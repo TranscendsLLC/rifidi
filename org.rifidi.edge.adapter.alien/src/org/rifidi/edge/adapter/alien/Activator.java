@@ -25,14 +25,19 @@ public class Activator implements BundleActivator {
 	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
 	 */
 	public void stop(BundleContext context) throws Exception {
+		readerAdapterRegistryService.unregisterReaderAdapter(AlienConnectionInfo.class);
 	}
 
+	/**
+	 * @return
+	 */
 	public ReaderAdapterRegistryService getReaderAdapterRegistryService() {
-		readerAdapterRegistryService.unregisterReaderAdapter(AlienConnectionInfo.class);
-		
 		return readerAdapterRegistryService;	
 	}
 
+    /**
+     * @param readerAdapterRegistryService
+     */
     @Inject
 	public void setReaderAdapterRegistryService(
 			ReaderAdapterRegistryService readerAdapterRegistryService) {
