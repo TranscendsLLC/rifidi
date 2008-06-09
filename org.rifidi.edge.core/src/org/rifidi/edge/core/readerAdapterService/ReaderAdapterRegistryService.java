@@ -5,13 +5,13 @@ import org.rifidi.edge.core.readerAdapter.ISpecificReaderAdapterFactory;
 
 public interface ReaderAdapterRegistryService {
 
-	public void registerReaderAdapter(Class<?> specConnectionInfo,
-			ISpecificReaderAdapterFactory pattern2);
+	public void registerReaderAdapter(Class<?> specificConnectionInfo,
+			ISpecificReaderAdapterFactory specificReaderAdapterFactory);
 
-	public void unregisterReaderAdapter(Class<?> specConnnectionInfo);
-	
+	public void unregisterReaderAdapter(Class<?> specificConnnectionInfo);
+
 	public void getSpecReaderAdapterFactory(
-			AbstractConnectionInfo pattern);
+			AbstractConnectionInfo specificConnectionInfo);
 
 	public void registerListener();
 
