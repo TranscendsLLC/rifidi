@@ -5,13 +5,6 @@ import org.rifidi.edge.core.readerAdapter.ISpecificReaderAdapterFactory;
 
 public class ReaderAdapterRegistryServiceImpl implements ReaderAdapterRegistryService {
 
-	/* (non-Javadoc)
-	 * @see org.rifidi.edge.core.readerAdapterService.ReaderAdapterRegistryService#registerReaderAdapter(org.rifidi.edge.core.readerAdapter.AbstractConnectionInfo, org.rifidi.edge.core.readerAdapter.ISpecificReaderAdapterFactory)
-	 */
-	public void registerReaderAdapter(AbstractConnectionInfo pattern1,
-			ISpecificReaderAdapterFactory pattern2) {
-
-	}
 
 	/* (non-Javadoc)
 	 * @see org.rifidi.edge.core.readerAdapterService.ReaderAdapterRegistryService#getSpecReaderAdapterFactory(org.rifidi.edge.core.readerAdapter.AbstractConnectionInfo)
@@ -32,5 +25,23 @@ public class ReaderAdapterRegistryServiceImpl implements ReaderAdapterRegistrySe
 	 */
 	public void unregisterListener() {
 
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.readerAdapterService.ReaderAdapterRegistryService#registerReaderAdapter(java.lang.Class, org.rifidi.edge.core.readerAdapter.ISpecificReaderAdapterFactory)
+	 */
+	public void registerReaderAdapter(Class<?> specConnectionInfo,
+			ISpecificReaderAdapterFactory pattern2) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.readerAdapterService.ReaderAdapterRegistryService#unregisterReaderAdapter(java.lang.Class)
+	 */
+	@Override
+	public void unregisterReaderAdapter(Class<?> specConnnectionInfo) {
+		// TODO Auto-generated method stub
+		
 	}
 }
