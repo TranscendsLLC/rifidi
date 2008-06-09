@@ -1,4 +1,4 @@
-package org.rifidi.edge.alien.adapter;
+package org.rifidi.edge.adapter.alien;
 
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
