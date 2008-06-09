@@ -6,7 +6,7 @@ public interface IReaderAdapter {
 
 	public void disconnect();
 
-	public void sendCommand();
+	public void sendCommand(byte[] command);
 
 	public void startStreamTags();
 
