@@ -1,0 +1,35 @@
+package org.rifidi.jms;
+
+import org.apache.activemq.broker.BrokerService;
+import org.osgi.framework.BundleActivator;
+import org.osgi.framework.BundleContext;
+
+public class Activator implements BundleActivator {
+
+	BrokerService broker;
+	/*
+	 * (non-Javadoc)
+	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
+	 */
+	public void start(BundleContext context) throws Exception {
+		
+		//start broker
+		broker = new BrokerService();
+		broker.addConnector("tcp://localhost:61616");
+		broker.start();
+		
+		//configure and register connection factory
+/*		ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory();
+		connectionFactory.setBrokerURL("tcp://localhost:61616");
+		context.registerService(ConnectionFactory.class.getName(), connectionFactory, null);*/
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
+	 */
+	public void stop(BundleContext context) throws Exception {
+		broker.stop();
+	}
+
+}
