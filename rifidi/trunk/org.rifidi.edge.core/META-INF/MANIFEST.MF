@@ -10,3 +10,5 @@ Export-Package: org.rifidi.edge.core.readerAdapter,
  org.rifidi.edge.core.readerAdapterFactory,
  org.rifidi.edge.core.readerAdapterService,
  org.rifidi.edge.core.session
+Require-Bundle: org.rifidi.services,
+ org.junit4
