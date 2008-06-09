@@ -1,6 +1,5 @@
 package org.rifidi.edge.core.session;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.rifidi.edge.core.readerAdapter.AbstractConnectionInfo;
