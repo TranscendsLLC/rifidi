@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.rifidi.edge.alien.adapter;
+package org.rifidi.edge.adapter.alien;
 
 import org.rifidi.edge.core.readerAdapter.AbstractConnectionInfo;
 
