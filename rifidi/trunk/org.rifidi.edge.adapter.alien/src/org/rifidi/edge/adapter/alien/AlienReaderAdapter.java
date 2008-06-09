@@ -30,7 +30,7 @@ public class AlienReaderAdapter implements IReaderAdapter {
 	 */
 	@Override
 	public void connect() {
-		// TODO Auto-generated method stub
+		//Connect to the Alien Reader
 
 	}
 
@@ -79,10 +79,11 @@ public class AlienReaderAdapter implements IReaderAdapter {
 	}
 
 	/**
+	 * Gets the 
 	 * 
 	 * @return
 	 */
-	public AlienConnectionInfo getAci() {
+	public AlienConnectionInfo getAlienConectionInfo() {
 		return aci;
 	}
 
