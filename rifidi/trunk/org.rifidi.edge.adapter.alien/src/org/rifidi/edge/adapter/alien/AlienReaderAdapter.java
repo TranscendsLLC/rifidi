@@ -11,6 +11,8 @@ import org.rifidi.edge.core.readerAdapter.IReaderAdapter;
  */
 public class AlienReaderAdapter implements IReaderAdapter {
 
+	private AlienConnectionInfo aci;
+
 	/**
 	 * Adapter for the Alien reader.
 	 * 
@@ -18,6 +20,7 @@ public class AlienReaderAdapter implements IReaderAdapter {
 	 *            The connection info for the Alien Reader.
 	 */
 	public AlienReaderAdapter(AlienConnectionInfo aci) {
+		this.aci = aci;
 	}
 
 	/*
@@ -73,6 +76,14 @@ public class AlienReaderAdapter implements IReaderAdapter {
 	public void stopStreamTags() {
 		// TODO Auto-generated method stub
 
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public AlienConnectionInfo getAci() {
+		return aci;
 	}
 
 }
