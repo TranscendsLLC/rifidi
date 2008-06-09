@@ -3,6 +3,7 @@ package org.rifidi.edge.core.session;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Random;
 
 import org.rifidi.edge.core.readerAdapter.AbstractConnectionInfo;
 import org.rifidi.edge.core.readerAdapter.IReaderAdapter;
@@ -22,7 +23,7 @@ public class SessionRegistryServiceImpl implements SessionRegistryService {
 	 * @see org.rifidi.edge.core.session.SessionRegistryService#intalize()
 	 */
 	public void initialize(){
-		counter=-1;
+		//counter=-1;
 		idMap = new HashMap<Integer, Session>();
 	}
 	
@@ -33,8 +34,12 @@ public class SessionRegistryServiceImpl implements SessionRegistryService {
 		if (abstractConnectionInfo == null)
 			throw new IllegalArgumentException("Null values not allowed.");
 			
-		counter++;
+		if (counter >= Integer.MAX_VALUE - 100)
+			throw new RuntimeException("Session counter reached max value.");
 		
+		counter++;
+
+
 		IReaderAdapter adapter = ReaderAdapterFactory.createReaderAdapter(abstractConnectionInfo);
 		Session session = new Session(abstractConnectionInfo, adapter, counter);
 		
