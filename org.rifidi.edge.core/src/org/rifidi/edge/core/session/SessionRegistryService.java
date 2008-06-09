@@ -7,18 +7,18 @@ import org.rifidi.edge.core.readerAdapter.IReaderAdapter;
 
 public interface SessionRegistryService {
 
-	public abstract void initialize();
+	public void initialize();
 
-	public abstract int createReaderSession(AbstractConnectionInfo abstractConnectionInfo);
+	public int createReaderSession(AbstractConnectionInfo abstractConnectionInfo);
 
-	public abstract Session getReaderSession(int sessionID);
+	public Session getReaderSession(int sessionID);
 	
-	public abstract boolean containsReaderSession(int sessionID);
+	public boolean containsReaderSession(int sessionID);
 
-	public abstract void deleteReaderSession(int sessionID);
+	public void deleteReaderSession(int sessionID);
 
-	public abstract List<IReaderAdapter> getAllReaderSessions();
+	public List<IReaderAdapter> getAllReaderSessions();
 	
-	public abstract int sessionCount();
+	public int sessionCount();
 
 }
