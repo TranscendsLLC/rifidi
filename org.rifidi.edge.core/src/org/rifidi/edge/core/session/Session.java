@@ -3,31 +3,73 @@ package org.rifidi.edge.core.session;
 import org.rifidi.edge.core.readerAdapter.AbstractConnectionInfo;
 import org.rifidi.edge.core.readerAdapter.IReaderAdapter;
 
-public class Session {
 
-	public void setSessionID(){
-		
-	}
+/**
+ * 
+ * @author Jerry and Kyle
+ * A session bundles the objects needed to communicate to the reader.
+ */
+
+public class Session {
 	
-	public void getSessionID(){
-		
-		
-	}
+	IReaderAdapter adapter;
 	
-	public void setSessionCreationPattern(AbstractConnectionInfo pattern){
-		
-	}
+	int sessionID;
 	
-	public AbstractConnectionInfo getSessionCreationPattern(){
-		
-		return null;
-	}
+	AbstractConnectionInfo connectionInfo;
 	
-	public IReaderAdapter getIReaderAdapter(){
-		return null;
+	/**
+	 * Creates a Session.
+	 * @param connectionInfo Info used to connect to a reader.
+	 * @param adapter Object that talks to a reader.
+	 * @param id Id for this session.
+	 */
+	public Session(AbstractConnectionInfo connectionInfo, IReaderAdapter adapter, int id ){
+		setConnectionInfo( connectionInfo);
+		setAdapter( adapter);
+		setSessionID(id);
 	}
-	
-	public void setIReaderAdapter(IReaderAdapter adapter){
-		
+
+	/**
+	 * @return the adapter
+	 */
+	public IReaderAdapter getAdapter() {
+		return adapter;
 	}
+
+	/**
+	 * @param adapter the adapter to set
+	 */
+	public void setAdapter(IReaderAdapter adapter) {
+		this.adapter = adapter;
+	}
+
+	/**
+	 * @return the sessionID
+	 */
+	public int getSessionID() {
+		return sessionID;
+	}
+
+	/**
+	 * @param sessionID the sessionID to set
+	 */
+	public void setSessionID(int sessionID) {
+		this.sessionID = sessionID;
+	}
+
+	/**
+	 * @return the connectionInfo
+	 */
+	public AbstractConnectionInfo getConnectionInfo() {
+		return connectionInfo;
+	}
+
+	/**
+	 * @param connectionInfo the connectionInfo to set
+	 */
+	public void setConnectionInfo(AbstractConnectionInfo connectionInfo) {
+		this.connectionInfo = connectionInfo;
+	}
+
 }
