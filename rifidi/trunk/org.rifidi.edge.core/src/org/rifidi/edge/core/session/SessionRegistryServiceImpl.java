@@ -30,7 +30,11 @@ public class SessionRegistryServiceImpl implements SessionRegistryService {
 	 * @see org.rifidi.edge.core.session.SessionRegistryService#createReaderSession(org.rifidi.edge.core.readerAdapter.AbstractConnectionInfo)
 	 */
 	public int createReaderSession(AbstractConnectionInfo abstractConnectionInfo){
+		if (abstractConnectionInfo == null)
+			throw new IllegalArgumentException("Null values not allowed.");
+			
 		counter++;
+		
 		IReaderAdapter adapter = ReaderAdapterFactory.createReaderAdapter(abstractConnectionInfo);
 		Session session = new Session(abstractConnectionInfo, adapter, counter);
 		
@@ -44,6 +48,11 @@ public class SessionRegistryServiceImpl implements SessionRegistryService {
 	 */
 	public Session getReaderSession(int sessionID){
 		return idMap.get(sessionID);
+	}
+	
+	@Override
+	public boolean containsReaderSession(int sessionID) {
+		return idMap.containsKey(sessionID);
 	}
 	
 	/* (non-Javadoc)
@@ -65,4 +74,11 @@ public class SessionRegistryServiceImpl implements SessionRegistryService {
 		}
 		return list;
 	}
+
+	@Override
+	public int sessionCount() {
+		// TODO Auto-generated method stub
+		return idMap.size();
+	}
+
 }

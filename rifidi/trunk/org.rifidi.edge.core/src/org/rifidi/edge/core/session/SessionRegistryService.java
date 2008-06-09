@@ -12,9 +12,13 @@ public interface SessionRegistryService {
 	public abstract int createReaderSession(AbstractConnectionInfo abstractConnectionInfo);
 
 	public abstract Session getReaderSession(int sessionID);
+	
+	public abstract boolean containsReaderSession(int sessionID);
 
 	public abstract void deleteReaderSession(int sessionID);
 
 	public abstract List<IReaderAdapter> getAllReaderSessions();
+	
+	public abstract int sessionCount();
 
 }
