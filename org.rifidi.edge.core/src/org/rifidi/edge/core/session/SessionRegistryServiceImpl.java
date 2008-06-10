@@ -3,7 +3,7 @@ package org.rifidi.edge.core.session;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Random;
+
 
 import org.rifidi.edge.core.readerAdapter.AbstractConnectionInfo;
 import org.rifidi.edge.core.readerAdapter.IReaderAdapter;
