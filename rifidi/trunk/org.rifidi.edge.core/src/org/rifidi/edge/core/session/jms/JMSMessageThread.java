@@ -81,7 +81,7 @@ public class JMSMessageThread implements Runnable {
 					break;
 				}
 				sendMessage(tagList);
-				// Wait for the polling intervall to time out if reader adapter
+				// Wait for the polling interval to time out if reader adapter
 				// is not blocking
 				if (!readerAdapter.isBlocking())
 					Thread.sleep(pollingIntervall);
