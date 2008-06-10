@@ -43,19 +43,6 @@ public class DummyReaderAdapter implements IReaderAdapter {
 	}
 
 	@Override
-	public void startStreamTags() {
-
-		
-
-	}
-
-	@Override
-	public void stopStreamTags() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
 	public boolean isBlocking() {
 		// TODO Auto-generated method stub
 		return false;
