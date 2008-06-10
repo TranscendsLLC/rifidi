@@ -1,6 +1,8 @@
 package org.rifidi.edge.core.readerAdapterService;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import org.rifidi.edge.core.readerAdapter.AbstractConnectionInfo;
 import org.rifidi.edge.core.readerAdapter.ISpecificReaderAdapterFactory;
@@ -9,6 +11,8 @@ public class ReaderAdapterRegistryServiceImpl implements
 		ReaderAdapterRegistryService {
 
 	private HashMap<Class<? extends AbstractConnectionInfo>, ISpecificReaderAdapterFactory> registry = new HashMap<Class<? extends AbstractConnectionInfo>, ISpecificReaderAdapterFactory>();
+	
+	private List<ReaderAdapterRegistryServiceListener> listeners = new ArrayList<ReaderAdapterRegistryServiceListener>();
 
 	/* (non-Javadoc)
 	 * @see org.rifidi.edge.core.readerAdapterService.ReaderAdapterRegistryService#registerReaderAdapter(java.lang.Class, org.rifidi.edge.core.readerAdapter.ISpecificReaderAdapterFactory)
@@ -20,15 +24,24 @@ public class ReaderAdapterRegistryServiceImpl implements
 		{
 			registry.put(specificConnectionInfo, specificReaderAdapterFactory);
 		}
-
+		for (ReaderAdapterRegistryServiceListener listener: listeners ){
+			listener.readerAdapterRegistryServiceListener(specificConnectionInfo, specificReaderAdapterFactory);
+		}
 	}
 
 	/* (non-Javadoc)
 	 * @see org.rifidi.edge.core.readerAdapterService.ReaderAdapterRegistryService#unregisterReaderAdapter(java.lang.Class)
 	 */
 	@Override
-	public void unregisterReaderAdapter(Class<? extends AbstractConnectionInfo> specificConnnectionInfo) {
-		registry.remove(specificConnnectionInfo);
+	public void unregisterReaderAdapter(Class<? extends AbstractConnectionInfo> specificConnectionInfo) {
+		
+		ISpecificReaderAdapterFactory specificReaderAdapterFactory = registry.get(specificConnectionInfo);
+		
+		for (ReaderAdapterRegistryServiceListener listener: listeners ){
+			listener.readerAdapterRegistryServiceListener(specificConnectionInfo, specificReaderAdapterFactory);
+		}
+		
+		registry.remove(specificConnectionInfo);
 	}
 
 	/* (non-Javadoc)
@@ -40,13 +53,25 @@ public class ReaderAdapterRegistryServiceImpl implements
 	}
 
 	@Override
-	public void registerListener() {
+	public boolean registerListener(ReaderAdapterRegistryServiceListener listener){
 		//TODO not implemented yet
+		if (listeners.contains(listener)){
+			return false; // return false because it was not added.
+		} else {
+			listeners.add(listener);
+			return true; //return true because we successfully added it.
+		}
 	}
 
 	@Override
-	public void unregisterListener() {
+	public boolean unregisterListener(ReaderAdapterRegistryServiceListener listener) {
 		//TODO not implemented yet
+		if (listeners.contains(listener)) {
+			listeners.remove(listener);
+			return true; // return true because we successfully removed the listener
+		} else {
+			return false;
+		}
 	}
 
 }

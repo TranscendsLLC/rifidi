@@ -37,7 +37,19 @@ public class ReaderAdapterRegistryTest {
 	 */
 	@Test
 	public void testRegisterReaderAdapter() {
-		Assert.fail();
+
+		ReaderAdapterRegistryService registry = new ReaderAdapterRegistryServiceImpl();
+		
+		ISpecificReaderAdapterFactory factory = new DummyReaderAdapterFactory();
+		registry.registerReaderAdapter(DummyConnectionInfo.class, factory);
+		
+		if (registry.getSpecReaderAdapterFactory(new DummyConnectionInfo()) != factory)
+		{
+			Assert.fail();
+		}
+		
+		/*registry.getSpecReaderAdapterFactory() */
+	
 	}
 	
 	/**
@@ -45,6 +57,7 @@ public class ReaderAdapterRegistryTest {
 	 */
 	@Test
 	public void testRegisterListener() {
+		//TODO
 		Assert.fail();
 	}
 	
@@ -53,13 +66,8 @@ public class ReaderAdapterRegistryTest {
 	 */
 	@Test
 	public void testUnRegisterListener() {
+		//TODO
 		Assert.fail();
-		ReaderAdapterRegistryService registry = new ReaderAdapterRegistryServiceImpl();
-		
-		ISpecificReaderAdapterFactory factory = new DummyReaderAdapterFactory();
-		registry.registerReaderAdapter(DummyConnectionInfo.class, factory);
-		
-		/*registry.getSpecReaderAdapterFactory() */
 
 	}
 }
