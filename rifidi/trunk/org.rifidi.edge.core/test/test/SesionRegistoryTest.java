@@ -25,6 +25,7 @@ public class SesionRegistoryTest {
 	@Test
 	public void testGetSessionRegistry(){
 		Assert.assertNotNull(sessionRegistryService);
+		Assert.assertTrue(sessionRegistryService.sessionCount() == 0);
 	}
 	
 	@Test
@@ -34,6 +35,16 @@ public class SesionRegistoryTest {
 		int id = sessionRegistryService2.createReaderSession(new DummyConnectionInfo());
 		
 		Assert.assertTrue(id >= 0);
+	}
+	
+	@Test
+	public void testSetAndGetSession(){
+		SessionRegistryService sessionRegistryService2 = new SessionRegistryServiceImpl();
+		
+		int id = sessionRegistryService2.createReaderSession(new DummyConnectionInfo());
+		
+		Assert.assertTrue(sessionRegistryService2.getReaderSession(id) == sessionRegistryService2);
+		Assert.assertTrue(sessionRegistryService2.sessionCount() == 1);
 	}
 	
 	@Inject

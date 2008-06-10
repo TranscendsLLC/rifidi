@@ -40,7 +40,7 @@ public class SessionRegistryServiceImpl implements SessionRegistryService {
 		counter++;
 
 
-		IReaderAdapter adapter = ReaderAdapterFactory.createReaderAdapter(abstractConnectionInfo);
+		IReaderAdapter adapter = ReaderAdapterFactory.getInstance().createReaderAdapter(abstractConnectionInfo);
 		Session session = new Session(abstractConnectionInfo, adapter, counter);
 		
 		idMap.put(counter, session);
@@ -49,7 +49,7 @@ public class SessionRegistryServiceImpl implements SessionRegistryService {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.rifidi.edge.core.session.SessionRegistryService#getReaderSession(int)
+	 * @see org.rifidi.edge.abstractConnectionInfocore.session.SessionRegistryService#getReaderSession(int)
 	 */
 	public Session getReaderSession(int sessionID){
 		return idMap.get(sessionID);

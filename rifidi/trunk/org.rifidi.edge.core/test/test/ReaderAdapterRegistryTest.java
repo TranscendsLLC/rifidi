@@ -8,6 +8,9 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.rifidi.edge.core.readerAdapter.ISpecificReaderAdapterFactory;
+import org.rifidi.edge.core.readerAdapterService.ReaderAdapterRegistryService;
+import org.rifidi.edge.core.readerAdapterService.ReaderAdapterRegistryServiceImpl;
 
 /**
  * @author Matthew Dean - matt@pramari.com
@@ -51,5 +54,12 @@ public class ReaderAdapterRegistryTest {
 	@Test
 	public void testUnRegisterListener() {
 		Assert.fail();
+		ReaderAdapterRegistryService registry = new ReaderAdapterRegistryServiceImpl();
+		
+		ISpecificReaderAdapterFactory factory = new DummyReaderAdapterFactory();
+		registry.registerReaderAdapter(DummyConnectionInfo.class, factory);
+		
+		/*registry.getSpecReaderAdapterFactory() */
+
 	}
 }
