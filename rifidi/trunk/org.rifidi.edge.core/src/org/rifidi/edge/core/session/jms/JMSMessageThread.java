@@ -10,7 +10,6 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 
 import org.rifidi.edge.core.readerAdapter.IReaderAdapter;
-import org.rifidi.edge.core.session.Session;
 import org.rifidi.edge.core.tag.TagRead;
 
 public class JMSMessageThread implements Runnable {
@@ -20,7 +19,8 @@ public class JMSMessageThread implements Runnable {
 
 	// Paramerters
 	private JMSHelper jmsHelper;
-	private Session session;
+	private int sessionID;
+	private IReaderAdapter adapter;
 
 	// Runntime Variables
 	private boolean running = false;
@@ -32,20 +32,22 @@ public class JMSMessageThread implements Runnable {
 
 	// Polling time if ReaderAdapter is non blocking
 	private long pollingIntervall = 1000;
+	
+
 
 	// Constructor
-	public JMSMessageThread(Session session, JMSHelper jmsHelper) {
+	public JMSMessageThread(int sessionID, IReaderAdapter readerAdapter, JMSHelper jmsHelper) {
 		this.jmsHelper = jmsHelper;
-		this.session = session;
+		this.sessionID = sessionID;
+		this.readerAdapter = readerAdapter;
 	}
 
 	public boolean start() {
-		if (jmsHelper != null && session != null) {
+		if (jmsHelper != null) {
 			if (jmsHelper.isInitialized()) {
-				readerAdapter = session.getAdapter();
 
 				thread = new Thread(this, "JMSMessageThread"
-						+ session.getSessionID());
+						+ sessionID);
 
 				try {
 					context = JAXBContext.newInstance(TagRead.class);

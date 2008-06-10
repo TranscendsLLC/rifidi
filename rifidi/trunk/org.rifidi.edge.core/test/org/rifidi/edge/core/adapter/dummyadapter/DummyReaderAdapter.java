@@ -1,27 +1,38 @@
 package org.rifidi.edge.core.adapter.dummyadapter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.rifidi.edge.core.readerAdapter.IReaderAdapter;
 import org.rifidi.edge.core.tag.TagRead;
 
 public class DummyReaderAdapter implements IReaderAdapter {
+	
+	boolean connected = false;
 
 	@Override
 	public void connect() {
-		// TODO Auto-generated method stub
+		connected = true;
 
 	}
 
 	@Override
 	public void disconnect() {
-		// TODO Auto-generated method stub
+		connected=false;
 
 	}
 
 	@Override
 	public List<TagRead> getNextTags() {
-		// TODO Auto-generated method stub
+		if(connected){
+			TagRead tr = new TagRead();
+			byte[] b = {0x01, 0x02, 0x03, 0x04 };
+			tr.setId(b);
+			tr.setLastSeenTime(System.currentTimeMillis());
+			ArrayList<TagRead> reads = new ArrayList<TagRead>();
+			reads.add(tr);
+			return reads;
+		}
 		return null;
 	}
 
@@ -33,7 +44,8 @@ public class DummyReaderAdapter implements IReaderAdapter {
 
 	@Override
 	public void startStreamTags() {
-		// TODO Auto-generated method stub
+
+		
 
 	}
 

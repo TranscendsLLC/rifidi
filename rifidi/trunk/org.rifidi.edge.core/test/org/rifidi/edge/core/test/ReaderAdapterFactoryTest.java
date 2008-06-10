@@ -20,7 +20,7 @@ import org.rifidi.services.registry.ServiceRegistry;
  * @author Matthew Dean - matt@pramari.com
  * 
  */
-public class TestReaderAdapterFactory {
+public class ReaderAdapterFactoryTest {
 
 	ReaderAdapterRegistryService readerAdapterRegistryService;
 	
