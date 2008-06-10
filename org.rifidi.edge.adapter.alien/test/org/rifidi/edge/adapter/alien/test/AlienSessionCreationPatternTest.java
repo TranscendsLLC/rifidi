@@ -1,7 +1,7 @@
 /**
  * 
  */
-package test;
+package org.rifidi.edge.adapter.alien.test;
 
 
 import org.junit.After;
@@ -13,7 +13,7 @@ import org.junit.Test;
  * @author Matthew Dean - matt@pramari.com
  *
  */
-public class AlienReaderAdapterFactoryTest {
+public class AlienSessionCreationPatternTest {
 
 	/**
 	 * @throws java.lang.Exception
@@ -33,7 +33,16 @@ public class AlienReaderAdapterFactoryTest {
 	 * Tests connecting the reader
 	 */
 	@Test
-	public void testSpecificSessionCreate() {
+	public void testIPAddress() {
 		Assert.fail();
 	}
+	
+	/**
+	 * Tests connecting the reader
+	 */
+	@Test
+	public void testPort() {
+		Assert.fail();
+	}
+
 }
