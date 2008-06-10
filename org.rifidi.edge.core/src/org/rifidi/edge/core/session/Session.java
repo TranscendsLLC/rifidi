@@ -10,7 +10,7 @@ import org.rifidi.edge.core.readerAdapter.IReaderAdapter;
  * A session bundles the objects needed to communicate to the reader.
  */
 
-public class Session {
+public class Session implements ISession {
 	
 	IReaderAdapter adapter;
 	
@@ -70,6 +70,24 @@ public class Session {
 	 */
 	public void setConnectionInfo(AbstractConnectionInfo connectionInfo) {
 		this.connectionInfo = connectionInfo;
+	}
+
+	@Override
+	public void sendCustomCommand(Object obj) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void startTagStream() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void stopTagStream() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
