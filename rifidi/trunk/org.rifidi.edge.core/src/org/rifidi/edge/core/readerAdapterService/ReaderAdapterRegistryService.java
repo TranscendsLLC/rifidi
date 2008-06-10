@@ -8,13 +8,14 @@ public interface ReaderAdapterRegistryService {
 	public void registerReaderAdapter(Class<? extends AbstractConnectionInfo> specificConnectionInfo,
 			ISpecificReaderAdapterFactory specificReaderAdapterFactory);
 
-	public void unregisterReaderAdapter(Class<? extends AbstractConnectionInfo> specificConnnectionInfo);
+	public void unregisterReaderAdapter(Class<? extends AbstractConnectionInfo> specificConnectionInfo);
 
 	public ISpecificReaderAdapterFactory getSpecReaderAdapterFactory(
 			AbstractConnectionInfo specificConnectionInfo);
 
-	public void registerListener();
+	public boolean registerListener(ReaderAdapterRegistryServiceListener listener);
 
-	public void unregisterListener();
+	public boolean unregisterListener(ReaderAdapterRegistryServiceListener listener);
+
 
 }
