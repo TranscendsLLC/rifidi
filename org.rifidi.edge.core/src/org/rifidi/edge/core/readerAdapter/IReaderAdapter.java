@@ -12,10 +12,6 @@ public interface IReaderAdapter {
 
 	public void sendCommand(byte[] command);
 
-	public void startStreamTags();
-
-	public void stopStreamTags();
-	
 	public List<TagRead> getNextTags();
 	
 	public boolean isBlocking();

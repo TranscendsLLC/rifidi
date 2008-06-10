@@ -100,26 +100,6 @@ public class AlienReaderAdapter implements IReaderAdapter {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.rifidi.edge.core.readerAdapter.IReaderAdapter#startStreamTags()
-	 */
-	@Override
-	public void startStreamTags() {
-		// Nothing needed
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.rifidi.edge.core.readerAdapter.IReaderAdapter#stopStreamTags()
-	 */
-	@Override
-	public void stopStreamTags() {
-		// Nothing needed
-	}
-
 	/**
 	 * Gets the next tag
 	 * 
