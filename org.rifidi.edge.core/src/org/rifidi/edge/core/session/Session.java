@@ -2,6 +2,7 @@ package org.rifidi.edge.core.session;
 
 import org.rifidi.edge.core.readerAdapter.AbstractConnectionInfo;
 import org.rifidi.edge.core.readerAdapter.IReaderAdapter;
+import org.rifidi.edge.core.session.jms.JMSMessageThread;
 
 
 /**
@@ -18,16 +19,19 @@ public class Session implements ISession {
 	
 	AbstractConnectionInfo connectionInfo;
 	
+	JMSMessageThread jmsMessageThread;
+	
 	/**
 	 * Creates a Session.
 	 * @param connectionInfo Info used to connect to a reader.
 	 * @param adapter Object that talks to a reader.
 	 * @param id Id for this session.
 	 */
-	public Session(AbstractConnectionInfo connectionInfo, IReaderAdapter adapter, int id ){
+	public Session(AbstractConnectionInfo connectionInfo, IReaderAdapter adapter, int id, JMSMessageThread jmsMessageThread ){
 		setConnectionInfo( connectionInfo);
 		setAdapter( adapter);
 		setSessionID(id);
+		this.jmsMessageThread = jmsMessageThread;
 	}
 
 	/**
@@ -80,13 +84,13 @@ public class Session implements ISession {
 
 	@Override
 	public void startTagStream() {
-		// TODO Auto-generated method stub
+		this.jmsMessageThread.start();
 		
 	}
 
 	@Override
 	public void stopTagStream() {
-		// TODO Auto-generated method stub
+		this.jmsMessageThread.stop();
 		
 	}
 
