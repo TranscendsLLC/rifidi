@@ -18,4 +18,6 @@ public interface IReaderAdapter {
 	
 	public List<TagRead> getNextTags();
 	
+	public boolean isBlocking();
+	
 }

@@ -188,4 +188,9 @@ public class AlienReaderAdapter implements IReaderAdapter {
 		}
 		return buf.toString();
 	}
+
+	@Override
+	public boolean isBlocking() {
+		return false;
+	}
 }
