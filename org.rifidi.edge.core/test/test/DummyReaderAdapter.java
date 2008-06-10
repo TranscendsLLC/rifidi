@@ -43,4 +43,10 @@ public class DummyReaderAdapter implements IReaderAdapter {
 
 	}
 
+	@Override
+	public boolean isBlocking() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }

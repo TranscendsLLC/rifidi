@@ -4,7 +4,6 @@ import java.io.StringWriter;
 import java.util.List;
 
 import javax.jms.JMSException;
-import javax.jms.MessageProducer;
 import javax.jms.TextMessage;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -31,7 +30,7 @@ public class JMSMessageThread implements Runnable {
 	private JAXBContext context;
 	private Marshaller marshaller;
 
-
+	private long pollingIntervall = 1000;
 
 	// Constructor
 	public JMSMessageThread(Session session, JMSHelper jmsHelper) {
@@ -71,21 +70,20 @@ public class JMSMessageThread implements Runnable {
 
 	@Override
 	public void run() {
-		// try {
-		// while (running) {
-		// List<TagRead> tags = readerAdapter.getNextTags();
-		//
-		// }
-		// } catch (InterruptedException e) {
-		//
-		// }
+		try {
+			while (running) {
+				List<TagRead> tagList = readerAdapter.getNextTags();
+				sendMessage(tagList);
+				if (!readerAdapter.isBlocking())
+					Thread.sleep(pollingIntervall);
+			}
+		} catch (InterruptedException e) {
 
+		}
 	}
 
-	private void sendMessage(List<TagRead> tagList)
-	{
-		for(TagRead tag : tagList)
-		{
+	private void sendMessage(List<TagRead> tagList) {
+		for (TagRead tag : tagList) {
 			StringWriter writer = new StringWriter();
 			try {
 				marshaller.marshal(tag, writer);
@@ -95,12 +93,21 @@ public class JMSMessageThread implements Runnable {
 			}
 			TextMessage textMessage;
 			try {
-				textMessage = jmsHelper.getSession().createTextMessage(writer.toString());
+				textMessage = jmsHelper.getSession().createTextMessage(
+						writer.toString());
 				jmsHelper.getMessageProducer().send(textMessage);
 			} catch (JMSException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
+	}
+
+	public long getPollingIntervall() {
+		return pollingIntervall;
+	}
+
+	public void setPollingIntervall(long pollingIntervall) {
+		this.pollingIntervall = pollingIntervall;
 	}
 }
