@@ -9,7 +9,7 @@ public interface SessionRegistryService {
 
 	public void initialize();
 
-	public int createReaderSession(AbstractConnectionInfo abstractConnectionInfo);
+	public Session createReaderSession(AbstractConnectionInfo abstractConnectionInfo);
 
 	public Session getReaderSession(int sessionID);
 	

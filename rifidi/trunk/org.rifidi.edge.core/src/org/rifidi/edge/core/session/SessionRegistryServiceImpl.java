@@ -9,7 +9,7 @@ import org.rifidi.edge.core.readerAdapter.AbstractConnectionInfo;
 import org.rifidi.edge.core.readerAdapter.IReaderAdapter;
 import org.rifidi.edge.core.readerAdapter.ReaderAdapterFactory;
 
-public class SessionRegistryServiceImpl implements SessionRegistryService {
+public class SessionRegistryServiceImpl implements SessionRegistryService, IRemoteSessionRegistryService {
 
 	HashMap<Integer, Session> idMap;
 	
@@ -30,7 +30,7 @@ public class SessionRegistryServiceImpl implements SessionRegistryService {
 	/* (non-Javadoc)
 	 * @see org.rifidi.edge.core.session.SessionRegistryService#createReaderSession(org.rifidi.edge.core.readerAdapter.AbstractConnectionInfo)
 	 */
-	public int createReaderSession(AbstractConnectionInfo abstractConnectionInfo){
+	public Session createReaderSession(AbstractConnectionInfo abstractConnectionInfo){
 		if (abstractConnectionInfo == null)
 			throw new IllegalArgumentException("Null values not allowed.");
 			
@@ -45,7 +45,7 @@ public class SessionRegistryServiceImpl implements SessionRegistryService {
 		
 		idMap.put(counter, session);
 		
-		return counter;
+		return session;
 	}
 	
 	/* (non-Javadoc)
