@@ -8,11 +8,11 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.rifidi.edge.core.adapter.dummyadapter.DummyConnectionInfo;
+import org.rifidi.edge.core.adapter.dummyadapter.DummyReaderAdapterFactory;
 import org.rifidi.edge.core.readerAdapter.ISpecificReaderAdapterFactory;
 import org.rifidi.edge.core.readerAdapterService.ReaderAdapterRegistryService;
 import org.rifidi.edge.core.readerAdapterService.ReaderAdapterRegistryServiceImpl;
-import org.rifidi.edge.core.readeradapter.dummyadapter.DummyConnectionInfo;
-import org.rifidi.edge.core.readeradapter.dummyadapter.DummyReaderAdapterFactory;
 
 
 /**

@@ -1,4 +1,4 @@
-package org.rifidi.edge.core.readeradapter.dummyadapter;
+package org.rifidi.edge.core.adapter.dummyadapter;
 
 import java.util.List;
 

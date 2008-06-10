@@ -7,11 +7,11 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.rifidi.edge.core.adapter.dummyadapter.DummyConnectionInfo;
+import org.rifidi.edge.core.adapter.dummyadapter.DummyReaderAdapterFactory;
 import org.rifidi.edge.core.readerAdapter.IReaderAdapter;
 import org.rifidi.edge.core.readerAdapter.ReaderAdapterFactory;
 import org.rifidi.edge.core.readerAdapterService.ReaderAdapterRegistryService;
-import org.rifidi.edge.core.readeradapter.dummyadapter.DummyConnectionInfo;
-import org.rifidi.edge.core.readeradapter.dummyadapter.DummyReaderAdapterFactory;
 import org.rifidi.services.annotations.Inject;
 import org.rifidi.services.registry.ServiceRegistry;
 
