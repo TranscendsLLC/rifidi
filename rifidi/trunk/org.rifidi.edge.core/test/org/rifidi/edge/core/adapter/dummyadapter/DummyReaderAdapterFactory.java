@@ -1,4 +1,4 @@
-package org.rifidi.edge.core.readeradapter.dummyadapter;
+package org.rifidi.edge.core.adapter.dummyadapter;
 
 import org.rifidi.edge.core.readerAdapter.AbstractConnectionInfo;
 import org.rifidi.edge.core.readerAdapter.IReaderAdapter;
