@@ -63,7 +63,7 @@ public class SessionTest {
 	 */
 	@Test
 	public void testGetSetSessionID() {
-		//TODO: Jerry should Implement
+		// TODO: Jerry should Implement
 		Assert.fail("Not Implemented");
 	}
 
@@ -72,7 +72,7 @@ public class SessionTest {
 	 */
 	@Test
 	public void testGetSetAbstractConnectionInfo() {
-		//TODO: Jerry should Implement
+		// TODO: Jerry should Implement
 		Assert.fail("Not Implemented");
 	}
 
@@ -81,7 +81,7 @@ public class SessionTest {
 	 */
 	@Test
 	public void testGetSetJMSThread() {
-		//TODO: Jerry should Implement
+		// TODO: Jerry should Implement
 		Assert.fail("Not Implemented");
 	}
 
@@ -90,7 +90,7 @@ public class SessionTest {
 	 */
 	@Test
 	public void testSendCustomCommand() {
-		//TODO: Jerry should Implement
+		// TODO: Jerry should Implement
 		Assert.fail("Not Implemented");
 	}
 
@@ -136,11 +136,12 @@ public class SessionTest {
 					javax.jms.Session.AUTO_ACKNOWLEDGE);
 			MessageConsumer consumer = jmsSession.createConsumer(jmsHelper
 					.getDestination());
-			
-			//Get the next message from the queue
+
+			// Get the next message from the queue
 			Message m = consumer.receive(500);
-			
-			//If the queue is not null, then we have started the tag stream correctly
+
+			// If the queue is not null, then we have started the tag stream
+			// correctly
 			Assert.assertNotNull(m);
 
 		} catch (JMSException e) {
@@ -149,6 +150,7 @@ public class SessionTest {
 		}
 
 		// TODO: Jerry needs to call stopTagStream and then make sure we don't
+		// have any more messages on the queue
 		// have any new messages in the JMS queue.
 		Assert.fail("Test not complete");
 

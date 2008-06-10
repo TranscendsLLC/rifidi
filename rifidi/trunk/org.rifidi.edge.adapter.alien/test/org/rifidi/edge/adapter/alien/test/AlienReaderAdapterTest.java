@@ -1,7 +1,7 @@
 /**
  * 
  */
-package test;
+package org.rifidi.edge.adapter.alien.test;
 
 import org.junit.Assert;
 import org.junit.After;
