@@ -41,24 +41,24 @@ public class JMSMessageThread implements Runnable {
 
 	public boolean start() {
 		if (jmsHelper != null && session != null) {
+			if (jmsHelper.isInitialized()) {
+				readerAdapter = session.getAdapter();
 
-			readerAdapter = session.getAdapter();
+				thread = new Thread(this, "JMSMessageThread"
+						+ session.getSessionID());
 
-			thread = new Thread(this, "JMSMessageThread"
-					+ session.getSessionID());
-			running = true;
-
-			try {
-				context = JAXBContext.newInstance(TagRead.class);
-				marshaller = context.createMarshaller();
-				marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-			} catch (JAXBException e) {
-				e.printStackTrace();
-				return false;
+				try {
+					context = JAXBContext.newInstance(TagRead.class);
+					marshaller = context.createMarshaller();
+					marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT,
+							true);
+				} catch (JAXBException e) {
+					e.printStackTrace();
+					return running;
+				}
+				running = true;
+				thread.start();
 			}
-
-			thread.start();
-
 		}
 		return running;
 	}
@@ -73,8 +73,16 @@ public class JMSMessageThread implements Runnable {
 	public void run() {
 		try {
 			while (running) {
+				// Get the tags form the reader adapter
 				List<TagRead> tagList = readerAdapter.getNextTags();
+				// Put the received tags on the JMS Queue aboard if tags == null
+				if (tagList == null) {
+					running = false;
+					break;
+				}
 				sendMessage(tagList);
+				// Wait for the polling intervall to time out if reader adapter
+				// is not blocking
 				if (!readerAdapter.isBlocking())
 					Thread.sleep(pollingIntervall);
 			}
