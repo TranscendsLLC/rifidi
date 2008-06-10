@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Rmi Plug-in
+Bundle-SymbolicName: org.rifidi.edge.rmi
+Bundle-Version: 1.0.0
+Bundle-Activator: org.rifidi.edge.rmi.Activator
+Bundle-Vendor: Pramari, LLC
+Eclipse-LazyStart: true
+Import-Package: org.osgi.framework;version="1.3.0"
+Require-Bundle: org.rifidi.edge.core,
+ org.rifidi.services,
+ org.junit4
