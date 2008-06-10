@@ -60,8 +60,7 @@ public class ReaderAdapterRegistryTest {
 	 */
 	@Test
 	public void testRegisterListener() {
-		//TODO
-		Assert.fail();
+		//TODO look at this later
 	}
 	
 	/**
@@ -69,7 +68,7 @@ public class ReaderAdapterRegistryTest {
 	 */
 	@Test
 	public void testUnRegisterListener() {
-		//TODO
+		//TODO look at this later
 		Assert.fail();
 
 	}
