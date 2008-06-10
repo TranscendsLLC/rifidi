@@ -30,6 +30,7 @@ public class JMSMessageThread implements Runnable {
 	private JAXBContext context;
 	private Marshaller marshaller;
 
+	// Polling time if ReaderAdapter is non blocking
 	private long pollingIntervall = 1000;
 
 	// Constructor
