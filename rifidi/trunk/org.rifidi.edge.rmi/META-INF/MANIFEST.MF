@@ -10,3 +10,7 @@ Import-Package: org.osgi.framework;version="1.3.0"
 Require-Bundle: org.rifidi.edge.core,
  org.rifidi.services,
  org.junit4
+Export-Package: org.rifidi.edge.rmi,
+ org.rifidi.edge.rmi.service,
+ org.rifidi.edge.rmi.session
+Eclipse-BuddyPolicy: registered

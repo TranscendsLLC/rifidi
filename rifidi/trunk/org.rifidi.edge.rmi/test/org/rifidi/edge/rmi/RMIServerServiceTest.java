@@ -39,8 +39,10 @@ public class RMIServerServiceTest {
 		try {
 			rmiServer.start();
 		} catch (RemoteException e) {
+			e.printStackTrace();
 			Assert.fail();
 		} catch (AlreadyBoundException e) {
+			e.printStackTrace();
 			Assert.fail();
 		}
 	}
