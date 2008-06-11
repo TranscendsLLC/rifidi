@@ -22,8 +22,10 @@ public class Activator implements BundleActivator {
 		broker = new BrokerService();
 		//TODO Save information about port and address in a configuration file
 		broker.addConnector("tcp://localhost:61616");
+		// Disable Presistence to avoid the creation of the ActiveMQ Directory
 		broker.setPersistent(false);
-		//broker.setUseJmx(false);
+		// TODO Disable JMX to avoid the use of RMI in JMS (ClassNotFoundException)
+		broker.setUseJmx(false);
 		broker.start();
 		
 		//configure and register connection factory
