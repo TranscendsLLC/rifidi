@@ -11,19 +11,20 @@ public class DummyReaderAdapter implements IReaderAdapter {
 	boolean connected = false;
 
 	@Override
-	public void connect() {
+	public boolean connect() {
 		connected = true;
-
+		return true;
 	}
 
 	@Override
-	public void disconnect() {
+	public boolean disconnect() {
 		connected=false;
-
+		return true;
 	}
 
 	@Override
 	public List<TagRead> getNextTags() {
+		
 		if(connected){
 			TagRead tr = new TagRead();
 			byte[] b = {0x01, 0x02, 0x03, 0x04 };
