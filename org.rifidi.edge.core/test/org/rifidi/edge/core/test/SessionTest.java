@@ -8,6 +8,7 @@ import javax.jms.ConnectionFactory;
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageConsumer;
+import javax.jms.TextMessage;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -145,6 +146,12 @@ public class SessionTest {
 			// Get the next message from the queue
 			Message m = consumer.receive(500);
 
+			System.out.println(((TextMessage)m).getText() + "== END ==");
+			
+			m = consumer.receive(5000);
+
+			System.out.println(((TextMessage)m).getText() + "== END ==");
+			
 			// If the queue is not null, then we have started the tag stream
 			// correctly
 			Assert.assertNotNull(m);
