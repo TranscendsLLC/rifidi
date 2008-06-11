@@ -27,6 +27,7 @@ public class Activator implements BundleActivator {
 		//TODO Save information about port and address in a configuration file
 		connectionFactory.setBrokerURL("tcp://localhost:61616");
 		context.registerService(ConnectionFactory.class.getName(), connectionFactory, null);
+
 	}
 
 	/*

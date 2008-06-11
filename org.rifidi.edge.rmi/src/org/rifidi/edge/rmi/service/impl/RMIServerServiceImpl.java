@@ -35,19 +35,28 @@ public class RMIServerServiceImpl implements RMIServerService {
 
 	@Override
 	public void start() throws RemoteException, AlreadyBoundException {
+		
+		// Stupid JAVA
+		//System.setSecurityManager(new SecurityManager());
+		
 		// Get the RMIRegistry and bind it to port and hostname
-		// TODO find out if localhost is sufficient
-		registry = LocateRegistry.getRegistry(port);
+		// TODO try to use the Registry from JMS
+		registry = LocateRegistry.getRegistry("127.0.0.1", port);
+		//registry = LocateRegistry.createRegistry(port);
 
 		// Create a new RemoteSessionRegistry
 		remoteSessionRegistry = new RemoteSessionRegistryImpl(
 				sessionRegistryService);
 
-		RemoteSessionRegistry stub = (RemoteSessionRegistry) UnicastRemoteObject
-				.exportObject(remoteSessionRegistry, 0);
-
-		// Bind the RemoteSessionRegistry to RMI
-		registry.bind(RemoteSessionRegistry.class.getName(), stub);
+		for(String stub : registry.list())
+		{
+			System.out.println(stub);
+		}
+//		RemoteSessionRegistry stub = (RemoteSessionRegistry) UnicastRemoteObject
+//				.exportObject(remoteSessionRegistry, port);
+//
+//		// Bind the RemoteSessionRegistry to RMI
+//		registry.bind(RemoteSessionRegistry.class.getName(), stub);
 
 	}
 
