@@ -31,4 +31,11 @@ public class TagRead {
 		this.lastSeenTime = lastSeenTime;
 	}
 
+	public String toXML(){
+		return null;
+	}
+	
+	public String toString(){
+		return null;
+	}
 }
