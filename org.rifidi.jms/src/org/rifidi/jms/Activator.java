@@ -20,6 +20,7 @@ public class Activator implements BundleActivator {
 		broker = new BrokerService();
 		//TODO Save information about port and address in a configuration file
 		broker.addConnector("tcp://localhost:61616");
+		broker.setUseJmx(false);
 		broker.start();
 		
 		//configure and register connection factory

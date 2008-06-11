@@ -20,11 +20,10 @@ public class JMSMessageThread implements Runnable {
 	// Paramerters
 	private JMSHelper jmsHelper;
 	private int sessionID;
-	private IReaderAdapter adapter;
+	private IReaderAdapter readerAdapter;
 
 	// Runntime Variables
 	private boolean running = false;
-	private IReaderAdapter readerAdapter;
 
 	// XML Context
 	private JAXBContext context;
@@ -32,11 +31,10 @@ public class JMSMessageThread implements Runnable {
 
 	// Polling time if ReaderAdapter is non blocking
 	private long pollingIntervall = 1000;
-	
-
 
 	// Constructor
-	public JMSMessageThread(int sessionID, IReaderAdapter readerAdapter, JMSHelper jmsHelper) {
+	public JMSMessageThread(int sessionID, IReaderAdapter readerAdapter,
+			JMSHelper jmsHelper) {
 		this.jmsHelper = jmsHelper;
 		this.sessionID = sessionID;
 		this.readerAdapter = readerAdapter;
@@ -46,8 +44,7 @@ public class JMSMessageThread implements Runnable {
 		if (jmsHelper != null) {
 			if (jmsHelper.isInitialized()) {
 
-				thread = new Thread(this, "JMSMessageThread"
-						+ sessionID);
+				thread = new Thread(this, "JMSMessageThread" + sessionID);
 
 				try {
 					context = JAXBContext.newInstance(TagRead.class);
@@ -106,6 +103,8 @@ public class JMSMessageThread implements Runnable {
 			try {
 				textMessage = jmsHelper.getSession().createTextMessage(
 						writer.toString());
+				System.out.println("++ Send next Message ++");
+				System.out.println(textMessage.getText());
 				jmsHelper.getMessageProducer().send(textMessage);
 			} catch (JMSException e) {
 				// TODO Auto-generated catch block

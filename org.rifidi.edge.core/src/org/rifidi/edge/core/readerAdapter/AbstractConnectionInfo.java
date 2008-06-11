@@ -18,5 +18,5 @@ public abstract class AbstractConnectionInfo {
 
 	}
 
-	public abstract Class<? extends IReaderAdapter> getReaderAdapterType();
+	public abstract Class<? extends AbstractConnectionInfo> getReaderAdapterType();
 }

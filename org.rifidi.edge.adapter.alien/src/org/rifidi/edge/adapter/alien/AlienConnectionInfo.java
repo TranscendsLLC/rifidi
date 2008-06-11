@@ -7,19 +7,16 @@ import org.rifidi.edge.core.readerAdapter.AbstractConnectionInfo;
 
 /**
  * @author Matthew Dean - matt@pramari.com
- *
+ * 
  */
 public class AlienConnectionInfo extends AbstractConnectionInfo {
 
 	private String username;
-	
+
 	private String password;
-	
-	/* (non-Javadoc)
-	 * @see org.rifidi.edge.core.readerAdapter.AbstractConnectionInfo#getReaderAdapterType()
-	 */
+
 	@Override
-	public Class<?> getReaderAdapterType() {
+	public Class<? extends AbstractConnectionInfo> getReaderAdapterType() {
 		return this.getClass();
 	}
 

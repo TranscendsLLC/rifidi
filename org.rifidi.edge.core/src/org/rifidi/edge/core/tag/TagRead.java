@@ -3,10 +3,13 @@
  */
 package org.rifidi.edge.core.tag;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 /**
  * @author Matthew Dean - matt@pramari.com
  * 
  */
+@XmlRootElement
 public class TagRead {
 
 	private byte[] id;
