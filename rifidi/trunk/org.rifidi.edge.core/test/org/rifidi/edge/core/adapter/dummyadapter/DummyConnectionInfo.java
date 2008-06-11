@@ -6,8 +6,7 @@ public class DummyConnectionInfo extends AbstractConnectionInfo {
 
 	@Override
 	public Class<? extends AbstractConnectionInfo> getReaderAdapterType() {
-		// TODO Auto-generated method stub
-		return null;
+		return DummyConnectionInfo.class;
 	}
 
 }
