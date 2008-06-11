@@ -41,27 +41,32 @@ public class RMIServerServiceImpl implements RMIServerService {
 
 		// Get the RMIRegistry and bind it to port and hostname
 		// TODO try to use the Registry from JMS
-		// registry = LocateRegistry.getRegistry("127.0.0.1", port);
-		registry = LocateRegistry.createRegistry(port);
+		try {
+			// Test if there is already an regisrty
+			registry = LocateRegistry.createRegistry(port);
+		} catch (RemoteException e) {
+			// TODO Log4J debugging message
+			System.out.println("RMI Regisrty allready exist!");
+			// if yes get registry
+			registry = LocateRegistry.getRegistry("127.0.0.1", port);
+		}
 
 		// Create a new RemoteSessionRegistry
 		remoteSessionRegistry = new RemoteSessionRegistryImpl(
 				sessionRegistryService);
 
 		// For Debug use only
-		// for(String value : registry.list())
-		// {
+		// for (String value : registry.list()) {
 		// System.out.println(value);
 		// }
 		RemoteSessionRegistry stub = (RemoteSessionRegistry) UnicastRemoteObject
-				.exportObject(remoteSessionRegistry, port);
+				.exportObject(remoteSessionRegistry, 0);
 
 		// Bind the RemoteSessionRegistry to RMI
 		registry.bind(RemoteSessionRegistry.class.getName(), stub);
 
 		// For Debug use only
-		// for(String value : registry.list())
-		// {
+		// for (String value : registry.list()) {
 		// System.out.println(value);
 		// }
 	}
