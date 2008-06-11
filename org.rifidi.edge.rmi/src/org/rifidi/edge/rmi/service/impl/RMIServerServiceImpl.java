@@ -7,6 +7,7 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.logging.Logger;
 
 import org.rifidi.edge.core.session.SessionRegistryService;
 import org.rifidi.edge.rmi.service.RMIServerService;
@@ -17,6 +18,8 @@ import org.rifidi.services.registry.ServiceRegistry;
 
 public class RMIServerServiceImpl implements RMIServerService {
 
+//	Log logger = 
+	
 	// SessionRegistry
 	private SessionRegistryService sessionRegistryService;
 	private RemoteSessionRegistryImpl remoteSessionRegistry;
@@ -36,9 +39,9 @@ public class RMIServerServiceImpl implements RMIServerService {
 	@Override
 	public void start() throws RemoteException, AlreadyBoundException {
 
-		// Stupid JAVA
-		// System.setSecurityManager(new SecurityManager());
-
+//		Logger log = Logger.getLogger("Test");
+//		log.info("Logging is working");
+//		log.
 		// Get the RMIRegistry and bind it to port and hostname
 		// TODO try to use the Registry from JMS
 		try {
