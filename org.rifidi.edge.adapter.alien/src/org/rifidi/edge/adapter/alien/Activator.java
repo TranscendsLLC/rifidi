@@ -16,6 +16,7 @@ public class Activator implements BundleActivator {
 	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
 	 */
 	public void start(BundleContext context) throws Exception {
+		System.out.println("Bundle " + this.getClass().getName() + " loaded");
 		ServiceRegistry.getInstance().service(this);
 	}
 
@@ -26,6 +27,7 @@ public class Activator implements BundleActivator {
 	 */
 	public void stop(BundleContext context) throws Exception {
 		readerAdapterRegistryService.unregisterReaderAdapter(AlienConnectionInfo.class);
+		System.out.println("Bundle " + this.getClass().getName() + " stopped");
 	}
 
 	/**

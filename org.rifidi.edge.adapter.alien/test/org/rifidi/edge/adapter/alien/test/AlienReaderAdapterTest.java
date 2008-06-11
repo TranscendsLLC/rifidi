@@ -3,10 +3,16 @@
  */
 package org.rifidi.edge.adapter.alien.test;
 
-import org.junit.Assert;
+import java.util.List;
+
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.rifidi.common.utilities.ByteAndHexConvertingUtility;
+import org.rifidi.edge.adapter.alien.AlienConnectionInfo;
+import org.rifidi.edge.adapter.alien.AlienReaderAdapter;
+import org.rifidi.edge.core.tag.TagRead;
 
 /**
  * 
@@ -15,6 +21,8 @@ import org.junit.Test;
  */
 public class AlienReaderAdapterTest {
 
+	AlienReaderAdapter alienReaderAdapter;
+	
 	/**
 	 * @throws java.lang.Exception
 	 */
@@ -27,7 +35,6 @@ public class AlienReaderAdapterTest {
 	 */
 	@After
 	public void tearDown() throws Exception {
-		Assert.fail();
 	}
 	
 	/**
@@ -35,6 +42,14 @@ public class AlienReaderAdapterTest {
 	 */
 	@Test
 	public void testConnect() {
+		AlienConnectionInfo connectionInfo = new AlienConnectionInfo();
+		connectionInfo.setIPAddress("192.168.1.100");
+		connectionInfo.setPort(23);
+		connectionInfo.setUsername("alien");
+		connectionInfo.setPassword("password");
+		
+		AlienReaderAdapter readerAdapter = new AlienReaderAdapter(connectionInfo);
+		readerAdapter.connect();
 		Assert.fail();
 	}
 	
@@ -43,6 +58,15 @@ public class AlienReaderAdapterTest {
 	 */
 	@Test
 	public void testStream() {
+		if(alienReaderAdapter != null)
+		{
+			List<TagRead> tagList = alienReaderAdapter.getNextTags();
+			for(TagRead t : tagList)
+			{
+				System.out.println(ByteAndHexConvertingUtility.toHexString(t.getId()));
+			}
+			
+		}
 		Assert.fail();
 	}
 	
@@ -59,6 +83,7 @@ public class AlienReaderAdapterTest {
 	 */
 	@Test
 	public void testDisconnect() {
+		alienReaderAdapter.disconnect();
 		Assert.fail();
 	}
 }
