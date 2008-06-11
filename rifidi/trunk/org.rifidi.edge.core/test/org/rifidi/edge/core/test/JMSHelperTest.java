@@ -7,6 +7,7 @@ import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
 import javax.jms.JMSException;
+import javax.jms.MessageProducer;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -133,7 +134,44 @@ public class JMSHelperTest {
 	public void testSetGetMessageProducer() {
 		//TODO: Jerry should Implement
 		
-	
+		JMSHelper helper = new JMSHelper();
+		
+		Connection c = null;
+		try {
+			c = connectionFactory.createConnection();
+		} catch (JMSException e) {
+			e.printStackTrace();
+			Assert.fail("JMS: create connection failed.");
+		}
+		
+		javax.jms.Session jmsSession = null;
+		try {
+			jmsSession = c.createSession(false,
+					javax.jms.Session.AUTO_ACKNOWLEDGE);
+		} catch (JMSException e) {
+			e.printStackTrace();
+			Assert.fail("JMS: create session failed.");
+		}
+		
+		Destination d = null;
+		try {
+			 d = jmsSession.createQueue("test");
+		} catch (JMSException e) {
+			e.printStackTrace();
+			Assert.fail("JMS: create Destination failed.");
+		}
+		
+		MessageProducer messageProducer = null;
+		try {
+			messageProducer = jmsSession.createProducer(d);
+		} catch (JMSException e) {
+			e.printStackTrace();
+			Assert.fail("JMS: create MessageProducer failed.");
+		}
+		
+		helper.setMessageProducer(messageProducer);
+		Assert.assertTrue(helper.getMessageProducer() == messageProducer);
+		
 	}
 
 	/**
