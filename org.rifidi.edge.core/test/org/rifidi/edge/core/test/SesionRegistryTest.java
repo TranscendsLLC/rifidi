@@ -68,7 +68,7 @@ public class SesionRegistryTest {
 		
 		ISession s = sessionRegistryService2.createReaderSession(new DummyConnectionInfo());
 		
-		//Assert.assertTrue(sessionRegistryService2.getReaderSession(id) == sessionRegistryService2);
+		//Assert.assertTrue(sessionRegistryService2.getReaderSession(s.) == sessionRegistryService2);
 		//Assert.assertTrue(sessionRegistryService2.sessionCount() == 1);
 	}
 	
