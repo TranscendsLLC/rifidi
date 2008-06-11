@@ -3,8 +3,17 @@
  */
 package org.rifidi.edge.core.test;
 
+import javax.jms.Connection;
+import javax.jms.ConnectionFactory;
+import javax.jms.Destination;
+import javax.jms.JMSException;
+
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
+import org.rifidi.edge.core.session.jms.JMSHelper;
+import org.rifidi.services.annotations.Inject;
+import org.rifidi.services.registry.ServiceRegistry;
 
 /**
  * @author kyle
@@ -12,14 +21,39 @@ import org.junit.Test;
  */
 public class JMSHelperTest {
 
+	private ConnectionFactory connectionFactory;
+	
+	/**
+	 * @throws java.lang.Exception
+	 */
+	@Before
+	public void setUp() throws Exception {
+		ServiceRegistry.getInstance().service(this);
+	}
+	
+	
 	/**
 	 * Test to make sure set and get work for Connections
 	 */
 	@Test
 	public void testSetGetConnection() {
-		//TODO: Jerry should Implement
 		
-		Assert.fail("Not Implemented");
+		
+		JMSHelper helper = new JMSHelper();
+		
+		Connection c = null;
+		try {
+			c = connectionFactory.createConnection();
+		} catch (JMSException e) {
+			e.printStackTrace();
+			Assert.fail("JMS: create connection failed.");
+		}
+		
+		helper.setConnection(c);
+		
+		Assert.assertTrue(helper.getConnection() == c);
+		
+		//Assert.fail("Not Implemented");
 	}
 	
 	/**
@@ -27,8 +61,29 @@ public class JMSHelperTest {
 	 */
 	@Test
 	public void testSetGetSession(){
-		//TODO: Jerry should Implement
-		Assert.fail("Not Implemented");
+		
+		
+		JMSHelper helper = new JMSHelper();
+		
+		Connection c = null;
+		try {
+			c = connectionFactory.createConnection();
+		} catch (JMSException e) {
+			e.printStackTrace();
+			Assert.fail("JMS: create connection failed.");
+		}
+		
+		javax.jms.Session jmsSession = null;
+		try {
+			jmsSession = c.createSession(false,
+					javax.jms.Session.AUTO_ACKNOWLEDGE);
+		} catch (JMSException e) {
+			e.printStackTrace();
+			Assert.fail("JMS: create session failed.");
+		}
+		
+		helper.setSession(jmsSession);
+		Assert.assertTrue(helper.getSession() == jmsSession) ;
 	}
 
 	/**
@@ -36,8 +91,39 @@ public class JMSHelperTest {
 	 */
 	@Test
 	public void testSetGetDestination() {
-		//TODO: Jerry should Implement
-		Assert.fail("Not Implemented");
+		
+		JMSHelper helper = new JMSHelper();
+		
+		Connection c = null;
+		try {
+			c = connectionFactory.createConnection();
+		} catch (JMSException e) {
+			e.printStackTrace();
+			Assert.fail("JMS: create connection failed.");
+		}
+		
+		javax.jms.Session jmsSession = null;
+		try {
+			jmsSession = c.createSession(false,
+					javax.jms.Session.AUTO_ACKNOWLEDGE);
+		} catch (JMSException e) {
+			e.printStackTrace();
+			Assert.fail("JMS: create session failed.");
+		}
+		
+		Destination d = null;
+		try {
+			 d = jmsSession.createQueue("test");
+		} catch (JMSException e) {
+			e.printStackTrace();
+			Assert.fail("JMS: create Destination failed.");
+		}
+		
+		helper.setDestination(d);
+		
+		Assert.assertTrue(d == helper.getDestination());
+		
+		//Assert.fail("Not Implemented");
 	}
 
 	/**
@@ -46,7 +132,8 @@ public class JMSHelperTest {
 	@Test
 	public void testSetGetMessageProducer() {
 		//TODO: Jerry should Implement
-		Assert.fail("Not Implemented");
+		
+	
 	}
 
 	/**
@@ -54,8 +141,11 @@ public class JMSHelperTest {
 	 */
 	@Test
 	public void testSetIsInitialized() {
-		//TODO: Jerry should Implement
-		Assert.fail("Not Implemented");
+		JMSHelper helper = new JMSHelper();
+		
+		helper.initializeJMSQueue(connectionFactory, "test");
+		
+		Assert.assertTrue(helper.isInitialized());
 	}
 
 	/**
@@ -65,8 +155,22 @@ public class JMSHelperTest {
 	 */
 	@Test
 	public void testInitialize() {
-		//TODO: Jerry should Implement
-		Assert.fail("Not Implemented");
-	}
 
+		//Assert.fail("Not Implemented");
+		
+		JMSHelper helper = new JMSHelper();
+		
+		helper.initializeJMSQueue(connectionFactory, "test");
+		
+		Assert.assertNotNull(helper.getSession());
+		Assert.assertNotNull(helper.getDestination());
+		Assert.assertNotNull(helper.getMessageProducer());
+		Assert.assertNotNull(helper.getSession());
+
+	}
+	
+	@Inject
+	public void setConnectionFactory(ConnectionFactory connectionFactory) {
+		this.connectionFactory = connectionFactory;
+	}
 }
