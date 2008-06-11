@@ -50,6 +50,7 @@ public class AlienReaderAdapter implements IReaderAdapter {
 	public void connect() {
 		// Connect to the Alien Reader
 		try {
+			System.out.println(aci.getIPAddress() + ", " + aci.getPort());
 			connection = new Socket(aci.getIPAddress(), aci.getPort());
 			out = new PrintWriter(connection.getOutputStream());
 			in = new BufferedReader(new InputStreamReader(connection
@@ -107,22 +108,32 @@ public class AlienReaderAdapter implements IReaderAdapter {
 	@Override
 	public List<TagRead> getNextTags() {
 		// TODO Auto-generated method stub
+		
+		System.out.println("starting the getnexttags");
+		
 		List<TagRead> retVal = null;
 
 		try {
+			System.out.println("Sending the taglistformat to custom format");
 			out.write("set TagListFormat=Custom");
 			out.flush();
 			readFromReader(in);
 			
+			System.out.println("Sending the custom format");
 			out.write("set TagListCustomFormat=%k|%t");
 			out.flush();
-			readFromReader(in);
+			//readFromReader(in);
+			
+			System.out.println("Reading tags");
 			out.write("t");
 			
 			retVal = parseString(readFromReader(in));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		
+		System.out.println("finishing the getnexttags");
+		
 		return retVal;
 	}
 
@@ -166,6 +177,7 @@ public class AlienReaderAdapter implements IReaderAdapter {
 			buf.append((char)ch);
 			ch=inBuf.read();
 		}
+		System.out.println("Reading in: " + buf.toString());
 		return buf.toString();
 	}
 

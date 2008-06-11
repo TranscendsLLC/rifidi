@@ -19,7 +19,7 @@ public class AlienConnectionInfo extends AbstractConnectionInfo {
 	public Class<? extends AbstractConnectionInfo> getReaderAdapterType() {
 		return this.getClass();
 	}
-
+	
 	public String getUsername() {
 		return username;
 	}
