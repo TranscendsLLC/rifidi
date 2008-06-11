@@ -48,8 +48,16 @@ public class AlienReaderAdapterTest {
 		connectionInfo.setUsername("alien");
 		connectionInfo.setPassword("password");
 		
-		AlienReaderAdapter readerAdapter = new AlienReaderAdapter(connectionInfo);
-		readerAdapter.connect();
+		alienReaderAdapter = new AlienReaderAdapter(connectionInfo);
+		alienReaderAdapter.connect();
+		
+		List<TagRead> tagList = alienReaderAdapter.getNextTags();
+		System.out.println("taglist size: " + tagList.size());
+		for(TagRead t : tagList)
+		{
+			System.out.println(ByteAndHexConvertingUtility.toHexString(t.getId()));
+		}
+	
 		Assert.fail();
 	}
 	
@@ -61,11 +69,14 @@ public class AlienReaderAdapterTest {
 		if(alienReaderAdapter != null)
 		{
 			List<TagRead> tagList = alienReaderAdapter.getNextTags();
+			System.out.println("taglist size: " + tagList.size());
 			for(TagRead t : tagList)
 			{
 				System.out.println(ByteAndHexConvertingUtility.toHexString(t.getId()));
 			}
 			
+		} else {
+			System.out.println("the readeradapter is null");
 		}
 		Assert.fail();
 	}
