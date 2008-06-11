@@ -34,7 +34,7 @@ public class RMIServerServiceTest {
 	}
 
 	@Test
-	public void testStartRMIServer() {
+	public void testStartStopRMIServer() {
 		RMIServerService rmiServer = new RMIServerServiceImpl();
 		try {
 			rmiServer.start();
@@ -45,6 +45,8 @@ public class RMIServerServiceTest {
 			e.printStackTrace();
 			Assert.fail();
 		}
+		
+		rmiServer.stop();
 	}
 
 }
