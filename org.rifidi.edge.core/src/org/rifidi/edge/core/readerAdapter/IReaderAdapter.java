@@ -6,9 +6,9 @@ import org.rifidi.edge.core.tag.TagRead;
 
 public interface IReaderAdapter {
 
-	public void connect();
+	public boolean connect();
 
-	public void disconnect();
+	public boolean disconnect();
 
 	public void sendCommand(byte[] command);
 
