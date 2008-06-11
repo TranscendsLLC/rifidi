@@ -1,12 +1,11 @@
 package org.rifidi.edge.core.adapter.dummyadapter;
 
 import org.rifidi.edge.core.readerAdapter.AbstractConnectionInfo;
-import org.rifidi.edge.core.readerAdapter.IReaderAdapter;
 
-public class DummyConnectionInfo extends AbstractConnectionInfo{
+public class DummyConnectionInfo extends AbstractConnectionInfo {
 
 	@Override
-	public Class<? extends IReaderAdapter> getReaderAdapterType() {
+	public Class<? extends AbstractConnectionInfo> getReaderAdapterType() {
 		// TODO Auto-generated method stub
 		return null;
 	}
