@@ -5,6 +5,7 @@ package org.rifidi.edge.core.test;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.rifidi.edge.core.adapter.dummyadapter.DummyConnectionInfo;
 
 /**
  * @author kyle
@@ -18,8 +19,9 @@ public class AbstractConnectionInfoTest {
 	 */
 	@Test
 	public void testSetGetIP(){
-		//TODO: Jerry should Implement
-		Assert.fail("Not Implemented");
+		DummyConnectionInfo info = new DummyConnectionInfo();
+		info.setIPAddress("127.0.0.1");
+		Assert.assertTrue(info.getIPAddress().equals("127.0.0.1"));
 	}
 	
 	/**
@@ -27,8 +29,9 @@ public class AbstractConnectionInfoTest {
 	 */
 	@Test
 	public void testsetgetPort(){
-		//TODO: Jerry should Implement
-		Assert.fail("Not Implemented");
+		DummyConnectionInfo info = new DummyConnectionInfo();
+		info.setPort(8080);
+		Assert.assertTrue(info.getPort() == 8080);
 	}
 
 }

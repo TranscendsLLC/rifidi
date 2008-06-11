@@ -15,6 +15,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.rifidi.edge.core.adapter.dummyadapter.DummyConnectionInfo;
 import org.rifidi.edge.core.adapter.dummyadapter.DummyReaderAdapter;
+import org.rifidi.edge.core.readerAdapter.AbstractConnectionInfo;
 import org.rifidi.edge.core.session.Session;
 import org.rifidi.edge.core.session.jms.JMSHelper;
 import org.rifidi.edge.core.session.jms.JMSMessageThread;
@@ -63,8 +64,10 @@ public class SessionTest {
 	 */
 	@Test
 	public void testGetSetSessionID() {
-		// TODO: Jerry should Implement
-		Assert.fail("Not Implemented");
+		Session session = new Session(null, null, -1, null);
+		
+		session.setSessionID(3);
+		Assert.assertTrue(session.getSessionID() == 3);
 	}
 
 	/**
@@ -72,8 +75,10 @@ public class SessionTest {
 	 */
 	@Test
 	public void testGetSetAbstractConnectionInfo() {
-		// TODO: Jerry should Implement
-		Assert.fail("Not Implemented");
+		Session session = new Session(null, null, 0, null);
+		AbstractConnectionInfo info = new DummyConnectionInfo();
+		session.setConnectionInfo(info);
+		Assert.assertTrue(session.getConnectionInfo() == info);
 	}
 
 	/**
@@ -143,6 +148,9 @@ public class SessionTest {
 			// If the queue is not null, then we have started the tag stream
 			// correctly
 			Assert.assertNotNull(m);
+			
+			s.stopTagStream();
+			
 
 		} catch (JMSException e) {
 			e.printStackTrace();
@@ -153,7 +161,7 @@ public class SessionTest {
 		// have any more messages on the queue
 		// have any new messages in the JMS queue.
 		Assert.fail("Test not complete");
-
+		
 	}
 
 	@Inject

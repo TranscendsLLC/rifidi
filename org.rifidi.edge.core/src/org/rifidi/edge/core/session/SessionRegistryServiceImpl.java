@@ -40,7 +40,7 @@ public class SessionRegistryServiceImpl implements SessionRegistryService, IRemo
 	 */
 	public Session createReaderSession(AbstractConnectionInfo abstractConnectionInfo){
 		if (abstractConnectionInfo == null)
-			throw new IllegalArgumentException("Null values not allowed.");
+			throw new IllegalArgumentException("Null references not allowed.");
 			
 		if (counter >= Integer.MAX_VALUE - 100)
 			throw new RuntimeException("Session counter reached max value: " + (Integer.MAX_VALUE - 100));
