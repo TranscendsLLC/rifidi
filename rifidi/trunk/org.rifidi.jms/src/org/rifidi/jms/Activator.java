@@ -16,11 +16,14 @@ public class Activator implements BundleActivator {
 	 */
 	public void start(BundleContext context) throws Exception {
 		
+		System.out.println("Bundle " + this.getClass().getName() + " loaded");
+		
 		//start broker
 		broker = new BrokerService();
 		//TODO Save information about port and address in a configuration file
 		broker.addConnector("tcp://localhost:61616");
-		broker.setUseJmx(false);
+		broker.setPersistent(false);
+		//broker.setUseJmx(false);
 		broker.start();
 		
 		//configure and register connection factory
@@ -37,6 +40,7 @@ public class Activator implements BundleActivator {
 	 */
 	public void stop(BundleContext context) throws Exception {
 		broker.stop();
+		System.out.println("Bundle " + this.getClass().getName() + " stopped");
 	}
 
 }
