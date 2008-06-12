@@ -14,7 +14,7 @@ import org.rifidi.edge.core.session.jms.JMSMessageThread;
 import org.rifidi.services.annotations.Inject;
 import org.rifidi.services.registry.ServiceRegistry;
 
-public class SessionRegistryServiceImpl implements SessionRegistryService, IRemoteSessionRegistryService {
+public class SessionRegistryServiceImpl implements SessionRegistryService{
 
 	HashMap<Integer, Session> idMap;
 	
