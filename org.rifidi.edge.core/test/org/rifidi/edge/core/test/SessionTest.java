@@ -128,11 +128,11 @@ public class SessionTest {
 			// Get the next message from the queue
 			Message m = consumer.receive(500);
 
-			System.out.println(((TextMessage)m).getText() + "== END ==");
+			logger.info(((TextMessage)m).getText() + "== END ==");
 			
 			m = consumer.receive(5000);
 
-			System.out.println(((TextMessage)m).getText() + "== END ==");
+			logger.info(((TextMessage)m).getText() + "== END ==");
 			
 		} catch (JMSException e) {
 			e.printStackTrace();
