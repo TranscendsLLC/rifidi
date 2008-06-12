@@ -10,12 +10,17 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.rifidi.common.utilities.ByteAndHexConvertingUtility;
 import org.rifidi.edge.core.readerAdapter.IReaderAdapter;
 import org.rifidi.edge.core.tag.TagRead;
 
+
 //TODO: Try this junit test on a /real/ thing magic reader
 public class ThingMagicReaderAdapter implements IReaderAdapter {
+	
+	private static final Log logger = LogFactory.getLog(ThingMagicReaderAdapter.class);	
 	
 	boolean connected = false;
 	
@@ -31,7 +36,7 @@ public class ThingMagicReaderAdapter implements IReaderAdapter {
 	@Override
 	public boolean connect() {
 		try {
-			System.out.println("Connecting: " + tmci.getIPAddress() + ":" + tmci.getPort() + " ...");
+			logger.debug("Connecting: " + tmci.getIPAddress() + ":" + tmci.getPort() + " ...");
 			connection = new Socket(tmci.getIPAddress(), tmci.getPort());
 			
 			out = new PrintWriter(connection.getOutputStream());
@@ -39,26 +44,23 @@ public class ThingMagicReaderAdapter implements IReaderAdapter {
 			in = new BufferedReader(new InputStreamReader(connection
 				.getInputStream()));
 			
-			//System.out.println(readFromReader(in));
+			//logger.debug(readFromReader(in));
 			
 			connected = true;
 		} catch (UnknownHostException e) {
-			//TODO print stack trace to log4j
-			e.printStackTrace();
+			logger.debug("UnknownHostException.", e);
 			return false;
 		} catch (ConnectException e){
-			System.out.println("Connection to reader refused.");
+			logger.debug("Connection to reader refused.");
 			System.out.println("Please check if the reader is properly turned on and connected to the network.");
 			//System.out.println("Stack trace follows...");
 			//e.printStackTrace();
 			return false;
 		} catch (IOException e) {
-			//TODO print stack trace to log4j
-			e.printStackTrace();
+			logger.debug("IOException occured.",e);
 			return false;
 		}
-		//TODO: Replace with log4j
-		System.out.println("Successfully Connected.");
+		logger.debug("Successfully Connected.");
 		return true;
 	}
 
@@ -73,8 +75,7 @@ public class ThingMagicReaderAdapter implements IReaderAdapter {
 			e.printStackTrace();
 			return false;
 		}
-		//TODO: Replace with log4j
-		System.out.println("Successfully Disconnected.");
+		logger.debug("Successfully Disconnected.");
 		return true;
 	}
 
@@ -101,14 +102,14 @@ public class ThingMagicReaderAdapter implements IReaderAdapter {
 			//chew up last new lines.
 			input = input.substring(0, input.lastIndexOf("\n\n"));
 			
-			//System.out.println("Input: " + input.replace("\n", "\\n"));
+			//logger("Input: " + input.replace("\n", "\\n"));
 			
 			String[] rawTags = input.split("\n");
 			
 			
 			
 			for (String rawTag: rawTags){
-				System.out.println(rawTag);
+				logger.debug(rawTag);
 				
 				String[] rawTagItems = rawTag.split("\\|");
 				
@@ -134,9 +135,11 @@ public class ThingMagicReaderAdapter implements IReaderAdapter {
 				readFromReader(in);
 			} catch (IOException e) {
 				//TODO print stack trace to log4j
-				e.printStackTrace();
+				logger.debug("IOException.", e);
 			}
+			
 		}
+
 	}
 
 	@Override
@@ -159,8 +162,7 @@ public class ThingMagicReaderAdapter implements IReaderAdapter {
 		try {
 			Thread.sleep(500);
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.debug("InterruptedException.", e);
 		}
 		while(inBuf.ready()){
 			int ch=inBuf.read();
