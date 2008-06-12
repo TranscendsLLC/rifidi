@@ -132,7 +132,7 @@ public class JMSHelperTest {
 	 */
 	@Test
 	public void testSetGetMessageProducer() {
-		//TODO: Jerry should Implement
+
 		
 		JMSHelper helper = new JMSHelper();
 		
