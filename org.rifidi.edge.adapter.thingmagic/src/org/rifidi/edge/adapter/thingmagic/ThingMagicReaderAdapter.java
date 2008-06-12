@@ -52,7 +52,7 @@ public class ThingMagicReaderAdapter implements IReaderAdapter {
 			return false;
 		} catch (ConnectException e){
 			logger.debug("Connection to reader refused.");
-			System.out.println("Please check if the reader is properly turned on and connected to the network.");
+			logger.debug("Please check if the reader is properly turned on and connected to the network.");
 			//System.out.println("Stack trace follows...");
 			//e.printStackTrace();
 			return false;
@@ -71,8 +71,7 @@ public class ThingMagicReaderAdapter implements IReaderAdapter {
 		try {
 			connection.close();
 		} catch (IOException e){
-			//TODO print stack trace to log4j
-			e.printStackTrace();
+			logger.debug("IOException.", e);
 			return false;
 		}
 		logger.debug("Successfully Disconnected.");
