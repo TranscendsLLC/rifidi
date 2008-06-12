@@ -2,6 +2,8 @@ package org.rifidi.edge.rmi.session.impl;
 
 import java.rmi.RemoteException;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.readerAdapter.AbstractConnectionInfo;
 import org.rifidi.edge.core.session.ISession;
 import org.rifidi.edge.core.session.Session;
@@ -11,6 +13,8 @@ import org.rifidi.edge.rmi.session.RemoteSessionRegistry;
 
 public class RemoteSessionRegistryImpl implements RemoteSessionRegistry {
 
+	private Log logger = LogFactory.getLog(RemoteSessionRegistryImpl.class);
+	
 	private SessionRegistryService sessionRegistryService;
 
 	public RemoteSessionRegistryImpl(
@@ -21,6 +25,7 @@ public class RemoteSessionRegistryImpl implements RemoteSessionRegistry {
 	@Override
 	public RemoteSession createReaderSession(
 			AbstractConnectionInfo connectionInfo) throws RemoteException {
+		logger.debug("Remote Call: createReaderSession()");
 		RemoteSession remoteSession = new RemoteSessionImpl(
 				sessionRegistryService.createReaderSession(connectionInfo));
 		return remoteSession;
@@ -29,6 +34,7 @@ public class RemoteSessionRegistryImpl implements RemoteSessionRegistry {
 	@Override
 	public void deleteReaderSession(RemoteSession remoteSession)
 			throws RemoteException {
+		logger.debug("Remote Call: deleteReaderSession()");
 		//TODO look if this is even working Session might be not available
 		if(remoteSession instanceof RemoteSessionImpl)
 		{
@@ -38,13 +44,11 @@ public class RemoteSessionRegistryImpl implements RemoteSessionRegistry {
 				sessionRegistryService.deleteReaderSession(((Session)session).getSessionID());
 			}else
 			{
-				//TODO Get Log4J
-				System.err.println("RemoteSessionRegistry: Session Error... look this up");
+				logger.error("RemoteSessionRegistry: Session Error... look this up");
 			}
 		}else
 		{
-			//TODO Get Log4J
-			System.err.println("RemoteSessionRegistry: Session Error... look this up");
+			logger.error("RemoteSessionRegistry: Session Error... look this up");
 		}
 		
 		
