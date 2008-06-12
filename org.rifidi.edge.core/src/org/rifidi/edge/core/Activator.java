@@ -12,8 +12,6 @@ import org.rifidi.edge.core.session.SessionRegistryServiceImpl;
 
 public class Activator implements BundleActivator {
 
-	private Log logger = LogFactory.getLog(Activator.class);
-
 	SessionRegistryService sessionService;
 	ReaderAdapterRegistryService readerAdapterRegistryService;
 
@@ -24,6 +22,9 @@ public class Activator implements BundleActivator {
 	 */
 	public void start(BundleContext context) throws Exception {
 		System.out.println("Bundle " + this.getClass().getName() + " loaded");
+		
+		
+		
 		sessionService = new SessionRegistryServiceImpl();
 		context.registerService(SessionRegistryService.class.getName(),
 				sessionService, null);
