@@ -78,7 +78,7 @@ public class Session implements ISession {
 
 	@Override
 	public void sendCustomCommand(Object obj) {
-		// TODO Auto-generated method stub
+		// TODO needs to be implemened and designed
 		
 	}
 

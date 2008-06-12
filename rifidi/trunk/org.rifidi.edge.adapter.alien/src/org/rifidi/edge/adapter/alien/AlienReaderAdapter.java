@@ -114,7 +114,6 @@ public class AlienReaderAdapter implements IReaderAdapter {
 	 */
 	@Override
 	public List<TagRead> getNextTags() {
-		// TODO Auto-generated method stub
 
 		logger.debug("starting the getnexttags");
 

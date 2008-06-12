@@ -39,13 +39,12 @@ public class DummyReaderAdapter implements IReaderAdapter {
 
 	@Override
 	public void sendCommand(byte[] command) {
-		// TODO Auto-generated method stub
+		// TODO Dummy method need to be implemented
 
 	}
 
 	@Override
 	public boolean isBlocking() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 

@@ -81,7 +81,7 @@ public class JMSMessageThread implements Runnable {
 						tag.toXML());
 				jmsHelper.getMessageProducer().send(textMessage);
 			} catch (JMSException e) {
-				// TODO Auto-generated catch block
+				// TODO Think about error handling
 				e.printStackTrace();
 			}
 		}
