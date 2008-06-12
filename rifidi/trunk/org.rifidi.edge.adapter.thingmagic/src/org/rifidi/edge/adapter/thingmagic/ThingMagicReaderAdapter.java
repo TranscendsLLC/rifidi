@@ -1,0 +1,178 @@
+package org.rifidi.edge.adapter.thingmagic;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.ConnectException;
+import java.net.Socket;
+import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.rifidi.common.utilities.ByteAndHexConvertingUtility;
+import org.rifidi.edge.core.readerAdapter.IReaderAdapter;
+import org.rifidi.edge.core.tag.TagRead;
+
+//TODO: Try this junit test on a /real/ thing magic reader
+public class ThingMagicReaderAdapter implements IReaderAdapter {
+	
+	boolean connected = false;
+	
+	private Socket connection = null;
+	private BufferedReader in = null;
+	private PrintWriter out = null;
+	
+	private ThingMagicConnectionInfo tmci;
+	public ThingMagicReaderAdapter(ThingMagicConnectionInfo connectionInfo){
+		tmci = connectionInfo;
+	}
+	
+	@Override
+	public boolean connect() {
+		try {
+			System.out.println("Connecting: " + tmci.getIPAddress() + ":" + tmci.getPort() + " ...");
+			connection = new Socket(tmci.getIPAddress(), tmci.getPort());
+			
+			out = new PrintWriter(connection.getOutputStream());
+			
+			in = new BufferedReader(new InputStreamReader(connection
+				.getInputStream()));
+			
+			//System.out.println(readFromReader(in));
+			
+			connected = true;
+		} catch (UnknownHostException e) {
+			//TODO print stack trace to log4j
+			e.printStackTrace();
+			return false;
+		} catch (ConnectException e){
+			System.out.println("Connection to reader refused.");
+			System.out.println("Please check if the reader is properly turned on and connected to the network.");
+			//System.out.println("Stack trace follows...");
+			//e.printStackTrace();
+			return false;
+		} catch (IOException e) {
+			//TODO print stack trace to log4j
+			e.printStackTrace();
+			return false;
+		}
+		//TODO: Replace with log4j
+		System.out.println("Successfully Connected.");
+		return true;
+	}
+
+	@Override
+	public boolean disconnect() {
+		connected=false;
+		out.flush();
+		try {
+			connection.close();
+		} catch (IOException e){
+			//TODO print stack trace to log4j
+			e.printStackTrace();
+			return false;
+		}
+		//TODO: Replace with log4j
+		System.out.println("Successfully Disconnected.");
+		return true;
+	}
+
+	@Override
+	public List<TagRead> getNextTags() {
+		String input = null;
+		List<TagRead> tags = new ArrayList<TagRead>();
+		if(connected){
+			
+			out.write("select id, timestamp from tag_id;\n");
+			out.flush();
+			
+			try {
+				 input = readFromReader(in);
+			} catch (IOException e) {
+				//TODO print stack trace to log4j
+				e.printStackTrace();
+				return null;
+			}
+			
+			if (input.equals("\n"))				// TODO Auto-generated catch block
+				return tags;
+			
+			//chew up last new lines.
+			input = input.substring(0, input.lastIndexOf("\n\n"));
+			
+			//System.out.println("Input: " + input.replace("\n", "\\n"));
+			
+			String[] rawTags = input.split("\n");
+			
+			
+			
+			for (String rawTag: rawTags){
+				System.out.println(rawTag);
+				
+				String[] rawTagItems = rawTag.split("\\|");
+				
+				TagRead tag = new TagRead();
+				
+				tag.setId(ByteAndHexConvertingUtility.fromHexString(rawTagItems[0].substring(2, rawTagItems[0].length())));
+				
+				//TODO: correct the time stamps.
+				tag.setLastSeenTime(System.nanoTime()); 
+				tags.add(tag);
+			}
+			return tags;
+		}
+		return null;
+	}
+
+	@Override
+	public void sendCommand(byte[] command) {
+		if (!connected ){
+			// TODO This needs to be implemented more fully.
+			try {
+				out.write(new String(command));
+				readFromReader(in);
+			} catch (IOException e) {
+				//TODO print stack trace to log4j
+				e.printStackTrace();
+			}
+		}
+	}
+
+	@Override
+	public boolean isBlocking() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	
+	public static String readFromReader(BufferedReader inBuf) throws IOException{
+		StringBuffer buf=new StringBuffer();
+		
+		//String temp = inBuf.readLine();
+		/*while(temp != null){
+			buf.append(temp);
+			temp = inBuf.readLine();
+		}*/
+		
+		//TODO: See if this is really needed on the real thing magic reader.
+		try {
+			Thread.sleep(500);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		while(inBuf.ready()){
+			int ch=inBuf.read();
+			buf.append((char)ch);
+		}
+		/*
+		int ch=inBuf.read();
+		while(ch != -1){
+			buf.append((char)ch);
+			ch=inBuf.read();
+		}*/
+		
+		return buf.toString();
+	}
+}
