@@ -88,7 +88,6 @@ public class LLRPReaderAdapter implements IReaderAdapter {
 	public boolean connect() {
 		// Connect to the Alien Reader
 		try {
-
 			connection = new Socket(aci.getIPAddress(), aci.getPort());
 			out = new DataOutputStream(connection.getOutputStream());
 			in = new DataInputStream(connection.getInputStream());
@@ -193,6 +192,24 @@ public class LLRPReaderAdapter implements IReaderAdapter {
 	}
 
 	/**
+	 * Reads in an LLRPCommand
+	 * 
+	 * @return
+	 */
+	private LLRPMessage readInCommand() {
+		LLRPMessage m = null;
+		try {
+			m = read();
+		} catch (IOException e) {
+
+		} catch (InvalidLLRPMessageException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return m;
+	}
+
+	/**
 	 * This method causes the calling thread to sleep for a specified number of
 	 * milliseconds
 	 * 
@@ -238,15 +255,8 @@ public class LLRPReaderAdapter implements IReaderAdapter {
 		addROSpec.setROSpec(createROSpec());
 		write(addROSpec, "ADD_ROSPEC");
 		pause(250);
-		try {
-			LLRPMessage m = read();
-			logger.debug(m);
-		} catch (IOException e) {
-
-		} catch (InvalidLLRPMessageException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		LLRPMessage adros = readInCommand();
+		logger.debug(adros);
 
 		// Create an ENABLE_ROSPEC message and send it to the reader
 		ENABLE_ROSPEC enableROSpec = new ENABLE_ROSPEC();
@@ -254,25 +264,8 @@ public class LLRPReaderAdapter implements IReaderAdapter {
 		write(enableROSpec, "ENABLE_ROSPEC");
 		pause(250);
 
-		try {
-			LLRPMessage m = read();
-			logger.debug(m);
-		} catch (IOException e) {
-
-		} catch (InvalidLLRPMessageException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		try {
-			LLRPMessage m = read();
-			logger.debug(m);
-		} catch (IOException e) {
-
-		} catch (InvalidLLRPMessageException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		LLRPMessage enros = readInCommand();
+		logger.debug(enros);
 
 		// Create a DISABLE_ROSPEC message and send it to the reader
 		DISABLE_ROSPEC disableROSpec = new DISABLE_ROSPEC();
@@ -280,15 +273,8 @@ public class LLRPReaderAdapter implements IReaderAdapter {
 		write(disableROSpec, "DISABLE_ROSPEC");
 		pause(250);
 
-		try {
-			LLRPMessage m = read();
-			logger.debug(m);
-		} catch (IOException e) {
-
-		} catch (InvalidLLRPMessageException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		LLRPMessage disros = readInCommand();
+		logger.debug(disros);
 
 		// Create a DELTE_ROSPEC message and send it to the reader
 		DELETE_ROSPEC deleteROSpec = new DELETE_ROSPEC();
@@ -296,15 +282,8 @@ public class LLRPReaderAdapter implements IReaderAdapter {
 		write(deleteROSpec, "DELETE_ROSPEC");
 		pause(250);
 
-		try {
-			LLRPMessage m = read();
-			logger.debug(m);
-		} catch (IOException e) {
-
-		} catch (InvalidLLRPMessageException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		LLRPMessage delros = readInCommand();
+		logger.debug(delros);
 
 		return retVal;
 	}
