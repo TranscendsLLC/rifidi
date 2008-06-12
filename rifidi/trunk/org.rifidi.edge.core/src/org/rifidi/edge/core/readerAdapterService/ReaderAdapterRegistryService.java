@@ -1,5 +1,7 @@
 package org.rifidi.edge.core.readerAdapterService;
 
+import java.util.List;
+
 import org.rifidi.edge.core.readerAdapter.AbstractConnectionInfo;
 import org.rifidi.edge.core.readerAdapter.ISpecificReaderAdapterFactory;
 
@@ -12,6 +14,8 @@ public interface ReaderAdapterRegistryService {
 
 	public ISpecificReaderAdapterFactory getSpecReaderAdapterFactory(
 			AbstractConnectionInfo specificConnectionInfo);
+	
+	public List<String> getAvailableReaderAdapters();
 
 	public boolean registerListener(ReaderAdapterRegistryServiceListener listener);
 

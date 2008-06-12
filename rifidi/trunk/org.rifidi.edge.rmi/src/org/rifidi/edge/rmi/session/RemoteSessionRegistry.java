@@ -2,6 +2,7 @@ package org.rifidi.edge.rmi.session;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.util.List;
 
 import org.rifidi.edge.core.readerAdapter.AbstractConnectionInfo;
 
@@ -12,5 +13,7 @@ public interface RemoteSessionRegistry extends Remote {
 
 	public void deleteReaderSession(RemoteSession remoteSession)
 			throws RemoteException;
+	
+	public List<String> getAvailableReaderAdapters() throws RemoteException;
 
 }
