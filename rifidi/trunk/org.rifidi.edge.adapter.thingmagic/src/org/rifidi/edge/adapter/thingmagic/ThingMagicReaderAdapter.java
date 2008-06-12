@@ -91,11 +91,11 @@ public class ThingMagicReaderAdapter implements IReaderAdapter {
 				 input = readFromReader(in);
 			} catch (IOException e) {
 				//TODO print stack trace to log4j
-				e.printStackTrace();
+				logger.debug("IOException.", e);
 				return null;
 			}
 			
-			if (input.equals("\n"))				// TODO Auto-generated catch block
+			if (input.equals("\n"))				
 				return tags;
 			
 			//chew up last new lines.
