@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Utilities Plug-in
+Bundle-SymbolicName: org.rifidi.edge.common.utilities
+Bundle-Version: 1.0.0
+Bundle-Activator: org.rifidi.edge.common.utilities.Activator
+Bundle-Vendor: Pramari, LLC
+Eclipse-LazyStart: true
+Import-Package: org.osgi.framework;version="1.3.0"
+Export-Package: org.rifidi.edge.common.utilities.converter
