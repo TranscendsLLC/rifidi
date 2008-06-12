@@ -7,8 +7,9 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.logging.Logger;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.session.SessionRegistryService;
 import org.rifidi.edge.rmi.service.RMIServerService;
 import org.rifidi.edge.rmi.session.RemoteSessionRegistry;
@@ -18,8 +19,11 @@ import org.rifidi.services.registry.ServiceRegistry;
 
 public class RMIServerServiceImpl implements RMIServerService {
 
-//	Log logger = 
-	
+	/**
+	 * Log System
+	 */
+	private Log logger = LogFactory.getLog(RMIServerServiceImpl.class);
+
 	// SessionRegistry
 	private SessionRegistryService sessionRegistryService;
 	private RemoteSessionRegistryImpl remoteSessionRegistry;
@@ -39,17 +43,15 @@ public class RMIServerServiceImpl implements RMIServerService {
 	@Override
 	public void start() throws RemoteException, AlreadyBoundException {
 
-//		Logger log = Logger.getLogger("Test");
-//		log.info("Logging is working");
-//		log.
 		// Get the RMIRegistry and bind it to port and hostname
 		// TODO try to use the Registry from JMS
 		try {
+			logger.debug("Starting RMI Service");
 			// Test if there is already an regisrty
 			registry = LocateRegistry.createRegistry(port);
 		} catch (RemoteException e) {
 			// TODO Log4J debugging message
-			System.out.println("RMI Regisrty allready exist!");
+			logger.warn("RMI is already bound. Try to recieve instance!");
 			// if yes get registry
 			registry = LocateRegistry.getRegistry("127.0.0.1", port);
 		}
@@ -58,17 +60,14 @@ public class RMIServerServiceImpl implements RMIServerService {
 		remoteSessionRegistry = new RemoteSessionRegistryImpl(
 				sessionRegistryService);
 
-		// For Debug use only
-		// for (String value : registry.list()) {
-		// System.out.println(value);
-		// }
 		RemoteSessionRegistry stub = (RemoteSessionRegistry) UnicastRemoteObject
 				.exportObject(remoteSessionRegistry, 0);
 
 		// Bind the RemoteSessionRegistry to RMI
+		logger.debug("Bind RemoteSessionRegistry to RMI Registry");
 		registry.bind(RemoteSessionRegistry.class.getName(), stub);
 
-		// For Debug use only
+		// For Debug use only. List all registered Objects in rmi registry
 		// for (String value : registry.list()) {
 		// System.out.println(value);
 		// }
@@ -77,16 +76,23 @@ public class RMIServerServiceImpl implements RMIServerService {
 	@Override
 	public void stop() {
 		try {
+			logger.debug("Unbinding RemoteSessionRegistry");
 			registry.unbind(RemoteSessionRegistry.class.getName());
 			// TODO find out how to release the RMI TCP Socket again
+			for (String object : registry.list()) {
+				logger.warn("Object " + object
+						+ " still remains in RMI Registry");
+			}
 		} catch (AccessException e) {
-			// TODO Auto-generated catch block
+			logger.error("RMI Access violation");
 			e.printStackTrace();
 		} catch (RemoteException e) {
-			// TODO Auto-generated catch block
+			logger.error("RMI RemoteException occured "
+					+ "while trying to unbind RemoteSessionRegistry");
 			e.printStackTrace();
 		} catch (NotBoundException e) {
-			// TODO Auto-generated catch block
+			logger.error("RemoteSessionRegistry was not "
+					+ "found in RMI Registry while trying to unbind");
 			e.printStackTrace();
 		}
 	}
@@ -97,6 +103,7 @@ public class RMIServerServiceImpl implements RMIServerService {
 	@Inject
 	public void setSessionRegistryService(
 			SessionRegistryService sessionRegistryService) {
+		logger.debug("Services: SessionRegistryService was injected");
 		this.sessionRegistryService = sessionRegistryService;
 	}
 
