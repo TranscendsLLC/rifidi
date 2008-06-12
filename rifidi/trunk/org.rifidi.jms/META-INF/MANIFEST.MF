@@ -121,6 +121,4 @@ Export-Package: javax.jms,
  org.apache.activemq.util,
  org.apache.activemq.util.xstream,
  org.apache.activemq.wireformat,
- org.apache.activemq.xbean,
- org.apache.commons.logging,
- org.apache.commons.logging.impl
+ org.apache.activemq.xbean

@@ -13,6 +13,7 @@ Export-Package: org.rifidi.edge.core.readerAdapter,
 Require-Bundle: org.rifidi.services,
  org.junit4,
  org.rifidi.jms,
- org.rifidi.common.utilities
+ org.rifidi.common.utilities,
+ org.rifidi.edge.log4j
 Bundle-Vendor: Pramari, LLC
 Bundle-ClassPath: .
