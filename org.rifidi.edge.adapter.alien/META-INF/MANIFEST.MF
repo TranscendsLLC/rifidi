@@ -9,4 +9,5 @@ Eclipse-LazyStart: true
 Require-Bundle: org.rifidi.edge.core,
  org.rifidi.services,
  org.rifidi.common.utilities,
- org.junit4
+ org.junit4,
+ org.rifidi.edge.log4j

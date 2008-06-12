@@ -11,6 +11,8 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.readerAdapter.IReaderAdapter;
 import org.rifidi.edge.core.tag.TagRead;
 
@@ -19,6 +21,8 @@ import org.rifidi.edge.core.tag.TagRead;
  * 
  */
 public class LLRPReaderAdapter implements IReaderAdapter {
+	
+	private static final Log logger = LogFactory.getLog(LLRPReaderAdapter.class);	
 	
 	/**
 	 * The connection info for this reader
@@ -48,7 +52,7 @@ public class LLRPReaderAdapter implements IReaderAdapter {
 	public boolean connect() {
 		// Connect to the Alien Reader
 		try {
-			System.out.println(aci.getIPAddress() + ", " + aci.getPort());
+			logger.debug(aci.getIPAddress() + ", " + aci.getPort());
 			connection = new Socket(aci.getIPAddress(), aci.getPort());
 			out = new PrintWriter(connection.getOutputStream());
 			in = new BufferedReader(new InputStreamReader(connection
@@ -61,10 +65,10 @@ public class LLRPReaderAdapter implements IReaderAdapter {
 			readFromReader(in);
 			
 		} catch (UnknownHostException e) {
-			e.printStackTrace();
+			logger.debug("UnknownHostException.", e);
 			return false;
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.debug("IOException.", e);
 			return false;
 		}
 		return true;
@@ -98,8 +102,7 @@ public class LLRPReaderAdapter implements IReaderAdapter {
 			out.write(new String(command));
 			readFromReader(in);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.debug("IOException.", e);
 		}
 	}
 
@@ -111,22 +114,22 @@ public class LLRPReaderAdapter implements IReaderAdapter {
 	public List<TagRead> getNextTags() {
 		// TODO Auto-generated method stub
 		
-		System.out.println("starting the getnexttags");
+		logger.debug("starting the getnexttags");
 		
 		List<TagRead> retVal = null;
 
 		try {
-			System.out.println("Sending the taglistformat to custom format");
+			logger.debug("Sending the taglistformat to custom format");
 			out.write('\1'+"set TagListFormat=Custom\n");
 			out.flush();
 			readFromReader(in);
 			
-			System.out.println("Sending the custom format");
+			logger.debug("Sending the custom format");
 			out.write('\1'+"set TagListCustomFormat=%k|%t\n");
 			out.flush();
 			readFromReader(in);
 			
-			System.out.println("Reading tags");
+			logger.debug("Reading tags");
 			out.write('\1'+"get taglist\n");
 			out.flush();
 			
@@ -134,15 +137,15 @@ public class LLRPReaderAdapter implements IReaderAdapter {
 			//TODO: This is a bit of a hack, 
 			String tags = readFromReader(in);
 			tags=readFromReader(in);
-			System.out.println("tags:" + tags);
+			logger.debug("tags:" + tags);
 			retVal = parseString(tags);
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.debug("IOException.", e);
 		} catch(NullPointerException e) {
-			e.printStackTrace();
+			logger.debug("NullPointerException.", e);
 		}
 		
-		System.out.println("finishing the getnexttags");
+		logger.debug("finishing the getnexttags");
 		
 		return retVal;
 	}
@@ -166,14 +169,14 @@ public class LLRPReaderAdapter implements IReaderAdapter {
 	 */
 	public static String readFromReader(BufferedReader inBuf) throws IOException{
 		StringBuffer buf=new StringBuffer();
-		System.out.println("Reading...");
+		logger.debug("Reading...");
 		int ch=inBuf.read();
 		while((char)ch!='\0'){
 			buf.append((char)ch);
 			ch=inBuf.read();
 		}
-		System.out.println("Done reading!");
-		System.out.println("Reading in: " + buf.toString());
+		logger.debug("Done reading!");
+		logger.debug("Reading in: " + buf.toString());
 		return buf.toString();
 	}
 
