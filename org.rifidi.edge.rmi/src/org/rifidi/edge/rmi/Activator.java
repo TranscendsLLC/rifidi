@@ -17,6 +17,7 @@ public class Activator implements BundleActivator {
 	public void start(BundleContext context) throws Exception {
 		System.out.println("Bundle " + this.getClass().getName() + " loaded");
 
+		System.out.println("Registering RMIServerService");
 		rmiServerService = new RMIServerServiceImpl();
 		context.registerService(RMIServerService.class.getName(),
 				rmiServerService, null);
