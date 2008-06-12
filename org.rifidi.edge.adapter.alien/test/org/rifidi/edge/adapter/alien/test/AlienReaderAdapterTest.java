@@ -20,8 +20,6 @@ import org.rifidi.edge.core.tag.TagRead;
  * @author Matt
  */
 public class AlienReaderAdapterTest {
-
-	AlienReaderAdapter alienReaderAdapter;
 	
 	/**
 	 * @throws java.lang.Exception
@@ -48,7 +46,7 @@ public class AlienReaderAdapterTest {
 		connectionInfo.setUsername("alien");
 		connectionInfo.setPassword("password");
 		
-		alienReaderAdapter = new AlienReaderAdapter(connectionInfo);
+		AlienReaderAdapter alienReaderAdapter = new AlienReaderAdapter(connectionInfo);
 		alienReaderAdapter.connect();
 		
 		List<TagRead> tagList = alienReaderAdapter.getNextTags();
@@ -66,6 +64,15 @@ public class AlienReaderAdapterTest {
 	 */
 	@Test
 	public void testStream() {
+		AlienConnectionInfo connectionInfo = new AlienConnectionInfo();
+		connectionInfo.setIPAddress("192.168.1.100");
+		connectionInfo.setPort(23);
+		connectionInfo.setUsername("alien");
+		connectionInfo.setPassword("password");
+		
+		AlienReaderAdapter alienReaderAdapter = new AlienReaderAdapter(connectionInfo);
+		alienReaderAdapter.connect();
+		
 		if(alienReaderAdapter != null)
 		{
 			List<TagRead> tagList = alienReaderAdapter.getNextTags();
@@ -94,6 +101,18 @@ public class AlienReaderAdapterTest {
 	 */
 	@Test
 	public void testDisconnect() {
+		AlienConnectionInfo connectionInfo = new AlienConnectionInfo();
+		connectionInfo.setIPAddress("192.168.1.100");
+		connectionInfo.setPort(23);
+		connectionInfo.setUsername("alien");
+		connectionInfo.setPassword("password");
+		
+		AlienReaderAdapter alienReaderAdapter = new AlienReaderAdapter(connectionInfo);
+		alienReaderAdapter.connect();
+		
+		
+		
+		
 		alienReaderAdapter.disconnect();
 		Assert.fail();
 	}

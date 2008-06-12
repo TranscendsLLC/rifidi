@@ -47,7 +47,7 @@ public class AlienReaderAdapter implements IReaderAdapter {
 	 * @see org.rifidi.edge.core.readerAdapter.IReaderAdapter#connect()
 	 */
 	@Override
-	public void connect() {
+	public boolean connect() {
 		// Connect to the Alien Reader
 		try {
 			System.out.println(aci.getIPAddress() + ", " + aci.getPort());
@@ -62,12 +62,14 @@ public class AlienReaderAdapter implements IReaderAdapter {
 			out.flush();
 			readFromReader(in);
 			
-			
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
+			return false;
 		} catch (IOException e) {
 			e.printStackTrace();
+			return false;
 		}
+		return true;
 	}
 
 	/*
@@ -76,13 +78,15 @@ public class AlienReaderAdapter implements IReaderAdapter {
 	 * @see org.rifidi.edge.core.readerAdapter.IReaderAdapter#disconnect()
 	 */
 	@Override
-	public void disconnect() {
+	public boolean disconnect() {
 		out.write("q");
 		out.flush();
 		try {
 			connection.close();
 		} catch (IOException e) {
+			return false;
 		}
+		return true;
 	}
 
 	/*
@@ -115,20 +119,28 @@ public class AlienReaderAdapter implements IReaderAdapter {
 
 		try {
 			System.out.println("Sending the taglistformat to custom format");
-			out.write("set TagListFormat=Custom");
+			out.write('\1'+"set TagListFormat=Custom\n");
 			out.flush();
 			readFromReader(in);
 			
 			System.out.println("Sending the custom format");
-			out.write("set TagListCustomFormat=%k|%t");
+			out.write('\1'+"set TagListCustomFormat=%k|%t\n");
 			out.flush();
-			//readFromReader(in);
+			readFromReader(in);
 			
 			System.out.println("Reading tags");
-			out.write("t");
+			out.write('\1'+"get taglist\n");
+			out.flush();
 			
-			retVal = parseString(readFromReader(in));
+			
+			//TODO: This is a bit of a hack, 
+			String tags = readFromReader(in);
+			tags=readFromReader(in);
+			System.out.println("tags:" + tags);
+			retVal = parseString(tags);
 		} catch (IOException e) {
+			e.printStackTrace();
+		} catch(NullPointerException e) {
 			e.printStackTrace();
 		}
 		
@@ -160,6 +172,7 @@ public class AlienReaderAdapter implements IReaderAdapter {
 			newTagRead
 					.setId(ByteAndHexConvertingUtility.fromHexString(tagData));
 			newTagRead.setLastSeenTime(System.nanoTime());
+			retVal.add(newTagRead);
 		}
 		return retVal;
 	}
@@ -172,11 +185,13 @@ public class AlienReaderAdapter implements IReaderAdapter {
 	 */
 	public static String readFromReader(BufferedReader inBuf) throws IOException{
 		StringBuffer buf=new StringBuffer();
+		System.out.println("Reading...");
 		int ch=inBuf.read();
 		while((char)ch!='\0'){
 			buf.append((char)ch);
 			ch=inBuf.read();
 		}
+		System.out.println("Done reading!");
 		System.out.println("Reading in: " + buf.toString());
 		return buf.toString();
 	}
