@@ -79,8 +79,6 @@ public class JMSMessageThread implements Runnable {
 			try {
 				textMessage = jmsHelper.getSession().createTextMessage(
 						tag.toXML());
-				// System.out.println("++ Send next Message ++");
-				// System.out.println(textMessage.getText());
 				jmsHelper.getMessageProducer().send(textMessage);
 			} catch (JMSException e) {
 				// TODO Auto-generated catch block
