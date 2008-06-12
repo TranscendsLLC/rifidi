@@ -14,7 +14,7 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.rifidi.common.utilities.ByteAndHexConvertingUtility;
+import org.rifidi.edge.common.utilities.converter.ByteAndHexConvertingUtility;
 import org.rifidi.edge.core.readerAdapter.IReaderAdapter;
 import org.rifidi.edge.core.tag.TagRead;
 
@@ -24,7 +24,8 @@ import org.rifidi.edge.core.tag.TagRead;
  */
 public class AlienReaderAdapter implements IReaderAdapter {
 
-	private static final Log logger = LogFactory.getLog(AlienReaderAdapter.class);	
+	private static final Log logger = LogFactory
+			.getLog(AlienReaderAdapter.class);
 	/**
 	 * The connection info for this reader
 	 */
@@ -64,7 +65,7 @@ public class AlienReaderAdapter implements IReaderAdapter {
 			out.write("password\n");
 			out.flush();
 			readFromReader(in);
-			
+
 		} catch (UnknownHostException e) {
 			logger.debug("UnknownHostException.", e);
 			return false;
@@ -114,40 +115,39 @@ public class AlienReaderAdapter implements IReaderAdapter {
 	@Override
 	public List<TagRead> getNextTags() {
 		// TODO Auto-generated method stub
-		
+
 		logger.debug("starting the getnexttags");
-		
+
 		List<TagRead> retVal = null;
 
 		try {
 			logger.debug("Sending the taglistformat to custom format");
-			out.write('\1'+"set TagListFormat=Custom\n");
+			out.write('\1' + "set TagListFormat=Custom\n");
 			out.flush();
 			readFromReader(in);
-			
+
 			logger.debug("Sending the custom format");
-			out.write('\1'+"set TagListCustomFormat=%k|%t\n");
+			out.write('\1' + "set TagListCustomFormat=%k|%t\n");
 			out.flush();
 			readFromReader(in);
-			
+
 			logger.debug("Reading tags");
-			out.write('\1'+"get taglist\n");
+			out.write('\1' + "get taglist\n");
 			out.flush();
-			
-			
-			//TODO: This is a bit of a hack, 
+
+			// TODO: This is a bit of a hack,
 			String tags = readFromReader(in);
-			tags=readFromReader(in);
+			tags = readFromReader(in);
 			logger.debug("tags:" + tags);
 			retVal = parseString(tags);
 		} catch (IOException e) {
 			logger.debug("IOException.", e);
-		} catch(NullPointerException e) {
+		} catch (NullPointerException e) {
 			logger.debug("NullPointerException.", e);
 		}
-		
+
 		logger.debug("finishing the getnexttags");
-		
+
 		return retVal;
 	}
 
@@ -167,9 +167,9 @@ public class AlienReaderAdapter implements IReaderAdapter {
 			String[] splitString2 = s.split("|");
 			String tagData = splitString2[0];
 			// String timeStamp=splitString2[1];
-			
-			//TODO: Get the actual timestamp
-			
+
+			// TODO: Get the actual timestamp
+
 			TagRead newTagRead = new TagRead();
 			newTagRead
 					.setId(ByteAndHexConvertingUtility.fromHexString(tagData));
@@ -178,20 +178,22 @@ public class AlienReaderAdapter implements IReaderAdapter {
 		}
 		return retVal;
 	}
-	
+
 	/**
 	 * Read responses from the socket
+	 * 
 	 * @param inBuf
 	 * @return
 	 * @throws IOException
 	 */
-	public static String readFromReader(BufferedReader inBuf) throws IOException{
-		StringBuffer buf=new StringBuffer();
+	public static String readFromReader(BufferedReader inBuf)
+			throws IOException {
+		StringBuffer buf = new StringBuffer();
 		logger.debug("Reading...");
-		int ch=inBuf.read();
-		while((char)ch!='\0'){
-			buf.append((char)ch);
-			ch=inBuf.read();
+		int ch = inBuf.read();
+		while ((char) ch != '\0') {
+			buf.append((char) ch);
+			ch = inBuf.read();
 		}
 		logger.debug("Done reading!");
 		logger.debug("Reading in: " + buf.toString());

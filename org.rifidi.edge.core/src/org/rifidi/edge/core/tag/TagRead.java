@@ -10,7 +10,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.rifidi.common.utilities.ByteAndHexConvertingUtility;
+import org.rifidi.edge.common.utilities.converter.ByteAndHexConvertingUtility;
 
 /**
  * @author Matthew Dean - matt@pramari.com

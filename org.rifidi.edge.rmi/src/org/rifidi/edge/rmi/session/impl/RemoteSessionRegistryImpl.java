@@ -1,25 +1,31 @@
 package org.rifidi.edge.rmi.session.impl;
 
 import java.rmi.RemoteException;
+import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.readerAdapter.AbstractConnectionInfo;
+import org.rifidi.edge.core.readerAdapterService.ReaderAdapterRegistryService;
 import org.rifidi.edge.core.session.ISession;
 import org.rifidi.edge.core.session.Session;
 import org.rifidi.edge.core.session.SessionRegistryService;
 import org.rifidi.edge.rmi.session.RemoteSession;
 import org.rifidi.edge.rmi.session.RemoteSessionRegistry;
+import org.rifidi.services.annotations.Inject;
+import org.rifidi.services.registry.ServiceRegistry;
 
 public class RemoteSessionRegistryImpl implements RemoteSessionRegistry {
 
 	private Log logger = LogFactory.getLog(RemoteSessionRegistryImpl.class);
 	
 	private SessionRegistryService sessionRegistryService;
+	private ReaderAdapterRegistryService readerAdapterRegistryService;
 
 	public RemoteSessionRegistryImpl(
 			SessionRegistryService sessionRegistryService) {
 		this.sessionRegistryService = sessionRegistryService;
+		ServiceRegistry.getInstance().service(this);
 	}
 
 	@Override
@@ -49,8 +55,17 @@ public class RemoteSessionRegistryImpl implements RemoteSessionRegistry {
 		}else
 		{
 			logger.error("RemoteSessionRegistry: Session Error... look this up");
-		}
-		
-		
+		}	
+	}
+
+	@Override
+	public List<String> getAvailableReaderAdapters() throws RemoteException {
+		return readerAdapterRegistryService.getAvailableReaderAdapters();
+	}
+
+	@Inject
+	public void setReaderAdapterRegistryService(
+			ReaderAdapterRegistryService readerAdapterRegistryService) {
+		this.readerAdapterRegistryService = readerAdapterRegistryService;
 	}
 }

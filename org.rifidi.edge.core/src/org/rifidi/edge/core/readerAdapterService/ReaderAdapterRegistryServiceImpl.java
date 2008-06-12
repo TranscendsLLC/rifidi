@@ -4,12 +4,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.readerAdapter.AbstractConnectionInfo;
 import org.rifidi.edge.core.readerAdapter.ISpecificReaderAdapterFactory;
 
 public class ReaderAdapterRegistryServiceImpl implements
 		ReaderAdapterRegistryService {
 
+	private Log logger = LogFactory.getLog(ReaderAdapterRegistryServiceImpl.class);
+	
 	private HashMap<Class<? extends AbstractConnectionInfo>, ISpecificReaderAdapterFactory> registry = new HashMap<Class<? extends AbstractConnectionInfo>, ISpecificReaderAdapterFactory>();
 	
 	private List<ReaderAdapterRegistryServiceListener> listeners = new ArrayList<ReaderAdapterRegistryServiceListener>();
@@ -20,6 +24,7 @@ public class ReaderAdapterRegistryServiceImpl implements
 	@Override
 	public void registerReaderAdapter(Class<? extends AbstractConnectionInfo> specificConnectionInfo,
 			ISpecificReaderAdapterFactory specificReaderAdapterFactory) {
+		logger.debug("ReaderAdapter " + specificConnectionInfo.getName() + " registered");
 		if(! registry.containsKey(specificConnectionInfo))
 		{
 			registry.put(specificConnectionInfo, specificReaderAdapterFactory);
@@ -52,6 +57,16 @@ public class ReaderAdapterRegistryServiceImpl implements
 		return registry.get(specificConnectionInfo.getClass());
 	}
 
+	@Override
+	public List<String> getAvailableReaderAdapters() {
+		ArrayList<String> availableAdapters = new ArrayList<String>();
+		for(Class<?> clazz : registry.keySet())
+		{
+			availableAdapters.add(clazz.getName());
+		}
+		return availableAdapters;
+	}
+	
 	@Override
 	public boolean registerListener(ReaderAdapterRegistryServiceListener listener){
 		//TODO not implemented yet
