@@ -95,7 +95,6 @@ public class SessionRegistryServiceImpl implements SessionRegistryService{
 
 	@Override
 	public int sessionCount() {
-		// TODO Auto-generated method stub
 		return idMap.size();
 	}
 	

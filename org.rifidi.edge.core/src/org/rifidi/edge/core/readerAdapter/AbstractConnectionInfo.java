@@ -22,5 +22,6 @@ public abstract class AbstractConnectionInfo {
 		this.port = port;
 	}
 
+	//TODO Think about the sense of this method
 	public abstract Class<? extends AbstractConnectionInfo> getReaderAdapterType();
 }

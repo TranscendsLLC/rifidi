@@ -49,31 +49,28 @@ public class ServiceRegistry {
 	private ServiceRegistry() {
 		Activator.getDefaultContext().addServiceListener(new ServiceListener() {
 
-					/*
-					 * (non-Javadoc)
-					 * 
-					 * @see org.osgi.framework.ServiceListener#serviceChanged(org.osgi.framework.ServiceEvent)
-					 */
-					@Override
-					public void serviceChanged(ServiceEvent event) {
-						if (ServiceEvent.REGISTERED == event.getType()) {
-							for (String serviceName : (String[]) event
-									.getServiceReference().getProperty(
-											"objectClass")) {
-								if (wanted.containsKey(serviceName)) {
-									for (DeferredInit defInit : wanted
-											.get(serviceName)) {
-										System.out.println(defInit.object
-												+ " got " + wanted);
-										serviceMethod(defInit.method,
-												defInit.object);
-									}
-									wanted.remove(serviceName);
-								}
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.osgi.framework.ServiceListener#serviceChanged(org.osgi.framework.ServiceEvent)
+			 */
+			@Override
+			public void serviceChanged(ServiceEvent event) {
+				if (ServiceEvent.REGISTERED == event.getType()) {
+					for (String serviceName : (String[]) event
+							.getServiceReference().getProperty("objectClass")) {
+						if (wanted.containsKey(serviceName)) {
+							for (DeferredInit defInit : wanted.get(serviceName)) {
+								System.out.println(defInit.object + " got "
+										+ wanted);
+								serviceMethod(defInit.method, defInit.object);
 							}
+							wanted.remove(serviceName);
 						}
 					}
-				});
+				}
+			}
+		});
 		wanted = new HashMap<String, List<DeferredInit>>();
 	}
 
@@ -107,19 +104,17 @@ public class ServiceRegistry {
 		if (method.isAnnotationPresent(Inject.class)) {
 
 			Class<?> wantedService = method.getParameterTypes()[0];
-			ServiceReference ref = Activator.getDefaultContext().getServiceReference(
-							wantedService.getName());
+			ServiceReference ref = Activator.getDefaultContext()
+					.getServiceReference(wantedService.getName());
 			if (ref != null) {
 				try {
-					method.invoke(object, Activator.getDefaultContext().getService(ref));
+					method.invoke(object, Activator.getDefaultContext()
+							.getService(ref));
 				} catch (IllegalArgumentException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				} catch (IllegalAccessException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				} catch (InvocationTargetException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				return;
