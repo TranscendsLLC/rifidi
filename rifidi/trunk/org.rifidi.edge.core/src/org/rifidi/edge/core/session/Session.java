@@ -149,14 +149,11 @@ public class Session implements ISession {
 		}
 	}
 
-	//TODO: Add this to the ISession Interface... maybe?
 	public ERifidiReaderAdapter getState()
 	{
 		return state;
 	}
 
-	//TODO: Add this to the ISession Interface... maybe?
-	//TODO: Andreas, make sure this is correct.
 	public void connect() {
 		try {
 			adapter.connect();
@@ -180,8 +177,6 @@ public class Session implements ISession {
 		}
 	}
 	
-	//TODO: Add this to the ISession Interface... maybe?
-	//TODO: Andreas, make sure this is correct.
 	public void disconnect() {
 		try {
 			adapter.disconnect();
@@ -208,7 +203,6 @@ public class Session implements ISession {
 	/**
 	 * @return The cause of the error, null if there was none.
 	 */
-	//TODO: Add this to the ISession Interface... maybe?
 	public Exception getErrorCause() {
 		return errorCause;
 	}
