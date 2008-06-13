@@ -70,9 +70,11 @@ public class JMSMessageThread implements Runnable {
 					Thread.sleep(pollingIntervall);
 			}
 		} catch (InterruptedException e) {
-
+			//TODO: Deal with exception.
+			running = false;
 		} catch (RifidiAdapterIllegalStateException e) {
-			
+			//TODO: Deal with exception.
+			running = false;
 		}
 	}
 
