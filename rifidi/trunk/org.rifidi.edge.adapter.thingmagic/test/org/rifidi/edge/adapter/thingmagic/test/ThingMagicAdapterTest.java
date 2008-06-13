@@ -48,7 +48,7 @@ public class ThingMagicAdapterTest {
 			adapter.connect();
 		} catch (RifidiConnectionException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//e.printStackTrace();
 			Assert.fail();
 		}
 

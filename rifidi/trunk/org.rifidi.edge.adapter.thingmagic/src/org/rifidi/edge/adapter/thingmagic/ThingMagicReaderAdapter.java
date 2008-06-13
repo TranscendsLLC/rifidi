@@ -62,9 +62,9 @@ public class ThingMagicReaderAdapter implements IReaderAdapter {
 			//System.out.println("Stack trace follows...");
 			//e.printStackTrace();
 			
-			//logger.error("ConnectException...",e);
+			logger.error("ConnectException...",e);
 			throw new RifidiConnectionException(
-					"Connection to reader refused." +
+					"Connection to reader refused. " +
 					"Please check if the reader is properly turned on and connected to the network.", e);
 		} catch (IOException e) {
 			logger.error("IOException occured.",e);
