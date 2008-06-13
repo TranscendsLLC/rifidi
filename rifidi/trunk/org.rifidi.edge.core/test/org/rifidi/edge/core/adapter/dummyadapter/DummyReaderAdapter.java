@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.rifidi.edge.core.readerAdapter.IReaderAdapter;
+import org.rifidi.edge.core.readerAdapter.commands.ICustomCommand;
 import org.rifidi.edge.core.tag.TagRead;
 
 public class DummyReaderAdapter implements IReaderAdapter {
@@ -38,7 +39,7 @@ public class DummyReaderAdapter implements IReaderAdapter {
 	}
 
 	@Override
-	public void sendCommand(byte[] command) {
+	public void sendCustomCommand(ICustomCommand customCommand) {
 		// TODO Dummy method need to be implemented
 
 	}

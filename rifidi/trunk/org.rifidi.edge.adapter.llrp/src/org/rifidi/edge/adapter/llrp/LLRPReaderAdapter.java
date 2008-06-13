@@ -37,6 +37,7 @@ import org.llrp.ltk.types.UnsignedInteger;
 import org.llrp.ltk.types.UnsignedShort;
 import org.llrp.ltk.types.UnsignedShortArray;
 import org.rifidi.edge.core.readerAdapter.IReaderAdapter;
+import org.rifidi.edge.core.readerAdapter.commands.ICustomCommand;
 import org.rifidi.edge.core.tag.TagRead;
 
 /**
@@ -133,7 +134,7 @@ public class LLRPReaderAdapter implements IReaderAdapter {
 	 * @see org.rifidi.edge.core.readerAdapter.IReaderAdapter#sendCommand(byte[])
 	 */
 	@Override
-	public void sendCommand(byte[] command) {
+	public void sendCustomCommand(ICustomCommand customCommand) {
 
 	}
 
