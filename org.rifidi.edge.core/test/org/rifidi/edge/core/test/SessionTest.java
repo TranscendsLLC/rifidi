@@ -148,7 +148,7 @@ public class SessionTest {
 	 */
 	@Test
 	public void testSendCustomCommand() {
-		// TODO: Jerry should Implement
+		// TODO Jerry should Implement
 		//Assert.fail("Not Implemented");
 	}
 
