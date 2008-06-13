@@ -4,6 +4,7 @@
 package org.rifidi.edge.core.session;
 
 import org.rifidi.edge.core.readerAdapter.commands.ICustomCommand;
+import org.rifidi.edge.core.readerAdapter.commands.ICustomCommandResult;
 
 /**
  * @author jerry
@@ -15,5 +16,5 @@ public interface ISession {
 	
 	public void stopTagStream();
 	
-	public void sendCustomCommand(ICustomCommand customCommand);
+	public ICustomCommandResult sendCustomCommand(ICustomCommand customCommand);
 }
