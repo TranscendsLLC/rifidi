@@ -74,6 +74,7 @@ public class JMSMessageThread implements Runnable {
 			running = false;
 		} catch (RifidiAdapterIllegalStateException e) {
 			//TODO: Deal with exception.
+			//TODO: This exception should be dealt with in the session.
 			running = false;
 		}
 	}
