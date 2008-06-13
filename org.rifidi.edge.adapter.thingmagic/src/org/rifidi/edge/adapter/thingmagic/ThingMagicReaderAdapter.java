@@ -14,6 +14,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.common.utilities.converter.ByteAndHexConvertingUtility;
 import org.rifidi.edge.core.readerAdapter.IReaderAdapter;
+import org.rifidi.edge.core.readerAdapter.commands.ICustomCommand;
 import org.rifidi.edge.core.tag.TagRead;
 
 
@@ -48,16 +49,18 @@ public class ThingMagicReaderAdapter implements IReaderAdapter {
 			
 			connected = true;
 		} catch (UnknownHostException e) {
-			logger.debug("UnknownHostException.", e);
+			logger.error("UnknownHostException.", e);
 			return false;
 		} catch (ConnectException e){
-			logger.debug("Connection to reader refused.");
-			logger.debug("Please check if the reader is properly turned on and connected to the network.");
+			logger.info("Connection to reader refused.");
+			logger.info("Please check if the reader is properly turned on and connected to the network.");
 			//System.out.println("Stack trace follows...");
 			//e.printStackTrace();
+			
+			//logger.error("ConnectException...",e);
 			return false;
 		} catch (IOException e) {
-			logger.debug("IOException occured.",e);
+			logger.error("IOException occured.",e);
 			return false;
 		}
 		logger.debug("Successfully Connected.");
@@ -126,16 +129,16 @@ public class ThingMagicReaderAdapter implements IReaderAdapter {
 	}
 
 	@Override
-	public void sendCommand(byte[] command) {
+	public void sendCustomCommand(ICustomCommand customCommand) {
 		if (!connected ){
 			// TODO This needs to be implemented more fully.
-			try {
+			/*try {
 				out.write(new String(command));
 				readFromReader(in);
 			} catch (IOException e) {
 				//TODO print stack trace to log4j
 				logger.debug("IOException.", e);
-			}
+			}*/
 			
 		}
 

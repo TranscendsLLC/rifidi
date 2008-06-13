@@ -16,6 +16,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.common.utilities.converter.ByteAndHexConvertingUtility;
 import org.rifidi.edge.core.readerAdapter.IReaderAdapter;
+import org.rifidi.edge.core.readerAdapter.commands.ICustomCommand;
 import org.rifidi.edge.core.tag.TagRead;
 
 /**
@@ -99,13 +100,13 @@ public class AlienReaderAdapter implements IReaderAdapter {
 	 * @see org.rifidi.edge.core.readerAdapter.IReaderAdapter#sendCommand(byte[])
 	 */
 	@Override
-	public void sendCommand(byte[] command) {
-		try {
+	public void sendCustomCommand(ICustomCommand customCommand) {
+		/*try {
 			out.write(new String(command));
 			readFromReader(in);
 		} catch (IOException e) {
 			logger.debug("IOException.", e);
-		}
+		}*/
 	}
 
 	/**

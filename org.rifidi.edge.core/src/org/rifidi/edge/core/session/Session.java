@@ -2,6 +2,7 @@ package org.rifidi.edge.core.session;
 
 import org.rifidi.edge.core.readerAdapter.AbstractConnectionInfo;
 import org.rifidi.edge.core.readerAdapter.IReaderAdapter;
+import org.rifidi.edge.core.readerAdapter.commands.ICustomCommand;
 import org.rifidi.edge.core.session.jms.JMSMessageThread;
 
 
@@ -77,7 +78,7 @@ public class Session implements ISession {
 	}
 
 	@Override
-	public void sendCustomCommand(Object obj) {
+	public void sendCustomCommand(ICustomCommand customCommand) {
 		// TODO needs to be implemened and designed
 		
 	}
