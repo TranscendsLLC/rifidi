@@ -14,6 +14,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.adapter.thingmagic.commands.ThingMagicCustomCommand;
 import org.rifidi.edge.common.utilities.converter.ByteAndHexConvertingUtility;
+import org.rifidi.edge.core.exception.RifidiIIllegialArgumentException;
+import org.rifidi.edge.core.exception.adapter.RifidiAdapterIllegalStateException;
+import org.rifidi.edge.core.exception.adapter.RifidiConnectionException;
 import org.rifidi.edge.core.readerAdapter.IReaderAdapter;
 import org.rifidi.edge.core.readerAdapter.commands.ICustomCommand;
 import org.rifidi.edge.core.readerAdapter.commands.ICustomCommandResult;
@@ -37,7 +40,7 @@ public class ThingMagicReaderAdapter implements IReaderAdapter {
 	}
 	
 	@Override
-	public boolean connect() {
+	public void connect() throws RifidiConnectionException {
 		try {
 			logger.debug("Connecting: " + tmci.getIPAddress() + ":" + tmci.getPort() + " ...");
 			connection = new Socket(tmci.getIPAddress(), tmci.getPort());
@@ -51,40 +54,40 @@ public class ThingMagicReaderAdapter implements IReaderAdapter {
 			
 			connected = true;
 		} catch (UnknownHostException e) {
-			logger.error("UnknownHostException.", e);
-			return false;
+			logger.error("Unknown host.", e);
+			throw new RifidiConnectionException("Unknown host.", e);
 		} catch (ConnectException e){
-			logger.info("Connection to reader refused.");
-			logger.info("Please check if the reader is properly turned on and connected to the network.");
+			logger.error("Connection to reader refused.");
+			logger.error("Please check if the reader is properly turned on and connected to the network.");
 			//System.out.println("Stack trace follows...");
 			//e.printStackTrace();
 			
 			//logger.error("ConnectException...",e);
-			return false;
+			throw new RifidiConnectionException(
+					"Connection to reader refused." +
+					"Please check if the reader is properly turned on and connected to the network.", e);
 		} catch (IOException e) {
 			logger.error("IOException occured.",e);
-			return false;
+			throw new RifidiConnectionException("IOException occured.", e);
 		}
 		logger.debug("Successfully Connected.");
-		return true;
 	}
 
 	@Override
-	public boolean disconnect() {
+	public void disconnect() throws RifidiConnectionException {
 		connected=false;
 		out.flush();
 		try {
 			connection.close();
 		} catch (IOException e){
 			logger.debug("IOException.", e);
-			return false;
+			throw new RifidiConnectionException(e);
 		}
 		logger.debug("Successfully Disconnected.");
-		return true;
 	}
 
 	@Override
-	public List<TagRead> getNextTags() {
+	public List<TagRead> getNextTags() throws RifidiAdapterIllegalStateException{
 		String input = null;
 		List<TagRead> tags = new ArrayList<TagRead>();
 		if(connected){
@@ -97,7 +100,7 @@ public class ThingMagicReaderAdapter implements IReaderAdapter {
 			} catch (IOException e) {
 				//TODO print stack trace to log4j
 				logger.debug("IOException.", e);
-				return null;
+				throw new RifidiAdapterIllegalStateException(e);
 			}
 			
 			if (input.equals("\n"))				
@@ -127,12 +130,14 @@ public class ThingMagicReaderAdapter implements IReaderAdapter {
 			}
 			return tags;
 		}
-		return null;
+		throw new RifidiAdapterIllegalStateException("Adapter not Connected to Reader.");
 	}
 
 
 	@Override
-	public ICustomCommandResult sendCustomCommand(ICustomCommand customCommand) {
+	public ICustomCommandResult sendCustomCommand(ICustomCommand customCommand)
+			throws RifidiAdapterIllegalStateException, RifidiIIllegialArgumentException
+	{
 		ThingMagicCustomCommand command;
 		if(customCommand == null)
 			//TODO: needs to be fixed.

@@ -3,6 +3,9 @@ package org.rifidi.edge.core.adapter.dummyadapter;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.rifidi.edge.core.exception.RifidiIIllegialArgumentException;
+import org.rifidi.edge.core.exception.adapter.RifidiAdapterIllegalStateException;
+import org.rifidi.edge.core.exception.adapter.RifidiConnectionException;
 import org.rifidi.edge.core.readerAdapter.IReaderAdapter;
 import org.rifidi.edge.core.readerAdapter.commands.ICustomCommand;
 import org.rifidi.edge.core.readerAdapter.commands.ICustomCommandResult;
@@ -13,19 +16,17 @@ public class DummyReaderAdapter implements IReaderAdapter {
 	boolean connected = false;
 
 	@Override
-	public boolean connect() {
+	public void connect() throws RifidiConnectionException {
 		connected = true;
-		return true;
 	}
 
 	@Override
-	public boolean disconnect() {
+	public void disconnect() throws RifidiConnectionException {
 		connected=false;
-		return true;
 	}
 
 	@Override
-	public List<TagRead> getNextTags() {
+	public List<TagRead> getNextTags() throws RifidiAdapterIllegalStateException {
 		
 		if(connected){
 			TagRead tr = new TagRead();
@@ -40,7 +41,9 @@ public class DummyReaderAdapter implements IReaderAdapter {
 	}
 
 	@Override
-	public ICustomCommandResult sendCustomCommand(ICustomCommand customCommand) {
+	public ICustomCommandResult sendCustomCommand(ICustomCommand customCommand) 
+		throws RifidiAdapterIllegalStateException, RifidiIIllegialArgumentException
+	{
 		// TODO Jerry Dummy method need to be implemented
 		return null;
 	}
