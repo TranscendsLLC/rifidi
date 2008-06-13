@@ -58,7 +58,7 @@ public class ThingMagicAdapterTest {
 	}
 
 	/*
-	 * @Test public void testTagRead(){ //TODO: implement this test. }
+	 * @Test public void testTagRead(){ //TODO Jerry implement this test. }
 	 */
 
 	@Inject
