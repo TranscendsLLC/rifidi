@@ -93,7 +93,7 @@ public class LLRPReaderAdapter implements IReaderAdapter {
 	 */
 	@Override
 	public boolean connect() {
-		// Connect to the Alien Reader
+		// Connect to the LLRP Reader
 		try {
 			connection = new Socket(aci.getIPAddress(), aci.getPort());
 			out = new DataOutputStream(connection.getOutputStream());
@@ -240,8 +240,9 @@ public class LLRPReaderAdapter implements IReaderAdapter {
 	 */
 	private void write(LLRPMessage msg, String message) {
 		try {
-			logger.info(" Sending message: \n" + msg.toXMLString());
+			logger.debug(" Sending message: \n" + msg.toXMLString());
 			out.write(msg.encodeBinary());
+			out.flush();
 		} catch (IOException e) {
 			logger.error("Couldn't send Command ", e);
 		} catch (InvalidLLRPMessageException e) {
@@ -300,7 +301,6 @@ public class LLRPReaderAdapter implements IReaderAdapter {
 	 */
 	@Override
 	public boolean isBlocking() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -311,6 +311,7 @@ public class LLRPReaderAdapter implements IReaderAdapter {
 	 */
 	public LLRPMessage read() throws IOException, InvalidLLRPMessageException {
 		LLRPMessage m = null;
+		
 		// The message header
 		byte[] first = new byte[6];
 
@@ -320,6 +321,7 @@ public class LLRPReaderAdapter implements IReaderAdapter {
 		// Read in the message header. If -1 is read, there is no more
 		// data available, so close the socket
 		if (in.read(first, 0, 6) == -1) {
+			//TODO ErrorHandling
 			return null;
 		}
 		int msgLength = 0;
@@ -361,7 +363,7 @@ public class LLRPReaderAdapter implements IReaderAdapter {
 			logger.debug("about to read stuff");
 			numBytesRead = in.read(temp, 0, msgLength - accumulator.size());
 			logger.debug("reading stuff: " + numBytesRead + ", msg length: "
-					+ accumulator.size() + ", temp size: " + temp.length);
+					+ accumulator.size() + ", temp size: " + temp.length );
 			for (int i = 0; i < numBytesRead; i++) {
 				accumulator.add(temp[i]);
 			}

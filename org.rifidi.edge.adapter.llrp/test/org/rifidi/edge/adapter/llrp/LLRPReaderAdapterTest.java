@@ -29,11 +29,12 @@ public class LLRPReaderAdapterTest extends TestCase {
 	public void testConnect() {
 		LLRPConnectionInfo lci = new LLRPConnectionInfo();
 		lci.setIPAddress("127.0.0.1");
-		lci.setPort(10000);
+		lci.setPort(5084);
 		LLRPReaderAdapter newAdapt = new LLRPReaderAdapter(lci);
 		if(	!newAdapt.connect() ) {
 			Assert.fail();
 		}
+		newAdapt.getNextTags();
 		
 		newAdapt.disconnect();
 	}
