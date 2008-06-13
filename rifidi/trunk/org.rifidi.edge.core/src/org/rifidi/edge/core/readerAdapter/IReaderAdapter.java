@@ -3,6 +3,7 @@ package org.rifidi.edge.core.readerAdapter;
 import java.util.List;
 
 import org.rifidi.edge.core.readerAdapter.commands.ICustomCommand;
+import org.rifidi.edge.core.readerAdapter.commands.ICustomCommandResult;
 import org.rifidi.edge.core.tag.TagRead;
 
 public interface IReaderAdapter {
@@ -11,7 +12,7 @@ public interface IReaderAdapter {
 
 	public boolean disconnect();
 
-	public void sendCustomCommand(ICustomCommand customCommand);
+	public ICustomCommandResult sendCustomCommand(ICustomCommand customCommand);
 
 	public List<TagRead> getNextTags();
 	
