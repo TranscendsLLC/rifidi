@@ -1,4 +1,4 @@
-/**
+/*
  * 
  */
 package org.rifidi.edge.adapter.llrp;
@@ -44,8 +44,9 @@ import org.rifidi.edge.core.readerAdapter.commands.ICustomCommandResult;
 import org.rifidi.edge.core.tag.TagRead;
 
 /**
- * @author Matthew Dean - matt@pramari.com
  * 
+ * 
+ * @author Matthew Dean - matt@pramari.com
  */
 public class LLRPReaderAdapter implements IReaderAdapter {
 
