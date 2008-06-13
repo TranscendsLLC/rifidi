@@ -98,7 +98,6 @@ public class ThingMagicReaderAdapter implements IReaderAdapter {
 			try {
 				 input = readFromReader(in);
 			} catch (IOException e) {
-				//TODO print stack trace to log4j
 				logger.debug("IOException.", e);
 				throw new RifidiAdapterIllegalStateException(e);
 			}
@@ -163,7 +162,6 @@ public class ThingMagicReaderAdapter implements IReaderAdapter {
 				out.write(command.getCustomCommand());
 				readFromReader(in);
 			} catch (IOException e) {
-				//TODO print stack trace to log4j
 				logger.debug("IOException.", e);
 			}
 			
