@@ -12,6 +12,8 @@ import org.junit.Test;
 import org.rifidi.edge.adapter.alien.AlienConnectionInfo;
 import org.rifidi.edge.adapter.alien.AlienReaderAdapter;
 import org.rifidi.edge.common.utilities.converter.ByteAndHexConvertingUtility;
+import org.rifidi.edge.core.exception.adapter.RifidiAdapterIllegalStateException;
+import org.rifidi.edge.core.exception.adapter.RifidiConnectionException;
 import org.rifidi.edge.core.tag.TagRead;
 
 /**
@@ -37,6 +39,7 @@ public class AlienReaderAdapterTest {
 
 	/**
 	 * Tests connecting the reader
+	 * @throws RifidiAdapterIllegalStateException 
 	 */
 	@Test
 	public void testConnect() {
@@ -48,9 +51,22 @@ public class AlienReaderAdapterTest {
 
 		AlienReaderAdapter alienReaderAdapter = new AlienReaderAdapter(
 				connectionInfo);
-		alienReaderAdapter.connect();
+		try {
+			alienReaderAdapter.connect();
+		} catch (RifidiConnectionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			Assert.fail();
+		}
 
-		List<TagRead> tagList = alienReaderAdapter.getNextTags();
+		List<TagRead> tagList = null;
+		try {
+			tagList = alienReaderAdapter.getNextTags();
+		} catch (RifidiAdapterIllegalStateException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			Assert.fail();
+		}
 		System.out.println("taglist size: " + tagList.size());
 		for (TagRead t : tagList) {
 			System.out.println(ByteAndHexConvertingUtility.toHexString(t
@@ -73,19 +89,34 @@ public class AlienReaderAdapterTest {
 
 		AlienReaderAdapter alienReaderAdapter = new AlienReaderAdapter(
 				connectionInfo);
-		alienReaderAdapter.connect();
-
-		if (alienReaderAdapter != null) {
-			List<TagRead> tagList = alienReaderAdapter.getNextTags();
-			System.out.println("taglist size: " + tagList.size());
-			for (TagRead t : tagList) {
-				System.out.println(ByteAndHexConvertingUtility.toHexString(t
-						.getId()));
-			}
-
-		} else {
+		
+		if (alienReaderAdapter == null)
 			System.out.println("the readeradapter is null");
+		
+		try {
+			alienReaderAdapter.connect();
+		} catch (RifidiConnectionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			Assert.fail();
 		}
+
+
+		List<TagRead> tagList = null;
+		try {
+			tagList = alienReaderAdapter.getNextTags();
+		} catch (RifidiAdapterIllegalStateException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			Assert.fail();
+		}
+		System.out.println("taglist size: " + tagList.size());
+		for (TagRead t : tagList) {
+			System.out.println(ByteAndHexConvertingUtility.toHexString(t
+					.getId()));
+		}
+
+
 		Assert.fail();
 	}
 
@@ -110,9 +141,22 @@ public class AlienReaderAdapterTest {
 
 		AlienReaderAdapter alienReaderAdapter = new AlienReaderAdapter(
 				connectionInfo);
-		alienReaderAdapter.connect();
+		try {
+			alienReaderAdapter.connect();
+		} catch (RifidiConnectionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			Assert.fail();
+		}
 
-		alienReaderAdapter.disconnect();
+		try {
+			alienReaderAdapter.disconnect();
+		} catch (RifidiConnectionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			Assert.fail();
+		}
+		
 		Assert.fail();
 	}
 }

@@ -15,6 +15,9 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.common.utilities.converter.ByteAndHexConvertingUtility;
+import org.rifidi.edge.core.exception.RifidiIIllegialArgumentException;
+import org.rifidi.edge.core.exception.adapter.RifidiAdapterIllegalStateException;
+import org.rifidi.edge.core.exception.adapter.RifidiConnectionException;
 import org.rifidi.edge.core.readerAdapter.IReaderAdapter;
 import org.rifidi.edge.core.readerAdapter.commands.ICustomCommand;
 import org.rifidi.edge.core.readerAdapter.commands.ICustomCommandResult;
@@ -53,7 +56,7 @@ public class AlienReaderAdapter implements IReaderAdapter {
 	 * @see org.rifidi.edge.core.readerAdapter.IReaderAdapter#connect()
 	 */
 	@Override
-	public boolean connect() {
+	public void connect() throws RifidiConnectionException {
 		// Connect to the Alien Reader
 		try {
 			logger.debug(aci.getIPAddress() + ", " + aci.getPort());
@@ -70,12 +73,12 @@ public class AlienReaderAdapter implements IReaderAdapter {
 
 		} catch (UnknownHostException e) {
 			logger.debug("UnknownHostException.", e);
-			return false;
+			throw new RifidiConnectionException(e);
 		} catch (IOException e) {
 			logger.debug("IOException.", e);
-			return false;
+			throw new RifidiConnectionException(e);
 		}
-		return true;
+		
 	}
 
 	/*
@@ -84,15 +87,15 @@ public class AlienReaderAdapter implements IReaderAdapter {
 	 * @see org.rifidi.edge.core.readerAdapter.IReaderAdapter#disconnect()
 	 */
 	@Override
-	public boolean disconnect() {
+	public void disconnect() throws RifidiConnectionException{
 		out.write("q");
 		out.flush();
 		try {
 			connection.close();
 		} catch (IOException e) {
-			return false;
+			logger.debug("IOException.", e);
+			throw new RifidiConnectionException(e);
 		}
-		return true;
 	}
 
 	/*
@@ -101,7 +104,8 @@ public class AlienReaderAdapter implements IReaderAdapter {
 	 * @see org.rifidi.edge.core.readerAdapter.IReaderAdapter#sendCommand(byte[])
 	 */
 	@Override
-	public ICustomCommandResult sendCustomCommand(ICustomCommand customCommand) {
+	public ICustomCommandResult sendCustomCommand(ICustomCommand customCommand) 
+			throws RifidiAdapterIllegalStateException, RifidiIIllegialArgumentException {
 		/*try {
 			out.write(new String(command));
 			readFromReader(in);
@@ -116,7 +120,7 @@ public class AlienReaderAdapter implements IReaderAdapter {
 	 * 
 	 */
 	@Override
-	public List<TagRead> getNextTags() {
+	public List<TagRead> getNextTags() throws RifidiAdapterIllegalStateException {
 
 		logger.debug("starting the getnexttags");
 

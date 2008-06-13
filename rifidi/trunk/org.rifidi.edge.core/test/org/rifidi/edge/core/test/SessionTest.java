@@ -18,6 +18,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.rifidi.edge.core.adapter.dummyadapter.DummyConnectionInfo;
 import org.rifidi.edge.core.adapter.dummyadapter.DummyReaderAdapter;
+import org.rifidi.edge.core.exception.adapter.RifidiConnectionException;
 import org.rifidi.edge.core.readerAdapter.AbstractConnectionInfo;
 import org.rifidi.edge.core.session.Session;
 import org.rifidi.edge.core.session.jms.JMSHelper;
@@ -107,7 +108,12 @@ public class SessionTest {
 		
 		DummyReaderAdapter adapter = new DummyReaderAdapter();
 		
-		adapter.connect();
+		try {
+			adapter.connect();
+		} catch (RifidiConnectionException e2) {
+			Assert.fail();
+			e2.printStackTrace();
+		}
 		
 		JMSMessageThread jmsThread = new JMSMessageThread(1, adapter, jmsHelper);
 		if(! jmsThread.start())
@@ -169,7 +175,14 @@ public class SessionTest {
 
 		// create the dummy reader adapter
 		DummyReaderAdapter readerAdapter = new DummyReaderAdapter();
-		readerAdapter.connect();
+		
+		try {
+			readerAdapter.connect();
+		} catch (RifidiConnectionException e1) {
+			// TODO Auto-generated catch block
+			Assert.fail();
+			e1.printStackTrace();
+		}
 
 		// create the JMS Helper
 		JMSHelper jmsHelper = new JMSHelper();

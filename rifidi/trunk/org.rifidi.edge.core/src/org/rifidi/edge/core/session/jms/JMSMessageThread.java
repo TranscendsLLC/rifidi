@@ -5,6 +5,7 @@ import java.util.List;
 import javax.jms.JMSException;
 import javax.jms.TextMessage;
 
+import org.rifidi.edge.core.exception.adapter.RifidiAdapterIllegalStateException;
 import org.rifidi.edge.core.readerAdapter.IReaderAdapter;
 import org.rifidi.edge.core.tag.TagRead;
 
@@ -70,6 +71,8 @@ public class JMSMessageThread implements Runnable {
 			}
 		} catch (InterruptedException e) {
 
+		} catch (RifidiAdapterIllegalStateException e) {
+			
 		}
 	}
 

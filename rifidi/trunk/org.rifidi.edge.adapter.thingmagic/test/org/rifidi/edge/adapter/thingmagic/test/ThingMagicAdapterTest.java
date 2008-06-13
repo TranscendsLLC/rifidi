@@ -10,6 +10,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.rifidi.edge.adapter.thingmagic.ThingMagicConnectionInfo;
 import org.rifidi.edge.adapter.thingmagic.ThingMagicReaderAdapter;
+import org.rifidi.edge.core.exception.adapter.RifidiAdapterIllegalStateException;
+import org.rifidi.edge.core.exception.adapter.RifidiConnectionException;
 import org.rifidi.edge.core.tag.TagRead;
 import org.rifidi.services.annotations.Inject;
 import org.rifidi.services.registry.ServiceRegistry;
@@ -42,9 +44,22 @@ public class ThingMagicAdapterTest {
 
 		ThingMagicReaderAdapter adapter = new ThingMagicReaderAdapter(info);
 
-		Assert.assertTrue(adapter.connect());
+		try {
+			adapter.connect();
+		} catch (RifidiConnectionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			Assert.fail();
+		}
 
-		List<TagRead> tagReads = adapter.getNextTags();
+		List<TagRead> tagReads = null;
+		try {
+			tagReads = adapter.getNextTags();
+		} catch (RifidiAdapterIllegalStateException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			Assert.fail("Illegal Adapter State.");
+		}
 		Assert.assertNotNull(tagReads);
 
 		if (tagReads.size() == 0) {
@@ -54,7 +69,14 @@ public class ThingMagicAdapterTest {
 				System.out.println(tagRead.toXML());
 			}
 		}
-		Assert.assertTrue(adapter.disconnect());
+		
+		try {
+			adapter.disconnect();
+		} catch (RifidiConnectionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			Assert.fail("Error while disconecting.");
+		}
 	}
 
 	/*
