@@ -3,6 +3,8 @@ package org.rifidi.edge.rmi.session;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
+import org.rifidi.edge.core.readerAdapter.commands.ICustomCommand;
+
 public interface RemoteSession extends Remote {
 	
 	// TODO Think about error handling
@@ -12,5 +14,5 @@ public interface RemoteSession extends Remote {
 	public void stopTagStream() throws RemoteException;
 	
 	// TODO Think about error handling
-	public void sendCustomCommand(Object o) throws RemoteException;
+	public void sendCustomCommand(ICustomCommand o) throws RemoteException;
 }
