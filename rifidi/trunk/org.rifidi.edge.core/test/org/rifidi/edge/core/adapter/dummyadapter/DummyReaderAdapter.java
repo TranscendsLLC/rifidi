@@ -40,7 +40,7 @@ public class DummyReaderAdapter implements IReaderAdapter {
 
 	@Override
 	public void sendCustomCommand(ICustomCommand customCommand) {
-		// TODO Dummy method need to be implemented
+		// TODO Jerry Dummy method need to be implemented
 
 	}
 
