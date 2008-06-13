@@ -3,6 +3,7 @@ package org.rifidi.edge.core.session;
 import org.rifidi.edge.core.readerAdapter.AbstractConnectionInfo;
 import org.rifidi.edge.core.readerAdapter.IReaderAdapter;
 import org.rifidi.edge.core.readerAdapter.commands.ICustomCommand;
+import org.rifidi.edge.core.readerAdapter.commands.ICustomCommandResult;
 import org.rifidi.edge.core.session.jms.JMSMessageThread;
 
 
@@ -14,13 +15,13 @@ import org.rifidi.edge.core.session.jms.JMSMessageThread;
 
 public class Session implements ISession {
 	
-	IReaderAdapter adapter;
+	private IReaderAdapter adapter;
 	
-	int sessionID;
+	private int sessionID;
 	
-	AbstractConnectionInfo connectionInfo;
+	private AbstractConnectionInfo connectionInfo;
 	
-	JMSMessageThread jmsMessageThread;
+	private JMSMessageThread jmsMessageThread;
 	
 	/**
 	 * Creates a Session.
@@ -78,9 +79,9 @@ public class Session implements ISession {
 	}
 
 	@Override
-	public void sendCustomCommand(ICustomCommand customCommand) {
+	public ICustomCommandResult sendCustomCommand(ICustomCommand customCommand) {
 		// TODO needs to be implemened and designed
-		
+		return null;
 	}
 
 	@Override
