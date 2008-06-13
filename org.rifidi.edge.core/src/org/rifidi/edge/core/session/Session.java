@@ -125,14 +125,28 @@ public class Session implements ISession {
 
 	@Override
 	public void startTagStream() {
-		this.jmsMessageThread.start();
-		
+		if (state == ERifidiReaderAdapter.CONNECTED) {
+			state = ERifidiReaderAdapter.STREAMING;
+			this.jmsMessageThread.start();
+		} else {
+			state = ERifidiReaderAdapter.ERROR;
+			RifidiAdapterIllegalStateException e = new RifidiAdapterIllegalStateException();
+			logger.error("Adapter must be in the CONNECTED state to start the tag stream.", e);
+			errorCause = e;
+		}
 	}
 
 	@Override
 	public void stopTagStream() {
-		this.jmsMessageThread.stop();
-		
+		if (state ==  ERifidiReaderAdapter.STREAMING) {
+			state = ERifidiReaderAdapter.CONNECTED;
+			this.jmsMessageThread.stop();
+		} else {
+			state = ERifidiReaderAdapter.ERROR;
+			RifidiAdapterIllegalStateException e = new RifidiAdapterIllegalStateException();
+			logger.error("Adapter must be in the STREAMING state to stop the tag stream.", e);
+			errorCause = e;			
+		}
 	}
 
 	//TODO: Add this to the ISession Interface... maybe?
@@ -197,6 +211,16 @@ public class Session implements ISession {
 	//TODO: Add this to the ISession Interface... maybe?
 	public Exception getErrorCause() {
 		return errorCause;
+	}
+
+	/**
+	 * Just for internal use
+	 * 
+	 * @param errorCause the errorCause to set
+	 */
+	public void setErrorCause(Exception errorCause) {
+		this.errorCause = errorCause;
+		state = ERifidiReaderAdapter.ERROR;
 	}
 	
 
