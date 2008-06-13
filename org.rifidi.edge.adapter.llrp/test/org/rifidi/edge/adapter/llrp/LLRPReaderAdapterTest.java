@@ -30,7 +30,12 @@ public class LLRPReaderAdapterTest extends TestCase {
 		LLRPConnectionInfo lci = new LLRPConnectionInfo();
 		lci.setIPAddress("127.0.0.1");
 		lci.setPort(10000);
-		Assert.fail();
+		LLRPReaderAdapter newAdapt = new LLRPReaderAdapter(lci);
+		if(	!newAdapt.connect() ) {
+			Assert.fail();
+		}
+		
+		newAdapt.disconnect();
 	}
 	
 	/**
@@ -38,6 +43,7 @@ public class LLRPReaderAdapterTest extends TestCase {
 	 */
 	@Test
 	public void testStream() {
+		
 		
 		Assert.fail();
 	}
@@ -47,6 +53,8 @@ public class LLRPReaderAdapterTest extends TestCase {
 	 */
 	@Test
 	public void testRawCommand() {
+		
+		
 		Assert.fail();
 	}
 	
@@ -55,6 +63,7 @@ public class LLRPReaderAdapterTest extends TestCase {
 	 */
 	@Test
 	public void testDisconnect() {
+		
 		
 		Assert.fail();
 	}
