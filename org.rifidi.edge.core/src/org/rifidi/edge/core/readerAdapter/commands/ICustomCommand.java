@@ -1,5 +1,7 @@
 package org.rifidi.edge.core.readerAdapter.commands;
 
-public interface ICustomCommand {
+import java.io.Serializable;
+
+public interface ICustomCommand extends Serializable {
 
 }
