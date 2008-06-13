@@ -10,7 +10,7 @@ import org.rifidi.edge.core.readerAdapter.IReaderAdapter;
 import org.rifidi.edge.core.readerAdapter.commands.ICustomCommand;
 import org.rifidi.edge.core.readerAdapter.commands.ICustomCommandResult;
 import org.rifidi.edge.core.session.jms.JMSMessageThread;
-import org.rifidi.edge.enums.ERifidiReaderAdapter;
+import org.rifidi.edge.enums.EReaderAdapterState;
 
 
 /**
@@ -31,7 +31,7 @@ public class Session implements ISession {
 	
 	private JMSMessageThread jmsMessageThread;
 	
-	private ERifidiReaderAdapter state;
+	private EReaderAdapterState state;
 	
 	private Exception errorCause;
 	
@@ -94,15 +94,15 @@ public class Session implements ISession {
 	public ICustomCommandResult sendCustomCommand(ICustomCommand customCommand) {
 		// TODO needs to be implemented and designed
 		// TODO Handle exceptions here or send them up the call chain.
-		state = ERifidiReaderAdapter.BUSY;
+		state = EReaderAdapterState.BUSY;
 		try {
 			return adapter.sendCustomCommand(customCommand);
 		} catch (RifidiAdapterIllegalStateException e) {
-			state = ERifidiReaderAdapter.ERROR;
+			state = EReaderAdapterState.ERROR;
 			errorCause = e;
 			logger.error("Adapter in Illegal State", e);
 		} catch (RifidiIIllegialArgumentException e) {
-			state = ERifidiReaderAdapter.ERROR;
+			state = EReaderAdapterState.ERROR;
 			errorCause = e;
 			logger.error("Illegal Argument Passed.", e);
 		} catch (RuntimeException e){
@@ -113,23 +113,23 @@ public class Session implements ISession {
 			 * be thrown up the stack.
 			 */
 			
-			state = ERifidiReaderAdapter.ERROR;
+			state = EReaderAdapterState.ERROR;
 			errorCause = e;
 			
 			logger.error("Uncaught RuntimeException in " + adapter.getClass() + " adapter. " +
 						 "This means that there may be an unfixed bug in the adapter.", e);
 		}
-		state = ERifidiReaderAdapter.CONNECTED;
+		state = EReaderAdapterState.CONNECTED;
 		return null;
 	}
 
 	@Override
 	public void startTagStream() {
-		if (state == ERifidiReaderAdapter.CONNECTED) {
-			state = ERifidiReaderAdapter.STREAMING;
+		if (state == EReaderAdapterState.CONNECTED) {
+			state = EReaderAdapterState.STREAMING;
 			this.jmsMessageThread.start();
 		} else {
-			state = ERifidiReaderAdapter.ERROR;
+			state = EReaderAdapterState.ERROR;
 			RifidiAdapterIllegalStateException e = new RifidiAdapterIllegalStateException();
 			logger.error("Adapter must be in the CONNECTED state to start the tag stream.", e);
 			errorCause = e;
@@ -138,18 +138,18 @@ public class Session implements ISession {
 
 	@Override
 	public void stopTagStream() {
-		if (state ==  ERifidiReaderAdapter.STREAMING) {
-			state = ERifidiReaderAdapter.CONNECTED;
+		if (state ==  EReaderAdapterState.STREAMING) {
+			state = EReaderAdapterState.CONNECTED;
 			this.jmsMessageThread.stop();
 		} else {
-			state = ERifidiReaderAdapter.ERROR;
+			state = EReaderAdapterState.ERROR;
 			RifidiAdapterIllegalStateException e = new RifidiAdapterIllegalStateException();
 			logger.error("Adapter must be in the STREAMING state to stop the tag stream.", e);
 			errorCause = e;			
 		}
 	}
 
-	public ERifidiReaderAdapter getState()
+	public EReaderAdapterState getState()
 	{
 		return state;
 	}
@@ -158,7 +158,7 @@ public class Session implements ISession {
 		try {
 			adapter.connect();
 		} catch (RifidiConnectionException e) {
-			state = ERifidiReaderAdapter.ERROR;
+			state = EReaderAdapterState.ERROR;
 			errorCause = e;
 			logger.error("Error while disconnecting.", e);
 		} catch (RuntimeException e){
@@ -169,7 +169,7 @@ public class Session implements ISession {
 			 * be thrown up the stack.
 			 */
 			
-			state = ERifidiReaderAdapter.ERROR;
+			state = EReaderAdapterState.ERROR;
 			errorCause = e;
 			
 			logger.error("Uncaught RuntimeException in " + adapter.getClass() + " adapter. " +
@@ -181,7 +181,7 @@ public class Session implements ISession {
 		try {
 			adapter.disconnect();
 		} catch (RifidiConnectionException e) {
-			state = ERifidiReaderAdapter.ERROR;
+			state = EReaderAdapterState.ERROR;
 			errorCause = e;
 			logger.error("Error while disconnecting.", e);
 		} catch (RuntimeException e){
@@ -192,7 +192,7 @@ public class Session implements ISession {
 			 * be thrown up the stack.
 			 */
 			
-			state = ERifidiReaderAdapter.ERROR;
+			state = EReaderAdapterState.ERROR;
 			errorCause = e;
 			
 			logger.error("Uncaught RuntimeException in " + adapter.getClass() + " adapter. " +
@@ -214,7 +214,7 @@ public class Session implements ISession {
 	 */
 	public void setErrorCause(Exception errorCause) {
 		this.errorCause = errorCause;
-		state = ERifidiReaderAdapter.ERROR;
+		state = EReaderAdapterState.ERROR;
 	}
 	
 

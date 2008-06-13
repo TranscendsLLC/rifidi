@@ -12,7 +12,7 @@ import org.rifidi.edge.core.readerAdapter.IReaderAdapter;
 import org.rifidi.edge.core.session.Session;
 import org.rifidi.edge.core.session.SessionRegistryService;
 import org.rifidi.edge.core.tag.TagRead;
-import org.rifidi.edge.enums.ERifidiReaderAdapter;
+import org.rifidi.edge.enums.EReaderAdapterState;
 import org.rifidi.services.annotations.Inject;
 import org.rifidi.services.registry.ServiceRegistry;
 
