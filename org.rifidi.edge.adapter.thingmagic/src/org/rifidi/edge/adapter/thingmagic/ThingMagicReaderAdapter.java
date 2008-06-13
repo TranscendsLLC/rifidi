@@ -15,6 +15,7 @@ import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.common.utilities.converter.ByteAndHexConvertingUtility;
 import org.rifidi.edge.core.readerAdapter.IReaderAdapter;
 import org.rifidi.edge.core.readerAdapter.commands.ICustomCommand;
+import org.rifidi.edge.core.readerAdapter.commands.ICustomCommandResult;
 import org.rifidi.edge.core.tag.TagRead;
 
 
@@ -130,7 +131,7 @@ public class ThingMagicReaderAdapter implements IReaderAdapter {
 
 
 	@Override
-	public void sendCustomCommand(ICustomCommand customCommand) {
+	public ICustomCommandResult sendCustomCommand(ICustomCommand customCommand) {
 		ThingMagicCustomCommand command;
 		if(customCommand == null)
 			//TODO: needs to be fixed.
@@ -161,7 +162,7 @@ public class ThingMagicReaderAdapter implements IReaderAdapter {
 			}
 			
 		}
-
+		return null;
 	}
 
 	@Override
