@@ -105,6 +105,18 @@ public class LLRPReaderAdapter implements IReaderAdapter {
 			e.printStackTrace();
 			return false;
 		}
+		
+		try {
+			LLRPMessage m = read();
+			logger.debug(m);
+		} catch (IOException e) {
+			e.printStackTrace();
+			return false;
+		} catch (InvalidLLRPMessageException e) {
+			e.printStackTrace();
+			return false;
+		}
+		
 		return true;
 	}
 
