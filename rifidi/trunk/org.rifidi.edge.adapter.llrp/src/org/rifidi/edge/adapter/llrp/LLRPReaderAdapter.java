@@ -11,7 +11,8 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.llrp.ltk.exceptions.InvalidLLRPMessageException;
 import org.llrp.ltk.generated.enumerations.AISpecStopTriggerType;
 import org.llrp.ltk.generated.enumerations.AirProtocols;
@@ -36,8 +37,10 @@ import org.llrp.ltk.types.LLRPMessage;
 import org.llrp.ltk.types.UnsignedInteger;
 import org.llrp.ltk.types.UnsignedShort;
 import org.llrp.ltk.types.UnsignedShortArray;
+import org.rifidi.edge.common.utilities.converter.ByteAndHexConvertingUtility;
 import org.rifidi.edge.core.readerAdapter.IReaderAdapter;
 import org.rifidi.edge.core.readerAdapter.commands.ICustomCommand;
+import org.rifidi.edge.core.readerAdapter.commands.ICustomCommandResult;
 import org.rifidi.edge.core.tag.TagRead;
 
 /**
@@ -54,9 +57,13 @@ public class LLRPReaderAdapter implements IReaderAdapter {
 	/**
 	 * The log4j logger
 	 */
-	private static Logger logger;
+	private static Log logger = LogFactory.getLog(LLRPReaderAdapter.class);
 
+	/**
+	 * 
+	 */
 	private Socket connection = null;
+
 	/**
 	 * The incoming data stream from the LLRP reader connection
 	 */
@@ -76,8 +83,6 @@ public class LLRPReaderAdapter implements IReaderAdapter {
 	 */
 	public LLRPReaderAdapter(LLRPConnectionInfo aci) {
 		this.aci = aci;
-
-		logger = Logger.getLogger(LLRPReaderAdapter.class);
 	}
 
 	/*
@@ -109,22 +114,22 @@ public class LLRPReaderAdapter implements IReaderAdapter {
 	 */
 	@Override
 	public boolean disconnect() {
-
 		// wait for one second before closing the connection
-		pause(1000);
 
+		// Create a CLOSE_CONNECTION message and send it to the reader
+		CLOSE_CONNECTION cc = new CLOSE_CONNECTION();
+		write(cc, "CloseConnection");
 		try {
-			// Create a CLOSE_CONNECTION message and send it to the reader
-			CLOSE_CONNECTION cc = new CLOSE_CONNECTION();
-			write(cc, "CloseConnection");
 			LLRPMessage m = read();
 			logger.debug(m);
 		} catch (IOException e) {
-
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		} catch (InvalidLLRPMessageException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+
 		return true;
 	}
 
@@ -134,8 +139,8 @@ public class LLRPReaderAdapter implements IReaderAdapter {
 	 * @see org.rifidi.edge.core.readerAdapter.IReaderAdapter#sendCommand(byte[])
 	 */
 	@Override
-	public void sendCustomCommand(ICustomCommand customCommand) {
-
+	public ICustomCommandResult sendCustomCommand(ICustomCommand customCommand) {
+		return null;
 	}
 
 	/**
@@ -289,6 +294,9 @@ public class LLRPReaderAdapter implements IReaderAdapter {
 		return retVal;
 	}
 
+	/**
+	 * Returns true if the adapter is blocking
+	 */
 	@Override
 	public boolean isBlocking() {
 		// TODO Auto-generated method stub
@@ -322,6 +330,8 @@ public class LLRPReaderAdapter implements IReaderAdapter {
 			throw new IOException("Incorrect Message Length");
 		}
 
+		logger.debug("msg length is: " + msgLength);
+
 		/*
 		 * the rest of bytes of the message will be stored in here before they
 		 * are put in the accumulator. If the message is short, all
@@ -347,14 +357,16 @@ public class LLRPReaderAdapter implements IReaderAdapter {
 		// while there are still bytes left to read on the socket and
 		// the entire message has not been read
 		while (((msgLength - accumulator.size()) != 0) && numBytesRead != -1) {
-
+			logger.debug("about to read stuff");
 			numBytesRead = in.read(temp, 0, msgLength - accumulator.size());
-
+			logger.debug("reading stuff: " + numBytesRead + ", msg length: "
+					+ accumulator.size() + ", temp size: " + temp.length);
 			for (int i = 0; i < numBytesRead; i++) {
 				accumulator.add(temp[i]);
 			}
 		}
 
+		logger.debug("after the while");
 		if ((msgLength - accumulator.size()) != 0) {
 			throw new IOException("Error: Discrepency between message size"
 					+ " in header and actual number of bytes read");
@@ -378,7 +390,7 @@ public class LLRPReaderAdapter implements IReaderAdapter {
 	 * @param bytes
 	 * @return
 	 */
-	private int calculateLLRPMessageLength(byte[] bytes)
+	public static int calculateLLRPMessageLength(byte[] bytes)
 			throws IllegalArgumentException {
 		long msgLength = 0;
 		int num1 = 0;
@@ -386,7 +398,7 @@ public class LLRPReaderAdapter implements IReaderAdapter {
 		int num3 = 0;
 		int num4 = 0;
 
-		num1 = ((unsignedByteToInt(bytes[2])));
+		num1 = ((ByteAndHexConvertingUtility.unsignedByteToInt(bytes[2])));
 		num1 = num1 << 32;
 		if (num1 > 127) {
 			throw new RuntimeException(
@@ -395,13 +407,13 @@ public class LLRPReaderAdapter implements IReaderAdapter {
 							+ "no unsigned ints in java");
 		}
 
-		num2 = ((unsignedByteToInt(bytes[3])));
+		num2 = ((ByteAndHexConvertingUtility.unsignedByteToInt(bytes[3])));
 		num2 = num2 << 16;
 
-		num3 = ((unsignedByteToInt(bytes[4])));
+		num3 = ((ByteAndHexConvertingUtility.unsignedByteToInt(bytes[4])));
 		num3 = num3 << 8;
 
-		num4 = (unsignedByteToInt(bytes[5]));
+		num4 = (ByteAndHexConvertingUtility.unsignedByteToInt(bytes[5]));
 
 		msgLength = num1 + num2 + num3 + num4;
 
@@ -419,7 +431,7 @@ public class LLRPReaderAdapter implements IReaderAdapter {
 	 * @param b
 	 * @return
 	 */
-	private int unsignedByteToInt(byte b) {
+	public int unsignedByteToInt(byte b) {
 		return (int) b & 0xFF;
 	}
 
