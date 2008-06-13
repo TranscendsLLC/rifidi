@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.rifidi.edge.core.test;
+package org.rifidi.edge.core.test.session;
 
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
