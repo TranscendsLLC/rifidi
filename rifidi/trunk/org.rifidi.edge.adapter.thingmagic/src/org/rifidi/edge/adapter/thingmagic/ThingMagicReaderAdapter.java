@@ -128,17 +128,37 @@ public class ThingMagicReaderAdapter implements IReaderAdapter {
 		return null;
 	}
 
+
 	@Override
 	public void sendCustomCommand(ICustomCommand customCommand) {
+		ThingMagicCustomCommand command;
+		if(customCommand == null)
+			//TODO: needs to be fixed.
+			throw new IllegalArgumentException();
+		
+		if(customCommand instanceof ThingMagicCustomCommand){
+			command = (ThingMagicCustomCommand) customCommand;
+			if(command.getCustomCommand() == null)
+				//TODO: needs to be fixed.
+				throw new IllegalArgumentException();
+			else 
+				if (command.getCustomCommand().equals("") || command.getCustomCommand().endsWith(";"))
+					//TODO: needs to be fixed.
+					throw new IllegalArgumentException();
+		} else {
+			//TODO: needs to be fixed.
+			throw new IllegalArgumentException();
+		}
+		
 		if (!connected ){
 			// TODO This needs to be implemented more fully.
-			/*try {
-				out.write(new String(command));
+			try {
+				out.write(command.getCustomCommand());
 				readFromReader(in);
 			} catch (IOException e) {
 				//TODO print stack trace to log4j
 				logger.debug("IOException.", e);
-			}*/
+			}
 			
 		}
 
