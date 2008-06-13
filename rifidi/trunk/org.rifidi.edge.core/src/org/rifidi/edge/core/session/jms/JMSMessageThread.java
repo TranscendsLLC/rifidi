@@ -5,12 +5,21 @@ import java.util.List;
 import javax.jms.JMSException;
 import javax.jms.TextMessage;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.exception.adapter.RifidiAdapterIllegalStateException;
 import org.rifidi.edge.core.readerAdapter.IReaderAdapter;
+import org.rifidi.edge.core.session.Session;
+import org.rifidi.edge.core.session.SessionRegistryService;
 import org.rifidi.edge.core.tag.TagRead;
+import org.rifidi.edge.enums.ERifidiReaderAdapter;
+import org.rifidi.services.annotations.Inject;
+import org.rifidi.services.registry.ServiceRegistry;
 
 public class JMSMessageThread implements Runnable {
 
+	private Log logger = LogFactory.getLog(JMSMessageThread.class);
+	
 	// Internal Thread
 	private Thread thread;
 
@@ -18,6 +27,9 @@ public class JMSMessageThread implements Runnable {
 	private JMSHelper jmsHelper;
 	private int sessionID;
 	private IReaderAdapter readerAdapter;
+
+	// SessionRegisrtyService
+	private SessionRegistryService sessionRegistryService;
 
 	// Runntime Variables
 	private boolean running = false;
@@ -31,6 +43,8 @@ public class JMSMessageThread implements Runnable {
 		this.jmsHelper = jmsHelper;
 		this.sessionID = sessionID;
 		this.readerAdapter = readerAdapter;
+		
+		ServiceRegistry.getInstance().service(this);
 	}
 
 	public boolean start() {
@@ -70,11 +84,31 @@ public class JMSMessageThread implements Runnable {
 					Thread.sleep(pollingIntervall);
 			}
 		} catch (InterruptedException e) {
-			//TODO: Deal with exception.
+			// This should be fine
 			running = false;
 		} catch (RifidiAdapterIllegalStateException e) {
-			//TODO: Deal with exception.
-			//TODO: This exception should be dealt with in the session.
+			// this is not the best solution... maybe there is another way to deal with this.
+			if(sessionRegistryService != null)
+			{
+				Session session = sessionRegistryService.getReaderSession(sessionID);
+				session.setErrorCause(e);
+			}
+			running = false;
+		} catch (RuntimeException e){
+			// this is not the best solution... maybe there is another way to deal with this.
+			/* Error Resistance.
+			 * Uncaught Runtime errors should not cause the whole
+			 * edge server to go down. Only that adapter that caused it.
+			 * Reminder: Runtime errors in java do not need a "throws" clause to 
+			 * be thrown up the stack.
+			 */
+			if(sessionRegistryService != null)
+			{
+				Session session = sessionRegistryService.getReaderSession(sessionID);
+				session.setErrorCause(e);
+			}
+			logger.error("Uncaught RuntimeException in " + readerAdapter.getClass() + " adapter. " +
+						 "This means that there may be an unfixed bug in the adapter.", e);
 			running = false;
 		}
 	}
@@ -99,5 +133,15 @@ public class JMSMessageThread implements Runnable {
 
 	public void setPollingIntervall(long pollingIntervall) {
 		this.pollingIntervall = pollingIntervall;
+	}
+
+	/**
+	 * @param sessionRegistryService
+	 *            the sessionRegistryService to set
+	 */
+	@Inject
+	public void setSessionRegistryService(
+			SessionRegistryService sessionRegistryService) {
+		this.sessionRegistryService = sessionRegistryService;
 	}
 }
