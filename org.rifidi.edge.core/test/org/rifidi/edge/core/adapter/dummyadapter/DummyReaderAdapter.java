@@ -87,7 +87,7 @@ public class DummyReaderAdapter implements IReaderAdapter {
 
 		DummyCustomCommandResult result = new DummyCustomCommandResult();
 
-		result.setResult(command.getCommand() + " <Result> ");
+		result.setResult(command.getCommand() + " <Result>");
 
 		return result;
 	}

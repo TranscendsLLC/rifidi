@@ -17,10 +17,18 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.rifidi.edge.core.adapter.dummyadapter.DummyConnectionInfo;
+import org.rifidi.edge.core.adapter.dummyadapter.DummyCustomCommand;
+import org.rifidi.edge.core.adapter.dummyadapter.DummyCustomCommandResult;
 import org.rifidi.edge.core.adapter.dummyadapter.DummyReaderAdapter;
+import org.rifidi.edge.core.adapter.dummyadapter.DummyReaderAdapterFactory;
+import org.rifidi.edge.core.adapter.dummyadapter.EDummyError;
+import org.rifidi.edge.core.exception.adapter.RifidiAdapterIllegalStateException;
 import org.rifidi.edge.core.exception.adapter.RifidiConnectionException;
 import org.rifidi.edge.core.readerAdapter.AbstractConnectionInfo;
+import org.rifidi.edge.core.readerAdapterService.ReaderAdapterRegistryService;
+import org.rifidi.edge.core.readerAdapterenums.EReaderAdapterState;
 import org.rifidi.edge.core.session.Session;
+import org.rifidi.edge.core.session.SessionRegistryService;
 import org.rifidi.edge.core.session.jms.JMSHelper;
 import org.rifidi.edge.core.session.jms.JMSMessageThread;
 import org.rifidi.services.annotations.Inject;
@@ -35,6 +43,10 @@ public class SessionTest {
 	private static final Log logger = LogFactory.getLog(SessionTest.class);
 
 	private ConnectionFactory connectionFactory;
+	
+	private SessionRegistryService sessionRegistryService;
+	
+	private ReaderAdapterRegistryService readerAdapterRegistryService;
 
 	/**
 	 * @throws java.lang.Exception
@@ -162,6 +174,25 @@ public class SessionTest {
 	public void testSendCustomCommand() {
 		// TODO Jerry should Implement
 		//Assert.fail("Not Implemented");
+		
+		readerAdapterRegistryService.registerReaderAdapter(
+				DummyConnectionInfo.class, new DummyReaderAdapterFactory());
+
+		
+
+		DummyConnectionInfo info = new DummyConnectionInfo();
+		
+		Session s = sessionRegistryService
+				.createReaderSession(info);
+		
+
+		s.connect();
+
+
+		Assert.assertTrue("Command <Result>".equals(  ((DummyCustomCommandResult)s.sendCustomCommand(new DummyCustomCommand("Command"))).getResult() ));
+		
+		s.disconnect();
+		
 	}
 
 	/**
@@ -246,6 +277,19 @@ public class SessionTest {
 	@Inject
 	public void setConnectionFactory(ConnectionFactory connectionFactory) {
 		this.connectionFactory = connectionFactory;
+	}
+	
+	@Inject
+	public void setSessionRegistryService(SessionRegistryService regSer) {
+		this.sessionRegistryService = regSer;
+	}
+	
+	@Inject
+	public void setAdapterRegistryService(
+			ReaderAdapterRegistryService readerAdapterRegistryService) {
+		this.readerAdapterRegistryService = readerAdapterRegistryService;
+		
+		readerAdapterRegistryService.registerReaderAdapter(DummyConnectionInfo.class, new DummyReaderAdapterFactory());
 	}
 
 }

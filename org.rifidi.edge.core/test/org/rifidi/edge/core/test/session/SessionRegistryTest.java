@@ -58,16 +58,13 @@ public class SessionRegistryTest {
 	}
 
 	@Test
-	//TODO Jerry check this test
 	public void testSetAndGetSession() {
 		SessionRegistryService sessionRegistryService2 = new SessionRegistryServiceImpl();
 		
 		Session s = sessionRegistryService2
 				.createReaderSession(new DummyConnectionInfo());
 
-		// Assert.assertTrue(sessionRegistryService2.getReaderSession(s.) ==
-		// sessionRegistryService2);
-		// Assert.assertTrue(sessionRegistryService2.sessionCount() == 1);
+		Assert.assertTrue(sessionRegistryService2.getReaderSession(s.getSessionID()) == s);
 	}
 
 	@Inject
