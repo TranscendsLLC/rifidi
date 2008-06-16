@@ -13,10 +13,10 @@ import org.rifidi.edge.core.adapter.dummyadapter.DummyConnectionInfo;
 import org.rifidi.edge.core.adapter.dummyadapter.DummyReaderAdapterFactory;
 import org.rifidi.edge.core.adapter.dummyadapter.EDummyError;
 import org.rifidi.edge.core.readerAdapterService.ReaderAdapterRegistryService;
+import org.rifidi.edge.core.readerAdapterenums.EReaderAdapterState;
 import org.rifidi.edge.core.session.ISession;
 import org.rifidi.edge.core.session.SessionRegistryService;
 import org.rifidi.edge.core.session.SessionRegistryServiceImpl;
-import org.rifidi.edge.enums.EReaderAdapterState;
 import org.rifidi.services.annotations.Inject;
 import org.rifidi.services.registry.ServiceRegistry;
 
