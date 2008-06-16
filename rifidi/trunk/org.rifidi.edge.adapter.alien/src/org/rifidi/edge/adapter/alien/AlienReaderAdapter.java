@@ -1,5 +1,13 @@
-/**
- * 
+/*
+ *  AlienReaderAdapter.java
+ *
+ *  Created:	Jun 20, 2006
+ *  Project:	RiFidi Emulator - A Software Simulation Tool for RFID Devices
+ *  				http://www.rifidi.org
+ *  				http://rifidi.sourceforge.net
+ *  Copyright:	Pramari LLC and the Rifidi Project
+ *  License:	Lesser GNU Public License (LGPL)
+ *  				http://www.opensource.org/licenses/lgpl-license.html
  */
 package org.rifidi.edge.adapter.alien;
 
@@ -26,6 +34,10 @@ import org.rifidi.edge.core.tag.TagRead;
 /**
  * @author Matthew Dean - matt@pramari.com
  * 
+ */
+/**
+ * @author Matthew Dean - matt@pramari.com
+ *
  */
 public class AlienReaderAdapter implements IReaderAdapter {
 
@@ -78,7 +90,6 @@ public class AlienReaderAdapter implements IReaderAdapter {
 			logger.debug("IOException.", e);
 			throw new RifidiConnectionException(e);
 		}
-		
 	}
 
 	/*
