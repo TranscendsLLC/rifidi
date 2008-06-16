@@ -12,38 +12,42 @@ import org.rifidi.edge.core.readerAdapter.commands.ICustomCommandResult;
 import org.rifidi.edge.core.readerAdapterenums.EReaderAdapterState;
 import org.rifidi.edge.core.session.jms.JMSMessageThread;
 
-
 /**
  * 
- * @author Jerry and Kyle
- * A session bundles the objects needed to communicate to the reader.
+ * @author Jerry and Kyle A session bundles the objects needed to communicate to
+ *         the reader.
  */
 
-public class Session implements ISession {
-	
-	private static final Log logger = LogFactory.getLog(Session.class);	
-	
+public class Session {
+
+	private static final Log logger = LogFactory.getLog(Session.class);
+
 	private IReaderAdapter adapter;
-	
+
 	private int sessionID;
-	
+
 	private AbstractConnectionInfo connectionInfo;
-	
+
 	private JMSMessageThread jmsMessageThread;
-	
+
 	private EReaderAdapterState state;
-	
+
 	private Exception errorCause;
-	
+
 	/**
 	 * Creates a Session.
-	 * @param connectionInfo Info used to connect to a reader.
-	 * @param adapter Object that talks to a reader.
-	 * @param id Id for this session.
+	 * 
+	 * @param connectionInfo
+	 *            Info used to connect to a reader.
+	 * @param adapter
+	 *            Object that talks to a reader.
+	 * @param id
+	 *            Id for this session.
 	 */
-	public Session(AbstractConnectionInfo connectionInfo, IReaderAdapter adapter, int id, JMSMessageThread jmsMessageThread ){
-		setConnectionInfo( connectionInfo);
-		setAdapter( adapter);
+	public Session(AbstractConnectionInfo connectionInfo,
+			IReaderAdapter adapter, int id, JMSMessageThread jmsMessageThread) {
+		setConnectionInfo(connectionInfo);
+		setAdapter(adapter);
 		setSessionID(id);
 		this.jmsMessageThread = jmsMessageThread;
 		state = EReaderAdapterState.CREATED;
@@ -57,7 +61,8 @@ public class Session implements ISession {
 	}
 
 	/**
-	 * @param adapter the adapter to set
+	 * @param adapter
+	 *            the adapter to set
 	 */
 	public void setAdapter(IReaderAdapter adapter) {
 		this.adapter = adapter;
@@ -71,7 +76,8 @@ public class Session implements ISession {
 	}
 
 	/**
-	 * @param sessionID the sessionID to set
+	 * @param sessionID
+	 *            the sessionID to set
 	 */
 	public void setSessionID(int sessionID) {
 		this.sessionID = sessionID;
@@ -85,13 +91,13 @@ public class Session implements ISession {
 	}
 
 	/**
-	 * @param connectionInfo the connectionInfo to set
+	 * @param connectionInfo
+	 *            the connectionInfo to set
 	 */
 	public void setConnectionInfo(AbstractConnectionInfo connectionInfo) {
 		this.connectionInfo = connectionInfo;
 	}
 
-	@Override
 	public ICustomCommandResult sendCustomCommand(ICustomCommand customCommand) {
 		// TODO needs to be implemented and designed
 		// TODO Handle exceptions here or send them up the call chain.
@@ -106,25 +112,29 @@ public class Session implements ISession {
 			state = EReaderAdapterState.ERROR;
 			errorCause = e;
 			logger.error("Illegal Argument Passed.", e);
-		} catch (RuntimeException e){
-			/* Error Resistance.
-			 * Uncaught Runtime errors should not cause the whole
-			 * edge server to go down. Only that adapter that caused it.
-			 * Reminder: Runtime errors in java do not need a "throws" clause to 
+		} catch (RuntimeException e) {
+			/*
+			 * Error Resistance. Uncaught Runtime errors should not cause the
+			 * whole edge server to go down. Only that adapter that caused it.
+			 * Reminder: Runtime errors in java do not need a "throws" clause to
 			 * be thrown up the stack.
 			 */
-			
+
 			state = EReaderAdapterState.ERROR;
 			errorCause = e;
-			
-			logger.error("Uncaught RuntimeException in " + adapter.getClass() + " adapter. " +
-						 "This means that there may be an unfixed bug in the adapter.", e);
+
+			logger
+					.error(
+							"Uncaught RuntimeException in "
+									+ adapter.getClass()
+									+ " adapter. "
+									+ "This means that there may be an unfixed bug in the adapter.",
+							e);
 		}
 		state = EReaderAdapterState.CONNECTED;
 		return null;
 	}
 
-	@Override
 	public void startTagStream() {
 		if (state == EReaderAdapterState.CONNECTED) {
 			state = EReaderAdapterState.STREAMING;
@@ -132,26 +142,30 @@ public class Session implements ISession {
 		} else {
 			state = EReaderAdapterState.ERROR;
 			RifidiAdapterIllegalStateException e = new RifidiAdapterIllegalStateException();
-			logger.error("Adapter must be in the CONNECTED state to start the tag stream.", e);
+			logger
+					.error(
+							"Adapter must be in the CONNECTED state to start the tag stream.",
+							e);
 			errorCause = e;
 		}
 	}
 
-	@Override
 	public void stopTagStream() {
-		if (state ==  EReaderAdapterState.STREAMING) {
+		if (state == EReaderAdapterState.STREAMING) {
 			state = EReaderAdapterState.CONNECTED;
 			this.jmsMessageThread.stop();
 		} else {
 			state = EReaderAdapterState.ERROR;
 			RifidiAdapterIllegalStateException e = new RifidiAdapterIllegalStateException();
-			logger.error("Adapter must be in the STREAMING state to stop the tag stream.", e);
-			errorCause = e;			
+			logger
+					.error(
+							"Adapter must be in the STREAMING state to stop the tag stream.",
+							e);
+			errorCause = e;
 		}
 	}
 
-	public EReaderAdapterState getState()
-	{
+	public EReaderAdapterState getState() {
 		return state;
 	}
 
@@ -163,22 +177,27 @@ public class Session implements ISession {
 			state = EReaderAdapterState.ERROR;
 			errorCause = e;
 			logger.error("Error while connecting.", e);
-		} catch (RuntimeException e){
-			/* Error Resistance.
-			 * Uncaught Runtime errors should not cause the whole
-			 * edge server to go down. Only that adapter that caused it.
-			 * Reminder: Runtime errors in java do not need a "throws" clause to 
+		} catch (RuntimeException e) {
+			/*
+			 * Error Resistance. Uncaught Runtime errors should not cause the
+			 * whole edge server to go down. Only that adapter that caused it.
+			 * Reminder: Runtime errors in java do not need a "throws" clause to
 			 * be thrown up the stack.
 			 */
-			
+
 			state = EReaderAdapterState.ERROR;
 			errorCause = e;
-			
-			logger.error("Uncaught RuntimeException in " + adapter.getClass() + " adapter. " +
-						 "This means that there may be an unfixed bug in the adapter.", e);
+
+			logger
+					.error(
+							"Uncaught RuntimeException in "
+									+ adapter.getClass()
+									+ " adapter. "
+									+ "This means that there may be an unfixed bug in the adapter.",
+							e);
 		}
 	}
-	
+
 	public void disconnect() {
 		try {
 			adapter.disconnect();
@@ -187,19 +206,24 @@ public class Session implements ISession {
 			state = EReaderAdapterState.ERROR;
 			errorCause = e;
 			logger.error("Error while disconnecting.", e);
-		} catch (RuntimeException e){
-			/* Error Resistance.
-			 * Uncaught Runtime errors should not cause the whole
-			 * edge server to go down. Only that adapter that caused it.
-			 * Reminder: Runtime errors in java do not need a "throws" clause to 
+		} catch (RuntimeException e) {
+			/*
+			 * Error Resistance. Uncaught Runtime errors should not cause the
+			 * whole edge server to go down. Only that adapter that caused it.
+			 * Reminder: Runtime errors in java do not need a "throws" clause to
 			 * be thrown up the stack.
 			 */
-			
+
 			state = EReaderAdapterState.ERROR;
 			errorCause = e;
-			
-			logger.error("Uncaught RuntimeException in " + adapter.getClass() + " adapter. " +
-						 "This means that there may be an unfixed bug in the adapter.", e);
+
+			logger
+					.error(
+							"Uncaught RuntimeException in "
+									+ adapter.getClass()
+									+ " adapter. "
+									+ "This means that there may be an unfixed bug in the adapter.",
+							e);
 		}
 	}
 
@@ -213,13 +237,13 @@ public class Session implements ISession {
 	/**
 	 * Just for internal use
 	 * 
-	 * @param errorCause the errorCause to set
+	 * @param errorCause
+	 *            the errorCause to set
 	 */
 	public void setErrorCause(Exception errorCause) {
 		this.errorCause = errorCause;
 		state = EReaderAdapterState.ERROR;
 	}
-	
 
 	// //TODO: Think if we need this method.
 	// public List<TagRead> getNextTags() {
@@ -244,6 +268,6 @@ public class Session implements ISession {
 	// adapter. " +
 	// "This means that there may be an unfixed bug in the adapter.", e);
 	// }
-	//		return null;
-	//	}
+	// return null;
+	// }
 }

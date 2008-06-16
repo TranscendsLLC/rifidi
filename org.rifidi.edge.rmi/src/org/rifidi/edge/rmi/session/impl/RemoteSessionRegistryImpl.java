@@ -8,7 +8,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.readerAdapter.AbstractConnectionInfo;
 import org.rifidi.edge.core.readerAdapterService.ReaderAdapterRegistryService;
-import org.rifidi.edge.core.session.ISession;
 import org.rifidi.edge.core.session.Session;
 import org.rifidi.edge.core.session.SessionRegistryService;
 import org.rifidi.edge.rmi.session.RemoteSession;
@@ -48,7 +47,7 @@ public class RemoteSessionRegistryImpl implements RemoteSessionRegistry {
 		//TODO look if this is even working Session might be not available
 		if(remoteSession instanceof RemoteSessionImpl)
 		{
-			ISession session = ((RemoteSessionImpl)remoteSession).getSession();
+			Session session = ((RemoteSessionImpl)remoteSession).getSession();
 			if(session instanceof Session)
 			{
 				remoteSessionList.remove(remoteSession);
