@@ -5,7 +5,6 @@ import java.rmi.RemoteException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.readerAdapter.commands.ICustomCommand;
-import org.rifidi.edge.core.session.ISession;
 import org.rifidi.edge.core.session.Session;
 import org.rifidi.edge.rmi.session.RemoteSession;
 
@@ -39,7 +38,7 @@ public class RemoteSessionImpl implements RemoteSession {
 	}
 
 	// TODO Think about a better place for this
-	public ISession getSession() {
+	public Session getSession() {
 		return session;
 	}
 
