@@ -21,6 +21,7 @@ import org.rifidi.edge.core.adapter.dummyadapter.DummyReaderAdapter;
 import org.rifidi.edge.core.adapter.dummyadapter.DummyReaderAdapterFactory;
 import org.rifidi.edge.core.adapter.dummyadapter.EDummyError;
 import org.rifidi.edge.core.exception.RifidiException;
+import org.rifidi.edge.core.exception.adapter.RifidiAdapterIllegalStateException;
 import org.rifidi.edge.core.exception.adapter.RifidiConnectionException;
 import org.rifidi.edge.core.readerAdapterService.ReaderAdapterRegistryService;
 import org.rifidi.edge.core.readerAdapterenums.EReaderAdapterState;
@@ -163,7 +164,7 @@ public class SessionBreakageTest {
 		} catch (NullPointerException e){
 			Assert.assertSame(EReaderAdapterState.ERROR, s.getState());
 			Assert.assertNotNull(s.getErrorCause());
-			Assert.assertTrue(s.getErrorCause() instanceof RifidiException);
+			Assert.assertTrue(s.getErrorCause() instanceof RifidiAdapterIllegalStateException);
 		}
 
 	}
@@ -261,10 +262,86 @@ public class SessionBreakageTest {
 		
 		System.out.println(s.getState());
 		
-		Assert.assertTrue(s.getState() == EReaderAdapterState.ERROR);
+		Assert.assertSame(s.getState() , EReaderAdapterState.ERROR);
+		Assert.assertTrue(s.getErrorCause() instanceof RifidiAdapterIllegalStateException);
 	}
 	
+	@Test
+	public void testSessionSendCustomCommandRealTime(){
+				
+		readerAdapterRegistryService.registerReaderAdapter(
+				DummyConnectionInfo.class, new DummyReaderAdapterFactory());
+
+		
+
+		DummyConnectionInfo info = new DummyConnectionInfo();
+		
+		info.setErrorToSet(EDummyError.SEND_CUSTOM_COMMAND_RUNTIME);
+		
+		Session s = sessionRegistryService
+				.createReaderSession(info);
+		
+
+		s.connect();
+
+
+		s.sendCustomCommand(new DummyCustomCommand("Command"));
+		
+		System.out.println(s.getState());
+		
+		Assert.assertSame(s.getState() , EReaderAdapterState.ERROR);
+		Assert.assertTrue(s.getErrorCause() instanceof RuntimeException);
+	}
 	
+	@Test
+	public void testSessionDisconnectCommand(){
+				
+		readerAdapterRegistryService.registerReaderAdapter(
+				DummyConnectionInfo.class, new DummyReaderAdapterFactory());
+
+		
+
+		DummyConnectionInfo info = new DummyConnectionInfo();
+		
+		info.setErrorToSet(EDummyError.DISCONNECT);
+		
+		Session s = sessionRegistryService
+				.createReaderSession(info);
+		
+
+		s.connect();
+
+
+		s.disconnect();
+		
+		Assert.assertSame(s.getState() , EReaderAdapterState.ERROR);
+		Assert.assertTrue(s.getErrorCause() instanceof RifidiConnectionException);
+	}
+	
+	@Test
+	public void testSessionDisconnectRealTime(){
+				
+		readerAdapterRegistryService.registerReaderAdapter(
+				DummyConnectionInfo.class, new DummyReaderAdapterFactory());
+
+		
+
+		DummyConnectionInfo info = new DummyConnectionInfo();
+		
+		info.setErrorToSet(EDummyError.DISCONNECT_RUNTIME);
+		
+		Session s = sessionRegistryService
+				.createReaderSession(info);
+		
+
+		s.connect();
+
+
+		s.disconnect();
+		
+		Assert.assertSame(s.getState() , EReaderAdapterState.ERROR);
+		Assert.assertTrue(s.getErrorCause() instanceof RuntimeException);
+	}
 	
 	@Inject
 	public void setConnectionFactory(ConnectionFactory connectionFactory) {
