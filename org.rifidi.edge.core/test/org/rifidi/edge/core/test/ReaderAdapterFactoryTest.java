@@ -29,7 +29,6 @@ public class ReaderAdapterFactoryTest {
 	 */
 	@Before
 	public void setUp() throws Exception {
-		// TODO finish this junit
 		ServiceRegistry.getInstance().service(this);
 		// might fail.
 		readerAdapterRegistryService.registerReaderAdapter(
