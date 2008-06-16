@@ -36,12 +36,7 @@ public class RemoteSessionImpl implements RemoteSession {
 		logger.debug("Remote Call: stopTagStream()");
 		session.stopTagStream();
 	}
-
-	// TODO Think about a better place for this
-	public Session getSession() {
-		return session;
-	}
-
+	
 	@Override
 	public String getReaderDescription() {
 		return session.getConnectionInfo().getReaderType();
@@ -50,6 +45,11 @@ public class RemoteSessionImpl implements RemoteSession {
 	@Override
 	public String getReaderType() {
 		return session.getConnectionInfo().getReaderDescription();
+	}
+
+	// TODO Think about a better place for this
+	public Session getSession() {
+		return session;
 	}
 
 }
