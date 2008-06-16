@@ -26,8 +26,7 @@ import org.rifidi.edge.core.readerAdapterenums.EReaderAdapterState;
 import org.rifidi.edge.core.session.Session;
 import org.rifidi.edge.core.session.SessionRegistryService;
 import org.rifidi.edge.core.session.SessionRegistryServiceImpl;
-import org.rifidi.edge.core.session.jms.JMSHelper;
-import org.rifidi.edge.core.session.jms.JMSMessageThread;
+
 import org.rifidi.services.annotations.Inject;
 import org.rifidi.services.registry.ServiceRegistry;
 
