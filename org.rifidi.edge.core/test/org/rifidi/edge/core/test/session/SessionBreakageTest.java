@@ -23,16 +23,11 @@ import org.rifidi.edge.core.exception.RifidiException;
 import org.rifidi.edge.core.exception.adapter.RifidiConnectionException;
 import org.rifidi.edge.core.readerAdapterService.ReaderAdapterRegistryService;
 import org.rifidi.edge.core.readerAdapterenums.EReaderAdapterState;
-import org.rifidi.edge.core.session.ISession;
 import org.rifidi.edge.core.session.Session;
 import org.rifidi.edge.core.session.SessionRegistryService;
 import org.rifidi.edge.core.session.SessionRegistryServiceImpl;
-<<<<<<< .mine
 import org.rifidi.edge.core.session.jms.JMSHelper;
 import org.rifidi.edge.core.session.jms.JMSMessageThread;
-import org.rifidi.edge.enums.EReaderAdapterState;
-=======
->>>>>>> .r159
 import org.rifidi.services.annotations.Inject;
 import org.rifidi.services.registry.ServiceRegistry;
 
@@ -74,7 +69,7 @@ public class SessionBreakageTest {
 		
 		info.setErrorToSet(EDummyError.CONNECT);
 		
-		ISession s = sessionRegistryService2
+		Session s = sessionRegistryService2
 				.createReaderSession(info);
 		
 
@@ -96,7 +91,7 @@ public class SessionBreakageTest {
 		
 		info.setErrorToSet(EDummyError.CONNECT_RUNTIME);
 		
-		ISession s = sessionRegistryService2
+		Session s = sessionRegistryService2
 				.createReaderSession(info);
 		
 
