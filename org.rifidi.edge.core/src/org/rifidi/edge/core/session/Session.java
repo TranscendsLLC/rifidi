@@ -103,7 +103,9 @@ public class Session {
 		// TODO Handle exceptions here or send them up the call chain.
 		state = EReaderAdapterState.BUSY;
 		try {
-			return adapter.sendCustomCommand(customCommand);
+			ICustomCommandResult result = adapter.sendCustomCommand(customCommand);
+			state = EReaderAdapterState.CONNECTED;
+			return result;
 		} catch (RifidiAdapterIllegalStateException e) {
 			state = EReaderAdapterState.ERROR;
 			errorCause = e;
@@ -131,7 +133,6 @@ public class Session {
 									+ "This means that there may be an unfixed bug in the adapter.",
 							e);
 		}
-		state = EReaderAdapterState.CONNECTED;
 		return null;
 	}
 

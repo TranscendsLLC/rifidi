@@ -16,6 +16,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.rifidi.edge.core.adapter.dummyadapter.DummyConnectionInfo;
+import org.rifidi.edge.core.adapter.dummyadapter.DummyCustomCommand;
 import org.rifidi.edge.core.adapter.dummyadapter.DummyReaderAdapter;
 import org.rifidi.edge.core.adapter.dummyadapter.DummyReaderAdapterFactory;
 import org.rifidi.edge.core.adapter.dummyadapter.EDummyError;
@@ -62,13 +63,11 @@ public class SessionBreakageTest {
 		readerAdapterRegistryService.registerReaderAdapter(
 				DummyConnectionInfo.class, new DummyReaderAdapterFactory());
 
-		SessionRegistryService sessionRegistryService2 = new SessionRegistryServiceImpl();
-
 		DummyConnectionInfo info = new DummyConnectionInfo();
 		
 		info.setErrorToSet(EDummyError.CONNECT);
 		
-		Session s = sessionRegistryService2
+		Session s = sessionRegistryService
 				.createReaderSession(info);
 		
 
@@ -84,13 +83,12 @@ public class SessionBreakageTest {
 		readerAdapterRegistryService.registerReaderAdapter(
 				DummyConnectionInfo.class, new DummyReaderAdapterFactory());
 
-		SessionRegistryService sessionRegistryService2 = new SessionRegistryServiceImpl();
 
 		DummyConnectionInfo info = new DummyConnectionInfo();
 		
 		info.setErrorToSet(EDummyError.CONNECT_RUNTIME);
 		
-		Session s = sessionRegistryService2
+		Session s = sessionRegistryService
 				.createReaderSession(info);
 		
 
@@ -232,12 +230,41 @@ public class SessionBreakageTest {
 			e.printStackTrace();
 			Assert.fail();
 		} catch (NullPointerException e){
+			
 			Assert.assertSame(EReaderAdapterState.ERROR, s.getState());
 			Assert.assertNotNull(s.getErrorCause());
 			Assert.assertTrue(s.getErrorCause() instanceof RuntimeException);
 		}
 
 	}
+	
+	@Test
+	public void testSessionSendCustomCommand(){
+				
+		readerAdapterRegistryService.registerReaderAdapter(
+				DummyConnectionInfo.class, new DummyReaderAdapterFactory());
+
+		
+
+		DummyConnectionInfo info = new DummyConnectionInfo();
+		
+		info.setErrorToSet(EDummyError.SEND_CUSTOM_COMMAND);
+		
+		Session s = sessionRegistryService
+				.createReaderSession(info);
+		
+
+		s.connect();
+
+
+		s.sendCustomCommand(new DummyCustomCommand("Command"));
+		
+		System.out.println(s.getState());
+		
+		Assert.assertTrue(s.getState() == EReaderAdapterState.ERROR);
+	}
+	
+	
 	
 	@Inject
 	public void setConnectionFactory(ConnectionFactory connectionFactory) {

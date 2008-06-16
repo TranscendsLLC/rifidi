@@ -11,6 +11,14 @@ public class DummyCustomCommand implements ICustomCommand {
 	
 	private String command;
 
+	public DummyCustomCommand(String c){
+		command = c;
+	}
+	
+	public DummyCustomCommand(){
+		
+	}
+	
 	/**
 	 * @return the command
 	 */
