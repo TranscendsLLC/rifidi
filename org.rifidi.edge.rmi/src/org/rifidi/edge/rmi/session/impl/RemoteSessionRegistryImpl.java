@@ -1,6 +1,7 @@
 package org.rifidi.edge.rmi.session.impl;
 
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -22,6 +23,8 @@ public class RemoteSessionRegistryImpl implements RemoteSessionRegistry {
 	private SessionRegistryService sessionRegistryService;
 	private ReaderAdapterRegistryService readerAdapterRegistryService;
 
+	private List<RemoteSession> remoteSessionList = new ArrayList<RemoteSession>();
+	
 	public RemoteSessionRegistryImpl(
 			SessionRegistryService sessionRegistryService) {
 		this.sessionRegistryService = sessionRegistryService;
@@ -34,6 +37,7 @@ public class RemoteSessionRegistryImpl implements RemoteSessionRegistry {
 		logger.debug("Remote Call: createReaderSession()");
 		RemoteSession remoteSession = new RemoteSessionImpl(
 				sessionRegistryService.createReaderSession(connectionInfo));
+		remoteSessionList.add(remoteSession);
 		return remoteSession;
 	}
 
@@ -47,6 +51,7 @@ public class RemoteSessionRegistryImpl implements RemoteSessionRegistry {
 			ISession session = ((RemoteSessionImpl)remoteSession).getSession();
 			if(session instanceof Session)
 			{
+				remoteSessionList.remove(remoteSession);
 				sessionRegistryService.deleteReaderSession(((Session)session).getSessionID());
 			}else
 			{
@@ -67,5 +72,10 @@ public class RemoteSessionRegistryImpl implements RemoteSessionRegistry {
 	public void setReaderAdapterRegistryService(
 			ReaderAdapterRegistryService readerAdapterRegistryService) {
 		this.readerAdapterRegistryService = readerAdapterRegistryService;
+	}
+
+	@Override
+	public List<RemoteSession> getAllSessions() throws RemoteException {
+		return new ArrayList<RemoteSession>(remoteSessionList);
 	}
 }

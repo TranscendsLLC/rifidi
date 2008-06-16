@@ -6,15 +6,16 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.readerAdapter.commands.ICustomCommand;
 import org.rifidi.edge.core.session.ISession;
+import org.rifidi.edge.core.session.Session;
 import org.rifidi.edge.rmi.session.RemoteSession;
 
 public class RemoteSessionImpl implements RemoteSession {
 
 	private Log logger = LogFactory.getLog(RemoteSessionRegistryImpl.class);
 
-	private ISession session;
+	private Session session;
 
-	public RemoteSessionImpl(ISession session) {
+	public RemoteSessionImpl(Session session) {
 		this.session = session;
 	}
 
@@ -40,6 +41,16 @@ public class RemoteSessionImpl implements RemoteSession {
 	// TODO Think about a better place for this
 	public ISession getSession() {
 		return session;
+	}
+
+	@Override
+	public String getReaderDescription() {
+		return session.getConnectionInfo().getReaderType();
+	}
+
+	@Override
+	public String getReaderType() {
+		return session.getConnectionInfo().getReaderDescription();
 	}
 
 }

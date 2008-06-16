@@ -5,7 +5,7 @@ package org.rifidi.edge.core.session;
 
 import org.rifidi.edge.core.readerAdapter.commands.ICustomCommand;
 import org.rifidi.edge.core.readerAdapter.commands.ICustomCommandResult;
-import org.rifidi.edge.enums.EReaderAdapterState;
+import org.rifidi.edge.core.readerAdapterenums.EReaderAdapterState;
 
 /**
  * @author jerry
