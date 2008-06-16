@@ -57,7 +57,7 @@ public class SessionTest {
 	@Test
 	public void testGetSetAdapter() {
 
-		DummyReaderAdapter dummyAdapter = new DummyReaderAdapter();
+		DummyReaderAdapter dummyAdapter = new DummyReaderAdapter(new DummyConnectionInfo());
 		Session s = new Session(null, null, -1, null);
 
 		s.setAdapter(dummyAdapter);
@@ -76,7 +76,13 @@ public class SessionTest {
 		Assert.assertTrue(session.getSessionID() == 3);
 	}
 
-	/**
+	/**	@Before
+	public void setUp() throws Exception {
+	}
+
+	@After
+	public void tearDown() throws Exception {
+	}
 	 * Make sure we can set and get the AbstractConnectionInfo
 	 */
 	@Test
@@ -106,7 +112,7 @@ public class SessionTest {
 			Assert.fail("Error while initializing jmsHelper.");
 		}
 		
-		DummyReaderAdapter adapter = new DummyReaderAdapter();
+		DummyReaderAdapter adapter = new DummyReaderAdapter(new DummyConnectionInfo());
 		
 		try {
 			adapter.connect();
@@ -174,7 +180,7 @@ public class SessionTest {
 		int SessionID = 1;
 
 		// create the dummy reader adapter
-		DummyReaderAdapter readerAdapter = new DummyReaderAdapter();
+		DummyReaderAdapter readerAdapter = new DummyReaderAdapter(info);
 		
 		try {
 			readerAdapter.connect();

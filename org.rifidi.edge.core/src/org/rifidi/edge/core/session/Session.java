@@ -46,6 +46,7 @@ public class Session implements ISession {
 		setAdapter( adapter);
 		setSessionID(id);
 		this.jmsMessageThread = jmsMessageThread;
+		state = EReaderAdapterState.CREATED;
 	}
 
 	/**
@@ -157,10 +158,11 @@ public class Session implements ISession {
 	public void connect() {
 		try {
 			adapter.connect();
+			state = EReaderAdapterState.CONNECTED;
 		} catch (RifidiConnectionException e) {
 			state = EReaderAdapterState.ERROR;
 			errorCause = e;
-			logger.error("Error while disconnecting.", e);
+			logger.error("Error while connecting.", e);
 		} catch (RuntimeException e){
 			/* Error Resistance.
 			 * Uncaught Runtime errors should not cause the whole
@@ -180,6 +182,7 @@ public class Session implements ISession {
 	public void disconnect() {
 		try {
 			adapter.disconnect();
+			state = EReaderAdapterState.DISCONECTED;
 		} catch (RifidiConnectionException e) {
 			state = EReaderAdapterState.ERROR;
 			errorCause = e;

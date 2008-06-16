@@ -17,8 +17,12 @@ public class DummyReaderAdapter implements IReaderAdapter {
 
 	private boolean connected = false;
 
-	public DummyReaderAdapter() {
-		error = EDummyError.NONE;
+
+	private DummyConnectionInfo info; 
+	
+	public DummyReaderAdapter(DummyConnectionInfo info) {
+		error = info.getErrorToSet();
+		this.info = info;
 	}
 
 	@Override
