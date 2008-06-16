@@ -22,7 +22,9 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.llrp.ltk.exceptions.InvalidLLRPMessageException;
+import org.llrp.ltk.generated.enumerations.AISpecStopTriggerType;
 import org.llrp.ltk.generated.enumerations.AccessReportTriggerType;
+import org.llrp.ltk.generated.enumerations.AirProtocols;
 import org.llrp.ltk.generated.enumerations.NotificationEventType;
 import org.llrp.ltk.generated.enumerations.ROReportTriggerType;
 import org.llrp.ltk.generated.enumerations.ROSpecStartTriggerType;
@@ -34,12 +36,17 @@ import org.llrp.ltk.generated.messages.DELETE_ROSPEC;
 import org.llrp.ltk.generated.messages.DISABLE_ROSPEC;
 import org.llrp.ltk.generated.messages.ENABLE_ROSPEC;
 import org.llrp.ltk.generated.messages.LLRPMessageFactory;
+import org.llrp.ltk.generated.messages.RO_ACCESS_REPORT;
 import org.llrp.ltk.generated.messages.SET_READER_CONFIG;
 import org.llrp.ltk.generated.messages.START_ROSPEC;
 import org.llrp.ltk.generated.messages.STOP_ROSPEC;
+import org.llrp.ltk.generated.parameters.AISpec;
+import org.llrp.ltk.generated.parameters.AISpecStopTrigger;
 import org.llrp.ltk.generated.parameters.AccessReportSpec;
 import org.llrp.ltk.generated.parameters.C1G2EPCMemorySelector;
+import org.llrp.ltk.generated.parameters.EPC_96;
 import org.llrp.ltk.generated.parameters.EventNotificationState;
+import org.llrp.ltk.generated.parameters.InventoryParameterSpec;
 import org.llrp.ltk.generated.parameters.ROBoundarySpec;
 import org.llrp.ltk.generated.parameters.ROReportSpec;
 import org.llrp.ltk.generated.parameters.ROSpec;
@@ -47,11 +54,13 @@ import org.llrp.ltk.generated.parameters.ROSpecStartTrigger;
 import org.llrp.ltk.generated.parameters.ROSpecStopTrigger;
 import org.llrp.ltk.generated.parameters.ReaderEventNotificationSpec;
 import org.llrp.ltk.generated.parameters.TagReportContentSelector;
+import org.llrp.ltk.generated.parameters.TagReportData;
 import org.llrp.ltk.types.Bit;
 import org.llrp.ltk.types.LLRPInteger;
 import org.llrp.ltk.types.LLRPMessage;
 import org.llrp.ltk.types.UnsignedInteger;
 import org.llrp.ltk.types.UnsignedShort;
+import org.llrp.ltk.types.UnsignedShortArray;
 import org.rifidi.edge.common.utilities.converter.ByteAndHexConvertingUtility;
 import org.rifidi.edge.core.exception.adapter.RifidiConnectionException;
 import org.rifidi.edge.core.readerAdapter.IReaderAdapter;
@@ -124,7 +133,7 @@ public class LLRPReaderAdapter implements IReaderAdapter {
 
 		try {
 			LLRPMessage m = read();
-			logger.debug(m);
+			logger.debug(m.toXMLString());
 
 			SET_READER_CONFIG config = createSetReaderConfig();
 			write(config, "Set Reader Config");
@@ -158,7 +167,7 @@ public class LLRPReaderAdapter implements IReaderAdapter {
 		write(cc, "CloseConnection");
 		try {
 			LLRPMessage m = read();
-			logger.debug(m);
+			logger.debug(m.toXMLString());
 		} catch (IOException e) {
 			e.printStackTrace();
 			throw new RifidiConnectionException(e);
@@ -166,7 +175,7 @@ public class LLRPReaderAdapter implements IReaderAdapter {
 			e.printStackTrace();
 			throw new RifidiConnectionException(e);
 		}
-		
+
 		this.pause(1000);
 	}
 
@@ -188,7 +197,7 @@ public class LLRPReaderAdapter implements IReaderAdapter {
 	@Override
 	public List<TagRead> getNextTags() {
 		logger.debug("STARTING THE GETNEXTTAGS");
-		
+
 		List<TagRead> retVal = null;
 
 		// CREATE an ADD_ROSPEC Message and send it to the reader
@@ -217,8 +226,8 @@ public class LLRPReaderAdapter implements IReaderAdapter {
 		} catch (InvalidLLRPMessageException e1) {
 			e1.printStackTrace();
 		}
-		
-		//Create a START_ROSPEC message and send it to the reader
+
+		// Create a START_ROSPEC message and send it to the reader
 		START_ROSPEC startROSpec = new START_ROSPEC();
 		startROSpec.setROSpecID(new UnsignedInteger(ROSPEC_ID));
 		write(startROSpec, "START_ROSPEC");
@@ -229,15 +238,22 @@ public class LLRPReaderAdapter implements IReaderAdapter {
 		} catch (InvalidLLRPMessageException e1) {
 			e1.printStackTrace();
 		}
-		
+
+		LLRPMessage startros2 = readInCommand();
+		logger.debug("START ROSPEC2 TO XML");
+		try {
+			logger.debug(startros2.toXMLString());
+		} catch (InvalidLLRPMessageException e1) {
+			e1.printStackTrace();
+		}
+
 		pause(1000);
-		
-		//Create a STOP_ROSPEC message and send it to the reader
+
+		// Create a STOP_ROSPEC message and send it to the reader
 		STOP_ROSPEC stopROSpec = new STOP_ROSPEC();
 		stopROSpec.setROSpecID(new UnsignedInteger(ROSPEC_ID));
 		write(stopROSpec, "STOP_ROSPEC");
 		pause(250);
-		write(startROSpec, "STOP_ROSPEC");
 		LLRPMessage stopros = readInCommand();
 		logger.debug("STOP ROSPEC TO XML");
 		try {
@@ -246,9 +262,17 @@ public class LLRPReaderAdapter implements IReaderAdapter {
 			e1.printStackTrace();
 		}
 
+		LLRPMessage stopros2 = readInCommand();
+		logger.debug("STOP ROSPEC2 TO XML");
+		try {
+			logger.debug(stopros2.toXMLString());
+		} catch (InvalidLLRPMessageException e1) {
+			e1.printStackTrace();
+		}
+
 		LLRPMessage tags = readInCommand();
 		retVal = parseTags(tags);
-		
+
 		try {
 			logger.debug("TAGS TO XML STRING");
 			logger.debug(tags.toXMLString());
@@ -362,8 +386,29 @@ public class LLRPReaderAdapter implements IReaderAdapter {
 		return setReaderConfig;
 	}
 
+	/**
+	 * Parses the tags from xml.
+	 * 
+	 * @param msg
+	 * @return
+	 */
 	private List<TagRead> parseTags(LLRPMessage msg) {
-		List<TagRead> retVal = null;
+
+		List<TagRead> retVal = new ArrayList<TagRead>();
+		
+		RO_ACCESS_REPORT rar = (RO_ACCESS_REPORT)msg;
+		
+		//TagReportData list parse
+		for(TagReportData t:rar.getTagReportDataList()) {
+			TagRead newTag = new TagRead();
+			EPC_96 id = (EPC_96)t.getEPCParameter();
+			newTag.setId(ByteAndHexConvertingUtility.fromHexString(id.getEPC().toString()));
+			//TODO: Either our classes or the Toolkit handles this in the wrong way.   
+			//newTag.setLastSeenTime(t.getLastSeenTimestampUTC().getMicroseconds().toLong());
+			newTag.setLastSeenTime(System.nanoTime());
+			retVal.add(newTag);
+		}
+		
 
 		return retVal;
 	}
@@ -527,6 +572,28 @@ public class LLRPReaderAdapter implements IReaderAdapter {
 		roBoundarySpec.setROSpecStopTrigger(stopTrig);
 
 		roSpec.setROBoundarySpec(roBoundarySpec);
+
+		// Add an AISpec
+		AISpec aispec = new AISpec();
+
+		// set AI Stop trigger to null
+		AISpecStopTrigger aiStopTrigger = new AISpecStopTrigger();
+		aiStopTrigger.setAISpecStopTriggerType(new AISpecStopTriggerType(
+				AISpecStopTriggerType.Null));
+		aiStopTrigger.setDurationTrigger(new UnsignedInteger(0));
+		aispec.setAISpecStopTrigger(aiStopTrigger);
+
+		UnsignedShortArray antennaIDs = new UnsignedShortArray();
+		antennaIDs.add(new UnsignedShort(0));
+		aispec.setAntennaIDs(antennaIDs);
+
+		InventoryParameterSpec inventoryParam = new InventoryParameterSpec();
+		inventoryParam.setProtocolID(new AirProtocols(
+				AirProtocols.EPCGlobalClass1Gen2));
+		inventoryParam.setInventoryParameterSpecID(new UnsignedShort(1));
+		aispec.addToInventoryParameterSpecList(inventoryParam);
+
+		roSpec.addToSpecParameterList(aispec);
 
 		return roSpec;
 	}
