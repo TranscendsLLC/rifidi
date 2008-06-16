@@ -9,22 +9,18 @@ public class RifidiReaderAdapterCreationException extends RifidiReaderAdapterExc
 
 	public RifidiReaderAdapterCreationException() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	public RifidiReaderAdapterCreationException(String message, Throwable cause) {
 		super(message, cause);
-		// TODO Auto-generated constructor stub
 	}
 
 	public RifidiReaderAdapterCreationException(String message) {
 		super(message);
-		// TODO Auto-generated constructor stub
 	}
 
 	public RifidiReaderAdapterCreationException(Throwable cause) {
 		super(cause);
-		// TODO Auto-generated constructor stub
 	}
 
 }

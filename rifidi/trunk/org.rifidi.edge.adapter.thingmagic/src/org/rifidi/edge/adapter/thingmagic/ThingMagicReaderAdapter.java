@@ -13,6 +13,7 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.adapter.thingmagic.commands.ThingMagicCustomCommand;
+import org.rifidi.edge.adapter.thingmagic.commands.ThingMagicCustomCommandResult;
 import org.rifidi.edge.common.utilities.converter.ByteAndHexConvertingUtility;
 import org.rifidi.edge.core.exception.RifidiIIllegialArgumentException;
 import org.rifidi.edge.core.exception.adapter.RifidiAdapterIllegalStateException;
@@ -138,35 +139,35 @@ public class ThingMagicReaderAdapter implements IReaderAdapter {
 			throws RifidiAdapterIllegalStateException, RifidiIIllegialArgumentException
 	{
 		ThingMagicCustomCommand command;
+		ThingMagicCustomCommandResult result = null;
 		if(customCommand == null)
-			//TODO: needs to be fixed.
-			throw new IllegalArgumentException();
+			throw new RifidiIIllegialArgumentException();
 		
 		if(customCommand instanceof ThingMagicCustomCommand){
 			command = (ThingMagicCustomCommand) customCommand;
 			if(command.getCustomCommand() == null)
-				//TODO: needs to be fixed.
-				throw new IllegalArgumentException();
+				throw new RifidiIIllegialArgumentException();
 			else 
 				if (command.getCustomCommand().equals("") || command.getCustomCommand().endsWith(";"))
-					//TODO: needs to be fixed.
-					throw new IllegalArgumentException();
+					throw new RifidiIIllegialArgumentException();
 		} else {
-			//TODO: needs to be fixed.
-			throw new IllegalArgumentException();
+			throw new RifidiIIllegialArgumentException();
 		}
 		
 		if (!connected ){
 			// TODO This needs to be implemented more fully.
 			try {
 				out.write(command.getCustomCommand());
-				readFromReader(in);
+				out.flush();
+				//TODO check if result is actually an error
+				result = new ThingMagicCustomCommandResult(readFromReader(in));
 			} catch (IOException e) {
-				logger.debug("IOException.", e);
+				logger.debug("IOException has accured.", e);
+				throw new RifidiAdapterIllegalStateException(e.getClass().getName(), e);
 			}
 			
 		}
-		return null;
+		return result;
 	}
 
 	@Override
