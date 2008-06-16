@@ -1,4 +1,4 @@
-package org.rifidi.edge.core.test;
+package org.rifidi.edge.core.test.session;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -12,7 +12,7 @@ import org.rifidi.edge.core.session.SessionRegistryServiceImpl;
 import org.rifidi.services.annotations.Inject;
 import org.rifidi.services.registry.ServiceRegistry;
 
-public class SesionRegistryTest {
+public class SessionRegistryTest {
 
 	private SessionRegistryService sessionRegistryService;
 

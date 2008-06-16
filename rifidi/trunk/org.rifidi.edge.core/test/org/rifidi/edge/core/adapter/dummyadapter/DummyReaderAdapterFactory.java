@@ -10,7 +10,9 @@ public class DummyReaderAdapterFactory implements ISpecificReaderAdapterFactory 
 	@Override
 	public IReaderAdapter createSpecificReaderAdapter(
 			AbstractConnectionInfo abstractConnectionInfo) throws RifidiReaderAdapterCreationException{
-		return new DummyReaderAdapter();
+		if (!(abstractConnectionInfo instanceof DummyConnectionInfo) )
+			throw new RifidiReaderAdapterCreationException();
+		return new DummyReaderAdapter((DummyConnectionInfo)abstractConnectionInfo);
 	}
 
 }
