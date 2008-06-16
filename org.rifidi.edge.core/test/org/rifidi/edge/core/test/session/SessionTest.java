@@ -202,6 +202,8 @@ public class SessionTest {
 		// create the reader Session
 		Session s = new Session(info, readerAdapter, SessionID, mthread);
 
+		s.connect();
+		
 		s.startTagStream();
 
 		Connection c;
