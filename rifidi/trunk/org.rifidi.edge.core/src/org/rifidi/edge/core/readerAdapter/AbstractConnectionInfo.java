@@ -6,6 +6,26 @@ public abstract class AbstractConnectionInfo {
 
 	private String ip;
 
+	private String readerType;
+
+	private String readerDescription;
+
+	public String getReaderDescription() {
+		return readerDescription;
+	}
+
+	public void setReaderDescription(String readerDescription) {
+		this.readerDescription = readerDescription;
+	}
+
+	public String getReaderType() {
+		return readerType;
+	}
+
+	public void setReaderType(String readerType) {
+		this.readerType = readerType;
+	}
+
 	public String getIPAddress() {
 		return ip;
 	}
@@ -22,6 +42,7 @@ public abstract class AbstractConnectionInfo {
 		this.port = port;
 	}
 
-	//TODO Think about the sense of this method
+	// TODO Think about the sense of this method
+	@Deprecated
 	public abstract Class<? extends AbstractConnectionInfo> getReaderAdapterType();
 }

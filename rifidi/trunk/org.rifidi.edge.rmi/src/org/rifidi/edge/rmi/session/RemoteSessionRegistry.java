@@ -14,6 +14,8 @@ public interface RemoteSessionRegistry extends Remote {
 	public void deleteReaderSession(RemoteSession remoteSession)
 			throws RemoteException;
 	
+	public List<RemoteSession> getAllSessions() throws RemoteException;
+	
 	public List<String> getAvailableReaderAdapters() throws RemoteException;
 
 }

@@ -9,8 +9,8 @@ import org.rifidi.edge.core.readerAdapter.AbstractConnectionInfo;
 import org.rifidi.edge.core.readerAdapter.IReaderAdapter;
 import org.rifidi.edge.core.readerAdapter.commands.ICustomCommand;
 import org.rifidi.edge.core.readerAdapter.commands.ICustomCommandResult;
+import org.rifidi.edge.core.readerAdapterenums.EReaderAdapterState;
 import org.rifidi.edge.core.session.jms.JMSMessageThread;
-import org.rifidi.edge.enums.EReaderAdapterState;
 
 
 /**
