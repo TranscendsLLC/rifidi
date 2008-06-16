@@ -13,7 +13,6 @@ import org.rifidi.edge.core.tag.TagRead;
 
 public class DummyReaderAdapter implements IReaderAdapter {
 
-	private EDummyError error;
 
 	private boolean connected = false;
 
@@ -21,13 +20,12 @@ public class DummyReaderAdapter implements IReaderAdapter {
 	private DummyConnectionInfo info; 
 	
 	public DummyReaderAdapter(DummyConnectionInfo info) {
-		error = info.getErrorToSet();
 		this.info = info;
 	}
 
 	@Override
 	public void connect() throws RifidiConnectionException {
-		switch (error) {
+		switch (info.getErrorToSet()) {
 			case CONNECT:
 				throw new RifidiConnectionException();
 			case CONNECT_RUNTIME:
@@ -38,7 +36,7 @@ public class DummyReaderAdapter implements IReaderAdapter {
 
 	@Override
 	public void disconnect() throws RifidiConnectionException {
-		switch (error) {
+		switch (info.getErrorToSet()) {
 			case DISCONNECT:
 				throw new RifidiConnectionException();
 			case DISCONNECT_RUNTIME:
@@ -50,7 +48,7 @@ public class DummyReaderAdapter implements IReaderAdapter {
 	@Override
 	public List<TagRead> getNextTags()
 			throws RifidiAdapterIllegalStateException {
-		switch (error) {
+		switch (info.getErrorToSet()) {
 			case GET_NEXT_TAGS:
 				throw new RifidiAdapterIllegalStateException();
 			case GET_NEXT_TAGS_RUNTIME:
@@ -73,7 +71,7 @@ public class DummyReaderAdapter implements IReaderAdapter {
 	public ICustomCommandResult sendCustomCommand(ICustomCommand customCommand)
 			throws RifidiAdapterIllegalStateException,
 			RifidiIIllegialArgumentException {
-		switch (error) {
+		switch (info.getErrorToSet()) {
 			case SEND_CUSTOM_COMMAND:
 				throw new RifidiAdapterIllegalStateException();
 			case SEND_CUSTOM_COMMAND2:
@@ -100,6 +98,10 @@ public class DummyReaderAdapter implements IReaderAdapter {
 	}
 
 	public void setError(EDummyError error) {
-		this.error = error;
+		info.setErrorToSet(error);
+	}
+	
+	public EDummyError getError(){
+		return info.getErrorToSet();
 	}
 }
