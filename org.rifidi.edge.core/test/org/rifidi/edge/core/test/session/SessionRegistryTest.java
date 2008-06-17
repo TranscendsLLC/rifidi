@@ -21,7 +21,6 @@ public class SessionRegistryTest {
 	@Before
 	public void setUp() throws Exception {
 		ServiceRegistry.getInstance().service(this);
-
 	}
 
 	/**
@@ -30,7 +29,9 @@ public class SessionRegistryTest {
 	@Test
 	public void testGetSessionRegistry() {
 		Assert.assertNotNull(sessionRegistryService);
-		Assert.assertTrue(sessionRegistryService.sessionCount() == 0);
+		// TODO Jerry why do we need the session count here? Isn't it sufficient to ask if it is null or something like that?
+		//Assert.assertTrue(sessionRegistryService.sessionCount() == 0);
+		Assert.fail("TODO");
 	}
 
 	/**
@@ -52,7 +53,7 @@ public class SessionRegistryTest {
 		ReaderConnectionRegistryService sessionRegistryService2 = new ReaderConnectionRegistryServiceImpl();
 
 		ReaderConnection s = sessionRegistryService2
-				.createReaderSession(new DummyConnectionInfo());
+				.createReaderConnection(new DummyConnectionInfo());
 
 		Assert.assertNotNull(s);
 	}
@@ -62,9 +63,9 @@ public class SessionRegistryTest {
 		ReaderConnectionRegistryService sessionRegistryService2 = new ReaderConnectionRegistryServiceImpl();
 		
 		ReaderConnection s = sessionRegistryService2
-				.createReaderSession(new DummyConnectionInfo());
+				.createReaderConnection(new DummyConnectionInfo());
 
-		Assert.assertTrue(sessionRegistryService2.getReaderSession(s.getSessionID()) == s);
+		Assert.assertTrue(sessionRegistryService2.getReaderConnection(s.getSessionID()) == s);
 	}
 
 	@Inject

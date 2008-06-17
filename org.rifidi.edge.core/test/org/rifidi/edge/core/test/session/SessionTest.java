@@ -183,7 +183,7 @@ public class SessionTest {
 		DummyConnectionInfo info = new DummyConnectionInfo();
 		
 		ReaderConnection s = sessionRegistryService
-				.createReaderSession(info);
+				.createReaderConnection(info);
 		
 
 		s.connect();
