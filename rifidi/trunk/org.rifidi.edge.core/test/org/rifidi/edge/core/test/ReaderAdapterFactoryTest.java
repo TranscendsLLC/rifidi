@@ -9,9 +9,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.rifidi.edge.core.adapter.dummyadapter.DummyConnectionInfo;
 import org.rifidi.edge.core.adapter.dummyadapter.DummyReaderAdapterFactory;
-import org.rifidi.edge.core.readerAdapter.IReaderAdapter;
-import org.rifidi.edge.core.readerAdapter.ReaderAdapterFactory;
-import org.rifidi.edge.core.readerAdapterService.ReaderAdapterRegistryService;
+import org.rifidi.edge.core.readerPlugin.IReaderPlugin;
+import org.rifidi.edge.core.readerPlugin.ReaderPluginFactory;
+import org.rifidi.edge.core.readerPluginService.ReaderAdapterRegistryService;
 import org.rifidi.services.annotations.Inject;
 import org.rifidi.services.registry.ServiceRegistry;
 
@@ -50,7 +50,7 @@ public class ReaderAdapterFactoryTest {
 	 */
 	@Test
 	public void testCreateReaderAdapter() {
-		IReaderAdapter adapter = ReaderAdapterFactory.getInstance()
+		IReaderPlugin adapter = ReaderPluginFactory.getInstance()
 				.createReaderAdapter(new DummyConnectionInfo());
 		Assert.assertNotNull(adapter);
 	}

@@ -20,14 +20,14 @@ import org.rifidi.edge.core.adapter.dummyadapter.DummyCustomCommand;
 import org.rifidi.edge.core.adapter.dummyadapter.DummyReaderAdapter;
 import org.rifidi.edge.core.adapter.dummyadapter.DummyReaderAdapterFactory;
 import org.rifidi.edge.core.adapter.dummyadapter.EDummyError;
+import org.rifidi.edge.core.connection.ReaderConnection;
+import org.rifidi.edge.core.connection.ReaderConnectionRegistryService;
+import org.rifidi.edge.core.connection.ReaderConnectionRegistryServiceImpl;
 import org.rifidi.edge.core.exception.RifidiException;
-import org.rifidi.edge.core.exception.adapter.RifidiAdapterIllegalStateException;
-import org.rifidi.edge.core.exception.adapter.RifidiConnectionException;
-import org.rifidi.edge.core.readerAdapter.enums.EReaderAdapterState;
-import org.rifidi.edge.core.readerAdapterService.ReaderAdapterRegistryService;
-import org.rifidi.edge.core.session.Session;
-import org.rifidi.edge.core.session.SessionRegistryService;
-import org.rifidi.edge.core.session.SessionRegistryServiceImpl;
+import org.rifidi.edge.core.exception.readerPlugin.RifidiAdapterIllegalStateException;
+import org.rifidi.edge.core.exception.readerPlugin.RifidiConnectionException;
+import org.rifidi.edge.core.readerPlugin.enums.EReaderAdapterState;
+import org.rifidi.edge.core.readerPluginService.ReaderAdapterRegistryService;
 
 import org.rifidi.services.annotations.Inject;
 import org.rifidi.services.registry.ServiceRegistry;
@@ -37,7 +37,7 @@ public class SessionBreakageTest {
 
 	private ConnectionFactory connectionFactory;
 	
-	private SessionRegistryService sessionRegistryService;
+	private ReaderConnectionRegistryService sessionRegistryService;
 
 	private ReaderAdapterRegistryService readerAdapterRegistryService;
 
@@ -68,7 +68,7 @@ public class SessionBreakageTest {
 		
 		info.setErrorToSet(EDummyError.CONNECT);
 		
-		Session s = sessionRegistryService
+		ReaderConnection s = sessionRegistryService
 				.createReaderSession(info);
 		
 
@@ -89,7 +89,7 @@ public class SessionBreakageTest {
 		
 		info.setErrorToSet(EDummyError.CONNECT_RUNTIME);
 		
-		Session s = sessionRegistryService
+		ReaderConnection s = sessionRegistryService
 				.createReaderSession(info);
 		
 
@@ -122,7 +122,7 @@ public class SessionBreakageTest {
 		}
 
 		// create the reader Session
-		Session s = sessionRegistryService.createReaderSession(info);
+		ReaderConnection s = sessionRegistryService.createReaderSession(info);
 
 		s.connect();
 		
@@ -191,7 +191,7 @@ public class SessionBreakageTest {
 		}
 
 		// create the reader Session
-		Session s = sessionRegistryService.createReaderSession(info);
+		ReaderConnection s = sessionRegistryService.createReaderSession(info);
 
 		s.connect();
 		
@@ -251,7 +251,7 @@ public class SessionBreakageTest {
 		
 		info.setErrorToSet(EDummyError.SEND_CUSTOM_COMMAND);
 		
-		Session s = sessionRegistryService
+		ReaderConnection s = sessionRegistryService
 				.createReaderSession(info);
 		
 
@@ -278,7 +278,7 @@ public class SessionBreakageTest {
 		
 		info.setErrorToSet(EDummyError.SEND_CUSTOM_COMMAND_RUNTIME);
 		
-		Session s = sessionRegistryService
+		ReaderConnection s = sessionRegistryService
 				.createReaderSession(info);
 		
 
@@ -305,7 +305,7 @@ public class SessionBreakageTest {
 		
 		info.setErrorToSet(EDummyError.DISCONNECT);
 		
-		Session s = sessionRegistryService
+		ReaderConnection s = sessionRegistryService
 				.createReaderSession(info);
 		
 
@@ -330,7 +330,7 @@ public class SessionBreakageTest {
 		
 		info.setErrorToSet(EDummyError.DISCONNECT_RUNTIME);
 		
-		Session s = sessionRegistryService
+		ReaderConnection s = sessionRegistryService
 				.createReaderSession(info);
 		
 
@@ -349,7 +349,7 @@ public class SessionBreakageTest {
 	}
 
 	@Inject
-	public void setSessionRegistryService(SessionRegistryService regSer) {
+	public void setSessionRegistryService(ReaderConnectionRegistryService regSer) {
 		this.sessionRegistryService = regSer;
 	}
 

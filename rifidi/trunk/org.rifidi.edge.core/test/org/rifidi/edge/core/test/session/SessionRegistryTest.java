@@ -5,16 +5,16 @@ import org.junit.Before;
 import org.junit.Test;
 import org.rifidi.edge.core.adapter.dummyadapter.DummyConnectionInfo;
 import org.rifidi.edge.core.adapter.dummyadapter.DummyReaderAdapterFactory;
-import org.rifidi.edge.core.readerAdapterService.ReaderAdapterRegistryService;
-import org.rifidi.edge.core.session.Session;
-import org.rifidi.edge.core.session.SessionRegistryService;
-import org.rifidi.edge.core.session.SessionRegistryServiceImpl;
+import org.rifidi.edge.core.connection.ReaderConnection;
+import org.rifidi.edge.core.connection.ReaderConnectionRegistryService;
+import org.rifidi.edge.core.connection.ReaderConnectionRegistryServiceImpl;
+import org.rifidi.edge.core.readerPluginService.ReaderAdapterRegistryService;
 import org.rifidi.services.annotations.Inject;
 import org.rifidi.services.registry.ServiceRegistry;
 
 public class SessionRegistryTest {
 
-	private SessionRegistryService sessionRegistryService;
+	private ReaderConnectionRegistryService sessionRegistryService;
 
 	private ReaderAdapterRegistryService readerAdapterRegistryService;
 
@@ -49,9 +49,9 @@ public class SessionRegistryTest {
 		readerAdapterRegistryService.registerReaderAdapter(
 				DummyConnectionInfo.class, new DummyReaderAdapterFactory());
 
-		SessionRegistryService sessionRegistryService2 = new SessionRegistryServiceImpl();
+		ReaderConnectionRegistryService sessionRegistryService2 = new ReaderConnectionRegistryServiceImpl();
 
-		Session s = sessionRegistryService2
+		ReaderConnection s = sessionRegistryService2
 				.createReaderSession(new DummyConnectionInfo());
 
 		Assert.assertNotNull(s);
@@ -59,16 +59,16 @@ public class SessionRegistryTest {
 
 	@Test
 	public void testSetAndGetSession() {
-		SessionRegistryService sessionRegistryService2 = new SessionRegistryServiceImpl();
+		ReaderConnectionRegistryService sessionRegistryService2 = new ReaderConnectionRegistryServiceImpl();
 		
-		Session s = sessionRegistryService2
+		ReaderConnection s = sessionRegistryService2
 				.createReaderSession(new DummyConnectionInfo());
 
 		Assert.assertTrue(sessionRegistryService2.getReaderSession(s.getSessionID()) == s);
 	}
 
 	@Inject
-	public void setSessionRegistryService(SessionRegistryService regSer) {
+	public void setSessionRegistryService(ReaderConnectionRegistryService regSer) {
 		this.sessionRegistryService = regSer;
 	}
 

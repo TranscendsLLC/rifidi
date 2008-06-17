@@ -22,15 +22,15 @@ import org.rifidi.edge.core.adapter.dummyadapter.DummyCustomCommandResult;
 import org.rifidi.edge.core.adapter.dummyadapter.DummyReaderAdapter;
 import org.rifidi.edge.core.adapter.dummyadapter.DummyReaderAdapterFactory;
 import org.rifidi.edge.core.adapter.dummyadapter.EDummyError;
-import org.rifidi.edge.core.exception.adapter.RifidiAdapterIllegalStateException;
-import org.rifidi.edge.core.exception.adapter.RifidiConnectionException;
-import org.rifidi.edge.core.readerAdapter.AbstractConnectionInfo;
-import org.rifidi.edge.core.readerAdapter.enums.EReaderAdapterState;
-import org.rifidi.edge.core.readerAdapterService.ReaderAdapterRegistryService;
-import org.rifidi.edge.core.session.Session;
-import org.rifidi.edge.core.session.SessionRegistryService;
-import org.rifidi.edge.core.session.jms.JMSHelper;
-import org.rifidi.edge.core.session.jms.JMSMessageThread;
+import org.rifidi.edge.core.connection.ReaderConnection;
+import org.rifidi.edge.core.connection.ReaderConnectionRegistryService;
+import org.rifidi.edge.core.connection.jms.JMSHelper;
+import org.rifidi.edge.core.connection.jms.JMSMessageThread;
+import org.rifidi.edge.core.exception.readerPlugin.RifidiAdapterIllegalStateException;
+import org.rifidi.edge.core.exception.readerPlugin.RifidiConnectionException;
+import org.rifidi.edge.core.readerPlugin.AbstractReaderInfo;
+import org.rifidi.edge.core.readerPlugin.enums.EReaderAdapterState;
+import org.rifidi.edge.core.readerPluginService.ReaderAdapterRegistryService;
 import org.rifidi.services.annotations.Inject;
 import org.rifidi.services.registry.ServiceRegistry;
 
@@ -44,7 +44,7 @@ public class SessionTest {
 
 	private ConnectionFactory connectionFactory;
 	
-	private SessionRegistryService sessionRegistryService;
+	private ReaderConnectionRegistryService sessionRegistryService;
 	
 	private ReaderAdapterRegistryService readerAdapterRegistryService;
 
@@ -70,7 +70,7 @@ public class SessionTest {
 	public void testGetSetAdapter() {
 
 		DummyReaderAdapter dummyAdapter = new DummyReaderAdapter(new DummyConnectionInfo());
-		Session s = new Session(null, null, -1, null);
+		ReaderConnection s = new ReaderConnection(null, null, -1, null);
 
 		s.setAdapter(dummyAdapter);
 		Assert.assertEquals(dummyAdapter, s.getAdapter());
@@ -82,7 +82,7 @@ public class SessionTest {
 	 */
 	@Test
 	public void testGetSetSessionID() {
-		Session session = new Session(null, null, -1, null);
+		ReaderConnection session = new ReaderConnection(null, null, -1, null);
 		
 		session.setSessionID(3);
 		Assert.assertTrue(session.getSessionID() == 3);
@@ -99,8 +99,8 @@ public class SessionTest {
 	 */
 	@Test
 	public void testGetSetAbstractConnectionInfo() {
-		Session session = new Session(null, null, 0, null);
-		AbstractConnectionInfo info = new DummyConnectionInfo();
+		ReaderConnection session = new ReaderConnection(null, null, 0, null);
+		AbstractReaderInfo info = new DummyConnectionInfo();
 		session.setConnectionInfo(info);
 		Assert.assertTrue(session.getConnectionInfo() == info);
 	}
@@ -182,7 +182,7 @@ public class SessionTest {
 
 		DummyConnectionInfo info = new DummyConnectionInfo();
 		
-		Session s = sessionRegistryService
+		ReaderConnection s = sessionRegistryService
 				.createReaderSession(info);
 		
 
@@ -231,7 +231,7 @@ public class SessionTest {
 				readerAdapter, jmsHelper);
 
 		// create the reader Session
-		Session s = new Session(info, readerAdapter, SessionID, mthread);
+		ReaderConnection s = new ReaderConnection(info, readerAdapter, SessionID, mthread);
 
 		s.connect();
 		
@@ -280,7 +280,7 @@ public class SessionTest {
 	}
 	
 	@Inject
-	public void setSessionRegistryService(SessionRegistryService regSer) {
+	public void setSessionRegistryService(ReaderConnectionRegistryService regSer) {
 		this.sessionRegistryService = regSer;
 	}
 	

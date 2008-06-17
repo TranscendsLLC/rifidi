@@ -1,4 +1,4 @@
-package org.rifidi.edge.core.readerAdapter.commands;
+package org.rifidi.edge.core.readerPlugin.commands;
 
 import java.io.Serializable;
 

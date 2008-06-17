@@ -1,4 +1,4 @@
-package org.rifidi.edge.core.readerAdapter.enums;
+package org.rifidi.edge.core.readerPlugin.enums;
 
 public enum EReaderAdapterState {
 	CREATED, CONNECTED, DISCONECTED, DESTROYED, STREAMING, BUSY, ERROR

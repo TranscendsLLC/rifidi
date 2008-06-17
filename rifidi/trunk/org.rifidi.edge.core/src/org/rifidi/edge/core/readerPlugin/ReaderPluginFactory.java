@@ -1,29 +1,29 @@
-package org.rifidi.edge.core.readerAdapter;
+package org.rifidi.edge.core.readerPlugin;
 
-import org.rifidi.edge.core.exception.adapter.RifidiReaderAdapterCreationException;
-import org.rifidi.edge.core.readerAdapterService.ReaderAdapterRegistryService;
+import org.rifidi.edge.core.exception.readerPlugin.RifidiReaderAdapterCreationException;
+import org.rifidi.edge.core.readerPluginService.ReaderAdapterRegistryService;
 import org.rifidi.services.annotations.Inject;
 import org.rifidi.services.registry.ServiceRegistry;
 
 
-public class ReaderAdapterFactory {
+public class ReaderPluginFactory {
 	
-	private static ReaderAdapterFactory INSTANCE = new ReaderAdapterFactory();
+	private static ReaderPluginFactory INSTANCE = new ReaderPluginFactory();
 	
 	private ReaderAdapterRegistryService readerAdapterRegistryService;
 	
-	public ReaderAdapterFactory(){
+	public ReaderPluginFactory(){
 		ServiceRegistry.getInstance().service(this);
 	}
 	
 	
 
-	public IReaderAdapter createReaderAdapter(
-			AbstractConnectionInfo abstractConnnectionInfo) {
-		IReaderAdapter readerAdapter = null;
+	public IReaderPlugin createReaderAdapter(
+			AbstractReaderInfo abstractConnnectionInfo) {
+		IReaderPlugin readerAdapter = null;
 		
 		if (readerAdapterRegistryService != null ){
-			ISpecificReaderAdapterFactory factory = readerAdapterRegistryService.getSpecReaderAdapterFactory(abstractConnnectionInfo);
+			ISpecificReaderPluginFactory factory = readerAdapterRegistryService.getSpecReaderAdapterFactory(abstractConnnectionInfo);
 			try {
 				readerAdapter = factory.createSpecificReaderAdapter(abstractConnnectionInfo);
 			} catch (RifidiReaderAdapterCreationException e) {
@@ -35,7 +35,7 @@ public class ReaderAdapterFactory {
 		return readerAdapter;
 	}
 
-	public static ReaderAdapterFactory getInstance()
+	public static ReaderPluginFactory getInstance()
 	{
 		return INSTANCE;
 	}
