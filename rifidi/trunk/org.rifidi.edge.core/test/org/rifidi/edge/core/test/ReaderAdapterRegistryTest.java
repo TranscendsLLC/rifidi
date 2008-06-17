@@ -8,8 +8,8 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.rifidi.edge.core.adapter.dummyadapter.DummyConnectionInfo;
-import org.rifidi.edge.core.adapter.dummyadapter.DummyReaderAdapterFactory;
+import org.rifidi.edge.core.adapter.dummyadapter.DummyReaderInfo;
+import org.rifidi.edge.core.adapter.dummyadapter.DummyReaderPluginFactory;
 import org.rifidi.edge.core.readerPlugin.ISpecificReaderPluginFactory;
 import org.rifidi.edge.core.readerPluginService.ReaderPluginRegistryService;
 import org.rifidi.edge.core.readerPluginService.ReaderPluginRegistryServiceImpl;
@@ -43,10 +43,10 @@ public class ReaderAdapterRegistryTest {
 
 		ReaderPluginRegistryService registry = new ReaderPluginRegistryServiceImpl();
 		
-		ISpecificReaderPluginFactory factory = new DummyReaderAdapterFactory();
-		registry.registerReaderAdapter(DummyConnectionInfo.class, factory);
+		ISpecificReaderPluginFactory factory = new DummyReaderPluginFactory();
+		registry.registerReaderAdapter(DummyReaderInfo.class, factory);
 		
-		if (registry.getSpecReaderAdapterFactory(new DummyConnectionInfo()) != factory)
+		if (registry.getSpecReaderAdapterFactory(new DummyReaderInfo()) != factory)
 		{
 			Assert.fail();
 		}

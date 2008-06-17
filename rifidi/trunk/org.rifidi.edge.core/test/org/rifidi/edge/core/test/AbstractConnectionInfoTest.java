@@ -5,7 +5,7 @@ package org.rifidi.edge.core.test;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.rifidi.edge.core.adapter.dummyadapter.DummyConnectionInfo;
+import org.rifidi.edge.core.adapter.dummyadapter.DummyReaderInfo;
 
 /**
  * @author kyle
@@ -19,7 +19,7 @@ public class AbstractConnectionInfoTest {
 	 */
 	@Test
 	public void testSetGetIP(){
-		DummyConnectionInfo info = new DummyConnectionInfo();
+		DummyReaderInfo info = new DummyReaderInfo();
 		info.setIPAddress("127.0.0.1");
 		Assert.assertTrue(info.getIPAddress().equals("127.0.0.1"));
 	}
@@ -29,7 +29,7 @@ public class AbstractConnectionInfoTest {
 	 */
 	@Test
 	public void testsetgetPort(){
-		DummyConnectionInfo info = new DummyConnectionInfo();
+		DummyReaderInfo info = new DummyReaderInfo();
 		info.setPort(8080);
 		Assert.assertTrue(info.getPort() == 8080);
 	}

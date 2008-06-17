@@ -1,11 +1,12 @@
 package org.rifidi.edge.rmi.ReaderConnection;
 
+import java.io.Serializable;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
 import org.rifidi.edge.core.readerPlugin.commands.ICustomCommand;
 
-public interface RemoteReaderConnection extends Remote {
+public interface RemoteReaderConnection extends Remote, Serializable {
 
 	// TODO Think about error handling
 	public void startTagStream() throws RemoteException;

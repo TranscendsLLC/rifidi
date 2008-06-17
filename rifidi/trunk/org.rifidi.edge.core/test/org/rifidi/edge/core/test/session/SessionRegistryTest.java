@@ -3,8 +3,8 @@ package org.rifidi.edge.core.test.session;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.rifidi.edge.core.adapter.dummyadapter.DummyConnectionInfo;
-import org.rifidi.edge.core.adapter.dummyadapter.DummyReaderAdapterFactory;
+import org.rifidi.edge.core.adapter.dummyadapter.DummyReaderInfo;
+import org.rifidi.edge.core.adapter.dummyadapter.DummyReaderPluginFactory;
 import org.rifidi.edge.core.connection.ReaderConnection;
 import org.rifidi.edge.core.connection.ReaderConnectionRegistryService;
 import org.rifidi.edge.core.connection.ReaderConnectionRegistryServiceImpl;
@@ -48,12 +48,12 @@ public class SessionRegistryTest {
 	@Test
 	public void testCreateSession() {
 		readerPluginRegistryService.registerReaderAdapter(
-				DummyConnectionInfo.class, new DummyReaderAdapterFactory());
+				DummyReaderInfo.class, new DummyReaderPluginFactory());
 
 		ReaderConnectionRegistryService sessionRegistryService2 = new ReaderConnectionRegistryServiceImpl();
 
 		ReaderConnection s = sessionRegistryService2
-				.createReaderConnection(new DummyConnectionInfo());
+				.createReaderConnection(new DummyReaderInfo());
 
 		Assert.assertNotNull(s);
 	}
@@ -63,7 +63,7 @@ public class SessionRegistryTest {
 		ReaderConnectionRegistryService sessionRegistryService2 = new ReaderConnectionRegistryServiceImpl();
 		
 		ReaderConnection s = sessionRegistryService2
-				.createReaderConnection(new DummyConnectionInfo());
+				.createReaderConnection(new DummyReaderInfo());
 
 		Assert.assertTrue(sessionRegistryService2.getReaderConnection(s.getSessionID()) == s);
 	}

@@ -11,15 +11,15 @@ import org.rifidi.edge.core.readerPlugin.commands.ICustomCommand;
 import org.rifidi.edge.core.readerPlugin.commands.ICustomCommandResult;
 import org.rifidi.edge.core.tag.TagRead;
 
-public class DummyReaderAdapter implements IReaderPlugin {
+public class DummyReaderPlugin implements IReaderPlugin {
 
 
 	private boolean connected = false;
 
 
-	private DummyConnectionInfo info; 
+	private DummyReaderInfo info; 
 	
-	public DummyReaderAdapter(DummyConnectionInfo info) {
+	public DummyReaderPlugin(DummyReaderInfo info) {
 		this.info = info;
 	}
 
