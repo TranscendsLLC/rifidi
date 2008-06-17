@@ -23,9 +23,9 @@ import org.rifidi.edge.core.adapter.dummyadapter.EDummyError;
 import org.rifidi.edge.core.connection.ReaderConnection;
 import org.rifidi.edge.core.connection.ReaderConnectionRegistryService;
 import org.rifidi.edge.core.connection.ReaderConnectionRegistryServiceImpl;
+import org.rifidi.edge.core.exception.RifidiAdapterIllegalStateException;
+import org.rifidi.edge.core.exception.RifidiConnectionException;
 import org.rifidi.edge.core.exception.RifidiException;
-import org.rifidi.edge.core.exception.readerPlugin.RifidiAdapterIllegalStateException;
-import org.rifidi.edge.core.exception.readerPlugin.RifidiConnectionException;
 import org.rifidi.edge.core.readerPlugin.enums.EReaderAdapterState;
 import org.rifidi.edge.core.readerPluginService.ReaderAdapterRegistryService;
 
