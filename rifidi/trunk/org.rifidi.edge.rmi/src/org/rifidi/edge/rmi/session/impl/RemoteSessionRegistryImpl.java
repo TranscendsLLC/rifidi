@@ -35,7 +35,7 @@ public class RemoteSessionRegistryImpl implements RemoteSessionRegistry {
 			AbstractReaderInfo connectionInfo) throws RemoteException {
 		logger.debug("Remote Call: createReaderSession()");
 		RemoteSession remoteSession = new RemoteSessionImpl(
-				sessionRegistryService.createReaderSession(connectionInfo));
+				sessionRegistryService.createReaderConnection(connectionInfo));
 		remoteSessionList.add(remoteSession);
 		return remoteSession;
 	}
@@ -51,7 +51,7 @@ public class RemoteSessionRegistryImpl implements RemoteSessionRegistry {
 			if(session instanceof ReaderConnection)
 			{
 				remoteSessionList.remove(remoteSession);
-				sessionRegistryService.deleteReaderSession(((ReaderConnection)session).getSessionID());
+				sessionRegistryService.deleteReaderConnection(((ReaderConnection)session).getSessionID());
 			}else
 			{
 				logger.error("RemoteSessionRegistry: Session Error... look this up");

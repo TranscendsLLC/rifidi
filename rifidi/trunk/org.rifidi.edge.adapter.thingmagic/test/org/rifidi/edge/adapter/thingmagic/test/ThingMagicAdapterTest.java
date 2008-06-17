@@ -11,8 +11,8 @@ import org.junit.Test;
 import org.rifidi.edge.core.exception.readerPlugin.RifidiAdapterIllegalStateException;
 import org.rifidi.edge.core.exception.readerPlugin.RifidiConnectionException;
 import org.rifidi.edge.core.tag.TagRead;
-import org.rifidi.edge.readerPlugin.thingmagic.ThingMagicConnectionInfo;
-import org.rifidi.edge.readerPlugin.thingmagic.ThingMagicReaderAdapter;
+import org.rifidi.edge.readerPlugin.thingmagic.ThingMagicReaderInfo;
+import org.rifidi.edge.readerPlugin.thingmagic.ThingMagicReaderPlugin;
 import org.rifidi.services.annotations.Inject;
 import org.rifidi.services.registry.ServiceRegistry;
 
@@ -38,11 +38,11 @@ public class ThingMagicAdapterTest {
 
 	@Test
 	public void testConnect() {
-		ThingMagicConnectionInfo info = new ThingMagicConnectionInfo();
+		ThingMagicReaderInfo info = new ThingMagicReaderInfo();
 		info.setIPAddress("127.0.0.1");
 		info.setPort(8080);
 
-		ThingMagicReaderAdapter adapter = new ThingMagicReaderAdapter(info);
+		ThingMagicReaderPlugin adapter = new ThingMagicReaderPlugin(info);
 
 		try {
 			adapter.connect();

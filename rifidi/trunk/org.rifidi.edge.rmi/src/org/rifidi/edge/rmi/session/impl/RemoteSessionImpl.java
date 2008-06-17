@@ -12,44 +12,34 @@ public class RemoteSessionImpl implements RemoteSession {
 
 	private Log logger = LogFactory.getLog(RemoteSessionRegistryImpl.class);
 
-	private ReaderConnection session;
+	private ReaderConnection readerConnection;
 
 	public RemoteSessionImpl(ReaderConnection session) {
-		this.session = session;
+		this.readerConnection = session;
 	}
 
 	@Override
 	public void sendCustomCommand(ICustomCommand customCommand)
 			throws RemoteException {
 		logger.debug("Remote Call: sendCustomCommand()");
-		session.sendCustomCommand(customCommand);
+		readerConnection.sendCustomCommand(customCommand);
 	}
 
 	@Override
 	public void startTagStream() throws RemoteException {
 		logger.debug("Remote Call: startTagStream()");
-		session.startTagStream();
+		readerConnection.startTagStream();
 	}
 
 	@Override
 	public void stopTagStream() throws RemoteException {
 		logger.debug("Remote Call: stopTagStream()");
-		session.stopTagStream();
+		readerConnection.stopTagStream();
 	}
 	
-	@Override
-	public String getReaderDescription() {
-		return session.getConnectionInfo().getReaderType();
-	}
-
-	@Override
-	public String getReaderType() {
-		return session.getConnectionInfo().getReaderDescription();
-	}
-
 	// TODO Think about a better place for this
 	public ReaderConnection getSession() {
-		return session;
+		return readerConnection;
 	}
 
 }

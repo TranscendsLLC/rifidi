@@ -27,7 +27,7 @@ public class Activator implements BundleActivator {
 	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
 	 */
 	public void stop(BundleContext context) throws Exception {
-		readerAdapterRegistryService.unregisterReaderAdapter(ThingMagicConnectionInfo.class);
+		readerAdapterRegistryService.unregisterReaderAdapter(ThingMagicReaderInfo.class);
 		System.out.println("Bundle " + this.getClass().getName() + " stopped");
 	}
 
@@ -49,7 +49,7 @@ public class Activator implements BundleActivator {
 		
 		System.out.println("Registering ReaderAdapter ThingMagic.");
 		// register ReaderAdapter to the Services Registry
-		readerAdapterRegistryService.registerReaderAdapter(ThingMagicConnectionInfo.class,
-				new ThingMagicReaderAdapterFactory());
+		readerAdapterRegistryService.registerReaderAdapter(ThingMagicReaderInfo.class,
+				new ThingMagicReaderPluginFactory());
 	}
 }

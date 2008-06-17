@@ -39,14 +39,14 @@ import org.rifidi.edge.core.tag.TagRead;
  * @author Matthew Dean - matt@pramari.com
  *
  */
-public class AlienReaderAdapter implements IReaderPlugin {
+public class AlienReaderPlugin implements IReaderPlugin {
 
 	private static final Log logger = LogFactory
-			.getLog(AlienReaderAdapter.class);
+			.getLog(AlienReaderPlugin.class);
 	/**
 	 * The connection info for this reader
 	 */
-	private AlienConnectionInfo aci;
+	private AlienReaderInfo aci;
 
 	private Socket connection = null;
 	private BufferedReader in = null;
@@ -58,7 +58,7 @@ public class AlienReaderAdapter implements IReaderPlugin {
 	 * @param aci
 	 *            The connection info for the Alien Reader.
 	 */
-	public AlienReaderAdapter(AlienConnectionInfo aci) {
+	public AlienReaderPlugin(AlienReaderInfo aci) {
 		this.aci = aci;
 	}
 

@@ -9,10 +9,11 @@ import org.rifidi.edge.core.readerPlugin.AbstractReaderInfo;
  * @author Matthew Dean - matt@pramari.com
  * 
  */
-public class LLRPConnectionInfo extends AbstractReaderInfo {
+public class LLRPReaderInfo extends AbstractReaderInfo {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1614519150096139679L;
 	
-	@Override
-	public Class<? extends AbstractReaderInfo> getReaderAdapterType() {
-		return this.getClass();
-	}
 }

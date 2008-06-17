@@ -9,7 +9,7 @@ import org.rifidi.edge.core.readerPlugin.AbstractReaderInfo;
  * @author Matthew Dean - matt@pramari.com
  * 
  */
-public class AlienConnectionInfo extends AbstractReaderInfo {
+public class AlienReaderInfo extends AbstractReaderInfo {
 
 	/**
 	 * 
@@ -20,11 +20,6 @@ public class AlienConnectionInfo extends AbstractReaderInfo {
 
 	private String password;
 
-	@Override
-	public Class<? extends AbstractReaderInfo> getReaderAdapterType() {
-		return this.getClass();
-	}
-	
 	public String getUsername() {
 		return username;
 	}
