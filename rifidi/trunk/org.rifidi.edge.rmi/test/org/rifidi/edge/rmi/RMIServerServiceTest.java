@@ -15,7 +15,7 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.rifidi.edge.rmi.proxy.RemoteReaderConnectionRegistry;
+import org.rifidi.edge.rmi.ReaderConnection.RemoteReaderConnectionRegistry;
 import org.rifidi.edge.rmi.service.RMIServerService;
 import org.rifidi.services.annotations.Inject;
 import org.rifidi.services.registry.ServiceRegistry;

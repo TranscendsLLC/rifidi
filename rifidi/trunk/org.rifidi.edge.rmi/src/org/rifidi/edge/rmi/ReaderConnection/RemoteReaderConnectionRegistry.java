@@ -1,4 +1,4 @@
-package org.rifidi.edge.rmi.proxy;
+package org.rifidi.edge.rmi.ReaderConnection;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;

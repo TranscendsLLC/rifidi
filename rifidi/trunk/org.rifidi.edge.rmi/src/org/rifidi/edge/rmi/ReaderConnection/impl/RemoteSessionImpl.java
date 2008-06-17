@@ -1,4 +1,4 @@
-package org.rifidi.edge.rmi.proxy.impl;
+package org.rifidi.edge.rmi.ReaderConnection.impl;
 
 import java.rmi.RemoteException;
 
@@ -6,7 +6,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.connection.ReaderConnection;
 import org.rifidi.edge.core.readerPlugin.commands.ICustomCommand;
-import org.rifidi.edge.rmi.proxy.RemoteReaderConnection;
+import org.rifidi.edge.rmi.ReaderConnection.RemoteReaderConnection;
 
 public class RemoteSessionImpl implements RemoteReaderConnection {
 

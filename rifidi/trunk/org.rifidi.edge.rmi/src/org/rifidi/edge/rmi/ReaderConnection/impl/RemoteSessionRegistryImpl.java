@@ -1,4 +1,4 @@
-package org.rifidi.edge.rmi.proxy.impl;
+package org.rifidi.edge.rmi.ReaderConnection.impl;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -10,8 +10,8 @@ import org.rifidi.edge.core.connection.ReaderConnection;
 import org.rifidi.edge.core.connection.ReaderConnectionRegistryService;
 import org.rifidi.edge.core.readerPlugin.AbstractReaderInfo;
 import org.rifidi.edge.core.readerPluginService.ReaderPluginRegistryService;
-import org.rifidi.edge.rmi.proxy.RemoteReaderConnection;
-import org.rifidi.edge.rmi.proxy.RemoteReaderConnectionRegistry;
+import org.rifidi.edge.rmi.ReaderConnection.RemoteReaderConnection;
+import org.rifidi.edge.rmi.ReaderConnection.RemoteReaderConnectionRegistry;
 import org.rifidi.services.annotations.Inject;
 import org.rifidi.services.registry.ServiceRegistry;
 

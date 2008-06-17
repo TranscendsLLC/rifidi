@@ -12,6 +12,6 @@ Require-Bundle: org.rifidi.edge.core,
  org.rifidi.edge.log4j,
  org.rifidi.edge.services
 Export-Package: org.rifidi.edge.rmi,
- org.rifidi.edge.rmi.proxy,
+ org.rifidi.edge.rmi.ReaderConnection,
  org.rifidi.edge.rmi.service
 Eclipse-BuddyPolicy: registered
