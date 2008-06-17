@@ -15,8 +15,8 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.rifidi.edge.rmi.proxy.RemoteReaderConnectionRegistry;
 import org.rifidi.edge.rmi.service.RMIServerService;
-import org.rifidi.edge.rmi.session.RemoteSessionRegistry;
 import org.rifidi.services.annotations.Inject;
 import org.rifidi.services.registry.ServiceRegistry;
 
@@ -28,7 +28,7 @@ public class RMIServerServiceTest {
 
 	private Log logger = LogFactory.getLog(RMIServerServiceTest.class);
 	private RMIServerService rmiServerService;
-	private RemoteSessionRegistry sessionRegistry;
+	private RemoteReaderConnectionRegistry sessionRegistry;
 
 	/**
 	 * @throws java.lang.Exception
@@ -72,8 +72,8 @@ public class RMIServerServiceTest {
 		try {
 			Registry registry = LocateRegistry.getRegistry("127.0.0.1", 1099);
 			logger.info("Getting RemoteSessionRegistry");
-			sessionRegistry = (RemoteSessionRegistry) registry
-					.lookup(RemoteSessionRegistry.class.getName());
+			sessionRegistry = (RemoteReaderConnectionRegistry) registry
+					.lookup(RemoteReaderConnectionRegistry.class.getName());
 			if (sessionRegistry == null) {
 				Assert.fail();
 			}
