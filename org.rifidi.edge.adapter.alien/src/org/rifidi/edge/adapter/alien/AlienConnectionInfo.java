@@ -11,6 +11,11 @@ import org.rifidi.edge.core.readerAdapter.AbstractConnectionInfo;
  */
 public class AlienConnectionInfo extends AbstractConnectionInfo {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1794239884061191033L;
+
 	private String username;
 
 	private String password;

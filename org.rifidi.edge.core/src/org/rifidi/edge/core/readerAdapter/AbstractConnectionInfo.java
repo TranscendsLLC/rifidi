@@ -1,6 +1,8 @@
 package org.rifidi.edge.core.readerAdapter;
 
-public abstract class AbstractConnectionInfo {
+import java.io.Serializable;
+
+public abstract class AbstractConnectionInfo implements Serializable {
 
 	private int port;
 
