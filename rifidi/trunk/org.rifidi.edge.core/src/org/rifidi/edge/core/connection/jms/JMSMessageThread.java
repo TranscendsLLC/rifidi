@@ -9,7 +9,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.connection.ReaderConnection;
 import org.rifidi.edge.core.connection.ReaderConnectionRegistryService;
-import org.rifidi.edge.core.exception.readerPlugin.RifidiAdapterIllegalStateException;
+import org.rifidi.edge.core.exception.RifidiAdapterIllegalStateException;
 import org.rifidi.edge.core.readerPlugin.IReaderPlugin;
 import org.rifidi.edge.core.tag.TagRead;
 import org.rifidi.services.annotations.Inject;

@@ -1,6 +1,6 @@
 package org.rifidi.edge.core.readerPlugin;
 
-import org.rifidi.edge.core.exception.readerPlugin.RifidiReaderAdapterCreationException;
+import org.rifidi.edge.core.exception.RifidiReaderAdapterCreationException;
 
 public interface ISpecificReaderPluginFactory {
 

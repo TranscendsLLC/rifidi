@@ -1,6 +1,6 @@
 package org.rifidi.edge.core.readerPlugin;
 
-import org.rifidi.edge.core.exception.readerPlugin.RifidiReaderAdapterCreationException;
+import org.rifidi.edge.core.exception.RifidiReaderAdapterCreationException;
 import org.rifidi.edge.core.readerPluginService.ReaderAdapterRegistryService;
 import org.rifidi.services.annotations.Inject;
 import org.rifidi.services.registry.ServiceRegistry;
