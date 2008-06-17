@@ -3,9 +3,9 @@ package org.rifidi.edge.core.adapter.dummyadapter;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.rifidi.edge.core.exception.RifidiAdapterIllegalStateException;
-import org.rifidi.edge.core.exception.RifidiConnectionException;
 import org.rifidi.edge.core.exception.RifidiIIllegialArgumentException;
+import org.rifidi.edge.core.exception.readerConnection.RifidiConnectionIllegalStateException;
+import org.rifidi.edge.core.exception.readerConnection.RifidiConnectionException;
 import org.rifidi.edge.core.readerPlugin.IReaderPlugin;
 import org.rifidi.edge.core.readerPlugin.commands.ICustomCommand;
 import org.rifidi.edge.core.readerPlugin.commands.ICustomCommandResult;
@@ -47,10 +47,10 @@ public class DummyReaderAdapter implements IReaderPlugin {
 
 	@Override
 	public List<TagRead> getNextTags()
-			throws RifidiAdapterIllegalStateException {
+			throws RifidiConnectionIllegalStateException {
 		switch (info.getErrorToSet()) {
 			case GET_NEXT_TAGS:
-				throw new RifidiAdapterIllegalStateException();
+				throw new RifidiConnectionIllegalStateException();
 			case GET_NEXT_TAGS_RUNTIME:
 				throw new RuntimeException();
 		}
@@ -69,11 +69,11 @@ public class DummyReaderAdapter implements IReaderPlugin {
 
 	@Override
 	public ICustomCommandResult sendCustomCommand(ICustomCommand customCommand)
-			throws RifidiAdapterIllegalStateException,
+			throws RifidiConnectionIllegalStateException,
 			RifidiIIllegialArgumentException {
 		switch (info.getErrorToSet()) {
 			case SEND_CUSTOM_COMMAND:
-				throw new RifidiAdapterIllegalStateException();
+				throw new RifidiConnectionIllegalStateException();
 			case SEND_CUSTOM_COMMAND2:
 				throw new RifidiIIllegialArgumentException();
 			case SEND_CUSTOM_COMMAND_RUNTIME:

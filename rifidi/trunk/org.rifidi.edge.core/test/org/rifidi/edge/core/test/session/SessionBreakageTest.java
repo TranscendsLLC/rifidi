@@ -23,9 +23,9 @@ import org.rifidi.edge.core.adapter.dummyadapter.EDummyError;
 import org.rifidi.edge.core.connection.ReaderConnection;
 import org.rifidi.edge.core.connection.ReaderConnectionRegistryService;
 import org.rifidi.edge.core.connection.ReaderConnectionRegistryServiceImpl;
-import org.rifidi.edge.core.exception.RifidiAdapterIllegalStateException;
-import org.rifidi.edge.core.exception.RifidiConnectionException;
 import org.rifidi.edge.core.exception.RifidiException;
+import org.rifidi.edge.core.exception.readerConnection.RifidiConnectionIllegalStateException;
+import org.rifidi.edge.core.exception.readerConnection.RifidiConnectionException;
 import org.rifidi.edge.core.readerPlugin.enums.EReaderAdapterState;
 import org.rifidi.edge.core.readerPluginService.ReaderAdapterRegistryService;
 
@@ -164,7 +164,7 @@ public class SessionBreakageTest {
 		} catch (NullPointerException e){
 			Assert.assertSame(EReaderAdapterState.ERROR, s.getState());
 			Assert.assertNotNull(s.getErrorCause());
-			Assert.assertTrue(s.getErrorCause() instanceof RifidiAdapterIllegalStateException);
+			Assert.assertTrue(s.getErrorCause() instanceof RifidiConnectionIllegalStateException);
 		}
 
 	}
@@ -263,7 +263,7 @@ public class SessionBreakageTest {
 		System.out.println(s.getState());
 		
 		Assert.assertSame(s.getState() , EReaderAdapterState.ERROR);
-		Assert.assertTrue(s.getErrorCause() instanceof RifidiAdapterIllegalStateException);
+		Assert.assertTrue(s.getErrorCause() instanceof RifidiConnectionIllegalStateException);
 	}
 	
 	@Test
