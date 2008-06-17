@@ -8,13 +8,13 @@ public interface ReaderConnectionRegistryService {
 
 	public void initialize();
 
-	public ReaderConnection createReaderConnection(AbstractReaderInfo abstractConnectionInfo);
+	public IReaderConnection createReaderConnection(AbstractReaderInfo abstractConnectionInfo);
 
-	public ReaderConnection getReaderConnection(int readerConnectionID);
+	public IReaderConnection getReaderConnection(int readerConnectionID);
 	
 	public void deleteReaderConnection(int readerConnectionID);
 	
-	public void deleteReaderConnection(ReaderConnection readerConnection);
+	public void deleteReaderConnection(IReaderConnection readerConnection);
 
 	public List<ReaderConnection> getAllReaderConnections();
 

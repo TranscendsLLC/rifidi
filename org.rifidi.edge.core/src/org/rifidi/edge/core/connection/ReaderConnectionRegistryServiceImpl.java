@@ -39,7 +39,7 @@ public class ReaderConnectionRegistryServiceImpl implements
 	}
 
 	@Override
-	public ReaderConnection createReaderConnection(
+	public IReaderConnection createReaderConnection(
 			AbstractReaderInfo abstractConnectionInfo) {
 		if (abstractConnectionInfo == null)
 			throw new IllegalArgumentException("Null references not allowed.");
@@ -75,7 +75,7 @@ public class ReaderConnectionRegistryServiceImpl implements
 	}
 	
 	@Override
-	public ReaderConnection getReaderConnection(int readerConnectionID) {
+	public IReaderConnection getReaderConnection(int readerConnectionID) {
 		return readerConnectionRegistry.get(readerConnectionID);
 	}
 
@@ -87,7 +87,7 @@ public class ReaderConnectionRegistryServiceImpl implements
 	}
 
 	@Override
-	public void deleteReaderConnection(ReaderConnection readerConnection) {
+	public void deleteReaderConnection(IReaderConnection readerConnection) {
 		//TODO delete JMS Thread and Queue
 		readerConnectionRegistry.remove(readerConnection);
 	}

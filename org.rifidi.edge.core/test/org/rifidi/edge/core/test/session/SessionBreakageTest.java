@@ -17,7 +17,7 @@ import org.rifidi.edge.core.adapter.dummyadapter.DummyCustomCommand;
 import org.rifidi.edge.core.adapter.dummyadapter.DummyReaderPlugin;
 import org.rifidi.edge.core.adapter.dummyadapter.DummyReaderPluginFactory;
 import org.rifidi.edge.core.adapter.dummyadapter.EDummyError;
-import org.rifidi.edge.core.connection.ReaderConnection;
+import org.rifidi.edge.core.connection.IReaderConnection;
 import org.rifidi.edge.core.connection.ReaderConnectionRegistryService;
 import org.rifidi.edge.core.exception.readerConnection.RifidiConnectionException;
 import org.rifidi.edge.core.exception.readerConnection.RifidiConnectionIllegalStateException;
@@ -62,7 +62,7 @@ public class SessionBreakageTest {
 
 		info.setErrorToSet(EDummyError.CONNECT);
 
-		ReaderConnection s = sessionRegistryService
+		IReaderConnection s = sessionRegistryService
 				.createReaderConnection(info);
 
 		s.connect();
@@ -81,7 +81,7 @@ public class SessionBreakageTest {
 
 		info.setErrorToSet(EDummyError.CONNECT_RUNTIME);
 
-		ReaderConnection s = sessionRegistryService
+		IReaderConnection s = sessionRegistryService
 				.createReaderConnection(info);
 
 		s.connect();
@@ -112,7 +112,7 @@ public class SessionBreakageTest {
 		}
 
 		// create the reader Session
-		ReaderConnection s = sessionRegistryService
+		IReaderConnection s = sessionRegistryService
 				.createReaderConnection(info);
 
 		s.connect();
@@ -184,7 +184,7 @@ public class SessionBreakageTest {
 		}
 
 		// create the reader Session
-		ReaderConnection s = sessionRegistryService
+		IReaderConnection s = sessionRegistryService
 				.createReaderConnection(info);
 
 		s.connect();
@@ -244,7 +244,7 @@ public class SessionBreakageTest {
 
 		info.setErrorToSet(EDummyError.SEND_CUSTOM_COMMAND);
 
-		ReaderConnection s = sessionRegistryService
+		IReaderConnection s = sessionRegistryService
 				.createReaderConnection(info);
 
 		s.connect();
@@ -268,7 +268,7 @@ public class SessionBreakageTest {
 
 		info.setErrorToSet(EDummyError.SEND_CUSTOM_COMMAND_RUNTIME);
 
-		ReaderConnection s = sessionRegistryService
+		IReaderConnection s = sessionRegistryService
 				.createReaderConnection(info);
 
 		s.connect();
@@ -291,7 +291,7 @@ public class SessionBreakageTest {
 
 		info.setErrorToSet(EDummyError.DISCONNECT);
 
-		ReaderConnection s = sessionRegistryService
+		IReaderConnection s = sessionRegistryService
 				.createReaderConnection(info);
 
 		s.connect();
@@ -313,7 +313,7 @@ public class SessionBreakageTest {
 
 		info.setErrorToSet(EDummyError.DISCONNECT_RUNTIME);
 
-		ReaderConnection s = sessionRegistryService
+		IReaderConnection s = sessionRegistryService
 				.createReaderConnection(info);
 
 		s.connect();
