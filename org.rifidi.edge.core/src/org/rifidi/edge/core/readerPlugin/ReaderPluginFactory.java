@@ -1,6 +1,6 @@
 package org.rifidi.edge.core.readerPlugin;
 
-import org.rifidi.edge.core.exception.RifidiReaderAdapterCreationException;
+import org.rifidi.edge.core.exception.readerConnection.RifidiReaderPluginCreationException;
 import org.rifidi.edge.core.readerPluginService.ReaderAdapterRegistryService;
 import org.rifidi.services.annotations.Inject;
 import org.rifidi.services.registry.ServiceRegistry;
@@ -23,7 +23,7 @@ public class ReaderPluginFactory {
 			try {
 				readerAdapter = factory
 						.createSpecificReaderAdapter(abstractConnnectionInfo);
-			} catch (RifidiReaderAdapterCreationException e) {
+			} catch (RifidiReaderPluginCreationException e) {
 				// TODO Catch or toss it up the call stack...
 				e.printStackTrace();
 			}
