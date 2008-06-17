@@ -30,7 +30,7 @@ import org.rifidi.edge.core.exception.readerConnection.RifidiConnectionIllegalSt
 import org.rifidi.edge.core.exception.readerConnection.RifidiConnectionException;
 import org.rifidi.edge.core.readerPlugin.AbstractReaderInfo;
 import org.rifidi.edge.core.readerPlugin.enums.EReaderAdapterState;
-import org.rifidi.edge.core.readerPluginService.ReaderAdapterRegistryService;
+import org.rifidi.edge.core.readerPluginService.ReaderPluginRegistryService;
 import org.rifidi.services.annotations.Inject;
 import org.rifidi.services.registry.ServiceRegistry;
 
@@ -46,7 +46,7 @@ public class SessionTest {
 	
 	private ReaderConnectionRegistryService sessionRegistryService;
 	
-	private ReaderAdapterRegistryService readerAdapterRegistryService;
+	private ReaderPluginRegistryService readerPluginRegistryService;
 
 	/**
 	 * @throws java.lang.Exception
@@ -175,7 +175,7 @@ public class SessionTest {
 		// TODO Jerry should Implement
 		//Assert.fail("Not Implemented");
 		
-		readerAdapterRegistryService.registerReaderAdapter(
+		readerPluginRegistryService.registerReaderAdapter(
 				DummyConnectionInfo.class, new DummyReaderAdapterFactory());
 
 		
@@ -286,10 +286,10 @@ public class SessionTest {
 	
 	@Inject
 	public void setAdapterRegistryService(
-			ReaderAdapterRegistryService readerAdapterRegistryService) {
-		this.readerAdapterRegistryService = readerAdapterRegistryService;
+			ReaderPluginRegistryService readerPluginRegistryService) {
+		this.readerPluginRegistryService = readerPluginRegistryService;
 		
-		readerAdapterRegistryService.registerReaderAdapter(DummyConnectionInfo.class, new DummyReaderAdapterFactory());
+		readerPluginRegistryService.registerReaderAdapter(DummyConnectionInfo.class, new DummyReaderAdapterFactory());
 	}
 
 }

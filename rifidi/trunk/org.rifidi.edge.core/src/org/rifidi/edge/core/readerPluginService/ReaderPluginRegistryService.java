@@ -5,7 +5,7 @@ import java.util.List;
 import org.rifidi.edge.core.readerPlugin.AbstractReaderInfo;
 import org.rifidi.edge.core.readerPlugin.ISpecificReaderPluginFactory;
 
-public interface ReaderAdapterRegistryService {
+public interface ReaderPluginRegistryService {
 
 	public void registerReaderAdapter(Class<? extends AbstractReaderInfo> specificConnectionInfo,
 			ISpecificReaderPluginFactory specificReaderAdapterFactory);

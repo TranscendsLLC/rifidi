@@ -2,13 +2,13 @@ package org.rifidi.edge.readerPlugin.alien;
 
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
-import org.rifidi.edge.core.readerPluginService.ReaderAdapterRegistryService;
+import org.rifidi.edge.core.readerPluginService.ReaderPluginRegistryService;
 import org.rifidi.services.annotations.Inject;
 import org.rifidi.services.registry.ServiceRegistry;
 
 public class Activator implements BundleActivator {
 
-	private ReaderAdapterRegistryService readerAdapterRegistryService;
+	private ReaderPluginRegistryService readerPluginRegistryService;
 
 	/*
 	 * (non-Javadoc)
@@ -26,28 +26,28 @@ public class Activator implements BundleActivator {
 	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
 	 */
 	public void stop(BundleContext context) throws Exception {
-		readerAdapterRegistryService.unregisterReaderAdapter(AlienReaderInfo.class);
+		readerPluginRegistryService.unregisterReaderAdapter(AlienReaderInfo.class);
 		System.out.println("Bundle " + this.getClass().getName() + " stopped");
 	}
 
 	/**
 	 * @return
 	 */
-	public ReaderAdapterRegistryService getReaderAdapterRegistryService() {
-		return readerAdapterRegistryService;	
+	public ReaderPluginRegistryService getReaderAdapterRegistryService() {
+		return readerPluginRegistryService;	
 	}
 
     /**
-     * @param readerAdapterRegistryService
+     * @param readerPluginRegistryService
      */
     @Inject
 	public void setReaderAdapterRegistryService(
-			ReaderAdapterRegistryService readerAdapterRegistryService) {
-		this.readerAdapterRegistryService = readerAdapterRegistryService;
+			ReaderPluginRegistryService readerPluginRegistryService) {
+		this.readerPluginRegistryService = readerPluginRegistryService;
 		
 		System.out.println("Registering ReaderAdapter Alien.");
 		// register ReaderAdapter to the Services Registry
-		readerAdapterRegistryService.registerReaderAdapter(AlienReaderInfo.class,
+		readerPluginRegistryService.registerReaderAdapter(AlienReaderInfo.class,
 				new AlienReaderPluginFactory());
 	}
 	
