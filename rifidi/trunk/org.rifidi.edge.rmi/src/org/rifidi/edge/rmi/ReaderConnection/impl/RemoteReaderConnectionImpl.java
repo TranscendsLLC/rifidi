@@ -10,6 +10,11 @@ import org.rifidi.edge.rmi.ReaderConnection.RemoteReaderConnection;
 
 public class RemoteReaderConnectionImpl implements RemoteReaderConnection {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8838335635546640L;
+
 	private Log logger = LogFactory.getLog(RemoteReaderConnectionRegistryImpl.class);
 
 	private ReaderConnection readerConnection;
