@@ -12,7 +12,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.connection.ReaderConnectionRegistryService;
 import org.rifidi.edge.rmi.ReaderConnection.RemoteReaderConnectionRegistry;
-import org.rifidi.edge.rmi.ReaderConnection.impl.RemoteSessionRegistryImpl;
+import org.rifidi.edge.rmi.ReaderConnection.impl.RemoteReaderConnectionRegistryImpl;
 import org.rifidi.edge.rmi.service.RMIServerService;
 import org.rifidi.services.annotations.Inject;
 import org.rifidi.services.registry.ServiceRegistry;
@@ -26,7 +26,7 @@ public class RMIServerServiceImpl implements RMIServerService {
 
 	// SessionRegistry
 	private ReaderConnectionRegistryService sessionRegistryService;
-	private RemoteSessionRegistryImpl remoteSessionRegistry;
+	private RemoteReaderConnectionRegistryImpl remoteSessionRegistry;
 
 	// RMI Registry
 	private Registry registry;
@@ -57,7 +57,7 @@ public class RMIServerServiceImpl implements RMIServerService {
 		}
 
 		// Create a new RemoteSessionRegistry
-		remoteSessionRegistry = new RemoteSessionRegistryImpl(
+		remoteSessionRegistry = new RemoteReaderConnectionRegistryImpl(
 				sessionRegistryService);
 
 		RemoteReaderConnectionRegistry stub = (RemoteReaderConnectionRegistry) UnicastRemoteObject
