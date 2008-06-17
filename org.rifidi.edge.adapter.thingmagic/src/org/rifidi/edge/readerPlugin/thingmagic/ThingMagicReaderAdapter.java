@@ -1,4 +1,4 @@
-package org.rifidi.edge.adapter.thingmagic;
+package org.rifidi.edge.readerPlugin.thingmagic;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -12,20 +12,20 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.rifidi.edge.adapter.thingmagic.commands.ThingMagicCustomCommand;
-import org.rifidi.edge.adapter.thingmagic.commands.ThingMagicCustomCommandResult;
 import org.rifidi.edge.common.utilities.converter.ByteAndHexConvertingUtility;
 import org.rifidi.edge.core.exception.RifidiIIllegialArgumentException;
-import org.rifidi.edge.core.exception.adapter.RifidiAdapterIllegalStateException;
-import org.rifidi.edge.core.exception.adapter.RifidiConnectionException;
-import org.rifidi.edge.core.readerAdapter.IReaderAdapter;
-import org.rifidi.edge.core.readerAdapter.commands.ICustomCommand;
-import org.rifidi.edge.core.readerAdapter.commands.ICustomCommandResult;
+import org.rifidi.edge.core.exception.readerPlugin.RifidiAdapterIllegalStateException;
+import org.rifidi.edge.core.exception.readerPlugin.RifidiConnectionException;
+import org.rifidi.edge.core.readerPlugin.IReaderPlugin;
+import org.rifidi.edge.core.readerPlugin.commands.ICustomCommand;
+import org.rifidi.edge.core.readerPlugin.commands.ICustomCommandResult;
 import org.rifidi.edge.core.tag.TagRead;
+import org.rifidi.edge.readerPlugin.thingmagic.commands.ThingMagicCustomCommand;
+import org.rifidi.edge.readerPlugin.thingmagic.commands.ThingMagicCustomCommandResult;
 
 
 //TODO: Try this junit test on a /real/ thing magic reader
-public class ThingMagicReaderAdapter implements IReaderAdapter {
+public class ThingMagicReaderAdapter implements IReaderPlugin {
 	
 	private static final Log logger = LogFactory.getLog(ThingMagicReaderAdapter.class);	
 	

@@ -4,17 +4,17 @@ import java.rmi.RemoteException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.rifidi.edge.core.readerAdapter.commands.ICustomCommand;
-import org.rifidi.edge.core.session.Session;
+import org.rifidi.edge.core.connection.ReaderConnection;
+import org.rifidi.edge.core.readerPlugin.commands.ICustomCommand;
 import org.rifidi.edge.rmi.session.RemoteSession;
 
 public class RemoteSessionImpl implements RemoteSession {
 
 	private Log logger = LogFactory.getLog(RemoteSessionRegistryImpl.class);
 
-	private Session session;
+	private ReaderConnection session;
 
-	public RemoteSessionImpl(Session session) {
+	public RemoteSessionImpl(ReaderConnection session) {
 		this.session = session;
 	}
 
@@ -48,7 +48,7 @@ public class RemoteSessionImpl implements RemoteSession {
 	}
 
 	// TODO Think about a better place for this
-	public Session getSession() {
+	public ReaderConnection getSession() {
 		return session;
 	}
 

@@ -1,6 +1,6 @@
-package org.rifidi.edge.adapter.alien.command;
+package org.rifidi.edge.readerPlugin.alien.command;
 
-import org.rifidi.edge.core.readerAdapter.commands.ICustomCommand;
+import org.rifidi.edge.core.readerPlugin.commands.ICustomCommand;
 
 public class AlienCustomCommand implements ICustomCommand {
 

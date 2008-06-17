@@ -1,6 +1,6 @@
-package org.rifidi.edge.adapter.llrp.commands;
+package org.rifidi.edge.readerPlugin.llrp.commands;
 
-import org.rifidi.edge.core.readerAdapter.commands.ICustomCommand;
+import org.rifidi.edge.core.readerPlugin.commands.ICustomCommand;
 
 public class LLRPCustomCommand implements ICustomCommand {
 

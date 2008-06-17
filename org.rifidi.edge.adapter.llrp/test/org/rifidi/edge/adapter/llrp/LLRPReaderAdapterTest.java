@@ -22,8 +22,10 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.rifidi.edge.common.utilities.converter.ByteAndHexConvertingUtility;
-import org.rifidi.edge.core.exception.adapter.RifidiConnectionException;
+import org.rifidi.edge.core.exception.readerPlugin.RifidiConnectionException;
 import org.rifidi.edge.core.tag.TagRead;
+import org.rifidi.edge.readerPlugin.llrp.LLRPConnectionInfo;
+import org.rifidi.edge.readerPlugin.llrp.LLRPReaderAdapter;
 
 /**
  * LLRP reader adapter.  

@@ -8,11 +8,11 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.rifidi.edge.adapter.thingmagic.ThingMagicConnectionInfo;
-import org.rifidi.edge.adapter.thingmagic.ThingMagicReaderAdapter;
-import org.rifidi.edge.core.exception.adapter.RifidiAdapterIllegalStateException;
-import org.rifidi.edge.core.exception.adapter.RifidiConnectionException;
+import org.rifidi.edge.core.exception.readerPlugin.RifidiAdapterIllegalStateException;
+import org.rifidi.edge.core.exception.readerPlugin.RifidiConnectionException;
 import org.rifidi.edge.core.tag.TagRead;
+import org.rifidi.edge.readerPlugin.thingmagic.ThingMagicConnectionInfo;
+import org.rifidi.edge.readerPlugin.thingmagic.ThingMagicReaderAdapter;
 import org.rifidi.services.annotations.Inject;
 import org.rifidi.services.registry.ServiceRegistry;
 

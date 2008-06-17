@@ -1,4 +1,4 @@
-package org.rifidi.edge.adapter.llrp;
+package org.rifidi.edge.readerPlugin.llrp;
 
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
