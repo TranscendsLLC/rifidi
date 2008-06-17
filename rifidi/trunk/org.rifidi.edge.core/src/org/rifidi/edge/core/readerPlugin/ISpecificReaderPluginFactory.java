@@ -1,10 +1,10 @@
 package org.rifidi.edge.core.readerPlugin;
 
-import org.rifidi.edge.core.exception.RifidiReaderAdapterCreationException;
+import org.rifidi.edge.core.exception.readerConnection.RifidiReaderPluginCreationException;
 
 public interface ISpecificReaderPluginFactory {
 
 	public IReaderPlugin createSpecificReaderAdapter(AbstractReaderInfo abstractConnectionInfo)
-		throws RifidiReaderAdapterCreationException;
+		throws RifidiReaderPluginCreationException;
 
 }
