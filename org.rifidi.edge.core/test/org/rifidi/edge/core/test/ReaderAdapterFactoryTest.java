@@ -7,8 +7,8 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.rifidi.edge.core.adapter.dummyadapter.DummyConnectionInfo;
-import org.rifidi.edge.core.adapter.dummyadapter.DummyReaderAdapterFactory;
+import org.rifidi.edge.core.adapter.dummyadapter.DummyReaderInfo;
+import org.rifidi.edge.core.adapter.dummyadapter.DummyReaderPluginFactory;
 import org.rifidi.edge.core.readerPlugin.IReaderPlugin;
 import org.rifidi.edge.core.readerPlugin.ReaderPluginFactory;
 import org.rifidi.edge.core.readerPluginService.ReaderPluginRegistryService;
@@ -32,7 +32,7 @@ public class ReaderAdapterFactoryTest {
 		ServiceRegistry.getInstance().service(this);
 		// might fail.
 		readerPluginRegistryService.registerReaderAdapter(
-				DummyConnectionInfo.class, new DummyReaderAdapterFactory());
+				DummyReaderInfo.class, new DummyReaderPluginFactory());
 
 	}
 
@@ -42,7 +42,7 @@ public class ReaderAdapterFactoryTest {
 	@After
 	public void tearDown() throws Exception {
 		// TODO finish this junit
-		readerPluginRegistryService.unregisterReaderAdapter(DummyConnectionInfo.class);
+		readerPluginRegistryService.unregisterReaderAdapter(DummyReaderInfo.class);
 	}
 
 	/**
@@ -50,7 +50,7 @@ public class ReaderAdapterFactoryTest {
 	 */
 	@Test
 	public void testCreateReaderAdapter() {
-		IReaderPlugin adapter = new ReaderPluginFactory().createReaderAdapter(new DummyConnectionInfo());
+		IReaderPlugin adapter = new ReaderPluginFactory().createReaderAdapter(new DummyReaderInfo());
 		Assert.assertNotNull(adapter);
 	}
 

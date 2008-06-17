@@ -18,17 +18,19 @@ public class Activator implements BundleActivator {
 	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
 	 */
 	public void start(BundleContext context) throws Exception {
-		System.out.println("Bundle " + this.getClass().getName() + " loaded");
+		System.out.println("== Bundle " + this.getClass().getName() + " loaded ==");
 
-		System.out.println("Registering SessionRegistryService");
+		
+		System.out.println("Registering Service: ReaderPluginRegistryService");
+		readerPluginRegistryService = new ReaderPluginRegistryServiceImpl();
+		context.registerService(ReaderPluginRegistryService.class.getName(),
+				readerPluginRegistryService, null);
+		
+		System.out.println("Registering Service: ReaderConnectionRegisrtyService");
 		sessionService = new ReaderConnectionRegistryServiceImpl();
 		context.registerService(ReaderConnectionRegistryService.class.getName(),
 				sessionService, null);
 
-		System.out.println("Registering ReaderAdapterRegistryService");
-		readerPluginRegistryService = new ReaderPluginRegistryServiceImpl();
-		context.registerService(ReaderPluginRegistryService.class.getName(),
-				readerPluginRegistryService, null);
 	}
 
 	/*
@@ -37,7 +39,7 @@ public class Activator implements BundleActivator {
 	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
 	 */
 	public void stop(BundleContext context) throws Exception {
-		System.out.println("Bundle " + this.getClass().getName() + " stopped");
+		System.out.println("== Bundle " + this.getClass().getName() + " stopped ==");
 	}
 
 }

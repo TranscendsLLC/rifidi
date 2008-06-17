@@ -9,7 +9,8 @@ Eclipse-LazyStart: true
 Require-Bundle: org.rifidi.edge.core,
  org.rifidi.edge.log4j,
  org.junit4,
- org.rifidi.edge.common.utilities
+ org.rifidi.edge.common.utilities,
+ org.rifidi.edge.services
 Bundle-ClassPath: lib/jdom.jar,
  lib/LTKJava_0_1_0-SNAPSHOT.jar,
  .

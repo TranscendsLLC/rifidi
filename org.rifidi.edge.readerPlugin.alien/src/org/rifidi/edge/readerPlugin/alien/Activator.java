@@ -16,7 +16,7 @@ public class Activator implements BundleActivator {
 	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
 	 */
 	public void start(BundleContext context) throws Exception {
-		System.out.println("Bundle " + this.getClass().getName() + " loaded");
+		System.out.println("== Bundle " + this.getClass().getName() + " loaded ==");
 		ServiceRegistry.getInstance().service(this);
 	}
 
@@ -45,7 +45,7 @@ public class Activator implements BundleActivator {
 			ReaderPluginRegistryService readerPluginRegistryService) {
 		this.readerPluginRegistryService = readerPluginRegistryService;
 		
-		System.out.println("Registering ReaderAdapter Alien.");
+		System.out.println("Registering ReaderPlugin: Alien");
 		// register ReaderAdapter to the Services Registry
 		readerPluginRegistryService.registerReaderAdapter(AlienReaderInfo.class,
 				new AlienReaderPluginFactory());

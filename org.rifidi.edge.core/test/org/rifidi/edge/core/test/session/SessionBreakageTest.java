@@ -12,10 +12,10 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.rifidi.edge.core.adapter.dummyadapter.DummyConnectionInfo;
+import org.rifidi.edge.core.adapter.dummyadapter.DummyReaderInfo;
 import org.rifidi.edge.core.adapter.dummyadapter.DummyCustomCommand;
-import org.rifidi.edge.core.adapter.dummyadapter.DummyReaderAdapter;
-import org.rifidi.edge.core.adapter.dummyadapter.DummyReaderAdapterFactory;
+import org.rifidi.edge.core.adapter.dummyadapter.DummyReaderPlugin;
+import org.rifidi.edge.core.adapter.dummyadapter.DummyReaderPluginFactory;
 import org.rifidi.edge.core.adapter.dummyadapter.EDummyError;
 import org.rifidi.edge.core.connection.ReaderConnection;
 import org.rifidi.edge.core.connection.ReaderConnectionRegistryService;
@@ -56,9 +56,9 @@ public class SessionBreakageTest {
 	public void testSessionConnectionErrorHandling() {
 
 		readerPluginRegistryService.registerReaderAdapter(
-				DummyConnectionInfo.class, new DummyReaderAdapterFactory());
+				DummyReaderInfo.class, new DummyReaderPluginFactory());
 
-		DummyConnectionInfo info = new DummyConnectionInfo();
+		DummyReaderInfo info = new DummyReaderInfo();
 
 		info.setErrorToSet(EDummyError.CONNECT);
 
@@ -75,9 +75,9 @@ public class SessionBreakageTest {
 	public void testSessionConnectionErrorHandling2() {
 
 		readerPluginRegistryService.registerReaderAdapter(
-				DummyConnectionInfo.class, new DummyReaderAdapterFactory());
+				DummyReaderInfo.class, new DummyReaderPluginFactory());
 
-		DummyConnectionInfo info = new DummyConnectionInfo();
+		DummyReaderInfo info = new DummyReaderInfo();
 
 		info.setErrorToSet(EDummyError.CONNECT_RUNTIME);
 
@@ -94,14 +94,14 @@ public class SessionBreakageTest {
 	public void testGetTagsError() {
 
 		// set up dummy connection Info
-		DummyConnectionInfo info = new DummyConnectionInfo();
+		DummyReaderInfo info = new DummyReaderInfo();
 		info.setIPAddress("127.0.0.1");
 		info.setPort(12345);
 
 		info.setErrorToSet(EDummyError.GET_NEXT_TAGS);
 
 		// create the dummy reader adapter
-		DummyReaderAdapter readerAdapter = new DummyReaderAdapter(info);
+		DummyReaderPlugin readerAdapter = new DummyReaderPlugin(info);
 
 		try {
 			readerAdapter.connect();
@@ -166,14 +166,14 @@ public class SessionBreakageTest {
 	public void testGetTagsErrorRuntime() {
 
 		// set up dummy connection Info
-		DummyConnectionInfo info = new DummyConnectionInfo();
+		DummyReaderInfo info = new DummyReaderInfo();
 		info.setIPAddress("127.0.0.1");
 		info.setPort(12345);
 
 		info.setErrorToSet(EDummyError.GET_NEXT_TAGS_RUNTIME);
 
 		// create the dummy reader adapter
-		DummyReaderAdapter readerAdapter = new DummyReaderAdapter(info);
+		DummyReaderPlugin readerAdapter = new DummyReaderPlugin(info);
 
 		try {
 			readerAdapter.connect();
@@ -238,9 +238,9 @@ public class SessionBreakageTest {
 	public void testSessionSendCustomCommand() {
 
 		readerPluginRegistryService.registerReaderAdapter(
-				DummyConnectionInfo.class, new DummyReaderAdapterFactory());
+				DummyReaderInfo.class, new DummyReaderPluginFactory());
 
-		DummyConnectionInfo info = new DummyConnectionInfo();
+		DummyReaderInfo info = new DummyReaderInfo();
 
 		info.setErrorToSet(EDummyError.SEND_CUSTOM_COMMAND);
 
@@ -262,9 +262,9 @@ public class SessionBreakageTest {
 	public void testSessionSendCustomCommandRealTime() {
 
 		readerPluginRegistryService.registerReaderAdapter(
-				DummyConnectionInfo.class, new DummyReaderAdapterFactory());
+				DummyReaderInfo.class, new DummyReaderPluginFactory());
 
-		DummyConnectionInfo info = new DummyConnectionInfo();
+		DummyReaderInfo info = new DummyReaderInfo();
 
 		info.setErrorToSet(EDummyError.SEND_CUSTOM_COMMAND_RUNTIME);
 
@@ -285,9 +285,9 @@ public class SessionBreakageTest {
 	public void testSessionDisconnectCommand() {
 
 		readerPluginRegistryService.registerReaderAdapter(
-				DummyConnectionInfo.class, new DummyReaderAdapterFactory());
+				DummyReaderInfo.class, new DummyReaderPluginFactory());
 
-		DummyConnectionInfo info = new DummyConnectionInfo();
+		DummyReaderInfo info = new DummyReaderInfo();
 
 		info.setErrorToSet(EDummyError.DISCONNECT);
 
@@ -307,9 +307,9 @@ public class SessionBreakageTest {
 	public void testSessionDisconnectRealTime() {
 
 		readerPluginRegistryService.registerReaderAdapter(
-				DummyConnectionInfo.class, new DummyReaderAdapterFactory());
+				DummyReaderInfo.class, new DummyReaderPluginFactory());
 
-		DummyConnectionInfo info = new DummyConnectionInfo();
+		DummyReaderInfo info = new DummyReaderInfo();
 
 		info.setErrorToSet(EDummyError.DISCONNECT_RUNTIME);
 
@@ -340,7 +340,7 @@ public class SessionBreakageTest {
 		this.readerPluginRegistryService = readerPluginRegistryService;
 
 		readerPluginRegistryService.registerReaderAdapter(
-				DummyConnectionInfo.class, new DummyReaderAdapterFactory());
+				DummyReaderInfo.class, new DummyReaderPluginFactory());
 	}
 
 }

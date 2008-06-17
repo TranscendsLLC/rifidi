@@ -5,14 +5,14 @@ import org.rifidi.edge.core.readerPlugin.AbstractReaderInfo;
 import org.rifidi.edge.core.readerPlugin.IReaderPlugin;
 import org.rifidi.edge.core.readerPlugin.ISpecificReaderPluginFactory;
 
-public class DummyReaderAdapterFactory implements ISpecificReaderPluginFactory {
+public class DummyReaderPluginFactory implements ISpecificReaderPluginFactory {
 
 	@Override
 	public IReaderPlugin createSpecificReaderAdapter(
 			AbstractReaderInfo abstractConnectionInfo) throws RifidiReaderPluginCreationException{
-		if (!(abstractConnectionInfo instanceof DummyConnectionInfo) )
+		if (!(abstractConnectionInfo instanceof DummyReaderInfo) )
 			throw new RifidiReaderPluginCreationException();
-		return new DummyReaderAdapter((DummyConnectionInfo)abstractConnectionInfo);
+		return new DummyReaderPlugin((DummyReaderInfo)abstractConnectionInfo);
 	}
 
 }

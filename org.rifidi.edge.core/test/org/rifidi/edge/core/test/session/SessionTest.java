@@ -16,11 +16,11 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.rifidi.edge.core.adapter.dummyadapter.DummyConnectionInfo;
+import org.rifidi.edge.core.adapter.dummyadapter.DummyReaderInfo;
 import org.rifidi.edge.core.adapter.dummyadapter.DummyCustomCommand;
 import org.rifidi.edge.core.adapter.dummyadapter.DummyCustomCommandResult;
-import org.rifidi.edge.core.adapter.dummyadapter.DummyReaderAdapter;
-import org.rifidi.edge.core.adapter.dummyadapter.DummyReaderAdapterFactory;
+import org.rifidi.edge.core.adapter.dummyadapter.DummyReaderPlugin;
+import org.rifidi.edge.core.adapter.dummyadapter.DummyReaderPluginFactory;
 import org.rifidi.edge.core.connection.ReaderConnection;
 import org.rifidi.edge.core.connection.ReaderConnectionRegistryService;
 import org.rifidi.edge.core.connection.jms.JMSHelper;
@@ -66,8 +66,8 @@ public class SessionTest {
 	@Test
 	public void testGetSetAdapter() {
 
-		DummyReaderAdapter dummyAdapter = new DummyReaderAdapter(
-				new DummyConnectionInfo());
+		DummyReaderPlugin dummyAdapter = new DummyReaderPlugin(
+				new DummyReaderInfo());
 		ReaderConnection s = new ReaderConnection(null, null, -1, null);
 
 		s.setAdapter(dummyAdapter);
@@ -95,7 +95,7 @@ public class SessionTest {
 	@Test
 	public void testGetSetAbstractConnectionInfo() {
 		ReaderConnection session = new ReaderConnection(null, null, 0, null);
-		AbstractReaderInfo info = new DummyConnectionInfo();
+		AbstractReaderInfo info = new DummyReaderInfo();
 		session.setConnectionInfo(info);
 		Assert.assertTrue(session.getConnectionInfo() == info);
 	}
@@ -117,8 +117,8 @@ public class SessionTest {
 			Assert.fail("Error while initializing jmsHelper.");
 		}
 
-		DummyReaderAdapter adapter = new DummyReaderAdapter(
-				new DummyConnectionInfo());
+		DummyReaderPlugin adapter = new DummyReaderPlugin(
+				new DummyReaderInfo());
 
 		try {
 			adapter.connect();
@@ -168,9 +168,9 @@ public class SessionTest {
 		// Assert.fail("Not Implemented");
 
 		readerPluginRegistryService.registerReaderAdapter(
-				DummyConnectionInfo.class, new DummyReaderAdapterFactory());
+				DummyReaderInfo.class, new DummyReaderPluginFactory());
 
-		DummyConnectionInfo info = new DummyConnectionInfo();
+		DummyReaderInfo info = new DummyReaderInfo();
 
 		ReaderConnection s = sessionRegistryService
 				.createReaderConnection(info);
@@ -196,13 +196,13 @@ public class SessionTest {
 	public void testStartTagStream() {
 
 		// set up dummy connection Info
-		DummyConnectionInfo info = new DummyConnectionInfo();
+		DummyReaderInfo info = new DummyReaderInfo();
 		info.setIPAddress("127.0.0.1");
 		info.setPort(12345);
 		int SessionID = 1;
 
 		// create the dummy reader adapter
-		DummyReaderAdapter readerAdapter = new DummyReaderAdapter(info);
+		DummyReaderPlugin readerAdapter = new DummyReaderPlugin(info);
 
 		try {
 			readerAdapter.connect();
@@ -282,7 +282,7 @@ public class SessionTest {
 		this.readerPluginRegistryService = readerPluginRegistryService;
 
 		readerPluginRegistryService.registerReaderAdapter(
-				DummyConnectionInfo.class, new DummyReaderAdapterFactory());
+				DummyReaderInfo.class, new DummyReaderPluginFactory());
 	}
 
 }

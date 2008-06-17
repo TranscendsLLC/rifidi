@@ -2,7 +2,7 @@ package org.rifidi.edge.core.adapter.dummyadapter;
 
 import org.rifidi.edge.core.readerPlugin.AbstractReaderInfo;
 
-public class DummyConnectionInfo extends AbstractReaderInfo {
+public class DummyReaderInfo extends AbstractReaderInfo {
 
 	/**
 	 * 
