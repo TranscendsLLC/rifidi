@@ -16,8 +16,4 @@ public interface RemoteSession extends Remote {
 	// TODO Think about error handling
 	public void sendCustomCommand(ICustomCommand o) throws RemoteException;
 
-	public String getReaderType();
-
-	public String getReaderDescription();
-
 }

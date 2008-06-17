@@ -73,17 +73,17 @@ import org.rifidi.edge.core.tag.TagRead;
  * 
  * @author Matthew Dean - matt@pramari.com
  */
-public class LLRPReaderAdapter implements IReaderPlugin {
+public class LLRPReaderPlugin implements IReaderPlugin {
 
 	/**
 	 * The connection info for this reader
 	 */
-	private LLRPConnectionInfo aci;
+	private LLRPReaderInfo aci;
 
 	/**
 	 * The log4j logger
 	 */
-	private static Log logger = LogFactory.getLog(LLRPReaderAdapter.class);
+	private static Log logger = LogFactory.getLog(LLRPReaderPlugin.class);
 
 	/**
 	 * 
@@ -107,7 +107,7 @@ public class LLRPReaderAdapter implements IReaderPlugin {
 	 * @param aci
 	 *            The connection info for the Alien Reader.
 	 */
-	public LLRPReaderAdapter(LLRPConnectionInfo aci) {
+	public LLRPReaderPlugin(LLRPReaderInfo aci) {
 		this.aci = aci;
 	}
 

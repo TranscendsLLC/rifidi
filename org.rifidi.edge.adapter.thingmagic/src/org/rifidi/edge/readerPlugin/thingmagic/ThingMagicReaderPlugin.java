@@ -25,9 +25,9 @@ import org.rifidi.edge.readerPlugin.thingmagic.commands.ThingMagicCustomCommandR
 
 
 //TODO: Try this junit test on a /real/ thing magic reader
-public class ThingMagicReaderAdapter implements IReaderPlugin {
+public class ThingMagicReaderPlugin implements IReaderPlugin {
 	
-	private static final Log logger = LogFactory.getLog(ThingMagicReaderAdapter.class);	
+	private static final Log logger = LogFactory.getLog(ThingMagicReaderPlugin.class);	
 	
 	boolean connected = false;
 	
@@ -35,8 +35,8 @@ public class ThingMagicReaderAdapter implements IReaderPlugin {
 	private BufferedReader in = null;
 	private PrintWriter out = null;
 	
-	private ThingMagicConnectionInfo tmci;
-	public ThingMagicReaderAdapter(ThingMagicConnectionInfo connectionInfo){
+	private ThingMagicReaderInfo tmci;
+	public ThingMagicReaderPlugin(ThingMagicReaderInfo connectionInfo){
 		tmci = connectionInfo;
 	}
 	

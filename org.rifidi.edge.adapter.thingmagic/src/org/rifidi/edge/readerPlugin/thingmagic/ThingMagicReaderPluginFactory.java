@@ -7,13 +7,13 @@ import org.rifidi.edge.core.readerPlugin.AbstractReaderInfo;
 import org.rifidi.edge.core.readerPlugin.IReaderPlugin;
 import org.rifidi.edge.core.readerPlugin.ISpecificReaderPluginFactory;
 
-public class ThingMagicReaderAdapterFactory implements ISpecificReaderPluginFactory {
-	private static final Log logger = LogFactory.getLog(ThingMagicReaderAdapterFactory.class);	
+public class ThingMagicReaderPluginFactory implements ISpecificReaderPluginFactory {
+	private static final Log logger = LogFactory.getLog(ThingMagicReaderPluginFactory.class);	
 	@Override
 	public IReaderPlugin createSpecificReaderAdapter(
 			AbstractReaderInfo abstractConnectionInfo) throws RifidiReaderAdapterCreationException{
 		logger.debug("createSpecificReaderAdapter called.");
-		return new ThingMagicReaderAdapter((ThingMagicConnectionInfo) abstractConnectionInfo);
+		return new ThingMagicReaderPlugin((ThingMagicReaderInfo) abstractConnectionInfo);
 	}
 
 }

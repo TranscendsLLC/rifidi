@@ -14,18 +14,18 @@ import org.rifidi.edge.core.readerPlugin.ISpecificReaderPluginFactory;
  * @author Matthew Dean - matt@pramari.com
  *
  */
-public class AlienReaderAdapterFactory implements ISpecificReaderPluginFactory {
-	private static final Log logger = LogFactory.getLog(AlienReaderAdapterFactory.class);	
+public class AlienReaderPluginFactory implements ISpecificReaderPluginFactory {
+	private static final Log logger = LogFactory.getLog(AlienReaderPluginFactory.class);	
 	/* (non-Javadoc)
 	 * @see org.rifidi.edge.core.readerAdapter.ISpecificReaderAdapterFactory#createSpecificReaderAdapter(org.rifidi.edge.core.readerAdapter.AbstractConnectionInfo)
 	 */
 	@Override
 	public IReaderPlugin createSpecificReaderAdapter(AbstractReaderInfo abstractConnectionInfo) throws RifidiReaderAdapterCreationException{
 		
-		if(abstractConnectionInfo instanceof AlienConnectionInfo)
+		if(abstractConnectionInfo instanceof AlienReaderInfo)
 		{
 			logger.debug("createSpecificReaderAdapter called.");
-			return new AlienReaderAdapter((AlienConnectionInfo)abstractConnectionInfo);
+			return new AlienReaderPlugin((AlienReaderInfo)abstractConnectionInfo);
 		}
 		return null;
 	}

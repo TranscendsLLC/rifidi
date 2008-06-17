@@ -24,8 +24,8 @@ import org.junit.Test;
 import org.rifidi.edge.common.utilities.converter.ByteAndHexConvertingUtility;
 import org.rifidi.edge.core.exception.readerPlugin.RifidiConnectionException;
 import org.rifidi.edge.core.tag.TagRead;
-import org.rifidi.edge.readerPlugin.llrp.LLRPConnectionInfo;
-import org.rifidi.edge.readerPlugin.llrp.LLRPReaderAdapter;
+import org.rifidi.edge.readerPlugin.llrp.LLRPReaderInfo;
+import org.rifidi.edge.readerPlugin.llrp.LLRPReaderPlugin;
 
 /**
  * LLRP reader adapter.  
@@ -58,10 +58,10 @@ public class LLRPReaderAdapterTest extends TestCase {
 	 */
 	@Test
 	public void testConnect() {
-		LLRPConnectionInfo lci = new LLRPConnectionInfo();
+		LLRPReaderInfo lci = new LLRPReaderInfo();
 		lci.setIPAddress("127.0.0.1");
 		lci.setPort(5084);
-		LLRPReaderAdapter newAdapt = new LLRPReaderAdapter(lci);
+		LLRPReaderPlugin newAdapt = new LLRPReaderPlugin(lci);
 		try {
 			newAdapt.connect();
 		} catch (RifidiConnectionException e) {
@@ -80,10 +80,10 @@ public class LLRPReaderAdapterTest extends TestCase {
 	 */
 	@Test
 	public void testStream() {
-		LLRPConnectionInfo lci = new LLRPConnectionInfo();
+		LLRPReaderInfo lci = new LLRPReaderInfo();
 		lci.setIPAddress("127.0.0.1");
 		lci.setPort(5084);
-		LLRPReaderAdapter newAdapt = new LLRPReaderAdapter(lci);
+		LLRPReaderPlugin newAdapt = new LLRPReaderPlugin(lci);
 
 		try {
 			newAdapt.connect();
@@ -123,10 +123,10 @@ public class LLRPReaderAdapterTest extends TestCase {
 	public void testDisconnect() {
 		logger.debug("testing the disconnect");
 		
-		LLRPConnectionInfo lci = new LLRPConnectionInfo();
+		LLRPReaderInfo lci = new LLRPReaderInfo();
 		lci.setIPAddress("127.0.0.1");
 		lci.setPort(5084);
-		LLRPReaderAdapter newAdapt = new LLRPReaderAdapter(lci);
+		LLRPReaderPlugin newAdapt = new LLRPReaderPlugin(lci);
 		try {
 			newAdapt.connect();
 		} catch (RifidiConnectionException e) {

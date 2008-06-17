@@ -21,8 +21,8 @@ import org.rifidi.edge.common.utilities.converter.ByteAndHexConvertingUtility;
 import org.rifidi.edge.core.exception.readerPlugin.RifidiAdapterIllegalStateException;
 import org.rifidi.edge.core.exception.readerPlugin.RifidiConnectionException;
 import org.rifidi.edge.core.tag.TagRead;
-import org.rifidi.edge.readerPlugin.alien.AlienConnectionInfo;
-import org.rifidi.edge.readerPlugin.alien.AlienReaderAdapter;
+import org.rifidi.edge.readerPlugin.alien.AlienReaderInfo;
+import org.rifidi.edge.readerPlugin.alien.AlienReaderPlugin;
 
 /**
  * 
@@ -51,13 +51,13 @@ public class AlienReaderAdapterTest {
 	 */
 	@Test
 	public void testConnect() {
-		AlienConnectionInfo connectionInfo = new AlienConnectionInfo();
+		AlienReaderInfo connectionInfo = new AlienReaderInfo();
 		connectionInfo.setIPAddress("192.168.1.100");
 		connectionInfo.setPort(23);
 		connectionInfo.setUsername("alien");
 		connectionInfo.setPassword("password");
 
-		AlienReaderAdapter alienReaderAdapter = new AlienReaderAdapter(
+		AlienReaderPlugin alienReaderAdapter = new AlienReaderPlugin(
 				connectionInfo);
 		try {
 			alienReaderAdapter.connect();
@@ -87,13 +87,13 @@ public class AlienReaderAdapterTest {
 	 */
 	@Test
 	public void testStream() {
-		AlienConnectionInfo connectionInfo = new AlienConnectionInfo();
+		AlienReaderInfo connectionInfo = new AlienReaderInfo();
 		connectionInfo.setIPAddress("192.168.1.100");
 		connectionInfo.setPort(23);
 		connectionInfo.setUsername("alien");
 		connectionInfo.setPassword("password");
 
-		AlienReaderAdapter alienReaderAdapter = new AlienReaderAdapter(
+		AlienReaderPlugin alienReaderAdapter = new AlienReaderPlugin(
 				connectionInfo);
 		
 		if (alienReaderAdapter == null)
@@ -137,13 +137,13 @@ public class AlienReaderAdapterTest {
 	 */
 	@Test
 	public void testDisconnect() {
-		AlienConnectionInfo connectionInfo = new AlienConnectionInfo();
+		AlienReaderInfo connectionInfo = new AlienReaderInfo();
 		connectionInfo.setIPAddress("192.168.1.100");
 		connectionInfo.setPort(23);
 		connectionInfo.setUsername("alien");
 		connectionInfo.setPassword("password");
 
-		AlienReaderAdapter alienReaderAdapter = new AlienReaderAdapter(
+		AlienReaderPlugin alienReaderAdapter = new AlienReaderPlugin(
 				connectionInfo);
 		try {
 			alienReaderAdapter.connect();
