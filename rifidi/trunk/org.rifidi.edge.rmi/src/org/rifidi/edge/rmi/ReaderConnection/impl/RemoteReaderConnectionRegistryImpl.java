@@ -15,16 +15,16 @@ import org.rifidi.edge.rmi.ReaderConnection.RemoteReaderConnectionRegistry;
 import org.rifidi.services.annotations.Inject;
 import org.rifidi.services.registry.ServiceRegistry;
 
-public class RemoteSessionRegistryImpl implements RemoteReaderConnectionRegistry {
+public class RemoteReaderConnectionRegistryImpl implements RemoteReaderConnectionRegistry {
 
-	private Log logger = LogFactory.getLog(RemoteSessionRegistryImpl.class);
+	private Log logger = LogFactory.getLog(RemoteReaderConnectionRegistryImpl.class);
 	
 	private ReaderConnectionRegistryService sessionRegistryService;
 	private ReaderPluginRegistryService readerPluginRegistryService;
 
 	private List<RemoteReaderConnection> remoteSessionList = new ArrayList<RemoteReaderConnection>();
 	
-	public RemoteSessionRegistryImpl(
+	public RemoteReaderConnectionRegistryImpl(
 			ReaderConnectionRegistryService sessionRegistryService) {
 		this.sessionRegistryService = sessionRegistryService;
 		ServiceRegistry.getInstance().service(this);
@@ -34,7 +34,7 @@ public class RemoteSessionRegistryImpl implements RemoteReaderConnectionRegistry
 	public RemoteReaderConnection createReaderSession(
 			AbstractReaderInfo connectionInfo) throws RemoteException {
 		logger.debug("Remote Call: createReaderSession()");
-		RemoteReaderConnection remoteReaderConnection = new RemoteSessionImpl(
+		RemoteReaderConnection remoteReaderConnection = new RemoteReaderConnectionImpl(
 				sessionRegistryService.createReaderConnection(connectionInfo));
 		remoteSessionList.add(remoteReaderConnection);
 		return remoteReaderConnection;
@@ -45,9 +45,9 @@ public class RemoteSessionRegistryImpl implements RemoteReaderConnectionRegistry
 			throws RemoteException {
 		logger.debug("Remote Call: deleteReaderSession()");
 		//TODO look if this is even working Session might be not available
-		if(remoteReaderConnection instanceof RemoteSessionImpl)
+		if(remoteReaderConnection instanceof RemoteReaderConnectionImpl)
 		{
-			ReaderConnection session = ((RemoteSessionImpl)remoteReaderConnection).getSession();
+			ReaderConnection session = ((RemoteReaderConnectionImpl)remoteReaderConnection).getSession();
 			if(session instanceof ReaderConnection)
 			{
 				remoteSessionList.remove(remoteReaderConnection);

@@ -8,13 +8,13 @@ import org.rifidi.edge.core.connection.ReaderConnection;
 import org.rifidi.edge.core.readerPlugin.commands.ICustomCommand;
 import org.rifidi.edge.rmi.ReaderConnection.RemoteReaderConnection;
 
-public class RemoteSessionImpl implements RemoteReaderConnection {
+public class RemoteReaderConnectionImpl implements RemoteReaderConnection {
 
-	private Log logger = LogFactory.getLog(RemoteSessionRegistryImpl.class);
+	private Log logger = LogFactory.getLog(RemoteReaderConnectionRegistryImpl.class);
 
 	private ReaderConnection readerConnection;
 
-	public RemoteSessionImpl(ReaderConnection session) {
+	public RemoteReaderConnectionImpl(ReaderConnection session) {
 		this.readerConnection = session;
 	}
 
