@@ -8,26 +8,6 @@ public abstract class AbstractReaderInfo implements Serializable {
 
 	private String ip;
 
-	private String readerType;
-
-	private String readerDescription;
-
-	public String getReaderDescription() {
-		return readerDescription;
-	}
-
-	public void setReaderDescription(String readerDescription) {
-		this.readerDescription = readerDescription;
-	}
-
-	public String getReaderType() {
-		return readerType;
-	}
-
-	public void setReaderType(String readerType) {
-		this.readerType = readerType;
-	}
-
 	public String getIPAddress() {
 		return ip;
 	}
@@ -44,7 +24,4 @@ public abstract class AbstractReaderInfo implements Serializable {
 		this.port = port;
 	}
 
-	// TODO Think about the sense of this method
-	@Deprecated
-	public abstract Class<? extends AbstractReaderInfo> getReaderAdapterType();
 }

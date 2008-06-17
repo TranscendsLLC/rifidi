@@ -3,22 +3,19 @@ package org.rifidi.edge.core.connection;
 import java.util.List;
 
 import org.rifidi.edge.core.readerPlugin.AbstractReaderInfo;
-import org.rifidi.edge.core.readerPlugin.IReaderPlugin;
 
 public interface ReaderConnectionRegistryService {
 
 	public void initialize();
 
-	public ReaderConnection createReaderSession(AbstractReaderInfo abstractConnectionInfo);
+	public ReaderConnection createReaderConnection(AbstractReaderInfo abstractConnectionInfo);
 
-	public ReaderConnection getReaderSession(int sessionID);
+	public ReaderConnection getReaderConnection(int readerConnectionID);
 	
-	public boolean containsReaderSession(int sessionID);
-
-	public void deleteReaderSession(int sessionID);
-
-	public List<IReaderPlugin> getAllReaderSessions();
+	public void deleteReaderConnection(int readerConnectionID);
 	
-	public int sessionCount();
+	public void deleteReaderConnection(ReaderConnection readerConnection);
+
+	public List<ReaderConnection> getAllReaderConnections();
 
 }
