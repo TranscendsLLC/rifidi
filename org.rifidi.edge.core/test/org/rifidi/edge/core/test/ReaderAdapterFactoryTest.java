@@ -11,7 +11,7 @@ import org.rifidi.edge.core.adapter.dummyadapter.DummyConnectionInfo;
 import org.rifidi.edge.core.adapter.dummyadapter.DummyReaderAdapterFactory;
 import org.rifidi.edge.core.readerPlugin.IReaderPlugin;
 import org.rifidi.edge.core.readerPlugin.ReaderPluginFactory;
-import org.rifidi.edge.core.readerPluginService.ReaderAdapterRegistryService;
+import org.rifidi.edge.core.readerPluginService.ReaderPluginRegistryService;
 import org.rifidi.services.annotations.Inject;
 import org.rifidi.services.registry.ServiceRegistry;
 
@@ -22,7 +22,7 @@ import org.rifidi.services.registry.ServiceRegistry;
  */
 public class ReaderAdapterFactoryTest {
 
-	ReaderAdapterRegistryService readerAdapterRegistryService;
+	ReaderPluginRegistryService readerPluginRegistryService;
 	
 	/**
 	 * @throws java.lang.Exception
@@ -31,7 +31,7 @@ public class ReaderAdapterFactoryTest {
 	public void setUp() throws Exception {
 		ServiceRegistry.getInstance().service(this);
 		// might fail.
-		readerAdapterRegistryService.registerReaderAdapter(
+		readerPluginRegistryService.registerReaderAdapter(
 				DummyConnectionInfo.class, new DummyReaderAdapterFactory());
 
 	}
@@ -42,7 +42,7 @@ public class ReaderAdapterFactoryTest {
 	@After
 	public void tearDown() throws Exception {
 		// TODO finish this junit
-		readerAdapterRegistryService.unregisterReaderAdapter(DummyConnectionInfo.class);
+		readerPluginRegistryService.unregisterReaderAdapter(DummyConnectionInfo.class);
 	}
 
 	/**
@@ -56,7 +56,7 @@ public class ReaderAdapterFactoryTest {
 
 	@Inject
 	public void setReaderAdapterRegistryService(
-			ReaderAdapterRegistryService readerAdapterRegistryService) {
-		this.readerAdapterRegistryService = readerAdapterRegistryService;
+			ReaderPluginRegistryService readerPluginRegistryService) {
+		this.readerPluginRegistryService = readerPluginRegistryService;
 	}
 }

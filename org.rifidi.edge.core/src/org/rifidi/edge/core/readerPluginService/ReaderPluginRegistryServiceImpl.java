@@ -9,11 +9,11 @@ import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.readerPlugin.AbstractReaderInfo;
 import org.rifidi.edge.core.readerPlugin.ISpecificReaderPluginFactory;
 
-public class ReaderAdapterRegistryServiceImpl implements
-		ReaderAdapterRegistryService {
+public class ReaderPluginRegistryServiceImpl implements
+		ReaderPluginRegistryService {
 
 	private Log logger = LogFactory
-			.getLog(ReaderAdapterRegistryServiceImpl.class);
+			.getLog(ReaderPluginRegistryServiceImpl.class);
 
 	private HashMap<Class<? extends AbstractReaderInfo>, ISpecificReaderPluginFactory> registry = new HashMap<Class<? extends AbstractReaderInfo>, ISpecificReaderPluginFactory>();
 

@@ -9,7 +9,7 @@ import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.connection.ReaderConnection;
 import org.rifidi.edge.core.connection.ReaderConnectionRegistryService;
 import org.rifidi.edge.core.readerPlugin.AbstractReaderInfo;
-import org.rifidi.edge.core.readerPluginService.ReaderAdapterRegistryService;
+import org.rifidi.edge.core.readerPluginService.ReaderPluginRegistryService;
 import org.rifidi.edge.rmi.session.RemoteSession;
 import org.rifidi.edge.rmi.session.RemoteSessionRegistry;
 import org.rifidi.services.annotations.Inject;
@@ -20,7 +20,7 @@ public class RemoteSessionRegistryImpl implements RemoteSessionRegistry {
 	private Log logger = LogFactory.getLog(RemoteSessionRegistryImpl.class);
 	
 	private ReaderConnectionRegistryService sessionRegistryService;
-	private ReaderAdapterRegistryService readerAdapterRegistryService;
+	private ReaderPluginRegistryService readerPluginRegistryService;
 
 	private List<RemoteSession> remoteSessionList = new ArrayList<RemoteSession>();
 	
@@ -64,13 +64,13 @@ public class RemoteSessionRegistryImpl implements RemoteSessionRegistry {
 
 	@Override
 	public List<String> getAvailableReaderAdapters() throws RemoteException {
-		return readerAdapterRegistryService.getAvailableReaderAdapters();
+		return readerPluginRegistryService.getAvailableReaderAdapters();
 	}
 
 	@Inject
 	public void setReaderAdapterRegistryService(
-			ReaderAdapterRegistryService readerAdapterRegistryService) {
-		this.readerAdapterRegistryService = readerAdapterRegistryService;
+			ReaderPluginRegistryService readerPluginRegistryService) {
+		this.readerPluginRegistryService = readerPluginRegistryService;
 	}
 
 	@Override

@@ -1,13 +1,13 @@
 package org.rifidi.edge.core.readerPlugin;
 
 import org.rifidi.edge.core.exception.readerConnection.RifidiReaderPluginCreationException;
-import org.rifidi.edge.core.readerPluginService.ReaderAdapterRegistryService;
+import org.rifidi.edge.core.readerPluginService.ReaderPluginRegistryService;
 import org.rifidi.services.annotations.Inject;
 import org.rifidi.services.registry.ServiceRegistry;
 
 public class ReaderPluginFactory {
 
-	private ReaderAdapterRegistryService readerAdapterRegistryService;
+	private ReaderPluginRegistryService readerPluginRegistryService;
 
 	public ReaderPluginFactory() {
 		ServiceRegistry.getInstance().service(this);
@@ -17,8 +17,8 @@ public class ReaderPluginFactory {
 			AbstractReaderInfo abstractConnnectionInfo) {
 		IReaderPlugin readerAdapter = null;
 
-		if (readerAdapterRegistryService != null) {
-			ISpecificReaderPluginFactory factory = readerAdapterRegistryService
+		if (readerPluginRegistryService != null) {
+			ISpecificReaderPluginFactory factory = readerPluginRegistryService
 					.getSpecReaderAdapterFactory(abstractConnnectionInfo);
 			try {
 				readerAdapter = factory
@@ -35,18 +35,18 @@ public class ReaderPluginFactory {
 	/**
 	 * @return the readerAdapterRegistryService
 	 */
-	public ReaderAdapterRegistryService getReaderAdapterRegistryService() {
-		return readerAdapterRegistryService;
+	public ReaderPluginRegistryService getReaderAdapterRegistryService() {
+		return readerPluginRegistryService;
 	}
 
 	/**
-	 * @param readerAdapterRegistryService
+	 * @param readerPluginRegistryService
 	 *            the readerAdapterRegistryService to set
 	 */
 	@Inject
 	public void setReaderAdapterRegistryService(
-			ReaderAdapterRegistryService readerAdapterRegistryService) {
-		this.readerAdapterRegistryService = readerAdapterRegistryService;
+			ReaderPluginRegistryService readerPluginRegistryService) {
+		this.readerPluginRegistryService = readerPluginRegistryService;
 	}
 
 }

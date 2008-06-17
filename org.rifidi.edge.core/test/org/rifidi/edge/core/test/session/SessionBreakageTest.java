@@ -27,7 +27,7 @@ import org.rifidi.edge.core.exception.RifidiException;
 import org.rifidi.edge.core.exception.readerConnection.RifidiConnectionIllegalStateException;
 import org.rifidi.edge.core.exception.readerConnection.RifidiConnectionException;
 import org.rifidi.edge.core.readerPlugin.enums.EReaderAdapterState;
-import org.rifidi.edge.core.readerPluginService.ReaderAdapterRegistryService;
+import org.rifidi.edge.core.readerPluginService.ReaderPluginRegistryService;
 
 import org.rifidi.services.annotations.Inject;
 import org.rifidi.services.registry.ServiceRegistry;
@@ -39,7 +39,7 @@ public class SessionBreakageTest {
 	
 	private ReaderConnectionRegistryService sessionRegistryService;
 
-	private ReaderAdapterRegistryService readerAdapterRegistryService;
+	private ReaderPluginRegistryService readerPluginRegistryService;
 
 	
 	/**
@@ -61,7 +61,7 @@ public class SessionBreakageTest {
 	@Test
 	public void testSessionConnectionErrorHandling(){
 				
-		readerAdapterRegistryService.registerReaderAdapter(
+		readerPluginRegistryService.registerReaderAdapter(
 				DummyConnectionInfo.class, new DummyReaderAdapterFactory());
 
 		DummyConnectionInfo info = new DummyConnectionInfo();
@@ -81,7 +81,7 @@ public class SessionBreakageTest {
 	@Test
 	public void testSessionConnectionErrorHandling2(){
 				
-		readerAdapterRegistryService.registerReaderAdapter(
+		readerPluginRegistryService.registerReaderAdapter(
 				DummyConnectionInfo.class, new DummyReaderAdapterFactory());
 
 
@@ -242,7 +242,7 @@ public class SessionBreakageTest {
 	@Test
 	public void testSessionSendCustomCommand(){
 				
-		readerAdapterRegistryService.registerReaderAdapter(
+		readerPluginRegistryService.registerReaderAdapter(
 				DummyConnectionInfo.class, new DummyReaderAdapterFactory());
 
 		
@@ -269,7 +269,7 @@ public class SessionBreakageTest {
 	@Test
 	public void testSessionSendCustomCommandRealTime(){
 				
-		readerAdapterRegistryService.registerReaderAdapter(
+		readerPluginRegistryService.registerReaderAdapter(
 				DummyConnectionInfo.class, new DummyReaderAdapterFactory());
 
 		
@@ -296,7 +296,7 @@ public class SessionBreakageTest {
 	@Test
 	public void testSessionDisconnectCommand(){
 				
-		readerAdapterRegistryService.registerReaderAdapter(
+		readerPluginRegistryService.registerReaderAdapter(
 				DummyConnectionInfo.class, new DummyReaderAdapterFactory());
 
 		
@@ -320,7 +320,7 @@ public class SessionBreakageTest {
 	@Test
 	public void testSessionDisconnectRealTime(){
 				
-		readerAdapterRegistryService.registerReaderAdapter(
+		readerPluginRegistryService.registerReaderAdapter(
 				DummyConnectionInfo.class, new DummyReaderAdapterFactory());
 
 		
@@ -354,10 +354,10 @@ public class SessionBreakageTest {
 
 	@Inject
 	public void setAdapterRegistryService(
-			ReaderAdapterRegistryService readerAdapterRegistryService) {
-		this.readerAdapterRegistryService = readerAdapterRegistryService;
+			ReaderPluginRegistryService readerPluginRegistryService) {
+		this.readerPluginRegistryService = readerPluginRegistryService;
 		
-		readerAdapterRegistryService.registerReaderAdapter(DummyConnectionInfo.class, new DummyReaderAdapterFactory());
+		readerPluginRegistryService.registerReaderAdapter(DummyConnectionInfo.class, new DummyReaderAdapterFactory());
 	}
 
 }

@@ -8,7 +8,7 @@ import org.rifidi.edge.core.adapter.dummyadapter.DummyReaderAdapterFactory;
 import org.rifidi.edge.core.connection.ReaderConnection;
 import org.rifidi.edge.core.connection.ReaderConnectionRegistryService;
 import org.rifidi.edge.core.connection.ReaderConnectionRegistryServiceImpl;
-import org.rifidi.edge.core.readerPluginService.ReaderAdapterRegistryService;
+import org.rifidi.edge.core.readerPluginService.ReaderPluginRegistryService;
 import org.rifidi.services.annotations.Inject;
 import org.rifidi.services.registry.ServiceRegistry;
 
@@ -16,7 +16,7 @@ public class SessionRegistryTest {
 
 	private ReaderConnectionRegistryService sessionRegistryService;
 
-	private ReaderAdapterRegistryService readerAdapterRegistryService;
+	private ReaderPluginRegistryService readerPluginRegistryService;
 
 	@Before
 	public void setUp() throws Exception {
@@ -39,7 +39,7 @@ public class SessionRegistryTest {
 	 */
 	@Test
 	public void testGetReaderAdapterRegistryService() {
-		Assert.assertNotNull(readerAdapterRegistryService);
+		Assert.assertNotNull(readerPluginRegistryService);
 	}
 
 	/**
@@ -47,7 +47,7 @@ public class SessionRegistryTest {
 	 */
 	@Test
 	public void testCreateSession() {
-		readerAdapterRegistryService.registerReaderAdapter(
+		readerPluginRegistryService.registerReaderAdapter(
 				DummyConnectionInfo.class, new DummyReaderAdapterFactory());
 
 		ReaderConnectionRegistryService sessionRegistryService2 = new ReaderConnectionRegistryServiceImpl();
@@ -75,8 +75,8 @@ public class SessionRegistryTest {
 
 	@Inject
 	public void setAdapterRegistryService(
-			ReaderAdapterRegistryService readerAdapterRegistryService) {
-		this.readerAdapterRegistryService = readerAdapterRegistryService;
+			ReaderPluginRegistryService readerPluginRegistryService) {
+		this.readerPluginRegistryService = readerPluginRegistryService;
 	}
 
 }

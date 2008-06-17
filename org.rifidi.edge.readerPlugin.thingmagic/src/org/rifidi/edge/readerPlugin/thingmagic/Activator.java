@@ -2,13 +2,13 @@ package org.rifidi.edge.readerPlugin.thingmagic;
 
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
-import org.rifidi.edge.core.readerPluginService.ReaderAdapterRegistryService;
+import org.rifidi.edge.core.readerPluginService.ReaderPluginRegistryService;
 import org.rifidi.services.annotations.Inject;
 import org.rifidi.services.registry.ServiceRegistry;
 
 public class Activator implements BundleActivator {
 
-	private ReaderAdapterRegistryService readerAdapterRegistryService;
+	private ReaderPluginRegistryService readerPluginRegistryService;
 	
 	/*
 	 * (non-Javadoc)
@@ -27,7 +27,7 @@ public class Activator implements BundleActivator {
 	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
 	 */
 	public void stop(BundleContext context) throws Exception {
-		readerAdapterRegistryService.unregisterReaderAdapter(ThingMagicReaderInfo.class);
+		readerPluginRegistryService.unregisterReaderAdapter(ThingMagicReaderInfo.class);
 		System.out.println("Bundle " + this.getClass().getName() + " stopped");
 	}
 
@@ -35,21 +35,21 @@ public class Activator implements BundleActivator {
 	/**
 	 * @return
 	 */
-	public ReaderAdapterRegistryService getReaderAdapterRegistryService() {
-		return readerAdapterRegistryService;	
+	public ReaderPluginRegistryService getReaderAdapterRegistryService() {
+		return readerPluginRegistryService;	
 	}
 
     /**
-     * @param readerAdapterRegistryService
+     * @param readerPluginRegistryService
      */
     @Inject
 	public void setReaderAdapterRegistryService(
-			ReaderAdapterRegistryService readerAdapterRegistryService) {
-		this.readerAdapterRegistryService = readerAdapterRegistryService;
+			ReaderPluginRegistryService readerPluginRegistryService) {
+		this.readerPluginRegistryService = readerPluginRegistryService;
 		
 		System.out.println("Registering ReaderAdapter ThingMagic.");
 		// register ReaderAdapter to the Services Registry
-		readerAdapterRegistryService.registerReaderAdapter(ThingMagicReaderInfo.class,
+		readerPluginRegistryService.registerReaderAdapter(ThingMagicReaderInfo.class,
 				new ThingMagicReaderPluginFactory());
 	}
 }
