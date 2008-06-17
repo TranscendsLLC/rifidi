@@ -1,15 +1,15 @@
 package org.rifidi.edge.core.adapter.dummyadapter;
 
-import org.rifidi.edge.core.exception.adapter.RifidiReaderAdapterCreationException;
-import org.rifidi.edge.core.readerAdapter.AbstractConnectionInfo;
-import org.rifidi.edge.core.readerAdapter.IReaderAdapter;
-import org.rifidi.edge.core.readerAdapter.ISpecificReaderAdapterFactory;
+import org.rifidi.edge.core.exception.readerPlugin.RifidiReaderAdapterCreationException;
+import org.rifidi.edge.core.readerPlugin.AbstractReaderInfo;
+import org.rifidi.edge.core.readerPlugin.IReaderPlugin;
+import org.rifidi.edge.core.readerPlugin.ISpecificReaderPluginFactory;
 
-public class DummyReaderAdapterFactory implements ISpecificReaderAdapterFactory {
+public class DummyReaderAdapterFactory implements ISpecificReaderPluginFactory {
 
 	@Override
-	public IReaderAdapter createSpecificReaderAdapter(
-			AbstractConnectionInfo abstractConnectionInfo) throws RifidiReaderAdapterCreationException{
+	public IReaderPlugin createSpecificReaderAdapter(
+			AbstractReaderInfo abstractConnectionInfo) throws RifidiReaderAdapterCreationException{
 		if (!(abstractConnectionInfo instanceof DummyConnectionInfo) )
 			throw new RifidiReaderAdapterCreationException();
 		return new DummyReaderAdapter((DummyConnectionInfo)abstractConnectionInfo);

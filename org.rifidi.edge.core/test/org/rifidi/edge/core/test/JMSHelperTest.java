@@ -12,7 +12,7 @@ import javax.jms.MessageProducer;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.rifidi.edge.core.session.jms.JMSHelper;
+import org.rifidi.edge.core.connection.jms.JMSHelper;
 import org.rifidi.services.annotations.Inject;
 import org.rifidi.services.registry.ServiceRegistry;
 

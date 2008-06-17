@@ -1,4 +1,4 @@
-package org.rifidi.edge.core.readerAdapterService;
+package org.rifidi.edge.core.readerPluginService;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -6,15 +6,15 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.rifidi.edge.core.readerAdapter.AbstractConnectionInfo;
-import org.rifidi.edge.core.readerAdapter.ISpecificReaderAdapterFactory;
+import org.rifidi.edge.core.readerPlugin.AbstractReaderInfo;
+import org.rifidi.edge.core.readerPlugin.ISpecificReaderPluginFactory;
 
 public class ReaderAdapterRegistryServiceImpl implements
 		ReaderAdapterRegistryService {
 
 	private Log logger = LogFactory.getLog(ReaderAdapterRegistryServiceImpl.class);
 	
-	private HashMap<Class<? extends AbstractConnectionInfo>, ISpecificReaderAdapterFactory> registry = new HashMap<Class<? extends AbstractConnectionInfo>, ISpecificReaderAdapterFactory>();
+	private HashMap<Class<? extends AbstractReaderInfo>, ISpecificReaderPluginFactory> registry = new HashMap<Class<? extends AbstractReaderInfo>, ISpecificReaderPluginFactory>();
 	
 	private List<ReaderAdapterRegistryServiceListener> listeners = new ArrayList<ReaderAdapterRegistryServiceListener>();
 
@@ -22,8 +22,8 @@ public class ReaderAdapterRegistryServiceImpl implements
 	 * @see org.rifidi.edge.core.readerAdapterService.ReaderAdapterRegistryService#registerReaderAdapter(java.lang.Class, org.rifidi.edge.core.readerAdapter.ISpecificReaderAdapterFactory)
 	 */
 	@Override
-	public void registerReaderAdapter(Class<? extends AbstractConnectionInfo> specificConnectionInfo,
-			ISpecificReaderAdapterFactory specificReaderAdapterFactory) {
+	public void registerReaderAdapter(Class<? extends AbstractReaderInfo> specificConnectionInfo,
+			ISpecificReaderPluginFactory specificReaderAdapterFactory) {
 		logger.debug("ReaderAdapter " + specificConnectionInfo.getName() + " registered");
 		if(! registry.containsKey(specificConnectionInfo))
 		{
@@ -38,9 +38,9 @@ public class ReaderAdapterRegistryServiceImpl implements
 	 * @see org.rifidi.edge.core.readerAdapterService.ReaderAdapterRegistryService#unregisterReaderAdapter(java.lang.Class)
 	 */
 	@Override
-	public void unregisterReaderAdapter(Class<? extends AbstractConnectionInfo> specificConnectionInfo) {
+	public void unregisterReaderAdapter(Class<? extends AbstractReaderInfo> specificConnectionInfo) {
 		
-		ISpecificReaderAdapterFactory specificReaderAdapterFactory = registry.get(specificConnectionInfo);
+		ISpecificReaderPluginFactory specificReaderAdapterFactory = registry.get(specificConnectionInfo);
 		
 		for (ReaderAdapterRegistryServiceListener listener: listeners ){
 			listener.readerAdapterRegistryServiceListener(specificConnectionInfo, specificReaderAdapterFactory);
@@ -53,7 +53,7 @@ public class ReaderAdapterRegistryServiceImpl implements
 	 * @see org.rifidi.edge.core.readerAdapterService.ReaderAdapterRegistryService#getSpecReaderAdapterFactory(org.rifidi.edge.core.readerAdapter.AbstractConnectionInfo)
 	 */
 	@Override
-	public ISpecificReaderAdapterFactory getSpecReaderAdapterFactory(AbstractConnectionInfo specificConnectionInfo) {
+	public ISpecificReaderPluginFactory getSpecReaderAdapterFactory(AbstractReaderInfo specificConnectionInfo) {
 		return registry.get(specificConnectionInfo.getClass());
 	}
 

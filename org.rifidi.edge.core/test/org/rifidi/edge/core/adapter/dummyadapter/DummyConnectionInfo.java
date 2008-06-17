@@ -1,13 +1,13 @@
 package org.rifidi.edge.core.adapter.dummyadapter;
 
-import org.rifidi.edge.core.readerAdapter.AbstractConnectionInfo;
+import org.rifidi.edge.core.readerPlugin.AbstractReaderInfo;
 
-public class DummyConnectionInfo extends AbstractConnectionInfo {
+public class DummyConnectionInfo extends AbstractReaderInfo {
 	
 	private EDummyError errorToSet = EDummyError.NONE;
 
 	@Override
-	public Class<? extends AbstractConnectionInfo> getReaderAdapterType() {
+	public Class<? extends AbstractReaderInfo> getReaderAdapterType() {
 		return DummyConnectionInfo.class;
 	}
 

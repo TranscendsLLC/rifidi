@@ -1,8 +1,8 @@
-package org.rifidi.edge.core.readerAdapter;
+package org.rifidi.edge.core.readerPlugin;
 
 import java.io.Serializable;
 
-public abstract class AbstractConnectionInfo implements Serializable {
+public abstract class AbstractReaderInfo implements Serializable {
 
 	private int port;
 
@@ -46,5 +46,5 @@ public abstract class AbstractConnectionInfo implements Serializable {
 
 	// TODO Think about the sense of this method
 	@Deprecated
-	public abstract Class<? extends AbstractConnectionInfo> getReaderAdapterType();
+	public abstract Class<? extends AbstractReaderInfo> getReaderAdapterType();
 }

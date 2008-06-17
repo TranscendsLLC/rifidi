@@ -1,6 +1,6 @@
 package org.rifidi.edge.core.adapter.dummyadapter;
 
-import org.rifidi.edge.core.readerAdapter.commands.ICustomCommand;
+import org.rifidi.edge.core.readerPlugin.commands.ICustomCommand;
 
 public class DummyCustomCommand implements ICustomCommand {
 
