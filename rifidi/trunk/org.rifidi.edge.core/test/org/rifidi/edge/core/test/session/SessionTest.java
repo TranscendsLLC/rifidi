@@ -21,6 +21,7 @@ import org.rifidi.edge.core.adapter.dummyadapter.DummyCustomCommand;
 import org.rifidi.edge.core.adapter.dummyadapter.DummyCustomCommandResult;
 import org.rifidi.edge.core.adapter.dummyadapter.DummyReaderPlugin;
 import org.rifidi.edge.core.adapter.dummyadapter.DummyReaderPluginFactory;
+import org.rifidi.edge.core.connection.IReaderConnection;
 import org.rifidi.edge.core.connection.ReaderConnection;
 import org.rifidi.edge.core.connection.ReaderConnectionRegistryService;
 import org.rifidi.edge.core.connection.jms.JMSHelper;
@@ -68,7 +69,7 @@ public class SessionTest {
 
 		DummyReaderPlugin dummyAdapter = new DummyReaderPlugin(
 				new DummyReaderInfo());
-		ReaderConnection s = new ReaderConnection(null, null, -1, null);
+		IReaderConnection s = new ReaderConnection(null, null, -1, null);
 
 		s.setAdapter(dummyAdapter);
 		Assert.assertEquals(dummyAdapter, s.getAdapter());
@@ -80,7 +81,7 @@ public class SessionTest {
 	 */
 	@Test
 	public void testGetSetSessionID() {
-		ReaderConnection session = new ReaderConnection(null, null, -1, null);
+		IReaderConnection session = new ReaderConnection(null, null, -1, null);
 
 		session.setSessionID(3);
 		Assert.assertTrue(session.getSessionID() == 3);
@@ -94,7 +95,7 @@ public class SessionTest {
 	 */
 	@Test
 	public void testGetSetAbstractConnectionInfo() {
-		ReaderConnection session = new ReaderConnection(null, null, 0, null);
+		IReaderConnection session = new ReaderConnection(null, null, 0, null);
 		AbstractReaderInfo info = new DummyReaderInfo();
 		session.setConnectionInfo(info);
 		Assert.assertTrue(session.getConnectionInfo() == info);
@@ -172,7 +173,7 @@ public class SessionTest {
 
 		DummyReaderInfo info = new DummyReaderInfo();
 
-		ReaderConnection s = sessionRegistryService
+		IReaderConnection s = sessionRegistryService
 				.createReaderConnection(info);
 
 		s.connect();
@@ -222,7 +223,7 @@ public class SessionTest {
 				readerAdapter, jmsHelper);
 
 		// create the reader Session
-		ReaderConnection s = new ReaderConnection(info, readerAdapter,
+		IReaderConnection s = new ReaderConnection(info, readerAdapter,
 				SessionID, mthread);
 
 		s.connect();

@@ -10,4 +10,5 @@ Require-Bundle: org.rifidi.edge.core,
  org.junit4,
  org.rifidi.edge.log4j,
  org.rifidi.edge.services,
- org.rifidi.edge.common.utilities
+ org.rifidi.edge.common.utilities,
+ org.rifidi.edge.rmi

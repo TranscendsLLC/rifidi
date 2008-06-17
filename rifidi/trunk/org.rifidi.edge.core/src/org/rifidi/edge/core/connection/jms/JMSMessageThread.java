@@ -7,7 +7,7 @@ import javax.jms.TextMessage;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.rifidi.edge.core.connection.ReaderConnection;
+import org.rifidi.edge.core.connection.IReaderConnection;
 import org.rifidi.edge.core.connection.ReaderConnectionRegistryService;
 import org.rifidi.edge.core.exception.readerConnection.RifidiConnectionIllegalStateException;
 import org.rifidi.edge.core.readerPlugin.IReaderPlugin;
@@ -90,7 +90,7 @@ public class JMSMessageThread implements Runnable {
 			// this is not the best solution... maybe there is another way to
 			// deal with this.
 			if (sessionRegistryService != null) {
-				ReaderConnection session = sessionRegistryService
+				IReaderConnection session = sessionRegistryService
 						.getReaderConnection(readerConnectionID);
 				session.setErrorCause(e);
 			}
@@ -105,7 +105,7 @@ public class JMSMessageThread implements Runnable {
 			 * be thrown up the stack.
 			 */
 			if (sessionRegistryService != null) {
-				ReaderConnection session = sessionRegistryService
+				IReaderConnection session = sessionRegistryService
 						.getReaderConnection(readerConnectionID);
 				session.setErrorCause(e);
 			}

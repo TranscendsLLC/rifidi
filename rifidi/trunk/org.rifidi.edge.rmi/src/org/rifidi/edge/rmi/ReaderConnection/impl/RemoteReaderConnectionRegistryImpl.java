@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.rifidi.edge.core.connection.IReaderConnection;
 import org.rifidi.edge.core.connection.ReaderConnection;
 import org.rifidi.edge.core.connection.ReaderConnectionRegistryService;
 import org.rifidi.edge.core.readerPlugin.AbstractReaderInfo;
@@ -47,11 +48,11 @@ public class RemoteReaderConnectionRegistryImpl implements RemoteReaderConnectio
 		//TODO look if this is even working Session might be not available
 		if(remoteReaderConnection instanceof RemoteReaderConnectionImpl)
 		{
-			ReaderConnection session = ((RemoteReaderConnectionImpl)remoteReaderConnection).getSession();
+			IReaderConnection session = ((RemoteReaderConnectionImpl)remoteReaderConnection).getSession();
 			if(session instanceof ReaderConnection)
 			{
 				remoteSessionList.remove(remoteReaderConnection);
-				sessionRegistryService.deleteReaderConnection(((ReaderConnection)session).getSessionID());
+				sessionRegistryService.deleteReaderConnection(((IReaderConnection)session).getSessionID());
 			}else
 			{
 				logger.error("RemoteSessionRegistry: Session Error... look this up");

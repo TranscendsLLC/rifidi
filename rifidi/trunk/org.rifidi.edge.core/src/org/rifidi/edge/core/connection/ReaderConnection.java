@@ -18,7 +18,7 @@ import org.rifidi.edge.core.readerPlugin.enums.EReaderAdapterState;
  *         the reader.
  */
 
-public class ReaderConnection {
+public class ReaderConnection implements IReaderConnection {
 
 	private static final Log logger = LogFactory.getLog(ReaderConnection.class);
 
@@ -53,51 +53,51 @@ public class ReaderConnection {
 		state = EReaderAdapterState.CREATED;
 	}
 
-	/**
-	 * @return the adapter
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.connection.IReaderConnection#getAdapter()
 	 */
 	public IReaderPlugin getAdapter() {
 		return adapter;
 	}
 
-	/**
-	 * @param adapter
-	 *            the adapter to set
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.connection.IReaderConnection#setAdapter(org.rifidi.edge.core.readerPlugin.IReaderPlugin)
 	 */
 	public void setAdapter(IReaderPlugin adapter) {
 		this.adapter = adapter;
 	}
 
-	/**
-	 * @return the sessionID
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.connection.IReaderConnection#getSessionID()
 	 */
 	public int getSessionID() {
 		return sessionID;
 	}
 
-	/**
-	 * @param sessionID
-	 *            the sessionID to set
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.connection.IReaderConnection#setSessionID(int)
 	 */
 	public void setSessionID(int sessionID) {
 		this.sessionID = sessionID;
 	}
 
-	/**
-	 * @return the connectionInfo
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.connection.IReaderConnection#getConnectionInfo()
 	 */
 	public AbstractReaderInfo getConnectionInfo() {
 		return connectionInfo;
 	}
 
-	/**
-	 * @param connectionInfo
-	 *            the connectionInfo to set
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.connection.IReaderConnection#setConnectionInfo(org.rifidi.edge.core.readerPlugin.AbstractReaderInfo)
 	 */
 	public void setConnectionInfo(AbstractReaderInfo connectionInfo) {
 		this.connectionInfo = connectionInfo;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.connection.IReaderConnection#sendCustomCommand(org.rifidi.edge.core.readerPlugin.commands.ICustomCommand)
+	 */
 	public ICustomCommandResult sendCustomCommand(ICustomCommand customCommand) {
 		// TODO needs to be implemented and designed
 		// TODO Handle exceptions here or send them up the call chain.
@@ -136,6 +136,9 @@ public class ReaderConnection {
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.connection.IReaderConnection#startTagStream()
+	 */
 	public void startTagStream() {
 		if (state == EReaderAdapterState.CONNECTED) {
 			state = EReaderAdapterState.STREAMING;
@@ -151,6 +154,9 @@ public class ReaderConnection {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.connection.IReaderConnection#stopTagStream()
+	 */
 	public void stopTagStream() {
 		if (state == EReaderAdapterState.STREAMING) {
 			state = EReaderAdapterState.CONNECTED;
@@ -166,10 +172,16 @@ public class ReaderConnection {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.connection.IReaderConnection#getState()
+	 */
 	public EReaderAdapterState getState() {
 		return state;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.connection.IReaderConnection#connect()
+	 */
 	public void connect() {
 		try {
 			adapter.connect();
@@ -199,6 +211,9 @@ public class ReaderConnection {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.connection.IReaderConnection#disconnect()
+	 */
 	public void disconnect() {
 		try {
 			adapter.disconnect();
@@ -228,18 +243,15 @@ public class ReaderConnection {
 		}
 	}
 
-	/**
-	 * @return The cause of the error, null if there was none.
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.connection.IReaderConnection#getErrorCause()
 	 */
 	public Exception getErrorCause() {
 		return errorCause;
 	}
 
-	/**
-	 * Just for internal use
-	 * 
-	 * @param errorCause
-	 *            the errorCause to set
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.connection.IReaderConnection#setErrorCause(java.lang.Exception)
 	 */
 	public void setErrorCause(Exception errorCause) {
 		this.errorCause = errorCause;
