@@ -42,10 +42,6 @@ public class ReaderPluginRegistryServiceImpl implements
 	@Override
 	public void unregisterReaderAdapter(
 			Class<? extends AbstractReaderInfo> specificConnectionInfo) {
-
-		ISpecificReaderPluginFactory specificReaderAdapterFactory = registry
-				.get(specificConnectionInfo);
-
 		registry.remove(specificConnectionInfo);
 	}
 
