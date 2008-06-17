@@ -69,7 +69,7 @@ public class SessionBreakageTest {
 		info.setErrorToSet(EDummyError.CONNECT);
 		
 		ReaderConnection s = sessionRegistryService
-				.createReaderSession(info);
+				.createReaderConnection(info);
 		
 
 		s.connect();
@@ -90,7 +90,7 @@ public class SessionBreakageTest {
 		info.setErrorToSet(EDummyError.CONNECT_RUNTIME);
 		
 		ReaderConnection s = sessionRegistryService
-				.createReaderSession(info);
+				.createReaderConnection(info);
 		
 
 		s.connect();
@@ -122,7 +122,7 @@ public class SessionBreakageTest {
 		}
 
 		// create the reader Session
-		ReaderConnection s = sessionRegistryService.createReaderSession(info);
+		ReaderConnection s = sessionRegistryService.createReaderConnection(info);
 
 		s.connect();
 		
@@ -191,7 +191,7 @@ public class SessionBreakageTest {
 		}
 
 		// create the reader Session
-		ReaderConnection s = sessionRegistryService.createReaderSession(info);
+		ReaderConnection s = sessionRegistryService.createReaderConnection(info);
 
 		s.connect();
 		
@@ -252,7 +252,7 @@ public class SessionBreakageTest {
 		info.setErrorToSet(EDummyError.SEND_CUSTOM_COMMAND);
 		
 		ReaderConnection s = sessionRegistryService
-				.createReaderSession(info);
+				.createReaderConnection(info);
 		
 
 		s.connect();
@@ -279,7 +279,7 @@ public class SessionBreakageTest {
 		info.setErrorToSet(EDummyError.SEND_CUSTOM_COMMAND_RUNTIME);
 		
 		ReaderConnection s = sessionRegistryService
-				.createReaderSession(info);
+				.createReaderConnection(info);
 		
 
 		s.connect();
@@ -306,8 +306,7 @@ public class SessionBreakageTest {
 		info.setErrorToSet(EDummyError.DISCONNECT);
 		
 		ReaderConnection s = sessionRegistryService
-				.createReaderSession(info);
-		
+				.createReaderConnection(info);		
 
 		s.connect();
 
@@ -331,7 +330,7 @@ public class SessionBreakageTest {
 		info.setErrorToSet(EDummyError.DISCONNECT_RUNTIME);
 		
 		ReaderConnection s = sessionRegistryService
-				.createReaderSession(info);
+				.createReaderConnection(info);
 		
 
 		s.connect();

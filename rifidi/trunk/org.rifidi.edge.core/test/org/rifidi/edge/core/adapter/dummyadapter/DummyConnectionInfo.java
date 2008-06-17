@@ -6,11 +6,6 @@ public class DummyConnectionInfo extends AbstractReaderInfo {
 	
 	private EDummyError errorToSet = EDummyError.NONE;
 
-	@Override
-	public Class<? extends AbstractReaderInfo> getReaderAdapterType() {
-		return DummyConnectionInfo.class;
-	}
-
 	/**
 	 * @return the errorToSet
 	 */

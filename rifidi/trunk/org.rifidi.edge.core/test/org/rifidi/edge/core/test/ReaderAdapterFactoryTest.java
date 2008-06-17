@@ -50,8 +50,7 @@ public class ReaderAdapterFactoryTest {
 	 */
 	@Test
 	public void testCreateReaderAdapter() {
-		IReaderPlugin adapter = ReaderPluginFactory.getInstance()
-				.createReaderAdapter(new DummyConnectionInfo());
+		IReaderPlugin adapter = new ReaderPluginFactory().createReaderAdapter(new DummyConnectionInfo());
 		Assert.assertNotNull(adapter);
 	}
 
