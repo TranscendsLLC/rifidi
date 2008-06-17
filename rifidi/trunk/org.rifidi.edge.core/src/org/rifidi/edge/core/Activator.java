@@ -2,14 +2,14 @@ package org.rifidi.edge.core;
 
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
-import org.rifidi.edge.core.readerAdapterService.ReaderAdapterRegistryService;
-import org.rifidi.edge.core.readerAdapterService.ReaderAdapterRegistryServiceImpl;
-import org.rifidi.edge.core.session.SessionRegistryService;
-import org.rifidi.edge.core.session.SessionRegistryServiceImpl;
+import org.rifidi.edge.core.connection.ReaderConnectionRegistryService;
+import org.rifidi.edge.core.connection.ReaderConnectionRegistryServiceImpl;
+import org.rifidi.edge.core.readerPluginService.ReaderAdapterRegistryService;
+import org.rifidi.edge.core.readerPluginService.ReaderAdapterRegistryServiceImpl;
 
 public class Activator implements BundleActivator {
 
-	private SessionRegistryService sessionService;
+	private ReaderConnectionRegistryService sessionService;
 	private ReaderAdapterRegistryService readerAdapterRegistryService;
 
 	/*
@@ -21,8 +21,8 @@ public class Activator implements BundleActivator {
 		System.out.println("Bundle " + this.getClass().getName() + " loaded");
 
 		System.out.println("Registering SessionRegistryService");
-		sessionService = new SessionRegistryServiceImpl();
-		context.registerService(SessionRegistryService.class.getName(),
+		sessionService = new ReaderConnectionRegistryServiceImpl();
+		context.registerService(ReaderConnectionRegistryService.class.getName(),
 				sessionService, null);
 
 		System.out.println("Registering ReaderAdapterRegistryService");

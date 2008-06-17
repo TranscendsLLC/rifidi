@@ -6,15 +6,15 @@ Bundle-Version: 1.0.0
 Bundle-Activator: org.rifidi.edge.core.Activator
 Import-Package: org.osgi.framework;version="1.3.0"
 Eclipse-LazyStart: true
-Export-Package: org.rifidi.edge.core.exception,
- org.rifidi.edge.core.exception.adapter,
- org.rifidi.edge.core.readerAdapter,
- org.rifidi.edge.core.readerAdapter.commands,
- org.rifidi.edge.core.readerAdapterService,
- org.rifidi.edge.core.session,
+Export-Package: org.rifidi.edge.core.connection,
+ org.rifidi.edge.core.exception,
+ org.rifidi.edge.core.exception.readerPlugin,
+ org.rifidi.edge.core.readerPlugin,
+ org.rifidi.edge.core.readerPlugin.commands,
+ org.rifidi.edge.core.readerPluginService,
  org.rifidi.edge.core.tag
 Require-Bundle: org.junit4,
- org.rifidi.jms,
+ org.rifidi.edge.jms,
  org.rifidi.edge.log4j,
  org.rifidi.edge.services,
  org.rifidi.edge.common.utilities
