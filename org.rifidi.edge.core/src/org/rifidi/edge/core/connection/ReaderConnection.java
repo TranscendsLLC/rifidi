@@ -3,9 +3,9 @@ package org.rifidi.edge.core.connection;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.connection.jms.JMSMessageThread;
-import org.rifidi.edge.core.exception.RifidiAdapterIllegalStateException;
-import org.rifidi.edge.core.exception.RifidiConnectionException;
 import org.rifidi.edge.core.exception.RifidiIIllegialArgumentException;
+import org.rifidi.edge.core.exception.readerConnection.RifidiConnectionIllegalStateException;
+import org.rifidi.edge.core.exception.readerConnection.RifidiConnectionException;
 import org.rifidi.edge.core.readerPlugin.AbstractReaderInfo;
 import org.rifidi.edge.core.readerPlugin.IReaderPlugin;
 import org.rifidi.edge.core.readerPlugin.commands.ICustomCommand;
@@ -106,7 +106,7 @@ public class ReaderConnection {
 			ICustomCommandResult result = adapter.sendCustomCommand(customCommand);
 			state = EReaderAdapterState.CONNECTED;
 			return result;
-		} catch (RifidiAdapterIllegalStateException e) {
+		} catch (RifidiConnectionIllegalStateException e) {
 			state = EReaderAdapterState.ERROR;
 			errorCause = e;
 			logger.error("Adapter in Illegal State", e);
@@ -142,7 +142,7 @@ public class ReaderConnection {
 			this.jmsMessageThread.start();
 		} else {
 			state = EReaderAdapterState.ERROR;
-			RifidiAdapterIllegalStateException e = new RifidiAdapterIllegalStateException();
+			RifidiConnectionIllegalStateException e = new RifidiConnectionIllegalStateException();
 			logger
 					.error(
 							"Adapter must be in the CONNECTED state to start the tag stream.",
@@ -157,7 +157,7 @@ public class ReaderConnection {
 			this.jmsMessageThread.stop();
 		} else {
 			state = EReaderAdapterState.ERROR;
-			RifidiAdapterIllegalStateException e = new RifidiAdapterIllegalStateException();
+			RifidiConnectionIllegalStateException e = new RifidiConnectionIllegalStateException();
 			logger
 					.error(
 							"Adapter must be in the STREAMING state to stop the tag stream.",
