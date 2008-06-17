@@ -9,7 +9,7 @@
  *  License:	Lesser GNU Public License (LGPL)
  *  				http://www.opensource.org/licenses/lgpl-license.html
  */
-package org.rifidi.edge.adapter.alien;
+package org.rifidi.edge.readerPlugin.alien;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -24,11 +24,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.common.utilities.converter.ByteAndHexConvertingUtility;
 import org.rifidi.edge.core.exception.RifidiIIllegialArgumentException;
-import org.rifidi.edge.core.exception.adapter.RifidiAdapterIllegalStateException;
-import org.rifidi.edge.core.exception.adapter.RifidiConnectionException;
-import org.rifidi.edge.core.readerAdapter.IReaderAdapter;
-import org.rifidi.edge.core.readerAdapter.commands.ICustomCommand;
-import org.rifidi.edge.core.readerAdapter.commands.ICustomCommandResult;
+import org.rifidi.edge.core.exception.readerPlugin.RifidiAdapterIllegalStateException;
+import org.rifidi.edge.core.exception.readerPlugin.RifidiConnectionException;
+import org.rifidi.edge.core.readerPlugin.IReaderPlugin;
+import org.rifidi.edge.core.readerPlugin.commands.ICustomCommand;
+import org.rifidi.edge.core.readerPlugin.commands.ICustomCommandResult;
 import org.rifidi.edge.core.tag.TagRead;
 
 /**
@@ -39,7 +39,7 @@ import org.rifidi.edge.core.tag.TagRead;
  * @author Matthew Dean - matt@pramari.com
  *
  */
-public class AlienReaderAdapter implements IReaderAdapter {
+public class AlienReaderAdapter implements IReaderPlugin {
 
 	private static final Log logger = LogFactory
 			.getLog(AlienReaderAdapter.class);

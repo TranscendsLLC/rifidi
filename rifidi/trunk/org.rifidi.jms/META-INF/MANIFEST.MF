@@ -1,9 +1,9 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Jms Plug-in
-Bundle-SymbolicName: org.rifidi.jms
+Bundle-SymbolicName: org.rifidi.edge.jms
 Bundle-Version: 1.0.0
-Bundle-Activator: org.rifidi.jms.Activator
+Bundle-Activator: org.rifidi.edge.jms.Activator
 Bundle-Vendor: Pramari LLC
 Eclipse-LazyStart: true
 Import-Package: org.osgi.framework;version="1.3.0"

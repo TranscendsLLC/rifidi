@@ -6,10 +6,10 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.rifidi.edge.core.readerAdapter.AbstractConnectionInfo;
-import org.rifidi.edge.core.readerAdapterService.ReaderAdapterRegistryService;
-import org.rifidi.edge.core.session.Session;
-import org.rifidi.edge.core.session.SessionRegistryService;
+import org.rifidi.edge.core.connection.ReaderConnection;
+import org.rifidi.edge.core.connection.ReaderConnectionRegistryService;
+import org.rifidi.edge.core.readerPlugin.AbstractReaderInfo;
+import org.rifidi.edge.core.readerPluginService.ReaderAdapterRegistryService;
 import org.rifidi.edge.rmi.session.RemoteSession;
 import org.rifidi.edge.rmi.session.RemoteSessionRegistry;
 import org.rifidi.services.annotations.Inject;
@@ -19,20 +19,20 @@ public class RemoteSessionRegistryImpl implements RemoteSessionRegistry {
 
 	private Log logger = LogFactory.getLog(RemoteSessionRegistryImpl.class);
 	
-	private SessionRegistryService sessionRegistryService;
+	private ReaderConnectionRegistryService sessionRegistryService;
 	private ReaderAdapterRegistryService readerAdapterRegistryService;
 
 	private List<RemoteSession> remoteSessionList = new ArrayList<RemoteSession>();
 	
 	public RemoteSessionRegistryImpl(
-			SessionRegistryService sessionRegistryService) {
+			ReaderConnectionRegistryService sessionRegistryService) {
 		this.sessionRegistryService = sessionRegistryService;
 		ServiceRegistry.getInstance().service(this);
 	}
 
 	@Override
 	public RemoteSession createReaderSession(
-			AbstractConnectionInfo connectionInfo) throws RemoteException {
+			AbstractReaderInfo connectionInfo) throws RemoteException {
 		logger.debug("Remote Call: createReaderSession()");
 		RemoteSession remoteSession = new RemoteSessionImpl(
 				sessionRegistryService.createReaderSession(connectionInfo));
@@ -47,11 +47,11 @@ public class RemoteSessionRegistryImpl implements RemoteSessionRegistry {
 		//TODO look if this is even working Session might be not available
 		if(remoteSession instanceof RemoteSessionImpl)
 		{
-			Session session = ((RemoteSessionImpl)remoteSession).getSession();
-			if(session instanceof Session)
+			ReaderConnection session = ((RemoteSessionImpl)remoteSession).getSession();
+			if(session instanceof ReaderConnection)
 			{
 				remoteSessionList.remove(remoteSession);
-				sessionRegistryService.deleteReaderSession(((Session)session).getSessionID());
+				sessionRegistryService.deleteReaderSession(((ReaderConnection)session).getSessionID());
 			}else
 			{
 				logger.error("RemoteSessionRegistry: Session Error... look this up");

@@ -3,7 +3,7 @@ package org.rifidi.edge.rmi.session;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
-import org.rifidi.edge.core.readerAdapter.commands.ICustomCommand;
+import org.rifidi.edge.core.readerPlugin.commands.ICustomCommand;
 
 public interface RemoteSession extends Remote {
 

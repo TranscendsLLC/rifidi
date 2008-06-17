@@ -1,6 +1,6 @@
-package org.rifidi.edge.adapter.thingmagic.commands;
+package org.rifidi.edge.readerPlugin.thingmagic.commands;
 
-import org.rifidi.edge.core.readerAdapter.commands.ICustomCommand;
+import org.rifidi.edge.core.readerPlugin.commands.ICustomCommand;
 
 public class ThingMagicCustomCommand implements ICustomCommand {
 	

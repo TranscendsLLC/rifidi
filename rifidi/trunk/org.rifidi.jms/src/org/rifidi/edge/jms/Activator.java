@@ -1,4 +1,4 @@
-package org.rifidi.jms;
+package org.rifidi.edge.jms;
 
 import javax.jms.ConnectionFactory;
 

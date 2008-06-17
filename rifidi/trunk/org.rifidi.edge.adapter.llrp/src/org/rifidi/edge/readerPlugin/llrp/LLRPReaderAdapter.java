@@ -9,7 +9,7 @@
  *  License:	Lesser GNU Public License (LGPL)
  *  				http://www.opensource.org/licenses/lgpl-license.html
  */
-package org.rifidi.edge.adapter.llrp;
+package org.rifidi.edge.readerPlugin.llrp;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -62,10 +62,10 @@ import org.llrp.ltk.types.UnsignedInteger;
 import org.llrp.ltk.types.UnsignedShort;
 import org.llrp.ltk.types.UnsignedShortArray;
 import org.rifidi.edge.common.utilities.converter.ByteAndHexConvertingUtility;
-import org.rifidi.edge.core.exception.adapter.RifidiConnectionException;
-import org.rifidi.edge.core.readerAdapter.IReaderAdapter;
-import org.rifidi.edge.core.readerAdapter.commands.ICustomCommand;
-import org.rifidi.edge.core.readerAdapter.commands.ICustomCommandResult;
+import org.rifidi.edge.core.exception.readerPlugin.RifidiConnectionException;
+import org.rifidi.edge.core.readerPlugin.IReaderPlugin;
+import org.rifidi.edge.core.readerPlugin.commands.ICustomCommand;
+import org.rifidi.edge.core.readerPlugin.commands.ICustomCommandResult;
 import org.rifidi.edge.core.tag.TagRead;
 
 /**
@@ -73,7 +73,7 @@ import org.rifidi.edge.core.tag.TagRead;
  * 
  * @author Matthew Dean - matt@pramari.com
  */
-public class LLRPReaderAdapter implements IReaderAdapter {
+public class LLRPReaderAdapter implements IReaderPlugin {
 
 	/**
 	 * The connection info for this reader

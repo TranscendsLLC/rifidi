@@ -17,12 +17,12 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.rifidi.edge.adapter.alien.AlienConnectionInfo;
-import org.rifidi.edge.adapter.alien.AlienReaderAdapter;
 import org.rifidi.edge.common.utilities.converter.ByteAndHexConvertingUtility;
-import org.rifidi.edge.core.exception.adapter.RifidiAdapterIllegalStateException;
-import org.rifidi.edge.core.exception.adapter.RifidiConnectionException;
+import org.rifidi.edge.core.exception.readerPlugin.RifidiAdapterIllegalStateException;
+import org.rifidi.edge.core.exception.readerPlugin.RifidiConnectionException;
 import org.rifidi.edge.core.tag.TagRead;
+import org.rifidi.edge.readerPlugin.alien.AlienConnectionInfo;
+import org.rifidi.edge.readerPlugin.alien.AlienReaderAdapter;
 
 /**
  * 

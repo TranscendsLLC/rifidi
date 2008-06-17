@@ -1,8 +1,8 @@
-package org.rifidi.edge.adapter.alien;
+package org.rifidi.edge.readerPlugin.alien;
 
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
-import org.rifidi.edge.core.readerAdapterService.ReaderAdapterRegistryService;
+import org.rifidi.edge.core.readerPluginService.ReaderAdapterRegistryService;
 import org.rifidi.services.annotations.Inject;
 import org.rifidi.services.registry.ServiceRegistry;
 

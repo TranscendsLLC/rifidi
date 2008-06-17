@@ -10,7 +10,7 @@ import java.rmi.server.UnicastRemoteObject;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.rifidi.edge.core.session.SessionRegistryService;
+import org.rifidi.edge.core.connection.ReaderConnectionRegistryService;
 import org.rifidi.edge.rmi.service.RMIServerService;
 import org.rifidi.edge.rmi.session.RemoteSessionRegistry;
 import org.rifidi.edge.rmi.session.impl.RemoteSessionRegistryImpl;
@@ -25,7 +25,7 @@ public class RMIServerServiceImpl implements RMIServerService {
 	private Log logger = LogFactory.getLog(RMIServerServiceImpl.class);
 
 	// SessionRegistry
-	private SessionRegistryService sessionRegistryService;
+	private ReaderConnectionRegistryService sessionRegistryService;
 	private RemoteSessionRegistryImpl remoteSessionRegistry;
 
 	// RMI Registry
@@ -102,7 +102,7 @@ public class RMIServerServiceImpl implements RMIServerService {
 	 */
 	@Inject
 	public void setSessionRegistryService(
-			SessionRegistryService sessionRegistryService) {
+			ReaderConnectionRegistryService sessionRegistryService) {
 		logger.debug("Services: SessionRegistryService was injected");
 		this.sessionRegistryService = sessionRegistryService;
 	}

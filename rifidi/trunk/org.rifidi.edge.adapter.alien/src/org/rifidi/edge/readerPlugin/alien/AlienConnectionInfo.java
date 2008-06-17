@@ -1,15 +1,15 @@
 /**
  * 
  */
-package org.rifidi.edge.adapter.alien;
+package org.rifidi.edge.readerPlugin.alien;
 
-import org.rifidi.edge.core.readerAdapter.AbstractConnectionInfo;
+import org.rifidi.edge.core.readerPlugin.AbstractReaderInfo;
 
 /**
  * @author Matthew Dean - matt@pramari.com
  * 
  */
-public class AlienConnectionInfo extends AbstractConnectionInfo {
+public class AlienConnectionInfo extends AbstractReaderInfo {
 
 	/**
 	 * 
@@ -21,7 +21,7 @@ public class AlienConnectionInfo extends AbstractConnectionInfo {
 	private String password;
 
 	@Override
-	public Class<? extends AbstractConnectionInfo> getReaderAdapterType() {
+	public Class<? extends AbstractReaderInfo> getReaderAdapterType() {
 		return this.getClass();
 	}
 	

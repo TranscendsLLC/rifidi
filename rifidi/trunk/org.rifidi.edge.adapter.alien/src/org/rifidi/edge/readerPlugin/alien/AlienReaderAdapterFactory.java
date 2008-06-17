@@ -1,26 +1,26 @@
 /**
  * 
  */
-package org.rifidi.edge.adapter.alien;
+package org.rifidi.edge.readerPlugin.alien;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.rifidi.edge.core.exception.adapter.RifidiReaderAdapterCreationException;
-import org.rifidi.edge.core.readerAdapter.AbstractConnectionInfo;
-import org.rifidi.edge.core.readerAdapter.IReaderAdapter;
-import org.rifidi.edge.core.readerAdapter.ISpecificReaderAdapterFactory;
+import org.rifidi.edge.core.exception.readerPlugin.RifidiReaderAdapterCreationException;
+import org.rifidi.edge.core.readerPlugin.AbstractReaderInfo;
+import org.rifidi.edge.core.readerPlugin.IReaderPlugin;
+import org.rifidi.edge.core.readerPlugin.ISpecificReaderPluginFactory;
 
 /**
  * @author Matthew Dean - matt@pramari.com
  *
  */
-public class AlienReaderAdapterFactory implements ISpecificReaderAdapterFactory {
+public class AlienReaderAdapterFactory implements ISpecificReaderPluginFactory {
 	private static final Log logger = LogFactory.getLog(AlienReaderAdapterFactory.class);	
 	/* (non-Javadoc)
 	 * @see org.rifidi.edge.core.readerAdapter.ISpecificReaderAdapterFactory#createSpecificReaderAdapter(org.rifidi.edge.core.readerAdapter.AbstractConnectionInfo)
 	 */
 	@Override
-	public IReaderAdapter createSpecificReaderAdapter(AbstractConnectionInfo abstractConnectionInfo) throws RifidiReaderAdapterCreationException{
+	public IReaderPlugin createSpecificReaderAdapter(AbstractReaderInfo abstractConnectionInfo) throws RifidiReaderAdapterCreationException{
 		
 		if(abstractConnectionInfo instanceof AlienConnectionInfo)
 		{

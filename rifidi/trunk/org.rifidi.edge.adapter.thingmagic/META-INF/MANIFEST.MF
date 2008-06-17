@@ -1,15 +1,15 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Thingmagic Plug-in
-Bundle-SymbolicName: org.rifidi.edge.adapter.thingmagic
+Bundle-SymbolicName: org.rifidi.edge.readerPlugin.thingmagic
 Bundle-Version: 1.0.0
-Bundle-Activator: org.rifidi.edge.adapter.thingmagic.Activator
+Bundle-Activator: org.rifidi.edge.readerPlugin.thingmagic.Activator
 Bundle-Vendor: Pramari, LLC
 Eclipse-LazyStart: true
 Import-Package: org.osgi.framework;version="1.3.0"
 Require-Bundle: org.rifidi.edge.core,
  org.junit4,
- org.rifidi.jms,
+ org.rifidi.edge.jms,
  org.rifidi.edge.log4j,
  org.rifidi.edge.services,
  org.rifidi.edge.common.utilities
