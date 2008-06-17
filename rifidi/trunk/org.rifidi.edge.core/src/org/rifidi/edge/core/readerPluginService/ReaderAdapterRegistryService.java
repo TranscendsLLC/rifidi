@@ -17,9 +17,4 @@ public interface ReaderAdapterRegistryService {
 	
 	public List<String> getAvailableReaderAdapters();
 
-	public boolean registerListener(ReaderAdapterRegistryServiceListener listener);
-
-	public boolean unregisterListener(ReaderAdapterRegistryServiceListener listener);
-
-
 }

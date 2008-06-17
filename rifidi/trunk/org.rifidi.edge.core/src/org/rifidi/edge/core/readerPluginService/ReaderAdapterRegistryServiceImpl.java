@@ -12,81 +12,61 @@ import org.rifidi.edge.core.readerPlugin.ISpecificReaderPluginFactory;
 public class ReaderAdapterRegistryServiceImpl implements
 		ReaderAdapterRegistryService {
 
-	private Log logger = LogFactory.getLog(ReaderAdapterRegistryServiceImpl.class);
-	
-	private HashMap<Class<? extends AbstractReaderInfo>, ISpecificReaderPluginFactory> registry = new HashMap<Class<? extends AbstractReaderInfo>, ISpecificReaderPluginFactory>();
-	
-	private List<ReaderAdapterRegistryServiceListener> listeners = new ArrayList<ReaderAdapterRegistryServiceListener>();
+	private Log logger = LogFactory
+			.getLog(ReaderAdapterRegistryServiceImpl.class);
 
-	/* (non-Javadoc)
-	 * @see org.rifidi.edge.core.readerAdapterService.ReaderAdapterRegistryService#registerReaderAdapter(java.lang.Class, org.rifidi.edge.core.readerAdapter.ISpecificReaderAdapterFactory)
+	private HashMap<Class<? extends AbstractReaderInfo>, ISpecificReaderPluginFactory> registry = new HashMap<Class<? extends AbstractReaderInfo>, ISpecificReaderPluginFactory>();
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.rifidi.edge.core.readerAdapterService.ReaderAdapterRegistryService#registerReaderAdapter(java.lang.Class,
+	 *      org.rifidi.edge.core.readerAdapter.ISpecificReaderAdapterFactory)
 	 */
 	@Override
-	public void registerReaderAdapter(Class<? extends AbstractReaderInfo> specificConnectionInfo,
+	public void registerReaderAdapter(
+			Class<? extends AbstractReaderInfo> specificConnectionInfo,
 			ISpecificReaderPluginFactory specificReaderAdapterFactory) {
-		logger.debug("ReaderAdapter " + specificConnectionInfo.getName() + " registered");
-		if(! registry.containsKey(specificConnectionInfo))
-		{
+		logger.debug("ReaderAdapter " + specificConnectionInfo.getName()
+				+ " registered");
+		if (!registry.containsKey(specificConnectionInfo)) {
 			registry.put(specificConnectionInfo, specificReaderAdapterFactory);
-		}
-		for (ReaderAdapterRegistryServiceListener listener: listeners ){
-			listener.readerAdapterRegistryServiceListener(specificConnectionInfo, specificReaderAdapterFactory);
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.rifidi.edge.core.readerAdapterService.ReaderAdapterRegistryService#unregisterReaderAdapter(java.lang.Class)
 	 */
 	@Override
-	public void unregisterReaderAdapter(Class<? extends AbstractReaderInfo> specificConnectionInfo) {
-		
-		ISpecificReaderPluginFactory specificReaderAdapterFactory = registry.get(specificConnectionInfo);
-		
-		for (ReaderAdapterRegistryServiceListener listener: listeners ){
-			listener.readerAdapterRegistryServiceListener(specificConnectionInfo, specificReaderAdapterFactory);
-		}
-		
+	public void unregisterReaderAdapter(
+			Class<? extends AbstractReaderInfo> specificConnectionInfo) {
+
+		ISpecificReaderPluginFactory specificReaderAdapterFactory = registry
+				.get(specificConnectionInfo);
+
 		registry.remove(specificConnectionInfo);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.rifidi.edge.core.readerAdapterService.ReaderAdapterRegistryService#getSpecReaderAdapterFactory(org.rifidi.edge.core.readerAdapter.AbstractConnectionInfo)
 	 */
 	@Override
-	public ISpecificReaderPluginFactory getSpecReaderAdapterFactory(AbstractReaderInfo specificConnectionInfo) {
+	public ISpecificReaderPluginFactory getSpecReaderAdapterFactory(
+			AbstractReaderInfo specificConnectionInfo) {
 		return registry.get(specificConnectionInfo.getClass());
 	}
 
 	@Override
 	public List<String> getAvailableReaderAdapters() {
 		ArrayList<String> availableAdapters = new ArrayList<String>();
-		for(Class<?> clazz : registry.keySet())
-		{
+		for (Class<?> clazz : registry.keySet()) {
 			availableAdapters.add(clazz.getName());
 		}
 		return availableAdapters;
-	}
-	
-	@Override
-	public boolean registerListener(ReaderAdapterRegistryServiceListener listener){
-		//TODO not implemented yet
-		if (listeners.contains(listener)){
-			return false; // return false because it was not added.
-		} else {
-			listeners.add(listener);
-			return true; //return true because we successfully added it.
-		}
-	}
-
-	@Override
-	public boolean unregisterListener(ReaderAdapterRegistryServiceListener listener) {
-		//TODO not implemented yet
-		if (listeners.contains(listener)) {
-			listeners.remove(listener);
-			return true; // return true because we successfully removed the listener
-		} else {
-			return false;
-		}
 	}
 
 }
