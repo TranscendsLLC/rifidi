@@ -24,8 +24,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.common.utilities.converter.ByteAndHexConvertingUtility;
 import org.rifidi.edge.core.exception.RifidiIIllegialArgumentException;
-import org.rifidi.edge.core.exception.readerPlugin.RifidiAdapterIllegalStateException;
-import org.rifidi.edge.core.exception.readerPlugin.RifidiConnectionException;
+import org.rifidi.edge.core.exception.readerConnection.RifidiConnectionIllegalStateException;
+import org.rifidi.edge.core.exception.readerConnection.RifidiConnectionException;
 import org.rifidi.edge.core.readerPlugin.IReaderPlugin;
 import org.rifidi.edge.core.readerPlugin.commands.ICustomCommand;
 import org.rifidi.edge.core.readerPlugin.commands.ICustomCommandResult;
@@ -116,7 +116,7 @@ public class AlienReaderPlugin implements IReaderPlugin {
 	 */
 	@Override
 	public ICustomCommandResult sendCustomCommand(ICustomCommand customCommand) 
-			throws RifidiAdapterIllegalStateException, RifidiIIllegialArgumentException {
+			throws RifidiConnectionIllegalStateException, RifidiIIllegialArgumentException {
 		/*try {
 			out.write(new String(command));
 			readFromReader(in);
@@ -131,7 +131,7 @@ public class AlienReaderPlugin implements IReaderPlugin {
 	 * 
 	 */
 	@Override
-	public List<TagRead> getNextTags() throws RifidiAdapterIllegalStateException {
+	public List<TagRead> getNextTags() throws RifidiConnectionIllegalStateException {
 
 		logger.debug("starting the getnexttags");
 

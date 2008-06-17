@@ -5,7 +5,7 @@ package org.rifidi.edge.readerPlugin.alien;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.rifidi.edge.core.exception.readerPlugin.RifidiReaderAdapterCreationException;
+import org.rifidi.edge.core.exception.readerConnection.RifidiReaderPluginCreationException;
 import org.rifidi.edge.core.readerPlugin.AbstractReaderInfo;
 import org.rifidi.edge.core.readerPlugin.IReaderPlugin;
 import org.rifidi.edge.core.readerPlugin.ISpecificReaderPluginFactory;
@@ -20,7 +20,7 @@ public class AlienReaderPluginFactory implements ISpecificReaderPluginFactory {
 	 * @see org.rifidi.edge.core.readerAdapter.ISpecificReaderAdapterFactory#createSpecificReaderAdapter(org.rifidi.edge.core.readerAdapter.AbstractConnectionInfo)
 	 */
 	@Override
-	public IReaderPlugin createSpecificReaderAdapter(AbstractReaderInfo abstractConnectionInfo) throws RifidiReaderAdapterCreationException{
+	public IReaderPlugin createSpecificReaderAdapter(AbstractReaderInfo abstractConnectionInfo) throws RifidiReaderPluginCreationException{
 		
 		if(abstractConnectionInfo instanceof AlienReaderInfo)
 		{

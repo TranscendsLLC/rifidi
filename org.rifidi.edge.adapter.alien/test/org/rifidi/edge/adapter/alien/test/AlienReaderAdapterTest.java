@@ -18,8 +18,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.rifidi.edge.common.utilities.converter.ByteAndHexConvertingUtility;
-import org.rifidi.edge.core.exception.readerPlugin.RifidiAdapterIllegalStateException;
-import org.rifidi.edge.core.exception.readerPlugin.RifidiConnectionException;
+import org.rifidi.edge.core.exception.readerConnection.RifidiConnectionIllegalStateException;
+import org.rifidi.edge.core.exception.readerConnection.RifidiConnectionException;
 import org.rifidi.edge.core.tag.TagRead;
 import org.rifidi.edge.readerPlugin.alien.AlienReaderInfo;
 import org.rifidi.edge.readerPlugin.alien.AlienReaderPlugin;
@@ -47,7 +47,7 @@ public class AlienReaderAdapterTest {
 
 	/**
 	 * Tests connecting the reader
-	 * @throws RifidiAdapterIllegalStateException 
+	 * @throws RifidiConnectionIllegalStateException 
 	 */
 	@Test
 	public void testConnect() {
@@ -69,7 +69,7 @@ public class AlienReaderAdapterTest {
 		List<TagRead> tagList = null;
 		try {
 			tagList = alienReaderAdapter.getNextTags();
-		} catch (RifidiAdapterIllegalStateException e) {
+		} catch (RifidiConnectionIllegalStateException e) {
 			e.printStackTrace();
 			Assert.fail();
 		}
@@ -110,7 +110,7 @@ public class AlienReaderAdapterTest {
 		List<TagRead> tagList = null;
 		try {
 			tagList = alienReaderAdapter.getNextTags();
-		} catch (RifidiAdapterIllegalStateException e) {
+		} catch (RifidiConnectionIllegalStateException e) {
 			e.printStackTrace();
 			Assert.fail();
 		}

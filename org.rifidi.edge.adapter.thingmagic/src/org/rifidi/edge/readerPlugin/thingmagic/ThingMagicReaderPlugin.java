@@ -14,8 +14,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.common.utilities.converter.ByteAndHexConvertingUtility;
 import org.rifidi.edge.core.exception.RifidiIIllegialArgumentException;
-import org.rifidi.edge.core.exception.readerPlugin.RifidiAdapterIllegalStateException;
-import org.rifidi.edge.core.exception.readerPlugin.RifidiConnectionException;
+import org.rifidi.edge.core.exception.readerConnection.RifidiConnectionIllegalStateException;
+import org.rifidi.edge.core.exception.readerConnection.RifidiConnectionException;
 import org.rifidi.edge.core.readerPlugin.IReaderPlugin;
 import org.rifidi.edge.core.readerPlugin.commands.ICustomCommand;
 import org.rifidi.edge.core.readerPlugin.commands.ICustomCommandResult;
@@ -88,7 +88,7 @@ public class ThingMagicReaderPlugin implements IReaderPlugin {
 	}
 
 	@Override
-	public List<TagRead> getNextTags() throws RifidiAdapterIllegalStateException{
+	public List<TagRead> getNextTags() throws RifidiConnectionIllegalStateException{
 		String input = null;
 		List<TagRead> tags = new ArrayList<TagRead>();
 		if(connected){
@@ -100,7 +100,7 @@ public class ThingMagicReaderPlugin implements IReaderPlugin {
 				 input = readFromReader(in);
 			} catch (IOException e) {
 				logger.debug("IOException.", e);
-				throw new RifidiAdapterIllegalStateException(e);
+				throw new RifidiConnectionIllegalStateException(e);
 			}
 			
 			if (input.equals("\n"))				
@@ -130,13 +130,13 @@ public class ThingMagicReaderPlugin implements IReaderPlugin {
 			}
 			return tags;
 		}
-		throw new RifidiAdapterIllegalStateException("Adapter not Connected to Reader.");
+		throw new RifidiConnectionIllegalStateException("Adapter not Connected to Reader.");
 	}
 
 
 	@Override
 	public ICustomCommandResult sendCustomCommand(ICustomCommand customCommand)
-			throws RifidiAdapterIllegalStateException, RifidiIIllegialArgumentException
+			throws RifidiConnectionIllegalStateException, RifidiIIllegialArgumentException
 	{
 		ThingMagicCustomCommand command;
 		ThingMagicCustomCommandResult result = null;
@@ -162,7 +162,7 @@ public class ThingMagicReaderPlugin implements IReaderPlugin {
 				result = new ThingMagicCustomCommandResult(readFromReader(in));
 			} catch (IOException e) {
 				logger.debug("IOException has accured.", e);
-				throw new RifidiAdapterIllegalStateException(e.getClass().getName(), e);
+				throw new RifidiConnectionIllegalStateException(e.getClass().getName(), e);
 			}
 			
 		}

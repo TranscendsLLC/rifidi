@@ -8,8 +8,8 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.rifidi.edge.core.exception.readerPlugin.RifidiAdapterIllegalStateException;
-import org.rifidi.edge.core.exception.readerPlugin.RifidiConnectionException;
+import org.rifidi.edge.core.exception.readerConnection.RifidiConnectionIllegalStateException;
+import org.rifidi.edge.core.exception.readerConnection.RifidiConnectionException;
 import org.rifidi.edge.core.tag.TagRead;
 import org.rifidi.edge.readerPlugin.thingmagic.ThingMagicReaderInfo;
 import org.rifidi.edge.readerPlugin.thingmagic.ThingMagicReaderPlugin;
@@ -55,7 +55,7 @@ public class ThingMagicAdapterTest {
 		List<TagRead> tagReads = null;
 		try {
 			tagReads = adapter.getNextTags();
-		} catch (RifidiAdapterIllegalStateException e) {
+		} catch (RifidiConnectionIllegalStateException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			Assert.fail("Illegal Adapter State.");
