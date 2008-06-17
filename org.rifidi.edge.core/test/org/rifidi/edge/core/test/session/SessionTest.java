@@ -21,15 +21,12 @@ import org.rifidi.edge.core.adapter.dummyadapter.DummyCustomCommand;
 import org.rifidi.edge.core.adapter.dummyadapter.DummyCustomCommandResult;
 import org.rifidi.edge.core.adapter.dummyadapter.DummyReaderAdapter;
 import org.rifidi.edge.core.adapter.dummyadapter.DummyReaderAdapterFactory;
-import org.rifidi.edge.core.adapter.dummyadapter.EDummyError;
 import org.rifidi.edge.core.connection.ReaderConnection;
 import org.rifidi.edge.core.connection.ReaderConnectionRegistryService;
 import org.rifidi.edge.core.connection.jms.JMSHelper;
 import org.rifidi.edge.core.connection.jms.JMSMessageThread;
-import org.rifidi.edge.core.exception.readerConnection.RifidiConnectionIllegalStateException;
 import org.rifidi.edge.core.exception.readerConnection.RifidiConnectionException;
 import org.rifidi.edge.core.readerPlugin.AbstractReaderInfo;
-import org.rifidi.edge.core.readerPlugin.enums.EReaderAdapterState;
 import org.rifidi.edge.core.readerPluginService.ReaderPluginRegistryService;
 import org.rifidi.services.annotations.Inject;
 import org.rifidi.services.registry.ServiceRegistry;
@@ -39,13 +36,13 @@ import org.rifidi.services.registry.ServiceRegistry;
  * 
  */
 public class SessionTest {
-	
+
 	private static final Log logger = LogFactory.getLog(SessionTest.class);
 
 	private ConnectionFactory connectionFactory;
-	
+
 	private ReaderConnectionRegistryService sessionRegistryService;
-	
+
 	private ReaderPluginRegistryService readerPluginRegistryService;
 
 	/**
@@ -69,7 +66,8 @@ public class SessionTest {
 	@Test
 	public void testGetSetAdapter() {
 
-		DummyReaderAdapter dummyAdapter = new DummyReaderAdapter(new DummyConnectionInfo());
+		DummyReaderAdapter dummyAdapter = new DummyReaderAdapter(
+				new DummyConnectionInfo());
 		ReaderConnection s = new ReaderConnection(null, null, -1, null);
 
 		s.setAdapter(dummyAdapter);
@@ -83,19 +81,16 @@ public class SessionTest {
 	@Test
 	public void testGetSetSessionID() {
 		ReaderConnection session = new ReaderConnection(null, null, -1, null);
-		
+
 		session.setSessionID(3);
 		Assert.assertTrue(session.getSessionID() == 3);
 	}
 
-	/**	@Before
-	public void setUp() throws Exception {
-	}
-
-	@After
-	public void tearDown() throws Exception {
-	}
-	 * Make sure we can set and get the AbstractConnectionInfo
+	/**
+	 * @Before public void setUp() throws Exception { }
+	 * 
+	 * @After public void tearDown() throws Exception { } Make sure we can set
+	 *        and get the AbstractConnectionInfo
 	 */
 	@Test
 	public void testGetSetAbstractConnectionInfo() {
@@ -111,57 +106,54 @@ public class SessionTest {
 	@Test
 	public void testJMSThread() {
 		JMSHelper jmsHelper = new JMSHelper();
-		
-		if(connectionFactory == null)
-		{
+
+		if (connectionFactory == null) {
 			Assert.fail("Coudn't get connection Factory out of Services");
 		}
-		
+
 		jmsHelper.initializeJMSQueue(connectionFactory, "test");
-		
-		if (!jmsHelper.isInitialized())
-		{
+
+		if (!jmsHelper.isInitialized()) {
 			Assert.fail("Error while initializing jmsHelper.");
 		}
-		
-		DummyReaderAdapter adapter = new DummyReaderAdapter(new DummyConnectionInfo());
-		
+
+		DummyReaderAdapter adapter = new DummyReaderAdapter(
+				new DummyConnectionInfo());
+
 		try {
 			adapter.connect();
 		} catch (RifidiConnectionException e2) {
 			Assert.fail();
 			e2.printStackTrace();
 		}
-		
+
 		JMSMessageThread jmsThread = new JMSMessageThread(1, adapter, jmsHelper);
-		if(! jmsThread.start())
-		{
+		if (!jmsThread.start()) {
 			Assert.fail("Error while starting JMSThread");
 		}
-		
+
 		try {
 			Thread.sleep(500);
 		} catch (InterruptedException e1) {
 			e1.printStackTrace();
 		}
 		try {
-			MessageConsumer consumer = jmsHelper.getSession().createConsumer(jmsHelper
-					.getDestination());
+			MessageConsumer consumer = jmsHelper.getSession().createConsumer(
+					jmsHelper.getDestination());
 
 			// Get the next message from the queue
 			Message m = consumer.receive(500);
 
-			logger.info(((TextMessage)m).getText() + "== END ==");
-			
+			logger.info(((TextMessage) m).getText() + "== END ==");
+
 			m = consumer.receive(5000);
 
-			logger.info(((TextMessage)m).getText() + "== END ==");
-			
+			logger.info(((TextMessage) m).getText() + "== END ==");
+
 		} catch (JMSException e) {
 			e.printStackTrace();
 			Assert.fail();
 		}
-		
 
 		jmsThread.stop();
 
@@ -173,26 +165,25 @@ public class SessionTest {
 	@Test
 	public void testSendCustomCommand() {
 		// TODO Jerry should Implement
-		//Assert.fail("Not Implemented");
-		
+		// Assert.fail("Not Implemented");
+
 		readerPluginRegistryService.registerReaderAdapter(
 				DummyConnectionInfo.class, new DummyReaderAdapterFactory());
 
-		
-
 		DummyConnectionInfo info = new DummyConnectionInfo();
-		
+
 		ReaderConnection s = sessionRegistryService
 				.createReaderConnection(info);
-		
 
 		s.connect();
 
+		Assert.assertTrue("Command <Result>"
+				.equals(((DummyCustomCommandResult) s
+						.sendCustomCommand(new DummyCustomCommand("Command")))
+						.getResult()));
 
-		Assert.assertTrue("Command <Result>".equals(  ((DummyCustomCommandResult)s.sendCustomCommand(new DummyCustomCommand("Command"))).getResult() ));
-		
 		s.disconnect();
-		
+
 	}
 
 	/**
@@ -212,7 +203,7 @@ public class SessionTest {
 
 		// create the dummy reader adapter
 		DummyReaderAdapter readerAdapter = new DummyReaderAdapter(info);
-		
+
 		try {
 			readerAdapter.connect();
 		} catch (RifidiConnectionException e1) {
@@ -231,10 +222,11 @@ public class SessionTest {
 				readerAdapter, jmsHelper);
 
 		// create the reader Session
-		ReaderConnection s = new ReaderConnection(info, readerAdapter, SessionID, mthread);
+		ReaderConnection s = new ReaderConnection(info, readerAdapter,
+				SessionID, mthread);
 
 		s.connect();
-		
+
 		s.startTagStream();
 
 		Connection c;
@@ -250,21 +242,21 @@ public class SessionTest {
 			// Get the next message from the queue
 			Message m = consumer.receive(500);
 
-			System.out.println(((TextMessage)m).getText() + "== END ==");
-			
+			System.out.println(((TextMessage) m).getText() + "== END ==");
+
 			m = consumer.receive(5000);
 
-			System.out.println(((TextMessage)m).getText() + "== END ==");
-			
+			System.out.println(((TextMessage) m).getText() + "== END ==");
+
 			// If the queue is not null, then we have started the tag stream
 			// correctly
 			Assert.assertNotNull(m);
-			
+
 			s.stopTagStream();
-			
+
 			// see if there is anything in the queue after it has been stopped.
 			m = consumer.receive(5000);
-			
+
 			Assert.assertNull(m);
 
 		} catch (JMSException e) {
@@ -278,18 +270,19 @@ public class SessionTest {
 	public void setConnectionFactory(ConnectionFactory connectionFactory) {
 		this.connectionFactory = connectionFactory;
 	}
-	
+
 	@Inject
 	public void setSessionRegistryService(ReaderConnectionRegistryService regSer) {
 		this.sessionRegistryService = regSer;
 	}
-	
+
 	@Inject
 	public void setAdapterRegistryService(
 			ReaderPluginRegistryService readerPluginRegistryService) {
 		this.readerPluginRegistryService = readerPluginRegistryService;
-		
-		readerPluginRegistryService.registerReaderAdapter(DummyConnectionInfo.class, new DummyReaderAdapterFactory());
+
+		readerPluginRegistryService.registerReaderAdapter(
+				DummyConnectionInfo.class, new DummyReaderAdapterFactory());
 	}
 
 }

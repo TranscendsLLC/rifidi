@@ -18,6 +18,7 @@ import org.rifidi.services.registry.ServiceRegistry;
 
 public class ThingMagicAdapterTest {
 
+	@SuppressWarnings("unused")
 	private ConnectionFactory connectionFactory;
 
 	/**
