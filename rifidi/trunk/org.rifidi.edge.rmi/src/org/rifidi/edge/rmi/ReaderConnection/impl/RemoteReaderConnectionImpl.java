@@ -19,8 +19,8 @@ public class RemoteReaderConnectionImpl implements RemoteReaderConnection {
 
 	private IReaderConnection readerConnection;
 
-	public RemoteReaderConnectionImpl(IReaderConnection session) {
-		this.readerConnection = session;
+	public RemoteReaderConnectionImpl(IReaderConnection readerConnection) {
+		this.readerConnection = readerConnection;
 	}
 
 	@Override
