@@ -18,6 +18,7 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -90,11 +91,9 @@ public class LLRPReaderPlugin implements IReaderPlugin {
 	 */
 	private Socket connection = null;
 
-	/**
-	 * The incoming data stream from the LLRP reader connection
-	 */
-	private DataInputStream in = null;
 	private DataOutputStream out = null;
+
+	private ReadThread reader = null;
 
 	/**
 	 * The ID of the ROSpec that is used
@@ -122,7 +121,8 @@ public class LLRPReaderPlugin implements IReaderPlugin {
 		try {
 			connection = new Socket(aci.getIPAddress(), aci.getPort());
 			out = new DataOutputStream(connection.getOutputStream());
-			in = new DataInputStream(connection.getInputStream());
+			reader = new ReadThread(connection);
+			reader.start();
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
 			throw new RifidiConnectionException(e);
@@ -131,26 +131,20 @@ public class LLRPReaderPlugin implements IReaderPlugin {
 			throw new RifidiConnectionException(e);
 		}
 
-		try {
-			LLRPMessage m = read();
-			logger.debug(m.toXMLString());
+		SET_READER_CONFIG config = createSetReaderConfig();
+		write(config, "Set Reader Config");
 
-			SET_READER_CONFIG config = createSetReaderConfig();
-			write(config, "Set Reader Config");
-			LLRPMessage setconf = readInCommand();
-			logger.debug("SET CONF TO XML");
-			try {
-				logger.debug(setconf.toXMLString());
-			} catch (InvalidLLRPMessageException e2) {
-				e2.printStackTrace();
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-			throw new RifidiConnectionException(e);
-		} catch (InvalidLLRPMessageException e) {
-			e.printStackTrace();
-			throw new RifidiConnectionException(e);
-		}
+		// CREATE an ADD_ROSPEC Message and send it to the reader
+		ADD_ROSPEC addROSpec = new ADD_ROSPEC();
+		addROSpec.setROSpec(createROSpec());
+		write(addROSpec, "ADD_ROSPEC");
+		pause(250);
+
+		// Create an ENABLE_ROSPEC message and send it to the reader
+		ENABLE_ROSPEC enableROSpec = new ENABLE_ROSPEC();
+		enableROSpec.setROSpecID(new UnsignedInteger(ROSPEC_ID));
+		write(enableROSpec, "ENABLE_ROSPEC");
+		pause(250);
 	}
 
 	/*
@@ -165,18 +159,242 @@ public class LLRPReaderPlugin implements IReaderPlugin {
 		// Create a CLOSE_CONNECTION message and send it to the reader
 		CLOSE_CONNECTION cc = new CLOSE_CONNECTION();
 		write(cc, "CloseConnection");
-		try {
-			LLRPMessage m = read();
-			logger.debug(m.toXMLString());
-		} catch (IOException e) {
-			e.printStackTrace();
-			throw new RifidiConnectionException(e);
-		} catch (InvalidLLRPMessageException e) {
-			e.printStackTrace();
-			throw new RifidiConnectionException(e);
-		}
 
 		this.pause(1000);
+	}
+
+	/**
+	 * 
+	 * This class is a allows LLRP messages to be read on a separate thread
+	 * 
+	 * @author Kyle Neumeier
+	 * @author Andreas Huebner
+	 * @author Matthew Dean
+	 */
+	class ReadThread extends Thread {
+
+		/**
+		 * The incoming data stream from the LLRP reader connection
+		 */
+		private DataInputStream inStream = null;
+
+		/**
+		 * The socket for the connection to the LLRP Reader
+		 */
+		private Socket socket = null;
+
+		/**
+		 * A queue to store incoming LLRP Messages
+		 */
+		private LinkedBlockingQueue<LLRPMessage> commandQueue = null;
+
+		/**
+		 * A queue to store incoming LLRP Messages
+		 */
+		@SuppressWarnings("unused")
+		private LinkedBlockingQueue<LLRPMessage> tagQueue = null;
+
+		/**
+		 * Thread for constant reading of the stream
+		 * 
+		 * @param inStream
+		 */
+		public ReadThread(Socket socket) {
+			this.socket = socket;
+			this.commandQueue = new LinkedBlockingQueue<LLRPMessage>();
+			this.tagQueue = new LinkedBlockingQueue<LLRPMessage>();
+			try {
+				this.inStream = new DataInputStream(socket.getInputStream());
+			} catch (IOException e) {
+				logger.error("Cannot get input stream", e);
+			}
+		}
+
+		@Override
+		public void run() {
+			super.run();
+			if (socket.isConnected()) {
+				while (!socket.isClosed()) {
+					LLRPMessage message = null;
+					try {
+						System.out.println("just before reading the message");
+						message = read();
+						System.out.println("just after reading the message");
+						if (message != null) {
+							if (message.getMessageID().toInteger() != 4) {
+								commandQueue.put(message);
+								logger.info("Received Message: \n"
+										+ message.toXMLString());
+								System.out.println("message: "
+										+ message.toXMLString());
+							} else {
+
+							}
+						} else {
+							logger.info("closing socket");
+							socket.close();
+						}
+
+					} catch (IOException e) {
+						logger.error("Error while reading message", e);
+					} catch (InvalidLLRPMessageException e) {
+						logger.error("Error while reading message", e);
+					} catch (InterruptedException e) {
+						logger.error("Error while reading message", e);
+					}
+				}
+			}
+		}
+
+		/**
+		 * Read everything from the stream until the socket is closed
+		 * 
+		 * @throws InvalidLLRPMessageException
+		 */
+		public LLRPMessage read() throws IOException,
+				InvalidLLRPMessageException {
+			LLRPMessage m = null;
+			// The message header
+			byte[] first = new byte[6];
+
+			// the complete message
+			byte[] msg;
+
+			// Read in the message header. If -1 is read, there is no more
+			// data available, so close the socket
+			if (inStream.read(first, 0, 6) == -1) {
+				return null;
+			}
+			int msgLength = 0;
+
+			try {
+				// calculate message length
+				msgLength = calculateLLRPMessageLength(first);
+			} catch (IllegalArgumentException e) {
+				throw new IOException("Incorrect Message Length");
+			}
+
+			/*
+			 * the rest of bytes of the message will be stored in here before
+			 * they are put in the accumulator. If the message is short, all
+			 * messageLength-6 bytes will be read in here at once. If it is
+			 * long, the data might not be available on the socket all at once,
+			 * so it make take a couple of iterations to read in all the bytes
+			 */
+			byte[] temp = new byte[msgLength - 6];
+
+			// all the rest of the bytes will be put into the accumulator
+			ArrayList<Byte> accumulator = new ArrayList<Byte>();
+
+			// add the first six bytes to the accumulator so that it will
+			// contain all the bytes at the end
+			for (byte b : first) {
+				accumulator.add(b);
+			}
+
+			// the number of bytes read on the last call to read()
+			int numBytesRead = 0;
+
+			// read from the input stream and put bytes into the accumulator
+			// while there are still bytes left to read on the socket and
+			// the entire message has not been read
+			while (((msgLength - accumulator.size()) != 0)
+					&& numBytesRead != -1) {
+
+				numBytesRead = inStream.read(temp, 0, msgLength
+						- accumulator.size());
+
+				for (int i = 0; i < numBytesRead; i++) {
+					accumulator.add(temp[i]);
+				}
+			}
+
+			if ((msgLength - accumulator.size()) != 0) {
+				throw new IOException("Error: Discrepency between message size"
+						+ " in header and actual number of bytes read");
+			}
+
+			msg = new byte[msgLength];
+
+			// copy all bytes in the accumulator to the msg byte array
+			for (int i = 0; i < accumulator.size(); i++) {
+				msg[i] = accumulator.get(i);
+			}
+
+			// turn the byte array into an LLRP Message Object
+			m = LLRPMessageFactory.createLLRPMessage(msg);
+			return m;
+		}
+
+		/**
+		 * Send in the first 6 bytes of an LLRP Message
+		 * 
+		 * @param bytes
+		 * @return
+		 */
+		private int calculateLLRPMessageLength(byte[] bytes)
+				throws IllegalArgumentException {
+			long msgLength = 0;
+			int num1 = 0;
+			int num2 = 0;
+			int num3 = 0;
+			int num4 = 0;
+
+			num1 = ((unsignedByteToInt(bytes[2])));
+			num1 = num1 << 32;
+
+			if (num1 > 127) {
+				throw new RuntimeException(
+						"Cannot construct a message greater than "
+								+ "2147483647 bytes (2^31 - 1), due to the fact that there are "
+								+ "no unsigned ints in java");
+			}
+
+			num2 = ((unsignedByteToInt(bytes[3])));
+			num2 = num2 << 16;
+
+			num3 = ((unsignedByteToInt(bytes[4])));
+			num3 = num3 << 8;
+
+			num4 = (unsignedByteToInt(bytes[5]));
+
+			msgLength = num1 + num2 + num3 + num4;
+
+			System.out.println("Message length is: " + msgLength);
+
+			if (msgLength < 0) {
+				throw new IllegalArgumentException(
+						"LLRP message length is less than 0");
+			} else {
+				return (int) msgLength;
+			}
+		}
+
+		/**
+		 * From http://www.rgagnon.com/javadetails/java-0026.html
+		 * 
+		 * @param b
+		 * @return
+		 */
+		private int unsignedByteToInt(byte b) {
+			return (int) b & 0xFF;
+		}
+
+		/**
+		 * Receive the next Message
+		 * 
+		 * @return returns the Message form the Queue and removes it. It blocks
+		 *         if there is no Message.
+		 */
+		public LLRPMessage getNextMessage() {
+			LLRPMessage m = null;
+			try {
+				m = commandQueue.take();
+			} catch (InterruptedException e) {
+				// nothing
+			}
+			return m;
+		}
 	}
 
 	/*
@@ -199,104 +417,27 @@ public class LLRPReaderPlugin implements IReaderPlugin {
 		logger.debug("STARTING THE GETNEXTTAGS");
 
 		List<TagRead> retVal = null;
-
-		// CREATE an ADD_ROSPEC Message and send it to the reader
-		ADD_ROSPEC addROSpec = new ADD_ROSPEC();
-		addROSpec.setROSpec(createROSpec());
-		write(addROSpec, "ADD_ROSPEC");
-		pause(250);
-		LLRPMessage adros = readInCommand();
-		logger.debug("ADD ROSPEC TO XML");
-		try {
-			logger.debug(adros.toXMLString());
-		} catch (InvalidLLRPMessageException e2) {
-			e2.printStackTrace();
-		}
-
-		// Create an ENABLE_ROSPEC message and send it to the reader
-		ENABLE_ROSPEC enableROSpec = new ENABLE_ROSPEC();
-		enableROSpec.setROSpecID(new UnsignedInteger(ROSPEC_ID));
-		write(enableROSpec, "ENABLE_ROSPEC");
-		pause(250);
-
-		LLRPMessage enros = readInCommand();
-		logger.debug("ENABLE ROSPEC TO XML");
-		try {
-			logger.debug(enros.toXMLString());
-		} catch (InvalidLLRPMessageException e1) {
-			e1.printStackTrace();
-		}
-
 		// Create a START_ROSPEC message and send it to the reader
 		START_ROSPEC startROSpec = new START_ROSPEC();
 		startROSpec.setROSpecID(new UnsignedInteger(ROSPEC_ID));
-		write(startROSpec, "START_ROSPEC");
-		LLRPMessage startros = readInCommand();
-		logger.debug("START ROSPEC TO XML");
-		try {
-			logger.debug(startros.toXMLString());
-		} catch (InvalidLLRPMessageException e1) {
-			e1.printStackTrace();
-		}
-
-		LLRPMessage startros2 = readInCommand();
-		logger.debug("START ROSPEC2 TO XML");
-		try {
-			logger.debug(startros2.toXMLString());
-		} catch (InvalidLLRPMessageException e1) {
-			e1.printStackTrace();
-		}
-
-		pause(1000);
 
 		// Create a STOP_ROSPEC message and send it to the reader
 		STOP_ROSPEC stopROSpec = new STOP_ROSPEC();
 		stopROSpec.setROSpecID(new UnsignedInteger(ROSPEC_ID));
 		write(stopROSpec, "STOP_ROSPEC");
 		pause(250);
-		LLRPMessage stopros = readInCommand();
-		logger.debug("STOP ROSPEC TO XML");
-		try {
-			logger.debug(stopros.toXMLString());
-		} catch (InvalidLLRPMessageException e1) {
-			e1.printStackTrace();
-		}
 
-		LLRPMessage stopros2 = readInCommand();
-		logger.debug("STOP ROSPEC2 TO XML");
-		try {
-			logger.debug(stopros2.toXMLString());
-		} catch (InvalidLLRPMessageException e1) {
-			e1.printStackTrace();
-		}
-
-		LLRPMessage tags = readInCommand();
-		retVal = parseTags(tags);
-
-		try {
-			logger.debug("TAGS TO XML STRING");
-			logger.debug(tags.toXMLString());
-		} catch (InvalidLLRPMessageException e) {
-			e.printStackTrace();
-		}
+		// retVal = parseTags();
 
 		// Create a DISABLE_ROSPEC message and send it to the reader
 		DISABLE_ROSPEC disableROSpec = new DISABLE_ROSPEC();
 		disableROSpec.setROSpecID(new UnsignedInteger(ROSPEC_ID));
 		write(disableROSpec, "DISABLE_ROSPEC");
-		pause(250);
-
-		LLRPMessage disros = readInCommand();
-		logger.debug(disros);
 
 		// Create a DELTE_ROSPEC message and send it to the reader
 		DELETE_ROSPEC deleteROSpec = new DELETE_ROSPEC();
 		deleteROSpec.setROSpecID(new UnsignedInteger(ROSPEC_ID));
 		write(deleteROSpec, "DELETE_ROSPEC");
-		pause(250);
-
-		LLRPMessage delros = readInCommand();
-		logger.debug(delros);
 
 		return retVal;
 	}
@@ -392,23 +533,24 @@ public class LLRPReaderPlugin implements IReaderPlugin {
 	 * @param msg
 	 * @return
 	 */
-	private List<TagRead> parseTags(LLRPMessage msg) {
+	public List<TagRead> parseTags(LLRPMessage msg) {
 
 		List<TagRead> retVal = new ArrayList<TagRead>();
-		
-		RO_ACCESS_REPORT rar = (RO_ACCESS_REPORT)msg;
-		
-		//TagReportData list parse
-		for(TagReportData t:rar.getTagReportDataList()) {
+
+		RO_ACCESS_REPORT rar = (RO_ACCESS_REPORT) msg;
+
+		// TagReportData list parse
+		for (TagReportData t : rar.getTagReportDataList()) {
 			TagRead newTag = new TagRead();
-			EPC_96 id = (EPC_96)t.getEPCParameter();
-			newTag.setId(ByteAndHexConvertingUtility.fromHexString(id.getEPC().toString()));
-			//TODO: Either our classes or the Toolkit handles this in the wrong way.   
-			//newTag.setLastSeenTime(t.getLastSeenTimestampUTC().getMicroseconds().toLong());
+			EPC_96 id = (EPC_96) t.getEPCParameter();
+			newTag.setId(ByteAndHexConvertingUtility.fromHexString(id.getEPC()
+					.toString()));
+			// TODO: Either our classes or the Toolkit handles this in the wrong
+			// way.
+			// newTag.setLastSeenTime(t.getLastSeenTimestampUTC().getMicroseconds().toLong());
 			newTag.setLastSeenTime(System.nanoTime());
 			retVal.add(newTag);
 		}
-		
 
 		return retVal;
 	}
@@ -419,130 +561,6 @@ public class LLRPReaderPlugin implements IReaderPlugin {
 	@Override
 	public boolean isBlocking() {
 		return false;
-	}
-
-	/**
-	 * Read everything from the stream until the socket is closed
-	 * 
-	 * @throws InvalidLLRPMessageException
-	 */
-	public LLRPMessage read() throws IOException, InvalidLLRPMessageException {
-		LLRPMessage m = null;
-
-		// The message header
-		byte[] first = new byte[6];
-
-		// the complete message
-		byte[] msg;
-
-		// Read in the message header. If -1 is read, there is no more
-		// data available, so close the socket
-		if (in.read(first, 0, 6) == -1) {
-			// TODO ErrorHandling
-			return null;
-		}
-		int msgLength = 0;
-
-		try {
-			// calculate message length
-			msgLength = calculateLLRPMessageLength(first);
-		} catch (IllegalArgumentException e) {
-			throw new IOException("Incorrect Message Length");
-		}
-
-		logger.debug("msg length is: " + msgLength);
-
-		/*
-		 * the rest of bytes of the message will be stored in here before they
-		 * are put in the accumulator. If the message is short, all
-		 * messageLength-6 bytes will be read in here at once. If it is long,
-		 * the data might not be available on the socket all at once, so it make
-		 * take a couple of iterations to read in all the bytes
-		 */
-		byte[] temp = new byte[msgLength - 6];
-
-		// all the rest of the bytes will be put into the accumulator
-		ArrayList<Byte> accumulator = new ArrayList<Byte>();
-
-		// add the first six bytes to the accumulator so that it will
-		// contain all the bytes at the end
-		for (byte b : first) {
-			accumulator.add(b);
-		}
-
-		// the number of bytes read on the last call to read()
-		int numBytesRead = 0;
-
-		// read from the input stream and put bytes into the accumulator
-		// while there are still bytes left to read on the socket and
-		// the entire message has not been read
-		while (((msgLength - accumulator.size()) != 0) && numBytesRead != -1) {
-			logger.debug("about to read stuff");
-			numBytesRead = in.read(temp, 0, msgLength - accumulator.size());
-			logger.debug("reading stuff: " + numBytesRead + ", msg length: "
-					+ accumulator.size() + ", temp size: " + temp.length);
-			for (int i = 0; i < numBytesRead; i++) {
-				accumulator.add(temp[i]);
-			}
-		}
-
-		logger.debug("after the while");
-		if ((msgLength - accumulator.size()) != 0) {
-			throw new IOException("Error: Discrepency between message size"
-					+ " in header and actual number of bytes read");
-		}
-
-		msg = new byte[msgLength];
-
-		// copy all bytes in the accumulator to the msg byte array
-		for (int i = 0; i < accumulator.size(); i++) {
-			msg[i] = accumulator.get(i);
-		}
-
-		// turn the byte array into an LLRP Message Object
-		m = LLRPMessageFactory.createLLRPMessage(msg);
-		return m;
-	}
-
-	/**
-	 * Send in the first 6 bytes of an LLRP Message
-	 * 
-	 * @param bytes
-	 * @return
-	 */
-	public static int calculateLLRPMessageLength(byte[] bytes)
-			throws IllegalArgumentException {
-		long msgLength = 0;
-		int num1 = 0;
-		int num2 = 0;
-		int num3 = 0;
-		int num4 = 0;
-
-		num1 = ((ByteAndHexConvertingUtility.unsignedByteToInt(bytes[2])));
-		num1 = num1 << 32;
-		if (num1 > 127) {
-			throw new RuntimeException(
-					"Cannot construct a message greater than "
-							+ "2147483647 bytes (2^31 - 1), due to the fact that there are "
-							+ "no unsigned ints in java");
-		}
-
-		num2 = ((ByteAndHexConvertingUtility.unsignedByteToInt(bytes[3])));
-		num2 = num2 << 16;
-
-		num3 = ((ByteAndHexConvertingUtility.unsignedByteToInt(bytes[4])));
-		num3 = num3 << 8;
-
-		num4 = (ByteAndHexConvertingUtility.unsignedByteToInt(bytes[5]));
-
-		msgLength = num1 + num2 + num3 + num4;
-
-		if (msgLength < 0) {
-			throw new IllegalArgumentException(
-					"LLRP message length is less than 0");
-		} else {
-			return (int) msgLength;
-		}
 	}
 
 	/**
@@ -620,23 +638,5 @@ public class LLRPReaderPlugin implements IReaderPlugin {
 	 */
 	public int unsignedByteToInt(byte b) {
 		return (int) b & 0xFF;
-	}
-
-	/**
-	 * Reads in an LLRPCommand
-	 * 
-	 * @return
-	 */
-	private LLRPMessage readInCommand() {
-		LLRPMessage m = null;
-		try {
-			m = read();
-		} catch (IOException e) {
-
-		} catch (InvalidLLRPMessageException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return m;
 	}
 }
