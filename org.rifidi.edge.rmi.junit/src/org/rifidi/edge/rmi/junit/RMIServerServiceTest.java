@@ -53,22 +53,6 @@ public class RMIServerServiceTest {
 	}
 
 	@Test
-	public void startRMIServer() {
-		if (rmiServerService != null) {
-			// rmiServerService.start();
-			try {
-				Registry registry = LocateRegistry.getRegistry("127.0.0.1",
-						1099);
-			} catch (RemoteException e) {
-				e.printStackTrace();
-				Assert.fail();
-			}
-		} else {
-			Assert.fail();
-		}
-	}
-
-	@Test
 	public void getRemoteReaderConnectionRegistry() {
 		// if (System.getSecurityManager() == null) {
 		// System.setSecurityManager(new SecurityManager());
@@ -120,19 +104,6 @@ public class RMIServerServiceTest {
 		}
 	}
 
-	// @Test
-	// public void stopRMIServer() {
-	// if (rmiServerService == null) {
-	// Assert.fail();
-	// } else {
-	// rmiServerService.stop();
-	// }
-	//
-	// }
-
-	/**
-	 * @param rmiServerService
-	 */
 	@Inject
 	public void setRmiServerService(RMIServerService rmiServerService) {
 		this.rmiServerService = rmiServerService;
