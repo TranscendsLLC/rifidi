@@ -24,4 +24,5 @@ public abstract class AbstractReaderInfo implements Serializable {
 		this.port = port;
 	}
 
+	public abstract String getReaderType();
 }

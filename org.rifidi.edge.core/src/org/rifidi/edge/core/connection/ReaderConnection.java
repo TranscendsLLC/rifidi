@@ -258,6 +258,11 @@ public class ReaderConnection implements IReaderConnection {
 		state = EReaderAdapterState.ERROR;
 	}
 
+	public void cleanUp() {
+		jmsMessageThread.stop();
+		jmsMessageThread = null;
+	}
+
 	// //TODO: Think if we need this method.
 	// public List<TagRead> getNextTags() {
 	// try {

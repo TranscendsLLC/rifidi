@@ -8,7 +8,7 @@ import javax.jms.TextMessage;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.connection.IReaderConnection;
-import org.rifidi.edge.core.connection.ReaderConnectionRegistryService;
+import org.rifidi.edge.core.connection.registry.ReaderConnectionRegistryService;
 import org.rifidi.edge.core.exception.readerConnection.RifidiConnectionIllegalStateException;
 import org.rifidi.edge.core.readerPlugin.IReaderPlugin;
 import org.rifidi.edge.core.tag.TagRead;
