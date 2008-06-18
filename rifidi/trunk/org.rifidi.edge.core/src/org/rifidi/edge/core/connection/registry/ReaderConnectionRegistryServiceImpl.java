@@ -1,4 +1,4 @@
-package org.rifidi.edge.core.connection;
+package org.rifidi.edge.core.connection.registry;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -6,6 +6,8 @@ import java.util.List;
 
 import javax.jms.ConnectionFactory;
 
+import org.rifidi.edge.core.connection.IReaderConnection;
+import org.rifidi.edge.core.connection.ReaderConnection;
 import org.rifidi.edge.core.connection.jms.JMSHelper;
 import org.rifidi.edge.core.connection.jms.JMSMessageThread;
 import org.rifidi.edge.core.readerPlugin.AbstractReaderInfo;
@@ -83,7 +85,8 @@ public class ReaderConnectionRegistryServiceImpl implements
 	@Override
 	public void deleteReaderConnection(int readerConnectionID) {
 		//TODO delete JMS Thread and Queue
-		readerConnectionRegistry.remove(readerConnectionID);
+		ReaderConnection readerConnection = readerConnectionRegistry.remove(readerConnectionID);
+		readerConnection.cleanUp();
 	}
 
 	@Override

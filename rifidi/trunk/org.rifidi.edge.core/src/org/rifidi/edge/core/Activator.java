@@ -2,8 +2,8 @@ package org.rifidi.edge.core;
 
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
-import org.rifidi.edge.core.connection.ReaderConnectionRegistryService;
-import org.rifidi.edge.core.connection.ReaderConnectionRegistryServiceImpl;
+import org.rifidi.edge.core.connection.registry.ReaderConnectionRegistryService;
+import org.rifidi.edge.core.connection.registry.ReaderConnectionRegistryServiceImpl;
 import org.rifidi.edge.core.readerPluginService.ReaderPluginRegistryService;
 import org.rifidi.edge.core.readerPluginService.ReaderPluginRegistryServiceImpl;
 
