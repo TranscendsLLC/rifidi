@@ -5,6 +5,7 @@ import java.rmi.RemoteException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.connection.IReaderConnection;
+import org.rifidi.edge.core.readerPlugin.AbstractReaderInfo;
 import org.rifidi.edge.core.readerPlugin.commands.ICustomCommand;
 import org.rifidi.edge.rmi.ReaderConnection.RemoteReaderConnection;
 
@@ -65,6 +66,12 @@ public class RemoteReaderConnectionImpl implements RemoteReaderConnection {
 	public String getReaderState() throws RemoteException {
 		logger.debug("RemoteCall: getReaderState()");
 		return readerConnection.getState().toString();
+	}
+
+	@Override
+	public AbstractReaderInfo getReaderInfo() throws RemoteException {
+		logger.debug("RemoteCall: getReaderInfo()");
+		return readerConnection.getConnectionInfo();
 	}
 
 }

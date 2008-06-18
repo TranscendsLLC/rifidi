@@ -3,6 +3,7 @@ package org.rifidi.edge.rmi.ReaderConnection;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
+import org.rifidi.edge.core.readerPlugin.AbstractReaderInfo;
 import org.rifidi.edge.core.readerPlugin.commands.ICustomCommand;
 
 public interface RemoteReaderConnection extends Remote {
@@ -24,6 +25,8 @@ public interface RemoteReaderConnection extends Remote {
 			throws RemoteException;
 
 	public String getTagQueueName() throws RemoteException;
+	
+	public AbstractReaderInfo getReaderInfo() throws RemoteException;
 	
 	public String getReaderState() throws RemoteException;
 }
