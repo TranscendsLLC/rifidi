@@ -50,9 +50,9 @@ public class JMSMessageThread implements Runnable {
 		if (jmsHelper != null) {
 			if (jmsHelper.isInitialized()) {
 
-				thread = new Thread(this, "JMSMessageThread"
+				thread = new Thread(this, "JMSMessageThread "
 						+ readerConnectionID);
-
+				logger.debug("JMS Message Thread started for Queue: " + readerConnectionID);
 				running = true;
 				thread.start();
 			}
@@ -72,6 +72,7 @@ public class JMSMessageThread implements Runnable {
 			while (running) {
 				// Get the tags form the reader adapter
 				List<TagRead> tagList = readerAdapter.getNextTags();
+				//logger.debug(tagList.size() + " new Tags. Storing it at the Queue");
 				// Put the received tags on the JMS Queue aboard if tags == null
 				if (tagList == null) {
 					running = false;
@@ -121,10 +122,12 @@ public class JMSMessageThread implements Runnable {
 			try {
 				textMessage = jmsHelper.getSession().createTextMessage(
 						tag.toXML());
+				textMessage.setJMSExpiration(1000);
 				jmsHelper.getMessageProducer().send(textMessage);
 			} catch (JMSException e) {
 				// TODO Think about error handling
 				e.printStackTrace();
+				logger.error("Error while sending JMS Message.", e);
 			}
 		}
 	}
