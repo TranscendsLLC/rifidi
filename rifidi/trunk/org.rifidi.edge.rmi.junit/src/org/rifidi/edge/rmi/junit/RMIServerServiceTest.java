@@ -85,22 +85,25 @@ public class RMIServerServiceTest {
 			Assert.fail();
 		} else {
 			try {
-				RemoteReaderConnection remoteReaderConnection = remoteReaderConnectionRegistry
+				RemoteReaderConnection readerConnection = remoteReaderConnectionRegistry
 						.createReaderSession(new DummyReaderInfo());
-				remoteReaderConnection.startTagStream();
+
+				readerConnection.connect();
+				
+				readerConnection.startTagStream();
 				try {
 					Thread.sleep(2000);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
-				remoteReaderConnection.stopTagStream();
+				readerConnection.stopTagStream();
+				readerConnection.disconnect();
 				remoteReaderConnectionRegistry
-						.deleteReaderSession(remoteReaderConnection);
+						.deleteReaderSession(readerConnection);
 			} catch (RemoteException e) {
 				e.printStackTrace();
 				Assert.fail();
 			}
-			Assert.fail();
 		}
 	}
 
