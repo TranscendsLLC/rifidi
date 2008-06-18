@@ -8,7 +8,9 @@ import org.rifidi.edge.core.readerPlugin.IReaderPlugin;
 import org.rifidi.edge.core.readerPlugin.ISpecificReaderPluginFactory;
 
 public class ThingMagicReaderPluginFactory implements ISpecificReaderPluginFactory {
+	
 	private static final Log logger = LogFactory.getLog(ThingMagicReaderPluginFactory.class);	
+	
 	@Override
 	public IReaderPlugin createSpecificReaderAdapter(
 			AbstractReaderInfo abstractConnectionInfo) throws RifidiReaderPluginCreationException{
