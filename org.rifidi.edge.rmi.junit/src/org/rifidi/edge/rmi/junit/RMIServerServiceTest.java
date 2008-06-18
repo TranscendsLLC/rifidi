@@ -31,8 +31,6 @@ public class RMIServerServiceTest {
 
 	private Log logger = LogFactory.getLog(RMIServerServiceTest.class);
 
-	private RMIServerService rmiServerService;
-
 	private RemoteReaderConnectionRegistry remoteReaderConnectionRegistry;
 
 	private ReaderPluginRegistryService readerPluginRegistryService;
@@ -107,10 +105,6 @@ public class RMIServerServiceTest {
 		}
 	}
 
-	@Inject
-	public void setRmiServerService(RMIServerService rmiServerService) {
-		this.rmiServerService = rmiServerService;
-	}
 
 	@Inject
 	public void setReaderPluginRegistryService(
