@@ -11,6 +11,7 @@ import java.rmi.server.UnicastRemoteObject;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.connection.ReaderConnectionRegistryService;
+import org.rifidi.edge.rmi.ReaderConnection.RemoteReaderConnection;
 import org.rifidi.edge.rmi.ReaderConnection.RemoteReaderConnectionRegistry;
 import org.rifidi.edge.rmi.ReaderConnection.impl.RemoteReaderConnectionRegistryImpl;
 import org.rifidi.edge.rmi.service.RMIServerService;
@@ -115,6 +116,48 @@ public class RMIServerServiceImpl implements RMIServerService {
 		} catch (NotBoundException e) {
 			logger.error("RemoteReaderConnectionRegistry was not "
 					+ "found in RMI Registry while trying to unbind");
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public void bind(String url, RemoteReaderConnection remoteReaderConnection) {
+		// TODO Throw Exceptions
+		RemoteReaderConnection remoteReaderConnectionStub = null;
+		try {
+			remoteReaderConnectionStub = (RemoteReaderConnection) UnicastRemoteObject.exportObject(remoteReaderConnection, 0);
+		} catch (RemoteException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+		try {
+			registry.bind(url, remoteReaderConnectionStub);
+		} catch (AccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (AlreadyBoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public void unbind(String url) {
+		// TODO throw Exceptions
+		try {
+			registry.unbind(url);
+		} catch (AccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NotBoundException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

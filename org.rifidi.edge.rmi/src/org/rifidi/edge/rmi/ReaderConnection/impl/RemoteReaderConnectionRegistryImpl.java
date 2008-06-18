@@ -1,7 +1,9 @@
 package org.rifidi.edge.rmi.ReaderConnection.impl;
 
 import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -13,18 +15,21 @@ import org.rifidi.edge.core.readerPlugin.AbstractReaderInfo;
 import org.rifidi.edge.core.readerPluginService.ReaderPluginRegistryService;
 import org.rifidi.edge.rmi.ReaderConnection.RemoteReaderConnection;
 import org.rifidi.edge.rmi.ReaderConnection.RemoteReaderConnectionRegistry;
+import org.rifidi.edge.rmi.service.RMIServerService;
 import org.rifidi.services.annotations.Inject;
 import org.rifidi.services.registry.ServiceRegistry;
 
-public class RemoteReaderConnectionRegistryImpl implements RemoteReaderConnectionRegistry {
+public class RemoteReaderConnectionRegistryImpl implements
+		RemoteReaderConnectionRegistry {
 
-	private Log logger = LogFactory.getLog(RemoteReaderConnectionRegistryImpl.class);
-	
+	private Log logger = LogFactory
+			.getLog(RemoteReaderConnectionRegistryImpl.class);
+
 	private ReaderConnectionRegistryService sessionRegistryService;
 	private ReaderPluginRegistryService readerPluginRegistryService;
 
-	private List<RemoteReaderConnection> remoteSessionList = new ArrayList<RemoteReaderConnection>();
-	
+	private HashMap<RemoteReaderConnection, RemoteReaderConnection> remoteSessionList = new HashMap<RemoteReaderConnection, RemoteReaderConnection>();
+
 	public RemoteReaderConnectionRegistryImpl(
 			ReaderConnectionRegistryService sessionRegistryService) {
 		this.sessionRegistryService = sessionRegistryService;
@@ -32,35 +37,35 @@ public class RemoteReaderConnectionRegistryImpl implements RemoteReaderConnectio
 	}
 
 	@Override
-	public RemoteReaderConnection createReaderSession(
-			AbstractReaderInfo connectionInfo) throws RemoteException {
+	public RemoteReaderConnection createReaderSession(AbstractReaderInfo connectionInfo)
+			throws RemoteException {
 		logger.debug("Remote Call: createReaderSession()");
-		RemoteReaderConnection remoteReaderConnection = new RemoteReaderConnectionImpl(
-				sessionRegistryService.createReaderConnection(connectionInfo));
-		remoteSessionList.add(remoteReaderConnection);
-		return remoteReaderConnection;
+		
+		//Create ReaderConnection
+		IReaderConnection readerConnection = sessionRegistryService.createReaderConnection(connectionInfo);
+		//Create RemoteReaderConnection
+		RemoteReaderConnection remoteReaderConnection = new RemoteReaderConnectionImpl(readerConnection);
+		
+		// Create RMI Stub for RemoteReaderConnection
+		RemoteReaderConnection remoteReaderConnectionStub = null;
+		try {
+			remoteReaderConnectionStub = (RemoteReaderConnection) UnicastRemoteObject.exportObject(remoteReaderConnection, 0);
+		} catch (RemoteException e) {
+			logger.error("Coudn't create RMI Stub for RemoteReaderConnection:",e);
+			//e.printStackTrace(); 
+		}
+		
+		remoteSessionList.put(remoteReaderConnectionStub, remoteReaderConnection);
+		
+		return remoteReaderConnectionStub;
 	}
 
 	@Override
-	public void deleteReaderSession(RemoteReaderConnection remoteReaderConnection)
+	public void deleteReaderSession(
+			RemoteReaderConnection remoteReaderConnection)
 			throws RemoteException {
-		logger.debug("Remote Call: deleteReaderSession()");
-		//TODO look if this is even working Session might be not available
-		if(remoteReaderConnection instanceof RemoteReaderConnectionImpl)
-		{
-			IReaderConnection session = ((RemoteReaderConnectionImpl)remoteReaderConnection).getSession();
-			if(session instanceof ReaderConnection)
-			{
-				remoteSessionList.remove(remoteReaderConnection);
-				sessionRegistryService.deleteReaderConnection(((IReaderConnection)session).getSessionID());
-			}else
-			{
-				logger.error("RemoteSessionRegistry: Session Error... look this up");
-			}
-		}else
-		{
-			logger.error("RemoteSessionRegistry: Session Error... look this up");
-		}	
+		logger.debug("Remote Call: deleteReaderSession() NOT IMPLEMENTED");
+		// TODO implement
 	}
 
 	@Override
@@ -68,14 +73,15 @@ public class RemoteReaderConnectionRegistryImpl implements RemoteReaderConnectio
 		return readerPluginRegistryService.getAvailableReaderAdapters();
 	}
 
+	@Override
+	public List<RemoteReaderConnection> getAllSessions() throws RemoteException {
+		return new ArrayList<RemoteReaderConnection>(remoteSessionList.values());
+	}
+
 	@Inject
 	public void setReaderAdapterRegistryService(
 			ReaderPluginRegistryService readerPluginRegistryService) {
 		this.readerPluginRegistryService = readerPluginRegistryService;
 	}
-
-	@Override
-	public List<RemoteReaderConnection> getAllSessions() throws RemoteException {
-		return new ArrayList<RemoteReaderConnection>(remoteSessionList);
-	}
+	
 }

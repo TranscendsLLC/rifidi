@@ -15,7 +15,8 @@ public class RemoteReaderConnectionImpl implements RemoteReaderConnection {
 	 */
 	private static final long serialVersionUID = 8838335635546640L;
 
-	private Log logger = LogFactory.getLog(RemoteReaderConnectionRegistryImpl.class);
+	private Log logger = LogFactory
+			.getLog(RemoteReaderConnectionRegistryImpl.class);
 
 	private IReaderConnection readerConnection;
 
@@ -24,27 +25,34 @@ public class RemoteReaderConnectionImpl implements RemoteReaderConnection {
 	}
 
 	@Override
+	public void connect() throws RemoteException {
+		logger.debug("RemoteCall: connect()");
+		readerConnection.connect();
+	}
+
+	@Override
+	public void disconnect() throws RemoteException {
+		logger.debug("RemoteCall: disconnect()");
+		readerConnection.disconnect();
+	}
+
+	@Override
 	public void sendCustomCommand(ICustomCommand customCommand)
 			throws RemoteException {
-		logger.debug("Remote Call: sendCustomCommand()");
+		logger.debug("RemoteCall: sendCustomCommand()");
 		readerConnection.sendCustomCommand(customCommand);
 	}
 
 	@Override
 	public void startTagStream() throws RemoteException {
-		logger.debug("Remote Call: startTagStream()");
+		logger.debug("RemoteCall: startTagStream()");
 		readerConnection.startTagStream();
 	}
 
 	@Override
 	public void stopTagStream() throws RemoteException {
-		logger.debug("Remote Call: stopTagStream()");
+		logger.debug("RemoteCall: stopTagStream()");
 		readerConnection.stopTagStream();
-	}
-	
-	// TODO Think about a better place for this
-	public IReaderConnection getSession() {
-		return readerConnection;
 	}
 
 }
