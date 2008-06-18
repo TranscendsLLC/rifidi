@@ -26,4 +26,9 @@ public class DummyReaderInfo extends AbstractReaderInfo {
 		this.errorToSet = errorToSet;
 	}
 
+	@Override
+	public String getReaderType() {
+		return "DummyReaderAdapter";
+	}
+
 }
