@@ -9,13 +9,11 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.connection.IReaderConnection;
-import org.rifidi.edge.core.connection.ReaderConnection;
 import org.rifidi.edge.core.connection.ReaderConnectionRegistryService;
 import org.rifidi.edge.core.readerPlugin.AbstractReaderInfo;
 import org.rifidi.edge.core.readerPluginService.ReaderPluginRegistryService;
 import org.rifidi.edge.rmi.ReaderConnection.RemoteReaderConnection;
 import org.rifidi.edge.rmi.ReaderConnection.RemoteReaderConnectionRegistry;
-import org.rifidi.edge.rmi.service.RMIServerService;
 import org.rifidi.services.annotations.Inject;
 import org.rifidi.services.registry.ServiceRegistry;
 
@@ -25,38 +23,43 @@ public class RemoteReaderConnectionRegistryImpl implements
 	private Log logger = LogFactory
 			.getLog(RemoteReaderConnectionRegistryImpl.class);
 
-	private ReaderConnectionRegistryService sessionRegistryService;
+	private ReaderConnectionRegistryService readerConnectionRegistryService;
 	private ReaderPluginRegistryService readerPluginRegistryService;
 
 	private HashMap<RemoteReaderConnection, RemoteReaderConnection> remoteSessionList = new HashMap<RemoteReaderConnection, RemoteReaderConnection>();
 
 	public RemoteReaderConnectionRegistryImpl(
 			ReaderConnectionRegistryService sessionRegistryService) {
-		this.sessionRegistryService = sessionRegistryService;
+		this.readerConnectionRegistryService = sessionRegistryService;
 		ServiceRegistry.getInstance().service(this);
 	}
 
 	@Override
-	public RemoteReaderConnection createReaderSession(AbstractReaderInfo connectionInfo)
-			throws RemoteException {
+	public RemoteReaderConnection createReaderSession(
+			AbstractReaderInfo connectionInfo) throws RemoteException {
 		logger.debug("Remote Call: createReaderSession()");
-		
-		//Create ReaderConnection
-		IReaderConnection readerConnection = sessionRegistryService.createReaderConnection(connectionInfo);
-		//Create RemoteReaderConnection
-		RemoteReaderConnection remoteReaderConnection = new RemoteReaderConnectionImpl(readerConnection);
-		
+
+		// Create ReaderConnection
+		IReaderConnection readerConnection = readerConnectionRegistryService
+				.createReaderConnection(connectionInfo);
+		// Create RemoteReaderConnection
+		RemoteReaderConnection remoteReaderConnection = new RemoteReaderConnectionImpl(
+				readerConnection);
+
 		// Create RMI Stub for RemoteReaderConnection
 		RemoteReaderConnection remoteReaderConnectionStub = null;
 		try {
-			remoteReaderConnectionStub = (RemoteReaderConnection) UnicastRemoteObject.exportObject(remoteReaderConnection, 0);
+			remoteReaderConnectionStub = (RemoteReaderConnection) UnicastRemoteObject
+					.exportObject(remoteReaderConnection, 0);
 		} catch (RemoteException e) {
-			logger.error("Coudn't create RMI Stub for RemoteReaderConnection:",e);
-			//e.printStackTrace(); 
+			logger.error("Coudn't create RMI Stub for RemoteReaderConnection:",
+					e);
+			// e.printStackTrace();
 		}
-		
-		remoteSessionList.put(remoteReaderConnectionStub, remoteReaderConnection);
-		
+
+		remoteSessionList.put(remoteReaderConnectionStub,
+				remoteReaderConnection);
+
 		return remoteReaderConnectionStub;
 	}
 
@@ -64,8 +67,11 @@ public class RemoteReaderConnectionRegistryImpl implements
 	public void deleteReaderSession(
 			RemoteReaderConnection remoteReaderConnection)
 			throws RemoteException {
-		logger.debug("Remote Call: deleteReaderSession() NOT IMPLEMENTED");
-		// TODO implement
+		logger.debug("Remote Call: deleteReaderSession()");
+		RemoteReaderConnection readerToDelete = remoteSessionList
+				.remove(remoteReaderConnection);
+		readerConnectionRegistryService.deleteReaderConnection(Integer
+				.parseInt(readerToDelete.getTagQueueName()));
 	}
 
 	@Override
@@ -83,5 +89,5 @@ public class RemoteReaderConnectionRegistryImpl implements
 			ReaderPluginRegistryService readerPluginRegistryService) {
 		this.readerPluginRegistryService = readerPluginRegistryService;
 	}
-	
+
 }
