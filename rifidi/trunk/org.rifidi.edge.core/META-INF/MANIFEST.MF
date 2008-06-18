@@ -9,6 +9,7 @@ Eclipse-LazyStart: true
 Export-Package: org.rifidi.edge.core,
  org.rifidi.edge.core.connection,
  org.rifidi.edge.core.connection.jms,
+ org.rifidi.edge.core.connection.registry,
  org.rifidi.edge.core.exception,
  org.rifidi.edge.core.exception.readerConnection,
  org.rifidi.edge.core.readerPlugin,
