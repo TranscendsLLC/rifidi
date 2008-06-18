@@ -9,4 +9,9 @@ public class ThingMagicReaderInfo extends AbstractReaderInfo {
 	 */
 	private static final long serialVersionUID = -609667495940483193L;
 
+	@Override
+	public String getReaderType() {
+		return "ThingMagicReader";
+	}
+
 }
