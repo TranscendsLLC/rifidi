@@ -23,4 +23,7 @@ public interface RemoteReaderConnection extends Remote {
 	public void sendCustomCommand(ICustomCommand customCommand)
 			throws RemoteException;
 
+	public String getTagQueueName() throws RemoteException;
+	
+	public String getReaderState() throws RemoteException;
 }

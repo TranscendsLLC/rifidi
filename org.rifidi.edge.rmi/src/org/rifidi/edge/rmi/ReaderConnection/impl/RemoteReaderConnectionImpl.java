@@ -55,4 +55,16 @@ public class RemoteReaderConnectionImpl implements RemoteReaderConnection {
 		readerConnection.stopTagStream();
 	}
 
+	@Override
+	public String getTagQueueName() throws RemoteException {
+		logger.debug("RemoteCall: getTagQueueName()");
+		return Integer.toString(readerConnection.getSessionID());
+	}
+
+	@Override
+	public String getReaderState() throws RemoteException {
+		logger.debug("RemoteCall: getReaderState()");
+		return readerConnection.getState().toString();
+	}
+
 }
