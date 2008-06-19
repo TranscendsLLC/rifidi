@@ -286,11 +286,10 @@ public class ReaderConnection implements IReaderConnection {
 		
 		if (errorCause != null ){
 			//Need to do some house keeping first...
-			//if (jmsMessageThread != null)
-			//	this.jmsMessageThread.stop();
 			try {
+				this.jmsMessageThread.stop();
 				adapter.disconnect();
-			} catch (RifidiConnectionException e) {
+			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
