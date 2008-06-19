@@ -19,7 +19,6 @@ import org.rifidi.edge.readerplugin.dummy.DummyReaderInfo;
 import org.rifidi.edge.readerplugin.dummy.DummyReaderPluginFactory;
 import org.rifidi.edge.rmi.ReaderConnection.RemoteReaderConnection;
 import org.rifidi.edge.rmi.ReaderConnection.RemoteReaderConnectionRegistry;
-import org.rifidi.edge.rmi.service.RMIServerService;
 import org.rifidi.services.annotations.Inject;
 import org.rifidi.services.registry.ServiceRegistry;
 
@@ -87,7 +86,7 @@ public class RMIServerServiceTest {
 						.createReaderConnection(new DummyReaderInfo());
 
 				readerConnection.connect();
-				
+
 				readerConnection.startTagStream();
 				try {
 					Thread.sleep(2000);
@@ -104,7 +103,6 @@ public class RMIServerServiceTest {
 			}
 		}
 	}
-
 
 	@Inject
 	public void setReaderPluginRegistryService(
