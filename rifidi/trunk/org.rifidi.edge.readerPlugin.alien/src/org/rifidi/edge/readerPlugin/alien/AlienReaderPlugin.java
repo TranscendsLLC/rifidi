@@ -82,6 +82,7 @@ public class AlienReaderPlugin implements IReaderPlugin {
 			out.write("password\n");
 			out.flush();
 			readFromReader(in);
+			readFromReader(in);
 
 		} catch (UnknownHostException e) {
 			logger.debug("UnknownHostException.", e);
@@ -159,9 +160,9 @@ public class AlienReaderPlugin implements IReaderPlugin {
 			out.write('\1' + "get taglist\n");
 			out.flush();
 
-			// TODO: This is a bit of a hack,
+			// TODO: This is a bit of a hack
 			String tags = readFromReader(in);
-			tags = readFromReader(in);
+			//tags = readFromReader(in);
 			logger.debug("tags:" + tags);
 			retVal = parseString(tags);
 		} catch (IOException e) {
