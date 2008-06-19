@@ -90,16 +90,22 @@ public class LLRPReaderPlugin implements IReaderPlugin {
 	private static Log logger = LogFactory.getLog(LLRPReaderPlugin.class);
 
 	/**
-	 * 
+	 * The socket connection.
 	 */
 	private Socket connection = null;
 
+	/**
+	 * The output stream.
+	 */
 	private DataOutputStream out = null;
 
+	/**
+	 * The reader thread.  
+	 */
 	private ReadThread reader = null;
 
 	/**
-	 * The ID of the ROSpec that is used
+	 * The ID of the ROSpec that is used.
 	 */
 	private static int ROSPEC_ID = 1;
 
