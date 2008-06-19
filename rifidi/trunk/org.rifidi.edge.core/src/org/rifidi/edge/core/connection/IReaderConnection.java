@@ -96,6 +96,6 @@ public interface IReaderConnection {
 	 * @param errorCause
 	 *            the errorCause to set
 	 */
-	public abstract void setErrorCause(Exception errorCause);
+	public abstract void setErrorCause(RifidiException errorCause);
 
 }

@@ -1,14 +1,3 @@
-/*
- *  JMSMessageThread.java
- *
- *  Created:	Jun 19, 2008
- *  Project:	RiFidi Emulator - A Software Simulation Tool for RFID Devices
- *  				http://www.rifidi.org
- *  				http://rifidi.sourceforge.net
- *  Copyright:	Pramari LLC and the Rifidi Project
- *  License:	Lesser GNU Public License (LGPL)
- *  				http://www.opensource.org/licenses/lgpl-license.html
- */
 package org.rifidi.edge.core.connection.jms;
 
 import java.util.List;
@@ -20,6 +9,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.connection.IReaderConnection;
 import org.rifidi.edge.core.connection.registry.ReaderConnectionRegistryService;
+import org.rifidi.edge.core.exception.RifidiException;
 import org.rifidi.edge.core.exception.readerConnection.RifidiConnectionIllegalStateException;
 import org.rifidi.edge.core.readerPlugin.IReaderPlugin;
 import org.rifidi.edge.core.tag.TagRead;
@@ -132,13 +122,17 @@ public class JMSMessageThread implements Runnable {
 			 * Reminder: Runtime errors in java do not need a "throws" clause to
 			 * be thrown up the stack.
 			 */
+			
+			String errorMsg = "Uncaught RuntimeException in " + readerAdapter.getClass()
+				+ " adapter. This means that there may be an unfixed bug in the adapter.";
+			
 			if (sessionRegistryService != null) {
 				IReaderConnection connection = sessionRegistryService
 						.getReaderConnection(readerConnectionID);
-				connection.setErrorCause(e);
+				connection.setErrorCause(new RifidiException(errorMsg , e));
 			}
-			logger.error("Uncaught RuntimeException in " + readerAdapter.getClass()
-						+ " adapter. This means that there may be an unfixed bug in the adapter.",e);
+			
+			logger.error(errorMsg,e);
 			running = false;
 		}
 	}

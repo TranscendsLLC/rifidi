@@ -45,7 +45,7 @@ public class ReaderConnection implements IReaderConnection {
 
 	private EReaderAdapterState state;
 
-	private Exception errorCause;
+	private RifidiException errorCause;
 
 	/**
 	 * Creates a Session.
@@ -298,7 +298,7 @@ public class ReaderConnection implements IReaderConnection {
 	/* (non-Javadoc)
 	 * @see org.rifidi.edge.core.connection.IReaderConnection#setErrorCause(java.lang.Exception)
 	 */
-	public void setErrorCause(Exception errorCause) {
+	public void setErrorCause(RifidiException errorCause) {
 		
 		if (errorCause != null ){
 			//Need to do some house keeping first...
