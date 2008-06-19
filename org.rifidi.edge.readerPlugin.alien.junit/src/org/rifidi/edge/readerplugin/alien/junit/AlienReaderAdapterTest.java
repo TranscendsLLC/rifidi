@@ -25,7 +25,7 @@ import org.rifidi.edge.readerPlugin.alien.AlienReaderInfo;
 import org.rifidi.edge.readerPlugin.alien.AlienReaderPlugin;
 
 /**
- * 
+ * Test class for the plugin of the Alien reader.  
  * 
  * @author Matt
  */
@@ -47,7 +47,8 @@ public class AlienReaderAdapterTest {
 
 	/**
 	 * Tests connecting the reader
-	 * @throws RifidiConnectionIllegalStateException 
+	 * 
+	 * @throws RifidiConnectionIllegalStateException
 	 */
 	@Test
 	public void testConnect() {
@@ -79,7 +80,6 @@ public class AlienReaderAdapterTest {
 					.getId()));
 		}
 
-		Assert.fail();
 	}
 
 	/**
@@ -95,17 +95,16 @@ public class AlienReaderAdapterTest {
 
 		AlienReaderPlugin alienReaderAdapter = new AlienReaderPlugin(
 				connectionInfo);
-		
+
 		if (alienReaderAdapter == null)
 			System.out.println("the readeradapter is null");
-		
+
 		try {
 			alienReaderAdapter.connect();
 		} catch (RifidiConnectionException e) {
 			e.printStackTrace();
 			Assert.fail();
 		}
-
 
 		List<TagRead> tagList = null;
 		try {
@@ -120,18 +119,15 @@ public class AlienReaderAdapterTest {
 					.getId()));
 		}
 
-
-		Assert.fail();
 	}
 
 	/**
 	 * Tests the raw command sending to the reader
 	 */
-	@Test
-	public void testRawCommand() {
-		Assert.fail();
-	}
-
+	// @Test
+	// public void testRawCommand() {
+	// Assert.fail();
+	// }
 	/**
 	 * Tests disconnecting the reader
 	 */
@@ -158,7 +154,5 @@ public class AlienReaderAdapterTest {
 			e.printStackTrace();
 			Assert.fail();
 		}
-		
-		Assert.fail();
 	}
 }
