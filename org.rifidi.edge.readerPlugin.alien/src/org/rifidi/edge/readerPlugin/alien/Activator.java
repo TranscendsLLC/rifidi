@@ -16,7 +16,8 @@ public class Activator implements BundleActivator {
 	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
 	 */
 	public void start(BundleContext context) throws Exception {
-		System.out.println("== Bundle " + this.getClass().getName() + " loaded ==");
+		System.out.println("== Bundle " + this.getClass().getName()
+				+ " loaded ==");
 		ServiceRegistry.getInstance().service(this);
 	}
 
@@ -26,31 +27,35 @@ public class Activator implements BundleActivator {
 	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
 	 */
 	public void stop(BundleContext context) throws Exception {
-		readerPluginRegistryService.unregisterReaderAdapter(AlienReaderInfo.class);
+		readerPluginRegistryService
+				.unregisterReaderAdapter(AlienReaderInfo.class);
 		System.out.println("Bundle " + this.getClass().getName() + " stopped");
 	}
 
 	/**
-	 * @return
+	 * Gets the registry service for this plugin.
+	 * 
+	 * @return The registry service for this plugin.
 	 */
 	public ReaderPluginRegistryService getReaderAdapterRegistryService() {
-		return readerPluginRegistryService;	
+		return readerPluginRegistryService;
 	}
 
-    /**
-     * @param readerPluginRegistryService
-     */
-    @Inject
+	/**
+	 * Sets the registry service for this plugin.
+	 * 
+	 * @param readerPluginRegistryService
+	 *            The new registry service for this plugin.
+	 */
+	@Inject
 	public void setReaderAdapterRegistryService(
 			ReaderPluginRegistryService readerPluginRegistryService) {
 		this.readerPluginRegistryService = readerPluginRegistryService;
-		
+
 		System.out.println("Registering ReaderPlugin: Alien");
 		// register ReaderAdapter to the Services Registry
-		readerPluginRegistryService.registerReaderAdapter(AlienReaderInfo.class,
-				new AlienReaderPluginFactory());
+		readerPluginRegistryService.registerReaderAdapter(
+				AlienReaderInfo.class, new AlienReaderPluginFactory());
 	}
-	
-	
 
 }

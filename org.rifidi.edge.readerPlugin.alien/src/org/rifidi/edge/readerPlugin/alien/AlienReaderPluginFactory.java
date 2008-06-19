@@ -11,11 +11,18 @@ import org.rifidi.edge.core.readerPlugin.IReaderPlugin;
 import org.rifidi.edge.core.readerPlugin.ISpecificReaderPluginFactory;
 
 /**
+ * This is a factory class for the Alien reader plugin.  
+ * 
  * @author Matthew Dean - matt@pramari.com
- *
  */
 public class AlienReaderPluginFactory implements ISpecificReaderPluginFactory {
-	private static final Log logger = LogFactory.getLog(AlienReaderPluginFactory.class);	
+	
+	/**
+	 * The logger for this class.  
+	 */
+	private static final Log logger = LogFactory.getLog(AlienReaderPluginFactory.class);
+	
+	
 	/* (non-Javadoc)
 	 * @see org.rifidi.edge.core.readerAdapter.ISpecificReaderAdapterFactory#createSpecificReaderAdapter(org.rifidi.edge.core.readerAdapter.AbstractConnectionInfo)
 	 */
