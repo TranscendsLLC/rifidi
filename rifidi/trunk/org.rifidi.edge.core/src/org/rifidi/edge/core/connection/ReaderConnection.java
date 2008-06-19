@@ -291,7 +291,7 @@ public class ReaderConnection implements IReaderConnection {
 				adapter.disconnect();
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				//e.printStackTrace();
 			}
 		
 			this.errorCause = errorCause;
