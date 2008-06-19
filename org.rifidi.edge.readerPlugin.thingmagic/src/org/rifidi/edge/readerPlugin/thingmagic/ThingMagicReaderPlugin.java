@@ -40,6 +40,9 @@ public class ThingMagicReaderPlugin implements IReaderPlugin {
 		tmci = connectionInfo;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.readerPlugin.IReaderPlugin#connect()
+	 */
 	@Override
 	public void connect() throws RifidiConnectionException {
 		try {
@@ -74,6 +77,9 @@ public class ThingMagicReaderPlugin implements IReaderPlugin {
 		logger.debug("Successfully Connected.");
 	}
 
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.readerPlugin.IReaderPlugin#disconnect()
+	 */
 	@Override
 	public void disconnect() throws RifidiConnectionException {
 		connected=false;
@@ -87,6 +93,9 @@ public class ThingMagicReaderPlugin implements IReaderPlugin {
 		logger.debug("Successfully Disconnected.");
 	}
 
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.readerPlugin.IReaderPlugin#getNextTags()
+	 */
 	@Override
 	public List<TagRead> getNextTags() throws RifidiConnectionIllegalStateException{
 		String input = null;
@@ -134,6 +143,9 @@ public class ThingMagicReaderPlugin implements IReaderPlugin {
 	}
 
 
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.readerPlugin.IReaderPlugin#sendCustomCommand(org.rifidi.edge.core.readerPlugin.commands.ICustomCommand)
+	 */
 	@Override
 	public ICustomCommandResult sendCustomCommand(ICustomCommand customCommand)
 			throws RifidiConnectionIllegalStateException, RifidiIIllegialArgumentException
@@ -169,14 +181,23 @@ public class ThingMagicReaderPlugin implements IReaderPlugin {
 		return result;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.readerPlugin.IReaderPlugin#isBlocking()
+	 */
 	@Override
 	public boolean isBlocking() {
 		return false;
 	}
 
 	
-	public static String readFromReader(BufferedReader inBuf) throws IOException{
-		StringBuffer buf=new StringBuffer();
+	/**
+	 * Reads a series of bytes until the end of the stream it hit.
+	 * @param inBuf A buffered reader for input.
+	 * @return The bytes read as a continuous string.
+	 * @throws IOException
+	 */
+	private static String readFromReader(BufferedReader inBuf) throws IOException{
+		StringBuffer buf = new StringBuffer();
 		
 		//String temp = inBuf.readLine();
 		/*while(temp != null){
