@@ -41,17 +41,36 @@ public interface IReaderConnection {
 	 */
 	public abstract void setConnectionInfo(AbstractReaderInfo connectionInfo);
 
+	/**
+	 * @param customCommand
+	 * @return
+	 */
 	public abstract ICustomCommandResult sendCustomCommand(
 			ICustomCommand customCommand);
 
+	/**
+	 * Starts the tag streaming
+	 */
 	public abstract void startTagStream();
 
+	/**
+	 * Stops the tag streaming.
+	 */
 	public abstract void stopTagStream();
 
+	/**
+	 * @return The currect state of the reader.
+	 */
 	public abstract EReaderAdapterState getState();
 
+	/**
+	 * Connect to the reader
+	 */
 	public abstract void connect();
 
+	/**
+	 * Disconnect from the reader
+	 */
 	public abstract void disconnect();
 
 	/**
