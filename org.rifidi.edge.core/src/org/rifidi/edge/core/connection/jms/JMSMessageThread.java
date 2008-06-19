@@ -122,9 +122,9 @@ public class JMSMessageThread implements Runnable {
 			 * be thrown up the stack.
 			 */
 			if (sessionRegistryService != null) {
-				IReaderConnection session = sessionRegistryService
+				IReaderConnection connection = sessionRegistryService
 						.getReaderConnection(readerConnectionID);
-				session.setErrorCause(e);
+				connection.setErrorCause(e);
 			}
 			logger.error("Uncaught RuntimeException in " + readerAdapter.getClass()
 						+ " adapter. This means that there may be an unfixed bug in the adapter.",e);
