@@ -1,7 +1,7 @@
 /*
- *  AlienReaderAdapter.java
+ *  AlienReaderPlugin.java
  *
- *  Created:	Jun 20, 2006
+ *  Created:	Jun 19, 2008
  *  Project:	RiFidi Emulator - A Software Simulation Tool for RFID Devices
  *  				http://www.rifidi.org
  *  				http://rifidi.sourceforge.net
@@ -24,8 +24,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.common.utilities.converter.ByteAndHexConvertingUtility;
 import org.rifidi.edge.core.exception.RifidiIIllegialArgumentException;
-import org.rifidi.edge.core.exception.readerConnection.RifidiConnectionIllegalStateException;
 import org.rifidi.edge.core.exception.readerConnection.RifidiConnectionException;
+import org.rifidi.edge.core.exception.readerConnection.RifidiConnectionIllegalStateException;
 import org.rifidi.edge.core.readerPlugin.IReaderPlugin;
 import org.rifidi.edge.core.readerPlugin.commands.ICustomCommand;
 import org.rifidi.edge.core.readerPlugin.commands.ICustomCommandResult;
@@ -40,6 +40,9 @@ import org.rifidi.edge.readerPlugin.alien.command.AlienCustomCommand;
  */
 public class AlienReaderPlugin implements IReaderPlugin {
 
+	/**
+	 * The log4j logger.  
+	 */
 	private static final Log logger = LogFactory
 			.getLog(AlienReaderPlugin.class);
 
@@ -49,17 +52,17 @@ public class AlienReaderPlugin implements IReaderPlugin {
 	private AlienReaderInfo aci;
 
 	/**
-	 * The socket
+	 * The socket.
 	 */
 	private Socket connection = null;
 
 	/**
-	 * The reader
+	 * The reader.
 	 */
 	private BufferedReader in = null;
 
 	/**
-	 * The writer
+	 * The writer.
 	 */
 	private PrintWriter out = null;
 
@@ -87,14 +90,17 @@ public class AlienReaderPlugin implements IReaderPlugin {
 			out = new PrintWriter(connection.getOutputStream());
 			in = new BufferedReader(new InputStreamReader(connection
 					.getInputStream()));
-			out.write("alien\n");
+			out.write('\1' + aci.getUsername() + "\n");
 			out.flush();
 			readFromReader(in);
-			out.write("password\n");
+			out.write('\1' + aci.getPassword() + "\n");
 			out.flush();
 			readFromReader(in);
-			readFromReader(in);
-
+			String passwordResponse = readFromReader(in);
+			if(passwordResponse.contains(AlienResponseList.INVALID)) {
+				logger.debug("RifidiConnectionException was thrown");
+				throw new RifidiConnectionException("Username/Password combination is invalid");
+			}
 		} catch (UnknownHostException e) {
 			logger.debug("UnknownHostException.", e);
 			throw new RifidiConnectionException(e);
@@ -158,22 +164,22 @@ public class AlienReaderPlugin implements IReaderPlugin {
 
 		try {
 			logger.debug("Sending the taglistformat to custom format");
-			out.write('\1' + "set TagListFormat=Custom\n");
+			out.write(AlienCommandList.TAG_LIST_FORMAT);
 			out.flush();
 			readFromReader(in);
 
 			logger.debug("Sending the custom format");
-			out.write('\1' + "set TagListCustomFormat=%k|%t\n");
+			out.write(AlienCommandList.TAG_LIST_CUSTOM_FORMAT);
 			out.flush();
 			readFromReader(in);
 
 			logger.debug("Reading tags");
-			out.write('\1' + "get taglist\n");
+			out.write(AlienCommandList.TAG_LIST);
 			out.flush();
 
 			// TODO: This is a bit of a hack
 			String tags = readFromReader(in);
-			// tags = readFromReader(in);
+
 			logger.debug("tags:" + tags);
 			retVal = parseString(tags);
 		} catch (IOException e) {
@@ -212,7 +218,7 @@ public class AlienReaderPlugin implements IReaderPlugin {
 			newTagRead.setLastSeenTime(System.nanoTime());
 			retVal.add(newTagRead);
 		}
-		
+
 		return retVal;
 	}
 
@@ -245,5 +251,39 @@ public class AlienReaderPlugin implements IReaderPlugin {
 	@Override
 	public boolean isBlocking() {
 		return false;
+	}
+
+	/**
+	 * List of Alien commands.
+	 * 
+	 * @author Matthew Dean - matt@pramari.com
+	 */
+	private static class AlienCommandList {
+		/**
+		 * Tag list command.
+		 */
+		public static final String TAG_LIST = ('\1' + "get taglist\n");
+
+		/**
+		 * Tag list format command.
+		 */
+		public static final String TAG_LIST_FORMAT = ('\1' + "set TagListFormat=Custom\n");
+
+		/**
+		 * Tag list custom format command.
+		 */
+		public static final String TAG_LIST_CUSTOM_FORMAT = ('\1' + "set TagListCustomFormat=%k|%t\n");
+	}
+	
+	/**
+	 * List of Alien commands.
+	 * 
+	 * @author Matthew Dean - matt@pramari.com
+	 */
+	private static class AlienResponseList {
+		/**
+		 * Tag list command.
+		 */
+		public static final String INVALID = "Invalid";
 	}
 }
