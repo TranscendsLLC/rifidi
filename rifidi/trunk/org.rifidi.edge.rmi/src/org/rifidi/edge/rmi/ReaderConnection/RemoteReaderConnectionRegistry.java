@@ -8,10 +8,10 @@ import org.rifidi.edge.core.readerPlugin.AbstractReaderInfo;
 
 public interface RemoteReaderConnectionRegistry extends Remote {
 
-	public RemoteReaderConnection createReaderSession(
+	public RemoteReaderConnection createReaderConnection(
 			AbstractReaderInfo connectionInfo) throws RemoteException;
 
-	public void deleteReaderSession(RemoteReaderConnection remoteReaderConnection)
+	public void deleteReaderConnection(RemoteReaderConnection remoteReaderConnection)
 			throws RemoteException;
 	
 	public List<RemoteReaderConnection> getAllSessions() throws RemoteException;
