@@ -1,3 +1,14 @@
+/*
+ *  JMSHelper.java
+ *
+ *  Created:	Jun 19, 2008
+ *  Project:	RiFidi Emulator - A Software Simulation Tool for RFID Devices
+ *  				http://www.rifidi.org
+ *  				http://rifidi.sourceforge.net
+ *  Copyright:	Pramari LLC and the Rifidi Project
+ *  License:	Lesser GNU Public License (LGPL)
+ *  				http://www.opensource.org/licenses/lgpl-license.html
+ */
 package org.rifidi.edge.core.connection.jms;
 
 import javax.jms.Connection;
@@ -16,7 +27,7 @@ import javax.jms.Session;
 public class JMSHelper {
 
 	private boolean isInitialized;
-	
+
 	private Connection connection;
 	private Session session;
 	private Destination destination;
@@ -24,8 +35,11 @@ public class JMSHelper {
 
 	/**
 	 * Initialize the JMS Helper
-	 * @param connectionFactory The JMS Connection Factory
-	 * @param queueName The name of a queue in string form
+	 * 
+	 * @param connectionFactory
+	 *            The JMS Connection Factory
+	 * @param queueName
+	 *            The name of a queue in string form
 	 * @return
 	 */
 	public boolean initializeJMSQueue(ConnectionFactory connectionFactory,
@@ -39,7 +53,7 @@ public class JMSHelper {
 			destination = session.createQueue(queueName);
 
 			messageProducer = session.createProducer(destination);
-			
+
 			isInitialized = true;
 		} catch (JMSException e) {
 			e.printStackTrace();
@@ -55,7 +69,8 @@ public class JMSHelper {
 	}
 
 	/**
-	 * @param connection A JMS Connection
+	 * @param connection
+	 *            A JMS Connection
 	 */
 	public void setConnection(Connection connection) {
 		this.connection = connection;
@@ -69,7 +84,8 @@ public class JMSHelper {
 	}
 
 	/**
-	 * @param session A JMS Session
+	 * @param session
+	 *            A JMS Session
 	 */
 	public void setSession(Session session) {
 		this.session = session;
@@ -83,7 +99,8 @@ public class JMSHelper {
 	}
 
 	/**
-	 * @param destination A JMS Destination
+	 * @param destination
+	 *            A JMS Destination
 	 */
 	public void setDestination(Destination destination) {
 		this.destination = destination;
@@ -97,7 +114,8 @@ public class JMSHelper {
 	}
 
 	/**
-	 * @param messageProducer A JMS MessageProducer
+	 * @param messageProducer
+	 *            A JMS MessageProducer
 	 */
 	public void setMessageProducer(MessageProducer messageProducer) {
 		this.messageProducer = messageProducer;
@@ -112,11 +130,11 @@ public class JMSHelper {
 
 	/**
 	 * Set if this helper is initialized or not.
-	 * @param isInitialized 
+	 * 
+	 * @param isInitialized
 	 */
 	public void setInitialized(boolean isInitialized) {
 		this.isInitialized = isInitialized;
 	}
 
-	
 }
