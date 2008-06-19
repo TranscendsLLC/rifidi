@@ -20,20 +20,50 @@ import org.rifidi.services.registry.ServiceRegistry;
 public class RemoteReaderConnectionRegistryImpl implements
 		RemoteReaderConnectionRegistry {
 
+	/**
+	 * Logging System
+	 */
 	private Log logger = LogFactory
 			.getLog(RemoteReaderConnectionRegistryImpl.class);
 
+	/**
+	 * ReaderConnectionRegistry is a Service providing creation and storing of
+	 * the ReaderConnections.
+	 */
 	private ReaderConnectionRegistryService readerConnectionRegistryService;
+
+	/**
+	 * ReaderPluginRegistryService is a Service providing Information about
+	 * available ReaderPlugins. Needs to be serviced. See
+	 * 
+	 * @Inject statement.
+	 */
 	private ReaderPluginRegistryService readerPluginRegistryService;
 
+	/**
+	 * Store for all created RemoteReaderConnections. The first
+	 * RemoteReaderConnection is holding the UnicastRemoteObject reference. The
+	 * second RemoteReaderConnection is the instance of the
+	 * RemoteReaderConnection associated to the UnicastRemoteObject.
+	 */
 	private HashMap<RemoteReaderConnection, RemoteReaderConnection> remoteSessionList = new HashMap<RemoteReaderConnection, RemoteReaderConnection>();
 
+	/**
+	 * Constructor
+	 * 
+	 * @param sessionRegistryService
+	 */
 	public RemoteReaderConnectionRegistryImpl(
 			ReaderConnectionRegistryService sessionRegistryService) {
 		this.readerConnectionRegistryService = sessionRegistryService;
 		ServiceRegistry.getInstance().service(this);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.rifidi.edge.rmi.ReaderConnection.RemoteReaderConnectionRegistry#createReaderConnection(org.rifidi.edge.core.readerPlugin.AbstractReaderInfo)
+	 */
 	@Override
 	public RemoteReaderConnection createReaderConnection(
 			AbstractReaderInfo connectionInfo) throws RemoteException {
@@ -63,6 +93,11 @@ public class RemoteReaderConnectionRegistryImpl implements
 		return remoteReaderConnectionStub;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.rifidi.edge.rmi.ReaderConnection.RemoteReaderConnectionRegistry#deleteReaderConnection(org.rifidi.edge.rmi.ReaderConnection.RemoteReaderConnection)
+	 */
 	@Override
 	public void deleteReaderConnection(
 			RemoteReaderConnection remoteReaderConnection)
@@ -74,16 +109,32 @@ public class RemoteReaderConnectionRegistryImpl implements
 				.parseInt(readerToDelete.getTagQueueName()));
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.rifidi.edge.rmi.ReaderConnection.RemoteReaderConnectionRegistry#getAvailableReaderAdapters()
+	 */
 	@Override
 	public List<String> getAvailableReaderAdapters() throws RemoteException {
 		return readerPluginRegistryService.getAvailableReaderAdapters();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.rifidi.edge.rmi.ReaderConnection.RemoteReaderConnectionRegistry#getAllSessions()
+	 */
 	@Override
 	public List<RemoteReaderConnection> getAllSessions() throws RemoteException {
 		return new ArrayList<RemoteReaderConnection>(remoteSessionList.values());
 	}
 
+	/**
+	 * Dependency Injecting. This method is needed to be serviced by the
+	 * org.rifidi.services Framework
+	 * 
+	 * @param readerPluginRegistryService
+	 */
 	@Inject
 	public void setReaderAdapterRegistryService(
 			ReaderPluginRegistryService readerPluginRegistryService) {

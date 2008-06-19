@@ -1,14 +1,15 @@
 package org.rifidi.edge.rmi.service;
 
-import org.rifidi.edge.rmi.ReaderConnection.RemoteReaderConnection;
-
 public interface RMIServerService {
 
+	/**
+	 * Start the RMIServer
+	 */
 	public void start();
 
+	/**
+	 * Stop the RMIServer
+	 */
 	public void stop();
 
-	public void bind(String url, RemoteReaderConnection remoteReaderConnection);
-	
-	public void unbind(String url);
 }
