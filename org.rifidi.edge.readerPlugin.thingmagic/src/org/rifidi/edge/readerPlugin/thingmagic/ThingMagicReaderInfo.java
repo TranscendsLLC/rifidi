@@ -15,9 +15,4 @@ public class ThingMagicReaderInfo extends AbstractReaderInfo {
 		return "ThingMagicReader";
 	}
 
-	@Override
-	public String getReaderType() {
-		return "ThingMagicReader";
-	}
-
 }
