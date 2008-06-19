@@ -84,7 +84,7 @@ public class RMIServerServiceTest {
 		} else {
 			try {
 				RemoteReaderConnection readerConnection = remoteReaderConnectionRegistry
-						.createReaderSession(new DummyReaderInfo());
+						.createReaderConnection(new DummyReaderInfo());
 
 				readerConnection.connect();
 				
@@ -97,7 +97,7 @@ public class RMIServerServiceTest {
 				readerConnection.stopTagStream();
 				readerConnection.disconnect();
 				remoteReaderConnectionRegistry
-						.deleteReaderSession(readerConnection);
+						.deleteReaderConnection(readerConnection);
 			} catch (RemoteException e) {
 				e.printStackTrace();
 				Assert.fail();
