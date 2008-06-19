@@ -19,6 +19,7 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -36,6 +37,8 @@ import org.llrp.ltk.generated.messages.CLOSE_CONNECTION;
 import org.llrp.ltk.generated.messages.DELETE_ROSPEC;
 import org.llrp.ltk.generated.messages.DISABLE_ROSPEC;
 import org.llrp.ltk.generated.messages.ENABLE_ROSPEC;
+import org.llrp.ltk.generated.messages.GET_ROSPECS;
+import org.llrp.ltk.generated.messages.GET_ROSPECS_RESPONSE;
 import org.llrp.ltk.generated.messages.LLRPMessageFactory;
 import org.llrp.ltk.generated.messages.RO_ACCESS_REPORT;
 import org.llrp.ltk.generated.messages.SET_READER_CONFIG;
@@ -156,6 +159,16 @@ public class LLRPReaderPlugin implements IReaderPlugin {
 	public void disconnect() throws RifidiConnectionException {
 		// wait for one second before closing the connection
 
+		// Create a DISABLE_ROSPEC message and send it to the reader
+		DISABLE_ROSPEC disableROSpec = new DISABLE_ROSPEC();
+		disableROSpec.setROSpecID(new UnsignedInteger(ROSPEC_ID));
+		write(disableROSpec, "DISABLE_ROSPEC");
+
+		// Create a DELTE_ROSPEC message and send it to the reader
+		DELETE_ROSPEC deleteROSpec = new DELETE_ROSPEC();
+		deleteROSpec.setROSpecID(new UnsignedInteger(ROSPEC_ID));
+		write(deleteROSpec, "DELETE_ROSPEC");
+
 		// Create a CLOSE_CONNECTION message and send it to the reader
 		CLOSE_CONNECTION cc = new CLOSE_CONNECTION();
 		write(cc, "CloseConnection");
@@ -191,8 +204,12 @@ public class LLRPReaderPlugin implements IReaderPlugin {
 		/**
 		 * A queue to store incoming LLRP Messages
 		 */
-		@SuppressWarnings("unused")
 		private LinkedBlockingQueue<LLRPMessage> tagQueue = null;
+
+		/**
+		 * roSpecListQueue
+		 */
+		private LinkedBlockingQueue<LLRPMessage> roSpecListQueue = null;
 
 		/**
 		 * Thread for constant reading of the stream
@@ -203,6 +220,7 @@ public class LLRPReaderPlugin implements IReaderPlugin {
 			this.socket = socket;
 			this.commandQueue = new LinkedBlockingQueue<LLRPMessage>();
 			this.tagQueue = new LinkedBlockingQueue<LLRPMessage>();
+			this.roSpecListQueue = new LinkedBlockingQueue<LLRPMessage>();
 			try {
 				this.inStream = new DataInputStream(socket.getInputStream());
 			} catch (IOException e) {
@@ -217,24 +235,31 @@ public class LLRPReaderPlugin implements IReaderPlugin {
 				while (!socket.isClosed()) {
 					LLRPMessage message = null;
 					try {
-						System.out.println("just before reading the message");
 						message = read();
-						System.out.println("just after reading the message");
 						if (message != null) {
-							if (message.getMessageID().toInteger() != 4) {
+							// If the message isn't a RO_ACCESS_REPORT, it is
+							// going on the command queue.
+							if (!(message instanceof RO_ACCESS_REPORT)
+									&& !(message instanceof GET_ROSPECS_RESPONSE)) {
 								commandQueue.put(message);
+								logger.debug("ADDING A NON-TAG MESSAGE: "
+										+ message.getMessageID().toString());
 								logger.info("Received Message: \n"
 										+ message.toXMLString());
-								System.out.println("message: "
-										+ message.toXMLString());
-							} else {
-
+								commandQueue.clear();
+							} else if (message instanceof RO_ACCESS_REPORT) {
+								logger.debug("ADDING A TAG MESSAGE");
+								tagQueue.clear();
+								tagQueue.put(message);
+							} else if (message instanceof GET_ROSPECS_RESPONSE) {
+								logger.debug("ADDING A GET ROSPEC RESPONSE");
+								roSpecListQueue.clear();
+								roSpecListQueue.put(message);
 							}
 						} else {
 							logger.info("closing socket");
 							socket.close();
 						}
-
 					} catch (IOException e) {
 						logger.error("Error while reading message", e);
 					} catch (InvalidLLRPMessageException e) {
@@ -360,8 +385,6 @@ public class LLRPReaderPlugin implements IReaderPlugin {
 
 			msgLength = num1 + num2 + num3 + num4;
 
-			System.out.println("Message length is: " + msgLength);
-
 			if (msgLength < 0) {
 				throw new IllegalArgumentException(
 						"LLRP message length is less than 0");
@@ -386,15 +409,26 @@ public class LLRPReaderPlugin implements IReaderPlugin {
 		 * @return returns the Message form the Queue and removes it. It blocks
 		 *         if there is no Message.
 		 */
-		public LLRPMessage getNextMessage() {
+		public LLRPMessage getNextTags() {
 			LLRPMessage m = null;
 			try {
-				m = commandQueue.take();
+				m = tagQueue.poll(1000, TimeUnit.MILLISECONDS);
 			} catch (InterruptedException e) {
 				// nothing
 			}
 			return m;
 		}
+
+		public LLRPMessage getNextRoSpecList() {
+			LLRPMessage m = null;
+			try {
+				m = roSpecListQueue.take();
+			} catch (InterruptedException e) {
+				// nothing
+			}
+			return m;
+		}
+
 	}
 
 	/*
@@ -409,6 +443,26 @@ public class LLRPReaderPlugin implements IReaderPlugin {
 	}
 
 	/**
+	 * Finds the next acceptable ROSpec number
+	 * 
+	 * @param grr
+	 */
+	public void findNextInt(GET_ROSPECS_RESPONSE grr) {
+		ROSPEC_ID++;
+		boolean isDone = false;
+		while (!isDone) {
+			isDone = true;
+			for (ROSpec r : grr.getROSpecList()) {
+				if (r.getROSpecID().intValue() == ROSPEC_ID) {
+					isDone = false;
+					ROSPEC_ID++;
+				}
+			}
+		}
+		logger.debug("got past the while loop in the find next int");
+	}
+
+	/**
 	 * Gets the next tag
 	 * 
 	 */
@@ -416,28 +470,72 @@ public class LLRPReaderPlugin implements IReaderPlugin {
 	public List<TagRead> getNextTags() {
 		logger.debug("STARTING THE GETNEXTTAGS");
 
+		GET_ROSPECS gr = new GET_ROSPECS();
+		write(gr, "GET ROSPECS");
+		GET_ROSPECS_RESPONSE grr = (GET_ROSPECS_RESPONSE) reader
+				.getNextRoSpecList();
+
+		logger.debug("Got past the get rospec response");
+		if (!doesRoSpecExist(grr)) {
+
+			logger.debug("ROSpec does not exist, creating a new one");
+			findNextInt(grr);
+
+			// CREATE an ADD_ROSPEC Message and send it to the reader
+			ADD_ROSPEC addROSpec = new ADD_ROSPEC();
+			addROSpec.setROSpec(createROSpec());
+			write(addROSpec, "ADD_ROSPEC");
+			pause(250);
+
+			// Create an ENABLE_ROSPEC message and send it to the reader
+			ENABLE_ROSPEC enableROSpec = new ENABLE_ROSPEC();
+			enableROSpec.setROSpecID(new UnsignedInteger(ROSPEC_ID));
+			write(enableROSpec, "ENABLE_ROSPEC");
+			pause(250);
+		}
+
+		logger.debug("got past the if statement");
+
 		List<TagRead> retVal = null;
 		// Create a START_ROSPEC message and send it to the reader
 		START_ROSPEC startROSpec = new START_ROSPEC();
 		startROSpec.setROSpecID(new UnsignedInteger(ROSPEC_ID));
+		write(startROSpec, "START_ROSPEC");
+
+		pause(1000);
 
 		// Create a STOP_ROSPEC message and send it to the reader
 		STOP_ROSPEC stopROSpec = new STOP_ROSPEC();
 		stopROSpec.setROSpecID(new UnsignedInteger(ROSPEC_ID));
 		write(stopROSpec, "STOP_ROSPEC");
-		pause(250);
 
-		// retVal = parseTags();
+		logger.debug("right before the tag read");
 
-		// Create a DISABLE_ROSPEC message and send it to the reader
-		DISABLE_ROSPEC disableROSpec = new DISABLE_ROSPEC();
-		disableROSpec.setROSpecID(new UnsignedInteger(ROSPEC_ID));
-		write(disableROSpec, "DISABLE_ROSPEC");
+		retVal = parseTags(reader.getNextTags());
 
-		// Create a DELTE_ROSPEC message and send it to the reader
-		DELETE_ROSPEC deleteROSpec = new DELETE_ROSPEC();
-		deleteROSpec.setROSpecID(new UnsignedInteger(ROSPEC_ID));
-		write(deleteROSpec, "DELETE_ROSPEC");
+		return retVal;
+	}
+
+	/**
+	 * 
+	 * 
+	 * @param grr
+	 * @return
+	 */
+	private boolean doesRoSpecExist(GET_ROSPECS_RESPONSE grr) {
+		try {
+			logger.debug(grr.toXMLString());
+		} catch (InvalidLLRPMessageException e) {
+			e.printStackTrace();
+		}
+
+		boolean retVal = false;
+
+		for (ROSpec r : grr.getROSpecList()) {
+			if (r.getROSpecID().toInteger() == ROSPEC_ID) {
+				retVal = true;
+			}
+		}
 
 		return retVal;
 	}
@@ -536,6 +634,10 @@ public class LLRPReaderPlugin implements IReaderPlugin {
 	public List<TagRead> parseTags(LLRPMessage msg) {
 
 		List<TagRead> retVal = new ArrayList<TagRead>();
+
+		if (msg == null) {
+			return retVal;
+		}
 
 		RO_ACCESS_REPORT rar = (RO_ACCESS_REPORT) msg;
 
