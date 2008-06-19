@@ -6,6 +6,11 @@ import org.rifidi.edge.core.readerPluginService.ReaderPluginRegistryService;
 import org.rifidi.services.annotations.Inject;
 import org.rifidi.services.registry.ServiceRegistry;
 
+/**
+ * This class is the activator which starts and stops the bundle.  
+ * 
+ * @author Matthew Dean - matt@pramari.com
+ */
 public class Activator implements BundleActivator {
 
 	private ReaderPluginRegistryService readerPluginRegistryService;
@@ -34,14 +39,18 @@ public class Activator implements BundleActivator {
 	}
 
 	/**
-	 * @return
+	 * Gets the plugin registry service.  
+	 * 
+	 * @return	The plugin registry service.  
 	 */
 	public ReaderPluginRegistryService getReaderAdapterRegistryService() {
 		return readerPluginRegistryService;
 	}
 
 	/**
-	 * @param readerPluginRegistryService
+	 * Sets the plugin registry service.  
+	 * 
+	 * @param readerPluginRegistryService	The new plugin registry service.
 	 */
 	@Inject
 	public void setReaderAdapterRegistryService(
