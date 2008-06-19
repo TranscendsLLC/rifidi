@@ -1,5 +1,5 @@
 /*
- *  Activator.java
+ *  ThingMagicReaderInfo.java
  *
  *  Created:	Jun 19, 2008
  *  Project:	RiFidi Emulator - A Software Simulation Tool for RFID Devices
