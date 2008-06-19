@@ -27,6 +27,9 @@ public class ReaderConnectionRegistryServiceImpl implements
 
 	private ReaderPluginFactory readerPluginFactory;
 
+	/**
+	 * The constructor for this object
+	 */
 	public ReaderConnectionRegistryServiceImpl() {
 		ServiceRegistry.getInstance().service(this);
 		readerPluginFactory = new ReaderPluginFactory();
@@ -34,12 +37,18 @@ public class ReaderConnectionRegistryServiceImpl implements
 		initialize();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.connection.registry.ReaderConnectionRegistryService#initialize()
+	 */
 	@Override
 	public void initialize() {
 		// initialize counter if ReaderAdapter where loaded
 		counter = 0;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.connection.registry.ReaderConnectionRegistryService#createReaderConnection(org.rifidi.edge.core.readerPlugin.AbstractReaderInfo)
+	 */
 	@Override
 	public IReaderConnection createReaderConnection(
 			AbstractReaderInfo abstractConnectionInfo) {
@@ -76,12 +85,18 @@ public class ReaderConnectionRegistryServiceImpl implements
 		return session;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.connection.registry.ReaderConnectionRegistryService#getReaderConnection(int)
+	 */
 	@Override
 	public IReaderConnection getReaderConnection(int readerConnectionID) {
 		return readerConnectionRegistry.get(readerConnectionID);
 	}
 
 
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.connection.registry.ReaderConnectionRegistryService#deleteReaderConnection(int)
+	 */
 	@Override
 	public void deleteReaderConnection(int readerConnectionID) {
 		//TODO delete JMS Thread and Queue
@@ -89,17 +104,27 @@ public class ReaderConnectionRegistryServiceImpl implements
 		readerConnection.cleanUp();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.connection.registry.ReaderConnectionRegistryService#deleteReaderConnection(org.rifidi.edge.core.connection.IReaderConnection)
+	 */
 	@Override
 	public void deleteReaderConnection(IReaderConnection readerConnection) {
 		//TODO delete JMS Thread and Queue
 		readerConnectionRegistry.remove(readerConnection);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.connection.registry.ReaderConnectionRegistryService#getAllReaderConnections()
+	 */
 	@Override
 	public List<ReaderConnection> getAllReaderConnections() {
 		return new ArrayList<ReaderConnection>(readerConnectionRegistry.values());
 	}
 
+	/**
+	 * A method helper for the services injection framework.
+	 * @param connectionFactory 
+	 */
 	@Inject
 	public void setConnectionFactory(ConnectionFactory connectionFactory) {
 		this.connectionFactory = connectionFactory;
