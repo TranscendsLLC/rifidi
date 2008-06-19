@@ -36,16 +36,26 @@ public class JMSMessageThread implements Runnable {
 	// Polling time if ReaderAdapter is non blocking
 	private long pollingIntervall = 1000;
 
-	// Constructor
-	public JMSMessageThread(int sessionID, IReaderPlugin readerAdapter,
+	
+	/**
+	 * Constructs the message thread.
+	 * @param connectionID The ID of the connection
+	 * @param readerAdapter The reader adapter plugin
+	 * @param jmsHelper A JMS Helper object 
+	 */
+	public JMSMessageThread(int connectionID, IReaderPlugin readerAdapter,
 			JMSHelper jmsHelper) {
 		this.jmsHelper = jmsHelper;
-		this.readerConnectionID = sessionID;
+		this.readerConnectionID = connectionID;
 		this.readerAdapter = readerAdapter;
 
 		ServiceRegistry.getInstance().service(this);
 	}
 
+	/**
+	 * Starts this thread.
+	 * @return If the starting is successful or not.
+	 */
 	public boolean start() {
 		if (jmsHelper != null) {
 			if (jmsHelper.isInitialized()) {
@@ -60,12 +70,18 @@ public class JMSMessageThread implements Runnable {
 		return running;
 	}
 
+	/**
+	 * Stop this thread.
+	 */
 	public void stop() {
 		running = false;
 		if (thread.isAlive())
 			thread.interrupt();
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Runnable#run()
+	 */
 	@Override
 	public void run() {
 		try {
@@ -116,6 +132,10 @@ public class JMSMessageThread implements Runnable {
 		}
 	}
 
+	/**
+	 * Send the tag list though JMS
+	 * @param tagList The tag list to send.
+	 */
 	private void sendMessage(List<TagRead> tagList) {
 		for (TagRead tag : tagList) {
 			TextMessage textMessage;
@@ -132,14 +152,24 @@ public class JMSMessageThread implements Runnable {
 		}
 	}
 
+	/**
+	 * @return
+	 */
 	public long getPollingIntervall() {
 		return pollingIntervall;
 	}
 
+	/**
+	 * @param pollingIntervall
+	 */
 	public void setPollingIntervall(long pollingIntervall) {
 		this.pollingIntervall = pollingIntervall;
 	}
 
+	/**
+	 * Edge Server injection method. Sets an internal variable.
+	 * @param sessionRegistryService
+	 */
 	@Inject
 	public void setSessionRegistryService(
 			ReaderConnectionRegistryService sessionRegistryService) {
