@@ -13,7 +13,7 @@ import org.junit.Test;
  * @author Matthew Dean - matt@pramari.com
  *
  */
-public class AlienSessionCreationPatternTest {
+public class AlienReaderInfoTest {
 
 	/**
 	 * @throws java.lang.Exception
