@@ -48,8 +48,19 @@ public class AlienReaderPlugin implements IReaderPlugin {
 	 */
 	private AlienReaderInfo aci;
 
+	/**
+	 * The socket
+	 */
 	private Socket connection = null;
+
+	/**
+	 * The reader
+	 */
 	private BufferedReader in = null;
+
+	/**
+	 * The writer
+	 */
 	private PrintWriter out = null;
 
 	/**
@@ -120,8 +131,8 @@ public class AlienReaderPlugin implements IReaderPlugin {
 			throws RifidiConnectionIllegalStateException,
 			RifidiIIllegialArgumentException {
 
-		AlienCustomCommand acc = (AlienCustomCommand)customCommand;
-		
+		AlienCustomCommand acc = (AlienCustomCommand) customCommand;
+
 		try {
 			out.write(acc.getCommand());
 			readFromReader(in);
@@ -162,7 +173,7 @@ public class AlienReaderPlugin implements IReaderPlugin {
 
 			// TODO: This is a bit of a hack
 			String tags = readFromReader(in);
-			//tags = readFromReader(in);
+			// tags = readFromReader(in);
 			logger.debug("tags:" + tags);
 			retVal = parseString(tags);
 		} catch (IOException e) {
@@ -201,6 +212,7 @@ public class AlienReaderPlugin implements IReaderPlugin {
 			newTagRead.setLastSeenTime(System.nanoTime());
 			retVal.add(newTagRead);
 		}
+		
 		return retVal;
 	}
 

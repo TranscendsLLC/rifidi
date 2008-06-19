@@ -9,9 +9,14 @@ public class AlienCustomCommand implements ICustomCommand {
 	 */
 	private static final long serialVersionUID = -6640601794117802867L;
 	
+	/**
+	 * The command. 
+	 */
 	private String command;
 
 	/**
+	 * Gets the command. 
+	 * 
 	 * @return the command
 	 */
 	public String getCommand() {
@@ -19,6 +24,8 @@ public class AlienCustomCommand implements ICustomCommand {
 	}
 
 	/**
+	 * Sets the command. 
+	 * 
 	 * @param command the command to set
 	 */
 	public void setCommand(String command) {
