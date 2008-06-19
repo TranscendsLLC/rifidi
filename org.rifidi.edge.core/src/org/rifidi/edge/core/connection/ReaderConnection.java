@@ -5,6 +5,7 @@ import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.connection.jms.JMSMessageThread;
 import org.rifidi.edge.core.exception.RifidiException;
 import org.rifidi.edge.core.exception.RifidiIIllegialArgumentException;
+import org.rifidi.edge.core.exception.RifidiPreviousError;
 import org.rifidi.edge.core.exception.readerConnection.RifidiConnectionIllegalStateException;
 import org.rifidi.edge.core.exception.readerConnection.RifidiConnectionException;
 import org.rifidi.edge.core.readerPlugin.AbstractReaderInfo;
@@ -102,18 +103,23 @@ public class ReaderConnection implements IReaderConnection {
 	public ICustomCommandResult sendCustomCommand(ICustomCommand customCommand) throws RifidiException {
 		// TODO needs to be implemented and designed
 		// TODO Handle exceptions here or send them up the call chain.
+		if (state != EReaderAdapterState.CONNECTED) {
+			if (state == EReaderAdapterState.ERROR) {
+				throw new RifidiPreviousError("Connection already in error state", errorCause);
+			}
+			RifidiException e = new RifidiConnectionIllegalStateException("Connection in illegal state.");
+			setErrorCause(e);
+		}
 		state = EReaderAdapterState.BUSY;
 		try {
 			ICustomCommandResult result = adapter.sendCustomCommand(customCommand);
 			state = EReaderAdapterState.CONNECTED;
 			return result;
 		} catch (RifidiConnectionIllegalStateException e) {
-			state = EReaderAdapterState.ERROR;
-			errorCause = e;
+			setErrorCause(e);
 			logger.error("Adapter in Illegal State", e);
 		} catch (RifidiIIllegialArgumentException e) {
-			state = EReaderAdapterState.ERROR;
-			errorCause = e;
+			setErrorCause(e);
 			logger.error("Illegal Argument Passed.", e);
 		} catch (RuntimeException e) {
 			/*
@@ -123,8 +129,7 @@ public class ReaderConnection implements IReaderConnection {
 			 * be thrown up the stack.
 			 */
 
-			state = EReaderAdapterState.ERROR;
-			errorCause = e;
+			setErrorCause(e);
 
 			String errorMsg = "Uncaught RuntimeException in "
 				+ adapter.getClass()
@@ -146,13 +151,15 @@ public class ReaderConnection implements IReaderConnection {
 			state = EReaderAdapterState.STREAMING;
 			this.jmsMessageThread.start();
 		} else {
-			state = EReaderAdapterState.ERROR;
+			if (state == EReaderAdapterState.ERROR) {
+				throw new RifidiPreviousError("Connection already in error state.", errorCause);
+			}
 			RifidiConnectionIllegalStateException e = new RifidiConnectionIllegalStateException();
 			logger
 					.error(
 							"Adapter must be in the CONNECTED state to start the tag stream.",
 							e);
-			errorCause = e;
+			setErrorCause(e);
 		}
 	}
 
@@ -164,13 +171,16 @@ public class ReaderConnection implements IReaderConnection {
 			state = EReaderAdapterState.CONNECTED;
 			this.jmsMessageThread.stop();
 		} else {
-			state = EReaderAdapterState.ERROR;
+			if (state == EReaderAdapterState.ERROR) {
+				throw new RifidiPreviousError("Connection already in error state.", errorCause);
+			}
 			RifidiConnectionIllegalStateException e = new RifidiConnectionIllegalStateException();
 			logger
 					.error(
 							"Adapter must be in the STREAMING state to stop the tag stream.",
 							e);
-			errorCause = e;
+			setErrorCause(e);
+			throw e;
 		}
 	}
 
@@ -185,12 +195,21 @@ public class ReaderConnection implements IReaderConnection {
 	 * @see org.rifidi.edge.core.connection.IReaderConnection#connect()
 	 */
 	public void connect() throws RifidiException {
+		if (state != EReaderAdapterState.CREATED) {
+			if (state == EReaderAdapterState.ERROR) {
+				logger.debug("Trying to recconnect after an error occured...");
+				errorCause= null;
+			} else {
+				RifidiException e =  new RifidiConnectionIllegalStateException("Addapter trying to connect in illegal state.");
+				setErrorCause(e);
+				throw e;
+			}
+		}
 		try {
 			adapter.connect();
 			state = EReaderAdapterState.CONNECTED;
 		} catch (RifidiConnectionException e) {
-			state = EReaderAdapterState.ERROR;
-			errorCause = e;
+			setErrorCause(e);
 			logger.error("Error while connecting.", e);
 		} catch (RuntimeException e) {
 			/*
@@ -200,8 +219,7 @@ public class ReaderConnection implements IReaderConnection {
 			 * be thrown up the stack.
 			 */
 
-			state = EReaderAdapterState.ERROR;
-			errorCause = e;
+			setErrorCause(e);
 
 			String errorMsg = "Uncaught RuntimeException in "
 				+ adapter.getClass()
@@ -218,12 +236,19 @@ public class ReaderConnection implements IReaderConnection {
 	 * @see org.rifidi.edge.core.connection.IReaderConnection#disconnect()
 	 */
 	public void disconnect() throws RifidiException {
+		if (state != EReaderAdapterState.CONNECTED){
+			if (state == EReaderAdapterState.ERROR) {
+				throw new RifidiPreviousError("Connection already in error state.", errorCause);
+			}
+			RifidiException e = new RifidiConnectionIllegalStateException("Connection in illegal state while trying to disconnect");
+			setErrorCause(e);
+			throw e;
+		}
 		try {
 			adapter.disconnect();
 			state = EReaderAdapterState.DISCONECTED;
 		} catch (RifidiConnectionException e) {
-			state = EReaderAdapterState.ERROR;
-			errorCause = e;
+			setErrorCause(e);
 			logger.error("Error while disconnecting.", e);
 		} catch (RuntimeException e) {
 			/*
@@ -233,8 +258,7 @@ public class ReaderConnection implements IReaderConnection {
 			 * be thrown up the stack.
 			 */
 
-			state = EReaderAdapterState.ERROR;
-			errorCause = e;
+			setErrorCause(e);
 
 			String errorMsg = "Uncaught RuntimeException in "
 				+ adapter.getClass()
@@ -258,8 +282,20 @@ public class ReaderConnection implements IReaderConnection {
 	 * @see org.rifidi.edge.core.connection.IReaderConnection#setErrorCause(java.lang.Exception)
 	 */
 	public void setErrorCause(Exception errorCause) {
-		this.errorCause = errorCause;
-		state = EReaderAdapterState.ERROR;
+		
+		if (errorCause != null ){
+			//Need to do some house keeping first...
+			this.jmsMessageThread.stop();
+			try {
+				adapter.disconnect();
+			} catch (RifidiConnectionException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		
+			this.errorCause = errorCause;
+			state = EReaderAdapterState.ERROR;
+		}
 	}
 
 	public void cleanUp() {
