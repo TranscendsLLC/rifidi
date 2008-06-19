@@ -3,6 +3,7 @@ package org.rifidi.edge.core.connection;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.connection.jms.JMSMessageThread;
+import org.rifidi.edge.core.exception.RifidiException;
 import org.rifidi.edge.core.exception.RifidiIIllegialArgumentException;
 import org.rifidi.edge.core.exception.readerConnection.RifidiConnectionIllegalStateException;
 import org.rifidi.edge.core.exception.readerConnection.RifidiConnectionException;
@@ -98,7 +99,7 @@ public class ReaderConnection implements IReaderConnection {
 	/* (non-Javadoc)
 	 * @see org.rifidi.edge.core.connection.IReaderConnection#sendCustomCommand(org.rifidi.edge.core.readerPlugin.commands.ICustomCommand)
 	 */
-	public ICustomCommandResult sendCustomCommand(ICustomCommand customCommand) {
+	public ICustomCommandResult sendCustomCommand(ICustomCommand customCommand) throws RifidiException{
 		// TODO needs to be implemented and designed
 		// TODO Handle exceptions here or send them up the call chain.
 		state = EReaderAdapterState.BUSY;
@@ -125,13 +126,14 @@ public class ReaderConnection implements IReaderConnection {
 			state = EReaderAdapterState.ERROR;
 			errorCause = e;
 
+			String errorMsg = "Uncaught RuntimeException in "
+				+ adapter.getClass()
+				+ " adapter. "
+				+ "This means that there may be an unfixed bug in the adapter.";
 			logger
-					.error(
-							"Uncaught RuntimeException in "
-									+ adapter.getClass()
-									+ " adapter. "
-									+ "This means that there may be an unfixed bug in the adapter.",
-							e);
+					.error( errorMsg, e);
+			
+			throw new RifidiException(errorMsg, e);
 		}
 		return null;
 	}
@@ -139,7 +141,7 @@ public class ReaderConnection implements IReaderConnection {
 	/* (non-Javadoc)
 	 * @see org.rifidi.edge.core.connection.IReaderConnection#startTagStream()
 	 */
-	public void startTagStream() {
+	public void startTagStream() throws RifidiException {
 		if (state == EReaderAdapterState.CONNECTED) {
 			state = EReaderAdapterState.STREAMING;
 			this.jmsMessageThread.start();
@@ -157,7 +159,7 @@ public class ReaderConnection implements IReaderConnection {
 	/* (non-Javadoc)
 	 * @see org.rifidi.edge.core.connection.IReaderConnection#stopTagStream()
 	 */
-	public void stopTagStream() {
+	public void stopTagStream() throws RifidiException {
 		if (state == EReaderAdapterState.STREAMING) {
 			state = EReaderAdapterState.CONNECTED;
 			this.jmsMessageThread.stop();
@@ -182,7 +184,7 @@ public class ReaderConnection implements IReaderConnection {
 	/* (non-Javadoc)
 	 * @see org.rifidi.edge.core.connection.IReaderConnection#connect()
 	 */
-	public void connect() {
+	public void connect() throws RifidiException {
 		try {
 			adapter.connect();
 			state = EReaderAdapterState.CONNECTED;
@@ -201,20 +203,21 @@ public class ReaderConnection implements IReaderConnection {
 			state = EReaderAdapterState.ERROR;
 			errorCause = e;
 
+			String errorMsg = "Uncaught RuntimeException in "
+				+ adapter.getClass()
+				+ " adapter. "
+				+ "This means that there may be an unfixed bug in the adapter.";
 			logger
-					.error(
-							"Uncaught RuntimeException in "
-									+ adapter.getClass()
-									+ " adapter. "
-									+ "This means that there may be an unfixed bug in the adapter.",
-							e);
+					.error( errorMsg, e);
+			
+			throw new RifidiException(errorMsg, e);
 		}
 	}
 
 	/* (non-Javadoc)
 	 * @see org.rifidi.edge.core.connection.IReaderConnection#disconnect()
 	 */
-	public void disconnect() {
+	public void disconnect() throws RifidiException {
 		try {
 			adapter.disconnect();
 			state = EReaderAdapterState.DISCONECTED;
@@ -233,13 +236,14 @@ public class ReaderConnection implements IReaderConnection {
 			state = EReaderAdapterState.ERROR;
 			errorCause = e;
 
+			String errorMsg = "Uncaught RuntimeException in "
+				+ adapter.getClass()
+				+ " adapter. "
+				+ "This means that there may be an unfixed bug in the adapter.";
 			logger
-					.error(
-							"Uncaught RuntimeException in "
-									+ adapter.getClass()
-									+ " adapter. "
-									+ "This means that there may be an unfixed bug in the adapter.",
-							e);
+					.error( errorMsg, e);
+			
+			throw new RifidiException(errorMsg, e);
 		}
 	}
 
