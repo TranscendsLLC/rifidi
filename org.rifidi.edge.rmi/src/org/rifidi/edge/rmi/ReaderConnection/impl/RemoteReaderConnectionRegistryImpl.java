@@ -35,7 +35,7 @@ public class RemoteReaderConnectionRegistryImpl implements
 	}
 
 	@Override
-	public RemoteReaderConnection createReaderSession(
+	public RemoteReaderConnection createReaderConnection(
 			AbstractReaderInfo connectionInfo) throws RemoteException {
 		logger.debug("Remote Call: createReaderSession()");
 
@@ -64,7 +64,7 @@ public class RemoteReaderConnectionRegistryImpl implements
 	}
 
 	@Override
-	public void deleteReaderSession(
+	public void deleteReaderConnection(
 			RemoteReaderConnection remoteReaderConnection)
 			throws RemoteException {
 		logger.debug("Remote Call: deleteReaderSession()");
