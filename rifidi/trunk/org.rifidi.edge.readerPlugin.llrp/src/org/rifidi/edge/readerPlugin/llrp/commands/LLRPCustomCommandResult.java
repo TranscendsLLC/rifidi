@@ -1,7 +1,7 @@
 /*
  *  LLRPCustomCommandResult.java
  *
- *  Created:	Jun 20, 2006
+ *  Created:	Jun 19, 2008
  *  Project:	RiFidi Emulator - A Software Simulation Tool for RFID Devices
  *  				http://www.rifidi.org
  *  				http://rifidi.sourceforge.net
