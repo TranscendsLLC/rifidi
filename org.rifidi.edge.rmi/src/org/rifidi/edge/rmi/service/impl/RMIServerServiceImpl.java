@@ -11,7 +11,6 @@ import java.rmi.server.UnicastRemoteObject;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.connection.registry.ReaderConnectionRegistryService;
-import org.rifidi.edge.rmi.ReaderConnection.RemoteReaderConnection;
 import org.rifidi.edge.rmi.ReaderConnection.RemoteReaderConnectionRegistry;
 import org.rifidi.edge.rmi.ReaderConnection.impl.RemoteReaderConnectionRegistryImpl;
 import org.rifidi.edge.rmi.service.RMIServerService;
@@ -41,6 +40,9 @@ public class RMIServerServiceImpl implements RMIServerService {
 		ServiceRegistry.getInstance().service(this);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.rmi.service.RMIServerService#start()
+	 */
 	@Override
 	public void start() {
 
@@ -96,6 +98,9 @@ public class RMIServerServiceImpl implements RMIServerService {
 		// }
 	}
 
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.rmi.service.RMIServerService#stop()
+	 */
 	@Override
 	public void stop() {
 		try {
@@ -120,49 +125,10 @@ public class RMIServerServiceImpl implements RMIServerService {
 		}
 	}
 
-	@Override
-	public void bind(String url, RemoteReaderConnection remoteReaderConnection) {
-		// TODO Throw Exceptions
-		RemoteReaderConnection remoteReaderConnectionStub = null;
-		try {
-			remoteReaderConnectionStub = (RemoteReaderConnection) UnicastRemoteObject.exportObject(remoteReaderConnection, 0);
-		} catch (RemoteException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		
-		try {
-			registry.bind(url, remoteReaderConnectionStub);
-		} catch (AccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (RemoteException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (AlreadyBoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
-	@Override
-	public void unbind(String url) {
-		// TODO throw Exceptions
-		try {
-			registry.unbind(url);
-		} catch (AccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (RemoteException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (NotBoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
 	/**
+	 * Dependency Injection. This method is needed by the rifidi services
+	 * framework.
+	 * 
 	 * @param sessionRegistryService
 	 */
 	@Inject
