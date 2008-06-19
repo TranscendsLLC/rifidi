@@ -1,5 +1,8 @@
 package org.rifidi.edge.core.connection;
 
+import org.rifidi.edge.core.exception.RifidiException;
+import org.rifidi.edge.core.exception.RifidiIIllegialArgumentException;
+import org.rifidi.edge.core.exception.readerConnection.RifidiConnectionIllegalStateException;
 import org.rifidi.edge.core.readerPlugin.AbstractReaderInfo;
 import org.rifidi.edge.core.readerPlugin.IReaderPlugin;
 import org.rifidi.edge.core.readerPlugin.commands.ICustomCommand;
@@ -46,17 +49,17 @@ public interface IReaderConnection {
 	 * @return
 	 */
 	public abstract ICustomCommandResult sendCustomCommand(
-			ICustomCommand customCommand);
+			ICustomCommand customCommand) throws RifidiException;
 
 	/**
 	 * Starts the tag streaming
 	 */
-	public abstract void startTagStream();
+	public abstract void startTagStream() throws RifidiException;
 
 	/**
 	 * Stops the tag streaming.
 	 */
-	public abstract void stopTagStream();
+	public abstract void stopTagStream() throws RifidiException;
 
 	/**
 	 * @return The currect state of the reader.
@@ -66,12 +69,12 @@ public interface IReaderConnection {
 	/**
 	 * Connect to the reader
 	 */
-	public abstract void connect();
+	public abstract void connect() throws RifidiException;
 
 	/**
 	 * Disconnect from the reader
 	 */
-	public abstract void disconnect();
+	public abstract void disconnect() throws RifidiException;
 
 	/**
 	 * @return The cause of the error, null if there was none.
