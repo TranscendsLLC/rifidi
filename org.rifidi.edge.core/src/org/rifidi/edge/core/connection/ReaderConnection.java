@@ -16,7 +16,7 @@ import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.connection.jms.JMSMessageThread;
 import org.rifidi.edge.core.exception.RifidiException;
 import org.rifidi.edge.core.exception.RifidiIIllegialArgumentException;
-import org.rifidi.edge.core.exception.RifidiPreviousError;
+import org.rifidi.edge.core.exception.RifidiPreviousErrorException;
 import org.rifidi.edge.core.exception.readerConnection.RifidiConnectionIllegalStateException;
 import org.rifidi.edge.core.exception.readerConnection.RifidiConnectionException;
 import org.rifidi.edge.core.readerPlugin.AbstractReaderInfo;
@@ -156,7 +156,7 @@ public class ReaderConnection implements IReaderConnection {
 			this.jmsMessageThread.start();
 		} else {
 			if (state == EReaderAdapterState.ERROR) {
-				throw new RifidiPreviousError("Connection already in error state.", errorCause);
+				throw new RifidiPreviousErrorException("Connection already in error state.", errorCause);
 			}
 			RifidiConnectionIllegalStateException e = new RifidiConnectionIllegalStateException();
 			logger
@@ -176,7 +176,7 @@ public class ReaderConnection implements IReaderConnection {
 			this.jmsMessageThread.stop();
 		} else {
 			if (state == EReaderAdapterState.ERROR) {
-				throw new RifidiPreviousError("Connection already in error state.", errorCause);
+				throw new RifidiPreviousErrorException("Connection already in error state.", errorCause);
 			}
 			RifidiConnectionIllegalStateException e = new RifidiConnectionIllegalStateException();
 			logger
@@ -243,7 +243,7 @@ public class ReaderConnection implements IReaderConnection {
 	public void disconnect() throws RifidiException {
 		if (state != EReaderAdapterState.CONNECTED){
 			if (state == EReaderAdapterState.ERROR) {
-				throw new RifidiPreviousError("Connection already in error state.", errorCause);
+				throw new RifidiPreviousErrorException("Connection already in error state.", errorCause);
 			}
 			RifidiException e = new RifidiConnectionIllegalStateException("Connection in illegal state while trying to disconnect");
 			setErrorCause(e);
