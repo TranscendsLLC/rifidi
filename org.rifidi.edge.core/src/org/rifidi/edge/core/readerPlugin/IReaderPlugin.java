@@ -12,18 +12,21 @@ import org.rifidi.edge.core.tag.TagRead;
 public interface IReaderPlugin {
 
 	/**
+	 * Connects to a reader
 	 * @throws RifidiConnectionException
 	 */
 	public void connect() throws RifidiConnectionException;
 
 	/**
+	 * Disconnects from a reader
 	 * @throws RifidiConnectionException
 	 */
 	public void disconnect() throws RifidiConnectionException;
 
 	/**
-	 * @param customCommand
-	 * @return
+	 * Sends a custom command
+	 * @param customCommand The custom command to send.
+	 * @return The result of the custom command
 	 * @throws RifidiConnectionIllegalStateException
 	 * @throws RifidiIIllegialArgumentException
 	 */
@@ -31,13 +34,15 @@ public interface IReaderPlugin {
 		throws RifidiConnectionIllegalStateException, RifidiIIllegialArgumentException;
 
 	/**
-	 * @return
+	 * Gets the list of tags seen by this reader
+	 * @return The list of tags
 	 * @throws RifidiConnectionIllegalStateException
 	 */
 	public List<TagRead> getNextTags() throws RifidiConnectionIllegalStateException;
 	
 	/**
-	 * @return
+	 * Is this reader blocking or not?
+	 * @return True if blocking
 	 */
 	public boolean isBlocking();
 	

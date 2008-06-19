@@ -24,22 +24,42 @@ public class TagRead {
 	private JAXBContext context;
 	private Marshaller marshaller;
 
+	/**
+	 * The ID of the tag
+	 * @return Tag ID
+	 */
 	public byte[] getId() {
 		return id;
 	}
 
+	/**
+	 * Sets the id of the tag
+	 * @param id 
+	 */
 	public void setId(byte[] id) {
 		this.id = id;
 	}
 
+	/**
+	 * Returns the last seen time in milliseconds.
+	 * @return The last seen time
+	 */
 	public long getLastSeenTime() {
 		return lastSeenTime;
 	}
 
+	/**
+	 * The last seen time of the tag.
+	 * @param lastSeenTime Time in milliseconds
+	 */
 	public void setLastSeenTime(long lastSeenTime) {
 		this.lastSeenTime = lastSeenTime;
 	}
 
+	
+	/**
+	 * @return The tag in xml format
+	 */
 	public String toXML() {
 		try {
 			context = JAXBContext.newInstance(this.getClass());
@@ -59,6 +79,9 @@ public class TagRead {
 		return writer.toString();
 	}
 
+	/**
+	 * @return The id of this tag in hex format
+	 */
 	public String toString() {
 		return ByteAndHexConvertingUtility.toHexString(id);
 	}

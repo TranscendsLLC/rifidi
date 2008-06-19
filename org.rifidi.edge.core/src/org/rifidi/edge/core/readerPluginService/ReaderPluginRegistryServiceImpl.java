@@ -56,6 +56,9 @@ public class ReaderPluginRegistryServiceImpl implements
 		return registry.get(specificConnectionInfo.getClass());
 	}
 
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.readerPluginService.ReaderPluginRegistryService#getAvailableReaderAdapters()
+	 */
 	@Override
 	public List<String> getAvailableReaderAdapters() {
 		ArrayList<String> availableAdapters = new ArrayList<String>();

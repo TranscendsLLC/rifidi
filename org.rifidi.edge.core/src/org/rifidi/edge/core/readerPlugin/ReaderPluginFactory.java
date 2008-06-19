@@ -5,6 +5,10 @@ import org.rifidi.edge.core.readerPluginService.ReaderPluginRegistryService;
 import org.rifidi.services.annotations.Inject;
 import org.rifidi.services.registry.ServiceRegistry;
 
+/**
+ * @author jerry
+ *
+ */
 public class ReaderPluginFactory {
 
 	private ReaderPluginRegistryService readerPluginRegistryService;
@@ -13,6 +17,12 @@ public class ReaderPluginFactory {
 		ServiceRegistry.getInstance().service(this);
 	}
 
+	
+	/**
+	 * Creates a reader plugin
+	 * @param abstractConnnectionInfo The connection info for this reader
+	 * @return A new reader plugin
+	 */
 	public IReaderPlugin createReaderAdapter(
 			AbstractReaderInfo abstractConnnectionInfo) {
 		IReaderPlugin readerAdapter = null;
