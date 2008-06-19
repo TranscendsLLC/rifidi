@@ -14,6 +14,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.rifidi.edge.core.connection.IReaderConnection;
 import org.rifidi.edge.core.connection.registry.ReaderConnectionRegistryService;
+import org.rifidi.edge.core.exception.RifidiException;
 import org.rifidi.edge.core.exception.readerConnection.RifidiConnectionException;
 import org.rifidi.edge.core.exception.readerConnection.RifidiConnectionIllegalStateException;
 import org.rifidi.edge.core.readerPlugin.enums.EReaderAdapterState;
@@ -64,15 +65,23 @@ public class SessionBreakageTest {
 
 		IReaderConnection s = sessionRegistryService
 				.createReaderConnection(info);
-
-		s.connect();
-		Assert.assertTrue(s.getState() == EReaderAdapterState.ERROR);
-
+		
 		Assert.assertNotNull(s);
+
+		try {
+			s.connect();
+		} catch (RifidiException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			Assert.assertTrue(s.getState() == EReaderAdapterState.ERROR);
+		}
+		
+
+		
 	}
 
 	@Test
-	public void testSessionConnectionErrorHandling2() {
+	public void testSessionConnectionErrorHandlingRuntime() {
 
 		readerPluginRegistryService.registerReaderAdapter(
 				DummyReaderInfo.class, new DummyReaderPluginFactory());
@@ -84,10 +93,18 @@ public class SessionBreakageTest {
 		IReaderConnection s = sessionRegistryService
 				.createReaderConnection(info);
 
-		s.connect();
-		Assert.assertTrue(s.getState() == EReaderAdapterState.ERROR);
-
 		Assert.assertNotNull(s);
+		
+		try {
+			s.connect();
+		} catch (RifidiException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			Assert.assertTrue(s.getState() == EReaderAdapterState.ERROR);
+		}
+		
+
+
 	}
 
 	@Test
@@ -115,9 +132,19 @@ public class SessionBreakageTest {
 		IReaderConnection s = sessionRegistryService
 				.createReaderConnection(info);
 
-		s.connect();
+		try {
+			s.connect();
+		} catch (RifidiException e1) {
+			e1.printStackTrace();
+			Assert.fail();
+		}
 
-		s.startTagStream();
+		try {
+			s.startTagStream();
+		} catch (RifidiException e1) {
+			e1.printStackTrace();
+			Assert.fail();
+		}
 
 		Connection c;
 		try {
@@ -143,7 +170,13 @@ public class SessionBreakageTest {
 			// correctly
 			Assert.assertNotNull(m);
 
-			s.stopTagStream();
+			try {
+				s.stopTagStream();
+			} catch (RifidiException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				Assert.fail();
+			}
 
 			// see if there is anything in the queue after it has been stopped.
 			m = consumer.receive(5000);
@@ -187,9 +220,21 @@ public class SessionBreakageTest {
 		IReaderConnection s = sessionRegistryService
 				.createReaderConnection(info);
 
-		s.connect();
+		try {
+			s.connect();
+		} catch (RifidiException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+			Assert.fail();
+		}
 
-		s.startTagStream();
+		try {
+			s.startTagStream();
+		} catch (RifidiException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+			Assert.fail();
+		}
 
 		Connection c;
 		try {
@@ -215,7 +260,13 @@ public class SessionBreakageTest {
 			// correctly
 			Assert.assertNotNull(m);
 
-			s.stopTagStream();
+			try {
+				s.stopTagStream();
+			} catch (RifidiException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				Assert.fail();
+			}
 
 			// see if there is anything in the queue after it has been stopped.
 			m = consumer.receive(5000);
@@ -247,9 +298,19 @@ public class SessionBreakageTest {
 		IReaderConnection s = sessionRegistryService
 				.createReaderConnection(info);
 
-		s.connect();
+		try {
+			s.connect();
+		} catch (RifidiException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
-		s.sendCustomCommand(new DummyCustomCommand("Command"));
+		try {
+			s.sendCustomCommand(new DummyCustomCommand("Command"));
+		} catch (RifidiException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		System.out.println(s.getState());
 
@@ -271,9 +332,19 @@ public class SessionBreakageTest {
 		IReaderConnection s = sessionRegistryService
 				.createReaderConnection(info);
 
-		s.connect();
+		try {
+			s.connect();
+		} catch (RifidiException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
-		s.sendCustomCommand(new DummyCustomCommand("Command"));
+		try {
+			s.sendCustomCommand(new DummyCustomCommand("Command"));
+		} catch (RifidiException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		System.out.println(s.getState());
 
@@ -294,9 +365,19 @@ public class SessionBreakageTest {
 		IReaderConnection s = sessionRegistryService
 				.createReaderConnection(info);
 
-		s.connect();
+		try {
+			s.connect();
+		} catch (RifidiException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
-		s.disconnect();
+		try {
+			s.disconnect();
+		} catch (RifidiException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		Assert.assertSame(s.getState(), EReaderAdapterState.ERROR);
 		Assert
@@ -316,9 +397,20 @@ public class SessionBreakageTest {
 		IReaderConnection s = sessionRegistryService
 				.createReaderConnection(info);
 
-		s.connect();
+		try {
+			s.connect();
+		} catch (RifidiException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			Assert.fail();
+		}
 
-		s.disconnect();
+		try {
+			s.disconnect();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		Assert.assertSame(s.getState(), EReaderAdapterState.ERROR);
 		Assert.assertTrue(s.getErrorCause() instanceof RuntimeException);

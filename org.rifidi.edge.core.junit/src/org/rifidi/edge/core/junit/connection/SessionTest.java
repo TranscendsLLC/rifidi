@@ -21,6 +21,7 @@ import org.rifidi.edge.core.connection.ReaderConnection;
 import org.rifidi.edge.core.connection.jms.JMSHelper;
 import org.rifidi.edge.core.connection.jms.JMSMessageThread;
 import org.rifidi.edge.core.connection.registry.ReaderConnectionRegistryService;
+import org.rifidi.edge.core.exception.RifidiException;
 import org.rifidi.edge.core.exception.readerConnection.RifidiConnectionException;
 import org.rifidi.edge.core.readerPlugin.AbstractReaderInfo;
 import org.rifidi.edge.core.readerPluginService.ReaderPluginRegistryService;
@@ -176,14 +177,32 @@ public class SessionTest {
 		IReaderConnection s = sessionRegistryService
 				.createReaderConnection(info);
 
-		s.connect();
+		try {
+			s.connect();
+		} catch (RifidiException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			Assert.fail();
+		}
 
-		Assert.assertTrue("Command <Result>"
-				.equals(((DummyCustomCommandResult) s
-						.sendCustomCommand(new DummyCustomCommand("Command")))
-						.getResult()));
+		try {
+			Assert.assertTrue("Command <Result>"
+					.equals(((DummyCustomCommandResult) s
+							.sendCustomCommand(new DummyCustomCommand("Command")))
+							.getResult()));
+		} catch (RifidiException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			Assert.fail();
+		}
 
-		s.disconnect();
+		try {
+			s.disconnect();
+		} catch (RifidiException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			Assert.fail();
+		}
 
 	}
 
@@ -226,9 +245,21 @@ public class SessionTest {
 		IReaderConnection s = new ReaderConnection(info, readerAdapter,
 				SessionID, mthread);
 
-		s.connect();
+		try {
+			s.connect();
+		} catch (RifidiException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+			Assert.fail();
+		}
 
-		s.startTagStream();
+		try {
+			s.startTagStream();
+		} catch (RifidiException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+			Assert.fail();
+		}
 
 		Connection c;
 		try {
@@ -253,7 +284,13 @@ public class SessionTest {
 			// correctly
 			Assert.assertNotNull(m);
 
-			s.stopTagStream();
+			try {
+				s.stopTagStream();
+			} catch (RifidiException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				Assert.fail();
+			}
 
 			// see if there is anything in the queue after it has been stopped.
 			m = consumer.receive(5000);

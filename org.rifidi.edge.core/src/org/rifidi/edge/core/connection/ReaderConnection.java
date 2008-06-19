@@ -211,6 +211,7 @@ public class ReaderConnection implements IReaderConnection {
 		} catch (RifidiConnectionException e) {
 			setErrorCause(e);
 			logger.error("Error while connecting.", e);
+			throw e;
 		} catch (RuntimeException e) {
 			/*
 			 * Error Resistance. Uncaught Runtime errors should not cause the
@@ -285,7 +286,8 @@ public class ReaderConnection implements IReaderConnection {
 		
 		if (errorCause != null ){
 			//Need to do some house keeping first...
-			this.jmsMessageThread.stop();
+			//if (jmsMessageThread != null)
+			//	this.jmsMessageThread.stop();
 			try {
 				adapter.disconnect();
 			} catch (RifidiConnectionException e) {
