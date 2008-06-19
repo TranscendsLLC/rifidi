@@ -35,11 +35,13 @@ import org.rifidi.edge.readerPlugin.llrp.LLRPReaderPlugin;
 public class LLRPReaderAdapterTest extends TestCase {
 
 	/**
-	 * The log4j logger
+	 * The log4j logger.
 	 */
 	private static Log logger = LogFactory.getLog(LLRPReaderAdapterTest.class);
 
 	/**
+	 * Sets up the TestCase.  
+	 * 
 	 * @throws java.lang.Exception
 	 */
 	@Before
@@ -47,6 +49,8 @@ public class LLRPReaderAdapterTest extends TestCase {
 	}
 
 	/**
+	 * Tears down the TestCase.  
+	 * 
 	 * @throws java.lang.Exception
 	 */
 	@After
@@ -112,7 +116,7 @@ public class LLRPReaderAdapterTest extends TestCase {
 	/**
 	 * Tests the raw command sending to the reader
 	 */
-	///public void testRawCommand() {
+	//public void testRawCommand() {
 	//	Assert.fail();
 	//}
 
