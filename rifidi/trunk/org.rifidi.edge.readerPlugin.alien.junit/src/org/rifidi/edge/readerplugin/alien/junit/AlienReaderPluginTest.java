@@ -29,7 +29,7 @@ import org.rifidi.edge.readerPlugin.alien.AlienReaderPlugin;
  * 
  * @author Matt
  */
-public class AlienReaderAdapterTest {
+public class AlienReaderPluginTest {
 
 	/**
 	 * @throws java.lang.Exception

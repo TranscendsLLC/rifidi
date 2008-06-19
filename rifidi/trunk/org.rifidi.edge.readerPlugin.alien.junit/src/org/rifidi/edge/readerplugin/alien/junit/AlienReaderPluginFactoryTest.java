@@ -13,7 +13,7 @@ import org.junit.Test;
  * @author Matthew Dean - matt@pramari.com
  *
  */
-public class AlienReaderAdapterFactoryTest {
+public class AlienReaderPluginFactoryTest {
 
 	/**
 	 * @throws java.lang.Exception
