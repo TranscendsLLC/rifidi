@@ -1,3 +1,14 @@
+/*
+ *  ReaderConnection.java
+ *
+ *  Created:	Jun 19, 2008
+ *  Project:	RiFidi Emulator - A Software Simulation Tool for RFID Devices
+ *  				http://www.rifidi.org
+ *  				http://rifidi.sourceforge.net
+ *  Copyright:	Pramari LLC and the Rifidi Project
+ *  License:	Lesser GNU Public License (LGPL)
+ *  				http://www.opensource.org/licenses/lgpl-license.html
+ */
 package org.rifidi.edge.core.connection;
 
 import org.apache.commons.logging.Log;
@@ -103,13 +114,6 @@ public class ReaderConnection implements IReaderConnection {
 	public ICustomCommandResult sendCustomCommand(ICustomCommand customCommand) throws RifidiException {
 		// TODO needs to be implemented and designed
 		// TODO Handle exceptions here or send them up the call chain.
-		if (state != EReaderAdapterState.CONNECTED) {
-			if (state == EReaderAdapterState.ERROR) {
-				throw new RifidiPreviousError("Connection already in error state", errorCause);
-			}
-			RifidiException e = new RifidiConnectionIllegalStateException("Connection in illegal state.");
-			setErrorCause(e);
-		}
 		state = EReaderAdapterState.BUSY;
 		try {
 			ICustomCommandResult result = adapter.sendCustomCommand(customCommand);
