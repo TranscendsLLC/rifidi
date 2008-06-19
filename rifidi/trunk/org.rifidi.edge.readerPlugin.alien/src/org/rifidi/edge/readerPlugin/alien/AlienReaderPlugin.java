@@ -30,19 +30,19 @@ import org.rifidi.edge.core.readerPlugin.IReaderPlugin;
 import org.rifidi.edge.core.readerPlugin.commands.ICustomCommand;
 import org.rifidi.edge.core.readerPlugin.commands.ICustomCommandResult;
 import org.rifidi.edge.core.tag.TagRead;
+import org.rifidi.edge.readerPlugin.alien.command.AlienCustomCommand;
 
 /**
- * @author Matthew Dean - matt@pramari.com
+ * This class represents a plugin that will communicate with an Alien ALR-9800
+ * reader.
  * 
- */
-/**
  * @author Matthew Dean - matt@pramari.com
- *
  */
 public class AlienReaderPlugin implements IReaderPlugin {
 
 	private static final Log logger = LogFactory
 			.getLog(AlienReaderPlugin.class);
+
 	/**
 	 * The connection info for this reader
 	 */
@@ -98,7 +98,7 @@ public class AlienReaderPlugin implements IReaderPlugin {
 	 * @see org.rifidi.edge.core.readerAdapter.IReaderAdapter#disconnect()
 	 */
 	@Override
-	public void disconnect() throws RifidiConnectionException{
+	public void disconnect() throws RifidiConnectionException {
 		out.write("q");
 		out.flush();
 		try {
@@ -115,23 +115,30 @@ public class AlienReaderPlugin implements IReaderPlugin {
 	 * @see org.rifidi.edge.core.readerAdapter.IReaderAdapter#sendCommand(byte[])
 	 */
 	@Override
-	public ICustomCommandResult sendCustomCommand(ICustomCommand customCommand) 
-			throws RifidiConnectionIllegalStateException, RifidiIIllegialArgumentException {
-		/*try {
-			out.write(new String(command));
+	public ICustomCommandResult sendCustomCommand(ICustomCommand customCommand)
+			throws RifidiConnectionIllegalStateException,
+			RifidiIIllegialArgumentException {
+
+		AlienCustomCommand acc = (AlienCustomCommand)customCommand;
+		
+		try {
+			out.write(acc.getCommand());
 			readFromReader(in);
 		} catch (IOException e) {
 			logger.debug("IOException.", e);
-		}*/
+		}
+
 		return null;
 	}
 
-	/**
-	 * Gets the next tag
+	/*
+	 * (non-Javadoc)
 	 * 
+	 * @see org.rifidi.edge.core.readerPlugin.IReaderPlugin#getNextTags()
 	 */
 	@Override
-	public List<TagRead> getNextTags() throws RifidiConnectionIllegalStateException {
+	public List<TagRead> getNextTags()
+			throws RifidiConnectionIllegalStateException {
 
 		logger.debug("starting the getnexttags");
 
@@ -217,6 +224,11 @@ public class AlienReaderPlugin implements IReaderPlugin {
 		return buf.toString();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.rifidi.edge.core.readerPlugin.IReaderPlugin#isBlocking()
+	 */
 	@Override
 	public boolean isBlocking() {
 		return false;
