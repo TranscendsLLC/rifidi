@@ -15,5 +15,10 @@ public class LLRPReaderInfo extends AbstractReaderInfo {
 	 * 
 	 */
 	private static final long serialVersionUID = 1614519150096139679L;
+
+	@Override
+	public String getReaderType() {
+		return "LLRP Reader";
+	}
 	
 }
