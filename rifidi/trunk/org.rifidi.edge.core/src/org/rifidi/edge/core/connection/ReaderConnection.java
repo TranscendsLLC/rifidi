@@ -133,16 +133,20 @@ public class ReaderConnection implements IReaderConnection {
 			 * be thrown up the stack.
 			 */
 
-			setErrorCause(e);
-
 			String errorMsg = "Uncaught RuntimeException in "
 				+ adapter.getClass()
 				+ " adapter. "
 				+ "This means that there may be an unfixed bug in the adapter.";
-			logger
-					.error( errorMsg, e);
 			
-			throw new RifidiException(errorMsg, e);
+			logger.error( errorMsg, e);
+			
+			/* We wrap the Runtime exception */
+			RifidiException e2 = new RifidiException(errorMsg, e);
+			
+			setErrorCause(e2);
+
+			/* And throw it. */
+			throw e2;
 		}
 		return null;
 	}
@@ -224,16 +228,20 @@ public class ReaderConnection implements IReaderConnection {
 			 * be thrown up the stack.
 			 */
 
-			setErrorCause(e);
-
 			String errorMsg = "Uncaught RuntimeException in "
 				+ adapter.getClass()
 				+ " adapter. "
 				+ "This means that there may be an unfixed bug in the adapter.";
-			logger
-					.error( errorMsg, e);
 			
-			throw new RifidiException(errorMsg, e);
+			logger.error( errorMsg, e);
+			
+			/* We wrap the Runtime exception */
+			RifidiException e2 = new RifidiException(errorMsg, e);
+			
+			setErrorCause(e2);
+
+			/* And throw it. */
+			throw e2;
 		}
 	}
 
@@ -263,16 +271,20 @@ public class ReaderConnection implements IReaderConnection {
 			 * be thrown up the stack.
 			 */
 
-			setErrorCause(e);
-
 			String errorMsg = "Uncaught RuntimeException in "
 				+ adapter.getClass()
 				+ " adapter. "
 				+ "This means that there may be an unfixed bug in the adapter.";
-			logger
-					.error( errorMsg, e);
 			
-			throw new RifidiException(errorMsg, e);
+			logger.error( errorMsg, e);
+			
+			/* We wrap the Runtime exception */
+			RifidiException e2 = new RifidiException(errorMsg, e);
+			
+			setErrorCause(e2);
+
+			/* And throw it. */
+			throw e2;
 		}
 	}
 
@@ -296,6 +308,11 @@ public class ReaderConnection implements IReaderConnection {
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				//e.printStackTrace();
+				
+				/* we ignore any exceptions because 
+				 * we are already in an error
+				 * state
+				 */
 			}
 		
 			this.errorCause = errorCause;
