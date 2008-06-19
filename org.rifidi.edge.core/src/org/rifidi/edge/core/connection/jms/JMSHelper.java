@@ -22,6 +22,12 @@ public class JMSHelper {
 	private Destination destination;
 	private MessageProducer messageProducer;
 
+	/**
+	 * Initialize the JMS Helper
+	 * @param connectionFactory The JMS Connection Factory
+	 * @param queueName The name of a queue in string form
+	 * @return
+	 */
 	public boolean initializeJMSQueue(ConnectionFactory connectionFactory,
 			String queueName) {
 		try {
@@ -41,42 +47,73 @@ public class JMSHelper {
 		return isInitialized;
 	}
 
+	/**
+	 * @return A JMS Connection
+	 */
 	public Connection getConnection() {
 		return connection;
 	}
 
+	/**
+	 * @param connection A JMS Connection
+	 */
 	public void setConnection(Connection connection) {
 		this.connection = connection;
 	}
 
+	/**
+	 * @return A JMS Session
+	 */
 	public Session getSession() {
 		return session;
 	}
 
+	/**
+	 * @param session A JMS Session
+	 */
 	public void setSession(Session session) {
 		this.session = session;
 	}
 
+	/**
+	 * @return A JMS Destination
+	 */
 	public Destination getDestination() {
 		return destination;
 	}
 
+	/**
+	 * @param destination A JMS Destination
+	 */
 	public void setDestination(Destination destination) {
 		this.destination = destination;
 	}
 
+	/**
+	 * @return A JMS MessageProducer
+	 */
 	public MessageProducer getMessageProducer() {
 		return messageProducer;
 	}
 
+	/**
+	 * @param messageProducer A JMS MessageProducer
+	 */
 	public void setMessageProducer(MessageProducer messageProducer) {
 		this.messageProducer = messageProducer;
 	}
 
+	/**
+	 * @return Is this helper initialized?
+	 */
 	public boolean isInitialized() {
 		return isInitialized;
 	}
 
+	/**
+	 * Set if this helper is initialized or not.
+	 * @param isInitialized 
+	 */
 	public void setInitialized(boolean isInitialized) {
 		this.isInitialized = isInitialized;
 	}
