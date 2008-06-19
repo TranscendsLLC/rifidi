@@ -36,4 +36,9 @@ public class AlienReaderInfo extends AbstractReaderInfo {
 		this.password = password;
 	}
 
+	@Override
+	public String getReaderType() {
+		return "Alienreader";
+	}
+
 }
