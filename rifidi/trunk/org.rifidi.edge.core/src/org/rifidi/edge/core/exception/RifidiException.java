@@ -7,6 +7,7 @@ public class RifidiException extends Exception {
 	 */
 	private static final long serialVersionUID = -6039685993579708974L;
 
+
 	public RifidiException() {
 	}
 
