@@ -101,6 +101,7 @@ public class SessionBreakageTest {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			Assert.assertTrue(s.getState() == EReaderAdapterState.ERROR);
+			Assert.assertTrue(s.getErrorCause().getCause() instanceof RuntimeException);
 		}
 		
 
@@ -280,7 +281,7 @@ public class SessionBreakageTest {
 
 			Assert.assertSame(EReaderAdapterState.ERROR, s.getState());
 			Assert.assertNotNull(s.getErrorCause());
-			Assert.assertTrue(s.getErrorCause() instanceof RuntimeException);
+			Assert.assertTrue(s.getErrorCause().getCause() instanceof RuntimeException);
 		}
 
 	}
@@ -349,7 +350,7 @@ public class SessionBreakageTest {
 		System.out.println(s.getState());
 
 		Assert.assertSame(s.getState(), EReaderAdapterState.ERROR);
-		Assert.assertTrue(s.getErrorCause() instanceof RuntimeException);
+		Assert.assertTrue(s.getErrorCause().getCause() instanceof RuntimeException);
 	}
 
 	@Test
@@ -413,7 +414,7 @@ public class SessionBreakageTest {
 		}
 
 		Assert.assertSame(s.getState(), EReaderAdapterState.ERROR);
-		Assert.assertTrue(s.getErrorCause() instanceof RuntimeException);
+		Assert.assertTrue(s.getErrorCause().getCause() instanceof RuntimeException);
 	}
 
 	@Inject
