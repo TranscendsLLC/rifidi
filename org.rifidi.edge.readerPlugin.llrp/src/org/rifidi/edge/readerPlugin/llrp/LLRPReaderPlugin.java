@@ -1,5 +1,5 @@
 /*
- *  LLRPReaderAdapter.java
+ *  LLRPReaderPlugin.java
  *
  *  Created:	Jun 20, 2006
  *  Project:	RiFidi Emulator - A Software Simulation Tool for RFID Devices
@@ -73,7 +73,7 @@ import org.rifidi.edge.core.readerPlugin.commands.ICustomCommandResult;
 import org.rifidi.edge.core.tag.TagRead;
 
 /**
- * LLRP Reader.
+ * This class represents a plugin which will talk with an LLRP Reader.
  * 
  * @author Matthew Dean - matt@pramari.com
  */
@@ -100,7 +100,7 @@ public class LLRPReaderPlugin implements IReaderPlugin {
 	private DataOutputStream out = null;
 
 	/**
-	 * The reader thread.  
+	 * The reader thread.
 	 */
 	private ReadThread reader = null;
 
@@ -183,7 +183,6 @@ public class LLRPReaderPlugin implements IReaderPlugin {
 	}
 
 	/**
-	 * 
 	 * This class is a allows LLRP messages to be read on a separate thread
 	 * 
 	 * @author Kyle Neumeier
@@ -234,6 +233,11 @@ public class LLRPReaderPlugin implements IReaderPlugin {
 			}
 		}
 
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see java.lang.Thread#run()
+		 */
 		@Override
 		public void run() {
 			super.run();
@@ -449,11 +453,13 @@ public class LLRPReaderPlugin implements IReaderPlugin {
 	}
 
 	/**
-	 * Finds the next acceptable ROSpec number
+	 * Finds the next acceptable ROSpec number.
 	 * 
 	 * @param grr
+	 *            The GET_ROSPECS_RESPONSE, which will list all ROSpec IDs
+	 *            already in use.
 	 */
-	public void findNextInt(GET_ROSPECS_RESPONSE grr) {
+	private void findNextInt(GET_ROSPECS_RESPONSE grr) {
 		ROSPEC_ID++;
 		boolean isDone = false;
 		while (!isDone) {

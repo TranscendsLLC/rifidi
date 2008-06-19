@@ -10,22 +10,29 @@ import org.rifidi.edge.core.readerPlugin.IReaderPlugin;
 import org.rifidi.edge.core.readerPlugin.ISpecificReaderPluginFactory;
 
 /**
+ * The plugin factory for the LLRP.  
+ * 
  * @author Matthew Dean - matt@pramari.com
- *
  */
 public class LLRPReaderPluginFactory implements ISpecificReaderPluginFactory {
 
-	private static final Log logger = LogFactory.getLog(LLRPReaderPluginFactory.class);
-	
-	/* (non-Javadoc)
+	/**
+	 * The logger.
+	 */
+	private static final Log logger = LogFactory
+			.getLog(LLRPReaderPluginFactory.class);
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.rifidi.edge.core.readerAdapter.ISpecificReaderAdapterFactory#createSpecificReaderAdapter(org.rifidi.edge.core.readerAdapter.AbstractConnectionInfo)
 	 */
 	@Override
-	public IReaderPlugin createSpecificReaderAdapter(AbstractReaderInfo abstractConnectionInfo) {
-		if(abstractConnectionInfo instanceof LLRPReaderInfo)
-		{
+	public IReaderPlugin createSpecificReaderAdapter(
+			AbstractReaderInfo abstractConnectionInfo) {
+		if (abstractConnectionInfo instanceof LLRPReaderInfo) {
 			logger.debug("createSpecificReaderAdapter called.");
-			return new LLRPReaderPlugin((LLRPReaderInfo)abstractConnectionInfo);
+			return new LLRPReaderPlugin((LLRPReaderInfo) abstractConnectionInfo);
 		}
 		return null;
 	}
