@@ -32,12 +32,12 @@ import org.rifidi.edge.readerPlugin.llrp.LLRPReaderPlugin;
  * 
  * @author Matthew Dean - matt@pramari.com
  */
-public class LLRPReaderAdapterTest extends TestCase {
+public class LLRPReaderPluginTest extends TestCase {
 
 	/**
 	 * The log4j logger.
 	 */
-	private static Log logger = LogFactory.getLog(LLRPReaderAdapterTest.class);
+	private static Log logger = LogFactory.getLog(LLRPReaderPluginTest.class);
 
 	/**
 	 * Sets up the TestCase.  
