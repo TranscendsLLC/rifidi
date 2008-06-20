@@ -114,6 +114,16 @@ public class ReaderConnection implements IReaderConnection {
 	public ICustomCommandResult sendCustomCommand(ICustomCommand customCommand) throws RifidiException {
 		// TODO needs to be implemented and designed
 		// TODO Handle exceptions here or send them up the call chain.
+		if (state != EReaderAdapterState.CREATED) {
+			if (state == EReaderAdapterState.ERROR) {
+				throw new RifidiPreviousErrorException("Connection already in error state.", errorCause);
+			} else {
+				RifidiException e =  new RifidiConnectionIllegalStateException("Addapter trying to connect in illegal state.");
+				setErrorCause(e);
+				throw e;
+			}
+		}
+		
 		state = EReaderAdapterState.BUSY;
 		try {
 			ICustomCommandResult result = adapter.sendCustomCommand(customCommand);
