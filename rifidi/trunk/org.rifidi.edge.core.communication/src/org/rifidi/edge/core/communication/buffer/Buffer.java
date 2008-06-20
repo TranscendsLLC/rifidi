@@ -10,6 +10,8 @@
  */
 package org.rifidi.edge.core.communication.buffer;
 
+import java.io.IOException;
+import java.net.Socket;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import org.rifidi.edge.core.communication.threads.ReadRunnable;
@@ -28,17 +30,32 @@ public class Buffer {
 	private LinkedBlockingQueue<Object> readQueue;
 	private LinkedBlockingQueue<Object> writeQueue;
 	
-	public Buffer(Protocol protocol) {
-		
+	private Socket socket;
+	private Protocol protocol;
+	
+	public Buffer(Protocol protocol, Socket socket) {
+		this.socket = socket;
+		this.protocol = protocol;
 		readQueue = new LinkedBlockingQueue<Object>();
 		writeQueue = new LinkedBlockingQueue<Object>();
-		
-		readThread = new Thread(new ReadRunnable(protocol, readQueue));
-		writeThread = new Thread(new WriteRunnable(protocol, writeQueue));
 	}
 	
 	public void startBuffer()
 	{
+		
+		try {
+			readThread = new Thread(new ReadRunnable(protocol, readQueue, socket.getInputStream()));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		try {
+			writeThread = new Thread(new WriteRunnable(protocol, writeQueue, socket.getOutputStream()));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		readThread.start();
 		writeThread.start();
 	}
