@@ -64,14 +64,12 @@ public class RMIServerServiceImpl implements RMIServerService {
 			// Test if there is already an regisrty
 			registry = LocateRegistry.createRegistry(port);
 		} catch (RemoteException e) {
-			// TODO Log4J debugging message
 			logger.warn("RMI is already bound. Try to recieve instance!");
 			// if yes get registry
 			try {
 				registry = LocateRegistry.getRegistry("127.0.0.1", port);
 			} catch (RemoteException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+				logger.error(e1);
 			}
 		}
 
@@ -84,8 +82,7 @@ public class RMIServerServiceImpl implements RMIServerService {
 			stub = (RemoteReaderConnectionRegistry) UnicastRemoteObject
 					.exportObject(remoteSessionRegistry, 0);
 		} catch (RemoteException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e);
 		}
 
 		// Bind the RemoteSessionRegistry to RMI
@@ -93,14 +90,11 @@ public class RMIServerServiceImpl implements RMIServerService {
 		try {
 			registry.bind(RemoteReaderConnectionRegistry.class.getName(), stub);
 		} catch (AccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e);
 		} catch (RemoteException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e);
 		} catch (AlreadyBoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e);
 		}
 
 		// For Debug use only. List all registered Objects in rmi registry
