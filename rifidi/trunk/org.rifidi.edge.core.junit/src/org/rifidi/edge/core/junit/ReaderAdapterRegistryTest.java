@@ -55,21 +55,4 @@ public class ReaderAdapterRegistryTest {
 	
 	}
 	
-	/**
-	 * Tests connecting the reader
-	 */
-	@Test
-	public void testRegisterListener() {
-		//TODO look at this later
-	}
-	
-	/**
-	 * Tests connecting the reader
-	 */
-	@Test
-	public void testUnRegisterListener() {
-		//TODO look at this later
-		Assert.fail();
-
-	}
 }
