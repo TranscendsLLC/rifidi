@@ -306,7 +306,6 @@ public class ReaderConnection implements IReaderConnection {
 				this.jmsMessageThread.stop();
 				adapter.disconnect();
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				//e.printStackTrace();
 				
 				/* we ignore any exceptions because 

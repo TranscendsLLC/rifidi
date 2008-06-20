@@ -110,7 +110,6 @@ public class ReaderConnectionRegistryServiceImpl implements
 	 */
 	@Override
 	public void deleteReaderConnection(int readerConnectionID) {
-		//TODO delete JMS Thread and Queue
 		ReaderConnection readerConnection = readerConnectionRegistry.remove(readerConnectionID);
 		readerConnection.cleanUp();
 	}
@@ -120,8 +119,8 @@ public class ReaderConnectionRegistryServiceImpl implements
 	 */
 	@Override
 	public void deleteReaderConnection(IReaderConnection readerConnection) {
-		//TODO delete JMS Thread and Queue
 		readerConnectionRegistry.remove(readerConnection);
+		((ReaderConnection)readerConnection).cleanUp();
 	}
 
 	/* (non-Javadoc)
