@@ -112,8 +112,7 @@ public class ReaderConnection implements IReaderConnection {
 	 * @see org.rifidi.edge.core.connection.IReaderConnection#sendCustomCommand(org.rifidi.edge.core.readerPlugin.commands.ICustomCommand)
 	 */
 	public ICustomCommandResult sendCustomCommand(ICustomCommand customCommand) throws RifidiException {
-		// TODO needs to be implemented and designed
-		// TODO Handle exceptions here or send them up the call chain.
+
 		if (state != EReaderAdapterState.CREATED) {
 			if (state == EReaderAdapterState.ERROR) {
 				throw new RifidiPreviousErrorException("Connection already in error state.", errorCause);
