@@ -24,11 +24,6 @@ public class DummyReaderPlugin implements IReaderPlugin {
 	/* used only when the dummy adapter is set to random errors */
 	Random random;
 	
-	/* number from 0 (inclusive) to 1 (exclusive)*/
-	double randomErrorProbibility = 0.10;
-	
-	/* number from 0 (inclusive) to 1 (exclusive)*/
-	double probiblityOfErrorsBeingRuntimeExceptions = 0.25;
 	
 	public DummyReaderPlugin(DummyReaderInfo info) {
 		this.info = info;
@@ -44,8 +39,8 @@ public class DummyReaderPlugin implements IReaderPlugin {
 			case CONNECT_RUNTIME:
 				throw new RuntimeException();
 			case RANDOM:
-				if (random.nextDouble() <= randomErrorProbibility){
-					if(random.nextDouble() <= probiblityOfErrorsBeingRuntimeExceptions){
+				if (random.nextDouble() <= info.getRandomErrorProbibility()){
+					if(random.nextDouble() <= info.getProbiblityOfErrorsBeingRuntimeExceptions()){
 						throw new RuntimeException();
 					} else {
 						throw new RifidiConnectionException();
@@ -63,8 +58,8 @@ public class DummyReaderPlugin implements IReaderPlugin {
 			case DISCONNECT_RUNTIME:
 				throw new RuntimeException();
 			case RANDOM:
-				if (random.nextDouble() <= randomErrorProbibility){
-					if(random.nextDouble() <= probiblityOfErrorsBeingRuntimeExceptions){
+				if (random.nextDouble() <= info.getRandomErrorProbibility()){
+					if(random.nextDouble() <= info.getProbiblityOfErrorsBeingRuntimeExceptions()){
 						throw new RuntimeException();
 					} else {
 						throw new RifidiConnectionException();
@@ -83,8 +78,8 @@ public class DummyReaderPlugin implements IReaderPlugin {
 			case GET_NEXT_TAGS_RUNTIME:
 				throw new RuntimeException();
 			case RANDOM:
-				if (random.nextDouble() <= randomErrorProbibility){
-					if(random.nextDouble() <= probiblityOfErrorsBeingRuntimeExceptions){
+				if (random.nextDouble() <= info.getRandomErrorProbibility()){
+					if(random.nextDouble() <= info.getProbiblityOfErrorsBeingRuntimeExceptions()){
 						throw new RuntimeException();
 					} else {
 						throw new RifidiConnectionIllegalStateException();
@@ -116,8 +111,8 @@ public class DummyReaderPlugin implements IReaderPlugin {
 			case SEND_CUSTOM_COMMAND_RUNTIME:
 				throw new RuntimeException();
 			case RANDOM:
-				if (random.nextDouble() <= randomErrorProbibility){
-					if(random.nextDouble() <= probiblityOfErrorsBeingRuntimeExceptions){
+				if (random.nextDouble() <= info.getRandomErrorProbibility()){
+					if(random.nextDouble() <= info.getProbiblityOfErrorsBeingRuntimeExceptions()){
 						throw new RuntimeException();
 					} else {
 						throw new RifidiConnectionIllegalStateException();
