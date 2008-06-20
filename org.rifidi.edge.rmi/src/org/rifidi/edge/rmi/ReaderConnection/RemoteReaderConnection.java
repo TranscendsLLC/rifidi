@@ -26,7 +26,7 @@ import org.rifidi.edge.core.readerPlugin.commands.ICustomCommand;
  */
 public interface RemoteReaderConnection extends Remote {
 
-	// TODO Think about error handling
+
 	/**
 	 * Connect the ReaderPlugin with the Reader
 	 * 
@@ -34,7 +34,7 @@ public interface RemoteReaderConnection extends Remote {
 	 */
 	public void connect() throws RemoteException;
 
-	// TODO Think about error handling
+
 	/**
 	 * Disconnect the ReaderPlugin from the Reader
 	 * 
@@ -42,7 +42,7 @@ public interface RemoteReaderConnection extends Remote {
 	 */
 	public void disconnect() throws RemoteException;
 
-	// TODO Think about error handling
+
 	/**
 	 * Start streaming of tags at the JMS Queue
 	 * 
@@ -50,7 +50,7 @@ public interface RemoteReaderConnection extends Remote {
 	 */
 	public void startTagStream() throws RemoteException;
 
-	// TODO Think about error handling
+
 	/**
 	 * Stop streaming of tags
 	 * 
@@ -58,7 +58,7 @@ public interface RemoteReaderConnection extends Remote {
 	 */
 	public void stopTagStream() throws RemoteException;
 
-	// TODO Think about error handling
+
 	/**
 	 * Send a custom command to the Reader
 	 * 
