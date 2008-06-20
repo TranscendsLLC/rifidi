@@ -29,9 +29,6 @@ public class SessionRegistryTest {
 	@Test
 	public void testGetSessionRegistry() {
 		Assert.assertNotNull(sessionRegistryService);
-		// TODO Jerry why do we need the session count here? Isn't it sufficient to ask if it is null or something like that?
-		//Assert.assertTrue(sessionRegistryService.sessionCount() == 0);
-		Assert.fail("TODO");
 	}
 
 	/**

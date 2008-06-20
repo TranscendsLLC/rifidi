@@ -41,7 +41,6 @@ public class ReaderAdapterFactoryTest {
 	 */
 	@After
 	public void tearDown() throws Exception {
-		// TODO finish this junit
 		readerPluginRegistryService.unregisterReaderAdapter(DummyReaderInfo.class);
 	}
 

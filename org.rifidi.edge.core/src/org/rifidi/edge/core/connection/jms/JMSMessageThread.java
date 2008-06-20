@@ -114,6 +114,17 @@ public class JMSMessageThread implements Runnable {
 				session.setErrorCause(e);
 			}
 			running = false;
+		} catch (JMSException e) {
+			String errorMsg = "Error trying to send tags to client over JMS";
+		
+			if (sessionRegistryService != null) {
+				IReaderConnection connection = sessionRegistryService
+						.getReaderConnection(readerConnectionID);
+				connection.setErrorCause(new RifidiConnectionIllegalStateException(errorMsg , e));
+			}
+		
+			logger.error(errorMsg, e);
+			running = false;		
 		} catch (RuntimeException e) {
 			// this is not the best solution... maybe there is another way to
 			// deal with this.
@@ -133,7 +144,7 @@ public class JMSMessageThread implements Runnable {
 				connection.setErrorCause(new RifidiException(errorMsg , e));
 			}
 			
-			logger.error(errorMsg,e);
+			logger.error(errorMsg, e);
 			running = false;
 		}
 	}
@@ -142,19 +153,15 @@ public class JMSMessageThread implements Runnable {
 	 * Send the tag list though JMS
 	 * @param tagList The tag list to send.
 	 */
-	private void sendMessage(List<TagRead> tagList) {
+	private void sendMessage(List<TagRead> tagList) throws JMSException {
 		for (TagRead tag : tagList) {
 			TextMessage textMessage;
-			try {
+
 				textMessage = jmsHelper.getSession().createTextMessage(
 						tag.toXML());
 				textMessage.setJMSExpiration(1000);
 				jmsHelper.getMessageProducer().send(textMessage);
-			} catch (JMSException e) {
-				// TODO Think about error handling
-				e.printStackTrace();
-				logger.error("Error while sending JMS Message.", e);
-			}
+
 		}
 	}
 
