@@ -166,8 +166,6 @@ public class SessionTest {
 	 */
 	@Test
 	public void testSendCustomCommand() {
-		// TODO Jerry should Implement
-		// Assert.fail("Not Implemented");
 
 		readerPluginRegistryService.registerReaderAdapter(
 				DummyReaderInfo.class, new DummyReaderPluginFactory());
@@ -180,7 +178,6 @@ public class SessionTest {
 		try {
 			s.connect();
 		} catch (RifidiException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			Assert.fail();
 		}
@@ -191,7 +188,6 @@ public class SessionTest {
 							.sendCustomCommand(new DummyCustomCommand("Command")))
 							.getResult()));
 		} catch (RifidiException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			Assert.fail();
 		}
@@ -199,7 +195,6 @@ public class SessionTest {
 		try {
 			s.disconnect();
 		} catch (RifidiException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			Assert.fail();
 		}
@@ -227,7 +222,6 @@ public class SessionTest {
 		try {
 			readerAdapter.connect();
 		} catch (RifidiConnectionException e1) {
-			// TODO Auto-generated catch block
 			Assert.fail();
 			e1.printStackTrace();
 		}
@@ -248,7 +242,6 @@ public class SessionTest {
 		try {
 			s.connect();
 		} catch (RifidiException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 			Assert.fail();
 		}
@@ -256,7 +249,6 @@ public class SessionTest {
 		try {
 			s.startTagStream();
 		} catch (RifidiException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 			Assert.fail();
 		}
@@ -287,7 +279,6 @@ public class SessionTest {
 			try {
 				s.stopTagStream();
 			} catch (RifidiException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 				Assert.fail();
 			}
