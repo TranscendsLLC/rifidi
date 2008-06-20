@@ -65,7 +65,6 @@ public class RemoteReaderConnectionImpl implements RemoteReaderConnection {
 		try {
 			readerConnection.connect();
 		} catch (RifidiException e) {
-			// TODO Auto-generated catch block
 			//e.printStackTrace();
 			throw new RemoteException("Error calling Remote method.",e);
 		}
@@ -82,7 +81,6 @@ public class RemoteReaderConnectionImpl implements RemoteReaderConnection {
 		try {
 			readerConnection.disconnect();
 		} catch (RifidiException e) {
-			// TODO Auto-generated catch block
 			//e.printStackTrace();
 			throw new RemoteException("Error calling Remote method.",e);
 		}
@@ -100,7 +98,6 @@ public class RemoteReaderConnectionImpl implements RemoteReaderConnection {
 		try {
 			readerConnection.sendCustomCommand(customCommand);
 		} catch (RifidiException e) {
-			// TODO Auto-generated catch block
 			//e.printStackTrace();
 			throw new RemoteException("Error calling Remote method.",e);
 		}
@@ -117,7 +114,6 @@ public class RemoteReaderConnectionImpl implements RemoteReaderConnection {
 		try {
 			readerConnection.startTagStream();
 		} catch (RifidiException e) {
-			// TODO Auto-generated catch block
 			//e.printStackTrace();
 			throw new RemoteException("Error calling Remote method.",e);
 		}
@@ -134,7 +130,6 @@ public class RemoteReaderConnectionImpl implements RemoteReaderConnection {
 		try {
 			readerConnection.stopTagStream();
 		} catch (RifidiException e) {
-			// TODO Auto-generated catch block
 			//e.printStackTrace();
 			throw new RemoteException("Error calling Remote method.",e);
 		}
