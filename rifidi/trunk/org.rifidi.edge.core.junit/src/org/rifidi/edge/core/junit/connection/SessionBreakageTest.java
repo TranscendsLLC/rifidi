@@ -175,6 +175,8 @@ public class SessionBreakageTest {
 			} catch (RifidiException e) {
 				e.printStackTrace();
 				Assert.fail();
+			} finally {
+				System.out.println("The state of the plugin is" + s.getState());
 			}
 
 			// see if there is anything in the queue after it has been stopped.
