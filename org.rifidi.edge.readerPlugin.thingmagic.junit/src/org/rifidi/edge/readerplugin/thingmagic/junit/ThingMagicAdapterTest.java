@@ -53,7 +53,6 @@ public class ThingMagicAdapterTest {
 		try {
 			adapter.connect();
 		} catch (RifidiConnectionException e) {
-			// TODO Auto-generated catch block
 			// e.printStackTrace();
 			Assert.fail();
 		}
@@ -62,7 +61,6 @@ public class ThingMagicAdapterTest {
 		try {
 			tagReads = adapter.getNextTags();
 		} catch (RifidiConnectionIllegalStateException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			Assert.fail("Illegal Adapter State.");
 		}
@@ -79,7 +77,6 @@ public class ThingMagicAdapterTest {
 		try {
 			adapter.disconnect();
 		} catch (RifidiConnectionException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			Assert.fail("Error while disconecting.");
 		}
