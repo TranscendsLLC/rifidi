@@ -108,6 +108,7 @@ public class JMSMessageThread implements Runnable {
 			// this is not the best solution... maybe there is another way to
 			// deal with this.
 			if (sessionRegistryService != null) {
+				logger.debug("sessionRegistryService is not null");
 				IReaderConnection session = sessionRegistryService
 						.getReaderConnection(readerConnectionID);
 				session.setErrorCause(e);
