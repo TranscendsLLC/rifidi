@@ -19,22 +19,18 @@ public class RifidiPreviousErrorException extends RifidiException {
 	private static final long serialVersionUID = -7052195193847631535L;
 
 	public RifidiPreviousErrorException() {
-		// TODO Auto-generated constructor stub
 	}
 
 	public RifidiPreviousErrorException(String message) {
 		super(message);
-		// TODO Auto-generated constructor stub
 	}
 
 	public RifidiPreviousErrorException(Throwable cause) {
 		super(cause);
-		// TODO Auto-generated constructor stub
 	}
 
 	public RifidiPreviousErrorException(String message, Throwable cause) {
 		super(message, cause);
-		// TODO Auto-generated constructor stub
 	}
 
 }
