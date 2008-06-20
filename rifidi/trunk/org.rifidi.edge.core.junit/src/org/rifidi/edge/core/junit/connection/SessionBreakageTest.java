@@ -71,6 +71,7 @@ public class SessionBreakageTest {
 		try {
 			s.connect();
 		} catch (RifidiException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 			Assert.assertTrue(s.getState() == EReaderAdapterState.ERROR);
 		}
@@ -97,6 +98,7 @@ public class SessionBreakageTest {
 		try {
 			s.connect();
 		} catch (RifidiException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 			Assert.assertTrue(s.getState() == EReaderAdapterState.ERROR);
 			Assert.assertTrue(s.getErrorCause().getCause() instanceof RuntimeException);
@@ -186,8 +188,7 @@ public class SessionBreakageTest {
 		} catch (NullPointerException e) {
 			Assert.assertSame(EReaderAdapterState.ERROR, s.getState());
 			Assert.assertNotNull(s.getErrorCause());
-			Assert
-					.assertTrue(s.getErrorCause() instanceof RifidiConnectionIllegalStateException);
+			Assert.assertTrue(s.getErrorCause() instanceof RifidiConnectionIllegalStateException);
 		}
 
 	}
@@ -208,6 +209,7 @@ public class SessionBreakageTest {
 		try {
 			readerAdapter.connect();
 		} catch (RifidiConnectionException e1) {
+			// TODO Auto-generated catch block
 			Assert.fail();
 			e1.printStackTrace();
 		}
