@@ -2,6 +2,7 @@ package org.rifidi.edge.readerplugin.dummy;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import org.rifidi.edge.core.exception.RifidiIIllegialArgumentException;
 import org.rifidi.edge.core.exception.readerConnection.RifidiConnectionIllegalStateException;
@@ -18,20 +19,38 @@ public class DummyReaderPlugin implements IReaderPlugin {
 
 	private boolean connected = false;
 
-
-	private DummyReaderInfo info; 
+	private DummyReaderInfo info;
+	
+	/* used only when the dummy adapter is set to random errors */
+	Random random;
+	
+	/* number from 0 (inclusive) to 1 (exclusive)*/
+	double randomErrorProbibility = 0.10;
+	
+	/* number from 0 (inclusive) to 1 (exclusive)*/
+	double probiblityOfErrorsBeingRuntimeExceptions = 0.25;
 	
 	public DummyReaderPlugin(DummyReaderInfo info) {
 		this.info = info;
+		random = new Random();
 	}
 
 	@Override
 	public void connect() throws RifidiConnectionException {
+
 		switch (info.getErrorToSet()) {
 			case CONNECT:
 				throw new RifidiConnectionException();
 			case CONNECT_RUNTIME:
 				throw new RuntimeException();
+			case RANDOM:
+				if (random.nextDouble() <= randomErrorProbibility){
+					if(random.nextDouble() <= probiblityOfErrorsBeingRuntimeExceptions){
+						throw new RuntimeException();
+					} else {
+						throw new RifidiConnectionException();
+					}
+				}
 		}
 		connected = true;
 	}
@@ -43,6 +62,14 @@ public class DummyReaderPlugin implements IReaderPlugin {
 				throw new RifidiConnectionException();
 			case DISCONNECT_RUNTIME:
 				throw new RuntimeException();
+			case RANDOM:
+				if (random.nextDouble() <= randomErrorProbibility){
+					if(random.nextDouble() <= probiblityOfErrorsBeingRuntimeExceptions){
+						throw new RuntimeException();
+					} else {
+						throw new RifidiConnectionException();
+					}
+				}
 		}
 		connected = false;
 	}
@@ -55,6 +82,14 @@ public class DummyReaderPlugin implements IReaderPlugin {
 				throw new RifidiConnectionIllegalStateException();
 			case GET_NEXT_TAGS_RUNTIME:
 				throw new RuntimeException();
+			case RANDOM:
+				if (random.nextDouble() <= randomErrorProbibility){
+					if(random.nextDouble() <= probiblityOfErrorsBeingRuntimeExceptions){
+						throw new RuntimeException();
+					} else {
+						throw new RifidiConnectionIllegalStateException();
+					}
+				}
 		}
 
 		if (connected) {
@@ -80,6 +115,14 @@ public class DummyReaderPlugin implements IReaderPlugin {
 				throw new RifidiIIllegialArgumentException();
 			case SEND_CUSTOM_COMMAND_RUNTIME:
 				throw new RuntimeException();
+			case RANDOM:
+				if (random.nextDouble() <= randomErrorProbibility){
+					if(random.nextDouble() <= probiblityOfErrorsBeingRuntimeExceptions){
+						throw new RuntimeException();
+					} else {
+						throw new RifidiConnectionIllegalStateException();
+					}
+				}
 		}
 
 		if (!(customCommand instanceof DummyCustomCommand))
