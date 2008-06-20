@@ -213,18 +213,18 @@ public class AlienReaderPlugin implements IReaderPlugin {
 
 		for (String s : splitString) {
 			s = s.trim();
-			String[] splitString2 = s.split("|");
+			String[] splitString2 = s.split("\\|");
 			if (splitString2.length > 1) {
 				String tagData = splitString2[0];
 				// String timeStamp=splitString2[1];
 
 				// TODO: Get the actual timestamp
-
 				TagRead newTagRead = new TagRead();
 				newTagRead.setId(ByteAndHexConvertingUtility
-						.fromHexString(tagData));
+						.fromHexString(tagData.trim()));
 				newTagRead.setLastSeenTime(System.nanoTime());
 				retVal.add(newTagRead);
+
 			}
 		}
 
