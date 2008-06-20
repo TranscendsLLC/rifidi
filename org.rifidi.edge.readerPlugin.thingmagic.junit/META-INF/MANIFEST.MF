@@ -11,4 +11,5 @@ Require-Bundle: org.junit4,
  org.rifidi.edge.readerPlugin.thingmagic,
  org.rifidi.edge.log4j,
  org.rifidi.edge.services,
- org.rifidi.edge.core
+ org.rifidi.edge.core,
+ org.rifidi.edge.common.utilities
