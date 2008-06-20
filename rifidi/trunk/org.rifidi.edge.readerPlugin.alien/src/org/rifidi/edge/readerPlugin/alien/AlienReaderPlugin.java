@@ -41,7 +41,7 @@ import org.rifidi.edge.readerPlugin.alien.command.AlienCustomCommand;
 public class AlienReaderPlugin implements IReaderPlugin {
 
 	/**
-	 * The log4j logger.  
+	 * The log4j logger.
 	 */
 	private static final Log logger = LogFactory
 			.getLog(AlienReaderPlugin.class);
@@ -90,16 +90,23 @@ public class AlienReaderPlugin implements IReaderPlugin {
 			out = new PrintWriter(connection.getOutputStream());
 			in = new BufferedReader(new InputStreamReader(connection
 					.getInputStream()));
+			String welcome = readFromReader(in);
+			if (!welcome.contains(AlienResponseList.WELCOME)) {
+				logger.debug("RifidiConnectionException was thrown,"
+						+ " reader is not an alien reader: " + welcome);
+				throw new RifidiConnectionException(
+						"Reader is not an alien reader");
+			}
 			out.write('\1' + aci.getUsername() + "\n");
 			out.flush();
 			readFromReader(in);
 			out.write('\1' + aci.getPassword() + "\n");
 			out.flush();
-			readFromReader(in);
 			String passwordResponse = readFromReader(in);
-			if(passwordResponse.contains(AlienResponseList.INVALID)) {
+			if (passwordResponse.contains(AlienResponseList.INVALID)) {
 				logger.debug("RifidiConnectionException was thrown");
-				throw new RifidiConnectionException("Username/Password combination is invalid");
+				throw new RifidiConnectionException(
+						"Username/Password combination is invalid");
 			}
 		} catch (UnknownHostException e) {
 			logger.debug("UnknownHostException.", e);
@@ -274,7 +281,7 @@ public class AlienReaderPlugin implements IReaderPlugin {
 		 */
 		public static final String TAG_LIST_CUSTOM_FORMAT = ('\1' + "set TagListCustomFormat=%k|%t\n");
 	}
-	
+
 	/**
 	 * List of Alien commands.
 	 * 
@@ -285,5 +292,10 @@ public class AlienReaderPlugin implements IReaderPlugin {
 		 * Tag list command.
 		 */
 		public static final String INVALID = "Invalid";
+
+		/**
+		 * Tag list command.
+		 */
+		public static final String WELCOME = "Alien";
 	}
 }
