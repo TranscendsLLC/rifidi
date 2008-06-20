@@ -48,7 +48,7 @@ public class Activator implements BundleActivator {
 			ReaderPluginRegistryService readerPluginRegistryService) {
 		this.readerPluginRegistryService = readerPluginRegistryService;
 
-		System.out.println("Registering ReaderPlugin: LLRPReader");
+		System.out.println("Registering ReaderPlugin: DummyReaderPlugin");
 		// register ReaderAdapter to the Services Registry
 		readerPluginRegistryService.registerReaderAdapter(
 				DummyReaderInfo.class, new DummyReaderPluginFactory());
