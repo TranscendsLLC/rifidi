@@ -175,6 +175,7 @@ public class ReaderConnection implements IReaderConnection {
 	 * @see org.rifidi.edge.core.connection.IReaderConnection#stopTagStream()
 	 */
 	public void stopTagStream() throws RifidiException {
+		logger.debug(state);
 		if (state == EReaderAdapterState.STREAMING) {
 			state = EReaderAdapterState.CONNECTED;
 			this.jmsMessageThread.stop();
