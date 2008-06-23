@@ -10,6 +10,7 @@ Require-Bundle: org.rifidi.edge.core,
  org.rifidi.edge.log4j,
  org.rifidi.edge.services,
  org.rifidi.edge.common.utilities,
- org.rifidi.edge.rmi
+ org.rifidi.edge.rmi,
+ org.rifidi.edge.core.communication
 Export-Package: org.rifidi.edge.readerPlugin.alien,
  org.rifidi.edge.readerPlugin.alien.command
