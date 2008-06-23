@@ -16,31 +16,40 @@ import java.util.List;
 import org.rifidi.edge.core.communication.buffer.Protocol;
 
 /**
+ * Protocol class for the Alien reader.  
+ * 
  * @author Matthew Dean - matt@pramari.com
- *
  */
 public class AlienProtocol extends Protocol {
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.rifidi.edge.core.communication.buffer.Protocol#fromObject(java.lang.Object)
 	 */
 	@Override
 	public byte[] fromObject(Object arg) {
-		
-		return ((String)arg).getBytes();
+		return ((String) arg).getBytes();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.rifidi.edge.core.communication.buffer.Protocol#toObject(byte[])
 	 */
 	@Override
 	public List<Object> toObject(byte[] arg) {
 		List<Object> retVal = new ArrayList<Object>();
-		
+
 		String input = new String(arg);
-		
-		retVal.add(input);
-		
+		String[] splitstr = input.split("\0");
+
+		for (String s : splitstr) {
+			if (s.length() > 0) {
+				retVal.add(s);
+			}
+		}
+
 		return retVal;
 	}
 
