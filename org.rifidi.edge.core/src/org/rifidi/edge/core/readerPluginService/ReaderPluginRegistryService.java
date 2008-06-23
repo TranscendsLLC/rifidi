@@ -45,5 +45,9 @@ public interface ReaderPluginRegistryService {
 	 * @return The list of available reader adapters
 	 */
 	public List<String> getAvailableReaderAdapters();
+	
+	@SuppressWarnings("unchecked")
+	//TODO: Look up other ways to do this class parameterization
+	public Class[] getAbstractReaderInfoClasses();
 
 }
