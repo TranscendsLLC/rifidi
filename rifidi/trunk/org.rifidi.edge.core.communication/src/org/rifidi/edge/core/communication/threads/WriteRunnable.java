@@ -4,10 +4,12 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import org.rifidi.edge.core.communication.buffer.Protocol;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.rifidi.edge.core.communication.Protocol;
 
 public class WriteRunnable implements Runnable{
-
+	private static final Log logger = LogFactory.getLog(WriteRunnable.class);
 	
 	
 	
@@ -15,7 +17,7 @@ public class WriteRunnable implements Runnable{
 	private LinkedBlockingQueue<Object> writeQueue;
 	private OutputStream outputStream;
 	
-	private boolean running = false;
+	private boolean running = true;
 
 	public WriteRunnable(Protocol protocol, LinkedBlockingQueue<Object> writeQueue, OutputStream outputStream) {
 		// TODO Auto-generated constructor stub
@@ -27,15 +29,16 @@ public class WriteRunnable implements Runnable{
 	
 	@Override
 	public void run() {
-		// TODO Auto-generated method stub
+		logger.debug("Starting Write thread");
 		try {
 			while(running) {
 			
 				Object object = writeQueue.take();
-				
+				logger.debug(object);
 				byte[] bytes = protocol.fromObject(object);
 				
 				outputStream.write(bytes);
+				outputStream.flush();
 			}
 		} catch (InterruptedException e) {
 			// TODO Think about what to do with this exception
@@ -44,7 +47,7 @@ public class WriteRunnable implements Runnable{
 		} catch (IOException e) {
 			// TODO Think about what to do with this exception
 			running = false;
-			e.printStackTrace();
+			Thread.currentThread().getUncaughtExceptionHandler().uncaughtException(Thread.currentThread(), e);
 		}
 	}
 
