@@ -67,7 +67,9 @@ public class ReaderPluginRegistryServiceImpl implements
 		return registry.get(specificConnectionInfo.getClass());
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.rifidi.edge.core.readerPluginService.ReaderPluginRegistryService#getAvailableReaderAdapters()
 	 */
 	@Override
@@ -77,6 +79,18 @@ public class ReaderPluginRegistryServiceImpl implements
 			availableAdapters.add(clazz.getName());
 		}
 		return availableAdapters;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public Class[] getAbstractReaderInfoClasses() {
+		Class[] retVal = new Class[registry.size()];
+		int index = 0;
+		for (Class c : registry.keySet()) {
+			retVal[index] = c;
+			index++;
+		}
+		return retVal;
 	}
 
 }
