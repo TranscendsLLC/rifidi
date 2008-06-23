@@ -6,15 +6,18 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import org.rifidi.edge.core.communication.buffer.Protocol;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.rifidi.edge.core.communication.Protocol;
 
-public class ReadRunnable implements Runnable{
 
+public class ReadRunnable implements Runnable {
+	private static final Log logger = LogFactory.getLog(ReadRunnable.class);
 
 	private Protocol protocol;
 	private LinkedBlockingQueue<Object> readQueue;
 
-	boolean running = false;
+	boolean running = true;
 	private InputStream inputStream;
 	
 	
@@ -27,16 +30,17 @@ public class ReadRunnable implements Runnable{
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub
+		logger.debug("Starting Write thread");
 		try {
 			while(running){
 				byte[] input = readFromSocket(inputStream);
 				List<Object> msg =  protocol.toObject(input);
+				logger.debug(msg);
 				readQueue.add(msg);
 			}
 		} catch (IOException e) {
 			running = false;
-			e.printStackTrace();
-			
+			Thread.currentThread().getUncaughtExceptionHandler().uncaughtException(Thread.currentThread(), e);
 		}
 	}
 

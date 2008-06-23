@@ -14,15 +14,18 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import org.rifidi.edge.core.communication.ICommunicationConnection;
+import org.rifidi.edge.core.communication.Protocol;
 import org.rifidi.edge.core.communication.threads.ReadRunnable;
 import org.rifidi.edge.core.communication.threads.WriteRunnable;
+import org.rifidi.edge.core.readerPlugin.IReaderPlugin;
 
 /**
  * 
  * 
  * @author Matthew Dean - matt@pramari.com
  */
-public class Buffer {
+public class Communication {
 	
 	private Thread readThread;
 	private Thread writeThread;
@@ -33,52 +36,32 @@ public class Buffer {
 	private Socket socket;
 	private Protocol protocol;
 	
-	public Buffer(Protocol protocol, Socket socket) {
+	public Communication(Socket socket, Protocol protocol ) {
 		this.socket = socket;
 		this.protocol = protocol;
 		readQueue = new LinkedBlockingQueue<Object>();
 		writeQueue = new LinkedBlockingQueue<Object>();
 	}
 	
-	public void startBuffer()
+	public ICommunicationConnection startCommunication() throws IOException
 	{
 		
-		try {
-			readThread = new Thread(new ReadRunnable(protocol, readQueue, socket.getInputStream()));
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		try {
-			writeThread = new Thread(new WriteRunnable(protocol, writeQueue, socket.getOutputStream()));
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		readThread = new Thread(new ReadRunnable(protocol, readQueue, socket.getInputStream()));
+
+		writeThread = new Thread(new WriteRunnable(protocol, writeQueue, socket.getOutputStream()));
+
+		CommunicationConnection communicationConnection = new CommunicationConnection(readQueue, readQueue);
 		
 		readThread.start();
 		writeThread.start();
+		
+		readThread.setUncaughtExceptionHandler(communicationConnection);
+		writeThread.setUncaughtExceptionHandler(communicationConnection);
+
+		return communicationConnection;
 	}
-	
-	/**
-	 * 
-	 * @return
-	 */
-	public Object recieve() {
-		try {
-			return readQueue.take();
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return null;
-	}
-	
-	/**
-	 * 
-	 * @param msg
-	 */
-	public void send(Object msg) {
-		writeQueue.add(msg);
+
+	public Socket getSocket(){
+		return socket;
 	}
 }
