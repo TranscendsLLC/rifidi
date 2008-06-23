@@ -11,6 +11,8 @@
  */
 package org.rifidi.edge.readerPlugin.alien;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 import org.rifidi.edge.core.readerPlugin.AbstractReaderInfo;
 
 /**
@@ -19,6 +21,7 @@ import org.rifidi.edge.core.readerPlugin.AbstractReaderInfo;
  * 
  * @author Matthew Dean - matt@pramari.com
  */
+@XmlRootElement
 public class AlienReaderInfo extends AbstractReaderInfo {
 
 	/**
