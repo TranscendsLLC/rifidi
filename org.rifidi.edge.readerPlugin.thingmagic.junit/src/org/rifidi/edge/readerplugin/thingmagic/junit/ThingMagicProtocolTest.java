@@ -28,14 +28,13 @@ public class ThingMagicProtocolTest {
 	public void testToObject() {
 		ThingMagicProtocol protocol = new ThingMagicProtocol();
 		
-		TagRead tag = new TagRead();
 		
 		byte[] output = {'0','x','2','F','3','3','A','7','2','3','0','0','8',
 						 'C','9','0','7','C','F','4','7','6','1','B','F','D','\n','\n'};
 		
 		
 		
-		List test = protocol.toObject(output);
+		List<?> test = protocol.toObject(output);
 		
 		Assert.assertTrue(test.size() == 1);
 		Assert.assertTrue(test.get(0).equals("0x2F33A723008C907CF4761BFD"));
