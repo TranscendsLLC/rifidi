@@ -3,7 +3,7 @@ package org.rifidi.edge.readerPlugin.thingmagic;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.rifidi.edge.core.communication.buffer.Protocol;
+import org.rifidi.edge.core.communication.Protocol;
 
 public class ThingMagicProtocol extends Protocol {
 
