@@ -14,21 +14,22 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.communication.ICommunicationConnection;
 import org.rifidi.edge.core.communication.Protocol;
-import org.rifidi.edge.core.communication.threads.ReadRunnable;
-import org.rifidi.edge.core.communication.threads.WriteRunnable;
+import org.rifidi.edge.core.communication.service.CommunicationServiceImpl;
+import org.rifidi.edge.core.communication.threads.NewThread;
+import org.rifidi.edge.core.communication.threads.ReadThread;
+import org.rifidi.edge.core.communication.threads.WriteThread;
 import org.rifidi.edge.core.readerPlugin.IReaderPlugin;
 
-/**
- * 
- * 
- * @author Matthew Dean - matt@pramari.com
- */
+
 public class Communication {
+	private static final Log logger = LogFactory.getLog(CommunicationServiceImpl.class);
 	
-	private Thread readThread;
-	private Thread writeThread;
+	private ReadThread readThread;
+	private WriteThread writeThread;
 	
 	private LinkedBlockingQueue<Object> readQueue;
 	private LinkedBlockingQueue<Object> writeQueue;
@@ -45,20 +46,28 @@ public class Communication {
 	
 	public ICommunicationConnection startCommunication() throws IOException
 	{
+		logger.debug("Trying to start communications");
 		
-		readThread = new Thread(new ReadRunnable(protocol, readQueue, socket.getInputStream()));
+		readThread = new ReadThread("Read Thread: " + socket.getInetAddress().toString() + ":" + socket.getPort(), protocol, readQueue, socket.getInputStream());
 
-		writeThread = new Thread(new WriteRunnable(protocol, writeQueue, socket.getOutputStream()));
+		writeThread = new WriteThread("Write Thread: " + socket.getInetAddress().toString() + ":" + socket.getPort(), protocol, writeQueue, socket.getOutputStream());
 
+
+		
 		CommunicationConnection communicationConnection = new CommunicationConnection(readQueue, readQueue);
 		
 		readThread.start();
 		writeThread.start();
-		
 		readThread.setUncaughtExceptionHandler(communicationConnection);
 		writeThread.setUncaughtExceptionHandler(communicationConnection);
 
+
 		return communicationConnection;
+	}
+	
+	public void stopCommunication(){
+		readThread.stop();
+		writeThread.stop();
 	}
 
 	public Socket getSocket(){

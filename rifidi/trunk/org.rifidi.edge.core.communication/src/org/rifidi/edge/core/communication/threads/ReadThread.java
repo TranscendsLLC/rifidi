@@ -11,26 +11,29 @@ import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.communication.Protocol;
 
 
-public class ReadRunnable implements Runnable {
-	private static final Log logger = LogFactory.getLog(ReadRunnable.class);
+public class ReadThread  extends NewThread {
+	private static final Log logger = LogFactory.getLog(ReadThread.class);
 
 	private Protocol protocol;
 	private LinkedBlockingQueue<Object> readQueue;
 
-	boolean running = true;
 	private InputStream inputStream;
 	
 	
-	public ReadRunnable(Protocol protocol, LinkedBlockingQueue<Object> readQueue, InputStream inputStream) {
+	
+	public ReadThread(String threadName, Protocol protocol, LinkedBlockingQueue<Object> readQueue, InputStream inputStream) {
+		super(threadName);
 		this.protocol = protocol;
 		this.readQueue = readQueue;
 		this.inputStream = inputStream;
+		
+		
 	}
 	
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub
-		logger.debug("Starting Write thread");
+		logger.debug("Starting Read thread");
 		try {
 			while(running){
 				byte[] input = readFromSocket(inputStream);
@@ -54,4 +57,5 @@ public class ReadRunnable implements Runnable {
 		
 		return buffer.toByteArray();
 	}
+	
 }
