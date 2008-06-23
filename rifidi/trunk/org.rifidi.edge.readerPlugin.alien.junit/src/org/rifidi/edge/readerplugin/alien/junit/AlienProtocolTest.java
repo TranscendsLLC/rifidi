@@ -46,10 +46,14 @@ public class AlienProtocolTest {
 	public void testToObject() {
 		try {
 			AlienProtocol newProt = new AlienProtocol();
-			String retVal = "get TagList";
+			String retVal = "get TagList\n\r\0get acqLevel\n\r\0";
 			List<Object> newObj = newProt.toObject(retVal.getBytes());
 			String omg = (String) newObj.get(0);
-			if (!retVal.equals(omg)) {
+			String omg2 = (String) newObj.get(1);
+			if (!omg.equals("get TagList\n\r")) {
+				Assert.fail();
+			}
+			if (!omg2.equals("get acqLevel\n\r")) {
 				Assert.fail();
 			}
 		} catch (Exception e) {
