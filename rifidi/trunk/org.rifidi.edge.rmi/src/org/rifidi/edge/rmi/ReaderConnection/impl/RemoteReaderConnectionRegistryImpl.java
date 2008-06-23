@@ -119,7 +119,7 @@ public class RemoteReaderConnectionRegistryImpl implements
 		readerConnectionRegistryService.deleteReaderConnection(Integer
 				.parseInt(readerToDelete.getTagQueueName()));
 	}
-
+	
 	/*
 	 * (non-Javadoc)
 	 * 
