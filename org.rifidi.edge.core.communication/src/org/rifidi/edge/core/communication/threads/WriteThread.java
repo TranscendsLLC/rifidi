@@ -8,8 +8,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.communication.Protocol;
 
-public class WriteRunnable implements Runnable{
-	private static final Log logger = LogFactory.getLog(WriteRunnable.class);
+public class WriteThread extends NewThread {
+	private static final Log logger = LogFactory.getLog(WriteThread.class);
 	
 	
 	
@@ -19,7 +19,8 @@ public class WriteRunnable implements Runnable{
 	
 	private boolean running = true;
 
-	public WriteRunnable(Protocol protocol, LinkedBlockingQueue<Object> writeQueue, OutputStream outputStream) {
+	public WriteThread(String threadName, Protocol protocol, LinkedBlockingQueue<Object> writeQueue, OutputStream outputStream) {
+		super(threadName);
 		// TODO Auto-generated constructor stub
 		
 		this.protocol = protocol;
