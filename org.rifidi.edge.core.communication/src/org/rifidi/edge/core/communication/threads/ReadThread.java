@@ -29,6 +29,7 @@ public class ReadThread extends AbstractThread {
 	 * @param readQueue
 	 * @param inputStream
 	 */
+	//TODO: Jerry this is not documented
 	public ReadThread(String threadName, Protocol protocol,
 			LinkedBlockingQueue<Object> readQueue, InputStream inputStream) {
 		super(threadName);
@@ -61,6 +62,7 @@ public class ReadThread extends AbstractThread {
 		}
 	}
 
+	//TODO Jerry this is not documented
 	private byte[] readFromSocket(InputStream inputStream) throws IOException {
 		int input;
 		ByteArrayOutputStream buffer = new ByteArrayOutputStream();
