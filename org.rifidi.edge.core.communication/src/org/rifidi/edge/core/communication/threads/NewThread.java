@@ -17,14 +17,14 @@ public abstract class NewThread implements Runnable {
 	}
 	
 	public void start(){
-		logger.debug("Starting");
+		logger.debug("Starting " + thread.getName());
 		running = true;
 		thread.start();
 		
 	}
 	
 	public void stop(){
-		logger.debug("Stoping");
+		logger.debug("Stoping " + thread.getName());
 		running = false;
 		try {
 			thread.join(1000);

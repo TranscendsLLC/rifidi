@@ -42,9 +42,8 @@ public class WriteThread extends NewThread {
 				outputStream.flush();
 			}
 		} catch (InterruptedException e) {
-			// TODO Think about what to do with this exception
 			running = false;
-			e.printStackTrace();
+			//e.printStackTrace();
 		} catch (IOException e) {
 			// TODO Think about what to do with this exception
 			running = false;
