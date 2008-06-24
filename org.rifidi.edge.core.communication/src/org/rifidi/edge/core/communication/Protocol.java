@@ -14,7 +14,7 @@ import java.util.List;
 
 /**
  * @author Matthew Dean - matt@pramari.com
- *
+ * 
  */
 public abstract class Protocol {
 	/**
@@ -23,7 +23,7 @@ public abstract class Protocol {
 	 * @return
 	 */
 	public abstract List<Object> toObject(byte[] arg);
-	
+
 	/**
 	 * 
 	 * @param arg
