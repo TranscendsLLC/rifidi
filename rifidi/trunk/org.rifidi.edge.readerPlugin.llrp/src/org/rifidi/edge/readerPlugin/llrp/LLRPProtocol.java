@@ -26,12 +26,12 @@ import org.rifidi.edge.core.communication.Protocol;
  * @author Matthew Dean - matt@pramari.com
  * 
  */
-public class LLRPProtcol extends Protocol {
+public class LLRPProtocol extends Protocol {
 
 	/**
 	 * The log4j logger.
 	 */
-	private static final Log logger = LogFactory.getLog(LLRPProtcol.class);
+	private static final Log logger = LogFactory.getLog(LLRPProtocol.class);
 
 	/*
 	 * (non-Javadoc)
