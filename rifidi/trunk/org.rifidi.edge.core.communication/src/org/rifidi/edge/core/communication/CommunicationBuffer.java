@@ -7,7 +7,7 @@ import java.io.IOException;
  * @author jerry
  *
  */
-public interface ICommunicationConnection {
+public interface CommunicationBuffer {
 	
 	/**
 	 * Used to send an message to a reader

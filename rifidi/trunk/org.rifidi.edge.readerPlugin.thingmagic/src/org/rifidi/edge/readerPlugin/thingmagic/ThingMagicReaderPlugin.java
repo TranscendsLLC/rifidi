@@ -25,7 +25,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.common.utilities.converter.ByteAndHexConvertingUtility;
 import org.rifidi.edge.core.communication.CommunicationService;
-import org.rifidi.edge.core.communication.ICommunicationConnection;
+import org.rifidi.edge.core.communication.CommunicationBuffer;
 import org.rifidi.edge.core.exception.RifidiIIllegialArgumentException;
 import org.rifidi.edge.core.exception.readerConnection.RifidiConnectionIllegalStateException;
 import org.rifidi.edge.core.exception.readerConnection.RifidiConnectionException;
@@ -48,7 +48,7 @@ public class ThingMagicReaderPlugin implements IReaderPlugin {
 	
 	boolean connected = false;
 
-	private ICommunicationConnection communicationConnection;
+	private CommunicationBuffer communicationConnection;
 
 	private ThingMagicReaderInfo tmci;
 

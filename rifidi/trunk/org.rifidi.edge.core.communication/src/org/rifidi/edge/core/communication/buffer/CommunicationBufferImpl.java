@@ -6,15 +6,15 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.rifidi.edge.core.communication.ICommunicationConnection;
+import org.rifidi.edge.core.communication.CommunicationBuffer;
 
 
 /**
  * @author jerry
  *
  */
-public class CommunicationConnection implements ICommunicationConnection, Thread.UncaughtExceptionHandler {
-	private static final Log logger = LogFactory.getLog(CommunicationConnection.class);	
+public class CommunicationBufferImpl implements CommunicationBuffer, Thread.UncaughtExceptionHandler {
+	private static final Log logger = LogFactory.getLog(CommunicationBufferImpl.class);	
 	
 
 	private LinkedBlockingQueue<Object> readQueue;
@@ -22,7 +22,7 @@ public class CommunicationConnection implements ICommunicationConnection, Thread
 
 	Exception exception;
 
-	public CommunicationConnection(LinkedBlockingQueue<Object> readQueue,
+	public CommunicationBufferImpl(LinkedBlockingQueue<Object> readQueue,
 			LinkedBlockingQueue<Object> writeQueue) {
 		this.readQueue = readQueue;
 		this.writeQueue = writeQueue;

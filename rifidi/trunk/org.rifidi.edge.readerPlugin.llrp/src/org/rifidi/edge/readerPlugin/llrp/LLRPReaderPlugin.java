@@ -63,7 +63,7 @@ import org.llrp.ltk.types.UnsignedShort;
 import org.llrp.ltk.types.UnsignedShortArray;
 import org.rifidi.edge.common.utilities.converter.ByteAndHexConvertingUtility;
 import org.rifidi.edge.core.communication.CommunicationService;
-import org.rifidi.edge.core.communication.ICommunicationConnection;
+import org.rifidi.edge.core.communication.CommunicationBuffer;
 import org.rifidi.edge.core.exception.readerConnection.RifidiConnectionException;
 import org.rifidi.edge.core.readerPlugin.IReaderPlugin;
 import org.rifidi.edge.core.readerPlugin.commands.ICustomCommand;
@@ -87,7 +87,7 @@ public class LLRPReaderPlugin implements IReaderPlugin {
 	/**
 	 * The communication connection
 	 */
-	private ICommunicationConnection communicationConnection;
+	private CommunicationBuffer communicationConnection;
 
 	/**
 	 * The communication service for this reader.
@@ -217,14 +217,14 @@ public class LLRPReaderPlugin implements IReaderPlugin {
 		/**
 		 * The connection object.
 		 */
-		private ICommunicationConnection connection;
+		private CommunicationBuffer connection;
 
 		/**
 		 * Thread for constant reading of the stream
 		 * 
 		 * @param inStream
 		 */
-		public LLRPReadThread(ICommunicationConnection comm) {
+		public LLRPReadThread(CommunicationBuffer comm) {
 			this.commandQueue = new LinkedBlockingQueue<LLRPMessage>();
 			this.tagQueue = new LinkedBlockingQueue<LLRPMessage>();
 			this.roSpecListQueue = new LinkedBlockingQueue<LLRPMessage>();
