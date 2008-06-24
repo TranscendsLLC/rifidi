@@ -16,7 +16,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.rifidi.edge.core.communication.ICommunicationConnection;
+import org.rifidi.edge.core.communication.CommunicationBuffer;
 import org.rifidi.edge.core.communication.Protocol;
 import org.rifidi.edge.core.communication.service.CommunicationServiceImpl;
 
@@ -59,7 +59,7 @@ public class Communication {
 	 * @return ICommunicationConnection The connection to talk with the reader.
 	 * @throws IOException
 	 */
-	public ICommunicationConnection startCommunication() throws IOException
+	public CommunicationBuffer startCommunication() throws IOException
 	{
 		logger.debug("Trying to start communications");
 		
@@ -69,7 +69,7 @@ public class Communication {
 
 
 		
-		CommunicationConnection communicationConnection = new CommunicationConnection(readQueue, writeQueue);
+		CommunicationBufferImpl communicationConnection = new CommunicationBufferImpl(readQueue, writeQueue);
 		
 		readThread.start();
 		writeThread.start();

@@ -2,14 +2,14 @@ package org.rifidi.edge.core.communication.threads;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.rifidi.edge.core.communication.buffer.CommunicationConnection;
+import org.rifidi.edge.core.communication.buffer.CommunicationBufferImpl;
 
 /**
  * @author jerry
  *
  */
 public abstract class NewThread implements Runnable {
-	private static final Log logger = LogFactory.getLog(CommunicationConnection.class);	
+	private static final Log logger = LogFactory.getLog(CommunicationBufferImpl.class);	
 	
 	Thread thread;
 	

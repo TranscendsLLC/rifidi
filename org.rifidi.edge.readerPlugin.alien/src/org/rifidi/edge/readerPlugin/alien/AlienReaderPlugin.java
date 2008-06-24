@@ -20,7 +20,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.common.utilities.converter.ByteAndHexConvertingUtility;
 import org.rifidi.edge.core.communication.CommunicationService;
-import org.rifidi.edge.core.communication.ICommunicationConnection;
+import org.rifidi.edge.core.communication.CommunicationBuffer;
 import org.rifidi.edge.core.exception.RifidiIIllegialArgumentException;
 import org.rifidi.edge.core.exception.readerConnection.RifidiConnectionException;
 import org.rifidi.edge.core.exception.readerConnection.RifidiConnectionIllegalStateException;
@@ -49,7 +49,7 @@ public class AlienReaderPlugin implements IReaderPlugin {
 	/**
 	 * Communication connection.
 	 */
-	private ICommunicationConnection communicationConnection;
+	private CommunicationBuffer communicationConnection;
 
 	/**
 	 * Communication service.
