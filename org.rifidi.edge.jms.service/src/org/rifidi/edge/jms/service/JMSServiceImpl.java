@@ -4,6 +4,6 @@ package org.rifidi.edge.jms.service;
  * @author jerry
  *
  */
-public interface JMSService {
+public class JMSServiceImpl implements JMSService {
 
 }
