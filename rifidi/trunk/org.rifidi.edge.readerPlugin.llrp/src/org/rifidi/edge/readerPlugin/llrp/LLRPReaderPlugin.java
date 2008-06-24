@@ -62,7 +62,7 @@ import org.llrp.ltk.types.UnsignedInteger;
 import org.llrp.ltk.types.UnsignedShort;
 import org.llrp.ltk.types.UnsignedShortArray;
 import org.rifidi.edge.common.utilities.converter.ByteAndHexConvertingUtility;
-import org.rifidi.edge.core.communication.CommunicationBuffer;
+import org.rifidi.edge.core.communication.buffer.CommunicationBuffer;
 import org.rifidi.edge.core.communication.service.CommunicationService;
 import org.rifidi.edge.core.exception.readerConnection.RifidiConnectionException;
 import org.rifidi.edge.core.readerPlugin.IReaderPlugin;
