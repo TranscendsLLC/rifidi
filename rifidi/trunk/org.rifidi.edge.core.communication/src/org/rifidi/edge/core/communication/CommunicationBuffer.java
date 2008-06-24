@@ -17,22 +17,31 @@ public interface CommunicationBuffer {
 	public void send(Object msg) throws IOException;
 	
 	/**
-	 * Receive a message from a reader
-	 * @return
+	 * Receive a message from a reader.
+	 * Will block and wait for a message if there is no messages on the buffer.
+	 * @return Message
 	 * @throws IOException
 	 */
 	public Object receive() throws IOException;
 	
 	/**
-	 * @return
+	 * Receive a message from a reader.
+	 * Nonblocking receive method.
+	 * @return Message
 	 * @throws IOException
 	 */
 	public Object receiveNonBlocking() throws IOException;
 	
 	/**
-	 * @param mills
-	 * @return
+	 * Receive a message from a reader.
+	 * Will block and wait for a message or time out and return null 
+	 * @param mills Milliseconds to time out.
+	 * @return Message
 	 * @throws IOException
 	 */
 	public Object receiveTimeOut(long mills) throws IOException;
+	
+	/*TODO: Consider adding a method that will dump all available messages on
+	 *		a Collection or list and return. (blocking and or non-blocking).
+	 */
 }
