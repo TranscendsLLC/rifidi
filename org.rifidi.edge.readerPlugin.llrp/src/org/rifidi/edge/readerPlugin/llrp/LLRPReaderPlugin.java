@@ -191,7 +191,7 @@ public class LLRPReaderPlugin implements IReaderPlugin {
 	}
 
 	/**
-	 * This class is a allows LLRP messages to be read on a separate thread
+	 * This class is a allows LLRP messages to be read on a separate thread.  
 	 * 
 	 * @author Kyle Neumeier
 	 * @author Andreas Huebner
