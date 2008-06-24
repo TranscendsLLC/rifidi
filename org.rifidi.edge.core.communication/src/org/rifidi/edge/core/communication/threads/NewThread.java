@@ -4,6 +4,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.communication.buffer.CommunicationConnection;
 
+/**
+ * @author jerry
+ *
+ */
 public abstract class NewThread implements Runnable {
 	private static final Log logger = LogFactory.getLog(CommunicationConnection.class);	
 	
@@ -16,6 +20,9 @@ public abstract class NewThread implements Runnable {
 		
 	}
 	
+	/**
+	 * 
+	 */
 	public void start(){
 		logger.debug("Starting " + thread.getName());
 		running = true;
@@ -23,6 +30,9 @@ public abstract class NewThread implements Runnable {
 		
 	}
 	
+	/**
+	 * 
+	 */
 	public void stop(){
 		logger.debug("Stoping " + thread.getName());
 		running = false;
@@ -40,6 +50,9 @@ public abstract class NewThread implements Runnable {
 	
 	}
 	
+	/**
+	 * @param eh
+	 */
 	public void setUncaughtExceptionHandler(Thread.UncaughtExceptionHandler eh){
 		thread.setUncaughtExceptionHandler(eh);
 	}

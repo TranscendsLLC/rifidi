@@ -18,17 +18,27 @@ import org.rifidi.edge.core.readerPlugin.AbstractReaderInfo;
 import org.rifidi.edge.core.readerPlugin.IReaderPlugin;
 
 
+/**
+ * @author jerry
+ *
+ */
 public class CommunicationServiceImpl implements CommunicationService {
 	private static final Log logger = LogFactory.getLog(CommunicationServiceImpl.class);
 	
 
 	Map<ICommunicationConnection, Communication> communications;
 
+	/**
+	 * Default Constructor
+	 */
 	public CommunicationServiceImpl(){
 		//logger.debug();
 		communications = new HashMap<ICommunicationConnection, Communication>();
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.communication.CommunicationService#createConnection(org.rifidi.edge.core.readerPlugin.IReaderPlugin, org.rifidi.edge.core.readerPlugin.AbstractReaderInfo, org.rifidi.edge.core.communication.Protocol)
+	 */
 	@Override
 	public ICommunicationConnection createConnection(IReaderPlugin plugin, AbstractReaderInfo info,
 			Protocol protocol) throws UnknownHostException, ConnectException, IOException {
@@ -44,6 +54,9 @@ public class CommunicationServiceImpl implements CommunicationService {
 		return communicationConnection;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.communication.CommunicationService#destroyConnection(org.rifidi.edge.core.communication.ICommunicationConnection)
+	 */
 	@Override
 	public void destroyConnection(ICommunicationConnection connection) throws IOException {
 

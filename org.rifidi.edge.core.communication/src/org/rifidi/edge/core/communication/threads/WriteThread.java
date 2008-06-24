@@ -15,6 +15,12 @@ public class WriteThread extends NewThread {
 	private LinkedBlockingQueue<Object> writeQueue;
 	private OutputStream outputStream;
 
+	/**
+	 * @param threadName
+	 * @param protocol
+	 * @param writeQueue
+	 * @param outputStream
+	 */
 	public WriteThread(String threadName, Protocol protocol,
 			LinkedBlockingQueue<Object> writeQueue, OutputStream outputStream) {
 		super(threadName);
@@ -24,6 +30,9 @@ public class WriteThread extends NewThread {
 		this.outputStream = outputStream;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Runnable#run()
+	 */
 	@Override
 	public void run() {
 		logger.debug("Starting Write thread");

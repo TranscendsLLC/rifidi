@@ -19,10 +19,27 @@ import org.rifidi.edge.core.communication.ICommunicationConnection;
 import org.rifidi.edge.core.readerPlugin.AbstractReaderInfo;
 import org.rifidi.edge.core.readerPlugin.IReaderPlugin;
 
+/**
+ * @author jerry
+ *
+ */
 public interface CommunicationService {
 	
+	/**
+	 * @param plugin
+	 * @param info
+	 * @param protocol
+	 * @return
+	 * @throws UnknownHostException
+	 * @throws ConnectException
+	 * @throws IOException
+	 */
 	public ICommunicationConnection createConnection(IReaderPlugin plugin, AbstractReaderInfo info, Protocol protocol) throws UnknownHostException, ConnectException, IOException;
 	
+	/**
+	 * @param connection
+	 * @throws IOException
+	 */
 	public void destroyConnection(ICommunicationConnection connection)
 			throws IOException;
 }

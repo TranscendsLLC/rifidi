@@ -10,6 +10,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.communication.Protocol;
 
+/**
+ * @author jerry
+ *
+ */
 public class ReadThread extends NewThread {
 	private static final Log logger = LogFactory.getLog(ReadThread.class);
 
@@ -18,6 +22,12 @@ public class ReadThread extends NewThread {
 
 	private InputStream inputStream;
 
+	/**
+	 * @param threadName
+	 * @param protocol
+	 * @param readQueue
+	 * @param inputStream
+	 */
 	public ReadThread(String threadName, Protocol protocol,
 			LinkedBlockingQueue<Object> readQueue, InputStream inputStream) {
 		super(threadName);
@@ -27,6 +37,9 @@ public class ReadThread extends NewThread {
 
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Runnable#run()
+	 */
 	@Override
 	public void run() {
 		logger.debug("Starting Read thread");

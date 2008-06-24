@@ -5,6 +5,10 @@ import org.osgi.framework.BundleContext;
 import org.rifidi.edge.core.communication.service.CommunicationServiceImpl;
 
 
+/**
+ * @author jerry
+ *
+ */
 public class Activator implements BundleActivator {
 
 	private CommunicationServiceImpl communicationService;
