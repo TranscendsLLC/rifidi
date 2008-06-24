@@ -87,13 +87,13 @@ public class ReaderConnectionRegistryServiceImpl implements
 				readerPlugin, jmsHelper);
 
 		// Build Connection Object for holding JMS and Plugin
-		ReaderConnection session = new ReaderConnection(abstractConnectionInfo,
+		ReaderConnection connection = new ReaderConnection(abstractConnectionInfo,
 				readerPlugin, counter, jmsThread);
 
 		// register readerConnection in registry
-		readerConnectionRegistry.put(counter, session);
+		readerConnectionRegistry.put(counter, connection);
 
-		return session;
+		return connection;
 	}
 	
 	/* (non-Javadoc)
