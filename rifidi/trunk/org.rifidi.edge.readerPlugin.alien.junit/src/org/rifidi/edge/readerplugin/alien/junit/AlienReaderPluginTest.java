@@ -25,7 +25,7 @@ import org.rifidi.edge.readerPlugin.alien.AlienReaderInfo;
 import org.rifidi.edge.readerPlugin.alien.AlienReaderPlugin;
 
 /**
- * Test class for the plugin of the Alien reader.  
+ * Test class for the plugin of the Alien reader.
  * 
  * @author Matt
  */
@@ -66,20 +66,6 @@ public class AlienReaderPluginTest {
 			e.printStackTrace();
 			Assert.fail();
 		}
-
-		List<TagRead> tagList = null;
-		try {
-			tagList = alienReaderAdapter.getNextTags();
-		} catch (RifidiConnectionIllegalStateException e) {
-			e.printStackTrace();
-			Assert.fail();
-		}
-		System.out.println("taglist size: " + tagList.size());
-		for (TagRead t : tagList) {
-			System.out.println(ByteAndHexConvertingUtility.toHexString(t
-					.getId()));
-		}
-
 	}
 
 	/**
@@ -106,17 +92,19 @@ public class AlienReaderPluginTest {
 			Assert.fail();
 		}
 
-		List<TagRead> tagList = null;
-		try {
-			tagList = alienReaderAdapter.getNextTags();
-		} catch (RifidiConnectionIllegalStateException e) {
-			e.printStackTrace();
-			Assert.fail();
-		}
-		System.out.println("taglist size: " + tagList.size());
-		for (TagRead t : tagList) {
-			System.out.println(ByteAndHexConvertingUtility.toHexString(t
-					.getId()));
+		for (int i = 0; i < 100; i++) {
+			List<TagRead> tagList = null;
+			try {
+				tagList = alienReaderAdapter.getNextTags();
+			} catch (RifidiConnectionIllegalStateException e) {
+				e.printStackTrace();
+				Assert.fail();
+			}
+			System.out.println("taglist size: " + tagList.size());
+			for (TagRead t : tagList) {
+				System.out.println(ByteAndHexConvertingUtility.toHexString(t
+						.getId()));
+			}
 		}
 
 	}
