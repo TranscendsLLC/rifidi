@@ -1,5 +1,6 @@
 package org.rifidi.edge.core.communication.buffer;
 
+import java.io.IOException;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import org.apache.commons.logging.Log;
@@ -20,7 +21,7 @@ public class CommunicationConnection implements ICommunicationConnection, Thread
 		this.writeQueue = writeQueue;
 	}
 
-	public Object recieve() throws Exception {
+	public Object recieve() throws IOException {
 		try {
 			logger.debug("Trying to recieve a message");
 			return readQueue.take();
@@ -32,7 +33,13 @@ public class CommunicationConnection implements ICommunicationConnection, Thread
 		}
 		
 		if (exception != null){
-			throw exception;
+			if (exception instanceof IOException )
+				throw (IOException) exception;
+			
+			if (exception instanceof RuntimeException )
+				throw (RuntimeException) exception;
+			
+			throw new RuntimeException("Unexpected non-RuntimeException in read or write thread", exception);
 		}
 		return null;
 	}
@@ -41,11 +48,17 @@ public class CommunicationConnection implements ICommunicationConnection, Thread
 	 * 
 	 * @param msg
 	 */
-	public void send(Object msg) throws Exception {
+	public void send(Object msg) throws IOException {
 		logger.debug("Trying to send a message: " + msg );
 		writeQueue.add(msg);
 		if (exception != null){
-			throw exception;
+			if (exception instanceof IOException )
+				throw (IOException) exception;
+			
+			if (exception instanceof RuntimeException )
+				throw (RuntimeException) exception;
+			
+			throw new RuntimeException("Unexpected non-RuntimeException in read or write thread", exception);
 		}
 	}
 
