@@ -35,36 +35,14 @@ public class CommunicationConnection implements ICommunicationConnection, Thread
 	 */
 	@Override
 	public Object receive() throws IOException {
-		if (exception != null) {
-			/*These if statements are here so that we can 'throws IOException' in the method
-			 * signature instead of 'throws Exception'
-			 */
-			if (exception instanceof IOException)
-				throw (IOException) exception;
-
-			if (exception instanceof RuntimeException)
-				throw (RuntimeException) exception;
-
-			throw new RuntimeException(
-					"Unexpected non-RuntimeException in read or write thread",
-					exception);
-		}
+		throwIfIOException (exception);
 
 		try {
 			logger.debug("Trying to recieve a message");
 			return readQueue.take();
 
 		} catch (InterruptedException e) {
-			if (exception != null){
-				if (exception instanceof IOException )
-					throw (IOException) exception;
-				
-				if (exception instanceof RuntimeException )
-					throw (RuntimeException) exception;
-				
-				throw new RuntimeException("Unexpected non-RuntimeException in read or write thread", exception);
-			}
-
+			throwIfIOException (exception);
 		}
 		return null;
 	}
@@ -76,20 +54,7 @@ public class CommunicationConnection implements ICommunicationConnection, Thread
 	 */
 	@Override
 	public Object receiveNonBlocking() throws IOException {
-		if (exception != null) {
-			/*These if statements are here so that we can 'throws IOException' in the method
-			 * signature instead of 'throws Exception'
-			 */
-			if (exception instanceof IOException)
-				throw (IOException) exception;
-
-			if (exception instanceof RuntimeException)
-				throw (RuntimeException) exception;
-
-			throw new RuntimeException(
-					"Unexpected non-RuntimeException in read or write thread",
-					exception);
-		}
+		throwIfIOException (exception);
 
 		logger.debug("Trying to recieve a message");
 		Object retVal = readQueue.poll();
@@ -104,35 +69,14 @@ public class CommunicationConnection implements ICommunicationConnection, Thread
 	 */
 	@Override
 	public Object receiveTimeOut(long mills) throws IOException {
-		if (exception != null) {
-			/*These if statements are here so that we can 'throws IOException' in the method
-			 * signature instead of 'throws Exception'
-			 */
-			if (exception instanceof IOException)
-				throw (IOException) exception;
-
-			if (exception instanceof RuntimeException)
-				throw (RuntimeException) exception;
-
-			throw new RuntimeException(
-					"Unexpected non-RuntimeException in read or write thread",
-					exception);
-		}
+		throwIfIOException (exception);
 
 		Object retVal = null;
 		try {
 			readQueue.poll(mills, TimeUnit.MILLISECONDS);
 		} catch (InterruptedException e) {
 
-			if (exception != null){
-				if (exception instanceof IOException )
-					throw (IOException) exception;
-				
-				if (exception instanceof RuntimeException )
-					throw (RuntimeException) exception;
-				
-				throw new RuntimeException("Unexpected non-RuntimeException in read or write thread", exception);
-			}
+			throwIfIOException (exception);
 
 		}
 		return retVal;
@@ -147,22 +91,40 @@ public class CommunicationConnection implements ICommunicationConnection, Thread
 	public void send(Object msg) throws IOException {
 		logger.debug("Trying to send a message: " + msg);
 		writeQueue.add(msg);
-		if (exception != null) {
+		
+		throwIfIOException (exception);
+	}
+
+	/**
+	 * This method tests if an object is a IOException or a RuntimeException and
+	 * throws it if it is true. It will also wrap any other Exception objects up in a
+	 * RuntimeException object and throw the newly created exception. Otherwise the
+	 * same object is returned. 
+	 * @param object Any Object
+	 * @return The object sent to this method.
+	 * @throws IOException
+	 * @throws RuntimeException
+	 */
+	private Object throwIfIOException(Object object) throws IOException {
+		if (object != null){
 			/*These if statements are here so that we can 'throws IOException' in the method
 			 * signature instead of 'throws Exception'
 			 */
-			if (exception instanceof IOException)
-				throw (IOException) exception;
+			if (object instanceof IOException)
+				throw (IOException) object;
 
-			if (exception instanceof RuntimeException)
-				throw (RuntimeException) exception;
-
-			throw new RuntimeException(
+			if (object instanceof RuntimeException)
+				throw (RuntimeException) object;
+			
+			if (object instanceof Exception)
+				throw new RuntimeException(
 					"Unexpected non-RuntimeException in read or write thread.",
 					exception);
+			
+			return object;
 		}
+		return null;
 	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
