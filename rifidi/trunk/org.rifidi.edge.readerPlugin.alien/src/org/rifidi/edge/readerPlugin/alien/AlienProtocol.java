@@ -13,10 +13,10 @@ package org.rifidi.edge.readerPlugin.alien;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.rifidi.edge.core.communication.buffer.Protocol;
+import org.rifidi.edge.core.communication.Protocol;
 
 /**
- * Protocol class for the Alien reader.  
+ * Protocol class for the Alien reader.
  * 
  * @author Matthew Dean - matt@pramari.com
  */
