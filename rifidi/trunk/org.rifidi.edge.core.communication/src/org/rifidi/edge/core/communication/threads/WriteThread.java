@@ -10,44 +10,41 @@ import org.rifidi.edge.core.communication.Protocol;
 
 public class WriteThread extends NewThread {
 	private static final Log logger = LogFactory.getLog(WriteThread.class);
-	
-	
-	
+
 	private Protocol protocol;
 	private LinkedBlockingQueue<Object> writeQueue;
 	private OutputStream outputStream;
-	
-	
 
-	public WriteThread(String threadName, Protocol protocol, LinkedBlockingQueue<Object> writeQueue, OutputStream outputStream) {
+	public WriteThread(String threadName, Protocol protocol,
+			LinkedBlockingQueue<Object> writeQueue, OutputStream outputStream) {
 		super(threadName);
-		// TODO Auto-generated constructor stub
-		
+
 		this.protocol = protocol;
 		this.writeQueue = writeQueue;
 		this.outputStream = outputStream;
 	}
-	
+
 	@Override
 	public void run() {
 		logger.debug("Starting Write thread");
 		try {
-			while(running) {
-			
+			while (running) {
+
 				Object object = writeQueue.take();
 				logger.debug(object);
 				byte[] bytes = protocol.fromObject(object);
-				
+
 				outputStream.write(bytes);
 				outputStream.flush();
 			}
 		} catch (InterruptedException e) {
 			running = false;
-			//e.printStackTrace();
+			// e.printStackTrace();
 		} catch (IOException e) {
 			// TODO Think about what to do with this exception
 			running = false;
-			Thread.currentThread().getUncaughtExceptionHandler().uncaughtException(Thread.currentThread(), e);
+			Thread.currentThread().getUncaughtExceptionHandler()
+					.uncaughtException(Thread.currentThread(), e);
 		}
 	}
 
