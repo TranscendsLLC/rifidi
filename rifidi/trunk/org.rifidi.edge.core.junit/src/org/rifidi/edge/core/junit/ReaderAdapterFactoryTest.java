@@ -8,7 +8,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.rifidi.edge.core.readerPlugin.IReaderPlugin;
-import org.rifidi.edge.core.readerPlugin.ReaderPluginFactory;
+import org.rifidi.edge.core.readerPlugin.factory.ReaderPluginFactory;
 import org.rifidi.edge.core.readerPluginService.ReaderPluginRegistryService;
 import org.rifidi.edge.readerplugin.dummy.DummyReaderInfo;
 import org.rifidi.edge.readerplugin.dummy.DummyReaderPluginFactory;
