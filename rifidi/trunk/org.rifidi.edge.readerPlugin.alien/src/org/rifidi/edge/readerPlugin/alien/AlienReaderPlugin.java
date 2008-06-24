@@ -11,7 +11,6 @@
  */
 package org.rifidi.edge.readerPlugin.alien;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
@@ -250,27 +249,6 @@ public class AlienReaderPlugin implements IReaderPlugin {
 		return retVal;
 	}
 
-	/**
-	 * Read responses from the socket
-	 * 
-	 * @param inBuf
-	 * @return
-	 * @throws IOException
-	 */
-	public static String readFromReader(BufferedReader inBuf)
-			throws IOException {
-		StringBuffer buf = new StringBuffer();
-		logger.debug("Reading...");
-		int ch = inBuf.read();
-		while ((char) ch != '\0') {
-			buf.append((char) ch);
-			ch = inBuf.read();
-		}
-		logger.debug("Done reading!");
-		logger.debug("Reading in: " + buf.toString());
-		return buf.toString();
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -320,6 +298,12 @@ public class AlienReaderPlugin implements IReaderPlugin {
 		public static final String WELCOME = "Alien";
 	}
 
+	/**
+	 * Inject the communication service.
+	 * 
+	 * @param communicationService
+	 *            The communication service to inject.
+	 */
 	@Inject
 	public void setCommunicationService(
 			CommunicationService communicationService) {
