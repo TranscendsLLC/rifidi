@@ -14,6 +14,7 @@ import org.rifidi.edge.core.communication.CommunicationService;
 import org.rifidi.edge.core.communication.ICommunicationConnection;
 import org.rifidi.edge.core.communication.Protocol;
 import org.rifidi.edge.core.communication.buffer.Communication;
+import org.rifidi.edge.core.readerPlugin.AbstractReaderInfo;
 import org.rifidi.edge.core.readerPlugin.IReaderPlugin;
 
 
@@ -29,10 +30,10 @@ public class CommunicationServiceImpl implements CommunicationService {
 	}
 	
 	@Override
-	public ICommunicationConnection createConnection(IReaderPlugin plugin,
+	public ICommunicationConnection createConnection(IReaderPlugin plugin, AbstractReaderInfo info,
 			Protocol protocol) throws UnknownHostException, ConnectException, IOException {
-		logger.debug("Connecting: " + plugin.getReaderInfo().getIPAddress() + ":" + plugin.getReaderInfo().getPort() + " ...");
-		Socket socket = new Socket(plugin.getReaderInfo().getIPAddress(), plugin.getReaderInfo().getPort());
+		logger.debug("Connecting: " + info.getIPAddress() + ":" + info.getPort() + " ...");
+		Socket socket = new Socket(info.getIPAddress(), info.getPort());
 		
 		Communication communication = new Communication(socket, protocol);
 		
@@ -45,7 +46,7 @@ public class CommunicationServiceImpl implements CommunicationService {
 
 	@Override
 	public void destroyConnection(ICommunicationConnection connection) throws IOException {
-		
+
 		Communication communication = communications.get(connection);
 		communications.remove(connection);
 		
@@ -53,7 +54,7 @@ public class CommunicationServiceImpl implements CommunicationService {
 				+ communication.getSocket().getPort() + " ...");
 		
 		communication.getSocket().close();
-		communication.stopCommunication();
+		
 	}
 
 	

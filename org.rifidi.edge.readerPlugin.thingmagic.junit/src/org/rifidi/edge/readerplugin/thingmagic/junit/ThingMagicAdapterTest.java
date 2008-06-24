@@ -53,7 +53,7 @@ public class ThingMagicAdapterTest {
 		try {
 			adapter.connect();
 		} catch (RifidiConnectionException e) {
-			// e.printStackTrace();
+			 e.printStackTrace();
 			Assert.fail();
 		}
 
