@@ -289,7 +289,7 @@ public class LLRPReaderPlugin implements IReaderPlugin {
 		 */
 		public LLRPMessage read() throws IOException,
 				InvalidLLRPMessageException {
-			LLRPMessage m = (LLRPMessage) connection.recieve();
+			LLRPMessage m = (LLRPMessage) connection.receive();
 			return m;
 		}
 
