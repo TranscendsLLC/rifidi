@@ -197,7 +197,7 @@ public class ThingMagicReaderPlugin implements IReaderPlugin {
 
 				//TODO check if result is actually an error
 				result = new ThingMagicCustomCommandResult((String) communicationConnection.recieve());
-			} catch (Exception e) {
+			} catch (IOException e) {
 				logger.debug("IOException has accured.", e);
 				throw new RifidiConnectionIllegalStateException(e.getClass().getName(), e);
 			}
