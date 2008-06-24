@@ -90,7 +90,7 @@ public class LLRPReaderPlugin implements IReaderPlugin {
 	private ICommunicationConnection communicationConnection;
 
 	/**
-	 * 
+	 * The communication service for this reader.  
 	 */
 	private CommunicationService communicationService;
 
@@ -105,7 +105,7 @@ public class LLRPReaderPlugin implements IReaderPlugin {
 	private static int ROSPEC_ID = 1;
 
 	/**
-	 * 
+	 * The LLRPReadThread that will read from the connection queue.  
 	 */
 	private LLRPReadThread reader;
 
@@ -210,12 +210,12 @@ public class LLRPReaderPlugin implements IReaderPlugin {
 		private LinkedBlockingQueue<LLRPMessage> tagQueue = null;
 
 		/**
-		 * roSpecListQueue
+		 * A queue to store incoming LLRP Messages
 		 */
 		private LinkedBlockingQueue<LLRPMessage> roSpecListQueue = null;
 
 		/**
-		 * 
+		 * The connection object.  
 		 */
 		private ICommunicationConnection connection;
 
@@ -309,6 +309,11 @@ public class LLRPReaderPlugin implements IReaderPlugin {
 			return m;
 		}
 
+		/**
+		 * Returns the next GET_ROSPEC_REQUEST method.  
+		 * 
+		 * @return
+		 */
 		public LLRPMessage getNextRoSpecList() {
 			LLRPMessage m = null;
 			try {
@@ -409,7 +414,7 @@ public class LLRPReaderPlugin implements IReaderPlugin {
 	}
 
 	/**
-	 * 
+	 * Does the ROSpec exist?
 	 * 
 	 * @param grr
 	 * @return
@@ -624,6 +629,7 @@ public class LLRPReaderPlugin implements IReaderPlugin {
 	}
 
 	/**
+	 * Inject the communication service. 
 	 * 
 	 * @param communicationService
 	 */
