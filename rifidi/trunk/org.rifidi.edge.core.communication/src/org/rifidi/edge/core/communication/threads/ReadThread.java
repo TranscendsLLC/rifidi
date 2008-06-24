@@ -38,8 +38,10 @@ public class ReadThread  extends NewThread {
 			while(running){
 				byte[] input = readFromSocket(inputStream);
 				List<Object> msg =  protocol.toObject(input);
-				logger.debug(msg);
-				readQueue.add(msg);
+				for (Object o: msg){
+					logger.debug(o);
+					readQueue.add(o);
+				}
 			}
 		} catch (IOException e) {
 			running = false;
@@ -52,9 +54,13 @@ public class ReadThread  extends NewThread {
 		ByteArrayOutputStream buffer = new ByteArrayOutputStream();
 		
 		while((input = inputStream.read()) != -1){
+			logger.debug("Reading");
 			buffer.write(input);
+			
+			if (inputStream.available() == 0)
+				break;		
 		}
-		
+		logger.debug("Extiting reading");
 		return buffer.toByteArray();
 	}
 	
