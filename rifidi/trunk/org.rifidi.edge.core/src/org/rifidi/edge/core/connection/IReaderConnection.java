@@ -18,6 +18,7 @@ import org.rifidi.edge.core.readerPlugin.commands.ICustomCommand;
 import org.rifidi.edge.core.readerPlugin.commands.ICustomCommandResult;
 import org.rifidi.edge.core.readerPlugin.enums.EReaderAdapterState;
 
+
 public interface IReaderConnection {
 
 	/**
