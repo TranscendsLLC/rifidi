@@ -7,8 +7,9 @@ import java.util.concurrent.LinkedBlockingQueue;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.communication.protocol.Protocol;
+import org.rifidi.edge.common.utilities.thread.AbstractThread;
 
-public class WriteThread extends NewThread {
+public class WriteThread extends AbstractThread {
 	private static final Log logger = LogFactory.getLog(WriteThread.class);
 
 	private Protocol protocol;

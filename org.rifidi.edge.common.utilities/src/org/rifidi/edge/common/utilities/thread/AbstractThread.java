@@ -1,21 +1,20 @@
-package org.rifidi.edge.core.communication.threads;
+package org.rifidi.edge.common.utilities.thread;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.rifidi.edge.core.communication.buffer.CommunicationBufferImpl;
 
 /**
  * @author jerry
  *
  */
-public abstract class NewThread implements Runnable {
-	private static final Log logger = LogFactory.getLog(CommunicationBufferImpl.class);	
+public abstract class AbstractThread implements Runnable {
+	private static final Log logger = LogFactory.getLog(AbstractThread.class);	
 	
 	Thread thread;
 	
 	protected boolean running = false;
 	
-	protected NewThread(String threadName){
+	protected AbstractThread(String threadName){
 		thread = new Thread(this, threadName);
 		
 	}
