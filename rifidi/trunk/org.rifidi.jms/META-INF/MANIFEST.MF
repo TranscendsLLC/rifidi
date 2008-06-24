@@ -121,4 +121,6 @@ Export-Package: javax.jms,
  org.apache.activemq.util,
  org.apache.activemq.util.xstream,
  org.apache.activemq.wireformat,
- org.apache.activemq.xbean
+ org.apache.activemq.xbean,
+ org.rifidi.edge.jms
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
