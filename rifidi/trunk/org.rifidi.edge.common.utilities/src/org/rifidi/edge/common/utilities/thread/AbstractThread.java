@@ -22,11 +22,11 @@ public abstract class AbstractThread implements Runnable {
 	/**
 	 * 
 	 */
-	public void start(){
+	public boolean start(){
 		logger.debug("Starting " + thread.getName());
 		running = true;
 		thread.start();
-		
+		return true;
 	}
 	
 	/**
