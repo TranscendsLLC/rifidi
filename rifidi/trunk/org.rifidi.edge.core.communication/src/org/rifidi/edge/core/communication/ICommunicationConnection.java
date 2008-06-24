@@ -1,7 +1,9 @@
 package org.rifidi.edge.core.communication;
 
+import java.io.IOException;
+
 
 public interface ICommunicationConnection {
-	public void send(Object msg) throws Exception;
-	public Object recieve() throws Exception;
+	public void send(Object msg) throws IOException;
+	public Object recieve() throws IOException;
 }

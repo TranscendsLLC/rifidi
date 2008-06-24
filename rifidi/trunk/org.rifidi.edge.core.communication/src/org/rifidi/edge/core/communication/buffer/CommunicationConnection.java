@@ -58,7 +58,7 @@ public class CommunicationConnection implements ICommunicationConnection, Thread
 			if (exception instanceof RuntimeException )
 				throw (RuntimeException) exception;
 			
-			throw new RuntimeException("Unexpected non-RuntimeException in read or write thread", exception);
+			throw new RuntimeException("Unexpected non-RuntimeException in read or write thread.", exception);
 		}
 	}
 
