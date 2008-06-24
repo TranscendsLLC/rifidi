@@ -42,15 +42,19 @@ public class AlienProtocol extends Protocol {
 		List<Object> retVal = new ArrayList<Object>();
 
 		String input = new String(arg);
-		String[] splitstr = input.split("\0");
 
-		for (String s : splitstr) {
-			if (s.length() > 0) {
-				retVal.add(s);
+		if (!input.equals("\0")) {
+			String[] splitstr = input.split("\0");
+
+			for (String s : splitstr) {
+				if (s.length() > 0) {
+					retVal.add(s);
+				}
 			}
+		} else {
+			retVal.add("\0");
 		}
 
 		return retVal;
 	}
-
 }

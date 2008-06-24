@@ -13,9 +13,6 @@ package org.rifidi.edge.readerPlugin.alien;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +20,8 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.common.utilities.converter.ByteAndHexConvertingUtility;
+import org.rifidi.edge.core.communication.CommunicationService;
+import org.rifidi.edge.core.communication.ICommunicationConnection;
 import org.rifidi.edge.core.exception.RifidiIIllegialArgumentException;
 import org.rifidi.edge.core.exception.readerConnection.RifidiConnectionException;
 import org.rifidi.edge.core.exception.readerConnection.RifidiConnectionIllegalStateException;
@@ -31,6 +30,8 @@ import org.rifidi.edge.core.readerPlugin.commands.ICustomCommand;
 import org.rifidi.edge.core.readerPlugin.commands.ICustomCommandResult;
 import org.rifidi.edge.core.tag.TagRead;
 import org.rifidi.edge.readerPlugin.alien.command.AlienCustomCommand;
+import org.rifidi.services.annotations.Inject;
+import org.rifidi.services.registry.ServiceRegistry;
 
 /**
  * This class represents a plugin that will communicate with an Alien ALR-9800
@@ -46,25 +47,16 @@ public class AlienReaderPlugin implements IReaderPlugin {
 	private static final Log logger = LogFactory
 			.getLog(AlienReaderPlugin.class);
 
+	boolean connected;
+
+	private ICommunicationConnection communicationConnection;
+
 	/**
 	 * The connection info for this reader
 	 */
 	private AlienReaderInfo aci;
 
-	/**
-	 * The socket.
-	 */
-	private Socket connection = null;
-
-	/**
-	 * The reader.
-	 */
-	private BufferedReader in = null;
-
-	/**
-	 * The writer.
-	 */
-	private PrintWriter out = null;
+	private CommunicationService communicationService;
 
 	/**
 	 * Adapter for the Alien reader.
@@ -74,6 +66,10 @@ public class AlienReaderPlugin implements IReaderPlugin {
 	 */
 	public AlienReaderPlugin(AlienReaderInfo aci) {
 		this.aci = aci;
+
+		connected = false;
+
+		ServiceRegistry.getInstance().service(this);
 	}
 
 	/*
@@ -83,26 +79,35 @@ public class AlienReaderPlugin implements IReaderPlugin {
 	 */
 	@Override
 	public void connect() throws RifidiConnectionException {
+		if (communicationService == null) {
+			throw new RifidiConnectionException(
+					"CommunicationSerivce Not Found!");
+		}
+
 		// Connect to the Alien Reader
 		try {
+
+			communicationConnection = communicationService.createConnection(
+					this, aci, new AlienProtocol());
+
+			connected = true;
+
 			logger.debug(aci.getIPAddress() + ", " + aci.getPort());
-			connection = new Socket(aci.getIPAddress(), aci.getPort());
-			out = new PrintWriter(connection.getOutputStream());
-			in = new BufferedReader(new InputStreamReader(connection
-					.getInputStream()));
-			String welcome = readFromReader(in);
+			String welcome = (String) communicationConnection.recieve();
 			if (!welcome.contains(AlienResponseList.WELCOME)) {
 				logger.debug("RifidiConnectionException was thrown,"
 						+ " reader is not an alien reader: " + welcome);
 				throw new RifidiConnectionException(
 						"Reader is not an alien reader");
 			}
-			out.write('\1' + aci.getUsername() + "\n");
-			out.flush();
-			readFromReader(in);
-			out.write('\1' + aci.getPassword() + "\n");
-			out.flush();
-			String passwordResponse = readFromReader(in);
+			communicationConnection.send(new String('\1' + aci.getUsername()
+					+ "\n"));
+			communicationConnection.recieve();
+
+			communicationConnection.send(new String('\1' + aci.getPassword() + "\n"));
+
+			String passwordResponse = (String) communicationConnection
+					.recieve();
 			if (passwordResponse.contains(AlienResponseList.INVALID)) {
 				logger.debug("RifidiConnectionException was thrown");
 				throw new RifidiConnectionException(
@@ -114,6 +119,9 @@ public class AlienReaderPlugin implements IReaderPlugin {
 		} catch (IOException e) {
 			logger.debug("IOException.", e);
 			throw new RifidiConnectionException(e);
+		} catch (Exception e) {
+			logger.debug("Exception.", e);
+			throw new RifidiConnectionException(e);
 		}
 	}
 
@@ -124,14 +132,23 @@ public class AlienReaderPlugin implements IReaderPlugin {
 	 */
 	@Override
 	public void disconnect() throws RifidiConnectionException {
-		out.write("q");
-		out.flush();
+
+		connected = false;
+		if (communicationService == null)
+			throw new RifidiConnectionException(
+					"CommunicationSerivce Not Found!");
+
 		try {
-			connection.close();
+			communicationConnection.send("q");
+			communicationService.destroyConnection(communicationConnection);
 		} catch (IOException e) {
 			logger.debug("IOException.", e);
 			throw new RifidiConnectionException(e);
+		} catch (Exception e) {
+			logger.debug("Exception.", e);
+			throw new RifidiConnectionException(e);
 		}
+		logger.debug("Successfully Disconnected.");
 	}
 
 	/*
@@ -144,13 +161,22 @@ public class AlienReaderPlugin implements IReaderPlugin {
 			throws RifidiConnectionIllegalStateException,
 			RifidiIIllegialArgumentException {
 
-		AlienCustomCommand acc = (AlienCustomCommand) customCommand;
-
 		try {
-			out.write(acc.getCommand());
-			readFromReader(in);
+			AlienCustomCommand acc = (AlienCustomCommand) customCommand;
+			communicationConnection.send(acc.getCommand());
+			communicationConnection.recieve();
 		} catch (IOException e) {
 			logger.debug("IOException.", e);
+			throw new RifidiConnectionIllegalStateException(e);
+		} catch (ClassCastException e) {
+			logger.debug("ClassCastException.", e);
+			throw new RifidiIIllegialArgumentException(e);
+		} catch (NullPointerException e) {
+			logger.debug("NullPointerException.", e);
+			throw new RifidiIIllegialArgumentException(e);
+		} catch (Exception e) {
+			logger.debug("Exception.", e);
+			throw new RifidiConnectionIllegalStateException(e);
 		}
 
 		return null;
@@ -171,28 +197,31 @@ public class AlienReaderPlugin implements IReaderPlugin {
 
 		try {
 			logger.debug("Sending the taglistformat to custom format");
-			out.write(AlienCommandList.TAG_LIST_FORMAT);
-			out.flush();
-			readFromReader(in);
+			communicationConnection.send(AlienCommandList.TAG_LIST_FORMAT);
+			String resp = (String)communicationConnection.recieve();
+			logger.debug("TAG_LIST_FORMAT response: " + resp);
 
 			logger.debug("Sending the custom format");
-			out.write(AlienCommandList.TAG_LIST_CUSTOM_FORMAT);
-			out.flush();
-			readFromReader(in);
+			communicationConnection.send(AlienCommandList.TAG_LIST_CUSTOM_FORMAT);
+			String cust = (String)communicationConnection.recieve();
+			
+			logger.debug("TAG_LIST_CUSTOM_FORMAT response: " + cust);
 
 			logger.debug("Reading tags");
-			out.write(AlienCommandList.TAG_LIST);
-			out.flush();
+			communicationConnection.send(AlienCommandList.TAG_LIST);
+			
 
-			// TODO: This is a bit of a hack
-			String tags = readFromReader(in);
+			String tags = (String)communicationConnection.recieve();
+			logger.debug("TAG_LIST response: " + tags);
 
 			logger.debug("tags:" + tags);
 			retVal = parseString(tags);
 		} catch (IOException e) {
 			logger.debug("IOException.", e);
-		} catch (NullPointerException e) {
-			logger.debug("NullPointerException.", e);
+			throw new RifidiConnectionIllegalStateException(e);
+		} catch(Exception e) {
+			logger.debug("Excepion.",e);
+			throw new RifidiConnectionIllegalStateException(e);
 		}
 
 		logger.debug("finishing the getnexttags");
@@ -208,6 +237,8 @@ public class AlienReaderPlugin implements IReaderPlugin {
 	 */
 	private List<TagRead> parseString(String input) {
 		String[] splitString = input.split("\n");
+		
+		logger.debug("Trying to parse this tag data: " + input);
 
 		List<TagRead> retVal = new ArrayList<TagRead>();
 
@@ -299,5 +330,13 @@ public class AlienReaderPlugin implements IReaderPlugin {
 		 * Tag list command.
 		 */
 		public static final String WELCOME = "Alien";
+	}
+
+	@Inject
+	public void setCommunicationService(
+			CommunicationService communicationService) {
+		logger.debug("communicationService set");
+		this.communicationService = communicationService;
+
 	}
 }
