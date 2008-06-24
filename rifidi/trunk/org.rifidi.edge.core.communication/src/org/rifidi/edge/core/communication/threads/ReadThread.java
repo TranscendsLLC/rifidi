@@ -8,6 +8,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.rifidi.edge.common.utilities.converter.ByteAndHexConvertingUtility;
 import org.rifidi.edge.core.communication.Protocol;
 
 
@@ -37,6 +38,7 @@ public class ReadThread  extends NewThread {
 		try {
 			while(running){
 				byte[] input = readFromSocket(inputStream);
+				//TODO Think about what to do if the byte array is empty
 				List<Object> msg =  protocol.toObject(input);
 				for (Object o: msg){
 					logger.debug(o);
