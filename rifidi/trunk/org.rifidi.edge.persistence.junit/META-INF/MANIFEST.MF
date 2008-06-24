@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Junit Plug-in
+Bundle-SymbolicName: org.rifidi.edge.persistence.junit
+Bundle-Version: 1.0.0
+Bundle-Activator: org.rifidi.edge.persistence.junit.Activator
+Bundle-Vendor: Pramari, LLC
+Eclipse-LazyStart: true
+Import-Package: org.osgi.framework;version="1.3.0"
+Require-Bundle: org.rifidi.edge.persistence,
+ org.rifidi.edge.core,
+ org.junit4,
+ org.rifidi.edge.readerPlugin.alien
