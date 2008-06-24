@@ -17,7 +17,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.communication.CommunicationBuffer;
-import org.rifidi.edge.core.communication.Protocol;
+import org.rifidi.edge.core.communication.protocol.Protocol;
 import org.rifidi.edge.core.communication.service.CommunicationServiceImpl;
 
 import org.rifidi.edge.core.communication.threads.ReadThread;

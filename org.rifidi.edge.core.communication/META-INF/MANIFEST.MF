@@ -9,6 +9,8 @@ Eclipse-LazyStart: true
 Bundle-Vendor: Pramari, LLC
 Export-Package: org.rifidi.edge.core.communication,
  org.rifidi.edge.core.communication.buffer,
+ org.rifidi.edge.core.communication.protocol,
+ org.rifidi.edge.core.communication.service,
  org.rifidi.edge.core.communication.threads
 Require-Bundle: org.rifidi.edge.core,
  org.rifidi.edge.log4j
