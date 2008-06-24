@@ -74,6 +74,8 @@ public class CommunicationConnection implements ICommunicationConnection, Thread
 	@Override
 	public Object recieveNonBlocking() throws IOException {
 		if (exception != null) {
+			/*These if statements are here so that we can 'throws IOException' in the method
+			 * signature instead of 'throws Exception'*/
 			if (exception instanceof IOException)
 				throw (IOException) exception;
 
@@ -99,6 +101,8 @@ public class CommunicationConnection implements ICommunicationConnection, Thread
 	@Override
 	public Object recieveTimeOut(long mills) throws IOException {
 		if (exception != null) {
+			/*These if statements are here so that we can 'throws IOException' in the method
+			 * signature instead of 'throws Exception'*/
 			if (exception instanceof IOException)
 				throw (IOException) exception;
 
@@ -139,6 +143,8 @@ public class CommunicationConnection implements ICommunicationConnection, Thread
 		logger.debug("Trying to send a message: " + msg);
 		writeQueue.add(msg);
 		if (exception != null) {
+			/*These if statements are here so that we can 'throws IOException' in the method
+			 * signature instead of 'throws Exception'*/
 			if (exception instanceof IOException)
 				throw (IOException) exception;
 
