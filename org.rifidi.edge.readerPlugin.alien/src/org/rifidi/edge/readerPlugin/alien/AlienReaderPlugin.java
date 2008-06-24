@@ -48,14 +48,15 @@ public class AlienReaderPlugin implements IReaderPlugin {
 			.getLog(AlienReaderPlugin.class);
 
 	/**
-	 * 
+	 * Communication connection
 	 */
 	private ICommunicationConnection communicationConnection;
 	
 	/**
-	 * 
+	 * Communication service
 	 */
 	private CommunicationService communicationService;
+	
 	/**
 	 * The connection info for this reader
 	 */
