@@ -92,7 +92,7 @@ public class AlienReaderPlugin implements IReaderPlugin {
 					this, aci, new AlienProtocol());
 
 			logger.debug(aci.getIPAddress() + ", " + aci.getPort());
-			String welcome = (String) communicationConnection.recieve();
+			String welcome = (String) communicationConnection.receive();
 			if (!welcome.contains(AlienResponseList.WELCOME)) {
 				logger.debug("RifidiConnectionException was thrown,"
 						+ " reader is not an alien reader: " + welcome);
@@ -101,13 +101,13 @@ public class AlienReaderPlugin implements IReaderPlugin {
 			}
 			communicationConnection.send(new String('\1' + aci.getUsername()
 					+ "\n"));
-			communicationConnection.recieve();
+			communicationConnection.receive();
 
 			communicationConnection.send(new String('\1' + aci.getPassword()
 					+ "\n"));
 
 			String passwordResponse = (String) communicationConnection
-					.recieve();
+					.receive();
 			if (passwordResponse.contains(AlienResponseList.INVALID)) {
 				logger.debug("RifidiConnectionException was thrown");
 				throw new RifidiConnectionException(
@@ -156,7 +156,7 @@ public class AlienReaderPlugin implements IReaderPlugin {
 		try {
 			AlienCustomCommand acc = (AlienCustomCommand) customCommand;
 			communicationConnection.send(acc.getCommand());
-			communicationConnection.recieve();
+			communicationConnection.receive();
 		} catch (IOException e) {
 			logger.debug("IOException.", e);
 			throw new RifidiConnectionIllegalStateException(e);
@@ -187,20 +187,20 @@ public class AlienReaderPlugin implements IReaderPlugin {
 		try {
 			logger.debug("Sending the taglistformat to custom format");
 			communicationConnection.send(AlienCommandList.TAG_LIST_FORMAT);
-			String resp = (String) communicationConnection.recieve();
+			String resp = (String) communicationConnection.receive();
 			logger.debug("TAG_LIST_FORMAT response: " + resp);
 
 			logger.debug("Sending the custom format");
 			communicationConnection
 					.send(AlienCommandList.TAG_LIST_CUSTOM_FORMAT);
-			String cust = (String) communicationConnection.recieve();
+			String cust = (String) communicationConnection.receive();
 
 			logger.debug("TAG_LIST_CUSTOM_FORMAT response: " + cust);
 
 			logger.debug("Reading tags");
 			communicationConnection.send(AlienCommandList.TAG_LIST);
 
-			String tags = (String) communicationConnection.recieve();
+			String tags = (String) communicationConnection.receive();
 			logger.debug("TAG_LIST response: " + tags);
 
 			logger.debug("tags:" + tags);
