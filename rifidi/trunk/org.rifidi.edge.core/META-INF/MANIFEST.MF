@@ -15,6 +15,7 @@ Export-Package: org.rifidi.edge.core,
  org.rifidi.edge.core.readerPlugin,
  org.rifidi.edge.core.readerPlugin.commands,
  org.rifidi.edge.core.readerPlugin.enums,
+ org.rifidi.edge.core.readerPlugin.factory,
  org.rifidi.edge.core.readerPluginService,
  org.rifidi.edge.core.tag
 Require-Bundle: org.rifidi.edge.jms,
