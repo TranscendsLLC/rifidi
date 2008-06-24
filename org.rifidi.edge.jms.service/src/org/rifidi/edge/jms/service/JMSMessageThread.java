@@ -7,6 +7,7 @@ import javax.jms.TextMessage;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.rifidi.edge.common.utilities.thread.AbstractThread;
 import org.rifidi.edge.core.connection.IReaderConnection;
 import org.rifidi.edge.core.connection.registry.ReaderConnectionRegistryService;
 import org.rifidi.edge.core.exception.RifidiException;
@@ -16,12 +17,9 @@ import org.rifidi.edge.core.tag.TagRead;
 import org.rifidi.services.annotations.Inject;
 import org.rifidi.services.registry.ServiceRegistry;
 
-public class JMSMessageThread implements Runnable {
+public class JMSMessageThread extends AbstractThread{
 
 	private Log logger = LogFactory.getLog(JMSMessageThread.class);
-
-	// Internal Thread
-	private Thread thread;
 
 	// Paramerters
 	private JMSHelper jmsHelper;
@@ -31,8 +29,6 @@ public class JMSMessageThread implements Runnable {
 	// SessionRegisrtyService
 	private ReaderConnectionRegistryService sessionRegistryService;
 
-	// Runntime Variables
-	private boolean running = false;
 
 	// Polling time if ReaderAdapter is non blocking
 	private long pollingIntervall = 1000;
@@ -46,6 +42,9 @@ public class JMSMessageThread implements Runnable {
 	 */
 	public JMSMessageThread(int connectionID, IReaderPlugin readerAdapter,
 			JMSHelper jmsHelper) {
+		super( "JMSMessageThread "
+						+ connectionID);
+		
 		this.jmsHelper = jmsHelper;
 		this.readerConnectionID = connectionID;
 		this.readerAdapter = readerAdapter;
@@ -60,12 +59,9 @@ public class JMSMessageThread implements Runnable {
 	public boolean start() {
 		if (jmsHelper != null) {
 			if (jmsHelper.isInitialized()) {
-
-				thread = new Thread(this, "JMSMessageThread "
-						+ readerConnectionID);
 				logger.debug("JMS Message Thread started for Queue: " + readerConnectionID);
 				running = true;
-				thread.start();
+				start();
 			}
 		}
 		return running;
@@ -74,11 +70,12 @@ public class JMSMessageThread implements Runnable {
 	/**
 	 * Stop this thread.
 	 */
-	public void stop() {
+/*	public void stop() {
 		running = false;
 		if (thread.isAlive())
 			thread.interrupt();
-	}
+	} 
+*/
 
 	/* (non-Javadoc)
 	 * @see java.lang.Runnable#run()
