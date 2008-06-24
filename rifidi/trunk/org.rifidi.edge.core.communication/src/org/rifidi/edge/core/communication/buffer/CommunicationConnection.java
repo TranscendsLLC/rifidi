@@ -8,10 +8,14 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.communication.ICommunicationConnection;
 
-public class CommunicationConnection implements ICommunicationConnection,
-		Thread.UncaughtExceptionHandler {
-	private static final Log logger = LogFactory
-			.getLog(CommunicationConnection.class);
+
+/**
+ * @author jerry
+ *
+ */
+public class CommunicationConnection implements ICommunicationConnection, Thread.UncaughtExceptionHandler {
+	private static final Log logger = LogFactory.getLog(CommunicationConnection.class);	
+	
 
 	private LinkedBlockingQueue<Object> readQueue;
 	private LinkedBlockingQueue<Object> writeQueue;
@@ -48,6 +52,15 @@ public class CommunicationConnection implements ICommunicationConnection,
 			return readQueue.take();
 
 		} catch (InterruptedException e) {
+			if (exception != null){
+				if (exception instanceof IOException )
+					throw (IOException) exception;
+				
+				if (exception instanceof RuntimeException )
+					throw (RuntimeException) exception;
+				
+				throw new RuntimeException("Unexpected non-RuntimeException in read or write thread", exception);
+			}
 
 		}
 		return null;
@@ -102,6 +115,16 @@ public class CommunicationConnection implements ICommunicationConnection,
 			readQueue.poll(mills, TimeUnit.MILLISECONDS);
 		} catch (InterruptedException e) {
 
+			if (exception != null){
+				if (exception instanceof IOException )
+					throw (IOException) exception;
+				
+				if (exception instanceof RuntimeException )
+					throw (RuntimeException) exception;
+				
+				throw new RuntimeException("Unexpected non-RuntimeException in read or write thread", exception);
+			}
+
 		}
 		return retVal;
 	}
@@ -139,6 +162,7 @@ public class CommunicationConnection implements ICommunicationConnection,
 		if (e instanceof Exception) {
 			logger.debug("Saw exception " + e.getClass().getName());
 			exception = (Exception) e;
+			
 		} else {
 			t.getThreadGroup().uncaughtException(t, e);
 		}
