@@ -48,21 +48,19 @@ public class AlienReaderPlugin implements IReaderPlugin {
 			.getLog(AlienReaderPlugin.class);
 
 	/**
-	 * Communication connection
+	 * Communication connection.
 	 */
 	private ICommunicationConnection communicationConnection;
-	
+
 	/**
-	 * Communication service
+	 * Communication service.
 	 */
 	private CommunicationService communicationService;
-	
+
 	/**
 	 * The connection info for this reader
 	 */
 	private AlienReaderInfo aci;
-
-
 
 	/**
 	 * Adapter for the Alien reader.
@@ -106,7 +104,8 @@ public class AlienReaderPlugin implements IReaderPlugin {
 					+ "\n"));
 			communicationConnection.recieve();
 
-			communicationConnection.send(new String('\1' + aci.getPassword() + "\n"));
+			communicationConnection.send(new String('\1' + aci.getPassword()
+					+ "\n"));
 
 			String passwordResponse = (String) communicationConnection
 					.recieve();
@@ -189,20 +188,20 @@ public class AlienReaderPlugin implements IReaderPlugin {
 		try {
 			logger.debug("Sending the taglistformat to custom format");
 			communicationConnection.send(AlienCommandList.TAG_LIST_FORMAT);
-			String resp = (String)communicationConnection.recieve();
+			String resp = (String) communicationConnection.recieve();
 			logger.debug("TAG_LIST_FORMAT response: " + resp);
 
 			logger.debug("Sending the custom format");
-			communicationConnection.send(AlienCommandList.TAG_LIST_CUSTOM_FORMAT);
-			String cust = (String)communicationConnection.recieve();
-			
+			communicationConnection
+					.send(AlienCommandList.TAG_LIST_CUSTOM_FORMAT);
+			String cust = (String) communicationConnection.recieve();
+
 			logger.debug("TAG_LIST_CUSTOM_FORMAT response: " + cust);
 
 			logger.debug("Reading tags");
 			communicationConnection.send(AlienCommandList.TAG_LIST);
-			
 
-			String tags = (String)communicationConnection.recieve();
+			String tags = (String) communicationConnection.recieve();
 			logger.debug("TAG_LIST response: " + tags);
 
 			logger.debug("tags:" + tags);
@@ -221,11 +220,12 @@ public class AlienReaderPlugin implements IReaderPlugin {
 	 * Parses the string.
 	 * 
 	 * @param input
-	 * @return
+	 *            The input string, consisting of all of the tag data.
+	 * @return A list of TagRead objects parsed from the input string.
 	 */
 	private List<TagRead> parseString(String input) {
 		String[] splitString = input.split("\n");
-		
+
 		logger.debug("Trying to parse this tag data: " + input);
 
 		List<TagRead> retVal = new ArrayList<TagRead>();
