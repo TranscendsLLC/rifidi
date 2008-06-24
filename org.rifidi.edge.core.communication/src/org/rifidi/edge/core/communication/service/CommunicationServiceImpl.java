@@ -50,10 +50,7 @@ public class CommunicationServiceImpl implements CommunicationService {
 		Communication communication = communications.get(connection);
 		communications.remove(connection);
 		
-		logger.debug("Disconnecting: " + communication.getSocket().getInetAddress() + ":" 
-				+ communication.getSocket().getPort() + " ...");
-		
-		communication.getSocket().close();
+		communication.stopCommunication();
 		
 	}
 
