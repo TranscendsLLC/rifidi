@@ -119,9 +119,6 @@ public class AlienReaderPlugin implements IReaderPlugin {
 		} catch (IOException e) {
 			logger.debug("IOException.", e);
 			throw new RifidiConnectionException(e);
-		} catch (Exception e) {
-			logger.debug("Exception.", e);
-			throw new RifidiConnectionException(e);
 		}
 	}
 
@@ -143,9 +140,6 @@ public class AlienReaderPlugin implements IReaderPlugin {
 			communicationService.destroyConnection(communicationConnection);
 		} catch (IOException e) {
 			logger.debug("IOException.", e);
-			throw new RifidiConnectionException(e);
-		} catch (Exception e) {
-			logger.debug("Exception.", e);
 			throw new RifidiConnectionException(e);
 		}
 		logger.debug("Successfully Disconnected.");
@@ -174,9 +168,6 @@ public class AlienReaderPlugin implements IReaderPlugin {
 		} catch (NullPointerException e) {
 			logger.debug("NullPointerException.", e);
 			throw new RifidiIIllegialArgumentException(e);
-		} catch (Exception e) {
-			logger.debug("Exception.", e);
-			throw new RifidiConnectionIllegalStateException(e);
 		}
 
 		return null;
@@ -218,9 +209,6 @@ public class AlienReaderPlugin implements IReaderPlugin {
 			retVal = parseString(tags);
 		} catch (IOException e) {
 			logger.debug("IOException.", e);
-			throw new RifidiConnectionIllegalStateException(e);
-		} catch(Exception e) {
-			logger.debug("Excepion.",e);
 			throw new RifidiConnectionIllegalStateException(e);
 		}
 
