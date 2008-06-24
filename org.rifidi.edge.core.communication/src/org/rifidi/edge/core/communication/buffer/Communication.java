@@ -25,6 +25,11 @@ import org.rifidi.edge.core.communication.threads.WriteThread;
 
 
 
+/**
+ * @author jerry
+ * This class represents one communication pipe to the reader.
+ * This class is only meant to be used internally.
+ */
 public class Communication {
 	private static final Log logger = LogFactory.getLog(CommunicationServiceImpl.class);
 	
@@ -37,6 +42,11 @@ public class Communication {
 	private Socket socket;
 	private Protocol protocol;
 	
+	/**
+	 * Creates a communication to a reader.
+	 * @param socket The socket this communication class will use.
+	 * @param protocol The adapter supplied protocol handler. 
+	 */
 	public Communication(Socket socket, Protocol protocol ) {
 		this.socket = socket;
 		this.protocol = protocol;
@@ -44,13 +54,18 @@ public class Communication {
 		writeQueue = new LinkedBlockingQueue<Object>();
 	}
 	
+	/**
+	 * Starts the communication with a reader
+	 * @return ICommunicationConnection The connection to talk with the reader.
+	 * @throws IOException
+	 */
 	public ICommunicationConnection startCommunication() throws IOException
 	{
 		logger.debug("Trying to start communications");
 		
-		readThread = new ReadThread("Read Thread: " + socket.getInetAddress().toString() + ":" + socket.getPort(), protocol, readQueue, socket.getInputStream());
+		readThread = new ReadThread("Read Thread: (" + socket.getInetAddress().toString() + ":" + socket.getPort() + ")", protocol, readQueue, socket.getInputStream());
 
-		writeThread = new WriteThread("Write Thread: " + socket.getInetAddress().toString() + ":" + socket.getPort(), protocol, writeQueue, socket.getOutputStream());
+		writeThread = new WriteThread("Write Thread: (" + socket.getInetAddress().toString() + ":" + socket.getPort() + ")", protocol, writeQueue, socket.getOutputStream());
 
 
 		
@@ -65,6 +80,10 @@ public class Communication {
 		return communicationConnection;
 	}
 	
+	/**
+	 * Stops a communication to a reader.
+	 * @throws IOException
+	 */
 	public void stopCommunication() throws IOException{
 		readThread.stop();
 		writeThread.stop();
