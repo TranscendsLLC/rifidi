@@ -10,8 +10,8 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.rifidi.edge.core.communication.CommunicationBuffer;
 import org.rifidi.edge.core.communication.buffer.Communication;
+import org.rifidi.edge.core.communication.buffer.CommunicationBuffer;
 import org.rifidi.edge.core.communication.protocol.Protocol;
 import org.rifidi.edge.core.readerPlugin.AbstractReaderInfo;
 import org.rifidi.edge.core.readerPlugin.IReaderPlugin;
