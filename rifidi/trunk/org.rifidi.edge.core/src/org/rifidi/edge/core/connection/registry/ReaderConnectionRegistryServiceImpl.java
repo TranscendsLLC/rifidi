@@ -23,7 +23,7 @@ import org.rifidi.edge.core.connection.jms.JMSHelper;
 import org.rifidi.edge.core.connection.jms.JMSMessageThread;
 import org.rifidi.edge.core.readerPlugin.AbstractReaderInfo;
 import org.rifidi.edge.core.readerPlugin.IReaderPlugin;
-import org.rifidi.edge.core.readerPlugin.ReaderPluginFactory;
+import org.rifidi.edge.core.readerPlugin.factory.ReaderPluginFactory;
 import org.rifidi.services.annotations.Inject;
 import org.rifidi.services.registry.ServiceRegistry;
 
