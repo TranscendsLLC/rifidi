@@ -54,7 +54,7 @@ public class Communication {
 
 
 		
-		CommunicationConnection communicationConnection = new CommunicationConnection(readQueue, readQueue);
+		CommunicationConnection communicationConnection = new CommunicationConnection(readQueue, writeQueue);
 		
 		readThread.start();
 		writeThread.start();
