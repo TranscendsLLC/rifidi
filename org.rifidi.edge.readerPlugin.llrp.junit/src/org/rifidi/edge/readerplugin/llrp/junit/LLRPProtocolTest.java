@@ -25,7 +25,7 @@ import org.llrp.ltk.generated.messages.DELETE_ROSPEC;
 import org.llrp.ltk.generated.messages.ENABLE_ROSPEC;
 import org.llrp.ltk.types.LLRPMessage;
 import org.llrp.ltk.types.UnsignedInteger;
-import org.rifidi.edge.readerPlugin.llrp.LLRPProtcol;
+import org.rifidi.edge.readerPlugin.llrp.LLRPProtocol;
 
 /**
  * Tests the LLRPProtocol methods.
@@ -82,7 +82,7 @@ public class LLRPProtocolTest {
 				index++;
 			}
 
-			LLRPProtcol newProt = new LLRPProtcol();
+			LLRPProtocol newProt = new LLRPProtocol();
 			List<Object> newArr = newProt.toObject(acc);
 
 			for (Object o : newArr) {
@@ -111,7 +111,7 @@ public class LLRPProtocolTest {
 		DELETE_ROSPEC deleteROSpec = new DELETE_ROSPEC();
 		deleteROSpec.setROSpecID(new UnsignedInteger(1));
 
-		LLRPProtcol newProt = new LLRPProtcol();
+		LLRPProtocol newProt = new LLRPProtocol();
 
 		byte omg[] = newProt.fromObject(deleteROSpec);
 
