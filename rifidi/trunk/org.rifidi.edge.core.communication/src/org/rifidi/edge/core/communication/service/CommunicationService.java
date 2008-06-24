@@ -8,7 +8,7 @@
  *  License:	Lesser GNU Public License (LGPL)
  *  				http://www.opensource.org/licenses/lgpl-license.html
  */
-package org.rifidi.edge.core.communication;
+package org.rifidi.edge.core.communication.service;
 
 
 import java.io.IOException;
@@ -16,6 +16,7 @@ import java.net.ConnectException;
 import java.net.UnknownHostException;
 
 import org.rifidi.edge.core.communication.CommunicationBuffer;
+import org.rifidi.edge.core.communication.protocol.Protocol;
 import org.rifidi.edge.core.readerPlugin.AbstractReaderInfo;
 import org.rifidi.edge.core.readerPlugin.IReaderPlugin;
 

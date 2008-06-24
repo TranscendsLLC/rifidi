@@ -2,6 +2,7 @@ package org.rifidi.edge.core.communication;
 
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
+import org.rifidi.edge.core.communication.service.CommunicationService;
 import org.rifidi.edge.core.communication.service.CommunicationServiceImpl;
 
 

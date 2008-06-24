@@ -8,7 +8,7 @@
  *  License:	Lesser GNU Public License (LGPL)
  *  				http://www.opensource.org/licenses/lgpl-license.html
  */
-package org.rifidi.edge.core.communication;
+package org.rifidi.edge.core.communication.protocol;
 
 import java.util.List;
 

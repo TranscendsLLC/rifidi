@@ -20,7 +20,7 @@ import org.llrp.ltk.exceptions.InvalidLLRPMessageException;
 import org.llrp.ltk.generated.messages.LLRPMessageFactory;
 import org.llrp.ltk.types.LLRPMessage;
 import org.rifidi.edge.common.utilities.converter.ByteAndHexConvertingUtility;
-import org.rifidi.edge.core.communication.Protocol;
+import org.rifidi.edge.core.communication.protocol.Protocol;
 
 /**
  * @author Matthew Dean - matt@pramari.com
