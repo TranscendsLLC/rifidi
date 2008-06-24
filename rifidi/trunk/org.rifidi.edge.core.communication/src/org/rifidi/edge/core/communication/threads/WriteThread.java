@@ -22,6 +22,7 @@ public class WriteThread extends AbstractThread {
 	 * @param writeQueue
 	 * @param outputStream
 	 */
+	//TODO Jerry this is not documented
 	public WriteThread(String threadName, Protocol protocol,
 			LinkedBlockingQueue<Object> writeQueue, OutputStream outputStream) {
 		super(threadName);
