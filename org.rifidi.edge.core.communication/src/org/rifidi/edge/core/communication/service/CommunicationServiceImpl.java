@@ -41,6 +41,9 @@ public class CommunicationServiceImpl implements CommunicationService {
 	@Override
 	public CommunicationBuffer createConnection(IReaderPlugin plugin, AbstractReaderInfo info,
 			Protocol protocol) throws UnknownHostException, ConnectException, IOException {
+		if ( (plugin == null) || (info == null) || (protocol==null))
+			throw new NullPointerException("No null pointers allowed in arguments to this method.");
+		
 		logger.debug("Connecting: " + info.getIPAddress() + ":" + info.getPort() + " ...");
 		Socket socket = new Socket(info.getIPAddress(), info.getPort());
 		
@@ -57,10 +60,10 @@ public class CommunicationServiceImpl implements CommunicationService {
 	 * @see org.rifidi.edge.core.communication.CommunicationService#destroyConnection(org.rifidi.edge.core.communication.ICommunicationConnection)
 	 */
 	@Override
-	public void destroyConnection(CommunicationBuffer connection) throws IOException {
+	public void destroyConnection(CommunicationBuffer buffer) throws IOException {
 
-		Communication communication = communications.get(connection);
-		communications.remove(connection);
+		Communication communication = communications.get(buffer);
+		communications.remove(buffer);
 		
 		communication.stopCommunication();
 		
