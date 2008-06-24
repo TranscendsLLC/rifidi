@@ -90,12 +90,12 @@ public class LLRPReaderPlugin implements IReaderPlugin {
 	private ICommunicationConnection communicationConnection;
 
 	/**
-	 * The communication service for this reader.  
+	 * The communication service for this reader.
 	 */
 	private CommunicationService communicationService;
 
 	/**
-	 * The log4j logger
+	 * The log4j logger.
 	 */
 	private static Log logger = LogFactory.getLog(LLRPReaderPlugin.class);
 
@@ -105,7 +105,7 @@ public class LLRPReaderPlugin implements IReaderPlugin {
 	private static int ROSPEC_ID = 1;
 
 	/**
-	 * The LLRPReadThread that will read from the connection queue.  
+	 * The LLRPReadThread that will read from the connection queue.
 	 */
 	private LLRPReadThread reader;
 
@@ -215,7 +215,7 @@ public class LLRPReaderPlugin implements IReaderPlugin {
 		private LinkedBlockingQueue<LLRPMessage> roSpecListQueue = null;
 
 		/**
-		 * The connection object.  
+		 * The connection object.
 		 */
 		private ICommunicationConnection connection;
 
@@ -310,7 +310,7 @@ public class LLRPReaderPlugin implements IReaderPlugin {
 		}
 
 		/**
-		 * Returns the next GET_ROSPEC_REQUEST method.  
+		 * Returns the next GET_ROSPEC_REQUEST method.
 		 * 
 		 * @return
 		 */
@@ -359,9 +359,10 @@ public class LLRPReaderPlugin implements IReaderPlugin {
 		logger.debug("got past the while loop in the find next int");
 	}
 
-	/**
-	 * Gets the next tag
+	/*
+	 * (non-Javadoc)
 	 * 
+	 * @see org.rifidi.edge.core.readerPlugin.IReaderPlugin#getNextTags()
 	 */
 	@Override
 	public List<TagRead> getNextTags() {
@@ -417,7 +418,9 @@ public class LLRPReaderPlugin implements IReaderPlugin {
 	 * Does the ROSpec exist?
 	 * 
 	 * @param grr
-	 * @return
+	 *            The GET_ROSPECS_RESPONSE search through.
+	 * @return Returns true if the default ROSpec exists, false if it does not
+	 *         exist.  
 	 */
 	private boolean doesRoSpecExist(GET_ROSPECS_RESPONSE grr) {
 		try {
@@ -457,9 +460,9 @@ public class LLRPReaderPlugin implements IReaderPlugin {
 	}
 
 	/**
-	 * This method creates a SET_READER_CONFIG method
+	 * This method creates a SET_READER_CONFIG method.  
 	 * 
-	 * @return
+	 * @return		The SET_READER_CONFIG object.  
 	 */
 	private SET_READER_CONFIG createSetReaderConfig() {
 		SET_READER_CONFIG setReaderConfig = new SET_READER_CONFIG();
@@ -525,7 +528,8 @@ public class LLRPReaderPlugin implements IReaderPlugin {
 	 * Parses the tags from xml.
 	 * 
 	 * @param msg
-	 * @return
+	 *            The tag message to parse.
+	 * @return A list of TagRead objects representing tags.
 	 */
 	public List<TagRead> parseTags(LLRPMessage msg) {
 
@@ -564,7 +568,7 @@ public class LLRPReaderPlugin implements IReaderPlugin {
 	/**
 	 * This method creates a ROSpec with null start and stop triggers
 	 * 
-	 * @return
+	 * @return	A ROSpec object.  
 	 */
 	private ROSpec createROSpec() {
 		// create a new rospec
@@ -619,6 +623,7 @@ public class LLRPReaderPlugin implements IReaderPlugin {
 	 * milliseconds
 	 * 
 	 * @param ms
+	 *            How many milliseconds to pause.
 	 */
 	private void pause(long ms) {
 		try {
@@ -629,9 +634,10 @@ public class LLRPReaderPlugin implements IReaderPlugin {
 	}
 
 	/**
-	 * Inject the communication service. 
+	 * Inject the communication service.
 	 * 
 	 * @param communicationService
+	 *            The communication service to inject.
 	 */
 	@Inject
 	public void setCommunicationService(
