@@ -47,16 +47,21 @@ public class AlienReaderPlugin implements IReaderPlugin {
 	private static final Log logger = LogFactory
 			.getLog(AlienReaderPlugin.class);
 
-	boolean connected;
-
+	/**
+	 * 
+	 */
 	private ICommunicationConnection communicationConnection;
-
+	
+	/**
+	 * 
+	 */
+	private CommunicationService communicationService;
 	/**
 	 * The connection info for this reader
 	 */
 	private AlienReaderInfo aci;
 
-	private CommunicationService communicationService;
+
 
 	/**
 	 * Adapter for the Alien reader.
@@ -66,8 +71,6 @@ public class AlienReaderPlugin implements IReaderPlugin {
 	 */
 	public AlienReaderPlugin(AlienReaderInfo aci) {
 		this.aci = aci;
-
-		connected = false;
 
 		ServiceRegistry.getInstance().service(this);
 	}
@@ -89,8 +92,6 @@ public class AlienReaderPlugin implements IReaderPlugin {
 
 			communicationConnection = communicationService.createConnection(
 					this, aci, new AlienProtocol());
-
-			connected = true;
 
 			logger.debug(aci.getIPAddress() + ", " + aci.getPort());
 			String welcome = (String) communicationConnection.recieve();
@@ -129,8 +130,6 @@ public class AlienReaderPlugin implements IReaderPlugin {
 	 */
 	@Override
 	public void disconnect() throws RifidiConnectionException {
-
-		connected = false;
 		if (communicationService == null)
 			throw new RifidiConnectionException(
 					"CommunicationSerivce Not Found!");
