@@ -128,7 +128,7 @@ public class ThingMagicReaderPlugin implements IReaderPlugin {
 				
 				 input = (String) communicationConnection.recieve();
 				 logger.debug(input);
-			} catch (Exception e) {
+			} catch (IOException e) {
 				logger.debug("IOException has accured.", e);
 				throw new RifidiConnectionIllegalStateException(e);
 			}
@@ -212,42 +212,6 @@ public class ThingMagicReaderPlugin implements IReaderPlugin {
 	@Override
 	public boolean isBlocking() {
 		return false;
-	}
-
-	
-	/**
-	 * Reads a series of bytes until the end of the stream it hit.
-	 * @param inBuf A buffered reader for input.
-	 * @return The bytes read as a continuous string.
-	 * @throws IOException
-	 */
-	private static String readFromReader(BufferedReader inBuf) throws IOException{
-		StringBuffer buf = new StringBuffer();
-		
-		//String temp = inBuf.readLine();
-		/*while(temp != null){
-			buf.append(temp);
-			temp = inBuf.readLine();
-		}*/
-		
-		//TODO: See if this is really needed on the real thing magic reader.
-		try {
-			Thread.sleep(500);
-		} catch (InterruptedException e) {
-			logger.debug("InterruptedException.", e);
-		}
-		while(inBuf.ready()){
-			int ch=inBuf.read();
-			buf.append((char)ch);
-		}
-		/*
-		int ch=inBuf.read();
-		while(ch != -1){
-			buf.append((char)ch);
-			ch=inBuf.read();
-		}*/
-		
-		return buf.toString();
 	}
 
 	@Inject
