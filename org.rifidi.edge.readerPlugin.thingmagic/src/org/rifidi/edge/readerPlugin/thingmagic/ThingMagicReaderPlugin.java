@@ -11,12 +11,8 @@
  */
 package org.rifidi.edge.readerPlugin.thingmagic;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.net.ConnectException;
-import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,11 +25,9 @@ import org.rifidi.edge.core.communication.service.CommunicationService;
 import org.rifidi.edge.core.exception.RifidiIIllegialArgumentException;
 import org.rifidi.edge.core.exception.readerConnection.RifidiConnectionIllegalStateException;
 import org.rifidi.edge.core.exception.readerConnection.RifidiConnectionException;
-import org.rifidi.edge.core.readerPlugin.AbstractReaderInfo;
 import org.rifidi.edge.core.readerPlugin.IReaderPlugin;
 import org.rifidi.edge.core.readerPlugin.commands.ICustomCommand;
 import org.rifidi.edge.core.readerPlugin.commands.ICustomCommandResult;
-import org.rifidi.edge.core.readerPluginService.ReaderPluginRegistryService;
 import org.rifidi.edge.core.tag.TagRead;
 import org.rifidi.edge.readerPlugin.thingmagic.commands.ThingMagicCustomCommand;
 import org.rifidi.edge.readerPlugin.thingmagic.commands.ThingMagicCustomCommandResult;
