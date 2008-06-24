@@ -65,12 +65,14 @@ public class Communication {
 		return communicationConnection;
 	}
 	
-	public void stopCommunication(){
+	public void stopCommunication() throws IOException{
 		readThread.stop();
 		writeThread.stop();
+		
+		logger.debug("Disconnecting: " + socket.getInetAddress() + ":" 
+				+ socket.getPort() + " ...");
+		
+		socket.close();
 	}
 
-	public Socket getSocket(){
-		return socket;
-	}
 }
