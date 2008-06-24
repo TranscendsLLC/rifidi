@@ -11,10 +11,7 @@
  */
 package org.rifidi.edge.readerPlugin.llrp;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
-import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,7 +36,6 @@ import org.llrp.ltk.generated.messages.DISABLE_ROSPEC;
 import org.llrp.ltk.generated.messages.ENABLE_ROSPEC;
 import org.llrp.ltk.generated.messages.GET_ROSPECS;
 import org.llrp.ltk.generated.messages.GET_ROSPECS_RESPONSE;
-import org.llrp.ltk.generated.messages.LLRPMessageFactory;
 import org.llrp.ltk.generated.messages.RO_ACCESS_REPORT;
 import org.llrp.ltk.generated.messages.SET_READER_CONFIG;
 import org.llrp.ltk.generated.messages.START_ROSPEC;
@@ -66,11 +62,15 @@ import org.llrp.ltk.types.UnsignedInteger;
 import org.llrp.ltk.types.UnsignedShort;
 import org.llrp.ltk.types.UnsignedShortArray;
 import org.rifidi.edge.common.utilities.converter.ByteAndHexConvertingUtility;
+import org.rifidi.edge.core.communication.CommunicationService;
+import org.rifidi.edge.core.communication.ICommunicationConnection;
 import org.rifidi.edge.core.exception.readerConnection.RifidiConnectionException;
 import org.rifidi.edge.core.readerPlugin.IReaderPlugin;
 import org.rifidi.edge.core.readerPlugin.commands.ICustomCommand;
 import org.rifidi.edge.core.readerPlugin.commands.ICustomCommandResult;
 import org.rifidi.edge.core.tag.TagRead;
+import org.rifidi.services.annotations.Inject;
+import org.rifidi.services.registry.ServiceRegistry;
 
 /**
  * This class represents a plugin which will talk with an LLRP Reader.
@@ -85,29 +85,29 @@ public class LLRPReaderPlugin implements IReaderPlugin {
 	private LLRPReaderInfo aci;
 
 	/**
+	 * The communication connection
+	 */
+	private ICommunicationConnection communicationConnection;
+
+	/**
+	 * 
+	 */
+	private CommunicationService communicationService;
+
+	/**
 	 * The log4j logger
 	 */
 	private static Log logger = LogFactory.getLog(LLRPReaderPlugin.class);
 
 	/**
-	 * The socket connection.
-	 */
-	private Socket connection = null;
-
-	/**
-	 * The output stream.
-	 */
-	private DataOutputStream out = null;
-
-	/**
-	 * The reader thread.
-	 */
-	private ReadThread reader = null;
-
-	/**
 	 * The ID of the ROSpec that is used.
 	 */
 	private static int ROSPEC_ID = 1;
+
+	/**
+	 * 
+	 */
+	private LLRPReadThread reader;
 
 	/**
 	 * Adapter for the Alien reader.
@@ -117,6 +117,8 @@ public class LLRPReaderPlugin implements IReaderPlugin {
 	 */
 	public LLRPReaderPlugin(LLRPReaderInfo aci) {
 		this.aci = aci;
+
+		ServiceRegistry.getInstance().service(this);
 	}
 
 	/*
@@ -126,11 +128,18 @@ public class LLRPReaderPlugin implements IReaderPlugin {
 	 */
 	@Override
 	public void connect() throws RifidiConnectionException {
+		if (communicationService == null) {
+			throw new RifidiConnectionException(
+					"CommunicationSerivce Not Found!");
+		}
+
 		// Connect to the LLRP Reader
 		try {
-			connection = new Socket(aci.getIPAddress(), aci.getPort());
-			out = new DataOutputStream(connection.getOutputStream());
-			reader = new ReadThread(connection);
+			communicationConnection = communicationService.createConnection(
+					this, aci, new LLRPProtocol());
+
+			reader = new LLRPReadThread(communicationConnection);
+
 			reader.start();
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
@@ -189,17 +198,7 @@ public class LLRPReaderPlugin implements IReaderPlugin {
 	 * @author Andreas Huebner
 	 * @author Matthew Dean
 	 */
-	class ReadThread extends Thread {
-
-		/**
-		 * The incoming data stream from the LLRP reader connection
-		 */
-		private DataInputStream inStream = null;
-
-		/**
-		 * The socket for the connection to the LLRP Reader
-		 */
-		private Socket socket = null;
+	private class LLRPReadThread extends Thread {
 
 		/**
 		 * A queue to store incoming LLRP Messages
@@ -217,20 +216,20 @@ public class LLRPReaderPlugin implements IReaderPlugin {
 		private LinkedBlockingQueue<LLRPMessage> roSpecListQueue = null;
 
 		/**
+		 * 
+		 */
+		private ICommunicationConnection connection;
+
+		/**
 		 * Thread for constant reading of the stream
 		 * 
 		 * @param inStream
 		 */
-		public ReadThread(Socket socket) {
-			this.socket = socket;
+		public LLRPReadThread(ICommunicationConnection comm) {
 			this.commandQueue = new LinkedBlockingQueue<LLRPMessage>();
 			this.tagQueue = new LinkedBlockingQueue<LLRPMessage>();
 			this.roSpecListQueue = new LinkedBlockingQueue<LLRPMessage>();
-			try {
-				this.inStream = new DataInputStream(socket.getInputStream());
-			} catch (IOException e) {
-				logger.error("Cannot get input stream", e);
-			}
+			this.connection = comm;
 		}
 
 		/*
@@ -241,43 +240,46 @@ public class LLRPReaderPlugin implements IReaderPlugin {
 		@Override
 		public void run() {
 			super.run();
-			if (socket.isConnected()) {
-				while (!socket.isClosed()) {
-					LLRPMessage message = null;
-					try {
-						message = read();
-						if (message != null) {
-							// If the message isn't a RO_ACCESS_REPORT, it is
-							// going on the command queue.
-							if (!(message instanceof RO_ACCESS_REPORT)
-									&& !(message instanceof GET_ROSPECS_RESPONSE)) {
-								commandQueue.put(message);
-								logger.debug("ADDING A NON-TAG MESSAGE: "
-										+ message.getMessageID().toString());
-								logger.info("Received Message: \n"
-										+ message.toXMLString());
-								commandQueue.clear();
-							} else if (message instanceof RO_ACCESS_REPORT) {
-								logger.debug("ADDING A TAG MESSAGE");
-								tagQueue.clear();
-								tagQueue.put(message);
-							} else if (message instanceof GET_ROSPECS_RESPONSE) {
-								logger.debug("ADDING A GET ROSPEC RESPONSE");
-								roSpecListQueue.clear();
-								roSpecListQueue.put(message);
-							}
-						} else {
-							logger.info("closing socket");
-							socket.close();
+			boolean isRunning = true;
+			while (isRunning) {
+				LLRPMessage message = null;
+				try {
+					message = read();
+					if (message != null) {
+						// If the message isn't a RO_ACCESS_REPORT, it is
+						// going on the command queue.
+						if (!(message instanceof RO_ACCESS_REPORT)
+								&& !(message instanceof GET_ROSPECS_RESPONSE)) {
+							commandQueue.put(message);
+							logger.debug("ADDING A NON-TAG MESSAGE: "
+									+ message.getMessageID().toString());
+							logger.info("Received Message: \n"
+									+ message.toXMLString());
+							commandQueue.clear();
+						} else if (message instanceof RO_ACCESS_REPORT) {
+							logger.debug("ADDING A TAG MESSAGE");
+							tagQueue.clear();
+							tagQueue.put(message);
+						} else if (message instanceof GET_ROSPECS_RESPONSE) {
+							logger.debug("ADDING A GET ROSPEC RESPONSE");
+							roSpecListQueue.clear();
+							roSpecListQueue.put(message);
 						}
-					} catch (IOException e) {
-						logger.error("Error while reading message", e);
-					} catch (InvalidLLRPMessageException e) {
-						logger.error("Error while reading message", e);
-					} catch (InterruptedException e) {
-						logger.error("Error while reading message", e);
+					} else {
+						logger.info("closing socket");
+						isRunning = false;
 					}
+				} catch (IOException e) {
+					logger.error("Error while reading message", e);
+					isRunning = false;
+				} catch (InvalidLLRPMessageException e) {
+					isRunning = false;
+					logger.error("Error while reading message", e);
+				} catch (InterruptedException e) {
+					isRunning = false;
+					logger.error("Error while reading message", e);
 				}
+
 			}
 		}
 
@@ -288,129 +290,8 @@ public class LLRPReaderPlugin implements IReaderPlugin {
 		 */
 		public LLRPMessage read() throws IOException,
 				InvalidLLRPMessageException {
-			LLRPMessage m = null;
-			// The message header
-			byte[] first = new byte[6];
-
-			// the complete message
-			byte[] msg;
-
-			// Read in the message header. If -1 is read, there is no more
-			// data available, so close the socket
-			if (inStream.read(first, 0, 6) == -1) {
-				return null;
-			}
-			int msgLength = 0;
-
-			try {
-				// calculate message length
-				msgLength = calculateLLRPMessageLength(first);
-			} catch (IllegalArgumentException e) {
-				throw new IOException("Incorrect Message Length");
-			}
-
-			/*
-			 * the rest of bytes of the message will be stored in here before
-			 * they are put in the accumulator. If the message is short, all
-			 * messageLength-6 bytes will be read in here at once. If it is
-			 * long, the data might not be available on the socket all at once,
-			 * so it make take a couple of iterations to read in all the bytes
-			 */
-			byte[] temp = new byte[msgLength - 6];
-
-			// all the rest of the bytes will be put into the accumulator
-			ArrayList<Byte> accumulator = new ArrayList<Byte>();
-
-			// add the first six bytes to the accumulator so that it will
-			// contain all the bytes at the end
-			for (byte b : first) {
-				accumulator.add(b);
-			}
-
-			// the number of bytes read on the last call to read()
-			int numBytesRead = 0;
-
-			// read from the input stream and put bytes into the accumulator
-			// while there are still bytes left to read on the socket and
-			// the entire message has not been read
-			while (((msgLength - accumulator.size()) != 0)
-					&& numBytesRead != -1) {
-
-				numBytesRead = inStream.read(temp, 0, msgLength
-						- accumulator.size());
-
-				for (int i = 0; i < numBytesRead; i++) {
-					accumulator.add(temp[i]);
-				}
-			}
-
-			if ((msgLength - accumulator.size()) != 0) {
-				throw new IOException("Error: Discrepency between message size"
-						+ " in header and actual number of bytes read");
-			}
-
-			msg = new byte[msgLength];
-
-			// copy all bytes in the accumulator to the msg byte array
-			for (int i = 0; i < accumulator.size(); i++) {
-				msg[i] = accumulator.get(i);
-			}
-
-			// turn the byte array into an LLRP Message Object
-			m = LLRPMessageFactory.createLLRPMessage(msg);
+			LLRPMessage m = (LLRPMessage) connection.recieve();
 			return m;
-		}
-
-		/**
-		 * Send in the first 6 bytes of an LLRP Message
-		 * 
-		 * @param bytes
-		 * @return
-		 */
-		private int calculateLLRPMessageLength(byte[] bytes)
-				throws IllegalArgumentException {
-			long msgLength = 0;
-			int num1 = 0;
-			int num2 = 0;
-			int num3 = 0;
-			int num4 = 0;
-
-			num1 = ((unsignedByteToInt(bytes[2])));
-			num1 = num1 << 32;
-
-			if (num1 > 127) {
-				throw new RuntimeException(
-						"Cannot construct a message greater than "
-								+ "2147483647 bytes (2^31 - 1), due to the fact that there are "
-								+ "no unsigned ints in java");
-			}
-
-			num2 = ((unsignedByteToInt(bytes[3])));
-			num2 = num2 << 16;
-
-			num3 = ((unsignedByteToInt(bytes[4])));
-			num3 = num3 << 8;
-
-			num4 = (unsignedByteToInt(bytes[5]));
-
-			msgLength = num1 + num2 + num3 + num4;
-
-			if (msgLength < 0) {
-				throw new IllegalArgumentException(
-						"LLRP message length is less than 0");
-			} else {
-				return (int) msgLength;
-			}
-		}
-
-		/**
-		 * From http://www.rgagnon.com/javadetails/java-0026.html
-		 * 
-		 * @param b
-		 * @return
-		 */
-		private int unsignedByteToInt(byte b) {
-			return (int) b & 0xFF;
 		}
 
 		/**
@@ -563,8 +444,7 @@ public class LLRPReaderPlugin implements IReaderPlugin {
 	private void write(LLRPMessage msg, String message) {
 		try {
 			logger.debug(" Sending message: \n" + msg.toXMLString());
-			out.write(msg.encodeBinary());
-			out.flush();
+			communicationConnection.send(msg);
 		} catch (IOException e) {
 			logger.error("Couldn't send Command ", e);
 		} catch (InvalidLLRPMessageException e) {
@@ -745,12 +625,14 @@ public class LLRPReaderPlugin implements IReaderPlugin {
 	}
 
 	/**
-	 * From http://www.rgagnon.com/javadetails/java-0026.html
 	 * 
-	 * @param b
-	 * @return
+	 * @param communicationService
 	 */
-	public int unsignedByteToInt(byte b) {
-		return (int) b & 0xFF;
+	@Inject
+	public void setCommunicationService(
+			CommunicationService communicationService) {
+		logger.debug("communicationService set");
+		this.communicationService = communicationService;
+
 	}
 }
