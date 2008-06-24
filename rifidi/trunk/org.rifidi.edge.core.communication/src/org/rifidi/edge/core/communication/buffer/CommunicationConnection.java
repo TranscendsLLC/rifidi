@@ -162,6 +162,7 @@ public class CommunicationConnection implements ICommunicationConnection, Thread
 		if (e instanceof Exception) {
 			logger.debug("Saw exception " + e.getClass().getName());
 			exception = (Exception) e;
+			//TODO Put an interrupt object on the queue.... or exception depending on what is decided.
 			
 		} else {
 			t.getThreadGroup().uncaughtException(t, e);
