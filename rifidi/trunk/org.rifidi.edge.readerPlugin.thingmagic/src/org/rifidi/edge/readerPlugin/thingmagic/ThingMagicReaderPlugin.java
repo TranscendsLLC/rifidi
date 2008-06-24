@@ -128,8 +128,6 @@ public class ThingMagicReaderPlugin implements IReaderPlugin {
 				
 				 input = (String) communicationConnection.recieve();
 				 logger.debug(input);
-				 input = (String) communicationConnection.recieve();
-				 logger.debug(input);
 			} catch (Exception e) {
 				logger.debug("IOException has accured.", e);
 				throw new RifidiConnectionIllegalStateException(e);

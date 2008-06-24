@@ -54,13 +54,12 @@ public class ReadThread  extends NewThread {
 		ByteArrayOutputStream buffer = new ByteArrayOutputStream();
 		
 		while((input = inputStream.read()) != -1){
-			logger.debug("Reading");
 			buffer.write(input);
 			
+			//TODO Not sure this is going to work for every reader
 			if (inputStream.available() == 0)
 				break;		
 		}
-		logger.debug("Extiting reading");
 		return buffer.toByteArray();
 	}
 	
