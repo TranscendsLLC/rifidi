@@ -2,6 +2,7 @@ package org.rifidi.edge.core.communication.buffer;
 
 import java.io.IOException;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -21,17 +22,11 @@ public class CommunicationConnection implements ICommunicationConnection, Thread
 		this.writeQueue = writeQueue;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.communication.ICommunicationConnection#recieve()
+	 */
+	@Override
 	public Object recieve() throws IOException {
-		try {
-			logger.debug("Trying to recieve a message");
-			return readQueue.take();
-
-
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
 		if (exception != null){
 			if (exception instanceof IOException )
 				throw (IOException) exception;
@@ -41,13 +36,69 @@ public class CommunicationConnection implements ICommunicationConnection, Thread
 			
 			throw new RuntimeException("Unexpected non-RuntimeException in read or write thread", exception);
 		}
+		
+		try {
+			logger.debug("Trying to recieve a message");
+			return readQueue.take();
+
+
+		} catch (InterruptedException e) {
+	
+		}
 		return null;
 	}
-	
-	/**
-	 * 
-	 * @param msg
+
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.communication.ICommunicationConnection#recieveNonBlocking()
 	 */
+	@Override
+	public Object recieveNonBlocking() throws IOException {
+		if (exception != null){
+			if (exception instanceof IOException )
+				throw (IOException) exception;
+			
+			if (exception instanceof RuntimeException )
+				throw (RuntimeException) exception;
+			
+			throw new RuntimeException("Unexpected non-RuntimeException in read or write thread", exception);
+		}
+		
+		logger.debug("Trying to recieve a message");
+		Object retVal = readQueue.poll();
+
+	
+
+		return retVal;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.communication.ICommunicationConnection#recieveTimeOut(long)
+	 */
+	@Override
+	public Object recieveTimeOut(long mills) throws IOException {
+		if (exception != null){
+			if (exception instanceof IOException )
+				throw (IOException) exception;
+			
+			if (exception instanceof RuntimeException )
+				throw (RuntimeException) exception;
+			
+			throw new RuntimeException("Unexpected non-RuntimeException in read or write thread", exception);
+		}
+		
+		Object retVal = null;
+		try {
+			readQueue.poll(mills, TimeUnit.MILLISECONDS);
+		} catch (InterruptedException e) {
+			
+		}
+		return retVal;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.communication.ICommunicationConnection#send(java.lang.Object)
+	 */
+	@Override
 	public void send(Object msg) throws IOException {
 		logger.debug("Trying to send a message: " + msg );
 		writeQueue.add(msg);
@@ -61,7 +112,10 @@ public class CommunicationConnection implements ICommunicationConnection, Thread
 			throw new RuntimeException("Unexpected non-RuntimeException in read or write thread.", exception);
 		}
 	}
-
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Thread$UncaughtExceptionHandler#uncaughtException(java.lang.Thread, java.lang.Throwable)
+	 */
 	@Override
 	public void uncaughtException(Thread t, Throwable e) {
 		// TODO Auto-generated method stub
@@ -72,5 +126,4 @@ public class CommunicationConnection implements ICommunicationConnection, Thread
 			t.getThreadGroup().uncaughtException(t, e);
 		}
 	}
-
 }
