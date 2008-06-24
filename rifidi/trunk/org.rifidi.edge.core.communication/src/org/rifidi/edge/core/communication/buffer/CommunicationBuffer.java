@@ -1,4 +1,4 @@
-package org.rifidi.edge.core.communication;
+package org.rifidi.edge.core.communication.buffer;
 
 import java.io.IOException;
 
