@@ -47,6 +47,7 @@ public class AlienProtocol extends Protocol {
 			String[] splitstr = input.split("\0");
 
 			for (String s : splitstr) {
+				s = s.trim();
 				if (s.length() > 0) {
 					retVal.add(s);
 				}
