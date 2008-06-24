@@ -82,7 +82,7 @@ public class LLRPReaderPlugin implements IReaderPlugin {
 	/**
 	 * The connection info for this reader
 	 */
-	private LLRPReaderInfo aci;
+	private LLRPReaderInfo llrpri;
 
 	/**
 	 * The communication connection
@@ -112,12 +112,11 @@ public class LLRPReaderPlugin implements IReaderPlugin {
 	/**
 	 * Adapter for the Alien reader.
 	 * 
-	 * @param aci
+	 * @param llrpri
 	 *            The connection info for the Alien Reader.
 	 */
-	public LLRPReaderPlugin(LLRPReaderInfo aci) {
-		this.aci = aci;
-
+	public LLRPReaderPlugin(LLRPReaderInfo llrpri) {
+		this.llrpri = llrpri;
 		ServiceRegistry.getInstance().service(this);
 	}
 
@@ -136,7 +135,7 @@ public class LLRPReaderPlugin implements IReaderPlugin {
 		// Connect to the LLRP Reader
 		try {
 			communicationConnection = communicationService.createConnection(
-					this, aci, new LLRPProtocol());
+					this, llrpri, new LLRPProtocol());
 
 			reader = new LLRPReadThread(communicationConnection);
 
