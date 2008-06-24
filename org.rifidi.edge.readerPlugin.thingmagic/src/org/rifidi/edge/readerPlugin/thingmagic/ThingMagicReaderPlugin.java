@@ -126,7 +126,7 @@ public class ThingMagicReaderPlugin implements IReaderPlugin {
 			try {
 				communicationConnection.send("select id, timestamp from tag_id;\n");
 				
-				 input = (String) communicationConnection.recieve();
+				 input = (String) communicationConnection.receive();
 				 logger.debug(input);
 			} catch (IOException e) {
 				logger.debug("IOException has accured.", e);
@@ -196,7 +196,7 @@ public class ThingMagicReaderPlugin implements IReaderPlugin {
 				communicationConnection.send(command.getCustomCommand());
 
 				//TODO check if result is actually an error
-				result = new ThingMagicCustomCommandResult((String) communicationConnection.recieve());
+				result = new ThingMagicCustomCommandResult((String) communicationConnection.receive());
 			} catch (IOException e) {
 				logger.debug("IOException has accured.", e);
 				throw new RifidiConnectionIllegalStateException(e.getClass().getName(), e);
