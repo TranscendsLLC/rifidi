@@ -20,7 +20,7 @@ import org.llrp.ltk.exceptions.InvalidLLRPMessageException;
 import org.llrp.ltk.generated.messages.LLRPMessageFactory;
 import org.llrp.ltk.types.LLRPMessage;
 import org.rifidi.edge.common.utilities.converter.ByteAndHexConvertingUtility;
-import org.rifidi.edge.core.communication.buffer.Protocol;
+import org.rifidi.edge.core.communication.Protocol;
 
 /**
  * @author Matthew Dean - matt@pramari.com
@@ -31,9 +31,8 @@ public class LLRPProtcol extends Protocol {
 	/**
 	 * The log4j logger.
 	 */
-	private static final Log logger = LogFactory
-			.getLog(LLRPProtcol.class);
-	
+	private static final Log logger = LogFactory.getLog(LLRPProtcol.class);
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -41,7 +40,7 @@ public class LLRPProtcol extends Protocol {
 	 */
 	@Override
 	public byte[] fromObject(Object arg) {
-		LLRPMessage llrpm = (LLRPMessage)arg;
+		LLRPMessage llrpm = (LLRPMessage) arg;
 		try {
 			return llrpm.encodeBinary();
 		} catch (InvalidLLRPMessageException e) {
