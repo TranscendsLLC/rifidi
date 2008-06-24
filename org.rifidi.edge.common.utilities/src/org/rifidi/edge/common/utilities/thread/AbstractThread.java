@@ -10,7 +10,7 @@ import org.apache.commons.logging.LogFactory;
 public abstract class AbstractThread implements Runnable {
 	private static final Log logger = LogFactory.getLog(AbstractThread.class);	
 	
-	Thread thread;
+	private Thread thread;
 	
 	protected boolean running = false;
 	
@@ -49,10 +49,21 @@ public abstract class AbstractThread implements Runnable {
 	
 	}
 	
-	/**
-	 * @param eh
-	 */
+
 	public void setUncaughtExceptionHandler(Thread.UncaughtExceptionHandler eh){
-		thread.setUncaughtExceptionHandler(eh);
+		thread.setUncaughtExceptionHandler(eh);	
+	}
+	
+	public boolean isAlive(){
+		return thread.isAlive();
+		
+	}
+	
+	public void interrupt(){
+		thread.interrupt();
+	}
+	
+	public boolean isInterrupted(){
+		return thread.isInterrupted();
 	}
 }
