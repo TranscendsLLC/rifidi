@@ -34,8 +34,11 @@ public class CommunicationConnection implements ICommunicationConnection, Thread
 	 * @see org.rifidi.edge.core.communication.ICommunicationConnection#recieve()
 	 */
 	@Override
-	public Object recieve() throws IOException {
+	public Object receive() throws IOException {
 		if (exception != null) {
+			/*These if statements are here so that we can 'throws IOException' in the method
+			 * signature instead of 'throws Exception'
+			 */
 			if (exception instanceof IOException)
 				throw (IOException) exception;
 
@@ -72,10 +75,11 @@ public class CommunicationConnection implements ICommunicationConnection, Thread
 	 * @see org.rifidi.edge.core.communication.ICommunicationConnection#recieveNonBlocking()
 	 */
 	@Override
-	public Object recieveNonBlocking() throws IOException {
+	public Object receiveNonBlocking() throws IOException {
 		if (exception != null) {
 			/*These if statements are here so that we can 'throws IOException' in the method
-			 * signature instead of 'throws Exception'*/
+			 * signature instead of 'throws Exception'
+			 */
 			if (exception instanceof IOException)
 				throw (IOException) exception;
 
@@ -99,10 +103,11 @@ public class CommunicationConnection implements ICommunicationConnection, Thread
 	 * @see org.rifidi.edge.core.communication.ICommunicationConnection#recieveTimeOut(long)
 	 */
 	@Override
-	public Object recieveTimeOut(long mills) throws IOException {
+	public Object receiveTimeOut(long mills) throws IOException {
 		if (exception != null) {
 			/*These if statements are here so that we can 'throws IOException' in the method
-			 * signature instead of 'throws Exception'*/
+			 * signature instead of 'throws Exception'
+			 */
 			if (exception instanceof IOException)
 				throw (IOException) exception;
 
@@ -144,7 +149,8 @@ public class CommunicationConnection implements ICommunicationConnection, Thread
 		writeQueue.add(msg);
 		if (exception != null) {
 			/*These if statements are here so that we can 'throws IOException' in the method
-			 * signature instead of 'throws Exception'*/
+			 * signature instead of 'throws Exception'
+			 */
 			if (exception instanceof IOException)
 				throw (IOException) exception;
 
