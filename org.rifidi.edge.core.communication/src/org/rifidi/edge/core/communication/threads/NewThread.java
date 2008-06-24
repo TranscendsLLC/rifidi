@@ -30,7 +30,9 @@ public abstract class NewThread implements Runnable {
 			thread.join(1000);
 			if(thread.isAlive())
 			{
-				thread.interrupt();
+				synchronized (thread) {
+					thread.interrupt();
+				}
 			}
 		} catch (InterruptedException e) {
 	
