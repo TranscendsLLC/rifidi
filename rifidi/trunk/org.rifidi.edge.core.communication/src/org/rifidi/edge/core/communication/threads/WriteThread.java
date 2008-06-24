@@ -17,7 +17,7 @@ public class WriteThread extends NewThread {
 	private LinkedBlockingQueue<Object> writeQueue;
 	private OutputStream outputStream;
 	
-	private boolean running = true;
+	
 
 	public WriteThread(String threadName, Protocol protocol, LinkedBlockingQueue<Object> writeQueue, OutputStream outputStream) {
 		super(threadName);
