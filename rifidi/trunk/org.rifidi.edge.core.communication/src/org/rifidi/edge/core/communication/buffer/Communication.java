@@ -19,10 +19,10 @@ import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.communication.ICommunicationConnection;
 import org.rifidi.edge.core.communication.Protocol;
 import org.rifidi.edge.core.communication.service.CommunicationServiceImpl;
-import org.rifidi.edge.core.communication.threads.NewThread;
+
 import org.rifidi.edge.core.communication.threads.ReadThread;
 import org.rifidi.edge.core.communication.threads.WriteThread;
-import org.rifidi.edge.core.readerPlugin.IReaderPlugin;
+
 
 
 public class Communication {
