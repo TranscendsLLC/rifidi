@@ -26,6 +26,16 @@ public abstract class NewThread implements Runnable {
 	public void stop(){
 		logger.debug("Stoping");
 		running = false;
+		try {
+			thread.join(1000);
+			if(thread.isAlive())
+			{
+				thread.interrupt();
+			}
+		} catch (InterruptedException e) {
+	
+		}
+	
 	}
 	
 	public void setUncaughtExceptionHandler(Thread.UncaughtExceptionHandler eh){
