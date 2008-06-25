@@ -87,6 +87,7 @@ public class ReaderConnection implements IReaderConnection {
 		return sessionID;
 	}
 
+	//TODO Andreas: Need to change the name of this method.
 	/* (non-Javadoc)
 	 * @see org.rifidi.edge.core.connection.IReaderConnection#setSessionID(int)
 	 */
