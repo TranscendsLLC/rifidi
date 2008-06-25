@@ -223,12 +223,12 @@ public class ReaderConnection implements IReaderConnection {
 				errorCause = null;
 			} else if (state != EReaderAdapterState.DISCONECTED) {
 				logger.debug("Reconnecting from being disconnected...");
-			}else{
+			} else {
 				RifidiException e =  new RifidiConnectionIllegalStateException("Addapter trying to connect in illegal state.");
 				setErrorCause(e);
 				throw e;
 			}
-		}
+		} 
 		try {
 			adapter.connect();
 			state = EReaderAdapterState.CONNECTED;
