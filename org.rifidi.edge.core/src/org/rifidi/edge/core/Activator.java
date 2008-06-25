@@ -50,7 +50,7 @@ public class Activator implements BundleActivator {
 		jmsService = new JMSServiceImpl();
 		context.registerService(JMSService.class.getName(),
 				jmsService, null);
-
+		
 	}
 
 	/*
