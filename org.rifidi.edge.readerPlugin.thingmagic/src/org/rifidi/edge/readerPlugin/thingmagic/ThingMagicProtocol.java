@@ -20,6 +20,7 @@ public class ThingMagicProtocol extends Protocol {
 	@Override
 	public byte[] fromObject(Object arg) {
 		logger.debug(arg);
+		//All objects coming in are strings and are sent out as raw bytes.
 		return ( (String)arg ).getBytes();
 	}
 
@@ -33,6 +34,8 @@ public class ThingMagicProtocol extends Protocol {
 		
 		String input = new String(arg);
 		logger.debug(input);
+		
+		//the end of a tag stream is a double newline.
 		if(!input.equals("\n\n")){		
 		
 			for (String s : input.split("\n\n")) {

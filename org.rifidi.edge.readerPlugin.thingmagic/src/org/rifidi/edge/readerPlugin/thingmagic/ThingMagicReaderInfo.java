@@ -25,6 +25,9 @@ public class ThingMagicReaderInfo extends AbstractReaderInfo {
 	 */
 	private static final long serialVersionUID = -609667495940483193L;
 
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.readerPlugin.AbstractReaderInfo#getReaderType()
+	 */
 	@Override
 	public String getReaderType() {
 		return "ThingMagicReader";
