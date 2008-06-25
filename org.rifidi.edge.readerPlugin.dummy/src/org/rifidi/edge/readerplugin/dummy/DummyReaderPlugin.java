@@ -1,11 +1,24 @@
 package org.rifidi.edge.readerplugin.dummy;
 
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.ConnectException;
+import java.net.InetSocketAddress;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.rifidi.edge.common.utilities.thread.AbstractThread;
+import org.rifidi.edge.core.communication.buffer.CommunicationBuffer;
+import org.rifidi.edge.core.communication.service.CommunicationService;
 import org.rifidi.edge.core.exception.RifidiIIllegialArgumentException;
 import org.rifidi.edge.core.exception.readerConnection.RifidiConnectionIllegalStateException;
 import org.rifidi.edge.core.exception.readerConnection.RifidiConnectionException;
@@ -13,12 +26,16 @@ import org.rifidi.edge.core.readerPlugin.IReaderPlugin;
 import org.rifidi.edge.core.readerPlugin.commands.ICustomCommand;
 import org.rifidi.edge.core.readerPlugin.commands.ICustomCommandResult;
 import org.rifidi.edge.core.tag.TagRead;
+
 import org.rifidi.edge.readerplugin.dummy.commands.DummyCustomCommand;
 import org.rifidi.edge.readerplugin.dummy.commands.DummyCustomCommandResult;
+import org.rifidi.services.annotations.Inject;
+import org.rifidi.services.registry.ServiceRegistry;
 
-public class DummyReaderPlugin implements IReaderPlugin {
-
-	//SocketLoopBack loopback;
+public class DummyReaderPlugin implements IReaderPlugin  {
+	private static final Log logger = LogFactory.getLog(DummyReaderPlugin.class);
+	
+	public SocketLoopBack loopback;
 
 	private boolean connected = false;
 
@@ -26,18 +43,22 @@ public class DummyReaderPlugin implements IReaderPlugin {
 	
 	/* used only when the dummy adapter is set to random errors */
 	Random random;
+
+	private CommunicationService communicationService;
+
+	private CommunicationBuffer communicationBuffer;
 	
 	
 	public DummyReaderPlugin(DummyReaderInfo info) {
 		this.info = info;
 		random = new Random();
-		//loopback = new SocketLoopBack("DummyAdapter LoopBack: " + info.getPort());
-		//loopback.start();
+		ServiceRegistry.getInstance().service(this);
+		loopback = new SocketLoopBack("DummyAdapter LoopBack: " + info.getPort());
+		loopback.start();
 	}
 
 	@Override
 	public void connect() throws RifidiConnectionException {
-
 		switch (info.getErrorToSet()) {
 			case CONNECT:
 				throw new RifidiConnectionException();
@@ -52,11 +73,44 @@ public class DummyReaderPlugin implements IReaderPlugin {
 					}
 				}
 		}
+		
+		
+		if (communicationService == null)
+			throw new RifidiConnectionException("CommunicationSerivce Not Found!");
+		
+		try {
+			logger.debug("Connecting: " + info.getIPAddress() + ":" + info.getPort() + " ...");
+
+			communicationBuffer = communicationService.createConnection(this, info, new DummyProtocol());
+	
+			connected = true;
+		} catch (UnknownHostException e) {
+			logger.error("Unknown host.", e);
+			throw new RifidiConnectionException("Unknown host.", e);
+		} catch (ConnectException e){
+			logger.error("Connection to reader refused.");
+			logger.error("Please check if the reader is properly turned on and connected to the network.");
+			//System.out.println("Stack trace follows...");
+			//e.printStackTrace();
+			
+			//logger.error("ConnectException...",e);
+			throw new RifidiConnectionException(
+					"Connection to reader refused. " +
+					"Please check if the reader is properly turned on and connected to the network.", e);
+		} catch (IOException e) {
+			logger.error("IOException occured.",e);
+			throw new RifidiConnectionException("IOException occured.", e);
+		}
+		logger.debug("Successfully Connected.");
+		
+		
+		
 		connected = true;
 	}
 
 	@Override
 	public void disconnect() throws RifidiConnectionException {
+		connected = false;
 		switch (info.getErrorToSet()) {
 			case DISCONNECT:
 				throw new RifidiConnectionException();
@@ -71,7 +125,18 @@ public class DummyReaderPlugin implements IReaderPlugin {
 					}
 				}
 		}
-		connected = false;
+		
+		
+		if (communicationService == null)
+			throw new RifidiConnectionException("CommunicationSerivce Not Found!");
+		
+		try {
+			communicationService.destroyConnection(communicationBuffer);
+		} catch (IOException e){
+			logger.debug("IOException.", e);
+			throw new RifidiConnectionException(e);
+		}
+		logger.debug("Successfully Disconnected.");
 	}
 
 	@Override
@@ -149,7 +214,7 @@ public class DummyReaderPlugin implements IReaderPlugin {
 	public EDummyError getError(){
 		return info.getErrorToSet();
 	}
-	/*
+
 	private class SocketLoopBack extends AbstractThread {
 
 		protected SocketLoopBack(String threadName) {
@@ -159,24 +224,23 @@ public class DummyReaderPlugin implements IReaderPlugin {
 		@Override
 		public void run() {
 			// TODO Auto-generated method stub
-			Socket socket = new Socket();
-			InputStream in = null;
-			OutputStream out = null;
-			
 			try {
-				socket.bind(new InetSocketAddress(DummyReaderPlugin.this.info.getIPAddress(), DummyReaderPlugin.this.info.getPort()));
-				in = socket.getInputStream();
-				out = socket.getOutputStream();
+				ServerSocket serverSocket = new ServerSocket(DummyReaderPlugin.this.info.getPort());
+				Socket socket = serverSocket.accept();
+				InputStream in = socket.getInputStream();
+				OutputStream out = socket.getOutputStream();
 			
 			while(running){
 				byte[] loop = new byte[in.available()];
 				
-				in.read(loop);
+				if (loop.length != 0)
+					in.read(loop);
 				
 				out.write(loop);
 			}
 			
 				socket.close();
+				serverSocket.close();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -185,9 +249,22 @@ public class DummyReaderPlugin implements IReaderPlugin {
 		
 	}
 	
+
+		
 	@Override
-	public void finalize() throws Throwable {
-		loopback.stop();
+	protected void finalize() throws Throwable {
+		// TODO Auto-generated method stub
+		dispose();
 		super.finalize();
-	}*/
+	}
+	public void dispose() {
+		loopback.stop();
+	}
+	
+	@Inject
+	public void setCommunicationService(
+			CommunicationService communicationService) {
+		logger.debug("communicationService set");
+		this.communicationService = communicationService;
+	}
 }

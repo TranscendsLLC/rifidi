@@ -67,14 +67,17 @@ public class SessionTest {
 	 */
 	@Test
 	public void testGetSetAdapter() {
-
+		DummyReaderInfo info = new DummyReaderInfo();
+		info.setIPAddress("127.0.0.1");
+		info.setPort(10000);
+		
 		DummyReaderPlugin dummyAdapter = new DummyReaderPlugin(
-				new DummyReaderInfo());
+				info);
 		IReaderConnection s = new ReaderConnection(null, null, -1);
 
 		s.setAdapter(dummyAdapter);
 		Assert.assertEquals(dummyAdapter, s.getAdapter());
-
+		dummyAdapter.dispose();
 	}
 
 	/**
@@ -96,10 +99,15 @@ public class SessionTest {
 	 */
 	@Test
 	public void testGetSetAbstractConnectionInfo() {
-		IReaderConnection session = new ReaderConnection(null, null, 0);
-		AbstractReaderInfo info = new DummyReaderInfo();
+		
+		DummyReaderInfo info = new DummyReaderInfo();
+		info.setIPAddress("127.0.0.1");
+		info.setPort(10005);
+		IReaderConnection session = new ReaderConnection(info, new DummyReaderPlugin(info), 0);
 		session.setConnectionInfo(info);
 		Assert.assertTrue(session.getConnectionInfo() == info);
+		
+		
 	}
 
 	/**
@@ -108,7 +116,11 @@ public class SessionTest {
 	@Test
 	public void testJMSThread() {
 		JMSHelper jmsHelper = new JMSHelper();
-
+		DummyReaderInfo info = new DummyReaderInfo();
+		info.setIPAddress("127.0.0.1");
+		info.setPort(10001);
+		
+		
 		if (connectionFactory == null) {
 			Assert.fail("Coudn't get connection Factory out of Services");
 		}
@@ -120,7 +132,7 @@ public class SessionTest {
 		}
 
 		DummyReaderPlugin adapter = new DummyReaderPlugin(
-				new DummyReaderInfo());
+				info);
 
 		try {
 			adapter.connect();
@@ -158,7 +170,7 @@ public class SessionTest {
 		}
 
 		jmsThread.stop();
-
+		adapter.dispose();
 	}
 
 	/**
@@ -171,7 +183,9 @@ public class SessionTest {
 				DummyReaderInfo.class, new DummyReaderPluginFactory());
 
 		DummyReaderInfo info = new DummyReaderInfo();
-
+		info.setIPAddress("127.0.0.1");
+		info.setPort(10002);
+		
 		IReaderConnection s = sessionRegistryService
 				.createReaderConnection(info);
 
