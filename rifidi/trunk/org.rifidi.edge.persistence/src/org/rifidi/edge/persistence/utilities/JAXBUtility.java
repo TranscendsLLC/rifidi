@@ -155,7 +155,6 @@ public class JAXBUtility {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
 		return retVal;
 	}
 }

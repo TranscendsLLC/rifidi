@@ -16,6 +16,7 @@ import java.util.List;
 import javax.xml.bind.JAXBException;
 
 import org.rifidi.edge.core.readerPlugin.AbstractReaderInfo;
+import org.rifidi.edge.persistence.utilities.AbstractReaderInfoSuite;
 import org.rifidi.edge.persistence.utilities.JAXBUtility;
 
 /**
@@ -36,8 +37,9 @@ public class EdgePersistenceServiceImpl implements EdgePersistenceService {
 	@Override
 	public void saveToFile(List<AbstractReaderInfo> connectionList,
 			String filename) {
+		AbstractReaderInfoSuite cs = new AbstractReaderInfoSuite(connectionList);
 		JAXBUtility.getInstance().saveToFile(
-				JAXBUtility.getInstance().save(connectionList), filename);
+				JAXBUtility.getInstance().save(cs), filename);
 		this.filename = filename;
 	}
 
@@ -50,15 +52,15 @@ public class EdgePersistenceServiceImpl implements EdgePersistenceService {
 	@Override
 	public List<AbstractReaderInfo> restore() {
 		String xml = JAXBUtility.getInstance().restoreFromFile(filename);
-		List<AbstractReaderInfo> ari = null;
+		AbstractReaderInfoSuite cs = null;
 		try {
-			ari = (List<AbstractReaderInfo>) JAXBUtility.getInstance().load(
-					xml, AbstractReaderInfo.class);
+			cs = (AbstractReaderInfoSuite) JAXBUtility.getInstance().load(xml,
+					AbstractReaderInfoSuite.class);
 		} catch (JAXBException e) {
 			e.printStackTrace();
 		}
 
-		return ari;
+		return cs.getAbstractReaderInfoList();
 	}
 
 	/*
