@@ -24,6 +24,10 @@ import org.rifidi.edge.readerPlugin.thingmagic.ThingMagicReaderInfo;
 import org.rifidi.edge.readerPlugin.thingmagic.ThingMagicReaderPlugin;
 import org.rifidi.services.registry.ServiceRegistry;
 
+/**
+ * @author Jerry Maine - jerry@pramari.com
+ *
+ */
 public class ThingMagicAdapterTest {
 
 	/**

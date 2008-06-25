@@ -18,6 +18,10 @@ import org.rifidi.edge.core.readerPlugin.AbstractReaderInfo;
 import org.rifidi.edge.core.readerPlugin.IReaderPlugin;
 import org.rifidi.edge.core.readerPlugin.ISpecificReaderPluginFactory;
 
+/**
+ * @author Jerry Maine - jerry@pramari.com
+ *
+ */
 public class ThingMagicReaderPluginFactory implements ISpecificReaderPluginFactory {
 	
 	private static final Log logger = LogFactory.getLog(ThingMagicReaderPluginFactory.class);	

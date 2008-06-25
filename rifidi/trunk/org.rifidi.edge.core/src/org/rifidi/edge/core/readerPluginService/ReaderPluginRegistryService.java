@@ -16,6 +16,10 @@ import java.util.List;
 import org.rifidi.edge.core.readerPlugin.AbstractReaderInfo;
 import org.rifidi.edge.core.readerPlugin.ISpecificReaderPluginFactory;
 
+/**
+ * @author Jerry Maine - jerry@pramari.com
+ *
+ */
 public interface ReaderPluginRegistryService {
 
 	/**

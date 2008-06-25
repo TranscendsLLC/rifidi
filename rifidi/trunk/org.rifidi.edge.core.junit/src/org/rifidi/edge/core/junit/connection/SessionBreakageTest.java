@@ -27,6 +27,10 @@ import org.rifidi.edge.readerplugin.dummy.commands.DummyCustomCommand;
 import org.rifidi.services.annotations.Inject;
 import org.rifidi.services.registry.ServiceRegistry;
 
+/**
+ * @author Jerry Maine - jerry@pramari.com
+ *
+ */
 public class SessionBreakageTest {
 	// private static final Log logger =
 	// LogFactory.getLog(SessionBreakageTest.class);

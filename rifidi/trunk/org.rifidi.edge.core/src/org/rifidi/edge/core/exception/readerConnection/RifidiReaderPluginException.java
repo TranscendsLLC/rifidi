@@ -14,6 +14,10 @@ package org.rifidi.edge.core.exception.readerConnection;
 import org.rifidi.edge.core.exception.RifidiException;
 
 
+/**
+ * @author Jerry Maine - jerry@pramari.com
+ *
+ */
 public class RifidiReaderPluginException extends RifidiException {
 
 	/**

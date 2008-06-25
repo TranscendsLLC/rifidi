@@ -14,6 +14,7 @@ package org.rifidi.edge.core.readerPlugin.commands;
 import java.io.Serializable;
 
 /**
+ * @author Jerry Maine - jerry@pramari.com
  * A custom command interface. 
  */
 public interface ICustomCommand extends Serializable {

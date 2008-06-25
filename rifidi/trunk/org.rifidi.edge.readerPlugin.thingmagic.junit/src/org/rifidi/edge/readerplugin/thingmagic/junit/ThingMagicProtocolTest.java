@@ -9,9 +9,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.rifidi.edge.readerPlugin.thingmagic.ThingMagicProtocol;
 
+
 /**
- * @author jerry
- * 
+ * @author Jerry Maine - jerry@pramari.com
+ *
  */
 public class ThingMagicProtocolTest {
 

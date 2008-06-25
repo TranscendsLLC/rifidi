@@ -3,8 +3,9 @@ package org.rifidi.edge.common.utilities.thread;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+
 /**
- * @author jerry
+ * @author Jerry Maine - jerry@pramari.com
  *
  */
 public abstract class AbstractThread implements Runnable {

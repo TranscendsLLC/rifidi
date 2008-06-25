@@ -11,6 +11,10 @@
  */
 package org.rifidi.edge.core.exception;
 
+/**
+ * @author Jerry Maine - jerry@pramari.com
+ *
+ */
 public class RifidiException extends Exception {
 
 	/**

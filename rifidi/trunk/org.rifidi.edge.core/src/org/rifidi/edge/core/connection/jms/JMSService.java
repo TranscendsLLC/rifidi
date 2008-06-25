@@ -5,7 +5,7 @@ import org.rifidi.edge.core.connection.IReaderConnection;
 
 
 /**
- * @author jerry
+ * @author Jerry Maine - jerry@pramari.com
  *
  */
 public interface JMSService {
