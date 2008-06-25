@@ -7,6 +7,6 @@ import org.rifidi.edge.core.connection.IReaderConnection;
  *
  */
 public interface JMSService {
-	public void register(IReaderConnection connection, String queueName);
+	public boolean register(IReaderConnection connection);
 	public void unregister(IReaderConnection connection);
 }
