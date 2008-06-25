@@ -13,7 +13,7 @@ package org.rifidi.edge.core.connection;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.rifidi.edge.core.connection.jms.JMSMessageThread;
+import org.rifidi.edge.core.connection.jms.JMSService;
 import org.rifidi.edge.core.exception.RifidiException;
 import org.rifidi.edge.core.exception.RifidiIIllegialArgumentException;
 import org.rifidi.edge.core.exception.RifidiPreviousErrorException;
@@ -24,6 +24,8 @@ import org.rifidi.edge.core.readerPlugin.IReaderPlugin;
 import org.rifidi.edge.core.readerPlugin.commands.ICustomCommand;
 import org.rifidi.edge.core.readerPlugin.commands.ICustomCommandResult;
 import org.rifidi.edge.core.readerPlugin.enums.EReaderAdapterState;
+import org.rifidi.services.annotations.Inject;
+import org.rifidi.services.registry.ServiceRegistry;
 
 /**
  * 
@@ -41,11 +43,11 @@ public class ReaderConnection implements IReaderConnection {
 
 	private AbstractReaderInfo connectionInfo;
 
-	private JMSMessageThread jmsMessageThread;
-
 	private EReaderAdapterState state;
 
 	private RifidiException errorCause;
+
+	private JMSService jmsService;
 
 	/**
 	 * Creates a Session.
@@ -58,12 +60,12 @@ public class ReaderConnection implements IReaderConnection {
 	 *            Id for this session.
 	 */
 	public ReaderConnection(AbstractReaderInfo connectionInfo,
-			IReaderPlugin adapter, int id, JMSMessageThread jmsMessageThread) {
+			IReaderPlugin adapter, int id) {
 		setConnectionInfo(connectionInfo);
 		setAdapter(adapter);
 		setSessionID(id);
-		this.jmsMessageThread = jmsMessageThread;
 		state = EReaderAdapterState.CREATED;
+		ServiceRegistry.getInstance().service(this);
 	}
 
 	/* (non-Javadoc)
@@ -114,7 +116,7 @@ public class ReaderConnection implements IReaderConnection {
 	 */
 	public ICustomCommandResult sendCustomCommand(ICustomCommand customCommand) throws RifidiException {
 
-		if (state != EReaderAdapterState.CREATED) {
+		if (state != EReaderAdapterState.CONNECTED) {
 			if (state == EReaderAdapterState.ERROR) {
 				throw new RifidiPreviousErrorException("Connection already in error state.", errorCause);
 			} else {
@@ -167,7 +169,8 @@ public class ReaderConnection implements IReaderConnection {
 	public void startTagStream() throws RifidiException {
 		if (state == EReaderAdapterState.CONNECTED) {
 			state = EReaderAdapterState.STREAMING;
-			this.jmsMessageThread.start();
+			//this.jmsMessageThread.start();
+			jmsService.register(this);
 		} else {
 			if (state == EReaderAdapterState.ERROR) {
 				throw new RifidiPreviousErrorException("Connection already in error state.", errorCause);
@@ -187,7 +190,8 @@ public class ReaderConnection implements IReaderConnection {
 	public void stopTagStream() throws RifidiException {
 		if (state == EReaderAdapterState.STREAMING) {
 			state = EReaderAdapterState.CONNECTED;
-			this.jmsMessageThread.stop();
+			//this.jmsMessageThread.stop();
+			jmsService.unregister(this);
 		} else {
 			if (state == EReaderAdapterState.ERROR) {
 				throw new RifidiPreviousErrorException("Connection already in error state.", errorCause);
@@ -313,7 +317,8 @@ public class ReaderConnection implements IReaderConnection {
 		if (errorCause != null ){
 			//Need to do some house keeping first...
 			try {
-				this.jmsMessageThread.stop();
+				//this.jmsMessageThread.stop();
+				jmsService.unregister(this);
 				adapter.disconnect();
 			} catch (Exception e) {
 				//e.printStackTrace();
@@ -330,8 +335,9 @@ public class ReaderConnection implements IReaderConnection {
 	}
 
 	public void cleanUp() {
-		jmsMessageThread.stop();
-		jmsMessageThread = null;
+		jmsService.unregister(this);
+		//jmsMessageThread.stop();
+		//jmsMessageThread = null;
 	}
 
 	// //TODO: Think if we need this method.
@@ -359,4 +365,9 @@ public class ReaderConnection implements IReaderConnection {
 	// }
 	// return null;
 	// }
+	
+	@Inject
+	public void setJMSService(JMSService jmsService){
+		this.jmsService = jmsService;
+	}
 }

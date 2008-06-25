@@ -70,7 +70,7 @@ public class SessionTest {
 
 		DummyReaderPlugin dummyAdapter = new DummyReaderPlugin(
 				new DummyReaderInfo());
-		IReaderConnection s = new ReaderConnection(null, null, -1, null);
+		IReaderConnection s = new ReaderConnection(null, null, -1);
 
 		s.setAdapter(dummyAdapter);
 		Assert.assertEquals(dummyAdapter, s.getAdapter());
@@ -82,7 +82,7 @@ public class SessionTest {
 	 */
 	@Test
 	public void testGetSetSessionID() {
-		IReaderConnection session = new ReaderConnection(null, null, -1, null);
+		IReaderConnection session = new ReaderConnection(null, null, -1);
 
 		session.setSessionID(3);
 		Assert.assertTrue(session.getSessionID() == 3);
@@ -96,7 +96,7 @@ public class SessionTest {
 	 */
 	@Test
 	public void testGetSetAbstractConnectionInfo() {
-		IReaderConnection session = new ReaderConnection(null, null, 0, null);
+		IReaderConnection session = new ReaderConnection(null, null, 0);
 		AbstractReaderInfo info = new DummyReaderInfo();
 		session.setConnectionInfo(info);
 		Assert.assertTrue(session.getConnectionInfo() == info);
@@ -190,8 +190,8 @@ public class SessionTest {
 		} catch (RifidiException e) {
 			e.printStackTrace();
 			Assert.fail();
-		}
-
+		} 
+		
 		try {
 			s.disconnect();
 		} catch (RifidiException e) {
@@ -231,13 +231,9 @@ public class SessionTest {
 		jmsHelper.initializeJMSQueue(connectionFactory, Integer
 				.toString(SessionID));
 
-		// create the JMS thread
-		JMSMessageThread mthread = new JMSMessageThread(SessionID,
-				readerAdapter, jmsHelper);
-
 		// create the reader Session
 		IReaderConnection s = new ReaderConnection(info, readerAdapter,
-				SessionID, mthread);
+				SessionID);
 
 		try {
 			s.connect();
