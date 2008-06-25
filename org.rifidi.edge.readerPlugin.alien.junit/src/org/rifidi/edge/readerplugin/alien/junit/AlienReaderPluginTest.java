@@ -92,7 +92,7 @@ public class AlienReaderPluginTest {
 			Assert.fail();
 		}
 
-		for (int i = 0; i < 100; i++) {
+		for (int i = 0; i < 5; i++) {
 			List<TagRead> tagList = null;
 			try {
 				tagList = alienReaderAdapter.getNextTags();
