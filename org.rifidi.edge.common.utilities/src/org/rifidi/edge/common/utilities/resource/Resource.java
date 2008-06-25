@@ -3,8 +3,9 @@ package org.rifidi.edge.common.utilities.resource;
 import java.io.InputStream;
 
 
+
 /**
- * @author jerry
+ * @author Jerry Maine - jerry@pramari.com
  *
  */
 public class Resource {

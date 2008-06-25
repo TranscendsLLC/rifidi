@@ -2,6 +2,10 @@ package org.rifidi.edge.core.connection.jms;
 
 import org.rifidi.edge.common.utilities.thread.AbstractThread;
 
+/**
+ * @author Jerry Maine - jerry@pramari.com
+ *
+ */
 public class JMSMessagePoolThread extends AbstractThread {
 
 	boolean isStalled = false;

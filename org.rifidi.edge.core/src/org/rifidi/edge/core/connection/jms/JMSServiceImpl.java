@@ -11,7 +11,7 @@ import org.rifidi.services.annotations.Inject;
 import org.rifidi.services.registry.ServiceRegistry;
 
 /**
- * @author jerry
+ * @author Jerry Maine - jerry@pramari.com
  *
  */
 public class JMSServiceImpl implements JMSService {

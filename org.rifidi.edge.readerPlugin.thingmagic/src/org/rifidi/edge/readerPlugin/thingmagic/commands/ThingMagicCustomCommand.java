@@ -13,6 +13,11 @@ package org.rifidi.edge.readerPlugin.thingmagic.commands;
 
 import org.rifidi.edge.core.readerPlugin.commands.ICustomCommand;
 
+
+/**
+ * @author Jerry Maine - jerry@pramari.com
+ *
+ */
 public class ThingMagicCustomCommand implements ICustomCommand {
 	
 	/**

@@ -36,6 +36,10 @@ import org.rifidi.services.registry.ServiceRegistry;
 
 
 //TODO: Try this junit test on a /real/ thing magic reader
+/**
+ * @author Jerry Maine - jerry@pramari.com
+ *
+ */
 public class ThingMagicReaderPlugin implements IReaderPlugin {
 	
 	private static final Log logger = LogFactory.getLog(ThingMagicReaderPlugin.class);	

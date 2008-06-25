@@ -12,8 +12,7 @@
 package org.rifidi.edge.core.readerPlugin.enums;
 
 /**
- * 
- * @author jerry
+ * @author Jerry Maine - jerry@pramari.com
  * The allowable states for a reader
  */
 public enum EReaderAdapterState {

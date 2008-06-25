@@ -13,6 +13,10 @@ package org.rifidi.edge.readerPlugin.thingmagic;
 
 import org.rifidi.edge.core.readerPlugin.AbstractReaderInfo;
 
+/**
+ * @author Jerry Maine - jerry@pramari.com
+ *
+ */
 public class ThingMagicReaderInfo extends AbstractReaderInfo {
 
 	

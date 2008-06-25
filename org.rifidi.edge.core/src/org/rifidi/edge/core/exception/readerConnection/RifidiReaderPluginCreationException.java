@@ -11,6 +11,10 @@
  */
 package org.rifidi.edge.core.exception.readerConnection;
 
+/**
+ * @author Jerry Maine - jerry@pramari.com
+ *
+ */
 public class RifidiReaderPluginCreationException extends RifidiReaderPluginException{
 
 	/**
