@@ -4,6 +4,8 @@ import org.rifidi.edge.common.utilities.thread.AbstractThread;
 
 public class JMSMessageThread extends AbstractThread {
 
+	boolean isStalled = false;
+	
 	public JMSMessageThread(String threadName) {
 		super(threadName);
 		// TODO Auto-generated constructor stub
@@ -13,10 +15,19 @@ public class JMSMessageThread extends AbstractThread {
 	
 	@Override
 	public void run() {
-		// TODO Auto-generated method stub
 		while(running){
 			
+			isStalled = true;
 		}
+	}
+
+
+
+	/**
+	 * @return the isStalled
+	 */
+	public boolean isStalled() {
+		return isStalled;
 	}
 
 }
