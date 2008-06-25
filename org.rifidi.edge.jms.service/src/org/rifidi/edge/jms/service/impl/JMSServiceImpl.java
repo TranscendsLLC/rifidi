@@ -1,11 +1,11 @@
-package org.rifidi.edge.jms.service;
+package org.rifidi.edge.jms.service.impl;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.jms.ConnectionFactory;
 
-import org.rifidi.edge.core.connection.IReaderConnection;
+import org.rifidi.edge.core.connection.reader.IReaderConnection;
 import org.rifidi.services.annotations.Inject;
 import org.rifidi.services.registry.ServiceRegistry;
 
@@ -19,7 +19,7 @@ public class JMSServiceImpl implements JMSService {
 		ServiceRegistry.getInstance().service(this);
 	}
 
-	Map<IReaderConnection, JMSMessageSender> map = new HashMap<IReaderConnection, JMSMessageSender>();
+	Map<IReaderConnection, JMSMessageThread> map = new HashMap<IReaderConnection, JMSMessageThread>();
 	private ConnectionFactory connectionFactory;
 	
 	/* (non-Javadoc)
@@ -31,7 +31,7 @@ public class JMSServiceImpl implements JMSService {
 		
 		jmsHelper.initializeJMSQueue(connectionFactory, Integer.toString(connection.getSessionID()));
 		
-		JMSMessageSender jmsThread = new JMSMessageSender(connection.getSessionID(), connection.getAdapter() , jmsHelper);
+		JMSMessageThread jmsThread = new JMSMessageThread(connection.getSessionID(), connection.getAdapter() , jmsHelper);
 		
 		boolean retVal = jmsThread.start();
 		
@@ -46,7 +46,7 @@ public class JMSServiceImpl implements JMSService {
 	 */
 	@Override
 	public void unregister(IReaderConnection connection) {
-		JMSMessageSender jmsThread = map.get(connection);
+		JMSMessageThread jmsThread = map.get(connection);
 		
 		if (jmsThread != null) 
 			jmsThread.stop();

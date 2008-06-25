@@ -2,6 +2,8 @@ package org.rifidi.edge.jms.service;
 
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
+import org.rifidi.edge.jms.service.impl.JMSService;
+import org.rifidi.edge.jms.service.impl.JMSServiceImpl;
 
 /**
  * @author jerry
