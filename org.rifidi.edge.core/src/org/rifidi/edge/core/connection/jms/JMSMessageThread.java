@@ -7,6 +7,9 @@ import javax.jms.TextMessage;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.rifidi.edge.common.utilities.thread.AbstractThread;
+
+
 import org.rifidi.edge.core.connection.IReaderConnection;
 import org.rifidi.edge.core.connection.registry.ReaderConnectionRegistryService;
 import org.rifidi.edge.core.exception.RifidiException;
@@ -16,12 +19,9 @@ import org.rifidi.edge.core.tag.TagRead;
 import org.rifidi.services.annotations.Inject;
 import org.rifidi.services.registry.ServiceRegistry;
 
-public class JMSMessageThread implements Runnable {
+public class JMSMessageThread extends AbstractThread {
 
 	private Log logger = LogFactory.getLog(JMSMessageThread.class);
-
-	// Internal Thread
-	private Thread thread;
 
 	// Paramerters
 	private JMSHelper jmsHelper;
@@ -29,10 +29,8 @@ public class JMSMessageThread implements Runnable {
 	private IReaderPlugin readerAdapter;
 
 	// SessionRegisrtyService
-	private ReaderConnectionRegistryService sessionRegistryService;
+	private ReaderConnectionRegistryService connectionRegistryService;
 
-	// Runntime Variables
-	private boolean running = false;
 
 	// Polling time if ReaderAdapter is non blocking
 	private long pollingIntervall = 1000;
@@ -46,6 +44,9 @@ public class JMSMessageThread implements Runnable {
 	 */
 	public JMSMessageThread(int connectionID, IReaderPlugin readerAdapter,
 			JMSHelper jmsHelper) {
+		super( "JMSMessageThread "
+						+ connectionID);
+		
 		this.jmsHelper = jmsHelper;
 		this.readerConnectionID = connectionID;
 		this.readerAdapter = readerAdapter;
@@ -60,12 +61,9 @@ public class JMSMessageThread implements Runnable {
 	public boolean start() {
 		if (jmsHelper != null) {
 			if (jmsHelper.isInitialized()) {
-
-				thread = new Thread(this, "JMSMessageThread "
-						+ readerConnectionID);
 				logger.debug("JMS Message Thread started for Queue: " + readerConnectionID);
 				running = true;
-				thread.start();
+				super.start();
 			}
 		}
 		return running;
@@ -74,11 +72,12 @@ public class JMSMessageThread implements Runnable {
 	/**
 	 * Stop this thread.
 	 */
-	public void stop() {
+/*	public void stop() {
 		running = false;
 		if (thread.isAlive())
 			thread.interrupt();
-	}
+	} 
+*/
 
 	/* (non-Javadoc)
 	 * @see java.lang.Runnable#run()
@@ -107,9 +106,9 @@ public class JMSMessageThread implements Runnable {
 		} catch (RifidiConnectionIllegalStateException e) {
 			// this is not the best solution... maybe there is another way to
 			// deal with this.
-			if (sessionRegistryService != null) {
+			if (connectionRegistryService != null) {
 				logger.debug("sessionRegistryService is not null");
-				IReaderConnection session = sessionRegistryService
+				IReaderConnection session = connectionRegistryService
 						.getReaderConnection(readerConnectionID);
 				session.setErrorCause(e);
 			}
@@ -117,8 +116,8 @@ public class JMSMessageThread implements Runnable {
 		} catch (JMSException e) {
 			String errorMsg = "Error trying to send tags to client over JMS";
 		
-			if (sessionRegistryService != null) {
-				IReaderConnection connection = sessionRegistryService
+			if (connectionRegistryService != null) {
+				IReaderConnection connection = connectionRegistryService
 						.getReaderConnection(readerConnectionID);
 				connection.setErrorCause(new RifidiConnectionIllegalStateException(errorMsg , e));
 			}
@@ -126,7 +125,7 @@ public class JMSMessageThread implements Runnable {
 			logger.error(errorMsg, e);
 			running = false;		
 		} catch (RuntimeException e) {
-			// this is not the best solution... maybe there is another way to
+			//TODO this is not the best solution... maybe there is another way to
 			// deal with this.
 			/*
 			 * Error Resistance. Uncaught Runtime errors should not cause the
@@ -138,8 +137,8 @@ public class JMSMessageThread implements Runnable {
 			String errorMsg = "Uncaught RuntimeException in " + readerAdapter.getClass()
 				+ " adapter. This means that there may be an unfixed bug in the adapter.";
 			
-			if (sessionRegistryService != null) {
-				IReaderConnection connection = sessionRegistryService
+			if (connectionRegistryService != null) {
+				IReaderConnection connection = connectionRegistryService
 						.getReaderConnection(readerConnectionID);
 				connection.setErrorCause(new RifidiException(errorMsg , e));
 			}
@@ -184,8 +183,8 @@ public class JMSMessageThread implements Runnable {
 	 * @param sessionRegistryService
 	 */
 	@Inject
-	public void setSessionRegistryService(
-			ReaderConnectionRegistryService sessionRegistryService) {
-		this.sessionRegistryService = sessionRegistryService;
+	public void setConnectionRegistryService(
+			ReaderConnectionRegistryService connectionRegistryService) {
+		this.connectionRegistryService = connectionRegistryService;
 	}
 }

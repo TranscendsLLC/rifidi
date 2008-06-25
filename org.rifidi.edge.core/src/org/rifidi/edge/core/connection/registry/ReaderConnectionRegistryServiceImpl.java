@@ -20,7 +20,6 @@ import javax.jms.ConnectionFactory;
 import org.rifidi.edge.core.connection.IReaderConnection;
 import org.rifidi.edge.core.connection.ReaderConnection;
 import org.rifidi.edge.core.connection.jms.JMSHelper;
-import org.rifidi.edge.core.connection.jms.JMSMessageThread;
 import org.rifidi.edge.core.readerPlugin.AbstractReaderInfo;
 import org.rifidi.edge.core.readerPlugin.IReaderPlugin;
 import org.rifidi.edge.core.readerPlugin.factory.ReaderPluginFactory;
@@ -87,12 +86,9 @@ public class ReaderConnectionRegistryServiceImpl implements
 		jmsHelper.initializeJMSQueue(connectionFactory, Integer
 				.toString(counter));
 
-		JMSMessageThread jmsThread = new JMSMessageThread(counter,
-				readerPlugin, jmsHelper);
-
 		// Build Connection Object for holding JMS and Plugin
 		ReaderConnection connection = new ReaderConnection(abstractConnectionInfo,
-				readerPlugin, counter, jmsThread);
+				readerPlugin, counter);
 
 		// register readerConnection in registry
 		readerConnectionRegistry.put(counter, connection);
