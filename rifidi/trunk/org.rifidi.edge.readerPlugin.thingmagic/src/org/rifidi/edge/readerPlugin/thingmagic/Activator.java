@@ -17,6 +17,10 @@ import org.rifidi.edge.core.readerPluginService.ReaderPluginRegistryService;
 import org.rifidi.services.annotations.Inject;
 import org.rifidi.services.registry.ServiceRegistry;
 
+/**
+ * @author Jerry Maine - jerry@pramari.com
+ *
+ */
 public class Activator implements BundleActivator {
 
 	private ReaderPluginRegistryService readerPluginRegistryService;

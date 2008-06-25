@@ -46,10 +46,13 @@ public class ThingMagicReaderPlugin implements IReaderPlugin {
 	
 	boolean connected = false;
 
-	private CommunicationBuffer communicationConnection;
+	// the communication buffer used to talk to the reader
+	private CommunicationBuffer communicationBuffer;
 
+	// The information about a specific reader.
 	private ThingMagicReaderInfo tmci;
 
+	// Communication services
 	private CommunicationService communicationService;
 	
 	public ThingMagicReaderPlugin(ThingMagicReaderInfo connectionInfo){
@@ -68,7 +71,7 @@ public class ThingMagicReaderPlugin implements IReaderPlugin {
 		try {
 			logger.debug("Connecting: " + tmci.getIPAddress() + ":" + tmci.getPort() + " ...");
 
-			communicationConnection = communicationService.createConnection(this, tmci, new ThingMagicProtocol());
+			communicationBuffer = communicationService.createConnection(this, tmci, new ThingMagicProtocol());
 	
 			connected = true;
 		} catch (UnknownHostException e) {
@@ -101,7 +104,7 @@ public class ThingMagicReaderPlugin implements IReaderPlugin {
 			throw new RifidiConnectionException("CommunicationSerivce Not Found!");
 		
 		try {
-			communicationService.destroyConnection(communicationConnection);
+			communicationService.destroyConnection(communicationBuffer);
 		} catch (IOException e){
 			logger.debug("IOException.", e);
 			throw new RifidiConnectionException(e);
@@ -122,9 +125,9 @@ public class ThingMagicReaderPlugin implements IReaderPlugin {
 			
 			
 			try {
-				communicationConnection.send("select id, timestamp from tag_id;\n");
+				communicationBuffer.send("select id, timestamp from tag_id;\n");
 				
-				 input = (String) communicationConnection.receive();
+				 input = (String) communicationBuffer.receive();
 				 logger.debug(input);
 			} catch (IOException e) {
 				logger.debug("IOException has accured.", e);
@@ -133,14 +136,8 @@ public class ThingMagicReaderPlugin implements IReaderPlugin {
 			
 			if (input.equals("\n"))				
 				return tags;
-			
-			//chew up last new lines.
-			int index = input.lastIndexOf("\n\n");
-			if (index != -1)
-				input = input.substring(0, index);
-			
-			//logger("Input: " + input.replace("\n", "\\n"));
-			
+
+			// All tags returned are separated by newlines
 			String[] rawTags = input.split("\n");
 			
 			
@@ -148,9 +145,11 @@ public class ThingMagicReaderPlugin implements IReaderPlugin {
 			for (String rawTag: rawTags){
 				logger.debug(rawTag);
 				
+				//All tag data sent back is separated by vertical bars.
 				String[] rawTagItems = rawTag.split("\\|");
 				
 				TagRead tag = new TagRead();
+				
 				
 				logger.debug(rawTagItems[0]);
 				
@@ -191,10 +190,10 @@ public class ThingMagicReaderPlugin implements IReaderPlugin {
 		
 		if (!connected ){
 			try {
-				communicationConnection.send(command.getCustomCommand());
+				communicationBuffer.send(command.getCustomCommand());
 
 				//TODO check if result is actually an error
-				result = new ThingMagicCustomCommandResult((String) communicationConnection.receive());
+				result = new ThingMagicCustomCommandResult((String) communicationBuffer.receive());
 			} catch (IOException e) {
 				logger.debug("IOException has accured.", e);
 				throw new RifidiConnectionIllegalStateException(e.getClass().getName(), e);

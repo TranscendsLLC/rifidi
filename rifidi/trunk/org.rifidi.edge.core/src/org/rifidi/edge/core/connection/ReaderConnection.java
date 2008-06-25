@@ -29,7 +29,8 @@ import org.rifidi.services.registry.ServiceRegistry;
 
 /**
  * 
- * @author Jerry and Kyle A session bundles the objects needed to communicate to
+ * @author Jerry and Kyle
+ * A session bundles the objects needed to communicate to
  *         the reader.
  */
 
@@ -37,14 +38,19 @@ public class ReaderConnection implements IReaderConnection {
 
 	private static final Log logger = LogFactory.getLog(ReaderConnection.class);
 
-	private IReaderPlugin adapter;
+	
+	private IReaderPlugin plugin;
 
-	private int sessionID;
+	//The id of this connection
+	private int connectionID;
 
+	//The reader info for the specific plugin
 	private AbstractReaderInfo connectionInfo;
 
+	//The current state of this connection.
 	private EReaderAdapterState state;
 
+	//What caused the error in the adapter
 	private RifidiException errorCause;
 
 	private JMSService jmsService;
@@ -72,21 +78,21 @@ public class ReaderConnection implements IReaderConnection {
 	 * @see org.rifidi.edge.core.connection.IReaderConnection#getAdapter()
 	 */
 	public IReaderPlugin getAdapter() {
-		return adapter;
+		return plugin;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.rifidi.edge.core.connection.IReaderConnection#setAdapter(org.rifidi.edge.core.readerPlugin.IReaderPlugin)
 	 */
 	public void setAdapter(IReaderPlugin adapter) {
-		this.adapter = adapter;
+		this.plugin = adapter;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.rifidi.edge.core.connection.IReaderConnection#getSessionID()
 	 */
 	public int getSessionID() {
-		return sessionID;
+		return connectionID;
 	}
 
 	//TODO Andreas: Need to change the name of this method.
@@ -94,7 +100,7 @@ public class ReaderConnection implements IReaderConnection {
 	 * @see org.rifidi.edge.core.connection.IReaderConnection#setSessionID(int)
 	 */
 	public void setSessionID(int sessionID) {
-		this.sessionID = sessionID;
+		this.connectionID = sessionID;
 	}
 
 	/* (non-Javadoc)
@@ -128,7 +134,7 @@ public class ReaderConnection implements IReaderConnection {
 		
 		state = EReaderAdapterState.BUSY;
 		try {
-			ICustomCommandResult result = adapter.sendCustomCommand(customCommand);
+			ICustomCommandResult result = plugin.sendCustomCommand(customCommand);
 			state = EReaderAdapterState.CONNECTED;
 			return result;
 		} catch (RifidiConnectionIllegalStateException e) {
@@ -146,7 +152,7 @@ public class ReaderConnection implements IReaderConnection {
 			 */
 
 			String errorMsg = "Uncaught RuntimeException in "
-				+ adapter.getClass()
+				+ plugin.getClass()
 				+ " adapter. "
 				+ "This means that there may be an unfixed bug in the adapter.";
 			
@@ -230,7 +236,7 @@ public class ReaderConnection implements IReaderConnection {
 			}
 		} 
 		try {
-			adapter.connect();
+			plugin.connect();
 			state = EReaderAdapterState.CONNECTED;
 		} catch (RifidiConnectionException e) {
 			setErrorCause(e);
@@ -245,7 +251,7 @@ public class ReaderConnection implements IReaderConnection {
 			 */
 
 			String errorMsg = "Uncaught RuntimeException in "
-				+ adapter.getClass()
+				+ plugin.getClass()
 				+ " adapter. "
 				+ "This means that there may be an unfixed bug in the adapter.";
 			
@@ -274,7 +280,7 @@ public class ReaderConnection implements IReaderConnection {
 			throw e;
 		}
 		try {
-			adapter.disconnect();
+			plugin.disconnect();
 			state = EReaderAdapterState.DISCONECTED;
 		} catch (RifidiConnectionException e) {
 			setErrorCause(e);
@@ -288,7 +294,7 @@ public class ReaderConnection implements IReaderConnection {
 			 */
 
 			String errorMsg = "Uncaught RuntimeException in "
-				+ adapter.getClass()
+				+ plugin.getClass()
 				+ " adapter. "
 				+ "This means that there may be an unfixed bug in the adapter.";
 			
@@ -321,7 +327,7 @@ public class ReaderConnection implements IReaderConnection {
 			try {
 				//this.jmsMessageThread.stop();
 				jmsService.unregister(this);
-				adapter.disconnect();
+				plugin.disconnect();
 			} catch (Exception e) {
 				//e.printStackTrace();
 				
