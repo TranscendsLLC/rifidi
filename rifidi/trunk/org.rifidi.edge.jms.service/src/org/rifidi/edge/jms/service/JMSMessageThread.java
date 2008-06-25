@@ -27,7 +27,7 @@ public class JMSMessageThread extends AbstractThread {
 	private IReaderPlugin readerAdapter;
 
 	// SessionRegisrtyService
-	private ReaderConnectionRegistryService sessionRegistryService;
+	private ReaderConnectionRegistryService connectionRegistryService;
 
 
 	// Polling time if ReaderAdapter is non blocking
@@ -104,9 +104,9 @@ public class JMSMessageThread extends AbstractThread {
 		} catch (RifidiConnectionIllegalStateException e) {
 			// this is not the best solution... maybe there is another way to
 			// deal with this.
-			if (sessionRegistryService != null) {
+			if (connectionRegistryService != null) {
 				logger.debug("sessionRegistryService is not null");
-				IReaderConnection session = sessionRegistryService
+				IReaderConnection session = connectionRegistryService
 						.getReaderConnection(readerConnectionID);
 				session.setErrorCause(e);
 			}
@@ -114,8 +114,8 @@ public class JMSMessageThread extends AbstractThread {
 		} catch (JMSException e) {
 			String errorMsg = "Error trying to send tags to client over JMS";
 		
-			if (sessionRegistryService != null) {
-				IReaderConnection connection = sessionRegistryService
+			if (connectionRegistryService != null) {
+				IReaderConnection connection = connectionRegistryService
 						.getReaderConnection(readerConnectionID);
 				connection.setErrorCause(new RifidiConnectionIllegalStateException(errorMsg , e));
 			}
@@ -123,7 +123,7 @@ public class JMSMessageThread extends AbstractThread {
 			logger.error(errorMsg, e);
 			running = false;		
 		} catch (RuntimeException e) {
-			// this is not the best solution... maybe there is another way to
+			//TODO this is not the best solution... maybe there is another way to
 			// deal with this.
 			/*
 			 * Error Resistance. Uncaught Runtime errors should not cause the
@@ -135,8 +135,8 @@ public class JMSMessageThread extends AbstractThread {
 			String errorMsg = "Uncaught RuntimeException in " + readerAdapter.getClass()
 				+ " adapter. This means that there may be an unfixed bug in the adapter.";
 			
-			if (sessionRegistryService != null) {
-				IReaderConnection connection = sessionRegistryService
+			if (connectionRegistryService != null) {
+				IReaderConnection connection = connectionRegistryService
 						.getReaderConnection(readerConnectionID);
 				connection.setErrorCause(new RifidiException(errorMsg , e));
 			}
@@ -181,8 +181,8 @@ public class JMSMessageThread extends AbstractThread {
 	 * @param sessionRegistryService
 	 */
 	@Inject
-	public void setSessionRegistryService(
-			ReaderConnectionRegistryService sessionRegistryService) {
-		this.sessionRegistryService = sessionRegistryService;
+	public void setConnectionRegistryService(
+			ReaderConnectionRegistryService connectionRegistryService) {
+		this.connectionRegistryService = connectionRegistryService;
 	}
 }
