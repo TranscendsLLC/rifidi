@@ -9,7 +9,7 @@
  *  License:	Lesser GNU Public License (LGPL)
  *  				http://www.opensource.org/licenses/lgpl-license.html
  */
-package org.rifidi.edge.jms.service;
+package org.rifidi.edge.jms.service.impl;
 
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;

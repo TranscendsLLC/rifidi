@@ -1,6 +1,6 @@
 package org.rifidi.edge.jms.service;
 
-import org.rifidi.edge.core.connection.IReaderConnection;
+import org.rifidi.edge.core.connection.reader.IReaderConnection;
 
 /**
  * @author jerry
