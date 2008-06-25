@@ -19,7 +19,7 @@ public class JMSServiceImpl implements JMSService {
 		ServiceRegistry.getInstance().service(this);
 	}
 
-	Map<IReaderConnection, JMSMessageThread> map = new HashMap<IReaderConnection, JMSMessageThread>();
+	Map<IReaderConnection, JMSMessageSender> map = new HashMap<IReaderConnection, JMSMessageSender>();
 	private ConnectionFactory connectionFactory;
 	
 	/* (non-Javadoc)
@@ -31,7 +31,7 @@ public class JMSServiceImpl implements JMSService {
 		
 		jmsHelper.initializeJMSQueue(connectionFactory, Integer.toString(connection.getSessionID()));
 		
-		JMSMessageThread jmsThread = new JMSMessageThread(connection.getSessionID(), connection.getAdapter() , jmsHelper);
+		JMSMessageSender jmsThread = new JMSMessageSender(connection.getSessionID(), connection.getAdapter() , jmsHelper);
 		
 		boolean retVal = jmsThread.start();
 		
@@ -46,7 +46,7 @@ public class JMSServiceImpl implements JMSService {
 	 */
 	@Override
 	public void unregister(IReaderConnection connection) {
-		JMSMessageThread jmsThread = map.get(connection);
+		JMSMessageSender jmsThread = map.get(connection);
 		
 		if (jmsThread != null) 
 			jmsThread.stop();
