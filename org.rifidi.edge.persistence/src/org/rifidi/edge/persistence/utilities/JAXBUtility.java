@@ -10,6 +10,11 @@
  */
 package org.rifidi.edge.persistence.utilities;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
 
@@ -23,7 +28,7 @@ import org.rifidi.services.annotations.Inject;
 import org.rifidi.services.registry.ServiceRegistry;
 
 /**
- * This class loads and saves
+ * This class loads and saves.
  * 
  * @author Matthew Dean - matt@pramari.com
  */
@@ -63,7 +68,7 @@ public class JAXBUtility {
 	}
 
 	/**
-	 * Load an xml file.  
+	 * Load an xml file.
 	 * 
 	 * @param filename
 	 * @param o
@@ -82,7 +87,7 @@ public class JAXBUtility {
 	}
 
 	/**
-	 * Save an object.  
+	 * Save an object.
 	 * 
 	 * @param o
 	 */
@@ -102,5 +107,55 @@ public class JAXBUtility {
 		// if(debugToConsole)
 		System.out.print(writer);
 		return writer.toString();
+	}
+
+	/**
+	 * Saves a string-based xml to a file.
+	 * 
+	 * @param xml
+	 * @param filename
+	 */
+	public void saveToFile(String xml, String filename) {
+		File f = new File(filename);
+		if (f.exists()) {
+			f.delete();
+		}
+
+		try {
+			f.createNewFile();
+			FileWriter fw = new FileWriter(f);
+			fw.write(xml);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Saves a string-based xml to a file.
+	 * 
+	 * @param xml
+	 * @param filename
+	 */
+	public String restoreFromFile(String filename) {
+		String retVal = null;
+		try {
+			retVal = new String();
+			File file = new File(filename);
+			FileReader fr = new FileReader(file);
+
+			StringBuffer sb = new StringBuffer();
+			int temp = fr.read();
+			while (temp != -1) {
+				sb.append((char) temp);
+				temp = fr.read();
+			}
+			retVal = sb.toString();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		return retVal;
 	}
 }
