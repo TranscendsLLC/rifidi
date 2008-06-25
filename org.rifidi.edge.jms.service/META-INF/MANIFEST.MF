@@ -8,7 +8,7 @@ Bundle-Vendor: Pramari, LLC
 Eclipse-LazyStart: true
 Import-Package: org.osgi.framework;version="1.3.0"
 Require-Bundle: org.rifidi.edge.common.utilities,
- org.rifidi.edge.core,
  org.rifidi.edge.jms,
  org.rifidi.edge.services,
- org.rifidi.edge.log4j
+ org.rifidi.edge.log4j,
+ org.rifidi.edge.core
