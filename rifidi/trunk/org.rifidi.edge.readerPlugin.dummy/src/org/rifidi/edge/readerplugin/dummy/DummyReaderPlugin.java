@@ -1,8 +1,10 @@
 package org.rifidi.edge.readerplugin.dummy;
 
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+
 
 import org.rifidi.edge.core.exception.RifidiIIllegialArgumentException;
 import org.rifidi.edge.core.exception.readerConnection.RifidiConnectionIllegalStateException;
@@ -16,6 +18,7 @@ import org.rifidi.edge.readerplugin.dummy.commands.DummyCustomCommandResult;
 
 public class DummyReaderPlugin implements IReaderPlugin {
 
+	//SocketLoopBack loopback;
 
 	private boolean connected = false;
 
@@ -28,6 +31,8 @@ public class DummyReaderPlugin implements IReaderPlugin {
 	public DummyReaderPlugin(DummyReaderInfo info) {
 		this.info = info;
 		random = new Random();
+		//loopback = new SocketLoopBack("DummyAdapter LoopBack: " + info.getPort());
+		//loopback.start();
 	}
 
 	@Override
@@ -144,4 +149,45 @@ public class DummyReaderPlugin implements IReaderPlugin {
 	public EDummyError getError(){
 		return info.getErrorToSet();
 	}
+	/*
+	private class SocketLoopBack extends AbstractThread {
+
+		protected SocketLoopBack(String threadName) {
+			super(threadName);
+		}
+
+		@Override
+		public void run() {
+			// TODO Auto-generated method stub
+			Socket socket = new Socket();
+			InputStream in = null;
+			OutputStream out = null;
+			
+			try {
+				socket.bind(new InetSocketAddress(DummyReaderPlugin.this.info.getIPAddress(), DummyReaderPlugin.this.info.getPort()));
+				in = socket.getInputStream();
+				out = socket.getOutputStream();
+			
+			while(running){
+				byte[] loop = new byte[in.available()];
+				
+				in.read(loop);
+				
+				out.write(loop);
+			}
+			
+				socket.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+	}
+	
+	@Override
+	public void finalize() throws Throwable {
+		loopback.stop();
+		super.finalize();
+	}*/
 }
