@@ -26,10 +26,19 @@ public class JMSServiceImpl implements JMSService {
 	 * @see org.rifidi.edge.jms.service.JMSService#register(org.rifidi.edge.core.connection.IReaderConnection)
 	 */
 	@Override
-	public void register(IReaderConnection connection, String queueName) {
-		// TODO Auto-generated method stub
+	public boolean register(IReaderConnection connection) {
 		JMSHelper jmsHelper = new JMSHelper();
-		map.put(connection, value);
+		
+		jmsHelper.initializeJMSQueue(connectionFactory, Integer.toString(connection.getSessionID()));
+		
+		JMSMessageThread jmsThread = new JMSMessageThread(connection.getSessionID(), connection.getAdapter() , jmsHelper);
+		
+		boolean retVal = jmsThread.start();
+		
+		if (retVal)
+			map.put(connection, jmsThread);
+		
+		return retVal;
 	}
 
 	/* (non-Javadoc)
@@ -37,8 +46,12 @@ public class JMSServiceImpl implements JMSService {
 	 */
 	@Override
 	public void unregister(IReaderConnection connection) {
-		// TODO Auto-generated method stub
+		JMSMessageThread jmsThread = map.get(connection);
 		
+		if (jmsThread != null) 
+			jmsThread.stop();
+		
+		map.remove(connection);
 	}
 
 	/**
