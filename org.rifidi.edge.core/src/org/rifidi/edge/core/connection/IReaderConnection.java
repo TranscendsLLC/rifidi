@@ -32,6 +32,7 @@ public interface IReaderConnection {
 	 */
 	public abstract void setAdapter(IReaderPlugin adapter);
 
+	//TODO Andreas: Need to change the name of this method.
 	/**
 	 * @return the sessionID
 	 */
