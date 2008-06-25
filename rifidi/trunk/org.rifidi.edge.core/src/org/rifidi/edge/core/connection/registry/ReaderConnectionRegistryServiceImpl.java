@@ -27,6 +27,10 @@ import org.rifidi.edge.core.readerPlugin.factory.ReaderPluginFactory;
 import org.rifidi.services.annotations.Inject;
 import org.rifidi.services.registry.ServiceRegistry;
 
+/**
+ * @author jerry
+ *
+ */
 public class ReaderConnectionRegistryServiceImpl implements
 		ReaderConnectionRegistryService {
 

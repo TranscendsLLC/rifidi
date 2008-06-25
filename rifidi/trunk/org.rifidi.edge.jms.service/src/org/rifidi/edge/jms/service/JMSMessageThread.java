@@ -17,7 +17,7 @@ import org.rifidi.edge.core.tag.TagRead;
 import org.rifidi.services.annotations.Inject;
 import org.rifidi.services.registry.ServiceRegistry;
 
-public class JMSMessageThread extends AbstractThread{
+public class JMSMessageThread extends AbstractThread {
 
 	private Log logger = LogFactory.getLog(JMSMessageThread.class);
 
