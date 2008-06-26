@@ -39,8 +39,11 @@ public class ReadWriteThread extends AbstractThread {
 		logger.debug("Starting ReadAndWrite Thread");
 		try {
 			while (running) {
+				logger.debug("in the while loop, taking from write queue");
 				sendData(writeQueue.take());
+				logger.debug("before the read statement");
 				readQueue.add(readData());
+				logger.debug("after the read statement");
 			}
 		} catch (InterruptedException e) {
 			running = false;
