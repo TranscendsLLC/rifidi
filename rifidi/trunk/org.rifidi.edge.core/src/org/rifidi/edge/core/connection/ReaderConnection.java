@@ -58,7 +58,7 @@ public class ReaderConnection implements IReaderConnection {
 	// What caused the error in the adapter
 	private RifidiException errorCause;
 	// Semaphore for the above variable 
-	private Object errorSempaphore;
+	private Object errorSempaphore = new Object();
 	
 	private JMSService jmsService;
 
