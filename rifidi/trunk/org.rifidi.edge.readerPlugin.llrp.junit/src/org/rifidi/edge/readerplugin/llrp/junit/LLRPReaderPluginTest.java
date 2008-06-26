@@ -66,11 +66,11 @@ public class LLRPReaderPluginTest extends TestCase {
 		lci.setIPAddress("127.0.0.1");
 		lci.setPort(5084);
 		LLRPReaderPlugin newAdapt = new LLRPReaderPlugin(lci);
-		try {
-			newAdapt.connect();
-		} catch (RifidiConnectionException e) {
-			Assert.fail();
-		}
+//		try {
+//			newAdapt.connect();
+//		} catch (RifidiConnectionException e) {
+//			Assert.fail();
+//		}
 
 		try {
 			newAdapt.disconnect();
@@ -89,12 +89,12 @@ public class LLRPReaderPluginTest extends TestCase {
 		lci.setPort(5084);
 		LLRPReaderPlugin newAdapt = new LLRPReaderPlugin(lci);
 
-		try {
-			newAdapt.connect();
-		} catch (RifidiConnectionException e) {
-			e.printStackTrace();
-			Assert.fail();
-		}
+//		try {
+//			newAdapt.connect();
+//		} catch (RifidiConnectionException e) {
+//			e.printStackTrace();
+//			Assert.fail();
+//		}
 
 		List<TagRead> newTags = newAdapt.getNextTags();
 		
@@ -131,11 +131,11 @@ public class LLRPReaderPluginTest extends TestCase {
 		lci.setIPAddress("127.0.0.1");
 		lci.setPort(5084);
 		LLRPReaderPlugin newAdapt = new LLRPReaderPlugin(lci);
-		try {
-			newAdapt.connect();
-		} catch (RifidiConnectionException e) {
-			Assert.fail();
-		}
+		// try {
+		// newAdapt.connect();
+		// } catch (RifidiConnectionException e) {
+		// Assert.fail();
+		//		}
 
 		try {
 			newAdapt.disconnect();
