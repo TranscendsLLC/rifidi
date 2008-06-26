@@ -35,8 +35,7 @@ import org.rifidi.services.registry.ServiceRegistry;
 
 /**
  * 
- * @author Jerry and Kyle
- * A session bundles the objects needed to communicate to
+ * @author Jerry and Kyle A session bundles the objects needed to communicate to
  *         the reader.
  */
 
@@ -44,26 +43,25 @@ public class ReaderConnection implements IReaderConnection {
 
 	private static final Log logger = LogFactory.getLog(ReaderConnection.class);
 
-	
 	private IReaderPlugin plugin;
 
-	//The id of this connection
+	// The id of this connection
 	private int connectionID;
 
-	//The reader info for the specific plugin
+	// The reader info for the specific plugin
 	private AbstractReaderInfo connectionInfo;
 
-	//The current state of this connection.
+	// The current state of this connection.
 	private EReaderAdapterState state;
 
-	//What caused the error in the adapter
+	// What caused the error in the adapter
 	private RifidiException errorCause;
 
 	private JMSService jmsService;
 
 	private CommunicationService communicationService;
 	private Protocol protocol;
-	
+
 	/**
 	 * Creates a Session.
 	 * 
@@ -81,69 +79,89 @@ public class ReaderConnection implements IReaderConnection {
 		setSessionID(id);
 		state = EReaderAdapterState.CREATED;
 		ServiceRegistry.getInstance().service(this);
+
+		this.protocol = protocol;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.rifidi.edge.core.connection.IReaderConnection#getAdapter()
 	 */
 	public IReaderPlugin getAdapter() {
 		return plugin;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.rifidi.edge.core.connection.IReaderConnection#setAdapter(org.rifidi.edge.core.readerPlugin.IReaderPlugin)
 	 */
 	public void setAdapter(IReaderPlugin adapter) {
 		this.plugin = adapter;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.rifidi.edge.core.connection.IReaderConnection#getSessionID()
 	 */
 	public int getSessionID() {
 		return connectionID;
 	}
 
-	//TODO Andreas: Need to change the name of this method.
-	/* (non-Javadoc)
+	// TODO Andreas: Need to change the name of this method.
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.rifidi.edge.core.connection.IReaderConnection#setSessionID(int)
 	 */
 	public void setSessionID(int sessionID) {
 		this.connectionID = sessionID;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.rifidi.edge.core.connection.IReaderConnection#getConnectionInfo()
 	 */
 	public AbstractReaderInfo getConnectionInfo() {
 		return connectionInfo;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.rifidi.edge.core.connection.IReaderConnection#setConnectionInfo(org.rifidi.edge.core.readerPlugin.AbstractReaderInfo)
 	 */
 	public void setConnectionInfo(AbstractReaderInfo connectionInfo) {
 		this.connectionInfo = connectionInfo;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.rifidi.edge.core.connection.IReaderConnection#sendCustomCommand(org.rifidi.edge.core.readerPlugin.commands.ICustomCommand)
 	 */
-	public ICustomCommandResult sendCustomCommand(ICustomCommand customCommand) throws RifidiException {
+	public ICustomCommandResult sendCustomCommand(ICustomCommand customCommand)
+			throws RifidiException {
 
 		if (state != EReaderAdapterState.CONNECTED) {
 			if (state == EReaderAdapterState.ERROR) {
-				throw new RifidiPreviousErrorException("Connection already in error state.", errorCause);
+				throw new RifidiPreviousErrorException(
+						"Connection already in error state.", errorCause);
 			} else {
-				RifidiException e =  new RifidiConnectionIllegalStateException("Addapter trying to connect in illegal state.");
+				RifidiException e = new RifidiConnectionIllegalStateException(
+						"Addapter trying to connect in illegal state.");
 				setErrorCause(e);
 				throw e;
 			}
 		}
-		
+
 		state = EReaderAdapterState.BUSY;
 		try {
-			ICustomCommandResult result = plugin.sendCustomCommand(customCommand);
+			ICustomCommandResult result = plugin
+					.sendCustomCommand(customCommand);
 			state = EReaderAdapterState.CONNECTED;
 			return result;
 		} catch (RifidiConnectionIllegalStateException e) {
@@ -161,15 +179,15 @@ public class ReaderConnection implements IReaderConnection {
 			 */
 
 			String errorMsg = "Uncaught RuntimeException in "
-				+ plugin.getClass()
-				+ " adapter. "
-				+ "This means that there may be an unfixed bug in the adapter.";
-			
-			logger.error( errorMsg, e);
-			
+					+ plugin.getClass()
+					+ " adapter. "
+					+ "This means that there may be an unfixed bug in the adapter.";
+
+			logger.error(errorMsg, e);
+
 			/* We wrap the Runtime exception */
 			RifidiException e2 = new RifidiException(errorMsg, e);
-			
+
 			setErrorCause(e2);
 
 			/* And throw it. */
@@ -178,17 +196,20 @@ public class ReaderConnection implements IReaderConnection {
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.rifidi.edge.core.connection.IReaderConnection#startTagStream()
 	 */
 	public void startTagStream() throws RifidiException {
 		if (state == EReaderAdapterState.CONNECTED) {
 			state = EReaderAdapterState.STREAMING;
-			//this.jmsMessageThread.start();
+			// this.jmsMessageThread.start();
 			jmsService.register(this);
 		} else {
 			if (state == EReaderAdapterState.ERROR) {
-				throw new RifidiPreviousErrorException("Connection already in error state.", errorCause);
+				throw new RifidiPreviousErrorException(
+						"Connection already in error state.", errorCause);
 			}
 			RifidiConnectionIllegalStateException e = new RifidiConnectionIllegalStateException();
 			logger
@@ -199,17 +220,20 @@ public class ReaderConnection implements IReaderConnection {
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.rifidi.edge.core.connection.IReaderConnection#stopTagStream()
 	 */
 	public void stopTagStream() throws RifidiException {
 		if (state == EReaderAdapterState.STREAMING) {
 			state = EReaderAdapterState.CONNECTED;
-			//this.jmsMessageThread.stop();
+			// this.jmsMessageThread.stop();
 			jmsService.unregister(this);
 		} else {
 			if (state == EReaderAdapterState.ERROR) {
-				throw new RifidiPreviousErrorException("Connection already in error state.", errorCause);
+				throw new RifidiPreviousErrorException(
+						"Connection already in error state.", errorCause);
 			}
 			RifidiConnectionIllegalStateException e = new RifidiConnectionIllegalStateException();
 			logger
@@ -221,14 +245,18 @@ public class ReaderConnection implements IReaderConnection {
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.rifidi.edge.core.connection.IReaderConnection#getState()
 	 */
 	public EReaderAdapterState getState() {
 		return state;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.rifidi.edge.core.connection.IReaderConnection#connect()
 	 */
 	public void connect() throws RifidiException {
@@ -239,15 +267,17 @@ public class ReaderConnection implements IReaderConnection {
 			} else if (state == EReaderAdapterState.DISCONECTED) {
 				logger.debug("Reconnecting from being disconnected...");
 			} else {
-				RifidiException e =  new RifidiConnectionIllegalStateException("Addapter trying to connect in illegal state.");
+				RifidiException e = new RifidiConnectionIllegalStateException(
+						"Addapter trying to connect in illegal state.");
 				setErrorCause(e);
 				throw e;
 			}
-		} 
+		}
 		try {
-			
+
 			try {
-				communicationService.createConnection(plugin, connectionInfo, protocol);
+				communicationService.createConnection(plugin, connectionInfo,
+						protocol);
 				state = EReaderAdapterState.CONNECTED;
 			} catch (ConnectException e) {
 				// TODO Auto-generated catch block
@@ -259,11 +289,9 @@ public class ReaderConnection implements IReaderConnection {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
-			throw new RifidiConnectionException();
-			//plugin.connect();
-			
 
+			throw new RifidiConnectionException();
+			// plugin.connect();
 
 		} catch (RifidiConnectionException e) {
 			setErrorCause(e);
@@ -278,15 +306,15 @@ public class ReaderConnection implements IReaderConnection {
 			 */
 
 			String errorMsg = "Uncaught RuntimeException in "
-				+ plugin.getClass()
-				+ " adapter. "
-				+ "This means that there may be an unfixed bug in the adapter.";
-			
-			logger.error( errorMsg, e);
-			
+					+ plugin.getClass()
+					+ " adapter. "
+					+ "This means that there may be an unfixed bug in the adapter.";
+
+			logger.error(errorMsg, e);
+
 			/* We wrap the Runtime exception */
 			RifidiException e2 = new RifidiException(errorMsg, e);
-			
+
 			setErrorCause(e2);
 
 			/* And throw it. */
@@ -294,15 +322,21 @@ public class ReaderConnection implements IReaderConnection {
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.rifidi.edge.core.connection.IReaderConnection#disconnect()
 	 */
 	public void disconnect() throws RifidiException {
-		if ((state != EReaderAdapterState.CONNECTED) || (state != EReaderAdapterState.CREATED)){
+		if ((state != EReaderAdapterState.CONNECTED)
+				|| (state != EReaderAdapterState.CREATED)) {
 			if (state == EReaderAdapterState.ERROR) {
-				throw new RifidiPreviousErrorException("Connection already in error state and already disconnected.", errorCause);
+				throw new RifidiPreviousErrorException(
+						"Connection already in error state and already disconnected.",
+						errorCause);
 			}
-			RifidiException e = new RifidiConnectionIllegalStateException("Connection in illegal state while trying to disconnect");
+			RifidiException e = new RifidiConnectionIllegalStateException(
+					"Connection in illegal state while trying to disconnect");
 			setErrorCause(e);
 			throw e;
 		}
@@ -321,15 +355,15 @@ public class ReaderConnection implements IReaderConnection {
 			 */
 
 			String errorMsg = "Uncaught RuntimeException in "
-				+ plugin.getClass()
-				+ " adapter. "
-				+ "This means that there may be an unfixed bug in the adapter.";
-			
-			logger.error( errorMsg, e);
-			
+					+ plugin.getClass()
+					+ " adapter. "
+					+ "This means that there may be an unfixed bug in the adapter.";
+
+			logger.error(errorMsg, e);
+
 			/* We wrap the Runtime exception */
 			RifidiException e2 = new RifidiException(errorMsg, e);
-			
+
 			setErrorCause(e2);
 
 			/* And throw it. */
@@ -337,43 +371,48 @@ public class ReaderConnection implements IReaderConnection {
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.rifidi.edge.core.connection.IReaderConnection#getErrorCause()
 	 */
 	public Exception getErrorCause() {
 		return errorCause;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.rifidi.edge.core.connection.IReaderConnection#setErrorCause(java.lang.Exception)
 	 */
 	public void setErrorCause(RifidiException errorCause) {
 		logger.debug(errorCause.getClass().getSimpleName());
-		if (errorCause != null ){
-			//Need to do some house keeping first...
+		if (errorCause != null) {
+			// Need to do some house keeping first...
 			try {
-				//this.jmsMessageThread.stop();
+				// this.jmsMessageThread.stop();
 				jmsService.unregister(this);
 				plugin.disconnect();
 			} catch (Exception e) {
-				//e.printStackTrace();
-				
-				/* we ignore any exceptions because 
-				 * we are already in an error
+				// e.printStackTrace();
+
+				/*
+				 * we ignore any exceptions because we are already in an error
 				 * state
 				 */
 			}
-		
+
 			this.errorCause = errorCause;
 			state = EReaderAdapterState.ERROR;
-			logger.debug("Set reader state to error with message: " + errorCause.getClass().getSimpleName());
+			logger.debug("Set reader state to error with message: "
+					+ errorCause.getClass().getSimpleName());
 		}
 	}
 
 	public void cleanUp() {
 		jmsService.unregister(this);
-		//jmsMessageThread.stop();
-		//jmsMessageThread = null;
+		// jmsMessageThread.stop();
+		// jmsMessageThread = null;
 	}
 
 	// //TODO: Think if we need this method.
@@ -401,14 +440,15 @@ public class ReaderConnection implements IReaderConnection {
 	// }
 	// return null;
 	// }
-	
+
 	@Inject
-	public void setJMSService(JMSService jmsService){
+	public void setJMSService(JMSService jmsService) {
 		this.jmsService = jmsService;
 	}
-	
+
 	@Inject
-	public void setCommunicationService(CommunicationService communicationService) {
+	public void setCommunicationService(
+			CommunicationService communicationService) {
 		this.communicationService = communicationService;
 	}
 
