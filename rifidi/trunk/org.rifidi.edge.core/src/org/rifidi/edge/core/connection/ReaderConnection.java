@@ -271,7 +271,7 @@ public class ReaderConnection implements IReaderConnection {
 	 * @see org.rifidi.edge.core.connection.IReaderConnection#disconnect()
 	 */
 	public void disconnect() throws RifidiException {
-		if (state != EReaderAdapterState.CONNECTED){
+		if ((state != EReaderAdapterState.CONNECTED) || (state != EReaderAdapterState.CREATED)){
 			if (state == EReaderAdapterState.ERROR) {
 				throw new RifidiPreviousErrorException("Connection already in error state.", errorCause);
 			}
