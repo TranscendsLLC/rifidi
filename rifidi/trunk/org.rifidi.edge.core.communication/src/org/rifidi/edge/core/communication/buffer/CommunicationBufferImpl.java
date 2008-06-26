@@ -115,7 +115,7 @@ public class CommunicationBufferImpl implements CommunicationBuffer,
 	 * @throws RuntimeException
 	 */
 	private Object checkState(Object object) throws IOException {
-		synchronized (exception) {
+		
 			if (object != null) {
 				/*
 				 * These if statements are here so that we can 'throws IOException'
@@ -136,8 +136,7 @@ public class CommunicationBufferImpl implements CommunicationBuffer,
 							exception);
 				return object;
 			}
-		}
-		
+			
 		return null;
 	}
 
@@ -149,7 +148,7 @@ public class CommunicationBufferImpl implements CommunicationBuffer,
 	 */
 	@Override
 	public void uncaughtException(Thread t, Throwable e) {
-		synchronized (exception) {
+		
 			if (e instanceof Exception) {
 				logger
 						.debug("There was an Exception in the underlying communication layer: "
@@ -164,6 +163,6 @@ public class CommunicationBufferImpl implements CommunicationBuffer,
 			for (Thread interruptThread : threads) {
 				interruptThread.interrupt();
 			}
-		}
+		
 	}
 }
