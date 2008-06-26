@@ -31,6 +31,9 @@ import org.rifidi.edge.readerPlugin.alien.AlienReaderPlugin;
  */
 public class AlienReaderPluginTest {
 
+	private final String hostname = "192.168.1.100";
+	private final int port = 23;
+	
 	/**
 	 * @throws java.lang.Exception
 	 */
@@ -53,8 +56,8 @@ public class AlienReaderPluginTest {
 	@Test
 	public void testConnect() {
 		AlienReaderInfo connectionInfo = new AlienReaderInfo();
-		connectionInfo.setIPAddress("192.168.1.100");
-		connectionInfo.setPort(23);
+		connectionInfo.setIPAddress(hostname);
+		connectionInfo.setPort(port);
 		connectionInfo.setUsername("alien");
 		connectionInfo.setPassword("password");
 
@@ -74,8 +77,8 @@ public class AlienReaderPluginTest {
 	@Test
 	public void testStream() {
 		AlienReaderInfo connectionInfo = new AlienReaderInfo();
-		connectionInfo.setIPAddress("192.168.1.100");
-		connectionInfo.setPort(23);
+		connectionInfo.setIPAddress(hostname);
+		connectionInfo.setPort(port);
 		connectionInfo.setUsername("alien");
 		connectionInfo.setPassword("password");
 
@@ -92,7 +95,7 @@ public class AlienReaderPluginTest {
 			Assert.fail();
 		}
 
-		for (int i = 0; i < 5; i++) {
+		for (int i = 0; i < 100; i++) {
 			List<TagRead> tagList = null;
 			try {
 				tagList = alienReaderAdapter.getNextTags();
@@ -122,8 +125,8 @@ public class AlienReaderPluginTest {
 	@Test
 	public void testDisconnect() {
 		AlienReaderInfo connectionInfo = new AlienReaderInfo();
-		connectionInfo.setIPAddress("192.168.1.100");
-		connectionInfo.setPort(23);
+		connectionInfo.setIPAddress(hostname);
+		connectionInfo.setPort(port);
 		connectionInfo.setUsername("alien");
 		connectionInfo.setPassword("password");
 
