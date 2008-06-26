@@ -40,8 +40,10 @@ public class DummyReaderInfo extends AbstractReaderInfo {
 	 * @param errorToSet
 	 *            the errorToSet to set
 	 */
-	public void setErrorToSet(EDummyError errorToSet) {
-		this.errorToSet = errorToSet;
+	public void setErrorToSet(String errorToSet) {
+		errorToSet = errorToSet.trim().toUpperCase();
+		this.errorToSet = EDummyError.valueOf(errorToSet);
+		if (this.errorToSet == null) this.errorToSet = EDummyError.NONE;
 	}
 	
 	/**
