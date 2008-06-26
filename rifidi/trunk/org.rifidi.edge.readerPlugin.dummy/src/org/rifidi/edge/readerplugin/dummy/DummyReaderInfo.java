@@ -85,7 +85,6 @@ public class DummyReaderInfo extends AbstractReaderInfo {
 
 	@Override
 	public Protocol getProtocol() {
-		// TODO Auto-generated method stub
-		return null;
+		return new DummyProtocol();
 	}
 }
