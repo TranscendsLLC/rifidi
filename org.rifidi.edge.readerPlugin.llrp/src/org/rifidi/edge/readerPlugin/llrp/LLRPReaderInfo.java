@@ -11,6 +11,8 @@
  */
 package org.rifidi.edge.readerPlugin.llrp;
 
+import org.rifidi.edge.core.communication.enums.CommunicationType;
+import org.rifidi.edge.core.communication.protocol.Protocol;
 import org.rifidi.edge.core.readerPlugin.AbstractReaderInfo;
 
 /**
@@ -34,5 +36,15 @@ public class LLRPReaderInfo extends AbstractReaderInfo {
 	@Override
 	public String getReaderType() {
 		return "LLRP Reader";
+	}
+
+	@Override
+	public CommunicationType getCommunicationType() {
+		return CommunicationType.ASYNCHRONOUS;
+	}
+
+	@Override
+	public Protocol getProtocol() {
+		return new LLRPProtocol();
 	}
 }

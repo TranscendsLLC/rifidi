@@ -12,7 +12,6 @@
 package org.rifidi.edge.readerPlugin.llrp;
 
 import java.io.IOException;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -62,14 +61,13 @@ import org.llrp.ltk.types.UnsignedInteger;
 import org.llrp.ltk.types.UnsignedShort;
 import org.llrp.ltk.types.UnsignedShortArray;
 import org.rifidi.edge.common.utilities.converter.ByteAndHexConvertingUtility;
-import org.rifidi.edge.core.communication.buffer.CommunicationBuffer;
-import org.rifidi.edge.core.communication.service.CommunicationService;
+import org.rifidi.edge.core.communication.buffer.ConnectionBuffer;
 import org.rifidi.edge.core.exception.readerConnection.RifidiConnectionException;
+import org.rifidi.edge.core.exception.readerConnection.RifidiIllegalOperationException;
 import org.rifidi.edge.core.readerPlugin.IReaderPlugin;
 import org.rifidi.edge.core.readerPlugin.commands.ICustomCommand;
 import org.rifidi.edge.core.readerPlugin.commands.ICustomCommandResult;
 import org.rifidi.edge.core.tag.TagRead;
-import org.rifidi.services.annotations.Inject;
 import org.rifidi.services.registry.ServiceRegistry;
 
 /**
@@ -80,21 +78,6 @@ import org.rifidi.services.registry.ServiceRegistry;
 public class LLRPReaderPlugin implements IReaderPlugin {
 
 	/**
-	 * The connection info for this reader
-	 */
-	private LLRPReaderInfo llrpri;
-
-	/**
-	 * The communication connection
-	 */
-	private CommunicationBuffer communicationConnection;
-
-	/**
-	 * The communication service for this reader.
-	 */
-	private CommunicationService communicationService;
-
-	/**
 	 * The log4j logger.
 	 */
 	private static Log logger = LogFactory.getLog(LLRPReaderPlugin.class);
@@ -103,6 +86,8 @@ public class LLRPReaderPlugin implements IReaderPlugin {
 	 * The ID of the ROSpec that is used.
 	 */
 	private static int ROSPEC_ID = 1;
+
+	private ConnectionBuffer connection;
 
 	/**
 	 * The LLRPReadThread that will read from the connection queue.
@@ -116,7 +101,6 @@ public class LLRPReaderPlugin implements IReaderPlugin {
 	 *            The connection info for the Alien Reader.
 	 */
 	public LLRPReaderPlugin(LLRPReaderInfo llrpri) {
-		this.llrpri = llrpri;
 		ServiceRegistry.getInstance().service(this);
 	}
 
@@ -126,27 +110,22 @@ public class LLRPReaderPlugin implements IReaderPlugin {
 	 * @see org.rifidi.edge.core.readerAdapter.IReaderAdapter#connect()
 	 */
 	@Override
-	public void connect() throws RifidiConnectionException {
-		if (communicationService == null) {
-			throw new RifidiConnectionException(
-					"CommunicationSerivce Not Found!");
-		}
+	public void connect(ConnectionBuffer connection)
+			throws RifidiConnectionException {
 
 		// Connect to the LLRP Reader
-		try {
-			communicationConnection = communicationService.createConnection(
-					this, llrpri, new LLRPProtocol());
-
-			reader = new LLRPReadThread(communicationConnection);
-
-			reader.start();
-		} catch (UnknownHostException e) {
-			e.printStackTrace();
-			throw new RifidiConnectionException(e);
-		} catch (IOException e) {
-			e.printStackTrace();
-			throw new RifidiConnectionException(e);
-		}
+		// try {
+		reader = new LLRPReadThread(connection);
+		reader.start();
+		
+		this.connection = connection;
+		// } catch (UnknownHostException e) {
+		// e.printStackTrace();
+		// throw new RifidiConnectionException(e);
+		// } catch (IOException e) {
+		// e.printStackTrace();
+		// throw new RifidiConnectionException(e);
+		// }
 
 		SET_READER_CONFIG config = createSetReaderConfig();
 		write(config, "Set Reader Config");
@@ -191,7 +170,7 @@ public class LLRPReaderPlugin implements IReaderPlugin {
 	}
 
 	/**
-	 * This class is a allows LLRP messages to be read on a separate thread.  
+	 * This class is a allows LLRP messages to be read on a separate thread.
 	 * 
 	 * @author Kyle Neumeier
 	 * @author Andreas Huebner
@@ -217,14 +196,14 @@ public class LLRPReaderPlugin implements IReaderPlugin {
 		/**
 		 * The connection object.
 		 */
-		private CommunicationBuffer connection;
+		private ConnectionBuffer connection;
 
 		/**
 		 * Thread for constant reading of the stream
 		 * 
 		 * @param inStream
 		 */
-		public LLRPReadThread(CommunicationBuffer comm) {
+		public LLRPReadThread(ConnectionBuffer comm) {
 			this.commandQueue = new LinkedBlockingQueue<LLRPMessage>();
 			this.tagQueue = new LinkedBlockingQueue<LLRPMessage>();
 			this.roSpecListQueue = new LinkedBlockingQueue<LLRPMessage>();
@@ -277,6 +256,9 @@ public class LLRPReaderPlugin implements IReaderPlugin {
 				} catch (InterruptedException e) {
 					isRunning = false;
 					logger.error("Error while reading message", e);
+				} catch (RifidiIllegalOperationException e) {
+					isRunning = false;
+					logger.error("Error while reading message", e);
 				}
 
 			}
@@ -286,10 +268,11 @@ public class LLRPReaderPlugin implements IReaderPlugin {
 		 * Read everything from the stream until the socket is closed
 		 * 
 		 * @throws InvalidLLRPMessageException
+		 * @throws RifidiIllegalOperationException
 		 */
 		public LLRPMessage read() throws IOException,
-				InvalidLLRPMessageException {
-			LLRPMessage m = (LLRPMessage) connection.receive();
+				InvalidLLRPMessageException, RifidiIllegalOperationException {
+			LLRPMessage m = (LLRPMessage) connection.recieve();
 			return m;
 		}
 
@@ -420,7 +403,7 @@ public class LLRPReaderPlugin implements IReaderPlugin {
 	 * @param grr
 	 *            The GET_ROSPECS_RESPONSE search through.
 	 * @return Returns true if the default ROSpec exists, false if it does not
-	 *         exist.  
+	 *         exist.
 	 */
 	private boolean doesRoSpecExist(GET_ROSPECS_RESPONSE grr) {
 		try {
@@ -451,18 +434,20 @@ public class LLRPReaderPlugin implements IReaderPlugin {
 	private void write(LLRPMessage msg, String message) {
 		try {
 			logger.debug(" Sending message: \n" + msg.toXMLString());
-			communicationConnection.send(msg);
+			connection.send(msg);
 		} catch (IOException e) {
 			logger.error("Couldn't send Command ", e);
 		} catch (InvalidLLRPMessageException e) {
+			logger.error("Couldn't send Command", e);
+		} catch (RifidiIllegalOperationException e) {
 			logger.error("Couldn't send Command", e);
 		}
 	}
 
 	/**
-	 * This method creates a SET_READER_CONFIG method.  
+	 * This method creates a SET_READER_CONFIG method.
 	 * 
-	 * @return		The SET_READER_CONFIG object.  
+	 * @return The SET_READER_CONFIG object.
 	 */
 	private SET_READER_CONFIG createSetReaderConfig() {
 		SET_READER_CONFIG setReaderConfig = new SET_READER_CONFIG();
@@ -568,7 +553,7 @@ public class LLRPReaderPlugin implements IReaderPlugin {
 	/**
 	 * This method creates a ROSpec with null start and stop triggers
 	 * 
-	 * @return	A ROSpec object.  
+	 * @return A ROSpec object.
 	 */
 	private ROSpec createROSpec() {
 		// create a new rospec
@@ -631,19 +616,5 @@ public class LLRPReaderPlugin implements IReaderPlugin {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-	}
-
-	/**
-	 * Inject the communication service.
-	 * 
-	 * @param communicationService
-	 *            The communication service to inject.
-	 */
-	@Inject
-	public void setCommunicationService(
-			CommunicationService communicationService) {
-		logger.debug("communicationService set");
-		this.communicationService = communicationService;
-
 	}
 }
