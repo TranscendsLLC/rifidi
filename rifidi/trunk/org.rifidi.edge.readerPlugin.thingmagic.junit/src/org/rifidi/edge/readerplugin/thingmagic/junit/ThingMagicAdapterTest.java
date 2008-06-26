@@ -11,17 +11,23 @@
  */
 package org.rifidi.edge.readerplugin.thingmagic.junit;
 
+import java.io.IOException;
+import java.net.ConnectException;
+import java.net.UnknownHostException;
 import java.util.List;
 
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.rifidi.edge.core.communication.service.CommunicationService;
 import org.rifidi.edge.core.exception.readerConnection.RifidiConnectionException;
 import org.rifidi.edge.core.exception.readerConnection.RifidiConnectionIllegalStateException;
 import org.rifidi.edge.core.tag.TagRead;
+import org.rifidi.edge.readerPlugin.thingmagic.ThingMagicProtocol;
 import org.rifidi.edge.readerPlugin.thingmagic.ThingMagicReaderInfo;
 import org.rifidi.edge.readerPlugin.thingmagic.ThingMagicReaderPlugin;
+import org.rifidi.services.annotations.Inject;
 import org.rifidi.services.registry.ServiceRegistry;
 
 /**
@@ -29,6 +35,8 @@ import org.rifidi.services.registry.ServiceRegistry;
  *
  */
 public class ThingMagicAdapterTest {
+
+	private CommunicationService communicationService;
 
 	/**
 	 * @throws java.lang.Exception
@@ -55,9 +63,18 @@ public class ThingMagicAdapterTest {
 		ThingMagicReaderPlugin adapter = new ThingMagicReaderPlugin(info);
 
 		try {
-			adapter.connect();
-		} catch (RifidiConnectionException e) {
-			 e.printStackTrace();
+			adapter.connect(communicationService.createConnection(adapter, info, new ThingMagicProtocol()));
+		} catch (RifidiConnectionException e1) {
+			Assert.fail();
+			e1.printStackTrace();
+		} catch (ConnectException e) {
+			e.printStackTrace();
+			Assert.fail();
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+			Assert.fail();
+		} catch (IOException e) {
+			e.printStackTrace();
 			Assert.fail();
 		}
 
@@ -89,5 +106,9 @@ public class ThingMagicAdapterTest {
 	/*
 	 * @Test public void testTagRead(){ //TODO Jerry implement this test. }
 	 */
-
+	@Inject
+	public void setCommunicationService(
+			CommunicationService communicationService) {
+		this.communicationService = communicationService;
+	}
 }
