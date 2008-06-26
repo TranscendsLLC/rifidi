@@ -20,11 +20,12 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.common.utilities.converter.ByteAndHexConvertingUtility;
-import org.rifidi.edge.core.communication.buffer.CommunicationBuffer;
+import org.rifidi.edge.core.communication.buffer.ConnectionBuffer;
 import org.rifidi.edge.core.communication.service.CommunicationService;
 import org.rifidi.edge.core.exception.RifidiIIllegialArgumentException;
 import org.rifidi.edge.core.exception.readerConnection.RifidiConnectionIllegalStateException;
 import org.rifidi.edge.core.exception.readerConnection.RifidiConnectionException;
+import org.rifidi.edge.core.exception.readerConnection.RifidiIllegalOperationException;
 import org.rifidi.edge.core.readerPlugin.IReaderPlugin;
 import org.rifidi.edge.core.readerPlugin.commands.ICustomCommand;
 import org.rifidi.edge.core.readerPlugin.commands.ICustomCommandResult;
@@ -47,7 +48,7 @@ public class ThingMagicReaderPlugin implements IReaderPlugin {
 	boolean connected = false;
 
 	// the communication buffer used to talk to the reader
-	private CommunicationBuffer communicationBuffer;
+	private ConnectionBuffer connectionBuffer;
 
 	// The information about a specific reader.
 	private ThingMagicReaderInfo tmci;
@@ -64,33 +65,8 @@ public class ThingMagicReaderPlugin implements IReaderPlugin {
 	 * @see org.rifidi.edge.core.readerPlugin.IReaderPlugin#connect()
 	 */
 	@Override
-	public void connect() throws RifidiConnectionException {
-		if (communicationService == null)
-			throw new RifidiConnectionException("CommunicationSerivce Not Found!");
-		
-		try {
-			logger.debug("Connecting: " + tmci.getIPAddress() + ":" + tmci.getPort() + " ...");
-
-			communicationBuffer = communicationService.createConnection(this, tmci, new ThingMagicProtocol());
-	
-			connected = true;
-		} catch (UnknownHostException e) {
-			logger.error("Unknown host.", e);
-			throw new RifidiConnectionException("Unknown host.", e);
-		} catch (ConnectException e){
-			logger.error("Connection to reader refused.");
-			logger.error("Please check if the reader is properly turned on and connected to the network.");
-			//System.out.println("Stack trace follows...");
-			//e.printStackTrace();
-			
-			//logger.error("ConnectException...",e);
-			throw new RifidiConnectionException(
-					"Connection to reader refused. " +
-					"Please check if the reader is properly turned on and connected to the network.", e);
-		} catch (IOException e) {
-			logger.error("IOException occured.",e);
-			throw new RifidiConnectionException("IOException occured.", e);
-		}
+	public void connect(ConnectionBuffer connectionBuffer) throws RifidiConnectionException {
+		this.connectionBuffer = connectionBuffer;
 		logger.debug("Successfully Connected.");
 	}
 
@@ -104,7 +80,7 @@ public class ThingMagicReaderPlugin implements IReaderPlugin {
 			throw new RifidiConnectionException("CommunicationSerivce Not Found!");
 		
 		try {
-			communicationService.destroyConnection(communicationBuffer);
+			communicationService.destroyConnection(connectionBuffer);
 		} catch (IOException e){
 			logger.debug("IOException.", e);
 			throw new RifidiConnectionException(e);
@@ -125,11 +101,14 @@ public class ThingMagicReaderPlugin implements IReaderPlugin {
 			
 			
 			try {
-				communicationBuffer.send("select id, timestamp from tag_id;\n");
+				connectionBuffer.send("select id, timestamp from tag_id;\n");
 				
-				 input = (String) communicationBuffer.receive();
+				 input = (String) connectionBuffer.recieve();
 				 logger.debug(input);
 			} catch (IOException e) {
+				logger.debug("IOException has accured.", e);
+				throw new RifidiConnectionIllegalStateException(e);
+			} catch (RifidiIllegalOperationException e) {
 				logger.debug("IOException has accured.", e);
 				throw new RifidiConnectionIllegalStateException(e);
 			}
@@ -190,12 +169,15 @@ public class ThingMagicReaderPlugin implements IReaderPlugin {
 		
 		if (!connected ){
 			try {
-				communicationBuffer.send(command.getCustomCommand());
+				connectionBuffer.send(command.getCustomCommand());
 
 				//TODO check if result is actually an error
-				result = new ThingMagicCustomCommandResult((String) communicationBuffer.receive());
+				result = new ThingMagicCustomCommandResult((String) connectionBuffer.recieve());
 			} catch (IOException e) {
 				logger.debug("IOException has accured.", e);
+				throw new RifidiConnectionIllegalStateException(e.getClass().getName(), e);
+			} catch (RifidiIllegalOperationException e) {
+				logger.debug("RifidiIllegalOperationException has accured.", e);
 				throw new RifidiConnectionIllegalStateException(e.getClass().getName(), e);
 			}
 			
@@ -217,4 +199,5 @@ public class ThingMagicReaderPlugin implements IReaderPlugin {
 		logger.debug("communicationService set");
 		this.communicationService = communicationService;
 	}
+
 }
