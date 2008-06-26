@@ -21,6 +21,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.common.utilities.converter.ByteAndHexConvertingUtility;
+import org.rifidi.edge.common.utilities.thread.AbstractThread;
 import org.rifidi.edge.core.communication.buffer.CommunicationBuffer;
 import org.rifidi.edge.core.communication.service.CommunicationService;
 import org.rifidi.edge.core.exception.RifidiIIllegialArgumentException;
@@ -110,11 +111,11 @@ public class AlienReaderPlugin implements IReaderPlugin {
 				throw new RifidiConnectionException(
 						"Reader is not an alien reader");
 			}
-			write(new String('\1' + aci.getUsername()
-					+ "\n"),communicationConnection);
+			write(new String('\1' + aci.getUsername() + "\n"),
+					communicationConnection);
 
-			write(new String('\1' + aci.getPassword()
-					+ "\n"),communicationConnection);
+			write(new String('\1' + aci.getPassword() + "\n"),
+					communicationConnection);
 
 			String passwordResponse = alienReadThread.getInvalid();
 
@@ -125,6 +126,7 @@ public class AlienReaderPlugin implements IReaderPlugin {
 							"Username/Password combination is invalid");
 				}
 			} else {
+				pause(1000);
 				aka.start();
 			}
 		} catch (UnknownHostException e) {
@@ -148,8 +150,10 @@ public class AlienReaderPlugin implements IReaderPlugin {
 					"CommunicationSerivce Not Found!");
 
 		try {
-			aka.isRunning = false;
-			communicationConnection.send("q");
+			aka.stop();
+			pause(1000);
+			write("q",communicationConnection);
+			pause(500);
 			communicationService.destroyConnection(communicationConnection);
 		} catch (IOException e) {
 			logger.debug("IOException.", e);
@@ -170,7 +174,7 @@ public class AlienReaderPlugin implements IReaderPlugin {
 
 		try {
 			AlienCustomCommand acc = (AlienCustomCommand) customCommand;
-			write(acc.getCommand(),communicationConnection);
+			write(acc.getCommand(), communicationConnection);
 		} catch (IOException e) {
 			logger.debug("IOException.", e);
 			throw new RifidiConnectionIllegalStateException(e);
@@ -200,13 +204,14 @@ public class AlienReaderPlugin implements IReaderPlugin {
 
 		try {
 			logger.debug("Sending the taglistformat to custom format");
-			write(AlienCommandList.TAG_LIST_FORMAT,communicationConnection);
+			write(AlienCommandList.TAG_LIST_FORMAT, communicationConnection);
 
 			logger.debug("Sending the custom format");
-			write(AlienCommandList.TAG_LIST_CUSTOM_FORMAT,communicationConnection);
+			write(AlienCommandList.TAG_LIST_CUSTOM_FORMAT,
+					communicationConnection);
 
 			logger.debug("Reading tags");
-			write(AlienCommandList.TAG_LIST,communicationConnection);
+			write(AlienCommandList.TAG_LIST, communicationConnection);
 
 			String tags = alienReadThread.getNextTags();
 			logger.debug("TAG_LIST response: " + tags);
@@ -227,7 +232,7 @@ public class AlienReaderPlugin implements IReaderPlugin {
 	 * Writes a message out to an alien reader.
 	 * 
 	 * @param message
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	private synchronized void write(String message,
 			CommunicationBuffer connection) throws IOException {
@@ -388,11 +393,7 @@ public class AlienReaderPlugin implements IReaderPlugin {
 	 * 
 	 * @author Matthew Dean - matt@pramari.com
 	 */
-	private class AlienKeepAlive extends Thread {
-		/**
-		 * 
-		 */
-		public boolean isRunning = false;
+	private class AlienKeepAlive extends AbstractThread {
 
 		/**
 		 * The connection thread.
@@ -407,8 +408,8 @@ public class AlienReaderPlugin implements IReaderPlugin {
 		 * @param connection
 		 */
 		public AlienKeepAlive(CommunicationBuffer connection) {
+			super("Alien Keep Alive Thread, AKA \"Cuddles\"");
 			this.connection = connection;
-			isRunning = true;
 		}
 
 		/*
@@ -418,16 +419,15 @@ public class AlienReaderPlugin implements IReaderPlugin {
 		 */
 		@Override
 		public void run() {
-			super.run();
-			while (isRunning) {
-				try {
-					// connection.send(READER_VERSION);
+			try {
+				while (running) {
 					write(READER_VERSION, connection);
-				} catch (IOException e) {
-					e.printStackTrace();
-					isRunning = false;
+					pause(5000);
 				}
-				pause(5000);
+			} catch (InterruptedException e) {
+				running = false;
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
 		}
 
@@ -437,13 +437,25 @@ public class AlienReaderPlugin implements IReaderPlugin {
 		 * 
 		 * @param ms
 		 *            How many milliseconds to pause.
+		 * @throws InterruptedException
 		 */
-		private void pause(long ms) {
-			try {
-				Thread.sleep(ms);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
+		private void pause(long ms) throws InterruptedException {
+			Thread.sleep(ms);
+		}
+	}
+	
+	/**
+	 * This method causes the calling thread to sleep for a specified number
+	 * of milliseconds
+	 * 
+	 * @param ms
+	 *            How many milliseconds to pause.
+	 */
+	private void pause(long ms){
+		try {
+			Thread.sleep(ms);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
 		}
 	}
 
