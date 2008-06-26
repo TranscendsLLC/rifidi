@@ -19,11 +19,11 @@ import org.rifidi.edge.core.communication.protocol.Protocol;
 import org.rifidi.edge.core.readerPlugin.AbstractReaderInfo;
 import org.rifidi.edge.core.readerPlugin.IReaderPlugin;
 
-/**
- * @author jerry
- * 
+ /**
+ * @author Jerry Maine - jerry@pramari.com
+ *
  */
-public interface CommunicationService {
+interface CommunicationService {
 
 	/**
 	 * This method takes the required information and connects to the reader and
