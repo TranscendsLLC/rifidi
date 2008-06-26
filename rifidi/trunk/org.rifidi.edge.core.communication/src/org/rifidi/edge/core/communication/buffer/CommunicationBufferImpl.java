@@ -13,13 +13,13 @@ import org.apache.commons.logging.LogFactory;
  *
  */
 public class CommunicationBufferImpl implements CommunicationBuffer, Thread.UncaughtExceptionHandler {
+	
 	private static final Log logger = LogFactory.getLog(CommunicationBufferImpl.class);	
 	
-
 	private LinkedBlockingQueue<Object> readQueue;
 	private LinkedBlockingQueue<Object> writeQueue;
 
-	Exception exception;
+	private Exception exception;
 
 	public CommunicationBufferImpl(LinkedBlockingQueue<Object> readQueue,
 			LinkedBlockingQueue<Object> writeQueue) {
@@ -34,14 +34,14 @@ public class CommunicationBufferImpl implements CommunicationBuffer, Thread.Unca
 	 */
 	@Override
 	public Object receive() throws IOException {
-		throwIfIOException (exception);
+		checkState(exception);
 
 		try {
 			logger.debug("Trying to recieve a message");
 			return readQueue.take();
 
 		} catch (InterruptedException e) {
-			throwIfIOException (exception);
+			checkState (exception);
 		}
 		return null;
 	}
@@ -53,7 +53,7 @@ public class CommunicationBufferImpl implements CommunicationBuffer, Thread.Unca
 	 */
 	@Override
 	public Object receiveNonBlocking() throws IOException {
-		throwIfIOException (exception);
+		checkState (exception);
 
 		logger.debug("Trying to recieve a message");
 		Object retVal = readQueue.poll();
@@ -68,14 +68,14 @@ public class CommunicationBufferImpl implements CommunicationBuffer, Thread.Unca
 	 */
 	@Override
 	public Object receiveTimeOut(long mills) throws IOException {
-		throwIfIOException (exception);
+		checkState (exception);
 
 		Object retVal = null;
 		try {
 			readQueue.poll(mills, TimeUnit.MILLISECONDS);
 		} catch (InterruptedException e) {
 
-			throwIfIOException (exception);
+			checkState (exception);
 
 		}
 		return retVal;
@@ -91,7 +91,7 @@ public class CommunicationBufferImpl implements CommunicationBuffer, Thread.Unca
 		logger.debug("Trying to send a message: " + msg);
 		writeQueue.add(msg);
 		
-		throwIfIOException (exception);
+		checkState (exception);
 	}
 
 	/**
@@ -104,7 +104,11 @@ public class CommunicationBufferImpl implements CommunicationBuffer, Thread.Unca
 	 * @throws IOException
 	 * @throws RuntimeException
 	 */
-	private Object throwIfIOException(Object object) throws IOException {
+	private Object checkState(Object object) throws IOException {
+		
+		readQueue.notify();
+		writeQueue.notify();
+		
 		if (object != null){
 			/*These if statements are here so that we can 'throws IOException' in the method
 			 * signature instead of 'throws Exception'
