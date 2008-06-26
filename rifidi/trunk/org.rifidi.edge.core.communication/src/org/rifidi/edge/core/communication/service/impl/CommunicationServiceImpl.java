@@ -14,6 +14,7 @@ import org.rifidi.edge.core.communication.handler.Communication;
 import org.rifidi.edge.core.communication.handler.impl.AsynchronousCommunication;
 import org.rifidi.edge.core.communication.handler.impl.SynchronousCommunication;
 import org.rifidi.edge.core.communication.protocol.Protocol;
+import org.rifidi.edge.core.communication.service.CommunicationService;
 import org.rifidi.edge.core.readerPlugin.AbstractReaderInfo;
 import org.rifidi.edge.core.readerPlugin.IReaderPlugin;
 
