@@ -73,7 +73,7 @@ public class SessionTest {
 		
 		DummyReaderPlugin dummyAdapter = new DummyReaderPlugin(
 				info);
-		IReaderConnection s = new ReaderConnection(null, null, -1);
+		IReaderConnection s = new ReaderConnection(null, null, null, -1);
 
 		s.setAdapter(dummyAdapter);
 		Assert.assertEquals(dummyAdapter, s.getAdapter());
@@ -85,7 +85,7 @@ public class SessionTest {
 	 */
 	@Test
 	public void testGetSetSessionID() {
-		IReaderConnection session = new ReaderConnection(null, null, -1);
+		IReaderConnection session = new ReaderConnection(null, null, null, -1);
 
 		session.setSessionID(3);
 		Assert.assertTrue(session.getSessionID() == 3);
@@ -103,7 +103,7 @@ public class SessionTest {
 		DummyReaderInfo info = new DummyReaderInfo();
 		info.setIPAddress("127.0.0.1");
 		info.setPort(10005);
-		IReaderConnection session = new ReaderConnection(info, new DummyReaderPlugin(info), 0);
+		IReaderConnection session = new ReaderConnection(info, new DummyReaderPlugin(info), null,  0);
 		session.setConnectionInfo(info);
 		Assert.assertTrue(session.getConnectionInfo() == info);
 		
@@ -246,7 +246,7 @@ public class SessionTest {
 				.toString(SessionID));
 
 		// create the reader Session
-		IReaderConnection s = new ReaderConnection(info, readerAdapter,
+		IReaderConnection s = new ReaderConnection(info, readerAdapter, null,
 				SessionID);
 
 		try {
