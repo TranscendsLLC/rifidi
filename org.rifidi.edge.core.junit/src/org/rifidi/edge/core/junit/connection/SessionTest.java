@@ -25,6 +25,7 @@ import org.rifidi.edge.core.exception.RifidiException;
 import org.rifidi.edge.core.exception.readerConnection.RifidiConnectionException;
 import org.rifidi.edge.core.readerPlugin.AbstractReaderInfo;
 import org.rifidi.edge.core.readerPluginService.ReaderPluginRegistryService;
+import org.rifidi.edge.readerplugin.dummy.DummyProtocol;
 import org.rifidi.edge.readerplugin.dummy.DummyReaderInfo;
 import org.rifidi.edge.readerplugin.dummy.DummyReaderPlugin;
 import org.rifidi.edge.readerplugin.dummy.DummyReaderPluginFactory;
@@ -135,7 +136,7 @@ public class SessionTest {
 				info);
 
 		try {
-			adapter.connect();
+			adapter.connect(null);
 		} catch (RifidiConnectionException e2) {
 			Assert.fail();
 			e2.printStackTrace();
@@ -227,7 +228,7 @@ public class SessionTest {
 		// set up dummy connection Info
 		DummyReaderInfo info = new DummyReaderInfo();
 		info.setIPAddress("127.0.0.1");
-		info.setPort(12345);
+		info.setPort(123456);
 		int SessionID = 1;
 
 		// create the dummy reader adapter
@@ -246,7 +247,7 @@ public class SessionTest {
 				.toString(SessionID));
 
 		// create the reader Session
-		IReaderConnection s = new ReaderConnection(info, readerAdapter, null,
+		IReaderConnection s = new ReaderConnection(info, readerAdapter, new DummyProtocol(),
 				SessionID);
 
 		try {
