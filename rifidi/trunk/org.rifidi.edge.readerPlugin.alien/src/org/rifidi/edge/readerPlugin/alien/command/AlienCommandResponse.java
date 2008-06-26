@@ -16,6 +16,7 @@ package org.rifidi.edge.readerPlugin.alien.command;
  * 
  * @author Matthew Dean - matt@pramari.com
  */
+@Deprecated
 public class AlienCommandResponse {
 	/**
 	 * Enum that tells what type the message is.

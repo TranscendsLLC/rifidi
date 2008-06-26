@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.rifidi.edge.core.communication.protocol.Protocol;
-import org.rifidi.edge.readerPlugin.alien.command.AlienCommandResponse;
 
 /**
  * Protocol class for the Alien reader.
@@ -50,7 +49,7 @@ public class AlienProtocol extends Protocol {
 			for (String s : splitstr) {
 				s = s.trim();
 				if (s.length() > 0) {
-					retVal.add(new AlienCommandResponse(s));
+					retVal.add(s);
 				}
 			}
 		}
