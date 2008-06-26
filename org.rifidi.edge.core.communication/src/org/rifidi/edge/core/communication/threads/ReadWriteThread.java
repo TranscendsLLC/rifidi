@@ -54,7 +54,6 @@ public class ReadWriteThread extends AbstractThread {
 
 	private void sendData(Object message) throws InterruptedException, IOException {
 		byte[] bytes = protocol.fromObject(message);
-
 		out.write(bytes);
 		out.flush();
 	}
