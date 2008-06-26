@@ -1,5 +1,7 @@
 package org.rifidi.edge.readerplugin.dummy;
 
+import org.rifidi.edge.core.communication.enums.CommunicationType;
+import org.rifidi.edge.core.communication.protocol.Protocol;
 import org.rifidi.edge.core.readerPlugin.AbstractReaderInfo;
 
 public class DummyReaderInfo extends AbstractReaderInfo {
@@ -73,5 +75,17 @@ public class DummyReaderInfo extends AbstractReaderInfo {
 	public void setProbiblityOfErrorsBeingRuntimeExceptions(
 			double probiblityOfErrorsBeingRuntimeExceptions) {
 		this.probiblityOfErrorsBeingRuntimeExceptions = probiblityOfErrorsBeingRuntimeExceptions;
+	}
+
+	@Override
+	public CommunicationType getCommunicationType() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Protocol getProtocol() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
