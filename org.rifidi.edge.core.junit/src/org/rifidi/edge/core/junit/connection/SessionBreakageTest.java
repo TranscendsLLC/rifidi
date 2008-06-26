@@ -65,7 +65,7 @@ public class SessionBreakageTest {
 
 		DummyReaderInfo info = new DummyReaderInfo();
 
-		info.setErrorToSet(EDummyError.CONNECT);
+		info.setErrorToSet(EDummyError.CONNECT.toString());
 
 		IReaderConnection s = sessionRegistryService
 				.createReaderConnection(info);
@@ -91,7 +91,7 @@ public class SessionBreakageTest {
 
 		DummyReaderInfo info = new DummyReaderInfo();
 
-		info.setErrorToSet(EDummyError.CONNECT_RUNTIME);
+		info.setErrorToSet(EDummyError.CONNECT_RUNTIME.toString());
 
 		IReaderConnection s = sessionRegistryService
 				.createReaderConnection(info);
@@ -119,7 +119,7 @@ public class SessionBreakageTest {
 		info.setIPAddress("127.0.0.1");
 		info.setPort(12345);
 
-		info.setErrorToSet(EDummyError.GET_NEXT_TAGS);
+		info.setErrorToSet(EDummyError.GET_NEXT_TAGS.toString());
 
 		// create the dummy reader adapter
 		DummyReaderPlugin readerAdapter = new DummyReaderPlugin(info);
@@ -206,7 +206,7 @@ public class SessionBreakageTest {
 		info.setIPAddress("127.0.0.1");
 		info.setPort(12345);
 
-		info.setErrorToSet(EDummyError.GET_NEXT_TAGS_RUNTIME);
+		info.setErrorToSet(EDummyError.GET_NEXT_TAGS_RUNTIME.toString());
 
 		// create the dummy reader adapter
 		DummyReaderPlugin readerAdapter = new DummyReaderPlugin(info);
@@ -293,7 +293,7 @@ public class SessionBreakageTest {
 
 		DummyReaderInfo info = new DummyReaderInfo();
 
-		info.setErrorToSet(EDummyError.SEND_CUSTOM_COMMAND);
+		info.setErrorToSet(EDummyError.SEND_CUSTOM_COMMAND.toString());
 
 		IReaderConnection s = sessionRegistryService
 				.createReaderConnection(info);
@@ -325,7 +325,7 @@ public class SessionBreakageTest {
 
 		DummyReaderInfo info = new DummyReaderInfo();
 
-		info.setErrorToSet(EDummyError.SEND_CUSTOM_COMMAND_RUNTIME);
+		info.setErrorToSet(EDummyError.SEND_CUSTOM_COMMAND_RUNTIME.toString());
 
 		IReaderConnection s = sessionRegistryService
 				.createReaderConnection(info);
@@ -356,7 +356,7 @@ public class SessionBreakageTest {
 
 		DummyReaderInfo info = new DummyReaderInfo();
 
-		info.setErrorToSet(EDummyError.DISCONNECT);
+		info.setErrorToSet(EDummyError.DISCONNECT.toString());
 
 		IReaderConnection s = sessionRegistryService
 				.createReaderConnection(info);
@@ -373,7 +373,7 @@ public class SessionBreakageTest {
 			e.printStackTrace();
 		}
 
-		Assert.assertSame(s.getState(), EReaderAdapterState.ERROR);
+		Assert.assertSame(s.getState(), EReaderAdapterState.ERROR.toString());
 		Assert
 				.assertTrue(s.getErrorCause() instanceof RifidiConnectionException);
 	}
@@ -386,7 +386,7 @@ public class SessionBreakageTest {
 
 		DummyReaderInfo info = new DummyReaderInfo();
 
-		info.setErrorToSet(EDummyError.DISCONNECT_RUNTIME);
+		info.setErrorToSet(EDummyError.DISCONNECT_RUNTIME.toString());
 
 		IReaderConnection s = sessionRegistryService
 				.createReaderConnection(info);
