@@ -23,7 +23,7 @@ import org.rifidi.edge.core.readerPlugin.IReaderPlugin;
  * @author Jerry Maine - jerry@pramari.com
  *
  */
-interface CommunicationService {
+public interface CommunicationService {
 
 	/**
 	 * This method takes the required information and connects to the reader and
