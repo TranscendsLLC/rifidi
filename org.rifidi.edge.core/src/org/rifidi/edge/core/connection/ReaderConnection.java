@@ -57,7 +57,9 @@ public class ReaderConnection implements IReaderConnection {
 
 	// What caused the error in the adapter
 	private RifidiException errorCause;
-
+	// Semaphore for the above variable 
+	private Object errorSempaphore;
+	
 	private JMSService jmsService;
 
 	private CommunicationService communicationService;
@@ -378,7 +380,11 @@ public class ReaderConnection implements IReaderConnection {
 	 * @see org.rifidi.edge.core.connection.IReaderConnection#getErrorCause()
 	 */
 	public Exception getErrorCause() {
-		return errorCause;
+		Exception e = null;
+		synchronized (errorSempaphore) {
+			e = errorCause;
+		}
+		return e;
 	}
 
 	/*
@@ -387,26 +393,28 @@ public class ReaderConnection implements IReaderConnection {
 	 * @see org.rifidi.edge.core.connection.IReaderConnection#setErrorCause(java.lang.Exception)
 	 */
 	public void setErrorCause(RifidiException errorCause) {
-		logger.debug(errorCause.getClass().getSimpleName());
-		if (errorCause != null) {
-			// Need to do some house keeping first...
-			try {
-				// this.jmsMessageThread.stop();
-				jmsService.unregister(this);
-				plugin.disconnect();
-			} catch (Exception e) {
-				// e.printStackTrace();
-
-				/*
-				 * we ignore any exceptions because we are already in an error
-				 * state
-				 */
+		synchronized(errorSempaphore){
+			if (errorCause != null) {
+				// Need to do some house keeping first...
+				try {
+					// this.jmsMessageThread.stop();
+					jmsService.unregister(this);
+					plugin.disconnect();
+				} catch (Exception e) {
+					// e.printStackTrace();
+	
+					/*
+					 * we ignore any exceptions because we are already in an error
+					 * state
+					 */
+				}
+	
+				this.errorCause = errorCause;
+				state = EReaderAdapterState.ERROR;
+				logger.debug("Set reader state to error with message: "
+						+ errorCause.getClass().getSimpleName());
 			}
-
-			this.errorCause = errorCause;
-			state = EReaderAdapterState.ERROR;
-			logger.debug("Set reader state to error with message: "
-					+ errorCause.getClass().getSimpleName());
+			errorSempaphore.notify();
 		}
 	}
 
