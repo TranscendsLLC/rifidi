@@ -13,6 +13,8 @@ package org.rifidi.edge.core.readerPlugin;
 
 import java.io.Serializable;
 
+import org.rifidi.edge.core.communication.enums.CommunicationType;
+
 public abstract class AbstractReaderInfo implements Serializable {
 
 	private int port;
@@ -27,7 +29,8 @@ public abstract class AbstractReaderInfo implements Serializable {
 	}
 
 	/**
-	 * @param ipAddress The IP address of the Reader
+	 * @param ipAddress
+	 *            The IP address of the Reader
 	 */
 	public void setIPAddress(String ipAddress) {
 		ip = ipAddress;
@@ -41,7 +44,8 @@ public abstract class AbstractReaderInfo implements Serializable {
 	}
 
 	/**
-	 * @param port The IP port of the reader
+	 * @param port
+	 *            The IP port of the reader
 	 */
 	public void setPort(int port) {
 		this.port = port;
@@ -51,5 +55,10 @@ public abstract class AbstractReaderInfo implements Serializable {
 	 * @return A string version of the reader.
 	 */
 	public abstract String getReaderType();
-	
+
+	/**
+	 * @return the type of Communication
+	 */
+	public abstract CommunicationType getCommunicationType();
+
 }

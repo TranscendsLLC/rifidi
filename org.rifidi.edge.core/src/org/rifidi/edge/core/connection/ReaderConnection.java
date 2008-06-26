@@ -236,8 +236,14 @@ public class ReaderConnection implements IReaderConnection {
 			}
 		} 
 		try {
-			plugin.connect();
+			
+			//FIXME implemet CommunicationBuffers
+			
+			//plugin.connect();
+			
 			state = EReaderAdapterState.CONNECTED;
+			
+			throw new RifidiConnectionException();
 		} catch (RifidiConnectionException e) {
 			setErrorCause(e);
 			logger.error("Error while connecting.", e);
