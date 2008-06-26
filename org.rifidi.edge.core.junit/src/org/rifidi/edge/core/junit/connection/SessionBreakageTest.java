@@ -20,7 +20,6 @@ import org.rifidi.edge.core.exception.readerConnection.RifidiConnectionIllegalSt
 import org.rifidi.edge.core.readerPlugin.enums.EReaderAdapterState;
 import org.rifidi.edge.core.readerPluginService.ReaderPluginRegistryService;
 import org.rifidi.edge.readerplugin.dummy.DummyReaderInfo;
-import org.rifidi.edge.readerplugin.dummy.DummyReaderPlugin;
 import org.rifidi.edge.readerplugin.dummy.DummyReaderPluginFactory;
 import org.rifidi.edge.readerplugin.dummy.EDummyError;
 import org.rifidi.edge.readerplugin.dummy.commands.DummyCustomCommand;
@@ -122,14 +121,7 @@ public class SessionBreakageTest {
 		info.setErrorToSet(EDummyError.GET_NEXT_TAGS.toString());
 
 		// create the dummy reader adapter
-		DummyReaderPlugin readerAdapter = new DummyReaderPlugin(info);
 
-		try {
-			readerAdapter.connect();
-		} catch (RifidiConnectionException e1) {
-			Assert.fail();
-			e1.printStackTrace();
-		}
 
 		// create the reader Session
 		IReaderConnection s = sessionRegistryService
@@ -207,17 +199,6 @@ public class SessionBreakageTest {
 		info.setPort(12345);
 
 		info.setErrorToSet(EDummyError.GET_NEXT_TAGS_RUNTIME.toString());
-
-		// create the dummy reader adapter
-		DummyReaderPlugin readerAdapter = new DummyReaderPlugin(info);
-
-		try {
-			readerAdapter.connect();
-		} catch (RifidiConnectionException e1) {
-	
-			Assert.fail();
-			e1.printStackTrace();
-		}
 
 		// create the reader Session
 		IReaderConnection s = sessionRegistryService
