@@ -74,7 +74,7 @@ public class DummyReaderPlugin implements IReaderPlugin  {
 					}
 				}
 		}
-		
+		this.connectionBuffer = connectionBuffer;
 		
 		if (communicationService == null)
 			throw new RifidiConnectionException("CommunicationSerivce Not Found!");
