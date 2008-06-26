@@ -17,6 +17,7 @@ import java.util.List;
 
 import javax.jms.ConnectionFactory;
 
+import org.rifidi.edge.core.communication.protocol.Protocol;
 import org.rifidi.edge.core.connection.IReaderConnection;
 import org.rifidi.edge.core.connection.ReaderConnection;
 import org.rifidi.edge.core.connection.jms.JMSHelper;
@@ -87,6 +88,8 @@ public class ReaderConnectionRegistryServiceImpl implements
 		jmsHelper.initializeJMSQueue(connectionFactory, Integer
 				.toString(counter));
 
+		Protocol 
+		
 		// Build Connection Object for holding JMS and Plugin
 		ReaderConnection connection = new ReaderConnection(abstractConnectionInfo,
 				readerPlugin, counter);

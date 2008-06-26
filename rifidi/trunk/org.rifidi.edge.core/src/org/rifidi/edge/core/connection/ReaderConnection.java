@@ -11,14 +11,20 @@
  */
 package org.rifidi.edge.core.connection;
 
+import java.io.IOException;
+import java.net.ConnectException;
+import java.net.UnknownHostException;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.rifidi.edge.core.communication.protocol.Protocol;
+import org.rifidi.edge.core.communication.service.CommunicationService;
 import org.rifidi.edge.core.connection.jms.JMSService;
 import org.rifidi.edge.core.exception.RifidiException;
 import org.rifidi.edge.core.exception.RifidiIIllegialArgumentException;
 import org.rifidi.edge.core.exception.RifidiPreviousErrorException;
-import org.rifidi.edge.core.exception.readerConnection.RifidiConnectionIllegalStateException;
 import org.rifidi.edge.core.exception.readerConnection.RifidiConnectionException;
+import org.rifidi.edge.core.exception.readerConnection.RifidiConnectionIllegalStateException;
 import org.rifidi.edge.core.readerPlugin.AbstractReaderInfo;
 import org.rifidi.edge.core.readerPlugin.IReaderPlugin;
 import org.rifidi.edge.core.readerPlugin.commands.ICustomCommand;
@@ -55,6 +61,9 @@ public class ReaderConnection implements IReaderConnection {
 
 	private JMSService jmsService;
 
+	private CommunicationService communicationService;
+	private Protocol protocol;
+	
 	/**
 	 * Creates a Session.
 	 * 
@@ -66,7 +75,7 @@ public class ReaderConnection implements IReaderConnection {
 	 *            Id for this session.
 	 */
 	public ReaderConnection(AbstractReaderInfo connectionInfo,
-			IReaderPlugin adapter, int id) {
+			IReaderPlugin adapter, Protocol protocol, int id) {
 		setConnectionInfo(connectionInfo);
 		setAdapter(adapter);
 		setSessionID(id);
@@ -237,13 +246,25 @@ public class ReaderConnection implements IReaderConnection {
 		} 
 		try {
 			
-			//FIXME implemet CommunicationBuffers
-			
-			//plugin.connect();
-			
-			state = EReaderAdapterState.CONNECTED;
+			try {
+				communicationService.createConnection(plugin, connectionInfo, protocol);
+				state = EReaderAdapterState.CONNECTED;
+			} catch (ConnectException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (UnknownHostException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			
 			throw new RifidiConnectionException();
+			//plugin.connect();
+			
+
+
 		} catch (RifidiConnectionException e) {
 			setErrorCause(e);
 			logger.error("Error while connecting.", e);
@@ -384,4 +405,10 @@ public class ReaderConnection implements IReaderConnection {
 	public void setJMSService(JMSService jmsService){
 		this.jmsService = jmsService;
 	}
+	
+	@Inject
+	public void setCommunicationService(CommunicationService communicationService) {
+		this.communicationService = communicationService;
+	}
+
 }
