@@ -348,7 +348,7 @@ public class ReaderConnection implements IReaderConnection {
 	 * @see org.rifidi.edge.core.connection.IReaderConnection#setErrorCause(java.lang.Exception)
 	 */
 	public void setErrorCause(RifidiException errorCause) {
-		
+		logger.debug(errorCause.getClass().getSimpleName());
 		if (errorCause != null ){
 			//Need to do some house keeping first...
 			try {
@@ -366,6 +366,7 @@ public class ReaderConnection implements IReaderConnection {
 		
 			this.errorCause = errorCause;
 			state = EReaderAdapterState.ERROR;
+			logger.debug("Set reader state to error with message: " + errorCause.getClass().getSimpleName());
 		}
 	}
 
