@@ -4,7 +4,7 @@ import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
 import org.rifidi.edge.core.communication.handler.Communication;
-import org.rifidi.edge.core.communication.service.impl.CommunicationServiceImpl;
+import org.rifidi.edge.core.communication.service.CommunicationServiceImpl;
 
 /**
  * @author jerry
