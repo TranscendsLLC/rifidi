@@ -3,6 +3,10 @@
  */
 package org.rifidi.edge.core.junit.connection;
 
+import java.io.IOException;
+import java.net.ConnectException;
+import java.net.UnknownHostException;
+
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
 import javax.jms.JMSException;
@@ -16,6 +20,7 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.rifidi.edge.core.communication.service.CommunicationService;
 import org.rifidi.edge.core.connection.IReaderConnection;
 import org.rifidi.edge.core.connection.ReaderConnection;
 import org.rifidi.edge.core.connection.jms.JMSHelper;
@@ -23,7 +28,6 @@ import org.rifidi.edge.core.connection.jms.JMSMessageThread;
 import org.rifidi.edge.core.connection.registry.ReaderConnectionRegistryService;
 import org.rifidi.edge.core.exception.RifidiException;
 import org.rifidi.edge.core.exception.readerConnection.RifidiConnectionException;
-import org.rifidi.edge.core.readerPlugin.AbstractReaderInfo;
 import org.rifidi.edge.core.readerPluginService.ReaderPluginRegistryService;
 import org.rifidi.edge.readerplugin.dummy.DummyProtocol;
 import org.rifidi.edge.readerplugin.dummy.DummyReaderInfo;
@@ -47,6 +51,8 @@ public class SessionTest {
 	private ReaderConnectionRegistryService sessionRegistryService;
 
 	private ReaderPluginRegistryService readerPluginRegistryService;
+
+	private CommunicationService communicationService;
 
 	/**
 	 * @throws java.lang.Exception
@@ -136,12 +142,20 @@ public class SessionTest {
 				info);
 
 		try {
-			adapter.connect(null);
-		} catch (RifidiConnectionException e2) {
+			adapter.connect(communicationService.createConnection(adapter, info, new DummyProtocol()));
+		} catch (RifidiConnectionException e1) {
 			Assert.fail();
-			e2.printStackTrace();
+			e1.printStackTrace();
+		} catch (ConnectException e) {
+			e.printStackTrace();
+			Assert.fail();
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+			Assert.fail();
+		} catch (IOException e) {
+			e.printStackTrace();
+			Assert.fail();
 		}
-
 		JMSMessageThread jmsThread = new JMSMessageThread(1, adapter, jmsHelper);
 		if (!jmsThread.start()) {
 			Assert.fail("Error while starting JMSThread");
@@ -235,10 +249,19 @@ public class SessionTest {
 		DummyReaderPlugin readerAdapter = new DummyReaderPlugin(info);
 
 		try {
-			readerAdapter.connect();
+			readerAdapter.connect(communicationService.createConnection(readerAdapter, info, new DummyProtocol()));
 		} catch (RifidiConnectionException e1) {
 			Assert.fail();
 			e1.printStackTrace();
+		} catch (ConnectException e) {
+			e.printStackTrace();
+			Assert.fail();
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+			Assert.fail();
+		} catch (IOException e) {
+			e.printStackTrace();
+			Assert.fail();
 		}
 
 		// create the JMS Helper
@@ -325,4 +348,9 @@ public class SessionTest {
 				DummyReaderInfo.class, new DummyReaderPluginFactory());
 	}
 
+	@Inject
+	public void setCommunicationService(
+			CommunicationService communicationService) {
+		this.communicationService = communicationService;
+	}
 }
