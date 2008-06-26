@@ -72,7 +72,7 @@ public class CommunicationBufferImpl implements CommunicationBuffer, Thread.Unca
 
 		Object retVal = null;
 		try {
-			readQueue.poll(mills, TimeUnit.MILLISECONDS);
+			retVal = readQueue.poll(mills, TimeUnit.MILLISECONDS);
 		} catch (InterruptedException e) {
 
 			checkState (exception);
