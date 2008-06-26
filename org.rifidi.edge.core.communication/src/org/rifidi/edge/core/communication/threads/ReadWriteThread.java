@@ -77,7 +77,12 @@ public class ReadWriteThread extends AbstractThread {
 		int input;
 		ByteArrayOutputStream buffer = new ByteArrayOutputStream();
 
+		
 		while ((input = inputStream.read()) != -1) {
+			try {
+				Thread.sleep(10);
+			} catch (InterruptedException e) {
+			}
 			buffer.write(input);
 
 			// TODO Not sure this is going to work for every reader
