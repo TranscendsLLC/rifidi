@@ -23,7 +23,7 @@ import org.junit.Test;
 import org.rifidi.edge.common.utilities.converter.ByteAndHexConvertingUtility;
 import org.rifidi.edge.core.communication.buffer.ConnectionBuffer;
 import org.rifidi.edge.core.communication.service.CommunicationService;
-import org.rifidi.edge.core.communication.service.impl.CommunicationServiceImpl;
+import org.rifidi.edge.core.communication.service.CommunicationServiceImpl;
 import org.rifidi.edge.core.exception.readerConnection.RifidiConnectionException;
 import org.rifidi.edge.core.exception.readerConnection.RifidiConnectionIllegalStateException;
 import org.rifidi.edge.core.tag.TagRead;
