@@ -16,7 +16,7 @@ import java.util.Random;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.common.utilities.thread.AbstractThread;
-import org.rifidi.edge.core.communication.buffer.CommunicationBuffer;
+import org.rifidi.edge.core.communication.buffer.ConnectionBuffer;
 import org.rifidi.edge.core.communication.service.CommunicationService;
 import org.rifidi.edge.core.exception.RifidiIIllegialArgumentException;
 import org.rifidi.edge.core.exception.readerConnection.RifidiConnectionIllegalStateException;
@@ -45,7 +45,9 @@ public class DummyReaderPlugin implements IReaderPlugin  {
 
 	private CommunicationService communicationService;
 
-	private CommunicationBuffer communicationBuffer;
+	
+
+	private ConnectionBuffer connectionBuffer;
 	
 	
 	public DummyReaderPlugin(DummyReaderInfo info) {
@@ -57,7 +59,7 @@ public class DummyReaderPlugin implements IReaderPlugin  {
 	}
 
 	@Override
-	public void connect() throws RifidiConnectionException {
+	public void connect(ConnectionBuffer connectionBuffer) throws RifidiConnectionException {
 		switch (info.getErrorToSet()) {
 			case CONNECT:
 				throw new RifidiConnectionException();
@@ -80,7 +82,7 @@ public class DummyReaderPlugin implements IReaderPlugin  {
 		try {
 			logger.debug("Connecting: " + info.getIPAddress() + ":" + info.getPort() + " ...");
 
-			communicationBuffer = communicationService.createConnection(this, info, new DummyProtocol());
+			connectionBuffer = communicationService.createConnection(this, info, new DummyProtocol());
 	
 			connected = true;
 		} catch (UnknownHostException e) {
@@ -130,7 +132,7 @@ public class DummyReaderPlugin implements IReaderPlugin  {
 			throw new RifidiConnectionException("CommunicationSerivce Not Found!");
 		
 		try {
-			communicationService.destroyConnection(communicationBuffer);
+			communicationService.destroyConnection(connectionBuffer);
 		} catch (IOException e){
 			logger.debug("IOException.", e);
 			throw new RifidiConnectionException(e);
@@ -266,4 +268,5 @@ public class DummyReaderPlugin implements IReaderPlugin  {
 		logger.debug("communicationService set");
 		this.communicationService = communicationService;
 	}
+
 }
