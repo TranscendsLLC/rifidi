@@ -11,6 +11,8 @@
  */
 package org.rifidi.edge.readerPlugin.thingmagic;
 
+import org.rifidi.edge.core.communication.enums.CommunicationType;
+import org.rifidi.edge.core.communication.protocol.Protocol;
 import org.rifidi.edge.core.readerPlugin.AbstractReaderInfo;
 
 /**
@@ -31,6 +33,18 @@ public class ThingMagicReaderInfo extends AbstractReaderInfo {
 	@Override
 	public String getReaderType() {
 		return "ThingMagicReader";
+	}
+
+	@Override
+	public CommunicationType getCommunicationType() {
+		// TODO Auto-generated method stub
+		return CommunicationType.SYNCHRONOUS;
+	}
+
+	@Override
+	public Protocol getProtocol() {
+		// TODO Auto-generated method stub
+		return new ThingMagicProtocol();
 	}
 
 }
