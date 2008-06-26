@@ -7,12 +7,12 @@ import java.util.concurrent.SynchronousQueue;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.communication.buffer.ConnectionBuffer;
-import org.rifidi.edge.core.communication.buffer.impl.ConnectionBufferImpl;
+import org.rifidi.edge.core.communication.buffer.impl.SynchronousConnectionBufferImpl;
 import org.rifidi.edge.core.communication.handler.Communication;
 import org.rifidi.edge.core.communication.protocol.Protocol;
 import org.rifidi.edge.core.communication.threads.ReadWriteThread;
 
-public class SynchronousCommunication implements Communication{
+public class SynchronousCommunication implements Communication {
 
 	private Log logger = LogFactory.getLog(SynchronousCommunication.class);
 
@@ -41,14 +41,13 @@ public class SynchronousCommunication implements Communication{
 				protocol, socket.getInputStream(), socket.getOutputStream(),
 				readQueue, writeQueue);
 
-		ConnectionBuffer connectionBuffer = new ConnectionBufferImpl(readQueue,
-				writeQueue);
+		SynchronousConnectionBufferImpl connectionBuffer = new SynchronousConnectionBufferImpl(
+				readQueue, writeQueue);
 
 		readWriteThread.start();
 
-		// FIXME ExceptionHandling
-		// readThread.setUncaughtExceptionHandler(connectionBuffer);
-		// writeThread.setUncaughtExceptionHandler(connectionBuffer);
+		readWriteThread.setUncaughtExceptionHandler(connectionBuffer);
+
 
 		return connectionBuffer;
 	}

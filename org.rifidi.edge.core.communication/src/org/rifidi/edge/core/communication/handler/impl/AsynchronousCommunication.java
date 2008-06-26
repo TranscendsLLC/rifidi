@@ -6,7 +6,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.rifidi.edge.core.communication.buffer.impl.ConnectionBufferImpl;
+import org.rifidi.edge.core.communication.buffer.impl.AsynchronousConnectionBufferImpl;
 import org.rifidi.edge.core.communication.handler.Communication;
 import org.rifidi.edge.core.communication.protocol.Protocol;
 import org.rifidi.edge.core.communication.service.CommunicationServiceImpl;
@@ -50,7 +50,7 @@ public class AsynchronousCommunication implements Communication{
 	 * @throws IOException
 	 */
 	@Override
-	public ConnectionBufferImpl startCommunication() throws IOException {
+	public AsynchronousConnectionBufferImpl startCommunication() throws IOException {
 		logger.debug("Trying to start communications");
 
 		readThread = new ReadThread("Read Thread: ("
@@ -61,15 +61,14 @@ public class AsynchronousCommunication implements Communication{
 				+ socket.getInetAddress().toString() + ":" + socket.getPort()
 				+ ")", protocol, writeQueue, socket.getOutputStream());
 
-		ConnectionBufferImpl connectionBuffer = new ConnectionBufferImpl(
+		AsynchronousConnectionBufferImpl connectionBuffer = new AsynchronousConnectionBufferImpl(
 				readQueue, writeQueue);
 
 		readThread.start();
 		writeThread.start();
 
-		// FIXME ExceptionHandling
-		// readThread.setUncaughtExceptionHandler(connectionBuffer);
-		// writeThread.setUncaughtExceptionHandler(connectionBuffer);
+		readThread.setUncaughtExceptionHandler(connectionBuffer);
+		writeThread.setUncaughtExceptionHandler(connectionBuffer);
 
 		return connectionBuffer;
 	}

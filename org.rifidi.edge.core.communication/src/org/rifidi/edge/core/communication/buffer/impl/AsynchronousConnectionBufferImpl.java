@@ -10,10 +10,10 @@ import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.communication.buffer.ConnectionBuffer;
 import org.rifidi.edge.core.exception.readerConnection.RifidiIllegalOperationException;
 
-public class ConnectionBufferImpl implements ConnectionBuffer,
+public class AsynchronousConnectionBufferImpl implements ConnectionBuffer,
 		Thread.UncaughtExceptionHandler {
 	
-	private Log logger = LogFactory.getLog(ConnectionBufferImpl.class);
+	private Log logger = LogFactory.getLog(AsynchronousConnectionBufferImpl.class);
 
 	private BlockingQueue<Object> readQueue;
 	private BlockingQueue<Object> writeQueue;
@@ -22,7 +22,7 @@ public class ConnectionBufferImpl implements ConnectionBuffer,
 
 	private Set<Thread> currentThreads;
 
-	public ConnectionBufferImpl(BlockingQueue<Object> readQueue,
+	public AsynchronousConnectionBufferImpl(BlockingQueue<Object> readQueue,
 			BlockingQueue<Object> writeQueue) {
 		this.readQueue = readQueue;
 		this.writeQueue = writeQueue;
