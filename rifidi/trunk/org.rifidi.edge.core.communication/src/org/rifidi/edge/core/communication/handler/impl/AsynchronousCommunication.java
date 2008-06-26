@@ -9,7 +9,7 @@ import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.communication.buffer.impl.AsynchronousConnectionBufferImpl;
 import org.rifidi.edge.core.communication.handler.Communication;
 import org.rifidi.edge.core.communication.protocol.Protocol;
-import org.rifidi.edge.core.communication.service.impl.CommunicationServiceImpl;
+import org.rifidi.edge.core.communication.service.CommunicationServiceImpl;
 import org.rifidi.edge.core.communication.threads.ReadThread;
 import org.rifidi.edge.core.communication.threads.WriteThread;
 

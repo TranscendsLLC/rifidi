@@ -1,4 +1,4 @@
-package org.rifidi.edge.core.communication.service.impl;
+package org.rifidi.edge.core.communication.service;
 
 import java.io.IOException;
 import java.net.ConnectException;

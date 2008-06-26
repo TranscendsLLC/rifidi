@@ -11,7 +11,7 @@ Export-Package: org.rifidi.edge.core.communication,
  org.rifidi.edge.core.communication.buffer.impl,
  org.rifidi.edge.core.communication.handler,
  org.rifidi.edge.core.communication.handler.impl,
- org.rifidi.edge.core.communication.service.impl,
+ org.rifidi.edge.core.communication.service,
  org.rifidi.edge.core.communication.threads
 Require-Bundle: org.rifidi.edge.core,
  org.rifidi.edge.log4j,
