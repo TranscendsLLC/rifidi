@@ -13,6 +13,8 @@ package org.rifidi.edge.readerPlugin.alien;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.rifidi.edge.core.communication.enums.CommunicationType;
+import org.rifidi.edge.core.communication.protocol.Protocol;
 import org.rifidi.edge.core.readerPlugin.AbstractReaderInfo;
 
 /**
@@ -85,6 +87,16 @@ public class AlienReaderInfo extends AbstractReaderInfo {
 	@Override
 	public String getReaderType() {
 		return "Alienreader";
+	}
+
+	@Override
+	public CommunicationType getCommunicationType() {
+		return CommunicationType.SYNCHRONOUS;
+	}
+
+	@Override
+	public Protocol getProtocol() {
+		return new AlienProtocol();
 	}
 
 }
