@@ -11,6 +11,9 @@
  */
 package org.rifidi.edge.readerplugin.alien.junit;
 
+import java.io.IOException;
+import java.net.ConnectException;
+import java.net.UnknownHostException;
 import java.util.List;
 
 import org.junit.After;
@@ -18,11 +21,16 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.rifidi.edge.common.utilities.converter.ByteAndHexConvertingUtility;
-import org.rifidi.edge.core.exception.readerConnection.RifidiConnectionIllegalStateException;
+import org.rifidi.edge.core.communication.buffer.ConnectionBuffer;
+import org.rifidi.edge.core.communication.service.CommunicationService;
 import org.rifidi.edge.core.exception.readerConnection.RifidiConnectionException;
+import org.rifidi.edge.core.exception.readerConnection.RifidiConnectionIllegalStateException;
 import org.rifidi.edge.core.tag.TagRead;
+import org.rifidi.edge.readerPlugin.alien.AlienProtocol;
 import org.rifidi.edge.readerPlugin.alien.AlienReaderInfo;
 import org.rifidi.edge.readerPlugin.alien.AlienReaderPlugin;
+import org.rifidi.services.annotations.Inject;
+import org.rifidi.services.registry.ServiceRegistry;
 
 /**
  * Test class for the plugin of the Alien reader.
@@ -31,11 +39,14 @@ import org.rifidi.edge.readerPlugin.alien.AlienReaderPlugin;
  */
 public class AlienReaderPluginTest {
 
+	private CommunicationService commSer;
+	
 	/**
 	 * @throws java.lang.Exception
 	 */
 	@Before
 	public void setUp() throws Exception {
+		ServiceRegistry.getInstance().service(this);
 	}
 
 	/**
@@ -60,11 +71,23 @@ public class AlienReaderPluginTest {
 
 		AlienReaderPlugin alienReaderAdapter = new AlienReaderPlugin(
 				connectionInfo);
+		
 		try {
-			alienReaderAdapter.connect();
+			ConnectionBuffer omg = commSer.createConnection(alienReaderAdapter,
+					connectionInfo, new AlienProtocol());
+			alienReaderAdapter.connect(omg);
 		} catch (RifidiConnectionException e) {
 			e.printStackTrace();
 			Assert.fail();
+		} catch (ConnectException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 
@@ -86,10 +109,21 @@ public class AlienReaderPluginTest {
 			System.out.println("the readeradapter is null");
 
 		try {
-			alienReaderAdapter.connect();
+			ConnectionBuffer omg = commSer.createConnection(alienReaderAdapter,
+					connectionInfo, new AlienProtocol());
+			alienReaderAdapter.connect(omg);
 		} catch (RifidiConnectionException e) {
 			e.printStackTrace();
 			Assert.fail();
+		} catch (ConnectException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 
 		for (int i = 0; i < 30; i++) {
@@ -130,10 +164,21 @@ public class AlienReaderPluginTest {
 		AlienReaderPlugin alienReaderAdapter = new AlienReaderPlugin(
 				connectionInfo);
 		try {
-			alienReaderAdapter.connect();
+			ConnectionBuffer omg = commSer.createConnection(alienReaderAdapter,
+					connectionInfo, new AlienProtocol());
+			alienReaderAdapter.connect(omg);
 		} catch (RifidiConnectionException e) {
 			e.printStackTrace();
 			Assert.fail();
+		} catch (ConnectException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 
 		try {
@@ -142,5 +187,14 @@ public class AlienReaderPluginTest {
 			e.printStackTrace();
 			Assert.fail();
 		}
+	}
+
+	
+	/**
+	 * @param commSer the commSer to set
+	 */
+	@Inject
+	public void setCommSer(CommunicationService commSer) {
+		this.commSer = commSer;
 	}
 }
