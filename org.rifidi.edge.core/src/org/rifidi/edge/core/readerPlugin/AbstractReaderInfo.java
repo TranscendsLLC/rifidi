@@ -14,6 +14,7 @@ package org.rifidi.edge.core.readerPlugin;
 import java.io.Serializable;
 
 import org.rifidi.edge.core.communication.enums.CommunicationType;
+import org.rifidi.edge.core.communication.protocol.Protocol;
 
 public abstract class AbstractReaderInfo implements Serializable {
 
@@ -61,4 +62,9 @@ public abstract class AbstractReaderInfo implements Serializable {
 	 */
 	public abstract CommunicationType getCommunicationType();
 
+	/**
+	 * @return the protocol for this ReaderType
+	 */
+	//TODO move this to Factory
+	public abstract Protocol getProtocol();
 }
