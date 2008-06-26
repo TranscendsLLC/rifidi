@@ -19,12 +19,15 @@ public class CommunicationBufferImpl implements CommunicationBuffer,
 	private static final Log logger = LogFactory
 			.getLog(CommunicationBufferImpl.class);
 
+	// The Queues for the Buffer
 	private LinkedBlockingQueue<Object> readQueue;
 	private LinkedBlockingQueue<Object> writeQueue;
 
+	// The Exception happend in the underlying Communication
 	private Exception exception;
 
-	// Save the Threads to unblock them if there is an error on the Socket
+	// Save the Threads waiting for messages on the Queue to unblock them if
+	// there is an error on the Socket
 	private Set<Thread> threads = new HashSet<Thread>();
 
 	public CommunicationBufferImpl(LinkedBlockingQueue<Object> readQueue,
@@ -47,7 +50,6 @@ public class CommunicationBufferImpl implements CommunicationBuffer,
 		try {
 			return readQueue.take();
 		} catch (InterruptedException e) {
-			logger.debug("ERROR Happend ... ");
 			checkState(exception);
 		} finally {
 			// Remove the Thread since it's not waiting anymore
@@ -64,10 +66,9 @@ public class CommunicationBufferImpl implements CommunicationBuffer,
 	@Override
 	public Object receiveNonBlocking() throws IOException {
 		checkState(exception);
-
 		logger.debug("Trying to recieve a message");
 		Object retVal = readQueue.poll();
-
+		checkState(exception);
 		return retVal;
 	}
 
@@ -84,9 +85,7 @@ public class CommunicationBufferImpl implements CommunicationBuffer,
 		try {
 			readQueue.poll(mills, TimeUnit.MILLISECONDS);
 		} catch (InterruptedException e) {
-
 			checkState(exception);
-
 		}
 		return retVal;
 	}
@@ -98,9 +97,8 @@ public class CommunicationBufferImpl implements CommunicationBuffer,
 	 */
 	@Override
 	public void send(Object msg) throws IOException {
-		logger.debug("Trying to send a message: " + msg);
+		checkState(exception);
 		writeQueue.add(msg);
-
 		checkState(exception);
 	}
 
@@ -117,39 +115,29 @@ public class CommunicationBufferImpl implements CommunicationBuffer,
 	 * @throws RuntimeException
 	 */
 	private Object checkState(Object object) throws IOException {
-		logger.debug("Object is :" + exception);
-		if (object != null) {
-			/*
-			 * These if statements are here so that we can 'throws IOException'
-			 * in the method signature instead of 'throws Exception'
+		synchronized (exception) {
+			if (object != null) {
+				/*
+				 * These if statements are here so that we can 'throws IOException'
+				 * in the method signature instead of 'throws Exception'
+				 * 
+				 * logger.debug(object);
+				 * 
+				 */
+				if (object instanceof IOException)
+					throw (IOException) object;
 
-		logger.debug(object);
+				if (object instanceof RuntimeException)
+					throw (RuntimeException) object;
+
+				if (object instanceof Exception)
+					throw new RuntimeException(
+							"Unexpected non-RuntimeException in read or write thread.",
+							exception);
+				return object;
+			}
+		}
 		
-		synchronized (readQueue) {
-			readQueue.notifyAll();
-		}
-		synchronized (writeQueue) {
-			writeQueue.notifyAll();
-		}
-
-		
-		if (object != null){
-			/*These if statements are here so that we can 'throws IOException' in the method
-			 * signature instead of 'throws Exception'
-			 */
-			if (object instanceof IOException)
-				throw (IOException) object;
-
-			if (object instanceof RuntimeException)
-				throw (RuntimeException) object;
-
-			if (object instanceof Exception)
-				throw new RuntimeException(
-						"Unexpected non-RuntimeException in read or write thread.",
-						exception);
-
-			return object;
-		}
 		return null;
 	}
 
@@ -161,22 +149,21 @@ public class CommunicationBufferImpl implements CommunicationBuffer,
 	 */
 	@Override
 	public void uncaughtException(Thread t, Throwable e) {
-		if (e instanceof Exception) {
-			logger.debug("Saw exception " + e.getClass().getName());
-			exception = (Exception) e;
-			// TODO Put an interrupt object on the queue.... or exception
-			// depending on what is decided.
+		synchronized (exception) {
+			if (e instanceof Exception) {
+				logger
+						.debug("There was an Exception in the underlying communication layer: "
+								+ e.getClass().getName());
+				exception = (Exception) e;
+			} else {
+				t.getThreadGroup().uncaughtException(t, e);
+			}
 
-		} else {
-			t.getThreadGroup().uncaughtException(t, e);
+			// Cause all waiting threads to interrupt to get notification about that
+			// exception we just catch
+			for (Thread interruptThread : threads) {
+				interruptThread.interrupt();
+			}
 		}
-
-		logger.debug(exception);
-		// Cause all waiting threads to interrupt to get notification about that
-		// exception
-		for (Thread interruptThread : threads) {
-			interruptThread.interrupt();
-		}
-		logger.debug("Notify done!!!");
 	}
 }
