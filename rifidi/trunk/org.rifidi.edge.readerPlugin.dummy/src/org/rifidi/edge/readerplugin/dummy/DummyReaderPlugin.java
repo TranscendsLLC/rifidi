@@ -4,10 +4,8 @@ package org.rifidi.edge.readerplugin.dummy;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.ConnectException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -76,32 +74,7 @@ public class DummyReaderPlugin implements IReaderPlugin  {
 		}
 		this.connectionBuffer = connectionBuffer;
 		
-		if (communicationService == null)
-			throw new RifidiConnectionException("CommunicationSerivce Not Found!");
-		
-		try {
-			logger.debug("Connecting: " + info.getIPAddress() + ":" + info.getPort() + " ...");
 
-			connectionBuffer = communicationService.createConnection(this, info, new DummyProtocol());
-	
-			connected = true;
-		} catch (UnknownHostException e) {
-			logger.error("Unknown host.", e);
-			throw new RifidiConnectionException("Unknown host.", e);
-		} catch (ConnectException e){
-			logger.error("Connection to reader refused.");
-			logger.error("Please check if the reader is properly turned on and connected to the network.");
-			//System.out.println("Stack trace follows...");
-			//e.printStackTrace();
-			
-			//logger.error("ConnectException...",e);
-			throw new RifidiConnectionException(
-					"Connection to reader refused. " +
-					"Please check if the reader is properly turned on and connected to the network.", e);
-		} catch (IOException e) {
-			logger.error("IOException occured.",e);
-			throw new RifidiConnectionException("IOException occured.", e);
-		}
 		logger.debug("Successfully Connected.");
 		
 		
