@@ -17,7 +17,6 @@ import java.util.List;
 
 import javax.jms.ConnectionFactory;
 
-import org.rifidi.edge.core.communication.protocol.Protocol;
 import org.rifidi.edge.core.connection.IReaderConnection;
 import org.rifidi.edge.core.connection.ReaderConnection;
 import org.rifidi.edge.core.connection.jms.JMSHelper;
@@ -27,10 +26,9 @@ import org.rifidi.edge.core.readerPlugin.factory.ReaderPluginFactory;
 import org.rifidi.services.annotations.Inject;
 import org.rifidi.services.registry.ServiceRegistry;
 
-
 /**
  * @author Jerry Maine - jerry@pramari.com
- *
+ * 
  */
 public class ReaderConnectionRegistryServiceImpl implements
 		ReaderConnectionRegistryService {
@@ -53,7 +51,9 @@ public class ReaderConnectionRegistryServiceImpl implements
 		initialize();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.rifidi.edge.core.connection.registry.ReaderConnectionRegistryService#initialize()
 	 */
 	@Override
@@ -62,7 +62,9 @@ public class ReaderConnectionRegistryServiceImpl implements
 		counter = 0;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.rifidi.edge.core.connection.registry.ReaderConnectionRegistryService#createReaderConnection(org.rifidi.edge.core.readerPlugin.AbstractReaderInfo)
 	 */
 	@Override
@@ -88,19 +90,19 @@ public class ReaderConnectionRegistryServiceImpl implements
 		jmsHelper.initializeJMSQueue(connectionFactory, Integer
 				.toString(counter));
 
-		Protocol 
-		
 		// Build Connection Object for holding JMS and Plugin
-		ReaderConnection connection = new ReaderConnection(abstractConnectionInfo,
-				readerPlugin, counter);
+		ReaderConnection connection = new ReaderConnection(
+				abstractConnectionInfo, readerPlugin, null, counter);
 
 		// register readerConnection in registry
 		readerConnectionRegistry.put(counter, connection);
 
 		return connection;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.rifidi.edge.core.connection.registry.ReaderConnectionRegistryService#getReaderConnection(int)
 	 */
 	@Override
@@ -108,36 +110,44 @@ public class ReaderConnectionRegistryServiceImpl implements
 		return readerConnectionRegistry.get(readerConnectionID);
 	}
 
-
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.rifidi.edge.core.connection.registry.ReaderConnectionRegistryService#deleteReaderConnection(int)
 	 */
 	@Override
 	public void deleteReaderConnection(int readerConnectionID) {
-		ReaderConnection readerConnection = readerConnectionRegistry.remove(readerConnectionID);
+		ReaderConnection readerConnection = readerConnectionRegistry
+				.remove(readerConnectionID);
 		readerConnection.cleanUp();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.rifidi.edge.core.connection.registry.ReaderConnectionRegistryService#deleteReaderConnection(org.rifidi.edge.core.connection.IReaderConnection)
 	 */
 	@Override
 	public void deleteReaderConnection(IReaderConnection readerConnection) {
 		readerConnectionRegistry.remove(readerConnection);
-		((ReaderConnection)readerConnection).cleanUp();
+		((ReaderConnection) readerConnection).cleanUp();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.rifidi.edge.core.connection.registry.ReaderConnectionRegistryService#getAllReaderConnections()
 	 */
 	@Override
 	public List<ReaderConnection> getAllReaderConnections() {
-		return new ArrayList<ReaderConnection>(readerConnectionRegistry.values());
+		return new ArrayList<ReaderConnection>(readerConnectionRegistry
+				.values());
 	}
 
 	/**
 	 * A method helper for the services injection framework.
-	 * @param connectionFactory 
+	 * 
+	 * @param connectionFactory
 	 */
 	@Inject
 	public void setConnectionFactory(ConnectionFactory connectionFactory) {
