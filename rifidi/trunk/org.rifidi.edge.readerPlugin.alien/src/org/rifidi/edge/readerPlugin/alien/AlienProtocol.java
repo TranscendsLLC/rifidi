@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.rifidi.edge.core.communication.protocol.Protocol;
+import org.rifidi.edge.readerPlugin.alien.command.AlienCommandResponse;
 
 /**
  * Protocol class for the Alien reader.
@@ -31,7 +32,7 @@ public class AlienProtocol extends Protocol {
 	public byte[] fromObject(Object arg) {
 		return ((String) arg).getBytes();
 	}
-
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -49,13 +50,39 @@ public class AlienProtocol extends Protocol {
 			for (String s : splitstr) {
 				s = s.trim();
 				if (s.length() > 0) {
-					retVal.add(s);
+					retVal.add(new AlienCommandResponse(s));
 				}
 			}
-		} else {
-			retVal.add("\0");
 		}
 
 		return retVal;
 	}
+
+	// /*
+	// * (non-Javadoc)
+	// *
+	// * @see
+	// org.rifidi.edge.core.communication.buffer.Protocol#toObject(byte[])
+	// */
+	// @Override
+	// public List<Object> toObject(byte[] arg) {
+	// List<Object> retVal = new ArrayList<Object>();
+	//
+	// String input = new String(arg);
+	//
+	// if (!input.equals("\0")) {
+	// String[] splitstr = input.split("\0");
+	//
+	// for (String s : splitstr) {
+	// s = s.trim();
+	// if (s.length() > 0) {
+	// retVal.add(s);
+	// }
+	// }
+	// } else {
+	// retVal.add("\0");
+	// }
+	//
+	//		return retVal;
+	//	}
 }
