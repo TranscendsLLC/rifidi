@@ -17,6 +17,7 @@ import java.net.UnknownHostException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.rifidi.edge.core.communication.buffer.ConnectionBuffer;
 import org.rifidi.edge.core.communication.protocol.Protocol;
 import org.rifidi.edge.core.communication.service.CommunicationService;
 import org.rifidi.edge.core.connection.jms.JMSService;
@@ -276,22 +277,22 @@ public class ReaderConnection implements IReaderConnection {
 		try {
 
 			try {
-				communicationService.createConnection(plugin, connectionInfo,
-						protocol);
+				ConnectionBuffer connectionBuffer = communicationService
+						.createConnection(plugin, connectionInfo, protocol);
 				state = EReaderAdapterState.CONNECTED;
+
+				plugin.connect(connectionBuffer);
+
 			} catch (ConnectException e) {
-				// TODO Auto-generated catch block
+				// TODO Jerry move that into Exception Handling
 				e.printStackTrace();
 			} catch (UnknownHostException e) {
-				// TODO Auto-generated catch block
+				// TODO Jerry move that into Exception Handling
 				e.printStackTrace();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
+				// TODO Jerry move that into Exception Handling
 				e.printStackTrace();
 			}
-
-			throw new RifidiConnectionException();
-			// plugin.connect();
 
 		} catch (RifidiConnectionException e) {
 			setErrorCause(e);
