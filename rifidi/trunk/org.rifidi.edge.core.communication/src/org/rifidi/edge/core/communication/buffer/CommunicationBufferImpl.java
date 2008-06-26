@@ -106,8 +106,13 @@ public class CommunicationBufferImpl implements CommunicationBuffer, Thread.Unca
 	 */
 	private Object checkState(Object object) throws IOException {
 		
-		readQueue.notify();
-		writeQueue.notify();
+		synchronized (readQueue) {
+			readQueue.notifyAll();
+		}
+		synchronized (writeQueue) {
+			writeQueue.notifyAll();
+		}
+
 		
 		if (object != null){
 			/*These if statements are here so that we can 'throws IOException' in the method
