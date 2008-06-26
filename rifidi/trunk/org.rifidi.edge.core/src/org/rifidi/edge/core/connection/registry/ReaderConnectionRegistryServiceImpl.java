@@ -92,7 +92,8 @@ public class ReaderConnectionRegistryServiceImpl implements
 
 		// Build Connection Object for holding JMS and Plugin
 		ReaderConnection connection = new ReaderConnection(
-				abstractConnectionInfo, readerPlugin, null, counter);
+				abstractConnectionInfo, readerPlugin, abstractConnectionInfo
+						.getProtocol(), counter);
 
 		// register readerConnection in registry
 		readerConnectionRegistry.put(counter, connection);
