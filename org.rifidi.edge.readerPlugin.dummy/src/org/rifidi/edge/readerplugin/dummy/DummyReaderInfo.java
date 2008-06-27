@@ -69,6 +69,8 @@ public class DummyReaderInfo extends AbstractReaderInfo {
 	 * @param randomErrorProbibility the randomErrorProbibility to set
 	 */
 	public void setRandomErrorProbibility(double randomErrorProbibility) {
+		if ( (randomErrorProbibility < 0) || (randomErrorProbibility > 1) )
+			throw new IllegalArgumentException();
 		this.randomErrorProbibility = randomErrorProbibility;
 	}
 
@@ -84,6 +86,8 @@ public class DummyReaderInfo extends AbstractReaderInfo {
 	 */
 	public void setProbiblityOfErrorsBeingRuntimeExceptions(
 			double probiblityOfErrorsBeingRuntimeExceptions) {
+		if ( (probiblityOfErrorsBeingRuntimeExceptions < 0) || (probiblityOfErrorsBeingRuntimeExceptions > 1) )
+			throw new IllegalArgumentException();
 		this.probiblityOfErrorsBeingRuntimeExceptions = probiblityOfErrorsBeingRuntimeExceptions;
 	}
 
