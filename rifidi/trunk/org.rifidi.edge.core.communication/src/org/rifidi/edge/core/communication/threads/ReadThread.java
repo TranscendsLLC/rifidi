@@ -80,6 +80,7 @@ public class ReadThread extends AbstractThread {
 			buffer.write(input);
 
 			// TODO Not sure this is going to work for every reader
+			// TODO I don't like this - <3 Matt
 			if (inputStream.available() == 0)
 				break;
 		}
