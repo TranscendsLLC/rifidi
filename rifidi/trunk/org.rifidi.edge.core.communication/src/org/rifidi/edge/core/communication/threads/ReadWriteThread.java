@@ -55,7 +55,9 @@ public class ReadWriteThread extends AbstractThread {
 
 	}
 
-	private void sendData(Object message) throws InterruptedException, IOException {
+	private void sendData(Object message) throws InterruptedException,
+			IOException {
+		logger.debug("Sending Message " + message);
 		byte[] bytes = protocol.fromObject(message);
 		out.write(bytes);
 		out.flush();
@@ -63,6 +65,11 @@ public class ReadWriteThread extends AbstractThread {
 
 	private Object readData() throws IOException {
 		byte[] input = readFromSocket(in);
+
+		String omg = new String(input);
+		omg.replace('\0', '?');
+		logger.debug("reading from socket: " + omg);
+
 		// TODO Think about what to do if the byte array is empty
 		List<Object> msg = protocol.toObject(input);
 		if (msg.size() > 1) {
@@ -80,7 +87,7 @@ public class ReadWriteThread extends AbstractThread {
 		
 		while ((input = inputStream.read()) != -1) {
 			try {
-				Thread.sleep(10);
+				Thread.sleep(5);
 			} catch (InterruptedException e) {
 			}
 			buffer.write(input);
