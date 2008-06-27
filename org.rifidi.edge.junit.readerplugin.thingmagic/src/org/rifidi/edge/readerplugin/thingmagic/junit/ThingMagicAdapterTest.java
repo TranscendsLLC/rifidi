@@ -21,6 +21,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.rifidi.edge.core.communication.service.CommunicationService;
+import org.rifidi.edge.core.communication.service.impl.CommunicationServiceImpl;
 import org.rifidi.edge.core.exception.readerConnection.RifidiConnectionException;
 import org.rifidi.edge.core.exception.readerConnection.RifidiConnectionIllegalStateException;
 import org.rifidi.edge.core.tag.TagRead;
@@ -46,6 +47,7 @@ public class ThingMagicAdapterTest {
 	@Before
 	public void setUp() throws Exception {
 		ServiceRegistry.getInstance().service(this);
+		System.out.println(CommunicationServiceImpl.class.getName());
 		System.out.println("JUnit Test " + this.getClass().getName()
 				+ " loaded.");
 	}
@@ -80,7 +82,7 @@ public class ThingMagicAdapterTest {
 			e.printStackTrace();
 			Assert.fail();
 		}
-
+		
 		List<TagRead> tagReads = null;
 		try {
 			tagReads = adapter.getNextTags();

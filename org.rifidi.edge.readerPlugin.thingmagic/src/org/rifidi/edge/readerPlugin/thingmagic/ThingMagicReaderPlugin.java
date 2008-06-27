@@ -64,6 +64,7 @@ public class ThingMagicReaderPlugin implements IReaderPlugin {
 		this.connectionBuffer = connectionBuffer;
 		logger.debug("Successfully Connected.");
 		//TODO Check if this reader is really a Mercury 4 or 5 -- Thing Magic reader.
+		connected = true;
 	}
 
 	/* (non-Javadoc)
@@ -96,10 +97,8 @@ public class ThingMagicReaderPlugin implements IReaderPlugin {
 			logger.debug("Getting next tags.");
 			
 			
-			try {
-				connectionBuffer.send("select id, timestamp from tag_id;\n");
-				
-				 input = (String) connectionBuffer.recieve();
+			try {			
+				 input = (String) connectionBuffer.sendAndRecieve("select id, timestamp from tag_id;\n");
 				 logger.debug(input);
 			} catch (IOException e) {
 				logger.debug("IOException has accured.", e);
