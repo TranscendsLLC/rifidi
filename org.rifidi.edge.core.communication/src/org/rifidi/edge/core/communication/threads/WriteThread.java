@@ -17,10 +17,11 @@ public class WriteThread extends AbstractThread {
 	private OutputStream outputStream;
 
 	/**
-	 * @param threadName
-	 * @param protocol
-	 * @param writeQueue
-	 * @param outputStream
+	 * Instantiates a asynchronous read thread.
+	 * @param threadName The Name of the thread.
+	 * @param protocol The plugin provided protocol used to transform objects into a byte stream.
+	 * @param writeQueue The blocking queue used to pull the objects created from adapter through the protocol to the socket.
+	 * @param outputStream The output stream of the socket.
 	 */
 	//TODO Jerry this is not documented
 	public WriteThread(String threadName, Protocol protocol,

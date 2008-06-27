@@ -56,6 +56,9 @@ public class DummyReaderPlugin implements IReaderPlugin  {
 		loopback.start();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.readerPlugin.IReaderPlugin#connect(org.rifidi.edge.core.communication.buffer.ConnectionBuffer)
+	 */
 	@Override
 	public void connect(ConnectionBuffer connectionBuffer) throws RifidiConnectionException {
 		switch (info.getErrorToSet()) {
@@ -85,6 +88,9 @@ public class DummyReaderPlugin implements IReaderPlugin  {
 		connected = true;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.readerPlugin.IReaderPlugin#disconnect()
+	 */
 	@Override
 	public void disconnect() throws RifidiConnectionException {
 		connected = false;
@@ -116,6 +122,9 @@ public class DummyReaderPlugin implements IReaderPlugin  {
 		logger.debug("Successfully Disconnected.");
 	}
 
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.readerPlugin.IReaderPlugin#getNextTags()
+	 */
 	@Override
 	public List<TagRead> getNextTags()
 			throws RifidiConnectionIllegalStateException {
@@ -146,6 +155,9 @@ public class DummyReaderPlugin implements IReaderPlugin  {
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.readerPlugin.IReaderPlugin#sendCustomCommand(org.rifidi.edge.core.readerPlugin.commands.ICustomCommand)
+	 */
 	@Override
 	public ICustomCommandResult sendCustomCommand(ICustomCommand customCommand)
 			throws RifidiConnectionIllegalStateException,
@@ -192,6 +204,10 @@ public class DummyReaderPlugin implements IReaderPlugin  {
 		return info.getErrorToSet();
 	}
 
+	/*
+	 * This inner class takes whatever is read from the socket and returns it to the reader.
+	 * This allows the dummy adapter to help test the edge servers communication framework.
+	 */
 	private class SocketLoopBack extends AbstractThread {
 
 		protected SocketLoopBack(String threadName) {
@@ -200,7 +216,6 @@ public class DummyReaderPlugin implements IReaderPlugin  {
 
 		@Override
 		public void run() {
-			// TODO Auto-generated method stub
 			try {
 				ServerSocket serverSocket = new ServerSocket(DummyReaderPlugin.this.info.getPort());
 				Socket socket = serverSocket.accept();
@@ -228,16 +243,25 @@ public class DummyReaderPlugin implements IReaderPlugin  {
 	
 
 		
+	/* (non-Javadoc)
+	 * @see java.lang.Object#finalize()
+	 */
 	@Override
 	protected void finalize() throws Throwable {
 		// TODO Auto-generated method stub
 		dispose();
 		super.finalize();
 	}
+	/**
+	 * Used to stop the inner thread for this object
+	 */
 	public void dispose() {
 		loopback.stop();
 	}
 	
+	/**
+	 * @param communicationService The communication service.
+	 */
 	@Inject
 	public void setCommunicationService(
 			CommunicationService communicationService) {
