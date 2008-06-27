@@ -95,11 +95,13 @@ public class AlienReaderPlugin implements IReaderPlugin {
 						+ " reader is not an alien reader: " + welcome);
 				throw new RifidiConnectionException(
 						"Reader is not an alien reader");
+			} else {
+				logger.debug("Reader is an alien.  Hoo-ray!");
 			}
-			connection.sendAndRecieve(new String('\1' + aci.getUsername()
-					+ "\n"));
+
+			connection.sendAndRecieve(new String(aci.getUsername() + "\n"));
 			String passwordResponse = (String) connection
-					.sendAndRecieve(new String('\1' + aci.getPassword() + "\n"));
+					.sendAndRecieve(new String(aci.getPassword() + "\n"));
 			if (passwordResponse != null) {
 				if (passwordResponse.contains(AlienResponseList.INVALID)) {
 					logger.debug("RifidiConnectionException was thrown");
@@ -201,7 +203,8 @@ public class AlienReaderPlugin implements IReaderPlugin {
 
 			logger.debug("Reading tags");
 
-			String tags = (String)connection.sendAndRecieve(AlienCommandList.TAG_LIST);
+			String tags = (String) connection
+					.sendAndRecieve(AlienCommandList.TAG_LIST);
 			logger.debug("TAG_LIST response: " + tags);
 
 			logger.debug("tags:" + tags);
