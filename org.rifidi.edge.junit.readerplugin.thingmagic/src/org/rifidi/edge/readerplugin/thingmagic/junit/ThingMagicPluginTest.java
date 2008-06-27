@@ -37,7 +37,7 @@ import org.rifidi.services.registry.ServiceRegistry;
  * @author Jerry Maine - jerry@pramari.com
  *
  */
-public class ThingMagicAdapterTest {
+public class ThingMagicPluginTest {
 
 	private CommunicationService communicationService;
 
