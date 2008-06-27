@@ -186,6 +186,7 @@ public class SessionBreakageTest {
 			e.printStackTrace();
 			Assert.fail();
 		} catch (NullPointerException e) {
+
 			Assert.assertSame(EReaderAdapterState.ERROR, s.getState());
 			Assert.assertNotNull(s.getErrorCause());
 			Assert.assertTrue(s.getErrorCause() instanceof RifidiConnectionIllegalStateException);
