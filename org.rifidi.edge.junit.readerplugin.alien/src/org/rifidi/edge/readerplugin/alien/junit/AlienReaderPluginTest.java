@@ -87,13 +87,10 @@ public class AlienReaderPluginTest {
 			e.printStackTrace();
 			Assert.fail();
 		} catch (ConnectException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -124,13 +121,10 @@ public class AlienReaderPluginTest {
 			e.printStackTrace();
 			Assert.fail();
 		} catch (ConnectException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -178,13 +172,10 @@ public class AlienReaderPluginTest {
 			e.printStackTrace();
 			Assert.fail();
 		} catch (ConnectException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
