@@ -277,25 +277,21 @@ public class ReaderConnection implements IReaderConnection {
 			}
 		}
 		try {
-
-			try {
+				if (communicationService == null)
+					throw new ConnectException("Communication Service not found");
+			
 				ConnectionBuffer connectionBuffer = communicationService
 						.createConnection(plugin, connectionInfo, protocol);
 				state = EReaderAdapterState.CONNECTED;
 
 				plugin.connect(connectionBuffer);
 
-			} catch (ConnectException e) {
-				// TODO Jerry move that into Exception Handling
-				e.printStackTrace();
-			} catch (UnknownHostException e) {
-				// TODO Jerry move that into Exception Handling
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Jerry move that into Exception Handling
-				e.printStackTrace();
-			}
-
+		} catch (ConnectException e) {
+			setErrorCause(new RifidiConnectionException("Error while connecting",e));
+		} catch (UnknownHostException e) {
+			setErrorCause(new RifidiConnectionException("Error while connecting",e));
+		} catch (IOException e) {
+			setErrorCause(new RifidiConnectionException("Error while connecting",e));
 		} catch (RifidiConnectionException e) {
 			setErrorCause(e);
 			logger.error("Error while connecting.", e);
