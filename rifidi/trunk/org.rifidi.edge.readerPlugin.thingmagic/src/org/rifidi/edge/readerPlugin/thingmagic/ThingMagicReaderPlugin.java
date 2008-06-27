@@ -151,14 +151,15 @@ public class ThingMagicReaderPlugin implements IReaderPlugin {
 		if(customCommand == null)
 			throw new RifidiIIllegialArgumentException();
 		
-		//TODO: Jerry change this to have brackets
+		
 		if(customCommand instanceof ThingMagicCustomCommand){
 			command = (ThingMagicCustomCommand) customCommand;
-			if(command.getCustomCommand() == null)
+			if(command.getCustomCommand() == null) {
 				throw new RifidiIIllegialArgumentException();
-			else 
-				if (command.getCustomCommand().equals("") || command.getCustomCommand().endsWith(";\n"))
+			} else if (command.getCustomCommand().equals("") ||
+					command.getCustomCommand().endsWith(";\n")) {
 					throw new RifidiIIllegialArgumentException();
+			}
 		} else {
 			throw new RifidiIIllegialArgumentException();
 		}
