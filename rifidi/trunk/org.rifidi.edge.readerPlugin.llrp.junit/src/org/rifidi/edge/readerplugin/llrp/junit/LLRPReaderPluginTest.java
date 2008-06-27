@@ -11,6 +11,9 @@
  */
 package org.rifidi.edge.readerplugin.llrp.junit;
 
+import java.io.IOException;
+import java.net.ConnectException;
+import java.net.UnknownHostException;
 import java.util.List;
 
 import junit.framework.TestCase;
@@ -22,10 +25,15 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.rifidi.edge.common.utilities.converter.ByteAndHexConvertingUtility;
+import org.rifidi.edge.core.communication.buffer.ConnectionBuffer;
+import org.rifidi.edge.core.communication.service.CommunicationService;
+import org.rifidi.edge.core.communication.service.impl.CommunicationServiceImpl;
 import org.rifidi.edge.core.exception.readerConnection.RifidiConnectionException;
 import org.rifidi.edge.core.tag.TagRead;
+import org.rifidi.edge.readerPlugin.llrp.LLRPProtocol;
 import org.rifidi.edge.readerPlugin.llrp.LLRPReaderInfo;
 import org.rifidi.edge.readerPlugin.llrp.LLRPReaderPlugin;
+import org.rifidi.services.registry.ServiceRegistry;
 
 /**
  * LLRP reader adapter.  
@@ -34,6 +42,8 @@ import org.rifidi.edge.readerPlugin.llrp.LLRPReaderPlugin;
  */
 public class LLRPReaderPluginTest extends TestCase {
 
+	private CommunicationService commSer;
+	
 	/**
 	 * The log4j logger.
 	 */
@@ -46,6 +56,8 @@ public class LLRPReaderPluginTest extends TestCase {
 	 */
 	@Before
 	public void setUp() throws Exception {
+		commSer = new CommunicationServiceImpl();
+		ServiceRegistry.getInstance().service(this);
 	}
 
 	/**
@@ -66,11 +78,22 @@ public class LLRPReaderPluginTest extends TestCase {
 		lci.setIPAddress("127.0.0.1");
 		lci.setPort(5084);
 		LLRPReaderPlugin newAdapt = new LLRPReaderPlugin(lci);
-//		try {
-//			newAdapt.connect();
-//		} catch (RifidiConnectionException e) {
-//			Assert.fail();
-//		}
+		try {
+			ConnectionBuffer omg = commSer.createConnection(newAdapt,
+					 lci, new LLRPProtocol());
+			newAdapt.connect(omg);
+		} catch (RifidiConnectionException e) {
+			Assert.fail();
+		} catch (ConnectException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		try {
 			newAdapt.disconnect();
@@ -89,12 +112,23 @@ public class LLRPReaderPluginTest extends TestCase {
 		lci.setPort(5084);
 		LLRPReaderPlugin newAdapt = new LLRPReaderPlugin(lci);
 
-//		try {
-//			newAdapt.connect();
-//		} catch (RifidiConnectionException e) {
-//			e.printStackTrace();
-//			Assert.fail();
-//		}
+		try {
+			ConnectionBuffer omg = commSer.createConnection(newAdapt,
+					 lci, new LLRPProtocol());
+			newAdapt.connect(omg);
+		} catch (RifidiConnectionException e) {
+			e.printStackTrace();
+			Assert.fail();
+		} catch (ConnectException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		List<TagRead> newTags = newAdapt.getNextTags();
 		
@@ -131,11 +165,22 @@ public class LLRPReaderPluginTest extends TestCase {
 		lci.setIPAddress("127.0.0.1");
 		lci.setPort(5084);
 		LLRPReaderPlugin newAdapt = new LLRPReaderPlugin(lci);
-		// try {
-		// newAdapt.connect();
-		// } catch (RifidiConnectionException e) {
-		// Assert.fail();
-		//		}
+		 try {
+			 ConnectionBuffer omg = commSer.createConnection(newAdapt,
+					 lci, new LLRPProtocol());
+			newAdapt.connect(omg);
+		} catch (RifidiConnectionException e) {
+			Assert.fail();
+		} catch (ConnectException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		try {
 			newAdapt.disconnect();
