@@ -89,11 +89,17 @@ public class AlienReaderInfo extends AbstractReaderInfo {
 		return "Alienreader";
 	}
 
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.readerPlugin.AbstractReaderInfo#getCommunicationType()
+	 */
 	@Override
 	public CommunicationType getCommunicationType() {
 		return CommunicationType.SYNCHRONOUS;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.readerPlugin.AbstractReaderInfo#getProtocol()
+	 */
 	@Override
 	public Protocol getProtocol() {
 		return new AlienProtocol();
