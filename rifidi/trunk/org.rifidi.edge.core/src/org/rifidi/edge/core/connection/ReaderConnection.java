@@ -336,7 +336,8 @@ public class ReaderConnection implements IReaderConnection {
 						"Connection already in error state and already disconnected.",
 						errorCause);
 			}
-			RifidiException e = new RifidiConnectionIllegalStateException(
+			logger.debug(state);
+			RifidiException e = new RifidiConnectionException(
 					"Connection in illegal state while trying to disconnect");
 			setErrorCause(e);
 			throw e;
