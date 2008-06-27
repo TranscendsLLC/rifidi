@@ -32,7 +32,7 @@ public class ReaderPluginFactory {
 		ServiceRegistry.getInstance().service(this);
 	}
 
-	//TODO method name needs to be changed.
+	//TODO Andreas: method name needs to be changed.
 	/**
 	 * Creates a reader plugin
 	 * @param abstractConnnectionInfo The connection info for this reader
