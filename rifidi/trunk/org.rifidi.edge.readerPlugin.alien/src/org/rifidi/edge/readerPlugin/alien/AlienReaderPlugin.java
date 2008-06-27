@@ -13,6 +13,7 @@ package org.rifidi.edge.readerPlugin.alien;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -315,13 +316,16 @@ public class AlienReaderPlugin implements IReaderPlugin {
 			String[] splitString2 = s.split("\\|");
 			if (splitString2.length > 1) {
 				String tagData = splitString2[0];
-				// String timeStamp=splitString2[1];
+				String timeStamp = splitString2[1];
+
+				Time time = Time.valueOf(timeStamp);
+				logger.debug("Time: " + time.toString());
 
 				// TODO: Get the actual timestamp
 				TagRead newTagRead = new TagRead();
 				newTagRead.setId(ByteAndHexConvertingUtility
 						.fromHexString(tagData.trim()));
-				newTagRead.setLastSeenTime(System.nanoTime());
+				newTagRead.setLastSeenTime(time.getTime());
 				retVal.add(newTagRead);
 
 			}
