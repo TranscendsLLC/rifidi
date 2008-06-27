@@ -68,6 +68,7 @@ public class ThingMagicReaderPlugin implements IReaderPlugin {
 	public void connect(ConnectionBuffer connectionBuffer) throws RifidiConnectionException {
 		this.connectionBuffer = connectionBuffer;
 		logger.debug("Successfully Connected.");
+		//TODO Check if this reader is really a Mercury 4 or 5 -- Thing Magic reader.
 	}
 
 	/* (non-Javadoc)
