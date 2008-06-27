@@ -23,7 +23,7 @@ import org.junit.Test;
 import org.rifidi.edge.common.utilities.converter.ByteAndHexConvertingUtility;
 import org.rifidi.edge.core.communication.buffer.ConnectionBuffer;
 import org.rifidi.edge.core.communication.service.CommunicationService;
-import org.rifidi.edge.core.communication.service.CommunicationServiceImpl;
+import org.rifidi.edge.core.communication.service.impl.CommunicationServiceImpl;
 import org.rifidi.edge.core.exception.readerConnection.RifidiConnectionException;
 import org.rifidi.edge.core.exception.readerConnection.RifidiConnectionIllegalStateException;
 import org.rifidi.edge.core.tag.TagRead;
@@ -42,12 +42,14 @@ public class AlienReaderPluginTest {
 
 	private CommunicationService commSer;
 	
+	
+
 	/**
 	 * @throws java.lang.Exception
 	 */
 	@Before
 	public void setUp() throws Exception {
-		CommunicationServiceImpl impl = new CommunicationServiceImpl();
+		commSer = new CommunicationServiceImpl();
 		ServiceRegistry.getInstance().service(this);
 	}
 
@@ -65,6 +67,9 @@ public class AlienReaderPluginTest {
 	 */
 	@Test
 	public void testConnect() {
+		if (commSer == null) {
+			System.out.println("commSer is null");
+		}
 		AlienReaderInfo connectionInfo = new AlienReaderInfo();
 		connectionInfo.setIPAddress("192.168.1.100");
 		connectionInfo.setPort(23);
@@ -73,7 +78,7 @@ public class AlienReaderPluginTest {
 
 		AlienReaderPlugin alienReaderAdapter = new AlienReaderPlugin(
 				connectionInfo);
-		
+
 		try {
 			ConnectionBuffer omg = commSer.createConnection(alienReaderAdapter,
 					connectionInfo, new AlienProtocol());
@@ -98,6 +103,7 @@ public class AlienReaderPluginTest {
 	 */
 	@Test
 	public void testStream() {
+
 		AlienReaderInfo connectionInfo = new AlienReaderInfo();
 		connectionInfo.setIPAddress("192.168.1.100");
 		connectionInfo.setPort(23);
@@ -151,7 +157,6 @@ public class AlienReaderPluginTest {
 	// public void testRawCommand() {
 	// Assert.fail();
 	// }
-	
 	/**
 	 * Tests disconnecting the reader
 	 */
@@ -191,9 +196,9 @@ public class AlienReaderPluginTest {
 		}
 	}
 
-	
 	/**
-	 * @param commSer the commSer to set
+	 * @param commSer
+	 *            the commSer to set
 	 */
 	@Inject
 	public void setCommSer(CommunicationService commSer) {
