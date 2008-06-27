@@ -222,19 +222,19 @@ public class DummyReaderPlugin implements IReaderPlugin  {
 				InputStream in = socket.getInputStream();
 				OutputStream out = socket.getOutputStream();
 			
-			while(running){
-				byte[] loop = new byte[in.available()];
+				while(running){
+					byte[] loop = new byte[in.available()];
 				
-				if (loop.length != 0)
-					in.read(loop);
+					if (loop.length != 0)
+						in.read(loop);
 				
-				out.write(loop);
-			}
+					out.write(loop);
+				}
 			
-				socket.close();
-				serverSocket.close();
+					socket.close();
+					serverSocket.close();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
+				
 				e.printStackTrace();
 			}
 		}

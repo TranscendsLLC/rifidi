@@ -23,7 +23,6 @@ public class WriteThread extends AbstractThread {
 	 * @param writeQueue The blocking queue used to pull the objects created from adapter through the protocol to the socket.
 	 * @param outputStream The output stream of the socket.
 	 */
-	//TODO Jerry this is not documented
 	public WriteThread(String threadName, Protocol protocol,
 			LinkedBlockingQueue<Object> writeQueue, OutputStream outputStream) {
 		super(threadName);

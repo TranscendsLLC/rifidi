@@ -12,7 +12,6 @@ public class JMSMessagePoolThread extends AbstractThread {
 	
 	public JMSMessagePoolThread(String threadName) {
 		super(threadName);
-		// TODO Auto-generated constructor stub
 	}
 	
 	
