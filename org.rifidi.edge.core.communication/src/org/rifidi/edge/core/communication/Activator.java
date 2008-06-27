@@ -2,6 +2,7 @@ package org.rifidi.edge.core.communication;
 
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
+import org.rifidi.edge.core.communication.service.CommunicationService;
 import org.rifidi.edge.core.communication.service.impl.CommunicationServiceImpl;
 
 /**
@@ -24,7 +25,7 @@ public class Activator implements BundleActivator {
 		System.out.println("Registering Service: CommunicationService");
 
 		communicationService = new CommunicationServiceImpl();
-		context.registerService(CommunicationServiceImpl.class.getName(),
+		context.registerService(CommunicationService.class.getName(),
 				communicationService, null);
 
 	}
