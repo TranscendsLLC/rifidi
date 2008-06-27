@@ -12,8 +12,6 @@
 package org.rifidi.edge.readerPlugin.thingmagic;
 
 import java.io.IOException;
-import java.net.ConnectException;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,8 +21,8 @@ import org.rifidi.edge.common.utilities.converter.ByteAndHexConvertingUtility;
 import org.rifidi.edge.core.communication.buffer.ConnectionBuffer;
 import org.rifidi.edge.core.communication.service.CommunicationService;
 import org.rifidi.edge.core.exception.RifidiIIllegialArgumentException;
-import org.rifidi.edge.core.exception.readerConnection.RifidiConnectionIllegalStateException;
 import org.rifidi.edge.core.exception.readerConnection.RifidiConnectionException;
+import org.rifidi.edge.core.exception.readerConnection.RifidiConnectionIllegalStateException;
 import org.rifidi.edge.core.exception.readerConnection.RifidiIllegalOperationException;
 import org.rifidi.edge.core.readerPlugin.IReaderPlugin;
 import org.rifidi.edge.core.readerPlugin.commands.ICustomCommand;
@@ -50,15 +48,12 @@ public class ThingMagicReaderPlugin implements IReaderPlugin {
 	// the communication buffer used to talk to the reader
 	private ConnectionBuffer connectionBuffer;
 
-	// The information about a specific reader.
-	private ThingMagicReaderInfo tmci;
-
 	// Communication services
 	private CommunicationService communicationService;
 	
 	public ThingMagicReaderPlugin(ThingMagicReaderInfo connectionInfo){
-		tmci = connectionInfo;
 		ServiceRegistry.getInstance().service(this);
+		//We don't need to save the connection info in here, as it doesn't have a username/password
 	}
 	
 	/* (non-Javadoc)
