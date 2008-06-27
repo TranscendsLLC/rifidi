@@ -16,12 +16,14 @@ import org.rifidi.services.registry.ServiceRegistry;
  */
 public class JMSServiceImpl implements JMSService {
 	
+
+
+	private Map<IReaderConnection, JMSMessageThread> map = new HashMap<IReaderConnection, JMSMessageThread>();
+	private ConnectionFactory connectionFactory;
+	
 	public JMSServiceImpl(){
 		ServiceRegistry.getInstance().service(this);
 	}
-
-	Map<IReaderConnection, JMSMessageThread> map = new HashMap<IReaderConnection, JMSMessageThread>();
-	private ConnectionFactory connectionFactory;
 	
 	/* (non-Javadoc)
 	 * @see org.rifidi.edge.jms.service.JMSService#register(org.rifidi.edge.core.connection.IReaderConnection)

@@ -18,15 +18,16 @@ import org.rifidi.edge.core.communication.service.CommunicationService;
 import org.rifidi.edge.core.readerPlugin.AbstractReaderInfo;
 import org.rifidi.edge.core.readerPlugin.IReaderPlugin;
 
+
 /**
- * @author jerry
- * 
+ * @author Jerry Maine - jerry@pramari.com
+ *
  */
 public class CommunicationServiceImpl implements CommunicationService {
 	private static final Log logger = LogFactory
 			.getLog(CommunicationServiceImpl.class);
 
-	Map<ConnectionBuffer, Communication> communications;
+	private Map<ConnectionBuffer, Communication> communications;
 
 	/**
 	 * Default Constructor

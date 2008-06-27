@@ -65,6 +65,7 @@ public class ReaderConnection implements IReaderConnection {
 	private CommunicationService communicationService;
 	private Protocol protocol;
 
+	//TODO Andreas: Need to change the name of this method.
 	/**
 	 * Creates a Session.
 	 * 
@@ -86,6 +87,7 @@ public class ReaderConnection implements IReaderConnection {
 		this.protocol = protocol;
 	}
 
+	//TODO Andreas: Need to change the name of this method.
 	/*
 	 * (non-Javadoc)
 	 * 
