@@ -223,20 +223,6 @@ public class AlienReaderPlugin implements IReaderPlugin {
 	}
 
 	/**
-	 * Writes a message out to an alien reader.
-	 * 
-	 * @param message
-	 * @throws IOException
-	 */
-	// private synchronized void write(String message,
-	// ConnectionBufferImpl connection) throws IOException {
-	// try {
-	// connection.send(message);
-	// } catch (RifidiIllegalOperationException e) {
-	// e.printStackTrace();
-	// }
-	// }
-	/**
 	 * This thread keeps alive the Alien by sending it a version command every 5
 	 * seconds.
 	 * 
