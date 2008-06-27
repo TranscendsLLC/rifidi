@@ -75,6 +75,7 @@ public class ReadWriteThread extends AbstractThread {
 		if (msg.size() > 1) {
 			throw new IOException("To many message from reader");
 		}
+		
 		if (msg.isEmpty())
 			throw new IOException("No repsonse recieved");
 		return msg.get(0);
