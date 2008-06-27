@@ -32,7 +32,7 @@ import org.rifidi.services.annotations.Inject;
 import org.rifidi.services.registry.ServiceRegistry;
 
 
-//TODO: Jerry change name to 
+
 /**
  * @author Jerry Maine - jerry@pramari.com
  *
@@ -60,7 +60,41 @@ public class ThingMagicPluginTest {
 
 	//TODO: Jerry write more JUnit methods
 	@Test
-	public void testConnect() {
+	public void testConnectAndDisconnect() {
+		ThingMagicReaderInfo info = new ThingMagicReaderInfo();
+		info.setIPAddress("127.0.0.1");
+		info.setPort(8080);
+
+		ThingMagicReaderPlugin adapter = new ThingMagicReaderPlugin(info);
+
+		try {
+			adapter.connect(communicationService.createConnection(adapter, info, new ThingMagicProtocol()));
+		} catch (RifidiConnectionException e1) {
+			Assert.fail();
+			e1.printStackTrace();
+		} catch (ConnectException e) {
+			e.printStackTrace();
+			Assert.fail();
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+			Assert.fail();
+		} catch (IOException e) {
+			e.printStackTrace();
+			Assert.fail();
+		}
+		
+		try {
+			adapter.disconnect();
+		} catch (RifidiConnectionException e) {
+			e.printStackTrace();
+			Assert.fail("Error while disconecting.");
+		}
+	}
+
+	
+	@Test 
+	public void testTagRead(){ 
+		//TODO Jerry implement this test. 
 		ThingMagicReaderInfo info = new ThingMagicReaderInfo();
 		info.setIPAddress("127.0.0.1");
 		info.setPort(8080);
@@ -106,11 +140,11 @@ public class ThingMagicPluginTest {
 			e.printStackTrace();
 			Assert.fail("Error while disconecting.");
 		}
+		
+		
+		
 	}
-
-	/*
-	 * @Test public void testTagRead(){ //TODO Jerry implement this test. }
-	 */
+	
 	@Inject
 	public void setCommunicationService(
 			CommunicationService communicationService) {
