@@ -85,12 +85,13 @@ public class ReaderPluginRegistryServiceImpl implements
 		return availableAdapters;
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@Override
-	public Class[] getAbstractReaderInfoClasses() {
-		Class[] retVal = new Class[registry.size()];
+	public Class< ? extends AbstractReaderInfo>[] getAbstractReaderInfoClasses() {
+		@SuppressWarnings("unchecked")
+		Class< ? extends AbstractReaderInfo>[] retVal = new Class[registry.size()];
 		int index = 0;
-		for (Class c : registry.keySet()) {
+		for (Class< ? extends AbstractReaderInfo> c : registry.keySet()) {
 			retVal[index] = c;
 			index++;
 		}

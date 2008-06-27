@@ -50,8 +50,7 @@ public interface ReaderPluginRegistryService {
 	 */
 	public List<String> getAvailableReaderAdapters();
 	
-	@SuppressWarnings("unchecked")
-	//TODO: Look up other ways to do this class parameterization
-	public Class[] getAbstractReaderInfoClasses();
+
+	public Class< ? extends AbstractReaderInfo>[] getAbstractReaderInfoClasses();
 
 }
