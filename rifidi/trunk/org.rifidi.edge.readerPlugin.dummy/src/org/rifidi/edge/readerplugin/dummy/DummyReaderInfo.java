@@ -93,7 +93,6 @@ public class DummyReaderInfo extends AbstractReaderInfo {
 
 	@Override
 	public CommunicationType getCommunicationType() {
-		// TODO Auto-generated method stub
 		return CommunicationType.SYNCHRONOUS;
 	}
 

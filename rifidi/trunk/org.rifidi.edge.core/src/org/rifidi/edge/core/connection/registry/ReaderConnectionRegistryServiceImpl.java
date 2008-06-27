@@ -81,6 +81,7 @@ public class ReaderConnectionRegistryServiceImpl implements
 		// JMS Queue)
 		counter++;
 
+		//TODO check for null
 		// Build ReaderPlugin
 		IReaderPlugin readerPlugin = readerPluginFactory
 				.createReaderAdapter(abstractConnectionInfo);

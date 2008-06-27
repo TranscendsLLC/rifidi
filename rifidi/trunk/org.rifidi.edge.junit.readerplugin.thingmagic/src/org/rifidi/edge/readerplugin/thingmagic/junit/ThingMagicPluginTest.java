@@ -58,7 +58,6 @@ public class ThingMagicPluginTest {
 				+ " unloaded.");
 	}
 
-	//TODO: Jerry write more JUnit methods
 	@Test
 	public void testConnectAndDisconnect() {
 		ThingMagicReaderInfo info = new ThingMagicReaderInfo();
@@ -94,7 +93,6 @@ public class ThingMagicPluginTest {
 	
 	@Test 
 	public void testTagRead(){ 
-		//TODO Jerry implement this test. 
 		ThingMagicReaderInfo info = new ThingMagicReaderInfo();
 		info.setIPAddress("127.0.0.1");
 		info.setPort(8080);

@@ -37,7 +37,6 @@ public class ThingMagicReaderInfo extends AbstractReaderInfo {
 
 	@Override
 	public CommunicationType getCommunicationType() {
-		// TODO Auto-generated method stub
 		return CommunicationType.SYNCHRONOUS;
 	}
 
