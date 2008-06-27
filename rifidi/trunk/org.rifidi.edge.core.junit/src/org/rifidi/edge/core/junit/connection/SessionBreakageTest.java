@@ -12,6 +12,8 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.rifidi.edge.core.communication.service.CommunicationService;
+import org.rifidi.edge.core.communication.service.impl.CommunicationServiceImpl;
 import org.rifidi.edge.core.connection.IReaderConnection;
 import org.rifidi.edge.core.connection.registry.ReaderConnectionRegistryService;
 import org.rifidi.edge.core.exception.RifidiException;
@@ -46,7 +48,8 @@ public class SessionBreakageTest {
 	@Before
 	public void setUp() throws Exception {
 		ServiceRegistry.getInstance().service(this);
-
+		// to forcefully load the communication service implementation
+		System.out.println(CommunicationServiceImpl.class);
 	}
 
 	/**
