@@ -45,7 +45,17 @@ public class DummyReaderInfo extends AbstractReaderInfo {
 	public void setErrorToSet(String errorToSet) {
 		errorToSet = errorToSet.trim().toUpperCase();
 		this.errorToSet = EDummyError.valueOf(errorToSet);
-		if (this.errorToSet == null) this.errorToSet = EDummyError.NONE;
+		if (this.errorToSet == null) {
+			String msg = "Not a valid enum type. Please pick from this list: ";
+			EDummyError[] errorTypes = EDummyError.values();
+			for (int x = 0;x < errorTypes.length; x++) {
+				msg = msg + errorTypes[x].toString();
+				if (x < errorTypes.length-1)
+					msg = msg + ", ";
+			}
+			msg = msg + ".";
+			throw new IllegalArgumentException(msg);
+		}
 	}
 	
 	/**
