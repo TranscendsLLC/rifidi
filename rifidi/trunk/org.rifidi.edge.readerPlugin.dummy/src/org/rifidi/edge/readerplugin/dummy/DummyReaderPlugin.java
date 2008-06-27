@@ -72,6 +72,9 @@ public class DummyReaderPlugin implements IReaderPlugin  {
 					}
 				}
 		}
+		if (connectionBuffer == null )
+			throw new RifidiConnectionException("No connection buffer found.");
+		
 		this.connectionBuffer = connectionBuffer;
 		
 
