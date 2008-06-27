@@ -11,8 +11,9 @@ import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.communication.protocol.Protocol;
 import org.rifidi.edge.common.utilities.thread.AbstractThread;
 
+
 /**
- * @author jerry
+ * @author Jerry Maine - jerry@pramari.com
  *
  */
 public class ReadThread extends AbstractThread {
@@ -24,12 +25,12 @@ public class ReadThread extends AbstractThread {
 	private InputStream inputStream;
 
 	/**
-	 * @param threadName
-	 * @param protocol
-	 * @param readQueue
-	 * @param inputStream
+	 * Instantiates a asynchronous read thread.
+	 * @param threadName The Name of the thread.
+	 * @param protocol The plugin provided protocol used to transform the byte stream into objects.
+	 * @param readQueue The blocking queue used to push the objects created from the protocol to the adapter.
+	 * @param inputStream An input stream from a socket.
 	 */
-	//TODO: Jerry this is not documented
 	public ReadThread(String threadName, Protocol protocol,
 			LinkedBlockingQueue<Object> readQueue, InputStream inputStream) {
 		super(threadName);
@@ -62,7 +63,13 @@ public class ReadThread extends AbstractThread {
 		}
 	}
 
-	//TODO Jerry this is not documented
+	
+	/**
+	 * This reads the socket until nothing is available any more.
+	 * @param inputStream A stream from a socket
+	 * @return A byte array from the stream
+	 * @throws IOException
+	 */
 	private byte[] readFromSocket(InputStream inputStream) throws IOException {
 		int input;
 		ByteArrayOutputStream buffer = new ByteArrayOutputStream();
