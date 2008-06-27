@@ -12,6 +12,7 @@ import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.common.utilities.thread.AbstractThread;
 import org.rifidi.edge.core.communication.protocol.Protocol;
 
+//TODO: Document this file
 public class ReadWriteThread extends AbstractThread {
 
 	private Log logger = LogFactory.getLog(ReadWriteThread.class);
