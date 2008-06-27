@@ -74,7 +74,8 @@ public class ReadThread extends AbstractThread {
 	private byte[] readFromSocket(InputStream inputStream) throws IOException {
 		int input;
 		ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-
+		
+		//TODO need to find a way so that the we can return if and only if we have a complete message.
 		while ((input = inputStream.read()) != -1) {
 			buffer.write(input);
 
