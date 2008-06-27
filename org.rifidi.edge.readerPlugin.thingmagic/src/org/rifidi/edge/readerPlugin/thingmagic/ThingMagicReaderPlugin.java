@@ -162,7 +162,7 @@ public class ThingMagicReaderPlugin implements IReaderPlugin {
 			if(command.getCustomCommand() == null)
 				throw new RifidiIIllegialArgumentException();
 			else 
-				if (command.getCustomCommand().equals("") || command.getCustomCommand().endsWith(";"))
+				if (command.getCustomCommand().equals("") || command.getCustomCommand().endsWith(";\n"))
 					throw new RifidiIIllegialArgumentException();
 		} else {
 			throw new RifidiIIllegialArgumentException();
