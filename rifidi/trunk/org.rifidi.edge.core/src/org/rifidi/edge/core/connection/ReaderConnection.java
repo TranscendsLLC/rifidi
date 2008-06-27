@@ -65,6 +65,8 @@ public class ReaderConnection implements IReaderConnection {
 	private CommunicationService communicationService;
 	private Protocol protocol;
 
+	private ConnectionBuffer connectionBuffer;
+
 	//TODO Andreas: Need to change the name of this method.
 	/**
 	 * Creates a Session.
@@ -284,7 +286,7 @@ public class ReaderConnection implements IReaderConnection {
 				if (communicationService == null)
 					throw new ConnectException("Communication Service not found");
 			
-				ConnectionBuffer connectionBuffer = communicationService
+				connectionBuffer = communicationService
 						.createConnection(plugin, connectionInfo, protocol);
 				state = EReaderAdapterState.CONNECTED;
 
@@ -346,6 +348,14 @@ public class ReaderConnection implements IReaderConnection {
 		}
 		try {
 			plugin.disconnect();
+			try {
+				communicationService.destroyConnection(connectionBuffer);
+			} catch (IOException e) {
+				setErrorCause(new RifidiConnectionException(e));
+				logger.error("Error while disconnecting", e);
+			}
+			
+			
 			state = EReaderAdapterState.DISCONECTED;
 		} catch (RifidiConnectionException e) {
 			setErrorCause(e);
