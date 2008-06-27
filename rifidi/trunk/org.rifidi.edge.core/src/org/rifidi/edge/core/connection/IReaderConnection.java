@@ -21,11 +21,13 @@ import org.rifidi.edge.core.readerPlugin.enums.EReaderAdapterState;
 
 public interface IReaderConnection {
 
+	//TODO Andreas: Need to change the name of this method.
 	/**
 	 * @return the adapter
 	 */
 	public abstract IReaderPlugin getAdapter();
 
+	//TODO Andreas: Need to change the name of this method.
 	/**
 	 * @param adapter
 	 *            the adapter to set
@@ -38,6 +40,7 @@ public interface IReaderConnection {
 	 */
 	public abstract int getSessionID();
 
+	//TODO Andreas: Need to change the name of this method.
 	/**
 	 * @param sessionID
 	 *            the sessionID to set
