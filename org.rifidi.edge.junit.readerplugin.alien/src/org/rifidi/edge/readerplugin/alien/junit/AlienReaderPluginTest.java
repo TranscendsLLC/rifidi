@@ -128,7 +128,7 @@ public class AlienReaderPluginTest {
 			e.printStackTrace();
 		}
 
-		for (int i = 0; i < 30; i++) {
+		for (int i = 0; i < 5; i++) {
 			List<TagRead> tagList = null;
 			try {
 				tagList = alienReaderAdapter.getNextTags();
