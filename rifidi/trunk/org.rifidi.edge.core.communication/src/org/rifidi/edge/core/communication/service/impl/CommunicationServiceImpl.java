@@ -47,9 +47,13 @@ public class CommunicationServiceImpl implements CommunicationService {
 	public ConnectionBuffer createConnection(IReaderPlugin plugin,
 			AbstractReaderInfo info, Protocol protocol)
 			throws UnknownHostException, ConnectException, IOException {
-		if ((plugin == null) || (info == null) || (protocol == null))
+		if ((plugin == null) || (info == null) ||
+			(protocol == null) || (info.getCommunicationType() == null) ||
+			(info.getIPAddress() == null) || (info.getReaderType() == null) || 
+			(info.getProtocol() == null))
 			throw new NullPointerException(
-					"No null pointers allowed in arguments to this method.");
+					"No null pointers allowed in arguments to this method" + 
+					" nor in any AbstractReaderInfo object.");
 
 		logger.debug("Connecting: " + info.getIPAddress() + ":"
 				+ info.getPort() + " ...");
