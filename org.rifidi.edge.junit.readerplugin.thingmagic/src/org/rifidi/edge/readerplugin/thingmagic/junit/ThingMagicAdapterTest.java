@@ -30,6 +30,8 @@ import org.rifidi.edge.readerPlugin.thingmagic.ThingMagicReaderPlugin;
 import org.rifidi.services.annotations.Inject;
 import org.rifidi.services.registry.ServiceRegistry;
 
+
+//TODO: Jerry change name to 
 /**
  * @author Jerry Maine - jerry@pramari.com
  *
@@ -54,6 +56,7 @@ public class ThingMagicAdapterTest {
 				+ " unloaded.");
 	}
 
+	//TODO: Jerry write more JUnit methods
 	@Test
 	public void testConnect() {
 		ThingMagicReaderInfo info = new ThingMagicReaderInfo();
