@@ -22,7 +22,7 @@ import org.rifidi.edge.core.readerPlugin.ISpecificReaderPluginFactory;
 
 /**
  * @author Jerry Maine - jerry@pramari.com
- *
+ * 
  */
 public class ReaderPluginRegistryServiceImpl implements
 		ReaderPluginRegistryService {
@@ -57,6 +57,8 @@ public class ReaderPluginRegistryServiceImpl implements
 	@Override
 	public void unregisterReaderAdapter(
 			Class<? extends AbstractReaderInfo> specificConnectionInfo) {
+		// TODO lookup if there are any instances of the readerPlugin which got
+		// just removed
 		registry.remove(specificConnectionInfo);
 	}
 
@@ -85,13 +87,16 @@ public class ReaderPluginRegistryServiceImpl implements
 		return availableAdapters;
 	}
 
-	
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.readerPluginService.ReaderPluginRegistryService#getAbstractReaderInfoClasses()
+	 */
 	@Override
-	public Class< ? extends AbstractReaderInfo>[] getAbstractReaderInfoClasses() {
+	public Class<? extends AbstractReaderInfo>[] getAbstractReaderInfoClasses() {
 		@SuppressWarnings("unchecked")
-		Class< ? extends AbstractReaderInfo>[] retVal = new Class[registry.size()];
+		Class<? extends AbstractReaderInfo>[] retVal = new Class[registry
+				.size()];
 		int index = 0;
-		for (Class< ? extends AbstractReaderInfo> c : registry.keySet()) {
+		for (Class<? extends AbstractReaderInfo> c : registry.keySet()) {
 			retVal[index] = c;
 			index++;
 		}
