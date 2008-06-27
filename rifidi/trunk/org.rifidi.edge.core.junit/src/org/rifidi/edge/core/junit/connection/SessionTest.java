@@ -21,6 +21,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.rifidi.edge.core.communication.service.CommunicationService;
+import org.rifidi.edge.core.communication.service.impl.CommunicationServiceImpl;
 import org.rifidi.edge.core.connection.IReaderConnection;
 import org.rifidi.edge.core.connection.ReaderConnection;
 import org.rifidi.edge.core.connection.jms.JMSHelper;
@@ -59,6 +60,7 @@ public class SessionTest {
 	 */
 	@Before
 	public void setUp() throws Exception {
+		System.out.println(CommunicationServiceImpl.class.getName());
 		ServiceRegistry.getInstance().service(this);
 	}
 
@@ -242,7 +244,7 @@ public class SessionTest {
 		// set up dummy connection Info
 		DummyReaderInfo info = new DummyReaderInfo();
 		info.setIPAddress("127.0.0.1");
-		info.setPort(123456);
+		info.setPort(10010);
 		int SessionID = 1;
 
 		// create the dummy reader adapter
