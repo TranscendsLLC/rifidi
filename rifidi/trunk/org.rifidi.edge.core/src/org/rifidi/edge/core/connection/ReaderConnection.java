@@ -254,7 +254,9 @@ public class ReaderConnection implements IReaderConnection {
 	 * @see org.rifidi.edge.core.connection.IReaderConnection#getState()
 	 */
 	public EReaderAdapterState getState() {
-		return state;
+		synchronized(errorSempaphore){
+			return state;
+		}
 	}
 
 	/*
@@ -376,6 +378,7 @@ public class ReaderConnection implements IReaderConnection {
 	 * @see org.rifidi.edge.core.connection.IReaderConnection#getErrorCause()
 	 */
 	public Exception getErrorCause() {
+		logger.debug("Getting error Cause.");
 		Exception e = null;
 		synchronized (errorSempaphore) {
 			e = errorCause;
