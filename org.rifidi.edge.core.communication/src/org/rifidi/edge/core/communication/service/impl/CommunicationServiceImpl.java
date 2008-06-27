@@ -57,7 +57,10 @@ public class CommunicationServiceImpl implements CommunicationService {
 
 		logger.debug("Connecting: " + info.getIPAddress() + ":"
 				+ info.getPort() + " ...");
+		
+		//TODO: Think about setting a timeout for this socket.
 		Socket socket = new Socket(info.getIPAddress(), info.getPort());
+		//socket.setSoTimeout(500);
 
 		Communication communication = null;
 		switch (info.getCommunicationType()) {

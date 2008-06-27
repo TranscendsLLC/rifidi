@@ -56,6 +56,7 @@ public class ReadThread extends AbstractThread {
 					readQueue.add(o);
 				}
 			}
+		//TODO: Think about catching SocketTimeOutException separately.
 		} catch (IOException e) {
 			running = false;
 			Thread.currentThread().getUncaughtExceptionHandler()
