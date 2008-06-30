@@ -44,23 +44,25 @@ public class JAXBUtility {
 	private static Log logger = LogFactory.getLog(JAXBUtility.class);
 
 	/**
-	 * 
+	 * The ReaderPluginRegistryService, which we use to get the list of classes.
 	 */
 	private ReaderPluginRegistryService rprs;
 
 	/**
-	 * 
+	 * The instance of the JAXBUtility.
 	 */
 	private static JAXBUtility instance = new JAXBUtility();
 
 	/**
-	 * 
+	 * Private constructor.
 	 */
 	private JAXBUtility() {
 		ServiceRegistry.getInstance().service(this);
 	}
 
 	/**
+	 * Gets the Singleton instance of the JAXBUtility.
+	 * 
 	 * @return the instance
 	 */
 	public static JAXBUtility getInstance() {
@@ -68,6 +70,8 @@ public class JAXBUtility {
 	}
 
 	/**
+	 * Set the ReaderPluginRegistryService via injection.
+	 * 
 	 * @param rprs
 	 *            the rprs to set
 	 */
@@ -77,15 +81,15 @@ public class JAXBUtility {
 	}
 
 	/**
-	 * Load an xml file.
+	 * Loads an object out of xml.
 	 * 
-	 * @param filename
-	 * @param o
-	 * @return
+	 * @param xml
+	 *            The XML file in string form.
+	 * @return Returns an object
 	 * @throws JAXBException
 	 */
 	@SuppressWarnings("unchecked")
-	public Object load(String xml, Class<?> clazz) throws JAXBException {
+	public Object load(String xml) throws JAXBException {
 		JAXBContext context;
 		Class[] newClassArr = rprs.getAbstractReaderInfoClasses();
 		List<Class> classList = new ArrayList<Class>();
@@ -112,6 +116,7 @@ public class JAXBUtility {
 	 * Save an object.
 	 * 
 	 * @param o
+	 *            The object to save.
 	 */
 	@SuppressWarnings("unchecked")
 	public String save(Object o) {
@@ -125,14 +130,14 @@ public class JAXBUtility {
 				classList.add(a);
 			}
 			classList.add(AbstractReaderInfoSuite.class);
-			
+
 			Class[] omg = new Class[classList.size()];
 			int index = 0;
 			for (Class c : classList) {
 				omg[index] = c;
 				index++;
 			}
-			
+
 			context = JAXBContext.newInstance(omg);
 			Marshaller m = context.createMarshaller();
 			m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
@@ -150,7 +155,9 @@ public class JAXBUtility {
 	 * Saves a string-based xml to a file.
 	 * 
 	 * @param xml
+	 *            The XML to save.
 	 * @param filename
+	 *            The file to save to.
 	 */
 	public void saveToFile(String xml, String filename) {
 		File f = new File(filename);
