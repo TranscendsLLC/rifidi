@@ -13,12 +13,12 @@ package org.rifidi.edge.core.readerPlugin;
 
 import java.util.List;
 
-import org.rifidi.edge.core.communication.buffer.ConnectionBuffer;
 import org.rifidi.edge.core.exception.RifidiIIllegialArgumentException;
 import org.rifidi.edge.core.exception.readerConnection.RifidiConnectionException;
 import org.rifidi.edge.core.exception.readerConnection.RifidiConnectionIllegalStateException;
 import org.rifidi.edge.core.readerPlugin.commands.ICustomCommand;
 import org.rifidi.edge.core.readerPlugin.commands.ICustomCommandResult;
+import org.rifidi.edge.core.service.communication.buffer.ConnectionBuffer;
 import org.rifidi.edge.core.tag.TagRead;
 
 public interface IReaderPlugin {
