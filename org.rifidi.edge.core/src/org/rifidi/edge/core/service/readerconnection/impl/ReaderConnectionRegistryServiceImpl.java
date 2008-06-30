@@ -83,7 +83,7 @@ public class ReaderConnectionRegistryServiceImpl implements
 					+ (Integer.MAX_VALUE - 100));
 
 		logger.debug("Connecting to Reader "
-				+ abstractConnectionInfo.getClass() + "://"
+				+ abstractConnectionInfo.getClass().getName() + "://"
 				+ abstractConnectionInfo.getIPAddress() + ":"
 				+ abstractConnectionInfo.getPort());
 
