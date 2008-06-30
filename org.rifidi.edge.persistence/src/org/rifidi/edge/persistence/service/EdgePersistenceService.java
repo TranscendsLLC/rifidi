@@ -20,20 +20,21 @@ import org.rifidi.edge.core.readerPlugin.AbstractReaderInfo;
  * @author Matthew Dean - matt@pramari.com
  */
 public interface EdgePersistenceService {
-	
+
 	/**
 	 * 
 	 * @param connectionList
 	 * @param filename
 	 */
-	public void saveToFile(List<AbstractReaderInfo> connectionList, String filename);
+	public void saveToFile(List<AbstractReaderInfo> connectionList,
+			String filename);
 
 	/**
 	 * 
 	 * @return
 	 */
 	public List<AbstractReaderInfo> restore();
-	
+
 	/**
 	 * 
 	 * 
@@ -41,5 +42,5 @@ public interface EdgePersistenceService {
 	 * @param filename
 	 * @return
 	 */
-	public List<String> saveToString(List<AbstractReaderInfo> connectionList, String filename);
+	public List<String> saveToString(List<AbstractReaderInfo> connectionList);
 }
