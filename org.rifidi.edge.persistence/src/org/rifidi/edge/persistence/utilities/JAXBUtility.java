@@ -113,12 +113,27 @@ public class JAXBUtility {
 	 * 
 	 * @param o
 	 */
+	@SuppressWarnings("unchecked")
 	public String save(Object o) {
 		StringWriter writer = new StringWriter();
 		JAXBContext context;
 
 		try {
-			context = JAXBContext.newInstance(o.getClass());
+			Class[] newClassArr = rprs.getAbstractReaderInfoClasses();
+			List<Class> classList = new ArrayList<Class>();
+			for (Class a : newClassArr) {
+				classList.add(a);
+			}
+			classList.add(AbstractReaderInfoSuite.class);
+			
+			Class[] omg = new Class[classList.size()];
+			int index = 0;
+			for (Class c : classList) {
+				omg[index] = c;
+				index++;
+			}
+			
+			context = JAXBContext.newInstance(omg);
 			Marshaller m = context.createMarshaller();
 			m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
 			m.marshal(o, writer);
@@ -143,6 +158,7 @@ public class JAXBUtility {
 			f.delete();
 		}
 
+		logger.debug("path is: " + f.getAbsolutePath());
 		FileWriter fw = null;
 		try {
 			logger.debug("XML: " + xml);

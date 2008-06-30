@@ -32,6 +32,7 @@ public class EdgePersistenceServiceImpl implements EdgePersistenceService {
 	/**
 	 * The log4j logger.
 	 */
+	@SuppressWarnings("unused")
 	private static Log logger = LogFactory
 			.getLog(EdgePersistenceServiceImpl.class);
 
@@ -63,9 +64,7 @@ public class EdgePersistenceServiceImpl implements EdgePersistenceService {
 
 		AbstractReaderInfoSuite cs = null;
 		try {
-			logger.debug("Restoring from file: " + filename);
 			String xml = JAXBUtility.getInstance().restoreFromFile(filename);
-			logger.debug("Done restoring from file, xml is: " + xml);
 			cs = (AbstractReaderInfoSuite) JAXBUtility.getInstance().load(xml,
 					AbstractReaderInfoSuite.class);
 		} catch (JAXBException e) {
