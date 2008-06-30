@@ -21,7 +21,7 @@ import java.rmi.server.UnicastRemoteObject;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.rifidi.edge.core.connection.registry.ReaderConnectionRegistryService;
+import org.rifidi.edge.core.service.readerconnection.ReaderConnectionRegistryService;
 import org.rifidi.edge.rmi.ReaderConnection.RemoteReaderConnectionRegistry;
 import org.rifidi.edge.rmi.ReaderConnection.impl.RemoteReaderConnectionRegistryImpl;
 import org.rifidi.edge.rmi.service.RMIServerService;
