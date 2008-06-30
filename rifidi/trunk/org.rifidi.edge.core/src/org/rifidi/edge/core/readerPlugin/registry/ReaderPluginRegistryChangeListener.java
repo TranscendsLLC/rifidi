@@ -1,4 +1,6 @@
-package org.rifidi.edge.core.readerPlugin;
+package org.rifidi.edge.core.readerPlugin.registry;
+
+import org.rifidi.edge.core.readerPlugin.AbstractReaderInfo;
 
 
 /**
