@@ -298,12 +298,15 @@ public class ReaderConnection implements IReaderConnection {
 		} catch (ConnectException e) {
 			RifidiConnectionException e2 = new RifidiConnectionException("Error while connecting",e);
 			setErrorCause(e2);
+			throw e2;
 		} catch (UnknownHostException e) {
 			RifidiConnectionException e2 = new RifidiConnectionException("Error while connecting",e);
 			setErrorCause(e2);
+			throw e2;
 		} catch (IOException e) {
 			RifidiConnectionException e2 = new RifidiConnectionException("Error while connecting",e);
 			setErrorCause(e2);
+			throw e2;
 		} catch (RifidiConnectionException e) {
 			setErrorCause(e);
 			logger.error("Error while connecting.", e);
