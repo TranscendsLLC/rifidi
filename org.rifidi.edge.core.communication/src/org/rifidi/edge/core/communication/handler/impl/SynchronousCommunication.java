@@ -17,11 +17,11 @@ import java.util.concurrent.SynchronousQueue;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.rifidi.edge.core.communication.buffer.ConnectionBuffer;
 import org.rifidi.edge.core.communication.buffer.impl.SynchronousConnectionBufferImpl;
 import org.rifidi.edge.core.communication.handler.Communication;
 import org.rifidi.edge.core.communication.protocol.Protocol;
 import org.rifidi.edge.core.communication.threads.ReadWriteThread;
+import org.rifidi.edge.core.service.communication.buffer.ConnectionBuffer;
 
 public class SynchronousCommunication implements Communication {
 
