@@ -26,7 +26,7 @@ import org.rifidi.edge.persistence.utilities.JAXBUtility;
 import org.rifidi.edge.readerPlugin.alien.AlienReaderInfo;
 
 /**
- * Test class for JAXBUtility.  
+ * Test class for JAXBUtility.
  * 
  * @author Matthew Dean - matt@pramari.com
  */
@@ -47,22 +47,22 @@ public class JAXBUtilityTest {
 	}
 
 	/**
-	 * Test load the 
+	 * Test load the
 	 */
 	@Test
 	public void testLoad() {
 		AlienReaderInfo omg = new AlienReaderInfo();
-		
+
 		omg.setIPAddress("192.168.1.100");
 		omg.setPort(23);
 		omg.setUsername("alien");
 		omg.setPassword("password");
-		
+
 		AbstractReaderInfo ari = omg;
-		
+
 		try {
 			String lol = JAXBUtility.getInstance().save(ari);
-			JAXBUtility.getInstance().load(lol,AlienReaderInfo.class);
+			JAXBUtility.getInstance().load(lol, AlienReaderInfo.class);
 		} catch (JAXBException e) {
 			e.printStackTrace();
 			fail();
@@ -70,55 +70,60 @@ public class JAXBUtilityTest {
 	}
 
 	/**
-	 * Test save the object.  
+	 * Test save the object.
 	 */
 	@Test
 	public void testSave() {
 		AlienReaderInfo omg = new AlienReaderInfo();
-		
+
 		omg.setIPAddress("192.168.1.100");
 		omg.setPort(23);
 		omg.setUsername("alien");
 		omg.setPassword("password");
-		
+
 		AbstractReaderInfo ari = omg;
-		
+
 		try {
 			String lol = JAXBUtility.getInstance().save(ari);
-			JAXBUtility.getInstance().load(lol,AlienReaderInfo.class);
-			
+			JAXBUtility.getInstance().load(lol, AlienReaderInfo.class);
+
 		} catch (JAXBException e) {
 			e.printStackTrace();
 			fail();
 		}
 	}
-	
+
 	@Test
 	public void testSaveToFile() {
 		AlienReaderInfo omg = new AlienReaderInfo();
-		
+
 		omg.setIPAddress("192.168.1.100");
 		omg.setPort(23);
 		omg.setUsername("alien");
 		omg.setPassword("password");
-		
+
 		AlienReaderInfo omg2 = new AlienReaderInfo();
-		
-		omg2.setIPAddress("192.168.1.100");
-		omg2.setPort(23);
-		omg2.setUsername("alien");
-		omg2.setPassword("password");
-		
+
+		omg2.setIPAddress("192.168.1.199");
+		omg2.setPort(14324);
+		omg2.setUsername("omgzor");
+		omg2.setPassword("lolzor");
+
 		List<AbstractReaderInfo> aril = new ArrayList<AbstractReaderInfo>();
-		
+
 		aril.add(omg);
 		aril.add(omg2);
-		
+
 		EdgePersistenceServiceImpl impl = new EdgePersistenceServiceImpl();
 
-		 
-		 List<String> saveToFile = impl.saveToString(aril, "omgzor");
-		 saveToFile.size();
+		List<AbstractReaderInfo> restoril = null;
+
+		impl.saveToFile(aril, "omgzor");
+		restoril = impl.restore();
+
+		for (AbstractReaderInfo abs : restoril) {
+			System.out.println(abs.toString());
+		}
 	}
 
 }

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<abstractReaderInfoSuite>
+    <abstractReaderInfoList>
+        <IPAddress>192.168.1.100</IPAddress>
+        <port>23</port>
+    </abstractReaderInfoList>
+    <abstractReaderInfoList>
+        <IPAddress>192.168.1.199</IPAddress>
+        <port>14324</port>
+    </abstractReaderInfoList>
+</abstractReaderInfoSuite>
