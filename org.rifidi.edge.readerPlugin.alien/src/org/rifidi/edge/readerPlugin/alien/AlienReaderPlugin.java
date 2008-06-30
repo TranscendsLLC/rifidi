@@ -47,6 +47,9 @@ public class AlienReaderPlugin implements IReaderPlugin {
 	private static final Log logger = LogFactory
 			.getLog(AlienReaderPlugin.class);
 
+	/**
+	 * The ConnectionBuffer for the Alien.  
+	 */
 	private ConnectionBuffer connection = null;
 
 	/**
