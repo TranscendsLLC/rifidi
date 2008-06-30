@@ -13,7 +13,7 @@ package org.rifidi.edge.readerPlugin.llrp;
 
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
-import org.rifidi.edge.core.readerPluginService.ReaderPluginRegistryService;
+import org.rifidi.edge.core.service.readerplugin.ReaderPluginRegistryService;
 import org.rifidi.services.annotations.Inject;
 import org.rifidi.services.registry.ServiceRegistry;
 
