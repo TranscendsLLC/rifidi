@@ -134,7 +134,7 @@ public class ReaderConnectionRegistryServiceImpl implements
 		if (readerConnection != null) {
 			AbstractReaderInfo abstractConnectionInfo = getReaderConnection(
 					readerConnectionID).getConnectionInfo();
-			logger.debug("Connecting to Reader "
+			logger.debug("Deleting to Reader "
 					+ abstractConnectionInfo.getClass().getName() + "://"
 					+ abstractConnectionInfo.getIPAddress() + ":"
 					+ abstractConnectionInfo.getPort());
@@ -155,7 +155,7 @@ public class ReaderConnectionRegistryServiceImpl implements
 			return;
 		AbstractReaderInfo abstractConnectionInfo = readerConnection
 				.getConnectionInfo();
-		logger.debug("Connecting to Reader "
+		logger.debug("Deleting to Reader "
 				+ abstractConnectionInfo.getClass().getName() + "://"
 				+ abstractConnectionInfo.getIPAddress() + ":"
 				+ abstractConnectionInfo.getPort());
