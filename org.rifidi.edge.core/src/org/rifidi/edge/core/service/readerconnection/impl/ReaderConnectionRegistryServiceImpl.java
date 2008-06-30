@@ -21,7 +21,7 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.connection.IReaderConnection;
-import org.rifidi.edge.core.connection.ReaderConnection;
+import org.rifidi.edge.core.connection.impl.ReaderConnection;
 import org.rifidi.edge.core.readerPlugin.AbstractReaderInfo;
 import org.rifidi.edge.core.readerPlugin.IReaderPlugin;
 import org.rifidi.edge.core.readerPlugin.factory.ReaderPluginFactory;

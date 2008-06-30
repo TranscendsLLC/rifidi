@@ -14,7 +14,7 @@ package org.rifidi.edge.core.service.readerconnection;
 import java.util.List;
 
 import org.rifidi.edge.core.connection.IReaderConnection;
-import org.rifidi.edge.core.connection.ReaderConnection;
+import org.rifidi.edge.core.connection.impl.ReaderConnection;
 import org.rifidi.edge.core.readerPlugin.AbstractReaderInfo;
 
 public interface ReaderConnectionRegistryService {

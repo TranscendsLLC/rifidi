@@ -9,7 +9,7 @@
  *  License:	Lesser GNU Public License (LGPL)
  *  				http://www.opensource.org/licenses/lgpl-license.html
  */
-package org.rifidi.edge.core.connection;
+package org.rifidi.edge.core.connection.impl;
 
 import java.io.IOException;
 import java.net.ConnectException;
@@ -18,6 +18,7 @@ import java.net.UnknownHostException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.communication.protocol.Protocol;
+import org.rifidi.edge.core.connection.IReaderConnection;
 import org.rifidi.edge.core.exception.RifidiException;
 import org.rifidi.edge.core.exception.RifidiIIllegialArgumentException;
 import org.rifidi.edge.core.exception.RifidiPreviousErrorException;
