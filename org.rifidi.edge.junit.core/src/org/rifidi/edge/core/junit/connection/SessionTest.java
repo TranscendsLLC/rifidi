@@ -14,19 +14,18 @@ import javax.jms.Message;
 import javax.jms.MessageConsumer;
 import javax.jms.TextMessage;
 
-
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.rifidi.edge.core.communication.service.CommunicationService;
 import org.rifidi.edge.core.communication.service.impl.CommunicationServiceImpl;
 import org.rifidi.edge.core.connection.IReaderConnection;
 import org.rifidi.edge.core.connection.ReaderConnection;
-import org.rifidi.edge.core.connection.registry.ReaderConnectionRegistryService;
 import org.rifidi.edge.core.exception.RifidiException;
 import org.rifidi.edge.core.exception.readerConnection.RifidiConnectionException;
-import org.rifidi.edge.core.readerPluginService.ReaderPluginRegistryService;
+import org.rifidi.edge.core.service.communication.CommunicationService;
+import org.rifidi.edge.core.service.readerconnection.ReaderConnectionRegistryService;
+import org.rifidi.edge.core.service.readerplugin.ReaderPluginRegistryService;
 import org.rifidi.edge.jms.service.helper.JMSHelper;
 import org.rifidi.edge.readerplugin.dummy.DummyProtocol;
 import org.rifidi.edge.readerplugin.dummy.DummyReaderInfo;
@@ -43,7 +42,7 @@ import org.rifidi.services.registry.ServiceRegistry;
  */
 public class SessionTest {
 
-	//private static final Log logger = LogFactory.getLog(SessionTest.class);
+	// private static final Log logger = LogFactory.getLog(SessionTest.class);
 
 	private ConnectionFactory connectionFactory;
 
@@ -77,9 +76,8 @@ public class SessionTest {
 		DummyReaderInfo info = new DummyReaderInfo();
 		info.setIPAddress("127.0.0.1");
 		info.setPort(10000);
-		
-		DummyReaderPlugin dummyAdapter = new DummyReaderPlugin(
-				info);
+
+		DummyReaderPlugin dummyAdapter = new DummyReaderPlugin(info);
 		IReaderConnection s = new ReaderConnection(null, null, null, -1);
 
 		s.setAdapter(dummyAdapter);
@@ -106,18 +104,16 @@ public class SessionTest {
 	 */
 	@Test
 	public void testGetSetAbstractConnectionInfo() {
-		
+
 		DummyReaderInfo info = new DummyReaderInfo();
 		info.setIPAddress("127.0.0.1");
 		info.setPort(10005);
-		IReaderConnection session = new ReaderConnection(info, new DummyReaderPlugin(info), null,  0);
+		IReaderConnection session = new ReaderConnection(info,
+				new DummyReaderPlugin(info), null, 0);
 		session.setConnectionInfo(info);
 		Assert.assertTrue(session.getConnectionInfo() == info);
-		
-		
-	}
 
-	
+	}
 
 	/**
 	 * Make sure we can send a custom command.
@@ -131,7 +127,7 @@ public class SessionTest {
 		DummyReaderInfo info = new DummyReaderInfo();
 		info.setIPAddress("127.0.0.1");
 		info.setPort(10002);
-		
+
 		IReaderConnection s = sessionRegistryService
 				.createReaderConnection(info);
 
@@ -143,15 +139,16 @@ public class SessionTest {
 		}
 
 		try {
-			Assert.assertTrue("Command <Result>"
-					.equals(((DummyCustomCommandResult) s
-							.sendCustomCommand(new DummyCustomCommand("Command")))
-							.getResult()));
+			Assert
+					.assertTrue("Command <Result>"
+							.equals(((DummyCustomCommandResult) s
+									.sendCustomCommand(new DummyCustomCommand(
+											"Command"))).getResult()));
 		} catch (RifidiException e) {
 			e.printStackTrace();
 			Assert.fail();
-		} 
-		
+		}
+
 		try {
 			s.disconnect();
 		} catch (RifidiException e) {
@@ -180,7 +177,8 @@ public class SessionTest {
 		DummyReaderPlugin readerAdapter = new DummyReaderPlugin(info);
 
 		try {
-			readerAdapter.connect(communicationService.createConnection(readerAdapter, info, new DummyProtocol()));
+			readerAdapter.connect(communicationService.createConnection(
+					readerAdapter, info, new DummyProtocol()));
 		} catch (RifidiConnectionException e1) {
 			Assert.fail();
 			e1.printStackTrace();
@@ -201,8 +199,8 @@ public class SessionTest {
 				.toString(SessionID));
 
 		// create the reader Session
-		IReaderConnection s = new ReaderConnection(info, readerAdapter, new DummyProtocol(),
-				SessionID);
+		IReaderConnection s = new ReaderConnection(info, readerAdapter,
+				new DummyProtocol(), SessionID);
 
 		try {
 			s.connect();

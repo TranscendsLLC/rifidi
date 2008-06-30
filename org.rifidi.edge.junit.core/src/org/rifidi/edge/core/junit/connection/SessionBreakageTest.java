@@ -14,12 +14,12 @@ import org.junit.Before;
 import org.junit.Test;
 import org.rifidi.edge.core.communication.service.impl.CommunicationServiceImpl;
 import org.rifidi.edge.core.connection.IReaderConnection;
-import org.rifidi.edge.core.connection.registry.ReaderConnectionRegistryService;
 import org.rifidi.edge.core.exception.RifidiException;
 import org.rifidi.edge.core.exception.readerConnection.RifidiConnectionException;
 import org.rifidi.edge.core.exception.readerConnection.RifidiConnectionIllegalStateException;
 import org.rifidi.edge.core.readerPlugin.enums.EReaderAdapterState;
-import org.rifidi.edge.core.readerPluginService.ReaderPluginRegistryService;
+import org.rifidi.edge.core.service.readerconnection.ReaderConnectionRegistryService;
+import org.rifidi.edge.core.service.readerplugin.ReaderPluginRegistryService;
 import org.rifidi.edge.jms.service.impl.JMSServiceImpl;
 import org.rifidi.edge.readerplugin.dummy.DummyReaderInfo;
 import org.rifidi.edge.readerplugin.dummy.DummyReaderPluginFactory;
@@ -30,7 +30,7 @@ import org.rifidi.services.registry.ServiceRegistry;
 
 /**
  * @author Jerry Maine - jerry@pramari.com
- *
+ * 
  */
 public class SessionBreakageTest {
 	// private static final Log logger =
@@ -69,12 +69,12 @@ public class SessionBreakageTest {
 		DummyReaderInfo info = new DummyReaderInfo();
 		info.setIPAddress("127.0.0.1");
 		info.setPort(10001);
-		
+
 		info.setErrorToSet(EDummyError.CONNECT.toString());
 
 		IReaderConnection s = sessionRegistryService
 				.createReaderConnection(info);
-		
+
 		Assert.assertNotNull(s);
 
 		try {
@@ -83,9 +83,7 @@ public class SessionBreakageTest {
 			e.printStackTrace();
 			Assert.assertTrue(s.getState() == EReaderAdapterState.ERROR);
 		}
-		
 
-		
 	}
 
 	@Test
@@ -97,24 +95,23 @@ public class SessionBreakageTest {
 		DummyReaderInfo info = new DummyReaderInfo();
 		info.setIPAddress("127.0.0.1");
 		info.setPort(10002);
-		
+
 		info.setErrorToSet(EDummyError.CONNECT_RUNTIME.toString());
 
 		IReaderConnection s = sessionRegistryService
 				.createReaderConnection(info);
 
 		Assert.assertNotNull(s);
-		
+
 		try {
 			s.connect();
 		} catch (RifidiException e) {
-			
+
 			e.printStackTrace();
 			Assert.assertTrue(s.getState() == EReaderAdapterState.ERROR);
-			Assert.assertTrue(s.getErrorCause().getCause() instanceof RuntimeException);
+			Assert
+					.assertTrue(s.getErrorCause().getCause() instanceof RuntimeException);
 		}
-		
-
 
 	}
 
@@ -129,7 +126,6 @@ public class SessionBreakageTest {
 		info.setErrorToSet(EDummyError.GET_NEXT_TAGS.toString());
 
 		// create the dummy reader adapter
-
 
 		// create the reader Session
 		IReaderConnection s = sessionRegistryService
@@ -194,7 +190,8 @@ public class SessionBreakageTest {
 
 			Assert.assertSame(EReaderAdapterState.ERROR, s.getState());
 			Assert.assertNotNull(s.getErrorCause());
-			Assert.assertTrue(s.getErrorCause() instanceof RifidiConnectionIllegalStateException);
+			Assert
+					.assertTrue(s.getErrorCause() instanceof RifidiConnectionIllegalStateException);
 		}
 
 	}
@@ -270,7 +267,8 @@ public class SessionBreakageTest {
 
 			Assert.assertSame(EReaderAdapterState.ERROR, s.getState());
 			Assert.assertNotNull(s.getErrorCause());
-			Assert.assertTrue(s.getErrorCause().getCause() instanceof RuntimeException);
+			Assert
+					.assertTrue(s.getErrorCause().getCause() instanceof RuntimeException);
 		}
 
 	}
@@ -284,7 +282,7 @@ public class SessionBreakageTest {
 		DummyReaderInfo info = new DummyReaderInfo();
 		info.setIPAddress("127.0.0.1");
 		info.setPort(10005);
-		
+
 		info.setErrorToSet(EDummyError.SEND_CUSTOM_COMMAND.toString());
 
 		IReaderConnection s = sessionRegistryService
@@ -306,7 +304,8 @@ public class SessionBreakageTest {
 
 		Assert.assertSame(s.getState(), EReaderAdapterState.ERROR);
 		System.out.println(s.getErrorCause().getClass().getSimpleName());
-		Assert.assertTrue(s.getErrorCause() instanceof RifidiConnectionIllegalStateException);
+		Assert
+				.assertTrue(s.getErrorCause() instanceof RifidiConnectionIllegalStateException);
 	}
 
 	@Test
@@ -318,7 +317,7 @@ public class SessionBreakageTest {
 		DummyReaderInfo info = new DummyReaderInfo();
 		info.setIPAddress("127.0.0.1");
 		info.setPort(10006);
-		
+
 		info.setErrorToSet(EDummyError.SEND_CUSTOM_COMMAND_RUNTIME.toString());
 
 		IReaderConnection s = sessionRegistryService
@@ -339,7 +338,8 @@ public class SessionBreakageTest {
 		System.out.println(s.getState());
 
 		Assert.assertSame(s.getState(), EReaderAdapterState.ERROR);
-		Assert.assertTrue(s.getErrorCause().getCause() instanceof RuntimeException);
+		Assert
+				.assertTrue(s.getErrorCause().getCause() instanceof RuntimeException);
 	}
 
 	@Test
@@ -351,7 +351,7 @@ public class SessionBreakageTest {
 		DummyReaderInfo info = new DummyReaderInfo();
 		info.setIPAddress("127.0.0.1");
 		info.setPort(10007);
-		
+
 		info.setErrorToSet(EDummyError.DISCONNECT.toString());
 
 		IReaderConnection s = sessionRegistryService
@@ -370,7 +370,8 @@ public class SessionBreakageTest {
 		}
 
 		Assert.assertSame(s.getState(), EReaderAdapterState.ERROR);
-		Assert.assertTrue(s.getErrorCause() instanceof RifidiConnectionException);
+		Assert
+				.assertTrue(s.getErrorCause() instanceof RifidiConnectionException);
 	}
 
 	@Test
@@ -382,7 +383,7 @@ public class SessionBreakageTest {
 		DummyReaderInfo info = new DummyReaderInfo();
 		info.setIPAddress("127.0.0.1");
 		info.setPort(10008);
-		
+
 		info.setErrorToSet(EDummyError.DISCONNECT_RUNTIME.toString());
 
 		IReaderConnection s = sessionRegistryService
@@ -402,8 +403,10 @@ public class SessionBreakageTest {
 		}
 
 		Assert.assertSame(s.getState(), EReaderAdapterState.ERROR);
-		System.out.println(s.getErrorCause().getCause().getClass().getSimpleName());
-		Assert.assertTrue(s.getErrorCause().getCause() instanceof RuntimeException);
+		System.out.println(s.getErrorCause().getCause().getClass()
+				.getSimpleName());
+		Assert
+				.assertTrue(s.getErrorCause().getCause() instanceof RuntimeException);
 	}
 
 	@Inject
