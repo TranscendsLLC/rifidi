@@ -23,7 +23,7 @@ import org.rifidi.edge.persistence.utilities.AbstractReaderInfoSuite;
 import org.rifidi.edge.persistence.utilities.JAXBUtility;
 
 /**
- * The persistence
+ * The persistence implementation, which handles loading and saving to files.  
  * 
  * @author Matthew Dean - matt@pramari.com
  */
