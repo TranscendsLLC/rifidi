@@ -42,7 +42,6 @@ public class ThingMagicReaderInfo extends AbstractReaderInfo {
 
 	@Override
 	public Protocol getProtocol() {
-		// TODO Auto-generated method stub
 		return new ThingMagicProtocol();
 	}
 
