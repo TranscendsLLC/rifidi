@@ -23,7 +23,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
-import org.rifidi.edge.core.readerPluginService.ReaderPluginRegistryService;
+import org.rifidi.edge.core.service.readerplugin.ReaderPluginRegistryService;
 import org.rifidi.services.annotations.Inject;
 import org.rifidi.services.registry.ServiceRegistry;
 
