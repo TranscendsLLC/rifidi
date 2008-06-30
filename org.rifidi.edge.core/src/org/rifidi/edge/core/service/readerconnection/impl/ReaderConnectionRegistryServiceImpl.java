@@ -1,3 +1,5 @@
+package org.rifidi.edge.core.service.readerconnection.impl;
+
 /*
  *  ReaderConnectionRegistryServiceImpl.java
  *
@@ -9,7 +11,7 @@
  *  License:	Lesser GNU Public License (LGPL)
  *  				http://www.opensource.org/licenses/lgpl-license.html
  */
-package org.rifidi.edge.core.service.readerconnection.impl;
+
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -82,7 +84,7 @@ public class ReaderConnectionRegistryServiceImpl implements
 					+ (Integer.MAX_VALUE - 100));
 
 		logger.debug("Connecting to reader "
-				+ abstractConnectionInfo.getClass() + ":"
+				+ abstractConnectionInfo.getClass() + "://"
 				+ abstractConnectionInfo.getIPAddress() + ":"
 				+ abstractConnectionInfo.getPort());
 
@@ -130,7 +132,15 @@ public class ReaderConnectionRegistryServiceImpl implements
 	public void deleteReaderConnection(int readerConnectionID) {
 		ReaderConnection readerConnection = readerConnectionRegistry
 				.remove(readerConnectionID);
-		readerConnection.cleanUp();
+		if (readerConnection != null){
+			AbstractReaderInfo abstractConnectionInfo = getReaderConnection(readerConnectionID).getConnectionInfo();
+			logger.debug("Connecting to reader "
+					+ abstractConnectionInfo.getClass() + "://"
+					+ abstractConnectionInfo.getIPAddress() + ":"
+					+ abstractConnectionInfo.getPort());
+	
+			readerConnection.cleanUp();
+		}
 	}
 
 	/*
@@ -140,7 +150,14 @@ public class ReaderConnectionRegistryServiceImpl implements
 	 */
 	@Override
 	public void deleteReaderConnection(IReaderConnection readerConnection) {
-		readerConnectionRegistry.remove(readerConnection);
+		if (!readerConnectionRegistry.containsKey(readerConnection.getSessionID()))
+			return;
+		AbstractReaderInfo abstractConnectionInfo = readerConnection.getConnectionInfo();
+		logger.debug("Connecting to reader "
+				+ abstractConnectionInfo.getClass() + "://"
+				+ abstractConnectionInfo.getIPAddress() + ":"
+				+ abstractConnectionInfo.getPort());
+		readerConnectionRegistry.remove(readerConnection.getSessionID());
 		((ReaderConnection) readerConnection).cleanUp();
 	}
 
@@ -198,3 +215,4 @@ public class ReaderConnectionRegistryServiceImpl implements
 	}
 
 }
+
