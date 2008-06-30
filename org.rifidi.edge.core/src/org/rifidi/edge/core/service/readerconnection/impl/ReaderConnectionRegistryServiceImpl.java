@@ -170,6 +170,7 @@ public class ReaderConnectionRegistryServiceImpl implements
 	 */
 	@Override
 	public List<ReaderConnection> getAllReaderConnections() {
+		logger.debug("Getting all active connections.");
 		return new ArrayList<ReaderConnection>(readerConnectionRegistry
 				.values());
 	}
