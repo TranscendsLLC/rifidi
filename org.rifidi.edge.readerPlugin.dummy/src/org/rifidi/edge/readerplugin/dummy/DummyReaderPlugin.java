@@ -14,14 +14,14 @@ import java.util.Random;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.common.utilities.thread.AbstractThread;
-import org.rifidi.edge.core.communication.buffer.ConnectionBuffer;
-import org.rifidi.edge.core.communication.service.CommunicationService;
 import org.rifidi.edge.core.exception.RifidiIIllegialArgumentException;
 import org.rifidi.edge.core.exception.readerConnection.RifidiConnectionIllegalStateException;
 import org.rifidi.edge.core.exception.readerConnection.RifidiConnectionException;
 import org.rifidi.edge.core.readerPlugin.IReaderPlugin;
 import org.rifidi.edge.core.readerPlugin.commands.ICustomCommand;
 import org.rifidi.edge.core.readerPlugin.commands.ICustomCommandResult;
+import org.rifidi.edge.core.service.communication.CommunicationService;
+import org.rifidi.edge.core.service.communication.buffer.ConnectionBuffer;
 import org.rifidi.edge.core.tag.TagRead;
 
 import org.rifidi.edge.readerplugin.dummy.commands.DummyCustomCommand;
