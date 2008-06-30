@@ -119,14 +119,14 @@ public class RemoteReaderConnectionRegistryImpl implements
 		readerConnectionRegistryService.deleteReaderConnection(Integer
 				.parseInt(readerToDelete.getTagQueueName()));
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see org.rifidi.edge.rmi.ReaderConnection.RemoteReaderConnectionRegistry#getAvailableReaderAdapters()
 	 */
 	@Override
-	public List<String> getAvailableReaderAdapters() throws RemoteException {
+	public List<String> getAvailableReaderPlugins() throws RemoteException {
 		return readerPluginRegistryService.getAvailableReaderAdapters();
 	}
 
@@ -136,7 +136,8 @@ public class RemoteReaderConnectionRegistryImpl implements
 	 * @see org.rifidi.edge.rmi.ReaderConnection.RemoteReaderConnectionRegistry#getAllSessions()
 	 */
 	@Override
-	public List<RemoteReaderConnection> getAllSessions() throws RemoteException {
+	public List<RemoteReaderConnection> getAllReaderConnections()
+			throws RemoteException {
 		return new ArrayList<RemoteReaderConnection>(remoteSessionList.values());
 	}
 

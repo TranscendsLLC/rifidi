@@ -53,7 +53,7 @@ public interface RemoteReaderConnectionRegistry extends Remote {
 	 * @return a List of RemoteReaderConnections
 	 * @throws RemoteException
 	 */
-	public List<RemoteReaderConnection> getAllSessions() throws RemoteException;
+	public List<RemoteReaderConnection> getAllReaderConnections() throws RemoteException;
 
 	/**
 	 * Show the names of the registered ReaderPlugin ReaderInfos
@@ -61,6 +61,6 @@ public interface RemoteReaderConnectionRegistry extends Remote {
 	 * @return List of Names of the registred ReaderPlugin ReaderInfos
 	 * @throws RemoteException
 	 */
-	public List<String> getAvailableReaderAdapters() throws RemoteException;
+	public List<String> getAvailableReaderPlugins() throws RemoteException;
 
 }
