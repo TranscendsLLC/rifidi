@@ -14,6 +14,10 @@ import org.rifidi.edge.readerplugin.dummy.DummyReaderPluginFactory;
 import org.rifidi.services.annotations.Inject;
 import org.rifidi.services.registry.ServiceRegistry;
 
+/**
+ * @author Jerry Maine - jerry@pramari.com
+ *
+ */
 public class RegistryAutoRemoveTest {
 	// private static final Log logger =
 	// LogFactory.getLog(RegistryAutoRemoveTest.class);
