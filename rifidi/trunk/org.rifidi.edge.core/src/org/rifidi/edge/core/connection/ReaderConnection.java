@@ -17,10 +17,7 @@ import java.net.UnknownHostException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.rifidi.edge.core.communication.buffer.ConnectionBuffer;
 import org.rifidi.edge.core.communication.protocol.Protocol;
-import org.rifidi.edge.core.communication.service.CommunicationService;
-import org.rifidi.edge.core.connection.jms.JMSService;
 import org.rifidi.edge.core.exception.RifidiException;
 import org.rifidi.edge.core.exception.RifidiIIllegialArgumentException;
 import org.rifidi.edge.core.exception.RifidiPreviousErrorException;
@@ -31,6 +28,9 @@ import org.rifidi.edge.core.readerPlugin.IReaderPlugin;
 import org.rifidi.edge.core.readerPlugin.commands.ICustomCommand;
 import org.rifidi.edge.core.readerPlugin.commands.ICustomCommandResult;
 import org.rifidi.edge.core.readerPlugin.enums.EReaderAdapterState;
+import org.rifidi.edge.core.service.communication.CommunicationService;
+import org.rifidi.edge.core.service.communication.buffer.ConnectionBuffer;
+import org.rifidi.edge.core.service.jms.JMSService;
 import org.rifidi.services.annotations.Inject;
 import org.rifidi.services.registry.ServiceRegistry;
 
