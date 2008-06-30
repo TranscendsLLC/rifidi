@@ -12,12 +12,16 @@ package org.rifidi.edge.persistence.junit;
 
 import static org.junit.Assert.fail;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.xml.bind.JAXBException;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.rifidi.edge.core.readerPlugin.AbstractReaderInfo;
+import org.rifidi.edge.persistence.service.EdgePersistenceServiceImpl;
 import org.rifidi.edge.persistence.utilities.JAXBUtility;
 import org.rifidi.edge.readerPlugin.alien.AlienReaderInfo;
 
@@ -82,10 +86,39 @@ public class JAXBUtilityTest {
 		try {
 			String lol = JAXBUtility.getInstance().save(ari);
 			JAXBUtility.getInstance().load(lol,AlienReaderInfo.class);
+			
 		} catch (JAXBException e) {
 			e.printStackTrace();
 			fail();
 		}
+	}
+	
+	@Test
+	public void testSaveToFile() {
+		AlienReaderInfo omg = new AlienReaderInfo();
+		
+		omg.setIPAddress("192.168.1.100");
+		omg.setPort(23);
+		omg.setUsername("alien");
+		omg.setPassword("password");
+		
+		AlienReaderInfo omg2 = new AlienReaderInfo();
+		
+		omg2.setIPAddress("192.168.1.100");
+		omg2.setPort(23);
+		omg2.setUsername("alien");
+		omg2.setPassword("password");
+		
+		List<AbstractReaderInfo> aril = new ArrayList<AbstractReaderInfo>();
+		
+		aril.add(omg);
+		aril.add(omg2);
+		
+		EdgePersistenceServiceImpl impl = new EdgePersistenceServiceImpl();
+
+		 
+		 List<String> saveToFile = impl.saveToString(aril, "omgzor");
+		 saveToFile.size();
 	}
 
 }
