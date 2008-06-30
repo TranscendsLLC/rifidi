@@ -4,15 +4,25 @@
 package org.rifidi.edge.core.junit;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
+import org.rifidi.edge.core.communication.service.impl.CommunicationServiceImpl;
+import org.rifidi.edge.jms.service.impl.JMSServiceImpl;
 import org.rifidi.edge.readerplugin.dummy.DummyReaderInfo;
+import org.rifidi.services.registry.ServiceRegistry;
 
 /**
  * @author kyle
  *
  */
 public class AbstractConnectionInfoTest {
-	
+	@Before
+	public void setUp() throws Exception {
+		ServiceRegistry.getInstance().service(this);
+		
+		System.out.println(CommunicationServiceImpl.class.getName());
+		System.out.println(JMSServiceImpl.class.getName());
+	}
 	
 	/**
 	 * Uses DummyAbstractionConnectionInfo to test the getter and setter for IP

@@ -52,5 +52,9 @@ public interface ReaderPluginRegistryService {
 	
 
 	public Class< ? extends AbstractReaderInfo>[] getAbstractReaderInfoClasses();
+	
+	public void addEventListener(ReaderPluginRegistryChangeListener listener);
+	
+	public void removeEventListener(ReaderPluginRegistryChangeListener listener);
 
 }

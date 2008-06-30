@@ -3,10 +3,12 @@ package org.rifidi.edge.core.junit.connection;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.rifidi.edge.core.communication.service.impl.CommunicationServiceImpl;
 import org.rifidi.edge.core.connection.IReaderConnection;
 import org.rifidi.edge.core.connection.registry.ReaderConnectionRegistryService;
 import org.rifidi.edge.core.connection.registry.ReaderConnectionRegistryServiceImpl;
 import org.rifidi.edge.core.readerPluginService.ReaderPluginRegistryService;
+import org.rifidi.edge.jms.service.impl.JMSServiceImpl;
 import org.rifidi.edge.readerplugin.dummy.DummyReaderInfo;
 import org.rifidi.edge.readerplugin.dummy.DummyReaderPluginFactory;
 import org.rifidi.services.annotations.Inject;
@@ -25,6 +27,9 @@ public class SessionRegistryTest {
 	@Before
 	public void setUp() throws Exception {
 		ServiceRegistry.getInstance().service(this);
+		
+		System.out.println(CommunicationServiceImpl.class.getName());
+		System.out.println(JMSServiceImpl.class.getName());
 	}
 
 	/**

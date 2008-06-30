@@ -20,7 +20,7 @@ import org.rifidi.edge.core.readerPluginService.ReaderPluginRegistryServiceImpl;
 
 public class Activator implements BundleActivator {
 
-	private ReaderConnectionRegistryService sessionService;
+	private ReaderConnectionRegistryService connectionService;
 	private ReaderPluginRegistryService readerPluginRegistryService;
 
 	/*
@@ -40,10 +40,13 @@ public class Activator implements BundleActivator {
 
 		System.out.println("Registering Service:"
 				+ " ReaderConnectionRegisrtyService");
-		sessionService = new ReaderConnectionRegistryServiceImpl();
+		connectionService = new ReaderConnectionRegistryServiceImpl();
+		readerPluginRegistryService
+				.addEventListener((ReaderConnectionRegistryServiceImpl) connectionService);
 		context.registerService(
 				ReaderConnectionRegistryService.class.getName(),
-				sessionService, null);
+				connectionService, null);
+
 	}
 
 	/*
