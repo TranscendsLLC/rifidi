@@ -9,7 +9,7 @@
  *  License:	Lesser GNU Public License (LGPL)
  *  				http://www.opensource.org/licenses/lgpl-license.html
  */
-package org.rifidi.edge.core.connection.registry;
+package org.rifidi.edge.core.service.readerconnection.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -22,8 +22,9 @@ import org.rifidi.edge.core.connection.IReaderConnection;
 import org.rifidi.edge.core.connection.ReaderConnection;
 import org.rifidi.edge.core.readerPlugin.AbstractReaderInfo;
 import org.rifidi.edge.core.readerPlugin.IReaderPlugin;
+import org.rifidi.edge.core.readerPlugin.ReaderPluginRegistryChangeListener;
 import org.rifidi.edge.core.readerPlugin.factory.ReaderPluginFactory;
-import org.rifidi.edge.core.readerPluginService.ReaderPluginRegistryChangeListener;
+import org.rifidi.edge.core.service.readerconnection.ReaderConnectionRegistryService;
 import org.rifidi.services.registry.ServiceRegistry;
 
 /**
