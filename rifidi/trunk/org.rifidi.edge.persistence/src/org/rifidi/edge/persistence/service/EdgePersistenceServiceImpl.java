@@ -36,6 +36,9 @@ public class EdgePersistenceServiceImpl implements EdgePersistenceService {
 	private static Log logger = LogFactory
 			.getLog(EdgePersistenceServiceImpl.class);
 
+	/**
+	 * The filename.  
+	 */
 	private String filename = null;
 
 	/*
