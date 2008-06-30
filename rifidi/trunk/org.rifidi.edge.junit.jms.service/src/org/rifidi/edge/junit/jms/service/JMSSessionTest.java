@@ -4,26 +4,48 @@ import java.io.IOException;
 import java.net.ConnectException;
 import java.net.UnknownHostException;
 
+import javax.jms.ConnectionFactory;
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageConsumer;
 import javax.jms.TextMessage;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.rifidi.edge.core.communication.service.impl.CommunicationServiceImpl;
 import org.rifidi.edge.core.exception.readerConnection.RifidiConnectionException;
+import org.rifidi.edge.core.service.communication.CommunicationService;
 import org.rifidi.edge.jms.service.helper.JMSHelper;
+import org.rifidi.edge.jms.service.impl.JMSServiceImpl;
 import org.rifidi.edge.jms.service.threads.JMSMessageThread;
 import org.rifidi.edge.readerplugin.dummy.DummyProtocol;
 import org.rifidi.edge.readerplugin.dummy.DummyReaderInfo;
 import org.rifidi.edge.readerplugin.dummy.DummyReaderPlugin;
+import org.rifidi.services.annotations.Inject;
+import org.rifidi.services.registry.ServiceRegistry;
 
+/**
+ * @author Andreas Huebner - andreas@pramari.com
+ * 
+ */
 public class JMSSessionTest {
+
+	private ConnectionFactory connectionFactory;
+	private CommunicationService communicationService;
+
+	private Log logger = LogFactory.getLog(JMSSessionTest.class);
 
 	@Before
 	public void setUp() throws Exception {
+		ServiceRegistry.getInstance().service(this);
+		// This is necessary to advice JUNIT to load the Plugin's Activator at
+		// startup
+		System.out.println(CommunicationServiceImpl.class.getName());
+		System.out.println(JMSServiceImpl.class.getName());
 	}
 
 	@After
@@ -98,6 +120,17 @@ public class JMSSessionTest {
 
 		jmsThread.stop();
 		adapter.dispose();
+	}
+
+	@Inject
+	public void setCommunicationService(
+			CommunicationService communicationService) {
+		this.communicationService = communicationService;
+	}
+
+	@Inject
+	public void setConnectionFactory(ConnectionFactory connectionFactory) {
+		this.connectionFactory = connectionFactory;
 	}
 
 }
