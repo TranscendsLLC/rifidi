@@ -51,7 +51,9 @@ public class RMIServerServiceImpl implements RMIServerService {
 		ServiceRegistry.getInstance().service(this);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.rifidi.edge.rmi.service.RMIServerService#start()
 	 */
 	@Override
@@ -103,15 +105,23 @@ public class RMIServerServiceImpl implements RMIServerService {
 		// }
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.rifidi.edge.rmi.service.RMIServerService#stop()
 	 */
 	@Override
 	public void stop() {
 		try {
 			logger.debug("Unbinding RemoteReaderConnectionRegistry");
+			// Unbind the RemoteReaderConnections
 			registry.unbind(RemoteReaderConnectionRegistry.class.getName());
-			// TODO find out how to release the RMI TCP Socket again
+
+			logger.debug("Releasing the RMI ServerSocket: "
+					+ Registry.REGISTRY_PORT);
+			// Remove the binding to the socket the rmi registry is using
+			UnicastRemoteObject.unexportObject(registry, true);
+
 			for (String object : registry.list()) {
 				logger.warn("Object " + object
 						+ " still remains in RMI Registry");
