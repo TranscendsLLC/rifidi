@@ -321,7 +321,6 @@ public class AlienReaderPlugin implements IReaderPlugin {
 				Time time = Time.valueOf(timeStamp);
 				logger.debug("Time: " + time.toString());
 
-				// TODO: Get the actual timestamp
 				TagRead newTagRead = new TagRead();
 				newTagRead.setId(ByteAndHexConvertingUtility
 						.fromHexString(tagData.trim()));
