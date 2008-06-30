@@ -62,7 +62,7 @@ public class JAXBUtilityTest {
 
 		try {
 			String lol = JAXBUtility.getInstance().save(ari);
-			JAXBUtility.getInstance().load(lol, AlienReaderInfo.class);
+			JAXBUtility.getInstance().load(lol);
 		} catch (JAXBException e) {
 			e.printStackTrace();
 			fail();
@@ -85,7 +85,7 @@ public class JAXBUtilityTest {
 
 		try {
 			String lol = JAXBUtility.getInstance().save(ari);
-			JAXBUtility.getInstance().load(lol, AlienReaderInfo.class);
+			JAXBUtility.getInstance().load(lol);
 
 		} catch (JAXBException e) {
 			e.printStackTrace();
