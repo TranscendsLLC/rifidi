@@ -13,7 +13,7 @@ package org.rifidi.edge.core.communication.handler;
 
 import java.io.IOException;
 
-import org.rifidi.edge.core.communication.buffer.ConnectionBuffer;
+import org.rifidi.edge.core.service.communication.buffer.ConnectionBuffer;
 
 public interface Communication {
 

@@ -20,14 +20,14 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.rifidi.edge.core.communication.buffer.ConnectionBuffer;
 import org.rifidi.edge.core.communication.handler.Communication;
 import org.rifidi.edge.core.communication.handler.impl.AsynchronousCommunication;
 import org.rifidi.edge.core.communication.handler.impl.SynchronousCommunication;
 import org.rifidi.edge.core.communication.protocol.Protocol;
-import org.rifidi.edge.core.communication.service.CommunicationService;
 import org.rifidi.edge.core.readerPlugin.AbstractReaderInfo;
 import org.rifidi.edge.core.readerPlugin.IReaderPlugin;
+import org.rifidi.edge.core.service.communication.CommunicationService;
+import org.rifidi.edge.core.service.communication.buffer.ConnectionBuffer;
 
 
 /**

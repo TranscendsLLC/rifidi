@@ -18,8 +18,8 @@ import java.util.concurrent.BlockingQueue;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.rifidi.edge.core.communication.buffer.ConnectionBuffer;
 import org.rifidi.edge.core.exception.readerConnection.RifidiIllegalOperationException;
+import org.rifidi.edge.core.service.communication.buffer.ConnectionBuffer;
 
 public class SynchronousConnectionBufferImpl implements ConnectionBuffer,
 		Thread.UncaughtExceptionHandler {
