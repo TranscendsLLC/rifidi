@@ -5,7 +5,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.rifidi.edge.core.communication.service.impl.CommunicationServiceImpl;
-import org.rifidi.edge.core.connection.ReaderConnection;
+import org.rifidi.edge.core.connection.impl.ReaderConnection;
 import org.rifidi.edge.core.service.readerconnection.ReaderConnectionRegistryService;
 import org.rifidi.edge.core.service.readerplugin.ReaderPluginRegistryService;
 import org.rifidi.edge.jms.service.impl.JMSServiceImpl;
