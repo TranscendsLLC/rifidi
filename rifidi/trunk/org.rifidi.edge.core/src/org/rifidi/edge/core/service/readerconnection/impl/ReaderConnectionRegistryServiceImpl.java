@@ -12,7 +12,6 @@ package org.rifidi.edge.core.service.readerconnection.impl;
  *  				http://www.opensource.org/licenses/lgpl-license.html
  */
 
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -83,7 +82,7 @@ public class ReaderConnectionRegistryServiceImpl implements
 			throw new RuntimeException("Session counter reached max value: "
 					+ (Integer.MAX_VALUE - 100));
 
-		logger.debug("Connecting to reader "
+		logger.debug("Connecting to Reader "
 				+ abstractConnectionInfo.getClass() + "://"
 				+ abstractConnectionInfo.getIPAddress() + ":"
 				+ abstractConnectionInfo.getPort());
@@ -132,13 +131,14 @@ public class ReaderConnectionRegistryServiceImpl implements
 	public void deleteReaderConnection(int readerConnectionID) {
 		ReaderConnection readerConnection = readerConnectionRegistry
 				.remove(readerConnectionID);
-		if (readerConnection != null){
-			AbstractReaderInfo abstractConnectionInfo = getReaderConnection(readerConnectionID).getConnectionInfo();
-			logger.debug("Connecting to reader "
-					+ abstractConnectionInfo.getClass() + "://"
+		if (readerConnection != null) {
+			AbstractReaderInfo abstractConnectionInfo = getReaderConnection(
+					readerConnectionID).getConnectionInfo();
+			logger.debug("Connecting to Reader "
+					+ abstractConnectionInfo.getClass().getName() + "://"
 					+ abstractConnectionInfo.getIPAddress() + ":"
 					+ abstractConnectionInfo.getPort());
-	
+
 			readerConnection.cleanUp();
 		}
 	}
@@ -150,11 +150,13 @@ public class ReaderConnectionRegistryServiceImpl implements
 	 */
 	@Override
 	public void deleteReaderConnection(IReaderConnection readerConnection) {
-		if (!readerConnectionRegistry.containsKey(readerConnection.getSessionID()))
+		if (!readerConnectionRegistry.containsKey(readerConnection
+				.getSessionID()))
 			return;
-		AbstractReaderInfo abstractConnectionInfo = readerConnection.getConnectionInfo();
-		logger.debug("Connecting to reader "
-				+ abstractConnectionInfo.getClass() + "://"
+		AbstractReaderInfo abstractConnectionInfo = readerConnection
+				.getConnectionInfo();
+		logger.debug("Connecting to Reader "
+				+ abstractConnectionInfo.getClass().getName() + "://"
 				+ abstractConnectionInfo.getIPAddress() + ":"
 				+ abstractConnectionInfo.getPort());
 		readerConnectionRegistry.remove(readerConnection.getSessionID());
@@ -178,7 +180,11 @@ public class ReaderConnectionRegistryServiceImpl implements
 	// * @param connectionFactory
 	// */
 	// @Inject
-	// public void setConnectionFactory(ConnectionFactory connectionFactory) {
+	// public void setConnectionFactory(ConnectionFactory con// for
+	// (ReaderConnection c : connectionRegistryService
+	// .getAllReaderConnections()) {
+	// System.out.println(c.getAdapter());
+	// }nectionFactory) {
 	// this.connectionFactory = connectionFactory;
 	// }
 
@@ -202,17 +208,26 @@ public class ReaderConnectionRegistryServiceImpl implements
 	@Override
 	public void readerPluginRegistryRemoveEvent(
 			Class<? extends AbstractReaderInfo> info) {
-		Collection<ReaderConnection> connections = readerConnectionRegistry
-				.values();
+		//Connections to delete
+		Collection<ReaderConnection> connections = new ArrayList<ReaderConnection>();
 
 		// look up all connections that use that reader info and delete them.
-		for (ReaderConnection connection : connections) {
+		
+		//KLUDGE: If we don't do it this way we get a ConcurrentModificationException!
+		/* first we look up the connections that need to be removed and store them
+		 * in a Collection
+		 */
+		for (ReaderConnection connection : 
+				readerConnectionRegistry.values()) {
 			if (connection.getConnectionInfo().getClass().equals(info)) {
-				deleteReaderConnection(connection);
+				connections.add(connection);
 			}
 		}
-
+		
+		/* then we remove all connections in that Collection
+		 */
+		for (ReaderConnection connection: connections ){
+			deleteReaderConnection(connection);
+		}
 	}
-
 }
-
