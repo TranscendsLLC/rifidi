@@ -22,8 +22,8 @@ import org.rifidi.edge.core.connection.IReaderConnection;
 import org.rifidi.edge.core.connection.ReaderConnection;
 import org.rifidi.edge.core.readerPlugin.AbstractReaderInfo;
 import org.rifidi.edge.core.readerPlugin.IReaderPlugin;
-import org.rifidi.edge.core.readerPlugin.ReaderPluginRegistryChangeListener;
 import org.rifidi.edge.core.readerPlugin.factory.ReaderPluginFactory;
+import org.rifidi.edge.core.readerPlugin.registry.ReaderPluginRegistryChangeListener;
 import org.rifidi.edge.core.service.readerconnection.ReaderConnectionRegistryService;
 import org.rifidi.services.registry.ServiceRegistry;
 
