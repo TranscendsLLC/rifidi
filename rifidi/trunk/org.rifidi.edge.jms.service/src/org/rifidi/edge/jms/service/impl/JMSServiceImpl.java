@@ -17,7 +17,7 @@ import java.util.Map;
 import javax.jms.ConnectionFactory;
 
 import org.rifidi.edge.core.connection.IReaderConnection;
-import org.rifidi.edge.core.connection.jms.JMSService;
+import org.rifidi.edge.core.service.jms.JMSService;
 import org.rifidi.edge.jms.service.helper.JMSHelper;
 import org.rifidi.edge.jms.service.threads.JMSMessageThread;
 import org.rifidi.services.annotations.Inject;
