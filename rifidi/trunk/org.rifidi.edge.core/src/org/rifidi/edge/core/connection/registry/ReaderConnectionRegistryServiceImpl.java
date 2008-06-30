@@ -12,14 +12,18 @@
 package org.rifidi.edge.core.connection.registry;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.connection.IReaderConnection;
 import org.rifidi.edge.core.connection.ReaderConnection;
 import org.rifidi.edge.core.readerPlugin.AbstractReaderInfo;
 import org.rifidi.edge.core.readerPlugin.IReaderPlugin;
 import org.rifidi.edge.core.readerPlugin.factory.ReaderPluginFactory;
+import org.rifidi.edge.core.readerPluginService.ReaderPluginRegistryChangeListener;
 import org.rifidi.services.registry.ServiceRegistry;
 
 /**
@@ -27,7 +31,9 @@ import org.rifidi.services.registry.ServiceRegistry;
  * 
  */
 public class ReaderConnectionRegistryServiceImpl implements
-		ReaderConnectionRegistryService {
+		ReaderConnectionRegistryService, ReaderPluginRegistryChangeListener {
+	private Log logger = LogFactory
+			.getLog(ReaderConnectionRegistryServiceImpl.class);
 
 	private HashMap<Integer, ReaderConnection> readerConnectionRegistry;
 
@@ -66,12 +72,18 @@ public class ReaderConnectionRegistryServiceImpl implements
 	@Override
 	public IReaderConnection createReaderConnection(
 			AbstractReaderInfo abstractConnectionInfo) {
+
 		if (abstractConnectionInfo == null)
 			throw new IllegalArgumentException("Null references not allowed.");
 
 		if (counter >= Integer.MAX_VALUE - 100)
 			throw new RuntimeException("Session counter reached max value: "
 					+ (Integer.MAX_VALUE - 100));
+
+		logger.debug("Connecting to reader "
+				+ abstractConnectionInfo.getClass() + ":"
+				+ abstractConnectionInfo.getIPAddress() + ":"
+				+ abstractConnectionInfo.getPort());
 
 		// Unique identifier for ReaderConnections (also used as name for the
 		// JMS Queue)
@@ -150,6 +162,38 @@ public class ReaderConnectionRegistryServiceImpl implements
 	// @Inject
 	// public void setConnectionFactory(ConnectionFactory connectionFactory) {
 	// this.connectionFactory = connectionFactory;
-	//	}
+	// }
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.rifidi.edge.core.readerPluginService.ReaderPluginRegistryChangeListener#readerPluginRegistryAddEvent(java.lang.Class)
+	 */
+	@Override
+	public void readerPluginRegistryAddEvent(
+			Class<? extends AbstractReaderInfo> info) {
+		// We ignore this event because there is no need for it, yet.
+
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.rifidi.edge.core.readerPluginService.ReaderPluginRegistryChangeListener#readerPluginRegistryRemoveEvent(java.lang.Class)
+	 */
+	@Override
+	public void readerPluginRegistryRemoveEvent(
+			Class<? extends AbstractReaderInfo> info) {
+		Collection<ReaderConnection> connections = readerConnectionRegistry
+				.values();
+
+		// look up all connections that use that reader info and delete them.
+		for (ReaderConnection connection : connections) {
+			if (connection.getConnectionInfo().getClass().equals(info)) {
+				deleteReaderConnection(connection);
+			}
+		}
+
+	}
 
 }

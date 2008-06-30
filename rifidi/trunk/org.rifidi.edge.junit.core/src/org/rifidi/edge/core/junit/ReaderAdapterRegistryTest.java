@@ -8,9 +8,11 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.rifidi.edge.core.communication.service.impl.CommunicationServiceImpl;
 import org.rifidi.edge.core.readerPlugin.ISpecificReaderPluginFactory;
 import org.rifidi.edge.core.readerPluginService.ReaderPluginRegistryService;
 import org.rifidi.edge.core.readerPluginService.ReaderPluginRegistryServiceImpl;
+import org.rifidi.edge.jms.service.impl.JMSServiceImpl;
 import org.rifidi.edge.readerplugin.dummy.DummyReaderInfo;
 import org.rifidi.edge.readerplugin.dummy.DummyReaderPluginFactory;
 
@@ -26,6 +28,8 @@ public class ReaderAdapterRegistryTest {
 	 */
 	@Before
 	public void setUp() throws Exception {
+		System.out.println(CommunicationServiceImpl.class.getName());
+		System.out.println(JMSServiceImpl.class.getName());
 	}
 
 	/**

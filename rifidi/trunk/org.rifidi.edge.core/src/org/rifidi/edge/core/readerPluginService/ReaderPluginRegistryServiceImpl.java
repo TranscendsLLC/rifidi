@@ -13,7 +13,9 @@ package org.rifidi.edge.core.readerPluginService;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -31,9 +33,11 @@ public class ReaderPluginRegistryServiceImpl implements
 			.getLog(ReaderPluginRegistryServiceImpl.class);
 
 	private HashMap<Class<? extends AbstractReaderInfo>, ISpecificReaderPluginFactory> registry = new HashMap<Class<? extends AbstractReaderInfo>, ISpecificReaderPluginFactory>();
+	
+	private Set<ReaderPluginRegistryChangeListener> listeners = new HashSet<ReaderPluginRegistryChangeListener>();
 
 	/*
-	 * (non-Javadoc)
+	 * (non-Javadoc)ReaderConnectionRegistryService
 	 * 
 	 * @see org.rifidi.edge.core.readerAdapterService.ReaderAdapterRegistryService#registerReaderAdapter(java.lang.Class,
 	 *      org.rifidi.edge.core.readerAdapter.ISpecificReaderAdapterFactory)
@@ -42,10 +46,14 @@ public class ReaderPluginRegistryServiceImpl implements
 	public void registerReaderAdapter(
 			Class<? extends AbstractReaderInfo> specificConnectionInfo,
 			ISpecificReaderPluginFactory specificReaderAdapterFactory) {
-		logger.debug("ReaderAdapter " + specificConnectionInfo.getName()
-				+ " registered");
 		if (!registry.containsKey(specificConnectionInfo)) {
+			logger.debug("ReaderAdapter " + specificConnectionInfo.getName()
+					+ " registered");
 			registry.put(specificConnectionInfo, specificReaderAdapterFactory);
+		
+			for (ReaderPluginRegistryChangeListener listener: listeners){
+				listener.readerPluginRegistryAddEvent(specificConnectionInfo);
+			}
 		}
 	}
 
@@ -56,10 +64,17 @@ public class ReaderPluginRegistryServiceImpl implements
 	 */
 	@Override
 	public void unregisterReaderAdapter(
-			Class<? extends AbstractReaderInfo> specificConnectionInfo) {
+		Class<? extends AbstractReaderInfo> specificConnectionInfo) {
 		// TODO lookup if there are any instances of the readerPlugin which got
 		// just removed
-		registry.remove(specificConnectionInfo);
+		if (registry.containsKey(specificConnectionInfo) ){
+			logger.debug("ReaderAdapter " + specificConnectionInfo.getName()
+					+ " unregistered");
+			for (ReaderPluginRegistryChangeListener listener: listeners){
+				listener.readerPluginRegistryRemoveEvent(specificConnectionInfo);
+			}
+			registry.remove(specificConnectionInfo);
+		}
 	}
 
 	/*
@@ -101,6 +116,22 @@ public class ReaderPluginRegistryServiceImpl implements
 			index++;
 		}
 		return retVal;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.readerPluginService.ReaderPluginRegistryService#addEventListener(org.rifidi.edge.core.readerPluginService.ReaderPluginRegistryChangeListener)
+	 */
+	@Override
+	public void addEventListener(ReaderPluginRegistryChangeListener listener) {
+		listeners.add(listener);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.readerPluginService.ReaderPluginRegistryService#removeEventListener(org.rifidi.edge.core.readerPluginService.ReaderPluginRegistryChangeListener)
+	 */
+	@Override
+	public void removeEventListener(ReaderPluginRegistryChangeListener listener) {
+		listeners.remove(listener);
 	}
 
 }

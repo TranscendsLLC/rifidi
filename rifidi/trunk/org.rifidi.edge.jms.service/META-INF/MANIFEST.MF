@@ -12,3 +12,6 @@ Require-Bundle: org.rifidi.edge.core,
  org.rifidi.edge.services,
  org.rifidi.edge.log4j,
  org.rifidi.edge.common.utilities
+Export-Package: org.rifidi.edge.jms.service.helper,
+ org.rifidi.edge.jms.service.impl,
+ org.rifidi.edge.jms.service.threads

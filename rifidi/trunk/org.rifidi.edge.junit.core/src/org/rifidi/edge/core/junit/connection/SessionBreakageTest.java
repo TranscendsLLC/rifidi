@@ -20,6 +20,7 @@ import org.rifidi.edge.core.exception.readerConnection.RifidiConnectionException
 import org.rifidi.edge.core.exception.readerConnection.RifidiConnectionIllegalStateException;
 import org.rifidi.edge.core.readerPlugin.enums.EReaderAdapterState;
 import org.rifidi.edge.core.readerPluginService.ReaderPluginRegistryService;
+import org.rifidi.edge.jms.service.impl.JMSServiceImpl;
 import org.rifidi.edge.readerplugin.dummy.DummyReaderInfo;
 import org.rifidi.edge.readerplugin.dummy.DummyReaderPluginFactory;
 import org.rifidi.edge.readerplugin.dummy.EDummyError;
@@ -48,7 +49,8 @@ public class SessionBreakageTest {
 	public void setUp() throws Exception {
 		ServiceRegistry.getInstance().service(this);
 		// to forcefully load the communication service implementation
-		System.out.println(CommunicationServiceImpl.class);
+		System.out.println(CommunicationServiceImpl.class.getName());
+		System.out.println(JMSServiceImpl.class.getName());
 	}
 
 	/**

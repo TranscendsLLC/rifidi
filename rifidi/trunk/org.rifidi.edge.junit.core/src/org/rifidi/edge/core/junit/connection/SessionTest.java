@@ -14,8 +14,7 @@ import javax.jms.Message;
 import javax.jms.MessageConsumer;
 import javax.jms.TextMessage;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -44,7 +43,7 @@ import org.rifidi.services.registry.ServiceRegistry;
  */
 public class SessionTest {
 
-	private static final Log logger = LogFactory.getLog(SessionTest.class);
+	//private static final Log logger = LogFactory.getLog(SessionTest.class);
 
 	private ConnectionFactory connectionFactory;
 
