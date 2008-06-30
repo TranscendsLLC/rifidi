@@ -2,7 +2,7 @@ package org.rifidi.edge.jms.service;
 
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
-import org.rifidi.edge.core.connection.jms.JMSService;
+import org.rifidi.edge.core.service.jms.JMSService;
 import org.rifidi.edge.jms.service.impl.JMSServiceImpl;
 
 public class Activator implements BundleActivator {
