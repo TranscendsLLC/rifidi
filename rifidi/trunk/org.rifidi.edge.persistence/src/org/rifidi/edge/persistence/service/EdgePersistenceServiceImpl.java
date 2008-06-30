@@ -65,8 +65,7 @@ public class EdgePersistenceServiceImpl implements EdgePersistenceService {
 		AbstractReaderInfoSuite cs = null;
 		try {
 			String xml = JAXBUtility.getInstance().restoreFromFile(filename);
-			cs = (AbstractReaderInfoSuite) JAXBUtility.getInstance().load(xml,
-					AbstractReaderInfoSuite.class);
+			cs = (AbstractReaderInfoSuite) JAXBUtility.getInstance().load(xml);
 		} catch (JAXBException e) {
 			e.printStackTrace();
 		} catch (FileNotFoundException e) {
