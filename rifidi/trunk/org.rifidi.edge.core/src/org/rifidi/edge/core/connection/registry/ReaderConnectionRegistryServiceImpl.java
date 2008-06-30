@@ -15,15 +15,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import javax.jms.ConnectionFactory;
-
 import org.rifidi.edge.core.connection.IReaderConnection;
 import org.rifidi.edge.core.connection.ReaderConnection;
-import org.rifidi.edge.core.connection.jms.JMSHelper;
 import org.rifidi.edge.core.readerPlugin.AbstractReaderInfo;
 import org.rifidi.edge.core.readerPlugin.IReaderPlugin;
 import org.rifidi.edge.core.readerPlugin.factory.ReaderPluginFactory;
-import org.rifidi.services.annotations.Inject;
 import org.rifidi.services.registry.ServiceRegistry;
 
 /**
@@ -37,7 +33,7 @@ public class ReaderConnectionRegistryServiceImpl implements
 
 	private int counter;
 
-	private ConnectionFactory connectionFactory;
+	// private ConnectionFactory connectionFactory;
 
 	private ReaderPluginFactory readerPluginFactory;
 
@@ -81,15 +77,15 @@ public class ReaderConnectionRegistryServiceImpl implements
 		// JMS Queue)
 		counter++;
 
-		//TODO check for null
+		// TODO check for null
 		// Build ReaderPlugin
 		IReaderPlugin readerPlugin = readerPluginFactory
 				.createReaderAdapter(abstractConnectionInfo);
 
 		// Build JMS Queue and JMS Thread
-		JMSHelper jmsHelper = new JMSHelper();
-		jmsHelper.initializeJMSQueue(connectionFactory, Integer
-				.toString(counter));
+		// JMSHelper jmsHelper = new JMSHelper();
+		// jmsHelper.initializeJMSQueue(connectionFactory, Integer
+		// .toString(counter));
 
 		// Build Connection Object for holding JMS and Plugin
 		ReaderConnection connection = new ReaderConnection(
@@ -146,14 +142,14 @@ public class ReaderConnectionRegistryServiceImpl implements
 				.values());
 	}
 
-	/**
-	 * A method helper for the services injection framework.
-	 * 
-	 * @param connectionFactory
-	 */
-	@Inject
-	public void setConnectionFactory(ConnectionFactory connectionFactory) {
-		this.connectionFactory = connectionFactory;
-	}
+	// /**
+	// * A method helper for the services injection framework.
+	// *
+	// * @param connectionFactory
+	// */
+	// @Inject
+	// public void setConnectionFactory(ConnectionFactory connectionFactory) {
+	// this.connectionFactory = connectionFactory;
+	//	}
 
 }
