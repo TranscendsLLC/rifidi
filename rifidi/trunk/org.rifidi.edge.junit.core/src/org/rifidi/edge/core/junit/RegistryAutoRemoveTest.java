@@ -1,15 +1,13 @@
 package org.rifidi.edge.core.junit;
 
-
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
-import org.rifidi.edge.core.connection.ReaderConnection;
 import org.rifidi.edge.core.communication.service.impl.CommunicationServiceImpl;
-import org.rifidi.edge.core.connection.registry.ReaderConnectionRegistryService;
-import org.rifidi.edge.core.readerPluginService.ReaderPluginRegistryService;
+import org.rifidi.edge.core.connection.ReaderConnection;
+import org.rifidi.edge.core.service.readerconnection.ReaderConnectionRegistryService;
+import org.rifidi.edge.core.service.readerplugin.ReaderPluginRegistryService;
 import org.rifidi.edge.jms.service.impl.JMSServiceImpl;
 import org.rifidi.edge.readerplugin.dummy.DummyReaderInfo;
 import org.rifidi.edge.readerplugin.dummy.DummyReaderPluginFactory;
@@ -17,8 +15,8 @@ import org.rifidi.services.annotations.Inject;
 import org.rifidi.services.registry.ServiceRegistry;
 
 public class RegistryAutoRemoveTest {
-	//private static final Log logger = LogFactory.getLog(RegistryAutoRemoveTest.class);
-
+	// private static final Log logger =
+	// LogFactory.getLog(RegistryAutoRemoveTest.class);
 
 	private ReaderConnectionRegistryService connectionRegistryService;
 
@@ -39,36 +37,38 @@ public class RegistryAutoRemoveTest {
 	}
 
 	@Test
-	public void testRegistryAutoRemove(){
+	public void testRegistryAutoRemove() {
 		Assert.assertNotNull(connectionRegistryService);
 		Assert.assertNotNull(readerPluginRegistryService);
-		Assert.assertNotNull(connectionRegistryService.getAllReaderConnections());
-		
+		Assert.assertNotNull(connectionRegistryService
+				.getAllReaderConnections());
+
 		DummyReaderInfo info = new DummyReaderInfo();
 		info.setIPAddress("127.0.0.1");
 		info.setPort(10001);
 		connectionRegistryService.createReaderConnection(info);
-		
-		
+
 		DummyReaderInfo info2 = new DummyReaderInfo();
 		info2.setIPAddress("127.0.0.1");
 		info2.setPort(10002);
 		connectionRegistryService.createReaderConnection(info2);
-		
-		
-		readerPluginRegistryService.unregisterReaderAdapter(DummyReaderInfo.class);
-		
-		for (ReaderConnection c :connectionRegistryService.getAllReaderConnections()){
+
+		readerPluginRegistryService
+				.unregisterReaderAdapter(DummyReaderInfo.class);
+
+		for (ReaderConnection c : connectionRegistryService
+				.getAllReaderConnections()) {
 			System.out.println(c.getAdapter());
 		}
-		
-		Assert.assertTrue(connectionRegistryService.getAllReaderConnections().isEmpty());
-		
+
+		Assert.assertTrue(connectionRegistryService.getAllReaderConnections()
+				.isEmpty());
+
 	}
-	
 
 	@Inject
-	public void setConnectionRegistryService(ReaderConnectionRegistryService regSer) {
+	public void setConnectionRegistryService(
+			ReaderConnectionRegistryService regSer) {
 		this.connectionRegistryService = regSer;
 	}
 
@@ -82,4 +82,3 @@ public class RegistryAutoRemoveTest {
 	}
 
 }
-
