@@ -248,7 +248,6 @@ public class DummyReaderPlugin implements IReaderPlugin  {
 	 */
 	@Override
 	protected void finalize() throws Throwable {
-		// TODO Auto-generated method stub
 		dispose();
 		super.finalize();
 	}
