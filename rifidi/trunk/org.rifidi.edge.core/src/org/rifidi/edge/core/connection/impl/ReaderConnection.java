@@ -175,9 +175,11 @@ public class ReaderConnection implements IReaderConnection {
 		} catch (RifidiConnectionIllegalStateException e) {
 			setErrorCause(e);
 			logger.error("Adapter in Illegal State", e);
+			throw e;
 		} catch (RifidiIIllegialArgumentException e) {
 			setErrorCause(e);
 			logger.error("Illegal Argument Passed.", e);
+			throw e;
 		} catch (RuntimeException e) {
 			/*
 			 * Error Resistance. Uncaught Runtime errors should not cause the
@@ -201,7 +203,6 @@ public class ReaderConnection implements IReaderConnection {
 			/* And throw it. */
 			throw e2;
 		}
-		return null;
 	}
 
 	/*
@@ -225,6 +226,7 @@ public class ReaderConnection implements IReaderConnection {
 							"Adapter must be in the CONNECTED state to start the tag stream.",
 							e);
 			setErrorCause(e);
+			throw e;
 		}
 	}
 
@@ -294,11 +296,14 @@ public class ReaderConnection implements IReaderConnection {
 				plugin.connect(connectionBuffer);
 
 		} catch (ConnectException e) {
-			setErrorCause(new RifidiConnectionException("Error while connecting",e));
+			RifidiConnectionException e2 = new RifidiConnectionException("Error while connecting",e);
+			setErrorCause(e2);
 		} catch (UnknownHostException e) {
-			setErrorCause(new RifidiConnectionException("Error while connecting",e));
+			RifidiConnectionException e2 = new RifidiConnectionException("Error while connecting",e);
+			setErrorCause(e2);
 		} catch (IOException e) {
-			setErrorCause(new RifidiConnectionException("Error while connecting",e));
+			RifidiConnectionException e2 = new RifidiConnectionException("Error while connecting",e);
+			setErrorCause(e2);
 		} catch (RifidiConnectionException e) {
 			setErrorCause(e);
 			logger.error("Error while connecting.", e);
@@ -347,20 +352,20 @@ public class ReaderConnection implements IReaderConnection {
 			setErrorCause(e);
 			throw e;
 		}
+		state = EReaderAdapterState.DISCONECTED;
 		try {
 			plugin.disconnect();
-			try {
-				communicationService.destroyConnection(connectionBuffer);
-			} catch (IOException e) {
-				setErrorCause(new RifidiConnectionException(e));
-				logger.error("Error while disconnecting", e);
-			}
 			
-			
-			state = EReaderAdapterState.DISCONECTED;
+			communicationService.destroyConnection(connectionBuffer);
+		} catch (IOException e) {
+			RifidiConnectionException e2 = new RifidiConnectionException("Error while disconnecting",e);
+			setErrorCause(e2);
+			logger.error("Error while disconnecting", e);
+			throw e2;
 		} catch (RifidiConnectionException e) {
 			setErrorCause(e);
 			logger.error("Error while disconnecting.", e);
+			throw e;
 		} catch (RuntimeException e) {
 			/*
 			 * Error Resistance. Uncaught Runtime errors should not cause the
