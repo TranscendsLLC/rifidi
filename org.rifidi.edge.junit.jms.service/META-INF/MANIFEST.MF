@@ -6,4 +6,5 @@ Bundle-Version: 1.0.0
 Bundle-Vendor: Pramari, LLC
 Fragment-Host: org.rifidi.edge.jms.service;bundle-version="1.0.0"
 Require-Bundle: org.junit4,
- org.rifidi.edge.readerPlugin.dummy
+ org.rifidi.edge.readerPlugin.dummy,
+ org.rifidi.edge.core.communication
