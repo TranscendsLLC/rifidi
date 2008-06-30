@@ -10,11 +10,14 @@
  */
 package org.rifidi.edge.persistence.service;
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.bind.JAXBException;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.readerPlugin.AbstractReaderInfo;
 import org.rifidi.edge.persistence.utilities.AbstractReaderInfoSuite;
 import org.rifidi.edge.persistence.utilities.JAXBUtility;
@@ -25,6 +28,12 @@ import org.rifidi.edge.persistence.utilities.JAXBUtility;
  * @author Matthew Dean - matt@pramari.com
  */
 public class EdgePersistenceServiceImpl implements EdgePersistenceService {
+
+	/**
+	 * The log4j logger.
+	 */
+	private static Log logger = LogFactory
+			.getLog(EdgePersistenceServiceImpl.class);
 
 	private String filename = null;
 
@@ -51,15 +60,19 @@ public class EdgePersistenceServiceImpl implements EdgePersistenceService {
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<AbstractReaderInfo> restore() {
-		String xml = JAXBUtility.getInstance().restoreFromFile(filename);
+
 		AbstractReaderInfoSuite cs = null;
 		try {
+			logger.debug("Restoring from file: " + filename);
+			String xml = JAXBUtility.getInstance().restoreFromFile(filename);
+			logger.debug("Done restoring from file, xml is: " + xml);
 			cs = (AbstractReaderInfoSuite) JAXBUtility.getInstance().load(xml,
 					AbstractReaderInfoSuite.class);
 		} catch (JAXBException e) {
 			e.printStackTrace();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
 		}
-
 		return cs.getAbstractReaderInfoList();
 	}
 
@@ -69,8 +82,7 @@ public class EdgePersistenceServiceImpl implements EdgePersistenceService {
 	 * @see org.rifidi.edge.persistence.service.EdgePersistenceService#saveToString()
 	 */
 	@Override
-	public List<String> saveToString(List<AbstractReaderInfo> connectionList,
-			String filename) {
+	public List<String> saveToString(List<AbstractReaderInfo> connectionList) {
 		List<String> strList = new ArrayList<String>();
 
 		for (AbstractReaderInfo ari : connectionList) {

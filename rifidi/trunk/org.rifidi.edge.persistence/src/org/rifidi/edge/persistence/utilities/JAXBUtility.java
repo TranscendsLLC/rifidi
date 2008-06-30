@@ -17,12 +17,16 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.service.readerplugin.ReaderPluginRegistryService;
 import org.rifidi.services.annotations.Inject;
 import org.rifidi.services.registry.ServiceRegistry;
@@ -33,6 +37,11 @@ import org.rifidi.services.registry.ServiceRegistry;
  * @author Matthew Dean - matt@pramari.com
  */
 public class JAXBUtility {
+
+	/**
+	 * The log4j logger.
+	 */
+	private static Log logger = LogFactory.getLog(JAXBUtility.class);
 
 	/**
 	 * 
@@ -79,7 +88,20 @@ public class JAXBUtility {
 	public Object load(String xml, Class<?> clazz) throws JAXBException {
 		JAXBContext context;
 		Class[] newClassArr = rprs.getAbstractReaderInfoClasses();
-		context = JAXBContext.newInstance(newClassArr);
+		List<Class> classList = new ArrayList<Class>();
+		for (Class a : newClassArr) {
+			classList.add(a);
+		}
+		classList.add(AbstractReaderInfoSuite.class);
+
+		Class[] omg = new Class[classList.size()];
+		int index = 0;
+		for (Class c : classList) {
+			omg[index] = c;
+			index++;
+		}
+
+		context = JAXBContext.newInstance(omg);
 
 		Unmarshaller unmarshaller = context.createUnmarshaller();
 
@@ -121,12 +143,23 @@ public class JAXBUtility {
 			f.delete();
 		}
 
+		FileWriter fw = null;
 		try {
+			logger.debug("XML: " + xml);
 			f.createNewFile();
-			FileWriter fw = new FileWriter(f);
+			fw = new FileWriter(f);
 			fw.write(xml);
 		} catch (IOException e) {
 			e.printStackTrace();
+		} finally {
+			if (fw != null) {
+				try {
+					fw.flush();
+					fw.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 	}
 
@@ -136,11 +169,16 @@ public class JAXBUtility {
 	 * @param xml
 	 * @param filename
 	 */
-	public String restoreFromFile(String filename) {
+	public String restoreFromFile(String filename) throws FileNotFoundException {
 		String retVal = null;
 		try {
 			retVal = new String();
+			logger.debug("filename: " + filename);
 			File file = new File(filename);
+			if (!file.exists()) {
+				throw new FileNotFoundException("File does not exist: "
+						+ filename);
+			}
 			FileReader fr = new FileReader(file);
 
 			StringBuffer sb = new StringBuffer();

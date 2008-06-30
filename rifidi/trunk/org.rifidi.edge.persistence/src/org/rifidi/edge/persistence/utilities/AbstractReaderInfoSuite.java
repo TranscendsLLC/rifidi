@@ -10,6 +10,7 @@
  */
 package org.rifidi.edge.persistence.utilities;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlRootElement;
@@ -29,6 +30,13 @@ public class AbstractReaderInfoSuite {
 	 */
 	private List<AbstractReaderInfo> infoList = null;
 
+	/**
+	 * 
+	 */
+	public AbstractReaderInfoSuite() {
+		infoList = new ArrayList<AbstractReaderInfo>();
+	}
+	
 	/**
 	 * The AbstractReaderInfoSuite constructor.  
 	 */
