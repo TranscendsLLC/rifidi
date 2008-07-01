@@ -251,6 +251,6 @@ public class ReaderConnectionRegistryServiceImpl implements
 
 	@Override
 	public void removeEventListener(ReaderConnectionListener listener) {
-		listeners.remove(listeners);
+		listeners.remove(listener);
 	}
 }
