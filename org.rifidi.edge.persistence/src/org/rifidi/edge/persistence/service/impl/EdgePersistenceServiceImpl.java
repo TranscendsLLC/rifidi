@@ -50,6 +50,9 @@ public class EdgePersistenceServiceImpl implements EdgePersistenceService,
 	 */
 	private ReaderConnectionRegistryService rsrc;
 
+	/**
+	 * 
+	 */
 	public EdgePersistenceServiceImpl() {
 		ServiceRegistry.getInstance().service(this);
 	}
@@ -110,21 +113,39 @@ public class EdgePersistenceServiceImpl implements EdgePersistenceService,
 		return strList;
 	}
 
+	/**
+	 * 
+	 */
 	@Override
 	public void readerConnectionRegistryAddEvent(
 			ReaderConnection connection) {
 		// TODO Saving everything to a file, sort of hackish
-
+		List<ReaderConnection> readConnList = rsrc.getAllReaderConnections();
+		List<AbstractReaderInfo> absList = new ArrayList<AbstractReaderInfo>();
+		for(ReaderConnection rc:readConnList) {
+			absList.add(rc.getConnectionInfo());
+		}
+		this.saveToFile(absList, EdgePersistenceServiceImpl.XML_FILENAME);
 	}
 
+	/**
+	 * 
+	 */
 	@Override
 	public void readerConnectionRegistryRemoveEvent(
 			ReaderConnection connection) {
 		// TODO Saving everything to a file, sort of hackish
-
+		List<ReaderConnection> readConnList = rsrc.getAllReaderConnections();
+		List<AbstractReaderInfo> absList = new ArrayList<AbstractReaderInfo>();
+		for(ReaderConnection rc:readConnList) {
+			absList.add(rc.getConnectionInfo());
+		}
+		this.saveToFile(absList, EdgePersistenceServiceImpl.XML_FILENAME);
 	}
 
 	/**
+	 * 
+	 * 
 	 * @param newReaderConnectionRegistryService
 	 *            the newReaderConnectionRegistryService to set
 	 */
