@@ -348,9 +348,7 @@ public class ReaderConnection implements IReaderConnection {
 		if (! ((state == EReaderAdapterState.CONNECTED)
 				|| (state == EReaderAdapterState.CREATED)) ) {
 			if (state == EReaderAdapterState.ERROR) {
-				throw new RifidiPreviousErrorException(
-						"Connection already in error state and already disconnected.",
-						errorCause);
+				logger.debug("Disconnecting after there was an error.");
 			}
 			
 			RifidiException e = new RifidiConnectionException(
