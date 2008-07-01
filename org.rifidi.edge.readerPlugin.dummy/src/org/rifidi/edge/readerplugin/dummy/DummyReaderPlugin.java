@@ -229,6 +229,12 @@ public class DummyReaderPlugin implements IReaderPlugin  {
 						in.read(loop);
 				
 					out.write(loop);
+					try {
+						Thread.sleep(500);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 				}
 			
 					socket.close();
