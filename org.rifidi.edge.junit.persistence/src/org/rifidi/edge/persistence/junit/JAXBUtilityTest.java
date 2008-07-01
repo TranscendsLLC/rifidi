@@ -21,7 +21,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.rifidi.edge.core.readerPlugin.AbstractReaderInfo;
-import org.rifidi.edge.persistence.service.EdgePersistenceServiceImpl;
+import org.rifidi.edge.persistence.service.impl.EdgePersistenceServiceImpl;
 import org.rifidi.edge.persistence.utilities.JAXBUtility;
 import org.rifidi.edge.readerPlugin.alien.AlienReaderInfo;
 
