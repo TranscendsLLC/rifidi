@@ -114,7 +114,8 @@ public class ReaderConnectionRegistryServiceImpl implements
 		// register readerConnection in registry
 		readerConnectionRegistry.put(counter, connection);
 
-		for (ReaderConnectionListener listener :listeners){
+		// fire events.
+		for (ReaderConnectionListener listener : listeners){
 			listener.readerConnectionRegistryAddEvent(connection);
 		}
 		return connection;
@@ -140,6 +141,7 @@ public class ReaderConnectionRegistryServiceImpl implements
 		ReaderConnection readerConnection = readerConnectionRegistry
 				.remove(readerConnectionID);
 		if (readerConnection != null) {
+			//fire events
 			for (ReaderConnectionListener listener :listeners){
 				listener.readerConnectionRegistryRemoveEvent(readerConnection);
 			}
