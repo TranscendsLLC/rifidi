@@ -75,8 +75,7 @@ public class RMIServerServiceImpl implements RMIServerService {
 			}
 		}
 
-		if(sessionRegistryService == null)
-		{
+		if (sessionRegistryService == null) {
 			logger.error("Could not obtain RemoteReaderConnectionRegsirtyImpl");
 		}
 		// Create a new RemoteSessionRegistry
@@ -159,8 +158,8 @@ public class RMIServerServiceImpl implements RMIServerService {
 
 	@Override
 	public void bindToRMI(Object o) {
-		//if(registry)
-		
+		// TODO implement this method
+		logger.error("not implemented");
 	}
 
 }
