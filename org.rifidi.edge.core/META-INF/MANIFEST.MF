@@ -5,7 +5,6 @@ Bundle-SymbolicName: org.rifidi.edge.core
 Bundle-Version: 1.0.0
 Bundle-Activator: org.rifidi.edge.core.Activator
 Import-Package: org.osgi.framework;version="1.3.0"
-Eclipse-LazyStart: true
 Export-Package: org.rifidi.edge.core,
  org.rifidi.edge.core.communication.enums,
  org.rifidi.edge.core.communication.protocol,
@@ -26,9 +25,8 @@ Export-Package: org.rifidi.edge.core,
  org.rifidi.edge.core.service.readerplugin,
  org.rifidi.edge.core.service.readerplugin.impl,
  org.rifidi.edge.core.tag
-Require-Bundle: org.rifidi.edge.jms,
- org.rifidi.edge.log4j,
- org.rifidi.edge.services,
- org.rifidi.edge.common.utilities
 Bundle-Vendor: Pramari, LLC
 Bundle-ClassPath: .
+Require-Bundle: org.rifidi.edge.log4j,
+ org.rifidi.edge.services,
+ org.rifidi.edge.common.utilities
