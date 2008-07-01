@@ -15,7 +15,7 @@ import java.util.List;
 
 import org.rifidi.edge.core.readerPlugin.AbstractReaderInfo;
 import org.rifidi.edge.core.readerPlugin.ISpecificReaderPluginFactory;
-import org.rifidi.edge.core.readerPlugin.registry.ReaderPluginRegistryChangeListener;
+import org.rifidi.edge.core.readerPlugin.listener.ReaderPluginRegistryChangeListener;
 
 /**
  * @author Jerry Maine - jerry@pramari.com
