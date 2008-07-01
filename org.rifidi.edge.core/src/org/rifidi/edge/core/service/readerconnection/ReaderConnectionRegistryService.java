@@ -57,10 +57,18 @@ public interface ReaderConnectionRegistryService {
 	 */
 	public List<ReaderConnection> getAllReaderConnections();
 	
-	//TODO Jerry add and remove Listener
 	
+	
+	/**
+	 * Add a lister to listen for ReaderConnection creation and deleation
+	 * @param listener 
+	 */
 	public void addEventListener(ReaderConnectionListener listener);
 
+	/**
+	 * Remove a listener form the firing set.
+	 * @param listener
+	 */
 	public void removeEventListener(ReaderConnectionListener listener);
 
 }

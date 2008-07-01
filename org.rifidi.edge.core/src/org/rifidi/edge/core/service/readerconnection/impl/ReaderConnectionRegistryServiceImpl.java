@@ -246,11 +246,17 @@ public class ReaderConnectionRegistryServiceImpl implements
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.service.readerconnection.ReaderConnectionRegistryService#addEventListener(org.rifidi.edge.core.connection.listener.ReaderConnectionListener)
+	 */
 	@Override
 	public void addEventListener(ReaderConnectionListener listener) {
 		listeners.add(listener);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.service.readerconnection.ReaderConnectionRegistryService#removeEventListener(org.rifidi.edge.core.connection.listener.ReaderConnectionListener)
+	 */
 	@Override
 	public void removeEventListener(ReaderConnectionListener listener) {
 		listeners.remove(listener);
