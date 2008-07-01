@@ -10,3 +10,4 @@ Require-Bundle: org.rifidi.edge.core,
  org.rifidi.edge.log4j,
  org.rifidi.edge.services
 Export-Package: org.rifidi.edge.persistence.utilities
+Eclipse-LazyStart: true
