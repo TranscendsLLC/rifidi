@@ -118,7 +118,7 @@ public class EdgePersistenceServiceImpl implements EdgePersistenceService,
 	 */
 	@Override
 	public void readerConnectionRegistryAddEvent(
-			ReaderConnection connection) {
+			AbstractReaderInfo connection) {
 		// TODO Saving everything to a file, sort of hackish
 		List<ReaderConnection> readConnList = rsrc.getAllReaderConnections();
 		List<AbstractReaderInfo> absList = new ArrayList<AbstractReaderInfo>();
@@ -133,7 +133,7 @@ public class EdgePersistenceServiceImpl implements EdgePersistenceService,
 	 */
 	@Override
 	public void readerConnectionRegistryRemoveEvent(
-			ReaderConnection connection) {
+			AbstractReaderInfo connection) {
 		// TODO Saving everything to a file, sort of hackish
 		List<ReaderConnection> readConnList = rsrc.getAllReaderConnections();
 		List<AbstractReaderInfo> absList = new ArrayList<AbstractReaderInfo>();
