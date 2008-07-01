@@ -6,3 +6,4 @@ Bundle-Version: 1.0.0
 Bundle-Vendor: Pramari, LLC
 Fragment-Host: org.rifidi.edge.persistence;bundle-version="1.0.0"
 Require-Bundle: org.junit4
+Import-Package: org.rifidi.edge.readerPlugin.alien
