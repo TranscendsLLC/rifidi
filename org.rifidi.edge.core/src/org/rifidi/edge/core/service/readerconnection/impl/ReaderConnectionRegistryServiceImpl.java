@@ -121,7 +121,7 @@ public class ReaderConnectionRegistryServiceImpl implements
 
 		// fire events.
 		for (ReaderConnectionListener listener : listeners){
-			listener.readerConnectionRegistryAddEvent(connection);
+			listener.readerConnectionRegistryAddEvent(connection.getConnectionInfo());
 		}
 		return connection;
 	}
@@ -148,7 +148,7 @@ public class ReaderConnectionRegistryServiceImpl implements
 		if (readerConnection != null) {
 			//fire events
 			for (ReaderConnectionListener listener :listeners){
-				listener.readerConnectionRegistryRemoveEvent(readerConnection);
+				listener.readerConnectionRegistryRemoveEvent(readerConnection.getConnectionInfo());
 			}
 			AbstractReaderInfo abstractConnectionInfo = getReaderConnection(
 					readerConnectionID).getConnectionInfo();
