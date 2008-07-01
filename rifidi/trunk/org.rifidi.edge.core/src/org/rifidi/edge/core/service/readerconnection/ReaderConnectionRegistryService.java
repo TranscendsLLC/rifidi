@@ -55,5 +55,7 @@ public interface ReaderConnectionRegistryService {
 	 * @return The list of active connections
 	 */
 	public List<ReaderConnection> getAllReaderConnections();
+	
+	//TODO Jerry add and remove Listener
 
 }
