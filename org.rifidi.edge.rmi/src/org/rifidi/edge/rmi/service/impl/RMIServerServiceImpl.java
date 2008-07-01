@@ -75,6 +75,10 @@ public class RMIServerServiceImpl implements RMIServerService {
 			}
 		}
 
+		if(sessionRegistryService == null)
+		{
+			logger.error("Could not obtain RemoteReaderConnectionRegsirtyImpl");
+		}
 		// Create a new RemoteSessionRegistry
 		remoteSessionRegistry = new RemoteReaderConnectionRegistryImpl(
 				sessionRegistryService);
