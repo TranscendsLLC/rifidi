@@ -13,3 +13,4 @@ Require-Bundle: org.rifidi.edge.core,
  org.rifidi.edge.rmi
 Export-Package: org.rifidi.edge.readerPlugin.thingmagic,
  org.rifidi.edge.readerPlugin.thingmagic.commands
+Eclipse-LazyStart: true
