@@ -23,4 +23,11 @@ public interface RMIServerService {
 	 */
 	public void stop();
 
+	/**
+	 * Binds the given Object to RMI 
+	 * 
+	 * @param o the Object to bind
+	 */
+	public void bindToRMI(Object o);
+
 }
