@@ -38,6 +38,8 @@ public class EdgePersistenceServiceImpl implements EdgePersistenceService,
 
 	public static final String XML_FILENAME = "cuddles.xml";
 
+	public static final String XML_FILE_PATH = "../domains/default/";
+
 	/**
 	 * The log4j logger.
 	 */
@@ -117,15 +119,14 @@ public class EdgePersistenceServiceImpl implements EdgePersistenceService,
 	 * 
 	 */
 	@Override
-	public void readerConnectionRegistryAddEvent(
-			AbstractReaderInfo connection) {
+	public void readerConnectionRegistryAddEvent(AbstractReaderInfo connection) {
 		// TODO Saving everything to a file, sort of hackish
 		List<ReaderConnection> readConnList = rsrc.getAllReaderConnections();
 		List<AbstractReaderInfo> absList = new ArrayList<AbstractReaderInfo>();
-		for(ReaderConnection rc:readConnList) {
+		for (ReaderConnection rc : readConnList) {
 			absList.add(rc.getConnectionInfo());
 		}
-		this.saveToFile(absList, EdgePersistenceServiceImpl.XML_FILENAME);
+		this.saveToFile(absList, (XML_FILE_PATH + XML_FILENAME));
 	}
 
 	/**
@@ -137,10 +138,10 @@ public class EdgePersistenceServiceImpl implements EdgePersistenceService,
 		// TODO Saving everything to a file, sort of hackish
 		List<ReaderConnection> readConnList = rsrc.getAllReaderConnections();
 		List<AbstractReaderInfo> absList = new ArrayList<AbstractReaderInfo>();
-		for(ReaderConnection rc:readConnList) {
+		for (ReaderConnection rc : readConnList) {
 			absList.add(rc.getConnectionInfo());
 		}
-		this.saveToFile(absList, EdgePersistenceServiceImpl.XML_FILENAME);
+		this.saveToFile(absList, (XML_FILE_PATH + XML_FILENAME));
 	}
 
 	/**
