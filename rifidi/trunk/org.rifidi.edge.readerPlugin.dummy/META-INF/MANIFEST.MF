@@ -13,3 +13,4 @@ Require-Bundle: org.rifidi.edge.core,
  org.rifidi.edge.rmi
 Export-Package: org.rifidi.edge.readerplugin.dummy,
  org.rifidi.edge.readerplugin.dummy.commands
+Eclipse-LazyStart: true
