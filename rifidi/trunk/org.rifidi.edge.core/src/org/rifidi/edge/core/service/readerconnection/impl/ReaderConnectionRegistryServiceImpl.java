@@ -21,6 +21,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.connection.IReaderConnection;
 import org.rifidi.edge.core.connection.impl.ReaderConnection;
+import org.rifidi.edge.core.connection.listener.ReaderConnectionListener;
 import org.rifidi.edge.core.readerPlugin.AbstractReaderInfo;
 import org.rifidi.edge.core.readerPlugin.IReaderPlugin;
 import org.rifidi.edge.core.readerPlugin.factory.ReaderPluginFactory;
@@ -231,5 +232,17 @@ public class ReaderConnectionRegistryServiceImpl implements
 		for (ReaderConnection connection: connections ){
 			deleteReaderConnection(connection);
 		}
+	}
+
+	@Override
+	public void addEventListener(ReaderConnectionListener listener) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void removeEventListener(ReaderConnectionListener listener) {
+		// TODO Auto-generated method stub
+		
 	}
 }
