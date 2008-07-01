@@ -21,7 +21,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.readerPlugin.AbstractReaderInfo;
 import org.rifidi.edge.core.readerPlugin.ISpecificReaderPluginFactory;
-import org.rifidi.edge.core.readerPlugin.registry.ReaderPluginRegistryChangeListener;
+import org.rifidi.edge.core.readerPlugin.listener.ReaderPluginRegistryChangeListener;
 import org.rifidi.edge.core.service.readerplugin.ReaderPluginRegistryService;
 
 /**
