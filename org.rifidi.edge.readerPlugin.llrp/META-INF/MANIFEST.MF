@@ -9,7 +9,6 @@ Require-Bundle: org.rifidi.edge.core,
  org.rifidi.edge.log4j,
  org.rifidi.edge.common.utilities,
  org.rifidi.edge.services,
- org.rifidi.edge.core.communication,
  org.rifidi.edge.rmi
 Bundle-ClassPath: lib/jdom.jar,
  lib/LTKJava_0_1_0-SNAPSHOT.jar,
