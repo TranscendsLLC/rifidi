@@ -20,13 +20,11 @@ import org.rifidi.edge.core.exception.readerConnection.RifidiConnectionException
 import org.rifidi.edge.core.readerPlugin.IReaderPlugin;
 import org.rifidi.edge.core.readerPlugin.commands.ICustomCommand;
 import org.rifidi.edge.core.readerPlugin.commands.ICustomCommandResult;
-import org.rifidi.edge.core.service.communication.CommunicationService;
 import org.rifidi.edge.core.service.communication.buffer.ConnectionBuffer;
 import org.rifidi.edge.core.tag.TagRead;
 
 import org.rifidi.edge.readerplugin.dummy.commands.DummyCustomCommand;
 import org.rifidi.edge.readerplugin.dummy.commands.DummyCustomCommandResult;
-import org.rifidi.services.annotations.Inject;
 import org.rifidi.services.registry.ServiceRegistry;
 
 public class DummyReaderPlugin implements IReaderPlugin  {
@@ -40,9 +38,6 @@ public class DummyReaderPlugin implements IReaderPlugin  {
 	
 	/* used only when the dummy adapter is set to random errors */
 	Random random;
-
-	private CommunicationService communicationService;
-
 	
 
 	private ConnectionBuffer connectionBuffer;
@@ -79,7 +74,7 @@ public class DummyReaderPlugin implements IReaderPlugin  {
 			throw new RifidiConnectionException("No connection buffer found.");
 		
 		this.connectionBuffer = connectionBuffer;
-		
+		this.connectionBuffer.toString();
 
 		logger.debug("Successfully Connected.");
 		
@@ -109,16 +104,6 @@ public class DummyReaderPlugin implements IReaderPlugin  {
 				}
 		}
 		
-		
-		if (communicationService == null)
-			throw new RifidiConnectionException("CommunicationSerivce Not Found!");
-		
-		try {
-			communicationService.destroyConnection(connectionBuffer);
-		} catch (IOException e){
-			logger.debug("IOException.", e);
-			throw new RifidiConnectionException(e);
-		}
 		logger.debug("Successfully Disconnected.");
 	}
 
@@ -267,11 +252,5 @@ public class DummyReaderPlugin implements IReaderPlugin  {
 	/**
 	 * @param communicationService The communication service.
 	 */
-	@Inject
-	public void setCommunicationService(
-			CommunicationService communicationService) {
-		logger.debug("communicationService set");
-		this.communicationService = communicationService;
-	}
 
 }
