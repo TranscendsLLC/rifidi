@@ -50,10 +50,12 @@ public class AlienProtocolTest {
 			List<Object> newObj = newProt.toObject(retVal.getBytes());
 			String omg = (String) newObj.get(0);
 			String omg2 = (String) newObj.get(1);
-			if (!omg.equals("get TagList\n\r")) {
+			if (!omg.trim().equals("get TagList")) {
+				System.out.println("first fail");
 				Assert.fail();
 			}
-			if (!omg2.equals("get acqLevel\n\r")) {
+			if (!omg2.trim().equals("get acqLevel")) {
+				System.out.println("second fail");
 				Assert.fail();
 			}
 		} catch (Exception e) {
