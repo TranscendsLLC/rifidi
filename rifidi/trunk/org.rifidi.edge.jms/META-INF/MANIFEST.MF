@@ -127,3 +127,4 @@ Export-Package: javax.jms,
  org.apache.activemq.xbean,
  org.rifidi.edge.jms
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Eclipse-LazyStart: true
