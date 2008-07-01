@@ -32,3 +32,4 @@ Export-Package: org.jdom,
  org.llrp.ltk.util,
  org.rifidi.edge.readerPlugin.llrp,
  org.rifidi.edge.readerPlugin.llrp.commands
+Eclipse-LazyStart: true
