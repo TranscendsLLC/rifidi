@@ -3,17 +3,19 @@
  */
 package org.rifidi.edge.core.connection.listener;
 
-import org.rifidi.edge.core.readerPlugin.AbstractReaderInfo;
+import org.rifidi.edge.core.connection.impl.ReaderConnection;
+
+
 
 /**
  * @author Jerry Maine - jerry@pramari.com
  *
  */
 public interface ReaderConnectionListener {
-	public void readerPluginRegistryAddEvent(
-			Class<? extends AbstractReaderInfo> info);
+	public void readerConnectionRegistryAddEvent(
+			ReaderConnection connection);
 
-	public void readerPluginRegistryRemoveEvent(
-			Class<? extends AbstractReaderInfo> info);
+	public void readerConnectionRegistryRemoveEvent(
+			ReaderConnection connection);
 
 }
