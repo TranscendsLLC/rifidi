@@ -16,7 +16,6 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.rifidi.edge.core.communication.service.impl.CommunicationServiceImpl;
 import org.rifidi.edge.core.exception.readerConnection.RifidiConnectionException;
 import org.rifidi.edge.core.service.communication.CommunicationService;
 import org.rifidi.edge.jms.service.helper.JMSHelper;
@@ -44,7 +43,7 @@ public class JMSSessionTest {
 		ServiceRegistry.getInstance().service(this);
 		// This is necessary to advice JUNIT to load the Plugin's Activator at
 		// startup
-		System.out.println(CommunicationServiceImpl.class.getName());
+		// System.out.println(CommunicationServiceImpl.class.getName());
 		System.out.println(JMSServiceImpl.class.getName());
 	}
 
