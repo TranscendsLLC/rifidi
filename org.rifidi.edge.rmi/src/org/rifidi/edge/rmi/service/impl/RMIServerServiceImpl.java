@@ -157,4 +157,10 @@ public class RMIServerServiceImpl implements RMIServerService {
 		this.sessionRegistryService = sessionRegistryService;
 	}
 
+	@Override
+	public void bindToRMI(Object o) {
+		if(registry)
+		
+	}
+
 }
