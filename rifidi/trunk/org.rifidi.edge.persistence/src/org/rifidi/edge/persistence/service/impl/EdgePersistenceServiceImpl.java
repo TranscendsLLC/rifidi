@@ -8,7 +8,7 @@
  *  License:	Lesser GNU Public License (LGPL)
  *  				http://www.opensource.org/licenses/lgpl-license.html
  */
-package org.rifidi.edge.persistence.service;
+package org.rifidi.edge.persistence.service.impl;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -19,6 +19,7 @@ import javax.xml.bind.JAXBException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.readerPlugin.AbstractReaderInfo;
+import org.rifidi.edge.persistence.service.EdgePersistenceService;
 import org.rifidi.edge.persistence.utilities.AbstractReaderInfoSuite;
 import org.rifidi.edge.persistence.utilities.JAXBUtility;
 

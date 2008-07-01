@@ -3,7 +3,7 @@ package org.rifidi.edge.persistence;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.rifidi.edge.persistence.service.EdgePersistenceService;
-import org.rifidi.edge.persistence.service.EdgePersistenceServiceImpl;
+import org.rifidi.edge.persistence.service.impl.EdgePersistenceServiceImpl;
 
 public class Activator implements BundleActivator {
 
