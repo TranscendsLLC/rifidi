@@ -15,7 +15,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.Collections;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -34,9 +36,11 @@ public class ReaderPluginRegistryServiceImpl implements
 	private Log logger = LogFactory
 			.getLog(ReaderPluginRegistryServiceImpl.class);
 
-	private HashMap<Class<? extends AbstractReaderInfo>, ISpecificReaderPluginFactory> registry = new HashMap<Class<? extends AbstractReaderInfo>, ISpecificReaderPluginFactory>();
+	//TODO: Look if this is needed latter.
+	private Map<Class<? extends AbstractReaderInfo>, ISpecificReaderPluginFactory> registry = Collections.synchronizedMap(new HashMap<Class<? extends AbstractReaderInfo>, ISpecificReaderPluginFactory>());
 	
-	private Set<ReaderPluginRegistryChangeListener> listeners = new HashSet<ReaderPluginRegistryChangeListener>();
+	//TODO: Look if this is needed latter.
+	private Set<ReaderPluginRegistryChangeListener> listeners = Collections.synchronizedSet(new HashSet<ReaderPluginRegistryChangeListener>());
 
 	/*
 	 * (non-Javadoc)ReaderConnectionRegistryService

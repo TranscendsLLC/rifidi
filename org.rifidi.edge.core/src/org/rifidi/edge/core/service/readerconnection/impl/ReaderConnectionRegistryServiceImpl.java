@@ -14,9 +14,11 @@ package org.rifidi.edge.core.service.readerconnection.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.logging.Log;
@@ -40,9 +42,10 @@ public class ReaderConnectionRegistryServiceImpl implements
 	private Log logger = LogFactory
 			.getLog(ReaderConnectionRegistryServiceImpl.class);
 
-	private HashMap<Integer, ReaderConnection> readerConnectionRegistry;
+	private Map<Integer, ReaderConnection> readerConnectionRegistry;
 
-	Set<ReaderConnectionListener> listeners = new HashSet<ReaderConnectionListener>();
+	//TODO: Look if this is needed latter.
+	Set<ReaderConnectionListener> listeners = Collections.synchronizedSet(new HashSet<ReaderConnectionListener>());
 	
 	private int counter;
 
@@ -56,7 +59,9 @@ public class ReaderConnectionRegistryServiceImpl implements
 	public ReaderConnectionRegistryServiceImpl() {
 		ServiceRegistry.getInstance().service(this);
 		readerPluginFactory = new ReaderPluginFactory();
-		readerConnectionRegistry = new HashMap<Integer, ReaderConnection>();
+		
+		//TODO: Look if this is needed latter.
+		readerConnectionRegistry = Collections.synchronizedMap(new HashMap<Integer, ReaderConnection>());
 		initialize();
 	}
 
