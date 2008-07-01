@@ -3,7 +3,6 @@ package org.rifidi.edge.core.junit.connection;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.rifidi.edge.core.communication.service.impl.CommunicationServiceImpl;
 import org.rifidi.edge.core.connection.IReaderConnection;
 import org.rifidi.edge.core.service.readerconnection.ReaderConnectionRegistryService;
 import org.rifidi.edge.core.service.readerconnection.impl.ReaderConnectionRegistryServiceImpl;
@@ -28,7 +27,7 @@ public class SessionRegistryTest {
 	public void setUp() throws Exception {
 		ServiceRegistry.getInstance().service(this);
 
-		System.out.println(CommunicationServiceImpl.class.getName());
+		// System.out.println(CommunicationServiceImpl.class.getName());
 		System.out.println(JMSServiceImpl.class.getName());
 	}
 

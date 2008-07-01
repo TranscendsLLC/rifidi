@@ -7,7 +7,6 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.rifidi.edge.core.communication.service.impl.CommunicationServiceImpl;
 import org.rifidi.edge.core.readerPlugin.IReaderPlugin;
 import org.rifidi.edge.core.readerPlugin.factory.ReaderPluginFactory;
 import org.rifidi.edge.core.service.readerplugin.ReaderPluginRegistryService;
@@ -17,7 +16,6 @@ import org.rifidi.edge.readerplugin.dummy.DummyReaderPluginFactory;
 import org.rifidi.services.annotations.Inject;
 import org.rifidi.services.registry.ServiceRegistry;
 
-
 /**
  * @author Matthew Dean - matt@pramari.com
  * 
@@ -25,14 +23,14 @@ import org.rifidi.services.registry.ServiceRegistry;
 public class ReaderAdapterFactoryTest {
 
 	ReaderPluginRegistryService readerPluginRegistryService;
-	
+
 	/**
 	 * @throws java.lang.Exception
 	 */
 	@Before
 	public void setUp() throws Exception {
 		ServiceRegistry.getInstance().service(this);
-		System.out.println(CommunicationServiceImpl.class.getName());
+		// System.out.println(CommunicationServiceImpl.class.getName());
 		System.out.println(JMSServiceImpl.class.getName());
 		// might fail.
 		readerPluginRegistryService.registerReaderAdapter(
@@ -45,7 +43,8 @@ public class ReaderAdapterFactoryTest {
 	 */
 	@After
 	public void tearDown() throws Exception {
-		readerPluginRegistryService.unregisterReaderAdapter(DummyReaderInfo.class);
+		readerPluginRegistryService
+				.unregisterReaderAdapter(DummyReaderInfo.class);
 	}
 
 	/**
@@ -53,7 +52,8 @@ public class ReaderAdapterFactoryTest {
 	 */
 	@Test
 	public void testCreateReaderAdapter() {
-		IReaderPlugin adapter = new ReaderPluginFactory().createReaderAdapter(new DummyReaderInfo());
+		IReaderPlugin adapter = new ReaderPluginFactory()
+				.createReaderAdapter(new DummyReaderInfo());
 		Assert.assertNotNull(adapter);
 	}
 
