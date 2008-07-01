@@ -30,3 +30,5 @@ Bundle-ClassPath: .
 Require-Bundle: org.rifidi.edge.log4j,
  org.rifidi.edge.services,
  org.rifidi.edge.common.utilities
+Eclipse-LazyStart: true
+
