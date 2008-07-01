@@ -147,7 +147,7 @@ public class ReaderConnectionRegistryServiceImpl implements
 			}
 			AbstractReaderInfo abstractConnectionInfo = getReaderConnection(
 					readerConnectionID).getConnectionInfo();
-			logger.debug("Deleting to Reader "
+			logger.debug("Deleting Reader "
 					+ abstractConnectionInfo.getClass().getName() + "://"
 					+ abstractConnectionInfo.getIPAddress() + ":"
 					+ abstractConnectionInfo.getPort());
