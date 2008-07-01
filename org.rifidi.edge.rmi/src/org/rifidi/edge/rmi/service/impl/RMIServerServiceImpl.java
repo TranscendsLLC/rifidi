@@ -159,7 +159,7 @@ public class RMIServerServiceImpl implements RMIServerService {
 
 	@Override
 	public void bindToRMI(Object o) {
-		if(registry)
+		//if(registry)
 		
 	}
 
