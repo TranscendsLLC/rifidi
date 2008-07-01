@@ -13,3 +13,4 @@ Require-Bundle: org.rifidi.edge.core,
 Export-Package: org.rifidi.edge.rmi,
  org.rifidi.edge.rmi.ReaderConnection,
  org.rifidi.edge.rmi.service
+Eclipse-LazyStart: true
