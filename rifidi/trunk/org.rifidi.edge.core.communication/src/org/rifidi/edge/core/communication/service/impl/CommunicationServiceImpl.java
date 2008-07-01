@@ -17,6 +17,7 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Collections;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -44,8 +45,9 @@ public class CommunicationServiceImpl implements CommunicationService {
 	 * Default Constructor
 	 */
 	public CommunicationServiceImpl() {
-		// logger.debug();
-		communications = new HashMap<ConnectionBuffer, Communication>();
+		
+		//TODO: Look if this is needed latter.
+		communications = Collections.synchronizedMap(new HashMap<ConnectionBuffer, Communication>());
 	}
 
 	/*

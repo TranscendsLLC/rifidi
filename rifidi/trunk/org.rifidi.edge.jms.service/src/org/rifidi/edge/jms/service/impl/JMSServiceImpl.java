@@ -13,7 +13,7 @@ package org.rifidi.edge.jms.service.impl;
 
 import java.util.HashMap;
 import java.util.Map;
-
+import java.util.Collections;
 import javax.jms.ConnectionFactory;
 
 import org.rifidi.edge.core.connection.IReaderConnection;
@@ -29,7 +29,9 @@ import org.rifidi.services.registry.ServiceRegistry;
  */
 public class JMSServiceImpl implements JMSService {
 
-	private Map<IReaderConnection, JMSMessageThread> map = new HashMap<IReaderConnection, JMSMessageThread>();
+	//TODO: Look if this is needed latter.
+	private Map<IReaderConnection, JMSMessageThread> map = Collections.synchronizedMap(new HashMap<IReaderConnection, JMSMessageThread>());
+	
 	private ConnectionFactory connectionFactory;
 
 	public JMSServiceImpl() {
