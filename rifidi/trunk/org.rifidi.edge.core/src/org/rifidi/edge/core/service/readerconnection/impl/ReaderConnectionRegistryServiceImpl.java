@@ -15,7 +15,9 @@ package org.rifidi.edge.core.service.readerconnection.impl;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -40,6 +42,8 @@ public class ReaderConnectionRegistryServiceImpl implements
 
 	private HashMap<Integer, ReaderConnection> readerConnectionRegistry;
 
+	Set<ReaderConnectionListener> listeners = new HashSet<ReaderConnectionListener>();
+	
 	private int counter;
 
 	// private ConnectionFactory connectionFactory;
@@ -110,6 +114,9 @@ public class ReaderConnectionRegistryServiceImpl implements
 		// register readerConnection in registry
 		readerConnectionRegistry.put(counter, connection);
 
+		for (ReaderConnectionListener listener :listeners){
+			listener.readerConnectionRegistryAddEvent(connection);
+		}
 		return connection;
 	}
 
@@ -133,6 +140,9 @@ public class ReaderConnectionRegistryServiceImpl implements
 		ReaderConnection readerConnection = readerConnectionRegistry
 				.remove(readerConnectionID);
 		if (readerConnection != null) {
+			for (ReaderConnectionListener listener :listeners){
+				listener.readerConnectionRegistryRemoveEvent(readerConnection);
+			}
 			AbstractReaderInfo abstractConnectionInfo = getReaderConnection(
 					readerConnectionID).getConnectionInfo();
 			logger.debug("Deleting to Reader "
@@ -236,13 +246,11 @@ public class ReaderConnectionRegistryServiceImpl implements
 
 	@Override
 	public void addEventListener(ReaderConnectionListener listener) {
-		// TODO Auto-generated method stub
-		
+		listeners.add(listener);
 	}
 
 	@Override
 	public void removeEventListener(ReaderConnectionListener listener) {
-		// TODO Auto-generated method stub
-		
+		listeners.remove(listeners);
 	}
 }
