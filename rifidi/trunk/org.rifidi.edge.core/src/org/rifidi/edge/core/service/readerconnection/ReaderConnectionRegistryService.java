@@ -15,6 +15,7 @@ import java.util.List;
 
 import org.rifidi.edge.core.connection.IReaderConnection;
 import org.rifidi.edge.core.connection.impl.ReaderConnection;
+import org.rifidi.edge.core.connection.listener.ReaderConnectionListener;
 import org.rifidi.edge.core.readerPlugin.AbstractReaderInfo;
 
 public interface ReaderConnectionRegistryService {
@@ -57,5 +58,9 @@ public interface ReaderConnectionRegistryService {
 	public List<ReaderConnection> getAllReaderConnections();
 	
 	//TODO Jerry add and remove Listener
+	
+	public void addEventListener(ReaderConnectionListener listener);
+
+	public void removeEventListener(ReaderConnectionListener listener);
 
 }
