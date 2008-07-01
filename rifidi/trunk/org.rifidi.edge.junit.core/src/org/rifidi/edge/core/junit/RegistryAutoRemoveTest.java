@@ -4,7 +4,6 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.rifidi.edge.core.communication.service.impl.CommunicationServiceImpl;
 import org.rifidi.edge.core.connection.impl.ReaderConnection;
 import org.rifidi.edge.core.service.readerconnection.ReaderConnectionRegistryService;
 import org.rifidi.edge.core.service.readerplugin.ReaderPluginRegistryService;
@@ -16,7 +15,7 @@ import org.rifidi.services.registry.ServiceRegistry;
 
 /**
  * @author Jerry Maine - jerry@pramari.com
- *
+ * 
  */
 public class RegistryAutoRemoveTest {
 	// private static final Log logger =
@@ -31,7 +30,7 @@ public class RegistryAutoRemoveTest {
 	 */
 	@Before
 	public void setUp() throws Exception {
-		System.out.println(CommunicationServiceImpl.class.getName());
+		// System.out.println(CommunicationServiceImpl.class.getName());
 		System.out.println(JMSServiceImpl.class.getName());
 		ServiceRegistry.getInstance().service(this);
 	}

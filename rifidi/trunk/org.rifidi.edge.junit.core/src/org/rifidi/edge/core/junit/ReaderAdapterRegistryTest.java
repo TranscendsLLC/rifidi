@@ -3,12 +3,10 @@
  */
 package org.rifidi.edge.core.junit;
 
-
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.rifidi.edge.core.communication.service.impl.CommunicationServiceImpl;
 import org.rifidi.edge.core.readerPlugin.ISpecificReaderPluginFactory;
 import org.rifidi.edge.core.service.readerplugin.ReaderPluginRegistryService;
 import org.rifidi.edge.core.service.readerplugin.impl.ReaderPluginRegistryServiceImpl;
@@ -16,10 +14,9 @@ import org.rifidi.edge.jms.service.impl.JMSServiceImpl;
 import org.rifidi.edge.readerplugin.dummy.DummyReaderInfo;
 import org.rifidi.edge.readerplugin.dummy.DummyReaderPluginFactory;
 
-
 /**
  * @author Matthew Dean - matt@pramari.com
- *
+ * 
  */
 public class ReaderAdapterRegistryTest {
 
@@ -28,7 +25,7 @@ public class ReaderAdapterRegistryTest {
 	 */
 	@Before
 	public void setUp() throws Exception {
-		System.out.println(CommunicationServiceImpl.class.getName());
+		// System.out.println(CommunicationServiceImpl.class.getName());
 		System.out.println(JMSServiceImpl.class.getName());
 	}
 
@@ -40,23 +37,23 @@ public class ReaderAdapterRegistryTest {
 	}
 
 	/**
-	 * Test to see if we can register an adapter in the readerAdapterFactory and get it back
+	 * Test to see if we can register an adapter in the readerAdapterFactory and
+	 * get it back
 	 */
 	@Test
 	public void testRegisterReaderAdapter() {
 
 		ReaderPluginRegistryService registry = new ReaderPluginRegistryServiceImpl();
-		
+
 		ISpecificReaderPluginFactory factory = new DummyReaderPluginFactory();
 		registry.registerReaderAdapter(DummyReaderInfo.class, factory);
-		
-		if (registry.getSpecReaderAdapterFactory(new DummyReaderInfo()) != factory)
-		{
+
+		if (registry.getSpecReaderAdapterFactory(new DummyReaderInfo()) != factory) {
 			Assert.fail();
 		}
-		
-		/*registry.getSpecReaderAdapterFactory() */
-	
+
+		/* registry.getSpecReaderAdapterFactory() */
+
 	}
-	
+
 }
