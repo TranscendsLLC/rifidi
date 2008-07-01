@@ -18,17 +18,25 @@ import javax.xml.bind.JAXBException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.rifidi.edge.core.connection.impl.ReaderConnection;
+import org.rifidi.edge.core.connection.listener.ReaderConnectionListener;
 import org.rifidi.edge.core.readerPlugin.AbstractReaderInfo;
+import org.rifidi.edge.core.service.readerconnection.ReaderConnectionRegistryService;
 import org.rifidi.edge.persistence.service.EdgePersistenceService;
 import org.rifidi.edge.persistence.utilities.AbstractReaderInfoSuite;
 import org.rifidi.edge.persistence.utilities.JAXBUtility;
+import org.rifidi.services.annotations.Inject;
+import org.rifidi.services.registry.ServiceRegistry;
 
 /**
- * The persistence implementation, which handles loading and saving to files.  
+ * The persistence implementation, which handles loading and saving to files.
  * 
  * @author Matthew Dean - matt@pramari.com
  */
-public class EdgePersistenceServiceImpl implements EdgePersistenceService {
+public class EdgePersistenceServiceImpl implements EdgePersistenceService,
+		ReaderConnectionListener {
+
+	public static final String XML_FILENAME = "cuddles.xml";
 
 	/**
 	 * The log4j logger.
@@ -38,7 +46,16 @@ public class EdgePersistenceServiceImpl implements EdgePersistenceService {
 			.getLog(EdgePersistenceServiceImpl.class);
 
 	/**
-	 * The filename.  
+	 * 
+	 */
+	private ReaderConnectionRegistryService rsrc;
+
+	public EdgePersistenceServiceImpl() {
+		ServiceRegistry.getInstance().service(this);
+	}
+
+	/**
+	 * The filename.
 	 */
 	private String filename = null;
 
@@ -91,5 +108,30 @@ public class EdgePersistenceServiceImpl implements EdgePersistenceService {
 			strList.add(JAXBUtility.getInstance().save(ari));
 		}
 		return strList;
+	}
+
+	@Override
+	public void readerConnectionRegistryAddEvent(
+			ReaderConnection connection) {
+		// TODO Saving everything to a file, sort of hackish
+
+	}
+
+	@Override
+	public void readerConnectionRegistryRemoveEvent(
+			ReaderConnection connection) {
+		// TODO Saving everything to a file, sort of hackish
+
+	}
+
+	/**
+	 * @param newReaderConnectionRegistryService
+	 *            the newReaderConnectionRegistryService to set
+	 */
+	@Inject
+	public void setReaderConnectionRegistryService(
+			ReaderConnectionRegistryService newReaderConnectionRegistryService) {
+		this.rsrc = newReaderConnectionRegistryService;
+		newReaderConnectionRegistryService.addEventListener(this);
 	}
 }
