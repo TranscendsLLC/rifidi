@@ -1,11 +1,9 @@
 package org.rifidi.edge.readerplugin.dummy;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.communication.protocol.Protocol;
+import org.rifidi.edge.core.exception.readerConnection.RifidiInvalidMessageFormat;
 
 /**
  * @author Jerry Maine - jerry@pramari.com
@@ -14,37 +12,35 @@ import org.rifidi.edge.core.communication.protocol.Protocol;
 public class DummyProtocol extends Protocol {
 	private static final Log logger = LogFactory.getLog(DummyProtocol.class);
 	
+
+	StringBuilder byteBin = new StringBuilder();
+	
 	/* (non-Javadoc)
-	 * @see org.rifidi.edge.core.communication.buffer.Protocol#fromObject(java.lang.Object)
+	 * @see org.rifidi.edge.core.communication.protocol.Protocol#add(byte)
 	 */
 	@Override
-	public byte[] fromObject(Object arg) {
-		logger.debug(arg);
-		//All objects coming in are strings and are sent out as raw bytes.
-		return ( (String)arg ).getBytes();
+	public Object add(byte b) throws RifidiInvalidMessageFormat {
+		// TODO Auto-generated method stub
+		byteBin.append(b);
+		
+		if(byteBin.length() >= 2) {
+			if (byteBin.substring(byteBin.length()-2).equals("\n\n")) {
+				String retVal = byteBin.toString();
+				byteBin = new StringBuilder();
+				return retVal;
+			}
+		}
+		return null;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.rifidi.edge.core.communication.buffer.Protocol#toObject(byte[])
+	 * @see org.rifidi.edge.core.communication.protocol.Protocol#toByteArray(java.lang.Object)
 	 */
 	@Override
-	public List<Object> toObject(byte[] arg) {
-		
-		List<Object> retVal = new ArrayList<Object>();
-		
-		String input = new String(arg);
-		//logger.debug(input);
-		
-		//the end of a tag stream is a double newline.
-		if(!input.equals("\n\n")){		
-		
-			for (String s : input.split("\n\n")) {
-				if (!s.isEmpty())
-					retVal.add(s);
-			}		
-		}
-		
-		return retVal;
+	public byte[] toByteArray(Object o) throws RifidiInvalidMessageFormat {
+		logger.debug(o);
+		//All objects coming in are strings and are sent out as raw bytes.
+		return ( (String)o ).getBytes();
 	}
 
 }
