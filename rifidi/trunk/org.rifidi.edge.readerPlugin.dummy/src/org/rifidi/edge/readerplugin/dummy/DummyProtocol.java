@@ -21,7 +21,7 @@ public class DummyProtocol extends Protocol {
 	@Override
 	public Object add(byte b) throws RifidiInvalidMessageFormat {
 		// TODO Auto-generated method stub
-		byteBin.append(b);
+		byteBin.append((char)b);
 		
 		if(byteBin.length() >= 2) {
 			if (byteBin.substring(byteBin.length()-2).equals("\n\n")) {
