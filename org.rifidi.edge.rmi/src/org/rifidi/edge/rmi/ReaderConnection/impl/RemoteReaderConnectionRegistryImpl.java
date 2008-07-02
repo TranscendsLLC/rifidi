@@ -14,8 +14,10 @@ package org.rifidi.edge.rmi.ReaderConnection.impl;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -57,7 +59,8 @@ public class RemoteReaderConnectionRegistryImpl implements
 	 * second RemoteReaderConnection is the instance of the
 	 * RemoteReaderConnection associated to the UnicastRemoteObject.
 	 */
-	private HashMap<RemoteReaderConnection, RemoteReaderConnection> remoteSessionList = new HashMap<RemoteReaderConnection, RemoteReaderConnection>();
+	//TODO: Look if this is needed latter.
+	private Map<RemoteReaderConnection, RemoteReaderConnection> remoteSessionList = Collections.synchronizedMap(new HashMap<RemoteReaderConnection, RemoteReaderConnection>());
 
 	/**
 	 * Constructor
