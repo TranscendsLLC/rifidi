@@ -16,3 +16,5 @@ Require-Bundle: org.rifidi.edge.core,
 Export-Package: org.rifidi.edge.jms.service.helper,
  org.rifidi.edge.jms.service.impl,
  org.rifidi.edge.jms.service.threads
+Eclipse-LazyStart: true
+
