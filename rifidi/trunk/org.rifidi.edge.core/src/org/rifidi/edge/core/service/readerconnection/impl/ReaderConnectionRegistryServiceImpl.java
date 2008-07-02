@@ -115,7 +115,7 @@ public class ReaderConnectionRegistryServiceImpl implements
 //		}
 		
 //		if (readerConnectionRegistry.size() >= Integer.MAX_VALUE - 200)
-//			throw new RuntimeException("Session counter reached max value: "
+//			throw new IllegalStateException("Session counter reached max value: "
 //					+ (Integer.MAX_VALUE - 200));
 		
 		if (connectionID > Integer.MAX_VALUE -10)
