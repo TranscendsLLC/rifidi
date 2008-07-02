@@ -121,6 +121,8 @@ public class ReaderConnectionRegistryServiceImpl implements
 		if (connectionID > Integer.MAX_VALUE -10)
 			connectionID = 0;
 
+		connectionID++;
+		
 		logger.debug("Connecting to Reader "
 				+ abstractConnectionInfo.getClass().getName() + "://"
 				+ abstractConnectionInfo.getIPAddress() + ":"
