@@ -80,22 +80,22 @@ public class AsynchronousConnectionBufferImpl implements ConnectionBuffer,
 
 	@Override
 	public void uncaughtException(Thread t, Throwable e) {
-		synchronized (currentThreads) {
-			if (e instanceof IOException) {
+		
+		if (e instanceof IOException) {
+			synchronized (currentThreads) {
 				logger.debug("There was an Exception in "
 						+ "the underlying communication layer: "
 						+ e.getClass().getName());
 				exception = (IOException) e;
-			} else {
-				t.getThreadGroup().uncaughtException(t, e);
+				
+				// Cause all waiting threads to interrupt to get notification about that
+				// exception we just catch
+				for (Thread interruptThread : currentThreads) {
+					interruptThread.interrupt();
+				}
 			}
-	
-			// Cause all waiting threads to interrupt to get notification about that
-			// exception we just catch
-		
-			for (Thread interruptThread : currentThreads) {
-				interruptThread.interrupt();
-			}
+		} else {
+			t.getThreadGroup().uncaughtException(t, e);
 		}
 	
 
