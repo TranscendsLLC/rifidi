@@ -1,4 +1,4 @@
-package org.rifidi.edge.testclient.junit;
+package org.rifidi.edge.adminclient.junit;
 
 import java.rmi.AccessException;
 import java.rmi.NotBoundException;
@@ -10,10 +10,10 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.rifidi.edge.adminclient.testreaderthread.AbstractThread;
 import org.rifidi.edge.readerplugin.dummy.DummyReaderInfo;
 import org.rifidi.edge.rmi.ReaderConnection.RemoteReaderConnection;
 import org.rifidi.edge.rmi.ReaderConnection.RemoteReaderConnectionRegistry;
-import org.rifidi.edge.testclient.testreaderthread.AbstractThread;
 
 /**
  * @author Jerry Maine - jerry@pramari.com

@@ -1,4 +1,4 @@
-package org.rifidi.edge.testclient.annotations;
+package org.rifidi.edge.adminclient.annotations;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

@@ -1,4 +1,4 @@
-package org.rifidi.edge.testclient.commands.edgeServer;
+package org.rifidi.edge.adminclient.commands.edgeServer;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -14,12 +14,12 @@ import javax.jms.JMSException;
 import javax.jms.MessageConsumer;
 import javax.jms.TextMessage;
 
+import org.rifidi.edge.adminclient.annotations.Command;
+import org.rifidi.edge.adminclient.commands.ICommand;
+import org.rifidi.edge.adminclient.jms.JMSConsumerFactory;
 import org.rifidi.edge.core.readerPlugin.AbstractReaderInfo;
 import org.rifidi.edge.rmi.ReaderConnection.RemoteReaderConnection;
 import org.rifidi.edge.rmi.ReaderConnection.RemoteReaderConnectionRegistry;
-import org.rifidi.edge.testclient.annotations.Command;
-import org.rifidi.edge.testclient.commands.ICommand;
-import org.rifidi.edge.testclient.jms.JMSConsumerFactory;
 
 public class EdgeServerCommands implements ICommand {
 

@@ -1,4 +1,4 @@
-package org.rifidi.edge.testclient;
+package org.rifidi.edge.adminclient;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -9,9 +9,9 @@ import java.util.HashMap;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.rifidi.edge.testclient.annotations.Command;
-import org.rifidi.edge.testclient.commands.ICommand;
-import org.rifidi.edge.testclient.commands.MethodHelper;
+import org.rifidi.edge.adminclient.annotations.Command;
+import org.rifidi.edge.adminclient.commands.ICommand;
+import org.rifidi.edge.adminclient.commands.MethodHelper;
 
 public class Console {
 

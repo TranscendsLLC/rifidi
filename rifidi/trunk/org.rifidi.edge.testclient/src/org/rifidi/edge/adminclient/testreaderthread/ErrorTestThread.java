@@ -1,10 +1,10 @@
-package org.rifidi.edge.testclient.testreaderthread;
+package org.rifidi.edge.adminclient.testreaderthread;
 
 import java.rmi.RemoteException;
 import java.util.List;
 
+import org.rifidi.edge.adminclient.commands.edgeServer.EdgeServerCommands;
 import org.rifidi.edge.rmi.ReaderConnection.RemoteReaderConnection;
-import org.rifidi.edge.testclient.commands.edgeServer.EdgeServerCommands;
 
 /**
  * @author Jerry Maine - jerry@pramari.com
