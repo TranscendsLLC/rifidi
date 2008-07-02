@@ -160,27 +160,30 @@ public class JAXBUtility {
 	 *            The file to save to.
 	 */
 	public void saveToFile(String xml, String filename) {
-		File f = new File(filename);
-		if (f.exists()) {
-			f.delete();
-		}
+		//This synchronized block is dependent on this class being a singleton.  
+		synchronized (this) {
+			File f = new File(filename);
+			if (f.exists()) {
+				f.delete();
+			}
 
-		logger.debug("path is: " + f.getAbsolutePath());
-		FileWriter fw = null;
-		try {
-			logger.debug("XML: " + xml);
-			f.createNewFile();
-			fw = new FileWriter(f);
-			fw.write(xml);
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-			if (fw != null) {
-				try {
-					fw.flush();
-					fw.close();
-				} catch (IOException e) {
-					e.printStackTrace();
+			logger.debug("path is: " + f.getAbsolutePath());
+			FileWriter fw = null;
+			try {
+				logger.debug("XML: " + xml);
+				f.createNewFile();
+				fw = new FileWriter(f);
+				fw.write(xml);
+			} catch (IOException e) {
+				e.printStackTrace();
+			} finally {
+				if (fw != null) {
+					try {
+						fw.flush();
+						fw.close();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
 				}
 			}
 		}

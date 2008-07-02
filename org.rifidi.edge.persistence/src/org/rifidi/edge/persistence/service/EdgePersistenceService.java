@@ -12,16 +12,19 @@ package org.rifidi.edge.persistence.service;
 
 import java.util.List;
 
+import javax.xml.bind.JAXBException;
+
 import org.rifidi.edge.core.readerPlugin.AbstractReaderInfo;
 
 /**
- * 
+ * Save the edge persistence service 
  * 
  * @author Matthew Dean - matt@pramari.com
  */
 public interface EdgePersistenceService {
 
 	/**
+	 * Saves the given list of AbstractReaderInfos to a file with the given filename.  
 	 * 
 	 * @param connectionList
 	 * @param filename
@@ -30,13 +33,14 @@ public interface EdgePersistenceService {
 			String filename);
 
 	/**
+	 * Restores the List of AbstractReaderInfos from an xml file.  
 	 * 
 	 * @return
 	 */
-	public List<AbstractReaderInfo> restore();
+	public List<AbstractReaderInfo> restore() throws JAXBException;
 
 	/**
-	 * 
+	 * Saves a list of AbstractReaderInfos to an XML string.  
 	 * 
 	 * @param connectionList
 	 * @param filename

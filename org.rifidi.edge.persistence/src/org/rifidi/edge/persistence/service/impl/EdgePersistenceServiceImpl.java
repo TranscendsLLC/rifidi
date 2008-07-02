@@ -10,7 +10,9 @@
  */
 package org.rifidi.edge.persistence.service.impl;
 
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -59,11 +61,6 @@ public class EdgePersistenceServiceImpl implements EdgePersistenceService,
 		ServiceRegistry.getInstance().service(this);
 	}
 
-	/**
-	 * The filename.
-	 */
-	private String filename = null;
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -76,7 +73,6 @@ public class EdgePersistenceServiceImpl implements EdgePersistenceService,
 		AbstractReaderInfoSuite cs = new AbstractReaderInfoSuite(connectionList);
 		JAXBUtility.getInstance().saveToFile(
 				JAXBUtility.getInstance().save(cs), filename);
-		this.filename = filename;
 	}
 
 	/*
@@ -86,16 +82,26 @@ public class EdgePersistenceServiceImpl implements EdgePersistenceService,
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<AbstractReaderInfo> restore() {
+	public List<AbstractReaderInfo> restore() throws JAXBException {
 
+		File f=new File("omg.txt");
+		try {
+			f.createNewFile();
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+		
+		System.out.println(f.getAbsolutePath());
+		
 		AbstractReaderInfoSuite cs = null;
 		try {
-			String xml = JAXBUtility.getInstance().restoreFromFile(filename);
+			String xml = JAXBUtility.getInstance().restoreFromFile(
+					XML_FILE_PATH + XML_FILENAME);
 			cs = (AbstractReaderInfoSuite) JAXBUtility.getInstance().load(xml);
 		} catch (JAXBException e) {
-			e.printStackTrace();
+			throw e;
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			return new ArrayList<AbstractReaderInfo>();
 		}
 		return cs.getAbstractReaderInfoList();
 	}
@@ -155,5 +161,56 @@ public class EdgePersistenceServiceImpl implements EdgePersistenceService,
 			ReaderConnectionRegistryService newReaderConnectionRegistryService) {
 		this.rsrc = newReaderConnectionRegistryService;
 		newReaderConnectionRegistryService.addEventListener(this);
+		//TODO Uncomment this when we have a good solution to the persistence problem.  
+		//this.initialize();
+	}
+
+	/**
+	 * 
+	 */
+	void initialize() {
+		System.out.println("Starting the initialize");
+		List<ReaderConnection> readerConnections = this.rsrc
+				.getAllReaderConnections();
+		List<AbstractReaderInfo> currentReaders = new ArrayList<AbstractReaderInfo>();
+		for (ReaderConnection rc : readerConnections) {
+			currentReaders.add(rc.getConnectionInfo());
+		}
+		List<AbstractReaderInfo> readersFromFile;
+		try {
+			readersFromFile = this.restore();
+		} catch (JAXBException e) {
+			e.printStackTrace();
+			return;
+		}
+
+		List<AbstractReaderInfo> readersToCreate = abstractReaderInfoListDiff(
+				currentReaders, readersFromFile);
+
+		for (AbstractReaderInfo a : readersToCreate) {
+			System.out.println("Creating a reader: " + a);
+			this.rsrc.createReaderConnection(a);
+		}
+	}
+
+	/**
+	 * Returns every reader in the fromFile that is not in current.
+	 * 
+	 * @param current
+	 *            The list of AbstractReaderInfo
+	 * @param fromFile
+	 * @return
+	 */
+	private List<AbstractReaderInfo> abstractReaderInfoListDiff(
+			List<AbstractReaderInfo> current, List<AbstractReaderInfo> fromFile) {
+		List<AbstractReaderInfo> retVal = new ArrayList<AbstractReaderInfo>();
+		for (AbstractReaderInfo a : fromFile) {
+			for (AbstractReaderInfo b : current) {
+				if (!a.equals(b)) {
+					retVal.add(a);
+				}
+			}
+		}
+		return retVal;
 	}
 }
