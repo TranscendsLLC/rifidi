@@ -1,4 +1,4 @@
-package org.rifidi.edge.testclient.testreaderthread;
+package org.rifidi.edge.adminclient.testreaderthread;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

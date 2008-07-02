@@ -1,4 +1,4 @@
-package org.rifidi.edge.testclient.commands;
+package org.rifidi.edge.adminclient.commands;
 
 import java.lang.reflect.Method;
 

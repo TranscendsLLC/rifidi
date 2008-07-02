@@ -1,4 +1,4 @@
-package org.rifidi.edge.testclient.jms;
+package org.rifidi.edge.adminclient.jms;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
