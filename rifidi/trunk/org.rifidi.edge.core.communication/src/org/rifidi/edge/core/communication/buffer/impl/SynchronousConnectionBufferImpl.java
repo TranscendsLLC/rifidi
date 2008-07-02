@@ -61,7 +61,13 @@ public class SynchronousConnectionBufferImpl implements ConnectionBuffer,
 			currentThreads.add(Thread.currentThread());
 		}	
 		try {
-			writeQueue.put(message);
+			
+			//make sure this message is sent out.
+			synchronized (readQueue) {
+				writeQueue.put(message);
+				readQueue.notifyAll();
+			}
+
 			return readQueue.take();
 		} catch (InterruptedException e) {	
 		} finally {
@@ -87,7 +93,7 @@ public class SynchronousConnectionBufferImpl implements ConnectionBuffer,
 			synchronized (currentThreads) {
 				logger.debug("There was an Exception in "
 						+ "the underlying communication layer: "
-						+ e.getClass().getName());
+						+ e.getClass().getName(), e);
 				exception = (IOException) e;
 				
 				// Cause all waiting threads to interrupt to get notification about that

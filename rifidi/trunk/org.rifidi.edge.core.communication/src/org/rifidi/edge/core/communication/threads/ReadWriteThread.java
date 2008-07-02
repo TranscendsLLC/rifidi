@@ -91,25 +91,40 @@ public class ReadWriteThread extends AbstractThread {
 	public void run() {
 		logger.debug("Starting ReadAndWrite Thread");
 			
-		try {
-			while (running) {
-				// Send the next Message from the queue over the wire
-				sendData(writeQueue.take());
-				// read answer coresponding the the message send
-				readQueue.add(readData());
-			}
-		} catch (InterruptedException e) {
-			running = false;
-		} catch (IOException e) {
-			running = false;
-			Thread.currentThread().getUncaughtExceptionHandler()
-					.uncaughtException(Thread.currentThread(), e);
-		} catch (RifidiInvalidMessageFormat e) {
-			running = false;
-			Thread.currentThread().getUncaughtExceptionHandler()
-					.uncaughtException(Thread.currentThread(), e);
-		}
 		
+			try {
+				while (running) {
+					Object o2 = writeQueue.take();
+					
+					//make sure what we got is sent out before we return.
+					synchronized (readQueue) {
+						// Send the next Message from the queue over the wire
+						sendData(o2);
+						// read answer coresponding the the message send
+						Object o = readData();
+						logger.debug(o);
+						readQueue.add(o);
+						
+						readQueue.notifyAll();
+					}
+				}
+			} catch (InterruptedException e) {
+				running = false;
+			} catch (IOException e) {
+				running = false;
+				Thread.currentThread().getUncaughtExceptionHandler()
+						.uncaughtException(Thread.currentThread(), e);
+			} catch (RifidiInvalidMessageFormat e) {
+				running = false;
+				Thread.currentThread().getUncaughtExceptionHandler()
+						.uncaughtException(Thread.currentThread(), e);
+			} catch (Exception e) {
+				running = false;
+				Thread.currentThread().getUncaughtExceptionHandler()
+						.uncaughtException(Thread.currentThread(), e);
+			}
+			
+			
 		
 	}
 
