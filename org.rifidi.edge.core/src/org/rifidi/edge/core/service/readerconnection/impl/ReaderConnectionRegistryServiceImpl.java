@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 
 import org.apache.commons.logging.Log;
@@ -47,7 +48,9 @@ public class ReaderConnectionRegistryServiceImpl implements
 	//TODO: Look if this is needed latter.
 	Set<ReaderConnectionListener> listeners = Collections.synchronizedSet(new HashSet<ReaderConnectionListener>());
 	
-	private int counter;
+	//Random random;
+	
+	int connectionID;
 
 	// private ConnectionFactory connectionFactory;
 
@@ -72,8 +75,10 @@ public class ReaderConnectionRegistryServiceImpl implements
 	 */
 	@Override
 	public void initialize() {
-		// initialize counter if ReaderAdapter where loaded
-		counter = 0;
+		// initialize random number generator 
+		//random = new Random();
+		
+		connectionID = 0;
 	}
 
 	/*
@@ -84,22 +89,44 @@ public class ReaderConnectionRegistryServiceImpl implements
 	@Override
 	public IReaderConnection createReaderConnection(
 			AbstractReaderInfo abstractConnectionInfo) {
-
+		
+		
 		if (abstractConnectionInfo == null)
 			throw new IllegalArgumentException("Null references not allowed.");
-
-		if (counter >= Integer.MAX_VALUE - 100)
-			throw new RuntimeException("Session counter reached max value: "
-					+ (Integer.MAX_VALUE - 100));
+		
+//		// Worst case thinking
+//		if (readerConnectionRegistry.size() > Integer.MAX_VALUE - 100){
+//			throw new IllegalStateException("The max number of reader adapters is " + (Integer.MAX_VALUE - 100));
+//		}
+//		
+//		int connectionID = random.nextInt(Integer.MAX_VALUE);
+//		
+//		for (int counter = 0; readerConnectionRegistry.containsKey(connectionID); counter++){
+//			connectionID = random.nextInt(Integer.MAX_VALUE);
+//			
+//			/* Reset the random number generator after 50 tries.
+//			 * Basically getting a new seed that should be fairly
+//			 * unique from any other instantiation of Random.
+//			 * See java documentation for Random()
+//			 */
+//			if (counter < 50) {
+//				random.setSeed(random.nextLong() + System.nanoTime());
+//				counter = 0;
+//			}
+//		}
+		
+//		if (readerConnectionRegistry.size() >= Integer.MAX_VALUE - 200)
+//			throw new RuntimeException("Session counter reached max value: "
+//					+ (Integer.MAX_VALUE - 200));
+		
+		if (connectionID > Integer.MAX_VALUE -10)
+			connectionID = 0;
 
 		logger.debug("Connecting to Reader "
 				+ abstractConnectionInfo.getClass().getName() + "://"
 				+ abstractConnectionInfo.getIPAddress() + ":"
 				+ abstractConnectionInfo.getPort());
 
-		// Unique identifier for ReaderConnections (also used as name for the
-		// JMS Queue)
-		counter++;
 
 		// TODO check for null
 		// Build ReaderPlugin
@@ -114,10 +141,10 @@ public class ReaderConnectionRegistryServiceImpl implements
 		// Build Connection Object for holding JMS and Plugin
 		ReaderConnection connection = new ReaderConnection(
 				abstractConnectionInfo, readerPlugin, abstractConnectionInfo
-						.getProtocol(), counter);
+						.getProtocol(), connectionID);
 
 		// register readerConnection in registry
-		readerConnectionRegistry.put(counter, connection);
+		readerConnectionRegistry.put(connectionID, connection);
 
 		// fire events.
 		for (ReaderConnectionListener listener : listeners){
