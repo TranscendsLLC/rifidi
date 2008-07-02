@@ -65,8 +65,9 @@ public class SynchronousConnectionBufferImpl implements ConnectionBuffer,
 			return readQueue.take();
 		} catch (InterruptedException e) {	
 		} finally {
-			checkForException();
 			synchronized (currentThreads) {
+				checkForException();
+			
 				currentThreads.remove(Thread.currentThread());
 			}	
 		}
