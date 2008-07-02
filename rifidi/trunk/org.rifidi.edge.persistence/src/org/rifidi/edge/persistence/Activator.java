@@ -15,11 +15,14 @@ public class Activator implements BundleActivator {
 	public void start(BundleContext context) throws Exception {
 		System.out.println("== Bundle " + this.getClass().getName()
 				+ " loaded ==");
+		System.out.println("context bundle getLocation: "
+				+ context.getBundle().getLocation() + "\n");
 
 		System.out.println("Registering Service: EdgePersistenceService");
 		EdgePersistenceServiceImpl edgePersistenceService = new EdgePersistenceServiceImpl();
 		context.registerService(EdgePersistenceService.class.getName(),
 				edgePersistenceService, null);
+
 	}
 
 	/*
