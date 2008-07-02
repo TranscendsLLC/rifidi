@@ -57,12 +57,20 @@ public class SynchronousConnectionBufferImpl implements ConnectionBuffer,
 	public Object sendAndRecieve(Object message)
 			throws RifidiIllegalOperationException, IOException {
 		checkForException();
+		synchronized (currentThreads) {
+			currentThreads.add(Thread.currentThread());
+		}	
 		try {
 			writeQueue.put(message);
 			return readQueue.take();
-		} catch (InterruptedException e) {
+		} catch (InterruptedException e) {	
+		} finally {
 			checkForException();
+			synchronized (currentThreads) {
+				currentThreads.remove(Thread.currentThread());
+			}	
 		}
+		
 		return null;
 	}
 
@@ -73,18 +81,19 @@ public class SynchronousConnectionBufferImpl implements ConnectionBuffer,
 
 	@Override
 	public void uncaughtException(Thread t, Throwable e) {
-		if (e instanceof IOException) {
-			logger.debug("There was an Exception in "
-					+ "the underlying communication layer: "
-					+ e.getClass().getName());
-			exception = (IOException) e;
-		} else {
-			t.getThreadGroup().uncaughtException(t, e);
-		}
-
-		// Cause all waiting threads to interrupt to get notification about that
-		// exception we just catch
 		synchronized (currentThreads) {
+			if (e instanceof IOException) {
+				logger.debug("There was an Exception in "
+						+ "the underlying communication layer: "
+						+ e.getClass().getName());
+				exception = (IOException) e;
+			} else {
+				t.getThreadGroup().uncaughtException(t, e);
+			}
+
+			// Cause all waiting threads to interrupt to get notification about that
+			// exception we just catch
+			
 			for (Thread interruptThread : currentThreads) {
 				interruptThread.interrupt();
 			}
