@@ -18,6 +18,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.communication.protocol.Protocol;
+import org.rifidi.edge.core.exception.readerConnection.RifidiInvalidMessageFormat;
 import org.rifidi.edge.common.utilities.thread.AbstractThread;
 
 public class WriteThread extends AbstractThread {
@@ -54,7 +55,7 @@ public class WriteThread extends AbstractThread {
 
 				Object object = writeQueue.take();
 				logger.debug(object);
-				byte[] bytes = protocol.fromObject(object);
+				byte[] bytes = protocol.toByteArray(object);
 
 				outputStream.write(bytes);
 				outputStream.flush();
@@ -63,6 +64,11 @@ public class WriteThread extends AbstractThread {
 			running = false;
 			// e.printStackTrace();
 		} catch (IOException e) {
+			// TODO Think about what to do with this exception
+			running = false;
+			Thread.currentThread().getUncaughtExceptionHandler()
+					.uncaughtException(Thread.currentThread(), e);
+		} catch (RifidiInvalidMessageFormat e) {
 			// TODO Think about what to do with this exception
 			running = false;
 			Thread.currentThread().getUncaughtExceptionHandler()
