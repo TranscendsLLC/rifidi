@@ -81,7 +81,7 @@ public class AsynchronousConnectionBufferImpl implements ConnectionBuffer,
 	@Override
 	public void uncaughtException(Thread t, Throwable e) {
 		
-		if (e instanceof IOException) {
+		if (e instanceof Exception) {
 			synchronized (currentThreads) {
 				logger.debug("There was an Exception in "
 						+ "the underlying communication layer: "
