@@ -10,12 +10,11 @@
  */
 package org.rifidi.edge.readerplugin.alien.junit;
 
-import java.util.List;
-
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.rifidi.edge.core.exception.readerConnection.RifidiInvalidMessageFormat;
 import org.rifidi.edge.readerPlugin.alien.AlienProtocol;
 
 /**
@@ -46,18 +45,16 @@ public class AlienProtocolTest {
 	public void testToObject() {
 		try {
 			AlienProtocol newProt = new AlienProtocol();
-			String retVal = "get TagList\n\r\0get acqLevel\n\r\0";
-			List<Object> newObj = newProt.toObject(retVal.getBytes());
-			String omg = (String) newObj.get(0);
-			String omg2 = (String) newObj.get(1);
-			if (!omg.trim().equals("get TagList")) {
-				System.out.println("first fail");
-				Assert.fail();
+			String retVal = "get TagList\n\r\0";
+			char[] charArray = retVal.toCharArray();
+			Object omg = null;
+			for (char a : charArray) {
+				omg = newProt.add((byte) a);
 			}
-			if (!omg2.trim().equals("get acqLevel")) {
-				System.out.println("second fail");
-				Assert.fail();
-			}
+
+			Assert.assertNotNull(omg);
+			Assert.assertEquals(retVal, (String) omg);
+
 		} catch (Exception e) {
 			e.printStackTrace();
 			Assert.fail();
@@ -69,10 +66,15 @@ public class AlienProtocolTest {
 	 * {@link org.rifidi.edge.readerPlugin.alien.AlienProtocol#fromObject(java.lang.Object)}.
 	 */
 	@Test
-	public void testFromObject() {
+	public void testToByteArray() {
 		AlienProtocol newProt = new AlienProtocol();
 		String retVal = "get TagList";
-		if (!retVal.equals(new String(newProt.fromObject(retVal)))) {
+		try {
+			if (!retVal.equals(new String(newProt.toByteArray(retVal)))) {
+				Assert.fail();
+			}
+		} catch (RifidiInvalidMessageFormat e) {
+			e.printStackTrace();
 			Assert.fail();
 		}
 	}
