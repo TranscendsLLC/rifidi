@@ -52,6 +52,22 @@ public abstract class AbstractReaderInfo implements Serializable {
 		this.port = port;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object other) {
+		AbstractReaderInfo otherRi = (AbstractReaderInfo) other;
+		if (this.ip.equals(otherRi.getIPAddress())) {
+			if (this.port == otherRi.getPort()) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	/**
 	 * @return A string version of the reader.
 	 */
@@ -65,6 +81,6 @@ public abstract class AbstractReaderInfo implements Serializable {
 	/**
 	 * @return the protocol for this ReaderType
 	 */
-	//TODO move this to Factory
+	// TODO move this to Factory
 	public abstract Protocol getProtocol();
 }
