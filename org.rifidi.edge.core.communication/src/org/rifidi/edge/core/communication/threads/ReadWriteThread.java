@@ -91,6 +91,7 @@ public class ReadWriteThread extends AbstractThread {
 	@Override
 	public void run() {
 		logger.debug("Starting ReadAndWrite Thread");
+			
 		try {
 			while (running) {
 				// Send the next Message from the queue over the wire
@@ -105,7 +106,8 @@ public class ReadWriteThread extends AbstractThread {
 			Thread.currentThread().getUncaughtExceptionHandler()
 					.uncaughtException(Thread.currentThread(), e);
 		}
-
+		
+		
 	}
 
 	/**
