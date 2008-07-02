@@ -119,7 +119,12 @@ public class JAXBUtilityTest {
 		List<AbstractReaderInfo> restoril = null;
 
 		impl.saveToFile(aril, "omgzor");
-		restoril = impl.restore();
+		try {
+			restoril = impl.restore();
+		} catch (JAXBException e) {
+			e.printStackTrace();
+			fail();
+		}
 
 		for (AbstractReaderInfo abs : restoril) {
 			System.out.println(abs.toString());
