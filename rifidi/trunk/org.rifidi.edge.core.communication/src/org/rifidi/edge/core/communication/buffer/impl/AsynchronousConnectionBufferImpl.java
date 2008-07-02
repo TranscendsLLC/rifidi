@@ -52,8 +52,8 @@ public class AsynchronousConnectionBufferImpl implements ConnectionBuffer,
 		} catch (InterruptedException e) {
 			
 		} finally {
-			checkForException();
 			synchronized (currentThreads) {
+				checkForException();
 				currentThreads.remove(Thread.currentThread());
 			}	
 		}
