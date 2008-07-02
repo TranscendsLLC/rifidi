@@ -21,6 +21,12 @@ import org.rifidi.edge.core.readerPlugin.AbstractReaderInfo;
 import org.rifidi.edge.rmi.ReaderConnection.RemoteReaderConnection;
 import org.rifidi.edge.rmi.ReaderConnection.RemoteReaderConnectionRegistry;
 
+/**
+ * 
+ * 
+ * @author Andreas Huebner - andreas@pramari.com
+ * @author Matthew Dean - matt@pramari.com
+ */
 public class EdgeServerCommands implements ICommand {
 
 	private RemoteReaderConnectionRegistry remoteReaderConnectionRegistry;
@@ -62,6 +68,10 @@ public class EdgeServerCommands implements ICommand {
 		return "Connection established to " + hostname + ":" + port;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	@Command(name = "availableReaderTypes")
 	public String getAvailableReaderTypes() {
 		if (remoteReaderConnectionRegistry == null)
@@ -80,6 +90,11 @@ public class EdgeServerCommands implements ICommand {
 		}
 	}
 
+	/**
+	 * 
+	 * 
+	 * @return
+	 */
 	@Command(name = "activeConnections")
 	public String getActiveConnections() {
 		if (remoteReaderConnectionRegistry == null)

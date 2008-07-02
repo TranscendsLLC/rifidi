@@ -92,7 +92,7 @@ public class Console {
 		System.out.println("*************************************");
 		System.out.println("*  == Rifidi EdgeServer Console ==  *");
 		System.out.println("*                                   *");
-		System.out.println("*  Andreas Huebner (Pramari, LLC)   *");
+		System.out.println("*           Pramari, LLC            *");
 		System.out.println("*************************************");
 	}
 
