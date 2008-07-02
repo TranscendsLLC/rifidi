@@ -10,21 +10,16 @@
  */
 package org.rifidi.edge.readerplugin.llrp.junit;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import junit.framework.Assert;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.llrp.ltk.exceptions.InvalidLLRPMessageException;
-import org.llrp.ltk.generated.messages.DELETE_ROSPEC;
 import org.llrp.ltk.generated.messages.ENABLE_ROSPEC;
-import org.llrp.ltk.types.LLRPMessage;
 import org.llrp.ltk.types.UnsignedInteger;
+import org.rifidi.edge.core.exception.readerConnection.RifidiInvalidMessageFormat;
 import org.rifidi.edge.readerPlugin.llrp.LLRPProtocol;
 
 /**
@@ -54,101 +49,64 @@ public class LLRPProtocolTest {
 	}
 
 	/**
-	 * Tests the toObject method in LLRPProtocol
+	 * 
 	 */
 	@Test
-	public void testToObject() {
-		DELETE_ROSPEC deleteROSpec = new DELETE_ROSPEC();
-		deleteROSpec.setROSpecID(new UnsignedInteger(1));
-
+	public void testToByteArray() {
 		ENABLE_ROSPEC enableROSpec = new ENABLE_ROSPEC();
 		enableROSpec.setROSpecID(new UnsignedInteger(1));
 
-		List<Object> arrList = new ArrayList<Object>();
-		arrList.add(deleteROSpec);
-		arrList.add(enableROSpec);
+		LLRPProtocol prot = new LLRPProtocol();
 
 		try {
-			byte[] ds = deleteROSpec.encodeBinary();
-			byte[] es = enableROSpec.encodeBinary();
-			byte[] acc = new byte[ds.length + es.length];
-			int index = 0;
-			for (byte b : ds) {
-				acc[index] = b;
-				index++;
-			}
-			for (byte b : es) {
-				acc[index] = b;
-				index++;
+			byte[] byteArray = prot.toByteArray(enableROSpec);
+
+			Assert.assertArrayEquals(enableROSpec.encodeBinary(), byteArray);
+
+		} catch (RifidiInvalidMessageFormat e) {
+			Assert.fail();
+			e.printStackTrace();
+		} catch (InvalidLLRPMessageException e) {
+			Assert.fail();
+			e.printStackTrace();
+		}
+
+	}
+
+	/**
+	 * 
+	 */
+	@Test
+	public void testAddByte() {
+		ENABLE_ROSPEC enableROSpec = new ENABLE_ROSPEC();
+		enableROSpec.setROSpecID(new UnsignedInteger(1));
+
+		LLRPProtocol prot = new LLRPProtocol();
+
+		try {
+			byte[] omg = enableROSpec.encodeBinary();
+
+			Object test = null;
+
+			for (byte b : omg) {
+				test = prot.add(b);
 			}
 
-			LLRPProtocol newProt = new LLRPProtocol();
-			List<Object> newArr = newProt.toObject(acc);
-
-			for (Object o : newArr) {
-				if (((LLRPMessage) o).getClass() == DELETE_ROSPEC.class
-						|| ((LLRPMessage) o).getClass() == ENABLE_ROSPEC.class) {
-					logger.debug("Message checks out");
-				} else {
-					Assert.fail();
-				}
+			Assert.assertNotNull(test);
+			if (!(test instanceof ENABLE_ROSPEC)) {
+				Assert.fail();
 			}
 
 		} catch (InvalidLLRPMessageException e) {
+			logger.debug("Invalid message");
+			Assert.fail();
 			e.printStackTrace();
+		} catch (RifidiInvalidMessageFormat e) {
+			logger.debug("Invalid message format");
 			Assert.fail();
-		} catch (Exception e) {
 			e.printStackTrace();
-			Assert.fail();
 		}
+
 	}
 
-	/**
-	 * Tests the fromObject method in LLRPProtocol
-	 */
-	@Test
-	public void testFromObject() {
-		DELETE_ROSPEC deleteROSpec = new DELETE_ROSPEC();
-		deleteROSpec.setROSpecID(new UnsignedInteger(1));
-
-		LLRPProtocol newProt = new LLRPProtocol();
-
-		byte omg[] = newProt.fromObject(deleteROSpec);
-
-		if (omg != null) {
-			try {
-				if (!byteArrEquals(omg, deleteROSpec.encodeBinary())) {
-					Assert.fail();
-				}
-			} catch (InvalidLLRPMessageException e) {
-				e.printStackTrace();
-				Assert.fail();
-			}
-		} else {
-			logger.debug("fromObject is null");
-			Assert.fail();
-		}
-	}
-
-	/**
-	 * Checks the equality of 2 byte arrays
-	 * 
-	 * @param a
-	 * @param b
-	 * @return
-	 */
-	private boolean byteArrEquals(byte[] a, byte[] b) {
-	
-		if (a.length != b.length) {
-			return false;
-		}
-
-		for (int i = 0; i < a.length; i++) {
-			if (a[i] != b[i]) {
-				return false;
-			}
-		}
-
-		return true;
-	}
 }
