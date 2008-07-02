@@ -75,11 +75,14 @@ public class AsynchronousCommunication implements Communication{
 		AsynchronousConnectionBufferImpl connectionBuffer = new AsynchronousConnectionBufferImpl(
 				readQueue, writeQueue);
 
+		//This should be done BEFORE start is called.
+		readThread.setUncaughtExceptionHandler(connectionBuffer);
+		writeThread.setUncaughtExceptionHandler(connectionBuffer);
+		
 		readThread.start();
 		writeThread.start();
 
-		readThread.setUncaughtExceptionHandler(connectionBuffer);
-		writeThread.setUncaughtExceptionHandler(connectionBuffer);
+
 
 		return connectionBuffer;
 	}

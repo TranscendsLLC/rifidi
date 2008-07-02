@@ -55,9 +55,12 @@ public class SynchronousCommunication implements Communication {
 		SynchronousConnectionBufferImpl connectionBuffer = new SynchronousConnectionBufferImpl(
 				readQueue, writeQueue);
 
+		
+		readWriteThread.setUncaughtExceptionHandler(connectionBuffer);
+		
 		readWriteThread.start();
 
-		readWriteThread.setUncaughtExceptionHandler(connectionBuffer);
+		
 
 
 		return connectionBuffer;
