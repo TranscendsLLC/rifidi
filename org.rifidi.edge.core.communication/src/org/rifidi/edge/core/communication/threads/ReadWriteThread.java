@@ -11,17 +11,16 @@
  */
 package org.rifidi.edge.core.communication.threads;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.List;
 import java.util.concurrent.BlockingQueue;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.common.utilities.thread.AbstractThread;
 import org.rifidi.edge.core.communication.protocol.Protocol;
+import org.rifidi.edge.core.exception.readerConnection.RifidiInvalidMessageFormat;
 
 /**
  * This is the Read/Write Thread used for synchronous communication
@@ -105,6 +104,10 @@ public class ReadWriteThread extends AbstractThread {
 			running = false;
 			Thread.currentThread().getUncaughtExceptionHandler()
 					.uncaughtException(Thread.currentThread(), e);
+		} catch (RifidiInvalidMessageFormat e) {
+			running = false;
+			Thread.currentThread().getUncaughtExceptionHandler()
+					.uncaughtException(Thread.currentThread(), e);
 		}
 		
 		
@@ -117,11 +120,12 @@ public class ReadWriteThread extends AbstractThread {
 	 *            message to send
 	 * @throws InterruptedException
 	 * @throws IOException
+	 * @throws RifidiInvalidMessageFormat 
 	 */
 	private void sendData(Object message) throws InterruptedException,
-			IOException {
+			IOException, RifidiInvalidMessageFormat {
 		logger.debug("Sending Message " + message);
-		byte[] bytes = protocol.fromObject(message);
+		byte[] bytes = protocol.toByteArray(message);
 		out.write(bytes);
 		out.flush();
 	}
@@ -131,49 +135,18 @@ public class ReadWriteThread extends AbstractThread {
 	 * 
 	 * @return message from the socket (reader specific)
 	 * @throws IOException
+	 * @throws RifidiInvalidMessageFormat 
 	 */
-	private Object readData() throws IOException {
-		byte[] input = readFromSocket(in);
-
-		String omg = new String(input);
-		omg.replace('\0', '?');
-		logger.debug("reading from socket: " + omg);
-
-		// TODO Think about what to do if the byte array is empty
-		List<Object> msg = protocol.toObject(input);
-		if (msg.size() > 1) {
-			throw new IOException("To many message from reader");
-		}
-
-		if (msg.isEmpty())
-			throw new IOException("No repsonse recieved");
-		return msg.get(0);
-	}
-
-	/**
-	 * read bytes arrays from the input stream
-	 * 
-	 * @param inputStream
-	 *            input stream to read from
-	 * @return byte array
-	 * @throws IOException
-	 */
-	private byte[] readFromSocket(InputStream inputStream) throws IOException {
-		int input;
-		ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-
-		while ((input = inputStream.read()) != -1) {
-			try {
-				Thread.sleep(5);
-			} catch (InterruptedException e) {
+	private Object readData() throws IOException, RifidiInvalidMessageFormat {
+		int input = 0;
+		Object message = null;
+		while ((input = in.read()) != -1 && running) {
+			message = protocol.add((byte) input);
+			if (message != null) {
+				return message;
 			}
-			buffer.write(input);
-
-			// TODO Not sure this is going to work for every reader
-			if (inputStream.available() == 0)
-				break;
 		}
-		return buffer.toByteArray();
+		return null;
 	}
 
 }
