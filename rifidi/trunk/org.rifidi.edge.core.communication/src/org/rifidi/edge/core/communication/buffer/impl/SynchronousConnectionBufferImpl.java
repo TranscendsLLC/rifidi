@@ -30,7 +30,7 @@ public class SynchronousConnectionBufferImpl implements ConnectionBuffer,
 	private BlockingQueue<Object> readQueue;
 	private BlockingQueue<Object> writeQueue;
 
-	private IOException exception = null;
+	private Exception exception = null;
 
 	private Set<Thread> currentThreads;
 
@@ -81,9 +81,18 @@ public class SynchronousConnectionBufferImpl implements ConnectionBuffer,
 		return null;
 	}
 
-	private void checkForException() throws IOException {
-		if (exception != null)
-			throw exception;
+	private void checkForException() throws RifidiIllegalOperationException, IOException {
+		if (exception != null){
+			if (exception instanceof RifidiIllegalOperationException)
+				throw (RifidiIllegalOperationException) exception;
+			
+			if (exception instanceof IOException)
+				throw (IOException) exception;
+			
+			// we need to make sure things break so we do this.
+			if (exception instanceof RuntimeException)
+				throw (RuntimeException) exception;
+		}
 	}
 
 	@Override
@@ -94,7 +103,7 @@ public class SynchronousConnectionBufferImpl implements ConnectionBuffer,
 				logger.debug("There was an Exception in "
 						+ "the underlying communication layer: "
 						+ e.getClass().getName(), e);
-				exception = (IOException) e;
+				exception = (Exception) e;
 				
 				// Cause all waiting threads to interrupt to get notification about that
 				// exception we just catch
