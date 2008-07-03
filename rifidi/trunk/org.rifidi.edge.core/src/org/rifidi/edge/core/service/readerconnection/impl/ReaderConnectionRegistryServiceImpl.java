@@ -243,7 +243,6 @@ public class ReaderConnectionRegistryServiceImpl implements
 	@Override
 	public void readerPluginRegistryAddEvent(
 			Class<? extends AbstractReaderInfo> info) {
-		//TODO: Implement listening event.  
 		// We ignore this event because there is no need for it, yet. 
 
 	}

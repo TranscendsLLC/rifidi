@@ -40,7 +40,7 @@ public class ThingMagicProtocolTest {
 			try {
 				test = protocol.add(b);
 			} catch (RifidiInvalidMessageFormat e) {
-				// TODO Auto-generated catch block
+
 				e.printStackTrace();
 			}
 		}

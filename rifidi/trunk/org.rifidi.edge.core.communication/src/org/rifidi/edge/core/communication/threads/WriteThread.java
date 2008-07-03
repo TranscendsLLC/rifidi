@@ -64,12 +64,10 @@ public class WriteThread extends AbstractThread {
 			running = false;
 			// e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Think about what to do with this exception
 			running = false;
 			Thread.currentThread().getUncaughtExceptionHandler()
 					.uncaughtException(Thread.currentThread(), e);
 		} catch (RifidiInvalidMessageFormat e) {
-			// TODO Think about what to do with this exception
 			running = false;
 			Thread.currentThread().getUncaughtExceptionHandler()
 					.uncaughtException(Thread.currentThread(), e);
