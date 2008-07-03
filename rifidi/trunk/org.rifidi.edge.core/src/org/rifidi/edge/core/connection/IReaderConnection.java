@@ -18,7 +18,7 @@ import org.rifidi.edge.core.readerPlugin.commands.ICustomCommand;
 import org.rifidi.edge.core.readerPlugin.commands.ICustomCommandResult;
 import org.rifidi.edge.core.readerPlugin.enums.EReaderAdapterState;
 
-
+//TODO Needs class comment header...
 public interface IReaderConnection {
 
 	//TODO Andreas: Need to change the name of this method.

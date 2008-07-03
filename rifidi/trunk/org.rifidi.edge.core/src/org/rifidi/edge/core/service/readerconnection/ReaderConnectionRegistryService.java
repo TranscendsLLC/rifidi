@@ -18,6 +18,7 @@ import org.rifidi.edge.core.connection.impl.ReaderConnection;
 import org.rifidi.edge.core.connection.listener.ReaderConnectionListener;
 import org.rifidi.edge.core.readerPlugin.AbstractReaderInfo;
 
+//TODO Needs class comment header...
 public interface ReaderConnectionRegistryService {
 
 	/**
