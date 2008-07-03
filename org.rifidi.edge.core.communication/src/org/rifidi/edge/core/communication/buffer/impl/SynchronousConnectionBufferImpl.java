@@ -54,7 +54,7 @@ public class SynchronousConnectionBufferImpl implements ConnectionBuffer,
 	}
 
 	@Override
-	public Object sendAndRecieve(Object message)
+	public synchronized Object sendAndRecieve(Object message)
 			throws RifidiIllegalOperationException, IOException {
 		checkForException();
 		synchronized (currentThreads) {

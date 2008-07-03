@@ -6,3 +6,8 @@ Bundle-Version: 1.0.0
 Bundle-Vendor: Pramari, LLC
 Fragment-Host: org.rifidi.edge.core;bundle-version="1.0.0"
 Require-Bundle: org.junit4
+Import-Package: javax.jms,
+ org.rifidi.edge.jms.service.helper,
+ org.rifidi.edge.jms.service.impl,
+ org.rifidi.edge.readerplugin.dummy,
+ org.rifidi.edge.readerplugin.dummy.commands
