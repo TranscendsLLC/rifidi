@@ -30,6 +30,7 @@ import org.rifidi.edge.rmi.ReaderConnection.RemoteReaderConnectionRegistry;
 import org.rifidi.services.annotations.Inject;
 import org.rifidi.services.registry.ServiceRegistry;
 
+//TODO Needs class comment header...
 public class RemoteReaderConnectionRegistryImpl implements
 		RemoteReaderConnectionRegistry {
 

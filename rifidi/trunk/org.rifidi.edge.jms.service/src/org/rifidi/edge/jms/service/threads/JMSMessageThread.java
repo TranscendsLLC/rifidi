@@ -29,6 +29,7 @@ import org.rifidi.edge.jms.service.helper.JMSHelper;
 import org.rifidi.services.annotations.Inject;
 import org.rifidi.services.registry.ServiceRegistry;
 
+//TODO Needs class comment header...
 public class JMSMessageThread extends AbstractThread {
 
 	private Log logger = LogFactory.getLog(JMSMessageThread.class);

@@ -15,6 +15,7 @@ import java.io.IOException;
 
 import org.rifidi.edge.core.service.communication.buffer.ConnectionBuffer;
 
+//TODO Needs class comment header...
 public interface Communication {
 
 	public ConnectionBuffer startCommunication() throws IOException;

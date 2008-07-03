@@ -5,6 +5,7 @@ import org.osgi.framework.BundleContext;
 import org.rifidi.edge.core.service.jms.JMSService;
 import org.rifidi.edge.jms.service.impl.JMSServiceImpl;
 
+//TODO Needs class comment header...
 public class Activator implements BundleActivator {
 
 	private JMSServiceImpl jmsService;
