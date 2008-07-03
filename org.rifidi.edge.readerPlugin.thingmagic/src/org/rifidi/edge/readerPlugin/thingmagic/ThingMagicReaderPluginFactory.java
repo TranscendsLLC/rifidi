@@ -26,6 +26,9 @@ public class ThingMagicReaderPluginFactory implements ISpecificReaderPluginFacto
 	
 	private static final Log logger = LogFactory.getLog(ThingMagicReaderPluginFactory.class);	
 	
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.readerPlugin.ISpecificReaderPluginFactory#createSpecificReaderAdapter(org.rifidi.edge.core.readerPlugin.AbstractReaderInfo)
+	 */
 	@Override
 	public IReaderPlugin createSpecificReaderAdapter(
 			AbstractReaderInfo abstractConnectionInfo) throws RifidiReaderPluginCreationException{

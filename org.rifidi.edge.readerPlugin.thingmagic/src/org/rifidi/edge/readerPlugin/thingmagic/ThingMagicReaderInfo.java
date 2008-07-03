@@ -35,11 +35,17 @@ public class ThingMagicReaderInfo extends AbstractReaderInfo {
 		return "ThingMagicReader";
 	}
 
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.readerPlugin.AbstractReaderInfo#getCommunicationType()
+	 */
 	@Override
 	public CommunicationType getCommunicationType() {
 		return CommunicationType.SYNCHRONOUS;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.readerPlugin.AbstractReaderInfo#getProtocol()
+	 */
 	@Override
 	public Protocol getProtocol() {
 		return new ThingMagicProtocol();
