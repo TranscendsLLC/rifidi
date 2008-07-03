@@ -63,10 +63,10 @@ public class SynchronousConnectionBufferImpl implements ConnectionBuffer,
 		try {
 			
 			//make sure this message is sent out.
-			synchronized (readQueue) {
+			//synchronized (readQueue) {
 				writeQueue.put(message);
-				readQueue.notifyAll();
-			}
+				//readQueue.notifyAll();
+			//}
 
 			return readQueue.take();
 		} catch (InterruptedException e) {	
