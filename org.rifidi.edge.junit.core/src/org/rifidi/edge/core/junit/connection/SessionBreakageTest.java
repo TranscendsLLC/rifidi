@@ -368,10 +368,8 @@ public class SessionBreakageTest {
 			e.printStackTrace();
 		}
 
-		// This shouldn't toss an error when disconecting....
-		// should it?
-		Assert.assertNotSame(s.getState(), EReaderAdapterState.ERROR);
-		Assert.assertFalse(s.getErrorCause() instanceof RifidiConnectionException);
+		Assert.assertSame(s.getState(), EReaderAdapterState.ERROR);
+		Assert.assertTrue(s.getErrorCause() instanceof RifidiConnectionException);
 	}
 
 	@Test
