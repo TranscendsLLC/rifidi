@@ -97,7 +97,7 @@ public class ReadWriteThread extends AbstractThread {
 					Object o2 = writeQueue.take();
 					
 					//make sure what we got is sent out before we return.
-					synchronized (readQueue) {
+					//synchronized (readQueue) {
 						// Send the next Message from the queue over the wire
 						sendData(o2);
 						// read answer coresponding the the message send
@@ -105,8 +105,8 @@ public class ReadWriteThread extends AbstractThread {
 						logger.debug(o);
 						readQueue.add(o);
 						
-						readQueue.notifyAll();
-					}
+						//readQueue.notifyAll();
+					//}
 				}
 			} catch (InterruptedException e) {
 				running = false;
