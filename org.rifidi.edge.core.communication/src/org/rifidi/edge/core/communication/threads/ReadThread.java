@@ -74,7 +74,10 @@ public class ReadThread extends AbstractThread {
 				}
 			}
 			// TODO: Think about catching SocketTimeOutException separately.
-			// TODO: where is the Interrupted exception handler?
+			/* The exception handler is in the Java standard api
+			 * See Thread.setUncaughtExceptionHandler(), 
+			 * 	   Thread.getUncaughtExceptionHandler()
+			 */
 		} catch (IOException e) {
 			running = false;
 			Thread.currentThread().getUncaughtExceptionHandler()

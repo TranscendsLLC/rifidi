@@ -19,7 +19,7 @@ public class ThingMagicProtocol extends Protocol {
 	 */
 	@Override
 	public Object add(byte b) throws RifidiInvalidMessageFormat {
-		// TODO Auto-generated method stub
+	
 		byteBin.append((char) b);
 		
 		if(byteBin.length() >= 2) {
