@@ -24,6 +24,11 @@ import org.rifidi.edge.core.communication.service.impl.CommunicationServiceImpl;
 import org.rifidi.edge.core.communication.threads.ReadThread;
 import org.rifidi.edge.core.communication.threads.WriteThread;
 
+
+/**
+ * @author Jerry Maine - jerry@pramari.com
+ *
+ */
 public class AsynchronousCommunication implements Communication{
 	private static final Log logger = LogFactory
 			.getLog(CommunicationServiceImpl.class);

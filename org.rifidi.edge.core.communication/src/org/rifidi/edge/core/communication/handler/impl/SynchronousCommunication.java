@@ -23,6 +23,7 @@ import org.rifidi.edge.core.communication.protocol.Protocol;
 import org.rifidi.edge.core.communication.threads.ReadWriteThread;
 import org.rifidi.edge.core.service.communication.buffer.ConnectionBuffer;
 
+//TODO Needs class comment header...
 public class SynchronousCommunication implements Communication {
 
 	private Log logger = LogFactory.getLog(SynchronousCommunication.class);

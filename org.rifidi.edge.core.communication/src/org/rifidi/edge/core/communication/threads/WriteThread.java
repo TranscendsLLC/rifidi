@@ -21,6 +21,10 @@ import org.rifidi.edge.core.communication.protocol.Protocol;
 import org.rifidi.edge.core.exception.readerConnection.RifidiInvalidMessageFormat;
 import org.rifidi.edge.common.utilities.thread.AbstractThread;
 
+/**
+ * @author Jerry Maine - jerry@pramari.com
+ *
+ */
 public class WriteThread extends AbstractThread {
 	private static final Log logger = LogFactory.getLog(WriteThread.class);
 

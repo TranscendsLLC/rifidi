@@ -21,6 +21,7 @@ import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.exception.readerConnection.RifidiIllegalOperationException;
 import org.rifidi.edge.core.service.communication.buffer.ConnectionBuffer;
 
+//TODO Needs class comment header...
 public class AsynchronousConnectionBufferImpl implements ConnectionBuffer,
 		Thread.UncaughtExceptionHandler {
 	

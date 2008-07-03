@@ -18,6 +18,7 @@ import org.apache.activemq.broker.BrokerService;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
+//TODO Needs class comment header...
 public class Activator implements BundleActivator {
 
 	BrokerService broker;

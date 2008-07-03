@@ -16,6 +16,7 @@ import org.osgi.framework.BundleContext;
 import org.rifidi.edge.rmi.service.RMIServerService;
 import org.rifidi.edge.rmi.service.impl.RMIServerServiceImpl;
 
+//TODO Needs class comment header...
 public class Activator implements BundleActivator {
 
 	private RMIServerServiceImpl rmiServerService;

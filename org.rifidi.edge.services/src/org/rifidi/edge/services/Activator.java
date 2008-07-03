@@ -14,6 +14,7 @@ package org.rifidi.edge.services;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
+//TODO Needs class comment header...
 public class Activator implements BundleActivator {
 
 	public static BundleContext context;
