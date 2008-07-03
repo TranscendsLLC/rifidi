@@ -47,6 +47,7 @@ public abstract class AbstractThread implements Runnable {
 	public void stop(){
 		logger.debug("Stopping " + thread.getName());
 		running = false;
+		thread.interrupt();		
 		try {
 			thread.join(1000);
 			if(thread.isAlive())
