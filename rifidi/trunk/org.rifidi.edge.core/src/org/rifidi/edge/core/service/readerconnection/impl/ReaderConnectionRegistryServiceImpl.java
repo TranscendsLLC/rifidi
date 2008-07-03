@@ -201,7 +201,7 @@ public class ReaderConnectionRegistryServiceImpl implements
 			return;
 		AbstractReaderInfo abstractConnectionInfo = readerConnection
 				.getConnectionInfo();
-		logger.debug("Deleting to Reader "
+		logger.debug("Deleting Reader "
 				+ abstractConnectionInfo.getClass().getName() + "://"
 				+ abstractConnectionInfo.getIPAddress() + ":"
 				+ abstractConnectionInfo.getPort());
