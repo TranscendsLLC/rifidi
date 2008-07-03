@@ -2,6 +2,10 @@ package org.rifidi.edge.readerplugin.dummy.commands;
 
 import org.rifidi.edge.core.readerPlugin.commands.ICustomCommand;
 
+/**
+ * @author Jerry Maine - jerry@pramari.com
+ *
+ */
 public class DummyCustomCommand implements ICustomCommand {
 
 	/**

@@ -91,11 +91,17 @@ public class DummyReaderInfo extends AbstractReaderInfo {
 		this.probiblityOfErrorsBeingRuntimeExceptions = probiblityOfErrorsBeingRuntimeExceptions;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.readerPlugin.AbstractReaderInfo#getCommunicationType()
+	 */
 	@Override
 	public CommunicationType getCommunicationType() {
 		return CommunicationType.SYNCHRONOUS;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.readerPlugin.AbstractReaderInfo#getProtocol()
+	 */
 	@Override
 	public Protocol getProtocol() {
 		return new DummyProtocol();

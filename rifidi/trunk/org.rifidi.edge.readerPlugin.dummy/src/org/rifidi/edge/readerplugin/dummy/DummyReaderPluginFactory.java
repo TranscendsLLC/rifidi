@@ -5,8 +5,15 @@ import org.rifidi.edge.core.readerPlugin.AbstractReaderInfo;
 import org.rifidi.edge.core.readerPlugin.IReaderPlugin;
 import org.rifidi.edge.core.readerPlugin.ISpecificReaderPluginFactory;
 
+/**
+ * @author Jerry Maine - jerry@pramari.com
+ *
+ */
 public class DummyReaderPluginFactory implements ISpecificReaderPluginFactory {
 
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.readerPlugin.ISpecificReaderPluginFactory#createSpecificReaderAdapter(org.rifidi.edge.core.readerPlugin.AbstractReaderInfo)
+	 */
 	@Override
 	public IReaderPlugin createSpecificReaderAdapter(
 			AbstractReaderInfo abstractConnectionInfo) throws RifidiReaderPluginCreationException{

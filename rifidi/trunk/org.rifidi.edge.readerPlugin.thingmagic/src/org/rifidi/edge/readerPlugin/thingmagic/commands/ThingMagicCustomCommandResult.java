@@ -26,6 +26,9 @@ public class ThingMagicCustomCommandResult implements ICustomCommandResult {
 	
 	String result;
 
+	/**
+	 * @param result
+	 */
 	public ThingMagicCustomCommandResult(String result){
 		setResult(result);
 	}

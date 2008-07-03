@@ -25,12 +25,10 @@ import org.rifidi.edge.core.exception.readerConnection.RifidiIllegalOperationExc
 import org.rifidi.edge.core.readerPlugin.IReaderPlugin;
 import org.rifidi.edge.core.readerPlugin.commands.ICustomCommand;
 import org.rifidi.edge.core.readerPlugin.commands.ICustomCommandResult;
-import org.rifidi.edge.core.service.communication.CommunicationService;
 import org.rifidi.edge.core.service.communication.buffer.ConnectionBuffer;
 import org.rifidi.edge.core.tag.TagRead;
 import org.rifidi.edge.readerPlugin.thingmagic.commands.ThingMagicCustomCommand;
 import org.rifidi.edge.readerPlugin.thingmagic.commands.ThingMagicCustomCommandResult;
-import org.rifidi.services.annotations.Inject;
 import org.rifidi.services.registry.ServiceRegistry;
 
 
@@ -47,9 +45,6 @@ public class ThingMagicReaderPlugin implements IReaderPlugin {
 
 	// the communication buffer used to talk to the reader
 	private ConnectionBuffer connectionBuffer;
-
-	// Communication services
-	private CommunicationService communicationService;
 	
 	public ThingMagicReaderPlugin(ThingMagicReaderInfo connectionInfo){
 		ServiceRegistry.getInstance().service(this);
@@ -73,15 +68,7 @@ public class ThingMagicReaderPlugin implements IReaderPlugin {
 	@Override
 	public void disconnect() throws RifidiConnectionException {
 		connected=false;
-		if (communicationService == null)
-			throw new RifidiConnectionException("CommunicationSerivce Not Found!");
 		
-		try {
-			communicationService.destroyConnection(connectionBuffer);
-		} catch (IOException e){
-			logger.debug("IOException.", e);
-			throw new RifidiConnectionException(e);
-		}
 		logger.debug("Successfully Disconnected.");
 	}
 
@@ -188,13 +175,6 @@ public class ThingMagicReaderPlugin implements IReaderPlugin {
 	@Override
 	public boolean isBlocking() {
 		return false;
-	}
-
-	@Inject
-	public void setCommunicationService(
-			CommunicationService communicationService) {
-		logger.debug("communicationService set");
-		this.communicationService = communicationService;
 	}
 
 }
