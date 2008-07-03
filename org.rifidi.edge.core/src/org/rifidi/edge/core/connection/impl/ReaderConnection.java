@@ -357,19 +357,22 @@ public class ReaderConnection implements IReaderConnection {
 			throw e;
 		}
 		state = EReaderAdapterState.DISCONECTED;
+		
 		try {
 			plugin.disconnect();
 			
 			communicationService.destroyConnection(connectionBuffer);
 		} catch (IOException e) {
+			// Ignore IO errors when disconnecting.
+			
 			//RifidiConnectionException e2 = new RifidiConnectionException("Error while disconnecting",e);
 			//setErrorCause(e2);
 			logger.error("Error while disconnecting", e);
 			//throw e2;
 		} catch (RifidiConnectionException e) {
-			//setErrorCause(e);
+			setErrorCause(e);
 			logger.error("Error while disconnecting.", e);
-			//throw e;
+			throw e;
 		} catch (RuntimeException e) {
 			/*
 			 * Error Resistance. Uncaught Runtime errors should not cause the
