@@ -16,6 +16,7 @@ import java.io.Serializable;
 import org.rifidi.edge.core.communication.enums.CommunicationType;
 import org.rifidi.edge.core.communication.protocol.Protocol;
 
+//TODO Needs class comment header...
 public abstract class AbstractReaderInfo implements Serializable {
 
 	private int port;

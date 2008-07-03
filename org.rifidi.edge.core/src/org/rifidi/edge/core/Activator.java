@@ -18,6 +18,7 @@ import org.rifidi.edge.core.service.readerconnection.impl.ReaderConnectionRegist
 import org.rifidi.edge.core.service.readerplugin.ReaderPluginRegistryService;
 import org.rifidi.edge.core.service.readerplugin.impl.ReaderPluginRegistryServiceImpl;
 
+//TODO Needs class comment header...
 public class Activator implements BundleActivator {
 
 	private ReaderConnectionRegistryService connectionService;

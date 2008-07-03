@@ -13,6 +13,7 @@ package org.rifidi.edge.core.readerPlugin;
 
 import org.rifidi.edge.core.exception.readerConnection.RifidiReaderPluginCreationException;
 
+//TODO Needs class comment header...
 public interface ISpecificReaderPluginFactory {
 
 	/**

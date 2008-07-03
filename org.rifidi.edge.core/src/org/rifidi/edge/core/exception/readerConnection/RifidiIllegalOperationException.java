@@ -13,6 +13,7 @@ package org.rifidi.edge.core.exception.readerConnection;
 
 import org.rifidi.edge.core.exception.RifidiException;
 
+//TODO Needs class comment header...
 public class RifidiIllegalOperationException extends RifidiException {
 
 	/**

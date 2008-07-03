@@ -37,7 +37,9 @@ import org.rifidi.services.registry.ServiceRegistry;
 
 /**
  * 
- * @author Jerry and Kyle A session bundles the objects needed to communicate to
+ * @author Jerry Maine
+ * @author Kyle Neumeier
+ * A session bundles the objects needed to communicate to
  *         the reader.
  */
 

@@ -11,6 +11,7 @@
  */
 package org.rifidi.edge.core.communication.enums;
 
+//TODO Needs class comment header...
 public enum CommunicationType {
 	ASYNCHRONOUS, SYNCHRONOUS
 }

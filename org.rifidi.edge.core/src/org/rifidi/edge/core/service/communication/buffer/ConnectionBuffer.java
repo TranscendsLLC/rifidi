@@ -15,6 +15,10 @@ import java.io.IOException;
 
 import org.rifidi.edge.core.exception.readerConnection.RifidiIllegalOperationException;
 
+/**
+ * @author Jerry Maine - jerry@pramari.com
+ *
+ */
 public interface ConnectionBuffer {
 
 	/**

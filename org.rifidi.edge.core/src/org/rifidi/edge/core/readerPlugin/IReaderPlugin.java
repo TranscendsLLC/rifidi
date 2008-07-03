@@ -21,6 +21,7 @@ import org.rifidi.edge.core.readerPlugin.commands.ICustomCommandResult;
 import org.rifidi.edge.core.service.communication.buffer.ConnectionBuffer;
 import org.rifidi.edge.core.tag.TagRead;
 
+//TODO Needs class comment header...
 public interface IReaderPlugin {
 
 	/**
