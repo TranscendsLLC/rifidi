@@ -21,7 +21,7 @@ public class TagStreamCommand implements Command {
 		
 		while (running){
 			try {
-				connection.sendMessage("select id, timestamp from tag_id;\n");
+				connection.sendMessage("select id, timestamp from tag_id;");
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

@@ -26,7 +26,7 @@ public class ThingMagicCommunicationProtocol implements CommunicationProtocol {
 
 	@Override
 	public byte[] messageToByte(Object message) {
-		return ((String)message).getBytes();
+		return (((String)message) + "\n").getBytes();
 	}
 
 }
