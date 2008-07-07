@@ -1,6 +1,10 @@
 package org.rifidi.edge.readerplugin.thingmagic;
 
 
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.rifidi.edge.core.communication.service.ConnectionEventListener;
 import org.rifidi.edge.core.exceptions.RifidiConnectionException;
 import org.rifidi.edge.core.readerplugin.ReaderInfo;
@@ -14,7 +18,7 @@ import org.rifidi.edge.readerplugin.thingmagic.protocol.ThingMagicCommunicationP
  *
  */
 public class ThingMagicManager extends ConnectionManager {
-	
+	Set<ConnectionEventListener> listeners = Collections.synchronizedSet(new HashSet<ConnectionEventListener>());
 
 	public ThingMagicManager(ReaderInfo readerInfo) {
 		super(readerInfo);
@@ -23,30 +27,46 @@ public class ThingMagicManager extends ConnectionManager {
 	
 	@Override
 	public void addConnectionEventListener(ConnectionEventListener event) {
-		// TODO Auto-generated method stub
-		
+		listeners.add(event);	
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionManager#connect()
+	 */
 	@Override
 	public void connect() throws RifidiConnectionException {
-		// TODO Auto-generated method stub
+		//TODO need to check if this is a real Mercury 4 or 5, ThingMagic Reader.
 		
 	}
+	
 	@Override
 	public ConnectionStreams createCommunication()
 			throws RifidiConnectionException {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionManager#disconnect()
+	 */
 	@Override
 	public void disconnect() {
 		// TODO Auto-generated method stub
 		
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionManager#getCommunicationProtocol()
+	 */
 	@Override
 	public CommunicationProtocol getCommunicationProtocol() {
 		// TODO Auto-generated method stub
 		return new ThingMagicCommunicationProtocol();
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionManager#getMaxNumConnectionsAttemps()
+	 */
 	@Override
 	public int getMaxNumConnectionsAttemps() {
 		// TODO Auto-generated method stub
@@ -63,7 +83,7 @@ public class ThingMagicManager extends ConnectionManager {
 	 */
 	@Override
 	public void removeConnectionEventListener(ConnectionEventListener event) {
-		// TODO Auto-generated method stub
+		listeners.remove(event);
 		
 	}
 	
