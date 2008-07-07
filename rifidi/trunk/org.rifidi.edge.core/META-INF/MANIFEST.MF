@@ -1,0 +1,30 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Core Plug-in
+Bundle-SymbolicName: org.rifidi.edge.core
+Bundle-Version: 1.0.0
+Bundle-Activator: org.rifidi.edge.core.Activator
+Bundle-Vendor: Pramari, LLC
+Eclipse-LazyStart: true
+Eclipse-BuddyPolicy: dependent
+Import-Package: org.osgi.framework;version="1.3.0"
+Export-Package: org.rifidi.edge.core,
+ org.rifidi.edge.core.communication,
+ org.rifidi.edge.core.communication.service,
+ org.rifidi.edge.core.exceptions,
+ org.rifidi.edge.core.messageQueue,
+ org.rifidi.edge.core.messageQueue.service,
+ org.rifidi.edge.core.readerplugin,
+ org.rifidi.edge.core.readerplugin.commands,
+ org.rifidi.edge.core.readerplugin.commands.annotations,
+ org.rifidi.edge.core.readerplugin.connectionmanager,
+ org.rifidi.edge.core.readerplugin.messages,
+ org.rifidi.edge.core.readerplugin.messages.impl,
+ org.rifidi.edge.core.readerplugin.protocol,
+ org.rifidi.edge.core.readerplugin.service,
+ org.rifidi.edge.core.readerplugin.service.impl,
+ org.rifidi.edge.core.readersession,
+ org.rifidi.edge.core.readersession.impl,
+ org.rifidi.edge.core.readersession.service,
+ org.rifidi.edge.core.readersession.service.impl
+Require-Bundle: org.rifidi.edge.services
