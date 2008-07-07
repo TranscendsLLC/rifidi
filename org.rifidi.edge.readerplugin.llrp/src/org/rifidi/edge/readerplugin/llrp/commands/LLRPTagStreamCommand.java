@@ -11,6 +11,8 @@
 package org.rifidi.edge.readerplugin.llrp.commands;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.llrp.ltk.generated.enumerations.AISpecStopTriggerType;
 import org.llrp.ltk.generated.enumerations.AccessReportTriggerType;
@@ -21,12 +23,19 @@ import org.llrp.ltk.generated.enumerations.ROSpecStartTriggerType;
 import org.llrp.ltk.generated.enumerations.ROSpecState;
 import org.llrp.ltk.generated.enumerations.ROSpecStopTriggerType;
 import org.llrp.ltk.generated.messages.ADD_ROSPEC;
+import org.llrp.ltk.generated.messages.DELETE_ROSPEC;
+import org.llrp.ltk.generated.messages.DISABLE_ROSPEC;
 import org.llrp.ltk.generated.messages.ENABLE_ROSPEC;
+import org.llrp.ltk.generated.messages.GET_ROSPECS;
+import org.llrp.ltk.generated.messages.GET_ROSPECS_RESPONSE;
+import org.llrp.ltk.generated.messages.RO_ACCESS_REPORT;
 import org.llrp.ltk.generated.messages.SET_READER_CONFIG;
+import org.llrp.ltk.generated.messages.START_ROSPEC;
 import org.llrp.ltk.generated.parameters.AISpec;
 import org.llrp.ltk.generated.parameters.AISpecStopTrigger;
 import org.llrp.ltk.generated.parameters.AccessReportSpec;
 import org.llrp.ltk.generated.parameters.C1G2EPCMemorySelector;
+import org.llrp.ltk.generated.parameters.EPC_96;
 import org.llrp.ltk.generated.parameters.EventNotificationState;
 import org.llrp.ltk.generated.parameters.InventoryParameterSpec;
 import org.llrp.ltk.generated.parameters.ROBoundarySpec;
@@ -36,14 +45,18 @@ import org.llrp.ltk.generated.parameters.ROSpecStartTrigger;
 import org.llrp.ltk.generated.parameters.ROSpecStopTrigger;
 import org.llrp.ltk.generated.parameters.ReaderEventNotificationSpec;
 import org.llrp.ltk.generated.parameters.TagReportContentSelector;
+import org.llrp.ltk.generated.parameters.TagReportData;
 import org.llrp.ltk.types.Bit;
 import org.llrp.ltk.types.LLRPInteger;
+import org.llrp.ltk.types.LLRPMessage;
 import org.llrp.ltk.types.UnsignedInteger;
 import org.llrp.ltk.types.UnsignedShort;
 import org.llrp.ltk.types.UnsignedShortArray;
+import org.rifidi.edge.common.utilities.converter.ByteAndHexConvertingUtility;
 import org.rifidi.edge.core.communication.Connection;
 import org.rifidi.edge.core.messageQueue.MessageQueue;
 import org.rifidi.edge.core.readerplugin.commands.Command;
+import org.rifidi.edge.core.readerplugin.messages.impl.TagMessage;
 
 /**
  * 
@@ -51,6 +64,8 @@ import org.rifidi.edge.core.readerplugin.commands.Command;
  * @author Matthew Dean - matt@pramari.com
  */
 public class LLRPTagStreamCommand implements Command {
+
+	private boolean running = false;
 
 	/**
 	 * The ID of the ROSpec that is used.
@@ -65,27 +80,94 @@ public class LLRPTagStreamCommand implements Command {
 	 */
 	@Override
 	public void start(Connection connection, MessageQueue messageQueue) {
-
+		running = true;
 		try {
 			SET_READER_CONFIG config = createSetReaderConfig();
 			connection.sendMessage(config);
+
+			GET_ROSPECS gr = new GET_ROSPECS();
+			connection.sendMessage(gr);
+			GET_ROSPECS_RESPONSE grr = (GET_ROSPECS_RESPONSE) connection
+					.recieveMessage();
+
+			if (doesRoSpecExist(grr)) {
+				this.findNextInt(grr);
+			}
 
 			// CREATE an ADD_ROSPEC Message and send it to the reader
 			ADD_ROSPEC addROSpec = new ADD_ROSPEC();
 			addROSpec.setROSpec(createROSpec());
 			connection.sendMessage(addROSpec);
+			connection.recieveMessage();
 
 			// Create an ENABLE_ROSPEC message and send it to the reader
 			ENABLE_ROSPEC enableROSpec = new ENABLE_ROSPEC();
 			enableROSpec.setROSpecID(new UnsignedInteger(ROSPEC_ID));
 			connection.sendMessage(enableROSpec);
-			
-			
+			connection.recieveMessage();
+
+			// Create a START_ROSPEC message and send it to the reader
+			START_ROSPEC startROSpec = new START_ROSPEC();
+			startROSpec.setROSpecID(new UnsignedInteger(ROSPEC_ID));
+			connection.sendMessage(startROSpec);
+			connection.recieveMessage();
+			connection.recieveMessage();
+
+			while (running) {
+				LLRPMessage message = (LLRPMessage) connection.recieveMessage();
+
+				if (message instanceof RO_ACCESS_REPORT) {
+
+				}
+			}
+
+			// Create a DISABLE_ROSPEC message and send it to the reader
+			DISABLE_ROSPEC disableROSpec = new DISABLE_ROSPEC();
+			disableROSpec.setROSpecID(new UnsignedInteger(ROSPEC_ID));
+			connection.sendMessage(disableROSpec);
+
+			// Create a DELTE_ROSPEC message and send it to the reader
+			DELETE_ROSPEC deleteROSpec = new DELETE_ROSPEC();
+			deleteROSpec.setROSpecID(new UnsignedInteger(ROSPEC_ID));
+			connection.sendMessage(deleteROSpec);
 		} catch (IOException e) {
-			//TODO: Throw something here
+			// TODO: Throw something here
 			e.printStackTrace();
 		}
 
+	}
+
+	/**
+	 * Parses the tags from xml.
+	 * 
+	 * @param msg
+	 *            The tag message to parse.
+	 * @return A list of TagRead objects representing tags.
+	 */
+	public List<TagMessage> parseTags(LLRPMessage msg) {
+
+		List<TagMessage> retVal = new ArrayList<TagMessage>();
+
+		if (msg == null) {
+			return retVal;
+		}
+
+		RO_ACCESS_REPORT rar = (RO_ACCESS_REPORT) msg;
+
+		// TagReportData list parse
+		for (TagReportData t : rar.getTagReportDataList()) {
+			TagMessage newTag = new TagMessage();
+			EPC_96 id = (EPC_96) t.getEPCParameter();
+			newTag.setId(ByteAndHexConvertingUtility.fromHexString(id.getEPC()
+					.toString()));
+			// TODO: Either our classes or the Toolkit
+			// handles this in the wrong way.
+			// newTag.setLastSeenTime(t.getLastSeenTimestampUTC().getMicroseconds().toLong());
+			newTag.setLastSeenTime(System.nanoTime());
+			retVal.add(newTag);
+		}
+
+		return retVal;
 	}
 
 	/*
@@ -95,7 +177,48 @@ public class LLRPTagStreamCommand implements Command {
 	 */
 	@Override
 	public void stop() {
+		running = false;
+	}
 
+	/**
+	 * Finds the next acceptable ROSpec number.
+	 * 
+	 * @param grr
+	 *            The GET_ROSPECS_RESPONSE, which will list all ROSpec IDs
+	 *            already in use.
+	 */
+	private void findNextInt(GET_ROSPECS_RESPONSE grr) {
+		ROSPEC_ID++;
+		boolean isDone = false;
+		while (!isDone) {
+			isDone = true;
+			for (ROSpec r : grr.getROSpecList()) {
+				if (r.getROSpecID().intValue() == ROSPEC_ID) {
+					isDone = false;
+					ROSPEC_ID++;
+				}
+			}
+		}
+	}
+
+	/**
+	 * Does the ROSpec exist?
+	 * 
+	 * @param grr
+	 *            The GET_ROSPECS_RESPONSE search through.
+	 * @return Returns true if the default ROSpec exists, false if it does not
+	 *         exist.
+	 */
+	private boolean doesRoSpecExist(GET_ROSPECS_RESPONSE grr) {
+		boolean retVal = false;
+
+		for (ROSpec r : grr.getROSpecList()) {
+			if (r.getROSpecID().toInteger() == ROSPEC_ID) {
+				retVal = true;
+			}
+		}
+
+		return retVal;
 	}
 
 	/**
