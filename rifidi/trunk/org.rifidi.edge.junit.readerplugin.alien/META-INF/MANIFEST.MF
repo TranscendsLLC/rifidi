@@ -1,8 +1,0 @@
-Manifest-Version: 1.0
-Bundle-ManifestVersion: 2
-Bundle-Name: Alien Fragment
-Bundle-SymbolicName: org.rifidi.edge.junit.readerplugin.alien
-Bundle-Version: 1.0.0
-Bundle-Vendor: Pramari, LLC
-Fragment-Host: org.rifidi.edge.readerPlugin.alien;bundle-version="1.0.0"
-Require-Bundle: org.junit4

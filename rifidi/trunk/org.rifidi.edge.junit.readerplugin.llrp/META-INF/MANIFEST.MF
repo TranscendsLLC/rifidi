@@ -1,8 +1,0 @@
-Manifest-Version: 1.0
-Bundle-ManifestVersion: 2
-Bundle-Name: Llrp Fragment
-Bundle-SymbolicName: org.rifidi.edge.junit.readerplugin.llrp
-Bundle-Version: 1.0.0
-Bundle-Vendor: Pramari, LLC
-Fragment-Host: org.rifidi.edge.readerPlugin.llrp;bundle-version="1.0.0"
-Require-Bundle: org.junit4
