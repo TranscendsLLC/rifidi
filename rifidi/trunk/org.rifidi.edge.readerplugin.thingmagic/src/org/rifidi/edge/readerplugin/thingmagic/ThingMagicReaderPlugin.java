@@ -15,13 +15,13 @@ import org.rifidi.edge.readerplugin.thingmagic.commands.TagStreamCommand;
  *
  */
 public class ThingMagicReaderPlugin implements ReaderPlugin {
-
+	ArrayList<Class<? extends Command>> commands = new ArrayList<Class<? extends Command>>();
+	
 	/* (non-Javadoc)
 	 * @see org.rifidi.edge.core.readerplugin.ReaderPlugin#getAvailableCommands()
 	 */
 	@Override
 	public List<Class<? extends Command>> getAvailableCommands() {
-		ArrayList<Class<? extends Command>> commands = new ArrayList<Class<? extends Command>>();
 		commands.add(TagStreamCommand.class);
 		commands.add(GetTagsOnceCommand.class);
 		return commands;
@@ -33,7 +33,7 @@ public class ThingMagicReaderPlugin implements ReaderPlugin {
 	@Override
 	public ConnectionManager getConnectionManager() {
 		// TODO Auto-generated method stub
-		return new ThingMagicManager();
+		return new ThingMagicManager(null);
 	}
 
 	/* (non-Javadoc)
@@ -43,6 +43,11 @@ public class ThingMagicReaderPlugin implements ReaderPlugin {
 	public MessageProtocol getMessageProtocol() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public void addCommand(List<Class<? extends Command>> commands) {
+		commands.addAll(commands);
 	}
 
 }
