@@ -72,4 +72,13 @@ public class ThingMagicManager implements ConnectionManager {
 		connect(readerInfo, connection);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionManager#startKeepAlive()
+	 */
+	@Override
+	public void startKeepAlive() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

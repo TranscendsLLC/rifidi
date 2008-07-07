@@ -6,7 +6,7 @@ import org.rifidi.edge.core.readerplugin.ReaderInfo;
  * @author Jerry Maine - jerry@pramari.com
  *
  */
-public class ThingMagicReaderInfo implements ReaderInfo {
+public class ThingMagicReaderInfo extends ReaderInfo {
 
 	String ipAddress;
 	int port;
