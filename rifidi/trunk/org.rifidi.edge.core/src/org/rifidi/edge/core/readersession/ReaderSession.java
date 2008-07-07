@@ -1,6 +1,6 @@
 package org.rifidi.edge.core.readersession;
 
-import org.rifidi.edge.core.communication.service.RifidiConnectionException;
+import org.rifidi.edge.core.exceptions.RifidiConnectionException;
 import org.rifidi.edge.core.readerplugin.ReaderInfo;
 
 public interface ReaderSession {

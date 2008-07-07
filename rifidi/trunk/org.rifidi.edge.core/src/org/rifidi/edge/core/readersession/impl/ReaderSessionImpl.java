@@ -5,9 +5,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.rifidi.edge.core.communication.Connection;
 import org.rifidi.edge.core.communication.service.ConnectionService;
-import org.rifidi.edge.core.communication.service.RifidiConnectionException;
+import org.rifidi.edge.core.exceptions.RifidiConnectionException;
 import org.rifidi.edge.core.messageQueue.MessageQueue;
 import org.rifidi.edge.core.messageQueue.service.MessageService;
 import org.rifidi.edge.core.readerplugin.ReaderInfo;
@@ -47,7 +46,17 @@ public class ReaderSessionImpl implements ReaderSession {
 	}
 
 	@Override
+	public ReaderInfo getReaderInfo() {
+		return readerInfo;
+	}
+
+	@Override
 	public void executeCommand(String command) throws RifidiConnectionException {
+
+		if (status != ReaderSessionStatus.CONNECTED) {
+			initializeConnection();
+		}
+
 		for (Class<? extends Command> commandClass : readerPlugin
 				.getAvailableCommands()) {
 			System.out.println(commandClass.getName());
@@ -63,16 +72,14 @@ public class ReaderSessionImpl implements ReaderSession {
 
 						// TODO only need to happen once
 						commandInstance = (Command) constructor.newInstance();
-						connectionManager = readerPlugin.getConnectionManager();
-						Connection connection = connectionService
-								.createConnection(connectionManager, readerInfo);
+
 						MessageQueue messageQueue = messageService
 								.createMessageQueue();
 
 						status = ReaderSessionStatus.BUSY;
 
 						fireExecutionStartedEvent(commandInstance);
-						commandInstance.start(connection, messageQueue);
+						// commandInstance.start(connection, messageQueue);
 					} catch (SecurityException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -99,6 +106,11 @@ public class ReaderSessionImpl implements ReaderSession {
 
 	}
 
+	private void initializeConnection() {
+
+		// this.wait();
+	}
+
 	@Override
 	public void stopCommand() {
 		fireExecutionStoppedEvent(commandInstance);
@@ -115,6 +127,20 @@ public class ReaderSessionImpl implements ReaderSession {
 		listeners.remove(listener);
 	}
 
+	private void fireExecutionStartedEvent(Command event) {
+		connectionManager.startKeepAlive();
+		for (ExecutionListener listener : listeners) {
+			listener.executionStarted(event);
+		}
+	}
+
+	private void fireExecutionStoppedEvent(Command event) {
+		connectionManager.stopKeepAlive();
+		for (ExecutionListener listener : listeners) {
+			listener.executionStopped(event);
+		}
+	}
+
 	@Inject
 	public void setConnectionService(ConnectionService connectionService) {
 		System.out.println("ConnectionService injected");
@@ -125,26 +151,6 @@ public class ReaderSessionImpl implements ReaderSession {
 	public void setMessageService(MessageService messageService) {
 		System.out.println("MessageService injected");
 		this.messageService = messageService;
-	}
-
-	private void fireExecutionStartedEvent(Command event) {
-		connectionManager.startKeepAlive();
-		for (ExecutionListener listener : listeners) {
-			listener.executionStarted(event);
-		}
-	}
-
-	private void fireExecutionStoppedEvent(Command event) {
-		connectionManager.startKeepAlive();
-		for (ExecutionListener listener : listeners) {
-			listener.executionStopped(event);
-		}
-	}
-
-	@Override
-	public ReaderInfo getReaderInfo() {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 }
