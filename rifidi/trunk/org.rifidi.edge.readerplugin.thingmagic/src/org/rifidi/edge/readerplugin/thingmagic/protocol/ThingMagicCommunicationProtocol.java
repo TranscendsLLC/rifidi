@@ -13,11 +13,13 @@ public class ThingMagicCommunicationProtocol implements CommunicationProtocol {
 	@Override
 	public Object byteToMessage(byte b) {
 		buffer.append(b);
-		if(buffer.length() == 5)
-		{
-			String retVal = buffer.toString();
-			buffer = new StringBuffer();
-			return retVal;
+		if (buffer.length() >= 2 ){
+			if(buffer.toString().endsWith("\n\n"))
+			{
+				String retVal = buffer.toString();
+				buffer = new StringBuffer();
+				return retVal.replace("\n\n", "");
+			}
 		}
 		return null;
 	}
