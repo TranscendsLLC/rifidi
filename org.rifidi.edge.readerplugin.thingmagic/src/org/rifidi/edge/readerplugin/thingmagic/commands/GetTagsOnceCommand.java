@@ -15,7 +15,7 @@ public class GetTagsOnceCommand implements Command {
 	@Override
 	public void start(Connection connection, MessageQueue messageQueue) {
 		try {
-			connection.sendMessage("select id, timestamp from tag_id;\n");
+			connection.sendMessage("select id, timestamp from tag_id;");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
