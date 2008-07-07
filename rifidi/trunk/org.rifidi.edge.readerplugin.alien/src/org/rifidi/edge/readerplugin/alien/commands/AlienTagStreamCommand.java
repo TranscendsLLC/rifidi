@@ -22,8 +22,9 @@ import org.rifidi.edge.core.readerplugin.commands.Command;
 import org.rifidi.edge.core.readerplugin.messages.impl.TagMessage;
 
 /**
- * @author Matthew Dean - matt@pramari.com
  * 
+ * 
+ * @author Matthew Dean - matt@pramari.com
  */
 public class AlienTagStreamCommand implements Command {
 
@@ -57,7 +58,6 @@ public class AlienTagStreamCommand implements Command {
 				}
 			}
 		} catch (IOException e) {
-			// TODO: Throw some exception or other?
 			e.printStackTrace();
 		}
 
