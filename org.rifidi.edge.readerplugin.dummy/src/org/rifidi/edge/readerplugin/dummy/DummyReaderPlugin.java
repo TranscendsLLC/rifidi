@@ -31,4 +31,10 @@ public class DummyReaderPlugin implements ReaderPlugin {
 		return null;
 	}
 
+	@Override
+	public void addCommand(List<Class<? extends Command>> commands) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }
