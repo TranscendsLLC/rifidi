@@ -10,19 +10,13 @@ public class AlienConnectionManager implements ConnectionManager {
 	@Override
 	public void connect(ReaderInfo readerInfo, Connection connection) {
 		// TODO Auto-generated method stub
-
-	}
-	
-	@Override
-	public void reconnect() {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void disconnect() {
 		// TODO Auto-generated method stub
-
+		
 	}
 
 	@Override
@@ -42,4 +36,18 @@ public class AlienConnectionManager implements ConnectionManager {
 		// TODO Auto-generated method stub
 		return 0;
 	}
+
+	@Override
+	public void reconnect() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void startKeepAlive() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	
 }
