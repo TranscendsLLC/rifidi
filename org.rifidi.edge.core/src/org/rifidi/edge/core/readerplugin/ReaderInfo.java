@@ -1,6 +1,8 @@
 package org.rifidi.edge.core.readerplugin;
 
-public abstract class ReaderInfo {
+import java.io.Serializable;
+
+public abstract class ReaderInfo implements Serializable {
 
 	private String ipAddress;
 	private int port;
