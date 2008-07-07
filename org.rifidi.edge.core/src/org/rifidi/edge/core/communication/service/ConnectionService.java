@@ -3,6 +3,7 @@ package org.rifidi.edge.core.communication.service;
 import java.util.List;
 
 import org.rifidi.edge.core.communication.Connection;
+import org.rifidi.edge.core.exceptions.RifidiConnectionException;
 import org.rifidi.edge.core.readerplugin.ReaderInfo;
 import org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionManager;
 

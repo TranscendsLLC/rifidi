@@ -1,22 +1,33 @@
 package org.rifidi.edge.core.readerplugin.connectionmanager;
 
-import org.rifidi.edge.core.communication.Connection;
+import org.rifidi.edge.core.communication.service.ConnectionEventListener;
+import org.rifidi.edge.core.exceptions.RifidiConnectionException;
 import org.rifidi.edge.core.readerplugin.ReaderInfo;
 import org.rifidi.edge.core.readerplugin.protocol.CommunicationProtocol;
 
-public interface ConnectionManager {
+public abstract class ConnectionManager implements ConnectionExceptionListener {
 
-	public void connect(ReaderInfo readerInfo, Connection connection);
+	public ConnectionManager(ReaderInfo readerInfo) {
+	}
+
+	public abstract ConnectionStreams createCommunication()
+			throws RifidiConnectionException;
+
+	public abstract void connect() throws RifidiConnectionException;
+
+	public abstract void disconnect();
+
+	public abstract int getMaxNumConnectionsAttemps();
+
+	public abstract long getReconnectionIntervall();
+
+	public abstract CommunicationProtocol getCommunicationProtocol();
+
+	public abstract void startKeepAlive();
+
+	public abstract void stopKeepAlive();
 	
-	public void reconnect();
-
-	public void disconnect();
+	public abstract void addConnectionEventListener(ConnectionEventListener event);
 	
-	public int getMaxConnectionAttemps();
-	
-	public long getConnectionAttemptInterval();
-
-	public CommunicationProtocol getCommunicationProtocol();
-
-	public void startKeepAlive();
+	public abstract void removeConnectionEventListener(ConnectionEventListener event);
 }

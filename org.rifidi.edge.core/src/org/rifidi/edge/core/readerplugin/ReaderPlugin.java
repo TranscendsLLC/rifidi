@@ -12,7 +12,7 @@ public interface ReaderPlugin {
 
 	public List<Class<? extends Command>> getAvailableCommands();
 
-	// public void addCommand(Class<? extends Command> command);
+	public void addCommand(List<Class<? extends Command>> commands);
 
 	public MessageProtocol getMessageProtocol();
 }
