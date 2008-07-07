@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Llrp Plug-in
+Bundle-SymbolicName: org.rifidi.edge.readerplugin.llrp
+Bundle-Version: 1.0.0
+Bundle-Activator: org.rifidi.edge.readerplugin.llrp.Activator
+Bundle-Vendor: Pramari. LLC
+Eclipse-LazyStart: true
+Import-Package: org.osgi.framework;version="1.3.0"
+Require-Bundle: org.rifidi.edge.core,
+ org.rifidi.edge.services
