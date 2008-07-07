@@ -17,4 +17,6 @@ public interface ConnectionManager {
 	public long getConnectionAttemptInterval();
 
 	public CommunicationProtocol getCommunicationProtocol();
+
+	public void startKeepAlive();
 }

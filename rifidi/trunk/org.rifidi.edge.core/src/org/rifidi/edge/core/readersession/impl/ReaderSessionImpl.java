@@ -1,6 +1,5 @@
 package org.rifidi.edge.core.readersession.impl;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -15,6 +14,7 @@ import org.rifidi.edge.core.readerplugin.ReaderInfo;
 import org.rifidi.edge.core.readerplugin.ReaderPlugin;
 import org.rifidi.edge.core.readerplugin.commands.Command;
 import org.rifidi.edge.core.readerplugin.commands.annotations.CommandDesc;
+import org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionManager;
 import org.rifidi.edge.core.readersession.ExecutionListener;
 import org.rifidi.edge.core.readersession.ReaderSession;
 import org.rifidi.edge.core.readersession.ReaderSessionStatus;
@@ -33,6 +33,7 @@ public class ReaderSessionImpl implements ReaderSession {
 	private Command commandInstance;
 
 	private List<ExecutionListener> listeners = new ArrayList<ExecutionListener>();
+	private ConnectionManager connectionManager;
 
 	public ReaderSessionImpl(ReaderInfo readerInfo, ReaderPlugin readerPlugin) {
 		this.readerInfo = readerInfo;
@@ -50,9 +51,6 @@ public class ReaderSessionImpl implements ReaderSession {
 		for (Class<? extends Command> commandClass : readerPlugin
 				.getAvailableCommands()) {
 			System.out.println(commandClass.getName());
-			for (Annotation a : commandClass.getAnnotations()) {
-				System.out.println(a.toString());
-			}
 
 			CommandDesc commandDesc = commandClass
 					.getAnnotation(CommandDesc.class);
@@ -63,11 +61,11 @@ public class ReaderSessionImpl implements ReaderSession {
 						Constructor<? extends Command> constructor = commandClass
 								.getConstructor();
 
+						// TODO only need to happen once
 						commandInstance = (Command) constructor.newInstance();
-
+						connectionManager = readerPlugin.getConnectionManager();
 						Connection connection = connectionService
-								.createConnection(readerPlugin
-										.getConnectionManager(), readerInfo);
+								.createConnection(connectionManager, readerInfo);
 						MessageQueue messageQueue = messageService
 								.createMessageQueue();
 
@@ -130,12 +128,14 @@ public class ReaderSessionImpl implements ReaderSession {
 	}
 
 	private void fireExecutionStartedEvent(Command event) {
+		connectionManager.startKeepAlive();
 		for (ExecutionListener listener : listeners) {
 			listener.executionStarted(event);
 		}
 	}
 
 	private void fireExecutionStoppedEvent(Command event) {
+		connectionManager.startKeepAlive();
 		for (ExecutionListener listener : listeners) {
 			listener.executionStopped(event);
 		}
