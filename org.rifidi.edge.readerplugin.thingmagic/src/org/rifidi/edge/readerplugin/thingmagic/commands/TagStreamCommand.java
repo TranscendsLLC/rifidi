@@ -55,7 +55,7 @@ public class TagStreamCommand implements Command {
 					//TODO: correct the time stamps.
 					tag.setLastSeenTime(System.nanoTime()); 
 					messageQueue.addMessage(tag);
-				}
+				} 
 				
 			}
 		}
