@@ -8,22 +8,34 @@ import org.rifidi.edge.core.readerplugin.ReaderInfo;
  */
 public class ThingMagicReaderInfo implements ReaderInfo {
 
-	/* (non-Javadoc)
-	 * @see org.rifidi.edge.core.readerplugin.ReaderInfo#getIpAddress()
+	String ipAddress;
+	int port;
+	
+	/**
+	 * @return the ipAddress
 	 */
-	@Override
+	@Override()
 	public String getIpAddress() {
-		// TODO Auto-generated method stub
-		return null;
+		return ipAddress;
 	}
-
-	/* (non-Javadoc)
-	 * @see org.rifidi.edge.core.readerplugin.ReaderInfo#getPort()
+	/**
+	 * @param ipAddress the ipAddress to set
 	 */
-	@Override
-	public int getPort() {
-		// TODO Auto-generated method stub
-		return 0;
+	public void setIpAddress(String ipAddress) {
+		this.ipAddress = ipAddress;
 	}
-
+	/**
+	 * @return the port
+	 */
+	@Override()
+	public int getPort() {
+		return port;
+	}
+	/**
+	 * @param port the port to set
+	 */
+	public void setPort(int port) {
+		this.port = port;
+	}
+	
 }
