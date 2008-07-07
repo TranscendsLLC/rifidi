@@ -41,7 +41,6 @@ public class ThingMagicManager implements ConnectionManager {
 	 */
 	@Override
 	public CommunicationProtocol getCommunicationProtocol() {
-		// TODO Auto-generated method stub
 		return new ThingMagicCommunicationProtocol();
 	}
 

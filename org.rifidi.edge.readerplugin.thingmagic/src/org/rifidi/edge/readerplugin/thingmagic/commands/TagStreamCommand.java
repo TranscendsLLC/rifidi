@@ -15,6 +15,7 @@ public class TagStreamCommand implements Command {
 	//private static final Log logger = LogFactory.getLog(ThingMagicReaderPlugin.class);
 	
 	boolean running = true;
+	
 	@Override
 	public void start(Connection connection, MessageQueue messageQueue) {
 		
