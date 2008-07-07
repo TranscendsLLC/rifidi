@@ -3,6 +3,8 @@ package org.rifidi.edge.readerplugin.thingmagic.commands;
 import java.io.IOException;
 
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.common.utilities.converter.ByteAndHexConvertingUtility;
 import org.rifidi.edge.core.communication.Connection;
 import org.rifidi.edge.core.messageQueue.MessageQueue;
@@ -12,7 +14,7 @@ import org.rifidi.edge.core.readerplugin.messages.impl.TagMessage;
 
 @CommandDesc(name="TagStreaming")
 public class TagStreamCommand implements Command {
-	//private static final Log logger = LogFactory.getLog(ThingMagicReaderPlugin.class);
+	private static final Log logger = LogFactory.getLog(TagStreamCommand.class);
 	
 	boolean running = true;
 	
@@ -38,7 +40,7 @@ public class TagStreamCommand implements Command {
 			if ( !recieved.equals("") ) {
 				String[] rawTags = recieved.split("\n");
 				for (String rawTag: rawTags){
-					//logger.debug(rawTag);
+					logger.debug(rawTag);
 					
 					//All tag data sent back is separated by vertical bars.
 					String[] rawTagItems = rawTag.split("\\|");
