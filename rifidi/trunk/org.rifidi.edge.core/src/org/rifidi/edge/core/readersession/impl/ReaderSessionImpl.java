@@ -141,4 +141,10 @@ public class ReaderSessionImpl implements ReaderSession {
 		}
 	}
 
+	@Override
+	public ReaderInfo getReaderInfo() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }
