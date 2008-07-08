@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.rifidi.edge.core.readerplugin.ReaderInfo;
 import org.rifidi.edge.core.readerplugin.ReaderPlugin;
+import org.rifidi.edge.core.readerplugin.service.ReaderPluginListener;
 import org.rifidi.edge.core.readerplugin.service.ReaderPluginService;
 
 public class ReaderPluginServiceImpl implements ReaderPluginService {
@@ -33,6 +34,18 @@ public class ReaderPluginServiceImpl implements ReaderPluginService {
 	public ReaderPlugin getReaderPlugin(Class<? extends ReaderInfo> readerInfo){
 		//TODO Throw Exception if no such reader
 		return registry.get(readerInfo);
+	}
+
+	@Override
+	public void addReaderPluginListener(ReaderPluginListener listener) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void removeReaderPluginListener(ReaderPluginListener listener) {
+		// TODO Auto-generated method stub
+		
 	}
 
 	
