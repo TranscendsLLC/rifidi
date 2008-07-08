@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import org.rifidi.edge.core.communication.Connection;
@@ -18,7 +19,7 @@ public class ConnectionImpl implements Connection {
 	// FIXME KYLE make me Thread safe
 	private HashSet<Thread> blockedThreads = new HashSet<Thread>();
 
-	private List<ConnectionExceptionListener> listeners = new ArrayList<ConnectionExceptionListener>();
+	static private Set<ConnectionExceptionListener> listeners = new HashSet<ConnectionExceptionListener>();
 
 	public ConnectionImpl(LinkedBlockingQueue<Object> readQueue,
 			LinkedBlockingQueue<Object> writeQueue) {
