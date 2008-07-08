@@ -12,6 +12,8 @@ public interface ReaderPlugin {
 
 	public List<Class<? extends Command>> getAvailableCommands();
 
+	//TODO Need also remove command.
+	//TODO Consider making this abstract class and implementing this for all readers.
 	public void addCommand(List<Class<? extends Command>> commands);
 
 	public MessageProtocol getMessageProtocol();
