@@ -3,6 +3,7 @@ package org.rifidi.edge.readerplugin.dummy;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.rifidi.edge.core.readerplugin.ReaderInfo;
 import org.rifidi.edge.core.readerplugin.ReaderPlugin;
 import org.rifidi.edge.core.readerplugin.commands.Command;
 import org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionManager;
@@ -24,17 +25,15 @@ public class DummyReaderPlugin implements ReaderPlugin {
 		return new DummyMessageProtocol();
 	}
 
-	//FIXME implement ConnectionManager
-	@Override
-	public ConnectionManager getConnectionManager() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 	@Override
 	public void addCommand(List<Class<? extends Command>> commands) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public ConnectionManager getConnectionManager(ReaderInfo readerInfo) {
+		return new DummyConnectionManager(readerInfo);
 	}
 
 }

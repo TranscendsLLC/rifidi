@@ -16,6 +16,7 @@ import org.rifidi.edge.core.readerplugin.protocol.CommunicationProtocol;
 import org.rifidi.edge.readerplugin.dummy.protocol.DummyCommunicationProtocol;
 
 public class DummyConnectionManager extends ConnectionManager {
+	
 	private static final Log logger = LogFactory
 			.getLog(DummyConnectionManager.class);
 	DummyReaderInfo info;
@@ -26,11 +27,11 @@ public class DummyConnectionManager extends ConnectionManager {
 	/* used only when the dummy adapter is set to random errors */
 	Random random;
 
-	// public DummyConnectionManager(ReaderInfo readerInfo) {
-	// super(readerInfo);
-	// // TODO Auto-generated constructor stub
-	// this.info = (DummyReaderInfo) readerInfo;
-	// }
+	 public DummyConnectionManager(ReaderInfo readerInfo) {
+	 super(readerInfo);
+		 // TODO Auto-generated constructor stub
+		 this.info = (DummyReaderInfo) readerInfo;
+	 }
 
 	/*
 	 * (non-Javadoc)
@@ -38,8 +39,7 @@ public class DummyConnectionManager extends ConnectionManager {
 	 * @see org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionManager#connect()
 	 */
 	@Override
-	public void connect(ReaderInfo readerInfo) throws RifidiConnectionException {
-		readerInfo = (DummyReaderInfo) readerInfo;
+	public void connect() throws RifidiConnectionException {
 		/* used for breakage testing purposes */
 		switch (info.getErrorToSet()) {
 		case CONNECT:
@@ -123,10 +123,9 @@ public class DummyConnectionManager extends ConnectionManager {
 	 * @see org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionManager#createCommunication()
 	 */
 	@Override
-	public ConnectionStreams createCommunication(ReaderInfo readerInfo)
+	public ConnectionStreams createCommunication()
 			throws RifidiConnectionException {
-		readerInfo = (DummyReaderInfo) readerInfo;
-		return null;
+			return null;
 	}
 
 	@Override
@@ -157,11 +156,4 @@ public class DummyConnectionManager extends ConnectionManager {
 		// TODO Auto-generated method stub
 
 	}
-
-	@Override
-	protected void fireEvent() {
-		// TODO Auto-generated method stub
-		
-	}
-
 }

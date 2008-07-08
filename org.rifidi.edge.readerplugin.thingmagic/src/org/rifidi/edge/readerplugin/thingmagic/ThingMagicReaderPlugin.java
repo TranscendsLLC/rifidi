@@ -3,6 +3,7 @@ package org.rifidi.edge.readerplugin.thingmagic;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.rifidi.edge.core.readerplugin.ReaderInfo;
 import org.rifidi.edge.core.readerplugin.ReaderPlugin;
 import org.rifidi.edge.core.readerplugin.commands.Command;
 import org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionManager;
@@ -12,12 +13,14 @@ import org.rifidi.edge.readerplugin.thingmagic.commands.TagStreamCommand;
 
 /**
  * @author Jerry Maine - jerry@pramari.com
- *
+ * 
  */
 public class ThingMagicReaderPlugin implements ReaderPlugin {
 	ArrayList<Class<? extends Command>> commands = new ArrayList<Class<? extends Command>>();
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.rifidi.edge.core.readerplugin.ReaderPlugin#getAvailableCommands()
 	 */
 	@Override
@@ -27,16 +30,19 @@ public class ThingMagicReaderPlugin implements ReaderPlugin {
 		return commands;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.rifidi.edge.core.readerplugin.ReaderPlugin#getConnectionManager()
 	 */
 	@Override
-	public ConnectionManager getConnectionManager() {
-		// TODO Auto-generated method stub
-		return new ThingMagicManager();
+	public ConnectionManager getConnectionManager(ReaderInfo readerInfo) {
+		return new ThingMagicManager(readerInfo);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.rifidi.edge.core.readerplugin.ReaderPlugin#getMessageProtocol()
 	 */
 	@Override

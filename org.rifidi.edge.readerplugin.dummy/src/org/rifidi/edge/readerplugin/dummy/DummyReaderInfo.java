@@ -6,6 +6,11 @@ import org.rifidi.edge.core.readerplugin.ReaderInfo;
 
 public class DummyReaderInfo extends ReaderInfo {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -5486038928636364398L;
+
 	private EDummyError errorToSet = EDummyError.NONE;
 
 	/* number from 0 (inclusive) to 1 (exclusive)*/

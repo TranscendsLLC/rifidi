@@ -8,7 +8,6 @@ import org.rifidi.edge.core.communication.Connection;
 import org.rifidi.edge.core.communication.threads.ReadThread;
 import org.rifidi.edge.core.communication.threads.WriteThread;
 import org.rifidi.edge.core.exceptions.RifidiConnectionException;
-import org.rifidi.edge.core.readerplugin.ReaderInfo;
 import org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionExceptionListener;
 import org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionManager;
 import org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionStreams;
@@ -26,11 +25,8 @@ public class Communication implements ConnectionExceptionListener {
 	private LinkedBlockingQueue<Object> writeQueue;
 	private ReadThread readThread;
 	private WriteThread writeThread;
-	private ReaderInfo readerInfo;
 
-	public Communication(ConnectionManager connectionManager,
-			ReaderInfo readerInfo) {
-		this.readerInfo = readerInfo;
+	public Communication(ConnectionManager connectionManager) {
 		this.connectionManager = connectionManager;
 	}
 
@@ -50,7 +46,7 @@ public class Communication implements ConnectionExceptionListener {
 
 
 		// Create logical connection
-		connectionManager.connect(readerInfo);
+		connectionManager.connect();
 
 		connection.addConnectionExceptionListener(this);
 
@@ -110,7 +106,7 @@ public class Communication implements ConnectionExceptionListener {
 	}
 	
 	private void _connect() throws RifidiConnectionException{
-		ConnectionStreams connectionStreams = connectionManager.createCommunication(readerInfo);
+		ConnectionStreams connectionStreams = connectionManager.createCommunication();
 		readThread = new ReadThread("threadname", connection, protocol,
 				readQueue, connectionStreams.getInputStream());
 

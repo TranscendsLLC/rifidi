@@ -19,26 +19,18 @@ import org.rifidi.edge.readerplugin.thingmagic.protocol.ThingMagicCommunicationP
  */
 public class ThingMagicManager extends ConnectionManager {
 
+	public ThingMagicManager(ReaderInfo readerInfo) {
+		super(readerInfo);
+		info = (ThingMagicReaderInfo) readerInfo;
+	}
+
 	private Socket socket;
 	private ThingMagicReaderInfo info;
 	
 	@Override
-	public void connect(ReaderInfo readerInfo) throws RifidiConnectionException {
+	public void connect() throws RifidiConnectionException {
 		// TODO Auto-generated method stub
-		info = (ThingMagicReaderInfo) readerInfo;
-		
-		if (!info.isSsh()) {
-			try {
-				socket = new Socket(info.getIpAddress(), info.getPort());
-			} catch (UnknownHostException e) {
-				throw new RifidiConnectionException(e);
-			} catch (IOException e) {
-				throw new RifidiConnectionException(e);
-			}
-		} else {
-			//TODO implement connection to reader by ssh
-			throw new UnsupportedOperationException("Connections to Merucry 4 or 5, ThingMagic readers by ssh not impemented.");
-		}
+
 		
 		//TODO Fire events;
 	}
@@ -69,11 +61,12 @@ public class ThingMagicManager extends ConnectionManager {
 	 */
 	@Override
 	public int getMaxNumConnectionsAttemps() {
+		//TODO implement this.
 		return 3;
 	}
 	@Override
 	public long getReconnectionIntervall() {
-		// TODO Auto-generated method stub
+		// TODO implement this.
 		return 1000;
 	}
 	
@@ -105,22 +98,17 @@ public class ThingMagicManager extends ConnectionManager {
 	}
 
 	@Override
-	public ConnectionStreams createCommunication(ReaderInfo readerInfo)
+	public ConnectionStreams createCommunication()
 			throws RifidiConnectionException {
 		// TODO Auto-generated method stub
+		
+		
 		try {
 			return new ConnectionStreams(socket.getInputStream(), socket.getOutputStream());
 		} catch (IOException e) {
 			throw new RifidiConnectionException(e);
 		}
 	}
-
-	@Override
-	protected void fireEvent() {
-		// TODO Cannot tell if this is a fire disconnect event or fire connect event...
-		
-	}
-
 
 
 }
