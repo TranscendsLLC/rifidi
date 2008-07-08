@@ -15,4 +15,8 @@ public interface ReaderPluginService {
 	public ReaderPlugin getReaderPlugin(Class<? extends ReaderInfo> readerInfo);
 
 	public List<Class<? extends ReaderInfo>> getAllReaderPlugins();
+
+	public void addReaderPluginListener(ReaderPluginListener listener);
+
+	public void removeReaderPluginListener(ReaderPluginListener listener);
 }
