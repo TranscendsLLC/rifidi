@@ -61,7 +61,6 @@ public class ThingMagicManager extends ConnectionManager {
 	 */
 	@Override
 	public CommunicationProtocol getCommunicationProtocol() {
-		// TODO Auto-generated method stub
 		return new ThingMagicCommunicationProtocol();
 	}
 	
@@ -70,7 +69,6 @@ public class ThingMagicManager extends ConnectionManager {
 	 */
 	@Override
 	public int getMaxNumConnectionsAttemps() {
-		// TODO Auto-generated method stub
 		return 3;
 	}
 	@Override
