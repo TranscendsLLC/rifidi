@@ -33,7 +33,7 @@ public class ThingMagicReaderPlugin implements ReaderPlugin {
 	@Override
 	public ConnectionManager getConnectionManager() {
 		// TODO Auto-generated method stub
-		return new ThingMagicManager(null);
+		return new ThingMagicManager();
 	}
 
 	/* (non-Javadoc)

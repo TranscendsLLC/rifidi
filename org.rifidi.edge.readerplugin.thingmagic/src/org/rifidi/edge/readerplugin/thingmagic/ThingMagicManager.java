@@ -1,11 +1,11 @@
 package org.rifidi.edge.readerplugin.thingmagic;
 
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.io.IOException;
+import java.net.Socket;
+import java.net.UnknownHostException;
 
-import org.rifidi.edge.core.communication.service.ConnectionEventListener;
+
 import org.rifidi.edge.core.exceptions.RifidiConnectionException;
 import org.rifidi.edge.core.readerplugin.ReaderInfo;
 import org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionManager;
@@ -18,32 +18,42 @@ import org.rifidi.edge.readerplugin.thingmagic.protocol.ThingMagicCommunicationP
  *
  */
 public class ThingMagicManager extends ConnectionManager {
-	Set<ConnectionEventListener> listeners = Collections.synchronizedSet(new HashSet<ConnectionEventListener>());
 
-	public ThingMagicManager(ReaderInfo readerInfo) {
-		
-		// TODO Auto-generated constructor stub
-	}
+	private Socket socket;
+	private ThingMagicReaderInfo info;
 	
 	@Override
 	public void connect(ReaderInfo readerInfo) throws RifidiConnectionException {
 		// TODO Auto-generated method stub
+		info = (ThingMagicReaderInfo) readerInfo;
 		
+		if (!info.isSsh()) {
+			try {
+				socket = new Socket(info.getIpAddress(), info.getPort());
+			} catch (UnknownHostException e) {
+				throw new RifidiConnectionException(e);
+			} catch (IOException e) {
+				throw new RifidiConnectionException(e);
+			}
+		} else {
+			//TODO implement connection to reader by ssh
+			throw new UnsupportedOperationException("Connections to Merucry 4 or 5, ThingMagic readers by ssh not impemented.");
+		}
+		
+		//TODO Fire events;
 	}
 	
-	@Override
-	public void addConnectionEventListener(ConnectionEventListener event) {
-		listeners.add(event);	
-	}
-	
-
 	/* (non-Javadoc)
 	 * @see org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionManager#disconnect()
 	 */
 	@Override
 	public void disconnect() {
-		// TODO Auto-generated method stub
-		
+		try {
+			socket.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	/* (non-Javadoc)
@@ -69,21 +79,13 @@ public class ThingMagicManager extends ConnectionManager {
 		return 1000;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionManager#removeConnectionEventListener(org.rifidi.edge.core.communication.service.ConnectionEventListener)
-	 */
-	@Override
-	public void removeConnectionEventListener(ConnectionEventListener event) {
-		listeners.remove(event);
-		
-	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionManager#startKeepAlive()
 	 */
 	@Override
 	public void startKeepAlive() {
-		// TODO Auto-generated method stub
+		// ignore this.
 		
 	}
 	
@@ -92,7 +94,7 @@ public class ThingMagicManager extends ConnectionManager {
 	 */
 	@Override
 	public void stopKeepAlive() {
-		// TODO Auto-generated method stub
+		// ignore this.
 		
 	}
 	
@@ -101,20 +103,23 @@ public class ThingMagicManager extends ConnectionManager {
 	 */
 	@Override
 	public void connectionExceptionEvent(Exception exception) {
-		// TODO Auto-generated method stub
-		
+		// TODO What do we do with this???
 	}
 
 	@Override
 	public ConnectionStreams createCommunication(ReaderInfo readerInfo)
 			throws RifidiConnectionException {
 		// TODO Auto-generated method stub
-		return null;
+		try {
+			return new ConnectionStreams(socket.getInputStream(), socket.getOutputStream());
+		} catch (IOException e) {
+			throw new RifidiConnectionException(e);
+		}
 	}
 
 	@Override
 	protected void fireEvent() {
-		// TODO Auto-generated method stub
+		// TODO Cannot tell if this is a fire disconnect event or fire connect event...
 		
 	}
 
