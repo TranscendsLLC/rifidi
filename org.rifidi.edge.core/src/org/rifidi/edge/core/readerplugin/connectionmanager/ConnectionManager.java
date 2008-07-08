@@ -10,6 +10,8 @@ import org.rifidi.edge.core.readerplugin.protocol.CommunicationProtocol;
 
 public abstract class ConnectionManager implements ConnectionExceptionListener {
 
+	//TODO This should be protected instead of public.
+	//TODO Should be a Set instead of a List.
 	public List<ConnectionEventListener> listeners = new ArrayList<ConnectionEventListener>();
 	
 	// This is not working
