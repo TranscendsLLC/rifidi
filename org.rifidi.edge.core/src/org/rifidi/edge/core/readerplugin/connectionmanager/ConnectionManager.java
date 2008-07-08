@@ -19,6 +19,7 @@ public abstract class ConnectionManager implements ConnectionExceptionListener {
 	public abstract ConnectionStreams createCommunication(ReaderInfo readerInfo)
 			throws RifidiConnectionException;
 
+	//TODO: Should this method return ConnectionStreams instead of having an entirely different method??
 	public abstract void connect(ReaderInfo readerInfo)
 			throws RifidiConnectionException;
 
