@@ -19,8 +19,7 @@ public class ConnectionServiceImpl implements ConnectionService {
 	public Connection createConnection(ConnectionManager connectionManager,
 			ReaderInfo readerInfo) throws RifidiConnectionException {
 		Connection connection = null;
-		Communication communication = new Communication(connectionManager,
-				readerInfo);
+		Communication communication = new Communication(connectionManager);
 		connection = communication.connect();
 		fireAddEvent(connection);
 		return connection;

@@ -8,7 +8,7 @@ import org.rifidi.edge.core.readerplugin.protocol.MessageProtocol;
 
 public interface ReaderPlugin {
 
-	public ConnectionManager getConnectionManager();
+	public ConnectionManager getConnectionManager(ReaderInfo readerInfo);
 
 	public List<Class<? extends Command>> getAvailableCommands();
 

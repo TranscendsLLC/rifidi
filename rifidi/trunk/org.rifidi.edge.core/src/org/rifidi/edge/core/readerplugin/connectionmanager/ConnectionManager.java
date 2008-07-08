@@ -1,7 +1,7 @@
 package org.rifidi.edge.core.readerplugin.connectionmanager;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.rifidi.edge.core.communication.service.ConnectionEventListener;
 import org.rifidi.edge.core.exceptions.RifidiConnectionException;
@@ -10,19 +10,18 @@ import org.rifidi.edge.core.readerplugin.protocol.CommunicationProtocol;
 
 public abstract class ConnectionManager implements ConnectionExceptionListener {
 
-	//TODO This should be protected instead of public.
-	//TODO Should be a Set instead of a List.
-	public List<ConnectionEventListener> listeners = new ArrayList<ConnectionEventListener>();
+	protected Set<ConnectionEventListener> listeners = new HashSet<ConnectionEventListener>();
 	
-	// This is not working
-	// public ConnectionManager(ReaderInfo readerInfo) {
-	// }
+	
+	 public ConnectionManager(ReaderInfo readerInfo) {
+	 }
 
-	public abstract ConnectionStreams createCommunication(ReaderInfo readerInfo)
+	//TODO Rename this.
+	public abstract ConnectionStreams createCommunication()
 			throws RifidiConnectionException;
 
-	//TODO: Should this method return ConnectionStreams instead of having an entirely different method??
-	public abstract void connect(ReaderInfo readerInfo)
+	//TODO Rename this to authenticate
+	public abstract void connect()
 			throws RifidiConnectionException;
 
 	public abstract void disconnect();
@@ -47,5 +46,15 @@ public abstract class ConnectionManager implements ConnectionExceptionListener {
 		listeners.remove(listener);
 	}
 	
-	protected abstract void fireEvent(); 
+	protected void fireConnectEvent(){
+		for (ConnectionEventListener listener: listeners){
+			listener.connected();
+		}
+	}
+	
+	protected void fireDisconnectEvent(){
+		for (ConnectionEventListener listener: listeners){
+			listener.disconnected();
+		}
+	}
 }

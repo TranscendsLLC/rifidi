@@ -88,7 +88,7 @@ public class ReaderSessionImplJe implements ReaderSession {
 			
 		if (connectionManager == null)
 			connectionManager = readerPluginService.getReaderPlugin(
-					readerInfo.getClass()).getConnectionManager();
+					readerInfo.getClass()).getConnectionManager(readerInfo);
 
 		insureConnection();
 
