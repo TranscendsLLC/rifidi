@@ -26,9 +26,11 @@ public class Communication implements ConnectionExceptionListener {
 	private LinkedBlockingQueue<Object> writeQueue;
 	private ReadThread readThread;
 	private WriteThread writeThread;
+	private ReaderInfo readerInfo;
 
 	public Communication(ConnectionManager connectionManager,
 			ReaderInfo readerInfo) {
+		this.readerInfo = readerInfo;
 		this.connectionManager = connectionManager;
 	}
 
@@ -48,7 +50,7 @@ public class Communication implements ConnectionExceptionListener {
 
 
 		// Create logical connection
-		connectionManager.connect();
+		connectionManager.connect(readerInfo);
 
 		connection.addConnectionExceptionListener(this);
 
@@ -108,7 +110,7 @@ public class Communication implements ConnectionExceptionListener {
 	}
 	
 	private void _connect() throws RifidiConnectionException{
-		ConnectionStreams connectionStreams = connectionManager.createCommunication();
+		ConnectionStreams connectionStreams = connectionManager.createCommunication(readerInfo);
 		readThread = new ReadThread("threadname", connection, protocol,
 				readQueue, connectionStreams.getInputStream());
 
