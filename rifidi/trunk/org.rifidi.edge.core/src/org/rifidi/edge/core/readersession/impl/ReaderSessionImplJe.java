@@ -193,6 +193,7 @@ public class ReaderSessionImplJe implements ReaderSession {
 					} catch (RifidiConnectionException e) {
 						if (x == connectionManager
 								.getMaxNumConnectionsAttemps()) {
+							connection = null;
 							status = ReaderSessionStatus.DISCONNECTED;
 							throw e;
 						}
@@ -204,6 +205,7 @@ public class ReaderSessionImplJe implements ReaderSession {
 					}
 				}
 			} catch (RuntimeException e) {
+				connection = null;
 				status = ReaderSessionStatus.DISCONNECTED;
 				throw new RifidiConnectionException(
 						"RuntimeException detected! "
