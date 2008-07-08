@@ -26,7 +26,7 @@ public abstract class AbstractThread implements Runnable {
 	
 	protected boolean running = false;
 	
-	protected AbstractThread(String threadName){
+	public AbstractThread(String threadName){
 		thread = new Thread(this, threadName);
 		
 	}
