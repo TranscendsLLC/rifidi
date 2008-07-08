@@ -13,6 +13,7 @@ public abstract class ConnectionManager implements ConnectionExceptionListener {
 	public abstract ConnectionStreams createCommunication()
 			throws RifidiConnectionException;
 
+	//TODO: ReaderInfo needs to be passed in here.
 	public abstract void connect() throws RifidiConnectionException;
 
 	public abstract void disconnect();
