@@ -1,6 +1,5 @@
 package org.rifidi.edge.readerplugin.dummy;
 
-
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Random;
@@ -17,67 +16,80 @@ import org.rifidi.edge.core.readerplugin.protocol.CommunicationProtocol;
 import org.rifidi.edge.readerplugin.dummy.protocol.DummyCommunicationProtocol;
 
 public class DummyConnectionManager extends ConnectionManager {
-	private static final Log logger = LogFactory.getLog(DummyConnectionManager.class);
+	private static final Log logger = LogFactory
+			.getLog(DummyConnectionManager.class);
 	DummyReaderInfo info;
-	
-	Set<ConnectionEventListener> listeners = Collections.synchronizedSet(new HashSet<ConnectionEventListener>());
-	
+
+	Set<ConnectionEventListener> listeners = Collections
+			.synchronizedSet(new HashSet<ConnectionEventListener>());
+
 	/* used only when the dummy adapter is set to random errors */
 	Random random;
-	
-	public DummyConnectionManager(ReaderInfo readerInfo) {
-		super(readerInfo);
-		// TODO Auto-generated constructor stub
-		this.info = (DummyReaderInfo) readerInfo;
-	}
 
-	/* (non-Javadoc)
+	// public DummyConnectionManager(ReaderInfo readerInfo) {
+	// super(readerInfo);
+	// // TODO Auto-generated constructor stub
+	// this.info = (DummyReaderInfo) readerInfo;
+	// }
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionManager#connect()
 	 */
 	@Override
-	public void connect() throws RifidiConnectionException {
+	public void connect(ReaderInfo readerInfo) throws RifidiConnectionException {
+		readerInfo = (DummyReaderInfo) readerInfo;
 		/* used for breakage testing purposes */
 		switch (info.getErrorToSet()) {
-			case CONNECT:
-				throw new RifidiConnectionException();
-			case CONNECT_RUNTIME:
-				throw new RuntimeException();
-			case RANDOM:
-				if (info.getRandom().nextDouble() <= info.getRandomErrorProbibility()){
-					if(info.getRandom().nextDouble() <= info.getProbiblityOfErrorsBeingRuntimeExceptions()){
-						throw new RuntimeException();
-					} else {
-						throw new RifidiConnectionException();
-					}
+		case CONNECT:
+			throw new RifidiConnectionException();
+		case CONNECT_RUNTIME:
+			throw new RuntimeException();
+		case RANDOM:
+			if (info.getRandom().nextDouble() <= info
+					.getRandomErrorProbibility()) {
+				if (info.getRandom().nextDouble() <= info
+						.getProbiblityOfErrorsBeingRuntimeExceptions()) {
+					throw new RuntimeException();
+				} else {
+					throw new RifidiConnectionException();
 				}
+			}
 		}
-		
+
 		logger.debug("Connected");
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionManager#disconnect()
 	 */
 	@Override
 	public void disconnect() {
 		/* used for breakage testing purposes */
 		switch (info.getErrorToSet()) {
-			case DISCONNECT:
-				//throw new RifidiConnectionException();
-			case DISCONNECT_RUNTIME:
-				throw new RuntimeException();
-			case RANDOM:
-				if (info.getRandom().nextDouble() <= info.getRandomErrorProbibility()){
-					if(info.getRandom().nextDouble() <= info.getProbiblityOfErrorsBeingRuntimeExceptions()){
-						throw new RuntimeException();
-					} else {
-						//throw new RifidiConnectionException();
-					}
+		case DISCONNECT:
+			// throw new RifidiConnectionException();
+		case DISCONNECT_RUNTIME:
+			throw new RuntimeException();
+		case RANDOM:
+			if (info.getRandom().nextDouble() <= info
+					.getRandomErrorProbibility()) {
+				if (info.getRandom().nextDouble() <= info
+						.getProbiblityOfErrorsBeingRuntimeExceptions()) {
+					throw new RuntimeException();
+				} else {
+					// throw new RifidiConnectionException();
 				}
+			}
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionManager#getCommunicationProtocol()
 	 */
 	@Override
@@ -85,7 +97,9 @@ public class DummyConnectionManager extends ConnectionManager {
 		return new DummyCommunicationProtocol(info);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionManager#startKeepAlive()
 	 */
 	@Override
@@ -93,7 +107,9 @@ public class DummyConnectionManager extends ConnectionManager {
 		// do nothing
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionManager#addConnectionEventListener(org.rifidi.edge.core.communication.service.ConnectionEventListener)
 	 */
 	@Override
@@ -101,13 +117,15 @@ public class DummyConnectionManager extends ConnectionManager {
 		listeners.add(event);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionManager#createCommunication()
 	 */
 	@Override
-	public ConnectionStreams createCommunication()
+	public ConnectionStreams createCommunication(ReaderInfo readerInfo)
 			throws RifidiConnectionException {
-		// TODO Auto-generated method stub
+		readerInfo = (DummyReaderInfo) readerInfo;
 		return null;
 	}
 
@@ -131,14 +149,19 @@ public class DummyConnectionManager extends ConnectionManager {
 	@Override
 	public void stopKeepAlive() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void connectionExceptionEvent(Exception exception) {
 		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	protected void fireEvent() {
+		// TODO Auto-generated method stub
 		
 	}
 
-	
 }
