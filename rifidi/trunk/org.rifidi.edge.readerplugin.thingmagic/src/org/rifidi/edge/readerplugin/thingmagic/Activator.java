@@ -25,7 +25,7 @@ public class Activator implements BundleActivator {
 	 */
 	public void stop(BundleContext context) throws Exception {
 		if (readerPluginService != null) {
-			System.out.println("Unregistering Plugin: DummyReaderPlugin");
+			System.out.println("Unregistering Plugin: ThingMagicReaderPlugin");
 			readerPluginService.unregisterReaderPlugin(ThingMagicReaderInfo.class);
 		}
 		System.out.println("== Bundle ThingMagicReaderPlugin stopped ==");
@@ -34,7 +34,7 @@ public class Activator implements BundleActivator {
 	@Inject
 	public void setReaderPluginService(ReaderPluginService readerPluginService) {
 		this.readerPluginService = readerPluginService;
-		System.out.println("Registering Plugin: DummyReaderPlugin");
+		System.out.println("Registering Plugin: ThingMagicReaderPlugin");
 		this.readerPluginService.registerReaderPlugin(ThingMagicReaderInfo.class,
 				new ThingMagicReaderPlugin());	
 	}
