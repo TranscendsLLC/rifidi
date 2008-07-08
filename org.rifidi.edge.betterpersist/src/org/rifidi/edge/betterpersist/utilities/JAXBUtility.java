@@ -20,18 +20,11 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.rifidi.edge.core.readerplugin.ReaderInfo;
 import org.rifidi.edge.readerplugin.alien.AlienReaderInfo;
 import org.rifidi.edge.readerplugin.llrp.LLRPReaderInfo;
-import org.w3c.dom.Document;
-import org.w3c.dom.DocumentFragment;
-import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 /**
@@ -121,10 +114,9 @@ public class JAXBUtility {
 	 *            The object to save.
 	 */
 	@SuppressWarnings("unchecked")
-	public Node save(Object o ) {
+	public Node save(Object o, Node parent) {
 		JAXBContext context;
-		Element root=null;
-		DocumentFragment dom=null;
+		logger.debug("Just before the try in save()");
 
 		try {
 			Class[] newClassArr = new Class[] { AlienReaderInfo.class,
@@ -133,21 +125,22 @@ public class JAXBUtility {
 			context = JAXBContext.newInstance(newClassArr);
 			Marshaller m = context.createMarshaller();
 			m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-			DocumentBuilder db = dbf.newDocumentBuilder();
+			// DocumentBuilderFactory dbf =
+			// DocumentBuilderFactory.newInstance();
+			// DocumentBuilder db = dbf.newDocumentBuilder();
 
 			// create an instance of DOM
-			dom = null;
-			m.marshal(o, dom);
-		
-
+			m.marshal(o, parent);
+			
 		} catch (JAXBException e) {
 			e.printStackTrace();
-		} catch (ParserConfigurationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
-		return root;
+
+		// catch (ParserConfigurationException e) {
+		// // TODO Auto-generated catch block
+		// e.printStackTrace();
+		// }
+		return parent;
 	}
 
 	/**
@@ -219,10 +212,5 @@ public class JAXBUtility {
 			e.printStackTrace();
 		}
 		return retVal;
-	}
-
-	public Element createReaderInfoNode(ReaderInfo ari, Document persistMap) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 }
