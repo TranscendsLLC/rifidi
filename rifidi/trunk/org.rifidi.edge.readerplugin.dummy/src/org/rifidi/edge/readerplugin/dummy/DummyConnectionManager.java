@@ -30,6 +30,9 @@ public class DummyConnectionManager extends ConnectionManager {
 	/* used only when the dummy adapter is set to random errors */
 	Random random;
 
+	PipedInputStream input;
+	PipedOutputStream output;
+	
 	 public DummyConnectionManager(ReaderInfo readerInfo) {
 	 super(readerInfo);
 		 // TODO Auto-generated constructor stub
@@ -69,6 +72,18 @@ public class DummyConnectionManager extends ConnectionManager {
 					// throw new RifidiConnectionException();
 				}
 			}
+		}
+		try {
+			input.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		try {
+			output.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 
@@ -128,10 +143,8 @@ public class DummyConnectionManager extends ConnectionManager {
 			}
 		}
 
-		
 		//TODO test this.
-		PipedInputStream input = new PipedInputStream();
-		PipedOutputStream output = null;
+		input = new PipedInputStream();
 		try {
 			output = new PipedOutputStream(input);
 		} catch (IOException e) {
