@@ -10,6 +10,8 @@
  */
 package sandbox;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.betterpersist.xml.PersistedReaderInfo;
 import org.rifidi.edge.core.readerplugin.ReaderInfo;
 import org.rifidi.edge.readerplugin.alien.AlienReaderInfo;
@@ -20,7 +22,14 @@ import org.rifidi.edge.readerplugin.llrp.LLRPReaderInfo;
  * 
  */
 public class SandboxClass {
+	/**
+	 * The log4j logger.debug.
+	 */
+	private static final Log logger = LogFactory
+			.getLog(SandboxClass.class);
+	
 	public void test() {
+		logger.debug("Starting the test");
 		PersistedReaderInfo pri = new PersistedReaderInfo();
 		AlienReaderInfo ari = new AlienReaderInfo();
 		ari.setIpAddress("localhost");
@@ -34,11 +43,17 @@ public class SandboxClass {
 		ari2.setUsername("alieny");
 		ari2.setPassword("passwordy");
 
+		ReaderInfo llrp = new LLRPReaderInfo();
+		llrp.setIpAddress("localhosty");
+		llrp.setPort(200009);
+		
 		ReaderInfo llrp2 = new LLRPReaderInfo();
 		llrp2.setIpAddress("localhostx");
 		llrp2.setPort(20008);
 		
-		System.out.println(llrp2.getClass().getName());
-
+		pri.addReaderInfo(ari);
+		pri.addReaderInfo(ari2);
+		pri.addReaderInfo(llrp);
+		pri.addReaderInfo(llrp2);
 	}
 }
