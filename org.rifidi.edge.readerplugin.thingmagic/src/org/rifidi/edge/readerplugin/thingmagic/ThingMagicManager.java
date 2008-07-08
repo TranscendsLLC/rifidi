@@ -21,8 +21,14 @@ public class ThingMagicManager extends ConnectionManager {
 	Set<ConnectionEventListener> listeners = Collections.synchronizedSet(new HashSet<ConnectionEventListener>());
 
 	public ThingMagicManager(ReaderInfo readerInfo) {
-		super(readerInfo);
+		
 		// TODO Auto-generated constructor stub
+	}
+	
+	@Override
+	public void connect(ReaderInfo readerInfo) throws RifidiConnectionException {
+		// TODO Auto-generated method stub
+		
 	}
 	
 	@Override
@@ -30,22 +36,7 @@ public class ThingMagicManager extends ConnectionManager {
 		listeners.add(event);	
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionManager#connect()
-	 */
-	@Override
-	public void connect() throws RifidiConnectionException {
-		//TODO need to check if this is a real Mercury 4 or 5, ThingMagic Reader.
-		
-	}
-	
-	@Override
-	public ConnectionStreams createCommunication()
-			throws RifidiConnectionException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionManager#disconnect()
 	 */
@@ -110,6 +101,19 @@ public class ThingMagicManager extends ConnectionManager {
 	 */
 	@Override
 	public void connectionExceptionEvent(Exception exception) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public ConnectionStreams createCommunication(ReaderInfo readerInfo)
+			throws RifidiConnectionException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	protected void fireEvent() {
 		// TODO Auto-generated method stub
 		
 	}

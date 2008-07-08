@@ -28,7 +28,7 @@ import org.rifidi.services.annotations.Inject;
  * 
  */
 public class ReaderSessionImplJe implements ReaderSession {
-	Set<ExecutionListener> listeners = Collections
+	private Set<ExecutionListener> listeners = Collections
 			.synchronizedSet(new HashSet<ExecutionListener>());
 
 	private ConnectionService connectionService;
@@ -46,6 +46,8 @@ public class ReaderSessionImplJe implements ReaderSession {
 	private MessageService messageService;
 
 	private Command commandInstance;
+	
+	private MessageQueue messageQueue;
 
 	public ReaderSessionImplJe(ReaderInfo readerInfo) {
 		this.readerInfo = readerInfo;
@@ -57,6 +59,7 @@ public class ReaderSessionImplJe implements ReaderSession {
 		listeners.add(listener);
 	}
 
+	//TODO Implement firing of events.
 	@Override
 	public void executeCommand(String command)
 			throws RifidiConnectionException, RifidiCommandInterruptedException {
@@ -68,15 +71,21 @@ public class ReaderSessionImplJe implements ReaderSession {
 		/*
 		 * Life goes by a bit better with a bit of sanity checking...
 		 */
-		if (connectionService == null)
+		if (connectionService == null){
+			status = ReaderSessionStatus.CONNECTED;
 			throw new RifidiConnectionException("No communication service.");
-
-		if (readerPluginService == null)
+		}
+			
+		if (readerPluginService == null){
+			status = ReaderSessionStatus.CONNECTED;
 			throw new RifidiConnectionException("No ReaderPlugin service.");
-
-		if (messageService == null)
+		}
+		
+		if (messageService == null) {
+			status = ReaderSessionStatus.CONNECTED;
 			throw new RifidiConnectionException("No Message service.");
-
+		}
+			
 		if (connectionManager == null)
 			connectionManager = readerPluginService.getReaderPlugin(
 					readerInfo.getClass()).getConnectionManager();
@@ -91,7 +100,8 @@ public class ReaderSessionImplJe implements ReaderSession {
 			CommandDesc commandDesc = commandClass
 					.getAnnotation(CommandDesc.class);
 			if (commandDesc == null) {
-				throw new RifidiCommandInterruptedException("Command found.");
+				status = ReaderSessionStatus.CONNECTED;
+				throw new RifidiCommandInterruptedException("Command not found.");
 			} else {
 				if (commandDesc.name().equals(command)) {
 					try {
@@ -100,8 +110,8 @@ public class ReaderSessionImplJe implements ReaderSession {
 
 						commandInstance = (Command) constructor.newInstance();
 
-						// TODO: do not need to make a new MQ
-						MessageQueue messageQueue = messageService
+						if (messageQueue == null) 
+							messageQueue = messageService
 								.createMessageQueue();
 
 						try {
@@ -112,6 +122,7 @@ public class ReaderSessionImplJe implements ReaderSession {
 							try {
 								commandInstance.start(connection, messageQueue);
 							} catch (IOException e1) {
+								status = ReaderSessionStatus.DISCONNECTED;
 								throw new RifidiConnectionException(
 										"Error after exhausting "
 												+ connectionManager
@@ -120,11 +131,13 @@ public class ReaderSessionImplJe implements ReaderSession {
 										e1);
 							}
 						} catch (ClassCastException e) {
+							status = ReaderSessionStatus.CONNECTED;
 							throw new RifidiCommandInterruptedException(
 									"Command interrupted due to unexpected ClassCastExecption. "
 											+ "Probibly tried to execute a command that did not belong to this reader, "
 											+ "or something else caused it.", e);
 						} catch (RuntimeException e) {
+							status = ReaderSessionStatus.CONNECTED;
 							throw new RifidiCommandInterruptedException(
 									"Command interrupted due to unexpected RuntimeException. "
 											+ "This may be caused by a bug in the command implemenation itself or, "
@@ -133,24 +146,30 @@ public class ReaderSessionImplJe implements ReaderSession {
 						}
 
 					} catch (SecurityException e) {
+						status = ReaderSessionStatus.CONNECTED;
 						throw new RifidiCommandInterruptedException(
-								"Command found.", e);
+								"Command not found.", e);
 					} catch (NoSuchMethodException e) {
+						status = ReaderSessionStatus.CONNECTED;
 						throw new RifidiCommandInterruptedException(
-								"Command found.", e);
+								"Command not found.", e);
 					} catch (IllegalArgumentException e) {
+						status = ReaderSessionStatus.CONNECTED;
 						throw new RifidiCommandInterruptedException(
-								"Command found.", e);
+								"Command not found.", e);
 					} catch (InstantiationException e) {
+						status = ReaderSessionStatus.CONNECTED;
 						throw new RifidiCommandInterruptedException(
-								"Command found.", e);
+								"Command not found.", e);
 					} catch (IllegalAccessException e) {
+						status = ReaderSessionStatus.CONNECTED;
 						throw new RifidiCommandInterruptedException(
-								"Command found.", e);
+								"Command not found.", e);
 					} catch (InvocationTargetException e) {
+						status = ReaderSessionStatus.CONNECTED;
 						throw new RifidiCommandInterruptedException(
-								"Command found.", e);
-					}
+								"Command not found.", e);
+					} 
 				}
 			}
 		}
@@ -178,13 +197,19 @@ public class ReaderSessionImplJe implements ReaderSession {
 							throw e;
 						}
 					}
+					try {
+						wait(connectionManager.getReconnectionIntervall());
+					} catch (InterruptedException e) {
+						// ignore this exception.
+					}
 				}
 			} catch (RuntimeException e) {
+				status = ReaderSessionStatus.DISCONNECTED;
 				throw new RifidiConnectionException(
 						"RuntimeException detected! "
 								+ "There is a possible bug in "
 								+ connectionManager.getClass().getName(), e);
-			}
+			} 
 		}
 
 	}
