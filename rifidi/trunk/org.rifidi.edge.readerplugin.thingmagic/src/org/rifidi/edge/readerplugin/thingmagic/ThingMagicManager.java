@@ -3,8 +3,6 @@ package org.rifidi.edge.readerplugin.thingmagic;
 
 import java.io.IOException;
 import java.net.Socket;
-import java.net.UnknownHostException;
-
 
 import org.rifidi.edge.core.exceptions.RifidiConnectionException;
 import org.rifidi.edge.core.readerplugin.ReaderInfo;
@@ -56,18 +54,13 @@ public class ThingMagicManager extends ConnectionManager {
 		return new ThingMagicCommunicationProtocol();
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionManager#getMaxNumConnectionsAttemps()
-	 */
 	@Override
 	public int getMaxNumConnectionsAttemps() {
-		//TODO implement this.
-		return 3;
+		return (info.getMaxNumConnectionsAttemps() != 0) ? info.getMaxNumConnectionsAttemps() : 3;
 	}
 	@Override
 	public long getReconnectionIntervall() {
-		// TODO implement this.
-		return 1000;
+		return (info.getReconnectionIntervall() != 0) ? info.getReconnectionIntervall() : 1000;
 	}
 	
 

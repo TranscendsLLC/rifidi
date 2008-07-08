@@ -1,5 +1,8 @@
 package org.rifidi.edge.readerplugin.dummy;
 
+import java.io.IOException;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Random;
@@ -40,25 +43,7 @@ public class DummyConnectionManager extends ConnectionManager {
 	 */
 	@Override
 	public void connect() throws RifidiConnectionException {
-		/* used for breakage testing purposes */
-		switch (info.getErrorToSet()) {
-		case CONNECT:
-			throw new RifidiConnectionException();
-		case CONNECT_RUNTIME:
-			throw new RuntimeException();
-		case RANDOM:
-			if (info.getRandom().nextDouble() <= info
-					.getRandomErrorProbibility()) {
-				if (info.getRandom().nextDouble() <= info
-						.getProbiblityOfErrorsBeingRuntimeExceptions()) {
-					throw new RuntimeException();
-				} else {
-					throw new RifidiConnectionException();
-				}
-			}
-		}
-
-		logger.debug("Connected");
+		// always succeeds
 	}
 
 	/*
@@ -125,29 +110,57 @@ public class DummyConnectionManager extends ConnectionManager {
 	@Override
 	public ConnectionStreams createCommunication()
 			throws RifidiConnectionException {
-			return null;
+		/* used for breakage testing purposes */
+		switch (info.getErrorToSet()) {
+		case CONNECT:
+			throw new RifidiConnectionException();
+		case CONNECT_RUNTIME:
+			throw new RuntimeException();
+		case RANDOM:
+			if (info.getRandom().nextDouble() <= info
+					.getRandomErrorProbibility()) {
+				if (info.getRandom().nextDouble() <= info
+						.getProbiblityOfErrorsBeingRuntimeExceptions()) {
+					throw new RuntimeException();
+				} else {
+					throw new RifidiConnectionException();
+				}
+			}
+		}
+
+		
+		//TODO test this.
+		PipedInputStream input = new PipedInputStream();
+		PipedOutputStream output = null;
+		try {
+			output = new PipedOutputStream(input);
+		} catch (IOException e) {
+			throw new RifidiConnectionException(e);
+		}
+		
+		logger.debug("Connected");
+		return new ConnectionStreams(input, output);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionManager#getMaxNumConnectionsAttemps()
+	 */
 	@Override
 	public int getMaxNumConnectionsAttemps() {
-		// TODO Auto-generated method stub
-		return 100;
+		return (info.getMaxNumConnectionsAttemps() != 0) ? info.getMaxNumConnectionsAttemps() : 3;
 	}
-
+	
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionManager#getReconnectionIntervall()
+	 */
 	@Override
 	public long getReconnectionIntervall() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public void removeConnectionEventListener(ConnectionEventListener event) {
-		listeners.remove(event);
+		return (info.getReconnectionIntervall() != 0) ? info.getReconnectionIntervall() : 1000;
 	}
 
 	@Override
 	public void stopKeepAlive() {
-		// TODO Auto-generated method stub
+		//ignore this.
 
 	}
 
