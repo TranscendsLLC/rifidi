@@ -23,6 +23,10 @@ import org.rifidi.edge.core.readersession.ReaderSessionJerry;
 import org.rifidi.edge.core.readersession.ReaderSessionStatus;
 import org.rifidi.services.annotations.Inject;
 
+/**
+ * @author Jerry Maine - jerry@pramari.com
+ *
+ */
 public class ReaderSessionImplJerry implements ReaderSessionJerry {
 
 	Set<ExecutionListener> listeners = Collections.synchronizedSet(new HashSet<ExecutionListener>());
