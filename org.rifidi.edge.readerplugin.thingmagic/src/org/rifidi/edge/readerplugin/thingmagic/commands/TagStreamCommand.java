@@ -7,6 +7,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.common.utilities.converter.ByteAndHexConvertingUtility;
 import org.rifidi.edge.core.communication.Connection;
+import org.rifidi.edge.core.exceptions.RifidiMessageQueueException;
 import org.rifidi.edge.core.messageQueue.MessageQueue;
 import org.rifidi.edge.core.readerplugin.commands.Command;
 import org.rifidi.edge.core.readerplugin.commands.annotations.CommandDesc;
@@ -54,7 +55,13 @@ public class TagStreamCommand implements Command {
 					
 					//TODO: correct the time stamps.
 					tag.setLastSeenTime(System.nanoTime()); 
-					messageQueue.addMessage(tag);
+					try {
+						messageQueue.addMessage(tag);
+					} catch (RifidiMessageQueueException e) {
+						//TODO make quit better
+						e.printStackTrace();
+						return;
+					}
 				} 
 				
 			}
