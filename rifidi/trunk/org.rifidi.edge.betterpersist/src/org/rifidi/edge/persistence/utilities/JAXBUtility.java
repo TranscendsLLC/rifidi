@@ -8,7 +8,7 @@
  *  License:	Lesser GNU Public License (LGPL)
  *  				http://www.opensource.org/licenses/lgpl-license.html
  */
-package org.rifidi.edge.betterpersist.utilities;
+package org.rifidi.edge.persistence.utilities;
 
 import java.io.File;
 import java.io.FileNotFoundException;

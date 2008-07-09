@@ -12,8 +12,8 @@ package sandbox;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.rifidi.edge.betterpersist.xml.PersistedReaderInfo;
 import org.rifidi.edge.core.readerplugin.ReaderInfo;
+import org.rifidi.edge.persistence.xml.PersistedReaderInfo;
 import org.rifidi.edge.readerplugin.alien.AlienReaderInfo;
 import org.rifidi.edge.readerplugin.llrp.LLRPReaderInfo;
 
