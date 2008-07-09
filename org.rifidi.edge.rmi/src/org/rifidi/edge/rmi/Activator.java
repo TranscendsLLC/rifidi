@@ -27,8 +27,7 @@ public class Activator implements BundleActivator {
 	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
 	 */
 	public void start(BundleContext context) throws Exception {
-		System.out.println("== Bundle " + this.getClass().getName()
-				+ " loaded ==");
+		System.out.println("== Bundle RMI started ==");
 
 		System.out.println("Registering Service: RMISeverService");
 		rmiServerService = new RMIServerServiceImpl();
@@ -45,8 +44,7 @@ public class Activator implements BundleActivator {
 	 */
 	public void stop(BundleContext context) throws Exception {
 		rmiServerService.stop();
-		System.out.println("== Bundle " + this.getClass().getName()
-				+ " stopped ==");
+		System.out.println("== Bundle RMI stopped ==");
 	}
 
 }
