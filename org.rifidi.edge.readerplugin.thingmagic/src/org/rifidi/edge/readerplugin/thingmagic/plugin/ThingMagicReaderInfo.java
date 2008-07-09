@@ -1,4 +1,4 @@
-package org.rifidi.edge.readerplugin.thingmagic;
+package org.rifidi.edge.readerplugin.thingmagic.plugin;
 
 import org.rifidi.edge.core.readerplugin.ReaderInfo;
 
