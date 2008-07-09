@@ -119,19 +119,19 @@ public class ReaderSessionImplJe implements ReaderSession, ConnectionEventListen
 						try {
 							commandInstance.start(connection, messageQueue);
 						} catch (IOException e) {
-							insureConnection();
+							//insureConnection();
 							// try one more time...
-							try {
-								commandInstance.start(connection, messageQueue);
-							} catch (IOException e1) {
-								status = ReaderSessionStatus.DISCONNECTED;
-								throw new RifidiConnectionException(
-										"Error after exhausting "
-												+ connectionManager
-														.getMaxNumConnectionsAttemps()
-												+ "attempts. Probably have a unreliable connection",
-										e1);
-							}
+//							try {
+//								commandInstance.start(connection, messageQueue);
+//							} catch (IOException e1) {
+//								status = ReaderSessionStatus.DISCONNECTED;
+//								throw new RifidiConnectionException(
+//										"Error after exhausting "
+//												+ connectionManager
+//														.getMaxNumConnectionsAttemps()
+//												+ "attempts. Probably have a unreliable connection",
+//										e1);
+//							}
 						} catch (ClassCastException e) {
 							status = ReaderSessionStatus.CONNECTED;
 							throw new RifidiCommandInterruptedException(
