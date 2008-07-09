@@ -7,11 +7,12 @@ import org.rifidi.edge.core.readerplugin.protocol.CommunicationProtocol;
 
 public abstract class ConnectionManager {
 
+	ReaderInfo info;
 	
 	
-	
-	 public ConnectionManager(ReaderInfo readerInfo) {
-	 }
+	public ConnectionManager(ReaderInfo readerInfo) {
+		info = readerInfo;
+	}
 
 	//TODO Rename this.
 	public abstract ConnectionStreams createCommunication()
@@ -33,6 +34,8 @@ public abstract class ConnectionManager {
 
 	public abstract void stopKeepAlive();
 
-
+	public String toString(){
+		return this.getClass().getSimpleName() + ": " + info.getIpAddress() + ":" + info.getPort();
+	}
 
 }

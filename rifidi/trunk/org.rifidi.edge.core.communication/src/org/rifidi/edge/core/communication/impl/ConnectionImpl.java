@@ -14,6 +14,8 @@ public class ConnectionImpl implements Connection {
 	private LinkedBlockingQueue<Object> writeQueue;
 	private IOException exception = null;
 
+	private Object locker = new Object();
+	
 	// FIXME KYLE make me Thread safe
 	private HashSet<Thread> blockedThreads = new HashSet<Thread>();
 
@@ -55,7 +57,7 @@ public class ConnectionImpl implements Connection {
 	}
 
 	public void setException(IOException e) {
-		synchronized (exception) {
+		synchronized (locker) {
 			this.exception = e;
 			for (Thread thread : blockedThreads)
 				thread.interrupt();
@@ -66,7 +68,7 @@ public class ConnectionImpl implements Connection {
 	}
 
 	private void checkException() throws IOException {
-		synchronized (exception) {
+		synchronized (locker) {
 			if (exception != null)
 				throw exception;
 		}
