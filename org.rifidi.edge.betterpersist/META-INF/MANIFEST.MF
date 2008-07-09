@@ -1,9 +1,9 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Betterpersist Plug-in
-Bundle-SymbolicName: org.rifidi.edge.betterpersist
+Bundle-SymbolicName: org.rifidi.edge.persistence
 Bundle-Version: 1.0.0
-Bundle-Activator: org.rifidi.edge.betterpersist.Activator
+Bundle-Activator: org.rifidi.edge.persistence.Activator
 Bundle-Vendor: Pramari, LLC
 Eclipse-LazyStart: true
 Import-Package: org.osgi.framework;version="1.3.0"

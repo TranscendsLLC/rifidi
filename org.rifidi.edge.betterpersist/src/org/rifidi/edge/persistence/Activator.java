@@ -1,4 +1,4 @@
-package org.rifidi.edge.betterpersist;
+package org.rifidi.edge.persistence;
 
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;

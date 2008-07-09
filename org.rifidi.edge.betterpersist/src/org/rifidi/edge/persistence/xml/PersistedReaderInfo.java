@@ -8,7 +8,7 @@
  *  License:	Lesser GNU Public License (LGPL)
  *  				http://www.opensource.org/licenses/lgpl-license.html
  */
-package org.rifidi.edge.betterpersist.xml;
+package org.rifidi.edge.persistence.xml;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -25,9 +25,9 @@ import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.rifidi.edge.betterpersist.utilities.JAXBUtility;
 import org.rifidi.edge.core.exceptions.RifidiReaderInfoNotFoundException;
 import org.rifidi.edge.core.readerplugin.ReaderInfo;
+import org.rifidi.edge.persistence.utilities.JAXBUtility;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
