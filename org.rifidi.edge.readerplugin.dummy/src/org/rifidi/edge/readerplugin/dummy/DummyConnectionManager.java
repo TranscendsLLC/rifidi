@@ -7,7 +7,6 @@ import java.util.Random;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.rifidi.edge.core.communication.Connection;
 import org.rifidi.edge.core.exceptions.RifidiConnectionException;
 import org.rifidi.edge.core.readerplugin.ReaderInfo;
 import org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionManager;
@@ -16,7 +15,7 @@ import org.rifidi.edge.core.readerplugin.protocol.CommunicationProtocol;
 import org.rifidi.edge.readerplugin.dummy.protocol.DummyCommunicationProtocol;
 
 public class DummyConnectionManager extends ConnectionManager {
-	
+
 	private static final Log logger = LogFactory
 			.getLog(DummyConnectionManager.class);
 	DummyReaderInfo info;
@@ -26,12 +25,12 @@ public class DummyConnectionManager extends ConnectionManager {
 
 	PipedInputStream input;
 	PipedOutputStream output;
-	
-	 public DummyConnectionManager(ReaderInfo readerInfo) {
-	 super(readerInfo);
-		 // TODO Auto-generated constructor stub
-		 this.info = (DummyReaderInfo) readerInfo;
-	 }
+
+	public DummyConnectionManager(ReaderInfo readerInfo) {
+		super(readerInfo);
+		// TODO Auto-generated constructor stub
+		this.info = (DummyReaderInfo) readerInfo;
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -101,7 +100,6 @@ public class DummyConnectionManager extends ConnectionManager {
 		// do nothing
 	}
 
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -128,37 +126,43 @@ public class DummyConnectionManager extends ConnectionManager {
 			}
 		}
 
-		//TODO test this.
+		// TODO test this.
 		input = new PipedInputStream();
 		try {
 			output = new PipedOutputStream(input);
 		} catch (IOException e) {
 			throw new RifidiConnectionException(e);
 		}
-		
+
 		logger.debug("Connected");
 		return new ConnectionStreams(input, output);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionManager#getMaxNumConnectionsAttemps()
 	 */
 	@Override
 	public int getMaxNumConnectionsAttemps() {
-		return (info.getMaxNumConnectionsAttemps() != 0) ? info.getMaxNumConnectionsAttemps() : 3;
+		return (info.getMaxNumConnectionsAttemps() != 0) ? info
+				.getMaxNumConnectionsAttemps() : 3;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionManager#getReconnectionIntervall()
 	 */
 	@Override
 	public long getReconnectionIntervall() {
-		return (info.getReconnectionIntervall() != 0) ? info.getReconnectionIntervall() : 1000;
+		return (info.getReconnectionIntervall() != 0) ? info
+				.getReconnectionIntervall() : 1000;
 	}
 
 	@Override
 	public void stopKeepAlive() {
-		//ignore this.
+		// ignore this.
 
 	}
 
