@@ -33,10 +33,10 @@ public class ErrorTestThread extends AbstractThread {
 
 					for (RemoteReaderConnection connection : connections) {
 						if (connection.getReaderState().equalsIgnoreCase(
-								"ERROR"))
-							System.out.println(connection.getReaderInfo()
-									.getReaderType()
-									+ "had ");
+								"ERROR"));
+//							System.out.println(connection.getReaderInfo()
+//									.getReaderType()
+//									+ "had ");
 					}
 				} catch (RemoteException e) {
 

@@ -67,7 +67,7 @@ public class TestClientTest {
 		for (int x = 0; x < 200; x++){
 			
 			DummyReaderInfo dummyInfo1 = new DummyReaderInfo();
-			dummyInfo1.setIPAddress("127.0.0.1");
+			dummyInfo1.setIpAddress("127.0.0.1");
 			dummyInfo1.setPort(10000 + x);
 			
 			RemoteReaderConnection remoteReader1 = null;
