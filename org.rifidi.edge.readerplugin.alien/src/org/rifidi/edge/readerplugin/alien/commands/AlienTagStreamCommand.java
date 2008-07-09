@@ -17,6 +17,7 @@ import java.util.List;
 
 import org.rifidi.edge.common.utilities.converter.ByteAndHexConvertingUtility;
 import org.rifidi.edge.core.communication.Connection;
+import org.rifidi.edge.core.exceptions.RifidiMessageQueueException;
 import org.rifidi.edge.core.messageQueue.MessageQueue;
 import org.rifidi.edge.core.readerplugin.commands.Command;
 import org.rifidi.edge.core.readerplugin.messages.impl.TagMessage;
@@ -58,6 +59,10 @@ public class AlienTagStreamCommand implements Command {
 				}
 			}
 		} catch (IOException e) {
+			//TODO make quit better
+			e.printStackTrace();
+		} catch (RifidiMessageQueueException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
