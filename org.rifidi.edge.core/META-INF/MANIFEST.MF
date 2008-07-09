@@ -27,4 +27,5 @@ Export-Package: org.rifidi.edge.core,
  org.rifidi.edge.core.readersession.impl,
  org.rifidi.edge.core.readersession.service,
  org.rifidi.edge.core.readersession.service.impl
-Require-Bundle: org.rifidi.edge.services
+Require-Bundle: org.rifidi.edge.services,
+ org.rifidi.edge.log4j
