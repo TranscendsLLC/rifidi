@@ -22,6 +22,7 @@ public class Activator implements BundleActivator {
 		System.out.println("Starting: DeploymentService");
 		deployServiceImpl = new DeployServiceImpl(context);
 		paths = new ArrayList<String>();
+		//TODO Change Directory to something with more sense
 		paths.add("C:\\temp");
 		deployServiceImpl.add(paths);
 	}
