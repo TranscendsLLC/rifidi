@@ -112,9 +112,10 @@ public class ReaderSessionImplJe implements ReaderSession, ConnectionEventListen
 
 						commandInstance = (Command) constructor.newInstance();
 
+						//TODO MessageQueue needs a name
 						if (messageQueue == null) 
 							messageQueue = messageService
-								.createMessageQueue();
+								.createMessageQueue("name");
 
 						try {
 							commandInstance.start(connection, messageQueue);
