@@ -6,13 +6,13 @@ import org.rifidi.edge.core.messageQueue.MessageQueue;
 
 public interface MessageService {
 	
-	public MessageQueue createMessageQueue();
+	public MessageQueue createMessageQueue(String messageQueueName);
 
 	public void destroyMessageQueue(MessageQueue messageQueue);
 	
 	public List<MessageQueue> getAllMessageQueues();
 	
-	public void addMessageQueueListener(MessageQueueListener listener);
+	public void addMessageQueueListener(MessageServiceListener listener);
 	
-	public void removeMessageQueueListener(MessageQueueListener listener);
+	public void removeMessageQueueListener(MessageServiceListener listener);
 }
