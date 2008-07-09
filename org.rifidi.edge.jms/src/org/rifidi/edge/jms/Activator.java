@@ -17,8 +17,10 @@ import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.broker.BrokerService;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
+import org.rifidi.edge.core.messageQueue.service.MessageService;
+import org.rifidi.edge.jms.messageservice.MessageServiceImpl;
 
-//TODO Needs class comment header...
+// TODO Needs class comment header...
 public class Activator implements BundleActivator {
 
 	BrokerService broker;
@@ -37,7 +39,7 @@ public class Activator implements BundleActivator {
 		broker = new BrokerService();
 		// TODO Save information about port and address in a configuration file
 		broker.addConnector("tcp://localhost:61616");
-		// Disable Presistence to avoid the creation of the ActiveMQ Directory
+		// Disable Persistence to avoid the creation of the ActiveMQ Directory
 		broker.setPersistent(false);
 		// TODO Disable JMX to avoid the use of RMI in JMS
 		// (ClassNotFoundException)
@@ -54,6 +56,12 @@ public class Activator implements BundleActivator {
 		context.registerService(ConnectionFactory.class.getName(),
 				connectionFactory, null);
 
+		// Register MessageService utilizing JMS
+		System.out.println("Registering Service: (JMS) MessageService");
+		MessageService messageService = new MessageServiceImpl(
+				connectionFactory);
+		context.registerService(MessageService.class.getName(), messageService,
+				null);
 	}
 
 	/*

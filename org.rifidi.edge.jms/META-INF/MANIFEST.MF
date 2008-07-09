@@ -128,3 +128,5 @@ Export-Package: javax.jms,
  org.rifidi.edge.jms
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Eclipse-LazyStart: true
+Require-Bundle: org.rifidi.edge.core,
+ org.rifidi.edge.services
