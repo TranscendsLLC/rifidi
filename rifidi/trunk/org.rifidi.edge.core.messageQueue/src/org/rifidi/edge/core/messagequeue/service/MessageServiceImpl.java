@@ -4,18 +4,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.rifidi.edge.core.messageQueue.MessageQueue;
-import org.rifidi.edge.core.messageQueue.service.MessageQueueListener;
 import org.rifidi.edge.core.messageQueue.service.MessageService;
+import org.rifidi.edge.core.messageQueue.service.MessageServiceListener;
 import org.rifidi.edge.core.messagequeue.impl.MessageQueueImpl;
 
+/**
+ * @author Andreas Huebner - andreas@pramari.com
+ * 
+ */
 public class MessageServiceImpl implements MessageService {
 
-	private List<MessageQueueListener> listeners = new ArrayList<MessageQueueListener>();
+	private List<MessageServiceListener> listeners = new ArrayList<MessageServiceListener>();
 
 	private ArrayList<MessageQueue> messageQueues = new ArrayList<MessageQueue>();
 
 	@Override
-	public MessageQueue createMessageQueue() {
+	public MessageQueue createMessageQueue(String messageQueueName) {
 		MessageQueue messageQueue = new MessageQueueImpl();
 		messageQueues.add(messageQueue);
 		fireAddEvent(messageQueue);
@@ -25,7 +29,7 @@ public class MessageServiceImpl implements MessageService {
 	@Override
 	public void destroyMessageQueue(MessageQueue messageQueue) {
 		messageQueues.remove(messageQueue);
-		((MessageQueueImpl)messageQueue).stop();
+		((MessageQueueImpl) messageQueue).stop();
 		fireRemoveEvent(messageQueue);
 	}
 
@@ -35,23 +39,23 @@ public class MessageServiceImpl implements MessageService {
 	}
 
 	@Override
-	public void addMessageQueueListener(MessageQueueListener listener) {
+	public void addMessageQueueListener(MessageServiceListener listener) {
 		listeners.add(listener);
 	}
 
 	@Override
-	public void removeMessageQueueListener(MessageQueueListener listener) {
+	public void removeMessageQueueListener(MessageServiceListener listener) {
 		listeners.remove(listener);
 	}
 
 	private void fireAddEvent(MessageQueue event) {
-		for (MessageQueueListener listener : listeners) {
+		for (MessageServiceListener listener : listeners) {
 			listener.addEvent(event);
 		}
 	}
 
 	private void fireRemoveEvent(MessageQueue event) {
-		for (MessageQueueListener listener : listeners) {
+		for (MessageServiceListener listener : listeners) {
 			listener.removeEvent(event);
 		}
 	}
