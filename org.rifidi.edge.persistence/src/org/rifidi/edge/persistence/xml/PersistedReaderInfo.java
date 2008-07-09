@@ -36,12 +36,12 @@ import com.sun.org.apache.xml.internal.serialize.OutputFormat;
 import com.sun.org.apache.xml.internal.serialize.XMLSerializer;
 
 /**
- * This is
+ * This is SPARTA!
  * 
  * @author Matthew Dean - matt@pramari.com
  */
 public class PersistedReaderInfo {
-	
+
 	/**
 	 * The log4j logger.debug.
 	 */
@@ -91,7 +91,7 @@ public class PersistedReaderInfo {
 	}
 
 	/**
-	 * Removes the reader
+	 * Removes the reader from the persistence layer.
 	 * 
 	 * @param readerInfo
 	 * @throws RifidiReaderInfoNotFoundException
@@ -123,8 +123,8 @@ public class PersistedReaderInfo {
 
 	private Element find(ReaderInfo readerInfo, Element readerInfoTypeList) {
 		// TODO: Matt use XPath to find
-		//XPathFactory factory = XPathFactory.newInstance();
-		//XPath xpath = factory.newXPath();
+		// XPathFactory factory = XPathFactory.newInstance();
+		// XPath xpath = factory.newXPath();
 		// Node result = null;
 		// try {
 		// XPathExpression expr = xpath.compile(new String("/"
@@ -143,9 +143,11 @@ public class PersistedReaderInfo {
 		Node result = null;
 		try {
 			logger.debug("Just before the compile");
-			String exp = new String(new String("/"
-					+ XMLTags.ROOT_TAG + "/" + XMLTags.ELEMENT_TAG + "["
-					+ XMLTags.TYPE_TAG + "='" + readerInfoType + "']"));
+			// String exp = new String(new String("/"
+			// + XMLTags.ROOT_TAG + "/" + XMLTags.ELEMENT_TAG + "["
+			// + XMLTags.TYPE_TAG + "='" + readerInfoType + "']"));
+			String exp = new String("//" + XMLTags.ELEMENT_TAG + "[@"
+					+ XMLTags.TYPE_TAG + "='" + readerInfoType + "']");
 			logger.debug("String expression is: \n" + exp);
 			XPathExpression expr = xpath.compile(exp);
 			logger.debug("Just after the compile");
