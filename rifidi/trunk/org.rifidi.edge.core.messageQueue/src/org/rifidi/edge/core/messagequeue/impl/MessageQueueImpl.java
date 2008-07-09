@@ -7,11 +7,16 @@ import org.rifidi.edge.core.readerplugin.messages.Message;
 
 public class MessageQueueImpl implements MessageQueue {
 
+	private static int counter = 1;
+	
+	private String queueName;
+	
 	Thread thread;
 
 	LinkedBlockingQueue<Message> messageQueue = new LinkedBlockingQueue<Message>();
 
 	public MessageQueueImpl() {
+		queueName =Integer.toString(counter++);
 		thread = new Thread(new Runnable() {
 
 			@Override
@@ -41,6 +46,11 @@ public class MessageQueueImpl implements MessageQueue {
 
 	public void stop() {
 		thread.interrupt();
+	}
+
+	@Override
+	public String getName() {
+		return queueName;
 	}
 
 }
