@@ -83,7 +83,7 @@ public class Communication implements ConnectionExceptionListener {
 		}
 		
 		try {
-			wait(connectionManager.getReconnectionIntervall());
+			Thread.sleep(connectionManager.getReconnectionIntervall());
 		} catch (InterruptedException e1) {
 			// ignore this exception.
 		}
@@ -125,10 +125,10 @@ public class Communication implements ConnectionExceptionListener {
 	
 	private void _connect() throws RifidiConnectionException{
 		ConnectionStreams connectionStreams = connectionManager.createCommunication();
-		readThread = new ReadThread("threadname", connection, protocol,
+		readThread = new ReadThread(connectionManager.toString() + " Read", connection, protocol,
 				readQueue, connectionStreams.getInputStream());
 
-		writeThread = new WriteThread("threadname", connection, protocol,
+		writeThread = new WriteThread(connectionManager.toString() + " Write", connection, protocol,
 				writeQueue, connectionStreams.getOutputStream());
 		
 		readThread.start();
