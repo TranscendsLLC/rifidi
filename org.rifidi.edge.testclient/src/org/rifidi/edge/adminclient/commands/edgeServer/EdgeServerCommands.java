@@ -17,7 +17,7 @@ import javax.jms.TextMessage;
 import org.rifidi.edge.adminclient.annotations.Command;
 import org.rifidi.edge.adminclient.commands.ICommand;
 import org.rifidi.edge.adminclient.jms.JMSConsumerFactory;
-import org.rifidi.edge.core.readerPlugin.AbstractReaderInfo;
+import org.rifidi.edge.core.readerplugin.ReaderInfo;
 import org.rifidi.edge.rmi.ReaderConnection.RemoteReaderConnection;
 import org.rifidi.edge.rmi.ReaderConnection.RemoteReaderConnectionRegistry;
 
@@ -109,7 +109,7 @@ public class EdgeServerCommands implements ICommand {
 					.getAllReaderConnections()) {
 				retVal.append(reader.getTagQueueName() + ": "
 						+ reader.getReaderInfo().getClass().getSimpleName()
-						+ " ID " + reader.getReaderInfo().getIPAddress() + ":"
+						+ " ID " + reader.getReaderInfo().getIpAddress() + ":"
 						+ reader.getReaderInfo().getPort() + " Status: "
 						+ reader.getReaderState() + "\n");
 			}
@@ -130,9 +130,9 @@ public class EdgeServerCommands implements ICommand {
 					.getAllReaderConnections();
 			for (RemoteReaderConnection connection : connections) {
 				if (connection.getReaderState().equalsIgnoreCase("ERROR")) {
-					System.out.print(connection.getReaderInfo().getReaderType()
-							+ " " + connection.getReaderInfo().getIPAddress()
-							+ ":" + connection.getReaderInfo().getPort());
+//					System.out.print(connection.getReaderInfo().getReaderType()
+//							+ " " + connection.getReaderInfo().getIpAddress()
+//							+ ":" + connection.getReaderInfo().getPort());
 
 					// TODO Find a better, more clean way of finding the type of
 					// error.
@@ -210,15 +210,14 @@ public class EdgeServerCommands implements ICommand {
 				return "Error while reading in the reader type to create";
 			}
 
-			AbstractReaderInfo readerInfo = null;
+			ReaderInfo readerInfo = null;
 
 			try {
 				Class<?> readerInfoClazz = Class.forName(availableReaderTypes
 						.get(selection - 1));
-				readerInfo = (AbstractReaderInfo) readerInfoClazz
-						.getConstructor(new Class[0])
-						.newInstance(new Object[0]);
-				System.out.println(readerInfo.getReaderType());
+				readerInfo = (ReaderInfo) readerInfoClazz.getConstructor(
+						new Class[0]).newInstance(new Object[0]);
+			//	System.out.println(readerInfo.getReaderType());
 				for (Method m : readerInfoClazz.getMethods()) {
 					if (m.getName().startsWith("set")) {
 						System.out.print(m.getName().substring(3) + ": ");

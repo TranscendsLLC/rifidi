@@ -6,10 +6,10 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/org.rifidi.edge.log4j"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/org.rifidi.edge.core"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/org.rifidi.edge.readerPlugin.alien"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/org.rifidi.edge.readerPlugin.dummy"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/org.rifidi.edge.readerPlugin.llrp"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/org.rifidi.edge.readerPlugin.thingmagic"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/org.rifidi.edge.rmi"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/org.rifidi.edge.readerplugin.alien"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/org.rifidi.edge.readerplugin.dummy"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/org.rifidi.edge.readerplugin.llrp"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/org.rifidi.edge.readerplugin.thingmagic"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
