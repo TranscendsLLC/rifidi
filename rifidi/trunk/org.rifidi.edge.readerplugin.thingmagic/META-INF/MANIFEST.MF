@@ -11,3 +11,6 @@ Require-Bundle: org.rifidi.edge.core,
  org.rifidi.edge.services,
  org.rifidi.edge.common.utilities,
  org.rifidi.edge.log4j
+Export-Package: org.rifidi.edge.readerplugin.thingmagic.commands,
+ org.rifidi.edge.readerplugin.thingmagic.plugin,
+ org.rifidi.edge.readerplugin.thingmagic.protocol
