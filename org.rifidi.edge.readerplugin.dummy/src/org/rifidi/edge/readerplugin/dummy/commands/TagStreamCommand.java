@@ -1,6 +1,7 @@
 package org.rifidi.edge.readerplugin.dummy.commands;
 
 import org.rifidi.edge.core.communication.Connection;
+import org.rifidi.edge.core.exceptions.RifidiMessageQueueException;
 import org.rifidi.edge.core.messageQueue.MessageQueue;
 import org.rifidi.edge.core.readerplugin.commands.Command;
 import org.rifidi.edge.core.readerplugin.commands.annotations.CommandDesc;
@@ -35,7 +36,13 @@ public class TagStreamCommand implements Command {
 		message.setId("Hallo".getBytes());
 		message.setLastSeenTime(1565467895l);
 		while (running){
-			queue.addMessage(message);
+			try {
+				queue.addMessage(message);
+			} catch (RifidiMessageQueueException e) {
+				e.printStackTrace();
+				//TODO make quit better
+				return;
+			}
 		}
 		System.out.println("TagStreaming is stopped");
 	
