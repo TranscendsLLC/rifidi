@@ -31,6 +31,7 @@ public class Communication implements ConnectionExceptionListener {
 	
 	public Communication(ConnectionManager connectionManager) {
 		this.connectionManager = connectionManager;
+		protocol = this.connectionManager.getCommunicationProtocol();
 	}
 
 	public Connection connect() throws RifidiConnectionException {
