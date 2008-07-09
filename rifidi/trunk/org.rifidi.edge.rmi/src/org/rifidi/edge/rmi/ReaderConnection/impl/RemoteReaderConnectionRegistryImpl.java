@@ -85,17 +85,9 @@ public class RemoteReaderConnectionRegistryImpl implements
 		return retVal;
 	}
 
-	public ReaderPluginService getReaderPluginService() {
-		return readerPluginService;
-	}
-
+	@Inject
 	public void setReaderPluginService(ReaderPluginService readerPluginService) {
 		this.readerPluginService = readerPluginService;
-	}
-
-	@Inject
-	public ReaderSessionService getReaderSessionService() {
-		return readerSessionService;
 	}
 
 	@Inject
