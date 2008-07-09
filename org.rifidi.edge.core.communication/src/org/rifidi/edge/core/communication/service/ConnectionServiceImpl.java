@@ -17,17 +17,19 @@ public class ConnectionServiceImpl implements ConnectionService {
 
 	@Override
 	public Connection createConnection(ConnectionManager connectionManager,
-			ReaderInfo readerInfo) throws RifidiConnectionException {
+			ReaderInfo readerInfo, ConnectionEventListener listener) throws RifidiConnectionException {
 		Connection connection = null;
 		Communication communication = new Communication(connectionManager);
 		connection = communication.connect();
 		fireAddEvent(connection);
+		communication.addConnectionEventListener(listener);
 		return connection;
 	}
 
 	@Override
-	public void destroyConnection(Connection connection) {
+	public void destroyConnection(Connection connection, ConnectionEventListener listener) {
 		Communication communication = connections.remove(connection);
+		communication.removeConnectionEventListener(listener);
 		communication.disconnect();
 		fireRemoveEvent(connection);
 	}

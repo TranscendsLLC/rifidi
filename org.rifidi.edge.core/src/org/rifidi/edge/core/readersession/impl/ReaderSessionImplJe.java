@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.rifidi.edge.core.communication.Connection;
+import org.rifidi.edge.core.communication.service.ConnectionEventListener;
 import org.rifidi.edge.core.communication.service.ConnectionService;
 import org.rifidi.edge.core.exceptions.RifidiCommandInterruptedException;
 import org.rifidi.edge.core.exceptions.RifidiConnectionException;
@@ -27,7 +28,7 @@ import org.rifidi.services.annotations.Inject;
  * @author Jerry Maine - jerry@pramari.com
  * 
  */
-public class ReaderSessionImplJe implements ReaderSession {
+public class ReaderSessionImplJe implements ReaderSession, ConnectionEventListener {
 	private Set<ExecutionListener> listeners = Collections
 			.synchronizedSet(new HashSet<ExecutionListener>());
 
@@ -91,7 +92,7 @@ public class ReaderSessionImplJe implements ReaderSession {
 					readerInfo.getClass()).getConnectionManager(readerInfo);
 
 		insureConnection();
-
+		
 		/* look for and execute the command */
 		for (Class<? extends Command> commandClass : readerPluginService
 				.getReaderPlugin(readerInfo.getClass()).getAvailableCommands()) {
@@ -179,40 +180,11 @@ public class ReaderSessionImplJe implements ReaderSession {
 	}
 
 	private void insureConnection() throws RifidiConnectionException {
+		connection = connectionService.createConnection(
+				connectionManager, readerInfo, this);
+		
+		
 
-		if (connection != null) {
-			try {
-				for (int x = 1; connectionManager.getMaxNumConnectionsAttemps() <= x; x++) {
-					try {
-						connection = connectionService.createConnection(
-								connectionManager, readerInfo);
-						if (connection != null)
-							break;
-						// TODO: how do we get out if we get the connection the
-						// first time
-					} catch (RifidiConnectionException e) {
-						if (x == connectionManager
-								.getMaxNumConnectionsAttemps()) {
-							connection = null;
-							status = ReaderSessionStatus.DISCONNECTED;
-							throw e;
-						}
-					}
-					try {
-						wait(connectionManager.getReconnectionIntervall());
-					} catch (InterruptedException e) {
-						// ignore this exception.
-					}
-				}
-			} catch (RuntimeException e) {
-				connection = null;
-				status = ReaderSessionStatus.DISCONNECTED;
-				throw new RifidiConnectionException(
-						"RuntimeException detected! "
-								+ "There is a possible bug in "
-								+ connectionManager.getClass().getName(), e);
-			} 
-		}
 
 	}
 
@@ -245,7 +217,7 @@ public class ReaderSessionImplJe implements ReaderSession {
 	}
 
 	@Inject
-	public void setReaderPluginService(ReaderPluginService readerPluginService) {
+	public void setReaderobjPluginService(ReaderPluginService readerPluginService) {
 		this.readerPluginService = readerPluginService;
 	}
 
@@ -254,4 +226,38 @@ public class ReaderSessionImplJe implements ReaderSession {
 		System.out.println("MessageService injected");
 		this.messageService = messageService;
 	}
+
+	/*=============================================================*/
+	/*  ConnectionEventListener Below                              */
+	/*=============================================================*/
+	@Override
+	public void connected() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void disconnected() {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void connectionExceptionEvent(Exception exception) {
+		// TODO Auto-generated method stub
+		// fires whenever there connections momentarily fails.
+	}
+
+	@Override
+	public void disconnectedOnError() {
+		// TODO Auto-generated method stub
+		// fires when we gave up trying to maintain the connection
+	}
+	
+	/*==============================================================*/
+	@Override
+	public void finalize(){
+		
+	}
+
+
 }

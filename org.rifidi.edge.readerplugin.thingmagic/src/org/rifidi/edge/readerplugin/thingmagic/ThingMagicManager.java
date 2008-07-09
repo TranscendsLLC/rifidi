@@ -81,14 +81,6 @@ public class ThingMagicManager extends ConnectionManager {
 		// ignore this.
 		
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionExceptionListener#connectionExceptionEvent(java.lang.Exception)
-	 */
-	@Override
-	public void connectionExceptionEvent(Exception exception) {
-		// TODO What do we do with this???
-	}
 
 	@Override
 	public ConnectionStreams createCommunication()

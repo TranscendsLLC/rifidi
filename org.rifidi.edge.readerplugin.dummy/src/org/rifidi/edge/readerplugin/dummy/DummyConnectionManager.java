@@ -3,14 +3,11 @@ package org.rifidi.edge.readerplugin.dummy;
 import java.io.IOException;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.Random;
-import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.rifidi.edge.core.communication.service.ConnectionEventListener;
+import org.rifidi.edge.core.communication.Connection;
 import org.rifidi.edge.core.exceptions.RifidiConnectionException;
 import org.rifidi.edge.core.readerplugin.ReaderInfo;
 import org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionManager;
@@ -23,9 +20,6 @@ public class DummyConnectionManager extends ConnectionManager {
 	private static final Log logger = LogFactory
 			.getLog(DummyConnectionManager.class);
 	DummyReaderInfo info;
-
-	Set<ConnectionEventListener> listeners = Collections
-			.synchronizedSet(new HashSet<ConnectionEventListener>());
 
 	/* used only when the dummy adapter is set to random errors */
 	Random random;
@@ -107,15 +101,6 @@ public class DummyConnectionManager extends ConnectionManager {
 		// do nothing
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionManager#addConnectionEventListener(org.rifidi.edge.core.communication.service.ConnectionEventListener)
-	 */
-	@Override
-	public void addConnectionEventListener(ConnectionEventListener event) {
-		listeners.add(event);
-	}
 
 	/*
 	 * (non-Javadoc)
@@ -177,9 +162,4 @@ public class DummyConnectionManager extends ConnectionManager {
 
 	}
 
-	@Override
-	public void connectionExceptionEvent(Exception exception) {
-		// TODO Auto-generated method stub
-
-	}
 }
