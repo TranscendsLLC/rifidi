@@ -23,6 +23,7 @@ import org.rifidi.edge.core.readersession.ExecutionListener;
 import org.rifidi.edge.core.readersession.ReaderSession;
 import org.rifidi.edge.core.readersession.ReaderSessionStatus;
 import org.rifidi.services.annotations.Inject;
+import org.rifidi.services.registry.ServiceRegistry;
 
 /**
  * @author Jerry Maine - jerry@pramari.com
@@ -52,7 +53,7 @@ public class ReaderSessionImplJe implements ReaderSession, ConnectionEventListen
 
 	public ReaderSessionImplJe(ReaderInfo readerInfo) {
 		this.readerInfo = readerInfo;
-
+		ServiceRegistry.getInstance().service(this);
 	}
 
 	@Override
