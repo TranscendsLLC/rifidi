@@ -24,7 +24,7 @@ public class Activator implements BundleActivator {
 	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
 	 */
 	public void start(BundleContext context) throws Exception {
-		System.out.println("== Bundle " + this.getClass().getName() + " loaded ==");
+		System.out.println("== Bundle Services started ==");
 		Activator.context = context;
 	}
 
@@ -33,7 +33,7 @@ public class Activator implements BundleActivator {
 	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
 	 */
 	public void stop(BundleContext context) throws Exception {
-		System.out.println("== Bundle " + this.getClass().getName() + " stopped ==");
+		System.out.println("== Bundle Services stopped ==");
 		context = null;
 	}
 
