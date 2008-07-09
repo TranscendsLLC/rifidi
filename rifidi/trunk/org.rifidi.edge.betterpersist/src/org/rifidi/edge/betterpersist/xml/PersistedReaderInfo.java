@@ -41,7 +41,7 @@ import com.sun.org.apache.xml.internal.serialize.XMLSerializer;
  * @author Matthew Dean - matt@pramari.com
  */
 public class PersistedReaderInfo {
-
+	
 	/**
 	 * The log4j logger.debug.
 	 */
@@ -51,7 +51,7 @@ public class PersistedReaderInfo {
 	/**
 	 * 
 	 */
-	private Document persistMap = null;
+	private Document doc = null;
 
 	/**
 	 * 
@@ -62,9 +62,9 @@ public class PersistedReaderInfo {
 	 * 
 	 */
 	public PersistedReaderInfo() {
-		persistMap = createDocument();
-		root = persistMap.createElement(XMLTags.ROOT_TAG);
-		persistMap.appendChild(root);
+		doc = createDocument();
+		root = doc.createElement(XMLTags.ROOT_TAG);
+		doc.appendChild(root);
 	}
 
 	/**
@@ -76,7 +76,7 @@ public class PersistedReaderInfo {
 				.getName());
 		if (readerInfoTypeList == null) {
 			logger.debug("Got into the reader is null area");
-			readerInfoTypeList = persistMap.createElement(XMLTags.ELEMENT_TAG);
+			readerInfoTypeList = doc.createElement(XMLTags.ELEMENT_TAG);
 			readerInfoTypeList.setAttribute(XMLTags.TYPE_TAG, readerInfo
 					.getClass().getName());
 			root.appendChild(readerInfoTypeList);
@@ -90,6 +90,12 @@ public class PersistedReaderInfo {
 		printToFile();
 	}
 
+	/**
+	 * Removes the reader
+	 * 
+	 * @param readerInfo
+	 * @throws RifidiReaderInfoNotFoundException
+	 */
 	public void removeReader(ReaderInfo readerInfo)
 			throws RifidiReaderInfoNotFoundException {
 		Element readerInfoTypeList = findReaderTypeList(readerInfo.getClass()
@@ -107,12 +113,26 @@ public class PersistedReaderInfo {
 
 	}
 
+	/**
+	 * 
+	 * @param xml
+	 */
 	public void parsePersistanceXMLFile(File xml) {
-		// TODO parse XML file into DOM structure
+
 	}
 
 	private Element find(ReaderInfo readerInfo, Element readerInfoTypeList) {
 		// TODO: Matt use XPath to find
+		//XPathFactory factory = XPathFactory.newInstance();
+		//XPath xpath = factory.newXPath();
+		// Node result = null;
+		// try {
+		// XPathExpression expr = xpath.compile(new String("/"
+		// + XMLTags.ROOT_TAG + "/" + XMLTags.ELEMENT_TAG + "["
+		// + XMLTags.TYPE_TAG + "='" + readerInfo.getClass().getName() + "']"));
+		// } catch (XPathExpressionException e) {
+		// e.printStackTrace();
+		// }
 		return null;
 	}
 
@@ -123,12 +143,13 @@ public class PersistedReaderInfo {
 		Node result = null;
 		try {
 			logger.debug("Just before the compile");
-			XPathExpression expr = xpath.compile(new String("/"
+			String exp = new String(new String("/"
 					+ XMLTags.ROOT_TAG + "/" + XMLTags.ELEMENT_TAG + "["
-					+ XMLTags.VALUE + "='" + readerInfoType + "']"));
+					+ XMLTags.TYPE_TAG + "='" + readerInfoType + "']"));
+			logger.debug("String expression is: \n" + exp);
+			XPathExpression expr = xpath.compile(exp);
 			logger.debug("Just after the compile");
-			Object oResult = expr
-					.evaluate(this.persistMap, XPathConstants.NODE);
+			Object oResult = expr.evaluate(this.doc, XPathConstants.NODE);
 			logger.debug("Just after the evaluate");
 			if (oResult == null) {
 				logger.debug("returning null");
@@ -169,19 +190,22 @@ public class PersistedReaderInfo {
 		return dom;
 	}
 
+	/**
+	 * Prints the document to a file.
+	 */
 	private void printToFile() {
 		logger.debug("Printing in the file");
 		try {
 			// print
-			OutputFormat format = new OutputFormat(persistMap);
+			OutputFormat format = new OutputFormat(doc);
 			format.setIndenting(true);
 
-			 XMLSerializer serializer = new XMLSerializer(new FileOutputStream(
+			XMLSerializer serializer = new XMLSerializer(new FileOutputStream(
 					new File("cuddles.xml")), format);
 
-			//XMLSerializer serializer = new XMLSerializer(System.out, format);
+			// XMLSerializer serializer = new XMLSerializer(System.out, format);
 
-			serializer.serialize(persistMap);
+			serializer.serialize(doc);
 
 		} catch (IOException ie) {
 			ie.printStackTrace();
