@@ -3,6 +3,7 @@ package org.rifidi.edge.readerplugin.thingmagic;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.net.UnknownHostException;
 
 import org.rifidi.edge.core.exceptions.RifidiConnectionException;
 import org.rifidi.edge.core.readerplugin.ReaderInfo;
@@ -27,10 +28,7 @@ public class ThingMagicManager extends ConnectionManager {
 	
 	@Override
 	public void connect() throws RifidiConnectionException {
-		// TODO Auto-generated method stub
-
-		
-		//TODO Fire events;
+		// ignore this for now.
 	}
 	
 	/* (non-Javadoc)
@@ -86,7 +84,18 @@ public class ThingMagicManager extends ConnectionManager {
 	public ConnectionStreams createCommunication()
 			throws RifidiConnectionException {
 		// TODO Auto-generated method stub
-		
+		if (!info.isSsh()) {
+			try {
+				socket = new Socket(info.getIpAddress(), info.getPort());
+			} catch (UnknownHostException e) {
+				throw new RifidiConnectionException(e);
+			} catch (IOException e) {
+				throw new RifidiConnectionException(e);
+			}
+		} else {
+			//TODO implement connection to reader by ssh
+			throw new UnsupportedOperationException("Connections to Merucry 4 or 5, ThingMagic readers by ssh not impemented.");
+		}
 		
 		try {
 			return new ConnectionStreams(socket.getInputStream(), socket.getOutputStream());
