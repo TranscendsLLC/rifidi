@@ -8,9 +8,9 @@ import org.rifidi.edge.core.communication.Connection;
 import org.rifidi.edge.core.exceptions.RifidiMessageQueueException;
 import org.rifidi.edge.core.messageQueue.MessageQueue;
 import org.rifidi.edge.core.readerplugin.commands.Command;
+import org.rifidi.edge.core.readerplugin.commands.CommandReturnStatus;
 import org.rifidi.edge.core.readerplugin.commands.annotations.CommandDesc;
 import org.rifidi.edge.core.readerplugin.messages.impl.TagMessage;
-import org.rifidi.edge.core.readersession.impl.CommandStatus;
 
 @CommandDesc(name="TagStreamingBrokenRuntime")
 public class TagStreamCommandBrokenRuntime implements Command {
@@ -20,7 +20,7 @@ public class TagStreamCommandBrokenRuntime implements Command {
 	Random random = new Random();
 
 	@Override
-	public CommandStatus start(Connection connection, MessageQueue messageQueue) throws IOException {
+	public CommandReturnStatus start(Connection connection, MessageQueue messageQueue) {
 		//TODO: Need to set this up properly.
 //		switch (info.getErrorToSet()) {
 //			case GET_NEXT_TAGS:
@@ -40,8 +40,12 @@ public class TagStreamCommandBrokenRuntime implements Command {
 		while (running){
 			String rawtag = ByteAndHexConvertingUtility.toHexString("Hallo".getBytes()).replace(" ", "") +
 			"|" + 1565467895l + "\n\n";
-			connection.sendMessage(rawtag);
-			rawtag = (String) connection.recieveMessage();
+			try {
+				connection.sendMessage(rawtag);
+				rawtag = (String) connection.recieveMessage();
+			} catch (IOException e1) {
+				return CommandReturnStatus.INTERRUPTED;
+			}
 			
 			if (random.nextDouble() <= 20)
 				throw new RuntimeException();
@@ -67,14 +71,15 @@ public class TagStreamCommandBrokenRuntime implements Command {
 					try {
 						messageQueue.addMessage(tag);
 					} catch (RifidiMessageQueueException e) {
-						throw new IOException(e);
+						return CommandReturnStatus.INTERRUPTED;
+
 					}
 				}
 			
 			}
 		}
 		System.out.println("TagStreaming is stopped");
-		return CommandStatus.SUCCESSFUL;
+		return CommandReturnStatus.SUCCESSFUL;
 	}
 
 	@Override
