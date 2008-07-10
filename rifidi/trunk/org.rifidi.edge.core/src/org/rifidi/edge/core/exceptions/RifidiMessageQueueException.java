@@ -9,6 +9,7 @@ public class RifidiMessageQueueException extends RifidiException {
 
 	public RifidiMessageQueueException() {
 		// TODO Auto-generated constructor stub
+		super();
 	}
 
 	public RifidiMessageQueueException(String arg0, Throwable arg1) {
