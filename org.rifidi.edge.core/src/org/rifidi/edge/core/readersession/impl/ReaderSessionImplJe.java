@@ -100,7 +100,7 @@ public class ReaderSessionImplJe implements ReaderSession, ConnectionEventListen
 		/* look for and execute the command */
 		for (Class<? extends Command> commandClass : readerPluginService
 				.getReaderPlugin(readerInfo.getClass()).getAvailableCommands()) {
-			System.out.println(commandClass.getName());
+			logger.debug(commandClass.getName());
 
 			CommandDesc commandDesc = commandClass
 					.getAnnotation(CommandDesc.class);
@@ -122,6 +122,7 @@ public class ReaderSessionImplJe implements ReaderSession, ConnectionEventListen
 								.createMessageQueue(connectionManager.toString());
 						
 						try {
+							logger.debug("Trying to run command: " + commandDesc.name());
 							commandInstance.start(connection, messageQueue);
 						} catch (IOException e) {
 							//insureConnection();
