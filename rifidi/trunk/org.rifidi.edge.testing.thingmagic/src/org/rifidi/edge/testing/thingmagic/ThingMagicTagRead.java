@@ -1,10 +1,6 @@
 package org.rifidi.edge.testing.thingmagic;
 
 import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.util.List;
 
 import org.junit.After;
 import org.junit.Assert;
