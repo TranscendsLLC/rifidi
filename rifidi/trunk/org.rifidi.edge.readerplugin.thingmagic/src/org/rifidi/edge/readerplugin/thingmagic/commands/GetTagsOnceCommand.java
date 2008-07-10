@@ -16,6 +16,7 @@ import org.rifidi.edge.core.readerplugin.messages.impl.TagMessage;
 public class GetTagsOnceCommand implements Command {
 	private static final Log logger = LogFactory.getLog(GetTagsOnceCommand.class);
 	private static final String GET_TAGS = "select id, timestamp from tag_id;";
+	
 	@Override
 	public void start(Connection connection, MessageQueue messageQueue) throws IOException {
 		try {
