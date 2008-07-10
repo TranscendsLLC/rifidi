@@ -8,6 +8,10 @@ import org.rifidi.services.registry.ServiceRegistry;
 
 
 
+/**
+ * @author Jerry Maine - jerry@pramari.com
+ *
+ */
 public class Activator implements BundleActivator {
 	/*
 	 * (non-Javadoc)
