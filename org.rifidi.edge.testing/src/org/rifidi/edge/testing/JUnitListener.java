@@ -11,16 +11,16 @@ import org.junit.runner.notification.RunListener;
  * @author Jerry Maine - jerry@pramari.com
  *
  */
-public class JunitListener extends RunListener {
-	private static final Log logger = LogFactory.getLog(JunitListener.class);
+public class JUnitListener extends RunListener {
+	private static final Log logger = LogFactory.getLog(JUnitListener.class);
 	
 	public void testFinished(Description description){
 		logger.debug("JUnit Finished: " + description);
 	}
 	
 	public void testFailure(Failure failure){
-		logger.error(failure);
+		logger.error("JUnit Failure: " + failure);
 		//logger.error(failure.getMessage());
-		logger.error(failure.getTrace());
+		logger.error("JUnit Failure: " + failure.getTrace());
 	}
 }

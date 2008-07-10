@@ -26,7 +26,7 @@ public class TestingServiceImpl extends AbstractThread implements TestingService
 	public void run() {
 		// TODO Auto-generated method stub
 		JUnitCore junit = new JUnitCore();
-		RunListener listener = new JunitListener();
+		RunListener listener = new JUnitListener();
 		junit.addListener(listener);
 //		try {
 //			Thread.sleep(5000);
