@@ -12,6 +12,7 @@ import org.rifidi.edge.core.messageQueue.MessageQueue;
 import org.rifidi.edge.core.readerplugin.commands.Command;
 import org.rifidi.edge.core.readerplugin.commands.annotations.CommandDesc;
 import org.rifidi.edge.core.readerplugin.messages.impl.TagMessage;
+import org.rifidi.edge.core.readersession.impl.CommandStatus;
 
 @CommandDesc(name="TagStreaming")
 public class TagStreamCommand implements Command {
@@ -20,7 +21,7 @@ public class TagStreamCommand implements Command {
 	boolean running = true;
 	
 	@Override
-	public void start(Connection connection, MessageQueue messageQueue) {
+	public CommandStatus start(Connection connection, MessageQueue messageQueue) throws IOException {
 		
 		while (running){
 			try {
@@ -58,15 +59,13 @@ public class TagStreamCommand implements Command {
 					try {
 						messageQueue.addMessage(tag);
 					} catch (RifidiMessageQueueException e) {
-						//TODO make quit better
-						e.printStackTrace();
-						return;
+						throw new IOException(e);
 					}
 				} 
 				
 			}
 		}
-	
+		return CommandStatus.SUCCESSFUL;
 	}
 
 	@Override

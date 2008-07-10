@@ -11,6 +11,7 @@ import org.rifidi.edge.core.messageQueue.MessageQueue;
 import org.rifidi.edge.core.readerplugin.commands.Command;
 import org.rifidi.edge.core.readerplugin.commands.annotations.CommandDesc;
 import org.rifidi.edge.core.readerplugin.messages.impl.TagMessage;
+import org.rifidi.edge.core.readersession.impl.CommandStatus;
 
 @CommandDesc(name="GetTagsCurrentlyOnAntennas")
 public class GetTagsOnceCommand implements Command {
@@ -18,7 +19,7 @@ public class GetTagsOnceCommand implements Command {
 	private static final String GET_TAGS = "select id, timestamp from tag_id;";
 	
 	@Override
-	public void start(Connection connection, MessageQueue messageQueue) throws IOException {
+	public CommandStatus start(Connection connection, MessageQueue messageQueue) throws IOException {
 		try {
 			logger.debug("Issuing Command: " + GET_TAGS);
 			connection.sendMessage(GET_TAGS);
@@ -56,7 +57,7 @@ public class GetTagsOnceCommand implements Command {
 			}
 			
 		}
-
+		return CommandStatus.SUCCESSFUL;
 	}
 
 	@Override

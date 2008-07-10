@@ -11,6 +11,7 @@ import org.rifidi.edge.core.messageQueue.MessageQueue;
 import org.rifidi.edge.core.readerplugin.commands.Command;
 import org.rifidi.edge.core.readerplugin.commands.annotations.CommandDesc;
 import org.rifidi.edge.core.readerplugin.messages.impl.TagMessage;
+import org.rifidi.edge.core.readersession.impl.CommandStatus;
 
 @CommandDesc(name="GetTagsCurrentlyOnAntennas")
 public class GetTagsOnceCommand implements Command {
@@ -18,7 +19,7 @@ public class GetTagsOnceCommand implements Command {
 	boolean running = true;
 	
 	@Override
-	public void start(Connection connection, MessageQueue messageQueue) throws IOException {
+	public CommandStatus start(Connection connection, MessageQueue messageQueue) throws IOException {
 		logger.debug("Getting tags.");
 		//TODO: Need to set this up properly.
 //		switch (info.getErrorToSet()) {
@@ -68,7 +69,7 @@ public class GetTagsOnceCommand implements Command {
 			
 		}
 		
-
+		return CommandStatus.SUCCESSFUL;
 	}
 
 	@Override
