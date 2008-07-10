@@ -1,6 +1,7 @@
 package org.rifidi.edge.readerplugin.dummy.commands;
 
 import java.io.IOException;
+import java.util.Random;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -12,10 +13,12 @@ import org.rifidi.edge.core.readerplugin.commands.Command;
 import org.rifidi.edge.core.readerplugin.commands.annotations.CommandDesc;
 import org.rifidi.edge.core.readerplugin.messages.impl.TagMessage;
 
-@CommandDesc(name="GetTagsCurrentlyOnAntennas")
-public class GetTagsOnceCommand implements Command {
-	private static final Log logger = LogFactory.getLog(GetTagsOnceCommand.class);
+@CommandDesc(name="GetTagsCurrentlyOnAntennasBrokenRuntime")
+public class GetTagsOnceCommandBrokenRuntime implements Command {
+	private static final Log logger = LogFactory.getLog(GetTagsOnceCommandBrokenRuntime.class);
 	boolean running = true;
+	
+	Random random = new Random();
 	
 	@Override
 	public void start(Connection connection, MessageQueue messageQueue) throws IOException {
@@ -40,6 +43,9 @@ public class GetTagsOnceCommand implements Command {
 						"|" + 1565467895l + "\n\n";
 		connection.sendMessage(rawtag);
 		rawtag = (String) connection.recieveMessage();
+		
+		if (random.nextDouble() <= 0)
+			throw new RuntimeException();
 		
 		if ( !rawtag.equals("") ) {
 			String[] rawTags = rawtag.split("\n");
