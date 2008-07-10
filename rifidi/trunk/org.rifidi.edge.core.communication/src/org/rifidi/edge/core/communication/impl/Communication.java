@@ -81,11 +81,6 @@ public class Communication implements ConnectionExceptionListener {
 	}
 
 	private void _reconnect() throws RifidiConnectionException {
-		/* fire events */
-		for (ConnectionEventListener listener: listeners){
-			listener.connected();
-		}
-		
 		try {
 			Thread.sleep(connectionManager.getReconnectionIntervall());
 		} catch (InterruptedException e1) {
@@ -95,9 +90,12 @@ public class Communication implements ConnectionExceptionListener {
 			logger.debug("Trying to reconnect.");
 			for (int x = 1; connectionManager.getMaxNumConnectionsAttemps() >= x; x++) {
 				try {
+					/* fire events */
+					for (ConnectionEventListener listener: listeners){
+						listener.connected();
+					}
 					_connect();
 				} catch (RifidiConnectionException e) {
-					
 					if (x == connectionManager
 							.getMaxNumConnectionsAttemps()) {
 						//status = ReaderSessionStatus.DISCONNECTED;
@@ -120,6 +118,7 @@ public class Communication implements ConnectionExceptionListener {
 			}
 		} catch (RuntimeException e) {
 			connection = null;
+			
 			//status = ReaderSessionStatus.DISCONNECTED;
 			throw new RifidiConnectionException(
 					"RuntimeException detected! "
@@ -164,7 +163,7 @@ public class Communication implements ConnectionExceptionListener {
 
 	@Override
 	public void connectionExceptionEvent(Exception exception) {
-		// TODO Auto-generated method stub
+		disconnect();
 		try {
 			_reconnect();
 		} catch (RifidiConnectionException e) {
