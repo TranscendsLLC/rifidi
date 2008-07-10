@@ -66,6 +66,7 @@ public class ConnectionImpl implements Connection {
 			for (ConnectionExceptionListener listener : listeners) {
 				listener.connectionExceptionEvent(e);
 			}
+			locker.notifyAll();
 		}
 	}
 
