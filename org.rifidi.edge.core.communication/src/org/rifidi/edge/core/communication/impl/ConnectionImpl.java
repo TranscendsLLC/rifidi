@@ -7,6 +7,7 @@ import java.util.Set;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import org.rifidi.edge.core.communication.Connection;
+import org.rifidi.edge.core.exceptions.RifidiInvalidMessageFormat;
 import org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionExceptionListener;
 
 public class ConnectionImpl implements Connection {
@@ -73,8 +74,12 @@ public class ConnectionImpl implements Connection {
 			if (exception != null) {
 				if (exception instanceof IOException){
 					throw (IOException) exception;		
-				} else if (exception instanceof RuntimeException) {
+				} else if (exception instanceof ClassCastException) {
+					throw new IOException("Possible Invalid Message Format!", exception);
+				}else if (exception instanceof RuntimeException) {
 					throw (RuntimeException) exception;
+				} else if (exception instanceof RifidiInvalidMessageFormat) {
+					throw new IOException("Invalid Message Format!", exception);
 				} else {
 					throw new UndeclaredThrowableException(exception);
 				}
