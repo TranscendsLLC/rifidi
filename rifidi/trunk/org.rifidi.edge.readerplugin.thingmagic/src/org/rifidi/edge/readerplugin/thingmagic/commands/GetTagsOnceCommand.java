@@ -45,13 +45,13 @@ public class GetTagsOnceCommand implements Command {
 				TagMessage tag = new TagMessage();
 				
 				
-				logger.debug(rawTagItems[0]);
+				//logger.debug(rawTagItems[0]);
 				
 				tag.setId(ByteAndHexConvertingUtility.fromHexString(rawTagItems[0].substring(2, rawTagItems[0].length())));
 				
 				//TODO: correct the time stamps.
 				tag.setLastSeenTime(System.nanoTime()); 
-				logger.debug(tag.toXML());
+				//logger.debug(tag.toXML());
 				try {
 					messageQueue.addMessage(tag);
 				} catch (RifidiMessageQueueException e) {
