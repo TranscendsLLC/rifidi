@@ -22,13 +22,14 @@ import org.rifidi.edge.core.messageQueue.MessageQueue;
 import org.rifidi.edge.core.readerplugin.commands.Command;
 import org.rifidi.edge.core.readerplugin.commands.annotations.CommandDesc;
 import org.rifidi.edge.core.readerplugin.messages.impl.TagMessage;
+import org.rifidi.edge.core.readersession.impl.CommandStatus;
 
 /**
  * 
  * 
  * @author Matthew Dean - matt@pramari.com
  */
-@CommandDesc(name="getTagList")
+@CommandDesc(name = "getTagList")
 public class AlienTagStreamCommand implements Command {
 
 	private boolean running = false;
@@ -40,7 +41,8 @@ public class AlienTagStreamCommand implements Command {
 	 *      org.rifidi.edge.core.messageQueue.MessageQueue)
 	 */
 	@Override
-	public void start(Connection connection, MessageQueue messageQueue) throws IOException {
+	public CommandStatus start(Connection connection, MessageQueue messageQueue)
+			throws IOException {
 		running = true;
 		try {
 
@@ -52,18 +54,18 @@ public class AlienTagStreamCommand implements Command {
 
 			while (running) {
 				connection.sendMessage(AlienCommandList.TAG_LIST);
-				String tag_msg = (String)connection.recieveMessage();
-				
+				String tag_msg = (String) connection.recieveMessage();
+
 				List<TagMessage> tagList = this.parseString(tag_msg);
-				
-				for(TagMessage m:tagList) {
+
+				for (TagMessage m : tagList) {
 					messageQueue.addMessage(m);
 				}
 			}
 		} catch (RifidiMessageQueueException e) {
 			throw new IOException(e);
 		}
-
+		return CommandStatus.SUCCESSFUL;
 	}
 
 	/*
@@ -97,7 +99,7 @@ public class AlienTagStreamCommand implements Command {
 		 */
 		public static final String TAG_LIST_CUSTOM_FORMAT = ('\1' + "set TagListCustomFormat=%k|%t\n");
 	}
-	
+
 	/**
 	 * Parses the string.
 	 * 
