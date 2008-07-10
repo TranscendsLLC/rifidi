@@ -3,7 +3,7 @@ package org.rifidi.edge.readerplugin.dummy.protocol;
 import java.io.ByteArrayOutputStream;
 
 import org.rifidi.edge.core.readerplugin.protocol.CommunicationProtocol;
-import org.rifidi.edge.readerplugin.dummy.DummyReaderInfo;
+import org.rifidi.edge.readerplugin.dummy.plugin.DummyReaderInfo;
 
 public class DummyCommunicationProtocol implements CommunicationProtocol {
 

@@ -1,4 +1,4 @@
-package org.rifidi.edge.readerplugin.dummy;
+package org.rifidi.edge.readerplugin.dummy.plugin;
 
 import java.io.IOException;
 import java.io.PipedInputStream;

@@ -1,4 +1,4 @@
-package org.rifidi.edge.readerplugin.dummy;
+package org.rifidi.edge.readerplugin.dummy.plugin;
 
 public enum EDummyError {
 	CONNECT, DISCONNECT, GET_NEXT_TAGS, SEND_CUSTOM_COMMAND,
