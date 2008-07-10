@@ -17,7 +17,7 @@ import org.rifidi.edge.core.readerplugin.ReaderInfo;
 import org.rifidi.edge.core.readerplugin.service.ReaderPluginService;
 import org.rifidi.edge.core.readersession.ReaderSession;
 import org.rifidi.edge.core.readersession.service.ReaderSessionService;
-import org.rifidi.edge.readerplugin.dummy.DummyReaderInfo;
+import org.rifidi.edge.readerplugin.dummy.plugin.DummyReaderInfo;
 import org.rifidi.services.annotations.Inject;
 import org.rifidi.services.registry.ServiceRegistry;
 
