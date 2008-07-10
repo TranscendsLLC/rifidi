@@ -13,15 +13,18 @@ import org.rifidi.edge.readerplugin.dummy.commands.TagStreamCommand;
 import org.rifidi.edge.readerplugin.dummy.protocol.DummyMessageProtocol;
 
 public class DummyReaderPlugin implements ReaderPlugin {
-
+	ArrayList<Class<? extends Command>> commands = new ArrayList<Class<? extends Command>>();
+	
+	public DummyReaderPlugin(){		
+		commands.add(TagStreamCommand.class);
+		commands.add(GetTagsOnceCommand.class);
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.rifidi.edge.core.readerplugin.ReaderPlugin#getAvailableCommands()
 	 */
 	@Override
 	public List<Class<? extends Command>> getAvailableCommands() {
-		ArrayList<Class<? extends Command>> commands = new ArrayList<Class<? extends Command>>();
-		commands.add(TagStreamCommand.class);
-		commands.add(GetTagsOnceCommand.class);
 		return commands;
 	}
 
