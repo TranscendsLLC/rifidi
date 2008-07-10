@@ -126,10 +126,10 @@ public class Communication implements ConnectionExceptionListener {
 	
 	private void _connect() throws RifidiConnectionException{
 		ConnectionStreams connectionStreams = connectionManager.createCommunication();
-		readThread = new ReadThread(connectionManager.toString() + " Read", connection, protocol,
+		readThread = new ReadThread(connectionManager.toString() + " Read Thread", connection, protocol,
 				readQueue, connectionStreams.getInputStream());
 
-		writeThread = new WriteThread(connectionManager.toString() + " Write", connection, protocol,
+		writeThread = new WriteThread(connectionManager.toString() + " Write Thread", connection, protocol,
 				writeQueue, connectionStreams.getOutputStream());
 		
 		readThread.start();
