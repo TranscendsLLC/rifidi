@@ -7,6 +7,8 @@ Bundle-Activator: org.rifidi.edge.common.utilities.Activator
 Bundle-Vendor: Pramari, LLC
 Import-Package: org.osgi.framework;version="1.3.0"
 Export-Package: org.rifidi.edge.common.utilities.converter,
+ org.rifidi.edge.common.utilities.jaxb,
+ org.rifidi.edge.common.utilities.resource,
  org.rifidi.edge.common.utilities.thread
 Require-Bundle: org.rifidi.edge.log4j
 Eclipse-LazyStart: true
