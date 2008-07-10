@@ -28,8 +28,9 @@ import org.rifidi.edge.core.readerplugin.protocol.CommunicationProtocol;
 import org.rifidi.edge.readerplugin.alien.protocol.AlienCommunicationProtocol;
 
 /**
- * @author Matthew Dean - matt@pramari.com
  * 
+ * 
+ * @author Matthew Dean - matt@pramari.com
  */
 public class AlienConnectionManager extends ConnectionManager {
 
@@ -79,7 +80,6 @@ public class AlienConnectionManager extends ConnectionManager {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-
 		} else {
 			throw new RifidiConnectionException();
 		}
@@ -171,7 +171,7 @@ public class AlienConnectionManager extends ConnectionManager {
 	 * @see org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionManager#startKeepAlive()
 	 */
 	@Override
-	public void startKeepAlive() {
+	public void startKeepAlive(Connection connection) {
 		// TODO Nothing here yet, more later
 
 	}
@@ -182,7 +182,7 @@ public class AlienConnectionManager extends ConnectionManager {
 	 * @see org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionManager#stopKeepAlive()
 	 */
 	@Override
-	public void stopKeepAlive() {
+	public void stopKeepAlive(Connection connection) {
 		// TODO Nothing here yet, more later
 
 	}

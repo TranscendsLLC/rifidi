@@ -18,14 +18,19 @@ import org.rifidi.edge.core.readerplugin.ReaderPlugin;
 import org.rifidi.edge.core.readerplugin.commands.Command;
 import org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionManager;
 import org.rifidi.edge.core.readerplugin.protocol.MessageProtocol;
+import org.rifidi.edge.readerplugin.alien.commands.AlienTagStreamCommand;
 import org.rifidi.edge.readerplugin.alien.protocol.AlienMessageProtocol;
 
 /**
- * @author Matthew Dean - matt@pramari.com
  * 
+ * 
+ * @author Matthew Dean - matt@pramari.com
  */
 public class AlienReaderPlugin implements ReaderPlugin {
 
+	/**
+	 * The list of commmands
+	 */
 	private List<Class<? extends Command>> commands;
 
 	/**
@@ -33,6 +38,7 @@ public class AlienReaderPlugin implements ReaderPlugin {
 	 */
 	public AlienReaderPlugin() {
 		commands = new ArrayList<Class<? extends Command>>();
+		commands.add(AlienTagStreamCommand.class);
 	}
 
 	/*

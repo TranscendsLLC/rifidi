@@ -20,6 +20,7 @@ import org.rifidi.edge.core.communication.Connection;
 import org.rifidi.edge.core.exceptions.RifidiMessageQueueException;
 import org.rifidi.edge.core.messageQueue.MessageQueue;
 import org.rifidi.edge.core.readerplugin.commands.Command;
+import org.rifidi.edge.core.readerplugin.commands.annotations.CommandDesc;
 import org.rifidi.edge.core.readerplugin.messages.impl.TagMessage;
 
 /**
@@ -27,6 +28,7 @@ import org.rifidi.edge.core.readerplugin.messages.impl.TagMessage;
  * 
  * @author Matthew Dean - matt@pramari.com
  */
+@CommandDesc(name="getTagList")
 public class AlienTagStreamCommand implements Command {
 
 	private boolean running = false;
@@ -38,7 +40,7 @@ public class AlienTagStreamCommand implements Command {
 	 *      org.rifidi.edge.core.messageQueue.MessageQueue)
 	 */
 	@Override
-	public void start(Connection connection, MessageQueue messageQueue) {
+	public void start(Connection connection, MessageQueue messageQueue) throws IOException {
 		running = true;
 		try {
 
@@ -58,11 +60,8 @@ public class AlienTagStreamCommand implements Command {
 					messageQueue.addMessage(m);
 				}
 			}
-		} catch (IOException e) {
-			//TODO make quit better
-			e.printStackTrace();
 		} catch (RifidiMessageQueueException e) {
-			e.printStackTrace();
+			throw new IOException(e);
 		}
 
 	}
