@@ -8,7 +8,8 @@ import org.rifidi.edge.core.readerplugin.protocol.CommunicationProtocol;
 
 public abstract class ConnectionManager {
 
-	ReaderInfo info;
+	//TODO: think about if we need this
+	private ReaderInfo info;
 	
 	
 	public ConnectionManager(ReaderInfo readerInfo) {
@@ -31,11 +32,9 @@ public abstract class ConnectionManager {
 
 	public abstract CommunicationProtocol getCommunicationProtocol();
 
-	//TODO: need to pass in connection
-	public abstract void startKeepAlive();
+	public abstract void startKeepAlive(Connection connection);
 
-	//TODO: need to pass in connection
-	public abstract void stopKeepAlive();
+	public abstract void stopKeepAlive(Connection connection);
 
 	public String toString(){
 		return this.getClass().getSimpleName() + ": " + info.getIpAddress() + ":" + info.getPort();
