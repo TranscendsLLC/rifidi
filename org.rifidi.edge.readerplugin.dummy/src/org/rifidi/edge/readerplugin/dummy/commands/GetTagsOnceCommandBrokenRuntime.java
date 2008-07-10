@@ -12,6 +12,7 @@ import org.rifidi.edge.core.messageQueue.MessageQueue;
 import org.rifidi.edge.core.readerplugin.commands.Command;
 import org.rifidi.edge.core.readerplugin.commands.annotations.CommandDesc;
 import org.rifidi.edge.core.readerplugin.messages.impl.TagMessage;
+import org.rifidi.edge.core.readersession.impl.CommandStatus;
 
 @CommandDesc(name="GetTagsCurrentlyOnAntennasBrokenRuntime")
 public class GetTagsOnceCommandBrokenRuntime implements Command {
@@ -21,7 +22,7 @@ public class GetTagsOnceCommandBrokenRuntime implements Command {
 	Random random = new Random();
 	
 	@Override
-	public void start(Connection connection, MessageQueue messageQueue) throws IOException {
+	public CommandStatus start(Connection connection, MessageQueue messageQueue) throws IOException{
 		logger.debug("Getting tags.");
 		//TODO: Need to set this up properly.
 //		switch (info.getErrorToSet()) {
@@ -74,7 +75,7 @@ public class GetTagsOnceCommandBrokenRuntime implements Command {
 			
 		}
 		
-
+		return CommandStatus.SUCCESSFUL;
 	}
 
 	@Override
