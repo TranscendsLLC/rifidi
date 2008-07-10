@@ -2,7 +2,6 @@ package org.rifidi.edge.readerplugin.thingmagic.commands;
 
 import java.io.IOException;
 
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.common.utilities.converter.ByteAndHexConvertingUtility;
@@ -10,9 +9,9 @@ import org.rifidi.edge.core.communication.Connection;
 import org.rifidi.edge.core.exceptions.RifidiMessageQueueException;
 import org.rifidi.edge.core.messageQueue.MessageQueue;
 import org.rifidi.edge.core.readerplugin.commands.Command;
+import org.rifidi.edge.core.readerplugin.commands.CommandReturnStatus;
 import org.rifidi.edge.core.readerplugin.commands.annotations.CommandDesc;
 import org.rifidi.edge.core.readerplugin.messages.impl.TagMessage;
-import org.rifidi.edge.core.readersession.impl.CommandStatus;
 
 @CommandDesc(name="TagStreaming")
 public class TagStreamCommand implements Command {
@@ -21,7 +20,7 @@ public class TagStreamCommand implements Command {
 	boolean running = true;
 	
 	@Override
-	public CommandStatus start(Connection connection, MessageQueue messageQueue) throws IOException {
+	public CommandReturnStatus start(Connection connection, MessageQueue messageQueue) {
 		
 		while (running){
 			try {
@@ -35,8 +34,7 @@ public class TagStreamCommand implements Command {
 			try {
 				recieved = (String) connection.recieveMessage();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				return CommandReturnStatus.INTERRUPTED;
 			}
 			
 			if ( !recieved.equals("") ) {
@@ -59,13 +57,13 @@ public class TagStreamCommand implements Command {
 					try {
 						messageQueue.addMessage(tag);
 					} catch (RifidiMessageQueueException e) {
-						throw new IOException(e);
+						return CommandReturnStatus.INTERRUPTED;
 					}
 				} 
 				
 			}
 		}
-		return CommandStatus.SUCCESSFUL;
+		return CommandReturnStatus.SUCCESSFUL;
 	}
 
 	@Override

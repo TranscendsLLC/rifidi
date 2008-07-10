@@ -9,9 +9,9 @@ import org.rifidi.edge.core.communication.Connection;
 import org.rifidi.edge.core.exceptions.RifidiMessageQueueException;
 import org.rifidi.edge.core.messageQueue.MessageQueue;
 import org.rifidi.edge.core.readerplugin.commands.Command;
+import org.rifidi.edge.core.readerplugin.commands.CommandReturnStatus;
 import org.rifidi.edge.core.readerplugin.commands.annotations.CommandDesc;
 import org.rifidi.edge.core.readerplugin.messages.impl.TagMessage;
-import org.rifidi.edge.core.readersession.impl.CommandStatus;
 
 @CommandDesc(name="GetTagsCurrentlyOnAntennas")
 public class GetTagsOnceCommand implements Command {
@@ -19,7 +19,7 @@ public class GetTagsOnceCommand implements Command {
 	private static final String GET_TAGS = "select id, timestamp from tag_id;";
 	
 	@Override
-	public CommandStatus start(Connection connection, MessageQueue messageQueue) throws IOException {
+	public CommandReturnStatus start(Connection connection, MessageQueue messageQueue){
 		try {
 			logger.debug("Issuing Command: " + GET_TAGS);
 			connection.sendMessage(GET_TAGS);
@@ -28,7 +28,12 @@ public class GetTagsOnceCommand implements Command {
 			e.printStackTrace();
 		}
 		
-		String recieved = (String) connection.recieveMessage();
+		String recieved;
+		try {
+			recieved = (String) connection.recieveMessage();
+		} catch (IOException e1) {
+			return CommandReturnStatus.INTERRUPTED;
+		}
 		
 		logger.debug("Returned: " + recieved);
 		if ( !recieved.equals("") ) {
@@ -52,12 +57,12 @@ public class GetTagsOnceCommand implements Command {
 				try {
 					messageQueue.addMessage(tag);
 				} catch (RifidiMessageQueueException e) {
-					throw new IOException(e);
+					return CommandReturnStatus.INTERRUPTED;
 				}
 			}
 			
 		}
-		return CommandStatus.SUCCESSFUL;
+		return CommandReturnStatus.SUCCESSFUL;
 	}
 
 	@Override
