@@ -26,13 +26,8 @@ public class GetTagsOnceCommand implements Command {
 			e.printStackTrace();
 		}
 		
-		String recieved = "";
-		try {
-			recieved = (String) connection.recieveMessage();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		String recieved = (String) connection.recieveMessage();
+		
 		logger.debug("Returned: " + recieved);
 		if ( !recieved.equals("") ) {
 			String[] rawTags = recieved.split("\n");
@@ -55,9 +50,7 @@ public class GetTagsOnceCommand implements Command {
 				try {
 					messageQueue.addMessage(tag);
 				} catch (RifidiMessageQueueException e) {
-					//TODO make quit better
-					e.printStackTrace();
-					return;
+					throw new IOException(e);
 				}
 			}
 			
