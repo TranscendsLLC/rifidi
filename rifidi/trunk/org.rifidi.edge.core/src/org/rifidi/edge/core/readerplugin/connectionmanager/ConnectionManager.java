@@ -31,8 +31,10 @@ public abstract class ConnectionManager {
 
 	public abstract CommunicationProtocol getCommunicationProtocol();
 
+	//TODO: need to pass in connection
 	public abstract void startKeepAlive();
 
+	//TODO: need to pass in connection
 	public abstract void stopKeepAlive();
 
 	public String toString(){
