@@ -104,10 +104,7 @@ public class ReaderSessionImpl implements ReaderSession, ConnectionEventListener
 
 			CommandDesc commandDesc = commandClass
 					.getAnnotation(CommandDesc.class);
-			if (commandDesc == null) {
-				status = ReaderSessionStatus.CONNECTED;
-				throw new RifidiCommandInterruptedException("Command not found.");
-			} else {
+			if (commandDesc != null) {
 				if (commandDesc.name().equals(command)) {
 					try {
 						Constructor<? extends Command> constructor = commandClass
@@ -178,7 +175,14 @@ public class ReaderSessionImpl implements ReaderSession, ConnectionEventListener
 						throw new RifidiCommandInterruptedException(
 								"Command not found.", e);
 					} 
+				} else {
+					commandDesc = null;
 				}
+			}
+			
+			if (commandDesc == null){
+				status = ReaderSessionStatus.CONNECTED;
+				throw new RifidiCommandInterruptedException("\""+ command +"\" command not found.");
 			}
 		}
 
