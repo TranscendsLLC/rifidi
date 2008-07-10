@@ -1,6 +1,7 @@
 package org.rifidi.edge.readerplugin.dummy.commands;
 
 import java.io.IOException;
+import java.util.Random;
 
 import org.rifidi.edge.common.utilities.converter.ByteAndHexConvertingUtility;
 import org.rifidi.edge.core.communication.Connection;
@@ -10,11 +11,12 @@ import org.rifidi.edge.core.readerplugin.commands.Command;
 import org.rifidi.edge.core.readerplugin.commands.annotations.CommandDesc;
 import org.rifidi.edge.core.readerplugin.messages.impl.TagMessage;
 
-@CommandDesc(name="TagStreaming")
-public class TagStreamCommand implements Command {
+@CommandDesc(name="TagStreamingBroken")
+public class TagStreamCommandBroken implements Command {
 
 	boolean running = true;
 
+	Random random = new Random();
 
 	@Override
 	public void start(Connection connection, MessageQueue messageQueue) throws IOException{
@@ -39,6 +41,9 @@ public class TagStreamCommand implements Command {
 			"|" + 1565467895l + "\n\n";
 			connection.sendMessage(rawtag);
 			rawtag = (String) connection.recieveMessage();
+			
+			if (random.nextDouble() <= 20)
+				throw new IOException();
 			
 			if ( !rawtag.equals("") ) {
 				String[] rawTags = rawtag.split("\n");
