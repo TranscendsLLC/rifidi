@@ -216,11 +216,13 @@ public class ReaderSessionImplJe implements ReaderSession, ConnectionEventListen
 
 	@Inject
 	public void setConnectionService(ConnectionService connectionService) {
+		System.out.println("ConnectionService injected");
 		this.connectionService = connectionService;
 	}
 
 	@Inject
 	public void setReaderobjPluginService(ReaderPluginService readerPluginService) {
+		System.out.println("ReaderPluginService injected");
 		this.readerPluginService = readerPluginService;
 	}
 
