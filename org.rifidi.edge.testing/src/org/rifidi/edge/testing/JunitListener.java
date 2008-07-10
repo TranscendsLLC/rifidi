@@ -20,7 +20,7 @@ public class JunitListener extends RunListener {
 	
 	public void testFailure(Failure failure){
 		logger.error(failure);
-		logger.error(failure.getMessage());
+		//logger.error(failure.getMessage());
 		logger.error(failure.getTrace());
 	}
 }
