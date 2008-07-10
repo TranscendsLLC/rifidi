@@ -1,6 +1,5 @@
 package org.rifidi.edge.core.communication.impl;
 
-
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -19,7 +18,7 @@ import org.rifidi.edge.core.readerplugin.protocol.CommunicationProtocol;
 
 public class Communication implements ConnectionExceptionListener {
 	private static final Log logger = LogFactory.getLog(Communication.class);
-	
+
 	private CommunicationProtocol protocol;
 	private ConnectionManager connectionManager;
 
@@ -31,7 +30,7 @@ public class Communication implements ConnectionExceptionListener {
 	private WriteThread writeThread;
 
 	private Set<ConnectionEventListener> listeners = new HashSet<ConnectionEventListener>();
-	
+
 	public Communication(ConnectionManager connectionManager) {
 		this.connectionManager = connectionManager;
 		protocol = this.connectionManager.getCommunicationProtocol();
@@ -51,26 +50,25 @@ public class Communication implements ConnectionExceptionListener {
 			_reconnect();
 		}
 
-
 		// Create logical connection
 		connectionManager.connect(connection);
-		
+
 		/* fire events */
-		for (ConnectionEventListener listener: listeners){
+		for (ConnectionEventListener listener : listeners) {
 			listener.connected();
 		}
-		
+
 		return connection;
 	}
 
 	public void disconnect() {
 		// TODO make sure the order is fine
-		
+
 		/* fire events */
-		for (ConnectionEventListener listener: listeners){
+		for (ConnectionEventListener listener : listeners) {
 			listener.disconnected();
 		}
-		
+
 		writeThread.ignoreExceptions(true);
 		readThread.ignoreExceptions(true);
 
@@ -91,72 +89,73 @@ public class Communication implements ConnectionExceptionListener {
 			for (int x = 1; connectionManager.getMaxNumConnectionsAttemps() >= x; x++) {
 				try {
 					/* fire events */
-					for (ConnectionEventListener listener: listeners){
+					for (ConnectionEventListener listener : listeners) {
 						listener.connected();
 					}
 					_connect();
 				} catch (RifidiConnectionException e) {
-					if (x == connectionManager
-							.getMaxNumConnectionsAttemps()) {
-						//status = ReaderSessionStatus.DISCONNECTED;
-						//darn... we have failed.
+					if (x == connectionManager.getMaxNumConnectionsAttemps()) {
+						// status = ReaderSessionStatus.DISCONNECTED;
+						// darn... we have failed.
 						logger.debug("Error! We gave up. " + e.getMessage());
 						throw e;
 					} else {
-						logger.debug("Error! "+ e.getMessage());
+						logger.debug("Error! " + e.getMessage());
 					}
 					try {
-						Thread.sleep(connectionManager.getReconnectionIntervall());
+						Thread.sleep(connectionManager
+								.getReconnectionIntervall());
 					} catch (InterruptedException e1) {
 						// ignore this exception.
 					}
-					//we have failed... try again.... 
+					// we have failed... try again....
 					continue;
 				}
-				//hay!!! we succeeded!! 
+				// hay!!! we succeeded!!
 				break;
 			}
 		} catch (RuntimeException e) {
 			connection = null;
-			//status = ReaderSessionStatus.DISCONNECTED;
-			throw new RifidiConnectionException(
-					"RuntimeException detected! "
-							+ "There is a possible bug in "
-							+ connectionManager.getClass().getName(), e);
-		} 	
+			// status = ReaderSessionStatus.DISCONNECTED;
+			throw new RifidiConnectionException("RuntimeException detected! "
+					+ "There is a possible bug in "
+					+ connectionManager.getClass().getName(), e);
+		}
 		/* fire events */
-		for (ConnectionEventListener listener: listeners){
+		for (ConnectionEventListener listener : listeners) {
 			listener.disconnected();
 		}
 	}
-	
-	private void _connect() throws RifidiConnectionException{
-		ConnectionStreams connectionStreams = connectionManager.createCommunication();
-		readThread = new ReadThread(connectionManager.toString() + " Read Thread", connection, protocol,
-				readQueue, connectionStreams.getInputStream());
 
-		writeThread = new WriteThread(connectionManager.toString() + " Write Thread", connection, protocol,
-				writeQueue, connectionStreams.getOutputStream());
-		
+	private void _connect() throws RifidiConnectionException {
+		ConnectionStreams connectionStreams = connectionManager
+				.createCommunication();
+		readThread = new ReadThread(connectionManager.toString()
+				+ " Read Thread", connection, protocol, readQueue,
+				connectionStreams.getInputStream());
+
+		writeThread = new WriteThread(connectionManager.toString()
+				+ " Write Thread", connection, protocol, writeQueue,
+				connectionStreams.getOutputStream());
+
 		readThread.start();
 		writeThread.start();
-		
+
 	}
-	
-	
-	public void  addConnectionEventListener( ConnectionEventListener listener){
+
+	public void addConnectionEventListener(ConnectionEventListener listener) {
 		listeners.add(listener);
 		connection.addConnectionExceptionListener(listener);
 	}
-	
-	public void  removeConnectionEventListener( ConnectionEventListener listener){
+
+	public void removeConnectionEventListener(ConnectionEventListener listener) {
 		listeners.add(listener);
 		connection.addConnectionExceptionListener(listener);
 	}
-	
-	/*==============================================================*/
+
+	/* ============================================================== */
 	@Override
-	public void finalize(){
+	public void finalize() {
 		listeners.clear();
 	}
 
@@ -168,10 +167,10 @@ public class Communication implements ConnectionExceptionListener {
 		} catch (RifidiConnectionException e) {
 			// TODO Auto-generated catch block
 			/* fire events */
-			for (ConnectionEventListener listener: listeners){
-				listener.disconnectedOnError();
+			for (ConnectionEventListener listener : listeners) {
+				listener.error();
 			}
 		}
 	}
-	
+
 }
