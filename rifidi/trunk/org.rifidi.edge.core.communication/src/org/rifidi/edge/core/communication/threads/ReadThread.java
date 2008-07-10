@@ -15,14 +15,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Queue;
 
-
+import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.communication.impl.ConnectionImpl;
 import org.rifidi.edge.core.readerplugin.protocol.CommunicationProtocol;
 
 
 
 public class ReadThread extends AbstractThread {
-	//private static final Log logger = LogFactory.getLog(ReadThread.class);
+	private static final org.apache.commons.logging.Log logger = LogFactory.getLog(ReadThread.class);
 
 	private CommunicationProtocol protocol;
 	private Queue<Object> readQueue;
@@ -47,6 +47,7 @@ public class ReadThread extends AbstractThread {
 			while ((input = inputStream.read()) != -1 && running) {
 				message = protocol.byteToMessage((byte) input);
 				if (message != null) {
+					logger.debug(message);
 					readQueue.add(message);
 				}
 			}

@@ -16,11 +16,13 @@ import java.io.OutputStream;
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.communication.impl.ConnectionImpl;
 import org.rifidi.edge.core.readerplugin.protocol.CommunicationProtocol;
 
 public class WriteThread extends AbstractThread {
-	// private static final Log logger = LogFactory.getLog(WriteThread.class);
+	private static final Log logger = LogFactory.getLog(WriteThread.class);
 
 	private CommunicationProtocol protocol;
 	private LinkedBlockingQueue<Object> writeQueue;
@@ -44,7 +46,7 @@ public class WriteThread extends AbstractThread {
 			while (running) {
 
 				Object object = writeQueue.take();
-				// logger.debug(object);
+				logger.debug(object);
 				byte[] bytes = protocol.messageToByte(object);
 
 				outputStream.write(bytes);
