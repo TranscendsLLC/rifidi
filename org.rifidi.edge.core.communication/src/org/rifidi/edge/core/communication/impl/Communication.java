@@ -118,7 +118,6 @@ public class Communication implements ConnectionExceptionListener {
 			}
 		} catch (RuntimeException e) {
 			connection = null;
-			
 			//status = ReaderSessionStatus.DISCONNECTED;
 			throw new RifidiConnectionException(
 					"RuntimeException detected! "
