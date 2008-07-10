@@ -1,5 +1,7 @@
 package org.rifidi.edge.testing.thingmagic;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
@@ -19,11 +21,17 @@ import org.rifidi.services.annotations.Inject;
 import org.rifidi.services.registry.ServiceRegistry;
 
 
+/**
+ * @author Jerry Maine - jerry@pramari.com
+ *
+ */
 public class ThingMagicTagRead {
 
 	private ReaderSessionService readerSessionService;
 	private ReaderPluginService readerPluginService;
 
+	ByteArrayOutputStream output = new ByteArrayOutputStream();
+	
 	@Before
 	public void setUp() throws Exception {
 		ServiceRegistry.getInstance().service(this);
@@ -95,12 +103,15 @@ public class ThingMagicTagRead {
 			readerSession.executeCommand("GetTagsCurrentlyOnAntennas");
 		} catch (RifidiConnectionException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
-			Assert.fail();
+			//e.printStackTrace();
+			//e.printStackTrace(new PrintStream(output));
+			//Assert.fail(output.toString());
+			throw new AssertionError(e);
 		} catch (RifidiCommandInterruptedException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
-			Assert.fail();
+			//e.printStackTrace(new PrintStream(output));
+			//Assert.fail(output.toString());
+			throw new AssertionError(e);
 		}
 	}
 
