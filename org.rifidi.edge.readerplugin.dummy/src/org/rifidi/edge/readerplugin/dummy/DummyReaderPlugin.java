@@ -13,6 +13,9 @@ import org.rifidi.edge.readerplugin.dummy.protocol.DummyMessageProtocol;
 
 public class DummyReaderPlugin implements ReaderPlugin {
 
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.readerplugin.ReaderPlugin#getAvailableCommands()
+	 */
 	@Override
 	public List<Class<? extends Command>> getAvailableCommands() {
 		ArrayList<Class<? extends Command>> commands = new ArrayList<Class<? extends Command>>();
@@ -20,20 +23,37 @@ public class DummyReaderPlugin implements ReaderPlugin {
 		return commands;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.readerplugin.ReaderPlugin#getMessageProtocol()
+	 */
 	@Override
 	public MessageProtocol getMessageProtocol() {
 		return new DummyMessageProtocol();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.readerplugin.ReaderPlugin#addCommand(java.util.List)
+	 */
 	@Override
 	public void addCommand(List<Class<? extends Command>> commands) {
-		// TODO Auto-generated method stub
+		commands.addAll(commands);
 		
 	}
 
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.readerplugin.ReaderPlugin#getConnectionManager(org.rifidi.edge.core.readerplugin.ReaderInfo)
+	 */
 	@Override
 	public ConnectionManager getConnectionManager(ReaderInfo readerInfo) {
 		return new DummyConnectionManager(readerInfo);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.readerplugin.ReaderPlugin#removeCommand(java.util.List)
+	 */
+	@Override
+	public void removeCommand(List<Class<? extends Command>> commands) {
+		commands.removeAll(commands);		
 	}
 
 }

@@ -56,4 +56,9 @@ public class ThingMagicReaderPlugin implements ReaderPlugin {
 		commands.addAll(commands);
 	}
 
+	@Override
+	public void removeCommand(List<Class<? extends Command>> commands) {
+		commands.removeAll(commands);	
+	}
+
 }
