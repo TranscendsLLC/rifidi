@@ -11,4 +11,5 @@ Require-Bundle: org.rifidi.edge.core,
  org.rifidi.edge.services,
  org.rifidi.edge.testing,
  org.junit4,
- org.rifidi.edge.readerplugin.alien
+ org.rifidi.edge.readerplugin.alien,
+ org.rifidi.edge.log4j

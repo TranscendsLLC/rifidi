@@ -10,6 +10,8 @@
  */
 package org.rifidi.edge.testing.alien;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -17,16 +19,20 @@ import org.rifidi.edge.core.exceptions.RifidiCommandInterruptedException;
 import org.rifidi.edge.core.exceptions.RifidiConnectionException;
 import org.rifidi.edge.core.readersession.ReaderSession;
 import org.rifidi.edge.core.readersession.service.ReaderSessionService;
+import org.rifidi.edge.readerplugin.alien.AlienConnectionManager;
 import org.rifidi.edge.readerplugin.alien.AlienReaderInfo;
 import org.rifidi.services.annotations.Inject;
 import org.rifidi.services.registry.ServiceRegistry;
 
 /**
- * This class tests the Alien's connect and TagRead functionality.  
+ * This class tests the Alien's connect and TagRead functionality.
  * 
  * @author Matthew Dean - matt@pramari.com
  */
 public class AlienTestTagRead {
+
+	private static final Log logger = LogFactory
+			.getLog(AlienConnectionManager.class);
 
 	private ReaderSessionService readerSessionService;
 
@@ -43,6 +49,8 @@ public class AlienTestTagRead {
 		info.setPort(23);
 		info.setUsername("alien");
 		info.setPassword("password");
+		info.setMaxNumConnectionsAttemps(3);
+		info.setReconnectionIntervall(1000);
 	}
 
 	/**
@@ -52,13 +60,12 @@ public class AlienTestTagRead {
 	public void tearDown() throws Exception {
 	}
 
-	
 	/**
 	 * 
 	 */
 	@Test
 	public void testConnectAndDisconnect() {
-		
+		logger.debug("Testing the connect/disconnect");
 	}
 
 	/**
@@ -66,7 +73,10 @@ public class AlienTestTagRead {
 	 */
 	@Test
 	public void testTagRead() {
-		ReaderSession readerSession = readerSessionService.createReaderSesssion(info);
+		logger.debug("Testing the tag reads");
+		
+		ReaderSession readerSession = readerSessionService
+				.createReaderSesssion(info);
 		try {
 			readerSession.executeCommand("getTagList");
 		} catch (RifidiConnectionException e) {
