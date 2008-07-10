@@ -1,17 +1,19 @@
 package org.rifidi.edge.readerplugin.dummy.protocol;
 
+import java.io.ByteArrayOutputStream;
+
 import org.rifidi.edge.core.readerplugin.protocol.CommunicationProtocol;
 import org.rifidi.edge.readerplugin.dummy.DummyReaderInfo;
 
 public class DummyCommunicationProtocol implements CommunicationProtocol {
 
-	private StringBuffer buffer;
+	private ByteArrayOutputStream buffer;
 	
 	/* used for breakage test purposes */
 	DummyReaderInfo info;
 	
 	public DummyCommunicationProtocol(DummyReaderInfo info) {
-		buffer = new StringBuffer();
+		buffer = new ByteArrayOutputStream();
 		this.info = info;
 	}
 	
@@ -34,12 +36,14 @@ public class DummyCommunicationProtocol implements CommunicationProtocol {
 				}
 		}
 		
-		buffer.append(b);
-		if(buffer.length() == 5)
-		{
-			String retVal = buffer.toString();
-			buffer = new StringBuffer();
-			return retVal;
+		buffer.write( b);
+		if (buffer.toString().length() >= 2 ){
+			if(buffer.toString().endsWith("\n\n"))
+			{
+				String retVal = buffer.toString();
+				buffer = new ByteArrayOutputStream();
+				return retVal.replace("\n\n", "");
+			}
 		}
 		return null;
 	}
