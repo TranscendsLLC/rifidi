@@ -11,7 +11,6 @@
  */
 package org.rifidi.edge.core.communication.threads;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.Queue;
 
@@ -51,7 +50,7 @@ public class ReadThread extends AbstractThread {
 					readQueue.add(message);
 				}
 			}
-		} catch (IOException e) {
+		} catch (Exception e) {
 			running = false;
 			e.printStackTrace();
 			if (!ignoreExceptions) {
