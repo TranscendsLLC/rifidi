@@ -7,6 +7,8 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.communication.Connection;
 import org.rifidi.edge.core.communication.service.ConnectionEventListener;
 import org.rifidi.edge.core.communication.service.ConnectionService;
@@ -30,6 +32,7 @@ import org.rifidi.services.registry.ServiceRegistry;
  * 
  */
 public class ReaderSessionImplJe implements ReaderSession, ConnectionEventListener {
+	private static final Log logger = LogFactory.getLog(ReaderSessionImplJe.class);
 	private Set<ExecutionListener> listeners = Collections
 			.synchronizedSet(new HashSet<ExecutionListener>());
 
@@ -216,19 +219,19 @@ public class ReaderSessionImplJe implements ReaderSession, ConnectionEventListen
 
 	@Inject
 	public void setConnectionService(ConnectionService connectionService) {
-		System.out.println("ConnectionService injected");
+		logger.debug("ConnectionService injected");
 		this.connectionService = connectionService;
 	}
 
 	@Inject
 	public void setReaderobjPluginService(ReaderPluginService readerPluginService) {
-		System.out.println("ReaderPluginService injected");
+		logger.debug("ReaderPluginService injected");
 		this.readerPluginService = readerPluginService;
 	}
 
 	@Inject
 	public void setMessageService(MessageService messageService) {
-		System.out.println("MessageService injected");
+		logger.debug("MessageService injected");
 		this.messageService = messageService;
 	}
 
