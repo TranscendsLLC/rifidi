@@ -75,12 +75,8 @@ public class ConnectionImpl implements Connection {
 			if (exception != null) {
 				if (exception instanceof IOException){
 					throw (IOException) exception;		
-				} else if (exception instanceof RuntimeException) {
-					throw (RuntimeException) exception;
-				} else if (exception instanceof RifidiInvalidMessageFormat) {
-					throw new IOException("Invalid Message Format!", exception);
 				} else {
-					throw new UndeclaredThrowableException(exception);
+					throw new IOException(exception);
 				}
 			}
 		}
