@@ -3,6 +3,7 @@ package org.rifidi.edge.core.readersession;
 import org.rifidi.edge.core.exceptions.RifidiCommandInterruptedException;
 import org.rifidi.edge.core.exceptions.RifidiConnectionException;
 import org.rifidi.edge.core.readerplugin.ReaderInfo;
+import org.rifidi.edge.core.readersession.impl.enums.ReaderSessionStatus;
 
 public interface ReaderSession {
 
