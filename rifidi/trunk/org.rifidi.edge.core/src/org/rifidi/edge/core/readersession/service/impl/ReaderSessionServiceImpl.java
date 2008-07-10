@@ -7,7 +7,7 @@ import org.rifidi.edge.core.readerplugin.ReaderInfo;
 import org.rifidi.edge.core.readerplugin.ReaderPlugin;
 import org.rifidi.edge.core.readerplugin.service.ReaderPluginService;
 import org.rifidi.edge.core.readersession.ReaderSession;
-import org.rifidi.edge.core.readersession.impl.ReaderSessionImplJe;
+import org.rifidi.edge.core.readersession.impl.ReaderSessionImpl;
 import org.rifidi.edge.core.readersession.service.ReaderSessionListener;
 import org.rifidi.edge.core.readersession.service.ReaderSessionService;
 
@@ -24,7 +24,7 @@ public class ReaderSessionServiceImpl implements ReaderSessionService {
 	public ReaderSession createReaderSesssion(ReaderInfo readerInfo) {
 		ReaderPlugin readerPlugin = readerPluginService
 				.getReaderPlugin(readerInfo.getClass());
-		ReaderSession readerSession = new ReaderSessionImplJe(readerInfo);
+		ReaderSession readerSession = new ReaderSessionImpl(readerInfo);
 		registry.add(readerSession);
 		return readerSession;
 	}

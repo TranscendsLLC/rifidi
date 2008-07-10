@@ -31,8 +31,8 @@ import org.rifidi.services.registry.ServiceRegistry;
  * @author Jerry Maine - jerry@pramari.com
  * 
  */
-public class ReaderSessionImplJe implements ReaderSession, ConnectionEventListener {
-	private static final Log logger = LogFactory.getLog(ReaderSessionImplJe.class);
+public class ReaderSessionImpl implements ReaderSession, ConnectionEventListener {
+	private static final Log logger = LogFactory.getLog(ReaderSessionImpl.class);
 	private Set<ExecutionListener> listeners = Collections
 			.synchronizedSet(new HashSet<ExecutionListener>());
 
@@ -54,7 +54,7 @@ public class ReaderSessionImplJe implements ReaderSession, ConnectionEventListen
 	
 	private MessageQueue messageQueue;
 
-	public ReaderSessionImplJe(ReaderInfo readerInfo) {
+	public ReaderSessionImpl(ReaderInfo readerInfo) {
 		this.readerInfo = readerInfo;
 		ServiceRegistry.getInstance().service(this);
 	}
