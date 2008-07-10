@@ -95,7 +95,7 @@ public class ReaderSessionImpl implements ReaderSession, ConnectionEventListener
 			connectionManager = readerPluginService.getReaderPlugin(
 					readerInfo.getClass()).getConnectionManager(readerInfo);
 
-		insureConnection();
+		initConnection();
 		
 		/* look for and execute the command */
 		for (Class<? extends Command> commandClass : readerPluginService
@@ -104,7 +104,11 @@ public class ReaderSessionImpl implements ReaderSession, ConnectionEventListener
 
 			CommandDesc commandDesc = commandClass
 					.getAnnotation(CommandDesc.class);
+			//TODO throw Exception if we don't find the Command
 			if (commandDesc != null) {
+				status = ReaderSessionStatus.CONNECTED;
+				throw new RifidiCommandInterruptedException("Command not found.");
+			} else {
 				if (commandDesc.name().equals(command)) {
 					try {
 						Constructor<? extends Command> constructor = commandClass
@@ -175,14 +179,7 @@ public class ReaderSessionImpl implements ReaderSession, ConnectionEventListener
 						throw new RifidiCommandInterruptedException(
 								"Command not found.", e);
 					} 
-				} else {
-					commandDesc = null;
 				}
-			}
-			
-			if (commandDesc == null){
-				status = ReaderSessionStatus.CONNECTED;
-				throw new RifidiCommandInterruptedException("\""+ command +"\" command not found.");
 			}
 		}
 
@@ -190,7 +187,7 @@ public class ReaderSessionImpl implements ReaderSession, ConnectionEventListener
 
 	}
 
-	private void insureConnection() throws RifidiConnectionException {
+	private void initConnection() throws RifidiConnectionException {
 		connection = connectionService.createConnection(
 				connectionManager, readerInfo, this);
 		
