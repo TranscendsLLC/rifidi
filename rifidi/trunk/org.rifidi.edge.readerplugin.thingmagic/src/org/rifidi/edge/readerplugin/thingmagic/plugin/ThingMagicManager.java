@@ -55,7 +55,7 @@ public class ThingMagicManager extends ConnectionManager {
 	 * @see org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionManager#startKeepAlive()
 	 */
 	@Override
-	public void startKeepAlive() {
+	public void startKeepAlive(Connection connectoin) {
 		// ignore this.
 		
 	}
@@ -64,7 +64,7 @@ public class ThingMagicManager extends ConnectionManager {
 	 * @see org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionManager#stopKeepAlive()
 	 */
 	@Override
-	public void stopKeepAlive() {
+	public void stopKeepAlive(Connection connection) {
 		// ignore this.
 		
 	}
