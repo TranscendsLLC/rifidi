@@ -5,6 +5,8 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.communication.Connection;
 import org.rifidi.edge.core.communication.service.ConnectionEventListener;
 import org.rifidi.edge.core.communication.threads.ReadThread;
@@ -16,6 +18,7 @@ import org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionStreams;
 import org.rifidi.edge.core.readerplugin.protocol.CommunicationProtocol;
 
 public class Communication implements ConnectionExceptionListener {
+	private static final Log logger = LogFactory.getLog(Communication.class);
 	
 	private CommunicationProtocol protocol;
 	private ConnectionManager connectionManager;
@@ -45,7 +48,7 @@ public class Communication implements ConnectionExceptionListener {
 		try {
 			_connect();
 		} catch (RifidiConnectionException e) {
-			reconnect();
+			_reconnect();
 		}
 
 
@@ -77,7 +80,7 @@ public class Communication implements ConnectionExceptionListener {
 		readThread.stop();
 	}
 
-	private void reconnect() throws RifidiConnectionException {
+	private void _reconnect() throws RifidiConnectionException {
 		/* fire events */
 		for (ConnectionEventListener listener: listeners){
 			listener.connected();
@@ -89,18 +92,23 @@ public class Communication implements ConnectionExceptionListener {
 			// ignore this exception.
 		}
 		try {
-			for (int x = 1; connectionManager.getMaxNumConnectionsAttemps() <= x; x++) {
+			logger.debug("Trying to reconnect.");
+			for (int x = 1; connectionManager.getMaxNumConnectionsAttemps() >= x; x++) {
 				try {
 					_connect();
 				} catch (RifidiConnectionException e) {
+					
 					if (x == connectionManager
 							.getMaxNumConnectionsAttemps()) {
 						//status = ReaderSessionStatus.DISCONNECTED;
 						//darn... we have failed.
+						logger.debug("Error! We gave up. " + e.getMessage());
 						throw e;
+					} else {
+						logger.debug("Error! "+ e.getMessage());
 					}
 					try {
-						wait(connectionManager.getReconnectionIntervall());
+						Thread.sleep(connectionManager.getReconnectionIntervall());
 					} catch (InterruptedException e1) {
 						// ignore this exception.
 					}
@@ -158,7 +166,7 @@ public class Communication implements ConnectionExceptionListener {
 	public void connectionExceptionEvent(Exception exception) {
 		// TODO Auto-generated method stub
 		try {
-			reconnect();
+			_reconnect();
 		} catch (RifidiConnectionException e) {
 			// TODO Auto-generated catch block
 			/* fire events */
