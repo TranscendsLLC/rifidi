@@ -106,10 +106,9 @@ public class ReaderSessionImpl implements ReaderSession, ConnectionEventListener
 					.getAnnotation(CommandDesc.class);
 			//TODO throw Exception if we don't find the Command
 			if (commandDesc != null) {
-				status = ReaderSessionStatus.CONNECTED;
-				throw new RifidiCommandInterruptedException("Command not found.");
-			} else {
-				if (commandDesc.name().equals(command)) {
+				if (!commandDesc.name().equals(command)){ 
+					commandDesc = null;
+				} else {
 					try {
 						Constructor<? extends Command> constructor = commandClass
 								.getConstructor();
@@ -180,6 +179,11 @@ public class ReaderSessionImpl implements ReaderSession, ConnectionEventListener
 								"Command not found.", e);
 					} 
 				}
+			}
+			
+			if (commandDesc == null){
+				status = ReaderSessionStatus.CONNECTED;
+				throw new RifidiCommandInterruptedException("\"" + command + "\" Command not found.");
 			}
 		}
 
