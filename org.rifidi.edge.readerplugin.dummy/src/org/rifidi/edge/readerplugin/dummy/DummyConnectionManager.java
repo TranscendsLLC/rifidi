@@ -97,7 +97,7 @@ public class DummyConnectionManager extends ConnectionManager {
 	 * @see org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionManager#startKeepAlive()
 	 */
 	@Override
-	public void startKeepAlive() {
+	public void startKeepAlive(Connection connection) {
 		// do nothing
 	}
 
@@ -162,7 +162,7 @@ public class DummyConnectionManager extends ConnectionManager {
 	}
 
 	@Override
-	public void stopKeepAlive() {
+	public void stopKeepAlive(Connection connection) {
 		// ignore this.
 
 	}
