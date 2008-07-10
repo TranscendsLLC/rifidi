@@ -62,7 +62,6 @@ public class AlienTagStreamCommand implements Command {
 			//TODO make quit better
 			e.printStackTrace();
 		} catch (RifidiMessageQueueException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
