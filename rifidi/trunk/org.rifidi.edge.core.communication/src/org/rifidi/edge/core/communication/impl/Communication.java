@@ -53,7 +53,7 @@ public class Communication implements ConnectionExceptionListener {
 
 
 		// Create logical connection
-		connectionManager.connect();
+		connectionManager.connect(connection);
 		
 		/* fire events */
 		for (ConnectionEventListener listener: listeners){
@@ -74,7 +74,7 @@ public class Communication implements ConnectionExceptionListener {
 		writeThread.ignoreExceptions(true);
 		readThread.ignoreExceptions(true);
 
-		connectionManager.disconnect();
+		connectionManager.disconnect(connection);
 
 		writeThread.stop();
 		readThread.stop();

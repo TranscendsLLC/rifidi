@@ -7,6 +7,7 @@ import java.net.UnknownHostException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.rifidi.edge.core.communication.Connection;
 import org.rifidi.edge.core.exceptions.RifidiConnectionException;
 import org.rifidi.edge.core.readerplugin.ReaderInfo;
 import org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionManager;
@@ -30,23 +31,7 @@ public class ThingMagicManager extends ConnectionManager {
 	private Socket socket;
 	private ThingMagicReaderInfo info;
 	
-	@Override
-	public void connect() throws RifidiConnectionException {
-		// ignore this for now.
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionManager#disconnect()
-	 */
-	@Override
-	public void disconnect() {
-		try {
-			socket.close();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
+
 	
 	/* (non-Javadoc)
 	 * @see org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionManager#getCommunicationProtocol()
@@ -109,6 +94,24 @@ public class ThingMagicManager extends ConnectionManager {
 			logger.debug("Error: ", e);
 			throw new RifidiConnectionException(e);
 		}
+	}
+
+	@Override
+	public void connect(Connection connection) throws RifidiConnectionException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void disconnect(Connection connection) {
+
+		try {
+			socket.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 
 
