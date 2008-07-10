@@ -3,6 +3,7 @@ package org.rifidi.edge.core.readersession.impl;
 import org.rifidi.edge.core.communication.Connection;
 import org.rifidi.edge.core.messageQueue.MessageQueue;
 import org.rifidi.edge.core.readerplugin.commands.Command;
+import org.rifidi.edge.core.readerplugin.commands.CommandReturnStatus;
 import org.rifidi.edge.core.readersession.ReaderSession;
 
 public class ExecutionThread implements Runnable {
@@ -14,7 +15,7 @@ public class ExecutionThread implements Runnable {
 
 	private Command command;
 	@SuppressWarnings("unused")
-	private CommandStatus status;
+	private CommandReturnStatus status;
 
 	public ExecutionThread(Connection connection, MessageQueue messageQueue,
 			ReaderSession readerSession) {
@@ -24,9 +25,8 @@ public class ExecutionThread implements Runnable {
 		thread.start();
 	}
 
-	public void start(Command command, CommandStatus status) {
+	public void start(Command command) {
 		this.command = command;
-		this.status = status;
 		synchronized (this) {
 			notify();
 		}
@@ -47,18 +47,18 @@ public class ExecutionThread implements Runnable {
 	@Override
 	public void run() {
 		try {
-			try {
-				status = command.start(connection, messageQueue);
-			} catch (Exception e) {
-				e.printStackTrace();
-			} catch (Error e) {
-				e.printStackTrace();
+			if (command == null) {
+				try {
+					status = command.start(connection, messageQueue);
+				} catch (Exception e) {
+					e.printStackTrace();
+				} catch (Error e) {
+					e.printStackTrace();
+				}
+				// Wait for the next command
 			}
-			// Wait for the next command
-
 			wait();
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

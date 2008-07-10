@@ -1,9 +1,9 @@
 package org.rifidi.edge.core.readersession.impl;
 
-import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -18,6 +18,7 @@ import org.rifidi.edge.core.messageQueue.MessageQueue;
 import org.rifidi.edge.core.messageQueue.service.MessageService;
 import org.rifidi.edge.core.readerplugin.ReaderInfo;
 import org.rifidi.edge.core.readerplugin.commands.Command;
+import org.rifidi.edge.core.readerplugin.commands.CommandReturnStatus;
 import org.rifidi.edge.core.readerplugin.commands.annotations.CommandDesc;
 import org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionManager;
 import org.rifidi.edge.core.readerplugin.service.ReaderPluginService;
@@ -31,8 +32,10 @@ import org.rifidi.services.registry.ServiceRegistry;
  * @author Jerry Maine - jerry@pramari.com
  * 
  */
-public class ReaderSessionImpl implements ReaderSession, ConnectionEventListener {
-	private static final Log logger = LogFactory.getLog(ReaderSessionImpl.class);
+public class ReaderSessionImpl implements ReaderSession,
+		ConnectionEventListener, CommandExecutionListener {
+	private static final Log logger = LogFactory
+			.getLog(ReaderSessionImpl.class);
 	private Set<ExecutionListener> listeners = Collections
 			.synchronizedSet(new HashSet<ExecutionListener>());
 
@@ -51,8 +54,11 @@ public class ReaderSessionImpl implements ReaderSession, ConnectionEventListener
 	private MessageService messageService;
 
 	private Command commandInstance;
-	
+
 	private MessageQueue messageQueue;
+	private ExecutionThread executionThread;
+
+	private HashMap<Command, CommandStatuss> commandJournal = new HashMap<Command, CommandStatuss>();
 
 	public ReaderSessionImpl(ReaderInfo readerInfo) {
 		this.readerInfo = readerInfo;
@@ -64,7 +70,7 @@ public class ReaderSessionImpl implements ReaderSession, ConnectionEventListener
 		listeners.add(listener);
 	}
 
-	//TODO Implement firing of events.
+	// TODO Implement firing of events.
 	@Override
 	public void executeCommand(String command)
 			throws RifidiConnectionException, RifidiCommandInterruptedException {
@@ -76,38 +82,37 @@ public class ReaderSessionImpl implements ReaderSession, ConnectionEventListener
 		/*
 		 * Life goes by a bit better with a bit of sanity checking...
 		 */
-		if (connectionService == null){
+		if (connectionService == null) {
 			status = ReaderSessionStatus.CONNECTED;
 			throw new RifidiConnectionException("No communication service.");
 		}
-			
-		if (readerPluginService == null){
+
+		if (readerPluginService == null) {
 			status = ReaderSessionStatus.CONNECTED;
 			throw new RifidiConnectionException("No ReaderPlugin service.");
 		}
-		
+
 		if (messageService == null) {
 			status = ReaderSessionStatus.CONNECTED;
 			throw new RifidiConnectionException("No Message service.");
 		}
-			
+
 		if (connectionManager == null)
 			connectionManager = readerPluginService.getReaderPlugin(
 					readerInfo.getClass()).getConnectionManager(readerInfo);
 
 		initConnection();
-		
+
 		CommandDesc commandDesc = null;
 		/* look for and execute the command */
 		for (Class<? extends Command> commandClass : readerPluginService
 				.getReaderPlugin(readerInfo.getClass()).getAvailableCommands()) {
 			logger.debug(commandClass.getName());
 
-			commandDesc = commandClass
-					.getAnnotation(CommandDesc.class);
-			//TODO throw Exception if we don't find the Command
+			commandDesc = commandClass.getAnnotation(CommandDesc.class);
+			// TODO throw Exception if we don't find the Command
 			if (commandDesc != null) {
-				if (!commandDesc.name().equals(command)){ 
+				if (!commandDesc.name().equals(command)) {
 					commandDesc = null;
 				} else {
 					try {
@@ -116,29 +121,23 @@ public class ReaderSessionImpl implements ReaderSession, ConnectionEventListener
 
 						commandInstance = (Command) constructor.newInstance();
 
-						
-						//TODO MessageQueue needs a name, Done-Jerry
-						if (messageQueue == null) 
+						// TODO MessageQueue needs a name, Done-Jerry
+						if (messageQueue == null)
 							messageQueue = messageService
-								.createMessageQueue(connectionManager.toString());
-						
+									.createMessageQueue(connectionManager
+											.toString());
+
 						try {
-							logger.debug("Trying to run command: " + commandDesc.name());
-							commandInstance.start(connection, messageQueue);
-						} catch (IOException e) {
-							//insureConnection();
-							// try one more time...
-//							try {
-//								commandInstance.start(connection, messageQueue);
-//							} catch (IOException e1) {
-//								status = ReaderSessionStatus.DISCONNECTED;
-//								throw new RifidiConnectionException(
-//										"Error after exhausting "
-//												+ connectionManager
-//														.getMaxNumConnectionsAttemps()
-//												+ "attempts. Probably have a unreliable connection",
-//										e1);
-//							}
+							logger.debug("Trying to run command: "
+									+ commandDesc.name());
+							if (executionThread == null) {
+								executionThread = new ExecutionThread(
+										connection, messageQueue, this);
+							}
+							// Here Command gets Executed
+							executionThread.start(commandInstance);
+							// commandJournal.put(commandInstance,
+							//									CommandStatus.SUCCESSFUL);
 						} catch (ClassCastException e) {
 							status = ReaderSessionStatus.CONNECTED;
 							throw new RifidiCommandInterruptedException(
@@ -178,26 +177,23 @@ public class ReaderSessionImpl implements ReaderSession, ConnectionEventListener
 						status = ReaderSessionStatus.CONNECTED;
 						throw new RifidiCommandInterruptedException(
 								"Command not found.", e);
-					} 
+					}
 				}
 			}
-			
 
 		}
-		if (commandDesc == null){
+		if (commandDesc == null) {
 			status = ReaderSessionStatus.CONNECTED;
-			throw new RifidiCommandInterruptedException("\"" + command + "\" Command not found.");
+			throw new RifidiCommandInterruptedException("\"" + command
+					+ "\" Command not found.");
 		}
 		status = ReaderSessionStatus.CONNECTED;
 
 	}
 
 	private void initConnection() throws RifidiConnectionException {
-		connection = connectionService.createConnection(
-				connectionManager, readerInfo, this);
-		
-		
-
+		connection = connectionService.createConnection(connectionManager,
+				readerInfo, this);
 
 	}
 
@@ -231,7 +227,8 @@ public class ReaderSessionImpl implements ReaderSession, ConnectionEventListener
 	}
 
 	@Inject
-	public void setReaderobjPluginService(ReaderPluginService readerPluginService) {
+	public void setReaderobjPluginService(
+			ReaderPluginService readerPluginService) {
 		logger.debug("ReaderPluginService injected");
 		this.readerPluginService = readerPluginService;
 	}
@@ -242,13 +239,13 @@ public class ReaderSessionImpl implements ReaderSession, ConnectionEventListener
 		this.messageService = messageService;
 	}
 
-	/*=============================================================*/
-	/*  ConnectionEventListener Below                              */
-	/*=============================================================*/
+	/* ============================================================= */
+	/* ConnectionEventListener Below */
+	/* ============================================================= */
 	@Override
 	public void connected() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -267,12 +264,16 @@ public class ReaderSessionImpl implements ReaderSession, ConnectionEventListener
 		// TODO Auto-generated method stub
 		// fires when we gave up trying to maintain the connection
 	}
-	
-	/*==============================================================*/
+
+	/* ============================================================== */
 	@Override
-	public void finalize(){
-		
+	public void finalize() {
+
 	}
 
+	@Override
+	public void commandFinished(Command command, CommandReturnStatus status) {
+		//commandJournal.put(command, status);
+	}
 
 }
