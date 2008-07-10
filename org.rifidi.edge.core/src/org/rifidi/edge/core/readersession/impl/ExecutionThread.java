@@ -33,7 +33,7 @@ public class ExecutionThread implements Runnable {
 
 	public void start(Command command) {
 		this.command = command;
-		synchronized (thread) {
+		synchronized (this) {
 			notify();
 		}
 	}
@@ -75,7 +75,7 @@ public class ExecutionThread implements Runnable {
 				// Wait for the next command
 			}
 			readerSession.commandFinished(command, status);
-			synchronized (thread) {
+			synchronized (this) {
 				wait();
 			}
 		} catch (InterruptedException e) {
