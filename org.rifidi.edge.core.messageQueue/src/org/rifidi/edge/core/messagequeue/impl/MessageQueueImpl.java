@@ -2,11 +2,14 @@ package org.rifidi.edge.core.messagequeue.impl;
 
 import java.util.concurrent.LinkedBlockingQueue;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.messageQueue.MessageQueue;
 import org.rifidi.edge.core.readerplugin.messages.Message;
 
 public class MessageQueueImpl implements MessageQueue {
-
+	//private static final Log logger = LogFactory.getLog(MessageQueueImpl.class);
+	
 	private static int counter = 1;
 	
 	private String queueName;
@@ -26,7 +29,7 @@ public class MessageQueueImpl implements MessageQueue {
 						Message m;
 
 						m = messageQueue.take();
-
+						//logger.debug(m.toXML());
 						System.out.println(m.toXML());
 					}
 				} catch (InterruptedException e) {
