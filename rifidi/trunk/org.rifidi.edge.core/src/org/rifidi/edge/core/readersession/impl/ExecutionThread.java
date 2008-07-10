@@ -1,5 +1,7 @@
 package org.rifidi.edge.core.readersession.impl;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.communication.Connection;
 import org.rifidi.edge.core.messageQueue.MessageQueue;
 import org.rifidi.edge.core.readerplugin.commands.Command;
@@ -8,6 +10,8 @@ import org.rifidi.edge.core.readersession.ReaderSession;
 
 public class ExecutionThread implements Runnable {
 
+	private Log logger = LogFactory.getLog(ExecutionThread.class);
+	
 	private Thread thread;
 
 	private Connection connection;
@@ -27,7 +31,7 @@ public class ExecutionThread implements Runnable {
 
 	public void start(Command command) {
 		this.command = command;
-		synchronized (this) {
+		synchronized (thread) {
 			notify();
 		}
 	}
@@ -52,12 +56,23 @@ public class ExecutionThread implements Runnable {
 					status = command.start(connection, messageQueue);
 				} catch (Exception e) {
 					e.printStackTrace();
+					logger.error(
+							"Command interrupted due to unexpected Execption. "
+									+ "Probibly tried to execute a command that did not belong to this reader, "
+									+ "or something else caused it.", e);
 				} catch (Error e) {
 					e.printStackTrace();
+					logger.error(
+							"Command interrupted due to unexpected Critical Exception. "
+									+ "This may be caused by a bug in the command implemenation itself or, "
+									+ "or the protocol implemenation of the reader.",
+							e);
 				}
 				// Wait for the next command
 			}
-			wait();
+			synchronized (thread) {
+				wait();
+			}	
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}

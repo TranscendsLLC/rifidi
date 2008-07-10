@@ -12,6 +12,7 @@ import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.communication.Connection;
 import org.rifidi.edge.core.communication.service.ConnectionEventListener;
 import org.rifidi.edge.core.communication.service.ConnectionService;
+import org.rifidi.edge.core.communication.service.ConnectionStatus;
 import org.rifidi.edge.core.exceptions.RifidiCommandInterruptedException;
 import org.rifidi.edge.core.exceptions.RifidiConnectionException;
 import org.rifidi.edge.core.messageQueue.MessageQueue;
@@ -24,7 +25,8 @@ import org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionManager;
 import org.rifidi.edge.core.readerplugin.service.ReaderPluginService;
 import org.rifidi.edge.core.readersession.ExecutionListener;
 import org.rifidi.edge.core.readersession.ReaderSession;
-import org.rifidi.edge.core.readersession.ReaderSessionStatus;
+import org.rifidi.edge.core.readersession.impl.enums.CommandStatus;
+import org.rifidi.edge.core.readersession.impl.enums.ReaderSessionStatus;
 import org.rifidi.services.annotations.Inject;
 import org.rifidi.services.registry.ServiceRegistry;
 
@@ -34,30 +36,34 @@ import org.rifidi.services.registry.ServiceRegistry;
  */
 public class ReaderSessionImpl implements ReaderSession,
 		ConnectionEventListener, CommandExecutionListener {
+
 	private static final Log logger = LogFactory
 			.getLog(ReaderSessionImpl.class);
+
 	private Set<ExecutionListener> listeners = Collections
 			.synchronizedSet(new HashSet<ExecutionListener>());
 
+	// Services
 	private ConnectionService connectionService;
+	private MessageService messageService;
+	private ReaderPluginService readerPluginService;
 
+	// Session Information
 	private ReaderInfo readerInfo;
-
 	private ConnectionManager connectionManager;
 
 	private Connection connection;
-
-	private ReaderSessionStatus status = ReaderSessionStatus.DISCONNECTED;
-
-	private ReaderPluginService readerPluginService;
-
-	private MessageService messageService;
-
-	private Command commandInstance;
-
 	private MessageQueue messageQueue;
+
+	// CommandExecution
+	private Command curCommand;
 	private ExecutionThread executionThread;
 
+	// Status
+	private ReaderSessionStatus readerSessionStatus = ReaderSessionStatus.OK;
+	private ConnectionStatus connectionStatus = ConnectionStatus.DISCONNECTED;
+
+	private CommandStatus commandExecutionStatus = CommandStatus.EXECUTING;
 	private HashMap<Command, CommandStatus> commandJournal = new HashMap<Command, CommandStatus>();
 
 	public ReaderSessionImpl(ReaderInfo readerInfo) {
@@ -65,136 +71,131 @@ public class ReaderSessionImpl implements ReaderSession,
 		ServiceRegistry.getInstance().service(this);
 	}
 
-	@Override
-	public void addExecutionListener(ExecutionListener listener) {
-		listeners.add(listener);
-	}
-
 	// TODO Implement firing of events.
 	@Override
 	public void executeCommand(String command)
 			throws RifidiConnectionException, RifidiCommandInterruptedException {
-		if (status == ReaderSessionStatus.BUSY) {
+
+		/*
+		 * Check if we currently run a command
+		 */
+		if (commandExecutionStatus == CommandStatus.EXECUTING) {
 			throw new RifidiCommandInterruptedException(
 					"This reader is busy, please try this command again later.");
 		}
-		status = ReaderSessionStatus.BUSY;
+
 		/*
 		 * Life goes by a bit better with a bit of sanity checking...
 		 */
+
+		/*
+		 * Check for needed Services
+		 */
 		if (connectionService == null) {
-			status = ReaderSessionStatus.CONNECTED;
+			readerSessionStatus = ReaderSessionStatus.ERROR;
 			throw new RifidiConnectionException("No communication service.");
 		}
-
 		if (readerPluginService == null) {
-			status = ReaderSessionStatus.CONNECTED;
+			readerSessionStatus = ReaderSessionStatus.ERROR;
 			throw new RifidiConnectionException("No ReaderPlugin service.");
 		}
-
 		if (messageService == null) {
-			status = ReaderSessionStatus.CONNECTED;
+			readerSessionStatus = ReaderSessionStatus.ERROR;
 			throw new RifidiConnectionException("No Message service.");
 		}
 
+		/*
+		 * If not initialized yet do so
+		 */
 		if (connectionManager == null)
 			connectionManager = readerPluginService.getReaderPlugin(
 					readerInfo.getClass()).getConnectionManager(readerInfo);
+		if (connection == null)
+			connection = connectionService.createConnection(connectionManager,
+					readerInfo, this);
+		if (messageQueue == null)
+			messageQueue = messageService.createMessageQueue(connectionManager
+					.toString());
 
-		initConnection();
+		/*
+		 * Check if we are in an error state
+		 */
+		if (readerSessionStatus == ReaderSessionStatus.ERROR) {
+			// TODO find a way to tell a reason why we are in ERROR
+			throw new RifidiConnectionException("");
+		}
+		if (connectionStatus == ConnectionStatus.ERROR) {
+			throw new RifidiConnectionException(
+					"The connection to the reader is not valid anymore. (MAX_CONNECTION_ATTEMPTS)");
+		}
 
+		/*
+		 * lookup command
+		 */
 		CommandDesc commandDesc = null;
-		/* look for and execute the command */
 		for (Class<? extends Command> commandClass : readerPluginService
 				.getReaderPlugin(readerInfo.getClass()).getAvailableCommands()) {
-			logger.debug(commandClass.getName());
+			logger.debug("Inspecting Command : " + commandClass.getName());
 
 			commandDesc = commandClass.getAnnotation(CommandDesc.class);
-			// TODO throw Exception if we don't find the Command
+
 			if (commandDesc != null) {
-				if (!commandDesc.name().equals(command)) {
-					commandDesc = null;
-				} else {
+				// TODO make lookup case neutral
+				if (commandDesc.name().equals(command)) {
+					// Create Command via reflection
+					Constructor<? extends Command> constructor;
 					try {
-						Constructor<? extends Command> constructor = commandClass
-								.getConstructor();
-
-						commandInstance = (Command) constructor.newInstance();
-
-						// TODO MessageQueue needs a name, Done-Jerry
-						if (messageQueue == null)
-							messageQueue = messageService
-									.createMessageQueue(connectionManager
-											.toString());
-
-						try {
-							logger.debug("Trying to run command: "
-									+ commandDesc.name());
-							if (executionThread == null) {
-								executionThread = new ExecutionThread(
-										connection, messageQueue, this);
-							}
-							// Here Command gets Executed
-							executionThread.start(commandInstance);
-							// commandJournal.put(commandInstance,
-							//									CommandStatus.SUCCESSFUL);
-						} catch (ClassCastException e) {
-							status = ReaderSessionStatus.CONNECTED;
-							throw new RifidiCommandInterruptedException(
-									"Command interrupted due to unexpected ClassCastExecption. "
-											+ "Probibly tried to execute a command that did not belong to this reader, "
-											+ "or something else caused it.", e);
-						} catch (RuntimeException e) {
-							status = ReaderSessionStatus.CONNECTED;
-							throw new RifidiCommandInterruptedException(
-									"Command interrupted due to unexpected RuntimeException. "
-											+ "This may be caused by a bug in the command implemenation itself or, "
-											+ "or the protocol implemenation of the reader.",
-									e);
-						}
-
+						constructor = commandClass.getConstructor();
+						curCommand = (Command) constructor.newInstance();
+						break;
 					} catch (SecurityException e) {
-						status = ReaderSessionStatus.CONNECTED;
+						e.printStackTrace();
 						throw new RifidiCommandInterruptedException(
 								"Command not found.", e);
 					} catch (NoSuchMethodException e) {
-						status = ReaderSessionStatus.CONNECTED;
+						e.printStackTrace();
 						throw new RifidiCommandInterruptedException(
 								"Command not found.", e);
 					} catch (IllegalArgumentException e) {
-						status = ReaderSessionStatus.CONNECTED;
+						e.printStackTrace();
 						throw new RifidiCommandInterruptedException(
 								"Command not found.", e);
 					} catch (InstantiationException e) {
-						status = ReaderSessionStatus.CONNECTED;
+						e.printStackTrace();
 						throw new RifidiCommandInterruptedException(
 								"Command not found.", e);
 					} catch (IllegalAccessException e) {
-						status = ReaderSessionStatus.CONNECTED;
+						e.printStackTrace();
 						throw new RifidiCommandInterruptedException(
 								"Command not found.", e);
 					} catch (InvocationTargetException e) {
-						status = ReaderSessionStatus.CONNECTED;
+						e.printStackTrace();
 						throw new RifidiCommandInterruptedException(
 								"Command not found.", e);
 					}
 				}
 			}
-
 		}
-		if (commandDesc == null) {
-			status = ReaderSessionStatus.CONNECTED;
-			throw new RifidiCommandInterruptedException("\"" + command
-					+ "\" Command not found.");
-		}
-		status = ReaderSessionStatus.CONNECTED;
 
+		// Check if Execution Thread is Initialized
+		if (executionThread == null) {
+			executionThread = new ExecutionThread(connection, messageQueue,
+					this);
+		}
+
+		readerSessionStatus = ReaderSessionStatus.OK;
+		// EXECUTE THE COMMAND
+		executionThread.start(curCommand);
 	}
 
-	private void initConnection() throws RifidiConnectionException {
-		connection = connectionService.createConnection(connectionManager,
-				readerInfo, this);
-
+	@Override
+	public void stopCommand() {
+		if (readerSessionStatus == ReaderSessionStatus.BUSY || readerSessionStatus == ReaderSessionStatus.ERROR) {
+			// TODO put commandstatus into Journal
+			curCommand.stop();
+			curCommand = null;
+			readerSessionStatus = ReaderSessionStatus.OK;
+		}
 	}
 
 	@Override
@@ -204,53 +205,59 @@ public class ReaderSessionImpl implements ReaderSession,
 
 	@Override
 	public ReaderSessionStatus getStatus() {
-		// TODO Auto-generated method stub
-		return status;
+		return readerSessionStatus;
 	}
 
+	/*
+	 * =====================================================================
+	 * Command Execution Notification Service
+	 * This notifies when a execution started
+	 * =====================================================================
+	 */
+	
 	@Override
 	public void removeExecutionListener(ExecutionListener listener) {
 		listeners.add(listener);
 	}
 
 	@Override
-	public void stopCommand() {
-		commandInstance.stop();
-		commandInstance = null;
-		status = ReaderSessionStatus.CONNECTED;
+	public void addExecutionListener(ExecutionListener listener) {
+		listeners.add(listener);
 	}
 
-	@Inject
-	public void setConnectionService(ConnectionService connectionService) {
-		logger.debug("ConnectionService injected");
-		this.connectionService = connectionService;
+	/*
+	 * =====================================================================
+	 * Command Execution Event
+	 * =====================================================================
+	 */
+	@Override
+	public void commandFinished(Command command, CommandReturnStatus status) {
+		// TODO implement Command Execution End
+		readerSessionStatus = ReaderSessionStatus.OK;
+		// commandJournal.put(command, status);
 	}
 
-	@Inject
-	public void setReaderobjPluginService(
-			ReaderPluginService readerPluginService) {
-		logger.debug("ReaderPluginService injected");
-		this.readerPluginService = readerPluginService;
-	}
-
-	@Inject
-	public void setMessageService(MessageService messageService) {
-		logger.debug("MessageService injected");
-		this.messageService = messageService;
-	}
-
-	/* ============================================================= */
-	/* ConnectionEventListener Below */
-	/* ============================================================= */
+	/*
+	 * =====================================================================
+	 * Service Injection Framework
+	 * =====================================================================
+	 */
 	@Override
 	public void connected() {
-		// TODO Auto-generated method stub
-
+		connectionStatus = ConnectionStatus.CONNECTED;
+		//notify();
 	}
 
 	@Override
 	public void disconnected() {
-		// TODO Auto-generated method stub
+		connectionStatus = ConnectionStatus.DISCONNECTED;
+		//notify();
+	}
+
+	@Override
+	public void error() {
+		connectionStatus = ConnectionStatus.ERROR;
+		//notify();
 	}
 
 	@Override
@@ -259,21 +266,49 @@ public class ReaderSessionImpl implements ReaderSession,
 		// fires whenever there connections momentarily fails.
 	}
 
-	@Override
-	public void disconnectedOnError() {
-		// TODO Auto-generated method stub
-		// fires when we gave up trying to maintain the connection
+	/*
+	 * =====================================================================
+	 * Service Injection Framework
+	 * =====================================================================
+	 */
+
+	/**
+	 * @param connectionService
+	 */
+	@Inject
+	public void setConnectionService(ConnectionService connectionService) {
+		this.connectionService = connectionService;
 	}
 
-	/* ============================================================== */
+	/**
+	 * @param messageService
+	 */
+	@Inject
+	public void setMessageService(MessageService messageService) {
+		this.messageService = messageService;
+	}
+
+	/**
+	 * @param readerPluginService
+	 */
+	@Inject
+	public void setReaderPluginService(ReaderPluginService readerPluginService) {
+		this.readerPluginService = readerPluginService;
+	}
+
+	/*
+	 * =====================================================================
+	 * CleanUp for Instance destroy
+	 * =====================================================================
+	 */
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#finalize()
+	 */
 	@Override
 	public void finalize() {
-
+		// TODO think about cleaning that up
 	}
-
-	@Override
-	public void commandFinished(Command command, CommandReturnStatus status) {
-		//commandJournal.put(command, status);
-	}
-
 }
