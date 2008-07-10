@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.exceptions.RifidiConnectionException;
 import org.rifidi.edge.core.readerplugin.ReaderInfo;
 import org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionManager;
@@ -17,7 +19,9 @@ import org.rifidi.edge.readerplugin.thingmagic.protocol.ThingMagicCommunicationP
  *
  */
 public class ThingMagicManager extends ConnectionManager {
-
+	private static final Log logger = LogFactory.getLog(ThingMagicManager.class);
+	
+	
 	public ThingMagicManager(ReaderInfo readerInfo) {
 		super(readerInfo);
 		info = (ThingMagicReaderInfo) readerInfo;
@@ -88,8 +92,10 @@ public class ThingMagicManager extends ConnectionManager {
 			try {
 				socket = new Socket(info.getIpAddress(), info.getPort());
 			} catch (UnknownHostException e) {
+				//logger.debug("Error: ", e);
 				throw new RifidiConnectionException(e);
 			} catch (IOException e) {
+				//logger.debug("Error: ", e);
 				throw new RifidiConnectionException(e);
 			}
 		} else {
@@ -100,6 +106,7 @@ public class ThingMagicManager extends ConnectionManager {
 		try {
 			return new ConnectionStreams(socket.getInputStream(), socket.getOutputStream());
 		} catch (IOException e) {
+			logger.debug("Error: ", e);
 			throw new RifidiConnectionException(e);
 		}
 	}
