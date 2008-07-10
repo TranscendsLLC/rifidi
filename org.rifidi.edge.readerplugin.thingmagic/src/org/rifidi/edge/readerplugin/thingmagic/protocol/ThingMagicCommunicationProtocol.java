@@ -3,7 +3,8 @@ package org.rifidi.edge.readerplugin.thingmagic.protocol;
 import org.rifidi.edge.core.readerplugin.protocol.CommunicationProtocol;
 
 public class ThingMagicCommunicationProtocol implements CommunicationProtocol {
-
+	//private static final Log logger = LogFactory.getLog(ThingMagicCommunicationProtocol.class);
+	
 	private StringBuffer buffer;
 	
 	public ThingMagicCommunicationProtocol() {
@@ -12,7 +13,8 @@ public class ThingMagicCommunicationProtocol implements CommunicationProtocol {
 	
 	@Override
 	public Object byteToMessage(byte b) {
-		buffer.append(b);
+		//logger.debug((char) b );
+		buffer.append((char) b);
 		if (buffer.length() >= 2 ){
 			if(buffer.toString().endsWith("\n\n"))
 			{
