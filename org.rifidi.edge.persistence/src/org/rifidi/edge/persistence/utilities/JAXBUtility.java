@@ -86,20 +86,8 @@ public class JAXBUtility {
 	public Object load(Node xml) throws JAXBException {
 		JAXBContext context;
 		Class[] newClassArr = new Class[] { AlienReaderInfo.class,
-				LLRPReaderInfo.class };// rprs.getAbstractReaderInfoClasses();
-		// List<Class> classList = new ArrayList<Class>();
-		// for (Class a : newClassArr) {
-		// classList.add(a);
-		// }
-		// classList.add(AbstractReaderInfoSuite.class);
-
-		// Class[] omg = new Class[classList.size()];
-		// int index = 0;
-		// for (Class c : classList) {
-		// omg[index] = c;
-		// index++;
-		// }
-
+				LLRPReaderInfo.class };
+		
 		context = JAXBContext.newInstance(newClassArr);
 
 		Unmarshaller unmarshaller = context.createUnmarshaller();
@@ -125,21 +113,13 @@ public class JAXBUtility {
 			context = JAXBContext.newInstance(newClassArr);
 			Marshaller m = context.createMarshaller();
 			m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-			// DocumentBuilderFactory dbf =
-			// DocumentBuilderFactory.newInstance();
-			// DocumentBuilder db = dbf.newDocumentBuilder();
-
-			// create an instance of DOM
+			
 			m.marshal(o, parent);
 			
 		} catch (JAXBException e) {
 			e.printStackTrace();
 		}
 
-		// catch (ParserConfigurationException e) {
-		// // TODO Auto-generated catch block
-		// e.printStackTrace();
-		// }
 		return parent;
 	}
 
