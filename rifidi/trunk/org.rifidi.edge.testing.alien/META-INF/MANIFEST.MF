@@ -10,4 +10,5 @@ Bundle-Vendor: Pramari, LLC
 Require-Bundle: org.rifidi.edge.core,
  org.rifidi.edge.services,
  org.rifidi.edge.testing,
- org.junit4
+ org.junit4,
+ org.rifidi.edge.readerplugin.alien

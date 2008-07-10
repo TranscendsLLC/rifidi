@@ -13,7 +13,7 @@ public class Activator implements BundleActivator {
 	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
 	 */
 	public void start(BundleContext context) throws Exception {
-		System.out.println("== Bundle ThingMagic Tests Started ==");
+		System.out.println("== Bundle Alien Tests Started ==");
 		ServiceRegistry.getInstance().service(this);
 	}
 
@@ -22,12 +22,17 @@ public class Activator implements BundleActivator {
 	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
 	 */
 	public void stop(BundleContext context) throws Exception {
-		System.out.println("== Bundle ThingMagic Tests Stopped ==");
+		System.out.println("== Bundle Alien Tests Stopped ==");
 	}
 
+	/**
+	 * Injects the testing service
+	 * 
+	 * @param service
+	 */
 	@Inject
 	public void setTestingService(TestingService service){
-		System.out.println("Starting to test the ThingMagic plugin.");
+		System.out.println("Starting to test the Alien plugin.");
 		service.addJunitTests(AlienTestTagRead.class);
 	}
 
