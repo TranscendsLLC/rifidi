@@ -58,7 +58,7 @@ public class ReaderSessionImpl implements ReaderSession,
 	private MessageQueue messageQueue;
 	private ExecutionThread executionThread;
 
-	private HashMap<Command, CommandStatuss> commandJournal = new HashMap<Command, CommandStatuss>();
+	private HashMap<Command, CommandStatus> commandJournal = new HashMap<Command, CommandStatus>();
 
 	public ReaderSessionImpl(ReaderInfo readerInfo) {
 		this.readerInfo = readerInfo;
