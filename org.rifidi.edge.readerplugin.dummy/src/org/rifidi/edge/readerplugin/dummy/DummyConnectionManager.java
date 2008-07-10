@@ -7,6 +7,7 @@ import java.util.Random;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.rifidi.edge.core.communication.Connection;
 import org.rifidi.edge.core.exceptions.RifidiConnectionException;
 import org.rifidi.edge.core.readerplugin.ReaderInfo;
 import org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionManager;
@@ -38,7 +39,7 @@ public class DummyConnectionManager extends ConnectionManager {
 	 * @see org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionManager#connect()
 	 */
 	@Override
-	public void connect() throws RifidiConnectionException {
+	public void connect(Connection connection) throws RifidiConnectionException {
 		// always succeeds
 	}
 
@@ -48,7 +49,7 @@ public class DummyConnectionManager extends ConnectionManager {
 	 * @see org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionManager#disconnect()
 	 */
 	@Override
-	public void disconnect() {
+	public void disconnect(Connection connection) {
 		/* used for breakage testing purposes */
 		switch (info.getErrorToSet()) {
 		case DISCONNECT:
