@@ -29,7 +29,7 @@ public class ThingMagicReaderPlugin implements ReaderPlugin {
 	 */
 	@Override
 	public List<Class<? extends Command>> getAvailableCommands() {
-		return commands;
+		return new ArrayList<Class<? extends Command>>(commands);
 	}
 
 	/*
