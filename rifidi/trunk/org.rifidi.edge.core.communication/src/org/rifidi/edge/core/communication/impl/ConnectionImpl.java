@@ -1,6 +1,7 @@
 package org.rifidi.edge.core.communication.impl;
 
 import java.io.IOException;
+import java.lang.reflect.UndeclaredThrowableException;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -12,7 +13,7 @@ public class ConnectionImpl implements Connection {
 
 	private LinkedBlockingQueue<Object> readQueue;
 	private LinkedBlockingQueue<Object> writeQueue;
-	private IOException exception = null;
+	private Exception exception = null;
 
 	private Object locker = new Object();
 	
@@ -56,7 +57,7 @@ public class ConnectionImpl implements Connection {
 		return !readQueue.isEmpty();
 	}
 
-	public void setException(IOException e) {
+	public void setException(Exception e) {
 		synchronized (locker) {
 			this.exception = e;
 			for (Thread thread : blockedThreads)
@@ -69,8 +70,15 @@ public class ConnectionImpl implements Connection {
 
 	private void checkException() throws IOException {
 		synchronized (locker) {
-			if (exception != null)
-				throw exception;
+			if (exception != null) {
+				if (exception instanceof IOException){
+					throw (IOException) exception;		
+				} else if (exception instanceof RuntimeException) {
+					throw (RuntimeException) exception;
+				} else {
+					throw new UndeclaredThrowableException(exception);
+				}
+			}
 		}
 	}
 

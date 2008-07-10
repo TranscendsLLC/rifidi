@@ -11,7 +11,6 @@
  */
 package org.rifidi.edge.core.communication.threads;
 
-import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -55,7 +54,7 @@ public class WriteThread extends AbstractThread {
 		} catch (InterruptedException e) {
 			running = false;
 			// e.printStackTrace();
-		} catch (IOException e) {
+		} catch (Exception e) {
 			running = false;
 			e.printStackTrace();
 			if (!ignoreExceptions) {
