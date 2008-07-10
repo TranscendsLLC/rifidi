@@ -97,12 +97,13 @@ public class ReaderSessionImpl implements ReaderSession, ConnectionEventListener
 
 		initConnection();
 		
+		CommandDesc commandDesc = null;
 		/* look for and execute the command */
 		for (Class<? extends Command> commandClass : readerPluginService
 				.getReaderPlugin(readerInfo.getClass()).getAvailableCommands()) {
 			logger.debug(commandClass.getName());
 
-			CommandDesc commandDesc = commandClass
+			commandDesc = commandClass
 					.getAnnotation(CommandDesc.class);
 			//TODO throw Exception if we don't find the Command
 			if (commandDesc != null) {
@@ -181,12 +182,12 @@ public class ReaderSessionImpl implements ReaderSession, ConnectionEventListener
 				}
 			}
 			
-			if (commandDesc == null){
-				status = ReaderSessionStatus.CONNECTED;
-				throw new RifidiCommandInterruptedException("\"" + command + "\" Command not found.");
-			}
-		}
 
+		}
+		if (commandDesc == null){
+			status = ReaderSessionStatus.CONNECTED;
+			throw new RifidiCommandInterruptedException("\"" + command + "\" Command not found.");
+		}
 		status = ReaderSessionStatus.CONNECTED;
 
 	}
