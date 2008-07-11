@@ -137,9 +137,10 @@ public class Communication implements ConnectionExceptionListener {
 		writeThread = new WriteThread(connectionManager.toString()
 				+ " Write Thread", connection, protocol, writeQueue,
 				connectionStreams.getOutputStream());
-
 		readThread.start();
 		writeThread.start();
+		
+		connectionManager.connect(connection);
 
 	}
 
