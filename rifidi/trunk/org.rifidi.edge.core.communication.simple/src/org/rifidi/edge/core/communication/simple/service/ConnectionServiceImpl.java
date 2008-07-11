@@ -1,7 +1,6 @@
 package org.rifidi.edge.core.communication.simple.service;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import org.rifidi.edge.core.communication.Connection;

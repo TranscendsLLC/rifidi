@@ -55,17 +55,41 @@ public class SimpleConnectionImpl implements Connection {
 			/* if there is nothing on the queue
 			 * we block until there is something.
 			 */
-			if (recieved.isEmpty()) {
-				_gatherMessagesBlocking();
-			} else {
+
+			Object retVal = null;
+			while (true) {
+				int input;
 				/*
-				 * if not... we just gather all or nothing... and go on.
+				 * if there is one or more objects on the buffer.
 				 */
-				_gatherMessagesNonBlocking();
+				if (!recieved.isEmpty()) {
+					/*
+					 * check to see if there is any bytes
+					 * available on the inputStream
+					 * if not... we break the while loop.
+					 */
+					if ( !(inputStream.available() > 0) ) break;
+				}
+				/*
+				 * Do a blocking read for one byte.
+				 */	
+				if ((input = inputStream.read()) == -1) throw new IOException();
+
+				/* 
+				 * send that byte to the protocol
+				 */
+				retVal = protocol.byteToMessage((byte) input);
+				
+				/* 
+				 * check to see if the protocol sent us a complete message.
+				 */
+				if (retVal != null) {
+					/*
+					 * if so.. we push it on the stack.
+					 */
+					recieved.push(retVal);
+				}
 			}
-			Object retVal = recieved.pop();
-			
-			return retVal;
 		} catch (IOException e) {
 			if (listener != null) {
 				listener.connectionExceptionEvent(e);
@@ -81,7 +105,18 @@ public class SimpleConnectionImpl implements Connection {
 				}
 			}
 			throw e;
+		} catch (RifidiInvalidMessageFormat e) {
+			if (listener != null) {
+				listener.connectionExceptionEvent(e);
+				listener.error();
+			}
+			throw new IOException(e);
 		}
+		
+		/* 
+		 * pop just one object off the stack.		 * 
+		 */
+		return recieved.pop();
 	}
 
 	/* (non-Javadoc)
@@ -106,10 +141,7 @@ public class SimpleConnectionImpl implements Connection {
 			} catch (InterruptedException e) {
 				// Ignore this.
 			}
-
-			//Store any available messages on a queue and don't block.
-			_gatherMessagesNonBlocking();
-			
+	
 		} catch (IOException e) {
 			if (listener != null) {
 				listener.connectionExceptionEvent(e);
@@ -128,57 +160,9 @@ public class SimpleConnectionImpl implements Connection {
 		}
 	}
 
-	/**
-	 * @param blocking 
-	 * @throws IOException
-	 * @throws RifidiInvalidMessageFormat
-	 */
-	private void _gatherMessagesNonBlocking() throws IOException {
-		Object message = null;
-		while (inputStream.available() > 0) {
-			int input = inputStream.read();
-			try {
-				message = protocol.byteToMessage((byte) input);
-			} catch (RifidiInvalidMessageFormat e) {
-				throw new IOException(e);
-			}
-			if (message != null) {
-				logger.debug(message);
-				recieved.push(message);
-			}
-		}
-	}
-	
-	private void _gatherMessagesBlocking() throws IOException {
-		Object message = null;
-		int input;
-		boolean gotSomething = false;
-		while (true) {
-			if (!gotSomething){
-				if ((input = inputStream.read()) == -1) break;
-			} else {
-				if (inputStream.available() > 0) {
-					input = inputStream.read();
-				} else {
-					break;
-				}
-			}
-			try {
-				message = protocol.byteToMessage((byte) input);
-			} catch (RifidiInvalidMessageFormat e) {
-				throw new IOException(e);
-			}
-			if (message != null) {
-				logger.debug(message);
-				recieved.push(message);
-				gotSomething=true;
-			}
-		}
-	}
-	
-
 	public void disconnect(){
 		connectionManager.disconnect(this);
+		recieved.clear();
 	}
 	
 	@Override
@@ -201,6 +185,7 @@ public class SimpleConnectionImpl implements Connection {
 					_connect();
 					
 				} catch (RifidiConnectionException e) {
+					disconnect();
 					if (x == connectionManager.getMaxNumConnectionsAttemps()) {
 						// status = ReaderSessionStatus.DISCONNECTED;
 						// darn... we have failed.
@@ -211,6 +196,7 @@ public class SimpleConnectionImpl implements Connection {
 					} else {
 						logger.debug("Error! " + e.getMessage());
 					}
+		
 					try {
 						Thread.sleep(connectionManager
 								.getReconnectionIntervall());
