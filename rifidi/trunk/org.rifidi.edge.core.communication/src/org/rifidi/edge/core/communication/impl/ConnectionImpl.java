@@ -2,12 +2,9 @@ package org.rifidi.edge.core.communication.impl;
 
 import java.io.IOException;
 import java.util.HashSet;
-import java.util.Set;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import org.rifidi.edge.core.communication.Connection;
-import org.rifidi.edge.core.communication.service.ConnectionEventListener;
-import org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionExceptionListener;
 
 public class ConnectionImpl implements Connection {
 
@@ -19,8 +16,6 @@ public class ConnectionImpl implements Connection {
 	
 	// FIXME KYLE make me Thread safe
 	private HashSet<Thread> blockedThreads = new HashSet<Thread>();
-
-	private Set<ConnectionEventListener> listeners = new HashSet<ConnectionEventListener>();
 
 	public ConnectionImpl(LinkedBlockingQueue<Object> readQueue,
 			LinkedBlockingQueue<Object> writeQueue) {
@@ -60,11 +55,10 @@ public class ConnectionImpl implements Connection {
 	public void setException(Exception e) {
 		synchronized (locker) {
 			this.exception = e;
+			readQueue.clear();
+			writeQueue.clear();
 			for (Thread thread : blockedThreads)
 				thread.interrupt();
-			for (ConnectionEventListener listener : listeners) {
-				listener.disconnected();
-			}
 			locker.notifyAll();
 		}
 	}
@@ -81,19 +75,8 @@ public class ConnectionImpl implements Connection {
 		}
 	}
 
-	public void addConnectionEventListener(
-			ConnectionEventListener listener) {
-		listeners.add(listener);
-	}
-
-	public void removeConnectionEventListener(
-			ConnectionEventListener listener) {
-		listeners.add(listener);
-	}
-
 	/*==============================================================*/
 	@Override
 	public void finalize(){
-		listeners.clear();
 	}
 }

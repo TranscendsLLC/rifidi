@@ -11,10 +11,13 @@
  */
 package org.rifidi.edge.core.communication.threads;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 
 public abstract class AbstractThread implements Runnable {
-	// private static final Log logger =
-	// LogFactory.getLog(AbstractThread.class);
+	 private static final Log logger =
+	 LogFactory.getLog(AbstractThread.class);
 
 	private Thread thread;
 
@@ -40,7 +43,7 @@ public abstract class AbstractThread implements Runnable {
 	 * 
 	 */
 	public void stop() {
-		// logger.debug("Stopping " + thread.getName());
+		logger.debug("Try stopping " + thread.getName());
 		running = false;
 		try {
 			thread.join(1000);

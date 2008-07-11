@@ -12,15 +12,15 @@ import org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionManager;
 
 public class ConnectionServiceImpl implements ConnectionService {
 
-	private List<ConnectionListener> listeners = new ArrayList<ConnectionListener>();
+	private List<ConnectionServiceListener> listeners = new ArrayList<ConnectionServiceListener>();
 	private HashMap<Connection, Communication> connections = new HashMap<Connection, Communication>();
 
 	@Override
 	public Connection createConnection(ConnectionManager connectionManager,
-			ReaderInfo readerInfo, ConnectionEventListener listener) throws RifidiConnectionException {
+			ReaderInfo readerInfo, CommunicationStateListener communicationStateListener) throws RifidiConnectionException {
 		Connection connection = null;
 		Communication communication = new Communication(connectionManager);
-		communication.addConnectionEventListener(listener);
+		communication.addCommunicationStateListener(communicationStateListener);
 		connection = communication.connect();
 		fireAddEvent(connection);
 
@@ -28,9 +28,9 @@ public class ConnectionServiceImpl implements ConnectionService {
 	}
 
 	@Override
-	public void destroyConnection(Connection connection, ConnectionEventListener listener) {
+	public void destroyConnection(Connection connection, CommunicationStateListener listener) {
 		Communication communication = connections.remove(connection);
-		communication.removeConnectionEventListener(listener);
+		communication.removeCommunicationStateListener(listener);
 		communication.disconnect();
 		fireRemoveEvent(connection);
 	}
@@ -41,23 +41,23 @@ public class ConnectionServiceImpl implements ConnectionService {
 	}
 
 	@Override
-	public void addConnectionListener(ConnectionListener listener) {
+	public void addConnectionServiceListener(ConnectionServiceListener listener) {
 		listeners.add(listener);
 	}
 
 	@Override
-	public void removeConnectionListener(ConnectionListener listener) {
+	public void removeConnectionServiceListener(ConnectionServiceListener listener) {
 		listeners.remove(listener);
 	}
 
 	private void fireAddEvent(Connection event) {
-		for (ConnectionListener listener : listeners) {
+		for (ConnectionServiceListener listener : listeners) {
 			listener.addEvent(event);
 		}
 	}
 
 	private void fireRemoveEvent(Connection event) {
-		for (ConnectionListener listener : listeners) {
+		for (ConnectionServiceListener listener : listeners) {
 			listener.removeEvent(event);
 		}
 	}
