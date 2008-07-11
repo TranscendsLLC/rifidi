@@ -10,14 +10,14 @@ import org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionManager;
 public interface ConnectionService {
 
 	public Connection createConnection(ConnectionManager connectionManager,
-			ReaderInfo readerInfo, ConnectionEventListener listener)
+			ReaderInfo readerInfo, CommunicationStateListener communicationStateListener)
 		throws RifidiConnectionException;
 
-	public void destroyConnection(Connection connection, ConnectionEventListener listener);
+	public void destroyConnection(Connection connection, CommunicationStateListener listener);
 
 	public List<Connection> getAllConnections();
 
-	public void addConnectionListener(ConnectionListener listener);
+	public void addConnectionServiceListener(ConnectionServiceListener listener);
 
-	public void removeConnectionListener(ConnectionListener listener);
+	public void removeConnectionServiceListener(ConnectionServiceListener listener);
 }

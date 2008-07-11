@@ -15,8 +15,4 @@ public interface ReaderSession {
 	public void stopCommand();
 
 	public ReaderSessionStatus getStatus();
-
-	public void addExecutionListener(ExecutionListener listener);
-
-	public void removeExecutionListener(ExecutionListener listener);
 }
