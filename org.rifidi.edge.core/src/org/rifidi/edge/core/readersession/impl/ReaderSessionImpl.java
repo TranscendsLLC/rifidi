@@ -209,7 +209,7 @@ public class ReaderSessionImpl implements ReaderSession,
 			e.printStackTrace();
 		}
 
-		readerSessionStatus = ReaderSessionStatus.OK;
+		readerSessionStatus = ReaderSessionStatus.BUSY;
 		// EXECUTE THE COMMAND
 		executionThread.start(curCommand);
 		logger.debug("Command given to execution thread");
