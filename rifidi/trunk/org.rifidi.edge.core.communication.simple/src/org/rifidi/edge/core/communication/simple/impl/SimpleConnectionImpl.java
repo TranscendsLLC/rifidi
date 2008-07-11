@@ -210,6 +210,7 @@ public class SimpleConnectionImpl implements Connection {
 					+ "There is a possible bug in "
 					+ connectionManager.getClass().getName(), e);
 		}
+		
  		/* fire event */
 		if (listener != null)
 			listener.connected();
