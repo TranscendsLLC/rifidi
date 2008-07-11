@@ -79,6 +79,7 @@ public class ExecutionThread implements Runnable {
 				wait();
 			}
 		} catch (InterruptedException e) {
+			//TODO well not sure if we should print that
 			e.printStackTrace();
 		}
 	}
