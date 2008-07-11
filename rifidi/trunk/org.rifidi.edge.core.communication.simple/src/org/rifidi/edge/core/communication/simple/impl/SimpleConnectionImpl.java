@@ -135,12 +135,6 @@ public class SimpleConnectionImpl implements Connection {
 
 			outputStream.write(bytes);
 			outputStream.flush();
-
-			try {
-				Thread.sleep(50);
-			} catch (InterruptedException e) {
-				// Ignore this.
-			}
 	
 		} catch (IOException e) {
 			if (listener != null) {
