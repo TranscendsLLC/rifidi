@@ -36,8 +36,14 @@ public class SimpleConnectionImpl implements Connection {
 
 	public SimpleConnectionImpl(ConnectionManager connectionManager, ConnectionEventListener listener)  throws RifidiConnectionException {
 		this.connectionManager = connectionManager;
-		_connect();
+		try {
+			_connect();
+		} catch (RifidiConnectionException e) {
+			_reconnect();
+		}
 		this.listener = listener;
+		if (this.listener != null)
+			this.listener.connected();
 	}
 
 	/* (non-Javadoc)
@@ -61,14 +67,18 @@ public class SimpleConnectionImpl implements Connection {
 			
 			return retVal;
 		} catch (IOException e) {
-			listener.connectionExceptionEvent(e);
-			listener.disconnected();
+			if (listener != null) {
+				listener.connectionExceptionEvent(e);
+				listener.disconnected();
+			}
 			disconnect();
 			try {
 				_reconnect();
 			} catch (RifidiConnectionException e1) {
-				listener.connectionExceptionEvent(e1);
-				listener.error();
+				if (listener != null) {
+					listener.connectionExceptionEvent(e1);
+					listener.error();
+				}
 			}
 			throw e;
 		}
@@ -101,14 +111,18 @@ public class SimpleConnectionImpl implements Connection {
 			_gatherMessagesNonBlocking();
 			
 		} catch (IOException e) {
-			listener.connectionExceptionEvent(e);
-			listener.error();
+			if (listener != null) {
+				listener.connectionExceptionEvent(e);
+				listener.error();
+			}
 			disconnect();
 			try {
 				_reconnect();
 			} catch (RifidiConnectionException e1) {
-				listener.connectionExceptionEvent(e1);
-				listener.error();
+				if (listener != null) {
+					listener.connectionExceptionEvent(e1);
+					listener.error();
+				}
 			}
 			throw e;
 		}
@@ -179,7 +193,8 @@ public class SimpleConnectionImpl implements Connection {
 					if (x == connectionManager.getMaxNumConnectionsAttemps()) {
 						// status = ReaderSessionStatus.DISCONNECTED;
 						// darn... we have failed.
-						listener.connectionExceptionEvent(e);
+						if (listener != null)
+							listener.connectionExceptionEvent(e);
 						logger.debug("Error! We gave up. " + e.getMessage());
 						throw e;
 					} else {
@@ -204,8 +219,8 @@ public class SimpleConnectionImpl implements Connection {
 					+ connectionManager.getClass().getName(), e);
 		}
  		/* fire event */
-
-		listener.connected();
+		if (listener != null)
+			listener.connected();
 	}
 	private void _connect() throws RifidiConnectionException {
 		ConnectionStreams streams = this.connectionManager.createCommunication();
