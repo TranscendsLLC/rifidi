@@ -10,7 +10,7 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.communication.Connection;
-import org.rifidi.edge.core.communication.service.ConnectionEventListener;
+import org.rifidi.edge.core.communication.service.CommunicationStateListener;
 import org.rifidi.edge.core.communication.service.ConnectionService;
 import org.rifidi.edge.core.communication.service.ConnectionStatus;
 import org.rifidi.edge.core.exceptions.RifidiCommandInterruptedException;
@@ -35,13 +35,10 @@ import org.rifidi.services.registry.ServiceRegistry;
  * 
  */
 public class ReaderSessionImpl implements ReaderSession,
-		ConnectionEventListener, CommandExecutionListener {
+		CommunicationStateListener, CommandExecutionListener {
 
 	private static final Log logger = LogFactory
 			.getLog(ReaderSessionImpl.class);
-
-	private Set<ExecutionListener> listeners = Collections
-			.synchronizedSet(new HashSet<ExecutionListener>());
 
 	// Services
 	private ConnectionService connectionService;
@@ -110,9 +107,10 @@ public class ReaderSessionImpl implements ReaderSession,
 		if (connectionManager == null)
 			connectionManager = readerPluginService.getReaderPlugin(
 					readerInfo.getClass()).getConnectionManager(readerInfo);
-		if (connection == null)
+		if (connection == null){
 			connection = connectionService.createConnection(connectionManager,
 					readerInfo, this);
+		}
 		if (messageQueue == null)
 			messageQueue = messageService.createMessageQueue(connectionManager
 					.toString());
@@ -239,23 +237,6 @@ public class ReaderSessionImpl implements ReaderSession,
 
 	/*
 	 * =====================================================================
-	 * Command Execution Notification Service This notifies when a execution
-	 * started
-	 * =====================================================================
-	 */
-
-	@Override
-	public void removeExecutionListener(ExecutionListener listener) {
-		listeners.add(listener);
-	}
-
-	@Override
-	public void addExecutionListener(ExecutionListener listener) {
-		listeners.add(listener);
-	}
-
-	/*
-	 * =====================================================================
 	 * Command Execution Event
 	 * =====================================================================
 	 */
@@ -279,8 +260,6 @@ public class ReaderSessionImpl implements ReaderSession,
 		synchronized (this) {
 			notify();
 		}
-
-		logger.debug("Connected again");
 	}
 
 	@Override
