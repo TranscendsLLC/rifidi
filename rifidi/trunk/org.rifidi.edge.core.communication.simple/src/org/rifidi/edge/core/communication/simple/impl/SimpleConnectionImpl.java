@@ -102,7 +102,7 @@ public class SimpleConnectionImpl implements Connection {
 			outputStream.flush();
 
 			try {
-				Thread.sleep(10);
+				Thread.sleep(50);
 			} catch (InterruptedException e) {
 				// Ignore this.
 			}
@@ -152,7 +152,17 @@ public class SimpleConnectionImpl implements Connection {
 	private void _gatherMessagesBlocking() throws IOException {
 		Object message = null;
 		int input;
-		while ((input = inputStream.read()) != -1) {
+		boolean gotSomething = false;
+		while (true) {
+			if (!gotSomething){
+				if ((input = inputStream.read()) == -1) break;
+			} else {
+				if (inputStream.available() > 0) {
+					input = inputStream.read();
+				} else {
+					break;
+				}
+			}
 			try {
 				message = protocol.byteToMessage((byte) input);
 			} catch (RifidiInvalidMessageFormat e) {
@@ -161,6 +171,7 @@ public class SimpleConnectionImpl implements Connection {
 			if (message != null) {
 				logger.debug(message);
 				recieved.push(message);
+				gotSomething=true;
 			}
 		}
 	}
