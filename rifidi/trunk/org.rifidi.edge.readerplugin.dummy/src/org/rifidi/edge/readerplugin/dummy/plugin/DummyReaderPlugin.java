@@ -8,16 +8,14 @@ import org.rifidi.edge.core.readerplugin.ReaderPlugin;
 import org.rifidi.edge.core.readerplugin.commands.Command;
 import org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionManager;
 import org.rifidi.edge.core.readerplugin.protocol.MessageProtocol;
-import org.rifidi.edge.readerplugin.dummy.commands.GetTagsOnceCommand;
-import org.rifidi.edge.readerplugin.dummy.commands.TagStreamCommand;
+import org.rifidi.edge.readerplugin.dummy.commands.StreamTagsTest;
 import org.rifidi.edge.readerplugin.dummy.protocol.DummyMessageProtocol;
 
 public class DummyReaderPlugin implements ReaderPlugin {
 	ArrayList<Class<? extends Command>> commands = new ArrayList<Class<? extends Command>>();
 	
 	public DummyReaderPlugin(){		
-		commands.add(TagStreamCommand.class);
-		commands.add(GetTagsOnceCommand.class);
+		commands.add(StreamTagsTest.class);
 	}
 	
 	/* (non-Javadoc)
@@ -50,7 +48,7 @@ public class DummyReaderPlugin implements ReaderPlugin {
 	 */
 	@Override
 	public ConnectionManager getConnectionManager(ReaderInfo readerInfo) {
-		return new DummyConnectionManager(readerInfo);
+		return new DummyConnectionManagerNew(readerInfo);
 	}
 
 	/* (non-Javadoc)
