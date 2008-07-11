@@ -158,7 +158,7 @@ public class DummyTagRead {
 			throw new AssertionError(e);
 		}
 		try {
-			Thread.sleep(5000);
+			Thread.sleep(50);
 		} catch (InterruptedException e) {
 		}
 		
