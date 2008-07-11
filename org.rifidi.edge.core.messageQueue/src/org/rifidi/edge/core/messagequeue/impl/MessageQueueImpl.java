@@ -2,8 +2,6 @@ package org.rifidi.edge.core.messagequeue.impl;
 
 import java.util.concurrent.LinkedBlockingQueue;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.messageQueue.MessageQueue;
 import org.rifidi.edge.core.readerplugin.messages.Message;
 
