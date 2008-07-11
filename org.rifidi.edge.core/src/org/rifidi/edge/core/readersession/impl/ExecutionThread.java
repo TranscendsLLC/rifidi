@@ -29,7 +29,7 @@ public class ExecutionThread implements Runnable {
 		this.connection = connection;
 		this.messageQueue = messageQueue;
 		this.readerSession = readerSession;
-		thread = new Thread(this, "ExecutionThread");
+		thread = new Thread(this, "ExecutionThread: " + messageQueue.getName());
 		thread.start();
 	}
 
