@@ -3,24 +3,24 @@ package org.rifidi.edge.core.communication.simple.impl;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.HashSet;
 import java.util.LinkedList;
-import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.communication.Connection;
+import org.rifidi.edge.core.communication.service.ConnectionEventListener;
 import org.rifidi.edge.core.exceptions.RifidiConnectionException;
 import org.rifidi.edge.core.exceptions.RifidiInvalidMessageFormat;
-import org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionExceptionListener;
 import org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionManager;
 import org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionStreams;
 import org.rifidi.edge.core.readerplugin.protocol.CommunicationProtocol;
 
+/**
+ * @author Jerry Maine - jerry@pramari.com
+ *
+ */
 public class SimpleConnectionImpl implements Connection {
 	private static final Log logger = LogFactory.getLog(SimpleConnectionImpl.class);
-
-	private Set<ConnectionExceptionListener> listeners = new HashSet<ConnectionExceptionListener>();
 
 	private OutputStream outputStream;
 
@@ -32,13 +32,12 @@ public class SimpleConnectionImpl implements Connection {
 
 	private ConnectionManager connectionManager;
 
-	public SimpleConnectionImpl(ConnectionManager connectionManager)  throws RifidiConnectionException {
+	private ConnectionEventListener listener;
+
+	public SimpleConnectionImpl(ConnectionManager connectionManager, ConnectionEventListener listener)  throws RifidiConnectionException {
 		this.connectionManager = connectionManager;
-		ConnectionStreams streams = this.connectionManager.createCommunication();
-		this.outputStream = streams.getOutputStream();
-		this.inputStream = streams.getInputStream();
-		this.protocol = this.connectionManager.getCommunicationProtocol();
-		this.connectionManager.connect(this);
+		_connect();
+		this.listener = listener;
 	}
 
 	/* (non-Javadoc)
@@ -62,7 +61,15 @@ public class SimpleConnectionImpl implements Connection {
 			
 			return retVal;
 		} catch (IOException e) {
-			fireException(e);
+			listener.connectionExceptionEvent(e);
+			listener.disconnected();
+			disconnect();
+			try {
+				_reconnect();
+			} catch (RifidiConnectionException e1) {
+				listener.connectionExceptionEvent(e1);
+				listener.error();
+			}
 			throw e;
 		}
 	}
@@ -94,7 +101,15 @@ public class SimpleConnectionImpl implements Connection {
 			_gatherMessagesNonBlocking();
 			
 		} catch (IOException e) {
-			fireException(e);
+			listener.connectionExceptionEvent(e);
+			listener.error();
+			disconnect();
+			try {
+				_reconnect();
+			} catch (RifidiConnectionException e1) {
+				listener.connectionExceptionEvent(e1);
+				listener.error();
+			}
 			throw e;
 		}
 	}
@@ -146,25 +161,58 @@ public class SimpleConnectionImpl implements Connection {
 		return !recieved.isEmpty();
 	}
 
-	public void fireException(Exception e) {
-		for (ConnectionExceptionListener listener : listeners) {
-			listener.connectionExceptionEvent(e);
+	/*===============================================================*/
+	private void _reconnect() throws RifidiConnectionException {
+		try {
+			Thread.sleep(connectionManager.getReconnectionIntervall());
+		} catch (InterruptedException e1) {
+			// ignore this exception.
 		}
-	}
+		try {
+			logger.debug("Trying to reconnect.");
+			for (int x = 1; connectionManager.getMaxNumConnectionsAttemps() >= x; x++) {
+				try {
+					/* fire events */
+					_connect();
+					
+				} catch (RifidiConnectionException e) {
+					if (x == connectionManager.getMaxNumConnectionsAttemps()) {
+						// status = ReaderSessionStatus.DISCONNECTED;
+						// darn... we have failed.
+						listener.connectionExceptionEvent(e);
+						logger.debug("Error! We gave up. " + e.getMessage());
+						throw e;
+					} else {
+						logger.debug("Error! " + e.getMessage());
+					}
+					try {
+						Thread.sleep(connectionManager
+								.getReconnectionIntervall());
+					} catch (InterruptedException e1) {
+						// ignore this exception.
+					}
+					// we have failed... try again....
+					continue;
+				}
+				// hay!!! we succeeded!!
+				break;
+			}
+		} catch (RuntimeException e) {
+			// status = ReaderSessionStatus.DISCONNECTED;
+			throw new RifidiConnectionException("RuntimeException detected! "
+					+ "There is a possible bug in "
+					+ connectionManager.getClass().getName(), e);
+		}
+ 		/* fire event */
 
-	public void addConnectionExceptionListener(
-			ConnectionExceptionListener listener) {
-		listeners.add(listener);
+		listener.connected();
 	}
-
-	public void removeConnectionExceptionListener(
-			ConnectionExceptionListener listener) {
-		listeners.add(listener);
+	private void _connect() throws RifidiConnectionException {
+		ConnectionStreams streams = this.connectionManager.createCommunication();
+		this.outputStream = streams.getOutputStream();
+		this.inputStream = streams.getInputStream();
+		this.protocol = this.connectionManager.getCommunicationProtocol();
+		this.connectionManager.connect(this);
 	}
-
-	/* ============================================================== */
-	@Override
-	public void finalize() {
-		listeners.clear();
-	}
+	
 }
