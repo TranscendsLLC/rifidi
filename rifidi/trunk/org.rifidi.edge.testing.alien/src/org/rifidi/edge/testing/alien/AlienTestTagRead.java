@@ -44,13 +44,6 @@ public class AlienTestTagRead {
 	@Before
 	public void setUp() throws Exception {
 		ServiceRegistry.getInstance().service(this);
-		info = new AlienReaderInfo();
-		info.setIpAddress("129.168.1.100");
-		info.setPort(23);
-		info.setUsername("alien");
-		info.setPassword("password");
-		info.setMaxNumConnectionsAttemps(3);
-		info.setReconnectionIntervall(1000);
 	}
 
 	/**
@@ -64,21 +57,25 @@ public class AlienTestTagRead {
 	 * 
 	 */
 	@Test
-	public void testConnectAndDisconnect() {
-		logger.debug("Testing the connect/disconnect");
-	}
-
-	/**
-	 * 
-	 */
-	@Test
 	public void testTagRead() {
+		info = new AlienReaderInfo();
+		info.setIpAddress("192.168.1.100");
+		info.setPort(23);
+		info.setUsername("alien");
+		info.setPassword("password");
+		info.setMaxNumConnectionsAttemps(3);
+		info.setReconnectionIntervall(1000);
+		
 		logger.debug("Testing the tag reads");
 		
 		ReaderSession readerSession = readerSessionService
 				.createReaderSesssion(info);
+		
 		try {
+			logger.debug("Testing the getTagList command");
 			readerSession.executeCommand("getTagList");
+			
+			readerSession.stopCommand();
 		} catch (RifidiConnectionException e) {
 			throw new AssertionError(e);
 		} catch (RifidiCommandInterruptedException e) {
