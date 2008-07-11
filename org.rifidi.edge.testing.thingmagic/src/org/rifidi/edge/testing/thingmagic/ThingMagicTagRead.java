@@ -5,13 +5,19 @@ import java.io.ByteArrayOutputStream;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
+import org.rifidi.edge.core.communication.simple.impl.SimpleConnectionImpl;
 import org.rifidi.edge.core.exceptions.RifidiCommandInterruptedException;
 import org.rifidi.edge.core.exceptions.RifidiConnectionException;
+import org.rifidi.edge.core.messageQueue.MessageQueue;
+import org.rifidi.edge.core.messageQueue.service.MessageService;
 import org.rifidi.edge.core.readerplugin.ReaderInfo;
 import org.rifidi.edge.core.readerplugin.service.ReaderPluginService;
 import org.rifidi.edge.core.readersession.ReaderSession;
 import org.rifidi.edge.core.readersession.service.ReaderSessionService;
+import org.rifidi.edge.readerplugin.thingmagic.commands.GetTagsOnceCommand;
+import org.rifidi.edge.readerplugin.thingmagic.plugin.ThingMagicManager;
 import org.rifidi.edge.readerplugin.thingmagic.plugin.ThingMagicReaderInfo;
 import org.rifidi.services.annotations.Inject;
 import org.rifidi.services.registry.ServiceRegistry;
@@ -25,8 +31,9 @@ public class ThingMagicTagRead {
 
 	private ReaderSessionService readerSessionService;
 	private ReaderPluginService readerPluginService;
-
+	
 	ByteArrayOutputStream output = new ByteArrayOutputStream();
+	private MessageService messageService;
 	
 	@Before
 	public void setUp() throws Exception {
@@ -40,6 +47,7 @@ public class ThingMagicTagRead {
 	public void tearDown() throws Exception {
 	}
 
+	@Ignore
 	@Test
 	public void testTagReadAndConnect() {
 		if (readerSessionService == null)
@@ -111,6 +119,25 @@ public class ThingMagicTagRead {
 		}
 	}
 
+	@Test
+	public void testTagReadAndConnect2(){
+		MessageQueue messageQueue = messageService.createMessageQueue("ThingMagic Test queue");
+		ReaderInfo info = new ThingMagicReaderInfo();
+		info.setIpAddress("localhost");
+		info.setPort(8080);
+		SimpleConnectionImpl connection;
+		try {
+			connection = new SimpleConnectionImpl(new ThingMagicManager(info), null);
+		} catch (RifidiConnectionException e) {
+			throw new AssertionError(e);
+		}
+		
+		GetTagsOnceCommand command = new GetTagsOnceCommand();
+		
+		
+		command.start(connection, messageQueue);
+	}
+	
 	@Inject
 	public void setReaderSessionService(ReaderSessionService service) {
 		readerSessionService = service;
@@ -119,5 +146,13 @@ public class ThingMagicTagRead {
 	@Inject 
 	public void setReaderPluginService(ReaderPluginService service){
 		readerPluginService = service;
+	}
+	
+	/**
+	 * @param messageService
+	 */
+	@Inject
+	public void setMessageService(MessageService messageService) {
+		this.messageService = messageService;
 	}
 }

@@ -13,6 +13,6 @@ Require-Bundle: org.rifidi.edge.log4j,
  org.rifidi.edge.services,
  org.rifidi.edge.common.utilities,
  org.rifidi.edge.core,
- org.rifidi.edge.core.communication,
  org.rifidi.edge.core.messageQueue,
- org.rifidi.edge.readerplugin.thingmagic
+ org.rifidi.edge.readerplugin.thingmagic,
+ org.rifidi.edge.core.communication.simple
