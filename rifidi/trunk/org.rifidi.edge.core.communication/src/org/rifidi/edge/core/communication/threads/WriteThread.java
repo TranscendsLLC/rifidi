@@ -18,6 +18,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.communication.impl.ConnectionImpl;
+import org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionExceptionListener;
 import org.rifidi.edge.core.readerplugin.protocol.CommunicationProtocol;
 
 public class WriteThread extends AbstractThread {
@@ -27,16 +28,18 @@ public class WriteThread extends AbstractThread {
 	private LinkedBlockingQueue<Object> writeQueue;
 	private OutputStream outputStream;
 	private boolean ignoreExceptions = false;
+	private ConnectionExceptionListener connectionExceptionListener;
 
-	public WriteThread(String threadName, ConnectionImpl connection,
+	public WriteThread(String threadName, ConnectionExceptionListener connectionExceptionListener,
 			CommunicationProtocol protocol, Queue<Object> writeQueue,
 			OutputStream outputStream) {
-		super(threadName, connection);
+		super(threadName);
 
 		this.protocol = protocol;
 		// TODO make this more safe
 		this.writeQueue = (LinkedBlockingQueue<Object>) writeQueue;
 		this.outputStream = outputStream;
+		this.connectionExceptionListener = connectionExceptionListener;
 	}
 
 	public void run() {
@@ -58,7 +61,7 @@ public class WriteThread extends AbstractThread {
 			running = false;
 			e.printStackTrace();
 			if (!ignoreExceptions) {
-				connection.setException(e);
+				connectionExceptionListener.connectionExceptionEvent(e);
 			}
 		}
 	}

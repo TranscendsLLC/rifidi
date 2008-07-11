@@ -34,14 +34,12 @@ public class Communication implements ConnectionExceptionListener {
 	public Communication(ConnectionManager connectionManager) {
 		this.connectionManager = connectionManager;
 		protocol = this.connectionManager.getCommunicationProtocol();
+		readQueue = new LinkedBlockingQueue<Object>();
+		writeQueue = new LinkedBlockingQueue<Object>();
+		connection = new ConnectionImpl(readQueue, writeQueue);
 	}
 
 	public Connection connect() throws RifidiConnectionException {
-
-		readQueue = new LinkedBlockingQueue<Object>();
-		writeQueue = new LinkedBlockingQueue<Object>();
-
-		connection = new ConnectionImpl(readQueue, writeQueue);
 
 		// Create physical connection
 		try {
@@ -131,27 +129,25 @@ public class Communication implements ConnectionExceptionListener {
 		ConnectionStreams connectionStreams = connectionManager
 				.createCommunication();
 		readThread = new ReadThread(connectionManager.toString()
-				+ " Read Thread", connection, protocol, readQueue,
+				+ " Read Thread", this, protocol, readQueue,
 				connectionStreams.getInputStream());
 
 		writeThread = new WriteThread(connectionManager.toString()
-				+ " Write Thread", connection, protocol, writeQueue,
+				+ " Write Thread", this, protocol, writeQueue,
 				connectionStreams.getOutputStream());
 		readThread.start();
 		writeThread.start();
-		
-		connectionManager.connect(connection);
 
 	}
 
 	public void addConnectionEventListener(ConnectionEventListener listener) {
 		listeners.add(listener);
-		connection.addConnectionExceptionListener(listener);
+		connection.addConnectionEventListener(listener);
 	}
 
 	public void removeConnectionEventListener(ConnectionEventListener listener) {
-		listeners.add(listener);
-		connection.addConnectionExceptionListener(listener);
+		listeners.remove(listener);
+		connection.removeConnectionEventListener(listener);
 	}
 
 	/* ============================================================== */
