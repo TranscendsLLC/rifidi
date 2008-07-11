@@ -37,7 +37,7 @@ public class MessageQueueImpl implements MessageQueue {
 				}
 
 			}
-		}, "MessageQueueTest");
+		}, "MessageQueueTest: " + queueName);
 		thread.start();
 	}
 
