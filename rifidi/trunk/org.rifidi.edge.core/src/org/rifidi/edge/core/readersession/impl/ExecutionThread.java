@@ -68,14 +68,6 @@ public class ExecutionThread implements Runnable {
 												+ "Probibly tried to execute a command that did not belong to this reader, "
 												+ "or something else caused it.",
 										e);
-					} catch (Error e) {
-						e.printStackTrace();
-						logger
-								.error(
-										"Command interrupted due to unexpected Critical Exception. "
-												+ "This may be caused by a bug in the command implemenation itself or, "
-												+ "or the protocol implemenation of the reader.",
-										e);
 					}
 					// Wait for the next command
 				}

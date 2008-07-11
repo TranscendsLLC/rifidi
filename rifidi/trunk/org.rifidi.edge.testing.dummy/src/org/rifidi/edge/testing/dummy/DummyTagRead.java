@@ -36,7 +36,12 @@ public class DummyTagRead {
 	
 	@Before
 	public void setUp() throws Exception {
-		ServiceRegistry.getInstance().service(this);		
+		ServiceRegistry.getInstance().service(this);
+		for (int x = 0; x < 40; x++) {
+			if (readerPluginService != null && 
+					readerSessionService != null ) break;
+			Thread.sleep(500);
+		}
 	}
 
 	@After
@@ -120,6 +125,47 @@ public class DummyTagRead {
 		}
 	}
 
+	
+	@Test
+	public void testDualTagReadTest(){
+		ReaderInfo info = new DummyReaderInfo();
+		info.setIpAddress("localhost");
+		info.setPort(8080);
+		ReaderSession readerSession = readerSessionService
+				.createReaderSesssion(info);
+		
+		ReaderInfo info2 = new DummyReaderInfo();
+		info2.setIpAddress("localhost");
+		info2.setPort(8080);
+		ReaderSession readerSession2 = readerSessionService
+				.createReaderSesssion(info2);
+		
+		try {
+			readerSession.executeCommand("TagStreaming");
+		} catch (RifidiConnectionException e) {
+			throw new AssertionError(e);
+		} catch (RifidiCommandInterruptedException e) {
+
+			throw new AssertionError(e);
+		}
+		
+		try {
+			readerSession2.executeCommand("TagStreaming");
+		} catch (RifidiConnectionException e) {
+			throw new AssertionError(e);
+		} catch (RifidiCommandInterruptedException e) {
+
+			throw new AssertionError(e);
+		}
+		try {
+			Thread.sleep(5000);
+		} catch (InterruptedException e) {
+		}
+		
+		readerSession.stopCommand();
+		readerSession2.stopCommand();
+	}
+	
 	@Inject
 	public void setReaderSessionService(ReaderSessionService service) {
 		readerSessionService = service;
