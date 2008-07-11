@@ -22,6 +22,8 @@ public class ExecutionThread implements Runnable {
 
 	private CommandExecutionListener readerSession;
 
+	private boolean running = true;
+
 	public ExecutionThread(Connection connection, MessageQueue messageQueue,
 			CommandExecutionListener readerSession) {
 		this.connection = connection;
@@ -52,32 +54,35 @@ public class ExecutionThread implements Runnable {
 
 	@Override
 	public void run() {
-		try {
-			if (command == null) {
-				try {
-					status = command.start(connection, messageQueue);
-				} catch (Exception e) {
-					e.printStackTrace();
-					logger
-							.error(
-									"Command interrupted due to unexpected Execption. "
-											+ "Probibly tried to execute a command that did not belong to this reader, "
-											+ "or something else caused it.", e);
-				} catch (Error e) {
-					e.printStackTrace();
-					logger
-							.error(
-									"Command interrupted due to unexpected Critical Exception. "
-											+ "This may be caused by a bug in the command implemenation itself or, "
-											+ "or the protocol implemenation of the reader.",
-									e);
+		while (running)
+			try {
+				if (command != null) {
+					try {
+						logger.debug("starting command");
+						status = command.start(connection, messageQueue);
+					} catch (Exception e) {
+						e.printStackTrace();
+						logger
+								.error(
+										"Command interrupted due to unexpected Execption. "
+												+ "Probibly tried to execute a command that did not belong to this reader, "
+												+ "or something else caused it.",
+										e);
+					} catch (Error e) {
+						e.printStackTrace();
+						logger
+								.error(
+										"Command interrupted due to unexpected Critical Exception. "
+												+ "This may be caused by a bug in the command implemenation itself or, "
+												+ "or the protocol implemenation of the reader.",
+										e);
+					}
+					// Wait for the next command
 				}
-				// Wait for the next command
-			}
-			readerSession.commandFinished(command, status);
-			synchronized (this) {
-				wait();
-			}
+				readerSession.commandFinished(command, status);
+				synchronized (this) {
+					wait();
+				}
 		} catch (InterruptedException e) {
 			//TODO well not sure if we should print that
 			e.printStackTrace();

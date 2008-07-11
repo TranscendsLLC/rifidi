@@ -79,7 +79,7 @@ public class ReaderSessionImpl implements ReaderSession,
 		/*
 		 * Check if we currently run a command
 		 */
-		if (commandExecutionStatus == CommandStatus.EXECUTING) {
+		if (readerSessionStatus == ReaderSessionStatus.BUSY) {
 			throw new RifidiCommandInterruptedException(
 					"This reader is busy, please try this command again later.");
 		}
@@ -127,6 +127,25 @@ public class ReaderSessionImpl implements ReaderSession,
 		if (connectionStatus == ConnectionStatus.ERROR) {
 			throw new RifidiConnectionException(
 					"The connection to the reader is not valid anymore. (MAX_CONNECTION_ATTEMPTS)");
+		}
+
+		/*
+		 * Check if we are connected
+		 */
+		while (connectionStatus != ConnectionStatus.CONNECTED) {
+			try {
+				synchronized (this) {
+					logger.debug("Waiting for Connection"
+							+ " Status to be Connected");
+					wait();
+				}
+
+			} catch (InterruptedException e) {
+			}
+			if (connectionStatus == ConnectionStatus.ERROR) {
+				throw new RifidiConnectionException(
+						"The connection to the reader is not valid anymore. (MAX_CONNECTION_ATTEMPTS)");
+			}
 		}
 
 		/*
@@ -183,14 +202,23 @@ public class ReaderSessionImpl implements ReaderSession,
 					this);
 		}
 
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 		readerSessionStatus = ReaderSessionStatus.OK;
 		// EXECUTE THE COMMAND
 		executionThread.start(curCommand);
+		logger.debug("Command given to execution thread");
 	}
 
 	@Override
 	public void stopCommand() {
-		if (readerSessionStatus == ReaderSessionStatus.BUSY || readerSessionStatus == ReaderSessionStatus.ERROR) {
+		if (readerSessionStatus == ReaderSessionStatus.BUSY
+				|| readerSessionStatus == ReaderSessionStatus.ERROR) {
 			// TODO put commandstatus into Journal
 			curCommand.stop();
 			curCommand = null;
@@ -210,11 +238,11 @@ public class ReaderSessionImpl implements ReaderSession,
 
 	/*
 	 * =====================================================================
-	 * Command Execution Notification Service
-	 * This notifies when a execution started
+	 * Command Execution Notification Service This notifies when a execution
+	 * started
 	 * =====================================================================
 	 */
-	
+
 	@Override
 	public void removeExecutionListener(ExecutionListener listener) {
 		listeners.add(listener);
@@ -239,31 +267,35 @@ public class ReaderSessionImpl implements ReaderSession,
 
 	/*
 	 * =====================================================================
-	 * Service Injection Framework
+	 * Connection Event Listener
 	 * =====================================================================
 	 */
 	@Override
 	public void connected() {
 		connectionStatus = ConnectionStatus.CONNECTED;
-		//notify();
+		// we need to notify in case we are waiting for the sate to change to
+		// connected
+		synchronized (this) {
+			notify();
+		}
+
+		logger.debug("Connected again");
 	}
 
 	@Override
 	public void disconnected() {
 		connectionStatus = ConnectionStatus.DISCONNECTED;
-		//notify();
+		logger.debug("Connection disconnected");
 	}
 
 	@Override
 	public void error() {
 		connectionStatus = ConnectionStatus.ERROR;
-		//notify();
-	}
-
-	@Override
-	public void connectionExceptionEvent(Exception exception) {
-		// TODO Auto-generated method stub
-		// fires whenever there connections momentarily fails.
+		// we need to notify in case we are waiting for the sate to change to
+		// connected
+		synchronized (this) {
+			notify();
+		}
 	}
 
 	/*
