@@ -41,6 +41,7 @@ public class ExecutionThread implements Runnable {
 	}
 
 	public void stop() {
+		running = false;
 		command.stop();
 		try {
 			thread.join(5000);
@@ -50,6 +51,7 @@ public class ExecutionThread implements Runnable {
 		if (thread.isAlive()) {
 			thread.interrupt();
 		}
+		command = null;
 	}
 
 	@Override
@@ -75,9 +77,9 @@ public class ExecutionThread implements Runnable {
 				synchronized (this) {
 					wait();
 				}
-		} catch (InterruptedException e) {
-			//TODO well not sure if we should print that
-			e.printStackTrace();
+			} catch (InterruptedException e) {
+				//TODO well not sure if we should print that
+				e.printStackTrace();
+			}
 		}
 	}
-}
