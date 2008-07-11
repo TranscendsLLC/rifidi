@@ -20,9 +20,10 @@ public class ConnectionServiceImpl implements ConnectionService {
 			ReaderInfo readerInfo, ConnectionEventListener listener) throws RifidiConnectionException {
 		Connection connection = null;
 		Communication communication = new Communication(connectionManager);
+		communication.addConnectionEventListener(listener);
 		connection = communication.connect();
 		fireAddEvent(connection);
-		communication.addConnectionEventListener(listener);
+
 		return connection;
 	}
 

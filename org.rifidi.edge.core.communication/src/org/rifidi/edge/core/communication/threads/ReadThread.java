@@ -15,26 +15,30 @@ import java.io.InputStream;
 import java.util.Queue;
 
 import org.apache.commons.logging.LogFactory;
-import org.rifidi.edge.core.communication.impl.ConnectionImpl;
+import org.rifidi.edge.core.exceptions.RifidiConnectionException;
+import org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionExceptionListener;
 import org.rifidi.edge.core.readerplugin.protocol.CommunicationProtocol;
 
-
-
 public class ReadThread extends AbstractThread {
-	private static final org.apache.commons.logging.Log logger = LogFactory.getLog(ReadThread.class);
+	private static final org.apache.commons.logging.Log logger = LogFactory
+			.getLog(ReadThread.class);
 
 	private CommunicationProtocol protocol;
 	private Queue<Object> readQueue;
 
 	private InputStream inputStream;
+	
+	private ConnectionExceptionListener connectionExceptionListener;
 
-	public ReadThread(String threadName, ConnectionImpl connection, CommunicationProtocol protocol,
-			Queue<Object> readQueue, InputStream inputStream) {
-		super(threadName, connection);
+	public ReadThread(String threadName,
+			ConnectionExceptionListener connectionExceptionListener,
+			CommunicationProtocol protocol, Queue<Object> readQueue,
+			InputStream inputStream) {
+		super(threadName);
 		this.protocol = protocol;
 		this.readQueue = readQueue;
 		this.inputStream = inputStream;
-
+		this.connectionExceptionListener = connectionExceptionListener;
 	}
 
 	@Override
@@ -50,11 +54,15 @@ public class ReadThread extends AbstractThread {
 					readQueue.add(message);
 				}
 			}
+			if (!ignoreExceptions) {
+				connectionExceptionListener.connectionExceptionEvent(new RifidiConnectionException(
+						"Socket was closed by client"));
+			}
 		} catch (Exception e) {
 			running = false;
 			e.printStackTrace();
 			if (!ignoreExceptions) {
-				connection.setException(e);
+				connectionExceptionListener.connectionExceptionEvent(e);
 			}
 		}
 	}

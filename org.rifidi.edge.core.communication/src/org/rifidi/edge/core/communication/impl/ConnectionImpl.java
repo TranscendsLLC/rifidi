@@ -1,13 +1,12 @@
 package org.rifidi.edge.core.communication.impl;
 
 import java.io.IOException;
-import java.lang.reflect.UndeclaredThrowableException;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import org.rifidi.edge.core.communication.Connection;
-import org.rifidi.edge.core.exceptions.RifidiInvalidMessageFormat;
+import org.rifidi.edge.core.communication.service.ConnectionEventListener;
 import org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionExceptionListener;
 
 public class ConnectionImpl implements Connection {
@@ -21,7 +20,7 @@ public class ConnectionImpl implements Connection {
 	// FIXME KYLE make me Thread safe
 	private HashSet<Thread> blockedThreads = new HashSet<Thread>();
 
-	private Set<ConnectionExceptionListener> listeners = new HashSet<ConnectionExceptionListener>();
+	private Set<ConnectionEventListener> listeners = new HashSet<ConnectionEventListener>();
 
 	public ConnectionImpl(LinkedBlockingQueue<Object> readQueue,
 			LinkedBlockingQueue<Object> writeQueue) {
@@ -63,8 +62,8 @@ public class ConnectionImpl implements Connection {
 			this.exception = e;
 			for (Thread thread : blockedThreads)
 				thread.interrupt();
-			for (ConnectionExceptionListener listener : listeners) {
-				listener.connectionExceptionEvent(e);
+			for (ConnectionEventListener listener : listeners) {
+				listener.disconnected();
 			}
 			locker.notifyAll();
 		}
@@ -82,13 +81,13 @@ public class ConnectionImpl implements Connection {
 		}
 	}
 
-	public void addConnectionExceptionListener(
-			ConnectionExceptionListener listener) {
+	public void addConnectionEventListener(
+			ConnectionEventListener listener) {
 		listeners.add(listener);
 	}
 
-	public void removeConnectionExceptionListener(
-			ConnectionExceptionListener listener) {
+	public void removeConnectionEventListener(
+			ConnectionEventListener listener) {
 		listeners.add(listener);
 	}
 

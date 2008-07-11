@@ -11,7 +11,6 @@
  */
 package org.rifidi.edge.core.communication.threads;
 
-import org.rifidi.edge.core.communication.impl.ConnectionImpl;
 
 public abstract class AbstractThread implements Runnable {
 	// private static final Log logger =
@@ -21,14 +20,10 @@ public abstract class AbstractThread implements Runnable {
 
 	protected boolean running = false;
 
-	protected ConnectionImpl connection;
-
 	protected boolean ignoreExceptions;
 
-	protected AbstractThread(String threadName, ConnectionImpl connection) {
-		this.connection = connection;
+	protected AbstractThread(String threadName) {
 		thread = new Thread(this, threadName);
-
 	}
 
 	/**
