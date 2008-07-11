@@ -220,6 +220,7 @@ public class ReaderSessionImpl implements ReaderSession,
 		if (readerSessionStatus == ReaderSessionStatus.BUSY
 				|| readerSessionStatus == ReaderSessionStatus.ERROR) {
 			// TODO put commandstatus into Journal
+			logger.debug("Stoping Command.");
 			curCommand.stop();
 			curCommand = null;
 			readerSessionStatus = ReaderSessionStatus.OK;
