@@ -21,7 +21,7 @@ public class AlienCommunicationProtocol implements CommunicationProtocol {
 
 	private static final char TERMINATION_CHAR = '\0';
 
-	private StringBuilder buf;
+	private StringBuilder buf = new StringBuilder();
 
 	/*
 	 * (non-Javadoc)

@@ -10,10 +10,7 @@
  */
 package org.rifidi.edge.readerplugin.alien;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
@@ -40,13 +37,9 @@ public class AlienConnectionManager extends ConnectionManager {
 
 	private Socket alienSock;
 
-	private BufferedReader reader;
-
-	private PrintWriter writer;
-
-	private AlienCommunicationProtocol protocol;
-
 	public static String PROMPT_SUPPRESS = "\1";
+	
+	public static String NEWLINE = "\n";
 
 	/**
 	 * 
@@ -56,10 +49,6 @@ public class AlienConnectionManager extends ConnectionManager {
 		super(readerInfo);
 		this.info = (AlienReaderInfo) readerInfo;
 		this.alienSock = null;
-		this.reader = null;
-		this.writer = null;
-		this.protocol = (AlienCommunicationProtocol) this
-				.getCommunicationProtocol();
 	}
 
 	/*
@@ -72,11 +61,16 @@ public class AlienConnectionManager extends ConnectionManager {
 		logger.debug("Alien is connecting");
 		if (alienSock != null) {
 			try {
-				this.readFromReader(reader);
-				this.writeToReader(PROMPT_SUPPRESS + this.info.getUsername());
-				this.readFromReader(reader);
-				this.writeToReader(PROMPT_SUPPRESS + this.info.getPassword());
-				this.readFromReader(reader);
+				logger.debug("getting the welcome response");
+				connection.recieveMessage();
+				logger.debug("sending username");
+				connection.sendMessage(PROMPT_SUPPRESS + this.info.getUsername() + NEWLINE);
+				logger.debug("getting the username response");
+				connection.recieveMessage();
+				logger.debug("sending the password: " + this.info.getPassword());
+				connection.sendMessage(PROMPT_SUPPRESS + this.info.getPassword() + NEWLINE);
+				logger.debug("recieving the password response");
+				connection.recieveMessage();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -96,11 +90,12 @@ public class AlienConnectionManager extends ConnectionManager {
 		// TODO: Check if the IP and port are valid here
 		ConnectionStreams cs = null;
 		try {
+			logger.debug("Creating the communication, IP is: "
+					+ this.info.getIpAddress() + ", and port is: "
+					+ this.info.getPort());
 			alienSock = new Socket(this.info.getIpAddress(), this.info
 					.getPort());
-			reader = new BufferedReader(new InputStreamReader(alienSock
-					.getInputStream()));
-			writer = new PrintWriter(alienSock.getOutputStream());
+			logger.debug("Done creating the socket");
 			cs = new ConnectionStreams(alienSock.getInputStream(), alienSock
 					.getOutputStream());
 		} catch (UnknownHostException e) {
@@ -119,10 +114,8 @@ public class AlienConnectionManager extends ConnectionManager {
 	@Override
 	public void disconnect(Connection connection) {
 		try {
-			this.writeToReader("q");
-			this.readFromReader(reader);
-			this.writer.close();
-			this.reader.close();
+			connection.sendMessage("q" + NEWLINE);
+			connection.recieveMessage();
 			this.alienSock.close();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -185,36 +178,5 @@ public class AlienConnectionManager extends ConnectionManager {
 	public void stopKeepAlive(Connection connection) {
 		// TODO Nothing here yet, more later
 
-	}
-
-	/**
-	 * Writes the message to the reader.
-	 * 
-	 * @param message
-	 */
-	private void writeToReader(String message) {
-		byte[] bytes = this.protocol.messageToByte(message);
-		this.writer.print(bytes);
-	}
-
-	/**
-	 * Read responses from the socket
-	 * 
-	 * @param inBuf
-	 * @return
-	 * @throws IOException
-	 */
-	public String readFromReader(BufferedReader inBuf) throws IOException {
-		StringBuffer buf = new StringBuffer();
-		logger.debug("Reading...");
-		int ch = inBuf.read();
-		String message = (String) this.protocol.byteToMessage((byte) ch);
-		while (message != null) {
-			ch = inBuf.read();
-			message = (String) this.protocol.byteToMessage((byte) ch);
-		}
-		logger.debug("Done reading!");
-		logger.debug("Reading in: " + buf.toString());
-		return buf.toString();
 	}
 }
