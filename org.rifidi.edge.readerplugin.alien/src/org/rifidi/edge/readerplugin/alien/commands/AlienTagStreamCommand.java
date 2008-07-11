@@ -15,14 +15,16 @@ import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.common.utilities.converter.ByteAndHexConvertingUtility;
 import org.rifidi.edge.core.communication.Connection;
 import org.rifidi.edge.core.exceptions.RifidiMessageQueueException;
 import org.rifidi.edge.core.messageQueue.MessageQueue;
 import org.rifidi.edge.core.readerplugin.commands.Command;
+import org.rifidi.edge.core.readerplugin.commands.CommandReturnStatus;
 import org.rifidi.edge.core.readerplugin.commands.annotations.CommandDesc;
 import org.rifidi.edge.core.readerplugin.messages.impl.TagMessage;
-import org.rifidi.edge.core.readersession.impl.CommandStatus;
 
 /**
  * 
@@ -32,7 +34,11 @@ import org.rifidi.edge.core.readersession.impl.CommandStatus;
 @CommandDesc(name = "getTagList")
 public class AlienTagStreamCommand implements Command {
 
+	@SuppressWarnings("unused")
 	private boolean running = false;
+
+	private static final Log logger = LogFactory
+			.getLog(AlienTagStreamCommand.class);
 
 	/*
 	 * (non-Javadoc)
@@ -41,8 +47,9 @@ public class AlienTagStreamCommand implements Command {
 	 *      org.rifidi.edge.core.messageQueue.MessageQueue)
 	 */
 	@Override
-	public CommandStatus start(Connection connection, MessageQueue messageQueue)
-			throws IOException {
+	public CommandReturnStatus start(Connection connection,
+			MessageQueue messageQueue) {
+		logger.debug("Starting the Tag List command for the Alien");
 		running = true;
 		try {
 
@@ -52,7 +59,8 @@ public class AlienTagStreamCommand implements Command {
 			connection.sendMessage(AlienCommandList.TAG_LIST_CUSTOM_FORMAT);
 			connection.recieveMessage();
 
-			while (running) {
+			///while (running) {
+
 				connection.sendMessage(AlienCommandList.TAG_LIST);
 				String tag_msg = (String) connection.recieveMessage();
 
@@ -61,11 +69,21 @@ public class AlienTagStreamCommand implements Command {
 				for (TagMessage m : tagList) {
 					messageQueue.addMessage(m);
 				}
-			}
+
+				//try {
+				//	Thread.sleep(1000);
+				//} catch (InterruptedException e) {
+				//}
+
+			//}
 		} catch (RifidiMessageQueueException e) {
-			throw new IOException(e);
+			e.printStackTrace();
+			return CommandReturnStatus.INTERRUPTED;
+		} catch (IOException e) {
+			e.printStackTrace();
+			return CommandReturnStatus.INTERRUPTED;
 		}
-		return CommandStatus.SUCCESSFUL;
+		return CommandReturnStatus.SUCCESSFUL;
 	}
 
 	/*
