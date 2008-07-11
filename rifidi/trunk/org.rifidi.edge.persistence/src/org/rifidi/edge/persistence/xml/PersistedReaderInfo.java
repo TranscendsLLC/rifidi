@@ -11,6 +11,7 @@
 package org.rifidi.edge.persistence.xml;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
@@ -39,6 +40,9 @@ import com.sun.org.apache.xml.internal.serialize.XMLSerializer;
 
 /**
  * This is SPARTA!
+ * 
+ * TODO: Potential problem with this: IP and Port might lose uniqueness
+ * depending on which readers were loaded at the time.
  * 
  * @author Matthew Dean - matt@pramari.com
  */
@@ -117,30 +121,18 @@ public class PersistedReaderInfo {
 
 	/**
 	 * 
-	 * @param xml
-	 */
-	public void parsePersistanceXMLFile(File xml) {
-		doc = this.createDocument(xml);
-	}
-
-	/**
-	 * 
-	 * 
 	 * @param readerInfo
 	 * @param readerInfoTypeList
 	 * @return
 	 */
-	public Element find(ReaderInfo readerInfo, Element readerInfoTypeList) {
-
+	private Element find(ReaderInfo readerInfo, Element readerInfoTypeList) {
 		logger.debug("In the find");
 		printToSTIO(readerInfoTypeList);
 		XPathFactory factory = XPathFactory.newInstance();
 		XPath xpath = factory.newXPath();
 		try {
 			logger.debug("Before the exp");
-			// String exp = new String("/*/*/*[" + XMLTags.IP_ADDRESS + "="
-			// + readerInfo.getIpAddress() + "]");
-			String exp = new String("/*/*");
+			String exp = new String("/*/*/*");
 			logger.debug("XPATH expression in the FIND method is: \n" + exp);
 			XPathExpression expr = xpath.compile(exp);
 			logger.debug("TypeList: " + readerInfoTypeList.toString());
@@ -152,27 +144,18 @@ public class PersistedReaderInfo {
 				logger.debug("find returning null after the IPADDRESS search");
 				return null;
 			} else {
-				//String exp2 = new String("/*[" + XMLTags.PORT + "="
-				//		+ readerInfo.getPort() + "]");
-				String exp2 = new String("/*");
-				logger.debug("XPATH expression in the INNER FIND method is: \n"
-						+ exp2);
 				logger.debug("NodeSet: " + oResult.toString()
 						+ " \nlength is: " + ((NodeList) oResult).getLength());
-				NodeList ipMatchList = (NodeList) oResult;
-				for (int i = 0, n = ipMatchList.getLength(); i < n; i++) {
-					Node node = ipMatchList.item(i);
-					logger.debug("NODE: " + node);
-				}
-				logger.debug("Just before the compile");
-				XPathExpression expr2 = xpath.compile(exp2);
-				logger.debug("Just before the evaluate");
-				Object xResult = expr2.evaluate(ipMatchList,
-						XPathConstants.NODE);
+				NodeList nodeArray = (NodeList) oResult;
+
+				Node xResult = this.findUniqueReader(readerInfo.getIpAddress(),
+						readerInfo.getPort(), nodeArray);
+
 				if (xResult == null) {
 					logger.debug("find returning null after the PORT search");
 					return null;
 				} else {
+					logger.debug("RETURNING A RESULT: " + xResult);
 					return (Element) xResult;
 				}
 			}
@@ -185,10 +168,53 @@ public class PersistedReaderInfo {
 
 	/**
 	 * 
+	 * 
+	 * @param ip
+	 * @param port
+	 * @param readerList
+	 * @return
+	 */
+	private Element findUniqueReader(String ip, int port, NodeList readerList) {
+		for (int i = 0, n = readerList.getLength(); i < n; i++) {
+			Node node = readerList.item(i);
+			logger.debug("NODE: " + node);
+			boolean ip_match = false;
+			boolean port_match = false;
+			NodeList childNodeList = node.getChildNodes();
+			for (int x = 0, m = childNodeList.getLength(); x < m; x++) {
+				Node child = childNodeList.item(x);
+				logger.debug("CHILD NODE: " + child);
+				if (child.getNodeName().equals(XMLTags.IP_ADDRESS)) {
+					logger.debug("IP CHILD NODE FOUND");
+					if (child.getFirstChild().getNodeValue().equals(ip)) {
+						logger.debug("IP IS A MATCH");
+						ip_match = true;
+					}
+				}
+				if (child.getNodeName().equals(XMLTags.PORT)) {
+					logger.debug("PORT CHILD NODE FOUND");
+					if (child.getFirstChild().getNodeValue().equals(
+							String.valueOf(port))) {
+						logger.debug("PORT IS A MATCH");
+						port_match = true;
+					}
+				}
+				if (ip_match && port_match) {
+					logger.debug("RETURNING: " + child);
+					return (Element) node;
+				}
+			}
+		}
+
+		return null;
+	}
+
+	/**
+	 * 
 	 * @param readerInfoType
 	 * @return
 	 */
-	public Element findReaderTypeList(String readerInfoType) {
+	private Element findReaderTypeList(String readerInfoType) {
 		XPathFactory factory = XPathFactory.newInstance();
 		XPath xpath = factory.newXPath();
 		Node result = null;
@@ -199,6 +225,7 @@ public class PersistedReaderInfo {
 			logger.debug("String expression is: \n" + exp);
 			XPathExpression expr = xpath.compile(exp);
 			logger.debug("Just after the compile");
+			this.printToSTIO(this.doc);
 			Object oResult = expr.evaluate(this.doc, XPathConstants.NODE);
 			logger.debug("Just after the evaluate");
 			if (oResult == null) {
@@ -213,7 +240,6 @@ public class PersistedReaderInfo {
 		}
 
 		logger.debug("Just before the return in the reader type list.  ");
-		// TODO: is this OK? I read it was ok online?
 		return (Element) result;
 	}
 
@@ -224,6 +250,7 @@ public class PersistedReaderInfo {
 		Document dom = null;
 		// get an instance of factory
 		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+		dbf.setNamespaceAware(true);
 		try {
 			// get an instance of builder
 			DocumentBuilder db = dbf.newDocumentBuilder();
@@ -243,17 +270,20 @@ public class PersistedReaderInfo {
 	/**
 	 * 
 	 */
-	private Document createDocument(File xmlFile) {
+	private Document createDocument(File xml) {
 		Document dom = null;
 		// get an instance of factory
 		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+		dbf.setNamespaceAware(true);
 		try {
 			// get an instance of builder
 			DocumentBuilder db = dbf.newDocumentBuilder();
 
 			// create an instance of DOM
 			try {
-				dom = db.parse(xmlFile);
+				logger.debug("Before the parse");
+				dom = db.parse(xml);
+				logger.debug("After Parse, parse successful");
 			} catch (SAXException e) {
 				e.printStackTrace();
 			} catch (IOException e) {
@@ -273,7 +303,7 @@ public class PersistedReaderInfo {
 	 * Prints the document to a file.
 	 */
 	private void printToFile() {
-		logger.debug("Printing in the file");
+		logger.debug("Printing the file");
 		try {
 			// print
 			OutputFormat format = new OutputFormat(doc);
@@ -292,9 +322,51 @@ public class PersistedReaderInfo {
 	}
 
 	/**
+	 * Loads everything into a dom object for testing.
+	 */
+	public void loadFromFile() {
+		File xmlFile = null;
+		try {
+			xmlFile = JAXBUtility.getXMLFile();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		if (xmlFile != null) {
+			logger.debug("FILE NOT NULL, CREATING NEW DOCUMENT");
+			this.doc = this.createDocument(xmlFile);
+			this.root = (Element) doc.getFirstChild();
+		} else {
+			logger.debug("FILE IS NULL");
+		}
+	}
+
+	/**
 	 * Prints the document to a file.
 	 */
 	private void printToSTIO(Element e) {
+		logger.debug("Printing in the file");
+		try {
+			// print
+			OutputFormat format = new OutputFormat(doc);
+			format.setIndenting(true);
+
+			// XMLSerializer serializer = new XMLSerializer(new
+			// FileOutputStream(
+			// new File("cuddles.xml")), format);
+
+			XMLSerializer serializer = new XMLSerializer(System.out, format);
+
+			serializer.serialize(e);
+
+		} catch (IOException ie) {
+			ie.printStackTrace();
+		}
+	}
+
+	/**
+	 * Prints the document to a file.
+	 */
+	private void printToSTIO(Document e) {
 		logger.debug("Printing in the file");
 		try {
 			// print

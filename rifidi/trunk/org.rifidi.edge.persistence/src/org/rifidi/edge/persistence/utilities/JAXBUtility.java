@@ -24,7 +24,7 @@ import javax.xml.bind.Unmarshaller;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.readerplugin.alien.AlienReaderInfo;
-import org.rifidi.edge.readerplugin.llrp.LLRPReaderInfo;
+import org.rifidi.edge.readerplugin.llrp.plugin.LLRPReaderInfo;
 import org.w3c.dom.Node;
 
 /**
@@ -39,10 +39,13 @@ public class JAXBUtility {
 	 */
 	private static Log logger = LogFactory.getLog(JAXBUtility.class);
 
+	public static final String FILE_NAME = "cuddles.xml";
+
 	/**
 	 * The ReaderPluginRegistryService, which we use to get the list of classes.
 	 */
 	// private ReaderPluginRegistryService rprs;
+	
 	/**
 	 * The instance of the JAXBUtility.
 	 */
@@ -74,6 +77,7 @@ public class JAXBUtility {
 	// public void setRprs(ReaderPluginRegistryService rprs) {
 	// this.rprs = rprs;
 	// }
+	
 	/**
 	 * Loads an object out of xml.
 	 * 
@@ -85,14 +89,28 @@ public class JAXBUtility {
 	@SuppressWarnings("unchecked")
 	public Object load(Node xml) throws JAXBException {
 		JAXBContext context;
-		Class[] newClassArr = new Class[] { AlienReaderInfo.class,
-				LLRPReaderInfo.class };
-		
-		context = JAXBContext.newInstance(newClassArr);
+
+		// FIXME: Broken
+		context = JAXBContext.newInstance(new Class[] { AlienReaderInfo.class,
+				LLRPReaderInfo.class });
 
 		Unmarshaller unmarshaller = context.createUnmarshaller();
 
 		return unmarshaller.unmarshal(xml);
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public String loadFileToXML() {
+		try {
+			String xml = this.restoreFromFile(FILE_NAME);
+			return xml;
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 	/**
@@ -107,15 +125,15 @@ public class JAXBUtility {
 		logger.debug("Just before the try in save()");
 
 		try {
-			Class[] newClassArr = new Class[] { AlienReaderInfo.class,
-					LLRPReaderInfo.class };// rprs.getAbstractReaderInfoClasses();
 
-			context = JAXBContext.newInstance(newClassArr);
+			// FIXME: Broken
+			context = JAXBContext.newInstance(new Class[] {
+					AlienReaderInfo.class, LLRPReaderInfo.class });
 			Marshaller m = context.createMarshaller();
 			m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-			
+
 			m.marshal(o, parent);
-			
+
 		} catch (JAXBException e) {
 			e.printStackTrace();
 		}
@@ -192,5 +210,19 @@ public class JAXBUtility {
 			e.printStackTrace();
 		}
 		return retVal;
+	}
+
+	/**
+	 * 
+	 * @return
+	 * @throws FileNotFoundException
+	 */
+	public static File getXMLFile() throws FileNotFoundException {
+		File file = new File(FILE_NAME);
+		if (file.exists()) {
+			return file;
+		} else {
+			throw new FileNotFoundException();
+		}
 	}
 }
