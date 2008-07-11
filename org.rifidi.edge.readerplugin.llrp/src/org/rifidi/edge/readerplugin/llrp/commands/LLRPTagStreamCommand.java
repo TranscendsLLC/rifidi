@@ -26,10 +26,12 @@ import org.llrp.ltk.generated.messages.ADD_ROSPEC;
 import org.llrp.ltk.generated.messages.DELETE_ROSPEC;
 import org.llrp.ltk.generated.messages.DISABLE_ROSPEC;
 import org.llrp.ltk.generated.messages.ENABLE_ROSPEC;
+import org.llrp.ltk.generated.messages.GET_REPORT;
 import org.llrp.ltk.generated.messages.GET_ROSPECS;
 import org.llrp.ltk.generated.messages.GET_ROSPECS_RESPONSE;
 import org.llrp.ltk.generated.messages.RO_ACCESS_REPORT;
 import org.llrp.ltk.generated.messages.SET_READER_CONFIG;
+import org.llrp.ltk.generated.messages.SET_READER_CONFIG_RESPONSE;
 import org.llrp.ltk.generated.messages.START_ROSPEC;
 import org.llrp.ltk.generated.parameters.AISpec;
 import org.llrp.ltk.generated.parameters.AISpecStopTrigger;
@@ -54,8 +56,11 @@ import org.llrp.ltk.types.UnsignedShort;
 import org.llrp.ltk.types.UnsignedShortArray;
 import org.rifidi.edge.common.utilities.converter.ByteAndHexConvertingUtility;
 import org.rifidi.edge.core.communication.Connection;
+import org.rifidi.edge.core.exceptions.RifidiMessageQueueException;
 import org.rifidi.edge.core.messageQueue.MessageQueue;
 import org.rifidi.edge.core.readerplugin.commands.Command;
+import org.rifidi.edge.core.readerplugin.commands.CommandReturnStatus;
+import org.rifidi.edge.core.readerplugin.commands.annotations.CommandDesc;
 import org.rifidi.edge.core.readerplugin.messages.impl.TagMessage;
 
 /**
@@ -63,6 +68,7 @@ import org.rifidi.edge.core.readerplugin.messages.impl.TagMessage;
  * 
  * @author Matthew Dean - matt@pramari.com
  */
+@CommandDesc(name="StreamTags")
 public class LLRPTagStreamCommand implements Command {
 
 	private boolean running = false;
@@ -79,17 +85,22 @@ public class LLRPTagStreamCommand implements Command {
 	 *      org.rifidi.edge.core.messageQueue.MessageQueue)
 	 */
 	@Override
-	public void start(Connection connection, MessageQueue messageQueue) {
+	public CommandReturnStatus start(Connection connection, MessageQueue messageQueue) {
 		running = true;
+		CommandReturnStatus retVal = null;
 		try {
 			SET_READER_CONFIG config = createSetReaderConfig();
 			connection.sendMessage(config);
+			
+			SET_READER_CONFIG_RESPONSE setReaderConfigResponse = (SET_READER_CONFIG_RESPONSE)connection.recieveMessage();
+			
 
 			GET_ROSPECS gr = new GET_ROSPECS();
 			connection.sendMessage(gr);
 			GET_ROSPECS_RESPONSE grr = (GET_ROSPECS_RESPONSE) connection
 					.recieveMessage();
 
+			//TODO: should also check to see if ROSpec is already active
 			if (doesRoSpecExist(grr)) {
 				this.findNextInt(grr);
 			}
@@ -111,13 +122,29 @@ public class LLRPTagStreamCommand implements Command {
 			startROSpec.setROSpecID(new UnsignedInteger(ROSPEC_ID));
 			connection.sendMessage(startROSpec);
 			connection.recieveMessage();
-			connection.recieveMessage();
 
+			int reportMessage=10;
 			while (running) {
+				GET_REPORT getReport = new GET_REPORT();
+				getReport.setMessageID(new UnsignedInteger(reportMessage++));
+				
+				connection.sendMessage(getReport);
+				
 				LLRPMessage message = (LLRPMessage) connection.recieveMessage();
 
 				if (message instanceof RO_ACCESS_REPORT) {
-
+					for (TagMessage tm : parseTags(message)){
+						try {
+							messageQueue.addMessage(tm);
+						} catch (RifidiMessageQueueException e) {
+							retVal = CommandReturnStatus.INTERRUPTED;
+						}
+					}
+				}
+				
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
 				}
 			}
 
@@ -131,11 +158,17 @@ public class LLRPTagStreamCommand implements Command {
 			deleteROSpec.setROSpecID(new UnsignedInteger(ROSPEC_ID));
 			connection.sendMessage(deleteROSpec);
 		} catch (IOException e) {
-			// TODO: Throw something here
-			e.printStackTrace();
+			return CommandReturnStatus.UNSUCCESSFUL;
 		}
+		
+		if(retVal==null){
+			retVal = CommandReturnStatus.SUCCESSFUL;
+		}
+		
+		return retVal;
 
 	}
+	
 
 	/**
 	 * Parses the tags from xml.
@@ -144,7 +177,7 @@ public class LLRPTagStreamCommand implements Command {
 	 *            The tag message to parse.
 	 * @return A list of TagRead objects representing tags.
 	 */
-	public List<TagMessage> parseTags(LLRPMessage msg) {
+	private List<TagMessage> parseTags(LLRPMessage msg) {
 
 		List<TagMessage> retVal = new ArrayList<TagMessage>();
 
@@ -267,17 +300,17 @@ public class LLRPTagStreamCommand implements Command {
 		EventNotificationState noteState = new EventNotificationState();
 		noteState.setEventType(new NotificationEventType(
 				NotificationEventType.AISpec_Event));
-		noteState.setNotificationState(new Bit(1));
+		noteState.setNotificationState(new Bit(0));
 		eventNoteSpec.addToEventNotificationStateList(noteState);
 		noteState = new EventNotificationState();
 		noteState.setEventType(new NotificationEventType(
 				NotificationEventType.ROSpec_Event));
-		noteState.setNotificationState(new Bit(1));
+		noteState.setNotificationState(new Bit(0));
 		eventNoteSpec.addToEventNotificationStateList(noteState);
 		noteState = new EventNotificationState();
 		noteState.setEventType(new NotificationEventType(
 				NotificationEventType.GPI_Event));
-		noteState.setNotificationState(new Bit(1));
+		noteState.setNotificationState(new Bit(0));
 		eventNoteSpec.addToEventNotificationStateList(noteState);
 		setReaderConfig.setReaderEventNotificationSpec(eventNoteSpec);
 

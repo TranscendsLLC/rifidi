@@ -9,6 +9,12 @@ Eclipse-LazyStart: true
 Import-Package: org.osgi.framework;version="1.3.0"
 Require-Bundle: org.rifidi.edge.core,
  org.rifidi.edge.services,
- org.rifidi.edge.common.utilities
+ org.rifidi.edge.common.utilities,
+ org.rifidi.edge.log4j
 Export-Package: org.rifidi.edge.readerplugin.llrp,
- org.rifidi.edge.readerplugin.llrp.commands
+ org.rifidi.edge.readerplugin.llrp.commands,
+ org.rifidi.edge.readerplugin.llrp.plugin,
+ org.rifidi.edge.readerplugin.llrp.protocol
+Bundle-ClassPath: .,
+ lib/LTKJava_0_1_0-SNAPSHOT.jar,
+ lib/jdom.jar
