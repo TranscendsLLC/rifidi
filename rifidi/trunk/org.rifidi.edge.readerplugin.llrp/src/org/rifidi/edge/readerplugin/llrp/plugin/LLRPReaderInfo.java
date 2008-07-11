@@ -8,7 +8,7 @@
  *  License:	Lesser GNU Public License (LGPL)
  *  				http://www.opensource.org/licenses/lgpl-license.html
  */
-package org.rifidi.edge.readerplugin.llrp;
+package org.rifidi.edge.readerplugin.llrp.plugin;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
