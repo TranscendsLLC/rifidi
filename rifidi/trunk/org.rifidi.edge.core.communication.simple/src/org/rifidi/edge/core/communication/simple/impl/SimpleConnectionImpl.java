@@ -92,7 +92,6 @@ public class SimpleConnectionImpl implements Connection {
 			}
 		} catch (IOException e) {
 			if (listener != null) {
-				listener.connectionExceptionEvent(e);
 				listener.disconnected();
 			}
 			disconnect();
@@ -100,14 +99,12 @@ public class SimpleConnectionImpl implements Connection {
 				_reconnect();
 			} catch (RifidiConnectionException e1) {
 				if (listener != null) {
-					listener.connectionExceptionEvent(e1);
 					listener.error();
 				}
 			}
 			throw e;
 		} catch (RifidiInvalidMessageFormat e) {
 			if (listener != null) {
-				listener.connectionExceptionEvent(e);
 				listener.error();
 			}
 			throw new IOException(e);
@@ -144,7 +141,6 @@ public class SimpleConnectionImpl implements Connection {
 	
 		} catch (IOException e) {
 			if (listener != null) {
-				listener.connectionExceptionEvent(e);
 				listener.error();
 			}
 			disconnect();
@@ -152,7 +148,6 @@ public class SimpleConnectionImpl implements Connection {
 				_reconnect();
 			} catch (RifidiConnectionException e1) {
 				if (listener != null) {
-					listener.connectionExceptionEvent(e1);
 					listener.error();
 				}
 			}
@@ -190,7 +185,7 @@ public class SimpleConnectionImpl implements Connection {
 						// status = ReaderSessionStatus.DISCONNECTED;
 						// darn... we have failed.
 						if (listener != null)
-							listener.connectionExceptionEvent(e);
+							listener.error();
 						logger.debug("Error! We gave up. " + e.getMessage());
 						throw e;
 					} else {
