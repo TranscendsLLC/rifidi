@@ -36,11 +36,13 @@ public class SimpleConnectionImpl implements Connection {
 
 	public SimpleConnectionImpl(ConnectionManager connectionManager, ConnectionEventListener listener)  throws RifidiConnectionException {
 		this.connectionManager = connectionManager;
+		
 		try {
 			_connect();
 		} catch (RifidiConnectionException e) {
 			_reconnect();
 		}
+		
 		this.listener = listener;
 		if (this.listener != null)
 			this.listener.connected();
@@ -57,6 +59,7 @@ public class SimpleConnectionImpl implements Connection {
 			 */
 
 			Object retVal = null;
+			//TODO: Deal if we get things back faster than we can receive them.
 			while (true) {
 				int input;
 				/*
@@ -216,6 +219,7 @@ public class SimpleConnectionImpl implements Connection {
 			listener.connected();
 	}
 	private void _connect() throws RifidiConnectionException {
+		
 		ConnectionStreams streams = this.connectionManager.createCommunication();
 		this.outputStream = streams.getOutputStream();
 		this.inputStream = streams.getInputStream();
