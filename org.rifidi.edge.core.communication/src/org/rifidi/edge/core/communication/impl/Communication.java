@@ -7,7 +7,8 @@ import java.util.concurrent.LinkedBlockingQueue;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.communication.Connection;
-import org.rifidi.edge.core.communication.service.ConnectionEventListener;
+import org.rifidi.edge.core.communication.service.CommunicationStateListener;
+import org.rifidi.edge.core.communication.service.ConnectionStatus;
 import org.rifidi.edge.core.communication.threads.ReadThread;
 import org.rifidi.edge.core.communication.threads.WriteThread;
 import org.rifidi.edge.core.exceptions.RifidiConnectionException;
@@ -29,7 +30,9 @@ public class Communication implements ConnectionExceptionListener {
 	private ReadThread readThread;
 	private WriteThread writeThread;
 
-	private Set<ConnectionEventListener> listeners = new HashSet<ConnectionEventListener>();
+	private Set<CommunicationStateListener> listeners = new HashSet<CommunicationStateListener>();
+
+	private boolean cleanUP = false;
 
 	public Communication(ConnectionManager connectionManager) {
 		this.connectionManager = connectionManager;
@@ -39,33 +42,29 @@ public class Communication implements ConnectionExceptionListener {
 		connection = new ConnectionImpl(readQueue, writeQueue);
 	}
 
-	public Connection connect() throws RifidiConnectionException {
-
-		// Create physical connection
+	public Connection connect() {
 		try {
-			_connect();
+			physicalConnect();
+
+			// Create logical connection
+			logger.debug("logical connection attempted");
+			connectionManager.connect(connection);
+
+			changeState(ConnectionStatus.CONNECTED);
+
 		} catch (RifidiConnectionException e) {
-			_reconnect();
+			try {
+				reconnect();
+			} catch (RifidiConnectionException e1) {
+				changeState(ConnectionStatus.ERROR);
+			}
 		}
-
-		// Create logical connection
-		connectionManager.connect(connection);
-
-		/* fire events */
-		for (ConnectionEventListener listener : listeners) {
-			listener.connected();
-		}
-
 		return connection;
 	}
 
 	public void disconnect() {
-		// TODO make sure the order is fine
 
-		/* fire events */
-		for (ConnectionEventListener listener : listeners) {
-			listener.disconnected();
-		}
+		changeState(ConnectionStatus.DISCONNECTED);
 
 		writeThread.ignoreExceptions(true);
 		readThread.ignoreExceptions(true);
@@ -76,37 +75,30 @@ public class Communication implements ConnectionExceptionListener {
 		readThread.stop();
 	}
 
-	private void _reconnect() throws RifidiConnectionException {
+	private void reconnect() throws RifidiConnectionException {
+		int maxConn;
+		int x = 0;
 		try {
-			Thread.sleep(connectionManager.getReconnectionIntervall());
-		} catch (InterruptedException e1) {
-			// ignore this exception.
-		}
-		try {
-			logger.debug("Trying to reconnect.");
-			for (int x = 1; connectionManager.getMaxNumConnectionsAttemps() >= x; x++) {
+			maxConn = connectionManager.getMaxNumConnectionsAttemps();
+			while (x < maxConn || maxConn == 0) {
+				if (maxConn != 0) {
+					x++;
+				}
+				// sleep
 				try {
-					/* fire events */
-					for (ConnectionEventListener listener : listeners) {
-						listener.connected();
-					}
-					_connect();
+					Thread.sleep(connectionManager.getReconnectionIntervall());
+				} catch (InterruptedException e1) {
+					// ignore this exception.
+				}
+				logger.debug("Trying to reconnect " + (maxConn - x)
+						+ " more times");
+				// try to reconnect
+				try {
+					physicalConnect();
+
+					logger.debug("logical connection attempted");
+					connectionManager.connect(connection);
 				} catch (RifidiConnectionException e) {
-					if (x == connectionManager.getMaxNumConnectionsAttemps()) {
-						// status = ReaderSessionStatus.DISCONNECTED;
-						// darn... we have failed.
-						logger.debug("Error! We gave up. " + e.getMessage());
-						throw e;
-					} else {
-						logger.debug("Error! " + e.getMessage());
-					}
-					try {
-						Thread.sleep(connectionManager
-								.getReconnectionIntervall());
-					} catch (InterruptedException e1) {
-						// ignore this exception.
-					}
-					// we have failed... try again....
 					continue;
 				}
 				// hay!!! we succeeded!!
@@ -120,34 +112,36 @@ public class Communication implements ConnectionExceptionListener {
 					+ connectionManager.getClass().getName(), e);
 		}
 		/* fire events */
-		for (ConnectionEventListener listener : listeners) {
-			listener.disconnected();
+		if (x == maxConn) {
+			throw new RifidiConnectionException("MAX_CONNECTION_ATTEMPS");
+		} else {
+			changeState(ConnectionStatus.CONNECTED);
 		}
 	}
 
-	private void _connect() throws RifidiConnectionException {
+	private void physicalConnect() throws RifidiConnectionException {
+		logger.debug("physical connection attempted");
 		ConnectionStreams connectionStreams = connectionManager
 				.createCommunication();
 		readThread = new ReadThread(connectionManager.toString()
-				+ " Read Thread", this, protocol, readQueue,
-				connectionStreams.getInputStream());
+				+ " Read Thread", this, protocol, readQueue, connectionStreams
+				.getInputStream());
 
 		writeThread = new WriteThread(connectionManager.toString()
 				+ " Write Thread", this, protocol, writeQueue,
 				connectionStreams.getOutputStream());
 		readThread.start();
 		writeThread.start();
-
 	}
 
-	public void addConnectionEventListener(ConnectionEventListener listener) {
+	public void addCommunicationStateListener(
+			CommunicationStateListener listener) {
 		listeners.add(listener);
-		connection.addConnectionEventListener(listener);
 	}
 
-	public void removeConnectionEventListener(ConnectionEventListener listener) {
+	public void removeCommunicationStateListener(
+			CommunicationStateListener listener) {
 		listeners.remove(listener);
-		connection.removeConnectionEventListener(listener);
 	}
 
 	/* ============================================================== */
@@ -158,16 +152,50 @@ public class Communication implements ConnectionExceptionListener {
 
 	@Override
 	public void connectionExceptionEvent(Exception exception) {
-		disconnect();
-		try {
-			_reconnect();
-		} catch (RifidiConnectionException e) {
-			// TODO Auto-generated catch block
-			/* fire events */
-			for (ConnectionEventListener listener : listeners) {
+		logger.debug("Connection Exception Event");
+		synchronized (this) {
+			if (!cleanUP) {
+				cleanUP = true;
+				new Thread(new CleanUP(exception), "ReconnectingThread")
+						.start();
+			}
+		}
+	}
+
+	private void changeState(ConnectionStatus communicationState) {
+		logger.debug("Communication state changed to " + communicationState);
+		if (communicationState == ConnectionStatus.CONNECTED) {
+			for (CommunicationStateListener listener : listeners) {
+				listener.connected();
+			}
+		} else if (communicationState == ConnectionStatus.DISCONNECTED) {
+			for (CommunicationStateListener listener : listeners) {
+				listener.disconnected();
+			}
+
+		} else if (communicationState == ConnectionStatus.ERROR) {
+			disconnect();
+			for (CommunicationStateListener listener : listeners) {
 				listener.error();
 			}
 		}
 	}
 
+	private class CleanUP implements Runnable {
+
+		private Exception exception;
+
+		public CleanUP(Exception exception) {
+			this.exception = exception;
+		}
+
+		@Override
+		public void run() {
+			disconnect();
+			connection.setException(exception);
+			connect();
+			cleanUP = false;
+		}
+
+	}
 }

@@ -43,7 +43,7 @@ public class ReadThread extends AbstractThread {
 
 	@Override
 	public void run() {
-		// logger.debug("Starting Read thread");
+		logger.debug("Starting: " + Thread.currentThread().getName());
 		try {
 			Object message = null;
 			int input;
@@ -65,6 +65,7 @@ public class ReadThread extends AbstractThread {
 				connectionExceptionListener.connectionExceptionEvent(e);
 			}
 		}
+		logger.debug("Stopping: " + Thread.currentThread().getName());
 	}
 
 }

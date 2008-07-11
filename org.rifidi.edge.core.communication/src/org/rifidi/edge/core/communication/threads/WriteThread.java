@@ -43,7 +43,7 @@ public class WriteThread extends AbstractThread {
 	}
 
 	public void run() {
-		// logger.debug("Starting Write thread");
+		logger.debug("Starting: " + Thread.currentThread().getName());
 		try {
 			while (running) {
 
@@ -64,6 +64,7 @@ public class WriteThread extends AbstractThread {
 				connectionExceptionListener.connectionExceptionEvent(e);
 			}
 		}
+		logger.debug("Stopping: " + Thread.currentThread().getName());
 	}
 
 }
