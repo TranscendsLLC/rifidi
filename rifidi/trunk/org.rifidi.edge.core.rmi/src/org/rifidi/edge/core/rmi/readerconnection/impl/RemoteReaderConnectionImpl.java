@@ -1,13 +1,13 @@
 package org.rifidi.edge.core.rmi.readerconnection.impl;
 
 import java.rmi.RemoteException;
+import java.util.List;
 
-import org.rifidi.edge.core.exceptions.RifidiCommandInterruptedException;
-import org.rifidi.edge.core.exceptions.RifidiConnectionException;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.readerplugin.ReaderInfo;
 import org.rifidi.edge.core.readersession.ReaderSession;
 import org.rifidi.edge.core.rmi.readerconnection.RemoteReaderConnection;
-import org.rifidi.edge.rmi.customcommand.CustomCommand;
 
 /**
  * Implementation for a RemoteReaderConnection
@@ -17,41 +17,105 @@ import org.rifidi.edge.rmi.customcommand.CustomCommand;
  */
 public class RemoteReaderConnectionImpl implements RemoteReaderConnection {
 
+	private Log logger = LogFactory.getLog(RemoteReaderConnectionImpl.class);
+	
 	private ReaderSession readerSession;
 
 	public RemoteReaderConnectionImpl(ReaderSession readerSession) {
 		this.readerSession = readerSession;
 	}
 
+	@Override
+	public String commandStatus(long id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String commandStatus() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String curExecutingCommand() throws RemoteException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public long curExecutingCommandID() throws RemoteException {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public long executeCommand(String command, String configuration)
+			throws RemoteException {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public List<String> getAvailableCommandGroups() throws RemoteException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<String> getAvailableCommands() throws RemoteException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<String> getAvailableCommands(String groupName)
+			throws RemoteException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getMessageQueueName() throws RemoteException {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 	@Override
 	public ReaderInfo getReaderInfo() throws RemoteException {
-		return readerSession.getReaderInfo();
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override
 	public String getReaderState() throws RemoteException {
-		return readerSession.getStatus().toString();
-	}
-
-
-
-	@Override
-	public void startTagStream() throws RemoteException {
-		try {
-			readerSession.executeCommand("tagstreaming");
-		} catch (RifidiConnectionException e) {
-			e.printStackTrace();
-			throw new RemoteException("Exception occured", e);
-		} catch (RifidiCommandInterruptedException e) {
-			e.printStackTrace();
-			throw new RemoteException("Exception occured", e);
-		}
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override
-	public void stopTagStream() throws RemoteException {
-		readerSession.stopCommand();
+	public void resetReaderConnection() throws RemoteException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public long startTagStream(String configuration) throws RemoteException {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public boolean stopCurCommand(boolean force) throws RemoteException {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean stopCurCommand(boolean force, long commandID)
+			throws RemoteException {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 	public ReaderSession getReaderSession() {
