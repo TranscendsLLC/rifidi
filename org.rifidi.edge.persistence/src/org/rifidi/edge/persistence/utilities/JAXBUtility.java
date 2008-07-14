@@ -90,7 +90,7 @@ public class JAXBUtility {
 	public Object load(Node xml) throws JAXBException {
 		JAXBContext context;
 
-		// FIXME: Broken
+		// FIXME: Broken, Oh the pain, please fix meeeeeee!
 		context = JAXBContext.newInstance(new Class[] { AlienReaderInfo.class,
 				LLRPReaderInfo.class });
 
@@ -112,14 +112,13 @@ public class JAXBUtility {
 
 		try {
 
-			// FIXME: Broken
+			// FIXME: Broken, Oh the pain, please fix meeeeeee!
 			context = JAXBContext.newInstance(new Class[] {
 					AlienReaderInfo.class, LLRPReaderInfo.class });
 			Marshaller m = context.createMarshaller();
 			m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
 
 			m.marshal(o, parent);
-
 		} catch (JAXBException e) {
 			e.printStackTrace();
 		}

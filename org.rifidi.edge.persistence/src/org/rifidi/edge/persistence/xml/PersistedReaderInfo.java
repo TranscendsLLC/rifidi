@@ -31,6 +31,7 @@ import org.rifidi.edge.core.readerplugin.ReaderInfo;
 import org.rifidi.edge.persistence.utilities.JAXBUtility;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
@@ -83,7 +84,7 @@ public class PersistedReaderInfo {
 				.getName());
 		if (readerInfoTypeList == null) {
 			logger.debug("Got into the reader is null area");
-			readerInfoTypeList = doc.createElement(XMLTags.ELEMENT_TAG);
+			readerInfoTypeList = doc.createElement(XMLTags.ELEMENT_LIST_TAG);
 			readerInfoTypeList.setAttribute(XMLTags.TYPE_TAG, readerInfo
 					.getClass().getName());
 			root.appendChild(readerInfoTypeList);
@@ -104,8 +105,8 @@ public class PersistedReaderInfo {
 	public void removeReader(ReaderInfo readerInfo)
 			throws RifidiReaderInfoNotFoundException {
 		logger.debug("calling the remove reader");
-		Element readerInfoTypeList = findReaderTypeList(readerInfo.getClass()
-				.getName());
+		Element readerInfoTypeList = this.findReaderTypeList2(readerInfo
+				.getClass().getName());
 		if (readerInfoTypeList == null) {
 			throw new RifidiReaderInfoNotFoundException();
 		}
@@ -115,7 +116,10 @@ public class PersistedReaderInfo {
 		if (readerInfoNode == null) {
 			throw new RifidiReaderInfoNotFoundException();
 		}
+		logger.debug("removing the child node");
+		this.printToSTIO(readerInfoTypeList);
 		readerInfoTypeList.removeChild(readerInfoNode);
+		logger.debug("printing to file");
 		printToFile();
 	}
 
@@ -220,7 +224,7 @@ public class PersistedReaderInfo {
 		Node result = null;
 		try {
 			logger.debug("Just before the compile");
-			String exp = new String("//" + XMLTags.ELEMENT_TAG + "[@"
+			String exp = new String("//" + XMLTags.ELEMENT_LIST_TAG + "[@"
 					+ XMLTags.TYPE_TAG + "='" + readerInfoType + "']");
 			logger.debug("String expression is: \n" + exp);
 			XPathExpression expr = xpath.compile(exp);
@@ -241,6 +245,56 @@ public class PersistedReaderInfo {
 
 		logger.debug("Just before the return in the reader type list.  ");
 		return (Element) result;
+	}
+
+	public Element findReaderTypeList3(String readerInfoType) {
+		NodeList nodeList = this.doc
+				.getElementsByTagName(XMLTags.ELEMENT_LIST_TAG);
+		Element retVal = null;
+		for (int i = 0; i < nodeList.getLength(); i++) {
+			Node readerInfoList = nodeList.item(i);
+			NamedNodeMap attributeList = readerInfoList.getAttributes();
+			for (int j = 0; j < attributeList.getLength(); j++) {
+				Node attribute = attributeList.getNamedItem("ReaderType");
+				if (attribute != null) {
+					if (attribute.getNodeValue().equals(readerInfoType)) {
+						retVal = (Element) readerInfoList;
+						break;
+					}
+				}
+			}
+		}
+		return retVal;
+	}
+
+	/**
+	 * 
+	 * 
+	 * @param readerInfoType
+	 * @return
+	 */
+	public Element findReaderTypeList2(String readerInfoType) {
+		logger.debug("In the findReaderTypeList method");
+		// NodeList nodes = root.getChildNodes();
+		NodeList nodes = root.getElementsByTagName(XMLTags.ELEMENT_LIST_TAG);
+		logger.debug("root name is: " + root.getNodeName());
+		logger.debug("root first child is: "
+				+ root.getFirstChild().getNodeName());
+		this.printToSTIO(root);
+		logger.debug("Found the child nodes, size is: "
+				+ root.getChildNodes().getLength());
+		for (int i = 0; i < nodes.getLength(); i++) {
+			Node listNode = nodes.item(i);
+			logger.debug("Node is: " + listNode.getNodeName());
+			NamedNodeMap attributes = listNode.getAttributes();
+			Node att = attributes.getNamedItem(XMLTags.TYPE_TAG);
+			logger.debug("Attribute is: " + att.getNodeValue() + ", arg is: "
+					+ readerInfoType);
+			if (att != null && att.getNodeValue().equalsIgnoreCase(readerInfoType)) {
+				return (Element) listNode;
+			}
+		}
+		return null;
 	}
 
 	/**
@@ -298,7 +352,7 @@ public class PersistedReaderInfo {
 		}
 		return dom;
 	}
-	
+
 	/**
 	 * Loads everything into a dom object for testing.
 	 */
@@ -317,7 +371,7 @@ public class PersistedReaderInfo {
 			logger.debug("FILE IS NULL");
 		}
 	}
-	
+
 	/**
 	 * Prints the document to a file.
 	 */
@@ -340,13 +394,10 @@ public class PersistedReaderInfo {
 		}
 	}
 
-
-
 	/**
 	 * Prints the document to a file.
 	 */
 	private void printToSTIO(Element e) {
-		logger.debug("Printing in the file");
 		try {
 			// print
 			OutputFormat format = new OutputFormat(doc);
@@ -397,7 +448,7 @@ public class PersistedReaderInfo {
 
 		public static final String ROOT_TAG = "PersistedReaderInfo";
 
-		public static final String ELEMENT_TAG = "ReaderInfoList";
+		public static final String ELEMENT_LIST_TAG = "ReaderInfoList";
 
 		public static final String TYPE_TAG = "ReaderType";
 
