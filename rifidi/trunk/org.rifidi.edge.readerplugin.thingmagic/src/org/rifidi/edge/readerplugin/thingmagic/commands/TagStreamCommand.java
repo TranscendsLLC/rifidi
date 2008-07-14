@@ -27,17 +27,18 @@ public class TagStreamCommand implements Command {
 			try {
 				connection.sendMessage("select id, timestamp from tag_id;");
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logger.debug("Oops got an IO Error.");
+				return CommandReturnStatus.INTERRUPTED;
 			}
 
 			String recieved = "";
 			try {
 				recieved = (String) connection.recieveMessage();
 			} catch (IOException e) {
+				logger.debug("Oops got an IO Error.");
 				return CommandReturnStatus.INTERRUPTED;
 			}
-
+			logger.debug("inspecting tag list");
 			if (!recieved.equals("")) {
 				String[] rawTags = recieved.split("\n");
 				for (String rawTag : rawTags) {
