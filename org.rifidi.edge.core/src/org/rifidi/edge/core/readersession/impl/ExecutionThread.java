@@ -24,6 +24,8 @@ public class ExecutionThread implements Runnable {
 
 	private boolean running = true;
 
+	private long commandID;
+
 	public ExecutionThread(Connection connection, MessageQueue messageQueue,
 			CommandExecutionListener readerSession) {
 		this.connection = connection;
@@ -33,8 +35,11 @@ public class ExecutionThread implements Runnable {
 		thread.start();
 	}
 
-	public void start(Command command) {
+	public void start(Command command, long commandID) {
+		// TODO think if this should be really a global variable
+		this.commandID = commandID;
 		this.command = command;
+
 		synchronized (this) {
 			notify();
 		}
@@ -61,7 +66,9 @@ public class ExecutionThread implements Runnable {
 				if (command != null) {
 					try {
 						logger.debug("starting command");
-						status = command.start(connection, messageQueue);
+						// TODO define config.xml for commands
+						status = command.start(connection, messageQueue, "",
+								commandID);
 					} catch (Exception e) {
 						e.printStackTrace();
 						logger
@@ -78,8 +85,8 @@ public class ExecutionThread implements Runnable {
 					wait();
 				}
 			} catch (InterruptedException e) {
-				//TODO well not sure if we should print that
+				// TODO well not sure if we should print that
 				e.printStackTrace();
 			}
-		}
 	}
+}
