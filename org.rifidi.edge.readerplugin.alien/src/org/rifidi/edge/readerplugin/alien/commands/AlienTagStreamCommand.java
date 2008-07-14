@@ -48,7 +48,7 @@ public class AlienTagStreamCommand implements Command {
 	 */
 	@Override
 	public CommandReturnStatus start(Connection connection,
-			MessageQueue messageQueue) {
+			MessageQueue messageQueue, String configuration, long commandID) {
 		logger.debug("Starting the Tag List command for the Alien");
 		running = true;
 		try {
@@ -59,23 +59,23 @@ public class AlienTagStreamCommand implements Command {
 			connection.sendMessage(AlienCommandList.TAG_LIST_CUSTOM_FORMAT);
 			connection.recieveMessage();
 
-			///while (running) {
+			// /while (running) {
 
-				connection.sendMessage(AlienCommandList.TAG_LIST);
-				String tag_msg = (String) connection.recieveMessage();
+			connection.sendMessage(AlienCommandList.TAG_LIST);
+			String tag_msg = (String) connection.recieveMessage();
 
-				List<TagMessage> tagList = this.parseString(tag_msg);
+			List<TagMessage> tagList = this.parseString(tag_msg);
 
-				for (TagMessage m : tagList) {
-					messageQueue.addMessage(m);
-				}
+			for (TagMessage m : tagList) {
+				messageQueue.addMessage(m);
+			}
 
-				//try {
-				//	Thread.sleep(1000);
-				//} catch (InterruptedException e) {
-				//}
+			// try {
+			// Thread.sleep(1000);
+			// } catch (InterruptedException e) {
+			// }
 
-			//}
+			// }
 		} catch (RifidiMessageQueueException e) {
 			e.printStackTrace();
 			return CommandReturnStatus.INTERRUPTED;
