@@ -35,7 +35,7 @@ public class ReaderPluginServiceImpl implements ReaderPluginService {
 	}
 
 	@Override
-	public List<String> getAllReaderPlugins() {
+	public List<String> getAllReaderInfos() {
 		return new ArrayList<String>(registry.keySet());
 	}
 

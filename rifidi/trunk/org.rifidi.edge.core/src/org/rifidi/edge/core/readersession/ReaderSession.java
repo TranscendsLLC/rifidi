@@ -13,6 +13,8 @@ public interface ReaderSession {
 	public long executeCommand(String command) throws RifidiConnectionException, RifidiCommandInterruptedException;
 
 	public void stopCommand();
+	
+	public String getQueueName();
 
 	public ReaderSessionStatus getStatus();
 }

@@ -313,8 +313,7 @@ public class ReaderSessionImpl implements ReaderSession,
 	 * =====================================================================
 	 */
 
-	public void cleanUP()
-	{
+	public void cleanUP() {
 		connectionService.destroyConnection(connection, this);
 	}
 	
@@ -326,5 +325,10 @@ public class ReaderSessionImpl implements ReaderSession,
 	@Override
 	public void finalize() {
 		// TODO think about cleaning that up
+	}
+
+	@Override
+	public String getQueueName() {
+		return messageQueue.getName();
 	}
 }
