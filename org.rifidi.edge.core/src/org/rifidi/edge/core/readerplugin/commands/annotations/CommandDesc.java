@@ -6,4 +6,5 @@ import java.lang.annotation.RetentionPolicy;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface CommandDesc {
 	public String name();
+	public String[] groups() default {} ;
 }
