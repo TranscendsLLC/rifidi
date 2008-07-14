@@ -15,11 +15,11 @@ import org.rifidi.edge.core.readerplugin.ReaderInfo;
 import org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionManager;
 import org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionStreams;
 import org.rifidi.edge.core.readerplugin.protocol.CommunicationProtocol;
-import org.rifidi.edge.readerplugin.dummy.protocol.DummyCommunicationProtocolNew;
+import org.rifidi.edge.readerplugin.dummy.protocol.DummyCommunicationProtocol;
 
 /**
  * @author kyle
- *
+ * 
  */
 public class DummyConnectionManagerNew extends ConnectionManager {
 
@@ -36,17 +36,20 @@ public class DummyConnectionManagerNew extends ConnectionManager {
 	/**
 	 * The communication protocol for the LLRP reader
 	 */
-	private DummyCommunicationProtocolNew communicationProtocol;
-	
+	private DummyCommunicationProtocol communicationProtocol;
+
 	Log logger = LogFactory.getLog(DummyConnectionManagerNew.class);
-	
+
 	public DummyConnectionManagerNew(ReaderInfo readerInfo) {
 		super(readerInfo);
 		this.readerInfo = readerInfo;
-		this.communicationProtocol = new DummyCommunicationProtocolNew();
+		this.communicationProtocol = new DummyCommunicationProtocol(
+				(DummyReaderInfo) readerInfo);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionManager#connect(org.rifidi.edge.core.communication.Connection)
 	 */
 	@Override
@@ -54,7 +57,9 @@ public class DummyConnectionManagerNew extends ConnectionManager {
 
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionManager#createCommunication()
 	 */
 	@Override
@@ -76,7 +81,9 @@ public class DummyConnectionManagerNew extends ConnectionManager {
 		return streams;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionManager#disconnect(org.rifidi.edge.core.communication.Connection)
 	 */
 	@Override
@@ -118,7 +125,9 @@ public class DummyConnectionManagerNew extends ConnectionManager {
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionManager#startKeepAlive(org.rifidi.edge.core.communication.Connection)
 	 */
 	@Override
@@ -127,7 +136,9 @@ public class DummyConnectionManagerNew extends ConnectionManager {
 
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionManager#stopKeepAlive(org.rifidi.edge.core.communication.Connection)
 	 */
 	@Override
