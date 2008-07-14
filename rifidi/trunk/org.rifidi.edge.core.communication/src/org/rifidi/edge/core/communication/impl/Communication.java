@@ -156,7 +156,7 @@ public class Communication implements ConnectionExceptionListener {
 		synchronized (this) {
 			if (!cleanUP) {
 				cleanUP = true;
-				new Thread(new CleanUP(exception), "ReconnectingThread: " + connectionManager.toString())
+				new Thread(new CleanUP(exception), "ReconnectingThread: [" + connectionManager.toString() + "]")
 						.start();
 			}
 		}
