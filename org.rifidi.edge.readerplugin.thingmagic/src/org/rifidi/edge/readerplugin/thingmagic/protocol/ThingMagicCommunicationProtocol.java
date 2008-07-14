@@ -1,9 +1,11 @@
 package org.rifidi.edge.readerplugin.thingmagic.protocol;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.readerplugin.protocol.CommunicationProtocol;
 
 public class ThingMagicCommunicationProtocol implements CommunicationProtocol {
-	//private static final Log logger = LogFactory.getLog(ThingMagicCommunicationProtocol.class);
+	private static final Log logger = LogFactory.getLog(ThingMagicCommunicationProtocol.class);
 	
 	private StringBuffer buffer;
 	
@@ -14,6 +16,8 @@ public class ThingMagicCommunicationProtocol implements CommunicationProtocol {
 	@Override
 	public Object byteToMessage(byte b) {
 		//logger.debug((char) b );
+		
+		//TODO Test this on the real reader.
 		buffer.append((char) b);
 		if (buffer.length() >= 2 ){
 			if(buffer.toString().endsWith("\n\n"))
@@ -22,6 +26,12 @@ public class ThingMagicCommunicationProtocol implements CommunicationProtocol {
 				buffer = new StringBuffer();
 				return retVal.replace("\n\n", "");
 			}
+		} else {
+			if (buffer.toString().equals("\n")) {
+				buffer = new StringBuffer();
+				return ""; // No tags message.
+			}
+			
 		}
 		return null;
 	}
