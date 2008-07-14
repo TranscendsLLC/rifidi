@@ -21,7 +21,7 @@ public class ReaderSessionServiceImpl implements ReaderSessionService {
 	}
 
 	@Override
-	public ReaderSession createReaderSesssion(ReaderInfo readerInfo) {
+	public ReaderSession createReaderSession(ReaderInfo readerInfo) {
 		ReaderPlugin readerPlugin = readerPluginService
 				.getReaderPlugin(readerInfo.getClass());
 		ReaderSession readerSession = new ReaderSessionImpl(readerInfo);

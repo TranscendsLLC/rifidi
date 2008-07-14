@@ -7,7 +7,7 @@ import org.rifidi.edge.core.readersession.ReaderSession;
 
 public interface ReaderSessionService {
 
-	public ReaderSession createReaderSesssion(ReaderInfo readerInfo);
+	public ReaderSession createReaderSession(ReaderInfo readerInfo);
 
 	public void destroyReaderSession(ReaderSession readerSession);
 
