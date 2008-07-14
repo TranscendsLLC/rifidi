@@ -8,7 +8,7 @@ import java.util.LinkedList;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.communication.Connection;
-import org.rifidi.edge.core.communication.service.ConnectionEventListener;
+import org.rifidi.edge.core.communication.service.CommunicationStateListener;
 import org.rifidi.edge.core.exceptions.RifidiConnectionException;
 import org.rifidi.edge.core.exceptions.RifidiInvalidMessageFormat;
 import org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionManager;
@@ -32,9 +32,9 @@ public class SimpleConnectionImpl implements Connection {
 
 	private ConnectionManager connectionManager;
 
-	private ConnectionEventListener listener;
+	private CommunicationStateListener listener;
 
-	public SimpleConnectionImpl(ConnectionManager connectionManager, ConnectionEventListener listener)  throws RifidiConnectionException {
+	public SimpleConnectionImpl(ConnectionManager connectionManager, CommunicationStateListener listener)  throws RifidiConnectionException {
 		this.connectionManager = connectionManager;
 		
 		try {
