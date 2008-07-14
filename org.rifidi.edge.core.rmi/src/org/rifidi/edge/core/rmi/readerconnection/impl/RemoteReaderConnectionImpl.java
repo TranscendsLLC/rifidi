@@ -5,6 +5,8 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.rifidi.edge.core.exceptions.RifidiCommandInterruptedException;
+import org.rifidi.edge.core.exceptions.RifidiConnectionException;
 import org.rifidi.edge.core.readerplugin.ReaderInfo;
 import org.rifidi.edge.core.readersession.ReaderSession;
 import org.rifidi.edge.core.rmi.readerconnection.RemoteReaderConnection;
@@ -18,104 +20,191 @@ import org.rifidi.edge.core.rmi.readerconnection.RemoteReaderConnection;
 public class RemoteReaderConnectionImpl implements RemoteReaderConnection {
 
 	private Log logger = LogFactory.getLog(RemoteReaderConnectionImpl.class);
-	
+
+	/**
+	 * Internal ReaderSession which gets exposed with this RemoteReaderConnection
+	 */
 	private ReaderSession readerSession;
 
+	/**
+	 * Create a new RemoteReaderConnection associated with the ReaderSession
+	 * 
+	 * @param readerSession
+	 *            with which the RemoteReaderConnection is assciated
+	 */
 	public RemoteReaderConnectionImpl(ReaderSession readerSession) {
 		this.readerSession = readerSession;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.rifidi.edge.core.rmi.readerconnection.RemoteReaderConnection#commandStatus(long)
+	 */
 	@Override
 	public String commandStatus(long id) {
-		// TODO Auto-generated method stub
-		return null;
+		return readerSession.commandStatus(id);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.rifidi.edge.core.rmi.readerconnection.RemoteReaderConnection#commandStatus()
+	 */
 	@Override
 	public String commandStatus() {
-		// TODO Auto-generated method stub
-		return null;
+		return readerSession.commandStatus();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.rifidi.edge.core.rmi.readerconnection.RemoteReaderConnection#curExecutingCommand()
+	 */
 	@Override
 	public String curExecutingCommand() throws RemoteException {
-		// TODO Auto-generated method stub
-		return null;
+		return readerSession.curExecutingCommand();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.rifidi.edge.core.rmi.readerconnection.RemoteReaderConnection#curExecutingCommandID()
+	 */
 	@Override
 	public long curExecutingCommandID() throws RemoteException {
-		// TODO Auto-generated method stub
-		return 0;
+		return readerSession.curExecutingCommandID();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.rifidi.edge.core.rmi.readerconnection.RemoteReaderConnection#executeCommand(java.lang.String,
+	 *      java.lang.String)
+	 */
 	@Override
 	public long executeCommand(String command, String configuration)
 			throws RemoteException {
-		// TODO Auto-generated method stub
-		return 0;
+		try {
+			return readerSession.executeCommand(command, configuration);
+		} catch (RifidiConnectionException e) {
+			logger.error("RifidiConnectionException", e);
+			throw new RemoteException("RifidiConnectionException", e);
+		} catch (RifidiCommandInterruptedException e) {
+			logger.error("RifidiCommandInterruptedException", e);
+			throw new RemoteException("RifidiConnectionException", e);
+		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.rifidi.edge.core.rmi.readerconnection.RemoteReaderConnection#getAvailableCommandGroups()
+	 */
 	@Override
 	public List<String> getAvailableCommandGroups() throws RemoteException {
-		// TODO Auto-generated method stub
-		return null;
+		return readerSession.getAvailableCommandGroups();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.rifidi.edge.core.rmi.readerconnection.RemoteReaderConnection#getAvailableCommands()
+	 */
 	@Override
 	public List<String> getAvailableCommands() throws RemoteException {
-		// TODO Auto-generated method stub
-		return null;
+		return readerSession.getAvailableCommands();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.rifidi.edge.core.rmi.readerconnection.RemoteReaderConnection#getAvailableCommands(java.lang.String)
+	 */
 	@Override
 	public List<String> getAvailableCommands(String groupName)
 			throws RemoteException {
-		// TODO Auto-generated method stub
-		return null;
+		return readerSession.getAvailableCommands(groupName);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.rifidi.edge.core.rmi.readerconnection.RemoteReaderConnection#getMessageQueueName()
+	 */
 	@Override
 	public String getMessageQueueName() throws RemoteException {
-		// TODO Auto-generated method stub
-		return null;
+		return readerSession.getMessageQueueName();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.rifidi.edge.core.rmi.readerconnection.RemoteReaderConnection#getReaderInfo()
+	 */
 	@Override
 	public ReaderInfo getReaderInfo() throws RemoteException {
-		// TODO Auto-generated method stub
-		return null;
+		return readerSession.getReaderInfo();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.rifidi.edge.core.rmi.readerconnection.RemoteReaderConnection#getReaderState()
+	 */
 	@Override
 	public String getReaderState() throws RemoteException {
-		// TODO Auto-generated method stub
-		return null;
+		return readerSession.getReaderState();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.rifidi.edge.core.rmi.readerconnection.RemoteReaderConnection#resetReaderConnection()
+	 */
 	@Override
 	public void resetReaderConnection() throws RemoteException {
-		// TODO Auto-generated method stub
-		
+		readerSession.resetReaderConnection();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.rifidi.edge.core.rmi.readerconnection.RemoteReaderConnection#startTagStream(java.lang.String)
+	 */
 	@Override
 	public long startTagStream(String configuration) throws RemoteException {
-		// TODO Auto-generated method stub
-		return 0;
+		try {
+			return readerSession.executeCommand("tagstreaming", configuration);
+		} catch (RifidiConnectionException e) {
+			logger.error("RifidiConnectionException", e);
+			throw new RemoteException("RifidiConnectionException", e);
+		} catch (RifidiCommandInterruptedException e) {
+			logger.error("RifidiCommandInterruptedException", e);
+			throw new RemoteException("RifidiCommandInterruptedException", e);
+		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.rifidi.edge.core.rmi.readerconnection.RemoteReaderConnection#stopCurCommand(boolean)
+	 */
 	@Override
 	public boolean stopCurCommand(boolean force) throws RemoteException {
-		// TODO Auto-generated method stub
-		return false;
+		return readerSession.stopCurCommand(force);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.rifidi.edge.core.rmi.readerconnection.RemoteReaderConnection#stopCurCommand(boolean,
+	 *      long)
+	 */
 	@Override
 	public boolean stopCurCommand(boolean force, long commandID)
 			throws RemoteException {
-		// TODO Auto-generated method stub
-		return false;
+		return readerSession.stopCurCommand(force, commandID);
 	}
 
 	public ReaderSession getReaderSession() {
