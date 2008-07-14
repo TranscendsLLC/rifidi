@@ -81,7 +81,7 @@ public class RemoteReaderConnectionRegistryImpl implements
 	@Override
 	public List<String> getAvailableReaderPlugins() throws RemoteException {
 		ArrayList<String> retVal = new ArrayList<String>(readerPluginService
-				.getAllReaderPlugins());
+				.getAllReaderInfos());
 		return retVal;
 	}
 
