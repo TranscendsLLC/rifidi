@@ -93,6 +93,8 @@ public class LLRPTagStreamCommand implements Command {
 			SET_READER_CONFIG config = createSetReaderConfig();
 			connection.sendMessage(config);
 
+			//TODO: check this, maybe
+			@SuppressWarnings("unused")
 			SET_READER_CONFIG_RESPONSE setReaderConfigResponse = (SET_READER_CONFIG_RESPONSE) connection
 					.recieveMessage();
 
