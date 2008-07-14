@@ -5,6 +5,7 @@ import java.util.List;
 import org.rifidi.edge.core.exceptions.RifidiCommandInterruptedException;
 import org.rifidi.edge.core.exceptions.RifidiConnectionException;
 import org.rifidi.edge.core.readerplugin.ReaderInfo;
+import org.rifidi.edge.core.readersession.impl.enums.CommandStatus;
 import org.rifidi.edge.core.readersession.impl.enums.ReaderSessionStatus;
 
 public interface ReaderSession {
@@ -30,13 +31,11 @@ public interface ReaderSession {
 	
 	public String commandStatus(long id);
 	
-	public String commandStatus();
+	public CommandStatus commandStatus();
 	
 	public String getMessageQueueName();
 	
 	public ReaderInfo getReaderInfo();
 	
-	public String getReaderState();
-	
-	public void resetReaderConnection();
+	public void resetReaderSession();
 }
