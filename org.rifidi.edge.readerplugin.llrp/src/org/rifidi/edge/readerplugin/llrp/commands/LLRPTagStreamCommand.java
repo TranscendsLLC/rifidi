@@ -68,7 +68,7 @@ import org.rifidi.edge.core.readerplugin.messages.impl.TagMessage;
  * 
  * @author Matthew Dean - matt@pramari.com
  */
-@CommandDesc(name="StreamTags")
+@CommandDesc(name = "StreamTags")
 public class LLRPTagStreamCommand implements Command {
 
 	private boolean running = false;
@@ -85,22 +85,23 @@ public class LLRPTagStreamCommand implements Command {
 	 *      org.rifidi.edge.core.messageQueue.MessageQueue)
 	 */
 	@Override
-	public CommandReturnStatus start(Connection connection, MessageQueue messageQueue) {
+	public CommandReturnStatus start(Connection connection,
+			MessageQueue messageQueue, String configuration, long commandID) {
 		running = true;
 		CommandReturnStatus retVal = null;
 		try {
 			SET_READER_CONFIG config = createSetReaderConfig();
 			connection.sendMessage(config);
-			
-			SET_READER_CONFIG_RESPONSE setReaderConfigResponse = (SET_READER_CONFIG_RESPONSE)connection.recieveMessage();
-			
+
+			SET_READER_CONFIG_RESPONSE setReaderConfigResponse = (SET_READER_CONFIG_RESPONSE) connection
+					.recieveMessage();
 
 			GET_ROSPECS gr = new GET_ROSPECS();
 			connection.sendMessage(gr);
 			GET_ROSPECS_RESPONSE grr = (GET_ROSPECS_RESPONSE) connection
 					.recieveMessage();
 
-			//TODO: should also check to see if ROSpec is already active
+			// TODO: should also check to see if ROSpec is already active
 			if (doesRoSpecExist(grr)) {
 				this.findNextInt(grr);
 			}
@@ -123,17 +124,17 @@ public class LLRPTagStreamCommand implements Command {
 			connection.sendMessage(startROSpec);
 			connection.recieveMessage();
 
-			int reportMessage=10;
+			int reportMessage = 10;
 			while (running) {
 				GET_REPORT getReport = new GET_REPORT();
 				getReport.setMessageID(new UnsignedInteger(reportMessage++));
-				
+
 				connection.sendMessage(getReport);
-				
+
 				LLRPMessage message = (LLRPMessage) connection.recieveMessage();
 
 				if (message instanceof RO_ACCESS_REPORT) {
-					for (TagMessage tm : parseTags(message)){
+					for (TagMessage tm : parseTags(message)) {
 						try {
 							messageQueue.addMessage(tm);
 						} catch (RifidiMessageQueueException e) {
@@ -141,7 +142,7 @@ public class LLRPTagStreamCommand implements Command {
 						}
 					}
 				}
-				
+
 				try {
 					Thread.sleep(1000);
 				} catch (InterruptedException e) {
@@ -160,15 +161,14 @@ public class LLRPTagStreamCommand implements Command {
 		} catch (IOException e) {
 			return CommandReturnStatus.UNSUCCESSFUL;
 		}
-		
-		if(retVal==null){
+
+		if (retVal == null) {
 			retVal = CommandReturnStatus.SUCCESSFUL;
 		}
-		
+
 		return retVal;
 
 	}
-	
 
 	/**
 	 * Parses the tags from xml.
