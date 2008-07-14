@@ -60,7 +60,7 @@ public class RemoteReaderConnectionImpl implements RemoteReaderConnection {
 	@Override
 	public void startTagStream() throws RemoteException {
 		try {
-			readerSession.executeCommand("tagstreaming");
+			readerSession.executeCommand("tagstreaming", "");
 		} catch (RifidiConnectionException e) {
 			e.printStackTrace();
 			throw new RemoteException("Exception occured", e);
@@ -72,7 +72,7 @@ public class RemoteReaderConnectionImpl implements RemoteReaderConnection {
 
 	@Override
 	public void stopTagStream() throws RemoteException {
-		readerSession.stopCommand();
+		readerSession.stopCurCommand(true);
 	}
 
 	public ReaderSession getReaderSession() {
