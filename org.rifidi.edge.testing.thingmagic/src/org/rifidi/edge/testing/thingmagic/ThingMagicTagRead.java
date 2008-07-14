@@ -7,17 +7,13 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.rifidi.edge.core.communication.simple.impl.SimpleConnectionImpl;
 import org.rifidi.edge.core.exceptions.RifidiCommandInterruptedException;
 import org.rifidi.edge.core.exceptions.RifidiConnectionException;
-import org.rifidi.edge.core.messageQueue.MessageQueue;
 import org.rifidi.edge.core.messageQueue.service.MessageService;
 import org.rifidi.edge.core.readerplugin.ReaderInfo;
 import org.rifidi.edge.core.readerplugin.service.ReaderPluginService;
 import org.rifidi.edge.core.readersession.ReaderSession;
 import org.rifidi.edge.core.readersession.service.ReaderSessionService;
-import org.rifidi.edge.readerplugin.thingmagic.commands.GetTagsOnceCommand;
-import org.rifidi.edge.readerplugin.thingmagic.plugin.ThingMagicManager;
 import org.rifidi.edge.readerplugin.thingmagic.plugin.ThingMagicReaderInfo;
 import org.rifidi.services.annotations.Inject;
 import org.rifidi.services.registry.ServiceRegistry;
@@ -54,7 +50,7 @@ public class ThingMagicTagRead {
 	public void tearDown() throws Exception {
 	}
 
-	@Ignore
+
 	@Test
 	public void testTagReadAndConnect() {
 		if (readerSessionService == null)
@@ -108,11 +104,12 @@ public class ThingMagicTagRead {
 		// }
 		info.setIpAddress("localhost");
 		info.setPort(8080);
+		info.setMaxNumConnectionsAttemps(10);
 		ReaderSession readerSession = readerSessionService
 				.createReaderSesssion(info);
 
 		try {
-			readerSession.executeCommand("GetTagsCurrentlyOnAntennas");
+			readerSession.executeCommand("TagStreaming");
 		} catch (RifidiConnectionException e) {
 			// TODO Auto-generated catch block
 			// e.printStackTrace();
@@ -125,32 +122,39 @@ public class ThingMagicTagRead {
 			// Assert.fail(output.toString());
 			throw new AssertionError(e);
 		}
-	}
-
-	@Test
-	public void testTagReadAndConnect2() {
-		MessageQueue messageQueue = messageService
-				.createMessageQueue("ThingMagic Test queue");
-		ReaderInfo info = new ThingMagicReaderInfo();
-		info.setIpAddress("localhost");
-		info.setPort(8080);
-		SimpleConnectionImpl connection;
+		
 		try {
-			connection = new SimpleConnectionImpl(new ThingMagicManager(info),
-					null);
-		} catch (RifidiConnectionException e) {
-			throw new AssertionError(e);
+			Thread.sleep(10000);
+		} catch (InterruptedException e) {
+
 		}
-
-		GetTagsOnceCommand command = new GetTagsOnceCommand();
-
-		command.start(connection, messageQueue, null, 0);
+		readerSession.stopCommand();
 	}
 
-	@Inject
-	public void setReaderSessionService(ReaderSessionService service) {
-		readerSessionService = service;
-	}
+//	@Test
+//	public void testTagReadAndConnect2() {
+//		MessageQueue messageQueue = messageService
+//				.createMessageQueue("ThingMagic Test queue");
+//		ReaderInfo info = new ThingMagicReaderInfo();
+//		info.setIpAddress("localhost");
+//		info.setPort(8080);
+//		SimpleConnectionImpl connection;
+//		try {
+//			connection = new SimpleConnectionImpl(new ThingMagicManager(info),
+//					null);
+//		} catch (RifidiConnectionException e) {
+//			throw new AssertionError(e);
+//		}
+//
+//		GetTagsOnceCommand command = new GetTagsOnceCommand();
+//
+//		command.start(connection, messageQueue, null, 0);
+//	}
+//
+//	@Inject
+//	public void setReaderSessionService(ReaderSessionService service) {
+//		readerSessionService = service;
+//	}
 
 	@Inject
 	public void setReaderPluginService(ReaderPluginService service) {
@@ -163,5 +167,13 @@ public class ThingMagicTagRead {
 	@Inject
 	public void setMessageService(MessageService messageService) {
 		this.messageService = messageService;
+	}
+
+	/**
+	 * @param readerSessionService the readerSessionService to set
+	 */
+	@Inject
+	public void setReaderSessionService(ReaderSessionService readerSessionService) {
+		this.readerSessionService = readerSessionService;
 	}
 }
