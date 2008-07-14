@@ -32,6 +32,10 @@ public class ReaderSessionServiceImpl implements ReaderSessionService {
 	@Override
 	public void destroyReaderSession(ReaderSession readerSession) {
 		readerSession.stopCommand();
+		if (readerSession instanceof ReaderSessionImpl) {
+			ReaderSessionImpl readerSessionImpl = (ReaderSessionImpl) readerSession;
+			readerSessionImpl.cleanUP();
+		}
 		registry.remove(readerSession);
 	}
 
