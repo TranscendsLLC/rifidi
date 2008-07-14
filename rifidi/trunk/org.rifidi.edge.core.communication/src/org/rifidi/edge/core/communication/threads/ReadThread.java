@@ -60,7 +60,7 @@ public class ReadThread extends AbstractThread {
 			}
 		} catch (Exception e) {
 			running = false;
-			e.printStackTrace();
+			logger.debug(e.getMessage());
 			if (!ignoreExceptions) {
 				connectionExceptionListener.connectionExceptionEvent(e);
 			}
