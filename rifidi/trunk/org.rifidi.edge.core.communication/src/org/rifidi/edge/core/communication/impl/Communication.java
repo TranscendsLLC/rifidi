@@ -58,21 +58,39 @@ public class Communication implements ConnectionExceptionListener {
 			} catch (RifidiConnectionException e1) {
 				changeState(ConnectionStatus.ERROR);
 			}
+		} catch (RuntimeException e) {
+			logger.error("Runtime Exception detected:"
+					+ " Probably the connectionmanager is not safe", e);
+			connection = null;
+			changeState(ConnectionStatus.ERROR);
+			return null;
 		}
 		return connection;
 	}
 
 	public void disconnect() {
+		try {
+			changeState(ConnectionStatus.DISCONNECTED);
 
-		changeState(ConnectionStatus.DISCONNECTED);
+			if (writeThread != null)
+				writeThread.ignoreExceptions(true);
+			if (readThread != null)
+				readThread.ignoreExceptions(true);
 
-		writeThread.ignoreExceptions(true);
-		readThread.ignoreExceptions(true);
+			connectionManager.disconnect(connection);
 
-		connectionManager.disconnect(connection);
+			if (writeThread != null)
+				writeThread.stop();
+			if (readThread != null)
+				readThread.stop();
+		} catch (RuntimeException e) {
+			logger.error("Runtime Exception detected:"
+					+ " Probably the connectionmanager is not safe", e);
+			connection = null;
+			changeState(ConnectionStatus.ERROR);
+			return;
 
-		writeThread.stop();
-		readThread.stop();
+		}
 	}
 
 	private void reconnect() throws RifidiConnectionException {
@@ -105,11 +123,11 @@ public class Communication implements ConnectionExceptionListener {
 				break;
 			}
 		} catch (RuntimeException e) {
+			logger.error("Runtime Exception detected:"
+					+ " Probably the connectionmanager is not safe", e);
 			connection = null;
-			// status = ReaderSessionStatus.DISCONNECTED;
-			throw new RifidiConnectionException("RuntimeException detected! "
-					+ "There is a possible bug in "
-					+ connectionManager.getClass().getName(), e);
+			changeState(ConnectionStatus.ERROR);
+			return;
 		}
 		/* fire events */
 		if (x == maxConn) {
