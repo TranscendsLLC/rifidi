@@ -10,7 +10,7 @@ public interface ReaderSession {
 	public ReaderInfo getReaderInfo();
 
 	//TODO: Need a way to tell what exceptions cause a restart and ones that do not.
-	public void executeCommand(String command) throws RifidiConnectionException, RifidiCommandInterruptedException;
+	public long executeCommand(String command) throws RifidiConnectionException, RifidiCommandInterruptedException;
 
 	public void stopCommand();
 

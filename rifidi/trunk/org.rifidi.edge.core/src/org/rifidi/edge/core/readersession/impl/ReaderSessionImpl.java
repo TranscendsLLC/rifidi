@@ -2,10 +2,7 @@ package org.rifidi.edge.core.readersession.impl;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -23,7 +20,6 @@ import org.rifidi.edge.core.readerplugin.commands.CommandReturnStatus;
 import org.rifidi.edge.core.readerplugin.commands.annotations.CommandDesc;
 import org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionManager;
 import org.rifidi.edge.core.readerplugin.service.ReaderPluginService;
-import org.rifidi.edge.core.readersession.ExecutionListener;
 import org.rifidi.edge.core.readersession.ReaderSession;
 import org.rifidi.edge.core.readersession.impl.enums.CommandStatus;
 import org.rifidi.edge.core.readersession.impl.enums.ReaderSessionStatus;
@@ -60,6 +56,7 @@ public class ReaderSessionImpl implements ReaderSession,
 	private ReaderSessionStatus readerSessionStatus = ReaderSessionStatus.OK;
 	private ConnectionStatus connectionStatus = ConnectionStatus.DISCONNECTED;
 
+	private long commandID = 0;
 	private CommandStatus commandExecutionStatus = CommandStatus.EXECUTING;
 	private HashMap<Command, CommandStatus> commandJournal = new HashMap<Command, CommandStatus>();
 
@@ -70,7 +67,7 @@ public class ReaderSessionImpl implements ReaderSession,
 
 	// TODO Implement firing of events.
 	@Override
-	public void executeCommand(String command)
+	public long executeCommand(String command)
 			throws RifidiConnectionException, RifidiCommandInterruptedException {
 
 		/*
@@ -107,7 +104,7 @@ public class ReaderSessionImpl implements ReaderSession,
 		if (connectionManager == null)
 			connectionManager = readerPluginService.getReaderPlugin(
 					readerInfo.getClass()).getConnectionManager(readerInfo);
-		if (connection == null){
+		if (connection == null) {
 			connection = connectionService.createConnection(connectionManager,
 					readerInfo, this);
 		}
@@ -208,9 +205,11 @@ public class ReaderSessionImpl implements ReaderSession,
 		}
 
 		readerSessionStatus = ReaderSessionStatus.BUSY;
-		// EXECUTE THE COMMAND
-		executionThread.start(curCommand);
+		// EXECUTE THE COMMAND and generate commandID
+		commandID++;
+		executionThread.start(curCommand,commandID);
 		logger.debug("Command given to execution thread");
+		return commandID;
 	}
 
 	@Override
