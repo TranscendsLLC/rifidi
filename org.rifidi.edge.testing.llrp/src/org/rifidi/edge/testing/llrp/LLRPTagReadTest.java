@@ -30,7 +30,7 @@ public class LLRPTagReadTest {
 	@Test
 	public void testLLRPStream() {
 		ReaderInfo ri = new LLRPReaderInfo();
-		ri.setIpAddress("127.0.0.1");
+		ri.setIpAddress("192.168.1.104");
 		ri.setPort(5084);
 		ri.setMaxNumConnectionsAttemps(100);
 		ReaderSession readerSession = readerSessionService
