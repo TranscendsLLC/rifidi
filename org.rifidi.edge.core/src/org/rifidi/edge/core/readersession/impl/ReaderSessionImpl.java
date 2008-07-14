@@ -313,6 +313,11 @@ public class ReaderSessionImpl implements ReaderSession,
 	 * =====================================================================
 	 */
 
+	public void cleanUP()
+	{
+		connectionService.destroyConnection(connection, this);
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 
