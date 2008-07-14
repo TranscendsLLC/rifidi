@@ -113,7 +113,13 @@ public class PersistedReaderInfo2 {
 			this.printToSTDIO(doc);
 			result = newListElement;
 		}
-		// JAXBUtility.getInstance().save(result, root);
+		//DOMOutputter domout = new DOMOutputter();
+		// try {
+		// org.w3c.dom.Element domResult = domout.output(result);
+		// JAXBUtility.getInstance().save(readerInfo, result);
+		// } catch (JDOMException e) {
+		// e.printStackTrace();
+		//		 }
 	}
 
 	/**
