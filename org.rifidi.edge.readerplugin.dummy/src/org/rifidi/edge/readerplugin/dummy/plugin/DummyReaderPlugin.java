@@ -8,17 +8,18 @@ import org.rifidi.edge.core.readerplugin.ReaderPlugin;
 import org.rifidi.edge.core.readerplugin.commands.Command;
 import org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionManager;
 import org.rifidi.edge.core.readerplugin.protocol.MessageProtocol;
-import org.rifidi.edge.readerplugin.dummy.commands.StreamTagsTest;
 import org.rifidi.edge.readerplugin.dummy.protocol.DummyMessageProtocol;
 
 public class DummyReaderPlugin implements ReaderPlugin {
 	ArrayList<Class<? extends Command>> commands = new ArrayList<Class<? extends Command>>();
-	
-	public DummyReaderPlugin(){		
+
+	public DummyReaderPlugin() {
 		commands.add(StreamTagsTest.class);
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.rifidi.edge.core.readerplugin.ReaderPlugin#getAvailableCommands()
 	 */
 	@Override
@@ -26,7 +27,9 @@ public class DummyReaderPlugin implements ReaderPlugin {
 		return new ArrayList<Class<? extends Command>>(commands);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.rifidi.edge.core.readerplugin.ReaderPlugin#getMessageProtocol()
 	 */
 	@Override
@@ -34,16 +37,20 @@ public class DummyReaderPlugin implements ReaderPlugin {
 		return new DummyMessageProtocol();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.rifidi.edge.core.readerplugin.ReaderPlugin#addCommand(java.util.List)
 	 */
 	@Override
 	public void addCommand(List<Class<? extends Command>> commands) {
 		commands.addAll(commands);
-		
+
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.rifidi.edge.core.readerplugin.ReaderPlugin#getConnectionManager(org.rifidi.edge.core.readerplugin.ReaderInfo)
 	 */
 	@Override
@@ -51,12 +58,14 @@ public class DummyReaderPlugin implements ReaderPlugin {
 		return new DummyConnectionManagerNew(readerInfo);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.rifidi.edge.core.readerplugin.ReaderPlugin#removeCommand(java.util.List)
 	 */
 	@Override
 	public void removeCommand(List<Class<? extends Command>> commands) {
-		commands.removeAll(commands);		
+		commands.removeAll(commands);
 	}
 
 }
