@@ -38,8 +38,8 @@ public class LoadTestClass {
 		pri.loadFromFile();
 
 		ReaderInfo llrp2 = new LLRPReaderInfo();
-		llrp2.setIpAddress("localhostx");
-		llrp2.setPort(20008);
+		llrp2.setIpAddress("localhosty");
+		llrp2.setPort(20009);
 
 		try {
 			pri.removeReader(llrp2);
