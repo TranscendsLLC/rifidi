@@ -69,7 +69,7 @@ public class AlienTestTagRead {
 		logger.debug("Testing the tag reads");
 		
 		ReaderSession readerSession = readerSessionService
-				.createReaderSesssion(info);
+				.createReaderSession(info);
 		
 		try {
 			logger.debug("Testing the getTagList command");
