@@ -10,6 +10,10 @@
  */
 package org.rifidi.edge.persistence.service.impl;
 
+import java.util.List;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.exceptions.RifidiReaderInfoNotFoundException;
 import org.rifidi.edge.core.readerplugin.ReaderInfo;
 import org.rifidi.edge.core.readerplugin.service.ReaderPluginListener;
@@ -20,6 +24,7 @@ import org.rifidi.edge.core.readersession.service.ReaderSessionService;
 import org.rifidi.edge.persistence.service.PersistenceService;
 import org.rifidi.edge.persistence.xml.PersistedReaderInfo;
 import org.rifidi.services.annotations.Inject;
+import org.rifidi.services.registry.ServiceRegistry;
 
 /**
  * 
@@ -28,52 +33,66 @@ import org.rifidi.services.annotations.Inject;
  */
 public class PersistanceServiceImpl implements PersistenceService,
 		ReaderPluginListener, ReaderSessionListener {
-	
+
 	/**
-	 * 
+	 * The log4j logger.debug.
+	 */
+	private static final Log logger = LogFactory
+			.getLog(PersistanceServiceImpl.class);
+
+	/**
+	 * The PersistedReaderInfo object.
 	 */
 	private PersistedReaderInfo pri;
-	
+
 	/**
 	 * 
 	 */
 	private ReaderSessionService readerSessionService;
-	
+
 	/**
 	 * 
 	 */
 	private ReaderPluginService readerPluginService;
 
 	/**
-	 * 
+	 * Constructor.
 	 */
 	public PersistanceServiceImpl() {
+		ServiceRegistry.getInstance().service(this);
 		pri = new PersistedReaderInfo();
-		System.out.println("created");
+		logger.debug("created");
 	}
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.rifidi.edge.core.readerplugin.service.ReaderPluginListener#readerPluginRegisteredEvent(java.lang.Class)
 	 */
 	@Override
 	public void readerPluginRegisteredEvent(
 			Class<? extends ReaderInfo> readerInfo) {
-		
+		List<ReaderInfo> readerInfoList = pri.getReaderInfos(readerInfo
+				.getName());
+		for (ReaderInfo ri : readerInfoList) {
+			this.readerSessionService.createReaderSession(ri);
+		}
 	}
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.rifidi.edge.core.readerplugin.service.ReaderPluginListener#readerPluginUnregisteredEvent(java.lang.Class)
 	 */
 	@Override
 	public void readerPluginUnregisteredEvent(
 			Class<? extends ReaderInfo> readerInfo) {
-		
+		// Do nothing
 	}
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.rifidi.edge.core.readersession.service.ReaderSessionListener#addEvent(org.rifidi.edge.core.readersession.ReaderSession)
 	 */
 	@Override
@@ -83,34 +102,57 @@ public class PersistanceServiceImpl implements PersistenceService,
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.rifidi.edge.core.readersession.service.ReaderSessionListener#removeEvent(org.rifidi.edge.core.readersession.ReaderSession)
 	 */
 	@Override
 	public void removeEvent(ReaderSession readerSession) {
-		 try {
+		try {
 			pri.removeReader(readerSession.getReaderInfo());
 		} catch (RifidiReaderInfoNotFoundException e) {
-			// TODO: Should we do anything else here?
+			// TODO: Should we do anything else here? If this happens something
+			// seriously went wrong?
 			e.printStackTrace();
 		}
 	}
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.rifidi.edge.persistence.service.PersistenceService#start(java.lang.String)
 	 */
 	@Override
 	public void start(String fileName) {
-		
+		List<String> readerNameList = this.readerPluginService
+				.getAllReaderInfos();
+		for (String readerClassName : readerNameList) {
+			List<ReaderInfo> readerInfoList = pri
+					.getReaderInfos(readerClassName);
+			for (ReaderInfo ri : readerInfoList) {
+				this.readerSessionService.createReaderSession(ri);
+			}
+		}
+
 	}
 
 	/**
+	 * Injects the ReaderPluginService.
 	 * 
+	 * @param rps
+	 */
+	@Inject
+	public void setReaderPluginService(ReaderPluginService rps) {
+		this.readerPluginService = rps;
+	}
+
+	/**
+	 * Injects the ReaderSessionService.
 	 * 
 	 * @param readerSessionService
 	 */
 	@Inject
-	public void setReaderSessionService(ReaderSessionService readerSessionService){
+	public void setReaderSessionService(
+			ReaderSessionService readerSessionService) {
 		this.readerSessionService = readerSessionService;
 	}
 

@@ -14,7 +14,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
+import javax.xml.bind.JAXBException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -93,6 +96,31 @@ public class PersistedReaderInfo {
 		JAXBUtility.getInstance().save(readerInfo, readerInfoTypeList);
 		logger.debug("Just before the print to file");
 		printToFile();
+	}
+
+	/**
+	 * Gets a list of the readerInfos stored in the XML file under the given
+	 * class.
+	 * 
+	 * @param readerInfoClass
+	 * @return
+	 */
+	public List<ReaderInfo> getReaderInfos(String className) {
+		List<ReaderInfo> retVal = new ArrayList<ReaderInfo>();
+		Element ele = this.findReaderTypeList(className);
+		NodeList nodes = ele.getChildNodes();
+		for (int i = 0; i < nodes.getLength(); i++) {
+			Node nod = nodes.item(i);
+			try {
+				ReaderInfo ri = (ReaderInfo) JAXBUtility.getInstance()
+						.load(nod);
+				retVal.add(ri);
+			} catch (JAXBException e) {
+				// TODO: probably should throw something here
+				e.printStackTrace();
+			}
+		}
+		return retVal;
 	}
 
 	/**
@@ -208,7 +236,6 @@ public class PersistedReaderInfo {
 				}
 			}
 		}
-
 		return null;
 	}
 
@@ -245,7 +272,6 @@ public class PersistedReaderInfo {
 		logger.debug("Just before the return in the reader type list.  ");
 		return (Element) result;
 	}
-
 
 	/**
 	 * 
