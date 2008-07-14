@@ -29,7 +29,6 @@ public class DummyConnectionManager extends ConnectionManager {
 
 	public DummyConnectionManager(ReaderInfo readerInfo) {
 		super(readerInfo);
-		// TODO Auto-generated constructor stub
 		this.info = (DummyReaderInfo) readerInfo;
 	}
 

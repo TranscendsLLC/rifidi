@@ -15,22 +15,18 @@ public class RifidiInvalidMessageFormat extends RifidiException {
 	private static final long serialVersionUID = -8367649195678157160L;
 	
 	public RifidiInvalidMessageFormat() {
-		// TODO Auto-generated constructor stub
 		super();
 	}
 
 	public RifidiInvalidMessageFormat(String arg0, Throwable arg1) {
 		super(arg0, arg1);
-		// TODO Auto-generated constructor stub
 	}
 
 	public RifidiInvalidMessageFormat(String arg0) {
 		super(arg0);
-		// TODO Auto-generated constructor stub
 	}
 
 	public RifidiInvalidMessageFormat(Throwable arg0) {
 		super(arg0);
-		// TODO Auto-generated constructor stub
 	}
 }
