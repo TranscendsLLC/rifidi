@@ -55,7 +55,7 @@ public class JAXBUtility {
 	 * Private constructor.
 	 */
 	private JAXBUtility() {
-		// ServiceRegistry.getInstance().service(this);
+		//ServiceRegistry.getInstance().service(this);
 	}
 
 	/**
@@ -97,20 +97,6 @@ public class JAXBUtility {
 		Unmarshaller unmarshaller = context.createUnmarshaller();
 
 		return unmarshaller.unmarshal(xml);
-	}
-
-	/**
-	 * 
-	 * @return
-	 */
-	public String loadFileToXML() {
-		try {
-			String xml = this.restoreFromFile(FILE_NAME);
-			return xml;
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-			return null;
-		}
 	}
 
 	/**

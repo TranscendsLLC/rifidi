@@ -298,7 +298,26 @@ public class PersistedReaderInfo {
 		}
 		return dom;
 	}
-
+	
+	/**
+	 * Loads everything into a dom object for testing.
+	 */
+	public void loadFromFile() {
+		File xmlFile = null;
+		try {
+			xmlFile = JAXBUtility.getXMLFile();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		if (xmlFile != null) {
+			logger.debug("FILE NOT NULL, CREATING NEW DOCUMENT");
+			this.doc = this.createDocument(xmlFile);
+			this.root = (Element) doc.getFirstChild();
+		} else {
+			logger.debug("FILE IS NULL");
+		}
+	}
+	
 	/**
 	 * Prints the document to a file.
 	 */
@@ -321,24 +340,7 @@ public class PersistedReaderInfo {
 		}
 	}
 
-	/**
-	 * Loads everything into a dom object for testing.
-	 */
-	public void loadFromFile() {
-		File xmlFile = null;
-		try {
-			xmlFile = JAXBUtility.getXMLFile();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
-		if (xmlFile != null) {
-			logger.debug("FILE NOT NULL, CREATING NEW DOCUMENT");
-			this.doc = this.createDocument(xmlFile);
-			this.root = (Element) doc.getFirstChild();
-		} else {
-			logger.debug("FILE IS NULL");
-		}
-	}
+
 
 	/**
 	 * Prints the document to a file.
@@ -390,7 +392,7 @@ public class PersistedReaderInfo {
 	 * 
 	 * @author Matthew Dean - matt@pramari.com
 	 */
-	public class XMLTags {
+	private class XMLTags {
 		public static final String VALUE = "val";
 
 		public static final String ROOT_TAG = "PersistedReaderInfo";
