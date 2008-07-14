@@ -19,7 +19,7 @@ public class StreamTagsTest implements Command {
 
 	@Override
 	public CommandReturnStatus start(Connection connection,
-			MessageQueue messageQueue) {
+			MessageQueue messageQueue, String configuration, long commandID) {
 		while (running) {
 			try {
 				connection.sendMessage("GET_SOMETHING\n");
