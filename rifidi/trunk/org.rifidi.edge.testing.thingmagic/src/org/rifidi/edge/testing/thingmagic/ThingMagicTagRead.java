@@ -144,7 +144,7 @@ public class ThingMagicTagRead {
 
 		GetTagsOnceCommand command = new GetTagsOnceCommand();
 
-		command.start(connection, messageQueue);
+		command.start(connection, messageQueue, null, 0);
 	}
 
 	@Inject
