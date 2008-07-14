@@ -31,7 +31,6 @@ import org.rifidi.edge.core.readerplugin.ReaderInfo;
 import org.rifidi.edge.persistence.utilities.JAXBUtility;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
@@ -105,7 +104,7 @@ public class PersistedReaderInfo {
 	public void removeReader(ReaderInfo readerInfo)
 			throws RifidiReaderInfoNotFoundException {
 		logger.debug("calling the remove reader");
-		Element readerInfoTypeList = this.findReaderTypeList2(readerInfo
+		Element readerInfoTypeList = this.findReaderTypeList(readerInfo
 				.getClass().getName());
 		if (readerInfoTypeList == null) {
 			throw new RifidiReaderInfoNotFoundException();
@@ -247,55 +246,6 @@ public class PersistedReaderInfo {
 		return (Element) result;
 	}
 
-	public Element findReaderTypeList3(String readerInfoType) {
-		NodeList nodeList = this.doc
-				.getElementsByTagName(XMLTags.ELEMENT_LIST_TAG);
-		Element retVal = null;
-		for (int i = 0; i < nodeList.getLength(); i++) {
-			Node readerInfoList = nodeList.item(i);
-			NamedNodeMap attributeList = readerInfoList.getAttributes();
-			for (int j = 0; j < attributeList.getLength(); j++) {
-				Node attribute = attributeList.getNamedItem("ReaderType");
-				if (attribute != null) {
-					if (attribute.getNodeValue().equals(readerInfoType)) {
-						retVal = (Element) readerInfoList;
-						break;
-					}
-				}
-			}
-		}
-		return retVal;
-	}
-
-	/**
-	 * 
-	 * 
-	 * @param readerInfoType
-	 * @return
-	 */
-	public Element findReaderTypeList2(String readerInfoType) {
-		logger.debug("In the findReaderTypeList method");
-		// NodeList nodes = root.getChildNodes();
-		NodeList nodes = root.getElementsByTagName(XMLTags.ELEMENT_LIST_TAG);
-		logger.debug("root name is: " + root.getNodeName());
-		logger.debug("root first child is: "
-				+ root.getFirstChild().getNodeName());
-		this.printToSTIO(root);
-		logger.debug("Found the child nodes, size is: "
-				+ root.getChildNodes().getLength());
-		for (int i = 0; i < nodes.getLength(); i++) {
-			Node listNode = nodes.item(i);
-			logger.debug("Node is: " + listNode.getNodeName());
-			NamedNodeMap attributes = listNode.getAttributes();
-			Node att = attributes.getNamedItem(XMLTags.TYPE_TAG);
-			logger.debug("Attribute is: " + att.getNodeValue() + ", arg is: "
-					+ readerInfoType);
-			if (att != null && att.getNodeValue().equalsIgnoreCase(readerInfoType)) {
-				return (Element) listNode;
-			}
-		}
-		return null;
-	}
 
 	/**
 	 * 
