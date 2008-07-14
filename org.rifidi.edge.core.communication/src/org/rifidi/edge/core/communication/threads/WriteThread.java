@@ -56,10 +56,9 @@ public class WriteThread extends AbstractThread {
 			}
 		} catch (InterruptedException e) {
 			running = false;
-			// e.printStackTrace();
 		} catch (Exception e) {
 			running = false;
-			e.printStackTrace();
+			logger.debug(e.getMessage());
 			if (!ignoreExceptions) {
 				connectionExceptionListener.connectionExceptionEvent(e);
 			}
