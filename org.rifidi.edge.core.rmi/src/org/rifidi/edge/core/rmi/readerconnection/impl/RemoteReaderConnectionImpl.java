@@ -180,7 +180,7 @@ public class RemoteReaderConnectionImpl implements RemoteReaderConnection {
 	@Override
 	public long startTagStream(String configuration) throws RemoteException {
 		try {
-			return readerSession.executeCommand("tagstreaming", configuration);
+			return readerSession.executeCommand("TagStreaming", configuration);
 		} catch (RifidiConnectionException e) {
 			logger.error("RifidiConnectionException", e);
 			throw new RemoteException("RifidiConnectionException", e);
@@ -188,7 +188,8 @@ public class RemoteReaderConnectionImpl implements RemoteReaderConnection {
 			logger.error("RifidiCommandInterruptedException", e);
 			throw new RemoteException("RifidiCommandInterruptedException", e);
 		} catch (RifidiCommandNotFoundException e) {
-			logger.error("RifidiCommandNotFoundException", e);
+			//TODO this might happen more often logger.error("RifidiCommandNotFoundException", e);
+			logger.error("Command not found" + e.getMessage());
 			throw new RemoteException("RifidiCommandNotFoundException", e);
 		}
 	}
