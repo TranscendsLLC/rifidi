@@ -29,7 +29,7 @@ public interface ReaderSession {
 	
 	public long curExecutingCommandID();
 	
-	public String commandStatus(long id);
+	public CommandStatus commandStatus(long id);
 	
 	public CommandStatus commandStatus();
 	
