@@ -22,6 +22,7 @@ public class ReaderSessionServiceImpl implements ReaderSessionService {
 
 	@Override
 	public ReaderSession createReaderSession(ReaderInfo readerInfo) {
+		@SuppressWarnings("unused")
 		ReaderPlugin readerPlugin = readerPluginService
 				.getReaderPlugin(readerInfo.getClass());
 		ReaderSession readerSession = new ReaderSessionImpl(readerInfo);
