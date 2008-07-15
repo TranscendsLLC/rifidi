@@ -73,6 +73,7 @@ public class RMIServerServiceImpl implements RMIServerService {
 		// Bind the RemoteSessionRegistry to RMI
 		logger.debug("Bind RemoteReaderConnectionRegistry to RMI Registry");
 		try {
+			logger.debug("Binding to " + RemoteReaderConnectionRegistry.class.getName());
 			registry.bind(RemoteReaderConnectionRegistry.class.getName(), stub);
 		} catch (AccessException e) {
 			logger.error(e);
