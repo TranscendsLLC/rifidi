@@ -3,9 +3,6 @@ package org.rifidi.edge.persistence;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
-import sandbox.LoadTestClass;
-import sandbox.SandboxClass;
-
 public class Activator implements BundleActivator {
 
 	/*
@@ -14,10 +11,6 @@ public class Activator implements BundleActivator {
 	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
 	 */
 	public void start(BundleContext context) throws Exception {
-		SandboxClass omg = new SandboxClass();
-		omg.test();
-		LoadTestClass ltc = new LoadTestClass();
-		ltc.test();
 	}
 
 	/*
