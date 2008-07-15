@@ -45,7 +45,7 @@ public class ExecutionThread implements Runnable {
 		}
 	}
 
-	public void stop() {
+	public void stop(boolean force) {
 		running = false;
 		command.stop();
 		try {
@@ -58,6 +58,8 @@ public class ExecutionThread implements Runnable {
 		}
 		command = null;
 	}
+	
+
 
 	@Override
 	public void run() {

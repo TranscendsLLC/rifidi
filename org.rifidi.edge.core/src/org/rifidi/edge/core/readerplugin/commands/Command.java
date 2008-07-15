@@ -6,7 +6,7 @@ import org.rifidi.edge.core.messageQueue.MessageQueue;
 /**
  * This is the command Interface defining a common base over all Commands
  * 
- * @author andreas
+ * @author Andreas Huebner - andreas@pramari.com
  * 
  */
 public interface Command {
