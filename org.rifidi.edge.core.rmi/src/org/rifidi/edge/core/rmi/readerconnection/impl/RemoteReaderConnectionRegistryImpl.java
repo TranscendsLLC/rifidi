@@ -41,7 +41,7 @@ public class RemoteReaderConnectionRegistryImpl implements
 			throws RemoteException {
 
 		ReaderSession readerSession = readerSessionService
-				.createReaderSesssion(readerInfo);
+				.createReaderSession(readerInfo);
 		RemoteReaderConnectionImpl remoteReaderConnection = new RemoteReaderConnectionImpl(
 				readerSession);
 

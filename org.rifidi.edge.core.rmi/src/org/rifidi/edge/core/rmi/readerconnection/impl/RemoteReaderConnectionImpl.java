@@ -22,7 +22,8 @@ public class RemoteReaderConnectionImpl implements RemoteReaderConnection {
 	private Log logger = LogFactory.getLog(RemoteReaderConnectionImpl.class);
 
 	/**
-	 * Internal ReaderSession which gets exposed with this RemoteReaderConnection
+	 * Internal ReaderSession which gets exposed with this
+	 * RemoteReaderConnection
 	 */
 	private ReaderSession readerSession;
 
@@ -53,7 +54,7 @@ public class RemoteReaderConnectionImpl implements RemoteReaderConnection {
 	 */
 	@Override
 	public String commandStatus() {
-		return readerSession.commandStatus();
+		return readerSession.commandStatus().toString();
 	}
 
 	/*
@@ -154,7 +155,7 @@ public class RemoteReaderConnectionImpl implements RemoteReaderConnection {
 	 */
 	@Override
 	public String getReaderState() throws RemoteException {
-		return readerSession.getReaderState();
+		return readerSession.getStatus().toString();
 	}
 
 	/*
@@ -164,7 +165,7 @@ public class RemoteReaderConnectionImpl implements RemoteReaderConnection {
 	 */
 	@Override
 	public void resetReaderConnection() throws RemoteException {
-		readerSession.resetReaderConnection();
+		readerSession.resetReaderSession();
 	}
 
 	/*
