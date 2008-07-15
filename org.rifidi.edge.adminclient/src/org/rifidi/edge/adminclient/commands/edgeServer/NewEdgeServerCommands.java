@@ -327,10 +327,8 @@ public class NewEdgeServerCommands implements ICommand {
 			remoteReaderConnection.executeCommand(commandName, "");
 			return "Command started";
 		} catch (RemoteException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			return "Command not found. " + e.getMessage();
 		}
-		return null;
 	}
 	
 	@Command(name="stop",arguments= {"connection id"})
