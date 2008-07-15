@@ -35,8 +35,20 @@ public class ExecutionThread {
 	 */
 	public ExecutionThread(Connection connection, MessageQueue messageQueue,
 			CommandExecutionListener readerSession) {
+		if(connection == null)
+		{
+			logger.error("NO Connection");
+		}
 		this.connection = connection;
+		if(messageQueue == null)
+		{
+			logger.error("NO MessageQueue");
+		}
 		this.messageQueue = messageQueue;
+		if(commandExecutionListener == null)
+		{
+			logger.error("NO CommandExecutionListerner");
+		}
 		this.commandExecutionListener = readerSession;
 	}
 
@@ -51,6 +63,11 @@ public class ExecutionThread {
 			throw new RifidiExecutionException("Command " + this.commandID
 					+ " is still executing");
 		}
+		if(_command == null)
+		{
+			logger.error("NO Command to execute");
+			return;
+		}
 		this.command = _command;
 		this.commandID = _commandID;
 		thread = new Thread(new Runnable() {
@@ -58,13 +75,18 @@ public class ExecutionThread {
 			@Override
 			public void run() {
 				logger.debug("Starting command");
+				if(command == null)
+				{
+					logger.error("NO Command to execute");
+					return;
+				}
 				status = command.start(connection, messageQueue,
 						_configuration, commandID);
 				commandExecutionListener.commandFinished(command, status);
 				command = null;
 				logger.debug("Command finished");
 			}
-		});
+		},"ExecuteThread "  + commandID);
 		thread.setDaemon(true);
 		thread.start();
 	}
