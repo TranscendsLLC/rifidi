@@ -13,4 +13,5 @@ Require-Bundle: org.rifidi.edge.persistence,
  org.rifidi.edge.readerplugin.llrp,
  org.rifidi.edge.log4j,
  org.rifidi.edge.core,
- org.rifidi.edge.common.utilities
+ org.rifidi.edge.common.utilities,
+ org.rifidi.edge.services
