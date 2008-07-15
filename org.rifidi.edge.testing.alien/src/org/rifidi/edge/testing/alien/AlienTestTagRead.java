@@ -65,16 +65,16 @@ public class AlienTestTagRead {
 		info.setPassword("password");
 		info.setMaxNumConnectionsAttemps(3);
 		info.setReconnectionIntervall(1000);
-		
+
 		logger.debug("Testing the tag reads");
-		
+
 		ReaderSession readerSession = readerSessionService
 				.createReaderSession(info);
-		
+
 		try {
 			logger.debug("Testing the getTagList command");
-			readerSession.executeCommand("getTagList",null);
-			
+			readerSession.executeCommand("getTagList", null);
+
 			readerSession.stopCurCommand(false);
 		} catch (RifidiConnectionException e) {
 			throw new AssertionError(e);
@@ -84,6 +84,7 @@ public class AlienTestTagRead {
 	}
 
 	/**
+	 * 
 	 * 
 	 * @param service
 	 */
