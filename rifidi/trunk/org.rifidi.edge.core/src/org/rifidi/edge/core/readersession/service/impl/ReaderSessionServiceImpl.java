@@ -16,6 +16,7 @@ public class ReaderSessionServiceImpl implements ReaderSessionService {
 	private ReaderPluginService readerPluginService;
 	private ArrayList<ReaderSession> registry = new ArrayList<ReaderSession>();
 	private ArrayList<ReaderSessionListener> listeners = new ArrayList<ReaderSessionListener>();
+	private int sessionID=1;
 
 	public ReaderSessionServiceImpl(ReaderPluginService readerPluginService) {
 		this.readerPluginService = readerPluginService;
@@ -26,7 +27,7 @@ public class ReaderSessionServiceImpl implements ReaderSessionService {
 		@SuppressWarnings("unused")
 		ReaderPlugin readerPlugin = readerPluginService
 				.getReaderPlugin(readerInfo.getClass());
-		ReaderSession readerSession = new ReaderSessionImpl(readerInfo);
+		ReaderSession readerSession = new ReaderSessionImpl(readerInfo, sessionID++);
 		registry.add(readerSession);
 		
 		for(ReaderSessionListener l : listeners){
