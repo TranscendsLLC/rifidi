@@ -19,7 +19,7 @@ public class ExecutionThread {
 	private Connection connection;
 	private MessageQueue messageQueue;
 
-	private CommandExecutionListener readerSession;
+	private CommandExecutionListener commandExecutionListener;
 
 	private Thread thread;
 	private Command command;
@@ -37,7 +37,7 @@ public class ExecutionThread {
 			CommandExecutionListener readerSession) {
 		this.connection = connection;
 		this.messageQueue = messageQueue;
-		this.readerSession = readerSession;
+		this.commandExecutionListener = readerSession;
 	}
 
 	/**
@@ -46,7 +46,7 @@ public class ExecutionThread {
 	 */
 	public void start(final Command _command, final String _configuration,
 			final long _commandID) throws RifidiExecutionException {
-		if (running || thread.isAlive()) {
+		if (running || command != null){
 			logger.error("command " + this.commandID + "is still executing");
 			throw new RifidiExecutionException("Command " + this.commandID
 					+ " is still executing");
@@ -57,10 +57,12 @@ public class ExecutionThread {
 
 			@Override
 			public void run() {
+				logger.debug("Starting command");
 				status = command.start(connection, messageQueue,
 						_configuration, commandID);
-				readerSession.commandFinished(command, status);
+				commandExecutionListener.commandFinished(command, status);
 				command = null;
+				logger.debug("Command finished");
 			}
 		});
 		thread.setDaemon(true);
@@ -75,6 +77,7 @@ public class ExecutionThread {
 		if (command != null) {
 			command.stop();
 			if (force) {
+				logger.debug("Force shutdown");
 				try {
 					thread.join(5000);
 				} catch (InterruptedException e) {
@@ -83,6 +86,8 @@ public class ExecutionThread {
 				if (thread.isAlive()) {
 					thread.interrupt();
 					thread.stop();
+					commandExecutionListener.commandFinished(command, CommandReturnStatus.INTERRUPTED);
+					command = null;
 				}
 			}
 		}
