@@ -68,9 +68,12 @@ public class ReaderSessionImpl implements ReaderSession,
 	// Status
 	private ReaderSessionStatus readerSessionStatus = ReaderSessionStatus.OK;
 	private ConnectionStatus connectionStatus = ConnectionStatus.DISCONNECTED;
+	
+	private int readerSessionID;
 
-	public ReaderSessionImpl(ReaderInfo readerInfo) {
+	public ReaderSessionImpl(ReaderInfo readerInfo, int readerSessionID) {
 		this.readerInfo = readerInfo;
+		this.readerSessionID = readerSessionID;
 		ServiceRegistry.getInstance().service(this);
 	}
 
@@ -403,8 +406,7 @@ public class ReaderSessionImpl implements ReaderSession,
 	@Inject
 	public void setMessageService(MessageService messageService) {
 		this.messageService = messageService;
-		messageQueue = this.messageService.createMessageQueue(connectionManager
-				.toString());
+		messageQueue = this.messageService.createMessageQueue(Integer.toString(readerSessionID));
 	}
 
 	/**
