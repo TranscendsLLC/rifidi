@@ -73,9 +73,9 @@ public class AlienTestTagRead {
 		
 		try {
 			logger.debug("Testing the getTagList command");
-			readerSession.executeCommand("getTagList");
+			readerSession.executeCommand("getTagList",null);
 			
-			readerSession.stopCommand();
+			readerSession.stopCurCommand(false);
 		} catch (RifidiConnectionException e) {
 			throw new AssertionError(e);
 		} catch (RifidiCommandInterruptedException e) {
