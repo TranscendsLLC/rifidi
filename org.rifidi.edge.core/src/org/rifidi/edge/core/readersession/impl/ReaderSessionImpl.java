@@ -14,6 +14,7 @@ import org.rifidi.edge.core.communication.service.CommunicationStateListener;
 import org.rifidi.edge.core.communication.service.ConnectionService;
 import org.rifidi.edge.core.communication.service.ConnectionStatus;
 import org.rifidi.edge.core.exceptions.RifidiCommandInterruptedException;
+import org.rifidi.edge.core.exceptions.RifidiCommandNotFoundException;
 import org.rifidi.edge.core.exceptions.RifidiConnectionException;
 import org.rifidi.edge.core.exceptions.RifidiExecutionException;
 import org.rifidi.edge.core.messageQueue.MessageQueue;
@@ -151,7 +152,7 @@ public class ReaderSessionImpl implements ReaderSession,
 	// TODO: validate configuration XML String
 	@Override
 	public long executeCommand(String command, String configuration)
-			throws RifidiConnectionException, RifidiCommandInterruptedException {
+			throws RifidiConnectionException, RifidiCommandInterruptedException, RifidiCommandNotFoundException {
 
 		curCommand = new CommandWrapper();
 		commandID++;
@@ -223,7 +224,7 @@ public class ReaderSessionImpl implements ReaderSession,
 	}
 
 	private Command lookupCommand(String command)
-			throws RifidiCommandInterruptedException {
+			throws RifidiCommandInterruptedException, RifidiCommandNotFoundException {
 
 		CommandDesc commandDesc = null;
 		for (Class<? extends Command> commandClass : readerPluginService
@@ -266,6 +267,8 @@ public class ReaderSessionImpl implements ReaderSession,
 						throw new RifidiCommandInterruptedException(
 								"Command not found.", e);
 					}
+				}else{
+					throw new RifidiCommandNotFoundException("Command not found " + command);
 				}
 			}
 		}

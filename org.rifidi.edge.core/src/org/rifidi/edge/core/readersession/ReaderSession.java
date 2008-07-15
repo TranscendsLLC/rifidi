@@ -3,6 +3,7 @@ package org.rifidi.edge.core.readersession;
 import java.util.List;
 
 import org.rifidi.edge.core.exceptions.RifidiCommandInterruptedException;
+import org.rifidi.edge.core.exceptions.RifidiCommandNotFoundException;
 import org.rifidi.edge.core.exceptions.RifidiConnectionException;
 import org.rifidi.edge.core.readerplugin.ReaderInfo;
 import org.rifidi.edge.core.readersession.impl.enums.CommandStatus;
@@ -19,7 +20,7 @@ public interface ReaderSession {
 	public List<String> getAvailableCommandGroups();
 	
 	//TODO: Need a way to tell what exceptions cause a restart and ones that do not.
-	public long executeCommand(String command, String configuration) throws RifidiConnectionException, RifidiCommandInterruptedException;
+	public long executeCommand(String command, String configuration) throws RifidiConnectionException, RifidiCommandInterruptedException, RifidiCommandNotFoundException;
 	
 	public boolean stopCurCommand(boolean force);
 	
