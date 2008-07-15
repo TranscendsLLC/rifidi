@@ -18,8 +18,8 @@ import org.rifidi.edge.adminclient.annotations.Command;
 import org.rifidi.edge.adminclient.commands.ICommand;
 import org.rifidi.edge.adminclient.jms.JMSConsumerFactory;
 import org.rifidi.edge.core.readerplugin.ReaderInfo;
-import org.rifidi.edge.rmi.ReaderConnection.RemoteReaderConnection;
-import org.rifidi.edge.rmi.ReaderConnection.RemoteReaderConnectionRegistry;
+import org.rifidi.edge.core.rmi.readerconnection.RemoteReaderConnection;
+import org.rifidi.edge.core.rmi.readerconnection.RemoteReaderConnectionRegistry;
 
 /**
  * 
@@ -60,6 +60,7 @@ public class EdgeServerCommands implements ICommand {
 					.lookup(RemoteReaderConnectionRegistry.class.getName());
 
 		} catch (Exception e) {
+			e.printStackTrace();
 			return "Could not connect.";
 		}
 
@@ -107,7 +108,7 @@ public class EdgeServerCommands implements ICommand {
 							.size() + "\n");
 			for (RemoteReaderConnection reader : remoteReaderConnectionRegistry
 					.getAllReaderConnections()) {
-				retVal.append(reader.getTagQueueName() + ": "
+				retVal.append(reader.getMessageQueueName() + ": "
 						+ reader.getReaderInfo().getClass().getSimpleName()
 						+ " ID " + reader.getReaderInfo().getIpAddress() + ":"
 						+ reader.getReaderInfo().getPort() + " Status: "
@@ -130,9 +131,9 @@ public class EdgeServerCommands implements ICommand {
 					.getAllReaderConnections();
 			for (RemoteReaderConnection connection : connections) {
 				if (connection.getReaderState().equalsIgnoreCase("ERROR")) {
-//					System.out.print(connection.getReaderInfo().getReaderType()
-//							+ " " + connection.getReaderInfo().getIpAddress()
-//							+ ":" + connection.getReaderInfo().getPort());
+					// System.out.print(connection.getReaderInfo().getReaderType()
+					// + " " + connection.getReaderInfo().getIpAddress()
+					// + ":" + connection.getReaderInfo().getPort());
 
 					// TODO Find a better, more clean way of finding the type of
 					// error.
@@ -141,7 +142,7 @@ public class EdgeServerCommands implements ICommand {
 					 * will cause an error to get the cause of the error.
 					 */
 					try {
-						connection.startTagStream();
+						connection.startTagStream("");
 					} catch (RemoteException e) {
 						Exception e2 = e;
 						while ((e2 != null) && (e2 instanceof RemoteException)) {
@@ -217,7 +218,7 @@ public class EdgeServerCommands implements ICommand {
 						.get(selection - 1));
 				readerInfo = (ReaderInfo) readerInfoClazz.getConstructor(
 						new Class[0]).newInstance(new Object[0]);
-			//	System.out.println(readerInfo.getReaderType());
+				// System.out.println(readerInfo.getReaderType());
 				for (Method m : readerInfoClazz.getMethods()) {
 					if (m.getName().startsWith("set")) {
 						System.out.print(m.getName().substring(3) + ": ");
@@ -305,13 +306,6 @@ public class EdgeServerCommands implements ICommand {
 
 			}
 
-			try {
-				remoteReaderConnection.connect();
-			} catch (RemoteException e2) {
-				e2.printStackTrace();
-				return "ERROR";
-			}
-
 		} catch (Exception e) {
 			e.printStackTrace();
 			return "ERROR";
@@ -328,12 +322,7 @@ public class EdgeServerCommands implements ICommand {
 			for (RemoteReaderConnection readerConnection : remoteReaderConnectionRegistry
 					.getAllReaderConnections()) {
 				try {
-					if (readerConnection.getTagQueueName().equals(id)) {
-						try {
-							readerConnection.disconnect();
-						} catch (RemoteException e) {
-							e.printStackTrace();
-						}
+					if (readerConnection.getMessageQueueName().equals(id)) {
 						remoteReaderConnectionRegistry
 								.deleteReaderConnection(readerConnection);
 						return "ReaderConnection deleted";
@@ -355,7 +344,7 @@ public class EdgeServerCommands implements ICommand {
 		try {
 			for (RemoteReaderConnection readerConnection : remoteReaderConnectionRegistry
 					.getAllReaderConnections()) {
-				if (readerConnection.getTagQueueName().equals(id)) {
+				if (readerConnection.getMessageQueueName().equals(id)) {
 					remoteReaderConnection = readerConnection;
 					break;
 				}
@@ -369,7 +358,7 @@ public class EdgeServerCommands implements ICommand {
 		}
 
 		try {
-			remoteReaderConnection.startTagStream();
+			remoteReaderConnection.startTagStream("");
 		} catch (RemoteException e2) {
 			e2.printStackTrace();
 		}
@@ -399,7 +388,7 @@ public class EdgeServerCommands implements ICommand {
 		}
 
 		try {
-			remoteReaderConnection.stopTagStream();
+			remoteReaderConnection.stopCurCommand(false);
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}

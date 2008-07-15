@@ -11,9 +11,9 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.rifidi.edge.adminclient.testreaderthread.AbstractThread;
-import org.rifidi.edge.readerplugin.dummy.DummyReaderInfo;
-import org.rifidi.edge.rmi.ReaderConnection.RemoteReaderConnection;
-import org.rifidi.edge.rmi.ReaderConnection.RemoteReaderConnectionRegistry;
+import org.rifidi.edge.core.rmi.readerconnection.RemoteReaderConnection;
+import org.rifidi.edge.core.rmi.readerconnection.RemoteReaderConnectionRegistry;
+import org.rifidi.edge.readerplugin.dummy.plugin.DummyReaderInfo;
 
 /**
  * @author Jerry Maine - jerry@pramari.com
@@ -23,7 +23,7 @@ public class TestClientTest {
 	String hostname = "localhost";
 	int port = 1099;
 	BackgroundThread thread;
-	
+
 	@Before
 	public void setUp() throws Exception {
 		thread = new BackgroundThread("Background");
@@ -38,12 +38,10 @@ public class TestClientTest {
 	@Test
 	public void testClientTest() {
 
-
 		Registry registry = null;
-		
+
 		RemoteReaderConnectionRegistry remoteReaderConnectionRegistry = null;
-		
-		
+
 		try {
 			registry = LocateRegistry.getRegistry(hostname, port);
 		} catch (RemoteException e) {
@@ -63,31 +61,25 @@ public class TestClientTest {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-			
-		for (int x = 0; x < 200; x++){
-			
+
+		for (int x = 0; x < 200; x++) {
+
 			DummyReaderInfo dummyInfo1 = new DummyReaderInfo();
 			dummyInfo1.setIpAddress("127.0.0.1");
 			dummyInfo1.setPort(10000 + x);
-			
+
 			RemoteReaderConnection remoteReader1 = null;
 			try {
-				remoteReader1 = remoteReaderConnectionRegistry.createReaderConnection(dummyInfo1);
+				remoteReader1 = remoteReaderConnectionRegistry
+						.createReaderConnection(dummyInfo1);
 			} catch (RemoteException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 				Assert.fail();
 			}
-			
+
 			try {
-				remoteReader1.connect();
-			} catch (RemoteException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				Assert.fail();
-			}
-			try {
-				remoteReader1.startTagStream();
+				remoteReader1.startTagStream("");
 			} catch (RemoteException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -95,10 +87,10 @@ public class TestClientTest {
 			}
 		}
 	}
-	
+
 	private class BackgroundThread extends AbstractThread {
-		
-		protected BackgroundThread(String name){
+
+		protected BackgroundThread(String name) {
 			super(name);
 		}
 
@@ -130,8 +122,8 @@ public class TestClientTest {
 				e.printStackTrace();
 				running = false;
 			}
-			while(running){
-				//System.out.println("Getting reader connections");
+			while (running) {
+				// System.out.println("Getting reader connections");
 				try {
 					remoteReaderConnectionRegistry2.getAllReaderConnections();
 				} catch (RemoteException e) {
@@ -141,10 +133,10 @@ public class TestClientTest {
 				try {
 					Thread.sleep(50);
 				} catch (InterruptedException e) {
-					//e.printStackTrace();
+					// e.printStackTrace();
 				}
 			}
 		}
-		
+
 	}
 }
