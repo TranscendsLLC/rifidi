@@ -15,7 +15,7 @@ import org.rifidi.edge.core.readerplugin.ReaderInfo;
 import org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionManager;
 import org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionStreams;
 import org.rifidi.edge.core.readerplugin.protocol.CommunicationProtocol;
-import org.rifidi.edge.readerplugin.dummy.protocol.DummyCommunicationProtocol;
+import org.rifidi.edge.readerplugin.dummy.protocol.DummyCommunicationProtocolNew;
 
 /**
  * @author kyle
@@ -36,15 +36,14 @@ public class DummyConnectionManagerNew extends ConnectionManager {
 	/**
 	 * The communication protocol for the LLRP reader
 	 */
-	private DummyCommunicationProtocol communicationProtocol;
+	private DummyCommunicationProtocolNew communicationProtocol;
 
 	Log logger = LogFactory.getLog(DummyConnectionManagerNew.class);
 
 	public DummyConnectionManagerNew(ReaderInfo readerInfo) {
 		super(readerInfo);
 		this.readerInfo = readerInfo;
-		this.communicationProtocol = new DummyCommunicationProtocol(
-				(DummyReaderInfo) readerInfo);
+		this.communicationProtocol = new DummyCommunicationProtocolNew();
 	}
 
 	/*
