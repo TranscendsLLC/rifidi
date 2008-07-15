@@ -31,7 +31,15 @@ import org.rifidi.services.annotations.Inject;
 import org.rifidi.services.registry.ServiceRegistry;
 
 /**
+ * 
+ * The ReaderSession handles execution of commands to one physical reader. It
+ * listens to the Communication to figure out if a physical connection is
+ * established. It also listens to the Command to figure out when the command
+ * has finished
+ * 
+ * @author Andreas Huebner - Andreas@pramari.com
  * @author Jerry Maine - jerry@pramari.com
+ * @author kyle Neumeier - kyle@pramari.com
  * 
  */
 public class ReaderSessionImpl implements ReaderSession,
@@ -48,22 +56,18 @@ public class ReaderSessionImpl implements ReaderSession,
 	// Session Information
 	private ReaderInfo readerInfo;
 	private ConnectionManager connectionManager;
-
 	private Connection connection;
 	private MessageQueue messageQueue;
 
 	// CommandExecution
 	private CommandWrapper curCommand;
 	private ExecutionThread executionThread;
+	private CommandJournal commandJournal = new CommandJournal();
 	private long commandID = 0;
 
 	// Status
 	private ReaderSessionStatus readerSessionStatus = ReaderSessionStatus.OK;
 	private ConnectionStatus connectionStatus = ConnectionStatus.DISCONNECTED;
-
-	@SuppressWarnings("unused")
-	private CommandStatus commandExecutionStatus = CommandStatus.EXECUTING;
-	private CommandJournal commandJournal= new CommandJournal();
 
 	public ReaderSessionImpl(ReaderInfo readerInfo) {
 		this.readerInfo = readerInfo;
@@ -81,6 +85,10 @@ public class ReaderSessionImpl implements ReaderSession,
 		return readerSessionStatus;
 	}
 
+	/**
+	 * This method returns all the commands that this reader session is able to
+	 * execute
+	 */
 	@Override
 	public List<String> getAvailableCommands() {
 		List<String> commands = new ArrayList<String>();
@@ -95,6 +103,10 @@ public class ReaderSessionImpl implements ReaderSession,
 		return commands;
 	}
 
+	/**
+	 * This method returns all the commands in a specified group that a session
+	 * can execute
+	 */
 	@Override
 	public List<String> getAvailableCommands(String groupName) {
 		List<String> commands = new ArrayList<String>();
@@ -112,9 +124,12 @@ public class ReaderSessionImpl implements ReaderSession,
 		}
 		return commands;
 	}
-	
+
+	/**
+	 * This method returns all the command groups available
+	 */
 	@Override
-	public List<String> getAvailableCommandGroups(){
+	public List<String> getAvailableCommandGroups() {
 		Set<String> groups = new HashSet<String>();
 		CommandDesc commandDesc = null;
 		for (Class<? extends Command> commandClass : readerPluginService
@@ -129,73 +144,35 @@ public class ReaderSessionImpl implements ReaderSession,
 		return new ArrayList<String>(groups);
 	}
 
-	//TODO Implement firing of events.
-	//TODO: validate configuration XML String
+	// TODO Implement firing of events.
+	// TODO: validate configuration XML String
 	@Override
 	public long executeCommand(String command, String configuration)
 			throws RifidiConnectionException, RifidiCommandInterruptedException {
 
-		/*
-		 * Check if we currently run a command
-		 */
-		if (readerSessionStatus == ReaderSessionStatus.BUSY) {
+		curCommand = new CommandWrapper();
+		commandID++;
+		curCommand.setCommandID(commandID);
+		curCommand.setCommandName(command);
+		curCommand.setCommandStatus(CommandStatus.WAITING);
+
+		if (readerSessionStatus != ReaderSessionStatus.OK) {
 			throw new RifidiCommandInterruptedException(
-					"This reader is busy, please try this command again later.");
+					"Cannot execute command because Reader Session is in "
+							+ readerSessionStatus + " state");
 		}
 
 		/*
-		 * Life goes by a bit better with a bit of sanity checking...
+		 * Initialize the communication if not already done
 		 */
-
-		/*
-		 * Check for needed Services
-		 */
-		if (connectionService == null) {
-			readerSessionStatus = ReaderSessionStatus.ERROR;
-			throw new RifidiConnectionException("No communication service.");
-		}
-		if (readerPluginService == null) {
-			readerSessionStatus = ReaderSessionStatus.ERROR;
-			throw new RifidiConnectionException("No ReaderPlugin service.");
-		}
-		if (messageService == null) {
-			readerSessionStatus = ReaderSessionStatus.ERROR;
-			throw new RifidiConnectionException("No Message service.");
-		}
-
-		/*
-		 * If not initialized yet do so
-		 */
-		if (connectionManager == null)
-			connectionManager = readerPluginService.getReaderPlugin(
-					readerInfo.getClass()).getConnectionManager(readerInfo);
-		if (connection == null) {
-			connection = connectionService.createConnection(connectionManager,
-					readerInfo, this);
-		}
-		if (messageQueue == null)
-			messageQueue = messageService.createMessageQueue(connectionManager
-					.toString());
-
-		/*
-		 * Check if we are in an error state
-		 */
-		if (readerSessionStatus == ReaderSessionStatus.ERROR) {
-			// TODO find a way to tell a reason why we are in ERROR
-			throw new RifidiConnectionException("");
-		}
-		if (connectionStatus == ConnectionStatus.ERROR) {
-			throw new RifidiConnectionException(
-					"The connection to the reader is not valid anymore. (MAX_CONNECTION_ATTEMPTS)");
-		}
-
+		connect();
 		/*
 		 * Check if we are connected
 		 */
 		while (connectionStatus != ConnectionStatus.CONNECTED) {
 			try {
 				synchronized (this) {
-					logger.debug("Waiting for Connection"
+					logger.debug(" Reader Session waiting for Connection"
 							+ " Status to be Connected");
 					wait();
 				}
@@ -211,6 +188,40 @@ public class ReaderSessionImpl implements ReaderSession,
 		/*
 		 * lookup command
 		 */
+		Command com = lookupCommand(command);
+		curCommand.setCommand(com);
+
+		// Check if Execution Thread is Initialized
+		if (executionThread == null) {
+			executionThread = new ExecutionThread(connection, messageQueue,
+					this);
+		}
+
+		readerSessionStatus = ReaderSessionStatus.BUSY;
+		curCommand.setCommandStatus(CommandStatus.EXECUTING);
+		try {
+			executionThread.start(curCommand.getCommand(), configuration,
+					commandID);
+		} catch (RifidiExecutionException e) {
+			throw new RifidiCommandInterruptedException(
+					"Cannot execute command because Reader Session is in "
+							+ readerSessionStatus + " state");
+
+		}
+		logger.debug("Command given to execution thread");
+		return commandID;
+	}
+
+	private void connect() throws RifidiConnectionException {
+		if (connection == null) {
+			connection = connectionService.createConnection(connectionManager,
+					readerInfo, this);
+		}
+	}
+
+	private Command lookupCommand(String command)
+			throws RifidiCommandInterruptedException {
+
 		CommandDesc commandDesc = null;
 		for (Class<? extends Command> commandClass : readerPluginService
 				.getReaderPlugin(readerInfo.getClass()).getAvailableCommands()) {
@@ -224,11 +235,9 @@ public class ReaderSessionImpl implements ReaderSession,
 					// Create Command via reflection
 					Constructor<? extends Command> constructor;
 					try {
-						curCommand = new CommandWrapper();
 						constructor = commandClass.getConstructor();
-						curCommand.setCommand((Command) constructor.newInstance());
-						curCommand.setCommandName(command);
-						break;
+						// return command if we found it
+						return (Command) constructor.newInstance();
 					} catch (SecurityException e) {
 						e.printStackTrace();
 						throw new RifidiCommandInterruptedException(
@@ -258,76 +267,55 @@ public class ReaderSessionImpl implements ReaderSession,
 			}
 		}
 
-		// Check if Execution Thread is Initialized
-		if (executionThread == null) {
-			executionThread = new ExecutionThread(connection, messageQueue,
-					this);
-		}
+		return null;
 
-		try {
-			Thread.sleep(1000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		readerSessionStatus = ReaderSessionStatus.BUSY;
-		// EXECUTE THE COMMAND and generate commandID
-		commandID++;
-		curCommand.setCommandID(commandID);
-		try {
-			executionThread.start(curCommand.getCommand(), configuration, commandID);
-		} catch (RifidiExecutionException e) {
-			//TODO keep track of that Exception
-			e.printStackTrace();
-		}
-		logger.debug("Command given to execution thread");
-		return commandID;
 	}
 
-	//TODO: figure out return value
+	// TODO: figure out return value
 	@Override
 	public boolean stopCurCommand(boolean force) {
 		if (readerSessionStatus == ReaderSessionStatus.BUSY
 				|| readerSessionStatus == ReaderSessionStatus.ERROR) {
-			// TODO put commandstatus into Journal
 			logger.debug("Stoping Command.");
 			executionThread.stop(force);
+			curCommand.setCommandStatus(CommandStatus.INTERRUPTED);
 			curCommand = null;
 			readerSessionStatus = ReaderSessionStatus.OK;
 		}
 		return false;
 	}
-	
-	public boolean stopCurCommand(boolean force, long commandID){
-		if(commandID == this.commandID){
+
+	public boolean stopCurCommand(boolean force, long commandID) {
+		if (commandID == this.commandID) {
 			return stopCurCommand(force);
-		}else{
+		} else {
 			return false;
 		}
 	}
-	
-	//TODO: what should this return if we are not executing anything?
+
+	// TODO: what should this return if we are not executing anything?
 	@Override
-	public String curExecutingCommand(){
+	public String curExecutingCommand() {
 		return curCommand.getCommandName();
 	}
+
 	@Override
-	public long curExecutingCommandID(){
+	public long curExecutingCommandID() {
 		return curCommand.getCommandID();
 	}
-	
+
 	@Override
-	public CommandStatus commandStatus(long id){
-		return this.commandJournal.getCommandStatus(id);
-	}
-	@Override
-	public CommandStatus commandStatus(){
+	public CommandStatus commandStatus() {
 		return curCommand.getCommandStatus();
 	}
-	
+
 	@Override
-	public String getMessageQueueName(){
+	public CommandStatus commandStatus(long id) {
+		return this.commandJournal.getCommandStatus(id);
+	}
+
+	@Override
+	public String getMessageQueueName() {
 		return this.messageQueue.getName();
 	}
 
@@ -335,10 +323,15 @@ public class ReaderSessionImpl implements ReaderSession,
 	public ReaderInfo getReaderInfo() {
 		return readerInfo;
 	}
-	
+
 	@Override
-	public void resetReaderSession(){
-		//TODO implement this
+	public void resetReaderSession() {
+		try {
+			connect();
+			readerSessionStatus = ReaderSessionStatus.OK;
+		} catch (RifidiConnectionException ex) {
+			logger.debug("Cannot reset Reader session");
+		}
 	}
 
 	/*
@@ -350,7 +343,12 @@ public class ReaderSessionImpl implements ReaderSession,
 	public void commandFinished(Command command, CommandReturnStatus status) {
 		// TODO implement Command Execution End
 		readerSessionStatus = ReaderSessionStatus.OK;
-		// commandJournal.put(command, status);
+
+		// only update commandStatus if the command status has not already been
+		// changed from executing
+		if (commandJournal.getCommandStatus(command) == CommandStatus.EXECUTING) {
+			commandJournal.updateCommand(command, status);
+		}
 	}
 
 	/*
@@ -377,6 +375,7 @@ public class ReaderSessionImpl implements ReaderSession,
 	@Override
 	public void error() {
 		connectionStatus = ConnectionStatus.ERROR;
+		readerSessionStatus = ReaderSessionStatus.ERROR;
 		// we need to notify in case we are waiting for the sate to change to
 		// connected
 		synchronized (this) {
@@ -404,6 +403,8 @@ public class ReaderSessionImpl implements ReaderSession,
 	@Inject
 	public void setMessageService(MessageService messageService) {
 		this.messageService = messageService;
+		messageQueue = this.messageService.createMessageQueue(connectionManager
+				.toString());
 	}
 
 	/**
@@ -412,6 +413,8 @@ public class ReaderSessionImpl implements ReaderSession,
 	@Inject
 	public void setReaderPluginService(ReaderPluginService readerPluginService) {
 		this.readerPluginService = readerPluginService;
+		connectionManager = readerPluginService.getReaderPlugin(
+				readerInfo.getClass()).getConnectionManager(readerInfo);
 	}
 
 	/*
