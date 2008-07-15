@@ -115,6 +115,7 @@ public class EdgeServerCommands implements ICommand {
 						+ reader.getReaderState() + "\n");
 			}
 		} catch (Exception e) {
+			e.printStackTrace();
 			return "Error while recieving active connections";
 		}
 		if (retVal.length() <= 0)
