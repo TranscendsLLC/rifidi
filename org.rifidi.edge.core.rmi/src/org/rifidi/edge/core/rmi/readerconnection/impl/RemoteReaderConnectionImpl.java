@@ -44,7 +44,7 @@ public class RemoteReaderConnectionImpl implements RemoteReaderConnection {
 	 */
 	@Override
 	public String commandStatus(long id) {
-		return readerSession.commandStatus(id);
+		return readerSession.commandStatus(id).toString();
 	}
 
 	/*
