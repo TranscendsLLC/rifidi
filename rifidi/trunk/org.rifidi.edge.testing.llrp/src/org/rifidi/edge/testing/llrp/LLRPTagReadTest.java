@@ -33,10 +33,9 @@ public class LLRPTagReadTest {
 		ri.setIpAddress("192.168.1.104");
 		ri.setPort(5084);
 		ri.setMaxNumConnectionsAttemps(100);
-		ReaderSession readerSession = readerSessionService
-				.createReaderSesssion(ri);
+		ReaderSession readerSession = readerSessionService.createReaderSession(ri);
 		try {
-			readerSession.executeCommand("StreamTags");
+			readerSession.executeCommand("StreamTags", null);
 		} catch (RifidiConnectionException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
