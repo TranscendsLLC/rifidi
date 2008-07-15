@@ -118,7 +118,7 @@ public class PersistanceServiceImpl implements PersistenceService,
 			pri.removeReader(readerSession.getReaderInfo());
 		} catch (RifidiReaderInfoNotFoundException e) {
 			// TODO: Should we do anything else here? If this happens something
-			// seriously went wrong?
+			// seriously went wrong?  We should think about this.  
 			e.printStackTrace();
 		}
 	}
