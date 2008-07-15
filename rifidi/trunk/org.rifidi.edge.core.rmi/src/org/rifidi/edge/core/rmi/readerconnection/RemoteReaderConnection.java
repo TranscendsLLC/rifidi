@@ -97,12 +97,12 @@ public interface RemoteReaderConnection extends Remote {
 	 *            command id assigned at the execution
 	 * @return String representing the status of the command execution
 	 */
-	public String commandStatus(long id);
+	public String commandStatus(long id) throws RemoteException;
 
 	/**
 	 * @return
 	 */
-	public String commandStatus();
+	public String commandStatus() throws RemoteException;
 	
 	/**
 	 * Get the name of the MessageQueue
