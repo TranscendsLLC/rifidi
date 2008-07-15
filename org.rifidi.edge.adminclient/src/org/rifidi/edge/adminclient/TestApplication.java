@@ -1,6 +1,7 @@
 package org.rifidi.edge.adminclient;
 
 import org.rifidi.edge.adminclient.commands.edgeServer.EdgeServerCommands;
+import org.rifidi.edge.adminclient.commands.edgeServer.NewEdgeServerCommands;
 
 public class TestApplication {
 	
@@ -12,6 +13,7 @@ public class TestApplication {
 	
 	public TestApplication() {
 		console = new Console();
-		console.startConsole(new EdgeServerCommands());
+		//console.startConsole(new EdgeServerCommands());
+		console.startConsole(new NewEdgeServerCommands());
 	}
 }
