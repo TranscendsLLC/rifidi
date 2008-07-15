@@ -24,6 +24,13 @@ public class StreamTagsTest implements Command {
 			try {
 				connection.sendMessage("GET_SOMETHING\n");
 				logger.debug((String) connection.recieveMessage());
+				
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 
 			} catch (IOException e) {
 				return CommandReturnStatus.UNSUCCESSFUL;
