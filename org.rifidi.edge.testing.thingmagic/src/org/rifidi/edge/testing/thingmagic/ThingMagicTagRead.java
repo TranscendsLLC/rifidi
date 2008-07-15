@@ -5,7 +5,6 @@ import java.io.ByteArrayOutputStream;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.rifidi.edge.core.exceptions.RifidiCommandInterruptedException;
 import org.rifidi.edge.core.exceptions.RifidiConnectionException;
@@ -106,10 +105,10 @@ public class ThingMagicTagRead {
 		info.setPort(8080);
 		info.setMaxNumConnectionsAttemps(10);
 		ReaderSession readerSession = readerSessionService
-				.createReaderSesssion(info);
+				.createReaderSession(info);
 
 		try {
-			readerSession.executeCommand("TagStreaming");
+			readerSession.executeCommand("TagStreaming", null);
 		} catch (RifidiConnectionException e) {
 			// TODO Auto-generated catch block
 			// e.printStackTrace();
@@ -128,7 +127,7 @@ public class ThingMagicTagRead {
 		} catch (InterruptedException e) {
 
 		}
-		readerSession.stopCommand();
+		readerSession.stopCurCommand(false);
 	}
 
 //	@Test
