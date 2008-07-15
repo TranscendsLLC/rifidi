@@ -6,6 +6,7 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.exceptions.RifidiCommandInterruptedException;
+import org.rifidi.edge.core.exceptions.RifidiCommandNotFoundException;
 import org.rifidi.edge.core.exceptions.RifidiConnectionException;
 import org.rifidi.edge.core.readerplugin.ReaderInfo;
 import org.rifidi.edge.core.readersession.ReaderSession;
@@ -93,7 +94,10 @@ public class RemoteReaderConnectionImpl implements RemoteReaderConnection {
 			throw new RemoteException("RifidiConnectionException", e);
 		} catch (RifidiCommandInterruptedException e) {
 			logger.error("RifidiCommandInterruptedException", e);
-			throw new RemoteException("RifidiConnectionException", e);
+			throw new RemoteException("RifidiCommandInterruptedException", e);
+		} catch (RifidiCommandNotFoundException e) {
+			logger.error("RifidiCommandNotFoundException", e);
+			throw new RemoteException("RifidiCommandNotFoundException", e);
 		}
 	}
 
@@ -183,6 +187,9 @@ public class RemoteReaderConnectionImpl implements RemoteReaderConnection {
 		} catch (RifidiCommandInterruptedException e) {
 			logger.error("RifidiCommandInterruptedException", e);
 			throw new RemoteException("RifidiCommandInterruptedException", e);
+		} catch (RifidiCommandNotFoundException e) {
+			logger.error("RifidiCommandNotFoundException", e);
+			throw new RemoteException("RifidiCommandNotFoundException", e);
 		}
 	}
 
