@@ -101,7 +101,7 @@ public class DummyTagRead {
 		info.setIpAddress("localhost");
 		info.setPort(8080);
 		ReaderSession readerSession = readerSessionService
-				.createReaderSesssion(info);
+				.createReaderSession(info);
 
 		try {
 			logger.debug(ObjectToXML.convertToXML(info));
@@ -110,7 +110,7 @@ public class DummyTagRead {
 			//e1.printStackTrace();
 		}
 		try {
-			readerSession.executeCommand("GetTagsCurrentlyOnAntennas");
+			readerSession.executeCommand("GetTagsCurrentlyOnAntennas", null);
 		} catch (RifidiConnectionException e) {
 			// TODO Auto-generated catch block
 			//e.printStackTrace();
@@ -132,16 +132,16 @@ public class DummyTagRead {
 		info.setIpAddress("localhost");
 		info.setPort(8080);
 		ReaderSession readerSession = readerSessionService
-				.createReaderSesssion(info);
+				.createReaderSession(info);
 		
 		ReaderInfo info2 = new DummyReaderInfo();
 		info2.setIpAddress("localhost");
 		info2.setPort(8080);
 		ReaderSession readerSession2 = readerSessionService
-				.createReaderSesssion(info2);
+				.createReaderSession(info2);
 		
 		try {
-			readerSession.executeCommand("TagStreaming");
+			readerSession.executeCommand("TagStreaming", null);
 		} catch (RifidiConnectionException e) {
 			throw new AssertionError(e);
 		} catch (RifidiCommandInterruptedException e) {
@@ -150,7 +150,7 @@ public class DummyTagRead {
 		}
 		
 		try {
-			readerSession2.executeCommand("TagStreaming");
+			readerSession2.executeCommand("TagStreaming", null);
 		} catch (RifidiConnectionException e) {
 			throw new AssertionError(e);
 		} catch (RifidiCommandInterruptedException e) {
@@ -162,8 +162,8 @@ public class DummyTagRead {
 		} catch (InterruptedException e) {
 		}
 		
-		readerSession.stopCommand();
-		readerSession2.stopCommand();
+		readerSession.stopCurCommand(false);
+		readerSession2.stopCurCommand(false);
 	}
 	
 	@Inject
