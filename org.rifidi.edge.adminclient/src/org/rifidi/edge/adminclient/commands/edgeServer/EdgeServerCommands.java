@@ -338,6 +338,33 @@ public class EdgeServerCommands implements ICommand {
 		return "RemoteReaderConnection not found";
 	}
 
+	@Command(name = "execute", arguments = { "connection id", "commandName" })
+	public String executeCommand(String id, String commandName) {
+		RemoteReaderConnection remoteReaderConnection = null;
+		try {
+			for (RemoteReaderConnection readerConnection : remoteReaderConnectionRegistry
+					.getAllReaderConnections()) {
+				if (readerConnection.getMessageQueueName().equals(id)) {
+					remoteReaderConnection = readerConnection;
+					break;
+				}
+			}
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+		if (remoteReaderConnection == null) {
+			return "ERROR. Connection not found";
+		}
+		try {
+			remoteReaderConnection.executeCommand(commandName, "");
+			return "Command started";
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+
 	@Command(name = "getTagReads", arguments = { "id", "count" })
 	public String getTagReads(String id, String count) {
 

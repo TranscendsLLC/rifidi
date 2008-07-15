@@ -306,6 +306,61 @@ public class NewEdgeServerCommands implements ICommand {
 		return "RemoteReaderConnection not found";
 	}
 
+	@Command(name = "execute", arguments = { "connection id", "commandName" })
+	public String executeCommand(String id, String commandName) {
+		RemoteReaderConnection remoteReaderConnection = null;
+		try {
+			for (RemoteReaderConnection readerConnection : remoteReaderConnectionRegistry
+					.getAllReaderConnections()) {
+				if (readerConnection.getMessageQueueName().equals(id)) {
+					remoteReaderConnection = readerConnection;
+					break;
+				}
+			}
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+		if (remoteReaderConnection == null) {
+			return "ERROR. Connection not found";
+		}
+		try {
+			remoteReaderConnection.executeCommand(commandName, "");
+			return "Command started";
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	@Command(name="stop",arguments= {"connection id"})
+	public String stopExecution(String id){
+		RemoteReaderConnection remoteReaderConnection = null;
+		try {
+			for (RemoteReaderConnection readerConnection : remoteReaderConnectionRegistry
+					.getAllReaderConnections()) {
+				if (readerConnection.getMessageQueueName().equals(id)) {
+					remoteReaderConnection = readerConnection;
+					break;
+				}
+			}
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+		if (remoteReaderConnection == null) {
+			return "ERROR. Connection not found";
+		}
+		try {
+			remoteReaderConnection.stopCurCommand(false);
+			return "Command stopped";
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return "ERROR";
+	}
+
+	
 	@Command(name = "getTagReads", arguments = { "id", "count" })
 	public String getTagReads(String id, String count) {
 
@@ -365,7 +420,7 @@ public class NewEdgeServerCommands implements ICommand {
 	}
 
 	@Command(name = "getCommandGroups", arguments = { "ConnectionID"})
-	public String getCommandGroups(String ID, String groupName) {
+	public String getCommandGroups(String ID) {
 		if (remoteReaderConnectionRegistry == null) {
 			return "Error. No Connection";
 		}
@@ -384,10 +439,44 @@ public class NewEdgeServerCommands implements ICommand {
 			}
 			
 			List<String> groups = readerConnection.getAvailableCommandGroups();
+			System.out.println("# CommandGroups found " + groups.size());
 			StringBuffer buffer = new StringBuffer();
 			for(String group: groups)
 			{
-				buffer.append(group);
+				buffer.append(group + "\n");
+			}
+			return buffer.toString();
+		} catch (RemoteException e) {
+			e.printStackTrace();
+			return "ERROR. " + e.getMessage();
+		}
+	}
+	
+	@Command(name = "getGroup", arguments = { "ConnectionID", "Groupname"})
+	public String getCommandsForGroup(String ID, String groupname) {
+		if (remoteReaderConnectionRegistry == null) {
+			return "Error. No Connection";
+		}
+
+		RemoteReaderConnection readerConnection = null;
+		try {
+			for (RemoteReaderConnection connection : remoteReaderConnectionRegistry
+					.getAllReaderConnections()) {
+				if (connection.getMessageQueueName().equals(ID)) {
+					readerConnection = connection;
+				}
+			}
+			
+			if (readerConnection == null) {
+				return "ERROR." + " RemoteReaderConnection not found";
+			}
+			
+			List<String> groups = readerConnection.getAvailableCommands(groupname);
+			System.out.println("# Commands in Group found " + groups.size());
+			StringBuffer buffer = new StringBuffer();
+			for(String group: groups)
+			{
+				buffer.append(group + "\n");
 			}
 			return buffer.toString();
 		} catch (RemoteException e) {
