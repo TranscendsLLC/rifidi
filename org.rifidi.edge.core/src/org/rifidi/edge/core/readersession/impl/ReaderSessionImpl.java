@@ -2,7 +2,10 @@ package org.rifidi.edge.core.readersession.impl;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -49,25 +52,85 @@ public class ReaderSessionImpl implements ReaderSession,
 	private MessageQueue messageQueue;
 
 	// CommandExecution
-	private Command curCommand;
+	private CommandWrapper curCommand;
 	private ExecutionThread executionThread;
+	private long commandID = 0;
 
 	// Status
 	private ReaderSessionStatus readerSessionStatus = ReaderSessionStatus.OK;
 	private ConnectionStatus connectionStatus = ConnectionStatus.DISCONNECTED;
 
-	private long commandID = 0;
 	private CommandStatus commandExecutionStatus = CommandStatus.EXECUTING;
-	private HashMap<Command, CommandStatus> commandJournal = new HashMap<Command, CommandStatus>();
+	private CommandJournal commandJournal= new CommandJournal();
 
 	public ReaderSessionImpl(ReaderInfo readerInfo) {
 		this.readerInfo = readerInfo;
 		ServiceRegistry.getInstance().service(this);
 	}
 
-	// TODO Implement firing of events.
+	/*
+	 * =====================================================================
+	 * READER SESSION METHODS
+	 * =====================================================================
+	 */
+
 	@Override
-	public long executeCommand(String command)
+	public ReaderSessionStatus getStatus() {
+		return readerSessionStatus;
+	}
+
+	@Override
+	public List<String> getAvailableCommands() {
+		List<String> commands = new ArrayList<String>();
+		CommandDesc commandDesc = null;
+		for (Class<? extends Command> commandClass : readerPluginService
+				.getReaderPlugin(readerInfo.getClass()).getAvailableCommands()) {
+			commandDesc = commandClass.getAnnotation(CommandDesc.class);
+			if (commandDesc != null) {
+				commands.add(commandDesc.name());
+			}
+		}
+		return commands;
+	}
+
+	@Override
+	public List<String> getAvailableCommands(String groupName) {
+		List<String> commands = new ArrayList<String>();
+		CommandDesc commandDesc = null;
+		for (Class<? extends Command> commandClass : readerPluginService
+				.getReaderPlugin(readerInfo.getClass()).getAvailableCommands()) {
+			commandDesc = commandClass.getAnnotation(CommandDesc.class);
+			if (commandDesc != null) {
+				for (String g : commandDesc.groups()) {
+					if (g.equals(groupName)) {
+						commands.add(commandDesc.name());
+					}
+				}
+			}
+		}
+		return commands;
+	}
+	
+	@Override
+	public List<String> getAvailableCommandGroups(){
+		Set<String> groups = new HashSet<String>();
+		CommandDesc commandDesc = null;
+		for (Class<? extends Command> commandClass : readerPluginService
+				.getReaderPlugin(readerInfo.getClass()).getAvailableCommands()) {
+			commandDesc = commandClass.getAnnotation(CommandDesc.class);
+			if (commandDesc != null) {
+				for (String g : commandDesc.groups()) {
+					groups.add(g);
+				}
+			}
+		}
+		return new ArrayList<String>(groups);
+	}
+
+	//TODO Implement firing of events.
+	//TODO: validate configuration XML String
+	@Override
+	public long executeCommand(String command, String configuration)
 			throws RifidiConnectionException, RifidiCommandInterruptedException {
 
 		/*
@@ -159,8 +222,10 @@ public class ReaderSessionImpl implements ReaderSession,
 					// Create Command via reflection
 					Constructor<? extends Command> constructor;
 					try {
+						curCommand = new CommandWrapper();
 						constructor = commandClass.getConstructor();
-						curCommand = (Command) constructor.newInstance();
+						curCommand.setCommand((Command) constructor.newInstance());
+						curCommand.setCommandName(command);
 						break;
 					} catch (SecurityException e) {
 						e.printStackTrace();
@@ -207,31 +272,66 @@ public class ReaderSessionImpl implements ReaderSession,
 		readerSessionStatus = ReaderSessionStatus.BUSY;
 		// EXECUTE THE COMMAND and generate commandID
 		commandID++;
-		executionThread.start(curCommand,commandID);
+		curCommand.setCommandID(commandID);
+		executionThread.start(curCommand.getCommand(), commandID);
 		logger.debug("Command given to execution thread");
 		return commandID;
 	}
 
+	//TODO: figure out return value
 	@Override
-	public void stopCommand() {
+	public boolean stopCurCommand(boolean force) {
 		if (readerSessionStatus == ReaderSessionStatus.BUSY
 				|| readerSessionStatus == ReaderSessionStatus.ERROR) {
 			// TODO put commandstatus into Journal
 			logger.debug("Stoping Command.");
-			curCommand.stop();
+			executionThread.stop(force);
 			curCommand = null;
 			readerSessionStatus = ReaderSessionStatus.OK;
 		}
+		return false;
+	}
+	
+	public boolean stopCurCommand(boolean force, long commandID){
+		if(commandID == this.commandID){
+			return stopCurCommand(force);
+		}else{
+			return false;
+		}
+	}
+	
+	//TODO: what should this return if we are not executing anything?
+	@Override
+	public String curExecutingCommand(){
+		return curCommand.getCommandName();
+	}
+	@Override
+	public long curExecutingCommandID(){
+		return curCommand.getCommandID();
+	}
+	
+	@Override
+	public CommandStatus commandStatus(long id){
+		return this.commandJournal.getCommandStatus(id);
+	}
+	@Override
+	public CommandStatus commandStatus(){
+		return curCommand.getCommandStatus();
+	}
+	
+	@Override
+	public String getMessageQueueName(){
+		return this.messageQueue.getName();
 	}
 
 	@Override
 	public ReaderInfo getReaderInfo() {
 		return readerInfo;
 	}
-
+	
 	@Override
-	public ReaderSessionStatus getStatus() {
-		return readerSessionStatus;
+	public void resetReaderSession(){
+		//TODO implement this
 	}
 
 	/*
@@ -316,7 +416,7 @@ public class ReaderSessionImpl implements ReaderSession,
 	public void cleanUP() {
 		connectionService.destroyConnection(connection, this);
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -327,8 +427,4 @@ public class ReaderSessionImpl implements ReaderSession,
 		// TODO think about cleaning that up
 	}
 
-	@Override
-	public String getQueueName() {
-		return messageQueue.getName();
-	}
 }

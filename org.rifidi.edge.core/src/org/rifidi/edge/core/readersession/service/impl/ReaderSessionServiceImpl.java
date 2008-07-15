@@ -31,7 +31,7 @@ public class ReaderSessionServiceImpl implements ReaderSessionService {
 
 	@Override
 	public void destroyReaderSession(ReaderSession readerSession) {
-		readerSession.stopCommand();
+		readerSession.stopCurCommand(true);
 		if (readerSession instanceof ReaderSessionImpl) {
 			ReaderSessionImpl readerSessionImpl = (ReaderSessionImpl) readerSession;
 			readerSessionImpl.cleanUP();
