@@ -15,6 +15,8 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -23,8 +25,9 @@ import javax.xml.bind.Unmarshaller;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.rifidi.edge.readerplugin.alien.AlienReaderInfo;
-import org.rifidi.edge.readerplugin.llrp.plugin.LLRPReaderInfo;
+import org.rifidi.edge.core.readerplugin.service.ReaderPluginService;
+import org.rifidi.services.annotations.Inject;
+import org.rifidi.services.registry.ServiceRegistry;
 import org.w3c.dom.Node;
 
 /**
@@ -39,13 +42,17 @@ public class JAXBUtility {
 	 */
 	private static Log logger = LogFactory.getLog(JAXBUtility.class);
 
-	public static final String FILE_NAME = "cuddles.xml";
+	private File file = null;
+
+	/**
+	 * 
+	 */
+	private ReaderPluginService readerPluginService;
 
 	/**
 	 * The ReaderPluginRegistryService, which we use to get the list of classes.
 	 */
 	// private ReaderPluginRegistryService rprs;
-	
 	/**
 	 * The instance of the JAXBUtility.
 	 */
@@ -55,7 +62,7 @@ public class JAXBUtility {
 	 * Private constructor.
 	 */
 	private JAXBUtility() {
-		//ServiceRegistry.getInstance().service(this);
+		ServiceRegistry.getInstance().service(this);
 	}
 
 	/**
@@ -68,17 +75,6 @@ public class JAXBUtility {
 	}
 
 	/**
-	 * Set the ReaderPluginRegistryService via injection.
-	 * 
-	 * @param rprs
-	 *            the rprs to set
-	 */
-	// @Inject
-	// public void setRprs(ReaderPluginRegistryService rprs) {
-	// this.rprs = rprs;
-	// }
-	
-	/**
 	 * Loads an object out of xml.
 	 * 
 	 * @param xml
@@ -90,9 +86,20 @@ public class JAXBUtility {
 	public Object load(Node xml) throws JAXBException {
 		JAXBContext context;
 
-		// FIXME: Broken, Oh the pain, please fix meeeeeee!
-		context = JAXBContext.newInstance(new Class[] { AlienReaderInfo.class,
-				LLRPReaderInfo.class });
+		List<String> classStringRegister = readerPluginService
+				.getAllReaderInfos();
+		List<Class> classRegister = new ArrayList<Class>();
+
+		for (String s : classStringRegister) {
+			try {
+				classRegister.add(Class.forName(s));
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			}
+		}
+
+		context = JAXBContext.newInstance(classRegister
+				.toArray(new Class[classRegister.size()]));
 
 		Unmarshaller unmarshaller = context.createUnmarshaller();
 
@@ -109,12 +116,22 @@ public class JAXBUtility {
 	public Node save(Object o, Node parent) {
 		JAXBContext context;
 		logger.debug("Just before the try in save()");
-
 		try {
 
-			// FIXME: Broken, Oh the pain, please fix meeeeeee!
-			context = JAXBContext.newInstance(new Class[] {
-					AlienReaderInfo.class, LLRPReaderInfo.class });
+			List<String> classStringRegister = readerPluginService
+					.getAllReaderInfos();
+			List<Class> classRegister = new ArrayList<Class>();
+
+			for (String s : classStringRegister) {
+				try {
+					classRegister.add(Class.forName(s));
+				} catch (ClassNotFoundException e) {
+					e.printStackTrace();
+				}
+			}
+
+			context = JAXBContext.newInstance(classRegister
+					.toArray(new Class[classRegister.size()]));
 			Marshaller m = context.createMarshaller();
 			m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
 
@@ -202,12 +219,29 @@ public class JAXBUtility {
 	 * @return
 	 * @throws FileNotFoundException
 	 */
-	public static File getXMLFile() throws FileNotFoundException {
-		File file = new File(FILE_NAME);
-		if (file.exists()) {
-			return file;
-		} else {
-			throw new FileNotFoundException();
+	public File getXMLFile() {
+		return file;
+	}
+
+	public void setFile(String path) throws IOException {
+		file = new File(path);
+		if (!file.exists()) {
+			try {
+				file.createNewFile();
+			} catch (IOException e) {
+				throw e;
+			}
 		}
+	}
+
+	/**
+	 * Set the ReaderPluginRegistryService via injection.
+	 * 
+	 * @param rprs
+	 *            the rprs to set
+	 */
+	@Inject
+	public void setReaderPluginService(ReaderPluginService readerPluginService) {
+		this.readerPluginService = readerPluginService;
 	}
 }

@@ -11,7 +11,6 @@
 package org.rifidi.edge.persistence.xml;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -334,11 +333,9 @@ public class PersistedReaderInfo {
 	 */
 	public void loadFromFile() {
 		File xmlFile = null;
-		try {
-			xmlFile = JAXBUtility.getXMLFile();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
+		
+		xmlFile = JAXBUtility.getInstance().getXMLFile();
+
 		if (xmlFile != null) {
 			logger.debug("FILE NOT NULL, CREATING NEW DOCUMENT");
 			this.doc = this.createDocument(xmlFile);
