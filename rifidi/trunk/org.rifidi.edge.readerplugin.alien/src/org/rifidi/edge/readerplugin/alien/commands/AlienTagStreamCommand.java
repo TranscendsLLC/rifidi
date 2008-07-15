@@ -31,10 +31,10 @@ import org.rifidi.edge.core.readerplugin.messages.impl.TagMessage;
  * 
  * @author Matthew Dean - matt@pramari.com
  */
-@CommandDesc(name = "getTagList")
+@CommandDesc(name = "TagStreaming")
 public class AlienTagStreamCommand implements Command {
 
-	@SuppressWarnings("unused")
+	
 	private boolean running = false;
 
 	private static final Log logger = LogFactory
@@ -59,23 +59,23 @@ public class AlienTagStreamCommand implements Command {
 			connection.sendMessage(AlienCommandList.TAG_LIST_CUSTOM_FORMAT);
 			connection.recieveMessage();
 
-			// /while (running) {
+			while (running) {
 
-			connection.sendMessage(AlienCommandList.TAG_LIST);
-			String tag_msg = (String) connection.recieveMessage();
+				connection.sendMessage(AlienCommandList.TAG_LIST);
+				String tag_msg = (String) connection.recieveMessage();
+	
+				List<TagMessage> tagList = this.parseString(tag_msg);
+	
+				for (TagMessage m : tagList) {
+					messageQueue.addMessage(m);
+				}
 
-			List<TagMessage> tagList = this.parseString(tag_msg);
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+				}
 
-			for (TagMessage m : tagList) {
-				messageQueue.addMessage(m);
 			}
-
-			// try {
-			// Thread.sleep(1000);
-			// } catch (InterruptedException e) {
-			// }
-
-			// }
 		} catch (RifidiMessageQueueException e) {
 			e.printStackTrace();
 			return CommandReturnStatus.INTERRUPTED;
