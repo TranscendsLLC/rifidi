@@ -3,92 +3,89 @@ package org.rifidi.edge.core.readersession.impl;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.communication.Connection;
+import org.rifidi.edge.core.exceptions.RifidiExecutionException;
 import org.rifidi.edge.core.messageQueue.MessageQueue;
 import org.rifidi.edge.core.readerplugin.commands.Command;
 import org.rifidi.edge.core.readerplugin.commands.CommandReturnStatus;
 
-public class ExecutionThread implements Runnable {
+/**
+ * @author Andreas Huebner - andreas@pramari.com
+ * 
+ */
+public class ExecutionThread {
 
 	private Log logger = LogFactory.getLog(ExecutionThread.class);
-
-	private Thread thread;
 
 	private Connection connection;
 	private MessageQueue messageQueue;
 
-	private Command command;
-	@SuppressWarnings("unused")
-	private CommandReturnStatus status;
-
 	private CommandExecutionListener readerSession;
 
-	private boolean running = true;
-
+	private Thread thread;
+	private Command command;
 	private long commandID;
+	private CommandReturnStatus status;
 
+	private boolean running = false;
+
+	/**
+	 * @param connection
+	 * @param messageQueue
+	 * @param readerSession
+	 */
 	public ExecutionThread(Connection connection, MessageQueue messageQueue,
 			CommandExecutionListener readerSession) {
 		this.connection = connection;
 		this.messageQueue = messageQueue;
 		this.readerSession = readerSession;
-		thread = new Thread(this, "ExecutionThread: " + messageQueue.getName());
+	}
+
+	/**
+	 * @param command
+	 * @param commandID
+	 */
+	public void start(final Command _command, final String _configuration,
+			final long _commandID) throws RifidiExecutionException {
+		if (running || thread.isAlive()) {
+			logger.error("command " + this.commandID + "is still executing");
+			throw new RifidiExecutionException("Command " + this.commandID
+					+ " is still executing");
+		}
+		this.command = _command;
+		this.commandID = _commandID;
+		thread = new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+				status = command.start(connection, messageQueue,
+						_configuration, commandID);
+				readerSession.commandFinished(command, status);
+				command = null;
+			}
+		});
+		thread.setDaemon(true);
 		thread.start();
 	}
 
-	public void start(Command command, long commandID) {
-		// TODO think if this should be really a global variable
-		this.commandID = commandID;
-		this.command = command;
-
-		synchronized (this) {
-			notify();
-		}
-	}
-
+	/**
+	 * @param force
+	 */
+	@SuppressWarnings("deprecation")
 	public void stop(boolean force) {
-		running = false;
-		command.stop();
-		try {
-			thread.join(5000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		if (thread.isAlive()) {
-			thread.interrupt();
-		}
-		command = null;
-	}
-	
-
-
-	@Override
-	public void run() {
-		while (running)
-			try {
-				if (command != null) {
-					try {
-						logger.debug("starting command");
-						// TODO define config.xml for commands
-						status = command.start(connection, messageQueue, "",
-								commandID);
-					} catch (Exception e) {
-						e.printStackTrace();
-						logger
-								.error(
-										"Command interrupted due to unexpected Execption. "
-												+ "Probibly tried to execute a command that did not belong to this reader, "
-												+ "or something else caused it.",
-										e);
-					}
-					// Wait for the next command
+		if (command != null) {
+			command.stop();
+			if (force) {
+				try {
+					thread.join(5000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
 				}
-				readerSession.commandFinished(command, status);
-				synchronized (this) {
-					wait();
+				if (thread.isAlive()) {
+					thread.interrupt();
+					thread.stop();
 				}
-			} catch (InterruptedException e) {
-				// TODO well not sure if we should print that
-				e.printStackTrace();
 			}
+		}
 	}
+
 }

@@ -15,6 +15,7 @@ import org.rifidi.edge.core.communication.service.ConnectionService;
 import org.rifidi.edge.core.communication.service.ConnectionStatus;
 import org.rifidi.edge.core.exceptions.RifidiCommandInterruptedException;
 import org.rifidi.edge.core.exceptions.RifidiConnectionException;
+import org.rifidi.edge.core.exceptions.RifidiExecutionException;
 import org.rifidi.edge.core.messageQueue.MessageQueue;
 import org.rifidi.edge.core.messageQueue.service.MessageService;
 import org.rifidi.edge.core.readerplugin.ReaderInfo;
@@ -60,6 +61,7 @@ public class ReaderSessionImpl implements ReaderSession,
 	private ReaderSessionStatus readerSessionStatus = ReaderSessionStatus.OK;
 	private ConnectionStatus connectionStatus = ConnectionStatus.DISCONNECTED;
 
+	@SuppressWarnings("unused")
 	private CommandStatus commandExecutionStatus = CommandStatus.EXECUTING;
 	private CommandJournal commandJournal= new CommandJournal();
 
@@ -273,7 +275,12 @@ public class ReaderSessionImpl implements ReaderSession,
 		// EXECUTE THE COMMAND and generate commandID
 		commandID++;
 		curCommand.setCommandID(commandID);
-		executionThread.start(curCommand.getCommand(), commandID);
+		try {
+			executionThread.start(curCommand.getCommand(), configuration, commandID);
+		} catch (RifidiExecutionException e) {
+			//TODO keep track of that Exception
+			e.printStackTrace();
+		}
 		logger.debug("Command given to execution thread");
 		return commandID;
 	}
