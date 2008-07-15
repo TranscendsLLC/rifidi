@@ -15,6 +15,7 @@ public class ReaderSessionServiceImpl implements ReaderSessionService {
 
 	private ReaderPluginService readerPluginService;
 	private ArrayList<ReaderSession> registry = new ArrayList<ReaderSession>();
+	private ArrayList<ReaderSessionListener> listeners = new ArrayList<ReaderSessionListener>();
 
 	public ReaderSessionServiceImpl(ReaderPluginService readerPluginService) {
 		this.readerPluginService = readerPluginService;
@@ -27,6 +28,11 @@ public class ReaderSessionServiceImpl implements ReaderSessionService {
 				.getReaderPlugin(readerInfo.getClass());
 		ReaderSession readerSession = new ReaderSessionImpl(readerInfo);
 		registry.add(readerSession);
+		
+		for(ReaderSessionListener l : listeners){
+			l.addEvent(readerSession);
+		}
+		
 		return readerSession;
 	}
 
@@ -38,6 +44,9 @@ public class ReaderSessionServiceImpl implements ReaderSessionService {
 			readerSessionImpl.cleanUP();
 		}
 		registry.remove(readerSession);
+		for(ReaderSessionListener l : listeners){
+			l.removeEvent(readerSession);
+		}
 	}
 
 	@Override
@@ -47,13 +56,13 @@ public class ReaderSessionServiceImpl implements ReaderSessionService {
 
 	@Override
 	public void addReaderSessionListener(ReaderSessionListener listener) {
-		// TODO Auto-generated method stub
+		listeners.add(listener);
 
 	}
 
 	@Override
 	public void removeReaderSessionListener(ReaderSessionListener listener) {
-		// TODO Auto-generated method stub
+		listeners.remove(listener);
 
 	}
 
