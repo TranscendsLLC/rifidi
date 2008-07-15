@@ -46,6 +46,7 @@ public class AlienCommunicationProtocol implements CommunicationProtocol {
 	 */
 	@Override
 	public byte[] messageToByte(Object message) {
+		//TODO: Possibly add a \n to the protocol automatically
 		return ((String) message).getBytes();
 	}
 
