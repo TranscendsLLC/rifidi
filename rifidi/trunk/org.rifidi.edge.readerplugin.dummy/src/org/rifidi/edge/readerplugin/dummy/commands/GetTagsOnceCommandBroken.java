@@ -26,23 +26,7 @@ public class GetTagsOnceCommandBroken implements Command {
 	public CommandReturnStatus start(Connection connection,
 			MessageQueue messageQueue, String configuration, long commandID) {
 		logger.debug("Getting tags.");
-		// TODO: Need to set this up properly.
-		// switch (info.getErrorToSet()) {
-		// case GET_NEXT_TAGS:
-		// throw new IOException();
-		// case GET_NEXT_TAGS_RUNTIME:
-		// throw new RuntimeException();
-		// case RANDOM:
-		// if (random.nextDouble() <= info.getRandomErrorProbibility()){
-		// if(random.nextDouble() <=
-		// info.getProbiblityOfErrorsBeingRuntimeExceptions()){
-		// throw new RuntimeException();
-		// } else {
-		// throw new IOException();
-		// }
-		// }
-		// }
-
+	
 		String rawtag = ByteAndHexConvertingUtility.toHexString(
 				"Hallo".getBytes()).replace(" ", "")
 				+ "|" + 1565467895l + "\n\n";
