@@ -7,6 +7,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.rifidi.edge.core.exceptions.RifidiCommandInterruptedException;
+import org.rifidi.edge.core.exceptions.RifidiCommandNotFoundException;
 import org.rifidi.edge.core.exceptions.RifidiConnectionException;
 import org.rifidi.edge.core.messageQueue.service.MessageService;
 import org.rifidi.edge.core.readerplugin.ReaderInfo;
@@ -120,6 +121,9 @@ public class ThingMagicTagRead {
 			// e.printStackTrace(new PrintStream(output));
 			// Assert.fail(output.toString());
 			throw new AssertionError(e);
+		} catch (RifidiCommandNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		
 		try {
