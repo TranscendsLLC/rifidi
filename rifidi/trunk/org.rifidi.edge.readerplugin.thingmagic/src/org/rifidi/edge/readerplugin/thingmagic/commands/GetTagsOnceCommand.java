@@ -13,7 +13,7 @@ import org.rifidi.edge.core.readerplugin.commands.CommandReturnStatus;
 import org.rifidi.edge.core.readerplugin.commands.annotations.CommandDesc;
 import org.rifidi.edge.core.readerplugin.messages.impl.TagMessage;
 
-@CommandDesc(name = "GetTagsCurrentlyOnAntennas")
+@CommandDesc(name = "getTagList")
 public class GetTagsOnceCommand implements Command {
 	private static final Log logger = LogFactory
 			.getLog(GetTagsOnceCommand.class);
