@@ -10,6 +10,7 @@
  */
 package org.rifidi.edge.persistence.service.impl;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -22,12 +23,14 @@ import org.rifidi.edge.core.readersession.ReaderSession;
 import org.rifidi.edge.core.readersession.service.ReaderSessionListener;
 import org.rifidi.edge.core.readersession.service.ReaderSessionService;
 import org.rifidi.edge.persistence.service.PersistenceService;
+import org.rifidi.edge.persistence.utilities.JAXBUtility;
 import org.rifidi.edge.persistence.xml.PersistedReaderInfo;
 import org.rifidi.services.annotations.Inject;
 import org.rifidi.services.registry.ServiceRegistry;
 
 /**
- * 
+ * This class is the implementation of the Persistence Service interface, which
+ * will be used to persist ReaderInfo objects.
  * 
  * @author Matthew Dean - matt@pramari.com
  */
@@ -39,6 +42,10 @@ public class PersistanceServiceImpl implements PersistenceService,
 	 */
 	private static final Log logger = LogFactory
 			.getLog(PersistanceServiceImpl.class);
+
+	private static final String DEFAULT_PATH = "../domains/default";
+
+	private static final String DEFAULT_FILENAME = "readerconfiguration.xml";
 
 	/**
 	 * The PersistedReaderInfo object.
@@ -123,6 +130,20 @@ public class PersistanceServiceImpl implements PersistenceService,
 	 */
 	@Override
 	public void start(String fileName) {
+
+		try {
+			if (fileName == null) {
+				JAXBUtility.getInstance().setFile(
+						DEFAULT_PATH + DEFAULT_FILENAME);
+			} else {
+				JAXBUtility.getInstance().setFile(fileName);
+			}
+		} catch (IOException e) {
+			// TODO: We are screwed if this happens, best to fail gracefully,
+			// think of a way
+			e.printStackTrace();
+		}
+
 		List<String> readerNameList = this.readerPluginService
 				.getAllReaderInfos();
 		for (String readerClassName : readerNameList) {
@@ -132,7 +153,6 @@ public class PersistanceServiceImpl implements PersistenceService,
 				this.readerSessionService.createReaderSession(ri);
 			}
 		}
-
 	}
 
 	/**
