@@ -15,6 +15,7 @@ public class ReaderPluginServiceImpl implements ReaderPluginService {
 
 	private Log logger = LogFactory.getLog(ReaderPluginServiceImpl.class);
 	private HashMap<String, ReaderPlugin> registry = new HashMap<String, ReaderPlugin>();
+	private ArrayList<ReaderPluginListener> listeners = new ArrayList<ReaderPluginListener>();
 
 	@Override
 	public void registerReaderPlugin(Class<? extends ReaderInfo> readerInfo,
@@ -23,6 +24,9 @@ public class ReaderPluginServiceImpl implements ReaderPluginService {
 		logger.debug("ReaderPlugin registered "
 				+ plugin.getClass().getSimpleName() + " : "
 				+ readerInfo.getName());
+		for(ReaderPluginListener l : listeners){
+			l.readerPluginRegisteredEvent(readerInfo);
+		}
 	}
 
 	@Override
@@ -31,6 +35,9 @@ public class ReaderPluginServiceImpl implements ReaderPluginService {
 		logger.debug("ReaderPlugin unregistered "
 				+ plugin.getClass().getSimpleName() + " : "
 				+ readerInfo.getName());
+		for(ReaderPluginListener l : listeners){
+			l.readerPluginUnregisteredEvent(readerInfo);
+		}
 
 	}
 
@@ -46,12 +53,12 @@ public class ReaderPluginServiceImpl implements ReaderPluginService {
 
 	@Override
 	public void addReaderPluginListener(ReaderPluginListener listener) {
-		// TODO Auto-generated method stub
+		listeners.add(listener);
 	}
 
 	@Override
 	public void removeReaderPluginListener(ReaderPluginListener listener) {
-		// TODO Auto-generated method stub
+		listeners.remove(listener);
 	}
 
 }
