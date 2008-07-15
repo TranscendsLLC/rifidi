@@ -4,7 +4,7 @@ import java.rmi.RemoteException;
 import java.util.List;
 
 import org.rifidi.edge.adminclient.commands.edgeServer.EdgeServerCommands;
-import org.rifidi.edge.rmi.ReaderConnection.RemoteReaderConnection;
+import org.rifidi.edge.core.rmi.readerconnection.RemoteReaderConnection;
 
 /**
  * @author Jerry Maine - jerry@pramari.com
@@ -33,10 +33,11 @@ public class ErrorTestThread extends AbstractThread {
 
 					for (RemoteReaderConnection connection : connections) {
 						if (connection.getReaderState().equalsIgnoreCase(
-								"ERROR"));
-//							System.out.println(connection.getReaderInfo()
-//									.getReaderType()
-//									+ "had ");
+								"ERROR"))
+							;
+						// System.out.println(connection.getReaderInfo()
+						// .getReaderType()
+						// + "had ");
 					}
 				} catch (RemoteException e) {
 
