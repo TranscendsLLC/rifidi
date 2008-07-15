@@ -4,6 +4,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.rifidi.edge.core.exceptions.RifidiCommandInterruptedException;
+import org.rifidi.edge.core.exceptions.RifidiCommandNotFoundException;
 import org.rifidi.edge.core.exceptions.RifidiConnectionException;
 import org.rifidi.edge.core.readerplugin.ReaderInfo;
 import org.rifidi.edge.core.readerplugin.service.ReaderPluginService;
@@ -40,6 +41,9 @@ public class LLRPTagReadTest {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (RifidiCommandInterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (RifidiCommandNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
