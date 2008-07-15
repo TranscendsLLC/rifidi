@@ -26,8 +26,7 @@ public class GetTagsOnceCommand implements Command {
 			logger.debug("Issuing Command: " + GET_TAGS);
 			connection.sendMessage(GET_TAGS);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			return CommandReturnStatus.INTERRUPTED;
 		}
 
 		String recieved;

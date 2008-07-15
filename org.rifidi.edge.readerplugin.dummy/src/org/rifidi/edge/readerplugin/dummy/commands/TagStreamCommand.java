@@ -19,22 +19,7 @@ public class TagStreamCommand implements Command {
 	@Override
 	public CommandReturnStatus start(Connection connection,
 			MessageQueue messageQueue, String configuration, long commandID) {
-		// TODO: Need to set this up properly.
-		// switch (info.getErrorToSet()) {
-		// case GET_NEXT_TAGS:
-		// throw new IOException();
-		// case GET_NEXT_TAGS_RUNTIME:
-		// throw new RuntimeException();
-		// case RANDOM:
-		// if (random.nextDouble() <= info.getRandomErrorProbibility()){
-		// if(random.nextDouble() <=
-		// info.getProbiblityOfErrorsBeingRuntimeExceptions()){
-		// throw new RuntimeException();
-		// } else {
-		// throw new IOException();
-		// }
-		// }
-		// }
+
 		System.out.println("TagStreaming is running!");
 		while (running) {
 			String rawtag = ByteAndHexConvertingUtility.toHexString(
