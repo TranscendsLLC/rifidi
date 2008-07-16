@@ -16,6 +16,7 @@ import org.rifidi.edge.testing.service.TestingService;
  *
  */
 public class TestingServiceImpl extends AbstractThread implements TestingService {
+	@SuppressWarnings("unused")
 	private static final Log logger = LogFactory.getLog(TestingService.class);
 	LinkedBlockingQueue<Class<?>[]> junitLists = new LinkedBlockingQueue<Class<?>[]>();
 		
