@@ -119,7 +119,7 @@ public class AlienConnectionManager extends ConnectionManager {
 	public void disconnect(Connection connection) {
 		try {
 			connection.sendMessage("q" + NEWLINE);
-			connection.receiveMessage();
+			connection.receiveMessage(500);
 			
 		} catch (IOException e) {
 			e.printStackTrace();
