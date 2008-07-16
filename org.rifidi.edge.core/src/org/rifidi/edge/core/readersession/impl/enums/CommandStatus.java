@@ -5,7 +5,7 @@ import org.rifidi.edge.core.readerplugin.commands.CommandReturnStatus;
 //TODO: This is a bit confusingly named, I got it mixed up with "CommandReturnStatus",
  
 public enum CommandStatus {
-	WAITING, EXECUTING, SUCCESSFUL, UNSUCCESSFUL, INTERRUPTED;
+	NOCOMMAND, WAITING, EXECUTING, SUCCESSFUL, UNSUCCESSFUL, INTERRUPTED;
 	
 	public static CommandStatus toCommandStatus(CommandReturnStatus crs){
 		switch(crs){
