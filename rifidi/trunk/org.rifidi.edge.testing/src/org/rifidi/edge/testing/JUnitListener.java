@@ -42,4 +42,14 @@ public class JUnitListener extends RunListener {
 			}
 		}
 	}
+	
+	public void testRunStarted(Description description) {
+		for (Description d: description.getChildren()){
+			logger.debug("Setting up to run Junit: " + d);
+		}
+	}
+	
+	public void testStarted(Description description) {
+		logger.debug("Attempting to run Junit: " + description);
+	}
 }
