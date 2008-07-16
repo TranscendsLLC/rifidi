@@ -17,6 +17,10 @@ public class CommandJournal {
 	
 	ArrayList<CommandWrapper> journal = new ArrayList<CommandWrapper>();
 	
+	public void addCommand(CommandWrapper command){
+		journal.add(command);
+	}
+	
 	public CommandStatus getCommandStatus(long commandID){
 		for(CommandWrapper cw : journal){
 			if(cw.getCommandID()==commandID){
