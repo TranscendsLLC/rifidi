@@ -120,11 +120,19 @@ public class AlienConnectionManager extends ConnectionManager {
 		try {
 			connection.sendMessage("q" + NEWLINE);
 			connection.recieveMessage();
-			if (this.alienSock != null) {
-				this.alienSock.close();
-			}
+			
 		} catch (IOException e) {
 			e.printStackTrace();
+		}finally
+		{
+			if (this.alienSock != null) {
+				try {
+					this.alienSock.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
 		}
 	}
 
