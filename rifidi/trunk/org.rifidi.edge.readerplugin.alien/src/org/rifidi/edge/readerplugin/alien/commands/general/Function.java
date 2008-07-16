@@ -35,7 +35,12 @@ public class Function implements Command {
 		
 				connection.sendMessage("get " + command + "\n");
 				String message = (String) connection.recieveMessage();
-		
+				
+				if (message.contains("=")) {
+					String[] temp = message.split("=");
+					message = temp[1].trim();
+				}
+				
 				messageQueue.addMessage(new GenericAlienMessage(new Property(
 						command, message)));
 		
@@ -53,7 +58,12 @@ public class Function implements Command {
 				connection.sendMessage("set " + command + "=" + configuration
 						+ "\n");
 				String message = (String) connection.recieveMessage();
-		
+				
+				if (message.contains("=")) {
+					String[] temp = message.split("=");
+					message = temp[1].trim();
+				}
+				
 				messageQueue.addMessage(new GenericAlienMessage(new Property(
 						command, message)));
 		

@@ -34,7 +34,13 @@ public class DebugHost implements Command {
 
 				connection.sendMessage(command + "\n");
 				String message = (String) connection.recieveMessage();
-
+				
+				if (message.contains("=")) {
+					String[] temp = message.split("=");
+					message = temp[1];
+				}
+				message = message.trim();
+				
 				messageQueue.addMessage(new GenericAlienMessage(new Property(
 						command, message)));
 
