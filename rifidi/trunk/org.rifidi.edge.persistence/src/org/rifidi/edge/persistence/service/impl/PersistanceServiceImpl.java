@@ -135,9 +135,11 @@ public class PersistanceServiceImpl implements PersistenceService,
 		try {
 			if (fileName == null) {
 				logger.debug("Using the default xml file");
-				this.pri.setFile(DEFAULT_PATH + DEFAULT_FILENAME);
+				this.pri.setFile(DEFAULT_PATH, DEFAULT_PATH + DEFAULT_FILENAME);
 			} else {
-				this.pri.setFile(fileName);
+				// FIXME we need to get the path as well for reasons to stupid
+				// to explain
+				this.pri.setFile(DEFAULT_PATH, fileName);
 			}
 		} catch (IOException e) {
 			// TODO: We are screwed if this happens, best to fail gracefully,

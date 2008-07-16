@@ -226,8 +226,12 @@ public class JAXBUtility {
 		return file;
 	}
 
-	public void setFile(String path) throws IOException {
-		file = new File(path);
+	public void setFile(String path,String fileName) throws IOException {
+		File pathFile = new File(path);
+		if(!pathFile.exists()) {
+			pathFile.mkdirs();
+		}
+		file = new File(fileName);
 		if (!file.exists()) {
 			try {
 				logger.debug("creating a new file!");
@@ -258,7 +262,7 @@ public class JAXBUtility {
 			try {
 				fw.close();
 			} catch (IOException e) {
-				//Nothing
+				// Nothing
 			}
 		}
 	}
