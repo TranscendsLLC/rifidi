@@ -246,7 +246,6 @@ public class ReaderSessionImpl implements ReaderSession,
 			logger.debug(readerPluginService.getReaderPlugin(
 					readerInfo.getClass()).getAvailableCommands().size()
 					+ " Commands found");
-			logger.debug("Inspecting Command : " + commandClass.getName());
 
 			commandDesc = commandClass.getAnnotation(CommandDesc.class);
 
@@ -377,7 +376,6 @@ public class ReaderSessionImpl implements ReaderSession,
 	 */
 	@Override
 	public void commandFinished(Command command, CommandReturnStatus status) {
-		// TODO implement Command Execution End
 		readerSessionStatus = ReaderSessionStatus.OK;
 
 		// only update commandStatus if the command status has not already been
