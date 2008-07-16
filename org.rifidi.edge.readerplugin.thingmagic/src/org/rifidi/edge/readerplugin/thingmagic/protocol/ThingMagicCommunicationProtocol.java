@@ -5,6 +5,9 @@ import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.readerplugin.protocol.CommunicationProtocol;
 
 public class ThingMagicCommunicationProtocol implements CommunicationProtocol {
+	
+	
+	@SuppressWarnings("unused")
 	private static final Log logger = LogFactory.getLog(ThingMagicCommunicationProtocol.class);
 	
 	private StringBuffer buffer;
