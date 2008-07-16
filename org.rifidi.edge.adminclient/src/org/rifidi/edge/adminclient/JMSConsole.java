@@ -16,6 +16,7 @@ import org.apache.commons.logging.LogFactory;
 public class JMSConsole implements Runnable {
 	private Log logger = LogFactory.getLog(JMSConsole.class);
 	
+	@SuppressWarnings("unused")
 	private final String connectionURL = "tcp://localhost:61616";
 	
 	private static final String defaultURL = "tcp://localhost:61616";
