@@ -87,7 +87,13 @@ public class Communication implements ConnectionExceptionListener {
 			logger.error("Runtime Exception detected:"
 					+ " Probably the connectionmanager is not safe", e);
 			connection = null;
-			changeState(ConnectionStatus.ERROR);
+			//changeState(ConnectionStatus.ERROR);
+			/*Can't call change state the normal way... 
+			 * It will cause an infinite loop.
+			 */
+			for (CommunicationStateListener listener : listeners) {
+				listener.error();
+			}
 			return;
 
 		}
