@@ -16,6 +16,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.rifidi.edge.core.exceptions.RifidiCommandInterruptedException;
+import org.rifidi.edge.core.exceptions.RifidiCommandNotFoundException;
 import org.rifidi.edge.core.exceptions.RifidiConnectionException;
 import org.rifidi.edge.core.readersession.ReaderSession;
 import org.rifidi.edge.core.readersession.service.ReaderSessionService;
@@ -73,7 +74,11 @@ public class AlienTestTagRead {
 
 		try {
 			logger.debug("Testing the getTagList command");
-			readerSession.executeCommand("getTagList", null);
+			try {
+				readerSession.executeCommand("getTagList", null);
+			} catch (RifidiCommandNotFoundException e) {
+				e.printStackTrace();
+			}
 
 			readerSession.stopCurCommand(false);
 		} catch (RifidiConnectionException e) {
