@@ -1,12 +1,13 @@
 package org.rifidi.edge.testing;
 
+import java.util.concurrent.SynchronousQueue;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.notification.RunListener;
 import org.rifidi.edge.common.utilities.thread.AbstractThread;
 import org.rifidi.edge.testing.service.TestingService;
-import java.util.concurrent.LinkedBlockingQueue;
 
 
 
@@ -16,7 +17,7 @@ import java.util.concurrent.LinkedBlockingQueue;
  */
 public class TestingServiceImpl extends AbstractThread implements TestingService {
 	private static final Log logger = LogFactory.getLog(TestingService.class);
-	LinkedBlockingQueue<Class<?>> klasses = new LinkedBlockingQueue<Class<?>>();
+	SynchronousQueue<Class<?>[]> senqQueue = new SynchronousQueue<Class<?>[]>();
 		
 	public TestingServiceImpl(String threadName) {
 		super(threadName);		
@@ -35,9 +36,11 @@ public class TestingServiceImpl extends AbstractThread implements TestingService
 //		}
 		try {
 			while(running){
-				Class<?> klass = klasses.take();
-				logger.debug("Attempting to run Junit " + klass.getName());
-				junit.run(klass);
+				Class<?>[] klasses = senqQueue.take();
+				for (Class<?> klass : klasses) {
+					logger.debug("Attempting to run Junit " + klass.getName());
+				}
+				junit.run(klasses);
 			}
 		} catch (InterruptedException e) {
 			//ignore this exception
@@ -48,8 +51,7 @@ public class TestingServiceImpl extends AbstractThread implements TestingService
 
 	@Override
 	public void addJunitTests(Class<?>... classes) {
-		for (Class<?> klass : classes)
-			klasses.add(klass);
+		senqQueue.add(classes);
 	}
 
 }

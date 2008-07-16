@@ -8,6 +8,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.rifidi.edge.core.communication.Connection;
+import org.rifidi.edge.core.communication.service.CommunicationStateListener;
 import org.rifidi.edge.core.communication.service.ConnectionService;
 import org.rifidi.edge.core.exceptions.RifidiCommandInterruptedException;
 import org.rifidi.edge.core.exceptions.RifidiCommandNotFoundException;
@@ -28,7 +29,7 @@ import org.rifidi.services.registry.ServiceRegistry;
  * @author Jerry Maine - jerry@pramari.com
  * 
  */
-public class ThingMagicTagRead {
+public class ThingMagicTagRead implements CommunicationStateListener {
 
 	private ReaderSessionService readerSessionService;
 	private ReaderPluginService readerPluginService;
@@ -36,6 +37,7 @@ public class ThingMagicTagRead {
 	ByteArrayOutputStream output = new ByteArrayOutputStream();
 	private MessageService messageService;
 	private ConnectionService connectionService;
+	private boolean error = false;
 
 	@Before
 	public void setUp() throws Exception {
@@ -52,6 +54,7 @@ public class ThingMagicTagRead {
 					connectionService != null) break;
 			Thread.sleep(500);
 		}
+		error = false;
 	}
 
 	@After
@@ -151,11 +154,14 @@ public class ThingMagicTagRead {
 		info.setPort(8080);
 		Connection connection;
 		try {
-			connection = connectionService.createConnection(new ThingMagicManager(info), info, null);
+			connection = connectionService.createConnection(new ThingMagicManager(info), info, this);
 		} catch (RifidiConnectionException e) {
 			throw new AssertionError(e);
 		}
-
+		if (error == true){
+			Assert.fail("connectin in error state.");
+		}
+		
 		GetTagsOnceCommand command = new GetTagsOnceCommand();
 
 		command.start(connection, messageQueue, null, 0);
@@ -188,5 +194,23 @@ public class ThingMagicTagRead {
 	@Inject 
 	public void setConnectionService(ConnectionService connectionService){
 		this.connectionService = connectionService;
+	}
+
+	@Override
+	public void connected() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void disconnected() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void error() {
+		// TODO Auto-generated method stub
+		this.error  = true;
 	}
 }
