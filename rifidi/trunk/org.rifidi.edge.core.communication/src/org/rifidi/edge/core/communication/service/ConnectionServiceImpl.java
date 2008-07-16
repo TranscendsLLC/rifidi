@@ -17,21 +17,27 @@ public class ConnectionServiceImpl implements ConnectionService {
 
 	@Override
 	public Connection createConnection(ConnectionManager connectionManager,
-			ReaderInfo readerInfo, CommunicationStateListener communicationStateListener) throws RifidiConnectionException {
+			ReaderInfo readerInfo,
+			CommunicationStateListener communicationStateListener)
+			throws RifidiConnectionException {
 		Connection connection = null;
 		Communication communication = new Communication(connectionManager);
 		communication.addCommunicationStateListener(communicationStateListener);
 		connection = communication.connect();
-		
-		if (connection == null) throw new RifidiConnectionException("Connection returned null.");
-		
+
+		if (connection == null)
+			throw new RifidiConnectionException("Connection returned null."
+					+ " This means there is a severe error in "
+					+ connectionManager.getClass().getSimpleName());
+
 		fireAddEvent(connection);
 		connections.put(connection, communication);
 		return connection;
 	}
 
 	@Override
-	public void destroyConnection(Connection connection, CommunicationStateListener listener) {
+	public void destroyConnection(Connection connection,
+			CommunicationStateListener listener) {
 		Communication communication = connections.remove(connection);
 		communication.removeCommunicationStateListener(listener);
 		communication.disconnect();
@@ -49,7 +55,8 @@ public class ConnectionServiceImpl implements ConnectionService {
 	}
 
 	@Override
-	public void removeConnectionServiceListener(ConnectionServiceListener listener) {
+	public void removeConnectionServiceListener(
+			ConnectionServiceListener listener) {
 		listeners.remove(listener);
 	}
 
