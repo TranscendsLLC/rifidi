@@ -1,4 +1,4 @@
-package org.rifidi.edeg.readerplugin.alien.command.extension;
+package org.rifidi.edge.readerplugin.alien.command.extension;
 
 import org.rifidi.edge.core.communication.Connection;
 import org.rifidi.edge.core.exceptions.RifidiMessageQueueException;
