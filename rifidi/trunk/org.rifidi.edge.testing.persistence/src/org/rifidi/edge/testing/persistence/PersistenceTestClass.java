@@ -17,6 +17,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.rifidi.edge.core.readersession.service.ReaderSessionService;
+import org.rifidi.edge.persistence.service.impl.PersistanceServiceImpl;
 import org.rifidi.services.annotations.Inject;
 import org.rifidi.services.registry.ServiceRegistry;
 
@@ -55,10 +56,10 @@ public class PersistenceTestClass {
 	 */
 	@Test
 	public void testLoading() {
-		logger.debug("Starting the test");
-		// PersistanceServiceImpl perSerImpl = new PersistanceServiceImpl();
-		//		
-		// perSerImpl.start(null);
+		logger.debug("Starting the load test");
+		 PersistanceServiceImpl perSerImpl = new PersistanceServiceImpl();
+
+		perSerImpl.start(null);
 	}
 	
 	/**
@@ -66,7 +67,7 @@ public class PersistenceTestClass {
 	 */
 	@Test
 	public void testSaving() {
-		
+		logger.debug("Starting the save test");
 	}
 	
 	/**

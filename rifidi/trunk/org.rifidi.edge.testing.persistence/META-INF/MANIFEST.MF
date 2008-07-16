@@ -15,4 +15,5 @@ Require-Bundle: org.rifidi.edge.persistence,
  org.rifidi.edge.core,
  org.rifidi.edge.common.utilities,
  org.rifidi.edge.services,
- org.junit4
+ org.junit4,
+ org.junit
