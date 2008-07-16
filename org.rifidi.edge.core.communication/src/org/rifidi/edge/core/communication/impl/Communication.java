@@ -147,6 +147,7 @@ public class Communication implements ConnectionExceptionListener {
 		logger.debug("physical connection attempted");
 		ConnectionStreams connectionStreams = connectionManager
 				.createCommunication();
+		logger.debug("test");
 		readThread = new ReadThread(connectionManager.toString()
 				+ " Read Thread", this, protocol, readQueue, connectionStreams
 				.getInputStream());
