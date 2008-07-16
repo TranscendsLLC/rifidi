@@ -38,9 +38,6 @@ public class TestingServiceImpl extends AbstractThread implements TestingService
 		try {
 			while(running){
 				Class<?>[] klasses = junitLists.take();
-				for (Class<?> klass : klasses) {
-					logger.debug("Attempting to run Junit " + klass.getName());
-				}
 				junit.run(klasses);
 			}
 		} catch (InterruptedException e) {
