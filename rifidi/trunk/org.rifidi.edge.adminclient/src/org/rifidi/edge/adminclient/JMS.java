@@ -1,7 +1,6 @@
 package org.rifidi.edge.adminclient;
 
 import javax.jms.Connection;
-import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.MessageConsumer;
@@ -9,13 +8,14 @@ import javax.jms.Session;
 import javax.jms.TextMessage;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
-import org.rifidi.edge.adminclient.jms.JMSConsumerFactory;
 
 public class JMS implements Runnable {
 
 	public static void main(String[] args) {
 		try {
-			new JMS();
+			if (args[0] != null)
+				if (!args[0].isEmpty())
+					new JMS(args[0]);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -27,7 +27,7 @@ public class JMS implements Runnable {
 	private Session session;
 	private MessageConsumer consumer;
 
-	public JMS() throws Exception {
+	public JMS(String queueName) throws Exception {
 		connectionFactory = new ActiveMQConnectionFactory();
 		connectionFactory.setBrokerURL("tcp://192.168.1.115:61616");
 		connection = connectionFactory.createConnection();
