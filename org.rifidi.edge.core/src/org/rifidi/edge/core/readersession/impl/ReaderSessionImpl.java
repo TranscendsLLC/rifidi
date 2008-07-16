@@ -455,6 +455,7 @@ public class ReaderSessionImpl implements ReaderSession,
 	 */
 
 	public void cleanUP() {
+		logger.debug("Cleaning up READDER SESSION: " + this.readerSessionID);
 		if (connection != null) {
 			connectionService.destroyConnection(connection, this);
 		}
