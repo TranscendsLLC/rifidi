@@ -69,7 +69,7 @@ public class ReaderSessionImpl implements ReaderSession,
 	// Status
 	private ReaderSessionStatus readerSessionStatus = ReaderSessionStatus.OK;
 	private ConnectionStatus connectionStatus = ConnectionStatus.DISCONNECTED;
-	
+
 	private int readerSessionID;
 
 	public ReaderSessionImpl(ReaderInfo readerInfo, int readerSessionID) {
@@ -152,7 +152,8 @@ public class ReaderSessionImpl implements ReaderSession,
 	// TODO: validate configuration XML String
 	@Override
 	public long executeCommand(String command, String configuration)
-			throws RifidiConnectionException, RifidiCommandInterruptedException, RifidiCommandNotFoundException {
+			throws RifidiConnectionException,
+			RifidiCommandInterruptedException, RifidiCommandNotFoundException {
 
 		curCommand = new CommandWrapper();
 		commandID++;
@@ -224,11 +225,15 @@ public class ReaderSessionImpl implements ReaderSession,
 	}
 
 	private Command lookupCommand(String command)
-			throws RifidiCommandInterruptedException, RifidiCommandNotFoundException {
+			throws RifidiCommandInterruptedException,
+			RifidiCommandNotFoundException {
 
 		CommandDesc commandDesc = null;
 		for (Class<? extends Command> commandClass : readerPluginService
 				.getReaderPlugin(readerInfo.getClass()).getAvailableCommands()) {
+			logger.debug(readerPluginService.getReaderPlugin(
+					readerInfo.getClass()).getAvailableCommands().size()
+					+ " Commands found");
 			logger.debug("Inspecting Command : " + commandClass.getName());
 
 			commandDesc = commandClass.getAnnotation(CommandDesc.class);
@@ -267,8 +272,9 @@ public class ReaderSessionImpl implements ReaderSession,
 						throw new RifidiCommandInterruptedException(
 								"Command not found.", e);
 					}
-				}else{
-					throw new RifidiCommandNotFoundException("Command not found " + command);
+				} else {
+					throw new RifidiCommandNotFoundException(
+							"Command not found " + command);
 				}
 			}
 		}
@@ -409,7 +415,8 @@ public class ReaderSessionImpl implements ReaderSession,
 	@Inject
 	public void setMessageService(MessageService messageService) {
 		this.messageService = messageService;
-		messageQueue = this.messageService.createMessageQueue(Integer.toString(readerSessionID));
+		messageQueue = this.messageService.createMessageQueue(Integer
+				.toString(readerSessionID));
 	}
 
 	/**
