@@ -4,10 +4,14 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.communication.Connection;
 
 public class ConnectionImpl implements Connection {
 
+	private Log logger = LogFactory.getLog(ConnectionImpl.class);
+	
 	private LinkedBlockingQueue<Object> readQueue;
 	private LinkedBlockingQueue<Object> writeQueue;
 	private Exception exception = null;
@@ -53,7 +57,9 @@ public class ConnectionImpl implements Connection {
 	}
 
 	public void setException(Exception e) {
+		logger.debug("Try to set Exception but need to pass lock");
 		synchronized (locker) {
+			logger.debug("Exception set in Connection");
 			this.exception = e;
 			readQueue.clear();
 			writeQueue.clear();

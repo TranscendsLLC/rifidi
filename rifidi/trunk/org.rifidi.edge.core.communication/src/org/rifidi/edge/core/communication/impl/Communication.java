@@ -233,8 +233,8 @@ public class Communication implements ConnectionExceptionListener {
 			} catch (InterruptedException e) {
 			}
 			logger.debug("Cleaning up connection by disconnecting");
-			disconnect();
 			connection.setException(exception);
+			disconnect();
 			logger.debug("Try to reconnect again");
 			connect();
 			logger.debug("ending cleanup service");
