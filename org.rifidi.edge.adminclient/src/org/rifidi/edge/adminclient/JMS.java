@@ -29,7 +29,7 @@ public class JMS implements Runnable {
 
 	public JMS() throws Exception {
 		connectionFactory = new ActiveMQConnectionFactory();
-		connectionFactory.setBrokerURL("tcp://localhost:61616");
+		connectionFactory.setBrokerURL("tcp://192.168.1.115:61616");
 		connection = connectionFactory.createConnection();
 		connection.start();
 		session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
