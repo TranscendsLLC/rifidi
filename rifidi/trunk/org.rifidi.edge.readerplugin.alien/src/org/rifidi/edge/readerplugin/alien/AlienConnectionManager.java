@@ -62,19 +62,19 @@ public class AlienConnectionManager extends ConnectionManager {
 		if (alienSock != null) {
 			try {
 				logger.debug("getting the welcome response");
-				connection.recieveMessage();
+				connection.receiveMessage();
 				logger.debug("sending username");
 				connection.sendMessage(PROMPT_SUPPRESS
 						+ this.info.getUsername() + NEWLINE);
 				logger.debug("getting the username response");
-				connection.recieveMessage();
+				connection.receiveMessage();
 				logger
 						.debug("sending the password: "
 								+ this.info.getPassword());
 				connection.sendMessage(PROMPT_SUPPRESS
 						+ this.info.getPassword() + NEWLINE);
 				logger.debug("recieving the password response");
-				connection.recieveMessage();
+				connection.receiveMessage();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -119,7 +119,7 @@ public class AlienConnectionManager extends ConnectionManager {
 	public void disconnect(Connection connection) {
 		try {
 			connection.sendMessage("q" + NEWLINE);
-			connection.recieveMessage();
+			connection.receiveMessage();
 			
 		} catch (IOException e) {
 			e.printStackTrace();

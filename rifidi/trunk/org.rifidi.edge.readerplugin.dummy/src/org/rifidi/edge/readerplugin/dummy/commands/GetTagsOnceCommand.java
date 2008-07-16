@@ -30,7 +30,7 @@ public class GetTagsOnceCommand implements Command {
 
 		try {
 			connection.sendMessage(rawtag);
-			rawtag = (String) connection.recieveMessage();
+			rawtag = (String) connection.receiveMessage();
 		} catch (IOException e1) {
 			return CommandReturnStatus.INTERRUPTED;
 		}

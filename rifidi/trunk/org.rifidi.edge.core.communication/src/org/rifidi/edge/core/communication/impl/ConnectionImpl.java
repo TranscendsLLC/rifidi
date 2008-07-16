@@ -3,6 +3,7 @@ package org.rifidi.edge.core.communication.impl;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -28,7 +29,7 @@ public class ConnectionImpl implements Connection {
 	}
 
 	@Override
-	public Object recieveMessage() throws IOException {
+	public Object receiveMessage() throws IOException {
 		checkException();
 
 		blockedThreads.add(Thread.currentThread());
@@ -44,6 +45,23 @@ public class ConnectionImpl implements Connection {
 		return retVal;
 	}
 
+	@Override
+	public Object receiveMessage(long timeout) throws IOException {
+		checkException();
+
+		blockedThreads.add(Thread.currentThread());
+
+		Object retVal = null;
+		try {
+			retVal = readQueue.poll(timeout, TimeUnit.MILLISECONDS);
+		} catch (InterruptedException e) {
+			checkException();
+		} finally {
+			blockedThreads.remove(Thread.currentThread());
+		}
+		return retVal;
+	}
+	
 	@Override
 	public void sendMessage(Object o) throws IOException {
 		checkException();

@@ -96,12 +96,12 @@ public class LLRPTagStreamCommand implements Command {
 			//TODO: check this, maybe
 			@SuppressWarnings("unused")
 			SET_READER_CONFIG_RESPONSE setReaderConfigResponse = (SET_READER_CONFIG_RESPONSE) connection
-					.recieveMessage();
+					.receiveMessage();
 
 			GET_ROSPECS gr = new GET_ROSPECS();
 			connection.sendMessage(gr);
 			GET_ROSPECS_RESPONSE grr = (GET_ROSPECS_RESPONSE) connection
-					.recieveMessage();
+					.receiveMessage();
 
 			// TODO: should also check to see if ROSpec is already active
 			if (doesRoSpecExist(grr)) {
@@ -112,19 +112,19 @@ public class LLRPTagStreamCommand implements Command {
 			ADD_ROSPEC addROSpec = new ADD_ROSPEC();
 			addROSpec.setROSpec(createROSpec());
 			connection.sendMessage(addROSpec);
-			connection.recieveMessage();
+			connection.receiveMessage();
 
 			// Create an ENABLE_ROSPEC message and send it to the reader
 			ENABLE_ROSPEC enableROSpec = new ENABLE_ROSPEC();
 			enableROSpec.setROSpecID(new UnsignedInteger(ROSPEC_ID));
 			connection.sendMessage(enableROSpec);
-			connection.recieveMessage();
+			connection.receiveMessage();
 
 			// Create a START_ROSPEC message and send it to the reader
 			START_ROSPEC startROSpec = new START_ROSPEC();
 			startROSpec.setROSpecID(new UnsignedInteger(ROSPEC_ID));
 			connection.sendMessage(startROSpec);
-			connection.recieveMessage();
+			connection.receiveMessage();
 
 			int reportMessage = 10;
 			while (running) {
@@ -133,7 +133,7 @@ public class LLRPTagStreamCommand implements Command {
 
 				connection.sendMessage(getReport);
 
-				LLRPMessage message = (LLRPMessage) connection.recieveMessage();
+				LLRPMessage message = (LLRPMessage) connection.receiveMessage();
 
 				if (message instanceof RO_ACCESS_REPORT) {
 					for (TagMessage tm : parseTags(message)) {

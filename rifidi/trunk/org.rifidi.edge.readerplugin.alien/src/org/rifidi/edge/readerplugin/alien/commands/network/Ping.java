@@ -37,7 +37,7 @@ public class Ping implements Command {
 
 				connection.sendMessage(command + " " + configuration
 						+ "\n");
-				String message = (String) connection.recieveMessage();
+				String message = (String) connection.receiveMessage();
 				
 				if (message.contains("=")) {
 					String[] temp = message.split("=");

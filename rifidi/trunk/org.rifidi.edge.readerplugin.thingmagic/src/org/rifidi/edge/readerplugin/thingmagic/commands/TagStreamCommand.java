@@ -33,7 +33,7 @@ public class TagStreamCommand implements Command {
 
 			String recieved = "";
 			try {
-				recieved = (String) connection.recieveMessage();
+				recieved = (String) connection.receiveMessage();
 			} catch (IOException e) {
 				logger.debug("Oops got an IO Error.");
 				return CommandReturnStatus.INTERRUPTED;
