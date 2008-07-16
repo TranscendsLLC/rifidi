@@ -23,7 +23,8 @@ public class Activator implements BundleActivator {
 		deployServiceImpl = new DeployServiceImpl(context);
 		paths = new ArrayList<String>();
 		//TODO Change Directory to something with more sense
-		paths.add("C:\\temp");
+		//paths.add("C:\\temp");
+		paths.add("/home/andreas/plugins");
 		deployServiceImpl.add(paths);
 	}
 
