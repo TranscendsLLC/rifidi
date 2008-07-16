@@ -23,7 +23,6 @@ import org.rifidi.edge.core.readersession.ReaderSession;
 import org.rifidi.edge.core.readersession.service.ReaderSessionListener;
 import org.rifidi.edge.core.readersession.service.ReaderSessionService;
 import org.rifidi.edge.persistence.service.PersistenceService;
-import org.rifidi.edge.persistence.utilities.JAXBUtility;
 import org.rifidi.edge.persistence.xml.PersistedReaderInfo;
 import org.rifidi.services.annotations.Inject;
 import org.rifidi.services.registry.ServiceRegistry;
@@ -43,7 +42,7 @@ public class PersistanceServiceImpl implements PersistenceService,
 	private static final Log logger = LogFactory
 			.getLog(PersistanceServiceImpl.class);
 
-	private static final String DEFAULT_PATH = "../domains/default";
+	private static final String DEFAULT_PATH = "../domains/default/";
 
 	private static final String DEFAULT_FILENAME = "readerconfiguration.xml";
 
@@ -53,7 +52,7 @@ public class PersistanceServiceImpl implements PersistenceService,
 	private PersistedReaderInfo pri;
 
 	/**
-	 * 
+	 * The readerSessionService
 	 */
 	private ReaderSessionService readerSessionService;
 
@@ -118,7 +117,7 @@ public class PersistanceServiceImpl implements PersistenceService,
 			pri.removeReader(readerSession.getReaderInfo());
 		} catch (RifidiReaderInfoNotFoundException e) {
 			// TODO: Should we do anything else here? If this happens something
-			// seriously went wrong?  We should think about this.  
+			// seriously went wrong? We should think about this.
 			e.printStackTrace();
 		}
 	}
@@ -130,13 +129,13 @@ public class PersistanceServiceImpl implements PersistenceService,
 	 */
 	@Override
 	public void start(String fileName) {
-
+		logger.debug("Starting the persistence service");
 		try {
 			if (fileName == null) {
-				JAXBUtility.getInstance().setFile(
-						DEFAULT_PATH + DEFAULT_FILENAME);
+				logger.debug("Using the default xml file");
+				this.pri.setFile(DEFAULT_PATH + DEFAULT_FILENAME);
 			} else {
-				JAXBUtility.getInstance().setFile(fileName);
+				this.pri.setFile(fileName);
 			}
 		} catch (IOException e) {
 			// TODO: We are screwed if this happens, best to fail gracefully,

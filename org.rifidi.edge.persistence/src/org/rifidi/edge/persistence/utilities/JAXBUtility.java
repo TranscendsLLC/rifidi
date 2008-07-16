@@ -44,6 +44,9 @@ public class JAXBUtility {
 
 	private File file = null;
 
+	public static final String XML_TO_WRITE = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+			+ "<PersistedReaderInfo>\n</PersistedReaderInfo>";
+
 	/**
 	 * 
 	 */
@@ -227,10 +230,28 @@ public class JAXBUtility {
 		file = new File(path);
 		if (!file.exists()) {
 			try {
+				logger.debug("creating a new file!");
 				file.createNewFile();
+				this.writeInitialXMLToFile(file);
 			} catch (IOException e) {
 				throw e;
 			}
+		} else {
+			logger.debug("file already exists");
+		}
+	}
+
+	/**
+	 * Write the initial xml data to a newly created file.
+	 * 
+	 * @param f
+	 */
+	private void writeInitialXMLToFile(File f) {
+		try {
+			FileWriter fw = new FileWriter(f);
+			fw.write(XML_TO_WRITE.toCharArray());
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 
