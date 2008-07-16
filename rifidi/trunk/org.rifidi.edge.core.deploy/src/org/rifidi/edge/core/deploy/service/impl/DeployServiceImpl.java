@@ -3,6 +3,7 @@ package org.rifidi.edge.core.deploy.service.impl;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -30,7 +31,7 @@ import org.rifidi.services.registry.ServiceRegistry;
 
 /**
  * @author Andreas Huebner - andreas@pramari.com
- *
+ * 
  */
 public class DeployServiceImpl implements DeployService, FileMonitorListener {
 
@@ -86,21 +87,26 @@ public class DeployServiceImpl implements DeployService, FileMonitorListener {
 
 	private void uninstallBundle(File f) {
 		BundleHolder bundleHolder = bundleRegistry.get(f);
-		if (bundleHolder != null)
-			logger.debug("Removing Bundle " + bundleHolder.fragment.getSymbolicName());
+		if (bundleHolder != null) {
+			logger.debug("Removing Bundle "
+					+ bundleHolder.fragment.getSymbolicName());
+
+			bundleHolder.plugin.removeCommand(bundleHolder.commands);
+
 			try {
 				bundleHolder.fragment.uninstall();
 			} catch (BundleException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
+
 			try {
 				bundleHolder.host.update();
 			} catch (BundleException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+		}
 
 	}
 
@@ -121,41 +127,55 @@ public class DeployServiceImpl implements DeployService, FileMonitorListener {
 			hostBundle.update();
 
 			// Save BundleFragment and File
-			bundleRegistry.put(f, new BundleHolder(hostBundle, fragmentBundle));
+			BundleHolder bundleHolder = new BundleHolder(hostBundle,
+					fragmentBundle);
+			bundleRegistry.put(f, bundleHolder);
 
 			// open command.xml into CommandExtension
 			InputStream in = fragmentBundle.getEntry(COMMANDXML).openStream();
 			CommandExtension commandExtension = loadCommandExtension(in);
 
 			// Load ReaderInfo Class
-			// TODO check if class is extending ReaderInfo	
-			Class<?> readerInfoClass = Class.forName(commandExtension.getExtendPlugin());
-			
+			// TODO check if class is extending ReaderInfo
+			Class<?> readerInfoClass = Class.forName(commandExtension
+					.getExtendPlugin());
+
 			// Get Plugin associated with ReaderInfo
-			
-			//TODO find out about Class cast
+
+			// TODO find out about Class cast
 			ReaderPlugin readerPlugin = readerPluginService
 					.getReaderPlugin((Class<? extends ReaderInfo>) readerInfoClass);
-			
-			// TODO deferred loading 
+
+			// TODO deferred loading
 			if (readerPlugin == null) {
 				logger.error("ReaderPlugin "
 						+ commandExtension.getExtendPlugin() + " not found");
 				return;
-			} else{
+			} else {
 				ArrayList<Class<? extends Command>> commands = new ArrayList<Class<? extends Command>>();
-				for(String commandClass : commandExtension.getCommands()){
-					//TODO find out about Class cast
-					commands.add((Class<? extends Command>) Class.forName(commandClass));
+				for (String commandClass : commandExtension.getCommands()) {
+					// TODO find out about Class cast
+					Class<? extends Command> command = (Class<? extends Command>) Class.forName(commandClass);
+					commands.add(command);
+					logger.debug("found extension " + commandClass);
+					for(Annotation a : command.getAnnotations())
+					{
+						System.out.println("Annotation " + a.toString());
+					}
 				}
-					
+				logger.debug("adding " + commands.size()
+						+ " command(s) to readerplugin "
+						+ readerPlugin.getClass().getSimpleName());
+				bundleHolder.commands = commands;
+				bundleHolder.plugin = readerPlugin;
 				readerPlugin.addCommand(commands);
 			}
 		} catch (BundleException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
-			logger.error("Bundle " + f.getName() + " has no command XML extension");
+			logger.error("Bundle " + f.getName()
+					+ " has no command XML extension");
 		} catch (JAXBException e) {
 			e.printStackTrace();
 			logger.error("Bundle " + f.getName() + " command xml is invalid");
