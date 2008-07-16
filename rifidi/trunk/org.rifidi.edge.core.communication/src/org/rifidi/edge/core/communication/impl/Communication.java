@@ -236,7 +236,11 @@ public class Communication implements ConnectionExceptionListener {
 			connection.setException(exception);
 			disconnect();
 			logger.debug("Try to reconnect again");
-			connect();
+			try {
+				reconnect();
+			} catch (RifidiConnectionException e1) {
+				changeState(ConnectionStatus.ERROR);
+			}
 			logger.debug("ending cleanup service");
 			cleanUP = false;
 		}
