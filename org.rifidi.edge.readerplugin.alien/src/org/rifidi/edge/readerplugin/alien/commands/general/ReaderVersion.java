@@ -14,6 +14,10 @@ import org.rifidi.edge.readerplugin.alien.messages.GenericAlienMessage;
 import org.rifidi.edge.readerplugin.alien.messages.Property;
 
 
+/**
+ * @author Jerry Maine - jerry@pramari.com
+ *
+ */
 @CommandDesc(name = "ReaderVersion", groups = {"general"})
 public class ReaderVersion implements Command {
 	private static final Log logger = LogFactory
@@ -26,7 +30,7 @@ public class ReaderVersion implements Command {
 		MessageQueue messageQueue, String configuration, long commandID) {
 		logger.debug("Starting the " + this.getClass().getSimpleName()
 				+ " command for the Alien");
-		if (configuration == null) {
+		if (configuration == null || configuration.equals("")) {
 			try {
 		
 				connection.sendMessage("get " + command + "\n");

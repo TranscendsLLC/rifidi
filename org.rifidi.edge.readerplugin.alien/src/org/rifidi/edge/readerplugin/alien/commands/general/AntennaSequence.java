@@ -14,6 +14,10 @@ import org.rifidi.edge.readerplugin.alien.messages.GenericAlienMessage;
 import org.rifidi.edge.readerplugin.alien.messages.Property;
 
 
+/**
+ * @author Jerry Maine - jerry@pramari.com
+ *
+ */
 @CommandDesc(name = "AntennaSequence", groups = {"general"})
 public class AntennaSequence implements Command {
 	private static final Log logger = LogFactory
