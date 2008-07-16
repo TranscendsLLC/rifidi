@@ -5,3 +5,4 @@ Bundle-SymbolicName: org.rifidi.edge.readerplugin.alien.extension
 Bundle-Version: 1.0.0
 Bundle-Vendor: Pramari, LLC
 Fragment-Host: org.rifidi.edge.readerplugin.alien;bundle-version="1.0.0"
+Export-Package: org.rifidi.edeg.readerplugin.alien.command.extension
