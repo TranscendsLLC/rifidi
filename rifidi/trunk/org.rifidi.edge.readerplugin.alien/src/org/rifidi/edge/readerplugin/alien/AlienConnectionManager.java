@@ -38,7 +38,7 @@ public class AlienConnectionManager extends ConnectionManager {
 	private Socket alienSock;
 
 	public static String PROMPT_SUPPRESS = "\1";
-	
+
 	public static String NEWLINE = "\n";
 
 	/**
@@ -64,11 +64,15 @@ public class AlienConnectionManager extends ConnectionManager {
 				logger.debug("getting the welcome response");
 				connection.recieveMessage();
 				logger.debug("sending username");
-				connection.sendMessage(PROMPT_SUPPRESS + this.info.getUsername() + NEWLINE);
+				connection.sendMessage(PROMPT_SUPPRESS
+						+ this.info.getUsername() + NEWLINE);
 				logger.debug("getting the username response");
 				connection.recieveMessage();
-				logger.debug("sending the password: " + this.info.getPassword());
-				connection.sendMessage(PROMPT_SUPPRESS + this.info.getPassword() + NEWLINE);
+				logger
+						.debug("sending the password: "
+								+ this.info.getPassword());
+				connection.sendMessage(PROMPT_SUPPRESS
+						+ this.info.getPassword() + NEWLINE);
 				logger.debug("recieving the password response");
 				connection.recieveMessage();
 			} catch (IOException e) {
@@ -116,7 +120,9 @@ public class AlienConnectionManager extends ConnectionManager {
 		try {
 			connection.sendMessage("q" + NEWLINE);
 			connection.recieveMessage();
-			this.alienSock.close();
+			if (this.alienSock != null) {
+				this.alienSock.close();
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
