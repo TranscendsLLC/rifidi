@@ -144,7 +144,8 @@ public class LLRPConnectionManager extends ConnectionManager {
 
 		// make sure socket is closed
 		try {
-			socket.close();
+			if (socket != null)
+				socket.close();
 		} catch (IOException e) {
 			// socket was already closed
 			logger.debug("Socket was already closed.");
