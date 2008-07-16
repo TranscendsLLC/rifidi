@@ -152,7 +152,7 @@ public class AlienReaderPlugin implements ReaderPlugin {
 	 */
 	@Override
 	public List<Class<? extends Command>> getAvailableCommands() {
-		return commands;
+		return new ArrayList<Class<? extends Command>>(commands);
 	}
 
 	/*
@@ -172,7 +172,7 @@ public class AlienReaderPlugin implements ReaderPlugin {
 	 */
 	@Override
 	public void addCommand(List<Class<? extends Command>> commands) {
-		commands.addAll(commands);
+		this.commands.addAll(commands);
 	}
 
 	/*
@@ -192,6 +192,6 @@ public class AlienReaderPlugin implements ReaderPlugin {
 	 */
 	@Override
 	public void removeCommand(List<Class<? extends Command>> commands) {
-		commands.removeAll(commands);
+		this.commands.removeAll(commands);
 	}
 }
