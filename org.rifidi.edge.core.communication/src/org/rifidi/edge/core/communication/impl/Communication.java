@@ -80,26 +80,25 @@ public class Communication implements ConnectionExceptionListener {
 			if (connection != null)
 				connectionManager.disconnect(connection);
 
-			logger.debug("Trying to stop WriteThread " + writeThread );
-			if (writeThread != null)
-			{
+			logger.debug("Trying to stop WriteThread " + writeThread);
+			if (writeThread != null) {
 				writeThread.stop();
-			}else
-			{
-				logger.debug("Could not stop WriteThread " + writeThread + " because it was null");
+			} else {
+				logger.debug("Could not stop WriteThread " + writeThread
+						+ " because it was null");
 			}
-			if (readThread != null)
-			{
+			if (readThread != null) {
 				readThread.stop();
 			}
-			
+
 		} catch (RuntimeException e) {
 			logger.error("Runtime Exception detected:"
 					+ " Probably the connectionmanager is not safe", e);
 			connection = null;
-			//changeState(ConnectionStatus.ERROR);
-			/*Can't call change state the normal way... 
-			 * It will cause an infinite loop.
+			// changeState(ConnectionStatus.ERROR);
+			/*
+			 * Can't call change state the normal way... It will cause an
+			 * infinite loop.
 			 */
 			for (CommunicationStateListener listener : listeners) {
 				listener.error();
@@ -139,8 +138,10 @@ public class Communication implements ConnectionExceptionListener {
 				break;
 			}
 		} catch (RuntimeException e) {
-			logger.error("Runtime Exception detected:"
-					+ " Probably the connectionmanager is not safe", e);
+			logger
+					.error("Runtime Exception detected:" + " Probably the "
+							+ connectionManager.getClass().getName()
+							+ " is not safe", e);
 			connection = null;
 			changeState(ConnectionStatus.ERROR);
 			return;
@@ -191,8 +192,8 @@ public class Communication implements ConnectionExceptionListener {
 		synchronized (this) {
 			if (!cleanUP) {
 				cleanUP = true;
-				new Thread(new CleanUP(exception), "ReconnectingThread: [" + connectionManager.toString() + "]")
-						.start();
+				new Thread(new CleanUP(exception), "ReconnectingThread: ["
+						+ connectionManager.toString() + "]").start();
 			}
 		}
 	}
