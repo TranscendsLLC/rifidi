@@ -1,6 +1,5 @@
 package org.rifidi.edge.readerplugin.thingmagic.plugin;
 
-
 import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
@@ -17,12 +16,12 @@ import org.rifidi.edge.readerplugin.thingmagic.protocol.ThingMagicCommunicationP
 
 /**
  * @author Jerry Maine - jerry@pramari.com
- *
+ * 
  */
 public class ThingMagicManager extends ConnectionManager {
-	private static final Log logger = LogFactory.getLog(ThingMagicManager.class);
-	
-	
+	private static final Log logger = LogFactory
+			.getLog(ThingMagicManager.class);
+
 	public ThingMagicManager(ReaderInfo readerInfo) {
 		super(readerInfo);
 		info = (ThingMagicReaderInfo) readerInfo;
@@ -30,43 +29,49 @@ public class ThingMagicManager extends ConnectionManager {
 
 	private Socket socket;
 	private ThingMagicReaderInfo info;
-	
 
-	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionManager#getCommunicationProtocol()
 	 */
 	@Override
 	public CommunicationProtocol getCommunicationProtocol() {
 		return new ThingMagicCommunicationProtocol();
 	}
-	
+
 	@Override
 	public int getMaxNumConnectionsAttemps() {
-		return (info.getMaxNumConnectionsAttemps() != 0) ? info.getMaxNumConnectionsAttemps() : 3;
+		return (info.getMaxNumConnectionsAttemps() != 0) ? info
+				.getMaxNumConnectionsAttemps() : 3;
 	}
+
 	@Override
 	public long getReconnectionIntervall() {
-		return (info.getReconnectionIntervall() != 0) ? info.getReconnectionIntervall() : 1000;
+		return (info.getReconnectionIntervall() != 0) ? info
+				.getReconnectionIntervall() : 1000;
 	}
-	
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionManager#startKeepAlive()
 	 */
 	@Override
 	public void startKeepAlive(Connection connectoin) {
 		// ignore this.
-		
+
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionManager#stopKeepAlive()
 	 */
 	@Override
 	public void stopKeepAlive(Connection connection) {
 		// ignore this.
-		
+
 	}
 
 	@Override
@@ -74,22 +79,26 @@ public class ThingMagicManager extends ConnectionManager {
 			throws RifidiConnectionException {
 		// TODO Auto-generated method stub
 		if (!info.isSsh()) {
+			//logger.debug("Trying to connect to: " + info.getIpAddress() + ":"
+			//		+ info.getPort() + ".");
 			try {
 				socket = new Socket(info.getIpAddress(), info.getPort());
 			} catch (UnknownHostException e) {
-				//logger.debug("Error: ", e);
+				// logger.debug("Error: ", e);
 				throw new RifidiConnectionException(e);
 			} catch (IOException e) {
-				//logger.debug("Error: ", e);
+				// logger.debug("Error: ", e);
 				throw new RifidiConnectionException(e);
 			}
 		} else {
-			//TODO implement connection to reader by ssh
-			throw new UnsupportedOperationException("Connections to Merucry 4 or 5, ThingMagic readers by ssh not impemented.");
+			// TODO implement connection to reader by ssh
+			throw new UnsupportedOperationException(
+					"Connections to Merucry 4 or 5, ThingMagic readers by ssh not impemented.");
 		}
-		
+
 		try {
-			return new ConnectionStreams(socket.getInputStream(), socket.getOutputStream());
+			return new ConnectionStreams(socket.getInputStream(), socket
+					.getOutputStream());
 		} catch (IOException e) {
 			logger.debug("Error: ", e);
 			throw new RifidiConnectionException(e);
@@ -98,8 +107,8 @@ public class ThingMagicManager extends ConnectionManager {
 
 	@Override
 	public void connect(Connection connection) throws RifidiConnectionException {
-		// TODO Auto-generated method stub
-		
+		// Do nothing
+
 	}
 
 	@Override
@@ -112,8 +121,7 @@ public class ThingMagicManager extends ConnectionManager {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-	}
 
+	}
 
 }
