@@ -228,9 +228,17 @@ public class ReaderSessionImpl implements ReaderSession,
 			throws RifidiCommandInterruptedException,
 			RifidiCommandNotFoundException {
 
+		//the Command object for the command we are searching for
+		Command retVal = null;
+		
 		CommandDesc commandDesc = null;
-		for (Class<? extends Command> commandClass : readerPluginService
-				.getReaderPlugin(readerInfo.getClass()).getAvailableCommands()) {
+		
+		//get available commands from the reader plugin
+		List<Class<? extends Command>> availableCommands = readerPluginService
+				.getReaderPlugin(readerInfo.getClass()).getAvailableCommands();
+		
+		for (Class<? extends Command> commandClass : availableCommands) {
+			
 			logger.debug(readerPluginService.getReaderPlugin(
 					readerInfo.getClass()).getAvailableCommands().size()
 					+ " Commands found");
@@ -239,14 +247,14 @@ public class ReaderSessionImpl implements ReaderSession,
 			commandDesc = commandClass.getAnnotation(CommandDesc.class);
 
 			if (commandDesc != null) {
-				// TODO make lookup case neutral
 				if (commandDesc.name().equals(command)) {
 					// Create Command via reflection
 					Constructor<? extends Command> constructor;
 					try {
 						constructor = commandClass.getConstructor();
-						// return command if we found it
-						return (Command) constructor.newInstance();
+						retVal =  (Command) constructor.newInstance();
+						//command has been found.  break out of loop
+						break;
 					} catch (SecurityException e) {
 						e.printStackTrace();
 						throw new RifidiCommandInterruptedException(
@@ -272,14 +280,16 @@ public class ReaderSessionImpl implements ReaderSession,
 						throw new RifidiCommandInterruptedException(
 								"Command not found.", e);
 					}
-				} else {
-					throw new RifidiCommandNotFoundException(
-							"Command not found " + command);
 				}
-			}
+			} 
+		}
+		
+		if(retVal==null){
+			throw new RifidiCommandNotFoundException(
+					"Command not found " + command);
 		}
 
-		return null;
+		return retVal;
 
 	}
 
@@ -308,17 +318,26 @@ public class ReaderSessionImpl implements ReaderSession,
 	// TODO: what should this return if we are not executing anything?
 	@Override
 	public String curExecutingCommand() {
-		return curCommand.getCommandName();
+		if (curCommand != null)
+			return curCommand.getCommandName();
+		else
+			return "NO CURRENT COMMAND";
 	}
 
 	@Override
 	public long curExecutingCommandID() {
-		return curCommand.getCommandID();
+		if (curCommand != null) {
+			return curCommand.getCommandID();
+		} else
+			return -1;
 	}
 
 	@Override
 	public CommandStatus commandStatus() {
-		return curCommand.getCommandStatus();
+		if (curCommand != null) {
+			return curCommand.getCommandStatus();
+		} else
+			return CommandStatus.NOCOMMAND;
 	}
 
 	@Override
@@ -436,7 +455,9 @@ public class ReaderSessionImpl implements ReaderSession,
 	 */
 
 	public void cleanUP() {
-		connectionService.destroyConnection(connection, this);
+		if (connection != null) {
+			connectionService.destroyConnection(connection, this);
+		}
 	}
 
 	/*
@@ -447,6 +468,12 @@ public class ReaderSessionImpl implements ReaderSession,
 	@Override
 	public void finalize() {
 		// TODO think about cleaning that up
+	}
+
+	@Override
+	public String toString() {
+		return "READER SESSION: " + this.readerSessionID + " TYPE: "
+				+ this.readerInfo.getClass().getSimpleName();
 	}
 
 }

@@ -23,7 +23,7 @@ public class CommandJournal {
 				return cw.getCommandStatus();
 			}
 		}
-		return null;
+		return CommandStatus.NOCOMMAND;
 	}
 	
 	public void updateCommand(Command command, CommandReturnStatus status){
@@ -40,7 +40,7 @@ public class CommandJournal {
 				return cw.getCommandStatus();
 			}
 		}
-		return null;
+		return CommandStatus.NOCOMMAND;
 	}
 
 }
