@@ -77,7 +77,8 @@ public class Communication implements ConnectionExceptionListener {
 			if (readThread != null)
 				readThread.ignoreExceptions(true);
 
-			connectionManager.disconnect(connection);
+			if (connection != null)
+				connectionManager.disconnect(connection);
 
 			if (writeThread != null)
 				writeThread.stop();
