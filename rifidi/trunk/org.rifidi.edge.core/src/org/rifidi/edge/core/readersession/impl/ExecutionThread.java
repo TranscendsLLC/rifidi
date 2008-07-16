@@ -82,6 +82,7 @@ public class ExecutionThread {
 				}
 				status = command.start(connection, messageQueue,
 						_configuration, commandID);
+				//TODO Possibly pass in commandID instead of command
 				commandExecutionListener.commandFinished(command, status);
 				command = null;
 				logger.debug("Command finished");
