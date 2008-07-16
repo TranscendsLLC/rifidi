@@ -107,16 +107,21 @@ public class PersistedReaderInfo {
 	public List<ReaderInfo> getReaderInfos(String className) {
 		List<ReaderInfo> retVal = new ArrayList<ReaderInfo>();
 		Element ele = this.findReaderTypeList(className);
-		NodeList nodes = ele.getChildNodes();
-		for (int i = 0; i < nodes.getLength(); i++) {
-			Node nod = nodes.item(i);
-			try {
-				ReaderInfo ri = (ReaderInfo) JAXBUtility.getInstance()
-						.load(nod);
-				retVal.add(ri);
-			} catch (JAXBException e) {
-				// TODO: probably should throw something here
-				e.printStackTrace();
+		if (ele != null) {
+			NodeList nodes = ele.getChildNodes();
+			for (int i = 0; i < nodes.getLength(); i++) {
+				Node nod = nodes.item(i);
+				if (nod instanceof Element) {
+					try {
+						this.printToSTIO(nod);
+						ReaderInfo ri = (ReaderInfo) JAXBUtility.getInstance()
+								.load(nod);
+						retVal.add(ri);
+					} catch (JAXBException e) {
+						// TODO: probably should throw something here
+						e.printStackTrace();
+					}
+				}
 			}
 		}
 		return retVal;
@@ -150,9 +155,14 @@ public class PersistedReaderInfo {
 	}
 
 	/**
+	 * This will attempt to find a readerInfo in the XML data.
 	 * 
 	 * @param readerInfo
+	 *            The reader we want to find. The information we will use from
+	 *            this class is the class name, the IP, and the port.
 	 * @param readerInfoTypeList
+	 *            This is a list of ReaderInfo datas in XML form. The class
+	 *            already matches
 	 * @return
 	 */
 	private Element find(ReaderInfo readerInfo, Element readerInfoTypeList) {
@@ -197,12 +207,16 @@ public class PersistedReaderInfo {
 	}
 
 	/**
-	 * 
+	 * Finds a unique reader based on the IP and port given.
 	 * 
 	 * @param ip
+	 *            The IP of the reader you want to find.
 	 * @param port
+	 *            The port of the reader you want to find.
 	 * @param readerList
-	 * @return
+	 *            The list of readers that will be searched to find the reader.
+	 * @return The element representing the reader if it was found, null
+	 *         otherwise.
 	 */
 	private Element findUniqueReader(String ip, int port, NodeList readerList) {
 		for (int i = 0, n = readerList.getLength(); i < n; i++) {
@@ -239,6 +253,7 @@ public class PersistedReaderInfo {
 	}
 
 	/**
+	 * Find the readerTypeList.
 	 * 
 	 * @param readerInfoType
 	 * @return
@@ -257,6 +272,7 @@ public class PersistedReaderInfo {
 			this.printToSTIO(this.doc);
 			Object oResult = expr.evaluate(this.doc, XPathConstants.NODE);
 			logger.debug("Just after the evaluate");
+			this.printToSTIO((Node) oResult);
 			if (oResult == null) {
 				logger.debug("returning null");
 				return null;
@@ -297,7 +313,7 @@ public class PersistedReaderInfo {
 	}
 
 	/**
-	 * 
+	 * Creates a document based on the xml file given.
 	 */
 	private Document createDocument(File xml) {
 		Document dom = null;
@@ -333,7 +349,7 @@ public class PersistedReaderInfo {
 	 */
 	public void loadFromFile() {
 		File xmlFile = null;
-		
+
 		xmlFile = JAXBUtility.getInstance().getXMLFile();
 
 		if (xmlFile != null) {
@@ -343,6 +359,11 @@ public class PersistedReaderInfo {
 		} else {
 			logger.debug("FILE IS NULL");
 		}
+	}
+
+	public void setFile(String filename) throws IOException {
+		JAXBUtility.getInstance().setFile(filename);
+		this.loadFromFile();
 	}
 
 	/**
@@ -371,6 +392,30 @@ public class PersistedReaderInfo {
 	 * Prints the document to a file.
 	 */
 	private void printToSTIO(Element e) {
+		logger.debug("printing an element");
+		try {
+			// print
+			OutputFormat format = new OutputFormat(doc);
+			format.setIndenting(true);
+
+			// XMLSerializer serializer = new XMLSerializer(new
+			// FileOutputStream(
+			// new File("cuddles.xml")), format);
+
+			XMLSerializer serializer = new XMLSerializer(System.out, format);
+
+			serializer.serialize(e);
+
+		} catch (IOException ie) {
+			ie.printStackTrace();
+		}
+	}
+
+	/**
+	 * Prints the document to a file.
+	 */
+	private void printToSTIO(Node e) {
+		logger.debug("printing a node");
 		try {
 			// print
 			OutputFormat format = new OutputFormat(doc);
@@ -393,7 +438,7 @@ public class PersistedReaderInfo {
 	 * Prints the document to a file.
 	 */
 	private void printToSTIO(Document e) {
-		logger.debug("Printing in the file");
+		logger.debug("Printing the file");
 		try {
 			// print
 			OutputFormat format = new OutputFormat(doc);
