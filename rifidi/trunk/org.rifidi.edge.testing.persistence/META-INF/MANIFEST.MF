@@ -16,4 +16,6 @@ Require-Bundle: org.rifidi.edge.persistence,
  org.rifidi.edge.common.utilities,
  org.rifidi.edge.services,
  org.junit4,
- org.junit
+ org.junit,
+ org.rifidi.edge.readerplugin.dummy,
+ org.rifidi.edge.readerplugin.thingmagic
