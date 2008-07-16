@@ -24,6 +24,7 @@ public class ConnectionServiceImpl implements ConnectionService {
 		connection = communication.connect();
 		fireAddEvent(connection);
 
+		connections.put(connection, communication);
 		return connection;
 	}
 
