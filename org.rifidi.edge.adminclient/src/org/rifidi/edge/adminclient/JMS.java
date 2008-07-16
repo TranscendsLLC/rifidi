@@ -33,7 +33,7 @@ public class JMS implements Runnable {
 		connection = connectionFactory.createConnection();
 		connection.start();
 		session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
-		Destination dest = session.createQueue("1");
+		Destination dest = session.createQueue(queueName);
 		consumer = session.createConsumer(dest);
 
 		Thread thread = new Thread(this);
