@@ -10,7 +10,6 @@
  */
 package org.rifidi.edge.testing.persistence;
 
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.After;
@@ -23,21 +22,21 @@ import org.rifidi.edge.readerplugin.alien.AlienReaderInfo;
 import org.rifidi.services.annotations.Inject;
 import org.rifidi.services.registry.ServiceRegistry;
 
-
 /**
- * This class tests the persistence layer, and other fun things.  
+ * This class tests the persistence layer, and other fun things.
  * 
  * @author Matthew Dean - matt@pramari.com
  */
 public class PersistenceTestClass {
-	
+
 	private ReaderSessionService readerSessionService;
 
 	/**
 	 * The log4j logger.debug.
 	 */
-	private static final Log logger = LogFactory.getLog(PersistenceTestClass.class);
-	
+	private static final Log logger = LogFactory
+			.getLog(PersistenceTestClass.class);
+
 	/**
 	 * @throws java.lang.Exception
 	 */
@@ -54,18 +53,19 @@ public class PersistenceTestClass {
 	}
 
 	/**
-	 * Test the loading of the reader.  
+	 * Test the loading of the reader.
 	 */
 	@Test
 	public void testLoading() {
 		logger.debug("Starting the load test");
-		 PersistanceServiceImpl perSerImpl = new PersistanceServiceImpl();
 
-		perSerImpl.start(null);
+		PersistanceServiceImpl psi = new PersistanceServiceImpl();
+
+		psi.start(null);
 	}
-	
+
 	/**
-	 * Tests the saving part of the persistence test class, including the 
+	 * Tests the saving part of the persistence test class, including the
 	 */
 	@Test
 	public void testSaving() {
@@ -75,14 +75,14 @@ public class PersistenceTestClass {
 		ari.setPassword("omgzor");
 		ari.setUsername("alienzor");
 		ReaderSession rs = readerSessionService.createReaderSession(ari);
-		
+
 		readerSessionService.destroyReaderSession(rs);
-		
+
 		logger.debug("Starting the save test");
 	}
-	
+
 	/**
-	 * Injects the ReaderSessionService.  
+	 * Injects the ReaderSessionService.
 	 * 
 	 * @param service
 	 */
