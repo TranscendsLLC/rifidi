@@ -80,10 +80,18 @@ public class Communication implements ConnectionExceptionListener {
 			if (connection != null)
 				connectionManager.disconnect(connection);
 
+			logger.debug("Trying to stop WriteThread " + writeThread );
 			if (writeThread != null)
+			{
 				writeThread.stop();
+			}else
+			{
+				logger.debug("Could not stop WriteThread " + writeThread + " because it was null");
+			}
 			if (readThread != null)
+			{
 				readThread.stop();
+			}
 			
 		} catch (RuntimeException e) {
 			logger.error("Runtime Exception detected:"
@@ -213,6 +221,7 @@ public class Communication implements ConnectionExceptionListener {
 		private Exception exception;
 
 		public CleanUP(Exception exception) {
+			logger.debug("Starting up clean service");
 			this.exception = exception;
 		}
 
@@ -223,10 +232,12 @@ public class Communication implements ConnectionExceptionListener {
 				Thread.sleep(1000);
 			} catch (InterruptedException e) {
 			}
-			
+			logger.debug("Cleaning up connection by disconnecting");
 			disconnect();
 			connection.setException(exception);
+			logger.debug("Try to reconnect again");
 			connect();
+			logger.debug("ending cleanup service");
 			cleanUP = false;
 		}
 
