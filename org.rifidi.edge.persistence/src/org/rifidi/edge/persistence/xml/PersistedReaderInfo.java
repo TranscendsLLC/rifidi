@@ -348,7 +348,7 @@ public class PersistedReaderInfo {
 		File xmlFile = null;
 
 		xmlFile = JAXBUtility.getInstance().getXMLFile();
-
+		
 		if (xmlFile != null) {
 			logger.debug("FILE NOT NULL, CREATING NEW DOCUMENT");
 			this.doc = this.createDocument(xmlFile);
@@ -358,8 +358,8 @@ public class PersistedReaderInfo {
 		}
 	}
 
-	public void setFile(String filename) throws IOException {
-		JAXBUtility.getInstance().setFile(filename);
+	public void setFile(String path,String filename) throws IOException {
+		JAXBUtility.getInstance().setFile(path,filename);
 		this.loadFromFile();
 	}
 
