@@ -28,7 +28,7 @@ public class ConnectionServiceImpl implements ConnectionService {
 		if (connection == null)
 			throw new RifidiConnectionException("Connection returned null."
 					+ " This means there is a severe error in "
-					+ connectionManager.getClass().getSimpleName());
+					+ connectionManager.getClass().getName());
 
 		fireAddEvent(connection);
 		connections.put(connection, communication);
