@@ -23,7 +23,7 @@ public class ConnectionServiceImpl implements ConnectionService {
 		communication.addCommunicationStateListener(communicationStateListener);
 		connection = communication.connect();
 		
-		if (connection == null) throw new RifidiConnectionException();
+		if (connection == null) throw new RifidiConnectionException("Connection returned null.");
 		
 		fireAddEvent(connection);
 		connections.put(connection, communication);
