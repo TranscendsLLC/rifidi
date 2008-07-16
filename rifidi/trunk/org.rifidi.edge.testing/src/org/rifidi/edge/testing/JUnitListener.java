@@ -18,26 +18,26 @@ public class JUnitListener extends RunListener {
 	private static final Log logger = LogFactory.getLog(JUnitListener.class);
 	
 	public void testFinished(Description description){
-		logger.debug("JUnit Finished: " + description);
+		logger.info("JUnit Finished: " + description);
 	}
 	
 	public void testFailure(Failure failure){
-		logger.error("JUnit Failure: " + failure);
+		logger.fatal("JUnit Failure: " + failure);
 		//logger.error(failure.getMessage());
-		logger.error("JUnit Failure: " + failure.getTrace());
+		logger.fatal("JUnit Failure: " + failure.getTrace());
 	}
 	
 	public void testRunFinished(Result result) {
-		logger.debug("JUnits that ran: " + result.getRunCount());
-		logger.debug("JUnit runtime: " + ((double) result.getRunTime() / 1000) + " second(s)") ;
+		logger.info("JUnits that ran: " + result.getRunCount());
+		logger.info("JUnit runtime: " + ((double) result.getRunTime() / 1000) + " second(s)") ;
 		
 		if (result.wasSuccessful()) {
-			logger.debug("No Junits failed.");
+			logger.info("No Junits failed.");
 		} else {
-			logger.error("JUnits that failed: " + result.getFailureCount());
+			logger.fatal("JUnits that failed: " + result.getFailureCount());
 			List<Failure> failures = result.getFailures();
 			for (Failure failure: failures){
-				logger.error("JUnit Failure: " + failure);
+				logger.fatal("JUnit Failure: " + failure);
 				//logger.error("JUnit Failure (Stack Trace): " + failure.getTrace());
 			}
 		}
@@ -45,11 +45,11 @@ public class JUnitListener extends RunListener {
 	
 	public void testRunStarted(Description description) {
 		for (Description d: description.getChildren()){
-			logger.debug("Setting up to run Junit: " + d);
+			logger.info("Setting up to run Junit: " + d);
 		}
 	}
 	
 	public void testStarted(Description description) {
-		logger.debug("Attempting to run Junit: " + description);
+		logger.info("Attempting to run Junit: " + description);
 	}
 }
