@@ -22,8 +22,10 @@ public class ConnectionServiceImpl implements ConnectionService {
 		Communication communication = new Communication(connectionManager);
 		communication.addCommunicationStateListener(communicationStateListener);
 		connection = communication.connect();
+		
+		if (connection == null) throw new RifidiConnectionException();
+		
 		fireAddEvent(connection);
-
 		connections.put(connection, communication);
 		return connection;
 	}
