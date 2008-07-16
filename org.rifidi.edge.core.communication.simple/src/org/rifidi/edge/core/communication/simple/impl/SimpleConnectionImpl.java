@@ -246,7 +246,7 @@ public class SimpleConnectionImpl implements Connection {
 				/*
 				 * Do a blocking read for one byte.
 				 */	
-				for (long x = timeout / 2 ;!(inputStream.available() > 0) && x * 10 < timeout; x++ ) {
+				for (long x = timeout / 2 ;( !(inputStream.available() > 0) ) && (x * 10 < timeout); x++ ) {
 					try {
 						Thread.sleep(10);
 					} catch (InterruptedException e) {
