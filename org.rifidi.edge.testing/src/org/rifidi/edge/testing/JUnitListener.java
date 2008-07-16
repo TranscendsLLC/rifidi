@@ -28,8 +28,10 @@ public class JUnitListener extends RunListener {
 	}
 	
 	public void testRunFinished(Result result) {
-		logger.debug("Junits that ran: " + result.getRunCount());
-		logger.debug("Junits that failed: " + result.getFailureCount());
+		logger.debug("JUnits that ran: " + result.getRunCount());
+		logger.debug("JUnit runtime: " + result.getRunTime());
+		
+		logger.debug("JUnits that failed: " + result.getFailureCount());
 		if (result.wasSuccessful()) {	
 		} else {
 			List<Failure> failures = result.getFailures();
