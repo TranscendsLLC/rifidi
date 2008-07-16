@@ -83,6 +83,7 @@ public class Communication implements ConnectionExceptionListener {
 				writeThread.stop();
 			if (readThread != null)
 				readThread.stop();
+			
 		} catch (RuntimeException e) {
 			logger.error("Runtime Exception detected:"
 					+ " Probably the connectionmanager is not safe", e);
@@ -216,6 +217,12 @@ public class Communication implements ConnectionExceptionListener {
 
 		@Override
 		public void run() {
+			// Give Read and Write Thread time to react
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+			}
+			
 			disconnect();
 			connection.setException(exception);
 			connect();
