@@ -38,15 +38,25 @@ public class FileMonitor extends AbstractThread {
 	@Override
 	public boolean start() {
 		// TODO think about throwing exceptions
-
+		logger.debug("Start monitoring " + pathToMonitor);
 		// Check if all the Arguments are valid
 		if (pathToMonitor.isEmpty())
+		{
 			return false;
+		}
 		directory = new File(pathToMonitor);
+		if(!directory.exists())
+		{
+			logger.debug("Given path is not valid. Directory does not exist.");
+		}
 		if (directory.isDirectory())
+		{		
 			return super.start();
-		else
+		}
+		else{
+			logger.debug("path is not a directory: " + pathToMonitor);
 			return false;
+		}
 	}
 
 	/*
