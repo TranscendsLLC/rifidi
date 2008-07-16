@@ -9,7 +9,7 @@ import javax.jms.TextMessage;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 
-public class JMS implements Runnable {
+public class JMS {
 
 	public static void main(String[] args) {
 		try {
@@ -36,11 +36,9 @@ public class JMS implements Runnable {
 		Destination dest = session.createQueue(queueName);
 		consumer = session.createConsumer(dest);
 
-		Thread thread = new Thread(this);
-		thread.start();
+		run();
 	}
 
-	@Override
 	public void run() {
 		try {
 			while (true) {
