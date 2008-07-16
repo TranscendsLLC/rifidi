@@ -41,7 +41,7 @@ import com.sun.org.apache.xml.internal.serialize.OutputFormat;
 import com.sun.org.apache.xml.internal.serialize.XMLSerializer;
 
 /**
- * This is SPARTA!
+ * Comments considered harmful.
  * 
  * TODO: Potential problem with this: IP and Port might lose uniqueness
  * depending on which readers were loaded at the time.
@@ -115,7 +115,7 @@ public class PersistedReaderInfo {
 				Node nod = nodes.item(i);
 				if (nod instanceof Element) {
 					try {
-						this.printToSTIO(nod);
+						// this.printToSTIO(nod);
 						ReaderInfo ri = (ReaderInfo) JAXBUtility.getInstance()
 								.load(nod);
 						retVal.add(ri);
@@ -150,7 +150,7 @@ public class PersistedReaderInfo {
 			throw new RifidiReaderInfoNotFoundException();
 		}
 		logger.debug("removing the child node");
-		this.printToSTIO(readerInfoTypeList);
+		// this.printToSTIO(readerInfoTypeList);
 		readerInfoTypeList.removeChild(readerInfoNode);
 		logger.debug("printing to file");
 		printToFile();
@@ -169,7 +169,7 @@ public class PersistedReaderInfo {
 	 */
 	private Element find(ReaderInfo readerInfo, Element readerInfoTypeList) {
 		logger.debug("In the find");
-		printToSTIO(readerInfoTypeList);
+		// printToSTIO(readerInfoTypeList);
 		XPathFactory factory = XPathFactory.newInstance();
 		XPath xpath = factory.newXPath();
 		try {
@@ -229,24 +229,19 @@ public class PersistedReaderInfo {
 			NodeList childNodeList = node.getChildNodes();
 			for (int x = 0, m = childNodeList.getLength(); x < m; x++) {
 				Node child = childNodeList.item(x);
-				logger.debug("CHILD NODE: " + child);
 				if (child.getNodeName().equals(XMLTags.IP_ADDRESS)) {
-					logger.debug("IP CHILD NODE FOUND");
 					if (child.getFirstChild().getNodeValue().equals(ip)) {
-						logger.debug("IP IS A MATCH");
 						ip_match = true;
 					}
 				}
 				if (child.getNodeName().equals(XMLTags.PORT)) {
-					logger.debug("PORT CHILD NODE FOUND");
 					if (child.getFirstChild().getNodeValue().equals(
 							String.valueOf(port))) {
-						logger.debug("PORT IS A MATCH");
 						port_match = true;
 					}
 				}
 				if (ip_match && port_match) {
-					logger.debug("RETURNING: " + child);
+					logger.debug("RETURNING: " + node);
 					return (Element) node;
 				}
 			}
@@ -271,10 +266,10 @@ public class PersistedReaderInfo {
 			logger.debug("String expression is: \n" + exp);
 			XPathExpression expr = xpath.compile(exp);
 			logger.debug("Just after the compile");
-			this.printToSTIO(this.doc);
+			// this.printToSTIO(this.doc);
 			Object oResult = expr.evaluate(this.doc, XPathConstants.NODE);
 			logger.debug("Just after the evaluate");
-			this.printToSTIO((Node) oResult);
+			// this.printToSTIO((Node) oResult);
 			if (oResult == null) {
 				logger.debug("returning null");
 				return null;
@@ -387,81 +382,6 @@ public class PersistedReaderInfo {
 
 		} catch (IOException ie) {
 			ie.printStackTrace();
-		}
-	}
-
-	/**
-	 * Prints the document to a file.
-	 */
-	private void printToSTIO(Element e) {
-		if (e != null) {
-			logger.debug("printing an element");
-			try {
-				// print
-				OutputFormat format = new OutputFormat(doc);
-				format.setIndenting(true);
-
-				// XMLSerializer serializer = new XMLSerializer(new
-				// FileOutputStream(
-				// new File("cuddles.xml")), format);
-
-				XMLSerializer serializer = new XMLSerializer(System.out, format);
-
-				serializer.serialize(e);
-
-			} catch (IOException ie) {
-				ie.printStackTrace();
-			}
-		}
-	}
-
-	/**
-	 * Prints the document to a file.
-	 */
-	private void printToSTIO(Node e) {
-		if (e != null) {
-			logger.debug("printing a node");
-			try {
-				// print
-				OutputFormat format = new OutputFormat(doc);
-				format.setIndenting(true);
-
-				// XMLSerializer serializer = new XMLSerializer(new
-				// FileOutputStream(
-				// new File("cuddles.xml")), format);
-
-				XMLSerializer serializer = new XMLSerializer(System.out, format);
-
-				serializer.serialize(e);
-
-			} catch (IOException ie) {
-				ie.printStackTrace();
-			}
-		}
-	}
-
-	/**
-	 * Prints the document to standard output.
-	 */
-	private void printToSTIO(Document e) {
-		if (e != null) {
-			logger.debug("Printing the file");
-			try {
-				// print
-				OutputFormat format = new OutputFormat(doc);
-				format.setIndenting(true);
-
-				// XMLSerializer serializer = new XMLSerializer(new
-				// FileOutputStream(
-				// new File("cuddles.xml")), format);
-
-				XMLSerializer serializer = new XMLSerializer(System.out, format);
-
-				serializer.serialize(e);
-
-			} catch (IOException ie) {
-				ie.printStackTrace();
-			}
 		}
 	}
 
