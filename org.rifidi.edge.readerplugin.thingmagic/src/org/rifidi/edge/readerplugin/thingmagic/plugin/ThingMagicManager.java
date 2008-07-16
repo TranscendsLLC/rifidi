@@ -106,7 +106,8 @@ public class ThingMagicManager extends ConnectionManager {
 	public void disconnect(Connection connection) {
 
 		try {
-			socket.close();
+			if (socket != null)
+				socket.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
