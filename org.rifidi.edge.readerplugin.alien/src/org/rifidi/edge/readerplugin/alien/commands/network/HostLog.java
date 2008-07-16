@@ -33,7 +33,7 @@ public class HostLog implements Command {
 			try {
 
 				connection.sendMessage(command + "\n");
-				String message = (String) connection.recieveMessage();
+				String message = (String) connection.receiveMessage();
 				
 				if (message.contains("=")) {
 					String[] temp = message.split("=");

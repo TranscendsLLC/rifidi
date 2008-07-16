@@ -31,7 +31,7 @@ public class GetTagsOnceCommand implements Command {
 
 		String recieved;
 		try {
-			recieved = (String) connection.recieveMessage();
+			recieved = (String) connection.receiveMessage();
 		} catch (IOException e1) {
 			return CommandReturnStatus.INTERRUPTED;
 		}

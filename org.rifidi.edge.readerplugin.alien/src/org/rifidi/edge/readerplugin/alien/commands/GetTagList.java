@@ -34,15 +34,15 @@ public class GetTagList implements Command {
 		try {
 
 			connection.sendMessage(AlienCommandList.TAG_LIST_FORMAT);
-			connection.recieveMessage();
+			connection.receiveMessage();
 
 			connection.sendMessage(AlienCommandList.TAG_LIST_CUSTOM_FORMAT);
-			connection.recieveMessage();
+			connection.receiveMessage();
 
 			// /while (running) {
 
 			connection.sendMessage(AlienCommandList.TAG_LIST);
-			String tag_msg = (String) connection.recieveMessage();
+			String tag_msg = (String) connection.receiveMessage();
 
 			List<TagMessage> tagList = this.parseString(tag_msg);
 

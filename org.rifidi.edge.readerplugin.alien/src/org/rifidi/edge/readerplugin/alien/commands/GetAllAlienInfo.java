@@ -24,7 +24,7 @@ public class GetAllAlienInfo implements Command {
 		try {
 
 			connection.sendMessage("info");
-			String message = (String) connection.recieveMessage();
+			String message = (String) connection.receiveMessage();
 
 			messageQueue.addMessage(new AlienAllInfoMessage(message));
 

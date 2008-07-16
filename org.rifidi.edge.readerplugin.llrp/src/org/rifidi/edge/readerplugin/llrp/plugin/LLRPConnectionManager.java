@@ -61,7 +61,7 @@ public class LLRPConnectionManager extends ConnectionManager {
 		try {
 
 			READER_EVENT_NOTIFICATION event = (READER_EVENT_NOTIFICATION) connection
-					.recieveMessage();
+					.receiveMessage();
 			ConnectionAttemptEvent connAttempt = event
 					.getReaderEventNotificationData()
 					.getConnectionAttemptEvent();
@@ -124,7 +124,7 @@ public class LLRPConnectionManager extends ConnectionManager {
 		try {
 			connection.sendMessage(closeConnection);
 			CLOSE_CONNECTION_RESPONSE response = (CLOSE_CONNECTION_RESPONSE) connection
-					.recieveMessage();
+					.receiveMessage();
 			LLRPStatus status = response.getLLRPStatus();
 			StatusCode statuscode = status.getStatusCode();
 			int statusInt = statuscode.toInteger();

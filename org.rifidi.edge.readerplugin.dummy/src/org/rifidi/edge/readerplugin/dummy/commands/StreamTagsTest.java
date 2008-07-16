@@ -23,7 +23,7 @@ public class StreamTagsTest implements Command {
 		while (running) {
 			try {
 				connection.sendMessage("GET_SOMETHING\n");
-				logger.debug((String) connection.recieveMessage());
+				logger.debug((String) connection.receiveMessage());
 				
 				try {
 					Thread.sleep(1000);

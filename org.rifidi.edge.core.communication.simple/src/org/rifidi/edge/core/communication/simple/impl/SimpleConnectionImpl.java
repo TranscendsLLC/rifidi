@@ -52,7 +52,7 @@ public class SimpleConnectionImpl implements Connection {
 	 * @see org.rifidi.edge.core.communication.Connection#recieveMessage()
 	 */
 	@Override
-	public Object recieveMessage() throws IOException {
+	public Object receiveMessage() throws IOException {
 		try{
 			/* if there is nothing on the queue
 			 * we block until there is something.
@@ -219,6 +219,80 @@ public class SimpleConnectionImpl implements Connection {
 		this.inputStream = streams.getInputStream();
 		this.protocol = this.connectionManager.getCommunicationProtocol();
 		this.connectionManager.connect(this);
+	}
+
+	@Override
+	public Object receiveMessage(long timeout) throws IOException {
+		try{
+			/* if there is nothing on the queue
+			 * we block until there is something.
+			 */
+
+			Object retVal = null;
+			//TODO: Deal if we get things back faster than we can receive them.
+			while (true) {
+				int input;
+				/*
+				 * if there is one or more objects on the buffer.
+				 */
+				if (!recieved.isEmpty()) {
+					/*
+					 * check to see if there is any bytes
+					 * available on the inputStream
+					 * if not... we break the while loop.
+					 */
+					if ( !(inputStream.available() > 0) ) break;
+				}
+				/*
+				 * Do a blocking read for one byte.
+				 */	
+				for (long x = timeout / 2 ;!(inputStream.available() > 0) && x * 10 < timeout; x++ ) {
+					try {
+						Thread.sleep(10);
+					} catch (InterruptedException e) {
+						throw new IOException();
+					}
+				}
+				if ((input = inputStream.read()) == -1) 
+				/* 
+				 * send that byte to the protocol
+				 */
+				retVal = protocol.byteToMessage((byte) input);
+				
+				/* 
+				 * check to see if the protocol sent us a complete message.
+				 */
+				if (retVal != null) {
+					/*
+					 * if so.. we push it on the stack.
+					 */
+					recieved.push(retVal);
+				}
+			}
+		} catch (IOException e) {
+			if (listener != null) {
+				listener.disconnected();
+			}
+			disconnect();
+			try {
+				_reconnect();
+			} catch (RifidiConnectionException e1) {
+				if (listener != null) {
+					listener.error();
+				}
+			}
+			throw e;
+		} catch (RifidiInvalidMessageFormat e) {
+			if (listener != null) {
+				listener.error();
+			}
+			throw new IOException(e);
+		}
+		
+		/* 
+		 * pop just one object off the stack.		 * 
+		 */
+		return recieved.pop();
 	}
 	
 }

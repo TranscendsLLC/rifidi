@@ -33,7 +33,7 @@ public class Hostname implements Command {
 			try {
 
 				connection.sendMessage("get " + command + "\n");
-				String message = (String) connection.recieveMessage();
+				String message = (String) connection.receiveMessage();
 				
 				if (message.contains("=")) {
 					String[] temp = message.split("=");
@@ -57,7 +57,7 @@ public class Hostname implements Command {
 
 				connection.sendMessage("set " + command + "=" + configuration
 						+ "\n");
-				String message = (String) connection.recieveMessage();
+				String message = (String) connection.receiveMessage();
 				
 				if (message.contains("=")) {
 					String[] temp = message.split("=");
