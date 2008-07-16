@@ -109,7 +109,7 @@ public class Console {
 	// @Command(name="help",arguments="command")
 	private String helpForCommand(String command) {
 		String commandArguments = " ";
-		for (String argument : commandHelp.get(command)) {
+		for (String argument : commandHelp.get(command.toLowerCase())) {
 			commandArguments = commandArguments + " [" + argument + "] ";
 		}
 		String commandDescription = "* " + command + commandArguments;
