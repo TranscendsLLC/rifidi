@@ -94,7 +94,8 @@ public class DummyConnectionManagerNew extends ConnectionManager {
 			e1.printStackTrace();
 		}
 		try {
-			socket.close();
+			if (socket != null)
+				socket.close();
 		} catch (IOException e) {
 			logger.debug("Socket already closed");
 		}
