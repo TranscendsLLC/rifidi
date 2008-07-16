@@ -91,10 +91,12 @@ public class PersistedReaderInfo {
 			root.appendChild(readerInfoTypeList);
 			logger.debug("Leaving the reader is null area");
 		}
-		logger.debug("Creating the reader info node");
-		JAXBUtility.getInstance().save(readerInfo, readerInfoTypeList);
-		logger.debug("Just before the print to file");
-		printToFile();
+		if (this.find(readerInfo, readerInfoTypeList) == null) {
+			logger.debug("Creating the reader info node");
+			JAXBUtility.getInstance().save(readerInfo, readerInfoTypeList);
+			logger.debug("Just before the print to file");
+			printToFile();
+		}
 	}
 
 	/**
@@ -377,7 +379,7 @@ public class PersistedReaderInfo {
 			format.setIndenting(true);
 
 			XMLSerializer serializer = new XMLSerializer(new FileOutputStream(
-					new File("cuddles.xml")), format);
+					JAXBUtility.getInstance().getXMLFile()), format);
 
 			// XMLSerializer serializer = new XMLSerializer(System.out, format);
 
