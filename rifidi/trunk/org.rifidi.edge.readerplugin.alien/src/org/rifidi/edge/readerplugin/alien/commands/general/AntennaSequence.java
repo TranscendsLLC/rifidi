@@ -26,7 +26,7 @@ public class AntennaSequence implements Command {
 		MessageQueue messageQueue, String configuration, long commandID) {
 		logger.debug("Starting the " + this.getClass().getSimpleName()
 				+ " command for the Alien");
-		if (configuration == null) {
+		if (configuration == null || configuration.equals("")) {
 			try {
 		
 				connection.sendMessage("get " + command + "\n");

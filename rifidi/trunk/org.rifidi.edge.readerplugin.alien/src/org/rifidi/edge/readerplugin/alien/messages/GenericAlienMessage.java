@@ -11,6 +11,12 @@ import org.rifidi.edge.core.readerplugin.messages.Message;
 
 @XmlRootElement
 public class GenericAlienMessage implements Message {
+	
+	//for JAXB
+	public GenericAlienMessage(){
+		
+	}
+	
 	private Marshaller marshaller;
 	
 	private Property property;

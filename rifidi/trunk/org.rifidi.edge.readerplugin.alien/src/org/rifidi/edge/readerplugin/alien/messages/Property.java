@@ -5,6 +5,11 @@ import javax.xml.bind.annotation.XmlValue;
 
 public class Property {
 	
+	//for JAXB
+	public Property(){
+		
+	}
+	
 	private String name;
 	
 	private String value;
