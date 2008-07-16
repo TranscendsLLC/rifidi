@@ -103,9 +103,9 @@ public class AlienConnectionManager extends ConnectionManager {
 			cs = new ConnectionStreams(alienSock.getInputStream(), alienSock
 					.getOutputStream());
 		} catch (UnknownHostException e) {
-			e.printStackTrace();
+			throw new RifidiConnectionException(e.getMessage());
 		} catch (IOException e) {
-			e.printStackTrace();
+			throw new RifidiConnectionException(e.getMessage());
 		}
 		return cs;
 	}
