@@ -31,6 +31,7 @@ public class RemoteReaderConnectionRegistryImpl implements
 	private ReaderSessionService readerSessionService;
 
 	private HashMap<RemoteReaderConnection, RemoteReaderConnectionImpl> remoteSessionList = new HashMap<RemoteReaderConnection, RemoteReaderConnectionImpl>();
+	private HashMap<ReaderSession, RemoteReaderConnection> readerSessionSync = new HashMap<ReaderSession, RemoteReaderConnection>();
 
 	public RemoteReaderConnectionRegistryImpl() {
 		ServiceRegistry.getInstance().service(this);
@@ -42,24 +43,8 @@ public class RemoteReaderConnectionRegistryImpl implements
 
 		ReaderSession readerSession = readerSessionService
 				.createReaderSession(readerInfo);
-		RemoteReaderConnectionImpl remoteReaderConnection = new RemoteReaderConnectionImpl(
-				readerSession);
 
-		RemoteReaderConnection remoteReaderConnectionStub = null;
-		try {
-			remoteReaderConnectionStub = (RemoteReaderConnection) UnicastRemoteObject
-					.exportObject(remoteReaderConnection, 0);
-		} catch (RemoteException e) {
-			e.printStackTrace();
-			logger.error("Coudn't create RMI Stub for RemoteReaderConnection:",
-					e);
-			return null;
-		}
-
-		remoteSessionList.put(remoteReaderConnectionStub,
-				remoteReaderConnection);
-
-		return remoteReaderConnectionStub;
+		return saveRemoteConnection(readerSession);
 	}
 
 	@Override
@@ -75,6 +60,13 @@ public class RemoteReaderConnectionRegistryImpl implements
 	@Override
 	public List<RemoteReaderConnection> getAllReaderConnections()
 			throws RemoteException {
+		for(ReaderSession session : readerSessionService.getAllReaderSessions())
+		{
+			if(!readerSessionSync.containsKey(session))
+			{
+				saveRemoteConnection(session);
+			}
+		}
 		return new ArrayList<RemoteReaderConnection>(remoteSessionList.keySet());
 	}
 
@@ -96,4 +88,25 @@ public class RemoteReaderConnectionRegistryImpl implements
 		this.readerSessionService = readerSessionService;
 	}
 
+	private RemoteReaderConnection saveRemoteConnection(
+			ReaderSession readerSession) {
+		RemoteReaderConnectionImpl remoteReaderConnection = new RemoteReaderConnectionImpl(
+				readerSession);
+
+		RemoteReaderConnection remoteReaderConnectionStub = null;
+		try {
+			remoteReaderConnectionStub = (RemoteReaderConnection) UnicastRemoteObject
+					.exportObject(remoteReaderConnection, 0);
+		} catch (RemoteException e) {
+			e.printStackTrace();
+			logger.error("Coudn't create RMI Stub for RemoteReaderConnection:",
+					e);
+			return null;
+		}
+
+		remoteSessionList.put(remoteReaderConnectionStub,
+				remoteReaderConnection);
+		readerSessionSync.put(readerSession, remoteReaderConnection);
+		return remoteReaderConnectionStub;
+	}
 }
