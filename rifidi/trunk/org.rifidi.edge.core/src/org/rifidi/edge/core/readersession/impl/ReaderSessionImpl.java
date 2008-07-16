@@ -148,24 +148,26 @@ public class ReaderSessionImpl implements ReaderSession,
 		return new ArrayList<String>(groups);
 	}
 
-	// TODO Implement firing of events.
 	// TODO: validate configuration XML String
 	@Override
 	public long executeCommand(String command, String configuration)
 			throws RifidiConnectionException,
 			RifidiCommandInterruptedException, RifidiCommandNotFoundException {
 
-		curCommand = new CommandWrapper();
-		commandID++;
-		curCommand.setCommandID(commandID);
-		curCommand.setCommandName(command);
-		curCommand.setCommandStatus(CommandStatus.WAITING);
 
 		if (readerSessionStatus != ReaderSessionStatus.OK) {
 			throw new RifidiCommandInterruptedException(
 					"Cannot execute command because Reader Session is in "
 							+ readerSessionStatus + " state");
 		}
+		
+
+		curCommand = new CommandWrapper();
+		commandID++;
+		curCommand.setCommandID(commandID);
+		curCommand.setCommandName(command);
+		curCommand.setCommandStatus(CommandStatus.WAITING);
+		commandJournal.addCommand(curCommand);
 
 		/*
 		 * Initialize the communication if not already done
@@ -185,6 +187,7 @@ public class ReaderSessionImpl implements ReaderSession,
 			} catch (InterruptedException e) {
 			}
 			if (connectionStatus == ConnectionStatus.ERROR) {
+				curCommand=null;
 				throw new RifidiConnectionException(
 						"The connection to the reader is not valid anymore. (MAX_CONNECTION_ATTEMPTS)");
 			}
@@ -208,6 +211,7 @@ public class ReaderSessionImpl implements ReaderSession,
 			executionThread.start(curCommand.getCommand(), configuration,
 					commandID);
 		} catch (RifidiExecutionException e) {
+			curCommand=null;
 			throw new RifidiCommandInterruptedException(
 					"Cannot execute command because Reader Session is in "
 							+ readerSessionStatus + " state");
@@ -307,6 +311,7 @@ public class ReaderSessionImpl implements ReaderSession,
 		return false;
 	}
 
+	@Override
 	public boolean stopCurCommand(boolean force, long commandID) {
 		if (commandID == this.commandID) {
 			return stopCurCommand(force);
