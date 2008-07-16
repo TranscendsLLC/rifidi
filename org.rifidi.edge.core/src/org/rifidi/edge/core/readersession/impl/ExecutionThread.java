@@ -45,7 +45,7 @@ public class ExecutionThread {
 			logger.error("NO MessageQueue");
 		}
 		this.messageQueue = messageQueue;
-		if(commandExecutionListener == null)
+		if(readerSession == null)
 		{
 			logger.error("NO CommandExecutionListerner");
 		}
