@@ -292,8 +292,7 @@ public class NewEdgeServerCommands implements ICommand {
 					.getAllReaderConnections()) {
 				try {
 					if (readerConnection.getMessageQueueName().equals(id)) {
-						remoteReaderConnectionRegistry
-								.deleteReaderConnection(readerConnection);
+						remoteReaderConnectionRegistry.deleteReaderConnection(readerConnection);
 						return "ReaderConnection deleted";
 					}
 				} catch (RemoteException e) {
@@ -416,8 +415,42 @@ public class NewEdgeServerCommands implements ICommand {
 		}
 		return "";
 	}
+	
+	@Command(name="availableCommands",arguments={"ConnectionsID"})
+	public String getAvailableCommands(String ID)
+	{
+		if (remoteReaderConnectionRegistry == null) {
+			return "Error. No Connection";
+		}
 
-	@Command(name = "getCommandGroups", arguments = { "ConnectionID"})
+		RemoteReaderConnection readerConnection = null;
+		try {
+			for (RemoteReaderConnection connection : remoteReaderConnectionRegistry
+					.getAllReaderConnections()) {
+				if (connection.getMessageQueueName().equals(ID)) {
+					readerConnection = connection;
+				}
+			}
+			
+			if (readerConnection == null) {
+				return "ERROR." + " RemoteReaderConnection not found";
+			}
+			
+			List<String> groups = readerConnection.getAvailableCommands();
+			System.out.println( groups.size() + " Commands found " );
+			StringBuffer buffer = new StringBuffer();
+			for(String group: groups)
+			{
+				buffer.append(group + "\n");
+			}
+			return buffer.toString();
+		} catch (RemoteException e) {
+			e.printStackTrace();
+			return "ERROR. " + e.getMessage();
+		}
+	}
+
+	@Command(name = "availableCommandGroups", arguments = { "ConnectionID"})
 	public String getCommandGroups(String ID) {
 		if (remoteReaderConnectionRegistry == null) {
 			return "Error. No Connection";
@@ -450,7 +483,7 @@ public class NewEdgeServerCommands implements ICommand {
 		}
 	}
 	
-	@Command(name = "getGroup", arguments = { "ConnectionID", "Groupname"})
+	@Command(name = "availableCommandsForGroup", arguments = { "ConnectionID", "Groupname"})
 	public String getCommandsForGroup(String ID, String groupname) {
 		if (remoteReaderConnectionRegistry == null) {
 			return "Error. No Connection";
