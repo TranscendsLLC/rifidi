@@ -9,11 +9,14 @@ import org.junit.Test;
 import org.rifidi.edge.core.exceptions.RifidiCommandInterruptedException;
 import org.rifidi.edge.core.exceptions.RifidiCommandNotFoundException;
 import org.rifidi.edge.core.exceptions.RifidiConnectionException;
+import org.rifidi.edge.core.messageQueue.MessageQueue;
 import org.rifidi.edge.core.messageQueue.service.MessageService;
 import org.rifidi.edge.core.readerplugin.ReaderInfo;
 import org.rifidi.edge.core.readerplugin.service.ReaderPluginService;
 import org.rifidi.edge.core.readersession.ReaderSession;
 import org.rifidi.edge.core.readersession.service.ReaderSessionService;
+import org.rifidi.edge.readerplugin.thingmagic.commands.GetTagsOnceCommand;
+import org.rifidi.edge.readerplugin.thingmagic.plugin.ThingMagicManager;
 import org.rifidi.edge.readerplugin.thingmagic.plugin.ThingMagicReaderInfo;
 import org.rifidi.services.annotations.Inject;
 import org.rifidi.services.registry.ServiceRegistry;
@@ -104,7 +107,7 @@ public class ThingMagicTagRead {
 		// }
 		info.setIpAddress("localhost");
 		info.setPort(8080);
-		info.setMaxNumConnectionsAttemps(10);
+		info.setMaxNumConnectionsAttemps(3);
 		ReaderSession readerSession = readerSessionService
 				.createReaderSession(info);
 
@@ -152,11 +155,6 @@ public class ThingMagicTagRead {
 //		GetTagsOnceCommand command = new GetTagsOnceCommand();
 //
 //		command.start(connection, messageQueue, null, 0);
-//	}
-//
-//	@Inject
-//	public void setReaderSessionService(ReaderSessionService service) {
-//		readerSessionService = service;
 //	}
 
 	@Inject
