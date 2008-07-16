@@ -1,7 +1,6 @@
 package org.rifidi.edge.testing;
 
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.SynchronousQueue;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
