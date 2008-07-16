@@ -247,7 +247,7 @@ public class ReaderSessionImpl implements ReaderSession,
 			commandDesc = commandClass.getAnnotation(CommandDesc.class);
 
 			if (commandDesc != null) {
-				if (commandDesc.name().equals(command)) {
+				if (commandDesc.name().equalsIgnoreCase(command)) {
 					// Create Command via reflection
 					Constructor<? extends Command> constructor;
 					try {
