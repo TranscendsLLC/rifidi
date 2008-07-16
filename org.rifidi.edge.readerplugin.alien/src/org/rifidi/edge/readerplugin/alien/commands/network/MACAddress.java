@@ -34,7 +34,13 @@ public class MACAddress implements Command {
 
 				connection.sendMessage("get " + command + "\n");
 				String message = (String) connection.recieveMessage();
-
+				
+				if (message.contains("=")) {
+					String[] temp = message.split("=");
+					message = temp[1];
+				}
+				message = message.trim();
+				
 				messageQueue.addMessage(new GenericAlienMessage(new Property(
 						command, message)));
 
