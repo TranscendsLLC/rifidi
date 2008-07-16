@@ -12,6 +12,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.rifidi.edge.common.utilities.jaxb.ObjectToXML;
 import org.rifidi.edge.core.exceptions.RifidiCommandInterruptedException;
+import org.rifidi.edge.core.exceptions.RifidiCommandNotFoundException;
 import org.rifidi.edge.core.exceptions.RifidiConnectionException;
 import org.rifidi.edge.core.readerplugin.ReaderInfo;
 import org.rifidi.edge.core.readerplugin.service.ReaderPluginService;
@@ -122,6 +123,8 @@ public class DummyTagRead {
 			//e.printStackTrace(new PrintStream(output));
 			//Assert.fail(output.toString());
 			throw new AssertionError(e);
+		} catch (RifidiCommandNotFoundException e) {
+			throw new AssertionError(e);
 		}
 	}
 
@@ -146,6 +149,8 @@ public class DummyTagRead {
 			throw new AssertionError(e);
 		} catch (RifidiCommandInterruptedException e) {
 
+			
+		} catch (RifidiCommandNotFoundException e) {
 			throw new AssertionError(e);
 		}
 		
@@ -155,6 +160,8 @@ public class DummyTagRead {
 			throw new AssertionError(e);
 		} catch (RifidiCommandInterruptedException e) {
 
+			throw new AssertionError(e);
+		} catch (RifidiCommandNotFoundException e) {
 			throw new AssertionError(e);
 		}
 		try {
