@@ -151,6 +151,8 @@ public class PersistanceServiceImpl implements PersistenceService,
 			List<ReaderInfo> readerInfoList = pri
 					.getReaderInfos(readerClassName);
 			for (ReaderInfo ri : readerInfoList) {
+				logger.debug("Adding a reader: " + ri.getIpAddress() + ", "
+						+ ri.getPort());
 				this.readerSessionService.createReaderSession(ri);
 			}
 		}
