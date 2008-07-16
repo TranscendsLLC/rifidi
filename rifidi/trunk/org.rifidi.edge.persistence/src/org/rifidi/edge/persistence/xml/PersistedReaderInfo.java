@@ -392,22 +392,24 @@ public class PersistedReaderInfo {
 	 * Prints the document to a file.
 	 */
 	private void printToSTIO(Element e) {
-		logger.debug("printing an element");
-		try {
-			// print
-			OutputFormat format = new OutputFormat(doc);
-			format.setIndenting(true);
+		if (e != null) {
+			logger.debug("printing an element");
+			try {
+				// print
+				OutputFormat format = new OutputFormat(doc);
+				format.setIndenting(true);
 
-			// XMLSerializer serializer = new XMLSerializer(new
-			// FileOutputStream(
-			// new File("cuddles.xml")), format);
+				// XMLSerializer serializer = new XMLSerializer(new
+				// FileOutputStream(
+				// new File("cuddles.xml")), format);
 
-			XMLSerializer serializer = new XMLSerializer(System.out, format);
+				XMLSerializer serializer = new XMLSerializer(System.out, format);
 
-			serializer.serialize(e);
+				serializer.serialize(e);
 
-		} catch (IOException ie) {
-			ie.printStackTrace();
+			} catch (IOException ie) {
+				ie.printStackTrace();
+			}
 		}
 	}
 
@@ -415,45 +417,49 @@ public class PersistedReaderInfo {
 	 * Prints the document to a file.
 	 */
 	private void printToSTIO(Node e) {
-		logger.debug("printing a node");
-		try {
-			// print
-			OutputFormat format = new OutputFormat(doc);
-			format.setIndenting(true);
+		if (e != null) {
+			logger.debug("printing a node");
+			try {
+				// print
+				OutputFormat format = new OutputFormat(doc);
+				format.setIndenting(true);
 
-			// XMLSerializer serializer = new XMLSerializer(new
-			// FileOutputStream(
-			// new File("cuddles.xml")), format);
+				// XMLSerializer serializer = new XMLSerializer(new
+				// FileOutputStream(
+				// new File("cuddles.xml")), format);
 
-			XMLSerializer serializer = new XMLSerializer(System.out, format);
+				XMLSerializer serializer = new XMLSerializer(System.out, format);
 
-			serializer.serialize(e);
+				serializer.serialize(e);
 
-		} catch (IOException ie) {
-			ie.printStackTrace();
+			} catch (IOException ie) {
+				ie.printStackTrace();
+			}
 		}
 	}
 
 	/**
-	 * Prints the document to a file.
+	 * Prints the document to standard output.
 	 */
 	private void printToSTIO(Document e) {
-		logger.debug("Printing the file");
-		try {
-			// print
-			OutputFormat format = new OutputFormat(doc);
-			format.setIndenting(true);
+		if (e != null) {
+			logger.debug("Printing the file");
+			try {
+				// print
+				OutputFormat format = new OutputFormat(doc);
+				format.setIndenting(true);
 
-			// XMLSerializer serializer = new XMLSerializer(new
-			// FileOutputStream(
-			// new File("cuddles.xml")), format);
+				// XMLSerializer serializer = new XMLSerializer(new
+				// FileOutputStream(
+				// new File("cuddles.xml")), format);
 
-			XMLSerializer serializer = new XMLSerializer(System.out, format);
+				XMLSerializer serializer = new XMLSerializer(System.out, format);
 
-			serializer.serialize(e);
+				serializer.serialize(e);
 
-		} catch (IOException ie) {
-			ie.printStackTrace();
+			} catch (IOException ie) {
+				ie.printStackTrace();
+			}
 		}
 	}
 

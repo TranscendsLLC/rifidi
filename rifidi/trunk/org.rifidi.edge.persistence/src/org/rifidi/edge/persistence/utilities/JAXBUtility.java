@@ -247,11 +247,19 @@ public class JAXBUtility {
 	 * @param f
 	 */
 	private void writeInitialXMLToFile(File f) {
+		FileWriter fw = null;
 		try {
-			FileWriter fw = new FileWriter(f);
+			fw = new FileWriter(f);
 			fw.write(XML_TO_WRITE.toCharArray());
+			fw.flush();
 		} catch (IOException e) {
 			e.printStackTrace();
+		} finally {
+			try {
+				fw.close();
+			} catch (IOException e) {
+				//Nothing
+			}
 		}
 	}
 

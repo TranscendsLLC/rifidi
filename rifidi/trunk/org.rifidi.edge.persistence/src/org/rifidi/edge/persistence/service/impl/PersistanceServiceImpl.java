@@ -103,6 +103,7 @@ public class PersistanceServiceImpl implements PersistenceService,
 	 */
 	@Override
 	public void addEvent(ReaderSession readerSession) {
+		logger.debug("ADDING A READER");
 		pri.addReaderInfo(readerSession.getReaderInfo());
 	}
 
@@ -113,6 +114,7 @@ public class PersistanceServiceImpl implements PersistenceService,
 	 */
 	@Override
 	public void removeEvent(ReaderSession readerSession) {
+		logger.debug("REMOVING A READER");
 		try {
 			pri.removeReader(readerSession.getReaderInfo());
 		} catch (RifidiReaderInfoNotFoundException e) {
@@ -162,6 +164,7 @@ public class PersistanceServiceImpl implements PersistenceService,
 	@Inject
 	public void setReaderPluginService(ReaderPluginService rps) {
 		this.readerPluginService = rps;
+		this.readerPluginService.addReaderPluginListener(this);
 	}
 
 	/**
@@ -173,6 +176,7 @@ public class PersistanceServiceImpl implements PersistenceService,
 	public void setReaderSessionService(
 			ReaderSessionService readerSessionService) {
 		this.readerSessionService = readerSessionService;
+		this.readerSessionService.addReaderSessionListener(this);
 	}
 
 }
