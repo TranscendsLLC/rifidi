@@ -3,6 +3,7 @@ package org.rifidi.edge.rmi.ReaderConnection.impl;
 import java.rmi.RemoteException;
 
 import org.rifidi.edge.core.exceptions.RifidiCommandInterruptedException;
+import org.rifidi.edge.core.exceptions.RifidiCommandNotFoundException;
 import org.rifidi.edge.core.exceptions.RifidiConnectionException;
 import org.rifidi.edge.core.readerplugin.ReaderInfo;
 import org.rifidi.edge.core.readersession.ReaderSession;
@@ -60,7 +61,11 @@ public class RemoteReaderConnectionImpl implements RemoteReaderConnection {
 	@Override
 	public void startTagStream() throws RemoteException {
 		try {
-			readerSession.executeCommand("tagstreaming", "");
+			try {
+				readerSession.executeCommand("tagstreaming", "");
+			} catch (RifidiCommandNotFoundException e) {
+				throw new RemoteException("Command not found", e);
+			}
 		} catch (RifidiConnectionException e) {
 			e.printStackTrace();
 			throw new RemoteException("Exception occured", e);
