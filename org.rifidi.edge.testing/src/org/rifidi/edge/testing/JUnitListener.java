@@ -24,7 +24,7 @@ public class JUnitListener extends RunListener {
 	public void testFailure(Failure failure){
 		logger.error("JUnit Failure: " + failure);
 		//logger.error(failure.getMessage());
-		//logger.error("JUnit Failure: " + failure.getTrace());
+		logger.error("JUnit Failure: " + failure.getTrace());
 	}
 	
 	public void testRunFinished(Result result) {
@@ -35,7 +35,7 @@ public class JUnitListener extends RunListener {
 			List<Failure> failures = result.getFailures();
 			for (Failure failure: failures){
 				logger.error("JUnit Failure: " + failure);
-				logger.error("JUnit Failure (Stack Trace): " + failure.getTrace());
+				//logger.error("JUnit Failure (Stack Trace): " + failure.getTrace());
 			}
 		}
 	}
