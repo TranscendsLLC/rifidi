@@ -297,6 +297,7 @@ public class EdgeServerCommands implements ICommand {
 
 			// DummyReaderInfo readerInfo = new DummyReaderInfo();
 
+			@SuppressWarnings("unused")
 			RemoteReaderConnection remoteReaderConnection = null;
 			try {
 				remoteReaderConnection = remoteReaderConnectionRegistry

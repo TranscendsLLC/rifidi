@@ -1,6 +1,5 @@
 package org.rifidi.edge.adminclient;
 
-import org.rifidi.edge.adminclient.commands.edgeServer.EdgeServerCommands;
 import org.rifidi.edge.adminclient.commands.edgeServer.NewEdgeServerCommands;
 
 public class TestApplication {
