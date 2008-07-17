@@ -45,13 +45,13 @@ public class ThingMagicManager extends ConnectionManager {
 
 	@Override
 	public int getMaxNumConnectionsAttemps() {
-		return (info.getMaxNumConnectionsAttemps() != 0) ? info
+		return (info.getMaxNumConnectionsAttemps() < 0) ? info
 				.getMaxNumConnectionsAttemps() : 3;
 	}
 
 	@Override
 	public long getReconnectionIntervall() {
-		return (info.getReconnectionIntervall() != 0) ? info
+		return (info.getReconnectionIntervall() < 0) ? info
 				.getReconnectionIntervall() : 1000;
 	}
 
