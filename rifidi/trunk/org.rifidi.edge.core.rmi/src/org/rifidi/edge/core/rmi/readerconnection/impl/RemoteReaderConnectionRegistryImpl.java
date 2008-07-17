@@ -18,6 +18,11 @@ import org.rifidi.services.annotations.Inject;
 import org.rifidi.services.registry.ServiceRegistry;
 
 /**
+ * The implementation of the RemoteReaderConnectionRegistry. This is the Factory
+ * to create new RemoteReaderConnections. It will be exported by RMI to allow
+ * Clients to create and delete RemoteReaderConnections. It also allows to keep
+ * track of currently running RemoteReaderSessions.
+ * 
  * @author Andreas Huebner - andreas@pramari.com
  * 
  */
@@ -33,10 +38,18 @@ public class RemoteReaderConnectionRegistryImpl implements
 	private HashMap<RemoteReaderConnection, RemoteReaderConnectionImpl> remoteSessionList = new HashMap<RemoteReaderConnection, RemoteReaderConnectionImpl>();
 	private HashMap<ReaderSession, RemoteReaderConnection> readerSessionSync = new HashMap<ReaderSession, RemoteReaderConnection>();
 
+	/**
+	 * Constructor
+	 */
 	public RemoteReaderConnectionRegistryImpl() {
 		ServiceRegistry.getInstance().service(this);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.rifidi.edge.core.rmi.readerconnection.RemoteReaderConnectionRegistry#createReaderConnection(org.rifidi.edge.core.readerplugin.ReaderInfo)
+	 */
 	@Override
 	public RemoteReaderConnection createReaderConnection(ReaderInfo readerInfo)
 			throws RemoteException {
@@ -47,6 +60,11 @@ public class RemoteReaderConnectionRegistryImpl implements
 		return saveRemoteConnection(readerSession);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.rifidi.edge.core.rmi.readerconnection.RemoteReaderConnectionRegistry#deleteReaderConnection(org.rifidi.edge.core.rmi.readerconnection.RemoteReaderConnection)
+	 */
 	@Override
 	public void deleteReaderConnection(
 			RemoteReaderConnection remoteReaderConnection)
@@ -57,6 +75,11 @@ public class RemoteReaderConnectionRegistryImpl implements
 				.getReaderSession());
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.rifidi.edge.core.rmi.readerconnection.RemoteReaderConnectionRegistry#getAllReaderConnections()
+	 */
 	@Override
 	public List<RemoteReaderConnection> getAllReaderConnections()
 			throws RemoteException {
@@ -70,6 +93,11 @@ public class RemoteReaderConnectionRegistryImpl implements
 		return new ArrayList<RemoteReaderConnection>(remoteSessionList.keySet());
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.rifidi.edge.core.rmi.readerconnection.RemoteReaderConnectionRegistry#getAvailableReaderPlugins()
+	 */
 	@Override
 	public List<String> getAvailableReaderPlugins() throws RemoteException {
 		ArrayList<String> retVal = new ArrayList<String>(readerPluginService
@@ -77,11 +105,25 @@ public class RemoteReaderConnectionRegistryImpl implements
 		return retVal;
 	}
 
+	/**
+	 * Inject method to obtain a instance of the ReaderPluginService from the
+	 * RegistryService Framework
+	 * 
+	 * @param readerPluginService
+	 *            ReaderPluginService instance
+	 */
 	@Inject
 	public void setReaderPluginService(ReaderPluginService readerPluginService) {
 		this.readerPluginService = readerPluginService;
 	}
 
+	/**
+	 * Inject method to obtain a instance of the ReaderSessionService from the
+	 * RegistryService Framework
+	 * 
+	 * @param readerSessionService
+	 *            ReaderSessionService
+	 */
 	@Inject
 	public void setReaderSessionService(
 			ReaderSessionService readerSessionService) {

@@ -188,7 +188,8 @@ public class RemoteReaderConnectionImpl implements RemoteReaderConnection {
 			logger.error("RifidiCommandInterruptedException", e);
 			throw new RemoteException("RifidiCommandInterruptedException", e);
 		} catch (RifidiCommandNotFoundException e) {
-			//TODO this might happen more often logger.error("RifidiCommandNotFoundException", e);
+			// TODO this might happen more often
+			// logger.error("RifidiCommandNotFoundException", e);
 			logger.error("Command not found" + e.getMessage());
 			throw new RemoteException("RifidiCommandNotFoundException", e);
 		}
@@ -216,6 +217,13 @@ public class RemoteReaderConnectionImpl implements RemoteReaderConnection {
 		return readerSession.stopCurCommand(force, commandID);
 	}
 
+	/**
+	 * Get the internal ReaderSession this RemoteReaderConnection is associated
+	 * with. This should only be used to delete the ReaderSession if this
+	 * RemoteReaderSession gets deleted, too.
+	 * 
+	 * @return the internal ReaderSession
+	 */
 	public ReaderSession getReaderSession() {
 		return readerSession;
 	}

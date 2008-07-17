@@ -27,38 +27,58 @@ import org.rifidi.edge.core.readerplugin.ReaderInfo;
 public interface RemoteReaderConnection extends Remote {
 
 	/**
-	 * @return
+	 * Get a list of all available commands of this ReaderConnection
+	 * 
+	 * @return a list of Strings representing the available Commands
 	 * @throws RemoteException
+	 *             if a error occurs
 	 */
 	public List<String> getAvailableCommands() throws RemoteException;
 
 	/**
+	 * Get a list of available commands which are part of the given Group
+	 * 
 	 * @param groupName
-	 * @return
+	 *            Name of the Group the commands belong to
+	 * @return a list of Commands in this group
 	 * @throws RemoteException
+	 *             if a error occurs
 	 */
 	public List<String> getAvailableCommands(String groupName)
 			throws RemoteException;
 
 	/**
-	 * @return
+	 * Get a list of available command groups
+	 * 
+	 * @return groups available for this type of RemoteConnection
 	 * @throws RemoteException
+	 *             if a error occurs
 	 */
 	public List<String> getAvailableCommandGroups() throws RemoteException;
 
 	/**
-	 * Send a custom command to the Reader
+	 * Execute a custom command on the ReaderConnection
 	 * 
-	 * @param customCommand
+	 * @param command
+	 *            command to execute on the RemoteConnection
+	 * @param configuration
+	 *            xml describing the command configuration parameters
+	 * @return an id under this command will be executed
 	 * @throws RemoteException
+	 *             if a error occurs
 	 */
-	public long executeCommand(String command, String configuration) throws RemoteException;
+	public long executeCommand(String command, String configuration)
+			throws RemoteException;
 
 	/**
 	 * Start streaming of tags to the MessageQueue (This is a convenience method
 	 * for the command "streamtags")
 	 * 
+	 * @param configuration
+	 *            xml describing the configuration parameters
+	 * @return an id under this a command will be executed
 	 * @throws RemoteException
+	 *             if a error occurs
 	 */
 	public long startTagStream(String configuration) throws RemoteException;
 
@@ -66,7 +86,11 @@ public interface RemoteReaderConnection extends Remote {
 	 * Stop current executing command without checking if the command is a
 	 * specific one by ID
 	 * 
+	 * @param force
+	 *            for the command to stop by killing it if neccessary
+	 * @return true if successful, false otherwise
 	 * @throws RemoteException
+	 *             if a error occurs
 	 */
 	public boolean stopCurCommand(boolean force) throws RemoteException;
 
@@ -75,17 +99,29 @@ public interface RemoteReaderConnection extends Remote {
 	 * one by ID
 	 * 
 	 * @param commandID
+	 *            the command to stop
+	 * @param force
+	 *            for the command to stop by killing it if neccessary
+	 * @return true if successful, false otherwise
 	 * @throws RemoteException
+	 *             if a error occurs
 	 */
 	public boolean stopCurCommand(boolean force, long commandID)
 			throws RemoteException;
 
 	/**
-	 * @return the name of the currently executing command
+	 * Get the command currently executing
+	 * 
+	 * @return the name of the command currently executing, or null if no
+	 *         command is executing
+	 * @throws RemoteException
+	 *             if a error occurs
 	 */
 	public String curExecutingCommand() throws RemoteException;
 
 	/**
+	 * Get the ID of the current executing command
+	 * 
 	 * @return 0 if no command is executed otherwise the id of the command
 	 */
 	public long curExecutingCommandID() throws RemoteException;
@@ -96,40 +132,53 @@ public interface RemoteReaderConnection extends Remote {
 	 * @param id
 	 *            command id assigned at the execution
 	 * @return String representing the status of the command execution
+	 * @throws RemoteException
+	 *             if an error occurs
 	 */
 	public String commandStatus(long id) throws RemoteException;
 
 	/**
-	 * @return
+	 * Get the status of the current executing command
+	 * 
+	 * @return the status of the current executing command
+	 * @throws RemoteException
+	 *             if an error occurs
 	 */
 	public String commandStatus() throws RemoteException;
-	
+
 	/**
 	 * Get the name of the MessageQueue
 	 * 
-	 * @return
+	 * @return name of the MessageQueue
 	 * @throws RemoteException
+	 *             if an error occurs
 	 */
 	public String getMessageQueueName() throws RemoteException;
 
 	/**
 	 * Get the ReaderInfo of this ReaderConnection
 	 * 
-	 * @return
+	 * @return the ReaderInfo of this instance of the RemoteReaderConnection
 	 * @throws RemoteException
+	 *             if an error occurs
 	 */
 	public ReaderInfo getReaderInfo() throws RemoteException;
 
 	/**
 	 * Get the state of the Reader
 	 * 
-	 * @return
+	 * @return the state the ReaderConnection is in (OK, BUSY, ERROR)
 	 * @throws RemoteException
+	 *             if an error occurs
 	 */
 	public String getReaderState() throws RemoteException;
 
 	/**
+	 * Reset the ReaderConnection if it is in a ERROR state. This will reset the
+	 * connection, messageQueue as well as all buffers
+	 * 
 	 * @throws RemoteException
+	 *             if an error occurs
 	 */
 	public void resetReaderConnection() throws RemoteException;
 }

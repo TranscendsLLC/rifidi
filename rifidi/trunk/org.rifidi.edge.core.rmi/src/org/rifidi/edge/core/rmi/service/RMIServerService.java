@@ -11,7 +11,12 @@
  */
 package org.rifidi.edge.core.rmi.service;
 
-//TODO Needs class comment header...
+/**
+ * This interface describes the Methods the RMIServer should provide
+ * 
+ * @author Andreas Huebner - andreas@pramari.com
+ * 
+ */
 public interface RMIServerService {
 
 	/**
@@ -25,9 +30,10 @@ public interface RMIServerService {
 	public void stop();
 
 	/**
-	 * Binds the given Object to RMI 
+	 * Binds the given Object to RMI
 	 * 
-	 * @param o the Object to bind
+	 * @param o
+	 *            the Object to bind
 	 */
 	public void bindToRMI(Object o);
 

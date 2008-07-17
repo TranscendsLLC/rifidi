@@ -5,6 +5,12 @@ import org.osgi.framework.BundleContext;
 import org.rifidi.edge.core.rmi.service.RMIServerService;
 import org.rifidi.edge.core.rmi.service.impl.RMIServerServiceImpl;
 
+/**
+ * Activator for the RMI Bundle
+ * 
+ * @author Andreas Huebner - andreas@pramari.com
+ *
+ */
 public class Activator implements BundleActivator {
 
 	private RMIServerServiceImpl rmiServerService;
