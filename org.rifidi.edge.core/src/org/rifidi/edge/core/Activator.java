@@ -7,6 +7,12 @@ import org.rifidi.edge.core.readerplugin.service.impl.ReaderPluginServiceImpl;
 import org.rifidi.edge.core.readersession.service.ReaderSessionService;
 import org.rifidi.edge.core.readersession.service.impl.ReaderSessionServiceImpl;
 
+/**
+ * This is the Activator for the core Bundle
+ * 
+ * @author Andreas Huebner - andreas@pramari.com
+ *
+ */
 public class Activator implements BundleActivator {
 
 	/*
