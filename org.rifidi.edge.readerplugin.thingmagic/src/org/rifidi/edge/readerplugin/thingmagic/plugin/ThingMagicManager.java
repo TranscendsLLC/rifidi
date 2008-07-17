@@ -91,10 +91,13 @@ public class ThingMagicManager extends ConnectionManager {
 				// logger.debug("Error: ", e);
 				throw new RifidiConnectionException(e);
 			}
-		} else {
+		} else if (( (info.getPassword() != null) && !info.getPassword().equals("")  ) &&
+				   ( (info.getUser() != null)     && !info.getUser().equals("")      )     ){
 			// TODO implement connection to reader by ssh
 			throw new UnsupportedOperationException(
 					"Connections to Merucry 4 or 5, ThingMagic readers by ssh not impemented.");
+		} else {
+			throw new IllegalStateException("Password and username in invalid state.");
 		}
 
 		try {
