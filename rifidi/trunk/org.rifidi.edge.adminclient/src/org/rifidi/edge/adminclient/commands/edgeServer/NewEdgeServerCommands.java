@@ -49,6 +49,7 @@ public class NewEdgeServerCommands implements ICommand {
 			remoteReaderConnectionRegistry = (RemoteReaderConnectionRegistry) registry
 					.lookup(RemoteReaderConnectionRegistry.class.getName());
 
+			//TODO: Uh, we should never just catch generic exceptions.  
 		} catch (Exception e) {
 			return "Could not connect. " + e.getMessage();
 		}
