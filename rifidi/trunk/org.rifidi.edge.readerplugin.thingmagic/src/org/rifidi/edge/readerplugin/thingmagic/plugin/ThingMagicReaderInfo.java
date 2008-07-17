@@ -1,11 +1,14 @@
 package org.rifidi.edge.readerplugin.thingmagic.plugin;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 import org.rifidi.edge.core.readerplugin.ReaderInfo;
 
 /**
  * @author Jerry Maine - jerry@pramari.com
  *
  */
+@XmlRootElement
 public class ThingMagicReaderInfo extends ReaderInfo {
 
 	/**

@@ -20,7 +20,7 @@ import org.rifidi.edge.readerplugin.thingmagic.protocol.ThingMagicCommunicationP
  * @author Jerry Maine - jerry@pramari.com
  * 
  */
-@XmlRootElement
+
 public class ThingMagicManager extends ConnectionManager {
 	private static final Log logger = LogFactory
 			.getLog(ThingMagicManager.class);
