@@ -15,6 +15,15 @@ import org.rifidi.edge.core.rmi.readerconnection.impl.RemoteReaderConnectionRegi
 import org.rifidi.edge.core.rmi.service.RMIServerService;
 import org.rifidi.services.registry.ServiceRegistry;
 
+/**
+ * This is the implementation of a RMIServer. It will be a Service opening a RMI
+ * port and allow Clients to connect to it. By default it only binds the
+ * RemoteReaderRegistry into the RMI Namespace. This allows the Client to
+ * create, delete and get a list of available RemoteReaderConnections.
+ * 
+ * @author Andreas Huebner - andreas@pramari.com
+ * 
+ */
 public class RMIServerServiceImpl implements RMIServerService {
 	/**
 	 * Log System
@@ -73,9 +82,10 @@ public class RMIServerServiceImpl implements RMIServerService {
 		// Bind the RemoteSessionRegistry to RMI
 		logger.debug("Bind RemoteReaderConnectionRegistry to RMI Registry");
 		try {
-			logger.debug("Binding to: "  + RemoteReaderConnectionRegistry.class.getName());
+			logger.debug("Binding to: "
+					+ RemoteReaderConnectionRegistry.class.getName());
 			registry.bind(RemoteReaderConnectionRegistry.class.getName(), stub);
-			
+
 		} catch (AccessException e) {
 			logger.error(e);
 		} catch (RemoteException e) {
@@ -125,6 +135,11 @@ public class RMIServerServiceImpl implements RMIServerService {
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.rifidi.edge.core.rmi.service.RMIServerService#bindToRMI(java.lang.Object)
+	 */
 	@Override
 	public void bindToRMI(Object o) {
 		// TODO implement this method

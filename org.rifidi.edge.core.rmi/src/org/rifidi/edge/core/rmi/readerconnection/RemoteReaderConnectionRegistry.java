@@ -28,11 +28,13 @@ import org.rifidi.edge.core.readerplugin.ReaderInfo;
 public interface RemoteReaderConnectionRegistry extends Remote {
 
 	/**
-	 * Create a new ReaderConnectio
+	 * Create a new ReaderConnection
 	 * 
 	 * @param connectionInfo
-	 * @return the RemoteReaderConnection
+	 *            the ReaderInfo to create a instance of this Reader
+	 * @return the RemoteReaderConnection to operate on
 	 * @throws RemoteException
+	 *             if an error occurs
 	 */
 	public RemoteReaderConnection createReaderConnection(
 			ReaderInfo connectionInfo) throws RemoteException;
@@ -41,7 +43,9 @@ public interface RemoteReaderConnectionRegistry extends Remote {
 	 * Delete a previous made ReaderConnection
 	 * 
 	 * @param remoteReaderConnection
+	 *            the RemoteReaderConnection to delete
 	 * @throws RemoteException
+	 *             if an error occurs
 	 */
 	public void deleteReaderConnection(
 			RemoteReaderConnection remoteReaderConnection)
@@ -52,6 +56,7 @@ public interface RemoteReaderConnectionRegistry extends Remote {
 	 * 
 	 * @return a List of RemoteReaderConnections
 	 * @throws RemoteException
+	 *             if an error occurs
 	 */
 	public List<RemoteReaderConnection> getAllReaderConnections()
 			throws RemoteException;
@@ -59,8 +64,9 @@ public interface RemoteReaderConnectionRegistry extends Remote {
 	/**
 	 * Show the names of the registered ReaderPlugin ReaderInfos
 	 * 
-	 * @return List of Names of the registred ReaderPlugin ReaderInfos
+	 * @return List of Names of the known ReaderPlugin ReaderInfos
 	 * @throws RemoteException
+	 *             if an error occurs
 	 */
 	public List<String> getAvailableReaderPlugins() throws RemoteException;
 
