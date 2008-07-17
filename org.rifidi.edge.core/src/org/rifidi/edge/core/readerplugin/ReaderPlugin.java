@@ -6,6 +6,14 @@ import org.rifidi.edge.core.readerplugin.commands.Command;
 import org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionManager;
 import org.rifidi.edge.core.readerplugin.protocol.MessageProtocol;
 
+/**
+ * ReaderPlugin is a collection of Commands a certain type of reader provides.
+ * It's also used as a factory to create instances of necessary parts of this
+ * special ReaderPlugin. All ReaderPlugins need to implement this Interface.
+ * 
+ * @author Andreas Huebner - andreas@pramari.com
+ * 
+ */
 public interface ReaderPlugin {
 
 	public ConnectionManager getConnectionManager(ReaderInfo readerInfo);
