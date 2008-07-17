@@ -74,4 +74,11 @@ public abstract class AbstractThread implements Runnable {
 		this.ignoreExceptions = ignore;
 	}
 
+	public String toString(){
+		return thread.getName();
+	}
+	
+	public String getName(){
+		return thread.getName();
+	}
 }
