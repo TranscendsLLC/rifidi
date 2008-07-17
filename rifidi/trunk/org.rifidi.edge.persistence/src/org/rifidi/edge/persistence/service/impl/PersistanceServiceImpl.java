@@ -42,8 +42,14 @@ public class PersistanceServiceImpl implements PersistenceService,
 	private static final Log logger = LogFactory
 			.getLog(PersistanceServiceImpl.class);
 
+	/**
+	 * This is the default folder path
+	 */
 	private static final String DEFAULT_PATH = "../domains/default/";
 
+	/**
+	 * This is the default filename
+	 */
 	private static final String DEFAULT_FILENAME = "readerconfiguration.xml";
 
 	/**

@@ -1,3 +1,13 @@
+/* 
+ * Activator.java
+ *  Created:	July 17th, 2006
+ *  Project:	RiFidi Emulator - A Software Simulation Tool for RFID Devices
+ *  				http://www.rifidi.org
+ *  				http://rifidi.sourceforge.net
+ *  Copyright:	Pramari LLC and the Rifidi Project
+ *  License:	Lesser GNU Public License (LGPL)
+ *  				http://www.opensource.org/licenses/lgpl-license.html
+ */
 package org.rifidi.edge.persistence;
 
 import org.osgi.framework.BundleActivator;
@@ -5,6 +15,12 @@ import org.osgi.framework.BundleContext;
 import org.rifidi.edge.persistence.service.PersistenceService;
 import org.rifidi.edge.persistence.service.impl.PersistanceServiceImpl;
 
+/**
+ * The activator for the persistence class. This needs to start the persistence
+ * service.
+ * 
+ * @author Matthew Dean - matt@pramari.com
+ */
 public class Activator implements BundleActivator {
 
 	/*
@@ -16,9 +32,10 @@ public class Activator implements BundleActivator {
 		System.out.println("== Bundle " + this.getClass().getName()
 				+ " loaded ==");
 		PersistenceService persistSer = new PersistanceServiceImpl();
-		context.registerService(persistSer.getClass().getName(), persistSer, null);
-		
-		//TODO: This will eventually be called in a thread
+		context.registerService(persistSer.getClass().getName(), persistSer,
+				null);
+
+		// TODO: This will eventually be called in a thread
 		persistSer.start(null);
 	}
 

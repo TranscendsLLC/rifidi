@@ -42,20 +42,22 @@ public class JAXBUtility {
 	 */
 	private static Log logger = LogFactory.getLog(JAXBUtility.class);
 
+	/**
+	 * The file
+	 */
 	private File file = null;
 
+	/**
+	 * This is the initial XML that will be written  when a new file is created.  
+	 */
 	public static final String XML_TO_WRITE = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
 			+ "<PersistedReaderInfo>\n</PersistedReaderInfo>";
 
 	/**
-	 * 
+	 * The readerPluginService
 	 */
 	private ReaderPluginService readerPluginService;
 
-	/**
-	 * The ReaderPluginRegistryService, which we use to get the list of classes.
-	 */
-	// private ReaderPluginRegistryService rprs;
 	/**
 	 * The instance of the JAXBUtility.
 	 */
@@ -218,6 +220,7 @@ public class JAXBUtility {
 	}
 
 	/**
+	 * Returns the XML file
 	 * 
 	 * @return
 	 * @throws FileNotFoundException
@@ -271,7 +274,7 @@ public class JAXBUtility {
 	 * Set the ReaderPluginRegistryService via injection.
 	 * 
 	 * @param rprs
-	 *            the rprs to set
+	 *            The ReaderPluginRegistryService to set.  
 	 */
 	@Inject
 	public void setReaderPluginService(ReaderPluginService readerPluginService) {
