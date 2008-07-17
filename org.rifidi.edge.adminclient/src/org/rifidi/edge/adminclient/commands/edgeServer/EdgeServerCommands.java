@@ -58,7 +58,10 @@ public class EdgeServerCommands implements ICommand {
 					.parseInt(port));
 			remoteReaderConnectionRegistry = (RemoteReaderConnectionRegistry) registry
 					.lookup(RemoteReaderConnectionRegistry.class.getName());
-
+			/*
+			 * TODO: We should never catch generic exceptions. Lets break these
+			 * down to specific exceptions that might happen
+			 */
 		} catch (Exception e) {
 			e.printStackTrace();
 			return "Could not connect.";
