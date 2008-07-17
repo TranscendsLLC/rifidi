@@ -5,6 +5,12 @@ import org.osgi.framework.BundleContext;
 import org.rifidi.edge.core.communication.service.ConnectionService;
 import org.rifidi.edge.core.communication.service.ConnectionServiceImpl;
 
+/**
+ * Activator of the communication bundle
+ * 
+ * @author Andreas Huebner - andreas@pramari.com
+ *
+ */
 public class Activator implements BundleActivator {
 
 	private ConnectionServiceImpl connectionService;

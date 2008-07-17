@@ -19,6 +19,14 @@ import org.rifidi.edge.core.exceptions.RifidiConnectionException;
 import org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionExceptionListener;
 import org.rifidi.edge.core.readerplugin.protocol.CommunicationProtocol;
 
+/**
+ * ReadThread constantly reading from the given InputStream parsing the read
+ * bytes with help form the CommunicationProtocol of a ReaderPlugin and storing
+ * the full messages on a queue.
+ * 
+ * @author Andreas Huebner - andreas@pramari.com
+ * 
+ */
 public class ReadThread extends AbstractThread {
 	private static final org.apache.commons.logging.Log logger = LogFactory
 			.getLog(ReadThread.class);
@@ -27,9 +35,23 @@ public class ReadThread extends AbstractThread {
 	private Queue<Object> readQueue;
 
 	private InputStream inputStream;
-	
+
 	private ConnectionExceptionListener connectionExceptionListener;
 
+	/**
+	 * Create a new ReadThread
+	 * 
+	 * @param threadName
+	 *            the name of the Thread
+	 * @param connectionExceptionListener
+	 *            listener for communication exceptions
+	 * @param protocol
+	 *            protocol to transform bytes read from the InputStream into messages
+	 * @param readQueue
+	 *            the queue to store the read messages on
+	 * @param inputStream
+	 *            stream to read from
+	 */
 	public ReadThread(String threadName,
 			ConnectionExceptionListener connectionExceptionListener,
 			CommunicationProtocol protocol, Queue<Object> readQueue,
@@ -41,6 +63,11 @@ public class ReadThread extends AbstractThread {
 		this.connectionExceptionListener = connectionExceptionListener;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Runnable#run()
+	 */
 	@Override
 	public void run() {
 		logger.debug("Starting: " + Thread.currentThread().getName());
@@ -55,8 +82,9 @@ public class ReadThread extends AbstractThread {
 				}
 			}
 			if (!ignoreExceptions) {
-				connectionExceptionListener.connectionExceptionEvent(new RifidiConnectionException(
-						"Socket was closed by client"));
+				connectionExceptionListener
+						.connectionExceptionEvent(new RifidiConnectionException(
+								"Socket was closed by client"));
 			}
 		} catch (Exception e) {
 			running = false;

@@ -20,6 +20,15 @@ import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionExceptionListener;
 import org.rifidi.edge.core.readerplugin.protocol.CommunicationProtocol;
 
+/**
+ * Write Thread listens on the queue and writes message to the OutputStream. It
+ * uses the Protocol provided by a ReaderPlugin to transform the messages
+ * received from the queue into byte arrays and transmit them. It notifies a
+ * Listener if there was a Exception on the underlying communication.
+ * 
+ * @author Andreas Huebner - andreas@pramari.com
+ * 
+ */
 public class WriteThread extends AbstractThread {
 	private static final Log logger = LogFactory.getLog(WriteThread.class);
 
@@ -29,7 +38,20 @@ public class WriteThread extends AbstractThread {
 	private boolean ignoreExceptions = false;
 	private ConnectionExceptionListener connectionExceptionListener;
 
-	public WriteThread(String threadName, ConnectionExceptionListener connectionExceptionListener,
+	/**
+	 * Create a new WriteThread
+	 * 
+	 * @param threadName
+	 *            the name of the thread
+	 * @param connectionExceptionListener
+	 *            listener of exceptions on the underlying communication
+	 * @param protocol
+	 *            the protocol provided by
+	 * @param writeQueue
+	 * @param outputStream
+	 */
+	public WriteThread(String threadName,
+			ConnectionExceptionListener connectionExceptionListener,
 			CommunicationProtocol protocol, Queue<Object> writeQueue,
 			OutputStream outputStream) {
 		super(threadName);
@@ -41,6 +63,9 @@ public class WriteThread extends AbstractThread {
 		this.connectionExceptionListener = connectionExceptionListener;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Runnable#run()
+	 */
 	public void run() {
 		logger.debug("Starting: " + Thread.currentThread().getName());
 		try {
