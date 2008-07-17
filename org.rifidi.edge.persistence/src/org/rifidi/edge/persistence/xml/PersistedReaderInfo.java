@@ -57,7 +57,7 @@ public class PersistedReaderInfo {
 			.getLog(PersistedReaderInfo.class);
 
 	/**
-	 * 
+	 * The document object
 	 */
 	private Document doc = null;
 
