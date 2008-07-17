@@ -209,6 +209,22 @@ public class NewEdgeServerCommands implements ICommand {
 										|| c.equals(Integer.class)) {
 									int i = Integer.parseInt(input);
 									m.invoke(readerInfo, i);
+								}								
+								if (c.equals(Long.TYPE)
+										|| c.equals(Long.class)) {
+									long l = Long.parseLong(input);
+									System.out.println(l);
+									m.invoke(readerInfo, l);
+								}
+								if (c.equals(Byte.TYPE)
+										|| c.equals(Byte.class)	) {
+									byte b = Byte.parseByte(input);
+									m.invoke(readerInfo, b);
+								}
+								if (c.equals(Short.TYPE)
+										|| c.equals(Short.class)){
+									short s = Short.parseShort(input);
+									m.invoke(readerInfo, s);
 								}
 								if (c.equals(Double.TYPE)
 										|| c.equals(Double.class)) {

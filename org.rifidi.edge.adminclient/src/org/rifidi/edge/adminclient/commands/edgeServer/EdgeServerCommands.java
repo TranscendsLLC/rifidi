@@ -238,6 +238,7 @@ public class EdgeServerCommands implements ICommand {
 								if (c.equals(Long.TYPE)
 										|| c.equals(Long.class)) {
 									long l = Long.parseLong(input);
+									System.out.println(l);
 									m.invoke(readerInfo, l);
 								}
 								if (c.equals(Byte.TYPE)
