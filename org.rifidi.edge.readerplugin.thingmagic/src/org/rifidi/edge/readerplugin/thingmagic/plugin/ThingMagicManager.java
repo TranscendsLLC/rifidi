@@ -78,7 +78,8 @@ public class ThingMagicManager extends ConnectionManager {
 	public ConnectionStreams createCommunication()
 			throws RifidiConnectionException {
 		// TODO Auto-generated method stub
-		if (!info.isSsh()) {
+		if ( ( (info.getPassword() == null) || info.getPassword().equals("")  ) &&
+			 ( (info.getUser() == null)     || info.getUser().equals("")      )     ) {
 			//logger.debug("Trying to connect to: " + info.getIpAddress() + ":"
 			//		+ info.getPort() + ".");
 			try {

@@ -42,16 +42,5 @@ public class ThingMagicReaderInfo extends ReaderInfo {
 	public void setUser(String user) {
 		this.user = user;
 	}
-	/**
-	 * @return the ssh
-	 */
-	public boolean isSsh() {
-		return ssh;
-	}
-	/**
-	 * @param ssh the ssh to set
-	 */
-	public void setSsh(boolean ssh) {
-		this.ssh = ssh;
-	}
+
 }
