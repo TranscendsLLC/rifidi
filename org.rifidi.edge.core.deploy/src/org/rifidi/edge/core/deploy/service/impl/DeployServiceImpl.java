@@ -30,6 +30,14 @@ import org.rifidi.services.annotations.Inject;
 import org.rifidi.services.registry.ServiceRegistry;
 
 /**
+ * This is the implementation of the DeployService. It monitors a list of
+ * Directories for changes in the file system. Once it finds a new File it tries
+ * to load the File as a Fragment to a Plugin already running in the OSGI
+ * Context. It will lookup for a XML File inside of the Fragment to find the
+ * commands this Fragment provides to its host. After it was sucessfully loaded
+ * it will add the described commands to the ReaderPlugin these commands belong
+ * to.
+ * 
  * @author Andreas Huebner - andreas@pramari.com
  * 
  */
@@ -49,6 +57,12 @@ public class DeployServiceImpl implements DeployService, FileMonitorListener {
 	private JAXBContext jaxbContext;
 	private Unmarshaller unmarshaller;
 
+	/**
+	 * Constructor
+	 * 
+	 * @param context
+	 *            Context of the OSGi Framework
+	 */
 	public DeployServiceImpl(BundleContext context) {
 		ServiceRegistry.getInstance().service(this);
 		this.context = context;
@@ -63,6 +77,11 @@ public class DeployServiceImpl implements DeployService, FileMonitorListener {
 
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.rifidi.edge.core.deploy.service.DeployService#add(java.util.List)
+	 */
 	@Override
 	public void add(List<String> directoriesToMonitor) {
 		if (directoriesToMonitor != null)
@@ -76,6 +95,11 @@ public class DeployServiceImpl implements DeployService, FileMonitorListener {
 			}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.rifidi.edge.core.deploy.service.DeployService#remove(java.util.List)
+	 */
 	@Override
 	public void remove(List<String> directoriesToRemove) {
 		for (String d : directoriesToRemove) {
@@ -85,6 +109,12 @@ public class DeployServiceImpl implements DeployService, FileMonitorListener {
 		}
 	}
 
+	/**
+	 * Uninstall Fragment
+	 * 
+	 * @param f
+	 *            the file for the fragment to uninstall
+	 */
 	private void uninstallBundle(File f) {
 		BundleHolder bundleHolder = bundleRegistry.get(f);
 		if (bundleHolder != null) {
@@ -110,9 +140,17 @@ public class DeployServiceImpl implements DeployService, FileMonitorListener {
 
 	}
 
-	// TODO throw Exceptions
+	/**
+	 * Install fragment
+	 * 
+	 * @param f
+	 *            the file for the fragment to install
+	 */
 	@SuppressWarnings("unchecked")
 	private void installBundle(File f) {
+
+		// TODO throw Exceptions
+
 		try {
 			// Install Fragment
 			Bundle fragmentBundle = context.installBundle("file:"
@@ -155,11 +193,11 @@ public class DeployServiceImpl implements DeployService, FileMonitorListener {
 				ArrayList<Class<? extends Command>> commands = new ArrayList<Class<? extends Command>>();
 				for (String commandClass : commandExtension.getCommands()) {
 					// TODO find out about Class cast
-					Class<? extends Command> command = (Class<? extends Command>) Class.forName(commandClass);
+					Class<? extends Command> command = (Class<? extends Command>) Class
+							.forName(commandClass);
 					commands.add(command);
 					logger.debug("found extension " + commandClass);
-					for(Annotation a : command.getAnnotations())
-					{
+					for (Annotation a : command.getAnnotations()) {
 						System.out.println("Annotation " + a.toString());
 					}
 				}
@@ -185,6 +223,11 @@ public class DeployServiceImpl implements DeployService, FileMonitorListener {
 
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.rifidi.edge.core.deploy.monitor.FileMonitorListener#fileAddedEvent(java.io.File)
+	 */
 	@Override
 	public void fileAddedEvent(File f) {
 		synchronized (this) {
@@ -192,6 +235,11 @@ public class DeployServiceImpl implements DeployService, FileMonitorListener {
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.rifidi.edge.core.deploy.monitor.FileMonitorListener#fileRemovedEvent(java.io.File)
+	 */
 	@Override
 	public void fileRemovedEvent(File f) {
 		synchronized (this) {
@@ -199,6 +247,15 @@ public class DeployServiceImpl implements DeployService, FileMonitorListener {
 		}
 	}
 
+	/**
+	 * Parse Extension XML into a Java CommandExtension Object
+	 * 
+	 * @param in
+	 *            InputStream of the XML File
+	 * @return CommandExtenstion for the given XML File
+	 * @throws JAXBException
+	 *             if the XML File is invalid
+	 */
 	private CommandExtension loadCommandExtension(InputStream in)
 			throws JAXBException {
 		/*
@@ -209,6 +266,13 @@ public class DeployServiceImpl implements DeployService, FileMonitorListener {
 		return (CommandExtension) unmarshaller.unmarshal(in);
 	}
 
+	/**
+	 * Find a Bundle inside of the OSGI Registry
+	 * 
+	 * @param bundleName
+	 *            name of the Bundle
+	 * @return the OSGi Bundle with the given name
+	 */
 	private Bundle findBundle(String bundleName) {
 		for (Bundle b : context.getBundles()) {
 			if (b.getSymbolicName().equals(bundleName))
@@ -217,6 +281,12 @@ public class DeployServiceImpl implements DeployService, FileMonitorListener {
 		return null;
 	}
 
+	/**
+	 * Inject method to obtain a instance of the ReaderPluginService from the
+	 * ServiceRegistry Framework
+	 * 
+	 * @param readerPluginService instance of the ReaderPluginService
+	 */
 	@Inject
 	public void setReaderPluginService(ReaderPluginService readerPluginService) {
 		this.readerPluginService = readerPluginService;
