@@ -8,11 +8,11 @@ package org.rifidi.edge.core.readerplugin.commands;
  */
 public enum CommandReturnStatus {
 	/**
-	 * Command was successful exceuted
+	 * Command was successful executed
 	 */
 	SUCCESSFUL,
 	/**
-	 * Command was not succesful executed
+	 * Command was not successful executed
 	 */
 	UNSUCCESSFUL,
 	/**
