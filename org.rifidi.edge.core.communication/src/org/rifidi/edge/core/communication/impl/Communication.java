@@ -194,11 +194,11 @@ public class Communication implements ConnectionExceptionListener {
 		ConnectionStreams connectionStreams = connectionManager
 				.createCommunication();
 		logger.debug("test");
-		readThread = new ReadThread(connectionManager.toString() + "{"
+		readThread = new ReadThread(connectionManager.toString() + " {"
 				+ readQueue.hashCode() + "} Read Thread", this, protocol,
 				readQueue, connectionStreams.getInputStream());
 
-		writeThread = new WriteThread(connectionManager.toString() + "{"
+		writeThread = new WriteThread(connectionManager.toString() + " {"
 				+ writeQueue.hashCode() + "} Write Thread", this, protocol,
 				writeQueue, connectionStreams.getOutputStream());
 		readThread.start();
