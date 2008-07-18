@@ -40,13 +40,11 @@ public class JMSConsole implements Runnable {
 		try {
 			connection = connectionFactory.createConnection();
 		} catch (JMSException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		try {
 			connection.start();
 		} catch (JMSException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -63,20 +61,17 @@ public class JMSConsole implements Runnable {
 		try {
 			session.unsubscribe(queueName);
 		} catch (JMSException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 	
 	@Override
 	public void run() {
-		// TODO Auto-generated method stub
 		while (running){
 			for (MessageConsumer consumer: consumers){
 				try {
 					System.out.println(consumer.receive());
 				} catch (JMSException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
@@ -98,7 +93,6 @@ public class JMSConsole implements Runnable {
 			connection.stop();
 			connection.close();
 		} catch (JMSException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
