@@ -70,8 +70,10 @@ public class RemoteReaderConnectionRegistryImpl implements
 			RemoteReaderConnection remoteReaderConnection)
 			throws RemoteException {
 		RemoteReaderConnectionImpl remoteConnection = remoteSessionList
-				.get(remoteReaderConnection);
+				.remove(remoteReaderConnection);
 		readerSessionService.destroyReaderSession(remoteConnection
+				.getReaderSession());
+		readerSessionSync.remove(remoteConnection
 				.getReaderSession());
 	}
 
