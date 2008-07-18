@@ -126,8 +126,10 @@ public class PersistanceServiceImpl implements PersistenceService,
 		try {
 			pri.removeReader(readerSession.getReaderInfo());
 		} catch (RifidiReaderInfoNotFoundException e) {
-			// TODO: Should we do anything else here? If this happens something
-			// seriously went wrong? We should think about this.
+			/*
+			 * TODO: Should we do anything else here? If this happens something
+			 * seriously went wrong? We should think about this.
+			 */
 			e.printStackTrace();
 		}
 	}
@@ -145,8 +147,10 @@ public class PersistanceServiceImpl implements PersistenceService,
 				logger.debug("Using the default xml file");
 				this.pri.setFile(DEFAULT_PATH, DEFAULT_PATH + DEFAULT_FILENAME);
 			} else {
-				// FIXME we need to get the path as well for reasons to stupid
-				// to explain
+				/*
+				 * FIXME we need to get the path as well for reasons to stupid
+				 * to explain
+				 */
 				this.pri.setFile(DEFAULT_PATH, fileName);
 			}
 		} catch (IOException e) {
