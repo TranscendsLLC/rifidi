@@ -32,33 +32,36 @@ import org.rifidi.edge.readerplugin.alien.protocol.AlienCommunicationProtocol;
 public class AlienConnectionManager extends ConnectionManager {
 
 	/**
-	 * Logger.  
+	 * Logger.
 	 */
 	private static final Log logger = LogFactory
 			.getLog(AlienConnectionManager.class);
-	
+
 	/**
-	 * The ReaderInfo that we will use to get the username and password.  
+	 * The ReaderInfo that we will use to get the username and password.
 	 */
 	private AlienReaderInfo info;
 
 	/**
-	 * The socket for the Alien reader.  
+	 * The socket for the Alien reader.
 	 */
 	private Socket alienSock;
 
 	/**
-	 * You can put this in front of a Alien command for terse output to come back to you, making things faster and easier to parse.  
+	 * You can put this in front of a Alien command for terse output to come
+	 * back to you, making things faster and easier to parse.
 	 */
 	public static String PROMPT_SUPPRESS = "\1";
 
 	/**
-	 * Attach this to anything you send to the Alien.  
+	 * Attach this to anything you send to the Alien.
 	 */
 	public static String NEWLINE = "\n";
 
+	private KeepAliveThread aka = null;
+
 	/**
-	 * Constructor for the AlienConnectionManager.  
+	 * Constructor for the AlienConnectionManager.
 	 * 
 	 * @param readerInfo
 	 */
@@ -66,6 +69,7 @@ public class AlienConnectionManager extends ConnectionManager {
 		super(readerInfo);
 		this.info = (AlienReaderInfo) readerInfo;
 		this.alienSock = null;
+		this.aka = new KeepAliveThread();
 	}
 
 	/*
@@ -194,8 +198,9 @@ public class AlienConnectionManager extends ConnectionManager {
 	 */
 	@Override
 	public void startKeepAlive(Connection connection) {
-		// TODO Nothing here yet, more later
-
+		 aka.connection = connection;
+		 aka.running = true;
+		 aka.start();
 	}
 
 	/*
@@ -205,7 +210,58 @@ public class AlienConnectionManager extends ConnectionManager {
 	 */
 	@Override
 	public void stopKeepAlive(Connection connection) {
-		// TODO Nothing here yet, more later
+		 aka.running = false;
+	}
 
+	/**
+	 * This thread constantly polls an Alien reader with a version command,
+	 * keeping it from timing out.
+	 * 
+	 * @author Matthew Dean - matt@pramari.com
+	 */
+	private class KeepAliveThread extends Thread {
+
+		public static final String SET_KEEP_ALIVE = "set NotifyKeepAliveTime=30000";
+
+		/**
+		 * Tells whether the thread should keep running or not.
+		 */
+		public boolean running = false;
+
+		/**
+		 * The connection that we will send our keep alive pings through.
+		 */
+		public Connection connection = null;
+
+		/**
+		 * Constructor for the keep alive thread.
+		 * 
+		 * @param connection
+		 */
+		public KeepAliveThread() {
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see java.lang.Thread#run()
+		 */
+		@Override
+		public void run() {
+			while (running) {
+				try {
+					logger.debug("sending keep alive");
+					connection.sendMessage(PROMPT_SUPPRESS + SET_KEEP_ALIVE
+							+ NEWLINE);
+					connection.receiveMessage();
+					try {
+						Thread.sleep(30000);
+					} catch (InterruptedException e) {/* Do nothing */
+					}
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
 	}
 }
