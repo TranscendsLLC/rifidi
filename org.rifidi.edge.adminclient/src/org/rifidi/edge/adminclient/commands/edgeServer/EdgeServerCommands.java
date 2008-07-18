@@ -379,7 +379,6 @@ public class EdgeServerCommands implements ICommand {
 			remoteReaderConnection.executeCommand(commandName, "");
 			return "Command started";
 		} catch (RemoteException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return null;
