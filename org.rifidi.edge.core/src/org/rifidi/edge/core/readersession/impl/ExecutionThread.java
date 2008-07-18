@@ -9,6 +9,10 @@ import org.rifidi.edge.core.readerplugin.commands.Command;
 import org.rifidi.edge.core.readerplugin.commands.CommandReturnStatus;
 
 /**
+ * This is a Helper to execute Commands. It will take in the command and execute
+ * it in it's own thread. It also offers ways to force the stop of a executing
+ * command by killing the thread executing the command.
+ * 
  * @author Andreas Huebner - andreas@pramari.com
  * 
  */
@@ -29,42 +33,51 @@ public class ExecutionThread {
 	private boolean running = false;
 
 	/**
+	 * Create a new Instance of the Execution Thread.
+	 * 
 	 * @param connection
+	 *            the connection for the commands
 	 * @param messageQueue
+	 *            the messageQueue for the command
 	 * @param readerSession
+	 *            the Listener for command finished events
 	 */
 	public ExecutionThread(Connection connection, MessageQueue messageQueue,
 			CommandExecutionListener readerSession) {
-		if(connection == null)
-		{
+		if (connection == null) {
 			logger.error("NO Connection");
 		}
 		this.connection = connection;
-		if(messageQueue == null)
-		{
+		if (messageQueue == null) {
 			logger.error("NO MessageQueue");
 		}
 		this.messageQueue = messageQueue;
-		if(readerSession == null)
-		{
+		if (readerSession == null) {
 			logger.error("NO CommandExecutionListerner");
 		}
 		this.commandExecutionListener = readerSession;
 	}
 
 	/**
-	 * @param command
-	 * @param commandID
+	 * Start the execution of a command
+	 * 
+	 * @param _command
+	 *            command to execute
+	 * @param _configuration
+	 *            configuration for the command
+	 * @param _commandID
+	 *            assigned execution id
+	 * @throws RifidiExecutionException
+	 *             if the command could not be successful Executed
 	 */
 	public void start(final Command _command, final String _configuration,
 			final long _commandID) throws RifidiExecutionException {
-		if (running || command != null){
+		if (running || command != null) {
 			logger.error("command " + this.commandID + "is still executing");
 			throw new RifidiExecutionException("Command " + this.commandID
 					+ " is still executing");
 		}
-		if(_command == null)
-		{
+		if (_command == null) {
 			logger.error("NO Command to execute");
 			return;
 		}
@@ -75,25 +88,27 @@ public class ExecutionThread {
 			@Override
 			public void run() {
 				logger.debug("Starting command");
-				if(command == null)
-				{
+				if (command == null) {
 					logger.error("NO Command to execute");
 					return;
 				}
 				status = command.start(connection, messageQueue,
 						_configuration, commandID);
-				//TODO Possibly pass in commandID instead of command
+				// TODO Possibly pass in commandID instead of command
 				commandExecutionListener.commandFinished(command, status);
 				command = null;
 				logger.debug("Command finished");
 			}
-		},"ExecuteThread "  + commandID);
+		}, "ExecuteThread " + commandID);
 		thread.setDaemon(true);
 		thread.start();
 	}
 
 	/**
+	 * Stop the execution of this command
+	 * 
 	 * @param force
+	 *            force the command to stop by killing the executing thread
 	 */
 	@SuppressWarnings("deprecation")
 	public void stop(boolean force) {
@@ -109,7 +124,8 @@ public class ExecutionThread {
 				if (thread.isAlive()) {
 					thread.interrupt();
 					thread.stop();
-					commandExecutionListener.commandFinished(command, CommandReturnStatus.INTERRUPTED);
+					commandExecutionListener.commandFinished(command,
+							CommandReturnStatus.INTERRUPTED);
 					command = null;
 				}
 			}
