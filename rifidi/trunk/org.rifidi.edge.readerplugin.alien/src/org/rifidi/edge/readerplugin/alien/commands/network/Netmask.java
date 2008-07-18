@@ -87,7 +87,6 @@ public class Netmask implements Command {
 	 */
 	@Override
 	public void stop() {
-		// TODO Auto-generated method stub
 
 	}
 

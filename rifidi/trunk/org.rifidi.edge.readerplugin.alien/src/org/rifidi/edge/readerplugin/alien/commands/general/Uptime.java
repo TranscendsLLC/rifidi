@@ -66,7 +66,6 @@ public class Uptime implements Command {
 	 */
 	@Override
 	public void stop() {
-	// TODO Auto-generated method stub
 	
 	}
 }

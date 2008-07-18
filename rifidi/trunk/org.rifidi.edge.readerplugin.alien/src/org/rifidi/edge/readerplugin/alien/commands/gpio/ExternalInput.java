@@ -88,7 +88,6 @@ public class ExternalInput implements Command {
 	 */
 	@Override
 	public void stop() {
-	// TODO Auto-generated method stub
 	
 	}
 }

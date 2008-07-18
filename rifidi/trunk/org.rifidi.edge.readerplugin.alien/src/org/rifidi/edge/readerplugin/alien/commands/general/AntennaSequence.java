@@ -88,7 +88,6 @@ public class AntennaSequence implements Command {
 	 */
 	@Override
 	public void stop() {
-	// TODO Auto-generated method stub
 	
 	}
 }

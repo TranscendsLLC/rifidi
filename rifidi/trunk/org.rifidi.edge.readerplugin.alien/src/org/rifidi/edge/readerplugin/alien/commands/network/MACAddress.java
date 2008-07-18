@@ -65,7 +65,6 @@ public class MACAddress implements Command {
 	 */
 	@Override
 	public void stop() {
-		// TODO Auto-generated method stub
 
 	}
 
