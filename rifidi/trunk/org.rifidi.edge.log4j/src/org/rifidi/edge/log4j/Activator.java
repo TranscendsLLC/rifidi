@@ -16,6 +16,12 @@ import org.apache.commons.logging.LogFactory;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
+/**
+ * Activator for the Log4J Bundle
+ * 
+ * @author Andreas Huebner - andreas@pramari.com
+ *
+ */
 public class Activator implements BundleActivator {
 
 	private Log logger = LogFactory.getLog(this.getClass());
