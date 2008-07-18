@@ -112,7 +112,6 @@ public class AlienConnectionManager extends ConnectionManager {
 	@Override
 	public ConnectionStreams createCommunication()
 			throws RifidiConnectionException {
-		// TODO: Check if the IP and port are valid here
 		ConnectionStreams cs = null;
 		try {
 			logger.debug("Creating the communication, IP is: "
