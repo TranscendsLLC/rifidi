@@ -8,6 +8,10 @@ import org.rifidi.edge.readerplugin.thingmagic.plugin.ThingMagicReaderPlugin;
 import org.rifidi.services.annotations.Inject;
 import org.rifidi.services.registry.ServiceRegistry;
 
+/**
+ * @author Jerry Maine - jerry@pramari.com
+ *
+ */
 public class Activator implements BundleActivator {
 
 	private ReaderPluginService readerPluginService;

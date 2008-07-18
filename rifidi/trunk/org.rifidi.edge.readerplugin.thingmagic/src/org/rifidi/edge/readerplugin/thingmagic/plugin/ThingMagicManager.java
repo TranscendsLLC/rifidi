@@ -43,12 +43,18 @@ public class ThingMagicManager extends ConnectionManager {
 		return new ThingMagicCommunicationProtocol();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionManager#getMaxNumConnectionsAttemps()
+	 */
 	@Override
 	public int getMaxNumConnectionsAttemps() {
 		return (info.getMaxNumConnectionsAttemps() < 0) ? info
 				.getMaxNumConnectionsAttemps() : 3;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionManager#getReconnectionIntervall()
+	 */
 	@Override
 	public long getReconnectionIntervall() {
 		return (info.getReconnectionIntervall() < 0) ? info
@@ -77,6 +83,9 @@ public class ThingMagicManager extends ConnectionManager {
 
 	}
 
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionManager#createCommunication()
+	 */
 	@Override
 	public ConnectionStreams createCommunication()
 			throws RifidiConnectionException {
@@ -111,12 +120,18 @@ public class ThingMagicManager extends ConnectionManager {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionManager#connect(org.rifidi.edge.core.communication.Connection)
+	 */
 	@Override
 	public void connect(Connection connection) throws RifidiConnectionException {
 		// Do nothing
 
 	}
 
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionManager#disconnect(org.rifidi.edge.core.communication.Connection)
+	 */
 	@Override
 	public void disconnect(Connection connection) {
 

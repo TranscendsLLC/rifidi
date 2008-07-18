@@ -53,11 +53,17 @@ public class ThingMagicReaderPlugin implements ReaderPlugin {
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.readerplugin.ReaderPlugin#addCommand(java.util.List)
+	 */
 	@Override
 	public void addCommand(List<Class<? extends Command>> commands) {
 		commands.addAll(commands);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.readerplugin.ReaderPlugin#removeCommand(java.util.List)
+	 */
 	@Override
 	public void removeCommand(List<Class<? extends Command>> commands) {
 		commands.removeAll(commands);	

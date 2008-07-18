@@ -13,6 +13,10 @@ import org.rifidi.edge.core.readerplugin.commands.CommandReturnStatus;
 import org.rifidi.edge.core.readerplugin.commands.annotations.CommandDesc;
 import org.rifidi.edge.core.readerplugin.messages.impl.TagMessage;
 
+/**
+ * @author Jerry Maine - jerry@pramari.com
+ *
+ */
 @CommandDesc(name = "getTagList")
 public class GetTagsOnceCommand implements Command {
 	private static final Log logger = LogFactory
