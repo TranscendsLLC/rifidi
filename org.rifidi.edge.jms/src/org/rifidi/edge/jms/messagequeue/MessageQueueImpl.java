@@ -12,6 +12,13 @@ import org.rifidi.edge.core.exceptions.RifidiMessageQueueException;
 import org.rifidi.edge.core.messageQueue.MessageQueue;
 import org.rifidi.edge.core.readerplugin.messages.Message;
 
+/**
+ * Implementation of the MessageQueue using JMS as the underlying Queue. Allows
+ * to store Messages on a JMS Queue.
+ * 
+ * @author Andreas Huebner - andreas@pramari.com
+ * 
+ */
 public class MessageQueueImpl implements MessageQueue {
 
 	private Connection connection;
@@ -20,10 +27,25 @@ public class MessageQueueImpl implements MessageQueue {
 	private MessageProducer messageProducer;
 	private String queueName;
 
+	/**
+	 * Create a new MessageQueue
+	 * 
+	 * @param queueName
+	 *            the name used to create the queue
+	 */
 	public MessageQueueImpl(String queueName) {
 		this.queueName = queueName;
 	}
 
+	/**
+	 * Start the MessageQueue
+	 * 
+	 * @param connectionFactory
+	 *            ConnectionFactory to the JMSBroker
+	 * @throws JMSException
+	 *             if there is a error starting the message queue or if the jms
+	 *             broker couldn't be reached
+	 */
 	public void startMessageQueue(ConnectionFactory connectionFactory)
 			throws JMSException {
 		connection = connectionFactory.createConnection();
@@ -35,14 +57,24 @@ public class MessageQueueImpl implements MessageQueue {
 
 		messageProducer = session.createProducer(destination);
 	}
-	
-	public void stopMessageQueue() throws JMSException	{
+
+	/**
+	 * Stop a previously started MessageQueue
+	 * 
+	 * @throws JMSException
+	 */
+	public void stopMessageQueue() throws JMSException {
 		messageProducer.close();
 		session.close();
 		connection.stop();
 		connection.close();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.rifidi.edge.core.messageQueue.MessageQueue#addMessage(org.rifidi.edge.core.readerplugin.messages.Message)
+	 */
 	@Override
 	public void addMessage(Message message) throws RifidiMessageQueueException {
 		// TODO Think if we want to use the protocol for this
@@ -57,6 +89,11 @@ public class MessageQueueImpl implements MessageQueue {
 
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.rifidi.edge.core.messageQueue.MessageQueue#getName()
+	 */
 	@Override
 	public String getName() {
 		return queueName;

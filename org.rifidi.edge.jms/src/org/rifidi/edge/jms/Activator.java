@@ -20,7 +20,12 @@ import org.osgi.framework.BundleContext;
 import org.rifidi.edge.core.messageQueue.service.MessageService;
 import org.rifidi.edge.jms.messageservice.MessageServiceImpl;
 
-// TODO Needs class comment header...
+/**
+ * This is the Activator for the JMSService Bundle
+ * 
+ * @author Andreas Huebner - andreas@pramari.com
+ * 
+ */
 public class Activator implements BundleActivator {
 
 	BrokerService broker;

@@ -15,6 +15,10 @@ import org.rifidi.edge.jms.messagequeue.MessageQueueImpl;
 import org.rifidi.services.registry.ServiceRegistry;
 
 /**
+ * Implementation of the MessageQueueService. This allows to create and delete
+ * MessageQueues. It also notifies subscribers about new created or deleted
+ * MessageQueues.
+ * 
  * 
  * @author Andreas Huebner - andreas@pramari.com
  * 
@@ -26,11 +30,22 @@ public class MessageServiceImpl implements MessageService {
 
 	private Set<MessageServiceListener> listeners = new HashSet<MessageServiceListener>();
 
+	/**
+	 * Create a new MessageServcice
+	 * 
+	 * @param connectionFactory
+	 *            the ConnectionFactory to create new JMS Connections
+	 */
 	public MessageServiceImpl(ConnectionFactory connectionFactory) {
 		this.connectionFactory = connectionFactory;
 		ServiceRegistry.getInstance().service(this);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.rifidi.edge.core.messageQueue.service.MessageService#createMessageQueue(java.lang.String)
+	 */
 	@Override
 	public MessageQueue createMessageQueue(String messageQueueName) {
 		MessageQueueImpl messageQueue = new MessageQueueImpl(messageQueueName);
@@ -45,6 +60,11 @@ public class MessageServiceImpl implements MessageService {
 		return messageQueue;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.rifidi.edge.core.messageQueue.service.MessageService#destroyMessageQueue(org.rifidi.edge.core.messageQueue.MessageQueue)
+	 */
 	@Override
 	public void destroyMessageQueue(MessageQueue messageQueue) {
 		try {
@@ -56,28 +76,55 @@ public class MessageServiceImpl implements MessageService {
 		registry.remove(messageQueue);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.rifidi.edge.core.messageQueue.service.MessageService#getAllMessageQueues()
+	 */
 	@Override
 	public List<MessageQueue> getAllMessageQueues() {
 		ArrayList<MessageQueue> retVal = new ArrayList<MessageQueue>(registry);
 		return retVal;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.rifidi.edge.core.messageQueue.service.MessageService#addMessageQueueListener(org.rifidi.edge.core.messageQueue.service.MessageServiceListener)
+	 */
 	@Override
 	public void addMessageQueueListener(MessageServiceListener listener) {
 		listeners.add(listener);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.rifidi.edge.core.messageQueue.service.MessageService#removeMessageQueueListener(org.rifidi.edge.core.messageQueue.service.MessageServiceListener)
+	 */
 	@Override
 	public void removeMessageQueueListener(MessageServiceListener listener) {
 		listeners.remove(listener);
 	}
 
+	/**
+	 * Fire add event. This event is fired if a MessageQueue was created.
+	 * 
+	 * @param event
+	 *            the new MessageQueue created
+	 */
 	private void fireAddEvent(MessageQueue event) {
 		for (MessageServiceListener listener : listeners) {
 			listener.addEvent(event);
 		}
 	}
 
+	/**
+	 * Fire remove event. This event is fired if a MessageQueue was deleted.
+	 * 
+	 * @param event
+	 *            the MessageQueue deleted
+	 */
 	private void fireRemoveEvent(MessageQueue event) {
 		for (MessageServiceListener listener : listeners) {
 			listener.removeEvent(event);
