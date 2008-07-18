@@ -24,6 +24,9 @@ public class NetworkUpgrade implements Command {
 
 	static private String command = "NetworkUpgrade";
 
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.readerplugin.commands.Command#start(org.rifidi.edge.core.communication.Connection, org.rifidi.edge.core.messageQueue.MessageQueue, java.lang.String, long)
+	 */
 	@Override
 	public CommandReturnStatus start(Connection connection,
 			MessageQueue messageQueue, String configuration, long commandID) {
@@ -79,6 +82,9 @@ public class NetworkUpgrade implements Command {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.readerplugin.commands.Command#stop()
+	 */
 	@Override
 	public void stop() {
 		// TODO Auto-generated method stub

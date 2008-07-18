@@ -25,6 +25,9 @@ public class MaxAntenna implements Command {
 
 	static private String command = "MaxAntenna";
 	
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.readerplugin.commands.Command#start(org.rifidi.edge.core.communication.Connection, org.rifidi.edge.core.messageQueue.MessageQueue, java.lang.String, long)
+	 */
 	@Override
 	public CommandReturnStatus start(Connection connection,
 		MessageQueue messageQueue, String configuration, long commandID) {
@@ -58,6 +61,9 @@ public class MaxAntenna implements Command {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.readerplugin.commands.Command#stop()
+	 */
 	@Override
 	public void stop() {
 	// TODO Auto-generated method stub
