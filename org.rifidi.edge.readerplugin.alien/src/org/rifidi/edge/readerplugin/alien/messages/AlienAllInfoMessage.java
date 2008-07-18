@@ -10,6 +10,10 @@ import javax.xml.bind.Marshaller;
 
 import org.rifidi.edge.core.readerplugin.messages.Message;
 
+/**
+ * @author Jerry Maine - jerry@pramari.com
+ *
+ */
 public class AlienAllInfoMessage implements Message{
 	private Marshaller marshaller;
 	
@@ -24,10 +28,16 @@ public class AlienAllInfoMessage implements Message{
 	Map<String, String> program = new HashMap<String, String>();
 	Map<String, String> experimental = new HashMap<String, String>();
 	
+	/**
+	 * @param allinfo
+	 */
 	public AlienAllInfoMessage(String allinfo){
 		
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.readerplugin.messages.Message#toXML()
+	 */
 	@Override
 	public String toXML() {
 		if (marshaller == null) {
