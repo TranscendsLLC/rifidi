@@ -15,23 +15,33 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.rifidi.edge.core.readerplugin.ReaderInfo;
 
 /**
+ * This class represents the reader info needed for an Alien reader. In addition
+ * to the things already in ReaderInfo, this class also contains a username and
+ * password field used for connnecting to a reader.
+ * 
  * @author Matthew Dean - matt@pramari.com
- *
  */
 @XmlRootElement
 public class AlienReaderInfo extends ReaderInfo {
-	
-	
+
 	/**
-	 * 
+	 * Generated serialVersionUID
 	 */
 	private static final long serialVersionUID = 9204173142014313800L;
 
+	/**
+	 * The username for the reader
+	 */
 	private String username;
-	
+
+	/**
+	 * The password for the reader.
+	 */
 	private String password;
 
 	/**
+	 * Gets the username.
+	 * 
 	 * @return the username
 	 */
 	public String getUsername() {
@@ -39,13 +49,18 @@ public class AlienReaderInfo extends ReaderInfo {
 	}
 
 	/**
-	 * @param username the username to set
+	 * Sets the username.
+	 * 
+	 * @param username
+	 *            the username to set
 	 */
 	public void setUsername(String username) {
 		this.username = username;
 	}
 
 	/**
+	 * Gets the password
+	 * 
 	 * @return the password
 	 */
 	public String getPassword() {
@@ -53,11 +68,13 @@ public class AlienReaderInfo extends ReaderInfo {
 	}
 
 	/**
-	 * @param password the password to set
+	 * Sets the password.
+	 * 
+	 * @param password
+	 *            the password to set
 	 */
 	public void setPassword(String password) {
 		this.password = password;
 	}
-	
-	
+
 }
