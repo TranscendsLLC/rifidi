@@ -85,6 +85,7 @@ public class RemoteReaderConnectionImpl implements RemoteReaderConnection {
 	 *      java.lang.String)
 	 */
 	@Override
+	//TODO: remove stack traces
 	public long executeCommand(String command, String configuration)
 			throws RemoteException {
 		try {
