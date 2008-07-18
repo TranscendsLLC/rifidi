@@ -22,24 +22,41 @@ import org.rifidi.edge.core.rmi.readerconnection.RemoteReaderConnection;
 import org.rifidi.edge.core.rmi.readerconnection.RemoteReaderConnectionRegistry;
 
 public class NewEdgeServerCommands implements ICommand {
-	public NewEdgeServerCommands() {
-
-	}
 
 	private RemoteReaderConnectionRegistry remoteReaderConnectionRegistry;
 
 	private JMSConsumerFactory jmsFactory;
 
+	/**
+	 * initialize a new JMS Factory
+	 * 
+	 * @throws JMSException
+	 */
 	public void initializeJMS() throws JMSException {
 		jmsFactory = new JMSConsumerFactory("tcp://localhost:61616");
 		jmsFactory.start();
 	}
 
+	/**
+	 * Connect to the RMIServer using the default values. hostname: localhost
+	 * port: 1099
+	 * 
+	 * @return status
+	 */
 	@Command(name = "connectDefault")
 	public String connectDefault() {
 		return this.connect("localhost", "1099");
 	}
 
+	/**
+	 * Connect to the RMIServer
+	 * 
+	 * @param hostname
+	 *            hostname of the RMIServer
+	 * @param port
+	 *            port of the RMIServer
+	 * @return status
+	 */
 	@Command(name = "connect", arguments = { "hostname", "port" })
 	public String connect(String hostname, String port) {
 		Registry registry = null;
@@ -49,7 +66,7 @@ public class NewEdgeServerCommands implements ICommand {
 			remoteReaderConnectionRegistry = (RemoteReaderConnectionRegistry) registry
 					.lookup(RemoteReaderConnectionRegistry.class.getName());
 
-			//TODO: Uh, we should never just catch generic exceptions.  
+			// TODO: Uh, we should never just catch generic exceptions.
 		} catch (Exception e) {
 			return "Could not connect. " + e.getMessage();
 		}
@@ -209,19 +226,17 @@ public class NewEdgeServerCommands implements ICommand {
 										|| c.equals(Integer.class)) {
 									int i = Integer.parseInt(input);
 									m.invoke(readerInfo, i);
-								}								
-								if (c.equals(Long.TYPE)
-										|| c.equals(Long.class)) {
+								}
+								if (c.equals(Long.TYPE) || c.equals(Long.class)) {
 									long l = Long.parseLong(input);
 									m.invoke(readerInfo, l);
 								}
-								if (c.equals(Byte.TYPE)
-										|| c.equals(Byte.class)	) {
+								if (c.equals(Byte.TYPE) || c.equals(Byte.class)) {
 									byte b = Byte.parseByte(input);
 									m.invoke(readerInfo, b);
 								}
 								if (c.equals(Short.TYPE)
-										|| c.equals(Short.class)){
+										|| c.equals(Short.class)) {
 									short s = Short.parseShort(input);
 									m.invoke(readerInfo, s);
 								}
@@ -340,7 +355,8 @@ public class NewEdgeServerCommands implements ICommand {
 			return "ERROR. Connection not found";
 		}
 		try {
-			long commandID = remoteReaderConnection.executeCommand(commandName, "");
+			long commandID = remoteReaderConnection.executeCommand(commandName,
+					"");
 			return "Command started: " + commandID;
 		} catch (RemoteException e) {
 			return "Command not found. " + e.getMessage();
@@ -550,10 +566,9 @@ public class NewEdgeServerCommands implements ICommand {
 				return "ERROR." + " RemoteReaderConnection not found";
 			}
 			return readerConnection.commandStatus(Long.parseLong(commandID));
-		}catch(Exception e)
-		{
+		} catch (Exception e) {
 			return "ERROR" + e.getMessage();
 		}
 	}
-		
+
 }
