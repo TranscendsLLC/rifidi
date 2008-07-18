@@ -90,7 +90,6 @@ public class DummyConnectionManagerNew extends ConnectionManager {
 		try {
 			connection.sendMessage(new String("quit\n"));
 		} catch (IOException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		try {
@@ -132,7 +131,6 @@ public class DummyConnectionManagerNew extends ConnectionManager {
 	 */
 	@Override
 	public void startKeepAlive(Connection connection) {
-		// TODO Auto-generated method stub
 
 	}
 
@@ -143,7 +141,6 @@ public class DummyConnectionManagerNew extends ConnectionManager {
 	 */
 	@Override
 	public void stopKeepAlive(Connection connection) {
-		// TODO Auto-generated method stub
 
 	}
 
