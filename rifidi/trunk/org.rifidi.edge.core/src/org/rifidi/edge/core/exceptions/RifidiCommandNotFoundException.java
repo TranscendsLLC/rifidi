@@ -18,7 +18,6 @@ public class RifidiCommandNotFoundException extends RifidiException {
 	 */
 	public RifidiCommandNotFoundException() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	/**
@@ -31,7 +30,6 @@ public class RifidiCommandNotFoundException extends RifidiException {
 	 */
 	public RifidiCommandNotFoundException(String arg0, Throwable arg1) {
 		super(arg0, arg1);
-		// TODO Auto-generated constructor stub
 	}
 
 	/**
@@ -42,7 +40,6 @@ public class RifidiCommandNotFoundException extends RifidiException {
 	 */
 	public RifidiCommandNotFoundException(String arg0) {
 		super(arg0);
-		// TODO Auto-generated constructor stub
 	}
 
 	/**
@@ -53,7 +50,6 @@ public class RifidiCommandNotFoundException extends RifidiException {
 	 */
 	public RifidiCommandNotFoundException(Throwable arg0) {
 		super(arg0);
-		// TODO Auto-generated constructor stub
 	}
 
 }
