@@ -384,6 +384,7 @@ public class NewEdgeServerCommands implements ICommand {
 			remoteReaderConnection.stopCurCommand(false);
 			return "Command stopped";
 		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return "ERROR";
@@ -569,5 +570,29 @@ public class NewEdgeServerCommands implements ICommand {
 			return "ERROR" + e.getMessage();
 		}
 	}
+	@Command(name = "resetConnection", arguments = { "ConnectionID"})
+	public String resetCommection(String connectionID){
+		if (remoteReaderConnectionRegistry == null) {
+			return "Error. No Connection";
+		}
+		RemoteReaderConnection readerConnection = null;
+		try {
+			for (RemoteReaderConnection connection : remoteReaderConnectionRegistry
+					.getAllReaderConnections()) {
+				if (connection.getMessageQueueName().equals(connectionID)) {
+					readerConnection = connection;
+				}
+			}
 
+			if (readerConnection == null) {
+				return "ERROR." + " RemoteReaderConnection not found";
+			}
+			readerConnection.resetReaderConnection();
+			return "Connection reset successfully";
+		}catch(Exception e)
+		{
+			return "ERROR" + e.getMessage();
+		}
+	}
+		
 }
