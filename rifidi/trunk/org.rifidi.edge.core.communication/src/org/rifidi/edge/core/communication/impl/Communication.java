@@ -101,9 +101,11 @@ public class Communication implements ConnectionExceptionListener {
 			if (readThread != null)
 				readThread.ignoreExceptions(true);
 
-			if (connection != null)
+			if (connection != null){
 				connectionManager.disconnect(connection);
-
+				connection.cleanQueues();
+			}
+			
 			logger.debug("Trying to stop WriteThread " + writeThread);
 			if (writeThread != null) {
 				writeThread.stop();
@@ -193,7 +195,6 @@ public class Communication implements ConnectionExceptionListener {
 		logger.debug("physical connection attempted");
 		ConnectionStreams connectionStreams = connectionManager
 				.createCommunication();
-		logger.debug("test");
 		readThread = new ReadThread(connectionManager.toString() + " {"
 				+ readQueue.hashCode() + "} Read Thread", this, protocol,
 				readQueue, connectionStreams.getInputStream());
@@ -262,7 +263,6 @@ public class Communication implements ConnectionExceptionListener {
 	 *            new state of the connection
 	 */
 	private void changeState(ConnectionStatus communicationState) {
-		logger.debug("Communication state changed to " + communicationState);
 		if (communicationState == ConnectionStatus.CONNECTED) {
 			for (CommunicationStateListener listener : listeners) {
 				listener.connected();
@@ -278,6 +278,7 @@ public class Communication implements ConnectionExceptionListener {
 				listener.error();
 			}
 		}
+		logger.debug("Communication state changed to " + communicationState);
 	}
 
 	/**

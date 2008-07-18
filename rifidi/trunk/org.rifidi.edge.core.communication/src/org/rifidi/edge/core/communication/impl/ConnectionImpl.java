@@ -101,6 +101,14 @@ public class ConnectionImpl implements Connection {
 		writeQueue.offer(o);
 	}
 
+	// TODO: Threadsafe?
+	@Override
+	public void cleanQueues() {
+		readQueue.clear();
+		writeQueue.clear();
+
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -134,19 +142,24 @@ public class ConnectionImpl implements Connection {
 	}
 
 	/**
-	 * Check if there is a Problem with the underlying Communication
+	 * Check if there is a Problem with the underlying Communication. This needs
+	 * to reset the Exception object to null so that when we use this object to
+	 * reconnect, the exception is gone.
 	 * 
 	 * @throws IOException
 	 *             if there was a problem on the underlying communication
 	 */
 	private void checkException() throws IOException {
 		synchronized (locker) {
-			if (exception != null) {
-				if (exception instanceof IOException) {
-					throw (IOException) exception;
+			Exception e = exception;
+			exception = null;
+			if (e != null) {
+				if (e instanceof IOException) {
+					throw (IOException) e;
 				} else {
-					throw new IOException(exception);
+					throw new IOException(e);
 				}
+
 			}
 		}
 	}
@@ -159,4 +172,5 @@ public class ConnectionImpl implements Connection {
 	@Override
 	public void finalize() {
 	}
+
 }
