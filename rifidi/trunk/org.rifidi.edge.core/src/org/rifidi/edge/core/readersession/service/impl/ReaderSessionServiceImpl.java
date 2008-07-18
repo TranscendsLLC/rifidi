@@ -80,7 +80,10 @@ public class ReaderSessionServiceImpl implements ReaderSessionService,
 			ReaderSessionImpl readerSessionImpl = (ReaderSessionImpl) readerSession;
 			readerSessionImpl.cleanUP();
 		}
-		registry.remove(readerSession);
+		boolean successful = registry.remove(readerSession);
+		if(!successful){
+			logger.debug("Reader session not removed: " + readerSession);
+		}
 		for (ReaderSessionListener l : listeners) {
 			l.removeEvent(readerSession);
 		}
