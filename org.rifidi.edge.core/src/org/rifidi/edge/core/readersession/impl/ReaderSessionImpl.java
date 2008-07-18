@@ -177,6 +177,11 @@ public class ReaderSessionImpl implements ReaderSession,
 		curCommand.setCommandName(command);
 		curCommand.setCommandStatus(CommandStatus.WAITING);
 		commandJournal.addCommand(curCommand);
+		/*
+		 * lookup command
+		 */
+		Command com = lookupCommand(command);
+		curCommand.setCommand(com);
 
 		/*
 		 * Initialize the communication if not already done
@@ -186,6 +191,13 @@ public class ReaderSessionImpl implements ReaderSession,
 		 * Check if we are connected
 		 */
 		while (connectionStatus != ConnectionStatus.CONNECTED) {
+			if (connectionStatus == ConnectionStatus.ERROR) {
+				logger.debug("ConnectionStatus is Error");
+				curCommand = null;
+				throw new RifidiConnectionException(
+						"The connection to the reader is not valid anymore. (MAX_CONNECTION_ATTEMPTS)");
+			}
+
 			try {
 				synchronized (this) {
 					logger.debug(" Reader Session waiting for Connection"
@@ -202,28 +214,21 @@ public class ReaderSessionImpl implements ReaderSession,
 			}
 		}
 
-		/*
-		 * lookup command
-		 */
-		Command com = lookupCommand(command);
-		curCommand.setCommand(com);
-
 		// Check if Execution Thread is Initialized
 		if (executionThread == null) {
-			executionThread = new ExecutionThread(connection, messageQueue,
-					this);
+			executionThread = new ExecutionThread(messageQueue, this);
 		}
 
 		readerSessionStatus = ReaderSessionStatus.BUSY;
 		curCommand.setCommandStatus(CommandStatus.EXECUTING);
+		connection.cleanQueues();
 		try {
-			executionThread.start(curCommand.getCommand(), configuration,
+			executionThread.start(connection, curCommand.getCommand(), configuration,
 					commandID);
 		} catch (RifidiExecutionException e) {
 			curCommand = null;
-			throw new RifidiCommandInterruptedException(
-					"Cannot execute command because Reader Session is in "
-							+ readerSessionStatus + " state");
+			logger.error(e.getMessage());
+			throw new RifidiCommandInterruptedException(e.getMessage());
 
 		}
 		logger.debug("Command given to execution thread");
@@ -257,10 +262,6 @@ public class ReaderSessionImpl implements ReaderSession,
 				.getReaderPlugin(readerInfo.getClass()).getAvailableCommands();
 
 		for (Class<? extends Command> commandClass : availableCommands) {
-
-			logger.debug(readerPluginService.getReaderPlugin(
-					readerInfo.getClass()).getAvailableCommands().size()
-					+ " Commands found");
 
 			commandDesc = commandClass.getAnnotation(CommandDesc.class);
 
@@ -303,6 +304,10 @@ public class ReaderSessionImpl implements ReaderSession,
 		}
 
 		if (retVal == null) {
+			logger.debug("Command Not Found: " + command);
+			commandJournal.updateCommand(curCommand.getCommand(),
+					CommandStatus.NOCOMMAND);
+			curCommand = null;
 			throw new RifidiCommandNotFoundException("Command not found "
 					+ command);
 		}
@@ -422,11 +427,11 @@ public class ReaderSessionImpl implements ReaderSession,
 	 */
 	@Override
 	public void resetReaderSession() {
-		try {
-			connect();
+		if (this.connectionStatus == ConnectionStatus.ERROR) {
+			logger.debug("Resetting Communication");
+			cleanUP();
+			connection = null;
 			readerSessionStatus = ReaderSessionStatus.OK;
-		} catch (RifidiConnectionException ex) {
-			logger.debug("Cannot reset Reader session");
 		}
 	}
 
@@ -570,7 +575,9 @@ public class ReaderSessionImpl implements ReaderSession,
 		// TODO think about cleaning that up
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override

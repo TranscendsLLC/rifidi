@@ -20,7 +20,6 @@ public class ExecutionThread {
 
 	private Log logger = LogFactory.getLog(ExecutionThread.class);
 
-	private Connection connection;
 	private MessageQueue messageQueue;
 
 	private CommandExecutionListener commandExecutionListener;
@@ -42,12 +41,8 @@ public class ExecutionThread {
 	 * @param readerSession
 	 *            the Listener for command finished events
 	 */
-	public ExecutionThread(Connection connection, MessageQueue messageQueue,
+	public ExecutionThread( MessageQueue messageQueue,
 			CommandExecutionListener readerSession) {
-		if (connection == null) {
-			logger.error("NO Connection");
-		}
-		this.connection = connection;
 		if (messageQueue == null) {
 			logger.error("NO MessageQueue");
 		}
@@ -70,7 +65,7 @@ public class ExecutionThread {
 	 * @throws RifidiExecutionException
 	 *             if the command could not be successful Executed
 	 */
-	public void start(final Command _command, final String _configuration,
+	public void start(final Connection connection, final Command _command, final String _configuration,
 			final long _commandID) throws RifidiExecutionException {
 		if (running || command != null) {
 			logger.error("command " + this.commandID + "is still executing");
