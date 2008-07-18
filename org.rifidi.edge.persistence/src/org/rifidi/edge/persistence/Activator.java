@@ -31,12 +31,16 @@ public class Activator implements BundleActivator {
 	public void start(BundleContext context) throws Exception {
 		System.out.println("== Bundle " + this.getClass().getName()
 				+ " loaded ==");
+
+		//Create and register the persistence service.  
 		PersistenceService persistSer = new PersistanceServiceImpl();
 		context.registerService(persistSer.getClass().getName(), persistSer,
 				null);
 
-		// TODO: This will eventually be called in a thread
-		persistSer.start(null);
+		//Create and start the thread
+		PersistenceStarterThread perStart = new PersistenceStarterThread(
+				persistSer, null);
+		perStart.start();
 	}
 
 	/*
