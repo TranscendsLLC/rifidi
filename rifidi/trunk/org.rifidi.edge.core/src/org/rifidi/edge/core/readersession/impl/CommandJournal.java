@@ -39,6 +39,16 @@ public class CommandJournal {
 		}
 
 	}
+	
+	public void updateCommand(Command command, CommandStatus status) {
+		for (CommandWrapper cw : journal) {
+			if (cw.getCommand() == command) {
+				cw.setCommandStatus(status);
+				break;
+			}
+		}
+
+	}
 
 	public CommandStatus getCommandStatus(Command command) {
 		for (CommandWrapper cw : journal) {

@@ -45,4 +45,9 @@ public interface Connection {
 	 * @throws IOException
 	 */
 	public Object receiveMessage(long timeout) throws IOException;
+	
+	/**
+	 * This method cleans the read and write queues
+	 */
+	public void cleanQueues();
 }
