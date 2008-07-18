@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
-import javax.xml.bind.annotation.XmlRootElement;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.communication.Connection;
@@ -22,6 +20,7 @@ import org.rifidi.edge.readerplugin.thingmagic.protocol.ThingMagicCommunicationP
  */
 
 public class ThingMagicManager extends ConnectionManager {
+	@SuppressWarnings("unused")
 	private static final Log logger = LogFactory
 			.getLog(ThingMagicManager.class);
 
