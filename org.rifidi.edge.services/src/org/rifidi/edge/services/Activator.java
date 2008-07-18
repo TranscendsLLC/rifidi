@@ -14,7 +14,12 @@ package org.rifidi.edge.services;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
-//TODO Needs class comment header...
+/**
+ * Activator for the Injection Service Framework
+ * 
+ * @author Andreas Huebner - andreas@pramari.com
+ *
+ */
 public class Activator implements BundleActivator {
 
 	public static BundleContext context;

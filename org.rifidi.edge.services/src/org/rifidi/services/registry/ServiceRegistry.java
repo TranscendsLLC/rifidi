@@ -84,6 +84,11 @@ public class ServiceRegistry {
 		return instance;
 	}
 
+	/**
+	 * Service the given instance
+	 * 
+	 * @param object instance to be serviced
+	 */
 	public void service(Object object) {
 		for (Method method : object.getClass().getDeclaredMethods()) {
 			serviceMethod(method, object);
