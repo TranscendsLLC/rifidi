@@ -25,23 +25,40 @@ import org.rifidi.edge.core.readerplugin.protocol.CommunicationProtocol;
 import org.rifidi.edge.readerplugin.alien.protocol.AlienCommunicationProtocol;
 
 /**
- * 
+ * This class handles all of the connecting/disconnecting with the Alien reader.
  * 
  * @author Matthew Dean - matt@pramari.com
  */
 public class AlienConnectionManager extends ConnectionManager {
 
+	/**
+	 * Logger.  
+	 */
 	private static final Log logger = LogFactory
 			.getLog(AlienConnectionManager.class);
+	
+	/**
+	 * The ReaderInfo that we will use to get the username and password.  
+	 */
 	private AlienReaderInfo info;
 
+	/**
+	 * The socket for the Alien reader.  
+	 */
 	private Socket alienSock;
 
+	/**
+	 * You can put this in front of a Alien command for terse output to come back to you, making things faster and easier to parse.  
+	 */
 	public static String PROMPT_SUPPRESS = "\1";
 
+	/**
+	 * Attach this to anything you send to the Alien.  
+	 */
 	public static String NEWLINE = "\n";
 
 	/**
+	 * Constructor for the AlienConnectionManager.  
 	 * 
 	 * @param readerInfo
 	 */
@@ -120,16 +137,14 @@ public class AlienConnectionManager extends ConnectionManager {
 		try {
 			connection.sendMessage("q" + NEWLINE);
 			connection.receiveMessage(500);
-			
+
 		} catch (IOException e) {
 			e.printStackTrace();
-		}finally
-		{
+		} finally {
 			if (this.alienSock != null) {
 				try {
 					this.alienSock.close();
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
