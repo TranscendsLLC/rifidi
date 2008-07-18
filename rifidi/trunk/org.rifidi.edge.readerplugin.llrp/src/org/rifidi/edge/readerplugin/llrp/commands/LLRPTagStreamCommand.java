@@ -14,6 +14,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.llrp.ltk.generated.enumerations.AISpecStopTriggerType;
 import org.llrp.ltk.generated.enumerations.AccessReportTriggerType;
 import org.llrp.ltk.generated.enumerations.AirProtocols;
@@ -22,17 +24,22 @@ import org.llrp.ltk.generated.enumerations.ROReportTriggerType;
 import org.llrp.ltk.generated.enumerations.ROSpecStartTriggerType;
 import org.llrp.ltk.generated.enumerations.ROSpecState;
 import org.llrp.ltk.generated.enumerations.ROSpecStopTriggerType;
+import org.llrp.ltk.generated.enumerations.StatusCode;
 import org.llrp.ltk.generated.messages.ADD_ROSPEC;
+import org.llrp.ltk.generated.messages.ADD_ROSPEC_RESPONSE;
 import org.llrp.ltk.generated.messages.DELETE_ROSPEC;
+import org.llrp.ltk.generated.messages.DELETE_ROSPEC_RESPONSE;
 import org.llrp.ltk.generated.messages.DISABLE_ROSPEC;
+import org.llrp.ltk.generated.messages.DISABLE_ROSPEC_RESPONSE;
 import org.llrp.ltk.generated.messages.ENABLE_ROSPEC;
+import org.llrp.ltk.generated.messages.ENABLE_ROSPEC_RESPONSE;
 import org.llrp.ltk.generated.messages.GET_REPORT;
-import org.llrp.ltk.generated.messages.GET_ROSPECS;
 import org.llrp.ltk.generated.messages.GET_ROSPECS_RESPONSE;
 import org.llrp.ltk.generated.messages.RO_ACCESS_REPORT;
 import org.llrp.ltk.generated.messages.SET_READER_CONFIG;
 import org.llrp.ltk.generated.messages.SET_READER_CONFIG_RESPONSE;
 import org.llrp.ltk.generated.messages.START_ROSPEC;
+import org.llrp.ltk.generated.messages.START_ROSPEC_RESPONSE;
 import org.llrp.ltk.generated.parameters.AISpec;
 import org.llrp.ltk.generated.parameters.AISpecStopTrigger;
 import org.llrp.ltk.generated.parameters.AccessReportSpec;
@@ -78,6 +85,8 @@ public class LLRPTagStreamCommand implements Command {
 	 */
 	private static int ROSPEC_ID = 1;
 
+	private Log logger = LogFactory.getLog(LLRPTagStreamCommand.class);
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -88,48 +97,74 @@ public class LLRPTagStreamCommand implements Command {
 	public CommandReturnStatus start(Connection connection,
 			MessageQueue messageQueue, String configuration, long commandID) {
 		running = true;
+		int messageID = 1;
 		CommandReturnStatus retVal = null;
 		try {
 			SET_READER_CONFIG config = createSetReaderConfig();
+			config.setMessageID(new UnsignedInteger(messageID++));
+			logger.debug("before send config.  Connection: " + connection.toString());
 			connection.sendMessage(config);
+			logger.debug("after send config");
 
-			//TODO: check this, maybe
-			@SuppressWarnings("unused")
 			SET_READER_CONFIG_RESPONSE setReaderConfigResponse = (SET_READER_CONFIG_RESPONSE) connection
 					.receiveMessage();
 
-			GET_ROSPECS gr = new GET_ROSPECS();
-			connection.sendMessage(gr);
-			GET_ROSPECS_RESPONSE grr = (GET_ROSPECS_RESPONSE) connection
-					.receiveMessage();
-
-			// TODO: should also check to see if ROSpec is already active
-			if (doesRoSpecExist(grr)) {
-				this.findNextInt(grr);
+			StatusCode sc = setReaderConfigResponse.getLLRPStatus()
+					.getStatusCode();
+			if (sc.intValue() != StatusCode.M_Success) {
+				logger.debug("SET_READER_CONFIG returned with status code "
+						+ sc.intValue());
+				return CommandReturnStatus.UNSUCCESSFUL;
 			}
+
+			// TODO: //check to make sure this ROSpec is not already being used.
 
 			// CREATE an ADD_ROSPEC Message and send it to the reader
 			ADD_ROSPEC addROSpec = new ADD_ROSPEC();
 			addROSpec.setROSpec(createROSpec());
+			addROSpec.setMessageID(new UnsignedInteger(messageID++));
 			connection.sendMessage(addROSpec);
-			connection.receiveMessage();
+
+			ADD_ROSPEC_RESPONSE addROSpecResponse = (ADD_ROSPEC_RESPONSE) connection.receiveMessage();
+			sc = addROSpecResponse.getLLRPStatus().getStatusCode();
+			if (sc.intValue() != StatusCode.M_Success) {
+				logger.debug("ADD_ROSPEC_RESPONSE returned with status code "
+						+ sc.intValue());
+				return CommandReturnStatus.UNSUCCESSFUL;
+			}
 
 			// Create an ENABLE_ROSPEC message and send it to the reader
 			ENABLE_ROSPEC enableROSpec = new ENABLE_ROSPEC();
 			enableROSpec.setROSpecID(new UnsignedInteger(ROSPEC_ID));
+			enableROSpec.setMessageID(new UnsignedInteger(messageID++));
 			connection.sendMessage(enableROSpec);
-			connection.receiveMessage();
+
+			ENABLE_ROSPEC_RESPONSE enableROSpecResponse = (ENABLE_ROSPEC_RESPONSE) connection.receiveMessage();
+			sc = enableROSpecResponse.getLLRPStatus().getStatusCode();
+			if (sc.intValue() != StatusCode.M_Success) {
+				logger
+						.debug("ENABLE_ROSPEC_RESPONSE returned with status code "
+								+ sc.intValue());
+				return CommandReturnStatus.UNSUCCESSFUL;
+			}
 
 			// Create a START_ROSPEC message and send it to the reader
 			START_ROSPEC startROSpec = new START_ROSPEC();
 			startROSpec.setROSpecID(new UnsignedInteger(ROSPEC_ID));
+			startROSpec.setMessageID(new UnsignedInteger(messageID++));
 			connection.sendMessage(startROSpec);
-			connection.receiveMessage();
 
-			int reportMessage = 10;
+			START_ROSPEC_RESPONSE startROSpecResponse = (START_ROSPEC_RESPONSE) connection.receiveMessage();
+			sc = startROSpecResponse.getLLRPStatus().getStatusCode();
+			if (sc.intValue() != StatusCode.M_Success) {
+				logger.debug("START_ROSPEC_RESPONSE returned with status code "
+						+ sc.intValue());
+				return CommandReturnStatus.UNSUCCESSFUL;
+			}
+
 			while (running) {
 				GET_REPORT getReport = new GET_REPORT();
-				getReport.setMessageID(new UnsignedInteger(reportMessage++));
+				getReport.setMessageID(new UnsignedInteger(messageID++));
 
 				connection.sendMessage(getReport);
 
@@ -141,6 +176,7 @@ public class LLRPTagStreamCommand implements Command {
 							messageQueue.addMessage(tm);
 						} catch (RifidiMessageQueueException e) {
 							retVal = CommandReturnStatus.INTERRUPTED;
+							running = false;
 						}
 					}
 				}
@@ -154,13 +190,40 @@ public class LLRPTagStreamCommand implements Command {
 			// Create a DISABLE_ROSPEC message and send it to the reader
 			DISABLE_ROSPEC disableROSpec = new DISABLE_ROSPEC();
 			disableROSpec.setROSpecID(new UnsignedInteger(ROSPEC_ID));
+			disableROSpec.setMessageID(new UnsignedInteger(messageID++));
 			connection.sendMessage(disableROSpec);
+
+			DISABLE_ROSPEC_RESPONSE disableROSpecResponse = (DISABLE_ROSPEC_RESPONSE) connection.receiveMessage();
+			sc = disableROSpecResponse.getLLRPStatus().getStatusCode();
+			if (sc.intValue() != StatusCode.M_Success) {
+				logger
+						.debug("DISABLE_ROSPEC_RESPONSE returned with status code "
+								+ sc.intValue());
+				return CommandReturnStatus.UNSUCCESSFUL;
+			}
 
 			// Create a DELTE_ROSPEC message and send it to the reader
 			DELETE_ROSPEC deleteROSpec = new DELETE_ROSPEC();
 			deleteROSpec.setROSpecID(new UnsignedInteger(ROSPEC_ID));
+			deleteROSpec.setMessageID(new UnsignedInteger(messageID++));
 			connection.sendMessage(deleteROSpec);
+
+			DELETE_ROSPEC_RESPONSE deleteROSpecResponse = (DELETE_ROSPEC_RESPONSE) connection.receiveMessage();
+			sc = deleteROSpecResponse.getLLRPStatus().getStatusCode();
+			if (sc.intValue() != StatusCode.M_Success) {
+				logger
+						.debug("DELETE_ROSPEC_RESPONSE returned with status code "
+								+ sc.intValue());
+				return CommandReturnStatus.UNSUCCESSFUL;
+			}
+		} catch (ClassCastException ex) {
+			logger.error(ex.getMessage());
+			return CommandReturnStatus.UNSUCCESSFUL;
+
 		} catch (IOException e) {
+			logger.error(e.getMessage());
+			//TODO: remove this
+			e.printStackTrace();
 			return CommandReturnStatus.UNSUCCESSFUL;
 		}
 
