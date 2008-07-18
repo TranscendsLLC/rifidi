@@ -87,7 +87,6 @@ public class IPAddress implements Command {
 	 */
 	@Override
 	public void stop() {
-		// TODO Auto-generated method stub
 
 	}
 

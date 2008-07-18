@@ -87,7 +87,6 @@ public class HeartbeatAddress implements Command {
 	 */
 	@Override
 	public void stop() {
-		// TODO Auto-generated method stub
 
 	}
 
