@@ -9,10 +9,17 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.rifidi.edge.core.readerplugin.messages.Message;
 
+/**
+ * @author Jerry Maine - jerry@pramari.com
+ *
+ */
 @XmlRootElement
 public class GenericAlienMessage implements Message {
 	
 	//for JAXB
+	/**
+	 * 
+	 */
 	public GenericAlienMessage(){
 		
 	}
@@ -21,11 +28,17 @@ public class GenericAlienMessage implements Message {
 	
 	private Property property;
 	
+	/**
+	 * @param property
+	 */
 	public GenericAlienMessage(Property property){
 		this.property = property;
 	}
 	
 	
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.readerplugin.messages.Message#toXML()
+	 */
 	@Override
 	public String toXML() {
 		if (marshaller == null) {
@@ -50,6 +63,9 @@ public class GenericAlienMessage implements Message {
 
 	/**
 	 * @return the property
+	 */
+	/**
+	 * @return
 	 */
 	public Property getProperty() {
 		return property;

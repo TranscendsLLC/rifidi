@@ -24,6 +24,9 @@ public class TestingServiceImpl extends AbstractThread implements TestingService
 		super(threadName);		
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Runnable#run()
+	 */
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub
@@ -47,6 +50,9 @@ public class TestingServiceImpl extends AbstractThread implements TestingService
 		
 	}
 
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.testing.service.TestingService#addJunitTests(java.lang.Class<?>[])
+	 */
 	@Override
 	public void addJunitTests(Class<?>... classes) {
 		junitLists.add(classes);
