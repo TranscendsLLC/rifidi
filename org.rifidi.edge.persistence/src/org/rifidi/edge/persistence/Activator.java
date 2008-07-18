@@ -17,7 +17,7 @@ import org.rifidi.edge.persistence.service.impl.PersistanceServiceImpl;
 
 /**
  * The activator for the persistence class. This needs to start the persistence
- * service.
+ * service.  
  * 
  * @author Matthew Dean - matt@pramari.com
  */

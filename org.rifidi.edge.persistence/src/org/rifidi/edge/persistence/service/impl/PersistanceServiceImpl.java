@@ -58,12 +58,14 @@ public class PersistanceServiceImpl implements PersistenceService,
 	private PersistedReaderInfo pri;
 
 	/**
-	 * The readerSessionService
+	 * The readerSessionService, which we use to create reader sessions from
+	 * readerInfos we retrieve from xml.
 	 */
 	private ReaderSessionService readerSessionService;
 
 	/**
-	 * 
+	 * The readerPluginService, which handles notifying the persistence layer
+	 * about reader plugins which go offline and online.
 	 */
 	private ReaderPluginService readerPluginService;
 
