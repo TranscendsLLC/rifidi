@@ -84,6 +84,11 @@ public class ReaderSessionImpl implements ReaderSession,
 	 * =====================================================================
 	 */
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.rifidi.edge.core.readersession.ReaderSession#getStatus()
+	 */
 	@Override
 	public ReaderSessionStatus getStatus() {
 		return readerSessionStatus;
@@ -149,18 +154,22 @@ public class ReaderSessionImpl implements ReaderSession,
 	}
 
 	// TODO: validate configuration XML String
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.rifidi.edge.core.readersession.ReaderSession#executeCommand(java.lang.String,
+	 *      java.lang.String)
+	 */
 	@Override
 	public long executeCommand(String command, String configuration)
 			throws RifidiConnectionException,
 			RifidiCommandInterruptedException, RifidiCommandNotFoundException {
-
 
 		if (readerSessionStatus != ReaderSessionStatus.OK) {
 			throw new RifidiCommandInterruptedException(
 					"Cannot execute command because Reader Session is in "
 							+ readerSessionStatus + " state");
 		}
-		
 
 		curCommand = new CommandWrapper();
 		commandID++;
@@ -187,7 +196,7 @@ public class ReaderSessionImpl implements ReaderSession,
 			} catch (InterruptedException e) {
 			}
 			if (connectionStatus == ConnectionStatus.ERROR) {
-				curCommand=null;
+				curCommand = null;
 				throw new RifidiConnectionException(
 						"The connection to the reader is not valid anymore. (MAX_CONNECTION_ATTEMPTS)");
 			}
@@ -211,7 +220,7 @@ public class ReaderSessionImpl implements ReaderSession,
 			executionThread.start(curCommand.getCommand(), configuration,
 					commandID);
 		} catch (RifidiExecutionException e) {
-			curCommand=null;
+			curCommand = null;
 			throw new RifidiCommandInterruptedException(
 					"Cannot execute command because Reader Session is in "
 							+ readerSessionStatus + " state");
@@ -221,6 +230,12 @@ public class ReaderSessionImpl implements ReaderSession,
 		return commandID;
 	}
 
+	/**
+	 * Create a connection
+	 * 
+	 * @throws RifidiConnectionException
+	 *             if connection could not be established
+	 */
 	private void connect() throws RifidiConnectionException {
 		if (connection == null) {
 			connection = connectionService.createConnection(connectionManager,
@@ -232,17 +247,17 @@ public class ReaderSessionImpl implements ReaderSession,
 			throws RifidiCommandInterruptedException,
 			RifidiCommandNotFoundException {
 
-		//the Command object for the command we are searching for
+		// the Command object for the command we are searching for
 		Command retVal = null;
-		
+
 		CommandDesc commandDesc = null;
-		
-		//get available commands from the reader plugin
+
+		// get available commands from the reader plugin
 		List<Class<? extends Command>> availableCommands = readerPluginService
 				.getReaderPlugin(readerInfo.getClass()).getAvailableCommands();
-		
+
 		for (Class<? extends Command> commandClass : availableCommands) {
-			
+
 			logger.debug(readerPluginService.getReaderPlugin(
 					readerInfo.getClass()).getAvailableCommands().size()
 					+ " Commands found");
@@ -255,8 +270,8 @@ public class ReaderSessionImpl implements ReaderSession,
 					Constructor<? extends Command> constructor;
 					try {
 						constructor = commandClass.getConstructor();
-						retVal =  (Command) constructor.newInstance();
-						//command has been found.  break out of loop
+						retVal = (Command) constructor.newInstance();
+						// command has been found. break out of loop
 						break;
 					} catch (SecurityException e) {
 						e.printStackTrace();
@@ -284,12 +299,12 @@ public class ReaderSessionImpl implements ReaderSession,
 								"Command not found.", e);
 					}
 				}
-			} 
+			}
 		}
-		
-		if(retVal==null){
-			throw new RifidiCommandNotFoundException(
-					"Command not found " + command);
+
+		if (retVal == null) {
+			throw new RifidiCommandNotFoundException("Command not found "
+					+ command);
 		}
 
 		return retVal;
@@ -297,6 +312,11 @@ public class ReaderSessionImpl implements ReaderSession,
 	}
 
 	// TODO: figure out return value
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.rifidi.edge.core.readersession.ReaderSession#stopCurCommand(boolean)
+	 */
 	@Override
 	public boolean stopCurCommand(boolean force) {
 		if (readerSessionStatus == ReaderSessionStatus.BUSY
@@ -310,6 +330,12 @@ public class ReaderSessionImpl implements ReaderSession,
 		return false;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.rifidi.edge.core.readersession.ReaderSession#stopCurCommand(boolean,
+	 *      long)
+	 */
 	@Override
 	public boolean stopCurCommand(boolean force, long commandID) {
 		if (commandID == this.commandID) {
@@ -320,6 +346,11 @@ public class ReaderSessionImpl implements ReaderSession,
 	}
 
 	// TODO: what should this return if we are not executing anything?
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.rifidi.edge.core.readersession.ReaderSession#curExecutingCommand()
+	 */
 	@Override
 	public String curExecutingCommand() {
 		if (curCommand != null)
@@ -328,6 +359,11 @@ public class ReaderSessionImpl implements ReaderSession,
 			return "NO CURRENT COMMAND";
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.rifidi.edge.core.readersession.ReaderSession#curExecutingCommandID()
+	 */
 	@Override
 	public long curExecutingCommandID() {
 		if (curCommand != null) {
@@ -336,6 +372,11 @@ public class ReaderSessionImpl implements ReaderSession,
 			return -1;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.rifidi.edge.core.readersession.ReaderSession#commandStatus()
+	 */
 	@Override
 	public CommandStatus commandStatus() {
 		if (curCommand != null) {
@@ -344,21 +385,41 @@ public class ReaderSessionImpl implements ReaderSession,
 			return CommandStatus.NOCOMMAND;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.rifidi.edge.core.readersession.ReaderSession#commandStatus(long)
+	 */
 	@Override
 	public CommandStatus commandStatus(long id) {
 		return this.commandJournal.getCommandStatus(id);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.rifidi.edge.core.readersession.ReaderSession#getMessageQueueName()
+	 */
 	@Override
 	public String getMessageQueueName() {
 		return this.messageQueue.getName();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.rifidi.edge.core.readersession.ReaderSession#getReaderInfo()
+	 */
 	@Override
 	public ReaderInfo getReaderInfo() {
 		return readerInfo;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.rifidi.edge.core.readersession.ReaderSession#resetReaderSession()
+	 */
 	@Override
 	public void resetReaderSession() {
 		try {
@@ -373,6 +434,12 @@ public class ReaderSessionImpl implements ReaderSession,
 	 * =====================================================================
 	 * Command Execution Event
 	 * =====================================================================
+	 */
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.rifidi.edge.core.readersession.impl.CommandExecutionListener#commandFinished(org.rifidi.edge.core.readerplugin.commands.Command,
+	 *      org.rifidi.edge.core.readerplugin.commands.CommandReturnStatus)
 	 */
 	@Override
 	public void commandFinished(Command command, CommandReturnStatus status) {
@@ -390,6 +457,11 @@ public class ReaderSessionImpl implements ReaderSession,
 	 * Connection Event Listener
 	 * =====================================================================
 	 */
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.rifidi.edge.core.communication.service.CommunicationStateListener#connected()
+	 */
 	@Override
 	public void connected() {
 		connectionStatus = ConnectionStatus.CONNECTED;
@@ -406,6 +478,11 @@ public class ReaderSessionImpl implements ReaderSession,
 		logger.debug("Connection disconnected");
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.rifidi.edge.core.communication.service.CommunicationStateListener#error()
+	 */
 	@Override
 	public void error() {
 		connectionStatus = ConnectionStatus.ERROR;
@@ -424,7 +501,11 @@ public class ReaderSessionImpl implements ReaderSession,
 	 */
 
 	/**
+	 * Injecting method for obtaining a instance of the ConnectionService
+	 * through the ServiceRegistry Framework
+	 * 
 	 * @param connectionService
+	 *            instance of the ConnectionService
 	 */
 	@Inject
 	public void setConnectionService(ConnectionService connectionService) {
@@ -432,7 +513,11 @@ public class ReaderSessionImpl implements ReaderSession,
 	}
 
 	/**
+	 * Injection method to obtain a instance of the MessageService through the
+	 * ServiceRegistry Framework
+	 * 
 	 * @param messageService
+	 *            instance of the MessageService
 	 */
 	@Inject
 	public void setMessageService(MessageService messageService) {
@@ -442,6 +527,9 @@ public class ReaderSessionImpl implements ReaderSession,
 	}
 
 	/**
+	 * Injection method to obtain a instance of the ReaderPluginService through
+	 * the ServiceRegistry Framework
+	 * 
 	 * @param readerPluginService
 	 */
 	@Inject
@@ -457,6 +545,9 @@ public class ReaderSessionImpl implements ReaderSession,
 	 * =====================================================================
 	 */
 
+	/**
+	 * Clean up the ReaderSession
+	 */
 	public void cleanUP() {
 		logger.debug("Cleaning up READDER SESSION: " + this.readerSessionID);
 		try {
@@ -479,6 +570,9 @@ public class ReaderSessionImpl implements ReaderSession,
 		// TODO think about cleaning that up
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
 	@Override
 	public String toString() {
 		return "READER SESSION: " + this.readerSessionID + " TYPE: "
