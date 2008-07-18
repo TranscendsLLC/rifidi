@@ -60,8 +60,11 @@ public class LLRPConnectionManager extends ConnectionManager {
 	public void connect(Connection connection) throws RifidiConnectionException {
 		try {
 
-			READER_EVENT_NOTIFICATION event = (READER_EVENT_NOTIFICATION) connection
-					.receiveMessage();
+			Object o= connection.receiveMessage(1000);
+			if(o==null){
+				throw new RifidiConnectionException("CannotConnect");
+			}
+			READER_EVENT_NOTIFICATION event = (READER_EVENT_NOTIFICATION) o;
 			ConnectionAttemptEvent connAttempt = event
 					.getReaderEventNotificationData()
 					.getConnectionAttemptEvent();
@@ -120,9 +123,13 @@ public class LLRPConnectionManager extends ConnectionManager {
 
 	@Override
 	public void disconnect(Connection connection) {
-		CLOSE_CONNECTION closeConnection = new CLOSE_CONNECTION();
+		CLOSE_CONNECTION closeConnection = new CLOSE_CONNECTION();	
 		try {
 			connection.sendMessage(closeConnection);
+			Object o = connection.receiveMessage(1000);
+			if(o == null){
+				throw new IOException();
+			}
 			CLOSE_CONNECTION_RESPONSE response = (CLOSE_CONNECTION_RESPONSE) connection
 					.receiveMessage();
 			LLRPStatus status = response.getLLRPStatus();
