@@ -294,5 +294,10 @@ public class SimpleConnectionImpl implements Connection {
 		 */
 		return recieved.pop();
 	}
+
+	@Override
+	public void cleanQueues() {
+		recieved.clear();
+	}
 	
 }
