@@ -29,7 +29,6 @@ public class TestingServiceImpl extends AbstractThread implements TestingService
 	 */
 	@Override
 	public void run() {
-		// TODO Auto-generated method stub
 		JUnitCore junit = new JUnitCore();
 		RunListener listener = new JUnitListener();
 		junit.addListener(listener);
