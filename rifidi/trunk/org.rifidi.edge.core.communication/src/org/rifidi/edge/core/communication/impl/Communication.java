@@ -194,13 +194,13 @@ public class Communication implements ConnectionExceptionListener {
 		ConnectionStreams connectionStreams = connectionManager
 				.createCommunication();
 		logger.debug("test");
-		readThread = new ReadThread(connectionManager.toString()
-				+ " Read Thread", this, protocol, readQueue, connectionStreams
-				.getInputStream());
+		readThread = new ReadThread(connectionManager.toString() + "{"
+				+ readQueue.hashCode() + "} Read Thread", this, protocol,
+				readQueue, connectionStreams.getInputStream());
 
-		writeThread = new WriteThread(connectionManager.toString()
-				+ " Write Thread", this, protocol, writeQueue,
-				connectionStreams.getOutputStream());
+		writeThread = new WriteThread(connectionManager.toString() + "{"
+				+ writeQueue.hashCode() + "} Write Thread", this, protocol,
+				writeQueue, connectionStreams.getOutputStream());
 		readThread.start();
 		writeThread.start();
 	}
@@ -321,10 +321,10 @@ public class Communication implements ConnectionExceptionListener {
 			logger.debug("Cleaning up connection by disconnecting");
 			// Tell the connection object about the failed physical connection
 			connection.setException(exception);
-			
+
 			// Clean up the connection by closing all handles and threads
 			disconnect();
-			
+
 			// try to reconnect the communication
 			logger.debug("Try to reconnect again");
 			try {
@@ -333,7 +333,8 @@ public class Communication implements ConnectionExceptionListener {
 				changeState(ConnectionStatus.ERROR);
 			}
 			logger.debug("ending cleanup service");
-			// Security lock so that only one CleanUp Service Thread can run at the same time
+			// Security lock so that only one CleanUp Service Thread can run at
+			// the same time
 			cleanUP = false;
 		}
 
