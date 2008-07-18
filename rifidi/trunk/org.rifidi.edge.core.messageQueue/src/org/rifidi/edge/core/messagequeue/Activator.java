@@ -5,6 +5,12 @@ import org.osgi.framework.BundleContext;
 import org.rifidi.edge.core.messageQueue.service.MessageService;
 import org.rifidi.edge.core.messagequeue.service.MessageServiceImpl;
 
+/**
+ * Activator of the MessageQueue Bundle
+ * 
+ * @author Andreas Huebner - andreas@pramari.com
+ *
+ */
 public class Activator implements BundleActivator {
 
 	/*
