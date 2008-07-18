@@ -45,20 +45,16 @@ public class TestClientTest {
 		try {
 			registry = LocateRegistry.getRegistry(hostname, port);
 		} catch (RemoteException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		try {
 			remoteReaderConnectionRegistry = (RemoteReaderConnectionRegistry) registry
 					.lookup(RemoteReaderConnectionRegistry.class.getName());
 		} catch (AccessException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (RemoteException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (NotBoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -73,7 +69,6 @@ public class TestClientTest {
 				remoteReader1 = remoteReaderConnectionRegistry
 						.createReaderConnection(dummyInfo1);
 			} catch (RemoteException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 				Assert.fail();
 			}
@@ -81,7 +76,6 @@ public class TestClientTest {
 			try {
 				remoteReader1.startTagStream("");
 			} catch (RemoteException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 				Assert.fail();
 			}
@@ -96,29 +90,24 @@ public class TestClientTest {
 
 		@Override
 		public void run() {
-			// TODO Auto-generated method stub
 			System.out.println("Background thread started");
 			Registry registry2 = null;
 			RemoteReaderConnectionRegistry remoteReaderConnectionRegistry2 = null;
 			try {
 				registry2 = LocateRegistry.getRegistry(hostname, port);
 			} catch (RemoteException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			try {
 				remoteReaderConnectionRegistry2 = (RemoteReaderConnectionRegistry) registry2
 						.lookup(RemoteReaderConnectionRegistry.class.getName());
 			} catch (AccessException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 				running = false;
 			} catch (RemoteException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 				running = false;
 			} catch (NotBoundException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 				running = false;
 			}
@@ -127,7 +116,6 @@ public class TestClientTest {
 				try {
 					remoteReaderConnectionRegistry2.getAllReaderConnections();
 				} catch (RemoteException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				try {

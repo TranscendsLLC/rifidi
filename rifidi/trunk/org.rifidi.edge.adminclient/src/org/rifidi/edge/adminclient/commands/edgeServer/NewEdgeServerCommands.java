@@ -384,7 +384,6 @@ public class NewEdgeServerCommands implements ICommand {
 			remoteReaderConnection.stopCurCommand(false);
 			return "Command stopped";
 		} catch (RemoteException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return "ERROR";

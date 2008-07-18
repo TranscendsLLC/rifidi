@@ -17,7 +17,6 @@ public class JMS {
 				if (!args[0].isEmpty())
 					new JMS(args[0]);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -49,7 +48,6 @@ public class JMS {
 
 			}
 		} catch (JMSException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
