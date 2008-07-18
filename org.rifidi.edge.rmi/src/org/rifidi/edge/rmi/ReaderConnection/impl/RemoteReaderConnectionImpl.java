@@ -55,7 +55,6 @@ public class RemoteReaderConnectionImpl implements RemoteReaderConnection {
 	@Override
 	public void sendCustomCommand(CustomCommand customCommand)
 			throws RemoteException {
-		// TODO Auto-generated method stub
 	}
 
 	@Override
