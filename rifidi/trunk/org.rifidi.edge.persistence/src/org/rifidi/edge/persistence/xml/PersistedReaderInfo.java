@@ -62,12 +62,12 @@ public class PersistedReaderInfo {
 	private Document doc = null;
 
 	/**
-	 * 
+	 * The root element.
 	 */
 	private Element root;
 
 	/**
-	 * 
+	 * The PersistedReaderInfo constructor.
 	 */
 	public PersistedReaderInfo() {
 		doc = createDocument();
@@ -286,7 +286,7 @@ public class PersistedReaderInfo {
 	}
 
 	/**
-	 * 
+	 * Creates a new Dom document.
 	 */
 	private Document createDocument() {
 		Document dom = null;
@@ -348,7 +348,7 @@ public class PersistedReaderInfo {
 		File xmlFile = null;
 
 		xmlFile = JAXBUtility.getInstance().getXMLFile();
-		
+
 		if (xmlFile != null) {
 			logger.debug("FILE NOT NULL, CREATING NEW DOCUMENT");
 			this.doc = this.createDocument(xmlFile);
@@ -358,8 +358,19 @@ public class PersistedReaderInfo {
 		}
 	}
 
-	public void setFile(String path,String filename) throws IOException {
-		JAXBUtility.getInstance().setFile(path,filename);
+	/**
+	 * Sets the file that this class will use to build the DOM document.
+	 * 
+	 * @param path
+	 *            Sets the path for the folders that the file will use. The
+	 *            folders have to be created separately.
+	 * @param filename
+	 *            The complete path for the file. This is the file that the
+	 *            class will create.
+	 * @throws IOException
+	 */
+	public void setFile(String path, String filename) throws IOException {
+		JAXBUtility.getInstance().setFile(path, filename);
 		this.loadFromFile();
 	}
 
@@ -386,6 +397,7 @@ public class PersistedReaderInfo {
 	}
 
 	/**
+	 * The tags for the XML document that we will search for via Dom and XPath.
 	 * 
 	 * @author Matthew Dean - matt@pramari.com
 	 */

@@ -229,6 +229,13 @@ public class JAXBUtility {
 		return file;
 	}
 
+	/**
+	 * 
+	 * 
+	 * @param path
+	 * @param fileName
+	 * @throws IOException
+	 */
 	public void setFile(String path,String fileName) throws IOException {
 		File pathFile = new File(path);
 		if(!pathFile.exists()) {
