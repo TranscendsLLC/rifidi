@@ -285,6 +285,7 @@ public class LLRPTagStreamCommand implements Command {
 	 *            The GET_ROSPECS_RESPONSE, which will list all ROSpec IDs
 	 *            already in use.
 	 */
+	@SuppressWarnings("unused")
 	private void findNextInt(GET_ROSPECS_RESPONSE grr) {
 		ROSPEC_ID++;
 		boolean isDone = false;
@@ -307,6 +308,7 @@ public class LLRPTagStreamCommand implements Command {
 	 * @return Returns true if the default ROSpec exists, false if it does not
 	 *         exist.
 	 */
+	@SuppressWarnings("unused")
 	private boolean doesRoSpecExist(GET_ROSPECS_RESPONSE grr) {
 		boolean retVal = false;
 
