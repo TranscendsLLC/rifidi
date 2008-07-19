@@ -79,6 +79,7 @@ public class AlienConnectionManager extends ConnectionManager {
 	 */
 	@Override
 	public void connect(Connection connection) throws RifidiConnectionException {
+		//TODO: Check if this is really an Alien reader
 		logger.debug("Alien is connecting");
 		if (alienSock != null) {
 			try {
