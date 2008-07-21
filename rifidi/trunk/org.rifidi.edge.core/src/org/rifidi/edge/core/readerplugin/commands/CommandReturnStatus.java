@@ -1,7 +1,8 @@
 package org.rifidi.edge.core.readerplugin.commands;
 
 /**
- * Status of a command
+ * This is the return status of a command. It is returned by the stop() method
+ * of the Command.  It should not be confused with CommandStatus
  * 
  * @author Andreas Huebner - andreas@pramari.com
  * 
