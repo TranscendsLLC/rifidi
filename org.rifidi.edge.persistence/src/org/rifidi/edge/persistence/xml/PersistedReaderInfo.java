@@ -84,17 +84,13 @@ public class PersistedReaderInfo {
 		Element readerInfoTypeList = findReaderTypeList(readerInfo.getClass()
 				.getName());
 		if (readerInfoTypeList == null) {
-			logger.debug("Got into the reader is null area");
 			readerInfoTypeList = doc.createElement(XMLTags.ELEMENT_LIST_TAG);
 			readerInfoTypeList.setAttribute(XMLTags.TYPE_TAG, readerInfo
 					.getClass().getName());
 			root.appendChild(readerInfoTypeList);
-			logger.debug("Leaving the reader is null area");
 		}
 		if (this.find(readerInfo, readerInfoTypeList) == null) {
-			logger.debug("Creating the reader info node");
 			JAXBUtility.getInstance().save(readerInfo, readerInfoTypeList);
-			logger.debug("Just before the print to file");
 			printToFile();
 		}
 	}
@@ -137,22 +133,16 @@ public class PersistedReaderInfo {
 	 */
 	public void removeReader(ReaderInfo readerInfo)
 			throws RifidiReaderInfoNotFoundException {
-		logger.debug("calling the remove reader");
 		Element readerInfoTypeList = this.findReaderTypeList(readerInfo
 				.getClass().getName());
 		if (readerInfoTypeList == null) {
 			throw new RifidiReaderInfoNotFoundException();
 		}
-		logger.debug("just before the find");
 		Element readerInfoNode = find(readerInfo, root);
-		logger.debug("just after the find");
 		if (readerInfoNode == null) {
 			throw new RifidiReaderInfoNotFoundException();
 		}
-		logger.debug("removing the child node");
-		// this.printToSTIO(readerInfoTypeList);
 		readerInfoTypeList.removeChild(readerInfoNode);
-		logger.debug("printing to file");
 		printToFile();
 	}
 
@@ -168,33 +158,25 @@ public class PersistedReaderInfo {
 	 * @return
 	 */
 	private Element find(ReaderInfo readerInfo, Element readerInfoTypeList) {
-		logger.debug("In the find");
-		// printToSTIO(readerInfoTypeList);
 		XPathFactory factory = XPathFactory.newInstance();
 		XPath xpath = factory.newXPath();
 		try {
-			logger.debug("Before the exp");
 			String exp = new String("/*/*/*");
 			logger.debug("XPATH expression in the FIND method is: \n" + exp);
 			XPathExpression expr = xpath.compile(exp);
-			logger.debug("TypeList: " + readerInfoTypeList.toString());
-			logger.debug("Before the evaluate");
 			Object oResult = expr.evaluate(readerInfoTypeList,
 					XPathConstants.NODESET);
-			logger.debug("After the evaluate");
 			if (oResult == null) {
 				logger.debug("find returning null after the IPADDRESS search");
 				return null;
 			} else {
-				logger.debug("NodeSet: " + oResult.toString()
-						+ " \nlength is: " + ((NodeList) oResult).getLength());
 				NodeList nodeArray = (NodeList) oResult;
 
 				Node xResult = this.findUniqueReader(readerInfo.getIpAddress(),
 						readerInfo.getPort(), nodeArray);
 
 				if (xResult == null) {
-					logger.debug("find returning null after the PORT search");
+					logger.debug("find returning null");
 					return null;
 				} else {
 					logger.debug("RETURNING A RESULT: " + xResult);
@@ -260,16 +242,11 @@ public class PersistedReaderInfo {
 		XPath xpath = factory.newXPath();
 		Node result = null;
 		try {
-			logger.debug("Just before the compile");
 			String exp = new String("//" + XMLTags.ELEMENT_LIST_TAG + "[@"
 					+ XMLTags.TYPE_TAG + "='" + readerInfoType + "']");
 			logger.debug("String expression is: \n" + exp);
 			XPathExpression expr = xpath.compile(exp);
-			logger.debug("Just after the compile");
-			// this.printToSTIO(this.doc);
 			Object oResult = expr.evaluate(this.doc, XPathConstants.NODE);
-			logger.debug("Just after the evaluate");
-			// this.printToSTIO((Node) oResult);
 			if (oResult == null) {
 				logger.debug("returning null");
 				return null;
@@ -402,16 +379,36 @@ public class PersistedReaderInfo {
 	 * @author Matthew Dean - matt@pramari.com
 	 */
 	private class XMLTags {
+		/**
+		 * 
+		 */
 		public static final String VALUE = "val";
 
+		/**
+		 * The Root tag for the xml.  
+		 */
 		public static final String ROOT_TAG = "PersistedReaderInfo";
 
+		/**
+		 * The tag which contains a list of several ReaderInfo objects, all of
+		 * the same ReaderType.  
+		 */
 		public static final String ELEMENT_LIST_TAG = "ReaderInfoList";
 
+		/**
+		 * The ReaderType, which is represented by a package-qualified name of
+		 * the ReaderInfo class.
+		 */
 		public static final String TYPE_TAG = "ReaderType";
 
+		/**
+		 * The ip tag we will look for
+		 */
 		public static final String IP_ADDRESS = "ipAddress";
 
+		/**
+		 * The port tag we will look for
+		 */
 		public static final String PORT = "port";
 	}
 }
