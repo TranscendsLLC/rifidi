@@ -149,7 +149,7 @@ public class PersistanceServiceImpl implements PersistenceService,
 			} else {
 				/*
 				 * FIXME we need to get the path as well for reasons to stupid
-				 * to explain
+				 * to explain.  Set to a custom path as soon as we are able!  
 				 */
 				this.pri.setFile(DEFAULT_PATH, fileName);
 			}
