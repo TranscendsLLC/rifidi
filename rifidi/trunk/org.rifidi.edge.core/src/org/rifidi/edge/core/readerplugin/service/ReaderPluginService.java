@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.osgi.framework.Bundle;
 import org.rifidi.edge.core.readerplugin.ReaderInfo;
-import org.rifidi.edge.core.readerplugin.service.impl.ReaderPlugin;
+import org.rifidi.edge.core.readerplugin.ReaderPlugin;
 
 /**
  * Service used to keep track of the different ReaderPlugins available to the

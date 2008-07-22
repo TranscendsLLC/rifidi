@@ -15,6 +15,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.osgi.framework.Bundle;
 import org.rifidi.edge.core.readerplugin.ReaderInfo;
+import org.rifidi.edge.core.readerplugin.ReaderPlugin;
 import org.rifidi.edge.core.readerplugin.service.ReaderPluginListener;
 import org.rifidi.edge.core.readerplugin.service.ReaderPluginService;
 
