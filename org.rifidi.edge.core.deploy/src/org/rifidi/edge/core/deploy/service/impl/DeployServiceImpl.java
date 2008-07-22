@@ -121,6 +121,7 @@ public class DeployServiceImpl implements DeployService, FileMonitorListener {
 			logger.debug("Removing Bundle "
 					+ bundleHolder.fragment.getSymbolicName());
 
+			// TODO Move to new CommandDescription
 			bundleHolder.plugin.removeCommand(bundleHolder.commands);
 
 			try {
@@ -206,6 +207,7 @@ public class DeployServiceImpl implements DeployService, FileMonitorListener {
 						+ readerPlugin.getClass().getSimpleName());
 				bundleHolder.commands = commands;
 				bundleHolder.plugin = readerPlugin;
+				// TODO Move to new CommandDescription
 				readerPlugin.addCommand(commands);
 			}
 		} catch (BundleException e) {
@@ -285,7 +287,8 @@ public class DeployServiceImpl implements DeployService, FileMonitorListener {
 	 * Inject method to obtain a instance of the ReaderPluginService from the
 	 * ServiceRegistry Framework
 	 * 
-	 * @param readerPluginService instance of the ReaderPluginService
+	 * @param readerPluginService
+	 *            instance of the ReaderPluginService
 	 */
 	@Inject
 	public void setReaderPluginService(ReaderPluginService readerPluginService) {
