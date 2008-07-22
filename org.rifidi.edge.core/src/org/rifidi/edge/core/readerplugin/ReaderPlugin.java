@@ -1,12 +1,13 @@
 package org.rifidi.edge.core.readerplugin;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.rifidi.edge.core.readerplugin.commands.Command;
+import org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionManager;
 
 @XmlRootElement
 public class ReaderPlugin {
@@ -21,7 +22,6 @@ public class ReaderPlugin {
 
 	private ArrayList<CommandDescription> propertyList;
 
-	
 	public String getConnectionManager() {
 		return connectionManager;
 	}
@@ -34,11 +34,11 @@ public class ReaderPlugin {
 		return plugin;
 	}
 
-	@XmlElement(name="property")	
+	@XmlElement(name = "property")
 	public ArrayList<CommandDescription> getPropertyList() {
 		return propertyList;
 	}
-	
+
 	@XmlElement(name = "command")
 	public ArrayList<CommandDescription> getCommandList() {
 		return commandList;
@@ -63,9 +63,39 @@ public class ReaderPlugin {
 	public void setPropertyList(ArrayList<CommandDescription> propertyList) {
 		this.propertyList = propertyList;
 	}
-	
-	
-	
+
+	// Suggested Commands
+
+	public ConnectionManager newConnectionManager(ReaderInfo readerInfo) {
+		try {
+			return (ConnectionManager) Class.forName(connectionManager)
+					.getConstructor(readerInfo.getClass()).newInstance(
+							readerInfo);
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SecurityException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InstantiationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchMethodException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+
 	// AUTO Generated Methods
 
 	public List<String> getAvailableCommands() {
@@ -73,14 +103,14 @@ public class ReaderPlugin {
 		return null;
 	}
 
-	public void removeCommand(List<Class<? extends Command>> commands) {
+	public void removeCommand(List<CommandDescription> commands) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
-	public void addCommand(ArrayList<Class<? extends Command>> commands) {
+	public void addCommand(ArrayList<CommandDescription> commands) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 }
