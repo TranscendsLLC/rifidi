@@ -1,4 +1,4 @@
-package org.rifidi.edge.core.readerplugin.service.impl;
+package org.rifidi.edge.core.readerplugin;
 
 import java.util.ArrayList;
 
