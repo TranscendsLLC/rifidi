@@ -15,9 +15,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.osgi.framework.Bundle;
 import org.rifidi.edge.core.readerplugin.ReaderInfo;
-import org.rifidi.edge.core.readerplugin.ReaderPlugin;
 import org.rifidi.edge.core.readerplugin.service.ReaderPluginListener;
 import org.rifidi.edge.core.readerplugin.service.ReaderPluginService;
+import org.rifidi.edge.core.readerplugin.xml.ReaderPlugin;
 
 /**
  * This is the implementation of the ReaderPluginService. It keeps track of
@@ -145,8 +145,8 @@ public class ReaderPluginServiceImpl implements ReaderPluginService {
 	 * @see org.rifidi.edge.core.readerplugin.service.ReaderPluginService#getReaderPlugin(java.lang.Class)
 	 */
 	@Override
-	public ReaderPlugin getReaderPlugin(Class<? extends ReaderInfo> readerInfo) {
-		return registry.get(readerInfo.getName());
+	public ReaderPlugin getReaderPlugin(String readerInfo) {
+		return registry.get(readerInfo);
 	}
 
 	/*

@@ -1,4 +1,4 @@
-package org.rifidi.edge.core.readerplugin;
+package org.rifidi.edge.core.readerplugin.xml;
 
 import java.util.List;
 

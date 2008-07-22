@@ -12,9 +12,19 @@ public enum ReaderSessionStatus {
 	 */
 	OK,
 	/**
-	 * ReaderSession is currently executing a command
+	 * ReaderSession is currently executing a script command
 	 */
-	BUSY,
+	EXECUTING_SCRIPT,
+	/**
+	 * RederSession has caused a script to yield in order to execute a property
+	 */
+	EXECUTING_PROPERTY_WITH_YIELDED_SCRIPT,
+
+	/**
+	 * ReaderSession is executing a Property command and no script has been
+	 * yielded
+	 */
+	EXECUTING_PROPERTY_WITH_NO_YIELDED_SCRIPT,
 	/**
 	 * ReaderSession is in a error state because of unexpected problems
 	 */
