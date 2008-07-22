@@ -8,9 +8,19 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 public class ReaderPluginCommandExtension {
 
+	private String plugin;
+
 	private ArrayList<CommandDescription> commandList;
 
 	private ArrayList<CommandDescription> propertyList;
+
+	public String getPlugin() {
+		return plugin;
+	}
+
+	public void setPlugin(String plugin) {
+		this.plugin = plugin;
+	}
 
 	@XmlElement(name = "property")
 	public ArrayList<CommandDescription> getPropertyList() {
