@@ -6,9 +6,9 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.readerplugin.ReaderInfo;
-import org.rifidi.edge.core.readerplugin.ReaderPlugin;
 import org.rifidi.edge.core.readerplugin.service.ReaderPluginListener;
 import org.rifidi.edge.core.readerplugin.service.ReaderPluginService;
+import org.rifidi.edge.core.readerplugin.service.impl.ReaderPlugin;
 import org.rifidi.edge.core.readersession.ReaderSession;
 import org.rifidi.edge.core.readersession.impl.ReaderSessionImpl;
 import org.rifidi.edge.core.readersession.service.ReaderSessionListener;
@@ -81,7 +81,7 @@ public class ReaderSessionServiceImpl implements ReaderSessionService,
 			readerSessionImpl.cleanUP();
 		}
 		boolean successful = registry.remove(readerSession);
-		if(!successful){
+		if (!successful) {
 			logger.debug("Reader session not removed: " + readerSession);
 		}
 		for (ReaderSessionListener l : listeners) {
