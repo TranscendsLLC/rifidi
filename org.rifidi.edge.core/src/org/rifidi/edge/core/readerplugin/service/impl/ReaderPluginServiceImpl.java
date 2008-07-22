@@ -1,13 +1,20 @@
 package org.rifidi.edge.core.readerplugin.service.impl;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.osgi.framework.Bundle;
 import org.rifidi.edge.core.readerplugin.ReaderInfo;
-import org.rifidi.edge.core.readerplugin.ReaderPlugin;
 import org.rifidi.edge.core.readerplugin.service.ReaderPluginListener;
 import org.rifidi.edge.core.readerplugin.service.ReaderPluginService;
 
@@ -23,8 +30,27 @@ import org.rifidi.edge.core.readerplugin.service.ReaderPluginService;
 public class ReaderPluginServiceImpl implements ReaderPluginService {
 
 	private Log logger = LogFactory.getLog(ReaderPluginServiceImpl.class);
+
+	// Key: ReaderInfo Class Name ; Value: ReaderPlugin instance
 	private HashMap<String, ReaderPlugin> registry = new HashMap<String, ReaderPlugin>();
+
+	// Key: bundleID ; Value: ReaderInfoClass Name
+	private HashMap<Long, String> loadedBundles = new HashMap<Long, String>();
+
 	private ArrayList<ReaderPluginListener> listeners = new ArrayList<ReaderPluginListener>();
+
+	private JAXBContext jaxbContext;
+	private Unmarshaller unmarshaller;
+
+	public ReaderPluginServiceImpl() {
+		try {
+			jaxbContext = JAXBContext.newInstance(ReaderPlugin.class);
+			unmarshaller = jaxbContext.createUnmarshaller();
+		} catch (JAXBException e) {
+			logger.error("Fatal Exception in ReaderPluginService");
+			e.printStackTrace();
+		}
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -33,15 +59,52 @@ public class ReaderPluginServiceImpl implements ReaderPluginService {
 	 *      org.rifidi.edge.core.readerplugin.ReaderPlugin)
 	 */
 	@Override
-	public void registerReaderPlugin(Class<? extends ReaderInfo> readerInfo,
-			ReaderPlugin plugin) {
-		registry.put(readerInfo.getName(), plugin);
-		logger.debug("ReaderPlugin registered "
-				+ plugin.getClass().getSimpleName() + " : "
-				+ readerInfo.getName());
-		for (ReaderPluginListener l : listeners) {
-			l.readerPluginRegisteredEvent(readerInfo);
+	public void registerReaderPlugin(Bundle readerPluginBundle) {
+		// registry.put(readerInfo.getName(), plugin);
+		// logger.debug("ReaderPlugin registered "
+		// + plugin.getClass().getSimpleName() + " : "
+		// + readerInfo.getName());
+		// for (ReaderPluginListener l : listeners) {
+		// l.readerPluginRegisteredEvent(readerInfo);
+		// }
+
+		ReaderPlugin readerPlugin = null;
+
+		URL readerPluginXML = readerPluginBundle.getEntry("readerplugin.xml");
+		if (readerPluginXML != null) {
+			try {
+				readerPlugin = parseXML(readerPluginXML.openStream());
+			} catch (JAXBException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
+		try {
+			// We don't know if all the bean info is != null
+			String readerInfo = readerPlugin.getInfo();
+			registry.put(readerInfo, readerPlugin);
+			loadedBundles.put(readerPluginBundle.getBundleId(), readerInfo);
+			fireRegisterEvent(readerInfo);
+		} catch (NullPointerException e) {
+			logger.error("Fatal error while loading Plugin");
+		}
+	}
+
+	/**
+	 * Parse the XML to a ReaderPlugin
+	 * 
+	 * @param in
+	 *            InputStream of the readerplugin.xml
+	 * @return a instance of the ReaderPlugin appropriate to the given xml
+	 * @throws JAXBException
+	 *             if there is a error parsing the input to the readerinfo
+	 *             object
+	 */
+	private ReaderPlugin parseXML(InputStream in) throws JAXBException {
+		return (ReaderPlugin) unmarshaller.unmarshal(in);
 	}
 
 	/*
@@ -50,14 +113,18 @@ public class ReaderPluginServiceImpl implements ReaderPluginService {
 	 * @see org.rifidi.edge.core.readerplugin.service.ReaderPluginService#unregisterReaderPlugin(java.lang.Class)
 	 */
 	@Override
-	public void unregisterReaderPlugin(Class<? extends ReaderInfo> readerInfo) {
-		ReaderPlugin plugin = registry.remove(readerInfo.getName());
-		logger.debug("ReaderPlugin unregistered "
-				+ plugin.getClass().getSimpleName() + " : "
-				+ readerInfo.getName());
-		for (ReaderPluginListener l : listeners) {
-			l.readerPluginUnregisteredEvent(readerInfo);
-		}
+	public void unregisterReaderPlugin(Bundle readerPluginBundle) {
+		// ReaderPlugin plugin = registry.remove(readerInfo.getName());
+		// logger.debug("ReaderPlugin unregistered "
+		// + plugin.getClass().getSimpleName() + " : "
+		// + readerInfo.getName());
+		// for (ReaderPluginListener l : listeners) {
+		// l.readerPluginUnregisteredEvent(readerInfo);
+		// }
+		String readerInfo = loadedBundles.remove(readerPluginBundle
+				.getBundleId());
+		registry.remove(readerInfo);
+		fireUnregisterEvent(readerInfo);
 
 	}
 
@@ -99,6 +166,50 @@ public class ReaderPluginServiceImpl implements ReaderPluginService {
 	@Override
 	public void removeReaderPluginListener(ReaderPluginListener listener) {
 		listeners.remove(listener);
+	}
+
+	/**
+	 * Fire new ReaderPlugin registered event
+	 * 
+	 * @param readerInfo class name the ReaderInfo of the ReaderPlugin registered
+	 */
+	@SuppressWarnings("unchecked")
+	private void fireUnregisterEvent(String readerInfo) {
+		// TODO Remove the Class.forName later on
+		try {
+			for (ReaderPluginListener listener : listeners) {
+
+				listener
+						.readerPluginUnregisteredEvent((Class<? extends ReaderInfo>) Class
+								.forName(readerInfo));
+
+			}
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Fire ReaderPlugin unregistered event
+	 * 
+	 * @param readerInfo class name the ReaderInfo of the ReaderPlugin unregistered
+	 */
+	@SuppressWarnings("unchecked")
+	private void fireRegisterEvent(String readerInfo) {
+		// TODO Remove the Class.forName later on
+		try {
+			for (ReaderPluginListener listener : listeners) {
+
+				listener
+						.readerPluginRegisteredEvent((Class<? extends ReaderInfo>) Class
+								.forName(readerInfo));
+
+			}
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 }

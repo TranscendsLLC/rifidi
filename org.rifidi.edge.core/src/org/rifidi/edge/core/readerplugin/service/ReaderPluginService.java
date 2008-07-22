@@ -2,8 +2,9 @@ package org.rifidi.edge.core.readerplugin.service;
 
 import java.util.List;
 
+import org.osgi.framework.Bundle;
 import org.rifidi.edge.core.readerplugin.ReaderInfo;
-import org.rifidi.edge.core.readerplugin.ReaderPlugin;
+import org.rifidi.edge.core.readerplugin.service.impl.ReaderPlugin;
 
 /**
  * Service used to keep track of the different ReaderPlugins available to the
@@ -27,8 +28,7 @@ public interface ReaderPluginService {
 	 * @param plugin
 	 *            instance of the Plugin Class for the ReaderPlugin
 	 */
-	public void registerReaderPlugin(Class<? extends ReaderInfo> readerInfo,
-			ReaderPlugin plugin);
+	public void registerReaderPlugin(Bundle readerPluginBundle);
 
 	/**
 	 * Unregister a previously registered ReaderPlugin
@@ -36,7 +36,7 @@ public interface ReaderPluginService {
 	 * @param readerInfo
 	 *            the ReaderInfoClass of the ReaderPlugin to unregister
 	 */
-	public void unregisterReaderPlugin(Class<? extends ReaderInfo> readerInfo);
+	public void unregisterReaderPlugin(Bundle readerPluginBundle);
 
 	/**
 	 * Get the ReaderPlugin to the appropriate ReaderInfo
@@ -65,7 +65,8 @@ public interface ReaderPluginService {
 	/**
 	 * Remove a previously added ReaderPluginListener
 	 * 
-	 * @param listener to remove
+	 * @param listener
+	 *            to remove
 	 */
 	public void removeReaderPluginListener(ReaderPluginListener listener);
 }
