@@ -21,8 +21,6 @@ public class ReaderPlugin extends ReaderPluginCommandExtension {
 
 	private String info;
 
-	private String plugin;
-
 	public String getConnectionManager() {
 		return connectionManager;
 	}
@@ -31,20 +29,12 @@ public class ReaderPlugin extends ReaderPluginCommandExtension {
 		return info;
 	}
 
-	public String getPlugin() {
-		return plugin;
-	}
-
 	public void setConnectionManager(String connectionManager) {
 		this.connectionManager = connectionManager;
 	}
 
 	public void setInfo(String info) {
 		this.info = info;
-	}
-
-	public void setPlugin(String plugin) {
-		this.plugin = plugin;
 	}
 
 	// Suggested Commands
