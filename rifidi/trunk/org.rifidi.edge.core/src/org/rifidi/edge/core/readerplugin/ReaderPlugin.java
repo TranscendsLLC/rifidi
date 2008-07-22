@@ -4,23 +4,24 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionManager;
 
+/**
+ * Base class for extending a ReaderPlugin
+ * 
+ * @author Andreas Huebner - andreas@pramari.com
+ * 
+ */
 @XmlRootElement
-public class ReaderPlugin {
-
-	private ArrayList<CommandDescription> commandList;
+public class ReaderPlugin extends ReaderPluginExtension {
 
 	private String connectionManager;
 
 	private String info;
 
 	private String plugin;
-
-	private ArrayList<CommandDescription> propertyList;
 
 	public String getConnectionManager() {
 		return connectionManager;
@@ -34,20 +35,6 @@ public class ReaderPlugin {
 		return plugin;
 	}
 
-	@XmlElement(name = "property")
-	public ArrayList<CommandDescription> getPropertyList() {
-		return propertyList;
-	}
-
-	@XmlElement(name = "command")
-	public ArrayList<CommandDescription> getCommandList() {
-		return commandList;
-	}
-
-	public void setCommandList(ArrayList<CommandDescription> commandList) {
-		this.commandList = commandList;
-	}
-
 	public void setConnectionManager(String connectionManager) {
 		this.connectionManager = connectionManager;
 	}
@@ -58,10 +45,6 @@ public class ReaderPlugin {
 
 	public void setPlugin(String plugin) {
 		this.plugin = plugin;
-	}
-
-	public void setPropertyList(ArrayList<CommandDescription> propertyList) {
-		this.propertyList = propertyList;
 	}
 
 	// Suggested Commands
