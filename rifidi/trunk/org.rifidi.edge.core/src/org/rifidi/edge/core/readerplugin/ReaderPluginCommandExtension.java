@@ -6,7 +6,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
-public class ReaderPluginExtension {
+public class ReaderPluginCommandExtension {
 
 	private ArrayList<CommandDescription> commandList;
 

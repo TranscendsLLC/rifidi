@@ -15,7 +15,7 @@ import org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionManager;
  * 
  */
 @XmlRootElement
-public class ReaderPlugin extends ReaderPluginExtension {
+public class ReaderPlugin extends ReaderPluginCommandExtension {
 
 	private String connectionManager;
 
