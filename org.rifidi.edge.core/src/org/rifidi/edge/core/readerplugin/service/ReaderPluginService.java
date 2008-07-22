@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.osgi.framework.Bundle;
 import org.rifidi.edge.core.readerplugin.ReaderInfo;
-import org.rifidi.edge.core.readerplugin.ReaderPlugin;
+import org.rifidi.edge.core.readerplugin.xml.ReaderPlugin;
 
 /**
  * Service used to keep track of the different ReaderPlugins available to the
@@ -45,7 +45,7 @@ public interface ReaderPluginService {
 	 *            ReaderInfo of the Plugin to lookup
 	 * @return the ReaderPlugin associated with this ReaderPlugin
 	 */
-	public ReaderPlugin getReaderPlugin(Class<? extends ReaderInfo> readerInfo);
+	public ReaderPlugin getReaderPlugin(String readerInfo);
 
 	/**
 	 * Get a list of all available ReaderInfo Classes

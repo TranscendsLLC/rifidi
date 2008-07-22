@@ -8,6 +8,8 @@ import org.rifidi.edge.core.exceptions.RifidiConnectionException;
 import org.rifidi.edge.core.readerplugin.ReaderInfo;
 import org.rifidi.edge.core.readersession.impl.enums.CommandStatus;
 import org.rifidi.edge.core.readersession.impl.enums.ReaderSessionStatus;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 /**
  * The ReaderSession is a instance of a Session to a specific Reader. It allows
@@ -55,12 +57,11 @@ public interface ReaderSession {
 	// TODO: Need a way to tell what exceptions cause a restart and ones that do
 	// not.
 	/**
-	 * Execute a command
+	 * Execute an asynchronous command
 	 * 
-	 * @param command
-	 *            the command to execute
 	 * @param configuration
-	 *            the configuration passed in as a argument into the command
+	 *            the command and configuration passed in as a argument into the
+	 *            command
 	 * @return the id assigned command
 	 * @throws RifidiConnectionException
 	 *             if the connection failed
@@ -69,9 +70,27 @@ public interface ReaderSession {
 	 * @throws RifidiCommandNotFoundException
 	 *             the given command could not be found
 	 */
-	public long executeCommand(String command, String configuration)
+	public long executeCommand(Document configuration)
 			throws RifidiConnectionException,
 			RifidiCommandInterruptedException, RifidiCommandNotFoundException;
+
+	/**
+	 * Execute a series of synchronous properties
+	 * 
+	 * @param propertiesToExecute
+	 *            the commands and their arguments
+	 * @return An XML as a string that contains the results of all the
+	 *         properties executed
+	 * @throws RifidiConnectionException
+	 *             if the connection failed
+	 * @throws RifidiCommandNotFoundException
+	 *             the given command could not be found
+	 * @throws RifidiCommandInterruptedException
+	 *             if the command could not be started or was interrupted
+	 */
+	public Document executeProperty(Document propertiesToExecute)
+			throws RifidiConnectionException, RifidiCommandNotFoundException,
+			RifidiCommandInterruptedException;
 
 	/**
 	 * Stop the currently executing command

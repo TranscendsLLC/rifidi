@@ -1,4 +1,4 @@
-package org.rifidi.edge.core.readerplugin;
+package org.rifidi.edge.core.readerplugin.xml;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.rifidi.edge.core.readerplugin.ReaderInfo;
 import org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionManager;
 
 /**

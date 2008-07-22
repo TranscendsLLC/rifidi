@@ -1,11 +1,22 @@
 package org.rifidi.edge.core.readersession.impl;
 
+import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import javax.xml.XMLConstants;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
+import javax.xml.validation.Validator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -24,12 +35,20 @@ import org.rifidi.edge.core.readerplugin.commands.Command;
 import org.rifidi.edge.core.readerplugin.commands.CommandReturnStatus;
 import org.rifidi.edge.core.readerplugin.commands.annotations.CommandDesc;
 import org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionManager;
+import org.rifidi.edge.core.readerplugin.property.Property;
 import org.rifidi.edge.core.readerplugin.service.ReaderPluginService;
+import org.rifidi.edge.core.readerplugin.xml.CommandDescription;
+import org.rifidi.edge.core.readerplugin.xml.ReaderPlugin;
 import org.rifidi.edge.core.readersession.ReaderSession;
 import org.rifidi.edge.core.readersession.impl.enums.CommandStatus;
 import org.rifidi.edge.core.readersession.impl.enums.ReaderSessionStatus;
 import org.rifidi.services.annotations.Inject;
 import org.rifidi.services.registry.ServiceRegistry;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 /**
  * 
@@ -55,6 +74,7 @@ public class ReaderSessionImpl implements ReaderSession,
 	private ReaderPluginService readerPluginService;
 
 	// Session Information
+	private ReaderPlugin plugin;
 	private ReaderInfo readerInfo;
 	private ConnectionManager connectionManager;
 	private Connection connection;
@@ -71,6 +91,8 @@ public class ReaderSessionImpl implements ReaderSession,
 	private ConnectionStatus connectionStatus = ConnectionStatus.DISCONNECTED;
 
 	private int readerSessionID;
+
+	private MessageQueue errorQueue;
 
 	public ReaderSessionImpl(ReaderInfo readerInfo, int readerSessionID) {
 		this.readerInfo = readerInfo;
@@ -101,15 +123,7 @@ public class ReaderSessionImpl implements ReaderSession,
 	@Override
 	public List<String> getAvailableCommands() {
 		List<String> commands = new ArrayList<String>();
-		CommandDesc commandDesc = null;
-		for (Class<? extends Command> commandClass : readerPluginService
-				.getReaderPlugin(readerInfo.getClass()).getAvailableCommands()) {
-			commandDesc = commandClass.getAnnotation(CommandDesc.class);
-			if (commandDesc != null) {
-				commands.add(commandDesc.name());
-			}
-		}
-		return commands;
+		return new ArrayList<String>(plugin.getAvailableCommands());
 	}
 
 	/**
@@ -118,20 +132,10 @@ public class ReaderSessionImpl implements ReaderSession,
 	 */
 	@Override
 	public List<String> getAvailableCommands(String groupName) {
-		List<String> commands = new ArrayList<String>();
-		CommandDesc commandDesc = null;
-		for (Class<? extends Command> commandClass : readerPluginService
-				.getReaderPlugin(readerInfo.getClass()).getAvailableCommands()) {
-			commandDesc = commandClass.getAnnotation(CommandDesc.class);
-			if (commandDesc != null) {
-				for (String g : commandDesc.groups()) {
-					if (g.equals(groupName)) {
-						commands.add(commandDesc.name());
-					}
-				}
-			}
+		List<String> retVal = new ArrayList<String>();
+		for(String commandName : plugin.getAvailableCommands()){
+			plugin.get
 		}
-		return commands;
 	}
 
 	/**
@@ -153,7 +157,6 @@ public class ReaderSessionImpl implements ReaderSession,
 		return new ArrayList<String>(groups);
 	}
 
-	// TODO: validate configuration XML String
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -161,7 +164,7 @@ public class ReaderSessionImpl implements ReaderSession,
 	 *      java.lang.String)
 	 */
 	@Override
-	public long executeCommand(String command, String configuration)
+	public long executeScript(Document configuration)
 			throws RifidiConnectionException,
 			RifidiCommandInterruptedException, RifidiCommandNotFoundException {
 
@@ -219,12 +222,12 @@ public class ReaderSessionImpl implements ReaderSession,
 			executionThread = new ExecutionThread(messageQueue, this);
 		}
 
-		readerSessionStatus = ReaderSessionStatus.BUSY;
+		readerSessionStatus = ReaderSessionStatus.EXECUTING_SCRIPT;
 		curCommand.setCommandStatus(CommandStatus.EXECUTING);
 		connection.cleanQueues();
 		try {
-			executionThread.start(connection, curCommand.getCommand(), configuration,
-					commandID);
+			executionThread.start(connection, curCommand.getCommand(),
+					configuration, commandID);
 		} catch (RifidiExecutionException e) {
 			curCommand = null;
 			logger.error(e.getMessage());
@@ -233,6 +236,90 @@ public class ReaderSessionImpl implements ReaderSession,
 		}
 		logger.debug("Command given to execution thread");
 		return commandID;
+	}
+
+	public Document executeProperty(Document propertiesToExecute)
+			throws RifidiConnectionException,
+			RifidiCommandInterruptedException, RifidiCommandNotFoundException {
+		if (this.readerSessionStatus == ReaderSessionStatus.EXECUTING_SCRIPT) {
+			pauseCommand();
+			this.readerSessionStatus = ReaderSessionStatus.EXECUTING_PROPERTY_WITH_YIELDED_SCRIPT;
+		} else {
+			this.readerSessionStatus = ReaderSessionStatus.EXECUTING_PROPERTY_WITH_NO_YIELDED_SCRIPT;
+		}
+		Document returnDocument = null;
+		try {
+
+			DocumentBuilderFactory factory = DocumentBuilderFactory
+					.newInstance();
+			factory.setValidating(true);
+
+			DocumentBuilder docBuilder = factory.newDocumentBuilder();
+
+			returnDocument = docBuilder.newDocument();
+
+			Element root = returnDocument.getDocumentElement();
+
+			// for each property in propertiesToExecute
+			NodeList properties = propertiesToExecute.getChildNodes();
+			for (int i = 0; i < properties.getLength(); i++) {
+				Node property = properties.item(i);
+				if (property.getNodeType() == Node.ELEMENT_NODE) {
+					Element e = (Element) property;
+					// validate element
+
+					SchemaFactory schemaFactory = SchemaFactory
+							.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+
+					ReaderPlugin plugin = this.readerPluginService
+							.getReaderPlugin(readerInfo.getClass());
+					CommandDescription propertyCommand = plugin.getProperty(e
+							.getNodeName());
+					if (propertyCommand != null) {
+						propertyCommand.getXsd();
+						Schema schema = schemaFactory.newSchema(new File(
+								propertyCommand.getXsd()));
+						Validator v = schema.newValidator();
+						v.validate(new DOMSource(e));
+						
+						Property propObject = (Property)instantiate(propertyCommand);
+						
+						// execute property
+						Element returnVal = propObject
+								.execute(connection, errorQueue, e);
+
+						// insert return value into element
+						returnDocument.appendChild(returnVal);
+					} else {
+						// TODO: throw new exception
+					}
+				}
+			}
+
+			if (this.readerSessionStatus == ReaderSessionStatus.EXECUTING_PROPERTY_WITH_YIELDED_SCRIPT) {
+				restartCommand();
+			} else {
+				this.readerSessionStatus = ReaderSessionStatus.OK;
+			}
+		} catch (ParserConfigurationException e1) {
+		} catch (SAXException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return returnDocument;
+
+	}
+
+	private void pauseCommand() {
+
+	}
+
+	private void restartCommand() {
+
 	}
 
 	/**
@@ -246,6 +333,37 @@ public class ReaderSessionImpl implements ReaderSession,
 			connection = connectionService.createConnection(connectionManager,
 					readerInfo, this);
 		}
+	}
+
+	private Object instantiate(CommandDescription commandDescription)
+			throws RifidiCommandInterruptedException,
+			RifidiCommandNotFoundException {
+		Object obj = null;
+		try {
+			obj = Class.forName(commandDescription.getClassname()).getConstructor().newInstance();
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SecurityException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InstantiationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchMethodException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return obj;
 	}
 
 	private Command lookupCommand(String command)
@@ -324,7 +442,7 @@ public class ReaderSessionImpl implements ReaderSession,
 	 */
 	@Override
 	public boolean stopCurCommand(boolean force) {
-		if (readerSessionStatus == ReaderSessionStatus.BUSY
+		if (readerSessionStatus == ReaderSessionStatus.EXECUTING_SCRIPT
 				|| readerSessionStatus == ReaderSessionStatus.ERROR) {
 			logger.debug("Stoping Command.");
 			executionThread.stop(force);
@@ -527,8 +645,10 @@ public class ReaderSessionImpl implements ReaderSession,
 	@Inject
 	public void setMessageService(MessageService messageService) {
 		this.messageService = messageService;
-		messageQueue = this.messageService.createMessageQueue(Integer
+		this.messageQueue = this.messageService.createMessageQueue(Integer
 				.toString(readerSessionID));
+		this.errorQueue = this.messageService.createMessageQueue("E"
+				+ Integer.toString(readerSessionID));
 	}
 
 	/**
@@ -540,8 +660,8 @@ public class ReaderSessionImpl implements ReaderSession,
 	@Inject
 	public void setReaderPluginService(ReaderPluginService readerPluginService) {
 		this.readerPluginService = readerPluginService;
-		connectionManager = readerPluginService.getReaderPlugin(
-				readerInfo.getClass()).getConnectionManager(readerInfo);
+		this.plugin = readerPluginService.getReaderPlugin(readerInfo.getClass().getName());
+		this.connectionManager = plugin.newConnectionManager(readerInfo);
 	}
 
 	/*
