@@ -127,7 +127,7 @@ public class Communication implements ConnectionExceptionListener {
 			 * infinite loop.
 			 */
 			for (CommunicationStateListener listener : listeners) {
-				listener.error();
+				listener.conn_error();
 			}
 			return;
 
@@ -265,17 +265,17 @@ public class Communication implements ConnectionExceptionListener {
 	private void changeState(ConnectionStatus communicationState) {
 		if (communicationState == ConnectionStatus.CONNECTED) {
 			for (CommunicationStateListener listener : listeners) {
-				listener.connected();
+				listener.conn_connected();
 			}
 		} else if (communicationState == ConnectionStatus.DISCONNECTED) {
 			for (CommunicationStateListener listener : listeners) {
-				listener.disconnected();
+				listener.conn_disconnected();
 			}
 
 		} else if (communicationState == ConnectionStatus.ERROR) {
 			disconnect();
 			for (CommunicationStateListener listener : listeners) {
-				listener.error();
+				listener.conn_error();
 			}
 		}
 		logger.debug("Communication state changed to " + communicationState);
