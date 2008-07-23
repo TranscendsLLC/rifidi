@@ -13,8 +13,6 @@ package org.rifidi.edge.readerplugin.llrp;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.rifidi.edge.core.readerplugin.service.ReaderPluginService;
-import org.rifidi.edge.readerplugin.llrp.plugin.LLRPReaderInfo;
-import org.rifidi.edge.readerplugin.llrp.plugin.LLRPReaderPlugin;
 import org.rifidi.services.annotations.Inject;
 import org.rifidi.services.registry.ServiceRegistry;
 
@@ -26,6 +24,7 @@ import org.rifidi.services.registry.ServiceRegistry;
 public class Activator implements BundleActivator {
 
 	private ReaderPluginService readerPluginService;
+	private BundleContext context;
 	
 	/*
 	 * (non-Javadoc)
@@ -34,6 +33,7 @@ public class Activator implements BundleActivator {
 	public void start(BundleContext context) throws Exception {
 		System.out.println("== Bundle LLRPReaderPlugin started ==");
 		ServiceRegistry.getInstance().service(this);
+		this.context = context;
 	}
 
 	/*
@@ -43,7 +43,7 @@ public class Activator implements BundleActivator {
 	public void stop(BundleContext context) throws Exception {
 		if (readerPluginService != null) {
 			System.out.println("Unregistering Plugin: LLRPReaderPlugin");
-			readerPluginService.unregisterReaderPlugin(LLRPReaderInfo.class);
+			readerPluginService.unregisterReaderPlugin(context.getBundle());
 		}
 		System.out.println("== Bundle LLRPReaderPlugin stopped ==");
 	}
@@ -52,8 +52,8 @@ public class Activator implements BundleActivator {
 	public void setReaderPluginService(ReaderPluginService readerPluginService) {
 		this.readerPluginService = readerPluginService;
 		System.out.println("Registering Plugin: LLRPReaderPlugin");
-		this.readerPluginService.registerReaderPlugin(LLRPReaderInfo.class,
-				new LLRPReaderPlugin());	
+		this.readerPluginService.registerReaderPlugin(context.getBundle());
+		context = null;
 	}
 
 }
