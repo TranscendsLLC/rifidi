@@ -59,16 +59,13 @@ public interface RemoteReaderConnection extends Remote {
 	/**
 	 * Execute a custom command on the ReaderConnection
 	 * 
-	 * @param command
-	 *            command to execute on the RemoteConnection
 	 * @param configuration
 	 *            xml describing the command configuration parameters
 	 * @return an id under this command will be executed
 	 * @throws RemoteException
 	 *             if a error occurs
 	 */
-	public long executeCommand(String command, String configuration)
-			throws RemoteException;
+	public long executeCommand(String configuration) throws RemoteException;
 
 	/**
 	 * Start streaming of tags to the MessageQueue (This is a convenience method
