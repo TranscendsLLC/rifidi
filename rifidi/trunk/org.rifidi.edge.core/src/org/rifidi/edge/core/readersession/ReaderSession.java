@@ -5,6 +5,7 @@ import java.util.List;
 import org.rifidi.edge.core.exceptions.RifidiCommandInterruptedException;
 import org.rifidi.edge.core.exceptions.RifidiCommandNotFoundException;
 import org.rifidi.edge.core.exceptions.RifidiConnectionException;
+import org.rifidi.edge.core.exceptions.RifidiInvalidConfigurationException;
 import org.rifidi.edge.core.readerplugin.ReaderInfo;
 import org.rifidi.edge.core.readersession.impl.enums.CommandStatus;
 import org.rifidi.edge.core.readersession.impl.enums.ReaderSessionStatus;
@@ -31,29 +32,6 @@ public interface ReaderSession {
 	 */
 	public ReaderSessionStatus getStatus();
 
-	/**
-	 * Get a list of available commands for this instance of a ReaderPlugin
-	 * 
-	 * @return a list of availbale commands
-	 */
-	public List<String> getAvailableCommands();
-
-	/**
-	 * Get a list of available commands in the named group
-	 * 
-	 * @param groupName
-	 *            the name of the group to look up the commands
-	 * @return the commands in the specified group
-	 */
-	public List<String> getAvailableCommands(String groupName);
-
-	/**
-	 * Get a list of available command groups of this instance of a ReaderPlugin
-	 * 
-	 * @return list of groups available in this ReaderPlugin
-	 */
-	public List<String> getAvailableCommandGroups();
-
 	// TODO: Need a way to tell what exceptions cause a restart and ones that do
 	// not.
 	/**
@@ -69,10 +47,12 @@ public interface ReaderSession {
 	 *             if the command could not be started or was interrupted
 	 * @throws RifidiCommandNotFoundException
 	 *             the given command could not be found
+	 * @throws RifidiInvalidConfigurationException
 	 */
 	public long executeCommand(Document configuration)
 			throws RifidiConnectionException,
-			RifidiCommandInterruptedException, RifidiCommandNotFoundException;
+			RifidiCommandInterruptedException, RifidiCommandNotFoundException,
+			RifidiInvalidConfigurationException;
 
 	/**
 	 * Execute a series of synchronous properties

@@ -15,9 +15,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.osgi.framework.Bundle;
 import org.rifidi.edge.core.readerplugin.ReaderInfo;
+import org.rifidi.edge.core.readerplugin.ReaderPlugin;
 import org.rifidi.edge.core.readerplugin.service.ReaderPluginListener;
 import org.rifidi.edge.core.readerplugin.service.ReaderPluginService;
-import org.rifidi.edge.core.readerplugin.xml.ReaderPlugin;
+import org.rifidi.edge.core.readerplugin.xml.ReaderPluginXML;
 
 /**
  * This is the implementation of the ReaderPluginService. It keeps track of
@@ -45,7 +46,7 @@ public class ReaderPluginServiceImpl implements ReaderPluginService {
 
 	public ReaderPluginServiceImpl() {
 		try {
-			jaxbContext = JAXBContext.newInstance(ReaderPlugin.class);
+			jaxbContext = JAXBContext.newInstance(ReaderPluginXML.class);
 			unmarshaller = jaxbContext.createUnmarshaller();
 		} catch (JAXBException e) {
 			logger.error("Fatal Exception in ReaderPluginService");
@@ -70,11 +71,13 @@ public class ReaderPluginServiceImpl implements ReaderPluginService {
 		// }
 
 		ReaderPlugin readerPlugin = null;
+		ReaderPluginXML readerPluginXML = null;
 
-		URL readerPluginXML = readerPluginBundle.getEntry("readerplugin.xml");
-		if (readerPluginXML != null) {
+		URL xml = readerPluginBundle.getEntry("readerplugin.xml");
+		if (xml != null) {
 			try {
-				readerPlugin = parseXML(readerPluginXML.openStream());
+				readerPluginXML = parseXML(xml.openStream());
+				readerPlugin = new ReaderPlugin(readerPluginXML);
 			} catch (JAXBException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -85,7 +88,7 @@ public class ReaderPluginServiceImpl implements ReaderPluginService {
 		}
 		try {
 			// We don't know if all the bean info is != null
-			String readerInfo = readerPlugin.getInfo();
+			String readerInfo = readerPluginXML.getInfo();
 			registry.put(readerInfo, readerPlugin);
 			loadedBundles.put(readerPluginBundle.getBundleId(), readerInfo);
 			fireRegisterEvent(readerInfo);
@@ -104,8 +107,8 @@ public class ReaderPluginServiceImpl implements ReaderPluginService {
 	 *             if there is a error parsing the input to the readerinfo
 	 *             object
 	 */
-	private ReaderPlugin parseXML(InputStream in) throws JAXBException {
-		return (ReaderPlugin) unmarshaller.unmarshal(in);
+	private ReaderPluginXML parseXML(InputStream in) throws JAXBException {
+		return (ReaderPluginXML) unmarshaller.unmarshal(in);
 	}
 
 	/*
@@ -172,7 +175,8 @@ public class ReaderPluginServiceImpl implements ReaderPluginService {
 	/**
 	 * Fire new ReaderPlugin registered event
 	 * 
-	 * @param readerInfo class name the ReaderInfo of the ReaderPlugin registered
+	 * @param readerInfo
+	 *            class name the ReaderInfo of the ReaderPlugin registered
 	 */
 	@SuppressWarnings("unchecked")
 	private void fireUnregisterEvent(String readerInfo) {
@@ -194,7 +198,8 @@ public class ReaderPluginServiceImpl implements ReaderPluginService {
 	/**
 	 * Fire ReaderPlugin unregistered event
 	 * 
-	 * @param readerInfo class name the ReaderInfo of the ReaderPlugin unregistered
+	 * @param readerInfo
+	 *            class name the ReaderInfo of the ReaderPlugin unregistered
 	 */
 	@SuppressWarnings("unchecked")
 	private void fireRegisterEvent(String readerInfo) {
