@@ -9,6 +9,7 @@ import org.rifidi.edge.core.messageQueue.MessageQueue;
 import org.rifidi.edge.core.readerplugin.commands.Command;
 import org.rifidi.edge.core.readerplugin.commands.CommandReturnStatus;
 import org.rifidi.edge.core.readerplugin.commands.annotations.CommandDesc;
+import org.w3c.dom.Document;
 
 @CommandDesc(name = "StreamTagsTest")
 public class StreamTagsTest implements Command {
@@ -19,7 +20,8 @@ public class StreamTagsTest implements Command {
 
 	@Override
 	public CommandReturnStatus start(Connection connection,
-			MessageQueue messageQueue, String configuration, long commandID) {
+			MessageQueue messageQueue, MessageQueue errorQueue,
+			Document configuration, long commandID) {
 		while (running) {
 			try {
 				connection.sendMessage("GET_SOMETHING\n");

@@ -12,6 +12,7 @@ import org.rifidi.edge.core.readerplugin.commands.Command;
 import org.rifidi.edge.core.readerplugin.commands.CommandReturnStatus;
 import org.rifidi.edge.core.readerplugin.commands.annotations.CommandDesc;
 import org.rifidi.edge.core.readerplugin.messages.impl.TagMessage;
+import org.w3c.dom.Document;
 
 @CommandDesc(name = "GetTagsCurrentlyOnAntennas")
 public class GetTagsOnceCommand implements Command {
@@ -21,7 +22,8 @@ public class GetTagsOnceCommand implements Command {
 
 	@Override
 	public CommandReturnStatus start(Connection connection,
-			MessageQueue messageQueue, String configuration, long commandID) {
+			MessageQueue messageQueue, MessageQueue errorQueue,
+			Document configuration, long commandID) {
 		logger.debug("Getting tags.");
 
 		String rawtag = ByteAndHexConvertingUtility.toHexString(
