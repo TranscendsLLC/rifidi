@@ -69,6 +69,7 @@ import org.rifidi.edge.core.readerplugin.commands.Command;
 import org.rifidi.edge.core.readerplugin.commands.CommandReturnStatus;
 import org.rifidi.edge.core.readerplugin.commands.annotations.CommandDesc;
 import org.rifidi.edge.core.readerplugin.messages.impl.TagMessage;
+import org.w3c.dom.Document;
 
 /**
  * 
@@ -95,14 +96,16 @@ public class LLRPTagStreamCommand implements Command {
 	 */
 	@Override
 	public CommandReturnStatus start(Connection connection,
-			MessageQueue messageQueue, String configuration, long commandID) {
+			MessageQueue messageQueue, MessageQueue errorQueue,
+			Document configuration, long commandID) {
 		running = true;
 		int messageID = 1;
 		CommandReturnStatus retVal = null;
 		try {
 			SET_READER_CONFIG config = createSetReaderConfig();
 			config.setMessageID(new UnsignedInteger(messageID++));
-			logger.debug("before send config.  Connection: " + connection.toString());
+			logger.debug("before send config.  Connection: "
+					+ connection.toString());
 			connection.sendMessage(config);
 			logger.debug("after send config");
 
@@ -125,7 +128,8 @@ public class LLRPTagStreamCommand implements Command {
 			addROSpec.setMessageID(new UnsignedInteger(messageID++));
 			connection.sendMessage(addROSpec);
 
-			ADD_ROSPEC_RESPONSE addROSpecResponse = (ADD_ROSPEC_RESPONSE) connection.receiveMessage();
+			ADD_ROSPEC_RESPONSE addROSpecResponse = (ADD_ROSPEC_RESPONSE) connection
+					.receiveMessage();
 			sc = addROSpecResponse.getLLRPStatus().getStatusCode();
 			if (sc.intValue() != StatusCode.M_Success) {
 				logger.debug("ADD_ROSPEC_RESPONSE returned with status code "
@@ -139,7 +143,8 @@ public class LLRPTagStreamCommand implements Command {
 			enableROSpec.setMessageID(new UnsignedInteger(messageID++));
 			connection.sendMessage(enableROSpec);
 
-			ENABLE_ROSPEC_RESPONSE enableROSpecResponse = (ENABLE_ROSPEC_RESPONSE) connection.receiveMessage();
+			ENABLE_ROSPEC_RESPONSE enableROSpecResponse = (ENABLE_ROSPEC_RESPONSE) connection
+					.receiveMessage();
 			sc = enableROSpecResponse.getLLRPStatus().getStatusCode();
 			if (sc.intValue() != StatusCode.M_Success) {
 				logger
@@ -154,7 +159,8 @@ public class LLRPTagStreamCommand implements Command {
 			startROSpec.setMessageID(new UnsignedInteger(messageID++));
 			connection.sendMessage(startROSpec);
 
-			START_ROSPEC_RESPONSE startROSpecResponse = (START_ROSPEC_RESPONSE) connection.receiveMessage();
+			START_ROSPEC_RESPONSE startROSpecResponse = (START_ROSPEC_RESPONSE) connection
+					.receiveMessage();
 			sc = startROSpecResponse.getLLRPStatus().getStatusCode();
 			if (sc.intValue() != StatusCode.M_Success) {
 				logger.debug("START_ROSPEC_RESPONSE returned with status code "
@@ -193,7 +199,8 @@ public class LLRPTagStreamCommand implements Command {
 			disableROSpec.setMessageID(new UnsignedInteger(messageID++));
 			connection.sendMessage(disableROSpec);
 
-			DISABLE_ROSPEC_RESPONSE disableROSpecResponse = (DISABLE_ROSPEC_RESPONSE) connection.receiveMessage();
+			DISABLE_ROSPEC_RESPONSE disableROSpecResponse = (DISABLE_ROSPEC_RESPONSE) connection
+					.receiveMessage();
 			sc = disableROSpecResponse.getLLRPStatus().getStatusCode();
 			if (sc.intValue() != StatusCode.M_Success) {
 				logger
@@ -208,7 +215,8 @@ public class LLRPTagStreamCommand implements Command {
 			deleteROSpec.setMessageID(new UnsignedInteger(messageID++));
 			connection.sendMessage(deleteROSpec);
 
-			DELETE_ROSPEC_RESPONSE deleteROSpecResponse = (DELETE_ROSPEC_RESPONSE) connection.receiveMessage();
+			DELETE_ROSPEC_RESPONSE deleteROSpecResponse = (DELETE_ROSPEC_RESPONSE) connection
+					.receiveMessage();
 			sc = deleteROSpecResponse.getLLRPStatus().getStatusCode();
 			if (sc.intValue() != StatusCode.M_Success) {
 				logger
@@ -222,7 +230,7 @@ public class LLRPTagStreamCommand implements Command {
 
 		} catch (IOException e) {
 			logger.error(e.getMessage());
-			//TODO: remove this
+			// TODO: remove this
 			e.printStackTrace();
 			return CommandReturnStatus.UNSUCCESSFUL;
 		}
