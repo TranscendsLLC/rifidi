@@ -12,6 +12,7 @@ import org.rifidi.edge.core.readerplugin.commands.CommandReturnStatus;
 import org.rifidi.edge.core.readerplugin.commands.annotations.CommandDesc;
 import org.rifidi.edge.readerplugin.alien.messages.GenericAlienMessage;
 import org.rifidi.edge.readerplugin.alien.messages.Property;
+import org.w3c.dom.Document;
 
 /**
  * @author Jerry Maine - jerry@pramari.com
@@ -29,7 +30,8 @@ public class ExternalOutput implements Command {
 	 */
 	@Override
 	public CommandReturnStatus start(Connection connection,
-		MessageQueue messageQueue, String configuration, long commandID) {
+			MessageQueue messageQueue, MessageQueue errorQueue,
+			Document configuration, long commandID) {
 		logger.debug("Starting the " + this.getClass().getSimpleName()
 				+ " command for the Alien");
 		if (configuration == null || configuration.equals("")) {
