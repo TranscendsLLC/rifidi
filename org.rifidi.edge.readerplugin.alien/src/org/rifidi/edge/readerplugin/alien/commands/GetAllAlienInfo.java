@@ -10,6 +10,7 @@ import org.rifidi.edge.core.messageQueue.MessageQueue;
 import org.rifidi.edge.core.readerplugin.commands.Command;
 import org.rifidi.edge.core.readerplugin.commands.CommandReturnStatus;
 import org.rifidi.edge.readerplugin.alien.messages.AlienAllInfoMessage;
+import org.w3c.dom.Document;
 
 public class GetAllAlienInfo implements Command {
 
@@ -17,7 +18,8 @@ public class GetAllAlienInfo implements Command {
 
 	@Override
 	public CommandReturnStatus start(Connection connection,
-			MessageQueue messageQueue, String configuration, long commandID) {
+			MessageQueue messageQueue, MessageQueue errorQueue,
+			Document configuration, long commandID) {
 		logger.debug("Starting the " + this.getClass().getSimpleName()
 				+ " command for the Alien");
 		// running = true;
