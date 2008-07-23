@@ -7,6 +7,7 @@ import org.rifidi.edge.core.exceptions.RifidiExecutionException;
 import org.rifidi.edge.core.messageQueue.MessageQueue;
 import org.rifidi.edge.core.readerplugin.commands.Command;
 import org.rifidi.edge.core.readerplugin.commands.CommandReturnStatus;
+import org.w3c.dom.Document;
 
 /**
  * This is a Helper to execute Commands. It will take in the command and execute
@@ -21,6 +22,8 @@ public class ExecutionThread {
 	private Log logger = LogFactory.getLog(ExecutionThread.class);
 
 	private MessageQueue messageQueue;
+	
+	private MessageQueue errorQueue;
 
 	private CommandExecutionListener commandExecutionListener;
 
@@ -41,12 +44,14 @@ public class ExecutionThread {
 	 * @param readerSession
 	 *            the Listener for command finished events
 	 */
-	public ExecutionThread( MessageQueue messageQueue,
+	public ExecutionThread( MessageQueue messageQueue, MessageQueue errorQueue,
 			CommandExecutionListener readerSession) {
 		if (messageQueue == null) {
 			logger.error("NO MessageQueue");
 		}
 		this.messageQueue = messageQueue;
+		
+		this.errorQueue = errorQueue;
 		if (readerSession == null) {
 			logger.error("NO CommandExecutionListerner");
 		}
@@ -65,7 +70,7 @@ public class ExecutionThread {
 	 * @throws RifidiExecutionException
 	 *             if the command could not be successful Executed
 	 */
-	public void start(final Connection connection, final Command _command, final String _configuration,
+	public void start(final Connection connection, final Command _command, final Document _configuration,
 			final long _commandID) throws RifidiExecutionException {
 		if (running || command != null) {
 			logger.error("command " + this.commandID + "is still executing");
@@ -87,7 +92,7 @@ public class ExecutionThread {
 					logger.error("NO Command to execute");
 					return;
 				}
-				status = command.start(connection, messageQueue,
+				status = command.start(connection, messageQueue, errorQueue,
 						_configuration, commandID);
 				// TODO Possibly pass in commandID instead of command
 				commandExecutionListener.commandFinished(command, status);

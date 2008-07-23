@@ -11,16 +11,16 @@ public interface CommunicationStateListener {
 	/**
 	 * Communication connected event
 	 */
-	public void connected();
+	public void conn_connected();
 
 	/**
 	 * Communication disconnected event
 	 */
-	public void disconnected();
+	public void conn_disconnected();
 
 	/**
 	 * Communication not recoverable event
 	 */
-	public void error();
+	public void conn_error();
 
 }

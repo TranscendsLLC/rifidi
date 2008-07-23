@@ -2,6 +2,7 @@ package org.rifidi.edge.core.readerplugin.commands;
 
 import org.rifidi.edge.core.communication.Connection;
 import org.rifidi.edge.core.messageQueue.MessageQueue;
+import org.w3c.dom.Document;
 
 /**
  * This is the command Interface defining a common base over all Commands
@@ -28,7 +29,7 @@ public interface Command {
 	 */
 	public CommandReturnStatus start(Connection connection,
 			MessageQueue messageQueue, MessageQueue errorQueue,
-			String configuration, long commandID);
+			Document configuration, long commandID);
 
 	/**
 	 * Stop the execution of this command
