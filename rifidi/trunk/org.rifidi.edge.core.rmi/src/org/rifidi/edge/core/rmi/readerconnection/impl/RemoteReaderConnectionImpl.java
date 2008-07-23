@@ -1,16 +1,26 @@
 package org.rifidi.edge.core.rmi.readerconnection.impl;
 
+import java.io.IOException;
+import java.io.StringReader;
 import java.rmi.RemoteException;
 import java.util.List;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.exceptions.RifidiCommandInterruptedException;
 import org.rifidi.edge.core.exceptions.RifidiCommandNotFoundException;
 import org.rifidi.edge.core.exceptions.RifidiConnectionException;
+import org.rifidi.edge.core.exceptions.RifidiInvalidConfigurationException;
 import org.rifidi.edge.core.readerplugin.ReaderInfo;
 import org.rifidi.edge.core.readersession.ReaderSession;
 import org.rifidi.edge.core.rmi.readerconnection.RemoteReaderConnection;
+import org.w3c.dom.Document;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 /**
  * Implementation for a RemoteReaderConnection
@@ -86,10 +96,15 @@ public class RemoteReaderConnectionImpl implements RemoteReaderConnection {
 	 */
 	@Override
 	//TODO: remove stack traces
-	public long executeCommand(String command, String configuration)
+	public long executeCommand(String configuration)
 			throws RemoteException {
 		try {
-			return readerSession.executeCommand(command, configuration);
+			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder builder = factory.newDocumentBuilder();
+			StringReader reader = new StringReader( configuration );
+			InputSource inputSource = new InputSource( reader );
+			Document doc = builder.parse(inputSource);
+			return readerSession.executeCommand(doc);
 		} catch (RifidiConnectionException e) {
 			logger.error("RifidiConnectionException", e);
 			throw new RemoteException("RifidiConnectionException", e);
@@ -99,6 +114,18 @@ public class RemoteReaderConnectionImpl implements RemoteReaderConnection {
 		} catch (RifidiCommandNotFoundException e) {
 			logger.error("RifidiCommandNotFoundException", e);
 			throw new RemoteException("RifidiCommandNotFoundException", e);
+		} catch (RifidiInvalidConfigurationException e) {
+			logger.error("RifidiInvalidConfigurationException", e);
+			throw new RemoteException("RifidiInvalidConfigurationException", e);
+		} catch (ParserConfigurationException e) {
+			logger.error("ParserConfigurationException", e);
+			throw new RemoteException("ParserConfigurationException", e);
+		} catch (SAXException e) {
+			logger.error("SAXException", e);
+			throw new RemoteException("SAXException", e);
+		} catch (IOException e) {
+			logger.error("IOException", e);
+			throw new RemoteException("IOException", e);
 		}
 	}
 
@@ -109,7 +136,8 @@ public class RemoteReaderConnectionImpl implements RemoteReaderConnection {
 	 */
 	@Override
 	public List<String> getAvailableCommandGroups() throws RemoteException {
-		return readerSession.getAvailableCommandGroups();
+		//return readerSession.getAvailableCommandGroups();
+		throw new RemoteException("Funtion not available");
 	}
 
 	/*
@@ -119,7 +147,8 @@ public class RemoteReaderConnectionImpl implements RemoteReaderConnection {
 	 */
 	@Override
 	public List<String> getAvailableCommands() throws RemoteException {
-		return readerSession.getAvailableCommands();
+		//return readerSession.getAvailableCommands();
+		throw new RemoteException("Funtion not available");
 	}
 
 	/*
@@ -130,7 +159,8 @@ public class RemoteReaderConnectionImpl implements RemoteReaderConnection {
 	@Override
 	public List<String> getAvailableCommands(String groupName)
 			throws RemoteException {
-		return readerSession.getAvailableCommands(groupName);
+		//return readerSession.getAvailableCommands(groupName);
+		throw new RemoteException("Funtion not available");
 	}
 
 	/*
@@ -180,20 +210,7 @@ public class RemoteReaderConnectionImpl implements RemoteReaderConnection {
 	 */
 	@Override
 	public long startTagStream(String configuration) throws RemoteException {
-		try {
-			return readerSession.executeCommand("TagStreaming", configuration);
-		} catch (RifidiConnectionException e) {
-			logger.error("RifidiConnectionException", e);
-			throw new RemoteException("RifidiConnectionException", e);
-		} catch (RifidiCommandInterruptedException e) {
-			logger.error("RifidiCommandInterruptedException", e);
-			throw new RemoteException("RifidiCommandInterruptedException", e);
-		} catch (RifidiCommandNotFoundException e) {
-			// TODO this might happen more often
-			// logger.error("RifidiCommandNotFoundException", e);
-			logger.error("Command not found" + e.getMessage());
-			throw new RemoteException("RifidiCommandNotFoundException", e);
-		}
+		return executeCommand("<TagStreaming></TagStreaming>");
 	}
 
 	/*
