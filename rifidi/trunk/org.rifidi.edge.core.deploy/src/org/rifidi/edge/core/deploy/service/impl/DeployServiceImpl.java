@@ -22,7 +22,6 @@ import org.rifidi.edge.core.deploy.monitor.FileMonitorListener;
 import org.rifidi.edge.core.deploy.service.DeployService;
 import org.rifidi.edge.core.deploy.utilities.BundleHolder;
 import org.rifidi.edge.core.deploy.xml.CommandExtension;
-import org.rifidi.edge.core.readerplugin.ReaderInfo;
 import org.rifidi.edge.core.readerplugin.ReaderPlugin;
 import org.rifidi.edge.core.readerplugin.commands.Command;
 import org.rifidi.edge.core.readerplugin.service.ReaderPluginService;
@@ -80,7 +79,8 @@ public class DeployServiceImpl implements DeployService, FileMonitorListener {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.deploy.service.DeployService#add(java.util.List)
+	 * @see
+	 * org.rifidi.edge.core.deploy.service.DeployService#add(java.util.List)
 	 */
 	@Override
 	public void add(List<String> directoriesToMonitor) {
@@ -98,7 +98,8 @@ public class DeployServiceImpl implements DeployService, FileMonitorListener {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.deploy.service.DeployService#remove(java.util.List)
+	 * @see
+	 * org.rifidi.edge.core.deploy.service.DeployService#remove(java.util.List)
 	 */
 	@Override
 	public void remove(List<String> directoriesToRemove) {
@@ -174,16 +175,9 @@ public class DeployServiceImpl implements DeployService, FileMonitorListener {
 			InputStream in = fragmentBundle.getEntry(COMMANDXML).openStream();
 			CommandExtension commandExtension = loadCommandExtension(in);
 
-			// Load ReaderInfo Class
-			// TODO check if class is extending ReaderInfo
-			Class<?> readerInfoClass = Class.forName(commandExtension
-					.getExtendPlugin());
-
 			// Get Plugin associated with ReaderInfo
-
-			// TODO find out about Class cast
 			ReaderPlugin readerPlugin = readerPluginService
-					.getReaderPlugin((Class<? extends ReaderInfo>) readerInfoClass);
+					.getReaderPlugin(commandExtension.getExtendPlugin());
 
 			// TODO deferred loading
 			if (readerPlugin == null) {
@@ -228,7 +222,9 @@ public class DeployServiceImpl implements DeployService, FileMonitorListener {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.deploy.monitor.FileMonitorListener#fileAddedEvent(java.io.File)
+	 * @see
+	 * org.rifidi.edge.core.deploy.monitor.FileMonitorListener#fileAddedEvent
+	 * (java.io.File)
 	 */
 	@Override
 	public void fileAddedEvent(File f) {
@@ -240,7 +236,9 @@ public class DeployServiceImpl implements DeployService, FileMonitorListener {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.deploy.monitor.FileMonitorListener#fileRemovedEvent(java.io.File)
+	 * @see
+	 * org.rifidi.edge.core.deploy.monitor.FileMonitorListener#fileRemovedEvent
+	 * (java.io.File)
 	 */
 	@Override
 	public void fileRemovedEvent(File f) {
