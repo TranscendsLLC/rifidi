@@ -1,5 +1,6 @@
 package org.rifidi.edge.readerplugin.dummy;
 
+import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.rifidi.edge.core.readerplugin.service.ReaderPluginService;
@@ -18,8 +19,9 @@ public class Activator implements BundleActivator {
 	 */
 	public void start(BundleContext context) throws Exception {
 		System.out.println("== Bundle DummyReaderPlugin started ==");
-		ServiceRegistry.getInstance().service(this);
 		this.context = context;
+		ServiceRegistry.getInstance().service(this);
+
 	}
 
 	/*
