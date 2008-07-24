@@ -3,6 +3,8 @@ package org.rifidi.edge.readerplugin.dummy.plugin;
 import java.io.IOException;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
+import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.Random;
 
 import org.apache.commons.logging.Log;
@@ -24,8 +26,10 @@ public class DummyConnectionManager extends ConnectionManager {
 	/* used only when the dummy adapter is set to random errors */
 	Random random;
 
-	PipedInputStream input;
-	PipedOutputStream output;
+	/**
+	 * The socket for this connection
+	 */
+	private Socket socket;
 
 	public DummyConnectionManager(ReaderInfo readerInfo) {
 		super(readerInfo);
@@ -35,7 +39,9 @@ public class DummyConnectionManager extends ConnectionManager {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionManager#connect()
+	 * @see
+	 * org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionManager
+	 * #connect()
 	 */
 	@Override
 	public void connect(Connection connection) throws RifidiConnectionException {
@@ -45,7 +51,9 @@ public class DummyConnectionManager extends ConnectionManager {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionManager#disconnect()
+	 * @see
+	 * org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionManager
+	 * #disconnect()
 	 */
 	@Override
 	public void disconnect(Connection connection) {
@@ -66,22 +74,29 @@ public class DummyConnectionManager extends ConnectionManager {
 				}
 			}
 		}
+		
+		//logical disconnect
 		try {
-			input.close();
-		} catch (IOException e) {
-			e.printStackTrace();
+			connection.sendMessage(new String("quit\n"));
+		} catch (IOException e1) {
+			e1.printStackTrace();
 		}
+		
+		//physical disconnect
 		try {
-			output.close();
+			if (socket != null)
+				socket.close();
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.debug("Socket already closed");
 		}
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionManager#getCommunicationProtocol()
+	 * @see
+	 * org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionManager
+	 * #getCommunicationProtocol()
 	 */
 	@Override
 	public CommunicationProtocol getCommunicationProtocol() {
@@ -91,7 +106,9 @@ public class DummyConnectionManager extends ConnectionManager {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionManager#startKeepAlive()
+	 * @see
+	 * org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionManager
+	 * #startKeepAlive()
 	 */
 	@Override
 	public void startKeepAlive(Connection connection) {
@@ -101,7 +118,9 @@ public class DummyConnectionManager extends ConnectionManager {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionManager#createCommunication()
+	 * @see
+	 * org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionManager
+	 * #createCommunication()
 	 */
 	@Override
 	public ConnectionStreams createCommunication()
@@ -124,37 +143,46 @@ public class DummyConnectionManager extends ConnectionManager {
 			}
 		}
 
-		// TODO test this.
-		input = new PipedInputStream();
+		ConnectionStreams streams = null;
 		try {
-			output = new PipedOutputStream(input);
+			socket = new Socket(info.getIpAddress(), info.getPort());
+			streams = new ConnectionStreams(socket.getInputStream(), socket
+					.getOutputStream());
+		} catch (UnknownHostException e) {
+			throw new RifidiConnectionException("Cannot create socket: "
+					+ info.getIpAddress() + ":" + info.getPort()
+					+ " is an unknown host", e);
 		} catch (IOException e) {
-			throw new RifidiConnectionException(e);
+			throw new RifidiConnectionException(
+					"Cannot create socket due to IOException ", e);
 		}
+		return streams;
 
-		logger.debug("Connected");
-		return new ConnectionStreams(input, output);
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionManager#getMaxNumConnectionsAttemps()
+	 * @see
+	 * org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionManager
+	 * #getMaxNumConnectionsAttemps()
 	 */
 	@Override
 	public int getMaxNumConnectionsAttemps() {
-		return (info.getMaxNumConnectionsAttemps() != 0) ? info
+		return (info.getMaxNumConnectionsAttemps() >= 1) ? info
 				.getMaxNumConnectionsAttemps() : 3;
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionManager#getReconnectionIntervall()
+	 * @see
+	 * org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionManager
+	 * #getReconnectionIntervall()
 	 */
 	@Override
 	public long getReconnectionIntervall() {
-		return (info.getReconnectionIntervall() != 0) ? info
+		return (info.getReconnectionIntervall() >= 0) ? info
 				.getReconnectionIntervall() : 1000;
 	}
 

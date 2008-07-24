@@ -1,4 +1,4 @@
-package org.rifidi.edge.readerplugin.dummy.commands;
+package org.rifidi.edge.readerplugin.dummy.properties;
 
 import java.io.IOException;
 import java.util.Random;

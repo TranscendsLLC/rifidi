@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.rifidi.org/ReaderPlugin" xmlns:tns="http://www.rifidi.org/ReaderPlugin" elementFormDefault="qualified">
+
+    <element name="ReaderPlugin">
+    	<complexType>
+    		<sequence>
+    			<element name="plugin" type="string"></element>
+    			<element name="info" type="string"></element>
+    			<element name="connectionManager" type="string"></element>
+    			<element ref="tns:property" maxOccurs="unbounded"
+    				minOccurs="0">
+    			</element>
+
+    			<element ref="tns:command" maxOccurs="unbounded" minOccurs="0"></element>
+    		</sequence>
+    	</complexType>
+    </element>
+    
+
+
+    <element name="property" type="tns:propertyType"></element>
+
+    <complexType name="propertyType">
+    	<sequence>
+    		<element name="classname" type="string"></element>
+    		<element name="group" type="string" maxOccurs="unbounded"
+    			minOccurs="1">
+    		</element>
+    		<element name="name" type="string"></element>
+    		<element name="xsd" type="string"></element>
+    	</sequence>
+    </complexType>
+    
+    <element name="command" type="tns:commandType"></element>
+
+    <complexType name="commandType">
+    	<sequence>
+    		<element name="classname" type="string"></element>
+    		<element name="group" type="string" maxOccurs="unbounded"
+    			minOccurs="1">
+    		</element>
+    		<element name="name" type="string"></element>
+    		<element name="xsd" type="string"></element>
+    	</sequence>
+    </complexType>
+</schema>
