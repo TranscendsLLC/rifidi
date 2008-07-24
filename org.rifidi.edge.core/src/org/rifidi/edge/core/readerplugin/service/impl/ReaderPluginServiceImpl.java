@@ -57,8 +57,9 @@ public class ReaderPluginServiceImpl implements ReaderPluginService {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.readerplugin.service.ReaderPluginService#registerReaderPlugin(java.lang.Class,
-	 *      org.rifidi.edge.core.readerplugin.ReaderPlugin)
+	 * @seeorg.rifidi.edge.core.readerplugin.service.ReaderPluginService#
+	 * registerReaderPlugin(java.lang.Class,
+	 * org.rifidi.edge.core.readerplugin.ReaderPlugin)
 	 */
 	@Override
 	public void registerReaderPlugin(Bundle readerPluginBundle) {
@@ -73,7 +74,8 @@ public class ReaderPluginServiceImpl implements ReaderPluginService {
 		ReaderPlugin readerPlugin = null;
 		ReaderPluginXML readerPluginXML = null;
 
-		URL xml = readerPluginBundle.getEntry("readerplugin.xml");
+		//URL xml = readerPluginBundle.getEntry("ReaderPlugin.xml");
+		URL xml = readerPluginBundle.getResource("ReaderPlugin.xml");
 		if (xml != null) {
 			try {
 				readerPluginXML = parseXML(xml.openStream());
@@ -85,6 +87,8 @@ public class ReaderPluginServiceImpl implements ReaderPluginService {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+		} else {
+			logger.debug("This is null");
 		}
 		try {
 			// We don't know if all the bean info is != null
@@ -114,7 +118,8 @@ public class ReaderPluginServiceImpl implements ReaderPluginService {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.readerplugin.service.ReaderPluginService#unregisterReaderPlugin(java.lang.Class)
+	 * @seeorg.rifidi.edge.core.readerplugin.service.ReaderPluginService#
+	 * unregisterReaderPlugin(java.lang.Class)
 	 */
 	@Override
 	public void unregisterReaderPlugin(Bundle readerPluginBundle) {
@@ -135,7 +140,8 @@ public class ReaderPluginServiceImpl implements ReaderPluginService {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.readerplugin.service.ReaderPluginService#getAllReaderInfos()
+	 * @seeorg.rifidi.edge.core.readerplugin.service.ReaderPluginService#
+	 * getAllReaderInfos()
 	 */
 	@Override
 	public List<String> getAllReaderInfos() {
@@ -145,7 +151,9 @@ public class ReaderPluginServiceImpl implements ReaderPluginService {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.readerplugin.service.ReaderPluginService#getReaderPlugin(java.lang.Class)
+	 * @see
+	 * org.rifidi.edge.core.readerplugin.service.ReaderPluginService#getReaderPlugin
+	 * (java.lang.Class)
 	 */
 	@Override
 	public ReaderPlugin getReaderPlugin(String readerInfo) {
@@ -155,7 +163,9 @@ public class ReaderPluginServiceImpl implements ReaderPluginService {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.readerplugin.service.ReaderPluginService#addReaderPluginListener(org.rifidi.edge.core.readerplugin.service.ReaderPluginListener)
+	 * @seeorg.rifidi.edge.core.readerplugin.service.ReaderPluginService#
+	 * addReaderPluginListener
+	 * (org.rifidi.edge.core.readerplugin.service.ReaderPluginListener)
 	 */
 	@Override
 	public void addReaderPluginListener(ReaderPluginListener listener) {
@@ -165,7 +175,9 @@ public class ReaderPluginServiceImpl implements ReaderPluginService {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.readerplugin.service.ReaderPluginService#removeReaderPluginListener(org.rifidi.edge.core.readerplugin.service.ReaderPluginListener)
+	 * @seeorg.rifidi.edge.core.readerplugin.service.ReaderPluginService#
+	 * removeReaderPluginListener
+	 * (org.rifidi.edge.core.readerplugin.service.ReaderPluginListener)
 	 */
 	@Override
 	public void removeReaderPluginListener(ReaderPluginListener listener) {
