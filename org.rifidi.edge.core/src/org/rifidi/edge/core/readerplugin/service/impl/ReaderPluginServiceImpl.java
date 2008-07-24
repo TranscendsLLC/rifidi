@@ -75,6 +75,7 @@ public class ReaderPluginServiceImpl implements ReaderPluginService {
 		ReaderPluginXML readerPluginXML = null;
 
 		//URL xml = readerPluginBundle.getEntry("ReaderPlugin.xml");
+		//TODO Check why getEntry is not working
 		URL xml = readerPluginBundle.getResource("ReaderPlugin.xml");
 		if (xml != null) {
 			try {
