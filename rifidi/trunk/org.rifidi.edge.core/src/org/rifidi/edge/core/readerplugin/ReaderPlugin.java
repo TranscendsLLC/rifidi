@@ -1,5 +1,6 @@
 package org.rifidi.edge.core.readerplugin;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
@@ -34,8 +35,9 @@ public class ReaderPlugin {
 
 	public ConnectionManager newConnectionManager(ReaderInfo readerInfo) {
 		try {
+			//TODO: make a constructor with class and superclass
 			return (ConnectionManager) Class.forName(readerPluginXML.getConnectionManager())
-					.getConstructor(readerInfo.getClass()).newInstance(
+					.getConstructor(readerInfo.getClass().getSuperclass()).newInstance(
 							readerInfo);
 		} catch (IllegalArgumentException e) {
 			// TODO Auto-generated catch block
