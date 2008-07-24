@@ -13,4 +13,6 @@ Require-Bundle: org.rifidi.edge.core,
  org.rifidi.edge.common.utilities
 Export-Package: org.rifidi.edge.readerplugin.dummy.commands,
  org.rifidi.edge.readerplugin.dummy.plugin,
- org.rifidi.edge.readerplugin.dummy.protocol
+ org.rifidi.edge.readerplugin.dummy.properties,
+ org.rifidi.edge.readerplugin.dummy.protocol,
+ org.rifidi.edge.readerplugin.dummy.readerServer

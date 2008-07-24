@@ -1,7 +1,6 @@
-package org.rifidi.edge.readerplugin.dummy.commands;
+package org.rifidi.edge.readerplugin.dummy.properties;
 
 import java.io.IOException;
-import java.util.Random;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -15,32 +14,28 @@ import org.rifidi.edge.core.readerplugin.commands.annotations.CommandDesc;
 import org.rifidi.edge.core.readerplugin.messages.impl.TagMessage;
 import org.w3c.dom.Document;
 
-@CommandDesc(name = "GetTagsCurrentlyOnAntennasBroken")
-public class GetTagsOnceCommandBroken implements Command {
+@CommandDesc(name = "GetTagsCurrentlyOnAntennas")
+public class GetTagsOnceCommand implements Command {
 	private static final Log logger = LogFactory
-			.getLog(GetTagsOnceCommandBroken.class);
+			.getLog(GetTagsOnceCommand.class);
 	boolean running = true;
-
-	Random random = new Random();
 
 	@Override
 	public CommandReturnStatus start(Connection connection,
 			MessageQueue messageQueue, MessageQueue errorQueue,
 			Document configuration, long commandID) {
 		logger.debug("Getting tags.");
-	
+
 		String rawtag = ByteAndHexConvertingUtility.toHexString(
 				"Hallo".getBytes()).replace(" ", "")
 				+ "|" + 1565467895l + "\n\n";
+
 		try {
 			connection.sendMessage(rawtag);
 			rawtag = (String) connection.receiveMessage();
 		} catch (IOException e1) {
 			return CommandReturnStatus.INTERRUPTED;
 		}
-
-		if (random.nextDouble() <= 0)
-			return CommandReturnStatus.INTERRUPTED;
 
 		if (!rawtag.equals("")) {
 			String[] rawTags = rawtag.split("\n");

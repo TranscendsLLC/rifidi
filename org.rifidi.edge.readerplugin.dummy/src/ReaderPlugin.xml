@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<p:ReaderPlugin xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:p="http://www.rifidi.org/ReaderPlugin"
+	xsi:schemaLocation="http://www.rifidi.org/ReaderPlugin ..\..\org.rifidi.edge.core\src\org\rifidi\edge\core\readerplugin\ReaderPlugin.xsd">
+	<p:plugin>org.rifidi.readerplugin.dummy</p:plugin>
+	<p:info>org.rifidi.readerplugin.dummy.plugin.DummyReaderInfo</p:info>
+	<p:connectionManager>
+		org.rifidi.readerplugin.dummy.plugin.DummyConnectionManager
+	</p:connectionManager>
+	<p:command>
+		<p:classname>
+			org.rifidi.readerplugin.dummy.commands.TagStreamCommand
+		</p:classname>
+		<p:group>general</p:group>
+		<p:name>TagStreaming</p:name>
+		<p:xsd>
+			org.rifidi.readerplugin.dummy.commands.TagStreamCommand.xsd 
+		</p:xsd>
+	</p:command>
+</p:ReaderPlugin>
