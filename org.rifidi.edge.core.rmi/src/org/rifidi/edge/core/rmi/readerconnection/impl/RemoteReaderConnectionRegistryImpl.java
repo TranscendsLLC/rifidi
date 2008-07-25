@@ -53,7 +53,7 @@ public class RemoteReaderConnectionRegistryImpl implements
 	@Override
 	public RemoteReaderConnection createReaderConnection(ReaderInfo readerInfo)
 			throws RemoteException {
-
+		logger.debug("Create Reader called");
 		ReaderSession readerSession = readerSessionService
 				.createReaderSession(readerInfo);
 
