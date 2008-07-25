@@ -116,7 +116,7 @@ public class AlienTagEnhancedStreamCommand implements Command {
 		/**
 		 * Tag list custom format command.
 		 */
-		public static final String TAG_LIST_CUSTOM_FORMAT = ('\1' + "set TagListCustomFormat=%k|%t|%v\n");
+		public static final String TAG_LIST_CUSTOM_FORMAT = ('\1' + "set TagListCustomFormat=%k|%t|%a|%v|%d\n");
 	}
 
 	/**
@@ -137,7 +137,9 @@ public class AlienTagEnhancedStreamCommand implements Command {
 			if (splitString2.length > 1) {
 				String tagData = splitString2[0];
 				String timeStamp = splitString2[1];
-				String velocity = splitString2[2];
+				String antennaID = splitString2[2];
+				String velocity = splitString2[3];
+				String distance = splitString[4];
 				
 				Time time = Time.valueOf(timeStamp);
 
@@ -146,6 +148,9 @@ public class AlienTagEnhancedStreamCommand implements Command {
 						.fromHexString(tagData.trim()));
 				newTagRead.setLastSeenTime(time.getTime());
 				newTagRead.setVelocity(Float.parseFloat(velocity));
+				
+				newTagRead.setAntennaId(Integer.parseInt(antennaID));
+				newTagRead.setDistance(Float.parseFloat(distance));
 				retVal.add(newTagRead);
 
 			}
