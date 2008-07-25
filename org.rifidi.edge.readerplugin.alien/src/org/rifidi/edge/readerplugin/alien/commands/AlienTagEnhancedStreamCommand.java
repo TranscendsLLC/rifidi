@@ -25,21 +25,21 @@ import org.rifidi.edge.core.readerplugin.commands.Command;
 import org.rifidi.edge.core.readerplugin.commands.CommandReturnStatus;
 import org.rifidi.edge.core.readerplugin.commands.annotations.CommandDesc;
 import org.rifidi.edge.core.readerplugin.messages.impl.TagMessage;
-import org.rifidi.edge.readerplugin.alien.messages.VelocityTagMessage;
+import org.rifidi.edge.readerplugin.alien.messages.EnhancedTagMessage;
 
 /**
  * 
  * 
  * @author Matthew Dean - matt@pramari.com
  */
-@CommandDesc(name = "TagStreamingVelocity")
-public class AlienTagVelocityStreamCommand implements Command {
+@CommandDesc(name = "TagStreamingEnhanced")
+public class AlienTagEnhancedStreamCommand implements Command {
 
 	
 	private boolean running = false;
 
 	private static final Log logger = LogFactory
-			.getLog(AlienTagVelocityStreamCommand.class);
+			.getLog(AlienTagEnhancedStreamCommand.class);
 
 	/*
 	 * (non-Javadoc)
@@ -141,7 +141,7 @@ public class AlienTagVelocityStreamCommand implements Command {
 				
 				Time time = Time.valueOf(timeStamp);
 
-				VelocityTagMessage newTagRead = new VelocityTagMessage();
+				EnhancedTagMessage newTagRead = new EnhancedTagMessage();
 				newTagRead.setId(ByteAndHexConvertingUtility
 						.fromHexString(tagData.trim()));
 				newTagRead.setLastSeenTime(time.getTime());
