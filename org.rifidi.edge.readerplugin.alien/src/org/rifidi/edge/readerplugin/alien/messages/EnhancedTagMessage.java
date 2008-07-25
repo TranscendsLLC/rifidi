@@ -7,7 +7,7 @@ import org.rifidi.edge.core.readerplugin.messages.impl.TagMessage;
 @XmlRootElement
 public class EnhancedTagMessage extends TagMessage {
 	private float velocity;
-	private float distance;
+	private float signalStrength;
 	private int antennaId;
 
 	/**
@@ -27,15 +27,15 @@ public class EnhancedTagMessage extends TagMessage {
 	/**
 	 * @return the distance
 	 */
-	public float getDistance() {
-		return distance;
+	public float getSignalStrength() {
+		return signalStrength;
 	}
 
 	/**
 	 * @param distance the distance to set
 	 */
-	public void setDistance(float distance) {
-		this.distance = distance;
+	public void setSignalStrength(float distance) {
+		this.signalStrength = distance;
 	}
 
 	/**
