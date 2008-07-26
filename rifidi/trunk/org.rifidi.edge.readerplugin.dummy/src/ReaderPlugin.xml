@@ -3,11 +3,15 @@
 	<plugin>org.rifidi.readerplugin.dummy</plugin>
 	<info>org.rifidi.edge.readerplugin.dummy.plugin.DummyReaderInfo</info>
 	<connectionManager>org.rifidi.edge.readerplugin.dummy.plugin.DummyConnectionManager</connectionManager>
+	<property>
+		<classname>org.rifidi.edge.readerplugin.dummy.properties.GetTagsOnceCommand</classname>
+		<group>general</group>
+		<name>GetTagsOnce</name>
+	</property>
 	<command>
 		<classname>org.rifidi.edge.readerplugin.dummy.commands.TagStreamCommand</classname>
 		<group>general</group>
 		<name>TagStreaming</name>
-		<xsd>org.rifidi.edge.readerplugin.dummy.commands.TagStreamCommand.xsd 
-		</xsd>
 	</command>
+
 </readerPluginXML>

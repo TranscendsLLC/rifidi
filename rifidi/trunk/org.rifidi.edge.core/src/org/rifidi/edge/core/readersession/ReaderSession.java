@@ -67,10 +67,11 @@ public interface ReaderSession {
 	 *             the given command could not be found
 	 * @throws RifidiCommandInterruptedException
 	 *             if the command could not be started or was interrupted
+	 * @throws RifidiInvalidConfigurationException 
 	 */
 	public Document executeProperty(Document propertiesToExecute)
 			throws RifidiConnectionException, RifidiCommandNotFoundException,
-			RifidiCommandInterruptedException;
+			RifidiCommandInterruptedException, RifidiInvalidConfigurationException;
 
 	/**
 	 * Stop the currently executing command

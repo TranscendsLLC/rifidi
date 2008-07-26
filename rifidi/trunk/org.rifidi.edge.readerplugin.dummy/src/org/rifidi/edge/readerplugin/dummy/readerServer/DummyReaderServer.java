@@ -17,6 +17,7 @@ public class DummyReaderServer {
 	private boolean run=false;
 	private int port;
 	private boolean echo;
+	private Thread t;
 	
 	public static void main(String[] args) {
 		if (args.length == 2) {
@@ -27,13 +28,15 @@ public class DummyReaderServer {
 	}
 	
 	public void start(){
-		Thread t = new Thread(new DummyServerThread(), "Dummy Server Thread");
 		run = true;
+		t = new Thread(new DummyServerThread(), "Dummy Server Thread");
 		t.start();
 	}
 	
 	public void stop(){
 		run = false;
+		t.interrupt();
+		t=null;
 	}
 
 	public DummyReaderServer(int _port, boolean echo) {
@@ -80,10 +83,9 @@ public class DummyReaderServer {
 							out.flush();
 						}
 					}
-					System.out.println("Connection closed");
+					logger.debug("Connection closed");
 				} catch (IOException e) {
-					System.out.println("Connection lost");
-					e.printStackTrace();
+					logger.debug("Connection lost");
 				}
 			}
 			

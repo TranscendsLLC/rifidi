@@ -4,74 +4,37 @@ import java.io.IOException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.rifidi.edge.common.utilities.converter.ByteAndHexConvertingUtility;
+import org.rifidi.edge.common.utilities.dom.DomHelper;
 import org.rifidi.edge.core.communication.Connection;
-import org.rifidi.edge.core.exceptions.RifidiMessageQueueException;
 import org.rifidi.edge.core.messageQueue.MessageQueue;
-import org.rifidi.edge.core.readerplugin.commands.Command;
-import org.rifidi.edge.core.readerplugin.commands.CommandReturnStatus;
-import org.rifidi.edge.core.readerplugin.commands.annotations.CommandDesc;
-import org.rifidi.edge.core.readerplugin.messages.impl.TagMessage;
-import org.w3c.dom.Document;
+import org.rifidi.edge.core.readerplugin.property.Property;
+import org.w3c.dom.Element;
+import org.w3c.dom.Text;
 
-@CommandDesc(name = "GetTagsCurrentlyOnAntennas")
-public class GetTagsOnceCommand implements Command {
+public class GetTagsOnceCommand implements Property {
 	private static final Log logger = LogFactory
 			.getLog(GetTagsOnceCommand.class);
 	boolean running = true;
 
 	@Override
-	public CommandReturnStatus start(Connection connection,
-			MessageQueue messageQueue, MessageQueue errorQueue,
-			Document configuration, long commandID) {
+	public Element execute(Connection connection, MessageQueue errorQueue,
+			Element propertyConfig) {
 		logger.debug("Getting tags.");
 
-		String rawtag = ByteAndHexConvertingUtility.toHexString(
-				"Hallo".getBytes()).replace(" ", "")
-				+ "|" + 1565467895l + "\n\n";
+		String rawtag = "123456789\n";
 
 		try {
 			connection.sendMessage(rawtag);
 			rawtag = (String) connection.receiveMessage();
 		} catch (IOException e1) {
-			return CommandReturnStatus.INTERRUPTED;
+			return null;
 		}
-
-		if (!rawtag.equals("")) {
-			String[] rawTags = rawtag.split("\n");
-			for (String rawTag : rawTags) {
-				// logger.debug(rawTag);
-
-				// All tag data sent back is separated by vertical bars.
-				String[] rawTagItems = rawTag.split("\\|");
-
-				TagMessage tag = new TagMessage();
-
-				// logger.debug(rawTagItems[0]);
-
-				tag.setId(ByteAndHexConvertingUtility
-						.fromHexString(rawTagItems[0].substring(2,
-								rawTagItems[0].length())));
-
-				// TODO: correct the time stamps.
-				tag.setLastSeenTime(System.nanoTime());
-				// logger.debug(tag.toXML());
-				try {
-					messageQueue.addMessage(tag);
-				} catch (RifidiMessageQueueException e) {
-					return CommandReturnStatus.INTERRUPTED;
-				}
-			}
-
-		}
-
-		return CommandReturnStatus.SUCCESSFUL;
+		Element returnnode = propertyConfig.getOwnerDocument().createElement(propertyConfig.getNodeName());
+		Element tagID= propertyConfig.getOwnerDocument().createElement("TAGID");
+		Text data= propertyConfig.getOwnerDocument().createTextNode(rawtag);
+		tagID.appendChild(data);
+		returnnode.appendChild(tagID);
+	
+		return returnnode;
 	}
-
-	@Override
-	public void stop() {
-		// Do Nothing
-
-	}
-
 }

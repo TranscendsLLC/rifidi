@@ -117,7 +117,9 @@ public class ExecutionThread {
 			if (force) {
 				logger.debug("Force shutdown");
 				try {
+					logger.debug("before join");
 					thread.join(5000);
+					logger.debug("after join");
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}

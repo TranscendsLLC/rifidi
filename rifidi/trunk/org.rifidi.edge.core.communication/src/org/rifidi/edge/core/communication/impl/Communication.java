@@ -105,13 +105,8 @@ public class Communication implements ConnectionExceptionListener {
 				connectionManager.disconnect(connection);
 				connection.cleanQueues();
 			}
-			
-			logger.debug("Trying to stop WriteThread " + writeThread);
 			if (writeThread != null) {
 				writeThread.stop();
-			} else {
-				logger.debug("Could not stop WriteThread " + writeThread
-						+ " because it was null");
 			}
 			if (readThread != null) {
 				readThread.stop();

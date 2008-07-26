@@ -1,21 +1,21 @@
 package org.rifidi.edge.core.readersession.impl.states;
 
-import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.concurrent.Semaphore;
 
 import javax.xml.XMLConstants;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.rifidi.edge.common.utilities.dom.DomHelper;
+import org.rifidi.edge.common.utilities.resource.Resource;
 import org.rifidi.edge.core.communication.Connection;
 import org.rifidi.edge.core.communication.service.CommunicationStateListener;
 import org.rifidi.edge.core.communication.service.ConnectionService;
@@ -23,17 +23,14 @@ import org.rifidi.edge.core.communication.service.ConnectionStatus;
 import org.rifidi.edge.core.exceptions.RifidiCommandInterruptedException;
 import org.rifidi.edge.core.exceptions.RifidiCommandNotFoundException;
 import org.rifidi.edge.core.exceptions.RifidiConnectionException;
-import org.rifidi.edge.core.exceptions.RifidiExecutionException;
 import org.rifidi.edge.core.exceptions.RifidiInvalidConfigurationException;
 import org.rifidi.edge.core.messageQueue.MessageQueue;
 import org.rifidi.edge.core.messageQueue.service.MessageService;
 import org.rifidi.edge.core.readerplugin.ReaderInfo;
 import org.rifidi.edge.core.readerplugin.ReaderPlugin;
 import org.rifidi.edge.core.readerplugin.commands.Command;
-import org.rifidi.edge.core.readerplugin.commands.CommandConfiguration;
 import org.rifidi.edge.core.readerplugin.commands.CommandReturnStatus;
 import org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionManager;
-import org.rifidi.edge.core.readerplugin.property.Property;
 import org.rifidi.edge.core.readerplugin.service.ReaderPluginService;
 import org.rifidi.edge.core.readerplugin.xml.CommandDescription;
 import org.rifidi.edge.core.readersession.ReaderSession;
@@ -48,8 +45,6 @@ import org.rifidi.services.annotations.Inject;
 import org.rifidi.services.registry.ServiceRegistry;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 /**
@@ -141,17 +136,25 @@ public class ReaderSessionImpl implements ReaderSession, ReaderSessionState,
 	@Override
 	public Document executeProperty(Document propertiesToExecute)
 			throws RifidiConnectionException,
-			RifidiCommandInterruptedException, RifidiCommandNotFoundException {
-		return this.executeProperty(propertiesToExecute);
+			RifidiCommandInterruptedException, RifidiCommandNotFoundException, RifidiInvalidConfigurationException {
+		return this.state_executeProperty(propertiesToExecute);
 	}
 
-	protected void validate(String xsd, Element elementToValidate)
+	protected void validate(Class command, Element elementToValidate)
 			throws SAXException, IOException {
 		SchemaFactory schemaFactory = SchemaFactory
 				.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-		Schema schema = schemaFactory.newSchema(new File(xsd));
-		Validator v = schema.newValidator();
-		v.validate(new DOMSource(elementToValidate));
+		InputStream is = Resource.getResource(command, command.getSimpleName()+".xsd");
+		
+		
+		if(is!=null){
+			Schema schema = schemaFactory.newSchema(new StreamSource(is));
+			Validator v = schema.newValidator();
+			v.validate(new DOMSource(elementToValidate));
+		}else{
+			throw new IOException("XSD file could not be found: ");
+		}
+
 	}
 
 	/**
