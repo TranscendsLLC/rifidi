@@ -65,7 +65,14 @@ public class ReaderPlugin {
 	}
 	
 	public ArrayList<String> getCommands(){
-		ArrayList<CommandDescription> commands = this.readerPluginXML.getCommandList();
+		return getCommands(readerPluginXML.getCommandList());
+	}
+	
+	public ArrayList<String> getProperties(){
+		return getCommands(readerPluginXML.getPropertyList());
+	}
+	
+	private ArrayList<String> getCommands(ArrayList<CommandDescription> commands){
 		ArrayList<String> names = new ArrayList<String>();
 		for(CommandDescription d : commands){
 			names.add(d.getName());

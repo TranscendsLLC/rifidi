@@ -144,4 +144,6 @@ public interface ReaderSession {
 	public void resetReaderSession();
 	
 	public List<String> getAvailableCommands();
+	
+	public List<String> getAvailableProperties();
 }

@@ -548,4 +548,9 @@ public class ReaderSessionImpl implements ReaderSession, ReaderSessionState,
 		return plugin.getCommands();
 	}
 
+	@Override
+	public List<String> getAvailableProperties() {
+		return plugin.getProperties();
+	}
+
 }

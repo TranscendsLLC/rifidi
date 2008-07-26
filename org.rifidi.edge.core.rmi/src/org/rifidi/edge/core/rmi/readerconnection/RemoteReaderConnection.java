@@ -46,6 +46,8 @@ public interface RemoteReaderConnection extends Remote {
 	 */
 	public List<String> getAvailableCommands(String groupName)
 			throws RemoteException;
+	
+	public List<String> getAvailableProperties() throws RemoteException;
 
 	/**
 	 * Get a list of available command groups
