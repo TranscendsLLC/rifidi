@@ -1,7 +1,7 @@
 package org.rifidi.edge.core.readerplugin;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionManager;
@@ -62,6 +62,15 @@ public class ReaderPlugin {
 			e.printStackTrace();
 		}
 		return null;
+	}
+	
+	public ArrayList<String> getCommands(){
+		ArrayList<CommandDescription> commands = this.readerPluginXML.getCommandList();
+		ArrayList<String> names = new ArrayList<String>();
+		for(CommandDescription d : commands){
+			names.add(d.getName());
+		}
+		return names;
 	}
 
 }

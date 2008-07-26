@@ -142,4 +142,6 @@ public interface ReaderSession {
 	 * Restart the ReaderSession to reset a Error State
 	 */
 	public void resetReaderSession();
+	
+	public List<String> getAvailableCommands();
 }
