@@ -245,4 +245,9 @@ public class RemoteReaderConnectionImpl implements RemoteReaderConnection {
 		return readerSession;
 	}
 
+	@Override
+	public List<String> getAvailableProperties() throws RemoteException {
+		return readerSession.getAvailableProperties();
+	}
+
 }
