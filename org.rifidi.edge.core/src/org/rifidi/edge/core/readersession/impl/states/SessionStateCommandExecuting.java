@@ -70,10 +70,10 @@ public class SessionStateCommandExecuting implements ReaderSessionState {
 	@Override
 	public void state_stopCommand(boolean force) {
 		logger.debug("stopCommand in COMMAND_EXECUTING session state");
-		readerSessionImpl.executionThread.stop(force);
 		readerSessionImpl.curCommand.setCommandStatus(CommandStatus.INTERRUPTED);
 		readerSessionImpl.curCommand = null;
 		readerSessionImpl.transition(new SessionStateOK(readerSessionImpl));
+		readerSessionImpl.executionThread.stop(force);
 	}
 
 	@Override

@@ -2,67 +2,47 @@ package org.rifidi.edge.readerplugin.dummy.commands;
 
 import java.io.IOException;
 
-import org.rifidi.edge.common.utilities.converter.ByteAndHexConvertingUtility;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.communication.Connection;
-import org.rifidi.edge.core.exceptions.RifidiMessageQueueException;
 import org.rifidi.edge.core.messageQueue.MessageQueue;
 import org.rifidi.edge.core.readerplugin.commands.Command;
 import org.rifidi.edge.core.readerplugin.commands.CommandReturnStatus;
 import org.rifidi.edge.core.readerplugin.commands.annotations.CommandDesc;
-import org.rifidi.edge.core.readerplugin.messages.impl.TagMessage;
 import org.w3c.dom.Document;
 
 @CommandDesc(name = "TagStreaming")
 public class TagStreamCommand implements Command {
 
 	boolean running = true;
+	
+	Log logger = LogFactory.getLog(TagStreamCommand.class);
 
 	@Override
 	public CommandReturnStatus start(Connection connection,
 			MessageQueue messageQueue, MessageQueue errorQueue,
 			Document configuration, long commandID) {
 
-		System.out.println("TagStreaming is running!");
+		logger.debug("TagStreaming is running!");
 		while (running) {
-			String rawtag = ByteAndHexConvertingUtility.toHexString(
-					"Hallo".getBytes()).replace(" ", "")
-					+ "|" + 1565467895l + "\n\n";
+			String rawtag = "hello\n";
 			try {
 				connection.sendMessage(rawtag);
 				rawtag = (String) connection.receiveMessage();
+				logger.debug(rawtag);
 			} catch (IOException e1) {
 				return CommandReturnStatus.INTERRUPTED;
 			}
-
-			if (!rawtag.equals("")) {
-				String[] rawTags = rawtag.split("\n");
-				for (String rawTag : rawTags) {
-					// logger.debug(rawTag);
-
-					// All tag data sent back is separated by vertical bars.
-					String[] rawTagItems = rawTag.split("\\|");
-
-					TagMessage tag = new TagMessage();
-
-					// logger.debug(rawTagItems[0]);
-
-					tag.setId(ByteAndHexConvertingUtility
-							.fromHexString(rawTagItems[0].substring(2,
-									rawTagItems[0].length())));
-
-					// TODO: correct the time stamps.
-					tag.setLastSeenTime(System.nanoTime());
-					// logger.debug(tag.toXML());
-					try {
-						messageQueue.addMessage(tag);
-					} catch (RifidiMessageQueueException e) {
-						return CommandReturnStatus.INTERRUPTED;
-					}
-				}
-
+			
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
+			
 		}
-		System.out.println("TagStreaming is stopped");
+		logger.debug("TagStreaming is stopped");
 		return CommandReturnStatus.SUCCESSFUL;
 	}
 

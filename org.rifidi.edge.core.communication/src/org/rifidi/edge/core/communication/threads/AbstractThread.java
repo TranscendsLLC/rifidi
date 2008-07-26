@@ -66,6 +66,7 @@ public abstract class AbstractThread implements Runnable {
 		} catch (InterruptedException e) {
 			// Ignore
 		}
+		logger.debug("Thread stopped" + thread.getName());
 
 	}
 

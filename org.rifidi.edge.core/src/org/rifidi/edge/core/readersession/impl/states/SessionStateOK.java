@@ -89,26 +89,6 @@ public class SessionStateOK implements ReaderSessionState {
 		CommandDescription cd = readerSessionImpl.plugin
 				.getCommand(commandName);
 
-		try {
-			readerSessionImpl.validate(cd.getXsd(), element);
-		} catch (SAXException e1) {
-			logger.debug(e1.getMessage());
-			readerSessionImpl.commandJournal.updateCommand(
-					readerSessionImpl.curCommand.getCommand(),
-					CommandStatus.NOCOMMAND);
-			readerSessionImpl.curCommand = null;
-			readerSessionImpl.transition(new SessionStateOK(readerSessionImpl));
-			throw new RifidiInvalidConfigurationException(e1.getMessage());
-		} catch (IOException e1) {
-			logger.debug(e1.getMessage());
-			readerSessionImpl.commandJournal.updateCommand(
-					readerSessionImpl.curCommand.getCommand(),
-					CommandStatus.NOCOMMAND);
-			readerSessionImpl.curCommand = null;
-			readerSessionImpl.transition(new SessionStateOK(readerSessionImpl));
-			throw new RifidiInvalidConfigurationException(e1.getMessage());
-		}
-
 		/*
 		 * Instantiate new command object
 		 */
@@ -126,6 +106,26 @@ public class SessionStateOK implements ReaderSessionState {
 			throw e1;
 		}
 		readerSessionImpl.curCommand.setCommand(com);
+
+		try {
+			readerSessionImpl.validate(com.getClass(), element);
+		} catch (SAXException e1) {
+			logger.debug(e1.getMessage());
+			readerSessionImpl.commandJournal.updateCommand(
+					readerSessionImpl.curCommand.getCommand(),
+					CommandStatus.NOCOMMAND);
+			readerSessionImpl.curCommand = null;
+			readerSessionImpl.transition(new SessionStateOK(readerSessionImpl));
+			throw new RifidiInvalidConfigurationException(e1.getMessage());
+		} catch (IOException e1) {
+			logger.debug(e1.getMessage());
+			readerSessionImpl.commandJournal.updateCommand(
+					readerSessionImpl.curCommand.getCommand(),
+					CommandStatus.NOCOMMAND);
+			readerSessionImpl.curCommand = null;
+			readerSessionImpl.transition(new SessionStateOK(readerSessionImpl));
+			throw new RifidiInvalidConfigurationException(e1.getMessage());
+		}
 
 		/*
 		 * Initialize the communication if not already done. Blocks until
@@ -235,39 +235,102 @@ public class SessionStateOK implements ReaderSessionState {
 	public Document state_executeProperty(Document propertiesToExecute)
 			throws RifidiInvalidConfigurationException,
 			RifidiConnectionException, RifidiCommandNotFoundException {
-		Document returnDocument = null;
-		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-		factory.setValidating(true);
 
-		DocumentBuilder docBuilder = null;
-		try {
-			docBuilder = factory.newDocumentBuilder();
-		} catch (ParserConfigurationException e1) {
-			logger.debug(e1.getMessage());
-			readerSessionImpl.transition(new SessionStateOK(readerSessionImpl));
-			throw new RifidiInvalidConfigurationException(e1);
+		NodeList documentChildren = propertiesToExecute.getChildNodes();
+		Node propertyNode = null;
+		for(int i=0; i<documentChildren.getLength(); i++){
+			if(documentChildren.item(i).getNodeName().equals("Properties")){
+				propertyNode = documentChildren.item(i);
+				break;
+			}
 		}
+		
+		if(propertyNode==null){
+			logger.debug("Malformed Property Configuration XML: no 'Properties' Node found in document root");
+			readerSessionImpl.transition(new SessionStateOK(readerSessionImpl));
+			throw new RifidiInvalidConfigurationException("No 'Properties' Node found in document root");
+		}
+		
+		/*
+		 * Initialize the communication if not already done. Blocks
+		 * until connected
+		 */
+		try {
+			readerSessionImpl.connect();
+		} catch (RifidiConnectionException e1) {
+			logger.debug(e1.getMessage());
+			readerSessionImpl.connectionStatus = ConnectionStatus.ERROR;
+			readerSessionImpl.transition(new SessionStateError(
+					readerSessionImpl));
+			throw e1;
+		}
+		/*
+		 * Check if we are connected
+		 */
+		while (readerSessionImpl.connectionStatus != ConnectionStatus.CONNECTED) {
+			if (readerSessionImpl.connectionStatus == ConnectionStatus.ERROR) {
+				logger.debug("ConnectionStatus is Error");
+				readerSessionImpl.transition(new SessionStateError(
+						readerSessionImpl));
+				throw new RifidiConnectionException(
+						"The connection to the reader is not valid anymore."
+								+ " (MAX_CONNECTION_ATTEMPTS)");
+			}
 
-		returnDocument = docBuilder.newDocument();
+			/*
+			 * Wait until we are connected (this method's
+			 * conn_connected() or conn_error() will be called)
+			 */
+			try {
+				synchronized (this) {
+					logger.debug(" Reader Session "
+							+ "waiting for Connection"
+							+ " Status to be Connected");
+					wait();
+				}
 
-		Element root = returnDocument.getDocumentElement();
-
+			} catch (InterruptedException e1) {
+			}
+			if (readerSessionImpl.connectionStatus == ConnectionStatus.ERROR) {
+				logger.debug("ConnectionStatus is Error");
+				readerSessionImpl.transition(new SessionStateError(
+						readerSessionImpl));
+				throw new RifidiConnectionException(
+						"The connection to the reader is not valid anymore."
+								+ " (MAX_CONNECTION_ATTEMPTS)");
+			}
+		}
+		
 		readerSessionImpl.transition(new SessionStatePropertyExecuting(
 				readerSessionImpl));
-
+		
 		// for each property in propertiesToExecute
-		NodeList properties = propertiesToExecute.getChildNodes();
+		NodeList properties = propertyNode.getChildNodes();
 		for (int i = 0; i < properties.getLength(); i++) {
 			Node property = properties.item(i);
 			if (property.getNodeType() == Node.ELEMENT_NODE) {
 				Element e = (Element) property;
+				logger.debug("Property name: " + e.getNodeName());
 				// validate element
 				CommandDescription propertyCommand = readerSessionImpl.plugin
 						.getProperty(e.getNodeName());
 				if (propertyCommand != null) {
 
+
+					Property propObject;
 					try {
-						readerSessionImpl.validate(propertyCommand.getXsd(), e);
+						propObject = (Property) readerSessionImpl
+								.instantiate(propertyCommand);
+					} catch (RifidiCommandNotFoundException e1) {
+						logger.debug(e1.getMessage());
+						readerSessionImpl.transition(new SessionStateOK(
+								readerSessionImpl));
+						throw e1;
+					}
+					
+
+					try {
+						readerSessionImpl.validate(propObject.getClass(), e);
 					} catch (SAXException e1) {
 						logger.debug(e1.getMessage());
 						readerSessionImpl.transition(new SessionStateOK(
@@ -282,74 +345,13 @@ public class SessionStateOK implements ReaderSessionState {
 								.getMessage());
 					}
 
-					Property propObject;
-					try {
-						propObject = (Property) readerSessionImpl
-								.instantiate(propertyCommand);
-					} catch (RifidiCommandNotFoundException e1) {
-						logger.debug(e1.getMessage());
-						readerSessionImpl.transition(new SessionStateOK(
-								readerSessionImpl));
-						throw e1;
-					}
-
-					/*
-					 * Initialize the communication if not already done. Blocks
-					 * until connected
-					 */
-					try {
-						readerSessionImpl.connect();
-					} catch (RifidiConnectionException e1) {
-						logger.debug(e1.getMessage());
-						readerSessionImpl.connectionStatus = ConnectionStatus.ERROR;
-						readerSessionImpl.transition(new SessionStateError(
-								readerSessionImpl));
-						throw e1;
-					}
-					/*
-					 * Check if we are connected
-					 */
-					while (readerSessionImpl.connectionStatus != ConnectionStatus.CONNECTED) {
-						if (readerSessionImpl.connectionStatus == ConnectionStatus.ERROR) {
-							logger.debug("ConnectionStatus is Error");
-							readerSessionImpl.transition(new SessionStateError(
-									readerSessionImpl));
-							throw new RifidiConnectionException(
-									"The connection to the reader is not valid anymore."
-											+ " (MAX_CONNECTION_ATTEMPTS)");
-						}
-
-						/*
-						 * Wait until we are connected (this method's
-						 * conn_connected() or conn_error() will be called)
-						 */
-						try {
-							synchronized (this) {
-								logger.debug(" Reader Session "
-										+ "waiting for Connection"
-										+ " Status to be Connected");
-								wait();
-							}
-
-						} catch (InterruptedException e1) {
-						}
-						if (readerSessionImpl.connectionStatus == ConnectionStatus.ERROR) {
-							logger.debug("ConnectionStatus is Error");
-							readerSessionImpl.transition(new SessionStateError(
-									readerSessionImpl));
-							throw new RifidiConnectionException(
-									"The connection to the reader is not valid anymore."
-											+ " (MAX_CONNECTION_ATTEMPTS)");
-						}
-					}
-
 					// execute property
 					Element returnVal = propObject.execute(
 							readerSessionImpl.connection,
 							readerSessionImpl.errorQueue, e);
 
 					// insert return value into element
-					root.appendChild(returnVal);
+					propertyNode.replaceChild(returnVal,e);
 				} else {
 					// TODO: what to do if propertyCommand is null?
 				}
@@ -358,7 +360,7 @@ public class SessionStateOK implements ReaderSessionState {
 			}
 		}// end for loop
 		readerSessionImpl.state_propertyFinished();
-		return returnDocument;
+		return propertiesToExecute;
 	}
 
 	@Override
@@ -385,8 +387,6 @@ public class SessionStateOK implements ReaderSessionState {
 	@Override
 	public void conn_connected() {
 		readerSessionImpl.connectionStatus = ConnectionStatus.CONNECTED;
-		// we need to notify in case we are waiting for the sate to change to
-		// connected
 		synchronized (this) {
 			notify();
 		}
