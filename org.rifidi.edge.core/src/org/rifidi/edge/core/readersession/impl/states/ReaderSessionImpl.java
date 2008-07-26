@@ -3,6 +3,7 @@ package org.rifidi.edge.core.readersession.impl.states;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
+import java.util.List;
 import java.util.concurrent.Semaphore;
 
 import javax.xml.XMLConstants;
@@ -71,22 +72,22 @@ public class ReaderSessionImpl implements ReaderSession, ReaderSessionState,
 	private ReaderPluginService readerPluginService;
 
 	// Session Information
-	ReaderPlugin plugin;
-	ReaderInfo readerInfo;
-	ConnectionManager connectionManager;
-	Connection connection;
-	MessageQueue messageQueue;
-	MessageQueue errorQueue;
+	protected ReaderPlugin plugin;
+	protected ReaderInfo readerInfo;
+	protected ConnectionManager connectionManager;
+	protected Connection connection;
+	protected MessageQueue messageQueue;
+	protected MessageQueue errorQueue;
 
 	// CommandExecution
-	CommandWrapper curCommand;
-	ExecutionThread executionThread;
-	CommandJournal commandJournal = new CommandJournal();
-	long commandID = 0;
+	protected CommandWrapper curCommand;
+	protected ExecutionThread executionThread;
+	protected CommandJournal commandJournal = new CommandJournal();
+	protected long commandID = 0;
 
 	// Status
 	private ReaderSessionStatus readerSessionStatus = ReaderSessionStatus.OK;
-	ConnectionStatus connectionStatus = ConnectionStatus.DISCONNECTED;
+	protected ConnectionStatus connectionStatus = ConnectionStatus.DISCONNECTED;
 
 	// Reader Session State
 	private ReaderSessionState sessionState;
@@ -540,6 +541,11 @@ public class ReaderSessionImpl implements ReaderSession, ReaderSessionState,
 	public void transition(ReaderSessionState newState) {
 		this.sessionState = newState;
 		transitionSem.release();
+	}
+
+	@Override
+	public List<String> getAvailableCommands() {
+		return plugin.getCommands();
 	}
 
 }

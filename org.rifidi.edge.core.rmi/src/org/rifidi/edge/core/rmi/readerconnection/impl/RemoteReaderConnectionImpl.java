@@ -147,8 +147,7 @@ public class RemoteReaderConnectionImpl implements RemoteReaderConnection {
 	 */
 	@Override
 	public List<String> getAvailableCommands() throws RemoteException {
-		//return readerSession.getAvailableCommands();
-		throw new RemoteException("Funtion not available");
+		return readerSession.getAvailableCommands();
 	}
 
 	/*
