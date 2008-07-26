@@ -21,9 +21,11 @@ public class DummyReaderServer {
 	
 	public static void main(String[] args) {
 		if (args.length == 2) {
-			new DummyReaderServer(Integer.parseInt(args[0]), Boolean.parseBoolean(args[1]));
+			DummyReaderServer drs = new DummyReaderServer(Integer.parseInt(args[0]), Boolean.parseBoolean(args[1]));
+			drs.start();
 		} else {
-			new DummyReaderServer(2000, true);
+			DummyReaderServer drs = new DummyReaderServer(2000, true);
+			drs.start();
 		}
 	}
 	
