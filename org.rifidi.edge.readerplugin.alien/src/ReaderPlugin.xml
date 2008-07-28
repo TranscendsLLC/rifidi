@@ -18,4 +18,15 @@
 			org.rifidi.readerplugin.alien.commands.AlienTagStreamingCommand.xsd 
 		</p:xsd>
 	</p:command>
+		<p:command>
+		<p:classname>
+			org.rifidi.readerplugin.alien.commands.AlienTagStreamEnhancedCommand 
+		</p:classname>
+		<p:group>general</p:group>
+		<p:group>skript</p:group>
+		<p:name>TagStreamingEnhanced</p:name>
+		<p:xsd>
+			org.rifidi.readerplugin.alien.commands.AlienTagStreamEnhancedCommand.xsd 
+		</p:xsd>
+	</p:command>
 </p:ReaderPlugin>

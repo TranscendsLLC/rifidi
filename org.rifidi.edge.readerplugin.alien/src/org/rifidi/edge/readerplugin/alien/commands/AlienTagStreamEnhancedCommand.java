@@ -28,19 +28,19 @@ import org.rifidi.edge.core.readerplugin.messages.impl.TagMessage;
 import org.rifidi.edge.readerplugin.alien.messages.EnhancedTagMessage;
 import org.w3c.dom.Document;
 
+
 /**
- * 
- * 
- * @author Matthew Dean - matt@pramari.com
+ * @author Jerry Maine - jerry@pramari.com
+ *
  */
 @CommandDesc(name = "TagStreamingEnhanced")
-public class AlienTagEnhancedStreamCommand implements Command {
+public class AlienTagStreamEnhancedCommand implements Command {
 
 	
 	private boolean running = false;
 
 	private static final Log logger = LogFactory
-			.getLog(AlienTagEnhancedStreamCommand.class);
+			.getLog(AlienTagStreamEnhancedCommand.class);
 
 	/*
 	 * (non-Javadoc)
