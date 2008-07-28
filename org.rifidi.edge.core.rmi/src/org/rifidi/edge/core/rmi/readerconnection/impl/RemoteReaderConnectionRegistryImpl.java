@@ -48,7 +48,9 @@ public class RemoteReaderConnectionRegistryImpl implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.rmi.readerconnection.RemoteReaderConnectionRegistry#createReaderConnection(org.rifidi.edge.core.readerplugin.ReaderInfo)
+	 * @see
+	 * org.rifidi.edge.core.rmi.readerconnection.RemoteReaderConnectionRegistry
+	 * #createReaderConnection(org.rifidi.edge.core.readerplugin.ReaderInfo)
 	 */
 	@Override
 	public RemoteReaderConnection createReaderConnection(ReaderInfo readerInfo)
@@ -63,7 +65,10 @@ public class RemoteReaderConnectionRegistryImpl implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.rmi.readerconnection.RemoteReaderConnectionRegistry#deleteReaderConnection(org.rifidi.edge.core.rmi.readerconnection.RemoteReaderConnection)
+	 * @see
+	 * org.rifidi.edge.core.rmi.readerconnection.RemoteReaderConnectionRegistry
+	 * #deleteReaderConnection
+	 * (org.rifidi.edge.core.rmi.readerconnection.RemoteReaderConnection)
 	 */
 	@Override
 	public void deleteReaderConnection(
@@ -73,22 +78,22 @@ public class RemoteReaderConnectionRegistryImpl implements
 				.remove(remoteReaderConnection);
 		readerSessionService.destroyReaderSession(remoteConnection
 				.getReaderSession());
-		readerSessionSync.remove(remoteConnection
-				.getReaderSession());
+		readerSessionSync.remove(remoteConnection.getReaderSession());
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.rmi.readerconnection.RemoteReaderConnectionRegistry#getAllReaderConnections()
+	 * @see
+	 * org.rifidi.edge.core.rmi.readerconnection.RemoteReaderConnectionRegistry
+	 * #getAllReaderConnections()
 	 */
 	@Override
 	public List<RemoteReaderConnection> getAllReaderConnections()
 			throws RemoteException {
-		for(ReaderSession session : readerSessionService.getAllReaderSessions())
-		{
-			if(!readerSessionSync.containsKey(session))
-			{
+		for (ReaderSession session : readerSessionService
+				.getAllReaderSessions()) {
+			if (!readerSessionSync.containsKey(session)) {
 				saveRemoteConnection(session);
 			}
 		}
@@ -98,7 +103,9 @@ public class RemoteReaderConnectionRegistryImpl implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.rmi.readerconnection.RemoteReaderConnectionRegistry#getAvailableReaderPlugins()
+	 * @see
+	 * org.rifidi.edge.core.rmi.readerconnection.RemoteReaderConnectionRegistry
+	 * #getAvailableReaderPlugins()
 	 */
 	@Override
 	public List<String> getAvailableReaderPlugins() throws RemoteException {
