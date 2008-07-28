@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <readerPluginXML>
 	<plugin>org.rifidi.readerplugin.dummyenhanced</plugin>
-	<info>org.rifidi.edge.readerplugin.dummyenhanced.plugin.DummyReaderInfo</info>
-	<connectionManager>org.rifidi.edge.readerplugin.dummyenhanced.plugin.DummyConnectionManager</connectionManager>
+	<info>org.rifidi.edge.readerplugin.dummyenhanced.plugin.DummyEnhancedReaderInfo</info>
+	<connectionManager>org.rifidi.edge.readerplugin.dummyenhanced.plugin.DummyEnhancedConnectionManager</connectionManager>
 	<property>
 		<classname>org.rifidi.edge.readerplugin.dummyenhanced.properties.GetTagsOnceCommand</classname>
 		<group>general</group>
