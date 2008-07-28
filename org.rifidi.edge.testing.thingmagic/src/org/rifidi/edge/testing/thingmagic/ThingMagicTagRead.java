@@ -19,9 +19,9 @@ import org.rifidi.edge.core.readerplugin.ReaderInfo;
 import org.rifidi.edge.core.readerplugin.service.ReaderPluginService;
 import org.rifidi.edge.core.readersession.ReaderSession;
 import org.rifidi.edge.core.readersession.service.ReaderSessionService;
-import org.rifidi.edge.readerplugin.thingmagic.commands.GetTagsOnceCommand;
 import org.rifidi.edge.readerplugin.thingmagic.plugin.ThingMagicManager;
 import org.rifidi.edge.readerplugin.thingmagic.plugin.ThingMagicReaderInfo;
+import org.rifidi.edge.readerplugin.thingmagic.properties.GetTagsOnceCommand;
 import org.rifidi.services.annotations.Inject;
 import org.rifidi.services.registry.ServiceRegistry;
 
