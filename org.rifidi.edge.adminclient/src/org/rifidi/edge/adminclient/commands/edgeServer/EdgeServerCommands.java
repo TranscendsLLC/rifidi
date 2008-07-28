@@ -376,7 +376,7 @@ public class EdgeServerCommands implements ICommand {
 			return "ERROR. Connection not found";
 		}
 		try {
-			remoteReaderConnection.executeCommand(commandName);
+			remoteReaderConnection.executeCommand(commandName, "");
 			return "Command started";
 		} catch (RemoteException e) {
 			e.printStackTrace();
