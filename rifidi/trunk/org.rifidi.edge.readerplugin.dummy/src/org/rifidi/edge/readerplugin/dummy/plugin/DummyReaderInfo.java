@@ -2,8 +2,11 @@ package org.rifidi.edge.readerplugin.dummy.plugin;
 
 import java.util.Random;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 import org.rifidi.edge.core.readerplugin.ReaderInfo;
 
+@XmlRootElement
 public class DummyReaderInfo extends ReaderInfo {
 
 	/**
