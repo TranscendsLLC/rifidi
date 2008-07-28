@@ -11,11 +11,12 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.logging.Log;
+import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
 public class DomHelper {
-	
-	public static void nodePrinter(Log logger, Node node){
+
+	public static void nodePrinter(Log logger, Node node) {
 		try {
 			// Set up the output transformer
 			TransformerFactory transfac = TransformerFactory.newInstance();
@@ -41,6 +42,27 @@ public class DomHelper {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+
+	public static String toString(Document d) throws TransformerException {
+
+		// Set up the output transformer
+		TransformerFactory transfac = TransformerFactory.newInstance();
+		Transformer trans;
+
+		trans = transfac.newTransformer();
+
+		trans.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+		trans.setOutputProperty(OutputKeys.INDENT, "yes");
+
+		// Print the DOM node
+
+		StringWriter sw = new StringWriter();
+		StreamResult result = new StreamResult(sw);
+		DOMSource source = new DOMSource(d);
+		trans.transform(source, result);
+		String xmlString = sw.toString();
+		return xmlString;
 	}
 
 }
