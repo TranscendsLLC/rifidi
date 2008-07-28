@@ -112,16 +112,6 @@ public class ReaderSessionImpl implements ReaderSession, ReaderSessionState,
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.readersession.ReaderSession#getStatus()
-	 */
-	@Override
-	public ReaderSessionStatus getStatus() {
-		return readerSessionStatus;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
 	 * @see org.rifidi.edge.core.readersession.ReaderSession#executeCommand(java.lang.String,
 	 *      java.lang.String)
 	 */
@@ -537,6 +527,12 @@ public class ReaderSessionImpl implements ReaderSession, ReaderSessionState,
 		sessionState.state_stopCommand(force);
 
 	}
+	
+
+	@Override
+	public ReaderSessionStatus state_getStatus() {
+		return sessionState.state_getStatus();
+	}
 
 	public void transition(ReaderSessionState newState) {
 		this.sessionState = newState;
@@ -552,5 +548,6 @@ public class ReaderSessionImpl implements ReaderSession, ReaderSessionState,
 	public List<String> getAvailableProperties() {
 		return plugin.getProperties();
 	}
+
 
 }

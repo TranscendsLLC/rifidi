@@ -8,6 +8,11 @@
 		<group>general</group>
 		<name>GetTagsOnce</name>
 	</property>
+		<property>
+		<classname>org.rifidi.edge.readerplugin.dummy.properties.UsernameProperty</classname>
+		<group>general</group>
+		<name>username</name>
+	</property>
 	<command>
 		<classname>org.rifidi.edge.readerplugin.dummy.commands.TagStreamCommand</classname>
 		<group>general</group>
