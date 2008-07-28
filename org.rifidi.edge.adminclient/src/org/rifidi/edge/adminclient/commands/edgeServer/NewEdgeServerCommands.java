@@ -355,7 +355,7 @@ public class NewEdgeServerCommands implements ICommand {
 			return "ERROR. Connection not found";
 		}
 		try {
-			long commandID = remoteReaderConnection.executeCommand(commandName, "");
+			long commandID = remoteReaderConnection.executeCommand(commandName);
 			return "Command started: " + commandID;
 		} catch (RemoteException e) {
 			return "Command not found. " + e.getMessage();
