@@ -8,6 +8,16 @@ public class EnhancedTagMessage extends TagMessage {
 	private float velocity;
 	private float signalStrength;
 	private int antennaId;
+	
+	
+	public EnhancedTagMessage(){
+		/* default values for parts of this message when
+		 * they are not used.
+		 */
+		velocity = Float.NaN;
+		signalStrength = Float.NaN;
+		antennaId = -1;
+	}
 
 	/**
 	 * @return the velocity
