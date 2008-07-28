@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<readerPluginXML>
+	<plugin>org.rifidi.readerplugin.dummyenhanced</plugin>
+	<info>org.rifidi.edge.readerplugin.dummyenhanced.plugin.DummyReaderInfo</info>
+	<connectionManager>org.rifidi.edge.readerplugin.dummyenhanced.plugin.DummyConnectionManager</connectionManager>
+	<property>
+		<classname>org.rifidi.edge.readerplugin.dummyenhanced.properties.GetTagsOnceCommand</classname>
+		<group>general</group>
+		<name>GetTagsOnce</name>
+	</property>
+	<command>
+		<classname>org.rifidi.edge.readerplugin.dummyenhanced.commands.TagStreamCommand</classname>
+		<group>general</group>
+		<name>TagStreaming</name>
+	</command>
+
+</readerPluginXML>
