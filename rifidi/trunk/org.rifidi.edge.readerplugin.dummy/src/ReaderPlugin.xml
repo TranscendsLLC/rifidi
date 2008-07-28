@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <readerPluginXML>
-	<plugin>org.rifidi.readerplugin.dummy</plugin>
+	<plugin>org.rifidi.edge.readerplugin.dummy</plugin>
 	<info>org.rifidi.edge.readerplugin.dummy.plugin.DummyReaderInfo</info>
 	<connectionManager>org.rifidi.edge.readerplugin.dummy.plugin.DummyConnectionManager</connectionManager>
 	<property>

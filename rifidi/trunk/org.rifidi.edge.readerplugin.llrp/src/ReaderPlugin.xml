@@ -1,21 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<p:ReaderPlugin xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:p="http://www.rifidi.org/ReaderPlugin"
-	xsi:schemaLocation="http://www.rifidi.org/ReaderPlugin ..\..\org.rifidi.edge.core\src\org\rifidi\edge\core\readerplugin\ReaderPlugin.xsd">
-	<p:plugin>org.rifidi.readerplugin.llrp</p:plugin>
-	<p:info>org.rifidi.edge.readerplugin.llrp.plugin.LLRPReaderInfo</p:info>
-	<p:connectionManager>
-		org.rifidi.edge.readerplugin.llrp.plugin.LLRPConnectionManager 
-	</p:connectionManager>
-	<p:command>
-		<p:classname>
-			org.rifidi.edge.readerplugin.llrp.commands.LLRPTagStreamCommand 
-		</p:classname>
-		<p:group>general</p:group>
-		<p:group>skript</p:group>
-		<p:name>TagStreaming</p:name>
-		<p:xsd>
-			org.rifidi.edge.readerplugin.llrp.commands.LLRPTagStreamCommand.xsd 
-		</p:xsd>
-	</p:command>
-</p:ReaderPlugin>
+<readerPluginXML>
+	<plugin>org.rifidi.edge.readerplugin.llrp</plugin>
+	<info>org.rifidi.edge.readerplugin.llrp.plugin.LLRPReaderInfo</info>
+	<connectionManager>org.rifidi.edge.readerplugin.llrp.plugin.LLRPConnectionManager</connectionManager>
+	<command>
+		<classname>org.rifidi.edge.readerplugin.llrp.commands.LLRPTagStreamCommand</classname>
+		<group>general</group>
+		<group>skript</group>
+		<name>TagStreaming</name>
+	</command>
+</readerPluginXML>
