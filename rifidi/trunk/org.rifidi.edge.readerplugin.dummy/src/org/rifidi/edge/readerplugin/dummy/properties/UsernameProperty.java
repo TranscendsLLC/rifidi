@@ -20,26 +20,28 @@ public class UsernameProperty implements Property {
 	public Element execute(Connection connection, MessageQueue errorQueue,
 			Element propertyConfig) {
 
-		String type = propertyConfig.getAttribute("Type");
+		String type = propertyConfig.getAttribute("type");
 		String response = null;
 
 		try {
 			if (type.equals("get")) {
-				connection.sendMessage("get username");
+				connection.sendMessage("get username\n");
 				response = (String) connection.receiveMessage();
 				response = "username = " + "CURRENT USERNAME";
-			} else {
+			} else if(type.equals("set")) {
 				NodeList nl = propertyConfig.getChildNodes();
 				for (int i = 0; i < nl.getLength(); i++) {
 					if (nl.item(i).getNodeType() == Node.TEXT_NODE) {
 						Text newName = (Text) nl.item(i);
 						connection.sendMessage("set username = "
-								+ newName.getData());
+								+ newName.getData()+"\n");
 						response = (String) connection.receiveMessage();
-						response = "username = " + newName;
+						response = "username = " + newName.getData();
 						break;
 					}
 				}
+			}else{
+				logger.debug("type attribute not found");
 			}
 		} catch (IOException ex) {
 			logger.debug("IOException");

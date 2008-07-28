@@ -5,6 +5,7 @@ import org.rifidi.edge.core.exceptions.RifidiCommandNotFoundException;
 import org.rifidi.edge.core.exceptions.RifidiConnectionException;
 import org.rifidi.edge.core.exceptions.RifidiInvalidConfigurationException;
 import org.rifidi.edge.core.readersession.impl.ReaderSessionState;
+import org.rifidi.edge.core.readersession.impl.enums.ReaderSessionStatus;
 import org.w3c.dom.Document;
 
 public class SessionStatePropertyExecuting implements ReaderSessionState{
@@ -78,6 +79,11 @@ public class SessionStatePropertyExecuting implements ReaderSessionState{
 	public void conn_error() {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public ReaderSessionStatus state_getStatus() {
+		return ReaderSessionStatus.EXECUTING_PROPERTY_WITH_NO_YIELDED_COMMAND;
 	}
 
 }

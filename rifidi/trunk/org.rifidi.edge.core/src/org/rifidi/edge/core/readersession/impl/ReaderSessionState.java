@@ -5,6 +5,7 @@ import org.rifidi.edge.core.exceptions.RifidiCommandInterruptedException;
 import org.rifidi.edge.core.exceptions.RifidiCommandNotFoundException;
 import org.rifidi.edge.core.exceptions.RifidiConnectionException;
 import org.rifidi.edge.core.exceptions.RifidiInvalidConfigurationException;
+import org.rifidi.edge.core.readersession.impl.enums.ReaderSessionStatus;
 import org.w3c.dom.Document;
 
 public interface ReaderSessionState extends CommunicationStateListener{
@@ -26,5 +27,12 @@ public interface ReaderSessionState extends CommunicationStateListener{
 	public void state_propertyFinished();
 
 	public void state_error();
+	
+	/**
+	 * Get the current status of the ReaderSession
+	 * 
+	 * @return the status of the ReaderSession
+	 */
+	public ReaderSessionStatus state_getStatus();
 
 }

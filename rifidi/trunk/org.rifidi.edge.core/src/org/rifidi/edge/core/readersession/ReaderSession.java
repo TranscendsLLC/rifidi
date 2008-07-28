@@ -25,13 +25,6 @@ import org.w3c.dom.Element;
  */
 public interface ReaderSession {
 
-	/**
-	 * Get the current status of the ReaderSession
-	 * 
-	 * @return the status of the ReaderSession
-	 */
-	public ReaderSessionStatus getStatus();
-
 	// TODO: Need a way to tell what exceptions cause a restart and ones that do
 	// not.
 	/**

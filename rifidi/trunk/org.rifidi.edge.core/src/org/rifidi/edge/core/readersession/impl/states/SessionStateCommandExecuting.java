@@ -9,6 +9,7 @@ import org.rifidi.edge.core.exceptions.RifidiConnectionException;
 import org.rifidi.edge.core.exceptions.RifidiInvalidConfigurationException;
 import org.rifidi.edge.core.readersession.impl.ReaderSessionState;
 import org.rifidi.edge.core.readersession.impl.enums.CommandStatus;
+import org.rifidi.edge.core.readersession.impl.enums.ReaderSessionStatus;
 import org.w3c.dom.Document;
 
 public class SessionStateCommandExecuting implements ReaderSessionState {
@@ -91,6 +92,11 @@ public class SessionStateCommandExecuting implements ReaderSessionState {
 	public void conn_error() {
 		readerSessionImpl.connectionStatus = ConnectionStatus.ERROR;
 		this.state_error();
+	}
+
+	@Override
+	public ReaderSessionStatus state_getStatus() {
+		return ReaderSessionStatus.EXECUTING_COMMAND;
 	}
 
 }

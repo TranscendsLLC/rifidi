@@ -23,6 +23,7 @@ import org.rifidi.edge.core.readersession.impl.CommandWrapper;
 import org.rifidi.edge.core.readersession.impl.ExecutionThread;
 import org.rifidi.edge.core.readersession.impl.ReaderSessionState;
 import org.rifidi.edge.core.readersession.impl.enums.CommandStatus;
+import org.rifidi.edge.core.readersession.impl.enums.ReaderSessionStatus;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -354,6 +355,7 @@ public class SessionStateOK implements ReaderSessionState {
 					propertyNode.replaceChild(returnVal,e);
 				} else {
 					// TODO: what to do if propertyCommand is null?
+					logger.debug("Command not found!: " + e.getNodeName());
 				}
 			} else {
 				// TODO: what to do if property is not Element?
@@ -406,6 +408,11 @@ public class SessionStateOK implements ReaderSessionState {
 		synchronized (this) {
 			notify();
 		}
+	}
+
+	@Override
+	public ReaderSessionStatus state_getStatus() {
+		return ReaderSessionStatus.OK;
 	}
 
 }
