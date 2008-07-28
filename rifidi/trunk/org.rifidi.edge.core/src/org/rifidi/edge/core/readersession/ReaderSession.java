@@ -139,4 +139,6 @@ public interface ReaderSession {
 	public List<String> getAvailableCommands();
 	
 	public List<String> getAvailableProperties();
+
+	public ReaderSessionStatus getStatus();
 }
