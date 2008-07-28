@@ -32,8 +32,9 @@ public class Activator implements BundleActivator {
 	 */
 	public void start(BundleContext context) throws Exception {
 		System.out.println("== Bundle LLRPReaderPlugin started ==");
-		ServiceRegistry.getInstance().service(this);
 		this.context = context;
+		ServiceRegistry.getInstance().service(this);
+		
 	}
 
 	/*
