@@ -2,15 +2,18 @@ package org.rifidi.edge.core.rmi.readerconnection.impl;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.io.StringWriter;
 import java.rmi.RemoteException;
 import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.rifidi.edge.common.utilities.dom.DomHelper;
 import org.rifidi.edge.core.exceptions.RifidiCommandInterruptedException;
 import org.rifidi.edge.core.exceptions.RifidiCommandNotFoundException;
 import org.rifidi.edge.core.exceptions.RifidiConnectionException;
@@ -21,6 +24,9 @@ import org.rifidi.edge.core.rmi.readerconnection.RemoteReaderConnection;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+
+import com.sun.org.apache.xml.internal.serialize.OutputFormat;
+import com.sun.org.apache.xml.internal.serialize.XMLSerializer;
 
 /**
  * Implementation for a RemoteReaderConnection
@@ -126,6 +132,46 @@ public class RemoteReaderConnectionImpl implements RemoteReaderConnection {
 		} catch (IOException e) {
 			logger.error("IOException", e);
 			throw new RemoteException("IOException", e);
+		}
+	}
+	
+
+	@Override
+	public String executeProperty(String configuration) throws RemoteException {
+		try {
+			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder builder = factory.newDocumentBuilder();
+			StringReader reader = new StringReader( configuration );
+			InputSource inputSource = new InputSource( reader );
+			Document doc = builder.parse(inputSource);
+			Document d = readerSession.executeProperty(doc);
+			
+			String s = DomHelper.toString(d);
+			return s;
+		} catch (RifidiConnectionException e) {
+			logger.error("RifidiConnectionException", e);
+			throw new RemoteException("RifidiConnectionException", e);
+		} catch (RifidiCommandInterruptedException e) {
+			logger.error("RifidiCommandInterruptedException", e);
+			throw new RemoteException("RifidiCommandInterruptedException", e);
+		} catch (RifidiCommandNotFoundException e) {
+			logger.error("RifidiCommandNotFoundException", e);
+			throw new RemoteException("RifidiCommandNotFoundException", e);
+		} catch (RifidiInvalidConfigurationException e) {
+			logger.error("RifidiInvalidConfigurationException", e);
+			throw new RemoteException("RifidiInvalidConfigurationException", e);
+		} catch (ParserConfigurationException e) {
+			logger.error("ParserConfigurationException", e);
+			throw new RemoteException("ParserConfigurationException", e);
+		} catch (SAXException e) {
+			logger.error("SAXException", e);
+			throw new RemoteException("SAXException", e);
+		} catch (IOException e) {
+			logger.error("IOException", e);
+			throw new RemoteException("IOException", e);
+		} catch (TransformerException e) {
+			logger.error("TransformerException", e);
+			throw new RemoteException("TransformerException", e);
 		}
 	}
 
@@ -250,10 +296,5 @@ public class RemoteReaderConnectionImpl implements RemoteReaderConnection {
 		return readerSession.getAvailableProperties();
 	}
 
-	@Override
-	public String executeProperty(String configuration) throws RemoteException {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 }
