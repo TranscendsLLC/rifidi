@@ -26,6 +26,7 @@ import org.rifidi.edge.core.readerplugin.commands.CommandReturnStatus;
 import org.rifidi.edge.core.readerplugin.commands.annotations.CommandDesc;
 import org.rifidi.edge.core.readerplugin.messages.impl.TagMessage;
 import org.rifidi.edge.readerplugin.alien.messages.EnhancedTagMessage;
+import org.w3c.dom.Document;
 
 /**
  * 
@@ -49,7 +50,8 @@ public class AlienTagEnhancedStreamCommand implements Command {
 	 */
 	@Override
 	public CommandReturnStatus start(Connection connection,
-			MessageQueue messageQueue, String configuration, long commandID) {
+			MessageQueue messageQueue, MessageQueue errorQueue,
+			Document configuration, long commandID) {
 		logger.debug("Starting the Tag List command for the Alien");
 		running = true;
 		try {
@@ -157,4 +159,6 @@ public class AlienTagEnhancedStreamCommand implements Command {
 		}
 		return retVal;
 	}
+
+	
 }
