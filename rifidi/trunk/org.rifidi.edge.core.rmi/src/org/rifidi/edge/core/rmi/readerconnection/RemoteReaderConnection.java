@@ -68,6 +68,8 @@ public interface RemoteReaderConnection extends Remote {
 	 *             if a error occurs
 	 */
 	public long executeCommand(String configuration) throws RemoteException;
+	
+	public String executeProperty(String configuration) throws RemoteException;
 
 	/**
 	 * Start streaming of tags to the MessageQueue (This is a convenience method

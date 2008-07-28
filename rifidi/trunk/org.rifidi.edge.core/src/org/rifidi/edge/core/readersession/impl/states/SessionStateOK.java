@@ -180,8 +180,6 @@ public class SessionStateOK implements ReaderSessionState {
 						readerSessionImpl.curCommand.getCommand(),
 						CommandStatus.NOCOMMAND);
 				readerSessionImpl.curCommand = null;
-				readerSessionImpl.transition(new SessionStateError(
-						readerSessionImpl));
 				throw new RifidiConnectionException(
 						"The connection to the reader is not valid anymore. (MAX_CONNECTION_ATTEMPTS)");
 			}
@@ -239,22 +237,24 @@ public class SessionStateOK implements ReaderSessionState {
 
 		NodeList documentChildren = propertiesToExecute.getChildNodes();
 		Node propertyNode = null;
-		for(int i=0; i<documentChildren.getLength(); i++){
-			if(documentChildren.item(i).getNodeName().equals("Properties")){
+		for (int i = 0; i < documentChildren.getLength(); i++) {
+			if (documentChildren.item(i).getNodeName().equals("Properties")) {
 				propertyNode = documentChildren.item(i);
 				break;
 			}
 		}
-		
-		if(propertyNode==null){
-			logger.debug("Malformed Property Configuration XML: no 'Properties' Node found in document root");
+
+		if (propertyNode == null) {
+			logger
+					.debug("Malformed Property Configuration XML: no 'Properties' Node found in document root");
 			readerSessionImpl.transition(new SessionStateOK(readerSessionImpl));
-			throw new RifidiInvalidConfigurationException("No 'Properties' Node found in document root");
+			throw new RifidiInvalidConfigurationException(
+					"No 'Properties' Node found in document root");
 		}
-		
+
 		/*
-		 * Initialize the communication if not already done. Blocks
-		 * until connected
+		 * Initialize the communication if not already done. Blocks until
+		 * connected
 		 */
 		try {
 			readerSessionImpl.connect();
@@ -277,15 +277,16 @@ public class SessionStateOK implements ReaderSessionState {
 						"The connection to the reader is not valid anymore."
 								+ " (MAX_CONNECTION_ATTEMPTS)");
 			}
+			// TODO: what happens if we go to error state right here? maybe we
+			// should put a timeout on wait
 
 			/*
-			 * Wait until we are connected (this method's
-			 * conn_connected() or conn_error() will be called)
+			 * Wait until we are connected (this method's conn_connected() or
+			 * conn_error() will be called)
 			 */
 			try {
 				synchronized (this) {
-					logger.debug(" Reader Session "
-							+ "waiting for Connection"
+					logger.debug(" Reader Session " + "waiting for Connection"
 							+ " Status to be Connected");
 					wait();
 				}
@@ -293,18 +294,15 @@ public class SessionStateOK implements ReaderSessionState {
 			} catch (InterruptedException e1) {
 			}
 			if (readerSessionImpl.connectionStatus == ConnectionStatus.ERROR) {
-				logger.debug("ConnectionStatus is Error");
-				readerSessionImpl.transition(new SessionStateError(
-						readerSessionImpl));
 				throw new RifidiConnectionException(
 						"The connection to the reader is not valid anymore."
 								+ " (MAX_CONNECTION_ATTEMPTS)");
 			}
 		}
-		
+
 		readerSessionImpl.transition(new SessionStatePropertyExecuting(
 				readerSessionImpl));
-		
+
 		// for each property in propertiesToExecute
 		NodeList properties = propertyNode.getChildNodes();
 		for (int i = 0; i < properties.getLength(); i++) {
@@ -317,7 +315,6 @@ public class SessionStateOK implements ReaderSessionState {
 						.getProperty(e.getNodeName());
 				if (propertyCommand != null) {
 
-
 					Property propObject;
 					try {
 						propObject = (Property) readerSessionImpl
@@ -328,7 +325,6 @@ public class SessionStateOK implements ReaderSessionState {
 								readerSessionImpl));
 						throw e1;
 					}
-					
 
 					try {
 						readerSessionImpl.validate(propObject.getClass(), e);
@@ -352,7 +348,7 @@ public class SessionStateOK implements ReaderSessionState {
 							readerSessionImpl.errorQueue, e);
 
 					// insert return value into element
-					propertyNode.replaceChild(returnVal,e);
+					propertyNode.replaceChild(returnVal, e);
 				} else {
 					// TODO: what to do if propertyCommand is null?
 					logger.debug("Command not found!: " + e.getNodeName());
@@ -403,11 +399,10 @@ public class SessionStateOK implements ReaderSessionState {
 	@Override
 	public void conn_error() {
 		readerSessionImpl.connectionStatus = ConnectionStatus.ERROR;
-		// we need to notify in case we are waiting for the sate to change to
-		// connected
 		synchronized (this) {
 			notify();
 		}
+		this.state_error();
 	}
 
 	@Override

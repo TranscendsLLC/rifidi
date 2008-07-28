@@ -95,9 +95,9 @@ public class ExecutionThread {
 				status = command.start(connection, messageQueue, errorQueue,
 						_configuration, commandID);
 				// TODO Possibly pass in commandID instead of command
+				logger.debug("Command finished");
 				commandExecutionListener.commandFinished(command, status);
 				command = null;
-				logger.debug("Command finished");
 			}
 		}, "ExecuteThread " + commandID);
 		thread.setDaemon(true);
