@@ -3,6 +3,10 @@ package org.rifidi.edge.core.readerplugin.messages.impl;
 import javax.xml.bind.annotation.XmlRootElement;
 
 
+/**
+ * @author Jerry Maine - jerry@pramari.com
+ *
+ */
 @XmlRootElement
 public class EnhancedTagMessage extends TagMessage {
 	private float velocity;
