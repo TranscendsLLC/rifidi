@@ -55,7 +55,7 @@ public class TagStreamCommand implements Command {
 							.fromHexString(rawTagItems[0].substring(2,
 									rawTagItems[0].length())));
 
-					tag.setLastSeenTime(Integer.parseInt(rawTagItems[1]));
+					tag.setLastSeenTime(Long.parseLong(rawTagItems[1]));
 					
 					tag.setAntennaId(Integer.parseInt(rawTagItems[2]));
 					
