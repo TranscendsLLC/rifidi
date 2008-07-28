@@ -1,32 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<p:ReaderPlugin xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:p="http://www.rifidi.org/ReaderPlugin"
-	xsi:schemaLocation="http://www.rifidi.org/ReaderPlugin ..\..\org.rifidi.edge.core\src\org\rifidi\edge\core\readerplugin\ReaderPlugin.xsd">
-	<p:plugin>org.rifidi.readerplugin.alien</p:plugin>
-	<p:info>org.rifidi.readerplugin.alien.AlienReaderInfo</p:info>
-	<p:connectionManager>
-		org.rifidi.readerplugin.alien.AlienConnectionManager 
-	</p:connectionManager>
-	<p:command>
-		<p:classname>
-			org.rifidi.readerplugin.alien.commands.AlienTagStreamCommand 
-		</p:classname>
-		<p:group>general</p:group>
-		<p:group>skript</p:group>
-		<p:name>TagStreaming</p:name>
-		<p:xsd>
-			org.rifidi.readerplugin.alien.commands.AlienTagStreamingCommand.xsd 
-		</p:xsd>
-	</p:command>
-		<p:command>
-		<p:classname>
-			org.rifidi.readerplugin.alien.commands.AlienTagStreamEnhancedCommand 
-		</p:classname>
-		<p:group>general</p:group>
-		<p:group>skript</p:group>
-		<p:name>TagStreamingEnhanced</p:name>
-		<p:xsd>
-			org.rifidi.readerplugin.alien.commands.AlienTagStreamEnhancedCommand.xsd 
-		</p:xsd>
-	</p:command>
-</p:ReaderPlugin>
+<readerPluginXML>
+	<plugin>org.rifidi.edge.readerplugin.alien</plugin>
+	<info>org.rifidi.edge.readerplugin.alien.AlienReaderInfo</info>
+	<connectionManager>org.rifidi.edge.readerplugin.alien.AlienConnectionManager</connectionManager>
+	<command>
+		<classname>org.rifidi.edge.readerplugin.alien.commands.AlienTagStreamCommand</classname>
+		<group>general</group>
+		<group>skript</group>
+		<name>TagStreaming</name>
+	</command>
+</readerPluginXML>
