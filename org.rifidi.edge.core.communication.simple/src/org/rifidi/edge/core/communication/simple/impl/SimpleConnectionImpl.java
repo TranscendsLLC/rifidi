@@ -45,7 +45,7 @@ public class SimpleConnectionImpl implements Connection {
 		
 		this.listener = listener;
 		if (this.listener != null)
-			this.listener.connected();
+			this.listener.conn_connected();
 	}
 
 	/* (non-Javadoc)
@@ -95,20 +95,20 @@ public class SimpleConnectionImpl implements Connection {
 			}
 		} catch (IOException e) {
 			if (listener != null) {
-				listener.disconnected();
+				listener.conn_disconnected();
 			}
 			disconnect();
 			try {
 				_reconnect();
 			} catch (RifidiConnectionException e1) {
 				if (listener != null) {
-					listener.error();
+					listener.conn_error();
 				}
 			}
 			throw e;
 		} catch (RifidiInvalidMessageFormat e) {
 			if (listener != null) {
-				listener.error();
+				listener.conn_error();
 			}
 			throw new IOException(e);
 		}
@@ -138,14 +138,14 @@ public class SimpleConnectionImpl implements Connection {
 	
 		} catch (IOException e) {
 			if (listener != null) {
-				listener.error();
+				listener.conn_error();
 			}
 			disconnect();
 			try {
 				_reconnect();
 			} catch (RifidiConnectionException e1) {
 				if (listener != null) {
-					listener.error();
+					listener.conn_error();
 				}
 			}
 			throw e;
@@ -182,7 +182,7 @@ public class SimpleConnectionImpl implements Connection {
 						// status = ReaderSessionStatus.DISCONNECTED;
 						// darn... we have failed.
 						if (listener != null)
-							listener.error();
+							listener.conn_error();
 						logger.debug("Error! We gave up. " + e.getMessage());
 						throw e;
 					} else {
@@ -210,7 +210,7 @@ public class SimpleConnectionImpl implements Connection {
 		
  		/* fire event */
 		if (listener != null)
-			listener.connected();
+			listener.conn_connected();
 	}
 	private void _connect() throws RifidiConnectionException {
 		
@@ -271,20 +271,20 @@ public class SimpleConnectionImpl implements Connection {
 			}
 		} catch (IOException e) {
 			if (listener != null) {
-				listener.disconnected();
+				listener.conn_disconnected();
 			}
 			disconnect();
 			try {
 				_reconnect();
 			} catch (RifidiConnectionException e1) {
 				if (listener != null) {
-					listener.error();
+					listener.conn_error();
 				}
 			}
 			throw e;
 		} catch (RifidiInvalidMessageFormat e) {
 			if (listener != null) {
-				listener.error();
+				listener.conn_error();
 			}
 			throw new IOException(e);
 		}
