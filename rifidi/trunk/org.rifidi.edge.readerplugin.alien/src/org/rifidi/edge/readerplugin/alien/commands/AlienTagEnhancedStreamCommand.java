@@ -139,7 +139,7 @@ public class AlienTagEnhancedStreamCommand implements Command {
 				String timeStamp = splitString2[1];
 				String antennaID = splitString2[2];
 				String velocity = splitString2[3];
-				String signalStrength = splitString[4];
+				String signalStrength = splitString2[4];
 				
 				Time time = Time.valueOf(timeStamp);
 
