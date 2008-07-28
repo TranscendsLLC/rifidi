@@ -1,5 +1,7 @@
 package org.rifidi.edge.core.readersession.impl.states;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.exceptions.RifidiCommandInterruptedException;
 import org.rifidi.edge.core.exceptions.RifidiCommandNotFoundException;
 import org.rifidi.edge.core.exceptions.RifidiConnectionException;
@@ -10,7 +12,8 @@ import org.w3c.dom.Document;
 
 public class SessionStatePropertyExecuting implements ReaderSessionState{
 
-	ReaderSessionImpl readerSessionImpl;
+	private ReaderSessionImpl readerSessionImpl;
+	private Log logger = LogFactory.getLog(SessionStateCommandExecuting.class);
 	
 	public SessionStatePropertyExecuting(ReaderSessionImpl readerSessionImpl) {
 		this.readerSessionImpl = readerSessionImpl;
@@ -18,13 +21,14 @@ public class SessionStatePropertyExecuting implements ReaderSessionState{
 	
 	@Override
 	public void state_commandFinished() {
-		// TODO Auto-generated method stub
+		logger.debug("cannot execute resetSession when in " + ReaderSessionStatus.EXECUTING_PROPERTY_WITH_NO_YIELDED_COMMAND);
+		readerSessionImpl.transition(new SessionStatePropertyExecuting(readerSessionImpl));
 		
 	}
 
 	@Override
 	public void state_error() {
-		// TODO Auto-generated method stub
+		readerSessionImpl.transition(new SessionStateError(readerSessionImpl));
 		
 	}
 
@@ -33,7 +37,8 @@ public class SessionStatePropertyExecuting implements ReaderSessionState{
 			throws RifidiConnectionException,
 			RifidiCommandInterruptedException, RifidiCommandNotFoundException,
 			RifidiInvalidConfigurationException {
-		// TODO Auto-generated method stub
+		logger.debug("cannot execute executeCommand when in " + ReaderSessionStatus.EXECUTING_PROPERTY_WITH_NO_YIELDED_COMMAND);
+		readerSessionImpl.transition(new SessionStatePropertyExecuting(readerSessionImpl));
 		return 0;
 	}
 
@@ -41,43 +46,48 @@ public class SessionStatePropertyExecuting implements ReaderSessionState{
 	public Document state_executeProperty(Document propertiesToExecute)
 			throws RifidiConnectionException, RifidiCommandNotFoundException,
 			RifidiCommandInterruptedException {
+		logger.debug("cannot execute executeProperty when in " + ReaderSessionStatus.EXECUTING_PROPERTY_WITH_NO_YIELDED_COMMAND);
+		readerSessionImpl.transition(new SessionStatePropertyExecuting(readerSessionImpl));
 		return null;
 		
 	}
 
 	@Override
 	public void state_propertyFinished() {
-		// TODO Auto-generated method stub
+		logger.debug("Implement this method");
+		readerSessionImpl.transition(new SessionStateOK(readerSessionImpl));
 		
 	}
 
 	@Override
 	public void state_resetSession() {
-		// TODO Auto-generated method stub
+		logger.debug("cannot execute resetSession when in " + ReaderSessionStatus.EXECUTING_PROPERTY_WITH_NO_YIELDED_COMMAND);
+		readerSessionImpl.transition(new SessionStatePropertyExecuting(readerSessionImpl));
 		
 	}
 
 	@Override
 	public void state_stopCommand(boolean force) {
-		// TODO Auto-generated method stub
+		logger.debug("cannot execute stopCommand when in " + ReaderSessionStatus.EXECUTING_PROPERTY_WITH_NO_YIELDED_COMMAND);
+		readerSessionImpl.transition(new SessionStatePropertyExecuting(readerSessionImpl));
 		
 	}
 
 	@Override
 	public void conn_connected() {
-		// TODO Auto-generated method stub
+		logger.debug("connected called in " + ReaderSessionStatus.EXECUTING_PROPERTY_WITH_NO_YIELDED_COMMAND);
 		
 	}
 
 	@Override
 	public void conn_disconnected() {
-		// TODO Auto-generated method stub
+		logger.debug("disconnected called in " + ReaderSessionStatus.EXECUTING_PROPERTY_WITH_NO_YIELDED_COMMAND);
 		
 	}
 
 	@Override
 	public void conn_error() {
-		// TODO Auto-generated method stub
+		logger.debug("error called in " + ReaderSessionStatus.EXECUTING_PROPERTY_WITH_NO_YIELDED_COMMAND);
 		
 	}
 
