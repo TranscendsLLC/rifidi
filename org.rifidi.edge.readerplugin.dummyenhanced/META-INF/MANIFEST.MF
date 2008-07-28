@@ -10,3 +10,8 @@ Require-Bundle: org.rifidi.edge.core,
  org.rifidi.edge.services,
  org.rifidi.edge.log4j,
  org.rifidi.edge.common.utilities
+Export-Package: org.rifidi.edge.readerplugin.dummyenhanced.commands,
+ org.rifidi.edge.readerplugin.dummyenhanced.plugin,
+ org.rifidi.edge.readerplugin.dummyenhanced.properties,
+ org.rifidi.edge.readerplugin.dummyenhanced.protocol,
+ org.rifidi.edge.readerplugin.dummyenhanced.readerServer
