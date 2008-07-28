@@ -115,6 +115,12 @@ public class ReaderSessionImpl implements ReaderSession, ReaderSessionState,
 	 * @see org.rifidi.edge.core.readersession.ReaderSession#executeCommand(java.lang.String,
 	 *      java.lang.String)
 	 */
+
+	@Override
+	public ReaderSessionStatus getStatus() {
+		return state_getStatus();
+	}
+	
 	@Override
 	public long executeCommand(Document configuration)
 			throws RifidiConnectionException,
@@ -548,6 +554,5 @@ public class ReaderSessionImpl implements ReaderSession, ReaderSessionState,
 	public List<String> getAvailableProperties() {
 		return plugin.getProperties();
 	}
-
 
 }
