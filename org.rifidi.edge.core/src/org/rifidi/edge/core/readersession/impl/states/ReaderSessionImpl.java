@@ -112,15 +112,16 @@ public class ReaderSessionImpl implements ReaderSession, ReaderSessionState,
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.readersession.ReaderSession#executeCommand(java.lang.String,
-	 *      java.lang.String)
+	 * @see
+	 * org.rifidi.edge.core.readersession.ReaderSession#executeCommand(java.
+	 * lang.String, java.lang.String)
 	 */
 
 	@Override
 	public ReaderSessionStatus getStatus() {
 		return state_getStatus();
 	}
-	
+
 	@Override
 	public long executeCommand(Document configuration)
 			throws RifidiConnectionException,
@@ -133,7 +134,8 @@ public class ReaderSessionImpl implements ReaderSession, ReaderSessionState,
 	@Override
 	public Document executeProperty(Document propertiesToExecute)
 			throws RifidiConnectionException,
-			RifidiCommandInterruptedException, RifidiCommandNotFoundException, RifidiInvalidConfigurationException {
+			RifidiCommandInterruptedException, RifidiCommandNotFoundException,
+			RifidiInvalidConfigurationException {
 		return this.state_executeProperty(propertiesToExecute);
 	}
 
@@ -141,14 +143,14 @@ public class ReaderSessionImpl implements ReaderSession, ReaderSessionState,
 			throws SAXException, IOException {
 		SchemaFactory schemaFactory = SchemaFactory
 				.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-		InputStream is = Resource.getResource(command, command.getSimpleName()+".xsd");
-		
-		
-		if(is!=null){
+		InputStream is = Resource.getResource(command, command.getSimpleName()
+				+ ".xsd");
+
+		if (is != null) {
 			Schema schema = schemaFactory.newSchema(new StreamSource(is));
 			Validator v = schema.newValidator();
 			v.validate(new DOMSource(elementToValidate));
-		}else{
+		} else {
 			throw new IOException("XSD file could not be found: ");
 		}
 
@@ -196,7 +198,8 @@ public class ReaderSessionImpl implements ReaderSession, ReaderSessionState,
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.readersession.ReaderSession#stopCurCommand(boolean)
+	 * @see
+	 * org.rifidi.edge.core.readersession.ReaderSession#stopCurCommand(boolean)
 	 */
 	@Override
 	public boolean stopCurCommand(boolean force) {
@@ -207,8 +210,9 @@ public class ReaderSessionImpl implements ReaderSession, ReaderSessionState,
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.readersession.ReaderSession#stopCurCommand(boolean,
-	 *      long)
+	 * @see
+	 * org.rifidi.edge.core.readersession.ReaderSession#stopCurCommand(boolean,
+	 * long)
 	 */
 	@Override
 	public boolean stopCurCommand(boolean force, long commandID) {
@@ -223,7 +227,8 @@ public class ReaderSessionImpl implements ReaderSession, ReaderSessionState,
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.readersession.ReaderSession#curExecutingCommand()
+	 * @see
+	 * org.rifidi.edge.core.readersession.ReaderSession#curExecutingCommand()
 	 */
 	@Override
 	public String curExecutingCommand() {
@@ -236,7 +241,8 @@ public class ReaderSessionImpl implements ReaderSession, ReaderSessionState,
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.readersession.ReaderSession#curExecutingCommandID()
+	 * @see
+	 * org.rifidi.edge.core.readersession.ReaderSession#curExecutingCommandID()
 	 */
 	@Override
 	public long curExecutingCommandID() {
@@ -272,7 +278,8 @@ public class ReaderSessionImpl implements ReaderSession, ReaderSessionState,
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.readersession.ReaderSession#getMessageQueueName()
+	 * @see
+	 * org.rifidi.edge.core.readersession.ReaderSession#getMessageQueueName()
 	 */
 	@Override
 	public String getMessageQueueName() {
@@ -292,15 +299,19 @@ public class ReaderSessionImpl implements ReaderSession, ReaderSessionState,
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.readersession.ReaderSession#resetReaderSession()
+	 * @see
+	 * org.rifidi.edge.core.readersession.ReaderSession#resetReaderSession()
 	 */
 	@Override
 	public void resetReaderSession() {
-		/*
-		 * if (this.connectionStatus == ConnectionStatus.ERROR) {
-		 * logger.debug("Resetting Communication"); cleanUP(); connection =
-		 * null; readerSessionStatus = ReaderSessionStatus.OK; }
-		 */
+/*
+		if (this.connectionStatus == ConnectionStatus.ERROR) {
+			logger.debug("Resetting Communication");
+			cleanUP();
+			connection = null;
+			readerSessionStatus = ReaderSessionStatus.OK;
+		}*/
+
 		state_resetSession();
 	}
 
@@ -312,8 +323,9 @@ public class ReaderSessionImpl implements ReaderSession, ReaderSessionState,
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.readersession.impl.CommandExecutionListener#commandFinished(org.rifidi.edge.core.readerplugin.commands.Command,
-	 *      org.rifidi.edge.core.readerplugin.commands.CommandReturnStatus)
+	 * @seeorg.rifidi.edge.core.readersession.impl.CommandExecutionListener#
+	 * commandFinished(org.rifidi.edge.core.readerplugin.commands.Command,
+	 * org.rifidi.edge.core.readerplugin.commands.CommandReturnStatus)
 	 */
 	@Override
 	public void commandFinished(Command command, CommandReturnStatus status) {
@@ -334,7 +346,9 @@ public class ReaderSessionImpl implements ReaderSession, ReaderSessionState,
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.communication.service.CommunicationStateListener#connected()
+	 * @see
+	 * org.rifidi.edge.core.communication.service.CommunicationStateListener
+	 * #connected()
 	 */
 	@Override
 	public void conn_connected() {
@@ -349,7 +363,9 @@ public class ReaderSessionImpl implements ReaderSession, ReaderSessionState,
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.communication.service.CommunicationStateListener#error()
+	 * @see
+	 * org.rifidi.edge.core.communication.service.CommunicationStateListener
+	 * #error()
 	 */
 	@Override
 	public void conn_error() {
@@ -413,8 +429,8 @@ public class ReaderSessionImpl implements ReaderSession, ReaderSessionState,
 	/**
 	 * Clean up the ReaderSession
 	 */
-	public void cleanUP() {
-		logger.debug("Cleaning up READDER SESSION: " + this.readerSessionID);
+	public void cleanUp() {
+		logger.debug("Cleaning up reader session: " + this.readerSessionID);
 		try {
 			if (connection != null) {
 				connectionService.destroyConnection(connection, this);
@@ -533,7 +549,6 @@ public class ReaderSessionImpl implements ReaderSession, ReaderSessionState,
 		sessionState.state_stopCommand(force);
 
 	}
-	
 
 	@Override
 	public ReaderSessionStatus state_getStatus() {

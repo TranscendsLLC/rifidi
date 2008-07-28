@@ -78,7 +78,7 @@ public class ReaderSessionServiceImpl implements ReaderSessionService,
 		readerSession.stopCurCommand(true);
 		if (readerSession instanceof ReaderSessionImpl) {
 			ReaderSessionImpl readerSessionImpl = (ReaderSessionImpl) readerSession;
-			readerSessionImpl.cleanUP();
+			readerSessionImpl.cleanUp();
 		}
 		boolean successful = registry.remove(readerSession);
 		if (!successful) {
@@ -151,7 +151,7 @@ public class ReaderSessionServiceImpl implements ReaderSessionService,
 				readerSession.stopCurCommand(true);
 				if (readerSession instanceof ReaderSessionImpl) {
 					ReaderSessionImpl readerSessionImpl = (ReaderSessionImpl) readerSession;
-					readerSessionImpl.cleanUP();
+					readerSessionImpl.cleanUp();
 				}
 				if (registry.remove(readerSession)) {
 					logger.debug("Session Removed.");

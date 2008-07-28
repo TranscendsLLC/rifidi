@@ -250,4 +250,10 @@ public class RemoteReaderConnectionImpl implements RemoteReaderConnection {
 		return readerSession.getAvailableProperties();
 	}
 
+	@Override
+	public String executeProperty(String configuration) throws RemoteException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }
