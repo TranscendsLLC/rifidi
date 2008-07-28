@@ -4,7 +4,7 @@
 		<include>org.rifidi.edge.readerPlugin.alien@1.jar</include>
 	</reader>
 	<reader name="DUMMY"
-		desc="A dummy reader which connects correctly, ">
+		desc="A dummy reader for testing purposes.">
 		<include>org.rifidi.edge.readerPlugin.dummy@1.jar</include>
 	</reader>
 	<reader name="LLRP"
