@@ -349,7 +349,7 @@ public class NewEdgeServerCommands implements ICommand {
 				}
 			}
 		} catch (RemoteException e) {
-			e.printStackTrace();
+			return "Command not found. " + e.getMessage();
 		}
 		if (remoteReaderConnection == null) {
 			return "ERROR. Connection not found";
@@ -359,7 +359,10 @@ public class NewEdgeServerCommands implements ICommand {
 			return "Command started: " + commandID;
 		} catch (RemoteException e) {
 			return "Command not found. " + e.getMessage();
+		} catch (Exception e) {
+			return "General Error. " + e.getMessage();
 		}
+		
 	}
 
 	@Command(name = "stop", arguments = { "connection id" })
