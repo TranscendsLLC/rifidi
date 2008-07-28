@@ -1,0 +1,18 @@
+<readers>
+	<reader name="ALIEN_ALR_9800"
+		desc="The flagship reader for Alien.">
+		<include>org.rifidi.edge.readerPlugin.alien@1.jar</include>
+	</reader>
+	<reader name="DUMMY"
+		desc="A dummy reader which connects correctly, ">
+		<include>org.rifidi.edge.readerPlugin.dummy@1.jar</include>
+	</reader>
+	<reader name="LLRP"
+		desc="A reader that matches the EPC's Low Level Reader Protocol.">
+		<include>org.rifidi.edge.readerPlugin.llrp@1.jar</include>
+	</reader>
+	<reader name="THINGMAGIC_MERCURY_5"
+		desc="Flagship offering from thingmagic.">
+		<include>org.rifidi.edge.readerPlugin.thingmagic@1.jar</include>
+	</reader>
+</readers>
