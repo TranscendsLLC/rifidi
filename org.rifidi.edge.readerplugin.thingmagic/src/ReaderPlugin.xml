@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<readerPluginXML>
+	<plugin>org.rifidi.readerplugin.dummy</plugin>
+	<info>org.rifidi.edge.readerplugin.thingmagic.plugin.ThingMagicReaderInfo</info>
+	<connectionManager>org.rifidi.edge.readerplugin.thingmagic.plugin.ThingMagicConnectionManager</connectionManager>
+	<property>
+		<classname>org.rifidi.edge.readerplugin.thingmagic.properties.GetTagsOnceCommand</classname>
+		<group>general</group>
+		<name>GetTagsOnce</name>
+	</property>
+	<command>
+		<classname>org.rifidi.edge.readerplugin.thingmagic.commands.TagStreamCommand</classname>
+		<group>general</group>
+		<name>TagStreaming</name>
+	</command>
+
+</readerPluginXML>
