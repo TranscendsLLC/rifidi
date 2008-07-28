@@ -24,8 +24,8 @@ import org.rifidi.edge.core.messageQueue.MessageQueue;
 import org.rifidi.edge.core.readerplugin.commands.Command;
 import org.rifidi.edge.core.readerplugin.commands.CommandReturnStatus;
 import org.rifidi.edge.core.readerplugin.commands.annotations.CommandDesc;
+import org.rifidi.edge.core.readerplugin.messages.impl.EnhancedTagMessage;
 import org.rifidi.edge.core.readerplugin.messages.impl.TagMessage;
-import org.rifidi.edge.readerplugin.alien.messages.EnhancedTagMessage;
 import org.w3c.dom.Document;
 
 
