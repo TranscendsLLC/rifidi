@@ -106,7 +106,7 @@ public class ConfigCreatorUtility {
 
 			// fwriter.write(ConfigurationConstants.OSGI_FRAMEWORK);
 			// TODO: Write the path stuff to the OSGI jar, see if it doesn't
-			// have to be an absolute path
+			// have to be an absolute path, or if it doesn't have to exist at all, perhaps?
 
 			fwriter.write(ConfigurationConstants.OSGI_CASCADED
 					+ ConfigurationConstants.NEWLINE);

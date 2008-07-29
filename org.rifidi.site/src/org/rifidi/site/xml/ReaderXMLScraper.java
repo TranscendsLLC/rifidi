@@ -12,8 +12,12 @@ package org.rifidi.site.xml;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 import org.jdom.Document;
 import org.jdom.Element;
@@ -24,7 +28,7 @@ import org.rifidi.site.constants.ConfigurationConstants;
 import org.rifidi.site.constants.PluginConstants;
 
 /**
- * 
+ * Scrape the XML file.
  * 
  * @author Matthew Dean - matt@pramari.com
  */
@@ -51,7 +55,7 @@ public class ReaderXMLScraper {
 	}
 
 	/**
-	 * 
+	 * Gets the list of reader objects
 	 * 
 	 * @return
 	 */
@@ -59,18 +63,21 @@ public class ReaderXMLScraper {
 		List<ReaderObject> readerObjectList = new ArrayList<ReaderObject>();
 		File reader_folder = new File(ConfigurationConstants.READER_FOLDER_PATH);
 		File[] file_list = reader_folder.listFiles();
-		for (File f : file_list) {
-			File[] jar_file_list = f.listFiles();
-			File reader_xml = null;
-			for (File x : jar_file_list) {
-				// TODO: Might be wrong, and might have to break the filename
-				// out from the complete path.
-				if (x.getName().equals(PluginConstants.READER_XML_FILENAME)) {
-					reader_xml = x;
-				}
-			}
+		for (File jar_file : file_list) {
+			InputStream reader_xml = this.findXMLInJar(jar_file);
+			// File[] jar_file_list = f.listFiles();
+			// File reader_xml = null;
+			// System.out.println("File f is: " + f.getName());
+			// for (File x : jar_file_list) {
+			// // TODO: Might be wrong, and might have to break the filename
+			// // out from the complete path.
+			// if (x.getName().equals(PluginConstants.READER_XML_FILENAME)) {
+			// reader_xml = x;
+			// }
+			// }
 			if (reader_xml != null) {
-				ReaderObject ro = this.parseReaderXML(reader_xml);
+				ReaderObject ro = this.parseReaderXML(jar_file.getName(),
+						reader_xml);
 				if (ro != null) {
 					readerObjectList.add(ro);
 				}
@@ -80,17 +87,44 @@ public class ReaderXMLScraper {
 	}
 
 	/**
+	 * Finds an xml file in the given file. If the file is not a jar, or if
+	 * there is no ReaderPlugin.xml in the jar file, null is returned.
+	 * 
+	 * @param jarFile
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	private InputStream findXMLInJar(File jarFile) {
+		InputStream retVal = null;
+		try {
+			JarFile jar = new JarFile(jarFile);
+			Enumeration resources = jar.entries();
+			while (resources.hasMoreElements()) {
+				JarEntry je = (JarEntry) resources.nextElement();
+				if (je.getName().matches(".*\\.xml")) {
+					System.out.println("XML file: " + je.getName());
+					retVal = jar.getInputStream(je);
+				}
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return retVal;
+	}
+
+	/**
 	 * Parses the xml file into a ReaderObject
 	 * 
 	 * @param reader_xml
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public ReaderObject parseReaderXML(File reader_xml) {
-		if (!reader_xml.exists()) {
-			return null;
-		}
-		String include = reader_xml.getName();
+	private ReaderObject parseReaderXML(String jar_include_name,
+			InputStream reader_xml) {
+		// if (!reader_xml.exists()) {
+		// return null;
+		// }
+		String include = jar_include_name;
 		String name = null;
 		String info = null;
 		ReaderObject ro = new ReaderObject();

@@ -11,15 +11,19 @@
 package org.rifidi.site;
 
 import java.io.File;
+import java.util.List;
 
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
+import org.rifidi.site.xml.ReaderXMLScraper;
+import org.rifidi.site.xml.TemplateXMLScraper;
 
 /**
+ * 
+ * 
  * @author Matthew Dean - matt@pramari.com
- *
  */
 public class TestSiteCreatorInterface {
 
@@ -41,8 +45,36 @@ public class TestSiteCreatorInterface {
 	 * 
 	 */
 	@Test
-	public void TestCreateBatchFile() {
-		File f = new File("omg");
-		System.out.println(f.getAbsolutePath());
+	public void testReaderObjectList() {
+		List<ReaderObject> readerObjectList = ReaderXMLScraper.getInstance()
+				.getReaderObjectList();
+		for (ReaderObject ro : readerObjectList) {
+			System.out.println(ro.toString());
+		}
+	}
+
+	/**
+	 * 
+	 */
+	@Test
+	public void testTemplateList() {
+		File f = new File("../config.xml");
+		if (f.exists()) {
+			List<String> templateList = TemplateXMLScraper.getInstance()
+					.getIncludeList(f);
+			for (String s : templateList) {
+				System.out.println(s);
+			}
+		} else {
+			Assert.fail();
+		}
+	}
+	
+	/**
+	 * 
+	 */
+	@Test
+	public void testSiteCreator() {
+		
 	}
 }
