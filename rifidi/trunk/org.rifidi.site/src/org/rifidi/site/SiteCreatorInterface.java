@@ -45,6 +45,7 @@ public class SiteCreatorInterface {
 
 	/**
 	 * 
+	 * 
 	 * @param siteName
 	 */
 	public void createBatchFile(String siteName) {
@@ -52,6 +53,8 @@ public class SiteCreatorInterface {
 	}
 
 	/**
+	 * Create the config file based on the given name, list of reader objects,
+	 * and the list of includes.  
 	 * 
 	 * @param siteName
 	 * @param readerObjectList

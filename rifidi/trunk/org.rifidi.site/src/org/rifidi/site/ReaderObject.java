@@ -96,4 +96,13 @@ public class ReaderObject {
 	public void setInclude(String include) {
 		this.include = include;
 	}
+
+	/**
+	 * 
+	 */
+	@Override
+	public String toString() {
+		return new String(this.name + ", " + this.description + ", "
+				+ this.include);
+	}
 }
