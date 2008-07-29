@@ -107,7 +107,6 @@ public class JAXBUtility {
 				.toArray(new Class[classRegister.size()]));
 
 		Unmarshaller unmarshaller = context.createUnmarshaller();
-
 		return unmarshaller.unmarshal(xml);
 	}
 
