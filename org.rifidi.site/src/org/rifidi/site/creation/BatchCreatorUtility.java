@@ -32,10 +32,19 @@ public class BatchCreatorUtility {
 	 */
 	private static final String BATCH_END = "/configuration";
 	
+	/**
+	 * 
+	 */
 	private static final String SERVER_FOLDER = "../server/";
 	
+	/**
+	 * 
+	 */
 	private static final String FORWARD_SLASH = "/";
 	
+	/**
+	 * 
+	 */
 	private static final String START_BAT = "/start.bat";
 
 	/**

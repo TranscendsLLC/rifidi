@@ -10,8 +10,11 @@
  */
 package org.rifidi.site;
 
+import java.io.File;
+
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Test;
 
 
 /**
@@ -34,4 +37,12 @@ public class TestSiteCreatorInterface {
 	public void tearDown() throws Exception {
 	}
 
+	/**
+	 * 
+	 */
+	@Test
+	public void TestCreateBatchFile() {
+		File f = new File("omg");
+		System.out.println(f.getAbsolutePath());
+	}
 }
