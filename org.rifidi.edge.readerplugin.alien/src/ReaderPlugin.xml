@@ -19,6 +19,6 @@
 		<classname>org.rifidi.edge.readerplugin.alien.commands.AlienTagStreamEnhancedCommand</classname>
 		<group>general</group>
 		<group>skript</group>
-		<name>TagStreaming</name>
+		<name>TagStreamingEnhanced</name>
 	</command>
 </readerPluginXML>
