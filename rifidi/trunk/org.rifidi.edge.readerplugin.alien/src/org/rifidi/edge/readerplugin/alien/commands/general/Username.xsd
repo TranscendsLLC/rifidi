@@ -1,20 +1,22 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<schema xmlns="http://www.w3.org/2001/XMLSchema">
+<schema targetNamespace="http://rifidi.org/edge/alien/properties/Username" elementFormDefault="qualified" xmlns="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://rifidi.org/edge/alien/properties/Username">
 
-    <element name="Username">
-    	<complexType>
-    		<simpleContent>
-    			<extension base="string">
-    				<attribute name="type" use="required">
-    					<simpleType>
-    						<restriction base="string">
-    							<enumeration value="get"></enumeration>
-    							<enumeration value="set"></enumeration>
-    						</restriction>
-    					</simpleType>
-    				</attribute>
-    			</extension>
-    		</simpleContent>
-    	</complexType>
-    </element>
+    <element name="Username" type="tns:UsernameType"></element>
+    
+    <complexType name="UsernameType">
+    	<simpleContent>
+    		<extension base="string">
+    			<attribute ref="tns:type" use="required"></attribute>
+    		</extension>
+    	</simpleContent>
+    </complexType>
+
+    <attribute name="type">
+    	<simpleType>
+    		<restriction base="string">
+    			<enumeration value="set"></enumeration>
+    			<enumeration value="get"></enumeration>
+    		</restriction>
+    	</simpleType>
+    </attribute>
 </schema>

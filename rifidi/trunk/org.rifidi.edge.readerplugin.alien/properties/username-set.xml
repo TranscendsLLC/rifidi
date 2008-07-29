@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Username
-xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-xsi:noNamespaceSchemaLocation="../src/org/rifidi/edge/readerplugin/alien/commands/general/Username.xsd"
-type="set" >
-kyle
-</Username>
+<tns:Username tns:type="set"
+ xmlns:tns="http://rifidi.org/edge/alien/properties/Username"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:schemaLocation="http://rifidi.org/edge/alien/properties/Username ../src/org/rifidi/edge/readerplugin/alien/commands/general/Username.xsd ">
+	kyle
+</tns:Username>

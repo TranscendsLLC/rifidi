@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://rifidi.org/edge/alien/properties/AntennaSequence" xmlns:tns="http://rifidi.org/edge/alien/properties/AntennaSequence" elementFormDefault="qualified">
+
+    <element name="AntennaSequence" type="tns:antennaSequenceType"></element>
+    
+    <complexType name="antennaSequenceType">
+    	<simpleContent>
+    		<extension base="tns:sequenceType">
+    			<attribute ref="tns:type" use="required"></attribute>
+    		</extension>
+    	</simpleContent>
+    </complexType>
+
+    <simpleType name="sequenceType">
+    	<restriction base="string">
+    		<pattern value="((\d,)*\d)?"></pattern>
+    	</restriction>
+    </simpleType>
+
+    <attribute name="type">
+    	<simpleType>
+    		<restriction base="string">
+    			<enumeration value="get"></enumeration>
+    			<enumeration value="set"></enumeration>
+    		</restriction>
+    	</simpleType>
+    </attribute>
+</schema>

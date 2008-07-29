@@ -24,11 +24,11 @@ public class ReaderPluginXML extends ReaderPluginCommandExtension {
 	}
 
 	public void setConnectionManager(String connectionManager) {
-		this.connectionManager = connectionManager;
+		this.connectionManager = connectionManager.trim();
 	}
 
 	public void setInfo(String info) {
-		this.info = info;
+		this.info = info.trim();
 	}
 
 }

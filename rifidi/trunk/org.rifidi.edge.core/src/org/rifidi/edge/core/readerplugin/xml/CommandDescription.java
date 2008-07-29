@@ -14,7 +14,7 @@ public class CommandDescription {
 	}
 
 	public void setName(String name) {
-		this.name = name;
+		this.name = name.trim();
 	}
 
 	public String getClassname() {
@@ -22,7 +22,7 @@ public class CommandDescription {
 	}
 
 	public void setClassname(String classname) {
-		this.classname = classname;
+		this.classname = classname.trim();
 	}
 
 	public String getXsd() {
@@ -30,7 +30,7 @@ public class CommandDescription {
 	}
 
 	public void setXsd(String xsd) {
-		this.xsd = xsd;
+		this.xsd = xsd.trim();
 	}
 
 	public List<String> getGroups() {
