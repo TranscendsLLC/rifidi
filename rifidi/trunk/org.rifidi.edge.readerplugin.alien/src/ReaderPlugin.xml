@@ -2,21 +2,31 @@
 <readerPluginXML>
 	<plugin>org.rifidi.edge.readerplugin.alien</plugin>
 	<info>org.rifidi.edge.readerplugin.alien.AlienReaderInfo</info>
-	<connectionManager>org.rifidi.edge.readerplugin.alien.AlienConnectionManager</connectionManager>
+	<connectionManager>
+		org.rifidi.edge.readerplugin.alien.AlienConnectionManager
+	</connectionManager>
+	<name>ALIEN_ALR_9800</name>
+	<description>The ALR-9800 is Alien's flagship reader.</description>
 	<property>
-		<classname>org.rifidi.edge.readerplugin.alien.commands.general.Username</classname>
+		<classname>
+			org.rifidi.edge.readerplugin.alien.commands.general.Username
+		</classname>
 		<group>general</group>
 		<group>skript</group>
 		<name>Username</name>
 	</property>
 	<command>
-		<classname>org.rifidi.edge.readerplugin.alien.commands.AlienTagStreamCommand</classname>
+		<classname>
+			org.rifidi.edge.readerplugin.alien.commands.AlienTagStreamCommand
+		</classname>
 		<group>general</group>
 		<group>skript</group>
 		<name>TagStreaming</name>
 	</command>
 	<command>
-		<classname>org.rifidi.edge.readerplugin.alien.commands.AlienTagStreamEnhancedCommand</classname>
+		<classname>
+			org.rifidi.edge.readerplugin.alien.commands.AlienTagStreamEnhancedCommand
+		</classname>
 		<group>general</group>
 		<group>skript</group>
 		<name>TagStreamingEnhanced</name>
