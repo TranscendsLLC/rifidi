@@ -5,91 +5,68 @@ import java.io.IOException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.communication.Connection;
-import org.rifidi.edge.core.exceptions.RifidiMessageQueueException;
 import org.rifidi.edge.core.messageQueue.MessageQueue;
-import org.rifidi.edge.core.readerplugin.commands.Command;
-import org.rifidi.edge.core.readerplugin.commands.CommandReturnStatus;
-import org.rifidi.edge.core.readerplugin.commands.annotations.CommandDesc;
-import org.rifidi.edge.readerplugin.alien.messages.GenericAlienMessage;
-import org.rifidi.edge.readerplugin.alien.messages.Property;
-import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.w3c.dom.Text;
 
 
 /**
  * @author Jerry Maine - jerry@pramari.com
  *
  */
-@CommandDesc(name = "Username", groups = {"general"})
-public class Username implements Command {
+public class Username implements org.rifidi.edge.core.readerplugin.property.Property {
 	private static final Log logger = LogFactory
 	.getLog(Username.class);
 
-	static private String command = "Username";
-	
-	/* (non-Javadoc)
-	 * @see org.rifidi.edge.core.readerplugin.commands.Command#start(org.rifidi.edge.core.communication.Connection, org.rifidi.edge.core.messageQueue.MessageQueue, java.lang.String, long)
-	 */
-	@Override
-	public CommandReturnStatus start(Connection connection,
-			MessageQueue messageQueue, MessageQueue errorQueue,
-			Document configuration, long commandID) {
-		logger.debug("Starting the " + this.getClass().getSimpleName()
-				+ " command for the Alien");
-		if (configuration == null || configuration.equals("")) {
-			try {
-		
-				connection.sendMessage("get " + command + "\n");
-				String message = (String) connection.receiveMessage();
-				
-				if (message.contains("=")) {
-					String[] temp = message.split("=");
-					message = temp[1];
-				}
-				message = message.trim();
-				
-				messageQueue.addMessage(new GenericAlienMessage(new Property(
-						command, message)));
-		
-			} catch (RifidiMessageQueueException e) {
-				e.printStackTrace();
-				return CommandReturnStatus.INTERRUPTED;
-			} catch (IOException e) {
-				e.printStackTrace();
-				return CommandReturnStatus.INTERRUPTED;
-			}
-			return CommandReturnStatus.SUCCESSFUL;
-		} else {
-			try {
-		
-				connection.sendMessage("set " + command + "=" + configuration
-						+ "\n");
-				String message = (String) connection.receiveMessage();
-				
-				if (message.contains("=")) {
-					String[] temp = message.split("=");
-					message = temp[1];
-				}
-				message = message.trim();
-				
-				messageQueue.addMessage(new GenericAlienMessage(new Property(
-						command, message)));
-		
-			} catch (RifidiMessageQueueException e) {
-				e.printStackTrace();
-				return CommandReturnStatus.INTERRUPTED;
-			} catch (IOException e) {
-				e.printStackTrace();
-				return CommandReturnStatus.INTERRUPTED;
-			}
-			return CommandReturnStatus.SUCCESSFUL;
-		}
-	}
 
-	/* (non-Javadoc)
-	 * @see org.rifidi.edge.core.readerplugin.commands.Command#stop()
-	 */
 	@Override
-	public void stop() {
-	
+	public Element execute(Connection connection, MessageQueue errorQueue,
+			Element propertyConfig) {
+		String type = propertyConfig.getAttribute("type");
+		String response = null;
+
+		try {
+			if (type.equals("get")) {
+				connection.sendMessage("get username\n");
+				response = (String) connection.receiveMessage();
+				if (response.contains("=")) {
+					String[] temp = response.split("=");
+					response = temp[1];
+				}
+				response = response.trim();
+			} else if(type.equals("set")) {
+				NodeList nl = propertyConfig.getChildNodes();
+				for (int i = 0; i < nl.getLength(); i++) {
+					if (nl.item(i).getNodeType() == Node.TEXT_NODE) {
+						Text newName = (Text) nl.item(i);
+						connection.sendMessage("set username = "
+								+ newName.getData()+"\n");
+						response = (String) connection.receiveMessage();
+						if (response.contains("=")) {
+							String[] temp = response.split("=");
+							response = temp[1];
+						}
+						response = response.trim();
+						break;
+					}
+				}
+			}else{
+				logger.debug("type attribute not found");
+			}
+		} catch (IOException ex) {
+			logger.debug("IOException");
+		}
+
+		if (response == null) {
+			response = "ERROR";
+		}
+
+		Element returnnode = propertyConfig.getOwnerDocument().createElement(
+				propertyConfig.getNodeName());
+		Text data = propertyConfig.getOwnerDocument().createTextNode(response);
+		returnnode.appendChild(data);
+		return returnnode;
 	}
 }
