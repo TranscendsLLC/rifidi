@@ -31,6 +31,12 @@ public class BatchCreatorUtility {
 	 * The end of the batch file.  
 	 */
 	private static final String BATCH_END = "/configuration";
+	
+	private static final String SERVER_FOLDER = "../server/";
+	
+	private static final String FORWARD_SLASH = "/";
+	
+	private static final String START_BAT = "/start.bat";
 
 	/**
 	 * Private singleton instance.  
@@ -55,24 +61,21 @@ public class BatchCreatorUtility {
 	/**
 	 * Create the folders
 	 * 
-	 * TODO: Magic strings, get rid of them
-	 * 
 	 * @param siteName
 	 */
 	private void createFolders(String siteName) {
-		File f = new File("../server/" + siteName + "/");
+		File f = new File(SERVER_FOLDER + siteName + FORWARD_SLASH);
 		f.mkdirs();
 	}
 
 	/**
-	 * TODO: Magic strings, get rid of them
 	 * 
 	 * 
 	 * @param siteName
 	 */
 	public void createBatchFile(String siteName) {
 		this.createFolders(siteName);
-		File f = new File("../server/" + siteName + "/start.bat");
+		File f = new File(SERVER_FOLDER + siteName + START_BAT);
 		try {
 			f.createNewFile();
 			FileWriter fwriter = new FileWriter(f);
