@@ -22,33 +22,33 @@ import java.io.IOException;
 public class BatchCreatorUtility {
 
 	/**
-	 * The beginning of the batch file.  
+	 * The beginning of the batch file.
 	 */
 	private static final String BATCH_BEGIN = "java -jar ../../core/plugins/"
 			+ "org.eclipse.osgi_3.3.1.R33x_v20070828.jar "
 			+ "-console -configuration ../../sites/";
 	/**
-	 * The end of the batch file.  
+	 * The end of the batch file.
 	 */
 	private static final String BATCH_END = "/configuration";
-	
+
 	/**
 	 * 
 	 */
 	private static final String SERVER_FOLDER = "../server/";
-	
+
 	/**
 	 * 
 	 */
 	private static final String FORWARD_SLASH = "/";
-	
+
 	/**
 	 * 
 	 */
 	private static final String START_BAT = "/start.bat";
 
 	/**
-	 * Private singleton instance.  
+	 * Private singleton instance.
 	 */
 	private static BatchCreatorUtility instance = new BatchCreatorUtility();
 
@@ -59,7 +59,7 @@ public class BatchCreatorUtility {
 	}
 
 	/**
-	 * Returns the singleton instance.  
+	 * Returns the singleton instance.
 	 * 
 	 * @return
 	 */
@@ -85,12 +85,22 @@ public class BatchCreatorUtility {
 	public void createBatchFile(String siteName) {
 		this.createFolders(siteName);
 		File f = new File(SERVER_FOLDER + siteName + START_BAT);
+		FileWriter fwriter = null;
 		try {
 			f.createNewFile();
-			FileWriter fwriter = new FileWriter(f);
+			fwriter = new FileWriter(f);
 			fwriter.write(BATCH_BEGIN + siteName + BATCH_END);
+			fwriter.flush();
 		} catch (IOException e) {
 			e.printStackTrace();
+		} finally {
+			try {
+				if (fwriter != null) {
+					fwriter.close();
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 }
