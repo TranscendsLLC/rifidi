@@ -60,5 +60,5 @@ public class ConfigurationConstants {
 	/**
 	 * 
 	 */
-	public static final String NEWLINE = "\n";
+	public static final String NEWLINE = "\r\n";
 }

@@ -69,12 +69,21 @@ public class TestSiteCreatorInterface {
 			Assert.fail();
 		}
 	}
-	
+
 	/**
 	 * 
 	 */
 	@Test
 	public void testSiteCreator() {
+		List<String> templateList = TemplateXMLScraper.getInstance()
+				.getIncludeList(new File("../config.xml"));
+		List<ReaderObject> readerObjectList = ReaderXMLScraper.getInstance()
+				.getReaderObjectList();
+
+		SiteCreatorInterface.getInstance().createBatchFile("cuddles");
+		SiteCreatorInterface.getInstance().createConfigFile("cuddles",
+				readerObjectList, templateList);
+		
 		
 	}
 }
