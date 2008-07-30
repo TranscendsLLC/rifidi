@@ -31,6 +31,8 @@ import org.rifidi.edge.readerplugin.alien.protocol.AlienCommunicationProtocol;
  */
 public class AlienConnectionManager extends ConnectionManager {
 
+	public static final String WELCOME = "Alien";
+	
 	/**
 	 * Logger.
 	 */
