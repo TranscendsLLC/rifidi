@@ -24,7 +24,7 @@ import org.rifidi.site.creation.ConfigCreatorUtility;
 public class SiteCreatorInterface {
 
 	/**
-	 * 
+	 * Site the creator interface
 	 */
 	private SiteCreatorInterface() {
 	}

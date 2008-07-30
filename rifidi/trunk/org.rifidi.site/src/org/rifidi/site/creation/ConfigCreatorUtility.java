@@ -38,7 +38,7 @@ public class ConfigCreatorUtility {
 	/**
 	 * 
 	 */
-	private static final String CONFIG_INI = "/configuration/";
+	private static final String CONFIG_INI = "/config.ini";
 
 	/**
 	 * 
