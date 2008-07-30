@@ -93,12 +93,10 @@ public class AlienTagStreamEnhancedCommand implements Command {
 					messageQueue.addMessage(m);
 				}
 
-//				try {
-//					Thread.sleep(1000);
-//				} catch (InterruptedException e) {
-//				}
-				Thread.yield();
-
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException e) {
+				}
 			}
 		} catch (RifidiMessageQueueException e) {
 			e.printStackTrace();
