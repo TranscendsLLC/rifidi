@@ -137,7 +137,7 @@ public class AlienTagStreamEnhancedCommand implements Command {
 		/**
 		 * Tag list custom format command.
 		 */
-		public static final String TAG_LIST_CUSTOM_FORMAT = ('\1' + "set TagListCustomFormat=%k|%t|%a|%v|%m\n");
+		public static final String TAG_LIST_CUSTOM_FORMAT = ('\1' + "set TagListCustomFormat=%k|%T|%a|%v|%m\n");
 		
 		public static final String GET_TIME_ZONE = ('\1' + "get TimeZone\n");
 	}
