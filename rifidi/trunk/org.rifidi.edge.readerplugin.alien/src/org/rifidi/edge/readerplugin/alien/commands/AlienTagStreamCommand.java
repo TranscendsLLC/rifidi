@@ -13,7 +13,9 @@ package org.rifidi.edge.readerplugin.alien.commands;
 import java.io.IOException;
 import java.sql.Time;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+import java.util.TimeZone;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -33,6 +35,8 @@ import org.w3c.dom.Document;
  */
 public class AlienTagStreamCommand implements Command {
 
+	private TimeZone timeZone;
+	private Calendar calendar;
 	
 	private boolean running = false;
 
@@ -53,6 +57,18 @@ public class AlienTagStreamCommand implements Command {
 		running = true;
 		try {
 
+			connection.sendMessage(AlienCommandList.GET_TIME_ZONE);
+			String temp  = ((String) connection.receiveMessage());
+			if (temp.contains("=")){
+				String temp1[] = temp.split("=");
+				temp = temp1[1];
+			}
+			String timeZoneString = "GMT" + temp.trim();
+			
+			timeZone = TimeZone.getTimeZone(timeZoneString);
+			
+			calendar = Calendar.getInstance(timeZone);
+			
 			connection.sendMessage(AlienCommandList.TAG_LIST_FORMAT);
 			connection.receiveMessage();
 
@@ -70,11 +86,11 @@ public class AlienTagStreamCommand implements Command {
 					messageQueue.addMessage(m);
 				}
 
-				try {
-					Thread.sleep(1000);
-				} catch (InterruptedException e) {
-				}
-
+//				try {
+//					Thread.sleep(1000);
+//				} catch (InterruptedException e) {
+//				}
+				Thread.yield();
 			}
 		} catch (RifidiMessageQueueException e) {
 			e.printStackTrace();
@@ -116,6 +132,9 @@ public class AlienTagStreamCommand implements Command {
 		 * Tag list custom format command.
 		 */
 		public static final String TAG_LIST_CUSTOM_FORMAT = ('\1' + "set TagListCustomFormat=%k|%t\n");
+	
+		
+		public static final String GET_TIME_ZONE = ('\1' + "get TimeZone\n");
 	}
 
 	/**
@@ -138,11 +157,14 @@ public class AlienTagStreamCommand implements Command {
 				String timeStamp = splitString2[1];
 
 				Time time = Time.valueOf(timeStamp);
+				calendar.setTime(time);
+				Calendar currentDate = Calendar.getInstance(timeZone);
+				calendar.set(currentDate.get(Calendar.YEAR), currentDate.get(Calendar.MONTH), currentDate.get(Calendar.DATE));
 
 				TagMessage newTagRead = new TagMessage();
 				newTagRead.setId(ByteAndHexConvertingUtility
 						.fromHexString(tagData.trim()));
-				newTagRead.setLastSeenTime(time.getTime());
+				newTagRead.setLastSeenTime(calendar.getTimeInMillis());
 				retVal.add(newTagRead);
 
 			}
