@@ -113,10 +113,15 @@ public class SimpleConnectionImpl implements Connection {
 			throw new IOException(e);
 		}
 		
+		
 		/* 
 		 * pop just one object off the stack.		 * 
 		 */
-		return recieved.pop();
+		Object retVal = recieved.pop();
+		
+		logger.debug(retVal);
+		
+		return retVal;
 	}
 
 	/* (non-Javadoc)
