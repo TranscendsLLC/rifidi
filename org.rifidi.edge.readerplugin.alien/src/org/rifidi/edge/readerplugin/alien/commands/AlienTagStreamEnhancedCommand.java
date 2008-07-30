@@ -61,7 +61,10 @@ public class AlienTagStreamEnhancedCommand implements Command {
 
 			connection.sendMessage(AlienCommandList.TAG_LIST_CUSTOM_FORMAT);
 			connection.receiveMessage();
-
+//			try {
+//			Thread.sleep(1000);
+//		} catch (InterruptedException e) {
+//		}
 			while (running) {
 
 				connection.sendMessage(AlienCommandList.TAG_LIST);
@@ -73,10 +76,11 @@ public class AlienTagStreamEnhancedCommand implements Command {
 					messageQueue.addMessage(m);
 				}
 
-				try {
-					Thread.sleep(1000);
-				} catch (InterruptedException e) {
-				}
+//				try {
+//					Thread.sleep(1000);
+//				} catch (InterruptedException e) {
+//				}
+				Thread.yield();
 
 			}
 		} catch (RifidiMessageQueueException e) {
