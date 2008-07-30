@@ -86,7 +86,18 @@ public class AlienConnectionManager extends ConnectionManager {
 		if (alienSock != null) {
 			try {
 				logger.debug("getting the welcome response");
-				connection.receiveMessage();
+				String welcome = (String) connection.receiveMessage();
+				if (welcome == null || !welcome.contains(WELCOME)) {
+					logger.debug("RifidiConnectionException was thrown,"
+							+ " reader is not an alien reader: " + welcome);
+					throw new RifidiConnectionException(
+							"Reader is not an alien reader");
+				} else if (welcome.toLowerCase().contains("busy")){
+					throw new RifidiConnectionException(welcome);
+				} else {
+					logger.debug("Reader is an alien.  Hoo-ray!");
+				}
+				
 				logger.debug("sending username");
 				connection.sendMessage(PROMPT_SUPPRESS
 						+ this.info.getUsername() + NEWLINE);
