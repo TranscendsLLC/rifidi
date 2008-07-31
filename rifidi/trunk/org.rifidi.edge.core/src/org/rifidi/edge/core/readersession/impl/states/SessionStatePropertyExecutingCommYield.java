@@ -2,11 +2,17 @@ package org.rifidi.edge.core.readersession.impl.states;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.rifidi.edge.core.communication.service.ConnectionStatus;
+import org.rifidi.edge.core.exceptions.RifidiCannotRestartCommandException;
 import org.rifidi.edge.core.exceptions.RifidiCommandInterruptedException;
 import org.rifidi.edge.core.exceptions.RifidiCommandNotFoundException;
 import org.rifidi.edge.core.exceptions.RifidiConnectionException;
+import org.rifidi.edge.core.exceptions.RifidiExecutionException;
 import org.rifidi.edge.core.exceptions.RifidiInvalidConfigurationException;
+import org.rifidi.edge.core.readersession.impl.CommandExecutionListener;
+import org.rifidi.edge.core.readersession.impl.ExecutionThread;
 import org.rifidi.edge.core.readersession.impl.ReaderSessionState;
+import org.rifidi.edge.core.readersession.impl.enums.CommandStatus;
 import org.rifidi.edge.core.readersession.impl.enums.ReaderSessionStatus;
 import org.w3c.dom.Document;
 
@@ -23,7 +29,6 @@ public class SessionStatePropertyExecutingCommYield implements
 	@Override
 	public void state_commandFinished() {
 		logger.debug("cannot execute commandFinished when in " + ReaderSessionStatus.EXECUTING_PROPERTY_WITH_YIELDED_COMMAND);
-		readerSessionImpl.transition(new SessionStatePropertyExecutingCommYield(readerSessionImpl));
 	}
 
 	@Override
@@ -45,16 +50,104 @@ public class SessionStatePropertyExecutingCommYield implements
 	@Override
 	public Document state_executeProperty(Document propertiesToExecute)
 			throws RifidiConnectionException, RifidiCommandNotFoundException,
-			RifidiCommandInterruptedException {
-		logger.debug("cannot execute executeProperty when in " + ReaderSessionStatus.EXECUTING_PROPERTY_WITH_YIELDED_COMMAND);
-		readerSessionImpl.transition(new SessionStatePropertyExecutingCommYield(readerSessionImpl));
-		return null;
+			RifidiCommandInterruptedException, RifidiCannotRestartCommandException {
+		
+		
+		return propertiesToExecute;
 
 	}
 
 	@Override
-	public void state_propertyFinished() {
-		// TODO Auto-generated method stub
+	public void state_propertyFinished() throws RifidiCannotRestartCommandException{
+		if(readerSessionImpl.curCommand==null){
+			readerSessionImpl.transition(new SessionStateOK(readerSessionImpl));
+			throw new RifidiCannotRestartCommandException("Current command is null");
+		}
+		if(readerSessionImpl.curCommand.getCommandStatus()!=CommandStatus.YIELDED){
+			readerSessionImpl.curCommand = null;
+			readerSessionImpl.transition(new SessionStateOK(readerSessionImpl));
+			throw new RifidiCannotRestartCommandException("Current command is not in yieled state");
+		}
+		
+		/*
+		 * Initialize the communication if not already done. Blocks until
+		 * connected
+		 */
+		try {
+			readerSessionImpl.connect();
+		} catch (RifidiConnectionException e1) {
+			logger.debug(e1.getMessage());
+			readerSessionImpl.commandJournal.updateCommand(
+					readerSessionImpl.curCommand.getCommand(),
+					CommandStatus.NOCOMMAND);
+			readerSessionImpl.curCommand = null;
+			readerSessionImpl.connectionStatus = ConnectionStatus.ERROR;
+			readerSessionImpl.transition(new SessionStateError(
+					readerSessionImpl));
+			throw new RifidiCannotRestartCommandException(e1.getMessage());
+		}
+		/*
+		 * Check if we are connected
+		 */
+		
+		//If we are disconnected, wait for a connection event to happen.
+		while(readerSessionImpl.connectionStatus == ConnectionStatus.DISCONNECTED){
+			synchronized (this) {
+				try {
+					this.wait();
+				} catch (InterruptedException e) {
+				}
+			}
+		}
+
+		if (readerSessionImpl.connectionStatus == ConnectionStatus.ERROR) {
+			readerSessionImpl.commandJournal.updateCommand(
+					readerSessionImpl.curCommand.getCommand(),
+					CommandStatus.NOCOMMAND);
+			readerSessionImpl.curCommand = null;
+			//conn_error() will be called to transition to the error state
+			throw new RifidiCannotRestartCommandException(
+					"The connection to the reader is not valid anymore. (MAX_CONNECTION_ATTEMPTS)");
+		}
+
+		/*
+		 * Check if Execution Thread is Initialized
+		 */
+		if (readerSessionImpl.executionThread == null) {
+			readerSessionImpl.executionThread = new ExecutionThread(
+					readerSessionImpl.messageQueue,
+					readerSessionImpl.errorQueue,
+					(CommandExecutionListener) readerSessionImpl);
+		}
+
+		/*
+		 * Prepare for execution of new command
+		 */
+		readerSessionImpl.connection.cleanQueues();
+
+		/*
+		 * Execute new command
+		 */
+		try {
+			readerSessionImpl.executionThread.start(
+					readerSessionImpl.connection, readerSessionImpl.curCommand);
+
+			readerSessionImpl.curCommand
+					.setCommandStatus(CommandStatus.EXECUTING);
+
+			readerSessionImpl.transition(new SessionStateCommandExecuting(
+					readerSessionImpl));
+
+			logger.debug("Command " + readerSessionImpl.curCommand.getCommandID() + " restarted");
+		} catch (RifidiExecutionException e) {
+			logger.debug(e.getMessage());
+			readerSessionImpl.commandJournal.updateCommand(
+					readerSessionImpl.curCommand.getCommand(),
+					CommandStatus.UNSUCCESSFUL);
+			readerSessionImpl.curCommand = null;
+			readerSessionImpl.transition(new SessionStateOK(readerSessionImpl));
+			throw new RifidiCannotRestartCommandException(e.getMessage());
+		}
 
 	}
 
@@ -74,20 +167,25 @@ public class SessionStatePropertyExecutingCommYield implements
 
 	@Override
 	public void conn_connected() {
-		logger.debug("connected called in " + ReaderSessionStatus.EXECUTING_PROPERTY_WITH_YIELDED_COMMAND);
-		
+		readerSessionImpl.connectionStatus = ConnectionStatus.CONNECTED;
+		synchronized (this) {
+			notify();
+		}
 	}
 
 	@Override
 	public void conn_disconnected() {
-		logger.debug("disconnected called in " + ReaderSessionStatus.EXECUTING_PROPERTY_WITH_YIELDED_COMMAND);
-		
+		readerSessionImpl.connectionStatus = ConnectionStatus.DISCONNECTED;
+		logger.debug("Connection disconnected");
 	}
 
 	@Override
 	public void conn_error() {
-		logger.debug("error called in " + ReaderSessionStatus.EXECUTING_PROPERTY_WITH_YIELDED_COMMAND);
-		
+		readerSessionImpl.connectionStatus = ConnectionStatus.ERROR;
+		synchronized (this) {
+			notify();
+		}
+		this.state_error();
 	}
 
 	@Override

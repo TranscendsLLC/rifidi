@@ -5,9 +5,7 @@ import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.communication.Connection;
 import org.rifidi.edge.core.exceptions.RifidiExecutionException;
 import org.rifidi.edge.core.messageQueue.MessageQueue;
-import org.rifidi.edge.core.readerplugin.commands.Command;
 import org.rifidi.edge.core.readerplugin.commands.CommandReturnStatus;
-import org.w3c.dom.Document;
 
 /**
  * This is a Helper to execute Commands. It will take in the command and execute
@@ -28,8 +26,7 @@ public class ExecutionThread {
 	private CommandExecutionListener commandExecutionListener;
 
 	private Thread thread;
-	private Command command;
-	private long commandID;
+	private CommandWrapper commandWrapper;
 	private CommandReturnStatus status;
 
 	private boolean running = false;
@@ -70,36 +67,33 @@ public class ExecutionThread {
 	 * @throws RifidiExecutionException
 	 *             if the command could not be successful Executed
 	 */
-	public void start(final Connection connection, final Command _command, final Document _configuration,
-			final long _commandID) throws RifidiExecutionException {
-		if (running || command != null) {
-			logger.error("command " + this.commandID + "is still executing");
-			throw new RifidiExecutionException("Command " + this.commandID
+	public void start(final Connection connection, final CommandWrapper _command) throws RifidiExecutionException {
+		if (running || commandWrapper != null) {
+			throw new RifidiExecutionException("Command " + this.commandWrapper.getCommandID()
 					+ " is still executing");
 		}
 		if (_command == null) {
 			logger.error("NO Command to execute");
 			return;
 		}
-		this.command = _command;
-		this.commandID = _commandID;
+		this.commandWrapper = _command;
 		thread = new Thread(new Runnable() {
 
 			@Override
 			public void run() {
 				logger.debug("Starting command");
-				if (command == null) {
+				if (commandWrapper == null) {
 					logger.error("NO Command to execute");
 					return;
 				}
-				status = command.start(connection, messageQueue, errorQueue,
-						_configuration, commandID);
+				status = commandWrapper.getCommand().start(connection, messageQueue, errorQueue,
+						_command.getConfiguration(), commandWrapper.getCommandID());
 				// TODO Possibly pass in commandID instead of command
 				logger.debug("Command finished");
-				commandExecutionListener.commandFinished(command, status);
-				command = null;
+				commandExecutionListener.commandFinished(commandWrapper.getCommand(), status);
+				commandWrapper = null;
 			}
-		}, "ExecuteThread " + commandID);
+		}, "ExecuteThread " + commandWrapper.getCommandID());
 		thread.setDaemon(true);
 		thread.start();
 	}
@@ -112,23 +106,21 @@ public class ExecutionThread {
 	 */
 	@SuppressWarnings("deprecation")
 	public void stop(boolean force) {
-		if (command != null) {
-			command.stop();
+		if (commandWrapper != null) {
+			commandWrapper.getCommand().stop();
 			if (force) {
 				logger.debug("Force shutdown");
 				try {
-					logger.debug("before join");
 					thread.join(5000);
-					logger.debug("after join");
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
 				if (thread.isAlive()) {
 					thread.interrupt();
 					thread.stop();
-					commandExecutionListener.commandFinished(command,
+					commandExecutionListener.commandFinished(commandWrapper.getCommand(),
 							CommandReturnStatus.INTERRUPTED);
-					command = null;
+					commandWrapper = null;
 				}
 			}
 		}

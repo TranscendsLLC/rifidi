@@ -1,2 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tns:AntennaSequence tns:type="get" xmlns:tns="http://rifidi.org/edge/alien/properties/AntennaSequence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://rifidi.org/edge/alien/properties/AntennaSequence ../src/org/rifidi/edge/readerplugin/alien/commands/general/AntennaSequence.xsd ">1,2,3</tns:AntennaSequence>
+<AntennaSequence type="set"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../src/org/rifidi/edge/readerplugin/alien/commands/general/AntennaSequence.xsd">1,2,3</AntennaSequence>

@@ -15,6 +15,11 @@ import java.io.Serializable;
 public abstract class ReaderInfo implements Serializable {
 
 	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -512159091287322758L;
+
+	/**
 	 * IPAddress of the Reader
 	 */
 	private String ipAddress;

@@ -12,15 +12,17 @@
 			org.rifidi.edge.readerplugin.alien.commands.general.Username
 		</classname>
 		<group>general</group>
-		<group>skript</group>
 		<name>Username</name>
 	</property>
+	<property>
+		<classname>org.rifidi.edge.readerplugin.alien.commands.general.AntennaSequence</classname>
+		<name>AntennaSequence</name>
+		<group>general</group></property>
 	<command>
 		<classname>
 			org.rifidi.edge.readerplugin.alien.commands.AlienTagStreamCommand
 		</classname>
 		<group>general</group>
-		<group>skript</group>
 		<name>TagStreaming</name>
 	</command>
 	<command>
@@ -28,7 +30,6 @@
 			org.rifidi.edge.readerplugin.alien.commands.AlienTagStreamEnhancedCommand
 		</classname>
 		<group>general</group>
-		<group>skript</group>
 		<name>TagStreamingEnhanced</name>
 	</command>
 </readerPluginXML>

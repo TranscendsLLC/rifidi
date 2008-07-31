@@ -22,8 +22,6 @@ public class SessionStatePropertyExecuting implements ReaderSessionState{
 	@Override
 	public void state_commandFinished() {
 		logger.debug("cannot execute resetSession when in " + ReaderSessionStatus.EXECUTING_PROPERTY_WITH_NO_YIELDED_COMMAND);
-		readerSessionImpl.transition(new SessionStatePropertyExecuting(readerSessionImpl));
-		
 	}
 
 	@Override
@@ -54,7 +52,7 @@ public class SessionStatePropertyExecuting implements ReaderSessionState{
 
 	@Override
 	public void state_propertyFinished() {
-		logger.debug("Implement this method");
+		logger.debug("Property is Finished");
 		readerSessionImpl.transition(new SessionStateOK(readerSessionImpl));
 		
 	}

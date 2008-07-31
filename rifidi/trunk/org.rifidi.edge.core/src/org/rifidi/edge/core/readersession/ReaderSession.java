@@ -2,6 +2,7 @@ package org.rifidi.edge.core.readersession;
 
 import java.util.List;
 
+import org.rifidi.edge.core.exceptions.RifidiCannotRestartCommandException;
 import org.rifidi.edge.core.exceptions.RifidiCommandInterruptedException;
 import org.rifidi.edge.core.exceptions.RifidiCommandNotFoundException;
 import org.rifidi.edge.core.exceptions.RifidiConnectionException;
@@ -10,7 +11,6 @@ import org.rifidi.edge.core.readerplugin.ReaderInfo;
 import org.rifidi.edge.core.readersession.impl.enums.CommandStatus;
 import org.rifidi.edge.core.readersession.impl.enums.ReaderSessionStatus;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 
 /**
  * The ReaderSession is a instance of a Session to a specific Reader. It allows
@@ -61,10 +61,11 @@ public interface ReaderSession {
 	 * @throws RifidiCommandInterruptedException
 	 *             if the command could not be started or was interrupted
 	 * @throws RifidiInvalidConfigurationException 
+	 * @throws RifidiCannotRestartCommandException 
 	 */
 	public Document executeProperty(Document propertiesToExecute)
 			throws RifidiConnectionException, RifidiCommandNotFoundException,
-			RifidiCommandInterruptedException, RifidiInvalidConfigurationException;
+			RifidiCommandInterruptedException, RifidiInvalidConfigurationException, RifidiCannotRestartCommandException;
 
 	/**
 	 * Stop the currently executing command

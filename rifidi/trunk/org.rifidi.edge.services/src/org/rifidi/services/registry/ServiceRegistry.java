@@ -45,7 +45,6 @@ public class ServiceRegistry {
 	/**
 	 * Private constructor singleton pattern.
 	 */
-	@SuppressWarnings("unchecked")
 	private ServiceRegistry() {
 		Activator.getDefaultContext().addServiceListener(new ServiceListener() {
 

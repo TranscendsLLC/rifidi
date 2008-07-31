@@ -1,28 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://rifidi.org/edge/alien/properties/AntennaSequence" xmlns:tns="http://rifidi.org/edge/alien/properties/AntennaSequence" elementFormDefault="qualified">
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"  elementFormDefault="unqualified">
 
-    <element name="AntennaSequence" type="tns:antennaSequenceType"></element>
+    <xs:element name="AntennaSequence" type="antennaSequenceType"></xs:element>
     
-    <complexType name="antennaSequenceType">
-    	<simpleContent>
-    		<extension base="tns:sequenceType">
-    			<attribute ref="tns:type" use="required"></attribute>
-    		</extension>
-    	</simpleContent>
-    </complexType>
+    <xs:complexType name="antennaSequenceType">
+    	<xs:simpleContent>
+    		<xs:extension base="sequenceType">
+    			<xs:attribute ref="type" use="required"></xs:attribute>
+    		</xs:extension>
+    	</xs:simpleContent>
+    </xs:complexType>
 
-    <simpleType name="sequenceType">
-    	<restriction base="string">
-    		<pattern value="((\d,)*\d)?"></pattern>
-    	</restriction>
-    </simpleType>
+    <xs:simpleType name="sequenceType">
+    	<xs:restriction base="xs:string">
+    		<xs:pattern value="((\d,)*\d)?"></xs:pattern>
+    	</xs:restriction>
+    </xs:simpleType>
 
-    <attribute name="type">
-    	<simpleType>
-    		<restriction base="string">
-    			<enumeration value="get"></enumeration>
-    			<enumeration value="set"></enumeration>
-    		</restriction>
-    	</simpleType>
-    </attribute>
-</schema>
+    <xs:attribute name="type">
+    	<xs:simpleType>
+    		<xs:restriction base="xs:string">
+    			<xs:enumeration value="get"></xs:enumeration>
+    			<xs:enumeration value="set"></xs:enumeration>
+    		</xs:restriction>
+    	</xs:simpleType>
+    </xs:attribute>
+</xs:schema>

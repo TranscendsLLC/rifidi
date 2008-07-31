@@ -15,12 +15,12 @@ import javax.xml.validation.Validator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.rifidi.edge.common.utilities.dom.DomHelper;
 import org.rifidi.edge.common.utilities.resource.Resource;
 import org.rifidi.edge.core.communication.Connection;
 import org.rifidi.edge.core.communication.service.CommunicationStateListener;
 import org.rifidi.edge.core.communication.service.ConnectionService;
 import org.rifidi.edge.core.communication.service.ConnectionStatus;
+import org.rifidi.edge.core.exceptions.RifidiCannotRestartCommandException;
 import org.rifidi.edge.core.exceptions.RifidiCommandInterruptedException;
 import org.rifidi.edge.core.exceptions.RifidiCommandNotFoundException;
 import org.rifidi.edge.core.exceptions.RifidiConnectionException;
@@ -69,6 +69,7 @@ public class ReaderSessionImpl implements ReaderSession, ReaderSessionState,
 	// Services
 	private ConnectionService connectionService;
 	private MessageService messageService;
+	@SuppressWarnings("unused")
 	private ReaderPluginService readerPluginService;
 
 	// Session Information
@@ -86,6 +87,7 @@ public class ReaderSessionImpl implements ReaderSession, ReaderSessionState,
 	protected long commandID = 0;
 
 	// Status
+	@SuppressWarnings("unused")
 	private ReaderSessionStatus readerSessionStatus = ReaderSessionStatus.OK;
 	protected ConnectionStatus connectionStatus = ConnectionStatus.DISCONNECTED;
 
@@ -135,11 +137,11 @@ public class ReaderSessionImpl implements ReaderSession, ReaderSessionState,
 	public Document executeProperty(Document propertiesToExecute)
 			throws RifidiConnectionException,
 			RifidiCommandInterruptedException, RifidiCommandNotFoundException,
-			RifidiInvalidConfigurationException {
+			RifidiInvalidConfigurationException, RifidiCannotRestartCommandException {
 		return this.state_executeProperty(propertiesToExecute);
 	}
 
-	protected void validate(Class command, Element elementToValidate)
+	protected void validate(Class<?> command, Element elementToValidate)
 			throws SAXException, IOException {
 		SchemaFactory schemaFactory = SchemaFactory
 				.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
@@ -172,6 +174,7 @@ public class ReaderSessionImpl implements ReaderSession, ReaderSessionState,
 
 	protected Object instantiate(CommandDescription commandDescription)
 			throws RifidiCommandNotFoundException {
+		
 		Object obj = null;
 		try {
 			obj = Class.forName(commandDescription.getClassname())
@@ -304,14 +307,6 @@ public class ReaderSessionImpl implements ReaderSession, ReaderSessionState,
 	 */
 	@Override
 	public void resetReaderSession() {
-/*
-		if (this.connectionStatus == ConnectionStatus.ERROR) {
-			logger.debug("Resetting Communication");
-			cleanUP();
-			connection = null;
-			readerSessionStatus = ReaderSessionStatus.OK;
-		}*/
-
 		state_resetSession();
 	}
 
@@ -329,12 +324,6 @@ public class ReaderSessionImpl implements ReaderSession, ReaderSessionState,
 	 */
 	@Override
 	public void commandFinished(Command command, CommandReturnStatus status) {
-		// only update commandStatus if the command status has not already been
-		// changed from executing
-		// if (commandJournal.getCommandStatus(command) ==
-		// CommandStatus.EXECUTING) {
-		// commandJournal.updateCommand(command, status);
-		// }
 		state_commandFinished();
 	}
 
@@ -462,12 +451,12 @@ public class ReaderSessionImpl implements ReaderSession, ReaderSessionState,
 
 	@Override
 	public void state_commandFinished() {
-		try {
+/*		try {
 			transitionSem.acquire();
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		}*/
 		sessionState.state_commandFinished();
 
 	}
@@ -503,7 +492,7 @@ public class ReaderSessionImpl implements ReaderSession, ReaderSessionState,
 	public Document state_executeProperty(Document propertiesToExecute)
 			throws RifidiConnectionException, RifidiCommandNotFoundException,
 			RifidiCommandInterruptedException,
-			RifidiInvalidConfigurationException {
+			RifidiInvalidConfigurationException, RifidiCannotRestartCommandException {
 		try {
 			transitionSem.acquire();
 		} catch (InterruptedException e) {
@@ -515,13 +504,13 @@ public class ReaderSessionImpl implements ReaderSession, ReaderSessionState,
 	}
 
 	@Override
-	public void state_propertyFinished() {
-		try {
+	public void state_propertyFinished() throws RifidiCannotRestartCommandException {
+/*		try {
 			transitionSem.acquire();
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		}*/
 		sessionState.state_propertyFinished();
 
 	}
