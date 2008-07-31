@@ -24,8 +24,10 @@ public class Username implements org.rifidi.edge.core.readerplugin.property.Prop
 	@Override
 	public Element execute(Connection connection, MessageQueue errorQueue,
 			Element propertyConfig) {
+		logger.debug("Executing: " + this.getClass());
 		String type = propertyConfig.getAttribute("type");
 		String response = null;
+		
 
 		try {
 			if (type.equals("get")) {
