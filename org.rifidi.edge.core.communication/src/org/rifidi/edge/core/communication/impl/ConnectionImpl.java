@@ -152,7 +152,7 @@ public class ConnectionImpl implements Connection {
 	private void checkException() throws IOException {
 		logger.debug("Try to ckeck for Exception but need to pass lock");
 		synchronized (locker) {
-			logger.debug("Inside sync block.");
+			logger.debug("Inside sync block to check for exception.");
 			Exception e = exception;
 			exception = null;
 			if (e != null) {
