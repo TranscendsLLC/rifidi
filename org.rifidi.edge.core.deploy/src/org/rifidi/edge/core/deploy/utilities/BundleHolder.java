@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.osgi.framework.Bundle;
 import org.rifidi.edge.core.readerplugin.ReaderPlugin;
-import org.rifidi.edge.core.readerplugin.commands.Command;
+import org.rifidi.edge.core.readerplugin.xml.CommandDescription;
 
 /**
  * Bundle helper containing all necessary information to unload the Fragment
@@ -28,7 +28,12 @@ public class BundleHolder {
 	/**
 	 * Commands this fragment provides
 	 */
-	public List<Class<? extends Command>> commands;
+	public List<CommandDescription> commands;
+	
+	/**
+	 * Commands this fragment provides
+	 */
+	public List<CommandDescription> properties;
 
 	/**
 	 * ReaderPlugin the commands where added to

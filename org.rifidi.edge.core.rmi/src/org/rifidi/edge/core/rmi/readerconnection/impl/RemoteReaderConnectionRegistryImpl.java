@@ -11,6 +11,7 @@ import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.readerplugin.ReaderInfo;
 import org.rifidi.edge.core.readerplugin.service.ReaderPluginService;
 import org.rifidi.edge.core.readersession.ReaderSession;
+import org.rifidi.edge.core.readersession.service.ReaderSessionListener;
 import org.rifidi.edge.core.readersession.service.ReaderSessionService;
 import org.rifidi.edge.core.rmi.readerconnection.RemoteReaderConnection;
 import org.rifidi.edge.core.rmi.readerconnection.RemoteReaderConnectionRegistry;
@@ -27,7 +28,7 @@ import org.rifidi.services.registry.ServiceRegistry;
  * 
  */
 public class RemoteReaderConnectionRegistryImpl implements
-		RemoteReaderConnectionRegistry {
+		RemoteReaderConnectionRegistry, ReaderSessionListener {
 
 	private Log logger = LogFactory
 			.getLog(RemoteReaderConnectionRegistryImpl.class);
@@ -137,6 +138,7 @@ public class RemoteReaderConnectionRegistryImpl implements
 	public void setReaderSessionService(
 			ReaderSessionService readerSessionService) {
 		this.readerSessionService = readerSessionService;
+		readerSessionService.addReaderSessionListener(this);
 	}
 
 	private RemoteReaderConnection saveRemoteConnection(
@@ -159,5 +161,15 @@ public class RemoteReaderConnectionRegistryImpl implements
 				remoteReaderConnection);
 		readerSessionSync.put(readerSession, remoteReaderConnection);
 		return remoteReaderConnectionStub;
+	}
+
+	@Override
+	public void addEvent(ReaderSession readerSession) {	
+	}
+
+	@Override
+	public void removeEvent(ReaderSession readerSession) {
+		RemoteReaderConnection remoteReaderConnection = readerSessionSync.remove(readerSession);
+		remoteSessionList.values().remove(remoteReaderConnection);
 	}
 }

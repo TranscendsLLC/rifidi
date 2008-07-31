@@ -5,6 +5,7 @@ import org.w3c.dom.Document;
 
 public class PropertyConfiguration {
 	
+	@SuppressWarnings("unused")
 	private Document doc;
 	
 	public PropertyConfiguration(Document doc) {
