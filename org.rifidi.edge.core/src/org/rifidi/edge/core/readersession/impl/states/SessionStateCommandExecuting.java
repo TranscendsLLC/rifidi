@@ -160,12 +160,23 @@ public class SessionStateCommandExecuting implements ReaderSessionState {
 								.instantiate(propertyCommand);
 
 						readerSessionImpl.validate(propObject.getClass(), e);
-
-						// execute property
-						Element returnVal = propObject.execute(
-								readerSessionImpl.connection,
-								readerSessionImpl.errorQueue, e);
-
+						
+						Element returnVal = null;
+						logger.debug("Current state is " + readerSessionImpl.connectionStatus);
+						if (readerSessionImpl.connectionStatus == ConnectionStatus.ERROR) {
+							returnVal = e.getOwnerDocument().createElement(
+									e.getNodeName());
+							Text data = e.getOwnerDocument().createTextNode("ERROR");
+							returnVal.appendChild(data);
+						} else if (readerSessionImpl.connectionStatus == ConnectionStatus.CONNECTED) {
+						
+							// execute property
+							returnVal = propObject.execute(
+									readerSessionImpl.connection,
+									readerSessionImpl.errorQueue, e);
+						} else {	
+							logger.debug("Default case on swtich called with " + readerSessionImpl.connectionStatus);
+						}
 						// insert return value into element
 						propertyNode.replaceChild(returnVal, e);
 

@@ -295,14 +295,24 @@ public class SessionStateOK implements ReaderSessionState {
 						
 						readerSessionImpl.validate(propObject.getClass(), e);						
 
-						// execute property
-						Element returnVal = propObject.execute(
-								readerSessionImpl.connection,
-								readerSessionImpl.errorQueue, e);
-
+						Element returnVal = null;
+						logger.debug("Current state is " + readerSessionImpl.connectionStatus);
+						if (readerSessionImpl.connectionStatus == ConnectionStatus.ERROR) {
+								returnVal = e.getOwnerDocument().createElement(
+										e.getNodeName());
+								Text data = e.getOwnerDocument().createTextNode("ERROR");
+								returnVal.appendChild(data);
+						} else if (readerSessionImpl.connectionStatus == ConnectionStatus.CONNECTED) {
+								// execute property
+								returnVal = propObject.execute(
+										readerSessionImpl.connection,
+										readerSessionImpl.errorQueue, e);
+								
+						} else {	
+								logger.debug("Default case on swtich called with " + readerSessionImpl.connectionStatus);
+						}
 						// insert return value into element
 						propertyNode.replaceChild(returnVal, e);
-						
 					} catch (RifidiCommandNotFoundException e1) {
 						logger.debug(e1.getMessage());
 						Element error = propertiesToExecute.createElement(e.getNodeName());
@@ -376,6 +386,7 @@ public class SessionStateOK implements ReaderSessionState {
 
 	@Override
 	public void conn_error() {
+		logger.debug("Going from state OK to state ERROR.");
 		readerSessionImpl.connectionStatus = ConnectionStatus.ERROR;
 		synchronized (this) {
 			this.notify();
