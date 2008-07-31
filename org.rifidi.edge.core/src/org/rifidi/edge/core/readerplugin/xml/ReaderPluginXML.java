@@ -13,22 +13,22 @@ public class ReaderPluginXML extends ReaderPluginCommandExtension {
 
 	private String connectionManager;
 
-	private String info;
+	private String plugin;
 
 	public String getConnectionManager() {
 		return connectionManager;
 	}
 
-	public String getInfo() {
-		return info;
+	public String getPlugin() {
+		return plugin;
+	}
+
+	public void setPlugin(String plugin) {
+		this.plugin = plugin;
 	}
 
 	public void setConnectionManager(String connectionManager) {
 		this.connectionManager = connectionManager.trim();
-	}
-
-	public void setInfo(String info) {
-		this.info = info.trim();
 	}
 
 }
