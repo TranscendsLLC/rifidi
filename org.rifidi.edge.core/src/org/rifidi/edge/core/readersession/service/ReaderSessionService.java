@@ -55,4 +55,21 @@ public interface ReaderSessionService {
 	 *            the listener to remove
 	 */
 	public void removeReaderSessionListener(ReaderSessionListener listener);
+	
+	
+	/**
+	 * Add a new Listener to this Service.
+	 * 
+	 * @param listener
+	 *            the listener to add
+	 */
+	public void addReaderSessionAutoUnloadListener(ReaderSessionAutoUnloadListener listener);
+
+	/**
+	 * Remove a previous added Listener from this Service
+	 * 
+	 * @param listener
+	 *            the listener to remove
+	 */
+	public void removeReaderSessionAutoUnloadListener(ReaderSessionAutoUnloadListener listener);
 }
