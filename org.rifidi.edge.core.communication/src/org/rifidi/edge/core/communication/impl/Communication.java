@@ -327,6 +327,7 @@ public class Communication implements ConnectionExceptionListener {
 				reconnect();
 			} catch (RifidiConnectionException e1) {
 				changeState(ConnectionStatus.ERROR);
+				
 			}
 			logger.debug("ending cleanup service");
 			// Security lock so that only one CleanUp Service Thread can run at
