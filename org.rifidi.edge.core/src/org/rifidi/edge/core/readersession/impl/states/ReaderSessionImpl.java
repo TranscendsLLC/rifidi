@@ -3,6 +3,7 @@ package org.rifidi.edge.core.readersession.impl.states;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.Semaphore;
 
@@ -137,7 +138,8 @@ public class ReaderSessionImpl implements ReaderSession, ReaderSessionState,
 	public Document executeProperty(Document propertiesToExecute)
 			throws RifidiConnectionException,
 			RifidiCommandInterruptedException, RifidiCommandNotFoundException,
-			RifidiInvalidConfigurationException, RifidiCannotRestartCommandException {
+			RifidiInvalidConfigurationException,
+			RifidiCannotRestartCommandException {
 		return this.state_executeProperty(propertiesToExecute);
 	}
 
@@ -174,7 +176,7 @@ public class ReaderSessionImpl implements ReaderSession, ReaderSessionState,
 
 	protected Object instantiate(CommandDescription commandDescription)
 			throws RifidiCommandNotFoundException {
-		
+
 		Object obj = null;
 		try {
 			obj = Class.forName(commandDescription.getClassname())
@@ -451,12 +453,10 @@ public class ReaderSessionImpl implements ReaderSession, ReaderSessionState,
 
 	@Override
 	public void state_commandFinished() {
-/*		try {
-			transitionSem.acquire();
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}*/
+		/*
+		 * try { transitionSem.acquire(); } catch (InterruptedException e) { //
+		 * TODO Auto-generated catch block e.printStackTrace(); }
+		 */
 		sessionState.state_commandFinished();
 
 	}
@@ -492,7 +492,8 @@ public class ReaderSessionImpl implements ReaderSession, ReaderSessionState,
 	public Document state_executeProperty(Document propertiesToExecute)
 			throws RifidiConnectionException, RifidiCommandNotFoundException,
 			RifidiCommandInterruptedException,
-			RifidiInvalidConfigurationException, RifidiCannotRestartCommandException {
+			RifidiInvalidConfigurationException,
+			RifidiCannotRestartCommandException {
 		try {
 			transitionSem.acquire();
 		} catch (InterruptedException e) {
@@ -504,13 +505,12 @@ public class ReaderSessionImpl implements ReaderSession, ReaderSessionState,
 	}
 
 	@Override
-	public void state_propertyFinished() throws RifidiCannotRestartCommandException {
-/*		try {
-			transitionSem.acquire();
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}*/
+	public void state_propertyFinished()
+			throws RifidiCannotRestartCommandException {
+		/*
+		 * try { transitionSem.acquire(); } catch (InterruptedException e) { //
+		 * TODO Auto-generated catch block e.printStackTrace(); }
+		 */
 		sessionState.state_propertyFinished();
 
 	}
@@ -557,6 +557,26 @@ public class ReaderSessionImpl implements ReaderSession, ReaderSessionState,
 	@Override
 	public List<String> getAvailableProperties() {
 		return plugin.getProperties();
+	}
+
+	@Override
+	public Collection<String> getAvailableCommandGroups() {
+		return plugin.getCommandGroups();
+	}
+
+	@Override
+	public Collection<String> getAvailablePropertyGroups() {
+		return plugin.getPropertyGroups();
+	}
+
+	@Override
+	public Collection<String> getCommandsForGroup(String groupName) {
+		return plugin.getCommandsForGroup(groupName);
+	}
+
+	@Override
+	public Collection<String> getPropertiesForGroup(String groupName) {
+		return plugin.getPropertiesForGroup(groupName);
 	}
 
 }
