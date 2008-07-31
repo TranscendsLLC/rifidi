@@ -2,6 +2,7 @@ package org.rifidi.edge.core.readersession.impl.states;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.rifidi.edge.core.communication.service.ConnectionStatus;
 import org.rifidi.edge.core.exceptions.RifidiCommandInterruptedException;
 import org.rifidi.edge.core.exceptions.RifidiCommandNotFoundException;
 import org.rifidi.edge.core.exceptions.RifidiConnectionException;
@@ -80,13 +81,14 @@ public class SessionStatePropertyExecuting implements ReaderSessionState{
 	@Override
 	public void conn_disconnected() {
 		logger.debug("disconnected called in " + ReaderSessionStatus.EXECUTING_PROPERTY_WITH_NO_YIELDED_COMMAND);
-		
+		readerSessionImpl.connectionStatus = ConnectionStatus.DISCONNECTED;
 	}
 
 	@Override
 	public void conn_error() {
 		logger.debug("error called in " + ReaderSessionStatus.EXECUTING_PROPERTY_WITH_NO_YIELDED_COMMAND);
-		
+		readerSessionImpl.connectionStatus = ConnectionStatus.ERROR;
+		this.state_error();
 	}
 
 	@Override
