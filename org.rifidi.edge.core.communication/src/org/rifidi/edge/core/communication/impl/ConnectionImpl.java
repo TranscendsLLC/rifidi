@@ -156,7 +156,7 @@ public class ConnectionImpl implements Connection {
 			Exception e = exception;
 			exception = null;
 			if (e != null) {
-				logger.error("Exceptin found... Throwing it.", e);
+				logger.error("Exception found... Throwing it.", e);
 				if (e instanceof IOException) {
 					throw (IOException) e;
 				} else {
