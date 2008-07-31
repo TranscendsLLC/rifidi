@@ -1,6 +1,8 @@
 package org.rifidi.edge.core.readersession.service.impl;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -11,6 +13,7 @@ import org.rifidi.edge.core.readerplugin.service.ReaderPluginListener;
 import org.rifidi.edge.core.readerplugin.service.ReaderPluginService;
 import org.rifidi.edge.core.readersession.ReaderSession;
 import org.rifidi.edge.core.readersession.impl.states.ReaderSessionImpl;
+import org.rifidi.edge.core.readersession.service.ReaderSessionAutoUnloadListener;
 import org.rifidi.edge.core.readersession.service.ReaderSessionListener;
 import org.rifidi.edge.core.readersession.service.ReaderSessionService;
 
@@ -29,7 +32,9 @@ public class ReaderSessionServiceImpl implements ReaderSessionService,
 
 	private ReaderPluginService readerPluginService;
 	private ArrayList<ReaderSession> registry = new ArrayList<ReaderSession>();
-	private ArrayList<ReaderSessionListener> listeners = new ArrayList<ReaderSessionListener>();
+	
+	private Collection<ReaderSessionAutoUnloadListener> autoRemoveListeners = new HashSet<ReaderSessionAutoUnloadListener>();
+	private Collection<ReaderSessionListener> listeners = new HashSet<ReaderSessionListener>();
 	private int sessionID = 1;
 
 	private Log logger = LogFactory.getLog(ReaderSessionServiceImpl.class);
@@ -121,7 +126,20 @@ public class ReaderSessionServiceImpl implements ReaderSessionService,
 		listeners.remove(listener);
 
 	}
+	
+	@Override
+	public void addReaderSessionAutoUnloadListener(
+			ReaderSessionAutoUnloadListener listener) {
+		autoRemoveListeners.add(listener);
+	}
 
+	@Override
+	public void removeReaderSessionAutoUnloadListener(
+			ReaderSessionAutoUnloadListener listener) {
+		// TODO Auto-generated method stub
+		autoRemoveListeners.remove(listener);
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -156,8 +174,8 @@ public class ReaderSessionServiceImpl implements ReaderSessionService,
 				}
 				if (registry.remove(readerSession)) {
 					logger.debug("Session Removed.");
-					for (ReaderSessionListener l : listeners) {
-						l.removeEvent(readerSession);
+					for (ReaderSessionAutoUnloadListener l : autoRemoveListeners) {
+						l.autoRemoveEvent(readerSession);
 					}
 				}
 			}

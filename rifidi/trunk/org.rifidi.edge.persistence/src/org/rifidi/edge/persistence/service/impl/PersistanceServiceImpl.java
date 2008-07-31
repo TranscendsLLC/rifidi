@@ -20,6 +20,7 @@ import org.rifidi.edge.core.readerplugin.ReaderInfo;
 import org.rifidi.edge.core.readerplugin.service.ReaderPluginListener;
 import org.rifidi.edge.core.readerplugin.service.ReaderPluginService;
 import org.rifidi.edge.core.readersession.ReaderSession;
+import org.rifidi.edge.core.readersession.service.ReaderSessionAutoUnloadListener;
 import org.rifidi.edge.core.readersession.service.ReaderSessionListener;
 import org.rifidi.edge.core.readersession.service.ReaderSessionService;
 import org.rifidi.edge.persistence.service.PersistenceService;
@@ -34,7 +35,7 @@ import org.rifidi.services.registry.ServiceRegistry;
  * @author Matthew Dean - matt@pramari.com
  */
 public class PersistanceServiceImpl implements PersistenceService,
-		ReaderPluginListener, ReaderSessionListener {
+		ReaderPluginListener, ReaderSessionListener, ReaderSessionAutoUnloadListener {
 
 	/**
 	 * The log4j logger.debug.
@@ -134,6 +135,12 @@ public class PersistanceServiceImpl implements PersistenceService,
 		}
 	}
 
+	@Override
+	public void autoRemoveEvent(ReaderSession readerSession) {
+		// TODO Auto-generated method stub
+		
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -193,6 +200,9 @@ public class PersistanceServiceImpl implements PersistenceService,
 			ReaderSessionService readerSessionService) {
 		this.readerSessionService = readerSessionService;
 		this.readerSessionService.addReaderSessionListener(this);
+		this.readerSessionService.addReaderSessionAutoUnloadListener(this);
 	}
+
+
 
 }
