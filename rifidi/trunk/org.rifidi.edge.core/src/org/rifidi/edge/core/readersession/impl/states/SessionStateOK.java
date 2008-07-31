@@ -386,7 +386,6 @@ public class SessionStateOK implements ReaderSessionState {
 
 	@Override
 	public void conn_error() {
-		logger.debug("Going from state OK to state ERROR.");
 		readerSessionImpl.connectionStatus = ConnectionStatus.ERROR;
 		synchronized (this) {
 			this.notify();
