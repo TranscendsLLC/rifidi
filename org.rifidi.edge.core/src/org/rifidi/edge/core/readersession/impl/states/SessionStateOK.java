@@ -2,13 +2,10 @@ package org.rifidi.edge.core.readersession.impl.states;
 
 import java.io.IOException;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.impl.LogFactoryImpl;
 import org.rifidi.edge.core.communication.service.ConnectionStatus;
+import org.rifidi.edge.core.exceptions.RifidiCannotRestartCommandException;
 import org.rifidi.edge.core.exceptions.RifidiCommandInterruptedException;
 import org.rifidi.edge.core.exceptions.RifidiCommandNotFoundException;
 import org.rifidi.edge.core.exceptions.RifidiConnectionException;
@@ -28,6 +25,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.w3c.dom.Text;
 import org.xml.sax.SAXException;
 
 public class SessionStateOK implements ReaderSessionState {
@@ -43,8 +41,6 @@ public class SessionStateOK implements ReaderSessionState {
 	@Override
 	public void state_commandFinished() {
 		logger.debug("Cannot Execute commandFinished when in OK session state");
-		readerSessionImpl.transition(new SessionStateOK(readerSessionImpl));
-
 	}
 
 	@Override
@@ -59,7 +55,7 @@ public class SessionStateOK implements ReaderSessionState {
 			throws RifidiInvalidConfigurationException,
 			RifidiCommandNotFoundException, RifidiConnectionException,
 			RifidiCommandInterruptedException {
-		logger.debug("executeCommand called in SessionOK state");
+		logger.debug("executeCommand called");
 		CommandConfiguration commandConfiguration = new CommandConfiguration(
 				configuration);
 		String commandName = null;
@@ -80,6 +76,7 @@ public class SessionStateOK implements ReaderSessionState {
 		readerSessionImpl.curCommand = new CommandWrapper();
 		readerSessionImpl.commandID++;
 		readerSessionImpl.curCommand.setCommandID(readerSessionImpl.commandID);
+		readerSessionImpl.curCommand.setConfiguration(configuration);
 		readerSessionImpl.curCommand.setCommandName(commandName);
 		readerSessionImpl.curCommand.setCommandStatus(CommandStatus.WAITING);
 		readerSessionImpl.commandJournal
@@ -89,6 +86,13 @@ public class SessionStateOK implements ReaderSessionState {
 		 */
 		CommandDescription cd = readerSessionImpl.plugin
 				.getCommand(commandName);
+		
+		if(cd == null){
+			readerSessionImpl.curCommand.setCommandStatus(CommandStatus.NOCOMMAND);
+			readerSessionImpl.curCommand=null;
+			readerSessionImpl.transition(new SessionStateOK(readerSessionImpl));
+			throw new RifidiCommandNotFoundException("Command: " + commandName + " not found");
+		}
 
 		/*
 		 * Instantiate new command object
@@ -148,42 +152,27 @@ public class SessionStateOK implements ReaderSessionState {
 		/*
 		 * Check if we are connected
 		 */
-		while (readerSessionImpl.connectionStatus != ConnectionStatus.CONNECTED) {
-			if (readerSessionImpl.connectionStatus == ConnectionStatus.ERROR) {
-				logger.debug("ConnectionStatus is Error");
-				readerSessionImpl.commandJournal.updateCommand(
-						readerSessionImpl.curCommand.getCommand(),
-						CommandStatus.NOCOMMAND);
-				readerSessionImpl.curCommand = null;
-				readerSessionImpl.transition(new SessionStateError(
-						readerSessionImpl));
-				throw new RifidiConnectionException(
-						"The connection to the reader is not valid anymore. (MAX_CONNECTION_ATTEMPTS)");
-			}
-
-			/*
-			 * Wait until we are connected (this method's conn_connected() or
-			 * conn_error() will be called)
-			 */
-			try {
-				synchronized (this) {
-					logger.debug(" Reader Session waiting for Connection"
-							+ " Status to be Connected");
-					wait();
+		
+		//If we are disconnected, wait for a connection event to happen.
+		while(readerSessionImpl.connectionStatus == ConnectionStatus.DISCONNECTED){
+			synchronized (this) {
+				try {
+					this.wait();
+				} catch (InterruptedException e) {
 				}
-
-			} catch (InterruptedException e) {
-			}
-			if (readerSessionImpl.connectionStatus == ConnectionStatus.ERROR) {
-				logger.debug("ConnectionStatus is Error");
-				readerSessionImpl.commandJournal.updateCommand(
-						readerSessionImpl.curCommand.getCommand(),
-						CommandStatus.NOCOMMAND);
-				readerSessionImpl.curCommand = null;
-				throw new RifidiConnectionException(
-						"The connection to the reader is not valid anymore. (MAX_CONNECTION_ATTEMPTS)");
 			}
 		}
+
+		if (readerSessionImpl.connectionStatus == ConnectionStatus.ERROR) {
+			readerSessionImpl.commandJournal.updateCommand(
+					readerSessionImpl.curCommand.getCommand(),
+					CommandStatus.NOCOMMAND);
+			readerSessionImpl.curCommand = null;
+			//conn_error() will be called to transition to the error state
+			throw new RifidiConnectionException(
+					"The connection to the reader is not valid anymore. (MAX_CONNECTION_ATTEMPTS)");
+		}
+
 
 		/*
 		 * Check if Execution Thread is Initialized
@@ -205,9 +194,7 @@ public class SessionStateOK implements ReaderSessionState {
 		 */
 		try {
 			readerSessionImpl.executionThread.start(
-					readerSessionImpl.connection, readerSessionImpl.curCommand
-							.getCommand(), configuration,
-					readerSessionImpl.commandID);
+					readerSessionImpl.connection, readerSessionImpl.curCommand);
 
 			readerSessionImpl.curCommand
 					.setCommandStatus(CommandStatus.EXECUTING);
@@ -233,7 +220,7 @@ public class SessionStateOK implements ReaderSessionState {
 	@Override
 	public Document state_executeProperty(Document propertiesToExecute)
 			throws RifidiInvalidConfigurationException,
-			RifidiConnectionException, RifidiCommandNotFoundException {
+			RifidiConnectionException, RifidiCommandNotFoundException, RifidiCannotRestartCommandException {
 
 		NodeList documentChildren = propertiesToExecute.getChildNodes();
 		Node propertyNode = null;
@@ -245,8 +232,7 @@ public class SessionStateOK implements ReaderSessionState {
 		}
 
 		if (propertyNode == null) {
-			logger
-					.debug("Malformed Property Configuration XML: no 'Properties' Node found in document root");
+			logger.debug("No 'Properties' Node found in document root");
 			readerSessionImpl.transition(new SessionStateOK(readerSessionImpl));
 			throw new RifidiInvalidConfigurationException(
 					"No 'Properties' Node found in document root");
@@ -268,37 +254,24 @@ public class SessionStateOK implements ReaderSessionState {
 		/*
 		 * Check if we are connected
 		 */
-		while (readerSessionImpl.connectionStatus != ConnectionStatus.CONNECTED) {
-			if (readerSessionImpl.connectionStatus == ConnectionStatus.ERROR) {
-				logger.debug("ConnectionStatus is Error");
-				readerSessionImpl.transition(new SessionStateError(
-						readerSessionImpl));
-				throw new RifidiConnectionException(
-						"The connection to the reader is not valid anymore."
-								+ " (MAX_CONNECTION_ATTEMPTS)");
-			}
-			// TODO: what happens if we go to error state right here? maybe we
-			// should put a timeout on wait
-
-			/*
-			 * Wait until we are connected (this method's conn_connected() or
-			 * conn_error() will be called)
-			 */
-			try {
-				synchronized (this) {
-					logger.debug(" Reader Session " + "waiting for Connection"
-							+ " Status to be Connected");
-					wait();
+		
+		//If we are disconnected, wait for a connection event to happen.
+		while(readerSessionImpl.connectionStatus == ConnectionStatus.DISCONNECTED){
+			synchronized (this) {
+				try {
+					this.wait();
+				} catch (InterruptedException e) {
 				}
-
-			} catch (InterruptedException e1) {
-			}
-			if (readerSessionImpl.connectionStatus == ConnectionStatus.ERROR) {
-				throw new RifidiConnectionException(
-						"The connection to the reader is not valid anymore."
-								+ " (MAX_CONNECTION_ATTEMPTS)");
 			}
 		}
+
+		if (readerSessionImpl.connectionStatus == ConnectionStatus.ERROR) {
+			//conn_error() will be called to transition to the error state
+			throw new RifidiConnectionException(
+					"The connection to the reader is not valid anymore."
+							+ " (MAX_CONNECTION_ATTEMPTS)");
+		}
+
 
 		readerSessionImpl.transition(new SessionStatePropertyExecuting(
 				readerSessionImpl));
@@ -319,42 +292,48 @@ public class SessionStateOK implements ReaderSessionState {
 					try {
 						propObject = (Property) readerSessionImpl
 								.instantiate(propertyCommand);
+						
+						readerSessionImpl.validate(propObject.getClass(), e);						
+
+						// execute property
+						Element returnVal = propObject.execute(
+								readerSessionImpl.connection,
+								readerSessionImpl.errorQueue, e);
+
+						// insert return value into element
+						propertyNode.replaceChild(returnVal, e);
+						
 					} catch (RifidiCommandNotFoundException e1) {
 						logger.debug(e1.getMessage());
-						readerSessionImpl.transition(new SessionStateOK(
-								readerSessionImpl));
-						throw e1;
-					}
-
-					try {
-						readerSessionImpl.validate(propObject.getClass(), e);
+						Element error = propertiesToExecute.createElement(e.getNodeName());
+						Text message = propertiesToExecute.createTextNode("Property Not Found");
+						error.appendChild(message);
+						propertyNode.replaceChild(error, e);
+						
 					} catch (SAXException e1) {
 						logger.debug(e1.getMessage());
-						readerSessionImpl.transition(new SessionStateOK(
-								readerSessionImpl));
-						throw new RifidiInvalidConfigurationException(e1
-								.getMessage());
+						Element error = propertiesToExecute.createElement(e.getNodeName());
+						Text message = propertiesToExecute.createTextNode(e1.getMessage());
+						error.appendChild(message);
+						propertyNode.replaceChild(error, e);
+
 					} catch (IOException e1) {
 						logger.debug(e1.getMessage());
-						readerSessionImpl.transition(new SessionStateOK(
-								readerSessionImpl));
-						throw new RifidiInvalidConfigurationException(e1
-								.getMessage());
+						Element error = propertiesToExecute.createElement(e.getNodeName());
+						Text message = propertiesToExecute.createTextNode(e1.getMessage());
+						error.appendChild(message);
+						propertyNode.replaceChild(error, e);
 					}
 
-					// execute property
-					Element returnVal = propObject.execute(
-							readerSessionImpl.connection,
-							readerSessionImpl.errorQueue, e);
-
-					// insert return value into element
-					propertyNode.replaceChild(returnVal, e);
 				} else {
-					// TODO: what to do if propertyCommand is null?
-					logger.debug("Command not found!: " + e.getNodeName());
+					logger.debug("Property Not Found: " + e.getNodeName());
+					Element error = propertiesToExecute.createElement(e.getNodeName());
+					Text message = propertiesToExecute.createTextNode("Property Not Found");
+					error.appendChild(message);
+					propertyNode.replaceChild(error, e);
 				}
 			} else {
-				// TODO: what to do if property is not Element?
+				// if property is not element, skip it.
 			}
 		}// end for loop
 		readerSessionImpl.state_propertyFinished();
@@ -365,7 +344,6 @@ public class SessionStateOK implements ReaderSessionState {
 	public void state_propertyFinished() {
 		logger.debug("Cannot Execute "
 				+ "propertyFinished when in OK session state");
-		readerSessionImpl.transition(new SessionStateOK(readerSessionImpl));
 	}
 
 	@Override
@@ -386,21 +364,21 @@ public class SessionStateOK implements ReaderSessionState {
 	public void conn_connected() {
 		readerSessionImpl.connectionStatus = ConnectionStatus.CONNECTED;
 		synchronized (this) {
-			notify();
+			this.notify();
 		}
+
 	}
 
 	@Override
 	public void conn_disconnected() {
 		readerSessionImpl.connectionStatus = ConnectionStatus.DISCONNECTED;
-		logger.debug("Connection disconnected");
 	}
 
 	@Override
 	public void conn_error() {
 		readerSessionImpl.connectionStatus = ConnectionStatus.ERROR;
 		synchronized (this) {
-			notify();
+			this.notify();
 		}
 		this.state_error();
 	}

@@ -2,7 +2,6 @@ package org.rifidi.edge.core.rmi.readerconnection.impl;
 
 import java.io.IOException;
 import java.io.StringReader;
-import java.io.StringWriter;
 import java.rmi.RemoteException;
 import java.util.List;
 
@@ -14,6 +13,7 @@ import javax.xml.transform.TransformerException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.common.utilities.dom.DomHelper;
+import org.rifidi.edge.core.exceptions.RifidiCannotRestartCommandException;
 import org.rifidi.edge.core.exceptions.RifidiCommandInterruptedException;
 import org.rifidi.edge.core.exceptions.RifidiCommandNotFoundException;
 import org.rifidi.edge.core.exceptions.RifidiConnectionException;
@@ -24,9 +24,6 @@ import org.rifidi.edge.core.rmi.readerconnection.RemoteReaderConnection;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
-
-import com.sun.org.apache.xml.internal.serialize.OutputFormat;
-import com.sun.org.apache.xml.internal.serialize.XMLSerializer;
 
 /**
  * Implementation for a RemoteReaderConnection
@@ -172,6 +169,9 @@ public class RemoteReaderConnectionImpl implements RemoteReaderConnection {
 		} catch (TransformerException e) {
 			logger.error("TransformerException", e);
 			throw new RemoteException("TransformerException", e);
+		} catch (RifidiCannotRestartCommandException e) {
+			logger.error("RifidiCannotRestartCommandException", e);
+			throw new RemoteException("RifidiCannotRestartCommandException", e);
 		}
 	}
 

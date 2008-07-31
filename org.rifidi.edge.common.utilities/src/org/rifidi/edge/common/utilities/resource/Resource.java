@@ -11,7 +11,6 @@
  */
 package org.rifidi.edge.common.utilities.resource;
 
-import java.io.IOException;
 import java.io.InputStream;
 
 /**

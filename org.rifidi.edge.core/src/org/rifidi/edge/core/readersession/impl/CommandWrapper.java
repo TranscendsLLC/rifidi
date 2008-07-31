@@ -5,6 +5,7 @@ package org.rifidi.edge.core.readersession.impl;
 
 import org.rifidi.edge.core.readerplugin.commands.Command;
 import org.rifidi.edge.core.readersession.impl.enums.CommandStatus;
+import org.w3c.dom.Document;
 
 /**
  * 
@@ -23,6 +24,8 @@ public class CommandWrapper {
 	private Command command;
 	
 	private CommandStatus commandStatus;
+
+	private Document configuration;
 
 	public String getCommandName() {
 		return commandName;
@@ -54,6 +57,14 @@ public class CommandWrapper {
 
 	public void setCommandStatus(CommandStatus commandStatus) {
 		this.commandStatus = commandStatus;
+	}
+	
+	public void setConfiguration(Document configuration){
+		this.configuration = configuration;
+	}
+
+	public Document getConfiguration() {
+		return this.configuration;
 	}
 
 }
