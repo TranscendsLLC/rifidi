@@ -3,7 +3,7 @@ package org.rifidi.edge.core.rmi.readerconnection.impl;
 import java.io.IOException;
 import java.io.StringReader;
 import java.rmi.RemoteException;
-import java.util.List;
+import java.util.Collection;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -178,39 +178,6 @@ public class RemoteReaderConnectionImpl implements RemoteReaderConnection {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.rmi.readerconnection.RemoteReaderConnection#getAvailableCommandGroups()
-	 */
-	@Override
-	public List<String> getAvailableCommandGroups() throws RemoteException {
-		//return readerSession.getAvailableCommandGroups();
-		throw new RemoteException("Funtion not available");
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.rifidi.edge.core.rmi.readerconnection.RemoteReaderConnection#getAvailableCommands()
-	 */
-	@Override
-	public List<String> getAvailableCommands() throws RemoteException {
-		return readerSession.getAvailableCommands();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.rifidi.edge.core.rmi.readerconnection.RemoteReaderConnection#getAvailableCommands(java.lang.String)
-	 */
-	@Override
-	public List<String> getAvailableCommands(String groupName)
-			throws RemoteException {
-		//return readerSession.getAvailableCommands(groupName);
-		throw new RemoteException("Funtion not available");
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
 	 * @see org.rifidi.edge.core.rmi.readerconnection.RemoteReaderConnection#getMessageQueueName()
 	 */
 	@Override
@@ -291,9 +258,40 @@ public class RemoteReaderConnectionImpl implements RemoteReaderConnection {
 		return readerSession;
 	}
 
+
+	// === Get Commands and Properties as a list of Strings
+	
 	@Override
-	public List<String> getAvailableProperties() throws RemoteException {
+	public Collection<String> getAvailableCommandGroups() throws RemoteException {
+		return readerSession.getAvailableCommandGroups();
+	}
+
+
+	@Override
+	public Collection<String> getAvailableCommands() throws RemoteException {
+		return readerSession.getAvailableCommands();
+	}
+
+
+	@Override
+	public Collection<String> getAvailableCommands(String groupName)
+			throws RemoteException {
+		return readerSession.getCommandsForGroup(groupName);
+	}
+
+	@Override
+	public Collection<String> getAvailablePropertyGroups() throws RemoteException {
+		return readerSession.getAvailablePropertyGroups();
+	}
+
+	@Override
+	public Collection<String> getAvailableProperties() throws RemoteException {
 		return readerSession.getAvailableProperties();
+	}
+
+	@Override
+	public Collection<String> getAvailableProperties(String groupName) throws RemoteException {
+		return readerSession.getPropertiesForGroup(groupName);
 	}
 
 

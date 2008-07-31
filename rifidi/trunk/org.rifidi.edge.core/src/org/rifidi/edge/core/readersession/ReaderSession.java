@@ -1,5 +1,6 @@
 package org.rifidi.edge.core.readersession;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.rifidi.edge.core.exceptions.RifidiCannotRestartCommandException;
@@ -60,12 +61,14 @@ public interface ReaderSession {
 	 *             the given command could not be found
 	 * @throws RifidiCommandInterruptedException
 	 *             if the command could not be started or was interrupted
-	 * @throws RifidiInvalidConfigurationException 
-	 * @throws RifidiCannotRestartCommandException 
+	 * @throws RifidiInvalidConfigurationException
+	 * @throws RifidiCannotRestartCommandException
 	 */
 	public Document executeProperty(Document propertiesToExecute)
 			throws RifidiConnectionException, RifidiCommandNotFoundException,
-			RifidiCommandInterruptedException, RifidiInvalidConfigurationException, RifidiCannotRestartCommandException;
+			RifidiCommandInterruptedException,
+			RifidiInvalidConfigurationException,
+			RifidiCannotRestartCommandException;
 
 	/**
 	 * Stop the currently executing command
@@ -136,9 +139,39 @@ public interface ReaderSession {
 	 * Restart the ReaderSession to reset a Error State
 	 */
 	public void resetReaderSession();
-	
+
+	/**
+	 * Get all available command groups
+	 * 
+	 * @return a list of groups
+	 */
+	public Collection<String> getAvailableCommandGroups();
+
+	/**
+	 * Get all available property groups
+	 *
+	 * @return a list of groups
+	 */
+	public Collection<String> getAvailablePropertyGroups();
+
+	/**
+	 * Get all commands in the specified group
+	 * 
+	 * @param groupName the group to look for the commands
+	 * @return a list of commands in the group
+	 */
+	public Collection<String> getCommandsForGroup(String groupName);
+
+	/**
+	 * Get all properties in the specified group
+	 * 
+	 * @param groupName the group to look for the properties
+	 * @return a list of properties in the group
+	 */
+	public Collection<String> getPropertiesForGroup(String groupName);
+
 	public List<String> getAvailableCommands();
-	
+
 	public List<String> getAvailableProperties();
 
 	public ReaderSessionStatus getStatus();

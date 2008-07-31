@@ -13,7 +13,7 @@ package org.rifidi.edge.core.rmi.readerconnection;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
-import java.util.List;
+import java.util.Collection;
 
 import org.rifidi.edge.core.readerplugin.ReaderInfo;
 
@@ -27,38 +27,6 @@ import org.rifidi.edge.core.readerplugin.ReaderInfo;
 public interface RemoteReaderConnection extends Remote {
 
 	/**
-	 * Get a list of all available commands of this ReaderConnection
-	 * 
-	 * @return a list of Strings representing the available Commands
-	 * @throws RemoteException
-	 *             if a error occurs
-	 */
-	public List<String> getAvailableCommands() throws RemoteException;
-
-	/**
-	 * Get a list of available commands which are part of the given Group
-	 * 
-	 * @param groupName
-	 *            Name of the Group the commands belong to
-	 * @return a list of Commands in this group
-	 * @throws RemoteException
-	 *             if a error occurs
-	 */
-	public List<String> getAvailableCommands(String groupName)
-			throws RemoteException;
-	
-	public List<String> getAvailableProperties() throws RemoteException;
-
-	/**
-	 * Get a list of available command groups
-	 * 
-	 * @return groups available for this type of RemoteConnection
-	 * @throws RemoteException
-	 *             if a error occurs
-	 */
-	public List<String> getAvailableCommandGroups() throws RemoteException;
-
-	/**
 	 * Execute a custom command on the ReaderConnection
 	 * 
 	 * @param configuration
@@ -68,7 +36,7 @@ public interface RemoteReaderConnection extends Remote {
 	 *             if a error occurs
 	 */
 	public long executeCommand(String configuration) throws RemoteException;
-	
+
 	public String executeProperty(String configuration) throws RemoteException;
 
 	/**
@@ -182,4 +150,47 @@ public interface RemoteReaderConnection extends Remote {
 	 *             if an error occurs
 	 */
 	public void resetReaderConnection() throws RemoteException;
+
+	/**
+	 * Get a list of available command groups
+	 * 
+	 * @return groups available for this type of RemoteConnection
+	 * @throws RemoteException
+	 *             if a error occurs
+	 */
+	public Collection<String> getAvailableCommandGroups() throws RemoteException;
+
+	/**
+	 * Get a list of all available commands of this ReaderConnection
+	 * 
+	 * @return a list of Strings representing the available Commands
+	 * @throws RemoteException
+	 *             if a error occurs
+	 */
+	public Collection<String> getAvailableCommands() throws RemoteException;
+
+	/**
+	 * Get a list of available commands which are part of the given Group
+	 * 
+	 * @param groupName
+	 *            Name of the Group the commands belong to
+	 * @return a list of Commands in this group
+	 * @throws RemoteException
+	 *             if a error occurs
+	 */
+	public Collection<String> getAvailableCommands(String groupName)
+			throws RemoteException;
+
+	/**
+	 * Get a list of available property groups
+	 * 
+	 * @return groups available for this type of RemoteConnection
+	 * @throws RemoteException
+	 *             if a error occurs
+	 */
+	public Collection<String> getAvailablePropertyGroups() throws RemoteException;
+
+	public Collection<String> getAvailableProperties() throws RemoteException;
+	
+	public Collection<String> getAvailableProperties(String groupName) throws RemoteException;
 }
