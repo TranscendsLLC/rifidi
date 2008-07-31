@@ -71,13 +71,13 @@ public class ReaderPlugin {
 	public ArrayList<String> getCommands() {
 		return getCommands(readerPluginXML.getCommandList());
 	}
-	
+
 	public ArrayList<String> getProperties() {
 		return getCommands(readerPluginXML.getPropertyList());
 	}
 
 	// === Get Groups ==
-	
+
 	public Collection<String> getCommandGroups() {
 		return getGroups(readerPluginXML.getCommandList());
 	}
@@ -85,7 +85,7 @@ public class ReaderPlugin {
 	public Collection<String> getPropertyGroups() {
 		return getGroups(readerPluginXML.getPropertyList());
 	}
-	
+
 	// == Get Commands for Group
 
 	public Collection<String> getCommandsForGroup(String groupName) {
@@ -95,29 +95,33 @@ public class ReaderPlugin {
 	public Collection<String> getPropertiesForGroup(String groupName) {
 		return getListForGroup(groupName, readerPluginXML.getPropertyList());
 	}
-	
+
 	// == Helper method for groups
 
 	private Collection<String> getGroups(
 			List<CommandDescription> availableCommands) {
 		HashSet<String> commandGroups = new HashSet<String>();
 		for (CommandDescription desc : availableCommands) {
-			for (String s : desc.getGroups()) {
-				commandGroups.add(s);
+			if (desc.getGroups() != null) {
+				for (String s : desc.getGroups()) {
+					commandGroups.add(s);
+				}
 			}
 		}
 
 		return commandGroups;
 	}
 
-	// == Helper method for get commands in group 
-	
+	// == Helper method for get commands in group
+
 	private Collection<String> getListForGroup(String groupName,
 			List<CommandDescription> availableCommands) {
 		HashSet<String> commandsInGroup = new HashSet<String>();
 		for (CommandDescription desc : availableCommands) {
-			if (desc.getGroups().contains(groupName)) {
-				commandsInGroup.add(desc.getName());
+			if (desc.getGroups() != null) {
+				if (desc.getGroups().contains(groupName)) {
+					commandsInGroup.add(desc.getName());
+				}
 			}
 		}
 		return commandsInGroup;
@@ -129,6 +133,36 @@ public class ReaderPlugin {
 			names.add(d.getName());
 		}
 		return names;
+	}
+
+	public void addCommands(List<CommandDescription> commands) {
+		if (readerPluginXML.getCommandList() == null) {
+			readerPluginXML.setCommandList(new ArrayList<CommandDescription>());
+		}
+		readerPluginXML.getCommandList().addAll(commands);
+	}
+
+	public void addProperties(List<CommandDescription> properties) {
+		if (readerPluginXML.getPropertyList() == null) {
+			readerPluginXML
+					.setPropertyList(new ArrayList<CommandDescription>());
+		}
+		readerPluginXML.getPropertyList().addAll(properties);
+	}
+
+	public void removeCommands(List<CommandDescription> commands) {
+		if (readerPluginXML.getCommandList() == null) {
+			readerPluginXML.setCommandList(new ArrayList<CommandDescription>());
+		}
+		readerPluginXML.getCommandList().removeAll(commands);
+	}
+
+	public void removeProperties(List<CommandDescription> properties) {
+		if (readerPluginXML.getPropertyList() == null) {
+			readerPluginXML
+					.setPropertyList(new ArrayList<CommandDescription>());
+		}
+		readerPluginXML.getPropertyList().removeAll(properties);
 	}
 
 }
