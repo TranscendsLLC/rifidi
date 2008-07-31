@@ -8,6 +8,7 @@ import java.lang.reflect.Method;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.util.Collection;
 import java.util.List;
 
 import javax.jms.JMSException;
@@ -469,7 +470,7 @@ public class NewEdgeServerCommands implements ICommand {
 				return "ERROR." + " RemoteReaderConnection not found";
 			}
 
-			List<String> groups = readerConnection.getAvailableCommands();
+			Collection<String> groups = readerConnection.getAvailableCommands();
 			System.out.println(groups.size() + " Commands found ");
 			StringBuffer buffer = new StringBuffer();
 			for (String group : groups) {
@@ -501,7 +502,7 @@ public class NewEdgeServerCommands implements ICommand {
 				return "ERROR." + " RemoteReaderConnection not found";
 			}
 
-			List<String> groups = readerConnection.getAvailableCommandGroups();
+			Collection<String> groups = readerConnection.getAvailableCommandGroups();
 			System.out.println("# CommandGroups found " + groups.size());
 			StringBuffer buffer = new StringBuffer();
 			for (String group : groups) {
@@ -534,7 +535,7 @@ public class NewEdgeServerCommands implements ICommand {
 				return "ERROR." + " RemoteReaderConnection not found";
 			}
 
-			List<String> groups = readerConnection
+			Collection<String> groups = readerConnection
 					.getAvailableCommands(groupname);
 			System.out.println("# Commands in Group found " + groups.size());
 			StringBuffer buffer = new StringBuffer();
