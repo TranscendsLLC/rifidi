@@ -2,6 +2,8 @@ package org.rifidi.edge.core.readerplugin.xml;
 
 import java.util.List;
 
+import javax.xml.bind.annotation.XmlElement;
+
 public class CommandDescription {
 
 	private String name;
@@ -33,6 +35,7 @@ public class CommandDescription {
 		this.xsd = xsd.trim();
 	}
 
+	@XmlElement(name = "group")
 	public List<String> getGroups() {
 		return groups;
 	}
