@@ -2,6 +2,11 @@ package org.rifidi.edge.core.exceptions;
 
 public class RifidiCannotRestartCommandException extends RifidiException {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -6656975485410237250L;
+
 	public RifidiCannotRestartCommandException() {
 		// TODO Auto-generated constructor stub
 	}

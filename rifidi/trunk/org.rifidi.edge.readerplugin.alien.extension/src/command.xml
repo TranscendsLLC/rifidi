@@ -1,1 +1,9 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?><commandExtension><commands>org.rifidi.edge.readerplugin.alien.command.extension.TestExtensionCommand</commands><extendPlugin>org.rifidi.edge.readerplugin.alien.AlienReaderInfo</extendPlugin></commandExtension>
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<readerPluginCommandExtension>
+<info>org.rifidi.edge.readerplugin.alien.AlienReaderInfo</info>
+<command>
+	<classname>org.rifidi.edge.readerplugin.alien.command.extension.TestExtensionCommand</classname>
+	<name>TestExtensionCommand</name>
+	<group>extended commands</group>
+</command>
+</readerPluginCommandExtension>

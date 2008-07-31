@@ -151,17 +151,10 @@ public class ReaderPlugin {
 	}
 
 	public void removeCommands(List<CommandDescription> commands) {
-		if (readerPluginXML.getCommandList() == null) {
-			readerPluginXML.setCommandList(new ArrayList<CommandDescription>());
-		}
 		readerPluginXML.getCommandList().removeAll(commands);
 	}
 
 	public void removeProperties(List<CommandDescription> properties) {
-		if (readerPluginXML.getPropertyList() == null) {
-			readerPluginXML
-					.setPropertyList(new ArrayList<CommandDescription>());
-		}
 		readerPluginXML.getPropertyList().removeAll(properties);
 	}
 

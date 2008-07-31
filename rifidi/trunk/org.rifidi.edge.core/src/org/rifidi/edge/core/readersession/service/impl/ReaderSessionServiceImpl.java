@@ -106,6 +106,7 @@ public class ReaderSessionServiceImpl implements ReaderSessionService,
 	 */
 	@Override
 	public void addReaderSessionListener(ReaderSessionListener listener) {
+		logger.debug("adding:" + listener);
 		listeners.add(listener);
 
 	}
@@ -155,6 +156,9 @@ public class ReaderSessionServiceImpl implements ReaderSessionService,
 				}
 				if (registry.remove(readerSession)) {
 					logger.debug("Session Removed.");
+					for (ReaderSessionListener l : listeners) {
+						l.removeEvent(readerSession);
+					}
 				}
 			}
 

@@ -3,8 +3,6 @@ package org.rifidi.edge.core.deploy.service.impl;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.annotation.Annotation;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -21,10 +19,10 @@ import org.rifidi.edge.core.deploy.monitor.FileMonitor;
 import org.rifidi.edge.core.deploy.monitor.FileMonitorListener;
 import org.rifidi.edge.core.deploy.service.DeployService;
 import org.rifidi.edge.core.deploy.utilities.BundleHolder;
-import org.rifidi.edge.core.deploy.xml.CommandExtension;
 import org.rifidi.edge.core.readerplugin.ReaderPlugin;
-import org.rifidi.edge.core.readerplugin.commands.Command;
 import org.rifidi.edge.core.readerplugin.service.ReaderPluginService;
+import org.rifidi.edge.core.readerplugin.xml.CommandDescription;
+import org.rifidi.edge.core.readerplugin.xml.ReaderPluginCommandExtension;
 import org.rifidi.services.annotations.Inject;
 import org.rifidi.services.registry.ServiceRegistry;
 
@@ -67,7 +65,7 @@ public class DeployServiceImpl implements DeployService, FileMonitorListener {
 		this.context = context;
 
 		try {
-			jaxbContext = JAXBContext.newInstance(CommandExtension.class);
+			jaxbContext = JAXBContext.newInstance(ReaderPluginCommandExtension.class);
 			unmarshaller = jaxbContext.createUnmarshaller();
 		} catch (JAXBException e) {
 			// Well this should not happen.. so just report a stack trace
@@ -122,20 +120,22 @@ public class DeployServiceImpl implements DeployService, FileMonitorListener {
 			logger.debug("Removing Bundle "
 					+ bundleHolder.fragment.getSymbolicName());
 
-			// TODO Move to new CommandDescription
-			bundleHolder.plugin.removeCommand(bundleHolder.commands);
+			if(bundleHolder.commands!=null){
+				bundleHolder.plugin.removeCommands(bundleHolder.commands);
+			}
+			if (bundleHolder.properties!=null){
+				bundleHolder.plugin.removeProperties(bundleHolder.properties);
+			}
 
 			try {
 				bundleHolder.fragment.uninstall();
 			} catch (BundleException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 
 			try {
 				bundleHolder.host.update();
 			} catch (BundleException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -148,7 +148,6 @@ public class DeployServiceImpl implements DeployService, FileMonitorListener {
 	 * @param f
 	 *            the file for the fragment to install
 	 */
-	@SuppressWarnings("unchecked")
 	private void installBundle(File f) {
 
 		// TODO throw Exceptions
@@ -173,36 +172,38 @@ public class DeployServiceImpl implements DeployService, FileMonitorListener {
 
 			// open command.xml into CommandExtension
 			InputStream in = fragmentBundle.getEntry(COMMANDXML).openStream();
-			CommandExtension commandExtension = loadCommandExtension(in);
+			ReaderPluginCommandExtension commandExtension = loadCommandExtension(in);
 
 			// Get Plugin associated with ReaderInfo
 			ReaderPlugin readerPlugin = readerPluginService
-					.getReaderPlugin(commandExtension.getExtendPlugin());
+					.getReaderPlugin(commandExtension.getInfo());
 
 			// TODO deferred loading
 			if (readerPlugin == null) {
 				logger.error("ReaderPlugin "
-						+ commandExtension.getExtendPlugin() + " not found");
+						+ commandExtension.getInfo()+ " not found");
 				return;
 			} else {
-				ArrayList<Class<? extends Command>> commands = new ArrayList<Class<? extends Command>>();
-				for (String commandClass : commandExtension.getCommands()) {
-					// TODO find out about Class cast
-					Class<? extends Command> command = (Class<? extends Command>) Class
-							.forName(commandClass);
-					commands.add(command);
-					logger.debug("found extension " + commandClass);
-					for (Annotation a : command.getAnnotations()) {
-						System.out.println("Annotation " + a.toString());
-					}
-				}
-				logger.debug("adding " + commands.size()
-						+ " command(s) to readerplugin "
-						+ readerPlugin.getClass().getSimpleName());
-				bundleHolder.commands = commands;
+
+				List<CommandDescription> newCommands = commandExtension.getCommandList();
+				List<CommandDescription> newProperties = commandExtension.getPropertyList();
+				
+				bundleHolder.commands = newCommands;
+				bundleHolder.properties = newProperties;
 				bundleHolder.plugin = readerPlugin;
-				// TODO Move to new CommandDescription
-				readerPlugin.addCommand(commands);
+				
+				if(newCommands!=null){
+					readerPlugin.addCommands(commandExtension.getCommandList());
+					logger.debug("added " + newCommands.size()
+							+ " command(s) to readerplugin "
+							+ readerPlugin.getClass().getSimpleName());
+				}
+				if(newProperties!=null){
+					readerPlugin.addProperties(commandExtension.getPropertyList());
+					logger.debug("added " + newProperties.size()
+							+ " properties to readerplugin "
+							+ readerPlugin.getClass().getSimpleName());
+				}
 			}
 		} catch (BundleException e) {
 			e.printStackTrace();
@@ -213,10 +214,7 @@ public class DeployServiceImpl implements DeployService, FileMonitorListener {
 		} catch (JAXBException e) {
 			e.printStackTrace();
 			logger.error("Bundle " + f.getName() + " command xml is invalid");
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
 		}
-
 	}
 
 	/*
@@ -256,14 +254,14 @@ public class DeployServiceImpl implements DeployService, FileMonitorListener {
 	 * @throws JAXBException
 	 *             if the XML File is invalid
 	 */
-	private CommandExtension loadCommandExtension(InputStream in)
+	private ReaderPluginCommandExtension loadCommandExtension(InputStream in)
 			throws JAXBException {
 		/*
 		 * BufferedReader reader = new BufferedReader(new
 		 * InputStreamReader(in)); String input; while((input =
 		 * reader.readLine()) != null) { System.out.println(input); }
 		 */
-		return (CommandExtension) unmarshaller.unmarshal(in);
+		return (ReaderPluginCommandExtension) unmarshaller.unmarshal(in);
 	}
 
 	/**
