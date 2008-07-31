@@ -150,10 +150,13 @@ public class ConnectionImpl implements Connection {
 	 *             if there was a problem on the underlying communication
 	 */
 	private void checkException() throws IOException {
+		logger.debug("Try to ckeck for Exception but need to pass lock");
 		synchronized (locker) {
+			logger.debug("Inside sync block.");
 			Exception e = exception;
 			exception = null;
 			if (e != null) {
+				logger.error("Exceptin found... Throwing it.", e);
 				if (e instanceof IOException) {
 					throw (IOException) e;
 				} else {
