@@ -19,7 +19,7 @@ public class ReaderPluginCommandExtension {
 	}
 
 	public void setInfo(String info) {
-		this.info = info;
+		this.info = info.trim();
 	}
 
 	@XmlElement(name = "property")
