@@ -126,7 +126,7 @@ public class PersistedReaderInfo {
 				}
 			}
 		}
-		this.notify();
+		
 		return retVal;
 	}
 
