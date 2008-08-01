@@ -33,8 +33,8 @@ public class Activator implements BundleActivator {
 		// TODO Change Directory to something with more sense
 		// paths.add("C:\\temp");
 		paths.add("./plugins/extensions/");
-		 File file = new File("test");
-		 System.out.println(file.getAbsolutePath());
+		// File file = new File("test");
+		//System.out.println(file.getAbsolutePath());
 		// System.out.println(file.getCanonicalPath());
 		deployServiceImpl.add(paths);
 	}
