@@ -97,8 +97,8 @@ public class ReaderPluginServiceImpl implements ReaderPluginService {
 			registry.put(readerInfo, readerPlugin);
 			loadedBundles.put(readerPluginBundle.getBundleId(), readerInfo);
 			fireRegisterEvent(readerInfo);
-		} catch (NullPointerException e) {
-			logger.error("Fatal error while loading Plugin");
+		} catch (RuntimeException e) {
+			logger.error("Fatal error while loading Plugin", e);
 		}
 	}
 
