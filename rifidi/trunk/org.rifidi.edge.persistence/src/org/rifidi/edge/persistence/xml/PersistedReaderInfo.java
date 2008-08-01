@@ -102,6 +102,10 @@ public class PersistedReaderInfo {
 	 * @param readerInfoClass
 	 * @return
 	 */
+	/*
+	 * Synchronized block to prevent two threads from calling this method at the same time.
+	 * If they do, XPath can fall apart.
+	 */
 	public synchronized List<ReaderInfo> getReaderInfos(String className) {
 		List<ReaderInfo> retVal = new ArrayList<ReaderInfo>();
 		Element ele = this.findReaderTypeList(className);
