@@ -157,6 +157,9 @@ public class DeployServiceImpl implements DeployService, FileMonitorListener {
 			Bundle fragmentBundle = context.installBundle("file:"
 					+ f.getAbsolutePath());
 			// Get Fragment Host
+			if(fragmentBundle==null){
+				return;
+			}
 			String[] hostBundleName = ((String) fragmentBundle.getHeaders()
 					.get("Fragment-Host")).split(";");
 			if (hostBundleName[0].isEmpty())

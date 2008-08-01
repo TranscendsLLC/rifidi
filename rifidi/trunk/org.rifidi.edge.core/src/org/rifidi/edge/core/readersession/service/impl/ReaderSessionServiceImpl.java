@@ -111,7 +111,6 @@ public class ReaderSessionServiceImpl implements ReaderSessionService,
 	 */
 	@Override
 	public void addReaderSessionListener(ReaderSessionListener listener) {
-		logger.debug("adding:" + listener);
 		listeners.add(listener);
 
 	}
