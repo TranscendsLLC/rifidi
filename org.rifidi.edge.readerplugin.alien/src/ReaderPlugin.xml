@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <readerPluginXML>
 	<plugin>org.rifidi.edge.readerplugin.alien</plugin>
-	<info>org.rifidi.edge.readerplugin.alien.AlienReaderInfo</info>
+	<info>
+		org.rifidi.edge.readerplugin.alien.AlienReaderInfo
+	</info>
 	<connectionManager>
 		org.rifidi.edge.readerplugin.alien.AlienConnectionManager
 	</connectionManager>
