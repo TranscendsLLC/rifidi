@@ -15,6 +15,11 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.Collection;
 
+import org.rifidi.edge.core.exceptions.RifidiCannotRestartCommandException;
+import org.rifidi.edge.core.exceptions.RifidiCommandInterruptedException;
+import org.rifidi.edge.core.exceptions.RifidiCommandNotFoundException;
+import org.rifidi.edge.core.exceptions.RifidiConnectionException;
+import org.rifidi.edge.core.exceptions.RifidiInvalidConfigurationException;
 import org.rifidi.edge.core.readerplugin.ReaderInfo;
 
 /**
@@ -35,21 +40,28 @@ public interface RemoteReaderConnection extends Remote {
 	 * @throws RemoteException
 	 *             if a error occurs
 	 */
-	public long executeCommand(String configuration) throws RemoteException;
+	public long executeCommand(String configuration) throws RemoteException,
+			RifidiConnectionException, RifidiCommandInterruptedException,
+			RifidiCommandNotFoundException, RifidiInvalidConfigurationException;
 
-	public String executeProperty(String configuration) throws RemoteException;
+	public String executeProperty(String configuration) throws RemoteException,
+			RifidiConnectionException, RifidiCommandNotFoundException,
+			RifidiCommandInterruptedException,
+			RifidiInvalidConfigurationException,
+			RifidiCannotRestartCommandException;
 
-	/**
-	 * Start streaming of tags to the MessageQueue (This is a convenience method
-	 * for the command "streamtags")
-	 * 
-	 * @param configuration
-	 *            xml describing the configuration parameters
-	 * @return an id under this a command will be executed
-	 * @throws RemoteException
-	 *             if a error occurs
-	 */
-	public long startTagStream(String configuration) throws RemoteException;
+	// /**
+	// * Start streaming of tags to the MessageQueue (This is a convenience
+	// method
+	// * for the command "streamtags")
+	// *
+	// * @param configuration
+	// * xml describing the configuration parameters
+	// * @return an id under this a command will be executed
+	// * @throws RemoteException
+	// * if a error occurs
+	// */
+	// public long startTagStream(String configuration) throws RemoteException;
 
 	/**
 	 * Stop current executing command without checking if the command is a
@@ -158,7 +170,8 @@ public interface RemoteReaderConnection extends Remote {
 	 * @throws RemoteException
 	 *             if a error occurs
 	 */
-	public Collection<String> getAvailableCommandGroups() throws RemoteException;
+	public Collection<String> getAvailableCommandGroups()
+			throws RemoteException;
 
 	/**
 	 * Get a list of all available commands of this ReaderConnection
@@ -188,9 +201,11 @@ public interface RemoteReaderConnection extends Remote {
 	 * @throws RemoteException
 	 *             if a error occurs
 	 */
-	public Collection<String> getAvailablePropertyGroups() throws RemoteException;
+	public Collection<String> getAvailablePropertyGroups()
+			throws RemoteException;
 
 	public Collection<String> getAvailableProperties() throws RemoteException;
-	
-	public Collection<String> getAvailableProperties(String groupName) throws RemoteException;
+
+	public Collection<String> getAvailableProperties(String groupName)
+			throws RemoteException;
 }

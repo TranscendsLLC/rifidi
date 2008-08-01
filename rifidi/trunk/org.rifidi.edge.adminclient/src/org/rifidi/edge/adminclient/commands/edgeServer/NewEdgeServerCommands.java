@@ -140,8 +140,8 @@ public class NewEdgeServerCommands implements ICommand {
 					 * will cause an error to get the cause of the error.
 					 */
 					try {
-						connection.startTagStream("");
-					} catch (RemoteException e) {
+						connection.executeCommand("<TagStreaming></TagStreaming>");
+					} catch (Exception e) {
 						Exception e2 = e;
 						while ((e2 != null) && (e2 instanceof RemoteException)) {
 							e2 = (Exception) e2.getCause();
@@ -363,7 +363,7 @@ public class NewEdgeServerCommands implements ICommand {
 		} catch (Exception e) {
 			return "General Error. " + e.getMessage();
 		}
-		
+
 	}
 
 	@Command(name = "stop", arguments = { "connection id" })
@@ -414,8 +414,8 @@ public class NewEdgeServerCommands implements ICommand {
 		}
 
 		try {
-			remoteReaderConnection.startTagStream("");
-		} catch (RemoteException e2) {
+			remoteReaderConnection.executeCommand("<TagStreaming></TagStreaming>");
+		} catch (Exception e2) {
 			e2.printStackTrace();
 		}
 
@@ -502,7 +502,8 @@ public class NewEdgeServerCommands implements ICommand {
 				return "ERROR." + " RemoteReaderConnection not found";
 			}
 
-			Collection<String> groups = readerConnection.getAvailableCommandGroups();
+			Collection<String> groups = readerConnection
+					.getAvailableCommandGroups();
 			System.out.println("# CommandGroups found " + groups.size());
 			StringBuffer buffer = new StringBuffer();
 			for (String group : groups) {
@@ -573,8 +574,9 @@ public class NewEdgeServerCommands implements ICommand {
 			return "ERROR" + e.getMessage();
 		}
 	}
-	@Command(name = "resetConnection", arguments = { "ConnectionID"})
-	public String resetCommection(String connectionID){
+
+	@Command(name = "resetConnection", arguments = { "ConnectionID" })
+	public String resetCommection(String connectionID) {
 		if (remoteReaderConnectionRegistry == null) {
 			return "Error. No Connection";
 		}
@@ -592,10 +594,9 @@ public class NewEdgeServerCommands implements ICommand {
 			}
 			readerConnection.resetReaderConnection();
 			return "Connection reset successfully";
-		}catch(Exception e)
-		{
+		} catch (Exception e) {
 			return "ERROR" + e.getMessage();
 		}
 	}
-		
+
 }
