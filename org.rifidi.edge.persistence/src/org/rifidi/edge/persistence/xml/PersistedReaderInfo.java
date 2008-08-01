@@ -102,7 +102,7 @@ public class PersistedReaderInfo {
 	 * @param readerInfoClass
 	 * @return
 	 */
-	public List<ReaderInfo> getReaderInfos(String className) {
+	public synchronized List<ReaderInfo> getReaderInfos(String className) {
 		List<ReaderInfo> retVal = new ArrayList<ReaderInfo>();
 		Element ele = this.findReaderTypeList(className);
 		if (ele != null) {
@@ -122,6 +122,7 @@ public class PersistedReaderInfo {
 				}
 			}
 		}
+		this.notify();
 		return retVal;
 	}
 
@@ -255,7 +256,7 @@ public class PersistedReaderInfo {
 				result = (Node) oResult;
 			}
 		} catch (XPathExpressionException e) {
-			e.printStackTrace();
+			logger.error("Error in persistance", e);
 		}
 
 		logger.debug("Just before the return in the reader type list.  ");
