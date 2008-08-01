@@ -54,7 +54,8 @@ public class RemoteReaderConnectionImpl implements RemoteReaderConnection {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.rmi.readerconnection.RemoteReaderConnection#commandStatus(long)
+	 * @seeorg.rifidi.edge.core.rmi.readerconnection.RemoteReaderConnection#
+	 * commandStatus(long)
 	 */
 	@Override
 	public String commandStatus(long id) {
@@ -64,7 +65,8 @@ public class RemoteReaderConnectionImpl implements RemoteReaderConnection {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.rmi.readerconnection.RemoteReaderConnection#commandStatus()
+	 * @seeorg.rifidi.edge.core.rmi.readerconnection.RemoteReaderConnection#
+	 * commandStatus()
 	 */
 	@Override
 	public String commandStatus() {
@@ -74,7 +76,8 @@ public class RemoteReaderConnectionImpl implements RemoteReaderConnection {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.rmi.readerconnection.RemoteReaderConnection#curExecutingCommand()
+	 * @seeorg.rifidi.edge.core.rmi.readerconnection.RemoteReaderConnection#
+	 * curExecutingCommand()
 	 */
 	@Override
 	public String curExecutingCommand() throws RemoteException {
@@ -84,7 +87,8 @@ public class RemoteReaderConnectionImpl implements RemoteReaderConnection {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.rmi.readerconnection.RemoteReaderConnection#curExecutingCommandID()
+	 * @seeorg.rifidi.edge.core.rmi.readerconnection.RemoteReaderConnection#
+	 * curExecutingCommandID()
 	 */
 	@Override
 	public long curExecutingCommandID() throws RemoteException {
@@ -94,32 +98,22 @@ public class RemoteReaderConnectionImpl implements RemoteReaderConnection {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.rmi.readerconnection.RemoteReaderConnection#executeCommand(java.lang.String,
-	 *      java.lang.String)
+	 * @seeorg.rifidi.edge.core.rmi.readerconnection.RemoteReaderConnection#
+	 * executeCommand(java.lang.String, java.lang.String)
 	 */
 	@Override
-	//TODO: remove stack traces
-	public long executeCommand(String configuration)
-			throws RemoteException {
+	// TODO: remove stack traces
+	public long executeCommand(String configuration) throws RemoteException,
+			RifidiConnectionException, RifidiCommandInterruptedException,
+			RifidiCommandNotFoundException, RifidiInvalidConfigurationException {
 		try {
-			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+			DocumentBuilderFactory factory = DocumentBuilderFactory
+					.newInstance();
 			DocumentBuilder builder = factory.newDocumentBuilder();
-			StringReader reader = new StringReader( configuration );
-			InputSource inputSource = new InputSource( reader );
+			StringReader reader = new StringReader(configuration);
+			InputSource inputSource = new InputSource(reader);
 			Document doc = builder.parse(inputSource);
 			return readerSession.executeCommand(doc);
-		} catch (RifidiConnectionException e) {
-			logger.error("RifidiConnectionException", e);
-			throw new RemoteException("RifidiConnectionException", e);
-		} catch (RifidiCommandInterruptedException e) {
-			logger.error("RifidiCommandInterruptedException", e);
-			throw new RemoteException("RifidiCommandInterruptedException", e);
-		} catch (RifidiCommandNotFoundException e) {
-			logger.error("RifidiCommandNotFoundException", e);
-			throw new RemoteException("RifidiCommandNotFoundException", e);
-		} catch (RifidiInvalidConfigurationException e) {
-			logger.error("RifidiInvalidConfigurationException", e);
-			throw new RemoteException("RifidiInvalidConfigurationException", e);
 		} catch (ParserConfigurationException e) {
 			logger.error("ParserConfigurationException", e);
 			throw new RemoteException("ParserConfigurationException", e);
@@ -131,35 +125,24 @@ public class RemoteReaderConnectionImpl implements RemoteReaderConnection {
 			throw new RemoteException("IOException", e);
 		}
 	}
-	
 
 	@Override
-	public String executeProperty(String configuration) throws RemoteException {
+	public String executeProperty(String configuration) throws RemoteException,
+			RifidiConnectionException, RifidiCommandNotFoundException,
+			RifidiCommandInterruptedException,
+			RifidiInvalidConfigurationException,
+			RifidiCannotRestartCommandException {
 		try {
-			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+			DocumentBuilderFactory factory = DocumentBuilderFactory
+					.newInstance();
 			DocumentBuilder builder = factory.newDocumentBuilder();
-			StringReader reader = new StringReader( configuration );
-			InputSource inputSource = new InputSource( reader );
+			StringReader reader = new StringReader(configuration);
+			InputSource inputSource = new InputSource(reader);
 			Document doc = builder.parse(inputSource);
 			Document d = readerSession.executeProperty(doc);
-			
+
 			String s = DomHelper.toString(d);
 			return s;
-		} catch (RifidiConnectionException e) {
-			logger.error("RifidiConnectionException", e);
-			throw new RemoteException("RifidiConnectionException", e);
-		} catch (RifidiCommandInterruptedException e) {
-			logger.error("RifidiCommandInterruptedException", e);
-			throw new RemoteException("RifidiCommandInterruptedException", e);
-		} catch (RifidiCommandNotFoundException e) {
-			logger.error("RifidiCommandNotFoundException", e);
-			throw new RemoteException("RifidiCommandNotFoundException", e);
-		} catch (RifidiInvalidConfigurationException e) {
-			logger.error("RifidiInvalidConfigurationException", e);
-			throw new RemoteException("RifidiInvalidConfigurationException", e);
-		} catch (ParserConfigurationException e) {
-			logger.error("ParserConfigurationException", e);
-			throw new RemoteException("ParserConfigurationException", e);
 		} catch (SAXException e) {
 			logger.error("SAXException", e);
 			throw new RemoteException("SAXException", e);
@@ -169,16 +152,17 @@ public class RemoteReaderConnectionImpl implements RemoteReaderConnection {
 		} catch (TransformerException e) {
 			logger.error("TransformerException", e);
 			throw new RemoteException("TransformerException", e);
-		} catch (RifidiCannotRestartCommandException e) {
-			logger.error("RifidiCannotRestartCommandException", e);
-			throw new RemoteException("RifidiCannotRestartCommandException", e);
+		} catch (ParserConfigurationException e) {
+			logger.error("ParserConfigurationException", e);
+			throw new RemoteException("ParserConfigurationException", e);
 		}
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.rmi.readerconnection.RemoteReaderConnection#getMessageQueueName()
+	 * @seeorg.rifidi.edge.core.rmi.readerconnection.RemoteReaderConnection#
+	 * getMessageQueueName()
 	 */
 	@Override
 	public String getMessageQueueName() throws RemoteException {
@@ -188,7 +172,8 @@ public class RemoteReaderConnectionImpl implements RemoteReaderConnection {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.rmi.readerconnection.RemoteReaderConnection#getReaderInfo()
+	 * @seeorg.rifidi.edge.core.rmi.readerconnection.RemoteReaderConnection#
+	 * getReaderInfo()
 	 */
 	@Override
 	public ReaderInfo getReaderInfo() throws RemoteException {
@@ -198,7 +183,8 @@ public class RemoteReaderConnectionImpl implements RemoteReaderConnection {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.rmi.readerconnection.RemoteReaderConnection#getReaderState()
+	 * @seeorg.rifidi.edge.core.rmi.readerconnection.RemoteReaderConnection#
+	 * getReaderState()
 	 */
 	@Override
 	public String getReaderState() throws RemoteException {
@@ -208,27 +194,33 @@ public class RemoteReaderConnectionImpl implements RemoteReaderConnection {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.rmi.readerconnection.RemoteReaderConnection#resetReaderConnection()
+	 * @seeorg.rifidi.edge.core.rmi.readerconnection.RemoteReaderConnection#
+	 * resetReaderConnection()
 	 */
 	@Override
 	public void resetReaderConnection() throws RemoteException {
 		readerSession.resetReaderSession();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.rifidi.edge.core.rmi.readerconnection.RemoteReaderConnection#startTagStream(java.lang.String)
-	 */
-	@Override
-	public long startTagStream(String configuration) throws RemoteException {
-		return executeCommand("<TagStreaming></TagStreaming>");
-	}
+	//
+	// /*
+	// * (non-Javadoc)
+	// *
+	// * @see org.rifidi.edge.core.rmi.readerconnection.RemoteReaderConnection#
+	// startTagStream(java.lang.String)
+	// */
+	// @Override
+	// public long startTagStream(String configuration) throws RemoteException,
+	// RifidiConnectionException, RifidiCommandInterruptedException,
+	// RifidiCommandNotFoundException, RifidiInvalidConfigurationException {
+	// return executeCommand("<TagStreaming></TagStreaming>");
+	// }
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.rmi.readerconnection.RemoteReaderConnection#stopCurCommand(boolean)
+	 * @seeorg.rifidi.edge.core.rmi.readerconnection.RemoteReaderConnection#
+	 * stopCurCommand(boolean)
 	 */
 	@Override
 	public boolean stopCurCommand(boolean force) throws RemoteException {
@@ -238,8 +230,8 @@ public class RemoteReaderConnectionImpl implements RemoteReaderConnection {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.rmi.readerconnection.RemoteReaderConnection#stopCurCommand(boolean,
-	 *      long)
+	 * @seeorg.rifidi.edge.core.rmi.readerconnection.RemoteReaderConnection#
+	 * stopCurCommand(boolean, long)
 	 */
 	@Override
 	public boolean stopCurCommand(boolean force, long commandID)
@@ -258,20 +250,18 @@ public class RemoteReaderConnectionImpl implements RemoteReaderConnection {
 		return readerSession;
 	}
 
-
 	// === Get Commands and Properties as a list of Strings
-	
+
 	@Override
-	public Collection<String> getAvailableCommandGroups() throws RemoteException {
+	public Collection<String> getAvailableCommandGroups()
+			throws RemoteException {
 		return readerSession.getAvailableCommandGroups();
 	}
-
 
 	@Override
 	public Collection<String> getAvailableCommands() throws RemoteException {
 		return readerSession.getAvailableCommands();
 	}
-
 
 	@Override
 	public Collection<String> getAvailableCommands(String groupName)
@@ -280,7 +270,8 @@ public class RemoteReaderConnectionImpl implements RemoteReaderConnection {
 	}
 
 	@Override
-	public Collection<String> getAvailablePropertyGroups() throws RemoteException {
+	public Collection<String> getAvailablePropertyGroups()
+			throws RemoteException {
 		return readerSession.getAvailablePropertyGroups();
 	}
 
@@ -290,9 +281,9 @@ public class RemoteReaderConnectionImpl implements RemoteReaderConnection {
 	}
 
 	@Override
-	public Collection<String> getAvailableProperties(String groupName) throws RemoteException {
+	public Collection<String> getAvailableProperties(String groupName)
+			throws RemoteException {
 		return readerSession.getPropertiesForGroup(groupName);
 	}
-
 
 }
