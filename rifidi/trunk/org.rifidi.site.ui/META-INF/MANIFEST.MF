@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: org.rifidi.site.ui Plug-in
+Bundle-SymbolicName: org.rifidi.site.ui;singleton:=true
+Bundle-Version: 1.0.0
+Bundle-Activator: org.rifidi.site.ui.Activator
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime
+Eclipse-LazyStart: true
