@@ -31,6 +31,10 @@ import org.rifidi.edge.core.readerplugin.ReaderInfo;
  */
 public interface RemoteReaderConnection extends Remote {
 
+	public void enable() throws RemoteException;
+	
+	public void disable() throws RemoteException;
+	
 	/**
 	 * Execute a custom command on the ReaderConnection
 	 * 
