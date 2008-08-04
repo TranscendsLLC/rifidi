@@ -179,4 +179,6 @@ public interface ReaderSession {
 	public List<String> getAvailableProperties();
 
 	public ReaderSessionStatus getStatus();
+	
+	public void setReaderInfo(ReaderInfo readerInfo);
 }

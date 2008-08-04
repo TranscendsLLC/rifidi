@@ -11,6 +11,7 @@ import org.rifidi.edge.core.exceptions.RifidiCommandInterruptedException;
 import org.rifidi.edge.core.exceptions.RifidiCommandNotFoundException;
 import org.rifidi.edge.core.exceptions.RifidiConnectionException;
 import org.rifidi.edge.core.exceptions.RifidiInvalidConfigurationException;
+import org.rifidi.edge.core.readerplugin.ReaderInfo;
 import org.rifidi.edge.core.readersession.impl.ReaderSessionState;
 import org.rifidi.edge.core.readersession.impl.enums.ReaderSessionStatus;
 import org.w3c.dom.Document;
@@ -49,7 +50,7 @@ public class SessionStateConfigured implements ReaderSessionState {
 				}
 					
 				}, "Connection Thread");
-			t.run();
+			t.start();
 			readerSessionImpl.transition(new SessionStateOK(readerSessionImpl));
 		}
 
@@ -157,5 +158,11 @@ public class SessionStateConfigured implements ReaderSessionState {
 	public void conn_error() {
 		readerSessionImpl.connectionStatus = ConnectionStatus.ERROR;
 		this.state_error();
+	}
+
+	@Override
+	public void state_setReaderInfo(ReaderInfo readerInfo) {
+		readerSessionImpl.readerInfo = readerInfo;
+		readerSessionImpl.transition(new SessionStateConfigured(readerSessionImpl));
 	}
 }

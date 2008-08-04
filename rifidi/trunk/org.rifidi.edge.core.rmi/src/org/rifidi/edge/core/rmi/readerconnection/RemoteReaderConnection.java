@@ -212,4 +212,6 @@ public interface RemoteReaderConnection extends Remote {
 
 	public Collection<String> getAvailableProperties(String groupName)
 			throws RemoteException;
+	
+	public void setReaderInfo(ReaderInfo readerInfo) throws RemoteException;
 }

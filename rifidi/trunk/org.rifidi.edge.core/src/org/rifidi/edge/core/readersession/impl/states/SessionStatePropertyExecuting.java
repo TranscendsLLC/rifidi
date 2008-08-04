@@ -7,6 +7,7 @@ import org.rifidi.edge.core.exceptions.RifidiCommandInterruptedException;
 import org.rifidi.edge.core.exceptions.RifidiCommandNotFoundException;
 import org.rifidi.edge.core.exceptions.RifidiConnectionException;
 import org.rifidi.edge.core.exceptions.RifidiInvalidConfigurationException;
+import org.rifidi.edge.core.readerplugin.ReaderInfo;
 import org.rifidi.edge.core.readersession.impl.ReaderSessionState;
 import org.rifidi.edge.core.readersession.impl.enums.ReaderSessionStatus;
 import org.w3c.dom.Document;
@@ -109,6 +110,12 @@ public class SessionStatePropertyExecuting implements ReaderSessionState{
 	@Override
 	public ReaderSessionStatus state_getStatus() {
 		return ReaderSessionStatus.EXECUTING_PROPERTY_WITH_NO_YIELDED_COMMAND;
+	}
+
+	@Override
+	public void state_setReaderInfo(ReaderInfo readerInfo) {
+		logger.debug("Cannot execute setReaderInfo in " + ReaderSessionStatus.EXECUTING_PROPERTY_WITH_NO_YIELDED_COMMAND);
+		readerSessionImpl.transition(new SessionStatePropertyExecuting(readerSessionImpl));
 	}
 
 }

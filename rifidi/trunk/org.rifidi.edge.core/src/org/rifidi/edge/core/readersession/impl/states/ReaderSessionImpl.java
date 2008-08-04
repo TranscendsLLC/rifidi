@@ -310,6 +310,11 @@ public class ReaderSessionImpl implements ReaderSession, ReaderSessionState,
 		return readerInfo;
 	}
 
+	@Override
+	public void setReaderInfo(ReaderInfo readerInfo) {
+				
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -563,6 +568,16 @@ public class ReaderSessionImpl implements ReaderSession, ReaderSessionState,
 	@Override
 	public ReaderSessionStatus state_getStatus() {
 		return sessionState.state_getStatus();
+	}
+
+	@Override
+	public void state_setReaderInfo(ReaderInfo readerInfo) {
+		try {
+			transitionSem.acquire();
+		} catch (InterruptedException e) {
+		}
+		sessionState.state_setReaderInfo(readerInfo);
+		
 	}
 
 	public void transition(ReaderSessionState newState) {
