@@ -3,6 +3,9 @@
  */
 package org.rifidi.edge.core.readersession.impl.states;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.impl.LogFactoryImpl;
+import org.rifidi.edge.core.communication.service.ConnectionStatus;
 import org.rifidi.edge.core.exceptions.RifidiCannotRestartCommandException;
 import org.rifidi.edge.core.exceptions.RifidiCommandInterruptedException;
 import org.rifidi.edge.core.exceptions.RifidiCommandNotFoundException;
@@ -18,12 +21,50 @@ import org.w3c.dom.Document;
  */
 public class SessionStateConfigured implements ReaderSessionState {
 
+	private Log logger = LogFactoryImpl.getLog(SessionStateOK.class);
+
+	private ReaderSessionImpl readerSessionImpl;
+
+	public SessionStateConfigured(ReaderSessionImpl readerSessionImpl) {
+		this.readerSessionImpl = readerSessionImpl;
+	}
+
+	@Override
+	public void state_enable()  {
+		 /* Initialize the communication if not already done. Blocks until
+		 * connected
+		 */
+		
+			Thread t = new Thread(new Runnable(){
+				public void run() {
+					
+					try {
+					readerSessionImpl.connect();
+					} catch (RifidiConnectionException e1) {
+						logger.debug(e1.getMessage());
+						readerSessionImpl.connectionStatus = ConnectionStatus.ERROR;
+						readerSessionImpl.transition(new SessionStateError(
+								readerSessionImpl));
+					}
+				}
+					
+				}, "Connection Thread");
+			t.run();
+			readerSessionImpl.transition(new SessionStateOK(readerSessionImpl));
+		}
+
+	@Override
+	public void state_disable() {		
+		logger.debug("Cannot execute disable() when in Configured state");
+		readerSessionImpl.transition(new SessionStateConfigured(readerSessionImpl));
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.rifidi.edge.core.readersession.impl.ReaderSessionState#state_commandFinished()
 	 */
 	@Override
 	public void state_commandFinished() {
-		// TODO Auto-generated method stub
+		logger.debug("Cannot execute commandFinished when in Configured session state");
 
 	}
 
@@ -32,8 +73,8 @@ public class SessionStateConfigured implements ReaderSessionState {
 	 */
 	@Override
 	public void state_error() {
-		// TODO Auto-generated method stub
-
+		logger.debug("error called in Configured state");
+		readerSessionImpl.transition(new SessionStateError(readerSessionImpl));
 	}
 
 	/* (non-Javadoc)
@@ -44,7 +85,8 @@ public class SessionStateConfigured implements ReaderSessionState {
 			throws RifidiConnectionException,
 			RifidiCommandInterruptedException, RifidiCommandNotFoundException,
 			RifidiInvalidConfigurationException {
-		// TODO Auto-generated method stub
+		logger.debug("Cannot execute executeCommand when in Configured session state");
+		readerSessionImpl.transition(new SessionStateConfigured(readerSessionImpl));
 		return 0;
 	}
 
@@ -57,7 +99,8 @@ public class SessionStateConfigured implements ReaderSessionState {
 			RifidiCommandInterruptedException,
 			RifidiInvalidConfigurationException,
 			RifidiCannotRestartCommandException {
-		// TODO Auto-generated method stub
+		logger.debug("Cannot execute executeProperty when in Configured session state");
+		readerSessionImpl.transition(new SessionStateConfigured(readerSessionImpl));
 		return null;
 	}
 
@@ -66,8 +109,7 @@ public class SessionStateConfigured implements ReaderSessionState {
 	 */
 	@Override
 	public ReaderSessionStatus state_getStatus() {
-		// TODO Auto-generated method stub
-		return null;
+		return ReaderSessionStatus.CONIFGURED;
 	}
 
 	/* (non-Javadoc)
@@ -76,7 +118,7 @@ public class SessionStateConfigured implements ReaderSessionState {
 	@Override
 	public void state_propertyFinished()
 			throws RifidiCannotRestartCommandException {
-		// TODO Auto-generated method stub
+		logger.debug("Cannot execute propertyFinished when in Configured session state");
 
 	}
 
@@ -85,7 +127,8 @@ public class SessionStateConfigured implements ReaderSessionState {
 	 */
 	@Override
 	public void state_resetSession() {
-		// TODO Auto-generated method stub
+		logger.debug("Cannot execute resetSession when in Configured state");
+		readerSessionImpl.transition(new SessionStateConfigured(readerSessionImpl));
 
 	}
 
@@ -94,47 +137,25 @@ public class SessionStateConfigured implements ReaderSessionState {
 	 */
 	@Override
 	public void state_stopCommand(boolean force) {
-		// TODO Auto-generated method stub
+		logger.debug("Cannot execute stopCommand when in Configured state");
+		readerSessionImpl.transition(new SessionStateConfigured(readerSessionImpl));
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.rifidi.edge.core.communication.service.CommunicationStateListener#conn_connected()
-	 */
 	@Override
 	public void conn_connected() {
-		// TODO Auto-generated method stub
+		readerSessionImpl.connectionStatus = ConnectionStatus.CONNECTED;
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.rifidi.edge.core.communication.service.CommunicationStateListener#conn_disconnected()
-	 */
 	@Override
 	public void conn_disconnected() {
-		// TODO Auto-generated method stub
-
+		readerSessionImpl.connectionStatus = ConnectionStatus.DISCONNECTED;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.rifidi.edge.core.communication.service.CommunicationStateListener#conn_error()
-	 */
 	@Override
 	public void conn_error() {
-		// TODO Auto-generated method stub
-
+		readerSessionImpl.connectionStatus = ConnectionStatus.ERROR;
+		this.state_error();
 	}
-
-	@Override
-	public void state_disable() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void state_enable() {
-		// TODO Auto-generated method stub
-		
-	}
-
 }

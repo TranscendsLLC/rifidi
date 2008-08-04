@@ -27,6 +27,20 @@ public class SessionStatePropertyExecutingCommYield implements
 	}
 	
 	@Override
+	public void state_enable() {
+		logger.debug("Cannot execute enable when in " + ReaderSessionStatus.EXECUTING_PROPERTY_WITH_YIELDED_COMMAND);
+		readerSessionImpl.transition(new SessionStatePropertyExecutingCommYield(readerSessionImpl));
+		
+	}
+
+	@Override
+	public void state_disable() {
+		logger.debug("Cannot execute disable when in " + ReaderSessionStatus.EXECUTING_PROPERTY_WITH_YIELDED_COMMAND);
+		readerSessionImpl.transition(new SessionStatePropertyExecutingCommYield(readerSessionImpl));
+		
+	}
+
+	@Override
 	public void state_commandFinished() {
 		logger.debug("cannot execute commandFinished when in " + ReaderSessionStatus.EXECUTING_PROPERTY_WITH_YIELDED_COMMAND);
 	}
@@ -69,23 +83,6 @@ public class SessionStatePropertyExecutingCommYield implements
 			throw new RifidiCannotRestartCommandException("Current command is not in yieled state");
 		}
 		
-		/*
-		 * Initialize the communication if not already done. Blocks until
-		 * connected
-		 */
-		try {
-			readerSessionImpl.connect();
-		} catch (RifidiConnectionException e1) {
-			logger.debug(e1.getMessage());
-			readerSessionImpl.commandJournal.updateCommand(
-					readerSessionImpl.curCommand.getCommand(),
-					CommandStatus.NOCOMMAND);
-			readerSessionImpl.curCommand = null;
-			readerSessionImpl.connectionStatus = ConnectionStatus.ERROR;
-			readerSessionImpl.transition(new SessionStateError(
-					readerSessionImpl));
-			throw new RifidiCannotRestartCommandException(e1.getMessage());
-		}
 		/*
 		 * Check if we are connected
 		 */
@@ -191,18 +188,6 @@ public class SessionStatePropertyExecutingCommYield implements
 	@Override
 	public ReaderSessionStatus state_getStatus() {
 		return ReaderSessionStatus.EXECUTING_PROPERTY_WITH_YIELDED_COMMAND;
-	}
-
-	@Override
-	public void state_disable() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void state_enable() {
-		// TODO Auto-generated method stub
-		
 	}
 
 }
