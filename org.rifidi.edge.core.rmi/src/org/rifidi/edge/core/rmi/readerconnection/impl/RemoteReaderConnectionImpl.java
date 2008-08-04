@@ -286,4 +286,16 @@ public class RemoteReaderConnectionImpl implements RemoteReaderConnection {
 		return readerSession.getPropertiesForGroup(groupName);
 	}
 
+	@Override
+	public void disable() throws RemoteException {
+		readerSession.enable();
+
+	}
+
+	@Override
+	public void enable() throws RemoteException {
+		readerSession.disable();
+
+	}
+
 }
