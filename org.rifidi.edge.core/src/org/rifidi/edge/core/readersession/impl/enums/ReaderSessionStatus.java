@@ -8,6 +8,10 @@ package org.rifidi.edge.core.readersession.impl.enums;
  */
 public enum ReaderSessionStatus {
 	/**
+	 * Reader session is configured but not connected
+	 */
+	CONIFGURED,
+	/**
 	 * ReaderSession is ready
 	 */
 	OK,
