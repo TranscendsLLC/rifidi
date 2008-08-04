@@ -33,7 +33,21 @@ public class SessionStateCommandExecuting implements ReaderSessionState {
 	public SessionStateCommandExecuting(ReaderSessionImpl readerSessionImpl) {
 		this.readerSessionImpl = readerSessionImpl;
 	}
-	
+
+	@Override
+	public void state_enable() {
+		logger.debug("cannot execute enable when in " + ReaderSessionStatus.EXECUTING_COMMAND);
+		readerSessionImpl.transition(new SessionStateCommandExecuting(readerSessionImpl));
+		
+	}
+
+	@Override
+	public void state_disable() {
+		logger.debug("cannot execute disable when in " + ReaderSessionStatus.EXECUTING_COMMAND);
+		readerSessionImpl.transition(new SessionStateCommandExecuting(readerSessionImpl));
+		
+	}
+
 	@Override
 	public void state_commandFinished() {
 		logger.debug("command finished called when in "
@@ -106,19 +120,7 @@ public class SessionStateCommandExecuting implements ReaderSessionState {
 					"No 'Properties' Node found in document root");
 		}
 
-		/*
-		 * Initialize the communication if not already done. Blocks until
-		 * connected
-		 */
-		try {
-			readerSessionImpl.connect();
-		} catch (RifidiConnectionException e1) {
-			logger.debug(e1.getMessage());
-			readerSessionImpl.connectionStatus = ConnectionStatus.ERROR;
-			readerSessionImpl.transition(new SessionStateError(
-					readerSessionImpl));
-			throw e1;
-		}
+
 		/*
 		 * Check if we are connected
 		 */
@@ -271,18 +273,6 @@ public class SessionStateCommandExecuting implements ReaderSessionState {
 	@Override
 	public ReaderSessionStatus state_getStatus() {
 		return ReaderSessionStatus.EXECUTING_COMMAND;
-	}
-
-	@Override
-	public void state_disable() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void state_enable() {
-		// TODO Auto-generated method stub
-		
 	}
 
 }

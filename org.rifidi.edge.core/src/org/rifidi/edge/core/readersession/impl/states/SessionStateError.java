@@ -21,6 +21,20 @@ public class SessionStateError implements ReaderSessionState {
 	}
 	
 	@Override
+	public void state_enable() {
+		logger.debug("cannot execute disable when in " + ReaderSessionStatus.ERROR);
+		readerSessionImpl.transition(new SessionStateError(readerSessionImpl));
+		
+	}
+
+	@Override
+	public void state_disable() {
+		logger.debug("cannot execute disable when in " + ReaderSessionStatus.ERROR);
+		readerSessionImpl.transition(new SessionStateError(readerSessionImpl));
+		
+	}
+
+	@Override
 	public void state_commandFinished() {
 		logger.debug("cannot execute commandFinished when in " + ReaderSessionStatus.ERROR);
 		readerSessionImpl.transition(new SessionStateError(readerSessionImpl));
@@ -65,8 +79,7 @@ public class SessionStateError implements ReaderSessionState {
 	public void state_resetSession() {
 		readerSessionImpl.cleanUp();
 		readerSessionImpl.connection = null;
-		readerSessionImpl.transition(new SessionStateOK(readerSessionImpl));
-
+		readerSessionImpl.transition(new SessionStateConfigured(readerSessionImpl));
 	}
 
 	@Override
@@ -97,18 +110,6 @@ public class SessionStateError implements ReaderSessionState {
 	@Override
 	public ReaderSessionStatus state_getStatus() {
 		return ReaderSessionStatus.ERROR;
-	}
-
-	@Override
-	public void state_disable() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void state_enable() {
-		// TODO Auto-generated method stub
-		
 	}
 
 }

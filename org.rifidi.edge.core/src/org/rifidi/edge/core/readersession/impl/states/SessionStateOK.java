@@ -39,13 +39,27 @@ public class SessionStateOK implements ReaderSessionState {
 	}
 
 	@Override
+	public void state_enable() {
+		logger.debug("cannot execute enable when in " + ReaderSessionStatus.OK);
+		readerSessionImpl.transition(new SessionStateOK(readerSessionImpl));
+		
+	}
+
+	@Override
+	public void state_disable() {
+		readerSessionImpl.cleanUp();
+		readerSessionImpl.connection = null;
+		readerSessionImpl.transition(new SessionStateConfigured(readerSessionImpl));
+	}
+
+	@Override
 	public void state_commandFinished() {
 		logger.debug("Cannot Execute commandFinished when in OK session state");
 	}
 
 	@Override
 	public void state_error() {
-		logger.debug("error called in SessionOK state");
+		logger.debug("error called in OK Session state");
 		readerSessionImpl.transition(new SessionStateError(readerSessionImpl));
 
 	}
@@ -133,23 +147,6 @@ public class SessionStateOK implements ReaderSessionState {
 		}
 
 		/*
-		 * Initialize the communication if not already done. Blocks until
-		 * connected
-		 */
-		try {
-			readerSessionImpl.connect();
-		} catch (RifidiConnectionException e1) {
-			logger.debug(e1.getMessage());
-			readerSessionImpl.commandJournal.updateCommand(
-					readerSessionImpl.curCommand.getCommand(),
-					CommandStatus.NOCOMMAND);
-			readerSessionImpl.curCommand = null;
-			readerSessionImpl.connectionStatus = ConnectionStatus.ERROR;
-			readerSessionImpl.transition(new SessionStateError(
-					readerSessionImpl));
-			throw e1;
-		}
-		/*
 		 * Check if we are connected
 		 */
 		
@@ -215,8 +212,6 @@ public class SessionStateOK implements ReaderSessionState {
 		}
 	}
 
-	// TODO: need to think about what happens when a property command screws up.
-	// Do we keep going or send back an error
 	@Override
 	public Document state_executeProperty(Document propertiesToExecute)
 			throws RifidiInvalidConfigurationException,
@@ -238,19 +233,6 @@ public class SessionStateOK implements ReaderSessionState {
 					"No 'Properties' Node found in document root");
 		}
 
-		/*
-		 * Initialize the communication if not already done. Blocks until
-		 * connected
-		 */
-		try {
-			readerSessionImpl.connect();
-		} catch (RifidiConnectionException e1) {
-			logger.debug(e1.getMessage());
-			readerSessionImpl.connectionStatus = ConnectionStatus.ERROR;
-			readerSessionImpl.transition(new SessionStateError(
-					readerSessionImpl));
-			throw e1;
-		}
 		/*
 		 * Check if we are connected
 		 */
@@ -396,18 +378,6 @@ public class SessionStateOK implements ReaderSessionState {
 	@Override
 	public ReaderSessionStatus state_getStatus() {
 		return ReaderSessionStatus.OK;
-	}
-
-	@Override
-	public void state_disable() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void state_enable() {
-		// TODO Auto-generated method stub
-		
 	}
 
 }

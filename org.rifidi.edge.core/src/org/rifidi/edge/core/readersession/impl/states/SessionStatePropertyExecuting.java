@@ -21,6 +21,20 @@ public class SessionStatePropertyExecuting implements ReaderSessionState{
 	}
 	
 	@Override
+	public void state_enable() {
+		logger.debug("cannot enable disable when in " + ReaderSessionStatus.EXECUTING_PROPERTY_WITH_NO_YIELDED_COMMAND);
+		readerSessionImpl.transition(new SessionStatePropertyExecuting(readerSessionImpl));
+		
+	}
+
+	@Override
+	public void state_disable() {
+		logger.debug("cannot execute disable when in " + ReaderSessionStatus.EXECUTING_PROPERTY_WITH_NO_YIELDED_COMMAND);
+		readerSessionImpl.transition(new SessionStatePropertyExecuting(readerSessionImpl));
+		
+	}
+
+	@Override
 	public void state_commandFinished() {
 		logger.debug("cannot execute resetSession when in " + ReaderSessionStatus.EXECUTING_PROPERTY_WITH_NO_YIELDED_COMMAND);
 	}
@@ -75,6 +89,7 @@ public class SessionStatePropertyExecuting implements ReaderSessionState{
 	@Override
 	public void conn_connected() {
 		logger.debug("connected called in " + ReaderSessionStatus.EXECUTING_PROPERTY_WITH_NO_YIELDED_COMMAND);
+		readerSessionImpl.connectionStatus = ConnectionStatus.CONNECTED;
 		
 	}
 
@@ -94,18 +109,6 @@ public class SessionStatePropertyExecuting implements ReaderSessionState{
 	@Override
 	public ReaderSessionStatus state_getStatus() {
 		return ReaderSessionStatus.EXECUTING_PROPERTY_WITH_NO_YIELDED_COMMAND;
-	}
-
-	@Override
-	public void state_disable() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void state_enable() {
-		// TODO Auto-generated method stub
-		
 	}
 
 }

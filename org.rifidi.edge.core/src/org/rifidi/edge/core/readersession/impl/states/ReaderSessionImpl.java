@@ -87,8 +87,6 @@ public class ReaderSessionImpl implements ReaderSession, ReaderSessionState,
 	protected long commandID = 0;
 
 	// Status
-	@SuppressWarnings("unused")
-	private ReaderSessionStatus readerSessionStatus = ReaderSessionStatus.OK;
 	protected ConnectionStatus connectionStatus = ConnectionStatus.DISCONNECTED;
 
 	// Reader Session State
@@ -102,7 +100,7 @@ public class ReaderSessionImpl implements ReaderSession, ReaderSessionState,
 		this.readerSessionID = readerSessionID;
 		ServiceRegistry.getInstance().service(this);
 		transitionSem = new Semaphore(1, true);
-		sessionState = new SessionStateOK(this);
+		sessionState = new SessionStateConfigured(this);
 	}
 
 	/*
@@ -199,7 +197,7 @@ public class ReaderSessionImpl implements ReaderSession, ReaderSessionState,
 	}
 
 	@Override
-	public void enable() {
+	public void enable(){
 		this.state_enable();
 		
 	}
@@ -463,14 +461,22 @@ public class ReaderSessionImpl implements ReaderSession, ReaderSessionState,
 	 */
 
 	@Override
-	public void state_enable() {
-		// TODO Auto-generated method stub
+	public void state_enable(){
+		try {
+			transitionSem.acquire();
+		} catch (InterruptedException e) {
+		}
+		sessionState.state_enable();
 		
 	}
 
 	@Override
 	public void state_disable() {
-		// TODO Auto-generated method stub
+		try {
+			transitionSem.acquire();
+		} catch (InterruptedException e) {
+		}
+		sessionState.state_disable();
 		
 	}
 
@@ -489,8 +495,6 @@ public class ReaderSessionImpl implements ReaderSession, ReaderSessionState,
 		try {
 			transitionSem.acquire();
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 		sessionState.state_error();
 
@@ -520,8 +524,6 @@ public class ReaderSessionImpl implements ReaderSession, ReaderSessionState,
 		try {
 			transitionSem.acquire();
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 		return sessionState.state_executeProperty(propertiesToExecute);
 
@@ -543,8 +545,6 @@ public class ReaderSessionImpl implements ReaderSession, ReaderSessionState,
 		try {
 			transitionSem.acquire();
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 		sessionState.state_resetSession();
 
@@ -555,8 +555,6 @@ public class ReaderSessionImpl implements ReaderSession, ReaderSessionState,
 		try {
 			transitionSem.acquire();
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 		sessionState.state_stopCommand(force);
 
