@@ -96,4 +96,16 @@ public class SessionStatePropertyExecuting implements ReaderSessionState{
 		return ReaderSessionStatus.EXECUTING_PROPERTY_WITH_NO_YIELDED_COMMAND;
 	}
 
+	@Override
+	public void state_disable() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void state_enable() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

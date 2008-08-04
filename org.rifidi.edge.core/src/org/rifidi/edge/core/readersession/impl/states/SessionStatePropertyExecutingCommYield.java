@@ -193,4 +193,16 @@ public class SessionStatePropertyExecutingCommYield implements
 		return ReaderSessionStatus.EXECUTING_PROPERTY_WITH_YIELDED_COMMAND;
 	}
 
+	@Override
+	public void state_disable() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void state_enable() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

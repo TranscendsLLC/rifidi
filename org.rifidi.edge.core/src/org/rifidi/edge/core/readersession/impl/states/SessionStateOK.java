@@ -398,4 +398,16 @@ public class SessionStateOK implements ReaderSessionState {
 		return ReaderSessionStatus.OK;
 	}
 
+	@Override
+	public void state_disable() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void state_enable() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }
