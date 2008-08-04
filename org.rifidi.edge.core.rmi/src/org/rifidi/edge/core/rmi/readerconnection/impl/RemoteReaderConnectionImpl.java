@@ -298,4 +298,9 @@ public class RemoteReaderConnectionImpl implements RemoteReaderConnection {
 
 	}
 
+	@Override
+	public void setReaderInfo(ReaderInfo readerInfo) throws RemoteException{
+		readerSession.setReaderInfo(readerInfo);
+	}
+
 }

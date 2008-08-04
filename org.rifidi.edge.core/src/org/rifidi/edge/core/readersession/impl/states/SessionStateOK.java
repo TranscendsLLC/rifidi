@@ -11,6 +11,7 @@ import org.rifidi.edge.core.exceptions.RifidiCommandNotFoundException;
 import org.rifidi.edge.core.exceptions.RifidiConnectionException;
 import org.rifidi.edge.core.exceptions.RifidiExecutionException;
 import org.rifidi.edge.core.exceptions.RifidiInvalidConfigurationException;
+import org.rifidi.edge.core.readerplugin.ReaderInfo;
 import org.rifidi.edge.core.readerplugin.commands.Command;
 import org.rifidi.edge.core.readerplugin.commands.CommandConfiguration;
 import org.rifidi.edge.core.readerplugin.property.Property;
@@ -378,6 +379,12 @@ public class SessionStateOK implements ReaderSessionState {
 	@Override
 	public ReaderSessionStatus state_getStatus() {
 		return ReaderSessionStatus.OK;
+	}
+
+	@Override
+	public void state_setReaderInfo(ReaderInfo readerInfo) {
+		logger.debug("Cannot execute setReaderInfo in "  + ReaderSessionStatus.OK);
+		
 	}
 
 }

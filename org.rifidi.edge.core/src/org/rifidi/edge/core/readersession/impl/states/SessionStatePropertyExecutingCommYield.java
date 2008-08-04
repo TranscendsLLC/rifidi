@@ -9,6 +9,7 @@ import org.rifidi.edge.core.exceptions.RifidiCommandNotFoundException;
 import org.rifidi.edge.core.exceptions.RifidiConnectionException;
 import org.rifidi.edge.core.exceptions.RifidiExecutionException;
 import org.rifidi.edge.core.exceptions.RifidiInvalidConfigurationException;
+import org.rifidi.edge.core.readerplugin.ReaderInfo;
 import org.rifidi.edge.core.readersession.impl.CommandExecutionListener;
 import org.rifidi.edge.core.readersession.impl.ExecutionThread;
 import org.rifidi.edge.core.readersession.impl.ReaderSessionState;
@@ -188,6 +189,12 @@ public class SessionStatePropertyExecutingCommYield implements
 	@Override
 	public ReaderSessionStatus state_getStatus() {
 		return ReaderSessionStatus.EXECUTING_PROPERTY_WITH_YIELDED_COMMAND;
+	}
+
+	@Override
+	public void state_setReaderInfo(ReaderInfo readerInfo) {
+		logger.debug("Cannot execute setReaderInfo in " + ReaderSessionStatus.EXECUTING_PROPERTY_WITH_NO_YIELDED_COMMAND);
+		readerSessionImpl.transition(new SessionStatePropertyExecuting(readerSessionImpl));
 	}
 
 }
