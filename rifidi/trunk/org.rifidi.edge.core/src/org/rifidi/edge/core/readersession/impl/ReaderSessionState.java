@@ -37,5 +37,9 @@ public interface ReaderSessionState extends CommunicationStateListener{
 	 * @return the status of the ReaderSession
 	 */
 	public ReaderSessionStatus state_getStatus();
+	
+	public void state_enable();
+	
+	public void state_disable();
 
 }

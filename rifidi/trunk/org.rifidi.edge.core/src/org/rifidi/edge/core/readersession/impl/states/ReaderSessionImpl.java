@@ -198,6 +198,18 @@ public class ReaderSessionImpl implements ReaderSession, ReaderSessionState,
 		return obj;
 	}
 
+	@Override
+	public void enable() {
+		this.state_enable();
+		
+	}
+
+	@Override
+	public void disable() {
+		this.state_disable();
+		
+	}
+
 	// TODO: figure out return value
 	/*
 	 * (non-Javadoc)
@@ -451,6 +463,18 @@ public class ReaderSessionImpl implements ReaderSession, ReaderSessionState,
 	 */
 
 	@Override
+	public void state_enable() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void state_disable() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
 	public void state_commandFinished() {
 		/*
 		 * try { transitionSem.acquire(); } catch (InterruptedException e) { //
@@ -577,5 +601,6 @@ public class ReaderSessionImpl implements ReaderSession, ReaderSessionState,
 	public Collection<String> getPropertiesForGroup(String groupName) {
 		return plugin.getPropertiesForGroup(groupName);
 	}
+
 
 }

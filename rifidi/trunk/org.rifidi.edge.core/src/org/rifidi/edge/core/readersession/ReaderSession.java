@@ -104,6 +104,10 @@ public interface ReaderSession {
 	 */
 	public long curExecutingCommandID();
 
+	public void enable();
+	
+	public void disable();
+
 	/**
 	 * Get the status of the command with the specified id
 	 * 
