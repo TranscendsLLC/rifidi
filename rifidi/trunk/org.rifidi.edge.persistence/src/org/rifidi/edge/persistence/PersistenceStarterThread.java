@@ -12,7 +12,6 @@ package org.rifidi.edge.persistence;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.rifidi.edge.core.readerplugin.service.impl.ReaderPluginServiceImpl;
 import org.rifidi.edge.persistence.service.PersistenceService;
 
 /**
@@ -25,6 +24,7 @@ import org.rifidi.edge.persistence.service.PersistenceService;
  * @author Matthew Dean - matt@pramari.com
  */
 public class PersistenceStarterThread extends Thread {
+	@SuppressWarnings("unused")
 	private Log logger = LogFactory.getLog(PersistenceStarterThread.class);
 	
 	/**
