@@ -288,13 +288,13 @@ public class RemoteReaderConnectionImpl implements RemoteReaderConnection {
 
 	@Override
 	public void disable() throws RemoteException {
-		readerSession.enable();
+		readerSession.disable();
 
 	}
 
 	@Override
 	public void enable() throws RemoteException {
-		readerSession.disable();
+		readerSession.enable();
 
 	}
 
