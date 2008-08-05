@@ -1,6 +1,6 @@
 /* 
- * DefaultCustomView.java
- *  Created:	Aug 1, 2008
+ * NameSelectorView.java
+ *  Created:	Aug 5, 2008
  *  Project:	RiFidi Emulator - A Software Simulation Tool for RFID Devices
  *  				http://www.rifidi.org
  *  				http://rifidi.sourceforge.net
@@ -26,12 +26,12 @@ import org.eclipse.ui.part.ViewPart;
  * 
  * @author Matthew Dean - matt@pramari.com
  */
-public class DefaultCustomView extends ViewPart {
+public class NameSelectorView extends ViewPart {
 
 	/**
 	 * 
 	 */
-	public static final String ID = "org.rifidi.site.ui.defaultcustomview";
+	public static final String ID = "org.rifidi.site.ui.nameselector";
 
 	/**
 	 * 
@@ -41,7 +41,7 @@ public class DefaultCustomView extends ViewPart {
 	/**
 	 * 
 	 */
-	public DefaultCustomView() {
+	public NameSelectorView() {
 	}
 
 	/*
@@ -57,7 +57,7 @@ public class DefaultCustomView extends ViewPart {
 		GridLayout layout = new GridLayout(1, true);
 		parent.setLayout(layout);
 
-		// 1st Row
+		// 1st Column
 		Composite firstRow = new Composite(parent, SWT.NONE);
 		GridData firstColumnLayoutData = new GridData(GridData.FILL_BOTH);
 		firstColumnLayoutData.widthHint = 200;
@@ -67,20 +67,25 @@ public class DefaultCustomView extends ViewPart {
 		firstColumnLayout.marginWidth = 5;
 		firstRow.setLayout(firstColumnLayout);
 
-		// 2nd Row
+		// 3rd Column
 		Composite secondRow = new Composite(parent, SWT.NONE);
-		GridData thirdColumnLayoutData = new GridData(
-				GridData.HORIZONTAL_ALIGN_END);
+		GridData thirdColumnLayoutData = new GridData(GridData.HORIZONTAL_ALIGN_END);
 		secondRow.setLayoutData(thirdColumnLayoutData);
 		GridLayout thirdColumnLayout = new GridLayout(3, false);
 		secondRow.setLayout(thirdColumnLayout);
 
 		// === ListViewer ===
 		listViewer = new ListViewer(firstRow);
+		
+		
+		// listViewer.setContentProvider(new CommandListContentProvider());
+		// listViewer.setLabelProvider(new CommandListLabelProvider());
+		// GridData listViewerGridData = new GridData(GridData.FILL_VERTICAL);
+		// listViewer.getControl().setLayoutData(listViewerGridData);
 
 		// === Add and Remove Button ===
 		Button executeCommandButton = new Button(secondRow, SWT.PUSH);
-		executeCommandButton.setText("&Previous");
+		executeCommandButton.setText("< &Previous");
 		executeCommandButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				
@@ -111,13 +116,12 @@ public class DefaultCustomView extends ViewPart {
 	private void cleanup() {
 		listViewer.setInput(null);
 	}
-	
-	/*
-	 * (non-Javadoc)
+
+	/**
 	 * 
-	 * @see org.eclipse.ui.part.WorkbenchPart#setFocus()
 	 */
 	@Override
 	public void setFocus() {
 	}
+
 }
