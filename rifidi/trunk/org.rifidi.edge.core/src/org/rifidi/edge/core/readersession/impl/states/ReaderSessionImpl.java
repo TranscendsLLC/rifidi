@@ -70,6 +70,7 @@ public class ReaderSessionImpl implements ReaderSession, ReaderSessionState,
 	// Services
 	private ConnectionService connectionService;
 	private MessageService messageService;
+	@SuppressWarnings("unused")
 	private ReaderPluginService readerPluginService;
 
 	// Session Information

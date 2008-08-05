@@ -5,13 +5,15 @@ Bundle-SymbolicName: org.rifidi.edge.readerplugin.alien
 Bundle-Version: 1.0.0
 Bundle-Activator: org.rifidi.edge.readerplugin.alien.Activator
 Bundle-Vendor: Pramari, LLC
-Eclipse-LazyStart: true
+Bundle-ActivationPolicy: lazy
 Import-Package: org.osgi.framework;version="1.3.0"
 Export-Package: org.rifidi.edge.readerplugin.alien,
  org.rifidi.edge.readerplugin.alien.commands,
+ org.rifidi.edge.readerplugin.alien.commands.general,
  org.rifidi.edge.readerplugin.alien.messages,
  org.rifidi.edge.readerplugin.alien.protocol
 Require-Bundle: org.rifidi.edge.core;bundle-version="1.0.0",
  org.rifidi.edge.log4j;bundle-version="1.0.0",
  org.rifidi.edge.services;bundle-version="1.0.0",
  org.rifidi.edge.common.utilities;bundle-version="1.0.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6

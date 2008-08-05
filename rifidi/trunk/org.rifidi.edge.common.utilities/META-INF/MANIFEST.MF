@@ -12,4 +12,5 @@ Export-Package: org.rifidi.edge.common.utilities.converter,
  org.rifidi.edge.common.utilities.resource,
  org.rifidi.edge.common.utilities.thread
 Require-Bundle: org.rifidi.edge.log4j
-Eclipse-LazyStart: true
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6

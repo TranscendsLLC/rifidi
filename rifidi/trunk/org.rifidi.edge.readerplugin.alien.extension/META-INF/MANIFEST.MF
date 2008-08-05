@@ -6,3 +6,4 @@ Bundle-Version: 1.0.0
 Bundle-Vendor: Pramari, LLC
 Fragment-Host: org.rifidi.edge.readerplugin.alien;bundle-version="1.0.0"
 Export-Package: org.rifidi.edge.readerplugin.alien.command.extension
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
