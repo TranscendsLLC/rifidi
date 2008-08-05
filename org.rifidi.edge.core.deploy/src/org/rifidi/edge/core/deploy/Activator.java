@@ -1,6 +1,5 @@
 package org.rifidi.edge.core.deploy;
 
-import java.io.File;
 import java.util.ArrayList;
 
 import org.osgi.framework.BundleActivator;

@@ -20,7 +20,7 @@ public class CommandDescription {
 	}
 
 	public String getClassname() {
-		return classname;
+		return classname.trim();
 	}
 
 	public void setClassname(String classname) {
@@ -28,7 +28,7 @@ public class CommandDescription {
 	}
 
 	public String getXsd() {
-		return xsd;
+		return xsd.trim();
 	}
 
 	public void setXsd(String xsd) {
