@@ -10,18 +10,28 @@ import org.rifidi.edge.core.readersession.ReaderSession;
  * 
  */
 public interface ReaderSessionListener {
-	
+
 	/**
 	 * New ReaderSession added event
 	 * 
-	 * @param readerSession the ReaderSession being added
+	 * @param readerSession
+	 *            the ReaderSession being added
 	 */
-	public void addEvent(ReaderSession readerSession);
+	public void addReaderSessionEvent(ReaderSession readerSession);
 
 	/**
-	 * Remove ReaderSession event
+	 * Fires when a reader session is removed due to a user deleting it
 	 * 
-	 * @param readerSession the ReaderSession being removed
+	 * @param readerSession
+	 *            the ReaderSession being removed
 	 */
-	public void removeEvent(ReaderSession readerSession);
+	public void removeReaderSessionEvent(ReaderSession readerSession);
+
+	/**
+	 * Fires when a reader session is removed due to a reader plugin being
+	 * unloaded
+	 * 
+	 * @param readerSession
+	 */
+	public void autoRemoveReaderSessionEvent(ReaderSession readerSession);
 }

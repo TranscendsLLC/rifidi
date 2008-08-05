@@ -65,7 +65,8 @@ public class DeployServiceImpl implements DeployService, FileMonitorListener {
 		this.context = context;
 
 		try {
-			jaxbContext = JAXBContext.newInstance(ReaderPluginCommandExtension.class);
+			jaxbContext = JAXBContext
+					.newInstance(ReaderPluginCommandExtension.class);
 			unmarshaller = jaxbContext.createUnmarshaller();
 		} catch (JAXBException e) {
 			// Well this should not happen.. so just report a stack trace
@@ -120,10 +121,10 @@ public class DeployServiceImpl implements DeployService, FileMonitorListener {
 			logger.debug("Removing Bundle "
 					+ bundleHolder.fragment.getSymbolicName());
 
-			if(bundleHolder.commands!=null){
+			if (bundleHolder.commands != null) {
 				bundleHolder.plugin.removeCommands(bundleHolder.commands);
 			}
-			if (bundleHolder.properties!=null){
+			if (bundleHolder.properties != null) {
 				bundleHolder.plugin.removeProperties(bundleHolder.properties);
 			}
 
@@ -157,7 +158,7 @@ public class DeployServiceImpl implements DeployService, FileMonitorListener {
 			Bundle fragmentBundle = context.installBundle("file:"
 					+ f.getAbsolutePath());
 			// Get Fragment Host
-			if(fragmentBundle==null){
+			if (fragmentBundle == null) {
 				return;
 			}
 			String[] hostBundleName = ((String) fragmentBundle.getHeaders()
@@ -183,26 +184,29 @@ public class DeployServiceImpl implements DeployService, FileMonitorListener {
 
 			// TODO deferred loading
 			if (readerPlugin == null) {
-				logger.error("ReaderPlugin "
-						+ commandExtension.getInfo()+ " not found");
+				logger.error("ReaderPlugin " + commandExtension.getInfo()
+						+ " not found");
 				return;
 			} else {
 
-				List<CommandDescription> newCommands = commandExtension.getCommandList();
-				List<CommandDescription> newProperties = commandExtension.getPropertyList();
-				
+				List<CommandDescription> newCommands = commandExtension
+						.getCommandList();
+				List<CommandDescription> newProperties = commandExtension
+						.getPropertyList();
+
 				bundleHolder.commands = newCommands;
 				bundleHolder.properties = newProperties;
 				bundleHolder.plugin = readerPlugin;
-				
-				if(newCommands!=null){
+
+				if (newCommands != null) {
 					readerPlugin.addCommands(commandExtension.getCommandList());
 					logger.debug("added " + newCommands.size()
 							+ " command(s) to readerplugin "
 							+ readerPlugin.getClass().getSimpleName());
 				}
-				if(newProperties!=null){
-					readerPlugin.addProperties(commandExtension.getPropertyList());
+				if (newProperties != null) {
+					readerPlugin.addProperties(commandExtension
+							.getPropertyList());
 					logger.debug("added " + newProperties.size()
 							+ " properties to readerplugin "
 							+ readerPlugin.getClass().getSimpleName());
@@ -276,8 +280,10 @@ public class DeployServiceImpl implements DeployService, FileMonitorListener {
 	 */
 	private Bundle findBundle(String bundleName) {
 		for (Bundle b : context.getBundles()) {
-			if (b.getSymbolicName().equals(bundleName))
-				return b;
+			if (b.getSymbolicName() != null) {
+				if (b.getSymbolicName().equals(bundleName))
+					return b;
+			}
 		}
 		return null;
 	}

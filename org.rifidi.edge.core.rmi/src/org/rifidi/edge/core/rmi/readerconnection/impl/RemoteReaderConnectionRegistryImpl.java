@@ -164,12 +164,17 @@ public class RemoteReaderConnectionRegistryImpl implements
 	}
 
 	@Override
-	public void addEvent(ReaderSession readerSession) {	
+	public void addReaderSessionEvent(ReaderSession readerSession) {	
 	}
 
 	@Override
-	public void removeEvent(ReaderSession readerSession) {
+	public void removeReaderSessionEvent(ReaderSession readerSession) {
 		RemoteReaderConnection remoteReaderConnection = readerSessionSync.remove(readerSession);
 		remoteSessionList.values().remove(remoteReaderConnection);
+	}
+
+	@Override
+	public void autoRemoveReaderSessionEvent(ReaderSession readerSession) {
+		removeReaderSessionEvent(readerSession);
 	}
 }

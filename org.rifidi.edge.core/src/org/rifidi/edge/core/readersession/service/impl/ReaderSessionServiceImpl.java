@@ -13,7 +13,6 @@ import org.rifidi.edge.core.readerplugin.service.ReaderPluginListener;
 import org.rifidi.edge.core.readerplugin.service.ReaderPluginService;
 import org.rifidi.edge.core.readersession.ReaderSession;
 import org.rifidi.edge.core.readersession.impl.states.ReaderSessionImpl;
-import org.rifidi.edge.core.readersession.service.ReaderSessionAutoUnloadListener;
 import org.rifidi.edge.core.readersession.service.ReaderSessionListener;
 import org.rifidi.edge.core.readersession.service.ReaderSessionService;
 
@@ -32,8 +31,7 @@ public class ReaderSessionServiceImpl implements ReaderSessionService,
 
 	private ReaderPluginService readerPluginService;
 	private ArrayList<ReaderSession> registry = new ArrayList<ReaderSession>();
-	
-	private Collection<ReaderSessionAutoUnloadListener> autoRemoveListeners = new HashSet<ReaderSessionAutoUnloadListener>();
+
 	private Collection<ReaderSessionListener> listeners = new HashSet<ReaderSessionListener>();
 	private int sessionID = 1;
 
@@ -54,7 +52,8 @@ public class ReaderSessionServiceImpl implements ReaderSessionService,
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.readersession.service.ReaderSessionService#createReaderSession(org.rifidi.edge.core.readerplugin.ReaderInfo)
+	 * @seeorg.rifidi.edge.core.readersession.service.ReaderSessionService#
+	 * createReaderSession(org.rifidi.edge.core.readerplugin.ReaderInfo)
 	 */
 	@Override
 	public ReaderSession createReaderSession(ReaderInfo readerInfo) {
@@ -64,9 +63,10 @@ public class ReaderSessionServiceImpl implements ReaderSessionService,
 		ReaderSession readerSession = new ReaderSessionImpl(readerInfo,
 				sessionID++);
 		registry.add(readerSession);
+		logger.debug("Created new session: " + readerSession);
 
 		for (ReaderSessionListener l : listeners) {
-			l.addEvent(readerSession);
+			l.addReaderSessionEvent(readerSession);
 		}
 
 		return readerSession;
@@ -75,7 +75,8 @@ public class ReaderSessionServiceImpl implements ReaderSessionService,
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.readersession.service.ReaderSessionService#destroyReaderSession(org.rifidi.edge.core.readersession.ReaderSession)
+	 * @seeorg.rifidi.edge.core.readersession.service.ReaderSessionService#
+	 * destroyReaderSession(org.rifidi.edge.core.readersession.ReaderSession)
 	 */
 	@Override
 	public void destroyReaderSession(ReaderSession readerSession) {
@@ -90,14 +91,15 @@ public class ReaderSessionServiceImpl implements ReaderSessionService,
 			logger.debug("Reader session not removed: " + readerSession);
 		}
 		for (ReaderSessionListener l : listeners) {
-			l.removeEvent(readerSession);
+			l.removeReaderSessionEvent(readerSession);
 		}
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.readersession.service.ReaderSessionService#getAllReaderSessions()
+	 * @seeorg.rifidi.edge.core.readersession.service.ReaderSessionService#
+	 * getAllReaderSessions()
 	 */
 	@Override
 	public List<ReaderSession> getAllReaderSessions() {
@@ -107,7 +109,9 @@ public class ReaderSessionServiceImpl implements ReaderSessionService,
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.readersession.service.ReaderSessionService#addReaderSessionListener(org.rifidi.edge.core.readersession.service.ReaderSessionListener)
+	 * @seeorg.rifidi.edge.core.readersession.service.ReaderSessionService#
+	 * addReaderSessionListener
+	 * (org.rifidi.edge.core.readersession.service.ReaderSessionListener)
 	 */
 	@Override
 	public void addReaderSessionListener(ReaderSessionListener listener) {
@@ -118,31 +122,21 @@ public class ReaderSessionServiceImpl implements ReaderSessionService,
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.readersession.service.ReaderSessionService#removeReaderSessionListener(org.rifidi.edge.core.readersession.service.ReaderSessionListener)
+	 * @seeorg.rifidi.edge.core.readersession.service.ReaderSessionService#
+	 * removeReaderSessionListener
+	 * (org.rifidi.edge.core.readersession.service.ReaderSessionListener)
 	 */
 	@Override
 	public void removeReaderSessionListener(ReaderSessionListener listener) {
 		listeners.remove(listener);
 
 	}
-	
-	@Override
-	public void addReaderSessionAutoUnloadListener(
-			ReaderSessionAutoUnloadListener listener) {
-		autoRemoveListeners.add(listener);
-	}
 
-	@Override
-	public void removeReaderSessionAutoUnloadListener(
-			ReaderSessionAutoUnloadListener listener) {
-		// TODO Auto-generated method stub
-		autoRemoveListeners.remove(listener);
-	}
-	
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.readerplugin.service.ReaderPluginListener#readerPluginRegisteredEvent(java.lang.Class)
+	 * @seeorg.rifidi.edge.core.readerplugin.service.ReaderPluginListener#
+	 * readerPluginRegisteredEvent(java.lang.Class)
 	 */
 	@Override
 	public void readerPluginRegisteredEvent(
@@ -152,7 +146,8 @@ public class ReaderSessionServiceImpl implements ReaderSessionService,
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.readerplugin.service.ReaderPluginListener#readerPluginUnregisteredEvent(java.lang.Class)
+	 * @seeorg.rifidi.edge.core.readerplugin.service.ReaderPluginListener#
+	 * readerPluginUnregisteredEvent(java.lang.Class)
 	 */
 	@Override
 	public void readerPluginUnregisteredEvent(
@@ -173,9 +168,10 @@ public class ReaderSessionServiceImpl implements ReaderSessionService,
 				}
 				if (registry.remove(readerSession)) {
 					logger.debug("Session Removed.");
-					for (ReaderSessionAutoUnloadListener l : autoRemoveListeners) {
-						l.autoRemoveEvent(readerSession);
+					for (ReaderSessionListener l : listeners) {
+						l.autoRemoveReaderSessionEvent(readerSession);
 					}
+
 				}
 			}
 

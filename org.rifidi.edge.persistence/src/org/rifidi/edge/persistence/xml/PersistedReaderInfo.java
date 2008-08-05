@@ -11,7 +11,6 @@
 package org.rifidi.edge.persistence.xml;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +19,13 @@ import javax.xml.bind.JAXBException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
@@ -36,9 +42,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
-
-import com.sun.org.apache.xml.internal.serialize.OutputFormat;
-import com.sun.org.apache.xml.internal.serialize.XMLSerializer;
 
 /**
  * Comments considered harmful.
@@ -80,7 +83,7 @@ public class PersistedReaderInfo {
 	 * 
 	 * @param readerInfo
 	 */
-	public void addReaderInfo(ReaderInfo readerInfo) {
+	public boolean addReaderInfo(ReaderInfo readerInfo) {
 		Element readerInfoTypeList = findReaderTypeList(readerInfo.getClass()
 				.getName());
 		if (readerInfoTypeList == null) {
@@ -89,9 +92,12 @@ public class PersistedReaderInfo {
 					.getClass().getName());
 			root.appendChild(readerInfoTypeList);
 		}
-		if (this.find(readerInfo, readerInfoTypeList) == null) {
+		if (this.find(readerInfo) == null) {
 			JAXBUtility.getInstance().save(readerInfo, readerInfoTypeList);
 			printToFile();
+			return true;
+		}else{
+			return false;
 		}
 	}
 
@@ -103,8 +109,8 @@ public class PersistedReaderInfo {
 	 * @return
 	 */
 	/*
-	 * Synchronized block to prevent two threads from calling this method at the same time.
-	 * If they do, XPath can fall apart.
+	 * Synchronized block to prevent two threads from calling this method at the
+	 * same time. If they do, XPath can fall apart.
 	 */
 	public synchronized List<ReaderInfo> getReaderInfos(String className) {
 		List<ReaderInfo> retVal = new ArrayList<ReaderInfo>();
@@ -126,7 +132,7 @@ public class PersistedReaderInfo {
 				}
 			}
 		}
-		
+
 		return retVal;
 	}
 
@@ -136,19 +142,32 @@ public class PersistedReaderInfo {
 	 * @param readerInfo
 	 * @throws RifidiReaderInfoNotFoundException
 	 */
-	public void removeReader(ReaderInfo readerInfo)
+	public Element removeReader(ReaderInfo readerInfo)
 			throws RifidiReaderInfoNotFoundException {
 		Element readerInfoTypeList = this.findReaderTypeList(readerInfo
 				.getClass().getName());
 		if (readerInfoTypeList == null) {
 			throw new RifidiReaderInfoNotFoundException();
 		}
-		Element readerInfoNode = find(readerInfo, root);
+		Element readerInfoNode = find(readerInfo);
 		if (readerInfoNode == null) {
 			throw new RifidiReaderInfoNotFoundException();
 		}
-		readerInfoTypeList.removeChild(readerInfoNode);
+		Element e = (Element)readerInfoTypeList.removeChild(readerInfoNode);
 		printToFile();
+		return e;
+	}
+
+	/**
+	 * Returns true if a reader with an IP and port already exists
+	 * 
+	 * @param ip
+	 * @param port
+	 * @return
+	 */
+	private Element find(ReaderInfo readerInfo) {
+		return find(readerInfo.getIpAddress(), readerInfo.getPort(), readerInfo
+				.getClass().getName());
 	}
 
 	/**
@@ -162,29 +181,25 @@ public class PersistedReaderInfo {
 	 *            already matches
 	 * @return
 	 */
-	private Element find(ReaderInfo readerInfo, Element readerInfoTypeList) {
+	private Element find(String ip, int port, String readerInfoClass) {
 		XPathFactory factory = XPathFactory.newInstance();
 		XPath xpath = factory.newXPath();
+		Element readerInfoTypeList = findReaderTypeList(readerInfoClass);
 		try {
 			String exp = new String("/*/*/*");
-			logger.debug("XPATH expression in the FIND method is: \n" + exp);
 			XPathExpression expr = xpath.compile(exp);
 			Object oResult = expr.evaluate(readerInfoTypeList,
 					XPathConstants.NODESET);
 			if (oResult == null) {
-				logger.debug("find returning null after the IPADDRESS search");
 				return null;
 			} else {
 				NodeList nodeArray = (NodeList) oResult;
 
-				Node xResult = this.findUniqueReader(readerInfo.getIpAddress(),
-						readerInfo.getPort(), nodeArray);
+				Node xResult = this.findUniqueReader(ip, port, nodeArray);
 
 				if (xResult == null) {
-					logger.debug("find returning null");
 					return null;
 				} else {
-					logger.debug("RETURNING A RESULT: " + xResult);
 					return (Element) xResult;
 				}
 			}
@@ -210,7 +225,6 @@ public class PersistedReaderInfo {
 	private Element findUniqueReader(String ip, int port, NodeList readerList) {
 		for (int i = 0, n = readerList.getLength(); i < n; i++) {
 			Node node = readerList.item(i);
-			logger.debug("NODE: " + node);
 			boolean ip_match = false;
 			boolean port_match = false;
 			NodeList childNodeList = node.getChildNodes();
@@ -228,7 +242,6 @@ public class PersistedReaderInfo {
 					}
 				}
 				if (ip_match && port_match) {
-					logger.debug("RETURNING: " + node);
 					return (Element) node;
 				}
 			}
@@ -249,21 +262,16 @@ public class PersistedReaderInfo {
 		try {
 			String exp = new String("//" + XMLTags.ELEMENT_LIST_TAG + "[@"
 					+ XMLTags.TYPE_TAG + "='" + readerInfoType + "']");
-			logger.debug("String expression is: \n" + exp);
 			XPathExpression expr = xpath.compile(exp);
 			Object oResult = expr.evaluate(this.doc, XPathConstants.NODE);
 			if (oResult == null) {
-				logger.debug("returning null");
 				return null;
 			} else {
-				logger.debug("Not null, Casting the result");
 				result = (Node) oResult;
 			}
 		} catch (XPathExpressionException e) {
 			logger.error("Error in persistance", e);
 		}
-
-		logger.debug("Just before the return in the reader type list.  ");
 		return (Element) result;
 	}
 
@@ -305,9 +313,7 @@ public class PersistedReaderInfo {
 
 			// create an instance of DOM
 			try {
-				logger.debug("Before the parse");
 				dom = db.parse(xml);
-				logger.debug("After Parse, parse successful");
 			} catch (SAXException e) {
 				e.printStackTrace();
 			} catch (IOException e) {
@@ -332,7 +338,6 @@ public class PersistedReaderInfo {
 		xmlFile = JAXBUtility.getInstance().getXMLFile();
 
 		if (xmlFile != null) {
-			logger.debug("FILE NOT NULL, CREATING NEW DOCUMENT");
 			this.doc = this.createDocument(xmlFile);
 			this.root = (Element) doc.getFirstChild();
 		} else {
@@ -360,22 +365,29 @@ public class PersistedReaderInfo {
 	 * Prints the document to a file.
 	 */
 	private void printToFile() {
-		logger.debug("Printing the file");
+		// print
+		TransformerFactory transfac = TransformerFactory.newInstance();
+		Transformer trans;
+
 		try {
-			// print
-			OutputFormat format = new OutputFormat(doc);
-			format.setIndenting(true);
+			trans = transfac.newTransformer();
 
-			XMLSerializer serializer = new XMLSerializer(new FileOutputStream(
-					JAXBUtility.getInstance().getXMLFile()), format);
+			trans.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+			trans.setOutputProperty(OutputKeys.INDENT, "yes");
 
-			// XMLSerializer serializer = new XMLSerializer(System.out, format);
+			StreamResult result = new StreamResult(JAXBUtility.getInstance()
+					.getXMLFile());
 
-			serializer.serialize(doc);
-
-		} catch (IOException ie) {
-			ie.printStackTrace();
+			DOMSource source = new DOMSource(doc);
+			trans.transform(source, result);
+		} catch (TransformerConfigurationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (TransformerException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
+
 	}
 
 	/**
@@ -390,13 +402,13 @@ public class PersistedReaderInfo {
 		public static final String VALUE = "val";
 
 		/**
-		 * The Root tag for the xml.  
+		 * The Root tag for the xml.
 		 */
 		public static final String ROOT_TAG = "PersistedReaderInfo";
 
 		/**
 		 * The tag which contains a list of several ReaderInfo objects, all of
-		 * the same ReaderType.  
+		 * the same ReaderType.
 		 */
 		public static final String ELEMENT_LIST_TAG = "ReaderInfoList";
 
