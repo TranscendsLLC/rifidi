@@ -12,6 +12,8 @@ package org.rifidi.site.ui;
 
 import org.eclipse.jface.viewers.ListViewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -78,15 +80,27 @@ public class DefaultCustomView extends ViewPart {
 		// === Add and Remove Button ===
 		Button executeCommandButton = new Button(secondRow, SWT.PUSH);
 		executeCommandButton.setText("< Previous");
-		// executeCommandButton.addSelectionListener(null);
+		executeCommandButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				
+			}
+		});
 
 		Button executePropertyButton = new Button(secondRow, SWT.PUSH);
 		executePropertyButton.setText("Next >");
-		// executePropertyButton.addSelectionListener(null);
+		executePropertyButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				
+			}
+		});
 
 		Button stopCurCommandButton = new Button(secondRow, SWT.PUSH);
 		stopCurCommandButton.setText("Cancel");
-		// stopCurCommandButton.addSelectionListener(null);
+		stopCurCommandButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				
+			}
+		});
 	}
 
 	/**

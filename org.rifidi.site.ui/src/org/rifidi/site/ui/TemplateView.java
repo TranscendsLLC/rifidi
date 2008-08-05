@@ -13,6 +13,8 @@ package org.rifidi.site.ui;
 
 import org.eclipse.jface.viewers.ListViewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -26,10 +28,19 @@ import org.eclipse.ui.part.ViewPart;
  * @author Matthew Dean - matt@pramari.com
  */
 public class TemplateView extends ViewPart {
+	/**
+	 * 
+	 */
 	public static final String ID = "org.rifidi.site.ui.templateview";
 
+	/**
+	 * 
+	 */
 	private ListViewer listViewer;
 
+	/**
+	 * 
+	 */
 	public TemplateView() {
 
 	}
@@ -74,18 +85,29 @@ public class TemplateView extends ViewPart {
 		// listViewer.getControl().setLayoutData(listViewerGridData);
 
 		// === Add and Remove Button ===
-
 		Button executeCommandButton = new Button(secondRow, SWT.PUSH);
 		executeCommandButton.setText("< Previous");
-		// executeCommandButton.addSelectionListener(null);
+		executeCommandButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				
+			}
+		});
 
 		Button executePropertyButton = new Button(secondRow, SWT.PUSH);
 		executePropertyButton.setText("Next >");
-		// executePropertyButton.addSelectionListener(null);
+		executePropertyButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				
+			}
+		});
 
 		Button stopCurCommandButton = new Button(secondRow, SWT.PUSH);
 		stopCurCommandButton.setText("Cancel");
-		// stopCurCommandButton.addSelectionListener(null);
+		stopCurCommandButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				
+			}
+		});
 	}
 
 	@SuppressWarnings("unused")
