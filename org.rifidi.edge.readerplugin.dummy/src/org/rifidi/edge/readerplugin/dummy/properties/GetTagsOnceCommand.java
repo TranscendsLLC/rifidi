@@ -4,7 +4,6 @@ import java.io.IOException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.rifidi.edge.common.utilities.dom.DomHelper;
 import org.rifidi.edge.core.communication.Connection;
 import org.rifidi.edge.core.messageQueue.MessageQueue;
 import org.rifidi.edge.core.readerplugin.property.Property;
@@ -29,12 +28,14 @@ public class GetTagsOnceCommand implements Property {
 		} catch (IOException e1) {
 			return null;
 		}
-		Element returnnode = propertyConfig.getOwnerDocument().createElement(propertyConfig.getNodeName());
-		Element tagID= propertyConfig.getOwnerDocument().createElement("TAGID");
-		Text data= propertyConfig.getOwnerDocument().createTextNode(rawtag);
+		Element returnnode = propertyConfig.getOwnerDocument().createElement(
+				propertyConfig.getNodeName());
+		Element tagID = propertyConfig.getOwnerDocument()
+				.createElement("TAGID");
+		Text data = propertyConfig.getOwnerDocument().createTextNode(rawtag);
 		tagID.appendChild(data);
 		returnnode.appendChild(tagID);
-	
+
 		return returnnode;
 	}
 }

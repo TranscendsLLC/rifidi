@@ -1,8 +1,6 @@
 package org.rifidi.edge.readerplugin.dummy.plugin;
 
 import java.io.IOException;
-import java.io.PipedInputStream;
-import java.io.PipedOutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Random;
@@ -74,15 +72,15 @@ public class DummyConnectionManager extends ConnectionManager {
 				}
 			}
 		}
-		
-		//logical disconnect
+
+		// logical disconnect
 		try {
 			connection.sendMessage(new String("quit\n"));
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
-		
-		//physical disconnect
+
+		// physical disconnect
 		try {
 			if (socket != null)
 				socket.close();
