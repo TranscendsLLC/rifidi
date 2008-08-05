@@ -36,11 +36,7 @@ public class Activator implements BundleActivator {
 		PersistenceService persistSer = new PersistanceServiceImpl();
 		context.registerService(persistSer.getClass().getName(), persistSer,
 				null);
-
-		//Create and start the thread
-		PersistenceStarterThread perStart = new PersistenceStarterThread(
-				persistSer, null);
-		perStart.start();
+		//persistance starter thread comes on when ReaderPluginService is registered
 	}
 
 	/*

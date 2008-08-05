@@ -119,7 +119,6 @@ public class JAXBUtility {
 	@SuppressWarnings("unchecked")
 	public Node save(Object o, Node parent) {
 		JAXBContext context;
-		logger.debug("Just before the try in save()");
 		try {
 
 			List<String> classStringRegister = readerPluginService
@@ -243,14 +242,12 @@ public class JAXBUtility {
 		file = new File(fileName);
 		if (!file.exists()) {
 			try {
-				logger.debug("creating a new file!");
 				file.createNewFile();
 				this.writeInitialXMLToFile(file);
+				logger.debug("created a new persistance file: " + file.getAbsolutePath());
 			} catch (IOException e) {
 				throw e;
 			}
-		} else {
-			logger.debug("file already exists");
 		}
 	}
 

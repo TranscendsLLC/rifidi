@@ -5,7 +5,7 @@ Bundle-SymbolicName: org.rifidi.edge.persistence
 Bundle-Version: 1.0.0
 Bundle-Activator: org.rifidi.edge.persistence.Activator
 Bundle-Vendor: Pramari, LLC
-Eclipse-LazyStart: true
+Bundle-ActivationPolicy: lazy
 Eclipse-BuddyPolicy: global
 Import-Package: org.osgi.framework;version="1.3.0"
 Require-Bundle: org.rifidi.edge.core,
@@ -16,3 +16,4 @@ Export-Package: org.rifidi.edge.persistence,
  org.rifidi.edge.persistence.service.impl,
  org.rifidi.edge.persistence.utilities,
  org.rifidi.edge.persistence.xml
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
