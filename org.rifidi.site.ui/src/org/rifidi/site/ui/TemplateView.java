@@ -94,7 +94,7 @@ public class TemplateView extends ViewPart {
 		});
 
 		Button executePropertyButton = new Button(secondRow, SWT.PUSH);
-		executePropertyButton.setText("&Next >");
+		executePropertyButton.setText("&Next");
 		executePropertyButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				

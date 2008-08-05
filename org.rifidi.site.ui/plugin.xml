@@ -38,6 +38,12 @@
             name="DefaultCustomView"
             restorable="true">
       </view>
+      <view
+            class="org.rifidi.site.ui.NameSelectorView"
+            id="org.rifidi.site.ui.nameselector"
+            name="NameSelectorView"
+            restorable="true">
+      </view>
    </extension>
 
 </plugin>
