@@ -49,7 +49,6 @@ public class ReaderContentProvider implements IStructuredContentProvider {
 	 */
 	@Override
 	public void dispose() {
-		// TODO Auto-generated method stub
 		logger.debug("disposing the reader content provider");
 	}
 
@@ -62,7 +61,6 @@ public class ReaderContentProvider implements IStructuredContentProvider {
 	 */
 	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-		// TODO Auto-generated method stub
 		logger.debug("input changed on the reader content provider");
 	}
 

@@ -28,7 +28,7 @@ public class DefaultCustomView extends ViewPart {
 	/**
 	 * 
 	 */
-	public static final String ID = "org.rifidi.site.ui.view";
+	public static final String ID = "org.rifidi.site.ui.defaultcustomview";
 
 	/**
 	 * 

@@ -26,7 +26,7 @@ import org.eclipse.ui.part.ViewPart;
  * @author Matthew Dean - matt@pramari.com
  */
 public class TemplateView extends ViewPart {
-	public static final String ID = "org.rifidi.site.ui.view";
+	public static final String ID = "org.rifidi.site.ui.templateview";
 
 	private ListViewer listViewer;
 
