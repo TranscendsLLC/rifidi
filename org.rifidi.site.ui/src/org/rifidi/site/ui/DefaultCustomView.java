@@ -22,8 +22,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.part.ViewPart;
 
 /**
- * @author Matthew Dean - matt@pramari.com
  * 
+ * 
+ * @author Matthew Dean - matt@pramari.com
  */
 public class DefaultCustomView extends ViewPart {
 
