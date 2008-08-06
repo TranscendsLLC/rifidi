@@ -26,6 +26,25 @@ public class CreateBottomComposite {
 
 	/**
 	 * 
+	 */
+	private static CreateBottomComposite instance = new CreateBottomComposite();
+	
+	/**
+	 * @return the instance
+	 */
+	public static CreateBottomComposite getInstance() {
+		return instance;
+	}
+
+	/**
+	 * 
+	 */
+	private CreateBottomComposite() {
+	}
+	
+	/**
+	 * 
+	 * 
 	 * @return
 	 */
 	public Composite createBottomComposite(Composite parent) {
@@ -59,6 +78,6 @@ public class CreateBottomComposite {
 			}
 		});
 		
-		return null;
+		return newComp;
 	}
 }
