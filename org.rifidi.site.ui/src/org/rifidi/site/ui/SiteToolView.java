@@ -1,5 +1,5 @@
 /* 
- * DefaultCustomView.java
+ * SiteToolView.java
  *  Created:	Aug 1, 2008
  *  Project:	RiFidi Emulator - A Software Simulation Tool for RFID Devices
  *  				http://www.rifidi.org
@@ -26,12 +26,12 @@ import org.eclipse.ui.part.ViewPart;
  * 
  * @author Matthew Dean - matt@pramari.com
  */
-public class DefaultCustomView extends ViewPart {
+public class SiteToolView extends ViewPart {
 
 	/**
 	 * 
 	 */
-	public static final String ID = "org.rifidi.site.ui.defaultcustomview";
+	public static final String ID = "org.rifidi.site.ui.sitetoolview";
 
 	/**
 	 * 
@@ -41,7 +41,7 @@ public class DefaultCustomView extends ViewPart {
 	/**
 	 * 
 	 */
-	public DefaultCustomView() {
+	public SiteToolView() {
 	}
 
 	/*

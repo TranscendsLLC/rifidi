@@ -22,26 +22,9 @@
    <extension
          point="org.eclipse.ui.views">
       <view
-            name="TemplateView"
-            class="org.rifidi.site.ui.TemplateView"
-            id="org.rifidi.site.ui.templateview">
-      </view>
-      <view
-            class="org.rifidi.site.ui.ReaderView"
-            id="org.rifidi.site.ui.readerview"
-            name="ReaderView"
-            restorable="true">
-      </view>
-      <view
-            class="org.rifidi.site.ui.DefaultCustomView"
+            class="org.rifidi.site.ui.SiteToolView"
             id="org.rifidi.site.ui.defaultcustomview"
             name="DefaultCustomView"
-            restorable="true">
-      </view>
-      <view
-            class="org.rifidi.site.ui.NameSelectorView"
-            id="org.rifidi.site.ui.nameselector"
-            name="NameSelectorView"
             restorable="true">
       </view>
    </extension>
