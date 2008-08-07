@@ -10,7 +10,7 @@
  */
 package org.rifidi.site.ui.controller;
 
-import org.eclipse.swt.widgets.Composite;
+import org.rifidi.site.ui.content.DataComposite;
 
 /**
  * @author Matthew Dean - matt@pramari.com
@@ -31,7 +31,7 @@ public class CurrentCompositeRegistry {
 	/**
 	 * 
 	 */
-	private Composite curComp = null;
+	private DataComposite curComp = null;
 
 	/**
 	 * 
@@ -56,7 +56,7 @@ public class CurrentCompositeRegistry {
 	 * 
 	 * @return
 	 */
-	public Composite getCurrentComposite() {
+	public DataComposite getCurrentComposite() {
 		return curComp;
 	}
 
@@ -64,7 +64,7 @@ public class CurrentCompositeRegistry {
 	 * 
 	 * @param comp
 	 */
-	public void setCurrentComposite(Composite comp) {
+	public void setCurrentComposite(DataComposite comp) {
 		curComp = comp;
 	}
 	
@@ -75,8 +75,7 @@ public class CurrentCompositeRegistry {
 	 * @param selection
 	 * @return
 	 */
-	public Composite getNextComposite() {
-		
-		return null;
+	public void showNextComposite() {
+		curComp.endComposite();
 	}
 }

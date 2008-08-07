@@ -12,14 +12,14 @@ package org.rifidi.site.ui;
 
 import org.eclipse.jface.viewers.ListViewer;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.part.ViewPart;
+import org.rifidi.site.ui.content.CompositeFormData;
+import org.rifidi.site.ui.content.CreateBottomComposite;
+import org.rifidi.site.ui.content.DataComposite;
+import org.rifidi.site.ui.content.DefaultCustomComposite;
+import org.rifidi.site.ui.controller.CurrentCompositeRegistry;
 
 /**
  * 
@@ -54,54 +54,27 @@ public class SiteToolView extends ViewPart {
 	@Override
 	public void createPartControl(Composite parent) {
 
+		System.out.println("Creating the part control");
+
 		GridLayout layout = new GridLayout(1, true);
+
 		parent.setLayout(layout);
 
 		// 1st Row
-		Composite firstRow = new Composite(parent, SWT.NONE);
-		GridData firstColumnLayoutData = new GridData(GridData.FILL_BOTH);
-		firstColumnLayoutData.widthHint = 200;
-		firstRow.setLayoutData(firstColumnLayoutData);
-		FillLayout firstColumnLayout = new FillLayout();
-		firstColumnLayout.marginHeight = 5;
-		firstColumnLayout.marginWidth = 5;
-		firstRow.setLayout(firstColumnLayout);
+		DataComposite defaultCustom = new DefaultCustomComposite(parent, SWT.FILL,
+				new CompositeFormData());
+		
+		CurrentCompositeRegistry.getInstance().setCurrentComposite(defaultCustom);
 
 		// 2nd Row
-		Composite secondRow = new Composite(parent, SWT.NONE);
-		GridData thirdColumnLayoutData = new GridData(
-				GridData.HORIZONTAL_ALIGN_END);
-		secondRow.setLayoutData(thirdColumnLayoutData);
-		GridLayout thirdColumnLayout = new GridLayout(3, false);
-		secondRow.setLayout(thirdColumnLayout);
+		Composite secondRow = CreateBottomComposite.getInstance()
+				.createBottomComposite(parent);
+		secondRow.layout();
+
+		parent.layout();
 
 		// === ListViewer ===
-		listViewer = new ListViewer(firstRow);
-
-		// === Add and Remove Button ===
-		Button executeCommandButton = new Button(secondRow, SWT.PUSH);
-		executeCommandButton.setText("&Previous");
-		executeCommandButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				
-			}
-		});
-
-		Button executePropertyButton = new Button(secondRow, SWT.PUSH);
-		executePropertyButton.setText("&Next");
-		executePropertyButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				
-			}
-		});
-
-		Button stopCurCommandButton = new Button(secondRow, SWT.PUSH);
-		stopCurCommandButton.setText("Cancel");
-		stopCurCommandButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				
-			}
-		});
+		listViewer = new ListViewer(defaultCustom);
 	}
 
 	/**
@@ -111,7 +84,7 @@ public class SiteToolView extends ViewPart {
 	private void cleanup() {
 		listViewer.setInput(null);
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 

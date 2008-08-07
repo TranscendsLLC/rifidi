@@ -16,6 +16,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.rifidi.site.ui.controller.CurrentCompositeRegistry;
 
 /**
  * 
@@ -66,7 +67,7 @@ public class CreateBottomComposite {
 		executePropertyButton.setText("&Next");
 		executePropertyButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				
+				CurrentCompositeRegistry.getInstance().showNextComposite();
 			}
 		});
 
@@ -77,6 +78,8 @@ public class CreateBottomComposite {
 				
 			}
 		});
+		
+		parent.layout();
 		
 		return newComp;
 	}
