@@ -1,5 +1,5 @@
 /* 
- * DataComposite.java
+ * ReaderDataComposite.java
  *  Created:	Aug 6, 2008
  *  Project:	RiFidi Emulator - A Software Simulation Tool for RFID Devices
  *  				http://www.rifidi.org
@@ -10,40 +10,39 @@
  */
 package org.rifidi.site.ui.content;
 
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 
 /**
- * 
- * 
  * @author Matthew Dean - matt@pramari.com
+ * 
  */
-public abstract class DataComposite extends Composite {
+public class ReaderDataComposite extends DataComposite {
 
 	/**
-	 * 
-	 */
-	private CompositeFormData data;
-	
-	/**
-	 * 
 	 * 
 	 * @param parent
 	 * @param style
+	 * @param data
 	 */
-	public DataComposite(Composite parent, int style, CompositeFormData data) {
-		super(parent, style);
-		data = new CompositeFormData();
+	public ReaderDataComposite(Composite parent, int style,
+			CompositeFormData data) {
+		super(parent, style, data);
+
+		Button omgButton = new Button(parent, SWT.PUSH);
+		omgButton.setText("OMG");
+
+		parent.layout(true);
 	}
 
-	/**
-	 * @return the data
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.rifidi.site.ui.content.DataComposite#finalize()
 	 */
-	public CompositeFormData getData() {
-		return data;
+	@Override
+	public void endComposite() {
+
 	}
-	
-	/**
-	 *  
-	 */
-	public abstract void endComposite();
 }

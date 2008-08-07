@@ -23,8 +23,8 @@
          point="org.eclipse.ui.views">
       <view
             class="org.rifidi.site.ui.SiteToolView"
-            id="org.rifidi.site.ui.defaultcustomview"
-            name="DefaultCustomView"
+            id="org.rifidi.site.ui.sitetoolview"
+            name="SiteToolView"
             restorable="true">
       </view>
    </extension>

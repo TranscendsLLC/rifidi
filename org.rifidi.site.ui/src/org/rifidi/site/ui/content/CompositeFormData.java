@@ -1,5 +1,5 @@
 /* 
- * FormData.java
+ * CompositeFormData.java
  *  Created:	Aug 6, 2008
  *  Project:	RiFidi Emulator - A Software Simulation Tool for RFID Devices
  *  				http://www.rifidi.org
@@ -17,12 +17,12 @@ import java.util.HashMap;
  * 
  * @author Matthew Dean - matt@pramari.com
  */
-public class FormData {
+public class CompositeFormData {
 
 	/**
 	 * 
 	 */
-	public FormData() {
+	public CompositeFormData() {
 		stringMap = new HashMap<String, String>();
 	}
 
