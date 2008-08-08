@@ -191,7 +191,6 @@ public class ReaderPluginServiceImpl implements ReaderPluginService {
 	 * @param readerInfo
 	 *            class name the ReaderInfo of the ReaderPlugin registered
 	 */
-	@SuppressWarnings("unchecked")
 	private void fireUnregisterEvent(String readerInfo) {
 		// TODO Remove the Class.forName later on
 		try {
@@ -214,7 +213,6 @@ public class ReaderPluginServiceImpl implements ReaderPluginService {
 	 * @param readerInfo
 	 *            class name the ReaderInfo of the ReaderPlugin unregistered
 	 */
-	@SuppressWarnings("unchecked")
 	private void fireRegisterEvent(String readerInfo) {
 		// TODO Remove the Class.forName later on
 		try {
