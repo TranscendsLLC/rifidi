@@ -62,9 +62,8 @@ public class TagStreamCommand implements Command {
 							.fromHexString(rawTagItems[0].substring(2,
 									rawTagItems[0].length())));
 
-					// TODO: correct the time stamps.
 					BigDecimal timeStamp = new BigDecimal(rawTagItems[1]);
-					timeStamp.multiply(new BigDecimal(1000));
+					timeStamp = timeStamp.multiply(new BigDecimal(1000));
 					tag.setLastSeenTime(timeStamp.longValue());
 					try {
 						messageQueue.addMessage(tag);
