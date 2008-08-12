@@ -19,12 +19,12 @@ import org.rifidi.edge.readerplugin.thingmagic.protocol.ThingMagicCommunicationP
  * 
  */
 
-public class ThingMagicManager extends ConnectionManager {
+public class ThingMagicConnectionManager extends ConnectionManager {
 	@SuppressWarnings("unused")
 	private static final Log logger = LogFactory
-			.getLog(ThingMagicManager.class);
+			.getLog(ThingMagicConnectionManager.class);
 
-	public ThingMagicManager(ReaderInfo readerInfo) {
+	public ThingMagicConnectionManager(ReaderInfo readerInfo) {
 		super(readerInfo);
 		info = (ThingMagicReaderInfo) readerInfo;
 	}

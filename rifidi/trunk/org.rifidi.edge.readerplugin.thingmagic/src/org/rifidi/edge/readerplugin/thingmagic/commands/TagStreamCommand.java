@@ -1,6 +1,7 @@
 package org.rifidi.edge.readerplugin.thingmagic.commands;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -62,7 +63,9 @@ public class TagStreamCommand implements Command {
 									rawTagItems[0].length())));
 
 					// TODO: correct the time stamps.
-					tag.setLastSeenTime(System.nanoTime());
+					BigDecimal timeStamp = new BigDecimal(rawTagItems[1]);
+					timeStamp.multiply(new BigDecimal(1000));
+					tag.setLastSeenTime(timeStamp.longValue());
 					try {
 						messageQueue.addMessage(tag);
 					} catch (RifidiMessageQueueException e) {

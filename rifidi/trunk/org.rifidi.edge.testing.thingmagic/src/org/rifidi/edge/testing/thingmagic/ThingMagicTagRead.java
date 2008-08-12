@@ -19,7 +19,7 @@ import org.rifidi.edge.core.readerplugin.ReaderInfo;
 import org.rifidi.edge.core.readerplugin.service.ReaderPluginService;
 import org.rifidi.edge.core.readersession.ReaderSession;
 import org.rifidi.edge.core.readersession.service.ReaderSessionService;
-import org.rifidi.edge.readerplugin.thingmagic.plugin.ThingMagicManager;
+import org.rifidi.edge.readerplugin.thingmagic.plugin.ThingMagicConnectionManager;
 import org.rifidi.edge.readerplugin.thingmagic.plugin.ThingMagicReaderInfo;
 import org.rifidi.edge.readerplugin.thingmagic.properties.GetTagsOnceCommand;
 import org.rifidi.services.annotations.Inject;
@@ -154,7 +154,7 @@ public class ThingMagicTagRead implements CommunicationStateListener {
 		info.setPort(8080);
 		Connection connection;
 		try {
-			connection = connectionService.createConnection(new ThingMagicManager(info), info, this);
+			connection = connectionService.createConnection(new ThingMagicConnectionManager(info), info, this);
 		} catch (RifidiConnectionException e) {
 			throw new AssertionError(e);
 		}
