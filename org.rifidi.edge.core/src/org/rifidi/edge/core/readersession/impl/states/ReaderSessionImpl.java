@@ -406,6 +406,7 @@ public class ReaderSessionImpl implements ReaderSession, ReaderSessionState,
 	@Inject
 	public void setMessageService(MessageService messageService) {
 		this.messageService = messageService;
+		logger.debug("Creating message queues for " + readerSessionID);
 		this.messageQueue = this.messageService.createMessageQueue(Integer
 				.toString(readerSessionID));
 		this.errorQueue = this.messageService.createMessageQueue("E"

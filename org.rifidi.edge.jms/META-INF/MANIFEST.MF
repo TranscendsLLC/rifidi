@@ -129,4 +129,5 @@ Export-Package: javax.jms,
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Require-Bundle: org.rifidi.edge.core,
- org.rifidi.edge.services
+ org.rifidi.edge.services,
+ org.rifidi.edge.log4j;bundle-version="1.0.0"
