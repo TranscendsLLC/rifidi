@@ -8,6 +8,8 @@ import java.util.Set;
 import javax.jms.ConnectionFactory;
 import javax.jms.JMSException;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.messageQueue.MessageQueue;
 import org.rifidi.edge.core.messageQueue.service.MessageService;
 import org.rifidi.edge.core.messageQueue.service.MessageServiceListener;
@@ -25,6 +27,9 @@ import org.rifidi.services.registry.ServiceRegistry;
  */
 public class MessageServiceImpl implements MessageService {
 
+	private static final Log logger = LogFactory
+	.getLog(MessageServiceImpl.class);
+	
 	private ConnectionFactory connectionFactory;
 	private ArrayList<MessageQueue> registry = new ArrayList<MessageQueue>();
 
@@ -52,7 +57,8 @@ public class MessageServiceImpl implements MessageService {
 		try {
 			messageQueue.startMessageQueue(connectionFactory);
 		} catch (JMSException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
+			logger.error("Error creating MessageQueue " +  messageQueueName, e);
 			return null;
 		}
 		registry.add(messageQueue);
