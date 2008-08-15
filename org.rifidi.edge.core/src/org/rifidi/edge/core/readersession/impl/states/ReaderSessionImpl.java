@@ -588,12 +588,12 @@ public class ReaderSessionImpl implements ReaderSession, ReaderSessionState,
 	}
 
 	@Override
-	public List<String> getAvailableCommands() {
+	public Collection<String> getAvailableCommands() {
 		return plugin.getCommands();
 	}
 
 	@Override
-	public List<String> getAvailableProperties() {
+	public Collection<String> getAvailableProperties() {
 		return plugin.getProperties();
 	}
 
