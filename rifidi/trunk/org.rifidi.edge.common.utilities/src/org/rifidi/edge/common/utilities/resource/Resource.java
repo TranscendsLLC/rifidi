@@ -34,6 +34,7 @@ public class Resource {
 		path = path.replace(".", "/");
 
 		path = path + resource;
+		System.out.println(path);
 
 /*		InputStream xml = klass.getClassLoader().getResourceAsStream(path);
 

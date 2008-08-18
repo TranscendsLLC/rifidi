@@ -163,6 +163,7 @@ public class SessionStateConfigured implements ReaderSessionState {
 	@Override
 	public void state_setReaderInfo(ReaderInfo readerInfo) {
 		readerSessionImpl.readerInfo = readerInfo;
+		readerSessionImpl.connectionManager = readerSessionImpl.plugin.newConnectionManager(readerInfo);
 		readerSessionImpl.transition(new SessionStateConfigured(readerSessionImpl));
 	}
 }

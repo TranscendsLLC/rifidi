@@ -14,11 +14,13 @@ import javax.xml.bind.Unmarshaller;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.osgi.framework.Bundle;
+import org.rifidi.edge.core.exceptions.RifidiReaderInfoNotFoundException;
 import org.rifidi.edge.core.readerplugin.ReaderInfo;
 import org.rifidi.edge.core.readerplugin.ReaderPlugin;
 import org.rifidi.edge.core.readerplugin.service.ReaderPluginListener;
 import org.rifidi.edge.core.readerplugin.service.ReaderPluginService;
 import org.rifidi.edge.core.readerplugin.xml.ReaderPluginXML;
+import org.w3c.dom.Document;
 
 /**
  * This is the implementation of the ReaderPluginService. It keeps track of
@@ -63,13 +65,6 @@ public class ReaderPluginServiceImpl implements ReaderPluginService {
 	 */
 	@Override
 	public void registerReaderPlugin(Bundle readerPluginBundle) {
-		// registry.put(readerInfo.getName(), plugin);
-		// logger.debug("ReaderPlugin registered "
-		// + plugin.getClass().getSimpleName() + " : "
-		// + readerInfo.getName());
-		// for (ReaderPluginListener l : listeners) {
-		// l.readerPluginRegisteredEvent(readerInfo);
-		// }
 
 		ReaderPlugin readerPlugin = null;
 		ReaderPluginXML readerPluginXML = null;
@@ -149,6 +144,16 @@ public class ReaderPluginServiceImpl implements ReaderPluginService {
 		return new ArrayList<String>(registry.keySet());
 	}
 
+	@Override
+	public Document getReaderInfoAnnotation(String readerInfoClassName) throws RifidiReaderInfoNotFoundException {
+		ReaderPlugin plugin = registry.get(readerInfoClassName);
+		if(plugin!=null){
+			return plugin.getReaderInfoAnnotation();
+		}else{
+			throw new RifidiReaderInfoNotFoundException("Cannot find plugin with reader info " + readerInfoClassName);
+		}
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -191,6 +196,7 @@ public class ReaderPluginServiceImpl implements ReaderPluginService {
 	 * @param readerInfo
 	 *            class name the ReaderInfo of the ReaderPlugin registered
 	 */
+	@SuppressWarnings("unchecked")
 	private void fireUnregisterEvent(String readerInfo) {
 		// TODO Remove the Class.forName later on
 		try {
@@ -213,6 +219,7 @@ public class ReaderPluginServiceImpl implements ReaderPluginService {
 	 * @param readerInfo
 	 *            class name the ReaderInfo of the ReaderPlugin unregistered
 	 */
+	@SuppressWarnings("unchecked")
 	private void fireRegisterEvent(String readerInfo) {
 		// TODO Remove the Class.forName later on
 		try {

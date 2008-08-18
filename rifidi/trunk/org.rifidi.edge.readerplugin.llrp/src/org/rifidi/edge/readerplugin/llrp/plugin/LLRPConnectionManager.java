@@ -166,18 +166,18 @@ public class LLRPConnectionManager extends ConnectionManager {
 	}
 
 	@Override
-	public int getMaxNumConnectionsAttemps() {
-		if (this.readerInfo.getMaxNumConnectionsAttemps() > 1) {
-			return readerInfo.getMaxNumConnectionsAttemps();
+	public int getMaxNumConnectionsAttempts() {
+		if (this.readerInfo.getMaxNumConnectionsAttempts() > 1) {
+			return readerInfo.getMaxNumConnectionsAttempts();
 		} else {
 			return 1;
 		}
 	}
 
 	@Override
-	public long getReconnectionIntervall() {
-		if (this.readerInfo.getReconnectionIntervall() > 0) {
-			return readerInfo.getReconnectionIntervall();
+	public long getReconnectionInterval() {
+		if (this.readerInfo.getReconnectionInterval() > 0) {
+			return readerInfo.getReconnectionInterval();
 		} else {
 			return 0;
 		}

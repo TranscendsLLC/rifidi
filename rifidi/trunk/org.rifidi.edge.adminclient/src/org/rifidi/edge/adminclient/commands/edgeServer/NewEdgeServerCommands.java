@@ -3,6 +3,8 @@ package org.rifidi.edge.adminclient.commands.edgeServer;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.rmi.RemoteException;
@@ -14,6 +16,8 @@ import java.util.List;
 import javax.jms.JMSException;
 import javax.jms.MessageConsumer;
 import javax.jms.TextMessage;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Marshaller;
 
 import org.rifidi.edge.adminclient.annotations.Command;
 import org.rifidi.edge.adminclient.commands.ICommand;
@@ -107,8 +111,7 @@ public class NewEdgeServerCommands implements ICommand {
 					.getAllReaderConnections()) {
 				retVal.append(reader.getMessageQueueName() + ": "
 						+ reader.getReaderInfo().getClass().getSimpleName()
-						+ " ID " + reader.getReaderInfo().getIpAddress() + ":"
-						+ reader.getReaderInfo().getPort() + " Status: "
+						+ " ID " + " Status: "
 						+ reader.getReaderState() + "\n");
 			}
 		} catch (Exception e) {
@@ -299,8 +302,14 @@ public class NewEdgeServerCommands implements ICommand {
 			}
 
 			try {
+				
+				JAXBContext context = JAXBContext.newInstance(readerInfo.getClass());
+				Marshaller m = context.createMarshaller();
+				Writer writer = new StringWriter();
+				m.marshal(readerInfo, writer);
+				
 				remoteReaderConnectionRegistry
-						.createReaderConnection(readerInfo);
+						.createReaderConnection(writer.toString());
 			} catch (RemoteException e) {
 				e.printStackTrace();
 				return "ERROR";

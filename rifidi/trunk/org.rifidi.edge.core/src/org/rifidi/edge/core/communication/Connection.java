@@ -12,12 +12,14 @@ public interface Connection {
 
 	/**
 	 * Send the Message to the reader
+	 *
 	 * 
 	 * @param o
 	 *            Message(in the Format of the specific reader) to send
 	 * @throws IOException
 	 *             if there was a problem in the underlying communication layer
 	 */
+	//TODO: would be better if the Object is actually a Message
 	public void sendMessage(Object o) throws IOException;
 
 	/**

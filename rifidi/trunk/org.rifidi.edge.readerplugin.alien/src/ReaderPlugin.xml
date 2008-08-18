@@ -7,7 +7,7 @@
 	<connectionManager>
 		org.rifidi.edge.readerplugin.alien.AlienConnectionManager
 	</connectionManager>
-	<name>ALIEN_ALR_9800</name>
+	<name>Alien ALR 9800</name>
 	<description>The ALR-9800 is Alien's flagship reader.</description>
 	<property>
 		<classname>

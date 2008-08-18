@@ -184,11 +184,11 @@ public class AlienConnectionManager extends ConnectionManager {
 	 * @see org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionManager#getMaxNumConnectionsAttemps()
 	 */
 	@Override
-	public int getMaxNumConnectionsAttemps() {
-		if (info.getMaxNumConnectionsAttemps() <= 0) {
+	public int getMaxNumConnectionsAttempts() {
+		if (info.getMaxNumConnectionsAttempts() <= 0) {
 			return 1000;
 		}
-		return info.getMaxNumConnectionsAttemps();
+		return info.getMaxNumConnectionsAttempts();
 	}
 
 	/*
@@ -197,11 +197,11 @@ public class AlienConnectionManager extends ConnectionManager {
 	 * @see org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionManager#getReconnectionIntervall()
 	 */
 	@Override
-	public long getReconnectionIntervall() {
-		if (info.getReconnectionIntervall() <= 0) {
+	public long getReconnectionInterval() {
+		if (info.getReconnectionInterval() <= 0) {
 			return 1000;
 		}
-		return info.getMaxNumConnectionsAttemps();
+		return info.getMaxNumConnectionsAttempts();
 	}
 
 	/*

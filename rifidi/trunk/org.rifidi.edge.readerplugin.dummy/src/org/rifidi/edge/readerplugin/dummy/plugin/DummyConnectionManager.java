@@ -166,9 +166,9 @@ public class DummyConnectionManager extends ConnectionManager {
 	 * #getMaxNumConnectionsAttemps()
 	 */
 	@Override
-	public int getMaxNumConnectionsAttemps() {
-		return (info.getMaxNumConnectionsAttemps() >= 1) ? info
-				.getMaxNumConnectionsAttemps() : 3;
+	public int getMaxNumConnectionsAttempts() {
+		return (info.getMaxNumConnectionsAttempts() >= 1) ? info
+				.getMaxNumConnectionsAttempts() : 3;
 	}
 
 	/*
@@ -179,9 +179,9 @@ public class DummyConnectionManager extends ConnectionManager {
 	 * #getReconnectionIntervall()
 	 */
 	@Override
-	public long getReconnectionIntervall() {
-		return (info.getReconnectionIntervall() >= 0) ? info
-				.getReconnectionIntervall() : 1000;
+	public long getReconnectionInterval() {
+		return (info.getReconnectionInterval() >= 0) ? info
+				.getReconnectionInterval() : 1000;
 	}
 
 	@Override

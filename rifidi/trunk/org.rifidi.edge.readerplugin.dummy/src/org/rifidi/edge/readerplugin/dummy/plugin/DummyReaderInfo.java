@@ -6,7 +6,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.rifidi.edge.core.readerplugin.ReaderInfo;
 
-@XmlRootElement
+@XmlRootElement(name = "DummyReaderInfo")
 public class DummyReaderInfo extends ReaderInfo {
 
 	/**

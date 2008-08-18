@@ -57,10 +57,9 @@ public class ReaderSessionServiceImpl implements ReaderSessionService,
 	 */
 	@Override
 	public ReaderSession createReaderSession(ReaderInfo readerInfo) {
-		@SuppressWarnings("unused")
-		ReaderPlugin readerPlugin = readerPluginService
-				.getReaderPlugin(readerInfo.getClass().getName());
-		ReaderSession readerSession = new ReaderSessionImpl(readerInfo,
+		ReaderPlugin plugin = readerPluginService.getReaderPlugin(readerInfo.getClass()
+				.getName());
+		ReaderSession readerSession = new ReaderSessionImpl(plugin, readerInfo,
 				sessionID++);
 		registry.add(readerSession);
 		logger.debug("Created new session: " + readerSession);

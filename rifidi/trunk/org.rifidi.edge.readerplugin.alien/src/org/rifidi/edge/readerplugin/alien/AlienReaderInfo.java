@@ -13,6 +13,7 @@ package org.rifidi.edge.readerplugin.alien;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.rifidi.edge.core.readerplugin.ReaderInfo;
+import org.rifidi.edge.core.readerplugin.commands.StringMetadata;
 
 /**
  * This class represents the reader info needed for an Alien reader. In addition
@@ -21,7 +22,7 @@ import org.rifidi.edge.core.readerplugin.ReaderInfo;
  * 
  * @author Matthew Dean - matt@pramari.com
  */
-@XmlRootElement
+@XmlRootElement(name="AlienReaderInfo")
 public class AlienReaderInfo extends ReaderInfo {
 
 	/**
@@ -32,11 +33,13 @@ public class AlienReaderInfo extends ReaderInfo {
 	/**
 	 * The username for the reader
 	 */
+	@StringMetadata(defaultValue="alien", displayName="User name", editable=true, name="username", regex = "")
 	private String username;
 
 	/**
 	 * The password for the reader.
 	 */
+	@StringMetadata(defaultValue="password", displayName="Password", editable=true, name="password", regex = "")
 	private String password;
 
 	/**

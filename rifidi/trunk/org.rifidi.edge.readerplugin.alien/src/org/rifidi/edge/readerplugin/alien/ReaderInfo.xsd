@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.example.org/readerInfo" xmlns:tns="http://www.example.org/readerInfo" elementFormDefault="qualified">
+    <element name="AlienConnectionInfo"
+    	type="tns:AlienReaderInfo">
+    </element>
+    
+    <complexType name="AlienReaderInfo">
+    	<sequence>
+    		<element name="IPAddress" type="string" default="localhost">
+    			<annotation>
+    				<documentation>IP Address</documentation>
+    			</annotation></element>
+    		<element name="port" default="20000">
+    			<annotation>
+    				<documentation>Port</documentation>
+    			</annotation>
+    			<simpleType>
+    				<restriction base="integer">
+    					<minExclusive value="1"></minExclusive>
+    					<maxExclusive value="65500"></maxExclusive>
+    				</restriction>
+    			</simpleType>
+    		</element>
+    		<element name="ReconnectInterval" default="1000">
+    			<simpleType>
+    				<restriction base="int">
+    					<minExclusive value="0"></minExclusive>
+    					<maxExclusive value="1000000"></maxExclusive>
+    				</restriction>
+    			</simpleType>
+    		</element>
+    		<element name="ReconnectAttempts" default="3">
+    			<simpleType>
+    				<restriction base="int">
+    					<minInclusive value="0"></minInclusive>
+    					<maxInclusive value="1000"></maxInclusive>
+    				</restriction>
+    			</simpleType>
+    		</element>
+    		<element name="Username" type="string" default="alien"></element>
+    		<element name="Password" type="string" default="password"></element>
+    	</sequence>
+    </complexType>
+</schema>

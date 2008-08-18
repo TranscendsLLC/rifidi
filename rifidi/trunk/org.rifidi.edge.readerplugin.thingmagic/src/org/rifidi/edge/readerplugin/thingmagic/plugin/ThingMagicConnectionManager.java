@@ -46,18 +46,18 @@ public class ThingMagicConnectionManager extends ConnectionManager {
 	 * @see org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionManager#getMaxNumConnectionsAttemps()
 	 */
 	@Override
-	public int getMaxNumConnectionsAttemps() {
-		return (info.getMaxNumConnectionsAttemps() < 0) ? info
-				.getMaxNumConnectionsAttemps() : 3;
+	public int getMaxNumConnectionsAttempts() {
+		return (info.getMaxNumConnectionsAttempts() < 0) ? info
+				.getMaxNumConnectionsAttempts() : 3;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionManager#getReconnectionIntervall()
 	 */
 	@Override
-	public long getReconnectionIntervall() {
-		return (info.getReconnectionIntervall() < 0) ? info
-				.getReconnectionIntervall() : 1000;
+	public long getReconnectionInterval() {
+		return (info.getReconnectionInterval() < 0) ? info
+				.getReconnectionInterval() : 1000;
 	}
 
 	/*
