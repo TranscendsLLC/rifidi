@@ -20,7 +20,7 @@ import org.rifidi.edge.core.exceptions.RifidiCommandInterruptedException;
 import org.rifidi.edge.core.exceptions.RifidiCommandNotFoundException;
 import org.rifidi.edge.core.exceptions.RifidiConnectionException;
 import org.rifidi.edge.core.exceptions.RifidiInvalidConfigurationException;
-import org.rifidi.edge.core.readerplugin.ReaderInfo;
+import org.rifidi.edge.core.exceptions.RifidiReaderInfoNotFoundException;
 
 /**
  * This is the RemoteReaderConnection for controlling ReaderConnections over
@@ -140,14 +140,11 @@ public interface RemoteReaderConnection extends Remote {
 	 */
 	public String getMessageQueueName() throws RemoteException;
 
-	/**
-	 * Get the ReaderInfo of this ReaderConnection
-	 * 
-	 * @return the ReaderInfo of this instance of the RemoteReaderConnection
-	 * @throws RemoteException
-	 *             if an error occurs
-	 */
-	public ReaderInfo getReaderInfo() throws RemoteException;
+	public String getReaderInfo() throws RemoteException, RifidiReaderInfoNotFoundException;
+	
+	public void setReaderInfo(String readerInfo) throws RemoteException, RifidiReaderInfoNotFoundException;
+	
+	public String getReaderInfoClassName() throws RemoteException;
 
 	/**
 	 * Get the state of the Reader
@@ -212,6 +209,4 @@ public interface RemoteReaderConnection extends Remote {
 
 	public Collection<String> getAvailableProperties(String groupName)
 			throws RemoteException;
-	
-	public void setReaderInfo(ReaderInfo readerInfo) throws RemoteException;
 }

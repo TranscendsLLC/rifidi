@@ -1,10 +1,17 @@
 package org.rifidi.edge.core.rmi.readerconnection.impl;
 
 import java.io.IOException;
+import java.io.Reader;
 import java.io.StringReader;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.rmi.RemoteException;
 import java.util.Collection;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -18,6 +25,7 @@ import org.rifidi.edge.core.exceptions.RifidiCommandInterruptedException;
 import org.rifidi.edge.core.exceptions.RifidiCommandNotFoundException;
 import org.rifidi.edge.core.exceptions.RifidiConnectionException;
 import org.rifidi.edge.core.exceptions.RifidiInvalidConfigurationException;
+import org.rifidi.edge.core.exceptions.RifidiReaderInfoNotFoundException;
 import org.rifidi.edge.core.readerplugin.ReaderInfo;
 import org.rifidi.edge.core.readersession.ReaderSession;
 import org.rifidi.edge.core.rmi.readerconnection.RemoteReaderConnection;
@@ -169,15 +177,53 @@ public class RemoteReaderConnectionImpl implements RemoteReaderConnection {
 		return readerSession.getMessageQueueName();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @seeorg.rifidi.edge.core.rmi.readerconnection.RemoteReaderConnection#
-	 * getReaderInfo()
-	 */
 	@Override
-	public ReaderInfo getReaderInfo() throws RemoteException {
-		return readerSession.getReaderInfo();
+	public String getReaderInfo() throws RemoteException,
+			RifidiReaderInfoNotFoundException {
+		try {
+			JAXBContext context = JAXBContext.newInstance(readerSession
+					.getReaderInfo().getClass());
+			Marshaller m = context.createMarshaller();
+			Writer writer = new StringWriter();
+			m.marshal(readerSession.getReaderInfo(), writer);
+			return writer.toString();
+
+		} catch (JAXBException e) {
+			throw new RifidiReaderInfoNotFoundException(e.getMessage());
+		}
+
+	}
+
+	@Override
+	public void setReaderInfo(String readerInfo) throws RemoteException,
+			RifidiReaderInfoNotFoundException {
+		try {
+
+			JAXBContext context = JAXBContext.newInstance(readerSession
+					.getReaderInfo().getClass());
+
+			Unmarshaller unmarshaller = context.createUnmarshaller();
+			Reader reader = new StringReader(readerInfo);
+			ReaderInfo newReaderInfo = (ReaderInfo) unmarshaller
+					.unmarshal(reader);
+			if (newReaderInfo.getClass() != readerSession.getReaderInfo()
+					.getClass()) {
+				throw new RifidiReaderInfoNotFoundException(
+						"Cannot set reader info of "
+								+ readerSession.getReaderInfo().getClass()
+										.getSimpleName()
+								+ " to a reader info with type "
+								+ newReaderInfo.getClass().getSimpleName());
+			}
+			readerSession.setReaderInfo(newReaderInfo);
+		} catch (JAXBException e) {
+			throw new RifidiReaderInfoNotFoundException(e.getMessage());
+		}
+	}
+
+	@Override
+	public String getReaderInfoClassName() throws RemoteException {
+		return readerSession.getReaderInfo().getClass().getName();
 	}
 
 	/*
@@ -201,20 +247,6 @@ public class RemoteReaderConnectionImpl implements RemoteReaderConnection {
 	public void resetReaderConnection() throws RemoteException {
 		readerSession.resetReaderSession();
 	}
-
-	//
-	// /*
-	// * (non-Javadoc)
-	// *
-	// * @see org.rifidi.edge.core.rmi.readerconnection.RemoteReaderConnection#
-	// startTagStream(java.lang.String)
-	// */
-	// @Override
-	// public long startTagStream(String configuration) throws RemoteException,
-	// RifidiConnectionException, RifidiCommandInterruptedException,
-	// RifidiCommandNotFoundException, RifidiInvalidConfigurationException {
-	// return executeCommand("<TagStreaming></TagStreaming>");
-	// }
 
 	/*
 	 * (non-Javadoc)
@@ -296,11 +328,6 @@ public class RemoteReaderConnectionImpl implements RemoteReaderConnection {
 	public void enable() throws RemoteException {
 		readerSession.enable();
 
-	}
-
-	@Override
-	public void setReaderInfo(ReaderInfo readerInfo) throws RemoteException{
-		readerSession.setReaderInfo(readerInfo);
 	}
 
 }

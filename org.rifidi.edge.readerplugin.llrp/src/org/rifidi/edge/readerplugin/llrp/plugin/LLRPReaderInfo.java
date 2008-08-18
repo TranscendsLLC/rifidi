@@ -19,7 +19,7 @@ import org.rifidi.edge.core.readerplugin.ReaderInfo;
  * 
  * @author Matthew Dean - matt@pramari.com
  */
-@XmlRootElement
+@XmlRootElement(name="LLRPReaderInfo")
 public class LLRPReaderInfo extends ReaderInfo {
 
 	/**

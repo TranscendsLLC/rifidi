@@ -1,13 +1,28 @@
 package org.rifidi.edge.core.rmi.readerconnection.impl;
 
+import java.io.Reader;
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.rifidi.edge.core.exceptions.RifidiReaderInfoNotFoundException;
+import org.rifidi.edge.core.exceptions.RifidiReaderPluginXMLNotFoundException;
 import org.rifidi.edge.core.readerplugin.ReaderInfo;
 import org.rifidi.edge.core.readerplugin.service.ReaderPluginService;
 import org.rifidi.edge.core.readersession.ReaderSession;
@@ -17,6 +32,7 @@ import org.rifidi.edge.core.rmi.readerconnection.RemoteReaderConnection;
 import org.rifidi.edge.core.rmi.readerconnection.RemoteReaderConnectionRegistry;
 import org.rifidi.services.annotations.Inject;
 import org.rifidi.services.registry.ServiceRegistry;
+import org.w3c.dom.Document;
 
 /**
  * The implementation of the RemoteReaderConnectionRegistry. This is the Factory
@@ -46,21 +62,32 @@ public class RemoteReaderConnectionRegistryImpl implements
 		ServiceRegistry.getInstance().service(this);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.rifidi.edge.core.rmi.readerconnection.RemoteReaderConnectionRegistry
-	 * #createReaderConnection(org.rifidi.edge.core.readerplugin.ReaderInfo)
-	 */
 	@Override
-	public RemoteReaderConnection createReaderConnection(ReaderInfo readerInfo)
-			throws RemoteException {
-		logger.debug("Create Reader called");
-		ReaderSession readerSession = readerSessionService
-				.createReaderSession(readerInfo);
+	public RemoteReaderConnection createReaderConnection(String connectionInfo)
+			throws RemoteException, RifidiReaderInfoNotFoundException {
+		try {
+			List<String> readerInfoClassNames = readerPluginService
+					.getAllReaderInfos();
+			List<Class<?>> classRegister = new ArrayList<Class<?>>();
+			for (String s : readerInfoClassNames) {
+				classRegister.add(Class.forName(s));
+			}
 
-		return saveRemoteConnection(readerSession);
+			JAXBContext context = JAXBContext.newInstance(classRegister
+					.toArray(new Class[classRegister.size()]));
+
+			Unmarshaller unmarshaller = context.createUnmarshaller();
+			Reader reader = new StringReader(connectionInfo);
+			ReaderInfo readerInfo = (ReaderInfo) unmarshaller.unmarshal(reader);
+			ReaderSession readerSession = readerSessionService
+					.createReaderSession(readerInfo);
+
+			return saveRemoteConnection(readerSession);
+		} catch (ClassNotFoundException e) {
+			throw new RifidiReaderInfoNotFoundException(e.getMessage());
+		} catch (JAXBException e) {
+			throw new RifidiReaderInfoNotFoundException(e.getMessage());
+		}
 	}
 
 	/*
@@ -115,6 +142,33 @@ public class RemoteReaderConnectionRegistryImpl implements
 		return retVal;
 	}
 
+	@Override
+	public String getReaderPluginXML(String readerInfoClassName) throws RifidiReaderPluginXMLNotFoundException {
+		return readerPluginService.getReaderPlugin(readerInfoClassName).getReaderPluginXML();
+	}
+
+	@Override
+	public String getReaderInfoAnnotation(String readerInfoClassName)
+			throws RemoteException, RifidiReaderInfoNotFoundException,
+			TransformerException {
+		Document doc = readerPluginService
+				.getReaderInfoAnnotation(readerInfoClassName);
+		TransformerFactory transfac = TransformerFactory.newInstance();
+		Transformer trans = transfac.newTransformer();
+	
+		trans.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+		trans.setOutputProperty(OutputKeys.INDENT, "yes");
+	
+		// Print the DOM node
+	
+		StringWriter sw = new StringWriter();
+		StreamResult result = new StreamResult(sw);
+		DOMSource source = new DOMSource(doc);
+		trans.transform(source, result);
+		return sw.toString();
+	
+	}
+
 	/**
 	 * Inject method to obtain a instance of the ReaderPluginService from the
 	 * RegistryService Framework
@@ -164,12 +218,13 @@ public class RemoteReaderConnectionRegistryImpl implements
 	}
 
 	@Override
-	public void addReaderSessionEvent(ReaderSession readerSession) {	
+	public void addReaderSessionEvent(ReaderSession readerSession) {
 	}
 
 	@Override
 	public void removeReaderSessionEvent(ReaderSession readerSession) {
-		RemoteReaderConnection remoteReaderConnection = readerSessionSync.remove(readerSession);
+		RemoteReaderConnection remoteReaderConnection = readerSessionSync
+				.remove(readerSession);
 		remoteSessionList.values().remove(remoteReaderConnection);
 	}
 

@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
-import java.util.List;
 import java.util.concurrent.Semaphore;
 
 import javax.xml.XMLConstants;
@@ -96,9 +95,11 @@ public class ReaderSessionImpl implements ReaderSession, ReaderSessionState,
 
 	int readerSessionID;
 
-	public ReaderSessionImpl(ReaderInfo readerInfo, int readerSessionID) {
+	public ReaderSessionImpl(ReaderPlugin plugin, ReaderInfo readerInfo, int readerSessionID) {
 		this.readerInfo = readerInfo;
 		this.readerSessionID = readerSessionID;
+		this.plugin = plugin;
+		this.connectionManager = plugin.newConnectionManager(readerInfo);
 		ServiceRegistry.getInstance().service(this);
 		transitionSem = new Semaphore(1, true);
 		sessionState = new SessionStateConfigured(this);
@@ -313,7 +314,7 @@ public class ReaderSessionImpl implements ReaderSession, ReaderSessionState,
 
 	@Override
 	public void setReaderInfo(ReaderInfo readerInfo) {
-				
+		state_setReaderInfo(readerInfo);
 	}
 
 	/*
@@ -422,9 +423,6 @@ public class ReaderSessionImpl implements ReaderSession, ReaderSessionState,
 	@Inject
 	public void setReaderPluginService(ReaderPluginService readerPluginService) {
 		this.readerPluginService = readerPluginService;
-		this.plugin = readerPluginService.getReaderPlugin(readerInfo.getClass()
-				.getName());
-		this.connectionManager = plugin.newConnectionManager(readerInfo);
 	}
 
 	/*

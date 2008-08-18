@@ -6,6 +6,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.communication.Connection;
 import org.rifidi.edge.core.messageQueue.MessageQueue;
+import org.rifidi.edge.core.readerplugin.commands.StringMetadata;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -16,10 +17,10 @@ import org.w3c.dom.Text;
  * @author Jerry Maine - jerry@pramari.com
  *
  */
+@StringMetadata(defaultValue = "alien", displayName = "User name", editable = true, name = "username", regex = "")
 public class Username implements org.rifidi.edge.core.readerplugin.property.Property {
 	private static final Log logger = LogFactory
 	.getLog(Username.class);
-
 
 	@Override
 	public Element execute(Connection connection, MessageQueue errorQueue,

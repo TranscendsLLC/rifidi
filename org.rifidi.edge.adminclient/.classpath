@@ -10,7 +10,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/org.rifidi.edge.readerplugin.dummy"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/org.rifidi.edge.readerplugin.llrp"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/org.rifidi.edge.readerplugin.alien"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/org.rifidi.edge.readerplugin.dummyenhanced"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/org.rifidi.edge.readerplugin.thingmagic"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

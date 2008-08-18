@@ -15,7 +15,10 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.List;
 
-import org.rifidi.edge.core.readerplugin.ReaderInfo;
+import javax.xml.transform.TransformerException;
+
+import org.rifidi.edge.core.exceptions.RifidiReaderInfoNotFoundException;
+import org.rifidi.edge.core.exceptions.RifidiReaderPluginXMLNotFoundException;
 
 /**
  * This is the RemoteReaderConnectionRegistry. It's used for storing
@@ -27,17 +30,12 @@ import org.rifidi.edge.core.readerplugin.ReaderInfo;
  */
 public interface RemoteReaderConnectionRegistry extends Remote {
 
-	/**
-	 * Create a new ReaderConnection
-	 * 
-	 * @param connectionInfo
-	 *            the ReaderInfo to create a instance of this Reader
-	 * @return the RemoteReaderConnection to operate on
-	 * @throws RemoteException
-	 *             if an error occurs
-	 */
-	public RemoteReaderConnection createReaderConnection(
-			ReaderInfo connectionInfo) throws RemoteException;
+	public RemoteReaderConnection createReaderConnection(String connectionInfo)
+			throws RemoteException, RifidiReaderInfoNotFoundException;
+
+	public String getReaderInfoAnnotation(String readerInfoClassName)
+	throws RemoteException, RifidiReaderInfoNotFoundException,
+	TransformerException;
 
 	/**
 	 * Delete a previous made ReaderConnection
@@ -69,5 +67,7 @@ public interface RemoteReaderConnectionRegistry extends Remote {
 	 *             if an error occurs
 	 */
 	public List<String> getAvailableReaderPlugins() throws RemoteException;
+	
+	public String getReaderPluginXML(String readerInfoClassName) throws RemoteException, RifidiReaderPluginXMLNotFoundException;
 
 }

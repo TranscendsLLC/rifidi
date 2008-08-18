@@ -139,14 +139,14 @@ public class Communication implements ConnectionExceptionListener {
 		int maxConn;
 		int x = 0;
 		try {
-			maxConn = connectionManager.getMaxNumConnectionsAttemps();
+			maxConn = connectionManager.getMaxNumConnectionsAttempts();
 			while (x < maxConn || maxConn == 0) {
 				if (maxConn != 0) {
 					x++;
 				}
 				// sleep
 				try {
-					Thread.sleep(connectionManager.getReconnectionIntervall());
+					Thread.sleep(connectionManager.getReconnectionInterval());
 				} catch (InterruptedException e1) {
 					// ignore this exception.
 				}

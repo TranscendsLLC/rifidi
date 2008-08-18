@@ -28,7 +28,9 @@ public class CommandDescription {
 	}
 
 	public String getXsd() {
-		return xsd.trim();
+		if(xsd!=null){
+			return xsd.trim();
+		}else return xsd;
 	}
 
 	public void setXsd(String xsd) {

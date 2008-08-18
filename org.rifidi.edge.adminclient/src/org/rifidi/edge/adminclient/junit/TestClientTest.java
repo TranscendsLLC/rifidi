@@ -1,16 +1,27 @@
 package org.rifidi.edge.adminclient.junit;
 
+import java.io.StringWriter;
+import java.io.Writer;
 import java.rmi.AccessException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.rifidi.edge.adminclient.testreaderthread.AbstractThread;
+import org.rifidi.edge.core.exceptions.RifidiCommandInterruptedException;
+import org.rifidi.edge.core.exceptions.RifidiCommandNotFoundException;
+import org.rifidi.edge.core.exceptions.RifidiConnectionException;
+import org.rifidi.edge.core.exceptions.RifidiInvalidConfigurationException;
+import org.rifidi.edge.core.exceptions.RifidiReaderInfoNotFoundException;
 import org.rifidi.edge.core.rmi.readerconnection.RemoteReaderConnection;
 import org.rifidi.edge.core.rmi.readerconnection.RemoteReaderConnectionRegistry;
 import org.rifidi.edge.readerplugin.dummy.plugin.DummyReaderInfo;
@@ -66,16 +77,39 @@ public class TestClientTest {
 
 			RemoteReaderConnection remoteReader1 = null;
 			try {
+				JAXBContext context = JAXBContext.newInstance(dummyInfo1.getClass());
+				Marshaller m = context.createMarshaller();
+				Writer writer = new StringWriter();
+				m.marshal(dummyInfo1, writer);
+				
 				remoteReader1 = remoteReaderConnectionRegistry
-						.createReaderConnection(dummyInfo1);
+						.createReaderConnection(writer.toString());
 			} catch (RemoteException e) {
+				e.printStackTrace();
+				Assert.fail();
+			} catch (JAXBException e) {
+				e.printStackTrace();
+				Assert.fail();
+			} catch (RifidiReaderInfoNotFoundException e) {
 				e.printStackTrace();
 				Assert.fail();
 			}
 
 			try {
-				remoteReader1.startTagStream("");
+				remoteReader1.executeCommand("<TagStreamCommand/>");
 			} catch (RemoteException e) {
+				e.printStackTrace();
+				Assert.fail();
+			} catch (RifidiConnectionException e) {
+				e.printStackTrace();
+				Assert.fail();
+			} catch (RifidiCommandInterruptedException e) {
+				e.printStackTrace();
+				Assert.fail();
+			} catch (RifidiCommandNotFoundException e) {
+				e.printStackTrace();
+				Assert.fail();
+			} catch (RifidiInvalidConfigurationException e) {
 				e.printStackTrace();
 				Assert.fail();
 			}

@@ -3,7 +3,9 @@ package org.rifidi.edge.core.readerplugin.service;
 import java.util.List;
 
 import org.osgi.framework.Bundle;
+import org.rifidi.edge.core.exceptions.RifidiReaderInfoNotFoundException;
 import org.rifidi.edge.core.readerplugin.ReaderPlugin;
+import org.w3c.dom.Document;
 
 /**
  * Service used to keep track of the different ReaderPlugins available to the
@@ -68,4 +70,6 @@ public interface ReaderPluginService {
 	 *            to remove
 	 */
 	public void removeReaderPluginListener(ReaderPluginListener listener);
+
+	public Document getReaderInfoAnnotation(String readerInfoClassName) throws RifidiReaderInfoNotFoundException;
 }

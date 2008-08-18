@@ -2,6 +2,8 @@
 <readerPluginXML>
 	<plugin>org.rifidi.edge.readerplugin.dummy</plugin>
 	<info>org.rifidi.edge.readerplugin.dummy.plugin.DummyReaderInfo</info>
+	<name>Rifidi Dummy Reader</name>
+	<description>A reader used for testing purposes only</description>
 	<connectionManager>org.rifidi.edge.readerplugin.dummy.plugin.DummyConnectionManager</connectionManager>
 	<property>
 		<classname>org.rifidi.edge.readerplugin.dummy.properties.GetTagsOnceCommand</classname>

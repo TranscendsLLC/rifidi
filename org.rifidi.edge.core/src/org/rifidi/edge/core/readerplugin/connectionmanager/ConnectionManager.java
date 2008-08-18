@@ -74,14 +74,14 @@ public abstract class ConnectionManager {
 	 * 
 	 * @return number of connection attempts if connection fails
 	 */
-	public abstract int getMaxNumConnectionsAttemps();
+	public abstract int getMaxNumConnectionsAttempts();
 
 	/**
 	 * Get the wait time interval before trying to establish a new connection.
 	 * 
 	 * @return time to wait in ms
 	 */
-	public abstract long getReconnectionIntervall();
+	public abstract long getReconnectionInterval();
 
 	/**
 	 * Get the CommunicationProtocol of this ReaderPlugin.
