@@ -13,7 +13,7 @@ package org.rifidi.edge.readerplugin.alien;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.rifidi.edge.core.readerplugin.ReaderInfo;
-import org.rifidi.edge.core.readerplugin.commands.StringMetadata;
+import org.rifidi.edge.core.readerplugin.commands.annotations.StringMetadata;
 
 /**
  * This class represents the reader info needed for an Alien reader. In addition

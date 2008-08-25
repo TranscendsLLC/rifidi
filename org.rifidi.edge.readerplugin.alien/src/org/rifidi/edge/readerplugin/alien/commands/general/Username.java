@@ -6,7 +6,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.communication.Connection;
 import org.rifidi.edge.core.messageQueue.MessageQueue;
-import org.rifidi.edge.core.readerplugin.commands.StringMetadata;
+import org.rifidi.edge.core.readerplugin.commands.annotations.StringMetadata;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;

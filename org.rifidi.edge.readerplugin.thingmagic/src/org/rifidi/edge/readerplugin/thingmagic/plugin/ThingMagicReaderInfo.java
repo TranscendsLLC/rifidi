@@ -3,7 +3,7 @@ package org.rifidi.edge.readerplugin.thingmagic.plugin;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.rifidi.edge.core.readerplugin.ReaderInfo;
-import org.rifidi.edge.core.readerplugin.commands.StringMetadata;
+import org.rifidi.edge.core.readerplugin.commands.annotations.StringMetadata;
 
 /**
  * @author Jerry Maine - jerry@pramari.com

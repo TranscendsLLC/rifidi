@@ -11,11 +11,9 @@ import org.rifidi.edge.core.exceptions.RifidiMessageQueueException;
 import org.rifidi.edge.core.messageQueue.MessageQueue;
 import org.rifidi.edge.core.readerplugin.commands.Command;
 import org.rifidi.edge.core.readerplugin.commands.CommandReturnStatus;
-import org.rifidi.edge.core.readerplugin.commands.annotations.CommandDesc;
 import org.rifidi.edge.core.readerplugin.messages.impl.TagMessage;
 import org.w3c.dom.Document;
 
-@CommandDesc(name = "GetTagsCurrentlyOnAntennasBroken")
 public class GetTagsOnceCommandBroken implements Command {
 	private static final Log logger = LogFactory
 			.getLog(GetTagsOnceCommandBroken.class);

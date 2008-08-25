@@ -67,7 +67,6 @@ import org.rifidi.edge.core.exceptions.RifidiMessageQueueException;
 import org.rifidi.edge.core.messageQueue.MessageQueue;
 import org.rifidi.edge.core.readerplugin.commands.Command;
 import org.rifidi.edge.core.readerplugin.commands.CommandReturnStatus;
-import org.rifidi.edge.core.readerplugin.commands.annotations.CommandDesc;
 import org.rifidi.edge.core.readerplugin.messages.impl.TagMessage;
 import org.w3c.dom.Document;
 
@@ -76,7 +75,6 @@ import org.w3c.dom.Document;
  * 
  * @author Matthew Dean - matt@pramari.com
  */
-@CommandDesc(name = "StreamTags")
 public class LLRPTagStreamCommand implements Command {
 
 	private boolean running = false;

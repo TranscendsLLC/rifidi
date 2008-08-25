@@ -1,14 +1,14 @@
-package org.rifidi.edge.core.readerplugin.commands;
+package org.rifidi.edge.core.readerplugin.commands.annotations;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 @Retention(RetentionPolicy.RUNTIME)
-public @interface StringMetadata {
+public @interface IntegerMetadata{
 	String name();
 	String displayName();
-	String defaultValue();
+	int defaultValue();
 	boolean editable();
-	String regex();
-
+	int maxValue();
+	int minValue();
 }
