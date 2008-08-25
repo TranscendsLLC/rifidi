@@ -5,6 +5,7 @@ import java.util.Random;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.rifidi.edge.core.readerplugin.ReaderInfo;
+import org.rifidi.edge.core.readerplugin.commands.annotations.DoubleMetadata;
 
 @XmlRootElement(name = "DummyReaderInfo")
 public class DummyReaderInfo extends ReaderInfo {
@@ -17,10 +18,12 @@ public class DummyReaderInfo extends ReaderInfo {
 	private EDummyError errorToSet = EDummyError.NONE;
 
 	/* number from 0 (inclusive) to 1 (exclusive)*/
-	double randomErrorProbibility = 0.10;
+	@DoubleMetadata(defaultValue=.10, displayName=" Random Error Probablility", editable=true, maxValue=1, minValue=0, name="randomErrorProbibility")
+	private double randomErrorProbibility = 0.10;
 	
 	/* number from 0 (inclusive) to 1 (exclusive)*/
-	double probiblityOfErrorsBeingRuntimeExceptions = 0.25;
+	@DoubleMetadata(defaultValue=.25, displayName="Probablility that errors are runtime exceptions", editable=true, maxValue=1, minValue=0, name="probiblityOfErrorsBeingRuntimeExceptions")
+	private double probiblityOfErrorsBeingRuntimeExceptions = 0.25;
 	
 	/* used only when the dummy adapter is set to random errors */
 	Random random;

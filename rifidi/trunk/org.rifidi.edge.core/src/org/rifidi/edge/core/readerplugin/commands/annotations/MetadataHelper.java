@@ -1,4 +1,4 @@
-package org.rifidi.edge.core.readerplugin.commands;
+package org.rifidi.edge.core.readerplugin.commands.annotations;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;

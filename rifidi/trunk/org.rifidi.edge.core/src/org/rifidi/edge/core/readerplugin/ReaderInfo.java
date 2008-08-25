@@ -2,8 +2,8 @@ package org.rifidi.edge.core.readerplugin;
 
 import java.io.Serializable;
 
-import org.rifidi.edge.core.readerplugin.commands.IntegerMetadata;
-import org.rifidi.edge.core.readerplugin.commands.StringMetadata;
+import org.rifidi.edge.core.readerplugin.commands.annotations.IntegerMetadata;
+import org.rifidi.edge.core.readerplugin.commands.annotations.StringMetadata;
 
 /**
  * Abstract Description of a Reader. It defines all properties necessary to

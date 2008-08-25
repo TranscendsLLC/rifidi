@@ -8,10 +8,8 @@ import org.rifidi.edge.core.communication.Connection;
 import org.rifidi.edge.core.messageQueue.MessageQueue;
 import org.rifidi.edge.core.readerplugin.commands.Command;
 import org.rifidi.edge.core.readerplugin.commands.CommandReturnStatus;
-import org.rifidi.edge.core.readerplugin.commands.annotations.CommandDesc;
 import org.w3c.dom.Document;
 
-@CommandDesc(name = "TagStreaming")
 public class TagStreamCommand implements Command {
 
 	boolean running = true;

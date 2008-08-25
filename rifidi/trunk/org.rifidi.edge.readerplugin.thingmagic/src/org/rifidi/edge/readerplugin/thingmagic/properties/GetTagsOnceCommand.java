@@ -7,7 +7,6 @@ import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.common.utilities.converter.ByteAndHexConvertingUtility;
 import org.rifidi.edge.core.communication.Connection;
 import org.rifidi.edge.core.messageQueue.MessageQueue;
-import org.rifidi.edge.core.readerplugin.commands.annotations.CommandDesc;
 import org.rifidi.edge.core.readerplugin.messages.impl.TagMessage;
 import org.rifidi.edge.core.readerplugin.property.Property;
 import org.w3c.dom.Element;
@@ -16,7 +15,6 @@ import org.w3c.dom.Element;
  * @author Jerry Maine - jerry@pramari.com
  *
  */
-@CommandDesc(name = "getTagList")
 public class GetTagsOnceCommand implements Property {
 	private static final Log logger = LogFactory
 			.getLog(GetTagsOnceCommand.class);
