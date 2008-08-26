@@ -55,4 +55,11 @@ public interface ReaderSessionService {
 	 *            the listener to remove
 	 */
 	public void removeReaderSessionListener(ReaderSessionListener listener);
+
+	/**
+	 * Change the readerInfo for the supplied reader
+	 * @param readerSession
+	 * @param newReaderInfo
+	 */
+	void modifyReaderInfo(ReaderSession readerSession, ReaderInfo newReaderInfo);
 }

@@ -277,9 +277,10 @@ public class SessionStateCommandExecuting implements ReaderSessionState {
 	}
 
 	@Override
-	public void state_setReaderInfo(ReaderInfo readerInfo) {
+	public boolean state_setReaderInfo(ReaderInfo readerInfo) {
 		logger.debug("cannot execute setReaderInfo when in " + ReaderSessionStatus.EXECUTING_COMMAND);
 		readerSessionImpl.transition(new SessionStateOK(readerSessionImpl));
+		return false;
 		
 	}
 

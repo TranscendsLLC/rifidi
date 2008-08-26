@@ -203,6 +203,17 @@ public class PersistanceServiceImpl implements PersistenceService,
 		// ignore this
 	}
 
+	@Override
+	public void readerInfoEditedEvent(ReaderInfo oldReaderInfo, ReaderInfo newReaderInfo) {
+		try {
+			pri.removeReader(oldReaderInfo);
+		} catch (RifidiReaderInfoNotFoundException e) {
+			logger.debug("Cannot find reader info" + oldReaderInfo);
+		}
+		pri.addReaderInfo(newReaderInfo);
+		
+	}
+
 	/**
 	 * Injects the ReaderPluginService.
 	 * 
