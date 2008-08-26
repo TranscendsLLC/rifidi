@@ -2,6 +2,8 @@ package org.rifidi.edge.core;
 
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
+import org.rifidi.edge.core.readerplugin.annotations.service.WidgetAnnotationProcessorService;
+import org.rifidi.edge.core.readerplugin.annotations.service.impl.WidgetAnnotationProcessorServiceImpl;
 import org.rifidi.edge.core.readerplugin.service.ReaderPluginService;
 import org.rifidi.edge.core.readerplugin.service.impl.ReaderPluginServiceImpl;
 import org.rifidi.edge.core.readersession.service.ReaderSessionService;
@@ -32,6 +34,10 @@ public class Activator implements BundleActivator {
 		ReaderSessionService readerSessionService = new ReaderSessionServiceImpl(
 				readerPluginService);
 		context.registerService(ReaderSessionService.class.getName(), readerSessionService, null);
+		
+		System.out.println("Registering Serivce: WidgetAnnotaionProcessorService");
+		WidgetAnnotationProcessorService widgetService = new WidgetAnnotationProcessorServiceImpl();
+		context.registerService(WidgetAnnotationProcessorService.class.getName(), widgetService, null);
 	}
 
 	/*

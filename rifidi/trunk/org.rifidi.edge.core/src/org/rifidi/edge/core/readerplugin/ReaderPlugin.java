@@ -2,8 +2,6 @@ package org.rifidi.edge.core.readerplugin;
 
 import java.io.StringWriter;
 import java.io.Writer;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -13,31 +11,32 @@ import java.util.List;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.exceptions.RifidiReaderInfoNotFoundException;
 import org.rifidi.edge.core.exceptions.RifidiReaderPluginXMLNotFoundException;
-import org.rifidi.edge.core.readerplugin.commands.annotations.IntegerMetadata;
-import org.rifidi.edge.core.readerplugin.commands.annotations.MetadataHelper;
-import org.rifidi.edge.core.readerplugin.commands.annotations.StringMetadata;
+import org.rifidi.edge.core.exceptions.RifidiWidgetAnnotationException;
+import org.rifidi.edge.core.readerplugin.annotations.service.WidgetAnnotationProcessorService;
 import org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionManager;
 import org.rifidi.edge.core.readerplugin.xml.CommandDescription;
 import org.rifidi.edge.core.readerplugin.xml.ReaderPluginXML;
+import org.rifidi.services.annotations.Inject;
+import org.rifidi.services.registry.ServiceRegistry;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 
 public class ReaderPlugin {
 
-	ReaderPluginXML readerPluginXML;
+	private ReaderPluginXML readerPluginXML;
 
-	Log logger = LogFactory.getLog(ReaderPlugin.class);
+	@SuppressWarnings("unused")
+	private Log logger = LogFactory.getLog(ReaderPlugin.class);
+	
+	private WidgetAnnotationProcessorService widgetAnnotationProcessorService;
 
 	public ReaderPlugin(ReaderPluginXML readerPluginXML) {
 		this.readerPluginXML = readerPluginXML;
+		ServiceRegistry.getInstance().service(this);
 	}
 
 	public CommandDescription getProperty(String propertyName) {
@@ -206,40 +205,18 @@ public class ReaderPlugin {
 
 		try {
 			Class<?> clazz = Class.forName(this.readerPluginXML.getInfo());
-			ArrayList<Field> fields = new ArrayList<Field>();
-			for (Field f : clazz.getDeclaredFields()) {
-				fields.add(f);
-			}
-			for (Field f : clazz.getSuperclass().getDeclaredFields()) {
-				fields.add(f);
-			}
-
-			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-			DocumentBuilder db = dbf.newDocumentBuilder();
-			Document doc = db.newDocument();
-			Element root = doc.createElement("composite");
-			root.setAttribute("name", clazz.getSimpleName());
-			doc.appendChild(root);
-
-			for (Field f : fields) {
-				for (Annotation a : f.getAnnotations()) {
-					if (a.annotationType().equals(IntegerMetadata.class)) {
-						IntegerMetadata im = ((IntegerMetadata) a);
-						root.appendChild(MetadataHelper.toXML(doc, im));
-					} else if (a.annotationType().equals(StringMetadata.class)) {
-						StringMetadata im = ((StringMetadata) a);
-						root.appendChild(MetadataHelper.toXML(doc, im));
-					}
-				}
-			}
-
-			return doc;
+			return widgetAnnotationProcessorService.processAnnotation(clazz);
 		} catch (ClassNotFoundException e1) {
 			throw new RifidiReaderInfoNotFoundException(e1);
-		} catch (ParserConfigurationException e) {
+		} catch (RifidiWidgetAnnotationException e) {
 			throw new RifidiReaderInfoNotFoundException(e);
 		}
 
+	}
+	
+	@Inject
+	public void setWidgetAnnoationProcessorService(WidgetAnnotationProcessorService service){
+		widgetAnnotationProcessorService = service;
 	}
 
 }
