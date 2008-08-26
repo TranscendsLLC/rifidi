@@ -114,9 +114,10 @@ public class SessionStateError implements ReaderSessionState {
 	}
 
 	@Override
-	public void state_setReaderInfo(ReaderInfo readerInfo) {
+	public boolean state_setReaderInfo(ReaderInfo readerInfo) {
 		logger.debug("Cannot execute setReaderInfo in " + ReaderSessionStatus.ERROR);
 		readerSessionImpl.transition(new SessionStateError(readerSessionImpl));
+		return false;
 		
 	}
 

@@ -93,6 +93,18 @@ public class ReaderSessionServiceImpl implements ReaderSessionService,
 			l.removeReaderSessionEvent(readerSession);
 		}
 	}
+	
+	@Override
+	public void modifyReaderInfo(ReaderSession readerSession, ReaderInfo newReaderInfo){
+		logger.debug("modifying readerInfo for " + readerSession);
+		ReaderInfo oldReaderInfo = readerSession.getReaderInfo();
+		boolean success = readerSession.setReaderInfo(newReaderInfo);
+		if(success){
+			for(ReaderSessionListener l : listeners){
+				l.readerInfoEditedEvent(oldReaderInfo, newReaderInfo);
+			}
+		}
+	}
 
 	/*
 	 * (non-Javadoc)

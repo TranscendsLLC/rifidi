@@ -43,6 +43,6 @@ public interface ReaderSessionState extends CommunicationStateListener{
 	
 	public void state_disable();
 	
-	public void state_setReaderInfo(ReaderInfo readerInfo);
+	public boolean state_setReaderInfo(ReaderInfo readerInfo);
 
 }

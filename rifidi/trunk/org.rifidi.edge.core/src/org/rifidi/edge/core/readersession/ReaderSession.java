@@ -181,5 +181,5 @@ public interface ReaderSession {
 
 	public ReaderSessionStatus getStatus();
 
-	public void setReaderInfo(ReaderInfo readerInfo);
+	public boolean setReaderInfo(ReaderInfo readerInfo);
 }

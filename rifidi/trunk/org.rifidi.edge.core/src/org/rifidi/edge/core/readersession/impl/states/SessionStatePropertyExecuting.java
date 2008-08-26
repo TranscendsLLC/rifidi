@@ -43,7 +43,6 @@ public class SessionStatePropertyExecuting implements ReaderSessionState{
 	@Override
 	public void state_error() {
 		readerSessionImpl.transition(new SessionStateError(readerSessionImpl));
-		
 	}
 
 	@Override
@@ -113,9 +112,10 @@ public class SessionStatePropertyExecuting implements ReaderSessionState{
 	}
 
 	@Override
-	public void state_setReaderInfo(ReaderInfo readerInfo) {
+	public boolean state_setReaderInfo(ReaderInfo readerInfo) {
 		logger.debug("Cannot execute setReaderInfo in " + ReaderSessionStatus.EXECUTING_PROPERTY_WITH_NO_YIELDED_COMMAND);
 		readerSessionImpl.transition(new SessionStatePropertyExecuting(readerSessionImpl));
+		return false;
 	}
 
 }

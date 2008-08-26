@@ -313,8 +313,8 @@ public class ReaderSessionImpl implements ReaderSession, ReaderSessionState,
 	}
 
 	@Override
-	public void setReaderInfo(ReaderInfo readerInfo) {
-		state_setReaderInfo(readerInfo);
+	public boolean setReaderInfo(ReaderInfo readerInfo) {
+		return state_setReaderInfo(readerInfo);
 	}
 
 	/*
@@ -571,12 +571,12 @@ public class ReaderSessionImpl implements ReaderSession, ReaderSessionState,
 	}
 
 	@Override
-	public void state_setReaderInfo(ReaderInfo readerInfo) {
+	public boolean state_setReaderInfo(ReaderInfo readerInfo) {
 		try {
 			transitionSem.acquire();
 		} catch (InterruptedException e) {
 		}
-		sessionState.state_setReaderInfo(readerInfo);
+		return sessionState.state_setReaderInfo(readerInfo);
 		
 	}
 

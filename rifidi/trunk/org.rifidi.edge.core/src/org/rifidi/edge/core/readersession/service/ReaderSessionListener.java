@@ -1,5 +1,6 @@
 package org.rifidi.edge.core.readersession.service;
 
+import org.rifidi.edge.core.readerplugin.ReaderInfo;
 import org.rifidi.edge.core.readersession.ReaderSession;
 
 /**
@@ -34,4 +35,12 @@ public interface ReaderSessionListener {
 	 * @param readerSession
 	 */
 	public void autoRemoveReaderSessionEvent(ReaderSession readerSession);
+
+	/**
+	 * This event is fired when a readerInfo is modified while the reader
+	 * session is in the CONFIGURED state
+	 * 
+	 * @param readerSession
+	 */
+	public void readerInfoEditedEvent(ReaderInfo oldReaderInfo, ReaderInfo newReaderInfo);
 }

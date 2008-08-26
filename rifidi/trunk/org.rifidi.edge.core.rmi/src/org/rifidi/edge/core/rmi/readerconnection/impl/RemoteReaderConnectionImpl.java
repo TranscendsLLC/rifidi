@@ -28,7 +28,10 @@ import org.rifidi.edge.core.exceptions.RifidiInvalidConfigurationException;
 import org.rifidi.edge.core.exceptions.RifidiReaderInfoNotFoundException;
 import org.rifidi.edge.core.readerplugin.ReaderInfo;
 import org.rifidi.edge.core.readersession.ReaderSession;
+import org.rifidi.edge.core.readersession.service.ReaderSessionService;
 import org.rifidi.edge.core.rmi.readerconnection.RemoteReaderConnection;
+import org.rifidi.services.annotations.Inject;
+import org.rifidi.services.registry.ServiceRegistry;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -48,6 +51,8 @@ public class RemoteReaderConnectionImpl implements RemoteReaderConnection {
 	 * RemoteReaderConnection
 	 */
 	private ReaderSession readerSession;
+	
+	private ReaderSessionService readerSessionService;
 
 	/**
 	 * Create a new RemoteReaderConnection associated with the ReaderSession
@@ -57,6 +62,7 @@ public class RemoteReaderConnectionImpl implements RemoteReaderConnection {
 	 */
 	public RemoteReaderConnectionImpl(ReaderSession readerSession) {
 		this.readerSession = readerSession;
+		ServiceRegistry.getInstance().service(this);
 	}
 
 	/*
@@ -215,7 +221,7 @@ public class RemoteReaderConnectionImpl implements RemoteReaderConnection {
 								+ " to a reader info with type "
 								+ newReaderInfo.getClass().getSimpleName());
 			}
-			readerSession.setReaderInfo(newReaderInfo);
+			readerSessionService.modifyReaderInfo(readerSession, newReaderInfo);
 		} catch (JAXBException e) {
 			throw new RifidiReaderInfoNotFoundException(e.getMessage());
 		}
@@ -328,6 +334,19 @@ public class RemoteReaderConnectionImpl implements RemoteReaderConnection {
 	public void enable() throws RemoteException {
 		readerSession.enable();
 
+	}
+	
+	/**
+	 * Inject method to obtain a instance of the ReaderSessionService from the
+	 * RegistryService Framework
+	 * 
+	 * @param readerSessionService
+	 *            ReaderSessionService
+	 */
+	@Inject
+	public void setReaderSessionService(
+			ReaderSessionService readerSessionService) {
+		this.readerSessionService = readerSessionService;
 	}
 
 }

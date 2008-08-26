@@ -232,4 +232,9 @@ public class RemoteReaderConnectionRegistryImpl implements
 	public void autoRemoveReaderSessionEvent(ReaderSession readerSession) {
 		removeReaderSessionEvent(readerSession);
 	}
+
+	@Override
+	public void readerInfoEditedEvent(ReaderInfo oldReaderInfo,
+			ReaderInfo newReaderInfo) {
+	}
 }
