@@ -2,9 +2,6 @@ package org.rifidi.edge.core.readerplugin;
 
 import java.io.Serializable;
 
-import org.rifidi.edge.core.readerplugin.commands.annotations.IntegerMetadata;
-import org.rifidi.edge.core.readerplugin.commands.annotations.StringMetadata;
-
 /**
  * Abstract Description of a Reader. It defines all properties necessary to
  * create a new Instance of this ReaderPlugin type. All ReaderPlugins need to
@@ -25,25 +22,21 @@ public abstract class ReaderInfo implements Serializable {
 	/**
 	 * IPAddress of the Reader
 	 */
-	@StringMetadata(defaultValue = "localhost", displayName = "IP Address", editable = true, name = "ipAddress", regex = "")
 	private String ipAddress;
 
 	/**
 	 * Port of the Reader
 	 */
-	@IntegerMetadata(defaultValue = 20000, displayName = "Port", editable = true, name = "port", minValue = 1, maxValue = 65500)
 	private int port;
 
 	/**
 	 * Interval to wait before trying to reconnect
 	 */
-	@IntegerMetadata(defaultValue = 1000, displayName = "Reconnect Interval", editable = true, name = "reconnectionInterval", minValue = 0, maxValue = 1000000)
 	private long reconnectionInterval;
 
 	/**
 	 * Number of maximal attempts to reconnect to a reader
 	 */
-	@IntegerMetadata(defaultValue = 3, displayName = "Connection Attempts", editable = false, name = "maxNumConnectionsAttempts", minValue = 0, maxValue = 1000000)
 	private int maxNumConnectionsAttempts;
 
 	/**
