@@ -5,9 +5,19 @@ import java.util.Random;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.rifidi.edge.core.readerplugin.ReaderInfo;
-import org.rifidi.edge.core.readerplugin.commands.annotations.DoubleMetadata;
+import org.rifidi.edge.core.readerplugin.annotations.Widget;
+import org.rifidi.edge.core.readerplugin.annotations.WidgetType;
+import org.rifidi.edge.core.readerplugin.annotations.Widgets;
 
 @XmlRootElement(name = "DummyReaderInfo")
+@Widgets(name = "LLRPReaderInfo", widgets = {
+		@Widget(type = WidgetType.STRING, elementName = "ipAddress", displayName = "IP Address", defaultValue = "localhost"),
+		@Widget(type = WidgetType.INTEGER, elementName = "port", displayName = "Port", defaultValue = "12345", min = 0, max = 65535),
+		@Widget(type = WidgetType.LONG, elementName = "reconnectionInterval", displayName = "Reconnect Interval", defaultValue = "1000", min = 0, max = Long.MAX_VALUE),
+		@Widget(type = WidgetType.INTEGER, elementName = "maxNumConnectionsAttempts", displayName = "Connection Attempts", defaultValue = "3", min = -1, max = Integer.MAX_VALUE),
+		@Widget(type= WidgetType.DOUBLE, elementName="randomErrorProbibility", displayName="Random Error Probibility", defaultValue="0", max=1, min=0, decimalPlaces=2),
+		@Widget(type= WidgetType.DOUBLE, elementName="probiblityOfErrorsBeingRuntimeExceptions", displayName="Probibility that Errors are Runtime Exceptions", defaultValue="0", max=1, min=0, decimalPlaces=2), 
+		@Widget(type = WidgetType.ENUM, elementName = "errorToSet", displayName = "Error Type", defaultValue ="NONE", enumClass="org.rifidi.edge.readerplugin.dummy.plugin.EDummyError" )})
 public class DummyReaderInfo extends ReaderInfo {
 
 	/**
@@ -18,12 +28,11 @@ public class DummyReaderInfo extends ReaderInfo {
 	private EDummyError errorToSet = EDummyError.NONE;
 
 	/* number from 0 (inclusive) to 1 (exclusive)*/
-	@DoubleMetadata(defaultValue=.10, displayName=" Random Error Probablility", editable=true, maxValue=1, minValue=0, name="randomErrorProbibility")
-	private double randomErrorProbibility = 0.10;
+	private double randomErrorProbibility = 0;
 	
 	/* number from 0 (inclusive) to 1 (exclusive)*/
-	@DoubleMetadata(defaultValue=.25, displayName="Probablility that errors are runtime exceptions", editable=true, maxValue=1, minValue=0, name="probiblityOfErrorsBeingRuntimeExceptions")
-	private double probiblityOfErrorsBeingRuntimeExceptions = 0.25;
+	//@DoubleMetadata(defaultValue=.25, displayName="Probablility that errors are runtime exceptions", editable=true, maxValue=1, minValue=0, name="probiblityOfErrorsBeingRuntimeExceptions")
+	private double probiblityOfErrorsBeingRuntimeExceptions = 0;
 	
 	/* used only when the dummy adapter is set to random errors */
 	Random random;
@@ -39,6 +48,10 @@ public class DummyReaderInfo extends ReaderInfo {
 	 */
 	public EDummyError getErrorToSet() {
 		return errorToSet;
+	}
+	
+	public void setErrorToSet(EDummyError errorToSet){
+		this.errorToSet = errorToSet;
 	}
 
 	/**
