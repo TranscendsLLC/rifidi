@@ -123,6 +123,19 @@ public class NewEdgeServerCommands implements ICommand {
 		else
 			return retVal.toString();
 	}
+	
+	@Command(name = "getReaderInfoAnnotation", arguments = { "readerInfoClassName"})
+	public String getReaderInfoAnnotation(String readerInfoClassName) {
+		if (remoteReaderConnectionRegistry == null)
+			return "No connection to the EdgeServer";
+
+		try {
+			return remoteReaderConnectionRegistry.getReaderInfoAnnotation(readerInfoClassName);
+		} catch (Exception e) {
+			return "Error while recieving active connections. "
+					+ e.getMessage();
+		}
+	}
 
 	@Command(name = "getAdaptersInErrorState")
 	public String getAdaptersInErrorState() {
