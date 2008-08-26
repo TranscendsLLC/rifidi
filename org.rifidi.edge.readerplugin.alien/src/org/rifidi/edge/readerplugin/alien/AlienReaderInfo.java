@@ -13,7 +13,9 @@ package org.rifidi.edge.readerplugin.alien;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.rifidi.edge.core.readerplugin.ReaderInfo;
-import org.rifidi.edge.core.readerplugin.commands.annotations.StringMetadata;
+import org.rifidi.edge.core.readerplugin.annotations.Widget;
+import org.rifidi.edge.core.readerplugin.annotations.WidgetType;
+import org.rifidi.edge.core.readerplugin.annotations.Widgets;
 
 /**
  * This class represents the reader info needed for an Alien reader. In addition
@@ -22,7 +24,14 @@ import org.rifidi.edge.core.readerplugin.commands.annotations.StringMetadata;
  * 
  * @author Matthew Dean - matt@pramari.com
  */
-@XmlRootElement(name="AlienReaderInfo")
+@XmlRootElement(name = "AlienReaderInfo")
+@Widgets(name = "AlienReaderInfo", widgets = {
+		@Widget(type = WidgetType.STRING, elementName = "ipAddress", displayName = "IP Address", defaultValue = "localhost"),
+		@Widget(type = WidgetType.INTEGER, elementName = "port", displayName = "Port", defaultValue = "23", min = 0, max = 65535),
+		@Widget(type = WidgetType.STRING, elementName = "username", displayName = "User Name", defaultValue = "alien"),
+		@Widget(type = WidgetType.STRING, elementName = "password", displayName = "Password", defaultValue = "password"),
+		@Widget(type = WidgetType.LONG, elementName = "reconnectionInterval", displayName = "Reconnect Interval", defaultValue = "1000", min = 0, max = Long.MAX_VALUE),
+		@Widget(type = WidgetType.INTEGER, elementName = "maxNumConnectionsAttempts", displayName = "Connection Attempts", defaultValue = "3", min = -1, max = Integer.MAX_VALUE) })
 public class AlienReaderInfo extends ReaderInfo {
 
 	/**
@@ -33,13 +42,11 @@ public class AlienReaderInfo extends ReaderInfo {
 	/**
 	 * The username for the reader
 	 */
-	@StringMetadata(defaultValue="alien", displayName="User name", editable=true, name="username", regex = "")
 	private String username;
 
 	/**
 	 * The password for the reader.
 	 */
-	@StringMetadata(defaultValue="password", displayName="Password", editable=true, name="password", regex = "")
 	private String password;
 
 	/**

@@ -25,8 +25,6 @@ import org.rifidi.edge.core.exceptions.RifidiMessageQueueException;
 import org.rifidi.edge.core.messageQueue.MessageQueue;
 import org.rifidi.edge.core.readerplugin.commands.Command;
 import org.rifidi.edge.core.readerplugin.commands.CommandReturnStatus;
-import org.rifidi.edge.core.readerplugin.commands.annotations.IntegerMetadata;
-import org.rifidi.edge.core.readerplugin.commands.annotations.StringMetadata;
 import org.rifidi.edge.core.readerplugin.messages.impl.TagMessage;
 import org.w3c.dom.Document;
 
@@ -43,11 +41,9 @@ public class AlienTagStreamCommand implements Command {
 	private boolean running = false;
 	
 	@SuppressWarnings("unused")
-	@IntegerMetadata(defaultValue=0, displayName="", editable=false, name="", maxValue = 0, minValue = 0)
 	private int pollPeriod;
 	
 	@SuppressWarnings("unused")
-	@StringMetadata(defaultValue="", displayName="", editable=false, name="", regex = "")
 	private String antennaSequence;
 
 	private static final Log logger = LogFactory
