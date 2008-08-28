@@ -15,57 +15,59 @@ import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.common.utilities.converter.ByteAndHexConvertingUtility;
 import org.rifidi.edge.core.readerplugin.messages.impl.EnhancedTagMessage;
 
-
 public class DummyReaderServer {
 
 	Log logger = LogFactory.getLog(DummyReaderServer.class);
-	private boolean run=false;
+	private boolean run = false;
 	private int port;
 	private boolean echo;
 	private Thread t;
-	
+
 	private static List<EnhancedTagMessage> tags = new ArrayList<EnhancedTagMessage>();
-	
+
 	public static void main(String[] args) {
 		if (args.length == 2) {
-			DummyReaderServer drs = new DummyReaderServer(Integer.parseInt(args[0]), Boolean.parseBoolean(args[1]));
+			DummyReaderServer drs = new DummyReaderServer(Integer
+					.parseInt(args[0]), Boolean.parseBoolean(args[1]));
 			drs.start();
 		} else {
 			DummyReaderServer drs = new DummyReaderServer(2000, false);
 			drs.start();
 		}
-		
+
 		EnhancedTagMessage tag1 = new EnhancedTagMessage();
 		EnhancedTagMessage tag2 = new EnhancedTagMessage();
-		
-		tag1.setId(ByteAndHexConvertingUtility.fromHexString("2f347d99d43fffbb38a4f945"));
-		tag2.setId(ByteAndHexConvertingUtility.fromHexString("2f92ef48ef63e64f7a8cac89"));
-		
+
+		tag1.setId(ByteAndHexConvertingUtility
+				.fromHexString("2f347d99d43fffbb38a4f945"));
+		tag2.setId(ByteAndHexConvertingUtility
+				.fromHexString("2f92ef48ef63e64f7a8cac89"));
+
 		tags.add(tag1);
 		tags.add(tag2);
-		
+
 		ServerConsole console = new ServerConsole(tags);
 		console.go();
 	}
-	
-	public void start(){
+
+	public void start() {
 		run = true;
 		t = new Thread(new DummyServerThread(), "Dummy Server Thread");
 		t.start();
 	}
-	
-	public void stop(){
+
+	public void stop() {
 		run = false;
 		t.interrupt();
-		t=null;
+		t = null;
 	}
 
 	public DummyReaderServer(int _port, boolean echo) {
 		this.port = _port;
 		this.echo = echo;
 	}
-	
-	private class DummyServerThread implements Runnable{
+
+	private class DummyServerThread implements Runnable {
 
 		@Override
 		public void run() {
@@ -82,27 +84,37 @@ public class DummyReaderServer {
 					logger.debug("Waiting for Connection");
 					Socket socket = serverSocket.accept();
 					logger.debug("Connection");
-					BufferedReader in = new BufferedReader(new InputStreamReader(
-							socket.getInputStream()));
-					BufferedWriter out = new BufferedWriter(new OutputStreamWriter(
-							socket.getOutputStream()));
+					BufferedReader in = new BufferedReader(
+							new InputStreamReader(socket.getInputStream()));
+					BufferedWriter out = new BufferedWriter(
+							new OutputStreamWriter(socket.getOutputStream()));
 					String input;
-					
+
 					while ((input = in.readLine()) != null) {
 						input.trim();
 						if (input.toLowerCase().equals("quit")) {
-							System.out.println("Closing socket on quit command");
+							System.out
+									.println("Closing socket on quit command");
 							in.close();
 							out.close();
 							socket.close();
-						} else if (input.toLowerCase().equals("tag")){
+						} else if (input.toLowerCase().equals("tag")) {
 							synchronized (tags) {
-								for (EnhancedTagMessage tag: tags){
-									out.write(ByteAndHexConvertingUtility.toHexString(tag.getId()).replace(" ", "") + "|");
-									out.write(Long.toString(System.currentTimeMillis()) + "|");
-									out.write(Integer.toString(tag.getAntennaId()) + "|");
-									out.write(Float.toString(tag.getVelocity()) + "|");
-									out.write(Float.toString(tag.getSignalStrength()));
+								for (EnhancedTagMessage tag : tags) {
+									out.write(ByteAndHexConvertingUtility
+											.toHexString(tag.getId()).replace(
+													" ", "")
+											+ "|");
+									out.write(Long.toString(System
+											.currentTimeMillis())
+											+ "|");
+									out.write(Integer.toString(tag
+											.getAntennaId())
+											+ "|");
+									out.write(Float.toString(tag.getVelocity())
+											+ "|");
+									out.write(Float.toString(tag
+											.getSignalStrength()));
 									out.write("\n");
 								}
 								out.write("\n");
@@ -117,8 +129,8 @@ public class DummyReaderServer {
 					logger.debug("Connection lost");
 				}
 			}
-			
+
 		}
-		
+
 	}
 }

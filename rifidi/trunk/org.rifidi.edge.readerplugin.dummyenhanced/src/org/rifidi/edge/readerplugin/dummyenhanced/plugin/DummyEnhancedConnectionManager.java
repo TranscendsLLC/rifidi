@@ -56,14 +56,14 @@ public class DummyEnhancedConnectionManager extends ConnectionManager {
 	@Override
 	public void disconnect(Connection connection) {
 
-		//logical disconnect
+		// logical disconnect
 		try {
 			connection.sendMessage(new String("quit"));
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
-		
-		//physical disconnect
+
+		// physical disconnect
 		try {
 			if (socket != null)
 				socket.close();
@@ -106,7 +106,6 @@ public class DummyEnhancedConnectionManager extends ConnectionManager {
 	@Override
 	public ConnectionStreams createCommunication()
 			throws RifidiConnectionException {
-
 
 		ConnectionStreams streams = null;
 		try {

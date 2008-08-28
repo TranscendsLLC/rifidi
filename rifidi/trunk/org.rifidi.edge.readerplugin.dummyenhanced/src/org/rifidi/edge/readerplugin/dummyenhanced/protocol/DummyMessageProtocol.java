@@ -6,7 +6,7 @@ public class DummyMessageProtocol implements MessageProtocol {
 
 	@Override
 	public String toXML(Object message) {
-		return "Fake XML" + (String)message;
+		return "Fake XML" + (String) message;
 	}
 
 }

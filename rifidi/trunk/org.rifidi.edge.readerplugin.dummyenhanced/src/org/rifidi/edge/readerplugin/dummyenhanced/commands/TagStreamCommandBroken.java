@@ -12,7 +12,6 @@ import org.rifidi.edge.core.readerplugin.commands.CommandReturnStatus;
 import org.rifidi.edge.core.readerplugin.messages.impl.TagMessage;
 import org.w3c.dom.Document;
 
-
 public class TagStreamCommandBroken implements Command {
 
 	boolean running = true;

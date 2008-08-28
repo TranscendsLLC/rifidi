@@ -13,11 +13,10 @@ import org.rifidi.edge.core.readerplugin.commands.CommandReturnStatus;
 import org.rifidi.edge.core.readerplugin.messages.impl.EnhancedTagMessage;
 import org.w3c.dom.Document;
 
-
 public class TagStreamCommand implements Command {
 
 	boolean running = true;
-	
+
 	Log logger = LogFactory.getLog(TagStreamCommand.class);
 
 	@Override
@@ -35,7 +34,7 @@ public class TagStreamCommand implements Command {
 			} catch (IOException e1) {
 				return CommandReturnStatus.INTERRUPTED;
 			}
-			
+
 			logger.debug("inspecting tag list");
 			if (!rawtag.equals("")) {
 				String[] rawTags = rawtag.split("\n");
@@ -54,11 +53,11 @@ public class TagStreamCommand implements Command {
 									rawTagItems[0].length())));
 
 					tag.setLastSeenTime(Long.parseLong(rawTagItems[1]));
-					
+
 					tag.setAntennaId(Integer.parseInt(rawTagItems[2]));
-					
+
 					tag.setVelocity(Float.parseFloat(rawTagItems[3]));
-					
+
 					tag.setSignalStrength(Float.parseFloat(rawTagItems[4]));
 					try {
 						messageQueue.addMessage(tag);
@@ -68,14 +67,14 @@ public class TagStreamCommand implements Command {
 				}
 
 			}
-			
+
 			try {
 				Thread.sleep(500);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
+
 		}
 		logger.debug("TagStreaming is stopped");
 		return CommandReturnStatus.SUCCESSFUL;

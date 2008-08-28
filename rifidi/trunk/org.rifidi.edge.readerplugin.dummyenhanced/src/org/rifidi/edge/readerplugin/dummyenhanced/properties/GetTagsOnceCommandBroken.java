@@ -14,7 +14,6 @@ import org.rifidi.edge.core.readerplugin.commands.CommandReturnStatus;
 import org.rifidi.edge.core.readerplugin.messages.impl.TagMessage;
 import org.w3c.dom.Document;
 
-
 public class GetTagsOnceCommandBroken implements Command {
 	private static final Log logger = LogFactory
 			.getLog(GetTagsOnceCommandBroken.class);
@@ -27,7 +26,7 @@ public class GetTagsOnceCommandBroken implements Command {
 			MessageQueue messageQueue, MessageQueue errorQueue,
 			Document configuration, long commandID) {
 		logger.debug("Getting tags.");
-	
+
 		String rawtag = ByteAndHexConvertingUtility.toHexString(
 				"Hallo".getBytes()).replace(" ", "")
 				+ "|" + 1565467895l + "\n\n";
