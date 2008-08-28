@@ -1,7 +1,5 @@
 package org.rifidi.edge.readerplugin.dummyenhanced.plugin;
 
-import java.util.Random;
-
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.rifidi.edge.core.readerplugin.ReaderInfo;
