@@ -15,7 +15,7 @@ import org.w3c.dom.Text;
 public class UsernameProperty implements Property {
 
 	Log logger = LogFactory.getLog(UsernameProperty.class);
-	
+
 	@Override
 	public Element execute(Connection connection, MessageQueue errorQueue,
 			Element propertyConfig) {

@@ -28,12 +28,14 @@ public class GetTagsOnceCommand implements Property {
 		} catch (IOException e1) {
 			return null;
 		}
-		Element returnnode = propertyConfig.getOwnerDocument().createElement(propertyConfig.getNodeName());
-		Element tagID= propertyConfig.getOwnerDocument().createElement("TAGID");
-		Text data= propertyConfig.getOwnerDocument().createTextNode(rawtag);
+		Element returnnode = propertyConfig.getOwnerDocument().createElement(
+				propertyConfig.getNodeName());
+		Element tagID = propertyConfig.getOwnerDocument()
+				.createElement("TAGID");
+		Text data = propertyConfig.getOwnerDocument().createTextNode(rawtag);
 		tagID.appendChild(data);
 		returnnode.appendChild(tagID);
-	
+
 		return returnnode;
 	}
 }

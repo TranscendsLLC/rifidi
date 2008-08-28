@@ -13,8 +13,8 @@ public class ServerConsole {
 		this.tags = tags;
 	}
 
-	public void go(){
-		
+	public void go() {
+
 	}
-	
+
 }

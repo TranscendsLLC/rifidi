@@ -14,7 +14,6 @@ import org.rifidi.edge.core.readerplugin.commands.CommandReturnStatus;
 import org.rifidi.edge.core.readerplugin.messages.impl.TagMessage;
 import org.w3c.dom.Document;
 
-
 public class GetTagsOnceCommandBrokenRuntime implements Command {
 	private static final Log logger = LogFactory
 			.getLog(GetTagsOnceCommandBrokenRuntime.class);
