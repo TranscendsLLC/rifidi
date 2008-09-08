@@ -22,6 +22,7 @@ import javax.xml.bind.Marshaller;
 import org.rifidi.edge.adminclient.annotations.Command;
 import org.rifidi.edge.adminclient.commands.ICommand;
 import org.rifidi.edge.adminclient.jms.JMSConsumerFactory;
+import org.rifidi.edge.core.exceptions.RifidiWidgetAnnotationException;
 import org.rifidi.edge.core.readerplugin.ReaderInfo;
 import org.rifidi.edge.core.rmi.readerconnection.RemoteReaderConnection;
 import org.rifidi.edge.core.rmi.readerconnection.RemoteReaderConnectionRegistry;
@@ -109,10 +110,12 @@ public class NewEdgeServerCommands implements ICommand {
 							.size() + "\n");
 			for (RemoteReaderConnection reader : remoteReaderConnectionRegistry
 					.getAllReaderConnections()) {
-				retVal.append(reader.getMessageQueueName() + ": "
-						+ reader.getReaderInfo().getClass().getSimpleName()
-						+ " ID " + " Status: "
-						+ reader.getReaderState() + "\n");
+				retVal
+						.append(reader.getMessageQueueName()
+								+ ": "
+								+ reader.getReaderInfo().getClass()
+										.getSimpleName() + " ID " + " Status: "
+								+ reader.getReaderState() + "\n");
 			}
 		} catch (Exception e) {
 			return "Error while recieving active connections. "
@@ -123,14 +126,15 @@ public class NewEdgeServerCommands implements ICommand {
 		else
 			return retVal.toString();
 	}
-	
-	@Command(name = "getReaderInfoAnnotation", arguments = { "readerInfoClassName"})
+
+	@Command(name = "getReaderInfoAnnotation", arguments = { "readerInfoClassName" })
 	public String getReaderInfoAnnotation(String readerInfoClassName) {
 		if (remoteReaderConnectionRegistry == null)
 			return "No connection to the EdgeServer";
 
 		try {
-			return remoteReaderConnectionRegistry.getReaderInfoAnnotation(readerInfoClassName);
+			return remoteReaderConnectionRegistry
+					.getReaderInfoAnnotation(readerInfoClassName);
 		} catch (Exception e) {
 			return "Error while recieving active connections. "
 					+ e.getMessage();
@@ -145,7 +149,8 @@ public class NewEdgeServerCommands implements ICommand {
 					.getAllReaderConnections();
 			for (RemoteReaderConnection connection : connections) {
 				if (connection.getReaderState().equalsIgnoreCase("ERROR")) {
-					// System.out.print(connection.getReaderInfo().getReaderType()
+					//System.out.print(connection.getReaderInfo().getReaderType(
+					// )
 					// + " " + connection.getReaderInfo().getIpAddress()
 					// + ":" + connection.getReaderInfo().getPort());
 
@@ -156,7 +161,8 @@ public class NewEdgeServerCommands implements ICommand {
 					 * will cause an error to get the cause of the error.
 					 */
 					try {
-						connection.executeCommand("<TagStreaming></TagStreaming>");
+						connection
+								.executeCommand("<TagStreaming></TagStreaming>");
 					} catch (Exception e) {
 						Exception e2 = e;
 						while ((e2 != null) && (e2 instanceof RemoteException)) {
@@ -230,7 +236,7 @@ public class NewEdgeServerCommands implements ICommand {
 				Class<?> readerInfoClazz = Class.forName(availableReaderTypes
 						.get(selection - 1));
 				readerInfo = (ReaderInfo) readerInfoClazz.getConstructor(
-						new Class[0]).newInstance(new Object[0]);
+					new Class[0]).newInstance(new Object[0]);
 				// System.out.println(readerInfo.getReaderType());
 				for (Method m : readerInfoClazz.getMethods()) {
 					if (m.getName().startsWith("set")) {
@@ -315,14 +321,15 @@ public class NewEdgeServerCommands implements ICommand {
 			}
 
 			try {
-				
-				JAXBContext context = JAXBContext.newInstance(readerInfo.getClass());
+
+				JAXBContext context = JAXBContext.newInstance(readerInfo
+						.getClass());
 				Marshaller m = context.createMarshaller();
 				Writer writer = new StringWriter();
 				m.marshal(readerInfo, writer);
-				
-				remoteReaderConnectionRegistry
-						.createReaderConnection(writer.toString());
+
+				remoteReaderConnectionRegistry.createReaderConnection(writer
+						.toString());
 			} catch (RemoteException e) {
 				e.printStackTrace();
 				return "ERROR";
@@ -436,7 +443,8 @@ public class NewEdgeServerCommands implements ICommand {
 		}
 
 		try {
-			remoteReaderConnection.executeCommand("<TagStreaming></TagStreaming>");
+			remoteReaderConnection
+					.executeCommand("<TagStreaming></TagStreaming>");
 		} catch (Exception e2) {
 			e2.printStackTrace();
 		}
@@ -566,6 +574,42 @@ public class NewEdgeServerCommands implements ICommand {
 				buffer.append(group + "\n");
 			}
 			return buffer.toString();
+		} catch (RemoteException e) {
+			e.printStackTrace();
+			return "ERROR. " + e.getMessage();
+		}
+	}
+
+	@Command(name = "propertyAnnotations", arguments = { "ConnectionID",
+			"Groupname" })
+	public String getPropertyAnnotations(String ID, String groupname) {
+		if (remoteReaderConnectionRegistry == null) {
+			return "Error. No Connection";
+		}
+
+		RemoteReaderConnection readerConnection = null;
+		try {
+			for (RemoteReaderConnection connection : remoteReaderConnectionRegistry
+					.getAllReaderConnections()) {
+				if (connection.getMessageQueueName().equals(ID)) {
+					readerConnection = connection;
+				}
+			}
+
+			if (readerConnection == null) {
+				return "ERROR." + " RemoteReaderConnection not found";
+			}
+			
+			try {
+				System.out.println("about to get annotations");
+				String s = readerConnection.getPropertyAnnotations(groupname);
+				if (s==null || s.equals("")){
+					return "no properties for group " + groupname;
+				}else return s;
+			} catch (RifidiWidgetAnnotationException e) {
+				e.printStackTrace();
+				return "ERROR. " + e.getMessage();
+			}
 		} catch (RemoteException e) {
 			e.printStackTrace();
 			return "ERROR. " + e.getMessage();

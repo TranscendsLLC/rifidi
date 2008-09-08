@@ -7,6 +7,9 @@ import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.communication.Connection;
 import org.rifidi.edge.core.exceptions.RifidiMessageQueueException;
 import org.rifidi.edge.core.messageQueue.MessageQueue;
+import org.rifidi.edge.core.readerplugin.annotations.Widget;
+import org.rifidi.edge.core.readerplugin.annotations.WidgetType;
+import org.rifidi.edge.core.readerplugin.annotations.Widgets;
 import org.rifidi.edge.core.readerplugin.commands.Command;
 import org.rifidi.edge.core.readerplugin.commands.CommandReturnStatus;
 import org.rifidi.edge.readerplugin.alien.messages.GenericAlienMessage;
@@ -18,6 +21,8 @@ import org.w3c.dom.Document;
  * @author Jerry Maine - jerry@pramari.com
  *
  */
+@Widgets(name = "RFLevel", widgets = { 
+		@Widget(type = WidgetType.INTEGER, elementName = "RFLevel", editable = true, defaultValue = "0", displayName = "RF Level") })
 public class RFLevel implements Command {
 	private static final Log logger = LogFactory
 	.getLog(RFLevel.class);

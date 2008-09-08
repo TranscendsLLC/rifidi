@@ -21,6 +21,7 @@ import org.rifidi.edge.core.exceptions.RifidiCommandNotFoundException;
 import org.rifidi.edge.core.exceptions.RifidiConnectionException;
 import org.rifidi.edge.core.exceptions.RifidiInvalidConfigurationException;
 import org.rifidi.edge.core.exceptions.RifidiReaderInfoNotFoundException;
+import org.rifidi.edge.core.exceptions.RifidiWidgetAnnotationException;
 
 /**
  * This is the RemoteReaderConnection for controlling ReaderConnections over
@@ -209,4 +210,31 @@ public interface RemoteReaderConnection extends Remote {
 
 	public Collection<String> getAvailableProperties(String groupName)
 			throws RemoteException;
+	
+
+	/**
+	 * This method returns widget annotations for all of the properties in a group.
+	 * @param group The property group to get the annotations for
+	 * @return An XML file that contains descriptions of all of the properties for this group
+	 * 
+	 * @code(
+	 * <ReaderPropertyAnnoations>
+	 * 	<composite name="org.rifidi.edge.readerplugin.examplereader.property1">
+	 * 		<STRING>
+	 * 			...
+	 * 		</STRING>
+	 * 	</composite>
+	 *  <composite name="org.rifidi.edge.readerplugin.examplereader.property2">
+	 *  	<INTEGER>
+	 *  		...
+	 *  	</INTEGER>
+	 *  </composite>
+	 * </ReaderPluginAnnotations>
+	 * )
+	 * 
+	 * 
+	 * @throws RemoteException
+	 * @throws RifidiWidgetAnnotationException 
+	 */
+	public String getPropertyAnnotations(String group) throws RemoteException, RifidiWidgetAnnotationException;
 }

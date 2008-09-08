@@ -24,6 +24,7 @@ import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.exceptions.RifidiReaderInfoNotFoundException;
 import org.rifidi.edge.core.exceptions.RifidiReaderPluginXMLNotFoundException;
 import org.rifidi.edge.core.readerplugin.ReaderInfo;
+import org.rifidi.edge.core.readerplugin.ReaderPlugin;
 import org.rifidi.edge.core.readerplugin.service.ReaderPluginService;
 import org.rifidi.edge.core.readersession.ReaderSession;
 import org.rifidi.edge.core.readersession.service.ReaderSessionListener;
@@ -82,7 +83,7 @@ public class RemoteReaderConnectionRegistryImpl implements
 			ReaderSession readerSession = readerSessionService
 					.createReaderSession(readerInfo);
 
-			return saveRemoteConnection(readerSession);
+			return saveRemoteConnection(readerSession, readerPluginService.getReaderPlugin(readerInfo.getClass().getName()));
 		} catch (ClassNotFoundException e) {
 			throw new RifidiReaderInfoNotFoundException(e.getMessage());
 		} catch (JAXBException e) {
@@ -122,7 +123,7 @@ public class RemoteReaderConnectionRegistryImpl implements
 		for (ReaderSession session : readerSessionService
 				.getAllReaderSessions()) {
 			if (!readerSessionSync.containsKey(session)) {
-				saveRemoteConnection(session);
+				saveRemoteConnection(session, readerPluginService.getReaderPlugin(session.getReaderInfo().getClass().getName()));
 			}
 		}
 		return new ArrayList<RemoteReaderConnection>(remoteSessionList.keySet());
@@ -196,9 +197,9 @@ public class RemoteReaderConnectionRegistryImpl implements
 	}
 
 	private RemoteReaderConnection saveRemoteConnection(
-			ReaderSession readerSession) {
+			ReaderSession readerSession, ReaderPlugin readerPlugin) {
 		RemoteReaderConnectionImpl remoteReaderConnection = new RemoteReaderConnectionImpl(
-				readerSession);
+				readerSession, readerPlugin);
 
 		RemoteReaderConnection remoteReaderConnectionStub = null;
 		try {

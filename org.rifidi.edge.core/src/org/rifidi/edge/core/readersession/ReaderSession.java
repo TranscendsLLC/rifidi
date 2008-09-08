@@ -1,7 +1,5 @@
 package org.rifidi.edge.core.readersession;
 
-import java.util.Collection;
-
 import org.rifidi.edge.core.exceptions.RifidiCannotRestartCommandException;
 import org.rifidi.edge.core.exceptions.RifidiCommandInterruptedException;
 import org.rifidi.edge.core.exceptions.RifidiCommandNotFoundException;
@@ -142,42 +140,6 @@ public interface ReaderSession {
 	 * Restart the ReaderSession to reset a Error State
 	 */
 	public void resetReaderSession();
-
-	/**
-	 * Get all available command groups
-	 * 
-	 * @return a list of groups
-	 */
-	public Collection<String> getAvailableCommandGroups();
-
-	/**
-	 * Get all available property groups
-	 * 
-	 * @return a list of groups
-	 */
-	public Collection<String> getAvailablePropertyGroups();
-
-	/**
-	 * Get all commands in the specified group
-	 * 
-	 * @param groupName
-	 *            the group to look for the commands
-	 * @return a list of commands in the group
-	 */
-	public Collection<String> getCommandsForGroup(String groupName);
-
-	/**
-	 * Get all properties in the specified group
-	 * 
-	 * @param groupName
-	 *            the group to look for the properties
-	 * @return a list of properties in the group
-	 */
-	public Collection<String> getPropertiesForGroup(String groupName);
-
-	public Collection<String> getAvailableCommands();
-
-	public Collection<String> getAvailableProperties();
 
 	public ReaderSessionStatus getStatus();
 

@@ -3,7 +3,6 @@ package org.rifidi.edge.core.readersession.impl.states;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Collection;
 import java.util.concurrent.Semaphore;
 
 import javax.xml.XMLConstants;
@@ -584,36 +583,5 @@ public class ReaderSessionImpl implements ReaderSession, ReaderSessionState,
 		this.sessionState = newState;
 		transitionSem.release();
 	}
-
-	@Override
-	public Collection<String> getAvailableCommands() {
-		return plugin.getCommands();
-	}
-
-	@Override
-	public Collection<String> getAvailableProperties() {
-		return plugin.getProperties();
-	}
-
-	@Override
-	public Collection<String> getAvailableCommandGroups() {
-		return plugin.getCommandGroups();
-	}
-
-	@Override
-	public Collection<String> getAvailablePropertyGroups() {
-		return plugin.getPropertyGroups();
-	}
-
-	@Override
-	public Collection<String> getCommandsForGroup(String groupName) {
-		return plugin.getCommandsForGroup(groupName);
-	}
-
-	@Override
-	public Collection<String> getPropertiesForGroup(String groupName) {
-		return plugin.getPropertiesForGroup(groupName);
-	}
-
 
 }
