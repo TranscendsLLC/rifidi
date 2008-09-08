@@ -6,19 +6,23 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.communication.Connection;
 import org.rifidi.edge.core.messageQueue.MessageQueue;
+import org.rifidi.edge.core.readerplugin.annotations.Widget;
+import org.rifidi.edge.core.readerplugin.annotations.WidgetType;
+import org.rifidi.edge.core.readerplugin.annotations.Widgets;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 
-
 /**
  * @author Jerry Maine - jerry@pramari.com
- *
+ * 
  */
-public class Username implements org.rifidi.edge.core.readerplugin.property.Property {
-	private static final Log logger = LogFactory
-	.getLog(Username.class);
+@Widgets(name = "Username", widgets = { 
+		@Widget(type = WidgetType.STRING, elementName = "username", editable = true, defaultValue = "alien", displayName = "Username") })
+public class Username implements
+		org.rifidi.edge.core.readerplugin.property.Property {
+	private static final Log logger = LogFactory.getLog(Username.class);
 
 	@Override
 	public Element execute(Connection connection, MessageQueue errorQueue,
@@ -26,7 +30,6 @@ public class Username implements org.rifidi.edge.core.readerplugin.property.Prop
 		logger.debug("Executing: " + this.getClass());
 		String type = propertyConfig.getAttribute("type");
 		String response = null;
-		
 
 		try {
 			if (type.equals("get")) {
@@ -37,13 +40,13 @@ public class Username implements org.rifidi.edge.core.readerplugin.property.Prop
 					response = temp[1];
 				}
 				response = response.trim();
-			} else if(type.equals("set")) {
+			} else if (type.equals("set")) {
 				NodeList nl = propertyConfig.getChildNodes();
 				for (int i = 0; i < nl.getLength(); i++) {
 					if (nl.item(i).getNodeType() == Node.TEXT_NODE) {
 						Text newName = (Text) nl.item(i);
 						connection.sendMessage("set username = "
-								+ newName.getData()+"\n");
+								+ newName.getData() + "\n");
 						response = (String) connection.receiveMessage();
 						if (response.contains("=")) {
 							String[] temp = response.split("=");
@@ -53,7 +56,7 @@ public class Username implements org.rifidi.edge.core.readerplugin.property.Prop
 						break;
 					}
 				}
-			}else{
+			} else {
 				logger.debug("type attribute not found");
 			}
 		} catch (IOException ex) {
@@ -65,7 +68,7 @@ public class Username implements org.rifidi.edge.core.readerplugin.property.Prop
 		}
 
 		Element returnnode = propertyConfig.getOwnerDocument().createElement(
-				propertyConfig.getNodeName());
+			propertyConfig.getNodeName());
 		Text data = propertyConfig.getOwnerDocument().createTextNode(response);
 		returnnode.appendChild(data);
 		return returnnode;

@@ -1,6 +1,7 @@
 package org.rifidi.edge.core.readerplugin.annotations.service.impl;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -17,8 +18,9 @@ import org.w3c.dom.Element;
 
 public class WidgetAnnotationProcessorServiceImpl implements
 		WidgetAnnotationProcessorService {
-	
-	private Log logger = LogFactory.getLog(WidgetAnnotationProcessorServiceImpl.class);
+
+	private Log logger = LogFactory
+			.getLog(WidgetAnnotationProcessorServiceImpl.class);
 
 	@Override
 	public Document processAnnotation(Class<?> clazz)
@@ -28,21 +30,54 @@ public class WidgetAnnotationProcessorServiceImpl implements
 		try {
 			db = dbf.newDocumentBuilder();
 			Document doc = db.newDocument();
-
-			Widgets widgetsAnnotation = clazz.getAnnotation(Widgets.class);
-
-			Element root = doc.createElement("composite");
-			root.setAttribute("name", clazz.getSimpleName());
-			doc.appendChild(root);
-			for (Widget w : widgetsAnnotation.widgets()) {
-				root.appendChild(processWidget(w, doc));
-			}
-
+			Element e = processClass(clazz, doc);
+			doc.appendChild(e);
 			return doc;
 		} catch (ParserConfigurationException e) {
 			throw new RifidiWidgetAnnotationException(e);
 		}
 
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seeorg.rifidi.edge.core.readerplugin.annotations.service.
+	 * WidgetAnnotationProcessorService#processAnnotation(java.lang.String,
+	 * java.util.List)
+	 */
+	@Override
+	public Document processAnnotation(String rootName, List<Class<?>> classes)
+			throws RifidiWidgetAnnotationException {
+		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+		DocumentBuilder db;
+		if (rootName == null) {
+			throw new RifidiWidgetAnnotationException("rootName cannot be null");
+		}
+		try {
+			db = dbf.newDocumentBuilder();
+			Document doc = db.newDocument();
+			Element root = doc.createElement(rootName);
+			for(Class<?> clazz : classes){
+				root.appendChild(processClass(clazz, doc));
+			}
+			doc.appendChild(root);
+			
+			return doc;
+		} catch (ParserConfigurationException ex) {
+			throw new RifidiWidgetAnnotationException(ex);
+		}
+	}
+	
+	private Element processClass(Class<?> clazz, Document doc){
+		Widgets widgetsAnnotation = clazz.getAnnotation(Widgets.class);
+
+		Element annotationNode = doc.createElement("composite");
+		annotationNode.setAttribute("name", clazz.getSimpleName());
+		for (Widget w : widgetsAnnotation.widgets()) {
+			annotationNode.appendChild(processWidget(w, doc));
+		}
+		return annotationNode;
 	}
 
 	private Element processWidget(Widget widget, Document doc) {
@@ -65,8 +100,6 @@ public class WidgetAnnotationProcessorServiceImpl implements
 		editable.appendChild(doc.createTextNode(Boolean.toString(widget
 				.editable())));
 		element.appendChild(editable);
-
-
 
 		switch (widget.type()) {
 		case BOOLEAN:
@@ -96,11 +129,12 @@ public class WidgetAnnotationProcessorServiceImpl implements
 	}
 
 	private void processEnumWidget(Widget widget, Element element) {
-		String enumClass= widget.enumClass();
+		String enumClass = widget.enumClass();
 		try {
 			ArrayList<String> enumValues = new ArrayList<String>();
-			Enum<?>[] enums = (Enum[])Class.forName(enumClass).getEnumConstants();	
-			for(Enum<?> e : enums){
+			Enum<?>[] enums = (Enum[]) Class.forName(enumClass)
+					.getEnumConstants();
+			for (Enum<?> e : enums) {
 				enumValues.add(e.toString());
 			}
 			processPossibleValues(element, enumValues);
@@ -112,18 +146,18 @@ public class WidgetAnnotationProcessorServiceImpl implements
 	private void processDoubleWidget(Widget widget, Element element) {
 		Element min = element.getOwnerDocument().createElement(Widget.MIN);
 		min.appendChild(element.getOwnerDocument().createTextNode(
-				Double.toString(widget.min())));
+			Double.toString(widget.min())));
 		element.appendChild(min);
 
 		Element max = element.getOwnerDocument().createElement(Widget.MAX);
 		max.appendChild(element.getOwnerDocument().createTextNode(
-				Double.toString(widget.max())));
+			Double.toString(widget.max())));
 		element.appendChild(max);
 
 		Element decimal = element.getOwnerDocument().createElement(
-				Widget.DECIMAL_PLACES);
+			Widget.DECIMAL_PLACES);
 		decimal.appendChild(element.getOwnerDocument().createTextNode(
-				Integer.toString(widget.decimalPlaces())));
+			Integer.toString(widget.decimalPlaces())));
 		element.appendChild(decimal);
 
 	}
@@ -132,19 +166,19 @@ public class WidgetAnnotationProcessorServiceImpl implements
 		Element min = element.getOwnerDocument().createElement(Widget.MIN);
 		Float minFloat = new Double(widget.min()).floatValue();
 		min.appendChild(element.getOwnerDocument().createTextNode(
-				Float.toString(minFloat)));
+			Float.toString(minFloat)));
 		element.appendChild(min);
 
 		Element max = element.getOwnerDocument().createElement(Widget.MAX);
 		Float maxLong = new Double(widget.max()).floatValue();
 		max.appendChild(element.getOwnerDocument().createTextNode(
-				Float.toString(maxLong)));
+			Float.toString(maxLong)));
 		element.appendChild(max);
 
 		Element decimal = element.getOwnerDocument().createElement(
-				Widget.DECIMAL_PLACES);
+			Widget.DECIMAL_PLACES);
 		decimal.appendChild(element.getOwnerDocument().createTextNode(
-				Integer.toString(widget.decimalPlaces())));
+			Integer.toString(widget.decimalPlaces())));
 		element.appendChild(decimal);
 
 	}
@@ -153,13 +187,13 @@ public class WidgetAnnotationProcessorServiceImpl implements
 		Element min = element.getOwnerDocument().createElement(Widget.MIN);
 		Long minLong = new Double(widget.min()).longValue();
 		min.appendChild(element.getOwnerDocument().createTextNode(
-				Long.toString(minLong)));
+			Long.toString(minLong)));
 		element.appendChild(min);
 
 		Element max = element.getOwnerDocument().createElement(Widget.MAX);
 		Long maxLong = new Double(widget.max()).longValue();
 		max.appendChild(element.getOwnerDocument().createTextNode(
-				Long.toString(maxLong)));
+			Long.toString(maxLong)));
 		element.appendChild(max);
 
 	}
@@ -168,13 +202,13 @@ public class WidgetAnnotationProcessorServiceImpl implements
 		Element min = element.getOwnerDocument().createElement(Widget.MIN);
 		Integer minInt = new Double(widget.min()).intValue();
 		min.appendChild(element.getOwnerDocument().createTextNode(
-				Integer.toString(minInt)));
+			Integer.toString(minInt)));
 		element.appendChild(min);
 
 		Element max = element.getOwnerDocument().createElement(Widget.MAX);
 		Integer maxInt = new Double(widget.max()).intValue();
 		max.appendChild(element.getOwnerDocument().createTextNode(
-				Integer.toString(maxInt)));
+			Integer.toString(maxInt)));
 		element.appendChild(max);
 
 	}
@@ -182,18 +216,19 @@ public class WidgetAnnotationProcessorServiceImpl implements
 	private void processStringWidget(Widget widget, Element element) {
 		Element regex = element.getOwnerDocument().createElement(Widget.REGEX);
 		regex.appendChild(element.getOwnerDocument().createTextNode(
-				widget.regex()));
+			widget.regex()));
 		element.appendChild(regex);
 	}
 
 	private void processBooleanWidget(Widget widget, Element element) {
 
 	}
-	
-	private void processPossibleValues(Element element, ArrayList<String> possibleValues){
+
+	private void processPossibleValues(Element element,
+			ArrayList<String> possibleValues) {
 		if (possibleValues.size() > 0) {
 			Element values = element.getOwnerDocument().createElement(
-					Widget.POSSIBLE_VALUES);
+				Widget.POSSIBLE_VALUES);
 			for (String value : possibleValues) {
 				Element valueElement = element.getOwnerDocument()
 						.createElement(Widget.POSSIBLE_VALUE);

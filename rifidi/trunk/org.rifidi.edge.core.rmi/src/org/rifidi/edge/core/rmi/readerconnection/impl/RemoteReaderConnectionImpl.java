@@ -6,7 +6,9 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -26,7 +28,11 @@ import org.rifidi.edge.core.exceptions.RifidiCommandNotFoundException;
 import org.rifidi.edge.core.exceptions.RifidiConnectionException;
 import org.rifidi.edge.core.exceptions.RifidiInvalidConfigurationException;
 import org.rifidi.edge.core.exceptions.RifidiReaderInfoNotFoundException;
+import org.rifidi.edge.core.exceptions.RifidiWidgetAnnotationException;
 import org.rifidi.edge.core.readerplugin.ReaderInfo;
+import org.rifidi.edge.core.readerplugin.ReaderPlugin;
+import org.rifidi.edge.core.readerplugin.annotations.service.WidgetAnnotationProcessorService;
+import org.rifidi.edge.core.readerplugin.xml.CommandDescription;
 import org.rifidi.edge.core.readersession.ReaderSession;
 import org.rifidi.edge.core.readersession.service.ReaderSessionService;
 import org.rifidi.edge.core.rmi.readerconnection.RemoteReaderConnection;
@@ -51,8 +57,12 @@ public class RemoteReaderConnectionImpl implements RemoteReaderConnection {
 	 * RemoteReaderConnection
 	 */
 	private ReaderSession readerSession;
-	
+
 	private ReaderSessionService readerSessionService;
+
+	private ReaderPlugin plugin;
+
+	private WidgetAnnotationProcessorService annotationProcessorService;
 
 	/**
 	 * Create a new RemoteReaderConnection associated with the ReaderSession
@@ -60,8 +70,11 @@ public class RemoteReaderConnectionImpl implements RemoteReaderConnection {
 	 * @param readerSession
 	 *            with which the RemoteReaderConnection is assciated
 	 */
-	public RemoteReaderConnectionImpl(ReaderSession readerSession) {
+	public RemoteReaderConnectionImpl(ReaderSession readerSession,
+			ReaderPlugin plugin) {
 		this.readerSession = readerSession;
+		this.plugin = plugin;
+		;
 		ServiceRegistry.getInstance().service(this);
 	}
 
@@ -293,35 +306,62 @@ public class RemoteReaderConnectionImpl implements RemoteReaderConnection {
 	@Override
 	public Collection<String> getAvailableCommandGroups()
 			throws RemoteException {
-		return readerSession.getAvailableCommandGroups();
+		return plugin.getCommandGroups();
 	}
 
 	@Override
 	public Collection<String> getAvailableCommands() throws RemoteException {
-		return readerSession.getAvailableCommands();
+		return plugin.getCommands();
 	}
 
 	@Override
 	public Collection<String> getAvailableCommands(String groupName)
 			throws RemoteException {
-		return readerSession.getCommandsForGroup(groupName);
+		return plugin.getCommandsForGroup(groupName);
 	}
 
 	@Override
 	public Collection<String> getAvailablePropertyGroups()
 			throws RemoteException {
-		return readerSession.getAvailablePropertyGroups();
+		return plugin.getPropertyGroups();
 	}
 
 	@Override
 	public Collection<String> getAvailableProperties() throws RemoteException {
-		return readerSession.getAvailableProperties();
+		return plugin.getProperties();
 	}
 
 	@Override
 	public Collection<String> getAvailableProperties(String groupName)
 			throws RemoteException {
-		return readerSession.getPropertiesForGroup(groupName);
+		return plugin.getPropertiesForGroup(groupName);
+	}
+
+	@Override
+	public String getPropertyAnnotations(String group) throws RemoteException,
+			RifidiWidgetAnnotationException {
+		List<Class<?>> classes = new ArrayList<Class<?>>();
+		if(plugin.getPropertiesForGroup(group).size()==0){
+			logger.debug("No properties for group with name " + group);
+			logger.debug("Valid groups are : " + plugin.getPropertyGroups());
+		}
+		for (String property : plugin.getPropertiesForGroup(group)) {
+			try {
+				CommandDescription cd = plugin.getProperty(property);
+				classes.add(Class.forName(cd.getClassname()));
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+				logger.debug("ClassNotFoundException when "
+						+ "trying to instantite class for "
+						+ plugin.getProperty(property).getClassname());
+			}
+		}
+		try {
+			return DomHelper.toString(this.annotationProcessorService
+					.processAnnotation("ReaderPropertyDescriptors", classes));
+		} catch (TransformerException e) {
+			throw new RifidiWidgetAnnotationException(e);
+		}
 	}
 
 	@Override
@@ -335,7 +375,13 @@ public class RemoteReaderConnectionImpl implements RemoteReaderConnection {
 		readerSession.enable();
 
 	}
-	
+
+	@Inject
+	public void setWidgetAnnotationService(
+			WidgetAnnotationProcessorService service) {
+		this.annotationProcessorService = service;
+	}
+
 	/**
 	 * Inject method to obtain a instance of the ReaderSessionService from the
 	 * RegistryService Framework

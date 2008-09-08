@@ -20,6 +20,19 @@
 		<classname>org.rifidi.edge.readerplugin.alien.commands.general.AntennaSequence</classname>
 		<name>AntennaSequence</name>
 		<group>general</group></property>
+	<property>
+		<classname>org.rifidi.edge.readerplugin.alien.commands.general.RFLevel</classname>
+		<group>Performance</group>
+		<name>RFLevel</name>
+	</property>
+	<property>
+		<classname>org.rifidi.edge.readerplugin.alien.commands.general.RFModulation</classname>
+		<group>Performance</group>
+		<name>RFModulation</name></property>
+	<property>
+		<classname>org.rifidi.edge.readerplugin.alien.commands.gpio.ExternalInput</classname>
+		<group>GPIO</group>
+		<name>External Input</name></property>
 	<command>
 		<classname>
 			org.rifidi.edge.readerplugin.alien.commands.AlienTagStreamCommand

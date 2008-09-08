@@ -6,6 +6,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.communication.Connection;
 import org.rifidi.edge.core.messageQueue.MessageQueue;
+import org.rifidi.edge.core.readerplugin.annotations.Widget;
+import org.rifidi.edge.core.readerplugin.annotations.WidgetType;
+import org.rifidi.edge.core.readerplugin.annotations.Widgets;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -16,6 +19,8 @@ import org.w3c.dom.Text;
  * @author Jerry Maine - jerry@pramari.com
  *
  */
+@Widgets(name = "AntennaSequence", widgets = { 
+		@Widget(type = WidgetType.STRING, elementName = "antennasequence", editable = true, defaultValue = "0", displayName = "Antenna Sequence") })
 public class AntennaSequence implements org.rifidi.edge.core.readerplugin.property.Property {
 	private static final Log logger = LogFactory
 	.getLog(AntennaSequence.class);
