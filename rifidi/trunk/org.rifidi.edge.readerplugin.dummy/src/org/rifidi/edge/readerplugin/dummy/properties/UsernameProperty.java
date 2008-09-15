@@ -16,7 +16,7 @@ public class UsernameProperty implements Property {
 
 	Log logger = LogFactory.getLog(UsernameProperty.class);
 	
-	@Override
+	//@Override
 	public Element execute(Connection connection, MessageQueue errorQueue,
 			Element propertyConfig) {
 
@@ -56,6 +56,26 @@ public class UsernameProperty implements Property {
 		Text data = propertyConfig.getOwnerDocument().createTextNode(response);
 		returnnode.appendChild(data);
 		return returnnode;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.readerplugin.property.Property#getProperty(org.rifidi.edge.core.communication.Connection, org.rifidi.edge.core.messageQueue.MessageQueue, org.w3c.dom.Element)
+	 */
+	@Override
+	public Element getProperty(Connection connection, MessageQueue errorQueue,
+			Element propertyConfig) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.readerplugin.property.Property#setProperty(org.rifidi.edge.core.communication.Connection, org.rifidi.edge.core.messageQueue.MessageQueue, org.w3c.dom.Element)
+	 */
+	@Override
+	public Element setProperty(Connection connection, MessageQueue errorQueue,
+			Element propertyConfig) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

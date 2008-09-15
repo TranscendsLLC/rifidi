@@ -17,7 +17,18 @@ public interface ReaderSessionState extends CommunicationStateListener{
 			RifidiCommandInterruptedException, RifidiCommandNotFoundException,
 			RifidiInvalidConfigurationException;
 
-	public Document state_executeProperty(Document propertiesToExecute)throws RifidiConnectionException, RifidiCommandNotFoundException,
+	/**
+	 * 
+	 * @param propertiesToExecute
+	 * @param set if true, set the property.  If false, get the value of the property
+	 * @return
+	 * @throws RifidiConnectionException
+	 * @throws RifidiCommandNotFoundException
+	 * @throws RifidiCommandInterruptedException
+	 * @throws RifidiInvalidConfigurationException
+	 * @throws RifidiCannotRestartCommandException
+	 */
+	public Document state_executeProperty(Document propertiesToExecute, boolean set)throws RifidiConnectionException, RifidiCommandNotFoundException,
 	RifidiCommandInterruptedException,
 			RifidiInvalidConfigurationException,
 			RifidiCannotRestartCommandException;

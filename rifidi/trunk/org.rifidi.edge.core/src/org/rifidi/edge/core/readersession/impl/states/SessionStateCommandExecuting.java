@@ -84,7 +84,7 @@ public class SessionStateCommandExecuting implements ReaderSessionState {
 	}
 
 	@Override
-	public Document state_executeProperty(Document propertiesToExecute)
+	public Document state_executeProperty(Document propertiesToExecute, boolean set)
 			throws RifidiConnectionException, RifidiCommandNotFoundException,
 			RifidiCommandInterruptedException, RifidiInvalidConfigurationException, RifidiCannotRestartCommandException {
 		propertyWaiting=true;
@@ -173,10 +173,15 @@ public class SessionStateCommandExecuting implements ReaderSessionState {
 							returnVal.appendChild(data);
 						} else if (readerSessionImpl.connectionStatus == ConnectionStatus.CONNECTED) {
 						
-							// execute property
-							returnVal = propObject.execute(
+							if(set){
+							returnVal = propObject.setProperty(
 									readerSessionImpl.connection,
 									readerSessionImpl.errorQueue, e);
+							}else{
+								returnVal = propObject.getProperty(
+									readerSessionImpl.connection,
+									readerSessionImpl.errorQueue, e);
+							}
 						} else {	
 							logger.debug("Default case on swtich called with " + readerSessionImpl.connectionStatus);
 						}

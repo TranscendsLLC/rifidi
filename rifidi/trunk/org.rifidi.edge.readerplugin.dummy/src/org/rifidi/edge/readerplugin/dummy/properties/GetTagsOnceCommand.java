@@ -15,7 +15,7 @@ public class GetTagsOnceCommand implements Property {
 			.getLog(GetTagsOnceCommand.class);
 	boolean running = true;
 
-	@Override
+	//@Override
 	public Element execute(Connection connection, MessageQueue errorQueue,
 			Element propertyConfig) {
 		logger.debug("Getting tags.");
@@ -37,5 +37,25 @@ public class GetTagsOnceCommand implements Property {
 		returnnode.appendChild(tagID);
 
 		return returnnode;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.readerplugin.property.Property#getProperty(org.rifidi.edge.core.communication.Connection, org.rifidi.edge.core.messageQueue.MessageQueue, org.w3c.dom.Element)
+	 */
+	@Override
+	public Element getProperty(Connection connection, MessageQueue errorQueue,
+			Element propertyConfig) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.readerplugin.property.Property#setProperty(org.rifidi.edge.core.communication.Connection, org.rifidi.edge.core.messageQueue.MessageQueue, org.w3c.dom.Element)
+	 */
+	@Override
+	public Element setProperty(Connection connection, MessageQueue errorQueue,
+			Element propertyConfig) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

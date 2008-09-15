@@ -56,7 +56,7 @@ public class SessionStatePropertyExecuting implements ReaderSessionState{
 	}
 
 	@Override
-	public Document state_executeProperty(Document propertiesToExecute)
+	public Document state_executeProperty(Document propertiesToExecute, boolean set)
 			throws RifidiConnectionException, RifidiCommandNotFoundException,
 			RifidiCommandInterruptedException {
 		logger.debug("cannot execute executeProperty when in " + ReaderSessionStatus.EXECUTING_PROPERTY_WITH_NO_YIELDED_COMMAND);

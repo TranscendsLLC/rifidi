@@ -14,10 +14,10 @@ import javax.xml.bind.Marshaller;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.rifidi.dynamicswtforms.xml.exceptions.DynamicSWTFormAnnotationException;
+import org.rifidi.dynamicswtforms.xml.processor.DynamicSWTFormXMLProcessor;
 import org.rifidi.edge.core.exceptions.RifidiReaderInfoNotFoundException;
 import org.rifidi.edge.core.exceptions.RifidiReaderPluginXMLNotFoundException;
-import org.rifidi.edge.core.exceptions.RifidiWidgetAnnotationException;
-import org.rifidi.edge.core.readerplugin.annotations.service.WidgetAnnotationProcessorService;
 import org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionManager;
 import org.rifidi.edge.core.readerplugin.xml.CommandDescription;
 import org.rifidi.edge.core.readerplugin.xml.ReaderPluginXML;
@@ -32,7 +32,7 @@ public class ReaderPlugin {
 	@SuppressWarnings("unused")
 	private Log logger = LogFactory.getLog(ReaderPlugin.class);
 
-	private WidgetAnnotationProcessorService widgetAnnotationProcessorService;
+	private DynamicSWTFormXMLProcessor dynamicSWTFormXMLProcessor;
 
 	public ReaderPlugin(ReaderPluginXML readerPluginXML) {
 		this.readerPluginXML = readerPluginXML;
@@ -84,10 +84,10 @@ public class ReaderPlugin {
 
 		try {
 			Class<?> clazz = Class.forName(this.readerPluginXML.getInfo());
-			return widgetAnnotationProcessorService.processAnnotation(clazz);
+			return dynamicSWTFormXMLProcessor.processAnnotation(clazz);
 		} catch (ClassNotFoundException e1) {
 			throw new RifidiReaderInfoNotFoundException(e1);
-		} catch (RifidiWidgetAnnotationException e) {
+		} catch (DynamicSWTFormAnnotationException e) {
 			throw new RifidiReaderInfoNotFoundException(e);
 		}
 
@@ -221,8 +221,8 @@ public class ReaderPlugin {
 
 	@Inject
 	public void setWidgetAnnoationProcessorService(
-			WidgetAnnotationProcessorService service) {
-		widgetAnnotationProcessorService = service;
+			DynamicSWTFormXMLProcessor service) {
+		dynamicSWTFormXMLProcessor = service;
 	}
 
 }

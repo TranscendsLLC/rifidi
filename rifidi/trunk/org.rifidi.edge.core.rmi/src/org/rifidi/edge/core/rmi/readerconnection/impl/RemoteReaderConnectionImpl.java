@@ -21,6 +21,8 @@ import javax.xml.transform.TransformerException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.rifidi.dynamicswtforms.xml.exceptions.DynamicSWTFormAnnotationException;
+import org.rifidi.dynamicswtforms.xml.processor.DynamicSWTFormXMLProcessor;
 import org.rifidi.edge.common.utilities.dom.DomHelper;
 import org.rifidi.edge.core.exceptions.RifidiCannotRestartCommandException;
 import org.rifidi.edge.core.exceptions.RifidiCommandInterruptedException;
@@ -28,10 +30,8 @@ import org.rifidi.edge.core.exceptions.RifidiCommandNotFoundException;
 import org.rifidi.edge.core.exceptions.RifidiConnectionException;
 import org.rifidi.edge.core.exceptions.RifidiInvalidConfigurationException;
 import org.rifidi.edge.core.exceptions.RifidiReaderInfoNotFoundException;
-import org.rifidi.edge.core.exceptions.RifidiWidgetAnnotationException;
 import org.rifidi.edge.core.readerplugin.ReaderInfo;
 import org.rifidi.edge.core.readerplugin.ReaderPlugin;
-import org.rifidi.edge.core.readerplugin.annotations.service.WidgetAnnotationProcessorService;
 import org.rifidi.edge.core.readerplugin.xml.CommandDescription;
 import org.rifidi.edge.core.readersession.ReaderSession;
 import org.rifidi.edge.core.readersession.service.ReaderSessionService;
@@ -62,7 +62,7 @@ public class RemoteReaderConnectionImpl implements RemoteReaderConnection {
 
 	private ReaderPlugin plugin;
 
-	private WidgetAnnotationProcessorService annotationProcessorService;
+	private DynamicSWTFormXMLProcessor dynamicSWTFormXMLProcessor;
 
 	/**
 	 * Create a new RemoteReaderConnection associated with the ReaderSession
@@ -154,7 +154,7 @@ public class RemoteReaderConnectionImpl implements RemoteReaderConnection {
 	}
 
 	@Override
-	public String executeProperty(String configuration) throws RemoteException,
+	public String getProperty(String configuration) throws RemoteException,
 			RifidiConnectionException, RifidiCommandNotFoundException,
 			RifidiCommandInterruptedException,
 			RifidiInvalidConfigurationException,
@@ -166,7 +166,39 @@ public class RemoteReaderConnectionImpl implements RemoteReaderConnection {
 			StringReader reader = new StringReader(configuration);
 			InputSource inputSource = new InputSource(reader);
 			Document doc = builder.parse(inputSource);
-			Document d = readerSession.executeProperty(doc);
+			Document d = readerSession.executeProperty(doc, false);
+
+			String s = DomHelper.toString(d);
+			return s;
+		} catch (SAXException e) {
+			logger.error("SAXException");
+			throw new RemoteException("SAXException", e);
+		} catch (IOException e) {
+			logger.error("IOException", e);
+			throw new RemoteException("IOException", e);
+		} catch (TransformerException e) {
+			logger.error("TransformerException", e);
+			throw new RemoteException("TransformerException", e);
+		} catch (ParserConfigurationException e) {
+			logger.error("ParserConfigurationException", e);
+			throw new RemoteException("ParserConfigurationException", e);
+		}
+	}
+
+	@Override
+	public String setProperty(String configuration) throws RemoteException,
+			RifidiConnectionException, RifidiCommandNotFoundException,
+			RifidiCommandInterruptedException,
+			RifidiInvalidConfigurationException,
+			RifidiCannotRestartCommandException {
+		try {
+			DocumentBuilderFactory factory = DocumentBuilderFactory
+					.newInstance();
+			DocumentBuilder builder = factory.newDocumentBuilder();
+			StringReader reader = new StringReader(configuration);
+			InputSource inputSource = new InputSource(reader);
+			Document doc = builder.parse(inputSource);
+			Document d = readerSession.executeProperty(doc, true);
 
 			String s = DomHelper.toString(d);
 			return s;
@@ -339,9 +371,9 @@ public class RemoteReaderConnectionImpl implements RemoteReaderConnection {
 
 	@Override
 	public String getPropertyAnnotations(String group) throws RemoteException,
-			RifidiWidgetAnnotationException {
+			DynamicSWTFormAnnotationException {
 		List<Class<?>> classes = new ArrayList<Class<?>>();
-		if(plugin.getPropertiesForGroup(group).size()==0){
+		if (plugin.getPropertiesForGroup(group).size() == 0) {
 			logger.debug("No properties for group with name " + group);
 			logger.debug("Valid groups are : " + plugin.getPropertyGroups());
 		}
@@ -357,10 +389,10 @@ public class RemoteReaderConnectionImpl implements RemoteReaderConnection {
 			}
 		}
 		try {
-			return DomHelper.toString(this.annotationProcessorService
+			return DomHelper.toString(this.dynamicSWTFormXMLProcessor
 					.processAnnotation("ReaderPropertyDescriptors", classes));
 		} catch (TransformerException e) {
-			throw new RifidiWidgetAnnotationException(e);
+			throw new DynamicSWTFormAnnotationException(e);
 		}
 	}
 
@@ -377,9 +409,9 @@ public class RemoteReaderConnectionImpl implements RemoteReaderConnection {
 	}
 
 	@Inject
-	public void setWidgetAnnotationService(
-			WidgetAnnotationProcessorService service) {
-		this.annotationProcessorService = service;
+	public void setWidgetAnnoationProcessorService(
+			DynamicSWTFormXMLProcessor service) {
+		dynamicSWTFormXMLProcessor = service;
 	}
 
 	/**

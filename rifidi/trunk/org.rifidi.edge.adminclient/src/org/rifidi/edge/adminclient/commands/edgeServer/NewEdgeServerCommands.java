@@ -19,10 +19,10 @@ import javax.jms.TextMessage;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 
+import org.rifidi.dynamicswtforms.xml.exceptions.DynamicSWTFormAnnotationException;
 import org.rifidi.edge.adminclient.annotations.Command;
 import org.rifidi.edge.adminclient.commands.ICommand;
 import org.rifidi.edge.adminclient.jms.JMSConsumerFactory;
-import org.rifidi.edge.core.exceptions.RifidiWidgetAnnotationException;
 import org.rifidi.edge.core.readerplugin.ReaderInfo;
 import org.rifidi.edge.core.rmi.readerconnection.RemoteReaderConnection;
 import org.rifidi.edge.core.rmi.readerconnection.RemoteReaderConnectionRegistry;
@@ -606,7 +606,7 @@ public class NewEdgeServerCommands implements ICommand {
 				if (s==null || s.equals("")){
 					return "no properties for group " + groupname;
 				}else return s;
-			} catch (RifidiWidgetAnnotationException e) {
+			} catch (DynamicSWTFormAnnotationException e) {
 				e.printStackTrace();
 				return "ERROR. " + e.getMessage();
 			}

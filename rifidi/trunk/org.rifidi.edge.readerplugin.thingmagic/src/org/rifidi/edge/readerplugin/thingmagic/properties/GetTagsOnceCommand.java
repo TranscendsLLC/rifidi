@@ -20,7 +20,6 @@ public class GetTagsOnceCommand implements Property {
 			.getLog(GetTagsOnceCommand.class);
 	private static final String GET_TAGS = "select id, timestamp from tag_id;";
 
-	@Override
 	public Element execute(Connection connection, MessageQueue errorQueue,
 			Element propertyConfig) {
 		try {
@@ -66,6 +65,26 @@ public class GetTagsOnceCommand implements Property {
 			}
 
 		}
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.readerplugin.property.Property#getProperty(org.rifidi.edge.core.communication.Connection, org.rifidi.edge.core.messageQueue.MessageQueue, org.w3c.dom.Element)
+	 */
+	@Override
+	public Element getProperty(Connection connection, MessageQueue errorQueue,
+			Element propertyConfig) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.readerplugin.property.Property#setProperty(org.rifidi.edge.core.communication.Connection, org.rifidi.edge.core.messageQueue.MessageQueue, org.w3c.dom.Element)
+	 */
+	@Override
+	public Element setProperty(Connection connection, MessageQueue errorQueue,
+			Element propertyConfig) {
+		// TODO Auto-generated method stub
 		return null;
 	}
 

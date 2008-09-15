@@ -95,7 +95,7 @@ public class SessionStateConfigured implements ReaderSessionState {
 	 * @see org.rifidi.edge.core.readersession.impl.ReaderSessionState#state_executeProperty(org.w3c.dom.Document)
 	 */
 	@Override
-	public Document state_executeProperty(Document propertiesToExecute)
+	public Document state_executeProperty(Document propertiesToExecute, boolean set)
 			throws RifidiConnectionException, RifidiCommandNotFoundException,
 			RifidiCommandInterruptedException,
 			RifidiInvalidConfigurationException,
