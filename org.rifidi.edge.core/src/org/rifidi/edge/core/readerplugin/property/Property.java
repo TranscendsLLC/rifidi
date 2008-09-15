@@ -5,8 +5,11 @@ import org.rifidi.edge.core.messageQueue.MessageQueue;
 import org.w3c.dom.Element;
 
 public interface Property {
-	
-	public Element execute(Connection connection,
-			MessageQueue errorQueue, Element propertyConfig);
+
+	public Element getProperty(Connection connection, MessageQueue errorQueue,
+			Element propertyConfig);
+
+	public Element setProperty(Connection connection, MessageQueue errorQueue,
+			Element propertyConfig);
 
 }

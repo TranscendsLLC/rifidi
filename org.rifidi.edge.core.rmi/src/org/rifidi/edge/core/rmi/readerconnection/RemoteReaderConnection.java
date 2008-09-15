@@ -15,13 +15,13 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.Collection;
 
+import org.rifidi.dynamicswtforms.xml.exceptions.DynamicSWTFormAnnotationException;
 import org.rifidi.edge.core.exceptions.RifidiCannotRestartCommandException;
 import org.rifidi.edge.core.exceptions.RifidiCommandInterruptedException;
 import org.rifidi.edge.core.exceptions.RifidiCommandNotFoundException;
 import org.rifidi.edge.core.exceptions.RifidiConnectionException;
 import org.rifidi.edge.core.exceptions.RifidiInvalidConfigurationException;
 import org.rifidi.edge.core.exceptions.RifidiReaderInfoNotFoundException;
-import org.rifidi.edge.core.exceptions.RifidiWidgetAnnotationException;
 
 /**
  * This is the RemoteReaderConnection for controlling ReaderConnections over
@@ -33,9 +33,9 @@ import org.rifidi.edge.core.exceptions.RifidiWidgetAnnotationException;
 public interface RemoteReaderConnection extends Remote {
 
 	public void enable() throws RemoteException;
-	
+
 	public void disable() throws RemoteException;
-	
+
 	/**
 	 * Execute a custom command on the ReaderConnection
 	 * 
@@ -49,24 +49,74 @@ public interface RemoteReaderConnection extends Remote {
 			RifidiConnectionException, RifidiCommandInterruptedException,
 			RifidiCommandNotFoundException, RifidiInvalidConfigurationException;
 
-	public String executeProperty(String configuration) throws RemoteException,
+/**
+	 * This method takes in a property configuration XML and sets the values of
+	 * the properties
+	 * 
+	 * Input:
+	 * {@code
+	 *  <Properties>
+	 * 			 <property1Name>
+	 * 				<element1Name>value</element1Name>
+	 * 				<element2Name>value</element2Name>
+	 * 			</Property1Name>
+	 * 			<property2Name>
+	 * 				<element1Name>value</element1Name>
+	 * 			</property2Name>
+	 * </Properties>
+	 * 
+	 * @param configuration
+	 * @return The return values from the properties
+	 * @throws RemoteException
+	 * @throws RifidiConnectionException
+	 * @throws RifidiCommandNotFoundException
+	 * @throws RifidiCommandInterruptedException
+	 * @throws RifidiInvalidConfigurationException
+	 * @throws RifidiCannotRestartCommandException
+	 */
+	public String setProperty(String configuration) throws RemoteException,
 			RifidiConnectionException, RifidiCommandNotFoundException,
 			RifidiCommandInterruptedException,
 			RifidiInvalidConfigurationException,
 			RifidiCannotRestartCommandException;
 
-	// /**
-	// * Start streaming of tags to the MessageQueue (This is a convenience
-	// method
-	// * for the command "streamtags")
-	// *
-	// * @param configuration
-	// * xml describing the configuration parameters
-	// * @return an id under this a command will be executed
-	// * @throws RemoteException
-	// * if a error occurs
-	// */
-	// public long startTagStream(String configuration) throws RemoteException;
+/**
+	 * This method takes in a property configuration and sets the values
+	 * 
+	 *Inptut:
+	 *{@code
+	 * <Properties> <property1Name>...</property1Name>
+	 * <property2Name>...</property2Name> </Properties>}
+	 * 
+	 * Output:
+	 * 
+	 * {@code
+	 *  <Properties>
+	 * 			 <property1Name>
+	 * 				<element1Name>value</element1Name>
+	 * 				<element2Name>value</element2Name>
+	 * 			</Property1Name>
+	 * 			<property2Name>
+	 * 				<element1Name>value</element1Name>
+	 * 			</property2Name>
+	 * </Properties>
+	 * 
+	 * The elements in each property correspond to a Widget annotation in each Property's Widgets annotation
+	 * 
+	 * @param configuration as specified above
+	 * @return The values from the properties as specified above
+	 * @throws RemoteException
+	 * @throws RifidiConnectionException
+	 * @throws RifidiCommandNotFoundException
+	 * @throws RifidiCommandInterruptedException
+	 * @throws RifidiInvalidConfigurationException
+	 * @throws RifidiCannotRestartCommandException
+	 */
+	public String getProperty(String configuration) throws RemoteException,
+			RifidiConnectionException, RifidiCommandNotFoundException,
+			RifidiCommandInterruptedException,
+			RifidiInvalidConfigurationException,
+			RifidiCannotRestartCommandException;
 
 	/**
 	 * Stop current executing command without checking if the command is a
@@ -141,10 +191,12 @@ public interface RemoteReaderConnection extends Remote {
 	 */
 	public String getMessageQueueName() throws RemoteException;
 
-	public String getReaderInfo() throws RemoteException, RifidiReaderInfoNotFoundException;
-	
-	public void setReaderInfo(String readerInfo) throws RemoteException, RifidiReaderInfoNotFoundException;
-	
+	public String getReaderInfo() throws RemoteException,
+			RifidiReaderInfoNotFoundException;
+
+	public void setReaderInfo(String readerInfo) throws RemoteException,
+			RifidiReaderInfoNotFoundException;
+
 	public String getReaderInfoClassName() throws RemoteException;
 
 	/**
@@ -210,31 +262,27 @@ public interface RemoteReaderConnection extends Remote {
 
 	public Collection<String> getAvailableProperties(String groupName)
 			throws RemoteException;
-	
 
 	/**
-	 * This method returns widget annotations for all of the properties in a group.
-	 * @param group The property group to get the annotations for
-	 * @return An XML file that contains descriptions of all of the properties for this group
+	 * This method returns widget annotations for all of the properties in a
+	 * group.
 	 * 
-	 * @code(
-	 * <ReaderPropertyAnnoations>
-	 * 	<composite name="org.rifidi.edge.readerplugin.examplereader.property1">
-	 * 		<STRING>
-	 * 			...
-	 * 		</STRING>
-	 * 	</composite>
-	 *  <composite name="org.rifidi.edge.readerplugin.examplereader.property2">
-	 *  	<INTEGER>
-	 *  		...
-	 *  	</INTEGER>
-	 *  </composite>
-	 * </ReaderPluginAnnotations>
-	 * )
+	 * @param group
+	 *            The property group to get the annotations for
+	 * @return An XML file that contains descriptions of all of the properties
+	 *         for this group
+	 * 
+	 * @code( <ReaderPropertyAnnoations> <composite
+	 *        name="org.rifidi.edge.readerplugin.examplereader.property1">
+	 *        <STRING> ... </STRING> </composite> <composite
+	 *        name="org.rifidi.edge.readerplugin.examplereader.property2">
+	 *        <INTEGER> ... </INTEGER> </composite> </ReaderPluginAnnotations> )
 	 * 
 	 * 
 	 * @throws RemoteException
-	 * @throws RifidiWidgetAnnotationException 
+	 * @throws RifidiWidgetAnnotationException
+	 * @throws DynamicSWTFormAnnotationException
 	 */
-	public String getPropertyAnnotations(String group) throws RemoteException, RifidiWidgetAnnotationException;
+	public String getPropertyAnnotations(String group) throws RemoteException,
+			DynamicSWTFormAnnotationException;
 }

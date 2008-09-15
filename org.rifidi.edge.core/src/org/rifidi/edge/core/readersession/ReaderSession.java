@@ -50,6 +50,9 @@ public interface ReaderSession {
 	 * 
 	 * @param propertiesToExecute
 	 *            the commands and their arguments
+	 * @param set
+	 *            if true, set the property, if false, get the current value of
+	 *            the property
 	 * @return An XML as a string that contains the results of all the
 	 *         properties executed
 	 * @throws RifidiConnectionException
@@ -61,7 +64,7 @@ public interface ReaderSession {
 	 * @throws RifidiInvalidConfigurationException
 	 * @throws RifidiCannotRestartCommandException
 	 */
-	public Document executeProperty(Document propertiesToExecute)
+	public Document executeProperty(Document propertiesToExecute, boolean set)
 			throws RifidiConnectionException, RifidiCommandNotFoundException,
 			RifidiCommandInterruptedException,
 			RifidiInvalidConfigurationException,

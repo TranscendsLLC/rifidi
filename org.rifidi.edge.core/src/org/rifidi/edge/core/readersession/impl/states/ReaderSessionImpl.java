@@ -133,28 +133,28 @@ public class ReaderSessionImpl implements ReaderSession, ReaderSessionState,
 	}
 
 	@Override
-	public Document executeProperty(Document propertiesToExecute)
+	public Document executeProperty(Document propertiesToExecute, boolean set)
 			throws RifidiConnectionException,
 			RifidiCommandInterruptedException, RifidiCommandNotFoundException,
 			RifidiInvalidConfigurationException,
 			RifidiCannotRestartCommandException {
-		return this.state_executeProperty(propertiesToExecute);
+		return this.state_executeProperty(propertiesToExecute, set);
 	}
 
 	protected void validate(Class<?> command, Element elementToValidate)
 			throws SAXException, IOException {
-		SchemaFactory schemaFactory = SchemaFactory
-				.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-		InputStream is = Resource.getResource(command, command.getSimpleName()
-				+ ".xsd");
-
-		if (is != null) {
-			Schema schema = schemaFactory.newSchema(new StreamSource(is));
-			Validator v = schema.newValidator();
-			v.validate(new DOMSource(elementToValidate));
-		} else {
-			throw new IOException("XSD file could not be found: ");
-		}
+		
+		//TODO: worry about validating later
+		/*
+		 * SchemaFactory schemaFactory = SchemaFactory
+		 * .newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI); InputStream is =
+		 * Resource.getResource(command, command.getSimpleName() + ".xsd");
+		 * 
+		 * if (is != null) { Schema schema = schemaFactory.newSchema(new
+		 * StreamSource(is)); Validator v = schema.newValidator();
+		 * v.validate(new DOMSource(elementToValidate)); } else { throw new
+		 * IOException("XSD file could not be found: "); }
+		 */
 
 	}
 
@@ -520,7 +520,7 @@ public class ReaderSessionImpl implements ReaderSession, ReaderSessionState,
 	}
 
 	@Override
-	public Document state_executeProperty(Document propertiesToExecute)
+	public Document state_executeProperty(Document propertiesToExecute, boolean set)
 			throws RifidiConnectionException, RifidiCommandNotFoundException,
 			RifidiCommandInterruptedException,
 			RifidiInvalidConfigurationException,
@@ -529,7 +529,7 @@ public class ReaderSessionImpl implements ReaderSession, ReaderSessionState,
 			transitionSem.acquire();
 		} catch (InterruptedException e) {
 		}
-		return sessionState.state_executeProperty(propertiesToExecute);
+		return sessionState.state_executeProperty(propertiesToExecute, set);
 
 	}
 

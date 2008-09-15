@@ -11,6 +11,7 @@ Import-Package: org.osgi.framework;version="1.3.0"
 Require-Bundle: org.rifidi.edge.core,
  org.rifidi.edge.log4j,
  org.rifidi.edge.services,
- org.rifidi.edge.common.utilities;bundle-version="1.0.0"
+ org.rifidi.edge.common.utilities;bundle-version="1.0.0",
+ org.rifidi.dynamicSWTForms.xml;bundle-version="1.0.0"
 Export-Package: org.rifidi.edge.core.rmi.readerconnection
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6

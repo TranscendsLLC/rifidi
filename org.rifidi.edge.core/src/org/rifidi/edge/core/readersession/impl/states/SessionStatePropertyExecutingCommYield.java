@@ -63,7 +63,7 @@ public class SessionStatePropertyExecutingCommYield implements
 	}
 
 	@Override
-	public Document state_executeProperty(Document propertiesToExecute)
+	public Document state_executeProperty(Document propertiesToExecute, boolean set)
 			throws RifidiConnectionException, RifidiCommandNotFoundException,
 			RifidiCommandInterruptedException, RifidiCannotRestartCommandException {
 		

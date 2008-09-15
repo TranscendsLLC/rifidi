@@ -4,20 +4,20 @@ import java.util.Random;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.rifidi.dynamicswtforms.xml.annotaions.Form;
+import org.rifidi.dynamicswtforms.xml.annotaions.FormElement;
+import org.rifidi.dynamicswtforms.xml.constants.FormElementType;
 import org.rifidi.edge.core.readerplugin.ReaderInfo;
-import org.rifidi.edge.core.readerplugin.annotations.Widget;
-import org.rifidi.edge.core.readerplugin.annotations.WidgetType;
-import org.rifidi.edge.core.readerplugin.annotations.Widgets;
 
 @XmlRootElement(name = "DummyReaderInfo")
-@Widgets(name = "LLRPReaderInfo", widgets = {
-		@Widget(type = WidgetType.STRING, elementName = "ipAddress", displayName = "IP Address", defaultValue = "localhost"),
-		@Widget(type = WidgetType.INTEGER, elementName = "port", displayName = "Port", defaultValue = "12345", min = 0, max = 65535),
-		@Widget(type = WidgetType.LONG, elementName = "reconnectionInterval", displayName = "Reconnect Interval", defaultValue = "1000", min = 0, max = Long.MAX_VALUE),
-		@Widget(type = WidgetType.INTEGER, elementName = "maxNumConnectionsAttempts", displayName = "Connection Attempts", defaultValue = "3", min = -1, max = Integer.MAX_VALUE),
-		@Widget(type= WidgetType.DOUBLE, elementName="randomErrorProbibility", displayName="Random Error Probibility", defaultValue="0", max=1, min=0, decimalPlaces=2),
-		@Widget(type= WidgetType.DOUBLE, elementName="probiblityOfErrorsBeingRuntimeExceptions", displayName="Probibility that Errors are Runtime Exceptions", defaultValue="0", max=1, min=0, decimalPlaces=2), 
-		@Widget(type = WidgetType.ENUM, elementName = "errorToSet", displayName = "Error Type", defaultValue ="NONE", enumClass="org.rifidi.edge.readerplugin.dummy.plugin.EDummyError" )})
+@Form(name = "LLRPReaderInfo", formElements = {
+		@FormElement(type = FormElementType.STRING, elementName = "ipAddress", displayName = "IP Address", defaultValue = "localhost"),
+		@FormElement(type = FormElementType.INTEGER, elementName = "port", displayName = "Port", defaultValue = "12345", min = 0, max = 65535),
+		@FormElement(type = FormElementType.INTEGER, elementName = "reconnectionInterval", displayName = "Reconnect Interval", defaultValue = "1000", min = 0, max = Integer.MAX_VALUE),
+		@FormElement(type = FormElementType.INTEGER, elementName = "maxNumConnectionsAttempts", displayName = "Connection Attempts", defaultValue = "3", min = -1, max = Integer.MAX_VALUE),
+		@FormElement(type= FormElementType.FLOAT, elementName="randomErrorProbibility", displayName="Random Error Probibility", defaultValue="0", max=1, min=0, decimalPlaces=2),
+		@FormElement(type= FormElementType.FLOAT, elementName="probiblityOfErrorsBeingRuntimeExceptions", displayName="Probibility that Errors \nare Runtime Exceptions", defaultValue="0", max=1, min=0, decimalPlaces=2), 
+		@FormElement(type = FormElementType.CHOICE, elementName = "errorToSet", displayName = "Error Type", defaultValue ="NONE", enumClass="org.rifidi.edge.readerplugin.dummy.plugin.EDummyError" )})
 public class DummyReaderInfo extends ReaderInfo {
 
 	/**
