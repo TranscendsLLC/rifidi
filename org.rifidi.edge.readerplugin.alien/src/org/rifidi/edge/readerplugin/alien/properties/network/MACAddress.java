@@ -1,71 +1,84 @@
+/*
+ *  Gateway.java
+ *
+ *  Created:	September 16th, 2008
+ *  Project:	RiFidi Emulator - A Software Simulation Tool for RFID Devices
+ *  				http://www.rifidi.org
+ *  				http://rifidi.sourceforge.net
+ *  Copyright:	Pramari LLC and the Rifidi Project
+ *  License:	Lesser GNU Public License (LGPL)
+ *  				http://www.opensource.org/licenses/lgpl-license.html
+ */
 package org.rifidi.edge.readerplugin.alien.properties.network;
 
 import java.io.IOException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.rifidi.dynamicswtforms.xml.annotaions.Form;
+import org.rifidi.dynamicswtforms.xml.annotaions.FormElement;
+import org.rifidi.dynamicswtforms.xml.constants.FormElementType;
 import org.rifidi.edge.core.communication.Connection;
-import org.rifidi.edge.core.exceptions.RifidiMessageQueueException;
 import org.rifidi.edge.core.messageQueue.MessageQueue;
-import org.rifidi.edge.core.readerplugin.commands.Command;
-import org.rifidi.edge.core.readerplugin.commands.CommandReturnStatus;
-import org.rifidi.edge.readerplugin.alien.messages.GenericAlienMessage;
-import org.rifidi.edge.readerplugin.alien.messages.Property;
-import org.w3c.dom.Document;
+import org.rifidi.edge.core.readerplugin.property.Property;
+import org.rifidi.edge.readerplugin.alien.properties.AlienResponse;
+import org.w3c.dom.Element;
 
 /**
- * @author Jerry Maine - jerry@pramari.com
- *
+ * 
+ * 
+ * @author Matthew Dean
  */
-public class MACAddress implements Command {
-	private static final Log logger = LogFactory
-			.getLog(MACAddress.class);
+@Form(name = MACAddress.NAME, formElements = { @FormElement(type = FormElementType.STRING, elementName = MACAddress.DATA, editable = true, defaultValue = "0", displayName = MACAddress.DISPLAY) })
+public class MACAddress implements Property {
 
-	private static final  String command = "MACAddress";
+	private static final String NAME = "MACAddress";
 
-	/* (non-Javadoc)
-	 * @see org.rifidi.edge.core.readerplugin.commands.Command#start(org.rifidi.edge.core.communication.Connection, org.rifidi.edge.core.messageQueue.MessageQueue, java.lang.String, long)
+	private static final String DATA = "MACAddress Data";
+
+	private static final String DISPLAY = "MACAddress";
+
+	private static final Log logger = LogFactory.getLog(Gateway.class);
+
+	private static final String command = "MACAddress";
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.core.readerplugin.property.Property#getProperty(org.rifidi
+	 * .edge.core.communication.Connection,
+	 * org.rifidi.edge.core.messageQueue.MessageQueue, org.w3c.dom.Element)
 	 */
 	@Override
-	public CommandReturnStatus start(Connection connection,
-			MessageQueue messageQueue, MessageQueue errorQueue,
-			Document configuration, long commandID) {
-		logger.debug("Starting the " + this.getClass().getSimpleName()
-				+ " command for the Alien");
-		if (configuration == null || configuration.equals("")) {
-			try {
+	public Element getProperty(Connection connection, MessageQueue errorQueue,
+			Element propertyConfig) {
+		AlienResponse response = new AlienResponse();
+		String responseString = null;
+		try {
+			connection.sendMessage("\1get " + command + "\n");
 
-				connection.sendMessage("get " + command + "\n");
-				String message = (String) connection.receiveMessage();
-				
-				if (message.contains("=")) {
-					String[] temp = message.split("=");
-					message = temp[1];
-				}
-				message = message.trim();
-				
-				messageQueue.addMessage(new GenericAlienMessage(new Property(
-						command, message)));
+			responseString = (String) connection.receiveMessage();
 
-			} catch (RifidiMessageQueueException e) {
-				e.printStackTrace();
-				return CommandReturnStatus.INTERRUPTED;
-			} catch (IOException e) {
-				e.printStackTrace();
-				return CommandReturnStatus.INTERRUPTED;
-			}
-			return CommandReturnStatus.SUCCESSFUL;
-		} else {
-			return CommandReturnStatus.UNSUCCESSFUL;
+		} catch (IOException e) {
+			logger.debug("IOException");
 		}
+		response.setResponseMessage(responseString);
+		return response.formulateResponseXML(propertyConfig, NAME, DATA);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.rifidi.edge.core.readerplugin.commands.Command#stop()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.core.readerplugin.property.Property#setProperty(org.rifidi
+	 * .edge.core.communication.Connection,
+	 * org.rifidi.edge.core.messageQueue.MessageQueue, org.w3c.dom.Element)
 	 */
 	@Override
-	public void stop() {
-
+	public Element setProperty(Connection connection, MessageQueue errorQueue,
+			Element propertyConfig) {
+		return getProperty(connection, errorQueue, propertyConfig);
 	}
-
 }
+
