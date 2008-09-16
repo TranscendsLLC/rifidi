@@ -15,16 +15,24 @@ import org.rifidi.edge.readerplugin.alien.properties.PropertyWrapper;
 import org.w3c.dom.Element;
 
 /**
+ * 
+ * 
  * @author Jerry Maine
  * @author Kyle Neumeier - kyle@pramari.com
- * 
+ * @author Matthew Dean - matt@pramari.com
  */
-@Form(name = AntennaSequence.ant, formElements = { @FormElement(type = FormElementType.STRING, elementName = "AntennaSequenceData", editable = true, defaultValue = "0", displayName = "Antenna Sequence") })
+@Form(name = AntennaSequence.ANTENNA_SEQUENCE, formElements = { @FormElement(type = FormElementType.STRING, elementName = AntennaSequence.ANTENNA_SEQUENCE_DATA, editable = true, defaultValue = "0", displayName = AntennaSequence.ANTENNA_SEQUENCE_DISPLAY) })
 public class AntennaSequence implements Property {
-	
-	public static final String ant="1";
+
+	private static final String ANTENNA_SEQUENCE = "AntennaSequence";
+
+	private static final String ANTENNA_SEQUENCE_DATA = "AntennaSequenceData";
+
+	private static final String ANTENNA_SEQUENCE_DISPLAY = "Antenna Sequence";
 
 	private static final Log logger = LogFactory.getLog(AntennaSequence.class);
+
+	private static final String command = "antennasequence";
 
 	/*
 	 * (non-Javadoc)
@@ -40,7 +48,7 @@ public class AntennaSequence implements Property {
 		AlienResponse response = new AlienResponse();
 		String responseString = null;
 		try {
-			connection.sendMessage("\1get antennasequence\n");
+			connection.sendMessage("\1get " + command + "\n");
 
 			responseString = (String) connection.receiveMessage();
 
@@ -48,8 +56,8 @@ public class AntennaSequence implements Property {
 			logger.debug("IOException");
 		}
 		response.setResponseMessage(responseString);
-		return response.formulateResponseXML(propertyConfig, "AntennaSequence",
-				"AntennaSequenceData");
+		return response.formulateResponseXML(propertyConfig, ANTENNA_SEQUENCE,
+				ANTENNA_SEQUENCE_DATA);
 
 	}
 
@@ -67,8 +75,8 @@ public class AntennaSequence implements Property {
 
 		PropertyWrapper wrapper = new PropertyWrapper(propertyConfig);
 
-		String command = "\1set antennasequence = "
-				+ wrapper.getElementValue("AntennaSequenceData") + "\n";
+		String command = "\1set " + AntennaSequence.command + " = "
+				+ wrapper.getElementValue(ANTENNA_SEQUENCE_DATA) + "\n";
 		AlienResponse response = new AlienResponse();
 		String responseString = null;
 		try {
@@ -79,8 +87,8 @@ public class AntennaSequence implements Property {
 			logger.debug("IOException");
 		}
 		response.setResponseMessage(responseString);
-		return response.formulateResponseXML(propertyConfig, "AntennaSequence",
-				"AntennaSequenceData");
+		return response.formulateResponseXML(propertyConfig, ANTENNA_SEQUENCE,
+				ANTENNA_SEQUENCE_DATA);
 	}
 
 }
