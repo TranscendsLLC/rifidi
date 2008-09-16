@@ -34,7 +34,7 @@ public class Netmask implements Property {
 
 	private static final String NAME = "Netmask";
 
-	private static final String DATA = "Netmask Data";
+	private static final String DATA = "Netmask_Data";
 
 	private static final String DISPLAY = "Netmask";
 

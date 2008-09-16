@@ -20,11 +20,11 @@ import org.w3c.dom.Element;
 @Form(name = CommandPort.COMMAND_PORT, formElements = { @FormElement(type = FormElementType.STRING, elementName = CommandPort.COMMAND_PORT_DATA, editable = true, defaultValue = "0", displayName = CommandPort.COMMAND_PORT_DISPLAY) })
 public class CommandPort implements Property {
 
-	private static final String COMMAND_PORT = "AntennaSequence";
+	private static final String COMMAND_PORT = "CommandPort";
 
-	private static final String COMMAND_PORT_DATA = "AntennaSequenceData";
+	private static final String COMMAND_PORT_DATA = "CommandPort_Data";
 
-	private static final String COMMAND_PORT_DISPLAY = "Antenna Sequence";
+	private static final String COMMAND_PORT_DISPLAY = "CommandPort";
 
 	private static final Log logger = LogFactory.getLog(CommandPort.class);
 

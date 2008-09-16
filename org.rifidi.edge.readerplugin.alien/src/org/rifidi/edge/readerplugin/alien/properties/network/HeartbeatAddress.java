@@ -35,7 +35,7 @@ public class HeartbeatAddress implements Property {
 
 	private static final String NAME = "HeartbeatAddress";
 
-	private static final String DATA = "HeartbeatAddress Data";
+	private static final String DATA = "HeartbeatAddress_Data";
 
 	private static final String DISPLAY = "HeartbeatAddress";
 
