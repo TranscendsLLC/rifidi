@@ -22,7 +22,7 @@ public class Gateway implements Command {
 	private static final Log logger = LogFactory
 			.getLog(Gateway.class);
 
-	static private String command = "Gateway";
+	private static final  String command = "Gateway";
 
 	/* (non-Javadoc)
 	 * @see org.rifidi.edge.core.readerplugin.commands.Command#start(org.rifidi.edge.core.communication.Connection, org.rifidi.edge.core.messageQueue.MessageQueue, java.lang.String, long)

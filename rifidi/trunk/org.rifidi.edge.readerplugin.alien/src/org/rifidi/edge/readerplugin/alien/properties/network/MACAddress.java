@@ -21,7 +21,7 @@ public class MACAddress implements Command {
 	private static final Log logger = LogFactory
 			.getLog(MACAddress.class);
 
-	static private String command = "MACAddress";
+	private static final  String command = "MACAddress";
 
 	/* (non-Javadoc)
 	 * @see org.rifidi.edge.core.readerplugin.commands.Command#start(org.rifidi.edge.core.communication.Connection, org.rifidi.edge.core.messageQueue.MessageQueue, java.lang.String, long)
