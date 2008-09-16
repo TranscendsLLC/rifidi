@@ -9,6 +9,7 @@
 	</connectionManager>
 	<name>Alien ALR 9800</name>
 	<description>The ALR-9800 is Alien's flagship reader.</description>
+	
 	<property>
 		<classname>org.rifidi.edge.readerplugin.alien.properties.general.ReaderName</classname>
 		<name>ReaderName</name>
@@ -59,6 +60,73 @@
 		<name>ReaderNumber</name>
 		<group>general</group>
 	</property>
+	<property>
+		<classname>org.rifidi.edge.readerplugin.alien.properties.network.CommandPort</classname>
+		<name>CommandPort</name>
+		<group>network</group>
+	</property>
+	
+	<property>
+		<classname>org.rifidi.edge.readerplugin.alien.properties.network.DHCP</classname>
+		<name>DHCP</name>
+		<group>network</group>
+	</property>
+	<property>
+		<classname>org.rifidi.edge.readerplugin.alien.properties.network.DNS</classname>
+		<name>DNS</name>
+		<group>network</group>
+	</property>
+	<property>
+		<classname>org.rifidi.edge.readerplugin.alien.properties.network.CommandPort</classname>
+		<name>CommandPort</name>
+		<group>network</group>
+	</property>
+	<property>
+		<classname>org.rifidi.edge.readerplugin.alien.properties.network.IPAddress</classname>
+		<name>IPAddress</name>
+		<group>network</group>
+	</property>
+	<property>
+		<classname>org.rifidi.edge.readerplugin.alien.properties.network.Gateway</classname>
+		<name>Gateway</name>
+		<group>network</group>
+	</property>
+		<property>
+		<classname>org.rifidi.edge.readerplugin.alien.properties.network.Netmask</classname>
+		<name>Netmask</name>
+		<group>network</group>
+	</property>
+	<property>
+		<classname>org.rifidi.edge.readerplugin.alien.properties.network.NetworkTimeout</classname>
+		<name>NetworkTimeout</name>
+		<group>network</group>
+	</property>
+	<property>
+		<classname>org.rifidi.edge.readerplugin.alien.properties.network.HeartbeatAddress</classname>
+		<name>HeartbeatAddress</name>
+		<group>network</group>
+	</property>
+	<property>
+		<classname>org.rifidi.edge.readerplugin.alien.properties.network.HeartbeatAddress</classname>
+		<name>HeartbeatAddress</name>
+		<group>network</group>
+	</property>
+	<property>
+		<classname>org.rifidi.edge.readerplugin.alien.properties.network.HeartbeatPort</classname>
+		<name>HeartbeatPort</name>
+		<group>network</group>
+	</property>
+	<property>
+		<classname>org.rifidi.edge.readerplugin.alien.properties.network.HeartbeatTime</classname>
+		<name>HeartbeatTime</name>
+		<group>network</group>
+	</property>
+	<property>
+		<classname>org.rifidi.edge.readerplugin.alien.properties.network.HeartbeatCount</classname>
+		<name>HeartbeatCount</name>
+		<group>network</group>
+	</property>
+	
 	<command>
 		<classname>
 			org.rifidi.edge.readerplugin.alien.commands.AlienTagStreamCommand

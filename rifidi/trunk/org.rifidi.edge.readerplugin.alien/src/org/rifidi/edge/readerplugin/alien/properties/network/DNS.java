@@ -51,8 +51,7 @@ public class DNS implements Property {
 			logger.debug("IOException");
 		}
 		response.setResponseMessage(responseString);
-		return response.formulateResponseXML(propertyConfig, DNS,
-				DNS_DATA);
+		return response.formulateResponseXML(propertyConfig, DNS, DNS_DATA);
 	}
 
 	/*
