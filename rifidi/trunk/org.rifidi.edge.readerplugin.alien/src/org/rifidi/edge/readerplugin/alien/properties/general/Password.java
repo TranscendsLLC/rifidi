@@ -23,7 +23,7 @@ public class Password implements Property {
 
 	private static final String PASSWORD = "Password";
 
-	private static final String PASSWORD_DATA = "Password";
+	private static final String PASSWORD_DATA = "Password_Data";
 
 	private static final String PASSWORD_DISPLAY = "Password";
 

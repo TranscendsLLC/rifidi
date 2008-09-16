@@ -35,7 +35,7 @@ public class HeartbeatTime implements Property {
 
 	private static final String NAME = "HeartbeatTime";
 
-	private static final String DATA = "HeartbeatTime Data";
+	private static final String DATA = "HeartbeatTime_Data";
 
 	private static final String DISPLAY = "HeartbeatTime";
 

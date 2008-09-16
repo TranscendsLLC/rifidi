@@ -34,7 +34,7 @@ public class Gateway implements Property {
 	
 	private static final String NAME = "Gateway";
 	
-	private static final String DATA = "Gateway Data";
+	private static final String DATA = "Gateway_Data";
 	
 	private static final String DISPLAY = "Gateway";
 	

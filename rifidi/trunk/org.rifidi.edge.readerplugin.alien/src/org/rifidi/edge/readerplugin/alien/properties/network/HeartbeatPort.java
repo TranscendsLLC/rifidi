@@ -35,7 +35,7 @@ public class HeartbeatPort implements Property {
 
 	private static final String NAME = "HeartbeatPort";
 
-	private static final String DATA = "HeartbeatPort Data";
+	private static final String DATA = "HeartbeatPort_Data";
 
 	private static final String DISPLAY = "HeartbeatPort";
 

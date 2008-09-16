@@ -34,7 +34,7 @@ public class NetworkTimeout implements Property {
 
 	private static final String NAME = "NetworkTimeout";
 
-	private static final String DATA = "NetworkTimeout Data";
+	private static final String DATA = "NetworkTimeout_Data";
 
 	private static final String DISPLAY = "NetworkTimeout";
 

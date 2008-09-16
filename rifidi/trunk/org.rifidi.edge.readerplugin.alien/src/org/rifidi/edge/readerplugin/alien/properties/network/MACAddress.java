@@ -34,7 +34,7 @@ public class MACAddress implements Property {
 
 	private static final String NAME = "MACAddress";
 
-	private static final String DATA = "MACAddress Data";
+	private static final String DATA = "MACAddress_Data";
 
 	private static final String DISPLAY = "MACAddress";
 

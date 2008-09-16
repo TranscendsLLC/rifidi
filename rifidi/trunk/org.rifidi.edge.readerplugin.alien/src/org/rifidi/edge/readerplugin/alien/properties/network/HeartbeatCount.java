@@ -35,7 +35,7 @@ public class HeartbeatCount implements Property {
 
 	private static final String NAME = "HeartbeatCount";
 
-	private static final String DATA = "HeartbeatCount Data";
+	private static final String DATA = "HeartbeatCount_Data";
 
 	private static final String DISPLAY = "HeartbeatCount";
 

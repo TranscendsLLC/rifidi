@@ -21,7 +21,7 @@ public class DNS implements Property {
 
 	private static final String DNS = "DNS";
 
-	private static final String DNS_DATA = "DNS Data";
+	private static final String DNS_DATA = "DNS_Data";
 
 	private static final String DNS_DISPLAY = "DNS";
 

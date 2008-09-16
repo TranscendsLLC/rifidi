@@ -22,7 +22,7 @@ public class DHCP implements Property {
 
 	private static final String DHCP = "DHCP";
 
-	private static final String DHCP_DATA = "DHCP Data";
+	private static final String DHCP_DATA = "DHCP_Data";
 
 	private static final String DHCP_DISPLAY = "DHCP";
 

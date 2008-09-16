@@ -34,7 +34,7 @@ public class IPAddress implements Property {
 
 	private static final String NAME = "IPAddress";
 
-	private static final String DATA = "IPAddress Data";
+	private static final String DATA = "IPAddress_Data";
 
 	private static final String DISPLAY = "IPAddress";
 
