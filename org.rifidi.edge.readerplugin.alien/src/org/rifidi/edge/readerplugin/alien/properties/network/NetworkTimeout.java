@@ -22,7 +22,7 @@ public class NetworkTimeout implements Command {
 	private static final Log logger = LogFactory
 			.getLog(NetworkTimeout.class);
 
-	static private String command = "NetworkTimeout";
+	private static final  String command = "NetworkTimeout";
 
 	/* (non-Javadoc)
 	 * @see org.rifidi.edge.core.readerplugin.commands.Command#start(org.rifidi.edge.core.communication.Connection, org.rifidi.edge.core.messageQueue.MessageQueue, java.lang.String, long)

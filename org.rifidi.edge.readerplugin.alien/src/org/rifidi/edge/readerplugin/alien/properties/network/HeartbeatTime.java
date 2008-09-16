@@ -21,7 +21,7 @@ public class HeartbeatTime implements Command {
 	private static final Log logger = LogFactory
 			.getLog(HeartbeatTime.class);
 
-	static private String command = "HeartbeatTime";
+	private static final  String command = "HeartbeatTime";
 
 	/* (non-Javadoc)
 	 * @see org.rifidi.edge.core.readerplugin.commands.Command#start(org.rifidi.edge.core.communication.Connection, org.rifidi.edge.core.messageQueue.MessageQueue, java.lang.String, long)
