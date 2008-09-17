@@ -127,6 +127,44 @@
 		<group>network</group>
 	</property>
 	
+	<property>
+		<classname>org.rifidi.edge.readerplugin.alien.properties.time.Time</classname>
+		<name>Time</name>
+		<group>time</group>
+	</property>
+	<property>
+		<classname>org.rifidi.edge.readerplugin.alien.properties.time.TimeServer</classname>
+		<name>TimeServer</name>
+		<group>time</group>
+	</property>
+	<property>
+		<classname>org.rifidi.edge.readerplugin.alien.properties.time.TimeZone</classname>
+		<name>TimeZone</name>
+		<group>time</group>
+	</property>
+	
+	<property>
+		<classname>org.rifidi.edge.readerplugin.alien.properties.gpio.ExternalInput</classname>
+		<name>External Input</name>
+		<group>GPIO</group>
+	</property>
+	<property>
+		<classname>org.rifidi.edge.readerplugin.alien.properties.gpio.ExternalOutput</classname>
+		<name>External Output</name>
+		<group>GPIO</group>
+	</property>
+	<property>
+		<classname>org.rifidi.edge.readerplugin.alien.properties.gpio.InvertExternalOutput</classname>
+		<name>Invert External Output</name>
+		<group>GPIO</group>
+	</property>
+	<property>
+		<classname>org.rifidi.edge.readerplugin.alien.properties.gpio.InvertExternalInput</classname>
+		<name> Invert External Input</name>
+		<group>GPIO</group>
+	</property>
+	
+	
 	<command>
 		<classname>
 			org.rifidi.edge.readerplugin.alien.commands.AlienTagStreamCommand
