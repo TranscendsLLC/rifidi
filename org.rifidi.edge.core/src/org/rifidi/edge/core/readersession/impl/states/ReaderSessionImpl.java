@@ -1,20 +1,11 @@
 package org.rifidi.edge.core.readersession.impl.states;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.concurrent.Semaphore;
 
-import javax.xml.XMLConstants;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamSource;
-import javax.xml.validation.Schema;
-import javax.xml.validation.SchemaFactory;
-import javax.xml.validation.Validator;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.rifidi.edge.common.utilities.resource.Resource;
 import org.rifidi.edge.core.communication.Connection;
 import org.rifidi.edge.core.communication.service.CommunicationStateListener;
 import org.rifidi.edge.core.communication.service.ConnectionService;
