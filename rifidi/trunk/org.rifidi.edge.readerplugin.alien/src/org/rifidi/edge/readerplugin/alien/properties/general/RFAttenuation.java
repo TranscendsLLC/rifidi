@@ -11,6 +11,7 @@ import org.rifidi.edge.core.communication.Connection;
 import org.rifidi.edge.core.messageQueue.MessageQueue;
 import org.rifidi.edge.core.readerplugin.property.Property;
 import org.rifidi.edge.readerplugin.alien.properties.AlienResponse;
+import org.rifidi.edge.readerplugin.alien.properties.PropertyWrapper;
 import org.w3c.dom.Element;
 
 /**
@@ -67,8 +68,23 @@ public class RFAttenuation implements Property {
 	@Override
 	public Element setProperty(Connection connection, MessageQueue errorQueue,
 			Element propertyConfig) {
-		// TODO Auto-generated method stub
-		return null;
+
+		PropertyWrapper wrapper = new PropertyWrapper(propertyConfig);
+
+		String command = "\1set " + RFAttenuation.command + " = "
+				+ wrapper.getElementValue(RFATTENUATION_DATA) + "\n";
+		AlienResponse response = new AlienResponse();
+		String responseString = null;
+		try {
+			connection.sendMessage(command);
+			responseString = (String) connection.receiveMessage();
+
+		} catch (IOException e) {
+			logger.debug("IOException");
+		}
+		response.setResponseMessage(responseString);
+		return response.formulateResponseXML(propertyConfig, RFATTENUATION,
+				RFATTENUATION_DATA);
 	}
 
 }
