@@ -64,8 +64,7 @@ public class Username implements Property {
 	@Override
 	public Element setProperty(Connection connection, MessageQueue errorQueue,
 			Element propertyConfig) {
-		// TODO Auto-generated method stub
-		return null;
+		return getProperty(connection, errorQueue, propertyConfig);
 	}
 
 }
