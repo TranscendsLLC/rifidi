@@ -29,23 +29,42 @@ import org.rifidi.edge.core.readerplugin.messages.impl.TagMessage;
 import org.w3c.dom.Document;
 
 /**
- * 
+ * Tag stream command for the Alien reader.  
  * 
  * @author Matthew Dean - matt@pramari.com
  */
 public class AlienTagStreamCommand implements Command {
 
+	/**
+	 * 
+	 */
 	private TimeZone timeZone;
+	
+	/**
+	 * 
+	 */
 	private Calendar calendar;
 	
+	/**
+	 * 
+	 */
 	private boolean running = false;
 	
+	/**
+	 * 
+	 */
 	@SuppressWarnings("unused")
 	private int pollPeriod;
 	
+	/**
+	 * 
+	 */
 	@SuppressWarnings("unused")
 	private String antennaSequence;
 
+	/**
+	 * 
+	 */
 	private static final Log logger = LogFactory
 			.getLog(AlienTagStreamCommand.class);
 
