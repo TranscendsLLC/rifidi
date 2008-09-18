@@ -29,14 +29,14 @@ import org.w3c.dom.Element;
  * 
  * @author Matthew Dean
  */
-@Form(name = MACAddress.NAME, formElements = { @FormElement(type = FormElementType.STRING, elementName = MACAddress.DATA, editable = true, defaultValue = "0", displayName = MACAddress.DISPLAY) })
+@Form(name = MACAddress.NAME, formElements = { @FormElement(type = FormElementType.STRING, elementName = MACAddress.DATA, editable = false, defaultValue = "0", displayName = MACAddress.DISPLAY) })
 public class MACAddress implements Property {
 
 	private static final String NAME = "MACAddress";
 
 	private static final String DATA = "MACAddress_Data";
 
-	private static final String DISPLAY = "MACAddress";
+	private static final String DISPLAY = "MAC Address";
 
 	private static final Log logger = LogFactory.getLog(Gateway.class);
 

@@ -285,4 +285,6 @@ public interface RemoteReaderConnection extends Remote {
 	 */
 	public String getPropertyAnnotations(String group) throws RemoteException,
 			DynamicSWTFormAnnotationException;
+	
+	public String getCommandAnnotations() throws RemoteException, DynamicSWTFormAnnotationException;
 }

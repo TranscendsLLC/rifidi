@@ -37,7 +37,7 @@ public class HeartbeatAddress implements Property {
 
 	private static final String DATA = "HeartbeatAddress_Data";
 
-	private static final String DISPLAY = "HeartbeatAddress";
+	private static final String DISPLAY = "Heartbeat Address";
 
 	private static final Log logger = LogFactory.getLog(Gateway.class);
 

@@ -16,14 +16,14 @@ import org.w3c.dom.Element;
 /**
  *
  */
-@Form(name = Uptime.UPTIME, formElements = { @FormElement(type = FormElementType.STRING, elementName = Uptime.UPTIME_DATA, editable = true, defaultValue = "0", displayName = Uptime.UPTIME_DISPLAY) })
+@Form(name = Uptime.UPTIME, formElements = { @FormElement(type = FormElementType.INTEGER, elementName = Uptime.UPTIME_DATA, editable = false, defaultValue = "0", displayName = Uptime.UPTIME_DISPLAY) })
 public class Uptime implements Property {
 
 	private static final String UPTIME = "Uptime";
 
 	private static final String UPTIME_DATA = "UptimeData";
 
-	private static final String UPTIME_DISPLAY = "Uptime Display";
+	private static final String UPTIME_DISPLAY = "Uptime";
 
 	private static final Log logger = LogFactory.getLog(Uptime.class);
 

@@ -28,7 +28,7 @@ import org.w3c.dom.Element;
  * 
  * @author Matthew Dean
  */
-@Form(name = TimeServer.NAME, formElements = { @FormElement(type = FormElementType.STRING, elementName = TimeServer.DATA, editable = true, defaultValue = "0", displayName = TimeServer.DISPLAY, min = 0, max = 15) })
+@Form(name = TimeServer.NAME, formElements = { @FormElement(type = FormElementType.STRING, elementName = TimeServer.DATA, editable = false, defaultValue = "0", displayName = TimeServer.DISPLAY, min = 0, max = 15) })
 public class TimeServer implements Property {
 
 	private static final String NAME = "TimeServer";

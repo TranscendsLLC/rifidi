@@ -16,14 +16,14 @@ import org.w3c.dom.Element;
 /**
  * 
  */
-@Form(name = Username.USERNAME, formElements = { @FormElement(type = FormElementType.STRING, elementName = Username.USERNAME_DATA, editable = true, defaultValue = "alien", displayName = Username.USERNAME_DISPLAY) })
+@Form(name = Username.USERNAME, formElements = { @FormElement(type = FormElementType.STRING, elementName = Username.USERNAME_DATA, editable = true, defaultValue = "alien", displayName = Username.USERNAME_DISPLAY, regex="(.)+") })
 public class Username implements Property {
 
 	public static final String USERNAME = "Username";
 
 	public static final String USERNAME_DATA = "UsernameData";
 
-	public static final String USERNAME_DISPLAY = "Username Display";
+	public static final String USERNAME_DISPLAY = "Username";
 
 	private static final Log logger = LogFactory.getLog(Username.class);
 

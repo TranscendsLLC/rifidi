@@ -29,7 +29,7 @@ import org.w3c.dom.Element;
  * 
  * @author Matthew Dean
  */
-@Form(name = Gateway.NAME, formElements = { @FormElement(type = FormElementType.STRING, elementName = Gateway.DATA, editable = true, defaultValue = "0", displayName = Gateway.DISPLAY) })
+@Form(name = Gateway.NAME, formElements = { @FormElement(type = FormElementType.STRING, elementName = Gateway.DATA, editable = false, defaultValue = "0", displayName = Gateway.DISPLAY) })
 public class Gateway implements Property {
 	
 	private static final String NAME = "Gateway";
