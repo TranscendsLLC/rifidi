@@ -17,7 +17,7 @@ import org.w3c.dom.Element;
  * 
  * @author Matthew Dean
  */
-@Form(name = DHCP.DHCP, formElements = { @FormElement(type = FormElementType.STRING, elementName = DHCP.DHCP_DATA, editable = true, defaultValue = "0", displayName = DHCP.DHCP_DISPLAY) })
+@Form(name = DHCP.DHCP, formElements = { @FormElement(type = FormElementType.STRING, elementName = DHCP.DHCP_DATA, editable = false, defaultValue = "0", displayName = DHCP.DHCP_DISPLAY) })
 public class DHCP implements Property {
 
 	private static final String DHCP = "DHCP";

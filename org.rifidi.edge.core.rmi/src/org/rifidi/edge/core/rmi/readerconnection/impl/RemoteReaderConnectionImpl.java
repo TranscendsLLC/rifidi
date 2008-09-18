@@ -395,6 +395,36 @@ public class RemoteReaderConnectionImpl implements RemoteReaderConnection {
 			throw new DynamicSWTFormAnnotationException(e);
 		}
 	}
+	
+
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.rmi.readerconnection.RemoteReaderConnection#getCommandAnnotations()
+	 */
+	@Override
+	public String getCommandAnnotations() throws RemoteException,
+			DynamicSWTFormAnnotationException {
+		List<Class<?>> classes = new ArrayList<Class<?>>();
+		if (plugin.getCommands().size() == 0) {
+			logger.debug("No available commands");
+		}
+		for (String command : plugin.getCommands()) {
+			try {
+				CommandDescription cd = plugin.getCommand(command);
+				classes.add(Class.forName(cd.getClassname()));
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+				logger.debug("ClassNotFoundException when "
+						+ "trying to instantite class for "
+						+ plugin.getCommand(command));
+			}
+		}
+		try {
+			return DomHelper.toString(this.dynamicSWTFormXMLProcessor
+					.processAnnotation("CommandDescriptors", classes));
+		} catch (TransformerException e) {
+			throw new DynamicSWTFormAnnotationException(e);
+		}
+	}
 
 	@Override
 	public void disable() throws RemoteException {
@@ -426,5 +456,6 @@ public class RemoteReaderConnectionImpl implements RemoteReaderConnection {
 			ReaderSessionService readerSessionService) {
 		this.readerSessionService = readerSessionService;
 	}
+
 
 }

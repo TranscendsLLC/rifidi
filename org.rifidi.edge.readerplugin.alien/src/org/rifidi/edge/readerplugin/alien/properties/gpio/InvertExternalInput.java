@@ -28,7 +28,7 @@ import org.w3c.dom.Element;
 /**
  *
  */
-@Form(name = InvertExternalInput.NAME, formElements = { @FormElement(type = FormElementType.INTEGER, elementName = InvertExternalInput.DATA, editable = true, defaultValue = "0", displayName = InvertExternalInput.DISPLAY, min = 0, max = 15) })
+@Form(name = InvertExternalInput.NAME, formElements = { @FormElement(type = FormElementType.CHOICE, elementName = InvertExternalInput.DATA, editable = true, defaultValue = "OFF", displayName = InvertExternalInput.DISPLAY, enumClass="org.rifidi.edge.readerplugin.alien.properties.OnOff") })
 public class InvertExternalInput implements Property {
 
 	private static final String NAME = "InvertExternalInput";

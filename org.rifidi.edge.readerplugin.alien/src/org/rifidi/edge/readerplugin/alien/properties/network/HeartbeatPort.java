@@ -30,14 +30,14 @@ import org.w3c.dom.Element;
  * 
  * @author Matthew Dean
  */
-@Form(name = HeartbeatPort.NAME, formElements = { @FormElement(type = FormElementType.INTEGER, elementName = HeartbeatPort.DATA, editable = true, defaultValue = "0", displayName = HeartbeatPort.DISPLAY) })
+@Form(name = HeartbeatPort.NAME, formElements = { @FormElement(type = FormElementType.INTEGER, elementName = HeartbeatPort.DATA, editable = true, defaultValue = "0", displayName = HeartbeatPort.DISPLAY, min=0, max=65535) })
 public class HeartbeatPort implements Property {
 
 	private static final String NAME = "HeartbeatPort";
 
 	private static final String DATA = "HeartbeatPort_Data";
 
-	private static final String DISPLAY = "HeartbeatPort";
+	private static final String DISPLAY = "Heartbeat Port";
 
 	private static final Log logger = LogFactory.getLog(Gateway.class);
 

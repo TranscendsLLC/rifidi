@@ -29,14 +29,14 @@ import org.w3c.dom.Element;
  * 
  * @author Matthew Dean
  */
-@Form(name = NetworkTimeout.NAME, formElements = { @FormElement(type = FormElementType.STRING, elementName = NetworkTimeout.DATA, editable = true, defaultValue = "0", displayName = NetworkTimeout.DISPLAY) })
+@Form(name = NetworkTimeout.NAME, formElements = { @FormElement(type = FormElementType.INTEGER, elementName = NetworkTimeout.DATA, editable = true, defaultValue = "0", displayName = NetworkTimeout.DISPLAY, min=5, max=20000) })
 public class NetworkTimeout implements Property {
 
 	private static final String NAME = "NetworkTimeout";
 
 	private static final String DATA = "NetworkTimeout_Data";
 
-	private static final String DISPLAY = "NetworkTimeout";
+	private static final String DISPLAY = "Network Timeout";
 
 	private static final Log logger = LogFactory.getLog(Gateway.class);
 

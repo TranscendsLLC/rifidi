@@ -16,7 +16,7 @@ import org.w3c.dom.Element;
 /**
  *
  */
-@Form(name = DNS.DNS, formElements = { @FormElement(type = FormElementType.STRING, elementName = DNS.DNS_DATA, editable = true, defaultValue = "0", displayName = DNS.DNS_DISPLAY) })
+@Form(name = DNS.DNS, formElements = { @FormElement(type = FormElementType.STRING, elementName = DNS.DNS_DATA, editable = false, defaultValue = "0", displayName = DNS.DNS_DISPLAY) })
 public class DNS implements Property {
 
 	private static final String DNS = "DNS";

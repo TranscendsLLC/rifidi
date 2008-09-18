@@ -19,14 +19,14 @@ import org.w3c.dom.Element;
  * @author Matthew Dean - matt@pramari.com
  * @author Jerry Maine - jerry@pramari.com
  */
-@Form(name = ReaderType.READERTYPE, formElements = { @FormElement(type = FormElementType.STRING, elementName = ReaderType.READERTYPE_DATA, editable = true, defaultValue = "0", displayName = ReaderType.READERTYPE_DISPLAY) })
+@Form(name = ReaderType.READERTYPE, formElements = { @FormElement(type = FormElementType.STRING, elementName = ReaderType.READERTYPE_DATA, editable = false, defaultValue = "0", displayName = ReaderType.READERTYPE_DISPLAY) })
 public class ReaderType implements Property {
 
 	private static final String READERTYPE = "ReaderType";
 
 	private static final String READERTYPE_DATA = "ReaderTypeData";
 
-	private static final String READERTYPE_DISPLAY = "ReaderTypeDisplay";
+	private static final String READERTYPE_DISPLAY = "Reader Type";
 
 	private static final Log logger = LogFactory.getLog(ReaderType.class);
 	

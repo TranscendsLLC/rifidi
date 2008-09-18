@@ -13,134 +13,134 @@
 	<property>
 		<classname>org.rifidi.edge.readerplugin.alien.properties.general.ReaderName</classname>
 		<name>ReaderName</name>
-		<group>general</group>
+		<group>General</group>
 	</property>
 	<property>
 		<classname>org.rifidi.edge.readerplugin.alien.properties.general.Username</classname>
 		<name>Username</name>
-		<group>general</group>
+		<group>General</group>
 	</property>
 	<property>
 		<classname>org.rifidi.edge.readerplugin.alien.properties.general.Password</classname>
 		<name>Password</name>
-		<group>general</group>
+		<group>General</group>
 	</property>
 	<property>
 		<classname>org.rifidi.edge.readerplugin.alien.properties.general.AntennaSequence</classname>
 		<name>AntennaSequence</name>
-		<group>general</group>
+		<group>General</group>
 	</property>
 	<property>
 		<classname>org.rifidi.edge.readerplugin.alien.properties.general.MaxAntenna</classname>
 		<name>MaxAntenna</name>
-		<group>general</group>
+		<group>General</group>
 	</property>
 	<property>
 		<classname>org.rifidi.edge.readerplugin.alien.properties.general.RFAttenuation</classname>
 		<name>RFAttenuation</name>
-		<group>general</group>
+		<group>General</group>
 	</property>
 	<property>
 		<classname>org.rifidi.edge.readerplugin.alien.properties.general.Uptime</classname>
 		<name>Uptime</name>
-		<group>general</group>
+		<group>General</group>
 	</property>
 	<property>
 		<classname>org.rifidi.edge.readerplugin.alien.properties.general.ReaderVersion</classname>
 		<name>ReaderVersion</name>
-		<group>general</group>
+		<group>General</group>
 	</property>
 	<property>
 		<classname>org.rifidi.edge.readerplugin.alien.properties.general.ReaderType</classname>
 		<name>ReaderType</name>
-		<group>general</group>
+		<group>General</group>
 	</property>
 	<property>
 		<classname>org.rifidi.edge.readerplugin.alien.properties.general.ReaderNumber</classname>
 		<name>ReaderNumber</name>
-		<group>general</group>
+		<group>General</group>
 	</property>
 	<property>
 		<classname>org.rifidi.edge.readerplugin.alien.properties.network.CommandPort</classname>
 		<name>CommandPort</name>
-		<group>network</group>
+		<group>Network</group>
 	</property>
 	
 	<property>
 		<classname>org.rifidi.edge.readerplugin.alien.properties.network.DHCP</classname>
 		<name>DHCP</name>
-		<group>network</group>
+		<group>Network</group>
 	</property>
 	<property>
 		<classname>org.rifidi.edge.readerplugin.alien.properties.network.DNS</classname>
 		<name>DNS</name>
-		<group>network</group>
+		<group>Network</group>
 	</property>
 	<property>
 		<classname>org.rifidi.edge.readerplugin.alien.properties.network.CommandPort</classname>
 		<name>CommandPort</name>
-		<group>network</group>
+		<group>Network</group>
 	</property>
 	<property>
 		<classname>org.rifidi.edge.readerplugin.alien.properties.network.IPAddress</classname>
 		<name>IPAddress</name>
-		<group>network</group>
+		<group>Network</group>
 	</property>
 	<property>
 		<classname>org.rifidi.edge.readerplugin.alien.properties.network.Gateway</classname>
 		<name>Gateway</name>
-		<group>network</group>
+		<group>Network</group>
 	</property>
 		<property>
 		<classname>org.rifidi.edge.readerplugin.alien.properties.network.Netmask</classname>
 		<name>Netmask</name>
-		<group>network</group>
+		<group>Network</group>
 	</property>
 	<property>
 		<classname>org.rifidi.edge.readerplugin.alien.properties.network.NetworkTimeout</classname>
 		<name>NetworkTimeout</name>
-		<group>network</group>
+		<group>Network</group>
 	</property>
 	<property>
 		<classname>org.rifidi.edge.readerplugin.alien.properties.network.HeartbeatAddress</classname>
 		<name>HeartbeatAddress</name>
-		<group>network</group>
+		<group>Heartbeat</group>
 	</property>
 	<property>
 		<classname>org.rifidi.edge.readerplugin.alien.properties.network.HeartbeatAddress</classname>
 		<name>HeartbeatAddress</name>
-		<group>network</group>
+		<group>Heartbeat</group>
 	</property>
 	<property>
 		<classname>org.rifidi.edge.readerplugin.alien.properties.network.HeartbeatPort</classname>
 		<name>HeartbeatPort</name>
-		<group>network</group>
+		<group>Heartbeat</group>
 	</property>
 	<property>
 		<classname>org.rifidi.edge.readerplugin.alien.properties.network.HeartbeatTime</classname>
 		<name>HeartbeatTime</name>
-		<group>network</group>
+		<group>Heartbeat</group>
 	</property>
 	<property>
 		<classname>org.rifidi.edge.readerplugin.alien.properties.network.HeartbeatCount</classname>
 		<name>HeartbeatCount</name>
-		<group>network</group>
+		<group>Heartbeat</group>
 	</property>
 	
 	<property>
 		<classname>org.rifidi.edge.readerplugin.alien.properties.time.Time</classname>
 		<name>Time</name>
-		<group>time</group>
+		<group>Time</group>
 	</property>
 	<property>
 		<classname>org.rifidi.edge.readerplugin.alien.properties.time.TimeServer</classname>
 		<name>TimeServer</name>
-		<group>time</group>
+		<group>Time</group>
 	</property>
 	<property>
 		<classname>org.rifidi.edge.readerplugin.alien.properties.time.TimeZone</classname>
 		<name>TimeZone</name>
-		<group>time</group>
+		<group>Time</group>
 	</property>
 	
 	<property>
@@ -169,14 +169,14 @@
 		<classname>
 			org.rifidi.edge.readerplugin.alien.commands.AlienTagStreamCommand
 		</classname>
-		<group>general</group>
+		<group>General</group>
 		<name>TagStreaming</name>
 	</command>
 	<command>
 		<classname>
 			org.rifidi.edge.readerplugin.alien.commands.AlienTagStreamEnhancedCommand
 		</classname>
-		<group>general</group>
+		<group>General</group>
 		<name>TagStreamingEnhanced</name>
 	</command>
 </readerPluginXML>

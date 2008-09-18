@@ -30,14 +30,14 @@ import org.w3c.dom.Element;
  * 
  * @author Matthew Dean
  */
-@Form(name = HeartbeatCount.NAME, formElements = { @FormElement(type = FormElementType.STRING, elementName = HeartbeatCount.DATA, editable = true, defaultValue = "0", displayName = HeartbeatCount.DISPLAY) })
+@Form(name = HeartbeatCount.NAME, formElements = { @FormElement(type = FormElementType.INTEGER, elementName = HeartbeatCount.DATA, editable = true, defaultValue = "0", displayName = HeartbeatCount.DISPLAY) })
 public class HeartbeatCount implements Property {
 
 	private static final String NAME = "HeartbeatCount";
 
 	private static final String DATA = "HeartbeatCount_Data";
 
-	private static final String DISPLAY = "HeartbeatCount";
+	private static final String DISPLAY = "Heartbeat Count";
 
 	private static final Log logger = LogFactory.getLog(Gateway.class);
 

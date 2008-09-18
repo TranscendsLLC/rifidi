@@ -29,7 +29,7 @@ import org.w3c.dom.Element;
  * 
  * @author Matthew Dean
  */
-@Form(name = Netmask.NAME, formElements = { @FormElement(type = FormElementType.STRING, elementName = Netmask.DATA, editable = true, defaultValue = "0", displayName = Netmask.DISPLAY) })
+@Form(name = Netmask.NAME, formElements = { @FormElement(type = FormElementType.STRING, elementName = Netmask.DATA, editable = false, defaultValue = "0", displayName = Netmask.DISPLAY) })
 public class Netmask implements Property {
 
 	private static final String NAME = "Netmask";

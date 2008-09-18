@@ -30,7 +30,7 @@ import org.w3c.dom.Element;
  * 
  * @author Matthew Dean
  */
-@Form(name = HeartbeatTime.NAME, formElements = { @FormElement(type = FormElementType.STRING, elementName = HeartbeatTime.DATA, editable = true, defaultValue = "0", displayName = HeartbeatTime.DISPLAY) })
+@Form(name = HeartbeatTime.NAME, formElements = { @FormElement(type = FormElementType.INTEGER, elementName = HeartbeatTime.DATA, editable = true, defaultValue = "0", displayName = HeartbeatTime.DISPLAY) })
 public class HeartbeatTime implements Property {
 
 	private static final String NAME = "HeartbeatTime";

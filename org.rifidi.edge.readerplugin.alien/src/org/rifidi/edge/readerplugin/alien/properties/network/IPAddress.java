@@ -29,14 +29,14 @@ import org.w3c.dom.Element;
  * 
  * @author Matthew Dean
  */
-@Form(name = IPAddress.NAME, formElements = { @FormElement(type = FormElementType.STRING, elementName = IPAddress.DATA, editable = true, defaultValue = "0", displayName = IPAddress.DISPLAY) })
+@Form(name = IPAddress.NAME, formElements = { @FormElement(type = FormElementType.STRING, elementName = IPAddress.DATA, editable = false, defaultValue = "0", displayName = IPAddress.DISPLAY) })
 public class IPAddress implements Property {
 
 	private static final String NAME = "IPAddress";
 
 	private static final String DATA = "IPAddress_Data";
 
-	private static final String DISPLAY = "IPAddress";
+	private static final String DISPLAY = "IP Address";
 
 	private static final Log logger = LogFactory.getLog(Gateway.class);
 

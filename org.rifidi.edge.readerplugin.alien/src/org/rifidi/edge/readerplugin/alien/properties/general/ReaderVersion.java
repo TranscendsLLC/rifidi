@@ -17,14 +17,14 @@ import org.w3c.dom.Element;
  * 
  * @author Matthew Dean
  */
-@Form(name = ReaderVersion.READERVERSION, formElements = { @FormElement(type = FormElementType.STRING, elementName = ReaderVersion.READERVERSION_DATA, editable = true, defaultValue = "0", displayName = ReaderVersion.READERVERSION_DISPLAY) })
+@Form(name = ReaderVersion.READERVERSION, formElements = { @FormElement(type = FormElementType.STRING, elementName = ReaderVersion.READERVERSION_DATA, editable = false, defaultValue = "0", displayName = ReaderVersion.READERVERSION_DISPLAY) })
 public class ReaderVersion implements Property {
 	
 	private static final String READERVERSION = "ReaderVersion";
 
 	private static final String READERVERSION_DATA = "ReaderVersionData";
 
-	private static final String READERVERSION_DISPLAY = "ReaderVersion Display";
+	private static final String READERVERSION_DISPLAY = "Reader Version";
 	
 	private static final Log logger = LogFactory.getLog(ReaderVersion.class);
 

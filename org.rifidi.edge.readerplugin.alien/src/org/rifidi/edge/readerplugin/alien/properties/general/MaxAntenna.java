@@ -23,7 +23,7 @@ public class MaxAntenna implements Property {
 
 	private static final String MAXANTENNA_DATA = "MaxAntennaData";
 
-	private static final String MAXANTENNA_DISPLAY = "MaxAntenna";
+	private static final String MAXANTENNA_DISPLAY = "Max Antenna";
 
 	private static final Log logger = LogFactory.getLog(MaxAntenna.class);
 

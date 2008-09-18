@@ -19,6 +19,7 @@ import java.util.TimeZone;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.rifidi.dynamicswtforms.xml.annotaions.Form;
 import org.rifidi.edge.common.utilities.converter.ByteAndHexConvertingUtility;
 import org.rifidi.edge.core.communication.Connection;
 import org.rifidi.edge.core.exceptions.RifidiMessageQueueException;
@@ -29,42 +30,24 @@ import org.rifidi.edge.core.readerplugin.messages.impl.TagMessage;
 import org.w3c.dom.Document;
 
 /**
- * Tag stream command for the Alien reader.  
+ * 
  * 
  * @author Matthew Dean - matt@pramari.com
  */
+@Form(name="AlienTagStreamCommand", formElements={})
 public class AlienTagStreamCommand implements Command {
 
-	/**
-	 * 
-	 */
 	private TimeZone timeZone;
-	
-	/**
-	 * 
-	 */
 	private Calendar calendar;
 	
-	/**
-	 * 
-	 */
 	private boolean running = false;
 	
-	/**
-	 * 
-	 */
 	@SuppressWarnings("unused")
 	private int pollPeriod;
 	
-	/**
-	 * 
-	 */
 	@SuppressWarnings("unused")
 	private String antennaSequence;
 
-	/**
-	 * 
-	 */
 	private static final Log logger = LogFactory
 			.getLog(AlienTagStreamCommand.class);
 

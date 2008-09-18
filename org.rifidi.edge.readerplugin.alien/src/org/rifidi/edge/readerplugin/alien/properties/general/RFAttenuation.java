@@ -18,14 +18,14 @@ import org.w3c.dom.Element;
  * 
  * @author Matthew Dean
  */
-@Form(name = RFAttenuation.RFATTENUATION, formElements = { @FormElement(type = FormElementType.STRING, elementName = RFAttenuation.RFATTENUATION_DATA, editable = true, defaultValue = "0", displayName = RFAttenuation.RFATTENUATION_DISPLAY) })
+@Form(name = RFAttenuation.RFATTENUATION, formElements = { @FormElement(type = FormElementType.INTEGER, elementName = RFAttenuation.RFATTENUATION_DATA, editable = true, defaultValue = "0", displayName = RFAttenuation.RFATTENUATION_DISPLAY, min=0, max=160) })
 public class RFAttenuation implements Property {
 
 	private static final String RFATTENUATION = "RFAttenuation";
 
 	private static final String RFATTENUATION_DATA = "RFAttenuationData";
 
-	private static final String RFATTENUATION_DISPLAY = "RFAttenuation Display";
+	private static final String RFATTENUATION_DISPLAY = "RF Attenuation";
 
 	private static final Log logger = LogFactory.getLog(RFAttenuation.class);
 

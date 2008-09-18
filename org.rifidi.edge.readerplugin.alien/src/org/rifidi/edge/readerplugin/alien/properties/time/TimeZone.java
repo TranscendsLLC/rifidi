@@ -28,14 +28,14 @@ import org.w3c.dom.Element;
  * 
  * @author Matthew Dean
  */
-@Form(name = TimeZone.NAME, formElements = { @FormElement(type = FormElementType.STRING, elementName = TimeZone.DATA, editable = true, defaultValue = "0", displayName = TimeZone.DISPLAY, min = 0, max = 15) })
+@Form(name = TimeZone.NAME, formElements = { @FormElement(type = FormElementType.INTEGER, elementName = TimeZone.DATA, editable = true, defaultValue = "0", displayName = TimeZone.DISPLAY, min = 0, max = 15) })
 public class TimeZone implements Property {
 
 	private static final String NAME = "TimeZone";
 
 	private static final String DATA = "TimeZoneData";
 
-	private static final String DISPLAY = "TimeZone";
+	private static final String DISPLAY = "Time Zone";
 
 	private static final Log logger = LogFactory.getLog(TimeZone.class);
 
