@@ -28,7 +28,7 @@ import org.w3c.dom.Element;
  * 
  * @author Matthew Dean
  */
-@Form(name = TimeZone.NAME, formElements = { @FormElement(type = FormElementType.INTEGER, elementName = TimeZone.DATA, editable = true, defaultValue = "0", displayName = TimeZone.DISPLAY, min = 0, max = 15) })
+@Form(name = TimeZone.NAME, formElements = { @FormElement(type = FormElementType.INTEGER, elementName = TimeZone.DATA, editable = true, defaultValue = "0", displayName = TimeZone.DISPLAY) })
 public class TimeZone implements Property {
 
 	private static final String NAME = "TimeZone";

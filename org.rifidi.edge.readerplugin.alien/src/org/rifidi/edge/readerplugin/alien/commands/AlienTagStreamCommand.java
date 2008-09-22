@@ -34,7 +34,7 @@ import org.w3c.dom.Document;
  * 
  * @author Matthew Dean - matt@pramari.com
  */
-@Form(name="AlienTagStreamCommand", formElements={})
+@Form(name="TagStreaming", formElements={})
 public class AlienTagStreamCommand implements Command {
 
 	private TimeZone timeZone;
