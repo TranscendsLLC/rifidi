@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 
@@ -69,13 +70,23 @@ public class ReaderPluginServiceImpl implements ReaderPluginService {
 		ReaderPlugin readerPlugin = null;
 		ReaderPluginXML readerPluginXML = null;
 
-		//URL xml = readerPluginBundle.getEntry("ReaderPlugin.xml");
-		//TODO Check why getEntry is not working
-		URL xml = readerPluginBundle.getResource("ReaderPlugin.xml");
+		URL xml = null;
+		Enumeration enumerations = readerPluginBundle.findEntries(".",
+				"ReaderPlugin.xml", true);
+		if (enumerations!=null && enumerations.hasMoreElements()) {
+			xml = (URL) enumerations.nextElement();
+		}
+
+		// TODO Strange...this used to work, but doesn't seem to always work...
+		// URL = readerPluginBundle.getResource("ReaderPlugin.xml");
 		if (xml != null) {
 			try {
 				readerPluginXML = parseXML(xml.openStream());
 				readerPlugin = new ReaderPlugin(readerPluginXML);
+				String readerInfo = readerPluginXML.getInfo();
+				registry.put(readerInfo, readerPlugin);
+				loadedBundles.put(readerPluginBundle.getBundleId(), readerInfo);
+				fireRegisterEvent(readerInfo);
 			} catch (JAXBException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -84,16 +95,8 @@ public class ReaderPluginServiceImpl implements ReaderPluginService {
 				e.printStackTrace();
 			}
 		} else {
-			logger.debug("This is null");
-		}
-		try {
-			// We don't know if all the bean info is != null
-			String readerInfo = readerPluginXML.getInfo();
-			registry.put(readerInfo, readerPlugin);
-			loadedBundles.put(readerPluginBundle.getBundleId(), readerInfo);
-			fireRegisterEvent(readerInfo);
-		} catch (RuntimeException e) {
-			logger.error("Fatal error while loading Plugin", e);
+			logger.error("Cannot find ReaderPlugin.XML for the bundle: "
+					+ readerPluginBundle.getSymbolicName());
 		}
 	}
 
@@ -145,12 +148,15 @@ public class ReaderPluginServiceImpl implements ReaderPluginService {
 	}
 
 	@Override
-	public Document getReaderInfoAnnotation(String readerInfoClassName) throws RifidiReaderInfoNotFoundException {
+	public Document getReaderInfoAnnotation(String readerInfoClassName)
+			throws RifidiReaderInfoNotFoundException {
 		ReaderPlugin plugin = registry.get(readerInfoClassName);
-		if(plugin!=null){
+		if (plugin != null) {
 			return plugin.getReaderInfoAnnotation();
-		}else{
-			throw new RifidiReaderInfoNotFoundException("Cannot find plugin with reader info " + readerInfoClassName);
+		} else {
+			throw new RifidiReaderInfoNotFoundException(
+					"Cannot find plugin with reader info "
+							+ readerInfoClassName);
 		}
 	}
 
