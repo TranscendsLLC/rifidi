@@ -48,7 +48,7 @@ public class SessionStateOK implements ReaderSessionState {
 
 	@Override
 	public void state_disable() {
-		readerSessionImpl.cleanUp();
+		readerSessionImpl.cleanUpConnection();
 		readerSessionImpl.connection = null;
 		readerSessionImpl.transition(new SessionStateConfigured(
 				readerSessionImpl));

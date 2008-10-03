@@ -78,7 +78,7 @@ public class SessionStateError implements ReaderSessionState {
 
 	@Override
 	public void state_resetSession() {
-		readerSessionImpl.cleanUp();
+		readerSessionImpl.cleanUpConnection();
 		readerSessionImpl.connection = null;
 		readerSessionImpl.transition(new SessionStateConfigured(readerSessionImpl));
 	}

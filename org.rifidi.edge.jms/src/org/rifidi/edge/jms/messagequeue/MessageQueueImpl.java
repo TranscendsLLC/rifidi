@@ -2,10 +2,12 @@ package org.rifidi.edge.jms.messagequeue;
 
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
+import javax.jms.DeliveryMode;
 import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.MessageProducer;
 import javax.jms.Session;
+import javax.jms.TemporaryQueue;
 import javax.jms.TextMessage;
 
 import org.rifidi.edge.core.exceptions.RifidiMessageQueueException;
@@ -52,8 +54,7 @@ public class MessageQueueImpl implements MessageQueue {
 		connection.start();
 
 		session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
-
-		destination = session.createQueue(queueName);
+		this.destination = session.createQueue(this.queueName);
 
 		messageProducer = session.createProducer(destination);
 	}
@@ -68,6 +69,7 @@ public class MessageQueueImpl implements MessageQueue {
 		session.close();
 		connection.stop();
 		connection.close();
+		((TemporaryQueue)destination).delete();
 	}
 
 	/*
@@ -81,6 +83,8 @@ public class MessageQueueImpl implements MessageQueue {
 		try {
 			TextMessage textMessage = session
 					.createTextMessage(message.toXML());
+			textMessage.setJMSDeliveryMode(DeliveryMode.NON_PERSISTENT);
+			textMessage.setJMSExpiration(1000);
 			messageProducer.send(textMessage);
 		} catch (JMSException e) {
 			e.printStackTrace();
