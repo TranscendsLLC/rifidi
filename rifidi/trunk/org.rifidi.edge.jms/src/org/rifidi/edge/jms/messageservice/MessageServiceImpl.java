@@ -52,13 +52,13 @@ public class MessageServiceImpl implements MessageService {
 	 * @see org.rifidi.edge.core.messageQueue.service.MessageService#createMessageQueue(java.lang.String)
 	 */
 	@Override
-	public MessageQueue createMessageQueue(String messageQueueName) {
-		MessageQueueImpl messageQueue = new MessageQueueImpl(messageQueueName);
+	public MessageQueue createMessageQueue(String quename) {
+		MessageQueueImpl messageQueue = new MessageQueueImpl(quename);
 		try {
 			messageQueue.startMessageQueue(connectionFactory);
 		} catch (JMSException e) {
 			//e.printStackTrace();
-			logger.error("Error creating MessageQueue " +  messageQueueName, e);
+			logger.error("Error creating MessageQueue ", e);
 			return null;
 		}
 		registry.add(messageQueue);

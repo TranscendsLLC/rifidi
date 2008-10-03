@@ -85,7 +85,8 @@ public class ReaderSessionImpl implements ReaderSession, ReaderSessionState,
 
 	int readerSessionID;
 
-	public ReaderSessionImpl(ReaderPlugin plugin, ReaderInfo readerInfo, int readerSessionID) {
+	public ReaderSessionImpl(ReaderPlugin plugin, ReaderInfo readerInfo,
+			int readerSessionID) {
 		this.readerInfo = readerInfo;
 		this.readerSessionID = readerSessionID;
 		this.plugin = plugin;
@@ -134,8 +135,8 @@ public class ReaderSessionImpl implements ReaderSession, ReaderSessionState,
 
 	protected void validate(Class<?> command, Element elementToValidate)
 			throws SAXException, IOException {
-		
-		//TODO: worry about validating later
+
+		// TODO: worry about validating later
 		/*
 		 * SchemaFactory schemaFactory = SchemaFactory
 		 * .newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI); InputStream is =
@@ -189,15 +190,15 @@ public class ReaderSessionImpl implements ReaderSession, ReaderSessionState,
 	}
 
 	@Override
-	public void enable(){
+	public void enable() {
 		this.state_enable();
-		
+
 	}
 
 	@Override
 	public void disable() {
 		this.state_disable();
-		
+
 	}
 
 	// TODO: figure out return value
@@ -422,10 +423,21 @@ public class ReaderSessionImpl implements ReaderSession, ReaderSessionState,
 	 */
 
 	/**
-	 * Clean up the ReaderSession
+	 * This method must be called to clean up when the session is deleted
 	 */
-	public void cleanUp() {
-		logger.debug("Cleaning up reader session: " + this.readerSessionID);
+	public void destroy() {
+		logger.debug("Destroying ReaderSession: " + this.readerSessionID);
+		this.messageService.destroyMessageQueue(this.messageQueue);
+		this.messageService.destroyMessageQueue(this.errorQueue);
+		cleanUpConnection();
+	}
+
+	/**
+	 * This method destroys the connection for this reader session. It should be
+	 * called when something is wrong with the physical connection or when
+	 * deleting this session all together
+	 */
+	protected void cleanUpConnection() {
 		try {
 			if (connection != null) {
 				connectionService.destroyConnection(connection, this);
@@ -456,13 +468,13 @@ public class ReaderSessionImpl implements ReaderSession, ReaderSessionState,
 	 */
 
 	@Override
-	public void state_enable(){
+	public void state_enable() {
 		try {
 			transitionSem.acquire();
 		} catch (InterruptedException e) {
 		}
 		sessionState.state_enable();
-		
+
 	}
 
 	@Override
@@ -472,7 +484,7 @@ public class ReaderSessionImpl implements ReaderSession, ReaderSessionState,
 		} catch (InterruptedException e) {
 		}
 		sessionState.state_disable();
-		
+
 	}
 
 	@Override
@@ -511,9 +523,9 @@ public class ReaderSessionImpl implements ReaderSession, ReaderSessionState,
 	}
 
 	@Override
-	public Document state_executeProperty(Document propertiesToExecute, boolean set)
-			throws RifidiConnectionException, RifidiCommandNotFoundException,
-			RifidiCommandInterruptedException,
+	public Document state_executeProperty(Document propertiesToExecute,
+			boolean set) throws RifidiConnectionException,
+			RifidiCommandNotFoundException, RifidiCommandInterruptedException,
 			RifidiInvalidConfigurationException,
 			RifidiCannotRestartCommandException {
 		try {
@@ -567,7 +579,7 @@ public class ReaderSessionImpl implements ReaderSession, ReaderSessionState,
 		} catch (InterruptedException e) {
 		}
 		return sessionState.state_setReaderInfo(readerInfo);
-		
+
 	}
 
 	public void transition(ReaderSessionState newState) {
