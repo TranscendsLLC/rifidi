@@ -430,6 +430,7 @@ public class ReaderSessionImpl implements ReaderSession, ReaderSessionState,
 		this.messageService.destroyMessageQueue(this.messageQueue);
 		this.messageService.destroyMessageQueue(this.errorQueue);
 		cleanUpConnection();
+		sessionState = null;
 	}
 
 	/**

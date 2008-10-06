@@ -69,7 +69,6 @@ public class MessageQueueImpl implements MessageQueue {
 		session.close();
 		connection.stop();
 		connection.close();
-		((TemporaryQueue)destination).delete();
 	}
 
 	/*
