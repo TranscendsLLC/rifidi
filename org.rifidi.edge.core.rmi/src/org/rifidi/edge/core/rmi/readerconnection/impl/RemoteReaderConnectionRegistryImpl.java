@@ -108,6 +108,7 @@ public class RemoteReaderConnectionRegistryImpl implements
 		readerSessionService.destroyReaderSession(remoteConnection
 				.getReaderSession());
 		readerSessionSync.remove(remoteConnection.getReaderSession());
+		UnicastRemoteObject.unexportObject(remoteConnection, true);
 	}
 
 	/*
