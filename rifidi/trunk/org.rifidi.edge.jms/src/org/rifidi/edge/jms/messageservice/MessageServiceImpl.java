@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
 import javax.jms.JMSException;
 
@@ -14,7 +15,6 @@ import org.rifidi.edge.core.messageQueue.MessageQueue;
 import org.rifidi.edge.core.messageQueue.service.MessageService;
 import org.rifidi.edge.core.messageQueue.service.MessageServiceListener;
 import org.rifidi.edge.jms.messagequeue.MessageQueueImpl;
-import org.rifidi.services.registry.ServiceRegistry;
 
 /**
  * Implementation of the MessageQueueService. This allows to create and delete
@@ -28,10 +28,12 @@ import org.rifidi.services.registry.ServiceRegistry;
 public class MessageServiceImpl implements MessageService {
 
 	private static final Log logger = LogFactory
-	.getLog(MessageServiceImpl.class);
-	
+			.getLog(MessageServiceImpl.class);
+
 	private ConnectionFactory connectionFactory;
+	private Connection connection;
 	private ArrayList<MessageQueue> registry = new ArrayList<MessageQueue>();
+	private int numQueues = 0;
 
 	private Set<MessageServiceListener> listeners = new HashSet<MessageServiceListener>();
 
@@ -43,21 +45,34 @@ public class MessageServiceImpl implements MessageService {
 	 */
 	public MessageServiceImpl(ConnectionFactory connectionFactory) {
 		this.connectionFactory = connectionFactory;
-		ServiceRegistry.getInstance().service(this);
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.messageQueue.service.MessageService#createMessageQueue(java.lang.String)
+	 * @see
+	 * org.rifidi.edge.core.messageQueue.service.MessageService#createMessageQueue
+	 * (java.lang.String)
 	 */
 	@Override
-	public MessageQueue createMessageQueue(String quename) {
+	public synchronized MessageQueue createMessageQueue(String quename) {
 		MessageQueueImpl messageQueue = new MessageQueueImpl(quename);
 		try {
-			messageQueue.startMessageQueue(connectionFactory);
+			if (numQueues == 0) {
+				logger.debug("Creating new JMS Connection");
+				connection = connectionFactory.createConnection();
+			}
+
+			messageQueue.startMessageQueue(connection);
+
+			// make sure to start connection after the session has already been
+			// set up
+			if (numQueues == 0) {
+				connection.start();
+			}
+			numQueues++;
 		} catch (JMSException e) {
-			//e.printStackTrace();
+			// e.printStackTrace();
 			logger.error("Error creating MessageQueue ", e);
 			return null;
 		}
@@ -69,12 +84,20 @@ public class MessageServiceImpl implements MessageService {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.messageQueue.service.MessageService#destroyMessageQueue(org.rifidi.edge.core.messageQueue.MessageQueue)
+	 * @see
+	 * org.rifidi.edge.core.messageQueue.service.MessageService#destroyMessageQueue
+	 * (org.rifidi.edge.core.messageQueue.MessageQueue)
 	 */
 	@Override
-	public void destroyMessageQueue(MessageQueue messageQueue) {
+	public synchronized void destroyMessageQueue(MessageQueue messageQueue) {
 		try {
 			((MessageQueueImpl) messageQueue).stopMessageQueue();
+			numQueues--;
+			if (numQueues == 0) {
+				logger.debug("Closing JMS Connection");
+				connection.stop();
+				connection.close();
+			}
 		} catch (JMSException e) {
 			e.printStackTrace();
 		}
@@ -85,7 +108,9 @@ public class MessageServiceImpl implements MessageService {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.messageQueue.service.MessageService#getAllMessageQueues()
+	 * @see
+	 * org.rifidi.edge.core.messageQueue.service.MessageService#getAllMessageQueues
+	 * ()
 	 */
 	@Override
 	public List<MessageQueue> getAllMessageQueues() {
@@ -96,7 +121,9 @@ public class MessageServiceImpl implements MessageService {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.messageQueue.service.MessageService#addMessageQueueListener(org.rifidi.edge.core.messageQueue.service.MessageServiceListener)
+	 * @seeorg.rifidi.edge.core.messageQueue.service.MessageService#
+	 * addMessageQueueListener
+	 * (org.rifidi.edge.core.messageQueue.service.MessageServiceListener)
 	 */
 	@Override
 	public void addMessageQueueListener(MessageServiceListener listener) {
@@ -106,7 +133,9 @@ public class MessageServiceImpl implements MessageService {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.messageQueue.service.MessageService#removeMessageQueueListener(org.rifidi.edge.core.messageQueue.service.MessageServiceListener)
+	 * @seeorg.rifidi.edge.core.messageQueue.service.MessageService#
+	 * removeMessageQueueListener
+	 * (org.rifidi.edge.core.messageQueue.service.MessageServiceListener)
 	 */
 	@Override
 	public void removeMessageQueueListener(MessageServiceListener listener) {

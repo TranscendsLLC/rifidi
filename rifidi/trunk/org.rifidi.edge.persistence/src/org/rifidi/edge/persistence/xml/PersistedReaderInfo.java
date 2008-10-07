@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.bind.JAXBException;
+import javax.xml.bind.annotation.DomHandler;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -34,6 +35,7 @@ import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.rifidi.edge.common.utilities.dom.DomHelper;
 import org.rifidi.edge.core.exceptions.RifidiReaderInfoNotFoundException;
 import org.rifidi.edge.core.readerplugin.ReaderInfo;
 import org.rifidi.edge.persistence.utilities.JAXBUtility;
@@ -336,6 +338,8 @@ public class PersistedReaderInfo {
 		File xmlFile = null;
 
 		xmlFile = JAXBUtility.getInstance().getXMLFile();
+		
+		logger.debug("Persistance File: " + xmlFile.getAbsolutePath());
 
 		if (xmlFile != null) {
 			this.doc = this.createDocument(xmlFile);
