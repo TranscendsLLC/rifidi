@@ -11,13 +11,12 @@
  */
 package org.rifidi.edge.jms;
 
-import javax.jms.ConnectionFactory;
-
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.broker.BrokerService;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.rifidi.edge.core.messageQueue.service.MessageService;
+import org.rifidi.edge.jms.messageservice.BrokerWrapper;
 import org.rifidi.edge.jms.messageservice.MessageServiceImpl;
 
 /**
@@ -56,15 +55,10 @@ public class Activator implements BundleActivator {
 		// TODO Save information about port and address in a configuration file
 		connectionFactory.setBrokerURL("tcp://localhost:61616");
 
-		// Register JMS ConnectionFactory as a Service
-		System.out.println("Registering Service: (JMS) ConnectionFactory");
-		context.registerService(ConnectionFactory.class.getName(),
-				connectionFactory, null);
-
 		// Register MessageService utilizing JMS
 		System.out.println("Registering Service: (JMS) MessageService");
 		MessageService messageService = new MessageServiceImpl(
-				connectionFactory);
+				new BrokerWrapper(broker, connectionFactory));
 		context.registerService(MessageService.class.getName(), messageService,
 				null);
 	}
