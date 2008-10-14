@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Set;
 
 import javax.jms.Connection;
-import javax.jms.ConnectionFactory;
 import javax.jms.JMSException;
 
 import org.apache.commons.logging.Log;
@@ -30,7 +29,7 @@ public class MessageServiceImpl implements MessageService {
 	private static final Log logger = LogFactory
 			.getLog(MessageServiceImpl.class);
 
-	private ConnectionFactory connectionFactory;
+	private BrokerWrapper brokerWrapper;
 	private Connection connection;
 	private ArrayList<MessageQueue> registry = new ArrayList<MessageQueue>();
 	private int numQueues = 0;
@@ -43,8 +42,8 @@ public class MessageServiceImpl implements MessageService {
 	 * @param connectionFactory
 	 *            the ConnectionFactory to create new JMS Connections
 	 */
-	public MessageServiceImpl(ConnectionFactory connectionFactory) {
-		this.connectionFactory = connectionFactory;
+	public MessageServiceImpl(BrokerWrapper brokerWrapper) {
+		this.brokerWrapper = brokerWrapper;
 	}
 
 	/*
@@ -60,7 +59,8 @@ public class MessageServiceImpl implements MessageService {
 		try {
 			if (numQueues == 0) {
 				logger.debug("Creating new JMS Connection");
-				connection = connectionFactory.createConnection();
+				connection = brokerWrapper.getConnectionFactory()
+						.createConnection();
 			}
 
 			messageQueue.startMessageQueue(connection);
@@ -90,16 +90,36 @@ public class MessageServiceImpl implements MessageService {
 	 */
 	@Override
 	public synchronized void destroyMessageQueue(MessageQueue messageQueue) {
+		MessageQueueImpl mq = ((MessageQueueImpl) messageQueue);
 		try {
-			((MessageQueueImpl) messageQueue).stopMessageQueue();
-			numQueues--;
-			if (numQueues == 0) {
-				logger.debug("Closing JMS Connection");
-				connection.stop();
-				connection.close();
-			}
+			mq.stopMessageQueue();
 		} catch (JMSException e) {
-			e.printStackTrace();
+			logger.error(e);
+		}
+
+		try {
+			logger.debug("Removing destination");
+			mq.destroyDestination(brokerWrapper);
+		} catch (Exception e) {
+			logger.error(e);
+		}
+
+		numQueues--;
+		if (numQueues == 0) {
+			logger.debug("Closing JMS Connection");
+			
+			try {
+				connection.stop();
+			} catch (JMSException e) {
+				logger.error(e);
+			}
+			
+			try {
+				connection.close();
+			} catch (JMSException e) {
+				logger.error(e);
+			}
+
 		}
 		fireRemoveEvent(messageQueue);
 		registry.remove(messageQueue);
@@ -165,11 +185,5 @@ public class MessageServiceImpl implements MessageService {
 			listener.removeEvent(event);
 		}
 	}
-
-	// Not needed because passed in at the constructor
-	// @Inject
-	// public void setConnectionFactory(ConnectionFactory connectionFactory) {
-	// this.connectionFactory = connectionFactory;
-	// }
 
 }
