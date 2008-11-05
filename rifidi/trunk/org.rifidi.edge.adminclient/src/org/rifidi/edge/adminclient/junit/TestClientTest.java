@@ -22,8 +22,8 @@ import org.rifidi.edge.core.exceptions.RifidiCommandNotFoundException;
 import org.rifidi.edge.core.exceptions.RifidiConnectionException;
 import org.rifidi.edge.core.exceptions.RifidiInvalidConfigurationException;
 import org.rifidi.edge.core.exceptions.RifidiReaderInfoNotFoundException;
-import org.rifidi.edge.core.rmi.readerconnection.RemoteReaderConnection;
-import org.rifidi.edge.core.rmi.readerconnection.RemoteReaderConnectionRegistry;
+import org.rifidi.edge.core.rmi.readerconnection.ReaderSessionStub;
+import org.rifidi.edge.core.rmi.readerconnection.EdgeServerStub;
 import org.rifidi.edge.readerplugin.dummy.plugin.DummyReaderInfo;
 
 /**
@@ -51,7 +51,7 @@ public class TestClientTest {
 
 		Registry registry = null;
 
-		RemoteReaderConnectionRegistry remoteReaderConnectionRegistry = null;
+		EdgeServerStub remoteReaderConnectionRegistry = null;
 
 		try {
 			registry = LocateRegistry.getRegistry(hostname, port);
@@ -59,8 +59,8 @@ public class TestClientTest {
 			e.printStackTrace();
 		}
 		try {
-			remoteReaderConnectionRegistry = (RemoteReaderConnectionRegistry) registry
-					.lookup(RemoteReaderConnectionRegistry.class.getName());
+			remoteReaderConnectionRegistry = (EdgeServerStub) registry
+					.lookup(EdgeServerStub.class.getName());
 		} catch (AccessException e) {
 			e.printStackTrace();
 		} catch (RemoteException e) {
@@ -75,7 +75,7 @@ public class TestClientTest {
 			dummyInfo1.setIpAddress("127.0.0.1");
 			dummyInfo1.setPort(10000 + x);
 
-			RemoteReaderConnection remoteReader1 = null;
+			ReaderSessionStub remoteReader1 = null;
 			try {
 				JAXBContext context = JAXBContext.newInstance(dummyInfo1.getClass());
 				Marshaller m = context.createMarshaller();
@@ -83,7 +83,7 @@ public class TestClientTest {
 				m.marshal(dummyInfo1, writer);
 				
 				remoteReader1 = remoteReaderConnectionRegistry
-						.createReaderConnection(writer.toString());
+						.createReaderSession(writer.toString());
 			} catch (RemoteException e) {
 				e.printStackTrace();
 				Assert.fail();
@@ -126,15 +126,15 @@ public class TestClientTest {
 		public void run() {
 			System.out.println("Background thread started");
 			Registry registry2 = null;
-			RemoteReaderConnectionRegistry remoteReaderConnectionRegistry2 = null;
+			EdgeServerStub remoteReaderConnectionRegistry2 = null;
 			try {
 				registry2 = LocateRegistry.getRegistry(hostname, port);
 			} catch (RemoteException e) {
 				e.printStackTrace();
 			}
 			try {
-				remoteReaderConnectionRegistry2 = (RemoteReaderConnectionRegistry) registry2
-						.lookup(RemoteReaderConnectionRegistry.class.getName());
+				remoteReaderConnectionRegistry2 = (EdgeServerStub) registry2
+						.lookup(EdgeServerStub.class.getName());
 			} catch (AccessException e) {
 				e.printStackTrace();
 				running = false;
@@ -148,7 +148,7 @@ public class TestClientTest {
 			while (running) {
 				// System.out.println("Getting reader connections");
 				try {
-					remoteReaderConnectionRegistry2.getAllReaderConnections();
+					remoteReaderConnectionRegistry2.getAllReaderSessions();
 				} catch (RemoteException e) {
 					e.printStackTrace();
 				}

@@ -24,12 +24,12 @@ import org.rifidi.edge.adminclient.annotations.Command;
 import org.rifidi.edge.adminclient.commands.ICommand;
 import org.rifidi.edge.adminclient.jms.JMSConsumerFactory;
 import org.rifidi.edge.core.readerplugin.ReaderInfo;
-import org.rifidi.edge.core.rmi.readerconnection.RemoteReaderConnection;
-import org.rifidi.edge.core.rmi.readerconnection.RemoteReaderConnectionRegistry;
+import org.rifidi.edge.core.rmi.readerconnection.ReaderSessionStub;
+import org.rifidi.edge.core.rmi.readerconnection.EdgeServerStub;
 
 public class NewEdgeServerCommands implements ICommand {
 
-	private RemoteReaderConnectionRegistry remoteReaderConnectionRegistry;
+	private EdgeServerStub remoteReaderConnectionRegistry;
 
 	private JMSConsumerFactory jmsFactory;
 
@@ -69,8 +69,8 @@ public class NewEdgeServerCommands implements ICommand {
 		try {
 			registry = LocateRegistry.getRegistry(hostname, Integer
 					.parseInt(port));
-			remoteReaderConnectionRegistry = (RemoteReaderConnectionRegistry) registry
-					.lookup(RemoteReaderConnectionRegistry.class.getName());
+			remoteReaderConnectionRegistry = (EdgeServerStub) registry
+					.lookup(EdgeServerStub.class.getName());
 
 			// TODO: Uh, we should never just catch generic exceptions.
 		} catch (Exception e) {
@@ -106,10 +106,10 @@ public class NewEdgeServerCommands implements ICommand {
 		StringBuffer retVal = new StringBuffer();
 		try {
 			retVal.append("Size of the remoteRegistry "
-					+ remoteReaderConnectionRegistry.getAllReaderConnections()
+					+ remoteReaderConnectionRegistry.getAllReaderSessions()
 							.size() + "\n");
-			for (RemoteReaderConnection reader : remoteReaderConnectionRegistry
-					.getAllReaderConnections()) {
+			for (ReaderSessionStub reader : remoteReaderConnectionRegistry
+					.getAllReaderSessions()) {
 				retVal
 						.append(reader.getMessageQueueName()
 								+ ": "
@@ -145,9 +145,9 @@ public class NewEdgeServerCommands implements ICommand {
 	public String getAdaptersInErrorState() {
 		try {
 			System.out.println("-- List of Readers in error state --");
-			List<RemoteReaderConnection> connections = remoteReaderConnectionRegistry
-					.getAllReaderConnections();
-			for (RemoteReaderConnection connection : connections) {
+			List<ReaderSessionStub> connections = remoteReaderConnectionRegistry
+					.getAllReaderSessions();
+			for (ReaderSessionStub connection : connections) {
 				if (connection.getReaderState().equalsIgnoreCase("ERROR")) {
 					//System.out.print(connection.getReaderInfo().getReaderType(
 					// )
@@ -328,7 +328,7 @@ public class NewEdgeServerCommands implements ICommand {
 				Writer writer = new StringWriter();
 				m.marshal(readerInfo, writer);
 
-				remoteReaderConnectionRegistry.createReaderConnection(writer
+				remoteReaderConnectionRegistry.createReaderSession(writer
 						.toString());
 			} catch (RemoteException e) {
 				e.printStackTrace();
@@ -349,12 +349,12 @@ public class NewEdgeServerCommands implements ICommand {
 		if (remoteReaderConnectionRegistry == null)
 			return "No connection to the EdgeServer";
 		try {
-			for (RemoteReaderConnection readerConnection : remoteReaderConnectionRegistry
-					.getAllReaderConnections()) {
+			for (ReaderSessionStub readerConnection : remoteReaderConnectionRegistry
+					.getAllReaderSessions()) {
 				try {
 					if (readerConnection.getMessageQueueName().equals(id)) {
 						remoteReaderConnectionRegistry
-								.deleteReaderConnection(readerConnection);
+								.deleteReaderSession(readerConnection);
 						return "ReaderConnection deleted";
 					}
 				} catch (RemoteException e) {
@@ -369,10 +369,10 @@ public class NewEdgeServerCommands implements ICommand {
 
 	@Command(name = "execute", arguments = { "connection id", "commandName" })
 	public String executeCommand(String id, String commandName) {
-		RemoteReaderConnection remoteReaderConnection = null;
+		ReaderSessionStub remoteReaderConnection = null;
 		try {
-			for (RemoteReaderConnection readerConnection : remoteReaderConnectionRegistry
-					.getAllReaderConnections()) {
+			for (ReaderSessionStub readerConnection : remoteReaderConnectionRegistry
+					.getAllReaderSessions()) {
 				if (readerConnection.getMessageQueueName().equals(id)) {
 					remoteReaderConnection = readerConnection;
 					break;
@@ -397,10 +397,10 @@ public class NewEdgeServerCommands implements ICommand {
 
 	@Command(name = "stop", arguments = { "connection id" })
 	public String stopExecution(String id) {
-		RemoteReaderConnection remoteReaderConnection = null;
+		ReaderSessionStub remoteReaderConnection = null;
 		try {
-			for (RemoteReaderConnection readerConnection : remoteReaderConnectionRegistry
-					.getAllReaderConnections()) {
+			for (ReaderSessionStub readerConnection : remoteReaderConnectionRegistry
+					.getAllReaderSessions()) {
 				if (readerConnection.getMessageQueueName().equals(id)) {
 					remoteReaderConnection = readerConnection;
 					break;
@@ -425,10 +425,10 @@ public class NewEdgeServerCommands implements ICommand {
 	@Command(name = "getTagReads", arguments = { "id", "count" })
 	public String getTagReads(String id, String count) {
 
-		RemoteReaderConnection remoteReaderConnection = null;
+		ReaderSessionStub remoteReaderConnection = null;
 		try {
-			for (RemoteReaderConnection readerConnection : remoteReaderConnectionRegistry
-					.getAllReaderConnections()) {
+			for (ReaderSessionStub readerConnection : remoteReaderConnectionRegistry
+					.getAllReaderSessions()) {
 				if (readerConnection.getMessageQueueName().equals(id)) {
 					remoteReaderConnection = readerConnection;
 					break;
@@ -487,10 +487,10 @@ public class NewEdgeServerCommands implements ICommand {
 			return "Error. No Connection";
 		}
 
-		RemoteReaderConnection readerConnection = null;
+		ReaderSessionStub readerConnection = null;
 		try {
-			for (RemoteReaderConnection connection : remoteReaderConnectionRegistry
-					.getAllReaderConnections()) {
+			for (ReaderSessionStub connection : remoteReaderConnectionRegistry
+					.getAllReaderSessions()) {
 				if (connection.getMessageQueueName().equals(ID)) {
 					readerConnection = connection;
 				}
@@ -519,10 +519,10 @@ public class NewEdgeServerCommands implements ICommand {
 			return "Error. No Connection";
 		}
 
-		RemoteReaderConnection readerConnection = null;
+		ReaderSessionStub readerConnection = null;
 		try {
-			for (RemoteReaderConnection connection : remoteReaderConnectionRegistry
-					.getAllReaderConnections()) {
+			for (ReaderSessionStub connection : remoteReaderConnectionRegistry
+					.getAllReaderSessions()) {
 				if (connection.getMessageQueueName().equals(ID)) {
 					readerConnection = connection;
 				}
@@ -553,10 +553,10 @@ public class NewEdgeServerCommands implements ICommand {
 			return "Error. No Connection";
 		}
 
-		RemoteReaderConnection readerConnection = null;
+		ReaderSessionStub readerConnection = null;
 		try {
-			for (RemoteReaderConnection connection : remoteReaderConnectionRegistry
-					.getAllReaderConnections()) {
+			for (ReaderSessionStub connection : remoteReaderConnectionRegistry
+					.getAllReaderSessions()) {
 				if (connection.getMessageQueueName().equals(ID)) {
 					readerConnection = connection;
 				}
@@ -587,10 +587,10 @@ public class NewEdgeServerCommands implements ICommand {
 			return "Error. No Connection";
 		}
 
-		RemoteReaderConnection readerConnection = null;
+		ReaderSessionStub readerConnection = null;
 		try {
-			for (RemoteReaderConnection connection : remoteReaderConnectionRegistry
-					.getAllReaderConnections()) {
+			for (ReaderSessionStub connection : remoteReaderConnectionRegistry
+					.getAllReaderSessions()) {
 				if (connection.getMessageQueueName().equals(ID)) {
 					readerConnection = connection;
 				}
@@ -623,10 +623,10 @@ public class NewEdgeServerCommands implements ICommand {
 			return "Error. No Connection";
 		}
 
-		RemoteReaderConnection readerConnection = null;
+		ReaderSessionStub readerConnection = null;
 		try {
-			for (RemoteReaderConnection connection : remoteReaderConnectionRegistry
-					.getAllReaderConnections()) {
+			for (ReaderSessionStub connection : remoteReaderConnectionRegistry
+					.getAllReaderSessions()) {
 				if (connection.getMessageQueueName().equals(connectionID)) {
 					readerConnection = connection;
 				}
@@ -646,10 +646,10 @@ public class NewEdgeServerCommands implements ICommand {
 		if (remoteReaderConnectionRegistry == null) {
 			return "Error. No Connection";
 		}
-		RemoteReaderConnection readerConnection = null;
+		ReaderSessionStub readerConnection = null;
 		try {
-			for (RemoteReaderConnection connection : remoteReaderConnectionRegistry
-					.getAllReaderConnections()) {
+			for (ReaderSessionStub connection : remoteReaderConnectionRegistry
+					.getAllReaderSessions()) {
 				if (connection.getMessageQueueName().equals(connectionID)) {
 					readerConnection = connection;
 				}

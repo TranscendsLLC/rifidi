@@ -12,13 +12,14 @@ import org.rifidi.edge.core.exceptions.RifidiCommandNotFoundException;
 import org.rifidi.edge.core.exceptions.RifidiConnectionException;
 import org.rifidi.edge.core.exceptions.RifidiInvalidConfigurationException;
 import org.rifidi.edge.core.readerplugin.ReaderInfo;
+import org.rifidi.edge.core.readerplugin.commands.CommandConfiguration;
 import org.rifidi.edge.core.readersession.impl.ReaderSessionState;
 import org.rifidi.edge.core.readersession.impl.enums.ReaderSessionStatus;
 import org.w3c.dom.Document;
 
 /**
  * @author kyle
- *
+ * 
  */
 public class SessionStateConfigured implements ReaderSessionState {
 
@@ -31,46 +32,53 @@ public class SessionStateConfigured implements ReaderSessionState {
 	}
 
 	@Override
-	public void state_enable()  {
-		 /* Initialize the communication if not already done. Blocks until
+	public void state_enable() {
+		/*
+		 * Initialize the communication if not already done. Blocks until
 		 * connected
 		 */
-		
-			Thread t = new Thread(new Runnable(){
-				public void run() {
-					
-					try {
+
+		Thread t = new Thread(new Runnable() {
+			public void run() {
+				try {
 					readerSessionImpl.connect();
-					} catch (RifidiConnectionException e1) {
-						logger.debug(e1.getMessage());
-						readerSessionImpl.connectionStatus = ConnectionStatus.ERROR;
-						readerSessionImpl.transition(new SessionStateError(
-								readerSessionImpl));
-					}
+				} catch (RifidiConnectionException e1) {
+					logger.debug(e1.getMessage());
+					readerSessionImpl.connectionStatus = ConnectionStatus.ERROR;
+					readerSessionImpl.transition(new SessionStateError(
+							readerSessionImpl));
 				}
-					
-				}, "Connection Thread");
-			t.start();
-			readerSessionImpl.transition(new SessionStateOK(readerSessionImpl));
-		}
+			}
+		}, "Connection Thread");
+		t.start();
+		readerSessionImpl.transition(new SessionStateOK(readerSessionImpl));
+	}
 
 	@Override
-	public void state_disable() {		
+	public void state_disable() {
 		logger.debug("Cannot execute disable() when in Configured state");
-		readerSessionImpl.transition(new SessionStateConfigured(readerSessionImpl));
+		readerSessionImpl.transition(new SessionStateConfigured(
+				readerSessionImpl));
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.rifidi.edge.core.readersession.impl.ReaderSessionState#state_commandFinished()
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seeorg.rifidi.edge.core.readersession.impl.ReaderSessionState#
+	 * state_commandFinished()
 	 */
 	@Override
 	public void state_commandFinished() {
-		logger.debug("Cannot execute commandFinished when in Configured session state");
+		logger.debug("Cannot execute commandFinished "
+				+ "when in Configured session state");
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.rifidi.edge.core.readersession.impl.ReaderSessionState#state_error()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.core.readersession.impl.ReaderSessionState#state_error()
 	 */
 	@Override
 	public void state_error() {
@@ -78,68 +86,95 @@ public class SessionStateConfigured implements ReaderSessionState {
 		readerSessionImpl.transition(new SessionStateError(readerSessionImpl));
 	}
 
-	/* (non-Javadoc)
-	 * @see org.rifidi.edge.core.readersession.impl.ReaderSessionState#state_executeCommand(org.w3c.dom.Document)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seeorg.rifidi.edge.core.readersession.impl.ReaderSessionState#
+	 * state_executeCommand(org.w3c.dom.Document)
 	 */
 	@Override
-	public long state_executeCommand(Document configuration)
+	public long state_executeCommand(CommandConfiguration configuration)
 			throws RifidiConnectionException,
-			RifidiCommandInterruptedException, RifidiCommandNotFoundException,
-			RifidiInvalidConfigurationException {
-		logger.debug("Cannot execute executeCommand when in Configured session state");
-		readerSessionImpl.transition(new SessionStateConfigured(readerSessionImpl));
+			RifidiCommandInterruptedException, RifidiCommandNotFoundException {
+		logger.debug("Cannot execute executeCommand "
+				+ "when in Configured session state");
+		readerSessionImpl.transition(new SessionStateConfigured(
+				readerSessionImpl));
 		return 0;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.rifidi.edge.core.readersession.impl.ReaderSessionState#state_executeProperty(org.w3c.dom.Document)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seeorg.rifidi.edge.core.readersession.impl.ReaderSessionState#
+	 * state_executeProperty(org.w3c.dom.Document)
 	 */
 	@Override
-	public Document state_executeProperty(Document propertiesToExecute, boolean set)
-			throws RifidiConnectionException, RifidiCommandNotFoundException,
-			RifidiCommandInterruptedException,
+	public Document state_executeProperty(Document propertiesToExecute,
+			boolean set) throws RifidiConnectionException,
+			RifidiCommandNotFoundException, RifidiCommandInterruptedException,
 			RifidiInvalidConfigurationException,
 			RifidiCannotRestartCommandException {
-		logger.debug("Cannot execute executeProperty when in Configured session state");
-		readerSessionImpl.transition(new SessionStateConfigured(readerSessionImpl));
+		logger.debug("Cannot execute "
+				+ "executeProperty when in Configured session state");
+		readerSessionImpl.transition(new SessionStateConfigured(
+				readerSessionImpl));
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.rifidi.edge.core.readersession.impl.ReaderSessionState#state_getStatus()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.core.readersession.impl.ReaderSessionState#state_getStatus
+	 * ()
 	 */
 	@Override
 	public ReaderSessionStatus state_getStatus() {
 		return ReaderSessionStatus.CONIFGURED;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.rifidi.edge.core.readersession.impl.ReaderSessionState#state_propertyFinished()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seeorg.rifidi.edge.core.readersession.impl.ReaderSessionState#
+	 * state_propertyFinished()
 	 */
 	@Override
 	public void state_propertyFinished()
 			throws RifidiCannotRestartCommandException {
-		logger.debug("Cannot execute propertyFinished when in Configured session state");
+		logger.debug("Cannot execute propertyFinished when "
+				+ "in Configured session state");
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.rifidi.edge.core.readersession.impl.ReaderSessionState#state_resetSession()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.core.readersession.impl.ReaderSessionState#state_resetSession
+	 * ()
 	 */
 	@Override
 	public void state_resetSession() {
 		logger.debug("Cannot execute resetSession when in Configured state");
-		readerSessionImpl.transition(new SessionStateConfigured(readerSessionImpl));
+		readerSessionImpl.transition(new SessionStateConfigured(
+				readerSessionImpl));
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.rifidi.edge.core.readersession.impl.ReaderSessionState#state_stopCommand(boolean)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.core.readersession.impl.ReaderSessionState#state_stopCommand
+	 * (boolean)
 	 */
 	@Override
 	public void state_stopCommand(boolean force) {
 		logger.debug("Cannot execute stopCommand when in Configured state");
-		readerSessionImpl.transition(new SessionStateConfigured(readerSessionImpl));
+		readerSessionImpl.transition(new SessionStateConfigured(
+				readerSessionImpl));
 
 	}
 
@@ -163,8 +198,10 @@ public class SessionStateConfigured implements ReaderSessionState {
 	@Override
 	public boolean state_setReaderInfo(ReaderInfo readerInfo) {
 		readerSessionImpl.readerInfo = readerInfo;
-		readerSessionImpl.connectionManager = readerSessionImpl.plugin.newConnectionManager(readerInfo);
-		readerSessionImpl.transition(new SessionStateConfigured(readerSessionImpl));
+		readerSessionImpl.connectionManager = readerSessionImpl.plugin
+				.newConnectionManager(readerInfo);
+		readerSessionImpl.transition(new SessionStateConfigured(
+				readerSessionImpl));
 		return true;
 	}
 }

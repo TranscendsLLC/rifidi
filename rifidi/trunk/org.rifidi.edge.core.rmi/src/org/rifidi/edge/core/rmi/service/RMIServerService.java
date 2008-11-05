@@ -11,6 +11,10 @@
  */
 package org.rifidi.edge.core.rmi.service;
 
+import java.rmi.Remote;
+import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
+
 /**
  * This interface describes the Methods the RMIServer should provide
  * 
@@ -34,7 +38,25 @@ public interface RMIServerService {
 	 * 
 	 * @param o
 	 *            the Object to bind
+	 * @throws RemoteException
 	 */
-	public void bindToRMI(Object o);
+	public void bindToRMI(UnicastRemoteObject obj, String id)
+			throws RemoteException;
+
+	/**
+	 * Unbinds the object from RMI registry.
+	 * 
+	 * @param id
+	 * @throws RemoteException
+	 */
+	public void unbindFromRMI(String id) throws RemoteException;
+
+	/**
+	 * Gets a object with the given RMI registry ID
+	 * 
+	 * @param id
+	 * @return
+	 */
+	public Remote lookup(String id);
 
 }

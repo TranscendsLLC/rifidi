@@ -11,6 +11,7 @@ import org.rifidi.edge.core.exceptions.RifidiCommandNotFoundException;
 import org.rifidi.edge.core.exceptions.RifidiConnectionException;
 import org.rifidi.edge.core.exceptions.RifidiInvalidConfigurationException;
 import org.rifidi.edge.core.readerplugin.ReaderInfo;
+import org.rifidi.edge.core.readerplugin.commands.CommandConfiguration;
 import org.rifidi.edge.core.readerplugin.property.Property;
 import org.rifidi.edge.core.readerplugin.xml.CommandDescription;
 import org.rifidi.edge.core.readersession.impl.ReaderSessionState;
@@ -74,10 +75,9 @@ public class SessionStateCommandExecuting implements ReaderSessionState {
 	}
 
 	@Override
-	public long state_executeCommand(Document configuration)
+	public long state_executeCommand(CommandConfiguration configuration)
 			throws RifidiConnectionException,
-			RifidiCommandInterruptedException, RifidiCommandNotFoundException,
-			RifidiInvalidConfigurationException {
+			RifidiCommandInterruptedException, RifidiCommandNotFoundException {
 		logger.debug("cannot executeCommand when in COMMAND_EXECUTING session state");
 		readerSessionImpl.transition(new SessionStateCommandExecuting(readerSessionImpl));
 		return 0;

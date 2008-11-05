@@ -67,27 +67,11 @@ public class SessionStateOK implements ReaderSessionState {
 	}
 
 	@Override
-	public long state_executeCommand(Document configuration)
-			throws RifidiInvalidConfigurationException,
-			RifidiCommandNotFoundException, RifidiConnectionException,
+	public long state_executeCommand(CommandConfiguration configuration)
+			throws RifidiCommandNotFoundException, RifidiConnectionException,
 			RifidiCommandInterruptedException {
 		logger.debug("executeCommand called");
-		CommandConfiguration commandConfiguration = new CommandConfiguration(
-				configuration);
-		String commandName = null;
-		Element element = null;
-
-		/*
-		 * Verify configuration is ok
-		 */
-		try {
-			commandName = commandConfiguration.getCommandName();
-			element = commandConfiguration.getConfigAsElement();
-		} catch (RifidiInvalidConfigurationException e1) {
-			logger.debug(e1.getMessage());
-			readerSessionImpl.transition(new SessionStateOK(readerSessionImpl));
-			throw e1;
-		}
+		String commandName = configuration.getCommandName();
 
 		readerSessionImpl.curCommand = new CommandWrapper();
 		readerSessionImpl.commandID++;
@@ -122,33 +106,13 @@ public class SessionStateOK implements ReaderSessionState {
 		} catch (RifidiCommandNotFoundException e1) {
 			logger.debug(e1.getMessage());
 			readerSessionImpl.commandJournal.updateCommand(
-				readerSessionImpl.curCommand.getCommand(),
-				CommandStatus.NOCOMMAND);
+					readerSessionImpl.curCommand.getCommand(),
+					CommandStatus.NOCOMMAND);
 			readerSessionImpl.curCommand = null;
 			readerSessionImpl.transition(new SessionStateOK(readerSessionImpl));
 			throw e1;
 		}
 		readerSessionImpl.curCommand.setCommand(com);
-
-		try {
-			readerSessionImpl.validate(com.getClass(), element);
-		} catch (SAXException e1) {
-			logger.debug(e1.getMessage());
-			readerSessionImpl.commandJournal.updateCommand(
-				readerSessionImpl.curCommand.getCommand(),
-				CommandStatus.NOCOMMAND);
-			readerSessionImpl.curCommand = null;
-			readerSessionImpl.transition(new SessionStateOK(readerSessionImpl));
-			throw new RifidiInvalidConfigurationException(e1.getMessage());
-		} catch (IOException e1) {
-			logger.debug(e1.getMessage());
-			readerSessionImpl.commandJournal.updateCommand(
-				readerSessionImpl.curCommand.getCommand(),
-				CommandStatus.NOCOMMAND);
-			readerSessionImpl.curCommand = null;
-			readerSessionImpl.transition(new SessionStateOK(readerSessionImpl));
-			throw new RifidiInvalidConfigurationException(e1.getMessage());
-		}
 
 		/*
 		 * Check if we are connected
@@ -166,8 +130,8 @@ public class SessionStateOK implements ReaderSessionState {
 
 		if (readerSessionImpl.connectionStatus == ConnectionStatus.ERROR) {
 			readerSessionImpl.commandJournal.updateCommand(
-				readerSessionImpl.curCommand.getCommand(),
-				CommandStatus.NOCOMMAND);
+					readerSessionImpl.curCommand.getCommand(),
+					CommandStatus.NOCOMMAND);
 			readerSessionImpl.curCommand = null;
 			// conn_error() will be called to transition to the error state
 			throw new RifidiConnectionException(
@@ -194,7 +158,7 @@ public class SessionStateOK implements ReaderSessionState {
 		 */
 		try {
 			readerSessionImpl.executionThread.start(
-				readerSessionImpl.connection, readerSessionImpl.curCommand);
+					readerSessionImpl.connection, readerSessionImpl.curCommand);
 
 			readerSessionImpl.curCommand
 					.setCommandStatus(CommandStatus.EXECUTING);
@@ -207,8 +171,8 @@ public class SessionStateOK implements ReaderSessionState {
 		} catch (RifidiExecutionException e) {
 			logger.debug(e.getMessage());
 			readerSessionImpl.commandJournal.updateCommand(
-				readerSessionImpl.curCommand.getCommand(),
-				CommandStatus.UNSUCCESSFUL);
+					readerSessionImpl.curCommand.getCommand(),
+					CommandStatus.UNSUCCESSFUL);
 			readerSessionImpl.curCommand = null;
 			readerSessionImpl.transition(new SessionStateOK(readerSessionImpl));
 			throw new RifidiCommandInterruptedException(e.getMessage());
@@ -281,24 +245,22 @@ public class SessionStateOK implements ReaderSessionState {
 						readerSessionImpl.validate(propObject.getClass(), e);
 
 						Element returnVal = null;
-						logger.debug("Current state is "
-								+ readerSessionImpl.connectionStatus);
 						if (readerSessionImpl.connectionStatus == ConnectionStatus.ERROR) {
 							returnVal = e.getOwnerDocument().createElement(
-								e.getNodeName());
+									e.getNodeName());
 							Text data = e.getOwnerDocument().createTextNode(
-								"ERROR");
+									"ERROR");
 							returnVal.appendChild(data);
 						} else if (readerSessionImpl.connectionStatus == ConnectionStatus.CONNECTED) {
 							// execute property
 							if (set) {
 								returnVal = propObject.setProperty(
-									readerSessionImpl.connection,
-									readerSessionImpl.errorQueue, e);
+										readerSessionImpl.connection,
+										readerSessionImpl.errorQueue, e);
 							} else {
 								returnVal = propObject.getProperty(
-									readerSessionImpl.connection,
-									readerSessionImpl.errorQueue, e);
+										readerSessionImpl.connection,
+										readerSessionImpl.errorQueue, e);
 							}
 
 						} else {

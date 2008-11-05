@@ -1,6 +1,6 @@
 package org.rifidi.edge.core.exceptions;
 
-public class RifidiInvalidConfigurationException extends Exception {
+public class RifidiInvalidConfigurationException extends RifidiException {
 
 	public RifidiInvalidConfigurationException() {
 		super();

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -30,10 +31,10 @@ public class ReaderSessionServiceImpl implements ReaderSessionService,
 		ReaderPluginListener {
 
 	private ReaderPluginService readerPluginService;
-	private ArrayList<ReaderSession> registry = new ArrayList<ReaderSession>();
+	private ConcurrentHashMap<Long, ReaderSession> registry = new ConcurrentHashMap<Long, ReaderSession>();
 
 	private Collection<ReaderSessionListener> listeners = new HashSet<ReaderSessionListener>();
-	private int sessionID = 1;
+	private long sessionID = 0;
 
 	private Log logger = LogFactory.getLog(ReaderSessionServiceImpl.class);
 
@@ -59,9 +60,10 @@ public class ReaderSessionServiceImpl implements ReaderSessionService,
 	public ReaderSession createReaderSession(ReaderInfo readerInfo) {
 		ReaderPlugin plugin = readerPluginService.getReaderPlugin(readerInfo.getClass()
 				.getName());
+		sessionID = sessionID + 1;
 		ReaderSession readerSession = new ReaderSessionImpl(plugin, readerInfo,
-				sessionID++);
-		registry.add(readerSession);
+				sessionID);
+		registry.put(sessionID, readerSession);
 		logger.debug("Created new session: " + readerSession);
 
 		for (ReaderSessionListener l : listeners) {
@@ -85,8 +87,8 @@ public class ReaderSessionServiceImpl implements ReaderSessionService,
 			ReaderSessionImpl readerSessionImpl = (ReaderSessionImpl) readerSession;
 			readerSessionImpl.destroy();
 		}
-		boolean successful = registry.remove(readerSession);
-		if (!successful) {
+		ReaderSession session = registry.remove(readerSession.getSessionID());
+		if (null==session) {
 			logger.debug("Reader session not removed: " + readerSession);
 		}
 		for (ReaderSessionListener l : listeners) {
@@ -106,6 +108,14 @@ public class ReaderSessionServiceImpl implements ReaderSessionService,
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.readersession.service.ReaderSessionService#getReaderSession(long)
+	 */
+	@Override
+	public ReaderSession getReaderSession(long id) {
+		return this.registry.get(id);
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -114,7 +124,7 @@ public class ReaderSessionServiceImpl implements ReaderSessionService,
 	 */
 	@Override
 	public List<ReaderSession> getAllReaderSessions() {
-		return new ArrayList<ReaderSession>(registry);
+		return new ArrayList<ReaderSession>(registry.values());
 	}
 
 	/*
@@ -165,7 +175,7 @@ public class ReaderSessionServiceImpl implements ReaderSessionService,
 			Class<? extends ReaderInfo> readerInfo) {
 
 		ArrayList<ReaderSession> tempReaderSessions = new ArrayList<ReaderSession>(
-				this.registry);
+				this.registry.values());
 
 		for (ReaderSession readerSession : tempReaderSessions) {
 			if (readerSession.getReaderInfo().getClass().getName().equals(
@@ -177,7 +187,7 @@ public class ReaderSessionServiceImpl implements ReaderSessionService,
 					ReaderSessionImpl readerSessionImpl = (ReaderSessionImpl) readerSession;
 					readerSessionImpl.destroy();
 				}
-				if (registry.remove(readerSession)) {
+				if (registry.remove(readerSession.getSessionID())!=null) {
 					logger.debug("Session Removed.");
 					for (ReaderSessionListener l : listeners) {
 						l.autoRemoveReaderSessionEvent(readerSession);

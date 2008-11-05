@@ -41,6 +41,16 @@ public interface ReaderSessionService {
 	public List<ReaderSession> getAllReaderSessions();
 
 	/**
+	 * Get a readerSession by ID
+	 * 
+	 * @param id
+	 *            the ID of the reader session
+	 * @return the reader session with the corresponding ID, or null if there is
+	 *         not one
+	 */
+	public ReaderSession getReaderSession(long id);
+
+	/**
 	 * Add a new Listener to this Service.
 	 * 
 	 * @param listener
@@ -58,6 +68,7 @@ public interface ReaderSessionService {
 
 	/**
 	 * Change the readerInfo for the supplied reader
+	 * 
 	 * @param readerSession
 	 * @param newReaderInfo
 	 */

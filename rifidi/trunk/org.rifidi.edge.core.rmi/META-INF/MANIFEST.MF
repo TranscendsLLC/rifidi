@@ -13,5 +13,7 @@ Require-Bundle: org.rifidi.edge.core,
  org.rifidi.edge.services,
  org.rifidi.edge.common.utilities;bundle-version="1.0.0",
  org.rifidi.dynamicSWTForms.xml;bundle-version="1.0.0"
-Export-Package: org.rifidi.edge.core.rmi.readerconnection
+Export-Package: org.rifidi.edge.core.rmi.readerconnection,
+ org.rifidi.edge.core.rmi.readerconnection.exceptions,
+ org.rifidi.edge.core.rmi.readerconnection.returnobjects
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6

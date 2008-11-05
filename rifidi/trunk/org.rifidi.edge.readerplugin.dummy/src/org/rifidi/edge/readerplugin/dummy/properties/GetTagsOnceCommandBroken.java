@@ -10,9 +10,9 @@ import org.rifidi.edge.core.communication.Connection;
 import org.rifidi.edge.core.exceptions.RifidiMessageQueueException;
 import org.rifidi.edge.core.messageQueue.MessageQueue;
 import org.rifidi.edge.core.readerplugin.commands.Command;
+import org.rifidi.edge.core.readerplugin.commands.CommandConfiguration;
 import org.rifidi.edge.core.readerplugin.commands.CommandReturnStatus;
 import org.rifidi.edge.core.readerplugin.messages.impl.TagMessage;
-import org.w3c.dom.Document;
 
 public class GetTagsOnceCommandBroken implements Command {
 	private static final Log logger = LogFactory
@@ -24,7 +24,7 @@ public class GetTagsOnceCommandBroken implements Command {
 	@Override
 	public CommandReturnStatus start(Connection connection,
 			MessageQueue messageQueue, MessageQueue errorQueue,
-			Document configuration, long commandID) {
+			CommandConfiguration configuration, long commandID) {
 		logger.debug("Getting tags.");
 	
 		String rawtag = ByteAndHexConvertingUtility.toHexString(

@@ -64,6 +64,7 @@ public class ReaderPluginServiceImpl implements ReaderPluginService {
 	 * registerReaderPlugin(java.lang.Class,
 	 * org.rifidi.edge.core.readerplugin.ReaderPlugin)
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public void registerReaderPlugin(Bundle readerPluginBundle) {
 
