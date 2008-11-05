@@ -8,6 +8,7 @@ Bundle-Vendor: Pramari, LLC
 Import-Package: org.osgi.framework;version="1.3.0"
 Export-Package: org.rifidi.edge.common.utilities.converter,
  org.rifidi.edge.common.utilities.dom,
+ org.rifidi.edge.common.utilities.expiration,
  org.rifidi.edge.common.utilities.jaxb,
  org.rifidi.edge.common.utilities.resource,
  org.rifidi.edge.common.utilities.thread
