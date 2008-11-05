@@ -29,6 +29,15 @@ public class CommandJournal {
 		}
 		return CommandStatus.NOCOMMAND;
 	}
+	
+	public String getCommandName(long commandID){
+		for (CommandWrapper cw : journal) {
+			if (cw.getCommandID() == commandID) {
+				return cw.getCommandName();
+			}
+		}
+		return CommandStatus.NOCOMMAND.name();
+	}
 
 	public void updateCommand(Command command, CommandReturnStatus status) {
 		for (CommandWrapper cw : journal) {

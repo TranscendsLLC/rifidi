@@ -8,8 +8,8 @@ import org.rifidi.edge.core.exceptions.RifidiCommandInterruptedException;
 import org.rifidi.edge.core.exceptions.RifidiCommandNotFoundException;
 import org.rifidi.edge.core.exceptions.RifidiConnectionException;
 import org.rifidi.edge.core.exceptions.RifidiExecutionException;
-import org.rifidi.edge.core.exceptions.RifidiInvalidConfigurationException;
 import org.rifidi.edge.core.readerplugin.ReaderInfo;
+import org.rifidi.edge.core.readerplugin.commands.CommandConfiguration;
 import org.rifidi.edge.core.readersession.impl.CommandExecutionListener;
 import org.rifidi.edge.core.readersession.impl.ExecutionThread;
 import org.rifidi.edge.core.readersession.impl.ReaderSessionState;
@@ -53,10 +53,9 @@ public class SessionStatePropertyExecutingCommYield implements
 	}
 
 	@Override
-	public long state_executeCommand(Document configuration)
+	public long state_executeCommand(CommandConfiguration configuration)
 			throws RifidiConnectionException,
-			RifidiCommandInterruptedException, RifidiCommandNotFoundException,
-			RifidiInvalidConfigurationException {
+			RifidiCommandInterruptedException, RifidiCommandNotFoundException {
 		logger.debug("cannot execute executeCommand when in " + ReaderSessionStatus.EXECUTING_PROPERTY_WITH_YIELDED_COMMAND);
 		readerSessionImpl.transition(new SessionStatePropertyExecutingCommYield(readerSessionImpl));
 		return 0;

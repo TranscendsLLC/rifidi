@@ -5,8 +5,8 @@ import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.exceptions.RifidiCommandInterruptedException;
 import org.rifidi.edge.core.exceptions.RifidiCommandNotFoundException;
 import org.rifidi.edge.core.exceptions.RifidiConnectionException;
-import org.rifidi.edge.core.exceptions.RifidiInvalidConfigurationException;
 import org.rifidi.edge.core.readerplugin.ReaderInfo;
+import org.rifidi.edge.core.readerplugin.commands.CommandConfiguration;
 import org.rifidi.edge.core.readersession.impl.ReaderSessionState;
 import org.rifidi.edge.core.readersession.impl.enums.ReaderSessionStatus;
 import org.w3c.dom.Document;
@@ -50,10 +50,9 @@ public class SessionStateError implements ReaderSessionState {
 	}
 
 	@Override
-	public long state_executeCommand(Document configuration)
+	public long state_executeCommand(CommandConfiguration configuration)
 			throws RifidiConnectionException,
-			RifidiCommandInterruptedException, RifidiCommandNotFoundException,
-			RifidiInvalidConfigurationException {
+			RifidiCommandInterruptedException, RifidiCommandNotFoundException {
 		logger.debug("cannot execute executeCommand when in " + ReaderSessionStatus.ERROR);
 		readerSessionImpl.transition(new SessionStateError(readerSessionImpl));
 		return -1;

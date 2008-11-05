@@ -20,9 +20,9 @@ import org.rifidi.edge.core.messageQueue.service.MessageService;
 import org.rifidi.edge.core.readerplugin.ReaderInfo;
 import org.rifidi.edge.core.readerplugin.ReaderPlugin;
 import org.rifidi.edge.core.readerplugin.commands.Command;
+import org.rifidi.edge.core.readerplugin.commands.CommandConfiguration;
 import org.rifidi.edge.core.readerplugin.commands.CommandReturnStatus;
 import org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionManager;
-import org.rifidi.edge.core.readerplugin.service.ReaderPluginService;
 import org.rifidi.edge.core.readerplugin.xml.CommandDescription;
 import org.rifidi.edge.core.readersession.ReaderSession;
 import org.rifidi.edge.core.readersession.impl.CommandExecutionListener;
@@ -59,8 +59,6 @@ public class ReaderSessionImpl implements ReaderSession, ReaderSessionState,
 	// Services
 	private ConnectionService connectionService;
 	private MessageService messageService;
-	@SuppressWarnings("unused")
-	private ReaderPluginService readerPluginService;
 
 	// Session Information
 	protected ReaderPlugin plugin;
@@ -83,10 +81,10 @@ public class ReaderSessionImpl implements ReaderSession, ReaderSessionState,
 	private ReaderSessionState sessionState;
 	private Semaphore transitionSem;
 
-	int readerSessionID;
+	Long readerSessionID;
 
 	public ReaderSessionImpl(ReaderPlugin plugin, ReaderInfo readerInfo,
-			int readerSessionID) {
+			Long readerSessionID) {
 		this.readerInfo = readerInfo;
 		this.readerSessionID = readerSessionID;
 		this.plugin = plugin;
@@ -105,21 +103,29 @@ public class ReaderSessionImpl implements ReaderSession, ReaderSessionState,
 	/*
 	 * (non-Javadoc)
 	 * 
+	 * @see org.rifidi.edge.core.readersession.ReaderSession#getSessionID()
+	 */
+	@Override
+	public long getSessionID() {
+		return this.readerSessionID;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see
 	 * org.rifidi.edge.core.readersession.ReaderSession#executeCommand(java.
 	 * lang.String, java.lang.String)
 	 */
-
 	@Override
 	public ReaderSessionStatus getStatus() {
 		return state_getStatus();
 	}
 
 	@Override
-	public long executeCommand(Document configuration)
+	public long executeCommand(CommandConfiguration configuration)
 			throws RifidiConnectionException,
-			RifidiCommandInterruptedException, RifidiCommandNotFoundException,
-			RifidiInvalidConfigurationException {
+			RifidiCommandInterruptedException, RifidiCommandNotFoundException {
 
 		return state_executeCommand(configuration);
 	}
@@ -209,9 +215,8 @@ public class ReaderSessionImpl implements ReaderSession, ReaderSessionState,
 	 * org.rifidi.edge.core.readersession.ReaderSession#stopCurCommand(boolean)
 	 */
 	@Override
-	public boolean stopCurCommand(boolean force) {
+	public void stopCurCommand(boolean force) {
 		this.state_stopCommand(force);
-		return false;
 	}
 
 	/*
@@ -222,11 +227,9 @@ public class ReaderSessionImpl implements ReaderSession, ReaderSessionState,
 	 * long)
 	 */
 	@Override
-	public boolean stopCurCommand(boolean force, long commandID) {
+	public void stopCurCommand(boolean force, long commandID) {
 		if (commandID == this.commandID) {
-			return stopCurCommand(force);
-		} else {
-			return false;
+			stopCurCommand(force);
 		}
 	}
 
@@ -243,6 +246,14 @@ public class ReaderSessionImpl implements ReaderSession, ReaderSessionState,
 			return curCommand.getCommandName();
 		else
 			return "NO CURRENT COMMAND";
+	}
+
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.readersession.ReaderSession#commandName()
+	 */
+	@Override
+	public String commandName(long id) {
+		return commandJournal.getCommandName(id);
 	}
 
 	/*
@@ -399,21 +410,10 @@ public class ReaderSessionImpl implements ReaderSession, ReaderSessionState,
 	public void setMessageService(MessageService messageService) {
 		this.messageService = messageService;
 		logger.debug("Creating message queues for " + readerSessionID);
-		this.messageQueue = this.messageService.createMessageQueue(Integer
+		this.messageQueue = this.messageService.createMessageQueue(Long
 				.toString(readerSessionID));
 		this.errorQueue = this.messageService.createMessageQueue("E"
-				+ Integer.toString(readerSessionID));
-	}
-
-	/**
-	 * Injection method to obtain a instance of the ReaderPluginService through
-	 * the ServiceRegistry Framework
-	 * 
-	 * @param readerPluginService
-	 */
-	@Inject
-	public void setReaderPluginService(ReaderPluginService readerPluginService) {
-		this.readerPluginService = readerPluginService;
+				+ Long.toString(readerSessionID));
 	}
 
 	/*
@@ -509,10 +509,9 @@ public class ReaderSessionImpl implements ReaderSession, ReaderSessionState,
 	}
 
 	@Override
-	public long state_executeCommand(Document configuration)
+	public long state_executeCommand(CommandConfiguration configuration)
 			throws RifidiConnectionException,
-			RifidiCommandInterruptedException, RifidiCommandNotFoundException,
-			RifidiInvalidConfigurationException {
+			RifidiCommandInterruptedException, RifidiCommandNotFoundException{
 		try {
 			transitionSem.acquire();
 		} catch (InterruptedException e) {
@@ -527,8 +526,7 @@ public class ReaderSessionImpl implements ReaderSession, ReaderSessionState,
 	public Document state_executeProperty(Document propertiesToExecute,
 			boolean set) throws RifidiConnectionException,
 			RifidiCommandNotFoundException, RifidiCommandInterruptedException,
-			RifidiInvalidConfigurationException,
-			RifidiCannotRestartCommandException {
+			RifidiCannotRestartCommandException, RifidiInvalidConfigurationException {
 		try {
 			transitionSem.acquire();
 		} catch (InterruptedException e) {

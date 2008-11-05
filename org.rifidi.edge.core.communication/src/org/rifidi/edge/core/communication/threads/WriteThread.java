@@ -71,7 +71,7 @@ public class WriteThread extends AbstractThread {
 		try {
 			while (running) {
 				Object object = writeQueue.take();
-				logger.debug(object);
+				//logger.debug(object);
 				byte[] bytes = protocol.messageToByte(object);
 
 				outputStream.write(bytes);

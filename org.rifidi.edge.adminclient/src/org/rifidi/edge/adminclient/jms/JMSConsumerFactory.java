@@ -13,7 +13,7 @@ import javax.jms.Session;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.rifidi.edge.core.rmi.readerconnection.RemoteReaderConnection;
+import org.rifidi.edge.core.rmi.readerconnection.ReaderSessionStub;
 
 public class JMSConsumerFactory {
 
@@ -57,7 +57,7 @@ public class JMSConsumerFactory {
 	}
 
 	public MessageConsumer createConsumer(
-			RemoteReaderConnection remoteReaderConnection) throws JMSException,
+			ReaderSessionStub remoteReaderConnection) throws JMSException,
 			RemoteException {
 		Destination dest = session.createQueue(remoteReaderConnection
 				.getMessageQueueName());

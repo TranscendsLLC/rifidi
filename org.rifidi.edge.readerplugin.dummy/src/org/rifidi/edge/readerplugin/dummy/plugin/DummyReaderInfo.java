@@ -124,6 +124,4 @@ public class DummyReaderInfo extends ReaderInfo {
 	public void setRandom(Random random) {
 		this.random = random;
 	}
-
-
 }

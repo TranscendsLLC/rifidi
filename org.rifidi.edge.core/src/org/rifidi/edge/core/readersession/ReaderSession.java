@@ -6,6 +6,7 @@ import org.rifidi.edge.core.exceptions.RifidiCommandNotFoundException;
 import org.rifidi.edge.core.exceptions.RifidiConnectionException;
 import org.rifidi.edge.core.exceptions.RifidiInvalidConfigurationException;
 import org.rifidi.edge.core.readerplugin.ReaderInfo;
+import org.rifidi.edge.core.readerplugin.commands.CommandConfiguration;
 import org.rifidi.edge.core.readersession.impl.enums.CommandStatus;
 import org.rifidi.edge.core.readersession.impl.enums.ReaderSessionStatus;
 import org.w3c.dom.Document;
@@ -19,6 +20,7 @@ import org.w3c.dom.Document;
  * communication events.
  * 
  * @author Andreas Huebner - andreas@pramari.com
+ * @author Kyle Neumeier - kyle@pramari.com
  * 
  */
 public interface ReaderSession {
@@ -40,10 +42,9 @@ public interface ReaderSession {
 	 *             the given command could not be found
 	 * @throws RifidiInvalidConfigurationException
 	 */
-	public long executeCommand(Document configuration)
+	public long executeCommand(CommandConfiguration configuration)
 			throws RifidiConnectionException,
-			RifidiCommandInterruptedException, RifidiCommandNotFoundException,
-			RifidiInvalidConfigurationException;
+			RifidiCommandInterruptedException, RifidiCommandNotFoundException;
 
 	/**
 	 * Execute a series of synchronous properties
@@ -77,7 +78,7 @@ public interface ReaderSession {
 	 *            force the command to stop
 	 * @return true if command could be stopped
 	 */
-	public boolean stopCurCommand(boolean force);
+	public void stopCurCommand(boolean force);
 
 	/**
 	 * Stop the currently executing command if it has the specified id
@@ -88,7 +89,7 @@ public interface ReaderSession {
 	 *            the id of command to stop
 	 * @return true if command could be stopped
 	 */
-	public boolean stopCurCommand(boolean force, long commandID);
+	public void stopCurCommand(boolean force, long commandID);
 
 	/**
 	 * Get the current executing command
@@ -98,14 +99,29 @@ public interface ReaderSession {
 	public String curExecutingCommand();
 
 	/**
+	 * Get the command name with the given command ID
+	 * 
+	 * @param id
+	 *            An id of a currently executing or previously executed command
+	 * @return The command name
+	 */
+	public String commandName(long id);
+
+	/**
 	 * Get the id of the current executing command
 	 * 
 	 * @return id of the current command, 0 if there is none executing
 	 */
 	public long curExecutingCommandID();
 
+	/**
+	 * Move the session from the Configured state to the OK state
+	 */
 	public void enable();
 
+	/**
+	 * Move the sesssion to the Configured state
+	 */
 	public void disable();
 
 	/**
@@ -120,7 +136,7 @@ public interface ReaderSession {
 	/**
 	 * Get the status of the currently executing command
 	 * 
-	 * @return status of the current executing command, NONE if ther is no
+	 * @return status of the current executing command, NONE if there is no
 	 *         command executing
 	 */
 	public CommandStatus commandStatus();
@@ -140,11 +156,31 @@ public interface ReaderSession {
 	public ReaderInfo getReaderInfo();
 
 	/**
-	 * Restart the ReaderSession to reset a Error State
+	 * Move the session from the Error state to the configured state
 	 */
 	public void resetReaderSession();
 
+	/**
+	 * Get the status of this reader session
+	 * 
+	 * @See ReaderSessionStatus
+	 * @return The status of the reader
+	 */
 	public ReaderSessionStatus getStatus();
 
+	/**
+	 * The ReaderInfo can be changed when the session is in the configured state
+	 * 
+	 * @param readerInfo
+	 *            The new reader info for this session
+	 * @return true if successful
+	 */
 	public boolean setReaderInfo(ReaderInfo readerInfo);
+
+	/**
+	 * Get the ID of this reader session
+	 * 
+	 * @return The ID of this session
+	 */
+	public long getSessionID();
 }

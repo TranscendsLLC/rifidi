@@ -145,22 +145,22 @@
 	
 	<property>
 		<classname>org.rifidi.edge.readerplugin.alien.properties.gpio.ExternalInput</classname>
-		<name>External Input</name>
+		<name>ExternalInput</name>
 		<group>GPIO</group>
 	</property>
 	<property>
 		<classname>org.rifidi.edge.readerplugin.alien.properties.gpio.ExternalOutput</classname>
-		<name>External Output</name>
+		<name>ExternalOutput</name>
 		<group>GPIO</group>
 	</property>
 	<property>
 		<classname>org.rifidi.edge.readerplugin.alien.properties.gpio.InvertExternalOutput</classname>
-		<name>Invert External Output</name>
+		<name>InvertExternalOutput</name>
 		<group>GPIO</group>
 	</property>
 	<property>
 		<classname>org.rifidi.edge.readerplugin.alien.properties.gpio.InvertExternalInput</classname>
-		<name> Invert External Input</name>
+		<name> InvertExternalInput</name>
 		<group>GPIO</group>
 	</property>
 	

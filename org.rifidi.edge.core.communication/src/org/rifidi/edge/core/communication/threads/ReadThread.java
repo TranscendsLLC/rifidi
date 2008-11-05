@@ -77,7 +77,7 @@ public class ReadThread extends AbstractThread {
 			while ((input = inputStream.read()) != -1 && running) {
 				message = protocol.byteToMessage((byte) input);
 				if (message != null) {
-					logger.debug(message);
+					//logger.debug(message);
 					readQueue.add(message);
 				}
 			}
@@ -88,7 +88,7 @@ public class ReadThread extends AbstractThread {
 			}
 		} catch (Exception e) {
 			running = false;
-			logger.debug(e.getMessage());
+			logger.debug("Error when reading");
 			if (!ignoreExceptions) {
 				connectionExceptionListener.connectionExceptionEvent(e);
 			}
