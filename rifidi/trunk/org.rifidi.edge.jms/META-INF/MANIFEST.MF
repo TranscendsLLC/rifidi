@@ -9,7 +9,7 @@ Import-Package: javax.naming,
  javax.net,
  javax.transaction,
  javax.transaction.xa,
- org.osgi.framework;version="1.3.0"
+ org.osgi.framework;version="1.4.0"
 Bundle-ClassPath: lib/activemq-all-5.1.0.jar,
  .
 Export-Package: javax.jms,
