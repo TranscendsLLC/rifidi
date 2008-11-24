@@ -10,6 +10,8 @@
  */
 package org.rifidi.edge.testing.alien;
 
+import java.util.HashSet;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.After;
@@ -18,6 +20,8 @@ import org.junit.Test;
 import org.rifidi.edge.core.exceptions.RifidiCommandInterruptedException;
 import org.rifidi.edge.core.exceptions.RifidiCommandNotFoundException;
 import org.rifidi.edge.core.exceptions.RifidiConnectionException;
+import org.rifidi.edge.core.readerplugin.commands.CommandArgument;
+import org.rifidi.edge.core.readerplugin.commands.CommandConfiguration;
 import org.rifidi.edge.core.readersession.ReaderSession;
 import org.rifidi.edge.core.readersession.service.ReaderSessionService;
 import org.rifidi.edge.readerplugin.alien.AlienConnectionManager;
@@ -64,8 +68,8 @@ public class AlienTestTagRead {
 		info.setPort(23);
 		info.setUsername("alien");
 		info.setPassword("password");
-		info.setMaxNumConnectionsAttemps(3);
-		info.setReconnectionIntervall(1000);
+		info.setMaxNumConnectionsAttempts(3);
+		info.setReconnectionInterval(1000);
 
 		logger.debug("Testing the tag reads");
 
@@ -75,7 +79,8 @@ public class AlienTestTagRead {
 		try {
 			logger.debug("Testing the getTagList command");
 			try {
-				readerSession.executeCommand("getTagList", null);
+				CommandConfiguration cc = new CommandConfiguration("getTagList", new HashSet<CommandArgument>());
+				readerSession.executeCommand(cc);
 			} catch (RifidiCommandNotFoundException e) {
 				e.printStackTrace();
 			}

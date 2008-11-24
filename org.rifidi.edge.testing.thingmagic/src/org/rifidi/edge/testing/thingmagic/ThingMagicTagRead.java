@@ -1,6 +1,7 @@
 package org.rifidi.edge.testing.thingmagic;
 
 import java.io.ByteArrayOutputStream;
+import java.util.HashSet;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -16,6 +17,8 @@ import org.rifidi.edge.core.exceptions.RifidiConnectionException;
 import org.rifidi.edge.core.messageQueue.MessageQueue;
 import org.rifidi.edge.core.messageQueue.service.MessageService;
 import org.rifidi.edge.core.readerplugin.ReaderInfo;
+import org.rifidi.edge.core.readerplugin.commands.CommandArgument;
+import org.rifidi.edge.core.readerplugin.commands.CommandConfiguration;
 import org.rifidi.edge.core.readerplugin.service.ReaderPluginService;
 import org.rifidi.edge.core.readersession.ReaderSession;
 import org.rifidi.edge.core.readersession.service.ReaderSessionService;
@@ -44,14 +47,14 @@ public class ThingMagicTagRead implements CommunicationStateListener {
 		ServiceRegistry.getInstance().service(this);
 		// System.out.println(CommunicationTest.class);
 		// System.out.println(MessageQueueImpl.class.getName());
-		/* 
+		/*
 		 * wait until all services are available.
 		 */
 		for (int x = 0; x < 40; x++) {
-			if (messageService != null &&
-					readerPluginService != null && 
-					readerSessionService != null &&
-					connectionService != null) break;
+			if (messageService != null && readerPluginService != null
+					&& readerSessionService != null
+					&& connectionService != null)
+				break;
 			Thread.sleep(500);
 		}
 		error = false;
@@ -115,12 +118,14 @@ public class ThingMagicTagRead implements CommunicationStateListener {
 		// }
 		info.setIpAddress("localhost");
 		info.setPort(8080);
-		info.setMaxNumConnectionsAttemps(3);
+		info.setMaxNumConnectionsAttempts(3);
 		ReaderSession readerSession = readerSessionService
 				.createReaderSession(info);
 
 		try {
-			readerSession.executeCommand("TagStreaming", null);
+			CommandConfiguration cc = new CommandConfiguration("TagStreaming",
+					new HashSet<CommandArgument>());
+			readerSession.executeCommand(cc);
 		} catch (RifidiConnectionException e) {
 			// TODO Auto-generated catch block
 			// e.printStackTrace();
@@ -136,7 +141,7 @@ public class ThingMagicTagRead implements CommunicationStateListener {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		try {
 			Thread.sleep(10000);
 		} catch (InterruptedException e) {
@@ -154,19 +159,19 @@ public class ThingMagicTagRead implements CommunicationStateListener {
 		info.setPort(8080);
 		Connection connection;
 		try {
-			connection = connectionService.createConnection(new ThingMagicConnectionManager(info), info, this);
+			connection = connectionService.createConnection(
+					new ThingMagicConnectionManager(info), info, this);
 		} catch (RifidiConnectionException e) {
 			throw new AssertionError(e);
 		}
-		if (error == true){
+		if (error == true) {
 			Assert.fail("connectin in error state.");
 		}
-		
+
 		GetTagsOnceCommand command = new GetTagsOnceCommand();
 
-		command.start(connection, messageQueue, null, 0);
-		command.stop();
-		
+		command.execute(connection, messageQueue, null);
+
 		connectionService.destroyConnection(connection, null);
 	}
 
@@ -184,33 +189,56 @@ public class ThingMagicTagRead implements CommunicationStateListener {
 	}
 
 	/**
-	 * @param readerSessionService the readerSessionService to set
+	 * @param readerSessionService
+	 *            the readerSessionService to set
 	 */
 	@Inject
-	public void setReaderSessionService(ReaderSessionService readerSessionService) {
+	public void setReaderSessionService(
+			ReaderSessionService readerSessionService) {
 		this.readerSessionService = readerSessionService;
 	}
-	
-	@Inject 
-	public void setConnectionService(ConnectionService connectionService){
+
+	@Inject
+	public void setConnectionService(ConnectionService connectionService) {
 		this.connectionService = connectionService;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.core.communication.service.CommunicationStateListener
+	 * #conn_connected()
+	 */
 	@Override
-	public void connected() {
+	public void conn_connected() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.core.communication.service.CommunicationStateListener
+	 * #conn_disconnected()
+	 */
 	@Override
-	public void disconnected() {
+	public void conn_disconnected() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.core.communication.service.CommunicationStateListener
+	 * #conn_error()
+	 */
 	@Override
-	public void error() {
-		// TODO Auto-generated method stub
-		this.error  = true;
+	public void conn_error() {
+		this.error = true;
+
 	}
 }

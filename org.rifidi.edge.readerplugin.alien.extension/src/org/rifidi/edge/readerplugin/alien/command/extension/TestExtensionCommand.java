@@ -4,16 +4,20 @@ import org.rifidi.edge.core.communication.Connection;
 import org.rifidi.edge.core.exceptions.RifidiMessageQueueException;
 import org.rifidi.edge.core.messageQueue.MessageQueue;
 import org.rifidi.edge.core.readerplugin.commands.Command;
+import org.rifidi.edge.core.readerplugin.commands.CommandConfiguration;
 import org.rifidi.edge.core.readerplugin.commands.CommandReturnStatus;
 import org.rifidi.edge.core.readerplugin.messages.Message;
-import org.w3c.dom.Document;
 
 public class TestExtensionCommand implements Command {
 
+
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.readerplugin.commands.Command#start(org.rifidi.edge.core.communication.Connection, org.rifidi.edge.core.messageQueue.MessageQueue, org.rifidi.edge.core.messageQueue.MessageQueue, org.rifidi.edge.core.readerplugin.commands.CommandConfiguration, long)
+	 */
 	@Override
 	public CommandReturnStatus start(Connection connection,
 			MessageQueue messageQueue, MessageQueue errorQueue,
-			Document configuration, long commandID) {
+			CommandConfiguration configuration, long commandID) {
 		try {
 			messageQueue.addMessage(new Message() {
 
@@ -29,9 +33,13 @@ public class TestExtensionCommand implements Command {
 		return CommandReturnStatus.SUCCESSFUL;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.readerplugin.commands.Command#stop()
+	 */
 	@Override
 	public void stop() {
-
+		// TODO Auto-generated method stub
+		
 	}
-
+	
 }

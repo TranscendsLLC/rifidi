@@ -60,7 +60,7 @@ public class JMSConsumerFactory {
 			ReaderSessionStub remoteReaderConnection) throws JMSException,
 			RemoteException {
 		Destination dest = session.createQueue(remoteReaderConnection
-				.getMessageQueueName());
+				.getSessionProperties().getMessageQueueName());
 		MessageConsumer consumer = session.createConsumer(dest);
 		consumers.add(consumer);
 		return consumer;

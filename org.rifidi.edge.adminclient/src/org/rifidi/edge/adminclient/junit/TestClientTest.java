@@ -96,6 +96,7 @@ public class TestClientTest {
 			}
 
 			try {
+				
 				remoteReader1.executeCommand("<TagStreamCommand/>");
 			} catch (RemoteException e) {
 				e.printStackTrace();

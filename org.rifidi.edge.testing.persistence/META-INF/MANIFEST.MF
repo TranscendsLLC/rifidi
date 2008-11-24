@@ -5,8 +5,8 @@ Bundle-SymbolicName: org.rifidi.edge.testing.persistence
 Bundle-Version: 1.0.0
 Bundle-Activator: org.rifidi.edge.testing.persistence.Activator
 Bundle-Vendor: Pramari, LLC
-Eclipse-LazyStart: true
-Import-Package: org.osgi.framework;version="1.3.0"
+Bundle-ActivationPolicy: lazy
+Import-Package: org.osgi.framework;version="1.4.0"
 Require-Bundle: org.rifidi.edge.persistence,
  org.rifidi.edge.testing,
  org.rifidi.edge.readerplugin.alien,
@@ -16,5 +16,5 @@ Require-Bundle: org.rifidi.edge.persistence,
  org.rifidi.edge.common.utilities,
  org.rifidi.edge.services,
  org.junit4,
- org.junit,
  org.rifidi.edge.readerplugin.thingmagic
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
