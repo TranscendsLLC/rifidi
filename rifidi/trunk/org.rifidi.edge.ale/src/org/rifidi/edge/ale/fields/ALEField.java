@@ -11,6 +11,9 @@
 
 package org.rifidi.edge.ale.fields;
 
+import org.rifidi.edge.ale.datatypes.ALEDataTypes;
+import org.rifidi.edge.ale.datatypes.builtin.formats.ALEFormat;
+
 /**
  * This interface represents an ALE Field. A field specifies a piece of data
  * found on a tag. Fields can be generic (such as fixed) or symbolic (such as
@@ -38,7 +41,10 @@ public interface ALEField {
 	 * @param format
 	 *            the format of the specified data type
 	 * @return the data in this field
+	 * @throws IllegalArgumentException
+	 *             if the type specified is invalid for the field or if the
+	 *             format specified is invalid for the datatype
 	 */
-	public String getData(String type, String format);
+	public String getData(ALEDataTypes type, ALEFormat format);
 
 }
