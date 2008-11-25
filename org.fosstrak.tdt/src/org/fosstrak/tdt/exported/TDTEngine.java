@@ -18,7 +18,7 @@
  * Boston, MA  02110-1301  USA
  */
 
-package org.fosstrak.tdt;
+package org.fosstrak.tdt.exported;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -44,12 +44,22 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.exolab.castor.xml.MarshalException;
 import org.exolab.castor.xml.Unmarshaller;
 import org.exolab.castor.xml.ValidationException;
+import org.fosstrak.tdt.Entry;
+import org.fosstrak.tdt.EpcTagDataTranslation;
+import org.fosstrak.tdt.Field;
+import org.fosstrak.tdt.GEPC64Table;
+import org.fosstrak.tdt.Level;
+import org.fosstrak.tdt.Option;
+import org.fosstrak.tdt.PrefixTree;
+import org.fosstrak.tdt.Rule;
+import org.fosstrak.tdt.Scheme;
 import org.fosstrak.tdt.fileservice.FileService;
 import org.fosstrak.tdt.types.CompactionMethodList;
-import org.fosstrak.tdt.types.LevelTypeList;
 import org.fosstrak.tdt.types.ModeList;
 import org.fosstrak.tdt.types.PadDirectionList;
 import org.fosstrak.tdt.types.TagLengthList;
@@ -87,6 +97,8 @@ import org.xml.sax.SAXException;
  */
 public class TDTEngine {
 
+	private Log logger = LogFactory.getLog(TDTEngine.class);
+	
 	// --------------------------/
 	// - Class/Member Variables -/
 	// --------------------------/
@@ -188,7 +200,7 @@ public class TDTEngine {
 
 				initFromTDT(tdt);
 			} catch (IOException e) {
-				System.out.println("cannot open file: " + url.getFile());
+				logger.debug("cannot open resource: " + url.getFile());
 			}
 		}
 

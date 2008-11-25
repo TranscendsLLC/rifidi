@@ -21,7 +21,7 @@ import org.exolab.castor.xml.MarshalException;
 import org.exolab.castor.xml.Marshaller;
 import org.exolab.castor.xml.Unmarshaller;
 import org.exolab.castor.xml.ValidationException;
-import org.fosstrak.tdt.types.LevelTypeList;
+import org.fosstrak.tdt.exported.LevelTypeList;
 import org.xml.sax.ContentHandler;
 
 /**
@@ -39,7 +39,7 @@ public class Level implements java.io.Serializable {
     /**
      * Field _type
      */
-    private org.fosstrak.tdt.types.LevelTypeList _type;
+    private org.fosstrak.tdt.exported.LevelTypeList _type;
 
     /**
      * Field _prefixMatch
@@ -314,7 +314,7 @@ public class Level implements java.io.Serializable {
      * @return LevelTypeList
      * @return the value of field 'type'.
      */
-    public org.fosstrak.tdt.types.LevelTypeList getType()
+    public org.fosstrak.tdt.exported.LevelTypeList getType()
     {
         return this._type;
     } //-- org.fosstrak.tdt.types.LevelTypeList getType() 
@@ -498,7 +498,7 @@ public class Level implements java.io.Serializable {
      * 
      * @param type the value of field 'type'.
      */
-    public void setType(org.fosstrak.tdt.types.LevelTypeList type)
+    public void setType(org.fosstrak.tdt.exported.LevelTypeList type)
     {
         this._type = type;
     } //-- void setType(org.fosstrak.tdt.types.LevelTypeList) 

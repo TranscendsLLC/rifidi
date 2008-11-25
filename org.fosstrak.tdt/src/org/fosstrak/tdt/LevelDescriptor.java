@@ -67,7 +67,7 @@ public class LevelDescriptor extends org.exolab.castor.xml.util.XMLClassDescript
         //-- initialize attribute descriptors
         
         //-- _type
-        desc = new org.exolab.castor.xml.util.XMLFieldDescriptorImpl(org.fosstrak.tdt.types.LevelTypeList.class, "_type", "type", org.exolab.castor.xml.NodeType.Attribute);
+        desc = new org.exolab.castor.xml.util.XMLFieldDescriptorImpl(org.fosstrak.tdt.exported.LevelTypeList.class, "_type", "type", org.exolab.castor.xml.NodeType.Attribute);
         handler = new org.exolab.castor.xml.XMLFieldHandler() {
             public java.lang.Object getValue( java.lang.Object object ) 
                 throws IllegalStateException
@@ -80,7 +80,7 @@ public class LevelDescriptor extends org.exolab.castor.xml.util.XMLClassDescript
             {
                 try {
                     Level target = (Level) object;
-                    target.setType( (org.fosstrak.tdt.types.LevelTypeList) value);
+                    target.setType( (org.fosstrak.tdt.exported.LevelTypeList) value);
                 }
                 catch (java.lang.Exception ex) {
                     throw new IllegalStateException(ex.toString());
@@ -90,7 +90,7 @@ public class LevelDescriptor extends org.exolab.castor.xml.util.XMLClassDescript
                 return null;
             }
         };
-        handler = new org.exolab.castor.xml.handlers.EnumFieldHandler(org.fosstrak.tdt.types.LevelTypeList.class, handler);
+        handler = new org.exolab.castor.xml.handlers.EnumFieldHandler(org.fosstrak.tdt.exported.LevelTypeList.class, handler);
         desc.setImmutable(true);
         desc.setHandler(handler);
         desc.setRequired(true);

@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Ale Plug-in
+Bundle-SymbolicName: org.rifidi.edge.ale
+Bundle-Version: 1.0.0
+Bundle-Activator: org.rifidi.edge.ale.Activator
+Bundle-Vendor: Pramari, LLC
+Require-Bundle: org.rifidi.edge.tags;bundle-version="1.0.0",
+ org.rifidi.edge.tags.epc;bundle-version="1.0.0",
+ org.rifidi.edge.log4j;bundle-version="1.0.0",
+ org.rifidi.edge.tags.encodings.epc;bundle-version="1.0.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ActivationPolicy: lazy
+Import-Package: org.osgi.framework;version="1.4.0"

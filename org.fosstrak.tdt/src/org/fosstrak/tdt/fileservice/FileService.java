@@ -1,6 +1,5 @@
 package org.fosstrak.tdt.fileservice;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.URL;
 import java.util.ArrayList;
