@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            class="org.rifidi.edge.client.commands.views.ReaderCommandView"
+            id="org.rifidi.edge.client.commands.views.ReaderCommandView"
+            name="Reader Command View"
+            restorable="false">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="org.rifidi.edge.client.perspective">
+         <view
+               closeable="true"
+               id="org.rifidi.dashboard.twodview.views.SiteView"
+               minimized="false"
+               moveable="true"
+               ratio="0.2"
+               relationship="right"
+               relative="org.rifidi.edge.client.readerview.views.EdgeServerConnectionView"
+               showTitle="true"
+               standalone="true"
+               visible="true">
+         </view>
+         <view
+               closeable="true"
+               id="org.rifidi.edge.client.commands.views.ReaderCommandView"
+               minimized="false"
+               ratio="0.4"
+               relationship="bottom"
+               relative="org.rifidi.dashboard.twodview.views.SiteView"
+               showTitle="true"
+               visible="true">
+         </view>
+      </perspectiveExtension>
+   </extension>
+
+</plugin>

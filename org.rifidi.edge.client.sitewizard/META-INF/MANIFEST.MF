@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Site Wizard Plug-in
+Bundle-SymbolicName: org.rifidi.edge.client.sitewizard;singleton:=true
+Bundle-Version: 1.0.0
+Bundle-Activator: org.rifidi.edge.client.sitewizard.Activator
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.rifidi.edge.log4j;bundle-version="1.0.0"
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ClassPath: lib/jdom-1.1.jar,
+ .
