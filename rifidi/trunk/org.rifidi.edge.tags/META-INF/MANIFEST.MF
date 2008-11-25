@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Tags Plug-in
+Bundle-SymbolicName: org.rifidi.edge.tags
+Bundle-Version: 1.0.0
+Bundle-Activator: org.rifidi.edge.tags.Activator
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-Vendor: Pramari, LLC
+Export-Package: org.rifidi.edge.tags.data,
+ org.rifidi.edge.tags.data.memorybank,
+ org.rifidi.edge.tags.exceptions,
+ org.rifidi.edge.tags.util
+Import-Package: org.osgi.framework;version="1.4.0"

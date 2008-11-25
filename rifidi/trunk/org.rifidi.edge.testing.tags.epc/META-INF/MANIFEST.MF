@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Epc Fragment
+Bundle-SymbolicName: org.rifidi.edge.testing.tags.epc
+Bundle-Version: 1.0.0
+Bundle-Vendor: Pramari, LLC
+Fragment-Host: org.rifidi.edge.tags.epc;bundle-version="1.0.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Require-Bundle: org.junit4;bundle-version="4.3.1"

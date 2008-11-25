@@ -12,4 +12,7 @@ Bundle-ClassPath: lib/castor-0.9.9.1.jar,
  .,
  lib/xercesImpl-2.2.1.jar
 Require-Bundle: org.rifidi.edge.services;bundle-version="1.0.0",
- org.rifidi.edge.log4j;bundle-version="1.0.0"
+ org.rifidi.edge.log4j;bundle-version="1.0.0",
+ org.apache.commons.pool;bundle-version="1.0.0"
+Export-Package: org.fosstrak.tdt.exported,
+ org.fosstrak.tdt.pool

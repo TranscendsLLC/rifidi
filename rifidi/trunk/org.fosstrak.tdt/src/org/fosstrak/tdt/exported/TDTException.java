@@ -18,7 +18,7 @@
  * Boston, MA  02110-1301  USA
  */
 
-package org.fosstrak.tdt;
+package org.fosstrak.tdt.exported;
 
 /** A TDTException is thrown at runtime when the user supplies invalid or incomplete input. */
 

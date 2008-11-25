@@ -10,6 +10,9 @@
       </plugins>
       <features>
       </features>
+      <extraLocations>
+         <location path="${workspace_loc}/org.rifidi.edge.target/eclipse-core"/>
+      </extraLocations>
    </content>
 
 </target>

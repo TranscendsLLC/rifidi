@@ -5,7 +5,7 @@
  * $Id$
  */
 
-package org.fosstrak.tdt.types;
+package org.fosstrak.tdt.exported;
 
   //---------------------------------/
  //- Imported classes and packages -/
@@ -188,7 +188,7 @@ public class LevelTypeList implements java.io.Serializable {
      * @param string
      * @return LevelTypeList
      */
-    public static org.fosstrak.tdt.types.LevelTypeList valueOf(java.lang.String string)
+    public static org.fosstrak.tdt.exported.LevelTypeList valueOf(java.lang.String string)
     {
         java.lang.Object obj = null;
         if (string != null) obj = _memberTable.get(string);

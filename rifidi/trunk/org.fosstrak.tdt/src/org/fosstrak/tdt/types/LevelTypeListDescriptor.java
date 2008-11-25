@@ -110,7 +110,7 @@ public class LevelTypeListDescriptor extends org.exolab.castor.xml.util.XMLClass
      */
     public java.lang.Class getJavaClass()
     {
-        return org.fosstrak.tdt.types.LevelTypeList.class;
+        return org.fosstrak.tdt.exported.LevelTypeList.class;
     } //-- java.lang.Class getJavaClass() 
 
     /**
