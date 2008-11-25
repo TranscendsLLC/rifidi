@@ -1,0 +1,16 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Commands Plug-in
+Bundle-SymbolicName: org.rifidi.edge.client.commands;singleton:=true
+Bundle-Version: 1.0.0
+Bundle-Activator: org.rifidi.edge.client.commands.Activator
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.rifidi.edge.client;bundle-version="1.0.0",
+ org.rifidi.edge.log4j;bundle-version="1.0.0",
+ org.rifidi.edge.client.connections;bundle-version="1.0.0",
+ org.rifidi.dynamicSWTforms.ui;bundle-version="1.0.0",
+ org.jdom;bundle-version="1.0.0",
+ org.rifidi.edge.core.rmi.client;bundle-version="1.0.0"
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6

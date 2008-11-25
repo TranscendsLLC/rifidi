@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="*">
+         <view
+               id="org.eclipse.ui.console.ConsoleView"
+               minimized="false"
+               relationship="bottom"
+               relative="org.rifidi.edge.client.commands.views.ReaderCommandView">
+         </view>
+      </perspectiveExtension>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="popup:org.rifidi.edge.client.readerview.views.EdgeServerConnectionView?after=readeractions_additions">
+         <command
+               commandId="org.rifidi.edge.client.jmsconsole.commands.OpenJMSConsole"
+               id="OpenJMSConsole"
+               label="Open JMS Console"
+               style="push">
+            <visibleWhen>
+               <iterate
+                     ifEmpty="false">
+                  <instanceof
+                        value="org.rifidi.edge.client.connections.edgeserver.RemoteReader">
+                  </instanceof>
+               </iterate>
+            </visibleWhen>
+         </command>
+      </menuContribution>
+      <menuContribution
+            locationURI="toolbar:org.eclipse.ui.console.ConsoleView?after=additions">
+         <command
+               commandId="org.rifidi.edge.client.jmsconsole.commands.CloseConsole"
+               id="CloseConsole"
+               label="Close Console"
+               style="push">
+         </command>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            defaultHandler="org.rifidi.edge.client.jmsconsole.handlers.OpenJMSConsoleHandler"
+            id="org.rifidi.edge.client.jmsconsole.commands.OpenJMSConsole"
+            name="OpenJMSConsole">
+      </command>
+      <command
+            defaultHandler="org.rifidi.edge.client.jmsconsole.handlers.CloseConsoleHandler"
+            id="org.rifidi.edge.client.jmsconsole.commands.CloseConsole"
+            name="CloseConsole">
+      </command>
+   </extension>
+
+</plugin>

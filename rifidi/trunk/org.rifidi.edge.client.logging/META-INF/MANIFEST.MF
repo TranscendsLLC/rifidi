@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Logging Plug-in
+Bundle-SymbolicName: org.rifidi.edge.client.logging;singleton:=true
+Bundle-Version: 1.0.0
+Bundle-Activator: org.rifidi.edge.client.logging.Activator
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.rifidi.edge.client.connections;bundle-version="1.0.0",
+ org.rifidi.edge.log4j;bundle-version="1.0.0",
+ org.rifidi.edge.services;bundle-version="1.0.0"
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6

@@ -1,0 +1,16 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Twodview Plug-in
+Bundle-SymbolicName: org.rifidi.edge.client.twodview;singleton:=true
+Bundle-Version: 1.0.0
+Bundle-Activator: org.rifidi.dashboard.twodview.Activator
+Bundle-Vendor: PRAMARI LLC
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.draw2d;bundle-version="3.4.0",
+ org.rifidi.edge.services;bundle-version="1.0.0",
+ org.rifidi.edge.log4j;bundle-version="1.0.0",
+ org.eclipse.core.resources;bundle-version="3.4.1",
+ org.rifidi.edge.client.connections;bundle-version="1.1.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ActivationPolicy: lazy

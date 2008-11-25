@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Build Plug-in
+Bundle-SymbolicName: org.rifidi.edge.build; singleton:=true
+Bundle-Version: 1.0.0
+Bundle-Activator: org.rifidi.edge.build.Activator
+Bundle-Vendor: Pramari, LLC
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.rifidi.edge.log4j
+Eclipse-LazyStart: true

@@ -1,0 +1,20 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Tags Plug-in
+Bundle-SymbolicName: org.rifidi.edge.client.tags;singleton:=true
+Bundle-Version: 1.0.0
+Bundle-Activator: org.rifidi.edge.client.tags.Activator
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.rifidi.edge.client;bundle-version="1.0.0",
+ org.rifidi.edge.client.connections;bundle-version="1.1.0",
+ org.rifidi.edge.log4j;bundle-version="1.0.0",
+ org.rifidi.edge.services;bundle-version="1.0.0",
+ org.rifidi.edge.common.utilities;bundle-version="1.0.0",
+ org.rifidi.edge.core.rmi.client;bundle-version="1.0.0"
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Export-Package: org.rifidi.edge.client.tags,
+ org.rifidi.edge.client.tags.handlers,
+ org.rifidi.edge.client.tags.utils,
+ org.rifidi.edge.client.tags.views.reader
