@@ -25,7 +25,7 @@ import org.rifidi.edge.tags.util.BitVector;
  * @author kyle
  * 
  */
-public class UintDataType {
+public class UintDataTypeTests {
 
 	public static String int_1 = "135";
 	public static String hex_1 = "x87";

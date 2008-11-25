@@ -33,17 +33,17 @@ public class PCBits {
 	/**
 	 * The number of bits in the PC Bits
 	 */
-	private static int LENGTH_OF_PC_BITS = 16;
+	private static final int LENGTH_OF_PC_BITS = 16;
 
 	/**
 	 * The number of Length bits in the PC bits
 	 */
-	private static int NUMBER_OF_LENGTH_BITS = 5;
+	private static final int NUMBER_OF_LENGTH_BITS = 5;
 
 	/**
 	 * A default string for the 11 other bits (non length bits) in the PC bits
 	 */
-	private static String OTHER_BITS = "00000000000";
+	private static final String OTHER_BITS = "00000000000";
 
 	private BitVector _bits;
 
