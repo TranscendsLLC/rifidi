@@ -81,8 +81,7 @@ public class SiteView extends ViewPart implements ISelectionProvider {
 		LightweightSystem lws = new LightweightSystem(canvas);
 
 		ScalableLayeredPane lp = new ScalableLayeredPane();
-		canvas.addListener(SWT.MouseWheel | SWT.MouseDown | SWT.MouseUp
-				| SWT.MouseMove, new SiteViewMouseWheelListener(lp));
+		canvas.addListener(SWT.MouseWheel, new SiteViewMouseWheelListener(lp));
 		canvas.addKeyListener(new SiteViewKeyListener(lp));
 
 		floorplanLayer = new FloorPlanLayer();
