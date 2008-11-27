@@ -13,7 +13,6 @@ package org.rifidi.dashboard.twodview.views;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eclipse.draw2d.LightweightSystem;
-import org.eclipse.draw2d.ScalableLayeredPane;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.ISelection;
@@ -31,6 +30,7 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.part.ViewPart;
 import org.rifidi.dashboard.twodview.layers.EffectLayer;
 import org.rifidi.dashboard.twodview.layers.FloorPlanLayer;
+import org.rifidi.dashboard.twodview.layers.ListeningScalableLayeredPane;
 import org.rifidi.dashboard.twodview.layers.NoteLayer;
 import org.rifidi.dashboard.twodview.layers.ObjectLayer;
 import org.rifidi.dashboard.twodview.listeners.SiteViewDropTargetListener;
@@ -80,7 +80,7 @@ public class SiteView extends ViewPart implements ISelectionProvider {
 		// LWS holds the draw2d components
 		LightweightSystem lws = new LightweightSystem(canvas);
 
-		ScalableLayeredPane lp = new ScalableLayeredPane();
+		ListeningScalableLayeredPane lp = new ListeningScalableLayeredPane();
 		canvas.addListener(SWT.MouseWheel, new SiteViewMouseWheelListener(lp));
 		canvas.addKeyListener(new SiteViewKeyListener(lp));
 
@@ -103,15 +103,9 @@ public class SiteView extends ViewPart implements ISelectionProvider {
 		dt.setTransfer(new Transfer[] { TextTransfer.getInstance() });
 		dt.addDropListener(new SiteViewDropTargetListener(this, canvas));
 
-		// test stuff
-		// floorplanLayer.setFloorplan(Activator.imageDescriptorFromPlugin(
-		// "org.rifidi.dashboard.twodview", "icons/badwarehouse.gif")
-		// .createImage());
-
 		MenuManager menuMgr = new MenuManager();
 		menuMgr.add(new GroupMarker("twodview"));
-		// logger.debug("selection provider: " +
-		// getSite().getSelectionProvider());
+		
 		Menu menu = menuMgr.createContextMenu(canvas);
 		canvas.setMenu(menu);
 		getSite().registerContextMenu(menuMgr, this);

@@ -69,8 +69,8 @@ public class SiteViewKeyListener implements KeyListener {
 				bounds.x += x;
 				bounds.y += y;
 				ifig.setBounds(bounds);
-				((IFigure)object).repaint();
 			}
+			((IFigure)object).repaint();
 		}
 	}
 
