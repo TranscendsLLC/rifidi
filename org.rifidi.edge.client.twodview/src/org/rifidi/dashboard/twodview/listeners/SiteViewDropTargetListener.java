@@ -116,7 +116,7 @@ public class SiteViewDropTargetListener implements DropTargetListener {
 	public void drop(DropTargetEvent event) {
 
 		if (TextTransfer.getInstance().isSupportedType(event.currentDataType)) {
-			Image image = Activator.imageDescriptorFromPlugin("org.rifidi.dashboard.twodview", "icons/reader-24x24.png").createImage();
+			Image image = Activator.imageDescriptorFromPlugin("org.rifidi.edge.client.twodview", "icons/reader-24x24.png").createImage();
 			// get Reader from ReaderRegistry
 			RemoteReader reader = readerRegistry.getRemoteReader(RemoteReaderID.createIDFromString(event.data.toString()));
 			// create an ImageFigure that contains the reference to the reader

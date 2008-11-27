@@ -89,7 +89,7 @@ public class ObjectLayer extends XYLayer implements MouseListener,
 			// between
 			deltaY = me.y - rect.y;
 			me.consume();
-		}
+		} 
 
 	}
 
@@ -155,7 +155,7 @@ public class ObjectLayer extends XYLayer implements MouseListener,
 	 */
 	@Override
 	public void mouseHover(MouseEvent me) {
-		// TODO Auto-generated method stub
+		
 
 	}
 
