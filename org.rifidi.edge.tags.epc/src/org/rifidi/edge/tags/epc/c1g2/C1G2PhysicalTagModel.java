@@ -141,10 +141,10 @@ public class C1G2PhysicalTagModel extends PhysicalTagModel {
 			mb = _userMB;
 			break;
 		default:
-			throw new IllegalArgumentException();
+			throw new IllegalBankAccessException();
 		}
 		if (null == mb) {
-			throw new IllegalArgumentException();
+			throw new IllegalBankAccessException();
 		}
 		return mb.access(length, offset);
 

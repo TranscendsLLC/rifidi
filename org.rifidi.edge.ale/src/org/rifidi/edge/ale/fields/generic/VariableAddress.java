@@ -13,8 +13,30 @@ package org.rifidi.edge.ale.fields.generic;
 
 /**
  * @author kyle
- *
+ * 
  */
 public class VariableAddress {
+
+	private int _memBank;
+	private String _oid;
+
+	public VariableAddress(int memBank, String oid) {
+		_memBank = memBank;
+		_oid = oid;
+	}
+
+	/**
+	 * @return the _memBank
+	 */
+	public int get_memBank() {
+		return _memBank;
+	}
+
+	/**
+	 * @return the _oid
+	 */
+	public String get_oid() {
+		return _oid;
+	}
 
 }

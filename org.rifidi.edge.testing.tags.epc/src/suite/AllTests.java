@@ -11,12 +11,12 @@
 
 package suite;
 
-import tests.EPCMemoryBankTest;
-import tests.EPCMemoryBankTestWithoutHeaderNSI;
-import tests.EPCMemoryBankWithoutHeaderTest;
-import tests.ReservedMemoryBankTest;
-import tests.TIDMemoryBankTest;
-import tests.UserMemoryBankTest;
+import tests.c1g2.EPCMemoryBankTest;
+import tests.c1g2.EPCMemoryBankTestWithoutHeaderNSI;
+import tests.c1g2.EPCMemoryBankWithoutHeaderTest;
+import tests.c1g2.ReservedMemoryBankTest;
+import tests.c1g2.TIDMemoryBankTest;
+import tests.c1g2.UserMemoryBankTest;
 import junit.framework.JUnit4TestAdapter;
 import junit.framework.Test;
 import junit.framework.TestSuite;

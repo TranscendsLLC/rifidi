@@ -22,7 +22,9 @@ import org.rifidi.edge.tags.util.ConvertingUtil;
  * 
  * Note that for this class, only the EPC is stored in the underlying memory
  * bank. The PCBIts are stored in this class and will not affect any superclass
- * methods
+ * methods. This isn't a great solution because now @1.8.24 does not always give
+ * back the AFI bits. It would depend on the implementation of
+ * AbstractC1G2EPCBank
  * 
  * @author Kyle Neumeier - kyle@pramari.com
  * 
@@ -214,10 +216,9 @@ public class C1G2EPCBankWithoutHeader extends AbstractC1G2EPCBank {
 	 * @see org.rifidi.edge.tags.epc.c1g2.AbstractC1G2EPCBank#getNSIAndEPCBits()
 	 */
 	@Override
-	public BitVector getNSIAndEPCBits() throws IllegalBankAccessException {
+	public BitVector getNSIBits() throws IllegalBankAccessException {
 		try {
-			BitVector NSIVector = _pcBits.get(7, 16);
-			return NSIVector.append(_bits);
+			return _pcBits.get(7, 16);
 		} catch (IndexOutOfBoundsException ex) {
 			throw new IllegalBankAccessException("EPC bits not available");
 		}
