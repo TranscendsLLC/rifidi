@@ -114,6 +114,25 @@ public class BitVector {
 	}
 
 	/**
+	 * A method that appends the supplied bitVector to this one and returns a
+	 * new string.
+	 * 
+	 * @param bitVector
+	 *            the BitVector to append to this one
+	 * @return A new BitVector that is this BitVector followed by the supplied
+	 *         BitVector
+	 */
+	public BitVector append(BitVector bitVector) {
+		BitVector that = bitVector;
+		if (null == that) {
+			throw new IllegalArgumentException("bitVector cannot be null");
+		}
+		String thisString = this.toString(2);
+		String thatString = that.toString(2);
+		return new BitVector(thisString + thatString, 2);
+	}
+
+	/**
 	 * Return a new BitVector composed of bits from <code>fromIndex</code>
 	 * (inclusive) to <code>toIndex</code>(exclusive).
 	 * 

@@ -138,5 +138,15 @@ public class BitVectorTest{
 		bv = new BitVector(testString, 10, 10);
 		Assert.assertEquals(result, bv.toString(2));
 	}
+	
+	@Test
+	public void testAppend(){
+		String thisString = "01010010";
+		String thatString = "0010001000001111";
+		BitVector thisBV = new BitVector(thisString, 2);
+		BitVector thatBV = new BitVector(thatString, 2);
+		BitVector newBV = thisBV.append(thatBV);
+		Assert.assertEquals(thisString+thatString, newBV.toString(2));
+	}
 
 }

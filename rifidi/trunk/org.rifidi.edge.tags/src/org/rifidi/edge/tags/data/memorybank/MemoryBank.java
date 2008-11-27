@@ -13,6 +13,7 @@ package org.rifidi.edge.tags.data.memorybank;
 
 import java.io.Serializable;
 
+import org.rifidi.edge.tags.exceptions.IllegalBankAccessException;
 import org.rifidi.edge.tags.util.BitVector;
 
 /**
@@ -65,8 +66,31 @@ public class MemoryBank implements Serializable {
 	public int getMemoryBankSize() {
 		return _bits.bitLength();
 	}
-	
-	public String toString(){
+
+	/**
+	 * This method simulates a memory access from a bank.
+	 * 
+	 * @param bits
+	 *            the number of bits to read
+	 * @param offset
+	 *            the offset from the first bit. 0 indicates no offset
+	 * @return A BitVector representing <code>bits</code> number of bits
+	 *         starting at position <code>offset</code>
+	 * @throws IllegalBankAccessException
+	 *             If there was an out of bounds exception while performing the
+	 *             access
+	 */
+	public BitVector access(int bits, int offset)
+			throws IllegalBankAccessException {
+		try {
+			return _bits.get(offset, offset + bits);
+		} catch (IndexOutOfBoundsException ex) {
+			throw new IllegalBankAccessException();
+		}
+	}
+
+	@Override
+	public String toString() {
 		String bits = _bits.toString(2);
 		return new StringBuffer(bits).reverse().toString();
 	}

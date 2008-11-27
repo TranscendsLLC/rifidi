@@ -11,10 +11,10 @@
 
 package org.rifidi.edge.tags.epc.c1g2;
 
-import java.util.BitSet;
-
 import org.rifidi.edge.tags.data.PhysicalTagModel;
+import org.rifidi.edge.tags.data.memorybank.MemoryBank;
 import org.rifidi.edge.tags.exceptions.IllegalBankAccessException;
+import org.rifidi.edge.tags.util.BitVector;
 
 /**
  * This is a concrete implementation of a PhysicalTagModel for Class 1 Gen 2
@@ -37,6 +37,11 @@ import org.rifidi.edge.tags.exceptions.IllegalBankAccessException;
 public class C1G2PhysicalTagModel extends PhysicalTagModel {
 
 	/**
+	 * SerialVersionUID
+	 */
+	private static final long serialVersionUID = 1L;
+
+	/**
 	 * The Reserved Memory Bank. (bank 0)
 	 */
 	private C1G2ReservedBank _reservedMB;
@@ -44,7 +49,7 @@ public class C1G2PhysicalTagModel extends PhysicalTagModel {
 	/**
 	 * The EPC Memory Bank (bank 1)
 	 */
-	private C1G2EPCBank _epcMB;
+	private AbstractC1G2EPCBank _epcMB;
 
 	/**
 	 * The TID Memory Bank (bank 2)
@@ -71,7 +76,8 @@ public class C1G2PhysicalTagModel extends PhysicalTagModel {
 	 *            bank 3
 	 */
 	public C1G2PhysicalTagModel(C1G2ReservedBank reservedBank,
-			C1G2EPCBank epcBank, C1G2TIDBank tidBank, C1G2UserBank userBank) {
+			AbstractC1G2EPCBank epcBank, C1G2TIDBank tidBank,
+			C1G2UserBank userBank) {
 		_reservedMB = reservedBank;
 		_epcMB = epcBank;
 		_tidMB = tidBank;
@@ -79,46 +85,70 @@ public class C1G2PhysicalTagModel extends PhysicalTagModel {
 	}
 
 	/**
-	 * Constructs a new C1G2PhysicalTagModel from three memory banks and a
-	 * BitSet containing the EPC data (not including CRC and PC bits) for this
-	 * tag read. If not data is available for a particular bank, null should be
-	 * passed in as an argument
-	 * 
-	 * @param reservedBank
-	 *            bank 0
-	 * @param epc
-	 *            the EPC bits from bank 1, not including the CRC and PC bits
-	 *            (i.e. only the portion of bank 1 after address x1F)
-	 * @param tidBank
-	 *            bank 2
-	 * @param userBank
-	 *            bank 3
-	 */
-	public C1G2PhysicalTagModel(C1G2ReservedBank reservedBank, BitSet epc,
-			C1G2TIDBank tidBank, C1G2UserBank userBank) {
-		_reservedMB = reservedBank;
-		// TODO: create new C1G2EPCBank
-		_tidMB = tidBank;
-		_userMB = userBank;
-	}
-
-	/**
-	 * Constructs a new C1G2PhysicalTagModel only from the epc data portion of
+	 * Constructs a new C1G2PhysicalTagModel only from the EPC data portion of
 	 * bank 1(not including CRC and PC bits). The other memory banks on this tag
-	 * model will be null
+	 * model will be null.
+	 * 
+	 * This is a convenience constructor for when only the EPC bits are needed
+	 * for a C1G2PhsyicalTagModel. Please note that the 9 Numbering System
+	 * Identifier bits (the toggle bit and the AFI bits) will be set to all 0s.
+	 * This means you should use this constructor only if you know that your EPC
+	 * is part of the EPC encoding family as defined in the Tag Data
+	 * Specification (e.g SGTIN, GID, DOD). This method will also generate a
+	 * default PC Bits. For more information on how that is done see
+	 * C1G2EPCBankWithoutHeader
+	 * 
+	 * @see C1G2EPCBankWithoutHeader#C1G2EPCBankWithoutHeader(String)
 	 * 
 	 * @param epc
 	 *            the EPC bits from bank 1, not including the CRC and PC bits
 	 *            (i.e. only the portion of bank 1 after address x1F)
 	 */
-	public C1G2PhysicalTagModel(BitSet epc) {
-		this(null, epc, null, null);
+	public C1G2PhysicalTagModel(String epc) {
+		this(null, new C1G2EPCBankWithoutHeader(epc), null, null);
 	}
 
 	/**
-	 * SerialVersionUID
+	 * Read <code>length</code> number of bits from MemoryBank
+	 * <code>memBank</code> starting at position <code>offset</code>
+	 * 
+	 * @param memBank
+	 *            the memory bank to read from: 0-Reserved 1-EPC 2-TID 3-User
+	 * @param length
+	 *            The number of bits to read
+	 * @param offset
+	 *            The index of the first bit to read. 0 indicates start from the
+	 *            beginning
+	 * @return a BitVector representing the tag read
+	 * @throws IllegalBankAccessException
+	 *             If there was an error while reading (such as index out of
+	 *             bounds)
 	 */
-	private static final long serialVersionUID = 1L;
+	public BitVector read(int memBank, int length, int offset)
+			throws IllegalBankAccessException {
+		MemoryBank mb;
+		switch (memBank) {
+		case 0:
+			mb = _reservedMB;
+			break;
+		case 1:
+			mb = _epcMB;
+			break;
+		case 2:
+			mb = _tidMB;
+			break;
+		case 3:
+			mb = _userMB;
+			break;
+		default:
+			throw new IllegalArgumentException();
+		}
+		if (null == mb) {
+			throw new IllegalArgumentException();
+		}
+		return mb.access(length, offset);
+
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -152,7 +182,7 @@ public class C1G2PhysicalTagModel extends PhysicalTagModel {
 	 * @throws IllegalBankAccessException
 	 *             If no data is available for bank 1
 	 */
-	public C1G2EPCBank getEPCBank() throws IllegalBankAccessException {
+	public AbstractC1G2EPCBank getEPCBank() throws IllegalBankAccessException {
 		if (null == _epcMB) {
 			throw new IllegalBankAccessException("EPC Bank has no data");
 		}
@@ -192,11 +222,11 @@ public class C1G2PhysicalTagModel extends PhysicalTagModel {
 	 * @throws IllegalBankAccessException
 	 *             If no data is available for bank 1
 	 */
-	public BitSet getEPCBits() throws IllegalBankAccessException {
+	public BitVector getEPCBits() throws IllegalBankAccessException {
 		if (_epcMB == null) {
 			throw new IllegalBankAccessException("EPC Bank has no data");
 		}
-		return null;
+		return _epcMB.getEPCBits();
 	}
 
 }

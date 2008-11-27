@@ -15,6 +15,7 @@ Import-Package: org.osgi.framework;version="1.4.0"
 Export-Package: org.rifidi.edge.ale.datatypes,
  org.rifidi.edge.ale.datatypes.builtin,
  org.rifidi.edge.ale.datatypes.builtin.formats,
+ org.rifidi.edge.ale.exceptions,
  org.rifidi.edge.ale.fields,
  org.rifidi.edge.ale.fields.adapters,
  org.rifidi.edge.ale.fields.builtin,

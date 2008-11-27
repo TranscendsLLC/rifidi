@@ -1,5 +1,5 @@
 /*
- *  C1G2EPCBank.java
+ *  AbstractC1G2EPCBank.java
  *
  *  Project: Rifidi - A developer tool for RFID
  *  http://www.rifidi.org
@@ -16,12 +16,12 @@ import org.rifidi.edge.tags.exceptions.IllegalBankAccessException;
 import org.rifidi.edge.tags.util.BitVector;
 
 /**
- * This class models the EPC Memory Bank (bank 1) on a Gen2 tag
+ * This class serves as a base class for C1G2EPC Memory Bank (bank 1).
  * 
  * @author Kyle Neumeier - kyle@pramari.com
  * 
  */
-public class C1G2EPCBank extends MemoryBank {
+public abstract class AbstractC1G2EPCBank extends MemoryBank {
 
 	/**
 	 * serialVersionUID
@@ -29,20 +29,13 @@ public class C1G2EPCBank extends MemoryBank {
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * Constructs a new C1G2EPCBank.
+	 * Create a new C1G2 Memory Bank
 	 * 
 	 * @param bits
-	 *            The bits of the memory bank as a binary string composed only
-	 *            of '1' and '0' characters. The leftmost bit is at position 0
-	 * @throws IllegalArgumentException
-	 *             if the number of bits is less than 32
+	 *            a String of '1' and '0' bits
 	 */
-	public C1G2EPCBank(String bits) {
+	public AbstractC1G2EPCBank(String bits) {
 		super(bits);
-		if (_bits.bitLength() <= 32) {
-			throw new IllegalArgumentException(
-					"EPC Bank must be at least 32 bits long");
-		}
 	}
 
 	/**
@@ -50,18 +43,14 @@ public class C1G2EPCBank extends MemoryBank {
 	 * 
 	 * @return bits 0 - 15
 	 */
-	public BitVector getCRCBits() {
-		return _bits.get(0, 16);
-	}
+	public abstract BitVector getCRCBits() throws IllegalBankAccessException;
 
 	/**
 	 * Gets the StoredPC bits (x10 to x1F)
 	 * 
 	 * @return bits 16-31
 	 */
-	public BitVector getPCBits() {
-		return _bits.get(16, 32);
-	}
+	public abstract BitVector getPCBits() throws IllegalBankAccessException;
 
 	/**
 	 * Gets the EPC length bits (x10 to x14). Represents the number of 16-bit
@@ -69,18 +58,14 @@ public class C1G2EPCBank extends MemoryBank {
 	 * 
 	 * @return bits 16-20
 	 */
-	public BitVector getLengthBits() {
-		return _bits.get(16, 21);
-	}
+	public abstract BitVector getLengthBits() throws IllegalBankAccessException;
 
 	/**
 	 * Gets Reserved for Future Use bits
 	 * 
 	 * @return bits 21-22
 	 */
-	public BitVector getRFUBits() {
-		return _bits.get(21, 23);
-	}
+	public abstract BitVector getRFUBits() throws IllegalBankAccessException;
 
 	/**
 	 * Gets Toggle Bit (x17). If false, then the EPC is part of the EPC tag
@@ -91,9 +76,7 @@ public class C1G2EPCBank extends MemoryBank {
 	 * 
 	 * @return return bit 23
 	 */
-	public Boolean getToggleBit() {
-		return _bits.get(23);
-	}
+	public abstract Boolean getToggleBit() throws IllegalBankAccessException;
 
 	/**
 	 * Gets the Reserved/AFI bits (x18 - x1F). If the toggle bits is false, then
@@ -103,9 +86,18 @@ public class C1G2EPCBank extends MemoryBank {
 	 * 
 	 * @return bits 24-31
 	 */
-	public BitVector getAFIBits() {
-		return _bits.get(24, 32);
-	}
+	public abstract BitVector getAFIBits() throws IllegalBankAccessException;
+
+	/**
+	 * Gets Numbering System Identifier Bits and the EPC bits. Specifically: the
+	 * Toggle bit (x17), the Reserved/AFI bits (x18-1F) and the EPC bits
+	 * (starting at x20)
+	 * 
+	 * @return bits starting at 23
+	 * @throws IllegalBankAccessException
+	 */
+	public abstract BitVector getNSIAndEPCBits()
+			throws IllegalBankAccessException;
 
 	/**
 	 * Returns the EPC bits (starting at x20).
@@ -114,11 +106,6 @@ public class C1G2EPCBank extends MemoryBank {
 	 * @throws IllegalBankAccessException
 	 *             If no EPC bits are available
 	 */
-	public BitVector getEPCBits() throws IllegalBankAccessException {
-		try {
-			return _bits.get(32, _bits.bitLength());
-		} catch (IndexOutOfBoundsException ex) {
-			throw new IllegalBankAccessException("EPC bits not available");
-		}
-	}
+	public abstract BitVector getEPCBits() throws IllegalBankAccessException;
+
 }
