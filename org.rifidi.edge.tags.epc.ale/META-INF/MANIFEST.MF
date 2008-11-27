@@ -5,7 +5,9 @@ Bundle-SymbolicName: org.rifidi.edge.tags.epc.ale
 Bundle-Version: 1.0.0
 Bundle-Activator: org.rifidi.edge.tags.epc.ale.Activator
 Require-Bundle: org.rifidi.edge.ale;bundle-version="1.0.0",
- org.rifidi.edge.tags.epc;bundle-version="1.0.0"
+ org.rifidi.edge.tags.epc;bundle-version="1.0.0",
+ org.rifidi.edge.tags;bundle-version="1.0.0",
+ org.rifidi.edge.log4j;bundle-version="1.0.0"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: org.osgi.framework;version="1.4.0"

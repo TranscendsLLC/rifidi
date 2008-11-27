@@ -12,6 +12,8 @@
 package suite;
 
 import tests.EPCMemoryBankTest;
+import tests.EPCMemoryBankTestWithoutHeaderNSI;
+import tests.EPCMemoryBankWithoutHeaderTest;
 import tests.ReservedMemoryBankTest;
 import tests.TIDMemoryBankTest;
 import tests.UserMemoryBankTest;
@@ -30,6 +32,8 @@ public class AllTests {
 		//$JUnit-BEGIN$
 		suite.addTest(new JUnit4TestAdapter(ReservedMemoryBankTest.class));
 		suite.addTest(new JUnit4TestAdapter(EPCMemoryBankTest.class));
+		suite.addTest(new JUnit4TestAdapter(EPCMemoryBankWithoutHeaderTest.class));
+		suite.addTest(new JUnit4TestAdapter(EPCMemoryBankTestWithoutHeaderNSI.class));
 		suite.addTest(new JUnit4TestAdapter(TIDMemoryBankTest.class));
 		suite.addTest(new JUnit4TestAdapter(UserMemoryBankTest.class));
 		//$JUnit-END$
