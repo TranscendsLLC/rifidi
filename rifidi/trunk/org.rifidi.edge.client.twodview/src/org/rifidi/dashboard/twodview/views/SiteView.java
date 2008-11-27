@@ -81,7 +81,8 @@ public class SiteView extends ViewPart implements ISelectionProvider {
 		LightweightSystem lws = new LightweightSystem(canvas);
 
 		ScalableLayeredPane lp = new ScalableLayeredPane();
-		canvas.addListener(SWT.MouseWheel, new SiteViewMouseWheelListener(lp));
+		canvas.addListener(SWT.MouseWheel | SWT.MouseDown | SWT.MouseUp
+				| SWT.MouseMove, new SiteViewMouseWheelListener(lp));
 		canvas.addKeyListener(new SiteViewKeyListener(lp));
 
 		floorplanLayer = new FloorPlanLayer();
@@ -117,9 +118,16 @@ public class SiteView extends ViewPart implements ISelectionProvider {
 		getSite().registerContextMenu(menuMgr, this);
 		logger.debug("twodview is here!!!");
 
-		// objectLayer.addReader(new
-		// ReaderAlphaImageFigure(Activator.imageDescriptorFromPlugin("org.rifidi.dashboard.twodview",
-		// "icons/reader-24x24.png").createImage(), null), new Point(100,100));
+		// try {
+		// objectLayer.addReader(new ReaderAlphaImageFigure(Activator
+		// .imageDescriptorFromPlugin(
+		// "org.rifidi.edge.client.twodview",
+		// "icons/reader-24x24.png").createImage(), null),
+		// new Point(100, 100));
+		// } catch (ReaderAlreadyInMapException e) {
+		// // TODO Auto-generated catch block
+		// e.printStackTrace();
+		// }
 
 	}
 

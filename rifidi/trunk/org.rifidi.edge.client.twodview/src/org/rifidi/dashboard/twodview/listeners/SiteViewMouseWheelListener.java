@@ -22,6 +22,7 @@ import org.eclipse.swt.widgets.Listener;
 public class SiteViewMouseWheelListener implements Listener {
 
 	private ScalableLayeredPane sp = null;
+	
 
 	public SiteViewMouseWheelListener(ScalableLayeredPane lp) {
 		super();
@@ -30,6 +31,8 @@ public class SiteViewMouseWheelListener implements Listener {
 
 	@Override
 	public void handleEvent(Event event) {
+
+		// WHEEL
 		if (event.type == SWT.MouseWheel) {
 			if (event.count > 0 && sp.getScale() < 20) {
 				sp.setScale(sp.getScale() * 1.1);
@@ -40,6 +43,7 @@ public class SiteViewMouseWheelListener implements Listener {
 
 			}
 		}
+
 	}
 
 }

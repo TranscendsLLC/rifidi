@@ -10,6 +10,8 @@
  */
 package org.rifidi.dashboard.twodview.sfx;
 
+import org.eclipse.draw2d.IFigure;
+import org.eclipse.draw2d.Label;
 import org.eclipse.swt.graphics.Image;
 import org.rifidi.edge.client.connections.remotereader.RemoteReader;
 import org.rifidi.edge.client.connections.remotereader.RemoteReaderID;
@@ -19,6 +21,12 @@ import org.rifidi.edge.client.connections.remotereader.RemoteReaderID;
  * 
  */
 public class ReaderAlphaImageFigure extends AlphaImageFigure {
+
+	@Override
+	public IFigure getToolTip() {
+		this.setToolTip(this.createToolTip());
+		return super.getToolTip();
+	}
 
 	RemoteReader reader;
 
@@ -44,10 +52,21 @@ public class ReaderAlphaImageFigure extends AlphaImageFigure {
 	public ReaderAlphaImageFigure(Image image, RemoteReader reader) {
 		super(image);
 		this.reader = reader;
+		this.setToolTip(this.createToolTip());
 	}
 
 	public RemoteReaderID getReaderId() {
 		return this.reader.getID();
 	}
-
+	
+	private IFigure createToolTip(){
+		Label ttl=null;
+		if(reader==null){
+			ttl = new Label("I AM JUST A DUMMY\nsorry, no status here");
+		}else{
+		ttl = new Label(reader.getDescription()+"\n"+reader.getReaderState());
+		}
+		return ttl;
+	}
+	
 }
