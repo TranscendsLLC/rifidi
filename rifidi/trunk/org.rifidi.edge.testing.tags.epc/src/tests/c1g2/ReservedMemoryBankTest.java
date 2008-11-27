@@ -9,7 +9,7 @@
  *  http://www.opensource.org/licenses/lgpl-license.html
  */
 
-package tests;
+package tests.c1g2;
 
 import junit.framework.Assert;
 

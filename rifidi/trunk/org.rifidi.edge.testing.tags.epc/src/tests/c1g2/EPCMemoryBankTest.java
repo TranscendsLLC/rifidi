@@ -9,7 +9,7 @@
  *  http://www.opensource.org/licenses/lgpl-license.html
  */
 
-package tests;
+package tests.c1g2;
 
 import junit.framework.Assert;
 
@@ -92,10 +92,11 @@ public class EPCMemoryBankTest {
 		Assert.assertEquals(MEM_BANK, returnval);
 	}
 	
-	public void testNSIAndEPC(){
+	@Test
+	public void testNSI(){
 		C1G2EPCBankWithHeader bank = new C1G2EPCBankWithHeader(MEM_BANK);
 		try {
-			Assert.assertEquals(TOGGLE_BIT + AFI_BITS + EPC_BITS, bank.getEPCBits().toString(2));
+			Assert.assertEquals(TOGGLE_BIT + AFI_BITS, bank.getNSIBits().toString(2));
 		} catch (IllegalBankAccessException e) {
 			Assert.fail();
 		}

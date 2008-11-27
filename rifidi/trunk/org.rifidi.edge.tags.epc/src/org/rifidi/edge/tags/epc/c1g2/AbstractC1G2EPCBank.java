@@ -89,14 +89,13 @@ public abstract class AbstractC1G2EPCBank extends MemoryBank {
 	public abstract BitVector getAFIBits() throws IllegalBankAccessException;
 
 	/**
-	 * Gets Numbering System Identifier Bits and the EPC bits. Specifically: the
-	 * Toggle bit (x17), the Reserved/AFI bits (x18-1F) and the EPC bits
-	 * (starting at x20)
+	 * Gets Numbering System Identifier Bits. Specifically: the
+	 * Toggle bit (x17), the Reserved/AFI bits (x18-1F) 
 	 * 
-	 * @return bits starting at 23
+	 * @return bits 23-32
 	 * @throws IllegalBankAccessException
 	 */
-	public abstract BitVector getNSIAndEPCBits()
+	public abstract BitVector getNSIBits()
 			throws IllegalBankAccessException;
 
 	/**

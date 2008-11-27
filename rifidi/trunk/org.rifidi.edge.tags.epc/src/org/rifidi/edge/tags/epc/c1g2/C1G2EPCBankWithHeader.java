@@ -110,9 +110,9 @@ public class C1G2EPCBankWithHeader extends AbstractC1G2EPCBank {
 	 * @see org.rifidi.edge.tags.epc.c1g2.AbstractC1G2EPCBank#getNSIAndEPCBits()
 	 */
 	@Override
-	public BitVector getNSIAndEPCBits() throws IllegalBankAccessException {
+	public BitVector getNSIBits() throws IllegalBankAccessException {
 		try {
-			return _bits.get(23, _bits.bitLength());
+			return _bits.get(23, 32);
 		} catch (IndexOutOfBoundsException ex) {
 			throw new IllegalBankAccessException("EPC bits not available");
 		}
