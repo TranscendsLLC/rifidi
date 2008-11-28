@@ -40,11 +40,14 @@ public class ObjectLayer extends XYLayer {
 					.getImage().getBounds().width, reader.getImage()
 					.getBounds().height));
 		}
-		if (this.getChildren().isEmpty() | this.getChildren().contains(reader)) {
+		if (this.getChildren().contains(reader)) {
+			throw new ReaderAlreadyInMapException("Drag and Drop failed");
+
+		} else{
 			add(reader);
 			return;
-		} else
-			throw new ReaderAlreadyInMapException("Drag and Drop failed");
+		}
+			
 
 	}
 

@@ -179,9 +179,8 @@ public class ListeningScalableLayeredPane extends ScalableLayeredPane implements
 	private void moveFigure(IFigure figure) {
 		if (figure != null) {
 			Rectangle rect = figure.getBounds();
-			// never forget about the scale!!
-			rect.x += (deltaX / getScale());
-			rect.y += (deltaY / getScale());
+			rect.x += deltaX;
+			rect.y += deltaY;
 			figure.setBounds(rect);
 		}
 	}
