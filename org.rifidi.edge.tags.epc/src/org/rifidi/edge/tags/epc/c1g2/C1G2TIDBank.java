@@ -38,11 +38,11 @@ public class C1G2TIDBank extends MemoryBank {
 	 *             if the number of bits is less than 8
 	 */
 	public C1G2TIDBank(String bits) {
-		super(bits);
-		if (_bits.bitLength() < 8) {
+		if (bits.length() < 8) {
 			throw new IllegalArgumentException(
 					"TID Bank must contain at least 8 bits");
 		}
+		super.setMemoryBank(bits);
 	}
 
 	/**

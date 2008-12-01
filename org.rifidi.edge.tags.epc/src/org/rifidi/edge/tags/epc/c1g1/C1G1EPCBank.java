@@ -34,11 +34,11 @@ public class C1G1EPCBank extends MemoryBank {
 	 * @param bits
 	 */
 	public C1G1EPCBank(String bits) {
-		super(bits);
 		if (bits.length() < HEADER_BITS) {
 			throw new IllegalArgumentException("bits must contain at least "
 					+ HEADER_BITS + " bits");
 		}
+		super.setMemoryBank(bits);
 	}
 
 	public BitVector getEPC() throws IllegalBankAccessException {

@@ -11,8 +11,8 @@
 
 package org.rifidi.edge.tags.epc.c1g2;
 
-import org.rifidi.edge.tags.exceptions.IllegalBankAccessException;
 import org.rifidi.edge.tags.util.BitVector;
+import org.rifidi.edge.tags.util.CRC16;
 import org.rifidi.edge.tags.util.ConvertingUtil;
 
 /**
@@ -61,6 +61,11 @@ public class C1G2EPCBankWithoutHeader extends AbstractC1G2EPCBank {
 	 * Use this if you know the EPC is encoded via a known scheme as defined by
 	 * the Tag Data Specification (TDS) (e.g. SGTIN, GID, DOD).
 	 * 
+	 * The CRC bits are calculated according to F.3 in the gen 2 spec
+	 * 
+	 * TODO: the CRC bits are not currently being calculated. A zero is used for
+	 * now.
+	 * 
 	 * See section 6.3.2.1.2.2 in the Gen2 Specification or section 3.1-3.2 in
 	 * the Tag Data Specification 1.4 for more details
 	 * 
@@ -68,9 +73,9 @@ public class C1G2EPCBankWithoutHeader extends AbstractC1G2EPCBank {
 	 *            the EPC bits
 	 */
 	public C1G2EPCBankWithoutHeader(String EPC) {
-		super(EPC);
-		_pcBits = createPCBits(EPC.length(), DEFAULT_TOGGLE_BIT
-				+ DEFAULT_AFI_BITS);
+		String NSI = DEFAULT_TOGGLE_BIT + DEFAULT_AFI_BITS;
+		String memBank = generateHeader(EPC, NSI) + EPC;
+		super.setMemoryBank(memBank);
 	}
 
 	/**
@@ -87,6 +92,11 @@ public class C1G2EPCBankWithoutHeader extends AbstractC1G2EPCBank {
 	 * a defined EPC-defined encoding scheme as defined by the Tag Data
 	 * Specification (TDS) (e.g. SGTIN, GID, DOD).
 	 * 
+	 * The CRC bits are calculated according to F.3 in the gen 2 spec
+	 * 
+	 * TODO: the CRC bits are not currently being calculated. A zero is used for
+	 * now.
+	 * 
 	 * See section 6.3.2.1.2.2 in the Gen2 Specification or section 3.1-3.2 in
 	 * the Tag Data Specification 1.4 for more details
 	 * 
@@ -96,8 +106,8 @@ public class C1G2EPCBankWithoutHeader extends AbstractC1G2EPCBank {
 	 *            the 9 NSI bits
 	 */
 	public C1G2EPCBankWithoutHeader(String EPC, String NSI) {
-		super(EPC);
-		_pcBits = createPCBits(EPC.length(), NSI);
+		String header = generateHeader(EPC, NSI);
+		super.setMemoryBank(header + EPC);
 	}
 
 	/**
@@ -109,7 +119,7 @@ public class C1G2EPCBankWithoutHeader extends AbstractC1G2EPCBank {
 	 *            The NSI Bits must contain 9 bits
 	 * @return a BitVector that represents the PC bits
 	 */
-	private BitVector createPCBits(int EPCLength, String NSIBits) {
+	private String createPCBits(int EPCLength, String NSIBits) {
 		if (EPCLength < 0) {
 			throw new IllegalArgumentException(
 					"number of EPCBits must at least 0");
@@ -130,98 +140,32 @@ public class C1G2EPCBankWithoutHeader extends AbstractC1G2EPCBank {
 		String lengthBits = new BitVector(numBlocks.toString(), 10,
 				LENGTH_FIELD_LENGTH).toString(2);
 
-		String bits = lengthBits + DEFAULT_RFU_BITS + NSIBits;
-
-		// need to reverse the bits so that bit 0 is the left-most bit
-		return new BitVector(new StringBuilder(bits).reverse().toString(), 2);
+		return lengthBits + DEFAULT_RFU_BITS + NSIBits;
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * TODO: This method only sets the CRC-16 to zero. It should calculate the
+	 * CRC based on CRC-CCITT acording to F.3 in the gen2 spec
 	 * 
-	 * @see org.rifidi.edge.tags.epc.c1g2.AbstractC1G2EPCBank#getAFIBits()
+	 * @param bits
+	 * @return
 	 */
-	@Override
-	public BitVector getAFIBits() throws IllegalBankAccessException {
-		return _pcBits.get(8, 16);
+	private String generateCRC(String bits) {
+		int crc = 0;
+		return ConvertingUtil.toString(Integer.toString(crc), 10, 2, 16);
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * This method generates a header (CRC and PC bits given the nsiBits
 	 * 
-	 * @see org.rifidi.edge.tags.epc.c1g2.AbstractC1G2EPCBank#getCRCBits()
+	 * @param EPC
+	 * @param nsiBits
+	 * @return
 	 */
-	@Override
-	public BitVector getCRCBits() throws IllegalBankAccessException {
-		throw new IllegalBankAccessException("CRC Bits not available");
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.rifidi.edge.tags.epc.c1g2.AbstractC1G2EPCBank#getEPCBits()
-	 */
-	@Override
-	public BitVector getEPCBits() throws IllegalBankAccessException {
-		try {
-			return _bits.get(0, _bits.bitLength());
-		} catch (IndexOutOfBoundsException ex) {
-			throw new IllegalBankAccessException("EPC bits not available");
-		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.rifidi.edge.tags.epc.c1g2.AbstractC1G2EPCBank#getLengthBits()
-	 */
-	@Override
-	public BitVector getLengthBits() throws IllegalBankAccessException {
-		return _pcBits.get(0, 5);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.rifidi.edge.tags.epc.c1g2.AbstractC1G2EPCBank#getPCBits()
-	 */
-	@Override
-	public BitVector getPCBits() throws IllegalBankAccessException {
-		return _pcBits.get(0, _pcBits.bitLength());
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.rifidi.edge.tags.epc.c1g2.AbstractC1G2EPCBank#getRFUBits()
-	 */
-	@Override
-	public BitVector getRFUBits() throws IllegalBankAccessException {
-		return _pcBits.get(5, 7);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.rifidi.edge.tags.epc.c1g2.AbstractC1G2EPCBank#getToggleBit()
-	 */
-	@Override
-	public Boolean getToggleBit() throws IllegalBankAccessException {
-		return _pcBits.get(7);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.rifidi.edge.tags.epc.c1g2.AbstractC1G2EPCBank#getNSIAndEPCBits()
-	 */
-	@Override
-	public BitVector getNSIBits() throws IllegalBankAccessException {
-		try {
-			return _pcBits.get(7, 16);
-		} catch (IndexOutOfBoundsException ex) {
-			throw new IllegalBankAccessException("EPC bits not available");
-		}
+	private String generateHeader(String EPC, String nsiBits) {
+		String PCBits = createPCBits(EPC.length(), nsiBits);
+		String CRCBits = generateCRC(PCBits + EPC);
+		return CRCBits + PCBits;
 	}
 
 }

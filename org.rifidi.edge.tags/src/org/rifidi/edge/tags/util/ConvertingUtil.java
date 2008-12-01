@@ -69,4 +69,26 @@ public class ConvertingUtil {
 		return new Double(Math.ceil(_quotient)).intValue();
 	}
 
+	/**
+	 * This method returns a byte array given a string where each character in
+	 * the string is a hex digit
+	 * 
+	 * @param hexString
+	 *            a String where each character is a hex digit
+	 * @return a byte array where each byte represents one character in the
+	 *         string
+	 */
+	public static byte[] toBytes(String hexString) {
+		byte[] bytes = new byte[hexString.length()];
+		for(int i=0; i<hexString.length(); i++){
+			Character c = hexString.charAt(i);
+			int digit = Character.digit(c, 16);
+			if(digit==-1){
+				throw new IllegalArgumentException();
+			}
+			bytes[i] = (byte)digit;
+		}
+		return bytes;
+	}
+
 }
