@@ -37,11 +37,11 @@ public class C1G2ReservedBank extends MemoryBank {
 	 *             IllegalArgumentException if the length of bits is not 64
 	 */
 	public C1G2ReservedBank(String bits) {
-		super(bits);
-		if (_bits.bitLength() != 64) {
+		if (bits.length() != 64) {
 			throw new IllegalArgumentException(
 					"Reserved bank must have 64 bits");
 		}
+		super.setMemoryBank(bits);
 	}
 
 	/**

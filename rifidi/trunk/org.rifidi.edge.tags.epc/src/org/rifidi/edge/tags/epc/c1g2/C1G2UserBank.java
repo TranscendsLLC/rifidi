@@ -34,6 +34,6 @@ public class C1G2UserBank extends MemoryBank {
 	 *            of '1' and '0' characters. The leftmost bit is at position 0
 	 */
 	public C1G2UserBank(String bits) {
-		super(bits);
+		super.setMemoryBank(bits);
 	}
 }

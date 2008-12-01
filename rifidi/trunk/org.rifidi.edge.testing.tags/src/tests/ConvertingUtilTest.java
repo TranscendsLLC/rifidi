@@ -11,6 +11,8 @@
 
 package tests;
 
+import java.util.Arrays;
+
 import junit.framework.Assert;
 
 import org.junit.Test;
@@ -40,6 +42,21 @@ public class ConvertingUtilTest {
 		answer = "00F";
 		retVal = ConvertingUtil.toString(val, 2, 16, 3).toUpperCase();
 		Assert.assertEquals(answer, retVal);
+	}
+	
+	@Test
+	public void testToByte(){
+		String hex = "FFFF";
+		byte[] bytes = {0xf,0xf,0xf,0xf};
+		Assert.assertTrue(Arrays.equals(bytes, ConvertingUtil.toBytes(hex)));
+		
+		hex = "0";
+		byte[] bytes1 = {0x0};
+		Assert.assertTrue(Arrays.equals(bytes1, ConvertingUtil.toBytes(hex)));
+		
+		hex = "0000";
+		byte[] bytes2 = {0x0,0x0,0x0,0x0};
+		Assert.assertTrue(Arrays.equals(bytes2, ConvertingUtil.toBytes(hex)));
 	}
 
 }

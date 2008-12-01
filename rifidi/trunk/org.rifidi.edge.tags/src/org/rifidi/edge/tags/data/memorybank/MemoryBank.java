@@ -24,7 +24,7 @@ import org.rifidi.edge.tags.util.BitVector;
  * @author Kyle Neumeier - kyle@pramari.com
  * 
  */
-public class MemoryBank implements Serializable {
+public abstract class MemoryBank implements Serializable {
 
 	/**
 	 * The serialVersionUID
@@ -37,11 +37,14 @@ public class MemoryBank implements Serializable {
 	protected BitVector _bits;
 
 	/**
-	 * Create a new MemoryBank with the specified bits. The bitString should be
-	 * in binary format (composed only of '1' and '0' characters).
+	 * Sets the bits for this MemoryBank. The bitString should be in binary
+	 * format (composed only of '1' and '0' characters).
 	 * 
 	 * The bits should be logically structured so that the left-most bit is
 	 * indexed at 0
+	 * 
+	 * This method should probably be called by the constructor in the subclass
+	 * of this class.
 	 * 
 	 * @param bits
 	 *            The bits on the memory bank
@@ -49,7 +52,7 @@ public class MemoryBank implements Serializable {
 	 *             if bits is null or of the string contains anything other than
 	 *             a '1' or a '0' character
 	 */
-	public MemoryBank(String bits) {
+	protected void setMemoryBank(String bits) {
 		if (null == bits) {
 			throw new IllegalArgumentException("bits cannot be null");
 		}

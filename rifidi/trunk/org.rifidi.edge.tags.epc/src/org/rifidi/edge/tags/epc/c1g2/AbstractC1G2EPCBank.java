@@ -28,14 +28,12 @@ public abstract class AbstractC1G2EPCBank extends MemoryBank {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	/**
-	 * Create a new C1G2 Memory Bank
-	 * 
-	 * @param bits
-	 *            a String of '1' and '0' bits
-	 */
-	public AbstractC1G2EPCBank(String bits) {
-		super(bits);
+	protected void setMemoryBank(String bits) {
+		if (bits.length() <= 32) {
+			throw new IllegalArgumentException(
+					"EPC Bank must be at least 32 bits long");
+		}
+		super.setMemoryBank(bits);
 	}
 
 	/**
@@ -43,14 +41,18 @@ public abstract class AbstractC1G2EPCBank extends MemoryBank {
 	 * 
 	 * @return bits 0 - 15
 	 */
-	public abstract BitVector getCRCBits() throws IllegalBankAccessException;
+	public BitVector getCRCBits() {
+		return _bits.get(0, 16);
+	}
 
 	/**
 	 * Gets the StoredPC bits (x10 to x1F)
 	 * 
 	 * @return bits 16-31
 	 */
-	public abstract BitVector getPCBits() throws IllegalBankAccessException;
+	public BitVector getPCBits(){
+		return _bits.get(16, 32);
+	}
 
 	/**
 	 * Gets the EPC length bits (x10 to x14). Represents the number of 16-bit
@@ -58,14 +60,18 @@ public abstract class AbstractC1G2EPCBank extends MemoryBank {
 	 * 
 	 * @return bits 16-20
 	 */
-	public abstract BitVector getLengthBits() throws IllegalBankAccessException;
+	public BitVector getLengthBits(){
+		return _bits.get(16, 21);
+	}
 
 	/**
 	 * Gets Reserved for Future Use bits
 	 * 
 	 * @return bits 21-22
 	 */
-	public abstract BitVector getRFUBits() throws IllegalBankAccessException;
+	public BitVector getRFUBits(){
+		return _bits.get(21, 23);
+	}
 
 	/**
 	 * Gets Toggle Bit (x17). If false, then the EPC is part of the EPC tag
@@ -76,7 +82,9 @@ public abstract class AbstractC1G2EPCBank extends MemoryBank {
 	 * 
 	 * @return return bit 23
 	 */
-	public abstract Boolean getToggleBit() throws IllegalBankAccessException;
+	public Boolean getToggleBit(){
+		return _bits.get(23);
+	}
 
 	/**
 	 * Gets the Reserved/AFI bits (x18 - x1F). If the toggle bits is false, then
@@ -86,17 +94,24 @@ public abstract class AbstractC1G2EPCBank extends MemoryBank {
 	 * 
 	 * @return bits 24-31
 	 */
-	public abstract BitVector getAFIBits() throws IllegalBankAccessException;
+	public BitVector getAFIBits() {
+		return _bits.get(24, 32);
+	}
 
 	/**
-	 * Gets Numbering System Identifier Bits. Specifically: the
-	 * Toggle bit (x17), the Reserved/AFI bits (x18-1F) 
+	 * Gets Numbering System Identifier Bits. Specifically: the Toggle bit
+	 * (x17), the Reserved/AFI bits (x18-1F)
 	 * 
 	 * @return bits 23-32
 	 * @throws IllegalBankAccessException
 	 */
-	public abstract BitVector getNSIBits()
-			throws IllegalBankAccessException;
+	public BitVector getNSIBits() throws IllegalBankAccessException {
+		try {
+			return _bits.get(23, 32);
+		} catch (IndexOutOfBoundsException ex) {
+			throw new IllegalBankAccessException("EPC bits not available");
+		}
+	}
 
 	/**
 	 * Returns the EPC bits (starting at x20).
@@ -105,6 +120,12 @@ public abstract class AbstractC1G2EPCBank extends MemoryBank {
 	 * @throws IllegalBankAccessException
 	 *             If no EPC bits are available
 	 */
-	public abstract BitVector getEPCBits() throws IllegalBankAccessException;
+	public BitVector getEPCBits() throws IllegalBankAccessException {
+		try {
+			return _bits.get(32, _bits.bitLength());
+		} catch (IndexOutOfBoundsException ex) {
+			throw new IllegalBankAccessException("EPC bits not available");
+		}
+	}
 
 }
