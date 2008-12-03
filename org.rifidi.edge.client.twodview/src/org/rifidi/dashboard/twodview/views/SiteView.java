@@ -10,14 +10,19 @@
  */
 package org.rifidi.dashboard.twodview.views;
 
+import java.util.ArrayList;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.LightweightSystem;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DropTarget;
@@ -36,6 +41,8 @@ import org.rifidi.dashboard.twodview.layers.ObjectLayer;
 import org.rifidi.dashboard.twodview.listeners.SiteViewDropTargetListener;
 import org.rifidi.dashboard.twodview.listeners.SiteViewKeyListener;
 import org.rifidi.dashboard.twodview.listeners.SiteViewMouseWheelListener;
+import org.rifidi.dashboard.twodview.sfx.ReaderAlphaImageFigure;
+import org.rifidi.edge.client.connections.remotereader.RemoteReader;
 
 /**
  * @author Tobias Hoppenthaler - tobias@pramari.com
@@ -46,18 +53,19 @@ public class SiteView extends ViewPart implements ISelectionProvider {
 	private Log logger = LogFactory.getLog(SiteView.class);
 
 	public final static String ID = "org.rifidi.dashboard.twodview.views.SiteView";
-
+	private ListeningScalableLayeredPane lp;
 	private FloorPlanLayer floorplanLayer;
 	private ObjectLayer objectLayer;
 	private EffectLayer effectLayer;
 	private NoteLayer noteLayer;
+	private ArrayList<ISelectionChangedListener> listeners;
 
 	/**
 	 * 
 	 */
 	public SiteView() {
+		listeners = new ArrayList<ISelectionChangedListener>();
 
-		// TODO Auto-generated constructor stub
 	}
 
 	/*
@@ -80,7 +88,8 @@ public class SiteView extends ViewPart implements ISelectionProvider {
 		// LWS holds the draw2d components
 		LightweightSystem lws = new LightweightSystem(canvas);
 
-		ListeningScalableLayeredPane lp = new ListeningScalableLayeredPane();
+		lp = new ListeningScalableLayeredPane();
+
 		canvas.addListener(SWT.MouseWheel, new SiteViewMouseWheelListener(lp));
 		canvas.addKeyListener(new SiteViewKeyListener(lp));
 
@@ -91,8 +100,8 @@ public class SiteView extends ViewPart implements ISelectionProvider {
 
 		lp.add(floorplanLayer, 0);
 		lp.add(objectLayer, 1);
-		lp.add(effectLayer, 2);
-		lp.add(noteLayer, 3);
+//		lp.add(effectLayer, 2);
+//		lp.add(noteLayer, 3);
 
 		lws.setContents(lp);
 
@@ -105,11 +114,12 @@ public class SiteView extends ViewPart implements ISelectionProvider {
 
 		MenuManager menuMgr = new MenuManager();
 		menuMgr.add(new GroupMarker("twodview"));
-		
+
 		Menu menu = menuMgr.createContextMenu(canvas);
 		canvas.setMenu(menu);
+		getSite().setSelectionProvider(this); // TODO: needed???
 		getSite().registerContextMenu(menuMgr, this);
-		logger.debug("twodview is here!!!");
+		
 
 		// try {
 		// objectLayer.addReader(new ReaderAlphaImageFigure(Activator
@@ -166,23 +176,61 @@ public class SiteView extends ViewPart implements ISelectionProvider {
 	@Override
 	public void addSelectionChangedListener(ISelectionChangedListener listener) {
 		logger.debug("addSelectionChangedListener");
+		this.listeners.add(listener);
+
 	}
 
 	@Override
 	public ISelection getSelection() {
-		logger.debug("getSelection");
-		return null;
+		logger.debug("getSelection() called");
+		RemoteReader rr = null;
+
+		if (lp != null) {
+			logger.debug("LP not null");
+			try {
+				IFigure ifig = lp.getSelectedImage();
+				if (ifig == null)
+					return new StructuredSelection();
+				ReaderAlphaImageFigure raif = (ReaderAlphaImageFigure) ifig;
+				
+				rr = raif.getReader();
+				StructuredSelection ss = new StructuredSelection(rr);
+				logger.debug("returning RemoteReader in StructuredSelection: "+ss.toString());
+				return ss;
+			} catch (Exception e) {
+				logger.debug(e);
+				return new StructuredSelection();
+			}
+			
+		} else
+			return new StructuredSelection();
+
 	}
 
 	@Override
 	public void removeSelectionChangedListener(
 			ISelectionChangedListener listener) {
 		logger.debug("removeSelectionChangedListener");
+		listeners.remove(listener);
 	}
 
 	@Override
 	public void setSelection(ISelection selection) {
 		logger.debug("setSelection");
+		// from objectLayer get Image where Reader is...
+	}
+
+	public ListeningScalableLayeredPane getLayeredPane() {
+		return lp;
+	}
+
+	public void fireSelectionChanged() {
+
+		for (ISelectionChangedListener listener : listeners) {
+			SelectionChangedEvent sce = new SelectionChangedEvent(this,
+					getSelection());
+			listener.selectionChanged(sce);
+		}
 	}
 
 }

@@ -14,7 +14,6 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.commands.IHandlerListener;
-import org.eclipse.core.internal.runtime.FindSupport;
 import org.eclipse.ui.PlatformUI;
 import org.rifidi.dashboard.twodview.views.SiteView;
 
@@ -47,12 +46,12 @@ public class RemoveReader implements IHandler {
 	 */
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		SiteView siteView=null;
+		SiteView siteView = null;
 		siteView = (SiteView) PlatformUI.getWorkbench()
 				.getActiveWorkbenchWindow().getActivePage().findView(
 						"org.rifidi.dashboard.twodview.views.SiteView");
-		if(siteView!=null){
-			//delete figure at...
+		if (siteView != null) {
+			siteView.getLayeredPane().removeCurrentSelection();
 		}
 		return null;
 	}

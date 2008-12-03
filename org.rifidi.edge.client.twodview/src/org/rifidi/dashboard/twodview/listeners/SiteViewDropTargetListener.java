@@ -130,13 +130,13 @@ public class SiteViewDropTargetListener implements DropTargetListener {
 			int deltaX = 0, deltaY = 0;
 
 			while (compost != null) {
-				logger.debug("in loop: " + compost.toString());
+//				logger.debug("in loop: " + compost.toString());
 				Rectangle temp = new Rectangle(compost.getBounds());
 				deltaX += temp.x;
 				deltaY += temp.y;
 				compost = compost.getParent();
 			}
-			// deltaY+=20;
+//			 deltaY+=20;
 			logger.debug("deltas: " + deltaX + " " + deltaY);
 			raif.setBounds(new Rectangle(event.x - deltaX, event.y - deltaY,
 					raif.getImage().getBounds().width, raif.getImage()

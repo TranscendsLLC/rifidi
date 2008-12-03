@@ -34,7 +34,22 @@
             locationURI="popup:org.eclipse.ui.popup.any?after=twodview">
          <command
                commandId="org.rifidi.dashboard.twodview.changefloorplan"
+               label="ChangeFloorplan"
                style="push">
+         </command>
+         <command
+               commandId="org.rifidi.dashboard.twodview.removereader"
+               id="RemoveFromMap"
+               label="Remove"
+               style="push">
+            <visibleWhen>
+               <iterate
+                     ifEmpty="false">
+                  <instanceof
+                        value="org.rifidi.edge.client.connections.remotereader.RemoteReader">
+                  </instanceof>
+               </iterate>
+            </visibleWhen>
          </command>
       </menuContribution>
    </extension>
