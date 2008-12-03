@@ -15,7 +15,10 @@ import org.eclipse.draw2d.MouseEvent;
 import org.eclipse.draw2d.MouseListener;
 import org.eclipse.draw2d.MouseMotionListener;
 import org.eclipse.draw2d.ScalableLayeredPane;
+import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Rectangle;
+import org.eclipse.ui.PlatformUI;
+import org.rifidi.dashboard.twodview.views.SiteView;
 
 /**
  * @author Tobias Hoppenthaler - tobias@pramari.com
@@ -26,12 +29,20 @@ public class ListeningScalableLayeredPane extends ScalableLayeredPane implements
 
 	public ListeningScalableLayeredPane() {
 		super();
+		setMaximumSize(new Dimension(1024, 768));
 		addMouseListener(this);
 		addMouseMotionListener(this);
+
+		
 	}
 
 	private IFigure selectedImage;
+	private SiteView siteView;
 	private int deltaX, deltaY, startX, startY;
+	public static final int FLOORPLANLAYER = 0;
+	public static final int OBJECTLAYER = 1;
+	public static final int EFFECTLAYER = 2;
+	public static final int NOTELAYER = 3;
 
 	/*
 	 * (non-Javadoc)
@@ -55,20 +66,36 @@ public class ListeningScalableLayeredPane extends ScalableLayeredPane implements
 	 */
 	@Override
 	public void mousePressed(MouseEvent arg0) {
+		selectedImage=null;
 		// sets the starting point of the movement
 		startX = arg0.x;
 		startY = arg0.y;
 
 		try {
+			siteView = (SiteView) PlatformUI.getWorkbench()
+			.getActiveWorkbenchWindow().getActivePage().findView(
+					"org.rifidi.dashboard.twodview.views.SiteView");
 
 			selectedImage = findFigureAt(arg0.getLocation()); // Gets
 			// ImageFigure
 			// at current
 			// Location
+			
+			
+
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
+			System.out.println(e.getCause());
 			e.printStackTrace();
+			selectedImage = null;
+
+		} finally {
+			if (siteView != null) {
+				System.out.println("strucselec: " + siteView.getSelection());
+				siteView.fireSelectionChanged();
+			}
 		}
+
 		// Mouse Events should be consumed after usage to avoid ugly
 		// side-effects
 		arg0.consume();
@@ -128,7 +155,7 @@ public class ListeningScalableLayeredPane extends ScalableLayeredPane implements
 	 */
 	@Override
 	public void mouseEntered(MouseEvent arg0) {
-		// TODO Auto-generated method stub
+		// requestFocus();
 
 	}
 
@@ -198,6 +225,43 @@ public class ListeningScalableLayeredPane extends ScalableLayeredPane implements
 			}
 			((IFigure) object).repaint();
 		}
+	}
+
+	/**
+	 * Returns the currently selected IFigure element on the pane can be in each
+	 * one of the layers
+	 * 
+	 * @return selectedImage - IFigure
+	 */
+	public IFigure getSelectedImage() {
+		try {
+			if (selectedImage != null) {
+				System.out.println("getselim" + selectedImage.toString());
+				return this.selectedImage;
+			} else
+				return null;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+
+	}
+
+	/**
+	 * Sets the selected Image in the pane.
+	 * 
+	 * @param selectedImage
+	 */
+	public void setSelectedImage(IFigure selectedImage) {
+		this.selectedImage = selectedImage;
+	}
+
+	public void removeCurrentSelection() {
+		// if(selectedImage!=null){
+		getLayer(OBJECTLAYER).remove(selectedImage);
+		// selectedImage=null;
+		// }
+
 	}
 
 }
