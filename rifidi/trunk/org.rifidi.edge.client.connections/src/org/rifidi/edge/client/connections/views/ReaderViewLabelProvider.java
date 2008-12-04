@@ -61,7 +61,7 @@ public class ReaderViewLabelProvider implements ILabelProvider {
 				return Activator.getImageDescriptor("icons/action_stop.gif")
 						.createImage();
 			}
-			if (readerState.equals("CONIFGURED")) {
+			if (readerState.equals("CONFIGURED")) {
 				return Activator.getImageDescriptor("icons/icon_settings.gif")
 						.createImage();
 			}
