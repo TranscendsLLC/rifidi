@@ -10,7 +10,7 @@ public enum ReaderSessionStatus {
 	/**
 	 * Reader session is configured but not connected
 	 */
-	CONIFGURED,
+	CONFIGURED,
 	/**
 	 * ReaderSession is ready
 	 */

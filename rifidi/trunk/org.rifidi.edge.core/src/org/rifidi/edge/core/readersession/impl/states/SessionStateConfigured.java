@@ -131,7 +131,7 @@ public class SessionStateConfigured implements ReaderSessionState {
 	 */
 	@Override
 	public ReaderSessionStatus state_getStatus() {
-		return ReaderSessionStatus.CONIFGURED;
+		return ReaderSessionStatus.CONFIGURED;
 	}
 
 	/*
