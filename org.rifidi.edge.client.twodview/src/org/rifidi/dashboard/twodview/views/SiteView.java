@@ -100,8 +100,8 @@ public class SiteView extends ViewPart implements ISelectionProvider {
 
 		lp.add(floorplanLayer, 0);
 		lp.add(objectLayer, 1);
-//		lp.add(effectLayer, 2);
-//		lp.add(noteLayer, 3);
+		// lp.add(effectLayer, 2);
+		// lp.add(noteLayer, 3);
 
 		lws.setContents(lp);
 
@@ -192,16 +192,17 @@ public class SiteView extends ViewPart implements ISelectionProvider {
 				if (ifig == null)
 					return new StructuredSelection();
 				ReaderAlphaImageFigure raif = (ReaderAlphaImageFigure) ifig;
-				
+
 				rr = raif.getReader();
 				StructuredSelection ss = new StructuredSelection(rr);
-				logger.debug("returning RemoteReader in StructuredSelection: "+ss.toString());
+				logger.debug("returning RemoteReader in StructuredSelection: "
+						+ ss.toString());
 				return ss;
 			} catch (Exception e) {
 				logger.debug(e);
 				return new StructuredSelection();
 			}
-			
+
 		} else
 			return new StructuredSelection();
 
@@ -232,5 +233,6 @@ public class SiteView extends ViewPart implements ISelectionProvider {
 			listener.selectionChanged(sce);
 		}
 	}
+	
 
 }

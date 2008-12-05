@@ -13,14 +13,17 @@ package org.rifidi.dashboard.twodview.sfx;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.Label;
 import org.eclipse.swt.graphics.Image;
+import org.rifidi.dashboard.twodview.Activator;
 import org.rifidi.edge.client.connections.remotereader.RemoteReader;
 import org.rifidi.edge.client.connections.remotereader.RemoteReaderID;
+import org.rifidi.edge.client.twodview.enums.ReaderStateEnum;
 
 /**
  * @author Tobias Hoppenthaler - tobias@pramari.com
  * 
  */
 public class ReaderAlphaImageFigure extends AlphaImageFigure {
+	
 
 	@Override
 	public IFigure getToolTip() {
@@ -58,15 +61,53 @@ public class ReaderAlphaImageFigure extends AlphaImageFigure {
 	public RemoteReaderID getReaderId() {
 		return this.reader.getID();
 	}
-	
-	private IFigure createToolTip(){
-		Label ttl=null;
-		if(reader==null){
+
+	private IFigure createToolTip() {
+		Label ttl = null;
+		if (reader == null) {
 			ttl = new Label("I AM JUST A DUMMY\nsorry, no status here");
-		}else{
-		ttl = new Label(reader.getDescription()+"\n"+reader.getReaderState());
+		} else {
+			ttl = new Label(reader.getDescription() + "\n"
+					+ reader.getReaderState());
 		}
+		updateStatus();
 		return ttl;
 	}
-	
+
+	public void updateStatus() {
+		/*
+		 * check status update picture
+		 */
+		String state = reader.getReaderState();
+		boolean handled=false;
+
+		if (state.equals(ReaderStateEnum.CONFIGURED.toString())) {
+			this.setImage(Activator
+					.imageDescriptorFromPlugin(
+							"org.rifidi.edge.client.twodview",
+							"icons/reader-24x24.png").createImage());
+			handled=true;
+		}
+		if (state.equals(ReaderStateEnum.OK.toString())) {
+			this.setImage(Activator.imageDescriptorFromPlugin(
+					"org.rifidi.edge.client.twodview",
+					"icons/reader-24x24_on.png").createImage());
+			handled=true;
+		}
+		if (state.equals(ReaderStateEnum.ERROR.toString())) {
+			this.setImage(Activator.imageDescriptorFromPlugin(
+					"org.rifidi.edge.client.twodview",
+					"icons/reader-24x24_off.png").createImage());
+			handled=true;
+		}
+		if (state.equals(ReaderStateEnum.EXECUTING_COMMAND.toString())) {
+			this.setImage(Activator.imageDescriptorFromPlugin(
+					"org.rifidi.edge.client.twodview",
+					"icons/reader-24x24_err.png").createImage());
+			handled=true;
+		}
+		if(!handled){
+			// set an image with question mark
+		}
+	}
 }
