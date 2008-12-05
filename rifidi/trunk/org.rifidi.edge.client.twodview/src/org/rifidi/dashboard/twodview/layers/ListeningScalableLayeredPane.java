@@ -27,15 +27,6 @@ import org.rifidi.dashboard.twodview.views.SiteView;
 public class ListeningScalableLayeredPane extends ScalableLayeredPane implements
 		MouseListener, MouseMotionListener {
 
-	public ListeningScalableLayeredPane() {
-		super();
-		setMaximumSize(new Dimension(1024, 768));
-		addMouseListener(this);
-		addMouseMotionListener(this);
-
-		
-	}
-
 	private IFigure selectedImage;
 	private SiteView siteView;
 	private int deltaX, deltaY, startX, startY;
@@ -43,6 +34,16 @@ public class ListeningScalableLayeredPane extends ScalableLayeredPane implements
 	public static final int OBJECTLAYER = 1;
 	public static final int EFFECTLAYER = 2;
 	public static final int NOTELAYER = 3;
+	private StatusRunner thread;
+
+	public ListeningScalableLayeredPane() {
+		super();
+		setMaximumSize(new Dimension(1024, 768));
+		addMouseListener(this);
+		addMouseMotionListener(this);
+		thread = null;
+
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -66,22 +67,20 @@ public class ListeningScalableLayeredPane extends ScalableLayeredPane implements
 	 */
 	@Override
 	public void mousePressed(MouseEvent arg0) {
-		selectedImage=null;
+		selectedImage = null;
 		// sets the starting point of the movement
 		startX = arg0.x;
 		startY = arg0.y;
 
 		try {
 			siteView = (SiteView) PlatformUI.getWorkbench()
-			.getActiveWorkbenchWindow().getActivePage().findView(
-					"org.rifidi.dashboard.twodview.views.SiteView");
+					.getActiveWorkbenchWindow().getActivePage().findView(
+							"org.rifidi.dashboard.twodview.views.SiteView");
 
 			selectedImage = findFigureAt(arg0.getLocation()); // Gets
 			// ImageFigure
 			// at current
 			// Location
-			
-			
 
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -155,7 +154,7 @@ public class ListeningScalableLayeredPane extends ScalableLayeredPane implements
 	 */
 	@Override
 	public void mouseEntered(MouseEvent arg0) {
-		// requestFocus();
+		// TODO Auto-generated method stub
 
 	}
 
