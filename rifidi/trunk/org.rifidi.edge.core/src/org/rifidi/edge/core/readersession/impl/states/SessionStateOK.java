@@ -3,7 +3,7 @@ package org.rifidi.edge.core.readersession.impl.states;
 import java.io.IOException;
 
 import org.apache.commons.logging.Log;
-import org.apache.commons.logging.impl.LogFactoryImpl;
+import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.communication.service.ConnectionStatus;
 import org.rifidi.edge.core.exceptions.RifidiCannotRestartCommandException;
 import org.rifidi.edge.core.exceptions.RifidiCommandInterruptedException;
@@ -31,7 +31,7 @@ import org.xml.sax.SAXException;
 
 public class SessionStateOK implements ReaderSessionState {
 
-	private Log logger = LogFactoryImpl.getLog(SessionStateOK.class);
+	private Log logger = LogFactory.getLog(SessionStateOK.class);
 
 	private ReaderSessionImpl readerSessionImpl;
 
