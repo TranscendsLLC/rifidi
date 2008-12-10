@@ -8,14 +8,14 @@
  *  License:	Lesser GNU Public License (LGPL)
  *  				http://www.opensource.org/licenses/lgpl-license.html
  */
-package org.rifidi.dashboard.twodview.sfx;
+package org.rifidi.edge.client.twodview.sfx;
 
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.Label;
 import org.eclipse.swt.graphics.Image;
-import org.rifidi.dashboard.twodview.Activator;
 import org.rifidi.edge.client.connections.remotereader.RemoteReader;
 import org.rifidi.edge.client.connections.remotereader.RemoteReaderID;
+import org.rifidi.edge.client.twodview.Activator;
 import org.rifidi.edge.client.twodview.enums.ReaderStateEnum;
 
 /**

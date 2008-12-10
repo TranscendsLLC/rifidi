@@ -8,7 +8,7 @@
  *  License:	Lesser GNU Public License (LGPL)
  *  				http://www.opensource.org/licenses/lgpl-license.html
  */
-package org.rifidi.dashboard.twodview.listeners;
+package org.rifidi.edge.client.twodview.listeners;
 
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.ScalableLayeredPane;

@@ -8,7 +8,7 @@
  *  License:	Lesser GNU Public License (LGPL)
  *  				http://www.opensource.org/licenses/lgpl-license.html
  */
-package org.rifidi.dashboard.twodview.listeners;
+package org.rifidi.edge.client.twodview.listeners;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -18,14 +18,14 @@ import org.eclipse.swt.dnd.DropTargetListener;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
-import org.rifidi.dashboard.twodview.Activator;
-import org.rifidi.dashboard.twodview.exceptions.ReaderAlreadyInMapException;
-import org.rifidi.dashboard.twodview.layers.ObjectLayer;
-import org.rifidi.dashboard.twodview.sfx.ReaderAlphaImageFigure;
-import org.rifidi.dashboard.twodview.views.SiteView;
 import org.rifidi.edge.client.connections.registryservice.RemoteReaderConnectionRegistryService;
 import org.rifidi.edge.client.connections.remotereader.RemoteReader;
 import org.rifidi.edge.client.connections.remotereader.RemoteReaderID;
+import org.rifidi.edge.client.twodview.Activator;
+import org.rifidi.edge.client.twodview.exceptions.ReaderAlreadyInMapException;
+import org.rifidi.edge.client.twodview.layers.ObjectLayer;
+import org.rifidi.edge.client.twodview.sfx.ReaderAlphaImageFigure;
+import org.rifidi.edge.client.twodview.views.SiteView;
 import org.rifidi.services.annotations.Inject;
 import org.rifidi.services.registry.ServiceRegistry;
 

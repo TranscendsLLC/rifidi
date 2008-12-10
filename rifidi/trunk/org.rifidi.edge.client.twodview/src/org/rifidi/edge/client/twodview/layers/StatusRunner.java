@@ -8,9 +8,9 @@
  *  License:	Lesser GNU Public License (LGPL)
  *  				http://www.opensource.org/licenses/lgpl-license.html
  */
-package org.rifidi.dashboard.twodview.layers;
+package org.rifidi.edge.client.twodview.layers;
 
-import org.rifidi.dashboard.twodview.sfx.ReaderAlphaImageFigure;
+import org.rifidi.edge.client.twodview.sfx.ReaderAlphaImageFigure;
 
 /**
  * @author Tobias Hoppenthaler - tobias@pramari.com

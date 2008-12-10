@@ -1,4 +1,4 @@
-package org.rifidi.dashboard.twodview;
+package org.rifidi.edge.client.twodview;
 
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;

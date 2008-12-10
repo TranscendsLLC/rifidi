@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Twodview Plug-in
 Bundle-SymbolicName: org.rifidi.edge.client.twodview;singleton:=true
 Bundle-Version: 1.0.0
-Bundle-Activator: org.rifidi.dashboard.twodview.Activator
+Bundle-Activator: org.rifidi.edge.client.twodview.Activator
 Bundle-Vendor: PRAMARI LLC
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,

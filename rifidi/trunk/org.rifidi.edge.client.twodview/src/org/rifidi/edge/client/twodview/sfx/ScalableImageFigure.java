@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.rifidi.dashboard.twodview.sfx;
+package org.rifidi.edge.client.twodview.sfx;
 
 import org.eclipse.draw2d.Graphics;
 import org.eclipse.draw2d.ImageFigure;
