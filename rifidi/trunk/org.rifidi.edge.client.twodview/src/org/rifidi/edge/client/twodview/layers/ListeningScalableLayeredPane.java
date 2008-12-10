@@ -128,6 +128,7 @@ public class ListeningScalableLayeredPane extends ScalableLayeredPane implements
 
 			try {
 				// are we dragging the floorplan? yes -> panning
+				@SuppressWarnings("unused")
 				FloorPlanLayer fpl = (FloorPlanLayer) selectedImage.getParent();
 				pan();
 			} catch (ClassCastException e) {

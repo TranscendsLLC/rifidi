@@ -10,10 +10,8 @@
  */
 package org.rifidi.edge.client.twodview.layers;
 
-import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.draw2d.geometry.Rectangle;
-import org.eclipse.ui.PlatformUI;
 import org.rifidi.edge.client.twodview.exceptions.ReaderAlreadyInMapException;
 import org.rifidi.edge.client.twodview.sfx.ReaderAlphaImageFigure;
 import org.rifidi.services.registry.ServiceRegistry;
@@ -25,7 +23,6 @@ import org.rifidi.services.registry.ServiceRegistry;
 public class ObjectLayer extends XYLayer {
 
 	// private Log logger;
-	private Thread thread = null;
 
 	/**
 	 * Creates a new Layer with MouseListener and MouseMotionListener
@@ -68,56 +65,6 @@ public class ObjectLayer extends XYLayer {
 			}
 
 		}
-	}
-
-	@Override
-	public void add(IFigure figure, Object constraint, int index) {
-		// TODO Auto-generated method stub
-		super.add(figure, constraint, index);
-		if (getChildren().size() == 1 && thread == null) {
-			thread = new RefreshThread(this);
-			thread.start();
-			System.out.println("THREAD: ich bin da!");
-		}
-	}
-
-	@Override
-	public void remove(IFigure figure) {
-
-		super.remove(figure);
-		if (thread != null && getChildren().size() == 0) {
-			thread.interrupt();
-			thread = null;
-			System.out.println("THREAD:goodbye du schnoede welt...");
-		} else
-			System.out.println("WTF?");
-	}
-
-	private class RefreshThread extends Thread {
-
-		private long refreshRate = 10000;
-		private ObjectLayer layer;
-
-		public RefreshThread(ObjectLayer layer) {
-			super("ObjectLayerThread");
-			this.layer = layer;
-		}
-
-		@Override
-		public void run() {
-
-			while (!isInterrupted()) {
-				PlatformUI.getWorkbench().getDisplay().asyncExec(
-						new StatusRunner(layer));
-				try {
-					Thread.sleep(refreshRate);
-				} catch (InterruptedException e) {
-					interrupt();
-				}
-			}
-
-		}
-
 	}
 
 }
