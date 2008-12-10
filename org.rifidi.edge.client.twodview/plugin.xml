@@ -4,8 +4,8 @@
    <extension
          point="org.eclipse.ui.views">
       <view
-            class="org.rifidi.dashboard.twodview.views.SiteView"
-            id="org.rifidi.dashboard.twodview.views.SiteView"
+            class="org.rifidi.edge.client.twodview.views.SiteView"
+            id="org.rifidi.edge.client.twodview.views.SiteView"
             name="SiteView"
             restorable="true">
       </view>
@@ -13,18 +13,18 @@
    <extension
          point="org.eclipse.ui.commands">
       <command
-            category="org.rifidi.dashboard.twodview.2dview"
-            id="org.rifidi.dashboard.twodview.changefloorplan"
+            category="org.rifidi.edge.client.twodview.2dview"
+            id="org.rifidi.edge.client.twodview.changefloorplan"
             name="Change floorplan">
       </command>
       <category
             description="2dview"
-            id="org.rifidi.dashboard.twodview.2dview"
+            id="org.rifidi.edge.client.twodview.2dview"
             name="2dview">
       </category>
       <command
-            category="org.rifidi.dashboard.twodview.2dview"
-            id="org.rifidi.dashboard.twodview.removereader"
+            category="org.rifidi.edge.client.twodview.2dview"
+            id="org.rifidi.edge.client.twodview.removereader"
             name="Remove Reader">
       </command>
    </extension>
@@ -33,12 +33,12 @@
       <menuContribution
             locationURI="popup:org.eclipse.ui.popup.any?after=twodview">
          <command
-               commandId="org.rifidi.dashboard.twodview.changefloorplan"
+               commandId="org.rifidi.edge.client.twodview.changefloorplan"
                label="ChangeFloorplan"
                style="push">
          </command>
          <command
-               commandId="org.rifidi.dashboard.twodview.removereader"
+               commandId="org.rifidi.edge.client.twodview.removereader"
                id="RemoveFromMap"
                label="Remove"
                style="push">
@@ -56,12 +56,12 @@
    <extension
          point="org.eclipse.ui.handlers">
       <handler
-            class="org.rifidi.dashboard.twodview.commands.ChangeFloorPlan"
-            commandId="org.rifidi.dashboard.twodview.changefloorplan">
+            class="org.rifidi.edge.client.twodview.handlers.ChangeFloorPlan"
+            commandId="org.rifidi.edge.client.twodview.changefloorplan">
       </handler>
       <handler
-            class="org.rifidi.dashboard.twodview.commands.RemoveReader"
-            commandId="org.rifidi.dashboard.twodview.removereader">
+            class="org.rifidi.edge.client.twodview.handlers.RemoveReader"
+            commandId="org.rifidi.edge.client.twodview.removereader">
       </handler>
    </extension>
    <extension
@@ -70,7 +70,7 @@
             targetID="org.rifidi.edge.client.perspective">
          <view
                closeable="true"
-               id="org.rifidi.dashboard.twodview.views.SiteView"
+               id="org.rifidi.edge.client.twodview.views.SiteView"
                minimized="false"
                moveable="true"
                ratio="1.0"

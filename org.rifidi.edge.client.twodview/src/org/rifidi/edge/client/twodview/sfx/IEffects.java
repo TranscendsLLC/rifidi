@@ -8,7 +8,7 @@
  *  License:	Lesser GNU Public License (LGPL)
  *  				http://www.opensource.org/licenses/lgpl-license.html
  */
-package org.rifidi.dashboard.twodview.sfx;
+package org.rifidi.edge.client.twodview.sfx;
 
 import org.eclipse.swt.graphics.Color;
 

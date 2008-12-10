@@ -8,7 +8,7 @@
  *  License:	Lesser GNU Public License (LGPL)
  *  				http://www.opensource.org/licenses/lgpl-license.html
  */
-package org.rifidi.dashboard.twodview.layers;
+package org.rifidi.edge.client.twodview.layers;
 
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.MouseEvent;
@@ -18,7 +18,7 @@ import org.eclipse.draw2d.ScalableLayeredPane;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.ui.PlatformUI;
-import org.rifidi.dashboard.twodview.views.SiteView;
+import org.rifidi.edge.client.twodview.views.SiteView;
 
 /**
  * @author Tobias Hoppenthaler - tobias@pramari.com
@@ -75,7 +75,7 @@ public class ListeningScalableLayeredPane extends ScalableLayeredPane implements
 		try {
 			siteView = (SiteView) PlatformUI.getWorkbench()
 					.getActiveWorkbenchWindow().getActivePage().findView(
-							"org.rifidi.dashboard.twodview.views.SiteView");
+							"org.rifidi.edge.client.twodview.views.SiteView");
 
 			selectedImage = findFigureAt(arg0.getLocation()); // Gets
 			// ImageFigure

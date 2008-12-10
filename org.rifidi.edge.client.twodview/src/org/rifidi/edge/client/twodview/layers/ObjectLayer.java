@@ -8,14 +8,14 @@
  *  License:	Lesser GNU Public License (LGPL)
  *  				http://www.opensource.org/licenses/lgpl-license.html
  */
-package org.rifidi.dashboard.twodview.layers;
+package org.rifidi.edge.client.twodview.layers;
 
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.ui.PlatformUI;
-import org.rifidi.dashboard.twodview.exceptions.ReaderAlreadyInMapException;
-import org.rifidi.dashboard.twodview.sfx.ReaderAlphaImageFigure;
+import org.rifidi.edge.client.twodview.exceptions.ReaderAlreadyInMapException;
+import org.rifidi.edge.client.twodview.sfx.ReaderAlphaImageFigure;
 import org.rifidi.services.registry.ServiceRegistry;
 
 /**

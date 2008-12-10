@@ -8,7 +8,7 @@
  *  License:	Lesser GNU Public License (LGPL)
  *  				http://www.opensource.org/licenses/lgpl-license.html
  */
-package org.rifidi.dashboard.twodview.layers;
+package org.rifidi.edge.client.twodview.layers;
 
 import org.eclipse.swt.graphics.Image;
 

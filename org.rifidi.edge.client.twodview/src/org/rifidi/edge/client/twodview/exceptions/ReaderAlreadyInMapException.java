@@ -8,7 +8,7 @@
  *  License:	Lesser GNU Public License (LGPL)
  *  				http://www.opensource.org/licenses/lgpl-license.html
  */
-package org.rifidi.dashboard.twodview.exceptions;
+package org.rifidi.edge.client.twodview.exceptions;
 
 /**
  * @author Tobias Hoppenthaler - tobias@pramari.com

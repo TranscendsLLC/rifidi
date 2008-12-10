@@ -8,14 +8,14 @@
  *  License:	Lesser GNU Public License (LGPL)
  *  				http://www.opensource.org/licenses/lgpl-license.html
  */
-package org.rifidi.dashboard.twodview.commands;
+package org.rifidi.edge.client.twodview.handlers;
 
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.commands.IHandlerListener;
 import org.eclipse.ui.PlatformUI;
-import org.rifidi.dashboard.twodview.views.SiteView;
+import org.rifidi.edge.client.twodview.views.SiteView;
 
 /**
  * @author Tobias Hoppenthaler - tobias@pramari.com
@@ -49,7 +49,7 @@ public class RemoveReader implements IHandler {
 		SiteView siteView = null;
 		siteView = (SiteView) PlatformUI.getWorkbench()
 				.getActiveWorkbenchWindow().getActivePage().findView(
-						"org.rifidi.dashboard.twodview.views.SiteView");
+						"org.rifidi.edge.client.twodview.views.SiteView");
 		if (siteView != null) {
 			siteView.getLayeredPane().removeCurrentSelection();
 		}

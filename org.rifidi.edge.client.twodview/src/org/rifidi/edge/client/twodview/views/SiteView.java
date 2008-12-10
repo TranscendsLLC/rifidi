@@ -8,7 +8,7 @@
  *  License:	Lesser GNU Public License (LGPL)
  *  				http://www.opensource.org/licenses/lgpl-license.html
  */
-package org.rifidi.dashboard.twodview.views;
+package org.rifidi.edge.client.twodview.views;
 
 import java.util.ArrayList;
 
@@ -33,16 +33,16 @@ import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.part.ViewPart;
-import org.rifidi.dashboard.twodview.layers.EffectLayer;
-import org.rifidi.dashboard.twodview.layers.FloorPlanLayer;
-import org.rifidi.dashboard.twodview.layers.ListeningScalableLayeredPane;
-import org.rifidi.dashboard.twodview.layers.NoteLayer;
-import org.rifidi.dashboard.twodview.layers.ObjectLayer;
-import org.rifidi.dashboard.twodview.listeners.SiteViewDropTargetListener;
-import org.rifidi.dashboard.twodview.listeners.SiteViewKeyListener;
-import org.rifidi.dashboard.twodview.listeners.SiteViewMouseWheelListener;
-import org.rifidi.dashboard.twodview.sfx.ReaderAlphaImageFigure;
 import org.rifidi.edge.client.connections.remotereader.RemoteReader;
+import org.rifidi.edge.client.twodview.layers.EffectLayer;
+import org.rifidi.edge.client.twodview.layers.FloorPlanLayer;
+import org.rifidi.edge.client.twodview.layers.ListeningScalableLayeredPane;
+import org.rifidi.edge.client.twodview.layers.NoteLayer;
+import org.rifidi.edge.client.twodview.layers.ObjectLayer;
+import org.rifidi.edge.client.twodview.listeners.SiteViewDropTargetListener;
+import org.rifidi.edge.client.twodview.listeners.SiteViewKeyListener;
+import org.rifidi.edge.client.twodview.listeners.SiteViewMouseWheelListener;
+import org.rifidi.edge.client.twodview.sfx.ReaderAlphaImageFigure;
 
 /**
  * @author Tobias Hoppenthaler - tobias@pramari.com
@@ -52,7 +52,7 @@ public class SiteView extends ViewPart implements ISelectionProvider {
 
 	private Log logger = LogFactory.getLog(SiteView.class);
 
-	public final static String ID = "org.rifidi.dashboard.twodview.views.SiteView";
+	public final static String ID = "org.rifidi.edge.client.twodview.views.SiteView";
 	private ListeningScalableLayeredPane lp;
 	private FloorPlanLayer floorplanLayer;
 	private ObjectLayer objectLayer;
