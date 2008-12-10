@@ -34,14 +34,12 @@ public class ListeningScalableLayeredPane extends ScalableLayeredPane implements
 	public static final int OBJECTLAYER = 1;
 	public static final int EFFECTLAYER = 2;
 	public static final int NOTELAYER = 3;
-	private StatusRunner thread;
 
 	public ListeningScalableLayeredPane() {
 		super();
 		setMaximumSize(new Dimension(1024, 768));
 		addMouseListener(this);
 		addMouseMotionListener(this);
-		thread = null;
 
 	}
 
@@ -67,7 +65,7 @@ public class ListeningScalableLayeredPane extends ScalableLayeredPane implements
 	 */
 	@Override
 	public void mousePressed(MouseEvent arg0) {
-		selectedImage = null;
+		// selectedImage = null;
 		// sets the starting point of the movement
 		startX = arg0.x;
 		startY = arg0.y;
@@ -110,7 +108,7 @@ public class ListeningScalableLayeredPane extends ScalableLayeredPane implements
 	 */
 	@Override
 	public void mouseReleased(MouseEvent arg0) {
-		selectedImage = null;
+		// selectedImage = null;
 
 	}
 
