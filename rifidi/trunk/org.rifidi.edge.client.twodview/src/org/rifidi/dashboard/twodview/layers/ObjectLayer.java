@@ -111,7 +111,7 @@ public class ObjectLayer extends XYLayer {
 				try {
 					Thread.sleep(refreshRate);
 				} catch (InterruptedException e) {
-					Thread.interrupted();
+					interrupt();
 				}
 			}
 
