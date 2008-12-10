@@ -83,9 +83,10 @@ public class ObjectLayer extends XYLayer {
 
 	@Override
 	public void remove(IFigure figure) {
-		// TODO Auto-generated method stub
+
 		super.remove(figure);
 		if (thread != null && getChildren().size() == 0) {
+			thread.interrupt();
 			thread = null;
 			System.out.println("THREAD:goodbye du schnoede welt...");
 		} else
