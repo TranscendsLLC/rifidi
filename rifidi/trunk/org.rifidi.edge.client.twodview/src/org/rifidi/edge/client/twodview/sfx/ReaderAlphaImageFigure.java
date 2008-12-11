@@ -22,7 +22,9 @@ import org.rifidi.edge.client.twodview.enums.ReaderStateEnum;
  * @author Tobias Hoppenthaler - tobias@pramari.com
  * 
  */
-public class ReaderAlphaImageFigure extends AlphaImageFigure {
+public class ReaderAlphaImageFigure extends AlphaImageFigure
+		implements
+		org.rifidi.edge.client.connections.remotereader.listeners.ReaderStateListener {
 
 	@Override
 	public IFigure getToolTip() {
@@ -54,7 +56,7 @@ public class ReaderAlphaImageFigure extends AlphaImageFigure {
 	public ReaderAlphaImageFigure(Image image, RemoteReader reader) {
 		super(image);
 		this.reader = reader;
-		this.reader.addStateListener(new ReaderStateListener(this));
+		this.reader.addStateListener(this);
 		this.setToolTip(this.createToolTip());
 	}
 
@@ -70,7 +72,7 @@ public class ReaderAlphaImageFigure extends AlphaImageFigure {
 			ttl = new Label(reader.getDescription() + "\n"
 					+ reader.getReaderState());
 		}
-//		updateStatus();
+		// updateStatus();
 		return ttl;
 	}
 
@@ -113,6 +115,12 @@ public class ReaderAlphaImageFigure extends AlphaImageFigure {
 		 */
 		String state = reader.getReaderState();
 		updateStatus(state);
+
+	}
+
+	@Override
+	public void readerStateChanged(RemoteReaderID readerID, String newState) {
+		updateStatus(newState);
 
 	}
 }
