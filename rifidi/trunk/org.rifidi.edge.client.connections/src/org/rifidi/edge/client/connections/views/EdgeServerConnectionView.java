@@ -36,7 +36,6 @@ import org.rifidi.edge.client.connections.edgeserver.EdgeServerConnection;
 import org.rifidi.edge.client.connections.handlers.RemoveReaderHandler;
 import org.rifidi.edge.client.connections.registryservice.EdgeServerConnectionRegistryService;
 import org.rifidi.edge.client.connections.remotereader.RemoteReader;
-import org.rifidi.edge.client.connections.util.AbstractThread;
 import org.rifidi.services.annotations.Inject;
 import org.rifidi.services.registry.ServiceRegistry;
 
@@ -45,7 +44,7 @@ public class EdgeServerConnectionView extends ViewPart implements
 
 	public static final String ID = "org.rifidi.edge.client.readerview.views.EdgeServerConnectionView";
 
-//	private Log logger = LogFactory.getLog(EdgeServerConnectionView.class);
+	// private Log logger = LogFactory.getLog(EdgeServerConnectionView.class);
 
 	private EdgeServerConnectionRegistryService serverRegistry;
 	private TreeViewer treeViewer;
@@ -141,7 +140,7 @@ public class EdgeServerConnectionView extends ViewPart implements
 					}
 				} else {
 					if (refreshThread != null)
-						refreshThread.stop();
+						refreshThread.interrupt();
 				}
 
 			}
@@ -215,23 +214,24 @@ public class EdgeServerConnectionView extends ViewPart implements
 
 	public void dispose() {
 		if (refreshThread != null) {
-			refreshThread.stop();
+			refreshThread.interrupt();
 		}
 		super.dispose();
 	}
 
-	private class RefreshThread extends AbstractThread {
+	private class RefreshThread extends Thread {
 
 		private int updateInterval = 1;
-
+		
 		public RefreshThread() {
-			super("Tree Refresh thread.");
+			super(getViewSite().getSecondaryId().replace("&colon;", ":") + " Refresh thread.");
+			// TODO Auto-generated constructor stub
 		}
 
 		@Override
 		public void run() {
 			try {
-				while (running) {
+				while (!isInterrupted()) {
 					// logger.debug("Updating");
 					treeViewer.getTree().getDisplay().syncExec(new Runnable() {
 						@Override
@@ -240,7 +240,7 @@ public class EdgeServerConnectionView extends ViewPart implements
 								treeViewer.refresh();
 
 							} else {
-								running = false;
+								interrupt();
 							}
 						}
 					});

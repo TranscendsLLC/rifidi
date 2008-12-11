@@ -32,7 +32,6 @@ import org.rifidi.edge.client.connections.registryservice.listeners.RemoteReader
 import org.rifidi.edge.client.connections.remotereader.RemoteReader;
 import org.rifidi.edge.client.connections.remotereader.RemoteReaderID;
 import org.rifidi.edge.client.connections.remotereader.listeners.ReaderMessageListener;
-import org.rifidi.edge.client.connections.util.AbstractThread;
 import org.rifidi.edge.client.tags.utils.TagContainer;
 import org.rifidi.edge.core.readerplugin.messages.impl.EnhancedTagMessage;
 import org.rifidi.edge.core.readerplugin.messages.impl.TagMessage;
@@ -121,12 +120,13 @@ public class TagServerView extends ViewPart implements ReaderMessageListener,
 		tags.clear();
 		readerConnectionRegistryService.addListener(this);
 
-		thread.stop();
+		thread.interrupt();
 		super.dispose();
 	}
 
 	@Override
 	public void onMessage(Message message, RemoteReader reader) {
+		logger.debug("TagServerView: onMessage: " + message.toString() + " from Reader: "+reader.toString());
 		if (!table.getControl().isDisposed()) {
 			// synchronized(this) {
 			table.getTable().getDisplay().syncExec(
@@ -141,6 +141,7 @@ public class TagServerView extends ViewPart implements ReaderMessageListener,
 
 		public MessageRunner(TextMessage message, RemoteReader reader) {
 			this.message = message;
+			logger.debug("in message runner server");
 		}
 
 		@Override
@@ -219,7 +220,7 @@ public class TagServerView extends ViewPart implements ReaderMessageListener,
 	}
 
 	// TODO Implement this better.
-	private class RefreshThread extends AbstractThread {
+	private class RefreshThread extends Thread {
 
 		private long refreashRate = 1000;
 		private long retainTime = 3000;
@@ -233,7 +234,7 @@ public class TagServerView extends ViewPart implements ReaderMessageListener,
 		@Override
 		public void run() {
 			// TODO Auto-generated method stub
-			while (running) {
+			while (!isInterrupted()) {
 				List<TagContainer> tagsToKeep = new ArrayList<TagContainer>();
 				// logger.debug(tags);
 				// Convoluted but needed
@@ -268,6 +269,7 @@ public class TagServerView extends ViewPart implements ReaderMessageListener,
 				try {
 					Thread.sleep(refreashRate);
 				} catch (InterruptedException e) {
+					interrupt();
 				}
 			}
 		}
