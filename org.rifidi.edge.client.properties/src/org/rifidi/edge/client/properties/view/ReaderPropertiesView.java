@@ -5,8 +5,10 @@ package org.rifidi.edge.client.properties.view;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.views.properties.PropertySheet;
+import org.rifidi.edge.client.connections.remotereader.RemoteReader;
 import org.rifidi.edge.client.connections.views.EdgeServerConnectionView;
 
 /**
@@ -26,7 +28,9 @@ public class ReaderPropertiesView extends PropertySheet {
 	 * another view
 	 */
 	public void partActivated(IWorkbenchPart part) {
-		if (part instanceof EdgeServerConnectionView) {
+		ISelection sel = part.getSite().getSelectionProvider().getSelection();
+		
+		if (part instanceof EdgeServerConnectionView && sel instanceof RemoteReader) {
 			super.partActivated(part);
 		}
 	}
