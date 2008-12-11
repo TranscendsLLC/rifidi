@@ -44,7 +44,7 @@ public class TagDisplayHandler extends AbstractHandler {
 				
 				TagView view = (TagView) window.getActivePage().showView(TagView.class.getName(), connection.getDescription().replace(":","&colon;"),
 						IWorkbenchPage.VIEW_ACTIVATE);
-				view.initTagView( connection);
+				view.initTagView(connection);
 			} catch (PartInitException e1) {
 				logger.debug("Error. " , e1);
 				throw new ExecutionException("Could not create view.", e1);

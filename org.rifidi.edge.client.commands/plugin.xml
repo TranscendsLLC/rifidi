@@ -16,7 +16,7 @@
             targetID="org.rifidi.edge.client.perspective">
          <view
                closeable="true"
-               id="org.rifidi.dashboard.twodview.views.SiteView"
+               id="org.rifidi.edge.client.twodview.views.SiteView"
                minimized="false"
                moveable="true"
                ratio="0.2"
@@ -32,7 +32,7 @@
                minimized="false"
                ratio="0.4"
                relationship="bottom"
-               relative="org.rifidi.dashboard.twodview.views.SiteView"
+               relative="org.rifidi.edge.client.twodview.views.SiteView"
                showTitle="true"
                visible="true">
          </view>

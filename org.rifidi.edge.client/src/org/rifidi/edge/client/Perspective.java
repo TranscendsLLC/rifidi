@@ -10,12 +10,12 @@ public class Perspective implements IPerspectiveFactory {
 		// IFolderLayout leftFolder = layout.createFolder("leftFolder",
 		// IPageLayout.LEFT, 0.3f, layout.getEditorArea());
 		// leftFolder.addView("org.rifidi.edge.client.readerview.views.EdgeServerConnectionView");
-		// layout.addStandaloneView("org.rifidi.dashboard.twodview.views.SiteView",
+		// layout.addStandaloneView("org.rifidi.edge.client.twodview.views.SiteView",
 		// false, IPageLayout.RIGHT, 0f,
 		// layout.getEditorArea());
 		// IFolderLayout bottomFolder = layout.createFolder("bottomFolder",
 		// IPageLayout.BOTTOM, 0.6f,
-		// "org.rifidi.dashboard.twodview.views.SiteView");
+		// "org.rifidi.edge.client.twodview.views.SiteView");
 		// bottomFolder.addView("org.rifidi.edge.client.properties.view.MyPropertySheet");
 		// bottomFolder.addView("org.rifidi.edge.client.commands.views.ReaderCommandView");
 

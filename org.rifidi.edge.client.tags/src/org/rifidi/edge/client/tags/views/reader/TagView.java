@@ -1,6 +1,5 @@
 package org.rifidi.edge.client.tags.views.reader;
 
-
 import java.io.CharArrayReader;
 import java.io.Reader;
 import java.util.ArrayList;
@@ -27,18 +26,15 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.part.ViewPart;
 import org.rifidi.edge.client.connections.remotereader.RemoteReader;
 import org.rifidi.edge.client.connections.remotereader.listeners.ReaderMessageListener;
-import org.rifidi.edge.client.connections.util.AbstractThread;
 import org.rifidi.edge.client.tags.utils.TagContainer;
 import org.rifidi.edge.client.tags.utils.TagMessageUnmarshaller;
 import org.rifidi.edge.core.readerplugin.messages.impl.TagMessage;
 import org.rifidi.services.registry.ServiceRegistry;
 
-
-
-
 /**
  * @author jerry
- *
+ * @author Tobias Hoppenthaler - tobias@pramari.com
+ * 
  */
 public class TagView extends ViewPart implements ReaderMessageListener {
 	static private Log logger = LogFactory.getLog(TagView.class);
@@ -47,7 +43,7 @@ public class TagView extends ViewPart implements ReaderMessageListener {
 
 	// TODO Put this someplace better -- maybe
 	private Set<TagContainer> tags = new TreeSet<TagContainer>();
-	
+
 	private Object locker = new Object();
 
 	private Listener selChangeListener = new Listener() {
@@ -56,16 +52,18 @@ public class TagView extends ViewPart implements ReaderMessageListener {
 			table.refresh();
 		}
 	};
-	
+
 	private RefreshThread thread;
 	private RemoteReader connection;
-//	private MessageConvertingService messageConvertingService;
+
+	// private MessageConvertingService messageConvertingService;
 
 	@Override
 	public void createPartControl(Composite parent) {
-		logger.debug("Creating " + this.getClass().getSimpleName() + " control.");
+		logger.debug("Creating " + this.getClass().getSimpleName()
+				+ " control.");
 		ServiceRegistry.getInstance().service(this);
-		
+
 		composite = new Composite(parent, SWT.NONE);
 		composite.setLayout(new FillLayout());
 		table = new TableViewer(composite, SWT.BORDER | SWT.V_SCROLL | SWT.WRAP
@@ -74,9 +72,11 @@ public class TagView extends ViewPart implements ReaderMessageListener {
 		table.getTable().setLinesVisible(true);
 		table.getTable().setHeaderVisible(true);
 
-		String[] columnNames = { "Tag ID", "Time Stamp", "Antenna ID", "Signal Strength", "Velocity" };
-		int[] columnWidths = new int[] { 225, 120, 80, 110 , 80};
-		int[] columnAlignments = new int[] { SWT.LEFT, SWT.LEFT, SWT.LEFT, SWT.LEFT, SWT.LEFT};
+		String[] columnNames = { "Tag ID", "Time Stamp", "Antenna ID",
+				"Signal Strength", "Velocity" };
+		int[] columnWidths = new int[] { 225, 120, 80, 110, 80 };
+		int[] columnAlignments = new int[] { SWT.LEFT, SWT.LEFT, SWT.LEFT,
+				SWT.LEFT, SWT.LEFT };
 
 		List<TableColumn> tableColumns = new ArrayList<TableColumn>();
 		// create columns and add listeners to them
@@ -96,7 +96,8 @@ public class TagView extends ViewPart implements ReaderMessageListener {
 
 		getSite().setSelectionProvider(table);
 		setPartName(getViewSite().getSecondaryId().replace("&colon;", ":"));
-		setContentDescription(getViewSite().getSecondaryId().replace("&colon;", ":"));
+		setContentDescription(getViewSite().getSecondaryId().replace("&colon;",
+				":"));
 	}
 
 	@Override
@@ -109,17 +110,20 @@ public class TagView extends ViewPart implements ReaderMessageListener {
 		tags.clear();
 		connection.removeMessageListener(this);
 
-		thread.stop();
+		thread.interrupt();
 		super.dispose();
 	}
 
 	@Override
 	public void onMessage(Message message, RemoteReader reader) {
-		if (!table.getControl().isDisposed() ) {
-			//synchronized(this) {
+		// logger.debug("TagView: onMessage: " + message.toString() +
+		// " from Reader: "+reader.toString());
+		if (!table.getControl().isDisposed()) {
+			synchronized (this) {
 				table.getTable().getDisplay().syncExec(
-					new MessageRunner((TextMessage) message));
-			//}
+						new MessageRunner((TextMessage) message));
+				// this.message = (TextMessage) message;
+			}
 		}
 	}
 
@@ -129,6 +133,7 @@ public class TagView extends ViewPart implements ReaderMessageListener {
 
 		public MessageRunner(TextMessage message) {
 			this.message = message;
+			// logger.debug("in message runner tag view");
 		}
 
 		@Override
@@ -139,30 +144,31 @@ public class TagView extends ViewPart implements ReaderMessageListener {
 			} catch (JMSException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
-				
+
 				connection.removeMessageListener(TagView.this);
-			
+
 				return;
 			}
 			TagMessage tagMessage;
 			try {
 
-				tagMessage = (TagMessage) TagMessageUnmarshaller.getInstance().unmarshall(reader);
+				tagMessage = (TagMessage) TagMessageUnmarshaller.getInstance()
+						.unmarshall(reader);
 			} catch (JAXBException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-				
+
 				connection.removeMessageListener(TagView.this);
-			
+
 				return;
 			}
-//				catch (JMSException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//				connection.removeListener(TagView.this);
-//				
-//				return;
-//			}
+			// catch (JMSException e) {
+			// // TODO Auto-generated catch block
+			// e.printStackTrace();
+			// connection.removeListener(TagView.this);
+			//				
+			// return;
+			// }
 
 			TagContainer tm2;
 			synchronized (locker) {
@@ -170,10 +176,11 @@ public class TagView extends ViewPart implements ReaderMessageListener {
 					tm2.setTag(tagMessage);
 					tm2.setInternalTime(System.currentTimeMillis());
 					table.refresh(tm2);
-					//logger.debug(tm2);
+					// logger.debug(tm2);
 				} else {
-					tags.add(new TagContainer(tagMessage, System.currentTimeMillis()));
-					//TODO find a better way of doing this.
+					tags.add(new TagContainer(tagMessage, System
+							.currentTimeMillis()));
+					// TODO find a better way of doing this.
 					table.refresh();
 				}
 				locker.notify();
@@ -182,7 +189,8 @@ public class TagView extends ViewPart implements ReaderMessageListener {
 			// logger.debug(tagMessage.toXML());
 		}
 
-		private TagContainer getTagByID(TagMessage tm1, Collection<TagContainer> tags) {
+		private TagContainer getTagByID(TagMessage tm1,
+				Collection<TagContainer> tags) {
 			for (TagContainer tm : tags) {
 				if (Arrays.equals(tm1.getId(), tm.getTag().getId()))
 					return tm;
@@ -191,9 +199,6 @@ public class TagView extends ViewPart implements ReaderMessageListener {
 		}
 	}
 
-
-
-
 	public void initTagView(RemoteReader connection) {
 		// TODO Auto-generated method stub
 		this.connection = connection;
@@ -201,61 +206,67 @@ public class TagView extends ViewPart implements ReaderMessageListener {
 		thread = new RefreshThread();
 		thread.start();
 	}
-	
+
 	// TODO Implement this better.
-	private class RefreshThread extends AbstractThread {
+	private class RefreshThread extends Thread {
 
 		private long refreashRate = 1000;
 		private long retainTime = 3000;
-		
+
 		public RefreshThread() {
-			super(getViewSite().getSecondaryId().replace("&colon;", ":") + " Refresh thread.");
+			super(getViewSite().getSecondaryId().replace("&colon;", ":")
+					+ " Refresh thread.");
 			// TODO Auto-generated constructor stub
 		}
 
 		@Override
 		public void run() {
 			// TODO Auto-generated method stub
-			while (running) {
+			while (!isInterrupted()) {
 				List<TagContainer> tagsToKeep = new ArrayList<TagContainer>();
-				//logger.debug(tags);
-				 //Convoluted but needed
+				// logger.debug(tags);
+				// Convoluted but needed
 				synchronized (locker) {
-					for (TagContainer tm : tags){
-						//logger.debug(ByteAndHexConvertingUtility.toHexString(tm.getTag().getId()) + ": " + (System.currentTimeMillis() - tm.getInternalTime()));
-						if (System.currentTimeMillis() - tm.getInternalTime() <= retainTime ) {
-							//logger.debug("Keeping\n" + tm);
+					for (TagContainer tm : tags) {
+						// logger.debug(ByteAndHexConvertingUtility.toHexString(tm.getTag().getId())
+						// + ": " + (System.currentTimeMillis() -
+						// tm.getInternalTime()));
+						if (System.currentTimeMillis() - tm.getInternalTime() <= retainTime) {
+							// logger.debug("Keeping\n" + tm);
 							tagsToKeep.add(tm);
 						}
 					}
 					tags.clear();
-					for (TagContainer tm : tagsToKeep){
+					for (TagContainer tm : tagsToKeep) {
 						tags.add(tm);
 					}
 					tagsToKeep.clear();
 					locker.notify();
 				}
-				
-				if (!table.getControl().isDisposed() ) {
-					//synchronized(this) {
-						table.getControl().getDisplay().syncExec(new Runnable() {
-							@Override
-							public void run() {
-								table.refresh();
-							}
-						});
-					//}
+
+				if (!table.getControl().isDisposed()) {
+					// synchronized(this) {
+					table.getControl().getDisplay().syncExec(new Runnable() {
+						@Override
+						public void run() {
+							table.refresh();
+						}
+					});
+
+					// }
 				}
 				try {
 					Thread.sleep(refreashRate);
 				} catch (InterruptedException e) {
+					interrupt();
 				}
 			}
 		}
 	}
 
-//	@Inject
-//	public void getMessageConvertingService(MessageConvertingService messageConvertingService){
-//		this.messageConvertingService = messageConvertingService;
-//	}
+	// @Inject
+	// public void getMessageConvertingService(MessageConvertingService
+	// messageConvertingService){
+	// this.messageConvertingService = messageConvertingService;
+	// }
 }

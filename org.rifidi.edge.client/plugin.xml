@@ -51,10 +51,10 @@
          point="org.eclipse.core.runtime.products">
       <product
             application="org.rifidi.edge.client.application"
-            name="edgeclient">
+            name="Rifidi Edge Client">
          <property
                name="appName"
-               value="edgeclient">
+               value="Rifidi Edge Client">
          </property>
       </product>
    </extension>
