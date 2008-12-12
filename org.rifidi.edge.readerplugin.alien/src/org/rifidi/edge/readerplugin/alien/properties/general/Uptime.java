@@ -16,8 +16,10 @@ import org.w3c.dom.Element;
 /**
  *
  */
-@Form(name = Uptime.UPTIME, formElements = { @FormElement(type = FormElementType.INTEGER, elementName = Uptime.UPTIME_DATA, editable = false, defaultValue = "0", displayName = Uptime.UPTIME_DISPLAY) })
+@Form(name = Uptime.UPTIME, formElements = { @FormElement(type = FormElementType.INTEGER, elementName = Uptime.UPTIME_DATA, editable = false, defaultValue = Uptime.DEFAULT, displayName = Uptime.UPTIME_DISPLAY) })
 public class Uptime implements Property {
+
+	private static final String DEFAULT = "0";
 
 	private static final String UPTIME = "Uptime";
 
@@ -45,10 +47,13 @@ public class Uptime implements Property {
 		try {
 			connection.sendMessage("\1get " + command + "\n");
 
-			responseString = (String) connection.receiveMessage();
+			responseString = (String) connection.receiveMessage(500);
 
 		} catch (IOException e) {
 			logger.debug("IOException");
+		}
+		if(responseString==null){
+			responseString = DEFAULT;
 		}
 		response.setResponseMessage(responseString);
 		return response.formulateResponseXML(propertyConfig, UPTIME,

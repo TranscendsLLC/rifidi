@@ -19,9 +19,11 @@ import org.w3c.dom.Element;
  * @author Matthew Dean - matt@pramari.com
  * @author Jerry Maine - jerry@pramari.com
  */
-@Form(name = ReaderType.READERTYPE, formElements = { @FormElement(type = FormElementType.STRING, elementName = ReaderType.READERTYPE_DATA, editable = false, defaultValue = "0", displayName = ReaderType.READERTYPE_DISPLAY) })
+@Form(name = ReaderType.READERTYPE, formElements = { @FormElement(type = FormElementType.STRING, elementName = ReaderType.READERTYPE_DATA, editable = false, defaultValue = ReaderType.DEFUALT, displayName = ReaderType.READERTYPE_DISPLAY) })
 public class ReaderType implements Property {
 
+	private static final String DEFUALT = "0";
+	
 	private static final String READERTYPE = "ReaderType";
 
 	private static final String READERTYPE_DATA = "ReaderTypeData";
@@ -48,10 +50,13 @@ public class ReaderType implements Property {
 		try {
 			connection.sendMessage("\1get " + command + "\n");
 
-			responseString = (String) connection.receiveMessage();
+			responseString = (String) connection.receiveMessage(500);
 
 		} catch (IOException e) {
 			logger.debug("IOException");
+		}
+		if(responseString==null){
+			responseString=DEFUALT;
 		}
 		response.setResponseMessage(responseString);
 		return response.formulateResponseXML(propertyConfig, READERTYPE,
