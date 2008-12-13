@@ -24,7 +24,7 @@ import org.rifidi.edge.core.readerplugin.ReaderInfo;
  */
 @XmlRootElement(name="LLRPReaderInfo")
 @Form(name = "LLRPReaderInfo", formElements = {
-		@FormElement(type = FormElementType.STRING, elementName = "ipAddress", displayName = "IP Address", defaultValue = "localhost"),
+		@FormElement(type = FormElementType.STRING, elementName = "ipAddress", displayName = "IP Address", defaultValue = "127.0.0.1"),
 		@FormElement(type = FormElementType.INTEGER, elementName = "port", displayName = "Port", defaultValue = "5084", min = 0, max = 65535),
 		@FormElement(type = FormElementType.INTEGER, elementName = "reconnectionInterval", displayName = "Reconnect Interval", defaultValue = "1000", min = 0, max = Integer.MAX_VALUE),
 		@FormElement(type = FormElementType.INTEGER, elementName = "maxNumConnectionsAttempts", displayName = "Connection Attempts", defaultValue = "3", min = -1, max = Integer.MAX_VALUE) })
