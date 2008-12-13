@@ -8,7 +8,8 @@ Bundle-Vendor: Pramari, LLC
 Bundle-ActivationPolicy: lazy
 Eclipse-BuddyPolicy: global
 Import-Package: org.osgi.framework;version="1.4.0"
-Export-Package: org.rifidi.edge.core.communication,
+Export-Package: org.rifidi.edge.core,
+ org.rifidi.edge.core.communication,
  org.rifidi.edge.core.communication.service,
  org.rifidi.edge.core.exceptions,
  org.rifidi.edge.core.messageQueue,
@@ -21,10 +22,14 @@ Export-Package: org.rifidi.edge.core.communication,
  org.rifidi.edge.core.readerplugin.property,
  org.rifidi.edge.core.readerplugin.protocol,
  org.rifidi.edge.core.readerplugin.service,
+ org.rifidi.edge.core.readerplugin.service.impl,
  org.rifidi.edge.core.readerplugin.xml,
  org.rifidi.edge.core.readersession,
+ org.rifidi.edge.core.readersession.impl,
  org.rifidi.edge.core.readersession.impl.enums,
- org.rifidi.edge.core.readersession.service
+ org.rifidi.edge.core.readersession.impl.states,
+ org.rifidi.edge.core.readersession.service,
+ org.rifidi.edge.core.readersession.service.impl
 Require-Bundle: org.rifidi.edge.services,
  org.rifidi.edge.log4j,
  org.rifidi.edge.common.utilities;bundle-version="1.0.0",
