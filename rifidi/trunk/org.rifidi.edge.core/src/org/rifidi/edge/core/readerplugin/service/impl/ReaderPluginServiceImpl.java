@@ -72,8 +72,8 @@ public class ReaderPluginServiceImpl implements ReaderPluginService {
 		ReaderPluginXML readerPluginXML = null;
 
 		URL xml = null;
-		Enumeration enumerations = readerPluginBundle.findEntries(".",
-				"ReaderPlugin.xml", true);
+		Enumeration enumerations = readerPluginBundle.findEntries("READER-INF",
+				"ReaderPlugin.xml", false);
 		if (enumerations!=null && enumerations.hasMoreElements()) {
 			xml = (URL) enumerations.nextElement();
 		}
@@ -89,11 +89,9 @@ public class ReaderPluginServiceImpl implements ReaderPluginService {
 				loadedBundles.put(readerPluginBundle.getBundleId(), readerInfo);
 				fireRegisterEvent(readerInfo);
 			} catch (JAXBException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logger.error("ERROR", e);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logger.error("ERROR", e);
 			}
 		} else {
 			logger.error("Cannot find ReaderPlugin.XML for the bundle: "
