@@ -1,6 +1,10 @@
 package org.rifidi.edge.client.connections.registryservice;
 
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
 import java.util.Set;
+
+import javax.jms.JMSException;
 
 import org.rifidi.edge.client.connections.edgeserver.EdgeServerConnection;
 import org.rifidi.edge.client.connections.exceptions.EdgeServerConnectionRegistryException;
@@ -26,9 +30,12 @@ public interface EdgeServerConnectionRegistryService {
 	 * @param jmsPort
 	 * @return An ID that identifies this edge server to the registry
 	 * @throws EdgeServerConnectionRegistryException
+	 * @throws JMSException 
+	 * @throws NotBoundException 
+	 * @throws RemoteException 
 	 */
 	public int createConnection(String ip, int port, int jmsPort)
-			throws EdgeServerConnectionRegistryException;
+			throws RemoteException, NotBoundException, JMSException;
 
 	/**
 	 * Destroy the connection to the edge server and remove it from the registry

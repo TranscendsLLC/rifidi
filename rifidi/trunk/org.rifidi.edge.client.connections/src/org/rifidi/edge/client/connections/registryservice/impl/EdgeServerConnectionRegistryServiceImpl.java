@@ -36,9 +36,8 @@ public class EdgeServerConnectionRegistryServiceImpl implements
 	}
 
 	@Override
-	public synchronized int createConnection(String ip, int port, int jmsPort)
-			throws EdgeServerConnectionRegistryException {
-		try {
+	public synchronized int createConnection(String ip, int port, int jmsPort) throws RemoteException, NotBoundException, JMSException {
+
 			id++;
 			EdgeServerConnection connection = new EdgeServerConnection(ip,
 					port, jmsPort, id);
@@ -50,13 +49,6 @@ public class EdgeServerConnectionRegistryServiceImpl implements
 
 			return id;
 
-		} catch (JMSException e) {
-			throw new EdgeServerConnectionRegistryException(e);
-		} catch (RemoteException e) {
-			throw new EdgeServerConnectionRegistryException(e);
-		} catch (NotBoundException e) {
-			throw new EdgeServerConnectionRegistryException(e);
-		}
 	}
 
 	@Override
