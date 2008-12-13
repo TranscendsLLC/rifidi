@@ -13,7 +13,7 @@ import org.rifidi.edge.core.readerplugin.ReaderInfo;
  */
 @XmlRootElement(name="ThingMagicReaderInfo")
 @Form(name = "ThingMagicReaderInfo", formElements = {
-		@FormElement(type = FormElementType.STRING, elementName = "ipAddress", displayName = "IP Address", defaultValue = "localhost"),
+		@FormElement(type = FormElementType.STRING, elementName = "ipAddress", displayName = "IP Address", defaultValue = "127.0.0.1"),
 		@FormElement(type = FormElementType.INTEGER, elementName = "port", displayName = "Port", defaultValue = "23", min = 0, max = 65535),
 		@FormElement(type = FormElementType.STRING, elementName = "user", displayName = "User Name", defaultValue = "user"),
 		@FormElement(type = FormElementType.STRING, elementName = "password", displayName = "Password", defaultValue = "password"),

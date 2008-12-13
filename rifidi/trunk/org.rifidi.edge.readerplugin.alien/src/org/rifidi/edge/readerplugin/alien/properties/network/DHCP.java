@@ -17,14 +17,14 @@ import org.w3c.dom.Element;
  * 
  * @author Matthew Dean
  */
-@Form(name = DHCP.DHCP, formElements = { @FormElement(type = FormElementType.STRING, elementName = DHCP.DHCP_DATA, editable = false, defaultValue = "0", displayName = DHCP.DHCP_DISPLAY) })
+@Form(name = DHCP.NAME, formElements = { @FormElement(type = FormElementType.STRING, elementName = DHCP.DATA, editable = false, defaultValue = "0", displayName = DHCP.DISPLAY) })
 public class DHCP implements Property {
 
-	private static final String DHCP = "DHCP";
+	private static final String NAME = "DHCP";
 
-	private static final String DHCP_DATA = "DHCP_Data";
+	private static final String DATA = "DHCP_Data";
 
-	private static final String DHCP_DISPLAY = "DHCP";
+	private static final String DISPLAY = "DHCP";
 
 	private static final Log logger = LogFactory.getLog(DHCP.class);
 
@@ -52,7 +52,7 @@ public class DHCP implements Property {
 			logger.debug("IOException");
 		}
 		response.setResponseMessage(responseString);
-		return response.formulateResponseXML(propertyConfig, DHCP, DHCP_DATA);
+		return response.formulateResponseXML(propertyConfig, NAME, DATA);
 	}
 
 	/*

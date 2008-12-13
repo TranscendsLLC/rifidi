@@ -16,14 +16,14 @@ import org.w3c.dom.Element;
 /**
  *
  */
-@Form(name = DNS.DNS, formElements = { @FormElement(type = FormElementType.STRING, elementName = DNS.DNS_DATA, editable = false, defaultValue = "0", displayName = DNS.DNS_DISPLAY) })
+@Form(name = DNS.NAME, formElements = { @FormElement(type = FormElementType.STRING, elementName = DNS.DATA, editable = false, defaultValue = "0", displayName = DNS.DISPLAY) })
 public class DNS implements Property {
 
-	private static final String DNS = "DNS";
+	private static final String NAME = "DNS";
 
-	private static final String DNS_DATA = "DNS_Data";
+	private static final String DATA = "DNS_Data";
 
-	private static final String DNS_DISPLAY = "DNS";
+	private static final String DISPLAY = "DNS";
 
 	private static final Log logger = LogFactory.getLog(DNS.class);
 
@@ -51,7 +51,7 @@ public class DNS implements Property {
 			logger.debug("IOException");
 		}
 		response.setResponseMessage(responseString);
-		return response.formulateResponseXML(propertyConfig, DNS, DNS_DATA);
+		return response.formulateResponseXML(propertyConfig, NAME, DATA);
 	}
 
 	/*
