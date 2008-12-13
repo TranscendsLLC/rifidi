@@ -1,5 +1,10 @@
 package org.rifidi.edge.client.connections.wizards.server;
 
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
+
+import javax.jms.JMSException;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eclipse.jface.wizard.Wizard;
@@ -12,7 +17,7 @@ public class AddEdgeServerWizard extends Wizard {
 	static private Log logger = LogFactory.getLog(AddEdgeServerWizard.class);
 
 	private AddEdgeServerWizardPage connectEdgeServerWizardPage;
-	
+
 	private EdgeServerConnectionRegistryService edgeServerConnectionRegistryService;
 
 	public AddEdgeServerWizard() {
@@ -35,15 +40,30 @@ public class AddEdgeServerWizard extends Wizard {
 		int jmsPort = connectEdgeServerWizardPage.getJmsPort();
 
 		try {
-			this.edgeServerConnectionRegistryService.createConnection(url, port, jmsPort);		
-		} catch (Exception e) {
-			logger.debug(e.getMessage());
+			this.edgeServerConnectionRegistryService.createConnection(url,
+					port, jmsPort);
+		} catch (RemoteException e) {
 			Object o = getContainer().getCurrentPage();
 			if (o instanceof WizardPage) {
-				logger.debug("Setting error Message");
-				e.printStackTrace();
+				logger.error(e);
 				((WizardPage) o)
-						.setErrorMessage("Can't create connection to EdgeServer");
+						.setErrorMessage("Cannot create connection to Server. Remote Exception while trying to connect to RMI Registry");
+				return false;
+			}
+		} catch (NotBoundException e) {
+			Object o = getContainer().getCurrentPage();
+			if (o instanceof WizardPage) {
+				logger.error(e);
+				((WizardPage) o)
+						.setErrorMessage("Cannot create connection to Server.  No RMI registry could be found");
+				return false;
+			}
+		} catch (JMSException e) {
+			Object o = getContainer().getCurrentPage();
+			if (o instanceof WizardPage) {
+				logger.error(e);
+				((WizardPage) o)
+						.setErrorMessage("Cannot create connection to Server. No JMS queue could be found");
 				return false;
 			}
 		}

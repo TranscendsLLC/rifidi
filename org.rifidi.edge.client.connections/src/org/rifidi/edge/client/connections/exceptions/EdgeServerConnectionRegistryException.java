@@ -12,7 +12,7 @@ public class EdgeServerConnectionRegistryException extends Exception {
 	 * 
 	 */
 	private static final long serialVersionUID = 1947402495678692466L;
-
+	
 	public EdgeServerConnectionRegistryException() {
 		// TODO Auto-generated constructor stub
 	}
@@ -31,5 +31,5 @@ public class EdgeServerConnectionRegistryException extends Exception {
 		super(arg0, arg1);
 		// TODO Auto-generated constructor stub
 	}
-
+	
 }
