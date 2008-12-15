@@ -57,7 +57,8 @@ public class ReaderAlphaImageFigure extends AlphaImageFigure
 		super(image);
 		this.reader = reader;
 		this.reader.addStateListener(this);
-		this.setToolTip(this.createToolTip());
+		setToolTip(this.createToolTip());
+		updateStatus();
 	}
 
 	public RemoteReaderID getReaderId() {
