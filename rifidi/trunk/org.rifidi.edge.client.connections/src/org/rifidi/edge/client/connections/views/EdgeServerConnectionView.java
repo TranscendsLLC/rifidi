@@ -222,9 +222,11 @@ public class EdgeServerConnectionView extends ViewPart implements
 	private class RefreshThread extends Thread {
 
 		private int updateInterval = 1;
-		
+
 		public RefreshThread() {
-			super(getViewSite().getSecondaryId().replace("&colon;", ":") + " Refresh thread.");
+//			super(getViewSite().getSecondaryId().replace("&colon;", ":") +
+			// " Refresh thread.");
+			super("ConnectionViewRefreshThread");
 			// TODO Auto-generated constructor stub
 		}
 
