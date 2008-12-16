@@ -13,11 +13,13 @@ package org.rifidi.edge.client.twodview.listeners;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eclipse.draw2d.geometry.Rectangle;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DropTargetEvent;
 import org.eclipse.swt.dnd.DropTargetListener;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.MessageBox;
 import org.rifidi.edge.client.connections.registryservice.RemoteReaderConnectionRegistryService;
 import org.rifidi.edge.client.connections.remotereader.RemoteReader;
 import org.rifidi.edge.client.connections.remotereader.RemoteReaderID;
@@ -116,13 +118,16 @@ public class SiteViewDropTargetListener implements DropTargetListener {
 	public void drop(DropTargetEvent event) {
 
 		if (TextTransfer.getInstance().isSupportedType(event.currentDataType)) {
-			Image image = Activator.imageDescriptorFromPlugin("org.rifidi.edge.client.twodview", "icons/reader-24x24.png").createImage();
+			Image image = Activator
+					.imageDescriptorFromPlugin(
+							"org.rifidi.edge.client.twodview",
+							"icons/reader-24x24.png").createImage();
 			// get Reader from ReaderRegistry
-			RemoteReader reader = readerRegistry.getRemoteReader(RemoteReaderID.createIDFromString(event.data.toString()));
+			RemoteReader reader = readerRegistry.getRemoteReader(RemoteReaderID
+					.createIDFromString(event.data.toString()));
 			// create an ImageFigure that contains the reference to the reader
 			ReaderAlphaImageFigure raif = new ReaderAlphaImageFigure(image,
 					reader);
-			
 
 			ObjectLayer layer = siteView.getObjectLayer();
 
@@ -130,22 +135,27 @@ public class SiteViewDropTargetListener implements DropTargetListener {
 			int deltaX = 0, deltaY = 0;
 
 			while (compost != null) {
-//				logger.debug("in loop: " + compost.toString());
+				// logger.debug("in loop: " + compost.toString());
 				Rectangle temp = new Rectangle(compost.getBounds());
 				deltaX += temp.x;
 				deltaY += temp.y;
 				compost = compost.getParent();
 			}
-//			 deltaY+=20;
+			// deltaY+=20;
 			logger.debug("deltas: " + deltaX + " " + deltaY);
 			raif.setBounds(new Rectangle(event.x - deltaX, event.y - deltaY,
 					raif.getImage().getBounds().width, raif.getImage()
 							.getBounds().height));
 			try {
-				layer.addReader(raif,null);
+				layer.addReader(raif, null);
 			} catch (ReaderAlreadyInMapException e) {
 				// TODO : POPUP
-				e.printStackTrace(); 
+				logger.debug("ERROR: " + e.toString());
+				MessageBox mb = new MessageBox(siteView.getSite().getShell(),
+						SWT.ICON_WARNING);
+				mb.setText("Reader already in map");
+				mb.setMessage("Reader cannot be added to map more than once.");
+				mb.open();
 			}
 
 		}

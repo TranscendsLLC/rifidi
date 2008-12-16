@@ -111,6 +111,7 @@ public class TagView extends ViewPart implements ReaderMessageListener {
 		connection.removeMessageListener(this);
 
 		thread.interrupt();
+		thread=null;
 		super.dispose();
 	}
 

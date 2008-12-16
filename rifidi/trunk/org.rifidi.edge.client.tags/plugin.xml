@@ -32,7 +32,7 @@
                id="org.rifidi.edge.client.tags.views.TagView"
                ratio="1"
                relationship="stack"
-               relative="org.rifidi.edge.client.properties.view.MyPropertySheet">
+               relative="org.rifidi.edge.client.twodview.views.SiteView">
          </view>
       </perspectiveExtension>
    </extension>
