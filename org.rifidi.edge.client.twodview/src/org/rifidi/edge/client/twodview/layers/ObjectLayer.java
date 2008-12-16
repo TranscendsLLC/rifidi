@@ -40,8 +40,20 @@ public class ObjectLayer extends XYLayer {
 					.getImage().getBounds().width, reader.getImage()
 					.getBounds().height));
 		}
-		if (this.getChildren().contains(reader)) {
-			throw new ReaderAlreadyInMapException("Drag and Drop failed");
+
+		// FIXME: bug #40
+		if (!this.getChildren().isEmpty()) {
+
+			for (Object fig : this.getChildren()) {
+				ReaderAlphaImageFigure raif = (ReaderAlphaImageFigure) fig;
+				if (raif.getReaderId().equals(reader.getReaderId())) {
+					throw new ReaderAlreadyInMapException(
+							"Drag and Drop failed");
+
+				}
+			}
+			add(reader);
+			return;
 
 		} else {
 			add(reader);

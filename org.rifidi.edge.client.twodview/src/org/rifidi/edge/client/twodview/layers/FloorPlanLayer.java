@@ -11,6 +11,7 @@
 package org.rifidi.edge.client.twodview.layers;
 
 import org.eclipse.swt.graphics.Image;
+import org.rifidi.edge.client.twodview.Activator;
 
 /**
  * @author Tobias Hoppenthaler - tobias@pramari.com
@@ -48,6 +49,12 @@ public class FloorPlanLayer extends XYLayer {
 		Image floorplan = new Image(null, absPathToImage);
 		setFloorplan(floorplan);
 
+	}
+
+	public void init() {
+		setFloorplan(Activator.imageDescriptorFromPlugin(
+				"org.rifidi.edge.client.twodview", "icons/badwarehouse.gif")
+				.createImage());
 	}
 
 }

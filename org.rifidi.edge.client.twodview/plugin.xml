@@ -36,6 +36,16 @@
                commandId="org.rifidi.edge.client.twodview.changefloorplan"
                label="ChangeFloorplan"
                style="push">
+            <visibleWhen>
+               <iterate
+                     ifEmpty="true">
+                  <not>
+                     <instanceof
+                           value="org.rifidi.edge.client.connections.remotereader.RemoteReader">
+                     </instanceof>
+                  </not>
+               </iterate>
+            </visibleWhen>
          </command>
          <command
                commandId="org.rifidi.edge.client.twodview.removereader"
@@ -48,6 +58,94 @@
                   <instanceof
                         value="org.rifidi.edge.client.connections.remotereader.RemoteReader">
                   </instanceof>
+               </iterate>
+            </visibleWhen>
+         </command>
+         <command
+               commandId="org.rifidi.edge.client.tags.commands.OpenTagDisplay"
+               style="push">
+            <visibleWhen>
+               <iterate
+                     ifEmpty="false">
+                  <instanceof
+                        value="org.rifidi.edge.client.connections.remotereader.RemoteReader">
+                  </instanceof>
+               </iterate>
+            </visibleWhen>
+         </command>
+         <command
+               commandId="org.rifidi.edge.client.connections.EditReaderInfo"
+               icon="icons/bullet_wrench.png"
+               style="push">
+            <visibleWhen>
+               <iterate
+                     ifEmpty="false">
+                  <and>
+                     <instanceof
+                           value="org.rifidi.edge.client.connections.remotereader.RemoteReader">
+                     </instanceof>
+                     <test
+                           args="CONFIGURED"
+                           property="org.rifidi.edge.client.connections.edgeserver.state">
+                     </test>
+                  </and>
+               </iterate>
+            </visibleWhen>
+         </command>
+         <command
+               commandId="org.rifidi.edge.client.connections.commands.EnableReader"
+               icon="icons/flag_green.gif"
+               style="push">
+            <visibleWhen>
+               <iterate
+                     ifEmpty="false">
+                  <and>
+                     <instanceof
+                           value="org.rifidi.edge.client.connections.remotereader.RemoteReader">
+                     </instanceof>
+                     <test
+                           args="CONFIGURED"
+                           property="org.rifidi.edge.client.connections.edgeserver.state">
+                     </test>
+                  </and>
+               </iterate>
+            </visibleWhen>
+         </command>
+         <command
+               commandId="org.rifidi.edge.client.connections.commands.DisableReader"
+               icon="icons/flag_red.gif"
+               style="push">
+            <visibleWhen>
+               <iterate
+                     ifEmpty="false">
+                  <and>
+                     <instanceof
+                           value="org.rifidi.edge.client.connections.remotereader.RemoteReader">
+                     </instanceof>
+                     <test
+                           args="OK"
+                           property="org.rifidi.edge.client.connections.edgeserver.state">
+                     </test>
+                  </and>
+               </iterate>
+            </visibleWhen>
+         </command>
+         <command
+               commandId="org.rifidi.edge.client.connections.commands.ResetReader"
+               icon="icons/icon_history.gif"
+               style="push">
+            <visibleWhen>
+               <iterate
+                     ifEmpty="false">
+                  <and>
+                     <instanceof
+                           value="org.rifidi.edge.client.connections.remotereader.RemoteReader">
+                     </instanceof>
+                     <test
+                           args="ERROR"
+                           property="org.rifidi.edge.client.connections.edgeserver.state">
+                     </test>
+                  </and>
                </iterate>
             </visibleWhen>
          </command>

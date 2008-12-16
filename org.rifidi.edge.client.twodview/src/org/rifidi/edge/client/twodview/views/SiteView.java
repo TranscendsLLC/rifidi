@@ -94,6 +94,7 @@ public class SiteView extends ViewPart implements ISelectionProvider {
 		canvas.addKeyListener(new SiteViewKeyListener(lp));
 
 		floorplanLayer = new FloorPlanLayer();
+		floorplanLayer.init();
 		objectLayer = new ObjectLayer();
 		effectLayer = new EffectLayer();
 		noteLayer = new NoteLayer();
@@ -117,9 +118,8 @@ public class SiteView extends ViewPart implements ISelectionProvider {
 
 		Menu menu = menuMgr.createContextMenu(canvas);
 		canvas.setMenu(menu);
-		getSite().setSelectionProvider(this); // TODO: needed???
+		getSite().setSelectionProvider(this);
 		getSite().registerContextMenu(menuMgr, this);
-		
 
 		// try {
 		// objectLayer.addReader(new ReaderAlphaImageFigure(Activator
@@ -233,6 +233,5 @@ public class SiteView extends ViewPart implements ISelectionProvider {
 			listener.selectionChanged(sce);
 		}
 	}
-	
 
 }
