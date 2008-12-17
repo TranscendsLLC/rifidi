@@ -88,7 +88,7 @@ public class ChangeFloorPlan implements IHandler {
 				SWT.OPEN);
 		fd.setText("Open");
 		fd.setFilterPath(folder.getLocation().toString());
-		String[] filterExt = { "*.png", "*.jpg", "*.gif", "*.bmp", "*.*" };
+		String[] filterExt = { "*.*", "*.png", "*.jpg", "*.gif", "*.bmp" };
 		fd.setFilterExtensions(filterExt);
 		String selected = fd.open();
 		SiteView siteView=null;
@@ -96,7 +96,7 @@ public class ChangeFloorPlan implements IHandler {
 				.getActiveWorkbenchWindow().getActivePage().findView(
 						"org.rifidi.edge.client.twodview.views.SiteView");
 		if(siteView!=null)siteView.getFloorplanLayer().setFloorplan(selected);
-		System.out.println(selected);
+//		System.out.println(selected);
 
 		return null;
 	}
