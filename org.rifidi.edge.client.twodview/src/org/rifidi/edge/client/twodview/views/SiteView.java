@@ -121,17 +121,6 @@ public class SiteView extends ViewPart implements ISelectionProvider {
 		getSite().setSelectionProvider(this);
 		getSite().registerContextMenu(menuMgr, this);
 
-		// try {
-		// objectLayer.addReader(new ReaderAlphaImageFigure(Activator
-		// .imageDescriptorFromPlugin(
-		// "org.rifidi.edge.client.twodview",
-		// "icons/reader-24x24.png").createImage(), null),
-		// new Point(100, 100));
-		// } catch (ReaderAlreadyInMapException e) {
-		// // TODO Auto-generated catch block
-		// e.printStackTrace();
-		// }
-
 	}
 
 	/*

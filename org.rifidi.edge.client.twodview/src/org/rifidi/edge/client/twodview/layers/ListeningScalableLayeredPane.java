@@ -18,6 +18,8 @@ import org.eclipse.draw2d.ScalableLayeredPane;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.ui.PlatformUI;
+import org.rifidi.edge.client.twodview.Activator;
+import org.rifidi.edge.client.twodview.sfx.AlphaImageFigure;
 import org.rifidi.edge.client.twodview.views.SiteView;
 
 /**
@@ -52,7 +54,15 @@ public class ListeningScalableLayeredPane extends ScalableLayeredPane implements
 	 */
 	@Override
 	public void mouseDoubleClicked(MouseEvent arg0) {
-		// TODO Auto-generated method stub
+		if(arg0.button==1){
+		AlphaImageFigure mockReader = new AlphaImageFigure(Activator
+				.imageDescriptorFromPlugin("org.rifidi.edge.client.twodview",
+						"icons/reader-24x24.png").createImage());
+		mockReader.setBounds(new Rectangle(15,15,mockReader.getImage().getBounds().width,mockReader.getImage().getBounds().height));
+		getLayer(OBJECTLAYER).add(mockReader);
+		} else {
+			getLayer(OBJECTLAYER).removeAll();
+		}
 
 	}
 
@@ -255,11 +265,7 @@ public class ListeningScalableLayeredPane extends ScalableLayeredPane implements
 	}
 
 	public void removeCurrentSelection() {
-		// if(selectedImage!=null){
 		getLayer(OBJECTLAYER).remove(selectedImage);
-		// selectedImage=null;
-		// }
-
 	}
 
 }
