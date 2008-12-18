@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Xml Plug-in
+Bundle-Name: Rifidi DynamicSWTFroms Xml Plug-in
 Bundle-SymbolicName: org.rifidi.dynamicSWTForms.xml
 Bundle-Version: 1.0.0
 Bundle-Activator: org.rifidi.dynamicswtforms.xml.Activator
