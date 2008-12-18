@@ -7,7 +7,8 @@ import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.llrp.ltk.generated.enumerations.ConnectionAttemptStatusType;
 import org.llrp.ltk.generated.enumerations.StatusCode;
 import org.llrp.ltk.generated.messages.CLOSE_CONNECTION;
@@ -48,7 +49,7 @@ public class LLRPConnectionManager extends ConnectionManager {
 	 */
 	private LLRPCommunicationProtocol communicationProtocol;
 
-	private Logger logger = Logger.getLogger(LLRPConnectionManager.class);
+	private Log logger = LogFactory.getLog(LLRPCommunicationProtocol.class);
 
 	public LLRPConnectionManager(ReaderInfo readerInfo) {
 		super(readerInfo);
