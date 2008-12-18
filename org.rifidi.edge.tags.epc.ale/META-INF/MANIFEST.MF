@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Rifidi Edge EPC Tag ALE Adapter Plug-in
 Bundle-SymbolicName: org.rifidi.edge.tags.epc.ale
-Bundle-Version: 1.0.0
+Bundle-Version: 1.1.0
 Bundle-Activator: org.rifidi.edge.tags.epc.ale.Activator
 Require-Bundle: org.rifidi.edge.ale;bundle-version="1.1.0",
  org.rifidi.edge.tags.epc;bundle-version="1.1.0",
