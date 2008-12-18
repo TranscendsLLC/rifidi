@@ -1,8 +1,8 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Tags Plug-in
+Bundle-Name: Rifidi Edge Tags Plug-in
 Bundle-SymbolicName: org.rifidi.edge.tags
-Bundle-Version: 1.0.0
+Bundle-Version: 1.1.0
 Bundle-Activator: org.rifidi.edge.tags.Activator
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
