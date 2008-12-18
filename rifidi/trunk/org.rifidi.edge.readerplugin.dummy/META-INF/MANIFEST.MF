@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Dummy Plug-in
+Bundle-Name: Rifidi Edge Dummy Adapter Plug-in
 Bundle-SymbolicName: org.rifidi.edge.readerplugin.dummy
 Bundle-Version: 1.0.0
 Bundle-Activator: org.rifidi.edge.readerplugin.dummy.Activator
