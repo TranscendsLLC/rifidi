@@ -1,11 +1,11 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Epc Plug-in
+Bundle-Name: Rifidi Edge EPC Tag Plug-in
 Bundle-SymbolicName: org.rifidi.edge.tags.epc
-Bundle-Version: 1.0.0
+Bundle-Version: 1.1.0
 Bundle-Activator: org.rifidi.edge.tags.epc.Activator
 Bundle-Vendor: Pramari, LLC
-Require-Bundle: org.rifidi.edge.tags;bundle-version="1.0.0"
+Require-Bundle: org.rifidi.edge.tags;bundle-version="1.1.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Import-Package: org.osgi.framework;version="1.4.0"
