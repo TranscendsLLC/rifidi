@@ -170,20 +170,20 @@ public class SimpleConnectionImpl implements Connection {
 	/*===============================================================*/
 	private void _reconnect() throws RifidiConnectionException {
 		try {
-			Thread.sleep(connectionManager.getReconnectionIntervall());
+			Thread.sleep(connectionManager.getReconnectionInterval());
 		} catch (InterruptedException e1) {
 			// ignore this exception.
 		}
 		try {
 			logger.debug("Trying to reconnect.");
-			for (int x = 1; connectionManager.getMaxNumConnectionsAttemps() >= x; x++) {
+			for (int x = 1; connectionManager.getMaxNumConnectionsAttempts() >= x; x++) {
 				try {
 					/* fire events */
 					_connect();
 					
 				} catch (RifidiConnectionException e) {
 					disconnect();
-					if (x == connectionManager.getMaxNumConnectionsAttemps()) {
+					if (x == connectionManager.getMaxNumConnectionsAttempts()) {
 						// status = ReaderSessionStatus.DISCONNECTED;
 						// darn... we have failed.
 						if (listener != null)
@@ -196,7 +196,7 @@ public class SimpleConnectionImpl implements Connection {
 		
 					try {
 						Thread.sleep(connectionManager
-								.getReconnectionIntervall());
+								.getReconnectionInterval());
 					} catch (InterruptedException e1) {
 						// ignore this exception.
 					}
