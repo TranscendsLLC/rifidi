@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Utilities Plug-in
+Bundle-Name: Rifidi Edge Utilities Plug-in
 Bundle-SymbolicName: org.rifidi.edge.common.utilities
 Bundle-Version: 1.0.0
 Bundle-Activator: org.rifidi.edge.common.utilities.Activator
