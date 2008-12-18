@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Deploy Plug-in
+Bundle-Name: Rifidi Edge Deploy Plug-in
 Bundle-SymbolicName: org.rifidi.edge.core.deploy
 Bundle-Version: 1.0.0
 Bundle-Activator: org.rifidi.edge.core.deploy.Activator
