@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: MessageQueue Plug-in
+Bundle-Name: Rifidi Edge MessageQueue Plug-in
 Bundle-SymbolicName: org.rifidi.edge.core.messageQueue
 Bundle-Version: 1.0.0
 Bundle-Activator: org.rifidi.edge.core.messagequeue.Activator
