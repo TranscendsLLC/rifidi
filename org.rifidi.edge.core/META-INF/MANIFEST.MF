@@ -2,12 +2,13 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Rifidi Edge Core Plug-in
 Bundle-SymbolicName: org.rifidi.edge.core
-Bundle-Version: 1.0.0
+Bundle-Version: 1.1.0
 Bundle-Activator: org.rifidi.edge.core.Activator
 Bundle-Vendor: Pramari, LLC
 Bundle-ActivationPolicy: lazy
 Eclipse-BuddyPolicy: global
-Import-Package: org.osgi.framework;version="1.4.0"
+Import-Package: org.apache.commons.logging;version="1.0.4",
+ org.osgi.framework;version="1.4.0"
 Export-Package: org.rifidi.edge.core,
  org.rifidi.edge.core.communication,
  org.rifidi.edge.core.communication.service,
@@ -30,8 +31,7 @@ Export-Package: org.rifidi.edge.core,
  org.rifidi.edge.core.readersession.impl.states,
  org.rifidi.edge.core.readersession.service,
  org.rifidi.edge.core.readersession.service.impl
-Require-Bundle: org.rifidi.edge.services,
- org.rifidi.edge.log4j,
- org.rifidi.edge.common.utilities;bundle-version="1.0.0",
- org.rifidi.dynamicSWTForms.xml;bundle-version="1.0.0"
+Require-Bundle: org.rifidi.edge.services;bundle-version="1.1.0",
+ org.rifidi.edge.common.utilities;bundle-version="1.1.0",
+ org.rifidi.dynamicSWTForms.xml;bundle-version="1.1.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
