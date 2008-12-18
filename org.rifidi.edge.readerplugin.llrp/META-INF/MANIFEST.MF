@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Llrp Plug-in
+Bundle-Name: Rifidi Edge LLRP Adapater Plug-in
 Bundle-SymbolicName: org.rifidi.edge.readerplugin.llrp
 Bundle-Version: 1.0.0
 Bundle-Activator: org.rifidi.edge.readerplugin.llrp.Activator
