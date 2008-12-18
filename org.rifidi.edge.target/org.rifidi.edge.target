@@ -11,7 +11,10 @@
       <features>
       </features>
       <extraLocations>
-         <location path="${workspace_loc}/org.rifidi.edge.target/eclipse-core"/>
+         <location path="${workspace_loc}/org.rifidi.binary/thirdparty"/>
+         <location path="${workspace_loc}/org.rifidi.binary/rifidi"/>
+         <location path="${workspace_loc}/org.rifidi.edge.binary"/>
+         <location path="${workspace_loc}/org.rifidi.edge.target/libraries"/>
       </extraLocations>
    </content>
 
