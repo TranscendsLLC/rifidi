@@ -1,0 +1,119 @@
+// ------------------------------------------------------------------
+// Transitive dependencies of this project determined from the
+// maven pom organized by organization.
+// ------------------------------------------------------------------
+
+Apache ActiveMQ
+
+
+From: 'an unknown organization'
+  - Unnamed - ant:ant:jar:1.6.2  ant:ant:jar:1.6.2
+
+  - AOP alliance (http://aopalliance.sourceforge.net) aopalliance:aopalliance:jar:1.0
+    License: Public Domain 
+  - Unnamed - axis:axis:jar:1.2-RC1  axis:axis:jar:1.2-RC1
+
+  - Unnamed - com.sun.xml.bind:jaxb-impl:jar:2.0.3  com.sun.xml.bind:jaxb-impl:jar:2.0.3
+
+  - XStream (http://xstream.codehaus.org/) com.thoughtworks.xstream:xstream:jar:1.1.2
+    License: BSD style  (http://xstream.codehaus.com/license.html)
+  - Unnamed - commons-httpclient:commons-httpclient:jar:2.0.1  commons-httpclient:commons-httpclient:jar:2.0.1
+
+  - Unnamed - hsqldb:hsqldb:jar:1.8.0.1  hsqldb:hsqldb:jar:1.8.0.1
+
+  - JavaBeans Activation Framework (JAF) (http://java.sun.com/products/javabeans/jaf/index.jsp) javax.activation:activation:jar:1.1
+    License: Common Development and Distribution License (CDDL) v1.0  (https://glassfish.dev.java.net/public/CDDLv1.0.html)
+  - Unnamed - javax.xml.bind:jaxb-api:jar:2.1  javax.xml.bind:jaxb-api:jar:2.1
+
+  - Unnamed - javax.xml.bind:jsr173_api:jar:1.0  javax.xml.bind:jsr173_api:jar:1.0
+
+  - Unnamed - javax.xml.stream:stax-api:jar:1.0-2  javax.xml.stream:stax-api:jar:1.0-2
+
+  - Serp (http://serp.sourceforge.net) net.sourceforge.serp:serp:jar:1.13.1
+    License: BSD  (LICENSE.txt)
+  - Unnamed - org.apache.geronimo.specs:geronimo-j2ee-management_1.0_spec:jar:1.0  org.apache.geronimo.specs:geronimo-j2ee-management_1.0_spec:jar:1.0
+
+  - XML Pull Parsing API (http://www.xmlpull.org) xmlpull:xmlpull:jar:1.1.3.4d_b4_min
+    License: Public Domain  (http://www.xmlpull.org/v1/download/unpacked/LICENSE.txt)
+  - Unnamed - xpp3:xpp3_min:jar:1.1.3.4.O (http://www.extreme.indiana.edu/xgws/xsoap/xpp/mxp1/) xpp3:xpp3_min:jar:1.1.3.4.O
+
+
+From: 'Apache Software Foundation' (http://www.apache.org)
+  - Unnamed - commons-collections:commons-collections:jar:3.1  commons-collections:commons-collections:jar:3.1
+
+  - Log4j (http://logging.apache.org/log4j/docs/) log4j:log4j:jar:1.2.14
+    License: The Apache Software License, Version 2.0  (http://www.apache.org/licenses/LICENSE-2.0.txt)
+  - JMS 1.1 (http://geronimo.apache.org/specs/geronimo-jms_1.1_spec) org.apache.geronimo.specs:geronimo-jms_1.1_spec:jar:1.1.1
+    License: The Apache Software License, Version 2.0  (http://www.apache.org/licenses/LICENSE-2.0.txt)
+  - JPA 1.0 (http://geronimo.apache.org/specs/geronimo-jpa_3.0_spec) org.apache.geronimo.specs:geronimo-jpa_3.0_spec:jar:1.0
+    License: The Apache Software License, Version 2.0  (http://www.apache.org/licenses/LICENSE-2.0.txt)
+  - JTA 1.1 (http://geronimo.apache.org/specs/geronimo-jta_1.1_spec) org.apache.geronimo.specs:geronimo-jta_1.1_spec:jar:1.1
+    License: The Apache Software License, Version 2.0  (http://www.apache.org/licenses/LICENSE-2.0.txt)
+  - OpenJPA JDBC (http://openjpa.apache.org) org.apache.openjpa:openjpa-jdbc:jar:1.0.0
+    License: Apache Software License 2.0  (http://www.apache.org/licenses/LICENSE-2.0.txt)
+  - OpenJPA JDBC 1.5 (http://openjpa.apache.org) org.apache.openjpa:openjpa-jdbc-5:jar:1.0.0
+    License: Apache Software License 2.0  (http://www.apache.org/licenses/LICENSE-2.0.txt)
+  - OpenJPA Kernel (http://openjpa.apache.org) org.apache.openjpa:openjpa-kernel:jar:1.0.0
+    License: Apache Software License 2.0  (http://www.apache.org/licenses/LICENSE-2.0.txt)
+  - OpenJPA Kernel 1.5 (http://openjpa.apache.org) org.apache.openjpa:openjpa-kernel-5:jar:1.0.0
+    License: Apache Software License 2.0  (http://www.apache.org/licenses/LICENSE-2.0.txt)
+  - OpenJPA Utilities (http://openjpa.apache.org) org.apache.openjpa:openjpa-lib:jar:1.0.0
+    License: Apache Software License 2.0  (http://www.apache.org/licenses/LICENSE-2.0.txt)
+  - OpenJPA JPA (http://openjpa.apache.org) org.apache.openjpa:openjpa-persistence:jar:1.0.0
+    License: Apache Software License 2.0  (http://www.apache.org/licenses/LICENSE-2.0.txt)
+  - OpenJPA JPA JDBC (http://openjpa.apache.org) org.apache.openjpa:openjpa-persistence-jdbc:jar:1.0.0
+    License: Apache Software License 2.0  (http://www.apache.org/licenses/LICENSE-2.0.txt)
+
+From: 'Apache Software Foundation' (http://www.apache.org/)
+  - ActiveIO :: Core (http://activemq.apache.org/activeio-core) org.apache.activemq:activeio-core:jar:3.1.0
+    License: The Apache Software License, Version 2.0  (http://www.apache.org/licenses/LICENSE-2.0.txt)
+  - ActiveIO :: Core (http://activemq.apache.org/activeio-core) org.apache.activemq:activeio-core:jar:3.1.0
+    License: The Apache Software License, Version 2.0  (http://www.apache.org/licenses/LICENSE-2.0.txt)
+  - Camel :: Core (http://apache.apache.org/camel/camel-core) org.apache.camel:camel-core:bundle:1.3.0
+    License: The Apache Software License, Version 2.0  (http://www.apache.org/licenses/LICENSE-2.0.txt)
+  - XBean :: Spring (http://geronimo.apache.org/xbean/xbean-spring) org.apache.xbean:xbean-spring:bundle:3.3
+    License: The Apache Software License, Version 2.0  (http://www.apache.org/licenses/LICENSE-2.0.txt)
+
+From: 'Dawid Kurzyniec' (http://www.mathcs.emory.edu/~dawidk/)
+  - Backport of JSR 166 (http://www.mathcs.emory.edu/dcl/util/backport-util-concurrent/) backport-util-concurrent:backport-util-concurrent:jar:2.1
+    License: Public Domain  (http://creativecommons.org/licenses/publicdomain)
+
+From: 'Mort Bay Consulting' (http://www.mortbay.com)
+  - Jetty Server (http://jetty.mortbay.org) org.mortbay.jetty:jetty:jar:6.1.9
+    License: Apache License Version 2.0  (http://www.apache.org/licenses/LICENSE-2.0)
+  - Jetty Utilities (http://jetty.mortbay.org) org.mortbay.jetty:jetty-util:jar:6.1.9
+    License: Apache License Version 2.0  (http://www.apache.org/licenses/LICENSE-2.0)
+  - Servlet Specification 2.5 API (http://jetty.mortbay.org) org.mortbay.jetty:servlet-api-2.5:jar:6.1.9
+    License: CDDL 1.0  (https://glassfish.dev.java.net/public/CDDLv1.0.html)
+
+From: 'Spring Framework' (http://www.springframework.org/)
+  - Spring Framework: Core (http://www.springframework.org) org.springframework:spring-core:jar:2.5.1
+    License: The Apache Software License, Version 2.0  (http://www.apache.org/licenses/LICENSE-2.0.txt)
+
+From: 'The Apache Software Foundation' (http://commons.apache.org/)
+  - Commons Pool (http://commons.apache.org/pool/) commons-pool:commons-pool:jar:1.4
+    License: The Apache Software License, Version 2.0  (/LICENSE.txt)
+
+From: 'The Apache Software Foundation' (http://jakarta.apache.org)
+  - Lang (http://jakarta.apache.org/commons/${pom.artifactId.substring(8)}/) commons-lang:commons-lang:jar:2.1
+    License: The Apache Software License, Version 2.0  (/LICENSE.txt)
+  - Logging (http://jakarta.apache.org/commons/${pom.artifactId.substring(8)}/) commons-logging:commons-logging:jar:1.1
+    License: The Apache Software License, Version 2.0  (/LICENSE.txt)
+  - Logging (http://jakarta.apache.org/commons/logging/) commons-logging:commons-logging-api:jar:1.1
+    License: The Apache Software License, Version 2.0  (/LICENSE.txt)
+
+From: 'The Apache Software Foundation' (http://www.apache.org/)
+  - ActiveMQ :: Console (http://activemq.apache.org/activemq-console) org.apache.activemq:activemq-console:bundle:5.1.0
+    License: The Apache Software License, Version 2.0  (http://www.apache.org/licenses/LICENSE-2.0.txt)
+  - ActiveMQ :: Core (http://activemq.apache.org/activemq-core) org.apache.activemq:activemq-core:bundle:5.1.0
+    License: The Apache Software License, Version 2.0  (http://www.apache.org/licenses/LICENSE-2.0.txt)
+  - ActiveMQ :: Core (http://activemq.apache.org/activemq-core) org.apache.activemq:activemq-core:bundle:5.1.0
+    License: The Apache Software License, Version 2.0  (http://www.apache.org/licenses/LICENSE-2.0.txt)
+  - ActiveMQ :: JPA Message Store (http://activemq.apache.org/activemq-jpa-store) org.apache.activemq:activemq-jpa-store:jar:5.1.0
+    License: The Apache Software License, Version 2.0  (http://www.apache.org/licenses/LICENSE-2.0.txt)
+  - ActiveMQ :: Optional (http://activemq.apache.org/activemq-optional) org.apache.activemq:activemq-optional:jar:5.1.0
+    License: The Apache Software License, Version 2.0  (http://www.apache.org/licenses/LICENSE-2.0.txt)
+
+
+
+
