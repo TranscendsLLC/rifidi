@@ -1,10 +1,10 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Jms Plug-in
+Bundle-Name: Rifidi Edge Jms Plug-in
 Bundle-SymbolicName: org.rifidi.edge.jms
 Bundle-Version: 1.0.0
 Bundle-Activator: org.rifidi.edge.jms.Activator
-Bundle-Vendor: Pramari LLC
+Bundle-Vendor: Pramari, LLC
 Import-Package: javax.naming,
  javax.net,
  javax.transaction,
