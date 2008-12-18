@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?pde version="3.2"?>
+
+<target name="org.rifidi.edge.target.testing">
+
+   <location path="${workspace_loc}/org.rifidi.edge.target"/>
+
+   <content useAllPlugins="true">
+      <plugins>
+      </plugins>
+      <features>
+      </features>
+      <extraLocations>
+         <location path="${workspace_loc}/org.rifidi.binary/thirdparty"/>
+         <location path="${workspace_loc}/org.rifidi.edge.target/junit"/>
+         <location path="${workspace_loc}/org.rifidi.edge.target/libraries"/>
+         <location path="${workspace_loc}/org.rifidi.binary/rifidi"/>
+         <location path="${workspace_loc}/org.rifidi.edge.binary"/>
+      </extraLocations>
+   </content>
+
+</target>

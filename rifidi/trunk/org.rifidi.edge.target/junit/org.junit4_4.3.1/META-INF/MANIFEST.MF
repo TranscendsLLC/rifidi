@@ -1,0 +1,18 @@
+Manifest-Version: 1.0
+Bundle-Name: %pluginName
+Bundle-ClassPath: junit.jar
+Bundle-Vendor: %providerName
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-ManifestVersion: 2
+Bundle-Localization: plugin
+Bundle-SymbolicName: org.junit4
+Export-Package: junit.extensions;version="4.3.1",junit.framework;versi
+ on="4.3.1",junit.runner;version="4.3.1",junit.textui;version="4.3.1",
+ org.junit;version="4.3.1",org.junit.internal;version="4.3.1";x-intern
+ al:=true,org.junit.internal.requests;version="4.3.1";x-internal:=true
+ ,org.junit.internal.runners;version="4.3.1";x-internal:=true,org.juni
+ t.runner;version="4.3.1",org.junit.runner.manipulation;version="4.3.1
+ ",org.junit.runner.notification;version="4.3.1",org.junit.runners;ver
+ sion="4.3.1"
+Bundle-Version: 4.3.1
+

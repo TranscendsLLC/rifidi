@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Bundle-Name: %pluginName
+Bundle-ClassPath: automated.jar
+Bundle-RequiredExecutionEnvironment: J2SE-1.4
+Bundle-Vendor: %providerName
+Bundle-ManifestVersion: 2
+Bundle-Localization: plugin
+Bundle-SymbolicName: org.eclipse.test; singleton:=true
+Require-Bundle: org.apache.ant,org.junit,org.eclipse.ui,org.eclipse.co
+ re.runtime,org.eclipse.ui.ide.application,org.eclipse.equinox.app
+Bundle-Version: 3.2.0
+Eclipse-LazyStart: true
+
