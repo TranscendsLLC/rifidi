@@ -18,7 +18,7 @@
          <view
                id="org.rifidi.edge.client.readerview.views.EdgeServerConnectionView"
                minimized="false"
-               ratio="0.3"
+               ratio="0.2"
                relationship="left"
                relative="org.eclipse.ui.editorss"
                visible="true">

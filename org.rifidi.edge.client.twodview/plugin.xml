@@ -162,23 +162,5 @@
             commandId="org.rifidi.edge.client.twodview.removereader">
       </handler>
    </extension>
-   <extension
-         point="org.eclipse.ui.perspectiveExtensions">
-      <perspectiveExtension
-            targetID="org.rifidi.edge.client.perspective">
-         <view
-               closeable="true"
-               id="org.rifidi.edge.client.twodview.views.SiteView"
-               minimized="false"
-               moveable="true"
-               ratio="1.0"
-               relationship="right"
-               relative="org.eclipse.ui.editorss"
-               showTitle="true"
-               standalone="true"
-               visible="true">
-         </view>
-      </perspectiveExtension>
-   </extension>
 
 </plugin>

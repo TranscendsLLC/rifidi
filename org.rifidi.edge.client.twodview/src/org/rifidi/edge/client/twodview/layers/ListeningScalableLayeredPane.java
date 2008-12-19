@@ -10,6 +10,7 @@
  */
 package org.rifidi.edge.client.twodview.layers;
 
+import org.apache.commons.logging.Log;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.MouseEvent;
 import org.eclipse.draw2d.MouseListener;
@@ -32,10 +33,12 @@ public class ListeningScalableLayeredPane extends ScalableLayeredPane implements
 	private IFigure selectedImage;
 	private SiteView siteView;
 	private int deltaX, deltaY, startX, startY;
+
 	public static final int FLOORPLANLAYER = 0;
 	public static final int OBJECTLAYER = 1;
 	public static final int EFFECTLAYER = 2;
 	public static final int NOTELAYER = 3;
+	private Log logger;
 
 	public ListeningScalableLayeredPane() {
 		super();
@@ -54,12 +57,17 @@ public class ListeningScalableLayeredPane extends ScalableLayeredPane implements
 	 */
 	@Override
 	public void mouseDoubleClicked(MouseEvent arg0) {
-		if(arg0.button==1){
-		AlphaImageFigure mockReader = new AlphaImageFigure(Activator
-				.imageDescriptorFromPlugin("org.rifidi.edge.client.twodview",
-						"icons/reader-24x24.png").createImage());
-		mockReader.setBounds(new Rectangle(15,15,mockReader.getImage().getBounds().width,mockReader.getImage().getBounds().height));
-		getLayer(OBJECTLAYER).add(mockReader);
+		if (arg0.button == 1) {
+
+			AlphaImageFigure mockReader = new AlphaImageFigure(Activator
+					.imageDescriptorFromPlugin(
+							"org.rifidi.edge.client.twodview",
+							"icons/reader-24x24.png").createImage());
+			mockReader.setBounds(new Rectangle(arg0.x, arg0.y, mockReader
+					.getImage().getBounds().width, mockReader.getImage()
+					.getBounds().height));
+			getLayer(OBJECTLAYER).add(mockReader);
+
 		} else {
 			getLayer(OBJECTLAYER).removeAll();
 		}
@@ -91,9 +99,7 @@ public class ListeningScalableLayeredPane extends ScalableLayeredPane implements
 			// Location
 
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			System.out.println(e.getCause());
-			e.printStackTrace();
+			logger.debug("ERROR: " +e.toString());
 			selectedImage = null;
 
 		} finally {
@@ -244,12 +250,11 @@ public class ListeningScalableLayeredPane extends ScalableLayeredPane implements
 	public IFigure getSelectedImage() {
 		try {
 			if (selectedImage != null) {
-				System.out.println("getselim" + selectedImage.toString());
 				return this.selectedImage;
 			} else
 				return null;
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.debug("ERROR: " +e.toString());
 			return null;
 		}
 
