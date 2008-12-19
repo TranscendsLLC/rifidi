@@ -8,6 +8,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.jms.JMSException;
 import javax.jms.Message;
@@ -43,8 +44,6 @@ public class TagView extends ViewPart implements ReaderMessageListener {
 
 	// TODO Put this someplace better -- maybe
 	private Set<TagContainer> tags = new TreeSet<TagContainer>();
-
-	private Object locker = new Object();
 
 	private Listener selChangeListener = new Listener() {
 		public void handleEvent(Event event) {
@@ -115,17 +114,24 @@ public class TagView extends ViewPart implements ReaderMessageListener {
 		super.dispose();
 	}
 
+	AtomicBoolean lock = new AtomicBoolean(false);
+
 	@Override
 	public void onMessage(Message message, RemoteReader reader) {
 		// logger.debug("TagView: onMessage: " + message.toString() +
 		// " from Reader: "+reader.toString());
-		if (!table.getControl().isDisposed()) {
-			synchronized (this) {
-				table.getTable().getDisplay().syncExec(
-						new MessageRunner((TextMessage) message));
-				// this.message = (TextMessage) message;
-			}
+		if (lock.compareAndSet(false, true)) {
+			table.getTable().getDisplay().syncExec(
+					new MessageRunner((TextMessage) message));
 		}
+	}
+
+	public void initTagView(RemoteReader connection) {
+		// TODO Auto-generated method stub
+		this.connection = connection;
+		this.connection.addMessageListener(this);
+		thread = new RefreshThread();
+		thread.start();
 	}
 
 	private class MessageRunner implements Runnable {
@@ -139,40 +145,35 @@ public class TagView extends ViewPart implements ReaderMessageListener {
 
 		@Override
 		public void run() {
-			Reader reader;
 			try {
-				reader = new CharArrayReader(message.getText().toCharArray());
-			} catch (JMSException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+				Reader reader;
+				try {
+					reader = new CharArrayReader(message.getText()
+							.toCharArray());
+				} catch (JMSException e1) {
+					logger.error(e1);
+					connection.removeMessageListener(TagView.this);
+					return;
+				}
+				TagMessage tagMessage;
+				try {
 
-				connection.removeMessageListener(TagView.this);
+					tagMessage = (TagMessage) TagMessageUnmarshaller
+							.getInstance().unmarshall(reader);
+				} catch (JAXBException e) {
+					logger.error(e);
+					connection.removeMessageListener(TagView.this);
+					return;
+				}
+				// catch (JMSException e) {
+				// // TODO Auto-generated catch block
+				// e.printStackTrace();
+				// connection.removeListener(TagView.this);
+				//				
+				// return;
+				// }
 
-				return;
-			}
-			TagMessage tagMessage;
-			try {
-
-				tagMessage = (TagMessage) TagMessageUnmarshaller.getInstance()
-						.unmarshall(reader);
-			} catch (JAXBException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-
-				connection.removeMessageListener(TagView.this);
-
-				return;
-			}
-			// catch (JMSException e) {
-			// // TODO Auto-generated catch block
-			// e.printStackTrace();
-			// connection.removeListener(TagView.this);
-			//				
-			// return;
-			// }
-
-			TagContainer tm2;
-			synchronized (locker) {
+				TagContainer tm2;
 				if ((tm2 = getTagByID(tagMessage, tags)) != null) {
 					tm2.setTag(tagMessage);
 					tm2.setInternalTime(System.currentTimeMillis());
@@ -184,10 +185,9 @@ public class TagView extends ViewPart implements ReaderMessageListener {
 					// TODO find a better way of doing this.
 					table.refresh();
 				}
-				locker.notify();
+			} finally {
+				lock.compareAndSet(true, false);
 			}
-			// table.refresh();
-			// logger.debug(tagMessage.toXML());
 		}
 
 		private TagContainer getTagByID(TagMessage tm1,
@@ -198,14 +198,6 @@ public class TagView extends ViewPart implements ReaderMessageListener {
 			}
 			return null;
 		}
-	}
-
-	public void initTagView(RemoteReader connection) {
-		// TODO Auto-generated method stub
-		this.connection = connection;
-		this.connection.addMessageListener(this);
-		thread = new RefreshThread();
-		thread.start();
 	}
 
 	// TODO Implement this better.
@@ -227,23 +219,20 @@ public class TagView extends ViewPart implements ReaderMessageListener {
 				List<TagContainer> tagsToKeep = new ArrayList<TagContainer>();
 				// logger.debug(tags);
 				// Convoluted but needed
-				synchronized (locker) {
-					for (TagContainer tm : tags) {
-						// logger.debug(ByteAndHexConvertingUtility.toHexString(tm.getTag().getId())
-						// + ": " + (System.currentTimeMillis() -
-						// tm.getInternalTime()));
-						if (System.currentTimeMillis() - tm.getInternalTime() <= retainTime) {
-							// logger.debug("Keeping\n" + tm);
-							tagsToKeep.add(tm);
-						}
+				for (TagContainer tm : tags) {
+					// logger.debug(ByteAndHexConvertingUtility.toHexString(tm.getTag().getId())
+					// + ": " + (System.currentTimeMillis() -
+					// tm.getInternalTime()));
+					if (System.currentTimeMillis() - tm.getInternalTime() <= retainTime) {
+						// logger.debug("Keeping\n" + tm);
+						tagsToKeep.add(tm);
 					}
-					tags.clear();
-					for (TagContainer tm : tagsToKeep) {
-						tags.add(tm);
-					}
-					tagsToKeep.clear();
-					locker.notify();
 				}
+				tags.clear();
+				for (TagContainer tm : tagsToKeep) {
+					tags.add(tm);
+				}
+				tagsToKeep.clear();
 
 				if (!table.getControl().isDisposed()) {
 					// synchronized(this) {
