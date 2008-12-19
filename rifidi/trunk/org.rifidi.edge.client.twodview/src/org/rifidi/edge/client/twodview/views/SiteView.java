@@ -50,6 +50,7 @@ import org.rifidi.edge.client.twodview.sfx.ReaderAlphaImageFigure;
  */
 public class SiteView extends ViewPart implements ISelectionProvider {
 
+	@SuppressWarnings("unused")
 	private Log logger = LogFactory.getLog(SiteView.class);
 
 	public final static String ID = "org.rifidi.edge.client.twodview.views.SiteView";
@@ -164,18 +165,18 @@ public class SiteView extends ViewPart implements ISelectionProvider {
 
 	@Override
 	public void addSelectionChangedListener(ISelectionChangedListener listener) {
-		logger.debug("addSelectionChangedListener");
+//		logger.debug("addSelectionChangedListener");
 		this.listeners.add(listener);
 
 	}
 
 	@Override
 	public ISelection getSelection() {
-		logger.debug("getSelection() called");
+//		logger.debug("getSelection() called");
 		RemoteReader rr = null;
 
 		if (lp != null) {
-			logger.debug("LP not null");
+//			logger.debug("LP not null");
 			try {
 				IFigure ifig = lp.getSelectedImage();
 				if (ifig == null)
@@ -184,11 +185,13 @@ public class SiteView extends ViewPart implements ISelectionProvider {
 
 				rr = raif.getReader();
 				StructuredSelection ss = new StructuredSelection(rr);
-				logger.debug("returning RemoteReader in StructuredSelection: "
-						+ ss.toString());
+//				logger.debug("returning RemoteReader in StructuredSelection: "
+//						+ ss.toString());
 				return ss;
-			} catch (Exception e) {
-				logger.debug(e);
+			} catch (ClassCastException e) {
+				return new StructuredSelection();
+			} catch (Exception e){
+//				logger.debug("ERROR: "+e.toString());
 				return new StructuredSelection();
 			}
 
@@ -200,13 +203,13 @@ public class SiteView extends ViewPart implements ISelectionProvider {
 	@Override
 	public void removeSelectionChangedListener(
 			ISelectionChangedListener listener) {
-		logger.debug("removeSelectionChangedListener");
+//		logger.debug("removeSelectionChangedListener");
 		listeners.remove(listener);
 	}
 
 	@Override
 	public void setSelection(ISelection selection) {
-		logger.debug("setSelection");
+//		logger.debug("setSelection");
 		// from objectLayer get Image where Reader is...
 	}
 

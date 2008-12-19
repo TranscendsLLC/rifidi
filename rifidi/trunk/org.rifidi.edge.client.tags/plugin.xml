@@ -25,18 +25,6 @@
       </view>
    </extension>
    <extension
-         point="org.eclipse.ui.perspectiveExtensions">
-      <perspectiveExtension
-            targetID="org.eclipse.jdt.ui.JavaPerspective">
-         <view
-               id="org.rifidi.edge.client.tags.views.TagView"
-               ratio="1"
-               relationship="stack"
-               relative="org.rifidi.edge.client.twodview.views.SiteView">
-         </view>
-      </perspectiveExtension>
-   </extension>
-   <extension
          point="org.eclipse.ui.menus">
       <menuContribution
             locationURI="popup:org.rifidi.edge.client.readerview.views.EdgeServerConnectionView?after=others.seperator">

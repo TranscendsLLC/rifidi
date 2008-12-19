@@ -111,7 +111,7 @@ public class TagView extends ViewPart implements ReaderMessageListener {
 		connection.removeMessageListener(this);
 
 		thread.interrupt();
-		thread=null;
+		thread = null;
 		super.dispose();
 	}
 
@@ -255,19 +255,15 @@ public class TagView extends ViewPart implements ReaderMessageListener {
 					});
 
 					// }
-				}
-				try {
-					Thread.sleep(refreashRate);
-				} catch (InterruptedException e) {
-					interrupt();
+
+					try {
+						Thread.sleep(refreashRate);
+					} catch (InterruptedException e) {
+						interrupt();
+					}
 				}
 			}
 		}
-	}
 
-	// @Inject
-	// public void getMessageConvertingService(MessageConvertingService
-	// messageConvertingService){
-	// this.messageConvertingService = messageConvertingService;
-	// }
+	}
 }
