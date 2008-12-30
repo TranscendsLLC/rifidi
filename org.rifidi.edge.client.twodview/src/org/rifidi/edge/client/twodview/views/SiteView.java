@@ -91,9 +91,7 @@ public class SiteView extends ViewPart implements ISelectionProvider {
 
 		lp = new ListeningScalableLayeredPane();
 
-		canvas
-				.addListener(SWT.MouseWheel, new SiteViewMouseWheelListener(
-						this));
+		canvas.addListener(SWT.MouseWheel, new SiteViewMouseWheelListener(lp));
 		canvas.addKeyListener(new SiteViewKeyListener(lp));
 
 		floorplanLayer = new FloorPlanLayer();
