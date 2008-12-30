@@ -14,6 +14,7 @@ import org.eclipse.draw2d.ScalableLayeredPane;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
+import org.rifidi.edge.client.twodview.views.SiteView;
 
 /**
  * @author Tobias Hoppenthaler - tobias@pramari.com
@@ -21,17 +22,24 @@ import org.eclipse.swt.widgets.Listener;
  */
 public class SiteViewMouseWheelListener implements Listener {
 
+	private SiteView siteView = null;
 	private ScalableLayeredPane sp = null;
-	
 
-	public SiteViewMouseWheelListener(ScalableLayeredPane lp) {
+	public SiteViewMouseWheelListener(SiteView siteView) {
 		super();
-		this.sp = lp;
+		this.siteView = siteView;
+		this.sp = siteView.getLayeredPane();
 	}
 
 	@Override
 	public void handleEvent(Event event) {
 
+		// centerPane(event);
+		zoom(event);
+
+	}
+
+	public void zoom(Event event) {
 		// WHEEL
 		if (event.type == SWT.MouseWheel) {
 			if (event.count > 0 && sp.getScale() < 20) {
@@ -43,7 +51,11 @@ public class SiteViewMouseWheelListener implements Listener {
 
 			}
 		}
+	}
 
+	public void center(Event event) {
+		System.out.println(siteView.getViewSite().getWorkbenchWindow()
+				.getWorkbench().getDisplay().getBounds());
 	}
 
 }
