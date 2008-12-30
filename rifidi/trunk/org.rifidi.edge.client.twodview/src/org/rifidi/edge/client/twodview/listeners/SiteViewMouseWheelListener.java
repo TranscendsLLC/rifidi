@@ -10,11 +10,12 @@
  */
 package org.rifidi.edge.client.twodview.listeners;
 
+import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.ScalableLayeredPane;
+import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
-import org.rifidi.edge.client.twodview.views.SiteView;
 
 /**
  * @author Tobias Hoppenthaler - tobias@pramari.com
@@ -22,19 +23,17 @@ import org.rifidi.edge.client.twodview.views.SiteView;
  */
 public class SiteViewMouseWheelListener implements Listener {
 
-	private SiteView siteView = null;
 	private ScalableLayeredPane sp = null;
 
-	public SiteViewMouseWheelListener(SiteView siteView) {
+	public SiteViewMouseWheelListener(ScalableLayeredPane sp) {
 		super();
-		this.siteView = siteView;
-		this.sp = siteView.getLayeredPane();
+		this.sp = sp;
 	}
 
 	@Override
 	public void handleEvent(Event event) {
 
-		// centerPane(event);
+		centerPane(event);
 		zoom(event);
 
 	}
@@ -53,9 +52,22 @@ public class SiteViewMouseWheelListener implements Listener {
 		}
 	}
 
-	public void center(Event event) {
-		System.out.println(siteView.getViewSite().getWorkbenchWindow()
-				.getWorkbench().getDisplay().getBounds());
+	public void centerPane(Event event) {
+		//TODO COMMENT
+		int diffX = (sp.getBounds().width/2)-event.x;
+		int diffY = (sp.getBounds().height/2)-event.y;
+		for (Object object : sp.getChildren()) {
+			for (Object obj : ((IFigure) object).getChildren()) {
+				IFigure ifig = (IFigure) obj;
+				Rectangle bounds = ifig.getBounds();
+				bounds.x += diffX;
+				bounds.y += diffY ;
+				ifig.setBounds(bounds);
+			}
+			((IFigure)object).repaint();
+		}
+		System.out.println(sp.getBounds());
+		System.out.println(event.x + " " + event.y);
 	}
 
 }
