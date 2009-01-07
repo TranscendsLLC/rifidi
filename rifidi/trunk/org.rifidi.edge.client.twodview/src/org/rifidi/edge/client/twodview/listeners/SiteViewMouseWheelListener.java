@@ -32,10 +32,9 @@ public class SiteViewMouseWheelListener implements Listener {
 
 	@Override
 	public void handleEvent(Event event) {
-
-		centerPane(event);
 		zoom(event);
-
+		if (event.count > 0)
+			centerPane(event);
 	}
 
 	public void zoom(Event event) {
@@ -53,18 +52,18 @@ public class SiteViewMouseWheelListener implements Listener {
 	}
 
 	public void centerPane(Event event) {
-		//TODO COMMENT
-		int diffX = (sp.getBounds().width/2)-event.x;
-		int diffY = (sp.getBounds().height/2)-event.y;
+		// TODO COMMENT
+		int diffX = (sp.getBounds().width / 2) - event.x;
+		int diffY = (sp.getBounds().height / 2) - event.y;
 		for (Object object : sp.getChildren()) {
 			for (Object obj : ((IFigure) object).getChildren()) {
 				IFigure ifig = (IFigure) obj;
 				Rectangle bounds = ifig.getBounds();
 				bounds.x += diffX;
-				bounds.y += diffY ;
+				bounds.y += diffY;
 				ifig.setBounds(bounds);
 			}
-			((IFigure)object).repaint();
+			((IFigure) object).repaint();
 		}
 		System.out.println(sp.getBounds());
 		System.out.println(event.x + " " + event.y);
