@@ -7,7 +7,6 @@ Bundle-Activator: org.rifidi.edge.client.connections.Activator
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.rifidi.edge.client;bundle-version="1.0.0",
- org.rifidi.edge.log4j;bundle-version="1.0.0",
  org.rifidi.edge.services;bundle-version="1.0.0",
  org.eclipse.core.expressions,
  org.eclipse.ui.views.properties.tabbed;bundle-version="3.4.0",
@@ -148,3 +147,4 @@ Export-Package: javax.jms,
  org.rifidi.edge.client.connections.views,
  org.rifidi.edge.client.connections.wizards.reader,
  org.rifidi.edge.client.connections.wizards.server
+Import-Package: org.apache.commons.logging
