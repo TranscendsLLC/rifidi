@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.example.org/DynamicSWTForm" xmlns:tns="http://www.example.org/DynamicSWTForm" elementFormDefault="qualified">
+
+    <element name="DynamicSWTForm" type="tns:DynamicSWTFormType"></element>
+    
+    <complexType name="DynamicSWTFormType">
+    	<choice>
+    		<element name="TextWidget" type="tns:TextWidgetType" minOccurs="0" maxOccurs="unbounded"></element>
+    		<element name="IntegerWidget"
+    			type="tns:IntegerWidgetType" minOccurs="0" maxOccurs="unbounded">
+    		</element>
+    		<element name="FloatWidget" type="tns:FloatWidgetType" minOccurs="0" maxOccurs="unbounded"></element>
+    		<element name="ChoiceWidget" type="tns:ChoiceWidgetType" minOccurs="0" maxOccurs="unbounded"></element>
+    	</choice>
+    	<attribute name="name" type="string"></attribute>
+    </complexType>
+
+    <complexType name="TextWidgetType">
+    	<complexContent>
+    		<extension base="tns:AbstractWidgetType"></extension>
+    	</complexContent>
+    </complexType>
+    
+    <complexType name="IntegerWidgetType">
+    	<complexContent>
+    		<extension base="tns:AbstractWidgetType"></extension>
+    	</complexContent>
+    </complexType>
+    
+    <complexType name="FloatWidgetType">
+    	<complexContent>
+    		<extension base="tns:AbstractWidgetType"></extension>
+    	</complexContent>
+    </complexType>
+    
+    <complexType name="ChoiceWidgetType">
+    	<complexContent>
+    		<extension base="tns:AbstractWidgetType"></extension>
+    	</complexContent>
+    </complexType>
+    
+    <complexType name="AbstractWidgetType">
+        <all>
+        	<element name="name" type="string" minOccurs="1" maxOccurs="1"></element>
+        	<element name="diaplayName" type="string" minOccurs="1" maxOccurs="1"></element>
+        	<element name="defaultValue" type="string" minOccurs="1" maxOccurs="1"></element>
+        	<element name="editable" type="boolean" minOccurs="1" maxOccurs="1"></element>
+        </all>
+
+    </complexType>
+</schema>

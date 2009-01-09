@@ -1,0 +1,26 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: DynamicSWTforms Plug-in
+Bundle-SymbolicName: org.rifidi.dynamicSWTforms.ui
+Bundle-Version: 1.0.0
+Bundle-Activator: org.rifidi.dynamicswtforms.ui.Activator
+Bundle-Vendor: Pramari, LLC
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ActivationPolicy: lazy
+Require-Bundle: org.eclipse.swt;bundle-version="3.4.0",
+ org.rifidi.dynamicSWTForms.xml;bundle-version="1.0.0",
+ org.eclipse.jface;bundle-version="3.4.0",
+ org.eclipse.ui.views.properties.tabbed;bundle-version="3.4.0"
+Export-Package: org.rifidi.dynamicswtforms.ui.exceptions,
+ org.rifidi.dynamicswtforms.ui.form,
+ org.rifidi.dynamicswtforms.ui.widgets,
+ org.rifidi.dynamicswtforms.ui.widgets.abstractwidgets,
+ org.rifidi.dynamicswtforms.ui.widgets.data,
+ org.rifidi.dynamicswtforms.ui.widgets.listeners,
+ org.rifidi.dynamicswtforms.ui.widgets.standard,
+ org.rifidi.dynamicswtforms.ui.widgets.standard.impl
+Import-Package: org.apache.commons.logging;version="1.0.4",
+ org.jdom;version="1.0.0",
+ org.jdom.input;version="1.0.0",
+ org.jdom.output;version="1.0.0",
+ org.osgi.framework;version="1.4.0"
