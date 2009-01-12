@@ -10,12 +10,13 @@ Require-Bundle: org.eclipse.ui,
  org.rifidi.edge.services;bundle-version="1.0.0",
  org.eclipse.core.expressions,
  org.eclipse.ui.views.properties.tabbed;bundle-version="3.4.0",
- org.jdom;bundle-version="1.0.0",
  org.rifidi.dynamicSWTforms.ui;bundle-version="1.0.0",
  org.rifidi.dynamicSWTForms.xml;bundle-version="1.0.0",
  org.rifidi.edge.core.rmi.client;bundle-version="1.0.0",
  org.rifidi.rmi.utils;bundle-version="1.0.0",
- org.rifidi.edge.common.utilities;bundle-version="1.0.0"
+ org.rifidi.edge.common.utilities;bundle-version="1.0.0",
+ org.rifidi.edge.core;bundle-version="1.1.0",
+ org.rifidi.edge.core.rmi;bundle-version="1.1.0"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ClassPath: lib/activemq-all-5.1.0.jar,
@@ -147,4 +148,6 @@ Export-Package: javax.jms,
  org.rifidi.edge.client.connections.views,
  org.rifidi.edge.client.connections.wizards.reader,
  org.rifidi.edge.client.connections.wizards.server
-Import-Package: org.apache.commons.logging
+Import-Package: org.apache.commons.logging,
+ org.jdom;version="1.0.0",
+ org.jdom.input;version="1.0.0"
