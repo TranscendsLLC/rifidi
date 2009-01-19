@@ -10,6 +10,8 @@
  */
 package org.rifidi.edge.client.tagview.utils;
 
+import org.eclipse.core.databinding.observable.list.IListChangeListener;
+import org.eclipse.core.databinding.observable.list.ListChangeEvent;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ITableColorProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
@@ -21,7 +23,7 @@ import org.eclipse.swt.graphics.Image;
  *
  */
 public class TagTableLabelProvider implements ITableLabelProvider,
-		ITableColorProvider {
+		ITableColorProvider,IListChangeListener {
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnImage(java.lang.Object, int)
@@ -93,6 +95,15 @@ public class TagTableLabelProvider implements ITableLabelProvider,
 	public Color getForeground(Object element, int columnIndex) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.databinding.observable.list.IListChangeListener#handleListChange(org.eclipse.core.databinding.observable.list.ListChangeEvent)
+	 */
+	@Override
+	public void handleListChange(ListChangeEvent event) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

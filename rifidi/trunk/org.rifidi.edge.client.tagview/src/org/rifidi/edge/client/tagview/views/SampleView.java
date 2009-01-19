@@ -1,5 +1,6 @@
 package org.rifidi.edge.client.tagview.views;
 
+import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -38,6 +39,7 @@ public class SampleView extends ViewPart {
 	private Action action1;
 	private Action action2;
 	private Action doubleClickAction;
+	private WritableList[] antennaTagLists;
 
 	/*
 	 * The content provider class is responsible for providing objects to the
@@ -105,8 +107,13 @@ public class SampleView extends ViewPart {
 		this.numberOfAntennas = 3;
 
 		if (ctf != null) {
+			antennaTagLists = new WritableList[numberOfAntennas];
 			for (int i = 0; i < numberOfAntennas; i++) {
 				AntennaCtabItem item = new AntennaCtabItem(ctf, i);
+				antennaTagLists[i] = new WritableList();
+//				antennaTagLists[i].addListChangeListener(ContentProv)
+//				antennaTagLists[i].addListChangeListener(LabelProv)
+
 			}
 			ctf.setSelection(0);
 		}

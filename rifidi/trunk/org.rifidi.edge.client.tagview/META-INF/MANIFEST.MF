@@ -6,7 +6,8 @@ Bundle-Version: 1.0.0
 Bundle-Activator: org.rifidi.edge.client.tagview.Activator
 Bundle-Vendor: PRAMARI LLC
 Require-Bundle: org.eclipse.ui,
- org.eclipse.core.runtime
+ org.eclipse.core.runtime,
+ org.eclipse.core.databinding;bundle-version="1.1.1"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Import-Package: org.eclipse.nebula.widgets.pgroup
