@@ -41,14 +41,15 @@ public class AntennaCtabItem extends CTabItem {
 
 	public AntennaCtabItem(CTabFolder parent, int antennaNumber) {
 		super(parent, SWT.SMOOTH);
+		String antennaCaption = "Antenna #" + antennaNumber;
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		composite.setLayout(new FillLayout());
-		setText("Antenna #" + antennaNumber);
+		setText(antennaCaption);
 
 		PGroup group = new PGroup(composite, SWT.SMOOTH);
 		group.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-//		group.setText(make a variable)
+		group.setText(antennaCaption);
 		FillLayout layout = new FillLayout();
 		// layout.type = SWT.HORIZONTAL;
 		group.setLayout(layout);
