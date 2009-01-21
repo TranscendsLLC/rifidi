@@ -5,6 +5,7 @@ import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -20,8 +21,11 @@ import org.apache.commons.logging.LogFactory;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.RowLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.part.ViewPart;
@@ -41,6 +45,7 @@ public class TagView extends ViewPart implements ReaderMessageListener {
 	static private Log logger = LogFactory.getLog(TagView.class);
 	private Composite composite;
 	private TableViewer table;
+	private Set<Button> buttons = new HashSet<Button>();
 
 	// TODO Put this someplace better -- maybe
 	private Set<TagContainer> tags = new TreeSet<TagContainer>();
@@ -64,7 +69,20 @@ public class TagView extends ViewPart implements ReaderMessageListener {
 		ServiceRegistry.getInstance().service(this);
 
 		composite = new Composite(parent, SWT.NONE);
-		composite.setLayout(new FillLayout());
+		composite.setLayout(new RowLayout());
+
+		Group group = new Group(composite, SWT.NONE);
+		group.setText("Antenna Selection");
+		group.setLayout(new FillLayout());
+
+		for (int i = 0; i < 3; i++) {
+			Button button = new Button(group, SWT.CHECK);
+			button.setText("Antenna #" + i);
+			button.setData("Antenna", i);
+			button.setSelection(true);
+			buttons.add(button);
+			
+		}
 		table = new TableViewer(composite, SWT.BORDER | SWT.V_SCROLL | SWT.WRAP
 				| SWT.H_SCROLL | SWT.FULL_SELECTION);
 
