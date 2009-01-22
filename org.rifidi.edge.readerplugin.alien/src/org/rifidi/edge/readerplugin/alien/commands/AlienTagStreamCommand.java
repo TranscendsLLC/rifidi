@@ -132,8 +132,6 @@ public class AlienTagStreamCommand implements Command {
 			poll_period_int = Integer.parseInt(POLL_PERIOD_DEFAULT_STRING);
 		}
 
-		logger.debug("GETTING READY TO SEND MESSAGES");
-
 		try {
 			connection.sendMessage(AlienCommandList.GET_TIME_ZONE);
 			String temp = ((String) connection.receiveMessage());
@@ -147,37 +145,42 @@ public class AlienTagStreamCommand implements Command {
 
 			calendar = Calendar.getInstance(timeZone);
 
-			logger.debug("JUST BEFORE CONNECTION ANTENNASEQUENCECOMMAND");
+			// send Antenna Sequence
+			String command = AlienCommandList.ANTENNA_SEQUENCE_COMMAND
+					+ configuration
+							.getArgValue(AlienTagStreamCommand.ANTENNA_SEQUENCE)
+					+ AlienCommandList.ENDING;
 
-			connection
-					.sendMessage(AlienCommandList.ANTENNA_SEQUENCE_COMMAND
-							+ configuration
-									.getArgValue(AlienTagStreamCommand.ANTENNA_SEQUENCE)
-							+ AlienCommandList.ENDING);
+			logger.debug("Sending command: " + command);
+			connection.sendMessage(command);
 			connection.receiveMessage();
 
-			logger.debug("AFTER ANTENNASEQUENCECOMMAND");
-
-			connection.sendMessage(AlienCommandList.TAG_TYPE_COMMAND
-					+ tag_type_int + AlienCommandList.ENDING);
+			// sending TagType
+			command = AlienCommandList.TAG_TYPE_COMMAND + tag_type_int
+					+ AlienCommandList.ENDING;
+			logger.debug("Sening command: " + command);
+			connection.sendMessage(command);
 			connection.receiveMessage();
 
-			logger.debug("AFTER TAGTYPECOMMAND");
-
-			connection.sendMessage(AlienCommandList.TAG_LIST_FORMAT);
+			// sending TagListFormat
+			command = AlienCommandList.TAG_LIST_FORMAT;
+			logger.debug("Sening command: " + command);
+			connection.sendMessage(command);
 			connection.receiveMessage();
 
-			logger.debug("AFTER TAGLISTFORMAT");
-
-			connection.sendMessage(AlienCommandList.TAG_LIST_CUSTOM_FORMAT);
+			// sending custom format
+			command = AlienCommandList.TAG_LIST_CUSTOM_FORMAT;
+			logger.debug("Sening command: " + command);
+			connection.sendMessage(command);
 			connection.receiveMessage();
 
-			logger.debug("AFTER TAGLISTCUSTOMFORMAT");
-
-			logger.debug("STARTING TO LOOK FOR TAGS");
 			while (running) {
-				connection.sendMessage(AlienCommandList.TAG_LIST);
+				// sending get tag list
+				command = AlienCommandList.TAG_LIST;
+				logger.debug("Sening command: " + command);
+				connection.sendMessage(command);
 				String tag_msg = (String) connection.receiveMessage();
+				logger.debug("recieved: " + tag_msg);
 
 				List<TagMessage> tagList = this.parseString(tag_msg);
 
@@ -251,32 +254,38 @@ public class AlienTagStreamCommand implements Command {
 
 		List<TagMessage> retVal = new ArrayList<TagMessage>();
 
-		for (String s : splitString) {
-			s = s.trim();
-			String[] splitString2 = s.split("\\|");
-			if (splitString2.length > 1) {
-				String tagData = splitString2[0];
-				String timeStamp = splitString2[1];
-				String antennaID = splitString2[2];
+		try {
+			for (String s : splitString) {
+				s = s.trim();
+				String[] splitString2 = s.split("\\|");
+				if (splitString2.length > 1) {
+					String tagData = splitString2[0];
+					String timeStamp = splitString2[1];
+					String antennaID = splitString2[2];
 
-				Time time = Time.valueOf(timeStamp);
-				calendar.setTime(time);
-				Calendar currentDate = Calendar.getInstance(timeZone);
-				calendar.set(currentDate.get(Calendar.YEAR), currentDate
-						.get(Calendar.MONTH), currentDate.get(Calendar.DATE));
+					Time time = Time.valueOf(timeStamp);
+					calendar.setTime(time);
+					Calendar currentDate = Calendar.getInstance(timeZone);
+					calendar.set(currentDate.get(Calendar.YEAR), currentDate
+							.get(Calendar.MONTH), currentDate
+							.get(Calendar.DATE));
 
-				EnhancedTagMessage newTagRead = new EnhancedTagMessage();
-				newTagRead.setId(ByteAndHexConvertingUtility
-						.fromHexString(tagData.trim()));
-				newTagRead.setLastSeenTime(calendar.getTimeInMillis());
-			
-				//newTagRead.setVelocity(Float.parseFloat(velocity));
+					EnhancedTagMessage newTagRead = new EnhancedTagMessage();
+					newTagRead.setId(ByteAndHexConvertingUtility
+							.fromHexString(tagData.trim()));
+					newTagRead.setLastSeenTime(calendar.getTimeInMillis());
 
-				newTagRead.setAntennaId(Integer.parseInt(antennaID));
-				//newTagRead.setSignalStrength(Float.parseFloat(signalStrength));
-				retVal.add(newTagRead);
+					// newTagRead.setVelocity(Float.parseFloat(velocity));
 
+					newTagRead.setAntennaId(Integer.parseInt(antennaID));
+					// newTagRead.setSignalStrength(Float.parseFloat(signalStrength));
+					retVal.add(newTagRead);
+
+				}
 			}
+		} catch (Exception e) {
+			logger.error("There was a problem when parsing Alien Tags.  "
+					+ "tag has not been added", e);
 		}
 		return retVal;
 	}
