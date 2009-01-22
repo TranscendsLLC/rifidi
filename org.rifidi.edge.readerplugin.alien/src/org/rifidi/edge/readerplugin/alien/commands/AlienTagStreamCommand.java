@@ -231,7 +231,7 @@ public class AlienTagStreamCommand implements Command {
 		/**
 		 * Tag list custom format command.
 		 */
-		public static final String TAG_LIST_CUSTOM_FORMAT = ('\1' + "set TagListCustomFormat=%k|%T|%a|%m\n");
+		public static final String TAG_LIST_CUSTOM_FORMAT = ('\1' + "set TagListCustomFormat=%k|%T|%a\n");
 
 		/**
 		 * 
@@ -258,8 +258,6 @@ public class AlienTagStreamCommand implements Command {
 				String tagData = splitString2[0];
 				String timeStamp = splitString2[1];
 				String antennaID = splitString2[2];
-				//String velocity = splitString2[3];
-				//String signalStrength = splitString2[4];
 
 				Time time = Time.valueOf(timeStamp);
 				calendar.setTime(time);
