@@ -9,14 +9,14 @@
 <stringAttribute key="configLocation" value="${workspace_loc}/.metadata/.plugins/org.eclipse.pde.core/Edge Server"/>
 <booleanAttribute key="default_auto_start" value="true"/>
 <intAttribute key="default_start_level" value="4"/>
-<stringAttribute key="deselected_workspace_plugins" value="org.rifidi.edge.tags.epc,org.rifidi.edge.testing.ale,org.rifidi.edge.tags.epc.ale,org.rifidi.edge.testing.tags.epc,org.rifidi.edge.testing.tags,org.rifidi.edge.ale,org.rifidi.edge.testing.tags.epc.ale,org.fosstrak.tdt,org.rifidi.edge.tags.encodings.epc,org.rifidi.edge.tags,org.rifidi.edge.testing,org.rifidi.edge.testing.tags.encodings.epc"/>
+<stringAttribute key="deselected_workspace_plugins" value="org.rifidi.edge.webservice,org.rifidi.edge.epcglobal.ale.ws.api.read,org.rifidi.edge.ale,org.rifidi.edge.http,org.rifidi.edge.epcglobal.ale,org.rifidi.edge.tags,org.rifidi.dynamicSWTForms.xml,org.rifidi.rmi.utils"/>
 <booleanAttribute key="includeOptional" value="true"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="-os ${target.os} -ws ${target.ws} -arch ${target.arch} -nl ${target.nl} -console"/>
 <stringAttribute key="org.eclipse.jdt.launching.SOURCE_PATH_PROVIDER" value="org.eclipse.pde.ui.workbenchClasspathProvider"/>
 <stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Declipse.ignoreApp=true -Dosgi.noShutdown=true"/>
 <stringAttribute key="pde.version" value="3.3"/>
-<booleanAttribute key="show_selected_only" value="true"/>
-<stringAttribute key="target_bundles" value="org.rifidi.edge.core.messageQueue@default:default,org.apache.activemq@default:default,org.rifidi.dynamicSWTForms.xml@default:default,org.rifidi.logging@default:default,org.rifidi.log4j.edge@default:false,org.rifidi.edge.jms@default:default,org.rifidi.edge.services@default:default,org.rifidi.edge.core.communication@default:default,org.rifidi.edge.common.utilities@default:default,org.rifidi.edge.readerplugin.dummy@default:default,org.eclipse.osgi@:,org.rifidi.edge.readerplugin.thingmagic@default:default,org.rifidi.edge.core.rmi@default:default,org.rifidi.edge.core@default:default,org.rifidi.edge.core.deploy@default:default,org.rifidi.edge.readerplugin.llrp@default:default,org.rifidi.edge.readerplugin.alien@default:default"/>
+<booleanAttribute key="show_selected_only" value="false"/>
+<stringAttribute key="target_bundles" value="org.rifidi.edge.services@default:default,org.rifidi.edge.readerplugin.llrp*1.1.1@default:default,org.rifidi.edge.persistence*1.1.1@default:default,org.rifidi.dynamicSWTForms.xml@default:default,org.rifidi.edge.readerplugin.thingmagic*1.1.1@default:default,org.rifidi.edge.core.deploy@default:default,org.rifidi.log4j.edge@default:false,org.rifidi.edge.readerplugin.alien*1.1.2@default:default,org.rifidi.edge.readerplugin.dummy*1.1.1@default:default,org.rifidi.edge.core*2.0.0@default:default,org.rifidi.edge.core.rmi.api@default:default,org.eclipse.osgi@:,org.rifidi.edge.core.api@default:default,org.rifidi.edge.core.communication*1.1.1@default:default,org.rifidi.logging@default:default,org.rifidi.edge.jms*1.1.1@default:default,org.apache.activemq@default:default,org.rifidi.edge.core.rmi*2.0.0@default:default,org.rifidi.edge.common.utilities@default:default"/>
 <booleanAttribute key="tracing" value="false"/>
 <booleanAttribute key="useDefaultConfigArea" value="true"/>
 </launchConfiguration>
