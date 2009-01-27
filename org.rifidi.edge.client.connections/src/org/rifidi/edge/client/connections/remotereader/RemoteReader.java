@@ -154,6 +154,7 @@ public class RemoteReader implements MessageListener {
 			RemoteReaderID remoteReaderID, int serverID,
 			ServerDescription serverDesc) {
 		ServiceRegistry.getInstance().service(this);
+		logger.debug(this.getClass().getName()+": created");
 		this.jmsFactory = jmsFactory;
 		this.remoteReaderID = remoteReaderID;
 		this.serverID = serverID;
@@ -629,10 +630,13 @@ public class RemoteReader implements MessageListener {
 
 	@Override
 	public void onMessage(Message message) {
+		logger.debug(this.getReaderInfo().getString()+": in onMessageMethod");
 		synchronized (messageListeners) {
+			logger.debug(this.getReaderInfo().getString()+": in synchronized block");
 			for (ReaderMessageListener messageListener : messageListeners) {
 				messageListener.onMessage(message, this);
 			}
+			logger.debug(this.getReaderInfo().getString()+": after sync block");
 			messageListeners.notifyAll();
 		}
 	}
