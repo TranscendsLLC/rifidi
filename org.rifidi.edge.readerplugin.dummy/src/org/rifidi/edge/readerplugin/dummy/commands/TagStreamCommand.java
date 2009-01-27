@@ -4,11 +4,11 @@ import java.io.IOException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.rifidi.edge.core.communication.Connection;
-import org.rifidi.edge.core.messageQueue.MessageQueue;
-import org.rifidi.edge.core.readerplugin.commands.Command;
-import org.rifidi.edge.core.readerplugin.commands.CommandConfiguration;
-import org.rifidi.edge.core.readerplugin.commands.CommandReturnStatus;
+import org.rifidi.edge.core.api.communication.Connection;
+import org.rifidi.edge.core.api.messageQueue.MessageQueue;
+import org.rifidi.edge.core.api.readerplugin.commands.Command;
+import org.rifidi.edge.core.api.readerplugin.commands.CommandConfiguration;
+import org.rifidi.edge.core.api.readerplugin.commands.CommandReturnStatus;
 
 public class TagStreamCommand implements Command {
 
