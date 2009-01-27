@@ -7,8 +7,9 @@ import org.apache.commons.logging.LogFactory;
 import org.rifidi.dynamicswtforms.xml.annotaions.Form;
 import org.rifidi.dynamicswtforms.xml.annotaions.FormElement;
 import org.rifidi.dynamicswtforms.xml.constants.FormElementType;
-import org.rifidi.edge.core.communication.Connection;
-import org.rifidi.edge.core.messageQueue.MessageQueue;
+import org.rifidi.edge.core.api.communication.Connection;
+import org.rifidi.edge.core.api.messageQueue.MessageQueue;
+import org.rifidi.edge.core.api.readerplugin.property.Property;
 import org.rifidi.edge.readerplugin.alien.properties.AlienResponse;
 import org.w3c.dom.Element;
 
@@ -16,8 +17,7 @@ import org.w3c.dom.Element;
  *
  */
 @Form(name = ExternalInput.EXTERNAL_INPUT, formElements = { @FormElement(type = FormElementType.INTEGER, elementName = ExternalInput.EXTERNAL_INPUT_DATA, editable = false, defaultValue = "0", displayName = ExternalInput.EXTERNAL_INPUT_DISPLAY, min = 0, max = 15) })
-public class ExternalInput implements
-		org.rifidi.edge.core.readerplugin.property.Property {
+public class ExternalInput implements Property {
 	
 	private static final String EXTERNAL_INPUT = "ExternalInput";
 
