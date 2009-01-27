@@ -3,7 +3,6 @@ package org.rifidi.edge.client.connections.registryservice.impl;
 import java.util.HashMap;
 import java.util.concurrent.CopyOnWriteArraySet;
 
-import org.apache.activemq.store.jdbc.adapter.OracleJDBCAdapter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.client.connections.registryservice.RemoteReaderConnectionRegistryService;

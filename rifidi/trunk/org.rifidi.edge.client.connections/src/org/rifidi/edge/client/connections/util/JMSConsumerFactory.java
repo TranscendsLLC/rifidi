@@ -1,6 +1,5 @@
 package org.rifidi.edge.client.connections.util;
 
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
