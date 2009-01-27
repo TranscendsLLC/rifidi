@@ -7,7 +7,7 @@ import java.util.ArrayList;
 
 import org.rifidi.edge.core.api.readerplugin.commands.Command;
 import org.rifidi.edge.core.api.readerplugin.commands.CommandReturnStatus;
-import org.rifidi.edge.core.readersession.impl.enums.CommandStatus;
+import org.rifidi.edge.core.api.readersession.enums.CommandStatus;
 
 /**
  * @author kyle

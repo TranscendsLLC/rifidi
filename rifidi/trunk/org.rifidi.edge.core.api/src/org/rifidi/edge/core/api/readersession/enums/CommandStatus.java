@@ -1,4 +1,4 @@
-package org.rifidi.edge.core.readersession.impl.enums;
+package org.rifidi.edge.core.api.readersession.enums;
 
 import org.rifidi.edge.core.api.readerplugin.commands.CommandReturnStatus;
 

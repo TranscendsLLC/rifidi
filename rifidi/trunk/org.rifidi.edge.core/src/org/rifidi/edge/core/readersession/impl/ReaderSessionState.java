@@ -6,9 +6,9 @@ import org.rifidi.edge.core.api.exceptions.RifidiCommandNotFoundException;
 import org.rifidi.edge.core.api.exceptions.RifidiConnectionException;
 import org.rifidi.edge.core.api.exceptions.RifidiInvalidConfigurationException;
 import org.rifidi.edge.core.api.readerplugin.commands.CommandConfiguration;
+import org.rifidi.edge.core.api.readersession.enums.ReaderSessionStatus;
 import org.rifidi.edge.core.communication.service.CommunicationStateListener;
 import org.rifidi.edge.core.readerplugin.ReaderInfo;
-import org.rifidi.edge.core.readersession.impl.enums.ReaderSessionStatus;
 import org.w3c.dom.Document;
 
 public interface ReaderSessionState extends CommunicationStateListener {
