@@ -15,9 +15,9 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.Set;
 
-import org.rifidi.edge.core.exceptions.RifidiException;
-import org.rifidi.edge.core.readerplugin.property.PropertyConfiguration;
-import org.rifidi.edge.core.rmi.readerconnection.ReaderSessionStub;
+import org.rifidi.edge.core.api.exceptions.RifidiException;
+import org.rifidi.edge.core.api.readerplugin.property.PropertyConfiguration;
+import org.rifidi.edge.core.rmi.api.readerconnection.ReaderSessionStub;
 import org.rifidi.rmi.utils.cache.ServerDescription;
 import org.rifidi.rmi.utils.remotecall.ServerDescriptionBasedRemoteMethodCall;
 

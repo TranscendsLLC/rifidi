@@ -14,7 +14,7 @@ package org.rifidi.edge.core.rmi.client.sessionstub;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
-import org.rifidi.edge.core.rmi.readerconnection.ReaderSessionStub;
+import org.rifidi.edge.core.rmi.api.readerconnection.ReaderSessionStub;
 import org.rifidi.rmi.utils.cache.ServerDescription;
 import org.rifidi.rmi.utils.remotecall.ServerDescriptionBasedRemoteMethodCall;
 

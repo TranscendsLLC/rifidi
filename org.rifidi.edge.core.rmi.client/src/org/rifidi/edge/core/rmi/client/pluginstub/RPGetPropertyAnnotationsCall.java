@@ -15,10 +15,10 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 
 import org.rifidi.dynamicswtforms.xml.exceptions.DynamicSWTFormAnnotationException;
-import org.rifidi.edge.core.exceptions.RifidiException;
+import org.rifidi.edge.core.api.exceptions.RifidiException;
+import org.rifidi.edge.core.rmi.api.readerconnection.ReaderPluginManagerStub;
+import org.rifidi.edge.core.rmi.api.readerconnection.exceptions.RifidiPluginDoesNotExistException;
 import org.rifidi.edge.core.rmi.client.pluginstub.valueobjects.FormAnnotationListWrapper;
-import org.rifidi.edge.core.rmi.readerconnection.ReaderPluginManagerStub;
-import org.rifidi.edge.core.rmi.readerconnection.exceptions.RifidiPluginDoesNotExistException;
 import org.rifidi.rmi.utils.cache.ServerDescription;
 import org.rifidi.rmi.utils.remotecall.ServerDescriptionBasedRemoteMethodCall;
 

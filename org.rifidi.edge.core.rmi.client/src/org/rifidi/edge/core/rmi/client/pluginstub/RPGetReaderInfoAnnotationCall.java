@@ -14,8 +14,8 @@ package org.rifidi.edge.core.rmi.client.pluginstub;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
-import org.rifidi.edge.core.exceptions.RifidiReaderInfoNotFoundException;
-import org.rifidi.edge.core.rmi.readerconnection.ReaderPluginManagerStub;
+import org.rifidi.edge.core.api.exceptions.RifidiReaderInfoNotFoundException;
+import org.rifidi.edge.core.rmi.api.readerconnection.ReaderPluginManagerStub;
 import org.rifidi.rmi.utils.cache.ServerDescription;
 import org.rifidi.rmi.utils.remotecall.ServerDescriptionBasedRemoteMethodCall;
 
