@@ -4,8 +4,8 @@ import java.rmi.RemoteException;
 
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
-import org.rifidi.edge.core.rmi.readerconnection.EdgeServerStub;
-import org.rifidi.edge.core.rmi.readerconnection.ReaderPluginManagerStub;
+import org.rifidi.edge.core.rmi.api.readerconnection.EdgeServerStub;
+import org.rifidi.edge.core.rmi.api.readerconnection.ReaderPluginManagerStub;
 import org.rifidi.edge.core.rmi.readerconnection.impl.EdgeServerStubImpl;
 import org.rifidi.edge.core.rmi.readerconnection.impl.ReaderPluginManagerStubImpl;
 import org.rifidi.edge.core.rmi.service.RMIServerService;

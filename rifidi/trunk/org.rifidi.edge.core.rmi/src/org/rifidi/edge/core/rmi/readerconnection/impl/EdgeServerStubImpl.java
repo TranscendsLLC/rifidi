@@ -18,14 +18,14 @@ import javax.xml.bind.Unmarshaller;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.rifidi.edge.core.exceptions.RifidiReaderInfoNotFoundException;
+import org.rifidi.edge.core.api.exceptions.RifidiReaderInfoNotFoundException;
 import org.rifidi.edge.core.readerplugin.ReaderInfo;
 import org.rifidi.edge.core.readerplugin.service.ReaderPluginService;
 import org.rifidi.edge.core.readersession.ReaderSession;
 import org.rifidi.edge.core.readersession.service.ReaderSessionListener;
 import org.rifidi.edge.core.readersession.service.ReaderSessionService;
-import org.rifidi.edge.core.rmi.readerconnection.EdgeServerStub;
-import org.rifidi.edge.core.rmi.readerconnection.ReaderSessionStub;
+import org.rifidi.edge.core.rmi.api.readerconnection.EdgeServerStub;
+import org.rifidi.edge.core.rmi.api.readerconnection.ReaderSessionStub;
 import org.rifidi.edge.core.rmi.service.RMIServerService;
 import org.rifidi.services.annotations.Inject;
 import org.rifidi.services.registry.ServiceRegistry;
@@ -100,9 +100,9 @@ public class EdgeServerStubImpl extends UnicastRemoteObject implements
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.rmi.readerconnection.RemoteReaderConnectionRegistry
+	 * org.rifidi.edge.core.rmi.api.readerconnection.RemoteReaderConnectionRegistry
 	 * #deleteReaderConnection
-	 * (org.rifidi.edge.core.rmi.readerconnection.RemoteReaderConnection)
+	 * (org.rifidi.edge.core.rmi.api.readerconnection.RemoteReaderConnection)
 	 */
 	@Override
 	public void deleteReaderSession(Long ID) throws RemoteException {
@@ -117,7 +117,7 @@ public class EdgeServerStubImpl extends UnicastRemoteObject implements
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.rmi.readerconnection.RemoteReaderConnectionRegistry
+	 * org.rifidi.edge.core.rmi.api.readerconnection.RemoteReaderConnectionRegistry
 	 * #getAllReaderConnections()
 	 */
 	@Override
