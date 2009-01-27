@@ -15,7 +15,7 @@ import java.io.InputStream;
 import java.util.Queue;
 
 import org.apache.commons.logging.LogFactory;
-import org.rifidi.edge.core.exceptions.RifidiConnectionException;
+import org.rifidi.edge.core.api.exceptions.RifidiConnectionException;
 import org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionExceptionListener;
 import org.rifidi.edge.core.readerplugin.protocol.CommunicationProtocol;
 

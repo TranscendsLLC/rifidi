@@ -7,7 +7,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.rifidi.edge.core.communication.Connection;
+import org.rifidi.edge.core.api.communication.Connection;
 
 /**
  * This is the implementation of a Connection. It allows the Commands to send
