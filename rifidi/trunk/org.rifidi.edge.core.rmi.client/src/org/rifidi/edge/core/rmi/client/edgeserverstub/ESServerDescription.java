@@ -6,7 +6,7 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.rmi.registry.Registry;
 
-import org.rifidi.edge.core.rmi.readerconnection.EdgeServerStub;
+import org.rifidi.edge.core.rmi.api.readerconnection.EdgeServerStub;
 import org.rifidi.rmi.utils.cache.ServerDescription;
 
 /**
