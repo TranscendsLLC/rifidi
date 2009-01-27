@@ -1,6 +1,6 @@
 package org.rifidi.edge.core.readersession.impl.enums;
 
-import org.rifidi.edge.core.readerplugin.commands.CommandReturnStatus;
+import org.rifidi.edge.core.api.readerplugin.commands.CommandReturnStatus;
 
 //TODO: This is a bit confusingly named, I got it mixed up with "CommandReturnStatus",
 

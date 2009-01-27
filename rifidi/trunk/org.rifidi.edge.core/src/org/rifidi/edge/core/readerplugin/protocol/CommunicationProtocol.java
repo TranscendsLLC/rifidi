@@ -1,6 +1,6 @@
 package org.rifidi.edge.core.readerplugin.protocol;
 
-import org.rifidi.edge.core.exceptions.RifidiInvalidMessageFormat;
+import org.rifidi.edge.core.api.exceptions.RifidiInvalidMessageFormat;
 
 /**
  * The CommunicationProtocol can convert Messages of a specific reader format

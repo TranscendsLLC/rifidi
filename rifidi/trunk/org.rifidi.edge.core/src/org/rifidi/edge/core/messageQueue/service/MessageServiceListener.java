@@ -1,6 +1,6 @@
 package org.rifidi.edge.core.messageQueue.service;
 
-import org.rifidi.edge.core.messageQueue.MessageQueue;
+import org.rifidi.edge.core.api.messageQueue.MessageQueue;
 
 /**
  * Listener to monitor the MessageService for new MessageQueues and for the

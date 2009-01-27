@@ -2,25 +2,24 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Rifidi Edge Core Plug-in
 Bundle-SymbolicName: org.rifidi.edge.core
-Bundle-Version: 1.1.0
+Bundle-Version: 2.0.0
 Bundle-Activator: org.rifidi.edge.core.Activator
 Bundle-Vendor: Pramari, LLC
 Bundle-ActivationPolicy: lazy
 Eclipse-BuddyPolicy: global
 Import-Package: org.apache.commons.logging;version="1.0.4",
- org.osgi.framework;version="1.4.0"
-Export-Package: org.rifidi.edge.core,
- org.rifidi.edge.core.communication,
- org.rifidi.edge.core.communication.service,
- org.rifidi.edge.core.exceptions,
- org.rifidi.edge.core.messageQueue,
+ org.osgi.framework;version="1.4.0",
+ org.rifidi.edge.core.api.communication;version="1.0.0",
+ org.rifidi.edge.core.api.exceptions;version="1.0.0",
+ org.rifidi.edge.core.api.messageQueue;version="1.0.0",
+ org.rifidi.edge.core.api.readerplugin.commands;version="1.0.0",
+ org.rifidi.edge.core.api.readerplugin.messages;version="1.0.0",
+ org.rifidi.edge.core.api.readerplugin.property;version="1.0.0"
+Export-Package: org.rifidi.edge.core.communication.service,
  org.rifidi.edge.core.messageQueue.service,
  org.rifidi.edge.core.readerplugin,
- org.rifidi.edge.core.readerplugin.commands,
  org.rifidi.edge.core.readerplugin.connectionmanager,
- org.rifidi.edge.core.readerplugin.messages,
  org.rifidi.edge.core.readerplugin.messages.impl,
- org.rifidi.edge.core.readerplugin.property,
  org.rifidi.edge.core.readerplugin.protocol,
  org.rifidi.edge.core.readerplugin.service,
  org.rifidi.edge.core.readerplugin.service.impl,

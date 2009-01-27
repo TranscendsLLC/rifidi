@@ -3,8 +3,8 @@
  */
 package org.rifidi.edge.core.readersession.impl;
 
-import org.rifidi.edge.core.readerplugin.commands.Command;
-import org.rifidi.edge.core.readerplugin.commands.CommandConfiguration;
+import org.rifidi.edge.core.api.readerplugin.commands.Command;
+import org.rifidi.edge.core.api.readerplugin.commands.CommandConfiguration;
 import org.rifidi.edge.core.readersession.impl.enums.CommandStatus;
 
 /**

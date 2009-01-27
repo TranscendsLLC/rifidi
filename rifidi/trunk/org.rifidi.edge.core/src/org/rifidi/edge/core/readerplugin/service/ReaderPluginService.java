@@ -3,7 +3,7 @@ package org.rifidi.edge.core.readerplugin.service;
 import java.util.List;
 
 import org.osgi.framework.Bundle;
-import org.rifidi.edge.core.exceptions.RifidiReaderInfoNotFoundException;
+import org.rifidi.edge.core.api.exceptions.RifidiReaderInfoNotFoundException;
 import org.rifidi.edge.core.readerplugin.ReaderPlugin;
 import org.w3c.dom.Document;
 

@@ -2,12 +2,12 @@ package org.rifidi.edge.core.readersession.impl.states;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.rifidi.edge.core.api.exceptions.RifidiCommandInterruptedException;
+import org.rifidi.edge.core.api.exceptions.RifidiCommandNotFoundException;
+import org.rifidi.edge.core.api.exceptions.RifidiConnectionException;
+import org.rifidi.edge.core.api.readerplugin.commands.CommandConfiguration;
 import org.rifidi.edge.core.communication.service.ConnectionStatus;
-import org.rifidi.edge.core.exceptions.RifidiCommandInterruptedException;
-import org.rifidi.edge.core.exceptions.RifidiCommandNotFoundException;
-import org.rifidi.edge.core.exceptions.RifidiConnectionException;
 import org.rifidi.edge.core.readerplugin.ReaderInfo;
-import org.rifidi.edge.core.readerplugin.commands.CommandConfiguration;
 import org.rifidi.edge.core.readersession.impl.ReaderSessionState;
 import org.rifidi.edge.core.readersession.impl.enums.ReaderSessionStatus;
 import org.w3c.dom.Document;

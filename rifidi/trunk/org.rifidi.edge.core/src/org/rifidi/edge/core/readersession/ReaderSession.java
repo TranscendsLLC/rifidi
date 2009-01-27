@@ -1,12 +1,12 @@
 package org.rifidi.edge.core.readersession;
 
-import org.rifidi.edge.core.exceptions.RifidiCannotRestartCommandException;
-import org.rifidi.edge.core.exceptions.RifidiCommandInterruptedException;
-import org.rifidi.edge.core.exceptions.RifidiCommandNotFoundException;
-import org.rifidi.edge.core.exceptions.RifidiConnectionException;
-import org.rifidi.edge.core.exceptions.RifidiInvalidConfigurationException;
+import org.rifidi.edge.core.api.exceptions.RifidiCannotRestartCommandException;
+import org.rifidi.edge.core.api.exceptions.RifidiCommandInterruptedException;
+import org.rifidi.edge.core.api.exceptions.RifidiCommandNotFoundException;
+import org.rifidi.edge.core.api.exceptions.RifidiConnectionException;
+import org.rifidi.edge.core.api.exceptions.RifidiInvalidConfigurationException;
+import org.rifidi.edge.core.api.readerplugin.commands.CommandConfiguration;
 import org.rifidi.edge.core.readerplugin.ReaderInfo;
-import org.rifidi.edge.core.readerplugin.commands.CommandConfiguration;
 import org.rifidi.edge.core.readersession.impl.enums.CommandStatus;
 import org.rifidi.edge.core.readersession.impl.enums.ReaderSessionStatus;
 import org.w3c.dom.Document;

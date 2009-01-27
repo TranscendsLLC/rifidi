@@ -2,7 +2,7 @@ package org.rifidi.edge.core.readerplugin.messages.impl;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.rifidi.edge.core.readerplugin.messages.Message;
+import org.rifidi.edge.core.api.readerplugin.messages.Message;
 
 /**
  * This is a Message containing information about a tag.
@@ -53,7 +53,7 @@ public class TagMessage implements Message {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.rifidi.edge.core.readerplugin.messages.Message#toXML()
+	 * @see org.rifidi.edge.core.api.readerplugin.messages.Message#toXML()
 	 */
 	@Override
 	public String toXML() {

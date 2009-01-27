@@ -15,7 +15,7 @@ import javax.xml.bind.Unmarshaller;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.osgi.framework.Bundle;
-import org.rifidi.edge.core.exceptions.RifidiReaderInfoNotFoundException;
+import org.rifidi.edge.core.api.exceptions.RifidiReaderInfoNotFoundException;
 import org.rifidi.edge.core.readerplugin.ReaderInfo;
 import org.rifidi.edge.core.readerplugin.ReaderPlugin;
 import org.rifidi.edge.core.readerplugin.service.ReaderPluginListener;
