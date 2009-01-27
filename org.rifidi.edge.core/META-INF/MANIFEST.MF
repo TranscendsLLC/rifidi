@@ -14,7 +14,8 @@ Import-Package: org.apache.commons.logging;version="1.0.4",
  org.rifidi.edge.core.api.messageQueue;version="1.0.0",
  org.rifidi.edge.core.api.readerplugin.commands;version="1.0.0",
  org.rifidi.edge.core.api.readerplugin.messages;version="1.0.0",
- org.rifidi.edge.core.api.readerplugin.property;version="1.0.0"
+ org.rifidi.edge.core.api.readerplugin.property;version="1.0.0",
+ org.rifidi.edge.core.api.readersession.enums;version="[1.0.0,1.1.0)"
 Export-Package: org.rifidi.edge.core.communication.service,
  org.rifidi.edge.core.messageQueue.service,
  org.rifidi.edge.core.readerplugin,
@@ -26,7 +27,6 @@ Export-Package: org.rifidi.edge.core.communication.service,
  org.rifidi.edge.core.readerplugin.xml,
  org.rifidi.edge.core.readersession,
  org.rifidi.edge.core.readersession.impl,
- org.rifidi.edge.core.readersession.impl.enums,
  org.rifidi.edge.core.readersession.impl.states,
  org.rifidi.edge.core.readersession.service,
  org.rifidi.edge.core.readersession.service.impl

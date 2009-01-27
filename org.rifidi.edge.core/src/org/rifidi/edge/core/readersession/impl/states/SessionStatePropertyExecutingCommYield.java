@@ -8,13 +8,13 @@ import org.rifidi.edge.core.api.exceptions.RifidiCommandNotFoundException;
 import org.rifidi.edge.core.api.exceptions.RifidiConnectionException;
 import org.rifidi.edge.core.api.exceptions.RifidiExecutionException;
 import org.rifidi.edge.core.api.readerplugin.commands.CommandConfiguration;
+import org.rifidi.edge.core.api.readersession.enums.CommandStatus;
+import org.rifidi.edge.core.api.readersession.enums.ReaderSessionStatus;
 import org.rifidi.edge.core.communication.service.ConnectionStatus;
 import org.rifidi.edge.core.readerplugin.ReaderInfo;
 import org.rifidi.edge.core.readersession.impl.CommandExecutionListener;
 import org.rifidi.edge.core.readersession.impl.ExecutionThread;
 import org.rifidi.edge.core.readersession.impl.ReaderSessionState;
-import org.rifidi.edge.core.readersession.impl.enums.CommandStatus;
-import org.rifidi.edge.core.readersession.impl.enums.ReaderSessionStatus;
 import org.w3c.dom.Document;
 
 public class SessionStatePropertyExecutingCommYield implements
