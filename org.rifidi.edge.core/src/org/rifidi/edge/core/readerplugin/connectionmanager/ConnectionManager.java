@@ -1,7 +1,7 @@
 package org.rifidi.edge.core.readerplugin.connectionmanager;
 
-import org.rifidi.edge.core.communication.Connection;
-import org.rifidi.edge.core.exceptions.RifidiConnectionException;
+import org.rifidi.edge.core.api.communication.Connection;
+import org.rifidi.edge.core.api.exceptions.RifidiConnectionException;
 import org.rifidi.edge.core.readerplugin.ReaderInfo;
 import org.rifidi.edge.core.readerplugin.protocol.CommunicationProtocol;
 

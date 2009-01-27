@@ -6,22 +6,22 @@ import java.util.concurrent.Semaphore;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.rifidi.edge.core.communication.Connection;
+import org.rifidi.edge.core.api.communication.Connection;
+import org.rifidi.edge.core.api.exceptions.RifidiCannotRestartCommandException;
+import org.rifidi.edge.core.api.exceptions.RifidiCommandInterruptedException;
+import org.rifidi.edge.core.api.exceptions.RifidiCommandNotFoundException;
+import org.rifidi.edge.core.api.exceptions.RifidiConnectionException;
+import org.rifidi.edge.core.api.exceptions.RifidiInvalidConfigurationException;
+import org.rifidi.edge.core.api.messageQueue.MessageQueue;
+import org.rifidi.edge.core.api.readerplugin.commands.Command;
+import org.rifidi.edge.core.api.readerplugin.commands.CommandConfiguration;
+import org.rifidi.edge.core.api.readerplugin.commands.CommandReturnStatus;
 import org.rifidi.edge.core.communication.service.CommunicationStateListener;
 import org.rifidi.edge.core.communication.service.ConnectionService;
 import org.rifidi.edge.core.communication.service.ConnectionStatus;
-import org.rifidi.edge.core.exceptions.RifidiCannotRestartCommandException;
-import org.rifidi.edge.core.exceptions.RifidiCommandInterruptedException;
-import org.rifidi.edge.core.exceptions.RifidiCommandNotFoundException;
-import org.rifidi.edge.core.exceptions.RifidiConnectionException;
-import org.rifidi.edge.core.exceptions.RifidiInvalidConfigurationException;
-import org.rifidi.edge.core.messageQueue.MessageQueue;
 import org.rifidi.edge.core.messageQueue.service.MessageService;
 import org.rifidi.edge.core.readerplugin.ReaderInfo;
 import org.rifidi.edge.core.readerplugin.ReaderPlugin;
-import org.rifidi.edge.core.readerplugin.commands.Command;
-import org.rifidi.edge.core.readerplugin.commands.CommandConfiguration;
-import org.rifidi.edge.core.readerplugin.commands.CommandReturnStatus;
 import org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionManager;
 import org.rifidi.edge.core.readerplugin.xml.CommandDescription;
 import org.rifidi.edge.core.readersession.ReaderSession;
@@ -339,8 +339,8 @@ public class ReaderSessionImpl implements ReaderSession, ReaderSessionState,
 	 * (non-Javadoc)
 	 * 
 	 * @seeorg.rifidi.edge.core.readersession.impl.CommandExecutionListener#
-	 * commandFinished(org.rifidi.edge.core.readerplugin.commands.Command,
-	 * org.rifidi.edge.core.readerplugin.commands.CommandReturnStatus)
+	 * commandFinished(org.rifidi.edge.core.api.readerplugin.commands.Command,
+	 * org.rifidi.edge.core.api.readerplugin.commands.CommandReturnStatus)
 	 */
 	@Override
 	public void commandFinished(Command command, CommandReturnStatus status) {
@@ -356,7 +356,7 @@ public class ReaderSessionImpl implements ReaderSession, ReaderSessionState,
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.communication.service.CommunicationStateListener
+	 * org.rifidi.edge.core.api.communication.service.CommunicationStateListener
 	 * #connected()
 	 */
 	@Override
@@ -373,7 +373,7 @@ public class ReaderSessionImpl implements ReaderSession, ReaderSessionState,
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.communication.service.CommunicationStateListener
+	 * org.rifidi.edge.core.api.communication.service.CommunicationStateListener
 	 * #error()
 	 */
 	@Override
