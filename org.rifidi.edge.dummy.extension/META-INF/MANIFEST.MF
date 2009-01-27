@@ -1,8 +1,0 @@
-Manifest-Version: 1.0
-Bundle-ManifestVersion: 2
-Bundle-Name: Extension Fragment
-Bundle-SymbolicName: org.rifidi.edge.dummy.extension
-Bundle-Version: 1.0.0
-Bundle-Vendor: Pramari,LLC
-Fragment-Host: org.rifidi.edge.readerplugin.dummy;bundle-version="1.0.0"
-Export-Package: org.rifidi.edge.dummy.extension
