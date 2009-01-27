@@ -23,12 +23,12 @@ import org.rifidi.dynamicswtforms.xml.annotaions.Form;
 import org.rifidi.dynamicswtforms.xml.annotaions.FormElement;
 import org.rifidi.dynamicswtforms.xml.constants.FormElementType;
 import org.rifidi.edge.common.utilities.converter.ByteAndHexConvertingUtility;
-import org.rifidi.edge.core.communication.Connection;
-import org.rifidi.edge.core.exceptions.RifidiMessageQueueException;
-import org.rifidi.edge.core.messageQueue.MessageQueue;
-import org.rifidi.edge.core.readerplugin.commands.Command;
-import org.rifidi.edge.core.readerplugin.commands.CommandConfiguration;
-import org.rifidi.edge.core.readerplugin.commands.CommandReturnStatus;
+import org.rifidi.edge.core.api.communication.Connection;
+import org.rifidi.edge.core.api.exceptions.RifidiMessageQueueException;
+import org.rifidi.edge.core.api.messageQueue.MessageQueue;
+import org.rifidi.edge.core.api.readerplugin.commands.Command;
+import org.rifidi.edge.core.api.readerplugin.commands.CommandConfiguration;
+import org.rifidi.edge.core.api.readerplugin.commands.CommandReturnStatus;
 import org.rifidi.edge.core.readerplugin.messages.impl.EnhancedTagMessage;
 import org.rifidi.edge.core.readerplugin.messages.impl.TagMessage;
 import org.rifidi.edge.readerplugin.alien.properties.AlienTagGenerations;
@@ -281,6 +281,8 @@ public class AlienTagStreamCommand implements Command {
 					// newTagRead.setSignalStrength(Float.parseFloat(signalStrength));
 					retVal.add(newTagRead);
 
+				}else{
+					logger.error("Something is invalid: " + splitString2[0]);
 				}
 			}
 		} catch (Exception e) {

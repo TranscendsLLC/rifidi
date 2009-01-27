@@ -7,7 +7,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.rifidi.edge.core.readerplugin.messages.Message;
+import org.rifidi.edge.core.api.readerplugin.messages.Message;
 
 /**
  * @author Jerry Maine - jerry@pramari.com
