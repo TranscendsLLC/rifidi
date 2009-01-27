@@ -1,12 +1,12 @@
 package org.rifidi.edge.readerplugin.alien.command.extension;
 
-import org.rifidi.edge.core.communication.Connection;
-import org.rifidi.edge.core.exceptions.RifidiMessageQueueException;
-import org.rifidi.edge.core.messageQueue.MessageQueue;
-import org.rifidi.edge.core.readerplugin.commands.Command;
-import org.rifidi.edge.core.readerplugin.commands.CommandConfiguration;
-import org.rifidi.edge.core.readerplugin.commands.CommandReturnStatus;
-import org.rifidi.edge.core.readerplugin.messages.Message;
+import org.rifidi.edge.core.api.communication.Connection;
+import org.rifidi.edge.core.api.exceptions.RifidiMessageQueueException;
+import org.rifidi.edge.core.api.messageQueue.MessageQueue;
+import org.rifidi.edge.core.api.readerplugin.commands.Command;
+import org.rifidi.edge.core.api.readerplugin.commands.CommandConfiguration;
+import org.rifidi.edge.core.api.readerplugin.commands.CommandReturnStatus;
+import org.rifidi.edge.core.api.readerplugin.messages.Message;
 
 public class TestExtensionCommand implements Command {
 
