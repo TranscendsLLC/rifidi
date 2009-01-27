@@ -1,8 +1,8 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Rifidi Edge Jms Plug-in
+Bundle-Name: Rifidi Edge JMS Plug-in
 Bundle-SymbolicName: org.rifidi.edge.jms
-Bundle-Version: 1.1.0
+Bundle-Version: 1.1.1
 Bundle-Activator: org.rifidi.edge.jms.Activator
 Bundle-Vendor: Pramari, LLC
 Import-Package: javax.jms,
@@ -10,9 +10,12 @@ Import-Package: javax.jms,
  org.apache.activemq.broker;version="5.1.0",
  org.apache.activemq.command;version="5.1.0",
  org.apache.commons.logging;version="1.0.4",
- org.osgi.framework;version="1.4.0"
+ org.osgi.framework;version="1.4.0",
+ org.rifidi.edge.core.api.exceptions;version="1.0.0",
+ org.rifidi.edge.core.api.messageQueue;version="1.0.0",
+ org.rifidi.edge.core.api.readerplugin.messages;version="1.0.0"
 Bundle-ClassPath: .
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
-Require-Bundle: org.rifidi.edge.core;bundle-version="1.1.0",
- org.rifidi.edge.services;bundle-version="1.1.0"
+Require-Bundle: org.rifidi.edge.services;bundle-version="1.1.0",
+ org.rifidi.edge.core;bundle-version="1.1.0"
