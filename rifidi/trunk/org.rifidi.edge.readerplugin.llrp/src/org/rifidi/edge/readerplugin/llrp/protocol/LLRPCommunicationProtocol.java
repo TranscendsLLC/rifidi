@@ -11,7 +11,7 @@ import org.llrp.ltk.exceptions.InvalidLLRPMessageException;
 import org.llrp.ltk.generated.messages.LLRPMessageFactory;
 import org.llrp.ltk.types.LLRPMessage;
 import org.rifidi.edge.common.utilities.converter.ByteAndHexConvertingUtility;
-import org.rifidi.edge.core.exceptions.RifidiInvalidMessageFormat;
+import org.rifidi.edge.core.api.exceptions.RifidiInvalidMessageFormat;
 import org.rifidi.edge.core.readerplugin.protocol.CommunicationProtocol;
 
 /**
