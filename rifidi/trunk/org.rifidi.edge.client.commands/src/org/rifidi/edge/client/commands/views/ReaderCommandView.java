@@ -23,8 +23,8 @@ import org.jdom.Element;
 import org.rifidi.dynamicswtforms.ui.widgets.standard.StandardDynamicSWTForm;
 import org.rifidi.edge.client.connections.remotereader.RemoteReader;
 import org.rifidi.edge.client.connections.views.EdgeServerConnectionView;
-import org.rifidi.edge.core.readerplugin.commands.CommandArgument;
-import org.rifidi.edge.core.readerplugin.commands.CommandConfiguration;
+import org.rifidi.edge.core.api.readerplugin.commands.CommandArgument;
+import org.rifidi.edge.core.api.readerplugin.commands.CommandConfiguration;
 
 public class ReaderCommandView extends ViewPart {
 

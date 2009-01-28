@@ -21,9 +21,10 @@ import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.client.connections.exceptions.CannotCreateRemoteReaderException;
 import org.rifidi.edge.client.connections.remotereader.RemoteReader;
 import org.rifidi.edge.client.connections.remotereader.RemoteReaderID;
-import org.rifidi.edge.core.exceptions.RifidiException;
-import org.rifidi.edge.core.exceptions.RifidiReaderInfoNotFoundException;
-import org.rifidi.edge.core.exceptions.RifidiReaderPluginXMLNotFoundException;
+import org.rifidi.edge.core.api.exceptions.RifidiException;
+import org.rifidi.edge.core.api.exceptions.RifidiReaderInfoNotFoundException;
+import org.rifidi.edge.core.api.exceptions.RifidiReaderPluginXMLNotFoundException;
+import org.rifidi.edge.core.rmi.api.readerconnection.returnobjects.ReaderSessionProperties;
 import org.rifidi.edge.core.rmi.client.edgeserverstub.ESCreateReaderSessionCall;
 import org.rifidi.edge.core.rmi.client.edgeserverstub.ESDeleteReaderSessionCall;
 import org.rifidi.edge.core.rmi.client.edgeserverstub.ESGetAllReaderSessionIDsCall;
@@ -38,7 +39,6 @@ import org.rifidi.edge.core.rmi.client.pluginstub.valueobjects.ReaderPluginWrapp
 import org.rifidi.edge.core.rmi.client.sessionstub.SessionGetSessionPropsCall;
 import org.rifidi.edge.core.rmi.client.sessionstub.SessionServerDescription;
 import org.rifidi.edge.core.rmi.client.sessionstub.valueobjects.ReaderInfoWrapper;
-import org.rifidi.edge.core.rmi.readerconnection.returnobjects.ReaderSessionProperties;
 import org.rifidi.rmi.utils.exceptions.ServerUnavailable;
 
 /**

@@ -12,7 +12,7 @@ import javax.jms.Session;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.rifidi.edge.core.rmi.readerconnection.returnobjects.ReaderSessionProperties;
+import org.rifidi.edge.core.rmi.api.readerconnection.returnobjects.ReaderSessionProperties;
 
 public class JMSConsumerFactory {
 	// static Set<JMSConsumerFactory> factories = new
