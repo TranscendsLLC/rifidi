@@ -2,18 +2,18 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Rifidi Edge Core Plug-in
 Bundle-SymbolicName: org.rifidi.edge.core
-Bundle-Version: 2.0.0
+Bundle-Version: 2.1.0
 Bundle-Activator: org.rifidi.edge.core.Activator
 Bundle-Vendor: Pramari, LLC
 Bundle-ActivationPolicy: lazy
 Eclipse-BuddyPolicy: global
 Import-Package: org.apache.commons.logging;version="1.0.4",
  org.osgi.framework;version="1.4.0",
- org.rifidi.edge.core.api.communication;version="1.0.0",
- org.rifidi.edge.core.api.exceptions;version="1.0.0",
- org.rifidi.edge.core.api.messageQueue;version="1.0.0",
- org.rifidi.edge.core.api.readerplugin.commands;version="1.0.0",
- org.rifidi.edge.core.api.readerplugin.messages;version="1.0.0",
+ org.rifidi.edge.core.api.communication;version="[1.0.0,1.1.0)",
+ org.rifidi.edge.core.api.exceptions;version="[1.0.0,1.1.0)",
+ org.rifidi.edge.core.api.messageQueue;version="[1.0.0,1.1.0)",
+ org.rifidi.edge.core.api.readerplugin.commands;version="[1.0.0,1.1.0)",
+ org.rifidi.edge.core.api.readerplugin.messages;version="[1.0.0,1.1.0)",
  org.rifidi.edge.core.api.readerplugin.messages.impl;version="[1.0.0,1.1.0)",
  org.rifidi.edge.core.api.readerplugin.property;version="1.0.0",
  org.rifidi.edge.core.api.readersession.enums;version="[1.0.0,1.1.0)"
