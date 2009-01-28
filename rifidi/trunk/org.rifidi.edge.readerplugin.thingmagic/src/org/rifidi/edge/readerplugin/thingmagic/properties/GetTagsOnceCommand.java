@@ -7,8 +7,8 @@ import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.common.utilities.converter.ByteAndHexConvertingUtility;
 import org.rifidi.edge.core.api.communication.Connection;
 import org.rifidi.edge.core.api.messageQueue.MessageQueue;
+import org.rifidi.edge.core.api.readerplugin.messages.impl.TagMessage;
 import org.rifidi.edge.core.api.readerplugin.property.Property;
-import org.rifidi.edge.core.readerplugin.messages.impl.TagMessage;
 import org.w3c.dom.Element;
 
 /**

@@ -12,7 +12,7 @@ import org.rifidi.edge.core.api.messageQueue.MessageQueue;
 import org.rifidi.edge.core.api.readerplugin.commands.Command;
 import org.rifidi.edge.core.api.readerplugin.commands.CommandConfiguration;
 import org.rifidi.edge.core.api.readerplugin.commands.CommandReturnStatus;
-import org.rifidi.edge.core.readerplugin.messages.impl.TagMessage;
+import org.rifidi.edge.core.api.readerplugin.messages.impl.TagMessage;
 
 /**
  * @author Jerry Maine - jerry@pramari.com
