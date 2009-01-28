@@ -18,3 +18,8 @@ Import-Package: org.apache.commons.logging;version="1.0.4",
  org.rifidi.edge.core.rmi.api.readerconnection;version="[1.0.0,1.1.0)",
  org.rifidi.edge.core.rmi.api.readerconnection.exceptions;version="[1.0.0,1.1.0)",
  org.rifidi.edge.core.rmi.api.readerconnection.returnobjects;version="[1.0.0,1.1.0)"
+Export-Package: org.rifidi.edge.core.rmi.client.edgeserverstub,
+ org.rifidi.edge.core.rmi.client.pluginstub,
+ org.rifidi.edge.core.rmi.client.pluginstub.valueobjects,
+ org.rifidi.edge.core.rmi.client.sessionstub,
+ org.rifidi.edge.core.rmi.client.sessionstub.valueobjects
