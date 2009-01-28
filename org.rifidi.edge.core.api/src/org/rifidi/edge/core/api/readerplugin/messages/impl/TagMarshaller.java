@@ -9,7 +9,7 @@
  *  http://www.opensource.org/licenses/lgpl-license.html
  */
 
-package org.rifidi.edge.core.readerplugin.messages.impl;
+package org.rifidi.edge.core.api.readerplugin.messages.impl;
 
 import java.io.StringWriter;
 

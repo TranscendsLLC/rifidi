@@ -1,4 +1,4 @@
-package org.rifidi.edge.core.readerplugin.messages.impl;
+package org.rifidi.edge.core.api.readerplugin.messages.impl;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
