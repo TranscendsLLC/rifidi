@@ -10,5 +10,6 @@ Export-Package: org.rifidi.edge.core.api.communication;version="1.0.0",
  org.rifidi.edge.core.api.messageQueue;version="1.0.0",
  org.rifidi.edge.core.api.readerplugin.commands;version="1.0.0",
  org.rifidi.edge.core.api.readerplugin.messages;version="1.0.0",
+ org.rifidi.edge.core.api.readerplugin.messages.impl;version="1.0.0",
  org.rifidi.edge.core.api.readerplugin.property;version="1.0.0",
  org.rifidi.edge.core.api.readersession.enums;version="1.0.0"
