@@ -18,9 +18,9 @@ import org.rifidi.dynamicswtforms.xml.constants.FormData;
 import org.rifidi.edge.client.connections.exceptions.CannotExecutePropertyException;
 import org.rifidi.edge.client.connections.remotereader.RemoteReader;
 import org.rifidi.edge.client.properties.dynamicSWTForms.TabbedPropertyForm;
-import org.rifidi.edge.core.readerplugin.commands.CommandArgument;
-import org.rifidi.edge.core.readerplugin.commands.CommandConfiguration;
-import org.rifidi.edge.core.readerplugin.property.PropertyConfiguration;
+import org.rifidi.edge.core.api.readerplugin.commands.CommandArgument;
+import org.rifidi.edge.core.api.readerplugin.commands.CommandConfiguration;
+import org.rifidi.edge.core.api.readerplugin.property.PropertyConfiguration;
 
 /**
  * The ReaderPropertySection represents a single Section on the TabbedProperty

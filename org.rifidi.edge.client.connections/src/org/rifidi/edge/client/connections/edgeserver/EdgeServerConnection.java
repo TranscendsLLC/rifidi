@@ -12,9 +12,9 @@ import org.rifidi.edge.client.connections.exceptions.CannotCreateRemoteReaderExc
 import org.rifidi.edge.client.connections.registryservice.RemoteReaderConnectionRegistryService;
 import org.rifidi.edge.client.connections.remotereader.RemoteReaderID;
 import org.rifidi.edge.client.connections.util.JMSConsumerFactory;
-import org.rifidi.edge.core.exceptions.RifidiException;
-import org.rifidi.edge.core.exceptions.RifidiReaderInfoNotFoundException;
-import org.rifidi.edge.core.exceptions.RifidiReaderPluginXMLNotFoundException;
+import org.rifidi.edge.core.api.exceptions.RifidiException;
+import org.rifidi.edge.core.api.exceptions.RifidiReaderInfoNotFoundException;
+import org.rifidi.edge.core.api.exceptions.RifidiReaderPluginXMLNotFoundException;
 import org.rifidi.edge.core.rmi.client.edgeserverstub.ESServerDescription;
 import org.rifidi.edge.core.rmi.client.pluginstub.RPServerDescription;
 import org.rifidi.edge.core.rmi.client.pluginstub.valueobjects.FormAnnotationListWrapper;

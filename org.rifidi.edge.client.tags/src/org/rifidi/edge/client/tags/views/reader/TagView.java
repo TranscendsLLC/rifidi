@@ -20,12 +20,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.part.ViewPart;
@@ -33,8 +30,7 @@ import org.rifidi.edge.client.connections.remotereader.RemoteReader;
 import org.rifidi.edge.client.connections.remotereader.listeners.ReaderMessageListener;
 import org.rifidi.edge.client.tags.utils.TagContainer;
 import org.rifidi.edge.client.tags.utils.TagMessageUnmarshaller;
-import org.rifidi.edge.core.readerplugin.messages.impl.EnhancedTagMessage;
-import org.rifidi.edge.core.readerplugin.messages.impl.TagMessage;
+import org.rifidi.edge.core.api.readerplugin.messages.impl.TagMessage;
 import org.rifidi.services.registry.ServiceRegistry;
 
 /**
@@ -52,7 +48,7 @@ public class TagView extends ViewPart implements ReaderMessageListener {
 	private Set<TagContainer> tags = new TreeSet<TagContainer>();
 
 	private AtomicBoolean lock = new AtomicBoolean(false);
-	
+
 	private Listener selChangeListener = new Listener() {
 		public void handleEvent(Event event) {
 			table.getTable().setSortColumn((TableColumn) event.widget);
@@ -71,21 +67,21 @@ public class TagView extends ViewPart implements ReaderMessageListener {
 				+ " control.");
 		ServiceRegistry.getInstance().service(this);
 
-//		composite = new Composite(parent, SWT.NONE);
-//		composite.setLayout(new RowLayout());
-//
-//		Group group = new Group(composite, SWT.NONE);
-//		group.setText("Antenna Selection");
-//		group.setLayout(new FillLayout());
-//
-//		for (int i = 0; i < 3; i++) {
-//			Button button = new Button(group, SWT.CHECK);
-//			button.setText("Antenna #" + i);
-//			button.setData("Antenna", i);
-//			button.setSelection(true);
-//			buttons.add(button);
-//
-//		}
+		// composite = new Composite(parent, SWT.NONE);
+		// composite.setLayout(new RowLayout());
+		//
+		// Group group = new Group(composite, SWT.NONE);
+		// group.setText("Antenna Selection");
+		// group.setLayout(new FillLayout());
+		//
+		// for (int i = 0; i < 3; i++) {
+		// Button button = new Button(group, SWT.CHECK);
+		// button.setText("Antenna #" + i);
+		// button.setData("Antenna", i);
+		// button.setSelection(true);
+		// buttons.add(button);
+		//
+		// }
 
 		table = new TableViewer(parent, SWT.BORDER | SWT.V_SCROLL | SWT.WRAP
 				| SWT.H_SCROLL | SWT.FULL_SELECTION);
@@ -137,9 +133,9 @@ public class TagView extends ViewPart implements ReaderMessageListener {
 
 	@Override
 	public void onMessage(Message message, RemoteReader reader) {
-		logger.debug(this.getClass().getName()+": "+message.toString());
-		 logger.debug("TagView: onMessage: " + message.toString() +
-		 " from Reader: "+reader.toString());
+		logger.debug(this.getClass().getName() + ": " + message.toString());
+		logger.debug("TagView: onMessage: " + message.toString()
+				+ " from Reader: " + reader.toString());
 		if (lock.compareAndSet(false, true)) {
 			table.getTable().getDisplay().syncExec(
 					new MessageRunner((TextMessage) message));
@@ -152,14 +148,14 @@ public class TagView extends ViewPart implements ReaderMessageListener {
 		thread = new RefreshThread();
 		thread.start();
 	}
-	
-	public HashSet<Integer> getSelectedAntennas(){
+
+	public HashSet<Integer> getSelectedAntennas() {
 		HashSet<Integer> selectedAnt = new HashSet<Integer>();
 		for (Button button : buttons) {
-			if(button.getSelection()){
-				selectedAnt.add((Integer)button.getData("Antenna"));
+			if (button.getSelection()) {
+				selectedAnt.add((Integer) button.getData("Antenna"));
 			}
-			
+
 		}
 		return selectedAnt;
 	}
@@ -185,7 +181,7 @@ public class TagView extends ViewPart implements ReaderMessageListener {
 					connection.removeMessageListener(TagView.this);
 					return;
 				}
-				TagMessage tagMessage=new TagMessage();
+				TagMessage tagMessage = new TagMessage();
 				try {
 
 					tagMessage = (TagMessage) TagMessageUnmarshaller
@@ -195,9 +191,11 @@ public class TagView extends ViewPart implements ReaderMessageListener {
 					connection.removeMessageListener(TagView.this);
 					return;
 				}
-				//TODO: check if tag is on a selected antenna - if not: throw it out.
-//				EnhancedTagMessage etm = (EnhancedTagMessage)tagMessage;
-//				if(!getSelectedAntennas().contains(etm.getAntennaId())) return;
+				// TODO: check if tag is on a selected antenna - if not: throw
+				// it out.
+				// EnhancedTagMessage etm = (EnhancedTagMessage)tagMessage;
+				// if(!getSelectedAntennas().contains(etm.getAntennaId()))
+				// return;
 				TagContainer tm2;
 				if ((tm2 = getTagByID(tagMessage, tags)) != null) {
 					tm2.setTag(tagMessage);

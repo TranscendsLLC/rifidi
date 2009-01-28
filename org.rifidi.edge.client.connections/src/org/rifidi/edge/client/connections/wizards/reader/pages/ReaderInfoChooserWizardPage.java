@@ -13,7 +13,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.rifidi.edge.client.connections.edgeserver.EdgeServerConnection;
-import org.rifidi.edge.core.exceptions.RifidiReaderPluginXMLNotFoundException;
+import org.rifidi.edge.core.api.exceptions.RifidiReaderPluginXMLNotFoundException;
 import org.rifidi.rmi.utils.exceptions.ServerUnavailable;
 
 public class ReaderInfoChooserWizardPage extends WizardPage {

@@ -20,4 +20,6 @@ Export-Package: org.rifidi.edge.client.properties,
  org.rifidi.edge.client.properties.sections,
  org.rifidi.edge.client.properties.tabs
 Import-Package: org.jdom;version="1.0.0",
- org.jdom.input;version="1.0.0"
+ org.jdom.input;version="1.0.0",
+ org.rifidi.edge.core.api.readerplugin.commands;version="1.0.0",
+ org.rifidi.edge.core.api.readerplugin.property;version="1.0.0"

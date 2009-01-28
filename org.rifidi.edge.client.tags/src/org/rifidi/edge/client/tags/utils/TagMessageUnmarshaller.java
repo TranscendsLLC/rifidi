@@ -6,8 +6,8 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
-import org.rifidi.edge.core.readerplugin.messages.impl.EnhancedTagMessage;
-import org.rifidi.edge.core.readerplugin.messages.impl.TagMessage;
+import org.rifidi.edge.core.api.readerplugin.messages.impl.EnhancedTagMessage;
+import org.rifidi.edge.core.api.readerplugin.messages.impl.TagMessage;
 
 public class TagMessageUnmarshaller {
 

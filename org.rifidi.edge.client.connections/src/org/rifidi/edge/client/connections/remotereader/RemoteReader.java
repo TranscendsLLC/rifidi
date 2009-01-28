@@ -1,6 +1,5 @@
 package org.rifidi.edge.client.connections.remotereader;
 
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -23,12 +22,14 @@ import org.rifidi.edge.client.connections.remotereader.listeners.ReaderStateList
 import org.rifidi.edge.client.connections.util.JMSConsumerFactory;
 import org.rifidi.edge.common.utilities.expiration.ExpiringHashMap;
 import org.rifidi.edge.common.utilities.expiration.ExpiringObject;
-import org.rifidi.edge.core.exceptions.RifidiException;
-import org.rifidi.edge.core.exceptions.RifidiReaderInfoNotFoundException;
-import org.rifidi.edge.core.exceptions.RifidiReaderPluginXMLNotFoundException;
-import org.rifidi.edge.core.readerplugin.commands.CommandConfiguration;
-import org.rifidi.edge.core.readerplugin.property.PropertyConfiguration;
-import org.rifidi.edge.core.readersession.impl.enums.ReaderSessionStatus;
+import org.rifidi.edge.core.api.exceptions.RifidiException;
+import org.rifidi.edge.core.api.exceptions.RifidiReaderInfoNotFoundException;
+import org.rifidi.edge.core.api.exceptions.RifidiReaderPluginXMLNotFoundException;
+import org.rifidi.edge.core.api.readerplugin.commands.CommandConfiguration;
+import org.rifidi.edge.core.api.readerplugin.property.PropertyConfiguration;
+import org.rifidi.edge.core.api.readersession.enums.ReaderSessionStatus;
+import org.rifidi.edge.core.rmi.api.readerconnection.returnobjects.CommandInfo;
+import org.rifidi.edge.core.rmi.api.readerconnection.returnobjects.ReaderSessionProperties;
 import org.rifidi.edge.core.rmi.client.pluginstub.valueobjects.FormAnnotationListWrapper;
 import org.rifidi.edge.core.rmi.client.pluginstub.valueobjects.ReaderPluginWrapper;
 import org.rifidi.edge.core.rmi.client.sessionstub.SessionCommandStatusCall;
@@ -44,7 +45,6 @@ import org.rifidi.edge.core.rmi.client.sessionstub.SessionSetPropertyCall;
 import org.rifidi.edge.core.rmi.client.sessionstub.SessionSetReaderInfoCall;
 import org.rifidi.edge.core.rmi.client.sessionstub.SessionStopCurCommandCall;
 import org.rifidi.edge.core.rmi.client.sessionstub.valueobjects.ReaderInfoWrapper;
-import org.rifidi.edge.core.rmi.readerconnection.returnobjects.ReaderSessionProperties;
 import org.rifidi.rmi.utils.cache.ServerDescription;
 import org.rifidi.rmi.utils.cache.util.RemoteStubCacheUtil;
 import org.rifidi.rmi.utils.exceptions.ServerUnavailable;
@@ -154,7 +154,7 @@ public class RemoteReader implements MessageListener {
 			RemoteReaderID remoteReaderID, int serverID,
 			ServerDescription serverDesc) {
 		ServiceRegistry.getInstance().service(this);
-		logger.debug(this.getClass().getName()+": created");
+		logger.debug(this.getClass().getName() + ": created");
 		this.jmsFactory = jmsFactory;
 		this.remoteReaderID = remoteReaderID;
 		this.serverID = serverID;
@@ -565,7 +565,7 @@ public class RemoteReader implements MessageListener {
 	 */
 	public String currentlyExecutingCommand() {
 		SessionCommandStatusCall call = new SessionCommandStatusCall(sessionSD);
-		org.rifidi.edge.core.rmi.readerconnection.returnobjects.CommandInfo ci;
+		CommandInfo ci;
 		try {
 			ci = call.makeCall();
 			return ci.getCommandName();
@@ -630,13 +630,13 @@ public class RemoteReader implements MessageListener {
 
 	@Override
 	public void onMessage(Message message) {
-		logger.debug(this.getReaderInfo().getString()+": in onMessageMethod");
+		logger.debug(message + ": in onMessageMethod");
 		synchronized (messageListeners) {
-			logger.debug(this.getReaderInfo().getString()+": in synchronized block");
+
 			for (ReaderMessageListener messageListener : messageListeners) {
 				messageListener.onMessage(message, this);
 			}
-			logger.debug(this.getReaderInfo().getString()+": after sync block");
+
 			messageListeners.notifyAll();
 		}
 	}

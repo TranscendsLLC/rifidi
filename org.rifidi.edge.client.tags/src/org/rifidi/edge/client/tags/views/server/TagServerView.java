@@ -33,8 +33,8 @@ import org.rifidi.edge.client.connections.remotereader.RemoteReader;
 import org.rifidi.edge.client.connections.remotereader.RemoteReaderID;
 import org.rifidi.edge.client.connections.remotereader.listeners.ReaderMessageListener;
 import org.rifidi.edge.client.tags.utils.TagContainer;
-import org.rifidi.edge.core.readerplugin.messages.impl.EnhancedTagMessage;
-import org.rifidi.edge.core.readerplugin.messages.impl.TagMessage;
+import org.rifidi.edge.core.api.readerplugin.messages.impl.EnhancedTagMessage;
+import org.rifidi.edge.core.api.readerplugin.messages.impl.TagMessage;
 import org.rifidi.services.annotations.Inject;
 import org.rifidi.services.registry.ServiceRegistry;
 
@@ -126,7 +126,8 @@ public class TagServerView extends ViewPart implements ReaderMessageListener,
 
 	@Override
 	public void onMessage(Message message, RemoteReader reader) {
-		logger.debug("TagServerView: onMessage: " + message.toString() + " from Reader: "+reader.toString());
+		logger.debug("TagServerView: onMessage: " + message.toString()
+				+ " from Reader: " + reader.toString());
 		if (!table.getControl().isDisposed()) {
 			// synchronized(this) {
 			table.getTable().getDisplay().syncExec(

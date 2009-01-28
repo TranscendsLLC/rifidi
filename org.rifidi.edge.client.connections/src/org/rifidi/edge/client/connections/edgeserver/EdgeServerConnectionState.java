@@ -16,9 +16,9 @@ import java.util.Set;
 
 import org.rifidi.edge.client.connections.exceptions.CannotCreateRemoteReaderException;
 import org.rifidi.edge.client.connections.remotereader.RemoteReaderID;
-import org.rifidi.edge.core.exceptions.RifidiException;
-import org.rifidi.edge.core.exceptions.RifidiReaderInfoNotFoundException;
-import org.rifidi.edge.core.exceptions.RifidiReaderPluginXMLNotFoundException;
+import org.rifidi.edge.core.api.exceptions.RifidiException;
+import org.rifidi.edge.core.api.exceptions.RifidiReaderInfoNotFoundException;
+import org.rifidi.edge.core.api.exceptions.RifidiReaderPluginXMLNotFoundException;
 import org.rifidi.edge.core.rmi.client.pluginstub.valueobjects.FormAnnotationListWrapper;
 import org.rifidi.edge.core.rmi.client.pluginstub.valueobjects.ReaderPluginWrapper;
 import org.rifidi.edge.core.rmi.client.sessionstub.valueobjects.ReaderInfoWrapper;
