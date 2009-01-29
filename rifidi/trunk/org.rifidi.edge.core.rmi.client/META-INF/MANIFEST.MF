@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Rifidi Edge RMI Client Library
 Bundle-SymbolicName: org.rifidi.edge.core.rmi.client
-Bundle-Version: 2.0.1
+Bundle-Version: 2.0.2
 Bundle-Vendor: Pramari LLC
 Require-Bundle: org.jdom;bundle-version="1.0.0",
  org.rifidi.dynamicSWTForms.xml;bundle-version="1.0.0",
@@ -12,12 +12,12 @@ Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: .
 Import-Package: org.apache.commons.logging;version="1.0.4",
  org.osgi.framework;version="1.4.0",
- org.rifidi.edge.core.api.exceptions;version="[1.0.0,1.1.0)",
- org.rifidi.edge.core.api.readerplugin.commands;version="[1.0.0,1.1.0)",
- org.rifidi.edge.core.api.readerplugin.property;version="[1.0.0,1.1.0)",
- org.rifidi.edge.core.rmi.api.readerconnection;version="[1.0.0,1.1.0)",
- org.rifidi.edge.core.rmi.api.readerconnection.exceptions;version="[1.0.0,1.1.0)",
- org.rifidi.edge.core.rmi.api.readerconnection.returnobjects;version="[1.0.0,1.1.0)"
+ org.rifidi.edge.core.api.exceptions;version="[1.0.0,2.0.0)",
+ org.rifidi.edge.core.api.readerplugin.commands;version="[1.0.0,2.0.0)",
+ org.rifidi.edge.core.api.readerplugin.property;version="[1.0.0,2.0.0)",
+ org.rifidi.edge.core.rmi.api.readerconnection;version="[1.0.0,2.0.0)",
+ org.rifidi.edge.core.rmi.api.readerconnection.exceptions;version="[1.0.0,2.0.0)",
+ org.rifidi.edge.core.rmi.api.readerconnection.returnobjects;version="[1.0.0,2.0.0)"
 Export-Package: org.rifidi.edge.core.rmi.client.edgeserverstub,
  org.rifidi.edge.core.rmi.client.pluginstub,
  org.rifidi.edge.core.rmi.client.pluginstub.valueobjects,
