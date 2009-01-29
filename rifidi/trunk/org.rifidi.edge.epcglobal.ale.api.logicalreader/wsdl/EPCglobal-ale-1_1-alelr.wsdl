@@ -1,0 +1,830 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ALELRSERVICE DEFINITIONS -->
+<wsdl:definitions xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                  xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+                  xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/"
+                  xmlns:ale="urn:epcglobal:ale:xsd:1"
+                  xmlns:impl="urn:epcglobal:alelr:wsdl:1"
+                  targetNamespace="urn:epcglobal:alelr:wsdl:1">
+  <!-- ALELRSERVICE TYPES -->
+  <wsdl:types>
+    <xsd:schema targetNamespace="urn:epcglobal:alelr:wsdl:1">
+      <xsd:import namespace="urn:epcglobal:ale:xsd:1"
+                  schemaLocation="EPCglobal-ale-1_1-alelr.xsd"/>
+      <!-- ALELRSERVICE MESSAGE WRAPPERS -->
+
+      <xsd:element name="Define" type="impl:Define"/>
+      <xsd:complexType name="Define">
+        <xsd:sequence>
+          <xsd:element name="name" type="xsd:string"/>
+          <xsd:element name="spec" type="ale:LRSpec"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element name="DefineResult">
+        <xsd:complexType/>
+      </xsd:element>
+
+      <xsd:element name="Update" type="impl:Update"/>
+      <xsd:complexType name="Update">
+        <xsd:sequence>
+          <xsd:element name="name" type="xsd:string"/>
+          <xsd:element name="spec" type="ale:LRSpec"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element name="UpdateResult">
+        <xsd:complexType/>
+      </xsd:element>
+
+      <xsd:element name="Undefine" type="impl:Undefine"/>
+      <xsd:complexType name="Undefine">
+        <xsd:sequence>
+          <xsd:element name="name" type="xsd:string"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element name="UndefineResult">
+        <xsd:complexType/>
+      </xsd:element>
+
+      <xsd:element name="GetLogicalReaderNames" type="impl:EmptyParms"/>
+      <xsd:element name="GetLogicalReaderNamesResult" type="impl:ArrayOfString"/>
+
+      <xsd:element name="GetLRSpec" type="impl:GetLRSpec"/>
+      <xsd:complexType name="GetLRSpec">
+        <xsd:sequence>
+          <xsd:element name="name" type="xsd:string"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element name="GetLRSpecResult" type="ale:LRSpec"/>
+
+      <xsd:element name="AddReaders" type="impl:AddReaders"/>
+      <xsd:complexType name="AddReaders">
+        <xsd:sequence>
+          <xsd:element name="name" type="xsd:string"/>
+          <xsd:element name="readers" minOccurs="0">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="reader" type="xsd:string" minOccurs="0"
+                             maxOccurs="unbounded"/>
+              </xsd:sequence>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element name="AddReadersResult">
+        <xsd:complexType/>
+      </xsd:element>
+
+      <xsd:element name="SetReaders" type="impl:SetReaders"/>
+      <xsd:complexType name="SetReaders">
+        <xsd:sequence>
+          <xsd:element name="name" type="xsd:string"/>
+          <xsd:element name="readers" minOccurs="0">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="reader" type="xsd:string" minOccurs="0"
+                             maxOccurs="unbounded"/>
+              </xsd:sequence>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element name="SetReadersResult">
+        <xsd:complexType/>
+      </xsd:element>
+
+      <xsd:element name="RemoveReaders" type="impl:RemoveReaders"/>
+      <xsd:complexType name="RemoveReaders">
+        <xsd:sequence>
+          <xsd:element name="name" type="xsd:string"/>
+          <xsd:element name="readers" minOccurs="0">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="reader" type="xsd:string" minOccurs="0"
+                             maxOccurs="unbounded"/>
+              </xsd:sequence>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element name="RemoveReadersResult">
+        <xsd:complexType/>
+      </xsd:element>
+
+      <xsd:element name="SetProperties" type="impl:SetProperties"/>
+      <xsd:complexType name="SetProperties">
+        <xsd:sequence>
+          <xsd:element name="name" type="xsd:string"/>
+          <xsd:element name="properties" minOccurs="0">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="property" type="ale:LRProperty" minOccurs="0"
+                             maxOccurs="unbounded"/>
+              </xsd:sequence>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element name="SetPropertiesResult">
+        <xsd:complexType/>
+      </xsd:element>
+
+      <xsd:element name="GetPropertyValue" type="impl:GetPropertyValue"/>
+      <xsd:complexType name="GetPropertyValue">
+        <xsd:sequence>
+          <xsd:element name="name" type="xsd:string"/>
+          <xsd:element name="propertyName" type="xsd:string"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element name="GetPropertyValueResult" type="xsd:string"/>
+
+      <xsd:element name="GetStandardVersion" type="impl:EmptyParms"/>
+      <xsd:element name="GetStandardVersionResult" type="xsd:string"/>
+
+      <xsd:element name="GetVendorVersion" type="impl:EmptyParms"/>
+      <xsd:element name="GetVendorVersionResult" type="xsd:string"/>
+
+      <xsd:element name="ALEException" type="impl:ALEException"/>
+      <xsd:complexType name="ALEException">
+        <xsd:sequence>
+          <xsd:element name="reason" type="xsd:string"/>
+        </xsd:sequence>
+      </xsd:complexType>
+
+      <xsd:element name="DuplicateNameException" type="impl:DuplicateNameException"/>
+      <xsd:complexType name="DuplicateNameException">
+        <xsd:complexContent>
+          <xsd:extension base="impl:ALEException"/>
+        </xsd:complexContent>
+      </xsd:complexType>
+
+      <xsd:element name="NoSuchNameException" type="impl:NoSuchNameException"/>
+      <xsd:complexType name="NoSuchNameException">
+        <xsd:complexContent>
+          <xsd:extension base="impl:ALEException"/>
+        </xsd:complexContent>
+      </xsd:complexType>
+
+      <xsd:element name="InUseException" type="impl:InUseException"/>
+      <xsd:complexType name="InUseException">
+        <xsd:complexContent>
+          <xsd:extension base="impl:ALEException"/>
+        </xsd:complexContent>
+      </xsd:complexType>
+
+      <xsd:element name="ValidationException" type="impl:ValidationException"/>
+      <xsd:complexType name="ValidationException">
+        <xsd:complexContent>
+          <xsd:extension base="impl:ALEException"/>
+        </xsd:complexContent>
+      </xsd:complexType>
+
+      <xsd:element name="ImmutableReaderException" type="impl:ImmutableReaderException"/>
+      <xsd:complexType name="ImmutableReaderException">
+        <xsd:complexContent>
+          <xsd:extension base="impl:ALEException"/>
+        </xsd:complexContent>
+      </xsd:complexType>
+
+      <xsd:element name="NonCompositeReaderException"
+                   type="impl:NonCompositeReaderException"/>
+      <xsd:complexType name="NonCompositeReaderException">
+        <xsd:complexContent>
+          <xsd:extension base="impl:ALEException"/>
+        </xsd:complexContent>
+      </xsd:complexType>
+
+      <xsd:element name="ReaderLoopException" type="impl:ReaderLoopException"/>
+      <xsd:complexType name="ReaderLoopException">
+        <xsd:complexContent>
+          <xsd:extension base="impl:ALEException"/>
+        </xsd:complexContent>
+      </xsd:complexType>
+
+      <xsd:element name="SecurityException" type="impl:SecurityException"/>
+      <xsd:complexType name="SecurityException">
+        <xsd:complexContent>
+          <xsd:extension base="impl:ALEException"/>
+        </xsd:complexContent>
+      </xsd:complexType>
+
+      <xsd:element name="ImplementationException" type="impl:ImplementationException"/>
+      <xsd:complexType name="ImplementationException">
+        <xsd:complexContent>
+          <xsd:extension base="impl:ALEException">
+            <xsd:sequence>
+              <xsd:element name="severity" type="impl:ImplementationExceptionSeverity"/>
+            </xsd:sequence>
+          </xsd:extension>
+        </xsd:complexContent>
+      </xsd:complexType>
+
+      <xsd:complexType name="ArrayOfString">
+        <xsd:sequence>
+          <xsd:element name="string" type="xsd:string" minOccurs="0"
+                       maxOccurs="unbounded"/>
+        </xsd:sequence>
+      </xsd:complexType>
+
+      <!-- The ImplementationExceptionSeverity type is an enumerated type.
+           The following strings are legal values for this type:
+             ERROR
+             SEVERE
+            -->
+      <xsd:simpleType name="ImplementationExceptionSeverity">
+        <xsd:restriction base="xsd:string"/>
+      </xsd:simpleType>
+
+      <xsd:complexType name="EmptyParms"/>
+    </xsd:schema>
+  </wsdl:types>
+  <!-- ALELRSERVICE MESSAGES -->
+
+  <wsdl:message name="defineRequest">
+    <wsdl:part name="parms" element="impl:Define"/>
+  </wsdl:message>
+  <wsdl:message name="defineResponse">
+    <wsdl:part name="defineReturn" element="impl:DefineResult"/>
+  </wsdl:message>
+
+  <wsdl:message name="updateRequest">
+    <wsdl:part name="parms" element="impl:Update"/>
+  </wsdl:message>
+  <wsdl:message name="updateResponse">
+    <wsdl:part name="updateReturn" element="impl:UpdateResult"/>
+  </wsdl:message>
+
+  <wsdl:message name="undefineRequest">
+    <wsdl:part name="parms" element="impl:Undefine"/>
+  </wsdl:message>
+  <wsdl:message name="undefineResponse">
+    <wsdl:part name="undefineReturn" element="impl:UndefineResult"/>
+  </wsdl:message>
+
+  <wsdl:message name="getLogicalReaderNamesRequest">
+    <wsdl:part name="parms" element="impl:GetLogicalReaderNames"/>
+  </wsdl:message>
+  <wsdl:message name="getLogicalReaderNamesResponse">
+    <wsdl:part name="getLogicalReaderNamesReturn"
+               element="impl:GetLogicalReaderNamesResult"/>
+  </wsdl:message>
+
+  <wsdl:message name="getLRSpecRequest">
+    <wsdl:part name="parms" element="impl:GetLRSpec"/>
+  </wsdl:message>
+  <wsdl:message name="getLRSpecResponse">
+    <wsdl:part name="getLRSpecReturn" element="impl:GetLRSpecResult"/>
+  </wsdl:message>
+
+  <wsdl:message name="addReadersRequest">
+    <wsdl:part name="parms" element="impl:AddReaders"/>
+  </wsdl:message>
+  <wsdl:message name="addReadersResponse">
+    <wsdl:part name="addReadersReturn" element="impl:AddReadersResult"/>
+  </wsdl:message>
+
+  <wsdl:message name="setReadersRequest">
+    <wsdl:part name="parms" element="impl:SetReaders"/>
+  </wsdl:message>
+  <wsdl:message name="setReadersResponse">
+    <wsdl:part name="setReadersReturn" element="impl:SetReadersResult"/>
+  </wsdl:message>
+
+  <wsdl:message name="removeReadersRequest">
+    <wsdl:part name="parms" element="impl:RemoveReaders"/>
+  </wsdl:message>
+  <wsdl:message name="removeReadersResponse">
+    <wsdl:part name="removeReadersReturn" element="impl:RemoveReadersResult"/>
+  </wsdl:message>
+
+  <wsdl:message name="setPropertiesRequest">
+    <wsdl:part name="parms" element="impl:SetProperties"/>
+  </wsdl:message>
+  <wsdl:message name="setPropertiesResponse">
+    <wsdl:part name="setPropertiesReturn" element="impl:SetPropertiesResult"/>
+  </wsdl:message>
+
+  <wsdl:message name="getPropertyValueRequest">
+    <wsdl:part name="parms" element="impl:GetPropertyValue"/>
+  </wsdl:message>
+  <wsdl:message name="getPropertyValueResponse">
+    <wsdl:part name="getPropertyValueReturn" element="impl:GetPropertyValueResult"/>
+  </wsdl:message>
+
+  <wsdl:message name="getStandardVersionRequest">
+    <wsdl:part name="parms" element="impl:GetStandardVersion"/>
+  </wsdl:message>
+  <wsdl:message name="getStandardVersionResponse">
+    <wsdl:part name="getStandardVersionReturn" element="impl:GetStandardVersionResult"/>
+  </wsdl:message>
+
+  <wsdl:message name="getVendorVersionRequest">
+    <wsdl:part name="parms" element="impl:GetVendorVersion"/>
+  </wsdl:message>
+  <wsdl:message name="getVendorVersionResponse">
+    <wsdl:part name="getVendorVersionReturn" element="impl:GetVendorVersionResult"/>
+  </wsdl:message>
+
+  <wsdl:message name="DuplicateNameExceptionResponse">
+    <wsdl:part name="fault" element="impl:DuplicateNameException"/>
+  </wsdl:message>
+
+  <wsdl:message name="NoSuchNameExceptionResponse">
+    <wsdl:part name="fault" element="impl:NoSuchNameException"/>
+  </wsdl:message>
+
+  <wsdl:message name="InUseExceptionResponse">
+    <wsdl:part name="fault" element="impl:InUseException"/>
+  </wsdl:message>
+
+  <wsdl:message name="ValidationExceptionResponse">
+    <wsdl:part name="fault" element="impl:ValidationException"/>
+  </wsdl:message>
+
+  <wsdl:message name="ImmutableReaderExceptionResponse">
+    <wsdl:part name="fault" element="impl:ImmutableReaderException"/>
+  </wsdl:message>
+
+  <wsdl:message name="NonCompositeReaderExceptionResponse">
+    <wsdl:part name="fault" element="impl:NonCompositeReaderException"/>
+  </wsdl:message>
+
+  <wsdl:message name="ReaderLoopExceptionResponse">
+    <wsdl:part name="fault" element="impl:ReaderLoopException"/>
+  </wsdl:message>
+
+  <wsdl:message name="SecurityExceptionResponse">
+    <wsdl:part name="fault" element="impl:SecurityException"/>
+  </wsdl:message>
+
+  <wsdl:message name="ImplementationExceptionResponse">
+    <wsdl:part name="fault" element="impl:ImplementationException"/>
+  </wsdl:message>
+  <!-- ALELRSERVICE PORTTYPE -->
+
+  <wsdl:portType name="ALELRServicePortType">
+
+    <wsdl:operation name="define">
+      <wsdl:input message="impl:defineRequest" name="defineRequest"/>
+      <wsdl:output message="impl:defineResponse" name="defineResponse"/>
+      <wsdl:fault message="impl:DuplicateNameExceptionResponse"
+                  name="DuplicateNameExceptionFault"/>
+      <wsdl:fault message="impl:ValidationExceptionResponse"
+                  name="ValidationExceptionFault"/>
+      <wsdl:fault message="impl:SecurityExceptionResponse"
+                  name="SecurityExceptionFault"/>
+      <wsdl:fault message="impl:ImplementationExceptionResponse"
+                  name="ImplementationExceptionFault"/>
+    </wsdl:operation>
+
+    <wsdl:operation name="update">
+      <wsdl:input message="impl:updateRequest" name="updateRequest"/>
+      <wsdl:output message="impl:updateResponse" name="updateResponse"/>
+      <wsdl:fault message="impl:NoSuchNameExceptionResponse"
+                  name="NoSuchNameExceptionFault"/>
+      <wsdl:fault message="impl:ValidationExceptionResponse"
+                  name="ValidationExceptionFault"/>
+      <wsdl:fault message="impl:InUseExceptionResponse" name="InUseExceptionFault"/>
+      <wsdl:fault message="impl:ImmutableReaderExceptionResponse"
+                  name="ImmutableReaderExceptionFault"/>
+      <wsdl:fault message="impl:ReaderLoopExceptionResponse"
+                  name="ReaderLoopExceptionFault"/>
+      <wsdl:fault message="impl:SecurityExceptionResponse"
+                  name="SecurityExceptionFault"/>
+      <wsdl:fault message="impl:ImplementationExceptionResponse"
+                  name="ImplementationExceptionFault"/>
+    </wsdl:operation>
+
+    <wsdl:operation name="undefine">
+      <wsdl:input message="impl:undefineRequest" name="undefineRequest"/>
+      <wsdl:output message="impl:undefineResponse" name="undefineResponse"/>
+      <wsdl:fault message="impl:NoSuchNameExceptionResponse"
+                  name="NoSuchNameExceptionFault"/>
+      <wsdl:fault message="impl:InUseExceptionResponse" name="InUseExceptionFault"/>
+      <wsdl:fault message="impl:ImmutableReaderExceptionResponse"
+                  name="ImmutableReaderExceptionFault"/>
+      <wsdl:fault message="impl:SecurityExceptionResponse"
+                  name="SecurityExceptionFault"/>
+      <wsdl:fault message="impl:ImplementationExceptionResponse"
+                  name="ImplementationExceptionFault"/>
+    </wsdl:operation>
+
+    <wsdl:operation name="getLogicalReaderNames">
+      <wsdl:input message="impl:getLogicalReaderNamesRequest"
+                  name="getLogicalReaderNamesRequest"/>
+      <wsdl:output message="impl:getLogicalReaderNamesResponse"
+                   name="getLogicalReaderNamesResponse"/>
+      <wsdl:fault message="impl:SecurityExceptionResponse"
+                  name="SecurityExceptionFault"/>
+      <wsdl:fault message="impl:ImplementationExceptionResponse"
+                  name="ImplementationExceptionFault"/>
+    </wsdl:operation>
+
+    <wsdl:operation name="getLRSpec">
+      <wsdl:input message="impl:getLRSpecRequest" name="getLRSpecRequest"/>
+      <wsdl:output message="impl:getLRSpecResponse" name="getLRSpecResponse"/>
+      <wsdl:fault message="impl:NoSuchNameExceptionResponse"
+                  name="NoSuchNameExceptionFault"/>
+      <wsdl:fault message="impl:SecurityExceptionResponse"
+                  name="SecurityExceptionFault"/>
+      <wsdl:fault message="impl:ImplementationExceptionResponse"
+                  name="ImplementationExceptionFault"/>
+    </wsdl:operation>
+
+    <wsdl:operation name="addReaders">
+      <wsdl:input message="impl:addReadersRequest" name="addReadersRequest"/>
+      <wsdl:output message="impl:addReadersResponse" name="addReadersResponse"/>
+      <wsdl:fault message="impl:NoSuchNameExceptionResponse"
+                  name="NoSuchNameExceptionFault"/>
+      <wsdl:fault message="impl:ValidationExceptionResponse"
+                  name="ValidationExceptionFault"/>
+      <wsdl:fault message="impl:InUseExceptionResponse" name="InUseExceptionFault"/>
+      <wsdl:fault message="impl:ImmutableReaderExceptionResponse"
+                  name="ImmutableReaderExceptionFault"/>
+      <wsdl:fault message="impl:NonCompositeReaderExceptionResponse"
+                  name="NonCompositeReaderExceptionFault"/>
+      <wsdl:fault message="impl:ReaderLoopExceptionResponse"
+                  name="ReaderLoopExceptionFault"/>
+      <wsdl:fault message="impl:SecurityExceptionResponse"
+                  name="SecurityExceptionFault"/>
+      <wsdl:fault message="impl:ImplementationExceptionResponse"
+                  name="ImplementationExceptionFault"/>
+    </wsdl:operation>
+
+    <wsdl:operation name="setReaders">
+      <wsdl:input message="impl:setReadersRequest" name="setReadersRequest"/>
+      <wsdl:output message="impl:setReadersResponse" name="setReadersResponse"/>
+      <wsdl:fault message="impl:NoSuchNameExceptionResponse"
+                  name="NoSuchNameExceptionFault"/>
+      <wsdl:fault message="impl:ValidationExceptionResponse"
+                  name="ValidationExceptionFault"/>
+      <wsdl:fault message="impl:InUseExceptionResponse" name="InUseExceptionFault"/>
+      <wsdl:fault message="impl:ImmutableReaderExceptionResponse"
+                  name="ImmutableReaderExceptionFault"/>
+      <wsdl:fault message="impl:NonCompositeReaderExceptionResponse"
+                  name="NonCompositeReaderExceptionFault"/>
+      <wsdl:fault message="impl:ReaderLoopExceptionResponse"
+                  name="ReaderLoopExceptionFault"/>
+      <wsdl:fault message="impl:SecurityExceptionResponse"
+                  name="SecurityExceptionFault"/>
+      <wsdl:fault message="impl:ImplementationExceptionResponse"
+                  name="ImplementationExceptionFault"/>
+    </wsdl:operation>
+
+    <wsdl:operation name="removeReaders">
+      <wsdl:input message="impl:removeReadersRequest" name="removeReadersRequest"/>
+      <wsdl:output message="impl:removeReadersResponse" name="removeReadersResponse"/>
+      <wsdl:fault message="impl:NoSuchNameExceptionResponse"
+                  name="NoSuchNameExceptionFault"/>
+      <wsdl:fault message="impl:InUseExceptionResponse" name="InUseExceptionFault"/>
+      <wsdl:fault message="impl:ImmutableReaderExceptionResponse"
+                  name="ImmutableReaderExceptionFault"/>
+      <wsdl:fault message="impl:NonCompositeReaderExceptionResponse"
+                  name="NonCompositeReaderExceptionFault"/>
+      <wsdl:fault message="impl:SecurityExceptionResponse"
+                  name="SecurityExceptionFault"/>
+      <wsdl:fault message="impl:ImplementationExceptionResponse"
+                  name="ImplementationExceptionFault"/>
+    </wsdl:operation>
+
+    <wsdl:operation name="setProperties">
+      <wsdl:input message="impl:setPropertiesRequest" name="setPropertiesRequest"/>
+      <wsdl:output message="impl:setPropertiesResponse" name="setPropertiesResponse"/>
+      <wsdl:fault message="impl:NoSuchNameExceptionResponse"
+                  name="NoSuchNameExceptionFault"/>
+      <wsdl:fault message="impl:ValidationExceptionResponse"
+                  name="ValidationExceptionFault"/>
+      <wsdl:fault message="impl:InUseExceptionResponse" name="InUseExceptionFault"/>
+      <wsdl:fault message="impl:ImmutableReaderExceptionResponse"
+                  name="ImmutableReaderExceptionFault"/>
+      <wsdl:fault message="impl:SecurityExceptionResponse"
+                  name="SecurityExceptionFault"/>
+      <wsdl:fault message="impl:ImplementationExceptionResponse"
+                  name="ImplementationExceptionFault"/>
+    </wsdl:operation>
+
+    <wsdl:operation name="getPropertyValue">
+      <wsdl:input message="impl:getPropertyValueRequest" name="getPropertyValueRequest"/>
+      <wsdl:output message="impl:getPropertyValueResponse"
+                   name="getPropertyValueResponse"/>
+      <wsdl:fault message="impl:NoSuchNameExceptionResponse"
+                  name="NoSuchNameExceptionFault"/>
+      <wsdl:fault message="impl:SecurityExceptionResponse"
+                  name="SecurityExceptionFault"/>
+      <wsdl:fault message="impl:ImplementationExceptionResponse"
+                  name="ImplementationExceptionFault"/>
+    </wsdl:operation>
+
+    <wsdl:operation name="getStandardVersion">
+      <wsdl:input message="impl:getStandardVersionRequest"
+                  name="getStandardVersionRequest"/>
+      <wsdl:output message="impl:getStandardVersionResponse"
+                   name="getStandardVersionResponse"/>
+      <wsdl:fault message="impl:ImplementationExceptionResponse"
+                  name="ImplementationExceptionFault"/>
+    </wsdl:operation>
+
+    <wsdl:operation name="getVendorVersion">
+      <wsdl:input message="impl:getVendorVersionRequest" name="getVendorVersionRequest"/>
+      <wsdl:output message="impl:getVendorVersionResponse"
+                   name="getVendorVersionResponse"/>
+      <wsdl:fault message="impl:ImplementationExceptionResponse"
+                  name="ImplementationExceptionFault"/>
+    </wsdl:operation>
+  </wsdl:portType>
+  <!-- ALELRSERVICE BINDING -->
+
+  <wsdl:binding name="ALELRServiceBinding" type="impl:ALELRServicePortType">
+    <wsdlsoap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+
+    <wsdl:operation name="define">
+      <wsdlsoap:operation soapAction=""/>
+      <wsdl:input name="defineRequest">
+        <wsdlsoap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="defineResponse">
+        <wsdlsoap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="DuplicateNameExceptionFault">
+        <wsdlsoap:fault name="DuplicateNameExceptionFault" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="ValidationExceptionFault">
+        <wsdlsoap:fault name="ValidationExceptionFault" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="SecurityExceptionFault">
+        <wsdlsoap:fault name="SecurityExceptionFault" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="ImplementationExceptionFault">
+        <wsdlsoap:fault name="ImplementationExceptionFault" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+
+    <wsdl:operation name="update">
+      <wsdlsoap:operation soapAction=""/>
+      <wsdl:input name="updateRequest">
+        <wsdlsoap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="updateResponse">
+        <wsdlsoap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="NoSuchNameExceptionFault">
+        <wsdlsoap:fault name="NoSuchNameExceptionFault" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="ValidationExceptionFault">
+        <wsdlsoap:fault name="ValidationExceptionFault" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="InUseExceptionFault">
+        <wsdlsoap:fault name="InUseExceptionFault" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="ImmutableReaderExceptionFault">
+        <wsdlsoap:fault name="ImmutableReaderExceptionFault" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="ReaderLoopExceptionFault">
+        <wsdlsoap:fault name="ReaderLoopExceptionFault" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="SecurityExceptionFault">
+        <wsdlsoap:fault name="SecurityExceptionFault" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="ImplementationExceptionFault">
+        <wsdlsoap:fault name="ImplementationExceptionFault" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+
+    <wsdl:operation name="undefine">
+      <wsdlsoap:operation soapAction=""/>
+      <wsdl:input name="undefineRequest">
+        <wsdlsoap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="undefineResponse">
+        <wsdlsoap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="NoSuchNameExceptionFault">
+        <wsdlsoap:fault name="NoSuchNameExceptionFault" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="InUseExceptionFault">
+        <wsdlsoap:fault name="InUseExceptionFault" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="ImmutableReaderExceptionFault">
+        <wsdlsoap:fault name="ImmutableReaderExceptionFault" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="SecurityExceptionFault">
+        <wsdlsoap:fault name="SecurityExceptionFault" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="ImplementationExceptionFault">
+        <wsdlsoap:fault name="ImplementationExceptionFault" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+
+    <wsdl:operation name="getLogicalReaderNames">
+      <wsdlsoap:operation soapAction=""/>
+      <wsdl:input name="getLogicalReaderNamesRequest">
+        <wsdlsoap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="getLogicalReaderNamesResponse">
+        <wsdlsoap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="SecurityExceptionFault">
+        <wsdlsoap:fault name="SecurityExceptionFault" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="ImplementationExceptionFault">
+        <wsdlsoap:fault name="ImplementationExceptionFault" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+
+    <wsdl:operation name="getLRSpec">
+      <wsdlsoap:operation soapAction=""/>
+      <wsdl:input name="getLRSpecRequest">
+        <wsdlsoap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="getLRSpecResponse">
+        <wsdlsoap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="NoSuchNameExceptionFault">
+        <wsdlsoap:fault name="NoSuchNameExceptionFault" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="SecurityExceptionFault">
+        <wsdlsoap:fault name="SecurityExceptionFault" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="ImplementationExceptionFault">
+        <wsdlsoap:fault name="ImplementationExceptionFault" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+
+    <wsdl:operation name="addReaders">
+      <wsdlsoap:operation soapAction=""/>
+      <wsdl:input name="addReadersRequest">
+        <wsdlsoap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="addReadersResponse">
+        <wsdlsoap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="NoSuchNameExceptionFault">
+        <wsdlsoap:fault name="NoSuchNameExceptionFault" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="ValidationExceptionFault">
+        <wsdlsoap:fault name="ValidationExceptionFault" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="InUseExceptionFault">
+        <wsdlsoap:fault name="InUseExceptionFault" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="ImmutableReaderExceptionFault">
+        <wsdlsoap:fault name="ImmutableReaderExceptionFault" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="NonCompositeReaderExceptionFault">
+        <wsdlsoap:fault name="NonCompositeReaderExceptionFault" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="ReaderLoopExceptionFault">
+        <wsdlsoap:fault name="ReaderLoopExceptionFault" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="SecurityExceptionFault">
+        <wsdlsoap:fault name="SecurityExceptionFault" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="ImplementationExceptionFault">
+        <wsdlsoap:fault name="ImplementationExceptionFault" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+
+    <wsdl:operation name="setReaders">
+      <wsdlsoap:operation soapAction=""/>
+      <wsdl:input name="setReadersRequest">
+        <wsdlsoap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="setReadersResponse">
+        <wsdlsoap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="NoSuchNameExceptionFault">
+        <wsdlsoap:fault name="NoSuchNameExceptionFault" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="ValidationExceptionFault">
+        <wsdlsoap:fault name="ValidationExceptionFault" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="InUseExceptionFault">
+        <wsdlsoap:fault name="InUseExceptionFault" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="ImmutableReaderExceptionFault">
+        <wsdlsoap:fault name="ImmutableReaderExceptionFault" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="NonCompositeReaderExceptionFault">
+        <wsdlsoap:fault name="NonCompositeReaderExceptionFault" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="ReaderLoopExceptionFault">
+        <wsdlsoap:fault name="ReaderLoopExceptionFault" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="SecurityExceptionFault">
+        <wsdlsoap:fault name="SecurityExceptionFault" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="ImplementationExceptionFault">
+        <wsdlsoap:fault name="ImplementationExceptionFault" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+
+    <wsdl:operation name="removeReaders">
+      <wsdlsoap:operation soapAction=""/>
+      <wsdl:input name="removeReadersRequest">
+        <wsdlsoap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="removeReadersResponse">
+        <wsdlsoap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="NoSuchNameExceptionFault">
+        <wsdlsoap:fault name="NoSuchNameExceptionFault" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="InUseExceptionFault">
+        <wsdlsoap:fault name="InUseExceptionFault" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="ImmutableReaderExceptionFault">
+        <wsdlsoap:fault name="ImmutableReaderExceptionFault" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="NonCompositeReaderExceptionFault">
+        <wsdlsoap:fault name="NonCompositeReaderExceptionFault" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="SecurityExceptionFault">
+        <wsdlsoap:fault name="SecurityExceptionFault" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="ImplementationExceptionFault">
+        <wsdlsoap:fault name="ImplementationExceptionFault" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+
+    <wsdl:operation name="setProperties">
+      <wsdlsoap:operation soapAction=""/>
+      <wsdl:input name="setPropertiesRequest">
+        <wsdlsoap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="setPropertiesResponse">
+        <wsdlsoap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="NoSuchNameExceptionFault">
+        <wsdlsoap:fault name="NoSuchNameExceptionFault" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="ValidationExceptionFault">
+        <wsdlsoap:fault name="ValidationExceptionFault" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="InUseExceptionFault">
+        <wsdlsoap:fault name="InUseExceptionFault" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="ImmutableReaderExceptionFault">
+        <wsdlsoap:fault name="ImmutableReaderExceptionFault" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="SecurityExceptionFault">
+        <wsdlsoap:fault name="SecurityExceptionFault" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="ImplementationExceptionFault">
+        <wsdlsoap:fault name="ImplementationExceptionFault" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+
+    <wsdl:operation name="getPropertyValue">
+      <wsdlsoap:operation soapAction=""/>
+      <wsdl:input name="getPropertyValueRequest">
+        <wsdlsoap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="getPropertyValueResponse">
+        <wsdlsoap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="NoSuchNameExceptionFault">
+        <wsdlsoap:fault name="NoSuchNameExceptionFault" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="SecurityExceptionFault">
+        <wsdlsoap:fault name="SecurityExceptionFault" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="ImplementationExceptionFault">
+        <wsdlsoap:fault name="ImplementationExceptionFault" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+
+    <wsdl:operation name="getStandardVersion">
+      <wsdlsoap:operation soapAction=""/>
+      <wsdl:input name="getStandardVersionRequest">
+        <wsdlsoap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="getStandardVersionResponse">
+        <wsdlsoap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="ImplementationExceptionFault">
+        <wsdlsoap:fault name="ImplementationExceptionFault" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+
+    <wsdl:operation name="getVendorVersion">
+      <wsdlsoap:operation soapAction=""/>
+      <wsdl:input name="getVendorVersionRequest">
+        <wsdlsoap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="getVendorVersionResponse">
+        <wsdlsoap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="ImplementationExceptionFault">
+        <wsdlsoap:fault name="ImplementationExceptionFault" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+  </wsdl:binding>
+
+  <!-- ALELRSERVICE -->
+  <wsdl:service name="ALELRService">
+    <wsdl:port binding="impl:ALELRServiceBinding" name="ALELRServicePort">
+      <!-- The value of the location attribute below is an example only;
+           Implementations are free to choose any appropriate URL. -->
+      <wsdlsoap:address location="http://localhost:8080/services/ALELRService"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>
