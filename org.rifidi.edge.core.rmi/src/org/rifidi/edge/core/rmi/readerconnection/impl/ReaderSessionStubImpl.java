@@ -14,9 +14,6 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -37,11 +34,6 @@ import org.rifidi.edge.core.rmi.api.readerconnection.returnobjects.CommandInfo;
 import org.rifidi.edge.core.rmi.api.readerconnection.returnobjects.ReaderSessionProperties;
 import org.rifidi.services.annotations.Inject;
 import org.rifidi.services.registry.ServiceRegistry;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.Text;
 
 /**
  * Implementation for a ReaderSessionStub
@@ -154,7 +146,7 @@ public class ReaderSessionStubImpl extends UnicastRemoteObject implements
 		}
 		PropertyConfiguration config = new PropertyConfiguration(properties);
 		try {
-			return fromXML(readerSession.executeProperty(toXML(config), false));
+			return readerSession.executeProperty(config, false);
 		} catch (RifidiInvalidConfigurationException e) {
 			logger.error(e);
 			return null;
@@ -169,8 +161,8 @@ public class ReaderSessionStubImpl extends UnicastRemoteObject implements
 		logger.debug("RMI Call: setProperty");
 
 		try {
-			return fromXML(readerSession.executeProperty(toXML(configuration),
-					true));
+			return readerSession.executeProperty(configuration,
+					true);
 		} catch (RifidiInvalidConfigurationException e) {
 			logger.error(e);
 			return null;
@@ -310,88 +302,6 @@ public class ReaderSessionStubImpl extends UnicastRemoteObject implements
 		props.setReaderInfoClassName(readerSession.getReaderInfo().getClass()
 				.getName());
 		return props;
-	}
-
-	private Document toXML(PropertyConfiguration config) {
-
-		try {
-			DocumentBuilderFactory factory = DocumentBuilderFactory
-					.newInstance();
-			DocumentBuilder builder = factory.newDocumentBuilder();
-			Document doc = builder.getDOMImplementation().createDocument(null,
-					"Properties", null);
-			Element root = doc.getDocumentElement();
-			for (String name : config.getPropertyNames()) {
-				Element prop = doc.createElement(name);
-				CommandConfiguration c = config.getProperty(name);
-				if (c != null) {
-					for (String key : c.getArgNames()) {
-						Element keyNode = doc.createElement(key);
-						Text valueNode = doc.createTextNode(c.getArgValue(key));
-						if (c.hasError(key)) {
-							keyNode.setAttribute("error", "true");
-						}
-						keyNode.appendChild(valueNode);
-						prop.appendChild(keyNode);
-					}
-				}
-
-				root.appendChild(prop);
-			}
-
-			return doc;
-		} catch (ParserConfigurationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return null;
-
-	}
-
-	private PropertyConfiguration fromXML(Document config) {
-		if (config == null || config.getDocumentElement() == null) {
-			logger.error("Config is null");
-			return new PropertyConfiguration(new HashSet<CommandConfiguration>());
-		}
-		NodeList nl = config.getDocumentElement().getChildNodes();
-		Set<CommandConfiguration> properties = new HashSet<CommandConfiguration>();
-		for (int i = 0; i < nl.getLength(); i++) {
-			Node n = nl.item(i);
-			if (n instanceof Element) {
-				Element propertyElement = (Element) n;
-				String propName = propertyElement.getNodeName();
-				Set<CommandArgument> arguments = new HashSet<CommandArgument>();
-				NodeList nl2 = propertyElement.getChildNodes();
-				for (int j = 0; j < nl2.getLength(); j++) {
-					Node n2 = nl2.item(j);
-					if (n2 instanceof Element) {
-						Element valueElement = (Element) n2;
-						String propValueName = valueElement.getNodeName();
-						Node propValueElement = valueElement.getFirstChild();
-						if (propValueElement != null) {
-							if (propValueElement instanceof Text) {
-								String propValue = ((Text) propValueElement)
-										.getTextContent();
-								if (valueElement.hasAttribute("error")
-										&& valueElement.getAttribute("error")
-												.equals("true")) {
-									arguments.add(new CommandArgument(
-											propValueName, propValue, true));
-
-								} else {
-									arguments.add(new CommandArgument(
-											propValueName, propValue, false));
-								}
-							}
-						}
-					}
-				}
-				properties.add(new CommandConfiguration(propName, arguments));
-			}
-		}
-
-		return new PropertyConfiguration(properties);
-
 	}
 
 	/*
