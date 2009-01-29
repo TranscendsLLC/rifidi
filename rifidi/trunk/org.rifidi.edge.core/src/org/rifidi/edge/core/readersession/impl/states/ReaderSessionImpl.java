@@ -13,9 +13,10 @@ import org.rifidi.edge.core.api.exceptions.RifidiCommandNotFoundException;
 import org.rifidi.edge.core.api.exceptions.RifidiConnectionException;
 import org.rifidi.edge.core.api.exceptions.RifidiInvalidConfigurationException;
 import org.rifidi.edge.core.api.messageQueue.MessageQueue;
-import org.rifidi.edge.core.api.readerplugin.commands.Command;
 import org.rifidi.edge.core.api.readerplugin.commands.CommandConfiguration;
 import org.rifidi.edge.core.api.readerplugin.commands.CommandReturnStatus;
+import org.rifidi.edge.core.api.readerplugin.commands.api.Command;
+import org.rifidi.edge.core.api.readerplugin.property.PropertyConfiguration;
 import org.rifidi.edge.core.api.readersession.enums.CommandStatus;
 import org.rifidi.edge.core.api.readersession.enums.ReaderSessionStatus;
 import org.rifidi.edge.core.communication.service.CommunicationStateListener;
@@ -34,7 +35,6 @@ import org.rifidi.edge.core.readersession.impl.ExecutionThread;
 import org.rifidi.edge.core.readersession.impl.ReaderSessionState;
 import org.rifidi.services.annotations.Inject;
 import org.rifidi.services.registry.ServiceRegistry;
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
@@ -131,7 +131,7 @@ public class ReaderSessionImpl implements ReaderSession, ReaderSessionState,
 	}
 
 	@Override
-	public Document executeProperty(Document propertiesToExecute, boolean set)
+	public PropertyConfiguration executeProperty(PropertyConfiguration propertiesToExecute, boolean set)
 			throws RifidiConnectionException,
 			RifidiCommandInterruptedException, RifidiCommandNotFoundException,
 			RifidiInvalidConfigurationException,
@@ -523,7 +523,7 @@ public class ReaderSessionImpl implements ReaderSession, ReaderSessionState,
 	}
 
 	@Override
-	public Document state_executeProperty(Document propertiesToExecute,
+	public PropertyConfiguration state_executeProperty(PropertyConfiguration propertiesToExecute,
 			boolean set) throws RifidiConnectionException,
 			RifidiCommandNotFoundException, RifidiCommandInterruptedException,
 			RifidiCannotRestartCommandException, RifidiInvalidConfigurationException {
