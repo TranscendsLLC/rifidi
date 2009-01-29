@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: RMI Client Utils Plug-in
 Bundle-SymbolicName: org.rifidi.rmi.utils
-Bundle-Version: 1.0.0
+Bundle-Version: 1.0.1
 Bundle-Activator: org.rifidi.rmi.utils.Activator
 Bundle-Vendor: Pramari, LLC
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
