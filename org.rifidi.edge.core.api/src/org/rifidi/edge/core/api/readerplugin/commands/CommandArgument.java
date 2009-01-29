@@ -16,6 +16,9 @@ import java.io.Serializable;
 /**
  * This is a value object used to store an argument to a command.
  * 
+ * If the error flag is set, then the argValue for the Argument should be the
+ * cause of the error
+ * 
  * @see CommandConfiguration
  * @author Kyle Neumeier - kyle@pramari.com
  * 
@@ -32,7 +35,7 @@ public class CommandArgument implements Serializable {
 	private String _argName;
 
 	/**
-	 * The value for the arguement
+	 * The value for the argument
 	 */
 	private String _argValue;
 
@@ -56,6 +59,7 @@ public class CommandArgument implements Serializable {
 	}
 
 	/**
+	 * If the error flag is set, this string will be the reason for the error
 	 * 
 	 * @return The value of the argument
 	 */

@@ -1,7 +1,9 @@
-package org.rifidi.edge.core.api.readerplugin.commands;
+package org.rifidi.edge.core.api.readerplugin.commands.api;
 
 import org.rifidi.edge.core.api.communication.Connection;
 import org.rifidi.edge.core.api.messageQueue.MessageQueue;
+import org.rifidi.edge.core.api.readerplugin.commands.CommandConfiguration;
+import org.rifidi.edge.core.api.readerplugin.commands.CommandReturnStatus;
 
 /**
  * This is the command Interface defining a common base over all Commands
