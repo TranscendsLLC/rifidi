@@ -11,8 +11,11 @@
 
 package org.rifidi.edge.readerplugin.alien.properties;
 
-import org.w3c.dom.Element;
-import org.w3c.dom.Text;
+import java.util.HashSet;
+import java.util.Set;
+
+import org.rifidi.edge.core.api.readerplugin.commands.CommandArgument;
+import org.rifidi.edge.core.api.readerplugin.commands.CommandConfiguration;
 
 /**
  * @author Kyle Neumeier - kyle@pramari.com
@@ -43,22 +46,12 @@ public class AlienResponse {
 		}
 	}
 
-	public Element formulateResponseXML(Element parentElement,
-			String propertyName, String formElementName) {
-		Element returnNode = parentElement.getOwnerDocument().createElement(
-				propertyName);
-		Element formElementNode = parentElement.getOwnerDocument()
-				.createElement(formElementName);
-		if (error) {
-			formElementNode.setAttribute("error", "true");
-		} else {
-			formElementNode.setAttribute("error", "false");
-		}
-		Text textNode = parentElement.getOwnerDocument().createTextNode(
-				response);
-		formElementNode.appendChild(textNode);
-		returnNode.appendChild(formElementNode);
-		return returnNode;
+	public CommandConfiguration formulateResponse(String propertyName,
+			String formElementName) {
+		CommandArgument formElement = new CommandArgument(formElementName, response, error);
+		Set<CommandArgument> commandArguments = new HashSet<CommandArgument>();
+		commandArguments.add(formElement);
+		return new CommandConfiguration(propertyName, commandArguments);
 	}
 
 }

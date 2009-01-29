@@ -9,10 +9,9 @@ import org.rifidi.dynamicswtforms.xml.annotaions.FormElement;
 import org.rifidi.dynamicswtforms.xml.constants.FormElementType;
 import org.rifidi.edge.core.api.communication.Connection;
 import org.rifidi.edge.core.api.messageQueue.MessageQueue;
-import org.rifidi.edge.core.api.readerplugin.property.Property;
+import org.rifidi.edge.core.api.readerplugin.commands.CommandConfiguration;
+import org.rifidi.edge.core.api.readerplugin.property.api.Property;
 import org.rifidi.edge.readerplugin.alien.properties.AlienResponse;
-import org.rifidi.edge.readerplugin.alien.properties.PropertyWrapper;
-import org.w3c.dom.Element;
 
 /**
  * 
@@ -40,8 +39,8 @@ public class RFAttenuation implements Property {
 	 * org.rifidi.edge.core.messageQueue.MessageQueue, org.w3c.dom.Element)
 	 */
 	@Override
-	public Element getProperty(Connection connection, MessageQueue errorQueue,
-			Element propertyConfig) {
+	public CommandConfiguration getProperty(Connection connection, MessageQueue errorQueue,
+			CommandConfiguration propertyConfig) {
 		AlienResponse response = new AlienResponse();
 		String responseString = null;
 		try {
@@ -53,8 +52,7 @@ public class RFAttenuation implements Property {
 			logger.debug("IOException");
 		}
 		response.setResponseMessage(responseString);
-		return response.formulateResponseXML(propertyConfig, RFATTENUATION,
-				RFATTENUATION_DATA);
+		return response.formulateResponse(RFATTENUATION, RFATTENUATION_DATA);
 	}
 
 	/*
@@ -66,13 +64,11 @@ public class RFAttenuation implements Property {
 	 * org.rifidi.edge.core.messageQueue.MessageQueue, org.w3c.dom.Element)
 	 */
 	@Override
-	public Element setProperty(Connection connection, MessageQueue errorQueue,
-			Element propertyConfig) {
-
-		PropertyWrapper wrapper = new PropertyWrapper(propertyConfig);
+	public CommandConfiguration setProperty(Connection connection, MessageQueue errorQueue,
+			CommandConfiguration propertyConfig) {
 
 		String command = "\1set " + RFAttenuation.command + " = "
-				+ wrapper.getElementValue(RFATTENUATION_DATA) + "\n";
+				+ propertyConfig.getArgValue(RFATTENUATION_DATA) + "\n";
 		AlienResponse response = new AlienResponse();
 		String responseString = null;
 		try {
@@ -83,8 +79,7 @@ public class RFAttenuation implements Property {
 			logger.debug("IOException");
 		}
 		response.setResponseMessage(responseString);
-		return response.formulateResponseXML(propertyConfig, RFATTENUATION,
-				RFATTENUATION_DATA);
+		return response.formulateResponse(RFATTENUATION, RFATTENUATION_DATA);
 	}
 
 }
