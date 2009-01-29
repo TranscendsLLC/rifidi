@@ -11,9 +11,9 @@ import org.rifidi.edge.common.utilities.converter.ByteAndHexConvertingUtility;
 import org.rifidi.edge.core.api.communication.Connection;
 import org.rifidi.edge.core.api.exceptions.RifidiMessageQueueException;
 import org.rifidi.edge.core.api.messageQueue.MessageQueue;
-import org.rifidi.edge.core.api.readerplugin.commands.Command;
 import org.rifidi.edge.core.api.readerplugin.commands.CommandConfiguration;
 import org.rifidi.edge.core.api.readerplugin.commands.CommandReturnStatus;
+import org.rifidi.edge.core.api.readerplugin.commands.api.Command;
 import org.rifidi.edge.core.api.readerplugin.messages.impl.TagMessage;
 
 /**

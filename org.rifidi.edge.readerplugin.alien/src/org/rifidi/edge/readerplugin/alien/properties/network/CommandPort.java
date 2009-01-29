@@ -9,9 +9,9 @@ import org.rifidi.dynamicswtforms.xml.annotaions.FormElement;
 import org.rifidi.dynamicswtforms.xml.constants.FormElementType;
 import org.rifidi.edge.core.api.communication.Connection;
 import org.rifidi.edge.core.api.messageQueue.MessageQueue;
-import org.rifidi.edge.core.api.readerplugin.property.Property;
+import org.rifidi.edge.core.api.readerplugin.commands.CommandConfiguration;
+import org.rifidi.edge.core.api.readerplugin.property.api.Property;
 import org.rifidi.edge.readerplugin.alien.properties.AlienResponse;
-import org.w3c.dom.Element;
 
 /**
  * 
@@ -39,8 +39,8 @@ public class CommandPort implements Property {
 	 * org.rifidi.edge.core.messageQueue.MessageQueue, org.w3c.dom.Element)
 	 */
 	@Override
-	public Element getProperty(Connection connection, MessageQueue errorQueue,
-			Element propertyConfig) {
+	public CommandConfiguration getProperty(Connection connection,
+			MessageQueue errorQueue, CommandConfiguration propertyConfig) {
 		AlienResponse response = new AlienResponse();
 		String responseString = null;
 		try {
@@ -52,8 +52,7 @@ public class CommandPort implements Property {
 			logger.debug("IOException");
 		}
 		response.setResponseMessage(responseString);
-		return response.formulateResponseXML(propertyConfig, COMMAND_PORT,
-				COMMAND_PORT_DATA);
+		return response.formulateResponse(COMMAND_PORT, COMMAND_PORT_DATA);
 	}
 
 	/*
@@ -65,8 +64,8 @@ public class CommandPort implements Property {
 	 * org.rifidi.edge.core.messageQueue.MessageQueue, org.w3c.dom.Element)
 	 */
 	@Override
-	public Element setProperty(Connection connection, MessageQueue errorQueue,
-			Element propertyConfig) {
+	public CommandConfiguration setProperty(Connection connection,
+			MessageQueue errorQueue, CommandConfiguration propertyConfig) {
 		return getProperty(connection, errorQueue, propertyConfig);
 	}
 
