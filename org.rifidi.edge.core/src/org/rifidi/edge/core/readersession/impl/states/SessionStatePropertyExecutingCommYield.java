@@ -8,6 +8,7 @@ import org.rifidi.edge.core.api.exceptions.RifidiCommandNotFoundException;
 import org.rifidi.edge.core.api.exceptions.RifidiConnectionException;
 import org.rifidi.edge.core.api.exceptions.RifidiExecutionException;
 import org.rifidi.edge.core.api.readerplugin.commands.CommandConfiguration;
+import org.rifidi.edge.core.api.readerplugin.property.PropertyConfiguration;
 import org.rifidi.edge.core.api.readersession.enums.CommandStatus;
 import org.rifidi.edge.core.api.readersession.enums.ReaderSessionStatus;
 import org.rifidi.edge.core.communication.service.ConnectionStatus;
@@ -15,35 +16,43 @@ import org.rifidi.edge.core.readerplugin.ReaderInfo;
 import org.rifidi.edge.core.readersession.impl.CommandExecutionListener;
 import org.rifidi.edge.core.readersession.impl.ExecutionThread;
 import org.rifidi.edge.core.readersession.impl.ReaderSessionState;
-import org.w3c.dom.Document;
 
 public class SessionStatePropertyExecutingCommYield implements
 		ReaderSessionState {
 
 	private ReaderSessionImpl readerSessionImpl;
-	private Log logger = LogFactory.getLog(SessionStatePropertyExecutingCommYield.class);
-	
-	public SessionStatePropertyExecutingCommYield(ReaderSessionImpl readerSessionImpl) {
+	private Log logger = LogFactory
+			.getLog(SessionStatePropertyExecutingCommYield.class);
+
+	public SessionStatePropertyExecutingCommYield(
+			ReaderSessionImpl readerSessionImpl) {
 		this.readerSessionImpl = readerSessionImpl;
 	}
-	
+
 	@Override
 	public void state_enable() {
-		logger.debug("Cannot execute enable when in " + ReaderSessionStatus.EXECUTING_PROPERTY_WITH_YIELDED_COMMAND);
-		readerSessionImpl.transition(new SessionStatePropertyExecutingCommYield(readerSessionImpl));
-		
+		logger.debug("Cannot execute enable when in "
+				+ ReaderSessionStatus.EXECUTING_PROPERTY_WITH_YIELDED_COMMAND);
+		readerSessionImpl
+				.transition(new SessionStatePropertyExecutingCommYield(
+						readerSessionImpl));
+
 	}
 
 	@Override
 	public void state_disable() {
-		logger.debug("Cannot execute disable when in " + ReaderSessionStatus.EXECUTING_PROPERTY_WITH_YIELDED_COMMAND);
-		readerSessionImpl.transition(new SessionStatePropertyExecutingCommYield(readerSessionImpl));
-		
+		logger.debug("Cannot execute disable when in "
+				+ ReaderSessionStatus.EXECUTING_PROPERTY_WITH_YIELDED_COMMAND);
+		readerSessionImpl
+				.transition(new SessionStatePropertyExecutingCommYield(
+						readerSessionImpl));
+
 	}
 
 	@Override
 	public void state_commandFinished() {
-		logger.debug("cannot execute commandFinished when in " + ReaderSessionStatus.EXECUTING_PROPERTY_WITH_YIELDED_COMMAND);
+		logger.debug("cannot execute commandFinished when in "
+				+ ReaderSessionStatus.EXECUTING_PROPERTY_WITH_YIELDED_COMMAND);
 	}
 
 	@Override
@@ -56,39 +65,48 @@ public class SessionStatePropertyExecutingCommYield implements
 	public long state_executeCommand(CommandConfiguration configuration)
 			throws RifidiConnectionException,
 			RifidiCommandInterruptedException, RifidiCommandNotFoundException {
-		logger.debug("cannot execute executeCommand when in " + ReaderSessionStatus.EXECUTING_PROPERTY_WITH_YIELDED_COMMAND);
-		readerSessionImpl.transition(new SessionStatePropertyExecutingCommYield(readerSessionImpl));
+		logger.debug("cannot execute executeCommand when in "
+				+ ReaderSessionStatus.EXECUTING_PROPERTY_WITH_YIELDED_COMMAND);
+		readerSessionImpl
+				.transition(new SessionStatePropertyExecutingCommYield(
+						readerSessionImpl));
 		return 0;
 	}
 
 	@Override
-	public Document state_executeProperty(Document propertiesToExecute, boolean set)
+	public PropertyConfiguration state_executeProperty(
+			PropertyConfiguration propertiesToExecute, boolean set)
 			throws RifidiConnectionException, RifidiCommandNotFoundException,
-			RifidiCommandInterruptedException, RifidiCannotRestartCommandException {
-		
-		
+			RifidiCommandInterruptedException,
+			RifidiCannotRestartCommandException {
+
+		// TODO: maybe we shouldn't return the same properties? Maybe we should
+		// just transition back to same state...
 		return propertiesToExecute;
 
 	}
 
 	@Override
-	public void state_propertyFinished() throws RifidiCannotRestartCommandException{
-		if(readerSessionImpl.curCommand==null){
+	public void state_propertyFinished()
+			throws RifidiCannotRestartCommandException {
+		if (readerSessionImpl.curCommand == null) {
 			readerSessionImpl.transition(new SessionStateOK(readerSessionImpl));
-			throw new RifidiCannotRestartCommandException("Current command is null");
+			throw new RifidiCannotRestartCommandException(
+					"Current command is null");
 		}
-		if(readerSessionImpl.curCommand.getCommandStatus()!=CommandStatus.YIELDED){
+		if (readerSessionImpl.curCommand.getCommandStatus() != CommandStatus.YIELDED) {
 			readerSessionImpl.curCommand = null;
 			readerSessionImpl.transition(new SessionStateOK(readerSessionImpl));
-			throw new RifidiCannotRestartCommandException("Current command is not in yieled state");
+			throw new RifidiCannotRestartCommandException(
+					"Current command is not in yieled state");
 		}
-		
+
 		/*
 		 * Check if we are connected
 		 */
-		
-		//If we are disconnected, wait for a connection event to happen.
-		while(readerSessionImpl.connectionStatus == ConnectionStatus.DISCONNECTED){
+
+		// If we are disconnected, wait for a connection event to happen.
+		while (readerSessionImpl.connectionStatus == ConnectionStatus.DISCONNECTED) {
 			synchronized (this) {
 				try {
 					this.wait();
@@ -102,7 +120,7 @@ public class SessionStatePropertyExecutingCommYield implements
 					readerSessionImpl.curCommand.getCommand(),
 					CommandStatus.NOCOMMAND);
 			readerSessionImpl.curCommand = null;
-			//conn_error() will be called to transition to the error state
+			// conn_error() will be called to transition to the error state
 			throw new RifidiCannotRestartCommandException(
 					"The connection to the reader is not valid anymore. (MAX_CONNECTION_ATTEMPTS)");
 		}
@@ -135,7 +153,9 @@ public class SessionStatePropertyExecutingCommYield implements
 			readerSessionImpl.transition(new SessionStateCommandExecuting(
 					readerSessionImpl));
 
-			logger.debug("Command " + readerSessionImpl.curCommand.getCommandID() + " restarted");
+			logger.debug("Command "
+					+ readerSessionImpl.curCommand.getCommandID()
+					+ " restarted");
 		} catch (RifidiExecutionException e) {
 			logger.debug(e.getMessage());
 			readerSessionImpl.commandJournal.updateCommand(
@@ -150,15 +170,21 @@ public class SessionStatePropertyExecutingCommYield implements
 
 	@Override
 	public void state_resetSession() {
-		logger.debug("cannot execute resetSession when in " + ReaderSessionStatus.EXECUTING_PROPERTY_WITH_YIELDED_COMMAND);
-		readerSessionImpl.transition(new SessionStatePropertyExecutingCommYield(readerSessionImpl));
+		logger.debug("cannot execute resetSession when in "
+				+ ReaderSessionStatus.EXECUTING_PROPERTY_WITH_YIELDED_COMMAND);
+		readerSessionImpl
+				.transition(new SessionStatePropertyExecutingCommYield(
+						readerSessionImpl));
 
 	}
 
 	@Override
 	public void state_stopCommand(boolean force) {
-		logger.debug("cannot execute stopCommand when in " + ReaderSessionStatus.EXECUTING_PROPERTY_WITH_YIELDED_COMMAND);
-		readerSessionImpl.transition(new SessionStatePropertyExecutingCommYield(readerSessionImpl));
+		logger.debug("cannot execute stopCommand when in "
+				+ ReaderSessionStatus.EXECUTING_PROPERTY_WITH_YIELDED_COMMAND);
+		readerSessionImpl
+				.transition(new SessionStatePropertyExecutingCommYield(
+						readerSessionImpl));
 
 	}
 
@@ -192,8 +218,11 @@ public class SessionStatePropertyExecutingCommYield implements
 
 	@Override
 	public boolean state_setReaderInfo(ReaderInfo readerInfo) {
-		logger.debug("Cannot execute setReaderInfo in " + ReaderSessionStatus.EXECUTING_PROPERTY_WITH_NO_YIELDED_COMMAND);
-		readerSessionImpl.transition(new SessionStatePropertyExecuting(readerSessionImpl));
+		logger
+				.debug("Cannot execute setReaderInfo in "
+						+ ReaderSessionStatus.EXECUTING_PROPERTY_WITH_NO_YIELDED_COMMAND);
+		readerSessionImpl.transition(new SessionStatePropertyExecuting(
+				readerSessionImpl));
 		return false;
 	}
 

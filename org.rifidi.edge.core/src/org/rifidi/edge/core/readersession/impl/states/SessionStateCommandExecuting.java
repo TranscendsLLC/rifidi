@@ -1,6 +1,9 @@
 package org.rifidi.edge.core.readersession.impl.states;
 
-import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -10,19 +13,14 @@ import org.rifidi.edge.core.api.exceptions.RifidiCommandNotFoundException;
 import org.rifidi.edge.core.api.exceptions.RifidiConnectionException;
 import org.rifidi.edge.core.api.exceptions.RifidiInvalidConfigurationException;
 import org.rifidi.edge.core.api.readerplugin.commands.CommandConfiguration;
-import org.rifidi.edge.core.api.readerplugin.property.Property;
+import org.rifidi.edge.core.api.readerplugin.property.PropertyConfiguration;
+import org.rifidi.edge.core.api.readerplugin.property.api.Property;
 import org.rifidi.edge.core.api.readersession.enums.CommandStatus;
 import org.rifidi.edge.core.api.readersession.enums.ReaderSessionStatus;
 import org.rifidi.edge.core.communication.service.ConnectionStatus;
 import org.rifidi.edge.core.readerplugin.ReaderInfo;
 import org.rifidi.edge.core.readerplugin.xml.CommandDescription;
 import org.rifidi.edge.core.readersession.impl.ReaderSessionState;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.Text;
-import org.xml.sax.SAXException;
 
 public class SessionStateCommandExecuting implements ReaderSessionState {
 
@@ -84,7 +82,7 @@ public class SessionStateCommandExecuting implements ReaderSessionState {
 	}
 
 	@Override
-	public Document state_executeProperty(Document propertiesToExecute, boolean set)
+	public PropertyConfiguration state_executeProperty(PropertyConfiguration propertiesToExecute, boolean set)
 			throws RifidiConnectionException, RifidiCommandNotFoundException,
 			RifidiCommandInterruptedException, RifidiInvalidConfigurationException, RifidiCannotRestartCommandException {
 		propertyWaiting=true;
@@ -104,16 +102,10 @@ public class SessionStateCommandExecuting implements ReaderSessionState {
 			}
 		}
 		
-		NodeList documentChildren = propertiesToExecute.getChildNodes();
-		Node propertyNode = null;
-		for (int i = 0; i < documentChildren.getLength(); i++) {
-			if (documentChildren.item(i).getNodeName().equals("Properties")) {
-				propertyNode = documentChildren.item(i);
-				break;
-			}
-		}
+		List<String> propertyNames = new ArrayList<String>(propertiesToExecute
+				.getPropertyNames());
 
-		if (propertyNode == null) {
+		if (propertyNames == null || propertyNames.size() == 0) {
 			logger.debug("No 'Properties' Node found in document root");
 			readerSessionImpl.transition(new SessionStatePropertyExecutingCommYield(readerSessionImpl));
 			readerSessionImpl.state_propertyFinished();
@@ -145,91 +137,70 @@ public class SessionStateCommandExecuting implements ReaderSessionState {
 		readerSessionImpl.transition(new SessionStatePropertyExecutingCommYield(
 				readerSessionImpl));
 
+		Set<CommandConfiguration> returnProperties = new HashSet<CommandConfiguration>();
+
 		// for each property in propertiesToExecute
-		NodeList properties = propertyNode.getChildNodes();
-		for (int i = 0; i < properties.getLength(); i++) {
-			Node property = properties.item(i);
-			if (property.getNodeType() == Node.ELEMENT_NODE) {
-				Element e = (Element) property;
-				logger.debug("Property name: " + e.getNodeName());
-				// validate element
-				CommandDescription propertyCommand = readerSessionImpl.plugin
-						.getProperty(e.getNodeName());
-				if (propertyCommand != null) {
+		for (String propertyName : propertyNames) {
+			logger.debug("Property name: " + propertyName);
 
-					Property propObject = null;
-					try {
-						propObject = (Property) readerSessionImpl
-								.instantiate(propertyCommand);
+			CommandConfiguration property = propertiesToExecute
+					.getProperty(propertyName);
 
-						readerSessionImpl.validate(propObject.getClass(), e);
-						
-						Element returnVal = null;
-						logger.debug("Current state is " + readerSessionImpl.connectionStatus);
-						if (readerSessionImpl.connectionStatus == ConnectionStatus.ERROR) {
-							returnVal = e.getOwnerDocument().createElement(
-									e.getNodeName());
-							Text data = e.getOwnerDocument().createTextNode("ERROR");
-							returnVal.appendChild(data);
-						} else if (readerSessionImpl.connectionStatus == ConnectionStatus.CONNECTED) {
-						
-							if(set){
-							returnVal = propObject.setProperty(
+			// validate element
+			CommandDescription propertyCommandDescription = readerSessionImpl.plugin
+					.getProperty(propertyName);
+			if (propertyCommandDescription != null) {
+
+				Property propObject;
+				try {
+					propObject = (Property) readerSessionImpl
+							.instantiate(propertyCommandDescription);
+
+					// readerSessionImpl.validate(propObject.getClass(), e);
+
+					CommandConfiguration returnProperty = null;
+					if (readerSessionImpl.connectionStatus == ConnectionStatus.ERROR) {
+						logger
+								.error("Cannot execute property due to connection error");
+						returnProperties.add(SessionStateOK.createErrorProperty(property,
+								"Connection Error"));
+					} else if (readerSessionImpl.connectionStatus == ConnectionStatus.CONNECTED) {
+						// execute property
+						if (set) {
+							returnProperty = propObject.setProperty(
 									readerSessionImpl.connection,
-									readerSessionImpl.errorQueue, e);
-							}else{
-								returnVal = propObject.getProperty(
+									readerSessionImpl.errorQueue, property);
+						} else {
+							returnProperty = propObject.getProperty(
 									readerSessionImpl.connection,
-									readerSessionImpl.errorQueue, e);
-							}
-						} else {	
-							logger.debug("Default case on swtich called with " + readerSessionImpl.connectionStatus);
+									readerSessionImpl.errorQueue, property);
 						}
-						// insert return value into element
-						propertyNode.replaceChild(returnVal, e);
 
-					} catch (RifidiCommandNotFoundException e1) {
-						logger.debug(e1.getMessage());
-						Element error = propertiesToExecute.createElement(e
-								.getNodeName());
-						Text message = propertiesToExecute
-								.createTextNode("Property Not Found");
-						error.appendChild(message);
-						propertyNode.replaceChild(error, e);
-
-					} catch (SAXException e1) {
-						logger.debug(e1.getMessage());
-						Element error = propertiesToExecute.createElement(e
-								.getNodeName());
-						Text message = propertiesToExecute.createTextNode(e1
-								.getMessage());
-						error.appendChild(message);
-						propertyNode.replaceChild(error, e);
-
-					} catch (IOException e1) {
-						logger.debug(e1.getMessage());
-						Element error = propertiesToExecute.createElement(e
-								.getNodeName());
-						Text message = propertiesToExecute.createTextNode(e1
-								.getMessage());
-						error.appendChild(message);
-						propertyNode.replaceChild(error, e);
+					} else {
+						logger.debug("Default case on swtich called with "
+								+ readerSessionImpl.connectionStatus);
 					}
-				} else {
-					logger.debug("Property Not Found: " + e.getNodeName());
-					Element error = propertiesToExecute.createElement(e
-							.getNodeName());
-					Text message = propertiesToExecute
-							.createTextNode("Property Not Found");
-					error.appendChild(message);
-					propertyNode.replaceChild(error, e);
+					// insert return value into element
+					returnProperties.add(returnProperty);
+				} catch (RifidiCommandNotFoundException e1) {
+					logger.error("Cannot execute property.  "
+							+ "No property found with name: "
+							+ property.getCommandName());
+					returnProperties.add(SessionStateOK.createErrorProperty(property,
+							"Property Not Found"));
 				}
+
 			} else {
-				// if property is not element, skip it.
+				logger.error("Cannot execute property.  "
+						+ "No property found with name: "
+						+ property.getCommandName());
+				returnProperties.add(SessionStateOK.createErrorProperty(property,
+						"Property Not Found"));
 			}
+
 		}// end for loop
 		readerSessionImpl.state_propertyFinished();
-		return propertiesToExecute;
+		return new PropertyConfiguration(returnProperties);
 	}
 
 	@Override
