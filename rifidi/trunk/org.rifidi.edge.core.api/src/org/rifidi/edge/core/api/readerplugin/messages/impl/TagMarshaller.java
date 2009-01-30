@@ -30,18 +30,19 @@ public class TagMarshaller {
 	 * The JAXB Marshaller
 	 */
 	private Marshaller marshaller;
-	
+
 	/**
 	 * The instance of this Marshaller
 	 */
 	private static TagMarshaller instance = new TagMarshaller();;
 
 	/**
-	 * A private constructor 
+	 * A private constructor
 	 */
 	private TagMarshaller() {
 		try {
-			JAXBContext context = JAXBContext.newInstance(TagMessage.class);
+			JAXBContext context = JAXBContext.newInstance(TagMessage.class,
+					EnhancedTagMessage.class);
 			marshaller = context.createMarshaller();
 			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
 		} catch (JAXBException e) {
@@ -59,7 +60,9 @@ public class TagMarshaller {
 
 	/**
 	 * Convert a TagMessage into an XML String
-	 * @param tm The Tag Message to convert
+	 * 
+	 * @param tm
+	 *            The Tag Message to convert
 	 * @return an XML string
 	 */
 	public String getXML(TagMessage tm) {
