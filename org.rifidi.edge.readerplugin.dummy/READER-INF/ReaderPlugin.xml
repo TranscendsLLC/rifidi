@@ -1,24 +1,27 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <readerPluginXML>
-	<plugin>org.rifidi.edge.readerplugin.dummy</plugin>
-	<info>org.rifidi.edge.readerplugin.dummy.plugin.DummyReaderInfo</info>
+	<plugin>org.rifidi.edge.readerplugin.dummy
+	</plugin>
+	<info>org.rifidi.edge.readerplugin.dummy.plugin.DummyReaderInfo
+	</info>
 	<name>Rifidi Dummy Reader</name>
 	<description>A reader used for testing purposes only</description>
-	<connectionManager>org.rifidi.edge.readerplugin.dummy.plugin.DummyConnectionManager</connectionManager>
+	<connectionManager>
+		org.rifidi.edge.readerplugin.dummy.plugin.DummyConnectionManager
+	</connectionManager>
 	<property>
-		<classname>org.rifidi.edge.readerplugin.dummy.properties.GetTagsOnceCommand</classname>
-		<group>general</group>
-		<name>GetTagsOnce</name>
-	</property>
-		<property>
-		<classname>org.rifidi.edge.readerplugin.dummy.properties.UsernameProperty</classname>
-		<group>general</group>
-		<name>username</name>
+		<classname>
+			org.rifidi.edge.readerplugin.dummy.properties.TestProperty
+		</classname>
+		<name>TestProperty</name>
+		<group>General</group>
 	</property>
 	<command>
-		<classname>org.rifidi.edge.readerplugin.dummy.commands.TagStreamCommand</classname>
+		<classname>
+			org.rifidi.edge.readerplugin.dummy.commands.TagStreamCommand
+		</classname>
 		<group>general</group>
-		<name>TagStreaming</name>
+		<name>TagStreamCommand</name>
 	</command>
 
 </readerPluginXML>

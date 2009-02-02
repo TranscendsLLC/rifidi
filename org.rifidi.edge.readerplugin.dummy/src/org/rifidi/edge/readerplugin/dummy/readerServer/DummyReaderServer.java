@@ -78,9 +78,7 @@ public class DummyReaderServer {
 							socket.close();
 						}
 
-						// System.out.println("recieved input:" + input);
 						if (echo) {
-							// System.out.println("sending response...");
 							out.write(input + "\n");
 							out.flush();
 						}

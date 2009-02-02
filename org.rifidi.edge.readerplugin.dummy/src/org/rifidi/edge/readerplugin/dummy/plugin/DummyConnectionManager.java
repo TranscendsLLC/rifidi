@@ -3,7 +3,6 @@ package org.rifidi.edge.readerplugin.dummy.plugin;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.Random;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -14,6 +13,7 @@ import org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionManager;
 import org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionStreams;
 import org.rifidi.edge.core.readerplugin.protocol.CommunicationProtocol;
 import org.rifidi.edge.readerplugin.dummy.protocol.DummyCommunicationProtocol;
+import org.rifidi.edge.readerplugin.dummy.readerServer.DummyReaderServer;
 
 public class DummyConnectionManager extends ConnectionManager {
 
@@ -21,8 +21,7 @@ public class DummyConnectionManager extends ConnectionManager {
 			.getLog(DummyConnectionManager.class);
 	DummyReaderInfo info;
 
-	/* used only when the dummy adapter is set to random errors */
-	Random random;
+	private DummyReaderServer server;
 
 	/**
 	 * The socket for this connection
@@ -55,22 +54,9 @@ public class DummyConnectionManager extends ConnectionManager {
 	 */
 	@Override
 	public void disconnect(Connection connection) {
-		/* used for breakage testing purposes */
-		switch (info.getErrorToSet()) {
-		case DISCONNECT:
-			// throw new RifidiConnectionException();
-		case DISCONNECT_RUNTIME:
-			throw new RuntimeException();
-		case RANDOM:
-			if (info.getRandom().nextDouble() <= info
-					.getRandomErrorProbibility()) {
-				if (info.getRandom().nextDouble() <= info
-						.getProbiblityOfErrorsBeingRuntimeExceptions()) {
-					throw new RuntimeException();
-				} else {
-					// throw new RifidiConnectionException();
-				}
-			}
+
+		if (server != null) {
+			server.stop();
 		}
 
 		// logical disconnect
@@ -123,23 +109,9 @@ public class DummyConnectionManager extends ConnectionManager {
 	@Override
 	public ConnectionStreams createCommunication()
 			throws RifidiConnectionException {
-		/* used for breakage testing purposes */
-		switch (info.getErrorToSet()) {
-		case CONNECT:
-			throw new RifidiConnectionException();
-		case CONNECT_RUNTIME:
-			throw new RuntimeException();
-		case RANDOM:
-			if (info.getRandom().nextDouble() <= info
-					.getRandomErrorProbibility()) {
-				if (info.getRandom().nextDouble() <= info
-						.getProbiblityOfErrorsBeingRuntimeExceptions()) {
-					throw new RuntimeException();
-				} else {
-					throw new RifidiConnectionException();
-				}
-			}
-		}
+
+		server = new DummyReaderServer(info.getPort(), false);
+		server.start();
 
 		ConnectionStreams streams = null;
 		try {
