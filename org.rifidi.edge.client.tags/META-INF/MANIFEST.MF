@@ -18,5 +18,5 @@ Export-Package: org.rifidi.edge.client.tags,
  org.rifidi.edge.client.tags.utils,
  org.rifidi.edge.client.tags.views.reader
 Import-Package: javax.jms,
- org.rifidi.edge.core.api.readerplugin.messages.impl
+ org.rifidi.edge.core.api.readerplugin.messages.impl;version="[1.0.0,1.1.0)"
 Bundle-ClassPath: .

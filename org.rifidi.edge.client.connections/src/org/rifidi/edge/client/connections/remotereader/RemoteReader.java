@@ -630,7 +630,7 @@ public class RemoteReader implements MessageListener {
 
 	@Override
 	public void onMessage(Message message) {
-		logger.debug(message + ": in onMessageMethod");
+//		logger.debug(message + ": in onMessageMethod");
 		synchronized (messageListeners) {
 
 			for (ReaderMessageListener messageListener : messageListeners) {
