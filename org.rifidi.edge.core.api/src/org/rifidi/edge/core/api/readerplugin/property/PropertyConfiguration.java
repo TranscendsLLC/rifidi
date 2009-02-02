@@ -28,6 +28,12 @@ public class PropertyConfiguration implements Serializable {
 	private Set<CommandConfiguration> properties;
 
 	public PropertyConfiguration(Set<CommandConfiguration> properties) {
+		if(properties==null){
+			throw new NullPointerException("Properties cannot be null");
+		}
+		if(properties.contains(null)){
+			throw new NullPointerException("Properties cannot contain a null object");
+		}
 		this.properties = properties;
 	}
 
