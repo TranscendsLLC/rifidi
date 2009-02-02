@@ -25,7 +25,7 @@ public class TagTableLabelProvider implements ITableLabelProvider,
 
 	@Override
 	public String getColumnText(Object element, int columnIndex) {
-		// TODO Auto-generated method stub
+	
 		// logger.debug(element.getClass().getSimpleName() + ":" + columnIndex);
 
 		TagContainer tm = (TagContainer) element;

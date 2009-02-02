@@ -1,7 +1,7 @@
 package org.rifidi.edge.client.connections.views;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+//import org.apache.commons.logging.Log;
+//import org.apache.commons.logging.LogFactory;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.swt.graphics.Image;
@@ -14,7 +14,7 @@ import org.rifidi.services.registry.ServiceRegistry;
 
 public class ReaderViewLabelProvider implements ILabelProvider {
 
-	private Log logger = LogFactory.getLog(ReaderViewLabelProvider.class);
+//	private Log logger = LogFactory.getLog(ReaderViewLabelProvider.class);
 
 	private EdgeServerConnectionRegistryService edgeServerConnectionService;
 
