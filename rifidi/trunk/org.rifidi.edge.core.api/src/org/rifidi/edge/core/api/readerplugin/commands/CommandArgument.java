@@ -45,6 +45,12 @@ public class CommandArgument implements Serializable {
 	private boolean _error;
 
 	public CommandArgument(String argName, String argValue, boolean error) {
+		if(argName==null){
+			throw new NullPointerException("argName cannot be null");
+		}
+		if(argValue==null){
+			throw new NullPointerException("argValue cannot be null");
+		}
 		_argName = argName;
 		_argValue = argValue;
 		_error = error;

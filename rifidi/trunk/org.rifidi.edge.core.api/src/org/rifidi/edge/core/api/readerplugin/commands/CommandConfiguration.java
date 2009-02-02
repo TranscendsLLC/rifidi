@@ -42,6 +42,15 @@ public class CommandConfiguration implements Serializable {
 
 	public CommandConfiguration(String commandName,
 			Set<CommandArgument> arguments) {
+		if(commandName==null){
+			throw new NullPointerException("commandName cannot be null");
+		}
+		if(arguments==null){
+			throw new NullPointerException("arguments cannot be null");
+		}
+		if(arguments.contains(null)){
+			throw new NullPointerException("arguments cannot contain a null reference");
+		}
 		_arguments = arguments;
 		_commandName = commandName;
 	}
