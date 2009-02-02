@@ -27,6 +27,10 @@ import org.rifidi.edge.core.rmi.client.sessionstub.valueobjects.ReaderInfoWrappe
 import org.rifidi.rmi.utils.exceptions.ServerUnavailable;
 
 /**
+ * This regression test is for testing a client connecting to a server and creating an instance of a reader.  The following are prerequists:
+ * 1) server is started at localhost at port 1099
+ * 2) AlienReader Plugin is installed
+ * 3) No other sessions are created on the reader
  * @author Kyle Neumeier
  * 
  */
@@ -53,10 +57,13 @@ public class CreateReaderSession {
 		//get the readerPluginXML for the alien reader
 		getReaderPluginXML();
 		
+		//get the readerinfo annotation to figure out what is needed to create the reader
 		String readerInfoAnnotation = getReaderInfoAnnotation();
 		
+		//crate a reader info to send to the server
 		ReaderInfoWrapper readerInfo = createReaderInfo(readerInfoAnnotation);
 		
+		//create a reader session with the reader info
 		createReaderConnection(readerInfo);
 
 	}
