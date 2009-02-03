@@ -12,3 +12,4 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: org.rifidi.edge.core.rmi.api.readerconnection;version="1.0.0",
  org.rifidi.edge.core.rmi.api.readerconnection.exceptions;version="1.0.0",
  org.rifidi.edge.core.rmi.api.readerconnection.returnobjects;version="1.0.0"
+Bundle-Description: Classes needed by a client to connect to the Edge Server via RMI 
