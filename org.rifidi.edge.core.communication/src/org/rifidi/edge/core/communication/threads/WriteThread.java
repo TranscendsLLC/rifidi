@@ -17,8 +17,8 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionExceptionListener;
-import org.rifidi.edge.core.readerplugin.protocol.CommunicationProtocol;
+import org.rifidi.edge.core.api.readerplugin.communication.CommunicationProtocol;
+import org.rifidi.edge.core.communication.service.ConnectionExceptionListener;
 
 /**
  * Write Thread listens on the queue and writes message to the OutputStream. It

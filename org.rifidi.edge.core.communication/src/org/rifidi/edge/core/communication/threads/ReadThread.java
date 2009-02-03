@@ -16,8 +16,9 @@ import java.util.Queue;
 
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.api.exceptions.RifidiConnectionException;
-import org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionExceptionListener;
-import org.rifidi.edge.core.readerplugin.protocol.CommunicationProtocol;
+import org.rifidi.edge.core.api.readerplugin.communication.CommunicationProtocol;
+import org.rifidi.edge.core.communication.service.ConnectionExceptionListener;
+
 
 /**
  * ReadThread constantly reading from the given InputStream parsing the read
