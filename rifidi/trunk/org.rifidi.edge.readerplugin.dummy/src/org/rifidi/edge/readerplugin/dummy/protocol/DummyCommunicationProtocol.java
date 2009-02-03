@@ -1,6 +1,6 @@
 package org.rifidi.edge.readerplugin.dummy.protocol;
 
-import org.rifidi.edge.core.readerplugin.protocol.CommunicationProtocol;
+import org.rifidi.edge.core.api.readerplugin.communication.CommunicationProtocol;
 import org.rifidi.edge.readerplugin.dummy.plugin.DummyReaderInfo;
 
 public class DummyCommunicationProtocol implements CommunicationProtocol {

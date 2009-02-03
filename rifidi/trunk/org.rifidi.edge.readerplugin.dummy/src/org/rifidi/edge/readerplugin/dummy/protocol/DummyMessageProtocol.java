@@ -1,6 +1,6 @@
 package org.rifidi.edge.readerplugin.dummy.protocol;
 
-import org.rifidi.edge.core.readerplugin.protocol.MessageProtocol;
+import org.rifidi.edge.core.api.readerplugin.MessageProtocol;
 
 public class DummyMessageProtocol implements MessageProtocol {
 

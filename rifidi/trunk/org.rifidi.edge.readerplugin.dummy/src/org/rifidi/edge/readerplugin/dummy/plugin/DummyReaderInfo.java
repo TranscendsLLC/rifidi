@@ -5,7 +5,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.rifidi.dynamicswtforms.xml.annotaions.Form;
 import org.rifidi.dynamicswtforms.xml.annotaions.FormElement;
 import org.rifidi.dynamicswtforms.xml.constants.FormElementType;
-import org.rifidi.edge.core.readerplugin.ReaderInfo;
+import org.rifidi.edge.core.api.readerplugin.ReaderInfo;
 
 @XmlRootElement(name = "DummyReaderInfo")
 @Form(name = "DummyReaderInfo", formElements = {
