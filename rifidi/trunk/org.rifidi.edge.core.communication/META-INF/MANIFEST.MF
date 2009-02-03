@@ -2,14 +2,16 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Rifidi Edge Communication Plug-in
 Bundle-SymbolicName: org.rifidi.edge.core.communication
-Bundle-Version: 1.1.1
+Bundle-Version: 1.1.2
 Bundle-Activator: org.rifidi.edge.core.communication.Activator
 Bundle-Vendor: Pramari, LLC
 Bundle-ActivationPolicy: lazy
 Import-Package: org.apache.commons.logging;version="1.0.4",
  org.osgi.framework;version="1.4.0",
- org.rifidi.edge.core.api.communication;version="1.0.0",
- org.rifidi.edge.core.api.exceptions;version="1.0.0"
-Require-Bundle: org.rifidi.edge.core;bundle-version="1.1.0",
- org.rifidi.edge.services;bundle-version="1.1.0"
+ org.rifidi.edge.core.api.exceptions;version="[1.0.0,2.0.0)",
+ org.rifidi.edge.core.api.readerplugin;version="[1.0.0,2.0.0)",
+ org.rifidi.edge.core.api.readerplugin.communication;version="[1.0.0,2.0.0)"
+Require-Bundle: org.rifidi.edge.services;bundle-version="1.1.0",
+ org.rifidi.edge.core;bundle-version="4.0.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-Description: Service for reader sessions to create physical connection to a reader

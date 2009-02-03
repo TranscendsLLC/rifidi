@@ -6,16 +6,16 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.rifidi.edge.core.api.communication.Connection;
 import org.rifidi.edge.core.api.exceptions.RifidiConnectionException;
+import org.rifidi.edge.core.api.readerplugin.ConnectionManager;
+import org.rifidi.edge.core.api.readerplugin.communication.CommunicationProtocol;
+import org.rifidi.edge.core.api.readerplugin.communication.Connection;
+import org.rifidi.edge.core.api.readerplugin.communication.ConnectionStreams;
 import org.rifidi.edge.core.communication.service.CommunicationStateListener;
+import org.rifidi.edge.core.communication.service.ConnectionExceptionListener;
 import org.rifidi.edge.core.communication.service.ConnectionStatus;
 import org.rifidi.edge.core.communication.threads.ReadThread;
 import org.rifidi.edge.core.communication.threads.WriteThread;
-import org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionExceptionListener;
-import org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionManager;
-import org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionStreams;
-import org.rifidi.edge.core.readerplugin.protocol.CommunicationProtocol;
 
 /**
  * This is the internal Object managing a Connection by utilizing the
