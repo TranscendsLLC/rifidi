@@ -47,7 +47,6 @@ public class TagView extends ViewPart implements ReaderMessageListener {
 	private TableViewer table;
 	private Set<Button> buttons = new HashSet<Button>();
 
-	// TODO Put this someplace better -- maybe
 	private Set<TagContainer> tags = new TreeSet<TagContainer>();
 
 	private AtomicBoolean lock = new AtomicBoolean(false);
@@ -62,8 +61,6 @@ public class TagView extends ViewPart implements ReaderMessageListener {
 	private RefreshThread thread;
 	private RemoteReader connection;
 
-	// private MessageConvertingService messageConvertingService;
-
 	@Override
 	public void createPartControl(Composite parent) {
 		logger.debug("Creating " + this.getClass().getSimpleName()
@@ -71,7 +68,7 @@ public class TagView extends ViewPart implements ReaderMessageListener {
 		ServiceRegistry.getInstance().service(this);
 		parent.setLayout(new FillLayout(SWT.VERTICAL));
 
-		Group group = new Group(parent, SWT.NONE);
+		Group group = new Group(parent, SWT.NONE | SWT.TOP);
 		group.setText("Antenna Selection");
 		group.setLayout(new RowLayout(SWT.HORIZONTAL));
 
@@ -83,9 +80,10 @@ public class TagView extends ViewPart implements ReaderMessageListener {
 			buttons.add(button);
 
 		}
+		group.pack();
 
 		table = new TableViewer(parent, SWT.BORDER | SWT.V_SCROLL | SWT.WRAP
-				| SWT.H_SCROLL | SWT.FULL_SELECTION);
+				| SWT.H_SCROLL | SWT.FULL_SELECTION | SWT.BOTTOM);
 
 		table.getTable().setLinesVisible(true);
 		table.getTable().setHeaderVisible(true);
@@ -136,7 +134,7 @@ public class TagView extends ViewPart implements ReaderMessageListener {
 	public void onMessage(Message message, RemoteReader reader) {
 		// logger.debug("TagView: onMessage: " + message.toString()
 		// + " from Reader: " + reader.toString());
-		if (lock.compareAndSet(false, true)) {
+		if (lock.compareAndSet(false, true) && !table.getControl().isDisposed()) {
 			table.getTable().getDisplay().syncExec(
 					new MessageRunner((TextMessage) message));
 		}
@@ -171,8 +169,11 @@ public class TagView extends ViewPart implements ReaderMessageListener {
 
 		@Override
 		public void run() {
+
+			TagMessage tagMessage = new TagMessage();
 			try {
 				Reader reader;
+
 				try {
 					reader = new CharArrayReader(message.getText()
 							.toCharArray());
@@ -181,7 +182,7 @@ public class TagView extends ViewPart implements ReaderMessageListener {
 					connection.removeMessageListener(TagView.this);
 					return;
 				}
-				TagMessage tagMessage = new TagMessage();
+
 				try {
 
 					tagMessage = (TagMessage) TagMessageUnmarshaller
@@ -191,28 +192,24 @@ public class TagView extends ViewPart implements ReaderMessageListener {
 					connection.removeMessageListener(TagView.this);
 					return;
 				}
-				// check if tag is on a selected antenna - if not: throw
-				// it out.
+
+				TagContainer tm2;
+				if ((tm2 = getTagByID(tagMessage, tags)) != null) {
+					tags.remove(tm2);
+
+				}
+			} finally {
 				try {
+					// check if tag is on a selected antenna - if so: add to
+					// tags
 					EnhancedTagMessage etm = (EnhancedTagMessage) tagMessage;
-					if (!getSelectedAntennas().contains(etm.getAntennaId()))
-						return;
+					if (getSelectedAntennas().contains(etm.getAntennaId()))
+						tags.add(new TagContainer(tagMessage, System
+								.currentTimeMillis()));
 				} catch (ClassCastException e) {
 					logger.error(e);
 				}
-				TagContainer tm2;
-				if ((tm2 = getTagByID(tagMessage, tags)) != null) {
-					tm2.setTag(tagMessage);
-					tm2.setInternalTime(System.currentTimeMillis());
-					table.refresh(tm2);
-					// logger.debug(tm2);
-				} else {
-					tags.add(new TagContainer(tagMessage, System
-							.currentTimeMillis()));
-					// TODO find a better way of doing this.
-					table.refresh();
-				}
-			} finally {
+
 				lock.compareAndSet(true, false);
 			}
 		}
@@ -242,7 +239,7 @@ public class TagView extends ViewPart implements ReaderMessageListener {
 		@Override
 		public void run() {
 			// TODO Auto-generated method stub
-			while (!isInterrupted()) {
+			while (!isInterrupted() && !table.getControl().isDisposed()) {
 				List<TagContainer> tagsToKeep = new ArrayList<TagContainer>();
 				// logger.debug(tags);
 				// Convoluted but needed
@@ -262,7 +259,7 @@ public class TagView extends ViewPart implements ReaderMessageListener {
 				tagsToKeep.clear();
 
 				if (!table.getControl().isDisposed()) {
-					// synchronized(this) {
+
 					table.getControl().getDisplay().syncExec(new Runnable() {
 						@Override
 						public void run() {
