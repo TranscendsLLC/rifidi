@@ -16,12 +16,12 @@ import org.llrp.ltk.generated.messages.CLOSE_CONNECTION_RESPONSE;
 import org.llrp.ltk.generated.messages.READER_EVENT_NOTIFICATION;
 import org.llrp.ltk.generated.parameters.ConnectionAttemptEvent;
 import org.llrp.ltk.generated.parameters.LLRPStatus;
-import org.rifidi.edge.core.api.communication.Connection;
 import org.rifidi.edge.core.api.exceptions.RifidiConnectionException;
-import org.rifidi.edge.core.readerplugin.ReaderInfo;
-import org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionManager;
-import org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionStreams;
-import org.rifidi.edge.core.readerplugin.protocol.CommunicationProtocol;
+import org.rifidi.edge.core.api.readerplugin.ConnectionManager;
+import org.rifidi.edge.core.api.readerplugin.ReaderInfo;
+import org.rifidi.edge.core.api.readerplugin.communication.CommunicationProtocol;
+import org.rifidi.edge.core.api.readerplugin.communication.Connection;
+import org.rifidi.edge.core.api.readerplugin.communication.ConnectionStreams;
 import org.rifidi.edge.readerplugin.llrp.protocol.LLRPCommunicationProtocol;
 
 /**
@@ -52,7 +52,7 @@ public class LLRPConnectionManager extends ConnectionManager {
 	private Log logger = LogFactory.getLog(LLRPCommunicationProtocol.class);
 
 	public LLRPConnectionManager(ReaderInfo readerInfo) {
-		super(readerInfo);
+		super();
 		this.readerInfo = readerInfo;
 		communicationProtocol = new LLRPCommunicationProtocol();
 	}
