@@ -9,11 +9,11 @@ import java.util.Set;
 import org.rifidi.dynamicswtforms.xml.annotaions.Form;
 import org.rifidi.dynamicswtforms.xml.annotaions.FormElement;
 import org.rifidi.dynamicswtforms.xml.constants.FormElementType;
-import org.rifidi.edge.core.api.communication.Connection;
-import org.rifidi.edge.core.api.messageQueue.MessageQueue;
+import org.rifidi.edge.core.api.readerplugin.Property;
 import org.rifidi.edge.core.api.readerplugin.commands.CommandArgument;
 import org.rifidi.edge.core.api.readerplugin.commands.CommandConfiguration;
-import org.rifidi.edge.core.api.readerplugin.property.api.Property;
+import org.rifidi.edge.core.api.readerplugin.communication.Connection;
+import org.rifidi.edge.core.api.readerplugin.messageQueue.MessageQueue;
 
 /**
  * This is just a dummy property to make sure that properties are working

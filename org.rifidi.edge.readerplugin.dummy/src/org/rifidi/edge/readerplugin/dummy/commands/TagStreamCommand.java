@@ -5,12 +5,12 @@ import java.util.Random;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.dynamicswtforms.xml.annotaions.Form;
-import org.rifidi.edge.core.api.communication.Connection;
 import org.rifidi.edge.core.api.exceptions.RifidiMessageQueueException;
-import org.rifidi.edge.core.api.messageQueue.MessageQueue;
+import org.rifidi.edge.core.api.readerplugin.Command;
 import org.rifidi.edge.core.api.readerplugin.commands.CommandConfiguration;
 import org.rifidi.edge.core.api.readerplugin.commands.CommandReturnStatus;
-import org.rifidi.edge.core.api.readerplugin.commands.api.Command;
+import org.rifidi.edge.core.api.readerplugin.communication.Connection;
+import org.rifidi.edge.core.api.readerplugin.messageQueue.MessageQueue;
 import org.rifidi.edge.core.api.readerplugin.messages.impl.EnhancedTagMessage;
 
 @Form(name = "TagStreamCommand", formElements = {})
