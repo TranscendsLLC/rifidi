@@ -10,7 +10,7 @@
  */
 package org.rifidi.edge.readerplugin.alien.protocol;
 
-import org.rifidi.edge.core.readerplugin.protocol.CommunicationProtocol;
+import org.rifidi.edge.core.api.readerplugin.communication.CommunicationProtocol;
 
 /**
  * This

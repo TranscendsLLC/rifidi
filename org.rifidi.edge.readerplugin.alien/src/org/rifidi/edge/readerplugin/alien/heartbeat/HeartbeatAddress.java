@@ -17,11 +17,12 @@ import org.apache.commons.logging.LogFactory;
 import org.rifidi.dynamicswtforms.xml.annotaions.Form;
 import org.rifidi.dynamicswtforms.xml.annotaions.FormElement;
 import org.rifidi.dynamicswtforms.xml.constants.FormElementType;
-import org.rifidi.edge.core.api.communication.Connection;
-import org.rifidi.edge.core.api.messageQueue.MessageQueue;
+import org.rifidi.edge.core.api.readerplugin.Property;
 import org.rifidi.edge.core.api.readerplugin.commands.CommandConfiguration;
-import org.rifidi.edge.core.api.readerplugin.property.api.Property;
+import org.rifidi.edge.core.api.readerplugin.communication.Connection;
+import org.rifidi.edge.core.api.readerplugin.messageQueue.MessageQueue;
 import org.rifidi.edge.readerplugin.alien.properties.AlienResponse;
+
 
 /**
  * 

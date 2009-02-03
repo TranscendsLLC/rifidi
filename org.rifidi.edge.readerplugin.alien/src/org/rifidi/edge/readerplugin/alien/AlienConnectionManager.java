@@ -16,12 +16,12 @@ import java.net.UnknownHostException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.rifidi.edge.core.api.communication.Connection;
 import org.rifidi.edge.core.api.exceptions.RifidiConnectionException;
-import org.rifidi.edge.core.readerplugin.ReaderInfo;
-import org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionManager;
-import org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionStreams;
-import org.rifidi.edge.core.readerplugin.protocol.CommunicationProtocol;
+import org.rifidi.edge.core.api.readerplugin.ConnectionManager;
+import org.rifidi.edge.core.api.readerplugin.ReaderInfo;
+import org.rifidi.edge.core.api.readerplugin.communication.CommunicationProtocol;
+import org.rifidi.edge.core.api.readerplugin.communication.Connection;
+import org.rifidi.edge.core.api.readerplugin.communication.ConnectionStreams;
 import org.rifidi.edge.readerplugin.alien.protocol.AlienCommunicationProtocol;
 
 /**
@@ -68,7 +68,7 @@ public class AlienConnectionManager extends ConnectionManager {
 	 * @param readerInfo
 	 */
 	public AlienConnectionManager(ReaderInfo readerInfo) {
-		super(readerInfo);
+		super();
 		this.info = (AlienReaderInfo) readerInfo;
 		this.alienSock = null;
 		this.aka = new KeepAliveThread();
