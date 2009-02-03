@@ -3,7 +3,7 @@
  */
 package org.rifidi.edge.readerplugin.llrp.protocol;
 
-import org.rifidi.edge.core.readerplugin.protocol.MessageProtocol;
+import org.rifidi.edge.core.api.readerplugin.MessageProtocol;
 
 /**
  * @author kyle
