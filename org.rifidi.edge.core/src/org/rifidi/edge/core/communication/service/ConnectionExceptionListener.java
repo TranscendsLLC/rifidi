@@ -1,4 +1,4 @@
-package org.rifidi.edge.core.readerplugin.connectionmanager;
+package org.rifidi.edge.core.communication.service;
 
 /**
  * ConnectionExceptionListener for listening to Exception events on a Connection

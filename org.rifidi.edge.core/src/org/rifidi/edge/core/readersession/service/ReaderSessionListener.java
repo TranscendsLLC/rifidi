@@ -1,6 +1,6 @@
 package org.rifidi.edge.core.readersession.service;
 
-import org.rifidi.edge.core.readerplugin.ReaderInfo;
+import org.rifidi.edge.core.api.readerplugin.ReaderInfo;
 import org.rifidi.edge.core.readersession.ReaderSession;
 
 /**

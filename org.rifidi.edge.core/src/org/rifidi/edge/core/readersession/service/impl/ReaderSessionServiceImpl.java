@@ -8,10 +8,10 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.rifidi.edge.core.readerplugin.ReaderInfo;
-import org.rifidi.edge.core.readerplugin.ReaderPlugin;
-import org.rifidi.edge.core.readerplugin.service.ReaderPluginListener;
-import org.rifidi.edge.core.readerplugin.service.ReaderPluginService;
+import org.rifidi.edge.core.api.readerplugin.ReaderInfo;
+import org.rifidi.edge.core.api.readerplugin.ReaderPlugin;
+import org.rifidi.edge.core.api.readerplugin.service.ReaderPluginListener;
+import org.rifidi.edge.core.api.readerplugin.service.ReaderPluginService;
 import org.rifidi.edge.core.readersession.ReaderSession;
 import org.rifidi.edge.core.readersession.impl.states.ReaderSessionImpl;
 import org.rifidi.edge.core.readersession.service.ReaderSessionListener;

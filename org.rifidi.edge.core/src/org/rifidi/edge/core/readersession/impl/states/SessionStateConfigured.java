@@ -10,11 +10,11 @@ import org.rifidi.edge.core.api.exceptions.RifidiCommandInterruptedException;
 import org.rifidi.edge.core.api.exceptions.RifidiCommandNotFoundException;
 import org.rifidi.edge.core.api.exceptions.RifidiConnectionException;
 import org.rifidi.edge.core.api.exceptions.RifidiInvalidConfigurationException;
+import org.rifidi.edge.core.api.readerplugin.ReaderInfo;
 import org.rifidi.edge.core.api.readerplugin.commands.CommandConfiguration;
 import org.rifidi.edge.core.api.readerplugin.property.PropertyConfiguration;
 import org.rifidi.edge.core.api.readersession.enums.ReaderSessionStatus;
 import org.rifidi.edge.core.communication.service.ConnectionStatus;
-import org.rifidi.edge.core.readerplugin.ReaderInfo;
 import org.rifidi.edge.core.readersession.impl.ReaderSessionState;
 
 /**

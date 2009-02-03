@@ -1,8 +1,7 @@
 package org.rifidi.edge.core.messageQueue.service;
 
 import java.util.List;
-
-import org.rifidi.edge.core.api.messageQueue.MessageQueue;
+import org.rifidi.edge.core.api.readerplugin.messageQueue.MessageQueue;
 
 /**
  * MessageService for creating and deleting MessageQueues. This will be

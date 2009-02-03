@@ -2,10 +2,10 @@ package org.rifidi.edge.core.readersession.impl;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.rifidi.edge.core.api.communication.Connection;
 import org.rifidi.edge.core.api.exceptions.RifidiExecutionException;
-import org.rifidi.edge.core.api.messageQueue.MessageQueue;
 import org.rifidi.edge.core.api.readerplugin.commands.CommandReturnStatus;
+import org.rifidi.edge.core.api.readerplugin.communication.Connection;
+import org.rifidi.edge.core.api.readerplugin.messageQueue.MessageQueue;
 
 /**
  * This is a Helper to execute Commands. It will take in the command and execute

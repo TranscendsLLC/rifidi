@@ -16,11 +16,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.osgi.framework.Bundle;
 import org.rifidi.edge.core.api.exceptions.RifidiReaderInfoNotFoundException;
-import org.rifidi.edge.core.readerplugin.ReaderInfo;
-import org.rifidi.edge.core.readerplugin.ReaderPlugin;
-import org.rifidi.edge.core.readerplugin.service.ReaderPluginListener;
-import org.rifidi.edge.core.readerplugin.service.ReaderPluginService;
-import org.rifidi.edge.core.readerplugin.xml.ReaderPluginXML;
+import org.rifidi.edge.core.api.readerplugin.ReaderInfo;
+import org.rifidi.edge.core.api.readerplugin.ReaderPlugin;
+import org.rifidi.edge.core.api.readerplugin.service.ReaderPluginListener;
+import org.rifidi.edge.core.api.readerplugin.service.ReaderPluginService;
+import org.rifidi.edge.core.api.readerplugin.xml.ReaderPluginXML;
 import org.w3c.dom.Document;
 
 /**

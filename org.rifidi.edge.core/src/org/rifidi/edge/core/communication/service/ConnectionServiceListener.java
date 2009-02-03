@@ -1,6 +1,8 @@
 package org.rifidi.edge.core.communication.service;
 
-import org.rifidi.edge.core.api.communication.Connection;
+import org.rifidi.edge.core.api.readerplugin.communication.Connection;
+
+
 
 /**
  * ConnectionService listener to monitor the creation and the removal of
