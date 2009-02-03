@@ -2,11 +2,10 @@ package org.rifidi.edge.core.communication.service;
 
 import java.util.List;
 
-import org.rifidi.edge.core.api.communication.Connection;
 import org.rifidi.edge.core.api.exceptions.RifidiConnectionException;
-import org.rifidi.edge.core.readerplugin.ReaderInfo;
-import org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionManager;
-
+import org.rifidi.edge.core.api.readerplugin.ConnectionManager;
+import org.rifidi.edge.core.api.readerplugin.ReaderInfo;
+import org.rifidi.edge.core.api.readerplugin.communication.Connection;
 /**
  * ConnectionService to create and delete connections to readers
  * 

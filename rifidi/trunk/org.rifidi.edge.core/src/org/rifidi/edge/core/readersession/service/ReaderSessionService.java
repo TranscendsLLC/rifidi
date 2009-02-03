@@ -2,7 +2,7 @@ package org.rifidi.edge.core.readersession.service;
 
 import java.util.List;
 
-import org.rifidi.edge.core.readerplugin.ReaderInfo;
+import org.rifidi.edge.core.api.readerplugin.ReaderInfo;
 import org.rifidi.edge.core.readersession.ReaderSession;
 
 /**

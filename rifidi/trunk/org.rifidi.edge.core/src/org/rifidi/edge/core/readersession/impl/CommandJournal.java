@@ -5,8 +5,8 @@ package org.rifidi.edge.core.readersession.impl;
 
 import java.util.ArrayList;
 
+import org.rifidi.edge.core.api.readerplugin.Command;
 import org.rifidi.edge.core.api.readerplugin.commands.CommandReturnStatus;
-import org.rifidi.edge.core.api.readerplugin.commands.api.Command;
 import org.rifidi.edge.core.api.readersession.enums.CommandStatus;
 
 /**
