@@ -23,3 +23,4 @@ Export-Package: org.rifidi.edge.core.rmi.client.edgeserverstub,
  org.rifidi.edge.core.rmi.client.pluginstub.valueobjects,
  org.rifidi.edge.core.rmi.client.sessionstub,
  org.rifidi.edge.core.rmi.client.sessionstub.valueobjects
+Bundle-Description: Classes used to access the Edge Server via RMI that handle RMI network calls.
