@@ -224,8 +224,10 @@ public class TagView extends ViewPart implements ReaderMessageListener {
 		}
 	}
 
-	// TODO Implement this better.
+	
 	private class RefreshThread extends Thread {
+		
+		//TODO: management thinks that the following values should be modifyable from gui
 
 		private long refreashRate = 1000;
 		private long retainTime = 3000;

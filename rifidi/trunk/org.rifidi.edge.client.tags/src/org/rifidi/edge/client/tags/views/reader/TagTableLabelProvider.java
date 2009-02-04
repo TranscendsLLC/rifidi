@@ -1,5 +1,8 @@
 package org.rifidi.edge.client.tags.views.reader;
 
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eclipse.jface.viewers.ILabelProviderListener;
@@ -25,7 +28,7 @@ public class TagTableLabelProvider implements ITableLabelProvider,
 
 	@Override
 	public String getColumnText(Object element, int columnIndex) {
-	
+
 		// logger.debug(element.getClass().getSimpleName() + ":" + columnIndex);
 
 		TagContainer tm = (TagContainer) element;
@@ -35,7 +38,12 @@ public class TagTableLabelProvider implements ITableLabelProvider,
 			return ByteAndHexConvertingUtility.toHexString(tm.getTag().getId())
 					.replace(" ", "");
 		case 1:
-			return Long.toString(tm.getTag().getLastSeenTime());
+			Calendar cal = new GregorianCalendar();
+			cal.setTimeInMillis(tm.getTag().getLastSeenTime());
+
+			return correcTime(cal.get(Calendar.HOUR_OF_DAY)) + ":"
+					+ correcTime(cal.get(Calendar.MINUTE)) + ":"
+					+ correcTime(cal.get(Calendar.SECOND));
 		case 2:
 			if (tm.getTag() instanceof EnhancedTagMessage) {
 				int antenna = ((EnhancedTagMessage) tm.getTag()).getAntennaId();
@@ -123,6 +131,16 @@ public class TagTableLabelProvider implements ITableLabelProvider,
 	public Color getForeground(Object element, int columnIndex) {
 		// TODO Auto-generated method stub
 		return Display.getCurrent().getSystemColor(0);
+	}
+
+	private String correcTime(int time) {
+		String retVal;
+		if (time < 10) {
+			retVal = "0" + time;
+		} else {
+			retVal = Integer.toString(time);
+		}
+		return retVal;
 	}
 
 }
