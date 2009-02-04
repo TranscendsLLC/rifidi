@@ -40,7 +40,7 @@ import org.rifidi.edge.readerplugin.alien.properties.AlienTagGenerations;
  */
 @Form(name = "AlienTagStreamCommand", formElements = {
 		@FormElement(type = FormElementType.CHOICE, elementName = AlienTagStreamCommand.TAG_TYPE, displayName = AlienTagStreamCommand.TAG_TYPE_DISPLAY, defaultValue = "ALL", enumClass = "org.rifidi.edge.readerplugin.alien.properties.AlienTagGenerations"),
-		@FormElement(type = FormElementType.STRING, elementName = AlienTagStreamCommand.ANTENNA_SEQUENCE, displayName = AlienTagStreamCommand.ANTENNA_SEQUENCE_DISPLAY, defaultValue = "0 1"),
+		@FormElement(type = FormElementType.STRING, elementName = AlienTagStreamCommand.ANTENNA_SEQUENCE, displayName = AlienTagStreamCommand.ANTENNA_SEQUENCE_DISPLAY, defaultValue = "0"),
 		@FormElement(type = FormElementType.INTEGER, elementName = AlienTagStreamCommand.POLL_PERIOD_IN_MILLIS, displayName = AlienTagStreamCommand.POLL_PERIOD_IN_MILLIS_DISPLAY, defaultValue = AlienTagStreamCommand.POLL_PERIOD_DEFAULT_STRING) })
 public class AlienTagStreamCommand implements Command {
 
