@@ -1,4 +1,4 @@
-package org.rifidi.edge.regression.createSession;
+package org.rifidi.edge.regression.createsession;
 
 import java.io.BufferedReader;
 import java.io.IOException;

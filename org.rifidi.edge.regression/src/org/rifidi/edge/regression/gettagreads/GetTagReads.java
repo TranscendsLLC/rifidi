@@ -8,7 +8,7 @@
  *  License:	Lesser GNU Public License (LGPL)
  *  				http://www.opensource.org/licenses/lgpl-license.html
  */
-package org.rifidi.edge.regression.getTagReads;
+package org.rifidi.edge.regression.gettagreads;
 
 import java.io.IOException;
 import java.util.HashSet;
@@ -30,6 +30,7 @@ import org.rifidi.edge.core.api.readersession.enums.CommandStatus;
 import org.rifidi.edge.core.api.readersession.enums.ReaderSessionStatus;
 import org.rifidi.edge.core.rmi.api.readerconnection.returnobjects.CommandInfo;
 import org.rifidi.edge.core.rmi.client.edgeserverstub.ESCreateReaderSessionCall;
+import org.rifidi.edge.core.rmi.client.edgeserverstub.ESDeleteReaderSessionCall;
 import org.rifidi.edge.core.rmi.client.edgeserverstub.ESGetAllReaderSessionIDsCall;
 import org.rifidi.edge.core.rmi.client.edgeserverstub.ESServerDescription;
 import org.rifidi.edge.core.rmi.client.pluginstub.RPGetAvailableReaderPluginsCall;
@@ -43,7 +44,7 @@ import org.rifidi.edge.core.rmi.client.sessionstub.SessionExecuteCommandCall;
 import org.rifidi.edge.core.rmi.client.sessionstub.SessionGetStateCall;
 import org.rifidi.edge.core.rmi.client.sessionstub.SessionServerDescription;
 import org.rifidi.edge.core.rmi.client.sessionstub.valueobjects.ReaderInfoWrapper;
-import org.rifidi.edge.regression.createSession.AnnotationWrapper;
+import org.rifidi.edge.regression.createsession.AnnotationWrapper;
 import org.rifidi.rmi.utils.exceptions.ServerUnavailable;
 
 /**
@@ -52,16 +53,21 @@ import org.rifidi.rmi.utils.exceptions.ServerUnavailable;
  * 
  */
 public class GetTagReads {
-	private static final String IP = "127.0.0.1";
-	private static final int PORT = 1099;
+	private static final String SERVERIP = "127.0.0.1";
+	private static final int SERVERPORT = 1099;
 	private static final ESServerDescription edgeserverSD = new ESServerDescription(
-			IP, PORT);
+			SERVERIP, SERVERPORT);
 	private static final RPServerDescription readerPluginsSD = new RPServerDescription(
-			IP, PORT);
+			SERVERIP, SERVERPORT);
 	private static SessionServerDescription sessionSD = null;
 	private static Log logger = LogFactory.getLog(GetTagReads.class);
-	private static String alienRI = "org.rifidi.edge.readerplugin.alien.AlienReaderInfo";
-	private static String alienTagStreamCmdName = "AlienTagStreamCommand";
+	// private static String alienRI =
+	// "org.rifidi.edge.readerplugin.alien.AlienReaderInfo";
+	// private static String alienTagStreamCmdName = "AlienTagStreamCommand";
+
+	private static String dummyRI = "org.rifidi.edge.readerplugin.dummy.plugin.DummyReaderInfo";
+	private static String dummyTagStreamCmdName = "TagStreamCommand";
+
 	private static HashSet<CommandArgument> comArgs = new HashSet<CommandArgument>();
 
 	@Test
@@ -79,7 +85,7 @@ public class GetTagReads {
 
 		ReaderInfoWrapper readerInfo = createReaderInfo(readerInfoAnnotation);
 
-		createReaderConnection(readerInfo);
+		long id= createReaderConnection(readerInfo);
 
 		getReaderState(ReaderSessionStatus.CONFIGURED.toString());
 
@@ -89,18 +95,20 @@ public class GetTagReads {
 
 		commandStatus(CommandStatus.NOCOMMAND.toString());
 
-		CommandArgument comArg= new CommandArgument("TagType","ALL",false);
-		comArgs.add(comArg);
-		comArg=new CommandArgument("AntennaSequence","0",false);
-		comArgs.add(comArg);
-		comArg=new CommandArgument("PollPeriodInMillis","1000",false);
-		comArgs.add(comArg);
+		// CommandArgument comArg= new CommandArgument("TagType","ALL",false);
+		// comArgs.add(comArg);
+		// comArg=new CommandArgument("AntennaSequence","0",false);
+		// comArgs.add(comArg);
+		// comArg=new CommandArgument("PollPeriodInMillis","1000",false);
+		// comArgs.add(comArg);
 		CommandConfiguration commandConfiguration = new CommandConfiguration(
-				alienTagStreamCmdName, comArgs);
+				dummyTagStreamCmdName, comArgs);
 
 		executeCommand(commandConfiguration);
 
 		commandStatus(CommandStatus.EXECUTING.toString());
+		
+		deleteReaderSession(id);
 
 	}
 
@@ -126,9 +134,9 @@ public class GetTagReads {
 				readerPluginsSD);
 		try {
 			List<String> plugins = command.makeCall();
-			if (!plugins.contains(alienRI)) {
+			if (!plugins.contains(dummyRI)) {
 				Assert
-						.fail("Edge Server must have the alien reader plugin installed");
+						.fail("Edge Server must have the correct reader plugin installed");
 			} else {
 				logger.info("getAvailableReaderPlugins success");
 			}
@@ -141,13 +149,13 @@ public class GetTagReads {
 
 	public void getReaderPluginXML() {
 		RPGetReaderPluginXMLCall command = new RPGetReaderPluginXMLCall(
-				readerPluginsSD, alienRI);
+				readerPluginsSD, dummyRI);
 		try {
 			ReaderPluginWrapper wrapper = command.makeCall();
 			if (wrapper == null) {
 				Assert.fail("readerPluginXML is null");
 			} else {
-				logger.info("getReaderPluginXMLCall success for alien reader");
+				logger.info("getReaderPluginXMLCall success for reader");
 			}
 		} catch (RifidiReaderPluginXMLNotFoundException e) {
 			Assert.fail(e.getMessage());
@@ -158,7 +166,7 @@ public class GetTagReads {
 
 	public String getReaderInfoAnnotation() {
 		RPGetReaderInfoAnnotationCall command = new RPGetReaderInfoAnnotationCall(
-				readerPluginsSD, alienRI);
+				readerPluginsSD, dummyRI);
 		try {
 			String readerInfoAnnotation = command.makeCall();
 			if (readerInfoAnnotation == null) {
@@ -188,18 +196,20 @@ public class GetTagReads {
 		return null;
 	}
 
-	public void createReaderConnection(ReaderInfoWrapper readerInfo) {
+	public long createReaderConnection(ReaderInfoWrapper readerInfo) {
 
 		ESCreateReaderSessionCall command = new ESCreateReaderSessionCall(
 				edgeserverSD, readerInfo);
 		try {
 			long id = command.makeCall();
-			sessionSD = new SessionServerDescription(IP, PORT, id);
+			sessionSD = new SessionServerDescription(SERVERIP, SERVERPORT, id);
+			return id;
 		} catch (RifidiReaderInfoNotFoundException e) {
 			Assert.fail(e.getMessage());
 		} catch (ServerUnavailable e) {
 			Assert.fail(e.getMessage());
 		}
+		return Long.MAX_VALUE;
 	}
 
 	/**
@@ -241,8 +251,7 @@ public class GetTagReads {
 	 * @return
 	 */
 	public CommandInfo commandStatus(String desiredState) {
-		SessionCommandStatusCall call = new SessionCommandStatusCall(
-				sessionSD);
+		SessionCommandStatusCall call = new SessionCommandStatusCall(sessionSD);
 		try {
 			CommandInfo info = call.makeCall();
 			if (!info.getCommandStatus().toString().equals(desiredState)) {
@@ -267,7 +276,7 @@ public class GetTagReads {
 	public void executeCommand(CommandConfiguration commandConfiguration) {
 		SessionExecuteCommandCall call = new SessionExecuteCommandCall(
 				sessionSD, commandConfiguration);
-		
+
 		try {
 			call.makeCall();
 		} catch (ServerUnavailable e) {
@@ -276,6 +285,21 @@ public class GetTagReads {
 			Assert.fail(e.getMessage());
 		}
 
+	}
+	/**
+	 * @param readerID
+	 */
+	private void deleteReaderSession(long readerID) {
+
+		ESDeleteReaderSessionCall call = new ESDeleteReaderSessionCall(
+				edgeserverSD, readerID);
+		try {
+			call.makeCall();
+		} catch (ServerUnavailable e) {
+			logger.error(e.getMessage());
+		} catch (RuntimeException e) {
+			logger.error(e.getMessage());
+		}
 	}
 
 }
