@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:osgi="http://www.springframework.org/schema/osgi"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+                           http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi.xsd">
+
+	<osgi:service id="configurationServiceRegistration" ref="configurationService"
+		interface="org.rifidi.configuration.ConfigurationService" />
+	<bean id="configurationService" class="org.rifidi.configuration.ConfigurationServiceImpl"
+		scope="singleton">
+		<property name="configurationAdminService">
+			<ref bean="configurationAdmin" />
+		</property>
+	</bean>
+	<osgi:service id="jmxServiceRegistration" ref="jmxService"
+		interface="org.rifidi.configuration.JMXService" />
+	<bean id="jmxService" class="org.rifidi.configuration.JMXServiceImpl"
+		scope="singleton">
+		<property name="persistentServices">
+			<ref bean="persistentServicesSet" />
+		</property>
+		<property name="configurationControlMBean">
+			<ref bean="configurationControlJMX" />
+		</property>
+	</bean>
+	<bean id="configurationControlJMX" class="org.rifidi.configuration.mbeans.ConfigurationControl"
+		scope="singleton">
+		<property name="configurationService">
+			<ref bean="configurationService" />
+		</property>
+	</bean>
+	<osgi:reference id="configurationAdmin"
+		interface="org.osgi.service.cm.ConfigurationAdmin" />
+	<osgi:set id="persistentServicesSet" interface="org.rifidi.configuration.PersistentService"
+		cardinality="0..N">
+		<osgi:listener ref="jmxService" />
+	</osgi:set>
+	<osgi:set id="managedServiceFactories" interface="org.osgi.service.cm.ManagedServiceFactory"
+		cardinality="0..N">
+		<osgi:listener ref="configurationService" bind-method="bind"
+			unbind-method="unbind" />
+	</osgi:set>
+</beans>
