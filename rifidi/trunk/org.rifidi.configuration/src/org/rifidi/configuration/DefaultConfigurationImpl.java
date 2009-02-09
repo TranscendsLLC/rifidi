@@ -1,17 +1,17 @@
 /**
  * 
  */
-package org.rifidi.configuration.mbeans;
+package org.rifidi.configuration;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.management.Attribute;
 import javax.management.AttributeList;
 import javax.management.AttributeNotFoundException;
-import javax.management.DynamicMBean;
 import javax.management.InvalidAttributeValueException;
 import javax.management.MBeanAttributeInfo;
 import javax.management.MBeanException;
@@ -21,45 +21,47 @@ import javax.management.ReflectionException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.osgi.framework.ServiceRegistration;
 import org.rifidi.configuration.annotations.JMXMBean;
-import org.rifidi.configuration.annotations.Name;
 import org.rifidi.configuration.annotations.Operation;
 import org.rifidi.configuration.annotations.Property;
 
 /**
- * Container class for JMX.
- * 
  * @author Jochen Mader - jochen@pramari.com
  * 
  */
-public class RifidiDynamicMBean implements DynamicMBean {
+public class DefaultConfigurationImpl implements Configuration {
 	/** Logger for this class. */
 	private static final Log logger = LogFactory
-			.getLog(RifidiDynamicMBean.class);
+			.getLog(DefaultConfigurationImpl.class);
 	/** Names of properties mapped to their annotations */
 	private Map<String, Property> nameToProperty;
 	/** Names of operations mapped to their annotations */
 	private Map<String, Operation> nameToOperation;
 	/** The object that gets serviced. */
-	private Object serviced;
-	/** Name of the object. */
-	private Method name;
+	private Object target;
+	/** Factory ID that created the object. */
+	private String factoryID;
+	/** The id this service is registered by in the registry. */
+	private String serviceID;
+	/** Service registration for the instance. */
+	private ServiceRegistration registration;
 
 	/**
 	 * Constructor.
 	 * 
-	 * @param nameToProperty
-	 * @param nameToOperation
-	 * @param serviced
+	 * @param target
 	 */
-	public RifidiDynamicMBean(Object service) {
+	public DefaultConfigurationImpl(Object target, String factoryID,
+			String serviceID) {
+		this.factoryID = factoryID;
 		this.nameToProperty = new HashMap<String, Property>();
 		this.nameToOperation = new HashMap<String, Operation>();
-		this.serviced = service;
-
-		if (service.getClass().isAnnotationPresent(JMXMBean.class)) {
+		this.target = target;
+		this.serviceID = serviceID;
+		if (target.getClass().isAnnotationPresent(JMXMBean.class)) {
 			// check method annotations
-			for (Method method : service.getClass().getMethods()) {
+			for (Method method : target.getClass().getMethods()) {
 				// scan for operations annotation
 				if (method.isAnnotationPresent(Operation.class)) {
 					nameToOperation.put(method.getName(), (Operation) method
@@ -70,27 +72,37 @@ public class RifidiDynamicMBean implements DynamicMBean {
 					nameToProperty.put(method.getName().substring(3),
 							(Property) method.getAnnotation(Property.class));
 				}
-				// scan for name annotation
-				if (method.isAnnotationPresent(Name.class)) {
-					name = method;
-				}
 			}
 		}
 	}
 
-	public String getName() {
-		if (name != null) {
-			try {
-				return (String) name.invoke(serviced);
-			} catch (IllegalArgumentException e) {
-				logger.error("Can't get the name: " + e);
-			} catch (IllegalAccessException e) {
-				logger.error("Can't get the name: " + e);
-			} catch (InvocationTargetException e) {
-				logger.error("Can't get the name: " + e);
-			}
-		}
-		return "Missing name!";
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.rifidi.configuration.Configuration#getServiceID()
+	 */
+	@Override
+	public String getServiceID() {
+		return serviceID;
+	}
+
+	/**
+	private String 
+	 * @param registration
+	 *            the registration to set
+	 */
+	public void setRegistration(ServiceRegistration registration) {
+		this.registration = registration;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.rifidi.configuration.Configuration#getFactoryID()
+	 */
+	@Override
+	public String getFactoryID() {
+		return factoryID;
 	}
 
 	/*
@@ -104,9 +116,8 @@ public class RifidiDynamicMBean implements DynamicMBean {
 			ReflectionException {
 		if (nameToProperty.containsKey(attribute)) {
 			try {
-				Method method = serviced.getClass()
-						.getMethod("get" + attribute);
-				String res = (String) method.invoke(serviced);
+				Method method = target.getClass().getMethod("get" + attribute);
+				String res = (String) method.invoke(target);
 				return res;
 			} catch (SecurityException e) {
 				logger.error(e);
@@ -183,8 +194,7 @@ public class RifidiDynamicMBean implements DynamicMBean {
 	}
 
 	/*
-			} catch (MBeanRegistrationException e) {
-	 * (non-Javadoc)
+	 * } catch (MBeanRegistrationException e) { (non-Javadoc)
 	 * 
 	 * @see javax.management.DynamicMBean#invoke(java.lang.String,
 	 * java.lang.Object[], java.lang.String[])
@@ -194,8 +204,8 @@ public class RifidiDynamicMBean implements DynamicMBean {
 			throws MBeanException, ReflectionException {
 		if (nameToOperation.containsKey(actionName)) {
 			try {
-				Method method = serviced.getClass().getMethod(actionName);
-				method.invoke(serviced);
+				Method method = target.getClass().getMethod(actionName);
+				method.invoke(target);
 			} catch (SecurityException e) {
 				logger.error(e);
 			} catch (NoSuchMethodException e) {
@@ -209,7 +219,7 @@ public class RifidiDynamicMBean implements DynamicMBean {
 			}
 		} else {
 			logger.warn("Trie to call non existend operation " + actionName
-					+ " on " + serviced.getClass());
+					+ " on " + target.getClass());
 		}
 		return null;
 	}
@@ -226,9 +236,9 @@ public class RifidiDynamicMBean implements DynamicMBean {
 			MBeanException, ReflectionException {
 		if (nameToProperty.containsKey(attribute.getName())) {
 			try {
-				Method method = serviced.getClass().getMethod(
+				Method method = target.getClass().getMethod(
 						"set" + attribute.getName(), String.class);
-				method.invoke(serviced, attribute.getValue());
+				method.invoke(target, attribute.getValue());
 				return;
 			} catch (SecurityException e) {
 				logger.error(e);
@@ -273,6 +283,44 @@ public class RifidiDynamicMBean implements DynamicMBean {
 			}
 		}
 		return ret;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.rifidi.configuration.Configuration#destroy()
+	 */
+	@Override
+	public void destroy() {
+		if (registration != null) {
+			registration.unregister();
+			return;
+		}
+		logger
+				.error("Tried to unregister service that was not yet registered!");
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.rifidi.configuration.Configuration#getAttributes()
+	 */
+	@Override
+	public Map<String, String> getAttributes() {
+		Map<String, String> ret = new HashMap<String, String>();
+		try {
+			for (String name : nameToProperty.keySet()) {
+				ret.put(name, (String) getAttribute(name));
+			}
+			return ret;
+		} catch (AttributeNotFoundException e) {
+			logger.error("Problem getting property: " + e);
+		} catch (MBeanException e) {
+			logger.error("Problem getting property: " + e);
+		} catch (ReflectionException e) {
+			logger.error("Problem getting property: " + e);
+		}
+		return Collections.emptyMap();
 	}
 
 }

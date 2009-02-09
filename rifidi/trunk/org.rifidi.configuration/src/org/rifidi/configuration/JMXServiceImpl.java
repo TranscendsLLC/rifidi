@@ -22,9 +22,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.configuration.annotations.Operation;
 import org.rifidi.configuration.annotations.Property;
-import org.rifidi.configuration.mbeans.ConfigurationControl;
 import org.rifidi.configuration.mbeans.ConfigurationControlMBean;
-import org.rifidi.configuration.mbeans.RifidiDynamicMBean;
 import org.springframework.osgi.service.importer.OsgiServiceLifecycleListener;
 
 /**
@@ -37,7 +35,7 @@ public class JMXServiceImpl implements JMXService, OsgiServiceLifecycleListener 
 	/** The JMX server used by thi service instance. */
 	private MBeanServer mbs;
 	/** Set containing the currently registered services. */
-	private Map<PersistentService, ObjectName> persistentServicesToObjectNames; 
+	private Map<Configuration, ObjectName> persistentServicesToObjectNames;
 
 	/**
 	 * Constructor.
@@ -45,7 +43,7 @@ public class JMXServiceImpl implements JMXService, OsgiServiceLifecycleListener 
 	public JMXServiceImpl() {
 		// register the MBeans server
 		mbs = ManagementFactory.getPlatformMBeanServer();
-		persistentServicesToObjectNames = new HashMap<PersistentService, ObjectName>();
+		persistentServicesToObjectNames = new HashMap<Configuration, ObjectName>();
 		logger.debug("JMXServiceImpl created.");
 	}
 
@@ -58,32 +56,34 @@ public class JMXServiceImpl implements JMXService, OsgiServiceLifecycleListener 
 	 */
 	@Override
 	public void bind(Object service, Map arg1) throws Exception {
-		logger.debug("Trying to bind to JMX: " + service);
 		// avoid double init
-		if (!persistentServicesToObjectNames.containsKey(service)) {
-			// watch out, because of spring we are getting proxies, not the
-			// actual services
-			try {
-				RifidiDynamicMBean mbean = ((PersistentService) service)
-						.getRifidiDynamicMBean();
-				ObjectName obname = new ObjectName("rifidi:type="
-						+ mbean.getName());
-				mbs.registerMBean(mbean, obname);
-				persistentServicesToObjectNames.put(
-						(PersistentService) service, obname);
-			} catch (InstanceAlreadyExistsException e) {
-				logger.error("Tried to register object twice: "
-						+ service.toString() + " " + e);
-			} catch (MBeanRegistrationException e) {
-				logger.error(e);
-			} catch (NotCompliantMBeanException e) {
-				logger.error(e);
-			} catch (MalformedObjectNameException e) {
-				logger.error(e);
-			} catch (IllegalArgumentException e) {
-				logger.error(e);
+		synchronized (persistentServicesToObjectNames) {
+			if (!persistentServicesToObjectNames.containsKey(service)) {
+				logger.debug("Binding " + service + " to JMX.");
+				// watch out, because of spring we are getting proxies, not the
+				// actual services
+				try {
+					Configuration mbean = (Configuration) service;
+					ObjectName obname = new ObjectName("rifidi:type="
+							+ mbean.getServiceID());
+					mbs.registerMBean(mbean, obname);
+					persistentServicesToObjectNames.put(
+							(Configuration) service, obname);
+				} catch (InstanceAlreadyExistsException e) {
+					logger.error("Tried to register object twice: "
+							+ service.toString() + " " + e);
+				} catch (MBeanRegistrationException e) {
+					logger.error(e);
+				} catch (NotCompliantMBeanException e) {
+					logger.error(e);
+				} catch (MalformedObjectNameException e) {
+					logger.error(e);
+				} catch (IllegalArgumentException e) {
+					logger.error(e);
+				}
 			}
 		}
+
 	}
 
 	/*
@@ -95,18 +95,19 @@ public class JMXServiceImpl implements JMXService, OsgiServiceLifecycleListener 
 	 */
 	@Override
 	public void unbind(Object service, Map arg1) throws Exception {
-		logger.debug("removing " + service + " "
-				+ persistentServicesToObjectNames.containsKey(service));
-		if (persistentServicesToObjectNames.containsKey(service)) {
-			// unregister from jmx
-			try {
-				mbs.unregisterMBean(persistentServicesToObjectNames
-						.get(service));
-				persistentServicesToObjectNames.remove(service);
-			} catch (InstanceNotFoundException e) {
-				logger.error(e);
-			} catch (MBeanRegistrationException e) {
-				logger.error(e);
+		synchronized (persistentServicesToObjectNames) {
+			if (persistentServicesToObjectNames.containsKey(service)) {
+				// unregister from jmx
+				logger.debug("Unbinding " + service + " from JMX.");
+				try {
+					mbs.unregisterMBean(persistentServicesToObjectNames
+							.get(service));
+					persistentServicesToObjectNames.remove(service);
+				} catch (InstanceNotFoundException e) {
+					logger.error(e);
+				} catch (MBeanRegistrationException e) {
+					logger.error(e);
+				}
 			}
 		}
 	}
@@ -127,13 +128,13 @@ public class JMXServiceImpl implements JMXService, OsgiServiceLifecycleListener 
 	 * @param persistentServices
 	 *            the persistentServices to set
 	 */
-	public void setPersistentServices(Set<PersistentService> persistentServices) {
+	public void setConfigurations(Set<Configuration> configurationServices) {
 		// take a snapshot an initialize
-		Set<PersistentService> tempServices = new HashSet<PersistentService>(
-				persistentServices);
-		for (PersistentService persistentService : tempServices) {
+		Set<Configuration> tempServices = new HashSet<Configuration>(
+				configurationServices);
+		for (Configuration configurationService : tempServices) {
 			try {
-				bind(persistentService, null);
+				bind(configurationService, null);
 			} catch (Exception e) {
 				logger.error(e);
 			}
