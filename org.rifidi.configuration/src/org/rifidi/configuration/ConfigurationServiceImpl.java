@@ -3,12 +3,10 @@
  */
 package org.rifidi.configuration;
 
+import java.io.File;
 import java.io.IOException;
-import java.util.Dictionary;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -19,12 +17,6 @@ import org.apache.commons.configuration.SubnodeConfiguration;
 import org.apache.commons.configuration.tree.DefaultConfigurationNode;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.Constants;
-import org.osgi.framework.InvalidSyntaxException;
-import org.osgi.framework.ServiceReference;
-import org.osgi.service.cm.Configuration;
-import org.osgi.service.cm.ConfigurationAdmin;
 
 /**
  * @author Jochen Mader - jochen@pramari.com
@@ -36,46 +28,26 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 			.getLog(ConfigurationServiceImpl.class);
 	/** Path to the configfile. */
 	private String path;
-	/** Reference to the OSGi configuration admin service. */
-	private ConfigurationAdmin configAdmin;
-	/** Map of PIDs to their bundle locations. */
-	private Map<String, String> locations;
-	/** Bundle context of the owning bundle. */
-	private BundleContext context;
 	/** Configurations. */
 	private Map<String, Set<ServiceConfiguration>> factoryToConfigurations;
+	/** Currently registered services. */
+	private Set<Configuration> configurations;
+
+	/**
+	 * Currently available factories by their names.
+	 */
+	private Map<String, ServiceFactory> factories;
 
 	/**
 	 * Constructor.
 	 */
 	public ConfigurationServiceImpl() {
-		locations = new HashMap<String, String>();
-		factoryToConfigurations = new HashMap<String, Set<ServiceConfiguration>>();
 		path = System.getProperty("org.rifidi.edge.configuration");
+		factoryToConfigurations = new HashMap<String, Set<ServiceConfiguration>>(
+				loadConfig());
+		factories = new HashMap<String, ServiceFactory>();
+		configurations = new HashSet<Configuration>();
 		logger.debug("ConfigurationServiceImpl instantiated.");
-		factoryToConfigurations = loadConfig();
-	}
-
-	/**
-	 * Instantiate all the configurations associated with the given factory
-	 * name.
-	 * 
-	 * @param factory
-	 */
-	private void initFactory(String factory) {
-		for (ServiceConfiguration configuration : factoryToConfigurations
-				.get(factory)) {
-			try {
-				configuration.configuration = configAdmin
-						.createFactoryConfiguration(factory);
-				configuration.configuration.setBundleLocation(locations
-						.get(factory));
-				configuration.configuration.update(configuration.properties);
-				logger.debug("Created service " + configuration.name);
-			} catch (IOException e) {
-				logger.error(e);
-			}
-		}
 	}
 
 	/**
@@ -92,32 +64,34 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 			for (Object sectionName : configuration.getSections()) {
 				SubnodeConfiguration section = configuration
 						.getSection((String) sectionName);
-				String factoryName = section.getString("type");
-				if (ret.get(factoryName) == null) {
-					ret.put(factoryName, new HashSet<ServiceConfiguration>());
-				}
+				String factoryName = section.getString(Constants.FACTORYID);
 				// check if we have a type info
 				if (factoryName == null) {
-					logger.fatal("Missing type atribute in config of "
+					logger.fatal("Missing factoryid attribute in config of "
 							+ sectionName);
 					continue;
 				}
+				if (ret.get(factoryName) == null) {
+					ret.put(factoryName, new HashSet<ServiceConfiguration>());
+				}
 
-				Dictionary<String, String> configurationDictionary = new Hashtable<String, String>();
+				HashMap<String, String> configurationDictionary = new HashMap<String, String>();
 				// get all properties
 				Iterator<String> keys = section.getKeys();
 				while (keys.hasNext()) {
 					String key = keys.next();
-					if ("type".equals(key))
+					// factoryid is already processed
+					if (Constants.FACTORYID.equals(key)) {
 						continue;
+					}
 					configurationDictionary.put(key, section.getString(key));
 				}
-				configurationDictionary.put("name", (String) sectionName);
+
 				ServiceConfiguration config = new ServiceConfiguration();
 				config.properties = configurationDictionary;
-				config.name = (String) sectionName;
-				logger.debug("Read configuration for " + config.name + " ("
-						+ factoryName + ")");
+				config.serviceID = (String) sectionName;
+				logger.debug("Read configuration for " + config.serviceID
+						+ " (" + factoryName + ")");
 				ret.get(factoryName).add(config);
 			}
 		} catch (ConfigurationException e) {
@@ -127,28 +101,24 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	}
 
 	/**
-	 * Set reference to the configuration admin.
-	 * 
-	 * @param configAdmin
-	 */
-	public void setConfigurationAdminService(ConfigurationAdmin configAdmin) {
-		logger.debug("Got configuration admin instance: " + configAdmin);
-		this.configAdmin = configAdmin;
-	}
-
-	/**
 	 * The given service was bound to the registry.
 	 * 
 	 * @param serviceRef
 	 * @throws Exception
 	 */
-	public void bind(ServiceReference serviceRef) throws Exception {
-		// add to the list of available configurations
-		locations.put((String) serviceRef.getProperty(Constants.SERVICE_PID),
-				serviceRef.getBundle().getLocation());
-
-		if ("true".equals(System.getProperty("osgi.clean"))) {
-			initFactory((String) serviceRef.getProperty(Constants.SERVICE_PID));
+	@SuppressWarnings("unchecked")
+	public void bind(ServiceFactory factory, Map<?, ?> properties) {
+		synchronized (factories) {
+			if (factories.get(factory.getFactoryID()) == null) {
+				logger.debug("Registering " + factory.getFactoryID());
+				factories.put(factory.getFactoryID(), factory);
+				for (ServiceConfiguration serConf : factoryToConfigurations
+						.get(factory.getFactoryID())) {
+					factory
+							.createService(serConf.serviceID,
+									serConf.properties);
+				}
+			}
 		}
 	}
 
@@ -158,9 +128,32 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	 * @param serviceRef
 	 * @throws Exception
 	 */
-	public void unbind(ServiceReference serviceRef) throws Exception {
-		locations
-				.remove((String) serviceRef.getProperty(Constants.SERVICE_PID));
+	public synchronized void unbind(ServiceFactory factory, Map<?, ?> properties) {
+		synchronized (factories) {
+			logger.debug("Unregistering " + factory.getFactoryID());
+			factories.remove(factory.getFactoryID());
+		}
+
+	}
+
+	/**
+	 * Called whenever a new Configuration got registered to OSGi.
+	 * 
+	 * @param config
+	 * @param properties
+	 */
+	public void register(Configuration config, Map<?, ?> properties) {
+		configurations.add(config);
+	}
+
+	/**
+	 * Called whenever a Configuration got removed from OSGi.
+	 * 
+	 * @param config
+	 * @param properties
+	 */
+	public void unregister(Configuration config, Map<?, ?> properties) {
+		configurations.remove(config);
 	}
 
 	/*
@@ -169,36 +162,59 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	 * @see org.rifidi.configuration.ConfigurationService#storeConfiguration()
 	 */
 	@Override
-	public void storeConfiguration() {
+	public synchronized void storeConfiguration() {
+		HashSet<Configuration> copy = new HashSet<Configuration>(configurations);
 		try {
+			//TODO: copy file before deleting it!!
+			File file=new File(path);
+			file.delete();
+			file.createNewFile();
 			HierarchicalINIConfiguration configuration = new HierarchicalINIConfiguration(
 					path);
 			configuration.clear();
-			for(Configuration config:configAdmin.listConfigurations(null)){
-				DefaultConfigurationNode section=new DefaultConfigurationNode((String)config.getProperties().get("name"));
-				DefaultConfigurationNode type=new DefaultConfigurationNode("type");
-				type.setValue(config.getFactoryPid());
+			for (Configuration config : copy) {
+				DefaultConfigurationNode section = new DefaultConfigurationNode(
+						config.getServiceID());
+				DefaultConfigurationNode type = new DefaultConfigurationNode(
+						Constants.FACTORYID);
+				type.setValue(config.getFactoryID());
 				section.addChild(type);
-				Enumeration<?> keys=config.getProperties().keys();
-				while(keys.hasMoreElements()){
-					Object key=keys.nextElement();
-					if(!"name".equals(key) && !((String)key).startsWith("service")){
-						DefaultConfigurationNode newNode=new DefaultConfigurationNode((String)key);
-						newNode.setValue(config.getProperties().get(key));
-						section.addChild(newNode);
-					}
+				Map<String, String> attrs = config.getAttributes();
+				for (String key : attrs.keySet()) {
+					DefaultConfigurationNode newNode = new DefaultConfigurationNode(
+							(String) key);
+					newNode.setValue(attrs.get(key));
+					section.addChild(newNode);
 				}
 				configuration.getRootNode().addChild(section);
 			}
-			
-			
+
 			configuration.save();
 		} catch (ConfigurationException e) {
 			logger.error(e);
 		} catch (IOException e) {
 			logger.error(e);
-		} catch (InvalidSyntaxException e) {
-			logger.error(e);
+		}
+	}
+
+	/**
+	 * Set the current service factories.
+	 * 
+	 * @param serviceFactories
+	 */
+	public void setServiceFactories(Set<ServiceFactory> serviceFactories) {
+		for (ServiceFactory serviceFactory : serviceFactories) {
+			bind(serviceFactory, null);
+		}
+	}
+
+	/**
+	 * @param configurations
+	 *            the configurations to set
+	 */
+	public void setConfigurations(Set<Configuration> configurations) {
+		for (Configuration config : configurations) {
+			register(config, null);
 		}
 	}
 
@@ -209,9 +225,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	 * 
 	 */
 	protected class ServiceConfiguration {
-		public Dictionary<String, String> properties;
-		public Configuration configuration;
-		public String name;
+		public HashMap<String, String> properties;
+		public String serviceID;
 	}
-
 }
