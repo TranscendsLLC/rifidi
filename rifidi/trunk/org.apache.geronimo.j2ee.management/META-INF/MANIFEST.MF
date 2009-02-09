@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: JMS Management Plug-in
+Bundle-SymbolicName: org.apache.geronimo.j2ee.management
+Bundle-Version: 1.0.0
+Export-Package: javax.management.j2ee,
+ javax.management.j2ee.statistics
+Bundle-Vendor: Pramari, LLC
