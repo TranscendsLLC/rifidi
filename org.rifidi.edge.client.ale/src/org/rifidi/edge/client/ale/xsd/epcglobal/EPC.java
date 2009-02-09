@@ -28,7 +28,7 @@ import javax.xml.bind.annotation.XmlValue;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "EPC", propOrder = {
+@XmlType(name = "EPC", namespace = "urn:epcglobal:xsd:1", propOrder = {
     "value"
 })
 public class EPC {
