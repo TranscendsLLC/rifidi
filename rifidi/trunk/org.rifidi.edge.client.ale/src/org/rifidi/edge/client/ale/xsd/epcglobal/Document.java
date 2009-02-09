@@ -9,8 +9,6 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.datatype.XMLGregorianCalendar;
-import org.rifidi.edge.client.ale.xsd.ale.epcglobal.ECReports;
-import org.rifidi.edge.client.ale.xsd.ale.epcglobal.ECSpec;
 
 
 /**
@@ -36,7 +34,7 @@ import org.rifidi.edge.client.ale.xsd.ale.epcglobal.ECSpec;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "Document")
+@XmlType(name = "Document", namespace = "urn:epcglobal:xsd:1")
 @XmlSeeAlso({
     ECSpec.class,
     ECReports.class

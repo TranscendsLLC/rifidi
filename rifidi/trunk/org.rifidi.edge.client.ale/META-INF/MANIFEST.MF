@@ -8,6 +8,6 @@ Bundle-Vendor: PRAMARI LLC
 Require-Bundle: org.eclipse.core.runtime
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
-Export-Package: org.rifidi.edge.client.ale.wsdl.ale.epcglobal,
- org.rifidi.edge.client.ale.xsd.ale.epcglobal,
+Export-Package: org.rifidi.edge.client.ale.logicalreader.wsdl.epcglobal,
+ org.rifidi.edge.client.ale.wsdl.epcglobal,
  org.rifidi.edge.client.ale.xsd.epcglobal
