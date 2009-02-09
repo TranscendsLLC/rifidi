@@ -1,0 +1,657 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+  
+  http://www.apache.org/licenses/LICENSE-2.0
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.apache.activemq</groupId>
+    <artifactId>activemq-parent</artifactId>
+    <version>5.2.0</version>
+  </parent>
+
+  <artifactId>activemq-core</artifactId>
+  <packaging>bundle</packaging>
+  <name>ActiveMQ :: Core</name>
+  <description>The ActiveMQ Message Broker and Client implementations</description>
+
+  <properties>
+    <activemq.osgi.import.pkg>
+      com.thoughtworks.xstream*;resolution:=optional,
+      org.apache.activeio*;resolution:=optional,
+      org.apache.camel*;resolution:=optional,
+      org.apache.commons.pool*;resolution:=optional,
+      org.apache.derby*;resolution:=optional,
+      org.apache.tools.ant*;resolution:=optional,
+      org.apache.xbean*;resolution:=optional,
+      '=org.apache.xbean.spring.context.v2;resolution:=optional',
+      org.apache.xpath*;resolution:=optional,
+      org.codehaus.jam*;resolution:=optional,
+      org.springframework*;resolution:=optional,
+      org.springframework.beans.factory.xml;resolution:=optional,
+      org.w3c.dom.traversal*;resolution:=optional,
+      *
+    </activemq.osgi.import.pkg>
+    <activemq.osgi.export>
+      org.apache.activemq*;version=${project.version},
+      '=META-INF.services.org.apache.xbean.spring.http.activemq.apache.org.schema'
+    </activemq.osgi.export>
+  </properties>
+
+  <dependencies>
+
+    <!-- =============================== -->
+    <!-- Required Dependencies -->
+    <!-- =============================== -->
+    <dependency>
+      <groupId>commons-logging</groupId>
+      <artifactId>commons-logging-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.geronimo.specs</groupId>
+      <artifactId>geronimo-jms_1.1_spec</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>${pom.groupId}</groupId>
+      <artifactId>activeio-core</artifactId>
+      <optional>false</optional>
+    </dependency>
+
+
+    <!-- =============================== -->
+    <!-- Optional Dependencies           -->
+    <!-- =============================== -->
+    <dependency>
+      <groupId>org.apache.activemq</groupId>
+      <artifactId>activemq-jaas</artifactId>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-jms</artifactId>
+      <optional>true</optional>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.geronimo.specs</groupId>
+      <artifactId>geronimo-jta_1.0.1B_spec</artifactId>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.geronimo.specs</groupId>
+      <artifactId>geronimo-j2ee-management_1.0_spec</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.geronimo.specs</groupId>
+      <artifactId>geronimo-jacc_1.1_spec</artifactId>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>commons-pool</groupId>
+      <artifactId>commons-pool</artifactId>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>com.thoughtworks.xstream</groupId>
+      <artifactId>xstream</artifactId>
+      <version>1.2.2</version>
+      <optional>true</optional>
+    </dependency>        
+
+    <!-- for XML parsing -->
+    <dependency>
+      <groupId>org.apache.xbean</groupId>
+      <artifactId>xbean-spring</artifactId>
+      <optional>true</optional>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.derby</groupId>
+      <artifactId>derby</artifactId>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>xalan</groupId>
+      <artifactId>xalan</artifactId>
+      <optional>true</optional>
+    </dependency>
+
+
+    <!-- not really a dependency at all - just added optionally to get the generator working -->
+    <dependency>
+      <groupId>org.apache.activemq</groupId>
+      <artifactId>activemq-openwire-generator</artifactId>
+      <optional>true</optional>
+    </dependency>
+
+    <!-- =============================== -->
+    <!-- Testing Dependencies            -->
+    <!-- =============================== -->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.hamcrest</groupId>
+      <artifactId>hamcrest-all</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>commons-logging</groupId>
+      <artifactId>commons-logging</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>${pom.groupId}</groupId>
+      <artifactId>activeio-core</artifactId>
+      <optional>false</optional>
+      <type>test-jar</type>
+    </dependency>
+	<dependency>
+		<groupId>org.codehaus.jettison</groupId>
+		<artifactId>jettison</artifactId>
+		<version>1.0</version>
+		<scope>test</scope>
+	</dependency>	
+	<dependency>
+		<groupId>stax</groupId>
+		<artifactId>stax-api</artifactId>
+		<version>1.0.1</version>
+		<scope>test</scope>
+	</dependency>
+
+    <!-- testing camel helpers -->
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-core</artifactId>
+      <type>test-jar</type>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-spring</artifactId>
+      <type>test-jar</type>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-test</artifactId>
+      <scope>test</scope>
+    </dependency>    
+    <dependency>
+      <groupId>org.apache.activemq</groupId>
+      <artifactId>activemq-jmdns_1.0</artifactId>
+      <optional>true</optional>
+    </dependency>
+
+    <!-- Camel UI testing -->
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-swing</artifactId>
+      <version>${camel-version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <!-- database testing -->
+    <dependency>
+      <groupId>commons-collections</groupId>
+      <artifactId>commons-collections</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>commons-primitives</groupId>
+      <artifactId>commons-primitives</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>axion</groupId>
+      <artifactId>axion</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>regexp</groupId>
+      <artifactId>regexp</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <!--  LDAP tests -->
+    <dependency>
+      <groupId>org.apache.directory.server</groupId>
+      <artifactId>apacheds-core</artifactId>
+      <version>1.0.0</version>
+      <!--<version>1.0-RC3</version>-->
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>nlog4j</artifactId>
+      <version>1.2.24</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+    <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <configuration>
+          <links>
+            <link>http://java.sun.com/j2se/1.5.0/docs/api/</link>
+            <link>http://java.sun.com/j2ee/1.4/docs/api/</link>
+            <link>http://jakarta.apache.org/commons/logging/apidocs/</link>
+            <link>http://junit.sourceforge.net/javadoc/</link>
+          </links>
+          <stylesheetfile>${basedir}/../etc/css/stylesheet.css</stylesheetfile>
+          <linksource>true</linksource>
+          <maxmemory>256m</maxmemory>
+          <source>1.5</source>
+          <groups>
+            <group>
+              <title>JMS Client</title>
+              <packages>org.apache.activemq:org.apache.activemq.command</packages>
+            </group>
+            <group>
+              <title>JMS Client support classes for working with BLOBs and JNDI</title>
+              <packages>org.apache.activemq.blob:org.apache.activemq.jndi</packages>
+            </group>
+            <group>
+              <title>Enterprise Integration Pattern support via Camel</title>
+              <packages>org.apache.activemq.camel:org.apache.activemq.camel.*</packages>
+            </group>
+            <group>
+              <title>Spring support</title>
+              <packages>org.apache.activemq.spring:org.apache.activemq.xbean:org.apache.activemq.pool</packages>
+            </group>
+            <group>
+              <title>JMS Client Implementation classes</title>
+              <packages>org.apache.activemq.filter:org.apache.activemq.management:org.apache.activemq.selector:org.apache.activemq.thread</packages>
+            </group>
+            <group>
+              <title>Broker implementation</title>
+              <packages>org.apache.activemq.advisory:org.apache.activemq.broker:org.apache.activemq.broker.*:org.apache.activemq.state:org.apache.activemq.security:org.apache.activemq.transaction</packages>
+            </group>
+            <group>
+              <title>Broker Persistent Store</title>
+              <packages>org.apache.activemq.store:org.apache.activemq.store.*</packages>
+            </group>
+            <group>
+              <title>Kaha fast file based storage</title>
+              <packages>org.apache.activemq.kaha:org.apache.activemq.kaha.*</packages>
+            </group>
+            <group>
+              <title>Transports</title>
+              <packages>org.apache.activemq.transport:org.apache.activemq.transport.*</packages>
+            </group>
+            <group>
+              <title>Memory handling</title>
+              <packages>org.apache.activemq.memory:org.apache.activemq.memory.*</packages>
+            </group>
+            <group>
+              <title>Networks of Brokers</title>
+              <packages>org.apache.activemq.network:org.apache.activemq.network.*</packages>
+            </group>
+            <group>
+              <title>OpenWire support</title>
+              <packages>org.apache.activemq.openwire:org.apache.activemq.openwire.*</packages>
+            </group>
+            <group>
+              <title>Utility classes</title>
+              <packages>org.apache.activemq.util:org.apache.activemq.wireformat:org.apache.activemq.proxy</packages>
+            </group>
+          </groups>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>findbugs-maven-plugin</artifactId>
+        <version>1.1</version>
+        <configuration>
+          <threshold>Normal</threshold>
+          <effort>Default</effort>
+        </configuration>
+      </plugin>
+    </plugins>
+    </reporting>
+    
+  <build>
+    <plugins>
+      <!-- Configure which tests are included/excuded -->
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <forkMode>pertest</forkMode>
+          <childDelegation>false</childDelegation>
+          <useFile>true</useFile>
+          <argLine>-Xmx512M</argLine>
+
+           <systemProperties>
+            <property>
+              <name>org.apache.activemq.default.directory.prefix</name>
+              <value>target/</value>
+            </property>
+          </systemProperties>
+
+          <includes>
+            <include>**/*Test.*</include>
+          </includes>
+          <excludes>
+            <exclude>**/perf/SimpleDurableTopicTest.*</exclude>
+          </excludes>
+          <excludes>
+
+            <!-- These tests run too slow to execute as part of the unit tests -->
+            <exclude>**/TransactionNotStartedErrorTest.*</exclude>
+            <exclude>**/DefaultStoreBrokerTest.*</exclude>
+            <exclude>**/TcpTransportBrokerTest.*</exclude>
+            <exclude>**/activeio/*</exclude>
+
+            <!-- These are performance tests so take too long to run -->
+            <exclude>**/perf/*</exclude>
+            
+            <!-- These are load tests so take too long to run -->
+            <exclude>**/load/*</exclude>
+
+            <!-- http://jira.activemq.org/jira/browse/AMQ-594 -->
+            <exclude>**/SimpleNetworkTest.*</exclude>
+
+            <!-- http://jira.activemq.org/jira/browse/AMQ-610 -->
+            <exclude>**/FanoutTransportBrokerTest.*</exclude>
+
+            <!-- http://jira.activemq.org/jira/browse/AMQ-626 -->
+            <exclude>**/MultipleTestsWithSpringFactoryBeanTest.*</exclude>
+            <exclude>**/MultipleTestsWithXBeanFactoryBeanTest.*</exclude>
+            <exclude>**/MultipleTestsWithSpringXBeanFactoryBeanTest.*</exclude>
+
+            <!--  these seem to fail only in m2 -->
+            <!--<exclude>**/TransactedTopicMasterSlaveTest.*</exclude>-->
+
+            <!-- Kaha in flux - removing tests -->
+            <!--<exclude>**/KahaXARecoveryBrokerTest.*</exclude>-->
+            <!--<exclude>**/KahaRecoveryBrokerTest.*</exclude>-->
+
+            <!-- Multicast and UDP based tests fail on GBuild -->
+            <exclude>**/PeerTransportTest.*</exclude>
+            <exclude>**/MulticastTransportTest.*</exclude>
+            <exclude>**/MulticastNetworkTest.*</exclude>
+            <exclude>**/UnreliableUdpTransportTest.*</exclude>
+            <exclude>**/SslTransportBrokerTest.*</exclude>
+
+            <!-- this one is a little flaky and can fail on some platforms randomly -->
+            <exclude>**/QuickJournalRecoveryBrokerTest.*</exclude>
+            <exclude>**/QuickJournalXARecoveryBrokerTest.*</exclude>
+            <exclude>**/RendezvousDiscoverTransportTest.*</exclude>
+            <exclude>**/MissingDataFileTest.*</exclude>
+
+            <!-- UDP related tests someimes fail on some platforms -->
+            <exclude>**/UdpTransportTest.*</exclude>
+            <exclude>**/UdpTransportUsingServerTest.*</exclude>
+            <exclude>**/UdpSendReceiveWithTwoConnectionsTest.*</exclude>
+            <exclude>**/UdpSendReceiveWithTwoConnectionsAndLargeMessagesTest.*</exclude>
+
+            <!-- m2 tests failing since move from assembly  -->
+            <exclude>**/TwoBrokerMessageNotSentToRemoteWhenNoConsumerTest.*</exclude>
+            <exclude>**/TwoBrokerQueueClientsReconnectTest.*</exclude>
+            <exclude>**/ThreeBrokerQueueNetworkUsingTcpTest.*</exclude>
+            <exclude>**/QueueConsumerCloseAndReconnectTest.*</exclude>
+            <exclude>**/ThreeBrokerQueueNetworkTest.*</exclude>
+            <exclude>**/ThreeBrokerTopicNetworkTest.*</exclude>
+            <exclude>**/ThreeBrokerTopicNetworkUsingTcpTest.*</exclude>
+            <exclude>**/TwoBrokerMulticastQueueTest.*</exclude>
+
+            <!-- TODO move to optional module...  -->
+            <exclude>**/TwoBrokerTopicSendReceiveUsingHttpTest.*</exclude>
+
+            <!-- This test only works on machines which have ssh propertly configured -->
+            <exclude>**/SSHTunnelNetworkReconnectTest.*</exclude>
+            <!-- TODO need to get the JUnit test configured to create SSL sockets nicely via system properties -->
+            <exclude>**/StompSslTest.*</exclude>
+
+            <!--  see  http://issues.apache.org/activemq/browse/AMQ-826 -->
+            <!--  have not yet figured out the way to configure ApacheDS via Spring  -->
+            <exclude>**/LDAPAuthorizationMapTest.*</exclude>
+
+            <!-- http://issues.apache.org/activemq/browse/AMQ-1027 -->
+            <exclude>**/FailoverConsumerTest.*</exclude>
+
+            <!-- The NIO implemenation is not working properly on OS X.. -->
+            <exclude>**/nio/**</exclude>
+             <!-- A test used for memory profiling only. -->
+             <exclude>**/NetworkConnectionsCleanedupTest.*/**</exclude>
+             
+             <exclude>**/NetworkConnectionsCleanedupTest.*/**</exclude>
+             
+             <exclude>**/amq1490/*</exclude>
+             <exclude>**/AMQ1925/*</exclude>
+             <exclude>**/archive/*</exclude>
+             <exclude>**/NetworkFailoverTest.*/**</exclude>
+             
+
+            <exclude>**/AMQDeadlockTest3.*</exclude>
+          </excludes>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-clean-plugin</artifactId>
+        <configuration>
+          <filesets>
+            <fileset>
+              <directory>${basedir}/activemq-data</directory>
+            </fileset>
+          </filesets>
+        </configuration>
+      </plugin>
+      
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-antrun-plugin</artifactId>
+
+        <executions>
+	        <execution>
+            <id>package</id>
+            <phase>package</phase>
+            <configuration>
+              <tasks>
+                <echo>Deleting unwanted resources from the test-jar</echo>
+                <delete dir="${project.build.directory}/test-classes" verbose="true">
+									<include name="*.*" />
+								</delete>
+              </tasks>
+            </configuration>
+            <goals>
+              <goal>run</goal>
+            </goals>
+          </execution>
+  
+          <execution>
+            <id>site</id>
+            <phase>site</phase>
+            <configuration>
+              <tasks>
+                <echo>Running the XSDDoc task</echo>
+                <taskdef name="xsddoc" classname="net.sf.xframe.xsddoc.Task" />
+                <mkdir dir="${basedir}/target/site/xsddoc" />
+                <xsddoc file="${basedir}/src/main/resources/activemq.xsd" out="${basedir}/target/site/xsddoc" doctitle="Apache ActiveMQ XML Schema Reference" header="&lt;a href='http://activemq.apache.org/'&gt;Apache ActiveMQ&lt;/a&gt;" footer="Copyright 2007 (c) the &lt;a href='http://www.apache.org/'&gt;Apache Software Foundation&lt;/a&gt;" verbose="false" />
+                <!--
+                        css="${basedir}/../etc/css/stylesheet.css"
+                -->
+              </tasks>
+            </configuration>
+            <goals>
+              <goal>run</goal>
+            </goals>
+          </execution>
+        </executions>
+        <dependencies>
+          <dependency>
+            <groupId>xsddoc</groupId>
+            <artifactId>maven-xsddoc-plugin</artifactId>
+            <version>1.0</version>
+          </dependency>
+        </dependencies>
+      </plugin>
+
+      <!-- generate the attached tests jar -->
+      <plugin>
+        <artifactId>maven-jar-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>test-jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>javacc-maven-plugin</artifactId>
+        <version>2.0</version>
+        <executions>
+          <execution>
+            <phase>generate-sources</phase>
+            <configuration>
+              <sourceDirectory>${basedir}/src/main/grammar</sourceDirectory>
+              <outputDirectory>${basedir}/target/generated-javacc</outputDirectory>
+              <packageName>org.apache.activemq.selector</packageName>
+            </configuration>
+            <goals>
+              <goal>javacc</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- Disable for now cause it's generating an invalid xsd file and this breaks our spring compatibility.
+           we are going to manually maintain the xsd for now until we can improve the xsd generation from xbean
+      <plugin>
+        <groupId>org.apache.xbean</groupId>
+        <artifactId>maven-xbean-plugin</artifactId>
+        <version>${xbean-version}</version>
+        <executions>
+          <execution>
+            <configuration>
+              <namespace>http://activemq.apache.org/schema/core</namespace>
+              <schema>target/xbean/activemq.xsd</schema>
+              <generateSpringSchemasFile>false</generateSpringSchemasFile>
+            </configuration>
+            <goals>
+              <goal>mapping</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      -->
+
+      <!--  lets ensure that the XSD gets deployed  -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>attach-artifacts</id>
+            <phase>package</phase>
+            <goals>
+              <goal>attach-artifact</goal>
+            </goals>
+            <configuration>
+              <artifacts>
+                <artifact>
+                  <file>${basedir}/src/main/resources/activemq.xsd</file>
+                  <type>xsd</type>
+                </artifact>
+                <artifact>
+                  <file>${basedir}/src/main/resources/activemq.xsd.html</file>
+                  <type>xsd.html</type>
+                </artifact>
+              </artifacts>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+  <profiles>
+    
+    <profile>
+      <id>openwire-generate</id>
+      <dependencies>
+        <dependency>
+          <groupId>org.apache.activemq</groupId>
+          <artifactId>activemq-openwire-generator</artifactId>
+          <version>${activemq-version}</version>
+          <optional>true</optional>
+        </dependency>
+      </dependencies>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-antrun-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>default</id>
+                <phase>generate-sources</phase>
+                <configuration>
+                  <tasks>
+                    <echo>Running OpenWire Generator</echo>
+                    <taskdef name="generate" classname="org.apache.activemq.openwire.tool.JavaGeneratorTask" classpathref="maven.compile.classpath" />
+                    <generate version="3" basedir="${basedir}" />
+                  </tasks>
+                </configuration>
+                <goals>
+                  <goal>run</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    
+    <profile>
+      <id>jdk1.4</id>
+      <activation>
+        <jdk>1.4</jdk>
+      </activation>
+      <dependencies>
+        <dependency>
+          <groupId>activesoap</groupId>
+          <artifactId>jaxp-api</artifactId>
+        </dependency>
+      </dependencies>
+    </profile>
+    
+  </profiles>
+
+</project>
