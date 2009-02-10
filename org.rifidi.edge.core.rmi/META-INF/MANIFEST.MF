@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Rifidi Rmi Plug-in
 Bundle-SymbolicName: org.rifidi.edge.core.rmi
-Bundle-Version: 2.0.2
+Bundle-Version: 2.0.3
 Bundle-Activator: org.rifidi.edge.core.rmi.Activator
 Bundle-Vendor: Pramari, LLC
 Bundle-ActivationPolicy: lazy
@@ -19,8 +19,8 @@ Import-Package: org.apache.commons.logging;version="1.0.4",
  org.rifidi.edge.core.rmi.api.readerconnection.exceptions;version="[1.0.0,2.0.0)",
  org.rifidi.edge.core.rmi.api.readerconnection.returnobjects;version="[1.0.0,2.0.0)"
 Require-Bundle: org.rifidi.edge.core;bundle-version="1.1.0",
- org.rifidi.edge.services;bundle-version="1.1.0",
  org.rifidi.edge.common.utilities;bundle-version="1.1.0",
- org.rifidi.dynamicSWTForms.xml;bundle-version="1.1.0"
+ org.rifidi.dynamicSWTForms.xml;bundle-version="1.1.0",
+ org.rifidi.edge.services;bundle-version="1.1.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-Description: RMI service for exposing Edge Server to clients via RMI

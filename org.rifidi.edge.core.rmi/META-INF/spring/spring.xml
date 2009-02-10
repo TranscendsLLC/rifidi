@@ -1,0 +1,38 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:osgi="http://www.springframework.org/schema/osgi"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+     http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi.xsd">
+
+	<bean id="RMIServer" class="org.rifidi.edge.core.rmi.service.impl.RMIServerServiceImpl"
+		init-method="start" destroy-method="stop">
+		<property name="port" value="1099"></property>
+	</bean>
+
+	<bean id="EdgeServerStub"
+		class="org.rifidi.edge.core.rmi.readerconnection.impl.EdgeServerStubImpl">
+		<property name="RMIServerService" ref="RMIServer" />
+		<property name="readerPluginService" ref="ReaderPluginService" />
+		<property name="readerSessionService" ref="readerSessionService"></property>
+	</bean>
+
+	<bean id="ReaderPluginManagerStub"
+		class="org.rifidi.edge.core.rmi.readerconnection.impl.ReaderPluginManagerStubImpl">
+		<property name="RMIServerService" ref="RMIServer" />
+		<property name="readerPluginService" ref="ReaderPluginService" />
+		<property name="widgetAnnoationProcessorService" ref="DynamicSWTProcessor" />
+	</bean>
+
+	<osgi:service id="rmiServerService" ref="RMIServer"
+		interface="org.rifidi.edge.core.rmi.service.RMIServerService"></osgi:service>
+
+	<osgi:reference id="ReaderPluginService"
+		interface="org.rifidi.edge.core.api.readerplugin.service.ReaderPluginService"></osgi:reference>
+
+	<osgi:reference id="DynamicSWTProcessor"
+		interface="org.rifidi.dynamicswtforms.xml.processor.DynamicSWTFormXMLProcessor"></osgi:reference>
+
+	<osgi:reference id="readerSessionService"
+		interface="org.rifidi.edge.core.readersession.service.ReaderSessionService"></osgi:reference>
+
+</beans> 

@@ -27,8 +27,7 @@ import org.rifidi.edge.core.readersession.service.ReaderSessionService;
 import org.rifidi.edge.core.rmi.api.readerconnection.EdgeServerStub;
 import org.rifidi.edge.core.rmi.api.readerconnection.ReaderSessionStub;
 import org.rifidi.edge.core.rmi.service.RMIServerService;
-import org.rifidi.services.annotations.Inject;
-import org.rifidi.services.registry.ServiceRegistry;
+
 
 /**
  * The implementation of the EdgeServerStub. This is the Factory to create new
@@ -59,7 +58,6 @@ public class EdgeServerStubImpl extends UnicastRemoteObject implements
 	 */
 	public EdgeServerStubImpl() throws RemoteException {
 		super();
-		ServiceRegistry.getInstance().service(this);
 	}
 
 	@Override
@@ -161,7 +159,6 @@ public class EdgeServerStubImpl extends UnicastRemoteObject implements
 	 * @param readerPluginService
 	 *            ReaderPluginService instance
 	 */
-	@Inject
 	public void setReaderPluginService(ReaderPluginService readerPluginService) {
 		this.readerPluginService = readerPluginService;
 	}
@@ -173,16 +170,33 @@ public class EdgeServerStubImpl extends UnicastRemoteObject implements
 	 * @param readerSessionService
 	 *            ReaderSessionService
 	 */
-	@Inject
 	public void setReaderSessionService(
 			ReaderSessionService readerSessionService) {
 		this.readerSessionService = readerSessionService;
 		readerSessionService.addReaderSessionListener(this);
 	}
 
-	@Inject
 	public void setRMIServerService(RMIServerService rmiServerService) {
+		if(rmiServerService==null){
+			throw new NullPointerException();
+		}
 		this.rmiServerService = rmiServerService;
+		try {
+			rmiServerService.bindToRMI(this, EdgeServerStub.class.getName());
+		} catch (RemoteException e) {
+			logger.error("Failed to bind " + EdgeServerStub.class
+					+ " to RMI Server", e);
+		}
+	}
+	
+	public void cleanup(){
+		if(rmiServerService!=null){
+			try {
+				rmiServerService.unbindFromRMI(EdgeServerStub.class.getName());
+			} catch (RemoteException e) {
+				logger.error("Error when unbinding: ", e);
+			}
+		}
 	}
 
 	private ReaderSessionStub saveRemoteConnection(ReaderSession readerSession)
