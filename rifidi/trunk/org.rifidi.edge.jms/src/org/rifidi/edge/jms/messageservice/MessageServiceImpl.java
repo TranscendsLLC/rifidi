@@ -42,8 +42,11 @@ public class MessageServiceImpl implements MessageService {
 	 * @param connectionFactory
 	 *            the ConnectionFactory to create new JMS Connections
 	 */
-	public MessageServiceImpl(BrokerWrapper brokerWrapper) {
-		this.brokerWrapper = brokerWrapper;
+	public MessageServiceImpl() {
+	}
+	
+	public void setBrokerWrapper(BrokerWrapper broker){
+		this.brokerWrapper = broker;
 	}
 
 	/*

@@ -1,19 +1,12 @@
 package org.rifidi.edge.jms.messagequeue;
 
-import javax.jms.Connection;
-import javax.jms.DeliveryMode;
-import javax.jms.Destination;
-import javax.jms.JMSException;
-import javax.jms.MessageProducer;
-import javax.jms.Session;
-import javax.jms.TextMessage;
 
 import org.apache.activemq.command.ActiveMQDestination;
 import org.rifidi.edge.core.api.exceptions.RifidiMessageQueueException;
 import org.rifidi.edge.core.api.readerplugin.messageQueue.MessageQueue;
 import org.rifidi.edge.core.api.readerplugin.messages.Message;
 import org.rifidi.edge.jms.messageservice.BrokerWrapper;
-
+import javax.jms.*;
 /**
  * Implementation of the MessageQueue using JMS as the underlying Queue. Allows
  * to store Messages on a JMS Queue.
