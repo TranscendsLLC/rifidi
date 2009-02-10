@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            class="org.rifidi.edge.client.ale.ui.views.View"
+            id="org.rifidi.edge.client.ale.ui.views.View"
+            name="ALE View"
+            restorable="true">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="org.rifidi.edge.client.perspective.perspective">
+         <view
+               id="org.rifidi.edge.client.ale.ui.views.View"
+               minimized="false"
+               ratio="1.0f"
+               relationship="left"
+               relative="org.eclipse.ui.editorss"
+               visible="true">
+         </view>
+      </perspectiveExtension>
+   </extension>
+
+</plugin>
