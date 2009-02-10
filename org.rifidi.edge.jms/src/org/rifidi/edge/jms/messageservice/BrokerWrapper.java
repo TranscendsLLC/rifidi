@@ -15,22 +15,50 @@ import javax.jms.ConnectionFactory;
 
 import org.apache.activemq.broker.BrokerService;
 import org.apache.activemq.command.ActiveMQDestination;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * This class wraps the BrokerService to only expose functionality that is
  * needed
  * 
- * @author kyle
+ * @author Kyle Neumeier - kyle@pramari.com
  * 
  */
 public class BrokerWrapper {
 
+	private Log logger = LogFactory.getLog(BrokerWrapper.class);
 	private BrokerService broker;
 	private ConnectionFactory connectionFactory;
 
-	public BrokerWrapper(BrokerService broker, ConnectionFactory connectionFactory) {
-		this.broker = broker;
-		this.connectionFactory = connectionFactory;
+	/**
+	 * Emptry Constructor for spring
+	 */
+	public BrokerWrapper() {
+	}
+
+	/**
+	 * Setter method for spring to call
+	 * 
+	 * @param service
+	 */
+	public void setBrokerService(BrokerService service) {
+		if (service == null) {
+			throw new NullPointerException("BrokerService cannot be null");
+		}
+		this.broker = service;
+	}
+
+	/**
+	 * Setter method for spring to call
+	 * 
+	 * @param factory
+	 */
+	public void setConnectionFactory(ConnectionFactory factory) {
+		if (factory == null) {
+			throw new NullPointerException("Factory cannot be null");
+		}
+		this.connectionFactory = factory;
 	}
 
 	/**
@@ -43,10 +71,19 @@ public class BrokerWrapper {
 	 */
 	public void destroyDestination(ActiveMQDestination destination)
 			throws Exception {
-		broker.removeDestination(destination);
+		if (broker != null) {
+			broker.removeDestination(destination);
+		} else {
+			logger.error("broker is null");
+		}
 	}
-	
-	public ConnectionFactory getConnectionFactory(){
+
+	public ConnectionFactory getConnectionFactory() {
+		if (connectionFactory == null) {
+			logger
+					.error("ConnectionFactory is null.  BrokerWrapper was not initialized properly");
+			throw new NullPointerException();
+		}
 		return this.connectionFactory;
 	}
 

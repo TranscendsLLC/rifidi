@@ -11,13 +11,8 @@
  */
 package org.rifidi.edge.jms;
 
-import org.apache.activemq.ActiveMQConnectionFactory;
-import org.apache.activemq.broker.BrokerService;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
-import org.rifidi.edge.core.messageQueue.service.MessageService;
-import org.rifidi.edge.jms.messageservice.BrokerWrapper;
-import org.rifidi.edge.jms.messageservice.MessageServiceImpl;
 
 /**
  * This is the Activator for the JMSService Bundle
@@ -26,8 +21,6 @@ import org.rifidi.edge.jms.messageservice.MessageServiceImpl;
  * 
  */
 public class Activator implements BundleActivator {
-
-	BrokerService broker;
 
 	/*
 	 * (non-Javadoc)
@@ -38,29 +31,6 @@ public class Activator implements BundleActivator {
 
 		System.out.println("== Bundle " + this.getClass().getName()
 				+ " loaded ==");
-
-		// start broker
-		broker = new BrokerService();
-		// TODO Save information about port and address in a configuration file
-		broker.addConnector("tcp://localhost:61616");
-		// Disable Persistence to avoid the creation of the ActiveMQ Directory
-		broker.setPersistent(false);
-		// TODO Disable JMX to avoid the use of RMI in JMS
-		// (ClassNotFoundException)
-		broker.setUseJmx(false);
-		broker.start();
-
-		// configure and register connection factory
-		ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory();
-		// TODO Save information about port and address in a configuration file
-		connectionFactory.setBrokerURL("tcp://localhost:61616");
-
-		// Register MessageService utilizing JMS
-		System.out.println("Registering Service: (JMS) MessageService");
-		MessageService messageService = new MessageServiceImpl(
-				new BrokerWrapper(broker, connectionFactory));
-		context.registerService(MessageService.class.getName(), messageService,
-				null);
 	}
 
 	/*
@@ -69,7 +39,6 @@ public class Activator implements BundleActivator {
 	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
 	 */
 	public void stop(BundleContext context) throws Exception {
-		broker.stop();
 		System.out.println("== Bundle " + this.getClass().getName()
 				+ " stopped ==");
 	}

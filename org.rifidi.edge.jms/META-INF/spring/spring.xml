@@ -1,0 +1,42 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:amq="http://activemq.apache.org/schema/core" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:osgi="http://www.springframework.org/schema/osgi"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+  http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd
+   http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi.xsd">
+
+	<!--  Create an ActiveMQ Broker -->
+	<amq:broker id="broker" useJmx="false" persistent="false"
+		start="true">
+		<amq:transportConnectors>
+			<amq:transportConnector uri="tcp://localhost:61616" />
+		</amq:transportConnectors>
+	</amq:broker>
+
+	<!--
+		Create an ActiveMQ Connection Factory and point it to the broker
+	-->
+	<bean id="jmsFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
+		<property name="brokerURL">
+			<value>tcp://localhost:61616</value>
+		</property>
+	</bean>
+
+	<!--
+		Create a BrokerWrapper and give the broker and connFactory to it
+	-->
+	<bean id="wrapper" class="org.rifidi.edge.jms.messageservice.BrokerWrapper">
+		<property name="connectionFactory" ref="jmsFactory"></property>
+		<property name="brokerService" ref="broker"></property>
+	</bean>
+
+	<!-- Create the JMSService -->
+	<bean id="JMSService" class="org.rifidi.edge.jms.messageservice.MessageServiceImpl">
+		<property name="brokerWrapper" ref="wrapper"></property>
+	</bean>
+
+	<!-- Register the JMSService with the OSGi service registry -->
+	<osgi:service id="jmsMessageService" ref="JMSService"
+		interface="org.rifidi.edge.core.messageQueue.service.MessageService"></osgi:service>
+
+</beans> 
