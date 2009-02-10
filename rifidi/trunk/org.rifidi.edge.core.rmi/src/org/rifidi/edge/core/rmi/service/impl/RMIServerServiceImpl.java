@@ -12,7 +12,6 @@ import java.rmi.server.UnicastRemoteObject;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.rmi.service.RMIServerService;
-import org.rifidi.services.registry.ServiceRegistry;
 
 /**
  * This is the implementation of a RMIServer. It will be a Service opening a RMI
@@ -31,14 +30,20 @@ public class RMIServerServiceImpl implements RMIServerService {
 
 	// RMI Registry
 	private Registry registry;
-	// TODO Make port assignment more dynamic
+
+	/**
+	 * The port that RMI will open up. Default is 1099
+	 */
 	private int port = 1099;
 
 	/**
 	 * Default Constructor to get the class serviced
 	 */
 	public RMIServerServiceImpl() {
-		ServiceRegistry.getInstance().service(this);
+	}
+
+	public void setPort(int port) {
+		this.port = port;
 	}
 
 	/*
@@ -75,11 +80,10 @@ public class RMIServerServiceImpl implements RMIServerService {
 	 */
 	@Override
 	public void stop() {
+		logger.info("Stopping RMI Service");
 		try {
-
 			for (String object : registry.list()) {
-				logger.warn("Object " + object
-						+ " still remains in RMI Registry");
+				unbindFromRMI(object);
 			}
 		} catch (AccessException e) {
 			logger.error("RMI Access violation");
@@ -154,9 +158,8 @@ public class RMIServerServiceImpl implements RMIServerService {
 		try {
 			return registry.lookup(id);
 		} catch (AccessException e) {
-			logger
-					.error("AccessException when looking up object with ID "
-							+ id);
+			logger.error("AccessException when looking " + "up object with ID "
+					+ id);
 			return null;
 		} catch (RemoteException e) {
 			logger.error("Remote Exception when looking up object with ID "

@@ -36,11 +36,11 @@ import org.rifidi.edge.core.api.exceptions.RifidiReaderPluginXMLNotFoundExceptio
 import org.rifidi.edge.core.api.readerplugin.ReaderPlugin;
 import org.rifidi.edge.core.api.readerplugin.service.ReaderPluginService;
 import org.rifidi.edge.core.api.readerplugin.xml.CommandDescription;
+import org.rifidi.edge.core.rmi.api.readerconnection.EdgeServerStub;
 import org.rifidi.edge.core.rmi.api.readerconnection.ReaderPluginManagerStub;
 import org.rifidi.edge.core.rmi.api.readerconnection.exceptions.RifidiPluginDoesNotExistException;
 import org.rifidi.edge.core.rmi.api.readerconnection.returnobjects.CommandGroupMap;
-import org.rifidi.services.annotations.Inject;
-import org.rifidi.services.registry.ServiceRegistry;
+import org.rifidi.edge.core.rmi.service.RMIServerService;
 import org.w3c.dom.Document;
 
 /**
@@ -60,6 +60,8 @@ public class ReaderPluginManagerStubImpl extends UnicastRemoteObject implements
 	private ReaderPluginService readerPluginService;
 
 	private DynamicSWTFormXMLProcessor dynamicSWTFormXMLProcessor;
+	
+	private RMIServerService rmiServerService;
 
 	private Log logger = LogFactory.getLog(ReaderPluginManagerStubImpl.class);
 
@@ -68,7 +70,6 @@ public class ReaderPluginManagerStubImpl extends UnicastRemoteObject implements
 	 */
 	public ReaderPluginManagerStubImpl() throws RemoteException {
 		super();
-		ServiceRegistry.getInstance().service(this);
 	}
 
 	/*
@@ -277,12 +278,33 @@ public class ReaderPluginManagerStubImpl extends UnicastRemoteObject implements
 	 * @param readerPluginService
 	 *            ReaderPluginService instance
 	 */
-	@Inject
 	public void setReaderPluginService(ReaderPluginService readerPluginService) {
 		this.readerPluginService = readerPluginService;
 	}
+	
+	public void setRMIServerService(RMIServerService rmiService){
+		if(rmiService==null){
+			throw new NullPointerException();
+		}
+		try{
+			this.rmiServerService = rmiService;
+			rmiService.bindToRMI(this, ReaderPluginManagerStub.class.getName());
+		}catch(RemoteException e){
+			logger.error("Cannot bind " + ReaderPluginManagerStub.class.getName() + " to RMI");
+		}
+	}
+	
+	public void cleanup(){
+		if(rmiServerService!=null){
+			try {
+				rmiServerService.unbindFromRMI(EdgeServerStub.class.getName());
+			} catch (RemoteException e) {
+				logger.error("Error when unbinding: ", e);
+			}
+		}
+	}
 
-	@Inject
+
 	public void setWidgetAnnoationProcessorService(
 			DynamicSWTFormXMLProcessor service) {
 		dynamicSWTFormXMLProcessor = service;
