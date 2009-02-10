@@ -45,8 +45,12 @@ public class ReaderSessionServiceImpl implements ReaderSessionService,
 	 *            the ReaderPluginService necessary to create different reader
 	 *            types
 	 */
-	public ReaderSessionServiceImpl(ReaderPluginService readerPluginService) {
-		this.readerPluginService = readerPluginService;
+	public ReaderSessionServiceImpl() {
+		logger.debug("Starting ReaderSessionService");
+	}
+	
+	public void setReaderPluginSerivce(ReaderPluginService service){
+		this.readerPluginService = service;
 		readerPluginService.addReaderPluginListener(this);
 	}
 

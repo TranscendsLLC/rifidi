@@ -49,11 +49,12 @@ public class ReaderPluginServiceImpl implements ReaderPluginService {
 
 	public ReaderPluginServiceImpl() {
 		try {
+			logger.debug("Starting ReaderPluginService");
 			jaxbContext = JAXBContext.newInstance(ReaderPluginXML.class);
 			unmarshaller = jaxbContext.createUnmarshaller();
 		} catch (JAXBException e) {
-			logger.error("Fatal Exception in ReaderPluginService");
-			e.printStackTrace();
+			logger.error("Fatal Exception in ReaderPluginService", e);
+			throw new RuntimeException(e);
 		}
 	}
 
