@@ -2,8 +2,6 @@ package org.rifidi.edge.core.communication;
 
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
-import org.rifidi.edge.core.communication.service.ConnectionService;
-import org.rifidi.edge.core.communication.service.ConnectionServiceImpl;
 
 /**
  * Activator of the communication bundle
@@ -13,8 +11,6 @@ import org.rifidi.edge.core.communication.service.ConnectionServiceImpl;
  */
 public class Activator implements BundleActivator {
 
-	private ConnectionServiceImpl connectionService;
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -22,12 +18,6 @@ public class Activator implements BundleActivator {
 	 */
 	public void start(BundleContext context) throws Exception {
 		System.out.println("== Bundle ConnectionService started ==");
-		System.out.println("Registering Service: ConnectionService");
-
-		connectionService = new ConnectionServiceImpl();
-		context.registerService(ConnectionService.class.getName(),
-				connectionService, null);
-
 	}
 
 	/*

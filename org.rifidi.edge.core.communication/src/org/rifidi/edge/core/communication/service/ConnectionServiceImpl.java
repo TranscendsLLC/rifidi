@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.api.exceptions.RifidiConnectionException;
 import org.rifidi.edge.core.api.readerplugin.ConnectionManager;
 import org.rifidi.edge.core.api.readerplugin.ReaderInfo;
@@ -19,9 +21,14 @@ import org.rifidi.edge.core.communication.impl.Communication;
  */
 public class ConnectionServiceImpl implements ConnectionService {
 
+	private Log logger = LogFactory.getLog(ConnectionServiceImpl.class);
 	private List<ConnectionServiceListener> listeners = new ArrayList<ConnectionServiceListener>();
 	private HashMap<Connection, Communication> connections = new HashMap<Connection, Communication>();
 
+	public ConnectionServiceImpl(){
+		logger.debug("Starting Connection Service");
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.rifidi.edge.core.communication.service.ConnectionService#createConnection(org.rifidi.edge.core.readerplugin.connectionmanager.ConnectionManager, org.rifidi.edge.core.readerplugin.ReaderInfo, org.rifidi.edge.core.communication.service.CommunicationStateListener)
 	 */
