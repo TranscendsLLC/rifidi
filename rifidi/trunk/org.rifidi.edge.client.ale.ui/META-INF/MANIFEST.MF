@@ -8,6 +8,7 @@ Bundle-Vendor: PRAMARI LLC
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.rifidi.edge.client.ale;bundle-version="1.0.0",
- org.rifidi.edge.client.cxf;bundle-version="1.0.0"
+ org.rifidi.edge.client.cxf;bundle-version="1.0.0",
+ org.rifidi.logging;bundle-version="1.0.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
