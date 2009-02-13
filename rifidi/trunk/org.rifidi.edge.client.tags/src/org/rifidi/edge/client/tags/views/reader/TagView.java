@@ -21,6 +21,7 @@ import org.apache.commons.logging.LogFactory;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.RowData;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -66,9 +67,12 @@ public class TagView extends ViewPart implements ReaderMessageListener {
 		logger.debug("Creating " + this.getClass().getSimpleName()
 				+ " control.");
 		ServiceRegistry.getInstance().service(this);
-		parent.setLayout(new FillLayout(SWT.VERTICAL));
-
-		Group group = new Group(parent, SWT.NONE | SWT.TOP);
+		parent.setLayout(new RowLayout(SWT.VERTICAL));
+		Composite cGroup = new Composite(parent,SWT.NONE);
+		cGroup.setLayout(new RowLayout(SWT.VERTICAL));
+		Composite cTable = new Composite(parent,SWT.NONE);
+		cTable.setLayout(new FillLayout());
+		Group group = new Group(cGroup, SWT.NONE | SWT.TOP);
 		group.setText("Antenna Selection");
 		group.setLayout(new RowLayout(SWT.HORIZONTAL));
 
@@ -82,7 +86,7 @@ public class TagView extends ViewPart implements ReaderMessageListener {
 		}
 		group.pack();
 
-		table = new TableViewer(parent, SWT.BORDER | SWT.V_SCROLL | SWT.WRAP
+		table = new TableViewer(cTable, SWT.BORDER | SWT.V_SCROLL | SWT.WRAP
 				| SWT.H_SCROLL | SWT.FULL_SELECTION | SWT.BOTTOM);
 
 		table.getTable().setLinesVisible(true);
