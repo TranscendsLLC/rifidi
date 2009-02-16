@@ -7,7 +7,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import javax.management.Attribute;
 import javax.management.AttributeList;
@@ -30,38 +32,48 @@ import org.rifidi.configuration.annotations.Property;
  * @author Jochen Mader - jochen@pramari.com
  * 
  */
-public class DefaultConfigurationImpl implements Configuration {
+public class DefaultConfigurationImpl implements Configuration, Cloneable {
 	/** Logger for this class. */
 	private static final Log logger = LogFactory
 			.getLog(DefaultConfigurationImpl.class);
-	/** Names of properties mapped to their annotations */
-	private Map<String, Property> nameToProperty;
-	/** Names of operations mapped to their annotations */
-	private Map<String, Operation> nameToOperation;
+
 	/** The object that gets serviced. */
 	private Object target;
-	/** Factory ID that created the object. */
-	private String factoryID;
 	/** The id this service is registered by in the registry. */
 	private String serviceID;
 	/** Service registration for the instance. */
 	private ServiceRegistration registration;
+	/** Class this configuration is used for. */
+	private Class<?> clazz;
+	/** Names of properties mapped to their annotations */
+	protected Map<String, Property> nameToProperty;
+	/** Names of operations mapped to their annotations */
+	protected Map<String, Operation> nameToOperation;
+	/** ID of the factory owning the configuration. */
+	protected String factoryID;
+	/** Attributes set while we diddn't have an actual instance. */
+	private Set<Attribute> attributes;
+
+	/**
+	 * Protected constructor used by clone.
+	 */
+	protected DefaultConfigurationImpl() {
+		attributes=new HashSet<Attribute>();
+	}
 
 	/**
 	 * Constructor.
 	 * 
 	 * @param target
 	 */
-	public DefaultConfigurationImpl(Object target, String factoryID,
-			String serviceID) {
-		this.factoryID = factoryID;
+	public DefaultConfigurationImpl(Class<?> clazz, String factoryID) {
+		this.clazz = clazz;
 		this.nameToProperty = new HashMap<String, Property>();
 		this.nameToOperation = new HashMap<String, Operation>();
-		this.target = target;
-		this.serviceID = serviceID;
-		if (target.getClass().isAnnotationPresent(JMXMBean.class)) {
+		this.factoryID = factoryID;
+		if (clazz.isAnnotationPresent(JMXMBean.class)) {
 			// check method annotations
-			for (Method method : target.getClass().getMethods()) {
+			for (Method method : clazz.getMethods()) {
 				// scan for operations annotation
 				if (method.isAnnotationPresent(Operation.class)) {
 					nameToOperation.put(method.getName(), (Operation) method
@@ -87,7 +99,41 @@ public class DefaultConfigurationImpl implements Configuration {
 	}
 
 	/**
-	private String 
+	 * @param serviceID
+	 *            the serviceID to set
+	 */
+	public void setServiceID(String serviceID) {
+		this.serviceID = serviceID;
+	}
+
+	/**
+	 * @param target
+	 *            the target to set
+	 */
+	public void setTarget(Object target) {
+		if (!target.getClass().equals(clazz)) {
+			throw new RuntimeException("Got " + target.getClass()
+					+ " expected " + clazz);
+		}
+		this.target = target;
+		for (Attribute attribute : attributes) {
+			try {
+				setAttribute(attribute);
+			} catch (AttributeNotFoundException e) {
+				logger.error("That should not happen: " + e);
+			} catch (InvalidAttributeValueException e) {
+				logger.error("That should not happen: " + e);
+			} catch (MBeanException e) {
+				logger.error("That should not happen: " + e);
+			} catch (ReflectionException e) {
+				logger.error("That should not happen: " + e);
+			}
+		}
+	}
+
+	/**
+	 * private String
+	 * 
 	 * @param registration
 	 *            the registration to set
 	 */
@@ -235,23 +281,27 @@ public class DefaultConfigurationImpl implements Configuration {
 			throws AttributeNotFoundException, InvalidAttributeValueException,
 			MBeanException, ReflectionException {
 		if (nameToProperty.containsKey(attribute.getName())) {
-			try {
-				Method method = target.getClass().getMethod(
-						"set" + attribute.getName(), String.class);
-				method.invoke(target, attribute.getValue());
+			if (target == null) {
+				attributes.add(attribute);
 				return;
-			} catch (SecurityException e) {
-				logger.error(e);
-			} catch (NoSuchMethodException e) {
-				logger.error(e);
-			} catch (IllegalArgumentException e) {
-				logger.error(e);
-			} catch (IllegalAccessException e) {
-				logger.error(e);
-			} catch (InvocationTargetException e) {
-				logger.error(e);
+			} else {
+				try {
+					Method method = target.getClass().getMethod(
+							"set" + attribute.getName(), String.class);
+					method.invoke(target, attribute.getValue());
+					return;
+				} catch (SecurityException e) {
+					logger.error(e);
+				} catch (NoSuchMethodException e) {
+					logger.error(e);
+				} catch (IllegalArgumentException e) {
+					logger.error(e);
+				} catch (IllegalAccessException e) {
+					logger.error(e);
+				} catch (InvocationTargetException e) {
+					logger.error(e);
+				}
 			}
-
 		}
 		throw new AttributeNotFoundException();
 
@@ -268,18 +318,22 @@ public class DefaultConfigurationImpl implements Configuration {
 	public AttributeList setAttributes(AttributeList attributes) {
 		AttributeList ret = new AttributeList();
 		for (Object obj : attributes) {
-			try {
-				setAttribute((Attribute) obj);
-				ret.add(new Attribute(((Attribute) obj).getName(),
-						getAttribute(((Attribute) obj).getName())));
-			} catch (AttributeNotFoundException e) {
-				logger.error(e);
-			} catch (InvalidAttributeValueException e) {
-				logger.error(e);
-			} catch (MBeanException e) {
-				logger.error(e);
-			} catch (ReflectionException e) {
-				logger.error(e);
+			if (target == null) {
+				attributes.add((Attribute) obj);
+			} else {
+				try {
+					setAttribute((Attribute) obj);
+					ret.add(new Attribute(((Attribute) obj).getName(),
+							getAttribute(((Attribute) obj).getName())));
+				} catch (AttributeNotFoundException e) {
+					logger.error(e);
+				} catch (InvalidAttributeValueException e) {
+					logger.error(e);
+				} catch (MBeanException e) {
+					logger.error(e);
+				} catch (ReflectionException e) {
+					logger.error(e);
+				}
 			}
 		}
 		return ret;
@@ -323,4 +377,18 @@ public class DefaultConfigurationImpl implements Configuration {
 		return Collections.emptyMap();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#clone()
+	 */
+	@Override
+	public Object clone() {
+		DefaultConfigurationImpl config = new DefaultConfigurationImpl();
+		config.nameToOperation = new HashMap<String, Operation>(nameToOperation);
+		config.nameToProperty = new HashMap<String, Property>(nameToProperty);
+		config.factoryID = factoryID;
+		config.clazz=clazz;
+		return config;
+	}
 }

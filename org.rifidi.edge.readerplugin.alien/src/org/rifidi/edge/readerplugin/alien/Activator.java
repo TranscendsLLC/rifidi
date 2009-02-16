@@ -12,9 +12,6 @@ package org.rifidi.edge.readerplugin.alien;
 
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
-import org.rifidi.edge.core.api.readerplugin.service.ReaderPluginService;
-import org.rifidi.services.annotations.Inject;
-import org.rifidi.services.registry.ServiceRegistry;
 
 /**
  * Activator for Alien reader.
@@ -22,12 +19,6 @@ import org.rifidi.services.registry.ServiceRegistry;
  * @author Matthew Dean - matt@pramari.com
  */
 public class Activator implements BundleActivator {
-
-	private ReaderPluginService readerPluginService;
-	/**
-	 * This is just temporary
-	 */
-	private BundleContext context;
 
 	/*
 	 * (non-Javadoc)
@@ -37,9 +28,6 @@ public class Activator implements BundleActivator {
 	 * )
 	 */
 	public void start(BundleContext context) throws Exception {
-		System.out.println("== Bundle AlienReaderPlugin started ==");
-		this.context = context;
-		ServiceRegistry.getInstance().service(this);	
 	}
 
 	/*
@@ -49,23 +37,5 @@ public class Activator implements BundleActivator {
 	 * org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
 	 */
 	public void stop(BundleContext context) throws Exception {
-		if (readerPluginService != null) {
-			System.out.println("Unregistering Plugin: AlienReaderPlugin");
-			readerPluginService.unregisterReaderPlugin(context.getBundle());
-		}
-		System.out.println("== Bundle AlienReaderPlugin stopped ==");
-	}
-
-	/**
-	 * Set the ReaderPluginService via injection.
-	 * 
-	 * @param readerPluginService
-	 */
-	@Inject
-	public void setReaderPluginService(ReaderPluginService readerPluginService) {
-		this.readerPluginService = readerPluginService;
-		System.out.println("Registering Plugin: AlienReaderPlugin");
-		this.readerPluginService.registerReaderPlugin(context.getBundle());
-		context = null;
 	}
 }

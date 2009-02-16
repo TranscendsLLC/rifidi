@@ -3,8 +3,6 @@
  */
 package org.rifidi.configuration;
 
-import java.util.Map;
-
 /**
  * ServiceFactories create new services using a map as their input. They have to
  * be registered to the service registry under this interface and the have to
@@ -16,23 +14,21 @@ import java.util.Map;
 public interface ServiceFactory {
 
 	/**
-	 * Create a service with the given properties and register it to OSGi under
-	 * the given id.
+	 * Create a service from the given Configuration.
 	 * 
-	 * @param serviceID
-	 * @param properties
+	 * @param configuration
 	 */
-	void createService(String serviceID, Map<String, String> properties);
-
-	/**
-	 * Create a service with the given properties.
-	 * 
-	 * @param properties
-	 */
-	void createService(Map<String, String> properties);
+	void createService(Configuration configuration);
 
 	/**
 	 * Get the unique ID for this factory.
 	 */
 	String getFactoryID();
+
+	/**
+	 * Create an empty configuration object for the factory.
+	 * 
+	 * @return
+	 */
+	public Configuration getEmptyConfiguration();
 }

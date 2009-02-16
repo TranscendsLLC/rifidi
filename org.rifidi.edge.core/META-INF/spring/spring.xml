@@ -2,23 +2,24 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:osgi="http://www.springframework.org/schema/osgi"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
      http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi.xsd">
+	<!--  Create Reader Sessiopn Service -->
+	<bean id="readerSessionManagementImpl"
+		class="org.rifidi.edge.newcore.readersession.ReaderSessionManagementImpl">
+		<property name="context" ref="bundleContext" />
+		<property name="readerFactories" ref="readerFactoriesSet" />
+	</bean>
 
 	<!-- Create Reader Plugin Service -->
 	<bean id="readerPluginServiceImpl"
 		class="org.rifidi.edge.core.readerplugin.service.impl.ReaderPluginServiceImpl" />
 
-	<!-- Create Reader Session Service -->
-	<bean id="readerSessionServiceImpl"
-		class="org.rifidi.edge.core.readersession.service.impl.ReaderSessionServiceImpl">
-		<property name="readerPluginSerivce" ref="readerPluginServiceImpl"></property>
-	</bean>
-
-	<!-- Put reader Session Plugin is OSGi Registry -->
-	<osgi:service id="readerPluginService" ref="readerPluginServiceImpl"
-		interface="org.rifidi.edge.core.api.readerplugin.service.ReaderPluginService"></osgi:service>
-	
 	<!-- Put reader session service in OSGi Registry -->
-	<osgi:service id="readerSessionService" ref="readerSessionServiceImpl"
-		interface="org.rifidi.edge.core.readersession.service.ReaderSessionService"></osgi:service>
+	<osgi:service id="readerSessionManagement" ref="readerSessionManagementImpl"
+		interface="org.rifidi.edge.newcore.readersession.ReaderSessionManagement"></osgi:service>
 
+	<osgi:set id="readerFactoriesSet" interface="org.rifidi.edge.newcore.ReaderFactory"
+		cardinality="0..N">
+		<osgi:listener ref="readerSessionManagementImpl"
+			bind-method="bind" unbind-method="unbind" />
+	</osgi:set>
 </beans>
