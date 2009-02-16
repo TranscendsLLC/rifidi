@@ -11,6 +11,12 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import javax.management.Attribute;
+import javax.management.AttributeNotFoundException;
+import javax.management.InvalidAttributeValueException;
+import javax.management.MBeanException;
+import javax.management.ReflectionException;
+
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.HierarchicalINIConfiguration;
 import org.apache.commons.configuration.SubnodeConfiguration;
@@ -112,12 +118,34 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 			if (factories.get(factory.getFactoryID()) == null) {
 				logger.debug("Registering " + factory.getFactoryID());
 				factories.put(factory.getFactoryID(), factory);
-				for (ServiceConfiguration serConf : factoryToConfigurations
-						.get(factory.getFactoryID())) {
-					factory
-							.createService(serConf.serviceID,
-									serConf.properties);
+				if (factoryToConfigurations.get(factory.getFactoryID()) != null) {
+					for (ServiceConfiguration serConf : factoryToConfigurations
+							.get(factory.getFactoryID())) {
+						Configuration configuration = factory
+								.getEmptyConfiguration();
+						for (String prop : serConf.properties.keySet()) {
+							Attribute attribute = new Attribute(prop,
+									serConf.properties.get(prop));
+							try {
+								configuration.setAttribute(attribute);
+							} catch (AttributeNotFoundException e) {
+								logger.error("Unable to set attribute: "
+										+ attribute + " " + e);
+							} catch (InvalidAttributeValueException e) {
+								logger.error("Unable to set attribute: "
+										+ attribute + " " + e);
+							} catch (MBeanException e) {
+								logger.error("Unable to set attribute: "
+										+ attribute + " " + e);
+							} catch (ReflectionException e) {
+								logger.error("Unable to set attribute: "
+										+ attribute + " " + e);
+							}
+						}
+						factory.createService(configuration);
+					}
 				}
+
 			}
 		}
 	}
@@ -165,8 +193,8 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	public synchronized void storeConfiguration() {
 		HashSet<Configuration> copy = new HashSet<Configuration>(configurations);
 		try {
-			//TODO: copy file before deleting it!!
-			File file=new File(path);
+			// TODO: copy file before deleting it!!
+			File file = new File(path);
 			file.delete();
 			file.createNewFile();
 			HierarchicalINIConfiguration configuration = new HierarchicalINIConfiguration(

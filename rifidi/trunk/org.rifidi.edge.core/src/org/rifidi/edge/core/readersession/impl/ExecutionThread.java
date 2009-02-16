@@ -20,7 +20,7 @@ public class ExecutionThread {
 	private Log logger = LogFactory.getLog(ExecutionThread.class);
 
 	private MessageQueue messageQueue;
-	
+
 	private MessageQueue errorQueue;
 
 	private CommandExecutionListener commandExecutionListener;
@@ -41,13 +41,13 @@ public class ExecutionThread {
 	 * @param readerSession
 	 *            the Listener for command finished events
 	 */
-	public ExecutionThread( MessageQueue messageQueue, MessageQueue errorQueue,
+	public ExecutionThread(MessageQueue messageQueue, MessageQueue errorQueue,
 			CommandExecutionListener readerSession) {
 		if (messageQueue == null) {
 			logger.error("NO MessageQueue");
 		}
 		this.messageQueue = messageQueue;
-		
+
 		this.errorQueue = errorQueue;
 		if (readerSession == null) {
 			logger.error("NO CommandExecutionListerner");
@@ -67,9 +67,11 @@ public class ExecutionThread {
 	 * @throws RifidiExecutionException
 	 *             if the command could not be successful Executed
 	 */
-	public void start(final Connection connection, final CommandWrapper _command) throws RifidiExecutionException {
+	public void start(final Connection connection, final CommandWrapper _command)
+			throws RifidiExecutionException {
 		if (running || commandWrapper != null) {
-			throw new RifidiExecutionException("Command " + this.commandWrapper.getCommandID()
+			throw new RifidiExecutionException("Command "
+					+ this.commandWrapper.getCommandID()
 					+ " is still executing");
 		}
 		if (_command == null) {
@@ -86,11 +88,14 @@ public class ExecutionThread {
 					logger.error("NO Command to execute");
 					return;
 				}
-				status = commandWrapper.getCommand().start(connection, messageQueue, errorQueue,
-						_command.getConfiguration(), commandWrapper.getCommandID());
+				// TODO: disabled while refactoring
+				// status = commandWrapper.getCommand().start(connection,
+				// messageQueue, errorQueue,
+				// _command.getConfiguration(), commandWrapper.getCommandID());
 				// TODO Possibly pass in commandID instead of command
 				logger.debug("Command finished");
-				commandExecutionListener.commandFinished(commandWrapper.getCommand(), status);
+				commandExecutionListener.commandFinished(commandWrapper
+						.getCommand(), status);
 				commandWrapper = null;
 			}
 		}, "ExecuteThread " + commandWrapper.getCommandID());
@@ -118,8 +123,8 @@ public class ExecutionThread {
 				if (thread.isAlive()) {
 					thread.interrupt();
 					thread.stop();
-					commandExecutionListener.commandFinished(commandWrapper.getCommand(),
-							CommandReturnStatus.INTERRUPTED);
+					commandExecutionListener.commandFinished(commandWrapper
+							.getCommand(), CommandReturnStatus.INTERRUPTED);
 					commandWrapper = null;
 				}
 			}
