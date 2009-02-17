@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.rifidi.edge.newcore;
+package org.rifidi.edge.newcore.commands;
 
 /**
  * @author Jochen Mader - jochen@pramari.com

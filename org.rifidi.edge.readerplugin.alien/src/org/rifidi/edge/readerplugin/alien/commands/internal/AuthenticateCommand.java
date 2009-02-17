@@ -8,15 +8,15 @@ import java.io.IOException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.api.readerplugin.messageQueue.MessageQueue;
-import org.rifidi.edge.newcore.Command;
-import org.rifidi.edge.newcore.CommandState;
+import org.rifidi.edge.newcore.commands.Command;
+import org.rifidi.edge.newcore.commands.CommandState;
 import org.rifidi.edge.readerplugin.alien.Alien9800Reader;
 
 /**
  * @author Jochen Mader - jochen@pramari.com
  * 
  */
-public class AuthenticateCommand extends Command<Alien9800Reader> {
+public class AuthenticateCommand extends Command {
 	/** Logger for this class. */
 	private static final Log logger = LogFactory
 			.getLog(AuthenticateCommand.class);
@@ -28,14 +28,11 @@ public class AuthenticateCommand extends Command<Alien9800Reader> {
 	/**
 	 * Constructor.
 	 * 
-	 * @param reader
-	 * @param messageQueue
 	 * @param username
 	 * @param password
 	 */
-	public AuthenticateCommand(Alien9800Reader reader,
-			MessageQueue messageQueue, String username, String password) {
-		super(reader, messageQueue);
+	public AuthenticateCommand(String username, String password) {
+		super();
 		this.username = username;
 		this.password = password;
 	}

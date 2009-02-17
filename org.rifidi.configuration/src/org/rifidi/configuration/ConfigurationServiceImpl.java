@@ -115,37 +115,38 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	@SuppressWarnings("unchecked")
 	public void bind(ServiceFactory factory, Map<?, ?> properties) {
 		synchronized (factories) {
-			if (factories.get(factory.getFactoryID()) == null) {
-				logger.debug("Registering " + factory.getFactoryID());
-				factories.put(factory.getFactoryID(), factory);
-				if (factoryToConfigurations.get(factory.getFactoryID()) != null) {
-					for (ServiceConfiguration serConf : factoryToConfigurations
-							.get(factory.getFactoryID())) {
-						Configuration configuration = factory
-								.getEmptyConfiguration();
-						for (String prop : serConf.properties.keySet()) {
-							Attribute attribute = new Attribute(prop,
-									serConf.properties.get(prop));
-							try {
-								configuration.setAttribute(attribute);
-							} catch (AttributeNotFoundException e) {
-								logger.error("Unable to set attribute: "
-										+ attribute + " " + e);
-							} catch (InvalidAttributeValueException e) {
-								logger.error("Unable to set attribute: "
-										+ attribute + " " + e);
-							} catch (MBeanException e) {
-								logger.error("Unable to set attribute: "
-										+ attribute + " " + e);
-							} catch (ReflectionException e) {
-								logger.error("Unable to set attribute: "
-										+ attribute + " " + e);
+			for (String factoryID : factory.getFactoryIDs()) {
+				if (factories.get(factoryID) == null) {
+					logger.debug("Registering " + factoryID);
+					factories.put(factoryID, factory);
+					if (factoryToConfigurations.get(factoryID) != null) {
+						for (ServiceConfiguration serConf : factoryToConfigurations
+								.get(factoryID)) {
+							Configuration configuration = factory
+									.getEmptyConfiguration(factoryID);
+							for (String prop : serConf.properties.keySet()) {
+								Attribute attribute = new Attribute(prop,
+										serConf.properties.get(prop));
+								try {
+									configuration.setAttribute(attribute);
+								} catch (AttributeNotFoundException e) {
+									logger.error("Unable to set attribute: "
+											+ attribute + " " + e);
+								} catch (InvalidAttributeValueException e) {
+									logger.error("Unable to set attribute: "
+											+ attribute + " " + e);
+								} catch (MBeanException e) {
+									logger.error("Unable to set attribute: "
+											+ attribute + " " + e);
+								} catch (ReflectionException e) {
+									logger.error("Unable to set attribute: "
+											+ attribute + " " + e);
+								}
 							}
+							factory.createService(configuration);
 						}
-						factory.createService(configuration);
 					}
 				}
-
 			}
 		}
 	}
@@ -158,8 +159,10 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	 */
 	public synchronized void unbind(ServiceFactory factory, Map<?, ?> properties) {
 		synchronized (factories) {
-			logger.debug("Unregistering " + factory.getFactoryID());
-			factories.remove(factory.getFactoryID());
+			for (String factoryID : factory.getFactoryIDs()) {
+				logger.debug("Unregistering " + factoryID);
+				factories.remove(factoryID);
+			}
 		}
 
 	}

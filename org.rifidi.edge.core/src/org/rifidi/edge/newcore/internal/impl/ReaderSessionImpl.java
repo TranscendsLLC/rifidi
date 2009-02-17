@@ -10,10 +10,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.osgi.framework.ServiceRegistration;
 import org.rifidi.edge.core.api.readerplugin.messageQueue.MessageQueue;
-import org.rifidi.edge.newcore.Command;
-import org.rifidi.edge.newcore.CommandState;
 import org.rifidi.edge.newcore.Reader;
 import org.rifidi.edge.newcore.ReaderConfiguration;
+import org.rifidi.edge.newcore.commands.Command;
+import org.rifidi.edge.newcore.commands.CommandState;
 import org.rifidi.edge.newcore.exceptions.NoReaderAvailableException;
 import org.rifidi.edge.newcore.internal.ReaderSession;
 

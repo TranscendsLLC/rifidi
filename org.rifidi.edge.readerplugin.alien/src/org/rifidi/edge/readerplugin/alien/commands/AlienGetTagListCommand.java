@@ -12,18 +12,17 @@ import java.util.TimeZone;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.common.utilities.converter.ByteAndHexConvertingUtility;
-import org.rifidi.edge.core.api.readerplugin.messageQueue.MessageQueue;
 import org.rifidi.edge.core.api.readerplugin.messages.impl.EnhancedTagMessage;
 import org.rifidi.edge.core.api.readerplugin.messages.impl.TagMessage;
-import org.rifidi.edge.newcore.Command;
-import org.rifidi.edge.newcore.CommandState;
+import org.rifidi.edge.newcore.commands.Command;
+import org.rifidi.edge.newcore.commands.CommandState;
 import org.rifidi.edge.readerplugin.alien.Alien9800Reader;
 
 /**
  * @author Jochen Mader - jochen@pramari.com
  * 
  */
-public class AlienGetTagListCommand extends Command<Alien9800Reader> {
+public class AlienGetTagListCommand extends Command {
 	/** Logger for this class. */
 	private static final Log logger = LogFactory
 			.getLog(AlienGetTagListCommand.class);
@@ -41,15 +40,6 @@ public class AlienGetTagListCommand extends Command<Alien9800Reader> {
 	private boolean running = true;
 
 	/**
-	 * @param reader
-	 * @param messageQueue
-	 */
-	public AlienGetTagListCommand(Alien9800Reader reader,
-			MessageQueue messageQueue) {
-		super(reader, messageQueue);
-	}
-
-	/**
 	 * @return the tagType
 	 */
 	public int getTagType() {
@@ -62,8 +52,8 @@ public class AlienGetTagListCommand extends Command<Alien9800Reader> {
 	 */
 	public void setTagType(int tagType) {
 		this.tagType = tagType;
-		if(tagType>2 || tagType<0){
-			throw new RuntimeException("Sucker!");	
+		if (tagType > 2 || tagType < 0) {
+			throw new RuntimeException("Sucker!");
 		}
 	}
 
@@ -74,7 +64,7 @@ public class AlienGetTagListCommand extends Command<Alien9800Reader> {
 	 */
 	@Override
 	public void stop() {
-		running=false;
+		running = false;
 	}
 
 	/*
@@ -126,8 +116,8 @@ public class AlienGetTagListCommand extends Command<Alien9800Reader> {
 			List<TagMessage> tagList = this.parseString(tag_msg);
 
 			for (TagMessage m : tagList) {
-				System.out.println("Message: "+new String(m.getId()));
-//				getMessageQueue().addMessage(m);
+				System.out.println("Message: " + new String(m.getId()));
+				// getMessageQueue().addMessage(m);
 			}
 
 			try {
@@ -137,14 +127,15 @@ public class AlienGetTagListCommand extends Command<Alien9800Reader> {
 				return CommandState.KILLED;
 			}
 		}
-		if (Thread.interrupted()){
+		if (Thread.interrupted()) {
 			return CommandState.KILLED;
 		}
 		return CommandState.DONE;
 	}
-	
+
 	/**
-	 * Parse the given string for results. 
+	 * Parse the given string for results.
+	 * 
 	 * @param input
 	 * @return
 	 */
@@ -180,7 +171,7 @@ public class AlienGetTagListCommand extends Command<Alien9800Reader> {
 					// newTagRead.setSignalStrength(Float.parseFloat(signalStrength));
 					retVal.add(newTagRead);
 
-				}else{
+				} else {
 					logger.error("Something is invalid: " + splitString2[0]);
 				}
 			}

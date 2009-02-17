@@ -5,14 +5,11 @@ package org.rifidi.edge.readerplugin.alien;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
-import java.util.Collections;
-import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.configuration.annotations.JMXMBean;
 import org.rifidi.configuration.annotations.Property;
-import org.rifidi.edge.newcore.Command;
 import org.rifidi.edge.newcore.ReaderConfiguration;
 import org.rifidi.edge.newcore.exceptions.NoReaderAvailableException;
 
@@ -48,6 +45,7 @@ public class Alien9800ReaderConfiguration implements
 	 * Constructor.
 	 */
 	public Alien9800ReaderConfiguration() {
+		logger.debug("New instance of Alien 9800 Reader config created.");
 	}
 
 	/*
@@ -93,16 +91,6 @@ public class Alien9800ReaderConfiguration implements
 	@Override
 	public String getName() {
 		return name;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.rifidi.edge.newcore.ReaderConfiguration#getReaderCommands()
-	 */
-	@Override
-	public Set<Command> getReaderCommands() {
-		return Collections.emptySet();
 	}
 
 	/*

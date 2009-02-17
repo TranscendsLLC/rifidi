@@ -6,8 +6,8 @@ package org.rifidi.edge.newcore.internal;
 import java.util.concurrent.Callable;
 
 import org.rifidi.edge.core.api.readerplugin.messageQueue.MessageQueue;
-import org.rifidi.edge.newcore.Command;
 import org.rifidi.edge.newcore.ReaderConfiguration;
+import org.rifidi.edge.newcore.commands.Command;
 
 /**
  * A reader session manages the lifecycle of commands.

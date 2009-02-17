@@ -36,13 +36,6 @@ public interface ReaderConfiguration<T extends Reader> {
 	void releaseReader(T reader);
 
 	/**
-	 * Get the list of commands available for this reader.
-	 * 
-	 * @return
-	 */
-	Set<Command> getReaderCommands();
-
-	/**
 	 * Get the name of the reader. It should be unique but it doesn't have to
 	 * be.
 	 * 

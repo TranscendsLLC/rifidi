@@ -1,0 +1,22 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:osgi="http://www.springframework.org/schema/osgi"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+     http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi.xsd">
+	<!--  Create Reader Configuration Factory -->
+	<bean id="configurationFactory"
+		class="org.rifidi.edge.readerplugin.alien.Alien9800ReaderConfigurationFactory">
+		<property name="context" ref="bundleContext" />
+	</bean>
+	<!--  Create Command Configuration Factory -->
+	<bean id="commandConfigurationFactory"
+		class="org.rifidi.edge.readerplugin.alien.Alien9800CommandConfigurationFactory">
+		<property name="context" ref="bundleContext" />
+	</bean>
+
+	<!-- Put reader configuration service in OSGi Registry -->
+	<osgi:service id="readerConfigurationFactoryService" ref="configurationFactory"
+		interface="org.rifidi.configuration.ServiceFactory" />
+	<!-- Put command configuration service in OSGi Registry -->
+	<osgi:service id="commandConfigurationFactoryService" ref="commandConfigurationFactory"
+		interface="org.rifidi.configuration.ServiceFactory" />
+</beans>
