@@ -12,7 +12,7 @@ import java.util.concurrent.Future;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.rifidi.edge.newcore.CommandState;
+import org.rifidi.edge.newcore.commands.CommandState;
 import org.rifidi.edge.newcore.impl.AbstractReader;
 import org.rifidi.edge.readerplugin.alien.commands.internal.AuthenticateCommand;
 import org.rifidi.edge.readerplugin.alien.communication.ReadThread;
@@ -131,8 +131,9 @@ public class Alien9800Reader extends AbstractReader {
 
 		// try to authenticate
 		try {
-			Future<CommandState> future = execute(new AuthenticateCommand(this,
-					null, username, password));
+			AuthenticateCommand command=new AuthenticateCommand(username, password);
+			command.setReader(this);
+			Future<CommandState> future = execute(command);
 			CommandState state = future.get();
 			// if we lost the connection try to reconnect
 			if (CommandState.LOSTCONNECTION.equals(state)) {

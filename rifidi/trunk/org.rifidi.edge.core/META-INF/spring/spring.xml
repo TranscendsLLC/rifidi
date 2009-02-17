@@ -6,18 +6,14 @@
 	<bean id="readerSessionManagementImpl"
 		class="org.rifidi.edge.newcore.readersession.ReaderSessionManagementImpl">
 		<property name="context" ref="bundleContext" />
-		<property name="readerFactories" ref="readerFactoriesSet" />
+		<property name="readerConfigurations" ref="readerConfigurationsSet" />
 	</bean>
-
-	<!-- Create Reader Plugin Service -->
-	<bean id="readerPluginServiceImpl"
-		class="org.rifidi.edge.core.readerplugin.service.impl.ReaderPluginServiceImpl" />
 
 	<!-- Put reader session service in OSGi Registry -->
 	<osgi:service id="readerSessionManagement" ref="readerSessionManagementImpl"
 		interface="org.rifidi.edge.newcore.readersession.ReaderSessionManagement"></osgi:service>
 
-	<osgi:set id="readerFactoriesSet" interface="org.rifidi.edge.newcore.ReaderFactory"
+	<osgi:set id="readerConfigurationsSet" interface="org.rifidi.edge.newcore.ReaderConfiguration"
 		cardinality="0..N">
 		<osgi:listener ref="readerSessionManagementImpl"
 			bind-method="bind" unbind-method="unbind" />

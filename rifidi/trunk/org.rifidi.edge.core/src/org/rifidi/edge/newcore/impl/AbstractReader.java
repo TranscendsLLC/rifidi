@@ -9,9 +9,9 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import org.rifidi.edge.newcore.Command;
-import org.rifidi.edge.newcore.CommandState;
 import org.rifidi.edge.newcore.Reader;
+import org.rifidi.edge.newcore.commands.Command;
+import org.rifidi.edge.newcore.commands.CommandState;
 
 /**
  * @author Jochen Mader - jochen@pramari.com

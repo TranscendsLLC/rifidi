@@ -6,6 +6,9 @@ package org.rifidi.edge.newcore;
 import java.io.IOException;
 import java.util.concurrent.Future;
 
+import org.rifidi.edge.newcore.commands.Command;
+import org.rifidi.edge.newcore.commands.CommandState;
+
 /**
  * A reader represents two things: <br/>
  * 1. An open connection to a physical reader<br/>

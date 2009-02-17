@@ -1,8 +1,9 @@
-package org.rifidi.edge.newcore;
+package org.rifidi.edge.newcore.commands;
 
 import java.util.concurrent.Callable;
 
 import org.rifidi.edge.core.api.readerplugin.messageQueue.MessageQueue;
+import org.rifidi.edge.newcore.Reader;
 
 /**
  * This is the command Interface defining a common base over all Commands
@@ -11,19 +12,24 @@ import org.rifidi.edge.core.api.readerplugin.messageQueue.MessageQueue;
  * @author Jochen Mader - jochen@pramari.com
  * 
  */
-public abstract class Command<T extends Reader> implements
+public abstract class Command implements
 		Callable<CommandState> {
 
-	private T reader;
+	private Reader reader;
 	private MessageQueue messageQueue;
 
+
 	/**
-	 * @param reader
-	 * @param messageQueue
+	 * @param reader the reader to set
 	 */
-	public Command(T reader, MessageQueue messageQueue) {
-		super();
+	public void setReader(Reader reader) {
 		this.reader = reader;
+	}
+
+	/**
+	 * @param messageQueue the messageQueue to set
+	 */
+	public void setMessageQueue(MessageQueue messageQueue) {
 		this.messageQueue = messageQueue;
 	}
 
@@ -32,7 +38,7 @@ public abstract class Command<T extends Reader> implements
 	 * 
 	 * @return
 	 */
-	public T getReader() {
+	public Reader getReader() {
 		return reader;
 	}
 

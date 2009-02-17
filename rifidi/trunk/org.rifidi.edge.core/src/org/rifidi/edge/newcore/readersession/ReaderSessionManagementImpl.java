@@ -24,13 +24,13 @@ public class ReaderSessionManagementImpl implements ReaderSessionManagement {
 	/** Counter for session ids. */
 	private Integer counter = 0;
 	/***/
-	private Set<ReaderConfiguration> factories;
+	private Set<ReaderConfiguration> configurations;
 
 	/**
 	 * Constructor.
 	 */
 	public ReaderSessionManagementImpl() {
-		factories = new HashSet<ReaderConfiguration>();
+		configurations = new HashSet<ReaderConfiguration>();
 	}
 
 	/*
@@ -58,7 +58,7 @@ public class ReaderSessionManagementImpl implements ReaderSessionManagement {
 	 */
 	@Override
 	public Set<ReaderConfiguration> getAvailableReaderConfigurations() {
-		return new HashSet<ReaderConfiguration>(factories);
+		return new HashSet<ReaderConfiguration>(configurations);
 	}
 
 	/**
@@ -69,8 +69,13 @@ public class ReaderSessionManagementImpl implements ReaderSessionManagement {
 		this.context = context;
 	}
 
-	public void setReaderFactories(Set<ReaderConfiguration> factories) {
-		factories.addAll(factories);
+	/**
+	 * Used by spring to give the initial list of configs.
+	 * 
+	 * @param configurations
+	 */
+	public void setReaderConfigurations(Set<ReaderConfiguration> configurations) {
+		this.configurations.addAll(configurations);
 	}
 
 	/**
@@ -79,9 +84,9 @@ public class ReaderSessionManagementImpl implements ReaderSessionManagement {
 	 * @param readerFactory
 	 * @param parameters
 	 */
-	public void bind(ReaderConfiguration readerFactory,
+	public void bind(ReaderConfiguration readerConfiguration,
 			Dictionary<String, String> parameters) {
-		factories.add(readerFactory);
+		configurations.add(readerConfiguration);
 	}
 
 	/**
@@ -90,8 +95,8 @@ public class ReaderSessionManagementImpl implements ReaderSessionManagement {
 	 * @param readerFactory
 	 * @param parameters
 	 */
-	public void unbind(ReaderConfiguration readerFactory,
+	public void unbind(ReaderConfiguration readerConfiguration,
 			Dictionary<String, String> parameters) {
-		factories.remove(readerFactory);
+		configurations.remove(readerConfiguration);
 	}
 }
