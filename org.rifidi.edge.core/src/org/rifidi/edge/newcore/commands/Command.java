@@ -3,7 +3,7 @@ package org.rifidi.edge.newcore.commands;
 import java.util.concurrent.Callable;
 
 import org.rifidi.edge.core.api.readerplugin.messageQueue.MessageQueue;
-import org.rifidi.edge.newcore.Reader;
+import org.rifidi.edge.newcore.readers.Reader;
 
 /**
  * This is the command Interface defining a common base over all Commands

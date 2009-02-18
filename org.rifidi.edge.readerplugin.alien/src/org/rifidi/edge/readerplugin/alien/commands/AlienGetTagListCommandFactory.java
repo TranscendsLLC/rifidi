@@ -14,7 +14,33 @@ import org.rifidi.edge.newcore.commands.CommandFactory;
 @JMXMBean
 public class AlienGetTagListCommandFactory implements
 		CommandFactory<AlienGetTagListCommand> {
+	/** Interval between two reads. */
 	private Integer interval = 10;
+	/** Name of the command. */
+	private static final String name = "Alien9800-GetTagList";
+	/** Description of the command. */
+	private static final String description = "Get list of tags that appeared in the antenna field since the last call.";
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.newcore.commands.CommandFactory#getCommandDescription()
+	 */
+	@Override
+	public String getCommandDescription() {
+		return description;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.rifidi.edge.newcore.commands.CommandFactory#getCommandName()
+	 */
+	@Override
+	public String getCommandName() {
+		return name;
+	}
 
 	/**
 	 * @return the interval
@@ -30,10 +56,11 @@ public class AlienGetTagListCommandFactory implements
 	 */
 	public void setInterval(Integer interval) {
 		this.interval = interval;
-		System.out.println("got " + interval);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.rifidi.edge.newcore.commands.CommandFactory#getCommand()
 	 */
 	@Override

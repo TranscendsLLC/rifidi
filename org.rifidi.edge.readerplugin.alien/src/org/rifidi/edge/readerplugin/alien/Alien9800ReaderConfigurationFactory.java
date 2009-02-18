@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.rifidi.configuration.AbstractServiceFactory;
-import org.rifidi.edge.newcore.ReaderConfiguration;
+import org.rifidi.edge.newcore.readers.ReaderConfiguration;
 
 /**
  * @author Jochen Mader - jochen@pramari.com

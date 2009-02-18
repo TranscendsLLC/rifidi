@@ -10,8 +10,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.configuration.annotations.JMXMBean;
 import org.rifidi.configuration.annotations.Property;
-import org.rifidi.edge.newcore.ReaderConfiguration;
 import org.rifidi.edge.newcore.exceptions.NoReaderAvailableException;
+import org.rifidi.edge.newcore.readers.ReaderConfiguration;
 
 /**
  * @author Jochen Mader - jochen@pramari.com
@@ -27,7 +27,7 @@ public class Alien9800ReaderConfiguration implements
 	/** Description of the reader. */
 	private static final String description = "The Alien 9800 is an IP based RFID Reader using a telnet interface.";
 	/** Name of the reader. */
-	private static final String name = "Alien 9800";
+	private static final String name = "Alien9800";
 	/** IP address of the reader. */
 	private String ipAddress = "127.0.0.1";
 	/** Port to connect to. */

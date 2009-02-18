@@ -5,27 +5,36 @@ package org.rifidi.edge.newcore.readersession;
 
 import java.util.Set;
 
-import org.rifidi.edge.newcore.ReaderConfiguration;
-import org.rifidi.edge.newcore.internal.ReaderSession;
+import org.rifidi.edge.newcore.commands.CommandFactory;
+import org.rifidi.edge.newcore.readers.ReaderConfiguration;
 
 /**
  * @author Jochen Mader - jochen@pramari.com
  * 
  */
 public interface ReaderSessionManagement {
+
 	/**
-	 * Create an empty reader session and register it to OSGi. It will have an
-	 * "id" parameter associated with it to locate it in the registry.
+	 * Create and start a readersession.
 	 * 
-	 * @return
+	 * @param reader
+	 * @param command
 	 */
-	ReaderSession createReaderSession();
+	void createAndStartReaderSession(ReaderConfiguration<?> reader,
+			CommandFactory<?> command);
 
 	/**
 	 * Return the set of currently available readers.
 	 * 
 	 * @return
 	 */
-	Set<ReaderConfiguration> getAvailableReaderConfigurations();
+	Set<ReaderConfiguration<?>> getAvailableReaderConfigurations();
+
+	/**
+	 * Return the set of currently available command factories.
+	 * 
+	 * @return
+	 */
+	Set<CommandFactory<?>> getAvailableCommandFactories();
 
 }

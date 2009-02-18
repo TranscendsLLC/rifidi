@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.rifidi.edge.newcore.impl;
+package org.rifidi.edge.newcore.readers.impl;
 
 import java.io.IOException;
 import java.util.concurrent.Future;
@@ -9,9 +9,9 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import org.rifidi.edge.newcore.Reader;
 import org.rifidi.edge.newcore.commands.Command;
 import org.rifidi.edge.newcore.commands.CommandState;
+import org.rifidi.edge.newcore.readers.Reader;
 
 /**
  * @author Jochen Mader - jochen@pramari.com
