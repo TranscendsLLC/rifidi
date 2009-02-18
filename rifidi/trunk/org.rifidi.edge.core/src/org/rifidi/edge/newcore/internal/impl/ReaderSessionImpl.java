@@ -31,6 +31,8 @@ public class ReaderSessionImpl implements ReaderSession {
 	private CommandFactory<?> commandFactory;
 	/** Factory used for aquiring readers. */
 	private ReaderConfiguration<?> factory;
+	/** Currently aquired reader. */
+	private Reader reader;
 	/** True if the command is currently executing on a reader. */
 	private AtomicBoolean running;
 	/** Service registration for the service. */
@@ -66,7 +68,7 @@ public class ReaderSessionImpl implements ReaderSession {
 	 */
 	@Override
 	public void destroy() {
-		stop();
+
 		registration.unregister();
 	}
 
@@ -196,6 +198,7 @@ public class ReaderSessionImpl implements ReaderSession {
 				// reset so that the session can be started again
 				running.compareAndSet(true, false);
 				dying.compareAndSet(true, false);
+				factory.releaseReader(reader);
 			}
 		}
 		return false;

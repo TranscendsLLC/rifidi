@@ -32,7 +32,7 @@ public interface ReaderConfiguration<T extends Reader> {
 	 * 
 	 * @param reader
 	 */
-	void releaseReader(T reader);
+	void releaseReader(Object reader);
 
 	/**
 	 * Get the name of the reader. It should be unique but it doesn't have to
