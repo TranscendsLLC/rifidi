@@ -3,8 +3,6 @@
  */
 package org.rifidi.edge.newcore.readers;
 
-import java.util.Set;
-
 import org.rifidi.edge.newcore.exceptions.NoReaderAvailableException;
 
 /**
@@ -31,6 +29,7 @@ public interface ReaderConfiguration<T extends Reader> {
 
 	/**
 	 * Release the reader.
+	 * 
 	 * @param reader
 	 */
 	void releaseReader(T reader);
