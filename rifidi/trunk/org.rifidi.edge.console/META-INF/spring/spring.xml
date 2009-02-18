@@ -1,0 +1,15 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:osgi="http://www.springframework.org/schema/osgi"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+     http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi.xsd">
+	<!--  Custom commands -->
+	<bean id="customCommands" class="org.rifidi.edge.console.RifidiEdgeServerCommands">
+		<property name="readerSessionManagement" ref="readerSessionManagement" />
+	</bean>
+	<osgi:service id="customCommandsService" ref="customCommands"
+		interface="org.eclipse.osgi.framework.console.CommandProvider" />
+	<!-- Put reader session service in OSGi Registry -->
+	<osgi:reference id="readerSessionManagement"
+		interface="org.rifidi.edge.newcore.readersession.ReaderSessionManagement" />
+
+</beans>
