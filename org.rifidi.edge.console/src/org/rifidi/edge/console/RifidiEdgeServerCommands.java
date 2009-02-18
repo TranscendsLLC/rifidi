@@ -6,6 +6,8 @@ package org.rifidi.edge.console;
 import org.eclipse.osgi.framework.console.CommandInterpreter;
 import org.eclipse.osgi.framework.console.CommandProvider;
 import org.rifidi.edge.newcore.commands.CommandFactory;
+import org.rifidi.edge.newcore.exceptions.NonExistentCommandFactoryException;
+import org.rifidi.edge.newcore.exceptions.NonExistentReaderConfigurationException;
 import org.rifidi.edge.newcore.readers.ReaderConfiguration;
 import org.rifidi.edge.newcore.readersession.ReaderSessionManagement;
 
@@ -33,10 +35,10 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 	 * @return
 	 */
 	public Object _readers(CommandInterpreter intp) {
-		for (ReaderConfiguration<?> reader : readerSessionManagement
-				.getAvailableReaderConfigurations()) {
-			intp.println(reader.getName() + ": " + reader.getDescription());
-		}
+//		for (ReaderConfiguration<?> reader : readerSessionManagement
+//				.getAvailableReaderConfigurations()) {
+//			intp.println(reader.getName() + ": " + reader.getDescription());
+//		}
 		return null;
 	}
 
@@ -47,11 +49,11 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 	 * @return
 	 */
 	public Object _commands(CommandInterpreter intp) {
-		for (CommandFactory<?> command : readerSessionManagement
-				.getAvailableCommandFactories()) {
-			intp.println(command.getCommandName() + ": "
-					+ command.getCommandDescription());
-		}
+//		for (CommandFactory<?> command : readerSessionManagement
+//				.getAvailableCommandFactories()) {
+//			intp.println(command.getCommandName() + ": "
+//					+ command.getCommandDescription());
+//		}
 		return null;
 	}
 
@@ -61,30 +63,22 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 	 * @param intp
 	 * @return
 	 */
-	public Object _rs(CommandInterpreter intp) {
+	public Object _createreadersession(CommandInterpreter intp) {
 		String readerName = intp.nextArgument();
 		String commandName = intp.nextArgument();
 		if (readerName == null || commandName == null) {
-			intp.println("format is: rs <readername> <commandname>");
+			intp.println("format is: createreadersession <readername> <commandname>");
 			return null;
 		}
 		ReaderConfiguration<?> reader = null;
 		CommandFactory<?> command = null;
-		for (ReaderConfiguration<?> tempReader : readerSessionManagement
-				.getAvailableReaderConfigurations()) {
-			if (tempReader.getName().equals(readerName)) {
-				reader = tempReader;
-				break;
-			}
+		try {
+			readerSessionManagement.createAndStartReaderSession(readerName, commandName);
+		} catch (NonExistentCommandFactoryException e) {
+			intp.println("Reader "+readerName+" doesn't exist.");
+		} catch (NonExistentReaderConfigurationException e) {
+			intp.println("Command "+readerName+" doesn't exist.");
 		}
-		for (CommandFactory<?> tempCommand : readerSessionManagement
-				.getAvailableCommandFactories()) {
-			if (tempCommand.getCommandName().equals(commandName)) {
-				command = tempCommand;
-				break;
-			}
-		}
-		readerSessionManagement.createAndStartReaderSession(reader, command);
 		return null;
 	}
 
@@ -99,7 +93,7 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 		buffer.append("---Rifidi Edge Server Commands---\n\t");
 		buffer.append("readers - God mode\n\t");
 		buffer.append("commands - God mode\n\t");
-		buffer.append("rs - create and start readersession\n");
+		buffer.append("createreadersession - create and start readersession\n");
 		return buffer.toString();
 	}
 

@@ -9,6 +9,7 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: org.eclipse.osgi.framework.console;version="1.0.0",
  org.osgi.framework;version="1.3.0",
  org.rifidi.edge.newcore.commands,
+ org.rifidi.edge.newcore.exceptions,
  org.rifidi.edge.newcore.readers,
  org.rifidi.edge.newcore.readersession
 Bundle-ActivationPolicy: lazy
