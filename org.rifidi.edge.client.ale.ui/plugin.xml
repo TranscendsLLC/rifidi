@@ -4,8 +4,8 @@
    <extension
          point="org.eclipse.ui.views">
       <view
-            class="org.rifidi.edge.client.ale.ui.views.View"
-            id="org.rifidi.edge.client.ale.ui.views.View"
+            class="org.rifidi.edge.client.ale.ui.views.FncView"
+            id="org.rifidi.edge.client.ale.ui.views.FncView"
             name="ALE View"
             restorable="true">
       </view>
@@ -15,7 +15,7 @@
       <perspectiveExtension
             targetID="org.rifidi.edge.client.perspective.perspective">
          <view
-               id="org.rifidi.edge.client.ale.ui.views.View"
+               id="org.rifidi.edge.client.ale.ui.views.FncView"
                minimized="false"
                ratio="1.0f"
                relationship="left"
