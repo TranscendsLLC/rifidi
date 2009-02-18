@@ -6,8 +6,9 @@ package org.rifidi.edge.newcore.internal;
 import java.util.concurrent.Callable;
 
 import org.rifidi.edge.core.api.readerplugin.messageQueue.MessageQueue;
-import org.rifidi.edge.newcore.ReaderConfiguration;
 import org.rifidi.edge.newcore.commands.Command;
+import org.rifidi.edge.newcore.commands.CommandFactory;
+import org.rifidi.edge.newcore.readers.ReaderConfiguration;
 
 /**
  * A reader session manages the lifecycle of commands.
@@ -21,7 +22,7 @@ public interface ReaderSession extends Callable<Boolean> {
 	 * 
 	 * @param readerFactory
 	 */
-	void setReaderFactory(ReaderConfiguration readerFactory);
+	void setReaderFactory(ReaderConfiguration<?> readerFactory);
 
 	/**
 	 * Set the message queue for outgoing messages.
@@ -35,19 +36,19 @@ public interface ReaderSession extends Callable<Boolean> {
 	 * 
 	 * @return
 	 */
-	ReaderConfiguration getReaderFactory();
+	ReaderConfiguration<?> getReaderFactory();
 
 	/**
 	 * Set the command to be executed.
 	 * 
 	 * @param command
 	 */
-	void setCommmand(Command command);
+	void setCommmandFactory(CommandFactory<?> command);
 
 	/**
 	 * Get the command registered to the session. May be null.
 	 */
-	Command getCommand();
+	CommandFactory<?> getCommandFactory();
 
 	/**
 	 * Stop the current command.

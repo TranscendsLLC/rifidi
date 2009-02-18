@@ -10,12 +10,13 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.osgi.framework.ServiceRegistration;
 import org.rifidi.edge.core.api.readerplugin.messageQueue.MessageQueue;
-import org.rifidi.edge.newcore.Reader;
-import org.rifidi.edge.newcore.ReaderConfiguration;
 import org.rifidi.edge.newcore.commands.Command;
+import org.rifidi.edge.newcore.commands.CommandFactory;
 import org.rifidi.edge.newcore.commands.CommandState;
 import org.rifidi.edge.newcore.exceptions.NoReaderAvailableException;
 import org.rifidi.edge.newcore.internal.ReaderSession;
+import org.rifidi.edge.newcore.readers.Reader;
+import org.rifidi.edge.newcore.readers.ReaderConfiguration;
 
 /**
  * @author Jochen Mader - jochen@pramari.com
@@ -26,7 +27,7 @@ public class ReaderSessionImpl implements ReaderSession {
 	private static final Log logger = LogFactory
 			.getLog(ReaderSessionImpl.class);
 	/** Command the session is executing. */
-	private Command command;
+	private CommandFactory<?> commandFactory;
 	/** Factory used for aquiring readers. */
 	private ReaderConfiguration factory;
 	/** True if the command is currently executing on a reader. */
@@ -37,6 +38,8 @@ public class ReaderSessionImpl implements ReaderSession {
 	private ServiceRegistration registration;
 	/** Message queue for outgoing messages. */
 	private MessageQueue messageQueue;
+	/** Currently executing command. */
+	private Command command;
 
 	/**
 	 * Constructor.
@@ -70,20 +73,10 @@ public class ReaderSessionImpl implements ReaderSession {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.newcore.internal.ReaderSession#getCommand()
-	 */
-	@Override
-	public Command getCommand() {
-		return command;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
 	 * @see org.rifidi.edge.newcore.internal.ReaderSession#getReaderFactory()
 	 */
 	@Override
-	public ReaderConfiguration getReaderFactory() {
+	public ReaderConfiguration<?> getReaderFactory() {
 		return factory;
 	}
 
@@ -100,16 +93,27 @@ public class ReaderSessionImpl implements ReaderSession {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.rifidi.edge.newcore.internal.ReaderSession#setCommmand(org.rifidi
-	 * .edge.core.api.readerplugin.Command)
+	 * @see org.rifidi.edge.newcore.internal.ReaderSession#getCommandFactory()
 	 */
 	@Override
-	public void setCommmand(Command command) {
+	public CommandFactory<?> getCommandFactory() {
+		// TODO Auto-generated method stub
+		return commandFactory;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.newcore.internal.ReaderSession#setCommmandFactory(org
+	 * .rifidi.edge.newcore.commands.CommandFactory)
+	 */
+	@Override
+	public void setCommmandFactory(CommandFactory<?> commandFactory) {
 		assert (!running);
-		assert (command != null);
-		logger.debug("Setting command: " + command);
-		this.command = command;
+		assert (commandFactory != null);
+		logger.debug("Setting command factory: " + commandFactory);
+		this.commandFactory = commandFactory;
 	}
 
 	/*
@@ -143,7 +147,8 @@ public class ReaderSessionImpl implements ReaderSession {
 	}
 
 	private boolean canStart() {
-		return command != null && factory != null && messageQueue != null;
+		return commandFactory != null && factory != null
+				&& messageQueue == null;
 	}
 
 	/*
@@ -155,12 +160,13 @@ public class ReaderSessionImpl implements ReaderSession {
 	public Boolean call() throws Exception {
 		if (!canStart())
 			return false;
-		logger.debug("Starting with: " + command + " " + factory);
+		logger.debug("Starting with: " + commandFactory + " " + factory);
 		try {
 			Reader reader = factory.aquireReader();
-			// command.setReader(reader);
-			// // TODO: get a message queue in here
-			// command.setMessageQueue(null);
+			command = commandFactory.getCommand();
+			command.setReader(reader);
+			command.setMessageQueue(null);
+
 			Future<CommandState> future = reader.execute(command);
 			running = true;
 			CommandState state = future.get();

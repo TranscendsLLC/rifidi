@@ -13,4 +13,16 @@ public interface CommandFactory<T extends Command> {
 	 * @return
 	 */
 	T getCommand();
+	
+	/**
+	 * Get the name of the command
+	 * @return
+	 */
+	String getCommandName();
+	
+	/**
+	 * Get the description of the command.
+	 * @return
+	 */
+	String getCommandDescription();
 }

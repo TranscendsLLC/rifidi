@@ -7,7 +7,6 @@ import java.io.IOException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.rifidi.edge.core.api.readerplugin.messageQueue.MessageQueue;
 import org.rifidi.edge.newcore.commands.Command;
 import org.rifidi.edge.newcore.commands.CommandState;
 import org.rifidi.edge.readerplugin.alien.Alien9800Reader;
@@ -60,13 +59,15 @@ public class AuthenticateCommand extends Command {
 		}
 
 		logger.debug("sending username");
-		getReader().sendMessage(Alien9800Reader.PROMPT_SUPPRESS + username
-				+ Alien9800Reader.NEWLINE);
+		getReader().sendMessage(
+				Alien9800Reader.PROMPT_SUPPRESS + username
+						+ Alien9800Reader.NEWLINE);
 		logger.debug("getting the username response");
 		getReader().receiveMessage();
 		logger.debug("sending the password. ");
-		getReader().sendMessage(Alien9800Reader.PROMPT_SUPPRESS + password
-				+ Alien9800Reader.NEWLINE);
+		getReader().sendMessage(
+				Alien9800Reader.PROMPT_SUPPRESS + password
+						+ Alien9800Reader.NEWLINE);
 		logger.debug("recieving the password response");
 		getReader().receiveMessage();
 		return CommandState.DONE;

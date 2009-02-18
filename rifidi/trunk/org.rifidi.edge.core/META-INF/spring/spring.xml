@@ -13,9 +13,15 @@
 	<osgi:service id="readerSessionManagement" ref="readerSessionManagementImpl"
 		interface="org.rifidi.edge.newcore.readersession.ReaderSessionManagement"></osgi:service>
 
-	<osgi:set id="readerConfigurationsSet" interface="org.rifidi.edge.newcore.ReaderConfiguration"
+	<osgi:set id="readerConfigurationsSet" interface="org.rifidi.edge.newcore.readers.ReaderConfiguration"
 		cardinality="0..N">
 		<osgi:listener ref="readerSessionManagementImpl"
 			bind-method="bind" unbind-method="unbind" />
+	</osgi:set>
+	
+	<osgi:set id="commandFactoriesSet" interface="org.rifidi.edge.newcore.commands.CommandFactory"
+		cardinality="0..N">
+		<osgi:listener ref="readerSessionManagementImpl"
+			bind-method="bindCommand" unbind-method="unbindCommand" />
 	</osgi:set>
 </beans>
