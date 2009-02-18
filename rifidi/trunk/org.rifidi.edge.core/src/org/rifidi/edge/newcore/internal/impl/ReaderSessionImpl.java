@@ -5,6 +5,7 @@ package org.rifidi.edge.newcore.internal.impl;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -29,24 +30,24 @@ public class ReaderSessionImpl implements ReaderSession {
 	/** Command the session is executing. */
 	private CommandFactory<?> commandFactory;
 	/** Factory used for aquiring readers. */
-	private ReaderConfiguration factory;
+	private ReaderConfiguration<?> factory;
 	/** True if the command is currently executing on a reader. */
-	private boolean running;
-	/** True if the destroy method was hit. */
-	private boolean dying;
+	private AtomicBoolean running;
 	/** Service registration for the service. */
 	private ServiceRegistration registration;
 	/** Message queue for outgoing messages. */
 	private MessageQueue messageQueue;
 	/** Currently executing command. */
 	private Command command;
+	/** Set to true if someone attempted to kill the command. */
+	private AtomicBoolean dying;
 
 	/**
 	 * Constructor.
 	 */
 	public ReaderSessionImpl() {
-		running = false;
-		dying = false;
+		running = new AtomicBoolean(false);
+		dying = new AtomicBoolean(false);
 		logger.debug("Reader session created.");
 	}
 
@@ -65,7 +66,6 @@ public class ReaderSessionImpl implements ReaderSession {
 	 */
 	@Override
 	public void destroy() {
-		dying = true;
 		stop();
 		registration.unregister();
 	}
@@ -87,7 +87,7 @@ public class ReaderSessionImpl implements ReaderSession {
 	 */
 	@Override
 	public boolean isRunning() {
-		return running;
+		return running.get();
 	}
 
 	/*
@@ -110,7 +110,7 @@ public class ReaderSessionImpl implements ReaderSession {
 	 */
 	@Override
 	public void setCommmandFactory(CommandFactory<?> commandFactory) {
-		assert (!running);
+		assert (!running.get());
 		assert (commandFactory != null);
 		logger.debug("Setting command factory: " + commandFactory);
 		this.commandFactory = commandFactory;
@@ -124,8 +124,8 @@ public class ReaderSessionImpl implements ReaderSession {
 	 * .edge.core.api.readerplugin.ReaderFactory)
 	 */
 	@Override
-	public void setReaderFactory(ReaderConfiguration readerFactory) {
-		assert (!running);
+	public void setReaderFactory(ReaderConfiguration<?> readerFactory) {
+		assert (!running.get());
 		assert (readerFactory != null);
 		logger.debug("Setting reader factory: " + readerFactory);
 		this.factory = readerFactory;
@@ -140,7 +140,7 @@ public class ReaderSessionImpl implements ReaderSession {
 	 */
 	@Override
 	public void setMessageQueue(MessageQueue messageQueue) {
-		assert (!running);
+		assert (!running.get());
 		assert (messageQueue != null);
 		logger.debug("Setting message queue: " + messageQueue);
 		this.messageQueue = messageQueue;
@@ -160,36 +160,45 @@ public class ReaderSessionImpl implements ReaderSession {
 	public Boolean call() throws Exception {
 		if (!canStart())
 			return false;
-		logger.debug("Starting with: " + commandFactory + " " + factory);
-		try {
-			Reader reader = factory.aquireReader();
-			command = commandFactory.getCommand();
-			command.setReader(reader);
-			command.setMessageQueue(null);
+		if (running.compareAndSet(false, true)) {
+			try {
+				logger
+						.debug("Starting with: " + commandFactory + " "
+								+ factory);
+				try {
+					Reader reader = factory.aquireReader();
+					command = commandFactory.getCommand();
+					command.setReader(reader);
+					command.setMessageQueue(null);
 
-			Future<CommandState> future = reader.execute(command);
-			running = true;
-			CommandState state = future.get();
-			switch (state) {
-			case DONE:
-				break;
-			case KILLED:
-				break;
-			case FAILED:
-				break;
-			case LOSTCONNECTION:
-				return call();
+					Future<CommandState> future = reader.execute(command);
+					CommandState state = future.get();
+					switch (state) {
+					case DONE:
+						break;
+					case KILLED:
+						break;
+					case FAILED:
+						break;
+					case LOSTCONNECTION:
+						return call();
+					}
+				} catch (NoReaderAvailableException e) {
+					logger.warn("Unable to aquire reader: " + e);
+				} catch (InterruptedException e) {
+					logger.debug("Terminated: " + e);
+					Thread.currentThread().interrupt();
+				} catch (ExecutionException e) {
+					logger.error("Failed executing: " + e);
+				}
+				return true;
+			} finally {
+				// reset so that the session can be started again
+				running.compareAndSet(true, false);
+				dying.compareAndSet(true, false);
 			}
-		} catch (NoReaderAvailableException e) {
-			logger.warn("Unable to aquire reader: " + e);
-		} catch (InterruptedException e) {
-			logger.debug("Terminated: " + e);
-			Thread.currentThread().interrupt();
-		} catch (ExecutionException e) {
-			logger.error("Failed executing: " + e);
 		}
-		running = false;
-		return true;
+		return false;
 	}
 
 	/*
@@ -199,10 +208,10 @@ public class ReaderSessionImpl implements ReaderSession {
 	 */
 	@Override
 	public void stop() {
-		if (!running)
-			return;
-		logger.debug("Stopping command: " + command);
-		command.stop();
+		if (dying.compareAndSet(false, true)) {
+			logger.debug("Stopping command: " + command);
+			command.stop();
+		}
 	}
 
 }

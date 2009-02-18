@@ -9,6 +9,8 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.newcore.commands.Command;
 import org.rifidi.edge.newcore.commands.CommandState;
 import org.rifidi.edge.newcore.readers.Reader;
@@ -18,6 +20,8 @@ import org.rifidi.edge.newcore.readers.Reader;
  * 
  */
 public class AbstractReader implements Reader {
+	/** Logger for this class. */
+	private static final Log logger = LogFactory.getLog(AbstractReader.class);
 	/** Queue for reading messages. */
 	protected LinkedBlockingQueue<Object> readQueue = new LinkedBlockingQueue<Object>();
 	/** Queue for writing messages. */
@@ -91,6 +95,8 @@ public class AbstractReader implements Reader {
 	 */
 	@Override
 	public Future<CommandState> execute(Command command) {
+		logger.info("Submitting command for execution " + command
+				+ ". Currently active commands: " + executor.getActiveCount());
 		return executor.submit(command);
 	}
 
