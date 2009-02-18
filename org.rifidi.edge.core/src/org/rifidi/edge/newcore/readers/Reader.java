@@ -65,4 +65,9 @@ public interface Reader {
 	 * @return
 	 */
 	Future<CommandState> execute(Command command);
+
+	/**
+	 * Bring doen the reader and commands executing in it as fast as possible.
+	 */
+	void terminate();
 }

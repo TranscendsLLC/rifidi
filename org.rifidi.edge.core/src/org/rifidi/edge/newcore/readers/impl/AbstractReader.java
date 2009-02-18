@@ -27,7 +27,7 @@ public class AbstractReader implements Reader {
 	/** Queue for writing messages. */
 	protected LinkedBlockingQueue<Object> writeQueue = new LinkedBlockingQueue<Object>();
 	/** Used to execute commands. */
-	protected ThreadPoolExecutor executor;
+	public ThreadPoolExecutor executor;
 
 	/**
 	 * Constructor.
@@ -100,4 +100,13 @@ public class AbstractReader implements Reader {
 		return executor.submit(command);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.rifidi.edge.newcore.readers.Reader#terminate()
+	 */
+	@Override
+	public void terminate() {
+		executor.shutdownNow();
+	}
 }
