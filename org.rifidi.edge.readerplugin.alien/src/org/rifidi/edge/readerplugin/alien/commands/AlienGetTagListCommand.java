@@ -89,34 +89,34 @@ public class AlienGetTagListCommand extends Command {
 		// sending TagType
 		String command = Alien9800Reader.TAG_TYPE_COMMAND
 				+ tagTypes[getTagType()] + Alien9800Reader.NEWLINE;
-		logger.debug("Sening command: " + command);
+		logger.debug("Sending command: " + command);
 		getReader().sendMessage(command);
 		getReader().receiveMessage();
 
 		// sending TagListFormat
 		command = Alien9800Reader.TAG_LIST_FORMAT;
-		logger.debug("Sening command: " + command);
+		logger.debug("Sending command: " + command);
 		getReader().sendMessage(command);
 		getReader().receiveMessage();
 
 		// sending custom format
 		command = Alien9800Reader.TAG_LIST_CUSTOM_FORMAT;
-		logger.debug("Sening command: " + command);
+		logger.debug("Sending command: " + command);
 		getReader().sendMessage(command);
 		getReader().receiveMessage();
 
 		while (running) {
 			// sending get tag list
 			command = Alien9800Reader.TAG_LIST;
-			logger.debug("Sening command: " + command);
+			logger.debug("Sending command: " + command);
 			getReader().sendMessage(command);
 			String tag_msg = (String) getReader().receiveMessage();
-			logger.debug("recieved: " + tag_msg);
+			logger.debug("received: " + tag_msg);
 
 			List<TagMessage> tagList = this.parseString(tag_msg);
 
 			for (TagMessage m : tagList) {
-				System.out.println("Message: " + new String(m.getId()));
+//				System.out.println("Message: " + new String(m.getId()));
 				// getMessageQueue().addMessage(m);
 			}
 
@@ -172,7 +172,7 @@ public class AlienGetTagListCommand extends Command {
 					retVal.add(newTagRead);
 
 				} else {
-					logger.error("Something is invalid: " + splitString2[0]);
+//					logger.error("Something isreaders invalid: " + splitString2[0]);
 				}
 			}
 		} catch (Exception e) {

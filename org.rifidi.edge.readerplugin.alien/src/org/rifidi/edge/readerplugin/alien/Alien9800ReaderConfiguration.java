@@ -97,11 +97,10 @@ public class Alien9800ReaderConfiguration implements
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.newcore.ReaderConfiguration#releaseReader(org.rifidi.
-	 * edge.newcore.Reader)
+	 * org.rifidi.edge.newcore.ReaderConfiguration#releaseReader(java.lang.Object)
 	 */
 	@Override
-	public void releaseReader(Alien9800Reader reader) {
+	public void releaseReader(Object reader) {
 		if (reader.equals(this.reader)) {
 			this.reader = null;
 			return;
