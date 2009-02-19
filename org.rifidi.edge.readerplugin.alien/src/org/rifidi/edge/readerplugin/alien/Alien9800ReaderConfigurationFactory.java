@@ -6,7 +6,7 @@ package org.rifidi.edge.readerplugin.alien;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.rifidi.configuration.AbstractServiceFactory;
+import org.rifidi.edge.newcore.readers.AbstractReaderConfigurationFactory;
 import org.rifidi.edge.newcore.readers.ReaderConfiguration;
 
 /**
@@ -14,7 +14,7 @@ import org.rifidi.edge.newcore.readers.ReaderConfiguration;
  * 
  */
 public class Alien9800ReaderConfigurationFactory extends
-		AbstractServiceFactory<Alien9800ReaderConfiguration> {
+		AbstractReaderConfigurationFactory<Alien9800ReaderConfiguration> {
 
 	/*
 	 * (non-Javadoc)
@@ -33,7 +33,7 @@ public class Alien9800ReaderConfigurationFactory extends
 	 */
 	@Override
 	public List<String> getFactoryIDs() {
-		List<String> ret=new ArrayList<String>();
+		List<String> ret = new ArrayList<String>();
 		ret.add("Alien9800");
 		return ret;
 	}
@@ -41,14 +41,18 @@ public class Alien9800ReaderConfigurationFactory extends
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.rifidi.configuration.AbstractServiceFactory#customConfig(java
+	 * @see org.rifidi.configuration.AbstractServiceFactory#customConfig(java
 	 * .lang.Object)
 	 */
 	@Override
 	public void customConfig(Alien9800ReaderConfiguration instance) {
 		getContext().registerService(ReaderConfiguration.class.getName(),
 				instance, null);
+	}
+
+	@Override
+	public String getCommandConfigurationFactoryName() {
+		return Alien9800CommandConfigurationFactory.uniqueID;
 	}
 
 }

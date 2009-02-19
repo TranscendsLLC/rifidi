@@ -14,9 +14,19 @@
 	</bean>
 
 	<!-- Put reader configuration service in OSGi Registry -->
-	<osgi:service id="readerConfigurationFactoryService" ref="configurationFactory"
-		interface="org.rifidi.configuration.ServiceFactory" />
+	<osgi:service id="readerConfigurationFactoryService" ref="configurationFactory">
+		<osgi:interfaces>
+			<value>org.rifidi.configuration.ServiceFactory</value>
+			<value>
+				org.rifidi.edge.newcore.readers.AbstractReaderConfigurationFactory</value>
+		</osgi:interfaces>
+	</osgi:service>
 	<!-- Put command configuration service in OSGi Registry -->
-	<osgi:service id="commandConfigurationFactoryService" ref="commandConfigurationFactory"
-		interface="org.rifidi.configuration.ServiceFactory" />
+	<osgi:service id="commandConfigurationFactoryService" ref="commandConfigurationFactory">
+		<osgi:interfaces>
+			<value>org.rifidi.configuration.ServiceFactory</value>
+			<value>
+				org.rifidi.edge.newcore.commands.AbstractCommandConfigurationFactory</value>
+		</osgi:interfaces>
+	</osgi:service>
 </beans>
