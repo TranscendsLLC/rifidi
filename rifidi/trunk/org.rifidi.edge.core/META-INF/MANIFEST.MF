@@ -3,7 +3,6 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Rifidi Edge Core Plug-in
 Bundle-SymbolicName: org.rifidi.edge.core
 Bundle-Version: 5.0.0
-Bundle-Activator: org.rifidi.edge.core.Activator
 Bundle-Vendor: Pramari
 Bundle-ActivationPolicy: lazy
 Eclipse-BuddyPolicy: global
@@ -20,15 +19,7 @@ Import-Package: org.apache.commons.logging;version="1.0.4",
  org.rifidi.edge.core.api.readerplugin.service;version="[1.0.0,2.0.0)",
  org.rifidi.edge.core.api.readerplugin.xml;version="[1.0.0,2.0.0)",
  org.rifidi.edge.core.api.readersession.enums;version="[1.0.0,2.0.0)"
-Export-Package: org.rifidi.edge.core,
- org.rifidi.edge.core.communication.service,
- org.rifidi.edge.core.messageQueue.service,
- org.rifidi.edge.core.readersession,
- org.rifidi.edge.core.readersession.impl,
- org.rifidi.edge.core.readersession.impl.states,
- org.rifidi.edge.core.readersession.service,
- org.rifidi.edge.core.readersession.service.impl,
- org.rifidi.edge.newcore.commands,
+Export-Package: org.rifidi.edge.newcore.commands,
  org.rifidi.edge.newcore.exceptions,
  org.rifidi.edge.newcore.readers,
  org.rifidi.edge.newcore.readers.impl,
