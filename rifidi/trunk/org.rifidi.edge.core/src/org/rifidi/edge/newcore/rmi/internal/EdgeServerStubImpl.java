@@ -154,10 +154,10 @@ public class EdgeServerStubImpl implements EdgeServerStub {
 		AbstractCommandConfigurationFactory currentCommandFactory = null;
 		while (commandIter.hasNext()) {
 			currentCommandFactory = commandIter.next();
-			if (currentCommandFactory.getID().equals(
-					readerConfigFactory.getCommandConfigurationFactoryName())) {
-				break;
-			}
+//			if (currentCommandFactory.getID().equals(
+//					readerConfigFactory.getCommandConfigurationFactoryName())) {
+//				break;
+//			}
 
 		}
 

@@ -2,6 +2,7 @@ package org.rifidi.edge.newcore.commands;
 
 import java.util.concurrent.Callable;
 
+import org.rifidi.configuration.RifidiService;
 import org.rifidi.edge.core.api.readerplugin.messageQueue.EventQueue;
 import org.rifidi.edge.newcore.readers.Reader;
 
@@ -12,22 +13,23 @@ import org.rifidi.edge.newcore.readers.Reader;
  * @author Jochen Mader - jochen@pramari.com
  * 
  */
-public abstract class Command implements
-		Callable<CommandState> {
+public abstract class Command implements Callable<CommandState>, RifidiService {
 
 	private Reader reader;
 	private EventQueue eventQueue;
-
+	private String id;
 
 	/**
-	 * @param reader the reader to set
+	 * @param reader
+	 *            the reader to set
 	 */
 	public void setReader(Reader reader) {
 		this.reader = reader;
 	}
 
 	/**
-	 * @param eventQueue the messageQueue to set
+	 * @param eventQueue
+	 *            the messageQueue to set
 	 */
 	public void setEventQueue(EventQueue eventQueue) {
 		this.eventQueue = eventQueue;
@@ -49,6 +51,26 @@ public abstract class Command implements
 	 */
 	public EventQueue getEventQueue() {
 		return eventQueue;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.rifidi.configuration.RifidiService#getID()
+	 */
+	@Override
+	public String getID() {
+		return id;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.rifidi.configuration.RifidiService#setID(java.lang.String)
+	 */
+	@Override
+	public void setID(String id) {
+		this.id = id;
 	}
 
 	/**
