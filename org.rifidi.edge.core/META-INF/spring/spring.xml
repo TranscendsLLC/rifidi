@@ -4,14 +4,14 @@
      http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi.xsd">
 	<!--  Create Reader Sessiopn Service -->
 	<bean id="readerSessionManagementImpl"
-		class="org.rifidi.edge.newcore.readersession.ReaderSessionManagementImpl">
+		class="org.rifidi.edge.newcore.readersession.ReaderSessionDAOImpl">
 		<property name="context" ref="bundleContext" />
 		<property name="readerConfigurations" ref="readerConfigurationsSet" />
 	</bean>
 
 	<!-- Put reader session service in OSGi Registry -->
 	<osgi:service id="readerSessionManagement" ref="readerSessionManagementImpl"
-		interface="org.rifidi.edge.newcore.readersession.ReaderSessionManagement"></osgi:service>
+		interface="org.rifidi.edge.newcore.readersession.ReaderSessionDAO"></osgi:service>
 
 	<osgi:set id="readerConfigurationsSet" interface="org.rifidi.edge.newcore.readers.ReaderConfiguration"
 		cardinality="0..N">

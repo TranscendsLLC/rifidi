@@ -35,8 +35,7 @@ public interface ReaderConfiguration<T extends Reader> {
 	void releaseReader(Object reader);
 
 	/**
-	 * Get the name of the reader. It should be unique but it doesn't have to
-	 * be.
+	 * Get the name of the reader. Has to be unique.
 	 * 
 	 * @return
 	 */
