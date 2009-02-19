@@ -3,7 +3,7 @@ package org.rifidi.edge.jms.messagequeue;
 
 import org.apache.activemq.command.ActiveMQDestination;
 import org.rifidi.edge.core.api.exceptions.RifidiMessageQueueException;
-import org.rifidi.edge.core.api.readerplugin.messageQueue.MessageQueue;
+import org.rifidi.edge.core.api.readerplugin.messageQueue.EventQueue;
 import org.rifidi.edge.core.api.readerplugin.messages.Message;
 import org.rifidi.edge.jms.messageservice.BrokerWrapper;
 import javax.jms.*;
@@ -14,7 +14,7 @@ import javax.jms.*;
  * @author Andreas Huebner - andreas@pramari.com
  * 
  */
-public class MessageQueueImpl implements MessageQueue {
+public class MessageQueueImpl implements EventQueue {
 
 	private Session session;
 	private Destination destination;

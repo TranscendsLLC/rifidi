@@ -18,12 +18,14 @@ public abstract class AbstractReaderConfigurationFactory<T extends ReaderConfigu
 		extends AbstractServiceFactory<T> {
 
 	/**
-	 * AbstractCommandConfigurationFactories need to be tied to a specific
-	 * reader plugin type. This method should return the ID of the
-	 * CommandConfiguration associated with this reader plugin
+	 * CommandConfigurationFactoryFactories need to be tied to a specific reader
+	 * ConfigurationFactory type. This method should return the ID of the
+	 * CommandConfigurationFactoryFactory associated with this
+	 * ReaderConfigurationFactory
 	 * 
-	 * @return
+	 * @return the ID of the CommandConfigurationFactoryFactory associated with
+	 *         this ReaderConfigurationFactory
 	 */
-	public abstract String getCommandConfigurationFactoryName();
+	public abstract String getCommandConfigurationFactoryFactoryID();
 
 }

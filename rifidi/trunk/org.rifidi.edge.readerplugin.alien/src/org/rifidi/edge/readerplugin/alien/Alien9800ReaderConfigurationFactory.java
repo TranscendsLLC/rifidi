@@ -51,7 +51,7 @@ public class Alien9800ReaderConfigurationFactory extends
 	}
 
 	@Override
-	public String getCommandConfigurationFactoryName() {
+	public String getCommandConfigurationFactoryFactoryID() {
 		return Alien9800CommandConfigurationFactory.uniqueID;
 	}
 
