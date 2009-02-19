@@ -24,4 +24,10 @@
 		<osgi:listener ref="readerSessionManagementImpl"
 			bind-method="bindCommand" unbind-method="unbindCommand" />
 	</osgi:set>
+	
+	<osgi:set id="readerFactoryConfigurationSet" interface="org.rifidi.edge.newcore.commands.CommandFactory"
+		cardinality="0..N">
+		<osgi:listener ref="readerSessionManagementImpl"
+			bind-method="bindCommand" unbind-method="unbindCommand" />
+	</osgi:set>
 </beans>

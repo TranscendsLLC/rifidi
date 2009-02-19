@@ -2,7 +2,7 @@ package org.rifidi.edge.newcore.commands;
 
 import java.util.concurrent.Callable;
 
-import org.rifidi.edge.core.api.readerplugin.messageQueue.MessageQueue;
+import org.rifidi.edge.core.api.readerplugin.messageQueue.EventQueue;
 import org.rifidi.edge.newcore.readers.Reader;
 
 /**
@@ -16,7 +16,7 @@ public abstract class Command implements
 		Callable<CommandState> {
 
 	private Reader reader;
-	private MessageQueue messageQueue;
+	private EventQueue eventQueue;
 
 
 	/**
@@ -27,10 +27,10 @@ public abstract class Command implements
 	}
 
 	/**
-	 * @param messageQueue the messageQueue to set
+	 * @param eventQueue the messageQueue to set
 	 */
-	public void setMessageQueue(MessageQueue messageQueue) {
-		this.messageQueue = messageQueue;
+	public void setEventQueue(EventQueue eventQueue) {
+		this.eventQueue = eventQueue;
 	}
 
 	/**
@@ -43,12 +43,12 @@ public abstract class Command implements
 	}
 
 	/**
-	 * Return the message queue for the command.
+	 * Return the event queue for the command.
 	 * 
 	 * @return
 	 */
-	public MessageQueue getMessageQueue() {
-		return messageQueue;
+	public EventQueue getEventQueue() {
+		return eventQueue;
 	}
 
 	/**

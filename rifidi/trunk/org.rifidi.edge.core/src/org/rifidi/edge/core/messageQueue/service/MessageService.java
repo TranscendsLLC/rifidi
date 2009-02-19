@@ -1,7 +1,7 @@
 package org.rifidi.edge.core.messageQueue.service;
 
 import java.util.List;
-import org.rifidi.edge.core.api.readerplugin.messageQueue.MessageQueue;
+import org.rifidi.edge.core.api.readerplugin.messageQueue.EventQueue;
 
 /**
  * MessageService for creating and deleting MessageQueues. This will be
@@ -21,7 +21,7 @@ public interface MessageService {
 	 *            name of the MessageQueue to create
 	 * @return the MessageQueue
 	 */
-	public MessageQueue createMessageQueue(String messageQueueName);
+	public EventQueue createMessageQueue(String messageQueueName);
 
 	/**
 	 * Delete a previously created MessageQueue
@@ -29,14 +29,14 @@ public interface MessageService {
 	 * @param messageQueue
 	 *            MessageQueue to delete
 	 */
-	public void destroyMessageQueue(MessageQueue messageQueue);
+	public void destroyMessageQueue(EventQueue messageQueue);
 
 	/**
 	 * Get a list of all MessageQueues in this service
 	 * 
 	 * @return a list of MessageQueues
 	 */
-	public List<MessageQueue> getAllMessageQueues();
+	public List<EventQueue> getAllMessageQueues();
 
 	/**
 	 * Add a listener. Listening for the creation and deletion of MessageQueues.

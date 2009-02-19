@@ -1,6 +1,6 @@
 package org.rifidi.edge.core.messageQueue.service;
 
-import org.rifidi.edge.core.api.readerplugin.messageQueue.MessageQueue;
+import org.rifidi.edge.core.api.readerplugin.messageQueue.EventQueue;
 
 /**
  * Listener to monitor the MessageService for new MessageQueues and for the
@@ -16,7 +16,7 @@ public interface MessageServiceListener {
 	 * @param messageQueue
 	 *            the new MessageQueue
 	 */
-	public void addEvent(MessageQueue messageQueue);
+	public void addEvent(EventQueue messageQueue);
 
 	/**
 	 * MessageQueue removed event
@@ -24,5 +24,5 @@ public interface MessageServiceListener {
 	 * @param messageQueue
 	 *            the messageQueue removed
 	 */
-	public void removeEvent(MessageQueue messageQueue);
+	public void removeEvent(EventQueue messageQueue);
 }
