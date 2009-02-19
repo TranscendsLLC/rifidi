@@ -20,7 +20,8 @@ import org.osgi.framework.BundleContext;
  * @author Jochen Mader - jochen@pramari.com
  * 
  */
-public abstract class AbstractServiceFactory<T> implements ServiceFactory {
+public abstract class AbstractServiceFactory<T extends RifidiService>
+		implements ServiceFactory {
 	/** Logger for this class. */
 	private static final Log logger = LogFactory
 			.getLog(AbstractServiceFactory.class);
@@ -62,9 +63,12 @@ public abstract class AbstractServiceFactory<T> implements ServiceFactory {
 			T instance = getClazz().newInstance();
 			counter++;
 			((DefaultConfigurationImpl) configuration).setTarget(instance);
-			((DefaultConfigurationImpl) configuration)
-					.setServiceID(getFactoryIDs().get(0) + "-"
-							+ Integer.toString(counter));
+			if (configuration.getServiceID() == null) {
+				// TODO: baaad, we are depending on a concrete implementation!!!
+				((DefaultConfigurationImpl) configuration)
+						.setServiceID(getFactoryIDs().get(0) + "-"
+								+ Integer.toString(counter));
+			}
 			Dictionary<String, String> params = new Hashtable<String, String>();
 			params.put("type", getClazz().getName());
 			context.registerService(Configuration.class.getName(),

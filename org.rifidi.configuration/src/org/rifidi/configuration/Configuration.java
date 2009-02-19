@@ -22,7 +22,13 @@ public interface Configuration extends DynamicMBean {
 	 * @return
 	 */
 	String getServiceID();
-
+	
+	/**
+	 * Set the id for the governed service.
+	 * 
+	 */
+	void setServiceID(String id);
+	
 	/**
 	 * Get the id of the factory that registered the configuration.
 	 * 
