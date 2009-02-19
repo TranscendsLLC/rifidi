@@ -5,8 +5,8 @@ package org.rifidi.edge.newcore.internal;
 
 import java.util.concurrent.Callable;
 
-import org.rifidi.edge.core.api.readerplugin.messageQueue.MessageQueue;
 import org.rifidi.edge.newcore.commands.CommandFactory;
+import org.rifidi.edge.newcore.events.EventQueue;
 import org.rifidi.edge.newcore.readers.ReaderConfiguration;
 
 /**
@@ -24,11 +24,11 @@ public interface ReaderSession extends Callable<Boolean> {
 	void setReaderFactory(ReaderConfiguration<?> readerFactory);
 
 	/**
-	 * Set the message queue for outgoing messages.
+	 * Set the eventQueue for outgoing messages.
 	 * 
-	 * @param messageQueue
+	 * @param eventQueue
 	 */
-	void setMessageQueue(MessageQueue messageQueue);
+	void setEventQueue(EventQueue eventQueue);
 
 	/**
 	 * Get the reader factory currently used by the session.

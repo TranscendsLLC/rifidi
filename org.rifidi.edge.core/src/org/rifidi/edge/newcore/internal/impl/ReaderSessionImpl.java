@@ -10,10 +10,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.osgi.framework.ServiceRegistration;
-import org.rifidi.edge.core.api.readerplugin.messageQueue.MessageQueue;
 import org.rifidi.edge.newcore.commands.Command;
 import org.rifidi.edge.newcore.commands.CommandFactory;
 import org.rifidi.edge.newcore.commands.CommandState;
+import org.rifidi.edge.newcore.events.EventQueue;
 import org.rifidi.edge.newcore.exceptions.NoReaderAvailableException;
 import org.rifidi.edge.newcore.internal.ReaderSession;
 import org.rifidi.edge.newcore.readers.Reader;
@@ -38,7 +38,7 @@ public class ReaderSessionImpl implements ReaderSession {
 	/** Service registration for the service. */
 	private ServiceRegistration registration;
 	/** Message queue for outgoing messages. */
-	private MessageQueue messageQueue;
+	private EventQueue eventQueue;
 	/** Currently executing command. */
 	private Command command;
 	/** Set to true if someone attempted to kill the command. */
@@ -141,16 +141,16 @@ public class ReaderSessionImpl implements ReaderSession {
 	 * .edge.core.api.readerplugin.messageQueue.MessageQueue)
 	 */
 	@Override
-	public void setMessageQueue(MessageQueue messageQueue) {
+	public void setEventQueue(EventQueue eventQueue) {
 		assert (!running.get());
-		assert (messageQueue != null);
-		logger.debug("Setting message queue: " + messageQueue);
-		this.messageQueue = messageQueue;
+		assert (eventQueue != null);
+		logger.debug("Setting message queue: " + eventQueue);
+		this.eventQueue = eventQueue;
 	}
 
 	private boolean canStart() {
 		return commandFactory != null && factory != null
-				&& messageQueue == null;
+				&& eventQueue == null;
 	}
 
 	/*
@@ -171,7 +171,7 @@ public class ReaderSessionImpl implements ReaderSession {
 					Reader reader = factory.aquireReader();
 					command = commandFactory.getCommand();
 					command.setReader(reader);
-					command.setMessageQueue(null);
+					command.setEventQueue(null);
 
 					Future<CommandState> future = reader.execute(command);
 					CommandState state = future.get();

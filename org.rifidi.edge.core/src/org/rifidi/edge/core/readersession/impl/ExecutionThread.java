@@ -5,7 +5,7 @@ import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.api.exceptions.RifidiExecutionException;
 import org.rifidi.edge.core.api.readerplugin.commands.CommandReturnStatus;
 import org.rifidi.edge.core.api.readerplugin.communication.Connection;
-import org.rifidi.edge.core.api.readerplugin.messageQueue.MessageQueue;
+import org.rifidi.edge.core.api.readerplugin.messageQueue.EventQueue;
 
 /**
  * This is a Helper to execute Commands. It will take in the command and execute
@@ -19,9 +19,9 @@ public class ExecutionThread {
 
 	private Log logger = LogFactory.getLog(ExecutionThread.class);
 
-	private MessageQueue messageQueue;
+	private EventQueue messageQueue;
 
-	private MessageQueue errorQueue;
+	private EventQueue errorQueue;
 
 	private CommandExecutionListener commandExecutionListener;
 
@@ -41,7 +41,7 @@ public class ExecutionThread {
 	 * @param readerSession
 	 *            the Listener for command finished events
 	 */
-	public ExecutionThread(MessageQueue messageQueue, MessageQueue errorQueue,
+	public ExecutionThread(EventQueue messageQueue, EventQueue errorQueue,
 			CommandExecutionListener readerSession) {
 		if (messageQueue == null) {
 			logger.error("NO MessageQueue");

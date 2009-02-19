@@ -18,7 +18,7 @@ import org.rifidi.edge.core.api.readerplugin.ReaderPlugin;
 import org.rifidi.edge.core.api.readerplugin.commands.CommandConfiguration;
 import org.rifidi.edge.core.api.readerplugin.commands.CommandReturnStatus;
 import org.rifidi.edge.core.api.readerplugin.communication.Connection;
-import org.rifidi.edge.core.api.readerplugin.messageQueue.MessageQueue;
+import org.rifidi.edge.core.api.readerplugin.messageQueue.EventQueue;
 import org.rifidi.edge.core.api.readerplugin.property.PropertyConfiguration;
 import org.rifidi.edge.core.api.readerplugin.xml.CommandDescription;
 import org.rifidi.edge.core.api.readersession.enums.CommandStatus;
@@ -65,8 +65,8 @@ public class ReaderSessionImpl implements ReaderSession, ReaderSessionState,
 	protected ReaderInfo readerInfo;
 	protected ConnectionManager connectionManager;
 	protected Connection connection;
-	protected MessageQueue messageQueue;
-	protected MessageQueue errorQueue;
+	protected EventQueue messageQueue;
+	protected EventQueue errorQueue;
 
 	// CommandExecution
 	protected CommandWrapper curCommand;
