@@ -10,6 +10,6 @@
 		interface="org.eclipse.osgi.framework.console.CommandProvider" />
 	<!-- Put reader session service in OSGi Registry -->
 	<osgi:reference id="readerSessionManagement"
-		interface="org.rifidi.edge.newcore.readersession.ReaderSessionDAO" />
+		interface="org.rifidi.edge.core.readersession.ReaderSessionDAO" />
 
 </beans>

@@ -12,8 +12,8 @@ import java.util.concurrent.Future;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.rifidi.edge.newcore.commands.CommandState;
-import org.rifidi.edge.newcore.readers.impl.AbstractReader;
+import org.rifidi.edge.core.commands.CommandState;
+import org.rifidi.edge.core.readers.impl.AbstractReader;
 import org.rifidi.edge.readerplugin.alien.commands.internal.AuthenticateCommand;
 import org.rifidi.edge.readerplugin.alien.communication.ReadThread;
 import org.rifidi.edge.readerplugin.alien.communication.WriteThread;

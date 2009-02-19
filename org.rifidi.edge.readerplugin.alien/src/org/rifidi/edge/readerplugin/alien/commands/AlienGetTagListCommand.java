@@ -14,8 +14,8 @@ import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.common.utilities.converter.ByteAndHexConvertingUtility;
 import org.rifidi.edge.core.api.readerplugin.messages.impl.EnhancedTagMessage;
 import org.rifidi.edge.core.api.readerplugin.messages.impl.TagMessage;
-import org.rifidi.edge.newcore.commands.Command;
-import org.rifidi.edge.newcore.commands.CommandState;
+import org.rifidi.edge.core.commands.Command;
+import org.rifidi.edge.core.commands.CommandState;
 import org.rifidi.edge.readerplugin.alien.Alien9800Reader;
 
 /**
@@ -60,7 +60,7 @@ public class AlienGetTagListCommand extends Command {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.newcore.Command#stop()
+	 * @see org.rifidi.edge.core.Command#stop()
 	 */
 	@Override
 	public void stop() {

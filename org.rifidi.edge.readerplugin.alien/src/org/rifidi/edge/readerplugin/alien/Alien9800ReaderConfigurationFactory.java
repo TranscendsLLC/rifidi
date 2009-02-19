@@ -6,8 +6,8 @@ package org.rifidi.edge.readerplugin.alien;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.rifidi.edge.newcore.readers.AbstractReaderConfigurationFactory;
-import org.rifidi.edge.newcore.readers.ReaderConfiguration;
+import org.rifidi.edge.core.readers.AbstractReaderConfigurationFactory;
+import org.rifidi.edge.core.readers.ReaderConfiguration;
 
 /**
  * @author Jochen Mader - jochen@pramari.com

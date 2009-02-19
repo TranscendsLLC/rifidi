@@ -7,8 +7,8 @@ import java.io.IOException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.rifidi.edge.newcore.commands.Command;
-import org.rifidi.edge.newcore.commands.CommandState;
+import org.rifidi.edge.core.commands.Command;
+import org.rifidi.edge.core.commands.CommandState;
 import org.rifidi.edge.readerplugin.alien.Alien9800Reader;
 
 /**
@@ -39,7 +39,7 @@ public class AuthenticateCommand extends Command {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.newcore.Command#call()
+	 * @see org.rifidi.edge.core.Command#call()
 	 */
 	@Override
 	public CommandState call() throws Exception {
@@ -76,7 +76,7 @@ public class AuthenticateCommand extends Command {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.newcore.Command#stop()
+	 * @see org.rifidi.edge.core.Command#stop()
 	 */
 	@Override
 	public void stop() {

@@ -8,8 +8,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.rifidi.edge.newcore.commands.AbstractCommandConfigurationFactory;
-import org.rifidi.edge.newcore.commands.CommandFactory;
+import org.rifidi.edge.core.commands.AbstractCommandConfigurationFactory;
+import org.rifidi.edge.core.commands.CommandFactory;
 import org.rifidi.edge.readerplugin.alien.commands.AlienGetTagListCommandFactory;
 
 /**
@@ -71,7 +71,7 @@ public class Alien9800CommandConfigurationFactory extends
 	}
 
 	/* (non-Javadoc)
-	 * @see org.rifidi.edge.newcore.commands.AbstractCommandConfigurationFactory#getID()
+	 * @see org.rifidi.edge.core.commands.AbstractCommandConfigurationFactory#getID()
 	 */
 	@Override
 	public String getID() {

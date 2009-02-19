@@ -5,7 +5,7 @@ package org.rifidi.edge.readerplugin.alien.commands;
 
 import org.rifidi.configuration.annotations.JMXMBean;
 import org.rifidi.configuration.annotations.Property;
-import org.rifidi.edge.newcore.commands.CommandFactory;
+import org.rifidi.edge.core.commands.CommandFactory;
 
 /**
  * @author Jochen Mader - jochen@pramari.com
@@ -27,7 +27,7 @@ public class AlienGetTagListCommandFactory implements
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.newcore.commands.CommandFactory#getCommandDescription()
+	 * org.rifidi.edge.core.commands.CommandFactory#getCommandDescription()
 	 */
 	@Override
 	public String getCommandDescription() {
@@ -37,7 +37,7 @@ public class AlienGetTagListCommandFactory implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.newcore.commands.CommandFactory#getCommandName()
+	 * @see org.rifidi.edge.core.commands.CommandFactory#getCommandName()
 	 */
 	@Override
 	public String getCommandName() {
@@ -63,7 +63,7 @@ public class AlienGetTagListCommandFactory implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.newcore.commands.CommandFactory#getCommand()
+	 * @see org.rifidi.edge.core.commands.CommandFactory#getCommand()
 	 */
 	@Override
 	public AlienGetTagListCommand getCommand() {

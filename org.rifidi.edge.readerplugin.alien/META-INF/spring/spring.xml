@@ -18,7 +18,7 @@
 		<osgi:interfaces>
 			<value>org.rifidi.configuration.ServiceFactory</value>
 			<value>
-				org.rifidi.edge.newcore.readers.AbstractReaderConfigurationFactory</value>
+				org.rifidi.edge.core.readers.AbstractReaderConfigurationFactory</value>
 		</osgi:interfaces>
 	</osgi:service>
 	<!-- Put command configuration service in OSGi Registry -->
@@ -26,7 +26,7 @@
 		<osgi:interfaces>
 			<value>org.rifidi.configuration.ServiceFactory</value>
 			<value>
-				org.rifidi.edge.newcore.commands.AbstractCommandConfigurationFactory</value>
+				org.rifidi.edge.core.commands.AbstractCommandConfigurationFactory</value>
 		</osgi:interfaces>
 	</osgi:service>
 </beans>

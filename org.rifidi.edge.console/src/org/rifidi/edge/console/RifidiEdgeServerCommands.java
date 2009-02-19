@@ -5,11 +5,11 @@ package org.rifidi.edge.console;
 
 import org.eclipse.osgi.framework.console.CommandInterpreter;
 import org.eclipse.osgi.framework.console.CommandProvider;
-import org.rifidi.edge.newcore.commands.CommandFactory;
-import org.rifidi.edge.newcore.exceptions.NonExistentCommandFactoryException;
-import org.rifidi.edge.newcore.exceptions.NonExistentReaderConfigurationException;
-import org.rifidi.edge.newcore.readers.ReaderConfiguration;
-import org.rifidi.edge.newcore.readersession.ReaderSessionDAO;
+import org.rifidi.edge.core.commands.CommandFactory;
+import org.rifidi.edge.core.exceptions.NonExistentCommandFactoryException;
+import org.rifidi.edge.core.exceptions.NonExistentReaderConfigurationException;
+import org.rifidi.edge.core.readers.ReaderConfiguration;
+import org.rifidi.edge.core.readersession.ReaderSessionDAO;
 
 /**
  * @author Jochen Mader - jochen@pramari.com
