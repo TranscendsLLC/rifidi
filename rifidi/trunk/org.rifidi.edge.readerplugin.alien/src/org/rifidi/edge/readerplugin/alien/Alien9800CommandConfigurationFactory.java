@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.rifidi.configuration.AbstractMultiServiceFactory;
+import org.rifidi.edge.newcore.commands.AbstractCommandConfigurationFactory;
 import org.rifidi.edge.newcore.commands.CommandFactory;
 import org.rifidi.edge.readerplugin.alien.commands.AlienGetTagListCommandFactory;
 
@@ -17,9 +17,11 @@ import org.rifidi.edge.readerplugin.alien.commands.AlienGetTagListCommandFactory
  * 
  */
 public class Alien9800CommandConfigurationFactory extends
-		AbstractMultiServiceFactory {
+		AbstractCommandConfigurationFactory {
 
 	private Map<String, Class<?>> factoryIdToClass;
+	/** The gloabaly unique name for this factory */
+	public static final String uniqueID = "Alien9800CommandConfigurationFactory";
 
 	/**
 	 * 
@@ -66,5 +68,10 @@ public class Alien9800CommandConfigurationFactory extends
 	@Override
 	public List<String> getFactoryIDs() {
 		return new ArrayList<String>(factoryIdToClass.keySet());
+	}
+
+	@Override
+	public String getID() {
+		return uniqueID;
 	}
 }

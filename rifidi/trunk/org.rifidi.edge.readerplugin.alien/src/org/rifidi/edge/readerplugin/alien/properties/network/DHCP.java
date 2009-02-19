@@ -10,7 +10,7 @@ import org.rifidi.dynamicswtforms.xml.constants.FormElementType;
 import org.rifidi.edge.core.api.readerplugin.Property;
 import org.rifidi.edge.core.api.readerplugin.commands.CommandConfiguration;
 import org.rifidi.edge.core.api.readerplugin.communication.Connection;
-import org.rifidi.edge.core.api.readerplugin.messageQueue.MessageQueue;
+import org.rifidi.edge.core.api.readerplugin.messageQueue.EventQueue;
 import org.rifidi.edge.readerplugin.alien.properties.AlienResponse;
 
 /**
@@ -40,7 +40,7 @@ public class DHCP implements Property {
 	 */
 	@Override
 	public CommandConfiguration getProperty(Connection connection,
-			MessageQueue errorQueue, CommandConfiguration propertyConfig) {
+			EventQueue errorQueue, CommandConfiguration propertyConfig) {
 		AlienResponse response = new AlienResponse();
 		String responseString = null;
 		try {
@@ -65,7 +65,7 @@ public class DHCP implements Property {
 	 */
 	@Override
 	public CommandConfiguration setProperty(Connection connection,
-			MessageQueue errorQueue, CommandConfiguration propertyConfig) {
+			EventQueue errorQueue, CommandConfiguration propertyConfig) {
 		return getProperty(connection, errorQueue, propertyConfig);
 	}
 
