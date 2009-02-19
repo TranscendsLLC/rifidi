@@ -10,17 +10,28 @@
  */
 package org.rifidi.edge.client.ale.ui.views;
 
+import java.util.ArrayList;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.part.ViewPart;
 import org.rifidi.edge.client.ale.wsdl.epcglobal.ALEServicePortType;
+import org.rifidi.edge.client.ale.wsdl.epcglobal.ArrayOfString;
+import org.rifidi.edge.client.ale.wsdl.epcglobal.Define;
+import org.rifidi.edge.client.ale.wsdl.epcglobal.DuplicateNameExceptionResponse;
+import org.rifidi.edge.client.ale.wsdl.epcglobal.ECSpecValidationExceptionResponse;
+import org.rifidi.edge.client.ale.wsdl.epcglobal.EmptyParms;
+import org.rifidi.edge.client.ale.wsdl.epcglobal.ImplementationExceptionResponse;
+import org.rifidi.edge.client.ale.wsdl.epcglobal.SecurityExceptionResponse;
 import org.rifidi.edge.client.ale.xsd.epcglobal.ECBoundarySpec;
 import org.rifidi.edge.client.ale.xsd.epcglobal.ECReportOutputSpec;
 import org.rifidi.edge.client.ale.xsd.epcglobal.ECReportSetSpec;
@@ -38,10 +49,53 @@ public class FncView extends ViewPart {
 
 	public static final String id = "org.rifidi.edge.client.ale.ui.views.FncView";
 	private ALEServicePortType aleProxy = null;
-	
+
 	private String aleEndPoint = "http://localhost:8080/fc-server-0.4.0/services/ALEService";
-	
+
 	private Log logger = LogFactory.getLog(FncView.class);
+
+	private Group group = null;
+	private Label label1 = null;
+	private Text txtECspecName = null;
+	private Label label = null;
+	private Button rbInclInSpecY = null;
+	private Button rbInclInSpecN = null;
+	private Label label2 = null;
+	private Text txtRd2Incl = null;
+	private Group group1 = null;
+	private Label label3 = null;
+	private Text txtStableSet = null;
+	private Label label4 = null;
+	private Text txtRepeatAfter = null;
+	private Label label5 = null;
+	private Text txtDuration = null;
+	private Group group2 = null;
+	private Label label6 = null;
+	private Text txtRepSpecName = null;
+	private Group group3 = null;
+	private Group group4 = null;
+	private Button rbRepIfEmptyY = null;
+	private Button rbRepIfEmptyN = null;
+	private Button rbRepOoChangeY = null;
+	private Button rbRepOoChangeN = null;
+	private Group group5 = null;
+	private Group group6 = null;
+	private Group group7 = null;
+	private Button rbIncludeTagY = null;
+	private Button rbIncludeTagN = null;
+	private Button rbIncludeEPCy = null;
+	private Button rbIncludeEPCn = null;
+	private Group group8 = null;
+	private Group group9 = null;
+	private Button rbIncludeRawHexY = null;
+	private Button rbIncludeRawHexN = null;
+	private Button rbIncludeRawDecY = null;
+	private Button rbIncludeRawDecN = null;
+	private Group group10 = null;
+	private Button rbIncludeTagCountY = null;
+	private Button rbIncludeTagCountN = null;
+	private Button pbExecute = null;
+	private Composite parent = null;
 
 	/*
 	 * (non-Javadoc)
@@ -53,101 +107,301 @@ public class FncView extends ViewPart {
 	@Override
 	public void createPartControl(Composite parent) {
 
-		GridLayout grid = new GridLayout();
-		grid.numColumns=3;
-		grid.makeColumnsEqualWidth=true;
-		parent.setLayout(grid);
-		
-		Label lblEcName = new Label(parent,SWT.SHADOW_NONE);
-		lblEcName.setText("Event Cycle Name");
-		Text txtEcName = new Text(parent,SWT.SHADOW_NONE);
-		
-		Label lblInclSpecInRep = new Label(parent,SWT.SHADOW_NONE);
-		lblInclSpecInRep.setText("Include Spec in Report?");
-		lblInclSpecInRep.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
-		
-		Button oBinclSpecY = new Button(parent,SWT.RADIO);
-		oBinclSpecY.setText("yes");
-		Button oBinclSpecN = new Button(parent,SWT.RADIO);
-		oBinclSpecN.setSelection(true);
-		oBinclSpecN.setText("no");
-		
-		Label lblLogRdrs = new Label(parent,SWT.SHADOW_NONE);
-		lblLogRdrs.setText("Logical Readers");
-		lblLogRdrs.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
-		Text txtlogRdrs = new Text(parent,SWT.SHADOW_NONE);
-		
-		Label lblBoundary = new Label(parent,SWT.SHADOW_NONE);
-		lblBoundary.setText("Boundary");
-		lblBoundary.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
-		Label lblStableSet = new Label(parent,SWT.SHADOW_NONE);
-		lblStableSet.setText("Stable Set [ms]");
-		lblStableSet.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
-		Text txtStableSet = new Text(parent,SWT.SHADOW_NONE);
-		txtStableSet.setText("0");
-		Label lblRepeatAfter = new Label(parent,SWT.SHADOW_NONE);
-		lblRepeatAfter.setText("Repeat After [ms]");
-		lblRepeatAfter.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
-		Text txtRepeatAfter = new Text(parent,SWT.SHADOW_NONE);
-		txtRepeatAfter.setText("0");
-		Label lblDuration = new Label(parent,SWT.SHADOW_NONE);
-		lblDuration.setText("Duration [ms]");
-		lblDuration.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
-		Text txtDuration = new Text(parent,SWT.SHADOW_NONE);
-		txtDuration.setText("0");
-		
-		
-		
-//		ECSpec spec = new ECSpec();
-//		LogicalReaders lrs = new LogicalReaders();
-//		lrs.getLogicalReader().add("LogicalReader1");
-//		spec.setLogicalReaders(lrs);
-//		ECBoundarySpec bspec= new ECBoundarySpec();
-//		ECTime time = new ECTime();
-//		time.setUnit("MS");
-//		time.setValue(5500);
-//		bspec.setDuration(time);
-//		time.setValue(6000);
-//		bspec.setRepeatPeriod(time);
-//		time.setValue(0);
-//		bspec.setStableSetInterval(time);
-//		spec.setBoundarySpec(bspec);
-//		ReportSpecs repSpecs = new ReportSpecs();
-//		ECReportSpec repSpec = new ECReportSpec();
-//		ECReportSetSpec rss = new ECReportSetSpec();
-//		rss.setSet("CURRENT");
-//		ECReportOutputSpec eros = new ECReportOutputSpec();
-//		eros.setIncludeRawHex(true);
-//		eros.setIncludeRawDecimal(true);
-//		eros.setIncludeEPC(true);
-//		repSpec.setOutput(eros);
-//		repSpec.setReportSet(rss);
-//		repSpecs.getReportSpec().add(repSpec);
-//		spec.setReportSpecs(repSpecs);
-		
-		
-
+		this.parent = parent;
 		// init ALE
-//		logger.debug("\nJaxWsProxyFactoryBean aleFactory = new JaxWsProxyFactoryBean();");
-//		JaxWsProxyFactoryBean aleFactory = new JaxWsProxyFactoryBean();
-//		logger.debug("\naleFactory.setServiceClass(ALEServicePortType.class);");
-//		aleFactory.setServiceClass(ALEServicePortType.class);
-//		logger.debug("\naleEndPoint = " + aleEndPoint);
-//		aleFactory.setAddress(aleEndPoint);
-//		logger.debug("\naleProxy = (ALEServicePortType) aleFactory.create();");
-//		aleProxy = (ALEServicePortType) aleFactory.create();
-
-//		try {
-//			logger.debug("\ngetVendorVersion(): "
-//					+ aleProxy.getVendorVersion(new EmptyParms()) + "\n");
-//		} catch (ImplementationExceptionResponse e) {
-//			logger.error(e.getMessage());
-//		}
-//
-//		logger.debug("\nLogicalReader API\n");
-		
-
+		logger
+				.debug("\nJaxWsProxyFactoryBean aleFactory = new JaxWsProxyFactoryBean();");
+		JaxWsProxyFactoryBean aleFactory = new JaxWsProxyFactoryBean();
+		logger
+				.debug("\naleFactory.setServiceClass(ALEServicePortType.class);");
+		aleFactory.setServiceClass(ALEServicePortType.class);
+		logger.debug("\naleEndPoint = " + aleEndPoint);
+		aleFactory.setAddress(aleEndPoint);
+		logger
+				.debug("\naleProxy = (ALEServicePortType) aleFactory.create();");
+		aleProxy = (ALEServicePortType) aleFactory.create();
+		initialize();
 	}
+
+	private void initialize() {
+		createGroup();
+		parent.setSize(new Point(736, 1015));
+		parent.setLayout(new GridLayout(3, true));
+		label2 = new Label(parent, SWT.NONE);
+		label2.setText("Logical Readers:");
+		txtRd2Incl = new Text(parent, SWT.BORDER);
+		txtRd2Incl.setText("LogicalReader1");
+		createGroup1();
+		createGroup2();
+		createGroup5();
+		pbExecute = new Button(parent, SWT.NONE);
+		pbExecute.setText("Define");
+		pbExecute
+				.addSelectionListener(new org.eclipse.swt.events.SelectionListener() {
+					public void widgetSelected(
+							org.eclipse.swt.events.SelectionEvent e) {
+						System.out.println("widgetSelected()"); // TODO
+						// Auto-generated
+						// Event stub
+						// widgetSelected()
+						execute();
+					}
+
+					private void execute() {
+						ECSpec spec = new ECSpec();
+						LogicalReaders lrs = new LogicalReaders();
+						lrs.getLogicalReader().add(txtRd2Incl.getText());
+						spec.setLogicalReaders(lrs);
+						ECBoundarySpec bspec = new ECBoundarySpec();
+						ECTime time = new ECTime();
+						time.setUnit("MS");
+						time.setValue(Long.parseLong(txtDuration.getText()));
+						bspec.setDuration(time);
+						time.setValue(Long.parseLong(txtRepeatAfter.getText()));
+						bspec.setRepeatPeriod(time);
+						time.setValue(Long.parseLong(txtStableSet.getText()));
+						bspec.setStableSetInterval(time);
+						spec.setBoundarySpec(bspec);
+						ReportSpecs repSpecs = new ReportSpecs();
+						ECReportSpec repSpec = new ECReportSpec();
+						ECReportSetSpec rss = new ECReportSetSpec();
+						rss.setSet(txtRepSpecName.getText());
+						ECReportOutputSpec eros = new ECReportOutputSpec();
+						eros.setIncludeRawHex(rbIncludeRawDecY.getSelection());
+						eros.setIncludeRawDecimal(rbIncludeRawDecY
+								.getSelection());
+						eros.setIncludeEPC(rbIncludeEPCy.getSelection());
+						repSpec.setOutput(eros);
+						repSpec.setReportSet(rss);
+						repSpecs.getReportSpec().add(repSpec);
+						spec.setReportSpecs(repSpecs);
+
+						
+
+						try {
+							logger.debug("\ngetVendorVersion(): "
+									+ aleProxy
+											.getVendorVersion(new EmptyParms())
+									+ "\n");
+							logger.debug("\ngetStandardVersion(): "
+									+ aleProxy
+											.getStandardVersion(new EmptyParms())
+									+ "\n");
+							ArrayOfString names = aleProxy.getECSpecNames(new EmptyParms());
+							ArrayList<String> strings = (ArrayList<String>) names.getString();
+							for (String string : strings) {
+								logger.debug("\n"+string);
+							}
+							
+						} catch (ImplementationExceptionResponse e) {
+							logger.error(e.getMessage());
+						} catch (SecurityExceptionResponse e) {
+							logger.error(e.getMessage());
+						}
+						Define define = new Define();
+						define.setSpec(spec);
+						define.setSpecName(txtECspecName.getText());
+						try {
+							logger.debug(aleProxy.define(define));
+						} catch (ImplementationExceptionResponse e) {
+							logger.error(e.getMessage());
+						} catch (SecurityExceptionResponse e) {
+							logger.error(e.getMessage());
+						} catch (ECSpecValidationExceptionResponse e) {
+							logger.error(e.getMessage());
+						} catch (DuplicateNameExceptionResponse e) {
+							logger.error(e.getMessage());
+						} finally {
+							logger.debug("done");
+						}
+					}
+
+					public void widgetDefaultSelected(
+							org.eclipse.swt.events.SelectionEvent e) {
+					}
+				});
+	}
+
+	/**
+	 * This method initializes group
+	 * 
+	 */
+	private void createGroup() {
+		group = new Group(parent, SWT.NONE);
+		group.setLayout(new GridLayout());
+		group.setText("Create new Event Cycle");
+		label1 = new Label(group, SWT.NONE);
+		label1.setText("Event Cycle Name:");
+		txtECspecName = new Text(group, SWT.BORDER);
+		txtECspecName.setText("specCurrent");
+		label = new Label(group, SWT.NONE);
+		label.setText("Include Spec in Reports:");
+		rbInclInSpecY = new Button(group, SWT.RADIO);
+		rbInclInSpecY.setText("Yes");
+		rbInclInSpecN = new Button(group, SWT.RADIO);
+		rbInclInSpecN.setText("No");
+		rbInclInSpecN.setSelection(true);
+	}
+
+	/**
+	 * This method initializes group1
+	 * 
+	 */
+	private void createGroup1() {
+		group1 = new Group(parent, SWT.NONE);
+		group1.setLayout(new GridLayout());
+		group1.setText("Boundary");
+		label3 = new Label(group1, SWT.NONE);
+		label3.setText("Stable Set [ms] :");
+		txtStableSet = new Text(group1, SWT.BORDER);
+		txtStableSet.setText("0");
+		label4 = new Label(group1, SWT.NONE);
+		label4.setText("Repeat After [ms] :");
+		txtRepeatAfter = new Text(group1, SWT.BORDER);
+		txtRepeatAfter.setText("6000");
+		label5 = new Label(group1, SWT.NONE);
+		label5.setText("Duration [ms] :");
+		txtDuration = new Text(group1, SWT.BORDER);
+		txtDuration.setText("5500");
+	}
+
+	/**
+	 * This method initializes group2
+	 * 
+	 */
+	private void createGroup2() {
+		group2 = new Group(parent, SWT.NONE);
+		group2.setLayout(new GridLayout());
+		group2.setText("Report Spec");
+		label6 = new Label(group2, SWT.NONE);
+		label6.setText("Name:");
+		txtRepSpecName = new Text(group2, SWT.BORDER);
+		txtRepSpecName.setText("CURRENT");
+		createGroup3();
+		createGroup4();
+	}
+
+	/**
+	 * This method initializes group3
+	 * 
+	 */
+	private void createGroup3() {
+		group3 = new Group(group2, SWT.NONE);
+		group3.setLayout(new GridLayout());
+		group3.setText("Report if Empty");
+		rbRepIfEmptyY = new Button(group3, SWT.RADIO);
+		rbRepIfEmptyY.setText("Yes");
+		rbRepIfEmptyN = new Button(group3, SWT.RADIO);
+		rbRepIfEmptyN.setText("No");
+		rbRepIfEmptyN.setSelection(true);
+	}
+
+	/**
+	 * This method initializes group4
+	 * 
+	 */
+	private void createGroup4() {
+		group4 = new Group(group2, SWT.NONE);
+		group4.setLayout(new GridLayout());
+		group4.setText("Report only on Change");
+		rbRepOoChangeY = new Button(group4, SWT.RADIO);
+		rbRepOoChangeY.setText("Yes");
+		rbRepOoChangeN = new Button(group4, SWT.RADIO);
+		rbRepOoChangeN.setText("No");
+		rbRepOoChangeN.setSelection(true);
+	}
+
+	/**
+	 * This method initializes group5
+	 * 
+	 */
+	private void createGroup5() {
+		group5 = new Group(parent, SWT.NONE);
+		group5.setLayout(new GridLayout());
+		createGroup6();
+		group5.setText("Output Options");
+		createGroup7();
+		createGroup8();
+		createGroup9();
+		createGroup10();
+	}
+
+	/**
+	 * This method initializes group6
+	 * 
+	 */
+	private void createGroup6() {
+		group6 = new Group(group5, SWT.NONE);
+		group6.setLayout(new GridLayout());
+		group6.setText("Include Tag");
+		rbIncludeTagY = new Button(group6, SWT.RADIO);
+		rbIncludeTagY.setText("Yes");
+		rbIncludeTagN = new Button(group6, SWT.RADIO);
+		rbIncludeTagN.setText("No");
+		rbIncludeTagN.setSelection(true);
+	}
+
+	/**
+	 * This method initializes group7
+	 * 
+	 */
+	private void createGroup7() {
+		group7 = new Group(group5, SWT.NONE);
+		group7.setLayout(new GridLayout());
+		group7.setText("Include EPC");
+		rbIncludeEPCy = new Button(group7, SWT.RADIO);
+		rbIncludeEPCy.setText("Yes");
+		rbIncludeEPCn = new Button(group7, SWT.RADIO);
+		rbIncludeEPCn.setText("No");
+		rbIncludeEPCn.setSelection(true);
+	}
+
+	/**
+	 * This method initializes group8
+	 * 
+	 */
+	private void createGroup8() {
+		group8 = new Group(group5, SWT.NONE);
+		group8.setLayout(new GridLayout());
+		group8.setText("Include RAW Hex");
+		rbIncludeRawHexY = new Button(group8, SWT.RADIO);
+		rbIncludeRawHexY.setText("Yes");
+		rbIncludeRawHexN = new Button(group8, SWT.RADIO);
+		rbIncludeRawHexN.setText("No");
+		rbIncludeRawHexN.setSelection(true);
+	}
+
+	/**
+	 * This method initializes group9
+	 * 
+	 */
+	private void createGroup9() {
+		group9 = new Group(group5, SWT.NONE);
+		group9.setLayout(new GridLayout());
+		group9.setText("Include RAW Decimal");
+		rbIncludeRawDecY = new Button(group9, SWT.RADIO);
+		rbIncludeRawDecY.setText("Yes");
+		rbIncludeRawDecN = new Button(group9, SWT.RADIO);
+		rbIncludeRawDecN.setText("No");
+		rbIncludeRawDecN.setSelection(true);
+	}
+
+	/**
+	 * This method initializes group10
+	 * 
+	 */
+	private void createGroup10() {
+		group10 = new Group(group5, SWT.NONE);
+		group10.setLayout(new GridLayout());
+		group10.setText("Include Tag Count");
+		rbIncludeTagCountY = new Button(group10, SWT.RADIO);
+		rbIncludeTagCountY.setText("Yes");
+		rbIncludeTagCountN = new Button(group10, SWT.RADIO);
+		rbIncludeTagCountN.setText("No");
+		rbIncludeTagCountN.setSelection(true);
+	}
+
+	// @jve:decl-index=0:visual-constraint="324,21"
 
 	/*
 	 * (non-Javadoc)
