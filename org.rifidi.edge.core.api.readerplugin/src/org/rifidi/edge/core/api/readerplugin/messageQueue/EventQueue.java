@@ -10,7 +10,7 @@ import org.rifidi.edge.core.api.readerplugin.messages.Message;
  * @author Andreas Huebner - andreas@pramari.com
  * 
  */
-public interface MessageQueue {
+public interface EventQueue {
 
 	/**
 	 * Get the name of the MessagQueue

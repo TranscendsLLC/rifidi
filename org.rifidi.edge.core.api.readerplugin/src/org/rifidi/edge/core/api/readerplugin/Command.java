@@ -3,7 +3,7 @@ package org.rifidi.edge.core.api.readerplugin;
 import org.rifidi.edge.core.api.readerplugin.commands.CommandConfiguration;
 import org.rifidi.edge.core.api.readerplugin.commands.CommandReturnStatus;
 import org.rifidi.edge.core.api.readerplugin.communication.Connection;
-import org.rifidi.edge.core.api.readerplugin.messageQueue.MessageQueue;
+import org.rifidi.edge.core.api.readerplugin.messageQueue.EventQueue;
 
 /**
  * This is the command Interface defining a common base over all Commands
@@ -29,7 +29,7 @@ public interface Command {
 	 * @return the status of the command
 	 */
 	public CommandReturnStatus start(Connection connection,
-			MessageQueue messageQueue, MessageQueue errorQueue,
+			EventQueue messageQueue, EventQueue errorQueue,
 			CommandConfiguration configuration, long commandID);
 
 	/**
