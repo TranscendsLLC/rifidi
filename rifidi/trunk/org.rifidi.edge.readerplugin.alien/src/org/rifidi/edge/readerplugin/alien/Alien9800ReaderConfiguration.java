@@ -10,8 +10,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.configuration.annotations.JMXMBean;
 import org.rifidi.configuration.annotations.Property;
-import org.rifidi.edge.newcore.exceptions.NoReaderAvailableException;
-import org.rifidi.edge.newcore.readers.ReaderConfiguration;
+import org.rifidi.edge.core.exceptions.NoReaderAvailableException;
+import org.rifidi.edge.core.readers.ReaderConfiguration;
 
 /**
  * @author Jochen Mader - jochen@pramari.com
@@ -53,7 +53,7 @@ public class Alien9800ReaderConfiguration implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.newcore.ReaderConfiguration#aquireReader()
+	 * @see org.rifidi.edge.core.ReaderConfiguration#aquireReader()
 	 */
 	@Override
 	public synchronized Alien9800Reader aquireReader()
@@ -78,7 +78,7 @@ public class Alien9800ReaderConfiguration implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.newcore.ReaderConfiguration#getDescription()
+	 * @see org.rifidi.edge.core.ReaderConfiguration#getDescription()
 	 */
 	@Override
 	public String getDescription() {
@@ -88,7 +88,7 @@ public class Alien9800ReaderConfiguration implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.newcore.ReaderConfiguration#getName()
+	 * @see org.rifidi.edge.core.ReaderConfiguration#getName()
 	 */
 	@Override
 	public String getName() {
@@ -99,7 +99,7 @@ public class Alien9800ReaderConfiguration implements
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.newcore.ReaderConfiguration#releaseReader(java.lang.Object
+	 * org.rifidi.edge.core.ReaderConfiguration#releaseReader(java.lang.Object
 	 * )
 	 */
 	@Override
