@@ -124,6 +124,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 								.get(factoryID)) {
 							Configuration configuration = factory
 									.getEmptyConfiguration(factoryID);
+							configuration.setServiceID(serConf.serviceID);
 							for (String prop : serConf.properties.keySet()) {
 								Attribute attribute = new Attribute(prop,
 										serConf.properties.get(prop));

@@ -22,7 +22,7 @@ import org.osgi.framework.BundleContext;
  * @author Jochen Mader - jochen@pramari.com
  * 
  */
-public abstract class AbstractMultiServiceFactory implements ServiceFactory {
+public abstract class AbstractMultiServiceFactory implements ServiceFactory{
 	/** Logger for this class. */
 	private static final Log logger = LogFactory
 			.getLog(AbstractMultiServiceFactory.class);
@@ -70,9 +70,11 @@ public abstract class AbstractMultiServiceFactory implements ServiceFactory {
 					configuration.getFactoryID()).newInstance();
 			counter++;
 			((DefaultConfigurationImpl) configuration).setTarget(instance);
-			((DefaultConfigurationImpl) configuration)
-					.setServiceID(configuration.getFactoryID() + "-"
-							+ Integer.toString(counter));
+			if(configuration.getServiceID()==null){
+				((DefaultConfigurationImpl) configuration)
+				.setServiceID(configuration.getFactoryID() + "-"
+						+ Integer.toString(counter));	
+			}
 			Dictionary<String, String> params = new Hashtable<String, String>();
 			params.put("type", getFactoryIDToClass().get(
 					configuration.getFactoryID()).getName());

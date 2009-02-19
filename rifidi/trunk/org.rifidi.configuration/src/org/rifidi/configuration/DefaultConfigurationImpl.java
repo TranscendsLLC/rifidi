@@ -53,12 +53,14 @@ public class DefaultConfigurationImpl implements Configuration, Cloneable {
 	protected String factoryID;
 	/** Attributes set while we diddn't have an actual instance. */
 	private Set<Attribute> attributes;
+	/** ID of this configuration. */
+	private String id;
 
 	/**
 	 * Protected constructor used by clone.
 	 */
 	protected DefaultConfigurationImpl() {
-		attributes=new HashSet<Attribute>();
+		attributes = new HashSet<Attribute>();
 	}
 
 	/**
@@ -103,6 +105,10 @@ public class DefaultConfigurationImpl implements Configuration, Cloneable {
 	 *            the serviceID to set
 	 */
 	public void setServiceID(String serviceID) {
+		// TODO: check if the id ha already been set?
+		if (target instanceof RifidiService) {
+			((RifidiService) target).setID(serviceID);
+		}
 		this.serviceID = serviceID;
 	}
 
@@ -116,6 +122,10 @@ public class DefaultConfigurationImpl implements Configuration, Cloneable {
 					+ " expected " + clazz);
 		}
 		this.target = target;
+		// TODO: check if the id ha already been set?
+		if (target instanceof RifidiService) {
+			((RifidiService) target).setID(serviceID);
+		}
 		for (Attribute attribute : attributes) {
 			try {
 				setAttribute(attribute);
@@ -388,7 +398,7 @@ public class DefaultConfigurationImpl implements Configuration, Cloneable {
 		config.nameToOperation = new HashMap<String, Operation>(nameToOperation);
 		config.nameToProperty = new HashMap<String, Property>(nameToProperty);
 		config.factoryID = factoryID;
-		config.clazz=clazz;
+		config.clazz = clazz;
 		return config;
 	}
 }
