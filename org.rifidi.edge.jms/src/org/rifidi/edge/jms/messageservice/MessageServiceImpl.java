@@ -10,7 +10,7 @@ import javax.jms.JMSException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.rifidi.edge.core.api.readerplugin.messageQueue.MessageQueue;
+import org.rifidi.edge.core.api.readerplugin.messageQueue.EventQueue;
 import org.rifidi.edge.core.messageQueue.service.MessageService;
 import org.rifidi.edge.core.messageQueue.service.MessageServiceListener;
 import org.rifidi.edge.jms.messagequeue.MessageQueueImpl;
@@ -31,7 +31,7 @@ public class MessageServiceImpl implements MessageService {
 
 	private BrokerWrapper brokerWrapper;
 	private Connection connection;
-	private ArrayList<MessageQueue> registry = new ArrayList<MessageQueue>();
+	private ArrayList<EventQueue> registry = new ArrayList<EventQueue>();
 	private int numQueues = 0;
 
 	private Set<MessageServiceListener> listeners = new HashSet<MessageServiceListener>();
@@ -57,7 +57,7 @@ public class MessageServiceImpl implements MessageService {
 	 * (java.lang.String)
 	 */
 	@Override
-	public synchronized MessageQueue createMessageQueue(String quename) {
+	public synchronized EventQueue createMessageQueue(String quename) {
 		MessageQueueImpl messageQueue = new MessageQueueImpl(quename);
 		try {
 			if (numQueues == 0) {
@@ -92,7 +92,7 @@ public class MessageServiceImpl implements MessageService {
 	 * (org.rifidi.edge.core.messageQueue.MessageQueue)
 	 */
 	@Override
-	public synchronized void destroyMessageQueue(MessageQueue messageQueue) {
+	public synchronized void destroyMessageQueue(EventQueue messageQueue) {
 		MessageQueueImpl mq = ((MessageQueueImpl) messageQueue);
 		try {
 			mq.stopMessageQueue();
@@ -136,8 +136,8 @@ public class MessageServiceImpl implements MessageService {
 	 * ()
 	 */
 	@Override
-	public List<MessageQueue> getAllMessageQueues() {
-		ArrayList<MessageQueue> retVal = new ArrayList<MessageQueue>(registry);
+	public List<EventQueue> getAllMessageQueues() {
+		ArrayList<EventQueue> retVal = new ArrayList<EventQueue>(registry);
 		return retVal;
 	}
 
@@ -171,7 +171,7 @@ public class MessageServiceImpl implements MessageService {
 	 * @param event
 	 *            the new MessageQueue created
 	 */
-	private void fireAddEvent(MessageQueue event) {
+	private void fireAddEvent(EventQueue event) {
 		for (MessageServiceListener listener : listeners) {
 			listener.addEvent(event);
 		}
@@ -183,7 +183,7 @@ public class MessageServiceImpl implements MessageService {
 	 * @param event
 	 *            the MessageQueue deleted
 	 */
-	private void fireRemoveEvent(MessageQueue event) {
+	private void fireRemoveEvent(EventQueue event) {
 		for (MessageServiceListener listener : listeners) {
 			listener.removeEvent(event);
 		}

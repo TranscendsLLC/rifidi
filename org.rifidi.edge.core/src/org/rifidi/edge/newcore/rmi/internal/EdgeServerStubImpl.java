@@ -4,8 +4,11 @@
 package org.rifidi.edge.newcore.rmi.internal;
 
 import java.rmi.RemoteException;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.management.AttributeList;
@@ -38,6 +41,329 @@ public class EdgeServerStubImpl implements EdgeServerStub {
 	/** The logger for this class */
 	private static Log logger = LogFactory.getLog(EdgeServerStubImpl.class);
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.newcore.rmi.EdgeServerStub#createCommandConfiguraion(
+	 * java.lang.String, javax.management.AttributeList)
+	 */
+	@Override
+	public String createCommandConfiguraion(
+			String commandConfigurationFactoryID,
+			AttributeList commandConfigurationProperties)
+			throws RemoteException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.newcore.rmi.EdgeServerStub#createReaderConfiguration(
+	 * java.lang.String, javax.management.AttributeList)
+	 */
+	@Override
+	public String createReaderConfiguration(
+			String readerConfigurationFactoryID,
+			AttributeList readerConfigurationProperties) throws RemoteException {
+
+		AbstractReaderConfigurationFactory<?> readerConfigFactory = this.readerConfigDAO
+				.getReaderConfigurationFactory(readerConfigurationFactoryID);
+		Configuration readerConfiguration = readerConfigFactory
+				.getEmptyConfiguration(readerConfigurationFactoryID);
+		readerConfiguration.setAttributes(readerConfigurationProperties);
+		readerConfigFactory.createService(readerConfiguration);
+
+		// TODO: How to get ID of configuration?
+		return null;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.newcore.rmi.EdgeServerStub#deleteCommandFactory(java.
+	 * lang.String)
+	 */
+	@Override
+	public void deleteCommandFactory(String commandConfigurationName)
+			throws RemoteException {
+		// TODO Auto-generated method stub
+
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.newcore.rmi.EdgeServerStub#deleteReaderConfiguration(
+	 * java.lang.String)
+	 */
+	@Override
+	public void deleteReaderConfiguration(String readerConfigurationID)
+			throws RemoteException {
+		// TODO Auto-generated method stub
+
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seeorg.rifidi.edge.newcore.rmi.EdgeServerStub#
+	 * getAllReaderConfigurationProperties()
+	 */
+	@Override
+	public Map<String, AttributeList> getAllReaderConfigurationProperties()
+			throws RemoteException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seeorg.rifidi.edge.newcore.rmi.EdgeServerStub#
+	 * getAvailableCommandConfigurationFactories()
+	 */
+	@Override
+	public Map<String, String> getAvailableCommandConfigurationFactories()
+			throws RemoteException {
+		// return set
+		Map<String, String> retVal = new HashMap<String, String>();
+
+		// step through each reader config factory
+		Iterator<AbstractReaderConfigurationFactory<?>> readerConfigFacIter = readerConfigDAO
+				.getCurrentReaderConfigurationFactories().iterator();
+		while (readerConfigFacIter.hasNext()) {
+			AbstractReaderConfigurationFactory<?> RCF = readerConfigFacIter
+					.next();
+
+			// get the CommandConfigurationFactoryFactory ID that is associated
+			// with this reader config factory
+			String commandConfigFacFacID = RCF
+					.getCommandConfigurationFactoryFactoryID();
+
+			AbstractCommandConfigurationFactory accff = commandConfigDAO
+					.getCommandConfigurationFactoryFactory(commandConfigFacFacID);
+
+			if (accff != null) {
+				// add an entry in retval for each commandConfigurationFactory
+				// in the CommandConfigurationFactoryFactory
+				for (String ID : accff.getFactoryIDs()) {
+					retVal.put(ID, RCF.getFactoryIDs().get(0));
+				}
+			} else {
+				logger.warn("There is no "
+						+ "CommandConfigurationFactoryFactory with ID: "
+						+ commandConfigFacFacID);
+			}
+		}
+		return retVal;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.newcore.rmi.EdgeServerStub#getAvailableCommandConfigurations
+	 * (java.lang.String)
+	 */
+	@Override
+	public Map<String, String> getAvailableCommandConfigurations(
+			String readerConfigurationFactoryID) throws RemoteException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seeorg.rifidi.edge.newcore.rmi.EdgeServerStub#
+	 * getAvailableReaderConfigurationFactories()
+	 */
+	@Override
+	public Set<String> getAvailableReaderConfigurationFactories()
+			throws RemoteException {
+
+		Iterator<AbstractReaderConfigurationFactory<?>> iter = readerConfigDAO
+				.getCurrentReaderConfigurationFactories().iterator();
+		Set<String> retVal = new HashSet<String>();
+		AbstractReaderConfigurationFactory<?> current = null;
+
+		// step through each ReaderConfigurationFactory and add the ID to the
+		// set
+		while (iter.hasNext()) {
+			current = iter.next();
+			retVal.add(current.getFactoryIDs().get(0));
+		}
+		return retVal;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.newcore.rmi.EdgeServerStub#getAvailableReaderConfigurations
+	 * ()
+	 */
+	@Override
+	public Map<String, String> getAvailableReaderConfigurations()
+			throws RemoteException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.newcore.rmi.EdgeServerStub#getCommandConfiguration(java
+	 * .lang.String)
+	 */
+	@Override
+	public AttributeList getCommandConfiguration(String commandConfigurationID)
+			throws RemoteException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.newcore.rmi.EdgeServerStub#getCommandConfigurationDescription
+	 * (java.lang.String)
+	 */
+	@Override
+	public MBeanInfo getCommandConfigurationDescription(
+			String commandConfigurationFactoryID) throws RemoteException {
+		AbstractCommandConfigurationFactory factory = commandConfigDAO
+				.getCommandConfigurationFactoryFactoryFromConfigFactoryID(commandConfigurationFactoryID);
+
+		if (factory != null) {
+			Configuration emptyConfig = factory
+					.getEmptyConfiguration(commandConfigurationFactoryID);
+			return emptyConfig.getMBeanInfo();
+		} else
+			return null;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.newcore.rmi.EdgeServerStub#getReaderConfigurationDescription
+	 * (java.lang.String)
+	 */
+	@Override
+	public MBeanInfo getReaderConfigurationDescription(
+			String readerConfigurationFactoryID) throws RemoteException {
+		AbstractReaderConfigurationFactory<?> readerConfigFactory = readerConfigDAO
+				.getReaderConfigurationFactory(readerConfigurationFactoryID);
+		return readerConfigFactory.getEmptyConfiguration(
+				readerConfigurationFactoryID).getMBeanInfo();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.newcore.rmi.EdgeServerStub#getReaderConfigurationProperties
+	 * (java.lang.String)
+	 */
+	@Override
+	public AttributeList getReaderConfigurationProperties(
+			String readerConfigurationID) throws RemoteException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.rifidi.edge.newcore.rmi.EdgeServerStub#getReaderSessions()
+	 */
+	@Override
+	public Map<String, List<String>> getReaderSessions() throws RemoteException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.newcore.rmi.EdgeServerStub#setCommandConfigurationProperties
+	 * (java.lang.String, javax.management.AttributeList)
+	 */
+	@Override
+	public AttributeList setCommandConfigurationProperties(
+			String CommandConfigurationID,
+			AttributeList commandConfigurationProperties) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.newcore.rmi.EdgeServerStub#setReaderConfigurationProperties
+	 * (java.lang.String, javax.management.AttributeList)
+	 */
+	@Override
+	public AttributeList setReaderConfigurationProperties(
+			String ReaderConfigurationID,
+			AttributeList readerConfigurationProperties) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.newcore.rmi.EdgeServerStub#setSessionReaderConfiguration
+	 * (java.lang.String, java.lang.String, java.lang.String)
+	 */
+	@Override
+	public boolean setSessionReaderConfiguration(String readerSessionID,
+			String readerConfigurationID, String commandConfigurationID)
+			throws RemoteException {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.newcore.rmi.EdgeServerStub#startReaderSession(java.lang
+	 * .String, java.lang.String)
+	 */
+	@Override
+	public String startReaderSession(String readerConfigurationName,
+			String commandFactoryName) throws RemoteException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.newcore.rmi.EdgeServerStub#stopReaderSession(java.lang
+	 * .String)
+	 */
+	@Override
+	public void stopReaderSession(String readerSessionName)
+			throws RemoteException {
+		// TODO Auto-generated method stub
+
+	}
+
 	/**
 	 * Used by spring to set the CommandConfigurationDAO
 	 * 
@@ -64,193 +390,6 @@ public class EdgeServerStubImpl implements EdgeServerStub {
 	 */
 	public void setReaderSessionDAO(ReaderSessionDAO readerSessionManagement) {
 		this.readerSessionDAO = readerSessionManagement;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.rifidi.edge.newcore.rmi.EdgeServerStub#createCommandFactory(javax
-	 * .management.AttributeList)
-	 */
-	@Override
-	public String createCommandFactory(AttributeList commandConfiguration)
-			throws RemoteException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.rifidi.edge.newcore.rmi.EdgeServerStub#createReaderConfiguration(
-	 * javax.management.AttributeList)
-	 */
-	@Override
-	public String createReaderConfiguration(AttributeList readerConfiguration)
-			throws RemoteException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.rifidi.edge.newcore.rmi.EdgeServerStub#deleteCommandFactory(java.
-	 * lang.String)
-	 */
-	@Override
-	public void deleteCommandFactory(String commandConfigurationName)
-			throws RemoteException {
-		// TODO Auto-generated method stub
-
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.rifidi.edge.newcore.rmi.EdgeServerStub#deleteReaderConfiguration(
-	 * java.lang.String)
-	 */
-	@Override
-	public void deleteReaderConfiguration(String readerConfigurationName)
-			throws RemoteException {
-		// TODO Auto-generated method stub
-
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.rifidi.edge.newcore.rmi.EdgeServerStub#getAvailableCommandFactories
-	 * (java. lang.String)
-	 */
-	@Override
-	public Set<String> getAvailableCommandFactories(String readerPluginName)
-			throws RemoteException {
-		// return set
-		Set<String> retVal = new HashSet<String>();
-
-		// Find readerPlugin that matches readerPluginName
-		AbstractReaderConfigurationFactory<?> readerConfigFactory = readerConfigDAO
-				.getReaderConfigurationFactory(readerPluginName);
-
-		// if we did not find any readerConfigFactories that matched, return
-		if (readerConfigFactory == null) {
-			logger.debug("No Reader Configuration Factory found with id: "
-					+ readerPluginName);
-			return retVal;
-		}
-
-		// Find CommandConfigFactory that has the ID from the
-		// readerConfiguFactory
-		Iterator<AbstractCommandConfigurationFactory> commandIter = commandConfigDAO
-				.getCurrentCommandConfigurationFactories().iterator();
-
-		AbstractCommandConfigurationFactory currentCommandFactory = null;
-		while (commandIter.hasNext()) {
-			currentCommandFactory = commandIter.next();
-//			if (currentCommandFactory.getID().equals(
-//					readerConfigFactory.getCommandConfigurationFactoryName())) {
-//				break;
-//			}
-
-		}
-
-		// if we did not find any commandConfigFactories that matched, return
-		if (currentCommandFactory == null) {
-			logger.debug("No Command Configuration Factory found with id: "
-					+ readerConfigFactory.getCommandConfigurationFactoryName());
-			return retVal;
-		}
-		retVal.addAll(currentCommandFactory.getFactoryIDs());
-		return retVal;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.rifidi.edge.newcore.rmi.EdgeServerStub#getAvailableReaderPlugins()
-	 */
-	@Override
-	public Set<String> getAvailableReaderPlugins() throws RemoteException {
-		Iterator<AbstractReaderConfigurationFactory<?>> iter = readerConfigDAO
-				.getCurrentReaderConfigurationFactories().iterator();
-		Set<String> retVal = new HashSet<String>();
-		AbstractReaderConfigurationFactory<?> current = null;
-		while (iter.hasNext()) {
-			current = iter.next();
-			retVal.add(current.getFactoryIDs().get(0));
-		}
-		return retVal;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.rifidi.edge.newcore.rmi.EdgeServerStub#getCommandConfigurationDescription
-	 * (java.lang.String)
-	 */
-	@Override
-	public MBeanInfo getCommandConfigurationDescription(
-			String commandFactoryName) throws RemoteException {
-		Configuration commandConfig = commandConfigDAO
-				.getDefaultCommandConfiguration(commandFactoryName);
-		if (commandConfig != null) {
-			return commandConfig.getMBeanInfo();
-		} else
-			return null;
-
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.rifidi.edge.newcore.rmi.EdgeServerStub#getReaderConfigurationDescription
-	 * (java.lang.String)
-	 */
-	@Override
-	public MBeanInfo getReaderConfigurationDescription(String readerPluginName)
-			throws RemoteException {
-		AbstractReaderConfigurationFactory<?> readerConfigFactory = readerConfigDAO
-				.getReaderConfigurationFactory(readerPluginName);
-		return readerConfigFactory.getEmptyConfiguration(readerPluginName)
-				.getMBeanInfo();
-
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.rifidi.edge.newcore.rmi.EdgeServerStub#startReaderSession(java.lang
-	 * .String, java.lang.String)
-	 */
-	@Override
-	public String startReaderSession(String readerConfigurationName,
-			String commandFactoryName) throws RemoteException {
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.rifidi.edge.newcore.rmi.EdgeServerStub#stopReaderSession(java.lang
-	 * .String)
-	 */
-	@Override
-	public void stopReaderSession(String readerSessionName)
-			throws RemoteException {
-		// TODO Auto-generated method stub
-
 	}
 
 }

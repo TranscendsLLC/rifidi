@@ -5,9 +5,8 @@ package org.rifidi.edge.newcore.internal;
 
 import java.util.Set;
 
-import org.rifidi.configuration.Configuration;
 import org.rifidi.edge.newcore.commands.AbstractCommandConfigurationFactory;
-import org.rifidi.edge.newcore.commands.CommandConfiguration;
+import org.rifidi.edge.newcore.commands.CommandFactory;
 
 /**
  * A Data Access Object that keeps track of CommandConfiguraiton services and
@@ -19,23 +18,33 @@ import org.rifidi.edge.newcore.commands.CommandConfiguration;
 public interface CommandConfigurationDAO {
 
 	/**
-	 * @param commandConfigurationFactoryID
+	 * @param commandConfigurationFactoryFactoryID
 	 * @return the CommandConfigurationFactory service with the given ID
 	 */
-	public AbstractCommandConfigurationFactory getCommandConfigurationFactory(
+	public AbstractCommandConfigurationFactory getCommandConfigurationFactoryFactory(
+			String commandConfigurationFactoryFactoryID);
+
+	/**
+	 * @param commandConfigurationFactoryFactoryID
+	 * @return the CommandConfigurationFactory service which provides a
+	 *         commandConfigurationFactory service with the givenID
+	 */
+	public AbstractCommandConfigurationFactory getCommandConfigurationFactoryFactoryFromConfigFactoryID(
 			String commandConfigurationFactoryID);
 
 	/**
-	 * @return all current CommandConfigurationFactory services
+	 * @return all current CommandConfigurationFactoryFactory services
 	 */
-	public Set<AbstractCommandConfigurationFactory> getCurrentCommandConfigurationFactories();
+	public Set<AbstractCommandConfigurationFactory> getCurrentCommandConfigurationFactoryFactories();
 
 	/**
-	 * @param commandFactoryID
-	 *            the ID of the commandFactory
-	 * @return a default Command Configuration for the given ID
+	 * 
+	 * @param commandConfigurationFactory
+	 *            ID
+	 * @return The CommandConfigurationFactory with the givenID or null if it
+	 *         does not exist
 	 */
-	public Configuration getDefaultCommandConfiguration(
-			String commandFactoryID);
+	public CommandFactory<?> getCommandConfigurationFactory(
+			String commandConfigurationFactoryID);
 
 }
