@@ -69,9 +69,5 @@ public class Alien9800CommandConfigurationFactory extends
 	public List<String> getFactoryIDs() {
 		return new ArrayList<String>(factoryIdToClass.keySet());
 	}
-
-	@Override
-	public String getID() {
-		return uniqueID;
-	}
+	
 }

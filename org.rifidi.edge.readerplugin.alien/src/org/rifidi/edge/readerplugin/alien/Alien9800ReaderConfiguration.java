@@ -28,6 +28,8 @@ public class Alien9800ReaderConfiguration implements
 	private static final String description = "The Alien 9800 is an IP based RFID Reader using a telnet interface.";
 	/** Name of the reader. */
 	private static final String name = "Alien9800";
+	/** ID of the service. */
+	private String id;
 	/** IP address of the reader. */
 	private String ipAddress = "127.0.0.1";
 	/** Port to connect to. */
@@ -97,7 +99,8 @@ public class Alien9800ReaderConfiguration implements
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.newcore.ReaderConfiguration#releaseReader(java.lang.Object)
+	 * org.rifidi.edge.newcore.ReaderConfiguration#releaseReader(java.lang.Object
+	 * )
 	 */
 	@Override
 	public void releaseReader(Object reader) {
@@ -203,6 +206,26 @@ public class Alien9800ReaderConfiguration implements
 	 */
 	public void setMaxNumConnectionAttempts(Integer maxNumConnectionAttempts) {
 		this.maxNumConnectionAttempts = maxNumConnectionAttempts;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.rifidi.configuration.RifidiService#getID()
+	 */
+	@Override
+	public String getID() {
+		return id;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.rifidi.configuration.RifidiService#setID(java.lang.String)
+	 */
+	@Override
+	public void setID(String id) {
+		this.id = id;
 	}
 
 }
