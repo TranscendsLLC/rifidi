@@ -3,6 +3,7 @@
  */
 package org.rifidi.edge.newcore.readers;
 
+import org.rifidi.configuration.RifidiService;
 import org.rifidi.edge.newcore.exceptions.NoReaderAvailableException;
 
 /**
@@ -18,7 +19,7 @@ import org.rifidi.edge.newcore.exceptions.NoReaderAvailableException;
  * @author Jochen Mader - jochen@pramari.com
  * 
  */
-public interface ReaderConfiguration<T extends Reader> {
+public interface ReaderConfiguration<T extends Reader> extends RifidiService{
 	/**
 	 * Try to aquire an instance of the reader.
 	 * 

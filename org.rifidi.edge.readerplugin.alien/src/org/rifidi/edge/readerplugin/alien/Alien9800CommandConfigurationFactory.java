@@ -69,5 +69,13 @@ public class Alien9800CommandConfigurationFactory extends
 	public List<String> getFactoryIDs() {
 		return new ArrayList<String>(factoryIdToClass.keySet());
 	}
+
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.newcore.commands.AbstractCommandConfigurationFactory#getID()
+	 */
+	@Override
+	public String getID() {
+		return uniqueID;
+	}
 	
 }

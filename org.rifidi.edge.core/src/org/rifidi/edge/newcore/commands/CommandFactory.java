@@ -3,11 +3,13 @@
  */
 package org.rifidi.edge.newcore.commands;
 
+import org.rifidi.configuration.RifidiService;
+
 /**
  * @author Jochen Mader - jochen@pramari.com
  *
  */
-public interface CommandFactory<T extends Command> {
+public interface CommandFactory<T extends Command> extends RifidiService{
 	/**
 	 * Get a new instance of the command.
 	 * @return
