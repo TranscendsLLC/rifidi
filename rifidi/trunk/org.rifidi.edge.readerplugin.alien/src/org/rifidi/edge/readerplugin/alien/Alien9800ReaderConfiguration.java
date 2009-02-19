@@ -137,8 +137,8 @@ public class Alien9800ReaderConfiguration implements
 	 * @param port
 	 *            the port to set
 	 */
-	public void setPort(Integer port) {
-		this.port = port;
+	public void setPort(String port) {
+		this.port = Integer.parseInt(port);
 	}
 
 	/**

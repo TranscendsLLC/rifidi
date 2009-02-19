@@ -9,7 +9,7 @@ import org.rifidi.edge.newcore.commands.CommandFactory;
 import org.rifidi.edge.newcore.exceptions.NonExistentCommandFactoryException;
 import org.rifidi.edge.newcore.exceptions.NonExistentReaderConfigurationException;
 import org.rifidi.edge.newcore.readers.ReaderConfiguration;
-import org.rifidi.edge.newcore.readersession.ReaderSessionManagement;
+import org.rifidi.edge.newcore.readersession.ReaderSessionDAO;
 
 /**
  * @author Jochen Mader - jochen@pramari.com
@@ -17,15 +17,15 @@ import org.rifidi.edge.newcore.readersession.ReaderSessionManagement;
  */
 public class RifidiEdgeServerCommands implements CommandProvider {
 
-	private ReaderSessionManagement readerSessionManagement;
+	private ReaderSessionDAO readerSessionDAO;
 
 	/**
-	 * @param readerSessionManagement
-	 *            the readerSessionManagement to set
+	 * @param readerSessionDAO
+	 *            the readerSessionDAO to set
 	 */
 	public void setReaderSessionManagement(
-			ReaderSessionManagement readerSessionManagement) {
-		this.readerSessionManagement = readerSessionManagement;
+			ReaderSessionDAO readerSessionDAO) {
+		this.readerSessionDAO = readerSessionDAO;
 	}
 
 	/**
@@ -35,7 +35,7 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 	 * @return
 	 */
 	public Object _readers(CommandInterpreter intp) {
-//		for (ReaderConfiguration<?> reader : readerSessionManagement
+//		for (ReaderConfiguration<?> reader : readerSessionDAO
 //				.getAvailableReaderConfigurations()) {
 //			intp.println(reader.getName() + ": " + reader.getDescription());
 //		}
@@ -49,7 +49,7 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 	 * @return
 	 */
 	public Object _commands(CommandInterpreter intp) {
-//		for (CommandFactory<?> command : readerSessionManagement
+//		for (CommandFactory<?> command : readerSessionDAO
 //				.getAvailableCommandFactories()) {
 //			intp.println(command.getCommandName() + ": "
 //					+ command.getCommandDescription());
@@ -73,7 +73,7 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 		ReaderConfiguration<?> reader = null;
 		CommandFactory<?> command = null;
 		try {
-			readerSessionManagement.createAndStartReaderSession(readerName, commandName);
+			readerSessionDAO.createAndStartReaderSession(readerName, commandName);
 		} catch (NonExistentCommandFactoryException e) {
 			intp.println("Reader "+readerName+" doesn't exist.");
 		} catch (NonExistentReaderConfigurationException e) {

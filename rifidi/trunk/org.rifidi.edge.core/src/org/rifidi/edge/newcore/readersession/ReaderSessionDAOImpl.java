@@ -27,7 +27,7 @@ import org.rifidi.edge.newcore.readers.ReaderConfiguration;
  * @author Jochen Mader - jochen@pramari.com
  * 
  */
-public class ReaderSessionManagementImpl implements ReaderSessionManagement {
+public class ReaderSessionDAOImpl implements ReaderSessionDAO {
 
 	/** Reference to the bundle context. */
 	private BundleContext context;
@@ -43,15 +43,17 @@ public class ReaderSessionManagementImpl implements ReaderSessionManagement {
 	private Map<String, List<ReaderSession>> readerSessionByReaderConfig;
 	/** Currently available reader sessions by command factories. */
 	private Map<String, List<ReaderSession>> readerSessionByCommandFactory;
-
+	/** Currently created reader sessions. */
+	private Map<String, ReaderSession> readerSessionByName;
 	/**
 	 * Constructor.
 	 */
-	public ReaderSessionManagementImpl() {
+	public ReaderSessionDAOImpl() {
 		readerConfigurationsByName = new HashMap<String, ReaderConfiguration<?>>();
 		commandFactoriesByName = new HashMap<String, CommandFactory<?>>();
 		readerSessionByCommandFactory = new HashMap<String, List<ReaderSession>>();
 		readerSessionByReaderConfig = new HashMap<String, List<ReaderSession>>();
+		readerSessionByName = new HashMap<String, ReaderSession>();
 		executor = new ThreadPoolExecutor(5, 15, 200, TimeUnit.MILLISECONDS,
 				new LinkedBlockingQueue<Runnable>());
 	}
@@ -103,6 +105,15 @@ public class ReaderSessionManagementImpl implements ReaderSessionManagement {
 			// TODO: store future
 			Future<?> future = executor.submit(session);
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.newcore.readersession.ReaderSessionDAO#getReaderSessions()
+	 */
+	@Override
+	public Set<String> getReaderSessions() {
+		
+		return null;
 	}
 
 	/**
