@@ -3,7 +3,7 @@ package org.rifidi.edge.core.commands;
 import java.util.concurrent.Callable;
 
 import org.rifidi.configuration.RifidiService;
-import org.rifidi.edge.core.api.readerplugin.messageQueue.EventQueue;
+import org.rifidi.edge.core.events.EventQueue;
 import org.rifidi.edge.core.readers.Reader;
 
 /**

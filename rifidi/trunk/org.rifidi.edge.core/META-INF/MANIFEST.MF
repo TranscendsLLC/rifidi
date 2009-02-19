@@ -7,25 +7,12 @@ Bundle-Vendor: Pramari
 Bundle-ActivationPolicy: lazy
 Eclipse-BuddyPolicy: global
 Import-Package: org.apache.commons.logging;version="1.0.4",
- org.osgi.framework;version="1.4.0",
- org.rifidi.edge.core.api.exceptions;version="[1.0.0,2.0.0)",
- org.rifidi.edge.core.api.readerplugin;version="[1.0.0,2.0.0)",
- org.rifidi.edge.core.api.readerplugin.commands;version="[1.0.0,2.0.0)",
- org.rifidi.edge.core.api.readerplugin.communication;version="[1.0.0,2.0.0)",
- org.rifidi.edge.core.api.readerplugin.messageQueue;version="[1.0.0,2.0.0)",
- org.rifidi.edge.core.api.readerplugin.messages;version="[1.0.0,2.0.0)",
- org.rifidi.edge.core.api.readerplugin.messages.impl;version="[1.0.0,2.0.0)",
- org.rifidi.edge.core.api.readerplugin.property;version="[1.0.0,2.0.0)",
- org.rifidi.edge.core.api.readerplugin.service;version="[1.0.0,2.0.0)",
- org.rifidi.edge.core.api.readerplugin.xml;version="[1.0.0,2.0.0)",
- org.rifidi.edge.core.api.readersession.enums;version="[1.0.0,2.0.0)"
+ org.osgi.framework;version="1.4.0"
 Export-Package: org.rifidi.edge.core.commands,
  org.rifidi.edge.core.exceptions,
  org.rifidi.edge.core.readers,
  org.rifidi.edge.core.readers.impl,
  org.rifidi.edge.core.readersession
-Require-Bundle: org.rifidi.edge.services;bundle-version="1.1.0",
- org.rifidi.edge.common.utilities;bundle-version="1.1.0",
- org.rifidi.configuration;bundle-version="1.0.0";visibility:=reexport
+Require-Bundle: org.rifidi.configuration;bundle-version="1.0.0";visibility:=reexport
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-Description: This bundle contains several core services needed by the edge server, such as ReaderSession service
