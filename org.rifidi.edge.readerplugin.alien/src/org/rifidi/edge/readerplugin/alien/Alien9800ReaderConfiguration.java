@@ -42,6 +42,37 @@ public class Alien9800ReaderConfiguration implements
 	private Long reconnectionInterval = 500l;
 	/** Number of connection attempts before a connection goes into fail state. */
 	private Integer maxNumConnectionAttempts = 10;
+	
+	private String heartbeat_address = "127.0.0.1";
+	private String antenna_sequence = "0";
+	private int max_antenna = 4;
+	private String readername;
+	private String readernumber;
+	private String reader_type;
+	private String reader_version;
+	private int rf_attenuation=0;
+	private int external_input= 0;
+	private long uptime;
+	private int tag_type= 31;
+	private int external_output=0;
+	private String invert_external_input = "off";
+	private String invert_external_output= "off";
+	private int command_port;
+	private String DHCP;
+	private String DNS;
+	private String gateway;
+	private int heartbeat_count= 0;
+	private int heartbeat_port= 0;
+	private int heartbeat_time = 0;
+	/**ip address of reader*/
+	private String ipaddress;
+	private String mac_address;
+	private String netmask;
+	private String network_timeout;
+	private String time;
+	private String time_server;
+	private String time_zone;
+	
 
 	/**
 	 * Constructor.
