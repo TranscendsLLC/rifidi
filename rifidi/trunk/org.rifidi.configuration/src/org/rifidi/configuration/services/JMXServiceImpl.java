@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.rifidi.configuration;
+package org.rifidi.configuration.services;
 
 import java.lang.management.ManagementFactory;
 import java.lang.reflect.Method;
@@ -20,6 +20,7 @@ import javax.management.ObjectName;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.rifidi.configuration.Configuration;
 import org.rifidi.configuration.annotations.Operation;
 import org.rifidi.configuration.annotations.Property;
 import org.rifidi.configuration.mbeans.ConfigurationControlMBean;

@@ -5,7 +5,7 @@ package org.rifidi.configuration.mbeans;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.rifidi.configuration.ConfigurationService;
+import org.rifidi.configuration.services.ConfigurationService;
 
 /**
  * @author Jochen Mader - jochen@pramari.com

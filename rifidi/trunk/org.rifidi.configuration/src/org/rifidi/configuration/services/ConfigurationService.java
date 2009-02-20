@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.rifidi.configuration;
+package org.rifidi.configuration.services;
 
 /**
  * Services implementing this interface are supposed to provide a link between

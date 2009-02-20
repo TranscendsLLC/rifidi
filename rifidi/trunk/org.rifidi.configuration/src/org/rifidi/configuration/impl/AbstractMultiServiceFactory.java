@@ -1,14 +1,18 @@
 /**
  * 
  */
-package org.rifidi.configuration;
+package org.rifidi.configuration.impl;
 
 import java.util.Dictionary;
+import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.osgi.framework.BundleContext;
+import org.rifidi.configuration.Configuration;
+import org.rifidi.configuration.ServiceFactory;
 
 /**
  * Base class for a service factory. This class is meant for scenarios where
@@ -20,17 +24,16 @@ import org.osgi.framework.BundleContext;
  * @author Jochen Mader - jochen@pramari.com
  * 
  */
-public abstract class AbstractServiceFactory<T extends RifidiService>
-		implements ServiceFactory {
+public abstract class AbstractMultiServiceFactory implements ServiceFactory{
 	/** Logger for this class. */
 	private static final Log logger = LogFactory
-			.getLog(AbstractServiceFactory.class);
+			.getLog(AbstractMultiServiceFactory.class);
 	/** Counter for service ids. */
 	private int counter = 0;
 	/** Context of the registering bundle. */
 	private BundleContext context;
-	/** Reference to the configuration */
-	private DefaultConfigurationImpl configuration = null;
+	/** Chache for configs that have already benn processed. */
+	private Map<String, DefaultConfigurationImpl> factoryIDToConfig;
 
 	/*
 	 * (non-Javadoc)
@@ -39,14 +42,20 @@ public abstract class AbstractServiceFactory<T extends RifidiService>
 	 * org.rifidi.configuration.ServiceFactory#getEmptyConfiguration(java.lang
 	 * .String)
 	 */
+	/**
+	 * 
+	 */
+	public AbstractMultiServiceFactory() {
+		factoryIDToConfig = new HashMap<String, DefaultConfigurationImpl>();
+	}
+
 	@Override
 	public Configuration getEmptyConfiguration(String factoryID) {
-		assert (getFactoryIDs().get(0).equals(factoryID));
-		if (configuration == null) {
-			configuration = new DefaultConfigurationImpl(getClazz(),
-					getFactoryIDs().get(0));
+		if (!factoryIDToConfig.containsKey(factoryID)) {
+			factoryIDToConfig.put(factoryID, new DefaultConfigurationImpl(
+					getFactoryIDToClass().get(factoryID), factoryID));
 		}
-		return (Configuration) configuration.clone();
+		return (Configuration) factoryIDToConfig.get(factoryID).clone();
 	}
 
 	/*
@@ -58,37 +67,47 @@ public abstract class AbstractServiceFactory<T extends RifidiService>
 	 */
 	@Override
 	public synchronized void createService(Configuration configuration) {
-		assert (getFactoryIDs().get(0) != null);
 		try {
-			T instance = getClazz().newInstance();
+			Object instance = getFactoryIDToClass().get(
+					configuration.getFactoryID()).newInstance();
 			counter++;
 			((DefaultConfigurationImpl) configuration).setTarget(instance);
-			if (configuration.getServiceID() == null) {
-				// TODO: baaad, we are depending on a concrete implementation!!!
+			if(configuration.getServiceID()==null){
 				((DefaultConfigurationImpl) configuration)
-						.setServiceID(getFactoryIDs().get(0) + "-"
-								+ Integer.toString(counter));
+				.setServiceID(configuration.getFactoryID() + "-"
+						+ Integer.toString(counter));	
 			}
 			Dictionary<String, String> params = new Hashtable<String, String>();
-			params.put("type", getClazz().getName());
+			params.put("type", getFactoryIDToClass().get(
+					configuration.getFactoryID()).getName());
 			context.registerService(Configuration.class.getName(),
 					configuration, params);
-			customConfig(instance);
+			customInit(instance);
 		} catch (InstantiationException e) {
-			logger.error(getClazz() + " cannot be instantiated. " + e);
+			logger.error(getFactoryIDToClass()
+					.get(configuration.getFactoryID())
+					+ " cannot be instantiated. " + e);
 		} catch (IllegalAccessException e) {
-			logger.error(getClazz() + " cannot be instantiated. " + e);
+			logger.error(getFactoryIDToClass()
+					.get(configuration.getFactoryID())
+					+ " cannot be instantiated. " + e);
 		}
 	}
 
-	public abstract void customConfig(T instance);
+	/**
+	 * Do custom initialization here.
+	 * 
+	 * @param instance
+	 */
+	public abstract void customInit(Object instance);
 
 	/**
-	 * Get the class this factory constructs.
+	 * A map containing the factoryids as key and the class that the factoryid
+	 * should produce as value.
 	 * 
 	 * @return
 	 */
-	public abstract Class<T> getClazz();
+	public abstract Map<String, Class<?>> getFactoryIDToClass();
 
 	/**
 	 * @param context

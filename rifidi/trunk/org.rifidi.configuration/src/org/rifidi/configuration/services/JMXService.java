@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.rifidi.configuration;
+package org.rifidi.configuration.services;
 
 /**
  * @author Jochen Mader - jochen@pramari.com

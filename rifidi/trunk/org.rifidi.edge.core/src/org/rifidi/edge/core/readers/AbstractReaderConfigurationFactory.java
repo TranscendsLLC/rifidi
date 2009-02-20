@@ -3,7 +3,7 @@
  */
 package org.rifidi.edge.core.readers;
 
-import org.rifidi.configuration.AbstractServiceFactory;
+import org.rifidi.configuration.impl.AbstractServiceFactory;
 
 /**
  * An abstract class for all ReaderConfigurationFactories to extend.

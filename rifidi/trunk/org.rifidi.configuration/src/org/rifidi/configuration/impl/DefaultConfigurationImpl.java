@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.rifidi.configuration;
+package org.rifidi.configuration.impl;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -24,6 +24,8 @@ import javax.management.ReflectionException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.osgi.framework.ServiceRegistration;
+import org.rifidi.configuration.Configuration;
+import org.rifidi.configuration.RifidiService;
 import org.rifidi.configuration.annotations.JMXMBean;
 import org.rifidi.configuration.annotations.Operation;
 import org.rifidi.configuration.annotations.Property;
