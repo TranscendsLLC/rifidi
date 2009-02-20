@@ -16,6 +16,8 @@ import org.rifidi.edge.core.commands.CommandState;
 import org.rifidi.edge.core.readers.Reader;
 
 /**
+ * Base implementation of a reader. Extend for your own readers.
+ * 
  * @author Jochen Mader - jochen@pramari.com
  * 
  */

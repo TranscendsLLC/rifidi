@@ -9,8 +9,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.rifidi.edge.core.commands.AbstractCommandConfigurationFactory;
-import org.rifidi.edge.core.commands.CommandFactory;
-import org.rifidi.edge.readerplugin.alien.commands.AlienGetTagListCommandFactory;
+import org.rifidi.edge.core.commands.CommandConfiguration;
+import org.rifidi.edge.readerplugin.alien.commands.AlienGetTagListCommandConfiguration;
 
 /**
  * @author Jochen Mader - jochen@pramari.com
@@ -30,7 +30,7 @@ public class Alien9800CommandConfigurationFactory extends
 		super();
 		factoryIdToClass = new HashMap<String, Class<?>>();
 		factoryIdToClass.put("Alien9800-GetTagList",
-				AlienGetTagListCommandFactory.class);
+				AlienGetTagListCommandConfiguration.class);
 	}
 
 	/*
@@ -42,8 +42,8 @@ public class Alien9800CommandConfigurationFactory extends
 	 */
 	@Override
 	public void customInit(Object instance) {
-		if (instance instanceof CommandFactory<?>) {
-			getContext().registerService(CommandFactory.class.getName(),
+		if (instance instanceof CommandConfiguration<?>) {
+			getContext().registerService(CommandConfiguration.class.getName(),
 					instance, null);
 		}
 	}

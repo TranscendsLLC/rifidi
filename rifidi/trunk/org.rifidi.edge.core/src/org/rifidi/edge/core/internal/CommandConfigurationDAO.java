@@ -6,7 +6,7 @@ package org.rifidi.edge.core.internal;
 import java.util.Set;
 
 import org.rifidi.edge.core.commands.AbstractCommandConfigurationFactory;
-import org.rifidi.edge.core.commands.CommandFactory;
+import org.rifidi.edge.core.commands.CommandConfiguration;
 
 /**
  * A Data Access Object that keeps track of CommandConfiguraiton services and
@@ -44,7 +44,7 @@ public interface CommandConfigurationDAO {
 	 * @return The CommandConfigurationFactory with the givenID or null if it
 	 *         does not exist
 	 */
-	public CommandFactory<?> getCommandConfigurationFactory(
+	public CommandConfiguration<?> getCommandConfigurationFactory(
 			String commandConfigurationFactoryID);
 
 }

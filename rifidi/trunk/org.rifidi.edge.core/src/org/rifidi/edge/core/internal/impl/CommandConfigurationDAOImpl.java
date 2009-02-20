@@ -10,7 +10,7 @@ import java.util.Set;
 
 import org.rifidi.configuration.Configuration;
 import org.rifidi.edge.core.commands.AbstractCommandConfigurationFactory;
-import org.rifidi.edge.core.commands.CommandFactory;
+import org.rifidi.edge.core.commands.CommandConfiguration;
 import org.rifidi.edge.core.internal.CommandConfigurationDAO;
 
 /**
@@ -22,7 +22,7 @@ public class CommandConfigurationDAOImpl implements CommandConfigurationDAO {
 	/** The available Command Configuration factory factories */
 	private Set<AbstractCommandConfigurationFactory> commandConfigFactoryFactories;
 	/** The available Command Configuration Factories */
-	private Set<CommandFactory<?>> commandConfigFactories;
+	private Set<CommandConfiguration<?>> commandConfigFactories;
 
 	public CommandConfigurationDAOImpl() {
 		commandConfigFactoryFactories = new HashSet<AbstractCommandConfigurationFactory>();
@@ -83,7 +83,7 @@ public class CommandConfigurationDAOImpl implements CommandConfigurationDAO {
 	 * getCommandConfigurationFactory(java.lang.String)
 	 */
 	@Override
-	public CommandFactory<?> getCommandConfigurationFactory(
+	public CommandConfiguration<?> getCommandConfigurationFactory(
 			String commandConfigurationFactoryID) {
 		return null;
 	}
@@ -96,7 +96,7 @@ public class CommandConfigurationDAOImpl implements CommandConfigurationDAO {
 	 * @param parameters
 	 */
 	public void bindCommandConfigFactory(
-			CommandFactory<?> commandConfigurationFactory,
+			CommandConfiguration<?> commandConfigurationFactory,
 			Dictionary<String, String> parameters) {
 		commandConfigFactories.add(commandConfigurationFactory);
 	}
@@ -110,7 +110,7 @@ public class CommandConfigurationDAOImpl implements CommandConfigurationDAO {
 	 * @param parameters
 	 */
 	public void unbindCommandConfigFactory(
-			CommandFactory<?> commandConfigurationFactory,
+			CommandConfiguration<?> commandConfigurationFactory,
 			Dictionary<String, String> parameters) {
 		commandConfigFactories.remove(commandConfigurationFactory);
 	}
@@ -122,7 +122,7 @@ public class CommandConfigurationDAOImpl implements CommandConfigurationDAO {
 	 * @param factories
 	 *            the initial list of available command configuration factories
 	 */
-	public void setCommandConfigFactories(Set<CommandFactory<?>> factories) {
+	public void setCommandConfigFactories(Set<CommandConfiguration<?>> factories) {
 		commandConfigFactories.addAll(factories);
 	}
 

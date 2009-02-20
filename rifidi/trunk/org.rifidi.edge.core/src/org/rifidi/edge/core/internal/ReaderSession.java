@@ -5,7 +5,7 @@ package org.rifidi.edge.core.internal;
 
 import java.util.concurrent.Callable;
 
-import org.rifidi.edge.core.commands.CommandFactory;
+import org.rifidi.edge.core.commands.CommandConfiguration;
 import org.rifidi.edge.core.events.EventQueue;
 import org.rifidi.edge.core.readers.ReaderConfiguration;
 
@@ -42,12 +42,12 @@ public interface ReaderSession extends Callable<Boolean> {
 	 * 
 	 * @param command
 	 */
-	void setCommmandFactory(CommandFactory<?> command);
+	void setCommmandFactory(CommandConfiguration<?> command);
 
 	/**
 	 * Get the command registered to the session. May be null.
 	 */
-	CommandFactory<?> getCommandFactory();
+	CommandConfiguration<?> getCommandFactory();
 
 	/**
 	 * Stop the current command.
