@@ -7,16 +7,16 @@
                            http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi.xsd">
 
 	<osgi:service id="configurationServiceRegistration" ref="configurationService"
-		interface="org.rifidi.configuration.ConfigurationService" />
-	<bean id="configurationService" class="org.rifidi.configuration.ConfigurationServiceImpl"
+		interface="org.rifidi.configuration.services.ConfigurationService" />
+	<bean id="configurationService" class="org.rifidi.configuration.services.ConfigurationServiceImpl"
 		scope="singleton">
 		<property name="serviceFactories">
 			<ref bean="serviceFactoriesSet" />
 		</property>
 	</bean>
 	<osgi:service id="jmxServiceRegistration" ref="jmxService"
-		interface="org.rifidi.configuration.JMXService" />
-	<bean id="jmxService" class="org.rifidi.configuration.JMXServiceImpl"
+		interface="org.rifidi.configuration.services.JMXService" />
+	<bean id="jmxService" class="org.rifidi.configuration.services.JMXServiceImpl"
 		scope="singleton">
 		<property name="configurations">
 			<ref bean="configurationSet" />

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.rifidi.configuration;
+package org.rifidi.configuration.services;
 
 import java.io.File;
 import java.io.IOException;
@@ -23,6 +23,9 @@ import org.apache.commons.configuration.SubnodeConfiguration;
 import org.apache.commons.configuration.tree.DefaultConfigurationNode;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.rifidi.configuration.Configuration;
+import org.rifidi.configuration.Constants;
+import org.rifidi.configuration.ServiceFactory;
 
 /**
  * @author Jochen Mader - jochen@pramari.com

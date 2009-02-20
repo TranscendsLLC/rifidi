@@ -3,7 +3,7 @@
  */
 package org.rifidi.edge.core.commands;
 
-import org.rifidi.configuration.AbstractMultiServiceFactory;
+import org.rifidi.configuration.impl.AbstractMultiServiceFactory;
 
 /**
  * A base class that all CommandConfigurationFactories should extend. Concrete

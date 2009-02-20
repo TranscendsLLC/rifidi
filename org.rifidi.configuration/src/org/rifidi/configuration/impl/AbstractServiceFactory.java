@@ -1,16 +1,17 @@
 /**
  * 
  */
-package org.rifidi.configuration;
+package org.rifidi.configuration.impl;
 
 import java.util.Dictionary;
-import java.util.HashMap;
 import java.util.Hashtable;
-import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.osgi.framework.BundleContext;
+import org.rifidi.configuration.Configuration;
+import org.rifidi.configuration.RifidiService;
+import org.rifidi.configuration.ServiceFactory;
 
 /**
  * Base class for a service factory. This class is meant for scenarios where
@@ -22,16 +23,17 @@ import org.osgi.framework.BundleContext;
  * @author Jochen Mader - jochen@pramari.com
  * 
  */
-public abstract class AbstractMultiServiceFactory implements ServiceFactory{
+public abstract class AbstractServiceFactory<T extends RifidiService>
+		implements ServiceFactory {
 	/** Logger for this class. */
 	private static final Log logger = LogFactory
-			.getLog(AbstractMultiServiceFactory.class);
+			.getLog(AbstractServiceFactory.class);
 	/** Counter for service ids. */
 	private int counter = 0;
 	/** Context of the registering bundle. */
 	private BundleContext context;
-	/** Chache for configs that have already benn processed. */
-	private Map<String, DefaultConfigurationImpl> factoryIDToConfig;
+	/** Reference to the configuration */
+	private DefaultConfigurationImpl configuration = null;
 
 	/*
 	 * (non-Javadoc)
@@ -40,20 +42,14 @@ public abstract class AbstractMultiServiceFactory implements ServiceFactory{
 	 * org.rifidi.configuration.ServiceFactory#getEmptyConfiguration(java.lang
 	 * .String)
 	 */
-	/**
-	 * 
-	 */
-	public AbstractMultiServiceFactory() {
-		factoryIDToConfig = new HashMap<String, DefaultConfigurationImpl>();
-	}
-
 	@Override
 	public Configuration getEmptyConfiguration(String factoryID) {
-		if (!factoryIDToConfig.containsKey(factoryID)) {
-			factoryIDToConfig.put(factoryID, new DefaultConfigurationImpl(
-					getFactoryIDToClass().get(factoryID), factoryID));
+		assert (getFactoryIDs().get(0).equals(factoryID));
+		if (configuration == null) {
+			configuration = new DefaultConfigurationImpl(getClazz(),
+					getFactoryIDs().get(0));
 		}
-		return (Configuration) factoryIDToConfig.get(factoryID).clone();
+		return (Configuration) configuration.clone();
 	}
 
 	/*
@@ -65,47 +61,37 @@ public abstract class AbstractMultiServiceFactory implements ServiceFactory{
 	 */
 	@Override
 	public synchronized void createService(Configuration configuration) {
+		assert (getFactoryIDs().get(0) != null);
 		try {
-			Object instance = getFactoryIDToClass().get(
-					configuration.getFactoryID()).newInstance();
+			T instance = getClazz().newInstance();
 			counter++;
 			((DefaultConfigurationImpl) configuration).setTarget(instance);
-			if(configuration.getServiceID()==null){
+			if (configuration.getServiceID() == null) {
+				// TODO: baaad, we are depending on a concrete implementation!!!
 				((DefaultConfigurationImpl) configuration)
-				.setServiceID(configuration.getFactoryID() + "-"
-						+ Integer.toString(counter));	
+						.setServiceID(getFactoryIDs().get(0) + "-"
+								+ Integer.toString(counter));
 			}
 			Dictionary<String, String> params = new Hashtable<String, String>();
-			params.put("type", getFactoryIDToClass().get(
-					configuration.getFactoryID()).getName());
+			params.put("type", getClazz().getName());
 			context.registerService(Configuration.class.getName(),
 					configuration, params);
-			customInit(instance);
+			customConfig(instance);
 		} catch (InstantiationException e) {
-			logger.error(getFactoryIDToClass()
-					.get(configuration.getFactoryID())
-					+ " cannot be instantiated. " + e);
+			logger.error(getClazz() + " cannot be instantiated. " + e);
 		} catch (IllegalAccessException e) {
-			logger.error(getFactoryIDToClass()
-					.get(configuration.getFactoryID())
-					+ " cannot be instantiated. " + e);
+			logger.error(getClazz() + " cannot be instantiated. " + e);
 		}
 	}
 
-	/**
-	 * Do custom initialization here.
-	 * 
-	 * @param instance
-	 */
-	public abstract void customInit(Object instance);
+	public abstract void customConfig(T instance);
 
 	/**
-	 * A map containing the factoryids as key and the class that the factoryid
-	 * should produce as value.
+	 * Get the class this factory constructs.
 	 * 
 	 * @return
 	 */
-	public abstract Map<String, Class<?>> getFactoryIDToClass();
+	public abstract Class<T> getClazz();
 
 	/**
 	 * @param context
