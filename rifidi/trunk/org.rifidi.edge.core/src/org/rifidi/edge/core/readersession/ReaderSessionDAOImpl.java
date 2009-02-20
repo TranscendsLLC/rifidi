@@ -138,8 +138,6 @@ public class ReaderSessionDAOImpl implements ReaderSessionDAO {
 	public void bind(ReaderConfiguration<?> readerConfiguration,
 			Dictionary<String, String> parameters) {
 		synchronized (this) {
-			System.out.println(readerConfiguration.getName() + " "
-					+ readerConfiguration.getID());
 			readerConfigurationsById.put(readerConfiguration.getID(),
 					readerConfiguration);
 		}
@@ -180,8 +178,6 @@ public class ReaderSessionDAOImpl implements ReaderSessionDAO {
 			Set<ReaderConfiguration<?>> configurations) {
 		synchronized (this) {
 			for (ReaderConfiguration<?> config : configurations) {
-				System.out.println(config.getName() + " "
-						+ config.getID());
 				readerConfigurationsById.put(config.getID(), config);
 			}
 		}
@@ -196,8 +192,6 @@ public class ReaderSessionDAOImpl implements ReaderSessionDAO {
 	public void bindCommand(CommandConfiguration<?> commandFactory,
 			Dictionary<String, String> parameters) {
 		synchronized (this) {
-			System.out.println(commandFactory.getCommandName() + " "
-					+ commandFactory.getID());
 			commandFactoriesById.put(commandFactory.getID(),
 					commandFactory);
 		}
@@ -237,8 +231,6 @@ public class ReaderSessionDAOImpl implements ReaderSessionDAO {
 	public void setCommandFactories(Set<CommandConfiguration<?>> factories) {
 		synchronized (this) {
 			for (CommandConfiguration<?> factory : factories) {
-				System.out.println(factory.getCommandName() + " "
-						+ factory.getID());
 				commandFactoriesById.put(factory.getID(), factory);
 			}
 		}
