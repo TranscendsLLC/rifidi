@@ -11,11 +11,9 @@ import java.util.TimeZone;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.rifidi.edge.common.utilities.converter.ByteAndHexConvertingUtility;
-import org.rifidi.edge.core.api.readerplugin.messages.impl.EnhancedTagMessage;
-import org.rifidi.edge.core.api.readerplugin.messages.impl.TagMessage;
 import org.rifidi.edge.core.commands.Command;
 import org.rifidi.edge.core.commands.CommandState;
+import org.rifidi.edge.core.tags.TagMessage;
 import org.rifidi.edge.readerplugin.alien.Alien9800Reader;
 
 /**
@@ -160,7 +158,7 @@ public class AlienGetTagListCommand extends Command {
 							.get(Calendar.MONTH), currentDate
 							.get(Calendar.DATE));
 
-					EnhancedTagMessage newTagRead = new EnhancedTagMessage();
+/*					EnhancedTagMessage newTagRead = new EnhancedTagMessage();
 					newTagRead.setId(ByteAndHexConvertingUtility
 							.fromHexString(tagData.trim()));
 					newTagRead.setLastSeenTime(calendar.getTimeInMillis());
@@ -169,7 +167,7 @@ public class AlienGetTagListCommand extends Command {
 
 					newTagRead.setAntennaId(Integer.parseInt(antennaID));
 					// newTagRead.setSignalStrength(Float.parseFloat(signalStrength));
-					retVal.add(newTagRead);
+					retVal.add(newTagRead);*/
 
 				} else {
 //					logger.error("Something isreaders invalid: " + splitString2[0]);
