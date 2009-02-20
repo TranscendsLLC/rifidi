@@ -68,6 +68,40 @@ public class Alien9800Reader extends AbstractReader {
 	/** Get the timezone of the reader. */
 	public static final String GET_TIME_ZONE = ('\1' + "get TimeZone\n");
 	
+	/**
+	 * COMMANDS
+	 */
+	private static final String COMMAND_HEARTBEAT_ADDRESS = "heartbeataddress";
+	private static final String COMMAND_ANTENNA_SEQUENCE = "antennasequence";
+	private static final String COMMAND_MAX_ANTENNA = "maxantenna";
+	private static final String COMMAND_PASSWORD= "password";
+	private static final String COMMAND_READERNAME = "ReaderName";
+	private static final String COMMAND_READERNUMBER = "ReaderNumber";
+	private static final String COMMAND_READER_TYPE = "ReaderType";
+	private static final String COMMAND_READER_VERSION = "ReaderVersion";
+	private static final String COMMAND_RF_ATTENUATION = "RFAttenuation";
+	private static final String COMMAND_EXTERNAL_INPUT= "ExternalInput";
+	private static final String COMMAND_USERNAME = "username";
+	private static final String COMMAND_UPTIME = "Uptime";
+	private static final String COMMAND_TAG_TYPE= "tagtype";
+	private static final String COMMAND_EXTERNAL_OUTPUT = "ExternalOutput";
+	private static final String COMMAND_INVERT_EXTERNAL_INPUT = "InvertExternalInput";
+	private static final String COMMAND_INVERT_EXTERNAL_OUTPUT= "InvertExternalOutput";
+	private static final String COOMMAND_COMMAND_PORT= "CommandPort";
+	private static final String COMMAND_DHCP = "DHCP";
+	private static final String COMMAND_DNS= "DNS";
+	private static final String COMMAND_GATEWAY= "Gateway";
+	private static final String COMMAND_HEARTBEAT_COUNT= "HeartbeatCount";
+	private static final String COMMAND_HEARTBEAT_PORT= "HeartbeatPort";
+	private static final String COMMAND_HEARTBEAT_TIME = "HeartbeatTime";
+	private static final String COMMAND_IPADDRESS= "IPAddress";
+	private static final String COMMAND_MAC_ADDRESS = "MACAddress";
+	private static final String COMMAND_NETMASK = "Netmask";
+	private static final String COMMAND_NETWORK_TIMEOUT= "NetworkTimeout";
+	private static final String COMMAND_TIME= "Time";
+	private static final String COMMAND_TIME_SERVER= "TimeServer";
+	private static final String COMMAND_TIME_ZONE= "TimeZone";
+	
 	/** Thread for reading from the socket. */
 	private Thread readThread;
 	/** Thread for writing to the socket. */
