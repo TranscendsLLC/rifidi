@@ -5,7 +5,7 @@ package org.rifidi.edge.console;
 
 import org.eclipse.osgi.framework.console.CommandInterpreter;
 import org.eclipse.osgi.framework.console.CommandProvider;
-import org.rifidi.edge.core.commands.CommandFactory;
+import org.rifidi.edge.core.commands.CommandConfiguration;
 import org.rifidi.edge.core.exceptions.NonExistentCommandFactoryException;
 import org.rifidi.edge.core.exceptions.NonExistentReaderConfigurationException;
 import org.rifidi.edge.core.readers.ReaderConfiguration;
@@ -49,7 +49,7 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 	 * @return
 	 */
 	public Object _commands(CommandInterpreter intp) {
-//		for (CommandFactory<?> command : readerSessionDAO
+//		for (CommandConfiguration<?> command : readerSessionDAO
 //				.getAvailableCommandFactories()) {
 //			intp.println(command.getCommandName() + ": "
 //					+ command.getCommandDescription());
@@ -71,7 +71,7 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 			return null;
 		}
 		ReaderConfiguration<?> reader = null;
-		CommandFactory<?> command = null;
+		CommandConfiguration<?> command = null;
 		try {
 			readerSessionDAO.createAndStartReaderSession(readerName, commandName);
 		} catch (NonExistentCommandFactoryException e) {

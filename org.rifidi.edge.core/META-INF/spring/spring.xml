@@ -49,7 +49,7 @@
 	</osgi:set>
 
 	<!-- Listener for Command Configurations -->
-	<osgi:set id="commandFactoriesSet" interface="org.rifidi.edge.core.commands.CommandFactory"
+	<osgi:set id="commandFactoriesSet" interface="org.rifidi.edge.core.commands.CommandConfiguration"
 		cardinality="0..N">
 		<osgi:listener ref="readerSessionManagementImpl"
 			bind-method="bindCommand" unbind-method="unbindCommand" />
@@ -75,7 +75,7 @@
 	<!--
 		FIXME: does not actually listen to Reader Configuration Factories
 	-->
-	<osgi:set id="readerFactoryConfigurationSet" interface="org.rifidi.edge.core.commands.CommandFactory"
+	<osgi:set id="readerFactoryConfigurationSet" interface="org.rifidi.edge.core.commands.CommandConfiguration"
 		cardinality="0..N">
 		<osgi:listener ref="readerSessionManagementImpl"
 			bind-method="bindCommand" unbind-method="unbindCommand" />
