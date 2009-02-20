@@ -11,11 +11,13 @@
       <features>
       </features>
       <extraLocations>
-         <location path="${workspace_loc}/org.rifidi.binary/thirdparty"/>
-         <location path="${workspace_loc}/org.rifidi.edge.target/junit"/>
-         <location path="${workspace_loc}/org.rifidi.edge.target/libraries"/>
          <location path="${workspace_loc}/org.rifidi.binary/rifidi"/>
+         <location path="${workspace_loc}/org.rifidi.edge.target/libraries"/>
          <location path="${workspace_loc}/org.rifidi.edge.binary"/>
+         <location path="${workspace_loc}/org.rifidi.edge.target/spring"/>
+         <location path="${workspace_loc}/org.rifidi.edge.target/junit"/>
+         <location path="${workspace_loc}/org.rifidi.edge.target/http"/>
+         <location path="${workspace_loc}/org.rifidi.binary/thirdparty"/>
       </extraLocations>
    </content>
 
