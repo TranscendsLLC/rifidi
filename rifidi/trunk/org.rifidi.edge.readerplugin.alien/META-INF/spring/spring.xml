@@ -6,7 +6,6 @@
 	<bean id="configurationFactory"
 		class="org.rifidi.edge.readerplugin.alien.Alien9800ReaderConfigurationFactory">
 		<property name="context" ref="bundleContext" />
-		<property name="commandConfigurationFactory" ref="commandConfigurationFactory" />
 	</bean>
 	<!--  Create Command Configuration Factory -->
 	<bean id="commandConfigurationFactory"

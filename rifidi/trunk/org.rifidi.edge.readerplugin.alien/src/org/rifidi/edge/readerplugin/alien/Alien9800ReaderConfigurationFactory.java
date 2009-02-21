@@ -54,21 +54,9 @@ public class Alien9800ReaderConfigurationFactory extends
 				instance, null);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.rifidi.edge.core.readers.AbstractReaderConfigurationFactory#getCommandConfigFactory()
-	 */
 	@Override
-	public AbstractCommandConfigurationFactory getCommandConfigFactory() {
-		return commandConfigFactory;
-	}
-
-	/**
-	 * to be called by spring
-	 * @param commandConfigFactory the commandConfigFactory to set
-	 */
-	public void setCommandConfigFactory(
-			Alien9800CommandConfigurationFactory commandConfigFactory) {
-		this.commandConfigFactory = commandConfigFactory;
+	public String getCommandConfigFactoryID() {
+		return Alien9800CommandConfigurationFactory.uniqueID;
 	}
 
 }
