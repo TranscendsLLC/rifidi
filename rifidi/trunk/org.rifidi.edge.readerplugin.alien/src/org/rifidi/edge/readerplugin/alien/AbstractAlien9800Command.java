@@ -10,5 +10,4 @@ import org.rifidi.edge.core.commands.Command;
  * 
  */
 public abstract class AbstractAlien9800Command extends Command {
-
 }
