@@ -24,13 +24,6 @@ public interface ReaderSession extends Callable<Boolean> {
 	void setReaderFactory(ReaderConfiguration<?> readerFactory);
 
 	/**
-	 * Set the eventQueue for outgoing messages.
-	 * 
-	 * @param eventQueue
-	 */
-	void setEventQueue(EventQueue eventQueue);
-
-	/**
 	 * Get the reader factory currently used by the session.
 	 * 
 	 * @return

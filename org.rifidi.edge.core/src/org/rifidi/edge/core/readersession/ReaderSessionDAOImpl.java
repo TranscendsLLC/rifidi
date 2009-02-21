@@ -15,6 +15,8 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import javax.jms.Destination;
+
 import org.osgi.framework.BundleContext;
 import org.rifidi.edge.core.commands.CommandConfiguration;
 import org.rifidi.edge.core.exceptions.NonExistentCommandFactoryException;
@@ -22,15 +24,19 @@ import org.rifidi.edge.core.exceptions.NonExistentReaderConfigurationException;
 import org.rifidi.edge.core.internal.ReaderSession;
 import org.rifidi.edge.core.internal.impl.ReaderSessionImpl;
 import org.rifidi.edge.core.readers.ReaderConfiguration;
+import org.springframework.jms.core.JmsTemplate;
 
 /**
  * @author Jochen Mader - jochen@pramari.com
  * 
  */
 public class ReaderSessionDAOImpl implements ReaderSessionDAO {
-
 	/** Reference to the bundle context. */
 	private BundleContext context;
+	/** Template for jms messages. */
+	private JmsTemplate template;
+	/** Destination for jms messages. */
+	private Destination destination;
 	/** Counter for session ids. */
 	private Integer counter = 0;
 	/** Set of readers that is currently available. */
@@ -84,10 +90,11 @@ public class ReaderSessionDAOImpl implements ReaderSessionDAO {
 						"Tried to use a command that doesn't exist: "
 								+ commandFactoryID);
 			}
-
 			ReaderSessionImpl session = new ReaderSessionImpl();
 			session.setReaderFactory(reader);
 			session.setCommmandFactory(command);
+			session.setDestination(destination);
+			session.setTemplate(template);
 			Dictionary<String, String> params = new Hashtable<String, String>();
 			params.put("id", counter.toString());
 			counter++;
@@ -112,8 +119,7 @@ public class ReaderSessionDAOImpl implements ReaderSessionDAO {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.readersession.ReaderSessionDAO#getReaderSessions
-	 * ()
+	 * org.rifidi.edge.core.readersession.ReaderSessionDAO#getReaderSessions ()
 	 */
 	@Override
 	public Set<String> getReaderSessions() {
@@ -192,8 +198,7 @@ public class ReaderSessionDAOImpl implements ReaderSessionDAO {
 	public void bindCommand(CommandConfiguration<?> commandFactory,
 			Dictionary<String, String> parameters) {
 		synchronized (this) {
-			commandFactoriesById.put(commandFactory.getID(),
-					commandFactory);
+			commandFactoriesById.put(commandFactory.getID(), commandFactory);
 		}
 	}
 
@@ -234,5 +239,21 @@ public class ReaderSessionDAOImpl implements ReaderSessionDAO {
 				commandFactoriesById.put(factory.getID(), factory);
 			}
 		}
+	}
+
+	/**
+	 * @param template
+	 *            the template to set
+	 */
+	public void setTemplate(JmsTemplate template) {
+		this.template = template;
+	}
+
+	/**
+	 * @param destination
+	 *            the destination to set
+	 */
+	public void setDestination(Destination destination) {
+		this.destination = destination;
 	}
 }
