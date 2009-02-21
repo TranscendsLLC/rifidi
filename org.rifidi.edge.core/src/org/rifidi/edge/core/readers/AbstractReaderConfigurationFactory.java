@@ -4,6 +4,7 @@
 package org.rifidi.edge.core.readers;
 
 import org.rifidi.configuration.impl.AbstractServiceFactory;
+import org.rifidi.edge.core.commands.AbstractCommandConfigurationFactory;
 
 /**
  * An abstract class for all ReaderConfigurationFactories to extend.
@@ -18,14 +19,11 @@ public abstract class AbstractReaderConfigurationFactory<T extends ReaderConfigu
 		extends AbstractServiceFactory<T> {
 
 	/**
-	 * CommandConfigurationFactoryFactories need to be tied to a specific reader
-	 * ConfigurationFactory type. This method should return the ID of the
-	 * CommandConfigurationFactoryFactory associated with this
-	 * ReaderConfigurationFactory
+	 * Get the commandConfiguration factory associated with this reader
+	 * configuration
 	 * 
-	 * @return the ID of the CommandConfigurationFactoryFactory associated with
-	 *         this ReaderConfigurationFactory
+	 * @return
 	 */
-	public abstract String getCommandConfigurationFactoryFactoryID();
+	public abstract AbstractCommandConfigurationFactory getCommandConfigFactory();
 
 }

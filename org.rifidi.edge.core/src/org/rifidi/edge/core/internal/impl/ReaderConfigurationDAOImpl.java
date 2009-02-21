@@ -10,6 +10,7 @@ import java.util.Set;
 
 import org.rifidi.edge.core.internal.ReaderConfigurationDAO;
 import org.rifidi.edge.core.readers.AbstractReaderConfigurationFactory;
+import org.rifidi.edge.core.readers.ReaderConfiguration;
 
 /**
  * @author Kyle Neumeier - kyle@pramari.com
@@ -19,12 +20,15 @@ public class ReaderConfigurationDAOImpl implements ReaderConfigurationDAO {
 
 	/** The available reader configuration factories */
 	private Set<AbstractReaderConfigurationFactory<?>> readerConfigFactories;
+	/** The available set of reader configurations */
+	private Set<ReaderConfiguration<?>> readerConfigurations;
 
 	/**
 	 * constructor
 	 */
 	public ReaderConfigurationDAOImpl() {
 		readerConfigFactories = new HashSet<AbstractReaderConfigurationFactory<?>>();
+		readerConfigurations = new HashSet<ReaderConfiguration<?>>();
 	}
 
 	/*
@@ -59,6 +63,31 @@ public class ReaderConfigurationDAOImpl implements ReaderConfigurationDAO {
 	public Set<AbstractReaderConfigurationFactory<?>> getCurrentReaderConfigurationFactories() {
 		return new HashSet<AbstractReaderConfigurationFactory<?>>(
 				readerConfigFactories);
+	}
+
+	@Override
+	public Set<ReaderConfiguration<?>> getCurrentReaderConfigurations() {
+		return new HashSet<ReaderConfiguration<?>>(readerConfigurations);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.core.internal.ReaderConfigurationDAO#getReaderConfiguration
+	 * (java.lang.String)
+	 */
+	@Override
+	public ReaderConfiguration<?> getReaderConfiguration(
+			String readerConfigurationID) {
+		Iterator<ReaderConfiguration<?>> iter = readerConfigurations.iterator();
+		while (iter.hasNext()) {
+			ReaderConfiguration<?> current = iter.next();
+			if (current.getID().equals(readerConfigurationID)) {
+				return current;
+			}
+		}
+		return null;
 	}
 
 	/**
@@ -98,6 +127,44 @@ public class ReaderConfigurationDAOImpl implements ReaderConfigurationDAO {
 	public void setReaderConfigFactories(
 			Set<AbstractReaderConfigurationFactory<?>> factories) {
 		readerConfigFactories.addAll(factories);
+	}
+
+	/**
+	 * Used by spring to bind a new ReaderConfiguration to this service.
+	 * 
+	 * @param readerConfiguration
+	 *            the configuration to bind
+	 * @param parameters
+	 */
+	public void bindReaderConfiguration(
+			ReaderConfiguration<?> readerConfiguration,
+			Dictionary<String, String> parameters) {
+		this.readerConfigurations.add(readerConfiguration);
+	}
+
+	/**
+	 * Used by spring to unbind a disappearing ReaderConfiguration service from
+	 * this service.
+	 * 
+	 * @param readerConfiguration
+	 *            the ReaderConfiguration to unbind
+	 * @param parameters
+	 */
+	public void unbindReaderConfiguration(
+			ReaderConfiguration<?> readerConfiguration,
+			Dictionary<String, String> parameters) {
+		readerConfigurations.remove(readerConfiguration);
+	}
+
+	/**
+	 * Used by spring to give the initial list of reader configurations
+	 * 
+	 * @param configurations
+	 *            the initial list of available reader configurations
+	 */
+	public void setReaderConfigurations(
+			Set<ReaderConfiguration<?>> configurations) {
+		readerConfigurations.addAll(configurations);
 	}
 
 }
