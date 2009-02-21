@@ -7,6 +7,8 @@ import java.util.Map;
 
 import javax.management.DynamicMBean;
 
+import org.osgi.framework.ServiceRegistration;
+
 /**
  * Configurations provide a standard interface for handling services through a
  * configuration/management interface.
@@ -22,13 +24,13 @@ public interface Configuration extends DynamicMBean {
 	 * @return
 	 */
 	String getServiceID();
-	
+
 	/**
 	 * Set the id for the governed service.
 	 * 
 	 */
 	void setServiceID(String id);
-	
+
 	/**
 	 * Get the id of the factory that registered the configuration.
 	 * 
@@ -45,4 +47,7 @@ public interface Configuration extends DynamicMBean {
 	 * Destroy the service and remove it from the registry.
 	 */
 	void destroy();
+
+	/** Set the OSGi service registration for this object */
+	void setServiceRegistration(ServiceRegistration registration);
 }

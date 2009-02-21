@@ -6,6 +6,7 @@ package org.rifidi.edge.readerplugin.alien;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.rifidi.edge.core.commands.AbstractCommandConfigurationFactory;
 import org.rifidi.edge.core.readers.AbstractReaderConfigurationFactory;
 import org.rifidi.edge.core.readers.ReaderConfiguration;
 
@@ -15,7 +16,10 @@ import org.rifidi.edge.core.readers.ReaderConfiguration;
  */
 public class Alien9800ReaderConfigurationFactory extends
 		AbstractReaderConfigurationFactory<Alien9800ReaderConfiguration> {
-
+	
+	/** The ComandConfigurationFactory for this reader */
+	Alien9800CommandConfigurationFactory commandConfigFactory;
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -50,9 +54,21 @@ public class Alien9800ReaderConfigurationFactory extends
 				instance, null);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.readers.AbstractReaderConfigurationFactory#getCommandConfigFactory()
+	 */
 	@Override
-	public String getCommandConfigurationFactoryFactoryID() {
-		return Alien9800CommandConfigurationFactory.uniqueID;
+	public AbstractCommandConfigurationFactory getCommandConfigFactory() {
+		return commandConfigFactory;
+	}
+
+	/**
+	 * to be called by spring
+	 * @param commandConfigFactory the commandConfigFactory to set
+	 */
+	public void setCommandConfigFactory(
+			Alien9800CommandConfigurationFactory commandConfigFactory) {
+		this.commandConfigFactory = commandConfigFactory;
 	}
 
 }

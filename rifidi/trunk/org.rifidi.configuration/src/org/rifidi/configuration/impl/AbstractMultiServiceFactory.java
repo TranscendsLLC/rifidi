@@ -24,7 +24,7 @@ import org.rifidi.configuration.ServiceFactory;
  * @author Jochen Mader - jochen@pramari.com
  * 
  */
-public abstract class AbstractMultiServiceFactory implements ServiceFactory{
+public abstract class AbstractMultiServiceFactory implements ServiceFactory {
 	/** Logger for this class. */
 	private static final Log logger = LogFactory
 			.getLog(AbstractMultiServiceFactory.class);
@@ -72,16 +72,16 @@ public abstract class AbstractMultiServiceFactory implements ServiceFactory{
 					configuration.getFactoryID()).newInstance();
 			counter++;
 			((DefaultConfigurationImpl) configuration).setTarget(instance);
-			if(configuration.getServiceID()==null){
+			if (configuration.getServiceID() == null) {
 				((DefaultConfigurationImpl) configuration)
-				.setServiceID(configuration.getFactoryID() + "-"
-						+ Integer.toString(counter));	
+						.setServiceID(configuration.getFactoryID() + "-"
+								+ Integer.toString(counter));
 			}
 			Dictionary<String, String> params = new Hashtable<String, String>();
 			params.put("type", getFactoryIDToClass().get(
 					configuration.getFactoryID()).getName());
-			context.registerService(Configuration.class.getName(),
-					configuration, params);
+			configuration.setServiceRegistration(context.registerService(
+					Configuration.class.getName(), configuration, params));
 			customInit(instance);
 		} catch (InstantiationException e) {
 			logger.error(getFactoryIDToClass()

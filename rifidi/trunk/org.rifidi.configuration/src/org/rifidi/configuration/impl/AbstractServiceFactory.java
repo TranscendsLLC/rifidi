@@ -74,8 +74,8 @@ public abstract class AbstractServiceFactory<T extends RifidiService>
 			}
 			Dictionary<String, String> params = new Hashtable<String, String>();
 			params.put("type", getClazz().getName());
-			context.registerService(Configuration.class.getName(),
-					configuration, params);
+			configuration.setServiceRegistration(context.registerService(Configuration.class.getName(),
+					configuration, params));
 			customConfig(instance);
 		} catch (InstantiationException e) {
 			logger.error(getClazz() + " cannot be instantiated. " + e);

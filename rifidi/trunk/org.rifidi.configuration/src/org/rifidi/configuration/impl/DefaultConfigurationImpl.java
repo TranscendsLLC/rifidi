@@ -403,4 +403,10 @@ public class DefaultConfigurationImpl implements Configuration, Cloneable {
 		config.clazz = clazz;
 		return config;
 	}
+
+	@Override
+	public void setServiceRegistration(ServiceRegistration registration) {
+		// TODO Auto-generated method stub
+		
+	}
 }
