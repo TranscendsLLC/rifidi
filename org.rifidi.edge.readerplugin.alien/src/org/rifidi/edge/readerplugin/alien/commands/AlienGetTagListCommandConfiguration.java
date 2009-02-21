@@ -27,7 +27,8 @@ public class AlienGetTagListCommandConfiguration implements
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.commands.CommandConfiguration#getCommandDescription()
+	 * org.rifidi.edge.core.commands.CommandConfiguration#getCommandDescription
+	 * ()
 	 */
 	@Override
 	public String getCommandDescription() {

@@ -9,12 +9,19 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.TimeZone;
 
+import javax.jms.JMSException;
+import javax.jms.Message;
+import javax.jms.Session;
+import javax.jms.TextMessage;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.commands.Command;
 import org.rifidi.edge.core.commands.CommandState;
 import org.rifidi.edge.core.tags.TagMessage;
+import org.rifidi.edge.core.utilities.ByteAndHexConvertingUtility;
 import org.rifidi.edge.readerplugin.alien.Alien9800Reader;
+import org.springframework.jms.core.MessageCreator;
 
 /**
  * @author Jochen Mader - jochen@pramari.com
@@ -108,14 +115,18 @@ public class AlienGetTagListCommand extends Command {
 			command = Alien9800Reader.TAG_LIST;
 			logger.debug("Sending command: " + command);
 			getReader().sendMessage(command);
-			String tag_msg = (String) getReader().receiveMessage();
+			final String tag_msg = (String) getReader().receiveMessage();
 			logger.debug("received: " + tag_msg);
-
-			List<TagMessage> tagList = this.parseString(tag_msg);
-
-			for (TagMessage m : tagList) {
-//				System.out.println("Message: " + new String(m.getId()));
-				// getMessageQueue().addMessage(m);
+			for (String m : parseString(tag_msg)) {
+				final String text = m;
+				template.send(destination, new MessageCreator() {
+					public Message createMessage(Session session)
+							throws JMSException {
+						logger.info("Sending message: " + text);
+						TextMessage message = session.createTextMessage(text);
+						return message;
+					}
+				});
 			}
 
 			try {
@@ -137,10 +148,10 @@ public class AlienGetTagListCommand extends Command {
 	 * @param input
 	 * @return
 	 */
-	private List<TagMessage> parseString(String input) {
+	private List<String> parseString(String input) {
 		String[] splitString = input.split("\n");
 
-		List<TagMessage> retVal = new ArrayList<TagMessage>();
+		List<String> retVal = new ArrayList<String>();
 
 		try {
 			for (String s : splitString) {
@@ -157,17 +168,11 @@ public class AlienGetTagListCommand extends Command {
 					calendar.set(currentDate.get(Calendar.YEAR), currentDate
 							.get(Calendar.MONTH), currentDate
 							.get(Calendar.DATE));
-
-/*					EnhancedTagMessage newTagRead = new EnhancedTagMessage();
-					newTagRead.setId(ByteAndHexConvertingUtility
+					
+					String message= new String(ByteAndHexConvertingUtility
 							.fromHexString(tagData.trim()));
-					newTagRead.setLastSeenTime(calendar.getTimeInMillis());
-
-					// newTagRead.setVelocity(Float.parseFloat(velocity));
-
-					newTagRead.setAntennaId(Integer.parseInt(antennaID));
-					// newTagRead.setSignalStrength(Float.parseFloat(signalStrength));
-					retVal.add(newTagRead);*/
+					message += " "+calendar.getTimeInMillis()+" "+Integer.parseInt(antennaID);
+					retVal.add(message);
 
 				} else {
 //					logger.error("Something isreaders invalid: " + splitString2[0]);

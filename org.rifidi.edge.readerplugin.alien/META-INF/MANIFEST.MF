@@ -6,7 +6,8 @@ Bundle-Version: 1.1.5
 Bundle-Activator: org.rifidi.edge.readerplugin.alien.Activator
 Bundle-Vendor: Pramari, LLC
 Bundle-ActivationPolicy: lazy
-Import-Package: org.apache.commons.logging;version="1.0.4",
+Import-Package: javax.jms;version="1.1.0",
+ org.apache.commons.logging;version="1.0.4",
  org.osgi.framework;version="1.3.0",
  org.rifidi.edge.core.commands,
  org.rifidi.edge.core.exceptions,
@@ -14,7 +15,8 @@ Import-Package: org.apache.commons.logging;version="1.0.4",
  org.rifidi.edge.core.readers.impl,
  org.rifidi.edge.core.readersession,
  org.rifidi.edge.core.tags,
- org.rifidi.edge.core.utilities
+ org.rifidi.edge.core.utilities,
+ org.springframework.jms.core;version="2.5.5"
 Export-Package: org.rifidi.edge.readerplugin.alien,
  org.rifidi.edge.readerplugin.alien.commands,
  org.rifidi.edge.readerplugin.alien.commands.internal,
