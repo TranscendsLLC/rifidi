@@ -19,5 +19,10 @@ import org.rifidi.configuration.impl.AbstractMultiServiceFactory;
  */
 public abstract class AbstractCommandConfigurationFactory extends
 		AbstractMultiServiceFactory {
-	public abstract String getID(); 
+	/**
+	 * Get the ID of the configuration.
+	 * 
+	 * @return
+	 */
+	public abstract String getID();
 }

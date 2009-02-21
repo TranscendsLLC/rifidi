@@ -7,17 +7,19 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import javax.jms.Destination;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.osgi.framework.ServiceRegistration;
 import org.rifidi.edge.core.commands.Command;
 import org.rifidi.edge.core.commands.CommandConfiguration;
 import org.rifidi.edge.core.commands.CommandState;
-import org.rifidi.edge.core.events.EventQueue;
 import org.rifidi.edge.core.exceptions.NoReaderAvailableException;
 import org.rifidi.edge.core.internal.ReaderSession;
 import org.rifidi.edge.core.readers.Reader;
 import org.rifidi.edge.core.readers.ReaderConfiguration;
+import org.springframework.jms.core.JmsTemplate;
 
 /**
  * @author Jochen Mader - jochen@pramari.com
@@ -37,12 +39,14 @@ public class ReaderSessionImpl implements ReaderSession {
 	private AtomicBoolean running;
 	/** Service registration for the service. */
 	private ServiceRegistration registration;
-	/** Message queue for outgoing messages. */
-	private EventQueue eventQueue;
 	/** Currently executing command. */
 	private Command command;
 	/** Set to true if someone attempted to kill the command. */
 	private AtomicBoolean dying;
+	/** Spring JMS template for easy sending of JMS-Messages. */
+	private JmsTemplate template;
+	/** Destination for JMS-Messages. */
+	private Destination destination;
 
 	/**
 	 * Constructor.
@@ -51,6 +55,22 @@ public class ReaderSessionImpl implements ReaderSession {
 		running = new AtomicBoolean(false);
 		dying = new AtomicBoolean(false);
 		logger.debug("Reader session created.");
+	}
+
+	/**
+	 * @param template
+	 *            the template to set
+	 */
+	public void setTemplate(JmsTemplate template) {
+		this.template = template;
+	}
+
+	/**
+	 * @param destination
+	 *            the destination to set
+	 */
+	public void setDestination(Destination destination) {
+		this.destination = destination;
 	}
 
 	/**
@@ -106,8 +126,7 @@ public class ReaderSessionImpl implements ReaderSession {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.rifidi.edge.core.internal.ReaderSession#setCommmandFactory(org
+	 * @see org.rifidi.edge.core.internal.ReaderSession#setCommmandFactory(org
 	 * .rifidi.edge.newcore.commands.CommandFactory)
 	 */
 	@Override
@@ -133,24 +152,8 @@ public class ReaderSessionImpl implements ReaderSession {
 		this.factory = readerFactory;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.rifidi.edge.core.internal.ReaderSession#setMessageQueue(org.rifidi
-	 * .edge.core.api.readerplugin.messageQueue.MessageQueue)
-	 */
-	@Override
-	public void setEventQueue(EventQueue eventQueue) {
-		assert (!running.get());
-		assert (eventQueue != null);
-		logger.debug("Setting message queue: " + eventQueue);
-		this.eventQueue = eventQueue;
-	}
-
 	private boolean canStart() {
-		return commandFactory != null && factory != null
-				&& eventQueue == null;
+		return commandFactory != null && factory != null;
 	}
 
 	/*
@@ -171,8 +174,8 @@ public class ReaderSessionImpl implements ReaderSession {
 					Reader reader = factory.aquireReader();
 					command = commandFactory.getCommand();
 					command.setReader(reader);
-					command.setEventQueue(null);
-
+					command.setDestination(destination);
+					command.setTemplate(template);
 					Future<CommandState> future = reader.execute(command);
 					CommandState state = future.get();
 					switch (state) {
