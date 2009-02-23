@@ -11,9 +11,10 @@
       <features>
       </features>
       <extraLocations>
-         <location path="${workspace_loc}/org.rifidi.edge.target/libraries"/>
-         <location path="${workspace_loc}/org.rifidi.edge.target/spring"/>
          <location path="${workspace_loc}/org.rifidi.edge.target/http"/>
+         <location path="${workspace_loc}/org.rifidi.edge.target/esper"/>
+         <location path="${workspace_loc}/org.rifidi.edge.target/spring"/>
+         <location path="${workspace_loc}/org.rifidi.edge.target/libraries"/>
       </extraLocations>
    </content>
 
