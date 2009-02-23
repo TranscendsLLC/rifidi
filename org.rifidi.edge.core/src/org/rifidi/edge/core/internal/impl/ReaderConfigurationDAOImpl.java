@@ -8,6 +8,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.internal.ReaderConfigurationDAO;
 import org.rifidi.edge.core.readers.AbstractReaderConfigurationFactory;
 import org.rifidi.edge.core.readers.ReaderConfiguration;
@@ -22,6 +24,8 @@ public class ReaderConfigurationDAOImpl implements ReaderConfigurationDAO {
 	private Set<AbstractReaderConfigurationFactory<?>> readerConfigFactories;
 	/** The available set of reader configurations */
 	private Set<ReaderConfiguration<?>> readerConfigurations;
+	/** The logger for this class */
+	private Log logger = LogFactory.getLog(ReaderConfigurationDAOImpl.class);
 
 	/**
 	 * constructor
@@ -100,6 +104,8 @@ public class ReaderConfigurationDAOImpl implements ReaderConfigurationDAO {
 	public void bindReaderConfigFactory(
 			AbstractReaderConfigurationFactory<?> readerConfigurationFactory,
 			Dictionary<String, String> parameters) {
+		logger.debug("Reader Cofiguration Factory Bound:"
+				+ readerConfigurationFactory.getFactoryIDs().get(0));
 		readerConfigFactories.add(readerConfigurationFactory);
 	}
 
@@ -114,6 +120,8 @@ public class ReaderConfigurationDAOImpl implements ReaderConfigurationDAO {
 	public void unbindReaderConfigFactory(
 			AbstractReaderConfigurationFactory<?> readerConfigurationFactory,
 			Dictionary<String, String> parameters) {
+		logger.debug("Reader Cofiguration Factory Removed:"
+				+ readerConfigurationFactory.getFactoryIDs().get(0));
 		readerConfigFactories.remove(readerConfigurationFactory);
 	}
 
@@ -126,6 +134,12 @@ public class ReaderConfigurationDAOImpl implements ReaderConfigurationDAO {
 	 */
 	public void setReaderConfigFactories(
 			Set<AbstractReaderConfigurationFactory<?>> factories) {
+		Iterator<AbstractReaderConfigurationFactory<?>> iter = factories
+				.iterator();
+		while (iter.hasNext()) {
+			logger.debug("New Reader Cofiguration Factory Added:"
+					+ iter.next().getFactoryIDs().get(0));
+		}
 		readerConfigFactories.addAll(factories);
 	}
 
@@ -139,6 +153,7 @@ public class ReaderConfigurationDAOImpl implements ReaderConfigurationDAO {
 	public void bindReaderConfiguration(
 			ReaderConfiguration<?> readerConfiguration,
 			Dictionary<String, String> parameters) {
+		logger.debug("New Cofiguration Added:" + readerConfiguration.getID());
 		this.readerConfigurations.add(readerConfiguration);
 	}
 
@@ -153,6 +168,7 @@ public class ReaderConfigurationDAOImpl implements ReaderConfigurationDAO {
 	public void unbindReaderConfiguration(
 			ReaderConfiguration<?> readerConfiguration,
 			Dictionary<String, String> parameters) {
+		logger.debug("Configuraiton Unbound:" + readerConfiguration.getID());
 		readerConfigurations.remove(readerConfiguration);
 	}
 
@@ -162,8 +178,12 @@ public class ReaderConfigurationDAOImpl implements ReaderConfigurationDAO {
 	 * @param configurations
 	 *            the initial list of available reader configurations
 	 */
-	public void setReaderConfigurations(
+	public void setReaderConfiguration(
 			Set<ReaderConfiguration<?>> configurations) {
+		Iterator<ReaderConfiguration<?>> configs = configurations.iterator();
+		while (configs.hasNext()) {
+			logger.debug("New Cofiguration Added:" + configs.next().getID());
+		}
 		readerConfigurations.addAll(configurations);
 	}
 

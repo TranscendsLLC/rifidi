@@ -2,7 +2,6 @@
  * 
  */
 package org.rifidi.edge.core.internal.impl;
-
 import java.util.Dictionary;
 import java.util.HashSet;
 import java.util.Iterator;
