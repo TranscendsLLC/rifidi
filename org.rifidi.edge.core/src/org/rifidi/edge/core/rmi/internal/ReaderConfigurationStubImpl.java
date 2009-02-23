@@ -22,7 +22,7 @@ import org.rifidi.configuration.Configuration;
 import org.rifidi.edge.core.internal.ConfigurationDAO;
 import org.rifidi.edge.core.internal.ReaderConfigurationDAO;
 import org.rifidi.edge.core.readers.AbstractReaderConfigurationFactory;
-import org.rifidi.edge.core.readers.ReaderConfiguration;
+import org.rifidi.edge.core.readers.AbstractReaderConfiguration;
 import org.rifidi.edge.core.rmi.ReaderConfigurationStub;
 
 /**
@@ -81,8 +81,17 @@ public class ReaderConfigurationStubImpl implements ReaderConfigurationStub {
 			throws RemoteException {
 		Configuration config = configurationDAO
 				.getConfiguration(readerConfigurationID);
+		AbstractReaderConfiguration<?> readerConfig = readerConfigDAO
+				.getReaderConfiguration(readerConfigurationID);
 		if (config != null) {
 			config.destroy();
+		} else {
+			logger.warn("No configuraion found with ID: "
+					+ readerConfigurationID);
+		}
+		
+		if (readerConfig != null) {
+			readerConfig.destroy();
 		} else {
 			logger.warn("No reader configuraion found with ID: "
 					+ readerConfigurationID);
@@ -102,11 +111,11 @@ public class ReaderConfigurationStubImpl implements ReaderConfigurationStub {
 		Map<String, AttributeList> retVal = new HashMap<String, AttributeList>();
 
 		// get all reader configurations
-		Set<ReaderConfiguration<?>> configurations = this.readerConfigDAO
+		Set<AbstractReaderConfiguration<?>> configurations = this.readerConfigDAO
 				.getCurrentReaderConfigurations();
-		Iterator<ReaderConfiguration<?>> iter = configurations.iterator();
+		Iterator<AbstractReaderConfiguration<?>> iter = configurations.iterator();
 		while (iter.hasNext()) {
-			ReaderConfiguration<?> current = iter.next();
+			AbstractReaderConfiguration<?> current = iter.next();
 			// get the ID of the reader configuration
 			String serviceID = current.getID();
 			// get the configuration object associated with the reader config
@@ -170,12 +179,12 @@ public class ReaderConfigurationStubImpl implements ReaderConfigurationStub {
 		Map<String, String> retVal = new HashMap<String, String>();
 
 		// Get all ReaderConfigurations
-		Set<ReaderConfiguration<?>> configurations = readerConfigDAO
+		Set<AbstractReaderConfiguration<?>> configurations = readerConfigDAO
 				.getCurrentReaderConfigurations();
-		Iterator<ReaderConfiguration<?>> iter = configurations.iterator();
+		Iterator<AbstractReaderConfiguration<?>> iter = configurations.iterator();
 		while (iter.hasNext()) {
 
-			ReaderConfiguration<?> readerConfig = iter.next();
+			AbstractReaderConfiguration<?> readerConfig = iter.next();
 			// get the ID of the reader configuration
 			String configID = readerConfig.getID();
 

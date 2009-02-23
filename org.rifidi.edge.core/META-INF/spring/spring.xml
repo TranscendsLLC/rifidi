@@ -57,7 +57,7 @@
 
 	<!-- Listener for Reader Configurations -->
 	<osgi:set id="readerConfigurationsSet"
-		interface="org.rifidi.edge.core.readers.ReaderConfiguration"
+		interface="org.rifidi.edge.core.readers.AbstractReaderConfiguration"
 		cardinality="0..N">
 		<osgi:listener ref="readerSessionManagementImpl"
 			bind-method="bind" unbind-method="unbind" />

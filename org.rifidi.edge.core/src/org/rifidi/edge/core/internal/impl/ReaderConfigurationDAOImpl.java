@@ -12,7 +12,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.internal.ReaderConfigurationDAO;
 import org.rifidi.edge.core.readers.AbstractReaderConfigurationFactory;
-import org.rifidi.edge.core.readers.ReaderConfiguration;
+import org.rifidi.edge.core.readers.AbstractReaderConfiguration;
 
 /**
  * @author Kyle Neumeier - kyle@pramari.com
@@ -23,7 +23,7 @@ public class ReaderConfigurationDAOImpl implements ReaderConfigurationDAO {
 	/** The available reader configuration factories */
 	private Set<AbstractReaderConfigurationFactory<?>> readerConfigFactories;
 	/** The available set of reader configurations */
-	private Set<ReaderConfiguration<?>> readerConfigurations;
+	private Set<AbstractReaderConfiguration<?>> abstractReaderConfigurations;
 	/** The logger for this class */
 	private Log logger = LogFactory.getLog(ReaderConfigurationDAOImpl.class);
 
@@ -32,7 +32,7 @@ public class ReaderConfigurationDAOImpl implements ReaderConfigurationDAO {
 	 */
 	public ReaderConfigurationDAOImpl() {
 		readerConfigFactories = new HashSet<AbstractReaderConfigurationFactory<?>>();
-		readerConfigurations = new HashSet<ReaderConfiguration<?>>();
+		abstractReaderConfigurations = new HashSet<AbstractReaderConfiguration<?>>();
 	}
 
 	/*
@@ -70,8 +70,8 @@ public class ReaderConfigurationDAOImpl implements ReaderConfigurationDAO {
 	}
 
 	@Override
-	public Set<ReaderConfiguration<?>> getCurrentReaderConfigurations() {
-		return new HashSet<ReaderConfiguration<?>>(readerConfigurations);
+	public Set<AbstractReaderConfiguration<?>> getCurrentReaderConfigurations() {
+		return new HashSet<AbstractReaderConfiguration<?>>(abstractReaderConfigurations);
 	}
 
 	/*
@@ -82,11 +82,11 @@ public class ReaderConfigurationDAOImpl implements ReaderConfigurationDAO {
 	 * (java.lang.String)
 	 */
 	@Override
-	public ReaderConfiguration<?> getReaderConfiguration(
+	public AbstractReaderConfiguration<?> getReaderConfiguration(
 			String readerConfigurationID) {
-		Iterator<ReaderConfiguration<?>> iter = readerConfigurations.iterator();
+		Iterator<AbstractReaderConfiguration<?>> iter = abstractReaderConfigurations.iterator();
 		while (iter.hasNext()) {
-			ReaderConfiguration<?> current = iter.next();
+			AbstractReaderConfiguration<?> current = iter.next();
 			if (current.getID().equals(readerConfigurationID)) {
 				return current;
 			}
@@ -144,32 +144,32 @@ public class ReaderConfigurationDAOImpl implements ReaderConfigurationDAO {
 	}
 
 	/**
-	 * Used by spring to bind a new ReaderConfiguration to this service.
+	 * Used by spring to bind a new AbstractReaderConfiguration to this service.
 	 * 
 	 * @param readerConfiguration
 	 *            the configuration to bind
 	 * @param parameters
 	 */
 	public void bindReaderConfiguration(
-			ReaderConfiguration<?> readerConfiguration,
+			AbstractReaderConfiguration<?> readerConfiguration,
 			Dictionary<String, String> parameters) {
 		logger.debug("New Cofiguration Added:" + readerConfiguration.getID());
-		this.readerConfigurations.add(readerConfiguration);
+		this.abstractReaderConfigurations.add(readerConfiguration);
 	}
 
 	/**
-	 * Used by spring to unbind a disappearing ReaderConfiguration service from
+	 * Used by spring to unbind a disappearing AbstractReaderConfiguration service from
 	 * this service.
 	 * 
 	 * @param readerConfiguration
-	 *            the ReaderConfiguration to unbind
+	 *            the AbstractReaderConfiguration to unbind
 	 * @param parameters
 	 */
 	public void unbindReaderConfiguration(
-			ReaderConfiguration<?> readerConfiguration,
+			AbstractReaderConfiguration<?> readerConfiguration,
 			Dictionary<String, String> parameters) {
 		logger.debug("Configuraiton Unbound:" + readerConfiguration.getID());
-		readerConfigurations.remove(readerConfiguration);
+		abstractReaderConfigurations.remove(readerConfiguration);
 	}
 
 	/**
@@ -179,12 +179,12 @@ public class ReaderConfigurationDAOImpl implements ReaderConfigurationDAO {
 	 *            the initial list of available reader configurations
 	 */
 	public void setReaderConfiguration(
-			Set<ReaderConfiguration<?>> configurations) {
-		Iterator<ReaderConfiguration<?>> configs = configurations.iterator();
+			Set<AbstractReaderConfiguration<?>> configurations) {
+		Iterator<AbstractReaderConfiguration<?>> configs = configurations.iterator();
 		while (configs.hasNext()) {
 			logger.debug("New Cofiguration Added:" + configs.next().getID());
 		}
-		readerConfigurations.addAll(configurations);
+		abstractReaderConfigurations.addAll(configurations);
 	}
 
 }

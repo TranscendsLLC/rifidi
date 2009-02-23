@@ -7,7 +7,7 @@ import java.util.concurrent.Callable;
 
 import org.rifidi.edge.core.commands.CommandConfiguration;
 import org.rifidi.edge.core.events.EventQueue;
-import org.rifidi.edge.core.readers.ReaderConfiguration;
+import org.rifidi.edge.core.readers.AbstractReaderConfiguration;
 
 /**
  * A reader session manages the lifecycle of commands.
@@ -21,14 +21,14 @@ public interface ReaderSession extends Callable<Boolean> {
 	 * 
 	 * @param readerFactory
 	 */
-	void setReaderFactory(ReaderConfiguration<?> readerFactory);
+	void setReaderFactory(AbstractReaderConfiguration<?> readerFactory);
 
 	/**
 	 * Get the reader factory currently used by the session.
 	 * 
 	 * @return
 	 */
-	ReaderConfiguration<?> getReaderFactory();
+	AbstractReaderConfiguration<?> getReaderFactory();
 
 	/**
 	 * Set the command to be executed.

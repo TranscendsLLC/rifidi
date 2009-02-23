@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.rifidi.edge.core.readers.AbstractReaderConfigurationFactory;
-import org.rifidi.edge.core.readers.ReaderConfiguration;
+import org.rifidi.edge.core.readers.AbstractReaderConfiguration;
 
 /**
  * @author Jochen Mader - jochen@pramari.com
@@ -49,8 +49,8 @@ public class Alien9800ReaderConfigurationFactory extends
 	 */
 	@Override
 	public void customConfig(Alien9800ReaderConfiguration instance) {
-		getContext().registerService(ReaderConfiguration.class.getName(),
-				instance, null);
+		instance.setRegistration(getContext().registerService(AbstractReaderConfiguration.class.getName(),
+				instance, null));
 	}
 
 	@Override

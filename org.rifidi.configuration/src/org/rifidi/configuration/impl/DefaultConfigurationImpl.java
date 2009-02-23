@@ -132,7 +132,7 @@ public class DefaultConfigurationImpl implements Configuration, Cloneable {
 			try {
 				setAttribute(attribute);
 			} catch (AttributeNotFoundException e) {
-				logger.error("That should not happen: " + e);
+				logger.warn("No Attribute with name " + attribute.getName() + " was found");
 			} catch (InvalidAttributeValueException e) {
 				logger.error("That should not happen: " + e);
 			} catch (MBeanException e) {
@@ -141,16 +141,6 @@ public class DefaultConfigurationImpl implements Configuration, Cloneable {
 				logger.error("That should not happen: " + e);
 			}
 		}
-	}
-
-	/**
-	 * private String
-	 * 
-	 * @param registration
-	 *            the registration to set
-	 */
-	public void setRegistration(ServiceRegistration registration) {
-		this.registration = registration;
 	}
 
 	/*
@@ -175,7 +165,7 @@ public class DefaultConfigurationImpl implements Configuration, Cloneable {
 		if (nameToProperty.containsKey(attribute)) {
 			try {
 				Method method = target.getClass().getMethod("get" + attribute);
-				String res = (String) method.invoke(target);
+				String res = method.invoke(target).toString();
 				return res;
 			} catch (SecurityException e) {
 				logger.error(e);
@@ -276,7 +266,7 @@ public class DefaultConfigurationImpl implements Configuration, Cloneable {
 				logger.error(e);
 			}
 		} else {
-			logger.warn("Trie to call non existend operation " + actionName
+			logger.warn("Try to call non existend operation " + actionName
 					+ " on " + target.getClass());
 		}
 		return null;
@@ -331,9 +321,7 @@ public class DefaultConfigurationImpl implements Configuration, Cloneable {
 		AttributeList ret = new AttributeList();
 		for (Object obj : attributes) {
 			if (target == null) {
-				//TODO: Ask jochen to make sure this is correct
-				//attributes.add((Attribute) obj);
-				ret.add((Attribute) obj);
+				this.attributes.add((Attribute) obj);
 			} else {
 				try {
 					setAttribute((Attribute) obj);
@@ -408,7 +396,7 @@ public class DefaultConfigurationImpl implements Configuration, Cloneable {
 
 	@Override
 	public void setServiceRegistration(ServiceRegistration registration) {
-		// TODO Auto-generated method stub
-		
+		this.registration = registration;
+
 	}
 }
