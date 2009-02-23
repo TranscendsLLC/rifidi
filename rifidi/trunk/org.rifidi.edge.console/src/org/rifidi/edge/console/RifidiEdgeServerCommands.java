@@ -3,6 +3,10 @@
  */
 package org.rifidi.edge.console;
 
+import java.rmi.RemoteException;
+import java.util.Iterator;
+import java.util.Set;
+
 import org.eclipse.osgi.framework.console.CommandInterpreter;
 import org.eclipse.osgi.framework.console.CommandProvider;
 import org.rifidi.edge.core.commands.CommandConfiguration;
@@ -10,6 +14,7 @@ import org.rifidi.edge.core.exceptions.NonExistentCommandFactoryException;
 import org.rifidi.edge.core.exceptions.NonExistentReaderConfigurationException;
 import org.rifidi.edge.core.readers.ReaderConfiguration;
 import org.rifidi.edge.core.readersession.ReaderSessionDAO;
+import org.rifidi.edge.core.rmi.ReaderConfigurationStub;
 
 /**
  * @author Jochen Mader - jochen@pramari.com
@@ -18,14 +23,39 @@ import org.rifidi.edge.core.readersession.ReaderSessionDAO;
 public class RifidiEdgeServerCommands implements CommandProvider {
 
 	private ReaderSessionDAO readerSessionDAO;
+	/** The reader configuration RMI stub */
+	private ReaderConfigurationStub readerConfigStub;
 
 	/**
 	 * @param readerSessionDAO
 	 *            the readerSessionDAO to set
 	 */
-	public void setReaderSessionManagement(
-			ReaderSessionDAO readerSessionDAO) {
+	public void setReaderSessionManagement(ReaderSessionDAO readerSessionDAO) {
 		this.readerSessionDAO = readerSessionDAO;
+	}
+
+	/**
+	 * @param readerConfigStub
+	 *            the readerConfigStub to set
+	 */
+	public void setReaderConfigStub(ReaderConfigurationStub readerConfigStub) {
+		this.readerConfigStub = readerConfigStub;
+	}
+
+	public Object _readerConfigFactories(CommandInterpreter intp) {
+		Set<String> factories;
+		try {
+			factories = readerConfigStub
+					.getAvailableReaderConfigurationFactories();
+			Iterator<String> iter = factories.iterator();
+			while (iter.hasNext()) {
+				intp.println(iter.next());
+			}
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+
+		return null;
 	}
 
 	/**
@@ -35,10 +65,10 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 	 * @return
 	 */
 	public Object _readers(CommandInterpreter intp) {
-//		for (ReaderConfiguration<?> reader : readerSessionDAO
-//				.getAvailableReaderConfigurations()) {
-//			intp.println(reader.getName() + ": " + reader.getDescription());
-//		}
+		// for (ReaderConfiguration<?> reader : readerSessionDAO
+		// .getAvailableReaderConfigurations()) {
+		// intp.println(reader.getName() + ": " + reader.getDescription());
+		// }
 		return null;
 	}
 
@@ -49,11 +79,11 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 	 * @return
 	 */
 	public Object _commands(CommandInterpreter intp) {
-//		for (CommandConfiguration<?> command : readerSessionDAO
-//				.getAvailableCommandFactories()) {
-//			intp.println(command.getCommandName() + ": "
-//					+ command.getCommandDescription());
-//		}
+		// for (CommandConfiguration<?> command : readerSessionDAO
+		// .getAvailableCommandFactories()) {
+		// intp.println(command.getCommandName() + ": "
+		// + command.getCommandDescription());
+		// }
 		return null;
 	}
 
@@ -67,17 +97,19 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 		String readerName = intp.nextArgument();
 		String commandName = intp.nextArgument();
 		if (readerName == null || commandName == null) {
-			intp.println("format is: createreadersession <readername> <commandname>");
+			intp
+					.println("format is: createreadersession <readername> <commandname>");
 			return null;
 		}
 		ReaderConfiguration<?> reader = null;
 		CommandConfiguration<?> command = null;
 		try {
-			readerSessionDAO.createAndStartReaderSession(readerName, commandName);
+			readerSessionDAO.createAndStartReaderSession(readerName,
+					commandName);
 		} catch (NonExistentCommandFactoryException e) {
-			intp.println("Reader "+readerName+" doesn't exist.");
+			intp.println("Reader " + readerName + " doesn't exist.");
 		} catch (NonExistentReaderConfigurationException e) {
-			intp.println("Command "+readerName+" doesn't exist.");
+			intp.println("Command " + readerName + " doesn't exist.");
 		}
 		return null;
 	}

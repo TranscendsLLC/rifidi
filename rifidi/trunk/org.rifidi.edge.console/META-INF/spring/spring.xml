@@ -5,11 +5,14 @@
 	<!--  Custom commands -->
 	<bean id="customCommands" class="org.rifidi.edge.console.RifidiEdgeServerCommands">
 		<property name="readerSessionManagement" ref="readerSessionManagement" />
+		<property name="readerConfigStub" ref="readerConfigStub" />
 	</bean>
 	<osgi:service id="customCommandsService" ref="customCommands"
 		interface="org.eclipse.osgi.framework.console.CommandProvider" />
 	<!-- Put reader session service in OSGi Registry -->
 	<osgi:reference id="readerSessionManagement"
 		interface="org.rifidi.edge.core.readersession.ReaderSessionDAO" />
+	<osgi:reference id="readerConfigStub"
+		interface="org.rifidi.edge.core.rmi.ReaderConfigurationStub" />
 
 </beans>
