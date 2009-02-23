@@ -331,7 +331,9 @@ public class DefaultConfigurationImpl implements Configuration, Cloneable {
 		AttributeList ret = new AttributeList();
 		for (Object obj : attributes) {
 			if (target == null) {
-				attributes.add((Attribute) obj);
+				//TODO: Ask jochen to make sure this is correct
+				//attributes.add((Attribute) obj);
+				ret.add((Attribute) obj);
 			} else {
 				try {
 					setAttribute((Attribute) obj);
