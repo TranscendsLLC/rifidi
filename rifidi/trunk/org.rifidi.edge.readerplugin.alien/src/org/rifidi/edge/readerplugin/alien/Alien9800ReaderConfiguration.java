@@ -11,15 +11,15 @@ import org.apache.commons.logging.LogFactory;
 import org.rifidi.configuration.annotations.JMXMBean;
 import org.rifidi.configuration.annotations.Property;
 import org.rifidi.edge.core.exceptions.NoReaderAvailableException;
-import org.rifidi.edge.core.readers.ReaderConfiguration;
+import org.rifidi.edge.core.readers.AbstractReaderConfiguration;
 
 /**
  * @author Jochen Mader - jochen@pramari.com
  * 
  */
 @JMXMBean
-public class Alien9800ReaderConfiguration implements
-		ReaderConfiguration<Alien9800Reader> {
+public class Alien9800ReaderConfiguration extends
+		AbstractReaderConfiguration<Alien9800Reader> {
 	/** Logger for this class. */
 	private Log logger = LogFactory.getLog(Alien9800ReaderConfiguration.class);
 	/** Instance of the reader that has been handed out. */
@@ -163,8 +163,8 @@ public class Alien9800ReaderConfiguration implements
 	 * @return the port
 	 */
 	@Property(name = "Port", description = "Port of the reader.", writable = true)
-	public Integer getPort() {
-		return port;
+	public String getPort() {
+		return Integer.toString(port);
 	}
 
 	/**
@@ -211,32 +211,32 @@ public class Alien9800ReaderConfiguration implements
 	 * @return the reconnectionInterval
 	 */
 	@Property(name = "Reconnection Interval", description = "Time between two connection attempts (ms).", writable = true)
-	public Long getReconnectionInterval() {
-		return reconnectionInterval;
+	public String getReconnectionInterval() {
+		return Long.toString(reconnectionInterval);
 	}
 
 	/**
 	 * @param reconnectionInterval
 	 *            the reconnectionInterval to set
 	 */
-	public void setReconnectionInterval(Long reconnectionInterval) {
-		this.reconnectionInterval = reconnectionInterval;
+	public void setReconnectionInterval(String reconnectionInterval) {
+		this.reconnectionInterval = Long.parseLong(reconnectionInterval);
 	}
 
 	/**
 	 * @return the maxNumConnectionAttempts
 	 */
 	@Property(name = "Maximum Connection Attempts", description = "Number of times to try to connect to the reader before the connection is marked as failed.", writable = true)
-	public Integer getMaxNumConnectionAttempts() {
-		return maxNumConnectionAttempts;
+	public String getMaxNumConnectionAttempts() {
+		return Long.toString(maxNumConnectionAttempts);
 	}
 
 	/**
 	 * @param maxNumConnectionAttempts
 	 *            the maxNumConnectionAttempts to set
 	 */
-	public void setMaxNumConnectionAttempts(Integer maxNumConnectionAttempts) {
-		this.maxNumConnectionAttempts = maxNumConnectionAttempts;
+	public void setMaxNumConnectionAttempts(String maxNumConnectionAttempts) {
+		this.maxNumConnectionAttempts = Integer.parseInt(maxNumConnectionAttempts);
 	}
 
 	/*

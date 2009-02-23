@@ -23,7 +23,7 @@ import org.rifidi.edge.core.exceptions.NonExistentCommandFactoryException;
 import org.rifidi.edge.core.exceptions.NonExistentReaderConfigurationException;
 import org.rifidi.edge.core.internal.ReaderSession;
 import org.rifidi.edge.core.internal.impl.ReaderSessionImpl;
-import org.rifidi.edge.core.readers.ReaderConfiguration;
+import org.rifidi.edge.core.readers.AbstractReaderConfiguration;
 import org.springframework.jms.core.JmsTemplate;
 
 /**
@@ -40,7 +40,7 @@ public class ReaderSessionDAOImpl implements ReaderSessionDAO {
 	/** Counter for session ids. */
 	private Integer counter = 0;
 	/** Set of readers that is currently available. */
-	private Map<String, ReaderConfiguration<?>> readerConfigurationsById;
+	private Map<String, AbstractReaderConfiguration<?>> readerConfigurationsById;
 	/** Set of currently available commands. */
 	private Map<String, CommandConfiguration<?>> commandFactoriesById;
 	/** Executor for reader sessions. */
@@ -56,7 +56,7 @@ public class ReaderSessionDAOImpl implements ReaderSessionDAO {
 	 * Constructor.
 	 */
 	public ReaderSessionDAOImpl() {
-		readerConfigurationsById = new HashMap<String, ReaderConfiguration<?>>();
+		readerConfigurationsById = new HashMap<String, AbstractReaderConfiguration<?>>();
 		commandFactoriesById = new HashMap<String, CommandConfiguration<?>>();
 		readerSessionByCommandFactory = new HashMap<String, List<ReaderSession>>();
 		readerSessionByReaderConfig = new HashMap<String, List<ReaderSession>>();
@@ -76,7 +76,7 @@ public class ReaderSessionDAOImpl implements ReaderSessionDAO {
 			String commandFactoryID) throws NonExistentCommandFactoryException,
 			NonExistentReaderConfigurationException {
 		synchronized (this) {
-			ReaderConfiguration<?> reader = readerConfigurationsById
+			AbstractReaderConfiguration<?> reader = readerConfigurationsById
 					.get(readerConfigurationID);
 			CommandConfiguration<?> command = commandFactoriesById
 					.get(commandFactoryID);
@@ -141,7 +141,7 @@ public class ReaderSessionDAOImpl implements ReaderSessionDAO {
 	 * @param readerFactory
 	 * @param parameters
 	 */
-	public void bind(ReaderConfiguration<?> readerConfiguration,
+	public void bind(AbstractReaderConfiguration<?> readerConfiguration,
 			Dictionary<String, String> parameters) {
 		synchronized (this) {
 			readerConfigurationsById.put(readerConfiguration.getID(),
@@ -155,7 +155,7 @@ public class ReaderSessionDAOImpl implements ReaderSessionDAO {
 	 * @param readerFactory
 	 * @param parameters
 	 */
-	public void unbind(ReaderConfiguration<?> readerConfiguration,
+	public void unbind(AbstractReaderConfiguration<?> readerConfiguration,
 			Dictionary<String, String> parameters) {
 		synchronized (this) {
 			readerConfigurationsById.remove(readerConfiguration.getID());
@@ -181,9 +181,9 @@ public class ReaderSessionDAOImpl implements ReaderSessionDAO {
 	 * @param configurations
 	 */
 	public void setReaderConfigurations(
-			Set<ReaderConfiguration<?>> configurations) {
+			Set<AbstractReaderConfiguration<?>> configurations) {
 		synchronized (this) {
-			for (ReaderConfiguration<?> config : configurations) {
+			for (AbstractReaderConfiguration<?> config : configurations) {
 				readerConfigurationsById.put(config.getID(), config);
 			}
 		}

@@ -42,27 +42,27 @@ public interface ReaderConfigurationStub {
 
 	/**
 	 * Gets a description of a reader configuration. This will contain the
-	 * information necessary to construct a ReaderConfiguration.
+	 * information necessary to construct a AbstractReaderConfiguration.
 	 * 
 	 * @param readerConfigurationFactoryID
 	 *            the ID of the ReaderConfigurationFactory
 	 * @return an MBeanInfo object whose attributes describe how to create a
-	 *         ReaderConfiguration
+	 *         AbstractReaderConfiguration
 	 * @throws RemoteException
 	 */
 	MBeanInfo getReaderConfigurationDescription(
 			String readerConfigurationFactoryID) throws RemoteException;
 
 	/**
-	 * Creates a new ReaderConfiguration for the supplied configuration. The ID
+	 * Creates a new AbstractReaderConfiguration for the supplied configuration. The ID
 	 * of the readerConfiguration can be used along with the ID of a command
 	 * configuration to start a reader session
 	 * 
 	 * @param readerConfigurationFactoryID
 	 *            the ID of the reader configuration factory
 	 * @param readerConfigurationProperties
-	 *            all the properties to set on the new ReaderConfiguration
-	 * @return the ID of the newly created ReaderConfiguration
+	 *            all the properties to set on the new AbstractReaderConfiguration
+	 * @return the ID of the newly created AbstractReaderConfiguration
 	 * @throws RemoteException
 	 */
 	String createReaderConfiguration(String readerConfigurationFactoryID,
@@ -84,10 +84,10 @@ public interface ReaderConfigurationStub {
 
 	/**
 	 * This method returns an AttributeList that contains the name-value pairs
-	 * for all the properties of a currently available ReaderConfiguration.
+	 * for all the properties of a currently available AbstractReaderConfiguration.
 	 * 
 	 * @param readerConfigurationID
-	 *            The ID of the ReaderConfiguration to get
+	 *            The ID of the AbstractReaderConfiguration to get
 	 * @return The current values for a reader configuration
 	 * @throws RemoteException
 	 */
@@ -95,12 +95,12 @@ public interface ReaderConfigurationStub {
 			throws RemoteException;
 
 	/**
-	 * This method is used to update the properties of a ReaderConfiguration. It
+	 * This method is used to update the properties of a AbstractReaderConfiguration. It
 	 * may contain only the properties that you intend to change, but may
 	 * contain values that will stay the same
 	 * 
 	 * @param readerConfigurationID
-	 *            the ID of the ReaderConfiguration to update
+	 *            the ID of the AbstractReaderConfiguration to update
 	 * @param readerConfigurationProperties
 	 *            the new properties to set
 	 * @return The properties of the reader that were set

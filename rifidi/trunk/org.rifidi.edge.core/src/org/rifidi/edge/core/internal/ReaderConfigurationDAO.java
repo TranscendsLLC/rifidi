@@ -3,10 +3,10 @@ package org.rifidi.edge.core.internal;
 import java.util.Set;
 
 import org.rifidi.edge.core.readers.AbstractReaderConfigurationFactory;
-import org.rifidi.edge.core.readers.ReaderConfiguration;
+import org.rifidi.edge.core.readers.AbstractReaderConfiguration;
 
 /**
- * A Data Access Object that keeps track of ReaderConfiguration services and
+ * A Data Access Object that keeps track of AbstractReaderConfiguration services and
  * ReaderConfigurationFactory services in the OSGi service registry
  * 
  * @author Kyle Neumeier - kyle@pramari.com
@@ -35,7 +35,7 @@ public interface ReaderConfigurationDAO {
 	 * @return The readerConfiguration with the supplied ID, or null if it does
 	 *         not exist
 	 */
-	public ReaderConfiguration<?> getReaderConfiguration(
+	public AbstractReaderConfiguration<?> getReaderConfiguration(
 			String readerConfigurationID);
 
 	/**
@@ -43,6 +43,6 @@ public interface ReaderConfigurationDAO {
 	 * 
 	 * @return
 	 */
-	public Set<ReaderConfiguration<?>> getCurrentReaderConfigurations();
+	public Set<AbstractReaderConfiguration<?>> getCurrentReaderConfigurations();
 
 }

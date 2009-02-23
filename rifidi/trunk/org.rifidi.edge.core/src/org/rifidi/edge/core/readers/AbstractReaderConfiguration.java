@@ -3,6 +3,9 @@
  */
 package org.rifidi.edge.core.readers;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.osgi.framework.ServiceRegistration;
 import org.rifidi.configuration.RifidiService;
 import org.rifidi.edge.core.exceptions.NoReaderAvailableException;
 
@@ -19,33 +22,58 @@ import org.rifidi.edge.core.exceptions.NoReaderAvailableException;
  * @author Jochen Mader - jochen@pramari.com
  * 
  */
-public interface ReaderConfiguration<T extends Reader> extends RifidiService{
+public abstract class AbstractReaderConfiguration<T extends Reader> implements
+		RifidiService {
+
+	/** Service Registration with osgi */
+	private ServiceRegistration registration;
+	private static final Log logger = LogFactory
+			.getLog(AbstractReaderConfiguration.class);
+
+	/**
+	 * @param registration
+	 *            the registration to set
+	 */
+	public void setRegistration(ServiceRegistration registration) {
+		this.registration = registration;
+	}
+
+	public void destroy() {
+		if (registration != null) {
+			registration.unregister();
+			return;
+		}
+		logger.error("Tried to unregister service "
+				+ "that was not yet registered!");
+	}
+
 	/**
 	 * Try to aquire an instance of the reader.
 	 * 
 	 * @return
 	 * @throws NoReaderAvailableException
 	 */
-	T aquireReader() throws NoReaderAvailableException;
+	abstract public T aquireReader() throws NoReaderAvailableException;
 
 	/**
 	 * Release the reader.
 	 * 
 	 * @param reader
 	 */
-	void releaseReader(Object reader);
+	abstract public void releaseReader(Object reader);
 
 	/**
 	 * Get the name of the reader. Has to be unique.
 	 * 
 	 * @return
 	 */
-	String getName();
+	abstract public String getName();
 
 	/**
 	 * Get a description about the reader this factory is mapping to.
 	 * 
 	 * @return
 	 */
-	String getDescription();
+	abstract public String getDescription();
+
 }

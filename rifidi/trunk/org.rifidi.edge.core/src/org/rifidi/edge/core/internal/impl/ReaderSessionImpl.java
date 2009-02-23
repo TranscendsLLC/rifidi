@@ -18,7 +18,7 @@ import org.rifidi.edge.core.commands.CommandState;
 import org.rifidi.edge.core.exceptions.NoReaderAvailableException;
 import org.rifidi.edge.core.internal.ReaderSession;
 import org.rifidi.edge.core.readers.Reader;
-import org.rifidi.edge.core.readers.ReaderConfiguration;
+import org.rifidi.edge.core.readers.AbstractReaderConfiguration;
 import org.springframework.jms.core.JmsTemplate;
 
 /**
@@ -32,7 +32,7 @@ public class ReaderSessionImpl implements ReaderSession {
 	/** Command the session is executing. */
 	private CommandConfiguration<?> commandFactory;
 	/** Factory used for aquiring readers. */
-	private ReaderConfiguration<?> factory;
+	private AbstractReaderConfiguration<?> factory;
 	/** Currently aquired reader. */
 	private Reader reader;
 	/** True if the command is currently executing on a reader. */
@@ -98,7 +98,7 @@ public class ReaderSessionImpl implements ReaderSession {
 	 * @see org.rifidi.edge.core.internal.ReaderSession#getReaderFactory()
 	 */
 	@Override
-	public ReaderConfiguration<?> getReaderFactory() {
+	public AbstractReaderConfiguration<?> getReaderFactory() {
 		return factory;
 	}
 
@@ -145,7 +145,7 @@ public class ReaderSessionImpl implements ReaderSession {
 	 * .edge.core.api.readerplugin.ReaderFactory)
 	 */
 	@Override
-	public void setReaderFactory(ReaderConfiguration<?> readerFactory) {
+	public void setReaderFactory(AbstractReaderConfiguration<?> readerFactory) {
 		assert (!running.get());
 		assert (readerFactory != null);
 		logger.debug("Setting reader factory: " + readerFactory);

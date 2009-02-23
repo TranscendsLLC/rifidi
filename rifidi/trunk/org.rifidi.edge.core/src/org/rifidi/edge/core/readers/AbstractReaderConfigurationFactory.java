@@ -14,7 +14,7 @@ import org.rifidi.configuration.impl.AbstractServiceFactory;
  * @author Kyle Neumeier - kyle@pramari.com
  * 
  */
-public abstract class AbstractReaderConfigurationFactory<T extends ReaderConfiguration<?>>
+public abstract class AbstractReaderConfigurationFactory<T extends AbstractReaderConfiguration<?>>
 		extends AbstractServiceFactory<T> {
 
 	/**
