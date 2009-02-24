@@ -18,7 +18,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.commands.Command;
 import org.rifidi.edge.core.commands.CommandState;
-import org.rifidi.edge.core.tags.TagMessage;
 import org.rifidi.edge.core.utilities.ByteAndHexConvertingUtility;
 import org.rifidi.edge.readerplugin.alien.Alien9800Reader;
 import org.springframework.jms.core.MessageCreator;
@@ -168,14 +167,16 @@ public class AlienGetTagListCommand extends Command {
 					calendar.set(currentDate.get(Calendar.YEAR), currentDate
 							.get(Calendar.MONTH), currentDate
 							.get(Calendar.DATE));
-					
-					String message= new String(ByteAndHexConvertingUtility
+
+					String message = new String(ByteAndHexConvertingUtility
 							.fromHexString(tagData.trim()));
-					message += " "+calendar.getTimeInMillis()+" "+Integer.parseInt(antennaID);
+					message += " " + calendar.getTimeInMillis() + " "
+							+ Integer.parseInt(antennaID);
 					retVal.add(message);
 
 				} else {
-//					logger.error("Something isreaders invalid: " + splitString2[0]);
+					// logger.error("Something isreaders invalid: " +
+					// splitString2[0]);
 				}
 			}
 		} catch (Exception e) {
@@ -184,5 +185,5 @@ public class AlienGetTagListCommand extends Command {
 		}
 		return retVal;
 	}
-	
+
 }
