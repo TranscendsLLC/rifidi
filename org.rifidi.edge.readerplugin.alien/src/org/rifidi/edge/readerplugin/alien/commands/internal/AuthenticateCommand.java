@@ -69,7 +69,11 @@ public class AuthenticateCommand extends Command {
 				Alien9800Reader.PROMPT_SUPPRESS + password
 						+ Alien9800Reader.NEWLINE);
 		logger.debug("recieving the password response");
-		getReader().receiveMessage();
+		String authMessage = (String)getReader().receiveMessage();
+		if(authMessage.contains("Invalid")) {
+			return CommandState.FAILED;
+		}
+		
 		return CommandState.DONE;
 	}
 
