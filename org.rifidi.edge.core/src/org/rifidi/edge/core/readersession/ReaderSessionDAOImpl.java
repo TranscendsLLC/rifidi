@@ -6,6 +6,7 @@ package org.rifidi.edge.core.readersession;
 import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
@@ -17,6 +18,8 @@ import java.util.concurrent.TimeUnit;
 
 import javax.jms.Destination;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.osgi.framework.BundleContext;
 import org.rifidi.edge.core.commands.AbstractCommandConfiguration;
 import org.rifidi.edge.core.exceptions.NonExistentCommandFactoryException;
@@ -28,6 +31,7 @@ import org.springframework.jms.core.JmsTemplate;
 
 /**
  * @author Jochen Mader - jochen@pramari.com
+ * @author Kyle Neumeier - kyle@pramari.com
  * 
  */
 public class ReaderSessionDAOImpl implements ReaderSessionDAO {
@@ -51,6 +55,8 @@ public class ReaderSessionDAOImpl implements ReaderSessionDAO {
 	private Map<String, List<ReaderSession>> readerSessionByCommandFactory;
 	/** Currently created reader sessions. */
 	private Map<String, ReaderSession> readerSessionByName;
+	/** The logger for this class */
+	private Log logger = LogFactory.getLog(ReaderSessionDAOImpl.class);
 
 	/**
 	 * Constructor.
@@ -72,7 +78,7 @@ public class ReaderSessionDAOImpl implements ReaderSessionDAO {
 	 * createAndStartReaderSession(java.lang.String, java.lang.String)
 	 */
 	@Override
-	public void createAndStartReaderSession(String readerConfigurationID,
+	public String createAndStartReaderSession(String readerConfigurationID,
 			String commandFactoryID) throws NonExistentCommandFactoryException,
 			NonExistentReaderConfigurationException {
 		synchronized (this) {
@@ -97,9 +103,12 @@ public class ReaderSessionDAOImpl implements ReaderSessionDAO {
 			session.setTemplate(template);
 			Dictionary<String, String> params = new Hashtable<String, String>();
 			params.put("id", counter.toString());
+			readerSessionByName.put(Integer.toString(counter), session);
+			session.setID(Integer.toString(counter));
 			counter++;
 			session.setRegistration(context.registerService(ReaderSession.class
 					.getName(), session, params));
+
 			if (readerSessionByCommandFactory.get(commandFactoryID) == null) {
 				readerSessionByCommandFactory.put(commandFactoryID,
 						new ArrayList<ReaderSession>());
@@ -112,7 +121,48 @@ public class ReaderSessionDAOImpl implements ReaderSessionDAO {
 			readerSessionByReaderConfig.get(readerConfigurationID).add(session);
 			// TODO: store future
 			Future<?> future = executor.submit(session);
+			return session.getID();
 		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.core.readersession.ReaderSessionDAO#stopReaderSession
+	 * (java.lang.String)
+	 */
+	@Override
+	public void stopReaderSession(String sessionID) {
+		synchronized (this) {
+			ReaderSession session = readerSessionByName.remove(sessionID);
+			if (session != null) {
+				session.stop();
+
+				// remove from OSGi
+				session.destroy();
+
+				// remove from readerSessionbyCommanFactory
+				for (List<ReaderSession> sessionList : readerSessionByCommandFactory
+						.values()) {
+					if (sessionList.contains(session)) {
+						sessionList.remove(session);
+					}
+				}
+
+				// remove from readerSessionByReaderConfig
+				for (List<ReaderSession> sessionList : readerSessionByReaderConfig
+						.values()) {
+					if (sessionList.contains(session)) {
+						sessionList.remove(session);
+					}
+				}
+
+			} else {
+				logger.warn("No session found with ID " + sessionID);
+			}
+		}
+
 	}
 
 	/*
@@ -123,8 +173,7 @@ public class ReaderSessionDAOImpl implements ReaderSessionDAO {
 	 */
 	@Override
 	public Set<String> getReaderSessions() {
-
-		return null;
+		return new HashSet<String>(readerSessionByName.keySet());
 	}
 
 	/**
@@ -163,6 +212,7 @@ public class ReaderSessionDAOImpl implements ReaderSessionDAO {
 				for (ReaderSession session : readerSessionByReaderConfig
 						.get(readerConfiguration)) {
 					session.destroy();
+					readerSessionByName.remove(session.getID());
 					for (List<ReaderSession> sessionList : readerSessionByCommandFactory
 							.values()) {
 						if (sessionList.contains(session)) {
@@ -216,6 +266,7 @@ public class ReaderSessionDAOImpl implements ReaderSessionDAO {
 				for (ReaderSession session : readerSessionByCommandFactory
 						.get(commandFactory)) {
 					session.destroy();
+					readerSessionByName.remove(session.getID());
 					for (List<ReaderSession> sessionList : readerSessionByReaderConfig
 							.values()) {
 						if (sessionList.contains(session)) {
@@ -233,7 +284,8 @@ public class ReaderSessionDAOImpl implements ReaderSessionDAO {
 	 * 
 	 * @param factories
 	 */
-	public void setCommandFactories(Set<AbstractCommandConfiguration<?>> factories) {
+	public void setCommandFactories(
+			Set<AbstractCommandConfiguration<?>> factories) {
 		synchronized (this) {
 			for (AbstractCommandConfiguration<?> factory : factories) {
 				commandFactoriesById.put(factory.getID(), factory);

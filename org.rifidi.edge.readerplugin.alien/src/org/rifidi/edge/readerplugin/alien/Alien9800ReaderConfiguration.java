@@ -136,6 +136,7 @@ public class Alien9800ReaderConfiguration extends
 	@Override
 	public void releaseReader(Object reader) {
 		if (reader.equals(this.reader)) {
+			((Alien9800Reader)reader).cleanup();
 			this.reader = null;
 			return;
 		}

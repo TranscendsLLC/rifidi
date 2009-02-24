@@ -33,7 +33,7 @@ public class AlienGetTagListCommand extends Command {
 	/** Tagtypes. */
 	private Integer[] tagTypes = new Integer[] { 7, 16, 31 };
 	/** Tagtypes to query for: 0 - GEN1 1 - GEN2 2 - ALL */
-	private Integer tagType = 0;
+	private Integer tagType = 2;
 	/** Time between two polls. */
 	private Integer pollInterval = 10;
 	/** Timezone from the reader. */
@@ -115,13 +115,11 @@ public class AlienGetTagListCommand extends Command {
 			logger.debug("Sending command: " + command);
 			getReader().sendMessage(command);
 			final String tag_msg = (String) getReader().receiveMessage();
-			logger.debug("received: " + tag_msg);
 			for (String m : parseString(tag_msg)) {
 				final String text = m;
 				template.send(destination, new MessageCreator() {
 					public Message createMessage(Session session)
 							throws JMSException {
-						logger.info("Sending message: " + text);
 						TextMessage message = session.createTextMessage(text);
 						return message;
 					}
@@ -180,7 +178,7 @@ public class AlienGetTagListCommand extends Command {
 				}
 			}
 		} catch (Exception e) {
-			logger.error("There was a problem when parsing Alien Tags.  "
+			logger.warn("There was a problem when parsing Alien Tags.  "
 					+ "tag has not been added", e);
 		}
 		return retVal;

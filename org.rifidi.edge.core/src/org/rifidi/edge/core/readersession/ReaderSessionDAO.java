@@ -19,16 +19,26 @@ public interface ReaderSessionDAO {
 	 * 
 	 * @param readerConfigurationID
 	 * @param commandFactoryID
+	 * @return ID of session
 	 * @throws NonExistentCommandFactoryException
 	 * @throws NonExistentReaderConfigurationException
 	 */
-	void createAndStartReaderSession(String readerConfigurationID,
+	String createAndStartReaderSession(String readerConfigurationID,
 			String commandFactoryID) throws NonExistentCommandFactoryException,
 			NonExistentReaderConfigurationException;
-	
+
 	/**
 	 * Get the list of reader sessions.
+	 * 
 	 * @return
 	 */
 	Set<String> getReaderSessions();
+
+	/**
+	 * Stops the reader session
+	 * 
+	 * @param sessionID
+	 *            the ID of the session to stop
+	 */
+	void stopReaderSession(String sessionID);
 }
