@@ -5,15 +5,15 @@ package org.rifidi.edge.readerplugin.alien.commands;
 
 import org.rifidi.configuration.annotations.JMXMBean;
 import org.rifidi.configuration.annotations.Property;
-import org.rifidi.edge.core.commands.CommandConfiguration;
+import org.rifidi.edge.core.commands.AbstractCommandConfiguration;
 
 /**
  * @author Jochen Mader - jochen@pramari.com
  * 
  */
 @JMXMBean
-public class AlienGetTagListCommandConfiguration implements
-		CommandConfiguration<AlienGetTagListCommand> {
+public class AlienGetTagListCommandConfiguration extends
+		AbstractCommandConfiguration<AlienGetTagListCommand> {
 	/** Interval between two reads. */
 	private Integer interval = 10;
 	/** Name of the command. */
@@ -27,7 +27,7 @@ public class AlienGetTagListCommandConfiguration implements
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.commands.CommandConfiguration#getCommandDescription
+	 * org.rifidi.edge.core.commands.AbstractCommandConfiguration#getCommandDescription
 	 * ()
 	 */
 	@Override
@@ -38,7 +38,7 @@ public class AlienGetTagListCommandConfiguration implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.commands.CommandConfiguration#getCommandName()
+	 * @see org.rifidi.edge.core.commands.AbstractCommandConfiguration#getCommandName()
 	 */
 	@Override
 	public String getCommandName() {
@@ -49,22 +49,22 @@ public class AlienGetTagListCommandConfiguration implements
 	 * @return the interval
 	 */
 	@Property(name = "Interval", description = "Interval between two reads", writable = true)
-	public Integer getInterval() {
-		return interval;
+	public String getInterval() {
+		return Integer.toString(interval);
 	}
 
 	/**
 	 * @param interval
 	 *            the interval to set
 	 */
-	public void setInterval(Integer interval) {
-		this.interval = interval;
+	public void setInterval(String interval) {
+		this.interval = Integer.parseInt(interval);
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.commands.CommandConfiguration#getCommand()
+	 * @see org.rifidi.edge.core.commands.AbstractCommandConfiguration#getCommand()
 	 */
 	@Override
 	public AlienGetTagListCommand getCommand() {

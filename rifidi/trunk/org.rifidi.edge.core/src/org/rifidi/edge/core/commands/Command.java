@@ -15,15 +15,13 @@ import org.springframework.jms.core.JmsTemplate;
  * @author Jochen Mader - jochen@pramari.com
  * 
  */
-public abstract class Command implements Callable<CommandState>, RifidiService {
+public abstract class Command extends RifidiService implements Callable<CommandState>{
 	/** Reader used by the command. */
 	private Reader reader;
 	/** Spring JMS template for easy sending of JMS-Messages. */
 	protected JmsTemplate template;
 	/** Destination for JMS-Messages. */
 	protected Destination destination;
-	/** ID of the command. */
-	private String id;
 
 	/**
 	 * @param reader
@@ -56,26 +54,6 @@ public abstract class Command implements Callable<CommandState>, RifidiService {
 	 */
 	public void setDestination(Destination destination) {
 		this.destination = destination;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.rifidi.configuration.RifidiService#getID()
-	 */
-	@Override
-	public String getID() {
-		return id;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.rifidi.configuration.RifidiService#setID(java.lang.String)
-	 */
-	@Override
-	public void setID(String id) {
-		this.id = id;
 	}
 
 	/**

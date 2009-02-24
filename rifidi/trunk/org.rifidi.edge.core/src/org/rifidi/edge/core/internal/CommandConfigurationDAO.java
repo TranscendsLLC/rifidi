@@ -6,7 +6,7 @@ package org.rifidi.edge.core.internal;
 import java.util.Set;
 
 import org.rifidi.edge.core.commands.AbstractCommandConfigurationFactory;
-import org.rifidi.edge.core.commands.CommandConfiguration;
+import org.rifidi.edge.core.commands.AbstractCommandConfiguration;
 
 /**
  * A Data Access Object that keeps track of CommandConfiguraiton services and
@@ -17,34 +17,46 @@ import org.rifidi.edge.core.commands.CommandConfiguration;
  */
 public interface CommandConfigurationDAO {
 
-	/**
-	 * @param commandConfigurationFactoryFactoryID
-	 * @return the CommandConfigurationFactory service with the given ID
-	 */
-	public AbstractCommandConfigurationFactory getCommandConfigurationFactoryFactory(
-			String commandConfigurationFactoryFactoryID);
+	Set<AbstractCommandConfigurationFactory> getCommandConfigurationFactories();
 
 	/**
-	 * @param commandConfigurationFactoryFactoryID
-	 * @return the CommandConfigurationFactory service which provides a
-	 *         commandConfigurationFactory service with the givenID
+	 * Get the CommandConfigurationFactory with the givenID
+	 * 
+	 * @param commandConfigurationFactoryID
+	 * @return
 	 */
-	public AbstractCommandConfigurationFactory getCommandConfigurationFactoryFactoryFromConfigFactoryID(
+	AbstractCommandConfigurationFactory getCommandConfigurationFactory(
 			String commandConfigurationFactoryID);
 
 	/**
-	 * @return all current CommandConfigurationFactoryFactory services
+	 * Get the command configuration factory from the configuration type
+	 * @param commandConfigurationType
+	 * @return
 	 */
-	public Set<AbstractCommandConfigurationFactory> getCurrentCommandConfigurationFactoryFactories();
+	AbstractCommandConfigurationFactory getCommandConfigurationFactoryFromType(
+			String commandConfigurationType);
+
+	/**
+	 * Get the types of a command configuration that a particular command
+	 * configuraiton factory can produce
+	 * 
+	 * @param commandConfigurationFactoryID
+	 * @return
+	 */
+	Set<String> getCommandConfigurationTypes(
+			String commandConfigurationFactoryID);
 
 	/**
 	 * 
-	 * @param commandConfigurationFactory
-	 *            ID
-	 * @return The CommandConfigurationFactory with the givenID or null if it
-	 *         does not exist
+	 * @return the set of all currently configured commands
 	 */
-	public CommandConfiguration<?> getCommandConfigurationFactory(
-			String commandConfigurationFactoryID);
+	Set<AbstractCommandConfiguration<?>> getCommandConfigurations();
+	
+	/**
+	 * Get the CommandConfiguraiton associated with the given ID
+	 * @param commandConfigID
+	 * @return
+	 */
+	AbstractCommandConfiguration<?> getCommandConfiguration(String commandConfigID);
 
 }

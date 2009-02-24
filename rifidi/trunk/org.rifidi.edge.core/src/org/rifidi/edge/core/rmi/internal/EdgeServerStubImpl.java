@@ -9,6 +9,7 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.rifidi.configuration.services.ConfigurationService;
 import org.rifidi.edge.core.internal.CommandConfigurationDAO;
 import org.rifidi.edge.core.internal.ReaderConfigurationDAO;
 import org.rifidi.edge.core.readersession.ReaderSessionDAO;
@@ -22,6 +23,8 @@ import org.rifidi.edge.core.rmi.EdgeServerStub;
  */
 public class EdgeServerStubImpl implements EdgeServerStub {
 
+	/** The configuration service for the edge server*/
+	private ConfigurationService configurationService;
 	/** The object that manages creating and starting readerSessions */
 	private ReaderSessionDAO readerSessionDAO;
 	/** A data access object for the command configuration services */
@@ -30,6 +33,11 @@ public class EdgeServerStubImpl implements EdgeServerStub {
 	private ReaderConfigurationDAO readerConfigDAO;
 	/** The logger for this class */
 	private static Log logger = LogFactory.getLog(EdgeServerStubImpl.class);
+
+	@Override
+	public void save() throws RemoteException {
+		configurationService.storeConfiguration();
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -112,5 +120,13 @@ public class EdgeServerStubImpl implements EdgeServerStub {
 	public void setReaderSessionDAO(ReaderSessionDAO readerSessionManagement) {
 		this.readerSessionDAO = readerSessionManagement;
 	}
+
+	/**
+	 * @param configurationService the configurationService to set
+	 */
+	public void setConfigurationService(ConfigurationService configurationService) {
+		this.configurationService = configurationService;
+	}
+
 
 }

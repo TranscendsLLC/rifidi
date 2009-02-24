@@ -12,25 +12,26 @@ import org.rifidi.configuration.RifidiService;
  * @author Jochen Mader - jochen@pramari.com
  * 
  */
-public interface CommandConfiguration<T extends Command> extends RifidiService {
+public abstract class AbstractCommandConfiguration<T extends Command>extends
+		RifidiService {
 	/**
 	 * Get a new instance of the command.
 	 * 
 	 * @return
 	 */
-	T getCommand();
+	public abstract T getCommand();
 
 	/**
 	 * Get the name of the command
 	 * 
 	 * @return
 	 */
-	String getCommandName();
+	public abstract String getCommandName();
 
 	/**
 	 * Get the description of the command.
 	 * 
 	 * @return
 	 */
-	String getCommandDescription();
+	public abstract String getCommandDescription();
 }
