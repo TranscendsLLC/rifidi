@@ -22,30 +22,8 @@ import org.rifidi.edge.core.exceptions.NoReaderAvailableException;
  * @author Jochen Mader - jochen@pramari.com
  * 
  */
-public abstract class AbstractReaderConfiguration<T extends Reader> implements
+public abstract class AbstractReaderConfiguration<T extends Reader> extends
 		RifidiService {
-
-	/** Service Registration with osgi */
-	private ServiceRegistration registration;
-	private static final Log logger = LogFactory
-			.getLog(AbstractReaderConfiguration.class);
-
-	/**
-	 * @param registration
-	 *            the registration to set
-	 */
-	public void setRegistration(ServiceRegistration registration) {
-		this.registration = registration;
-	}
-
-	public void destroy() {
-		if (registration != null) {
-			registration.unregister();
-			return;
-		}
-		logger.error("Tried to unregister service "
-				+ "that was not yet registered!");
-	}
 
 	/**
 	 * Try to aquire an instance of the reader.

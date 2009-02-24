@@ -6,6 +6,8 @@
 	<bean id="customCommands" class="org.rifidi.edge.console.RifidiEdgeServerCommands">
 		<property name="readerSessionManagement" ref="readerSessionManagement" />
 		<property name="readerConfigStub" ref="readerConfigStub" />
+		<property name="commandConfigStub" ref="commandConfigStub" />
+		<property name="edgeServerStub" ref="edgeServerStub" />
 	</bean>
 	<osgi:service id="customCommandsService" ref="customCommands"
 		interface="org.eclipse.osgi.framework.console.CommandProvider" />
@@ -14,5 +16,9 @@
 		interface="org.rifidi.edge.core.readersession.ReaderSessionDAO" />
 	<osgi:reference id="readerConfigStub"
 		interface="org.rifidi.edge.core.rmi.ReaderConfigurationStub" />
+	<osgi:reference id="commandConfigStub"
+		interface="org.rifidi.edge.core.rmi.CommandConfigurationStub" />
+	<osgi:reference id="edgeServerStub"
+		interface="org.rifidi.edge.core.rmi.EdgeServerStub" />
 
 </beans>

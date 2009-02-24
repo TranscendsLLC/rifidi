@@ -13,7 +13,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.osgi.framework.ServiceRegistration;
 import org.rifidi.edge.core.commands.Command;
-import org.rifidi.edge.core.commands.CommandConfiguration;
+import org.rifidi.edge.core.commands.AbstractCommandConfiguration;
 import org.rifidi.edge.core.commands.CommandState;
 import org.rifidi.edge.core.exceptions.NoReaderAvailableException;
 import org.rifidi.edge.core.internal.ReaderSession;
@@ -30,7 +30,7 @@ public class ReaderSessionImpl implements ReaderSession {
 	private static final Log logger = LogFactory
 			.getLog(ReaderSessionImpl.class);
 	/** Command the session is executing. */
-	private CommandConfiguration<?> commandFactory;
+	private AbstractCommandConfiguration<?> commandFactory;
 	/** Factory used for aquiring readers. */
 	private AbstractReaderConfiguration<?> factory;
 	/** Currently aquired reader. */
@@ -118,7 +118,7 @@ public class ReaderSessionImpl implements ReaderSession {
 	 * @see org.rifidi.edge.core.internal.ReaderSession#getCommandFactory()
 	 */
 	@Override
-	public CommandConfiguration<?> getCommandFactory() {
+	public AbstractCommandConfiguration<?> getCommandFactory() {
 		// TODO Auto-generated method stub
 		return commandFactory;
 	}
@@ -130,7 +130,7 @@ public class ReaderSessionImpl implements ReaderSession {
 	 * .rifidi.edge.newcore.commands.CommandFactory)
 	 */
 	@Override
-	public void setCommmandFactory(CommandConfiguration<?> commandFactory) {
+	public void setCommmandFactory(AbstractCommandConfiguration<?> commandFactory) {
 		assert (!running.get());
 		assert (commandFactory != null);
 		logger.debug("Setting command factory: " + commandFactory);

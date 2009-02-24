@@ -49,7 +49,7 @@ public class Alien9800ReaderConfigurationFactory extends
 	 */
 	@Override
 	public void customConfig(Alien9800ReaderConfiguration instance) {
-		instance.setRegistration(getContext().registerService(AbstractReaderConfiguration.class.getName(),
+		instance.setServiceRegistration(getContext().registerService(AbstractReaderConfiguration.class.getName(),
 				instance, null));
 	}
 

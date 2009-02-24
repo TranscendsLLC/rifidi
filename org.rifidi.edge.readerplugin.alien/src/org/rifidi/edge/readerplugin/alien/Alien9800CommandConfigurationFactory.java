@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.rifidi.edge.core.commands.AbstractCommandConfigurationFactory;
-import org.rifidi.edge.core.commands.CommandConfiguration;
+import org.rifidi.edge.core.commands.AbstractCommandConfiguration;
 import org.rifidi.edge.readerplugin.alien.commands.AlienGetTagListCommandConfiguration;
 
 /**
@@ -42,9 +42,10 @@ public class Alien9800CommandConfigurationFactory extends
 	 */
 	@Override
 	public void customInit(Object instance) {
-		if (instance instanceof CommandConfiguration<?>) {
-			getContext().registerService(CommandConfiguration.class.getName(),
-					instance, null);
+		if (instance instanceof AbstractCommandConfiguration<?>) {
+			AbstractCommandConfiguration<?> cc = (AbstractCommandConfiguration<?>) instance;
+			cc.setServiceRegistration(getContext().registerService(
+					AbstractCommandConfiguration.class.getName(), instance, null));
 		}
 	}
 
@@ -70,12 +71,15 @@ public class Alien9800CommandConfigurationFactory extends
 		return new ArrayList<String>(factoryIdToClass.keySet());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.rifidi.edge.core.commands.AbstractCommandConfigurationFactory#getID()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.core.commands.AbstractCommandConfigurationFactory#getID()
 	 */
 	@Override
 	public String getID() {
 		return uniqueID;
 	}
-	
+
 }

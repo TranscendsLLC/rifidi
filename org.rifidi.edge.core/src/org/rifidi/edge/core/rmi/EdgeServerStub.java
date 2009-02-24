@@ -4,10 +4,6 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-
-import javax.management.AttributeList;
-import javax.management.MBeanInfo;
 
 /**
  * This is the interface for the Edge Server RMI Stub.
@@ -17,9 +13,12 @@ import javax.management.MBeanInfo;
  */
 public interface EdgeServerStub extends Remote {
 
-
-
-
+	/**
+	 * Saves the current configurations to a file
+	 * @throws RemoteException
+	 */
+	void save() throws RemoteException;
+	
 	/**
 	 * This method gets all the Sessions currently available on the reader. The
 	 * key is the ID of the session. The List has three elements. The first is
