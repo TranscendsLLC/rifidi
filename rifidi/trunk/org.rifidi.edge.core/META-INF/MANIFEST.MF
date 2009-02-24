@@ -27,7 +27,6 @@ Import-Package: javax.jms;version="1.1.0",
  org.springframework.jms.support.destination;version="2.5.5"
 Export-Package: org.rifidi.edge.core.commands,
  org.rifidi.edge.core.exceptions,
- org.rifidi.edge.core.jms,
  org.rifidi.edge.core.readers,
  org.rifidi.edge.core.readers.impl,
  org.rifidi.edge.core.readersession,

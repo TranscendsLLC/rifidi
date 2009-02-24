@@ -18,7 +18,7 @@
 	<bean id="readerSessionManagementImpl" class="org.rifidi.edge.core.readersession.ReaderSessionDAOImpl">
 		<property name="context" ref="bundleContext" />
 		<property name="readerConfigurations" ref="readerConfigurationsSet" />
-		<property name="template" ref="consumerJmsTemplate" />
+		<property name="template" ref="senderJmsTemplate" />
 		<property name="destination" ref="destination" />
 	</bean>
 
@@ -112,7 +112,6 @@
 	<!--  ActiveMQ destinations to use  -->
 	<amq:queue id="destination"
 		physicalName="org.apache.activemq.spring.Test.spring.embedded" />
-
 	<!--
 		JMS ConnectionFactory to use, configuring the embedded broker using
 		XML
@@ -130,13 +129,7 @@
 		</property>
 	</bean>
 
-	<bean id="consumerJmsTemplate" class="org.springframework.jms.core.JmsTemplate">
+	<bean id="senderJmsTemplate" class="org.springframework.jms.core.JmsTemplate">
 		<property name="connectionFactory" ref="jmsFactory" />
-	</bean>
-
-	<!-- a sample POJO consumer -->
-	<bean id="consumer" class="org.rifidi.edge.core.jms.TestConsumer">
-		<property name="template" ref="consumerJmsTemplate" />
-		<property name="destination" ref="destination" />
 	</bean>
 </beans>
