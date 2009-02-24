@@ -6,10 +6,12 @@ package org.rifidi.edge.core.internal;
 import java.util.concurrent.Callable;
 
 import org.rifidi.edge.core.commands.AbstractCommandConfiguration;
-import org.rifidi.edge.core.events.EventQueue;
 import org.rifidi.edge.core.readers.AbstractReaderConfiguration;
 
 /**
+ * TODO: This interface should extend RifidiService in order to persist reader
+ * sessions
+ * 
  * A reader session manages the lifecycle of commands.
  * 
  * @author Jochen Mader - jochen@pramari.com
@@ -58,5 +60,20 @@ public interface ReaderSession extends Callable<Boolean> {
 	 * @return
 	 */
 	boolean isRunning();
+
+	/**
+	 * TODO: This method will go away once this interface extends RifidiService
+	 * Get the ID associated with this session
+	 * 
+	 * @param id
+	 */
+	void setID(String id);
+
+	/**
+	 * TODO: This method will go away once this interface extends RifidiService
+	 * 
+	 * @return The ID associated with this session
+	 */
+	String getID();
 
 }

@@ -186,4 +186,11 @@ public class Alien9800Reader extends AbstractReader {
 			throw new IOException("Unable to authenticate: " + e);
 		}
 	}
+	
+	protected void cleanup(){
+		try {
+			this.socket.close();
+		} catch (IOException e) {
+		}
+	}
 }

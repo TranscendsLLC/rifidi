@@ -26,6 +26,7 @@
 
 	<bean id="edgeServerStub" class="org.rifidi.edge.core.rmi.internal.EdgeServerStubImpl">
 		<property name="configurationService" ref="configurationService" />
+		<property name="readerSessionDAO" ref="readerSessionDAOImpl" />
 	</bean>
 
 	<osgi:service id="edgeServerStubService" ref="edgeServerStub"
@@ -36,7 +37,7 @@
 
 
 	<!--  Create Reader Session Service -->
-	<bean id="readerSessionManagementImpl" class="org.rifidi.edge.core.readersession.ReaderSessionDAOImpl">
+	<bean id="readerSessionDAOImpl" class="org.rifidi.edge.core.readersession.ReaderSessionDAOImpl">
 		<property name="context" ref="bundleContext" />
 		<property name="readerConfigurations" ref="readerConfigurationsSet" />
 		<property name="template" ref="senderJmsTemplate" />
@@ -63,27 +64,14 @@
 	</bean>
 
 	<!-- Put reader session service in OSGi Registry -->
-	<osgi:service id="readerSessionManagement" ref="readerSessionManagementImpl"
+	<osgi:service id="readerSessionDAO" ref="readerSessionDAOImpl"
 		interface="org.rifidi.edge.core.readersession.ReaderSessionDAO"></osgi:service>
-
-	<!-- Put reader configuration DAO service in OSGi Registry -->
-	<osgi:service id="ReaderConfigurationDAO" ref="ReaderConfigurationDAOImpl"
-		interface="org.rifidi.edge.core.internal.ReaderConfigurationDAO"></osgi:service>
-
-	<!-- Put reader configuration DAO service in OSGi Registry -->
-	<osgi:service id="ConfigurationDAO" ref="ConfigurationDAOImpl"
-		interface="org.rifidi.edge.core.internal.ConfigurationDAO"></osgi:service>
-
-	<!-- Put command configuration DAO service in OSGi Registry -->
-	<osgi:service id="CommandConfigurationDAO" ref="CommandConfigurationDAOImpl"
-		interface="org.rifidi.edge.core.internal.CommandConfigurationDAO"></osgi:service>
-
 
 	<!-- Listener for Reader Configurations -->
 	<osgi:set id="readerConfigurationsSet"
 		interface="org.rifidi.edge.core.readers.AbstractReaderConfiguration"
 		cardinality="0..N">
-		<osgi:listener ref="readerSessionManagementImpl"
+		<osgi:listener ref="readerSessionDAOImpl"
 			bind-method="bind" unbind-method="unbind" />
 		<osgi:listener ref="ReaderConfigurationDAOImpl"
 			bind-method="bindReaderConfiguration" unbind-method="unbindReaderConfiguration" />
@@ -108,7 +96,7 @@
 	<osgi:set id="commandConfigurationSet"
 		interface="org.rifidi.edge.core.commands.AbstractCommandConfiguration"
 		cardinality="0..N">
-		<osgi:listener ref="readerSessionManagementImpl"
+		<osgi:listener ref="readerSessionDAOImpl"
 			bind-method="bindCommand" unbind-method="unbindCommand" />
 		<osgi:listener ref="CommandConfigurationDAOImpl"
 			bind-method="bindCommandConfiguration" unbind-method="unbindCommandConfiguration"></osgi:listener>
@@ -120,20 +108,6 @@
 		<osgi:listener ref="CommandConfigurationDAOImpl"
 			bind-method="bindCommandConfigFactory" unbind-method="unbindCommandConfigFactory"></osgi:listener>
 	</osgi:set>
-
-
-
-	<!--
-		FIXME: does not actually listen to Reader Configuration Factories
-	-->
-	<osgi:set id="readerFactoryConfigurationSet"
-		interface="org.rifidi.edge.core.commands.AbstractCommandConfiguration"
-		cardinality="0..N">
-		<osgi:listener ref="readerSessionManagementImpl"
-			bind-method="bindCommand" unbind-method="unbindCommand" />
-	</osgi:set>
-
-
 
 
 	<!--  JMS -->

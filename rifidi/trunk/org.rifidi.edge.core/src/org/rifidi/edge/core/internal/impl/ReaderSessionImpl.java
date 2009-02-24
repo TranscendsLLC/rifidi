@@ -47,6 +47,8 @@ public class ReaderSessionImpl implements ReaderSession {
 	private JmsTemplate template;
 	/** Destination for JMS-Messages. */
 	private Destination destination;
+	/** The ID for this reader session. */
+	private String ID;
 
 	/**
 	 * Constructor.
@@ -79,6 +81,26 @@ public class ReaderSessionImpl implements ReaderSession {
 	 */
 	public void setRegistration(ServiceRegistration registration) {
 		this.registration = registration;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.rifidi.edge.core.internal.ReaderSession#getID()
+	 */
+	@Override
+	public String getID() {
+		return this.ID;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.rifidi.edge.core.internal.ReaderSession#setID(java.lang.String)
+	 */
+	@Override
+	public void setID(String id) {
+		this.ID = id;
 	}
 
 	/*
@@ -130,7 +152,8 @@ public class ReaderSessionImpl implements ReaderSession {
 	 * .rifidi.edge.newcore.commands.CommandFactory)
 	 */
 	@Override
-	public void setCommmandFactory(AbstractCommandConfiguration<?> commandFactory) {
+	public void setCommmandFactory(
+			AbstractCommandConfiguration<?> commandFactory) {
 		assert (!running.get());
 		assert (commandFactory != null);
 		logger.debug("Setting command factory: " + commandFactory);
@@ -171,7 +194,7 @@ public class ReaderSessionImpl implements ReaderSession {
 						.debug("Starting with: " + commandFactory + " "
 								+ factory);
 				try {
-					Reader reader = factory.aquireReader();
+					reader = factory.aquireReader();
 					command = commandFactory.getCommand();
 					command.setReader(reader);
 					command.setDestination(destination);

@@ -5,6 +5,9 @@ import java.rmi.RemoteException;
 import java.util.List;
 import java.util.Map;
 
+import org.rifidi.edge.core.exceptions.NonExistentCommandFactoryException;
+import org.rifidi.edge.core.exceptions.NonExistentReaderConfigurationException;
+
 /**
  * This is the interface for the Edge Server RMI Stub.
  * 
@@ -15,10 +18,11 @@ public interface EdgeServerStub extends Remote {
 
 	/**
 	 * Saves the current configurations to a file
+	 * 
 	 * @throws RemoteException
 	 */
 	void save() throws RemoteException;
-	
+
 	/**
 	 * This method gets all the Sessions currently available on the reader. The
 	 * key is the ID of the session. The List has three elements. The first is
@@ -61,9 +65,13 @@ public interface EdgeServerStub extends Remote {
 	 *            for the session to use
 	 * @return the ID of the newly created session
 	 * @throws RemoteException
+	 * @throw NonExistentCommandFactoryException
+	 * @throw NonExistentReaderConfigurationException
 	 */
 	String startReaderSession(String readerConfigurationName,
-			String commandFactoryName) throws RemoteException;
+			String commandFactoryName) throws RemoteException,
+			NonExistentCommandFactoryException,
+			NonExistentReaderConfigurationException;
 
 	/**
 	 * Stop a currently executing reader session
