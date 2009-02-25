@@ -51,13 +51,16 @@ import org.rifidi.edge.client.ale.xsd.epcglobal.LRSpec.Properties;
 public class FncView extends ViewPart {
 
 	public static final String id = "org.rifidi.edge.client.ale.ui.views.FncView";
+
+	private Log logger = LogFactory.getLog(FncView.class);
+
 	private ALEServicePortType aleProxy = null;
 	private String aleEndPoint = "http://localhost:8080/fc-server-0.4.0/services/ALEService";
 
 	private ALELRServicePortType readerProxy = null;
 	private String readerEndPoint = "http://localhost:8080/fc-server-0.4.0/services/ALELRService";
 
-	private Log logger = LogFactory.getLog(FncView.class);
+	private String LOGICAL_READER_NAME = "LogicalReader1";
 
 	private Group group = null;
 	private Label label1 = null;
@@ -113,16 +116,16 @@ public class FncView extends ViewPart {
 	public void createPartControl(Composite parent) {
 
 		this.parent = parent;
-		// init ALE
-		logger
-				.debug("\nJaxWsProxyFactoryBean aleFactory = new JaxWsProxyFactoryBean();");
-		JaxWsProxyFactoryBean aleFactory = new JaxWsProxyFactoryBean();
-		logger.debug("\naleFactory.setServiceClass(ALEServicePortType.class);");
-		aleFactory.setServiceClass(ALEServicePortType.class);
-		logger.debug("\naleEndPoint = " + aleEndPoint);
-		aleFactory.setAddress(aleEndPoint);
-		logger.debug("\naleProxy = (ALEServicePortType) aleFactory.create();");
-		aleProxy = (ALEServicePortType) aleFactory.create();
+		initALE();
+		initALELR();
+		initialize();
+
+	}
+
+	/**
+	 * 
+	 */
+	private void initALELR() {
 		// init ALELR
 		logger
 				.debug("\nJaxWsProxyFactoryBean lrFactory = new JaxWsProxyFactoryBean();");
@@ -135,9 +138,66 @@ public class FncView extends ViewPart {
 		logger
 				.debug("\nreaderProxy = (ALELRServicePortType) lrFactory.create();");
 		readerProxy = (ALELRServicePortType) lrFactory.create();
-		// init UI
-		initialize();
 
+	}
+
+	/**
+	 * 
+	 */
+	private void initALE() {
+		// init ALE
+		logger
+				.debug("\nJaxWsProxyFactoryBean aleFactory = new JaxWsProxyFactoryBean();");
+		JaxWsProxyFactoryBean aleFactory = new JaxWsProxyFactoryBean();
+		logger.debug("\naleFactory.setServiceClass(ALEServicePortType.class);");
+		aleFactory.setServiceClass(ALEServicePortType.class);
+		logger.debug("\naleEndPoint = " + aleEndPoint);
+		aleFactory.setAddress(aleEndPoint);
+		logger.debug("\naleProxy = (ALEServicePortType) aleFactory.create();");
+		aleProxy = (ALEServicePortType) aleFactory.create();
+
+	}
+
+	private ECSpec buildEcSpec() {
+		ECSpec spec = new ECSpec();
+		LogicalReaders lrs = new LogicalReaders();
+		// lrs.getLogicalReader().add(txtRd2Incl.getText());
+		lrs.getLogicalReader().add(LOGICAL_READER_NAME);
+		spec.setLogicalReaders(lrs);
+		ECBoundarySpec bspec = new ECBoundarySpec();
+		ECTime durationTime = new ECTime();
+		durationTime.setUnit("MS");
+		// Long.parseLong(txtDuration.getText())
+		durationTime.setValue(5500);
+		bspec.setDuration(durationTime);
+		ECTime repeatTime = new ECTime();
+		repeatTime.setUnit("MS");
+		// Long.parseLong(txtRepeatAfter.getText())
+		repeatTime.setValue(6000);
+		bspec.setRepeatPeriod(repeatTime);
+		ECTime stableSetTime = new ECTime();
+		stableSetTime.setUnit("MS");
+		// Long.parseLong(txtStableSet.getText())
+		stableSetTime.setValue(0);
+		bspec.setStableSetInterval(stableSetTime);
+		spec.setBoundarySpec(bspec);
+		ReportSpecs repSpecs = new ReportSpecs();
+		ECReportSpec repSpec = new ECReportSpec();
+		ECReportSetSpec rss = new ECReportSetSpec();
+		// txtRepSpecName.getText()
+		rss.setSet("CURRENT");
+		ECReportOutputSpec eros = new ECReportOutputSpec();
+		// rbIncludeRawDecY.getSelection()
+		eros.setIncludeRawHex(true);
+		// rbIncludeRawDecY.getSelection()
+		eros.setIncludeRawDecimal(true);
+		// rbIncludeEPCy.getSelection()
+		eros.setIncludeEPC(true);
+		repSpec.setOutput(eros);
+		repSpec.setReportSet(rss);
+		repSpecs.getReportSpec().add(repSpec);
+		spec.setReportSpecs(repSpecs);
+		return spec;
 	}
 
 	private void initialize() {
@@ -147,7 +207,7 @@ public class FncView extends ViewPart {
 		label2 = new Label(parent, SWT.NONE);
 		label2.setText("Logical Readers:");
 		txtRd2Incl = new Text(parent, SWT.BORDER);
-		txtRd2Incl.setText("LogicalReader1");
+		txtRd2Incl.setText(LOGICAL_READER_NAME);
 		createGroup1();
 		createGroup2();
 		createGroup5();
@@ -157,138 +217,127 @@ public class FncView extends ViewPart {
 				.addSelectionListener(new org.eclipse.swt.events.SelectionListener() {
 					public void widgetSelected(
 							org.eclipse.swt.events.SelectionEvent e) {
-						System.out.println("widgetSelected()");
+						logger.debug("widgetSelected()");
 						execute();
-					}
-
-					private void execute() {
-						ECSpec spec = new ECSpec();
-						LogicalReaders lrs = new LogicalReaders();
-						lrs.getLogicalReader().add(txtRd2Incl.getText());
-						spec.setLogicalReaders(lrs);
-						ECBoundarySpec bspec = new ECBoundarySpec();
-						ECTime time = new ECTime();
-						time.setUnit("MS");
-						time.setValue(Long.parseLong(txtDuration.getText()));
-						bspec.setDuration(time);
-						time.setValue(Long.parseLong(txtRepeatAfter.getText()));
-						bspec.setRepeatPeriod(time);
-						time.setValue(Long.parseLong(txtStableSet.getText()));
-						bspec.setStableSetInterval(time);
-						spec.setBoundarySpec(bspec);
-						ReportSpecs repSpecs = new ReportSpecs();
-						ECReportSpec repSpec = new ECReportSpec();
-						ECReportSetSpec rss = new ECReportSetSpec();
-						rss.setSet(txtRepSpecName.getText());
-						ECReportOutputSpec eros = new ECReportOutputSpec();
-						eros.setIncludeRawHex(rbIncludeRawDecY.getSelection());
-						eros.setIncludeRawDecimal(rbIncludeRawDecY
-								.getSelection());
-						eros.setIncludeEPC(rbIncludeEPCy.getSelection());
-						repSpec.setOutput(eros);
-						repSpec.setReportSet(rss);
-						repSpecs.getReportSpec().add(repSpec);
-						spec.setReportSpecs(repSpecs);
-
-						// specify logical reader
-
-						org.rifidi.edge.client.ale.logicalreader.wsdl.epcglobal.Define defineR = new org.rifidi.edge.client.ale.logicalreader.wsdl.epcglobal.Define();
-						defineR.setName("LogicalReader1");
-						LRSpec lrSpec = new LRSpec();
-						lrSpec.setIsComposite(false);
-						Properties props = new Properties();
-
-						LRProperty lrProp = new LRProperty();
-						lrProp.setName("ReaderType");
-						lrProp
-								.setValue("org.fosstrak.ale.server.readers.rp.RPAdaptor");
-						props.getProperty().add(lrProp);
-						lrProp.setName("Description");
-						lrProp
-								.setValue("This Logical Reader consists of shelf 1 and shelf 2,3,4 of the physical reader named MyReader");
-						props.getProperty().add(lrProp);
-						lrProp.setName("PhysicalReaderName");
-						lrProp.setValue("MyReader");
-						props.getProperty().add(lrProp);
-						lrProp.setName("ReadTimeInterval");
-						lrProp.setValue("1000");
-						props.getProperty().add(lrProp);
-						lrProp.setName("PhysicalReaderSource");
-						lrProp.setValue("Shelf1,Shelf2,Shelf3,Shelf4");
-						props.getProperty().add(lrProp);
-						lrProp.setName("NotificationPoint");
-						lrProp.setValue("http://localhost:9090");
-						props.getProperty().add(lrProp);
-						lrProp.setName("ConnectionPoint");
-						lrProp.setValue("http://localhost:8000");
-						props.getProperty().add(lrProp);
-
-						lrSpec.setProperties(props);
-						defineR.setSpec(lrSpec);
-
-						try {
-							System.out.println("\ngetVendorVersion(): "
-									+ aleProxy
-											.getVendorVersion(new EmptyParms())
-									+ "\n");
-							System.out
-									.println("\ngetStandardVersion(): "
-											+ aleProxy
-													.getStandardVersion(new EmptyParms())
-											+ "\n");
-							Object out = null;
-							out = readerProxy
-									.getVendorVersion(new org.rifidi.edge.client.ale.logicalreader.wsdl.epcglobal.EmptyParms());
-							System.out.println(out);
-							out = readerProxy
-									.getStandardVersion(new org.rifidi.edge.client.ale.logicalreader.wsdl.epcglobal.EmptyParms());
-							System.out.println(out);
-							out = readerProxy.define(defineR);
-							System.out.println(out);
-							
-							org.rifidi.edge.client.ale.logicalreader.wsdl.epcglobal.ArrayOfString readers =readerProxy.getLogicalReaderNames(new org.rifidi.edge.client.ale.logicalreader.wsdl.epcglobal.EmptyParms());
-							ArrayList<String> rDstrings = (ArrayList<String>) readers.getString();
-							if(rDstrings.size()<1)System.out.println("NO READER IS DEFINED ON SERVER");
-							for (String string : rDstrings) {
-								System.out.println("\n" + string);
-							}
-							Define define = new Define();
-							define.setSpec(spec);
-							define.setSpecName(txtECspecName.getText());
-
-							ArrayOfString names = aleProxy
-									.getECSpecNames(new EmptyParms());
-							ArrayList<String> strings = (ArrayList<String>) names
-									.getString();
-							if(strings.size()<1)System.out.println("NO ECSPEC IS DEFINED ON SERVER");
-							for (String string : strings) {
-								System.out.println("\n" + string);
-							}
-
-						} catch (ImplementationExceptionResponse e) {
-							System.out.println(e.getMessage());
-						} catch (SecurityExceptionResponse e) {
-							System.out.println(e.getMessage());
-						} catch (org.rifidi.edge.client.ale.logicalreader.wsdl.epcglobal.ImplementationExceptionResponse e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						} catch (org.rifidi.edge.client.ale.logicalreader.wsdl.epcglobal.SecurityExceptionResponse e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						} catch (org.rifidi.edge.client.ale.logicalreader.wsdl.epcglobal.DuplicateNameExceptionResponse e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						} catch (ValidationExceptionResponse e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-
 					}
 
 					public void widgetDefaultSelected(
 							org.eclipse.swt.events.SelectionEvent e) {
 					}
 				});
+	}
+
+	private void execute() {
+		ECSpec spec = buildEcSpec();
+		LRSpec lrSpec = buildLrSpec();
+		// specify logical reader
+
+		org.rifidi.edge.client.ale.logicalreader.wsdl.epcglobal.Define defineR = new org.rifidi.edge.client.ale.logicalreader.wsdl.epcglobal.Define();
+		defineR.setName(LOGICAL_READER_NAME);
+
+		defineR.setSpec(lrSpec);
+
+		try {
+			logger.debug("\ngetVendorVersion(): "
+					+ aleProxy.getVendorVersion(new EmptyParms()) + "\n");
+			System.out.println("\ngetStandardVersion(): "
+					+ aleProxy.getStandardVersion(new EmptyParms()) + "\n");
+			Object out = null;
+			out = readerProxy
+					.getVendorVersion(new org.rifidi.edge.client.ale.logicalreader.wsdl.epcglobal.EmptyParms());
+			logger.debug(out);
+			out = readerProxy
+					.getStandardVersion(new org.rifidi.edge.client.ale.logicalreader.wsdl.epcglobal.EmptyParms());
+			logger.debug(out);
+			org.rifidi.edge.client.ale.logicalreader.wsdl.epcglobal.ArrayOfString readers = readerProxy
+					.getLogicalReaderNames(new org.rifidi.edge.client.ale.logicalreader.wsdl.epcglobal.EmptyParms());
+			ArrayList<String> rDstrings = (ArrayList<String>) readers
+					.getString();
+			if (rDstrings.size() < 1)
+				logger.debug("NO READER IS DEFINED ON SERVER");
+			for (String string : rDstrings) {
+				logger.debug("\n" + string);
+			}
+			out = readerProxy.define(defineR);
+			logger.debug(out);
+
+			readers = readerProxy
+					.getLogicalReaderNames(new org.rifidi.edge.client.ale.logicalreader.wsdl.epcglobal.EmptyParms());
+			rDstrings = (ArrayList<String>) readers.getString();
+			if (rDstrings.size() < 1)
+				logger.debug("NO READER IS DEFINED ON SERVER");
+			for (String string : rDstrings) {
+				logger.debug("\n" + string);
+			}
+			ArrayOfString names = aleProxy.getECSpecNames(new EmptyParms());
+			ArrayList<String> strings = (ArrayList<String>) names.getString();
+			if (strings.size() < 1)
+				logger.debug("NO ECSPEC IS DEFINED ON SERVER");
+			for (String string : strings) {
+				logger.debug("\n" + string);
+			}
+			Define define = new Define();
+			define.setSpec(spec);
+			define.setSpecName(txtECspecName.getText());
+			aleProxy.define(define);
+			names = aleProxy.getECSpecNames(new EmptyParms());
+			strings = (ArrayList<String>) names.getString();
+			if (strings.size() < 1)
+				logger.debug("NO ECSPEC IS DEFINED ON SERVER");
+			for (String string : strings) {
+				logger.debug("\n" + string);
+			}
+
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		}
+
+	}
+
+	private LRSpec buildLrSpec() {
+		LRSpec lrSpec = new LRSpec();
+		lrSpec.setIsComposite(false);
+
+		Properties props = new Properties();
+
+		LRProperty lrpReaderType = new LRProperty();
+		lrpReaderType.setName("ReaderType");
+		lrpReaderType.setValue("org.fosstrak.ale.server.readers.rp.RPAdaptor");
+		props.getProperty().add(lrpReaderType);
+
+		LRProperty lrpDesc = new LRProperty();
+		lrpDesc.setName("Description");
+		lrpDesc
+				.setValue("This Logical Reader consists of shelf 1 and shelf 2,3,4 of the physical reader named MyReader");
+		props.getProperty().add(lrpDesc);
+
+		LRProperty lrpPhysName = new LRProperty();
+		lrpPhysName.setName("PhysicalReaderName");
+		lrpPhysName.setValue("MyReader");
+		props.getProperty().add(lrpPhysName);
+
+		LRProperty lrpReadInterval = new LRProperty();
+		lrpReadInterval.setName("ReadTimeInterval");
+		lrpReadInterval.setValue("1000");
+		props.getProperty().add(lrpReadInterval);
+
+		LRProperty lrpPhysicalSource = new LRProperty();
+		lrpPhysicalSource.setName("PhysicalReaderSource");
+		lrpPhysicalSource.setValue("Shelf1,Shelf2,Shelf3,Shelf4");
+		props.getProperty().add(lrpPhysicalSource);
+
+		LRProperty lrpNotificationPoint = new LRProperty();
+		lrpNotificationPoint.setName("NotificationPoint");
+		lrpNotificationPoint.setValue("http://localhost:9090");
+		props.getProperty().add(lrpNotificationPoint);
+
+		LRProperty lrpConnectionPoint = new LRProperty();
+		lrpConnectionPoint.setName("ConnectionPoint");
+		lrpConnectionPoint.setValue("http://localhost:8000");
+		props.getProperty().add(lrpConnectionPoint);
+
+		lrSpec.setProperties(props);
+		return lrSpec;
 	}
 
 	/**

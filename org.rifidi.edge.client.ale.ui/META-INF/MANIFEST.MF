@@ -11,4 +11,4 @@ Require-Bundle: org.eclipse.ui,
  org.apache.cxf;bundle-version="1.0.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
-Import-Package: org.apache.log4j;version="1.2.13"
+Import-Package: org.apache.commons.logging;version="1.0.4"
