@@ -25,13 +25,13 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.part.ViewPart;
 import org.rifidi.edge.client.ale.logicalreader.wsdl.epcglobal.ALELRServicePortType;
-import org.rifidi.edge.client.ale.logicalreader.wsdl.epcglobal.ValidationExceptionResponse;
 import org.rifidi.edge.client.ale.wsdl.epcglobal.ALEServicePortType;
 import org.rifidi.edge.client.ale.wsdl.epcglobal.ArrayOfString;
 import org.rifidi.edge.client.ale.wsdl.epcglobal.Define;
 import org.rifidi.edge.client.ale.wsdl.epcglobal.EmptyParms;
 import org.rifidi.edge.client.ale.wsdl.epcglobal.ImplementationExceptionResponse;
 import org.rifidi.edge.client.ale.wsdl.epcglobal.SecurityExceptionResponse;
+import org.rifidi.edge.client.ale.wsdl.epcglobal.Subscribe;
 import org.rifidi.edge.client.ale.xsd.epcglobal.ECBoundarySpec;
 import org.rifidi.edge.client.ale.xsd.epcglobal.ECReportOutputSpec;
 import org.rifidi.edge.client.ale.xsd.epcglobal.ECReportSetSpec;
@@ -61,6 +61,7 @@ public class FncView extends ViewPart {
 	private String readerEndPoint = "http://localhost:8080/fc-server-0.4.0/services/ALELRService";
 
 	private String LOGICAL_READER_NAME = "LogicalReader1";
+	private String EC_SPEC_NAME = "specCURRENT";
 
 	private Group group = null;
 	private Label label1 = null;
@@ -249,49 +250,69 @@ public class FncView extends ViewPart {
 			out = readerProxy
 					.getStandardVersion(new org.rifidi.edge.client.ale.logicalreader.wsdl.epcglobal.EmptyParms());
 			logger.debug(out);
-			org.rifidi.edge.client.ale.logicalreader.wsdl.epcglobal.ArrayOfString readers = readerProxy
-					.getLogicalReaderNames(new org.rifidi.edge.client.ale.logicalreader.wsdl.epcglobal.EmptyParms());
-			ArrayList<String> rDstrings = (ArrayList<String>) readers
-					.getString();
-			if (rDstrings.size() < 1)
-				logger.debug("NO READER IS DEFINED ON SERVER");
-			for (String string : rDstrings) {
-				logger.debug("\n" + string);
-			}
+			printLRspecsFromServer();
 			out = readerProxy.define(defineR);
 			logger.debug(out);
+			printLRspecsFromServer();
+			
 
-			readers = readerProxy
-					.getLogicalReaderNames(new org.rifidi.edge.client.ale.logicalreader.wsdl.epcglobal.EmptyParms());
-			rDstrings = (ArrayList<String>) readers.getString();
-			if (rDstrings.size() < 1)
-				logger.debug("NO READER IS DEFINED ON SERVER");
-			for (String string : rDstrings) {
-				logger.debug("\n" + string);
-			}
-			ArrayOfString names = aleProxy.getECSpecNames(new EmptyParms());
-			ArrayList<String> strings = (ArrayList<String>) names.getString();
-			if (strings.size() < 1)
-				logger.debug("NO ECSPEC IS DEFINED ON SERVER");
-			for (String string : strings) {
-				logger.debug("\n" + string);
-			}
+			printECspecsFromServer();
 			Define define = new Define();
 			define.setSpec(spec);
 			define.setSpecName(txtECspecName.getText());
 			aleProxy.define(define);
-			names = aleProxy.getECSpecNames(new EmptyParms());
-			strings = (ArrayList<String>) names.getString();
-			if (strings.size() < 1)
-				logger.debug("NO ECSPEC IS DEFINED ON SERVER");
-			for (String string : strings) {
-				logger.debug("\n" + string);
-			}
+			printECspecsFromServer();
+			
+			Subscribe subscribParms = new Subscribe();
+			subscribParms.setNotificationURI("http://localhost:10000");
+			subscribParms.setSpecName(EC_SPEC_NAME);
+			aleProxy.subscribe(subscribParms);
 
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 		}
 
+	}
+
+	/**
+	 * @throws org.rifidi.edge.client.ale.logicalreader.wsdl.epcglobal.ImplementationExceptionResponse
+	 * @throws org.rifidi.edge.client.ale.logicalreader.wsdl.epcglobal.SecurityExceptionResponse
+	 * 
+	 */
+	private void printLRspecsFromServer()
+			throws org.rifidi.edge.client.ale.logicalreader.wsdl.epcglobal.SecurityExceptionResponse,
+			org.rifidi.edge.client.ale.logicalreader.wsdl.epcglobal.ImplementationExceptionResponse {
+		org.rifidi.edge.client.ale.logicalreader.wsdl.epcglobal.ArrayOfString readers = readerProxy
+				.getLogicalReaderNames(new org.rifidi.edge.client.ale.logicalreader.wsdl.epcglobal.EmptyParms());
+		ArrayList<String> rDstrings = (ArrayList<String>) readers.getString();
+		if (rDstrings.size() < 1) {
+			logger.debug("NO READER IS DEFINED ON SERVER");
+		} else {
+			logger.debug("the following logical readers are defined on the server:");
+			for (String string : rDstrings) {
+				logger.debug("\n" + string);
+			}
+		}
+
+	}
+
+	/**
+	 * @throws SecurityExceptionResponse
+	 * @throws ImplementationExceptionResponse
+	 * 
+	 */
+	private void printECspecsFromServer()
+			throws ImplementationExceptionResponse, SecurityExceptionResponse {
+		ArrayOfString names = aleProxy.getECSpecNames(new EmptyParms());
+		ArrayList<String> strings = (ArrayList<String>) names.getString();
+		if (strings.size() < 1) {
+			logger.debug("NO ECSPEC IS DEFINED ON SERVER");
+		} else {
+			logger.debug("the following ECspecs are defined on the server:");
+			for (String string : strings) {
+				logger.debug("\n" + string);
+			}
+		}
 	}
 
 	private LRSpec buildLrSpec() {
@@ -351,7 +372,7 @@ public class FncView extends ViewPart {
 		label1 = new Label(group, SWT.NONE);
 		label1.setText("Event Cycle Name:");
 		txtECspecName = new Text(group, SWT.BORDER);
-		txtECspecName.setText("specCurrent");
+		txtECspecName.setText(EC_SPEC_NAME);
 		label = new Label(group, SWT.NONE);
 		label.setText("Include Spec in Reports:");
 		rbInclInSpecY = new Button(group, SWT.RADIO);
