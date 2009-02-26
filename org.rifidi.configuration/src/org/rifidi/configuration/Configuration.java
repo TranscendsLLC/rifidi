@@ -39,7 +39,8 @@ public interface Configuration extends DynamicMBean {
 	String getFactoryID();
 
 	/**
-	 * Used for persistence.
+	 * Used for persistence. Should only be called when saving because it
+	 * returns attributes as a Map<String,String>
 	 */
 	Map<String, String> getAttributes();
 
