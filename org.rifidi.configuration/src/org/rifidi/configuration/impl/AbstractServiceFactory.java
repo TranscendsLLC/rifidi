@@ -64,13 +64,20 @@ public abstract class AbstractServiceFactory<T extends RifidiService>
 		assert (getFactoryIDs().get(0) != null);
 		try {
 			T instance = getClazz().newInstance();
-			counter++;
 			((DefaultConfigurationImpl) configuration).setTarget(instance);
+			counter++;
 			if (configuration.getServiceID() == null) {
 				// TODO: baaad, we are depending on a concrete implementation!!!
 				((DefaultConfigurationImpl) configuration)
 						.setServiceID(getFactoryIDs().get(0) + "-"
 								+ Integer.toString(counter));
+			}else{
+				String[] splitString = configuration.getServiceID().split("-");
+				String idNumString = splitString[splitString.length -1];
+				int idNum = Integer.parseInt(idNumString);
+				if(counter<idNum){
+					counter=idNum;
+				}
 			}
 			Dictionary<String, String> params = new Hashtable<String, String>();
 			params.put("type", getClazz().getName());

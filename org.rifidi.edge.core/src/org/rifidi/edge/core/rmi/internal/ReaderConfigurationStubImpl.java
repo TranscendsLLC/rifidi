@@ -21,8 +21,8 @@ import org.apache.commons.logging.LogFactory;
 import org.rifidi.configuration.Configuration;
 import org.rifidi.edge.core.internal.ConfigurationDAO;
 import org.rifidi.edge.core.internal.ReaderConfigurationDAO;
-import org.rifidi.edge.core.readers.AbstractReaderConfigurationFactory;
 import org.rifidi.edge.core.readers.AbstractReaderConfiguration;
+import org.rifidi.edge.core.readers.AbstractReaderConfigurationFactory;
 import org.rifidi.edge.core.rmi.ReaderConfigurationStub;
 
 /**
@@ -89,7 +89,7 @@ public class ReaderConfigurationStubImpl implements ReaderConfigurationStub {
 			logger.warn("No configuraion found with ID: "
 					+ readerConfigurationID);
 		}
-		
+
 		if (readerConfig != null) {
 			readerConfig.destroy();
 		} else {
@@ -113,7 +113,8 @@ public class ReaderConfigurationStubImpl implements ReaderConfigurationStub {
 		// get all reader configurations
 		Set<AbstractReaderConfiguration<?>> configurations = this.readerConfigDAO
 				.getCurrentReaderConfigurations();
-		Iterator<AbstractReaderConfiguration<?>> iter = configurations.iterator();
+		Iterator<AbstractReaderConfiguration<?>> iter = configurations
+				.iterator();
 		while (iter.hasNext()) {
 			AbstractReaderConfiguration<?> current = iter.next();
 			// get the ID of the reader configuration
@@ -181,7 +182,8 @@ public class ReaderConfigurationStubImpl implements ReaderConfigurationStub {
 		// Get all ReaderConfigurations
 		Set<AbstractReaderConfiguration<?>> configurations = readerConfigDAO
 				.getCurrentReaderConfigurations();
-		Iterator<AbstractReaderConfiguration<?>> iter = configurations.iterator();
+		Iterator<AbstractReaderConfiguration<?>> iter = configurations
+				.iterator();
 		while (iter.hasNext()) {
 
 			AbstractReaderConfiguration<?> readerConfig = iter.next();
@@ -295,6 +297,19 @@ public class ReaderConfigurationStubImpl implements ReaderConfigurationStub {
 	 */
 	public void setConfigurationDAO(ConfigurationDAO configurationDAO) {
 		this.configurationDAO = configurationDAO;
+	}
+
+	@Override
+	public AttributeList configureReader(String readerConfigurationID)
+			throws RemoteException {
+		AbstractReaderConfiguration<?> readerConfig = this.readerConfigDAO
+				.getReaderConfiguration(readerConfigurationID);
+		if (readerConfig == null) {
+			logger.warn("Reader Configuration with ID " + readerConfigurationID
+					+ " is not available");
+		}
+		readerConfig.configureReader();
+		return getReaderConfigurationProperties(readerConfigurationID);
 	}
 
 }

@@ -98,6 +98,33 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 		return null;
 	}
 
+	public Object _configurereader(CommandInterpreter intp) {
+		String id = intp.nextArgument();
+		if (id == null) {
+			intp
+					.println("Format is: configurereader <ReaderConfigurationID>");
+		}
+		try {
+			AttributeList attrs = readerConfigStub.configureReader(id);
+			if (attrs == null) {
+				intp.println("No reader configuraiton with ID " + id
+						+ " is available");
+			}
+
+			StringBuilder sb = new StringBuilder();
+			sb.append("Reader ConfigurationID: " + id + "\n");
+			for (Attribute attr : attrs.asList()) {
+				sb.append("\t" + attr.getName() + " - " + attr.getValue()
+						+ "\n");
+			}
+			intp.println(sb.toString());
+		} catch (RemoteException e) {
+			intp.println(e.getMessage());
+		}
+
+		return null;
+	}
+
 	/**
 	 * Display the list of available reader configurations.
 	 * 
@@ -519,7 +546,8 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 		}
 
 		try {
-			String id = edgeServerStub.startReaderSession(readerName, commandName);
+			String id = edgeServerStub.startReaderSession(readerName,
+					commandName);
 			intp.println("Reader Session Started.  ID is: " + id);
 		} catch (NonExistentCommandFactoryException e) {
 			intp.println("Command " + commandName + " doesn't exist.");
@@ -540,10 +568,10 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 		}
 		return null;
 	}
-	
-	public Object _stopreadersession(CommandInterpreter intp){
-		String readerSessionName= intp.nextArgument();
-		if(readerSessionName==null){
+
+	public Object _stopreadersession(CommandInterpreter intp) {
+		String readerSessionName = intp.nextArgument();
+		if (readerSessionName == null) {
 			intp.println("Format is: stopreadersession <readersessionID>");
 			return null;
 		}
@@ -575,22 +603,27 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 		buffer.append("setreaderproperties - "
 				+ "set the properties of a reader configuration\n\t");
 		buffer.append("readerdescription - "
-				+ "get the names of all properties in a configuration\n");
+				+ "get the names of all properties in a configuration\n\t");
+		buffer.append("configurereader - "
+				+ "Make a connection to reader and set and get properties\n");
 		buffer.append("------Command Config Comamnds ------\n\t");
 		buffer.append("commandtypes - List all command types\n\t");
 		buffer.append("commands - "
 				+ "List all available command configurations\n\t");
 		buffer.append("createcommand - create a new command configuration\n\t");
 		buffer.append("deletecommand - delete a command configuration\n\t");
-		buffer.append("getcommandproperties - get the properties of a command configuration\n\t");
-		buffer.append("setcommandproperties - set the properties of a command configuration\n\t");
-		buffer.append("commanddesription - get the names of all properties in a command configuraiton\n");
+		buffer
+				.append("getcommandproperties - get the properties of a command configuration\n\t");
+		buffer
+				.append("setcommandproperties - set the properties of a command configuration\n\t");
+		buffer
+				.append("commanddesription - get the names of all properties in a command configuraiton\n");
 		buffer.append("------Reader Session Commands------\n\t");
-		buffer.append("createreadersession - create and start readersession\n\t");
+		buffer
+				.append("createreadersession - create and start readersession\n\t");
 		buffer.append("stopreadersession - stop a reader session\n");
 		buffer.append("------Edge Server Commands------\n\t");
 		buffer.append("save - save configuraiton file\n");
 		return buffer.toString();
 	}
-
 }

@@ -10,6 +10,8 @@ import java.net.Socket;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
+import javax.management.AttributeList;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.commands.CommandState;
@@ -59,7 +61,7 @@ public class Alien9800Reader extends AbstractReader {
 	public static final String TAG_LIST = ('\1' + "get taglist\n");
 	/** Tag list format command. */
 	public static final String TAG_LIST_FORMAT = ('\1' + "set TagListFormat=Custom\n");
-	/**	Set type of tags to query for. */
+	/** Set type of tags to query for. */
 	public static final String TAG_TYPE_COMMAND = ('\1' + "set TagType=");
 	/** Set antenna sequence */
 	public static final String ANTENNA_SEQUENCE_COMMAND = ('\1' + "set AntennaSequence=");
@@ -67,41 +69,41 @@ public class Alien9800Reader extends AbstractReader {
 	public static final String TAG_LIST_CUSTOM_FORMAT = ('\1' + "set TagListCustomFormat=%k|%T|%a\n");
 	/** Get the timezone of the reader. */
 	public static final String GET_TIME_ZONE = ('\1' + "get TimeZone\n");
-	
+
 	/**
 	 * COMMANDS
 	 */
-	private static final String COMMAND_HEARTBEAT_ADDRESS = "heartbeataddress";
-	private static final String COMMAND_ANTENNA_SEQUENCE = "antennasequence";
-	private static final String COMMAND_MAX_ANTENNA = "maxantenna";
-	private static final String COMMAND_PASSWORD= "password";
-	private static final String COMMAND_READERNAME = "ReaderName";
-	private static final String COMMAND_READERNUMBER = "ReaderNumber";
-	private static final String COMMAND_READER_TYPE = "ReaderType";
-	private static final String COMMAND_READER_VERSION = "ReaderVersion";
-	private static final String COMMAND_RF_ATTENUATION = "RFAttenuation";
-	private static final String COMMAND_EXTERNAL_INPUT= "ExternalInput";
-	private static final String COMMAND_USERNAME = "username";
-	private static final String COMMAND_UPTIME = "Uptime";
-	private static final String COMMAND_TAG_TYPE= "tagtype";
-	private static final String COMMAND_EXTERNAL_OUTPUT = "ExternalOutput";
-	private static final String COMMAND_INVERT_EXTERNAL_INPUT = "InvertExternalInput";
-	private static final String COMMAND_INVERT_EXTERNAL_OUTPUT= "InvertExternalOutput";
-	private static final String COOMMAND_COMMAND_PORT= "CommandPort";
-	private static final String COMMAND_DHCP = "DHCP";
-	private static final String COMMAND_DNS= "DNS";
-	private static final String COMMAND_GATEWAY= "Gateway";
-	private static final String COMMAND_HEARTBEAT_COUNT= "HeartbeatCount";
-	private static final String COMMAND_HEARTBEAT_PORT= "HeartbeatPort";
-	private static final String COMMAND_HEARTBEAT_TIME = "HeartbeatTime";
-	private static final String COMMAND_IPADDRESS= "IPAddress";
-	private static final String COMMAND_MAC_ADDRESS = "MACAddress";
-	private static final String COMMAND_NETMASK = "Netmask";
-	private static final String COMMAND_NETWORK_TIMEOUT= "NetworkTimeout";
-	private static final String COMMAND_TIME= "Time";
-	private static final String COMMAND_TIME_SERVER= "TimeServer";
-	private static final String COMMAND_TIME_ZONE= "TimeZone";
-	
+	public static final String COMMAND_HEARTBEAT_ADDRESS = "heartbeataddress";
+	public static final String COMMAND_ANTENNA_SEQUENCE = "antennasequence";
+	public static final String COMMAND_MAX_ANTENNA = "maxantenna";
+	public static final String COMMAND_PASSWORD = "password";
+	public static final String COMMAND_READERNAME = "ReaderName";
+	public static final String COMMAND_READERNUMBER = "ReaderNumber";
+	public static final String COMMAND_READER_TYPE = "ReaderType";
+	public static final String COMMAND_READER_VERSION = "ReaderVersion";
+	public static final String COMMAND_RF_ATTENUATION = "RFAttenuation";
+	public static final String COMMAND_EXTERNAL_INPUT = "ExternalInput";
+	public static final String COMMAND_USERNAME = "username";
+	public static final String COMMAND_UPTIME = "Uptime";
+	public static final String COMMAND_TAG_TYPE = "tagtype";
+	public static final String COMMAND_EXTERNAL_OUTPUT = "ExternalOutput";
+	public static final String COMMAND_INVERT_EXTERNAL_INPUT = "InvertExternalInput";
+	public static final String COMMAND_INVERT_EXTERNAL_OUTPUT = "InvertExternalOutput";
+	public static final String COOMMAND_COMMAND_PORT = "CommandPort";
+	public static final String COMMAND_DHCP = "DHCP";
+	public static final String COMMAND_DNS = "DNS";
+	public static final String COMMAND_GATEWAY = "Gateway";
+	public static final String COMMAND_HEARTBEAT_COUNT = "HeartbeatCount";
+	public static final String COMMAND_HEARTBEAT_PORT = "HeartbeatPort";
+	public static final String COMMAND_HEARTBEAT_TIME = "HeartbeatTime";
+	public static final String COMMAND_IPADDRESS = "IPAddress";
+	public static final String COMMAND_MAC_ADDRESS = "MACAddress";
+	public static final String COMMAND_NETMASK = "Netmask";
+	public static final String COMMAND_NETWORK_TIMEOUT = "NetworkTimeout";
+	public static final String COMMAND_TIME = "Time";
+	public static final String COMMAND_TIME_SERVER = "TimeServer";
+	public static final String COMMAND_TIME_ZONE = "TimeZone";
+
 	/** Thread for reading from the socket. */
 	private Thread readThread;
 	/** Thread for writing to the socket. */
@@ -165,7 +167,8 @@ public class Alien9800Reader extends AbstractReader {
 
 		// try to authenticate
 		try {
-			AuthenticateCommand command=new AuthenticateCommand(username, password);
+			AuthenticateCommand command = new AuthenticateCommand(username,
+					password);
 			command.setReader(this);
 			Future<CommandState> future = execute(command);
 			CommandState state = future.get();
@@ -186,8 +189,12 @@ public class Alien9800Reader extends AbstractReader {
 			throw new IOException("Unable to authenticate: " + e);
 		}
 	}
-	
-	protected void cleanup(){
+
+	/**
+	 * This method needs to be called to clean up when the reader is no longer
+	 * needed
+	 */
+	protected void cleanup() {
 		try {
 			this.socket.close();
 		} catch (IOException e) {

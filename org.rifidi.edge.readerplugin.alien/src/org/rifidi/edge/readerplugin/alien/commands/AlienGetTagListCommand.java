@@ -42,12 +42,28 @@ public class AlienGetTagListCommand extends Command {
 	private Calendar calendar;
 	/** Set to falls to kill the callable. */
 	private boolean running = true;
-
+	private String antennasequence="0";
+	private int persistTime=-1;
+	
 	/**
 	 * @return the tagType
 	 */
 	public int getTagType() {
 		return tagType;
+	}
+
+	/**
+	 * @param antennasequence the antennasequence to set
+	 */
+	public void setAntennasequence(String antennasequence) {
+		this.antennasequence = antennasequence;
+	}
+
+	/**
+	 * @param persistTime the persistTime to set
+	 */
+	public void setPersistTime(int persistTime) {
+		this.persistTime = persistTime;
 	}
 
 	/**
@@ -57,8 +73,15 @@ public class AlienGetTagListCommand extends Command {
 	public void setTagType(int tagType) {
 		this.tagType = tagType;
 		if (tagType > 2 || tagType < 0) {
-			throw new RuntimeException("Sucker!");
+			throw new RuntimeException("Tagtype must be 0, 1, or 2");
 		}
+	}
+
+	/**
+	 * @param pollInterval the pollInterval to set
+	 */
+	public void setPollInterval(Integer pollInterval) {
+		this.pollInterval = pollInterval;
 	}
 
 	/*
@@ -78,6 +101,7 @@ public class AlienGetTagListCommand extends Command {
 	 */
 	@Override
 	public CommandState call() throws Exception {
+		logger.info("Starting GetTagList Command");
 		getReader().sendMessage(Alien9800Reader.GET_TIME_ZONE);
 		String temp = ((String) getReader().receiveMessage());
 		if (temp.contains("=")) {
