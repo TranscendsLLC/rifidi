@@ -71,6 +71,7 @@ public class AuthenticateCommand extends Command {
 		logger.debug("recieving the password response");
 		String authMessage = (String)getReader().receiveMessage();
 		if(authMessage.contains("Invalid")) {
+			logger.warn("Incorrect Password");
 			return CommandState.FAILED;
 		}
 		

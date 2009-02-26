@@ -14,6 +14,7 @@ import java.util.Set;
 import javax.management.Attribute;
 import javax.management.AttributeNotFoundException;
 import javax.management.InvalidAttributeValueException;
+import javax.management.MBeanAttributeInfo;
 import javax.management.MBeanException;
 import javax.management.ReflectionException;
 
@@ -215,11 +216,19 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 				type.setValue(config.getFactoryID());
 				section.addChild(type);
 				Map<String, String> attrs = config.getAttributes();
+				MBeanAttributeInfo[] infos = config.getMBeanInfo()
+						.getAttributes();
+				Map<String, MBeanAttributeInfo> attrInfo = new HashMap<String, MBeanAttributeInfo>();
+				for (MBeanAttributeInfo i : infos) {
+					attrInfo.put(i.getName(), i);
+				}
 				for (String key : attrs.keySet()) {
-					DefaultConfigurationNode newNode = new DefaultConfigurationNode(
-							(String) key);
-					newNode.setValue(attrs.get(key));
-					section.addChild(newNode);
+					if (attrInfo.get(key).isWritable()) {
+						DefaultConfigurationNode newNode = new DefaultConfigurationNode(
+								(String) key);
+						newNode.setValue(attrs.get(key));
+						section.addChild(newNode);
+					}
 				}
 				configuration.getRootNode().addChild(section);
 			}

@@ -104,7 +104,7 @@ public class ReaderConfigurationDAOImpl implements ReaderConfigurationDAO {
 	public void bindReaderConfigFactory(
 			AbstractReaderConfigurationFactory<?> readerConfigurationFactory,
 			Dictionary<String, String> parameters) {
-		logger.debug("Reader Cofiguration Factory Bound:"
+		logger.info("Reader Cofiguration Factory Bound:"
 				+ readerConfigurationFactory.getFactoryIDs().get(0));
 		readerConfigFactories.add(readerConfigurationFactory);
 	}
@@ -120,7 +120,7 @@ public class ReaderConfigurationDAOImpl implements ReaderConfigurationDAO {
 	public void unbindReaderConfigFactory(
 			AbstractReaderConfigurationFactory<?> readerConfigurationFactory,
 			Dictionary<String, String> parameters) {
-		logger.debug("Reader Cofiguration Factory Removed:"
+		logger.info("Reader Cofiguration Factory unbound:"
 				+ readerConfigurationFactory.getFactoryIDs().get(0));
 		readerConfigFactories.remove(readerConfigurationFactory);
 	}
@@ -136,10 +136,6 @@ public class ReaderConfigurationDAOImpl implements ReaderConfigurationDAO {
 			Set<AbstractReaderConfigurationFactory<?>> factories) {
 		Iterator<AbstractReaderConfigurationFactory<?>> iter = factories
 				.iterator();
-		while (iter.hasNext()) {
-			logger.debug("New Reader Cofiguration Factory Added:"
-					+ iter.next().getFactoryIDs().get(0));
-		}
 		readerConfigFactories.addAll(factories);
 	}
 
@@ -153,7 +149,7 @@ public class ReaderConfigurationDAOImpl implements ReaderConfigurationDAO {
 	public void bindReaderConfiguration(
 			AbstractReaderConfiguration<?> readerConfiguration,
 			Dictionary<String, String> parameters) {
-		logger.debug("New Cofiguration Added:" + readerConfiguration.getID());
+		logger.info("New Reader Cofiguration Bound:" + readerConfiguration.getID());
 		this.abstractReaderConfigurations.add(readerConfiguration);
 	}
 
@@ -168,7 +164,7 @@ public class ReaderConfigurationDAOImpl implements ReaderConfigurationDAO {
 	public void unbindReaderConfiguration(
 			AbstractReaderConfiguration<?> readerConfiguration,
 			Dictionary<String, String> parameters) {
-		logger.debug("Configuraiton Unbound:" + readerConfiguration.getID());
+		logger.info("Reader Configuraiton unbound:" + readerConfiguration.getID());
 		abstractReaderConfigurations.remove(readerConfiguration);
 	}
 
@@ -181,9 +177,6 @@ public class ReaderConfigurationDAOImpl implements ReaderConfigurationDAO {
 	public void setReaderConfiguration(
 			Set<AbstractReaderConfiguration<?>> configurations) {
 		Iterator<AbstractReaderConfiguration<?>> configs = configurations.iterator();
-		while (configs.hasNext()) {
-			logger.debug("New Cofiguration Added:" + configs.next().getID());
-		}
 		abstractReaderConfigurations.addAll(configurations);
 	}
 

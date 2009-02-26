@@ -76,7 +76,15 @@ public abstract class AbstractMultiServiceFactory implements ServiceFactory {
 				((DefaultConfigurationImpl) configuration)
 						.setServiceID(configuration.getFactoryID() + "-"
 								+ Integer.toString(counter));
+			} else {
+				String[] splitString = configuration.getServiceID().split("-");
+				String idNumString = splitString[splitString.length - 1];
+				int idNum = Integer.parseInt(idNumString);
+				if (counter < idNum) {
+					counter = idNum;
+				}
 			}
+
 			Dictionary<String, String> params = new Hashtable<String, String>();
 			params.put("type", getFactoryIDToClass().get(
 					configuration.getFactoryID()).getName());

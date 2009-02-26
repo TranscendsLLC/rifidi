@@ -8,8 +8,10 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.rifidi.edge.core.commands.AbstractCommandConfigurationFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.commands.AbstractCommandConfiguration;
+import org.rifidi.edge.core.commands.AbstractCommandConfigurationFactory;
 import org.rifidi.edge.core.internal.CommandConfigurationDAO;
 
 /**
@@ -22,6 +24,8 @@ public class CommandConfigurationDAOImpl implements CommandConfigurationDAO {
 	private Set<AbstractCommandConfigurationFactory> commandConfigFactories;
 	/** The available Command Configuration Factories */
 	private Set<AbstractCommandConfiguration<?>> abstractCommandConfigurations;
+	/**The logger for this class*/
+	private static final Log logger= LogFactory.getLog(CommandConfigurationDAOImpl.class);
 
 	public CommandConfigurationDAOImpl() {
 		commandConfigFactories = new HashSet<AbstractCommandConfigurationFactory>();
@@ -118,6 +122,7 @@ public class CommandConfigurationDAOImpl implements CommandConfigurationDAO {
 	public void bindCommandConfiguration(
 			AbstractCommandConfiguration<?> commandConfiguration,
 			Dictionary<String, String> parameters) {
+		logger.info("Command Configuration Bound: " + commandConfiguration.getID());
 		abstractCommandConfigurations.add(commandConfiguration);
 	}
 
@@ -132,6 +137,7 @@ public class CommandConfigurationDAOImpl implements CommandConfigurationDAO {
 	public void unbindCommandConfiguration(
 			AbstractCommandConfiguration<?> commandConfiguration,
 			Dictionary<String, String> parameters) {
+		logger.info("Command Configuration Unbound: " + commandConfiguration.getID());
 		abstractCommandConfigurations.remove(commandConfiguration);
 	}
 
@@ -157,6 +163,7 @@ public class CommandConfigurationDAOImpl implements CommandConfigurationDAO {
 	public void bindCommandConfigFactory(
 			AbstractCommandConfigurationFactory commandConfigurationFactory,
 			Dictionary<String, String> parameters) {
+		logger.info("Command Configuration Factory Bound: " + commandConfigurationFactory.getID());
 		commandConfigFactories.add(commandConfigurationFactory);
 	}
 
@@ -171,6 +178,7 @@ public class CommandConfigurationDAOImpl implements CommandConfigurationDAO {
 	public void unbindCommandConfigFactory(
 			AbstractCommandConfigurationFactory commandConfigurationFactory,
 			Dictionary<String, String> parameters) {
+		logger.info("Command Configuration Factory Unbound: " + commandConfigurationFactory.getID());
 		commandConfigFactories.remove(commandConfigurationFactory);
 	}
 

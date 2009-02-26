@@ -21,7 +21,7 @@ import org.rifidi.edge.core.readers.Reader;
  * @author Jochen Mader - jochen@pramari.com
  * 
  */
-public class AbstractReader implements Reader {
+public abstract class AbstractReader implements Reader {
 	/** Logger for this class. */
 	private static final Log logger = LogFactory.getLog(AbstractReader.class);
 	/** Queue for reading messages. */

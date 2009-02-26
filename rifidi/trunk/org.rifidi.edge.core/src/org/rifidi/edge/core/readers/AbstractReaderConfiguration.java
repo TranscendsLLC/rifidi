@@ -3,9 +3,6 @@
  */
 package org.rifidi.edge.core.readers;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.osgi.framework.ServiceRegistration;
 import org.rifidi.configuration.RifidiService;
 import org.rifidi.edge.core.exceptions.NoReaderAvailableException;
 
@@ -41,6 +38,15 @@ public abstract class AbstractReaderConfiguration<T extends Reader> extends
 	abstract public void releaseReader(Object reader);
 
 	/**
+	 * This method is intended to be a short-lived command that makes a
+	 * connection to the reader in order to aquire and also to set properties on
+	 * it. Certain reader types may open a concurrent connection to do this.
+	 * Resulting properties should be put in JMX properties of a
+	 * ReaderConfiguration
+	 */
+	abstract public void configureReader();
+
+	/**
 	 * Get the name of the reader. Has to be unique.
 	 * 
 	 * @return
@@ -53,5 +59,4 @@ public abstract class AbstractReaderConfiguration<T extends Reader> extends
 	 * @return
 	 */
 	abstract public String getDescription();
-
 }

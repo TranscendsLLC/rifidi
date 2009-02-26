@@ -54,14 +54,15 @@ public interface ReaderConfigurationStub {
 			String readerConfigurationFactoryID) throws RemoteException;
 
 	/**
-	 * Creates a new AbstractReaderConfiguration for the supplied configuration. The ID
-	 * of the readerConfiguration can be used along with the ID of a command
-	 * configuration to start a reader session
+	 * Creates a new AbstractReaderConfiguration for the supplied configuration.
+	 * The ID of the readerConfiguration can be used along with the ID of a
+	 * command configuration to start a reader session
 	 * 
 	 * @param readerConfigurationFactoryID
 	 *            the ID of the reader configuration factory
 	 * @param readerConfigurationProperties
-	 *            all the properties to set on the new AbstractReaderConfiguration
+	 *            all the properties to set on the new
+	 *            AbstractReaderConfiguration
 	 * @return the ID of the newly created AbstractReaderConfiguration
 	 * @throws RemoteException
 	 */
@@ -84,7 +85,8 @@ public interface ReaderConfigurationStub {
 
 	/**
 	 * This method returns an AttributeList that contains the name-value pairs
-	 * for all the properties of a currently available AbstractReaderConfiguration.
+	 * for all the properties of a currently available
+	 * AbstractReaderConfiguration.
 	 * 
 	 * @param readerConfigurationID
 	 *            The ID of the AbstractReaderConfiguration to get
@@ -95,9 +97,9 @@ public interface ReaderConfigurationStub {
 			throws RemoteException;
 
 	/**
-	 * This method is used to update the properties of a AbstractReaderConfiguration. It
-	 * may contain only the properties that you intend to change, but may
-	 * contain values that will stay the same
+	 * This method is used to update the properties of a
+	 * AbstractReaderConfiguration. It may contain only the properties that you
+	 * intend to change, but may contain values that will stay the same
 	 * 
 	 * @param readerConfigurationID
 	 *            the ID of the AbstractReaderConfiguration to update
@@ -117,6 +119,17 @@ public interface ReaderConfigurationStub {
 	 * @throws RemoteException
 	 */
 	void deleteReaderConfiguration(String readerConfigurationID)
+			throws RemoteException;
+
+	/**
+	 * Run the ConfigureReader command
+	 * 
+	 * @param readerConfiguraitonID
+	 *            The ID of the Reader Configuraiton
+	 * @return An AttributeList of all the attributes available
+	 * @throws RemoteException
+	 */
+	AttributeList configureReader(String readerConfiguraitonID)
 			throws RemoteException;
 
 }
