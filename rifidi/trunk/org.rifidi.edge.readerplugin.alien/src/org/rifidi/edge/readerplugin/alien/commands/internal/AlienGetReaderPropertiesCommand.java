@@ -20,11 +20,11 @@ import org.rifidi.edge.readerplugin.alien.commandobject.AlienCommandObject;
  */
 public class AlienGetReaderPropertiesCommand extends Command {
 
-	private HashMap<String, Object> attributes;
+	private HashMap<String, String> attributes;
 	private static final Log logger = LogFactory
 			.getLog(AlienGetReaderPropertiesCommand.class);
 
-	public AlienGetReaderPropertiesCommand(HashMap<String, Object> attributes) {
+	public AlienGetReaderPropertiesCommand(HashMap<String, String> attributes) {
 		super();
 		this.attributes = attributes;
 	}
@@ -87,7 +87,7 @@ public class AlienGetReaderPropertiesCommand extends Command {
 			aco = new AlienCommandObject(
 					Alien9800Reader.COMMAND_RF_ATTENUATION, getReader());
 			String val = attributes
-					.get(Alien9800ReaderConfiguration.PROP_RF_ATTENUATION).toString();
+					.get(Alien9800ReaderConfiguration.PROP_RF_ATTENUATION);
 
 			attributes.put(Alien9800ReaderConfiguration.PROP_RF_ATTENUATION,
 					aco.executeSet(val));
@@ -95,8 +95,8 @@ public class AlienGetReaderPropertiesCommand extends Command {
 			aco = new AlienCommandObject(
 					Alien9800Reader.COMMAND_EXTERNAL_OUTPUT, getReader());
 			val = attributes
-					.get(Alien9800ReaderConfiguration.PROP_EXTERNAL_OUTPUT).toString();
-			logger.debug("value : " + val);
+					.get(Alien9800ReaderConfiguration.PROP_EXTERNAL_OUTPUT);
+			
 			attributes.put(Alien9800ReaderConfiguration.PROP_EXTERNAL_OUTPUT,
 					aco.executeSet(val));
 

@@ -45,7 +45,7 @@ public class Alien9800ReaderConfiguration extends
 	/***
 	 * READER PROPERTIES - CONNECTION INFO
 	 */
-	private HashMap<String, Object> readerProperties;
+	private HashMap<String, String> readerProperties;
 	/** IP address of the reader. */
 	private String ipAddress = "127.0.0.1";
 	/** Port to connect to. */
@@ -109,16 +109,16 @@ public class Alien9800ReaderConfiguration extends
 	 * Constructor.
 	 */
 	public Alien9800ReaderConfiguration() {
-		readerProperties = new HashMap<String, Object>();
+		readerProperties = new HashMap<String, String>();
 		readerProperties.put(PROP_READER_NUMBER, "0");
 		readerProperties.put(PROP_READER_VERSION, "Unavailable");
 		readerProperties.put(PROP_READER_TYPE, "Unavailable");
 		readerProperties.put(PROP_MAC_ADDRESS, "Unavailable");
-		readerProperties.put(PROP_MAX_ANTENNA, 0);
-		readerProperties.put(PROP_EXTERNAL_INPUT, 0);
-		readerProperties.put(PROP_UPTIME, 0);
-		readerProperties.put(PROP_EXTERNAL_OUTPUT, 0);
-		readerProperties.put(PROP_RF_ATTENUATION, 0);
+		readerProperties.put(PROP_MAX_ANTENNA, "0");
+		readerProperties.put(PROP_EXTERNAL_INPUT, "0");
+		readerProperties.put(PROP_UPTIME, "0");
+		readerProperties.put(PROP_EXTERNAL_OUTPUT, "0");
+		readerProperties.put(PROP_RF_ATTENUATION, "0");
 		logger.debug("New instance of Alien 9800 Reader config created.");
 	}
 
@@ -158,7 +158,7 @@ public class Alien9800ReaderConfiguration extends
 		}
 		try {
 			createReader();
-			HashMap<String, Object> attrList = new HashMap<String, Object>();
+			HashMap<String, String> attrList = new HashMap<String, String>();
 			attrList.putAll(readerProperties);
 			AlienGetReaderPropertiesCommand command = new AlienGetReaderPropertiesCommand(
 					attrList);
@@ -344,17 +344,13 @@ public class Alien9800ReaderConfiguration extends
 
 	@Property(displayName = "GPO Output", description = "Ouput of GPO", writable = true, type = PropertyType.PT_INTEGER, minValue = "0", maxValue = "255")
 	public Integer getExternalOutput() {
-		//AlienConfigureReader may put the value in the hashmap as a string
-		Object val = readerProperties.get(PROP_EXTERNAL_OUTPUT);
-		if(val instanceof String){
-			readerProperties.put(PROP_EXTERNAL_OUTPUT, Integer.parseInt((String)val));
-		}
-		return (Integer) readerProperties.get(PROP_EXTERNAL_OUTPUT);
+		return Integer.parseInt(readerProperties.get(PROP_EXTERNAL_OUTPUT));
 	}
 
 	public void setExternalOutput(Integer externalOutput) {
 		if (externalOutput >= 0 && externalOutput <= 255) {
-			readerProperties.put(PROP_EXTERNAL_OUTPUT, externalOutput);
+			readerProperties.put(PROP_EXTERNAL_OUTPUT, Integer
+					.toString(externalOutput));
 			return;
 		}
 		logger.warn("ExternalOutput must be an"
@@ -363,16 +359,12 @@ public class Alien9800ReaderConfiguration extends
 
 	@Property(displayName = "RF Attenuation", description = "RF Attenuation", writable = true, type = PropertyType.PT_INTEGER)
 	public Integer getRFAttenuation() {
-		//AlienConfigureReader may put the value in the hashmap as a string
-		Object val = readerProperties.get(PROP_RF_ATTENUATION);
-		if(val instanceof String){
-			readerProperties.put(PROP_RF_ATTENUATION, Integer.parseInt((String)val));
-		}
-		return (Integer) readerProperties.get(PROP_RF_ATTENUATION);
+		return Integer.parseInt(readerProperties.get(PROP_RF_ATTENUATION));
 	}
 
 	public void setRFAttenuation(Integer rfAttenuation) {
-		readerProperties.put(PROP_RF_ATTENUATION, rfAttenuation);
+		readerProperties.put(PROP_RF_ATTENUATION, Integer
+				.toString(rfAttenuation));
 	}
 
 	@Property(displayName = "Reader Version", description = "Version Number of the reader", writable = false)
@@ -382,41 +374,26 @@ public class Alien9800ReaderConfiguration extends
 
 	@Property(displayName = "Reader Type", description = "Type of Reader", writable = false)
 	public String getReaderType() {
-		return (String)readerProperties.get(PROP_READER_TYPE);
+		return (String) readerProperties.get(PROP_READER_TYPE);
 	}
 
-	@Property(displayName = "Max Antennas", description = "Maximum number of antennas", writable = false, type=PropertyType.PT_INTEGER)
+	@Property(displayName = "Max Antennas", description = "Maximum number of antennas", writable = false, type = PropertyType.PT_INTEGER)
 	public Integer getMaxAntennas() {
-		//AlienConfigureReader may put the value in the hashmap as a string
-		Object val = readerProperties.get(PROP_MAX_ANTENNA);
-		if(val instanceof String){
-			readerProperties.put(PROP_MAX_ANTENNA, Integer.parseInt((String)val));
-		}
-		return (Integer)readerProperties.get(PROP_MAX_ANTENNA);
+		return Integer.parseInt(readerProperties.get(PROP_MAX_ANTENNA));
 	}
 
 	@Property(displayName = "MAC Address", description = "MAC Address of reader", writable = false)
 	public String getMACAddress() {
-		return (String)readerProperties.get(PROP_MAC_ADDRESS);
+		return (String) readerProperties.get(PROP_MAC_ADDRESS);
 	}
 
-	@Property(displayName = "GPI Input", description = "Input of GPI", writable = false, type=PropertyType.PT_INTEGER)
+	@Property(displayName = "GPI Input", description = "Input of GPI", writable = false, type = PropertyType.PT_INTEGER)
 	public Integer getExternalInput() {
-		//AlienConfigureReader may put the value in the hashmap as a string
-		Object val = readerProperties.get(PROP_EXTERNAL_INPUT);
-		if(val instanceof String){
-			readerProperties.put(PROP_EXTERNAL_INPUT, Integer.parseInt((String)val));
-		}
-		return (Integer)readerProperties.get(PROP_EXTERNAL_INPUT);
+		return Integer.parseInt(readerProperties.get(PROP_EXTERNAL_INPUT));
 	}
 
-	@Property(displayName = "Uptime", description = "Uptime of reader", writable = false, type=PropertyType.PT_INTEGER)
+	@Property(displayName = "Uptime", description = "Uptime of reader", writable = false, type = PropertyType.PT_INTEGER)
 	public Integer getUptime() {
-		//AlienConfigureReader may put the value in the hashmap as a string
-		Object val = readerProperties.get(PROP_UPTIME);
-		if(val instanceof String){
-			readerProperties.put(PROP_UPTIME, Integer.parseInt((String)val));
-		}
-		return (Integer)readerProperties.get(PROP_UPTIME);
+		return Integer.parseInt(readerProperties.get(PROP_UPTIME));
 	}
 }
