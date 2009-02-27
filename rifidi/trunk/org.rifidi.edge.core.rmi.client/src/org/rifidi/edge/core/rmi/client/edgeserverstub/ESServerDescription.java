@@ -6,7 +6,9 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.rmi.registry.Registry;
 
-import org.rifidi.edge.core.rmi.api.readerconnection.EdgeServerStub;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.rifidi.edge.core.rmi.EdgeServerStub;
 import org.rifidi.rmi.utils.cache.ServerDescription;
 
 /**
@@ -18,6 +20,8 @@ import org.rifidi.rmi.utils.cache.ServerDescription;
  */
 public class ESServerDescription extends ServerDescription {
 
+	Log logger = LogFactory.getLog(ESServerDescription.class);
+	
 	public ESServerDescription(String serverIP, int serverPort) {
 		super(serverIP, serverPort, EdgeServerStub.class.getName());
 	}
