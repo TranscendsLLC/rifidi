@@ -5,6 +5,14 @@
      http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi.xsd
      http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd">
 
+	<bean class="org.springframework.remoting.rmi.RmiServiceExporter">
+		<property name="serviceName" value="ReaderConfigurationStub" />
+		<property name="service" ref="readerConfigurationStub" />
+		<property name="serviceInterface"
+			value="org.rifidi.edge.core.rmi.ReaderConfigurationStub" />
+		<property name="registryPort" value="1098" />
+	</bean>
+
 	<bean id="readerConfigurationStub"
 		class="org.rifidi.edge.core.rmi.internal.ReaderConfigurationStubImpl">
 		<property name="readerConfigDAO" ref="ReaderConfigurationDAOImpl"></property>
@@ -13,6 +21,14 @@
 
 	<osgi:service id="readerConfigurationStubService" ref="readerConfigurationStub"
 		interface="org.rifidi.edge.core.rmi.ReaderConfigurationStub"></osgi:service>
+
+	<bean class="org.springframework.remoting.rmi.RmiServiceExporter">
+		<property name="serviceName" value="CommandConfigurationStub" />
+		<property name="service" ref="commandConfigurationStub" />
+		<property name="serviceInterface"
+			value="org.rifidi.edge.core.rmi.CommandConfigurationStub" />
+		<property name="registryPort" value="1098" />
+	</bean>
 
 	<bean id="commandConfigurationStub"
 		class="org.rifidi.edge.core.rmi.internal.CommandConfigurationStubImpl">
@@ -23,6 +39,13 @@
 
 	<osgi:service id="commandConfigurationStubService" ref="commandConfigurationStub"
 		interface="org.rifidi.edge.core.rmi.CommandConfigurationStub"></osgi:service>
+
+	<bean class="org.springframework.remoting.rmi.RmiServiceExporter">
+		<property name="serviceName" value="EdgeServerStub" />
+		<property name="service" ref="edgeServerStub" />
+		<property name="serviceInterface" value="org.rifidi.edge.core.rmi.EdgeServerStub" />
+		<property name="registryPort" value="1098" />
+	</bean>
 
 	<bean id="edgeServerStub" class="org.rifidi.edge.core.rmi.internal.EdgeServerStubImpl">
 		<property name="configurationService" ref="configurationService" />
@@ -71,8 +94,8 @@
 	<osgi:set id="readerConfigurationsSet"
 		interface="org.rifidi.edge.core.readers.AbstractReaderConfiguration"
 		cardinality="0..N">
-		<osgi:listener ref="readerSessionDAOImpl"
-			bind-method="bind" unbind-method="unbind" />
+		<osgi:listener ref="readerSessionDAOImpl" bind-method="bind"
+			unbind-method="unbind" />
 		<osgi:listener ref="ReaderConfigurationDAOImpl"
 			bind-method="bindReaderConfiguration" unbind-method="unbindReaderConfiguration" />
 	</osgi:set>
@@ -96,8 +119,8 @@
 	<osgi:set id="commandConfigurationSet"
 		interface="org.rifidi.edge.core.commands.AbstractCommandConfiguration"
 		cardinality="0..N">
-		<osgi:listener ref="readerSessionDAOImpl"
-			bind-method="bindCommand" unbind-method="unbindCommand" />
+		<osgi:listener ref="readerSessionDAOImpl" bind-method="bindCommand"
+			unbind-method="unbindCommand" />
 		<osgi:listener ref="CommandConfigurationDAOImpl"
 			bind-method="bindCommandConfiguration" unbind-method="unbindCommandConfiguration"></osgi:listener>
 	</osgi:set>

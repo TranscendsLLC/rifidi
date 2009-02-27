@@ -3,6 +3,7 @@
  */
 package org.rifidi.edge.core.rmi;
 
+import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.Map;
 
@@ -21,7 +22,7 @@ import javax.management.MBeanInfo;
  * @author Kyle Neumeier - kyle@pramari.com
  * 
  */
-public interface CommandConfigurationStub {
+public interface CommandConfigurationStub extends Remote{
 
 	/**
 	 * This method gets the available command types on the edge server and their
