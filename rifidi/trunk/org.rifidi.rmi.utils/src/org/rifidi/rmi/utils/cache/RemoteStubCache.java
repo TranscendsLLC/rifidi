@@ -28,7 +28,7 @@ import org.rifidi.rmi.utils.exceptions.ServerUnavailable;
  */
 public class RemoteStubCache {
 
-	//private static Log logger = LogFactory.getLog(RemoteStubCache.class);
+	// private static Log logger = LogFactory.getLog(RemoteStubCache.class);
 
 	/**
 	 * The cache
@@ -58,17 +58,6 @@ public class RemoteStubCache {
 		}
 		return returnValue;
 
-	}
-
-	/**
-	 * Adds a remote object stub to the cache. This method should not normally
-	 * be used.
-	 * 
-	 * @param desc
-	 * @param stub
-	 */
-	public static void put(ServerDescription desc, Remote stub) {
-		_serverDescriptionsToStubs.put(desc, stub);
 	}
 
 	public static void noLongerUsingStubToRemoteObject(
