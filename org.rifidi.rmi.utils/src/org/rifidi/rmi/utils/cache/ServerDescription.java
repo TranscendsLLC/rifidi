@@ -18,6 +18,9 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 /**
  * This class was inspired by the three oreilly.com articles on RMI by William
  * Grosso.
@@ -51,6 +54,9 @@ public abstract class ServerDescription {
 	 * A unique ID for this ServerDescription
 	 */
 	private String _hashString;
+	
+	private Log logger=LogFactory.getLog(ServerDescription.class);
+
 
 	/**
 	 * 

@@ -10,7 +10,6 @@ Import-Package: org.apache.commons.logging;version="1.0.4",
  org.osgi.framework;version="1.3.0"
 Bundle-ActivationPolicy: lazy
 Export-Package: org.rifidi.rmi.utils.cache,
- org.rifidi.rmi.utils.cache.util,
  org.rifidi.rmi.utils.exceptions,
  org.rifidi.rmi.utils.remotecall,
  org.rifidi.rmi.utils.retrystrategy
