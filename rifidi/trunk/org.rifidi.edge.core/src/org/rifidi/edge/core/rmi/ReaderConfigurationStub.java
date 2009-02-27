@@ -3,6 +3,7 @@
  */
 package org.rifidi.edge.core.rmi;
 
+import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.Map;
 import java.util.Set;
@@ -17,7 +18,7 @@ import javax.management.MBeanInfo;
  * @author Kyle Neumeier - kyle@pramari.com
  * 
  */
-public interface ReaderConfigurationStub {
+public interface ReaderConfigurationStub extends Remote {
 
 	/**
 	 * These are the reader "plugins" that are available on the server
@@ -124,12 +125,12 @@ public interface ReaderConfigurationStub {
 	/**
 	 * Run the ConfigureReader command
 	 * 
-	 * @param readerConfiguraitonID
+	 * @param readerConfigurationID
 	 *            The ID of the Reader Configuraiton
 	 * @return An AttributeList of all the attributes available
 	 * @throws RemoteException
 	 */
-	AttributeList configureReader(String readerConfiguraitonID)
+	AttributeList configureReader(String readerConfigurationID)
 			throws RemoteException;
 
 }
