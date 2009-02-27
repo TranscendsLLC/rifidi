@@ -307,6 +307,7 @@ public class ReaderConfigurationStubImpl implements ReaderConfigurationStub {
 		if (readerConfig == null) {
 			logger.warn("Reader Configuration with ID " + readerConfigurationID
 					+ " is not available");
+			return null;
 		}
 		readerConfig.configureReader();
 		return getReaderConfigurationProperties(readerConfigurationID);
