@@ -197,7 +197,7 @@ public class CommandConfigurationStubImpl implements CommandConfigurationStub {
 					.getCommandConfigurationTypes(factoryID);
 			Iterator<String> typeIter = types.iterator();
 			while (typeIter.hasNext()) {
-				retVal.put(typeIter.next(), factoryID);
+				retVal.put(typeIter.next(), factory.getFactoryIDs().get(0));
 			}
 		}
 
@@ -245,7 +245,8 @@ public class CommandConfigurationStubImpl implements CommandConfigurationStub {
 	public AttributeList setCommandConfigurationProperties(
 			String commandConfigurationID, AttributeList properties)
 			throws RemoteException {
-		Configuration config = configDAO.getConfiguration(commandConfigurationID);
+		Configuration config = configDAO
+				.getConfiguration(commandConfigurationID);
 		if (config != null) {
 			return config.setAttributes(properties);
 		} else {

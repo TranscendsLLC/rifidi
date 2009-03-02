@@ -16,20 +16,22 @@ import javax.management.MBeanInfo;
  * 
  * To be clear: CommandConfigurationFactory: AlienCommandConfigurationFactory
  * CommandConfigurationType: AlienGetTagList, AlienGPIGetTagList
- * AbstractCommandConfiguration: configured AlienGetTagList
+ * AbstractCommandConfiguration: configured AlienGetTagListCommandConfiguration
  * 
  * 
  * @author Kyle Neumeier - kyle@pramari.com
  * 
  */
-public interface CommandConfigurationStub extends Remote{
+public interface CommandConfigurationStub extends Remote {
 
 	/**
-	 * This method gets the available command types on the edge server and their
-	 * associated readerConfigurationFactoryID
+	 * This method gets the available command types on the edge server and the
+	 * ID of the reader factory that the command type works with
+	 * 
+	 * for example, it return <Alien9800-GetTagList, Alien9800>
 	 * 
 	 * @return A map where the key is an ID of a readerConfiguration type and
-	 *         the value is the ID of a readerConfigurationFactory on which the
+	 *         the value is the ID of a ReaderConfigurationFactory on which the
 	 *         command will run
 	 * @throws RemoteException
 	 */
@@ -47,7 +49,7 @@ public interface CommandConfigurationStub extends Remote{
 
 	/**
 	 * Gets the meta information necessary to construct a new
-	 * readerconfiguration
+	 * CommandConfiguration
 	 * 
 	 * @param commandConfigurationType
 	 *            the type of configuration to make
