@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.rifidi.edge.core.rmi.client.readerconfigurationstub;
+package org.rifidi.edge.core.rmi.client.commandconfigurationstub;
 
 import java.rmi.AccessException;
 import java.rmi.NotBoundException;
@@ -12,12 +12,12 @@ import java.rmi.registry.Registry;
 import org.rifidi.rmi.utils.cache.ServerDescription;
 
 /**
- * This is a server description for a ReaderConfigurationStub
+ * The ServerDescription for the CommandConfigurationStub
  * 
- * @author Kyle Neumeier - kyl@pramari.com
+ * @author Kyle Neumeier - kyle@pramari.com
  * 
  */
-public class RCServerDescription extends ServerDescription {
+public class CCServerDescription extends ServerDescription {
 
 	/**
 	 * Constructor
@@ -25,10 +25,10 @@ public class RCServerDescription extends ServerDescription {
 	 * @param serverIP
 	 *            The IP address of the server
 	 * @param serverPort
-	 *            The RMI port that the ReaderConfigurationStub is exposed on
+	 *            The RMI port of the server
 	 */
-	public RCServerDescription(String serverIP, int serverPort) {
-		super(serverIP, serverPort, "ReaderConfigurationStub");
+	public CCServerDescription(String serverIP, int serverPort) {
+		super(serverIP, serverPort, "CommandConfiguraitonStub");
 	}
 
 	/*
