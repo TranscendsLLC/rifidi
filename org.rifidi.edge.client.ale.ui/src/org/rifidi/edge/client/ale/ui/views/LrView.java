@@ -10,61 +10,88 @@
  */
 package org.rifidi.edge.client.ale.ui.views;
 
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.ServerSocket;
+import java.net.Socket;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.part.ViewPart;
-import org.rifidi.edge.client.ale.logicalreader.wsdl.epcglobal.ALELRServicePortType;
-import org.rifidi.edge.client.ale.logicalreader.wsdl.epcglobal.SecurityExceptionResponse;
+import org.rifidi.edge.client.ale.api.util.DeserializerUtil;
+import org.rifidi.edge.client.ale.api.xsd.ale.epcglobal.ECReports;
 
 /**
  * @author Tobias Hoppenthaler - tobias@pramari.com
- *
+ * 
  */
 public class LrView extends ViewPart {
 
-	private ALELRServicePortType readerProxy = null;
-	private String readerEndPoint = "http://localhost:8080/fc-server-0.4.0/services/ALELRService";
 	private Log logger = LogFactory.getLog(LrView.class);
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.part.WorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
+	private ServerSocket ss = null;
+	private int port = 10000;
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.ui.part.WorkbenchPart#createPartControl(org.eclipse.swt.widgets
+	 * .Composite)
 	 */
 	@Override
 	public void createPartControl(Composite arg0) {
-		// init logical Reader
-		logger.debug("\nJaxWsProxyFactoryBean lrFactory = new JaxWsProxyFactoryBean();");
-		JaxWsProxyFactoryBean lrFactory = new JaxWsProxyFactoryBean();
-		logger.debug("\nlrFactory.setServiceClass(ALELRServicePortType.class);");
-		lrFactory.setServiceClass(ALELRServicePortType.class);
-		logger.debug("\nlrFactory.setAddress(" + readerEndPoint + ");");
-		lrFactory.setAddress(readerEndPoint);
-		logger.debug("\nreaderProxy = (ALELRServicePortType) lrFactory.create();");
-		readerProxy = (ALELRServicePortType) lrFactory.create();
-
+		// create a new server socket to retrieve ECReports
 		try {
-			logger.debug("\ngetVendorVersion(): "
-							+ readerProxy
-									.getVendorVersion(new org.rifidi.edge.client.ale.logicalreader.wsdl.epcglobal.EmptyParms()));
-		} catch (org.rifidi.edge.client.ale.logicalreader.wsdl.epcglobal.ImplementationExceptionResponse e) {
+			ss = new ServerSocket(port);
+		} catch (IOException e) {
 			logger.error(e.getMessage());
 		}
-		try {
-			logger.debug("\ngetLogicalReaders(): "
-							+ readerProxy
-									.getLogicalReaderNames(new org.rifidi.edge.client.ale.logicalreader.wsdl.epcglobal.EmptyParms()));
+		while (true) {
+			// accept an incoming message
+			Socket s;
+			try {
+				s = ss.accept();
 
-		} catch (SecurityExceptionResponse e) {
-			logger.error(e.getMessage());
-		} catch (org.rifidi.edge.client.ale.logicalreader.wsdl.epcglobal.ImplementationExceptionResponse e) {
-			logger.error(e.getMessage());
+				BufferedReader in = new BufferedReader(new InputStreamReader(s
+						.getInputStream()));
+
+				String data = in.readLine();
+				String buf = "";
+				// ignore the http header
+				data = in.readLine();
+				data = in.readLine();
+				data = in.readLine();
+				data = in.readLine();
+
+				while (data != null) {
+					buf += data;
+					data = in.readLine();
+				}
+				// create a stream from the buf
+		        InputStream parseStream = new ByteArrayInputStream(buf.getBytes());
+		        
+		        // parse the string through the serializer/deserializer utils.
+		        ECReports reports = DeserializerUtil.deserializeECReports(parseStream);
+		        if (reports != null) {
+		                // call the handler that will process the ECReports
+		                handleReports(reports);
+		        }
+			} catch (IOException e) {
+				logger.error(e.getMessage());
+			}
+			
+
 		}
-		
 
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.part.WorkbenchPart#setFocus()
 	 */
 	@Override

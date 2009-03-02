@@ -24,25 +24,32 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.part.ViewPart;
-import org.rifidi.edge.client.ale.logicalreader.wsdl.epcglobal.ALELRServicePortType;
-import org.rifidi.edge.client.ale.wsdl.epcglobal.ALEServicePortType;
-import org.rifidi.edge.client.ale.wsdl.epcglobal.ArrayOfString;
-import org.rifidi.edge.client.ale.wsdl.epcglobal.Define;
-import org.rifidi.edge.client.ale.wsdl.epcglobal.EmptyParms;
-import org.rifidi.edge.client.ale.wsdl.epcglobal.ImplementationExceptionResponse;
-import org.rifidi.edge.client.ale.wsdl.epcglobal.SecurityExceptionResponse;
-import org.rifidi.edge.client.ale.wsdl.epcglobal.Subscribe;
-import org.rifidi.edge.client.ale.xsd.epcglobal.ECBoundarySpec;
-import org.rifidi.edge.client.ale.xsd.epcglobal.ECReportOutputSpec;
-import org.rifidi.edge.client.ale.xsd.epcglobal.ECReportSetSpec;
-import org.rifidi.edge.client.ale.xsd.epcglobal.ECReportSpec;
-import org.rifidi.edge.client.ale.xsd.epcglobal.ECSpec;
-import org.rifidi.edge.client.ale.xsd.epcglobal.ECTime;
-import org.rifidi.edge.client.ale.xsd.epcglobal.LRProperty;
-import org.rifidi.edge.client.ale.xsd.epcglobal.LRSpec;
-import org.rifidi.edge.client.ale.xsd.epcglobal.ECSpec.LogicalReaders;
-import org.rifidi.edge.client.ale.xsd.epcglobal.ECSpec.ReportSpecs;
-import org.rifidi.edge.client.ale.xsd.epcglobal.LRSpec.Properties;
+import org.rifidi.edge.client.ale.api.wsdl.ale.epcglobal.ALEServicePortType;
+import org.rifidi.edge.client.ale.api.wsdl.ale.epcglobal.ArrayOfString;
+import org.rifidi.edge.client.ale.api.wsdl.ale.epcglobal.Define;
+import org.rifidi.edge.client.ale.api.wsdl.ale.epcglobal.EmptyParms;
+import org.rifidi.edge.client.ale.api.wsdl.ale.epcglobal.ImplementationExceptionResponse;
+import org.rifidi.edge.client.ale.api.wsdl.ale.epcglobal.SecurityExceptionResponse;
+import org.rifidi.edge.client.ale.api.wsdl.ale.epcglobal.Subscribe;
+import org.rifidi.edge.client.ale.api.wsdl.alelr.epcglobal.ALELRServicePortType;
+import org.rifidi.edge.client.ale.api.xsd.ale.epcglobal.ECBoundarySpec;
+import org.rifidi.edge.client.ale.api.xsd.ale.epcglobal.ECReportOutputSpec;
+import org.rifidi.edge.client.ale.api.xsd.ale.epcglobal.ECReportSetSpec;
+import org.rifidi.edge.client.ale.api.xsd.ale.epcglobal.ECReportSpec;
+import org.rifidi.edge.client.ale.api.xsd.ale.epcglobal.ECSpec;
+import org.rifidi.edge.client.ale.api.xsd.ale.epcglobal.ECTime;
+import org.rifidi.edge.client.ale.api.xsd.ale.epcglobal.ECSpec.LogicalReaders;
+import org.rifidi.edge.client.ale.api.xsd.ale.epcglobal.ECSpec.ReportSpecs;
+import org.rifidi.edge.client.ale.api.xsd.alelr.epcglobal.LRProperty;
+import org.rifidi.edge.client.ale.api.xsd.alelr.epcglobal.LRSpec;
+import org.rifidi.edge.client.ale.api.xsd.alelr.epcglobal.LRSpec.Properties;
+
+
+
+
+
+
+
 
 /**
  * @author Tobias Hoppenthaler - tobias@pramari.com
@@ -233,7 +240,7 @@ public class FncView extends ViewPart {
 		LRSpec lrSpec = buildLrSpec();
 		// specify logical reader
 
-		org.rifidi.edge.client.ale.logicalreader.wsdl.epcglobal.Define defineR = new org.rifidi.edge.client.ale.logicalreader.wsdl.epcglobal.Define();
+		org.rifidi.edge.client.ale.api.wsdl.alelr.epcglobal.Define defineR = new org.rifidi.edge.client.ale.api.wsdl.alelr.epcglobal.Define();
 		defineR.setName(LOGICAL_READER_NAME);
 
 		defineR.setSpec(lrSpec);
@@ -245,16 +252,15 @@ public class FncView extends ViewPart {
 					+ aleProxy.getStandardVersion(new EmptyParms()) + "\n");
 			Object out = null;
 			out = readerProxy
-					.getVendorVersion(new org.rifidi.edge.client.ale.logicalreader.wsdl.epcglobal.EmptyParms());
+					.getVendorVersion(new org.rifidi.edge.client.ale.api.wsdl.alelr.epcglobal.EmptyParms());
 			logger.debug(out);
 			out = readerProxy
-					.getStandardVersion(new org.rifidi.edge.client.ale.logicalreader.wsdl.epcglobal.EmptyParms());
+					.getStandardVersion(new org.rifidi.edge.client.ale.api.wsdl.alelr.epcglobal.EmptyParms());
 			logger.debug(out);
 			printLRspecsFromServer();
 			out = readerProxy.define(defineR);
 			logger.debug(out);
 			printLRspecsFromServer();
-			
 
 			printECspecsFromServer();
 			Define define = new Define();
@@ -262,7 +268,7 @@ public class FncView extends ViewPart {
 			define.setSpecName(txtECspecName.getText());
 			aleProxy.define(define);
 			printECspecsFromServer();
-			
+
 			Subscribe subscribParms = new Subscribe();
 			subscribParms.setNotificationURI("http://localhost:10000");
 			subscribParms.setSpecName(EC_SPEC_NAME);
@@ -275,20 +281,21 @@ public class FncView extends ViewPart {
 	}
 
 	/**
-	 * @throws org.rifidi.edge.client.ale.logicalreader.wsdl.epcglobal.ImplementationExceptionResponse
-	 * @throws org.rifidi.edge.client.ale.logicalreader.wsdl.epcglobal.SecurityExceptionResponse
+	 * @throws org.rifidi.edge.client.ale.api.logicalreader.wsdl.epcglobal.ImplementationExceptionResponse
+	 * @throws org.rifidi.edge.client.ale.api.logicalreader.wsdl.epcglobal.SecurityExceptionResponse
 	 * 
 	 */
 	private void printLRspecsFromServer()
-			throws org.rifidi.edge.client.ale.logicalreader.wsdl.epcglobal.SecurityExceptionResponse,
-			org.rifidi.edge.client.ale.logicalreader.wsdl.epcglobal.ImplementationExceptionResponse {
-		org.rifidi.edge.client.ale.logicalreader.wsdl.epcglobal.ArrayOfString readers = readerProxy
-				.getLogicalReaderNames(new org.rifidi.edge.client.ale.logicalreader.wsdl.epcglobal.EmptyParms());
+			throws org.rifidi.edge.client.ale.api.wsdl.alelr.epcglobal.SecurityExceptionResponse,
+			org.rifidi.edge.client.ale.api.wsdl.alelr.epcglobal.ImplementationExceptionResponse {
+		org.rifidi.edge.client.ale.api.wsdl.alelr.epcglobal.ArrayOfString readers = readerProxy
+				.getLogicalReaderNames(new org.rifidi.edge.client.ale.api.wsdl.alelr.epcglobal.EmptyParms());
 		ArrayList<String> rDstrings = (ArrayList<String>) readers.getString();
 		if (rDstrings.size() < 1) {
 			logger.debug("NO READER IS DEFINED ON SERVER");
 		} else {
-			logger.debug("the following logical readers are defined on the server:");
+			logger
+					.debug("the following logical readers are defined on the server:");
 			for (String string : rDstrings) {
 				logger.debug("\n" + string);
 			}
