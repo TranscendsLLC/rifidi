@@ -21,6 +21,9 @@ import org.rifidi.edge.core.readersession.ReaderSessionDAO;
 import org.rifidi.edge.core.rmi.CommandConfigurationStub;
 import org.rifidi.edge.core.rmi.EdgeServerStub;
 import org.rifidi.edge.core.rmi.ReaderConfigurationStub;
+import org.rifidi.edge.core.rmi.client.readerconfigurationstub.RCGetReaderConfigurations;
+import org.rifidi.edge.core.rmi.client.readerconfigurationstub.RCServerDescription;
+import org.rifidi.rmi.utils.exceptions.ServerUnavailable;
 
 /**
  * @author Jochen Mader - jochen@pramari.com
@@ -109,6 +112,7 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 			if (attrs == null) {
 				intp.println("No reader configuraiton with ID " + id
 						+ " is available");
+				return null;
 			}
 
 			StringBuilder sb = new StringBuilder();
@@ -133,15 +137,16 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 	 */
 	public Object _readers(CommandInterpreter intp) {
 		try {
-			Map<String, String> readers = readerConfigStub
-					.getAvailableReaderConfigurations();
+			RCServerDescription desc= new RCServerDescription("127.0.0.1", 1098);
+			RCGetReaderConfigurations call = new RCGetReaderConfigurations(desc);
+			Map<String, String> readers = call.makeCall();
 			Iterator<String> iter = readers.keySet().iterator();
 			while (iter.hasNext()) {
 				String reader = iter.next();
 				String type = readers.get(reader);
 				intp.println("Reader: " + reader + " Factory: " + type);
 			}
-		} catch (RemoteException e) {
+		} catch (ServerUnavailable e) {
 			intp.println("Exception: " + e.getMessage());
 		}
 
