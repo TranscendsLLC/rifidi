@@ -3,7 +3,7 @@
  */
 package org.rifidi.edge.readerplugin.alien.commands;
 
-import java.sql.Time;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -12,13 +12,13 @@ import java.util.TimeZone;
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.Session;
-import javax.jms.TextMessage;
 
+import org.apache.activemq.command.ActiveMQObjectMessage;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.commands.Command;
 import org.rifidi.edge.core.commands.CommandState;
-import org.rifidi.edge.core.utilities.ByteAndHexConvertingUtility;
+import org.rifidi.edge.core.messages.EPCGeneration2Event;
 import org.rifidi.edge.readerplugin.alien.Alien9800Reader;
 import org.springframework.jms.core.MessageCreator;
 
@@ -138,16 +138,9 @@ public class AlienGetTagListCommand extends Command {
 			command = Alien9800Reader.TAG_LIST;
 			logger.debug("Sending command: " + command);
 			getReader().sendMessage(command);
-			final String tag_msg = (String) getReader().receiveMessage();
-			for (String m : parseString(tag_msg)) {
-				final String text = m;
-				template.send(destination, new MessageCreator() {
-					public Message createMessage(Session session)
-							throws JMSException {
-						TextMessage message = session.createTextMessage(text);
-						return message;
-					}
-				});
+			String tag_msg = (String) getReader().receiveMessage();
+			for (BigInteger m : parseString(tag_msg)) {
+				template.send(destination, new ObjectMessageCreator(m));
 			}
 
 			try {
@@ -169,10 +162,10 @@ public class AlienGetTagListCommand extends Command {
 	 * @param input
 	 * @return
 	 */
-	private List<String> parseString(String input) {
+	private List<BigInteger> parseString(String input) {
 		String[] splitString = input.split("\n");
 
-		List<String> retVal = new ArrayList<String>();
+		List<BigInteger> retVal = new ArrayList<BigInteger>();
 
 		try {
 			for (String s : splitString) {
@@ -182,19 +175,8 @@ public class AlienGetTagListCommand extends Command {
 					String tagData = splitString2[0];
 					String timeStamp = splitString2[1];
 					String antennaID = splitString2[2];
-
-					Time time = Time.valueOf(timeStamp);
-					calendar.setTime(time);
-					Calendar currentDate = Calendar.getInstance(timeZone);
-					calendar.set(currentDate.get(Calendar.YEAR), currentDate
-							.get(Calendar.MONTH), currentDate
-							.get(Calendar.DATE));
-
-					String message = new String(ByteAndHexConvertingUtility
-							.fromHexString(tagData.trim()));
-					message += " " + calendar.getTimeInMillis() + " "
-							+ Integer.parseInt(antennaID);
-					retVal.add(message);
+					
+					retVal.add(new BigInteger(tagData, 16));
 
 				} else {
 					// logger.error("Something isreaders invalid: " +
@@ -206,6 +188,44 @@ public class AlienGetTagListCommand extends Command {
 					+ "tag has not been added", e);
 		}
 		return retVal;
+	}
+
+	private class ObjectMessageCreator implements MessageCreator {
+
+		/** The message that should be part of the object. */
+		private BigInteger message;
+		private ActiveMQObjectMessage objectMessage;
+
+		/**
+		 * Constructor.
+		 * 
+		 * @param message
+		 */
+		public ObjectMessageCreator(BigInteger message) {
+			super();
+			this.message = message;
+			objectMessage = new ActiveMQObjectMessage();
+			EPCGeneration2Event gen2event = new EPCGeneration2Event();
+			gen2event.setEPCMemory(message);
+			try {
+				objectMessage.setObject(gen2event);
+			} catch (JMSException e) {
+				logger.warn("Unable to set tag event: " + e);
+			}
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * org.springframework.jms.core.MessageCreator#createMessage(javax.jms
+		 * .Session)
+		 */
+		@Override
+		public Message createMessage(Session arg0) throws JMSException {
+			return objectMessage;
+		}
+
 	}
 
 }
