@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.rifidi.edge.core.events;
+package org.rifidi.edge.core.messages;
 
 /**
  * @author Kyle Neumeier - kyle@pramari.com
