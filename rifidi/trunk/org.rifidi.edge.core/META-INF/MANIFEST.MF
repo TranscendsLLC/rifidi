@@ -33,6 +33,7 @@ Export-Package: org.rifidi.edge.core.commands,
  org.rifidi.edge.core.readers.impl,
  org.rifidi.edge.core.readersession,
  org.rifidi.edge.core.rmi,
+ org.rifidi.edge.core.rmi.internal,
  org.rifidi.edge.core.utilities
 Require-Bundle: org.rifidi.configuration;bundle-version="1.0.0";visibility:=reexport
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
