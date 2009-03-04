@@ -12,7 +12,5 @@ Import-Package: org.eclipse.osgi.framework.console;version="1.0.0",
  org.rifidi.edge.core.exceptions,
  org.rifidi.edge.core.readers,
  org.rifidi.edge.core.readersession,
- org.rifidi.edge.core.rmi,
- org.rifidi.rmi.utils.exceptions,
- org.rifidi.rmi.utils.remotecall
+ org.rifidi.edge.core.rmi
 Bundle-ActivationPolicy: lazy
