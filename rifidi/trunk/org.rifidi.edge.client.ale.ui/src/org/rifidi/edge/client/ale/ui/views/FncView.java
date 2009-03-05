@@ -275,7 +275,7 @@ public class FncView extends ViewPart {
 			aleProxy.subscribe(subscribParms);
 
 		} catch (Exception e) {
-			logger.error(e.getMessage());
+			e.printStackTrace();
 		}
 
 	}

@@ -9,6 +9,12 @@
             name="ALE View"
             restorable="true">
       </view>
+      <view
+            class="org.rifidi.edge.client.ale.ui.views.LrView"
+            id="org.rifidi.edge.client.ale.ui.views.LrView"
+            name="Event Sink"
+            restorable="true">
+      </view>
    </extension>
    <extension
          point="org.eclipse.ui.perspectiveExtensions">
@@ -21,6 +27,12 @@
                relationship="left"
                relative="org.eclipse.ui.editorss"
                visible="true">
+         </view>
+         <view
+               id="org.rifidi.edge.client.ale.ui.views.LrView"
+               minimized="false"
+               relationship="stack"
+               relative="org.rifidi.edge.client.ale.ui.views.FncView">
          </view>
       </perspectiveExtension>
    </extension>
