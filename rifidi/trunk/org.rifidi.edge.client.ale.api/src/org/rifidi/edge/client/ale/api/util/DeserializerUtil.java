@@ -67,7 +67,7 @@ public class DeserializerUtil {
 	public static ECSpec deserializeECSpec(InputStream inputStream) throws Exception {
 		ECSpec spec = null;
 		try {
-			String JAXB_CONTEXT = "org.fosstrak.ale.xsd.ale.epcglobal";
+			String JAXB_CONTEXT = "org.rifidi.edge.client.ale.api.xsd.ale.epcglobal";
 			
 			// initialize jaxb context and unmarshaller
 			JAXBContext context = JAXBContext.newInstance(JAXB_CONTEXT);
@@ -103,7 +103,7 @@ public class DeserializerUtil {
 	public static LRSpec deserializeLRSpec(InputStream inputStream) throws Exception {
 		LRSpec spec = null;
 		try {
-			String JAXB_CONTEXT = "org.fosstrak.ale.wsdl.alelr.epcglobal";
+			String JAXB_CONTEXT = "org.rifidi.edge.client.ale.api.wsdl.alelr.epcglobal";
 			
 			// initialize jaxb context and unmarshaller
 			JAXBContext context = JAXBContext.newInstance(JAXB_CONTEXT);
@@ -140,7 +140,7 @@ public class DeserializerUtil {
 		// FIXME : throws Exception
 		LRProperty prop = null;
 		try {
-			String JAXB_CONTEXT = "org.fosstrak.ale.wsdl.alelr.epcglobal";
+			String JAXB_CONTEXT = "org.rifidi.edge.client.ale.api.wsdl.alelr.epcglobal";
 			
 			// initialize jaxb context and unmarshaller
 			JAXBContext context = JAXBContext.newInstance(JAXB_CONTEXT);
@@ -164,7 +164,7 @@ public class DeserializerUtil {
 	public static SetProperties deserializeSetProperties(String pathName) throws IOException {
 		SetProperties props = null;
 		try {
-			String JAXB_CONTEXT = "org.fosstrak.ale.wsdl.alelr.epcglobal";
+			String JAXB_CONTEXT = "org.rifidi.edge.client.ale.api.wsdl.alelr.epcglobal";
 			
 			// initialize jaxb context and unmarshaller
 			JAXBContext context = JAXBContext.newInstance(JAXB_CONTEXT);
@@ -188,7 +188,7 @@ public class DeserializerUtil {
 	public static RemoveReaders deserializeRemoveReaders(String pathName) throws IOException {
 		RemoveReaders readers = null;
 		try {
-			String JAXB_CONTEXT = "org.fosstrak.ale.wsdl.alelr.epcglobal";
+			String JAXB_CONTEXT = "org.rifidi.edge.client.ale.api.wsdl.alelr.epcglobal";
 			
 			// initialize jaxb context and unmarshaller
 			JAXBContext context = JAXBContext.newInstance(JAXB_CONTEXT);
@@ -212,7 +212,7 @@ public class DeserializerUtil {
 	public static SetReaders deserializeSetReaders(String pathName) throws IOException {
 		SetReaders readers = null;
 		try {
-			String JAXB_CONTEXT = "org.fosstrak.ale.wsdl.alelr.epcglobal";
+			String JAXB_CONTEXT = "org.rifidi.edge.client.ale.api.wsdl.alelr.epcglobal";
 			
 			// initialize jaxb context and unmarshaller
 			JAXBContext context = JAXBContext.newInstance(JAXB_CONTEXT);
@@ -236,7 +236,7 @@ public class DeserializerUtil {
 	public static AddReaders deserializeAddReaders(String pathName) throws IOException {
 		AddReaders readers = null;
 		try {
-			String JAXB_CONTEXT = "org.fosstrak.ale.wsdl.alelr.epcglobal";
+			String JAXB_CONTEXT = "org.rifidi.edge.client.ale.api.wsdl.alelr.epcglobal";
 			
 			// initialize jaxb context and unmarshaller
 			JAXBContext context = JAXBContext.newInstance(JAXB_CONTEXT);
@@ -260,7 +260,7 @@ public class DeserializerUtil {
 	public static ECReports deserializeECReports(InputStream in) throws IOException {
 		ECReports reports = null;
 		try {
-			String JAXB_CONTEXT = "org.fosstrak.ale.xsd.ale.epcglobal";
+			String JAXB_CONTEXT = "org.rifidi.edge.client.ale.api.xsd.ale.epcglobal";
 			
 			// initialize jaxb context and unmarshaller
 			JAXBContext context = JAXBContext.newInstance(JAXB_CONTEXT);
