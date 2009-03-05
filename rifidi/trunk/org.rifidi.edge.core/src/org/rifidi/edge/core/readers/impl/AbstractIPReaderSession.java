@@ -8,11 +8,14 @@ import java.net.Socket;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Queue;
 import java.util.Set;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.jms.Destination;
 
@@ -61,13 +64,24 @@ public abstract class AbstractIPReaderSession implements ReaderSession {
 	/** Map containing the periodic commands with the process id as key. */
 	protected Map<Integer, Command> commands;
 	/** Map containing command process id as key and the future as value. */
-	protected Map<Integer, ScheduledFuture<?>> idToFuture;
+	protected Map<Integer, CommandExecutionData> idToData;
 	/** Job counter */
 	protected int counter = 0;
 	/** JMS destination. */
 	protected Destination destination;
 	/** Spring jms template */
 	protected JmsTemplate template;
+	/**
+	 * This thread takes care that connections get recreated when the socket
+	 * goes down.
+	 */
+	protected Thread connectionGuardian;
+	/** True if the socket is currently being connected. */
+	protected AtomicBoolean connecting = new AtomicBoolean(false);
+	/** True if the executor is up and running. */
+	protected AtomicBoolean processing = new AtomicBoolean(false);
+	/** Queue for commands that get submitted while the executor is inactive. */
+	protected Queue<Command> commandQueue = new ConcurrentLinkedQueue<Command>();
 
 	/**
 	 * Constructor.
@@ -81,13 +95,12 @@ public abstract class AbstractIPReaderSession implements ReaderSession {
 	public AbstractIPReaderSession(String host, int port,
 			int reconnectionInterval, int maxConAttempts,
 			Destination destination, JmsTemplate template) {
-		executor = new ScheduledThreadPoolExecutor(1);
 		this.host = host;
 		this.port = port;
 		this.maxConAttempts = maxConAttempts;
 		this.reconnectionInterval = reconnectionInterval;
 		this.commands = new HashMap<Integer, Command>();
-		this.idToFuture = new HashMap<Integer, ScheduledFuture<?>>();
+		this.idToData = new HashMap<Integer, CommandExecutionData>();
 		this.template = template;
 		this.destination = destination;
 		status = ReaderStatus.CREATED;
@@ -153,42 +166,139 @@ public abstract class AbstractIPReaderSession implements ReaderSession {
 	 */
 	@Override
 	public void connect() throws IOException {
-		status = ReaderStatus.CONNECTING;
-		// try to open the socket
-		for (int connCount = 0; connCount < maxConAttempts; connCount++) {
+		if ((status == ReaderStatus.PROCESSING
+				|| status == ReaderStatus.CREATED || status == ReaderStatus.LOGGINGIN)
+				&& connecting.compareAndSet(false, true)) {
 			try {
-				socket = new Socket(host, port);
-				break;
-			} catch (IOException e) {
-				logger.warn("Unable to connect to reader on try nr "
-						+ connCount + " " + e);
+				status = ReaderStatus.CONNECTING;
+				// if an executor exists, execute it
+				if (processing.get()) {
+					if (!processing.compareAndSet(true, false)) {
+						logger
+								.warn("Killed a non active executor. That should not happen. ");
+					}
+					executor.shutdownNow();
+					executor = null;
+					for (Integer id : commands.keySet()) {
+						idToData.get(id).future = null;
+					}
+				}
+				// check if somebody is currently reading
+				if (readThread != null) {
+					readThread.interrupt();
+					try {
+						logger.debug("Killing read thread.");
+						readThread.join();
+						readThread = null;
+					} catch (InterruptedException e1) {
+						Thread.currentThread().interrupt();
+						return;
+					}
+				}
+				// check if somebody is currently writing
+				if (writeThread != null) {
+					writeThread.interrupt();
+					try {
+						logger.debug("Killing write thread.");
+						writeThread.join();
+						writeThread = null;
+					} catch (InterruptedException e1) {
+						Thread.currentThread().interrupt();
+						return;
+					}
+				}
+				executor = new ScheduledThreadPoolExecutor(1);
+				// try to open the socket
+				for (int connCount = 0; connCount < maxConAttempts; connCount++) {
+					try {
+						socket = new Socket(host, port);
+						break;
+					} catch (IOException e) {
+						logger.warn("Unable to connect to reader on try nr "
+								+ connCount + " " + e);
+					}
+					// sleep between to connection attempts
+					try {
+						Thread.sleep(reconnectionInterval);
+					} catch (InterruptedException e) {
+						Thread.currentThread().interrupt();
+						return;
+					}
+				}
+				// no socket, we are screwed
+				if (socket == null) {
+					// revert
+					status = ReaderStatus.CREATED;
+					connecting.compareAndSet(true, false);
+					throw new IOException("Unable to reach reader.");
+				}
+				readThread = new Thread(new ReadThread(this, socket
+						.getInputStream(), readQueue));
+				writeThread = new Thread(new WriteThread(socket
+						.getOutputStream(), writeQueue));
+				readThread.start();
+				writeThread.start();
+				status = ReaderStatus.LOGGINGIN;
+				// do the logical connect
+				try {
+					if (!onConnect()) {
+						status = ReaderStatus.CREATED;
+						logger.warn("Unable to connect to reader " + host + ":"
+								+ port);
+						return;
+					}
+				} catch (IOException e) {
+					logger.debug("Unable to connect during login: " + e);
+					connecting.compareAndSet(true, false);
+					connect();
+				}
+				logger.debug("Connected.");
+				// create thread that checks if the write thread dies and
+				// restart it
+				connectionGuardian = new Thread() {
+
+					/*
+					 * (non-Javadoc)
+					 * 
+					 * @see java.lang.Thread#run()
+					 */
+					@Override
+					public void run() {
+						try {
+							readThread.join();
+							status = ReaderStatus.CREATED;
+							connect();
+						} catch (InterruptedException e) {
+							Thread.currentThread().interrupt();
+						} catch (IOException e) {
+							logger.warn("Unable to reconnect.");
+						}
+					}
+
+				};
+				connectionGuardian.start();
+				status = ReaderStatus.PROCESSING;
+				if (!processing.compareAndSet(false, true)) {
+					logger.warn("Executor was already active! ");
+				}
+				// resubmit commands
+				while (commandQueue.peek() != null) {
+					executor.submit(commandQueue.poll());
+				}
+				synchronized (commands) {
+					for (Integer id : commands.keySet()) {
+						if (idToData.get(id).future == null) {
+							idToData.get(id).future = executor
+									.scheduleWithFixedDelay(commands.get(id),
+											0, idToData.get(id).interval,
+											idToData.get(id).unit);
+						}
+					}
+				}
+			} finally {
+				connecting.compareAndSet(true, false);
 			}
-			// sleep between to connection attempts
-			try {
-				Thread.sleep(reconnectionInterval);
-			} catch (InterruptedException e) {
-				Thread.currentThread().interrupt();
-				return;
-			}
 		}
-		// no socket, we are screwed
-		if (socket == null) {
-			throw new IOException("Unable to reach reader.");
-		}
-		readThread = new Thread(new ReadThread(this, socket.getInputStream(),
-				readQueue));
-		writeThread = new Thread(new WriteThread(socket.getOutputStream(),
-				writeQueue));
-		readThread.start();
-		writeThread.start();
-		status = ReaderStatus.LOGGINGIN;
-		if (!onConnect()) {
-			status = ReaderStatus.FAIL;
-			logger.warn("Unable to connect to reader " + host + ":" + port);
-			return;
-		}
-		logger.debug("Connected.");
-		status = ReaderStatus.PROCESSING;
 	}
 
 	/*
@@ -198,13 +308,18 @@ public abstract class AbstractIPReaderSession implements ReaderSession {
 	 */
 	@Override
 	public Set<Command> disconnect() {
-		try {
-			socket.close();
-		} catch (IOException e) {
-			logger.debug("Failed closing socket: " + e);
+		if (processing.get()) {
+			if (processing.compareAndSet(true, false)) {
+				try {
+					socket.close();
+				} catch (IOException e) {
+					logger.debug("Failed closing socket: " + e);
+				}
+				readThread.interrupt();
+				writeThread.interrupt();
+				status = ReaderStatus.CREATED;
+			}
 		}
-		readThread.interrupt();
-		writeThread.interrupt();
 		return Collections.emptySet();
 	}
 
@@ -222,7 +337,11 @@ public abstract class AbstractIPReaderSession implements ReaderSession {
 		command.setReaderSession(this);
 		command.setTemplate(template);
 		command.setDestination(destination);
-		executor.submit(command);
+		if (processing.get()) {
+			executor.submit(command);
+			return;
+		}
+		commandQueue.add(command);
 	}
 
 	/*
@@ -233,18 +352,25 @@ public abstract class AbstractIPReaderSession implements ReaderSession {
 	 * .readers.Command, long, java.util.concurrent.TimeUnit)
 	 */
 	@Override
-	public synchronized Integer submit(Command command, long interval,
-			TimeUnit unit) {
-		command.setInput(readQueue);
-		command.setOutput(writeQueue);
-		command.setReaderSession(this);
-		command.setTemplate(template);
-		command.setDestination(destination);
-		Integer id = counter++;
-		commands.put(id, command);
-		idToFuture.put(id, executor.scheduleWithFixedDelay(command, 0,
-				interval, unit));
-		return id;
+	public Integer submit(Command command, long interval, TimeUnit unit) {
+		synchronized (commands) {
+			command.setInput(readQueue);
+			command.setOutput(writeQueue);
+			command.setReaderSession(this);
+			command.setTemplate(template);
+			command.setDestination(destination);
+			Integer id = counter++;
+			commands.put(id, command);
+			CommandExecutionData data = new CommandExecutionData();
+			data.interval = interval;
+			data.unit = unit;
+			if (processing.get()) {
+				data.future = executor.scheduleWithFixedDelay(command, 0,
+						interval, unit);
+			}
+			idToData.put(id, data);
+			return id;
+		}
 	}
 
 	/*
@@ -255,10 +381,11 @@ public abstract class AbstractIPReaderSession implements ReaderSession {
 	 */
 	@Override
 	public synchronized void killComand(Integer id) {
+
 		commands.remove(id);
-		ScheduledFuture<?> future = idToFuture.remove(id);
-		if (future != null) {
-			future.cancel(true);
+		CommandExecutionData data = idToData.remove(id);
+		if (data != null) {
+			data.future.cancel(true);
 		}
 	}
 
@@ -300,4 +427,9 @@ public abstract class AbstractIPReaderSession implements ReaderSession {
 		return status;
 	}
 
+	private class CommandExecutionData {
+		public long interval;
+		public TimeUnit unit;
+		public ScheduledFuture<?> future;
+	}
 }
