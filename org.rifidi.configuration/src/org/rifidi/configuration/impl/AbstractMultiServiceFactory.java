@@ -78,10 +78,17 @@ public abstract class AbstractMultiServiceFactory implements ServiceFactory {
 								+ Integer.toString(counter));
 			} else {
 				String[] splitString = configuration.getServiceID().split("-");
-				String idNumString = splitString[splitString.length - 1];
-				int idNum = Integer.parseInt(idNumString);
-				if (counter < idNum) {
-					counter = idNum;
+				if (splitString.length > 0) {
+					String idNumString = splitString[splitString.length - 1];
+					try {
+						int idNum = Integer.parseInt(idNumString);
+						if (counter < idNum) {
+							counter = idNum;
+						}
+					} catch (NumberFormatException e) {
+						logger.debug("Unable to parse service id: "
+								+ configuration.getServiceID());
+					}
 				}
 			}
 

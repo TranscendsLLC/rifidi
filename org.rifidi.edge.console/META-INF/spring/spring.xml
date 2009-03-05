@@ -4,21 +4,15 @@
      http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi.xsd">
 	<!--  Custom commands -->
 	<bean id="customCommands" class="org.rifidi.edge.console.RifidiEdgeServerCommands">
-		<property name="readerSessionManagement" ref="readerSessionManagement" />
-		<property name="readerConfigStub" ref="readerConfigStub" />
-		<property name="commandConfigStub" ref="commandConfigStub" />
-		<property name="edgeServerStub" ref="edgeServerStub" />
+		<property name="readerDAO" ref="readerManagement" />
+		<property name="commandDAO" ref="commandManagement" />
 	</bean>
 	<osgi:service id="customCommandsService" ref="customCommands"
 		interface="org.eclipse.osgi.framework.console.CommandProvider" />
 	<!-- Put reader session service in OSGi Registry -->
-	<osgi:reference id="readerSessionManagement"
-		interface="org.rifidi.edge.core.readersession.ReaderSessionDAO" />
-	<osgi:reference id="readerConfigStub"
-		interface="org.rifidi.edge.core.rmi.ReaderConfigurationStub" />
-	<osgi:reference id="commandConfigStub"
-		interface="org.rifidi.edge.core.rmi.CommandConfigurationStub" />
-	<osgi:reference id="edgeServerStub"
-		interface="org.rifidi.edge.core.rmi.EdgeServerStub" />
+	<osgi:reference id="readerManagement"
+		interface="org.rifidi.edge.core.daos.ReaderDAO" />
+	<osgi:reference id="commandManagement"
+		interface="org.rifidi.edge.core.daos.CommandDAO" />
 
 </beans>

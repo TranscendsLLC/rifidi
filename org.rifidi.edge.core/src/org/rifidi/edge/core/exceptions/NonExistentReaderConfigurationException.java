@@ -4,7 +4,7 @@
 package org.rifidi.edge.core.exceptions;
 
 /**
- * Thrown if somebody tried to use a reader that either doesn't exist or got
+ * Thrown if somebody tried to use a readerSession that either doesn't exist or got
  * removed from the registry.
  * 
  * @author Jochen Mader - jochen@pramari.com

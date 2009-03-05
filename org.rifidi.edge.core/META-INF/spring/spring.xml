@@ -5,73 +5,25 @@
      http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi.xsd
      http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd">
 
-	<bean class="org.springframework.remoting.rmi.RmiServiceExporter">
-		<property name="serviceName" value="ReaderConfigurationStub" />
-		<property name="service" ref="readerConfigurationStub" />
-		<property name="serviceInterface"
-			value="org.rifidi.edge.core.rmi.ReaderConfigurationStub" />
-		<property name="registryPort" value="1098" />
-	</bean>
-
-	<bean id="readerConfigurationStub"
-		class="org.rifidi.edge.core.rmi.internal.ReaderConfigurationStubImpl">
-		<property name="readerConfigDAO" ref="ReaderConfigurationDAOImpl"></property>
-		<property name="configurationDAO" ref="ConfigurationDAOImpl"></property>
-	</bean>
-
-	<osgi:service id="readerConfigurationStubService" ref="readerConfigurationStub"
-		interface="org.rifidi.edge.core.rmi.ReaderConfigurationStub"></osgi:service>
-
-	<bean class="org.springframework.remoting.rmi.RmiServiceExporter">
-		<property name="serviceName" value="CommandConfigurationStub" />
-		<property name="service" ref="commandConfigurationStub" />
-		<property name="serviceInterface"
-			value="org.rifidi.edge.core.rmi.CommandConfigurationStub" />
-		<property name="registryPort" value="1098" />
-	</bean>
-
-	<bean id="commandConfigurationStub"
-		class="org.rifidi.edge.core.rmi.internal.CommandConfigurationStubImpl">
-		<property name="readerConfigDAO" ref="ReaderConfigurationDAOImpl"></property>
-		<property name="configDAO" ref="ConfigurationDAOImpl"></property>
-		<property name="commandConfigDAO" ref="CommandConfigurationDAOImpl"></property>
-	</bean>
-
-	<osgi:service id="commandConfigurationStubService" ref="commandConfigurationStub"
-		interface="org.rifidi.edge.core.rmi.CommandConfigurationStub"></osgi:service>
-
-	<bean class="org.springframework.remoting.rmi.RmiServiceExporter">
-		<property name="serviceName" value="EdgeServerStub" />
-		<property name="service" ref="edgeServerStub" />
-		<property name="serviceInterface" value="org.rifidi.edge.core.rmi.EdgeServerStub" />
-		<property name="registryPort" value="1098" />
-	</bean>
-
-	<bean id="edgeServerStub" class="org.rifidi.edge.core.rmi.internal.EdgeServerStubImpl">
-		<property name="configurationService" ref="configurationService" />
-		<property name="readerSessionDAO" ref="readerSessionDAOImpl" />
-	</bean>
-
-	<osgi:service id="edgeServerStubService" ref="edgeServerStub"
-		interface="org.rifidi.edge.core.rmi.EdgeServerStub"></osgi:service>
-
 	<osgi:reference id="configurationService"
 		interface="org.rifidi.configuration.services.ConfigurationService" />
 
-
-	<!--  Create Reader Session Service -->
-	<bean id="readerSessionDAOImpl" class="org.rifidi.edge.core.readersession.ReaderSessionDAOImpl">
-		<property name="context" ref="bundleContext" />
-		<property name="readerConfigurations" ref="readerConfigurationsSet" />
-		<property name="template" ref="senderJmsTemplate" />
-		<property name="destination" ref="destination" />
+	<!-- Bind the ReaderDAO as an OSGi Service. -->
+	<osgi:service id="ReaderDAOBinding" interface="org.rifidi.edge.core.daos.ReaderDAO"
+		ref="ReaderDAOImpl" />
+	<!-- Create Reader Configuration DAO Service -->
+	<bean id="ReaderDAOImpl" class="org.rifidi.edge.core.daos.ReaderDAOImpl">
+		<property name="readerFactories" ref="readerFactoriesSet" />
+		<property name="reader" ref="readerSet" />
 	</bean>
 
+	<!-- Bind the CommandDAO as an OSGi Service. -->
+	<osgi:service id="CommandDAOBinding" interface="org.rifidi.edge.core.daos.CommandDAO"
+		ref="CommandDAOImpl" />
 	<!-- Create Reader Configuration DAO Service -->
-	<bean id="ReaderConfigurationDAOImpl"
-		class="org.rifidi.edge.core.internal.impl.ReaderConfigurationDAOImpl">
-		<property name="readerConfigFactories" ref="readerConfigurationFactoriesSet" />
-		<property name="readerConfiguration" ref="readerConfigurationsSet" />
+	<bean id="CommandDAOImpl" class="org.rifidi.edge.core.daos.CommandDAOImpl">
+		<property name="commandFactories" ref="commandFactoriesSet" />
+		<property name="commands" ref="commandSet" />
 	</bean>
 
 	<!-- Create Configuration DAO Service -->
@@ -79,33 +31,19 @@
 		<property name="configurations" ref="ConfigurationSet" />
 	</bean>
 
-	<!-- Create Command Configuration DAO Service -->
-	<bean id="CommandConfigurationDAOImpl"
-		class="org.rifidi.edge.core.internal.impl.CommandConfigurationDAOImpl">
-		<property name="commandConfigFactories" ref="commandConfigurationFactoriesSet" />
-		<property name="commandConfigurations" ref="commandConfigurationSet" />
-	</bean>
-
-	<!-- Put reader session service in OSGi Registry -->
-	<osgi:service id="readerSessionDAO" ref="readerSessionDAOImpl"
-		interface="org.rifidi.edge.core.readersession.ReaderSessionDAO"></osgi:service>
-
 	<!-- Listener for Reader Configurations -->
-	<osgi:set id="readerConfigurationsSet"
-		interface="org.rifidi.edge.core.readers.AbstractReaderConfiguration"
+	<osgi:set id="readerSet" interface="org.rifidi.edge.core.readers.AbstractReader"
 		cardinality="0..N">
-		<osgi:listener ref="readerSessionDAOImpl" bind-method="bind"
-			unbind-method="unbind" />
-		<osgi:listener ref="ReaderConfigurationDAOImpl"
-			bind-method="bindReaderConfiguration" unbind-method="unbindReaderConfiguration" />
+		<osgi:listener ref="ReaderDAOImpl" bind-method="bindReader"
+			unbind-method="unbindReader" />
 	</osgi:set>
 
 	<!-- Listener for Reader Configuration Factories -->
-	<osgi:set id="readerConfigurationFactoriesSet"
-		interface="org.rifidi.edge.core.readers.AbstractReaderConfigurationFactory"
+	<osgi:set id="readerFactoriesSet"
+		interface="org.rifidi.edge.core.readers.AbstractReaderFactory"
 		cardinality="0..N">
-		<osgi:listener ref="ReaderConfigurationDAOImpl"
-			bind-method="bindReaderConfigFactory" unbind-method="unbindReaderConfigFactory" />
+		<osgi:listener ref="ReaderDAOImpl" bind-method="bindReaderFactory"
+			unbind-method="unbindReaderFactory" />
 	</osgi:set>
 
 	<!-- Listener for Configuration Factories -->
@@ -116,20 +54,18 @@
 	</osgi:set>
 
 	<!-- Listener for Command Configurations -->
-	<osgi:set id="commandConfigurationSet"
+	<osgi:set id="commandSet"
 		interface="org.rifidi.edge.core.commands.AbstractCommandConfiguration"
 		cardinality="0..N">
-		<osgi:listener ref="readerSessionDAOImpl" bind-method="bindCommand"
+		<osgi:listener ref="CommandDAOImpl" bind-method="bindCommand"
 			unbind-method="unbindCommand" />
-		<osgi:listener ref="CommandConfigurationDAOImpl"
-			bind-method="bindCommandConfiguration" unbind-method="unbindCommandConfiguration"></osgi:listener>
 	</osgi:set>
 
-	<osgi:set id="commandConfigurationFactoriesSet"
+	<osgi:set id="commandFactoriesSet"
 		interface="org.rifidi.edge.core.commands.AbstractCommandConfigurationFactory"
-		cardinality="1..N">
-		<osgi:listener ref="CommandConfigurationDAOImpl"
-			bind-method="bindCommandConfigFactory" unbind-method="unbindCommandConfigFactory"></osgi:listener>
+		cardinality="0..N">
+		<osgi:listener ref="CommandDAOImpl" bind-method="bindCommandFactory"
+			unbind-method="unbindCommandFactory" />
 	</osgi:set>
 
 
@@ -147,6 +83,7 @@
 		XML
 	-->
 	<amq:connectionFactory id="jmsFactory" brokerURL="vm://localhost" />
+	
 	<!-- Spring JMS Template -->
 	<bean id="myJmsTemplate" class="org.springframework.jms.core.JmsTemplate">
 		<property name="connectionFactory">
