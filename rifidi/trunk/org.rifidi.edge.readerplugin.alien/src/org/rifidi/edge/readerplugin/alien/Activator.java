@@ -14,7 +14,7 @@ import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
 /**
- * Activator for Alien reader.
+ * Activator for Alien readerSession.
  * 
  * @author Matthew Dean - matt@pramari.com
  */

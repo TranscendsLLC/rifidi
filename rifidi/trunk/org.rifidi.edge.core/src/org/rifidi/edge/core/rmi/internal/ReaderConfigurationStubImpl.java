@@ -3,6 +3,7 @@
  */
 package org.rifidi.edge.core.rmi.internal;
 
+import java.io.Reader;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,10 +20,10 @@ import javax.management.MBeanInfo;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.configuration.Configuration;
+import org.rifidi.edge.core.daos.ReaderDAO;
 import org.rifidi.edge.core.internal.ConfigurationDAO;
-import org.rifidi.edge.core.internal.ReaderConfigurationDAO;
-import org.rifidi.edge.core.readers.AbstractReaderConfiguration;
-import org.rifidi.edge.core.readers.AbstractReaderConfigurationFactory;
+import org.rifidi.edge.core.readers.AbstractReader;
+import org.rifidi.edge.core.readers.AbstractReaderFactory;
 import org.rifidi.edge.core.rmi.ReaderConfigurationStub;
 
 /**
@@ -31,8 +32,8 @@ import org.rifidi.edge.core.rmi.ReaderConfigurationStub;
  */
 public class ReaderConfigurationStubImpl implements ReaderConfigurationStub {
 
-	/** A data access object for the reader configuration services */
-	private ReaderConfigurationDAO readerConfigDAO;
+	/** A data access object for the readerSession configuration services */
+	private ReaderDAO readerConfigDAO;
 	/** A data access object for configurations in OSGi */
 	private ConfigurationDAO configurationDAO;
 	/** A logger for this class */
@@ -51,9 +52,9 @@ public class ReaderConfigurationStubImpl implements ReaderConfigurationStub {
 			String readerConfigurationFactoryID,
 			AttributeList readerConfigurationProperties) throws RemoteException {
 
-		// get the reader configuration factory that corresponds to the ID
-		AbstractReaderConfigurationFactory<?> readerConfigFactory = this.readerConfigDAO
-				.getReaderConfigurationFactory(readerConfigurationFactoryID);
+		// get the readerSession configuration factory that corresponds to the ID
+		AbstractReaderFactory<?> readerConfigFactory = this.readerConfigDAO
+				.getReaderFactoryByID(readerConfigurationFactoryID);
 
 		// Get an empty configuration
 		Configuration readerConfiguration = readerConfigFactory
@@ -81,8 +82,8 @@ public class ReaderConfigurationStubImpl implements ReaderConfigurationStub {
 			throws RemoteException {
 		Configuration config = configurationDAO
 				.getConfiguration(readerConfigurationID);
-		AbstractReaderConfiguration<?> readerConfig = readerConfigDAO
-				.getReaderConfiguration(readerConfigurationID);
+		AbstractReader<?> readerConfig = readerConfigDAO
+				.getReaderByID(readerConfigurationID);
 		if (config != null) {
 			config.destroy();
 		} else {
@@ -93,7 +94,7 @@ public class ReaderConfigurationStubImpl implements ReaderConfigurationStub {
 		if (readerConfig != null) {
 			readerConfig.destroy();
 		} else {
-			logger.warn("No reader configuraion found with ID: "
+			logger.warn("No readerSession configuraion found with ID: "
 					+ readerConfigurationID);
 		}
 
@@ -110,16 +111,16 @@ public class ReaderConfigurationStubImpl implements ReaderConfigurationStub {
 			throws RemoteException {
 		Map<String, AttributeList> retVal = new HashMap<String, AttributeList>();
 
-		// get all reader configurations
-		Set<AbstractReaderConfiguration<?>> configurations = this.readerConfigDAO
-				.getCurrentReaderConfigurations();
-		Iterator<AbstractReaderConfiguration<?>> iter = configurations
+		// get all readerSession configurations
+		Set<AbstractReader<?>> configurations = this.readerConfigDAO
+				.getReaders();
+		Iterator<AbstractReader<?>> iter = configurations
 				.iterator();
 		while (iter.hasNext()) {
-			AbstractReaderConfiguration<?> current = iter.next();
-			// get the ID of the reader configuration
+			AbstractReader<?> current = iter.next();
+			// get the ID of the readerSession configuration
 			String serviceID = current.getID();
-			// get the configuration object associated with the reader config
+			// get the configuration object associated with the readerSession config
 			Configuration config = this.configurationDAO
 					.getConfiguration(serviceID);
 			if (config != null) {
@@ -157,12 +158,12 @@ public class ReaderConfigurationStubImpl implements ReaderConfigurationStub {
 	public Set<String> getAvailableReaderConfigurationFactories()
 			throws RemoteException {
 		Set<String> retVal = new HashSet<String>();
-		Set<AbstractReaderConfigurationFactory<?>> configFactories = this.readerConfigDAO
-				.getCurrentReaderConfigurationFactories();
-		Iterator<AbstractReaderConfigurationFactory<?>> iter = configFactories
+		Set<AbstractReaderFactory<?>> configFactories = this.readerConfigDAO
+				.getReaderFactories();
+		Iterator<AbstractReaderFactory<?>> iter = configFactories
 				.iterator();
 		while (iter.hasNext()) {
-			AbstractReaderConfigurationFactory<?> factory = iter.next();
+			AbstractReaderFactory<?> factory = iter.next();
 			retVal.add(factory.getFactoryIDs().get(0));
 		}
 		return retVal;
@@ -180,18 +181,18 @@ public class ReaderConfigurationStubImpl implements ReaderConfigurationStub {
 		Map<String, String> retVal = new HashMap<String, String>();
 
 		// Get all ReaderConfigurations
-		Set<AbstractReaderConfiguration<?>> configurations = readerConfigDAO
-				.getCurrentReaderConfigurations();
-		Iterator<AbstractReaderConfiguration<?>> iter = configurations
+		Set<AbstractReader<?>> configurations = readerConfigDAO
+				.getReaders();
+		Iterator<AbstractReader<?>> iter = configurations
 				.iterator();
 		while (iter.hasNext()) {
 
-			AbstractReaderConfiguration<?> readerConfig = iter.next();
-			// get the ID of the reader configuration
+			AbstractReader<?> readerConfig = iter.next();
+			// get the ID of the readerSession configuration
 			String configID = readerConfig.getID();
 
 			// look up the associated service configuration object for the
-			// reader configuration
+			// readerSession configuration
 			Configuration config = configurationDAO.getConfiguration(configID);
 			if (config != null) {
 				retVal.put(configID, config.getFactoryID());
@@ -213,14 +214,14 @@ public class ReaderConfigurationStubImpl implements ReaderConfigurationStub {
 	@Override
 	public MBeanInfo getReaderConfigurationDescription(
 			String readerConfigurationFactoryID) throws RemoteException {
-		AbstractReaderConfigurationFactory<?> configFactory = readerConfigDAO
-				.getReaderConfigurationFactory(readerConfigurationFactoryID);
+		AbstractReaderFactory<?> configFactory = readerConfigDAO
+				.getReaderFactoryByID(readerConfigurationFactoryID);
 		if (configFactory != null) {
 			Configuration config = configFactory
 					.getEmptyConfiguration(readerConfigurationFactoryID);
 			return config.getMBeanInfo();
 		} else {
-			logger.warn("No Reader Configuration Factory with ID "
+			logger.warn("No ReaderSession Configuration Factory with ID "
 					+ readerConfigurationFactoryID + " is available");
 		}
 		return null;
@@ -287,7 +288,7 @@ public class ReaderConfigurationStubImpl implements ReaderConfigurationStub {
 	 * @param readerConfigDAO
 	 *            the readerConfigDAO to set
 	 */
-	public void setReaderConfigDAO(ReaderConfigurationDAO readerConfigDAO) {
+	public void setReaderConfigDAO(ReaderDAO readerConfigDAO) {
 		this.readerConfigDAO = readerConfigDAO;
 	}
 
@@ -300,17 +301,8 @@ public class ReaderConfigurationStubImpl implements ReaderConfigurationStub {
 	}
 
 	@Override
-	public AttributeList configureReader(String readerConfigurationID)
-			throws RemoteException {
-		AbstractReaderConfiguration<?> readerConfig = this.readerConfigDAO
-				.getReaderConfiguration(readerConfigurationID);
-		if (readerConfig == null) {
-			logger.warn("Reader Configuration with ID " + readerConfigurationID
-					+ " is not available");
-			return null;
-		}
-		readerConfig.configureReader();
-		return getReaderConfigurationProperties(readerConfigurationID);
+	public AbstractReader<?> getReader(String ID) {
+		return readerConfigDAO.getReaderByID(ID);
 	}
 
 }

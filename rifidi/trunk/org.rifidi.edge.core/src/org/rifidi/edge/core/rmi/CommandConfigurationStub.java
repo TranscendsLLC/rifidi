@@ -10,6 +10,8 @@ import java.util.Map;
 import javax.management.AttributeList;
 import javax.management.MBeanInfo;
 
+import org.rifidi.edge.core.commands.AbstractCommandConfiguration;
+
 /**
  * This is the interface for a stub that allows clients to interact with
  * commands on the edge server
@@ -26,7 +28,7 @@ public interface CommandConfigurationStub extends Remote {
 
 	/**
 	 * This method gets the available command types on the edge server and the
-	 * ID of the reader factory that the command type works with
+	 * ID of the readerSession factory that the command type works with
 	 * 
 	 * for example, it return <Alien9800-GetTagList, Alien9800>
 	 * 
@@ -109,4 +111,11 @@ public interface CommandConfigurationStub extends Remote {
 	 */
 	void deleteCommandConfiguration(String commandConfigurationID)
 			throws RemoteException;
+	
+	/**
+	 * Temp.  Should be deleted
+	 * @param ID
+	 * @return
+	 */
+	AbstractCommandConfiguration<?> getCommand(String ID);
 }

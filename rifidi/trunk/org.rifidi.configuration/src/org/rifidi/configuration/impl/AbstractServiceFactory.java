@@ -71,19 +71,26 @@ public abstract class AbstractServiceFactory<T extends RifidiService>
 				((DefaultConfigurationImpl) configuration)
 						.setServiceID(getFactoryIDs().get(0) + "-"
 								+ Integer.toString(counter));
-			}else{
+			} else {
 				String[] splitString = configuration.getServiceID().split("-");
-				String idNumString = splitString[splitString.length -1];
-				int idNum = Integer.parseInt(idNumString);
-				if(counter<idNum){
-					counter=idNum;
+				if (splitString.length > 0) {
+					String idNumString = splitString[splitString.length - 1];
+					try {
+						int idNum = Integer.parseInt(idNumString);
+						if (counter < idNum) {
+							counter = idNum;
+						}
+					} catch (NumberFormatException e) {
+						logger.debug("Unable to parse service id: "
+								+ configuration.getServiceID());
+					}
 				}
 			}
 			Dictionary<String, String> params = new Hashtable<String, String>();
 			params.put("type", getClazz().getName());
+			customConfig(instance);
 			configuration.setServiceRegistration(context.registerService(Configuration.class.getName(),
 					configuration, params));
-			customConfig(instance);
 		} catch (InstantiationException e) {
 			logger.error(getClazz() + " cannot be instantiated. " + e);
 		} catch (IllegalAccessException e) {

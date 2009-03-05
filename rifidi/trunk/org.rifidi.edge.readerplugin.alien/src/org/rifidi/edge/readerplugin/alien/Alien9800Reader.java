@@ -3,199 +3,349 @@
  */
 package org.rifidi.edge.readerplugin.alien;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.Socket;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import javax.jms.Destination;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.rifidi.edge.core.commands.CommandState;
-import org.rifidi.edge.core.readers.impl.AbstractReader;
-import org.rifidi.edge.readerplugin.alien.commands.internal.AuthenticateCommand;
-import org.rifidi.edge.readerplugin.alien.communication.ReadThread;
-import org.rifidi.edge.readerplugin.alien.communication.WriteThread;
+import org.rifidi.configuration.annotations.JMXMBean;
+import org.rifidi.configuration.annotations.Property;
+import org.rifidi.configuration.annotations.PropertyType;
+import org.rifidi.edge.core.readers.AbstractReader;
+import org.rifidi.edge.core.readers.ReaderSession;
+import org.springframework.jms.core.JmsTemplate;
 
 /**
  * @author Jochen Mader - jochen@pramari.com
  * 
  */
-public class Alien9800Reader extends AbstractReader {
+@JMXMBean
+public class Alien9800Reader extends AbstractReader<Alien9800ReaderSession> {
 	/** Logger for this class. */
-	private static final Log logger = LogFactory.getLog(Alien9800Reader.class);
-	/** IP address of the reader. */
-	private String ipAddress;
+	private Log logger = LogFactory.getLog(Alien9800Reader.class);
+	/** Description of the readerSession. */
+	private static final String description = "The Alien 9800 is an IP based RFID ReaderSession using a telnet interface.";
+	/** Name of the readerSession. */
+	private static final String name = "Alien9800";
+	/** The only session an alien reader allows. */
+	private Alien9800ReaderSession session;
+
+	/***
+	 * READER PROPERTIES - CONNECTION INFO
+	 */
+	private HashMap<String, String> readerProperties;
+	/** IP address of the readerSession. */
+	private String ipAddress = "127.0.0.1";
 	/** Port to connect to. */
-	private Integer port;
+	private Integer port = 20000;
 	/** Username for the telnet interface. */
-	private String username;
+	private String username = "alien";
 	/** Password for the telnet interface. */
-	private String password;
+	private String password = "password";
 	/** Time between two connection attempts. */
-	private Long reconnectionInterval;
+	private Long reconnectionInterval = 500l;
 	/** Number of connection attempts before a connection goes into fail state. */
-	private Integer maxNumConnectionAttempts;
-	/** Socket through whcih we communicate with the reader. */
-	private Socket socket;
-	/** Stream for incoming data. */
-	private InputStream inputStream;
-	/** Stream for outgoing data. */
-	private OutputStream outputStream;
-	/** Each command needs to be terminated with a newline. */
-	public static final String NEWLINE = "\n";
-	/** Welcome string. */
-	public static final String WELCOME = "Alien";
-	/** Character that terminates a message from alien. */
-	public static final char TERMINATION_CHAR = '\0';
-	/**
-	 * You can put this in front of a Alien command for terse output to come
-	 * back to you, making things faster and easier to parse.
-	 */
-	public static final String PROMPT_SUPPRESS = "\1";
-
-	/** Tag list command. */
-	public static final String TAG_LIST = ('\1' + "get taglist\n");
-	/** Tag list format command. */
-	public static final String TAG_LIST_FORMAT = ('\1' + "set TagListFormat=Custom\n");
-	/** Set type of tags to query for. */
-	public static final String TAG_TYPE_COMMAND = ('\1' + "set TagType=");
-	/** Set antenna sequence */
-	public static final String ANTENNA_SEQUENCE_COMMAND = ('\1' + "set AntennaSequence=");
-	/** Tag list custom format command. */
-	public static final String TAG_LIST_CUSTOM_FORMAT = ('\1' + "set TagListCustomFormat=%k|%T|%a\n");
-	/** Get the timezone of the reader. */
-	public static final String GET_TIME_ZONE = ('\1' + "get TimeZone\n");
+	private Integer maxNumConnectionAttempts = 10;
+	/** JMS destination. */
+	private Destination destination;
+	/** Spring JMS template*/
+	private JmsTemplate template;
 
 	/**
-	 * COMMANDS
+	 * READER PROPERTIES - SETTABE, SET ON CONNECTION
 	 */
-	public static final String COMMAND_HEARTBEAT_ADDRESS = "heartbeataddress";
-	public static final String COMMAND_ANTENNA_SEQUENCE = "antennasequence";
-	public static final String COMMAND_MAX_ANTENNA = "maxantenna";
-	public static final String COMMAND_PASSWORD = "password";
-	public static final String COMMAND_READERNAME = "ReaderName";
-	public static final String COMMAND_READERNUMBER = "ReaderNumber";
-	public static final String COMMAND_READER_TYPE = "ReaderType";
-	public static final String COMMAND_READER_VERSION = "ReaderVersion";
-	public static final String COMMAND_RF_ATTENUATION = "RFAttenuation";
-	public static final String COMMAND_EXTERNAL_INPUT = "ExternalInput";
-	public static final String COMMAND_USERNAME = "username";
-	public static final String COMMAND_UPTIME = "Uptime";
-	public static final String COMMAND_TAG_TYPE = "tagtype";
-	public static final String COMMAND_EXTERNAL_OUTPUT = "ExternalOutput";
-	public static final String COMMAND_INVERT_EXTERNAL_INPUT = "InvertExternalInput";
-	public static final String COMMAND_INVERT_EXTERNAL_OUTPUT = "InvertExternalOutput";
-	public static final String COOMMAND_COMMAND_PORT = "CommandPort";
-	public static final String COMMAND_DHCP = "DHCP";
-	public static final String COMMAND_DNS = "DNS";
-	public static final String COMMAND_GATEWAY = "Gateway";
-	public static final String COMMAND_HEARTBEAT_COUNT = "HeartbeatCount";
-	public static final String COMMAND_HEARTBEAT_PORT = "HeartbeatPort";
-	public static final String COMMAND_HEARTBEAT_TIME = "HeartbeatTime";
-	public static final String COMMAND_IPADDRESS = "IPAddress";
-	public static final String COMMAND_MAC_ADDRESS = "MACAddress";
-	public static final String COMMAND_NETMASK = "Netmask";
-	public static final String COMMAND_NETWORK_TIMEOUT = "NetworkTimeout";
-	public static final String COMMAND_TIME = "Time";
-	public static final String COMMAND_TIME_SERVER = "TimeServer";
-	public static final String COMMAND_TIME_ZONE = "TimeZone";
+	public static final String PROP_RF_ATTENUATION = "RFAttenuation";
+	public static final String PROP_EXTERNAL_OUTPUT = "externalOutput";
+	public static final String PROP_INVERT_EXTERNAL_INPUT = "invertExternalInput";
+	public static final String PROP_INVERT_EXTERNAL_OUTPUT = "inverExternalOutput";
 
-	/** Thread for reading from the socket. */
-	private Thread readThread;
-	/** Thread for writing to the socket. */
-	private Thread writeThread;
+	/**
+	 * READER PROPERTIES - SETTABLE, INITIALIZED BY AQUIRE READER PROPERTIES
+	 */
+	public static final String PROP_COMMAND_PORT = "commandPort";
+	public static final String PROP_DHCP = "dhcp";
+	public static final String PROP_DNS = "dns";
+	public static final String PROP_GATEWAY = "gateway";
+	private String heartbeat_address;
+	private String heartbeat_count;
+	private String heartbeat_port;
+	private String heartbeat_time;
+	private String netmask;
+	private String network_timeout;
+	private String readername;
+	private String time;
+	private String time_server;
+	private String time_zone;
+	/** The unique number of the readerSession */
+	public static final String PROP_READER_NUMBER = "readerNumber";
+
+	/**
+	 * READER PROPERTIES - READ ONLY, INITIALZIED BY AQUIRE READER PROPERTIES
+	 */
+	/** MAC Address of the readerSession */
+	public static final String PROP_MAC_ADDRESS = "macAddress";
+	/** Maximum number of antennas supported */
+	public static final String PROP_MAX_ANTENNA = "maxAntenna";
+	/** The type of the alien readerSession */
+	public static final String PROP_READER_TYPE = "readerType";
+	/** The version of the readerSession */
+	public static final String PROP_READER_VERSION = "readerVersion";
+	/** GPO value */
+	public static final String PROP_EXTERNAL_INPUT = "externalinput";
+	/** Uptime of the readerSession */
+	public static final String PROP_UPTIME = "uptime";
 
 	/**
 	 * Constructor.
-	 * 
-	 * @param ipAddress
-	 * @param port
-	 * @param username
-	 * @param password
-	 * @param reconnectionInterval
-	 * @param maxNumConnectionAttempts
 	 */
-	public Alien9800Reader(String ipAddress, Integer port, String username,
-			String password, Long reconnectionInterval,
-			Integer maxNumConnectionAttempts) {
-		super();
+	public Alien9800Reader() {
+		readerProperties = new HashMap<String, String>();
+		readerProperties.put(PROP_READER_NUMBER, "0");
+		readerProperties.put(PROP_READER_VERSION, "Unavailable");
+		readerProperties.put(PROP_READER_TYPE, "Unavailable");
+		readerProperties.put(PROP_MAC_ADDRESS, "Unavailable");
+		readerProperties.put(PROP_MAX_ANTENNA, "0");
+		readerProperties.put(PROP_EXTERNAL_INPUT, "0");
+		readerProperties.put(PROP_UPTIME, "0");
+		readerProperties.put(PROP_EXTERNAL_OUTPUT, "0");
+		readerProperties.put(PROP_RF_ATTENUATION, "0");
+		logger
+				.debug("New instance of Alien 9800 ReaderSession config created.");
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.rifidi.edge.core.ReaderConfiguration#getDescription()
+	 */
+	@Override
+	public String getDescription() {
+		return description;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.rifidi.edge.core.ReaderConfiguration#getName()
+	 */
+	@Override
+	public String getName() {
+		return name;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.rifidi.edge.core.readers.AbstractReader#createReaderSession()
+	 */
+	@Override
+	public synchronized ReaderSession createReaderSession() {
+		if (session == null) {
+			session = new Alien9800ReaderSession(ipAddress, port,
+					(int) (long) reconnectionInterval,
+					maxNumConnectionAttempts, username, password, destination, template);
+			return session;
+		}
+		return null;
+	}
+	
+	/**
+	 * @param destination the destination to set
+	 */
+	public void setDestination(Destination destination) {
+		this.destination = destination;
+	}
+
+	/**
+	 * @param template the template to set
+	 */
+	public void setTemplate(JmsTemplate template) {
+		this.template = template;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.core.readers.AbstractReader#destroyReaderSession(org.
+	 * rifidi.edge.core.readers.ReaderSession)
+	 */
+	@Override
+	public void destroyReaderSession(ReaderSession session) {
+		session.disconnect();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.rifidi.edge.core.readers.AbstractReader#getReaderSessions()
+	 */
+	@Override
+	public List<ReaderSession> getReaderSessions() {
+		List<ReaderSession> ret = new ArrayList<ReaderSession>();
+		if (session != null) {
+			ret.add(session);
+		}
+		return ret;
+	}
+
+	/*
+	 * JMX PROPERTY GETTER/SETTERS
+	 */
+
+	/**
+	 * @return the ipAddress
+	 */
+	@Property(displayName = "IP Address", description = "Address of the readerSession.", writable = true)
+	public String getIpAddress() {
+		return ipAddress;
+	}
+
+	/**
+	 * @param ipAddress
+	 *            the ipAddress to set
+	 */
+	public void setIpAddress(String ipAddress) {
 		this.ipAddress = ipAddress;
+	}
+
+	/**
+	 * @return the port
+	 */
+	@Property(displayName = "Port", description = "Port of the readerSession.", writable = true, type = PropertyType.PT_INTEGER)
+	public Integer getPort() {
+		return port;
+	}
+
+	/**
+	 * @param port
+	 *            the port to set
+	 */
+	public void setPort(Integer port) {
 		this.port = port;
+	}
+
+	/**
+	 * @return the username
+	 */
+	@Property(displayName = "Username", description = "Username for logging into the readerSession.", writable = true)
+	public String getUsername() {
+		return username;
+	}
+
+	/**
+	 * @param username
+	 *            the username to set
+	 */
+	public void setUsername(String username) {
 		this.username = username;
+	}
+
+	/**
+	 * @return the password
+	 */
+	@Property(displayName = "Password", description = "Password for logging into the readerSession.", writable = true)
+	public String getPassword() {
+		return password;
+	}
+
+	/**
+	 * @param password
+	 *            the password to set
+	 */
+	public void setPassword(String password) {
 		this.password = password;
+	}
+
+	/**
+	 * @return the reconnectionInterval
+	 */
+	@Property(displayName = "Reconnection Interval", description = "Time between two connection attempts (ms).", writable = true, type = PropertyType.PT_LONG)
+	public Long getReconnectionInterval() {
+		return reconnectionInterval;
+	}
+
+	/**
+	 * @param reconnectionInterval
+	 *            the reconnectionInterval to set
+	 */
+	public void setReconnectionInterval(Long reconnectionInterval) {
 		this.reconnectionInterval = reconnectionInterval;
+	}
+
+	/**
+	 * @return the maxNumConnectionAttempts
+	 */
+	@Property(displayName = "Maximum Connection Attempts", description = "Number of times to try to connect to the readerSession before the connection is marked as failed.", writable = true, type = PropertyType.PT_INTEGER)
+	public Integer getMaxNumConnectionAttempts() {
+		return maxNumConnectionAttempts;
+	}
+
+	/**
+	 * @param maxNumConnectionAttempts
+	 *            the maxNumConnectionAttempts to set
+	 */
+	public void setMaxNumConnectionAttempts(Integer maxNumConnectionAttempts) {
 		this.maxNumConnectionAttempts = maxNumConnectionAttempts;
 	}
 
-	/**
-	 * Open the connection.
-	 * 
-	 * @throws IOException
-	 */
-	protected void connect() throws IOException {
-		// try to open the socket
-		for (int connCount = 0; connCount < maxNumConnectionAttempts; connCount++) {
-			try {
-				socket = new Socket(ipAddress, port);
-				inputStream = socket.getInputStream();
-				outputStream = socket.getOutputStream();
-				break;
-			} catch (IOException e) {
-				logger.warn("Unable to connect to reader on try nr "
-						+ connCount + " " + e);
-			}
-			// sleep between to connection attempts
-			try {
-				Thread.sleep(reconnectionInterval);
-			} catch (InterruptedException e) {
-				Thread.currentThread().interrupt();
-				return;
-			}
-		}
-		// no socket, we are screwed
-		if (socket == null) {
-			throw new IOException("Unable to reach reader.");
-		}
-		readThread = new Thread(new ReadThread(inputStream, readQueue));
-		writeThread = new Thread(new WriteThread(outputStream, writeQueue));
-		readThread.start();
-		writeThread.start();
-
-		// try to authenticate
-		try {
-			AuthenticateCommand command = new AuthenticateCommand(username,
-					password);
-			command.setReader(this);
-			Future<CommandState> future = execute(command);
-			CommandState state = future.get();
-			// if we lost the connection try to reconnect
-			if (CommandState.LOSTCONNECTION.equals(state)) {
-				connect();
-			} else if (!CommandState.DONE.equals(state)) {
-				// probably wrong password
-				logger.warn("Unable to authenticate: " + state);
-				throw new IOException("Unable to connect to reader.");
-			}
-		} catch (InterruptedException e) {
-			writeThread.interrupt();
-			readThread.interrupt();
-			Thread.currentThread().interrupt();
-		} catch (ExecutionException e) {
-			logger.error("Unable to execute command: " + e);
-			throw new IOException("Unable to authenticate: " + e);
-		}
+	@Property(displayName = "GPO Output", description = "Ouput of GPO", writable = true, type = PropertyType.PT_INTEGER, minValue = "0", maxValue = "255")
+	public Integer getExternalOutput() {
+		return Integer.parseInt(readerProperties.get(PROP_EXTERNAL_OUTPUT));
 	}
 
-	/**
-	 * This method needs to be called to clean up when the reader is no longer
-	 * needed
-	 */
-	protected void cleanup() {
-		try {
-			this.socket.close();
-		} catch (IOException e) {
+	public void setExternalOutput(Integer externalOutput) {
+		if (externalOutput >= 0 && externalOutput <= 255) {
+			readerProperties.put(PROP_EXTERNAL_OUTPUT, Integer
+					.toString(externalOutput));
+			return;
 		}
+		logger.warn("ExternalOutput must be an"
+				+ " integer between 0 and 255, but was " + externalOutput);
+	}
+
+	@Property(displayName = "RF Attenuation", description = "RF Attenuation", writable = true, type = PropertyType.PT_INTEGER)
+	public Integer getRFAttenuation() {
+		return Integer.parseInt(readerProperties.get(PROP_RF_ATTENUATION));
+	}
+
+	public void setRFAttenuation(Integer rfAttenuation) {
+		readerProperties.put(PROP_RF_ATTENUATION, Integer
+				.toString(rfAttenuation));
+	}
+
+	@Property(displayName = "ReaderSession Version", description = "Version Number of the readerSession", writable = false)
+	public String getReaderVersion() {
+		return (String) readerProperties.get(PROP_READER_VERSION);
+	}
+
+	@Property(displayName = "ReaderSession Type", description = "Type of ReaderSession", writable = false)
+	public String getReaderType() {
+		return (String) readerProperties.get(PROP_READER_TYPE);
+	}
+
+	@Property(displayName = "Max Antennas", description = "Maximum number of antennas", writable = false, type = PropertyType.PT_INTEGER)
+	public Integer getMaxAntennas() {
+		return Integer.parseInt(readerProperties.get(PROP_MAX_ANTENNA));
+	}
+
+	@Property(displayName = "MAC Address", description = "MAC Address of readerSession", writable = false)
+	public String getMACAddress() {
+		return (String) readerProperties.get(PROP_MAC_ADDRESS);
+	}
+
+	@Property(displayName = "GPI Input", description = "Input of GPI", writable = false, type = PropertyType.PT_INTEGER)
+	public Integer getExternalInput() {
+		return Integer.parseInt(readerProperties.get(PROP_EXTERNAL_INPUT));
+	}
+
+	@Property(displayName = "Uptime", description = "Uptime of readerSession", writable = false, type = PropertyType.PT_INTEGER)
+	public Integer getUptime() {
+		return Integer.parseInt(readerProperties.get(PROP_UPTIME));
 	}
 }

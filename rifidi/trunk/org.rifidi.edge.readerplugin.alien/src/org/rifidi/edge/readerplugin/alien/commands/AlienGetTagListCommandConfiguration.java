@@ -127,7 +127,6 @@ public class AlienGetTagListCommandConfiguration extends
 		c.setAntennasequence(antenna_sequence);
 		c.setPersistTime(persistTime);
 		c.setTagType(tagType);
-		c.setPollInterval(interval);
 		return c;
 	}
 }

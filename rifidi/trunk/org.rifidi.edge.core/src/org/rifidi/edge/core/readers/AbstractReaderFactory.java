@@ -8,17 +8,17 @@ import org.rifidi.configuration.impl.AbstractServiceFactory;
 /**
  * An abstract class for all ReaderConfigurationFactories to extend.
  * ReaderConfigurationFactories should register themselves to osgi under both
- * the AbstractReaderConfigurationFactory and the
+ * the AbstractReaderFactory and the
  * org.rifidi.configuration.ServiceFactory interfaces
  * 
  * @author Kyle Neumeier - kyle@pramari.com
  * 
  */
-public abstract class AbstractReaderConfigurationFactory<T extends AbstractReaderConfiguration<?>>
+public abstract class AbstractReaderFactory<T extends AbstractReader<?>>
 		extends AbstractServiceFactory<T> {
 
 	/**
-	 * Get the ID of the CommandConfigurationFactory associated with this reader
+	 * Get the ID of the CommandConfigurationFactory associated with this readerSession
 	 * configuration
 	 * 
 	 * @return

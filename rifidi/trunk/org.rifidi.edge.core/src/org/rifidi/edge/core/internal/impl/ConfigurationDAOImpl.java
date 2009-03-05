@@ -72,7 +72,7 @@ public class ConfigurationDAOImpl implements ConfigurationDAO {
 	}
 
 	/**
-	 * Used by spring to give the initial list of reader configuration
+	 * Used by spring to give the initial list of readerSession configuration
 	 * 
 	 * 
 	 * @param configurations

@@ -4,7 +4,7 @@
 package org.rifidi.edge.core.exceptions;
 
 /**
- * Thrown if a reader is not available.
+ * Thrown if a readerSession is not available.
  * 
  * @author Jochen Mader - jochen@pramari.com
  * 
