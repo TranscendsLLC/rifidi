@@ -166,11 +166,13 @@ public abstract class AbstractIPReaderSession implements ReaderSession {
 	 */
 	@Override
 	public void connect() throws IOException {
+		logger.warn(status);
 		if ((status == ReaderStatus.PROCESSING
 				|| status == ReaderStatus.CREATED || status == ReaderStatus.LOGGINGIN)
 				&& connecting.compareAndSet(false, true)) {
 			try {
 				status = ReaderStatus.CONNECTING;
+				socket=null;
 				// if an executor exists, execute it
 				if (processing.get()) {
 					if (!processing.compareAndSet(true, false)) {
@@ -295,7 +297,7 @@ public abstract class AbstractIPReaderSession implements ReaderSession {
 						}
 					}
 				}
-			} finally {
+			}finally {
 				connecting.compareAndSet(true, false);
 			}
 		}

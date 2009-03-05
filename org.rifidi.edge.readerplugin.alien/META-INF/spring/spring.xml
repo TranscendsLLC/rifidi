@@ -10,7 +10,7 @@
 		class="org.rifidi.edge.readerplugin.alien.Alien9800ReaderFactory">
 		<property name="context" ref="bundleContext" />
 		<property name="template" ref="myJmsTemplate" />
-		<property name="destination" ref="destination" />
+		<property name="destination" ref="destination2" />
 	</bean>
 	<!--  Create Command Configuration Factory -->
 	<bean id="commandConfigurationFactory"
@@ -36,7 +36,7 @@
 	</osgi:service>
 	
 		<!--  ActiveMQ destinations to use  -->
-	<amq:queue id="destination"
+	<amq:queue id="destination2"
 		physicalName="org.apache.activemq.spring.Test.spring.embedded" />
 	<!--
 		JMS ConnectionFactory to use, configuring the embedded broker using
