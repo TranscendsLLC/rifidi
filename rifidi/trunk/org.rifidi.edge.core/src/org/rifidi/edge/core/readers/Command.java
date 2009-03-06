@@ -20,26 +20,7 @@ public abstract class Command implements Runnable {
 	protected Destination destination;
 	/** The session this command is executed in. */
 	protected ReaderSession readerSession;
-	/** Queue for incoming messages. */
-	protected Queue<ByteMessage> input;
-	/** Queue for outgoing messages. */
-	protected Queue<ByteMessage> output;
 
-	/**
-	 * @param input
-	 *            the input to set
-	 */
-	public void setInput(Queue<ByteMessage> input) {
-		this.input = input;
-	}
-
-	/**
-	 * @param output
-	 *            the output to set
-	 */
-	public void setOutput(Queue<ByteMessage> output) {
-		this.output = output;
-	}
 
 	/**
 	 * @param template

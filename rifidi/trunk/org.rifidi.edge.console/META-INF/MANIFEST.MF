@@ -9,6 +9,8 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: org.eclipse.osgi.framework.console;version="1.0.0",
  org.osgi.framework;version="1.3.0",
  org.rifidi.configuration,
+ org.rifidi.configuration.impl,
+ org.rifidi.configuration.services,
  org.rifidi.edge.core.commands,
  org.rifidi.edge.core.daos,
  org.rifidi.edge.core.exceptions,

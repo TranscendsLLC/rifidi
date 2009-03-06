@@ -24,9 +24,8 @@ public interface ReaderSession {
 	/**
 	 * Close the connection and stop processing of commands.
 	 * 
-	 * @return set of currently scheduled commands
 	 */
-	Set<Command> disconnect();
+	void disconnect();
 
 	/**
 	 * Get a map containing all currently executing commands with their process
