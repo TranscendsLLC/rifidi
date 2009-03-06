@@ -22,6 +22,7 @@ import java.util.List;
 
 import javax.xml.bind.JAXBException;
 
+import org.eclipse.core.databinding.observable.list.WritableList;
 import org.rifidi.edge.client.ale.api.util.DeserializerUtil;
 import org.rifidi.edge.client.ale.api.xsd.ale.epcglobal.ECReport;
 import org.rifidi.edge.client.ale.api.xsd.ale.epcglobal.ECReportGroup;
@@ -35,15 +36,18 @@ import org.rifidi.edge.client.ale.api.xsd.epcglobal.EPC;
  */
 public class ReportRunner implements Runnable {
 
+	private ServerSocket ss = null;
+	private WritableList list = null;
+
 	/**
-	 * 
+	 * @param ss2
+	 * @param list
 	 */
-	public ReportRunner(ServerSocket ss) {
+	public ReportRunner(ServerSocket ss, WritableList list) {
 		super();
 		this.ss = ss;
+		this.list = list;
 	}
-
-	private ServerSocket ss = null;
 
 	/*
 	 * (non-Javadoc)
@@ -102,8 +106,12 @@ public class ReportRunner implements Runnable {
 						if (group.getGroupList() != null) {
 							for (ECReportGroupListMember member : group
 									.getGroupList().getMember()) {
-								if (member.getRawDecimal() != null) {
-									epcs.add(member.getRawDecimal());
+								if (member.getRawHex() != null) {
+									epcs.add(member.getRawHex());
+//									if(!list.contains(member)){
+//										list.add(member);
+//									}
+									
 								}
 							}
 						}
@@ -111,16 +119,26 @@ public class ReportRunner implements Runnable {
 				}
 			}
 		}
-
+		
+//		while(list.listIterator().hasNext()) {
+//			ECReportGroupListMember member = (ECReportGroupListMember)list.listIterator().next();
+//			if(!epcs.contains(member.getEpc())){
+//				list.remove(member);
+//			}
+//			
+//		}
+			
+		
 		if (epcs.size() == 0) {
 			System.out.println("no epc received - generating no event");
 			return;
 		} else {
 			for (EPC epc : epcs) {
 				System.out.println(epc.getValue());
+				if(!list.contains(epc))list.add(epc);
+				
 			}
 		}
 
 	}
-
 }
