@@ -6,13 +6,8 @@ package org.rifidi.edge.core.readers.impl;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Queue;
 import java.util.Set;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -23,7 +18,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.readers.ByteMessage;
 import org.rifidi.edge.core.readers.Command;
-import org.rifidi.edge.core.readers.ReaderSession;
 import org.rifidi.edge.core.readers.ReaderStatus;
 import org.rifidi.edge.core.readers.impl.threads.ReadThread;
 import org.rifidi.edge.core.readers.impl.threads.WriteThread;
@@ -35,53 +29,38 @@ import org.springframework.jms.core.JmsTemplate;
  * @author Jochen Mader - jochen@pramari.com
  * 
  */
-public abstract class AbstractIPReaderSession implements ReaderSession {
+public abstract class AbstractIPReaderSession extends AbstractReaderSession {
 	/** Logger for this class. */
 	private static final Log logger = LogFactory
 			.getLog(AbstractIPReaderSession.class);
-	/** Queue for reading messages. */
-	protected LinkedBlockingQueue<ByteMessage> readQueue = new LinkedBlockingQueue<ByteMessage>();
-	/** Queue for writing messages. */
-	protected LinkedBlockingQueue<ByteMessage> writeQueue = new LinkedBlockingQueue<ByteMessage>();
-	/** Used to execute commands. */
-	protected ScheduledThreadPoolExecutor executor;
+
 	/** Host to connect to. */
-	protected String host;
+	private String host;
 	/** Port to connect to. */
-	protected int port;
+	private int port;
 	/** The socket used for connecting to the reader. */
-	protected Socket socket;
+	private Socket socket;
 	/** Number reconnection attempts. */
-	protected int maxConAttempts;
+	private int maxConAttempts;
 	/** Interval between two connection attempts. */
-	protected int reconnectionInterval;
+	private int reconnectionInterval;
 	/** Thread for reading from the socket. */
-	protected Thread readThread;
+	private Thread readThread;
 	/** Thread for writing to the socket. */
-	protected Thread writeThread;
-	/** Status of the reader. */
-	protected ReaderStatus status;
-	/** Map containing the periodic commands with the process id as key. */
-	protected Map<Integer, Command> commands;
-	/** Map containing command process id as key and the future as value. */
-	protected Map<Integer, CommandExecutionData> idToData;
-	/** Job counter */
-	protected int counter = 0;
-	/** JMS destination. */
-	protected Destination destination;
-	/** Spring jms template */
-	protected JmsTemplate template;
+	private Thread writeThread;
+	/** Queue for reading messages. */
+	private LinkedBlockingQueue<ByteMessage> readQueue = new LinkedBlockingQueue<ByteMessage>();
+	/** Queue for writing messages. */
+	private LinkedBlockingQueue<ByteMessage> writeQueue = new LinkedBlockingQueue<ByteMessage>();
+
 	/**
 	 * This thread takes care that connections get recreated when the socket
 	 * goes down.
 	 */
-	protected Thread connectionGuardian;
+	private Thread connectionGuardian;
 	/** True if the socket is currently being connected. */
-	protected AtomicBoolean connecting = new AtomicBoolean(false);
-	/** True if the executor is up and running. */
-	protected AtomicBoolean processing = new AtomicBoolean(false);
-	/** Queue for commands that get submitted while the executor is inactive. */
-	protected Queue<Command> commandQueue = new ConcurrentLinkedQueue<Command>();
+	private AtomicBoolean connecting = new AtomicBoolean(false);
+
 
 	/**
 	 * Constructor.
@@ -95,15 +74,12 @@ public abstract class AbstractIPReaderSession implements ReaderSession {
 	public AbstractIPReaderSession(String host, int port,
 			int reconnectionInterval, int maxConAttempts,
 			Destination destination, JmsTemplate template) {
+		super(destination, template);
 		this.host = host;
 		this.port = port;
 		this.maxConAttempts = maxConAttempts;
 		this.reconnectionInterval = reconnectionInterval;
-		this.commands = new HashMap<Integer, Command>();
-		this.idToData = new HashMap<Integer, CommandExecutionData>();
-		this.template = template;
-		this.destination = destination;
-		status = ReaderStatus.CREATED;
+	
 	}
 
 	/**
@@ -166,14 +142,13 @@ public abstract class AbstractIPReaderSession implements ReaderSession {
 	 */
 	@Override
 	public void connect() throws IOException {
-		logger.warn(status);
-		if ((status == ReaderStatus.PROCESSING
-				|| status == ReaderStatus.CREATED || status == ReaderStatus.LOGGINGIN)
+		if ((getStatus() == ReaderStatus.PROCESSING
+				|| getStatus() == ReaderStatus.CREATED || getStatus() == ReaderStatus.LOGGINGIN)
 				&& connecting.compareAndSet(false, true)) {
 			try {
-				status = ReaderStatus.CONNECTING;
+				setStatus(ReaderStatus.CONNECTING);
 				socket=null;
-				// if an executor exists, execute it
+				// if an executor exists, execute it (delete the executor :))
 				if (processing.get()) {
 					if (!processing.compareAndSet(true, false)) {
 						logger
@@ -230,7 +205,7 @@ public abstract class AbstractIPReaderSession implements ReaderSession {
 				// no socket, we are screwed
 				if (socket == null) {
 					// revert
-					status = ReaderStatus.CREATED;
+					setStatus(ReaderStatus.CREATED);
 					connecting.compareAndSet(true, false);
 					throw new IOException("Unable to reach reader.");
 				}
@@ -240,11 +215,11 @@ public abstract class AbstractIPReaderSession implements ReaderSession {
 						.getOutputStream(), writeQueue));
 				readThread.start();
 				writeThread.start();
-				status = ReaderStatus.LOGGINGIN;
+				setStatus(ReaderStatus.LOGGINGIN);
 				// do the logical connect
 				try {
 					if (!onConnect()) {
-						status = ReaderStatus.CREATED;
+						setStatus(ReaderStatus.CREATED);
 						logger.warn("Unable to connect to reader " + host + ":"
 								+ port);
 						return;
@@ -268,7 +243,7 @@ public abstract class AbstractIPReaderSession implements ReaderSession {
 					public void run() {
 						try {
 							readThread.join();
-							status = ReaderStatus.CREATED;
+							setStatus(ReaderStatus.CREATED);
 							connect();
 						} catch (InterruptedException e) {
 							Thread.currentThread().interrupt();
@@ -279,7 +254,7 @@ public abstract class AbstractIPReaderSession implements ReaderSession {
 
 				};
 				connectionGuardian.start();
-				status = ReaderStatus.PROCESSING;
+				setStatus(ReaderStatus.PROCESSING);
 				if (!processing.compareAndSet(false, true)) {
 					logger.warn("Executor was already active! ");
 				}
@@ -309,7 +284,7 @@ public abstract class AbstractIPReaderSession implements ReaderSession {
 	 * @see org.rifidi.edge.core.newreaders.Reader#disconnect()
 	 */
 	@Override
-	public Set<Command> disconnect() {
+	public void disconnect() {
 		if (processing.get()) {
 			if (processing.compareAndSet(true, false)) {
 				try {
@@ -319,87 +294,12 @@ public abstract class AbstractIPReaderSession implements ReaderSession {
 				}
 				readThread.interrupt();
 				writeThread.interrupt();
-				status = ReaderStatus.CREATED;
+				setStatus(ReaderStatus.CREATED);
 			}
 		}
-		return Collections.emptySet();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.rifidi.edge.core.newreaders.Reader#submit(org.rifidi.edge.core.newreaders
-	 * .Command)
-	 */
-	@Override
-	public void submit(Command command) {
-		command.setInput(readQueue);
-		command.setOutput(writeQueue);
-		command.setReaderSession(this);
-		command.setTemplate(template);
-		command.setDestination(destination);
-		if (processing.get()) {
-			executor.submit(command);
-			return;
-		}
-		commandQueue.add(command);
-	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.rifidi.edge.core.readers.ReaderSession#submit(org.rifidi.edge.core
-	 * .readers.Command, long, java.util.concurrent.TimeUnit)
-	 */
-	@Override
-	public Integer submit(Command command, long interval, TimeUnit unit) {
-		synchronized (commands) {
-			command.setInput(readQueue);
-			command.setOutput(writeQueue);
-			command.setReaderSession(this);
-			command.setTemplate(template);
-			command.setDestination(destination);
-			Integer id = counter++;
-			commands.put(id, command);
-			CommandExecutionData data = new CommandExecutionData();
-			data.interval = interval;
-			data.unit = unit;
-			if (processing.get()) {
-				data.future = executor.scheduleWithFixedDelay(command, 0,
-						interval, unit);
-			}
-			idToData.put(id, data);
-			return id;
-		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.rifidi.edge.core.readers.ReaderSession#killComand(java.lang.Integer)
-	 */
-	@Override
-	public synchronized void killComand(Integer id) {
-
-		commands.remove(id);
-		CommandExecutionData data = idToData.remove(id);
-		if (data != null) {
-			data.future.cancel(true);
-		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.rifidi.edge.core.newreaders.Reader#currentCommands()
-	 */
-	@Override
-	public Map<Integer, Command> currentCommands() {
-		return new HashMap<Integer, Command>(commands);
-	}
 
 	/**
 	 * This method is called each time a new byte is read. It will return the
@@ -419,19 +319,5 @@ public abstract class AbstractIPReaderSession implements ReaderSession {
 	 */
 	public abstract boolean onConnect() throws IOException;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.rifidi.edge.core.newreaders.Reader#getStatus()
-	 */
-	@Override
-	public ReaderStatus getStatus() {
-		return status;
-	}
 
-	private class CommandExecutionData {
-		public long interval;
-		public TimeUnit unit;
-		public ScheduledFuture<?> future;
-	}
 }

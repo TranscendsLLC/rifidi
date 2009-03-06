@@ -73,6 +73,11 @@ public class CommandDAOImpl implements CommandDAO {
 			if (factory.getID().equals(id)) {
 				return factory;
 			}
+			for(String fac : factory.getFactoryIDs()){
+				if(fac.equals(id)){
+					return factory;
+				}
+			}
 		}
 		return null;
 	}

@@ -6,13 +6,15 @@
 	<bean id="customCommands" class="org.rifidi.edge.console.RifidiEdgeServerCommands">
 		<property name="readerDAO" ref="readerManagement" />
 		<property name="commandDAO" ref="commandManagement" />
+		<property name="configService" ref="configService" />
 	</bean>
 	<osgi:service id="customCommandsService" ref="customCommands"
 		interface="org.eclipse.osgi.framework.console.CommandProvider" />
 	<!-- Put reader session service in OSGi Registry -->
-	<osgi:reference id="readerManagement"
-		interface="org.rifidi.edge.core.daos.ReaderDAO" />
+	<osgi:reference id="readerManagement" interface="org.rifidi.edge.core.daos.ReaderDAO" />
 	<osgi:reference id="commandManagement"
 		interface="org.rifidi.edge.core.daos.CommandDAO" />
+	<osgi:reference id="configService"
+		interface="org.rifidi.configuration.services.ConfigurationService" />
 
 </beans>

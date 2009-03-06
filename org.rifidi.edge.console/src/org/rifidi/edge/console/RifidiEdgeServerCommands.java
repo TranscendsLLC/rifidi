@@ -9,8 +9,13 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import javax.management.Attribute;
+import javax.management.AttributeList;
+
 import org.eclipse.osgi.framework.console.CommandInterpreter;
 import org.eclipse.osgi.framework.console.CommandProvider;
+import org.rifidi.configuration.Configuration;
+import org.rifidi.configuration.services.ConfigurationService;
 import org.rifidi.edge.core.commands.AbstractCommandConfiguration;
 import org.rifidi.edge.core.commands.AbstractCommandConfigurationFactory;
 import org.rifidi.edge.core.daos.CommandDAO;
@@ -29,6 +34,16 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 	private ReaderDAO readerDAO;
 	/** DAO for managing commands. */
 	private CommandDAO commandDAO;
+	/** Configuration Service */
+	private ConfigurationService configService;
+
+	/**
+	 * @param configService
+	 *            the configService to set
+	 */
+	public void setConfigService(ConfigurationService configService) {
+		this.configService = configService;
+	}
 
 	/**
 	 * @param commandDAO
@@ -111,6 +126,35 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 		return null;
 	}
 
+	public Object _createreader(CommandInterpreter intp) {
+		String readerFacID = intp.nextArgument();
+		if (readerFacID == null) {
+			intp.println("Give a ReaderFactoryID");
+			return null;
+		}
+		AbstractReaderFactory<?> factory = this.readerDAO
+				.getReaderFactoryByID(readerFacID);
+		if (factory == null) {
+			intp
+					.println("Factory with ID " + readerFacID
+							+ " is not available");
+			return null;
+		}
+		AttributeList list = new AttributeList();
+		String attrname = intp.nextArgument();
+		String attrval = intp.nextArgument();
+		while (attrname != null && attrval != null) {
+			list.add(new Attribute(attrname, attrval));
+			attrname = intp.nextArgument();
+			attrval = intp.nextArgument();
+		}
+		Configuration c = factory.getEmptyConfiguration(readerFacID);
+		c.setAttributes(list);
+		factory.createService(c);
+		intp.println("Reader Created.  ID is " + c.getServiceID());
+		return null;
+	}
+
 	/**
 	 * Display the list of available commands.
 	 * 
@@ -138,6 +182,34 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 				intp.println("ID: " + id);
 			}
 		}
+		return null;
+	}
+
+	public Object _createcommand(CommandInterpreter intp) {
+		String commandFacID = intp.nextArgument();
+		if (commandFacID == null) {
+			intp.println("Give a CommandFactoryID");
+			return null;
+		}
+		AbstractCommandConfigurationFactory factory = this.commandDAO
+				.getCommandFactoryByID(commandFacID);
+		if (factory == null) {
+			intp.println("Factory with ID " + commandFacID
+					+ " is not available");
+			return null;
+		}
+		AttributeList list = new AttributeList();
+		String attrname = intp.nextArgument();
+		String attrval = intp.nextArgument();
+		while (attrname != null && attrval != null) {
+			list.add(new Attribute(attrname, attrval));
+			attrname = intp.nextArgument();
+			attrval = intp.nextArgument();
+		}
+		Configuration c = factory.getEmptyConfiguration(commandFacID);
+		c.setAttributes(list);
+		factory.createService(c);
+		intp.println("Command Created.  ID is " + c.getServiceID());
 		return null;
 	}
 
@@ -284,6 +356,12 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 		return null;
 	}
 
+	public Object _save(CommandInterpreter intp) {
+		configService.storeConfiguration();
+		intp.println("Configuration Saved!");
+		return null;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -302,11 +380,16 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 		buffer.append("\tcommands - get the list of configured commands\n");
 		buffer.append("----Management Commands----\n");
 		buffer
+				.append("\tcreatereader <readertype> [<propName> <propValue>]* - create a new reader\n");
+		buffer
+				.append("\tcreatecommand <commandtype> [<propName> <propValue>]* - create a new command\n");
+		buffer
 				.append("\tcreatesession <readerid> - create a new session on the given reader\n");
 		buffer
 				.append("\texecutecommand <readerid> <sessionid> <commandid>  <interval>- execute a command in a session\n");
 		buffer
 				.append("\tkillcommand <readerid> <sessionid> <commandid> - execute a command in a session\n");
+		buffer.append("\tsave - save the configuration to a file\n");
 		return buffer.toString();
 	}
 }
