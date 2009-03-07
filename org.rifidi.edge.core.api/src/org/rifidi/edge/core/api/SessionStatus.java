@@ -1,13 +1,13 @@
 /**
  * 
  */
-package org.rifidi.edge.core.readers;
+package org.rifidi.edge.core.api;
 
 /**
  * @author Jochen Mader - jochen@pramari.com
  *
  */
-public enum ReaderStatus {
+public enum SessionStatus {
 	CREATED,
 	CONNECTING,
 	LOGGINGIN,

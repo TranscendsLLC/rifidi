@@ -24,8 +24,8 @@ public class AlienGetReaderPropertiesCommand extends AbstractAlien9800Command {
 	private static final Log logger = LogFactory
 			.getLog(AlienGetReaderPropertiesCommand.class);
 
-	public AlienGetReaderPropertiesCommand(HashMap<String, String> attributes) {
-		super();
+	public AlienGetReaderPropertiesCommand(String commandID, HashMap<String, String> attributes) {
+		super(commandID);
 		this.attributes = attributes;
 	}
 

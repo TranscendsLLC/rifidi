@@ -6,7 +6,7 @@ package org.rifidi.edge.core.rmi.client.readerconfigurationstub;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
-import org.rifidi.edge.core.rmi.ReaderConfigurationStub;
+import org.rifidi.edge.core.api.ReaderStub;
 import org.rifidi.rmi.utils.remotecall.ServerDescriptionBasedRemoteMethodCall;
 
 /**
@@ -39,8 +39,8 @@ public class RCDeleteReaderConfiguration extends
 	@Override
 	protected Object performRemoteCall(Remote remoteObject)
 			throws RemoteException, RuntimeException {
-		ReaderConfigurationStub stub = (ReaderConfigurationStub) remoteObject;
-		stub.deleteReaderConfiguration(this.readerConfigurationID);
+		ReaderStub stub = (ReaderStub) remoteObject;
+		stub.deleteReader(this.readerConfigurationID);
 		return null;
 	}
 

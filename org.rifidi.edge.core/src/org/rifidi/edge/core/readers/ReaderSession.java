@@ -5,8 +5,9 @@ package org.rifidi.edge.core.readers;
 
 import java.io.IOException;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
+
+import org.rifidi.edge.core.api.SessionStatus;
 
 /**
  * @author Jochen Mader - jochen@pramari.com
@@ -61,5 +62,5 @@ public interface ReaderSession {
 	 * 
 	 * @return
 	 */
-	ReaderStatus getStatus();
+	SessionStatus getStatus();
 }

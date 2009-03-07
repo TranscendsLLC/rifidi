@@ -10,4 +10,8 @@ import org.rifidi.edge.core.readers.Command;
  * 
  */
 public abstract class AbstractAlien9800Command extends Command {
+
+	public AbstractAlien9800Command(String commandID) {
+		super(commandID);
+	}
 }

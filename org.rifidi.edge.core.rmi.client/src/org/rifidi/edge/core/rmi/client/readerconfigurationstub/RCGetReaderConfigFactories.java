@@ -7,7 +7,7 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.Set;
 
-import org.rifidi.edge.core.rmi.ReaderConfigurationStub;
+import org.rifidi.edge.core.api.ReaderStub;
 import org.rifidi.rmi.utils.remotecall.ServerDescriptionBasedRemoteMethodCall;
 
 /**
@@ -33,8 +33,8 @@ public class RCGetReaderConfigFactories extends
 	@Override
 	protected Set<String> performRemoteCall(Remote remoteObject)
 			throws RemoteException, RuntimeException {
-		ReaderConfigurationStub stub = (ReaderConfigurationStub) remoteObject;
-		return stub.getAvailableReaderConfigurationFactories();
+		ReaderStub stub = (ReaderStub) remoteObject;
+		return stub.getReaderFactories();
 	}
 
 }

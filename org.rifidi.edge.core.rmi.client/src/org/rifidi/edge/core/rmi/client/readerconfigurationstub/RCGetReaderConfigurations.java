@@ -7,7 +7,7 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.Map;
 
-import org.rifidi.edge.core.rmi.ReaderConfigurationStub;
+import org.rifidi.edge.core.api.ReaderStub;
 import org.rifidi.rmi.utils.remotecall.ServerDescriptionBasedRemoteMethodCall;
 
 /**
@@ -36,8 +36,8 @@ public class RCGetReaderConfigurations
 	@Override
 	protected Map<String, String> performRemoteCall(Remote remoteObject)
 			throws RemoteException, RuntimeException {
-		ReaderConfigurationStub stub = (ReaderConfigurationStub) remoteObject;
-		return stub.getAvailableReaderConfigurations();
+		ReaderStub stub = (ReaderStub) remoteObject;
+		return stub.getReaders();
 	}
 
 }

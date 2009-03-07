@@ -123,7 +123,7 @@ public class AlienGetTagListCommandConfiguration extends
 	 */
 	@Override
 	public AlienGetTagListCommand getCommand() {
-		AlienGetTagListCommand c = new AlienGetTagListCommand();
+		AlienGetTagListCommand c = new AlienGetTagListCommand(super.getID());
 		c.setAntennasequence(antenna_sequence);
 		c.setPersistTime(persistTime);
 		c.setTagType(tagType);

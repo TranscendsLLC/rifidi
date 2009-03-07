@@ -3,7 +3,7 @@ package org.rifidi.edge.core.rmi.client.commandconfigurationstub;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
-import org.rifidi.edge.core.rmi.CommandConfigurationStub;
+import org.rifidi.edge.core.api.CommandConfigurationStub;
 import org.rifidi.rmi.utils.cache.ServerDescription;
 import org.rifidi.rmi.utils.remotecall.ServerDescriptionBasedRemoteMethodCall;
 

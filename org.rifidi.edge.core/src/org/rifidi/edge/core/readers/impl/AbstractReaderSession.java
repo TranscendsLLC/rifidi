@@ -14,9 +14,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.jms.Destination;
 
+import org.rifidi.edge.core.api.SessionStatus;
 import org.rifidi.edge.core.readers.Command;
 import org.rifidi.edge.core.readers.ReaderSession;
-import org.rifidi.edge.core.readers.ReaderStatus;
 import org.springframework.jms.core.JmsTemplate;
 
 /**
@@ -28,7 +28,7 @@ public abstract class AbstractReaderSession implements ReaderSession {
 	/** Used to execute commands. */
 	protected ScheduledThreadPoolExecutor executor;
 	/** Status of the reader. */
-	private ReaderStatus status;
+	private SessionStatus status;
 	/** Map containing the periodic commands with the process id as key. */
 	protected Map<Integer, Command> commands;
 	/** Map containing command process id as key and the future as value. */
@@ -49,7 +49,7 @@ public abstract class AbstractReaderSession implements ReaderSession {
 		this.idToData = new HashMap<Integer, CommandExecutionData>();
 		this.template = template;
 		this.destination = destination;
-		status = ReaderStatus.CREATED;
+		status = SessionStatus.CREATED;
 	}
 
 	/*
@@ -68,7 +68,7 @@ public abstract class AbstractReaderSession implements ReaderSession {
 	 * @see org.rifidi.edge.core.readers.ReaderSession#getStatus()
 	 */
 	@Override
-	public ReaderStatus getStatus() {
+	public SessionStatus getStatus() {
 		return status;
 	}
 
@@ -141,7 +141,7 @@ public abstract class AbstractReaderSession implements ReaderSession {
 		public ScheduledFuture<?> future;
 	}
 
-	protected void setStatus(ReaderStatus status) {
+	protected void setStatus(SessionStatus status) {
 		this.status = status;
 	}
 

@@ -18,14 +18,13 @@ import javax.management.MBeanInfo;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.configuration.Configuration;
-import org.rifidi.edge.core.commands.AbstractCommandConfigurationFactory;
+import org.rifidi.edge.core.api.rmi.CommandConfigurationStub;
 import org.rifidi.edge.core.commands.AbstractCommandConfiguration;
+import org.rifidi.edge.core.commands.AbstractCommandConfigurationFactory;
 import org.rifidi.edge.core.daos.ReaderDAO;
 import org.rifidi.edge.core.internal.CommandConfigurationDAO;
 import org.rifidi.edge.core.internal.ConfigurationDAO;
 import org.rifidi.edge.core.readers.AbstractReaderFactory;
-import org.rifidi.edge.core.readers.Command;
-import org.rifidi.edge.core.rmi.CommandConfigurationStub;
 
 /**
  * @author Kyle Neumeier - kyle@pramari.com
@@ -255,11 +254,6 @@ public class CommandConfigurationStubImpl implements CommandConfigurationStub {
 					+ commandConfigurationID + " is available");
 		}
 		return null;
-	}
-
-	@Override
-	public AbstractCommandConfiguration<?> getCommand(String ID) {
-		return commandConfigDAO.getCommandConfiguration(ID);
 	}
 
 }

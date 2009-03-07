@@ -16,9 +16,9 @@ import javax.jms.Destination;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.rifidi.edge.core.api.SessionStatus;
 import org.rifidi.edge.core.readers.ByteMessage;
 import org.rifidi.edge.core.readers.Command;
-import org.rifidi.edge.core.readers.ReaderStatus;
 import org.rifidi.edge.core.readers.impl.threads.ReadThread;
 import org.rifidi.edge.core.readers.impl.threads.WriteThread;
 import org.springframework.jms.core.JmsTemplate;
@@ -142,11 +142,11 @@ public abstract class AbstractIPReaderSession extends AbstractReaderSession {
 	 */
 	@Override
 	public void connect() throws IOException {
-		if ((getStatus() == ReaderStatus.PROCESSING
-				|| getStatus() == ReaderStatus.CREATED || getStatus() == ReaderStatus.LOGGINGIN)
+		if ((getStatus() == SessionStatus.PROCESSING
+				|| getStatus() == SessionStatus.CREATED || getStatus() == SessionStatus.LOGGINGIN)
 				&& connecting.compareAndSet(false, true)) {
 			try {
-				setStatus(ReaderStatus.CONNECTING);
+				setStatus(SessionStatus.CONNECTING);
 				socket=null;
 				// if an executor exists, execute it (delete the executor :))
 				if (processing.get()) {
@@ -205,7 +205,7 @@ public abstract class AbstractIPReaderSession extends AbstractReaderSession {
 				// no socket, we are screwed
 				if (socket == null) {
 					// revert
-					setStatus(ReaderStatus.CREATED);
+					setStatus(SessionStatus.CREATED);
 					connecting.compareAndSet(true, false);
 					throw new IOException("Unable to reach reader.");
 				}
@@ -215,11 +215,11 @@ public abstract class AbstractIPReaderSession extends AbstractReaderSession {
 						.getOutputStream(), writeQueue));
 				readThread.start();
 				writeThread.start();
-				setStatus(ReaderStatus.LOGGINGIN);
+				setStatus(SessionStatus.LOGGINGIN);
 				// do the logical connect
 				try {
 					if (!onConnect()) {
-						setStatus(ReaderStatus.CREATED);
+						setStatus(SessionStatus.CREATED);
 						logger.warn("Unable to connect to reader " + host + ":"
 								+ port);
 						return;
@@ -243,7 +243,7 @@ public abstract class AbstractIPReaderSession extends AbstractReaderSession {
 					public void run() {
 						try {
 							readThread.join();
-							setStatus(ReaderStatus.CREATED);
+							setStatus(SessionStatus.CREATED);
 							connect();
 						} catch (InterruptedException e) {
 							Thread.currentThread().interrupt();
@@ -254,7 +254,7 @@ public abstract class AbstractIPReaderSession extends AbstractReaderSession {
 
 				};
 				connectionGuardian.start();
-				setStatus(ReaderStatus.PROCESSING);
+				setStatus(SessionStatus.PROCESSING);
 				if (!processing.compareAndSet(false, true)) {
 					logger.warn("Executor was already active! ");
 				}
@@ -294,7 +294,7 @@ public abstract class AbstractIPReaderSession extends AbstractReaderSession {
 				}
 				readThread.interrupt();
 				writeThread.interrupt();
-				setStatus(ReaderStatus.CREATED);
+				setStatus(SessionStatus.CREATED);
 			}
 		}
 	}
