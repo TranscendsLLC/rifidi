@@ -12,7 +12,7 @@ import java.rmi.registry.Registry;
 import org.rifidi.rmi.utils.cache.ServerDescription;
 
 /**
- * This is a server description for a ReaderConfigurationStub
+ * This is a server description for a ReaderStub
  * 
  * @author Kyle Neumeier - kyl@pramari.com
  * 
@@ -25,10 +25,10 @@ public class RCServerDescription extends ServerDescription {
 	 * @param serverIP
 	 *            The IP address of the server
 	 * @param serverPort
-	 *            The RMI port that the ReaderConfigurationStub is exposed on
+	 *            The RMI port that the ReaderStub is exposed on
 	 */
 	public RCServerDescription(String serverIP, int serverPort) {
-		super(serverIP, serverPort, "ReaderConfigurationStub");
+		super(serverIP, serverPort, "ReaderStub");
 	}
 
 	/*

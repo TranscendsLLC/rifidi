@@ -19,6 +19,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.messages.EPCGeneration2Event;
 import org.rifidi.edge.core.readers.Command;
+import org.rifidi.edge.readerplugin.alien.AbstractAlien9800Command;
 import org.rifidi.edge.readerplugin.alien.Alien9800ReaderSession;
 import org.rifidi.edge.readerplugin.alien.commandobject.AlienCommandObject;
 import org.rifidi.edge.readerplugin.alien.commandobject.AlienException;
@@ -29,7 +30,8 @@ import org.springframework.jms.core.MessageCreator;
  * @author Jochen Mader - jochen@pramari.com
  * 
  */
-public class AlienGetTagListCommand extends Command {
+public class AlienGetTagListCommand extends AbstractAlien9800Command {
+
 	/** Logger for this class. */
 	private static final Log logger = LogFactory
 			.getLog(AlienGetTagListCommand.class);
@@ -43,6 +45,15 @@ public class AlienGetTagListCommand extends Command {
 	private Calendar calendar;
 	private String antennasequence = "0";
 	private int persistTime = -1;
+
+	/**
+	 * Constructor
+	 * 
+	 * @param commandID
+	 */
+	public AlienGetTagListCommand(String commandID) {
+		super(commandID);
+	}
 
 	/**
 	 * @return the tagType
@@ -120,7 +131,7 @@ public class AlienGetTagListCommand extends Command {
 			logger.warn("Exception while executing command: " + ex);
 		} catch (IOException ex) {
 			logger.warn("IOException while executing command: " + ex);
-		} catch (Exception e){
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}

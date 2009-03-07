@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.rifidi.edge.core.rmi;
+package org.rifidi.edge.core.api.rmi;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
@@ -9,8 +9,6 @@ import java.util.Map;
 
 import javax.management.AttributeList;
 import javax.management.MBeanInfo;
-
-import org.rifidi.edge.core.commands.AbstractCommandConfiguration;
 
 /**
  * This is the interface for a stub that allows clients to interact with
@@ -111,11 +109,4 @@ public interface CommandConfigurationStub extends Remote {
 	 */
 	void deleteCommandConfiguration(String commandConfigurationID)
 			throws RemoteException;
-	
-	/**
-	 * Temp.  Should be deleted
-	 * @param ID
-	 * @return
-	 */
-	AbstractCommandConfiguration<?> getCommand(String ID);
 }

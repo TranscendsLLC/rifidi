@@ -51,4 +51,12 @@ public interface Configuration extends DynamicMBean {
 
 	/** Set the OSGi service registration for this object */
 	void setServiceRegistration(ServiceRegistration registration);
+
+	/**
+	 * Get the names of all the DynamicMBean Properties. For use with the
+	 * DynamicMBean getAttributes(String[]) method
+	 * 
+	 * @return An array of names of all the properties in this Configuration
+	 */
+	String[] getAttributeNames();
 }

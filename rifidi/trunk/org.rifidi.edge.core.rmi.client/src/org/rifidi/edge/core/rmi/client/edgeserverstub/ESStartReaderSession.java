@@ -6,9 +6,9 @@ package org.rifidi.edge.core.rmi.client.edgeserverstub;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
+import org.rifidi.edge.core.api.EdgeServerStub;
 import org.rifidi.edge.core.exceptions.NonExistentCommandFactoryException;
 import org.rifidi.edge.core.exceptions.NonExistentReaderConfigurationException;
-import org.rifidi.edge.core.rmi.EdgeServerStub;
 import org.rifidi.rmi.utils.remotecall.ServerDescriptionBasedRemoteMethodCall;
 
 /**

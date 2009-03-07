@@ -14,6 +14,5 @@ Import-Package: org.eclipse.osgi.framework.console;version="1.0.0",
  org.rifidi.edge.core.commands,
  org.rifidi.edge.core.daos,
  org.rifidi.edge.core.exceptions,
- org.rifidi.edge.core.readers,
- org.rifidi.edge.core.rmi
+ org.rifidi.edge.core.readers
 Bundle-ActivationPolicy: lazy

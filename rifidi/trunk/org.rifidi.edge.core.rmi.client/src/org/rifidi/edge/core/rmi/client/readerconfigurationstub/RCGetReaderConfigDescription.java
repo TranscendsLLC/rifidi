@@ -8,7 +8,7 @@ import java.rmi.RemoteException;
 
 import javax.management.MBeanInfo;
 
-import org.rifidi.edge.core.rmi.ReaderConfigurationStub;
+import org.rifidi.edge.core.api.ReaderStub;
 import org.rifidi.rmi.utils.remotecall.ServerDescriptionBasedRemoteMethodCall;
 
 /**
@@ -49,9 +49,9 @@ public class RCGetReaderConfigDescription extends
 	@Override
 	protected MBeanInfo performRemoteCall(Remote remoteObject)
 			throws RemoteException, RuntimeException {
-		ReaderConfigurationStub stub = (ReaderConfigurationStub) remoteObject;
+		ReaderStub stub = (ReaderStub) remoteObject;
 		return stub
-				.getReaderConfigurationDescription(readerConfigurationFactoryID);
+				.getReaderDescription(readerConfigurationFactoryID);
 	}
 
 }

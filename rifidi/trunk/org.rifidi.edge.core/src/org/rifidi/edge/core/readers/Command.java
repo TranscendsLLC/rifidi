@@ -3,8 +3,6 @@
  */
 package org.rifidi.edge.core.readers;
 
-import java.util.Queue;
-
 import javax.jms.Destination;
 
 import org.springframework.jms.core.JmsTemplate;
@@ -20,7 +18,19 @@ public abstract class Command implements Runnable {
 	protected Destination destination;
 	/** The session this command is executed in. */
 	protected ReaderSession readerSession;
+	/** The ID of the commandConfiguraiton (the RifidiService) */
+	private String commandID;
 
+	public Command(String commandID){
+		this.commandID = commandID;
+	}
+	
+	/**
+	 * @return the commandID
+	 */
+	public String getCommandID(){
+		return this.commandID;
+	}
 
 	/**
 	 * @param template

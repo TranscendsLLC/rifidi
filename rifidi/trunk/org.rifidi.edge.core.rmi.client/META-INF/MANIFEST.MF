@@ -10,7 +10,8 @@ Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: .
 Import-Package: org.apache.commons.logging;version="1.0.4",
  org.osgi.framework;version="1.4.0",
- org.rifidi.edge.core.exceptions,
- org.rifidi.edge.core.rmi
+ org.rifidi.edge.core.api,
+ org.rifidi.edge.core.api.rmi,
+ org.rifidi.edge.core.api.rmi.dto
 Bundle-Description: Classes used to access the Edge Server via RMI that handle RMI network calls.
 Export-Package: org.rifidi.edge.core.rmi.client.readerconfigurationstub

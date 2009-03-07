@@ -5,6 +5,7 @@ package org.rifidi.configuration.impl;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -17,6 +18,7 @@ import javax.management.AttributeNotFoundException;
 import javax.management.Descriptor;
 import javax.management.InvalidAttributeValueException;
 import javax.management.JMX;
+import javax.management.MBeanAttributeInfo;
 import javax.management.MBeanException;
 import javax.management.MBeanInfo;
 import javax.management.MBeanOperationInfo;
@@ -189,6 +191,18 @@ public class DefaultConfigurationImpl implements Configuration, Cloneable {
 
 		}
 		throw new AttributeNotFoundException();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.rifidi.configuration.Configuration#getAttributeNames()
+	 */
+	@Override
+	public String[] getAttributeNames() {
+		ArrayList<String> attrNames = new ArrayList<String>();
+		for(MBeanAttributeInfo attrInfo : this.getMBeanInfo().getAttributes()){
+			attrNames.add(attrInfo.getName());
+		}
+		return attrNames.toArray(new String[attrNames.size()]);
 	}
 
 	/*

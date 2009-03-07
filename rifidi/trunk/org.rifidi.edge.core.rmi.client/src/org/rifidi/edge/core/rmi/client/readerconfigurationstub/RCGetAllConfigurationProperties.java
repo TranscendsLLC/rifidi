@@ -9,7 +9,7 @@ import java.util.Map;
 
 import javax.management.AttributeList;
 
-import org.rifidi.edge.core.rmi.ReaderConfigurationStub;
+import org.rifidi.edge.core.api.ReaderStub;
 import org.rifidi.rmi.utils.remotecall.ServerDescriptionBasedRemoteMethodCall;
 
 /**
@@ -38,7 +38,7 @@ public class RCGetAllConfigurationProperties
 	@Override
 	protected Map<String, AttributeList> performRemoteCall(Remote remoteObject)
 			throws RemoteException, RuntimeException {
-		ReaderConfigurationStub stub = (ReaderConfigurationStub) remoteObject;
+		ReaderStub stub = (ReaderStub) remoteObject;
 		return stub.getAllReaderConfigurationProperties();
 	}
 
