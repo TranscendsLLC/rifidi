@@ -18,11 +18,12 @@ import org.rifidi.configuration.Configuration;
 import org.rifidi.configuration.services.ConfigurationService;
 import org.rifidi.edge.core.commands.AbstractCommandConfiguration;
 import org.rifidi.edge.core.commands.AbstractCommandConfigurationFactory;
+import org.rifidi.edge.core.commands.Command;
 import org.rifidi.edge.core.daos.CommandDAO;
+import org.rifidi.edge.core.daos.ConfigurationDAO;
 import org.rifidi.edge.core.daos.ReaderDAO;
 import org.rifidi.edge.core.readers.AbstractReader;
 import org.rifidi.edge.core.readers.AbstractReaderFactory;
-import org.rifidi.edge.core.readers.Command;
 import org.rifidi.edge.core.readers.ReaderSession;
 
 /**
@@ -36,6 +37,8 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 	private CommandDAO commandDAO;
 	/** Configuration Service */
 	private ConfigurationService configService;
+	/** The DAO for managing configurations */
+	private ConfigurationDAO configDAO;
 
 	/**
 	 * @param configService
@@ -61,31 +64,13 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 		this.readerDAO = readerDAO;
 	}
 
-	// ReaderSession session = null;
-	// Command command = null;
-	// ScheduledFuture<?> future = null;
-	//
-	// public Object _tester(CommandInterpreter intp) {
-	// String id = intp.nextArgument();
-	// AbstractReader<?> reader = readerConfigStub.getReader(id);
-	// session = reader.createReaderSession();
-	// try {
-	// session.connect();
-	// } catch (IOException e) {
-	// // TODO Auto-generated catch block
-	// e.printStackTrace();
-	// }
-	// AbstractCommandConfiguration<?> commandConfig = commandConfigStub
-	// .getCommand(intp.nextArgument());
-	// command = commandConfig.getCommand();
-	// future = session.submit(command, 500, TimeUnit.MILLISECONDS);
-	// return null;
-	// }
-	//
-	// public Object _stopit(CommandInterpreter intp) {
-	// future.cancel(true);
-	// return null;
-	// }
+	/**
+	 * @param configDAO
+	 *            the configDAO to set
+	 */
+	public void setConfigDAO(ConfigurationDAO configDAO) {
+		this.configDAO = configDAO;
+	}
 
 	/**
 	 * Get the available reader factory IDs
@@ -152,6 +137,71 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 		c.setAttributes(list);
 		factory.createService(c);
 		intp.println("Reader Created.  ID is " + c.getServiceID());
+		return null;
+	}
+
+	public Object _getproperties(CommandInterpreter intp) {
+		String readerID = intp.nextArgument();
+		if (readerID == null) {
+			intp.println("Give a ReaderFactoryID");
+			return null;
+		}
+		Configuration configuration = configDAO.getConfiguration(readerID);
+		if (configuration == null) {
+			intp.println("Reader with ID " + readerID + " is not available");
+			return null;
+		}
+		AttributeList list = configuration.getAttributes(configuration
+				.getAttributeNames());
+		intp.println("Properties for Reader " + readerID);
+		for (Attribute a : list.asList()) {
+			intp.println("\t" + a.getName() + " : " + a.getValue());
+		}
+		return null;
+
+	}
+
+	public Object _setproperties(CommandInterpreter intp) {
+		String readerID = intp.nextArgument();
+		if (readerID == null) {
+			intp.println("Give a ReaderFactoryID");
+			return null;
+		}
+		Configuration configuration = configDAO.getConfiguration(readerID);
+		if (configuration == null) {
+			intp.println("Reader with ID " + readerID + " is not available");
+			return null;
+		}
+		AttributeList list = new AttributeList();
+		String attrname = intp.nextArgument();
+		String attrval = intp.nextArgument();
+		while (attrname != null && attrval != null) {
+			list.add(new Attribute(attrname, attrval));
+			attrname = intp.nextArgument();
+			attrval = intp.nextArgument();
+		}
+		list = configuration.setAttributes(list);
+		intp.println("Properties for Reader " + readerID);
+		for (Attribute a : list.asList()) {
+			intp.println("\t" + a.getName() + " : " + a.getValue());
+		}
+		return null;
+
+	}
+
+	public Object _applypropchanges(CommandInterpreter intp) {
+		String readerID = intp.nextArgument();
+		if (readerID == null) {
+			intp.println("Give a ReaderFactoryID");
+			return null;
+		}
+		AbstractReader<?> reader = this.readerDAO.getReaderByID(readerID);
+		if (reader == null) {
+			intp.println("Reader with ID " + readerID + " is not available");
+			return null;
+		}
+		reader.applyPropertyChanges();
+		intp.println("Property Changes Applied");
 		return null;
 	}
 
@@ -265,6 +315,7 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 			}
 			ReaderSession session = sessions.get(Integer.parseInt(sessionid));
 			session.connect();
+			reader.applyPropertyChanges();
 		} catch (NumberFormatException e) {
 			intp.println("Session id not an integer.");
 			return null;
@@ -316,6 +367,9 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 				} else {
 					session.submit(command.getCommand());
 				}
+			} else {
+				intp.print("Session ID not found " + sessionid);
+				return null;
 			}
 		} catch (NumberFormatException e) {
 			intp.println("Session id or interval is not a number.");
@@ -389,6 +443,12 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 				.append("\texecutecommand <readerid> <sessionid> <commandid>  <interval>- execute a command in a session\n");
 		buffer
 				.append("\tkillcommand <readerid> <sessionid> <commandid> - execute a command in a session\n");
+		buffer
+				.append("\tgetproperties <id> - get the properties of a configuration\n");
+		buffer
+				.append("\tsetproperties <id> [<propName> <propValue>]* - set the properties on a configuration\n");
+		buffer
+				.append("\tapplypropchanges <readerid> apply the property changes on the configuration to the reader");
 		buffer.append("\tsave - save the configuration to a file\n");
 		return buffer.toString();
 	}

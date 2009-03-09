@@ -4,18 +4,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.readers.ByteMessage;
-import org.rifidi.edge.readerplugin.alien.AbstractAlien9800Command;
 import org.rifidi.edge.readerplugin.alien.Alien9800ReaderSession;
 
 public class GetTagListCommandObject {
 	/** The readerSession to send the command to */
 	private Alien9800ReaderSession readerSession;
-	/** A logger for this class */
-	private static final Log logger = LogFactory
-			.getLog(AbstractAlien9800Command.class);
 
 	/**
 	 * Construct a command object.

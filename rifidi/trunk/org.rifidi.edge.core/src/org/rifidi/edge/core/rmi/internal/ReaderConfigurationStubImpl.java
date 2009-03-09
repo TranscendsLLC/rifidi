@@ -24,12 +24,12 @@ import org.rifidi.edge.core.api.rmi.ReaderStub;
 import org.rifidi.edge.core.api.rmi.dto.ReaderDTO;
 import org.rifidi.edge.core.api.rmi.dto.SessionDTO;
 import org.rifidi.edge.core.commands.AbstractCommandConfiguration;
+import org.rifidi.edge.core.commands.Command;
 import org.rifidi.edge.core.daos.CommandDAO;
+import org.rifidi.edge.core.daos.ConfigurationDAO;
 import org.rifidi.edge.core.daos.ReaderDAO;
-import org.rifidi.edge.core.internal.ConfigurationDAO;
 import org.rifidi.edge.core.readers.AbstractReader;
 import org.rifidi.edge.core.readers.AbstractReaderFactory;
-import org.rifidi.edge.core.readers.Command;
 import org.rifidi.edge.core.readers.ReaderSession;
 
 /**
@@ -298,6 +298,7 @@ public class ReaderConfigurationStubImpl implements ReaderStub {
 								.connect();
 						logger.info("Session " + finalReaderID + " on Reader "
 								+ finalReaderID + " has started");
+						reader.applyPropertyChanges();
 					} else {
 						logger.warn("No session with index "
 								+ finalSessionIndex + " is available");
@@ -405,17 +406,18 @@ public class ReaderConfigurationStubImpl implements ReaderStub {
 	 * javax.management.AttributeList)
 	 */
 	@Override
-	public AttributeList setReaderProperties(String readerConfigurationID,
+	public void setReaderProperties(String readerConfigurationID,
 			AttributeList readerConfigurationProperties) throws RemoteException {
 		Configuration config = configurationDAO
 				.getConfiguration(readerConfigurationID);
-		if (config != null) {
-			return config.setAttributes(readerConfigurationProperties);
+		AbstractReader<?> reader = readerConfigDAO.getReaderByID(readerConfigurationID);
+		if ((config != null) && (reader!=null)) {
+			config.setAttributes(readerConfigurationProperties);
+			reader.applyPropertyChanges();
 		} else {
 			logger.warn("No Configuration object with ID "
 					+ readerConfigurationID + " is available");
 		}
-		return null;
 	}
 
 	/**

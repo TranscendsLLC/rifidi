@@ -70,9 +70,6 @@ public class CommandDAOImpl implements CommandDAO {
 	@Override
 	public AbstractCommandConfigurationFactory getCommandFactoryByID(String id) {
 		for (AbstractCommandConfigurationFactory factory : commandFactories) {
-			if (factory.getID().equals(id)) {
-				return factory;
-			}
 			for(String fac : factory.getFactoryIDs()){
 				if(fac.equals(id)){
 					return factory;
@@ -145,7 +142,7 @@ public class CommandDAOImpl implements CommandDAO {
 			AbstractCommandConfigurationFactory commandConfigurationFactory,
 			Dictionary<String, String> parameters) {
 		logger.info("Command Configuration Factory Bound: "
-				+ commandConfigurationFactory.getID());
+				+ commandConfigurationFactory.getFactoryIDs());
 		commandFactories.add(commandConfigurationFactory);
 	}
 
@@ -161,7 +158,7 @@ public class CommandDAOImpl implements CommandDAO {
 			AbstractCommandConfigurationFactory commandConfigurationFactory,
 			Dictionary<String, String> parameters) {
 		logger.info("Command Configuration Factory Unbound: "
-				+ commandConfigurationFactory.getID());
+				+ commandConfigurationFactory.getFactoryIDs());
 		commandFactories.remove(commandConfigurationFactory);
 	}
 

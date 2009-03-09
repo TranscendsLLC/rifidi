@@ -27,7 +27,9 @@
 	</bean>
 
 	<!-- Create Configuration DAO Service -->
-	<bean id="ConfigurationDAOImpl" class="org.rifidi.edge.core.internal.impl.ConfigurationDAOImpl">
+	<osgi:service id="ConfigurationDAOBinding" interface="org.rifidi.edge.core.daos.ConfigurationDAO"
+		ref="ConfigurationDAOImpl" />
+	<bean id="ConfigurationDAOImpl" class="org.rifidi.edge.core.daos.ConfigurationDAOImpl">
 		<property name="configurations" ref="ConfigurationSet" />
 	</bean>
 

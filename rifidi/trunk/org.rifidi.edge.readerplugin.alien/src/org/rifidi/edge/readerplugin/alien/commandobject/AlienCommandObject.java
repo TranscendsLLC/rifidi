@@ -2,10 +2,6 @@ package org.rifidi.edge.readerplugin.alien.commandobject;
 
 import java.io.IOException;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.rifidi.edge.core.readers.ByteMessage;
-import org.rifidi.edge.readerplugin.alien.AbstractAlien9800Command;
 import org.rifidi.edge.readerplugin.alien.Alien9800ReaderSession;
 
 /**
@@ -22,15 +18,12 @@ import org.rifidi.edge.readerplugin.alien.Alien9800ReaderSession;
  * @author Kyle Neumeier - kyle@pramari.com
  * 
  */
-public class AlienCommandObject {
+public abstract class AlienCommandObject {
 
 	/** The command to be sent to the Alien ReaderSession */
-	private String command;
+	protected String command;
 	/** The readerSession to send the command to */
-	private Alien9800ReaderSession readerSession;
-	/** A logger for this class */
-	private static final Log logger = LogFactory
-			.getLog(AbstractAlien9800Command.class);
+	protected Alien9800ReaderSession readerSession;
 
 	/**
 	 * Construct a command object.
@@ -41,76 +34,26 @@ public class AlienCommandObject {
 	 * @param readerSession
 	 *            A live readerSession to send the command to
 	 */
-	public AlienCommandObject(String command,
-			Alien9800ReaderSession readerSession) {
+	public AlienCommandObject(String command) {
 		this.command = command;
-		this.readerSession = readerSession;
 	}
 
 	/**
-	 * Execute A get
+	 * Set the session on the reader
 	 * 
-	 * 
-	 * 
-	 * @return the value of the property on the alien readerSession
-	 * @throws IOException
+	 * @param session
 	 */
-	public String executeGet() throws IOException, AlienException {
-		String message = Alien9800ReaderSession.PROMPT_SUPPRESS + "get "
-				+ command + Alien9800ReaderSession.NEWLINE;
-
-		readerSession.sendMessage(new ByteMessage(message.getBytes()));
-
-		ByteMessage incomingMessage = readerSession.receiveMessage();
-
-		String incoming = new String(incomingMessage.message);
-		if (incoming.contains("=")) {
-			String[] splitString = incoming.split("=");
-			return splitString[1].trim();
-		} else if (incoming.contains("Error")) {
-			logger.warn("Error while Getting Property: " + incoming.trim());
-			throw new AlienException(incoming.trim());
-		} else {
-			logger.warn("Something is wrong with the command: "
-					+ incoming.trim());
-			throw new AlienException(incoming.trim());
-		}
+	public void setSession(Alien9800ReaderSession session) {
+		this.readerSession = session;
 	}
 
 	/**
-	 * Execute a set
+	 * Execute a get or set on the reader
 	 * 
-	 * For commands of the form
-	 * 
-	 * set commandname = value\n
-	 * 
-	 * where the response is of the form
-	 * 
-	 * commandname=value\n
-	 * 
-	 * @param value
-	 *            the value to set
-	 * 
-	 * @return the value the alien readerSession set it to
+	 * @return The return value from the Call
 	 * @throws IOException
+	 * @throws AlienException
 	 */
-	public String executeSet(String value) throws IOException, AlienException {
-		assert (value != null);
-		String message = Alien9800ReaderSession.PROMPT_SUPPRESS + "set "
-				+ command + "=" + value + Alien9800ReaderSession.NEWLINE;
-		readerSession.sendMessage(new ByteMessage(message.getBytes()));
-		ByteMessage incomingMessage = readerSession.receiveMessage();
-		String incoming = new String(incomingMessage.message);
-		if (incoming.contains("=")) {
-			String[] splitString = incoming.split("=");
-			return splitString[1].trim();
-		} else if (incoming.contains("Error")) {
-			logger.warn("Error while Setting Property: " + incoming.trim());
-			throw new AlienException(incoming.trim());
-		} else {
-			logger.warn("Something is wrong with the command: " + incoming);
-			throw new AlienException(incoming.trim());
-		}
-	}
+	public abstract String execute() throws IOException, AlienException;
 
 }

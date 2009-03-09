@@ -86,9 +86,8 @@ public interface ReaderStub extends Remote {
 	 *            the ID of the Reader to update
 	 * @param readerProperties
 	 *            the new properties to set
-	 * @return The properties of the Reader that were set
 	 */
-	AttributeList setReaderProperties(String readerID,
+	void setReaderProperties(String readerID,
 			AttributeList readerProperties) throws RemoteException;
 
 	/**

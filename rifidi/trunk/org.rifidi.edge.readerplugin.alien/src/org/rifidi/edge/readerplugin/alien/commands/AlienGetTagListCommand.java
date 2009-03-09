@@ -18,11 +18,12 @@ import org.apache.activemq.command.ActiveMQObjectMessage;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.messages.EPCGeneration2Event;
-import org.rifidi.edge.core.readers.Command;
 import org.rifidi.edge.readerplugin.alien.AbstractAlien9800Command;
 import org.rifidi.edge.readerplugin.alien.Alien9800ReaderSession;
 import org.rifidi.edge.readerplugin.alien.commandobject.AlienCommandObject;
 import org.rifidi.edge.readerplugin.alien.commandobject.AlienException;
+import org.rifidi.edge.readerplugin.alien.commandobject.AlienGetCommandObject;
+import org.rifidi.edge.readerplugin.alien.commandobject.AlienSetCommandObject;
 import org.rifidi.edge.readerplugin.alien.commandobject.GetTagListCommandObject;
 import org.springframework.jms.core.MessageCreator;
 
@@ -97,30 +98,31 @@ public class AlienGetTagListCommand extends AbstractAlien9800Command {
 	@Override
 	public void run() {
 		try {
-			AlienCommandObject timeZoneCommand = new AlienCommandObject(
+			AlienCommandObject timeZoneCommand = new AlienGetCommandObject(
 					Alien9800ReaderSession.COMMAND_TIME_ZONE,
 					(Alien9800ReaderSession) this.readerSession);
-			String tz = timeZoneCommand.executeGet();
+			String tz = timeZoneCommand.execute();
 			String timeZoneString = "GMT" + tz;
 			timeZone = TimeZone.getTimeZone(timeZoneString);
 			calendar = Calendar.getInstance(timeZone);
 
 			// sending TagType
-			AlienCommandObject tagTypeCommand = new AlienCommandObject(
+			AlienCommandObject tagTypeCommand = new AlienSetCommandObject(
 					Alien9800ReaderSession.COMMAND_TAG_TYPE,
+					tagTypes[getTagType()].toString(),
 					(Alien9800ReaderSession) readerSession);
-			tagTypeCommand.executeSet(tagTypes[getTagType()].toString());
+			tagTypeCommand.execute();
 
 			// sending TagListFormat
-			AlienCommandObject tagListFormat = new AlienCommandObject(
-					Alien9800ReaderSession.COMMAND_TAG_LIST_FORMAT,
+			AlienCommandObject tagListFormat = new AlienSetCommandObject(
+					Alien9800ReaderSession.COMMAND_TAG_LIST_FORMAT, "custom",
 					(Alien9800ReaderSession) readerSession);
-			tagListFormat.executeSet("custom");
+			tagListFormat.execute();
 			// sending TagListFormat
-			AlienCommandObject tagListCustomFormat = new AlienCommandObject(
+			AlienCommandObject tagListCustomFormat = new AlienSetCommandObject(
 					Alien9800ReaderSession.COMMAND_TAG_LIST_CUSTOM_FORMAT,
-					(Alien9800ReaderSession) readerSession);
-			tagListCustomFormat.executeSet("%k|%T|%a");
+					"%k|%T|%a", (Alien9800ReaderSession) readerSession);
+			tagListCustomFormat.execute();
 			GetTagListCommandObject getTagListCommandObject = new GetTagListCommandObject(
 					(Alien9800ReaderSession) readerSession);
 			List<String> tags = getTagListCommandObject.executeGet();
