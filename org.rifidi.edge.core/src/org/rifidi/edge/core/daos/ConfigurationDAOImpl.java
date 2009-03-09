@@ -1,14 +1,13 @@
 /**
  * 
  */
-package org.rifidi.edge.core.internal.impl;
+package org.rifidi.edge.core.daos;
 import java.util.Dictionary;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
 import org.rifidi.configuration.Configuration;
-import org.rifidi.edge.core.internal.ConfigurationDAO;
 
 /**
  * @author kyle

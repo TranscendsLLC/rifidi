@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.rifidi.edge.core.api.SessionStatus;
+import org.rifidi.edge.core.commands.Command;
 
 /**
  * @author Jochen Mader - jochen@pramari.com

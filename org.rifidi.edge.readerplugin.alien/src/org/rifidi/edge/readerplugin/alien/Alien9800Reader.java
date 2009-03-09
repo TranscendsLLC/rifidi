@@ -5,19 +5,27 @@ package org.rifidi.edge.readerplugin.alien;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+import java.util.Properties;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import javax.jms.Destination;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.configuration.annotations.JMXMBean;
+import org.rifidi.configuration.annotations.Operation;
 import org.rifidi.configuration.annotations.Property;
 import org.rifidi.configuration.annotations.PropertyType;
 import org.rifidi.edge.core.readers.AbstractReader;
 import org.rifidi.edge.core.readers.ReaderSession;
+import org.rifidi.edge.readerplugin.alien.commandobject.AlienCommandObject;
+import org.rifidi.edge.readerplugin.alien.commandobject.AlienCommandObjectWrapper;
+import org.rifidi.edge.readerplugin.alien.commandobject.AlienGetCommandObject;
+import org.rifidi.edge.readerplugin.alien.commandobject.AlienSetCommandObject;
+import org.rifidi.edge.readerplugin.alien.commands.internal.AlienPropertyCommand;
 import org.springframework.jms.core.JmsTemplate;
 
 /**
@@ -34,11 +42,10 @@ public class Alien9800Reader extends AbstractReader<Alien9800ReaderSession> {
 	private static final String name = "Alien9800";
 	/** The only session an alien reader allows. */
 	private Alien9800ReaderSession session;
-
-	/***
-	 * READER PROPERTIES - CONNECTION INFO
-	 */
-	private HashMap<String, String> readerProperties;
+	/** A queue for putting commands to be executed next */
+	private LinkedBlockingQueue<AlienCommandObjectWrapper> propCommandsToBeExecuted;
+	/** A hashmap containing all the properties for this reader */
+	private ConcurrentHashMap<String, String> readerProperties;
 	/** IP address of the readerSession. */
 	private String ipAddress = "127.0.0.1";
 	/** Port to connect to. */
@@ -53,7 +60,7 @@ public class Alien9800Reader extends AbstractReader<Alien9800ReaderSession> {
 	private Integer maxNumConnectionAttempts = 10;
 	/** JMS destination. */
 	private Destination destination;
-	/** Spring JMS template*/
+	/** Spring JMS template */
 	private JmsTemplate template;
 
 	/**
@@ -104,7 +111,7 @@ public class Alien9800Reader extends AbstractReader<Alien9800ReaderSession> {
 	 * Constructor.
 	 */
 	public Alien9800Reader() {
-		readerProperties = new HashMap<String, String>();
+		readerProperties = new ConcurrentHashMap<String, String>();
 		readerProperties.put(PROP_READER_NUMBER, "0");
 		readerProperties.put(PROP_READER_VERSION, "Unavailable");
 		readerProperties.put(PROP_READER_TYPE, "Unavailable");
@@ -114,8 +121,42 @@ public class Alien9800Reader extends AbstractReader<Alien9800ReaderSession> {
 		readerProperties.put(PROP_UPTIME, "0");
 		readerProperties.put(PROP_EXTERNAL_OUTPUT, "0");
 		readerProperties.put(PROP_RF_ATTENUATION, "0");
-		logger
-				.debug("New instance of Alien 9800 ReaderSession config created.");
+
+		propCommandsToBeExecuted = new LinkedBlockingQueue<AlienCommandObjectWrapper>();
+		propCommandsToBeExecuted.add(new AlienCommandObjectWrapper(
+				PROP_READER_NUMBER, new AlienGetCommandObject(
+						Alien9800ReaderSession.COMMAND_READERNUMBER)));
+		propCommandsToBeExecuted.add(new AlienCommandObjectWrapper(
+				PROP_READER_VERSION, new AlienGetCommandObject(
+						Alien9800ReaderSession.COMMAND_READER_VERSION)));
+		propCommandsToBeExecuted.add(new AlienCommandObjectWrapper(
+				PROP_READER_TYPE, new AlienGetCommandObject(
+						Alien9800ReaderSession.COMMAND_READER_TYPE)));
+		propCommandsToBeExecuted.add(new AlienCommandObjectWrapper(
+				PROP_MAC_ADDRESS, new AlienGetCommandObject(
+						Alien9800ReaderSession.COMMAND_MAC_ADDRESS)));
+		propCommandsToBeExecuted.add(new AlienCommandObjectWrapper(
+				PROP_MAX_ANTENNA, new AlienGetCommandObject(
+						Alien9800ReaderSession.COMMAND_MAX_ANTENNA)));
+		propCommandsToBeExecuted.add(new AlienCommandObjectWrapper(
+				PROP_EXTERNAL_INPUT, new AlienGetCommandObject(
+						Alien9800ReaderSession.COMMAND_EXTERNAL_INPUT)));
+		propCommandsToBeExecuted
+				.add(new AlienCommandObjectWrapper(PROP_UPTIME,
+						new AlienGetCommandObject(
+								Alien9800ReaderSession.COMMAND_UPTIME)));
+
+		propCommandsToBeExecuted.add(new AlienCommandObjectWrapper(
+				PROP_EXTERNAL_OUTPUT, new AlienSetCommandObject(
+						Alien9800ReaderSession.COMMAND_EXTERNAL_OUTPUT,
+						this.readerProperties.get(PROP_EXTERNAL_OUTPUT))));
+
+		propCommandsToBeExecuted.add(new AlienCommandObjectWrapper(
+				PROP_RF_ATTENUATION, new AlienSetCommandObject(
+						Alien9800ReaderSession.COMMAND_RF_ATTENUATION,
+						this.readerProperties.get(PROP_RF_ATTENUATION))));
+
+		logger.debug("New instance of Alien9800Reader created.");
 	}
 
 	/*
@@ -148,21 +189,24 @@ public class Alien9800Reader extends AbstractReader<Alien9800ReaderSession> {
 		if (session == null) {
 			session = new Alien9800ReaderSession(ipAddress, port,
 					(int) (long) reconnectionInterval,
-					maxNumConnectionAttempts, username, password, destination, template);
+					maxNumConnectionAttempts, username, password, destination,
+					template);
 			return session;
 		}
 		return null;
 	}
-	
+
 	/**
-	 * @param destination the destination to set
+	 * @param destination
+	 *            the destination to set
 	 */
 	public void setDestination(Destination destination) {
 		this.destination = destination;
 	}
 
 	/**
-	 * @param template the template to set
+	 * @param template
+	 *            the template to set
 	 */
 	public void setTemplate(JmsTemplate template) {
 		this.template = template;
@@ -303,6 +347,10 @@ public class Alien9800Reader extends AbstractReader<Alien9800ReaderSession> {
 		if (externalOutput >= 0 && externalOutput <= 255) {
 			readerProperties.put(PROP_EXTERNAL_OUTPUT, Integer
 					.toString(externalOutput));
+			propCommandsToBeExecuted.add(new AlienCommandObjectWrapper(
+					PROP_EXTERNAL_OUTPUT, new AlienSetCommandObject(
+							Alien9800ReaderSession.COMMAND_EXTERNAL_OUTPUT,
+							Integer.toString(externalOutput))));
 			return;
 		}
 		logger.warn("ExternalOutput must be an"
@@ -315,8 +363,30 @@ public class Alien9800Reader extends AbstractReader<Alien9800ReaderSession> {
 	}
 
 	public void setRFAttenuation(Integer rfAttenuation) {
-		readerProperties.put(PROP_RF_ATTENUATION, Integer
-				.toString(rfAttenuation));
+		if (rfAttenuation >= 0 && rfAttenuation <= 100) {
+			readerProperties.put(PROP_RF_ATTENUATION, Integer
+					.toString(rfAttenuation));
+			propCommandsToBeExecuted.add(new AlienCommandObjectWrapper(
+					PROP_RF_ATTENUATION, new AlienSetCommandObject(
+							Alien9800ReaderSession.COMMAND_RF_ATTENUATION,
+							Integer.toString(rfAttenuation))));
+		} else {
+			logger.warn("RFAttenuation bust be an integer "
+					+ "between 0 and 100,  but was " + rfAttenuation);
+		}
+	}
+
+	@Property(displayName = "Reader Number", description = "Reader Number", writable = true, type = PropertyType.PT_STRING)
+	public String getReaderNumber() {
+		return readerProperties.get(PROP_READER_NUMBER);
+	}
+
+	public void setReaderNumber(String readerNumber) {
+		readerProperties.put(PROP_READER_NUMBER, readerNumber);
+		propCommandsToBeExecuted.add(new AlienCommandObjectWrapper(
+				PROP_READER_NUMBER, new AlienSetCommandObject(
+						Alien9800ReaderSession.COMMAND_RF_ATTENUATION,
+						readerNumber)));
 	}
 
 	@Property(displayName = "ReaderSession Version", description = "Version Number of the readerSession", writable = false)
@@ -347,5 +417,18 @@ public class Alien9800Reader extends AbstractReader<Alien9800ReaderSession> {
 	@Property(displayName = "Uptime", description = "Uptime of readerSession", writable = false, type = PropertyType.PT_INTEGER)
 	public Integer getUptime() {
 		return Integer.parseInt(readerProperties.get(PROP_UPTIME));
+	}
+
+	@Override
+	@Operation(description = "Apply all property changes to reader")
+	public synchronized void applyPropertyChanges() {
+		// TODO: may need to synchnonize the hashmap before I clear it?
+		if (session != null) {
+			ArrayList<AlienCommandObjectWrapper> commands = new ArrayList<AlienCommandObjectWrapper>();
+			this.propCommandsToBeExecuted.drainTo(commands);
+			AlienPropertyCommand command = new AlienPropertyCommand("",
+					readerProperties, commands);
+			session.submit(command);
+		}
 	}
 }

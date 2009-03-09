@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.rifidi.edge.core.internal;
+package org.rifidi.edge.core.daos;
 
 import org.rifidi.configuration.Configuration;
 

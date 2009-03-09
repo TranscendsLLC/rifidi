@@ -9,11 +9,13 @@ package org.rifidi.edge.readerplugin.alien.commandobject;
  */
 public class AlienException extends Exception {
 
+	/** SerialVersion ID*/
+	private static final long serialVersionUID = 1L;
+
 	/**
 	 * 
 	 */
 	public AlienException() {
-		// TODO Auto-generated constructor stub
 	}
 
 	/**
@@ -21,7 +23,6 @@ public class AlienException extends Exception {
 	 */
 	public AlienException(String arg0) {
 		super(arg0);
-		// TODO Auto-generated constructor stub
 	}
 
 	/**
@@ -29,7 +30,6 @@ public class AlienException extends Exception {
 	 */
 	public AlienException(Throwable arg0) {
 		super(arg0);
-		// TODO Auto-generated constructor stub
 	}
 
 	/**
@@ -38,7 +38,6 @@ public class AlienException extends Exception {
 	 */
 	public AlienException(String arg0, Throwable arg1) {
 		super(arg0, arg1);
-		// TODO Auto-generated constructor stub
 	}
 
 }

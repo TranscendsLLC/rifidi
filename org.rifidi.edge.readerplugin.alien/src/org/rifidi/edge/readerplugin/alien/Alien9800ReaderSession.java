@@ -123,7 +123,6 @@ public class Alien9800ReaderSession extends AbstractIPReaderSession {
 	 */
 	@Override
 	public boolean onConnect() throws IOException {
-		// TODO: add some validation
 		logger.debug("getting the welcome response");
 		String welcome = new String(receiveMessage().message);
 		logger.debug(welcome);

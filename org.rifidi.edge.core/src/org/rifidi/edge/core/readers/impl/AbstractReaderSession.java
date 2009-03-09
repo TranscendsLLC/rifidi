@@ -15,7 +15,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import javax.jms.Destination;
 
 import org.rifidi.edge.core.api.SessionStatus;
-import org.rifidi.edge.core.readers.Command;
+import org.rifidi.edge.core.commands.Command;
 import org.rifidi.edge.core.readers.ReaderSession;
 import org.springframework.jms.core.JmsTemplate;
 

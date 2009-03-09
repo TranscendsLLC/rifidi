@@ -16,13 +16,4 @@ import org.rifidi.configuration.impl.AbstractServiceFactory;
  */
 public abstract class AbstractReaderFactory<T extends AbstractReader<?>>
 		extends AbstractServiceFactory<T> {
-
-	/**
-	 * Get the ID of the CommandConfigurationFactory associated with this readerSession
-	 * configuration
-	 * 
-	 * @return
-	 */
-	public abstract String getCommandConfigFactoryID();
-
 }

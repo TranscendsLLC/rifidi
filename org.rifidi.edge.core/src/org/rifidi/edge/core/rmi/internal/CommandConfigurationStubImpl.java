@@ -4,38 +4,29 @@
 package org.rifidi.edge.core.rmi.internal;
 
 import java.rmi.RemoteException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.management.AttributeList;
-import javax.management.MBeanAttributeInfo;
 import javax.management.MBeanInfo;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.configuration.Configuration;
-import org.rifidi.edge.core.api.rmi.CommandConfigurationStub;
+import org.rifidi.edge.core.api.rmi.CommandStub;
 import org.rifidi.edge.core.commands.AbstractCommandConfiguration;
 import org.rifidi.edge.core.commands.AbstractCommandConfigurationFactory;
-import org.rifidi.edge.core.daos.ReaderDAO;
-import org.rifidi.edge.core.internal.CommandConfigurationDAO;
-import org.rifidi.edge.core.internal.ConfigurationDAO;
-import org.rifidi.edge.core.readers.AbstractReaderFactory;
+import org.rifidi.edge.core.daos.CommandDAO;
+import org.rifidi.edge.core.daos.ConfigurationDAO;
 
 /**
  * @author Kyle Neumeier - kyle@pramari.com
  * 
  */
-public class CommandConfigurationStubImpl implements CommandConfigurationStub {
+public class CommandConfigurationStubImpl implements CommandStub {
 
 	/** Data Access object for accessing command configurations and factories */
-	private CommandConfigurationDAO commandConfigDAO;
-	/** Data Access object for accessing readerSession configurations and factories */
-	private ReaderDAO readerConfigDAO;
+	private CommandDAO commandDAO;
 	/** Data access object for accessing all Configuration objects in OSGi */
 	private ConfigurationDAO configDAO;
 	/** The logger for this class */
@@ -45,21 +36,11 @@ public class CommandConfigurationStubImpl implements CommandConfigurationStub {
 	/**
 	 * Setter method used by spring
 	 * 
-	 * @param configConfigDAO
-	 *            the configConfigDAO to set
+	 * @param commandDAO
+	 *            the commandDAO to set
 	 */
-	public void setCommandConfigDAO(CommandConfigurationDAO commandConfigDAO) {
-		this.commandConfigDAO = commandConfigDAO;
-	}
-
-	/**
-	 * Setter method used by spring
-	 * 
-	 * @param readerConfigDAO
-	 *            the readerConfigDAO to set
-	 */
-	public void setReaderConfigDAO(ReaderDAO readerConfigDAO) {
-		this.readerConfigDAO = readerConfigDAO;
+	public void setCommandDAO(CommandDAO commandDAO) {
+		this.commandDAO = commandDAO;
 	}
 
 	/**
@@ -80,10 +61,10 @@ public class CommandConfigurationStubImpl implements CommandConfigurationStub {
 	 * (java.lang.String, javax.management.AttributeList)
 	 */
 	@Override
-	public String createCommandConfiguration(String commandConfigurationType,
+	public String createCommand(String commandConfigurationType,
 			AttributeList properties) throws RemoteException {
-		AbstractCommandConfigurationFactory factory = this.commandConfigDAO
-				.getCommandConfigurationFactoryFromType(commandConfigurationType);
+		AbstractCommandConfigurationFactory factory = this.commandDAO
+				.getCommandFactoryByID(commandConfigurationType);
 		Configuration configuration = factory
 				.getEmptyConfiguration(commandConfigurationType);
 		configuration.setAttributes(properties);
@@ -99,7 +80,7 @@ public class CommandConfigurationStubImpl implements CommandConfigurationStub {
 	 * (java.lang.String)
 	 */
 	@Override
-	public void deleteCommandConfiguration(String commandConfigurationID)
+	public void deleteCommand(String commandConfigurationID)
 			throws RemoteException {
 		Configuration config = configDAO
 				.getConfiguration(commandConfigurationID);
@@ -110,8 +91,8 @@ public class CommandConfigurationStubImpl implements CommandConfigurationStub {
 					+ " found");
 		}
 
-		AbstractCommandConfiguration<?> commandConfig = commandConfigDAO
-				.getCommandConfiguration(commandConfigurationID);
+		AbstractCommandConfiguration<?> commandConfig = commandDAO
+				.getCommandByID(commandConfigurationID);
 		if (commandConfig != null) {
 			commandConfig.destroy();
 		} else {
@@ -128,10 +109,10 @@ public class CommandConfigurationStubImpl implements CommandConfigurationStub {
 	 * getCommandConfigurationDescription(java.lang.String)
 	 */
 	@Override
-	public MBeanInfo getCommandConfigurationDescription(
-			String commandConfigurationType) throws RemoteException {
-		AbstractCommandConfigurationFactory factory = this.commandConfigDAO
-				.getCommandConfigurationFactoryFromType(commandConfigurationType);
+	public MBeanInfo getCommandDescription(String commandConfigurationType)
+			throws RemoteException {
+		AbstractCommandConfigurationFactory factory = this.commandDAO
+				.getCommandFactoryByID(commandConfigurationType);
 		if (factory == null) {
 			logger.warn("No Command Configuration Factory"
 					+ " is available for type : " + commandConfigurationType);
@@ -150,24 +131,13 @@ public class CommandConfigurationStubImpl implements CommandConfigurationStub {
 	 * getCommandConfigurationProperties(java.lang.String)
 	 */
 	@Override
-	public AttributeList getCommandConfigurationProperties(
-			String commandConfigurationID) throws RemoteException {
+	public AttributeList getCommandProperties(String commandConfigurationID)
+			throws RemoteException {
 		Configuration config = configDAO
 				.getConfiguration(commandConfigurationID);
 		if (config != null) {
-			// find out the names of all the attributes
-			List<String> attributeNames = new ArrayList<String>();
-			for (MBeanAttributeInfo attrInfo : config.getMBeanInfo()
-					.getAttributes()) {
-				attributeNames.add(attrInfo.getName());
-			}
-
-			// convert name arraylist to string array
-			String[] names = new String[attributeNames.size()];
-			attributeNames.toArray(names);
-
 			// get the attributes
-			return config.getAttributes(names);
+			return config.getAttributes(config.getAttributeNames());
 		} else {
 			logger.warn("No Configuration object with ID "
 					+ commandConfigurationID + " is available");
@@ -186,18 +156,10 @@ public class CommandConfigurationStubImpl implements CommandConfigurationStub {
 	public Map<String, String> getCommandConfigurationTypes()
 			throws RemoteException {
 		Map<String, String> retVal = new HashMap<String, String>();
-		Set<AbstractReaderFactory<?>> factories = readerConfigDAO
-				.getReaderFactories();
-		Iterator<AbstractReaderFactory<?>> factoryIter = factories
-				.iterator();
-		while (factoryIter.hasNext()) {
-			AbstractReaderFactory<?> factory = factoryIter.next();
-			String factoryID = factory.getCommandConfigFactoryID();
-			Set<String> types = this.commandConfigDAO
-					.getCommandConfigurationTypes(factoryID);
-			Iterator<String> typeIter = types.iterator();
-			while (typeIter.hasNext()) {
-				retVal.put(typeIter.next(), factory.getFactoryIDs().get(0));
+		for (AbstractCommandConfigurationFactory factory : commandDAO
+				.getCommandFactories()) {
+			for (String facID : factory.getFactoryIDs()) {
+				retVal.put(facID, factory.getReaderFactoryID());
 			}
 		}
 
@@ -212,15 +174,9 @@ public class CommandConfigurationStubImpl implements CommandConfigurationStub {
 	 * (java.lang.String)
 	 */
 	@Override
-	public Map<String, String> getCommandConfigurations()
-			throws RemoteException {
+	public Map<String, String> getCommands() throws RemoteException {
 		Map<String, String> retVal = new HashMap<String, String>();
-		Set<AbstractCommandConfiguration<?>> configuraitons = this.commandConfigDAO
-				.getCommandConfigurations();
-		Iterator<AbstractCommandConfiguration<?>> iter = configuraitons
-				.iterator();
-		while (iter.hasNext()) {
-			AbstractCommandConfiguration<?> commandconfig = iter.next();
+		for(AbstractCommandConfiguration<?> commandconfig: commandDAO.getCommands()){
 			Configuration configObj = configDAO.getConfiguration(commandconfig
 					.getID());
 			if (configObj != null) {
@@ -242,9 +198,8 @@ public class CommandConfigurationStubImpl implements CommandConfigurationStub {
 	 * javax.management.AttributeList)
 	 */
 	@Override
-	public AttributeList setCommandConfigurationProperties(
-			String commandConfigurationID, AttributeList properties)
-			throws RemoteException {
+	public AttributeList setCommandProperties(String commandConfigurationID,
+			AttributeList properties) throws RemoteException {
 		Configuration config = configDAO
 				.getConfiguration(commandConfigurationID);
 		if (config != null) {

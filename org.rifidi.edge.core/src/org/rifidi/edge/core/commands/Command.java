@@ -1,10 +1,11 @@
 /**
  * 
  */
-package org.rifidi.edge.core.readers;
+package org.rifidi.edge.core.commands;
 
 import javax.jms.Destination;
 
+import org.rifidi.edge.core.readers.ReaderSession;
 import org.springframework.jms.core.JmsTemplate;
 
 /**

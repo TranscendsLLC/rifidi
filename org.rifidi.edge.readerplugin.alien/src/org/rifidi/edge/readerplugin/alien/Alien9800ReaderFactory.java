@@ -21,6 +21,8 @@ public class Alien9800ReaderFactory extends
 
 	private Destination destination;
 	private JmsTemplate template;
+	/**The Unique ID for this Factory*/
+	public static final String FACTORY_ID= "Alien9800";
 
 	/**
 	 * @return the destination
@@ -50,9 +52,6 @@ public class Alien9800ReaderFactory extends
 		this.template = template;
 	}
 	
-	/** The ComandConfigurationFactory for this readerSession */
-	private Alien9800CommandConfigurationFactory commandConfigFactory;
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -71,7 +70,7 @@ public class Alien9800ReaderFactory extends
 	@Override
 	public List<String> getFactoryIDs() {
 		List<String> ret = new ArrayList<String>();
-		ret.add("Alien9800");
+		ret.add(FACTORY_ID);
 		return ret;
 	}
 
@@ -87,11 +86,6 @@ public class Alien9800ReaderFactory extends
 		instance.setTemplate(template);
 		instance.setServiceRegistration(getContext().registerService(AbstractReader.class.getName(),
 				instance, null));
-	}
-
-	@Override
-	public String getCommandConfigFactoryID() {
-		return Alien9800CommandConfigurationFactory.uniqueID;
 	}
 
 }
