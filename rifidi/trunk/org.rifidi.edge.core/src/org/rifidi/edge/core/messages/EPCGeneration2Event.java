@@ -11,6 +11,8 @@ import java.math.BigInteger;
  */
 public class EPCGeneration2Event extends DatacontainerEvent {
 
+	protected Integer epcLength;
+	
 	public EPCGeneration2Event() {
 		super(4);
 	}
@@ -34,4 +36,19 @@ public class EPCGeneration2Event extends DatacontainerEvent {
 	public String getEPC() {
 		return getMemoryBank(1).toString(16);
 	}
+
+	/**
+	 * @return the epcLength
+	 */
+	public Integer getEpcLength() {
+		return epcLength;
+	}
+
+	/**
+	 * @param epcLength the epcLength to set
+	 */
+	public void setEpcLength(Integer epcLength) {
+		this.epcLength = epcLength;
+	}
+	
 }
