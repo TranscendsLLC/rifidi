@@ -12,7 +12,7 @@ import java.rmi.registry.Registry;
 import org.rifidi.rmi.utils.cache.ServerDescription;
 
 /**
- * The ServerDescription for the CommandConfigurationStub
+ * The ServerDescription for the CommandStub
  * 
  * @author Kyle Neumeier - kyle@pramari.com
  * 

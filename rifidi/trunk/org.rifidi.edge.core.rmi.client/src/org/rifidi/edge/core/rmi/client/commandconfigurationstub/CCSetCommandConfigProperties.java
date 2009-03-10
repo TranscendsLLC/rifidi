@@ -5,7 +5,7 @@ import java.rmi.RemoteException;
 
 import javax.management.AttributeList;
 
-import org.rifidi.edge.core.api.CommandConfigurationStub;
+import org.rifidi.edge.core.api.rmi.CommandStub;
 import org.rifidi.rmi.utils.cache.ServerDescription;
 import org.rifidi.rmi.utils.remotecall.ServerDescriptionBasedRemoteMethodCall;
 
@@ -28,7 +28,7 @@ public class CCSetCommandConfigProperties extends
 	 * Constructor
 	 * 
 	 * @param serverDescription
-	 *            The ServerDescription of the CommandConfigurationStub
+	 *            The ServerDescription of the CommandStub
 	 * @param commandConfigurationID
 	 *            the ID of the CommandConfiguration to set the properties of
 	 * @param properties
@@ -44,8 +44,8 @@ public class CCSetCommandConfigProperties extends
 	@Override
 	protected AttributeList performRemoteCall(Remote remoteObject)
 			throws RemoteException, RuntimeException {
-		CommandConfigurationStub stub = (CommandConfigurationStub) remoteObject;
-		return stub.setCommandConfigurationProperties(
+		CommandStub stub = (CommandStub) remoteObject;
+		return stub.setCommandProperties(
 				this.commandConfigurationID, this.properties);
 	}
 

@@ -7,7 +7,7 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.Map;
 
-import org.rifidi.edge.core.api.CommandConfigurationStub;
+import org.rifidi.edge.core.api.rmi.CommandStub;
 import org.rifidi.rmi.utils.remotecall.ServerDescriptionBasedRemoteMethodCall;
 
 /**
@@ -36,7 +36,7 @@ public class CCGetCommandConfigTypes
 	@Override
 	protected Map<String, String> performRemoteCall(Remote remoteObject)
 			throws RemoteException, RuntimeException {
-		CommandConfigurationStub stub = (CommandConfigurationStub) remoteObject;
+		CommandStub stub = (CommandStub) remoteObject;
 		return stub.getCommandConfigurationTypes();
 	}
 

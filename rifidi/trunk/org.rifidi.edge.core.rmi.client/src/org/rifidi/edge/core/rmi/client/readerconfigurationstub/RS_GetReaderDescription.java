@@ -8,35 +8,34 @@ import java.rmi.RemoteException;
 
 import javax.management.MBeanInfo;
 
-import org.rifidi.edge.core.api.ReaderStub;
+import org.rifidi.edge.core.api.rmi.ReaderStub;
 import org.rifidi.rmi.utils.remotecall.ServerDescriptionBasedRemoteMethodCall;
 
 /**
- * This call gets an MBeanInfo object that describes the ReaderConfigurations
- * that are produced from this factory. This information can be used to
- * construct a new reader configuration
+ * This call gets an MBeanInfo object that describes the Readers that are
+ * produced from this factory. This information can be used to construct a new
+ * reader
  * 
  * @author Kyle Neumeier - kyle@pramari.com
  * 
  */
-public class RCGetReaderConfigDescription extends
+public class RS_GetReaderDescription extends
 		ServerDescriptionBasedRemoteMethodCall<MBeanInfo, RuntimeException> {
 
 	/** The supplied readerConfiguraitonFactoryID */
-	private String readerConfigurationFactoryID;
+	private String readerFactoryID;
 
 	/**
 	 * 
 	 * @param serverDescription
 	 *            The serverdescription
-	 * @param readerConfiguraitonFactoryID
-	 *            the ID of the reader configuraiton Factory to get a
-	 *            description of
+	 * @param readerFactoryID
+	 *            the ID of the reader Factory to get a description of
 	 */
-	public RCGetReaderConfigDescription(RCServerDescription serverDescription,
-			String readerConfiguraitonFactoryID) {
+	public RS_GetReaderDescription(RS_ServerDescription serverDescription,
+			String readerFactoryID) {
 		super(serverDescription);
-		this.readerConfigurationFactoryID = readerConfiguraitonFactoryID;
+		this.readerFactoryID = readerFactoryID;
 	}
 
 	/*
@@ -50,8 +49,7 @@ public class RCGetReaderConfigDescription extends
 	protected MBeanInfo performRemoteCall(Remote remoteObject)
 			throws RemoteException, RuntimeException {
 		ReaderStub stub = (ReaderStub) remoteObject;
-		return stub
-				.getReaderDescription(readerConfigurationFactoryID);
+		return stub.getReaderDescription(readerFactoryID);
 	}
 
 }

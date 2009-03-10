@@ -3,7 +3,7 @@ package org.rifidi.edge.core.rmi.client.commandconfigurationstub;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
-import org.rifidi.edge.core.api.CommandConfigurationStub;
+import org.rifidi.edge.core.api.rmi.CommandStub;
 import org.rifidi.rmi.utils.cache.ServerDescription;
 import org.rifidi.rmi.utils.remotecall.ServerDescriptionBasedRemoteMethodCall;
 
@@ -24,7 +24,7 @@ public class CCDeleteCommandConfiguration extends
 	 * Constructor
 	 * 
 	 * @param serverDescription
-	 *            The ServerDescription of the CommandConfigurationStub
+	 *            The ServerDescription of the CommandStub
 	 * @param commandConfigurationID
 	 *            The ID of the CommandConfiguration to delete
 	 */
@@ -37,8 +37,8 @@ public class CCDeleteCommandConfiguration extends
 	@Override
 	protected Object performRemoteCall(Remote remoteObject)
 			throws RemoteException, RuntimeException {
-		CommandConfigurationStub stub = (CommandConfigurationStub) remoteObject;
-		stub.deleteCommandConfiguration(this.commandConfigurationID);
+		CommandStub stub = (CommandStub) remoteObject;
+		stub.deleteCommand(this.commandConfigurationID);
 		return null;
 	}
 
