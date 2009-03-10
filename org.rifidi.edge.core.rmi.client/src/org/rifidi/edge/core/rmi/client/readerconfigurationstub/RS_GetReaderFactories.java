@@ -7,17 +7,17 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.Set;
 
-import org.rifidi.edge.core.api.ReaderStub;
+import org.rifidi.edge.core.api.rmi.ReaderStub;
 import org.rifidi.rmi.utils.remotecall.ServerDescriptionBasedRemoteMethodCall;
 
 /**
- * This remote call returns a list of ReaderConfigurationFactory IDs. This list
- * corresponds to the "reader plugins" that are available.
+ * This remote call returns a list of ReaderFactory IDs. This list corresponds
+ * to the "reader plugins" that are available.
  * 
  * @author Kyle Neumeier - Kyle Neumeier
  * 
  */
-public class RCGetReaderConfigFactories extends
+public class RS_GetReaderFactories extends
 		ServerDescriptionBasedRemoteMethodCall<Set<String>, RuntimeException> {
 
 	/**
@@ -26,7 +26,7 @@ public class RCGetReaderConfigFactories extends
 	 * @param serverDescription
 	 *            the server description
 	 */
-	public RCGetReaderConfigFactories(RCServerDescription serverDescription) {
+	public RS_GetReaderFactories(RS_ServerDescription serverDescription) {
 		super(serverDescription);
 	}
 

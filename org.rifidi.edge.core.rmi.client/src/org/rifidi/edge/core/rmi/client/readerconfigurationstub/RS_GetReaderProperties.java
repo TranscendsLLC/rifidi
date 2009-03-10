@@ -8,33 +8,33 @@ import java.rmi.RemoteException;
 
 import javax.management.AttributeList;
 
-import org.rifidi.edge.core.api.ReaderStub;
+import org.rifidi.edge.core.api.rmi.ReaderStub;
 import org.rifidi.rmi.utils.remotecall.ServerDescriptionBasedRemoteMethodCall;
 
 /**
- * This method gets the Attributes for a specified ReaderConfiguration
+ * This method gets the Attributes for a specified Reader
  * 
  * @author Kyle Neumeier -kyle@pramari.com
  * 
  */
-public class RCGetReaderConfigurationProperties extends
+public class RS_GetReaderProperties extends
 		ServerDescriptionBasedRemoteMethodCall<AttributeList, RemoteException> {
 
 	/** The ID of the ReaderConfiguration to get properties of */
-	private String readerConfigurationID;
+	private String readerID;
 
 	/**
 	 * Constructor
 	 * 
 	 * @param serverDescription
 	 *            The ServerDescription to use
-	 * @param readerConfigurationID
-	 *            The ID of the ReaderConfiguraiton to get the properties of
+	 * @param readerID
+	 *            The ID of the Reader to get the properties of
 	 */
-	public RCGetReaderConfigurationProperties(
-			RCServerDescription serverDescription, String readerConfigurationID) {
+	public RS_GetReaderProperties(RS_ServerDescription serverDescription,
+			String readerID) {
 		super(serverDescription);
-		this.readerConfigurationID = readerConfigurationID;
+		this.readerID = readerID;
 	}
 
 	/*
@@ -48,8 +48,7 @@ public class RCGetReaderConfigurationProperties extends
 	protected AttributeList performRemoteCall(Remote remoteObject)
 			throws RemoteException, RemoteException {
 		ReaderStub stub = (ReaderStub) remoteObject;
-		return stub
-				.getReaderProperties(this.readerConfigurationID);
+		return stub.getReaderProperties(this.readerID);
 	}
 
 }

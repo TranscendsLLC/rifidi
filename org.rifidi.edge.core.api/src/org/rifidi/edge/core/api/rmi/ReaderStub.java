@@ -87,8 +87,8 @@ public interface ReaderStub extends Remote {
 	 * @param readerProperties
 	 *            the new properties to set
 	 */
-	void setReaderProperties(String readerID,
-			AttributeList readerProperties) throws RemoteException;
+	void setReaderProperties(String readerID, AttributeList readerProperties)
+			throws RemoteException;
 
 	/**
 	 * Remove a Reader from the Edge Server
@@ -117,7 +117,8 @@ public interface ReaderStub extends Remote {
 	 *            The session to start
 	 * @throws RemoteException
 	 */
-	void startSession(String readerID, Integer sessionIndex) throws RemoteException;
+	void startSession(String readerID, Integer sessionIndex)
+			throws RemoteException;
 
 	/**
 	 * Stops a session
@@ -128,7 +129,8 @@ public interface ReaderStub extends Remote {
 	 *            The session to stop
 	 * @throws RemoteException
 	 */
-	void stopSession(String readerID, Integer sessionIndex) throws RemoteException;
+	void stopSession(String readerID, Integer sessionIndex)
+			throws RemoteException;
 
 	/**
 	 * Submit a command for execution on the reader
@@ -145,9 +147,10 @@ public interface ReaderStub extends Remote {
 	 * @param timeUnit
 	 *            Which time unit to use for the repeatInterval. Ignored if
 	 *            repeatInterval is set to 0
+	 * @return The processID of the submitted command
 	 */
-	void submitCommand(String readerID, Integer sessionIndex, String commandID,
-			Long repeatInterval, TimeUnit timeUnit);
+	Integer submitCommand(String readerID, Integer sessionIndex,
+			String commandID, Long repeatInterval, TimeUnit timeUnit);
 
 	/**
 	 * Stop a repeated command. The is removed from the executor and will not be

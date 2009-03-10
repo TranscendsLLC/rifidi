@@ -8,7 +8,7 @@ import java.rmi.RemoteException;
 
 import javax.management.AttributeList;
 
-import org.rifidi.edge.core.api.CommandConfigurationStub;
+import org.rifidi.edge.core.api.rmi.CommandStub;
 import org.rifidi.rmi.utils.remotecall.ServerDescriptionBasedRemoteMethodCall;
 
 /**
@@ -30,7 +30,7 @@ public class CCCreateCommandConfiguration extends
 	 * Constructor
 	 * 
 	 * @param serverDescription
-	 *            the ServerDescription of the CommandConfigurationStub
+	 *            the ServerDescription of the CommandStub
 	 * @param comamndConfigurationType
 	 *            The type of CommandConfiguration to create
 	 * @param properties
@@ -45,8 +45,8 @@ public class CCCreateCommandConfiguration extends
 	@Override
 	protected String performRemoteCall(Remote remoteObject)
 			throws RemoteException, RemoteException {
-		CommandConfigurationStub stub = (CommandConfigurationStub) remoteObject;
-		return stub.createCommandConfiguration(commandConfigurationType,
+		CommandStub stub = (CommandStub) remoteObject;
+		return stub.createCommand(commandConfigurationType,
 				this.properties);
 	}
 

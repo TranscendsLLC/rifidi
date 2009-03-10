@@ -17,7 +17,7 @@ import org.rifidi.rmi.utils.cache.ServerDescription;
  * @author Kyle Neumeier - kyl@pramari.com
  * 
  */
-public class RCServerDescription extends ServerDescription {
+public class RS_ServerDescription extends ServerDescription {
 
 	/**
 	 * Constructor
@@ -27,7 +27,7 @@ public class RCServerDescription extends ServerDescription {
 	 * @param serverPort
 	 *            The RMI port that the ReaderStub is exposed on
 	 */
-	public RCServerDescription(String serverIP, int serverPort) {
+	public RS_ServerDescription(String serverIP, int serverPort) {
 		super(serverIP, serverPort, "ReaderStub");
 	}
 

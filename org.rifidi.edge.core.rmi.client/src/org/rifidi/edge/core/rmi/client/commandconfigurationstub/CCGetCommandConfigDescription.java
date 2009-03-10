@@ -8,7 +8,7 @@ import java.rmi.RemoteException;
 
 import javax.management.MBeanInfo;
 
-import org.rifidi.edge.core.api.CommandConfigurationStub;
+import org.rifidi.edge.core.api.rmi.CommandStub;
 import org.rifidi.rmi.utils.cache.ServerDescription;
 import org.rifidi.rmi.utils.remotecall.ServerDescriptionBasedRemoteMethodCall;
 
@@ -30,7 +30,7 @@ public class CCGetCommandConfigDescription extends
 	 * Constructor
 	 * 
 	 * @param serverDescription
-	 *            The ServerDescription of the CommandConfigurationStub
+	 *            The ServerDescription of the CommandStub
 	 * @param commandConfigTypeID
 	 *            The type of ComamndConfiguration to get a description of
 	 */
@@ -43,9 +43,9 @@ public class CCGetCommandConfigDescription extends
 	@Override
 	protected MBeanInfo performRemoteCall(Remote remoteObject)
 			throws RemoteException, RuntimeException {
-		CommandConfigurationStub stub = (CommandConfigurationStub) remoteObject;
+		CommandStub stub = (CommandStub) remoteObject;
 		return stub
-				.getCommandConfigurationDescription(this.commandConfigTypeID);
+				.getCommandDescription(this.commandConfigTypeID);
 	}
 
 }

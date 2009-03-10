@@ -353,33 +353,34 @@ public class ReaderConfigurationStubImpl implements ReaderStub {
 	 * java.util.concurrent.TimeUnit)
 	 */
 	@Override
-	public void submitCommand(String readerID, Integer sessionIndex,
+	public Integer submitCommand(String readerID, Integer sessionIndex,
 			String commandID, Long repeatInterval, TimeUnit timeUnit) {
 		assert (sessionIndex >= 0);
 		AbstractReader<?> reader = readerConfigDAO.getReaderByID(readerID);
 		if (reader == null) {
 			logger.warn("No reader with ID " + readerID + " is available");
-			return;
+			return null;
 		}
 		AbstractCommandConfiguration<?> commandConfig = commandDAO
 				.getCommandByID(commandID);
 		if (commandConfig == null) {
 			logger.warn("No command with ID " + commandID + " is available");
-			return;
+			return null;
 		}
 
 		if (sessionIndex < reader.getReaderSessions().size()) {
 			Command command = commandConfig.getCommand();
-			reader.getReaderSessions().get(sessionIndex).submit(command,
-					repeatInterval, timeUnit);
+			Integer processID = reader.getReaderSessions().get(sessionIndex)
+					.submit(command, repeatInterval, timeUnit);
 			logger.info("Command with ID " + commandID
 					+ " submitted to session " + sessionIndex + " of reader "
 					+ readerID + " with repeat interval " + repeatInterval
 					+ " " + timeUnit);
+			return processID;
 		} else {
 			logger.warn("No session with index " + sessionIndex
 					+ " is available");
-			return;
+			return null;
 		}
 
 	}
@@ -410,8 +411,9 @@ public class ReaderConfigurationStubImpl implements ReaderStub {
 			AttributeList readerConfigurationProperties) throws RemoteException {
 		Configuration config = configurationDAO
 				.getConfiguration(readerConfigurationID);
-		AbstractReader<?> reader = readerConfigDAO.getReaderByID(readerConfigurationID);
-		if ((config != null) && (reader!=null)) {
+		AbstractReader<?> reader = readerConfigDAO
+				.getReaderByID(readerConfigurationID);
+		if ((config != null) && (reader != null)) {
 			config.setAttributes(readerConfigurationProperties);
 			reader.applyPropertyChanges();
 		} else {
