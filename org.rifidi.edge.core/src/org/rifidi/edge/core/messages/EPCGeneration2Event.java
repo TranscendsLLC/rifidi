@@ -33,8 +33,12 @@ public class EPCGeneration2Event extends DatacontainerEvent {
 		setMemory(3, memory);
 	}
 
-	public String getEPC() {
+	public String getEPC_HEX() {
 		return getMemoryBank(1).toString(16);
+	}
+	
+	public String getEPC_BIN() {
+		return getMemoryBank(1).toString(2);
 	}
 
 	/**
