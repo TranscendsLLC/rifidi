@@ -188,6 +188,17 @@ public class AlienGetTagListCommand extends AbstractAlien9800Command {
 			objectMessage = new ActiveMQObjectMessage();
 			EPCGeneration2Event gen2event = new EPCGeneration2Event();
 			gen2event.setEPCMemory(message);
+			//make some wild guesses on the length of the epc field
+			if (message.bitLength() > 96) {
+				// 192 bits
+				gen2event.setEpcLength(192);
+			} else if (message.bitLength() > 64) {
+				// 96 bits
+				gen2event.setEpcLength(96);
+			} else {
+				// 64 bits
+				gen2event.setEpcLength(64);
+			}
 			try {
 				objectMessage.setObject(gen2event);
 			} catch (JMSException e) {
