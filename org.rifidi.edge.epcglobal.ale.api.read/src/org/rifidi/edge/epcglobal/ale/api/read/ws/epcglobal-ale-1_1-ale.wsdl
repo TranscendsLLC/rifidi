@@ -1,0 +1,641 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ALESERVICE DEFINITIONS -->
+<wsdl:definitions xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                  xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+                  xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/"
+                  xmlns:ale="urn:epcglobal:ale:xsd:1"
+                  xmlns:impl="urn:epcglobal:ale:wsdl:1"
+                  targetNamespace="urn:epcglobal:ale:wsdl:1">
+  <!-- ALESERVICE TYPES -->
+  <wsdl:types>
+    <xsd:schema targetNamespace="urn:epcglobal:ale:wsdl:1">
+      <xsd:import namespace="urn:epcglobal:ale:xsd:1"
+                  schemaLocation="EPCglobal-ale-1_1-ale.xsd"/>
+      <!-- ALESERVICE MESSAGE WRAPPERS -->
+
+      <xsd:element name="Define" type="impl:Define"/>
+      <xsd:complexType name="Define">
+        <xsd:sequence>
+          <xsd:element name="specName" type="xsd:string"/>
+          <xsd:element name="spec" type="ale:ECSpec"/>
+        </xsd:sequence>
+      </xsd:complexType>
+
+      <xsd:element name="Undefine" type="impl:Undefine"/>
+      <xsd:complexType name="Undefine">
+        <xsd:sequence>
+          <xsd:element name="specName" type="xsd:string"/>
+        </xsd:sequence>
+      </xsd:complexType>
+
+      <xsd:element name="GetECSpec" type="impl:GetECSpec"/>
+      <xsd:complexType name="GetECSpec">
+        <xsd:sequence>
+          <xsd:element name="specName" type="xsd:string"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element name="GetECSpecResult" type="ale:ECSpec"/>
+
+      <xsd:element name="GetECSpecNames" type="impl:EmptyParms"/>
+      <xsd:element name="GetECSpecNamesResult" type="impl:ArrayOfString"/>
+
+      <xsd:element name="Subscribe" type="impl:Subscribe"/>
+      <xsd:complexType name="Subscribe">
+        <xsd:sequence>
+          <xsd:element name="specName" type="xsd:string"/>
+          <xsd:element name="notificationURI" type="xsd:string"/>
+        </xsd:sequence>
+      </xsd:complexType>
+
+      <xsd:element name="Unsubscribe" type="impl:Unsubscribe"/>
+      <xsd:complexType name="Unsubscribe">
+        <xsd:sequence>
+          <xsd:element name="specName" type="xsd:string"/>
+          <xsd:element name="notificationURI" type="xsd:string"/>
+        </xsd:sequence>
+      </xsd:complexType>
+
+      <xsd:element name="Poll" type="impl:Poll"/>
+      <xsd:complexType name="Poll">
+        <xsd:sequence>
+          <xsd:element name="specName" type="xsd:string"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element name="PollResult" type="ale:ECReports"/>
+
+      <xsd:element name="Immediate" type="impl:Immediate"/>
+      <xsd:complexType name="Immediate">
+        <xsd:sequence>
+          <xsd:element name="spec" type="ale:ECSpec"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element name="ImmediateResult" type="ale:ECReports"/>
+
+      <xsd:element name="GetSubscribers" type="impl:GetSubscribers"/>
+      <xsd:complexType name="GetSubscribers">
+        <xsd:sequence>
+          <xsd:element name="specName" type="xsd:string"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element name="GetSubscribersResult" type="impl:ArrayOfString"/>
+
+      <xsd:element name="GetStandardVersion" type="impl:EmptyParms"/>
+      <xsd:element name="GetStandardVersionResult" type="xsd:string"/>
+
+      <xsd:element name="GetVendorVersion" type="impl:EmptyParms"/>
+      <xsd:element name="GetVendorVersionResult" type="xsd:string"/>
+
+      <xsd:element name="ALEException" type="impl:ALEException"/>
+      <xsd:complexType name="ALEException">
+        <xsd:sequence>
+          <xsd:element name="reason" type="xsd:string"/>
+        </xsd:sequence>
+      </xsd:complexType>
+
+      <xsd:element name="SecurityException" type="impl:SecurityException"/>
+      <xsd:complexType name="SecurityException">
+        <xsd:complexContent>
+          <xsd:extension base="impl:ALEException"/>
+        </xsd:complexContent>
+      </xsd:complexType>
+
+      <xsd:element name="DuplicateNameException" type="impl:DuplicateNameException"/>
+      <xsd:complexType name="DuplicateNameException">
+        <xsd:complexContent>
+          <xsd:extension base="impl:ALEException"/>
+        </xsd:complexContent>
+      </xsd:complexType>
+
+      <xsd:element name="ECSpecValidationException"
+                   type="impl:ECSpecValidationException"/>
+      <xsd:complexType name="ECSpecValidationException">
+        <xsd:complexContent>
+          <xsd:extension base="impl:ALEException"/>
+        </xsd:complexContent>
+      </xsd:complexType>
+
+      <xsd:element name="InvalidURIException" type="impl:InvalidURIException"/>
+      <xsd:complexType name="InvalidURIException">
+        <xsd:complexContent>
+          <xsd:extension base="impl:ALEException"/>
+        </xsd:complexContent>
+      </xsd:complexType>
+
+      <xsd:element name="NoSuchNameException" type="impl:NoSuchNameException"/>
+      <xsd:complexType name="NoSuchNameException">
+        <xsd:complexContent>
+          <xsd:extension base="impl:ALEException"/>
+        </xsd:complexContent>
+      </xsd:complexType>
+
+      <xsd:element name="NoSuchSubscriberException"
+                   type="impl:NoSuchSubscriberException"/>
+      <xsd:complexType name="NoSuchSubscriberException">
+        <xsd:complexContent>
+          <xsd:extension base="impl:ALEException"/>
+        </xsd:complexContent>
+      </xsd:complexType>
+
+      <xsd:element name="DuplicateSubscriptionException"
+                   type="impl:DuplicateSubscriptionException"/>
+      <xsd:complexType name="DuplicateSubscriptionException">
+        <xsd:complexContent>
+          <xsd:extension base="impl:ALEException"/>
+        </xsd:complexContent>
+      </xsd:complexType>
+
+      <xsd:element name="ImplementationException" type="impl:ImplementationException"/>
+      <xsd:complexType name="ImplementationException">
+        <xsd:complexContent>
+          <xsd:extension base="impl:ALEException">
+            <xsd:sequence>
+              <xsd:element name="severity" type="impl:ImplementationExceptionSeverity"/>
+            </xsd:sequence>
+          </xsd:extension>
+        </xsd:complexContent>
+      </xsd:complexType>
+
+      <xsd:complexType name="ArrayOfString">
+        <xsd:sequence>
+          <xsd:element name="string" type="xsd:string" minOccurs="0"
+                       maxOccurs="unbounded"/>
+        </xsd:sequence>
+      </xsd:complexType>
+
+      <!-- The ImplementationExceptionSeverity type is an enumerated type.
+           The following strings are legal values for this type:
+             ERROR
+             SEVERE
+            -->
+      <xsd:simpleType name="ImplementationExceptionSeverity">
+        <xsd:restriction base="xsd:string"/>
+      </xsd:simpleType>
+
+      <xsd:element name="VoidHolder" type="impl:VoidHolder"/>
+      <xsd:complexType name="VoidHolder"/>
+
+      <xsd:complexType name="EmptyParms"/>
+    </xsd:schema>
+  </wsdl:types>
+  <!-- ALESERVICE MESSAGES -->
+
+  <wsdl:message name="defineRequest">
+    <wsdl:part name="parms" element="impl:Define"/>
+  </wsdl:message>
+  <wsdl:message name="defineResponse">
+    <wsdl:part name="defineReturn" element="impl:VoidHolder"/>
+  </wsdl:message>
+
+  <wsdl:message name="undefineRequest">
+    <wsdl:part name="parms" element="impl:Undefine"/>
+  </wsdl:message>
+  <wsdl:message name="undefineResponse">
+    <wsdl:part name="undefineReturn" element="impl:VoidHolder"/>
+  </wsdl:message>
+
+  <wsdl:message name="getECSpecRequest">
+    <wsdl:part name="parms" element="impl:GetECSpec"/>
+  </wsdl:message>
+  <wsdl:message name="getECSpecResponse">
+    <wsdl:part name="getECSpecReturn" element="impl:GetECSpecResult"/>
+  </wsdl:message>
+
+  <wsdl:message name="getECSpecNamesRequest">
+    <wsdl:part name="parms" element="impl:GetECSpecNames"/>
+  </wsdl:message>
+  <wsdl:message name="getECSpecNamesResponse">
+    <wsdl:part name="getECSpecNamesReturn" element="impl:GetECSpecNamesResult"/>
+  </wsdl:message>
+
+  <wsdl:message name="subscribeRequest">
+    <wsdl:part name="parms" element="impl:Subscribe"/>
+  </wsdl:message>
+  <wsdl:message name="subscribeResponse">
+    <wsdl:part name="subscribeReturn" element="impl:VoidHolder"/>
+  </wsdl:message>
+
+  <wsdl:message name="unsubscribeRequest">
+    <wsdl:part name="parms" element="impl:Unsubscribe"/>
+  </wsdl:message>
+  <wsdl:message name="unsubscribeResponse">
+    <wsdl:part name="unsubscribeReturn" element="impl:VoidHolder"/>
+  </wsdl:message>
+
+  <wsdl:message name="pollRequest">
+    <wsdl:part name="parms" element="impl:Poll"/>
+  </wsdl:message>
+  <wsdl:message name="pollResponse">
+    <wsdl:part name="pollReturn" element="impl:PollResult"/>
+  </wsdl:message>
+
+  <wsdl:message name="immediateRequest">
+    <wsdl:part name="parms" element="impl:Immediate"/>
+  </wsdl:message>
+  <wsdl:message name="immediateResponse">
+    <wsdl:part name="immediateReturn" element="impl:ImmediateResult"/>
+  </wsdl:message>
+
+  <wsdl:message name="getSubscribersRequest">
+    <wsdl:part name="parms" element="impl:GetSubscribers"/>
+  </wsdl:message>
+  <wsdl:message name="getSubscribersResponse">
+    <wsdl:part name="getSubscribersReturn" element="impl:GetSubscribersResult"/>
+  </wsdl:message>
+
+  <wsdl:message name="getStandardVersionRequest">
+    <wsdl:part name="parms" element="impl:GetStandardVersion"/>
+  </wsdl:message>
+  <wsdl:message name="getStandardVersionResponse">
+    <wsdl:part name="getStandardVersionReturn" element="impl:GetStandardVersionResult"/>
+  </wsdl:message>
+
+  <wsdl:message name="getVendorVersionRequest">
+    <wsdl:part name="parms" element="impl:GetVendorVersion"/>
+  </wsdl:message>
+  <wsdl:message name="getVendorVersionResponse">
+    <wsdl:part name="getVendorVersionReturn" element="impl:GetVendorVersionResult"/>
+  </wsdl:message>
+
+  <wsdl:message name="SecurityExceptionResponse">
+    <wsdl:part name="fault" element="impl:SecurityException"/>
+  </wsdl:message>
+
+  <wsdl:message name="DuplicateNameExceptionResponse">
+    <wsdl:part name="fault" element="impl:DuplicateNameException"/>
+  </wsdl:message>
+
+  <wsdl:message name="ECSpecValidationExceptionResponse">
+    <wsdl:part name="fault" element="impl:ECSpecValidationException"/>
+  </wsdl:message>
+
+  <wsdl:message name="InvalidURIExceptionResponse">
+    <wsdl:part name="fault" element="impl:InvalidURIException"/>
+  </wsdl:message>
+
+  <wsdl:message name="NoSuchNameExceptionResponse">
+    <wsdl:part name="fault" element="impl:NoSuchNameException"/>
+  </wsdl:message>
+
+  <wsdl:message name="NoSuchSubscriberExceptionResponse">
+    <wsdl:part name="fault" element="impl:NoSuchSubscriberException"/>
+  </wsdl:message>
+
+  <wsdl:message name="DuplicateSubscriptionExceptionResponse">
+    <wsdl:part name="fault" element="impl:DuplicateSubscriptionException"/>
+  </wsdl:message>
+
+  <wsdl:message name="ImplementationExceptionResponse">
+    <wsdl:part name="fault" element="impl:ImplementationException"/>
+  </wsdl:message>
+  <!-- ALESERVICE PORTTYPE -->
+
+  <wsdl:portType name="ALEServicePortType">
+
+    <wsdl:operation name="define">
+      <wsdl:input message="impl:defineRequest" name="defineRequest"/>
+      <wsdl:output message="impl:defineResponse" name="defineResponse"/>
+      <wsdl:fault message="impl:DuplicateNameExceptionResponse"
+                  name="DuplicateNameExceptionFault"/>
+      <wsdl:fault message="impl:ECSpecValidationExceptionResponse"
+                  name="ECSpecValidationExceptionFault"/>
+      <wsdl:fault message="impl:SecurityExceptionResponse"
+                  name="SecurityExceptionFault"/>
+      <wsdl:fault message="impl:ImplementationExceptionResponse"
+                  name="ImplementationExceptionFault"/>
+    </wsdl:operation>
+
+    <wsdl:operation name="undefine">
+      <wsdl:input message="impl:undefineRequest" name="undefineRequest"/>
+      <wsdl:output message="impl:undefineResponse" name="undefineResponse"/>
+      <wsdl:fault message="impl:NoSuchNameExceptionResponse"
+                  name="NoSuchNameExceptionFault"/>
+      <wsdl:fault message="impl:SecurityExceptionResponse"
+                  name="SecurityExceptionFault"/>
+      <wsdl:fault message="impl:ImplementationExceptionResponse"
+                  name="ImplementationExceptionFault"/>
+    </wsdl:operation>
+
+    <wsdl:operation name="getECSpec">
+      <wsdl:input message="impl:getECSpecRequest" name="getECSpecRequest"/>
+      <wsdl:output message="impl:getECSpecResponse" name="getECSpecResponse"/>
+      <wsdl:fault message="impl:NoSuchNameExceptionResponse"
+                  name="NoSuchNameExceptionFault"/>
+      <wsdl:fault message="impl:SecurityExceptionResponse"
+                  name="SecurityExceptionFault"/>
+      <wsdl:fault message="impl:ImplementationExceptionResponse"
+                  name="ImplementationExceptionFault"/>
+    </wsdl:operation>
+
+    <wsdl:operation name="getECSpecNames">
+      <wsdl:input message="impl:getECSpecNamesRequest" name="getECSpecNamesRequest"/>
+      <wsdl:output message="impl:getECSpecNamesResponse" name="getECSpecNamesResponse"/>
+      <wsdl:fault message="impl:SecurityExceptionResponse"
+                  name="SecurityExceptionFault"/>
+      <wsdl:fault message="impl:ImplementationExceptionResponse"
+                  name="ImplementationExceptionFault"/>
+    </wsdl:operation>
+
+    <wsdl:operation name="subscribe">
+      <wsdl:input message="impl:subscribeRequest" name="subscribeRequest"/>
+      <wsdl:output message="impl:subscribeResponse" name="subscribeResponse"/>
+      <wsdl:fault message="impl:NoSuchNameExceptionResponse"
+                  name="NoSuchNameExceptionFault"/>
+      <wsdl:fault message="impl:InvalidURIExceptionResponse"
+                  name="InvalidURIExceptionFault"/>
+      <wsdl:fault message="impl:DuplicateSubscriptionExceptionResponse"
+                  name="DuplicateSubscriptionExceptionFault"/>
+      <wsdl:fault message="impl:SecurityExceptionResponse"
+                  name="SecurityExceptionFault"/>
+      <wsdl:fault message="impl:ImplementationExceptionResponse"
+                  name="ImplementationExceptionFault"/>
+    </wsdl:operation>
+
+    <wsdl:operation name="unsubscribe">
+      <wsdl:input message="impl:unsubscribeRequest" name="unsubscribeRequest"/>
+      <wsdl:output message="impl:unsubscribeResponse" name="unsubscribeResponse"/>
+      <wsdl:fault message="impl:NoSuchNameExceptionResponse"
+                  name="NoSuchNameExceptionFault"/>
+      <wsdl:fault message="impl:NoSuchSubscriberExceptionResponse"
+                  name="NoSuchSubscriberExceptionFault"/>
+      <wsdl:fault message="impl:InvalidURIExceptionResponse"
+                  name="InvalidURIExceptionFault"/>
+      <wsdl:fault message="impl:SecurityExceptionResponse"
+                  name="SecurityExceptionFault"/>
+      <wsdl:fault message="impl:ImplementationExceptionResponse"
+                  name="ImplementationExceptionFault"/>
+    </wsdl:operation>
+
+    <wsdl:operation name="poll">
+      <wsdl:input message="impl:pollRequest" name="pollRequest"/>
+      <wsdl:output message="impl:pollResponse" name="pollResponse"/>
+      <wsdl:fault message="impl:NoSuchNameExceptionResponse"
+                  name="NoSuchNameExceptionFault"/>
+      <wsdl:fault message="impl:SecurityExceptionResponse"
+                  name="SecurityExceptionFault"/>
+      <wsdl:fault message="impl:ImplementationExceptionResponse"
+                  name="ImplementationExceptionFault"/>
+    </wsdl:operation>
+
+    <wsdl:operation name="immediate">
+      <wsdl:input message="impl:immediateRequest" name="immediateRequest"/>
+      <wsdl:output message="impl:immediateResponse" name="immediateResponse"/>
+      <wsdl:fault message="impl:ECSpecValidationExceptionResponse"
+                  name="ECSpecValidationExceptionFault"/>
+      <wsdl:fault message="impl:SecurityExceptionResponse"
+                  name="SecurityExceptionFault"/>
+      <wsdl:fault message="impl:ImplementationExceptionResponse"
+                  name="ImplementationExceptionFault"/>
+    </wsdl:operation>
+
+    <wsdl:operation name="getSubscribers">
+      <wsdl:input message="impl:getSubscribersRequest" name="getSubscribersRequest"/>
+      <wsdl:output message="impl:getSubscribersResponse" name="getSubscribersResponse"/>
+      <wsdl:fault message="impl:NoSuchNameExceptionResponse"
+                  name="NoSuchNameExceptionFault"/>
+      <wsdl:fault message="impl:SecurityExceptionResponse"
+                  name="SecurityExceptionFault"/>
+      <wsdl:fault message="impl:ImplementationExceptionResponse"
+                  name="ImplementationExceptionFault"/>
+    </wsdl:operation>
+
+    <wsdl:operation name="getStandardVersion">
+      <wsdl:input message="impl:getStandardVersionRequest"
+                  name="getStandardVersionRequest"/>
+      <wsdl:output message="impl:getStandardVersionResponse"
+                   name="getStandardVersionResponse"/>
+      <wsdl:fault message="impl:ImplementationExceptionResponse"
+                  name="ImplementationExceptionFault"/>
+    </wsdl:operation>
+
+    <wsdl:operation name="getVendorVersion">
+      <wsdl:input message="impl:getVendorVersionRequest" name="getVendorVersionRequest"/>
+      <wsdl:output message="impl:getVendorVersionResponse"
+                   name="getVendorVersionResponse"/>
+      <wsdl:fault message="impl:ImplementationExceptionResponse"
+                  name="ImplementationExceptionFault"/>
+    </wsdl:operation>
+  </wsdl:portType>
+  <!-- ALESERVICE BINDING -->
+
+  <wsdl:binding name="ALEServiceBinding" type="impl:ALEServicePortType">
+    <wsdlsoap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+
+    <wsdl:operation name="define">
+      <wsdlsoap:operation soapAction=""/>
+      <wsdl:input name="defineRequest">
+        <wsdlsoap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="defineResponse">
+        <wsdlsoap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="DuplicateNameExceptionFault">
+        <wsdlsoap:fault name="DuplicateNameExceptionFault" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="ECSpecValidationExceptionFault">
+        <wsdlsoap:fault name="ECSpecValidationExceptionFault" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="SecurityExceptionFault">
+        <wsdlsoap:fault name="SecurityExceptionFault" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="ImplementationExceptionFault">
+        <wsdlsoap:fault name="ImplementationExceptionFault" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+
+    <wsdl:operation name="undefine">
+      <wsdlsoap:operation soapAction=""/>
+      <wsdl:input name="undefineRequest">
+        <wsdlsoap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="undefineResponse">
+        <wsdlsoap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="NoSuchNameExceptionFault">
+        <wsdlsoap:fault name="NoSuchNameExceptionFault" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="SecurityExceptionFault">
+        <wsdlsoap:fault name="SecurityExceptionFault" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="ImplementationExceptionFault">
+        <wsdlsoap:fault name="ImplementationExceptionFault" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+
+    <wsdl:operation name="getECSpec">
+      <wsdlsoap:operation soapAction=""/>
+      <wsdl:input name="getECSpecRequest">
+        <wsdlsoap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="getECSpecResponse">
+        <wsdlsoap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="NoSuchNameExceptionFault">
+        <wsdlsoap:fault name="NoSuchNameExceptionFault" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="SecurityExceptionFault">
+        <wsdlsoap:fault name="SecurityExceptionFault" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="ImplementationExceptionFault">
+        <wsdlsoap:fault name="ImplementationExceptionFault" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+
+    <wsdl:operation name="getECSpecNames">
+      <wsdlsoap:operation soapAction=""/>
+      <wsdl:input name="getECSpecNamesRequest">
+        <wsdlsoap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="getECSpecNamesResponse">
+        <wsdlsoap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="SecurityExceptionFault">
+        <wsdlsoap:fault name="SecurityExceptionFault" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="ImplementationExceptionFault">
+        <wsdlsoap:fault name="ImplementationExceptionFault" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+
+    <wsdl:operation name="subscribe">
+      <wsdlsoap:operation soapAction=""/>
+      <wsdl:input name="subscribeRequest">
+        <wsdlsoap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="subscribeResponse">
+        <wsdlsoap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="NoSuchNameExceptionFault">
+        <wsdlsoap:fault name="NoSuchNameExceptionFault" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="InvalidURIExceptionFault">
+        <wsdlsoap:fault name="InvalidURIExceptionFault" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="DuplicateSubscriptionExceptionFault">
+        <wsdlsoap:fault name="DuplicateSubscriptionExceptionFault" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="SecurityExceptionFault">
+        <wsdlsoap:fault name="SecurityExceptionFault" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="ImplementationExceptionFault">
+        <wsdlsoap:fault name="ImplementationExceptionFault" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+
+    <wsdl:operation name="unsubscribe">
+      <wsdlsoap:operation soapAction=""/>
+      <wsdl:input name="unsubscribeRequest">
+        <wsdlsoap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="unsubscribeResponse">
+        <wsdlsoap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="NoSuchNameExceptionFault">
+        <wsdlsoap:fault name="NoSuchNameExceptionFault" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="NoSuchSubscriberExceptionFault">
+        <wsdlsoap:fault name="NoSuchSubscriberExceptionFault" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="InvalidURIExceptionFault">
+        <wsdlsoap:fault name="InvalidURIExceptionFault" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="SecurityExceptionFault">
+        <wsdlsoap:fault name="SecurityExceptionFault" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="ImplementationExceptionFault">
+        <wsdlsoap:fault name="ImplementationExceptionFault" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+
+    <wsdl:operation name="poll">
+      <wsdlsoap:operation soapAction=""/>
+      <wsdl:input name="pollRequest">
+        <wsdlsoap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="pollResponse">
+        <wsdlsoap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="NoSuchNameExceptionFault">
+        <wsdlsoap:fault name="NoSuchNameExceptionFault" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="SecurityExceptionFault">
+        <wsdlsoap:fault name="SecurityExceptionFault" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="ImplementationExceptionFault">
+        <wsdlsoap:fault name="ImplementationExceptionFault" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+
+    <wsdl:operation name="immediate">
+      <wsdlsoap:operation soapAction=""/>
+      <wsdl:input name="immediateRequest">
+        <wsdlsoap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="immediateResponse">
+        <wsdlsoap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="ECSpecValidationExceptionFault">
+        <wsdlsoap:fault name="ECSpecValidationExceptionFault" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="SecurityExceptionFault">
+        <wsdlsoap:fault name="SecurityExceptionFault" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="ImplementationExceptionFault">
+        <wsdlsoap:fault name="ImplementationExceptionFault" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+
+    <wsdl:operation name="getSubscribers">
+      <wsdlsoap:operation soapAction=""/>
+      <wsdl:input name="getSubscribersRequest">
+        <wsdlsoap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="getSubscribersResponse">
+        <wsdlsoap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="NoSuchNameExceptionFault">
+        <wsdlsoap:fault name="NoSuchNameExceptionFault" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="SecurityExceptionFault">
+        <wsdlsoap:fault name="SecurityExceptionFault" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="ImplementationExceptionFault">
+        <wsdlsoap:fault name="ImplementationExceptionFault" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+
+    <wsdl:operation name="getStandardVersion">
+      <wsdlsoap:operation soapAction=""/>
+      <wsdl:input name="getStandardVersionRequest">
+        <wsdlsoap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="getStandardVersionResponse">
+        <wsdlsoap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="ImplementationExceptionFault">
+        <wsdlsoap:fault name="ImplementationExceptionFault" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+
+    <wsdl:operation name="getVendorVersion">
+      <wsdlsoap:operation soapAction=""/>
+      <wsdl:input name="getVendorVersionRequest">
+        <wsdlsoap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="getVendorVersionResponse">
+        <wsdlsoap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="ImplementationExceptionFault">
+        <wsdlsoap:fault name="ImplementationExceptionFault" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+  </wsdl:binding>
+
+  <!-- ALESERVICE -->
+  <wsdl:service name="ALEService">
+    <wsdl:port binding="impl:ALEServiceBinding" name="ALEServicePort">
+      <!-- The value of the location attribute below is an example only;
+           Implementations are free to choose any appropriate URL. -->
+      <wsdlsoap:address location="http://localhost:8080/services/ALEService"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

@@ -26,7 +26,7 @@ import javax.xml.bind.annotation.XmlSeeAlso;
                       serviceName = "ALEService",
                       portName = "ALEServicePort",
                       targetNamespace = "urn:epcglobal:ale:wsdl:1",
-                      wsdlLocation = "file:./ale/EPCglobal-ale-1_1-ale.wsdl",
+                      wsdlLocation = "org/rifidi/edge/epcglobal/ale/api/read/ws/epcglobal-ale-1_1-ale.wsdl",
                       endpointInterface = "org.rifidi.edge.epcglobal.ale.api.read.ws.ALEServicePortType")
                       
 public class ALEServicePortTypeImpl implements ALEServicePortType {
