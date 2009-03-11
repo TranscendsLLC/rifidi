@@ -150,7 +150,7 @@ public interface ReaderStub extends Remote {
 	 * @return The processID of the submitted command
 	 */
 	Integer submitCommand(String readerID, Integer sessionIndex,
-			String commandID, Long repeatInterval, TimeUnit timeUnit);
+			String commandID, Long repeatInterval, TimeUnit timeUnit) throws RemoteException;
 
 	/**
 	 * Stop a repeated command. The is removed from the executor and will not be
@@ -163,6 +163,6 @@ public interface ReaderStub extends Remote {
 	 * @param processID
 	 *            The command to kill
 	 */
-	void killCommand(String readerID, Integer sessionIndex, Integer processID);
+	void killCommand(String readerID, Integer sessionIndex, Integer processID) throws RemoteException;
 
 }
