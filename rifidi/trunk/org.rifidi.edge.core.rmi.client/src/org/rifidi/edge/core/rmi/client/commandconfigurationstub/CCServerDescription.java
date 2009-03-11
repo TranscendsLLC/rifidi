@@ -28,7 +28,7 @@ public class CCServerDescription extends ServerDescription {
 	 *            The RMI port of the server
 	 */
 	public CCServerDescription(String serverIP, int serverPort) {
-		super(serverIP, serverPort, "CommandConfiguraitonStub");
+		super(serverIP, serverPort, "CommandStub");
 	}
 
 	/*
