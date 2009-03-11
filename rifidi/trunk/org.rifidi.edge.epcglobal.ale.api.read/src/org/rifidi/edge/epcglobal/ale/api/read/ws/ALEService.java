@@ -22,7 +22,7 @@ import javax.xml.ws.WebServiceFeature;
 
 
 @WebServiceClient(name = "ALEService", 
-                  wsdlLocation = "file:./ale/EPCglobal-ale-1_1-ale.wsdl",
+                  wsdlLocation = "org/rifidi/edge/epcglobal/ale/api/read/ws/epcglobal-ale-1_1-ale.wsdl",
                   targetNamespace = "urn:epcglobal:ale:wsdl:1") 
 public class ALEService extends Service {
 
