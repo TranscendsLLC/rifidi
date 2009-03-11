@@ -3,6 +3,7 @@
  */
 package org.rifidi.edge.core.api.rmi.dto;
 
+import java.io.Serializable;
 import java.util.List;
 
 import javax.management.AttributeList;
@@ -11,8 +12,10 @@ import javax.management.AttributeList;
  * @author kyle
  * 
  */
-public class ReaderDTO {
+public class ReaderDTO implements Serializable{
 
+	/**SerialVersionID */
+	private static final long serialVersionUID = 1L;
 	/** The ID of the reader */
 	private String readerID;
 	/** The factory type of this reader */

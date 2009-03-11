@@ -1,6 +1,6 @@
 package org.rifidi.edge.core.api.rmi.dto;
 
-import java.util.List;
+import java.io.Serializable;
 import java.util.Map;
 
 import org.rifidi.edge.core.api.SessionStatus;
@@ -11,7 +11,10 @@ import org.rifidi.edge.core.api.SessionStatus;
  * @author Kyle Neumeier - kyle@pramari.com
  * 
  */
-public class SessionDTO {
+public class SessionDTO implements Serializable {
+
+	/** SerialVersionID */
+	private static final long serialVersionUID = 1L;
 	/** The status of this session */
 	private SessionStatus status;
 	/** The Commands being executed. Integer is processID, String is command ID */
@@ -26,9 +29,9 @@ public class SessionDTO {
 	 *            The Commands being executed. Integer is processID, String is
 	 *            command ID
 	 */
-	public SessionDTO(SessionStatus status, Map<Integer,String> commands) {
+	public SessionDTO(SessionStatus status, Map<Integer, String> commands) {
 		this.status = status;
-		this.commands =commands;
+		this.commands = commands;
 	}
 
 	/**
@@ -39,8 +42,8 @@ public class SessionDTO {
 	}
 
 	/**
-	 * @return The Commands being executed. Integer is process ID for this session, String is
-	 *         Command ID
+	 * @return The Commands being executed. Integer is process ID for this
+	 *         session, String is Command ID
 	 */
 	public Map<Integer, String> getCommands() {
 		return commands;
