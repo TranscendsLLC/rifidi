@@ -4,12 +4,12 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
      http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi.xsd
      http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd">
-	<bean id="aleReadAPIService"
-		class="org.rifidi.edge.epcglobal.ale.api.read.ws.ALEServicePortTypeImpl" />
-	<osgi:service id="aleReadService" ref="aleReadAPIService">
+	<bean id="aleLRAPIService"
+		class="org.rifidi.edge.epcglobal.ale.api.lr.ws.ALELRServicePortTypeImpl" />
+	<osgi:service id="aleLRService" ref="aleLRAPIService">
 		<osgi:interfaces>
 			<value>org.rifidi.edge.wsmanagement.WebService</value>
-			<value>org.rifidi.edge.epcglobal.ale.api.read.ws.ALEServicePortType</value>
+			<value>org.rifidi.edge.epcglobal.ale.api.lr.ws.ALELRServicePortType</value>
 		</osgi:interfaces>
 	</osgi:service>
 </beans>
