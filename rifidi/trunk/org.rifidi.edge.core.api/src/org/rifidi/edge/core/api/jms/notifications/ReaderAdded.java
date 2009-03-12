@@ -2,24 +2,22 @@ package org.rifidi.edge.core.api.jms.notifications;
 
 import java.io.Serializable;
 
-import org.rifidi.edge.core.api.rmi.dto.ReaderDTO;
-
 public class ReaderAdded implements Serializable{
 
 	/** Serial Version ID for this message*/
 	private static final long serialVersionUID = 1L;
 	
-	private ReaderDTO readerDTO;
+	private String id;
 	
-	public ReaderAdded(ReaderDTO dto){
-		this.readerDTO = dto;
+	/**
+	 * @return the id
+	 */
+	public String getId() {
+		return id;
 	}
 
-	/**
-	 * @return the readerDTO
-	 */
-	public ReaderDTO getReaderDTO() {
-		return readerDTO;
+	public ReaderAdded(String id){
+		this.id= id;
 	}
 
 }
