@@ -1,4 +1,4 @@
-package org.rifidi.edge.core.jms.notifications;
+package org.rifidi.edge.core.api.jms.notifications;
 
 import java.io.Serializable;
 
