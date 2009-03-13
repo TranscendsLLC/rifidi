@@ -1,4 +1,4 @@
-package org.rifidi.edge.client.ale;
+package org.rifidi.edge.client.ale.api;
 
 import org.eclipse.core.runtime.Plugin;
 import org.osgi.framework.BundleContext;
