@@ -3,9 +3,16 @@
  */
 package org.rifidi.edge.core.readers;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
+import javax.management.AttributeList;
+
+import org.rifidi.configuration.Configuration;
 import org.rifidi.configuration.RifidiService;
+import org.rifidi.edge.core.api.rmi.dto.ReaderDTO;
+import org.rifidi.edge.core.api.rmi.dto.SessionDTO;
 
 /**
  * Factory that provides and manages readerSession instances
@@ -22,8 +29,8 @@ import org.rifidi.configuration.RifidiService;
  * @author Jochen Mader - jochen@pramari.com
  * 
  */
-public abstract class AbstractReader<T extends ReaderSession>
-		extends RifidiService {
+public abstract class AbstractReader<T extends ReaderSession> extends
+		RifidiService {
 
 	/**
 	 * Get the name of the readerSession. Has to be unique.
@@ -48,11 +55,12 @@ public abstract class AbstractReader<T extends ReaderSession>
 	abstract public ReaderSession createReaderSession();
 
 	/**
-	 * Get all currently created reader sessions.
+	 * Get all currently created reader sessions. The Key is the ID of the
+	 * session, and the value is the actual session
 	 * 
 	 * @return
 	 */
-	abstract public List<ReaderSession> getReaderSessions();
+	abstract public Map<String, ReaderSession> getReaderSessions();
 
 	/**
 	 * Destroy a reader session.
@@ -60,9 +68,28 @@ public abstract class AbstractReader<T extends ReaderSession>
 	 * @param session
 	 */
 	abstract public void destroyReaderSession(ReaderSession session);
-	
+
 	/**
 	 * Apply Property changes to the reader
 	 */
 	abstract public void applyPropertyChanges();
+
+	/***
+	 * This method returns the Data Transfer Object for this Reader
+	 * 
+	 * @param config
+	 *            The Configuration Object for this AbstractReader
+	 * @return A data transfer object for this reader
+	 */
+	public ReaderDTO getDTO(Configuration config) {
+		String readerID = config.getServiceID();
+		String factoryID = config.getFactoryID();
+		AttributeList attrs = config.getAttributes(config.getAttributeNames());
+		List<SessionDTO> sessionDTOs = new ArrayList<SessionDTO>();
+		for (ReaderSession s : this.getReaderSessions().values()) {
+			sessionDTOs.add(s.getDTO());
+		}
+		ReaderDTO dto = new ReaderDTO(readerID, factoryID, attrs, sessionDTOs);
+		return dto;
+	}
 }

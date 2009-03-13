@@ -5,6 +5,14 @@
      http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi.xsd
      http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd">
 
+	<bean id="JMSNotifier"
+		class="org.rifidi.edge.core.notifications.internal.ServiceNotifier">
+		<property name="readerDAO" ref="ReaderDAOImpl" />
+		<property name="commandDAO" ref="CommandDAOImpl" />
+		<property name="extNotificationDest" ref="externalDest" />
+		<property name="extNotificationTemplate" ref="extNotificationTemplate" />
+	</bean>
+
 	<osgi:reference id="configurationService"
 		interface="org.rifidi.configuration.services.ConfigurationService" />
 
@@ -27,8 +35,8 @@
 	</bean>
 
 	<!-- Create Configuration DAO Service -->
-	<osgi:service id="ConfigurationDAOBinding" interface="org.rifidi.edge.core.daos.ConfigurationDAO"
-		ref="ConfigurationDAOImpl" />
+	<osgi:service id="ConfigurationDAOBinding"
+		interface="org.rifidi.edge.core.daos.ConfigurationDAO" ref="ConfigurationDAOImpl" />
 	<bean id="ConfigurationDAOImpl" class="org.rifidi.edge.core.daos.ConfigurationDAOImpl">
 		<property name="configurations" ref="ConfigurationSet" />
 	</bean>
@@ -46,12 +54,16 @@
 		cardinality="0..N">
 		<osgi:listener ref="ReaderDAOImpl" bind-method="bindReaderFactory"
 			unbind-method="unbindReaderFactory" />
+		<osgi:listener ref="JMSNotifier" bind-method="bindReaderFactory"
+			unbind-method="unbindReaderFactory" />
 	</osgi:set>
 
 	<!-- Listener for Configuration Factories -->
 	<osgi:set id="ConfigurationSet" interface="org.rifidi.configuration.Configuration"
 		cardinality="0..N">
 		<osgi:listener ref="ConfigurationDAOImpl" bind-method="bindConfiguration"
+			unbind-method="unbindConfiguration" />
+		<osgi:listener ref="JMSNotifier" bind-method="bindConfiguration"
 			unbind-method="unbindConfiguration" />
 	</osgi:set>
 
@@ -67,6 +79,8 @@
 		interface="org.rifidi.edge.core.commands.AbstractCommandConfigurationFactory"
 		cardinality="0..N">
 		<osgi:listener ref="CommandDAOImpl" bind-method="bindCommandFactory"
+			unbind-method="unbindCommandFactory" />
+		<osgi:listener ref="JMSNotifier" bind-method="bindCommandFactory"
 			unbind-method="unbindCommandFactory" />
 	</osgi:set>
 
@@ -85,7 +99,7 @@
 		XML
 	-->
 	<amq:connectionFactory id="jmsFactory" brokerURL="vm://localhost" />
-	
+
 	<!-- Spring JMS Template -->
 	<bean id="myJmsTemplate" class="org.springframework.jms.core.JmsTemplate">
 		<property name="connectionFactory">
@@ -100,5 +114,33 @@
 
 	<bean id="senderJmsTemplate" class="org.springframework.jms.core.JmsTemplate">
 		<property name="connectionFactory" ref="jmsFactory" />
+	</bean>
+
+
+	<!--  External JMS Message Queue for events -->
+	<amq:broker useJmx="false" persistent="false">
+		<amq:transportConnectors>
+			<amq:transportConnector uri="tcp://localhost:1099" />
+		</amq:transportConnectors>
+	</amq:broker>
+	<!--  ActiveMQ destinations to use  -->
+	<amq:queue id="externalDest" physicalName="org.rifidi.edge.external.notifications" />
+	<!--
+		JMS ConnectionFactory to use, configuring the embedded broker using
+		XML
+	-->
+	<amq:connectionFactory id="externalConFac"
+		brokerURL="tcp://localhost:1099" />
+
+	<!-- Spring JMS Template -->
+	<bean id="extNotificationTemplate" class="org.springframework.jms.core.JmsTemplate">
+		<property name="connectionFactory">
+			<!-- lets wrap in a pool to avoid creating a connection per send -->
+			<bean class="org.springframework.jms.connection.SingleConnectionFactory">
+				<property name="targetConnectionFactory">
+					<ref local="externalConFac" />
+				</property>
+			</bean>
+		</property>
 	</bean>
 </beans>

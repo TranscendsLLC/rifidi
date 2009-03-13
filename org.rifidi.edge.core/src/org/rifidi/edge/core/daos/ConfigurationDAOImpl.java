@@ -2,27 +2,34 @@
  * 
  */
 package org.rifidi.edge.core.daos;
+
 import java.util.Dictionary;
-import java.util.HashSet;
-import java.util.Iterator;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.rifidi.configuration.Configuration;
 
 /**
- * @author kyle
+ * This is the implementation that listens for OSGi services for Configurations.
+ * 
+ * @author Kyle Neumeier - kyle@pramari.com
  * 
  */
 public class ConfigurationDAOImpl implements ConfigurationDAO {
 
 	/** The available Configurations */
-	private Set<Configuration> configurations;
+	private Map<String, Configuration> configurations;
+	private final static Log logger = LogFactory
+			.getLog(ConfigurationDAOImpl.class);
 
 	/**
 	 * constructor
 	 */
 	public ConfigurationDAOImpl() {
-		configurations = new HashSet<Configuration>();
+		configurations = new HashMap<String, Configuration>();
 	}
 
 	/*
@@ -34,15 +41,7 @@ public class ConfigurationDAOImpl implements ConfigurationDAO {
 	 */
 	@Override
 	public Configuration getConfiguration(String serviceID) {
-		// TODO Auto-generated method stub
-		Iterator<Configuration> iter = configurations.iterator();
-		while (iter.hasNext()) {
-			Configuration config = iter.next();
-			if (config.getServiceID().equals(serviceID)) {
-				return config;
-			}
-		}
-		return null;
+		return configurations.get(serviceID);
 	}
 
 	/**
@@ -54,7 +53,8 @@ public class ConfigurationDAOImpl implements ConfigurationDAO {
 	 */
 	public void bindConfiguration(Configuration configuration,
 			Dictionary<String, String> parameters) {
-		configurations.add(configuration);
+		logger.info("config bound: " + configuration.getServiceID());
+		configurations.put(configuration.getServiceID(), configuration);
 	}
 
 	/**
@@ -67,7 +67,7 @@ public class ConfigurationDAOImpl implements ConfigurationDAO {
 	 */
 	public void unbindConfiguration(Configuration configuration,
 			Dictionary<String, String> parameters) {
-		configurations.remove(configuration);
+		configurations.remove(configuration.getServiceID());
 	}
 
 	/**
@@ -78,7 +78,10 @@ public class ConfigurationDAOImpl implements ConfigurationDAO {
 	 *            the initial list of available configurations
 	 */
 	public void setConfigurations(Set<Configuration> configurations) {
-		this.configurations.addAll(configurations);
+		for (Configuration configuration : configurations) {
+			this.configurations
+					.put(configuration.getServiceID(), configuration);
+		}
 	}
 
 }
