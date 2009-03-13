@@ -22,7 +22,7 @@ public class RS_KillCommand extends
 	/** The reader ID */
 	private String readerID;
 	/** The session index */
-	private Integer sessionIndex;
+	private String sessionID;
 	/** The process ID of the command to kill */
 	private Integer processID;
 
@@ -33,16 +33,16 @@ public class RS_KillCommand extends
 	 *            The server to use
 	 * @param readerID
 	 *            The ID of the reader
-	 * @param sessionIndex
-	 *            The Index number of the session
+	 * @param sessionID
+	 *            The ID of the session
 	 * @param processID
 	 *            The process ID of the command to kill
 	 */
 	public RS_KillCommand(ServerDescription serverDescription, String readerID,
-			Integer sessionIndex, Integer processID) {
+			String sessionID, Integer processID) {
 		super(serverDescription);
 		this.readerID = readerID;
-		this.sessionIndex = sessionIndex;
+		this.sessionID= sessionID;
 		this.processID = processID;
 	}
 
@@ -57,7 +57,7 @@ public class RS_KillCommand extends
 	protected Object performRemoteCall(Remote remoteObject)
 			throws RemoteException, RemoteException {
 		ReaderStub stub = (ReaderStub) remoteObject;
-		stub.killCommand(readerID, sessionIndex, processID);
+		stub.killCommand(readerID, sessionID, processID);
 		return null;
 	}
 

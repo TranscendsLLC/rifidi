@@ -11,7 +11,7 @@
 	</bean>
 	<osgi:service id="customCommandsService" ref="customCommands"
 		interface="org.eclipse.osgi.framework.console.CommandProvider" />
-	<!-- Put reader session service in OSGi Registry -->
+
 	<osgi:reference id="readerManagement" interface="org.rifidi.edge.core.daos.ReaderDAO" />
 	<osgi:reference id="commandManagement"
 		interface="org.rifidi.edge.core.daos.CommandDAO" />

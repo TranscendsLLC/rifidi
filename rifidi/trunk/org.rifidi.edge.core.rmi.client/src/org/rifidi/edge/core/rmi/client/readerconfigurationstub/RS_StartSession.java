@@ -22,21 +22,21 @@ public class RS_StartSession extends
 	/** The ID of the reader */
 	private String readerID;
 	/** The index of the session to start */
-	private Integer sessionIndex;
+	private String sessionID;
 
 	/**
 	 * @param serverDescription
 	 *            The serverDescription
 	 * @param readerID
 	 *            The ID of the reader to start the session on
-	 * @param sessionIndex
+	 * @param sessionID
 	 *            The index number of the session to start
 	 */
 	public RS_StartSession(ServerDescription serverDescription,
-			String readerID, Integer sessionIndex) {
+			String readerID, String sessionID) {
 		super(serverDescription);
 		this.readerID = readerID;
-		this.sessionIndex = sessionIndex;
+		this.sessionID = sessionID;
 	}
 
 	/*
@@ -50,7 +50,7 @@ public class RS_StartSession extends
 	protected Object performRemoteCall(Remote remoteObject)
 			throws RemoteException, RuntimeException {
 		ReaderStub stub = (ReaderStub) remoteObject;
-		stub.startSession(readerID, sessionIndex);
+		stub.startSession(readerID, sessionID);
 		return null;
 	}
 

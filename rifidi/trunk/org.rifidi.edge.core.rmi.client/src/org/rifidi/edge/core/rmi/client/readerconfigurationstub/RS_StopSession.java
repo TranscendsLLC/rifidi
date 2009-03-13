@@ -19,17 +19,17 @@ public class RS_StopSession extends
 
 	/** The ID of the reader */
 	private String readerID;
-	/** The index of the session */
-	private Integer sessionIndex;
+	/** The ID of the session */
+	private String sessionID;
 
 	/**
 	 * @param serverDescription
 	 */
 	public RS_StopSession(ServerDescription serverDescription, String readerID,
-			Integer sessionIndex) {
+			String sessionID) {
 		super(serverDescription);
 		this.readerID = readerID;
-		this.sessionIndex = sessionIndex;
+		this.sessionID = sessionID;
 	}
 
 	/*
@@ -43,7 +43,7 @@ public class RS_StopSession extends
 	protected Object performRemoteCall(Remote remoteObject)
 			throws RemoteException, RuntimeException {
 		ReaderStub stub = (ReaderStub) remoteObject;
-		stub.stopSession(readerID, sessionIndex);
+		stub.stopSession(readerID, sessionID);
 		return null;
 	}
 }

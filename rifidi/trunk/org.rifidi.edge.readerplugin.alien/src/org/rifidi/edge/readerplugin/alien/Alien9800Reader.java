@@ -5,10 +5,8 @@ package org.rifidi.edge.readerplugin.alien;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Properties;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import javax.jms.Destination;
@@ -21,7 +19,6 @@ import org.rifidi.configuration.annotations.Property;
 import org.rifidi.configuration.annotations.PropertyType;
 import org.rifidi.edge.core.readers.AbstractReader;
 import org.rifidi.edge.core.readers.ReaderSession;
-import org.rifidi.edge.readerplugin.alien.commandobject.AlienCommandObject;
 import org.rifidi.edge.readerplugin.alien.commandobject.AlienCommandObjectWrapper;
 import org.rifidi.edge.readerplugin.alien.commandobject.AlienGetCommandObject;
 import org.rifidi.edge.readerplugin.alien.commandobject.AlienSetCommandObject;
@@ -62,6 +59,8 @@ public class Alien9800Reader extends AbstractReader<Alien9800ReaderSession> {
 	private Destination destination;
 	/** Spring JMS template */
 	private JmsTemplate template;
+	/**The ID of the session*/
+	private int sessionID = 0;
 
 	/**
 	 * READER PROPERTIES - SETTABE, SET ON CONNECTION
@@ -187,7 +186,8 @@ public class Alien9800Reader extends AbstractReader<Alien9800ReaderSession> {
 	@Override
 	public synchronized ReaderSession createReaderSession() {
 		if (session == null) {
-			session = new Alien9800ReaderSession(ipAddress, port,
+			sessionID++;
+			session = new Alien9800ReaderSession(Integer.toString(sessionID),ipAddress, port,
 					(int) (long) reconnectionInterval,
 					maxNumConnectionAttempts, username, password, destination,
 					template);
@@ -230,10 +230,10 @@ public class Alien9800Reader extends AbstractReader<Alien9800ReaderSession> {
 	 * @see org.rifidi.edge.core.readers.AbstractReader#getReaderSessions()
 	 */
 	@Override
-	public List<ReaderSession> getReaderSessions() {
-		List<ReaderSession> ret = new ArrayList<ReaderSession>();
+	public Map<String, ReaderSession> getReaderSessions() {
+		Map<String, ReaderSession> ret = new HashMap<String, ReaderSession>();
 		if (session != null) {
-			ret.add(session);
+			ret.put(session.getID(), session);
 		}
 		return ret;
 	}
