@@ -1,0 +1,53 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:osgi="http://www.springframework.org/schema/osgi"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+     http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi.xsd">
+
+	<bean class="org.springframework.remoting.rmi.RmiServiceExporter">
+		<property name="serviceName" value="ReaderStub" />
+		<property name="service" ref="readerStub" />
+		<property name="serviceInterface" value="org.rifidi.edge.core.api.rmi.ReaderStub" />
+		<property name="registryPort" value="1098" />
+	</bean>
+
+	<bean id="readerStub"
+		class="org.rifidi.edge.core.rmi.server.ReaderConfigurationStubImpl">
+		<property name="readerDAO" ref="readerDAO" />
+		<property name="configurationDAO" ref="configurationDAO" />
+		<property name="commandDAO" ref="commandDAO" />
+	</bean>
+
+	<bean class="org.springframework.remoting.rmi.RmiServiceExporter">
+		<property name="serviceName" value="CommandStub" />
+		<property name="service" ref="commandStub" />
+		<property name="serviceInterface" value="org.rifidi.edge.core.api.rmi.CommandStub" />
+		<property name="registryPort" value="1098" />
+	</bean>
+
+	<bean id="commandStub"
+		class="org.rifidi.edge.core.rmi.server.CommandConfigurationStubImpl">
+		<property name="configDAO" ref="configurationDAO" />
+		<property name="commandDAO" ref="commandDAO" />
+	</bean>
+
+	<bean class="org.springframework.remoting.rmi.RmiServiceExporter">
+		<property name="serviceName" value="EdgeServerStub" />
+		<property name="service" ref="edgeServerStub" />
+		<property name="serviceInterface" value="org.rifidi.edge.core.api.rmi.EdgeServerStub" />
+		<property name="registryPort" value="1098" />
+	</bean>
+
+	<bean id="edgeServerStub" class="org.rifidi.edge.core.rmi.server.EdgeServerStubImpl">
+		<property name="configurationService" ref="configurationService" />
+	</bean>
+
+	<osgi:reference id="readerDAO" interface="org.rifidi.edge.core.daos.ReaderDAO" />
+	<osgi:reference id="commandDAO"
+		interface="org.rifidi.edge.core.daos.CommandDAO" />
+	<osgi:reference id="configurationService"
+		interface="org.rifidi.configuration.services.ConfigurationService" />
+	<osgi:reference id="configurationDAO"
+		interface="org.rifidi.edge.core.daos.ConfigurationDAO" />
+
+
+</beans>
