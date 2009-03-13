@@ -4,7 +4,6 @@
 package org.rifidi.edge.console;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -98,9 +97,8 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 			intp
 					.println("ID: " + reader.getID() + " Name: "
 							+ reader.getName());
-			int count = 0;
-			for (ReaderSession session : reader.getReaderSessions()) {
-				intp.println("\tsession (" + count + "): " + session);
+			for (ReaderSession session : reader.getReaderSessions().values()) {
+				intp.println("\tsession (" + session.getID() + "): " + session);
 				Map<Integer, Command> commands = session.currentCommands();
 				for (Integer commandId : commands.keySet()) {
 					intp.println("\t\tcommand (" + commandId + "): "
@@ -308,12 +306,11 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 			return null;
 		}
 		try {
-			List<ReaderSession> sessions = reader.getReaderSessions();
-			if (sessions.size() - 1 < Integer.parseInt(sessionid)) {
+			ReaderSession session = reader.getReaderSessions().get(sessionid);
+			if (session == null) {
 				intp.println("Non existent session id.");
 				return null;
 			}
-			ReaderSession session = sessions.get(Integer.parseInt(sessionid));
 			session.connect();
 			reader.applyPropertyChanges();
 		} catch (NumberFormatException e) {
@@ -355,11 +352,9 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 			intp.println("Non existent command id.");
 			return null;
 		}
-		List<ReaderSession> sessions = reader.getReaderSessions();
+		ReaderSession session = reader.getReaderSessions().get(sessionid);
 		try {
-			if (sessions.size() - 1 >= Integer.parseInt(sessionid)) {
-				ReaderSession session = reader.getReaderSessions().get(
-						Integer.parseInt(sessionid));
+			if (session != null) {
 				Long ival = Long.parseLong(interval);
 				if (ival > 0) {
 					session.submit(command.getCommand(), ival,
@@ -372,7 +367,7 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 				return null;
 			}
 		} catch (NumberFormatException e) {
-			intp.println("Session id or interval is not a number.");
+			intp.println("interval is not a number.");
 			return null;
 		}
 		intp.println("Command submitted.");
@@ -395,15 +390,15 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 			return null;
 		}
 		AbstractReader<?> reader = readerDAO.getReaderByID(readerid);
-		List<ReaderSession> sessions = reader.getReaderSessions();
+		ReaderSession session = reader.getReaderSessions().get(sessionid);
 		try {
-			if (sessions.size() - 1 >= Integer.parseInt(sessionid)) {
-				ReaderSession session = reader.getReaderSessions().get(
-						Integer.parseInt(sessionid));
+			if (session != null) {
 				session.killComand(Integer.parseInt(commandid));
+			}else{
+				intp.println("session ID does not exist");
 			}
 		} catch (NumberFormatException e) {
-			intp.println("Session id or command id is not a number.");
+			intp.println("command id is not a number.");
 			return null;
 		}
 		intp.println("Command killed.");

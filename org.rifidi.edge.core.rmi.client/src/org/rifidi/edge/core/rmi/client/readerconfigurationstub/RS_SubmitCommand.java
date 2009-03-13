@@ -24,8 +24,8 @@ public class RS_SubmitCommand extends
 
 	/** The ID of the reader */
 	private String readerID;
-	/** The index of the session to submit the command to */
-	private Integer sessionIndex;
+	/** The id of the session to submit the command to */
+	private String sessionID;
 	/** The ID of the command to submit */
 	private String commandID;
 	/** The repeat interval */
@@ -40,7 +40,7 @@ public class RS_SubmitCommand extends
 	 *            The ServerDescription of the stub
 	 * @param readerID
 	 *            The ID of the reader to submit the command to
-	 * @param sessionIndex
+	 * @param sessionID
 	 *            The Index Number of the session to use
 	 * @param commandID
 	 *            The ID of the command to submit
@@ -52,11 +52,11 @@ public class RS_SubmitCommand extends
 	 *            repeatInterval is 0
 	 */
 	public RS_SubmitCommand(ServerDescription serverDescription,
-			String readerID, Integer sessionIndex, String commandID,
+			String readerID, String sessionID, String commandID,
 			Long repeatInterval, TimeUnit timeUnit) {
 		super(serverDescription);
 		this.readerID = readerID;
-		this.sessionIndex = sessionIndex;
+		this.sessionID = sessionID;
 		this.commandID = commandID;
 		this.repeatInterval = repeatInterval;
 		this.timeUnit = timeUnit;
@@ -73,7 +73,7 @@ public class RS_SubmitCommand extends
 	protected Integer performRemoteCall(Remote remoteObject)
 			throws RemoteException, RuntimeException {
 		ReaderStub stub = (ReaderStub) remoteObject;
-		return stub.submitCommand(readerID, sessionIndex, commandID,
+		return stub.submitCommand(readerID, sessionID, commandID,
 				repeatInterval, timeUnit);
 	}
 

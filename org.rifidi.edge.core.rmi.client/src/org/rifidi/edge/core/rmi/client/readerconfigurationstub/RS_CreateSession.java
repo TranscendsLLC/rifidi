@@ -5,7 +5,7 @@ package org.rifidi.edge.core.rmi.client.readerconfigurationstub;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
-import java.util.List;
+import java.util.Set;
 
 import org.rifidi.edge.core.api.rmi.ReaderStub;
 import org.rifidi.edge.core.api.rmi.dto.SessionDTO;
@@ -22,7 +22,7 @@ import org.rifidi.rmi.utils.remotecall.ServerDescriptionBasedRemoteMethodCall;
  */
 public class RS_CreateSession
 		extends
-		ServerDescriptionBasedRemoteMethodCall<List<SessionDTO>, RuntimeException> {
+		ServerDescriptionBasedRemoteMethodCall<Set<SessionDTO>, RuntimeException> {
 
 	/** The readerID to create a session on */
 	private String readerID;
@@ -43,7 +43,7 @@ public class RS_CreateSession
 	 * (java.rmi.Remote)
 	 */
 	@Override
-	protected List<SessionDTO> performRemoteCall(Remote remoteObject)
+	protected Set<SessionDTO> performRemoteCall(Remote remoteObject)
 			throws RemoteException, RuntimeException {
 		ReaderStub stub = (ReaderStub) remoteObject;
 		return stub.createSession(readerID);

@@ -79,15 +79,16 @@ public class Alien9800ReaderSession extends AbstractIPReaderSession {
 	public static final String COMMAND_TIME_ZONE = "TimeZone";
 
 	/**
+	 * @param id
 	 * @param host
 	 * @param port
 	 * @param reconnectionInterval
 	 * @param maxConAttempts
 	 */
-	public Alien9800ReaderSession(String host, int port,
+	public Alien9800ReaderSession(String id, String host, int port,
 			int reconnectionInterval, int maxConAttempts, String username,
 			String password, Destination destination, JmsTemplate template) {
-		super(host, port, reconnectionInterval, maxConAttempts, destination,
+		super(id, host, port, reconnectionInterval, maxConAttempts, destination,
 				template);
 		this.username = username;
 		this.password = password;

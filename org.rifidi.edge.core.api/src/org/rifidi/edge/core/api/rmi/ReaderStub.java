@@ -5,7 +5,6 @@ package org.rifidi.edge.core.api.rmi;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
-import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -106,38 +105,36 @@ public interface ReaderStub extends Remote {
 	 *            list of sessions currently on this reader
 	 * @throws RemoteException
 	 */
-	List<SessionDTO> createSession(String readerID) throws RemoteException;
+	Set<SessionDTO> createSession(String readerID) throws RemoteException;
 
 	/**
 	 * Starts a session on the reader
 	 * 
 	 * @param readerID
 	 *            The reader to use
-	 * @param sessionIndex
+	 * @param sessionID
 	 *            The session to start
 	 * @throws RemoteException
 	 */
-	void startSession(String readerID, Integer sessionIndex)
-			throws RemoteException;
+	void startSession(String readerID, String sessionID) throws RemoteException;
 
 	/**
 	 * Stops a session
 	 * 
 	 * @param readerID
 	 *            The reader to use
-	 * @param sessionIndex
+	 * @param sessionID
 	 *            The session to stop
 	 * @throws RemoteException
 	 */
-	void stopSession(String readerID, Integer sessionIndex)
-			throws RemoteException;
+	void stopSession(String readerID, String sessionID) throws RemoteException;
 
 	/**
 	 * Submit a command for execution on the reader
 	 * 
 	 * @param readerID
 	 *            The reader to use
-	 * @param sessionIndex
+	 * @param sessionID
 	 *            The session to use
 	 * @param commandID
 	 *            The command to use
@@ -149,8 +146,8 @@ public interface ReaderStub extends Remote {
 	 *            repeatInterval is set to 0
 	 * @return The processID of the submitted command
 	 */
-	Integer submitCommand(String readerID, Integer sessionIndex,
-			String commandID, Long repeatInterval, TimeUnit timeUnit) throws RemoteException;
+	Integer submitCommand(String readerID, String sessionID, String commandID,
+			Long repeatInterval, TimeUnit timeUnit) throws RemoteException;
 
 	/**
 	 * Stop a repeated command. The is removed from the executor and will not be
@@ -158,11 +155,12 @@ public interface ReaderStub extends Remote {
 	 * 
 	 * @param readerID
 	 *            The reader to use
-	 * @param sessionIndex
+	 * @param sessionID
 	 *            The session to use
 	 * @param processID
 	 *            The command to kill
 	 */
-	void killCommand(String readerID, Integer sessionIndex, Integer processID) throws RemoteException;
+	void killCommand(String readerID, String sessionID, Integer processID)
+			throws RemoteException;
 
 }
