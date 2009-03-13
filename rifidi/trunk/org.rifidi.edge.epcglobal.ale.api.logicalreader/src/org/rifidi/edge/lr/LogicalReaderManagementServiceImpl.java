@@ -3,12 +3,16 @@
  */
 package org.rifidi.edge.lr;
 
+import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.rifidi.edge.core.readers.AbstractReader;
 import org.rifidi.edge.epcglobal.ale.api.lr.data.LRProperty;
 import org.rifidi.edge.epcglobal.ale.api.lr.data.LRSpec;
 import org.rifidi.edge.epcglobal.ale.api.lr.ws.DuplicateNameExceptionResponse;
@@ -22,7 +26,10 @@ import org.rifidi.edge.epcglobal.ale.api.lr.ws.NoSuchNameExceptionResponse;
  */
 public class LogicalReaderManagementServiceImpl implements
 		LogicalReaderManagementService {
-
+	/** Logger for this class. */
+	private static final Log logger = LogFactory
+			.getLog(LogicalReaderManagementServiceImpl.class);
+	/** Map containing all logical readers with their names as key. */
 	private Map<String, LogicalReader> readers;
 
 	/**
@@ -30,6 +37,7 @@ public class LogicalReaderManagementServiceImpl implements
 	 */
 	public LogicalReaderManagementServiceImpl() {
 		readers = new ConcurrentHashMap<String, LogicalReader>();
+		logger.debug("Service created.");
 	}
 
 	/*
@@ -43,6 +51,7 @@ public class LogicalReaderManagementServiceImpl implements
 	@Override
 	public void createLogicalReader(String name, LRSpec lrSpec,
 			Boolean immutable) throws DuplicateNameExceptionResponse {
+		logger.debug("Creating reader " + name);
 		if (!readers.containsKey(name)) {
 			Set<LogicalReader> readers = new HashSet<LogicalReader>();
 			for (String reader : lrSpec.getReaders().getReader()) {
@@ -75,8 +84,10 @@ public class LogicalReaderManagementServiceImpl implements
 	public void destroyLogicalReader(String name)
 			throws NoSuchNameExceptionResponse,
 			ImmutableReaderExceptionResponse, InUseExceptionResponse {
+		logger.debug("Trying to destroy reader " + name);
 		LogicalReader reader = getLogicalReaderByName(name);
 		reader.destroy();
+		logger.debug("Destroied " + name);
 	}
 
 	/*
@@ -108,4 +119,44 @@ public class LogicalReaderManagementServiceImpl implements
 		return new HashSet<String>(readers.keySet());
 	}
 
+	/**
+	 * Register a new physical reader.
+	 */
+	public void bindReader(AbstractReader<?> reader,
+			Dictionary<Object, Object> props) {
+		logger.debug("Binding reader " + reader.getName());
+		synchronized (this.readers) {
+			this.readers.put(reader.getName(), new LogicalReaderImpl(true,
+					reader.getName(), new HashMap<String, String>()));
+		}
+	}
+
+	/**
+	 * Unregister a physical reader.
+	 */
+	public void unbindReader(AbstractReader<?> reader,
+			Dictionary<Object, Object> props) {
+		logger.debug("Unbinding reader " + reader.getName());
+		synchronized (this.readers) {
+			if (this.readers.get(reader.getName()).isInUse()) {
+				logger.warn("Removing reader that is currently used: "
+						+ reader.getName());
+			}
+			// TODO: add better removal logic
+			this.readers.remove(reader.getName());
+		}
+	}
+
+	/**
+	 * Used by string to provide the initial list of physical readers.
+	 * 
+	 * @param readers
+	 */
+	public void setRealReaders(Set<AbstractReader<?>> readers) {
+		synchronized (this.readers) {
+			for (AbstractReader<?> reader : readers) {
+				bindReader(reader, null);
+			}
+		}
+	}
 }
