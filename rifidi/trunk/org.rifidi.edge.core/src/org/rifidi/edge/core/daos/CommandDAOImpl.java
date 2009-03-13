@@ -4,7 +4,9 @@
 package org.rifidi.edge.core.daos;
 
 import java.util.Dictionary;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.logging.Log;
@@ -21,7 +23,7 @@ public class CommandDAOImpl implements CommandDAO {
 	/** The available Command Configuration factory factories */
 	private Set<AbstractCommandConfigurationFactory> commandFactories;
 	/** The available Command Configuration Factories */
-	private Set<AbstractCommandConfiguration<?>> commands;
+	private Map<String, AbstractCommandConfiguration<?>> commands;
 	/** The logger for this class */
 	private static final Log logger = LogFactory.getLog(CommandDAOImpl.class);
 
@@ -30,7 +32,7 @@ public class CommandDAOImpl implements CommandDAO {
 	 */
 	public CommandDAOImpl() {
 		commandFactories = new HashSet<AbstractCommandConfigurationFactory>();
-		commands = new HashSet<AbstractCommandConfiguration<?>>();
+		commands = new HashMap<String, AbstractCommandConfiguration<?>>();
 	}
 
 	/*
@@ -41,12 +43,7 @@ public class CommandDAOImpl implements CommandDAO {
 	 */
 	@Override
 	public AbstractCommandConfiguration<?> getCommandByID(String id) {
-		for (AbstractCommandConfiguration<?> command : commands) {
-			if (command.getID().equals(id)) {
-				return command;
-			}
-		}
-		return null;
+		return this.commands.get(id);
 	}
 
 	/*
@@ -70,8 +67,8 @@ public class CommandDAOImpl implements CommandDAO {
 	@Override
 	public AbstractCommandConfigurationFactory getCommandFactoryByID(String id) {
 		for (AbstractCommandConfigurationFactory factory : commandFactories) {
-			for(String fac : factory.getFactoryIDs()){
-				if(fac.equals(id)){
+			for (String fac : factory.getFactoryIDs()) {
+				if (fac.equals(id)) {
 					return factory;
 				}
 			}
@@ -86,7 +83,7 @@ public class CommandDAOImpl implements CommandDAO {
 	 */
 	@Override
 	public Set<AbstractCommandConfiguration<?>> getCommands() {
-		return new HashSet<AbstractCommandConfiguration<?>>(commands);
+		return new HashSet<AbstractCommandConfiguration<?>>(commands.values());
 	}
 
 	/**
@@ -101,7 +98,7 @@ public class CommandDAOImpl implements CommandDAO {
 			Dictionary<String, String> parameters) {
 		logger.info("Command Configuration Bound: "
 				+ commandConfiguration.getID());
-		commands.add(commandConfiguration);
+		commands.put(commandConfiguration.getID(), commandConfiguration);
 	}
 
 	/**
@@ -117,7 +114,7 @@ public class CommandDAOImpl implements CommandDAO {
 			Dictionary<String, String> parameters) {
 		logger.info("Command Configuration Unbound: "
 				+ commandConfiguration.getID());
-		commands.remove(commandConfiguration);
+		commands.remove(commandConfiguration.getID());
 	}
 
 	/**
@@ -128,7 +125,9 @@ public class CommandDAOImpl implements CommandDAO {
 	 *            the initial list of available command configuration factories
 	 */
 	public void setCommands(Set<AbstractCommandConfiguration<?>> configurations) {
-		commands.addAll(configurations);
+		for(AbstractCommandConfiguration<?> configuration : configurations){
+			this.commands.put(configuration.getID(), configuration);
+		}
 	}
 
 	/**

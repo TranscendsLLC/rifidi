@@ -4,8 +4,9 @@
 package org.rifidi.edge.core.daos;
 
 import java.util.Dictionary;
+import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.logging.Log;
@@ -21,9 +22,9 @@ import org.rifidi.edge.core.readers.AbstractReaderFactory;
 public class ReaderDAOImpl implements ReaderDAO {
 
 	/** The available readerSession configuration factories */
-	private Set<AbstractReaderFactory<?>> readerConfigFactories;
+	private Map<String, AbstractReaderFactory<?>> readerConfigFactories;
 	/** The available set of readerSession configurations */
-	private Set<AbstractReader<?>> abstractReaders;
+	private Map<String, AbstractReader<?>> abstractReaders;
 	/** The logger for this class */
 	private Log logger = LogFactory.getLog(ReaderDAOImpl.class);
 
@@ -31,8 +32,8 @@ public class ReaderDAOImpl implements ReaderDAO {
 	 * Constructor.
 	 */
 	public ReaderDAOImpl() {
-		readerConfigFactories = new HashSet<AbstractReaderFactory<?>>();
-		abstractReaders = new HashSet<AbstractReader<?>>();
+		readerConfigFactories = new HashMap<String, AbstractReaderFactory<?>>();
+		abstractReaders = new HashMap<String, AbstractReader<?>>();
 	}
 
 	/*
@@ -43,14 +44,7 @@ public class ReaderDAOImpl implements ReaderDAO {
 	 */
 	@Override
 	public AbstractReader<?> getReaderByID(String id) {
-		Iterator<AbstractReader<?>> iter = abstractReaders.iterator();
-		while (iter.hasNext()) {
-			AbstractReader<?> current = iter.next();
-			if (current.getID().equals(id)) {
-				return current;
-			}
-		}
-		return null;
+		return this.abstractReaders.get(id);
 	}
 
 	/*
@@ -60,7 +54,8 @@ public class ReaderDAOImpl implements ReaderDAO {
 	 */
 	@Override
 	public Set<AbstractReaderFactory<?>> getReaderFactories() {
-		return new HashSet<AbstractReaderFactory<?>>(readerConfigFactories);
+		return new HashSet<AbstractReaderFactory<?>>(readerConfigFactories
+				.values());
 	}
 
 	/*
@@ -72,16 +67,7 @@ public class ReaderDAOImpl implements ReaderDAO {
 	 */
 	@Override
 	public AbstractReaderFactory<?> getReaderFactoryByID(String id) {
-		Iterator<AbstractReaderFactory<?>> iter = readerConfigFactories
-				.iterator();
-		AbstractReaderFactory<?> current = null;
-		while (iter.hasNext()) {
-			current = iter.next();
-			if (current.getFactoryIDs().get(0).equals(id)) {
-				return current;
-			}
-		}
-		return null;
+		return readerConfigFactories.get(id);
 	}
 
 	/*
@@ -91,7 +77,7 @@ public class ReaderDAOImpl implements ReaderDAO {
 	 */
 	@Override
 	public Set<AbstractReader<?>> getReaders() {
-		return new HashSet<AbstractReader<?>>(abstractReaders);
+		return new HashSet<AbstractReader<?>>(abstractReaders.values());
 	}
 
 	/**
@@ -101,12 +87,12 @@ public class ReaderDAOImpl implements ReaderDAO {
 	 *            the factory to bind
 	 * @param parameters
 	 */
-	public void bindReaderFactory(
-			AbstractReaderFactory<?> readerFactory,
+	public void bindReaderFactory(AbstractReaderFactory<?> readerFactory,
 			Dictionary<String, String> parameters) {
 		logger.info("Reader Factory Bound:"
 				+ readerFactory.getFactoryIDs().get(0));
-		readerConfigFactories.add(readerFactory);
+		readerConfigFactories.put(readerFactory.getFactoryIDs().get(0),
+				readerFactory);
 	}
 
 	/**
@@ -121,7 +107,7 @@ public class ReaderDAOImpl implements ReaderDAO {
 			Dictionary<String, String> parameters) {
 		logger.info("Reader Factory unbound:"
 				+ readerFactory.getFactoryIDs().get(0));
-		readerConfigFactories.remove(readerFactory);
+		readerConfigFactories.remove(readerFactory.getFactoryIDs().get(0));
 	}
 
 	/**
@@ -131,7 +117,9 @@ public class ReaderDAOImpl implements ReaderDAO {
 	 *            the initial list of available reader factories
 	 */
 	public void setReaderFactories(Set<AbstractReaderFactory<?>> factories) {
-		readerConfigFactories.addAll(factories);
+		for (AbstractReaderFactory<?> factory : factories) {
+			readerConfigFactories.put(factory.getFactoryIDs().get(0), factory);
+		}
 	}
 
 	/**
@@ -144,7 +132,7 @@ public class ReaderDAOImpl implements ReaderDAO {
 	public void bindReader(AbstractReader<?> reader,
 			Dictionary<String, String> parameters) {
 		logger.info("Reader bound:" + reader.getID());
-		this.abstractReaders.add(reader);
+		this.abstractReaders.put(reader.getID(), reader);
 	}
 
 	/**
@@ -158,7 +146,7 @@ public class ReaderDAOImpl implements ReaderDAO {
 	public void unbindReader(AbstractReader<?> reader,
 			Dictionary<String, String> parameters) {
 		logger.info("Reader unbound:" + reader.getID());
-		abstractReaders.remove(reader);
+		abstractReaders.remove(reader.getID());
 	}
 
 	/**
@@ -168,6 +156,8 @@ public class ReaderDAOImpl implements ReaderDAO {
 	 *            the initial list of available readers
 	 */
 	public void setReader(Set<AbstractReader<?>> readers) {
-		abstractReaders.addAll(readers);
+		for (AbstractReader<?> reader : readers) {
+			abstractReaders.put(reader.getID(), reader);
+		}
 	}
 }

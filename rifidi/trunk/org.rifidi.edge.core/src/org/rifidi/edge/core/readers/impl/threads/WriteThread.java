@@ -5,7 +5,6 @@ package org.rifidi.edge.core.readers.impl.threads;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Queue;
 import java.util.concurrent.BlockingQueue;
 
 import org.apache.commons.logging.Log;

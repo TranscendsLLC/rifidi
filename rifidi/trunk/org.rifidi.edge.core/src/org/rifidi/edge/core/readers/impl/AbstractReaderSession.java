@@ -23,7 +23,7 @@ import org.springframework.jms.core.JmsTemplate;
  * @author Kyle Neumeier - kyle@pramari.com
  * 
  */
-public abstract class AbstractReaderSession implements ReaderSession {
+public abstract class AbstractReaderSession extends ReaderSession {
 
 	/** Used to execute commands. */
 	protected ScheduledThreadPoolExecutor executor;
@@ -44,7 +44,8 @@ public abstract class AbstractReaderSession implements ReaderSession {
 	/** Queue for commands that get submitted while the executor is inactive. */
 	protected Queue<Command> commandQueue = new ConcurrentLinkedQueue<Command>();
 
-	public AbstractReaderSession(Destination destination, JmsTemplate template) {
+	public AbstractReaderSession(String ID, Destination destination, JmsTemplate template) {
+		super(ID);
 		this.commands = new HashMap<Integer, Command>();
 		this.idToData = new HashMap<Integer, CommandExecutionData>();
 		this.template = template;

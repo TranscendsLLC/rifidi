@@ -5,8 +5,6 @@ package org.rifidi.edge.core.readers.impl;
 
 import java.io.IOException;
 import java.net.Socket;
-import java.util.Collections;
-import java.util.Set;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -17,7 +15,6 @@ import javax.jms.Destination;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.api.SessionStatus;
-import org.rifidi.edge.core.commands.Command;
 import org.rifidi.edge.core.readers.ByteMessage;
 import org.rifidi.edge.core.readers.impl.threads.ReadThread;
 import org.rifidi.edge.core.readers.impl.threads.WriteThread;
@@ -71,10 +68,10 @@ public abstract class AbstractIPReaderSession extends AbstractReaderSession {
 	 * @param reconnectionInterval
 	 * @param maxConAttempts
 	 */
-	public AbstractIPReaderSession(String host, int port,
+	public AbstractIPReaderSession(String ID, String host, int port,
 			int reconnectionInterval, int maxConAttempts,
 			Destination destination, JmsTemplate template) {
-		super(destination, template);
+		super(ID, destination, template);
 		this.host = host;
 		this.port = port;
 		this.maxConAttempts = maxConAttempts;
