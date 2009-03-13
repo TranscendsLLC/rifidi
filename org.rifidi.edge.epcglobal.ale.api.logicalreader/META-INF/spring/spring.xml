@@ -4,12 +4,36 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
      http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi.xsd
      http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd">
+
+
 	<bean id="aleLRAPIService"
-		class="org.rifidi.edge.epcglobal.ale.api.lr.ws.ALELRServicePortTypeImpl" />
+		class="org.rifidi.edge.epcglobal.ale.api.lr.ws.ALELRServicePortTypeImpl">
+		<property name="LRService" ref="lrManagment" />
+	</bean>
 	<osgi:service id="aleLRService" ref="aleLRAPIService">
 		<osgi:interfaces>
-			<value>org.rifidi.edge.wsmanagement.WebService</value>
-			<value>org.rifidi.edge.epcglobal.ale.api.lr.ws.ALELRServicePortType</value>
+			<value>org.rifidi.edge.wsmanagement.WebService
+			</value>
+			<value>org.rifidi.edge.epcglobal.ale.api.lr.ws.ALELRServicePortType
+			</value>
 		</osgi:interfaces>
 	</osgi:service>
+
+
+	<bean id="lrManagment" class="org.rifidi.edge.lr.LogicalReaderManagementServiceImpl">
+		<property name="realReaders" ref="readerSet" />
+	</bean>
+	<osgi:service id="lrManagmentService" ref="lrManagment">
+		<osgi:interfaces>
+			<value>org.rifidi.edge.lr.LogicalReaderManagementService
+			</value>
+		</osgi:interfaces>
+	</osgi:service>
+
+	<!-- Set containing all real readers. -->
+	<osgi:set id="readerSet" interface="org.rifidi.edge.core.readers.AbstractReader"
+		cardinality="0..N">
+		<osgi:listener ref="lrManagment" bind-method="bindReader"
+			unbind-method="unbindReader" />
+	</osgi:set>
 </beans>
