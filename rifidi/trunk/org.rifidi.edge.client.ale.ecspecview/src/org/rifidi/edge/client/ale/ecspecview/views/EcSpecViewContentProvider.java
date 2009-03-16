@@ -12,15 +12,14 @@ package org.rifidi.edge.client.ale.ecspecview.views;
 
 import java.util.ArrayList;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.rifidi.edge.client.ale.api.proxy.AleProxyFactory;
 import org.rifidi.edge.client.ale.api.wsdl.ale.epcglobal.EmptyParms;
-import org.rifidi.edge.client.ale.api.wsdl.ale.epcglobal.GetECSpec;
 import org.rifidi.edge.client.ale.api.wsdl.ale.epcglobal.ImplementationExceptionResponse;
-import org.rifidi.edge.client.ale.api.wsdl.ale.epcglobal.NoSuchNameExceptionResponse;
 import org.rifidi.edge.client.ale.api.wsdl.ale.epcglobal.SecurityExceptionResponse;
-import org.rifidi.edge.client.ale.api.xsd.ale.epcglobal.ECSpec;
 
 /**
  * @author Tobias Hoppenthaler - tobias@pramari.com
@@ -28,11 +27,12 @@ import org.rifidi.edge.client.ale.api.xsd.ale.epcglobal.ECSpec;
  */
 public class EcSpecViewContentProvider implements ITreeContentProvider {
 
+	private Log logger;
 	/**
 	 * 
 	 */
 	public EcSpecViewContentProvider() {
-
+		logger = LogFactory.getLog(EcSpecViewContentProvider.class);
 	}
 
 	/*
@@ -50,26 +50,20 @@ public class EcSpecViewContentProvider implements ITreeContentProvider {
 				ArrayList<String> strings = (ArrayList<String>) ((AleProxyFactory) parentElement)
 						.getAleServicePortType().getECSpecNames(
 								new EmptyParms()).getString();
-				ECSpec[] ecSpecs = new ECSpec[strings.size()];
-				int i = 0;
-				for (String string : strings) {
-					GetECSpec parms = new GetECSpec();
-					parms.setSpecName(string);
-					ecSpecs[i] = ((AleProxyFactory) parentElement)
-							.getAleServicePortType().getECSpec(parms);
-					i++;
+				String[] ecSpecs = new String[strings.size()];
+				
+
+				for (int i = 0; i < strings.size(); i++) {
+					ecSpecs[i] = strings.get(i);
+					System.out.println("CP" + strings.get(i));
 				}
 				return ecSpecs;
 
 			} catch (ImplementationExceptionResponse e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logger.error(e.getMessage());
+				
 			} catch (SecurityExceptionResponse e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (NoSuchNameExceptionResponse e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logger.error(e.getMessage());
 			}
 		}
 
@@ -109,9 +103,9 @@ public class EcSpecViewContentProvider implements ITreeContentProvider {
 				else
 					return false;
 			} catch (ImplementationExceptionResponse e) {
-				e.printStackTrace();
+				logger.error(e.getMessage());
 			} catch (SecurityExceptionResponse e) {
-				e.printStackTrace();
+				logger.error(e.getMessage());
 			}
 
 		}
@@ -127,42 +121,16 @@ public class EcSpecViewContentProvider implements ITreeContentProvider {
 	 */
 	@Override
 	public Object[] getElements(Object inputElement) {
-		if (inputElement instanceof AleProxyFactory) {
-			if (((AleProxyFactory) inputElement).getBaseUrl().isEmpty()) {
-				Object[] obj = new Object[1];
-				obj[0] = new AleProxyFactory(
-						"http://localhost:8080/fc-server-0.4.0/services");
-				return obj;
-			}
-
-			try {
-				ArrayList<String> strings = (ArrayList<String>) ((AleProxyFactory) inputElement)
-						.getAleServicePortType().getECSpecNames(
-								new EmptyParms()).getString();
-				ECSpec[] ecSpecs = new ECSpec[strings.size()];
-				int i = 0;
-				for (String string : strings) {
-					GetECSpec parms = new GetECSpec();
-					parms.setSpecName(string);
-					ecSpecs[i] = ((AleProxyFactory) inputElement)
-							.getAleServicePortType().getECSpec(parms);
-					i++;
-				}
-				return ecSpecs;
-
-			} catch (ImplementationExceptionResponse e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (SecurityExceptionResponse e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (NoSuchNameExceptionResponse e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-
+		if (inputElement instanceof AleProxyFactory
+				&& ((AleProxyFactory) inputElement).getBaseUrl().isEmpty()) {
+			Object[] obj = new Object[1];
+			obj[0] = new AleProxyFactory(
+					"http://localhost:8080/fc-server-0.4.0/services");
+			return obj;
+		} else {
+			return getChildren(inputElement);
 		}
-		return null;
+
 	}
 
 	/*
