@@ -16,12 +16,40 @@
       <menuContribution
             locationURI="menu:org.eclipse.ui.main.menu?after=additions">
          <menu
-               id="file"
+               id="org.rifidi.edge.client.menus.file"
                label="File">
             <command
-                  commandId="exit.command"
+                  commandId="org.eclipse.ui.file.exit"
                   id="Exit"
                   label="Exit"
+                  style="push">
+            </command>
+         </menu>
+         <menu
+               id="org.rifidi.edge.client.menus.window"
+               label="Window">
+            <command
+                  commandId="org.eclipse.ui.window.preferences"
+                  label="Preferences"
+                  style="push">
+            </command>
+            <command
+                  commandId="org.eclipse.ui.perspectives.showPerspective"
+                  label="Show Perspectives"
+                  style="push">
+            </command>
+         </menu>
+         <menu
+               id="org.rifidi.edge.client.menus.help"
+               label="Help">
+            <command
+                  commandId="org.eclipse.ui.help.helpContents"
+                  label="Help"
+                  style="push">
+            </command>
+            <command
+                  commandId="org.eclipse.ui.help.aboutAction"
+                  label="About"
                   style="push">
             </command>
          </menu>
@@ -29,22 +57,6 @@
       <menuContribution
             locationURI="toolbar:org.eclipse.ui.main.toolbar?after=additions">
       </menuContribution>
-   </extension>
-   <extension
-         point="org.eclipse.ui.perspectives">
-      <perspective
-            name="RCP Perspective"
-            class="org.rifidi.edge.client.Perspective"
-            id="org.rifidi.edge.client.perspective">
-      </perspective>
-   </extension>
-   <extension
-         point="org.eclipse.ui.commands">
-      <command
-            defaultHandler="org.rifidi.edge.client.handlers.ExitHandler"
-            id="exit.command"
-            name="Exit">
-      </command>
    </extension>
    <extension
          id="product"
