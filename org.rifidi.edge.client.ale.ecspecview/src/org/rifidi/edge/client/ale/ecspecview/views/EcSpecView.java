@@ -12,6 +12,7 @@ import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
@@ -45,141 +46,7 @@ public class EcSpecView extends ViewPart {
 	private Action action2;
 	private Action doubleClickAction;
 
-	/*
-	 * The content provider class is responsible for providing objects to the
-	 * view. It can wrap existing objects in adapters or simply return objects
-	 * as-is. These objects may be sensitive to the current input of the view,
-	 * or ignore it and always show the same content (like Task List, for
-	 * example).
-	 */
-
-//	 class TreeObject implements IAdaptable {
-//	 private String name;
-//	 private TreeParent parent;
-//			
-//	 public TreeObject(String name) {
-//	 this.name = name;
-//	 }
-//	 public String getName() {
-//	 return name;
-//	 }
-//	 public void setParent(TreeParent parent) {
-//	 this.parent = parent;
-//	 }
-//	 public TreeParent getParent() {
-//	 return parent;
-//	 }
-//	 public String toString() {
-//	 return getName();
-//	 }
-//	 public Object getAdapter(Class key) {
-//	 return null;
-//	 }
-//	 }
-//
-//	 class TreeParent extends TreeObject {
-//	 private ArrayList children;
-//	 public TreeParent(String name) {
-//	 super(name);
-//	 children = new ArrayList();
-//	 }
-//	 public void addChild(EdgeServerTreeObject child) {
-//	 children.add(child);
-//	 }
-//	 public void removeChild(TreeObject child) {
-//	 children.remove(child);
-//	 }
-//	 public TreeObject [] getChildren() {
-//	 return (TreeObject [])children.toArray(new TreeObject[children.size()]);
-//	 }
-//	 public boolean hasChildren() {
-//	 return children.size()>0;
-//	 }
-//	 }
-//	class ViewContentProvider implements IStructuredContentProvider,
-//			ITreeContentProvider {
-//		private TreeParent invisibleRoot;
-//
-//		public void inputChanged(Viewer v, Object oldInput, Object newInput) {
-//		}
-//
-//		public void dispose() {
-//		}
-//
-//		public Object[] getElements(Object parent) {
-//			if (parent.equals(getViewSite())) {
-//				if (invisibleRoot == null)
-//					initialize();
-//				return getChildren(invisibleRoot);
-//			}
-//			return getChildren(parent);
-//		}
-//
-//		public Object getParent(Object child) {
-//			if (child instanceof SpecTreeObject) {
-//				return ((SpecTreeObject) child).getParent();
-//			}
-//			return null;
-//		}
-//
-//		public Object[] getChildren(Object parent) {
-//			if (parent instanceof EdgeServerTreeObject) {
-//				return ((EdgeServerTreeObject) parent).getChildren();
-//			}
-//			return new Object[0];
-//		}
-//
-//		public boolean hasChildren(Object parent) {
-//			if (parent instanceof EdgeServerTreeObject)
-//				return ((EdgeServerTreeObject) parent).hasChildren();
-//			return false;
-//		}
-//
-//		/*
-//		 * We will set up a dummy model to initialize tree heararchy. In a real
-//		 * code, you will connect to a real model and expose its hierarchy.
-//		 */
-//		private void initialize() {
-//			// SpecTreeObject to1 = new SpecTreeObject("Spec 1");
-//			// SpecTreeObject to2 = new SpecTreeObject("Spec 2");
-//			// SpecTreeObject to3 = new SpecTreeObject("Spec 3");
-//			// TreeParent p1 = new TreeParent("Edge Server 1");
-//			// p1.addChild(to1);
-//			// p1.addChild(to2);
-//			// p1.addChild(to3);
-//			//			
-//			// SpecTreeObject to4 = new SpecTreeObject("Spec 4");
-//			// TreeParent p2 = new TreeParent("Edge Server 2");
-//			// p2.addChild(to4);
-//			//			
-//			// TreeParent root = new TreeParent("Root");
-//			// root.addChild(p1);
-//			// root.addChild(p2);
-//			
-//			EdgeServerTreeObject es1 = new EdgeServerTreeObject("Fosstrak");
-//
-//			invisibleRoot = new TreeParent("");
-//			invisibleRoot.addChild(es1);
-//		}
-//	}
-
-//	class ViewLabelProvider extends LabelProvider {
-//
-//		public String getText(Object obj) {
-//			return obj.toString();
-//		}
-//
-//		public Image getImage(Object obj) {
-//			String imageKey = ISharedImages.IMG_OBJ_ELEMENT;
-//			if (obj instanceof EdgeServerTreeObject)
-//				imageKey = ISharedImages.IMG_OBJ_FOLDER;
-//			return PlatformUI.getWorkbench().getSharedImages().getImage(
-//					imageKey);
-//		}
-//	}
-
-//	class NameSorter extends ViewerSorter {
-//	}
+	
 
 	/**
 	 * The constructor.
@@ -197,7 +64,7 @@ public class EcSpecView extends ViewPart {
 		drillDownAdapter = new DrillDownAdapter(viewer);
 		viewer.setContentProvider(new EcSpecViewContentProvider());
 		viewer.setLabelProvider(new EcSpecViewLabelProvider());
-//		viewer.setSorter(new NameSorter());
+		viewer.setSorter(new ViewerSorter());
 		viewer.setInput(getInitialInput());
 		viewer.expandAll();
 		makeActions();
@@ -257,7 +124,9 @@ public class EcSpecView extends ViewPart {
 	private void makeActions() {
 		action1 = new Action() {
 			public void run() {
-				showMessage("Action 1 executed");
+//				showMessage("Action 1 executed");
+				viewer.refresh();
+				viewer.expandAll();
 			}
 		};
 		action1.setText("Action 1");
@@ -267,7 +136,15 @@ public class EcSpecView extends ViewPart {
 
 		action2 = new Action() {
 			public void run() {
-				showMessage("Action 2 executed");
+				
+				ISelection selection = viewer.getSelection();
+				Object obj = ((IStructuredSelection) selection)
+						.getFirstElement();
+				if(obj instanceof String){
+					
+				}
+				
+//				showMessage("Action 2 executed");
 			}
 		};
 		action2.setText("Action 2");

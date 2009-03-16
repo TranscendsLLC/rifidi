@@ -7,6 +7,7 @@ Bundle-Activator: org.rifidi.edge.client.ale.ecspecview.Activator
 Bundle-Vendor: PRAMARI EUROPE GMBH
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
- org.rifidi.edge.client.ale.api;bundle-version="1.0.0"
+ org.rifidi.edge.client.ale.api;bundle-version="1.0.0",
+ org.rifidi.logging;bundle-version="1.0.2"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
