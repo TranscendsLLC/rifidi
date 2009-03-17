@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.perspectives">
+      <perspective
+            class="org.rifidi.edge.client.sal.perspective.SALPerspective"
+            id="org.rifidi.edge.client.sal.perspective"
+            name="org.rifidi.edge.client.sal.perspectiveSAL">
+      </perspective>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            category="EdgeServer"
+            class="org.rifidi.edge.client.sal.views.EdgeServerView"
+            id="org.rifidi.edge.client.sal.views.EdgeServerView"
+            name="Edge Server View"
+            restorable="true">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="org.rifidi.edge.client.sal.perspective">
+         <view
+               closeable="false"
+               id="org.rifidi.edge.client.sal.views.EdgeServerView"
+               minimized="false"
+               moveable="true"
+               ratio=".5"
+               relationship="left"
+               relative="org.eclipse.ui.editorss"
+               showTitle="true"
+               standalone="true"
+               visible="true">
+         </view>
+      </perspectiveExtension>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="popup:org.rifidi.edge.client.sal.views.EdgeServerView?after=additions">
+         <command
+               commandId="org.rifidi.edge.client.model.sal.commands.connect"
+               id="org.rifidi.edge.client.model.sal.commands.connectBinding"
+               label="Connect To Edge Server"
+               style="push">
+            <visibleWhen>
+               <iterate
+                     ifEmpty="false">
+                  <instanceof
+                        value="org.rifidi.edge.client.model.sal.RemoteEdgeServer">
+                  </instanceof>
+               </iterate>
+            </visibleWhen>
+         </command>
+      </menuContribution>
+   </extension>
+
+</plugin>

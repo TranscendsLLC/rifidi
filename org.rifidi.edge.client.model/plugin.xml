@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            id="org.rifidi.edge.client.model.sal.commands.connect"
+            name="EdgeServerConnect">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="org.rifidi.edge.client.model.sal.handlers.ConnectHandler"
+            commandId="org.rifidi.edge.client.model.sal.commands.connect">
+      </handler>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="org.rifidi.edge.client.model.sal.preferences.EdgeServerPreferencePage"
+            id="org.rifidi.edge.client.model.sal.preferences.EdgeServerPreferencePage"
+            name="Edge Server">
+      </page>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="org.rifidi.edge.client.model.sal.preferences.EdgeServerPreferenceInitializer">
+      </initializer>
+   </extension>
+
+</plugin>

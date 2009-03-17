@@ -1,0 +1,23 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Edge Server Client Model Plug-in
+Bundle-SymbolicName: org.rifidi.edge.client.model;singleton:=true
+Bundle-Version: 1.0.0
+Bundle-Activator: org.rifidi.edge.client.model.Activator
+Bundle-Vendor: Pramari, LLC
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.core.databinding;bundle-version="1.1.1"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ActivationPolicy: lazy
+Import-Package: javax.jms;version="1.1.0",
+ org.apache.activemq;version="5.2.0",
+ org.apache.commons.logging;version="1.1.1",
+ org.rifidi.edge.core.api.jms.notifications,
+ org.rifidi.edge.core.api.rmi.dto,
+ org.rifidi.edge.core.rmi.client.commandconfigurationstub,
+ org.rifidi.edge.core.rmi.client.edgeserverstub,
+ org.rifidi.edge.core.rmi.client.readerconfigurationstub,
+ org.rifidi.rmi.utils.exceptions,
+ org.rifidi.rmi.utils.remotecall
+Export-Package: org.rifidi.edge.client.model.sal
