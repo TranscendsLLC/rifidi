@@ -6,19 +6,18 @@ package org.rifidi.edge.core.rmi.client.readerconfigurationstub;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
-import javax.management.AttributeList;
-
 import org.rifidi.edge.core.api.rmi.ReaderStub;
+import org.rifidi.edge.core.api.rmi.dto.ReaderDTO;
 import org.rifidi.rmi.utils.remotecall.ServerDescriptionBasedRemoteMethodCall;
 
 /**
- * This method gets the Attributes for a specified Reader
+ * This method gets the Reader Data Transfer Object for a specified Reader
  * 
  * @author Kyle Neumeier -kyle@pramari.com
  * 
  */
 public class RS_GetReaderProperties extends
-		ServerDescriptionBasedRemoteMethodCall<AttributeList, RemoteException> {
+		ServerDescriptionBasedRemoteMethodCall<ReaderDTO, RemoteException> {
 
 	/** The ID of the ReaderConfiguration to get properties of */
 	private String readerID;
@@ -45,10 +44,10 @@ public class RS_GetReaderProperties extends
 	 * (java.rmi.Remote)
 	 */
 	@Override
-	protected AttributeList performRemoteCall(Remote remoteObject)
+	protected ReaderDTO performRemoteCall(Remote remoteObject)
 			throws RemoteException, RemoteException {
 		ReaderStub stub = (ReaderStub) remoteObject;
-		return stub.getReaderProperties(this.readerID);
+		return stub.getReader(this.readerID);
 	}
 
 }

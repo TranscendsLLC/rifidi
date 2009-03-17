@@ -66,15 +66,14 @@ public interface ReaderStub extends Remote {
 			throws RemoteException;
 
 	/**
-	 * This method returns an AttributeList that contains the name-value pairs
-	 * for all the properties of a currently available Reader.
+	 * This method returns the DTO for a particular reader
 	 * 
 	 * @param readerID
 	 *            The ID of the Reader to get
-	 * @return The current values for a Reader
+	 * @return The DTO for a reader
 	 * @throws RemoteException
 	 */
-	AttributeList getReaderProperties(String readerID) throws RemoteException;
+	ReaderDTO getReader(String readerID) throws RemoteException;
 
 	/**
 	 * This method is used to update the properties of a Reader. It may contain
