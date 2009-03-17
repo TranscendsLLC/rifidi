@@ -16,8 +16,8 @@ import org.rifidi.rmi.utils.remotecall.ServerDescriptionBasedRemoteMethodCall;
  * @author Kyle Neumeier -kyle@pramari.com
  * 
  */
-public class RS_GetReaderProperties extends
-		ServerDescriptionBasedRemoteMethodCall<ReaderDTO, RemoteException> {
+public class RS_GetReader extends
+		ServerDescriptionBasedRemoteMethodCall<ReaderDTO, RuntimeException> {
 
 	/** The ID of the ReaderConfiguration to get properties of */
 	private String readerID;
@@ -30,8 +30,7 @@ public class RS_GetReaderProperties extends
 	 * @param readerID
 	 *            The ID of the Reader to get the properties of
 	 */
-	public RS_GetReaderProperties(RS_ServerDescription serverDescription,
-			String readerID) {
+	public RS_GetReader(RS_ServerDescription serverDescription, String readerID) {
 		super(serverDescription);
 		this.readerID = readerID;
 	}
@@ -45,7 +44,7 @@ public class RS_GetReaderProperties extends
 	 */
 	@Override
 	protected ReaderDTO performRemoteCall(Remote remoteObject)
-			throws RemoteException, RemoteException {
+			throws RemoteException, RuntimeException {
 		ReaderStub stub = (ReaderStub) remoteObject;
 		return stub.getReader(this.readerID);
 	}
