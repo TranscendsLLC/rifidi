@@ -24,7 +24,7 @@ public class AleProxyFactory {
 	private String baseUrl = null;
 	private Log logger = LogFactory.getLog(AleProxyFactory.class);
 	private ALEServicePortType sp = null;
-	private ALELRServicePortType lrsp;
+	private ALELRServicePortType lrsp=null;
 
 	/**
 	 * 
