@@ -10,7 +10,8 @@ import java.net.URL;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.rifidi.edge.epcglobal.ale.api.read.data.ECSpec;
+import org.rifidi.edge.epcglobal.aleread.ECSPECManagerService;
+import org.rifidi.edge.lr.LogicalReaderManagementService;
 import org.rifidi.edge.wsmanagement.WebService;
 
 /**
@@ -22,8 +23,13 @@ import org.rifidi.edge.wsmanagement.WebService;
 @javax.jws.WebService(serviceName = "ALEService", portName = "ALEServicePort", targetNamespace = "urn:epcglobal:ale:wsdl:1", wsdlLocation = "org/rifidi/edge/epcglobal/ale/api/read/ws/epcglobal-ale-1_1-ale.wsdl", endpointInterface = "org.rifidi.edge.epcglobal.ale.api.read.ws.ALEServicePortType")
 public class ALEServicePortTypeImpl implements ALEServicePortType, WebService {
 
+	/** Service for managing logical readers. */
+	private LogicalReaderManagementService lrService;
+	/** Logger for this class. */
 	private static final Log logger = LogFactory
 			.getLog(ALEServicePortTypeImpl.class);
+	/** Service that manages the ecspecs. */
+	private ECSPECManagerService ecspecManagerService;
 
 	/*
 	 * (non-Javadoc)
@@ -62,17 +68,9 @@ public class ALEServicePortTypeImpl implements ALEServicePortType, WebService {
 			EmptyParms parms) throws ImplementationExceptionResponse,
 			SecurityExceptionResponse {
 		logger.info("Executing operation getECSpecNames");
-		System.out.println(parms);
-		try {
-			org.rifidi.edge.epcglobal.ale.api.read.ws.ArrayOfString _return = null;
-			return _return;
-		} catch (Exception ex) {
-			ex.printStackTrace();
-			throw new RuntimeException(ex);
-		}
-		// throw new
-		// ImplementationExceptionResponse("ImplementationExceptionResponse...");
-		// throw new SecurityExceptionResponse("SecurityExceptionResponse...");
+		ArrayOfString ret = new ArrayOfString();
+		ret.getString().addAll(ecspecManagerService.getNames());
+		return ret;
 	}
 
 	/*
@@ -113,23 +111,9 @@ public class ALEServicePortTypeImpl implements ALEServicePortType, WebService {
 			SecurityExceptionResponse, ECSpecValidationExceptionResponse,
 			DuplicateNameExceptionResponse {
 		logger.info("Executing operation define");
-		try {
-			ECSpec spec=parms.getSpec();
-			String specName=parms.getSpecName();
-			logger.debug("Defining "+specName);
-			org.rifidi.edge.epcglobal.ale.api.read.ws.VoidHolder _return = null;
-			return _return;
-		} catch (Exception ex) {
-			ex.printStackTrace();
-			throw new RuntimeException(ex);
-		}
-		// throw new
-		// ImplementationExceptionResponse("ImplementationExceptionResponse...");
-		// throw new SecurityExceptionResponse("SecurityExceptionResponse...");
-		// throw new
-		// ECSpecValidationExceptionResponse("ECSpecValidationExceptionResponse...");
-		// throw new
-		// DuplicateNameExceptionResponse("DuplicateNameExceptionResponse...");
+		ecspecManagerService.createSpec(parms.getSpecName(), parms.getSpec());
+		org.rifidi.edge.epcglobal.ale.api.read.ws.VoidHolder _return = null;
+		return _return;
 	}
 
 	/*
@@ -144,23 +128,8 @@ public class ALEServicePortTypeImpl implements ALEServicePortType, WebService {
 			NoSuchNameExceptionResponse, NoSuchSubscriberExceptionResponse,
 			SecurityExceptionResponse, InvalidURIExceptionResponse {
 		logger.info("Executing operation unsubscribe");
-		System.out.println(parms);
-		try {
-			org.rifidi.edge.epcglobal.ale.api.read.ws.VoidHolder _return = null;
-			return _return;
-		} catch (Exception ex) {
-			ex.printStackTrace();
-			throw new RuntimeException(ex);
-		}
-		// throw new
-		// ImplementationExceptionResponse("ImplementationExceptionResponse...");
-		// throw new
-		// NoSuchNameExceptionResponse("NoSuchNameExceptionResponse...");
-		// throw new
-		// NoSuchSubscriberExceptionResponse("NoSuchSubscriberExceptionResponse...");
-		// throw new SecurityExceptionResponse("SecurityExceptionResponse...");
-		// throw new
-		// InvalidURIExceptionResponse("InvalidURIExceptionResponse...");
+		ecspecManagerService.unsubscribe(parms.getSpecName(), parms.getNotificationURI());
+		return new VoidHolder();
 	}
 
 	/*
@@ -174,19 +143,7 @@ public class ALEServicePortTypeImpl implements ALEServicePortType, WebService {
 			GetECSpec parms) throws ImplementationExceptionResponse,
 			NoSuchNameExceptionResponse, SecurityExceptionResponse {
 		logger.info("Executing operation getECSpec");
-		System.out.println(parms);
-		try {
-			org.rifidi.edge.epcglobal.ale.api.read.data.ECSpec _return = null;
-			return _return;
-		} catch (Exception ex) {
-			ex.printStackTrace();
-			throw new RuntimeException(ex);
-		}
-		// throw new
-		// ImplementationExceptionResponse("ImplementationExceptionResponse...");
-		// throw new
-		// NoSuchNameExceptionResponse("NoSuchNameExceptionResponse...");
-		// throw new SecurityExceptionResponse("SecurityExceptionResponse...");
+		return ecspecManagerService.getSpecByName(parms.getSpecName());
 	}
 
 	/*
@@ -282,16 +239,13 @@ public class ALEServicePortTypeImpl implements ALEServicePortType, WebService {
 			DuplicateSubscriptionExceptionResponse, SecurityExceptionResponse,
 			InvalidURIExceptionResponse {
 		logger.info("Executing operation subscribe");
-		logger.debug(parms);
-		try {
-			return new VoidHolder();
-		} catch (Exception ex) {
-			ex.printStackTrace();
-			throw new RuntimeException(ex);
-		}
+		ecspecManagerService.subscribe(parms.getSpecName(), parms.getNotificationURI());
+		return new VoidHolder();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.rifidi.edge.wsmanagement.WebService#getService()
 	 */
 	@Override
@@ -299,7 +253,9 @@ public class ALEServicePortTypeImpl implements ALEServicePortType, WebService {
 		return this;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.rifidi.edge.wsmanagement.WebService#getUrl()
 	 */
 	@Override
@@ -307,9 +263,23 @@ public class ALEServicePortTypeImpl implements ALEServicePortType, WebService {
 		try {
 			return new URL("http://127.0.0.1:8081/aleread");
 		} catch (MalformedURLException e) {
-			logger.fatal("That should not happen: "+e);
+			logger.fatal("That should not happen: " + e);
 		}
 		return null;
 	}
 
+	/**
+	 * @param lrService
+	 *            the lrService to set
+	 */
+	public void setLrService(LogicalReaderManagementService lrService) {
+		this.lrService = lrService;
+	}
+
+	/**
+	 * @param ecspecManagerService the ecspecManagerService to set
+	 */
+	public void setEcspecManagerService(ECSPECManagerService ecspecManagerService) {
+		this.ecspecManagerService = ecspecManagerService;
+	}
 }

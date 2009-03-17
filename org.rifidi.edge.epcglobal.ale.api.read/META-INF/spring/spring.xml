@@ -4,12 +4,28 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
      http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi.xsd
      http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd">
+
+	<osgi:reference id="lrManagement"
+		interface="org.rifidi.edge.lr.LogicalReaderManagementService" />
+	<osgi:reference id="esperManagerService"
+		interface="org.rifidi.edge.esper.EsperManagementService" />
+
 	<bean id="aleReadAPIService"
-		class="org.rifidi.edge.epcglobal.ale.api.read.ws.ALEServicePortTypeImpl" />
+		class="org.rifidi.edge.epcglobal.ale.api.read.ws.ALEServicePortTypeImpl">
+		<property name="lrService" ref="lrManagement" />
+		<property name="ecspecManagerService" ref="ecspecManager" />
+	</bean>
+	<bean id="ecspecManager"
+		class="org.rifidi.edge.epcglobal.aleread.ECSPECManagerServiceImpl">
+		<property name="esperManagement" ref="esperManagerService"></property>
+	</bean>
+
 	<osgi:service id="aleReadService" ref="aleReadAPIService">
 		<osgi:interfaces>
-			<value>org.rifidi.edge.wsmanagement.WebService</value>
-			<value>org.rifidi.edge.epcglobal.ale.api.read.ws.ALEServicePortType</value>
+			<value>org.rifidi.edge.wsmanagement.WebService
+			</value>
+			<value>org.rifidi.edge.epcglobal.ale.api.read.ws.ALEServicePortType
+			</value>
 		</osgi:interfaces>
 	</osgi:service>
 </beans>
