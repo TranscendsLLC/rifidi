@@ -14,12 +14,16 @@ import java.util.ArrayList;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
+import org.osgi.service.prefs.Preferences;
 import org.rifidi.edge.client.ale.api.proxy.AleProxyFactory;
 import org.rifidi.edge.client.ale.api.wsdl.ale.epcglobal.EmptyParms;
 import org.rifidi.edge.client.ale.api.wsdl.ale.epcglobal.ImplementationExceptionResponse;
 import org.rifidi.edge.client.ale.api.wsdl.ale.epcglobal.SecurityExceptionResponse;
+import org.rifidi.edge.client.ale.ecspecview.Activator;
+import org.rifidi.edge.client.ale.ecspecview.preferences.EcSpecViewPreferences;
 
 /**
  * @author Tobias Hoppenthaler - tobias@pramari.com
@@ -28,6 +32,7 @@ import org.rifidi.edge.client.ale.api.wsdl.ale.epcglobal.SecurityExceptionRespon
 public class EcSpecViewContentProvider implements ITreeContentProvider {
 
 	private Log logger;
+
 	/**
 	 * 
 	 */
@@ -51,19 +56,14 @@ public class EcSpecViewContentProvider implements ITreeContentProvider {
 						.getAleServicePortType().getECSpecNames(
 								new EmptyParms()).getString();
 				String[] ecSpecs = new String[strings.size()];
-				
 
 				for (int i = 0; i < strings.size(); i++) {
 					ecSpecs[i] = strings.get(i);
-					System.out.println("CP" + strings.get(i));
 				}
 				return ecSpecs;
 
-			} catch (ImplementationExceptionResponse e) {
-				logger.error(e.getMessage());
-				
-			} catch (SecurityExceptionResponse e) {
-				logger.error(e.getMessage());
+			} catch (Exception e){
+				logger.error(e.getCause()+":\n"+e.getMessage());
 			}
 		}
 
@@ -93,6 +93,7 @@ public class EcSpecViewContentProvider implements ITreeContentProvider {
 	@Override
 	public boolean hasChildren(Object element) {
 		if (element instanceof AleProxyFactory) {
+			if(((AleProxyFactory)element).getAleEndpoint()==null)return false;
 			ArrayList<String> strings;
 			try {
 				strings = (ArrayList<String>) ((AleProxyFactory) element)
@@ -100,16 +101,15 @@ public class EcSpecViewContentProvider implements ITreeContentProvider {
 								new EmptyParms()).getString();
 				if (strings.size() > 0)
 					return true;
-				else
-					return false;
-			} catch (ImplementationExceptionResponse e) {
-				logger.error(e.getMessage());
-			} catch (SecurityExceptionResponse e) {
-				logger.error(e.getMessage());
-			}
+				
+			} catch (Exception e){
+				logger.error(e.getCause() + ":\n"+e.getMessage());
+				return false;
+			} 
 
 		}
 		return false;
+		
 	}
 
 	/*
@@ -122,15 +122,19 @@ public class EcSpecViewContentProvider implements ITreeContentProvider {
 	@Override
 	public Object[] getElements(Object inputElement) {
 		if (inputElement instanceof AleProxyFactory
-				&& ((AleProxyFactory) inputElement).getBaseUrl().isEmpty()) {
+				&& ((AleProxyFactory) inputElement).getServerName().isEmpty()) {
+			Preferences node = new DefaultScope().getNode(Activator.PLUGIN_ID);
 			Object[] obj = new Object[1];
-			obj[0] = new AleProxyFactory(
-					"http://localhost:8080/fc-server-0.4.0/services");
+			
+			obj[0] = new AleProxyFactory(node.get(
+					EcSpecViewPreferences.ALE_ENDPOINT, EcSpecViewPreferences.ALE_ENDPOINT_DEFAULT), node.get(
+					EcSpecViewPreferences.ALELR_ENDPOINT, EcSpecViewPreferences.ALELR_ENDPOINT_DEFAULT));
 			return obj;
-		} else {
+		} else if(hasChildren(inputElement))
 			return getChildren(inputElement);
+		else{
+			return null;
 		}
-
 	}
 
 	/*
