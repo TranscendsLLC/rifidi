@@ -18,32 +18,39 @@ import org.eclipse.ui.part.ViewPart;
 import org.rifidi.edge.client.model.sal.RemoteEdgeServer;
 
 /**
- * @author kyle
- *
+ * The View for displaying readers
+ * 
+ * @author Kyle Neumeier - kyle@pramari.com
+ * 
  */
 public class EdgeServerView extends ViewPart {
 
+	/** The tree viewer to use */
 	private AbstractTreeViewer treeViewer;
+	/** The EdgeServer model for this viewer */
 	private RemoteEdgeServer server;
-	
+
 	/**
 	 * 
 	 */
 	public EdgeServerView() {
-		// TODO Auto-generated constructor stub
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.part.WorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.ui.part.WorkbenchPart#createPartControl(org.eclipse.swt.widgets
+	 * .Composite)
 	 */
 	@Override
 	public void createPartControl(Composite parent) {
-		
+
 		GridLayout layout = new GridLayout(2, false);
 		parent.setLayout(layout);
-		
+
 		server = new RemoteEdgeServer();
-		
+
 		treeViewer = new TreeViewer(parent);
 		GridData treeViewerLayoutData = new GridData(GridData.FILL_BOTH);
 		treeViewerLayoutData.horizontalSpan = 2;
@@ -57,7 +64,9 @@ public class EdgeServerView extends ViewPart {
 		this.getSite().setSelectionProvider(treeViewer);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.part.WorkbenchPart#setFocus()
 	 */
 	@Override
@@ -65,7 +74,10 @@ public class EdgeServerView extends ViewPart {
 		// TODO Auto-generated method stub
 
 	}
-	
+
+	/**
+	 * Create a context menu for this viewer
+	 */
 	private void createContextMenu() {
 		// Create menu manager.
 		MenuManager menuMgr = new MenuManager();
@@ -85,6 +97,5 @@ public class EdgeServerView extends ViewPart {
 		// Register menu for extension.
 		getSite().registerContextMenu(menuMgr, treeViewer);
 	}
-
 
 }

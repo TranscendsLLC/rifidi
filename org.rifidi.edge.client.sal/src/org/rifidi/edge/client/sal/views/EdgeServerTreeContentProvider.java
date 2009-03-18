@@ -16,7 +16,9 @@ import org.rifidi.edge.client.model.sal.RemoteEdgeServer;
 import org.rifidi.edge.client.model.sal.RemoteReader;
 
 /**
- * @author kyle
+ * This is the content provider for the Edge Server Reader View
+ * 
+ * @author Kyle Neumeier - kyle@pramari.com
  * 
  */
 public class EdgeServerTreeContentProvider implements ITreeContentProvider,
@@ -24,8 +26,10 @@ public class EdgeServerTreeContentProvider implements ITreeContentProvider,
 
 	/** The tree viewer associated with this content provider */
 	private AbstractTreeViewer viewer = null;
+	/** The logger for this class */
 	private Log logger = LogFactory.getLog(EdgeServerTreeContentProvider.class);
-	private RemoteEdgeServer edgeServer=null;
+	/** The Edge Server this content provider provides information for */
+	private RemoteEdgeServer edgeServer = null;
 
 	/*
 	 * (non-Javadoc)
@@ -124,7 +128,7 @@ public class EdgeServerTreeContentProvider implements ITreeContentProvider,
 			}
 		}
 		if (oldInput != newInput) {
-			this.edgeServer=(RemoteEdgeServer)newInput;
+			this.edgeServer = (RemoteEdgeServer) newInput;
 			viewer.refresh();
 		}
 
@@ -132,10 +136,16 @@ public class EdgeServerTreeContentProvider implements ITreeContentProvider,
 
 	@Override
 	public void handleMapChange(MapChangeEvent event) {
-		for(Object key : event.diff.getAddedKeys()){
+		for (Object key : event.diff.getAddedKeys()) {
 			Object val = event.diff.getNewValue(key);
-			if(val instanceof RemoteReader){
+			if (val instanceof RemoteReader) {
 				viewer.add(edgeServer, val);
+			}
+		}
+		for (Object key : event.diff.getRemovedKeys()) {
+			Object val = event.diff.getOldValue(key);
+			if (val instanceof RemoteReader) {
+				viewer.remove(val);
 			}
 		}
 

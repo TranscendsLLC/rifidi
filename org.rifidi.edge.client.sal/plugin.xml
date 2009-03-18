@@ -44,16 +44,24 @@
          <command
                commandId="org.rifidi.edge.client.model.sal.commands.connect"
                id="org.rifidi.edge.client.model.sal.commands.connectBinding"
-               label="Connect To Edge Server"
+               label="Connect"
                style="push">
-            <visibleWhen>
-               <iterate
-                     ifEmpty="false">
-                  <instanceof
-                        value="org.rifidi.edge.client.model.sal.RemoteEdgeServer">
-                  </instanceof>
-               </iterate>
-            </visibleWhen>
+         </command>
+         <command
+               commandId="org.rifidi.edge.client.model.sal.commands.disconnect"
+               id="org.rifidi.edge.client.model.sal.commands.disconnectBinding"
+               label="Disconnect"
+               style="push">
+         </command>
+         <separator
+               name="org.rifidi.edge.client.sal.separator1"
+               visible="true">
+         </separator>
+         <command
+               commandId="org.rifidi.edge.client.model.sal.commands.update"
+               id="org.rifidi.edge.client.model.sal.commands.updateBinding"
+               label="Update"
+               style="push">
          </command>
       </menuContribution>
    </extension>
