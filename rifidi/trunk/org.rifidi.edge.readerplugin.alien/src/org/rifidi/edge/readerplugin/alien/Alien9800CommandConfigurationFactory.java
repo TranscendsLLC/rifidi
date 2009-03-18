@@ -5,11 +5,13 @@ package org.rifidi.edge.readerplugin.alien;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
-import org.rifidi.edge.core.commands.AbstractCommandConfigurationFactory;
 import org.rifidi.edge.core.commands.AbstractCommandConfiguration;
+import org.rifidi.edge.core.commands.AbstractCommandConfigurationFactory;
 import org.rifidi.edge.readerplugin.alien.commands.AlienGetTagListCommandConfiguration;
 
 /**
@@ -44,8 +46,9 @@ public class Alien9800CommandConfigurationFactory extends
 	public void customInit(Object instance) {
 		if (instance instanceof AbstractCommandConfiguration<?>) {
 			AbstractCommandConfiguration<?> cc = (AbstractCommandConfiguration<?>) instance;
-			cc.setServiceRegistration(getContext().registerService(
-					AbstractCommandConfiguration.class.getName(), instance, null));
+			Set<String> intefaces = new HashSet<String>();
+			intefaces.add(AbstractCommandConfiguration.class.getName());
+			cc.register(getContext(), intefaces);
 		}
 	}
 

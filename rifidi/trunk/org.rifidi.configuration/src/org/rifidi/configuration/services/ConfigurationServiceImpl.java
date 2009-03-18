@@ -5,6 +5,7 @@ package org.rifidi.configuration.services;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -26,6 +27,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.configuration.Configuration;
 import org.rifidi.configuration.Constants;
+import org.rifidi.configuration.RifidiService;
 import org.rifidi.configuration.ServiceFactory;
 
 /**
@@ -41,7 +43,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	/** Configurations. */
 	private Map<String, Set<ServiceConfiguration>> factoryToConfigurations;
 	/** Currently registered services. */
-	private Set<Configuration> configurations;
+	private Map<String, Configuration> IDToConfigurations;
 
 	/**
 	 * Currently available factories by their names.
@@ -56,7 +58,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 		factoryToConfigurations = new HashMap<String, Set<ServiceConfiguration>>(
 				loadConfig());
 		factories = new HashMap<String, ServiceFactory>();
-		configurations = new HashSet<Configuration>();
+		IDToConfigurations = new HashMap<String, Configuration>();
 		logger.debug("ConfigurationServiceImpl instantiated.");
 	}
 
@@ -179,7 +181,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	 * @param properties
 	 */
 	public void register(Configuration config, Map<?, ?> properties) {
-		configurations.add(config);
+		IDToConfigurations.put(config.getServiceID(), config);
 	}
 
 	/**
@@ -189,7 +191,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	 * @param properties
 	 */
 	public void unregister(Configuration config, Map<?, ?> properties) {
-		configurations.remove(config);
+		IDToConfigurations.remove(config.getServiceID());
 	}
 
 	/*
@@ -199,7 +201,8 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	 */
 	@Override
 	public synchronized void storeConfiguration() {
-		HashSet<Configuration> copy = new HashSet<Configuration>(configurations);
+		HashSet<Configuration> copy = new HashSet<Configuration>(
+				IDToConfigurations.values());
 		try {
 			// TODO: copy file before deleting it!!
 			File file = new File(path);
@@ -253,8 +256,8 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	}
 
 	/**
-	 * @param configurations
-	 *            the configurations to set
+	 * @param IDToConfigurations
+	 *            the IDToConfigurations to set
 	 */
 	public void setConfigurations(Set<Configuration> configurations) {
 		for (Configuration config : configurations) {
@@ -263,7 +266,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	}
 
 	/**
-	 * Just a container for service configurations.
+	 * Just a container for service IDToConfigurations.
 	 * 
 	 * @author Jochen Mader - jochen@pramari.com
 	 * 
@@ -271,5 +274,24 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	protected class ServiceConfiguration {
 		public HashMap<String, String> properties;
 		public String serviceID;
+	}
+
+	public void bindRifidiService(RifidiService service,
+			Dictionary<String, String> parameters) {
+		logger.warn("Service detected: " + service.getID());
+	}
+
+	public void unbindRifidiService(RifidiService service,
+			Dictionary<String, String> parameters) {
+		logger.warn("about to call destroy");
+		Configuration config = this.IDToConfigurations.get(service.getID());
+		if (config != null) {
+			
+			config.destroy();
+		}
+	}
+
+	public void setRifidiService(Set<RifidiService> services) {
+		logger.info("Rifidi Services Set: " + services);
 	}
 }

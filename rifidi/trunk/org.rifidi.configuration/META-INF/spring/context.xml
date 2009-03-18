@@ -8,11 +8,13 @@
 
 	<osgi:service id="configurationServiceRegistration" ref="configurationService"
 		interface="org.rifidi.configuration.services.ConfigurationService" />
-	<bean id="configurationService" class="org.rifidi.configuration.services.ConfigurationServiceImpl"
+	<bean id="configurationService"
+		class="org.rifidi.configuration.services.ConfigurationServiceImpl"
 		scope="singleton">
 		<property name="serviceFactories">
 			<ref bean="serviceFactoriesSet" />
 		</property>
+		<property name="rifidiService" ref="RifidiServiceSet" />
 	</bean>
 	<osgi:service id="jmxServiceRegistration" ref="jmxService"
 		interface="org.rifidi.configuration.services.JMXService" />
@@ -41,5 +43,11 @@
 		cardinality="0..N">
 		<osgi:listener ref="configurationService" bind-method="bind"
 			unbind-method="unbind" />
+	</osgi:set>
+	
+	<osgi:set id="RifidiServiceSet" interface="org.rifidi.configuration.RifidiService"
+		cardinality="0..N">
+		<osgi:listener ref="configurationService" bind-method="bindRifidiService"
+			unbind-method="unbindRifidiService" />
 	</osgi:set>
 </beans>

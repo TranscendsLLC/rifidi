@@ -109,6 +109,13 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 		return null;
 	}
 
+	public Object _configurations(CommandInterpreter intp) {
+		for (Configuration config : configDAO.getConfigurations()) {
+			intp.println("ID: " + config.getServiceID());
+		}
+		return null;
+	}
+
 	public Object _createreader(CommandInterpreter intp) {
 		String readerFacID = intp.nextArgument();
 		if (readerFacID == null) {
@@ -135,6 +142,21 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 		c.setAttributes(list);
 		factory.createService(c);
 		intp.println("Reader Created.  ID is " + c.getServiceID());
+		return null;
+	}
+
+	public Object _deletereader(CommandInterpreter intp) {
+		String readerID = intp.nextArgument();
+		if (readerID == null) {
+			intp.println("Give a Reader ID");
+			return null;
+		}
+		AbstractReader<?> reader = this.readerDAO.getReaderByID(readerID);
+		if (reader == null) {
+			intp.println("No reader with ID " + readerID + " is available");
+			return null;
+		}
+		reader.destroy();
 		return null;
 	}
 
@@ -259,6 +281,23 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 		factory.createService(c);
 		intp.println("Command Created.  ID is " + c.getServiceID());
 		return null;
+	}
+
+	public Object _deletecommand(CommandInterpreter intp) {
+		String commandID = intp.nextArgument();
+		if (commandID == null) {
+			intp.println("Please supply a command ID");
+			return null;
+		}
+		AbstractCommandConfiguration<?> command = this.commandDAO
+				.getCommandByID(commandID);
+		if (command == null) {
+			intp.println("No Command with ID " + commandID + " is avaialbe");
+			return null;
+		}
+		command.destroy();
+		return null;
+
 	}
 
 	/**
@@ -394,7 +433,7 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 		try {
 			if (session != null) {
 				session.killComand(Integer.parseInt(commandid));
-			}else{
+			} else {
 				intp.println("session ID does not exist");
 			}
 		} catch (NumberFormatException e) {

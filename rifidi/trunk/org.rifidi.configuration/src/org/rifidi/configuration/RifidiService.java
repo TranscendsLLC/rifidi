@@ -3,14 +3,19 @@
  */
 package org.rifidi.configuration;
 
+import java.util.Hashtable;
+import java.util.Set;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
 
 /**
  * Interface for rifidi services.
  * 
  * @author Jochen Mader - jochen@pramari.com
+ * @author Kyle Neumeier - kyle@pramari.com
  * 
  */
 public abstract class RifidiService {
@@ -46,21 +51,31 @@ public abstract class RifidiService {
 	}
 
 	/**
-	 * @param serviceRegistration
-	 *            the serviceRegistration to set
+	 * This method should be called to register the service to OSGi
+	 * 
+	 * @param context
+	 *            The BundleContext to use to register the service
+	 * @param interfaces
+	 *            The Interfaces to register the service under
 	 */
-	public void setServiceRegistration(ServiceRegistration serviceRegistration) {
-		this.serviceRegistration = serviceRegistration;
+	public void register(BundleContext context, Set<String> interfaces) {
+		interfaces.add(RifidiService.class.getName());
+		String[] serviceInterfaces = new String[interfaces.size()];
+		serviceInterfaces = interfaces.toArray(serviceInterfaces);
+		this.serviceRegistration = context.registerService(serviceInterfaces,
+				this, new Hashtable<String, String>());
 	}
 
 	/**
 	 * Unregister this service from the OSGi registry
 	 */
-	public void destroy() {
+	protected void unregister() {
 		if (serviceRegistration != null) {
 			serviceRegistration.unregister();
 		} else {
 			logger.warn("Service has not been registered " + ID);
 		}
 	}
+
+	public abstract void destroy();
 }

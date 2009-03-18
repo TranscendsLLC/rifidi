@@ -58,7 +58,6 @@ public abstract class AbstractIPReaderSession extends AbstractReaderSession {
 	/** True if the socket is currently being connected. */
 	private AtomicBoolean connecting = new AtomicBoolean(false);
 
-
 	/**
 	 * Constructor.
 	 * 
@@ -76,7 +75,7 @@ public abstract class AbstractIPReaderSession extends AbstractReaderSession {
 		this.port = port;
 		this.maxConAttempts = maxConAttempts;
 		this.reconnectionInterval = reconnectionInterval;
-	
+
 	}
 
 	/**
@@ -144,7 +143,7 @@ public abstract class AbstractIPReaderSession extends AbstractReaderSession {
 				&& connecting.compareAndSet(false, true)) {
 			try {
 				setStatus(SessionStatus.CONNECTING);
-				socket=null;
+				socket = null;
 				// if an executor exists, execute it (delete the executor :))
 				if (processing.get()) {
 					if (!processing.compareAndSet(true, false)) {
@@ -240,8 +239,11 @@ public abstract class AbstractIPReaderSession extends AbstractReaderSession {
 					public void run() {
 						try {
 							readThread.join();
-							setStatus(SessionStatus.CREATED);
-							connect();
+							// don't try to connect again if we are closing down
+							if (getStatus() != SessionStatus.CLOSED) {
+								setStatus(SessionStatus.CREATED);
+								connect();
+							}
 						} catch (InterruptedException e) {
 							Thread.currentThread().interrupt();
 						} catch (IOException e) {
@@ -269,7 +271,7 @@ public abstract class AbstractIPReaderSession extends AbstractReaderSession {
 						}
 					}
 				}
-			}finally {
+			} finally {
 				connecting.compareAndSet(true, false);
 			}
 		}
@@ -284,6 +286,8 @@ public abstract class AbstractIPReaderSession extends AbstractReaderSession {
 	public void disconnect() {
 		if (processing.get()) {
 			if (processing.compareAndSet(true, false)) {
+				setStatus(SessionStatus.CLOSED);
+				this.executor.shutdown();
 				try {
 					socket.close();
 				} catch (IOException e) {
@@ -291,12 +295,10 @@ public abstract class AbstractIPReaderSession extends AbstractReaderSession {
 				}
 				readThread.interrupt();
 				writeThread.interrupt();
-				setStatus(SessionStatus.CREATED);
+
 			}
 		}
 	}
-
-
 
 	/**
 	 * This method is called each time a new byte is read. It will return the
@@ -315,6 +317,5 @@ public abstract class AbstractIPReaderSession extends AbstractReaderSession {
 	 *             if a connection problem occurs
 	 */
 	public abstract boolean onConnect() throws IOException;
-
 
 }
