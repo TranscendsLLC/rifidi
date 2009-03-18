@@ -59,7 +59,7 @@ public class Alien9800Reader extends AbstractReader<Alien9800ReaderSession> {
 	private Destination destination;
 	/** Spring JMS template */
 	private JmsTemplate template;
-	/**The ID of the session*/
+	/** The ID of the session */
 	private int sessionID = 0;
 
 	/**
@@ -187,13 +187,24 @@ public class Alien9800Reader extends AbstractReader<Alien9800ReaderSession> {
 	public synchronized ReaderSession createReaderSession() {
 		if (session == null) {
 			sessionID++;
-			session = new Alien9800ReaderSession(Integer.toString(sessionID),ipAddress, port,
-					(int) (long) reconnectionInterval,
+			session = new Alien9800ReaderSession(Integer.toString(sessionID),
+					ipAddress, port, (int) (long) reconnectionInterval,
 					maxNumConnectionAttempts, username, password, destination,
 					template);
 			return session;
 		}
 		return null;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.rifidi.configuration.RifidiService#destroy()
+	 */
+	@Override
+	public void destroy() {
+		super.unregister();
+		destroyReaderSession(this.session);
 	}
 
 	/**
@@ -221,7 +232,10 @@ public class Alien9800Reader extends AbstractReader<Alien9800ReaderSession> {
 	 */
 	@Override
 	public void destroyReaderSession(ReaderSession session) {
-		session.disconnect();
+		if (session != null) {
+			session.disconnect();
+		}
+		session = null;
 	}
 
 	/*

@@ -14,6 +14,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.jms.Destination;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.api.SessionStatus;
 import org.rifidi.edge.core.commands.Command;
 import org.rifidi.edge.core.readers.ReaderSession;
@@ -43,6 +45,7 @@ public abstract class AbstractReaderSession extends ReaderSession {
 	protected AtomicBoolean processing = new AtomicBoolean(false);
 	/** Queue for commands that get submitted while the executor is inactive. */
 	protected Queue<Command> commandQueue = new ConcurrentLinkedQueue<Command>();
+	private static final Log logger = LogFactory.getLog(AbstractReaderSession.class);
 
 	public AbstractReaderSession(String ID, Destination destination, JmsTemplate template) {
 		super(ID);
@@ -142,7 +145,8 @@ public abstract class AbstractReaderSession extends ReaderSession {
 		public ScheduledFuture<?> future;
 	}
 
-	protected void setStatus(SessionStatus status) {
+	protected synchronized void setStatus(SessionStatus status) {
+		logger.debug("Changing state: " + status);
 		this.status = status;
 	}
 

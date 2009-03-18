@@ -182,24 +182,14 @@ public class ReaderConfigurationStubImpl implements ReaderStub {
 	 * getReaderConfigurationProperties(java.lang.String)
 	 */
 	@Override
-	public AttributeList getReaderProperties(String readerConfigurationID)
+	public ReaderDTO getReader(String readerConfigurationID)
 			throws RemoteException {
 		Configuration config = configurationDAO
 				.getConfiguration(readerConfigurationID);
-		if (config != null) {
-			// find out the names of all the attributes
-			List<String> attributeNames = new ArrayList<String>();
-			for (MBeanAttributeInfo attrInfo : config.getMBeanInfo()
-					.getAttributes()) {
-				attributeNames.add(attrInfo.getName());
-			}
-
-			// convert name arraylist to string array
-			String[] names = new String[attributeNames.size()];
-			attributeNames.toArray(names);
-
-			// get the attributes
-			return config.getAttributes(names);
+		AbstractReader<?> reader = readerDAO
+				.getReaderByID(readerConfigurationID);
+		if ((config != null) && (reader != null)) {
+			return reader.getDTO(config);
 		} else {
 			logger.warn("No Configuration object with ID "
 					+ readerConfigurationID + " is available");

@@ -5,6 +5,7 @@ package org.rifidi.edge.core.daos;
 
 import java.util.Dictionary;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -44,6 +45,14 @@ public class ConfigurationDAOImpl implements ConfigurationDAO {
 		return configurations.get(serviceID);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.daos.ConfigurationDAO#getConfigurations()
+	 */
+	@Override
+	public Set<Configuration> getConfigurations() {
+		return new HashSet<Configuration>(configurations.values());
+	}
+
 	/**
 	 * Used by spring to bind a new Configuration to this service.
 	 * 
@@ -67,6 +76,7 @@ public class ConfigurationDAOImpl implements ConfigurationDAO {
 	 */
 	public void unbindConfiguration(Configuration configuration,
 			Dictionary<String, String> parameters) {
+		logger.info("config unbound: " + configuration.getServiceID());
 		configurations.remove(configuration.getServiceID());
 	}
 

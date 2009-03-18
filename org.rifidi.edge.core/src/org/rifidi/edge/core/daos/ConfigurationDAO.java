@@ -3,6 +3,8 @@
  */
 package org.rifidi.edge.core.daos;
 
+import java.util.Set;
+
 import org.rifidi.configuration.Configuration;
 
 /**
@@ -13,5 +15,7 @@ import org.rifidi.configuration.Configuration;
 public interface ConfigurationDAO {
 	
 	public Configuration getConfiguration(String serviceID);
+	
+	public Set<Configuration> getConfigurations();
 
 }
