@@ -3,6 +3,8 @@
  */
 package org.rifidi.edge.client.model.sal;
 
+import org.rifidi.edge.core.api.rmi.dto.ReaderDTO;
+
 /**
  * @author kyle
  * 
@@ -10,20 +12,24 @@ package org.rifidi.edge.client.model.sal;
 public class RemoteReader {
 
 	/** The ID of the Reader */
-	private String ID;
+	private ReaderDTO readerDTO;
+
+	public RemoteReader(ReaderDTO readerDTO) {
+		super();
+		this.readerDTO = readerDTO;
+	}
 
 	/**
 	 * @return the iD
 	 */
 	public String getID() {
-		return ID;
+		return readerDTO.getReaderID();
 	}
-
+	
 	/**
-	 * @param id the iD to set
+	 * @return the readerDTO
 	 */
-	public void setID(String id) {
-		ID = id;
+	public ReaderDTO getReaderDTO() {
+		return readerDTO;
 	}
-
 }

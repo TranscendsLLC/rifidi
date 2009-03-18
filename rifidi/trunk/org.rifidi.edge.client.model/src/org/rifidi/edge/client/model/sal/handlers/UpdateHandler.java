@@ -12,13 +12,13 @@ import org.eclipse.ui.handlers.HandlerUtil;
 import org.rifidi.edge.client.model.sal.RemoteEdgeServer;
 
 /**
- * The Handler method for connecting to an EdgeServer. It should only be able to
- * happen if the Edge Server is in the disconnected state
+ * The handler method for updating the edge server. Should only be able to be
+ * executed if the RemoteEdgeServer is in the connected state
  * 
  * @author Kyle Neumeier - kyle@pramari.com
  * 
  */
-public class ConnectHandler extends AbstractHandler implements IHandler2 {
+public class UpdateHandler extends AbstractHandler implements IHandler2 {
 
 	/*
 	 * (non-Javadoc)
@@ -34,7 +34,7 @@ public class ConnectHandler extends AbstractHandler implements IHandler2 {
 		Object sel = selection.getFirstElement();
 		if (sel instanceof RemoteEdgeServer) {
 
-			((RemoteEdgeServer) sel).connect();
+			((RemoteEdgeServer) sel).update();
 
 		}
 		return null;

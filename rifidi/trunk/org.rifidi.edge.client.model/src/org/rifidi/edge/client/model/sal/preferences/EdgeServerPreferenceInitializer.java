@@ -24,11 +24,14 @@ public class EdgeServerPreferenceInitializer extends
 	@Override
 	public void initializeDefaultPreferences() {
 		Preferences node = new DefaultScope().getNode(Activator.PLUGIN_ID);
-		node.put(EdgeServerPreferences.EDGE_SERVER_IP, "127.0.0.1");
-		node.put(EdgeServerPreferences.EDGE_SERVER_PORT_JMS, "1099");
-		node.put(EdgeServerPreferences.EDGE_SERVER_PORT_RMI, "1098");
+		node.put(EdgeServerPreferences.EDGE_SERVER_IP,
+				EdgeServerPreferences.EDGE_SERVER_IP_DEFAULT);
+		node.put(EdgeServerPreferences.EDGE_SERVER_PORT_JMS,
+				EdgeServerPreferences.EDGE_SERVER_PORT_JMS_DEFAULT);
+		node.put(EdgeServerPreferences.EDGE_SERVER_PORT_RMI,
+				EdgeServerPreferences.EDGE_SERVER_PORT_RMI_DEFAULT);
 		node.put(EdgeServerPreferences.EDGE_SERVER_JMS_QUEUE,
-				"org.rifidi.edge.external.notifications");
+				EdgeServerPreferences.EDGE_SERVER_JMS_QUEUE_DEFAULT);
 	}
 
 }
