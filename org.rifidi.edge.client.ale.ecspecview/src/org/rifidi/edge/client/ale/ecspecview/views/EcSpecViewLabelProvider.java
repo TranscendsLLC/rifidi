@@ -52,7 +52,7 @@ public class EcSpecViewLabelProvider implements ILabelProvider {
 	@Override
 	public String getText(Object element) {
 		if (element instanceof AleProxyFactory)
-			return ((AleProxyFactory) element).getBaseUrl();
+			return ((AleProxyFactory) element).getServerName();
 		return ((String)element);
 	}
 

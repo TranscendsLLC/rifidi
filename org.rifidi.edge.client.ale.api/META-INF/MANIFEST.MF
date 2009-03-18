@@ -17,3 +17,4 @@ Export-Package: org.rifidi.edge.client.ale.api.alelr.xsd.epcglobal,
  org.rifidi.edge.client.ale.api.xsd.ale.epcglobal,
  org.rifidi.edge.client.ale.api.xsd.alelr.epcglobal,
  org.rifidi.edge.client.ale.api.xsd.epcglobal
+Import-Package: org.apache.commons.logging;version="1.1.1"

@@ -77,7 +77,7 @@ public class EcSpecView extends ViewPart {
 	 * @return
 	 */
 	private AleProxyFactory getInitialInput() {
-		return new AleProxyFactory("");
+		return new AleProxyFactory("","");
 	}
 
 	private void hookContextMenu() {

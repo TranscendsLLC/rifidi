@@ -10,6 +10,9 @@
  */
 package org.rifidi.edge.client.ale.api.proxy;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
@@ -21,31 +24,31 @@ import org.rifidi.edge.client.ale.api.wsdl.alelr.epcglobal.ALELRServicePortType;
  * 
  */
 public class AleProxyFactory {
-	private String baseUrl = null;
+	private String AleEndpoint = "", AlelrEndpoint = "";
 	private Log logger = LogFactory.getLog(AleProxyFactory.class);
 	private ALEServicePortType sp = null;
-	private ALELRServicePortType lrsp=null;
+	private ALELRServicePortType lrsp = null;
 
 	/**
 	 * 
 	 */
-	public AleProxyFactory(String baseUrl) {
-		super();
-		this.baseUrl = baseUrl;
+	public AleProxyFactory(String AleEndpoint, String AlelrEndpoint) {
+		this.AleEndpoint = AleEndpoint;
+		this.AlelrEndpoint = AlelrEndpoint;
 	}
 
 	public ALEServicePortType getAleServicePortType() {
-		if (sp == null && !baseUrl.isEmpty()) {
+		if (sp == null && !AleEndpoint.isEmpty()) {
 			// init ALE
-			String fullUrl = baseUrl + "/ALEService";
+
 			logger
 					.debug("\nJaxWsProxyFactoryBean aleFactory = new JaxWsProxyFactoryBean();");
 			JaxWsProxyFactoryBean aleFactory = new JaxWsProxyFactoryBean();
 			logger
 					.debug("\naleFactory.setServiceClass(ALEServicePortType.class);");
 			aleFactory.setServiceClass(ALEServicePortType.class);
-			logger.debug("\naleEndPoint = " + fullUrl);
-			aleFactory.setAddress(fullUrl);
+			logger.debug("\naleEndPoint = " + AleEndpoint);
+			aleFactory.setAddress(AleEndpoint);
 			logger
 					.debug("\naleProxy = (ALEServicePortType) aleFactory.create();");
 			sp = (ALEServicePortType) aleFactory.create();
@@ -56,17 +59,17 @@ public class AleProxyFactory {
 
 	public ALELRServicePortType getAleLrServicePortType() {
 
-		if (lrsp == null && !baseUrl.isEmpty()) {
+		if (lrsp == null && !AlelrEndpoint.isEmpty()) {
 			// init ALELR
-			String fullUrl = baseUrl + "/ALEService";
+
 			logger
 					.debug("\nJaxWsProxyFactoryBean lrFactory = new JaxWsProxyFactoryBean();");
 			JaxWsProxyFactoryBean lrFactory = new JaxWsProxyFactoryBean();
 			logger
 					.debug("\nlrFactory.setServiceClass(ALELRServicePortType.class);");
 			lrFactory.setServiceClass(ALELRServicePortType.class);
-			logger.debug("\nlrFactory.setAddress(" + fullUrl + ");");
-			lrFactory.setAddress(fullUrl);
+			logger.debug("\nlrFactory.setAddress(" + AlelrEndpoint + ");");
+			lrFactory.setAddress(AlelrEndpoint);
 			logger
 					.debug("\nreaderProxy = (ALELRServicePortType) lrFactory.create();");
 			lrsp = (ALELRServicePortType) lrFactory.create();
@@ -76,9 +79,47 @@ public class AleProxyFactory {
 	}
 
 	/**
-	 * @return the baseUrl
+	 * @return the aleEndpoint
 	 */
-	public String getBaseUrl() {
-		return baseUrl;
+	public String getAleEndpoint() {
+		return AleEndpoint;
+	}
+
+	/**
+	 * @param aleEndpoint
+	 *            the aleEndpoint to set
+	 */
+	public void setAleEndpoint(String aleEndpoint) {
+		AleEndpoint = aleEndpoint;
+	}
+
+	/**
+	 * @return the alelrEndpoint
+	 */
+	public String getAlelrEndpoint() {
+		return AlelrEndpoint;
+	}
+
+	/**
+	 * @param alelrEndpoint
+	 *            the alelrEndpoint to set
+	 */
+	public void setAlelrEndpoint(String alelrEndpoint) {
+		AlelrEndpoint = alelrEndpoint;
+	}
+
+	public String getServerName() {
+		String retVal = "";
+		if (!AleEndpoint.isEmpty()) {
+			try {
+				URL url = new URL(AleEndpoint);
+				retVal = url.getHost();
+			} catch (MalformedURLException e) {
+				logger.error(e.getMessage());
+			} 
+			
+
+		}
+		return retVal;
 	}
 }
