@@ -1,0 +1,16 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Webservice Plug-in
+Bundle-SymbolicName: org.rifidi.edge.client.ale.connection;singleton:=true
+Bundle-Version: 1.0.0
+Bundle-Activator: org.rifidi.edge.client.ale.connection.Activator
+Bundle-Vendor: PRAMARI EUROPE GMBH
+Require-Bundle: org.eclipse.core.runtime,
+ org.rifidi.edge.client.ale.api;bundle-version="1.0.0",
+ org.apache.cxf;bundle-version="1.0.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ActivationPolicy: lazy
+Export-Package: org.rifidi.edge.client.ale.connection.commands,
+ org.rifidi.edge.client.ale.connection.commands.impl,
+ org.rifidi.edge.client.ale.connection.listeners,
+ org.rifidi.edge.client.ale.connection.service
