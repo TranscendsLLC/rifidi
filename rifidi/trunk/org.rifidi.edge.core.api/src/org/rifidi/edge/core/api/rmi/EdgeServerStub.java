@@ -17,4 +17,11 @@ public interface EdgeServerStub extends Remote {
 	 * @throws RemoteException
 	 */
 	void save() throws RemoteException;
+
+	/**
+	 * 
+	 * @return The timestamp of the last time this server was started
+	 * @throws RemoteException
+	 */
+	Long getStartupTime() throws RemoteException;
 }
