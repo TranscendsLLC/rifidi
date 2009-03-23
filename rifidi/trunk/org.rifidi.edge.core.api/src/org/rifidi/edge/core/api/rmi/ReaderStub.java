@@ -12,6 +12,7 @@ import javax.management.AttributeList;
 import javax.management.MBeanInfo;
 
 import org.rifidi.edge.core.api.rmi.dto.ReaderDTO;
+import org.rifidi.edge.core.api.rmi.dto.ReaderFactoryDTO;
 import org.rifidi.edge.core.api.rmi.dto.SessionDTO;
 
 /**
@@ -28,7 +29,18 @@ public interface ReaderStub extends Remote {
 	 * 
 	 * @return a list of IDs of ReaderFactories that are currently available
 	 */
-	Set<String> getReaderFactories() throws RemoteException;
+	Set<ReaderFactoryDTO> getReaderFactories() throws RemoteException;
+
+	/**
+	 * This returns the ReaderFactoryDTO for the given readerFactoryID
+	 * 
+	 * @param readerFactoryID
+	 *            The ReaderFactoryID to return
+	 * @return The DTO for the readerFactory
+	 * @throws RemoteException
+	 */
+	ReaderFactoryDTO getReaderFactory(String readerFactoryID)
+			throws RemoteException;
 
 	/**
 	 * This method gets the readers that are currently available on the server

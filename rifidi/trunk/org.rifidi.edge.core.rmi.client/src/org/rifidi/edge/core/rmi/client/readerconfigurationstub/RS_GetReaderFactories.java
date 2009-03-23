@@ -8,6 +8,7 @@ import java.rmi.RemoteException;
 import java.util.Set;
 
 import org.rifidi.edge.core.api.rmi.ReaderStub;
+import org.rifidi.edge.core.api.rmi.dto.ReaderFactoryDTO;
 import org.rifidi.rmi.utils.remotecall.ServerDescriptionBasedRemoteMethodCall;
 
 /**
@@ -17,8 +18,9 @@ import org.rifidi.rmi.utils.remotecall.ServerDescriptionBasedRemoteMethodCall;
  * @author Kyle Neumeier - Kyle Neumeier
  * 
  */
-public class RS_GetReaderFactories extends
-		ServerDescriptionBasedRemoteMethodCall<Set<String>, RuntimeException> {
+public class RS_GetReaderFactories
+		extends
+		ServerDescriptionBasedRemoteMethodCall<Set<ReaderFactoryDTO>, RuntimeException> {
 
 	/**
 	 * Constructor
@@ -31,7 +33,7 @@ public class RS_GetReaderFactories extends
 	}
 
 	@Override
-	protected Set<String> performRemoteCall(Remote remoteObject)
+	protected Set<ReaderFactoryDTO> performRemoteCall(Remote remoteObject)
 			throws RemoteException, RuntimeException {
 		ReaderStub stub = (ReaderStub) remoteObject;
 		return stub.getReaderFactories();
