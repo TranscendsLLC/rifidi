@@ -24,16 +24,16 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eclipse.core.databinding.observable.map.ObservableMap;
 import org.eclipse.core.databinding.observable.map.WritableMap;
-import org.eclipse.core.databinding.observable.set.ObservableSet;
-import org.eclipse.core.databinding.observable.set.WritableSet;
 import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.osgi.service.prefs.Preferences;
 import org.rifidi.edge.client.model.Activator;
+import org.rifidi.edge.client.model.sal.notifications.handlers.ReaderFactoryNotificationHandler;
 import org.rifidi.edge.client.model.sal.notifications.handlers.ReaderNotificationHandler;
 import org.rifidi.edge.client.model.sal.preferences.EdgeServerPreferences;
+import org.rifidi.edge.core.api.jms.notifications.ReaderFactoryNotification;
 import org.rifidi.edge.core.api.jms.notifications.ReaderNotification;
 import org.rifidi.edge.core.api.rmi.dto.ReaderDTO;
-import org.rifidi.edge.core.rmi.client.commandconfigurationstub.CCServerDescription;
+import org.rifidi.edge.core.api.rmi.dto.ReaderFactoryDTO;
 import org.rifidi.edge.core.rmi.client.edgeserverstub.ESGetStartupTimestamp;
 import org.rifidi.edge.core.rmi.client.edgeserverstub.ESSave;
 import org.rifidi.edge.core.rmi.client.edgeserverstub.ESServerDescription;
@@ -50,19 +50,16 @@ import org.rifidi.rmi.utils.exceptions.ServerUnavailable;
  */
 public class RemoteEdgeServer implements MessageListener {
 
-	/** The server description for the command stub */
-	private CCServerDescription cc_description;
-	/** The set of reader factories on the server */
-	private ObservableSet readerFactoryIDs;
-	/** The set of command factories on the server */
-	private ObservableMap commandFactoryIDs;
 	/** The logger for this class */
 	private static final Log logger = LogFactory.getLog(RemoteEdgeServer.class);
+	/** The set of reader factories on the server */
+	private ObservableMap readerFactoryIDs;
 	/** The remote readers on this edge server */
 	private ObservableMap remoteReaders;
-	private ActiveMQConnectionFactory connectionFactory;
 	/** The current state of the edge server */
 	private RemoteEdgeServerState state;
+
+	private ActiveMQConnectionFactory connectionFactory;
 	private Connection conn;
 	private Session session;
 	private Destination dest;
@@ -85,8 +82,7 @@ public class RemoteEdgeServer implements MessageListener {
 	public RemoteEdgeServer() {
 		changeState(RemoteEdgeServerState.DISCONNECTED);
 
-		readerFactoryIDs = new WritableSet();
-		commandFactoryIDs = new WritableMap();
+		readerFactoryIDs = new WritableMap();
 		remoteReaders = new WritableMap();
 
 		connectionFactory = new ActiveMQConnectionFactory();
@@ -148,7 +144,7 @@ public class RemoteEdgeServer implements MessageListener {
 
 			// if the server has restarted since the last time we updated, we
 			// need to disconnect and reconnect
-			if (!(startupTime==0 || timestamp==startupTime)) {
+			if (!(startupTime == 0 || timestamp == startupTime)) {
 				disconnect();
 				connect();
 				return;
@@ -158,8 +154,13 @@ public class RemoteEdgeServer implements MessageListener {
 			RS_ServerDescription rs_description = getRSServerDescription();
 			RS_GetReaderFactories rsGetFactoriesCall = new RS_GetReaderFactories(
 					rs_description);
-
-			readerFactoryIDs.addAll(rsGetFactoriesCall.makeCall());
+			Set<ReaderFactoryDTO> readerFactoryDTOs = rsGetFactoriesCall
+					.makeCall();
+			for (ReaderFactoryDTO factory : readerFactoryDTOs) {
+				logger.debug("Found ReaderFactory: "
+						+ factory.getReaderFactoryID());
+				readerFactoryIDs.put(factory.getReaderFactoryID(), factory);
+			}
 
 			RS_GetReaders rsGetReaderCall = new RS_GetReaders(rs_description);
 			Set<ReaderDTO> readerDTOs = rsGetReaderCall.makeCall();
@@ -189,7 +190,6 @@ public class RemoteEdgeServer implements MessageListener {
 			logger.error("Error when disconnecting: ", e);
 		}
 		readerFactoryIDs.clear();
-		commandFactoryIDs.clear();
 		remoteReaders.clear();
 		logger.info("Remote Edge Server is in the Disconnected state");
 		changeState(RemoteEdgeServerState.DISCONNECTED);
@@ -215,15 +215,8 @@ public class RemoteEdgeServer implements MessageListener {
 	/**
 	 * @return the readerFactoryIDs
 	 */
-	public ObservableSet getReaderFactoryIDs() {
+	public ObservableMap getReaderFactoryIDs() {
 		return readerFactoryIDs;
-	}
-
-	/**
-	 * @return the commandFactoryIDs
-	 */
-	public ObservableMap getCommandFactoryIDs() {
-		return commandFactoryIDs;
 	}
 
 	/**
@@ -244,6 +237,11 @@ public class RemoteEdgeServer implements MessageListener {
 					ReaderNotificationHandler rnh = new ReaderNotificationHandler(
 							ra, remoteReaders, getRSServerDescription());
 					rnh.handleNotification();
+				} else if (message instanceof ReaderFactoryNotification) {
+					ReaderFactoryNotification rfn = (ReaderFactoryNotification) message;
+					ReaderFactoryNotificationHandler rfnh = new ReaderFactoryNotificationHandler(
+							rfn, readerFactoryIDs, getRSServerDescription());
+					rfnh.handleNotification();
 				}
 			} catch (JMSException e) {
 				logger.warn("JMS Exception while recieving message");
