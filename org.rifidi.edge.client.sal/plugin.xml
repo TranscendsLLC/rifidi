@@ -12,7 +12,6 @@
    <extension
          point="org.eclipse.ui.views">
       <view
-            category="EdgeServer"
             class="org.rifidi.edge.client.sal.views.EdgeServerView"
             id="org.rifidi.edge.client.sal.views.EdgeServerView"
             name="Edge Server View"
@@ -28,8 +27,23 @@
                id="org.rifidi.edge.client.sal.views.EdgeServerView"
                minimized="false"
                moveable="true"
-               ratio=".5"
+               ratio=".3"
                relationship="left"
+               relative="org.eclipse.ui.editorss"
+               showTitle="true"
+               standalone="true"
+               visible="true">
+         </view>
+      </perspectiveExtension>
+      <perspectiveExtension
+            targetID="org.rifidi.edge.client.sal.perspective">
+         <view
+               closeable="false"
+               id="org.eclipse.ui.views.PropertySheet"
+               minimized="false"
+               moveable="true"
+               ratio=".5"
+               relationship="bottom"
                relative="org.eclipse.ui.editorss"
                showTitle="true"
                standalone="true"
@@ -42,28 +56,176 @@
       <menuContribution
             locationURI="popup:org.rifidi.edge.client.sal.views.EdgeServerView?after=additions">
          <command
-               commandId="org.rifidi.edge.client.model.sal.commands.connect"
-               id="org.rifidi.edge.client.model.sal.commands.connectBinding"
+               commandId="org.rifidi.edge.client.sal.commands.edgeserver.connect"
+               id="org.rifidi.edge.client.sal.commands.edgeserver.connectBinding"
                label="Connect"
                style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <iterate>
+                  <instanceof
+                        value="org.rifidi.edge.client.model.sal.RemoteEdgeServer">
+                  </instanceof>
+               </iterate>
+            </visibleWhen>
          </command>
          <command
-               commandId="org.rifidi.edge.client.model.sal.commands.disconnect"
-               id="org.rifidi.edge.client.model.sal.commands.disconnectBinding"
+               commandId="org.rifidi.edge.client.sal.commands.edgeserver.disconnect"
+               id="org.rifidi.edge.client.sal.commands.edgeserver.disconnectBinding"
                label="Disconnect"
                style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <iterate>
+                  <instanceof
+                        value="org.rifidi.edge.client.model.sal.RemoteEdgeServer">
+                  </instanceof>
+               </iterate>
+            </visibleWhen>
          </command>
-         <separator
-               name="org.rifidi.edge.client.sal.separator1"
-               visible="true">
-         </separator>
          <command
-               commandId="org.rifidi.edge.client.model.sal.commands.update"
-               id="org.rifidi.edge.client.model.sal.commands.updateBinding"
+               commandId="org.rifidi.edge.client.sal.commands.edgeserver.update"
+               id="org.rifidi.edge.client.sal.commands.edgeserver.updateBinding"
                label="Update"
                style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <iterate>
+                  <instanceof
+                        value="org.rifidi.edge.client.model.sal.RemoteEdgeServer">
+                  </instanceof>
+               </iterate>
+            </visibleWhen>
+         </command>
+         <command
+               commandId="org.rifidi.edge.client.sal.commands.edgeserver.save"
+               id="org.rifidi.edge.client.sal.commands.edgeserver.saveBinding"
+               label="Save"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <iterate>
+                  <instanceof
+                        value="org.rifidi.edge.client.model.sal.RemoteEdgeServer">
+                  </instanceof>
+               </iterate>
+            </visibleWhen>
          </command>
       </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="org.rifidi.edge.client.sal.controller.edgeserver.handlers.ConnectHandler"
+            commandId="org.rifidi.edge.client.sal.commands.edgeserver.connect">
+         <enabledWhen>
+            <iterate
+                  ifEmpty="false">
+               <and>
+                  <instanceof
+                        value="org.rifidi.edge.client.model.sal.RemoteEdgeServer">
+                  </instanceof>
+                  <test
+                        property="org.rifidi.edge.client.sal.edgeserver.state"
+                        value="DISCONNECTED">
+                  </test>
+               </and>
+            </iterate>
+         </enabledWhen>
+      </handler>
+      <handler
+            class="org.rifidi.edge.client.sal.controller.edgeserver.handlers.DisconnectHandler"
+            commandId="org.rifidi.edge.client.sal.commands.edgeserver.disconnect">
+         <enabledWhen>
+            <iterate
+                  ifEmpty="false">
+               <and>
+                  <instanceof
+                        value="org.rifidi.edge.client.model.sal.RemoteEdgeServer">
+                  </instanceof>
+                  <test
+                        property="org.rifidi.edge.client.sal.edgeserver.state"
+                        value="CONNECTED">
+                  </test>
+               </and>
+            </iterate>
+         </enabledWhen>
+      </handler>
+      <handler
+            class="org.rifidi.edge.client.sal.controller.edgeserver.handlers.UpdateHandler"
+            commandId="org.rifidi.edge.client.sal.commands.edgeserver.update">
+         <enabledWhen>
+            <iterate
+                  ifEmpty="false">
+               <and>
+                  <instanceof
+                        value="org.rifidi.edge.client.model.sal.RemoteEdgeServer">
+                  </instanceof>
+                  <test
+                        property="org.rifidi.edge.client.sal.edgeserver.state"
+                        value="CONNECTED">
+                  </test>
+               </and>
+            </iterate>
+         </enabledWhen>
+      </handler>
+      <handler
+            class="org.rifidi.edge.client.sal.controller.edgeserver.handlers.SaveConfigurationHandler"
+            commandId="org.rifidi.edge.client.sal.commands.edgeserver.save">
+         <enabledWhen>
+            <iterate
+                  ifEmpty="false">
+               <and>
+                  <instanceof
+                        value="org.rifidi.edge.client.model.sal.RemoteEdgeServer">
+                  </instanceof>
+                  <test
+                        property="org.rifidi.edge.client.sal.edgeserver.state"
+                        value="CONNECTED">
+                  </test>
+               </and>
+            </iterate>
+         </enabledWhen>
+      </handler>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            id="org.rifidi.edge.client.sal.commands.edgeserver.connect"
+            name="EdgeServerConnect">
+      </command>
+      <command
+            id="org.rifidi.edge.client.sal.commands.edgeserver.update"
+            name="EdgeServerUpdate">
+      </command>
+      <command
+            id="org.rifidi.edge.client.sal.commands.edgeserver.disconnect"
+            name="EdgeServerDisconnect">
+      </command>
+      <command
+            id="org.rifidi.edge.client.sal.commands.edgeserver.save"
+            name="EdgeServerSave">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.core.expressions.propertyTesters">
+      <propertyTester
+            class="org.rifidi.edge.client.sal.controller.edgeserver.handlers.RemoteEdgeServerPropertyTester"
+            id="org.rifidi.edge.client.sal.edgeserver"
+            namespace="org.rifidi.edge.client.sal.edgeserver"
+            properties="state"
+            type="java.lang.Object">
+      </propertyTester>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.adapters">
+      <factory
+            adaptableType="org.rifidi.edge.client.model.sal.RemoteEdgeServer"
+            class="org.rifidi.edge.client.sal.properties.RemoteEdgeServerAdapterFactory">
+         <adapter
+               type="org.eclipse.ui.views.properties.IPropertySource">
+         </adapter>
+      </factory>
    </extension>
 
 </plugin>

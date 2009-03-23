@@ -3,6 +3,9 @@
  */
 package org.rifidi.edge.client.sal.views;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -16,6 +19,8 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.part.ViewPart;
 import org.rifidi.edge.client.model.sal.RemoteEdgeServer;
+import org.rifidi.edge.client.sal.controller.edgeserver.EdgeServerTreeContentProvider;
+import org.rifidi.edge.client.sal.controller.edgeserver.EdgeServerTreeLabelProvider;
 
 /**
  * The View for displaying readers
@@ -27,8 +32,6 @@ public class EdgeServerView extends ViewPart {
 
 	/** The tree viewer to use */
 	private AbstractTreeViewer treeViewer;
-	/** The EdgeServer model for this viewer */
-	private RemoteEdgeServer server;
 
 	/**
 	 * 
@@ -49,7 +52,9 @@ public class EdgeServerView extends ViewPart {
 		GridLayout layout = new GridLayout(2, false);
 		parent.setLayout(layout);
 
-		server = new RemoteEdgeServer();
+		RemoteEdgeServer server = new RemoteEdgeServer();
+		List<RemoteEdgeServer> input = new ArrayList<RemoteEdgeServer>();
+		input.add(server);
 
 		treeViewer = new TreeViewer(parent);
 		GridData treeViewerLayoutData = new GridData(GridData.FILL_BOTH);
@@ -60,7 +65,7 @@ public class EdgeServerView extends ViewPart {
 		createContextMenu();
 		treeViewer.setContentProvider(new EdgeServerTreeContentProvider());
 		treeViewer.setLabelProvider(new EdgeServerTreeLabelProvider());
-		treeViewer.setInput(server);
+		treeViewer.setInput(input);
 		this.getSite().setSelectionProvider(treeViewer);
 	}
 

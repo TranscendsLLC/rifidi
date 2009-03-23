@@ -7,7 +7,6 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 
 import org.rifidi.edge.core.api.rmi.EdgeServerStub;
-import org.rifidi.rmi.utils.cache.ServerDescription;
 import org.rifidi.rmi.utils.remotecall.ServerDescriptionBasedRemoteMethodCall;
 
 /**
@@ -23,7 +22,7 @@ public class ESGetStartupTimestamp extends
 	 * @param serverDescription
 	 *            the server description to use
 	 */
-	public ESGetStartupTimestamp(ServerDescription serverDescription) {
+	public ESGetStartupTimestamp(ESServerDescription serverDescription) {
 		super(serverDescription);
 	}
 

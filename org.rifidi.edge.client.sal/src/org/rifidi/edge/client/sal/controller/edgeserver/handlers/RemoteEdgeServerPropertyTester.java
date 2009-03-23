@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.rifidi.edge.client.model.sal.handlers.testers;
+package org.rifidi.edge.client.sal.controller.edgeserver.handlers;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -36,6 +36,7 @@ public class RemoteEdgeServerPropertyTester extends PropertyTester {
 
 		try {
 			if (receiver instanceof RemoteEdgeServer) {
+
 				String val = (String) expectedValue;
 				return ((RemoteEdgeServer) receiver).getState().equals(
 						RemoteEdgeServerState.valueOf(val));

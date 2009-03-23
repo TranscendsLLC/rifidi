@@ -2,73 +2,6 @@
 <?eclipse version="3.2"?>
 <plugin>
    <extension
-         point="org.eclipse.ui.commands">
-      <command
-            id="org.rifidi.edge.client.model.sal.commands.connect"
-            name="EdgeServerConnect">
-      </command>
-      <command
-            id="org.rifidi.edge.client.model.sal.commands.update"
-            name="EdgeServerUpdate">
-      </command>
-      <command
-            id="org.rifidi.edge.client.model.sal.commands.disconnect"
-            name="EdgeServerDisconnect">
-      </command>
-   </extension>
-   <extension
-         point="org.eclipse.ui.handlers">
-      <handler
-            class="org.rifidi.edge.client.model.sal.handlers.ConnectHandler"
-            commandId="org.rifidi.edge.client.model.sal.commands.connect">
-         <enabledWhen>
-            <iterate>
-               <instanceof
-                     value="org.rifidi.edge.client.model.sal.RemoteEdgeServer">
-               </instanceof>
-               <test
-                     property="org.rifidi.edge.client.remoteedgeserver.state"
-                     value="DISCONNECTED">
-               </test>
-            </iterate>
-         </enabledWhen>
-      </handler>
-      <handler
-            class="org.rifidi.edge.client.model.sal.handlers.DisconnectHandler"
-            commandId="org.rifidi.edge.client.model.sal.commands.disconnect">
-         <enabledWhen>
-            <iterate>
-               <and>
-                  <instanceof
-                        value="org.rifidi.edge.client.model.sal.RemoteEdgeServer">
-                  </instanceof>
-                  <test
-                        property="org.rifidi.edge.client.remoteedgeserver.state"
-                        value="CONNECTED">
-                  </test>
-               </and>
-            </iterate>
-         </enabledWhen>
-      </handler>
-      <handler
-            class="org.rifidi.edge.client.model.sal.handlers.UpdateHandler"
-            commandId="org.rifidi.edge.client.model.sal.commands.update">
-         <enabledWhen>
-            <iterate>
-               <and>
-                  <instanceof
-                        value="org.rifidi.edge.client.model.sal.RemoteEdgeServer">
-                  </instanceof>
-                  <test
-                        property="org.rifidi.edge.client.remoteedgeserver.state"
-                        value="CONNECTED">
-                  </test>
-               </and>
-            </iterate>
-         </enabledWhen>
-      </handler>
-   </extension>
-   <extension
          point="org.eclipse.ui.preferencePages">
       <page
             class="org.rifidi.edge.client.model.sal.preferences.EdgeServerPreferencePage"
@@ -81,16 +14,6 @@
       <initializer
             class="org.rifidi.edge.client.model.sal.preferences.EdgeServerPreferenceInitializer">
       </initializer>
-   </extension>
-   <extension
-         point="org.eclipse.core.expressions.propertyTesters">
-      <propertyTester
-            class="org.rifidi.edge.client.model.sal.handlers.testers.RemoteEdgeServerPropertyTester"
-            id="org.rifidi.edge.client.model.sal.handlers.testers.RemoteEdgeServerPropertyTester"
-            namespace="org.rifidi.edge.client.remoteedgeserver"
-            properties="state"
-            type="java.lang.Object">
-      </propertyTester>
    </extension>
 
 </plugin>

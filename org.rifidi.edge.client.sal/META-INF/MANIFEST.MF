@@ -7,7 +7,9 @@ Bundle-Activator: org.rifidi.edge.client.sal.SALPluginActivator
 Bundle-Vendor: Pramari, LLC
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
- org.eclipse.core.databinding;bundle-version="1.1.1"
+ org.eclipse.core.databinding;bundle-version="1.1.1",
+ org.eclipse.ui.views;bundle-version="3.3.0",
+ org.eclipse.core.expressions;bundle-version="3.4.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Import-Package: org.apache.commons.logging;version="1.1.1",
