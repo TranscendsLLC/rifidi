@@ -3,6 +3,8 @@
  */
 package org.rifidi.edge.client.model.sal;
 
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -32,6 +34,9 @@ import org.rifidi.edge.client.model.sal.preferences.EdgeServerPreferences;
 import org.rifidi.edge.core.api.jms.notifications.ReaderNotification;
 import org.rifidi.edge.core.api.rmi.dto.ReaderDTO;
 import org.rifidi.edge.core.rmi.client.commandconfigurationstub.CCServerDescription;
+import org.rifidi.edge.core.rmi.client.edgeserverstub.ESGetStartupTimestamp;
+import org.rifidi.edge.core.rmi.client.edgeserverstub.ESSave;
+import org.rifidi.edge.core.rmi.client.edgeserverstub.ESServerDescription;
 import org.rifidi.edge.core.rmi.client.readerconfigurationstub.RS_GetReaderFactories;
 import org.rifidi.edge.core.rmi.client.readerconfigurationstub.RS_GetReaders;
 import org.rifidi.edge.core.rmi.client.readerconfigurationstub.RS_ServerDescription;
@@ -45,8 +50,6 @@ import org.rifidi.rmi.utils.exceptions.ServerUnavailable;
  */
 public class RemoteEdgeServer implements MessageListener {
 
-	/** The server description for the reader stub */
-	private RS_ServerDescription rs_description;
 	/** The server description for the command stub */
 	private CCServerDescription cc_description;
 	/** The set of reader factories on the server */
@@ -64,6 +67,12 @@ public class RemoteEdgeServer implements MessageListener {
 	private Session session;
 	private Destination dest;
 	private MessageConsumer consumer;
+	private Long startupTime = 0l;
+
+	/** The property change support for this class */
+	private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+
+	public static final String STATE_PROPERTY = "org.rifidi.edge.client.model.sal.RemoteEdgeServer.state";
 
 	/**
 	 * Constructor
@@ -74,17 +83,12 @@ public class RemoteEdgeServer implements MessageListener {
 	 *            The RMI port of the server
 	 */
 	public RemoteEdgeServer() {
-		state = RemoteEdgeServerState.DISCONNECTED;
-		Preferences node = new DefaultScope().getNode(Activator.PLUGIN_ID);
-		String ip = node.get(EdgeServerPreferences.EDGE_SERVER_IP,
-				EdgeServerPreferences.EDGE_SERVER_IP_DEFAULT);
-		int port = Integer.parseInt(node.get(
-				EdgeServerPreferences.EDGE_SERVER_PORT_RMI,
-				EdgeServerPreferences.EDGE_SERVER_PORT_RMI_DEFAULT));
+		changeState(RemoteEdgeServerState.DISCONNECTED);
+
 		readerFactoryIDs = new WritableSet();
 		commandFactoryIDs = new WritableMap();
 		remoteReaders = new WritableMap();
-		rs_description = new RS_ServerDescription(ip, port);
+
 		connectionFactory = new ActiveMQConnectionFactory();
 	}
 
@@ -95,6 +99,7 @@ public class RemoteEdgeServer implements MessageListener {
 			return;
 		}
 		try {
+			this.startupTime = 0l;
 			// set up JMS consumer
 			Preferences node = new DefaultScope().getNode(Activator.PLUGIN_ID);
 			String ip = node.get(EdgeServerPreferences.EDGE_SERVER_IP,
@@ -114,9 +119,10 @@ public class RemoteEdgeServer implements MessageListener {
 
 			// Connect to RMI
 			logger.info("Remote Edge Server is in the Connected state");
-			this.state = RemoteEdgeServerState.CONNECTED;
+			changeState(RemoteEdgeServerState.CONNECTED);
 			update();
 		} catch (JMSException e) {
+			logger.debug("JMSException!", e);
 			disconnect();
 		}
 
@@ -135,6 +141,21 @@ public class RemoteEdgeServer implements MessageListener {
 			return;
 		}
 		try {
+			// first get the timestamp from the server
+			ESGetStartupTimestamp getTimestampCall = new ESGetStartupTimestamp(
+					getESServerDescription());
+			Long timestamp = getTimestampCall.makeCall();
+
+			// if the server has restarted since the last time we updated, we
+			// need to disconnect and reconnect
+			if (!(startupTime==0 || timestamp==startupTime)) {
+				disconnect();
+				connect();
+				return;
+			}
+			startupTime = timestamp;
+
+			RS_ServerDescription rs_description = getRSServerDescription();
 			RS_GetReaderFactories rsGetFactoriesCall = new RS_GetReaderFactories(
 					rs_description);
 
@@ -148,6 +169,7 @@ public class RemoteEdgeServer implements MessageListener {
 						new RemoteReader(reader));
 			}
 		} catch (ServerUnavailable su) {
+			logger.error("ServerUnavailable! ", su);
 			disconnect();
 		}
 	}
@@ -170,7 +192,24 @@ public class RemoteEdgeServer implements MessageListener {
 		commandFactoryIDs.clear();
 		remoteReaders.clear();
 		logger.info("Remote Edge Server is in the Disconnected state");
-		this.state = RemoteEdgeServerState.DISCONNECTED;
+		changeState(RemoteEdgeServerState.DISCONNECTED);
+	}
+
+	public void saveConfiguration() {
+		if (this.state == RemoteEdgeServerState.DISCONNECTED) {
+			logger.warn("Cannot save configuration when Edge Server "
+					+ "is in the Disconnected State!");
+			return;
+		}
+
+		ESSave saveCommand = new ESSave(getESServerDescription());
+		try {
+			saveCommand.makeCall();
+		} catch (ServerUnavailable e) {
+			logger.error("Exception while saving Remote Configuration", e);
+			disconnect();
+		}
+
 	}
 
 	/**
@@ -203,7 +242,7 @@ public class RemoteEdgeServer implements MessageListener {
 				if (message instanceof ReaderNotification) {
 					ReaderNotification ra = (ReaderNotification) message;
 					ReaderNotificationHandler rnh = new ReaderNotificationHandler(
-							ra, remoteReaders, rs_description);
+							ra, remoteReaders, getRSServerDescription());
 					rnh.handleNotification();
 				}
 			} catch (JMSException e) {
@@ -230,6 +269,42 @@ public class RemoteEdgeServer implements MessageListener {
 
 	public RemoteEdgeServerState getState() {
 		return this.state;
+	}
+
+	private synchronized void changeState(RemoteEdgeServerState newState) {
+		logger.info("Remote Edge Server State: " + newState);
+		RemoteEdgeServerState oldstate = this.state;
+		this.state = newState;
+		this.pcs.firePropertyChange(STATE_PROPERTY, oldstate, newState);
+
+	}
+
+	public void addPropertyChangeListener(PropertyChangeListener listener) {
+		this.pcs.addPropertyChangeListener(listener);
+	}
+
+	public void removePropertyChangeListener(PropertyChangeListener listener) {
+		this.pcs.removePropertyChangeListener(listener);
+	}
+
+	private RS_ServerDescription getRSServerDescription() {
+		Preferences node = new DefaultScope().getNode(Activator.PLUGIN_ID);
+		String ip = node.get(EdgeServerPreferences.EDGE_SERVER_IP,
+				EdgeServerPreferences.EDGE_SERVER_IP_DEFAULT);
+		int port = Integer.parseInt(node.get(
+				EdgeServerPreferences.EDGE_SERVER_PORT_RMI,
+				EdgeServerPreferences.EDGE_SERVER_PORT_RMI_DEFAULT));
+		return new RS_ServerDescription(ip, port);
+	}
+
+	private ESServerDescription getESServerDescription() {
+		Preferences node = new DefaultScope().getNode(Activator.PLUGIN_ID);
+		String ip = node.get(EdgeServerPreferences.EDGE_SERVER_IP,
+				EdgeServerPreferences.EDGE_SERVER_IP_DEFAULT);
+		int port = Integer.parseInt(node.get(
+				EdgeServerPreferences.EDGE_SERVER_PORT_RMI,
+				EdgeServerPreferences.EDGE_SERVER_PORT_RMI_DEFAULT));
+		return new ESServerDescription(ip, port);
 	}
 
 }

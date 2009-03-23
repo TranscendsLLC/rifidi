@@ -1,8 +1,10 @@
 /**
  * 
  */
-package org.rifidi.edge.client.sal.views;
+package org.rifidi.edge.client.sal.controller.edgeserver;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.swt.graphics.Image;
@@ -15,6 +17,9 @@ import org.rifidi.edge.client.sal.SALPluginActivator;
  * 
  */
 public class EdgeServerTreeLabelProvider implements ILabelProvider {
+
+	private static final Log logger = LogFactory
+			.getLog(EdgeServerTreeLabelProvider.class);
 
 	/*
 	 * (non-Javadoc)
