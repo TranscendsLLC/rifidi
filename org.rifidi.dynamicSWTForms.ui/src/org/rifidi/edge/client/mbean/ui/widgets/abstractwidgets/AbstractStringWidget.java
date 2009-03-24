@@ -1,17 +1,15 @@
 /**
  * 
  */
-package org.rifidi.dynamicswtforms.ui.widgets.abstractwidgets;
+package org.rifidi.edge.client.mbean.ui.widgets.abstractwidgets;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import javax.management.Attribute;
+
 import org.eclipse.swt.widgets.Text;
-import org.rifidi.dynamicswtforms.ui.widgets.AbstractWidget;
-import org.rifidi.dynamicswtforms.ui.widgets.data.AbstractWidgetData;
-import org.rifidi.dynamicswtforms.ui.widgets.data.StringWidgetData;
+import org.rifidi.edge.client.mbean.ui.widgets.data.StringWidgetData;
 
 /**
  * This is a convenience abstract class to use for widgets who want to display a
@@ -21,37 +19,32 @@ import org.rifidi.dynamicswtforms.ui.widgets.data.StringWidgetData;
  * @author Kyle Neumeier - kyle@pramari.com
  * 
  */
-public abstract class AbstractStringWidget extends AbstractWidget {
+public abstract class AbstractStringWidget<T extends StringWidgetData> extends
+		AbstractWidget<T> {
 
-	/**
-	 * The Text control
-	 */
+	/** The Text control */
 	protected Text text;
-	
-	/**
-	 * The regular expression
-	 */
+	/** The regular expression */
 	private Pattern regexPattern;
-	
-	/**
-	 * The regular expression matcher object used for validation
-	 */
+	/** The regular expression matcher object used for validation */
 	private Matcher matcher;
-	
+
 	/**
 	 * @param data
 	 */
-	public AbstractStringWidget(AbstractWidgetData data) {
+	public AbstractStringWidget(T data) {
 		super(data);
-		String regexString = ((StringWidgetData)data).getRegex();
-		if(regexString==null || regexString.equals("")){
+		String regexString = data.getRegex();
+		if (regexString == null || regexString.equals("")) {
 			regexPattern = Pattern.compile("(.)*");
-		}else{
+		} else {
 			regexPattern = Pattern.compile(regexString);
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.rifidi.dynamicswtforms.ui.widgets.DynamicSWTFormWidget#disable()
 	 */
 	@Override
@@ -60,35 +53,47 @@ public abstract class AbstractStringWidget extends AbstractWidget {
 
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.rifidi.dynamicswtforms.ui.widgets.DynamicSWTFormWidget#enable()
 	 */
 	@Override
 	public void enable() {
-		if(data.isEditable()){
+		if (data.isEditable()) {
 			this.text.setEnabled(true);
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.rifidi.dynamicswtforms.ui.widgets.DynamicSWTFormWidget#getValue()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.dynamicswtforms.ui.widgets.DynamicSWTFormWidget#getValue()
 	 */
 	@Override
-	public String getValue() {
-		return text.getText();
+	public Attribute getAttribute() {
+		return new Attribute(getElementName(), text.getText());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.rifidi.dynamicswtforms.ui.widgets.DynamicSWTFormWidget#setValue(java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.dynamicswtforms.ui.widgets.DynamicSWTFormWidget#setValue(java
+	 * .lang.String)
 	 */
 	@Override
-	public String setValue(String value) {
-		text.setText(value);
+	public String setValue(Object value) {
+		text.setText((String)value);
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.rifidi.dynamicswtforms.ui.widgets.DynamicSWTFormWidget#validate()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.dynamicswtforms.ui.widgets.DynamicSWTFormWidget#validate()
 	 */
 	@Override
 	public String validate() {

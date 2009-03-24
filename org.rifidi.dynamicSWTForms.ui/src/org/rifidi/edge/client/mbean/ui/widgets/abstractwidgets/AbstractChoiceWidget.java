@@ -1,14 +1,14 @@
 /**
  * 
  */
-package org.rifidi.dynamicswtforms.ui.widgets.abstractwidgets;
+package org.rifidi.edge.client.mbean.ui.widgets.abstractwidgets;
 
 import java.util.List;
 
+import javax.management.Attribute;
+
 import org.eclipse.swt.widgets.Combo;
-import org.rifidi.dynamicswtforms.ui.widgets.AbstractWidget;
-import org.rifidi.dynamicswtforms.ui.widgets.data.AbstractWidgetData;
-import org.rifidi.dynamicswtforms.ui.widgets.data.ChoiceWidgetData;
+import org.rifidi.edge.client.mbean.ui.widgets.data.ChoiceWidgetData;
 
 /**
  * This is a convenience abstract class to use for widgets who want to display a
@@ -18,7 +18,8 @@ import org.rifidi.dynamicswtforms.ui.widgets.data.ChoiceWidgetData;
  * @author Kyle Neumeier - kyle@pramari.com
  * 
  */
-public abstract class AbstractChoiceWidget extends AbstractWidget {
+public abstract class AbstractChoiceWidget<T extends ChoiceWidgetData> extends
+		AbstractWidget<T> {
 
 	/**
 	 * The combo control
@@ -28,7 +29,7 @@ public abstract class AbstractChoiceWidget extends AbstractWidget {
 	/**
 	 * @param data
 	 */
-	public AbstractChoiceWidget(AbstractWidgetData data) {
+	public AbstractChoiceWidget(T data) {
 		super(data);
 	}
 
@@ -62,9 +63,10 @@ public abstract class AbstractChoiceWidget extends AbstractWidget {
 	 * org.rifidi.dynamicswtforms.ui.widgets.DynamicSWTFormWidget#getValue()
 	 */
 	@Override
-	public String getValue() {
+	public Attribute getAttribute() {
 		try {
-			return combo.getItem(combo.getSelectionIndex());
+			return new Attribute(getElementName(), combo.getItem(combo
+					.getSelectionIndex()));
 		} catch (IllegalArgumentException ex) {
 			return null;
 		}
@@ -78,8 +80,8 @@ public abstract class AbstractChoiceWidget extends AbstractWidget {
 	 * .lang.String)
 	 */
 	@Override
-	public String setValue(String value) {
-		List<String> choices = ((ChoiceWidgetData) data).possibleChoices();
+	public String setValue(Object value) {
+		List<String> choices = data.possibleChoices();
 
 		int index = choices.indexOf(value);
 		if (index == -1) {
