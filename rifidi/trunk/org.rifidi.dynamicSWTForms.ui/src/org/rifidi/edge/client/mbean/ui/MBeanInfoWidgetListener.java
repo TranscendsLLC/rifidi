@@ -1,4 +1,4 @@
-package org.rifidi.dynamicswtforms.ui.widgets.listeners;
+package org.rifidi.edge.client.mbean.ui;
 
 /**
  * A class that wants to listen to changes to widgets in a form should use this
@@ -7,7 +7,7 @@ package org.rifidi.dynamicswtforms.ui.widgets.listeners;
  * @author Kyle Neumeier - kyle@pramari.com
  * 
  */
-public interface DynamicSWTWidgetListener {
+public interface MBeanInfoWidgetListener {
 
 	/**
 	 * This is called when the user has finished editing data in a widget (and

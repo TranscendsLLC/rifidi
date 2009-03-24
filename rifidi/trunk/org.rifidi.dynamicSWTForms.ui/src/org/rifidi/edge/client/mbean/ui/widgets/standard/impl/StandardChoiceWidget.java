@@ -1,4 +1,4 @@
-package org.rifidi.dynamicswtforms.ui.widgets.standard.impl;
+package org.rifidi.edge.client.mbean.ui.widgets.standard.impl;
 
 import java.util.List;
 
@@ -10,9 +10,8 @@ import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
-import org.rifidi.dynamicswtforms.ui.widgets.abstractwidgets.AbstractChoiceWidget;
-import org.rifidi.dynamicswtforms.ui.widgets.data.AbstractWidgetData;
-import org.rifidi.dynamicswtforms.ui.widgets.data.ChoiceWidgetData;
+import org.rifidi.edge.client.mbean.ui.widgets.abstractwidgets.AbstractChoiceWidget;
+import org.rifidi.edge.client.mbean.ui.widgets.data.ChoiceWidgetData;
 
 /**
  * A default implementation of the Choice Widget, which uses a combo control to
@@ -21,7 +20,7 @@ import org.rifidi.dynamicswtforms.ui.widgets.data.ChoiceWidgetData;
  * @author Kyle Neumeier - kyle@pramari.com
  * 
  */
-public class ChoiceWidget extends AbstractChoiceWidget {
+public class StandardChoiceWidget<T extends ChoiceWidgetData> extends AbstractChoiceWidget<T> {
 
 	/**
 	 * Set to true if the user has modified the data since the last time the
@@ -30,12 +29,12 @@ public class ChoiceWidget extends AbstractChoiceWidget {
 	private boolean dirty;
 
 	/**
-	 * Construct a new ChoiceWidget
+	 * Construct a new StandardChoiceWidget
 	 * 
 	 * @param data
 	 *            ChoiceWidgetData
 	 */
-	public ChoiceWidget(AbstractWidgetData data) {
+	public StandardChoiceWidget(T data) {
 		super(data);
 	}
 
