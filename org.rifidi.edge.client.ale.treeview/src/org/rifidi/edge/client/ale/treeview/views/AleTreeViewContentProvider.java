@@ -14,14 +14,18 @@ import java.util.ArrayList;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceReference;
 import org.osgi.service.prefs.Preferences;
 import org.rifidi.edge.client.ale.api.proxy.AleProxyFactory;
 import org.rifidi.edge.client.ale.api.wsdl.ale.epcglobal.ALEServicePortType;
 import org.rifidi.edge.client.ale.api.wsdl.ale.epcglobal.EmptyParms;
 import org.rifidi.edge.client.ale.api.wsdl.alelr.epcglobal.ALELRServicePortType;
+import org.rifidi.edge.client.ale.connection.service.ConnectionService;
 import org.rifidi.edge.client.ale.treeview.Activator;
 import org.rifidi.edge.client.ale.treeview.preferences.AleTreeViewPreferences;
 
@@ -31,13 +35,27 @@ import org.rifidi.edge.client.ale.treeview.preferences.AleTreeViewPreferences;
  */
 public class AleTreeViewContentProvider implements ITreeContentProvider {
 
-	private Log logger;
+	private Log logger = null;
+	private BundleContext context = null;
+	private ServiceReference svcRef = null;
+	private ConnectionService conSvc = null;
 
 	/**
 	 * 
 	 */
 	public AleTreeViewContentProvider() {
 		logger = LogFactory.getLog(AleTreeViewContentProvider.class);
+		context = InternalPlatform.getDefault()
+				.getBundleContext();
+		svcRef = context.getServiceReference(ConnectionService.class.getName());
+		if(svcRef==null){
+			logger.error("Service not available!");
+		}
+		conSvc=(ConnectionService)context.getService(svcRef);
+		if(conSvc==null){
+			logger.error("Service not available!");
+		}
+
 	}
 
 	/*
@@ -145,7 +163,9 @@ public class AleTreeViewContentProvider implements ITreeContentProvider {
 			ArrayList<String> strings;
 			try {
 				strings = (ArrayList<String>) ((ALELRServicePortType) element)
-						.getLogicalReaderNames(new org.rifidi.edge.client.ale.api.wsdl.alelr.epcglobal.EmptyParms()).getString();
+						.getLogicalReaderNames(
+								new org.rifidi.edge.client.ale.api.wsdl.alelr.epcglobal.EmptyParms())
+						.getString();
 				if (strings.size() > 0)
 					return true;
 
