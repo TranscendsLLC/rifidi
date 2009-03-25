@@ -16,8 +16,8 @@ import java.net.URL;
 import javax.management.ServiceNotFoundException;
 
 import org.eclipse.core.runtime.preferences.DefaultScope;
-import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
+import org.osgi.service.prefs.Preferences;
 import org.rifidi.edge.client.ale.connection.handler.ConnectionHandler;
 import org.rifidi.edge.client.ale.connection.service.ConnectionService;
 import org.rifidi.edge.client.ale.treeview.Activator;
@@ -27,60 +27,50 @@ import org.rifidi.edge.client.ale.treeview.preferences.AleTreeViewPreferences;
  * @author Tobias Hoppenthaler - tobias@pramari.com
  * 
  */
-public class ConnectionWrapper implements IPreferenceChangeListener {
+public class ConnectionWrapper {
 
-	private ConnectionHandler conHan;
-	private ConnectionService service;
+	private ConnectionService service = null;
 
 	public ConnectionService getConnectionService() {
 
-		try {
-			service = conHan.getService();
-		} catch (ServiceNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		IEclipsePreferences node = new DefaultScope().getNode(Activator.PLUGIN_ID);
-		node.addPreferenceChangeListener(this);
-		
-		if (service.getAleEndpoint() == null) {
-			System.err.println("Endpoint undefined.");
-		}
-		return service;
-	}
+		if (service == null) {
+			ConnectionHandler conHan = new ConnectionHandler();
 
-	//	
-	// private String getPrefsAleEndpoint
-	//	
-	// private String getPrefsLrEndpont
-
-	
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener#preferenceChange(org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent)
-	 */
-	@Override
-	public void preferenceChange(
-			org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent event) {
-		if(event.getKey().equals(AleTreeViewPreferences.ALE_ENDPOINT)){
-			String aleEp = event.getNode().get(AleTreeViewPreferences.ALE_ENDPOINT, AleTreeViewPreferences.ALE_ENDPOINT_DEFAULT);
 			try {
-				service.setAleEndpoint(new URL(aleEp));
-			} catch (MalformedURLException e) {
+				service = conHan.getService();
+			} catch (ServiceNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		}
-		if(event.getKey().equals(AleTreeViewPreferences.ALELR_ENDPOINT)){
-			String lrEp = event.getNode().get(AleTreeViewPreferences.ALELR_ENDPOINT, AleTreeViewPreferences.ALELR_ENDPOINT_DEFAULT);
+			Preferences node = new DefaultScope()
+					.getNode(Activator.PLUGIN_ID);
+			String aleEp = node.get(
+					AleTreeViewPreferences.ALE_ENDPOINT,
+					AleTreeViewPreferences.ALE_ENDPOINT_DEFAULT);
+			String lrEp = node.get(
+					AleTreeViewPreferences.ALELR_ENDPOINT,
+					AleTreeViewPreferences.ALELR_ENDPOINT_DEFAULT);
 			try {
 				service.setLrEndpoint(new URL(lrEp));
 			} catch (MalformedURLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			
+			try {
+				service.setAleEndpoint(new URL(aleEp));
+			} catch (MalformedURLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+
+			if (service.getAleEndpoint() == null||service.getLrEndpoint()==null) {
+				System.err.println("Endpoint undefined.");
+			}
 		}
-		
+		return service;
 	}
+
 
 }

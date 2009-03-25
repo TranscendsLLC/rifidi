@@ -14,20 +14,14 @@ import java.util.ArrayList;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.eclipse.core.internal.runtime.InternalPlatform;
-import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.TreeNode;
 import org.eclipse.jface.viewers.Viewer;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.ServiceReference;
-import org.osgi.service.prefs.Preferences;
-import org.rifidi.edge.client.ale.api.proxy.AleProxyFactory;
 import org.rifidi.edge.client.ale.api.wsdl.ale.epcglobal.ALEServicePortType;
 import org.rifidi.edge.client.ale.api.wsdl.ale.epcglobal.EmptyParms;
 import org.rifidi.edge.client.ale.api.wsdl.alelr.epcglobal.ALELRServicePortType;
 import org.rifidi.edge.client.ale.connection.service.ConnectionService;
-import org.rifidi.edge.client.ale.treeview.Activator;
-import org.rifidi.edge.client.ale.treeview.preferences.AleTreeViewPreferences;
+import org.rifidi.edge.client.ale.treeview.util.ConnectionWrapper.ConnectionWrapper;
 
 /**
  * @author Tobias Hoppenthaler - tobias@pramari.com
@@ -36,8 +30,8 @@ import org.rifidi.edge.client.ale.treeview.preferences.AleTreeViewPreferences;
 public class AleTreeViewContentProvider implements ITreeContentProvider {
 
 	private Log logger = null;
-	private BundleContext context = null;
-	private ServiceReference svcRef = null;
+	// private BundleContext context = null;
+	// private ServiceReference svcRef = null;
 	private ConnectionService conSvc = null;
 
 	/**
@@ -45,16 +39,19 @@ public class AleTreeViewContentProvider implements ITreeContentProvider {
 	 */
 	public AleTreeViewContentProvider() {
 		logger = LogFactory.getLog(AleTreeViewContentProvider.class);
-		context = InternalPlatform.getDefault()
-				.getBundleContext();
-		svcRef = context.getServiceReference(ConnectionService.class.getName());
-		if(svcRef==null){
-			logger.error("Service not available!");
-		}
-		conSvc=(ConnectionService)context.getService(svcRef);
-		if(conSvc==null){
-			logger.error("Service not available!");
-		}
+		ConnectionWrapper conWrap = new ConnectionWrapper();
+		conSvc = conWrap.getConnectionService();
+
+		// context = InternalPlatform.getDefault().getBundleContext();
+		// svcRef =
+		// context.getServiceReference(ConnectionService.class.getName());
+		// if (svcRef == null) {
+		// logger.error("Service not available!");
+		// }
+		// conSvc = (ConnectionService) context.getService(svcRef);
+		// if (conSvc == null) {
+		// logger.error("Service not available!");
+		// }
 
 	}
 
@@ -68,12 +65,12 @@ public class AleTreeViewContentProvider implements ITreeContentProvider {
 	@Override
 	public Object[] getChildren(Object parentElement) {
 
-		if (parentElement instanceof AleProxyFactory) {
+		if (parentElement instanceof TreeNode) {
 			Object[] objects = new Object[2];
-			ALEServicePortType proxy = ((AleProxyFactory) parentElement)
-					.getAleServicePortType();
-			ALELRServicePortType lrproxy = ((AleProxyFactory) parentElement)
-					.getAleLrServicePortType();
+
+			ALEServicePortType proxy = conSvc.getAleServicePortType();
+
+			ALELRServicePortType lrproxy = conSvc.getAleLrServicePortType();
 			objects[0] = proxy;
 			objects[1] = lrproxy;
 			return objects;
@@ -137,11 +134,8 @@ public class AleTreeViewContentProvider implements ITreeContentProvider {
 	 */
 	@Override
 	public boolean hasChildren(Object element) {
-		if (element instanceof AleProxyFactory) {
-			if (((AleProxyFactory) element).getAleEndpoint() == null)
-				return false;
-			else
-				return true;
+		if (element instanceof TreeNode) {
+			return true;
 		}
 		if (element instanceof ALEServicePortType) {
 
@@ -189,16 +183,10 @@ public class AleTreeViewContentProvider implements ITreeContentProvider {
 	 */
 	@Override
 	public Object[] getElements(Object inputElement) {
-		if (inputElement instanceof AleProxyFactory
-				&& ((AleProxyFactory) inputElement).getServerName().isEmpty()) {
-			Preferences node = new DefaultScope().getNode(Activator.PLUGIN_ID);
+		if (inputElement instanceof TreeNode
+				&& ((TreeNode) inputElement).getValue().toString().isEmpty()) {
 			Object[] obj = new Object[1];
-
-			obj[0] = new AleProxyFactory(node.get(
-					AleTreeViewPreferences.ALE_ENDPOINT,
-					AleTreeViewPreferences.ALE_ENDPOINT_DEFAULT), node.get(
-					AleTreeViewPreferences.ALELR_ENDPOINT,
-					AleTreeViewPreferences.ALELR_ENDPOINT_DEFAULT));
+			obj[0] = new TreeNode(conSvc.getAleEndpoint().getHost());
 			return obj;
 		} else if (hasChildren(inputElement))
 			return getChildren(inputElement);

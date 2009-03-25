@@ -10,11 +10,9 @@
  */
 package org.rifidi.edge.client.ale.connection.commands.impl;
 
-import org.eclipse.core.internal.runtime.InternalPlatform;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.ServiceReference;
 import org.rifidi.edge.client.ale.api.wsdl.ale.epcglobal.EmptyParms;
 import org.rifidi.edge.client.ale.connection.commands.WsCommand;
+import org.rifidi.edge.client.ale.connection.handler.ConnectionHandler;
 import org.rifidi.edge.client.ale.connection.service.ConnectionService;
 
 /**
@@ -30,31 +28,20 @@ public class GetVendorVersionAle implements WsCommand {
 	 */
 	@Override
 	public Object makeCall() {
-		String sna = "Communication Service not available";
-		String spe = "ServicePortType is null - probably no Endpoint set";
+		ConnectionHandler handler = new ConnectionHandler();
 
-		BundleContext context = InternalPlatform.getDefault()
-				.getBundleContext();
-
-		ServiceReference serviceReference = context
-				.getServiceReference(ConnectionService.class.getName());
-		if (serviceReference == null)
-			return sna;
-
-		ConnectionService connectionService = (ConnectionService) context
-				.getService(serviceReference);
-		if (connectionService == null)
-			return sna;
-		if (connectionService.getAleServicePortType() == null)
-			return spe;
-
-		EmptyParms parms = new EmptyParms();
 		try {
+			ConnectionService connectionService = handler.getService();
+			if (connectionService.getAleServicePortType() == null)
+				throw new RuntimeException("ServicePortType is null");
+
+			EmptyParms parms = new EmptyParms();
 			return connectionService.getAleServicePortType().getVendorVersion(
 					parms);
 		} catch (Exception e) {
-			e.printStackTrace();
-			return new Object();
+			return e.getMessage();
+		} finally {
+			handler.ungetService();
 		}
 
 	}

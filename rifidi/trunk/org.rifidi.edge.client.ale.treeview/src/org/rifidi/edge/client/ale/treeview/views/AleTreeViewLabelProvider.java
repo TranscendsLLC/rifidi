@@ -12,8 +12,8 @@ package org.rifidi.edge.client.ale.treeview.views;
 
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
+import org.eclipse.jface.viewers.TreeNode;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.rifidi.edge.client.ale.api.proxy.AleProxyFactory;
@@ -41,14 +41,18 @@ public class AleTreeViewLabelProvider implements ILabelProvider {
 	 */
 	@Override
 	public Image getImage(Object element) {
-		String imageKey = ISharedImages.IMG_OBJ_ELEMENT;
-		if (element instanceof AleProxyFactory)
-			return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FOLDER);
-			
-		if(element instanceof ALEServicePortType || element instanceof ALELRServicePortType)
-			return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_ELEMENT);
-		
-		return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FILE);
+
+		if (element instanceof TreeNode)
+			return PlatformUI.getWorkbench().getSharedImages().getImage(
+					ISharedImages.IMG_OBJ_FOLDER);
+
+		if (element instanceof ALEServicePortType
+				|| element instanceof ALELRServicePortType)
+			return PlatformUI.getWorkbench().getSharedImages().getImage(
+					ISharedImages.IMG_OBJ_ELEMENT);
+
+		return PlatformUI.getWorkbench().getSharedImages().getImage(
+				ISharedImages.IMG_OBJ_FILE);
 	}
 
 	/*
@@ -58,18 +62,18 @@ public class AleTreeViewLabelProvider implements ILabelProvider {
 	 */
 	@Override
 	public String getText(Object element) {
-		if (element instanceof AleProxyFactory)
-			return ((AleProxyFactory) element).getServerName();
-		
-		if (element instanceof ALEServicePortType){
+		if (element instanceof TreeNode)
+			return ((TreeNode) element).getValue().toString();
+
+		if (element instanceof ALEServicePortType) {
 			return "ECSpecs";
 		}
-		
-		if(element instanceof ALELRServicePortType){
+
+		if (element instanceof ALELRServicePortType) {
 			return "Logical Readers";
 		}
-		
-		return ((String)element);
+
+		return ((String) element);
 	}
 
 	/*
