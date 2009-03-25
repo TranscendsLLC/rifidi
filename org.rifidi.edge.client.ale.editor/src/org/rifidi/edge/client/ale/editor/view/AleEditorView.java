@@ -109,27 +109,27 @@ public class AleEditorView extends ViewPart {
 				"Duration (ms):");
 		Text txtDuration = toolkit.createText(form.getBody(), "0", SWT.BORDER);
 		txtDuration.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		Section secRepSpec = toolkit.createSection(form.getBody(),
-				Section.DESCRIPTION | Section.TITLE_BAR | Section.TWISTIE
-						| Section.EXPANDED);
-		secRepSpec.setLayout(new GridLayout());
-		gd = new GridData(GridData.GRAB_HORIZONTAL);
-		gd.horizontalSpan = 2;
-		secRepSpec.setLayoutData(gd);
-		TableWrapData td = new TableWrapData(TableWrapData.FILL);
-		td.colspan = 2;
-		secRepSpec.setLayoutData(td);
-		secRepSpec.addExpansionListener(new ExpansionAdapter() {
-			public void expansionStateChanged(ExpansionEvent e) {
-				form.reflow(true);
-			}
-		});
-		secRepSpec.setText("Section title");
-		secRepSpec.setDescription("This is the description that goes "
-				+ "below the title");
-		Composite sectionClient = toolkit.createComposite(secRepSpec);
-		sectionClient.setLayout(new GridLayout());
-		secRepSpec.setClient(sectionClient);
+//		Section secRepSpec = toolkit.createSection(form.getBody(),
+//				Section.DESCRIPTION | Section.TITLE_BAR | Section.TWISTIE
+//						| Section.EXPANDED);
+//		secRepSpec.setLayout(new GridLayout());
+//		gd = new GridData(GridData.GRAB_HORIZONTAL);
+//		gd.horizontalSpan = 2;
+//		secRepSpec.setLayoutData(gd);
+//		TableWrapData td = new TableWrapData(TableWrapData.FILL);
+//		td.colspan = 2;
+//		secRepSpec.setLayoutData(td);
+//		secRepSpec.addExpansionListener(new ExpansionAdapter() {
+//			public void expansionStateChanged(ExpansionEvent e) {
+//				form.reflow(true);
+//			}
+//		});
+//		secRepSpec.setText("Section title");
+//		secRepSpec.setDescription("This is the description that goes "
+//				+ "below the title");
+//		Composite sectionClient = toolkit.createComposite(secRepSpec);
+//		sectionClient.setLayout(new GridLayout());
+//		secRepSpec.setClient(sectionClient);
 
 		// ExpandableComposite ec = toolkit.createExpandableComposite(form
 		// .getBody(), ExpandableComposite.TREE_NODE

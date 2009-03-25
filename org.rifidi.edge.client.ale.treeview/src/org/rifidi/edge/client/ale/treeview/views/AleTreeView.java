@@ -11,6 +11,7 @@ import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.TreeNode;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.layout.FillLayout;
@@ -22,7 +23,6 @@ import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.DrillDownAdapter;
 import org.eclipse.ui.part.ViewPart;
-import org.rifidi.edge.client.ale.api.proxy.AleProxyFactory;
 
 /**
  * This sample class demonstrates how to plug-in a new workbench view. The view
@@ -46,8 +46,6 @@ public class AleTreeView extends ViewPart {
 	private Action action2;
 	private Action doubleClickAction;
 
-	
-
 	/**
 	 * The constructor.
 	 */
@@ -66,7 +64,7 @@ public class AleTreeView extends ViewPart {
 		viewer.setLabelProvider(new AleTreeViewLabelProvider());
 		viewer.setSorter(new ViewerSorter());
 		viewer.setInput(getInitialInput());
-//		viewer.expandAll();
+		// viewer.expandAll();
 		makeActions();
 		hookContextMenu();
 		hookDoubleClickAction();
@@ -76,8 +74,8 @@ public class AleTreeView extends ViewPart {
 	/**
 	 * @return
 	 */
-	private AleProxyFactory getInitialInput() {
-		return new AleProxyFactory("","");
+	private Object getInitialInput() {
+		return new TreeNode("");
 	}
 
 	private void hookContextMenu() {
@@ -124,9 +122,9 @@ public class AleTreeView extends ViewPart {
 	private void makeActions() {
 		action1 = new Action() {
 			public void run() {
-//				showMessage("Action 1 executed");
+				// showMessage("Action 1 executed");
 				viewer.refresh();
-//				viewer.expandAll();
+				// viewer.expandAll();
 			}
 		};
 		action1.setText("Action 1");
@@ -136,15 +134,15 @@ public class AleTreeView extends ViewPart {
 
 		action2 = new Action() {
 			public void run() {
-				
+
 				ISelection selection = viewer.getSelection();
 				Object obj = ((IStructuredSelection) selection)
 						.getFirstElement();
-				if(obj instanceof String){
-					
+				if (obj instanceof String) {
+
 				}
-				
-//				showMessage("Action 2 executed");
+
+				// showMessage("Action 2 executed");
 			}
 		};
 		action2.setText("Action 2");

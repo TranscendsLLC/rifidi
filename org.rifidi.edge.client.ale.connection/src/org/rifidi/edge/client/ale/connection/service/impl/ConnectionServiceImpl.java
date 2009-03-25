@@ -21,64 +21,84 @@ import org.rifidi.edge.client.ale.connection.service.ConnectionService;
 
 /**
  * @author Tobias Hoppenthaler - tobias@pramari.com
- *
+ * 
  */
 public class ConnectionServiceImpl implements ConnectionService {
-	private ALEServicePortType aleServicePortType=null;
-	private ALELRServicePortType lrServicePortType=null;
-	private URL aleEndpoint=null;
-	private URL lrEndpoint =null;
-	private ArrayList<EndpointChangeListener> aleListeners=null;
-	private ArrayList<EndpointChangeListener> lrListeners=null;
+	private ALEServicePortType aleServicePortType = null;
+	private ALELRServicePortType lrServicePortType = null;
+	private URL aleEndpoint = null;
+	private URL lrEndpoint = null;
+	private ArrayList<EndpointChangeListener> aleListeners = null;
+	private ArrayList<EndpointChangeListener> lrListeners = null;
+	private JaxWsProxyFactoryBean aleFactory = null;
+	private JaxWsProxyFactoryBean lrFactory = null;
 
 	/**
 	 * 
 	 */
 	public ConnectionServiceImpl() {
-		aleListeners=new ArrayList<EndpointChangeListener>();
-		lrListeners=new ArrayList<EndpointChangeListener>();
+		aleListeners = new ArrayList<EndpointChangeListener>();
+		lrListeners = new ArrayList<EndpointChangeListener>();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.rifidi.edge.client.ale.connection.service.ConnectionService#getAleEndpoint()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seeorg.rifidi.edge.client.ale.connection.service.ConnectionService#
+	 * getAleEndpoint()
 	 */
 	@Override
 	public URL getAleEndpoint() {
 		return aleEndpoint;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.rifidi.edge.client.ale.connection.service.ConnectionService#getLrEndpoint()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.client.ale.connection.service.ConnectionService#getLrEndpoint
+	 * ()
 	 */
 	@Override
 	public URL getLrEndpoint() {
 		return lrEndpoint;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.rifidi.edge.client.ale.connection.service.ConnectionService#setAleEndpoint(java.net.URL)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seeorg.rifidi.edge.client.ale.connection.service.ConnectionService#
+	 * setAleEndpoint(java.net.URL)
 	 */
 	@Override
 	public void setAleEndpoint(URL endpoint) {
-		URL temp =aleEndpoint;
-		this.aleEndpoint=endpoint;
+		URL temp = aleEndpoint;
+		this.aleEndpoint = endpoint;
 		fireAleChange(temp, endpoint);
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.rifidi.edge.client.ale.connection.service.ConnectionService#setLrEndpoint(java.net.URL)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.client.ale.connection.service.ConnectionService#setLrEndpoint
+	 * (java.net.URL)
 	 */
 	@Override
 	public void setLrEndpoint(URL endpoint) {
-		URL temp=lrEndpoint;
-		this.lrEndpoint=endpoint;
+		URL temp = lrEndpoint;
+		this.lrEndpoint = endpoint;
 		fireLrChange(temp, endpoint);
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.rifidi.edge.client.ale.connection.service.ConnectionService#subscribeAleChangeListener(org.rifidi.edge.client.ale.webservice.listeners.EndpointChangeListener)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seeorg.rifidi.edge.client.ale.connection.service.ConnectionService#
+	 * subscribeAleChangeListener
+	 * (org.rifidi.edge.client.ale.webservice.listeners.EndpointChangeListener)
 	 */
 	@Override
 	public void subscribeAleChangeListener(EndpointChangeListener listener) {
@@ -86,8 +106,12 @@ public class ConnectionServiceImpl implements ConnectionService {
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.rifidi.edge.client.ale.connection.service.ConnectionService#subscribeLRChangeListener(org.rifidi.edge.client.ale.webservice.listeners.EndpointChangeListener)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seeorg.rifidi.edge.client.ale.connection.service.ConnectionService#
+	 * subscribeLRChangeListener
+	 * (org.rifidi.edge.client.ale.webservice.listeners.EndpointChangeListener)
 	 */
 	@Override
 	public void subscribeLRChangeListener(EndpointChangeListener listener) {
@@ -95,8 +119,12 @@ public class ConnectionServiceImpl implements ConnectionService {
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.rifidi.edge.client.ale.connection.service.ConnectionService#unsubscribeAleChangeListener(org.rifidi.edge.client.ale.webservice.listeners.EndpointChangeListener)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seeorg.rifidi.edge.client.ale.connection.service.ConnectionService#
+	 * unsubscribeAleChangeListener
+	 * (org.rifidi.edge.client.ale.webservice.listeners.EndpointChangeListener)
 	 */
 	@Override
 	public void unsubscribeAleChangeListener(EndpointChangeListener listener) {
@@ -104,28 +132,38 @@ public class ConnectionServiceImpl implements ConnectionService {
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.rifidi.edge.client.ale.connection.service.ConnectionService#unsubscribeLRChangeListener(org.rifidi.edge.client.ale.webservice.listeners.EndpointChangeListener)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seeorg.rifidi.edge.client.ale.connection.service.ConnectionService#
+	 * unsubscribeLRChangeListener
+	 * (org.rifidi.edge.client.ale.webservice.listeners.EndpointChangeListener)
 	 */
 	@Override
 	public void unsubscribeLRChangeListener(EndpointChangeListener listener) {
 		lrListeners.remove(listener);
 
 	}
-	
-	private void fireAleChange(URL oldEp, URL newEp){
-		JaxWsProxyFactoryBean aleFactory = new JaxWsProxyFactoryBean();
-		aleFactory.setServiceClass(ALEServicePortType.class);
+
+	private void fireAleChange(URL oldEp, URL newEp) {
+		if (aleFactory == null) {
+			aleFactory = new JaxWsProxyFactoryBean();
+			aleFactory.setServiceClass(ALEServicePortType.class);
+		}
+
 		aleFactory.setAddress(newEp.toString());
 		aleServicePortType = (ALEServicePortType) aleFactory.create();
 		for (EndpointChangeListener listener : aleListeners) {
 			listener.endpointChanged(oldEp, newEp);
 		}
 	}
-	
-	private void fireLrChange(URL oldEp, URL newEp){
-		JaxWsProxyFactoryBean lrFactory = new JaxWsProxyFactoryBean();
-		lrFactory.setServiceClass(ALELRServicePortType.class);
+
+	private void fireLrChange(URL oldEp, URL newEp) {
+		if (lrFactory == null) {
+			lrFactory = new JaxWsProxyFactoryBean();
+			lrFactory.setServiceClass(ALELRServicePortType.class);
+		}
+
 		lrFactory.setAddress(newEp.toString());
 		lrServicePortType = (ALELRServicePortType) lrFactory.create();
 		for (EndpointChangeListener listener : lrListeners) {
@@ -133,38 +171,69 @@ public class ConnectionServiceImpl implements ConnectionService {
 		}
 	}
 
-	
-//	/* (non-Javadoc)
-//	 * @see org.rifidi.edge.client.ale.connection.service.ConnectionService#aleExec(java.lang.Object)
-//	 */
-//	@Override
-//	public void aleExec(Object executable) {
-//		//if exec instanceof ... cast ... makeCall(Stub);
-//		
-//	}
-//
-//	/* (non-Javadoc)
-//	 * @see org.rifidi.edge.client.ale.connection.service.ConnectionService#lrExec(java.lang.Object)
-//	 */
-//	@Override
-//	public void lrExec(Object executable) {
-//		//if exec instanceof ... cast ... makeCall(Stub);
-//		
-//	}
+	// /* (non-Javadoc)
+	// * @see
+	// org.rifidi.edge.client.ale.connection.service.ConnectionService#aleExec(java.lang.Object)
+	// */
+	// @Override
+	// public void aleExec(Object executable) {
+	// //if exec instanceof ... cast ... makeCall(Stub);
+	//		
+	// }
+	//
+	// /* (non-Javadoc)
+	// * @see
+	// org.rifidi.edge.client.ale.connection.service.ConnectionService#lrExec(java.lang.Object)
+	// */
+	// @Override
+	// public void lrExec(Object executable) {
+	// //if exec instanceof ... cast ... makeCall(Stub);
+	//		
+	// }
 
-	/* (non-Javadoc)
-	 * @see org.rifidi.edge.client.ale.connection.service.ConnectionService#getAleLrServicePortType()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seeorg.rifidi.edge.client.ale.connection.service.ConnectionService#
+	 * getAleLrServicePortType()
 	 */
 	@Override
 	public ALELRServicePortType getAleLrServicePortType() {
 		return lrServicePortType;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.rifidi.edge.client.ale.connection.service.ConnectionService#getAleServicePortType()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seeorg.rifidi.edge.client.ale.connection.service.ConnectionService#
+	 * getAleServicePortType()
 	 */
 	@Override
 	public ALEServicePortType getAleServicePortType() {
+		return aleServicePortType;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seeorg.rifidi.edge.client.ale.connection.service.ConnectionService#
+	 * getAleLrServicePortType(java.net.URL)
+	 */
+	@Override
+	public ALELRServicePortType getAleLrServicePortType(URL endpoint) {
+		setLrEndpoint(endpoint);
+		return lrServicePortType;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seeorg.rifidi.edge.client.ale.connection.service.ConnectionService#
+	 * getAleServicePortType(java.net.URL)
+	 */
+	@Override
+	public ALEServicePortType getAleServicePortType(URL endpoint) {
+		setAleEndpoint(endpoint);
 		return aleServicePortType;
 	}
 
