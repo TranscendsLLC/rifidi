@@ -3,12 +3,8 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Ale Plug-in
 Bundle-SymbolicName: org.rifidi.edge.client.ale.api
 Bundle-Version: 1.0.0
-Bundle-Activator: org.rifidi.edge.client.ale.api.Activator
 Bundle-Vendor: PRAMARI LLC
-Require-Bundle: org.eclipse.core.runtime,
- org.apache.cxf;bundle-version="1.0.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Bundle-ActivationPolicy: lazy
 Export-Package: org.rifidi.edge.client.ale.api.alelr.xsd.epcglobal,
  org.rifidi.edge.client.ale.api.proxy,
  org.rifidi.edge.client.ale.api.util,
@@ -17,4 +13,6 @@ Export-Package: org.rifidi.edge.client.ale.api.alelr.xsd.epcglobal,
  org.rifidi.edge.client.ale.api.xsd.ale.epcglobal,
  org.rifidi.edge.client.ale.api.xsd.alelr.epcglobal,
  org.rifidi.edge.client.ale.api.xsd.epcglobal
-Import-Package: org.apache.commons.logging;version="1.1.1"
+Import-Package: org.apache.commons.logging;version="1.1.1",
+ org.apache.cxf.frontend;version="2.1.4",
+ org.apache.cxf.jaxws;version="2.1.4"
