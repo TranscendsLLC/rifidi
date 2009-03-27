@@ -278,7 +278,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 
 	public void bindRifidiService(RifidiService service,
 			Dictionary<String, String> parameters) {
-		logger.warn("Service detected: " + service.getID());
+		logger.info("Service detected: " + service.getID());
 	}
 
 	public void unbindRifidiService(RifidiService service,
@@ -286,7 +286,6 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 		logger.warn("about to call destroy");
 		Configuration config = this.IDToConfigurations.get(service.getID());
 		if (config != null) {
-			
 			config.destroy();
 		}
 	}

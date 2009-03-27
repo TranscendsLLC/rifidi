@@ -94,9 +94,7 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 	 */
 	public Object _readers(CommandInterpreter intp) {
 		for (AbstractReader<?> reader : readerDAO.getReaders()) {
-			intp
-					.println("ID: " + reader.getID() + " Name: "
-							+ reader.getName());
+			intp.println("ID: " + reader.getID());
 			for (ReaderSession session : reader.getReaderSessions().values()) {
 				intp.println("\tsession (" + session.getID() + "): " + session);
 				Map<Integer, Command> commands = session.currentCommands();
