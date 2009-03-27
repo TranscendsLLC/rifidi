@@ -319,6 +319,37 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 		intp.println("Session created.");
 		return null;
 	}
+	
+	/**
+	 * Create a new reader session. Takes a reader id as argument.
+	 * 
+	 * @param intp
+	 * @return
+	 */
+	public Object _deletesession(CommandInterpreter intp) {
+		String readerid = intp.nextArgument();
+		String sessionid = intp.nextArgument();
+		if (readerid == null) {
+			intp.println("Give a reader id!");
+			return null;
+		}
+		if(sessionid==null){
+			intp.println("Give a session id!");
+			return null;
+		}
+		AbstractReader<?> reader = readerDAO.getReaderByID(readerid);
+		if(reader==null){
+			intp.println("No reader with ID " + readerid + " is available");
+			return null;
+		}
+		ReaderSession session = reader.getReaderSessions().get(sessionid);
+		if(session==null){
+			intp.println("No session with ID " + sessionid + " is available");
+			return null;
+		}
+		reader.destroyReaderSession(session);
+		return null;
+	}
 
 	/**
 	 * Create a new reader session. Takes a reader id as argument.

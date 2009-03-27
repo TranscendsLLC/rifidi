@@ -172,6 +172,8 @@ public class Alien9800Reader extends AbstractReader<Alien9800ReaderSession> {
 					ipAddress, port, (int) (long) reconnectionInterval,
 					maxNumConnectionAttempts, username, password, destination,
 					template);
+			
+			//TODO: remove this once we get AspectJ in here!
 			NotifierService service = notifyServiceWrapper.getNotifierService();
 			if (service != null) {
 				service.addSessionEvent(this.getID(), Integer
@@ -228,14 +230,16 @@ public class Alien9800Reader extends AbstractReader<Alien9800ReaderSession> {
 	@Override
 	public void destroyReaderSession(ReaderSession session) {
 		if (session != null) {
-			session.disconnect();
+			this.session.disconnect();
+			this.session = null;
+			
+			//TODO: remove this once we get AspectJ in here!
 			NotifierService service = notifyServiceWrapper.getNotifierService();
 			if (service != null) {
 				service.removeSessionEvent(this.getID(), Integer
 						.toString(sessionID));
 			}
 		}
-		session = null;
 	}
 
 	/*
