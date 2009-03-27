@@ -110,6 +110,18 @@ public interface ReaderStub extends Remote {
 	void deleteReader(String readerID) throws RemoteException;
 
 	/**
+	 * 
+	 * @param readerID
+	 *            The ID of the reader that contains the session
+	 * @param sessionID
+	 *            The ID of the session
+	 * @return The DTO of the Session
+	 * @throws RemoteException
+	 */
+	SessionDTO getSession(String readerID, String sessionID)
+			throws RemoteException;
+
+	/**
 	 * Create a new session on the reader.
 	 * 
 	 * @param The
