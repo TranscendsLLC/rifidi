@@ -131,6 +131,18 @@ public interface ReaderStub extends Remote {
 	Set<SessionDTO> createSession(String readerID) throws RemoteException;
 
 	/**
+	 * Delete a reader session
+	 * 
+	 * @param readerID
+	 *            The ID of the reader which has the session
+	 * @param sessionID
+	 *            The session to delete
+	 * @throws RemoteException
+	 */
+	void deleteSession(String readerID, String sessionID)
+			throws RemoteException;
+
+	/**
 	 * Starts a session on the reader
 	 * 
 	 * @param readerID
