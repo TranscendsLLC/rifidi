@@ -260,6 +260,20 @@ public class ReaderConfigurationStubImpl implements ReaderStub {
 		return sessionDTOs;
 	}
 
+	@Override
+	public void deleteSession(String readerID, String sessionID)
+			throws RemoteException {
+		logger.debug("RMI call: deleteSession");
+		AbstractReader<?> reader = this.readerDAO.getReaderByID(readerID);
+		if (reader != null) {
+			ReaderSession session = reader.getReaderSessions().get(sessionID);
+			if (session != null) {
+				reader.destroyReaderSession(session);
+			}
+		}
+
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
