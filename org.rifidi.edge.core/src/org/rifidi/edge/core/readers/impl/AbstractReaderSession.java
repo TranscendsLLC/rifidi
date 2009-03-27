@@ -149,5 +149,19 @@ public abstract class AbstractReaderSession extends ReaderSession {
 		logger.debug("Changing state: " + status);
 		this.status = status;
 	}
+	
+	/**
+	 * @return the destination
+	 */
+	protected Destination getDestination() {
+		return destination;
+	}
+
+	/**
+	 * @return the template
+	 */
+	protected JmsTemplate getTemplate() {
+		return template;
+	}
 
 }
