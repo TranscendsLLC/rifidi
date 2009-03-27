@@ -52,12 +52,11 @@ public class NotifierServiceImpl implements NotifierService {
 	public void setExtNotificationDest(Destination extNotificationDest) {
 		this.extNotificationDest = extNotificationDest;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.rifidi.edge.notifications.NotifierService#addSessionEvent(java
+	 * @see org.rifidi.edge.notifications.NotifierService#addSessionEvent(java
 	 * .lang.String, java.lang.String)
 	 */
 	@Override
@@ -75,8 +74,7 @@ public class NotifierServiceImpl implements NotifierService {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.rifidi.edge.notifications.NotifierService#removeSessionEvent
+	 * @see org.rifidi.edge.notifications.NotifierService#removeSessionEvent
 	 * (java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -93,14 +91,10 @@ public class NotifierServiceImpl implements NotifierService {
 
 	}
 
-
-
-
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.rifidi.edge.notifications.NotifierService#addReaderEvent(java
+	 * @see org.rifidi.edge.notifications.NotifierService#addReaderEvent(java
 	 * .lang.String)
 	 */
 	@Override
@@ -118,8 +112,7 @@ public class NotifierServiceImpl implements NotifierService {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.rifidi.edge.notifications.NotifierService#addReaderFactoryEvent
+	 * @see org.rifidi.edge.notifications.NotifierService#addReaderFactoryEvent
 	 * (java.lang.String)
 	 */
 	@Override
@@ -139,8 +132,7 @@ public class NotifierServiceImpl implements NotifierService {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.rifidi.edge.notifications.NotifierService#removeReaderEvent(
+	 * @see org.rifidi.edge.notifications.NotifierService#removeReaderEvent(
 	 * java.lang.String)
 	 */
 	@Override
@@ -165,9 +157,4 @@ public class NotifierServiceImpl implements NotifierService {
 						new ReaderFactoryRemovedNotification(readerFactoryID)));
 
 	}
-
-	public void SessionAdded() {
-		// TODO: send sessionAddedNotification
-	}
-
 }

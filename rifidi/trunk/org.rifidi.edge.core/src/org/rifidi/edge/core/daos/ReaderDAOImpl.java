@@ -11,7 +11,7 @@ import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.rifidi.edge.core.notifications.internal.NotifierServiceWrapper;
+import org.rifidi.edge.core.notifications.NotifierServiceWrapper;
 import org.rifidi.edge.core.readers.AbstractReader;
 import org.rifidi.edge.core.readers.AbstractReaderFactory;
 import org.rifidi.edge.notifications.NotifierService;

@@ -12,7 +12,7 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.configuration.Configuration;
-import org.rifidi.edge.core.notifications.internal.NotifierServiceWrapper;
+import org.rifidi.edge.core.notifications.NotifierServiceWrapper;
 import org.rifidi.edge.notifications.NotifierService;
 
 /**

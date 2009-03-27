@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.rifidi.edge.core.notifications.internal;
+package org.rifidi.edge.core.notifications;
 
 import java.util.Dictionary;
 

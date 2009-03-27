@@ -9,7 +9,7 @@
 		interface="org.rifidi.configuration.services.ConfigurationService" />
 
 	<bean id="NotifierServiceWrapper"
-		class="org.rifidi.edge.notifications.internal.NotifierServiceWrapper" />
+		class="org.rifidi.edge.core.notifications.NotifierServiceWrapper" />
 
 	<osgi:reference id="JMSNotifierService"
 		interface="org.rifidi.edge.notifications.NotifierService"
