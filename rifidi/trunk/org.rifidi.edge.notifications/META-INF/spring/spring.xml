@@ -1,0 +1,45 @@
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:osgi="http://www.springframework.org/schema/osgi"
+	xmlns:amq="http://activemq.apache.org/schema/core"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+     http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi.xsd
+     http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd">
+
+	<bean id="JMSNotifier"
+		class="org.rifidi.edge.notifications.internal.NotifierServiceImpl">
+		<property name="extNotificationDest" ref="externalDest" />
+		<property name="extNotificationTemplate" ref="extNotificationTemplate" />
+	</bean>
+
+	<osgi:service id="JMSNotifierService" ref="JMSNotifier"
+		interface="org.rifidi.edge.notifications.NotifierService" />
+
+	<!--  External JMS Message Queue for events -->
+	<amq:broker useJmx="false" persistent="false">
+		<amq:transportConnectors>
+			<amq:transportConnector uri="tcp://localhost:1099" />
+		</amq:transportConnectors>
+	</amq:broker>
+	<!--  ActiveMQ destinations to use  -->
+	<amq:queue id="externalDest" physicalName="org.rifidi.edge.external.notifications" />
+	<!--
+		JMS ConnectionFactory to use, configuring the embedded broker using
+		XML
+	-->
+	<amq:connectionFactory id="externalConFac"
+		brokerURL="tcp://localhost:1099" />
+
+	<!-- Spring JMS Template -->
+	<bean id="extNotificationTemplate" class="org.springframework.jms.core.JmsTemplate">
+		<property name="connectionFactory">
+			<!-- lets wrap in a pool to avoid creating a connection per send -->
+			<bean class="org.springframework.jms.connection.SingleConnectionFactory">
+				<property name="targetConnectionFactory">
+					<ref local="externalConFac" />
+				</property>
+			</bean>
+		</property>
+	</bean>
+
+</beans>

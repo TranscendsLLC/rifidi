@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.rifidi.edge.core.notifications.internal;
+package org.rifidi.edge.notifications.internal;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

@@ -19,6 +19,7 @@ import org.rifidi.configuration.annotations.Property;
 import org.rifidi.configuration.annotations.PropertyType;
 import org.rifidi.edge.core.readers.AbstractReader;
 import org.rifidi.edge.core.readers.ReaderSession;
+import org.rifidi.edge.notifications.NotifierService;
 import org.rifidi.edge.readerplugin.alien.commandobject.AlienCommandObjectWrapper;
 import org.rifidi.edge.readerplugin.alien.commandobject.AlienGetCommandObject;
 import org.rifidi.edge.readerplugin.alien.commandobject.AlienSetCommandObject;
@@ -33,10 +34,6 @@ import org.springframework.jms.core.JmsTemplate;
 public class Alien9800Reader extends AbstractReader<Alien9800ReaderSession> {
 	/** Logger for this class. */
 	private Log logger = LogFactory.getLog(Alien9800Reader.class);
-	/** Description of the readerSession. */
-	private static final String description = "The Alien 9800 is an IP based RFID ReaderSession using a telnet interface.";
-	/** Name of the readerSession. */
-	private static final String name = "Alien9800";
 	/** The only session an alien reader allows. */
 	private Alien9800ReaderSession session;
 	/** A queue for putting commands to be executed next */
@@ -44,23 +41,27 @@ public class Alien9800Reader extends AbstractReader<Alien9800ReaderSession> {
 	/** A hashmap containing all the properties for this reader */
 	private ConcurrentHashMap<String, String> readerProperties;
 	/** IP address of the readerSession. */
-	private String ipAddress = "127.0.0.1";
+	private String ipAddress = AlienReaderDefaultValues.ipAddress;
 	/** Port to connect to. */
-	private Integer port = 20000;
+	private Integer port = Integer.parseInt(AlienReaderDefaultValues.port);
 	/** Username for the telnet interface. */
-	private String username = "alien";
+	private String username = AlienReaderDefaultValues.username;
 	/** Password for the telnet interface. */
-	private String password = "password";
+	private String password = AlienReaderDefaultValues.password;
 	/** Time between two connection attempts. */
-	private Long reconnectionInterval = 500l;
+	private Long reconnectionInterval = Long
+			.parseLong(AlienReaderDefaultValues.reconnectionInterval);
 	/** Number of connection attempts before a connection goes into fail state. */
-	private Integer maxNumConnectionAttempts = 10;
+	private Integer maxNumConnectionAttempts = Integer
+			.parseInt(AlienReaderDefaultValues.maxNumConnectionAttempts);
 	/** JMS destination. */
 	private Destination destination;
 	/** Spring JMS template */
 	private JmsTemplate template;
 	/** The ID of the session */
 	private int sessionID = 0;
+	/** A wrapper containing the service to send jms notifications */
+	private NotifierServiceWrapper notifyServiceWrapper;
 
 	/**
 	 * READER PROPERTIES - SETTABE, SET ON CONNECTION
@@ -161,26 +162,6 @@ public class Alien9800Reader extends AbstractReader<Alien9800ReaderSession> {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.ReaderConfiguration#getDescription()
-	 */
-	@Override
-	public String getDescription() {
-		return description;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.rifidi.edge.core.ReaderConfiguration#getName()
-	 */
-	@Override
-	public String getName() {
-		return name;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
 	 * @see org.rifidi.edge.core.readers.AbstractReader#createReaderSession()
 	 */
 	@Override
@@ -191,6 +172,11 @@ public class Alien9800Reader extends AbstractReader<Alien9800ReaderSession> {
 					ipAddress, port, (int) (long) reconnectionInterval,
 					maxNumConnectionAttempts, username, password, destination,
 					template);
+			NotifierService service = notifyServiceWrapper.getNotifierService();
+			if (service != null) {
+				service.addSessionEvent(this.getID(), Integer
+						.toString(sessionID));
+			}
 			return session;
 		}
 		return null;
@@ -223,6 +209,15 @@ public class Alien9800Reader extends AbstractReader<Alien9800ReaderSession> {
 		this.template = template;
 	}
 
+	/***
+	 * 
+	 * @param wrapper
+	 *            The JMS Notifier to set
+	 */
+	public void setNotifiyServiceWrapper(NotifierServiceWrapper wrapper) {
+		this.notifyServiceWrapper = wrapper;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -234,6 +229,11 @@ public class Alien9800Reader extends AbstractReader<Alien9800ReaderSession> {
 	public void destroyReaderSession(ReaderSession session) {
 		if (session != null) {
 			session.disconnect();
+			NotifierService service = notifyServiceWrapper.getNotifierService();
+			if (service != null) {
+				service.removeSessionEvent(this.getID(), Integer
+						.toString(sessionID));
+			}
 		}
 		session = null;
 	}
@@ -259,7 +259,7 @@ public class Alien9800Reader extends AbstractReader<Alien9800ReaderSession> {
 	/**
 	 * @return the ipAddress
 	 */
-	@Property(displayName = "IP Address", description = "Address of the readerSession.", writable = true)
+	@Property(displayName = "IP Address", description = "Address of the readerSession.", writable = true, category = "connection", defaultValue = AlienReaderDefaultValues.ipAddress, orderValue = 0)
 	public String getIpAddress() {
 		return ipAddress;
 	}
@@ -275,7 +275,7 @@ public class Alien9800Reader extends AbstractReader<Alien9800ReaderSession> {
 	/**
 	 * @return the port
 	 */
-	@Property(displayName = "Port", description = "Port of the readerSession.", writable = true, type = PropertyType.PT_INTEGER)
+	@Property(displayName = "Port", description = "Port of the readerSession.", writable = true, type = PropertyType.PT_INTEGER, category = "connection", defaultValue = AlienReaderDefaultValues.port, orderValue = 1, minValue = "0", maxValue = "65535")
 	public Integer getPort() {
 		return port;
 	}
@@ -291,7 +291,7 @@ public class Alien9800Reader extends AbstractReader<Alien9800ReaderSession> {
 	/**
 	 * @return the username
 	 */
-	@Property(displayName = "Username", description = "Username for logging into the readerSession.", writable = true)
+	@Property(displayName = "Username", description = "Username for logging into the readerSession.", writable = true, category = "connection", defaultValue = AlienReaderDefaultValues.username, orderValue = 2)
 	public String getUsername() {
 		return username;
 	}
@@ -307,7 +307,7 @@ public class Alien9800Reader extends AbstractReader<Alien9800ReaderSession> {
 	/**
 	 * @return the password
 	 */
-	@Property(displayName = "Password", description = "Password for logging into the readerSession.", writable = true)
+	@Property(displayName = "Password", description = "Password for logging into the readerSession.", writable = true, category = "connection", defaultValue = AlienReaderDefaultValues.password, orderValue = 3)
 	public String getPassword() {
 		return password;
 	}
@@ -323,7 +323,7 @@ public class Alien9800Reader extends AbstractReader<Alien9800ReaderSession> {
 	/**
 	 * @return the reconnectionInterval
 	 */
-	@Property(displayName = "Reconnection Interval", description = "Time between two connection attempts (ms).", writable = true, type = PropertyType.PT_LONG)
+	@Property(displayName = "Reconnection Interval", description = "Time between two connection attempts (ms).", writable = true, type = PropertyType.PT_LONG, category = "connection", defaultValue = AlienReaderDefaultValues.reconnectionInterval, orderValue = 4, minValue = "0")
 	public Long getReconnectionInterval() {
 		return reconnectionInterval;
 	}
@@ -339,7 +339,7 @@ public class Alien9800Reader extends AbstractReader<Alien9800ReaderSession> {
 	/**
 	 * @return the maxNumConnectionAttempts
 	 */
-	@Property(displayName = "Maximum Connection Attempts", description = "Number of times to try to connect to the readerSession before the connection is marked as failed.", writable = true, type = PropertyType.PT_INTEGER)
+	@Property(displayName = "Maximum Connection Attempts", description = "Number of times to try to connect to the readerSession before the connection is marked as failed.", writable = true, type = PropertyType.PT_INTEGER, category = "connection", defaultValue = AlienReaderDefaultValues.maxNumConnectionAttempts, orderValue = 5, minValue = "0")
 	public Integer getMaxNumConnectionAttempts() {
 		return maxNumConnectionAttempts;
 	}

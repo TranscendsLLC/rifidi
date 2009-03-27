@@ -31,28 +31,14 @@ import org.rifidi.edge.core.api.rmi.dto.SessionDTO;
  */
 public abstract class AbstractReader<T extends ReaderSession> extends
 		RifidiService {
-
-	/**
-	 * Get the name of the readerSession. Has to be unique.
-	 * 
-	 * @return
-	 */
-	abstract public String getName();
-
-	/**
-	 * Get a description about the readerSession this factory is mapping to.
-	 * 
-	 * @return
-	 */
-	abstract public String getDescription();
-
+	
 	/**
 	 * Create a new reader session. If there are no more sessions available null
 	 * is returned.
 	 * 
 	 * @return
 	 */
-	abstract public ReaderSession createReaderSession();
+	public abstract ReaderSession createReaderSession();
 
 	/**
 	 * Get all currently created reader sessions. The Key is the ID of the

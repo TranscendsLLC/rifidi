@@ -193,13 +193,15 @@ public class DefaultConfigurationImpl implements Configuration, Cloneable {
 		throw new AttributeNotFoundException();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.rifidi.configuration.Configuration#getAttributeNames()
 	 */
 	@Override
 	public String[] getAttributeNames() {
 		ArrayList<String> attrNames = new ArrayList<String>();
-		for(MBeanAttributeInfo attrInfo : this.getMBeanInfo().getAttributes()){
+		for (MBeanAttributeInfo attrInfo : this.getMBeanInfo().getAttributes()) {
 			attrNames.add(attrInfo.getName());
 		}
 		return attrNames.toArray(new String[attrNames.size()]);
@@ -259,6 +261,11 @@ public class DefaultConfigurationImpl implements Configuration, Cloneable {
 				descriptor
 						.setField("org.rifidi.edge.category", prop.category());
 			}
+			if (!prop.defaultValue().equals("")) {
+				descriptor.setField(JMX.DEFAULT_VALUE_FIELD, PropertyType
+						.convert(prop.defaultValue(), prop.type()));
+			}
+			descriptor.setField("org.rifidi.edge.ordervalue", prop.orderValue());
 
 			attrs[counter] = new OpenMBeanAttributeInfoSupport(name, prop
 					.description(), PropertyType.getOpenType(prop.type()),

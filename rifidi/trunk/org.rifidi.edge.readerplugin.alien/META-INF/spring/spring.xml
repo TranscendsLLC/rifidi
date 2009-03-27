@@ -4,14 +4,26 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
      http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi.xsd
      http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd">
-     
+
 	<!--  Create Reader Configuration Factory -->
 	<bean id="configurationFactory"
 		class="org.rifidi.edge.readerplugin.alien.Alien9800ReaderFactory">
 		<property name="context" ref="bundleContext" />
 		<property name="template" ref="myJmsTemplate" />
 		<property name="destination" ref="destination2" />
+		<property name="notifierServiceWrapper" ref="NotifierServiceWrapper"/>
 	</bean>
+
+	<bean id="NotifierServiceWrapper"
+		class="org.rifidi.edge.readerplugin.alien.NotifierServiceWrapper" />
+
+	<osgi:reference id="JMSNotifierService"
+		interface="org.rifidi.edge.notifications.NotifierService"
+		cardinality="0..1">
+		<osgi:listener ref="NotifierServiceWrapper" bind-method="bindNotifierService"
+			unbind-method="unbindNotifierService"></osgi:listener>
+	</osgi:reference>
+
 	<!--  Create Command Configuration Factory -->
 	<bean id="commandConfigurationFactory"
 		class="org.rifidi.edge.readerplugin.alien.Alien9800CommandConfigurationFactory">
@@ -21,7 +33,8 @@
 	<!-- Put reader configuration service in OSGi Registry -->
 	<osgi:service id="readerConfigurationFactoryService" ref="configurationFactory">
 		<osgi:interfaces>
-			<value>org.rifidi.configuration.ServiceFactory</value>
+			<value>org.rifidi.configuration.ServiceFactory
+			</value>
 			<value>
 				org.rifidi.edge.core.readers.AbstractReaderFactory</value>
 		</osgi:interfaces>
@@ -29,21 +42,24 @@
 	<!-- Put command configuration service in OSGi Registry -->
 	<osgi:service id="commandConfigurationFactoryService" ref="commandConfigurationFactory">
 		<osgi:interfaces>
-			<value>org.rifidi.configuration.ServiceFactory</value>
+			<value>org.rifidi.configuration.ServiceFactory
+			</value>
 			<value>
-				org.rifidi.edge.core.commands.AbstractCommandConfigurationFactory</value>
+				org.rifidi.edge.core.commands.AbstractCommandConfigurationFactory
+			</value>
 		</osgi:interfaces>
 	</osgi:service>
-	
-		<!--  ActiveMQ destinations to use  -->
+
+	<!--  ActiveMQ destinations to use  -->
 	<amq:queue id="destination2"
 		physicalName="org.apache.activemq.spring.Test.spring.embedded" />
 	<!--
 		JMS ConnectionFactory to use, configuring the embedded broker using
 		XML
 	-->
-	<amq:connectionFactory id="jmsFactory2" brokerURL="vm://localhost" />
-	
+	<amq:connectionFactory id="jmsFactory2"
+		brokerURL="vm://localhost" />
+
 	<!-- Spring JMS Template -->
 	<bean id="myJmsTemplate" class="org.springframework.jms.core.JmsTemplate">
 		<property name="connectionFactory">
@@ -55,5 +71,5 @@
 			</bean>
 		</property>
 	</bean>
-	
+
 </beans>

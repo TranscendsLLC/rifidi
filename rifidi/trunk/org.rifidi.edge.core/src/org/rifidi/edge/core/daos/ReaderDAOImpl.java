@@ -11,8 +11,10 @@ import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.rifidi.edge.core.notifications.internal.NotifierServiceWrapper;
 import org.rifidi.edge.core.readers.AbstractReader;
 import org.rifidi.edge.core.readers.AbstractReaderFactory;
+import org.rifidi.edge.notifications.NotifierService;
 
 /**
  * @author Jochen Mader - jochen@pramari.com
@@ -27,6 +29,8 @@ public class ReaderDAOImpl implements ReaderDAO {
 	private Map<String, AbstractReader<?>> abstractReaders;
 	/** The logger for this class */
 	private Log logger = LogFactory.getLog(ReaderDAOImpl.class);
+	/** A notifier for JMS. Remove once we have aspects */
+	private NotifierServiceWrapper notifierService;
 
 	/**
 	 * Constructor.
@@ -93,6 +97,15 @@ public class ReaderDAOImpl implements ReaderDAO {
 				+ readerFactory.getFactoryIDs().get(0));
 		readerConfigFactories.put(readerFactory.getFactoryIDs().get(0),
 				readerFactory);
+
+		// TODO: Remove once we have aspects
+		if (notifierService == null) {
+			return;
+		}
+		NotifierService service = notifierService.getService();
+		if (service != null) {
+			service.addReaderFactoryEvent(readerFactory.getFactoryIDs().get(0));
+		}
 	}
 
 	/**
@@ -108,6 +121,15 @@ public class ReaderDAOImpl implements ReaderDAO {
 		logger.info("Reader Factory unbound:"
 				+ readerFactory.getFactoryIDs().get(0));
 		readerConfigFactories.remove(readerFactory.getFactoryIDs().get(0));
+
+		// TODO: Remove once we have aspects
+		if (notifierService == null) {
+			return;
+		}
+		NotifierService service = notifierService.getService();
+		if (service != null) {
+			service.removeReaderFactoryEvent(readerFactory.getFactoryIDs().get(0));
+		}
 	}
 
 	/**
@@ -119,6 +141,17 @@ public class ReaderDAOImpl implements ReaderDAO {
 	public void setReaderFactories(Set<AbstractReaderFactory<?>> factories) {
 		for (AbstractReaderFactory<?> factory : factories) {
 			readerConfigFactories.put(factory.getFactoryIDs().get(0), factory);
+		}
+
+		// TODO: Remove once we have aspects
+		if (notifierService == null) {
+			return;
+		}
+		NotifierService service = notifierService.getService();
+		if (service != null) {
+			for(AbstractReaderFactory<?> factory : factories){
+				service.addReaderFactoryEvent(factory.getFactoryIDs().get(0));
+			}
 		}
 	}
 
@@ -159,5 +192,15 @@ public class ReaderDAOImpl implements ReaderDAO {
 		for (AbstractReader<?> reader : readers) {
 			abstractReaders.put(reader.getID(), reader);
 		}
+	}
+	
+	/**
+	 * Called by Spring
+	 * 
+	 * @param notifierService
+	 *            the notifierService to set
+	 */
+	public void setNotifierService(NotifierServiceWrapper notifierService) {
+		this.notifierService = notifierService;
 	}
 }

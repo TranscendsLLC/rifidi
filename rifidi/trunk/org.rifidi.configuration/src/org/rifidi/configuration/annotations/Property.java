@@ -59,4 +59,17 @@ public @interface Property {
 	 * 
 	 */
 	String maxValue() default "";
+
+	/**
+	 * The default value of the property
+	 */
+	String defaultValue() default "";
+
+	/**
+	 * This value is used to help order the property on the UI. A value of -1 is
+	 * intended to indicated that the property should be grouped at the end. For
+	 * all values greater than -1, lower values indicate greater rank
+	 * 
+	 */
+	float orderValue() default -1;
 }

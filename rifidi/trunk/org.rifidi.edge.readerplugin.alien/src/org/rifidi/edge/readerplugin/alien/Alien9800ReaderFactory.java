@@ -25,6 +25,21 @@ public class Alien9800ReaderFactory extends
 	private JmsTemplate template;
 	/** The Unique ID for this Factory */
 	public static final String FACTORY_ID = "Alien9800";
+	/** Description of the readerSession. */
+	private static final String description = "The Alien 9800 is an IP based RFID ReaderSession using a telnet interface.";
+	/** Name of the readerSession. */
+	private static final String name = "Alien9800";
+	/** A JMS event notification sender*/
+	private NotifierServiceWrapper notifierServiceWrapper;
+
+	/**
+	 * Called by spring
+	 * 
+	 * @param wrapper
+	 */
+	public void setNotifierServiceWrapper(NotifierServiceWrapper wrapper) {
+		this.notifierServiceWrapper = wrapper;
+	}
 
 	/**
 	 * @return the destination
@@ -88,9 +103,20 @@ public class Alien9800ReaderFactory extends
 	public void customConfig(Alien9800Reader instance) {
 		instance.setDestination(destination);
 		instance.setTemplate(template);
+		instance.setNotifiyServiceWrapper(notifierServiceWrapper);
 		Set<String> interfaces = new HashSet<String>();
 		interfaces.add(AbstractReader.class.getName());
 		instance.register(getContext(), interfaces);
+	}
+
+	@Override
+	public String getDescription() {
+		return description;
+	}
+
+	@Override
+	public String getDisplayName() {
+		return name;
 	}
 
 }

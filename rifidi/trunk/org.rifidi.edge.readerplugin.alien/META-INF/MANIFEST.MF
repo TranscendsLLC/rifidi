@@ -20,6 +20,7 @@ Import-Package: javax.jms;version="1.1.0",
  org.rifidi.edge.core.readers,
  org.rifidi.edge.core.readers.impl,
  org.rifidi.edge.core.utilities,
+ org.rifidi.edge.notifications;resolution:=optional,
  org.springframework.jms.core;version="2.5.5"
 Export-Package: org.rifidi.edge.readerplugin.alien,
  org.rifidi.edge.readerplugin.alien.commands,
