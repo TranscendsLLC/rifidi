@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.rifidi.edge.notifications;
+package org.rifidi.edge.core.notifications;
 
 /**
  * @author kyle
@@ -13,9 +13,9 @@ public interface NotifierService {
 
 	public void removeSessionEvent(String readerID, String sessionID);
 
-	public void addReaderEvent(String readerID);
+	public void addConfigurationEvent(String serviceID);
 
-	public void removeReaderEvent(String readerID);
+	public void removeConfigurationEvent(String readerID);
 
 	public void addReaderFactoryEvent(String readerFactoryID);
 

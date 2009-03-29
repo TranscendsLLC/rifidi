@@ -18,7 +18,7 @@
 		class="org.rifidi.edge.readerplugin.alien.NotifierServiceWrapper" />
 
 	<osgi:reference id="JMSNotifierService"
-		interface="org.rifidi.edge.notifications.NotifierService"
+		interface="org.rifidi.edge.core.notifications.NotifierService"
 		cardinality="0..1">
 		<osgi:listener ref="NotifierServiceWrapper" bind-method="bindNotifierService"
 			unbind-method="unbindNotifierService"></osgi:listener>

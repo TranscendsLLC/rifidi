@@ -13,7 +13,9 @@ import org.rifidi.edge.core.api.jms.notifications.ReaderFactoryRemovedNotificati
 import org.rifidi.edge.core.api.jms.notifications.ReaderRemovedNotification;
 import org.rifidi.edge.core.api.jms.notifications.SessionAddedNotification;
 import org.rifidi.edge.core.api.jms.notifications.SessionRemovedNotification;
-import org.rifidi.edge.notifications.NotifierService;
+import org.rifidi.edge.core.daos.CommandDAO;
+import org.rifidi.edge.core.daos.ReaderDAO;
+import org.rifidi.edge.core.notifications.NotifierService;
 import org.springframework.jms.core.JmsTemplate;
 
 /**
@@ -32,6 +34,30 @@ public class NotifierServiceImpl implements NotifierService {
 	private Destination extNotificationDest;
 	/** The logger for this class */
 	private Log logger = LogFactory.getLog(NotifierServiceImpl.class);
+	/** reader dao. Won't be needed once we have aspects */
+	private ReaderDAO readerDAO;
+	/** commanddao. won't be needed once we have aspects */
+	private CommandDAO commandDAO;
+
+	/**
+	 * Called by spring
+	 * 
+	 * @param readerDAO
+	 *            the readerDAO to set
+	 */
+	public void setReaderDAO(ReaderDAO readerDAO) {
+		this.readerDAO = readerDAO;
+	}
+
+	/**
+	 * called by spring
+	 * 
+	 * @param commandDAO
+	 *            the commandDAO to set
+	 */
+	public void setCommandDAO(CommandDAO commandDAO) {
+		this.commandDAO = commandDAO;
+	}
 
 	/**
 	 * Called by Spring
@@ -98,13 +124,25 @@ public class NotifierServiceImpl implements NotifierService {
 	 * .lang.String)
 	 */
 	@Override
-	public void addReaderEvent(String readerID) {
+	public void addConfigurationEvent(String serviceID) {
 		try {
-			extNotificationTemplate.send(this.extNotificationDest,
-					new NotificationMessageCreator(new ReaderAddedNotification(
-							readerID)));
+			if (readerDAO != null) {
+				if (null != readerDAO.getReaderByID(serviceID)) {
+					extNotificationTemplate.send(this.extNotificationDest,
+							new NotificationMessageCreator(
+									new ReaderAddedNotification(serviceID)));
+					return;
+				}
+			}
+			if (commandDAO != null) {
+				if (null != commandDAO.getCommandByID(serviceID)) {
+					// TODO: send here
+					return;
+				}
+			}
+
 		} catch (Exception e) {
-			logger.warn("Reader Added Notification not sent: " + e);
+			logger.warn("Configuration Added Notification not sent: " + e);
 		}
 
 	}
@@ -136,10 +174,21 @@ public class NotifierServiceImpl implements NotifierService {
 	 * java.lang.String)
 	 */
 	@Override
-	public void removeReaderEvent(String readerID) {
-		extNotificationTemplate.send(this.extNotificationDest,
-				new NotificationMessageCreator(new ReaderRemovedNotification(
-						readerID)));
+	public void removeConfigurationEvent(String serviceID) {
+		if (readerDAO != null) {
+			if (null != readerDAO.getReaderByID(serviceID)) {
+				extNotificationTemplate.send(this.extNotificationDest,
+						new NotificationMessageCreator(
+								new ReaderRemovedNotification(serviceID)));
+				return;
+			}
+		}
+		if (commandDAO != null) {
+			if (null != commandDAO.getCommandByID(serviceID)) {
+				//TODO: send notification
+				return;
+			}
+		}
 
 	}
 
