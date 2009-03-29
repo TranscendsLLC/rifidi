@@ -12,8 +12,8 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.configuration.Configuration;
+import org.rifidi.edge.core.notifications.NotifierService;
 import org.rifidi.edge.core.notifications.NotifierServiceWrapper;
-import org.rifidi.edge.notifications.NotifierService;
 
 /**
  * This is the implementation that listens for OSGi services for Configurations.
@@ -29,10 +29,6 @@ public class ConfigurationDAOImpl implements ConfigurationDAO {
 			.getLog(ConfigurationDAOImpl.class);
 	/** A notifier for JMS. Remove once we have aspects */
 	private NotifierServiceWrapper notifierService;
-	/** reader dao. Won't be needed once we have aspects */
-	private ReaderDAO readerDAO;
-	/** commanddao. won't be needed once we have aspects */
-	private CommandDAO commandDAO;
 
 	/**
 	 * constructor
@@ -51,26 +47,6 @@ public class ConfigurationDAOImpl implements ConfigurationDAO {
 	@Override
 	public Configuration getConfiguration(String serviceID) {
 		return configurations.get(serviceID);
-	}
-
-	/**
-	 * Called by spring
-	 * 
-	 * @param readerDAO
-	 *            the readerDAO to set
-	 */
-	public void setReaderDAO(ReaderDAO readerDAO) {
-		this.readerDAO = readerDAO;
-	}
-
-	/**
-	 * called by spring
-	 * 
-	 * @param commandDAO
-	 *            the commandDAO to set
-	 */
-	public void setCommandDAO(CommandDAO commandDAO) {
-		this.commandDAO = commandDAO;
 	}
 
 	/**
@@ -111,12 +87,7 @@ public class ConfigurationDAOImpl implements ConfigurationDAO {
 		}
 		NotifierService service = this.notifierService.getService();
 		if (service != null) {
-			String id = configuration.getServiceID();
-			if (null != readerDAO.getReaderByID(id)) {
-				service.addReaderEvent(id);
-			} else if (null != commandDAO.getCommandByID(id)) {
-				// TODO: Add command notification
-			}
+			service.addConfigurationEvent(configuration.getServiceID());
 		}
 	}
 
@@ -139,12 +110,7 @@ public class ConfigurationDAOImpl implements ConfigurationDAO {
 		}
 		NotifierService service = this.notifierService.getService();
 		if (service != null) {
-			String id = configuration.getServiceID();
-			if (null != readerDAO.getReaderByID(id)) {
-				service.removeReaderEvent(id);
-			} else if (null != commandDAO.getCommandByID(id)) {
-				// TODO: Remove command notification
-			}
+			service.removeConfigurationEvent(configuration.getServiceID());
 		}
 	}
 

@@ -10,10 +10,17 @@
 		class="org.rifidi.edge.notifications.internal.NotifierServiceImpl">
 		<property name="extNotificationDest" ref="externalDest" />
 		<property name="extNotificationTemplate" ref="extNotificationTemplate" />
+		<property name="readerDAO" ref="ReaderDAOService" />
+		<property name="commandDAO" ref="CommandDAOService" />
 	</bean>
 
+	<osgi:reference id="ReaderDAOService" interface="org.rifidi.edge.core.daos.ReaderDAO"
+		cardinality="1..1" />
+	<osgi:reference id="CommandDAOService"
+		interface="org.rifidi.edge.core.daos.CommandDAO" cardinality="1..1" />
+
 	<osgi:service id="JMSNotifierService" ref="JMSNotifier"
-		interface="org.rifidi.edge.notifications.NotifierService" />
+		interface="org.rifidi.edge.core.notifications.NotifierService" />
 
 	<!--  External JMS Message Queue for events -->
 	<amq:broker useJmx="false" persistent="false">

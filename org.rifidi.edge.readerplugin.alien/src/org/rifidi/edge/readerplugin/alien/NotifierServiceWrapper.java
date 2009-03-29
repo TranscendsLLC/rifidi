@@ -5,7 +5,7 @@ package org.rifidi.edge.readerplugin.alien;
 
 import java.util.Dictionary;
 
-import org.rifidi.edge.notifications.NotifierService;
+import org.rifidi.edge.core.notifications.NotifierService;
 
 /**
  * @author kyle
