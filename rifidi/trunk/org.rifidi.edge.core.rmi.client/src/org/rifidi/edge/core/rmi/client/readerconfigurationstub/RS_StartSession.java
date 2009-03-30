@@ -7,7 +7,6 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 
 import org.rifidi.edge.core.api.rmi.ReaderStub;
-import org.rifidi.rmi.utils.cache.ServerDescription;
 import org.rifidi.rmi.utils.remotecall.ServerDescriptionBasedRemoteMethodCall;
 
 /**
@@ -32,7 +31,7 @@ public class RS_StartSession extends
 	 * @param sessionID
 	 *            The index number of the session to start
 	 */
-	public RS_StartSession(ServerDescription serverDescription,
+	public RS_StartSession(RS_ServerDescription serverDescription,
 			String readerID, String sessionID) {
 		super(serverDescription);
 		this.readerID = readerID;

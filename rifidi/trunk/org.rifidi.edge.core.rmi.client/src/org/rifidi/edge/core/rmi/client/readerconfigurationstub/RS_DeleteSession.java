@@ -5,33 +5,38 @@ package org.rifidi.edge.core.rmi.client.readerconfigurationstub;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
-import java.util.Set;
 
 import org.rifidi.edge.core.api.rmi.ReaderStub;
-import org.rifidi.edge.core.api.rmi.dto.SessionDTO;
 import org.rifidi.rmi.utils.remotecall.ServerDescriptionBasedRemoteMethodCall;
 
 /**
- * This command creates a new session on the reader. It retuns a List of
- * ReaderSession data transfer objects that give information about all the
- * sessions currently available on that reader
+ * This command deletes a Reader Session.
  * 
  * @author Kyle Neumeier - kyle@pramari.com
  * 
  */
-public class RS_CreateSession
-		extends
-		ServerDescriptionBasedRemoteMethodCall<Set<SessionDTO>, RuntimeException> {
+public class RS_DeleteSession extends
+		ServerDescriptionBasedRemoteMethodCall<Object, RuntimeException> {
 
-	/** The readerID to create a session on */
+	/** The ID of the reader */
 	private String readerID;
+	/** The ID of the session to delete */
+	private String sessionID;
 
 	/**
+	 * 
 	 * @param serverDescription
+	 *            The server description to use
+	 * @param readerID
+	 *            The ID of the reader which has the session
+	 * @param sessionID
+	 *            The ID of the session to delete
 	 */
-	public RS_CreateSession(RS_ServerDescription serverDescription, String readerID) {
+	public RS_DeleteSession(RS_ServerDescription serverDescription,
+			String readerID, String sessionID) {
 		super(serverDescription);
 		this.readerID = readerID;
+		this.sessionID = sessionID;
 	}
 
 	/*
@@ -42,10 +47,11 @@ public class RS_CreateSession
 	 * (java.rmi.Remote)
 	 */
 	@Override
-	protected Set<SessionDTO> performRemoteCall(Remote remoteObject)
+	protected Object performRemoteCall(Remote remoteObject)
 			throws RemoteException, RuntimeException {
 		ReaderStub stub = (ReaderStub) remoteObject;
-		return stub.createSession(readerID);
+		stub.deleteSession(readerID, sessionID);
+		return null;
 	}
 
 }

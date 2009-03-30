@@ -8,7 +8,6 @@ import java.rmi.RemoteException;
 
 import org.rifidi.edge.core.api.rmi.ReaderStub;
 import org.rifidi.edge.core.api.rmi.dto.SessionDTO;
-import org.rifidi.rmi.utils.cache.ServerDescription;
 import org.rifidi.rmi.utils.remotecall.ServerDescriptionBasedRemoteMethodCall;
 
 /**
@@ -24,7 +23,7 @@ public class RS_GetSession extends
 	/**
 	 * @param serverDescription
 	 */
-	public RS_GetSession(ServerDescription serverDescription, String readerID,
+	public RS_GetSession(RS_ServerDescription serverDescription, String readerID,
 			String sessionID) {
 		super(serverDescription);
 		this.readerID = readerID;
