@@ -9,10 +9,14 @@ import org.rifidi.edge.client.mbean.ui.widgets.abstractwidgets.AbstractNumberWid
 import org.rifidi.edge.client.mbean.ui.widgets.data.FloatWidgetData;
 
 /**
- * @author kyle
- *
+ * A widget that displays float. Note that Because it uses a spinner, the value
+ * ranges are limited
+ * 
+ * @author Kyle Neumeier - kyle@pramari.com
+ * 
  */
-public class StandardFloatWidget<T extends FloatWidgetData> extends AbstractNumberWidget<T> {
+public class StandardFloatWidget<T extends FloatWidgetData> extends
+		AbstractNumberWidget<T> {
 
 	/**
 	 * @param data
@@ -20,7 +24,7 @@ public class StandardFloatWidget<T extends FloatWidgetData> extends AbstractNumb
 	public StandardFloatWidget(T data) {
 		super(data);
 	}
-	
+
 	@Override
 	protected void buildCustomSpinner() {
 		spinner.setDigits(data.getNumDecimalPlaces());
@@ -43,25 +47,30 @@ public class StandardFloatWidget<T extends FloatWidgetData> extends AbstractNumb
 
 		spinner.setSelection(value);
 	}
-	
 
-	/* (non-Javadoc)
-	 * @see org.rifidi.dynamicswtforms.ui.widgets.DynamicSWTFormWidget#setValue(java.lang.Object)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.dynamicswtforms.ui.widgets.DynamicSWTFormWidget#setValue(java
+	 * .lang.Object)
 	 */
 	@Override
 	public String setValue(Object value) {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.rifidi.dynamicswtforms.ui.widgets.DynamicSWTFormWidget#getAttribute()
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.dynamicswtforms.ui.widgets.DynamicSWTFormWidget#getAttribute()
 	 */
 	@Override
 	public Attribute getAttribute() {
-		return new Attribute(getElementName(), Float.parseFloat(spinner.getText()));
+		return new Attribute(getElementName(), Float.parseFloat(spinner
+				.getText()));
 	}
-
-
 
 }

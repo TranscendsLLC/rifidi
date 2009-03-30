@@ -40,6 +40,7 @@ public abstract class AbstractMBeanInfoComposite implements
 		this.categories = categories;
 		this.includeExcelude = includeExclude;
 		this.widgets = new ArrayList<AbstractWidget<?>>();
+		this.listeners = new ArrayList<MBeanInfoWidgetListener>();
 	}
 
 	/**

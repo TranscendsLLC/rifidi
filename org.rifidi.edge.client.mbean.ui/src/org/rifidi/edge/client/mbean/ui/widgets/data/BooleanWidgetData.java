@@ -6,7 +6,7 @@ package org.rifidi.edge.client.mbean.ui.widgets.data;
 import javax.management.MBeanAttributeInfo;
 
 /**
- * @author kyle
+ * @author Kyle Neumeier - kyle@pramari.com
  *
  */
 public class BooleanWidgetData extends AbstractWidgetData {

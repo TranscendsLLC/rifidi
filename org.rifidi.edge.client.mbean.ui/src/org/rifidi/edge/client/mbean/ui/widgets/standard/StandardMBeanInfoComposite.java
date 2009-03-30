@@ -27,9 +27,12 @@ import org.rifidi.edge.client.mbean.ui.widgets.standard.impl.StandardLongWidget;
 import org.rifidi.edge.client.mbean.ui.widgets.standard.impl.StringWidget;
 
 /**
- * This is the default implementation of a Form. It looks like a table with one
- * column having labels and the other column having widgets. In addition, it can
- * display errors by showing a red x near the widget that has a problem
+ * This is the default implementation of a MBeanInfoComposite. It looks like a
+ * table with one column having labels and the other column having widgets. In
+ * addition, it can display errors by showing a red x near the widget that has a
+ * problem.
+ * 
+ * It uses standard SWT widgets
  * 
  * @author Kyle Neumeier - kyle@pramari.com
  * 
@@ -45,11 +48,19 @@ public class StandardMBeanInfoComposite extends AbstractMBeanInfoComposite {
 			.getLog(StandardMBeanInfoComposite.class);
 
 	/**
+	 * Constructor
 	 * 
 	 * @param formRoot
+	 *            - The MBeanInfo object to use
 	 * @param filterCategories
+	 *            A set of strings to filter for
 	 * @param include
+	 *            if true, the filter categories are interpreted to mean display
+	 *            only the categories in the set. If false, it means display all
+	 *            categories except for those in the set
 	 * @param displayErrors
+	 *            If true, display red xs by controls which do not pass
+	 *            validation
 	 */
 	public StandardMBeanInfoComposite(MBeanInfo formRoot,
 			Set<String> filterCategories, boolean include, boolean displayErrors) {
@@ -59,7 +70,10 @@ public class StandardMBeanInfoComposite extends AbstractMBeanInfoComposite {
 	}
 
 	/**
-	 * {@link AbstractMBeanInfoComposite#createControls(Composite)}
+	 * Create the control
+	 * 
+	 * @param parent
+	 *            - the composite to draw on
 	 */
 	@Override
 	public void createControls(Composite parent) {
@@ -104,10 +118,11 @@ public class StandardMBeanInfoComposite extends AbstractMBeanInfoComposite {
 			AbstractWidget<?> widget = null;
 
 			if (type.equals(Boolean.class.getName())) {
-				// widget = new StandardBooleanWidget(new BooleanWidgetData(child));
+				// widget = new StandardBooleanWidget(new
+				// BooleanWidgetData(child));
 			} else if (type.equals(Float.class.getName())) {
-				widget = new StandardFloatWidget<FloatWidgetData>(new FloatWidgetData(
-						child));
+				widget = new StandardFloatWidget<FloatWidgetData>(
+						new FloatWidgetData(child));
 			} else if (type.equals(Integer.class.getName())) {
 				widget = new StandardIntegerWidget<IntegerWidgetData>(
 						new IntegerWidgetData(child));
@@ -115,8 +130,8 @@ public class StandardMBeanInfoComposite extends AbstractMBeanInfoComposite {
 				widget = new StringWidget<StringWidgetData>(
 						new StringWidgetData(child));
 			} else if (type.equals(Long.class.getName())) {
-				widget = new StandardLongWidget<LongWidgetData>(new LongWidgetData(
-						child));
+				widget = new StandardLongWidget<LongWidgetData>(
+						new LongWidgetData(child));
 			} else {
 				logger.warn("No widget found for type " + type);
 				skip = true;
@@ -125,9 +140,9 @@ public class StandardMBeanInfoComposite extends AbstractMBeanInfoComposite {
 				this.widgets.add(widget);
 			}
 		}
-		
+
 		Collections.sort(widgets);
-		
+
 		for (AbstractWidget<?> widget : widgets) {
 			if (this.displayErrors) {
 				Label imageLabel = new Label(widgetCompsoite, SWT.NONE);

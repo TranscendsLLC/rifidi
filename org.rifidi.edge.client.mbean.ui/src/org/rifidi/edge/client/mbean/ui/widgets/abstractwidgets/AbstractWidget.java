@@ -13,7 +13,7 @@ import org.rifidi.edge.client.mbean.ui.widgets.data.AbstractWidgetData;
 /**
  * An abstract implementation of a Widget. Most widgets should extend this class
  * 
- * @author kyle
+ * @author Kyle Neumeier - kyle@pramari.com
  * 
  */
 public abstract class AbstractWidget<T extends AbstractWidgetData> implements

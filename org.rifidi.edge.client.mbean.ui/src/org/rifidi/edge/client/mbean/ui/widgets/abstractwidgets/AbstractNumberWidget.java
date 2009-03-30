@@ -34,6 +34,8 @@ public abstract class AbstractNumberWidget<T extends AbstractWidgetData>
 	private boolean dirty = false;
 
 	/**
+	 * Constructor
+	 * 
 	 * @param data
 	 */
 	public AbstractNumberWidget(T data) {
@@ -115,6 +117,10 @@ public abstract class AbstractNumberWidget<T extends AbstractWidgetData>
 
 	}
 
+	/**
+	 * This method handles custom configuration of the sinner control based on
+	 * the data type being used, such as decimal places or min/max
+	 */
 	protected abstract void buildCustomSpinner();
 
 }
