@@ -6,10 +6,7 @@ import org.rifidi.edge.client.mbean.ui.widgets.abstractwidgets.AbstractNumberWid
 import org.rifidi.edge.client.mbean.ui.widgets.data.IntegerWidgetData;
 
 /**
- * A default implementation of a Number Widget, which uses a spinner for
- * Integers and Floats. One problem with this implemetation is that a spinenr
- * cannot display anything larger than MAX_INT, so is not really big enough for
- * a true Float
+ * A control used to display an integer
  * 
  * @author Kyle Neumeier - kyle@pramari.com
  * 
@@ -29,20 +26,9 @@ public class StandardIntegerWidget<T extends IntegerWidgetData> extends
 
 	@Override
 	protected void buildCustomSpinner() {
-		if (data.maxValue() > Integer.MAX_VALUE) {
-			spinner.setMaximum(Integer.MAX_VALUE);
-		} else {
-			spinner.setMaximum(data.maxValue());
-		}
-
-		if (data.minValue() < Integer.MIN_VALUE) {
-			spinner.setMinimum(Integer.MIN_VALUE);
-		} else {
-			spinner.setMinimum(data.minValue());
-		}
-
+		spinner.setMaximum(data.maxValue());
+		spinner.setMinimum(data.minValue());
 		spinner.setSelection(data.getDefaultValue());
-
 
 	}
 

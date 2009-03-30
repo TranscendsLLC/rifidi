@@ -41,8 +41,7 @@ public class FloatWidgetData extends AbstractWidgetData {
 
 	/**
 	 * TODO: returns two decimal places for now.  Need to do this in a better way 
-	 * 
-	 * 
+	 *
 	 * @return The number of decimal places to display
 	 */
 	public int getNumDecimalPlaces() {
