@@ -3,14 +3,18 @@
  */
 package org.rifidi.edge.core.api.rmi.dto;
 
+import java.io.Serializable;
 import java.util.Set;
 
 /**
  * @author kyle
  *
  */
-public class CommandConfigPluginDTO {
+public class CommandConfigPluginDTO implements Serializable{
 	
+	/***/
+	private static final long serialVersionUID = 1L;
+
 	private String readerFactoryID;
 	
 	private Set<String> commandConfigFactoryIDs;
