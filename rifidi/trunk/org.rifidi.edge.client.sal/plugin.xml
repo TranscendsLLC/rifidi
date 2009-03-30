@@ -5,14 +5,16 @@
          point="org.eclipse.ui.perspectives">
       <perspective
             class="org.rifidi.edge.client.sal.perspective.SALPerspective"
+            icon="icons/reader-16x16.png"
             id="org.rifidi.edge.client.sal.perspective"
-            name="org.rifidi.edge.client.sal.perspectiveSAL">
+            name="Sensor Abstraction Layer">
       </perspective>
    </extension>
    <extension
          point="org.eclipse.ui.views">
       <view
             class="org.rifidi.edge.client.sal.views.EdgeServerView"
+            icon="icons/server.png"
             id="org.rifidi.edge.client.sal.views.EdgeServerView"
             name="Edge Server View"
             restorable="true">
@@ -57,6 +59,7 @@
             locationURI="popup:org.rifidi.edge.client.sal.views.EdgeServerView?after=additions">
          <command
                commandId="org.rifidi.edge.client.sal.commands.edgeserver.connect"
+               icon="icons/connect.png"
                id="org.rifidi.edge.client.sal.commands.edgeserver.connectBinding"
                label="Connect"
                style="push">
@@ -71,6 +74,7 @@
          </command>
          <command
                commandId="org.rifidi.edge.client.sal.commands.edgeserver.disconnect"
+               icon="icons/disconnect.png"
                id="org.rifidi.edge.client.sal.commands.edgeserver.disconnectBinding"
                label="Disconnect"
                style="push">
@@ -85,6 +89,7 @@
          </command>
          <command
                commandId="org.rifidi.edge.client.sal.commands.edgeserver.update"
+               icon="icons/arrow_refresh.png"
                id="org.rifidi.edge.client.sal.commands.edgeserver.updateBinding"
                label="Update"
                style="push">
@@ -99,6 +104,7 @@
          </command>
          <command
                commandId="org.rifidi.edge.client.sal.commands.edgeserver.save"
+               icon="icons/disk.png"
                id="org.rifidi.edge.client.sal.commands.edgeserver.saveBinding"
                label="Save"
                style="push">
@@ -107,6 +113,90 @@
                <iterate>
                   <instanceof
                         value="org.rifidi.edge.client.model.sal.RemoteEdgeServer">
+                  </instanceof>
+               </iterate>
+            </visibleWhen>
+         </command>
+         <command
+               commandId="org.rifidi.edge.client.sal.commands.edgeserver.newreader"
+               icon="icons/readeradd.png"
+               label="New Reader"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <iterate>
+                  <instanceof
+                        value="org.rifidi.edge.client.model.sal.RemoteEdgeServer">
+                  </instanceof>
+               </iterate>
+            </visibleWhen>
+         </command>
+         <command
+               commandId="org.rifidi.edge.client.sal.commands.reader.delete"
+               icon="icons/readerdelete.png"
+               label="Delete Reader"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <iterate>
+                  <instanceof
+                        value="org.rifidi.edge.client.model.sal.RemoteReader">
+                  </instanceof>
+               </iterate>
+            </visibleWhen>
+         </command>
+         <command
+               commandId="org.rifidi.edge.client.sal.commands.reader.createsession"
+               icon="icons/link_add.png"
+               label="Create Session"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <iterate>
+                  <instanceof
+                        value="org.rifidi.edge.client.model.sal.RemoteReader">
+                  </instanceof>
+               </iterate>
+            </visibleWhen>
+         </command>
+         <command
+               commandId="org.rifidi.edge.client.sal.commands.session.delete"
+               icon="icons/link_delete.png"
+               label="Delete Session"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <iterate>
+                  <instanceof
+                        value="org.rifidi.edge.client.model.sal.RemoteSession">
+                  </instanceof>
+               </iterate>
+            </visibleWhen>
+         </command>
+         <command
+               commandId="org.rifidi.edge.client.sal.commands.session.start"
+               icon="icons/control_play_blue.png"
+               label="Start Session"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <iterate>
+                  <instanceof
+                        value="org.rifidi.edge.client.model.sal.RemoteSession">
+                  </instanceof>
+               </iterate>
+            </visibleWhen>
+         </command>
+         <command
+               commandId="org.rifidi.edge.client.sal.commands.session.stop"
+               icon="icons/control_stop_blue.png"
+               label="Stop Session"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <iterate>
+                  <instanceof
+                        value="org.rifidi.edge.client.model.sal.RemoteSession">
                   </instanceof>
                </iterate>
             </visibleWhen>
@@ -187,6 +277,110 @@
             </iterate>
          </enabledWhen>
       </handler>
+      <handler
+            class="org.rifidi.edge.client.sal.controller.edgeserver.handlers.NewReaderHandler"
+            commandId="org.rifidi.edge.client.sal.commands.edgeserver.newreader">
+         <enabledWhen>
+            <iterate
+                  ifEmpty="false">
+               <and>
+                  <instanceof
+                        value="org.rifidi.edge.client.model.sal.RemoteEdgeServer">
+                  </instanceof>
+                  <test
+                        property="org.rifidi.edge.client.sal.edgeserver.state"
+                        value="CONNECTED">
+                  </test>
+               </and>
+            </iterate>
+         </enabledWhen>
+      </handler>
+      <handler
+            class="org.rifidi.edge.client.sal.controller.edgeserver.handlers.DeleteReaderHandler"
+            commandId="org.rifidi.edge.client.sal.commands.reader.delete">
+         <enabledWhen>
+            <iterate
+                  ifEmpty="false">
+               <instanceof
+                     value="org.rifidi.edge.client.model.sal.RemoteReader">
+               </instanceof>
+            </iterate>
+         </enabledWhen>
+      </handler>
+      <handler
+            class="org.rifidi.edge.client.sal.controller.edgeserver.handlers.CreateSessionHandler"
+            commandId="org.rifidi.edge.client.sal.commands.reader.createsession">
+         <enabledWhen>
+            <iterate
+                  ifEmpty="false">
+               <instanceof
+                     value="org.rifidi.edge.client.model.sal.RemoteReader">
+               </instanceof>
+            </iterate>
+         </enabledWhen>
+      </handler>
+      <handler
+            class="org.rifidi.edge.client.sal.controller.edgeserver.handlers.DeleteSessionHandler"
+            commandId="org.rifidi.edge.client.sal.commands.session.delete">
+         <enabledWhen>
+            <iterate
+                  ifEmpty="false">
+               <instanceof
+                     value="org.rifidi.edge.client.model.sal.RemoteSession">
+               </instanceof>
+            </iterate>
+         </enabledWhen>
+      </handler>
+      <handler
+            class="org.rifidi.edge.client.sal.controller.edgeserver.handlers.StartSessionHandler"
+            commandId="org.rifidi.edge.client.sal.commands.session.start">
+         <enabledWhen>
+            <iterate
+                  ifEmpty="false">
+               <and>
+                  <instanceof
+                        value="org.rifidi.edge.client.model.sal.RemoteSession">
+                  </instanceof>
+                  <or>
+                     <test
+                           property="org.rifidi.edge.client.sal.remotesession.state"
+                           value="CREATED">
+                     </test>
+                     <test
+                           property="org.rifidi.edge.client.sal.remotesession.state"
+                           value="CLOSED">
+                     </test>
+                  </or>
+               </and>
+            </iterate>
+         </enabledWhen>
+      </handler>
+      <handler
+            class="org.rifidi.edge.client.sal.controller.edgeserver.handlers.StopSessionHandler"
+            commandId="org.rifidi.edge.client.sal.commands.session.stop">
+         <enabledWhen>
+            <iterate
+                  ifEmpty="false">
+               <and>
+                  <instanceof
+                        value="org.rifidi.edge.client.model.sal.RemoteSession">
+                  </instanceof>
+                  <not>
+                     <test
+                           property="org.rifidi.edge.client.sal.remotesession.state"
+                           value="CREATED">
+                     </test>
+                  </not>
+                  <not>
+                     <test
+                           property="org.rifidi.edge.client.sal.remotesession.state"
+                           value="CLOSED">
+                     </test>
+                  </not>
+               </and>
+            </iterate>
+         </enabledWhen>
+      </handler>
    </extension>
    <extension
          point="org.eclipse.ui.commands">
@@ -206,6 +400,30 @@
             id="org.rifidi.edge.client.sal.commands.edgeserver.save"
             name="EdgeServerSave">
       </command>
+      <command
+            id="org.rifidi.edge.client.sal.commands.edgeserver.newreader"
+            name="EdgeServerNewReader">
+      </command>
+      <command
+            id="org.rifidi.edge.client.sal.commands.reader.delete"
+            name="DeleteReader">
+      </command>
+      <command
+            id="org.rifidi.edge.client.sal.commands.reader.createsession"
+            name="CreateSession">
+      </command>
+      <command
+            id="org.rifidi.edge.client.sal.commands.session.delete"
+            name="DeleteSession">
+      </command>
+      <command
+            id="org.rifidi.edge.client.sal.commands.session.start"
+            name="StartSession">
+      </command>
+      <command
+            id="org.rifidi.edge.client.sal.commands.session.stop"
+            name="StopSession">
+      </command>
    </extension>
    <extension
          point="org.eclipse.core.expressions.propertyTesters">
@@ -213,6 +431,13 @@
             class="org.rifidi.edge.client.sal.controller.edgeserver.handlers.RemoteEdgeServerPropertyTester"
             id="org.rifidi.edge.client.sal.edgeserver"
             namespace="org.rifidi.edge.client.sal.edgeserver"
+            properties="state"
+            type="java.lang.Object">
+      </propertyTester>
+      <propertyTester
+            class="org.rifidi.edge.client.sal.controller.edgeserver.handlers.RemoteSessionPropertyTester"
+            id="org.rifidi.edge.client.sal.remotesession"
+            namespace="org.rifidi.edge.client.sal.remotesession"
             properties="state"
             type="java.lang.Object">
       </propertyTester>
@@ -226,6 +451,15 @@
                type="org.eclipse.ui.views.properties.IPropertySource">
          </adapter>
       </factory>
+   </extension>
+   <extension
+         point="org.eclipse.ui.newWizards">
+      <wizard
+            class="org.rifidi.edge.client.sal.wizards.NewReaderWizard"
+            hasPages="true"
+            id="org.rifidi.edge.client.sal.newreaderwizard"
+            name="New Reader Wizard">
+      </wizard>
    </extension>
 
 </plugin>

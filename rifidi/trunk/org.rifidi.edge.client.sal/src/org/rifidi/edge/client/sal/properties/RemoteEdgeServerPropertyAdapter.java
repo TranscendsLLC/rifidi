@@ -9,12 +9,16 @@ import org.eclipse.ui.views.properties.PropertyDescriptor;
 import org.rifidi.edge.client.model.sal.RemoteEdgeServer;
 
 /**
- * @author kyle
+ * An adapter for the RemtoeEdgeServer to be an IPropertySoruce
+ * 
+ * @author Kyle Neumeier - kyle@pramari.com
  * 
  */
 public class RemoteEdgeServerPropertyAdapter implements IPropertySource2 {
 
+	/** The model object to be adapted */
 	private RemoteEdgeServer edgeServer;
+	/** Property Descriptors */
 	private IPropertyDescriptor[] propertyDescriptors;
 
 	public RemoteEdgeServerPropertyAdapter(RemoteEdgeServer edgeServer) {
@@ -69,10 +73,10 @@ public class RemoteEdgeServerPropertyAdapter implements IPropertySource2 {
 		if (propertyDescriptors == null) {
 			IPropertyDescriptor stateDescriptor = new PropertyDescriptor(
 					RemoteEdgeServer.STATE_PROPERTY, "State");
-			this.propertyDescriptors = new IPropertyDescriptor[]{stateDescriptor};
+			this.propertyDescriptors = new IPropertyDescriptor[] { stateDescriptor };
 		}
 		return propertyDescriptors;
-		
+
 	}
 
 	/*
@@ -84,7 +88,7 @@ public class RemoteEdgeServerPropertyAdapter implements IPropertySource2 {
 	 */
 	@Override
 	public Object getPropertyValue(Object id) {
-		if(id.equals(RemoteEdgeServer.STATE_PROPERTY)){
+		if (id.equals(RemoteEdgeServer.STATE_PROPERTY)) {
 			return edgeServer.getState();
 		}
 		return null;

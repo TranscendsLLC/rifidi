@@ -10,7 +10,9 @@ import org.eclipse.core.commands.IHandler2;
 import org.rifidi.edge.client.sal.controller.edgeserver.EdgeServerTreeContentProvider;
 
 /**
- * @author kyle
+ * A handler for persisting the configuration information on the server
+ * 
+ * @author Kyle Neumeier - kyle@pramari.com
  * 
  */
 public class SaveConfigurationHandler extends AbstractHandler implements
