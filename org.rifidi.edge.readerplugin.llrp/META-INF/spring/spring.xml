@@ -1,0 +1,59 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:osgi="http://www.springframework.org/schema/osgi"
+	xmlns:amq="http://activemq.apache.org/schema/core"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+     http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi.xsd
+     http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd">
+     
+	<!--  Create Reader Configuration Factory -->
+	<bean id="configurationFactory"
+		class="org.rifidi.edge.readerplugin.llrp.LLRPReaderFactory">
+		<property name="context" ref="bundleContext" />
+		<property name="template" ref="myJmsTemplate" />
+		<property name="destination" ref="destination3" />
+	</bean>
+	<!--  Create Command Configuration Factory -->
+	<bean id="commandConfigurationFactory"
+		class="org.rifidi.edge.readerplugin.llrp.LLRPCommandConfigurationFactory">
+		<property name="context" ref="bundleContext" />
+	</bean>
+
+	<!-- Put reader configuration service in OSGi Registry -->
+	<osgi:service id="readerConfigurationFactoryService" ref="configurationFactory">
+		<osgi:interfaces>
+			<value>org.rifidi.configuration.ServiceFactory</value>
+			<value>
+				org.rifidi.edge.core.readers.AbstractReaderFactory</value>
+		</osgi:interfaces>
+	</osgi:service>
+	<!-- Put command configuration service in OSGi Registry -->
+	<osgi:service id="commandConfigurationFactoryService" ref="commandConfigurationFactory">
+		<osgi:interfaces>
+			<value>org.rifidi.configuration.ServiceFactory</value>
+			<value>
+				org.rifidi.edge.core.commands.AbstractCommandConfigurationFactory</value>
+		</osgi:interfaces>
+	</osgi:service>
+	
+		<!--  ActiveMQ destinations to use  -->
+	<amq:queue id="destination3"
+		physicalName="org.apache.activemq.spring.Test.spring.embedded" />
+	<!--
+		JMS ConnectionFactory to use, configuring the embedded broker using
+		XML
+	-->
+	<amq:connectionFactory id="jmsFactory3" brokerURL="vm://localhost" />
+	
+	<!-- Spring JMS Template -->
+	<bean id="myJmsTemplate" class="org.springframework.jms.core.JmsTemplate">
+		<property name="connectionFactory">
+			<!-- lets wrap in a pool to avoid creating a connection per send -->
+			<bean class="org.springframework.jms.connection.SingleConnectionFactory">
+				<property name="targetConnectionFactory">
+					<ref local="jmsFactory3" />
+				</property>
+			</bean>
+		</property>
+	</bean>
+	
+</beans>
