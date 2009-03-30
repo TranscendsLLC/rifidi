@@ -6,9 +6,12 @@ package org.rifidi.edge.core.api.rmi;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.Map;
+import java.util.Set;
 
 import javax.management.AttributeList;
 import javax.management.MBeanInfo;
+
+import org.rifidi.edge.core.api.rmi.dto.CommandConfigPluginDTO;
 
 /**
  * This is the interface for a stub that allows clients to interact with
@@ -23,13 +26,11 @@ public interface CommandStub extends Remote {
 	 * This method gets the available command types on the edge server and the
 	 * ID of the ReaderFactory that the command type works with
 	 * 
-	 * for example, it return <Alien9800-GetTagList, Alien9800>
-	 * 
-	 * @return A map where the key is an ID of a command type and the value is
-	 *         the ID of a ReaderFactory on which the command will run
+	 * @return A set of CommandConfigPluginDTOs
 	 * @throws RemoteException
 	 */
-	Map<String, String> getCommandConfigurationTypes() throws RemoteException;
+	Set<CommandConfigPluginDTO> getCommandConfigurationTypes()
+			throws RemoteException;
 
 	/**
 	 * Gets the already configured commands
@@ -95,6 +96,5 @@ public interface CommandStub extends Remote {
 	 *            the ID of the commandConfiguration to delete
 	 * @throws RemoteException
 	 */
-	void deleteCommand(String commandID)
-			throws RemoteException;
+	void deleteCommand(String commandID) throws RemoteException;
 }
