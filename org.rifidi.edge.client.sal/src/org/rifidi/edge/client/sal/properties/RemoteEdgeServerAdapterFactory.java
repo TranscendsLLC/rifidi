@@ -9,25 +9,35 @@ import org.eclipse.ui.views.properties.IPropertySource2;
 import org.rifidi.edge.client.model.sal.RemoteEdgeServer;
 
 /**
- * @author kyle
- *
+ * An adapter factory for teh RemoteEdgeServer model object
+ * 
+ * @author Kyle Neumeier - kyle@pramari.com
+ * 
  */
 public class RemoteEdgeServerAdapterFactory implements IAdapterFactory {
 
-	Class[] classes = new Class[]{IPropertySource2.class};
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapter(java.lang.Object, java.lang.Class)
+	/** List of classes the RemoteEdgeServer can be adapted to */
+	private Class[] classes = new Class[] { IPropertySource2.class };
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.core.runtime.IAdapterFactory#getAdapter(java.lang.Object,
+	 * java.lang.Class)
 	 */
 	@Override
 	public Object getAdapter(Object adaptableObject, Class adapterType) {
-		if(adapterType.equals(IPropertySource.class)){
-			return new RemoteEdgeServerPropertyAdapter((RemoteEdgeServer)adaptableObject);
+		if (adapterType.equals(IPropertySource.class)) {
+			return new RemoteEdgeServerPropertyAdapter(
+					(RemoteEdgeServer) adaptableObject);
 		}
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapterList()
 	 */
 	@Override
