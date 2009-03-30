@@ -4,7 +4,9 @@
 package org.rifidi.edge.client.model.sal.preferences;
 
 /**
- * @author kyle
+ * Preference names and default values
+ * 
+ * @author Kyle Neumeier - kyle@pramari.com
  * 
  */
 public class EdgeServerPreferences {
