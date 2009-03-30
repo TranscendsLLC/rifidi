@@ -4,7 +4,6 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 
 import org.rifidi.edge.core.api.rmi.ReaderStub;
-import org.rifidi.rmi.utils.cache.ServerDescription;
 import org.rifidi.rmi.utils.remotecall.ServerDescriptionBasedRemoteMethodCall;
 
 /**
@@ -25,7 +24,7 @@ public class RS_StopSession extends
 	/**
 	 * @param serverDescription
 	 */
-	public RS_StopSession(ServerDescription serverDescription, String readerID,
+	public RS_StopSession(RS_ServerDescription serverDescription, String readerID,
 			String sessionID) {
 		super(serverDescription);
 		this.readerID = readerID;
