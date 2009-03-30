@@ -5,19 +5,12 @@ package org.rifidi.edge.client.model.sal;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.util.Set;
 
-import javax.jms.BytesMessage;
 import javax.jms.Connection;
 import javax.jms.Destination;
-import javax.jms.JMSException;
-import javax.jms.Message;
 import javax.jms.MessageConsumer;
-import javax.jms.MessageListener;
 import javax.jms.Session;
+import javax.management.AttributeList;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.commons.logging.Log;
@@ -27,19 +20,17 @@ import org.eclipse.core.databinding.observable.map.WritableMap;
 import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.osgi.service.prefs.Preferences;
 import org.rifidi.edge.client.model.Activator;
-import org.rifidi.edge.client.model.sal.notifications.handlers.ReaderFactoryNotificationHandler;
-import org.rifidi.edge.client.model.sal.notifications.handlers.ReaderNotificationHandler;
+import org.rifidi.edge.client.model.sal.commands.RequestExecuterSingleton;
 import org.rifidi.edge.client.model.sal.preferences.EdgeServerPreferences;
-import org.rifidi.edge.core.api.jms.notifications.ReaderFactoryNotification;
-import org.rifidi.edge.core.api.jms.notifications.ReaderNotification;
-import org.rifidi.edge.core.api.rmi.dto.ReaderDTO;
-import org.rifidi.edge.core.api.rmi.dto.ReaderFactoryDTO;
-import org.rifidi.edge.core.rmi.client.edgeserverstub.ESGetStartupTimestamp;
 import org.rifidi.edge.core.rmi.client.edgeserverstub.ESSave;
 import org.rifidi.edge.core.rmi.client.edgeserverstub.ESServerDescription;
-import org.rifidi.edge.core.rmi.client.readerconfigurationstub.RS_GetReaderFactories;
-import org.rifidi.edge.core.rmi.client.readerconfigurationstub.RS_GetReaders;
+import org.rifidi.edge.core.rmi.client.readerconfigurationstub.RS_CreateReader;
+import org.rifidi.edge.core.rmi.client.readerconfigurationstub.RS_CreateSession;
+import org.rifidi.edge.core.rmi.client.readerconfigurationstub.RS_DeleteReader;
+import org.rifidi.edge.core.rmi.client.readerconfigurationstub.RS_DeleteSession;
 import org.rifidi.edge.core.rmi.client.readerconfigurationstub.RS_ServerDescription;
+import org.rifidi.edge.core.rmi.client.readerconfigurationstub.RS_StartSession;
+import org.rifidi.edge.core.rmi.client.readerconfigurationstub.RS_StopSession;
 import org.rifidi.rmi.utils.exceptions.ServerUnavailable;
 
 /**
@@ -48,27 +39,33 @@ import org.rifidi.rmi.utils.exceptions.ServerUnavailable;
  * @author Kyle Neumeier
  * 
  */
-public class RemoteEdgeServer implements MessageListener {
+public class RemoteEdgeServer {
 
 	/** The logger for this class */
 	private static final Log logger = LogFactory.getLog(RemoteEdgeServer.class);
 	/** The set of reader factories on the server */
-	private ObservableMap readerFactoryIDs;
+	ObservableMap readerFactories;
 	/** The remote readers on this edge server */
-	private ObservableMap remoteReaders;
+	ObservableMap remoteReaders;
 	/** The current state of the edge server */
 	private RemoteEdgeServerState state;
-
-	private ActiveMQConnectionFactory connectionFactory;
-	private Connection conn;
-	private Session session;
-	private Destination dest;
-	private MessageConsumer consumer;
-	private Long startupTime = 0l;
-
+	/** The JMS notification object */
+	ActiveMQConnectionFactory connectionFactory;
+	/** The JMS Connection Object */
+	Connection conn;
+	/** The JMS session object */
+	Session session;
+	/** The JMS destination */
+	Destination dest;
+	/** The JMS consumer */
+	MessageConsumer consumer;
+	/** The last recorded start time of the server */
+	Long startupTime = 0l;
+	/** An object that recieves all JMS notifications */
+	JMSMessageHandler jmsMessageHandler;
 	/** The property change support for this class */
 	private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
-
+	/** The name of the state property */
 	public static final String STATE_PROPERTY = "org.rifidi.edge.client.model.sal.RemoteEdgeServer.state";
 
 	/**
@@ -82,46 +79,24 @@ public class RemoteEdgeServer implements MessageListener {
 	public RemoteEdgeServer() {
 		changeState(RemoteEdgeServerState.DISCONNECTED);
 
-		readerFactoryIDs = new WritableMap();
+		readerFactories = new WritableMap();
 		remoteReaders = new WritableMap();
 
 		connectionFactory = new ActiveMQConnectionFactory();
+		Thread t = new Thread(RequestExecuterSingleton.getInstance());
+		t.start();
 	}
 
+	/**
+	 * Connect to the edge server
+	 */
 	public void connect() {
-
 		if (this.state == RemoteEdgeServerState.CONNECTED) {
 			logger.warn("Edge Server is already in the connected state!");
 			return;
 		}
-		try {
-			this.startupTime = 0l;
-			// set up JMS consumer
-			Preferences node = new DefaultScope().getNode(Activator.PLUGIN_ID);
-			String ip = node.get(EdgeServerPreferences.EDGE_SERVER_IP,
-					EdgeServerPreferences.EDGE_SERVER_IP_DEFAULT);
-			String port = node.get(EdgeServerPreferences.EDGE_SERVER_PORT_JMS,
-					EdgeServerPreferences.EDGE_SERVER_PORT_JMS_DEFAULT);
-			String queuename = node.get(
-					EdgeServerPreferences.EDGE_SERVER_JMS_QUEUE,
-					EdgeServerPreferences.EDGE_SERVER_JMS_QUEUE_DEFAULT);
-			connectionFactory.setBrokerURL("tcp://" + ip + ":" + port);
-			conn = connectionFactory.createConnection();
-			conn.start();
-			session = conn.createSession(false, Session.AUTO_ACKNOWLEDGE);
-			dest = session.createQueue(queuename);
-			consumer = session.createConsumer(dest);
-			consumer.setMessageListener(this);
-
-			// Connect to RMI
-			logger.info("Remote Edge Server is in the Connected state");
-			changeState(RemoteEdgeServerState.CONNECTED);
-			update();
-		} catch (JMSException e) {
-			logger.debug("JMSException!", e);
-			disconnect();
-		}
-
+		RequestExecuterSingleton.getInstance().scheduleRequest(
+				new Command_Connect(this));
 	}
 
 	/**
@@ -131,72 +106,36 @@ public class RemoteEdgeServer implements MessageListener {
 	 *             If there was a problem when connecting to the server
 	 */
 	public void update() {
-		if (this.state == RemoteEdgeServerState.DISCONNECTED) {
+		if (this.state != RemoteEdgeServerState.CONNECTED) {
 			logger.warn("Cannot update the Remote Edge Server when "
 					+ "it is in the Disconnected State!");
 			return;
 		}
-		try {
-			// first get the timestamp from the server
-			ESGetStartupTimestamp getTimestampCall = new ESGetStartupTimestamp(
-					getESServerDescription());
-			Long timestamp = getTimestampCall.makeCall();
+		RequestExecuterSingleton.getInstance().scheduleRequest(
+				new Command_Update(this));
 
-			// if the server has restarted since the last time we updated, we
-			// need to disconnect and reconnect
-			if (!(startupTime == 0 || timestamp == startupTime)) {
-				disconnect();
-				connect();
-				return;
-			}
-			startupTime = timestamp;
-
-			RS_ServerDescription rs_description = getRSServerDescription();
-			RS_GetReaderFactories rsGetFactoriesCall = new RS_GetReaderFactories(
-					rs_description);
-			Set<ReaderFactoryDTO> readerFactoryDTOs = rsGetFactoriesCall
-					.makeCall();
-			for (ReaderFactoryDTO factory : readerFactoryDTOs) {
-				logger.debug("Found ReaderFactory: "
-						+ factory.getReaderFactoryID());
-				readerFactoryIDs.put(factory.getReaderFactoryID(), factory);
-			}
-
-			RS_GetReaders rsGetReaderCall = new RS_GetReaders(rs_description);
-			Set<ReaderDTO> readerDTOs = rsGetReaderCall.makeCall();
-			for (ReaderDTO reader : readerDTOs) {
-				logger.debug("Found reader: " + reader.getReaderID());
-				remoteReaders.put(reader.getReaderID(),
-						new RemoteReader(reader));
-			}
-		} catch (ServerUnavailable su) {
-			logger.error("ServerUnavailable! ", su);
-			disconnect();
-		}
 	}
 
+	/**
+	 * Disconnect from the edge server
+	 */
 	public void disconnect() {
 		if (this.state == RemoteEdgeServerState.DISCONNECTED) {
 			logger.warn("Remote Edge Server is already "
 					+ "in the Disconnected State!");
 			return;
 		}
-		try {
-			conn.stop();
-			conn.close();
-			session.close();
-			consumer.close();
-		} catch (JMSException e) {
-			logger.error("Error when disconnecting: ", e);
-		}
-		readerFactoryIDs.clear();
-		remoteReaders.clear();
-		logger.info("Remote Edge Server is in the Disconnected state");
-		changeState(RemoteEdgeServerState.DISCONNECTED);
+
+		RequestExecuterSingleton.getInstance().scheduleRequest(
+				new Command_Disconnect(this));
+
 	}
 
+	/***
+	 * Save the configuration on the server
+	 */
 	public void saveConfiguration() {
-		if (this.state == RemoteEdgeServerState.DISCONNECTED) {
+		if (this.state != RemoteEdgeServerState.CONNECTED) {
 			logger.warn("Cannot save configuration when Edge Server "
 					+ "is in the Disconnected State!");
 			return;
@@ -212,64 +151,197 @@ public class RemoteEdgeServer implements MessageListener {
 
 	}
 
-	/**
-	 * @return the readerFactoryIDs
+	/***
+	 * Delete a reader from the server
+	 * 
+	 * @param readerID
+	 *            The ID of the reader to delete
 	 */
-	public ObservableMap getReaderFactoryIDs() {
-		return readerFactoryIDs;
+	public void deleteReader(String readerID) {
+		if (this.state != RemoteEdgeServerState.CONNECTED) {
+			logger.warn("Cannot delete the reader when Edge Serve "
+					+ "is in the Disconnecte State!");
+			return;
+		}
+		RS_DeleteReader deleteCommand = new RS_DeleteReader(
+				getRSServerDescription(), readerID);
+		try {
+			deleteCommand.makeCall();
+		} catch (ServerUnavailable e) {
+			logger.error("Exception while deleting reader", e);
+			disconnect();
+		}
 	}
 
 	/**
+	 * Create a new reader on the server
+	 * 
+	 * @param factory
+	 *            The factory to user to crate the reader
+	 * @param list
+	 *            A list of attributes to set on the reader
+	 */
+	public void createReader(final RemoteReaderFactory factory,
+			final AttributeList list) {
+		if (this.state != RemoteEdgeServerState.CONNECTED) {
+			logger.warn("Cannot create Reader when Edge Server "
+					+ "is in the Disconnected State!");
+			return;
+		}
+		if (factory == null || list == null) {
+			logger.error("something is null" + factory + " " + list);
+			return;
+		}
+		Thread t = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				RS_ServerDescription serverDescription = getRSServerDescription();
+				RS_CreateReader call = new RS_CreateReader(serverDescription,
+						factory.getID(), list);
+				try {
+					call.makeCall();
+				} catch (ServerUnavailable e) {
+					logger.error("Server Unavailable: ", e);
+					disconnect();
+				}
+			}
+
+		});
+		t.start();
+	}
+
+	/***
+	 * Create a session on a reader
+	 * 
+	 * @param readerID
+	 *            The ID of the session
+	 */
+	public void createSession(String readerID) {
+		if (this.state != RemoteEdgeServerState.CONNECTED) {
+			logger.warn("Cannot create session when Edge Server "
+					+ "is in the Disconnecte State!");
+			return;
+		}
+		RS_CreateSession createSession = new RS_CreateSession(
+				getRSServerDescription(), readerID);
+		try {
+			createSession.makeCall();
+		} catch (ServerUnavailable e) {
+			logger.error("Exception while deleting reader", e);
+			disconnect();
+		}
+	}
+
+	/**
+	 * Delete a session on a reader
+	 * 
+	 * @param readerID
+	 *            The ID of the reader that has the session to delete
+	 * @param sessionID
+	 *            The ID of the session
+	 */
+	public void deleteSession(String readerID, String sessionID) {
+		if (this.state != RemoteEdgeServerState.CONNECTED) {
+			logger.warn("Cannot delete session when Edge Server "
+					+ "is in the Disconnecte State!");
+			return;
+		}
+		RS_DeleteSession deleteSession = new RS_DeleteSession(
+				getRSServerDescription(), readerID, sessionID);
+		try {
+			deleteSession.makeCall();
+		} catch (ServerUnavailable e) {
+			logger.error("Exception while deleting reader", e);
+			disconnect();
+		}
+
+	}
+
+	/***
+	 * Start a session
+	 * 
+	 * @param readerID
+	 *            The ID of the reader that has the session
+	 * @param sessionID
+	 *            The ID of the session to start
+	 */
+	public void startSession(String readerID, String sessionID) {
+		if (this.state != RemoteEdgeServerState.CONNECTED) {
+			logger.warn("Cannot start session when Edge Server "
+					+ "is in the Disconnected State!");
+			return;
+		}
+		RS_StartSession startSession = new RS_StartSession(
+				getRSServerDescription(), readerID, sessionID);
+
+		try {
+			startSession.makeCall();
+		} catch (ServerUnavailable e) {
+			logger.error("Exception while starting session", e);
+			disconnect();
+		}
+
+	}
+
+	/***
+	 * Stop a session on the reader
+	 * 
+	 * @param readerID
+	 *            The ID of the reader that has the session
+	 * @param sessionID
+	 *            The ID of the session to stop
+	 */
+	public void stopSession(String readerID, String sessionID) {
+		if (this.state != RemoteEdgeServerState.CONNECTED) {
+			logger.warn("Cannot stop session when Edge Server "
+					+ "is in the Disconnected State!");
+			return;
+		}
+		RS_StopSession stopSession = new RS_StopSession(
+				getRSServerDescription(), readerID, sessionID);
+
+		try {
+			stopSession.makeCall();
+		} catch (ServerUnavailable e) {
+			logger.error("Exception while stopping session", e);
+			disconnect();
+		}
+
+	}
+
+	/**
+	 * This returns a references to the readerFactories map
+	 * 
+	 * @return the readerFactoryIDs
+	 */
+	public ObservableMap getReaderFactories() {
+		return readerFactories;
+	}
+
+	/**
+	 * This returns a reference to the remoteReaders map
+	 * 
 	 * @return the remoteReaders
 	 */
 	public ObservableMap getRemoteReaders() {
 		return remoteReaders;
 	}
 
-	@Override
-	public void onMessage(Message arg0) {
-		if (arg0 instanceof BytesMessage) {
-			Object message;
-			try {
-				message = deserialize((BytesMessage) arg0);
-				if (message instanceof ReaderNotification) {
-					ReaderNotification ra = (ReaderNotification) message;
-					ReaderNotificationHandler rnh = new ReaderNotificationHandler(
-							ra, remoteReaders, getRSServerDescription());
-					rnh.handleNotification();
-				} else if (message instanceof ReaderFactoryNotification) {
-					ReaderFactoryNotification rfn = (ReaderFactoryNotification) message;
-					ReaderFactoryNotificationHandler rfnh = new ReaderFactoryNotificationHandler(
-							rfn, readerFactoryIDs, getRSServerDescription());
-					rfnh.handleNotification();
-				}
-			} catch (JMSException e) {
-				logger.warn("JMS Exception while recieving message");
-				disconnect();
-			} catch (IOException e) {
-				logger.warn("Cannot Deserialize the Message " + arg0);
-			} catch (ClassNotFoundException e) {
-				logger.warn("Cannot Deserialize the Message " + arg0);
-			}
-		}
-
-	}
-
-	private Object deserialize(BytesMessage message) throws JMSException,
-			IOException, ClassNotFoundException {
-		int length = (int) message.getBodyLength();
-		byte[] bytes = new byte[length];
-		message.readBytes(bytes);
-		ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(
-				bytes));
-		return in.readObject();
-	}
-
+	/**
+	 * 
+	 * @return The current state of the RemoteEdgeServer
+	 */
 	public RemoteEdgeServerState getState() {
 		return this.state;
 	}
 
-	private synchronized void changeState(RemoteEdgeServerState newState) {
+	/**
+	 * This method changes the state of the Remote Edge Server. It must be
+	 * called from within an eclipse thread
+	 * 
+	 * @param newState
+	 */
+	synchronized void changeState(RemoteEdgeServerState newState) {
 		logger.info("Remote Edge Server State: " + newState);
 		RemoteEdgeServerState oldstate = this.state;
 		this.state = newState;
@@ -277,15 +349,34 @@ public class RemoteEdgeServer implements MessageListener {
 
 	}
 
+	/**
+	 * Add a PropertyChangedListener
+	 * 
+	 * @param listener
+	 *            The listener to add
+	 */
 	public void addPropertyChangeListener(PropertyChangeListener listener) {
 		this.pcs.addPropertyChangeListener(listener);
 	}
 
+	/**
+	 * Remote a PropertyChangedListener
+	 * 
+	 * @param listener
+	 *            The listener to remove
+	 */
 	public void removePropertyChangeListener(PropertyChangeListener listener) {
 		this.pcs.removePropertyChangeListener(listener);
 	}
 
-	private RS_ServerDescription getRSServerDescription() {
+	/**
+	 * Helper method that looks up connection information in the Eclipse
+	 * Property Store and returns a RMI stub description to communicate with a
+	 * reader stub
+	 * 
+	 * @return The
+	 */
+	RS_ServerDescription getRSServerDescription() {
 		Preferences node = new DefaultScope().getNode(Activator.PLUGIN_ID);
 		String ip = node.get(EdgeServerPreferences.EDGE_SERVER_IP,
 				EdgeServerPreferences.EDGE_SERVER_IP_DEFAULT);
@@ -295,7 +386,14 @@ public class RemoteEdgeServer implements MessageListener {
 		return new RS_ServerDescription(ip, port);
 	}
 
-	private ESServerDescription getESServerDescription() {
+	/**
+	 * Helper method that looks up connection information in the Eclipse
+	 * Property Store and returns a RMI stub description to communicate with a
+	 * edge server stub
+	 * 
+	 * @return
+	 */
+	ESServerDescription getESServerDescription() {
 		Preferences node = new DefaultScope().getNode(Activator.PLUGIN_ID);
 		String ip = node.get(EdgeServerPreferences.EDGE_SERVER_IP,
 				EdgeServerPreferences.EDGE_SERVER_IP_DEFAULT);

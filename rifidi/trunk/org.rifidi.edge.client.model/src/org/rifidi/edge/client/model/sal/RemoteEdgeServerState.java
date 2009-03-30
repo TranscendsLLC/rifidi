@@ -10,5 +10,8 @@ package org.rifidi.edge.client.model.sal;
  * 
  */
 public enum RemoteEdgeServerState {
-	CONNECTED, DISCONNECTED;
+	/**State when RemoteEdgeServer is connected to the server*/
+	CONNECTED, 
+	/** State when RemoteEdgeServer is disconnected from the server */
+	DISCONNECTED;
 }

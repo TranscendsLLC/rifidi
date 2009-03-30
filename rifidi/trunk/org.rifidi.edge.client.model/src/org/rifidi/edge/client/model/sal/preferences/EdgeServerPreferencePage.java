@@ -12,6 +12,8 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.rifidi.edge.client.model.Activator;
 
 /**
+ * The contributed preference page for the RemoteEdgeServer
+ * 
  * @author Kyle Neumeier - kyle@pramari.com
  * 
  */
