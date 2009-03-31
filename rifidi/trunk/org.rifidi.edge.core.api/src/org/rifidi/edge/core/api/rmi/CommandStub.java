@@ -5,13 +5,13 @@ package org.rifidi.edge.core.api.rmi;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
-import java.util.Map;
 import java.util.Set;
 
 import javax.management.AttributeList;
 import javax.management.MBeanInfo;
 
 import org.rifidi.edge.core.api.rmi.dto.CommandConfigFactoryDTO;
+import org.rifidi.edge.core.api.rmi.dto.CommandConfigurationDTO;
 
 /**
  * This is the interface for a stub that allows clients to interact with
@@ -42,15 +42,24 @@ public interface CommandStub extends Remote {
 			throws RemoteException;
 
 	/**
-	 * Gets the already configured commands
+	 * Gets the DTOs for configured commands
 	 * 
-	 * for example, it return <Alien9800-GetTagList-1, Alien9800-GetTagList>
-	 * 
-	 * @return a map where the key is the ID of the Command and the value is the
-	 *         type of command.
+	 * @return a set of configured commands
 	 * @throws RemoteException
 	 */
-	Map<String, String> getCommands() throws RemoteException;
+	Set<CommandConfigurationDTO> getCommands() throws RemoteException;
+
+	/**
+	 * Gets the DTO for a given Command Configuration
+	 * 
+	 * @param commandConfigurationID
+	 *            The ID of the commandConfiguration to get
+	 * @return A DTO for the configured command, or null if no command
+	 *         configuration is available for the given ID
+	 * @throws RemoteException
+	 */
+	CommandConfigurationDTO getCommandConfiguration(
+			String commandConfigurationID) throws RemoteException;
 
 	/**
 	 * Gets the meta information necessary to construct a new Command
@@ -74,16 +83,6 @@ public interface CommandStub extends Remote {
 	 */
 	String createCommand(String commandType, AttributeList properties)
 			throws RemoteException;
-
-	/**
-	 * Get the properties of a currently configured Command
-	 * 
-	 * @param commandID
-	 *            The ID of the Command
-	 * @return An attributeList that contains the properties of the command
-	 * @throws RemoteException
-	 */
-	AttributeList getCommandProperties(String commandID) throws RemoteException;
 
 	/**
 	 * Sets the properties of a Command
