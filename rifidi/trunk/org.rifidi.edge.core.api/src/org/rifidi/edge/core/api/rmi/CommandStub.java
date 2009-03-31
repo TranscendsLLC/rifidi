@@ -11,7 +11,7 @@ import java.util.Set;
 import javax.management.AttributeList;
 import javax.management.MBeanInfo;
 
-import org.rifidi.edge.core.api.rmi.dto.CommandConfigPluginDTO;
+import org.rifidi.edge.core.api.rmi.dto.CommandConfigFactoryDTO;
 
 /**
  * This is the interface for a stub that allows clients to interact with
@@ -29,7 +29,7 @@ public interface CommandStub extends Remote {
 	 * @return A set of CommandConfigPluginDTOs
 	 * @throws RemoteException
 	 */
-	Set<CommandConfigPluginDTO> getCommandConfigurationTypes()
+	Set<CommandConfigFactoryDTO> getCommandConfigurationTypes()
 			throws RemoteException;
 
 	/**

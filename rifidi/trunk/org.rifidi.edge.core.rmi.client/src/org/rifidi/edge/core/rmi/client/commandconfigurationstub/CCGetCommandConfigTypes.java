@@ -8,12 +8,12 @@ import java.rmi.RemoteException;
 import java.util.Set;
 
 import org.rifidi.edge.core.api.rmi.CommandStub;
-import org.rifidi.edge.core.api.rmi.dto.CommandConfigPluginDTO;
+import org.rifidi.edge.core.api.rmi.dto.CommandConfigFactoryDTO;
 import org.rifidi.rmi.utils.remotecall.ServerDescriptionBasedRemoteMethodCall;
 
 /**
  * This call gets the available CommandConfiguraiton types. It returns a Set of
- * CommandConfigPluginDTO that contains the IDs of the command types and the IDs
+ * CommandConfigFactoryDTO that contains the IDs of the command types and the IDs
  * of the ReaderConfigurationFactory that the command type belongs to
  * 
  * @author Kyle Neumeier - kyle@pramari.com
@@ -21,7 +21,7 @@ import org.rifidi.rmi.utils.remotecall.ServerDescriptionBasedRemoteMethodCall;
  */
 public class CCGetCommandConfigTypes
 		extends
-		ServerDescriptionBasedRemoteMethodCall<Set<CommandConfigPluginDTO>, RuntimeException> {
+		ServerDescriptionBasedRemoteMethodCall<Set<CommandConfigFactoryDTO>, RuntimeException> {
 
 	/**
 	 * Constructor
@@ -34,7 +34,7 @@ public class CCGetCommandConfigTypes
 	}
 
 	@Override
-	protected Set<CommandConfigPluginDTO> performRemoteCall(Remote remoteObject)
+	protected Set<CommandConfigFactoryDTO> performRemoteCall(Remote remoteObject)
 			throws RemoteException, RuntimeException {
 		CommandStub stub = (CommandStub) remoteObject;
 		return stub.getCommandConfigurationTypes();
