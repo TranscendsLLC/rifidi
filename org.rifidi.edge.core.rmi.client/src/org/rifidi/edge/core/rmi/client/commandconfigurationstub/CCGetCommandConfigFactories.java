@@ -19,7 +19,7 @@ import org.rifidi.rmi.utils.remotecall.ServerDescriptionBasedRemoteMethodCall;
  * @author Kyle Neumeier - kyle@pramari.com
  * 
  */
-public class CCGetCommandConfigTypes
+public class CCGetCommandConfigFactories
 		extends
 		ServerDescriptionBasedRemoteMethodCall<Set<CommandConfigFactoryDTO>, RuntimeException> {
 
@@ -29,7 +29,7 @@ public class CCGetCommandConfigTypes
 	 * @param serverDescription
 	 *            The ServerDescription for the CommandConfiguraitonStub
 	 */
-	public CCGetCommandConfigTypes(CCServerDescription serverDescription) {
+	public CCGetCommandConfigFactories(CCServerDescription serverDescription) {
 		super(serverDescription);
 	}
 
@@ -37,7 +37,7 @@ public class CCGetCommandConfigTypes
 	protected Set<CommandConfigFactoryDTO> performRemoteCall(Remote remoteObject)
 			throws RemoteException, RuntimeException {
 		CommandStub stub = (CommandStub) remoteObject;
-		return stub.getCommandConfigurationTypes();
+		return stub.getCommandConfigFactories();
 	}
 
 }
