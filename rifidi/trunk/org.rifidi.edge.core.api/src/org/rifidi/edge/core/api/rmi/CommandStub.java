@@ -29,7 +29,16 @@ public interface CommandStub extends Remote {
 	 * @return A set of CommandConfigPluginDTOs
 	 * @throws RemoteException
 	 */
-	Set<CommandConfigFactoryDTO> getCommandConfigurationTypes()
+	Set<CommandConfigFactoryDTO> getCommandConfigFactories()
+			throws RemoteException;
+
+	/**
+	 * Get the CommandConfigFactoryID associated with a readerFactoryID
+	 * 
+	 * @param readerFactoryID
+	 * @return
+	 */
+	CommandConfigFactoryDTO getCommandConfigFactory(String readerFactoryID)
 			throws RemoteException;
 
 	/**
