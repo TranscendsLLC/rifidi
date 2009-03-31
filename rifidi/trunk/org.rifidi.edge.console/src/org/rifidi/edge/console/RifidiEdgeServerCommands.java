@@ -319,7 +319,7 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 		intp.println("Session created.");
 		return null;
 	}
-	
+
 	/**
 	 * Create a new reader session. Takes a reader id as argument.
 	 * 
@@ -333,17 +333,17 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 			intp.println("Give a reader id!");
 			return null;
 		}
-		if(sessionid==null){
+		if (sessionid == null) {
 			intp.println("Give a session id!");
 			return null;
 		}
 		AbstractReader<?> reader = readerDAO.getReaderByID(readerid);
-		if(reader==null){
+		if (reader == null) {
 			intp.println("No reader with ID " + readerid + " is available");
 			return null;
 		}
 		ReaderSession session = reader.getReaderSessions().get(sessionid);
-		if(session==null){
+		if (session == null) {
 			intp.println("No session with ID " + sessionid + " is available");
 			return null;
 		}
@@ -488,31 +488,42 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 	public String getHelp() {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("---Rifidi Edge Server Commands---\n");
-		buffer.append("----List Commands----\n");
+		buffer.append("  ----General commands----\n");
+		buffer.append("\tsave - save the configuration to a file\n");
+		buffer.append("  ----Reader related commands----\n");
 		buffer
 				.append("\treadertypes - get the list of available reader types\n");
 		buffer.append("\treaders - get the list of configured readers\n");
 		buffer
+				.append("\tcreatereader <readertype> [<propName> <propValue>]* - create a new reader\n");
+		buffer.append("\tdeletereader <readerid> - delete a reader\n");
+		buffer.append("  ----Command related commands----\n");
+		buffer
 				.append("\tcommandtypes - get the list of available command types\n");
 		buffer.append("\tcommands - get the list of configured commands\n");
-		buffer.append("----Management Commands----\n");
-		buffer
-				.append("\tcreatereader <readertype> [<propName> <propValue>]* - create a new reader\n");
 		buffer
 				.append("\tcreatecommand <commandtype> [<propName> <propValue>]* - create a new command\n");
-		buffer
-				.append("\tcreatesession <readerid> - create a new session on the given reader\n");
-		buffer
-				.append("\texecutecommand <readerid> <sessionid> <commandid>  <interval>- execute a command in a session\n");
-		buffer
-				.append("\tkillcommand <readerid> <sessionid> <commandid> - execute a command in a session\n");
+		buffer.append("\tdeletecommand <commandid> - delete a command\n");
+		buffer.append("  ----Configuration related commands----\n");
+		buffer.append("\tconfigurations - get the list of configurations\n");
 		buffer
 				.append("\tgetproperties <id> - get the properties of a configuration\n");
 		buffer
 				.append("\tsetproperties <id> [<propName> <propValue>]* - set the properties on a configuration\n");
 		buffer
-				.append("\tapplypropchanges <readerid> apply the property changes on the configuration to the reader");
-		buffer.append("\tsave - save the configuration to a file\n");
+				.append("\tapplypropchanges <readerid> apply the property changes on the configuration to the reader\n");
+		buffer.append("  ----Session related commands----\n");
+		buffer
+				.append("\tcreatesession <readerid> - create a new session on the given reader\n");
+		buffer
+				.append("\tdeletesession <readerid> <sessionid> - delete a session on the given reader\n");
+		buffer
+				.append("\tstartsession <readerid> <sessionid> - start a session on the given reader\n");
+		buffer
+				.append("\texecutecommand <readerid> <sessionid> <commandid>  <interval>- execute a command in a session\n");
+		buffer
+				.append("\tkillcommand <readerid> <sessionid> <commandid> - execute a command in a session\n");
+
 		return buffer.toString();
 	}
 }
