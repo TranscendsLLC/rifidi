@@ -16,7 +16,6 @@ public class CommandConfigurationDTO implements Serializable {
 	
 	private String commandConfigID;
 	private String commandConfigType;
-	private String readerFactoryID;
 	
 	/**
 	 * @param commandConfigID
@@ -24,11 +23,10 @@ public class CommandConfigurationDTO implements Serializable {
 	 * @param readerFactoryID
 	 */
 	public CommandConfigurationDTO(String commandConfigID,
-			String commandConfigType, String readerFactoryID) {
+			String commandConfigType) {
 		super();
 		this.commandConfigID = commandConfigID;
 		this.commandConfigType = commandConfigType;
-		this.readerFactoryID = readerFactoryID;
 	}
 
 	/**
@@ -44,13 +42,4 @@ public class CommandConfigurationDTO implements Serializable {
 	public String getCommandConfigType() {
 		return commandConfigType;
 	}
-
-	/**
-	 * @return the readerFactoryID
-	 */
-	public String getReaderFactoryID() {
-		return readerFactoryID;
-	}
-	
-
 }
