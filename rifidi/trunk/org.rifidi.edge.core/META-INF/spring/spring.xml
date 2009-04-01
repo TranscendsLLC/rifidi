@@ -38,6 +38,7 @@
 	<bean id="CommandDAOImpl" class="org.rifidi.edge.core.daos.CommandDAOImpl">
 		<property name="commandFactories" ref="commandFactoriesSet" />
 		<property name="commands" ref="commandSet" />
+		<property name="notifierService" ref="NotifierServiceWrapper" />
 	</bean>
 
 	<!-- Create Configuration DAO Service -->

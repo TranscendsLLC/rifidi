@@ -139,7 +139,9 @@ public abstract class AbstractIPReaderSession extends AbstractReaderSession {
 	@Override
 	public void connect() throws IOException {
 		if ((getStatus() == SessionStatus.PROCESSING
-				|| getStatus() == SessionStatus.CREATED || getStatus() == SessionStatus.LOGGINGIN)
+				|| getStatus() == SessionStatus.CREATED
+				|| getStatus() == SessionStatus.LOGGINGIN
+				|| getStatus() == SessionStatus.CLOSED)
 				&& connecting.compareAndSet(false, true)) {
 			try {
 				setStatus(SessionStatus.CONNECTING);
