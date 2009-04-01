@@ -7,12 +7,18 @@ import javax.jms.Destination;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.rifidi.edge.core.api.SessionStatus;
+import org.rifidi.edge.core.api.jms.notifications.CommandConfigFactoryAdded;
+import org.rifidi.edge.core.api.jms.notifications.CommandConfigFactoryRemoved;
+import org.rifidi.edge.core.api.jms.notifications.CommandConfigurationAddedNotification;
+import org.rifidi.edge.core.api.jms.notifications.CommandConfigurationRemovedNotification;
 import org.rifidi.edge.core.api.jms.notifications.ReaderAddedNotification;
 import org.rifidi.edge.core.api.jms.notifications.ReaderFactoryAddedNotification;
 import org.rifidi.edge.core.api.jms.notifications.ReaderFactoryRemovedNotification;
 import org.rifidi.edge.core.api.jms.notifications.ReaderRemovedNotification;
 import org.rifidi.edge.core.api.jms.notifications.SessionAddedNotification;
 import org.rifidi.edge.core.api.jms.notifications.SessionRemovedNotification;
+import org.rifidi.edge.core.api.jms.notifications.SessionStatusChangedNotification;
 import org.rifidi.edge.core.daos.CommandDAO;
 import org.rifidi.edge.core.daos.ReaderDAO;
 import org.rifidi.edge.core.notifications.NotifierService;
@@ -136,8 +142,7 @@ public class NotifierServiceImpl implements NotifierService {
 			}
 			if (commandDAO != null) {
 				if (null != commandDAO.getCommandByID(serviceID)) {
-					// TODO: send here
-					return;
+					addCommandConfiguration(serviceID);
 				}
 			}
 
@@ -185,8 +190,7 @@ public class NotifierServiceImpl implements NotifierService {
 		}
 		if (commandDAO != null) {
 			if (null != commandDAO.getCommandByID(serviceID)) {
-				//TODO: send notification
-				return;
+				removeCommandConfiguration(serviceID);
 			}
 		}
 
@@ -206,4 +210,99 @@ public class NotifierServiceImpl implements NotifierService {
 						new ReaderFactoryRemovedNotification(readerFactoryID)));
 
 	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.core.notifications.NotifierService#sessionStatusChanged
+	 * (java.lang.String, java.lang.String,
+	 * org.rifidi.edge.core.api.SessionStatus)
+	 */
+	@Override
+	public void sessionStatusChanged(String readerID, String sessionID,
+			SessionStatus sessionStatus) {
+		extNotificationTemplate.send(this.extNotificationDest,
+				new NotificationMessageCreator(
+						new SessionStatusChangedNotification(readerID,
+								sessionID, sessionStatus)));
+
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seeorg.rifidi.edge.core.notifications.NotifierService#
+	 * addCommandConfigFactoryEvent(java.lang.String, java.util.Set)
+	 */
+	@Override
+	public void addCommandConfigFactoryEvent(String readerFactoryID) {
+		try {
+			extNotificationTemplate.send(this.extNotificationDest,
+					new NotificationMessageCreator(
+							new CommandConfigFactoryAdded(readerFactoryID)));
+		} catch (Exception e) {
+			logger.warn("ReaderFactoryAdded Notification not sent " + e);
+		}
+
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seeorg.rifidi.edge.core.notifications.NotifierService#
+	 * removeCommandConfigFactoryEvent(java.lang.String)
+	 */
+	@Override
+	public void removeCommandConfigFactoryEvent(String readerFactoryID) {
+		try {
+			extNotificationTemplate.send(this.extNotificationDest,
+					new NotificationMessageCreator(
+							new CommandConfigFactoryRemoved(readerFactoryID)));
+		} catch (Exception e) {
+			logger.warn("ReaderFactoryAdded Notification not sent " + e);
+		}
+
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.core.notifications.NotifierService#addCommandConfiguration
+	 * (java.lang.String)
+	 */
+	@Override
+	public void addCommandConfiguration(String commandConfigurationID) {
+		try {
+			extNotificationTemplate.send(this.extNotificationDest,
+					new NotificationMessageCreator(
+							new CommandConfigurationAddedNotification(
+									commandConfigurationID)));
+		} catch (Exception e) {
+			logger.warn("ReaderFactoryAdded Notification not sent " + e);
+		}
+
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.core.notifications.NotifierService#removeCommandConfiguration
+	 * (java.lang.String)
+	 */
+	@Override
+	public void removeCommandConfiguration(String commandConfigurationID) {
+		try {
+			extNotificationTemplate.send(this.extNotificationDest,
+					new NotificationMessageCreator(
+							new CommandConfigurationRemovedNotification(
+									commandConfigurationID)));
+		} catch (Exception e) {
+			logger.warn("ReaderFactoryAdded Notification not sent " + e);
+		}
+
+	}
+
 }
