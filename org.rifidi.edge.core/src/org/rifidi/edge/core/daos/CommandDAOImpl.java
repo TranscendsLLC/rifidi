@@ -13,6 +13,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.commands.AbstractCommandConfiguration;
 import org.rifidi.edge.core.commands.AbstractCommandConfigurationFactory;
+import org.rifidi.edge.core.notifications.NotifierService;
+import org.rifidi.edge.core.notifications.NotifierServiceWrapper;
 
 /**
  * @author Jochen Mader - jochen@pramari.com
@@ -26,6 +28,8 @@ public class CommandDAOImpl implements CommandDAO {
 	private Map<String, AbstractCommandConfiguration<?>> commands;
 	/** The logger for this class */
 	private static final Log logger = LogFactory.getLog(CommandDAOImpl.class);
+	/** A notifier for JMS. Remove once we have aspects */
+	private NotifierServiceWrapper notifierService;
 
 	/**
 	 * 
@@ -71,6 +75,24 @@ public class CommandDAOImpl implements CommandDAO {
 				if (fac.equals(id)) {
 					return factory;
 				}
+			}
+		}
+		return null;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.core.daos.CommandDAO#getCommandFactoryByReaderID(java
+	 * .lang.String)
+	 */
+	@Override
+	public AbstractCommandConfigurationFactory getCommandFactoryByReaderID(
+			String id) {
+		for (AbstractCommandConfigurationFactory factory : commandFactories) {
+			if (factory.getReaderFactoryID().equals(id)) {
+				return factory;
 			}
 		}
 		return null;
@@ -125,7 +147,7 @@ public class CommandDAOImpl implements CommandDAO {
 	 *            the initial list of available command configuration factories
 	 */
 	public void setCommands(Set<AbstractCommandConfiguration<?>> configurations) {
-		for(AbstractCommandConfiguration<?> configuration : configurations){
+		for (AbstractCommandConfiguration<?> configuration : configurations) {
 			this.commands.put(configuration.getID(), configuration);
 		}
 	}
@@ -143,6 +165,16 @@ public class CommandDAOImpl implements CommandDAO {
 		logger.info("Command Configuration Factory Bound: "
 				+ commandConfigurationFactory.getFactoryIDs());
 		commandFactories.add(commandConfigurationFactory);
+
+		// TODO: Remove once we have aspects
+		if (notifierService == null) {
+			return;
+		}
+		NotifierService service = notifierService.getService();
+		if (service != null) {
+			service.addCommandConfigFactoryEvent(commandConfigurationFactory
+					.getReaderFactoryID());
+		}
 	}
 
 	/**
@@ -159,6 +191,16 @@ public class CommandDAOImpl implements CommandDAO {
 		logger.info("Command Configuration Factory Unbound: "
 				+ commandConfigurationFactory.getFactoryIDs());
 		commandFactories.remove(commandConfigurationFactory);
+
+		// TODO: Remove once we have aspects
+		if (notifierService == null) {
+			return;
+		}
+		NotifierService service = notifierService.getService();
+		if (service != null) {
+			service.removeCommandConfigFactoryEvent(commandConfigurationFactory
+					.getReaderFactoryID());
+		}
 	}
 
 	/**
@@ -171,5 +213,15 @@ public class CommandDAOImpl implements CommandDAO {
 	public void setCommandFactories(
 			Set<AbstractCommandConfigurationFactory> factories) {
 		commandFactories.addAll(factories);
+	}
+
+	/**
+	 * Called by Spring
+	 * 
+	 * @param notifierService
+	 *            the notifierService to set
+	 */
+	public void setNotifierService(NotifierServiceWrapper notifierService) {
+		this.notifierService = notifierService;
 	}
 }
