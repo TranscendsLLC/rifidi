@@ -3,6 +3,9 @@
  */
 package org.rifidi.edge.client.sal.views;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -15,26 +18,23 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.part.ViewPart;
+import org.rifidi.edge.client.model.sal.RemoteEdgeServer;
+import org.rifidi.edge.client.sal.controller.commands.CommandTreeContentProvider;
+import org.rifidi.edge.client.sal.controller.commands.CommandTreeLabelProvider;
 import org.rifidi.edge.client.sal.controller.edgeserver.EdgeServerTreeContentProvider;
 import org.rifidi.edge.client.sal.controller.edgeserver.EdgeServerTreeLabelProvider;
 import org.rifidi.edge.client.sal.modelmanager.ModelManagerService;
 
 /**
- * The View for displaying readers
+ * A view to display commands currently on the server
  * 
  * @author Kyle Neumeier - kyle@pramari.com
  * 
  */
-public class EdgeServerView extends ViewPart {
+public class CommandView extends ViewPart {
 
 	/** The tree viewer to use */
 	private AbstractTreeViewer treeViewer;
-
-	/**
-	 * 
-	 */
-	public EdgeServerView() {
-	}
 
 	/*
 	 * (non-Javadoc)
@@ -45,32 +45,20 @@ public class EdgeServerView extends ViewPart {
 	 */
 	@Override
 	public void createPartControl(Composite parent) {
-
 		GridLayout layout = new GridLayout(2, false);
 		parent.setLayout(layout);
-
 		treeViewer = new TreeViewer(parent);
 		GridData treeViewerLayoutData = new GridData(GridData.FILL_BOTH);
 		treeViewerLayoutData.horizontalSpan = 2;
 		treeViewer.getControl().setLayoutData(treeViewerLayoutData);
-		treeViewer.setContentProvider(new EdgeServerTreeContentProvider());
-		treeViewer.setLabelProvider(new EdgeServerTreeLabelProvider());
+		treeViewer.setContentProvider(new CommandTreeContentProvider());
+		treeViewer.setLabelProvider(new CommandTreeLabelProvider());
 		createContextMenu();
 		this.getSite().setSelectionProvider(treeViewer);
 		ModelManagerService.getInstance().addViewer(treeViewer);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.part.WorkbenchPart#setFocus()
-	 */
-	@Override
-	public void setFocus() {
-		// TODO Auto-generated method stub
 
 	}
-
+	
 	/**
 	 * Create a context menu for this viewer
 	 */
@@ -97,6 +85,15 @@ public class EdgeServerView extends ViewPart {
 	/*
 	 * (non-Javadoc)
 	 * 
+	 * @see org.eclipse.ui.part.WorkbenchPart#setFocus()
+	 */
+	@Override
+	public void setFocus() {
+		// TODO Auto-generated method stub
+
+	}
+
+	/* (non-Javadoc)
 	 * @see org.eclipse.ui.part.WorkbenchPart#dispose()
 	 */
 	@Override
@@ -104,5 +101,7 @@ public class EdgeServerView extends ViewPart {
 		super.dispose();
 		ModelManagerService.getInstance().removeViewwer(treeViewer);
 	}
+	
+	
 
 }
