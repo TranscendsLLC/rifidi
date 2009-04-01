@@ -171,7 +171,7 @@ public class Alien9800Reader extends AbstractReader<Alien9800ReaderSession> {
 			session = new Alien9800ReaderSession(Integer.toString(sessionID),
 					ipAddress, port, (int) (long) reconnectionInterval,
 					maxNumConnectionAttempts, username, password, destination,
-					template);
+					template, notifyServiceWrapper, this.getID());
 			
 			//TODO: remove this once we get AspectJ in here!
 			NotifierService service = notifyServiceWrapper.getNotifierService();

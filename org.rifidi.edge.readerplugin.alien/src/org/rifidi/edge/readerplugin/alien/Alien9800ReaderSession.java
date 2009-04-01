@@ -10,6 +10,8 @@ import javax.jms.Destination;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.rifidi.edge.core.api.SessionStatus;
+import org.rifidi.edge.core.notifications.NotifierService;
 import org.rifidi.edge.core.readers.ByteMessage;
 import org.rifidi.edge.core.readers.impl.AbstractIPReaderSession;
 import org.springframework.jms.core.JmsTemplate;
@@ -32,6 +34,11 @@ public class Alien9800ReaderSession extends AbstractIPReaderSession {
 	public static final String WELCOME = "Alien";
 	/** Character that terminates a message from alien. */
 	public static final char TERMINATION_CHAR = '\0';
+	/** Service used to send out notifications */
+	private NotifierServiceWrapper notifierService;
+	/** The ID of the reader this session belongs to */
+	private String readerID;
+
 	/**
 	 * You can put this in front of a Alien command for terse output to come
 	 * back to you, making things faster and easier to parse.
@@ -79,19 +86,42 @@ public class Alien9800ReaderSession extends AbstractIPReaderSession {
 	public static final String COMMAND_TIME_ZONE = "TimeZone";
 
 	/**
+	 * 
+	 * Constructor
+	 * 
 	 * @param id
+	 *            The ID of the session
 	 * @param host
+	 *            The IP to connect to
 	 * @param port
+	 *            The port to connect to
 	 * @param reconnectionInterval
+	 *            The wait time between reconnect attempts
 	 * @param maxConAttempts
+	 *            The maximum number of times to try to connect
+	 * @param username
+	 *            The Alien username
+	 * @param password
+	 *            The Alien password
+	 * @param destination
+	 *            The JMS destination for tags
+	 * @param template
+	 *            The JSM template for tags
+	 * @param notifierService
+	 *            The service for sending client notifications
+	 * @param readerID
+	 *            The ID of the reader that created this session
 	 */
 	public Alien9800ReaderSession(String id, String host, int port,
 			int reconnectionInterval, int maxConAttempts, String username,
-			String password, Destination destination, JmsTemplate template) {
-		super(id, host, port, reconnectionInterval, maxConAttempts, destination,
-				template);
+			String password, Destination destination, JmsTemplate template,
+			NotifierServiceWrapper notifierService, String readerID) {
+		super(id, host, port, reconnectionInterval, maxConAttempts,
+				destination, template);
 		this.username = username;
 		this.password = password;
+		this.notifierService = notifierService;
+		this.readerID = readerID;
 	}
 
 	/** The message currently being processed. */
@@ -156,4 +186,23 @@ public class Alien9800ReaderSession extends AbstractIPReaderSession {
 		}
 		return true;
 	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.core.readers.impl.AbstractReaderSession#setStatus(org
+	 * .rifidi.edge.core.api.SessionStatus)
+	 */
+	@Override
+	protected synchronized void setStatus(SessionStatus status) {
+		super.setStatus(status);
+
+		// TODO: Remove this once we have aspectJ
+		NotifierService service = notifierService.getNotifierService();
+		if (service != null) {
+			service.sessionStatusChanged(this.readerID, this.getID(), status);
+		}
+	}
+
 }
