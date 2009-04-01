@@ -137,8 +137,6 @@ public class EdgeServerTreeContentProvider implements ITreeContentProvider,
 	 */
 	@Override
 	public Object[] getElements(Object inputElement) {
-		logger.debug("inputElement is " + inputElement);
-
 		return getChildren(inputElement);
 
 	}
@@ -253,22 +251,30 @@ public class EdgeServerTreeContentProvider implements ITreeContentProvider,
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.rifidi.edge.client.sal.controller.edgeserver.EdgeServerController#startSession(java.lang.String, java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.client.sal.controller.edgeserver.EdgeServerController
+	 * #startSession(java.lang.String, java.lang.String)
 	 */
 	@Override
 	public void startSession(String readerID, String sessionID) {
 		this.edgeServerList.get(0).startSession(readerID, sessionID);
-		
+
 	}
 
-	/* (non-Javadoc)
-	 * @see org.rifidi.edge.client.sal.controller.edgeserver.EdgeServerController#stopSession(java.lang.String, java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.client.sal.controller.edgeserver.EdgeServerController
+	 * #stopSession(java.lang.String, java.lang.String)
 	 */
 	@Override
 	public void stopSession(String readerID, String sessionID) {
 		this.edgeServerList.get(0).stopSession(readerID, sessionID);
-		
+
 	}
 
 	/*
@@ -291,9 +297,19 @@ public class EdgeServerTreeContentProvider implements ITreeContentProvider,
 		}
 		if (oldInput != newInput) {
 			this.edgeServerList = (List<RemoteEdgeServer>) newInput;
-			for (RemoteEdgeServer edgeServer : edgeServerList) {
-				edgeServer.addPropertyChangeListener(this);
-				edgeServer.getRemoteReaders().addMapChangeListener(this);
+			List<RemoteEdgeServer> oldEdgeServerList = (List<RemoteEdgeServer>) oldInput;
+			if (oldEdgeServerList != null) {
+				for (RemoteEdgeServer edgeServer : oldEdgeServerList) {
+					edgeServer.removePropertyChangeListener(this);
+					edgeServer.getRemoteReaders().removeMapChangeListener(this);
+				}
+			}
+			if (edgeServerList != null) {
+				for (RemoteEdgeServer edgeServer : edgeServerList) {
+					edgeServer.addPropertyChangeListener(this);
+					edgeServer.getRemoteReaders().addMapChangeListener(this);
+					// TODO: should we be listening for ReaderFactories?
+				}
 			}
 			viewer.refresh();
 		}

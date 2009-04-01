@@ -19,6 +19,13 @@
             name="Edge Server View"
             restorable="true">
       </view>
+      <view
+            class="org.rifidi.edge.client.sal.views.CommandView"
+            icon="icons/cog.png"
+            id="org.rifidi.edge.client.sal.views.CommandView"
+            name="Command View"
+            restorable="true">
+      </view>
    </extension>
    <extension
          point="org.eclipse.ui.perspectiveExtensions">
@@ -29,7 +36,7 @@
                id="org.rifidi.edge.client.sal.views.EdgeServerView"
                minimized="false"
                moveable="true"
-               ratio=".3"
+               ratio=".4"
                relationship="left"
                relative="org.eclipse.ui.editorss"
                showTitle="true"
@@ -47,6 +54,21 @@
                ratio=".5"
                relationship="bottom"
                relative="org.eclipse.ui.editorss"
+               showTitle="true"
+               standalone="true"
+               visible="true">
+         </view>
+      </perspectiveExtension>
+      <perspectiveExtension
+            targetID="org.rifidi.edge.client.sal.perspective">
+         <view
+               closeable="false"
+               id="org.rifidi.edge.client.sal.views.CommandView"
+               minimized="false"
+               moveable="true"
+               ratio=".5"
+               relationship="bottom"
+               relative="org.rifidi.edge.client.sal.views.EdgeServerView"
                showTitle="true"
                standalone="true"
                visible="true">
@@ -120,7 +142,7 @@
          <command
                commandId="org.rifidi.edge.client.sal.commands.edgeserver.newreader"
                icon="icons/readeradd.png"
-               label="New Reader"
+               label="New Reader ..."
                style="push">
             <visibleWhen
                   checkEnabled="false">
@@ -175,7 +197,7 @@
          </command>
          <command
                commandId="org.rifidi.edge.client.sal.commands.session.start"
-               icon="icons/control_play_blue.png"
+               icon="icons/link-start.png"
                label="Start Session"
                style="push">
             <visibleWhen
@@ -189,7 +211,7 @@
          </command>
          <command
                commandId="org.rifidi.edge.client.sal.commands.session.stop"
-               icon="icons/control_stop_blue.png"
+               icon="icons/link-stop.png"
                label="Stop Session"
                style="push">
             <visibleWhen
@@ -197,6 +219,39 @@
                <iterate>
                   <instanceof
                         value="org.rifidi.edge.client.model.sal.RemoteSession">
+                  </instanceof>
+               </iterate>
+            </visibleWhen>
+         </command>
+      </menuContribution>
+      <menuContribution
+            locationURI="popup:org.rifidi.edge.client.sal.views.CommandView?after=additions">
+         <command
+               commandId="rg.rifidi.edge.client.sal.commands.commandconfig.create"
+               icon="icons/cog_add.png"
+               label="Create Command Template"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <iterate
+                     ifEmpty="false">
+                  <instanceof
+                        value="org.rifidi.edge.client.model.sal.RemoteCommandConfigType">
+                  </instanceof>
+               </iterate>
+            </visibleWhen>
+         </command>
+         <command
+               commandId="rg.rifidi.edge.client.sal.commands.commandconfig.delete"
+               icon="icons/cog_delete.png"
+               label="Delete Command Template"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <iterate
+                     ifEmpty="false">
+                  <instanceof
+                        value="org.rifidi.edge.client.model.sal.RemoteCommandConfiguration">
                   </instanceof>
                </iterate>
             </visibleWhen>
@@ -381,6 +436,33 @@
             </iterate>
          </enabledWhen>
       </handler>
+      <handler
+            class="org.rifidi.edge.client.sal.controller.commands.handlers.CreateCommandHandler"
+            commandId="rg.rifidi.edge.client.sal.commands.commandconfig.create">
+         <enabledWhen>
+            <iterate>
+               <and>
+                  <instanceof
+                        value="org.rifidi.edge.client.model.sal.RemoteCommandConfigType">
+                  </instanceof>
+               </and>
+            </iterate>
+         </enabledWhen>
+      </handler>
+      <handler
+            class="org.rifidi.edge.client.sal.controller.commands.handlers.DeleteCommandHandler"
+            commandId="rg.rifidi.edge.client.sal.commands.commandconfig.delete">
+         <enabledWhen>
+            <iterate
+                  ifEmpty="false">
+               <and>
+                  <instanceof
+                        value="org.rifidi.edge.client.model.sal.RemoteCommandConfiguration">
+                  </instanceof>
+               </and>
+            </iterate>
+         </enabledWhen>
+      </handler>
    </extension>
    <extension
          point="org.eclipse.ui.commands">
@@ -423,6 +505,14 @@
       <command
             id="org.rifidi.edge.client.sal.commands.session.stop"
             name="StopSession">
+      </command>
+      <command
+            id="rg.rifidi.edge.client.sal.commands.commandconfig.create"
+            name="CreateCommandConfiguration">
+      </command>
+      <command
+            id="rg.rifidi.edge.client.sal.commands.commandconfig.delete"
+            name="DeleteCommandConfiguration">
       </command>
    </extension>
    <extension

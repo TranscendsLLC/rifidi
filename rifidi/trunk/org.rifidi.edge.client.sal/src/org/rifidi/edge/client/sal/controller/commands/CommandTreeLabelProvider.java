@@ -1,21 +1,22 @@
 /**
  * 
  */
-package org.rifidi.edge.client.sal.controller.edgeserver;
+package org.rifidi.edge.client.sal.controller.commands;
 
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.swt.graphics.Image;
+import org.rifidi.edge.client.model.sal.RemoteCommandConfigFactory;
+import org.rifidi.edge.client.model.sal.RemoteCommandConfigType;
+import org.rifidi.edge.client.model.sal.RemoteCommandConfiguration;
 import org.rifidi.edge.client.model.sal.RemoteEdgeServer;
-import org.rifidi.edge.client.model.sal.RemoteReader;
-import org.rifidi.edge.client.model.sal.RemoteSession;
 import org.rifidi.edge.client.sal.SALPluginActivator;
 
 /**
- * @author Kyle Neumeier - kyle@pramari.com
+ * @author kyle
  * 
  */
-public class EdgeServerTreeLabelProvider implements ILabelProvider {
+public class CommandTreeLabelProvider implements ILabelProvider {
 
 	/*
 	 * (non-Javadoc)
@@ -24,7 +25,6 @@ public class EdgeServerTreeLabelProvider implements ILabelProvider {
 	 */
 	@Override
 	public Image getImage(Object element) {
-
 		if (element instanceof RemoteEdgeServer) {
 			RemoteEdgeServer server = (RemoteEdgeServer) element;
 			switch (server.getState()) {
@@ -35,32 +35,18 @@ public class EdgeServerTreeLabelProvider implements ILabelProvider {
 				return SALPluginActivator.getImageDescriptor(
 						"icons/server-red.png").createImage();
 			}
-		} else if (element instanceof RemoteReader) {
-			return SALPluginActivator.getImageDescriptor(
-					"icons/reader-16x16.png").createImage();
-		} else if (element instanceof RemoteSession) {
-			RemoteSession session = (RemoteSession) element;
-			switch (session.getStateOfSession()) {
-			case CLOSED:
-				return SALPluginActivator.getImageDescriptor(
-						"icons/link-red.png").createImage();
-			case CONNECTING:
-				return SALPluginActivator.getImageDescriptor(
-						"icons/link-yellow.png").createImage();
-			case CREATED:
-				return SALPluginActivator.getImageDescriptor(
-						"icons/link-red.png").createImage();
-			case FAIL:
-				return SALPluginActivator.getImageDescriptor(
-						"icons/link-red.png").createImage();
-			case LOGGINGIN:
-				return SALPluginActivator.getImageDescriptor(
-						"icons/link-yellow.png").createImage();
-			case PROCESSING:
-				return SALPluginActivator.getImageDescriptor(
-						"icons/link-green.png").createImage();
-			}
-
+		}
+		if (element instanceof RemoteCommandConfigFactory) {
+			return SALPluginActivator
+					.getImageDescriptor("icons/reader-cog.png").createImage();
+		}
+		if (element instanceof RemoteCommandConfigType) {
+			return SALPluginActivator
+					.getImageDescriptor("icons/folder.png").createImage();
+		}
+		if (element instanceof RemoteCommandConfiguration) {
+			return SALPluginActivator.getImageDescriptor("icons/cog.png")
+					.createImage();
 		}
 		return null;
 	}
@@ -74,14 +60,15 @@ public class EdgeServerTreeLabelProvider implements ILabelProvider {
 	public String getText(Object element) {
 		if (element instanceof RemoteEdgeServer) {
 			return "Edge Server";
-		}
-		if (element instanceof RemoteReader) {
-			return ((RemoteReader) element).getID();
-		}
-		if (element instanceof RemoteSession) {
-			return "Session: " +((RemoteSession) element).getSessionID();
-		}
-		return element.toString();
+		} else if (element instanceof RemoteCommandConfigFactory) {
+			return ((RemoteCommandConfigFactory) element).getReaderFactoryID()
+					+ " Commands";
+		} else if (element instanceof RemoteCommandConfigType) {
+			return ((RemoteCommandConfigType) element).getCommandConfigType();
+		} else if (element instanceof RemoteCommandConfiguration) {
+			return ((RemoteCommandConfiguration) element).getID();
+		} else
+			return element.toString();
 	}
 
 	/*

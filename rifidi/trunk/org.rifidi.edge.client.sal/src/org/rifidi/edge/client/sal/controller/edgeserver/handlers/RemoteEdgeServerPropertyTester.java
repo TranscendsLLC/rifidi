@@ -24,7 +24,6 @@ public class RemoteEdgeServerPropertyTester extends PropertyTester {
 	@Override
 	public boolean test(Object receiver, String property, Object[] args,
 			Object expectedValue) {
-
 		if (receiver instanceof RemoteEdgeServer) {
 
 			String val = (String) expectedValue;
