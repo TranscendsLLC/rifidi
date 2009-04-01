@@ -4,8 +4,8 @@
 package org.rifidi.edge.core.rmi.server;
 
 import java.rmi.RemoteException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.management.AttributeList;
 import javax.management.MBeanInfo;
@@ -14,6 +14,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.configuration.Configuration;
 import org.rifidi.edge.core.api.rmi.CommandStub;
+import org.rifidi.edge.core.api.rmi.dto.CommandConfigFactoryDTO;
+import org.rifidi.edge.core.api.rmi.dto.CommandConfigurationDTO;
 import org.rifidi.edge.core.commands.AbstractCommandConfiguration;
 import org.rifidi.edge.core.commands.AbstractCommandConfigurationFactory;
 import org.rifidi.edge.core.daos.CommandDAO;
@@ -65,11 +67,17 @@ public class CommandConfigurationStubImpl implements CommandStub {
 			AttributeList properties) throws RemoteException {
 		AbstractCommandConfigurationFactory factory = this.commandDAO
 				.getCommandFactoryByID(commandConfigurationType);
-		Configuration configuration = factory
-				.getEmptyConfiguration(commandConfigurationType);
-		configuration.setAttributes(properties);
-		factory.createService(configuration);
-		return configuration.getServiceID();
+		if (factory != null) {
+			Configuration configuration = factory
+					.getEmptyConfiguration(commandConfigurationType);
+
+			if (configuration != null) {
+				configuration.setAttributes(properties);
+				factory.createService(configuration);
+				return configuration.getServiceID();
+			}
+		}
+		return null;
 	}
 
 	/*
@@ -128,42 +136,36 @@ public class CommandConfigurationStubImpl implements CommandStub {
 	 * (non-Javadoc)
 	 * 
 	 * @seeorg.rifidi.edge.core.rmi.CommandConfigurationStub#
-	 * getCommandConfigurationProperties(java.lang.String)
+	 * getCommandConfigurationTypes()
 	 */
 	@Override
-	public AttributeList getCommandProperties(String commandConfigurationID)
+	public Set<CommandConfigFactoryDTO> getCommandConfigFactories()
 			throws RemoteException {
-		Configuration config = configDAO
-				.getConfiguration(commandConfigurationID);
-		if (config != null) {
-			// get the attributes
-			return config.getAttributes(config.getAttributeNames());
-		} else {
-			logger.warn("No Configuration object with ID "
-					+ commandConfigurationID + " is available");
+		Set<CommandConfigFactoryDTO> retVal = new HashSet<CommandConfigFactoryDTO>();
+		for (AbstractCommandConfigurationFactory factory : commandDAO
+				.getCommandFactories()) {
+			retVal.add(factory.getDTO());
 		}
 
-		return null;
+		return retVal;
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @seeorg.rifidi.edge.core.rmi.CommandConfigurationStub#
-	 * getCommandConfigurationTypes()
+	 * @see
+	 * org.rifidi.edge.core.api.rmi.CommandStub#getCommandConfigFactory(java
+	 * .lang.String)
 	 */
 	@Override
-	public Map<String, String> getCommandConfigurationTypes()
-			throws RemoteException {
-		Map<String, String> retVal = new HashMap<String, String>();
-		for (AbstractCommandConfigurationFactory factory : commandDAO
-				.getCommandFactories()) {
-			for (String facID : factory.getFactoryIDs()) {
-				retVal.put(facID, factory.getReaderFactoryID());
-			}
+	public CommandConfigFactoryDTO getCommandConfigFactory(
+			String readerFactoryID) throws RemoteException {
+		AbstractCommandConfigurationFactory factory = commandDAO
+				.getCommandFactoryByReaderID(readerFactoryID);
+		if (factory != null) {
+			return factory.getDTO();
 		}
-
-		return retVal;
+		return null;
 	}
 
 	/*
@@ -174,13 +176,14 @@ public class CommandConfigurationStubImpl implements CommandStub {
 	 * (java.lang.String)
 	 */
 	@Override
-	public Map<String, String> getCommands() throws RemoteException {
-		Map<String, String> retVal = new HashMap<String, String>();
-		for(AbstractCommandConfiguration<?> commandconfig: commandDAO.getCommands()){
+	public Set<CommandConfigurationDTO> getCommands() throws RemoteException {
+		Set<CommandConfigurationDTO> retVal = new HashSet<CommandConfigurationDTO>();
+		for (AbstractCommandConfiguration<?> commandconfig : commandDAO
+				.getCommands()) {
 			Configuration configObj = configDAO.getConfiguration(commandconfig
 					.getID());
 			if (configObj != null) {
-				retVal.put(commandconfig.getID(), configObj.getFactoryID());
+				retVal.add(commandconfig.getDTO(configObj));
 			} else {
 				logger.warn("Configuration Object with ID "
 						+ commandconfig.getID() + " does not exist");
@@ -188,6 +191,26 @@ public class CommandConfigurationStubImpl implements CommandStub {
 
 		}
 		return retVal;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.core.api.rmi.CommandStub#getCommandConfiguration(java
+	 * .lang.String)
+	 */
+	@Override
+	public CommandConfigurationDTO getCommandConfiguration(
+			String commandConfigurationID) throws RemoteException {
+		AbstractCommandConfiguration<?> commandConfig = commandDAO
+				.getCommandByID(commandConfigurationID);
+		Configuration configObj = configDAO
+				.getConfiguration(commandConfigurationID);
+		if (commandConfig != null && configObj != null) {
+			return commandConfig.getDTO(configObj);
+		}
+		return null;
 	}
 
 	/*
