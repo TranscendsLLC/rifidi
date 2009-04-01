@@ -88,6 +88,8 @@ public abstract class AbstractServiceFactory<T extends RifidiService>
 			}
 			Dictionary<String, String> params = new Hashtable<String, String>();
 			params.put("type", getClazz().getName());
+			// NOTE: it is important for customInit to happen before registering
+			// the service!
 			customConfig(instance);
 			configuration.setServiceRegistration(context.registerService(Configuration.class.getName(),
 					configuration, params));

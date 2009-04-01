@@ -95,9 +95,11 @@ public abstract class AbstractMultiServiceFactory implements ServiceFactory {
 			Dictionary<String, String> params = new Hashtable<String, String>();
 			params.put("type", getFactoryIDToClass().get(
 					configuration.getFactoryID()).getName());
+			// NOTE: it is important for customInit to happen before registering
+			// the service!
+			customInit(instance);
 			configuration.setServiceRegistration(context.registerService(
 					Configuration.class.getName(), configuration, params));
-			customInit(instance);
 		} catch (InstantiationException e) {
 			logger.error(getFactoryIDToClass()
 					.get(configuration.getFactoryID())
