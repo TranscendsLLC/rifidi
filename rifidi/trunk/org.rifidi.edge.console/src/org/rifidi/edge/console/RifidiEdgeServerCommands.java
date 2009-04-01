@@ -391,6 +391,44 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 		intp.println("Session started.");
 		return null;
 	}
+	
+	/**
+	 * Create a new reader session. Takes a reader id as argument.
+	 * 
+	 * @param intp
+	 * @return
+	 */
+	public Object _stopsession(CommandInterpreter intp) {
+		String readerid = intp.nextArgument();
+		String sessionid = intp.nextArgument();
+		if (readerid == null) {
+			intp.println("Give a reader id!");
+			return null;
+		}
+		if (sessionid == null) {
+			intp.println("Give a session id!");
+			return null;
+		}
+		AbstractReader<?> reader = readerDAO.getReaderByID(readerid);
+		if (reader == null) {
+			intp.println("Non existent reader id!");
+			return null;
+		}
+		try {
+			ReaderSession session = reader.getReaderSessions().get(sessionid);
+			if (session == null) {
+				intp.println("Non existent session id.");
+				return null;
+			}
+			session.disconnect();
+		} catch (NumberFormatException e) {
+			intp.println("Session id not an integer.");
+			return null;
+		}
+		intp.println("Session stopped.");
+		return null;
+	}
+
 
 	/**
 	 * Execute a command in a given session.
