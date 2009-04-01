@@ -17,7 +17,7 @@ import org.rifidi.rmi.utils.remotecall.ServerDescriptionBasedRemoteMethodCall;
  * @author Kyle Neumeier - kyle@pramari.com
  * 
  */
-public class CCGetCommandFactory
+public class CCGetCommandConfigFactory
 		extends
 		ServerDescriptionBasedRemoteMethodCall<CommandConfigFactoryDTO, RuntimeException> {
 
@@ -26,7 +26,7 @@ public class CCGetCommandFactory
 	/**
 	 * @param serverDescription
 	 */
-	public CCGetCommandFactory(CCServerDescription serverDescription,
+	public CCGetCommandConfigFactory(CCServerDescription serverDescription,
 			String readerFactoryID) {
 		super(serverDescription);
 		this.readerFactoryID = readerFactoryID;
