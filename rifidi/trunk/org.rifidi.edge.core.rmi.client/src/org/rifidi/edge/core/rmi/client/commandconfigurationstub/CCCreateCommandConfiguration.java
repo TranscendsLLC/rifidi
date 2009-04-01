@@ -19,7 +19,7 @@ import org.rifidi.rmi.utils.remotecall.ServerDescriptionBasedRemoteMethodCall;
  * 
  */
 public class CCCreateCommandConfiguration extends
-		ServerDescriptionBasedRemoteMethodCall<String, RemoteException> {
+		ServerDescriptionBasedRemoteMethodCall<String, RuntimeException> {
 
 	/** The type of CommandConfiguration to create */
 	private String commandConfigurationType;
@@ -40,11 +40,12 @@ public class CCCreateCommandConfiguration extends
 			String comamndConfigurationType, AttributeList properties) {
 		super(serverDescription);
 		this.properties = properties;
+		this.commandConfigurationType = comamndConfigurationType;
 	}
 
 	@Override
 	protected String performRemoteCall(Remote remoteObject)
-			throws RemoteException, RemoteException {
+			throws RemoteException, RuntimeException {
 		CommandStub stub = (CommandStub) remoteObject;
 		return stub.createCommand(commandConfigurationType,
 				this.properties);

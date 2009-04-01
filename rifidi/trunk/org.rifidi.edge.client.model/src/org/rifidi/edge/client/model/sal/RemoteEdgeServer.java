@@ -5,6 +5,7 @@ package org.rifidi.edge.client.model.sal;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.rmi.RemoteException;
 
 import javax.jms.Connection;
 import javax.jms.Destination;
@@ -22,6 +23,9 @@ import org.osgi.service.prefs.Preferences;
 import org.rifidi.edge.client.model.Activator;
 import org.rifidi.edge.client.model.sal.commands.RequestExecuterSingleton;
 import org.rifidi.edge.client.model.sal.preferences.EdgeServerPreferences;
+import org.rifidi.edge.core.rmi.client.commandconfigurationstub.CCCreateCommandConfiguration;
+import org.rifidi.edge.core.rmi.client.commandconfigurationstub.CCDeleteCommandConfiguration;
+import org.rifidi.edge.core.rmi.client.commandconfigurationstub.CCServerDescription;
 import org.rifidi.edge.core.rmi.client.edgeserverstub.ESSave;
 import org.rifidi.edge.core.rmi.client.edgeserverstub.ESServerDescription;
 import org.rifidi.edge.core.rmi.client.readerconfigurationstub.RS_CreateReader;
@@ -47,6 +51,10 @@ public class RemoteEdgeServer {
 	ObservableMap readerFactories;
 	/** The remote readers on this edge server */
 	ObservableMap remoteReaders;
+	/** Remote commandConfigurationFactories */
+	ObservableMap commandConfigFactories;
+	/** Remote CommandConfigurations */
+	ObservableMap commandConfigurations;
 	/** The current state of the edge server */
 	private RemoteEdgeServerState state;
 	/** The JMS notification object */
@@ -81,6 +89,8 @@ public class RemoteEdgeServer {
 
 		readerFactories = new WritableMap();
 		remoteReaders = new WritableMap();
+		commandConfigFactories = new WritableMap();
+		commandConfigurations = new WritableMap();
 
 		connectionFactory = new ActiveMQConnectionFactory();
 		Thread t = new Thread(RequestExecuterSingleton.getInstance());
@@ -309,6 +319,43 @@ public class RemoteEdgeServer {
 
 	}
 
+	public void createCommandConfiguration(String readerConfigurationType) {
+		if (this.state != RemoteEdgeServerState.CONNECTED) {
+			logger.warn("Cannot create command configuration when Edge Server "
+					+ "is in the Disconnected State!");
+			return;
+		}
+		CCCreateCommandConfiguration createCommand = new CCCreateCommandConfiguration(
+				getCCServerDescription(), readerConfigurationType,
+				new AttributeList());
+
+		try {
+			createCommand.makeCall();
+		} catch (ServerUnavailable e) {
+			logger.error("Exception while creating command configuration ", e);
+			disconnect();
+		}
+
+	}
+
+	public void deleteCommandConfiguration(String readerConfigurationID) {
+		if (this.state != RemoteEdgeServerState.CONNECTED) {
+			logger.warn("Cannot create command configuration when Edge Server "
+					+ "is in the Disconnected State!");
+			return;
+		}
+		CCDeleteCommandConfiguration deleteCommand = new CCDeleteCommandConfiguration(
+				getCCServerDescription(), readerConfigurationID);
+
+		try {
+			deleteCommand.makeCall();
+		} catch (ServerUnavailable e) {
+			logger.error("Exception while deleting command configuration ", e);
+			disconnect();
+		}
+
+	}
+
 	/**
 	 * This returns a references to the readerFactories map
 	 * 
@@ -325,6 +372,19 @@ public class RemoteEdgeServer {
 	 */
 	public ObservableMap getRemoteReaders() {
 		return remoteReaders;
+	}
+
+	public ObservableMap getRemoteCommandConfigFactories() {
+		return commandConfigFactories;
+	}
+
+	/**
+	 * Returns a reference to the the map of RemoteCommandConfigurations
+	 * 
+	 * @return the commandConfigurations
+	 */
+	public ObservableMap getCommandConfigurations() {
+		return commandConfigurations;
 	}
 
 	/**
@@ -401,6 +461,23 @@ public class RemoteEdgeServer {
 				EdgeServerPreferences.EDGE_SERVER_PORT_RMI,
 				EdgeServerPreferences.EDGE_SERVER_PORT_RMI_DEFAULT));
 		return new ESServerDescription(ip, port);
+	}
+
+	/**
+	 * Helper method that looks up connection information in the Eclipse
+	 * Property Store and returns a RMI stub description to communicate with a
+	 * edge server stub
+	 * 
+	 * @return
+	 */
+	CCServerDescription getCCServerDescription() {
+		Preferences node = new DefaultScope().getNode(Activator.PLUGIN_ID);
+		String ip = node.get(EdgeServerPreferences.EDGE_SERVER_IP,
+				EdgeServerPreferences.EDGE_SERVER_IP_DEFAULT);
+		int port = Integer.parseInt(node.get(
+				EdgeServerPreferences.EDGE_SERVER_PORT_RMI,
+				EdgeServerPreferences.EDGE_SERVER_PORT_RMI_DEFAULT));
+		return new CCServerDescription(ip, port);
 	}
 
 }

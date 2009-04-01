@@ -9,7 +9,6 @@ import java.rmi.RemoteException;
 import javax.management.MBeanInfo;
 
 import org.rifidi.edge.core.api.rmi.CommandStub;
-import org.rifidi.rmi.utils.cache.ServerDescription;
 import org.rifidi.rmi.utils.remotecall.ServerDescriptionBasedRemoteMethodCall;
 
 /**
@@ -34,7 +33,7 @@ public class CCGetCommandConfigDescription extends
 	 * @param commandConfigTypeID
 	 *            The type of ComamndConfiguration to get a description of
 	 */
-	public CCGetCommandConfigDescription(ServerDescription serverDescription,
+	public CCGetCommandConfigDescription(CCServerDescription serverDescription,
 			String commandConfigTypeID) {
 		super(serverDescription);
 		this.commandConfigTypeID = commandConfigTypeID;

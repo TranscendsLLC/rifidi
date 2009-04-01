@@ -4,7 +4,6 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 
 import org.rifidi.edge.core.api.rmi.CommandStub;
-import org.rifidi.rmi.utils.cache.ServerDescription;
 import org.rifidi.rmi.utils.remotecall.ServerDescriptionBasedRemoteMethodCall;
 
 /**
@@ -28,7 +27,7 @@ public class CCDeleteCommandConfiguration extends
 	 * @param commandConfigurationID
 	 *            The ID of the CommandConfiguration to delete
 	 */
-	public CCDeleteCommandConfiguration(ServerDescription serverDescription,
+	public CCDeleteCommandConfiguration(CCServerDescription serverDescription,
 			String commandConfigurationID) {
 		super(serverDescription);
 		this.commandConfigurationID = commandConfigurationID;

@@ -5,23 +5,23 @@ package org.rifidi.edge.core.rmi.client.commandconfigurationstub;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
-import java.util.Map;
+import java.util.Set;
 
 import org.rifidi.edge.core.api.rmi.CommandStub;
+import org.rifidi.edge.core.api.rmi.dto.CommandConfigurationDTO;
 import org.rifidi.rmi.utils.remotecall.ServerDescriptionBasedRemoteMethodCall;
 
 /**
  * This call returns the CommandConfiguration objects that are available. It
- * returns a Map<String,String> where the keys are the IDs of the
- * CommandConfigurations and the values are the IDs of the CommandConfiguration
- * types. For example: <Alien9800-GetTagList-1, Alien9800-GetTagList>
+ * returns a set of CommandConfigurationDTOs for each of the commands
+ * configurations that are available
  * 
  * @author Kyle Neumeier - kyle@pramari.com
  * 
  */
 public class CCGetCommandConfigurations
 		extends
-		ServerDescriptionBasedRemoteMethodCall<Map<String, String>, java.lang.RuntimeException> {
+		ServerDescriptionBasedRemoteMethodCall<Set<CommandConfigurationDTO>, java.lang.RuntimeException> {
 
 	/**
 	 * Constructor
@@ -34,7 +34,7 @@ public class CCGetCommandConfigurations
 	}
 
 	@Override
-	protected Map<String, String> performRemoteCall(Remote remoteObject)
+	protected Set<CommandConfigurationDTO> performRemoteCall(Remote remoteObject)
 			throws RemoteException, RuntimeException {
 		CommandStub stub = (CommandStub) remoteObject;
 		return stub.getCommands();

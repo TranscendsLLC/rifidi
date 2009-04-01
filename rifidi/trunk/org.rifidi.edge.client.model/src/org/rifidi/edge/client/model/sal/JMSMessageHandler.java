@@ -15,6 +15,10 @@ import javax.jms.MessageListener;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.client.model.sal.commands.RequestExecuterSingleton;
+import org.rifidi.edge.core.api.jms.notifications.CommandConfigFactoryAdded;
+import org.rifidi.edge.core.api.jms.notifications.CommandConfigFactoryRemoved;
+import org.rifidi.edge.core.api.jms.notifications.CommandConfigurationAddedNotification;
+import org.rifidi.edge.core.api.jms.notifications.CommandConfigurationRemovedNotification;
 import org.rifidi.edge.core.api.jms.notifications.ReaderAddedNotification;
 import org.rifidi.edge.core.api.jms.notifications.ReaderFactoryAddedNotification;
 import org.rifidi.edge.core.api.jms.notifications.ReaderFactoryRemovedNotification;
@@ -91,6 +95,26 @@ public class JMSMessageHandler implements MessageListener {
 					RequestExecuterSingleton.getInstance().scheduleRequest(
 							new Command_SessionStatusChanged(server,
 									notification));
+				} else if (message instanceof CommandConfigFactoryAdded) {
+					CommandConfigFactoryAdded notification = (CommandConfigFactoryAdded) message;
+					RequestExecuterSingleton.getInstance().scheduleRequest(
+							new Command_CommandConfigFactoryAdded(server,
+									notification));
+				} else if (message instanceof CommandConfigFactoryRemoved) {
+					CommandConfigFactoryRemoved notification = (CommandConfigFactoryRemoved) message;
+					RequestExecuterSingleton.getInstance().scheduleRequest(
+							new Command_CommandConfigFactoryRemoved(server,
+									notification));
+				} else if (message instanceof CommandConfigurationAddedNotification) {
+					CommandConfigurationAddedNotification notification = (CommandConfigurationAddedNotification) message;
+					RequestExecuterSingleton.getInstance().scheduleRequest(
+							new Command_CommandConfigurationAdded(server, notification));
+
+				} else if (message instanceof CommandConfigurationRemovedNotification) {
+					CommandConfigurationRemovedNotification notification = (CommandConfigurationRemovedNotification) message;
+					RequestExecuterSingleton.getInstance().scheduleRequest(
+							new Command_CommandConfigurationRemoved(server, notification));
+
 				}
 			} catch (JMSException e) {
 				logger.warn("JMS Exception while recieving message");

@@ -68,6 +68,8 @@ public class Command_Disconnect implements RemoteEdgeServerCommand {
 	public void executeEclipse() {
 		remoteEdgeServer.readerFactories.clear();
 		remoteEdgeServer.remoteReaders.clear();
+		remoteEdgeServer.commandConfigFactories.clear();
+		remoteEdgeServer.commandConfigurations.clear();
 		remoteEdgeServer.changeState(RemoteEdgeServerState.DISCONNECTED);
 		logger.info("Remote Edge Server is in the Disconnected state");
 
