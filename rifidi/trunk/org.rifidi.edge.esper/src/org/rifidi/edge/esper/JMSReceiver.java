@@ -77,12 +77,13 @@ public class JMSReceiver implements MessageListener {
 					mem = "0" + mem;
 					fill--;
 				}
+				ProcessedEvent event=new ProcessedEvent((EPCGeneration2Event) obj, engine
+						.convert(mem, extraparams,
+								LevelTypeList.PURE_IDENTITY), mem,
+						((EPCGeneration2Event) obj).getEPC_HEX());
 				// forward event to esper
-				epService.getEPRuntime().sendEvent(
-						new ProcessedEvent((EPCGeneration2Event) obj, engine
-								.convert(mem, extraparams,
-										LevelTypeList.PURE_IDENTITY), mem,
-								((EPCGeneration2Event) obj).getEPC_HEX()));
+				System.out.println(event.getHex());
+				epService.getEPRuntime().sendEvent(event);
 				return;
 			}
 			epService.getEPRuntime().sendEvent(obj);
