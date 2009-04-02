@@ -10,16 +10,23 @@ import org.rifidi.edge.core.messages.EPCGeneration2Event;
  * 
  */
 public class ProcessedEvent {
-	private EPCGeneration2Event event;
+	private EPCGeneration2Event baseEvent;
 	private String pureIdentity;
 	private String binary;
 	private String hex;
+	private int bogus=1;
+	/**
+	 * @return the bogus
+	 */
+	public int getBogus() {
+		return bogus;
+	}
 
 	/**
-	 * @return the event
+	 * @return the baseEvent
 	 */
-	public EPCGeneration2Event getEvent() {
-		return event;
+	public EPCGeneration2Event getBaseEvent() {
+		return baseEvent;
 	}
 
 	/**
@@ -44,7 +51,7 @@ public class ProcessedEvent {
 	}
 
 	/**
-	 * @param event
+	 * @param baseEvent
 	 * @param pureIdentity
 	 * @param binary
 	 * @param hex
@@ -52,7 +59,7 @@ public class ProcessedEvent {
 	public ProcessedEvent(EPCGeneration2Event event, String pureIdentity,
 			String binary, String hex) {
 		super();
-		this.event = event;
+		this.baseEvent = event;
 		this.pureIdentity = pureIdentity;
 		this.binary = binary;
 		this.hex = hex;
