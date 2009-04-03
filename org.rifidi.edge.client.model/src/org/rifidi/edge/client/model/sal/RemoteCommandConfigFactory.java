@@ -22,7 +22,8 @@ public class RemoteCommandConfigFactory {
 		this.readerFactoryID = dto.getReaderFactoryID();
 		commandTypes = new HashMap<String, RemoteCommandConfigType>();
 		for (String typeID : dto.getCommandConfigTypeIDs()) {
-			commandTypes.put(typeID, new RemoteCommandConfigType(typeID));
+			commandTypes.put(typeID, new RemoteCommandConfigType(typeID,
+					readerFactoryID));
 		}
 
 	}
@@ -44,6 +45,10 @@ public class RemoteCommandConfigFactory {
 
 	public RemoteCommandConfigType getCommandType(String commandType) {
 		return commandTypes.get(commandType);
+	}
+
+	public boolean containsType(String commandType) {
+		return this.commandTypes.keySet().contains(commandType);
 	}
 
 }

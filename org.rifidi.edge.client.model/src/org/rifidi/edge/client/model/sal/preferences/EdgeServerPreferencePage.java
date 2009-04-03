@@ -33,7 +33,10 @@ public class EdgeServerPreferencePage extends FieldEditorPreferencePage
 				"Edge Server JMS Port", getFieldEditorParent()));
 		addField(new StringFieldEditor(
 				EdgeServerPreferences.EDGE_SERVER_JMS_QUEUE,
-				"Edge Server JMS Queue Name", getFieldEditorParent()));
+				"Edge Server JMS Notifications Queue Name", getFieldEditorParent()));
+		addField(new StringFieldEditor(
+				EdgeServerPreferences.EDGE_SERVER_JMS_QUEUE_TAGS,
+				"Edge Server JMS Tags Queue Name", getFieldEditorParent()));
 	}
 
 	@Override

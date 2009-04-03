@@ -14,7 +14,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.rifidi.edge.client.model.sal.RemoteReaderFactory;
 import org.rifidi.edge.client.sal.controller.edgeserver.EdgeServerTreeContentProvider;
-import org.rifidi.edge.client.sal.wizards.NewReaderWizard;
+import org.rifidi.edge.client.sal.wizards.newreader.NewReaderWizard;
 
 /**
  * Create a new reader. Should only be called when the edge server is in

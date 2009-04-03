@@ -7,6 +7,7 @@ import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.swt.graphics.Image;
 import org.rifidi.edge.client.model.sal.RemoteEdgeServer;
+import org.rifidi.edge.client.model.sal.RemoteJob;
 import org.rifidi.edge.client.model.sal.RemoteReader;
 import org.rifidi.edge.client.model.sal.RemoteSession;
 import org.rifidi.edge.client.sal.SALPluginActivator;
@@ -16,6 +17,21 @@ import org.rifidi.edge.client.sal.SALPluginActivator;
  * 
  */
 public class EdgeServerTreeLabelProvider implements ILabelProvider {
+
+	private Image serverGreen = SALPluginActivator.getImageDescriptor(
+			"icons/server-green.png").createImage();
+	private Image serverRed = SALPluginActivator.getImageDescriptor(
+			"icons/server-red.png").createImage();
+	private Image reader = SALPluginActivator.getImageDescriptor(
+			"icons/reader-16x16.png").createImage();
+	private Image linkRed = SALPluginActivator.getImageDescriptor(
+			"icons/link-red.png").createImage();
+	private Image linkYellow = SALPluginActivator.getImageDescriptor(
+			"icons/link-yellow.png").createImage();
+	private Image linkGreen = SALPluginActivator.getImageDescriptor(
+			"icons/link-green.png").createImage();
+	private Image scriptGear = SALPluginActivator.getImageDescriptor(
+			"icons/script_gear.png").createImage();
 
 	/*
 	 * (non-Javadoc)
@@ -29,38 +45,31 @@ public class EdgeServerTreeLabelProvider implements ILabelProvider {
 			RemoteEdgeServer server = (RemoteEdgeServer) element;
 			switch (server.getState()) {
 			case CONNECTED:
-				return SALPluginActivator.getImageDescriptor(
-						"icons/server-green.png").createImage();
+				return serverGreen;
 			case DISCONNECTED:
-				return SALPluginActivator.getImageDescriptor(
-						"icons/server-red.png").createImage();
+				return serverRed;
 			}
 		} else if (element instanceof RemoteReader) {
-			return SALPluginActivator.getImageDescriptor(
-					"icons/reader-16x16.png").createImage();
+			return reader;
 		} else if (element instanceof RemoteSession) {
 			RemoteSession session = (RemoteSession) element;
 			switch (session.getStateOfSession()) {
 			case CLOSED:
-				return SALPluginActivator.getImageDescriptor(
-						"icons/link-red.png").createImage();
+				return linkRed;
 			case CONNECTING:
-				return SALPluginActivator.getImageDescriptor(
-						"icons/link-yellow.png").createImage();
+				return linkYellow;
 			case CREATED:
-				return SALPluginActivator.getImageDescriptor(
-						"icons/link-red.png").createImage();
+				return linkRed;
 			case FAIL:
-				return SALPluginActivator.getImageDescriptor(
-						"icons/link-red.png").createImage();
+				return linkRed;
 			case LOGGINGIN:
-				return SALPluginActivator.getImageDescriptor(
-						"icons/link-yellow.png").createImage();
+				return linkYellow;
 			case PROCESSING:
-				return SALPluginActivator.getImageDescriptor(
-						"icons/link-green.png").createImage();
+				return linkGreen;
 			}
 
+		} else if (element instanceof RemoteJob) {
+			return scriptGear;
 		}
 		return null;
 	}
@@ -79,7 +88,12 @@ public class EdgeServerTreeLabelProvider implements ILabelProvider {
 			return ((RemoteReader) element).getID();
 		}
 		if (element instanceof RemoteSession) {
-			return "Session: " +((RemoteSession) element).getSessionID();
+			return "Session: " + ((RemoteSession) element).getSessionID();
+		}
+		if (element instanceof RemoteJob) {
+			RemoteJob job = (RemoteJob) element;
+			return "Command " + job.getJobID() + " : "
+					+ job.getCommandConfigurationID();
 		}
 		return element.toString();
 	}
@@ -104,7 +118,20 @@ public class EdgeServerTreeLabelProvider implements ILabelProvider {
 	 */
 	@Override
 	public void dispose() {
-		// TODO Auto-generated method stub
+		this.linkGreen.dispose();
+		this.linkGreen = null;
+		this.linkRed.dispose();
+		this.linkRed = null;
+		this.linkYellow.dispose();
+		this.linkYellow = null;
+		this.reader.dispose();
+		this.reader = null;
+		this.scriptGear.dispose();
+		this.scriptGear = null;
+		this.serverGreen.dispose();
+		this.serverGreen = null;
+		this.serverRed.dispose();
+		this.serverRed = null;
 
 	}
 

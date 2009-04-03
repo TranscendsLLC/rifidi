@@ -56,8 +56,11 @@ public class Command_SessionRemoved implements RemoteEdgeServerCommand {
 	 */
 	@Override
 	public void executeEclipse() {
+
 		RemoteReader reader = (RemoteReader) server.getRemoteReaders().get(
 				readerID);
+		((RemoteSession) reader.getRemoteSessions().get(sessionID))
+				.getRemoteJobs().clear();
 		reader.getRemoteSessions().remove(sessionID);
 
 	}

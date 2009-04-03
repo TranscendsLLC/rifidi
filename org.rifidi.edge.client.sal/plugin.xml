@@ -5,6 +5,7 @@
          point="org.eclipse.ui.perspectives">
       <perspective
             class="org.rifidi.edge.client.sal.perspective.SALPerspective"
+            fixed="false"
             icon="icons/reader-16x16.png"
             id="org.rifidi.edge.client.sal.perspective"
             name="Sensor Abstraction Layer">
@@ -13,6 +14,7 @@
    <extension
          point="org.eclipse.ui.views">
       <view
+            allowMultiple="false"
             class="org.rifidi.edge.client.sal.views.EdgeServerView"
             icon="icons/server.png"
             id="org.rifidi.edge.client.sal.views.EdgeServerView"
@@ -20,10 +22,19 @@
             restorable="true">
       </view>
       <view
+            allowMultiple="false"
             class="org.rifidi.edge.client.sal.views.CommandView"
             icon="icons/cog.png"
             id="org.rifidi.edge.client.sal.views.CommandView"
             name="Command View"
+            restorable="true">
+      </view>
+      <view
+            allowMultiple="true"
+            class="org.rifidi.edge.client.sal.views.tags.TagView"
+            icon="icons/transmit.png"
+            id="org.rifidi.edge.client.sal.tags"
+            name="Tag View"
             restorable="true">
       </view>
    </extension>
@@ -31,48 +42,9 @@
          point="org.eclipse.ui.perspectiveExtensions">
       <perspectiveExtension
             targetID="org.rifidi.edge.client.sal.perspective">
-         <view
-               closeable="false"
-               id="org.rifidi.edge.client.sal.views.EdgeServerView"
-               minimized="false"
-               moveable="true"
-               ratio=".4"
-               relationship="left"
-               relative="org.eclipse.ui.editorss"
-               showTitle="true"
-               standalone="true"
-               visible="true">
-         </view>
-      </perspectiveExtension>
-      <perspectiveExtension
-            targetID="org.rifidi.edge.client.sal.perspective">
-         <view
-               closeable="false"
-               id="org.eclipse.ui.views.PropertySheet"
-               minimized="false"
-               moveable="true"
-               ratio=".5"
-               relationship="bottom"
-               relative="org.eclipse.ui.editorss"
-               showTitle="true"
-               standalone="true"
-               visible="true">
-         </view>
-      </perspectiveExtension>
-      <perspectiveExtension
-            targetID="org.rifidi.edge.client.sal.perspective">
-         <view
-               closeable="false"
-               id="org.rifidi.edge.client.sal.views.CommandView"
-               minimized="false"
-               moveable="true"
-               ratio=".5"
-               relationship="bottom"
-               relative="org.rifidi.edge.client.sal.views.EdgeServerView"
-               showTitle="true"
-               standalone="true"
-               visible="true">
-         </view>
+         <perspectiveShortcut
+               id="org.rifidi.edge.client.sal.perspective">
+         </perspectiveShortcut>
       </perspectiveExtension>
    </extension>
    <extension
@@ -87,7 +59,8 @@
                style="push">
             <visibleWhen
                   checkEnabled="false">
-               <iterate>
+               <iterate
+                     ifEmpty="false">
                   <instanceof
                         value="org.rifidi.edge.client.model.sal.RemoteEdgeServer">
                   </instanceof>
@@ -102,7 +75,8 @@
                style="push">
             <visibleWhen
                   checkEnabled="false">
-               <iterate>
+               <iterate
+                     ifEmpty="false">
                   <instanceof
                         value="org.rifidi.edge.client.model.sal.RemoteEdgeServer">
                   </instanceof>
@@ -117,7 +91,8 @@
                style="push">
             <visibleWhen
                   checkEnabled="false">
-               <iterate>
+               <iterate
+                     ifEmpty="false">
                   <instanceof
                         value="org.rifidi.edge.client.model.sal.RemoteEdgeServer">
                   </instanceof>
@@ -132,7 +107,8 @@
                style="push">
             <visibleWhen
                   checkEnabled="false">
-               <iterate>
+               <iterate
+                     ifEmpty="false">
                   <instanceof
                         value="org.rifidi.edge.client.model.sal.RemoteEdgeServer">
                   </instanceof>
@@ -146,7 +122,8 @@
                style="push">
             <visibleWhen
                   checkEnabled="false">
-               <iterate>
+               <iterate
+                     ifEmpty="false">
                   <instanceof
                         value="org.rifidi.edge.client.model.sal.RemoteEdgeServer">
                   </instanceof>
@@ -160,7 +137,8 @@
                style="push">
             <visibleWhen
                   checkEnabled="false">
-               <iterate>
+               <iterate
+                     ifEmpty="false">
                   <instanceof
                         value="org.rifidi.edge.client.model.sal.RemoteReader">
                   </instanceof>
@@ -174,7 +152,8 @@
                style="push">
             <visibleWhen
                   checkEnabled="false">
-               <iterate>
+               <iterate
+                     ifEmpty="false">
                   <instanceof
                         value="org.rifidi.edge.client.model.sal.RemoteReader">
                   </instanceof>
@@ -188,7 +167,8 @@
                style="push">
             <visibleWhen
                   checkEnabled="false">
-               <iterate>
+               <iterate
+                     ifEmpty="false">
                   <instanceof
                         value="org.rifidi.edge.client.model.sal.RemoteSession">
                   </instanceof>
@@ -202,7 +182,8 @@
                style="push">
             <visibleWhen
                   checkEnabled="false">
-               <iterate>
+               <iterate
+                     ifEmpty="false">
                   <instanceof
                         value="org.rifidi.edge.client.model.sal.RemoteSession">
                   </instanceof>
@@ -216,9 +197,55 @@
                style="push">
             <visibleWhen
                   checkEnabled="false">
-               <iterate>
+               <iterate
+                     ifEmpty="false">
                   <instanceof
                         value="org.rifidi.edge.client.model.sal.RemoteSession">
+                  </instanceof>
+               </iterate>
+            </visibleWhen>
+         </command>
+         <command
+               commandId="org.rifidi.edge.client.sal.commands.jobs.kill"
+               icon="icons/script_delete.png"
+               label="Delete Job"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <iterate
+                     ifEmpty="false">
+                  <instanceof
+                        value="org.rifidi.edge.client.model.sal.RemoteJob">
+                  </instanceof>
+               </iterate>
+            </visibleWhen>
+         </command>
+         <command
+               commandId="org.rifidi.edge.client.sal.commands.jobs.submit"
+               icon="icons/script_add.png"
+               label="Submit Job"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <iterate
+                     ifEmpty="false">
+                  <instanceof
+                        value="org.rifidi.edge.client.model.sal.RemoteSession">
+                  </instanceof>
+               </iterate>
+            </visibleWhen>
+         </command>
+         <command
+               commandId="org.rifidi.edge.client.sal.commands.reader.opentagview"
+               icon="icons/transmit_go.png"
+               label="Open Tag View"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <iterate
+                     ifEmpty="false">
+                  <instanceof
+                        value="org.rifidi.edge.client.model.sal.RemoteReader">
                   </instanceof>
                </iterate>
             </visibleWhen>
@@ -463,6 +490,42 @@
             </iterate>
          </enabledWhen>
       </handler>
+      <handler
+            class="org.rifidi.edge.client.sal.controller.edgeserver.handlers.DeleteJobHandler"
+            commandId="org.rifidi.edge.client.sal.commands.jobs.kill">
+         <enabledWhen>
+            <iterate
+                  ifEmpty="false">
+               <instanceof
+                     value="org.rifidi.edge.client.model.sal.RemoteJob">
+               </instanceof>
+            </iterate>
+         </enabledWhen>
+      </handler>
+      <handler
+            class="org.rifidi.edge.client.sal.controller.edgeserver.handlers.SubmitCommandHandler"
+            commandId="org.rifidi.edge.client.sal.commands.jobs.submit">
+         <enabledWhen>
+            <iterate
+                  ifEmpty="false">
+               <instanceof
+                     value="org.rifidi.edge.client.model.sal.RemoteSession">
+               </instanceof>
+            </iterate>
+         </enabledWhen>
+      </handler>
+      <handler
+            class="org.rifidi.edge.client.sal.controller.edgeserver.handlers.OpenTagViewHandler"
+            commandId="org.rifidi.edge.client.sal.commands.reader.opentagview">
+         <enabledWhen>
+            <iterate
+                  ifEmpty="false">
+               <instanceof
+                     value="org.rifidi.edge.client.model.sal.RemoteReader">
+               </instanceof>
+            </iterate>
+         </enabledWhen>
+      </handler>
    </extension>
    <extension
          point="org.eclipse.ui.commands">
@@ -514,6 +577,18 @@
             id="rg.rifidi.edge.client.sal.commands.commandconfig.delete"
             name="DeleteCommandConfiguration">
       </command>
+      <command
+            id="org.rifidi.edge.client.sal.commands.jobs.kill"
+            name="Kill Job">
+      </command>
+      <command
+            id="org.rifidi.edge.client.sal.commands.jobs.submit"
+            name="Submit Job">
+      </command>
+      <command
+            id="org.rifidi.edge.client.sal.commands.reader.opentagview"
+            name="Open Tag View">
+      </command>
    </extension>
    <extension
          point="org.eclipse.core.expressions.propertyTesters">
@@ -545,7 +620,7 @@
    <extension
          point="org.eclipse.ui.newWizards">
       <wizard
-            class="org.rifidi.edge.client.sal.wizards.NewReaderWizard"
+            class="org.rifidi.edge.client.sal.wizards.newreader.NewReaderWizard"
             hasPages="true"
             id="org.rifidi.edge.client.sal.newreaderwizard"
             name="New Reader Wizard">

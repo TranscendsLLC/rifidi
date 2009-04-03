@@ -13,10 +13,13 @@ public class RemoteCommandConfiguration {
 
 	private String commandType;
 	private String id;
+	private String readerFactoryID;
 
-	public RemoteCommandConfiguration(CommandConfigurationDTO dto) {
+	public RemoteCommandConfiguration(String readerFactoryID,
+			CommandConfigurationDTO dto) {
 		this.commandType = dto.getCommandConfigType();
 		this.id = dto.getCommandConfigID();
+		this.readerFactoryID = readerFactoryID;
 	}
 
 	public String getCommandType() {
@@ -27,4 +30,10 @@ public class RemoteCommandConfiguration {
 		return id;
 	}
 
+	/**
+	 * @return the readerFactoryID
+	 */
+	public String getReaderFactoryID() {
+		return readerFactoryID;
+	}
 }

@@ -3,6 +3,9 @@
  */
 package org.rifidi.edge.client.model.sal;
 
+import java.rmi.Remote;
+import java.util.Collection;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eclipse.core.databinding.observable.map.ObservableMap;
@@ -25,6 +28,8 @@ public class Command_CommandConfigurationAdded implements
 
 	/** The map of command configurations */
 	private ObservableMap commandConfigurations;
+	/** CommandConfiguraiotnFactories */
+	private ObservableMap commandConfigFactories;
 	/** The ID of the command configuration */
 	private String commandConfigurationID;
 	/** The DTO of the CommandConfiguration */
@@ -43,6 +48,7 @@ public class Command_CommandConfigurationAdded implements
 		this.commandConfigurationID = notification.getCommandConfigurationID();
 		this.serverDescription = server.getCCServerDescription();
 		this.disconnectCommand = new Command_Disconnect(server);
+		this.commandConfigFactories = server.commandConfigFactories;
 	}
 
 	/*
@@ -75,8 +81,17 @@ public class Command_CommandConfigurationAdded implements
 	@Override
 	public void executeEclipse() {
 		if (dto != null) {
-			this.commandConfigurations.put(this.commandConfigurationID,
-					new RemoteCommandConfiguration(dto));
+			String readerID;
+			Collection<RemoteCommandConfigFactory> factories = (Collection<RemoteCommandConfigFactory>) this.commandConfigFactories
+					.values();
+			for (RemoteCommandConfigFactory factory : factories) {
+				if (factory.containsType(dto.getCommandConfigType())) {
+					this.commandConfigurations.put(this.commandConfigurationID,
+							new RemoteCommandConfiguration(factory
+									.getReaderFactoryID(), dto));
+				}
+			}
+
 		}
 
 	}

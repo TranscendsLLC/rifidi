@@ -7,7 +7,10 @@ import java.util.Set;
 
 import javax.management.AttributeList;
 
+import org.rifidi.edge.client.model.sal.RemoteCommandConfiguration;
+import org.rifidi.edge.client.model.sal.RemoteJob;
 import org.rifidi.edge.client.model.sal.RemoteReaderFactory;
+import org.rifidi.edge.client.model.sal.RemoteSession;
 
 /**
  * An interface for controlling a RemoteEdgeServer
@@ -89,5 +92,15 @@ public interface EdgeServerController {
 	 * @param sessionID
 	 */
 	void stopSession(String readerID, String sessionID);
+
+	/**
+	 * Delete the Remote job
+	 * 
+	 * @param job
+	 */
+	void deleteRemoteJob(RemoteJob job);
+
+	void scheduleJob(RemoteSession session,
+			RemoteCommandConfiguration configuration, Long interval);
 
 }

@@ -144,9 +144,16 @@ public class Command_Update implements RemoteEdgeServerCommand {
 						commandPlugin));
 			}
 			for (CommandConfigurationDTO commandConfig : this.commandConfigurationDTOs) {
-				remoteEdgeServer.commandConfigurations
-						.put(commandConfig.getCommandConfigID(),
-								new RemoteCommandConfiguration(commandConfig));
+				for (CommandConfigFactoryDTO factoryDTO : commandConfigFactoryDTO) {
+					if (factoryDTO.getCommandConfigTypeIDs().contains(
+							commandConfig.getCommandConfigType())) {
+						remoteEdgeServer.commandConfigurations.put(
+								commandConfig.getCommandConfigID(),
+								new RemoteCommandConfiguration(factoryDTO
+										.getReaderFactoryID(), commandConfig));
+					}
+				}
+
 			}
 		}
 

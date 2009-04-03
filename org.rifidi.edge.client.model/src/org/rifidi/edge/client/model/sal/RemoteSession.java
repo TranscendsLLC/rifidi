@@ -5,7 +5,10 @@ package org.rifidi.edge.client.model.sal;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.util.Map;
 
+import org.eclipse.core.databinding.observable.map.ObservableMap;
+import org.eclipse.core.databinding.observable.map.WritableMap;
 import org.rifidi.edge.client.model.sal.properties.SessionStatePropertyBean;
 import org.rifidi.edge.core.api.SessionStatus;
 import org.rifidi.edge.core.api.rmi.dto.SessionDTO;
@@ -24,8 +27,12 @@ public class RemoteSession {
 	private SessionDTO sessionDTO;
 	/** The ID of the reader associated with this reader */
 	private String readerID;
+	/** The factory this session belongs to */
+	private String readerFactoryID;
 	/** The property change support for this class */
 	private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+	/** The submitted commands */
+	private ObservableMap remoteJobs;
 
 	/**
 	 * Constructor
@@ -35,11 +42,18 @@ public class RemoteSession {
 	 * @param sessionID
 	 *            The ID of the session
 	 */
-	public RemoteSession(String readerID, SessionDTO sessionDTO) {
-		super();
+	public RemoteSession(String readerID, String readerFactoryID,
+			SessionDTO sessionDTO) {
 		this.sessionDTO = sessionDTO;
+		this.readerFactoryID = readerFactoryID;
 		this.status = sessionDTO.getStatus();
 		this.readerID = readerID;
+		this.remoteJobs = new WritableMap();
+		for (Map.Entry<Integer, String> entry : sessionDTO.getCommands()
+				.entrySet()) {
+			_addRemoteJob(new RemoteJob(readerID, sessionDTO.getID(), entry
+					.getKey(), entry.getValue()));
+		}
 	}
 
 	/**
@@ -72,6 +86,13 @@ public class RemoteSession {
 	}
 
 	/**
+	 * @return the readerFactoryID
+	 */
+	public String getReaderFactoryID() {
+		return readerFactoryID;
+	}
+
+	/**
 	 * Add a property change listener
 	 * 
 	 * @param listener
@@ -87,6 +108,22 @@ public class RemoteSession {
 	 */
 	public void removePropertyChangeListener(PropertyChangeListener listener) {
 		this.pcs.removePropertyChangeListener(listener);
+	}
+
+	/**
+	 * @return the remoteJobs
+	 */
+	public ObservableMap getRemoteJobs() {
+		return remoteJobs;
+	}
+
+	private void _addRemoteJob(final RemoteJob job) {
+		remoteJobs.getRealm().asyncExec(new Runnable() {
+			@Override
+			public void run() {
+				remoteJobs.put(job.getJobID(), job);
+			}
+		});
 	}
 
 	/**

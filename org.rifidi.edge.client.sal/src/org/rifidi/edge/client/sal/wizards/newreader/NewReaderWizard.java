@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.rifidi.edge.client.sal.wizards;
+package org.rifidi.edge.client.sal.wizards.newreader;
 
 import java.util.Set;
 
