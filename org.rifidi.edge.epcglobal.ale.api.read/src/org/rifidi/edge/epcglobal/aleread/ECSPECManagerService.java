@@ -64,6 +64,14 @@ public interface ECSPECManagerService {
 			ECSpecValidationExceptionResponse;
 
 	/**
+	 * Destroy an ECSpec.
+	 * 
+	 * @param name
+	 * @throws NoSuchNameExceptionResponse
+	 */
+	public void destroySpec(String name) throws NoSuchNameExceptionResponse;
+
+	/**
 	 * Get a spec by its name.
 	 * 
 	 * @param name

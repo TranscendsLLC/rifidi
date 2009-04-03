@@ -10,6 +10,7 @@ import org.rifidi.edge.epcglobal.ale.api.lr.ws.DuplicateNameExceptionResponse;
 import org.rifidi.edge.epcglobal.ale.api.lr.ws.ImmutableReaderExceptionResponse;
 import org.rifidi.edge.epcglobal.ale.api.lr.ws.InUseExceptionResponse;
 import org.rifidi.edge.epcglobal.ale.api.lr.ws.NoSuchNameExceptionResponse;
+import org.rifidi.edge.epcglobal.ale.api.lr.ws.ValidationExceptionResponse;
 
 /**
  * @author Jochen Mader - jochen@pramari.com
@@ -50,5 +51,5 @@ public interface LogicalReaderManagementService {
 	 * @param immutable
 	 */
 	void createLogicalReader(String name, LRSpec lrSpec, Boolean immuatable)
-			throws DuplicateNameExceptionResponse;
+			throws DuplicateNameExceptionResponse, ValidationExceptionResponse;
 }

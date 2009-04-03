@@ -42,19 +42,7 @@ public class ALEServicePortTypeImpl implements ALEServicePortType, WebService {
 			Undefine parms) throws ImplementationExceptionResponse,
 			NoSuchNameExceptionResponse, SecurityExceptionResponse {
 		logger.info("Executing operation undefine");
-		System.out.println(parms);
-		try {
-			org.rifidi.edge.epcglobal.ale.api.read.ws.VoidHolder _return = null;
-			return _return;
-		} catch (Exception ex) {
-			ex.printStackTrace();
-			throw new RuntimeException(ex);
-		}
-		// throw new
-		// ImplementationExceptionResponse("ImplementationExceptionResponse...");
-		// throw new
-		// NoSuchNameExceptionResponse("NoSuchNameExceptionResponse...");
-		// throw new SecurityExceptionResponse("SecurityExceptionResponse...");
+		return new VoidHolder();
 	}
 
 	/*
@@ -128,7 +116,8 @@ public class ALEServicePortTypeImpl implements ALEServicePortType, WebService {
 			NoSuchNameExceptionResponse, NoSuchSubscriberExceptionResponse,
 			SecurityExceptionResponse, InvalidURIExceptionResponse {
 		logger.info("Executing operation unsubscribe");
-		ecspecManagerService.unsubscribe(parms.getSpecName(), parms.getNotificationURI());
+		ecspecManagerService.unsubscribe(parms.getSpecName(), parms
+				.getNotificationURI());
 		return new VoidHolder();
 	}
 
@@ -239,7 +228,8 @@ public class ALEServicePortTypeImpl implements ALEServicePortType, WebService {
 			DuplicateSubscriptionExceptionResponse, SecurityExceptionResponse,
 			InvalidURIExceptionResponse {
 		logger.info("Executing operation subscribe");
-		ecspecManagerService.subscribe(parms.getSpecName(), parms.getNotificationURI());
+		ecspecManagerService.subscribe(parms.getSpecName(), parms
+				.getNotificationURI());
 		return new VoidHolder();
 	}
 
@@ -277,9 +267,11 @@ public class ALEServicePortTypeImpl implements ALEServicePortType, WebService {
 	}
 
 	/**
-	 * @param ecspecManagerService the ecspecManagerService to set
+	 * @param ecspecManagerService
+	 *            the ecspecManagerService to set
 	 */
-	public void setEcspecManagerService(ECSPECManagerService ecspecManagerService) {
+	public void setEcspecManagerService(
+			ECSPECManagerService ecspecManagerService) {
 		this.ecspecManagerService = ecspecManagerService;
 	}
 }
