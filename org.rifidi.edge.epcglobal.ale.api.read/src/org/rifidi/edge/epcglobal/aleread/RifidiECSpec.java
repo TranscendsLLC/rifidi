@@ -79,8 +79,22 @@ class RifidiECSpec {
 		this.queryStatements = new ArrayList<EPStatement>();
 		this.futures = new HashSet<ScheduledFuture<?>>();
 		this.esper = esper;
-		// create the boundary conditions
+		// check if we got logical readers line 2135 of spec
+		if (spec.getLogicalReaders() == null
+				|| spec.getLogicalReaders().getLogicalReader() == null
+				|| spec.getLogicalReaders().getLogicalReader().size() == 0) {
+			throw new ECSpecValidationExceptionResponse("No logical readers were provided.");
+		}
+		// check if we got valid logical readers line 2135 of spec		
+		for (String reader : spec.getLogicalReaders().getLogicalReader()) {
+			//TODO: fill in
+		}
+		
+		// check if we got a boundary spec line 2137
 		ECBoundarySpec boundaryspec = spec.getBoundarySpec();
+		if(boundaryspec==null){
+			throw new ECSpecValidationExceptionResponse("No boundar spec specified."); 
+		}
 		startTriggers = new HashSet<Trigger>();
 		// collect start triggers
 		if (boundaryspec.getStartTrigger() != null) {
@@ -144,7 +158,18 @@ class RifidiECSpec {
 								+ spec.getBoundarySpec().getStableSetInterval()
 										.getUnit());
 			}
-			duration = spec.getBoundarySpec().getStableSetInterval().getValue();
+			stableSetInterval = spec.getBoundarySpec().getStableSetInterval().getValue();
+		}
+		
+		// check if the time values are valid line 2197
+		if(duration<0){
+			throw new ECSpecValidationExceptionResponse("Duration is smaller than 0.");
+		}
+		if(stableSetInterval<0){
+			throw new ECSpecValidationExceptionResponse("Stable set interval is smaller than 0.");
+		}
+		if(repeatInterval<0){
+			throw new ECSpecValidationExceptionResponse("Repeat interval is smaller than 0.");	
 		}
 		// when data available indicates if the spec should stop as soon as the
 		// first dataset has arrived
@@ -154,7 +179,12 @@ class RifidiECSpec {
 		} else {
 			whenDataAvailable = false;
 		}
+		//check if we can stop line 2203
+		if(stopTriggers.size()==0 && duration==0 && stableSetInterval == 0 && !whenDataAvailable){
+			
+		}
 		// collect the primary keys
+		//TODO: we need to check if the keys actually exist!!!!!
 		if (spec.getExtension() != null
 				&& spec.getExtension().getPrimaryKeyFields() != null) {
 			primarykeys = new HashSet<String>(spec.getExtension()
@@ -162,7 +192,10 @@ class RifidiECSpec {
 		} else {
 			primarykeys = new HashSet<String>();
 		}
-
+		//if no primary key is given the epc is the key
+		if(primarykeys.size()==0){
+			primarykeys.add("epc");
+		}
 		// TODO: finish the report spec.
 		// for(ECReportSpec repspec:spec.getReportSpecs().getReportSpec()){
 		// repspec.getExtension().
@@ -244,6 +277,16 @@ class RifidiECSpec {
 								+ (duration > repeatInterval ? duration
 										: repeatInterval)
 								+ "sec) org.rifidi.edge.esper.ProcessedEvent"));
+				//create the where conditions for primary fields
+				StringBuilder prims=new StringBuilder();
+				boolean first=true;
+				for(String key:primarykeys){
+					if(!first){
+						prims.append(" and");
+						first=false;
+					}
+					prims.append(" processedEvent.field('"+key+"')=whine.field('"+key+"')");
+				}
 				// fill the window
 				statements
 						.add(esper
@@ -254,7 +297,7 @@ class RifidiECSpec {
 												+ "_collectwin select * from org.rifidi.edge.esper.ProcessedEvent as processedEvent where "
 												+ "not exists (select * from "
 												+ name
-												+ "_collectwin as whine where processedEvent.hex=whine.hex)"));
+												+ "_collectwin as whine where "+prims.toString()+")"));
 
 				// INTERVAL TIMING
 				// regular timing using intervals, don't use if data available
@@ -331,7 +374,7 @@ class RifidiECSpec {
 				}
 
 				if (stableSetInterval > 0) {
-					//TODO: incorporate INTERVAL!!!!
+					// TODO: incorporate INTERVAL!!!!
 					// timing using stable set
 					queryStatements.add(esper.getEPAdministrator().createEPL(
 							"on pattern[every (org.rifidi.edge.epcglobal.aleread.StartEvent -> "

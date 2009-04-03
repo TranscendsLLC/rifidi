@@ -69,7 +69,7 @@ public class JMSReceiver implements MessageListener {
 			Object obj = ((ObjectMessage) message).getObject();
 			if (obj instanceof EPCGeneration2Event) {
 				HashMap<String, String> extraparams = new HashMap<String, String>();
-				String mem = ((EPCGeneration2Event) obj).getEPC_BIN();
+				String mem = ((EPCGeneration2Event) obj).getEPCMemory().toString(2);
 				int fill = ((EPCGeneration2Event) obj).getEpcLength()
 						- mem.length();
 				// big integer swallows leading zeroes, reattech 'em
@@ -80,7 +80,7 @@ public class JMSReceiver implements MessageListener {
 				ProcessedEvent event=new ProcessedEvent((EPCGeneration2Event) obj, engine
 						.convert(mem, extraparams,
 								LevelTypeList.PURE_IDENTITY), mem,
-						((EPCGeneration2Event) obj).getEPC_HEX());
+						((EPCGeneration2Event) obj).getEPCMemory().toString(16));
 				// forward event to esper
 				System.out.println(event.getHex());
 				epService.getEPRuntime().sendEvent(event);
