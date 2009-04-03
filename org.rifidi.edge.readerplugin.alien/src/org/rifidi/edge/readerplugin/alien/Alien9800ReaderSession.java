@@ -5,12 +5,14 @@ package org.rifidi.edge.readerplugin.alien;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.concurrent.TimeUnit;
 
 import javax.jms.Destination;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.api.SessionStatus;
+import org.rifidi.edge.core.commands.Command;
 import org.rifidi.edge.core.notifications.NotifierService;
 import org.rifidi.edge.core.readers.ByteMessage;
 import org.rifidi.edge.core.readers.impl.AbstractIPReaderSession;
@@ -203,6 +205,49 @@ public class Alien9800ReaderSession extends AbstractIPReaderSession {
 		if (service != null) {
 			service.sessionStatusChanged(this.readerID, this.getID(), status);
 		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.core.readers.impl.AbstractReaderSession#killComand(java
+	 * .lang.Integer)
+	 */
+	@Override
+	public void killComand(Integer id) {
+		super.killComand(id);
+
+		// TODO: Remove this once we have aspectJ
+		NotifierService service = notifierService.getNotifierService();
+		if (service != null) {
+			service.jobDeleted(this.readerID, this.getID(), id);
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.core.readers.impl.AbstractReaderSession#submit(org.rifidi
+	 * .edge.core.commands.Command, long, java.util.concurrent.TimeUnit)
+	 */
+	@Override
+	public Integer submit(Command command, long interval, TimeUnit unit) {
+		Integer retVal = super.submit(command, interval, unit);
+
+		// TODO: Remove this once we have aspectJ
+		try {
+			NotifierService service = notifierService.getNotifierService();
+			if (service != null) {
+				service.jobSubmitted(this.readerID, this.getID(), retVal,
+						command.getCommandID());
+			}
+		} catch (Exception e) {
+			// make sure the notification doesn't cause this method to exit
+			// under any circumstances
+		}
+		return retVal;
 	}
 
 }

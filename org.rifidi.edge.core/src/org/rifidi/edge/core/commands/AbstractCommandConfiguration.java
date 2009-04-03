@@ -21,7 +21,7 @@ public abstract class AbstractCommandConfiguration<T extends Command> extends
 	 * 
 	 * @return
 	 */
-	public abstract T getCommand();
+	public abstract T getCommand(String readerID);
 
 	/**
 	 * Get the name of the command

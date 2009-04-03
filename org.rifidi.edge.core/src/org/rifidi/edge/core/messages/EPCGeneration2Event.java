@@ -7,52 +7,34 @@ import java.math.BigInteger;
 
 /**
  * @author Jochen Mader - jochen@pramari.com
+ * @author Kyle Neumeier - kyle@pramari.com
  * 
  */
-public class EPCGeneration2Event extends DatacontainerEvent {
+public class EPCGeneration2Event extends EPCGeneration1Event {
 
-	protected Integer epcLength;
-	
+	/** Serial Version ID for this class */
+	private static final long serialVersionUID = 1L;
+	private BigInteger reservedBank;
+	private BigInteger tidBank;
+	private BigInteger userMemoryBank;
+
 	public EPCGeneration2Event() {
-		super(4);
+		super();
+		this.reservedBank = super.createMemoryBank();
+		this.tidBank = super.createMemoryBank();
+		this.userMemoryBank = super.createMemoryBank();
 	}
 
 	public void setReservedMemory(BigInteger memory) {
-		setMemory(0, memory);
-	}
-
-	public void setEPCMemory(BigInteger memory) {
-		setMemory(1, memory);
+		reservedBank = memory;
 	}
 
 	public void setTIDMemory(BigInteger memory) {
-		setMemory(2, memory);
+		tidBank = memory;
 	}
 
 	public void setUserMemory(BigInteger memory) {
-		setMemory(3, memory);
+		userMemoryBank = memory;
 	}
 
-	public String getEPC_HEX() {
-		return getMemoryBank(1).toString(16);
-	}
-	
-	public String getEPC_BIN() {
-		return getMemoryBank(1).toString(2);
-	}
-
-	/**
-	 * @return the epcLength
-	 */
-	public Integer getEpcLength() {
-		return epcLength;
-	}
-
-	/**
-	 * @param epcLength the epcLength to set
-	 */
-	public void setEpcLength(Integer epcLength) {
-		this.epcLength = epcLength;
-	}
-	
 }

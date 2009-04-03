@@ -463,10 +463,10 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 			if (session != null) {
 				Long ival = Long.parseLong(interval);
 				if (ival > 0) {
-					session.submit(command.getCommand(), ival,
+					session.submit(command.getCommand(readerid), ival,
 							TimeUnit.MILLISECONDS);
 				} else {
-					session.submit(command.getCommand());
+					session.submit(command.getCommand(readerid));
 				}
 			} else {
 				intp.print("Session ID not found " + sessionid);

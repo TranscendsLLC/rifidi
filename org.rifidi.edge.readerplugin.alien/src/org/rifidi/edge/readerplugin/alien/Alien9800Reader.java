@@ -230,6 +230,9 @@ public class Alien9800Reader extends AbstractReader<Alien9800ReaderSession> {
 	@Override
 	public void destroyReaderSession(ReaderSession session) {
 		if (session != null) {
+			for(Integer id : session.currentCommands().keySet()){
+				session.killComand(id);
+			}
 			this.session.disconnect();
 			this.session = null;
 			

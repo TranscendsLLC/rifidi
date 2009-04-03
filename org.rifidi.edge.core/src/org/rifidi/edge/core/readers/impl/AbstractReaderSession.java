@@ -45,9 +45,11 @@ public abstract class AbstractReaderSession extends ReaderSession {
 	protected AtomicBoolean processing = new AtomicBoolean(false);
 	/** Queue for commands that get submitted while the executor is inactive. */
 	protected Queue<Command> commandQueue = new ConcurrentLinkedQueue<Command>();
-	private static final Log logger = LogFactory.getLog(AbstractReaderSession.class);
+	private static final Log logger = LogFactory
+			.getLog(AbstractReaderSession.class);
 
-	public AbstractReaderSession(String ID, Destination destination, JmsTemplate template) {
+	public AbstractReaderSession(String ID, Destination destination,
+			JmsTemplate template) {
 		super(ID);
 		this.commands = new HashMap<Integer, Command>();
 		this.idToData = new HashMap<Integer, CommandExecutionData>();
@@ -87,7 +89,9 @@ public abstract class AbstractReaderSession extends ReaderSession {
 		commands.remove(id);
 		CommandExecutionData data = idToData.remove(id);
 		if (data != null) {
-			data.future.cancel(true);
+			if (data.future != null) {
+				data.future.cancel(true);
+			}
 		}
 
 	}
@@ -149,7 +153,7 @@ public abstract class AbstractReaderSession extends ReaderSession {
 		logger.debug("Changing state: " + status);
 		this.status = status;
 	}
-	
+
 	/**
 	 * @return the destination
 	 */

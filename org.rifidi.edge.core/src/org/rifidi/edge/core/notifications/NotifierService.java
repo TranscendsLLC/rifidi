@@ -29,9 +29,14 @@ public interface NotifierService {
 	public void addCommandConfigFactoryEvent(String readerFactoryID);
 
 	public void removeCommandConfigFactoryEvent(String readerFactoryID);
-	
+
 	public void addCommandConfiguration(String commandConfigurationID);
-	
+
 	public void removeCommandConfiguration(String commandConfigurationID);
+
+	public void jobSubmitted(String readerID, String sessionID, Integer jobID,
+			String commandID);
+
+	public void jobDeleted(String readerID, String sessionID, Integer jobID);
 
 }
