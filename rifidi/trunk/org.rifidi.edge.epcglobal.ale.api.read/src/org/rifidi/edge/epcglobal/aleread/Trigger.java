@@ -2,6 +2,8 @@ package org.rifidi.edge.epcglobal.aleread;
 
 import java.util.TimeZone;
 
+import com.espertech.esper.client.EPRuntime;
+
 /**
  * Runnable for time based triggers.
  * 
@@ -19,6 +21,8 @@ class Trigger implements Runnable {
 	private Long offset;
 	/** Difference between system and ale timezone. */
 	private Long delta;
+	/** The esper runtime. */
+	private EPRuntime runtime;
 
 	/**
 	 * Constructor.
@@ -29,12 +33,13 @@ class Trigger implements Runnable {
 	 * @param target
 	 */
 	public Trigger(Long period, Long offset, Long timezone,
-			RifidiECSpec target) {
+			RifidiECSpec target, EPRuntime runtime) {
 		super();
 		this.period = period;
 		this.offset = offset;
 		this.target = target;
 		this.delta = timezone - TimeZone.getDefault().getRawOffset();
+		this.runtime = runtime;
 	}
 
 	public long getDelayToNextExec() {
@@ -85,7 +90,7 @@ class Trigger implements Runnable {
 	@Override
 	public void run() {
 		if (start) {
-			target.start();
+			runtime.sendEvent(new StartEvent(target.getName()));
 			return;
 		}
 		target.stop();

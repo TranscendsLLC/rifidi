@@ -19,6 +19,7 @@ import org.rifidi.edge.epcglobal.ale.api.lr.ws.DuplicateNameExceptionResponse;
 import org.rifidi.edge.epcglobal.ale.api.lr.ws.ImmutableReaderExceptionResponse;
 import org.rifidi.edge.epcglobal.ale.api.lr.ws.InUseExceptionResponse;
 import org.rifidi.edge.epcglobal.ale.api.lr.ws.NoSuchNameExceptionResponse;
+import org.rifidi.edge.epcglobal.ale.api.lr.ws.ValidationExceptionResponse;
 
 /**
  * @author Jochen Mader - jochen@pramari.com
@@ -50,23 +51,40 @@ public class LogicalReaderManagementServiceImpl implements
 	 */
 	@Override
 	public void createLogicalReader(String name, LRSpec lrSpec,
-			Boolean immutable) throws DuplicateNameExceptionResponse {
+			Boolean immutable) throws DuplicateNameExceptionResponse,
+			ValidationExceptionResponse {
 		logger.debug("Creating reader " + name);
 		if (!readers.containsKey(name)) {
 			Set<LogicalReader> readers = new HashSet<LogicalReader>();
+			// check if we got readers
+			if (lrSpec.getReaders() == null) {
+				throw new ValidationExceptionResponse(
+						"No reader names were selected for this spec.");
+			}
+			// check if all readers really exist
+			if (!this.readers.keySet().containsAll(
+					lrSpec.getReaders().getReader())) {
+				throw new ValidationExceptionResponse(
+						"An invalid reader was specified. ");
+			}
+			// create the list of readers for the new composite reader
 			for (String reader : lrSpec.getReaders().getReader()) {
 				readers.add(this.readers.get(reader));
 			}
 			Map<String, String> props = new HashMap<String, String>();
-			for (LRProperty prop : lrSpec.getProperties().getProperty()) {
-				props.put(prop.getName(), prop.getValue());
+			if (lrSpec.getProperties() != null) {
+				for (LRProperty prop : lrSpec.getProperties().getProperty()) {
+					props.put(prop.getName(), prop.getValue());
+				}
 			}
 			if (lrSpec.isIsComposite()) {
-				readers.add(new CompositeLogicalReaderImpl(immutable, name,
-						props, readers));
-				return;
+				this.readers.put(name, new CompositeLogicalReaderImpl(
+						immutable, name, props, readers));
+			} else {
+				this.readers.put(name, new LogicalReaderImpl(immutable, name,
+						props));
 			}
-			readers.add(new LogicalReaderImpl(immutable, name, props));
+
 			return;
 		}
 		throw new DuplicateNameExceptionResponse("A reader named " + name
@@ -85,7 +103,20 @@ public class LogicalReaderManagementServiceImpl implements
 			throws NoSuchNameExceptionResponse,
 			ImmutableReaderExceptionResponse, InUseExceptionResponse {
 		logger.debug("Trying to destroy reader " + name);
-		LogicalReader reader = getLogicalReaderByName(name);
+		LogicalReader reader = readers.get(name);
+		if (reader == null) {
+			throw new NoSuchNameExceptionResponse("Reader with name " + name
+					+ " does not exist.");
+		}
+		if (reader.isImmutable()) {
+			throw new ImmutableReaderExceptionResponse("Reader " + name
+					+ " is immutable. ");
+		}
+		readers.remove(name);
+		if (reader.isInUse()) {
+			throw new InUseExceptionResponse("Reader " + name
+					+ " is currently in use.");
+		}
 		reader.destroy();
 		logger.debug("Destroied " + name);
 	}
@@ -124,10 +155,10 @@ public class LogicalReaderManagementServiceImpl implements
 	 */
 	public void bindReader(AbstractReader<?> reader,
 			Dictionary<Object, Object> props) {
-		logger.debug("Binding reader " + reader.getName());
+		logger.debug("Binding reader " + reader.getID());
 		synchronized (this.readers) {
-			this.readers.put(reader.getName(), new LogicalReaderImpl(true,
-					reader.getName(), new HashMap<String, String>()));
+			this.readers.put(reader.getID(), new LogicalReaderImpl(true, reader
+					.getID(), new HashMap<String, String>()));
 		}
 	}
 
@@ -136,14 +167,14 @@ public class LogicalReaderManagementServiceImpl implements
 	 */
 	public void unbindReader(AbstractReader<?> reader,
 			Dictionary<Object, Object> props) {
-		logger.debug("Unbinding reader " + reader.getName());
+		logger.debug("Unbinding reader " + reader.getID());
 		synchronized (this.readers) {
-			if (this.readers.get(reader.getName()).isInUse()) {
+			if (this.readers.get(reader.getID()).isInUse()) {
 				logger.warn("Removing reader that is currently used: "
-						+ reader.getName());
+						+ reader.getID());
 			}
 			// TODO: add better removal logic
-			this.readers.remove(reader.getName());
+			this.readers.remove(reader.getID());
 		}
 	}
 

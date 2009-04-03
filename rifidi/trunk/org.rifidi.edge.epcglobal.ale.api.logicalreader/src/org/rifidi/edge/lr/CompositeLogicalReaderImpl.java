@@ -44,6 +44,7 @@ public class CompositeLogicalReaderImpl implements CompositeLogicalReader {
 		this.properties = new ConcurrentHashMap<String, String>(properties);
 		this.users = new HashSet<Object>();
 		this.readers = new HashSet<LogicalReader>();
+		this.immutable = immutable;
 		readers.addAll(readers);
 	}
 

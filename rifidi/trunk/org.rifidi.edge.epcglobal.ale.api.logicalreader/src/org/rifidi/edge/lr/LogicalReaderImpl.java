@@ -38,6 +38,7 @@ public class LogicalReaderImpl implements LogicalReader {
 	 */
 	public LogicalReaderImpl(Boolean immutable, String name,
 			Map<String, String> properties) {
+		this.immutable = immutable;
 		this.name = name;
 		this.properties = new ConcurrentHashMap<String, String>(properties);
 		this.users = new HashSet<Object>();
@@ -63,7 +64,7 @@ public class LogicalReaderImpl implements LogicalReader {
 	@Override
 	public void destroy() throws ImmutableReaderExceptionResponse,
 			InUseExceptionResponse {
-		if(isImmutable()){
+		if (isImmutable()) {
 			throw new ImmutableReaderExceptionResponse("Reader is immutable.");
 		}
 		if (!users.isEmpty()) {
