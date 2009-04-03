@@ -5,9 +5,10 @@ package org.rifidi.edge.readerplugin.alien.commands;
 
 import java.io.IOException;
 import java.math.BigInteger;
-import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.TimeZone;
 
 import javax.jms.JMSException;
@@ -18,6 +19,8 @@ import org.apache.activemq.command.ActiveMQObjectMessage;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.messages.EPCGeneration2Event;
+import org.rifidi.edge.core.messages.EventCycle;
+import org.rifidi.edge.core.messages.TagReadEvent;
 import org.rifidi.edge.readerplugin.alien.AbstractAlien9800Command;
 import org.rifidi.edge.readerplugin.alien.Alien9800ReaderSession;
 import org.rifidi.edge.readerplugin.alien.commandobject.AlienCommandObject;
@@ -46,14 +49,16 @@ public class AlienGetTagListCommand extends AbstractAlien9800Command {
 	private Calendar calendar;
 	private String antennasequence = "0";
 	private int persistTime = -1;
+	private final String reader;
 
 	/**
 	 * Constructor
 	 * 
 	 * @param commandID
 	 */
-	public AlienGetTagListCommand(String commandID) {
+	public AlienGetTagListCommand(String commandID, String readerID) {
 		super(commandID);
+		this.reader = readerID;
 	}
 
 	/**
@@ -126,9 +131,10 @@ public class AlienGetTagListCommand extends AbstractAlien9800Command {
 			GetTagListCommandObject getTagListCommandObject = new GetTagListCommandObject(
 					(Alien9800ReaderSession) readerSession);
 			List<String> tags = getTagListCommandObject.executeGet();
-			for (BigInteger m : parseString(tags)) {
-				template.send(destination, new ObjectMessageCreator(m));
-			}
+
+			template.send(destination, new ObjectMessageCreator(
+					parseString(tags)));
+
 		} catch (AlienException ex) {
 			logger.warn("Exception while executing command: " + ex);
 		} catch (IOException ex) {
@@ -144,9 +150,9 @@ public class AlienGetTagListCommand extends AbstractAlien9800Command {
 	 * @param input
 	 * @return
 	 */
-	private List<BigInteger> parseString(List<String> input) {
+	private Set<TagReadEvent> parseString(List<String> input) {
 
-		List<BigInteger> retVal = new ArrayList<BigInteger>();
+		Set<TagReadEvent> retVal = new HashSet<TagReadEvent>();
 
 		try {
 			for (String s : input) {
@@ -157,7 +163,34 @@ public class AlienGetTagListCommand extends AbstractAlien9800Command {
 					String timeStamp = splitString2[1];
 					String antennaID = splitString2[2];
 
-					retVal.add(new BigInteger(tagData, 16));
+					BigInteger data = new BigInteger(tagData, 16);
+
+					EPCGeneration2Event gen2event = new EPCGeneration2Event();
+					gen2event.setEPCMemory(data);
+					// make some wild guesses on the length of the epc field
+					if (data.bitLength() > 96) {
+						// 192 bits
+						gen2event.setEpcLength(192);
+					} else if (data.bitLength() > 64) {
+						// 96 bits
+						gen2event.setEpcLength(96);
+					} else {
+						// 64 bits
+						gen2event.setEpcLength(64);
+					}
+					int antennaID_int = 0;
+
+					try {
+						antennaID_int = Integer.parseInt(antennaID);
+					} catch (NumberFormatException ex) {
+
+					}
+
+					// TODO: parse timestamp
+
+					TagReadEvent tag = new TagReadEvent(gen2event,
+							antennaID_int, System.currentTimeMillis());
+					retVal.add(tag);
 
 				} else {
 					// logger.error("Something isreaders invalid: " +
@@ -173,8 +206,6 @@ public class AlienGetTagListCommand extends AbstractAlien9800Command {
 
 	private class ObjectMessageCreator implements MessageCreator {
 
-		/** The message that should be part of the object. */
-		private BigInteger message;
 		private ActiveMQObjectMessage objectMessage;
 
 		/**
@@ -182,25 +213,13 @@ public class AlienGetTagListCommand extends AbstractAlien9800Command {
 		 * 
 		 * @param message
 		 */
-		public ObjectMessageCreator(BigInteger message) {
+		public ObjectMessageCreator(Set<TagReadEvent> tags) {
 			super();
-			this.message = message;
 			objectMessage = new ActiveMQObjectMessage();
-			EPCGeneration2Event gen2event = new EPCGeneration2Event();
-			gen2event.setEPCMemory(message);
-			//make some wild guesses on the length of the epc field
-			if (message.bitLength() > 96) {
-				// 192 bits
-				gen2event.setEpcLength(192);
-			} else if (message.bitLength() > 64) {
-				// 96 bits
-				gen2event.setEpcLength(96);
-			} else {
-				// 64 bits
-				gen2event.setEpcLength(64);
-			}
+
 			try {
-				objectMessage.setObject(gen2event);
+				objectMessage.setObject(new EventCycle(tags, reader, System
+						.currentTimeMillis()));
 			} catch (JMSException e) {
 				logger.warn("Unable to set tag event: " + e);
 			}

@@ -412,7 +412,7 @@ public class ReaderConfigurationStubImpl implements ReaderStub {
 
 		ReaderSession session = reader.getReaderSessions().get(sessionID);
 		if (session != null) {
-			Command command = commandConfig.getCommand();
+			Command command = commandConfig.getCommand(readerID);
 			Integer processID = session.submit(command, repeatInterval,
 					timeUnit);
 			logger.info("Command with ID " + commandID

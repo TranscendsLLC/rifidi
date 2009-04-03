@@ -122,8 +122,8 @@ public class AlienGetTagListCommandConfiguration extends
 	 * org.rifidi.edge.core.commands.AbstractCommandConfiguration#getCommand()
 	 */
 	@Override
-	public AlienGetTagListCommand getCommand() {
-		AlienGetTagListCommand c = new AlienGetTagListCommand(super.getID());
+	public AlienGetTagListCommand getCommand(String readerID) {
+		AlienGetTagListCommand c = new AlienGetTagListCommand(super.getID(), readerID);
 		c.setAntennasequence(antenna_sequence);
 		c.setPersistTime(persistTime);
 		c.setTagType(tagType);

@@ -12,6 +12,8 @@ import org.rifidi.edge.core.api.jms.notifications.CommandConfigFactoryAdded;
 import org.rifidi.edge.core.api.jms.notifications.CommandConfigFactoryRemoved;
 import org.rifidi.edge.core.api.jms.notifications.CommandConfigurationAddedNotification;
 import org.rifidi.edge.core.api.jms.notifications.CommandConfigurationRemovedNotification;
+import org.rifidi.edge.core.api.jms.notifications.JobDeletedNotification;
+import org.rifidi.edge.core.api.jms.notifications.JobSubmittedNotification;
 import org.rifidi.edge.core.api.jms.notifications.ReaderAddedNotification;
 import org.rifidi.edge.core.api.jms.notifications.ReaderFactoryAddedNotification;
 import org.rifidi.edge.core.api.jms.notifications.ReaderFactoryRemovedNotification;
@@ -33,7 +35,6 @@ import org.springframework.jms.core.JmsTemplate;
  * 
  */
 public class NotifierServiceImpl implements NotifierService {
-
 	/** The template for sending out Notification messages */
 	private JmsTemplate extNotificationTemplate;
 	/** The queue to send out notifications on */
@@ -260,7 +261,7 @@ public class NotifierServiceImpl implements NotifierService {
 					new NotificationMessageCreator(
 							new CommandConfigFactoryRemoved(readerFactoryID)));
 		} catch (Exception e) {
-			logger.warn("ReaderFactoryAdded Notification not sent " + e);
+			logger.warn("ReaderFactoryRemoved Notification not sent " + e);
 		}
 
 	}
@@ -280,7 +281,7 @@ public class NotifierServiceImpl implements NotifierService {
 							new CommandConfigurationAddedNotification(
 									commandConfigurationID)));
 		} catch (Exception e) {
-			logger.warn("ReaderFactoryAdded Notification not sent " + e);
+			logger.warn("commandconfiguraitonAdded Notification not sent " + e);
 		}
 
 	}
@@ -300,9 +301,51 @@ public class NotifierServiceImpl implements NotifierService {
 							new CommandConfigurationRemovedNotification(
 									commandConfigurationID)));
 		} catch (Exception e) {
-			logger.warn("ReaderFactoryAdded Notification not sent " + e);
+			logger.warn("CommandConfiguraitonRemoved Notification not sent "
+					+ e);
 		}
 
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.core.notifications.NotifierService#jobDeleted(java.lang
+	 * .String, java.lang.String, java.lang.Integer)
+	 */
+	@Override
+	public void jobDeleted(String readerID, String sessionID, Integer jobID) {
+		try {
+			extNotificationTemplate.send(this.extNotificationDest,
+					new NotificationMessageCreator(new JobDeletedNotification(
+							readerID, sessionID, jobID)));
+		} catch (Exception e) {
+			logger.warn("job deleted Notification not sent " + e);
+
+		}
+
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.core.notifications.NotifierService#jobSubmitted(java.
+	 * lang.String, java.lang.String, java.lang.Integer, java.lang.String)
+	 */
+	@Override
+	public void jobSubmitted(String readerID, String sessionID, Integer jobID,
+			String commandID) {
+		try {
+			extNotificationTemplate.send(this.extNotificationDest,
+					new NotificationMessageCreator(
+							new JobSubmittedNotification(readerID, sessionID,
+									jobID, commandID)));
+		} catch (Exception e) {
+			logger.warn("job submitted Notification not sent " + e);
+
+		}
 	}
 
 }
