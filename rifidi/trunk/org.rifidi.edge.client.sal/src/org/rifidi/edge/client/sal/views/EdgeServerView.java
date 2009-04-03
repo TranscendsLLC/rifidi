@@ -27,6 +27,7 @@ import org.rifidi.edge.client.sal.modelmanager.ModelManagerService;
  */
 public class EdgeServerView extends ViewPart {
 
+	public static final String ID = "org.rifidi.edge.client.sal.views.EdgeServerView";
 	/** The tree viewer to use */
 	private AbstractTreeViewer treeViewer;
 

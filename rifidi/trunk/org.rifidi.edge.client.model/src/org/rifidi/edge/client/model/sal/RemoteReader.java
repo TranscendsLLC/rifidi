@@ -5,6 +5,8 @@ package org.rifidi.edge.client.model.sal;
 
 import org.eclipse.core.databinding.observable.map.ObservableMap;
 import org.eclipse.core.databinding.observable.map.WritableMap;
+import org.eclipse.core.databinding.observable.set.ObservableSet;
+import org.eclipse.core.databinding.observable.set.WritableSet;
 import org.rifidi.edge.core.api.rmi.dto.ReaderDTO;
 import org.rifidi.edge.core.api.rmi.dto.SessionDTO;
 
@@ -20,6 +22,7 @@ public class RemoteReader {
 	private ReaderDTO readerDTO;
 	/** The set of remote session belonging to this reader */
 	private ObservableMap remoteSessions;
+	private ObservableSet tags;
 
 	/**
 	 * Constructor
@@ -31,8 +34,10 @@ public class RemoteReader {
 		super();
 		this.readerDTO = readerDTO;
 		remoteSessions = new WritableMap();
+		tags = new WritableSet();
 		for (SessionDTO dto : readerDTO.getSessions()) {
-			_addSession(new RemoteSession(readerDTO.getReaderID(), dto));
+			_addSession(new RemoteSession(readerDTO.getReaderID(), readerDTO
+					.getReaderFactoryID(), dto));
 		}
 	}
 
@@ -44,10 +49,11 @@ public class RemoteReader {
 	}
 
 	/**
-	 * @return the readerDTO
+	 * 
+	 * @return the factory ID of this reader
 	 */
-	public ReaderDTO getReaderDTO() {
-		return readerDTO;
+	public String getFactoryID() {
+		return this.readerDTO.getReaderFactoryID();
 	}
 
 	/**
@@ -70,5 +76,12 @@ public class RemoteReader {
 	 */
 	public ObservableMap getRemoteSessions() {
 		return remoteSessions;
+	}
+
+	/**
+	 * @return The tags seen by this reader
+	 */
+	public ObservableSet getTags() {
+		return tags;
 	}
 }

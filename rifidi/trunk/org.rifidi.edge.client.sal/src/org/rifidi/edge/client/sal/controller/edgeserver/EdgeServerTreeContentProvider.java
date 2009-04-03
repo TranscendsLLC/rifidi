@@ -19,7 +19,9 @@ import org.eclipse.core.databinding.observable.map.MapChangeEvent;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
+import org.rifidi.edge.client.model.sal.RemoteCommandConfiguration;
 import org.rifidi.edge.client.model.sal.RemoteEdgeServer;
+import org.rifidi.edge.client.model.sal.RemoteJob;
 import org.rifidi.edge.client.model.sal.RemoteReader;
 import org.rifidi.edge.client.model.sal.RemoteReaderFactory;
 import org.rifidi.edge.client.model.sal.RemoteSession;
@@ -85,6 +87,11 @@ public class EdgeServerTreeContentProvider implements ITreeContentProvider,
 					.values();
 			Object[] retVal = new Object[sessions.size()];
 			return sessions.toArray(retVal);
+		} else if (parentElement instanceof RemoteSession) {
+			RemoteSession session = (RemoteSession) parentElement;
+			Collection<RemoteJob> jobs = session.getRemoteJobs().values();
+			Object[] retVal = new Object[jobs.size()];
+			return jobs.toArray(retVal);
 		}
 		return new Object[] {};
 	}
@@ -113,17 +120,18 @@ public class EdgeServerTreeContentProvider implements ITreeContentProvider,
 	public boolean hasChildren(Object element) {
 		if (element instanceof List) {
 			return !((List) element).isEmpty();
-		}
-		if (element instanceof RemoteEdgeServer) {
+		} else if (element instanceof RemoteEdgeServer) {
 			RemoteEdgeServer server = (RemoteEdgeServer) element;
 			Collection<RemoteReader> readers = server.getRemoteReaders()
 					.values();
 			if (readers.size() > 0)
 				return true;
-		}
-		if (element instanceof RemoteReader) {
+		} else if (element instanceof RemoteReader) {
 			RemoteReader reader = (RemoteReader) element;
 			return !reader.getRemoteSessions().isEmpty();
+		} else if (element instanceof RemoteSession) {
+			RemoteSession session = (RemoteSession) element;
+			return !session.getRemoteJobs().isEmpty();
 		}
 		return false;
 	}
@@ -281,6 +289,36 @@ public class EdgeServerTreeContentProvider implements ITreeContentProvider,
 	 * (non-Javadoc)
 	 * 
 	 * @see
+	 * org.rifidi.edge.client.sal.controller.edgeserver.EdgeServerController
+	 * #deleteRemoteJob(org.rifidi.edge.client.model.sal.RemoteJob)
+	 */
+	@Override
+	public void deleteRemoteJob(RemoteJob job) {
+		this.edgeServerList.get(0).deleteRemoteJob(job);
+
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.client.sal.controller.edgeserver.EdgeServerController
+	 * #scheduleJob(org.rifidi.edge.client.model.sal.RemoteSession,
+	 * org.rifidi.edge.client.model.sal.RemoteCommandConfiguration,
+	 * java.lang.Long)
+	 */
+	@Override
+	public void scheduleJob(RemoteSession session,
+			RemoteCommandConfiguration configuration, Long interval) {
+		this.edgeServerList.get(0)
+				.scheduleJob(session, configuration, interval);
+
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
 	 * org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface
 	 * .viewers.Viewer, java.lang.Object, java.lang.Object)
 	 */
@@ -327,9 +365,10 @@ public class EdgeServerTreeContentProvider implements ITreeContentProvider,
 					&& (oldVal instanceof RemoteReader)) {
 				removeRemoteReader((RemoteReader) oldVal);
 				addRemoteReader((RemoteReader) newVal);
-			}
-			if (newVal instanceof RemoteSession) {
+			} else if (newVal instanceof RemoteSession) {
 				logger.debug("SESSION CHANGED!");
+			} else if (newVal instanceof RemoteJob) {
+				logger.debug("JOB CHANGED!");
 			}
 		}
 
@@ -338,9 +377,10 @@ public class EdgeServerTreeContentProvider implements ITreeContentProvider,
 			Object val = event.diff.getNewValue(key);
 			if (val instanceof RemoteReader) {
 				addRemoteReader((RemoteReader) val);
-			}
-			if (val instanceof RemoteSession) {
+			} else if (val instanceof RemoteSession) {
 				addRemoteSession((RemoteSession) val);
+			} else if (val instanceof RemoteJob) {
+				addRemoteJob((RemoteJob) val);
 			}
 		}
 
@@ -349,9 +389,10 @@ public class EdgeServerTreeContentProvider implements ITreeContentProvider,
 			Object val = event.diff.getOldValue(key);
 			if (val instanceof RemoteReader) {
 				removeRemoteReader((RemoteReader) val);
-			}
-			if (val instanceof RemoteSession) {
+			} else if (val instanceof RemoteSession) {
 				removeRemoteSession((RemoteSession) val);
+			} else if (val instanceof RemoteJob) {
+				removeRemoteJob((RemoteJob) val);
 			}
 		}
 
@@ -374,7 +415,6 @@ public class EdgeServerTreeContentProvider implements ITreeContentProvider,
 	 * @param reader
 	 */
 	private void removeRemoteReader(RemoteReader reader) {
-		reader.getRemoteSessions().clear();
 		reader.getRemoteSessions().removeMapChangeListener(this);
 		viewer.remove(reader);
 	}
@@ -388,6 +428,7 @@ public class EdgeServerTreeContentProvider implements ITreeContentProvider,
 		RemoteReader reader = (RemoteReader) edgeServerList.get(0)
 				.getRemoteReaders().get(session.getReaderID());
 		session.addPropertyChangeListener(this);
+		session.getRemoteJobs().addMapChangeListener(this);
 		viewer.add(reader, session);
 	}
 
@@ -398,7 +439,34 @@ public class EdgeServerTreeContentProvider implements ITreeContentProvider,
 	 */
 	private void removeRemoteSession(RemoteSession session) {
 		session.removePropertyChangeListener(this);
+		session.getRemoteJobs().removeMapChangeListener(this);
 		viewer.remove(session);
+	}
+
+	/**
+	 * Helper method to add a RemoteJob
+	 * 
+	 * @param job
+	 */
+	private void addRemoteJob(RemoteJob job) {
+		RemoteReader reader = (RemoteReader) edgeServerList.get(0)
+				.getRemoteReaders().get(job.getReaderID());
+		if (reader != null) {
+			RemoteSession session = (RemoteSession) reader.getRemoteSessions()
+					.get(job.getSessionID());
+			if (session != null) {
+				viewer.add(session, job);
+			}
+		}
+	}
+
+	/**
+	 * Helper method to remove a remote job
+	 * 
+	 * @param job
+	 */
+	private void removeRemoteJob(RemoteJob job) {
+		viewer.remove(job);
 	}
 
 	/*

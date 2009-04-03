@@ -54,6 +54,9 @@ public class Command_Connect implements RemoteEdgeServerCommand {
 			String queuename = node.get(
 					EdgeServerPreferences.EDGE_SERVER_JMS_QUEUE,
 					EdgeServerPreferences.EDGE_SERVER_JMS_QUEUE_DEFAULT);
+			String tagQueueName = node.get(
+					EdgeServerPreferences.EDGE_SERVER_JMS_QUEUE_TAGS,
+					EdgeServerPreferences.EDGE_SERVER_JMS_QUEUE_TAGS_DEFAULT);
 			remoteEdgeServer.connectionFactory.setBrokerURL("tcp://" + ip + ":"
 					+ port);
 			remoteEdgeServer.conn = remoteEdgeServer.connectionFactory
@@ -61,6 +64,7 @@ public class Command_Connect implements RemoteEdgeServerCommand {
 			remoteEdgeServer.conn.start();
 			remoteEdgeServer.session = remoteEdgeServer.conn.createSession(
 					false, Session.AUTO_ACKNOWLEDGE);
+
 			remoteEdgeServer.dest = remoteEdgeServer.session
 					.createQueue(queuename);
 			remoteEdgeServer.consumer = remoteEdgeServer.session
@@ -68,6 +72,13 @@ public class Command_Connect implements RemoteEdgeServerCommand {
 			remoteEdgeServer.jmsMessageHandler = new JMSMessageHandler(
 					remoteEdgeServer);
 			remoteEdgeServer.consumer
+					.setMessageListener(remoteEdgeServer.jmsMessageHandler);
+
+			remoteEdgeServer.dest_tags = remoteEdgeServer.session
+					.createQueue(tagQueueName);
+			remoteEdgeServer.consumer_tags = remoteEdgeServer.session
+					.createConsumer(remoteEdgeServer.dest_tags);
+			remoteEdgeServer.consumer_tags
 					.setMessageListener(remoteEdgeServer.jmsMessageHandler);
 		} catch (JMSException e) {
 			remoteEdgeServer.disconnect();

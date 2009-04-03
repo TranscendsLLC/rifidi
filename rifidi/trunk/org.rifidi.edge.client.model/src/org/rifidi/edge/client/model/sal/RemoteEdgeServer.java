@@ -5,13 +5,15 @@ package org.rifidi.edge.client.model.sal;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
-import java.rmi.RemoteException;
+import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 import javax.jms.Connection;
 import javax.jms.Destination;
 import javax.jms.MessageConsumer;
 import javax.jms.Session;
 import javax.management.AttributeList;
+import javax.xml.bind.JAXBException;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.commons.logging.Log;
@@ -19,6 +21,7 @@ import org.apache.commons.logging.LogFactory;
 import org.eclipse.core.databinding.observable.map.ObservableMap;
 import org.eclipse.core.databinding.observable.map.WritableMap;
 import org.eclipse.core.runtime.preferences.DefaultScope;
+import org.fosstrak.tdt.TDTEngine;
 import org.osgi.service.prefs.Preferences;
 import org.rifidi.edge.client.model.Activator;
 import org.rifidi.edge.client.model.sal.commands.RequestExecuterSingleton;
@@ -32,9 +35,11 @@ import org.rifidi.edge.core.rmi.client.readerconfigurationstub.RS_CreateReader;
 import org.rifidi.edge.core.rmi.client.readerconfigurationstub.RS_CreateSession;
 import org.rifidi.edge.core.rmi.client.readerconfigurationstub.RS_DeleteReader;
 import org.rifidi.edge.core.rmi.client.readerconfigurationstub.RS_DeleteSession;
+import org.rifidi.edge.core.rmi.client.readerconfigurationstub.RS_KillCommand;
 import org.rifidi.edge.core.rmi.client.readerconfigurationstub.RS_ServerDescription;
 import org.rifidi.edge.core.rmi.client.readerconfigurationstub.RS_StartSession;
 import org.rifidi.edge.core.rmi.client.readerconfigurationstub.RS_StopSession;
+import org.rifidi.edge.core.rmi.client.readerconfigurationstub.RS_SubmitCommand;
 import org.rifidi.rmi.utils.exceptions.ServerUnavailable;
 
 /**
@@ -67,6 +72,10 @@ public class RemoteEdgeServer {
 	Destination dest;
 	/** The JMS consumer */
 	MessageConsumer consumer;
+	/** Destination of tag events */
+	Destination dest_tags;
+	/** Consumer of tag events */
+	MessageConsumer consumer_tags;
 	/** The last recorded start time of the server */
 	Long startupTime = 0l;
 	/** An object that recieves all JMS notifications */
@@ -75,6 +84,8 @@ public class RemoteEdgeServer {
 	private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 	/** The name of the state property */
 	public static final String STATE_PROPERTY = "org.rifidi.edge.client.model.sal.RemoteEdgeServer.state";
+	/** engine for converting tags */
+	TDTEngine tdtEngine;
 
 	/**
 	 * Constructor
@@ -93,6 +104,11 @@ public class RemoteEdgeServer {
 		commandConfigurations = new WritableMap();
 
 		connectionFactory = new ActiveMQConnectionFactory();
+		try {
+			this.tdtEngine = new TDTEngine();
+		} catch (Exception e) {
+			logger.warn("Cannot create TDTEngine");
+		}
 		Thread t = new Thread(RequestExecuterSingleton.getInstance());
 		t.start();
 	}
@@ -354,6 +370,42 @@ public class RemoteEdgeServer {
 			disconnect();
 		}
 
+	}
+
+	public void deleteRemoteJob(RemoteJob job) {
+		if (this.state != RemoteEdgeServerState.CONNECTED) {
+			logger.warn("Cannot delete remote job when Edge Server "
+					+ "is in the Disconnected State!");
+			return;
+		}
+		RS_KillCommand kill = new RS_KillCommand(getRSServerDescription(), job
+				.getReaderID(), job.getSessionID(), job.getJobID());
+		try {
+			kill.makeCall();
+		} catch (ServerUnavailable e) {
+			logger.error("Exception while killing remote job ", e);
+			disconnect();
+		}
+
+	}
+
+	public void scheduleJob(RemoteSession session,
+			RemoteCommandConfiguration configuration, Long interval) {
+		if (this.state != RemoteEdgeServerState.CONNECTED) {
+			logger.warn("Cannot delete remote job when Edge Server "
+					+ "is in the Disconnected State!");
+			return;
+		}
+		RS_SubmitCommand command = new RS_SubmitCommand(
+				getRSServerDescription(), session.getReaderID(), session
+						.getSessionID(), configuration.getID(), interval,
+				TimeUnit.MILLISECONDS);
+		try {
+			command.makeCall();
+		} catch (ServerUnavailable e) {
+			logger.error("Exception while submitting remote job ", e);
+			disconnect();
+		}
 	}
 
 	/**

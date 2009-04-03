@@ -34,6 +34,8 @@ public class EdgeServerPreferenceInitializer extends
 				EdgeServerPreferences.EDGE_SERVER_PORT_RMI_DEFAULT);
 		node.put(EdgeServerPreferences.EDGE_SERVER_JMS_QUEUE,
 				EdgeServerPreferences.EDGE_SERVER_JMS_QUEUE_DEFAULT);
+		node.put(EdgeServerPreferences.EDGE_SERVER_JMS_QUEUE_TAGS,
+				EdgeServerPreferences.EDGE_SERVER_JMS_QUEUE_TAGS_DEFAULT);
 	}
 
 }

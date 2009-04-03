@@ -321,4 +321,19 @@ public class CommandTreeContentProvider implements ITreeContentProvider,
 
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seeorg.rifidi.edge.client.sal.controller.commands.CommandController#
+	 * getCommandConfigurations()
+	 */
+	@Override
+	public Set<RemoteCommandConfiguration> getCommandConfigurations() {
+		Set<RemoteCommandConfiguration> configurations = new HashSet<RemoteCommandConfiguration>();
+		for (Set<RemoteCommandConfiguration> configSets : this.configTypeToCommandConfigSet
+				.values()) {
+			configurations.addAll(configSets);
+		}
+		return configurations;
+	}
 }

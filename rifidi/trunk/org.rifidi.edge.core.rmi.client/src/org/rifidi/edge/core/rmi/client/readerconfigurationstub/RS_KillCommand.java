@@ -7,7 +7,6 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 
 import org.rifidi.edge.core.api.rmi.ReaderStub;
-import org.rifidi.rmi.utils.cache.ServerDescription;
 import org.rifidi.rmi.utils.remotecall.ServerDescriptionBasedRemoteMethodCall;
 
 /**
@@ -17,7 +16,7 @@ import org.rifidi.rmi.utils.remotecall.ServerDescriptionBasedRemoteMethodCall;
  * 
  */
 public class RS_KillCommand extends
-		ServerDescriptionBasedRemoteMethodCall<Object, RemoteException> {
+		ServerDescriptionBasedRemoteMethodCall<Object, RuntimeException> {
 
 	/** The reader ID */
 	private String readerID;
@@ -38,7 +37,7 @@ public class RS_KillCommand extends
 	 * @param processID
 	 *            The process ID of the command to kill
 	 */
-	public RS_KillCommand(ServerDescription serverDescription, String readerID,
+	public RS_KillCommand(RS_ServerDescription serverDescription, String readerID,
 			String sessionID, Integer processID) {
 		super(serverDescription);
 		this.readerID = readerID;
@@ -55,7 +54,7 @@ public class RS_KillCommand extends
 	 */
 	@Override
 	protected Object performRemoteCall(Remote remoteObject)
-			throws RemoteException, RemoteException {
+			throws RemoteException, RuntimeException {
 		ReaderStub stub = (ReaderStub) remoteObject;
 		stub.killCommand(readerID, sessionID, processID);
 		return null;

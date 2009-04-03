@@ -18,6 +18,13 @@ import org.rifidi.edge.client.sal.SALPluginActivator;
  */
 public class CommandTreeLabelProvider implements ILabelProvider {
 
+	private Image serverGreen = SALPluginActivator.getImageDescriptor(
+			"icons/server-green.png").createImage();
+	private Image serverRed = SALPluginActivator.getImageDescriptor(
+			"icons/server-red.png").createImage();
+	private Image readerCog = SALPluginActivator.getImageDescriptor(
+			"icons/reader-cog.png").createImage();
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -29,24 +36,21 @@ public class CommandTreeLabelProvider implements ILabelProvider {
 			RemoteEdgeServer server = (RemoteEdgeServer) element;
 			switch (server.getState()) {
 			case CONNECTED:
-				return SALPluginActivator.getImageDescriptor(
-						"icons/server-green.png").createImage();
+				return serverGreen;
 			case DISCONNECTED:
-				return SALPluginActivator.getImageDescriptor(
-						"icons/server-red.png").createImage();
+				return serverRed;
 			}
 		}
 		if (element instanceof RemoteCommandConfigFactory) {
-			return SALPluginActivator
-					.getImageDescriptor("icons/reader-cog.png").createImage();
+			return readerCog;
 		}
 		if (element instanceof RemoteCommandConfigType) {
-			return SALPluginActivator
-					.getImageDescriptor("icons/folder.png").createImage();
+			return SALPluginActivator.getDefault().getImageRegistry().get(
+					SALPluginActivator.IMAGE_FOLDER);
 		}
 		if (element instanceof RemoteCommandConfiguration) {
-			return SALPluginActivator.getImageDescriptor("icons/cog.png")
-					.createImage();
+			return SALPluginActivator.getDefault().getImageRegistry().get(
+					SALPluginActivator.IMAGE_COG);
 		}
 		return null;
 	}
@@ -91,7 +95,12 @@ public class CommandTreeLabelProvider implements ILabelProvider {
 	 */
 	@Override
 	public void dispose() {
-		// TODO Auto-generated method stub
+		serverGreen.dispose();
+		serverRed.dispose();
+		readerCog.dispose();
+		serverGreen = null;
+		serverRed = null;
+		readerCog = null;
 
 	}
 

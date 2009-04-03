@@ -96,8 +96,8 @@ public class Command_SessionAdded implements RemoteEdgeServerCommand {
 		// If there was no error, put create a new RemoteSession and put it in
 		// the map
 		if (sessionDTO != null && sessions != null && !error) {
-			sessions.put(sessionDTO.getID(), new RemoteSession(readerID,
-					sessionDTO));
+			sessions.put(sessionDTO.getID(), new RemoteSession(readerID, reader
+					.getFactoryID(), sessionDTO));
 		} else {
 			logger.warn("Cannot add session to observable map");
 		}

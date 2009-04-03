@@ -1,6 +1,7 @@
 package org.rifidi.edge.client.sal;
 
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
@@ -14,6 +15,12 @@ public class SALPluginActivator extends AbstractUIPlugin {
 
 	// The shared instance
 	private static SALPluginActivator plugin;
+	
+	public static final String IMAGE_FOLDER = "folder";
+	
+	public static final String IMAGE_COG = "cog";
+	
+	public static final String IMAGE_TAG = "tag";
 
 	/**
 	 * The constructor
@@ -64,5 +71,16 @@ public class SALPluginActivator extends AbstractUIPlugin {
 	 */
 	public static ImageDescriptor getImageDescriptor(String path) {
 		return imageDescriptorFromPlugin(PLUGIN_ID, path);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#initializeImageRegistry(org.eclipse.jface.resource.ImageRegistry)
+	 */
+	@Override
+	protected void initializeImageRegistry(ImageRegistry reg) {
+		super.initializeImageRegistry(reg);
+		reg.put(IMAGE_FOLDER, getImageDescriptor("icons/folder.png"));
+		reg.put(IMAGE_COG, getImageDescriptor("icons/cog.png"));
+		reg.put(IMAGE_TAG, getImageDescriptor("icons/newspaper.png"));
 	}
 }

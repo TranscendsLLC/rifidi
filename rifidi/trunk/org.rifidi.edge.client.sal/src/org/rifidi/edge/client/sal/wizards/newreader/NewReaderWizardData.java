@@ -1,4 +1,4 @@
-package org.rifidi.edge.client.sal.wizards;
+package org.rifidi.edge.client.sal.wizards.newreader;
 
 import javax.management.AttributeList;
 

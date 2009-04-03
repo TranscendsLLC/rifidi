@@ -3,9 +3,6 @@
  */
 package org.rifidi.edge.client.sal.views;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -18,11 +15,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.part.ViewPart;
-import org.rifidi.edge.client.model.sal.RemoteEdgeServer;
 import org.rifidi.edge.client.sal.controller.commands.CommandTreeContentProvider;
 import org.rifidi.edge.client.sal.controller.commands.CommandTreeLabelProvider;
-import org.rifidi.edge.client.sal.controller.edgeserver.EdgeServerTreeContentProvider;
-import org.rifidi.edge.client.sal.controller.edgeserver.EdgeServerTreeLabelProvider;
 import org.rifidi.edge.client.sal.modelmanager.ModelManagerService;
 
 /**
@@ -33,6 +27,7 @@ import org.rifidi.edge.client.sal.modelmanager.ModelManagerService;
  */
 public class CommandView extends ViewPart {
 
+	public static final String ID = "org.rifidi.edge.client.sal.views.CommandView";
 	/** The tree viewer to use */
 	private AbstractTreeViewer treeViewer;
 

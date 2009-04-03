@@ -8,7 +8,6 @@ import java.rmi.RemoteException;
 import java.util.concurrent.TimeUnit;
 
 import org.rifidi.edge.core.api.rmi.ReaderStub;
-import org.rifidi.rmi.utils.cache.ServerDescription;
 import org.rifidi.rmi.utils.remotecall.ServerDescriptionBasedRemoteMethodCall;
 
 /**
@@ -51,7 +50,7 @@ public class RS_SubmitCommand extends
 	 *            The TimeUnit used for the repeat interval. Ignored if the
 	 *            repeatInterval is 0
 	 */
-	public RS_SubmitCommand(ServerDescription serverDescription,
+	public RS_SubmitCommand(RS_ServerDescription serverDescription,
 			String readerID, String sessionID, String commandID,
 			Long repeatInterval, TimeUnit timeUnit) {
 		super(serverDescription);

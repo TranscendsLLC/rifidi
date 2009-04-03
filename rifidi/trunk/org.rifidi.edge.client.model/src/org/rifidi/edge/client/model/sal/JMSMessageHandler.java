@@ -19,6 +19,8 @@ import org.rifidi.edge.core.api.jms.notifications.CommandConfigFactoryAdded;
 import org.rifidi.edge.core.api.jms.notifications.CommandConfigFactoryRemoved;
 import org.rifidi.edge.core.api.jms.notifications.CommandConfigurationAddedNotification;
 import org.rifidi.edge.core.api.jms.notifications.CommandConfigurationRemovedNotification;
+import org.rifidi.edge.core.api.jms.notifications.JobDeletedNotification;
+import org.rifidi.edge.core.api.jms.notifications.JobSubmittedNotification;
 import org.rifidi.edge.core.api.jms.notifications.ReaderAddedNotification;
 import org.rifidi.edge.core.api.jms.notifications.ReaderFactoryAddedNotification;
 import org.rifidi.edge.core.api.jms.notifications.ReaderFactoryRemovedNotification;
@@ -26,6 +28,7 @@ import org.rifidi.edge.core.api.jms.notifications.ReaderRemovedNotification;
 import org.rifidi.edge.core.api.jms.notifications.SessionAddedNotification;
 import org.rifidi.edge.core.api.jms.notifications.SessionRemovedNotification;
 import org.rifidi.edge.core.api.jms.notifications.SessionStatusChangedNotification;
+import org.rifidi.edge.core.api.tags.TagBatch;
 
 /**
  * An object who listens to a JMS Queue and schedules commands based on the kind
@@ -63,7 +66,11 @@ public class JMSMessageHandler implements MessageListener {
 			Object message;
 			try {
 				message = deserialize((BytesMessage) arg0);
-				if (message instanceof ReaderAddedNotification) {
+				if (message instanceof TagBatch) {
+					TagBatch batch = (TagBatch) message;
+					RequestExecuterSingleton.getInstance().scheduleRequest(
+							new Command_TagBatchReceived(server, batch));
+				} else if (message instanceof ReaderAddedNotification) {
 					ReaderAddedNotification notification = (ReaderAddedNotification) message;
 					RequestExecuterSingleton.getInstance().scheduleRequest(
 							new Command_ReaderAdded(server, notification));
@@ -108,13 +115,22 @@ public class JMSMessageHandler implements MessageListener {
 				} else if (message instanceof CommandConfigurationAddedNotification) {
 					CommandConfigurationAddedNotification notification = (CommandConfigurationAddedNotification) message;
 					RequestExecuterSingleton.getInstance().scheduleRequest(
-							new Command_CommandConfigurationAdded(server, notification));
+							new Command_CommandConfigurationAdded(server,
+									notification));
 
 				} else if (message instanceof CommandConfigurationRemovedNotification) {
 					CommandConfigurationRemovedNotification notification = (CommandConfigurationRemovedNotification) message;
 					RequestExecuterSingleton.getInstance().scheduleRequest(
-							new Command_CommandConfigurationRemoved(server, notification));
-
+							new Command_CommandConfigurationRemoved(server,
+									notification));
+				} else if (message instanceof JobSubmittedNotification) {
+					JobSubmittedNotification notification = (JobSubmittedNotification) message;
+					RequestExecuterSingleton.getInstance().scheduleRequest(
+							new Command_JobSubmitted(server, notification));
+				} else if (message instanceof JobDeletedNotification) {
+					JobDeletedNotification notification = (JobDeletedNotification) message;
+					RequestExecuterSingleton.getInstance().scheduleRequest(
+							new Command_JobDeleted(server, notification));
 				}
 			} catch (JMSException e) {
 				logger.warn("JMS Exception while recieving message");
