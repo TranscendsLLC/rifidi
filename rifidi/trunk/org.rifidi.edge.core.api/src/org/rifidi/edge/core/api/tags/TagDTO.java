@@ -21,4 +21,36 @@ public class TagDTO implements Serializable {
 
 	private long timestamp;
 
+	/**
+	 * @param tagID
+	 * @param antennaNumber
+	 * @param timestamp
+	 */
+	public TagDTO(BigInteger tagID, int antennaNumber, long timestamp) {
+		this.tagID = tagID;
+		this.antennaNumber = antennaNumber;
+		this.timestamp = timestamp;
+	}
+
+	/**
+	 * @return the tagID
+	 */
+	public BigInteger getTagID() {
+		return tagID;
+	}
+
+	/**
+	 * @return the antennaNumber
+	 */
+	public int getAntennaNumber() {
+		return antennaNumber;
+	}
+
+	/**
+	 * @return the timestamp
+	 */
+	public long getTimestamp() {
+		return timestamp;
+	}
+
 }
