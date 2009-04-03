@@ -6,7 +6,6 @@ Bundle-Version: 1.0.0
 Bundle-Vendor: PRAMARI LLC
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: org.rifidi.edge.client.ale.api.alelr.xsd.epcglobal,
- org.rifidi.edge.client.ale.api.proxy,
  org.rifidi.edge.client.ale.api.util,
  org.rifidi.edge.client.ale.api.wsdl.ale.epcglobal,
  org.rifidi.edge.client.ale.api.wsdl.alelr.epcglobal,
