@@ -248,7 +248,7 @@ public class ECSPECManagerServiceImpl implements ECSPECManagerService {
 			try {
 				System.out.println("start");
 				for (EventBean bean : arg0) {
-					System.out.println(((ProcessedEvent) bean.get("eve")).getHex());
+					System.out.println(bean);
 				}
 				System.out.println("stop");
 			} catch (Exception e) {
