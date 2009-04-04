@@ -36,6 +36,14 @@ public interface LogicalReaderManagementService {
 	Set<String> getLogicalReaders();
 
 	/**
+	 * Check if a reader with the given name exists.
+	 * 
+	 * @param name
+	 * @return
+	 */
+	boolean readerExists(String name);
+
+	/**
 	 * Destroy the reader with the given name.
 	 * 
 	 * @param name

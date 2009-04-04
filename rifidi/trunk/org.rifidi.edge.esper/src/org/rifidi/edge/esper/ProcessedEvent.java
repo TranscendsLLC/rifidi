@@ -22,11 +22,11 @@ public class ProcessedEvent {
 			return hex;
 		}
 		if ("killPwd".equals(name)) {
-			return baseEvent.readMemory(EPCGeneration2Event.MEMORY_RESERVED, 0,
+			return baseEvent.readMemory(0, 0,
 					32).toString(16);
 		}
 		if ("accessPwd".equals(name)) {
-			return baseEvent.readMemory(EPCGeneration2Event.MEMORY_RESERVED,
+			return baseEvent.readMemory(0,
 					32, 32).toString(16);
 		}
 		if ("epcBank".equals(name)) {

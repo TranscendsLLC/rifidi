@@ -5,6 +5,7 @@ package org.rifidi.edge.core.messages;
 
 import java.io.Serializable;
 import java.math.BigInteger;
+import java.util.List;
 
 /**
  * @author Jochen Mader - jochen@pramari.com
@@ -15,12 +16,10 @@ public class DatacontainerEvent implements Serializable {
 	/** Serial Version for this class. */
 	private static final long serialVersionUID = 1L;
 
-	protected BigInteger readMemory(BigInteger bank, int offset, int length) {
-		return bank.shiftRight(offset - 1).mod(
-				BigInteger.valueOf((long) Math.pow(2, length)));
-	}
+	protected List<BigInteger> memoryBanks;
 	
-	protected BigInteger createMemoryBank(){
-		return new BigInteger("0",2);
+	public BigInteger readMemory(int bankid, int offset, int length) throws IndexOutOfBoundsException{
+		BigInteger comp=new BigInteger(Double.toString(Math.pow(2, length)),10);
+		return memoryBanks.get(bankid).shiftRight(offset - 1).add(comp);
 	}
 }
