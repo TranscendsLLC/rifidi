@@ -12,11 +12,11 @@
 
 	<bean id="aleReadAPIService"
 		class="org.rifidi.edge.epcglobal.ale.api.read.ws.ALEServicePortTypeImpl">
-		<property name="lrService" ref="lrManagement" />
 		<property name="ecspecManagerService" ref="ecspecManager" />
 	</bean>
 	<bean id="ecspecManager"
 		class="org.rifidi.edge.epcglobal.aleread.ECSPECManagerServiceImpl">
+		<property name="lrService" ref="lrManagement" />
 		<property name="esperManagement" ref="esperManagerService"></property>
 	</bean>
 

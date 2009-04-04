@@ -23,8 +23,6 @@ import org.rifidi.edge.wsmanagement.WebService;
 @javax.jws.WebService(serviceName = "ALEService", portName = "ALEServicePort", targetNamespace = "urn:epcglobal:ale:wsdl:1", wsdlLocation = "org/rifidi/edge/epcglobal/ale/api/read/ws/epcglobal-ale-1_1-ale.wsdl", endpointInterface = "org.rifidi.edge.epcglobal.ale.api.read.ws.ALEServicePortType")
 public class ALEServicePortTypeImpl implements ALEServicePortType, WebService {
 
-	/** Service for managing logical readers. */
-	private LogicalReaderManagementService lrService;
 	/** Logger for this class. */
 	private static final Log logger = LogFactory
 			.getLog(ALEServicePortTypeImpl.class);
@@ -257,15 +255,7 @@ public class ALEServicePortTypeImpl implements ALEServicePortType, WebService {
 		}
 		return null;
 	}
-
-	/**
-	 * @param lrService
-	 *            the lrService to set
-	 */
-	public void setLrService(LogicalReaderManagementService lrService) {
-		this.lrService = lrService;
-	}
-
+	
 	/**
 	 * @param ecspecManagerService
 	 *            the ecspecManagerService to set

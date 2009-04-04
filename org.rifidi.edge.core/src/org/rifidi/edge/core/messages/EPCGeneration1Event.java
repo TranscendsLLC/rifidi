@@ -7,35 +7,39 @@ import java.math.BigInteger;
 
 /**
  * @author Kyle Neumeier - kyle@pramari.com
- *
+ * 
  */
 public class EPCGeneration1Event extends DatacontainerEvent {
 
-	/***/
+	/** serial version for this class. */
 	private static final long serialVersionUID = 1L;
-	
+
+	/** Length of the epc. */
 	protected Integer epcLength;
-	
-	private BigInteger epcBank;
-	
+
+	/**
+	 * Constructor.
+	 */
 	public EPCGeneration1Event() {
-		epcBank=super.createMemoryBank();
+		memoryBanks.add(new BigInteger("0"));
 	}
-	
-	public void setEPCMemory(BigInteger memBank){
-		this.epcBank=memBank;
+
+	/**
+	 * Set the epc memory bank.
+	 * 
+	 * @param memBank
+	 */
+	public void setEPCMemory(BigInteger memBank) {
+		memoryBanks.set(0, memBank);
 	}
-	
-	public String getEPC_HEX() {
-		return epcBank.toString(16);
-	}
-	
-	public String getEPC_BIN() {
-		return epcBank.toString(2);
-	}
-	
-	public BigInteger getEPC(){
-		return epcBank;
+
+	/**
+	 * Get the epc memory bank.
+	 * 
+	 * @return
+	 */
+	public BigInteger getEPCMemory() {
+		return memoryBanks.get(0);
 	}
 
 	/**
@@ -46,7 +50,8 @@ public class EPCGeneration1Event extends DatacontainerEvent {
 	}
 
 	/**
-	 * @param epcLength the epcLength to set
+	 * @param epcLength
+	 *            the epcLength to set
 	 */
 	public void setEpcLength(Integer epcLength) {
 		this.epcLength = epcLength;

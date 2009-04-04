@@ -23,6 +23,7 @@ import org.rifidi.edge.epcglobal.ale.api.read.ws.InvalidURIExceptionResponse;
 import org.rifidi.edge.epcglobal.ale.api.read.ws.NoSuchNameExceptionResponse;
 import org.rifidi.edge.epcglobal.ale.api.read.ws.NoSuchSubscriberExceptionResponse;
 import org.rifidi.edge.esper.EsperManagementService;
+import org.rifidi.edge.lr.LogicalReaderManagementService;
 
 import com.espertech.esper.client.EPServiceProvider;
 import com.espertech.esper.client.EventBean;
@@ -46,7 +47,9 @@ public class ECSPECManagerServiceImpl implements ECSPECManagerService {
 	private EPServiceProvider esper;
 	/** Threadpool for executing the scheduled triggers. */
 	private ScheduledExecutorService triggerpool;
-
+	/** Service for managing logical readers. */
+	private LogicalReaderManagementService lrService;
+	
 	/**
 	 * Constructor.
 	 */
@@ -82,6 +85,17 @@ public class ECSPECManagerServiceImpl implements ECSPECManagerService {
 			logger.debug("Defining " + name);
 			if (!nameToSpec.containsKey(name)) {
 				try {
+
+					// check if we got logical readers line 2135 of spec
+					if (spec.getLogicalReaders() == null
+							|| spec.getLogicalReaders().getLogicalReader() == null
+							|| spec.getLogicalReaders().getLogicalReader().size() == 0) {
+						throw new ECSpecValidationExceptionResponse("No logical readers were provided.");
+					}
+					// check if we got valid logical readers line 2135 of spec		
+					for (String reader : spec.getLogicalReaders().getLogicalReader()) {
+						lrService.readerExists(reader);
+					}
 					RifidiECSpec ecSpec = new RifidiECSpec(name, spec, esper,
 							triggerpool);
 					nameToSpec.put(name, ecSpec);
@@ -230,6 +244,15 @@ public class ECSPECManagerServiceImpl implements ECSPECManagerService {
 			}
 		}
 	}
+
+	/**
+	 * @param lrService
+	 *            the lrService to set
+	 */
+	public void setLrService(LogicalReaderManagementService lrService) {
+		this.lrService = lrService;
+	}
+
 
 	private class TestListener implements UpdateListener {
 		/*

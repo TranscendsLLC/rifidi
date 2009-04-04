@@ -35,8 +35,7 @@ Export-Package: org.rifidi.edge.core.commands,
  org.rifidi.edge.core.messages.exceptions,
  org.rifidi.edge.core.notifications,
  org.rifidi.edge.core.readers,
- org.rifidi.edge.core.readers.impl,
- org.rifidi.edge.core.utilities
+ org.rifidi.edge.core.readers.impl
 Require-Bundle: org.rifidi.configuration;bundle-version="1.0.0";visibility:=reexport
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-Description: This bundle contains several core services needed by the edge server, such as ReaderSession service

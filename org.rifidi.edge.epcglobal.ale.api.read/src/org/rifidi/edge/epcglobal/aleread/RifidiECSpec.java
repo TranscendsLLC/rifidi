@@ -59,7 +59,6 @@ class RifidiECSpec {
 	private ArrayList<EPStatement> queryStatements;
 	/** Set containing all the scheduled triggers futures. */
 	private Set<ScheduledFuture<?>> futures;
-
 	/**
 	 * Constructor.
 	 * 
@@ -79,17 +78,6 @@ class RifidiECSpec {
 		this.queryStatements = new ArrayList<EPStatement>();
 		this.futures = new HashSet<ScheduledFuture<?>>();
 		this.esper = esper;
-		// check if we got logical readers line 2135 of spec
-		if (spec.getLogicalReaders() == null
-				|| spec.getLogicalReaders().getLogicalReader() == null
-				|| spec.getLogicalReaders().getLogicalReader().size() == 0) {
-			throw new ECSpecValidationExceptionResponse("No logical readers were provided.");
-		}
-		// check if we got valid logical readers line 2135 of spec		
-		for (String reader : spec.getLogicalReaders().getLogicalReader()) {
-			//TODO: fill in
-		}
-		
 		// check if we got a boundary spec line 2137
 		ECBoundarySpec boundaryspec = spec.getBoundarySpec();
 		if(boundaryspec==null){

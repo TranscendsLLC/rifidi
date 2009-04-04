@@ -41,6 +41,14 @@ public class LogicalReaderManagementServiceImpl implements
 		logger.debug("Service created.");
 	}
 
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.lr.LogicalReaderManagementService#readerExists(java.lang.String)
+	 */
+	@Override
+	public boolean readerExists(String name) {
+		return readers.containsKey(name);
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
