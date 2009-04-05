@@ -19,7 +19,7 @@ import org.apache.activemq.command.ActiveMQObjectMessage;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.messages.EPCGeneration2Event;
-import org.rifidi.edge.core.messages.EventCycle;
+import org.rifidi.edge.core.messages.ReadCycle;
 import org.rifidi.edge.core.messages.TagReadEvent;
 import org.rifidi.edge.readerplugin.alien.AbstractAlien9800Command;
 import org.rifidi.edge.readerplugin.alien.Alien9800ReaderSession;
@@ -218,7 +218,7 @@ public class AlienGetTagListCommand extends AbstractAlien9800Command {
 			objectMessage = new ActiveMQObjectMessage();
 
 			try {
-				objectMessage.setObject(new EventCycle(tags, reader, System
+				objectMessage.setObject(new ReadCycle(tags, reader, System
 						.currentTimeMillis()));
 			} catch (JMSException e) {
 				logger.warn("Unable to set tag event: " + e);
