@@ -7,15 +7,18 @@ import java.math.BigInteger;
 
 /**
  * @author Kyle Neumeier - kyle@pramari.com
- * 
+ * @author Jochen Mader - jochen@pramari.com
  */
 public class EPCGeneration1Event extends DatacontainerEvent {
 
 	/** serial version for this class. */
 	private static final long serialVersionUID = 1L;
-
+	/** Pure identity field, generated externally!! */
+	private String pureIdentity;
 	/** Length of the epc. */
 	protected Integer epcLength;
+	/** Store a hex copy of the epc for comparison. */
+	private String hex = "";
 
 	/**
 	 * Constructor.
@@ -31,8 +34,24 @@ public class EPCGeneration1Event extends DatacontainerEvent {
 	 */
 	public void setEPCMemory(BigInteger memBank) {
 		memoryBanks.set(0, memBank);
+		hex = memBank.toString(16);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.core.messages.DatacontainerEvent#getField(org.rifidi.
+	 * edge.core.messages.EpcFields)
+	 */
+	@Override
+	public String getField(EpcFields field) {
+		if (EpcFields.EPC.equals(field)) {
+			return hex;
+		}
+		return null;
+	}
+	
 	/**
 	 * Get the epc memory bank.
 	 * 
@@ -57,4 +76,17 @@ public class EPCGeneration1Event extends DatacontainerEvent {
 		this.epcLength = epcLength;
 	}
 
+	/**
+	 * @return the pureIdentity
+	 */
+	public String getPureIdentity() {
+		return pureIdentity;
+	}
+
+	/**
+	 * Set the pure identity.
+	 */
+	public void setPureIdentlty(String pureIdentity) {
+		this.pureIdentity = pureIdentity;
+	}
 }
