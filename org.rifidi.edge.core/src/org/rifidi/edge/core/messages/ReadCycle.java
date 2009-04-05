@@ -13,7 +13,7 @@ import java.util.Set;
  * @author Kyle Neumeier - kyle@pramari.com
  * 
  */
-public class EventCycle implements Serializable {
+public class ReadCycle implements Serializable {
 
 	/** The serial version ID for this class */
 	private static final long serialVersionUID = 1L;
@@ -29,7 +29,7 @@ public class EventCycle implements Serializable {
 	 * @param readerID
 	 * @param eventTimestamp
 	 */
-	public EventCycle(Set<TagReadEvent> tags, String readerID,
+	public ReadCycle(Set<TagReadEvent> tags, String readerID,
 			long eventTimestamp) {
 		this.tags = tags;
 		this.readerID = readerID;
