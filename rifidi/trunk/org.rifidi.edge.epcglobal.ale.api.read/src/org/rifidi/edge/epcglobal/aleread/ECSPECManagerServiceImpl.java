@@ -15,6 +15,8 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.rifidi.edge.core.messages.EPCGeneration1Event;
+import org.rifidi.edge.core.messages.TagReadEvent;
 import org.rifidi.edge.epcglobal.ale.api.read.data.ECSpec;
 import org.rifidi.edge.epcglobal.ale.api.read.ws.DuplicateNameExceptionResponse;
 import org.rifidi.edge.epcglobal.ale.api.read.ws.DuplicateSubscriptionExceptionResponse;
@@ -28,6 +30,7 @@ import org.rifidi.edge.lr.LogicalReaderManagementService;
 import com.espertech.esper.client.EPServiceProvider;
 import com.espertech.esper.client.EventBean;
 import com.espertech.esper.client.UpdateListener;
+import com.espertech.esper.event.map.MapEventBean;
 
 /**
  * @author Jochen Mader - jochen@pramari.com
@@ -49,7 +52,7 @@ public class ECSPECManagerServiceImpl implements ECSPECManagerService {
 	private ScheduledExecutorService triggerpool;
 	/** Service for managing logical readers. */
 	private LogicalReaderManagementService lrService;
-	
+
 	/**
 	 * Constructor.
 	 */
@@ -85,19 +88,16 @@ public class ECSPECManagerServiceImpl implements ECSPECManagerService {
 			logger.debug("Defining " + name);
 			if (!nameToSpec.containsKey(name)) {
 				try {
-
 					// check if we got logical readers line 2135 of spec
 					if (spec.getLogicalReaders() == null
 							|| spec.getLogicalReaders().getLogicalReader() == null
-							|| spec.getLogicalReaders().getLogicalReader().size() == 0) {
-						throw new ECSpecValidationExceptionResponse("No logical readers were provided.");
+							|| spec.getLogicalReaders().getLogicalReader()
+									.size() == 0) {
+						throw new ECSpecValidationExceptionResponse(
+								"No logical readers were provided.");
 					}
-					// check if we got valid logical readers line 2135 of spec		
-					for (String reader : spec.getLogicalReaders().getLogicalReader()) {
-						lrService.readerExists(reader);
-					}
-					RifidiECSpec ecSpec = new RifidiECSpec(name, spec, esper,
-							triggerpool);
+					RifidiECSpec ecSpec = new RifidiECSpec(name, spec,
+							lrService, esper, triggerpool);
 					nameToSpec.put(name, ecSpec);
 					return;
 				} catch (InvalidURIExceptionResponse e) {
@@ -125,6 +125,7 @@ public class ECSPECManagerServiceImpl implements ECSPECManagerService {
 			RifidiECSpec spec = nameToSpec.remove(name);
 			nameToURIs.remove(name);
 			spec.stop();
+			spec.destroy();
 		}
 	}
 
@@ -253,8 +254,10 @@ public class ECSPECManagerServiceImpl implements ECSPECManagerService {
 		this.lrService = lrService;
 	}
 
-
 	private class TestListener implements UpdateListener {
+		// TODO: synchronization?
+		private Set<TagReadEvent> lastEventSet;
+
 		/*
 		 * (non-Javadoc)
 		 * 
@@ -265,12 +268,24 @@ public class ECSPECManagerServiceImpl implements ECSPECManagerService {
 		@Override
 		public void update(EventBean[] arg0, EventBean[] arg1) {
 			esper.getEPRuntime().sendEvent(new StartEvent("wuhu"));
+			boolean empty = false;
 			try {
-				System.out.println("start");
+				Set<TagReadEvent> tagEvents = new HashSet<TagReadEvent>();
 				for (EventBean bean : arg0) {
-					System.out.println(bean);
+					if (((MapEventBean) bean).getProperties().containsKey(
+							"stream_0")) {
+						tagEvents.add((TagReadEvent) ((MapEventBean) bean)
+								.get("stream_0"));
+					} else {
+						break;
+					}
 				}
-				System.out.println("stop");
+				System.out.println("received: " + tagEvents.size());
+				for (TagReadEvent tagEvent : tagEvents) {
+					System.out
+							.println(((EPCGeneration1Event) tagEvent.getTag())
+									.getEPC());
+				}
 			} catch (Exception e) {
 				System.out.println(e.toString());
 			}

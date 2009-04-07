@@ -40,10 +40,22 @@ public class CompositeLogicalReaderImpl implements CompositeLogicalReader {
 	 */
 	public CompositeLogicalReaderImpl(Boolean immutable, String name,
 			Map<String, String> properties, Set<LogicalReader> readers) {
+		if (immutable == null) {
+			throw new IllegalArgumentException("immutable must not be null");
+		}
+		if (name == null) {
+			throw new IllegalArgumentException("name must not be null");
+		}
+		if (readers == null) {
+			throw new IllegalArgumentException("readers must not be null");
+		}
+		if (properties == null) {
+			throw new IllegalArgumentException("properties must not be null");
+		}
 		this.name = name;
 		this.properties = new ConcurrentHashMap<String, String>(properties);
 		this.users = new HashSet<Object>();
-		this.readers = new HashSet<LogicalReader>();
+		this.readers = readers;
 		this.immutable = immutable;
 		readers.addAll(readers);
 	}
@@ -71,7 +83,7 @@ public class CompositeLogicalReaderImpl implements CompositeLogicalReader {
 	@Override
 	public void destroy() throws ImmutableReaderExceptionResponse,
 			InUseExceptionResponse {
-		if(isImmutable()){
+		if (isImmutable()) {
 			throw new ImmutableReaderExceptionResponse("Reader is immutable.");
 		}
 		if (!users.isEmpty()) {
@@ -337,6 +349,16 @@ public class CompositeLogicalReaderImpl implements CompositeLogicalReader {
 			}
 		}
 		throw new InUseExceptionResponse("Reader is in use.");
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.rifidi.edge.lr.LogicalReader#getReaders()
+	 */
+	@Override
+	public Set<LogicalReader> getReaders() {
+		return new HashSet<LogicalReader>(readers);
 	}
 
 }
