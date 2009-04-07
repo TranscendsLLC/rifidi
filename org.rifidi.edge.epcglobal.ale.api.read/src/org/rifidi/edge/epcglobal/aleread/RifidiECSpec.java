@@ -10,10 +10,13 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.rifidi.edge.epcglobal.ale.api.lr.ws.NoSuchNameExceptionResponse;
 import org.rifidi.edge.epcglobal.ale.api.read.data.ECBoundarySpec;
 import org.rifidi.edge.epcglobal.ale.api.read.data.ECSpec;
 import org.rifidi.edge.epcglobal.ale.api.read.ws.ECSpecValidationExceptionResponse;
 import org.rifidi.edge.epcglobal.ale.api.read.ws.InvalidURIExceptionResponse;
+import org.rifidi.edge.lr.LogicalReader;
+import org.rifidi.edge.lr.LogicalReaderManagementService;
 
 import com.espertech.esper.client.EPServiceProvider;
 import com.espertech.esper.client.EPStatement;
@@ -59,6 +62,11 @@ class RifidiECSpec {
 	private ArrayList<EPStatement> queryStatements;
 	/** Set containing all the scheduled triggers futures. */
 	private Set<ScheduledFuture<?>> futures;
+	/** TODO: this needs fixing as the service might go away and reappear!!! */
+	private LogicalReaderManagementService lrService;
+	/** Readers used by this spec. */
+	private Set<LogicalReader> readers;
+
 	/**
 	 * Constructor.
 	 * 
@@ -67,7 +75,8 @@ class RifidiECSpec {
 	 * @param esper
 	 * @throws InvalidURIExceptionResponse
 	 */
-	public RifidiECSpec(String name, ECSpec spec, EPServiceProvider esper,
+	public RifidiECSpec(String name, ECSpec spec,
+			LogicalReaderManagementService lrService, EPServiceProvider esper,
 			ScheduledExecutorService triggerpool)
 			throws InvalidURIExceptionResponse,
 			ECSpecValidationExceptionResponse {
@@ -78,10 +87,33 @@ class RifidiECSpec {
 		this.queryStatements = new ArrayList<EPStatement>();
 		this.futures = new HashSet<ScheduledFuture<?>>();
 		this.esper = esper;
+		readers = new HashSet<LogicalReader>();
+		// check if we got valid logical readers line 2135 of spec
+		String currentReader = "";
+		try {
+			for (String reader : spec.getLogicalReaders().getLogicalReader()) {
+				currentReader = reader;
+				lrService.getLogicalReaderByName(reader).aquire(this);
+				readers.add(lrService.getLogicalReaderByName(reader));
+			}
+		} catch (NoSuchNameExceptionResponse e) {
+			// release all readers that have already been aquired
+			for (String reader : spec.getLogicalReaders().getLogicalReader()) {
+				try {
+					lrService.getLogicalReaderByName(reader).release(this);
+				} catch (NoSuchNameExceptionResponse ex) {
+					logger.debug("Reader " + reader + " doesn't exist");
+				}
+			}
+			throw new ECSpecValidationExceptionResponse("Logical reader "
+					+ currentReader + " doesn't exist.");
+		}
+
 		// check if we got a boundary spec line 2137
 		ECBoundarySpec boundaryspec = spec.getBoundarySpec();
-		if(boundaryspec==null){
-			throw new ECSpecValidationExceptionResponse("No boundar spec specified."); 
+		if (boundaryspec == null) {
+			throw new ECSpecValidationExceptionResponse(
+					"No boundar spec specified.");
 		}
 		startTriggers = new HashSet<Trigger>();
 		// collect start triggers
@@ -146,18 +178,22 @@ class RifidiECSpec {
 								+ spec.getBoundarySpec().getStableSetInterval()
 										.getUnit());
 			}
-			stableSetInterval = spec.getBoundarySpec().getStableSetInterval().getValue();
+			stableSetInterval = spec.getBoundarySpec().getStableSetInterval()
+					.getValue();
 		}
-		
+
 		// check if the time values are valid line 2197
-		if(duration<0){
-			throw new ECSpecValidationExceptionResponse("Duration is smaller than 0.");
+		if (duration < 0) {
+			throw new ECSpecValidationExceptionResponse(
+					"Duration is smaller than 0.");
 		}
-		if(stableSetInterval<0){
-			throw new ECSpecValidationExceptionResponse("Stable set interval is smaller than 0.");
+		if (stableSetInterval < 0) {
+			throw new ECSpecValidationExceptionResponse(
+					"Stable set interval is smaller than 0.");
 		}
-		if(repeatInterval<0){
-			throw new ECSpecValidationExceptionResponse("Repeat interval is smaller than 0.");	
+		if (repeatInterval < 0) {
+			throw new ECSpecValidationExceptionResponse(
+					"Repeat interval is smaller than 0.");
 		}
 		// when data available indicates if the spec should stop as soon as the
 		// first dataset has arrived
@@ -167,12 +203,13 @@ class RifidiECSpec {
 		} else {
 			whenDataAvailable = false;
 		}
-		//check if we can stop line 2203
-		if(stopTriggers.size()==0 && duration==0 && stableSetInterval == 0 && !whenDataAvailable){
-			
+		// check if we can stop line 2203
+		if (stopTriggers.size() == 0 && duration == 0 && stableSetInterval == 0
+				&& !whenDataAvailable) {
+
 		}
 		// collect the primary keys
-		//TODO: we need to check if the keys actually exist!!!!!
+		// TODO: we need to check if the keys actually exist!!!!!
 		if (spec.getExtension() != null
 				&& spec.getExtension().getPrimaryKeyFields() != null) {
 			primarykeys = new HashSet<String>(spec.getExtension()
@@ -180,9 +217,9 @@ class RifidiECSpec {
 		} else {
 			primarykeys = new HashSet<String>();
 		}
-		//if no primary key is given the epc is the key
-		if(primarykeys.size()==0){
-			primarykeys.add("epc");
+		// if no primary key is given the epc is the key
+		if (primarykeys.size() == 0) {
+			primarykeys.add("EPC");
 		}
 		// TODO: finish the report spec.
 		// for(ECReportSpec repspec:spec.getReportSpecs().getReportSpec()){
@@ -251,30 +288,78 @@ class RifidiECSpec {
 	}
 
 	/**
+	 * Helper method for filling the given set with the names of physicals
+	 * readers.
+	 * 
+	 * @param readerNames
+	 */
+	private void getReaderNames(LogicalReader reader, Set<String> readerNames) {
+		if (reader.getReaders().size() == 0) {
+			readerNames.add(reader.getName());
+			return;
+		}
+		for (LogicalReader subReader : reader.getReaders()) {
+			getReaderNames(subReader, readerNames);
+		}
+	}
+
+	/**
 	 * Start the spec.
 	 */
 	public void start() {
 		synchronized (statements) {
 			if (statements.size() == 0) {
+				HashSet<String> readerNames = new HashSet<String>();
+				for (LogicalReader reader : readers) {
+					getReaderNames(reader, readerNames);
+				}
+
 				// SETUP
 				// create the window window
-				statements.add(esper.getEPAdministrator().createEPL(
-						"create window "
-								+ name
-								+ "_collectwin.win:time("
-								+ (duration > repeatInterval ? duration
-										: repeatInterval)
-								+ "sec) org.rifidi.edge.esper.ProcessedEvent"));
-				//create the where conditions for primary fields
-				StringBuilder prims=new StringBuilder();
-				boolean first=true;
-				for(String key:primarykeys){
-					if(!first){
+				statements
+						.add(esper
+								.getEPAdministrator()
+								.createEPL(
+										"create window "
+												+ name
+												+ "_collectwin.win:time("
+												+ (duration > repeatInterval ? duration
+														: repeatInterval)
+												+ "sec) org.rifidi.edge.core.messages.TagReadEvent"));
+				// create the where conditions for primary fields
+				StringBuilder prims = new StringBuilder();
+				boolean first = true;
+				for (String key : primarykeys) {
+					if (!first) {
 						prims.append(" and");
-						first=false;
+						first = false;
 					}
-					prims.append(" processedEvent.field('"+key+"')=whine.field('"+key+"')");
+					// direct memory access
+					if (key.startsWith("@")) {
+						prims.append(" collected.tag.readMemory('");
+						prims.append(key);
+						prims.append("')=tagevent.tag.readMemory('");
+						prims.append(key);
+						prims.append("')");
+					} else {
+						prims.append(" collected.tag.");
+						prims.append(key);
+						prims.append("?=tagevent.tag.");
+						prims.append(key);
+						prims.append("?");
+					}
 				}
+
+				StringBuilder readersBuilder = new StringBuilder("( ");
+				for (String readerName : readerNames) {
+					readersBuilder.append("'");
+					readersBuilder.append(readerName);
+					readersBuilder.append("'");
+					readersBuilder.append(",");
+				}
+				//remove trailing commas
+				readersBuilder.deleteCharAt(readersBuilder.length()-1);
+				readersBuilder.append(" )");
 				// fill the window
 				statements
 						.add(esper
@@ -282,11 +367,13 @@ class RifidiECSpec {
 								.createEPL(
 										"insert into "
 												+ name
-												+ "_collectwin select * from org.rifidi.edge.esper.ProcessedEvent as processedEvent where "
+												+ "_collectwin select * from org.rifidi.edge.core.messages.TagReadEvent as tagevent where "
 												+ "not exists (select * from "
 												+ name
-												+ "_collectwin as whine where "+prims.toString()+")"));
-
+												+ "_collectwin as collected where "
+												+ prims.toString()
+												+ ") and readerID in "
+												+ readersBuilder.toString()));
 				// INTERVAL TIMING
 				// regular timing using intervals, don't use if data available
 				// is set
@@ -432,6 +519,25 @@ class RifidiECSpec {
 					logger.fatal("Unable to kill trigger: " + e);
 				}
 			}
+		}
+	}
+
+	/**
+	 * Destroy the spec and clean up.
+	 */
+	public void destroy() {
+		synchronized (statements) {
+			// make sure we are stopped
+			stop();
+			// release all readers that have already been aquired
+			for (String reader : spec.getLogicalReaders().getLogicalReader()) {
+				try {
+					lrService.getLogicalReaderByName(reader).release(this);
+				} catch (NoSuchNameExceptionResponse ex) {
+					logger.debug("Reader " + reader + " doesn't exist");
+				}
+			}
+			readers.clear();
 		}
 	}
 

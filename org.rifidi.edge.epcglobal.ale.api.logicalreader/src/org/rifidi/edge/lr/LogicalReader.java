@@ -102,4 +102,12 @@ public interface LogicalReader {
 	 * @param user
 	 */
 	void release(Object user);
+
+	/**
+	 * Get readers contained by this reader.
+	 * 
+	 * @return
+	 */
+	Set<LogicalReader> getReaders();
+
 }

@@ -14,6 +14,7 @@ Import-Package: com.espertech.esper.client,
  org.apache.cxf.transport.servlet;version="2.1.3",
  org.osgi.framework;version="1.3.0",
  org.osgi.service.http;version="1.2.0",
+ org.rifidi.edge.core.messages,
  org.rifidi.edge.esper,
  org.rifidi.edge.wsmanagement
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6

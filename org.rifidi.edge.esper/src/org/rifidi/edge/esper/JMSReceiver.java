@@ -16,7 +16,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.epcglobalinc.LevelTypeList;
 import org.fosstrak.tdt.TDTEngine;
-import org.rifidi.edge.core.messages.EPCGeneration2Event;
+import org.rifidi.edge.core.messages.EPCGeneration1Event;
+import org.rifidi.edge.core.messages.ReadCycle;
+import org.rifidi.edge.core.messages.TagReadEvent;
 
 import com.espertech.esper.client.EPServiceProvider;
 
@@ -67,23 +69,29 @@ public class JMSReceiver implements MessageListener {
 		try {
 			log.debug("message " + message);
 			Object obj = ((ObjectMessage) message).getObject();
-			if (obj instanceof EPCGeneration2Event) {
+			if (obj instanceof ReadCycle) {
+				ReadCycle cycle = (ReadCycle) obj;
 				HashMap<String, String> extraparams = new HashMap<String, String>();
-				String mem = ((EPCGeneration2Event) obj).getEPCMemory().toString(2);
-				int fill = ((EPCGeneration2Event) obj).getEpcLength()
-						- mem.length();
-				// big integer swallows leading zeroes, reattech 'em
-				while (fill > 0) {
-					mem = "0" + mem;
-					fill--;
+				for (TagReadEvent ev : cycle.getTags()) {
+					if (ev.getTag() instanceof EPCGeneration1Event) {
+						String mem = ((EPCGeneration1Event) ev.getTag())
+								.getEPCMemory().toString(2);
+						int fill = ((EPCGeneration1Event) ev.getTag())
+								.getEpcLength()
+								- mem.length();
+						// big integer swallows leading zeroes, reattech 'em
+						while (fill > 0) {
+							mem = "0" + mem;
+							fill--;
+						}
+						// generate pure identity
+						((EPCGeneration1Event) ev.getTag())
+								.setPureIdentlty(engine.convert(mem,
+										extraparams,
+										LevelTypeList.PURE_IDENTITY));
+					}
+					epService.getEPRuntime().sendEvent(ev);
 				}
-				ProcessedEvent event=new ProcessedEvent((EPCGeneration2Event) obj, engine
-						.convert(mem, extraparams,
-								LevelTypeList.PURE_IDENTITY), mem,
-						((EPCGeneration2Event) obj).getEPCMemory().toString(16));
-				// forward event to esper
-				System.out.println(event.getHex());
-				epService.getEPRuntime().sendEvent(event);
 				return;
 			}
 			epService.getEPRuntime().sendEvent(obj);

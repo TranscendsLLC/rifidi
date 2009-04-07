@@ -41,8 +41,12 @@ public class LogicalReaderManagementServiceImpl implements
 		logger.debug("Service created.");
 	}
 
-	/* (non-Javadoc)
-	 * @see org.rifidi.edge.lr.LogicalReaderManagementService#readerExists(java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.lr.LogicalReaderManagementService#readerExists(java.lang
+	 * .String)
 	 */
 	@Override
 	public boolean readerExists(String name) {
@@ -88,9 +92,11 @@ public class LogicalReaderManagementServiceImpl implements
 			if (lrSpec.isIsComposite()) {
 				this.readers.put(name, new CompositeLogicalReaderImpl(
 						immutable, name, props, readers));
+				logger.debug("Created new composite reader: "+name);
 			} else {
 				this.readers.put(name, new LogicalReaderImpl(immutable, name,
-						props));
+						readers, props));
+				logger.debug("Created new logical reader: "+name);
 			}
 
 			return;
@@ -166,7 +172,8 @@ public class LogicalReaderManagementServiceImpl implements
 		logger.debug("Binding reader " + reader.getID());
 		synchronized (this.readers) {
 			this.readers.put(reader.getID(), new LogicalReaderImpl(true, reader
-					.getID(), new HashMap<String, String>()));
+					.getID(), new HashSet<LogicalReader>(),
+					new HashMap<String, String>()));
 		}
 	}
 

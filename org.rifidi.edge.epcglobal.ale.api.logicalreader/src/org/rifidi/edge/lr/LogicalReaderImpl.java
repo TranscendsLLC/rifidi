@@ -3,6 +3,7 @@
  */
 package org.rifidi.edge.lr;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -37,7 +38,19 @@ public class LogicalReaderImpl implements LogicalReader {
 	 * @param properties
 	 */
 	public LogicalReaderImpl(Boolean immutable, String name,
-			Map<String, String> properties) {
+			Set<LogicalReader> readers, Map<String, String> properties) {
+		if (immutable == null) {
+			throw new IllegalArgumentException("immutable must not be null");
+		}
+		if (name == null) {
+			throw new IllegalArgumentException("name must not be null");
+		}
+		if(readers != null && readers.size()>0){
+			throw new IllegalArgumentException("This type of reader can't have sub readers.");
+		}
+		if (properties == null) {
+			throw new IllegalArgumentException("properties must not be null");
+		}
 		this.immutable = immutable;
 		this.name = name;
 		this.properties = new ConcurrentHashMap<String, String>(properties);
@@ -193,6 +206,9 @@ public class LogicalReaderImpl implements LogicalReader {
 			Set<LogicalReader> readers)
 			throws ImmutableReaderExceptionResponse, InUseExceptionResponse,
 			ReaderLoopExceptionResponse {
+		if(readers != null && readers.size()>0){
+			throw new IllegalArgumentException("This type of reader can't have sub readers.");
+		}
 		synchronized (users) {
 			if (!isInUse()) {
 				if (!isImmutable()) {
@@ -208,6 +224,16 @@ public class LogicalReaderImpl implements LogicalReader {
 			}
 			throw new InUseExceptionResponse("Reader is in use.");
 		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.rifidi.edge.lr.LogicalReader#getReaders()
+	 */
+	@Override
+	public Set<LogicalReader> getReaders() {
+		return Collections.emptySet();
 	}
 
 }
