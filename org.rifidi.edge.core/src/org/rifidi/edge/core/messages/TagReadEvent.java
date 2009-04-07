@@ -23,16 +23,27 @@ public class TagReadEvent implements Serializable {
 	private int antennaID;
 	/** The time the tag was read */
 	private long timestamp;
+	/** The ID of the reader that saw the tags */
+	private String readerID;
 
 	/**
 	 * @param tag
 	 * @param antennaID
 	 * @param timestamp
 	 */
-	public TagReadEvent(DatacontainerEvent tag, int antennaID, long timestamp) {
+	public TagReadEvent(String readerID, DatacontainerEvent tag, int antennaID,
+			long timestamp) {
 		this.tag = tag;
 		this.antennaID = antennaID;
 		this.timestamp = timestamp;
+		this.readerID = readerID;
+	}
+
+	/**
+	 * @return the readerID
+	 */
+	public String getReaderID() {
+		return readerID;
 	}
 
 	/**

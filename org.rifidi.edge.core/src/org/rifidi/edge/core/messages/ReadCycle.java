@@ -19,20 +19,15 @@ public class ReadCycle implements Serializable {
 	private static final long serialVersionUID = 1L;
 	/** The set of tags seen */
 	private Set<TagReadEvent> tags;
-	/** The ID of the reader that saw the tags */
-	private String readerID;
 	/** The time this event was generated */
 	private long eventTimestamp;
 
 	/**
 	 * @param tags
-	 * @param readerID
 	 * @param eventTimestamp
 	 */
-	public ReadCycle(Set<TagReadEvent> tags, String readerID,
-			long eventTimestamp) {
+	public ReadCycle(Set<TagReadEvent> tags, long eventTimestamp) {
 		this.tags = tags;
-		this.readerID = readerID;
 		this.eventTimestamp = eventTimestamp;
 	}
 
@@ -41,13 +36,6 @@ public class ReadCycle implements Serializable {
 	 */
 	public Set<TagReadEvent> getTags() {
 		return Collections.unmodifiableSet(tags);
-	}
-
-	/**
-	 * @return the readerID
-	 */
-	public String getReaderID() {
-		return readerID;
 	}
 
 	/**
