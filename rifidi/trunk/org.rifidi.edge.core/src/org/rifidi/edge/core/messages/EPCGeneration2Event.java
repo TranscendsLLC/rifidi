@@ -15,9 +15,6 @@ public class EPCGeneration2Event extends EPCGeneration1Event {
 	/** Serial Version ID for this class */
 	private static final long serialVersionUID = 1L;
 
-	/** Store a hex copy of the epc for comparison. */
-	private String hex = "";
-
 	public EPCGeneration2Event() {
 		memoryBanks.add(new BigInteger("0"));
 		memoryBanks.add(new BigInteger("0"));
@@ -25,42 +22,58 @@ public class EPCGeneration2Event extends EPCGeneration1Event {
 		memoryBanks.add(new BigInteger("0"));
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Get the kill password in hex.
 	 * 
-	 * @see
-	 * org.rifidi.edge.core.messages.EPCGeneration1Event#getField(org.rifidi
-	 * .edge.core.messages.EpcFields)
+	 * @return
 	 */
-	@Override
-	public String getField(EpcFields field) {
-		// TODO: tree might be better
-		if (EpcFields.EPC.equals(field)) {
-			// use hexencoding for equality
-			return hex;
-		}
-		if (EpcFields.KILLPWD.equals(field)) {
-			return readMemory(0, 0, 32).toString(16);
-		}
-		if (EpcFields.ACCESSPWD.equals(field)) {
-			return readMemory(0, 32, 32).toString(16);
-		}
-		if (EpcFields.EPCBANK.equals(field)) {
-			return getEPCMemory().toString(16);
-		}
-		if (EpcFields.TIDBANK.equals(field)) {
-			return getTIDMemory().toString(16);
-		}
-		if (EpcFields.USERBANK.equals(field)) {
-			return getUserMemory().toString(16);
-		}
-		if (EpcFields.AFI.equals(field)) {
-			return readMemory(1, 8, 24).toString(16);
-		}
-		if (EpcFields.NSI.equals(field)) {
-			return readMemory(1, 9, 23).toString(16);
-		}
-		return null;
+	public String getKillPwd() {
+		return readMemory(0, 0, 32).toString(16);
+	}
+
+	/**
+	 * Get the access password in hex.
+	 * 
+	 * @return
+	 */
+	public String AccessPwd() {
+		return readMemory(0, 32, 32).toString(16);
+	}
+
+	/**
+	 * Get the tid memory in hex.
+	 * 
+	 * @return
+	 */
+	public String getTid() {
+		return getTIDMemory().toString(16);
+	}
+
+	/**
+	 * Get the user memory in hex.
+	 * 
+	 * @return
+	 */
+	public String getUser() {
+		return getUserMemory().toString(16);
+	}
+
+	/**
+	 * Get the AFI.
+	 * 
+	 * @return
+	 */
+	public String getAFI() {
+		return readMemory(1, 8, 24).toString(16);
+	}
+
+	/**
+	 * Get the NSI.
+	 * 
+	 * @return
+	 */
+	public String getNSI() {
+		return readMemory(1, 9, 23).toString(16);
 	}
 
 	/**

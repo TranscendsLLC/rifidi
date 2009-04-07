@@ -18,7 +18,7 @@ public class EPCGeneration1Event extends DatacontainerEvent {
 	/** Length of the epc. */
 	protected Integer epcLength;
 	/** Store a hex copy of the epc for comparison. */
-	private String hex = "";
+	protected String hex = "";
 
 	/**
 	 * Constructor.
@@ -37,21 +37,15 @@ public class EPCGeneration1Event extends DatacontainerEvent {
 		hex = memBank.toString(16);
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Returns the epc in hex encoding.
 	 * 
-	 * @see
-	 * org.rifidi.edge.core.messages.DatacontainerEvent#getField(org.rifidi.
-	 * edge.core.messages.EpcFields)
+	 * @return
 	 */
-	@Override
-	public String getField(EpcFields field) {
-		if (EpcFields.EPC.equals(field)) {
-			return hex;
-		}
-		return null;
+	public String getEPC() {
+		return hex;
 	}
-	
+
 	/**
 	 * Get the epc memory bank.
 	 * 
