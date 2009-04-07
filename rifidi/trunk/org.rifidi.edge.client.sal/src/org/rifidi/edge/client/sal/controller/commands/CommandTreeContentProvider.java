@@ -268,6 +268,7 @@ public class CommandTreeContentProvider implements ITreeContentProvider,
 				commandSet.add(config);
 
 				viewer.add(type, config);
+				viewer.setExpandedState(type, true);
 				break;
 			}
 		}

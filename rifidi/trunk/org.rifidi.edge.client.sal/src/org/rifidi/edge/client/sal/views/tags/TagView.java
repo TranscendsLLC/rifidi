@@ -22,7 +22,7 @@ import org.rifidi.edge.client.model.sal.RemoteReader;
 import org.rifidi.edge.client.model.sal.RemoteTag;
 
 /**
- * @author kyle
+ * @author Kyle Neumeier - kyle@pramari.com
  * 
  */
 public class TagView extends ViewPart implements ISetChangeListener {
@@ -87,9 +87,9 @@ public class TagView extends ViewPart implements ISetChangeListener {
 	public void setReader(RemoteReader reader) {
 		// only intialize this the first time
 		if (remoteReader == null) {
+			setPartName(reader.getID() + " Tags");
 			this.remoteReader = reader;
 			this.tags = reader.getTags();
-			// table.getContentProvider().inputChanged(table, null, tags);
 			table.setInput(tags);
 		}
 	}
@@ -121,5 +121,4 @@ public class TagView extends ViewPart implements ISetChangeListener {
 		}
 
 	}
-
 }

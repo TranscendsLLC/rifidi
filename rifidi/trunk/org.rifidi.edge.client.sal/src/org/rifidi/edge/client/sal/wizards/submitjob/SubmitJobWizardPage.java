@@ -52,6 +52,8 @@ public class SubmitJobWizardPage extends WizardPage {
 	@Override
 	public void createControl(Composite parent) {
 		try {
+			setTitle("Job Submission Wizard");
+			setDescription("Submit a New Job to a Session");
 			Composite composite = new Composite(parent, SWT.None);
 			GridLayout gridLayout = new GridLayout(1, true);
 			composite.setLayout(gridLayout);
