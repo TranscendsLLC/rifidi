@@ -188,7 +188,7 @@ public class AlienGetTagListCommand extends AbstractAlien9800Command {
 
 					// TODO: parse timestamp
 
-					TagReadEvent tag = new TagReadEvent(gen2event,
+					TagReadEvent tag = new TagReadEvent(reader, gen2event,
 							antennaID_int, System.currentTimeMillis());
 					retVal.add(tag);
 
@@ -218,7 +218,7 @@ public class AlienGetTagListCommand extends AbstractAlien9800Command {
 			objectMessage = new ActiveMQObjectMessage();
 
 			try {
-				objectMessage.setObject(new ReadCycle(tags, reader, System
+				objectMessage.setObject(new ReadCycle(tags, System
 						.currentTimeMillis()));
 			} catch (JMSException e) {
 				logger.warn("Unable to set tag event: " + e);
