@@ -616,6 +616,20 @@
                type="org.eclipse.ui.views.properties.IPropertySource">
          </adapter>
       </factory>
+      <factory
+            adaptableType="org.rifidi.edge.client.sal.views.EdgeServerView"
+            class="org.rifidi.edge.client.sal.views.EdgeServerViewAdapterFactory">
+         <adapter
+               type="org.eclipse.ui.views.properties.IPropertySheetPage">
+         </adapter>
+      </factory>
+      <factory
+            adaptableType="org.rifidi.edge.client.sal.views.CommandView"
+            class="org.rifidi.edge.client.sal.views.CommandViewAdapterFactory">
+         <adapter
+               type="org.eclipse.ui.views.properties.IPropertySheetPage">
+         </adapter>
+      </factory>
    </extension>
    <extension
          point="org.eclipse.ui.newWizards">
@@ -625,6 +639,52 @@
             id="org.rifidi.edge.client.sal.newreaderwizard"
             name="New Reader Wizard">
       </wizard>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views.properties.tabbed.propertyContributor">
+      <propertyContributor
+            contributorId="org.rifidi.edge.client.sal.tabbedPropContributer"
+            labelProvider="org.rifidi.edge.client.sal.properties.SALTabbedPropertiesLabelProvider"
+            typeMapper="org.rifidi.edge.client.sal.properties.SALTabbedPropertiesTypeMapper">
+         <propertyCategory
+               category="EdgeServer">
+         </propertyCategory>
+      </propertyContributor>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views.properties.tabbed.propertyTabs">
+      <propertyTabs
+            contributorId="org.rifidi.edge.client.sal.tabbedPropContributer">
+         <propertyTab
+               category="EdgeServer"
+               id="org.rifidi.edge.client.sal.props.edgeserver"
+               indented="false"
+               label="Edge Server">
+         </propertyTab>
+      </propertyTabs>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views.properties.tabbed.propertySections">
+      <propertySections
+            contributorId="org.rifidi.edge.client.sal.tabbedPropContributer">
+         <propertySection
+               class="org.rifidi.edge.client.sal.properties.edgeserver.EdgeServerStateSection"
+               id="org.rifidi.edge.client.sal.props.edgeserver.state"
+               tab="org.rifidi.edge.client.sal.props.edgeserver">
+            <input
+                  type="org.rifidi.edge.client.model.sal.RemoteEdgeServer">
+            </input>
+         </propertySection>
+         <propertySection
+               afterSection="org.rifidi.edge.client.sal.props.edgeserver.state"
+               class="org.rifidi.edge.client.sal.properties.edgeserver.EdgeServerConnectionInfo"
+               id="org.rifidi.edge.client.sal.props.edgeserver.connection"
+               tab="org.rifidi.edge.client.sal.props.edgeserver">
+            <input
+                  type="org.rifidi.edge.client.model.sal.RemoteEdgeServer">
+            </input>
+         </propertySection>
+      </propertySections>
    </extension>
 
 </plugin>

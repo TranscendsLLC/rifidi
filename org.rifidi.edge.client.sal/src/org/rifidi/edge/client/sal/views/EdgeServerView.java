@@ -9,12 +9,14 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.part.ViewPart;
+import org.eclipse.ui.views.properties.tabbed.ITabbedPropertySheetPageContributor;
 import org.rifidi.edge.client.sal.controller.edgeserver.EdgeServerTreeContentProvider;
 import org.rifidi.edge.client.sal.controller.edgeserver.EdgeServerTreeLabelProvider;
 import org.rifidi.edge.client.sal.modelmanager.ModelManagerService;
@@ -25,7 +27,8 @@ import org.rifidi.edge.client.sal.modelmanager.ModelManagerService;
  * @author Kyle Neumeier - kyle@pramari.com
  * 
  */
-public class EdgeServerView extends ViewPart {
+public class EdgeServerView extends ViewPart implements
+		ITabbedPropertySheetPageContributor {
 
 	public static final String ID = "org.rifidi.edge.client.sal.views.EdgeServerView";
 	/** The tree viewer to use */
@@ -56,6 +59,7 @@ public class EdgeServerView extends ViewPart {
 		treeViewer.getControl().setLayoutData(treeViewerLayoutData);
 		treeViewer.setContentProvider(new EdgeServerTreeContentProvider());
 		treeViewer.setLabelProvider(new EdgeServerTreeLabelProvider());
+		treeViewer.setComparator(new ViewerComparator());
 		createContextMenu();
 		this.getSite().setSelectionProvider(treeViewer);
 		ModelManagerService.getInstance().addViewer(treeViewer);
@@ -104,6 +108,11 @@ public class EdgeServerView extends ViewPart {
 	public void dispose() {
 		super.dispose();
 		ModelManagerService.getInstance().removeViewwer(treeViewer);
+	}
+
+	@Override
+	public String getContributorId() {
+		return "org.rifidi.edge.client.sal.tabbedPropContributer";
 	}
 
 }

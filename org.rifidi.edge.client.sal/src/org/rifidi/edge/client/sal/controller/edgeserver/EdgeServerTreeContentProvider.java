@@ -19,6 +19,8 @@ import org.eclipse.core.databinding.observable.map.MapChangeEvent;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.ui.IViewReference;
+import org.eclipse.ui.PlatformUI;
 import org.rifidi.edge.client.model.sal.RemoteCommandConfiguration;
 import org.rifidi.edge.client.model.sal.RemoteEdgeServer;
 import org.rifidi.edge.client.model.sal.RemoteJob;
@@ -26,6 +28,7 @@ import org.rifidi.edge.client.model.sal.RemoteReader;
 import org.rifidi.edge.client.model.sal.RemoteReaderFactory;
 import org.rifidi.edge.client.model.sal.RemoteSession;
 import org.rifidi.edge.client.model.sal.properties.SessionStatePropertyBean;
+import org.rifidi.edge.client.sal.views.tags.TagView;
 
 /**
  * This is the content provider for the Edge Server Reader View
@@ -417,6 +420,17 @@ public class EdgeServerTreeContentProvider implements ITreeContentProvider,
 	private void removeRemoteReader(RemoteReader reader) {
 		reader.getRemoteSessions().removeMapChangeListener(this);
 		viewer.remove(reader);
+		IViewReference[] refs = PlatformUI.getWorkbench()
+				.getActiveWorkbenchWindow().getActivePage().getViewReferences();
+		for (IViewReference ref : refs) {
+			if (ref.getId().equals(TagView.ID)
+					&& ref.getSecondaryId().equals(reader.getID())) {
+				PlatformUI.getWorkbench().getActiveWorkbenchWindow()
+						.getActivePage().hideView(ref);
+				break;
+			}
+		}
+
 	}
 
 	/**
@@ -430,6 +444,7 @@ public class EdgeServerTreeContentProvider implements ITreeContentProvider,
 		session.addPropertyChangeListener(this);
 		session.getRemoteJobs().addMapChangeListener(this);
 		viewer.add(reader, session);
+		viewer.setExpandedState(reader, true);
 	}
 
 	/**

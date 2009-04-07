@@ -10,12 +10,14 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.core.databinding;bundle-version="1.1.1",
  org.eclipse.ui.views;bundle-version="3.3.0",
  org.eclipse.core.expressions;bundle-version="3.4.0",
- org.eclipse.jface.databinding;bundle-version="1.2.1"
+ org.eclipse.jface.databinding;bundle-version="1.2.1",
+ org.eclipse.ui.views.properties.tabbed;bundle-version="3.4.1"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Import-Package: org.apache.commons.logging;version="1.1.1",
  org.rifidi.edge.client.mbean.ui,
  org.rifidi.edge.client.mbean.ui.widgets.standard,
  org.rifidi.edge.client.model.sal,
+ org.rifidi.edge.client.model.sal.preferences,
  org.rifidi.edge.client.model.sal.properties,
  org.rifidi.edge.core.api

@@ -15,8 +15,6 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.rifidi.edge.client.model.sal.RemoteReader;
-import org.rifidi.edge.client.sal.controller.edgeserver.EdgeServerController;
-import org.rifidi.edge.client.sal.controller.edgeserver.EdgeServerTreeContentProvider;
 import org.rifidi.edge.client.sal.views.tags.TagView;
 
 /**
@@ -35,8 +33,6 @@ public class OpenTagViewHandler extends AbstractHandler implements IHandler2 {
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		ISelection sel = HandlerUtil.getCurrentSelection(event);
-		EdgeServerController controller = EdgeServerTreeContentProvider
-				.getEdgeServerController();
 
 		Object obj = ((TreeSelection) sel).getFirstElement();
 		RemoteReader reader = (RemoteReader) obj;

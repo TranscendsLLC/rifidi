@@ -9,12 +9,14 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.part.ViewPart;
+import org.eclipse.ui.views.properties.tabbed.ITabbedPropertySheetPageContributor;
 import org.rifidi.edge.client.sal.controller.commands.CommandTreeContentProvider;
 import org.rifidi.edge.client.sal.controller.commands.CommandTreeLabelProvider;
 import org.rifidi.edge.client.sal.modelmanager.ModelManagerService;
@@ -25,7 +27,8 @@ import org.rifidi.edge.client.sal.modelmanager.ModelManagerService;
  * @author Kyle Neumeier - kyle@pramari.com
  * 
  */
-public class CommandView extends ViewPart {
+public class CommandView extends ViewPart implements
+		ITabbedPropertySheetPageContributor {
 
 	public static final String ID = "org.rifidi.edge.client.sal.views.CommandView";
 	/** The tree viewer to use */
@@ -48,12 +51,13 @@ public class CommandView extends ViewPart {
 		treeViewer.getControl().setLayoutData(treeViewerLayoutData);
 		treeViewer.setContentProvider(new CommandTreeContentProvider());
 		treeViewer.setLabelProvider(new CommandTreeLabelProvider());
+		treeViewer.setComparator(new ViewerComparator());
 		createContextMenu();
 		this.getSite().setSelectionProvider(treeViewer);
 		ModelManagerService.getInstance().addViewer(treeViewer);
 
 	}
-	
+
 	/**
 	 * Create a context menu for this viewer
 	 */
@@ -88,7 +92,9 @@ public class CommandView extends ViewPart {
 
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.part.WorkbenchPart#dispose()
 	 */
 	@Override
@@ -96,7 +102,10 @@ public class CommandView extends ViewPart {
 		super.dispose();
 		ModelManagerService.getInstance().removeViewwer(treeViewer);
 	}
-	
-	
+
+	@Override
+	public String getContributorId() {
+		return "org.rifidi.edge.client.sal.tabbedPropContributer";
+	}
 
 }
