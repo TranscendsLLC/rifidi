@@ -4,11 +4,13 @@ Bundle-Name: Ecspecview Plug-in
 Bundle-SymbolicName: org.rifidi.edge.client.ale.treeview;singleton:=true
 Bundle-Version: 1.0.0
 Bundle-Activator: org.rifidi.edge.client.ale.treeview.Activator
-Bundle-Vendor: PRAMARI EUROPE GMBH
+Bundle-Vendor: PRAMARI LLC
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.rifidi.edge.client.ale.api;bundle-version="1.0.0",
- org.rifidi.edge.client.ale.connection;bundle-version="1.0.0"
+ org.rifidi.edge.client.ale.connection;bundle-version="1.0.0",
+ org.eclipse.ui.views;bundle-version="3.3.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Import-Package: org.apache.commons.logging;version="1.1.1"
+Export-Package: org.rifidi.edge.client.ale.treeview.util.ConnectionWrapper
