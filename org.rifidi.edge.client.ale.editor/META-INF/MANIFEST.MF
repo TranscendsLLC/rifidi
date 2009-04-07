@@ -6,6 +6,9 @@ Bundle-Version: 1.0.0
 Bundle-Activator: org.rifidi.edge.client.ale.editor.Activator
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
- org.eclipse.ui.forms;bundle-version="3.3.101"
+ org.eclipse.ui.forms;bundle-version="3.3.101",
+ org.rifidi.edge.client.ale.api;bundle-version="1.0.0",
+ org.rifidi.edge.client.ale.connection;bundle-version="1.0.0",
+ org.rifidi.edge.client.ale.treeview;bundle-version="1.0.0"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
