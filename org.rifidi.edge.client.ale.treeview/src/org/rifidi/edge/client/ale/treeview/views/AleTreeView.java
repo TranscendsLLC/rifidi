@@ -1,6 +1,7 @@
 package org.rifidi.edge.client.ale.treeview.views;
 
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
@@ -64,11 +65,19 @@ public class AleTreeView extends ViewPart {
 		viewer.setLabelProvider(new AleTreeViewLabelProvider());
 		viewer.setSorter(new ViewerSorter());
 		viewer.setInput(getInitialInput());
+		getSite().setSelectionProvider(viewer);
+
 		// viewer.expandAll();
 		makeActions();
-		hookContextMenu();
-		hookDoubleClickAction();
+		// hookContextMenu();
+		// hookDoubleClickAction();
 		contributeToActionBars();
+		MenuManager menuMgr = new MenuManager();
+		menuMgr.add(new GroupMarker("aletreeview"));
+
+		Menu menu = menuMgr.createContextMenu(viewer.getControl());
+		viewer.getControl().setMenu(menu);
+		getSite().registerContextMenu(menuMgr, viewer);
 	}
 
 	/**
@@ -127,10 +136,10 @@ public class AleTreeView extends ViewPart {
 				// viewer.expandAll();
 			}
 		};
-		action1.setText("Action 1");
-		action1.setToolTipText("Action 1 tooltip");
+		action1.setText("Refresh");
+		action1.setToolTipText("Refresh");
 		action1.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
-				.getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));
+				.getImageDescriptor(ISharedImages.IMG_ETOOL_HOME_NAV));
 
 		action2 = new Action() {
 			public void run() {
@@ -139,7 +148,7 @@ public class AleTreeView extends ViewPart {
 				Object obj = ((IStructuredSelection) selection)
 						.getFirstElement();
 				if (obj instanceof String) {
-
+					showMessage(obj.toString());
 				}
 
 				// showMessage("Action 2 executed");
@@ -177,5 +186,12 @@ public class AleTreeView extends ViewPart {
 	 */
 	public void setFocus() {
 		viewer.getControl().setFocus();
+	}
+
+	/**
+	 * @return the viewer
+	 */
+	public TreeViewer getViewer() {
+		return viewer;
 	}
 }

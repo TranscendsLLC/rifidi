@@ -17,9 +17,9 @@ import org.apache.commons.logging.LogFactory;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.TreeNode;
 import org.eclipse.jface.viewers.Viewer;
-import org.rifidi.edge.client.ale.api.wsdl.ale.epcglobal.ALEServicePortType;
 import org.rifidi.edge.client.ale.api.wsdl.ale.epcglobal.EmptyParms;
-import org.rifidi.edge.client.ale.api.wsdl.alelr.epcglobal.ALELRServicePortType;
+import org.rifidi.edge.client.ale.api.wsdl.ale.epcglobal.ImplementationExceptionResponse;
+import org.rifidi.edge.client.ale.api.wsdl.ale.epcglobal.SecurityExceptionResponse;
 import org.rifidi.edge.client.ale.connection.service.ConnectionService;
 import org.rifidi.edge.client.ale.treeview.util.ConnectionWrapper.ConnectionWrapper;
 
@@ -41,18 +41,6 @@ public class AleTreeViewContentProvider implements ITreeContentProvider {
 		logger = LogFactory.getLog(AleTreeViewContentProvider.class);
 		ConnectionWrapper conWrap = new ConnectionWrapper();
 		conSvc = conWrap.getConnectionService();
-
-		// context = InternalPlatform.getDefault().getBundleContext();
-		// svcRef =
-		// context.getServiceReference(ConnectionService.class.getName());
-		// if (svcRef == null) {
-		// logger.error("Service not available!");
-		// }
-		// conSvc = (ConnectionService) context.getService(svcRef);
-		// if (conSvc == null) {
-		// logger.error("Service not available!");
-		// }
-
 	}
 
 	/*
@@ -66,49 +54,37 @@ public class AleTreeViewContentProvider implements ITreeContentProvider {
 	public Object[] getChildren(Object parentElement) {
 
 		if (parentElement instanceof TreeNode) {
-			Object[] objects = new Object[2];
+			TreeNode node = (TreeNode) parentElement;
+			if (node.getValue().toString().startsWith("Remote EcSpecs (")) {
+				// conSvc.getAleServicePortType();
+				try {
+					ArrayList<String> strings = (ArrayList<String>) conSvc
+							.getAleServicePortType().getECSpecNames(
+									new EmptyParms()).getString();
+					return strings.toArray();
 
-			ALEServicePortType proxy = conSvc.getAleServicePortType();
-
-			ALELRServicePortType lrproxy = conSvc.getAleLrServicePortType();
-			objects[0] = proxy;
-			objects[1] = lrproxy;
-			return objects;
-		}
-		if (parentElement instanceof ALEServicePortType) {
-
-			try {
-				ArrayList<String> strings = (ArrayList<String>) ((ALEServicePortType) parentElement)
-						.getECSpecNames(new EmptyParms()).getString();
-				String[] ecSpecs = new String[strings.size()];
-
-				for (int i = 0; i < strings.size(); i++) {
-					ecSpecs[i] = strings.get(i);
+				} catch (Exception e) {
+					logger.error(e.getCause() + ":\n" + e.getMessage());
+					return new Object[0];
 				}
-				return ecSpecs;
-
-			} catch (Exception e) {
-				logger.error(e.getCause() + ":\n" + e.getMessage());
-				return new Object[0];
 			}
-		}
-		if (parentElement instanceof ALELRServicePortType) {
-			try {
-				ArrayList<String> strings = (ArrayList<String>) ((ALELRServicePortType) parentElement)
-						.getLogicalReaderNames(
-								new org.rifidi.edge.client.ale.api.wsdl.alelr.epcglobal.EmptyParms())
-						.getString();
-				String[] lrSpecs = new String[strings.size()];
-				for (int i = 0; i < strings.size(); i++) {
-					lrSpecs[i] = strings.get(i);
+			if (node.getValue().toString().startsWith("Logical Readers (")) {
+				try {
+					ArrayList<String> strings = (ArrayList<String>) conSvc
+							.getAleLrServicePortType()
+							.getLogicalReaderNames(
+									new org.rifidi.edge.client.ale.api.wsdl.alelr.epcglobal.EmptyParms())
+							.getString();
+					return strings.toArray();
+
+				} catch (Exception e) {
+					logger.error(e.getCause() + ":\n" + e.getMessage());
+					return new Object[0];
 				}
-				return lrSpecs;
-			} catch (Exception e) {
-				logger.error(e.getCause() + ":\n" + e.getMessage());
-				return new Object[0];
 			}
-		}
+			return new Object[0];
 
+		}
 		return null;
 	}
 
@@ -137,38 +113,6 @@ public class AleTreeViewContentProvider implements ITreeContentProvider {
 		if (element instanceof TreeNode) {
 			return true;
 		}
-		if (element instanceof ALEServicePortType) {
-
-			ArrayList<String> strings;
-			try {
-				strings = (ArrayList<String>) ((ALEServicePortType) element)
-						.getECSpecNames(new EmptyParms()).getString();
-				if (strings.size() > 0)
-					return true;
-
-			} catch (Exception e) {
-				logger.error(e.getCause() + ":\n" + e.getMessage());
-				return false;
-			}
-
-		}
-		if (element instanceof ALELRServicePortType) {
-
-			ArrayList<String> strings;
-			try {
-				strings = (ArrayList<String>) ((ALELRServicePortType) element)
-						.getLogicalReaderNames(
-								new org.rifidi.edge.client.ale.api.wsdl.alelr.epcglobal.EmptyParms())
-						.getString();
-				if (strings.size() > 0)
-					return true;
-
-			} catch (Exception e) {
-				logger.error(e.getCause() + ":\n" + e.getMessage());
-				return false;
-			}
-
-		}
 
 		return false;
 
@@ -185,8 +129,32 @@ public class AleTreeViewContentProvider implements ITreeContentProvider {
 	public Object[] getElements(Object inputElement) {
 		if (inputElement instanceof TreeNode
 				&& ((TreeNode) inputElement).getValue().toString().isEmpty()) {
-			Object[] obj = new Object[1];
-			obj[0] = new TreeNode(conSvc.getAleEndpoint().getHost());
+			Object[] obj = new Object[3];
+			try {
+				obj[0] = new TreeNode("Remote EcSpecs ("
+						+ conSvc.getAleServicePortType().getECSpecNames(
+								new EmptyParms()).getString().size() + ")");
+				obj[1] = new TreeNode(
+						"Logical Readers ("
+								+ conSvc
+										.getAleLrServicePortType()
+										.getLogicalReaderNames(
+												new org.rifidi.edge.client.ale.api.wsdl.alelr.epcglobal.EmptyParms())
+										.getString().size()+")");
+				obj[2] = new TreeNode("Local EcSpecs (0)");
+			} catch (ImplementationExceptionResponse e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (SecurityExceptionResponse e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (org.rifidi.edge.client.ale.api.wsdl.alelr.epcglobal.SecurityExceptionResponse e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (org.rifidi.edge.client.ale.api.wsdl.alelr.epcglobal.ImplementationExceptionResponse e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			return obj;
 		} else if (hasChildren(inputElement))
 			return getChildren(inputElement);
