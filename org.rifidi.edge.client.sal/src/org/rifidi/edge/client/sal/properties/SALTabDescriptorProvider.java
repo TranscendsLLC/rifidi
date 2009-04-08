@@ -27,7 +27,6 @@ public class SALTabDescriptorProvider implements ITabDescriptorProvider {
 	public ITabDescriptor[] getTabDescriptors(IWorkbenchPart part,
 			ISelection selection) {
 		ITabDescriptor[] retVal;
-		System.out.println("GET THE TAB DESCRIPTORS!!!");
 		if (part.getSite().getId().equals(CommandView.ID)) {
 			System.out.println("COMMAND!");
 		} else if (part.getSite().getId().equals(EdgeServerView.ID)) {

@@ -8,12 +8,12 @@ import java.beans.PropertyChangeListener;
 
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.swt.custom.CLabel;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.forms.widgets.FormText;
+import org.eclipse.ui.forms.widgets.Section;
+import org.eclipse.ui.forms.widgets.TableWrapData;
+import org.eclipse.ui.forms.widgets.TableWrapLayout;
 import org.eclipse.ui.views.properties.tabbed.AbstractPropertySection;
 import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetPage;
 import org.rifidi.edge.client.model.sal.RemoteEdgeServer;
@@ -25,7 +25,7 @@ import org.rifidi.edge.client.model.sal.RemoteEdgeServer;
 public class EdgeServerStateSection extends AbstractPropertySection implements
 		PropertyChangeListener {
 
-	private Text stateText = null;
+	private FormText stateText = null;
 	private RemoteEdgeServer server;
 
 	/**
@@ -46,20 +46,17 @@ public class EdgeServerStateSection extends AbstractPropertySection implements
 	public void createControls(Composite parent,
 			TabbedPropertySheetPage tabbedPropertySheetPage) {
 		super.createControls(parent, tabbedPropertySheetPage);
+		Section section = super.getWidgetFactory().createSection(parent,
+				Section.EXPANDED | Section.TITLE_BAR);
+		section.setText("Edge Server State");
 		Composite composite = super.getWidgetFactory().createFlatFormComposite(
-				parent);
-		composite.setLayout(new GridLayout(2, false));
-		CLabel label = super.getWidgetFactory().createCLabel(composite,
-				"Edge Server State:");
-		label.setLayoutData(new GridData());
-		stateText = super.getWidgetFactory().createText(composite, "");
-		GridData gridData = new GridData();
-		gridData.horizontalAlignment = GridData.FILL;
-		gridData.grabExcessHorizontalSpace = true;
-		gridData.widthHint = 150;
-		stateText.setLayoutData(gridData);
-		stateText.setEditable(false);
+				section);
+		composite.setLayout(new TableWrapLayout());
+		stateText = super.getWidgetFactory().createFormText(composite, false);
+		TableWrapData layoutData = new TableWrapData(TableWrapData.FILL_GRAB);
+		stateText.setLayoutData(layoutData);
 		stateText.setEnabled(false);
+		section.setClient(composite);
 	}
 
 	/*
@@ -74,7 +71,7 @@ public class EdgeServerStateSection extends AbstractPropertySection implements
 		super.setInput(part, selection);
 		Object input = ((IStructuredSelection) selection).getFirstElement();
 		RemoteEdgeServer server = (RemoteEdgeServer) input;
-		stateText.setText(server.getState().toString());
+		stateText.setText(server.getState().toString(), false, false);
 		if (server != null) {
 			if (this.server != null && this.server != server) {
 				server.removePropertyChangeListener(this);
@@ -87,7 +84,7 @@ public class EdgeServerStateSection extends AbstractPropertySection implements
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
 		if (evt.getPropertyName().equals(RemoteEdgeServer.STATE_PROPERTY)) {
-			stateText.setText(this.server.getState().toString());
+			stateText.setText(server.getState().toString(), false, false);
 		}
 
 	}
