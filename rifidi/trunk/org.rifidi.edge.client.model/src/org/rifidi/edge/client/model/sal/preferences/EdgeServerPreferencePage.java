@@ -9,7 +9,7 @@ import org.eclipse.jface.preference.IntegerFieldEditor;
 import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
-import org.rifidi.edge.client.model.Activator;
+import org.rifidi.edge.client.model.SALModelPlugin;
 
 /**
  * The contributed preference page for the RemoteEdgeServer
@@ -51,7 +51,7 @@ public class EdgeServerPreferencePage extends FieldEditorPreferencePage
 	 */
 	@Override
 	protected IPreferenceStore doGetPreferenceStore() {
-		return Activator.getDefault().getPreferenceStore();
+		return SALModelPlugin.getDefault().getPreferenceStore();
 	}
 
 }
