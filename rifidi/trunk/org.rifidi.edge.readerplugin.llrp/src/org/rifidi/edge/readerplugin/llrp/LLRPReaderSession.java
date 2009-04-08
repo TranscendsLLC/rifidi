@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeoutException;
 
 import javax.jms.Destination;
@@ -68,7 +69,6 @@ public class LLRPReaderSession extends AbstractReaderSession implements
 	private LLRPConnection connection = null;
 
 	int messageID = 1;
-
 	int maxConAttempts = -1;
 	int reconnectionInterval = -1;
 
@@ -78,6 +78,7 @@ public class LLRPReaderSession extends AbstractReaderSession implements
 	public LLRPReaderSession(String id, String host, int reconnectionInterval,
 			int maxConAttempts, Destination destination, JmsTemplate template) {
 		super(id, destination, template);
+		System.out.println(host);
 		this.connection = new LLRPConnector(this, host);
 		this.maxConAttempts = maxConAttempts;
 		this.reconnectionInterval = reconnectionInterval;
@@ -91,20 +92,32 @@ public class LLRPReaderSession extends AbstractReaderSession implements
 	@Override
 	public void connect() throws IOException {
 		logger.debug("Connecting");
-		for (int connCount = 0; connCount < maxConAttempts; connCount++) {
+		boolean connected = false;
+		for (int connCount = 0; connCount < maxConAttempts && !connected; connCount++) {
 			try {
+				System.out.println("JUST BEFORE THE CONNECTION ATTEMPT");
 				((LLRPConnector) connection).connect();
+				connected = true;
+				System.out.println("JUST AFTER THE CONNECTION ATTEMPT");
 			} catch (LLRPConnectionAttemptFailedException e) {
-				logger.debug("Unable to connect to LLRP con ");
+				logger.debug("Unable to connect to LLRP");
 			}
 
-			try {
-				Thread.sleep(reconnectionInterval);
-			} catch (InterruptedException e) {
-				Thread.currentThread().interrupt();
-				return;
+			if (!connected) {
+				try {
+					Thread.sleep(reconnectionInterval);
+				} catch (InterruptedException e) {
+					Thread.currentThread().interrupt();
+					return;
+				}
 			}
 		}
+
+		if (!connected) {
+			return;
+		}
+		
+		executor = new ScheduledThreadPoolExecutor(1);
 
 		try {
 			SET_READER_CONFIG config = createSetReaderConfig();
@@ -120,10 +133,15 @@ public class LLRPReaderSession extends AbstractReaderSession implements
 								+ sc.intValue());
 			}
 
+			if (!processing.compareAndSet(false, true)) {
+				logger.warn("Executor was already active! ");
+			}
 		} catch (TimeoutException e) {
 			e.printStackTrace();
+			disconnect();
 		} catch (ClassCastException ex) {
 			logger.error(ex.getMessage());
+			disconnect();
 		}
 
 	}
@@ -133,14 +151,21 @@ public class LLRPReaderSession extends AbstractReaderSession implements
 	 */
 	@Override
 	public void disconnect() {
-		logger.debug("Disconnecting");
-		((LLRPConnector) connection).disconnect();
+		if (processing.get()) {
+			if (processing.compareAndSet(true, false)) {
+				logger.debug("Disconnecting");
+				((LLRPConnector) connection).disconnect();
+			}
+		}
+		executor.shutdownNow();
+		executor=null;
 	}
 
 	/**
 	 * 
 	 */
 	public LLRPMessage transact(LLRPMessage message) {
+		System.out.println("Sending an LLRP message: " + message.getName());
 		LLRPMessage retVal = null;
 		try {
 			retVal = this.connection.transact(message);
@@ -186,7 +211,8 @@ public class LLRPReaderSession extends AbstractReaderSession implements
 			}
 
 			for (BigInteger m : parseString(tagdatastring)) {
-				this.getTemplate().send(this.getDestination(), new ObjectMessageCreator(m));
+				this.getTemplate().send(this.getDestination(),
+						new ObjectMessageCreator(m));
 			}
 		}
 	}

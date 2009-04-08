@@ -90,11 +90,21 @@ public class LLRPROSpecCommand extends AbstractLLRPCommand {
 	 */
 	@Override
 	public void run() {
+		this.session = (LLRPReaderSession)this.readerSession;
+		System.out.println("Session has been set: " + this.session);
+		System.out.println("Running LLRPROSpecCommand");
 		try {
 			boolean is_taken = false;
 			GET_ROSPECS rospecs = new GET_ROSPECS();
-			GET_ROSPECS_RESPONSE response = (GET_ROSPECS_RESPONSE) session
-					.transact(rospecs);
+			System.out.println("Just before get rospecs transact");
+			GET_ROSPECS_RESPONSE response = null;
+			try {
+				response = (GET_ROSPECS_RESPONSE) session.transact(rospecs);
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+
+			System.out.println("Just after get rospecs transact");
 			List<ROSpec> rospecList = response.getROSpecList();
 			for (ROSpec rspec : rospecList) {
 				if (this.rospec_id == rspec.getROSpecID().intValue()) {
@@ -166,16 +176,17 @@ public class LLRPROSpecCommand extends AbstractLLRPCommand {
 
 				// TODO: Check if it worked
 				session.transact(addRospec);
-				
+
 				ENABLE_ROSPEC enRspec = new ENABLE_ROSPEC();
 				enRspec.setROSpecID(new UnsignedInteger(this.rospec_id));
-				
+
 				START_ROSPEC sr = new START_ROSPEC();
 				sr.setROSpecID(new UnsignedInteger(this.rospec_id));
-				
-				
+
 				session.transact(enRspec);
-				
+
+				session.transact(sr);
+
 				logger.debug(response.toXMLString());
 
 			}

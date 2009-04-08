@@ -21,6 +21,7 @@ import java.util.Set;
 import org.rifidi.edge.core.commands.AbstractCommandConfiguration;
 import org.rifidi.edge.core.commands.AbstractCommandConfigurationFactory;
 import org.rifidi.edge.readerplugin.llrp.commands.LLRPGetTagListCommandConfiguration;
+import org.rifidi.edge.readerplugin.llrp.commands.LLRPROSpecCommandConfiguration;
 
 /**
  * @author Matthew Dean
@@ -39,6 +40,7 @@ public class LLRPCommandConfigurationFactory extends
 		factoryIdToClass = new HashMap<String, Class<?>>();
 		factoryIdToClass.put("LLRP-GetTagList",
 				LLRPGetTagListCommandConfiguration.class);
+		factoryIdToClass.put("LLRP-CreateROSpec", LLRPROSpecCommandConfiguration.class);
 	}
 
 	/*
@@ -82,7 +84,9 @@ public class LLRPCommandConfigurationFactory extends
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.rifidi.edge.core.commands.AbstractCommandConfigurationFactory#getReaderFactoryID()
+	 * 
+	 * @seeorg.rifidi.edge.core.commands.AbstractCommandConfigurationFactory#
+	 * getReaderFactoryID()
 	 */
 	@Override
 	public String getReaderFactoryID() {
