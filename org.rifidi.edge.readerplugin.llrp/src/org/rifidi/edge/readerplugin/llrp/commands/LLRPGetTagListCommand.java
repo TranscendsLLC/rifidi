@@ -31,7 +31,7 @@ public class LLRPGetTagListCommand extends AbstractLLRPCommand {
 	 */
 	public LLRPGetTagListCommand(String commandID) {
 		super(commandID);
-		this.session = (LLRPReaderSession)this.readerSession;
+		//this.session = (LLRPReaderSession)this.readerSession;
 	}
 	
 	
@@ -43,6 +43,7 @@ public class LLRPGetTagListCommand extends AbstractLLRPCommand {
 	 */
 	@Override
 	public void run() {
+		this.session = (LLRPReaderSession)this.readerSession;
 		session.send(new GET_REPORT());
 	}
 

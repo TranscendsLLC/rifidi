@@ -11,16 +11,17 @@
  */
 package org.rifidi.edge.readerplugin.llrp.commands;
 
+import org.rifidi.configuration.annotations.JMXMBean;
 import org.rifidi.configuration.annotations.Property;
 import org.rifidi.configuration.annotations.PropertyType;
 import org.rifidi.edge.core.commands.AbstractCommandConfiguration;
-import org.rifidi.edge.readerplugin.llrp.LLRPReaderSession;
 
 /**
  * 
  * 
  * @author Matthew Dean
  */
+@JMXMBean
 public class LLRPROSpecCommandConfiguration extends
 		AbstractCommandConfiguration<LLRPROSpecCommand> {
 	
@@ -29,7 +30,7 @@ public class LLRPROSpecCommandConfiguration extends
 	/**
 	 * 
 	 */
-	public LLRPROSpecCommandConfiguration(LLRPReaderSession session) {
+	public LLRPROSpecCommandConfiguration() {
 	}
 
 	/* (non-Javadoc)
@@ -61,14 +62,14 @@ public class LLRPROSpecCommandConfiguration extends
 	/**
 	 * @param roSpecID the roSpecID to set
 	 */
-	public void setROSpecID(int roSpecID) {
+	public void setROSpecID(Integer roSpecID) {
 		this.roSpecID = roSpecID;
 	}
 
 	/**
 	 * @return the roSpecID
 	 */
-	@Property(displayName = "ROSpec ID", description = "The ID of the ROSpec", writable = true, type = PropertyType.PT_INTEGER)
+	@Property(displayName = "ROSpecID", description = "The ID of the ROSpec", writable = true, type = PropertyType.PT_INTEGER)
 	public int getROSpecID() {
 		return roSpecID;
 	}
