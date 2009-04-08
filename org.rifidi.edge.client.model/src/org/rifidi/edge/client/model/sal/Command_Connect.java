@@ -6,9 +6,7 @@ package org.rifidi.edge.client.model.sal;
 import javax.jms.JMSException;
 import javax.jms.Session;
 
-import org.eclipse.core.runtime.preferences.DefaultScope;
-import org.osgi.service.prefs.Preferences;
-import org.rifidi.edge.client.model.Activator;
+import org.rifidi.edge.client.model.SALModelPlugin;
 import org.rifidi.edge.client.model.sal.commands.RemoteEdgeServerCommand;
 import org.rifidi.edge.client.model.sal.preferences.EdgeServerPreferences;
 
@@ -46,17 +44,15 @@ public class Command_Connect implements RemoteEdgeServerCommand {
 			// initialize the uptime of the server to 0
 			remoteEdgeServer.startupTime = 0l;
 			// set up JMS consumer
-			Preferences node = new DefaultScope().getNode(Activator.PLUGIN_ID);
-			String ip = node.get(EdgeServerPreferences.EDGE_SERVER_IP,
-					EdgeServerPreferences.EDGE_SERVER_IP_DEFAULT);
-			String port = node.get(EdgeServerPreferences.EDGE_SERVER_PORT_JMS,
-					EdgeServerPreferences.EDGE_SERVER_PORT_JMS_DEFAULT);
-			String queuename = node.get(
-					EdgeServerPreferences.EDGE_SERVER_JMS_QUEUE,
-					EdgeServerPreferences.EDGE_SERVER_JMS_QUEUE_DEFAULT);
-			String tagQueueName = node.get(
-					EdgeServerPreferences.EDGE_SERVER_JMS_QUEUE_TAGS,
-					EdgeServerPreferences.EDGE_SERVER_JMS_QUEUE_TAGS_DEFAULT);
+			String ip = SALModelPlugin.getDefault().getPreferenceStore()
+					.getString(EdgeServerPreferences.EDGE_SERVER_IP);
+			String port = SALModelPlugin.getDefault().getPreferenceStore()
+					.getString(EdgeServerPreferences.EDGE_SERVER_PORT_JMS);
+			String queuename = SALModelPlugin.getDefault().getPreferenceStore()
+					.getString(EdgeServerPreferences.EDGE_SERVER_JMS_QUEUE);
+			String tagQueueName = SALModelPlugin.getDefault()
+					.getPreferenceStore().getString(
+							EdgeServerPreferences.EDGE_SERVER_JMS_QUEUE_TAGS);
 			remoteEdgeServer.connectionFactory.setBrokerURL("tcp://" + ip + ":"
 					+ port);
 			remoteEdgeServer.conn = remoteEdgeServer.connectionFactory

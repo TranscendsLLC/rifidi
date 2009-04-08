@@ -5,7 +5,6 @@ package org.rifidi.edge.client.model.sal;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
-import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 import javax.jms.Connection;
@@ -13,7 +12,6 @@ import javax.jms.Destination;
 import javax.jms.MessageConsumer;
 import javax.jms.Session;
 import javax.management.AttributeList;
-import javax.xml.bind.JAXBException;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.commons.logging.Log;
@@ -23,7 +21,7 @@ import org.eclipse.core.databinding.observable.map.WritableMap;
 import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.fosstrak.tdt.TDTEngine;
 import org.osgi.service.prefs.Preferences;
-import org.rifidi.edge.client.model.Activator;
+import org.rifidi.edge.client.model.SALModelPlugin;
 import org.rifidi.edge.client.model.sal.commands.RequestExecuterSingleton;
 import org.rifidi.edge.client.model.sal.preferences.EdgeServerPreferences;
 import org.rifidi.edge.core.rmi.client.commandconfigurationstub.CCCreateCommandConfiguration;
@@ -489,12 +487,11 @@ public class RemoteEdgeServer {
 	 * @return The
 	 */
 	RS_ServerDescription getRSServerDescription() {
-		Preferences node = new DefaultScope().getNode(Activator.PLUGIN_ID);
-		String ip = node.get(EdgeServerPreferences.EDGE_SERVER_IP,
-				EdgeServerPreferences.EDGE_SERVER_IP_DEFAULT);
-		int port = Integer.parseInt(node.get(
-				EdgeServerPreferences.EDGE_SERVER_PORT_RMI,
-				EdgeServerPreferences.EDGE_SERVER_PORT_RMI_DEFAULT));
+		String ip = SALModelPlugin.getDefault().getPreferenceStore().getString(
+				EdgeServerPreferences.EDGE_SERVER_IP);
+		int port = Integer.parseInt(SALModelPlugin.getDefault()
+				.getPreferenceStore().getString(
+						EdgeServerPreferences.EDGE_SERVER_PORT_RMI));
 		return new RS_ServerDescription(ip, port);
 	}
 
@@ -506,12 +503,11 @@ public class RemoteEdgeServer {
 	 * @return
 	 */
 	ESServerDescription getESServerDescription() {
-		Preferences node = new DefaultScope().getNode(Activator.PLUGIN_ID);
-		String ip = node.get(EdgeServerPreferences.EDGE_SERVER_IP,
-				EdgeServerPreferences.EDGE_SERVER_IP_DEFAULT);
-		int port = Integer.parseInt(node.get(
-				EdgeServerPreferences.EDGE_SERVER_PORT_RMI,
-				EdgeServerPreferences.EDGE_SERVER_PORT_RMI_DEFAULT));
+		String ip = SALModelPlugin.getDefault().getPreferenceStore().getString(
+				EdgeServerPreferences.EDGE_SERVER_IP);
+		int port = Integer.parseInt(SALModelPlugin.getDefault()
+				.getPreferenceStore().getString(
+						EdgeServerPreferences.EDGE_SERVER_PORT_RMI));
 		return new ESServerDescription(ip, port);
 	}
 
@@ -523,12 +519,11 @@ public class RemoteEdgeServer {
 	 * @return
 	 */
 	CCServerDescription getCCServerDescription() {
-		Preferences node = new DefaultScope().getNode(Activator.PLUGIN_ID);
-		String ip = node.get(EdgeServerPreferences.EDGE_SERVER_IP,
-				EdgeServerPreferences.EDGE_SERVER_IP_DEFAULT);
-		int port = Integer.parseInt(node.get(
-				EdgeServerPreferences.EDGE_SERVER_PORT_RMI,
-				EdgeServerPreferences.EDGE_SERVER_PORT_RMI_DEFAULT));
+		String ip = SALModelPlugin.getDefault().getPreferenceStore().getString(
+				EdgeServerPreferences.EDGE_SERVER_IP);
+		int port = Integer.parseInt(SALModelPlugin.getDefault()
+				.getPreferenceStore().getString(
+						EdgeServerPreferences.EDGE_SERVER_PORT_RMI));
 		return new CCServerDescription(ip, port);
 	}
 

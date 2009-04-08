@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Edge Server Client Model Plug-in
 Bundle-SymbolicName: org.rifidi.edge.client.model;singleton:=true
 Bundle-Version: 1.0.0
-Bundle-Activator: org.rifidi.edge.client.model.Activator
+Bundle-Activator: org.rifidi.edge.client.model.SALModelPlugin
 Bundle-Vendor: Pramari, LLC
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
@@ -24,6 +24,7 @@ Import-Package: javax.jms;version="1.1.0",
  org.rifidi.edge.core.rmi.client.readerconfigurationstub,
  org.rifidi.rmi.utils.exceptions,
  org.rifidi.rmi.utils.remotecall
-Export-Package: org.rifidi.edge.client.model.sal,
+Export-Package: org.rifidi.edge.client.model,
+ org.rifidi.edge.client.model.sal,
  org.rifidi.edge.client.model.sal.preferences,
  org.rifidi.edge.client.model.sal.properties

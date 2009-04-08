@@ -6,7 +6,7 @@ package org.rifidi.edge.client.model.sal.preferences;
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.osgi.service.prefs.Preferences;
-import org.rifidi.edge.client.model.Activator;
+import org.rifidi.edge.client.model.SALModelPlugin;
 
 /**
  * Put default values in the Preference Store
@@ -25,7 +25,7 @@ public class EdgeServerPreferenceInitializer extends
 	 */
 	@Override
 	public void initializeDefaultPreferences() {
-		Preferences node = new DefaultScope().getNode(Activator.PLUGIN_ID);
+		Preferences node = new DefaultScope().getNode(SALModelPlugin.PLUGIN_ID);
 		node.put(EdgeServerPreferences.EDGE_SERVER_IP,
 				EdgeServerPreferences.EDGE_SERVER_IP_DEFAULT);
 		node.put(EdgeServerPreferences.EDGE_SERVER_PORT_JMS,
