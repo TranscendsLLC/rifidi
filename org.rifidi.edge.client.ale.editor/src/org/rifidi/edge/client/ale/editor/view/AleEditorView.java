@@ -12,14 +12,19 @@ package org.rifidi.edge.client.ale.editor.view;
 
 import java.util.ArrayList;
 
+import javax.swing.JToolBar.Separator;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.events.ExpansionAdapter;
 import org.eclipse.ui.forms.events.ExpansionEvent;
@@ -34,6 +39,9 @@ import org.rifidi.edge.client.ale.api.wsdl.alelr.epcglobal.EmptyParms;
 import org.rifidi.edge.client.ale.api.wsdl.alelr.epcglobal.ImplementationExceptionResponse;
 import org.rifidi.edge.client.ale.api.wsdl.alelr.epcglobal.SecurityExceptionResponse;
 import org.rifidi.edge.client.ale.api.xsd.ale.epcglobal.ECBoundarySpec;
+import org.rifidi.edge.client.ale.api.xsd.ale.epcglobal.ECReportOutputSpec;
+import org.rifidi.edge.client.ale.api.xsd.ale.epcglobal.ECReportSetSpec;
+import org.rifidi.edge.client.ale.api.xsd.ale.epcglobal.ECReportSpec;
 import org.rifidi.edge.client.ale.api.xsd.ale.epcglobal.ECSpec;
 import org.rifidi.edge.client.ale.connection.service.ConnectionService;
 import org.rifidi.edge.client.ale.treeview.util.ConnectionWrapper.ConnectionWrapper;
@@ -80,70 +88,30 @@ public class AleEditorView extends ViewPart {
 		layout.numColumns = 2;
 		form.getBody().setLayout(layout);
 		this.init("NewEcSpec", new ECSpec());
+
+		createReportCtab();
+		createSubscriberCtab();
+
 		
-
-		// Form starts here
-
-		// Readersection
-
-		// boundarysection
-
-		// reportspec section
-
-		// secRepSpec.setLayout(new GridLayout());
-		// gd = new GridData(GridData.GRAB_HORIZONTAL);
-		// gd.horizontalSpan = 2;
-		// secRepSpec.setLayoutData(gd);
-		// TableWrapData td = new TableWrapData(TableWrapData.FILL);
-		// td.colspan = 2;
-		// secRepSpec.setLayoutData(td);
-		// secRepSpec.addExpansionListener(new ExpansionAdapter() {
-		// public void expansionStateChanged(ExpansionEvent e) {
-		// form.reflow(true);
-		// }
-		// });
-		// secRepSpec.setText("Section title");
-		// secRepSpec.setDescription("This is the description that goes "
-		// + "below the title");
-		// Composite sectionClient = toolkit.createComposite(secRepSpec);
-		// sectionClient.setLayout(new GridLayout());
-		// secRepSpec.setClient(sectionClient);
-		//
-		// // ExpandableComposite ec = toolkit.createExpandableComposite(form
-		// // .getBody(), ExpandableComposite.TREE_NODE
-		// // | ExpandableComposite.CLIENT_INDENT);
-		// // ec.setText("Expandable Composite title");
-		// // String ctext = "We will now create a somewhat long text so that "
-		// // + "we can use it as content for the expandable composite. "
-		// // +
-		// "Expandable composite is used to hide or show the text using the "
-		// // + "toggle control";
-		// // Label client = toolkit.createLabel(ec, ctext, SWT.WRAP);
-		// // ec.setClient(client);
-		// // TableWrapData td = new TableWrapData();
-		// // td.colspan = 2;
-		// // ec.setLayoutData(td);
-		// // ec.addExpansionListener(new ExpansionAdapter() {
-		// // public void expansionStateChanged(ExpansionEvent e) {
-		// // form.reflow(true);
-		// // }
-		// // });
-		//
-		// Label lblReportSpec = toolkit
-		// .createLabel(form.getBody(), "Report Spec");
-		// Button btnAddSpec = new Button(form.getBody(), SWT.PUSH);
-		// btnAddSpec.setText("Add Report Spec");
-		// if !lastRspec.isEmpty->AddSpecLine
-
-		CTabItem ctiReport = new CTabItem(folder, SWT.NONE, 1);
-		ctiReport.setText("Reports (5)");
-		CTabItem ctiSubscribers = new CTabItem(folder, SWT.NONE, 2);
-		ctiSubscribers.setText("Subscribers");
+		
 
 	}
 
-	private void addReportSpec() {
+	/**
+	 * 
+	 */
+	private void createSubscriberCtab() {
+		CTabItem ctiReport = new CTabItem(folder, SWT.NONE, 1);
+		ctiReport.setText("Reports (5)");
+	}
 
+	/**
+	 * 
+	 */
+	private void createReportCtab() {
+		CTabItem ctiSubscribers = new CTabItem(folder, SWT.NONE, 2);
+		ctiSubscribers.setText("Subscribers");
+		
 	}
 
 	/*
@@ -175,53 +143,6 @@ public class AleEditorView extends ViewPart {
 		createSecLogRds();
 		createSecBoundary();
 		createSecReport();
-		createSecOutput();
-		createSecFilters();
-		createSecGrouping();
-		ECBoundarySpec bspec=null; 
-	
-		if(this.ecSpec.getBoundarySpec()!=null){
-			bspec= this.ecSpec.getBoundarySpec();
-			txtDuration.setText(Long.toString(bspec.getDuration().getValue()));
-			txtRepeatAfter.setText(Long
-					.toString(bspec.getRepeatPeriod().getValue()));
-			txtStableSet.setText(Long.toString(bspec.getStableSetInterval()
-					.getValue()));
-		}else{
-			txtDuration.setText("0");
-			txtRepeatAfter.setText("0");
-			txtStableSet.setText("0");
-		}
-		if(this.ecSpec.getLogicalReaders()!=null){
-		ArrayList<String> logiRead = (ArrayList<String>) this.ecSpec
-				.getLogicalReaders().getLogicalReader();
-			lrList.setSelection(logiRead.toArray(new String[logiRead.size()]));
-		}else{
-			//do nothing - no selection required
-		}
-	}
-
-	/**
-	 * 
-	 */
-	private void createSecGrouping() {
-		// TODO Auto-generated method stub
-
-	}
-
-	/**
-	 * 
-	 */
-	private void createSecFilters() {
-		// TODO Auto-generated method stub
-
-	}
-
-	/**
-	 * 
-	 */
-	private void createSecOutput() {
-		// TODO Auto-generated method stub
 
 	}
 
@@ -229,18 +150,40 @@ public class AleEditorView extends ViewPart {
 	 * 
 	 */
 	private void createSecReport() {
-		Section secRepSpec = toolkit.createSection(form.getBody(),
-				Section.DESCRIPTION | Section.TITLE_BAR | Section.TWISTIE
-						| Section.EXPANDED);
+		// addbutton
+//		toolkit.createSeparator(form.getBody(), Separator.HORIZONTAL);
+		Button btnAddSpecSec = toolkit.createButton(form.getBody(),
+				"Add Report Spec", SWT.PUSH);
+		btnAddSpecSec.addListener(SWT.Selection, new Listener() {
+			public void handleEvent(Event e) {
+				System.out.println("adding section");
+				ECReportSpec spec = new ECReportSpec();
+				spec.setReportName("NewReport");
+				ECReportSetSpec setSpec = new ECReportSetSpec();
+				setSpec.setSet("CURRENT");
+				spec.setReportSet(setSpec);
+				spec.setReportIfEmpty(false);
+				spec.setReportOnlyOnChange(false);
+				ECReportOutputSpec ecros= new ECReportOutputSpec();
+				ecros.setIncludeTag(false);
+				ecros.setIncludeEPC(false);
+				ecros.setIncludeRawHex(false);
+				ecros.setIncludeRawDecimal(false);
+				ecros.setIncludeCount(false);
+				spec.setOutput(ecros);
+				addReportSpecSection(spec);
+			}
+		});
 
-		TableWrapData repTd = new TableWrapData(TableWrapData.FILL_GRAB);
-		repTd.colspan = 2;
-		secRepSpec.setLayoutData(repTd);
-		secRepSpec.addExpansionListener(createExpansionAdapter());
-		secRepSpec.setText("Reporting");
-		secRepSpec.setDescription("Set the properties for the reports.");
-		Composite reportSectionClient = toolkit.createComposite(secRepSpec);
-		reportSectionClient.setLayout(new GridLayout());
+		if (this.ecSpec.getReportSpecs() != null) {
+			ArrayList<ECReportSpec> repSpecs = (ArrayList<ECReportSpec>) this.ecSpec
+					.getReportSpecs().getReportSpec();
+			for (ECReportSpec reportSpec : repSpecs) {
+				addReportSpecSection(reportSpec);
+			}
+		}
+
+		
 
 	}
 
@@ -272,6 +215,22 @@ public class AleEditorView extends ViewPart {
 		Label lblDuration = toolkit.createLabel(form.getBody(),
 				"Duration (ms):");
 		txtDuration = toolkit.createText(form.getBody(), "0", SWT.BORDER);
+		ECBoundarySpec bspec = null;
+
+		if (this.ecSpec.getBoundarySpec() != null) {
+			bspec = this.ecSpec.getBoundarySpec();
+			txtDuration.setText(Long.toString(bspec.getDuration().getValue()));
+			txtRepeatAfter.setText(Long.toString(bspec.getRepeatPeriod()
+					.getValue()));
+			txtStableSet.setText(Long.toString(bspec.getStableSetInterval()
+					.getValue()));
+		}
+
+		if (this.ecSpec.getLogicalReaders() != null) {
+			ArrayList<String> logiRead = (ArrayList<String>) this.ecSpec
+					.getLogicalReaders().getLogicalReader();
+			lrList.setSelection(logiRead.toArray(new String[logiRead.size()]));
+		}
 
 		boundarySection.setClient(boundarySectionClient);
 
@@ -314,7 +273,6 @@ public class AleEditorView extends ViewPart {
 		lrList.setItems((strings.toArray(new String[strings.size()])));
 
 		lrSection.setClient(lrSectionClient);
-		// TODO:select the used readers from spec
 
 	}
 
@@ -340,6 +298,47 @@ public class AleEditorView extends ViewPart {
 				SWT.RADIO);
 		// TODO:read from ecspec
 		btnInclSpecInRepNo.setSelection(true);
+
+	}
+
+	private Section addReportSpecSection(ECReportSpec spec) {
+		// spec. FIXME
+		Section secRepSpec = toolkit.createSection(form.getBody(),
+				Section.DESCRIPTION | Section.TITLE_BAR | Section.TWISTIE
+						| Section.EXPANDED);
+
+		TableWrapData repTd = new TableWrapData(TableWrapData.FILL_GRAB);
+		repTd.colspan = 2;
+		secRepSpec.setLayoutData(repTd);
+		secRepSpec.addExpansionListener(createExpansionAdapter());
+		secRepSpec.setText("Reporting");
+		secRepSpec.setDescription("Set the properties for the reports.");
+		Composite reportSectionClient = toolkit.createComposite(secRepSpec);
+		reportSectionClient.setLayout(new GridLayout());
+		Label lblRepSpecName = toolkit.createLabel(form.getBody(), "Name:");
+		Text txtRepSpecName = toolkit.createText(form.getBody(), spec
+				.getReportName());
+		Label lblRepSet = toolkit.createLabel(form.getBody(), "Report Set:");
+		Combo cboRepSet = new Combo(form.getBody(), SWT.READ_ONLY);
+		String[] arRepSetData = { "CURRENT", "ADDITIONS", "DELETIONS" };
+		cboRepSet.setItems(arRepSetData);
+		for (int i = 0; i < cboRepSet.getItemCount(); i++) {
+			if (spec.getReportSet().getSet().equalsIgnoreCase(
+					cboRepSet.getItem(i))) {
+				cboRepSet.select(i);
+			}
+		}
+//		form.layout();
+		form.reflow(true);
+		return secRepSpec;
+		
+
+	}
+
+	private void removeReportSpecSection(Section sec) {
+
+		sec.dispose();
+		// sec.get
 
 	}
 
