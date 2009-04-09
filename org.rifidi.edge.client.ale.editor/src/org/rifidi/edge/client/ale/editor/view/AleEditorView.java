@@ -66,7 +66,6 @@ public class AleEditorView extends ViewPart {
 	private List lrList;
 	private Text txtSpecName;
 	private String name;
-	
 
 	/*
 	 * (non-Javadoc)
@@ -77,7 +76,7 @@ public class AleEditorView extends ViewPart {
 	 */
 	@Override
 	public void createPartControl(Composite parent) {
-		
+
 		ConnectionWrapper cw = new ConnectionWrapper();
 		conSvc = cw.getConnectionService();
 
@@ -139,7 +138,8 @@ public class AleEditorView extends ViewPart {
 	public void init(String name, ECSpec ecSpec) {
 		this.ecSpec = ecSpec;
 		this.name = name;
-		
+		setPartName(this.name);
+
 		createHeader();
 		createSecLogRds();
 		createSecBoundary();
@@ -159,7 +159,7 @@ public class AleEditorView extends ViewPart {
 	 * 
 	 */
 	private void createHeader() {
-		form.setText(this.name);
+		// form.setText(this.name);
 		Button btnSave = toolkit.createButton(form.getBody(), "Save", SWT.PUSH);
 		toolkit.createSeparator(form.getBody(), Separator.HORIZONTAL);
 		btnSave.addListener(SWT.Selection, new Listener() {
@@ -175,9 +175,8 @@ public class AleEditorView extends ViewPart {
 
 			@Override
 			public void focusLost(FocusEvent e) {
-				form.setText(((Text)e.widget).getText());
-				
-				
+				// form.setText(((Text)e.widget).getText());
+				setPartName(((Text) e.widget).getText());
 
 			}
 
@@ -226,7 +225,8 @@ public class AleEditorView extends ViewPart {
 		lrList = new List(lrSectionClient, SWT.BORDER | SWT.MULTI
 				| SWT.V_SCROLL | SWT.FILL);
 		GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
-		// data.minimumHeight=50;
+		data.verticalSpan = 2;
+		data.heightHint = 50;
 		// data.grabExcessHorizontalSpace=true;
 		lrList.setLayoutData(data);
 
@@ -243,11 +243,13 @@ public class AleEditorView extends ViewPart {
 		}
 
 		lrList.setItems((strings.toArray(new String[strings.size()])));
-		// if(lrList.getItemCount()==0){
-		// lrSection.setDescription(lrSection.getDescription()+"\nCURRENTLY NO READERS AVAILABLE.");
-		// lrList.setVisible(false);
-		// }
 
+		// select readers
+		if (this.ecSpec.getLogicalReaders() != null) {
+			ArrayList<String> logiRead = (ArrayList<String>) this.ecSpec
+					.getLogicalReaders().getLogicalReader();
+			lrList.setSelection(logiRead.toArray(new String[logiRead.size()]));
+		}
 		lrSection.setClient(lrSectionClient);
 
 	}
@@ -276,14 +278,20 @@ public class AleEditorView extends ViewPart {
 		toolkit.createLabel(boundarySectionClient, "Stable Set (ms):");
 		txtStableSet = toolkit.createText(boundarySectionClient, "0",
 				SWT.BORDER);
+		txtStableSet.setLayoutData(new GridData(SWT.FILL, SWT.RIGHT, true,
+				false));
 
 		toolkit.createLabel(boundarySectionClient, "Repeat After (ms):");
 		txtRepeatAfter = toolkit.createText(boundarySectionClient, "0",
 				SWT.BORDER);
+		txtRepeatAfter.setLayoutData(new GridData(SWT.FILL, SWT.LEFT, true,
+				false));
 
 		toolkit.createLabel(boundarySectionClient, "Duration (ms):");
 		txtDuration = toolkit
 				.createText(boundarySectionClient, "0", SWT.BORDER);
+		txtDuration
+				.setLayoutData(new GridData(SWT.FILL, SWT.LEFT, true, false));
 		ECBoundarySpec bspec = null;
 
 		if (this.ecSpec.getBoundarySpec() != null) {
@@ -293,12 +301,6 @@ public class AleEditorView extends ViewPart {
 					.getValue()));
 			txtStableSet.setText(Long.toString(bspec.getStableSetInterval()
 					.getValue()));
-		}
-
-		if (this.ecSpec.getLogicalReaders() != null) {
-			ArrayList<String> logiRead = (ArrayList<String>) this.ecSpec
-					.getLogicalReaders().getLogicalReader();
-			lrList.setSelection(logiRead.toArray(new String[logiRead.size()]));
 		}
 
 		boundarySection.setClient(boundarySectionClient);
@@ -347,6 +349,8 @@ public class AleEditorView extends ViewPart {
 		toolkit.createLabel(reportSectionClient, "Name:");
 		Text txtRepSpecName = toolkit.createText(reportSectionClient, spec
 				.getReportName(), SWT.BORDER);
+		txtRepSpecName.setLayoutData(new GridData(SWT.FILL, SWT.RIGHT, true,
+				false));
 
 		toolkit.createLabel(reportSectionClient, "Report Set:");
 		Combo cboRepSet = new Combo(reportSectionClient, SWT.READ_ONLY);
@@ -451,12 +455,18 @@ public class AleEditorView extends ViewPart {
 		toolkit.createLabel(filterSectionClient, "Exclude Patterns:");
 		// TODO: minsize=...
 		Text txtExclPatterns = toolkit.createText(filterSectionClient, "",
-				SWT.MULTI | SWT.BORDER);
+				SWT.MULTI | SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
+		GridData txtExclPatData = new GridData(SWT.FILL, SWT.LEFT, true, false);
+		txtExclPatData.heightHint = 100;
+		txtExclPatterns.setLayoutData(txtExclPatData);
 
 		toolkit.createLabel(filterSectionClient, "Include Patterns:");
 
 		Text txtInclPatterns = toolkit.createText(filterSectionClient, "",
-				SWT.MULTI | SWT.BORDER);
+				SWT.MULTI | SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
+		GridData txtInclPatData = new GridData(SWT.FILL, SWT.LEFT, true, false);
+		txtInclPatData.heightHint = 100;
+		txtInclPatterns.setLayoutData(txtInclPatData);
 
 		if (spec.getFilterSpec() != null) {
 			if (spec.getFilterSpec().getExcludePatterns() != null) {
