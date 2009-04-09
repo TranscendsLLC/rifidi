@@ -13,10 +13,6 @@ public class EPCGeneration1Event extends DatacontainerEvent {
 
 	/** serial version for this class. */
 	private static final long serialVersionUID = 1L;
-	/** Pure identity field, generated externally!! */
-	private String pureIdentity;
-	/** Length of the epc. */
-	protected Integer epcLength;
 	/** Store a hex copy of the epc for comparison. */
 	protected String hex = "";
 
@@ -24,16 +20,18 @@ public class EPCGeneration1Event extends DatacontainerEvent {
 	 * Constructor.
 	 */
 	public EPCGeneration1Event() {
-		memoryBanks.add(new BigInteger("0"));
+		memoryBanks.add(new MemoryBankLengthTuple(new BigInteger("0"), 1));
 	}
 
 	/**
 	 * Set the epc memory bank.
 	 * 
 	 * @param memBank
+	 * @param length
 	 */
-	public void setEPCMemory(BigInteger memBank) {
-		memoryBanks.set(0, memBank);
+	public void setEPCMemory(BigInteger memBank, Integer length) {
+		memoryBanks.get(0).setLength(length);
+		memoryBanks.get(0).setMemory(memBank);
 		hex = memBank.toString(16);
 	}
 
@@ -52,35 +50,37 @@ public class EPCGeneration1Event extends DatacontainerEvent {
 	 * @return
 	 */
 	public BigInteger getEPCMemory() {
-		return memoryBanks.get(0);
+		return memoryBanks.get(0).getMemory();
 	}
 
 	/**
 	 * @return the epcLength
 	 */
 	public Integer getEpcLength() {
-		return epcLength;
+		return memoryBanks.get(0).getLength();
 	}
 
-	/**
-	 * @param epcLength
-	 *            the epcLength to set
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
-	public void setEpcLength(Integer epcLength) {
-		this.epcLength = epcLength;
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof EPCGeneration1Event) {
+			return hex.hashCode() == obj.hashCode();
+		}
+		return false;
 	}
 
-	/**
-	 * @return the pureIdentity
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#hashCode()
 	 */
-	public String getPureIdentity() {
-		return pureIdentity;
+	@Override
+	public int hashCode() {
+		return hex.hashCode();
 	}
 
-	/**
-	 * Set the pure identity.
-	 */
-	public void setPureIdentlty(String pureIdentity) {
-		this.pureIdentity = pureIdentity;
-	}
 }

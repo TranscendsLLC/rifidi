@@ -162,21 +162,17 @@ public class AlienGetTagListCommand extends AbstractAlien9800Command {
 					String tagData = splitString2[0];
 					String timeStamp = splitString2[1];
 					String antennaID = splitString2[2];
-
+					int epcLength=tagData.length()*16;
 					BigInteger data = new BigInteger(tagData, 16);
 
 					EPCGeneration2Event gen2event = new EPCGeneration2Event();
-					gen2event.setEPCMemory(data);
 					// make some wild guesses on the length of the epc field
-					if (data.bitLength() > 96) {
-						// 192 bits
-						gen2event.setEpcLength(192);
+					if (epcLength > 96) {
+						gen2event.setEPCMemory(data,192);
 					} else if (data.bitLength() > 64) {
-						// 96 bits
-						gen2event.setEpcLength(96);
+						gen2event.setEPCMemory(data,96);
 					} else {
-						// 64 bits
-						gen2event.setEpcLength(64);
+						gen2event.setEPCMemory(data,64);
 					}
 					int antennaID_int = 0;
 

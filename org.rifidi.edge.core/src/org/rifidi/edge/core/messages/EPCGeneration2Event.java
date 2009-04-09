@@ -16,10 +16,10 @@ public class EPCGeneration2Event extends EPCGeneration1Event {
 	private static final long serialVersionUID = 1L;
 
 	public EPCGeneration2Event() {
-		memoryBanks.add(new BigInteger("0"));
-		memoryBanks.add(new BigInteger("0"));
-		memoryBanks.add(new BigInteger("0"));
-		memoryBanks.add(new BigInteger("0"));
+		memoryBanks.add(new MemoryBankLengthTuple(new BigInteger("0"), 1));
+		memoryBanks.add(new MemoryBankLengthTuple(new BigInteger("0"), 1));
+		memoryBanks.add(new MemoryBankLengthTuple(new BigInteger("0"), 1));
+		memoryBanks.add(new MemoryBankLengthTuple(new BigInteger("0"), 1));
 	}
 
 	/**
@@ -28,7 +28,16 @@ public class EPCGeneration2Event extends EPCGeneration1Event {
 	 * @return
 	 */
 	public String getKillPwd() {
-		return readMemory(0, 0, 32).toString(16);
+		return "x" + readMemory(0, 0, 32).toString(16);
+	}
+
+	/**
+	 * Get the kill password in binary.
+	 * 
+	 * @return
+	 */
+	public String getKillPwdDecimal() {
+		return readMemory(0, 0, 32).toString(10);
 	}
 
 	/**
@@ -36,8 +45,17 @@ public class EPCGeneration2Event extends EPCGeneration1Event {
 	 * 
 	 * @return
 	 */
-	public String AccessPwd() {
-		return readMemory(0, 32, 32).toString(16);
+	public String getAccessPwd() {
+		return "x" + readMemory(0, 32, 32).toString(16);
+	}
+
+	/**
+	 * Get the access password in binary.
+	 * 
+	 * @return
+	 */
+	public String getAccessPwdDecimal() {
+		return readMemory(0, 32, 32).toString(10);
 	}
 
 	/**
@@ -80,16 +98,27 @@ public class EPCGeneration2Event extends EPCGeneration1Event {
 	 * Set the reserved memory bank.
 	 * 
 	 * @param memory
+	 * @param length
 	 */
-	public void setReservedMemory(BigInteger memory) {
-		memoryBanks.set(0, memory);
+	public void setReservedMemory(BigInteger memory, Integer length) {
+		memoryBanks.get(0).setMemory(memory);
+		memoryBanks.get(0).setLength(length);
 	}
 
 	/**
 	 * Get the reserved memory bank.
 	 */
 	public BigInteger getReservedMemory() {
-		return memoryBanks.get(0);
+		return memoryBanks.get(0).getMemory();
+	}
+
+	/**
+	 * Get the length of the reserved memory.
+	 * 
+	 * @return
+	 */
+	public Integer getReservedMemoryLength() {
+		return memoryBanks.get(0).getLength();
 	}
 
 	/*
@@ -97,12 +126,13 @@ public class EPCGeneration2Event extends EPCGeneration1Event {
 	 * 
 	 * @see
 	 * org.rifidi.edge.core.messages.EPCGeneration1Event#setEPCMemory(java.math
-	 * .BigInteger)
+	 * .BigInteger, java.lang.Integer)
 	 */
 	@Override
-	public void setEPCMemory(BigInteger memBank) {
+	public void setEPCMemory(BigInteger memBank, Integer length) {
 		hex = memBank.toString(16);
-		memoryBanks.set(1, memBank);
+		memoryBanks.get(1).setMemory(memBank);
+		memoryBanks.get(1).setLength(length);
 	}
 
 	/*
@@ -112,23 +142,34 @@ public class EPCGeneration2Event extends EPCGeneration1Event {
 	 */
 	@Override
 	public BigInteger getEPCMemory() {
-		return memoryBanks.get(1);
+		return memoryBanks.get(1).getMemory();
 	}
 
 	/**
 	 * Set the TID memory bank.
 	 * 
 	 * @param memory
+	 * @param length
 	 */
-	public void setTIDMemory(BigInteger memory) {
-		memoryBanks.set(2, memory);
+	public void setTIDMemory(BigInteger memory, Integer length) {
+		memoryBanks.get(2).setMemory(memory);
+		memoryBanks.get(2).setLength(length);
 	}
 
 	/**
 	 * Get the TID memory bank.
 	 */
 	public BigInteger getTIDMemory() {
-		return memoryBanks.get(2);
+		return memoryBanks.get(2).getMemory();
+	}
+
+	/**
+	 * Get the length of the tid memory.
+	 * 
+	 * @return
+	 */
+	public Integer getTIDMemoryLength() {
+		return memoryBanks.get(2).getLength();
 	}
 
 	/**
@@ -136,14 +177,24 @@ public class EPCGeneration2Event extends EPCGeneration1Event {
 	 * 
 	 * @param memory
 	 */
-	public void setUserMemory(BigInteger memory) {
-		memoryBanks.set(3, memory);
+	public void setUserMemory(BigInteger memory, Integer length) {
+		memoryBanks.get(3).setLength(length);
+		memoryBanks.get(3).setMemory(memory);
 	}
 
 	/**
 	 * Get the user memory bank.
 	 */
 	public BigInteger getUserMemory() {
-		return memoryBanks.get(3);
+		return memoryBanks.get(3).getMemory();
+	}
+
+	/**
+	 * Get the length of the user memory.
+	 * 
+	 * @return
+	 */
+	public Integer getUserMemoryLength() {
+		return memoryBanks.get(3).getLength();
 	}
 }
