@@ -27,6 +27,16 @@ public abstract class DatacontainerEvent implements Serializable {
 	}
 
 	/**
+	 * Get a memory bank.
+	 * 
+	 * @param id
+	 * @return
+	 */
+	public MemoryBankLengthTuple getMemoryBank(Integer id) {
+		return memoryBanks.get(id);
+	}
+
+	/**
 	 * Read from a memory bank.
 	 * 
 	 * @param address
@@ -51,7 +61,9 @@ public abstract class DatacontainerEvent implements Serializable {
 	 * @author Jochen Mader - jochen@pramari.com
 	 * 
 	 */
-	public class MemoryBankLengthTuple {
+	public class MemoryBankLengthTuple implements Serializable {
+		/** Default. */
+		private static final long serialVersionUID = 1L;
 		/** The memory bank. */
 		private BigInteger memory;
 		/** Length of the memory bank. */

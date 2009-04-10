@@ -56,7 +56,7 @@ public class EPCGeneration1Event extends DatacontainerEvent {
 	/**
 	 * @return the epcLength
 	 */
-	public Integer getEpcLength() {
+	public Integer getEPCMemoryLength() {
 		return memoryBanks.get(0).getLength();
 	}
 

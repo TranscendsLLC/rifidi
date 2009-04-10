@@ -9,14 +9,11 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.rifidi.edge.core.messages.EPCGeneration1Event;
-import org.rifidi.edge.core.messages.TagReadEvent;
 import org.rifidi.edge.epcglobal.ale.api.read.data.ECSpec;
 import org.rifidi.edge.epcglobal.ale.api.read.ws.DuplicateNameExceptionResponse;
 import org.rifidi.edge.epcglobal.ale.api.read.ws.DuplicateSubscriptionExceptionResponse;
@@ -28,9 +25,6 @@ import org.rifidi.edge.esper.EsperManagementService;
 import org.rifidi.edge.lr.LogicalReaderManagementService;
 
 import com.espertech.esper.client.EPServiceProvider;
-import com.espertech.esper.client.EventBean;
-import com.espertech.esper.client.UpdateListener;
-import com.espertech.esper.event.map.MapEventBean;
 
 /**
  * @author Jochen Mader - jochen@pramari.com
@@ -42,10 +36,6 @@ public class ECSPECManagerServiceImpl implements ECSPECManagerService {
 			.getLog(ECSPECManagerService.class);
 	/** Map containing the spec name as key and the spec as value. */
 	private Map<String, RifidiECSpec> nameToSpec;
-	/** Map containing the spec name as key and a set of target uris as value. */
-	private Map<String, Set<URI>> nameToURIs;
-	/** Map containing the URI as key and the target as value. */
-	private Map<URI, TestListener> uriToListener;
 	/** Esper engine isntance. */
 	private EPServiceProvider esper;
 	/** Threadpool for executing the scheduled triggers. */
@@ -58,8 +48,6 @@ public class ECSPECManagerServiceImpl implements ECSPECManagerService {
 	 */
 	public ECSPECManagerServiceImpl() {
 		nameToSpec = new HashMap<String, RifidiECSpec>();
-		nameToURIs = new HashMap<String, Set<URI>>();
-		uriToListener = new HashMap<URI, TestListener>();
 		// TODO: we might have to manage the size of the pool size but that
 		// requires profiling
 		triggerpool = new ScheduledThreadPoolExecutor(10);
@@ -123,7 +111,6 @@ public class ECSPECManagerServiceImpl implements ECSPECManagerService {
 				throw new NoSuchNameExceptionResponse(name + " doesn't exist.");
 			}
 			RifidiECSpec spec = nameToSpec.remove(name);
-			nameToURIs.remove(name);
 			spec.stop();
 			spec.destroy();
 		}
@@ -176,25 +163,8 @@ public class ECSPECManagerServiceImpl implements ECSPECManagerService {
 				URI target = new URI(uri);
 				// check if the spec actually exists
 				if (nameToSpec.containsKey(specName)) {
-					// create the list for holding the uri if not yet done
-					if (!nameToURIs.containsKey(specName)) {
-						nameToURIs.put(specName,
-								new ConcurrentSkipListSet<URI>());
-					}
-					// check if the uri is already registered
-					if (!nameToURIs.get(specName).contains(target)) {
-						nameToURIs.get(specName).add(target);
-						TestListener testListener = new TestListener();
-						uriToListener.put(target, testListener);
-						// start has to happen here to ensure that all
-						// statements are created
-						nameToSpec.get(specName).start();
-						nameToSpec.get(specName).registerUpdateListener(
-								testListener);
-						return;
-					}
-					throw new DuplicateSubscriptionExceptionResponse(uri
-							+ " is already registered to " + uri);
+					nameToSpec.get(specName).subscribe(target);
+					return;
 				}
 				throw new NoSuchNameExceptionResponse("A spec named "
 						+ specName + " doesn't exist. ");
@@ -220,23 +190,8 @@ public class ECSPECManagerServiceImpl implements ECSPECManagerService {
 				URI target = new URI(uri);
 				// check if the spec actually exists
 				if (nameToSpec.containsKey(specName)) {
-					// get the list holding the uris
-					if (nameToURIs.containsKey(specName)) {
-						// try to remove the uri
-						boolean rem = nameToURIs.get(specName).remove(target);
-						if (rem) {
-							if (nameToURIs.get(specName).isEmpty()) {
-								// clean up if the set is now empty
-								nameToURIs.remove(specName);
-								nameToSpec.get(specName)
-										.unregisterUpdateListener(
-												uriToListener.remove(target));
-							}
-							return;
-						}
-					}
-					throw new NoSuchSubscriberExceptionResponse(
-							"No subscription from " + uri + " to " + specName);
+					nameToSpec.get(specName).unsubscribe(target);
+					return;
 				}
 				throw new NoSuchNameExceptionResponse("A spec named "
 						+ specName + " doesn't exist. ");
@@ -252,44 +207,5 @@ public class ECSPECManagerServiceImpl implements ECSPECManagerService {
 	 */
 	public void setLrService(LogicalReaderManagementService lrService) {
 		this.lrService = lrService;
-	}
-
-	private class TestListener implements UpdateListener {
-		// TODO: synchronization?
-		private Set<TagReadEvent> lastEventSet;
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see
-		 * com.espertech.esper.client.UpdateListener#update(com.espertech.esper
-		 * .client.EventBean[], com.espertech.esper.client.EventBean[])
-		 */
-		@Override
-		public void update(EventBean[] arg0, EventBean[] arg1) {
-			esper.getEPRuntime().sendEvent(new StartEvent("wuhu"));
-			boolean empty = false;
-			try {
-				Set<TagReadEvent> tagEvents = new HashSet<TagReadEvent>();
-				for (EventBean bean : arg0) {
-					if (((MapEventBean) bean).getProperties().containsKey(
-							"stream_0")) {
-						tagEvents.add((TagReadEvent) ((MapEventBean) bean)
-								.get("stream_0"));
-					} else {
-						break;
-					}
-				}
-				System.out.println("received: " + tagEvents.size());
-				for (TagReadEvent tagEvent : tagEvents) {
-					System.out
-							.println(((EPCGeneration1Event) tagEvent.getTag())
-									.getEPC());
-				}
-			} catch (Exception e) {
-				System.out.println(e.toString());
-			}
-		}
-
 	}
 }

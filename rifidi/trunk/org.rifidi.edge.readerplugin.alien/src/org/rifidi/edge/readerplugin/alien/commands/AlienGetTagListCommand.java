@@ -162,7 +162,7 @@ public class AlienGetTagListCommand extends AbstractAlien9800Command {
 					String tagData = splitString2[0];
 					String timeStamp = splitString2[1];
 					String antennaID = splitString2[2];
-					int epcLength=tagData.length()*16;
+					int epcLength=tagData.length();
 					BigInteger data = new BigInteger(tagData, 16);
 
 					EPCGeneration2Event gen2event = new EPCGeneration2Event();

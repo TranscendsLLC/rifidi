@@ -1,8 +1,10 @@
 package org.rifidi.edge.epcglobal.aleread;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -12,15 +14,17 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.epcglobal.ale.api.lr.ws.NoSuchNameExceptionResponse;
 import org.rifidi.edge.epcglobal.ale.api.read.data.ECBoundarySpec;
+import org.rifidi.edge.epcglobal.ale.api.read.data.ECReportSpec;
 import org.rifidi.edge.epcglobal.ale.api.read.data.ECSpec;
+import org.rifidi.edge.epcglobal.ale.api.read.ws.DuplicateSubscriptionExceptionResponse;
 import org.rifidi.edge.epcglobal.ale.api.read.ws.ECSpecValidationExceptionResponse;
 import org.rifidi.edge.epcglobal.ale.api.read.ws.InvalidURIExceptionResponse;
+import org.rifidi.edge.epcglobal.ale.api.read.ws.NoSuchSubscriberExceptionResponse;
 import org.rifidi.edge.lr.LogicalReader;
 import org.rifidi.edge.lr.LogicalReaderManagementService;
 
 import com.espertech.esper.client.EPServiceProvider;
 import com.espertech.esper.client.EPStatement;
-import com.espertech.esper.client.UpdateListener;
 
 /**
  * Class for managing the lifetime of an ECSpec. TODO: check if the esper engine
@@ -58,14 +62,25 @@ class RifidiECSpec {
 	private ScheduledExecutorService triggerpool;
 	/** Statements created for this spec. */
 	private ArrayList<EPStatement> statements;
-	/** Statements that will return values. */
-	private ArrayList<EPStatement> queryStatements;
 	/** Set containing all the scheduled triggers futures. */
 	private Set<ScheduledFuture<?>> futures;
 	/** TODO: this needs fixing as the service might go away and reappear!!! */
 	private LogicalReaderManagementService lrService;
 	/** Readers used by this spec. */
 	private Set<LogicalReader> readers;
+
+	/** List containing statements that trigger when interval ran out. */
+	private List<EPStatement> intervalStatements;
+	/** List containing statements that trigger when the tag set is stable. */
+	private List<EPStatement> stableSetIntervalStatements;
+	/** List containing statements that trigger when a stop trigger arrived. */
+	private List<EPStatement> stopTriggerStatements;
+	/** List containing statements that trigger when data is available. */
+	private List<EPStatement> whenDataAvailableStatements;
+	/** Report manager for this spec. */
+	private ECReportmanager ecReportmanager = null;
+	/** Thread that runs the reportmanager. */
+	private Thread reportThread = null;
 
 	/**
 	 * Constructor.
@@ -84,10 +99,14 @@ class RifidiECSpec {
 		this.spec = spec;
 		this.name = name;
 		this.statements = new ArrayList<EPStatement>();
-		this.queryStatements = new ArrayList<EPStatement>();
 		this.futures = new HashSet<ScheduledFuture<?>>();
 		this.esper = esper;
+		whenDataAvailableStatements = new ArrayList<EPStatement>();
+		intervalStatements = new ArrayList<EPStatement>();
+		stopTriggerStatements = new ArrayList<EPStatement>();
+		stableSetIntervalStatements = new ArrayList<EPStatement>();
 		readers = new HashSet<LogicalReader>();
+		ecReportmanager = new ECReportmanager(esper);
 		// check if we got valid logical readers line 2135 of spec
 		String currentReader = "";
 		try {
@@ -221,6 +240,9 @@ class RifidiECSpec {
 		if (primarykeys.size() == 0) {
 			primarykeys.add("EPC");
 		}
+		for(ECReportSpec reportSpec:spec.getReportSpecs().getReportSpec()){
+			ecReportmanager.addECReport(reportSpec);
+		}
 		// TODO: finish the report spec.
 		// for(ECReportSpec repspec:spec.getReportSpecs().getReportSpec()){
 		// repspec.getExtension().
@@ -325,7 +347,7 @@ class RifidiECSpec {
 												+ "_collectwin.win:time("
 												+ (duration > repeatInterval ? duration
 														: repeatInterval)
-												+ "sec) org.rifidi.edge.core.messages.TagReadEvent"));
+												+ " msec) org.rifidi.edge.core.messages.TagReadEvent"));
 				// create the where conditions for primary fields
 				StringBuilder prims = new StringBuilder();
 				boolean first = true;
@@ -357,8 +379,8 @@ class RifidiECSpec {
 					readersBuilder.append("'");
 					readersBuilder.append(",");
 				}
-				//remove trailing commas
-				readersBuilder.deleteCharAt(readersBuilder.length()-1);
+				// remove trailing commas
+				readersBuilder.deleteCharAt(readersBuilder.length() - 1);
 				readersBuilder.append(" )");
 				// fill the window
 				statements
@@ -378,39 +400,48 @@ class RifidiECSpec {
 				// regular timing using intervals, don't use if data available
 				// is set
 				if (!whenDataAvailable) {
-					queryStatements
+					intervalStatements
 							.add(esper
 									.getEPAdministrator()
 									.createEPL(
 											"on pattern[every org.rifidi.edge.epcglobal.aleread.StartEvent -> (timer:interval("
 													+ duration
-													+ " msec) and not org.rifidi.edge.epcglobal.aleread.StopEvent)] select * from "
-													+ name + "_collectwin"));
+													+ " msec) and not org.rifidi.edge.epcglobal.aleread.StopEvent)] select tags from "
+													+ name
+													+ "_collectwin as tags"));
 				} else {
 					// WHEN DATA AVAILABLE
 					// timing for when data available, should replace regular
 					// timing if
 					// provided!!!
-					queryStatements.add(esper.getEPAdministrator().createEPL(
-							"on pattern[every (org.rifidi.edge.epcglobal.aleread.StartEvent -> "
-									+ name + "_collectwin where timer:within("
-									+ duration
-									+ " msec))] select count(whine) from "
-									+ name + "_collectwin as whine"));
+					whenDataAvailableStatements
+							.add(esper
+									.getEPAdministrator()
+									.createEPL(
+											"on pattern[every (org.rifidi.edge.epcglobal.aleread.StartEvent -> "
+													+ name
+													+ "_collectwin where timer:within("
+													+ duration
+													+ " msec))] select count(whine) from "
+													+ name
+													+ "_collectwin as whine"));
 
-					queryStatements.add(esper.getEPAdministrator().createEPL(
-							"on pattern[every (org.rifidi.edge.epcglobal.aleread.StartEvent -> "
-									+ name + "_collectwin where timer:within("
-									+ duration + " msec))] select * from "
-									+ name + "_collectwin as whine"));
+					whenDataAvailableStatements.add(esper.getEPAdministrator()
+							.createEPL(
+									"on pattern[every (org.rifidi.edge.epcglobal.aleread.StartEvent -> "
+											+ name
+											+ "_collectwin where timer:within("
+											+ duration
+											+ " msec))] select tags from "
+											+ name + "_collectwin as tags"));
 
 				}
 
 				// triggers if a startevent arrives without followup processed
 				// events
-				// needs to be used with both the regular and the data avilable
+				// needs to be used with both the regular and the data available
 				// queries
-				queryStatements
+				intervalStatements
 						.add(esper
 								.getEPAdministrator()
 								.createEPL(
@@ -423,7 +454,7 @@ class RifidiECSpec {
 				// STOP TRIGGERS
 				if (stopTriggers.size() > 0) {
 					// timing using a stop trigger
-					queryStatements
+					stopTriggerStatements
 							.add(esper
 									.getEPAdministrator()
 									.createEPL(
@@ -435,7 +466,7 @@ class RifidiECSpec {
 													+ name
 													+ "_collectwin as whine"));
 
-					queryStatements
+					stopTriggerStatements
 							.add(esper
 									.getEPAdministrator()
 									.createEPL(
@@ -443,22 +474,30 @@ class RifidiECSpec {
 													+ name
 													+ "_collectwin until (timer:interval("
 													+ duration
-													+ " msec) and org.rifidi.edge.epcglobal.aleread.StopEvent))] select * from "
-													+ name + "_collectwin"));
+													+ " msec) and org.rifidi.edge.epcglobal.aleread.StopEvent))] select tags from "
+													+ name
+													+ "_collectwin as tags"));
 
 				}
 
 				if (stableSetInterval > 0) {
 					// TODO: incorporate INTERVAL!!!!
 					// timing using stable set
-					queryStatements.add(esper.getEPAdministrator().createEPL(
-							"on pattern[every (org.rifidi.edge.epcglobal.aleread.StartEvent -> "
-									+ name + "_collectwin -> (timer:interval("
-									+ stableSetInterval + " msec) and not "
-									+ name + "_collectwin))] select * from "
-									+ name + "_collectwin"));
+					stableSetIntervalStatements
+							.add(esper
+									.getEPAdministrator()
+									.createEPL(
+											"on pattern[every (org.rifidi.edge.epcglobal.aleread.StartEvent -> "
+													+ name
+													+ "_collectwin -> (timer:interval("
+													+ stableSetInterval
+													+ " msec) and not "
+													+ name
+													+ "_collectwin))] select tags  from "
+													+ name
+													+ "_collectwin as tags"));
 
-					queryStatements
+					stableSetIntervalStatements
 							.add(esper
 									.getEPAdministrator()
 									.createEPL(
@@ -484,15 +523,37 @@ class RifidiECSpec {
 					builder.append(statement.getText() + "\n");
 				}
 				builder.append("Query Statements:\n");
-				for (EPStatement statement : queryStatements) {
+				for (EPStatement statement : collectQueryStatements()) {
 					builder.append(statement.getText() + "\n");
 				}
 				logger.debug("The following statements were created: \n"
 						+ builder.toString());
+				ecReportmanager.setIntervalStatements(intervalStatements);
+				ecReportmanager
+						.setStableSetIntervalStatements(stableSetIntervalStatements);
+				ecReportmanager.setStopTriggerStatements(stopTriggerStatements);
+				ecReportmanager
+						.setWhenDataAvailableStatements(whenDataAvailableStatements);
 				logger.debug("Spec " + getName() + " started.");
+				reportThread = new Thread(ecReportmanager);
+				reportThread.start();
 			}
 		}
 
+	}
+
+	/**
+	 * Collect all statements into one list. I KNOW IT'S REDUNDANT!
+	 * 
+	 * @return
+	 */
+	private List<EPStatement> collectQueryStatements() {
+		ArrayList<EPStatement> ret = new ArrayList<EPStatement>();
+		ret.addAll(intervalStatements);
+		ret.addAll(stableSetIntervalStatements);
+		ret.addAll(stopTriggerStatements);
+		ret.addAll(whenDataAvailableStatements);
+		return ret;
 	}
 
 	/**
@@ -501,8 +562,16 @@ class RifidiECSpec {
 	public void stop() {
 		synchronized (statements) {
 			logger.debug("Spec " + getName() + " stopped.");
+			reportThread.interrupt();
+			try {
+				reportThread.join();
+			} catch (InterruptedException e1) {
+				logger.warn("Got interrupted while waiting for report thread: "
+						+ e1);
+				Thread.currentThread().interrupt();
+			}
 			// kill all queries
-			for (EPStatement statement : queryStatements) {
+			for (EPStatement statement : collectQueryStatements()) {
 				statement.destroy();
 			}
 			// reverse the collection to prevent inconsistencies while deleting
@@ -541,31 +610,25 @@ class RifidiECSpec {
 		}
 	}
 
-	/**
-	 * Register a listener for reports
-	 * 
-	 * @param listener
-	 */
-	public void registerUpdateListener(UpdateListener listener) {
-		synchronized (this) {
-			for (EPStatement statement : queryStatements) {
-				logger.debug("Registering " + listener);
-				statement.addListener(listener);
-			}
+	// TODO: THREADING!!!!
+	private int uricounter = 0;
+
+	public void subscribe(URI uri)
+			throws DuplicateSubscriptionExceptionResponse {
+		uricounter++;
+		ecReportmanager.addURI(uri);
+		if (uricounter == 1) {
+			start();
 		}
+		// throw new DuplicateSubscriptionExceptionResponse(uri
+		// + " is already subsribed.");
 	}
 
-	/**
-	 * Unregister a listener for reports
-	 * 
-	 * @param listener
-	 */
-	public void unregisterUpdateListener(UpdateListener listener) {
-		synchronized (this) {
-			for (EPStatement statement : queryStatements) {
-				logger.debug("Unregistering " + listener);
-				statement.removeListener(listener);
-			}
+	public void unsubscribe(URI uri) throws NoSuchSubscriberExceptionResponse {
+		uricounter--;
+		ecReportmanager.removeURI(uri);
+		if (uricounter == 0) {
+			stop();
 		}
 	}
 
