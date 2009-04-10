@@ -7,7 +7,7 @@
 
 	<!--  Create Reader Configuration Factory -->
 	<bean id="configurationFactory"
-		class="org.rifidi.edge.readerplugin.thingmagic.ThingMagic4_5ReaderFactory">
+		class="org.rifidi.edge.readerplugin.alien.Alien9800ReaderFactory">
 		<property name="context" ref="bundleContext" />
 		<property name="template" ref="myJmsTemplate" />
 		<property name="destination" ref="destination2" />
@@ -15,7 +15,7 @@
 	</bean>
 
 	<bean id="NotifierServiceWrapper"
-		class="org.rifidi.edge.readerplugin.thingmagic.NotifierServiceWrapper" />
+		class="org.rifidi.edge.readerplugin.alien.NotifierServiceWrapper" />
 
 	<osgi:reference id="JMSNotifierService"
 		interface="org.rifidi.edge.core.notifications.NotifierService"
@@ -26,7 +26,7 @@
 
 	<!--  Create Command Configuration Factory -->
 	<bean id="commandConfigurationFactory"
-		class="org.rifidi.edge.readerplugin.thingmagic.ThingMagic4_5CommandConfigurationFactory">
+		class="org.rifidi.edge.readerplugin.alien.Alien9800CommandConfigurationFactory">
 		<property name="context" ref="bundleContext" />
 	</bean>
 
