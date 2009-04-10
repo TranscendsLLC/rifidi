@@ -77,16 +77,24 @@ public class EPCGeneration2Event extends EPCGeneration1Event {
 	}
 
 	/**
-	 * Get the AFI.
+	 * Get the AFI in HEX.
 	 * 
 	 * @return
 	 */
 	public String getAFI() {
 		return readMemory(1, 8, 24).toString(16);
 	}
-
+	
 	/**
-	 * Get the NSI.
+	 * Get the AFI in DEC
+	 * @return
+	 */
+	public String getAFIDecimal() {
+		return readMemory(1, 8, 24).toString(10);
+	}
+	
+	/**
+	 * Get the NSI in HEX.
 	 * 
 	 * @return
 	 */
@@ -94,6 +102,15 @@ public class EPCGeneration2Event extends EPCGeneration1Event {
 		return readMemory(1, 9, 23).toString(16);
 	}
 
+	/**
+	 * Get the NSI in DEC.
+	 * 
+	 * @return
+	 */
+	public String getNSIDecimal() {
+		return readMemory(1, 9, 23).toString(10);
+	}
+	
 	/**
 	 * Set the reserved memory bank.
 	 * 
@@ -143,6 +160,14 @@ public class EPCGeneration2Event extends EPCGeneration1Event {
 	@Override
 	public BigInteger getEPCMemory() {
 		return memoryBanks.get(1).getMemory();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.messages.EPCGeneration1Event#getEPCMemoryLength()
+	 */
+	@Override
+	public Integer getEPCMemoryLength() {
+		return memoryBanks.get(1).getLength();
 	}
 
 	/**
