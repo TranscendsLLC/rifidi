@@ -58,7 +58,11 @@ public class RequestExecuterSingleton implements Runnable {
 	 *         was not added
 	 */
 	public boolean scheduleRequest(RemoteEdgeServerCommand request) {
-		return requestQueue.offer(request);
+		boolean success =  requestQueue.offer(request);
+		if(!success){
+			logger.warn("Cannot schedule command : " + request.getType());
+		}
+		return success;
 	}
 
 	/*

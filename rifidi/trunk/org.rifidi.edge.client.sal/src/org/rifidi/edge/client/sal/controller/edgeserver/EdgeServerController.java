@@ -102,5 +102,9 @@ public interface EdgeServerController {
 
 	void scheduleJob(RemoteSession session,
 			RemoteCommandConfiguration configuration, Long interval);
+	
+	void clearPropertyChanges(String readerID);
+	
+	void synchPropertyChanges(String readerID);
 
 }

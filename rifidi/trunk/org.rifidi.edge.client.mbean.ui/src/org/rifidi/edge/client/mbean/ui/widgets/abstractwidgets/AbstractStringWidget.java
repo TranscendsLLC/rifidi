@@ -84,8 +84,10 @@ public abstract class AbstractStringWidget<T extends StringWidgetData> extends
 	 * .lang.String)
 	 */
 	@Override
-	public String setValue(Object value) {
-		text.setText((String)value);
+	public String setValue(Attribute value) {
+		if(text!=null){
+			text.setText((String)value.getValue());
+		}
 		return null;
 	}
 

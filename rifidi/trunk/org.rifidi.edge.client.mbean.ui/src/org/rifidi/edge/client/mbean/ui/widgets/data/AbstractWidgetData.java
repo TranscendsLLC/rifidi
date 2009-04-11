@@ -68,4 +68,13 @@ public abstract class AbstractWidgetData {
 				"org.rifidi.edge.ordervalue");
 	}
 
+	/**
+	 * Get description
+	 * 
+	 * @return
+	 */
+	public String getDescription() {
+		return element.getDescription();
+	}
+
 }

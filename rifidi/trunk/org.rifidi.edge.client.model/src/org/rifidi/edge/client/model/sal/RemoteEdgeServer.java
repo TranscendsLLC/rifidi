@@ -18,9 +18,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eclipse.core.databinding.observable.map.ObservableMap;
 import org.eclipse.core.databinding.observable.map.WritableMap;
-import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.fosstrak.tdt.TDTEngine;
-import org.osgi.service.prefs.Preferences;
 import org.rifidi.edge.client.model.SALModelPlugin;
 import org.rifidi.edge.client.model.sal.commands.RequestExecuterSingleton;
 import org.rifidi.edge.client.model.sal.preferences.EdgeServerPreferences;
@@ -456,7 +454,8 @@ public class RemoteEdgeServer {
 		RemoteEdgeServerState oldstate = this.state;
 		this.state = newState;
 		this.pcs.firePropertyChange(STATE_PROPERTY, oldstate, newState);
-
+		logger.debug("Number of PropertyChangeListeners Notified "
+				+ pcs.getPropertyChangeListeners().length);
 	}
 
 	/**

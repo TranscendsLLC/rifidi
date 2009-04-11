@@ -34,8 +34,9 @@ import org.rifidi.edge.client.model.sal.preferences.EdgeServerPreferences;
  * @author kyle
  * 
  */
-public class EdgeServerConnectionInfo extends AbstractPropertySection implements
-		FocusListener, PropertyChangeListener, IPropertyChangeListener {
+public class EdgeServerConnectionInfoSection extends AbstractPropertySection
+		implements FocusListener, PropertyChangeListener,
+		IPropertyChangeListener {
 
 	private List<Control> widgets = new ArrayList<Control>();
 	private Text ipText = null;
@@ -146,54 +147,51 @@ public class EdgeServerConnectionInfo extends AbstractPropertySection implements
 		Object input = ((IStructuredSelection) selection).getFirstElement();
 		RemoteEdgeServer server = (RemoteEdgeServer) input;
 
-		if (server != null) {
-			if (this.server != null && this.server != server) {
-				server.removePropertyChangeListener(this);
-			}
+		if (server != null && this.server != server) {
 			this.server = server;
+
+			SALModelPlugin.getDefault().getPreferenceStore()
+					.addPropertyChangeListener(this);
+
+			String ip = SALModelPlugin.getDefault().getPreferenceStore()
+					.getString(EdgeServerPreferences.EDGE_SERVER_IP);
+			ipText.setText(ip);
+
+			String rmiPort = SALModelPlugin.getDefault().getPreferenceStore()
+					.getString(EdgeServerPreferences.EDGE_SERVER_PORT_RMI);
+			try {
+				rmiPortSpinner.setSelection(Integer.parseInt(rmiPort));
+			} catch (NumberFormatException e) {
+				rmiPortSpinner.setSelection(0);
+			}
+
+			this.notificationJMSQText.setText(SALModelPlugin.getDefault()
+					.getPreferenceStore().getString(
+							EdgeServerPreferences.EDGE_SERVER_JMS_QUEUE));
+
+			String jmsPort = SALModelPlugin.getDefault().getPreferenceStore()
+					.getString(EdgeServerPreferences.EDGE_SERVER_PORT_JMS);
+			try {
+				jmsPortSpinner.setSelection(Integer.parseInt(jmsPort));
+			} catch (NumberFormatException e) {
+				rmiPortSpinner.setSelection(0);
+			}
+
+			this.tagsJMSQText.setText(SALModelPlugin.getDefault()
+					.getPreferenceStore().getString(
+							EdgeServerPreferences.EDGE_SERVER_JMS_QUEUE_TAGS));
+
+			if (server.getState() == RemoteEdgeServerState.DISCONNECTED) {
+				for (Control w : widgets) {
+					w.setEnabled(true);
+				}
+
+			} else {
+				for (Control w : widgets) {
+					w.setEnabled(false);
+				}
+			}
 			this.server.addPropertyChangeListener(this);
-		}
-
-		SALModelPlugin.getDefault().getPreferenceStore()
-				.addPropertyChangeListener(this);
-
-		String ip = SALModelPlugin.getDefault().getPreferenceStore().getString(
-				EdgeServerPreferences.EDGE_SERVER_IP);
-		ipText.setText(ip);
-
-		String rmiPort = SALModelPlugin.getDefault().getPreferenceStore()
-				.getString(EdgeServerPreferences.EDGE_SERVER_PORT_RMI);
-		try {
-			rmiPortSpinner.setSelection(Integer.parseInt(rmiPort));
-		} catch (NumberFormatException e) {
-			rmiPortSpinner.setSelection(0);
-		}
-
-		this.notificationJMSQText.setText(SALModelPlugin.getDefault()
-				.getPreferenceStore().getString(
-						EdgeServerPreferences.EDGE_SERVER_JMS_QUEUE));
-
-		String jmsPort = SALModelPlugin.getDefault().getPreferenceStore()
-				.getString(EdgeServerPreferences.EDGE_SERVER_PORT_JMS);
-		try {
-			jmsPortSpinner.setSelection(Integer.parseInt(jmsPort));
-		} catch (NumberFormatException e) {
-			rmiPortSpinner.setSelection(0);
-		}
-
-		this.tagsJMSQText.setText(SALModelPlugin.getDefault()
-				.getPreferenceStore().getString(
-						EdgeServerPreferences.EDGE_SERVER_JMS_QUEUE_TAGS));
-
-		if (server.getState() == RemoteEdgeServerState.DISCONNECTED) {
-			for (Control w : widgets) {
-				w.setEnabled(true);
-			}
-
-		} else {
-			for (Control w : widgets) {
-				w.setEnabled(false);
-			}
 		}
 	}
 
@@ -208,6 +206,10 @@ public class EdgeServerConnectionInfo extends AbstractPropertySection implements
 		super.dispose();
 		SALModelPlugin.getDefault().getPreferenceStore()
 				.removePropertyChangeListener(this);
+		this.server.removePropertyChangeListener(this);
+		for (Control c : widgets) {
+			c.dispose();
+		}
 	}
 
 	private String textOnFocus;

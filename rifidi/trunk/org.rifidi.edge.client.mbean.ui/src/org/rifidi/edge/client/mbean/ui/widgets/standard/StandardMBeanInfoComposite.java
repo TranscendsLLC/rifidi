@@ -1,7 +1,6 @@
 package org.rifidi.edge.client.mbean.ui.widgets.standard;
 
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.Set;
 
 import javax.management.MBeanAttributeInfo;
@@ -42,7 +41,7 @@ public class StandardMBeanInfoComposite extends AbstractMBeanInfoComposite {
 	/** If true, display errors */
 	private boolean displayErrors;
 	/** A list of error icons to turn on and off */
-	private ArrayList<Label> errorIcons;
+	private HashMap<String, Label> errorIcons;
 	/** The logger for this class */
 	private static final Log logger = LogFactory
 			.getLog(StandardMBeanInfoComposite.class);
@@ -66,7 +65,7 @@ public class StandardMBeanInfoComposite extends AbstractMBeanInfoComposite {
 			Set<String> filterCategories, boolean include, boolean displayErrors) {
 		super(formRoot, filterCategories, include);
 		this.displayErrors = displayErrors;
-		this.errorIcons = new ArrayList<Label>();
+		this.errorIcons = new HashMap<String, Label>();
 	}
 
 	/**
@@ -75,7 +74,6 @@ public class StandardMBeanInfoComposite extends AbstractMBeanInfoComposite {
 	 * @param parent
 	 *            - the composite to draw on
 	 */
-	@Override
 	public void createControls(Composite parent) {
 
 		// create the main composite for this form
@@ -137,20 +135,18 @@ public class StandardMBeanInfoComposite extends AbstractMBeanInfoComposite {
 				skip = true;
 			}
 			if (!skip) {
-				this.widgets.add(widget);
+				addWidget(widget);
 			}
 		}
 
-		Collections.sort(widgets);
-
-		for (AbstractWidget<?> widget : widgets) {
+		for (AbstractWidget<?> widget : getSortedListOfWidgets()) {
 			if (this.displayErrors) {
 				Label imageLabel = new Label(widgetCompsoite, SWT.NONE);
 				// TODO: remove this and add image manually
 				Image x = JFaceResources.getImage("dialog_message_error_image");
 				imageLabel.setImage(x);
 				imageLabel.setVisible(false);
-				errorIcons.add(imageLabel);
+				errorIcons.put(widget.getElementName(), imageLabel);
 			}
 
 			// add a label
@@ -167,10 +163,9 @@ public class StandardMBeanInfoComposite extends AbstractMBeanInfoComposite {
 	 */
 	@Override
 	public void setError(String widgetName, String message) {
-		for (AbstractWidget<?> w : widgets) {
-			if (w.getElementName().equalsIgnoreCase(widgetName)) {
-				errorIcons.get(widgets.indexOf(w)).setVisible(true);
-			}
+		AbstractWidget<?> widget = getWidget(widgetName);
+		if (widget != null) {
+			errorIcons.get(widget.getElementName()).setVisible(true);
 		}
 	}
 
@@ -179,11 +174,9 @@ public class StandardMBeanInfoComposite extends AbstractMBeanInfoComposite {
 	 */
 	@Override
 	public void unsetError(String widgetName) {
-		for (AbstractWidget<?> w : widgets) {
-			if (w.getElementName().equalsIgnoreCase(widgetName)) {
-				errorIcons.get(widgets.indexOf(w)).setVisible(false);
-			}
+		AbstractWidget<?> widget = getWidget(widgetName);
+		if (widget != null) {
+			errorIcons.get(widget.getElementName()).setVisible(false);
 		}
 	}
-
 }

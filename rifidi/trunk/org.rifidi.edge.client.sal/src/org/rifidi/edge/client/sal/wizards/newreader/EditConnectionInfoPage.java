@@ -78,7 +78,8 @@ public class EditConnectionInfoPage extends WizardPage implements
 	 */
 	private void draw() {
 
-		setTitle("New Reader Connection: " + wizardData.factory.getDisplayName());
+		setTitle("New Reader Connection: "
+				+ wizardData.factory.getDisplayName());
 		setDescription(wizardData.factory.getDescription());
 		assert (parent != null);
 		assert (wizardData != null);
@@ -109,7 +110,7 @@ public class EditConnectionInfoPage extends WizardPage implements
 	 *            - The data that was changed
 	 */
 	@Override
-	public void dataChanged(String newData) {
+	public void dataChanged(String widgetName, String newData) {
 		validate();
 
 	}
@@ -118,7 +119,7 @@ public class EditConnectionInfoPage extends WizardPage implements
 	 * Called from the MBeanWidetCompsoite when a key is released
 	 */
 	@Override
-	public void keyReleased() {
+	public void keyReleased(String widgetName) {
 		validate();
 	}
 

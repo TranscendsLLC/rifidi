@@ -16,12 +16,12 @@ public interface MBeanInfoWidgetListener {
 	 * @param newData
 	 *            The new value of the widget
 	 */
-	public void dataChanged(String newData);
+	public void dataChanged(String widgetName, String newData);
 
 	/**
 	 * This method is called when the user has released a key. It can be used to
 	 * do validation on key stroked, for example
 	 */
-	public void keyReleased();
+	public void keyReleased(String widgetName);
 
 }

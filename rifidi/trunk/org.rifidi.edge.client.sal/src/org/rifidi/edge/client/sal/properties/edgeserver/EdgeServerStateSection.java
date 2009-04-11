@@ -71,13 +71,10 @@ public class EdgeServerStateSection extends AbstractPropertySection implements
 		super.setInput(part, selection);
 		Object input = ((IStructuredSelection) selection).getFirstElement();
 		RemoteEdgeServer server = (RemoteEdgeServer) input;
-		stateText.setText(server.getState().toString(), false, false);
-		if (server != null) {
-			if (this.server != null && this.server != server) {
-				server.removePropertyChangeListener(this);
-			}
+		if (server != null && this.server!=server) {
+			stateText.setText(server.getState().toString(), false, false);
+			server.addPropertyChangeListener(this);
 			this.server = server;
-			this.server.addPropertyChangeListener(this);
 		}
 	}
 
@@ -87,6 +84,19 @@ public class EdgeServerStateSection extends AbstractPropertySection implements
 			stateText.setText(server.getState().toString(), false, false);
 		}
 
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.ui.views.properties.tabbed.AbstractPropertySection#dispose()
+	 */
+	@Override
+	public void dispose() {
+		super.dispose();
+		this.server.removePropertyChangeListener(this);
+		stateText.dispose();
 	}
 
 }

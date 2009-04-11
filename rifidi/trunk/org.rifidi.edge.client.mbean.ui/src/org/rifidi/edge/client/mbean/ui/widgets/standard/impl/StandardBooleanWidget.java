@@ -56,7 +56,7 @@ public class StandardBooleanWidget<T extends BooleanWidgetData> extends Abstract
 	 * @see org.rifidi.dynamicswtforms.ui.widgets.DynamicSWTFormWidget#setValue(java.lang.Object)
 	 */
 	@Override
-	public String setValue(Object value) {
+	public String setValue(Attribute value) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -69,7 +69,5 @@ public class StandardBooleanWidget<T extends BooleanWidgetData> extends Abstract
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
-	
 
 }

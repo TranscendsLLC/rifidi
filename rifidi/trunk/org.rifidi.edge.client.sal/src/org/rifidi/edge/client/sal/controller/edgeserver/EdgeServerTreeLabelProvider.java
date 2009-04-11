@@ -85,7 +85,12 @@ public class EdgeServerTreeLabelProvider implements ILabelProvider {
 			return "Edge Server";
 		}
 		if (element instanceof RemoteReader) {
-			return ((RemoteReader) element).getID();
+			RemoteReader reader = (RemoteReader)element;
+			if(reader.isDirty()){
+				return "*"+((RemoteReader) element).getID();
+			}else{
+				return ((RemoteReader) element).getID();
+			}
 		}
 		if (element instanceof RemoteSession) {
 			return "Session: " + ((RemoteSession) element).getSessionID();

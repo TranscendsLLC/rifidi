@@ -33,8 +33,8 @@ public class StandardIntegerWidget<T extends IntegerWidgetData> extends
 	}
 
 	@Override
-	public String setValue(Object value) {
-		spinner.setSelection((Integer) value);
+	public String setValue(Attribute value) {
+		spinner.setSelection((Integer) value.getValue());
 		return null;
 	}
 
