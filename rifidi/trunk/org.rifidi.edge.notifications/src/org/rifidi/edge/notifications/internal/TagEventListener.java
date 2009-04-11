@@ -9,7 +9,7 @@ import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.jms.ObjectMessage;
 
-import org.rifidi.edge.core.messages.EventCycle;
+import org.rifidi.edge.core.messages.ReadCycle;
 import org.springframework.jms.core.JmsTemplate;
 
 /**
@@ -52,8 +52,8 @@ public class TagEventListener implements MessageListener {
 	public void onMessage(Message arg0) {
 		try {
 			Object obj = ((ObjectMessage) arg0).getObject();
-			if (obj instanceof EventCycle) {
-				EventCycle event = (EventCycle) obj;
+			if (obj instanceof ReadCycle) {
+				ReadCycle event = (ReadCycle) obj;
 				extNotificationTemplate.send(extNotificationDest,
 						new TagMessageMessageCreator(event));
 			}

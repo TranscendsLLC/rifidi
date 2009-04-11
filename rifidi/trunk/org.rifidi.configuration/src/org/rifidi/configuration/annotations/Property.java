@@ -39,7 +39,7 @@ public @interface Property {
 	/**
 	 * A category that this property belongs to
 	 */
-	String category() default "";
+	String category() default "Miscellaneous";
 
 	/**
 	 * The class that this type belongs to. Default is String

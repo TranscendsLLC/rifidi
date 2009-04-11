@@ -43,7 +43,10 @@ public abstract class AbstractReaderSession extends ReaderSession {
 	private JmsTemplate template;
 	/** True if the executor is up and running. */
 	protected AtomicBoolean processing = new AtomicBoolean(false);
-	/** Queue for commands that get submitted while the executor is inactive. */
+	/**
+	 * Queue for single-shot commands that get submitted while the executor is
+	 * inactive.
+	 */
 	protected Queue<Command> commandQueue = new ConcurrentLinkedQueue<Command>();
 	private static final Log logger = LogFactory
 			.getLog(AbstractReaderSession.class);

@@ -19,7 +19,7 @@ import org.rifidi.edge.core.api.tags.TagBatch;
 import org.rifidi.edge.core.api.tags.TagDTO;
 import org.rifidi.edge.core.messages.DatacontainerEvent;
 import org.rifidi.edge.core.messages.EPCGeneration1Event;
-import org.rifidi.edge.core.messages.EventCycle;
+import org.rifidi.edge.core.messages.ReadCycle;
 import org.rifidi.edge.core.messages.TagReadEvent;
 import org.springframework.jms.core.MessageCreator;
 
@@ -31,15 +31,18 @@ public class TagMessageMessageCreator implements MessageCreator {
 
 	private TagBatch tagBatch;
 
-	public TagMessageMessageCreator(EventCycle cycle) {
+	public TagMessageMessageCreator(ReadCycle cycle) {
 		Set<TagDTO> tags = new HashSet<TagDTO>();
 		for (TagReadEvent tagRead : cycle.getTags()) {
 			DatacontainerEvent event = tagRead.getTag();
-			tags.add(new TagDTO(((EPCGeneration1Event) event).getEPC(), tagRead
-					.getAntennaID(), tagRead.getTimestamp()));
+			tags.add(new TagDTO(((EPCGeneration1Event) event).getEPCMemory(),
+					tagRead.getAntennaID(), tagRead.getTimestamp()));
 		}
-		tagBatch = new TagBatch(cycle.getReaderID(), cycle.getEventTimestamp(),
-				tags);
+		TagReadEvent e = cycle.getTags().iterator().next();
+		if (e != null) {
+			tagBatch = new TagBatch(e.getReaderID(), cycle.getEventTimestamp(),
+					tags);
+		}
 	}
 
 	/*

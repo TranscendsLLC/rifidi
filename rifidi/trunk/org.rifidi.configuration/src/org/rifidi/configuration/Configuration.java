@@ -8,6 +8,7 @@ import java.util.Map;
 import javax.management.DynamicMBean;
 
 import org.osgi.framework.ServiceRegistration;
+import org.rifidi.configuration.listeners.AttributesChangedListener;
 
 /**
  * Configurations provide a standard interface for handling services through a
@@ -59,4 +60,20 @@ public interface Configuration extends DynamicMBean {
 	 * @return An array of names of all the properties in this Configuration
 	 */
 	String[] getAttributeNames();
+
+	/**
+	 * Add a listener that is notified when the Attributes are changed on the
+	 * configuration. Remove this method when AspectJ is available.
+	 * 
+	 * @param listener
+	 */
+	void addAttributesChangedListener(AttributesChangedListener listener);
+
+	/**
+	 * Remote a listener that is notified of Attribute changes on this
+	 * configuration. Remove this method when AspectJ is available
+	 * 
+	 * @param listener
+	 */
+	void removeAttributesChangedListener(AttributesChangedListener listener);
 }
