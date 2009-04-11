@@ -8,6 +8,7 @@ import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.graphics.Image;
 import org.rifidi.edge.client.model.sal.RemoteEdgeServer;
+import org.rifidi.edge.client.model.sal.RemoteReader;
 import org.rifidi.edge.client.sal.SALPluginActivator;
 
 /**
@@ -18,6 +19,8 @@ public class SALTabbedPropertiesLabelProvider implements ILabelProvider {
 
 	private Image server = SALPluginActivator.getImageDescriptor(
 			"icons/server.png").createImage();
+	private Image reader = SALPluginActivator.getImageDescriptor(
+			"icons/reader-16x16.png").createImage();
 
 	/*
 	 * (non-Javadoc)
@@ -30,6 +33,9 @@ public class SALTabbedPropertiesLabelProvider implements ILabelProvider {
 			Object o = ((IStructuredSelection) element).getFirstElement();
 			if (o instanceof RemoteEdgeServer) {
 				return server;
+			}
+			if (o instanceof RemoteReader) {
+				return reader;
 			}
 
 		}
@@ -47,6 +53,9 @@ public class SALTabbedPropertiesLabelProvider implements ILabelProvider {
 			Object o = ((IStructuredSelection) element).getFirstElement();
 			if (o instanceof RemoteEdgeServer) {
 				return "Remote Edge Server";
+			}
+			if (o instanceof RemoteReader) {
+				return "Reader: " + ((RemoteReader) o).getID();
 			}
 
 		}
@@ -75,6 +84,8 @@ public class SALTabbedPropertiesLabelProvider implements ILabelProvider {
 	public void dispose() {
 		server.dispose();
 		server = null;
+		reader.dispose();
+		reader = null;
 
 	}
 

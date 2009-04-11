@@ -1,7 +1,11 @@
 package org.rifidi.edge.client.mbean.ui;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.management.Attribute;
@@ -10,7 +14,6 @@ import javax.management.MBeanAttributeInfo;
 import javax.management.MBeanInfo;
 import javax.management.openmbean.OpenMBeanAttributeInfo;
 
-import org.eclipse.swt.widgets.Composite;
 import org.rifidi.edge.client.mbean.ui.widgets.abstractwidgets.AbstractWidget;
 
 /**
@@ -26,7 +29,7 @@ public abstract class AbstractMBeanInfoComposite implements
 	/** The MBeanAttributeInfo that describes this form */
 	protected MBeanInfo formRoot;
 	/** The collection of Widgets that belong to this form */
-	protected ArrayList<AbstractWidget<?>> widgets;
+	private Map<String, AbstractWidget<?>> widgets;
 	/** The listeners who are listening to changes to widgets */
 	private ArrayList<MBeanInfoWidgetListener> listeners;
 	/** The categories to filter on */
@@ -39,22 +42,9 @@ public abstract class AbstractMBeanInfoComposite implements
 		this.formRoot = info;
 		this.categories = categories;
 		this.includeExcelude = includeExclude;
-		this.widgets = new ArrayList<AbstractWidget<?>>();
+		this.widgets = new HashMap<String, AbstractWidget<?>>();
 		this.listeners = new ArrayList<MBeanInfoWidgetListener>();
 	}
-
-	/**
-	 * Create the controls in a form-specific way. Most of the time, this will
-	 * involve creating a composite and adding the widgets to that composite.
-	 * 
-	 * This method should add widgets to the 'widgets' list as it creates them.
-	 * In addition, it should register itself as a MBeanInfoWidgetListener for
-	 * each of the widgets
-	 * 
-	 * @param parent
-	 *            The parent Composite
-	 */
-	public abstract void createControls(Composite parent);
 
 	/**
 	 * Use this method to display an error on the form
@@ -73,6 +63,27 @@ public abstract class AbstractMBeanInfoComposite implements
 	 *            The name of the widget
 	 */
 	public abstract void unsetError(String widgetName);
+
+	/**
+	 * Add a widget to the hashmap
+	 * 
+	 * @param widget
+	 */
+	protected void addWidget(AbstractWidget<?> widget) {
+		widgets.put(widget.getElementName(), widget);
+		widget.addListener(this);
+	}
+
+	protected List<AbstractWidget<?>> getSortedListOfWidgets() {
+		List<AbstractWidget<?>> list = new ArrayList<AbstractWidget<?>>(widgets
+				.values());
+		Collections.sort(list);
+		return list;
+	}
+
+	protected AbstractWidget<?> getWidget(String widgetName) {
+		return widgets.get(widgetName);
+	}
 
 	/**
 	 * 
@@ -105,7 +116,7 @@ public abstract class AbstractMBeanInfoComposite implements
 	 * the value of widgets
 	 */
 	public void enable() {
-		for (AbstractWidget<?> w : widgets) {
+		for (AbstractWidget<?> w : widgets.values()) {
 			w.enable();
 		}
 	}
@@ -115,7 +126,7 @@ public abstract class AbstractMBeanInfoComposite implements
 	 * changing the value of widgets
 	 */
 	public void disable() {
-		for (AbstractWidget<?> w : widgets) {
+		for (AbstractWidget<?> w : widgets.values()) {
 			w.disable();
 		}
 	}
@@ -129,7 +140,7 @@ public abstract class AbstractMBeanInfoComposite implements
 	 *         message
 	 */
 	public String validate() {
-		for (AbstractWidget<?> widget : widgets) {
+		for (AbstractWidget<?> widget : widgets.values()) {
 			String s = widget.validate();
 			if (s != null) {
 				return s;
@@ -146,30 +157,27 @@ public abstract class AbstractMBeanInfoComposite implements
 	 * @return The value as as string, null if the widget can't be found
 	 */
 	public Attribute getAttribute(String widgetName) {
-		for (AbstractWidget<?> widget : widgets) {
-			if (widget.getElementName().equalsIgnoreCase(widgetName)) {
-				return widget.getAttribute();
-			}
+		AbstractWidget<?> widget = widgets.get(widgetName);
+		if (widget != null) {
+			return widget.getAttribute();
 		}
+
 		return null;
 	}
 
 	/**
 	 * Set the value of a widget associated with this form
 	 * 
-	 * @param widgetName
-	 *            The name of the widget in this form
-	 * @param value
-	 *            The new value
+	 * @param attribute
+	 *            - the new attribute to set
 	 * @return null if the set was successful. Return a reason otherwise
 	 */
-	public String setValue(String widgetName, String value) {
-		for (AbstractWidget<?> widget : widgets) {
-			if (widget.getElementName().equalsIgnoreCase(widgetName)) {
-				return widget.setValue(value);
-			}
+	public String setValue(Attribute attribute) {
+		AbstractWidget<?> widget = widgets.get(attribute.getName());
+		if (widget != null) {
+			return widget.setValue(attribute);
 		}
-		return "Form does not contain widget with name " + widgetName;
+		return "Form does not contain widget with name " + attribute.getName();
 	}
 
 	/**
@@ -200,7 +208,7 @@ public abstract class AbstractMBeanInfoComposite implements
 	 */
 	public AttributeList getAttributes() {
 		AttributeList list = new AttributeList();
-		for (AbstractWidget<?> widget : widgets) {
+		for (AbstractWidget<?> widget : widgets.values()) {
 			list.add(widget.getAttribute());
 		}
 		return list;
@@ -211,9 +219,9 @@ public abstract class AbstractMBeanInfoComposite implements
 	 * notify listeners to this form
 	 */
 	@Override
-	public void dataChanged(String newData) {
+	public void dataChanged(String widgetName, String newData) {
 		for (MBeanInfoWidgetListener l : listeners) {
-			l.dataChanged(newData);
+			l.dataChanged(widgetName, newData);
 		}
 	}
 
@@ -222,9 +230,9 @@ public abstract class AbstractMBeanInfoComposite implements
 	 * notify listeners to this form
 	 */
 	@Override
-	public void keyReleased() {
+	public void keyReleased(String widgetName) {
 		for (MBeanInfoWidgetListener l : listeners) {
-			l.keyReleased();
+			l.keyReleased(widgetName);
 		}
 
 	}

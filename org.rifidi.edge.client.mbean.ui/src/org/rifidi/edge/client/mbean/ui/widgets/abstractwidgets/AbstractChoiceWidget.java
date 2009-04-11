@@ -80,14 +80,16 @@ public abstract class AbstractChoiceWidget<T extends ChoiceWidgetData> extends
 	 * .lang.String)
 	 */
 	@Override
-	public String setValue(Object value) {
-		List<String> choices = data.possibleChoices();
+	public String setValue(Attribute value) {
+		if (combo != null) {
+			List<String> choices = data.possibleChoices();
 
-		int index = choices.indexOf(value);
-		if (index == -1) {
-			return value + " is not a valid choice";
+			int index = choices.indexOf(value.getValue());
+			if (index == -1) {
+				return value + " is not a valid choice";
+			}
+			combo.select(choices.indexOf(value));
 		}
-		combo.select(choices.indexOf(value));
 		return null;
 	}
 

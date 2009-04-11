@@ -48,244 +48,6 @@
       </perspectiveExtension>
    </extension>
    <extension
-         point="org.eclipse.ui.menus">
-      <menuContribution
-            locationURI="popup:org.rifidi.edge.client.sal.views.EdgeServerView?after=additions">
-         <command
-               commandId="org.rifidi.edge.client.sal.commands.edgeserver.connect"
-               icon="icons/connect.png"
-               id="org.rifidi.edge.client.sal.commands.edgeserver.connectBinding"
-               label="Connect"
-               style="push">
-            <visibleWhen
-                  checkEnabled="false">
-               <iterate
-                     ifEmpty="false">
-                  <instanceof
-                        value="org.rifidi.edge.client.model.sal.RemoteEdgeServer">
-                  </instanceof>
-               </iterate>
-            </visibleWhen>
-         </command>
-         <command
-               commandId="org.rifidi.edge.client.sal.commands.edgeserver.disconnect"
-               icon="icons/disconnect.png"
-               id="org.rifidi.edge.client.sal.commands.edgeserver.disconnectBinding"
-               label="Disconnect"
-               style="push">
-            <visibleWhen
-                  checkEnabled="false">
-               <iterate
-                     ifEmpty="false">
-                  <instanceof
-                        value="org.rifidi.edge.client.model.sal.RemoteEdgeServer">
-                  </instanceof>
-               </iterate>
-            </visibleWhen>
-         </command>
-         <command
-               commandId="org.rifidi.edge.client.sal.commands.edgeserver.update"
-               icon="icons/arrow_refresh.png"
-               id="org.rifidi.edge.client.sal.commands.edgeserver.updateBinding"
-               label="Update"
-               style="push">
-            <visibleWhen
-                  checkEnabled="false">
-               <iterate
-                     ifEmpty="false">
-                  <instanceof
-                        value="org.rifidi.edge.client.model.sal.RemoteEdgeServer">
-                  </instanceof>
-               </iterate>
-            </visibleWhen>
-         </command>
-         <command
-               commandId="org.rifidi.edge.client.sal.commands.edgeserver.save"
-               icon="icons/disk.png"
-               id="org.rifidi.edge.client.sal.commands.edgeserver.saveBinding"
-               label="Save"
-               style="push">
-            <visibleWhen
-                  checkEnabled="false">
-               <iterate
-                     ifEmpty="false">
-                  <instanceof
-                        value="org.rifidi.edge.client.model.sal.RemoteEdgeServer">
-                  </instanceof>
-               </iterate>
-            </visibleWhen>
-         </command>
-         <command
-               commandId="org.rifidi.edge.client.sal.commands.edgeserver.newreader"
-               icon="icons/readeradd.png"
-               label="New Reader ..."
-               style="push">
-            <visibleWhen
-                  checkEnabled="false">
-               <iterate
-                     ifEmpty="false">
-                  <instanceof
-                        value="org.rifidi.edge.client.model.sal.RemoteEdgeServer">
-                  </instanceof>
-               </iterate>
-            </visibleWhen>
-         </command>
-         <command
-               commandId="org.rifidi.edge.client.sal.commands.reader.delete"
-               icon="icons/readerdelete.png"
-               label="Delete Reader"
-               style="push">
-            <visibleWhen
-                  checkEnabled="false">
-               <iterate
-                     ifEmpty="false">
-                  <instanceof
-                        value="org.rifidi.edge.client.model.sal.RemoteReader">
-                  </instanceof>
-               </iterate>
-            </visibleWhen>
-         </command>
-         <command
-               commandId="org.rifidi.edge.client.sal.commands.reader.createsession"
-               icon="icons/link_add.png"
-               label="Create Session"
-               style="push">
-            <visibleWhen
-                  checkEnabled="false">
-               <iterate
-                     ifEmpty="false">
-                  <instanceof
-                        value="org.rifidi.edge.client.model.sal.RemoteReader">
-                  </instanceof>
-               </iterate>
-            </visibleWhen>
-         </command>
-         <command
-               commandId="org.rifidi.edge.client.sal.commands.session.delete"
-               icon="icons/link_delete.png"
-               label="Delete Session"
-               style="push">
-            <visibleWhen
-                  checkEnabled="false">
-               <iterate
-                     ifEmpty="false">
-                  <instanceof
-                        value="org.rifidi.edge.client.model.sal.RemoteSession">
-                  </instanceof>
-               </iterate>
-            </visibleWhen>
-         </command>
-         <command
-               commandId="org.rifidi.edge.client.sal.commands.session.start"
-               icon="icons/link-start.png"
-               label="Start Session"
-               style="push">
-            <visibleWhen
-                  checkEnabled="false">
-               <iterate
-                     ifEmpty="false">
-                  <instanceof
-                        value="org.rifidi.edge.client.model.sal.RemoteSession">
-                  </instanceof>
-               </iterate>
-            </visibleWhen>
-         </command>
-         <command
-               commandId="org.rifidi.edge.client.sal.commands.session.stop"
-               icon="icons/link-stop.png"
-               label="Stop Session"
-               style="push">
-            <visibleWhen
-                  checkEnabled="false">
-               <iterate
-                     ifEmpty="false">
-                  <instanceof
-                        value="org.rifidi.edge.client.model.sal.RemoteSession">
-                  </instanceof>
-               </iterate>
-            </visibleWhen>
-         </command>
-         <command
-               commandId="org.rifidi.edge.client.sal.commands.jobs.kill"
-               icon="icons/script_delete.png"
-               label="Delete Job"
-               style="push">
-            <visibleWhen
-                  checkEnabled="false">
-               <iterate
-                     ifEmpty="false">
-                  <instanceof
-                        value="org.rifidi.edge.client.model.sal.RemoteJob">
-                  </instanceof>
-               </iterate>
-            </visibleWhen>
-         </command>
-         <command
-               commandId="org.rifidi.edge.client.sal.commands.jobs.submit"
-               icon="icons/script_add.png"
-               label="Submit Job"
-               style="push">
-            <visibleWhen
-                  checkEnabled="false">
-               <iterate
-                     ifEmpty="false">
-                  <instanceof
-                        value="org.rifidi.edge.client.model.sal.RemoteSession">
-                  </instanceof>
-               </iterate>
-            </visibleWhen>
-         </command>
-         <command
-               commandId="org.rifidi.edge.client.sal.commands.reader.opentagview"
-               icon="icons/transmit_go.png"
-               label="Open Tag View"
-               style="push">
-            <visibleWhen
-                  checkEnabled="false">
-               <iterate
-                     ifEmpty="false">
-                  <instanceof
-                        value="org.rifidi.edge.client.model.sal.RemoteReader">
-                  </instanceof>
-               </iterate>
-            </visibleWhen>
-         </command>
-      </menuContribution>
-      <menuContribution
-            locationURI="popup:org.rifidi.edge.client.sal.views.CommandView?after=additions">
-         <command
-               commandId="rg.rifidi.edge.client.sal.commands.commandconfig.create"
-               icon="icons/cog_add.png"
-               label="Create Command Template"
-               style="push">
-            <visibleWhen
-                  checkEnabled="false">
-               <iterate
-                     ifEmpty="false">
-                  <instanceof
-                        value="org.rifidi.edge.client.model.sal.RemoteCommandConfigType">
-                  </instanceof>
-               </iterate>
-            </visibleWhen>
-         </command>
-         <command
-               commandId="rg.rifidi.edge.client.sal.commands.commandconfig.delete"
-               icon="icons/cog_delete.png"
-               label="Delete Command Template"
-               style="push">
-            <visibleWhen
-                  checkEnabled="false">
-               <iterate
-                     ifEmpty="false">
-                  <instanceof
-                        value="org.rifidi.edge.client.model.sal.RemoteCommandConfiguration">
-                  </instanceof>
-               </iterate>
-            </visibleWhen>
-         </command>
-      </menuContribution>
-   </extension>
-   <extension
          point="org.eclipse.ui.handlers">
       <handler
             class="org.rifidi.edge.client.sal.controller.edgeserver.handlers.ConnectHandler"
@@ -526,6 +288,310 @@
             </iterate>
          </enabledWhen>
       </handler>
+      <handler
+            class="org.rifidi.edge.client.sal.controller.edgeserver.handlers.ClearPropertyChangesHandler"
+            commandId="org.rifidi.edge.client.sal.commands.reader.clearpropertychanges">
+         <enabledWhen>
+            <iterate
+                  ifEmpty="false">
+               <and>
+                  <instanceof
+                        value="org.rifidi.edge.client.model.sal.RemoteReader">
+                  </instanceof>
+                  <test
+                        property="org.rifidi.edge.client.sal.reader.dirty"
+                        value="true">
+                  </test>
+               </and>
+            </iterate>
+         </enabledWhen>
+      </handler>
+      <handler
+            class="org.rifidi.edge.client.sal.controller.edgeserver.handlers.SynchPropertyChangesHandler"
+            commandId="org.rifidi.edge.client.sal.commands.reader.synchpropertychanges">
+         <enabledWhen>
+            <iterate
+                  ifEmpty="false">
+               <and>
+                  <instanceof
+                        value="org.rifidi.edge.client.model.sal.RemoteReader">
+                  </instanceof>
+                  <test
+                        property="org.rifidi.edge.client.sal.reader.dirty"
+                        value="true">
+                  </test>
+               </and>
+            </iterate>
+         </enabledWhen>
+      </handler>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="popup:org.rifidi.edge.client.sal.views.EdgeServerView?after=additions">
+         <command
+               commandId="org.rifidi.edge.client.sal.commands.edgeserver.connect"
+               icon="icons/connect.png"
+               id="org.rifidi.edge.client.sal.commands.edgeserver.connectBinding"
+               label="Connect"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <iterate
+                     ifEmpty="false">
+                  <instanceof
+                        value="org.rifidi.edge.client.model.sal.RemoteEdgeServer">
+                  </instanceof>
+               </iterate>
+            </visibleWhen>
+         </command>
+         <command
+               commandId="org.rifidi.edge.client.sal.commands.edgeserver.disconnect"
+               icon="icons/disconnect.png"
+               id="org.rifidi.edge.client.sal.commands.edgeserver.disconnectBinding"
+               label="Disconnect"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <iterate
+                     ifEmpty="false">
+                  <instanceof
+                        value="org.rifidi.edge.client.model.sal.RemoteEdgeServer">
+                  </instanceof>
+               </iterate>
+            </visibleWhen>
+         </command>
+         <command
+               commandId="org.rifidi.edge.client.sal.commands.edgeserver.update"
+               icon="icons/arrow_refresh.png"
+               id="org.rifidi.edge.client.sal.commands.edgeserver.updateBinding"
+               label="Update"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <iterate
+                     ifEmpty="false">
+                  <instanceof
+                        value="org.rifidi.edge.client.model.sal.RemoteEdgeServer">
+                  </instanceof>
+               </iterate>
+            </visibleWhen>
+         </command>
+         <command
+               commandId="org.rifidi.edge.client.sal.commands.edgeserver.save"
+               icon="icons/disk.png"
+               id="org.rifidi.edge.client.sal.commands.edgeserver.saveBinding"
+               label="Save"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <iterate
+                     ifEmpty="false">
+                  <instanceof
+                        value="org.rifidi.edge.client.model.sal.RemoteEdgeServer">
+                  </instanceof>
+               </iterate>
+            </visibleWhen>
+         </command>
+         <command
+               commandId="org.rifidi.edge.client.sal.commands.edgeserver.newreader"
+               icon="icons/readeradd.png"
+               label="New Reader ..."
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <iterate
+                     ifEmpty="false">
+                  <instanceof
+                        value="org.rifidi.edge.client.model.sal.RemoteEdgeServer">
+                  </instanceof>
+               </iterate>
+            </visibleWhen>
+         </command>
+         <command
+               commandId="org.rifidi.edge.client.sal.commands.reader.delete"
+               icon="icons/readerdelete.png"
+               label="Delete Reader"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <iterate
+                     ifEmpty="false">
+                  <instanceof
+                        value="org.rifidi.edge.client.model.sal.RemoteReader">
+                  </instanceof>
+               </iterate>
+            </visibleWhen>
+         </command>
+         <command
+               commandId="org.rifidi.edge.client.sal.commands.reader.createsession"
+               icon="icons/link_add.png"
+               label="Create Session"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <iterate
+                     ifEmpty="false">
+                  <instanceof
+                        value="org.rifidi.edge.client.model.sal.RemoteReader">
+                  </instanceof>
+               </iterate>
+            </visibleWhen>
+         </command>
+         <command
+               commandId="org.rifidi.edge.client.sal.commands.session.delete"
+               icon="icons/link_delete.png"
+               label="Delete Session"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <iterate
+                     ifEmpty="false">
+                  <instanceof
+                        value="org.rifidi.edge.client.model.sal.RemoteSession">
+                  </instanceof>
+               </iterate>
+            </visibleWhen>
+         </command>
+         <command
+               commandId="org.rifidi.edge.client.sal.commands.session.start"
+               icon="icons/link-start.png"
+               label="Start Session"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <iterate
+                     ifEmpty="false">
+                  <instanceof
+                        value="org.rifidi.edge.client.model.sal.RemoteSession">
+                  </instanceof>
+               </iterate>
+            </visibleWhen>
+         </command>
+         <command
+               commandId="org.rifidi.edge.client.sal.commands.session.stop"
+               icon="icons/link-stop.png"
+               label="Stop Session"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <iterate
+                     ifEmpty="false">
+                  <instanceof
+                        value="org.rifidi.edge.client.model.sal.RemoteSession">
+                  </instanceof>
+               </iterate>
+            </visibleWhen>
+         </command>
+         <command
+               commandId="org.rifidi.edge.client.sal.commands.jobs.kill"
+               icon="icons/script_delete.png"
+               label="Delete Job"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <iterate
+                     ifEmpty="false">
+                  <instanceof
+                        value="org.rifidi.edge.client.model.sal.RemoteJob">
+                  </instanceof>
+               </iterate>
+            </visibleWhen>
+         </command>
+         <command
+               commandId="org.rifidi.edge.client.sal.commands.jobs.submit"
+               icon="icons/script_add.png"
+               label="Submit Job"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <iterate
+                     ifEmpty="false">
+                  <instanceof
+                        value="org.rifidi.edge.client.model.sal.RemoteSession">
+                  </instanceof>
+               </iterate>
+            </visibleWhen>
+         </command>
+         <command
+               commandId="org.rifidi.edge.client.sal.commands.reader.opentagview"
+               icon="icons/transmit_go.png"
+               label="Open Tag View"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <iterate
+                     ifEmpty="false">
+                  <instanceof
+                        value="org.rifidi.edge.client.model.sal.RemoteReader">
+                  </instanceof>
+               </iterate>
+            </visibleWhen>
+         </command>
+         <command
+               commandId="org.rifidi.edge.client.sal.commands.reader.clearpropertychanges"
+               icon="icons/table_delete.png"
+               label="Clear Property Changes"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <iterate
+                     ifEmpty="false">
+                  <instanceof
+                        value="org.rifidi.edge.client.model.sal.RemoteReader">
+                  </instanceof>
+               </iterate>
+            </visibleWhen>
+         </command>
+         <command
+               commandId="org.rifidi.edge.client.sal.commands.reader.synchpropertychanges"
+               icon="icons/table_go.png"
+               label="Commit Property Changes"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <iterate
+                     ifEmpty="false">
+                  <instanceof
+                        value="org.rifidi.edge.client.model.sal.RemoteReader">
+                  </instanceof>
+               </iterate>
+            </visibleWhen>
+         </command>
+      </menuContribution>
+      <menuContribution
+            locationURI="popup:org.rifidi.edge.client.sal.views.CommandView?after=additions">
+         <command
+               commandId="rg.rifidi.edge.client.sal.commands.commandconfig.create"
+               icon="icons/cog_add.png"
+               label="Create Command Template"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <iterate
+                     ifEmpty="false">
+                  <instanceof
+                        value="org.rifidi.edge.client.model.sal.RemoteCommandConfigType">
+                  </instanceof>
+               </iterate>
+            </visibleWhen>
+         </command>
+         <command
+               commandId="rg.rifidi.edge.client.sal.commands.commandconfig.delete"
+               icon="icons/cog_delete.png"
+               label="Delete Command Template"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <iterate
+                     ifEmpty="false">
+                  <instanceof
+                        value="org.rifidi.edge.client.model.sal.RemoteCommandConfiguration">
+                  </instanceof>
+               </iterate>
+            </visibleWhen>
+         </command>
+      </menuContribution>
    </extension>
    <extension
          point="org.eclipse.ui.commands">
@@ -589,6 +655,14 @@
             id="org.rifidi.edge.client.sal.commands.reader.opentagview"
             name="Open Tag View">
       </command>
+      <command
+            id="org.rifidi.edge.client.sal.commands.reader.clearpropertychanges"
+            name="ClearPropertyChanges">
+      </command>
+      <command
+            id="org.rifidi.edge.client.sal.commands.reader.synchpropertychanges"
+            name="SynchPropertyChanges">
+      </command>
    </extension>
    <extension
          point="org.eclipse.core.expressions.propertyTesters">
@@ -596,7 +670,7 @@
             class="org.rifidi.edge.client.sal.controller.edgeserver.handlers.RemoteEdgeServerPropertyTester"
             id="org.rifidi.edge.client.sal.edgeserver"
             namespace="org.rifidi.edge.client.sal.edgeserver"
-            properties="state"
+            properties="state, dirty"
             type="java.lang.Object">
       </propertyTester>
       <propertyTester
@@ -604,6 +678,13 @@
             id="org.rifidi.edge.client.sal.remotesession"
             namespace="org.rifidi.edge.client.sal.remotesession"
             properties="state"
+            type="java.lang.Object">
+      </propertyTester>
+      <propertyTester
+            class="org.rifidi.edge.client.sal.controller.edgeserver.handlers.ReaderPropertyTester"
+            id="org.rifidi.edge.client.sal.reader"
+            namespace="org.rifidi.edge.client.sal.reader"
+            properties="dirty"
             type="java.lang.Object">
       </propertyTester>
    </extension>
@@ -645,46 +726,9 @@
       <propertyContributor
             contributorId="org.rifidi.edge.client.sal.tabbedPropContributer"
             labelProvider="org.rifidi.edge.client.sal.properties.SALTabbedPropertiesLabelProvider"
+            tabDescriptorProvider="org.rifidi.edge.client.sal.properties.SALTabDescriptorProvider"
             typeMapper="org.rifidi.edge.client.sal.properties.SALTabbedPropertiesTypeMapper">
-         <propertyCategory
-               category="EdgeServer">
-         </propertyCategory>
       </propertyContributor>
-   </extension>
-   <extension
-         point="org.eclipse.ui.views.properties.tabbed.propertyTabs">
-      <propertyTabs
-            contributorId="org.rifidi.edge.client.sal.tabbedPropContributer">
-         <propertyTab
-               category="EdgeServer"
-               id="org.rifidi.edge.client.sal.props.edgeserver"
-               indented="false"
-               label="Edge Server">
-         </propertyTab>
-      </propertyTabs>
-   </extension>
-   <extension
-         point="org.eclipse.ui.views.properties.tabbed.propertySections">
-      <propertySections
-            contributorId="org.rifidi.edge.client.sal.tabbedPropContributer">
-         <propertySection
-               class="org.rifidi.edge.client.sal.properties.edgeserver.EdgeServerStateSection"
-               id="org.rifidi.edge.client.sal.props.edgeserver.state"
-               tab="org.rifidi.edge.client.sal.props.edgeserver">
-            <input
-                  type="org.rifidi.edge.client.model.sal.RemoteEdgeServer">
-            </input>
-         </propertySection>
-         <propertySection
-               afterSection="org.rifidi.edge.client.sal.props.edgeserver.state"
-               class="org.rifidi.edge.client.sal.properties.edgeserver.EdgeServerConnectionInfo"
-               id="org.rifidi.edge.client.sal.props.edgeserver.connection"
-               tab="org.rifidi.edge.client.sal.props.edgeserver">
-            <input
-                  type="org.rifidi.edge.client.model.sal.RemoteEdgeServer">
-            </input>
-         </propertySection>
-      </propertySections>
    </extension>
 
 </plugin>

@@ -134,8 +134,12 @@ public class Command_Update implements RemoteEdgeServerCommand {
 						new RemoteReaderFactory(factory, info));
 			}
 			for (ReaderDTO reader : readerDTOs) {
-				remoteEdgeServer.remoteReaders.put(reader.getReaderID(),
-						new RemoteReader(reader));
+				RemoteReaderFactory factory = (RemoteReaderFactory) remoteEdgeServer.readerFactories
+						.get(reader.getReaderFactoryID());
+				if (factory != null) {
+					remoteEdgeServer.remoteReaders.put(reader.getReaderID(),
+							new RemoteReader(reader, factory));
+				}
 			}
 
 			for (CommandConfigFactoryDTO commandPlugin : this.commandConfigFactoryDTO) {

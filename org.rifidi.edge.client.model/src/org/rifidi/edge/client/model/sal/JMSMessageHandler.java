@@ -21,6 +21,7 @@ import org.rifidi.edge.core.api.jms.notifications.CommandConfigurationAddedNotif
 import org.rifidi.edge.core.api.jms.notifications.CommandConfigurationRemovedNotification;
 import org.rifidi.edge.core.api.jms.notifications.JobDeletedNotification;
 import org.rifidi.edge.core.api.jms.notifications.JobSubmittedNotification;
+import org.rifidi.edge.core.api.jms.notifications.PropertyChangedNotification;
 import org.rifidi.edge.core.api.jms.notifications.ReaderAddedNotification;
 import org.rifidi.edge.core.api.jms.notifications.ReaderFactoryAddedNotification;
 import org.rifidi.edge.core.api.jms.notifications.ReaderFactoryRemovedNotification;
@@ -131,6 +132,10 @@ public class JMSMessageHandler implements MessageListener {
 					JobDeletedNotification notification = (JobDeletedNotification) message;
 					RequestExecuterSingleton.getInstance().scheduleRequest(
 							new Command_JobDeleted(server, notification));
+				} else if (message instanceof PropertyChangedNotification) {
+					PropertyChangedNotification notification = (PropertyChangedNotification) message;
+					RequestExecuterSingleton.getInstance().scheduleRequest(
+							new Command_PropertyChanged(server, notification));
 				}
 			} catch (JMSException e) {
 				logger.warn("JMS Exception while recieving message");

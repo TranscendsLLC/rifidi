@@ -43,6 +43,15 @@ public abstract class AbstractWidget<T extends AbstractWidgetData> implements
 	}
 
 	/**
+	 * Get the widget data associated with this widget
+	 * 
+	 * @return
+	 */
+	public T getWidgetData() {
+		return data;
+	}
+
+	/**
 	 * Create the label for this widget
 	 * 
 	 * @param parent
@@ -79,7 +88,7 @@ public abstract class AbstractWidget<T extends AbstractWidgetData> implements
 	 */
 	protected void notifyListenersDataChanged(String data) {
 		for (MBeanInfoWidgetListener l : listners) {
-			l.dataChanged(data);
+			l.dataChanged(this.data.getName(), data);
 		}
 
 	}
@@ -89,7 +98,7 @@ public abstract class AbstractWidget<T extends AbstractWidgetData> implements
 	 */
 	protected void notifyListenersKeyReleased() {
 		for (MBeanInfoWidgetListener l : listners) {
-			l.keyReleased();
+			l.keyReleased(this.data.getName());
 		}
 	}
 
@@ -125,7 +134,7 @@ public abstract class AbstractWidget<T extends AbstractWidgetData> implements
 	 * @return A string if there was a problem setting the value (such as a
 	 *         NumberFormatException), null if it was set successfully
 	 */
-	public abstract String setValue(Object value);
+	public abstract String setValue(Attribute value);
 
 	/**
 	 * Validate the current value of the widget in some way
@@ -141,7 +150,7 @@ public abstract class AbstractWidget<T extends AbstractWidgetData> implements
 	 */
 	@Override
 	public int compareTo(AbstractWidget<T> o) {
-		if(o.data.getOrder()==-1){
+		if (o.data.getOrder() == -1) {
 			return 1;
 		}
 		return data.getOrder().compareTo(o.data.getOrder());

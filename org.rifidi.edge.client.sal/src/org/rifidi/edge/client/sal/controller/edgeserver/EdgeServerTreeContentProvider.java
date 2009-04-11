@@ -27,6 +27,7 @@ import org.rifidi.edge.client.model.sal.RemoteJob;
 import org.rifidi.edge.client.model.sal.RemoteReader;
 import org.rifidi.edge.client.model.sal.RemoteReaderFactory;
 import org.rifidi.edge.client.model.sal.RemoteSession;
+import org.rifidi.edge.client.model.sal.properties.DirtyReaderPropertyBean;
 import org.rifidi.edge.client.model.sal.properties.SessionStatePropertyBean;
 import org.rifidi.edge.client.sal.views.tags.TagView;
 
@@ -322,6 +323,33 @@ public class EdgeServerTreeContentProvider implements ITreeContentProvider,
 	 * (non-Javadoc)
 	 * 
 	 * @see
+	 * org.rifidi.edge.client.sal.controller.edgeserver.EdgeServerController
+	 * #clearPropertyChanges(java.lang.String)
+	 */
+	@Override
+	public void clearPropertyChanges(String readerID) {
+		RemoteReader reader = (RemoteReader) this.edgeServerList.get(0)
+				.getRemoteReaders().get(readerID);
+		if (reader != null) {
+			reader.clearUpdatedProperties();
+		}
+
+	}
+
+	@Override
+	public void synchPropertyChanges(String readerID) {
+		RemoteReader reader = (RemoteReader) this.edgeServerList.get(0)
+				.getRemoteReaders().get(readerID);
+		if (reader != null) {
+			reader.clearUpdatedProperties();
+		}
+
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
 	 * org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface
 	 * .viewers.Viewer, java.lang.Object, java.lang.Object)
 	 */
@@ -410,6 +438,7 @@ public class EdgeServerTreeContentProvider implements ITreeContentProvider,
 		reader.getRemoteSessions().addMapChangeListener(this);
 		viewer.add(edgeServerList.get(0), reader);
 		viewer.setExpandedState(edgeServerList.get(0), true);
+		reader.addPropertyChangeListener(this);
 	}
 
 	/**
@@ -419,6 +448,7 @@ public class EdgeServerTreeContentProvider implements ITreeContentProvider,
 	 */
 	private void removeRemoteReader(RemoteReader reader) {
 		reader.getRemoteSessions().removeMapChangeListener(this);
+		reader.removePropertyChangeListener(this);
 		viewer.remove(reader);
 		IViewReference[] refs = PlatformUI.getWorkbench()
 				.getActiveWorkbenchWindow().getActivePage().getViewReferences();
@@ -505,8 +535,16 @@ public class EdgeServerTreeContentProvider implements ITreeContentProvider,
 					.get(bean.getSessionID());
 			viewer.refresh(session);
 
+		} else if (arg0.getPropertyName().equals(
+				DirtyReaderPropertyBean.DIRTY_EVENT_PROPERTY)) {
+			DirtyReaderPropertyBean bean = (DirtyReaderPropertyBean) arg0
+					.getNewValue();
+			RemoteReader reader = (RemoteReader) edgeServerList.get(0)
+					.getRemoteReaders().get(bean.getReaderID());
+
+			viewer.update(reader, null);
+
 		}
 
 	}
-
 }

@@ -57,8 +57,8 @@ public class StandardLongWidget<T extends LongWidgetData> extends
 	 * .lang.Object)
 	 */
 	@Override
-	public String setValue(Object value) {
-		spinner.setSelection(((Long) value).intValue());
+	public String setValue(Attribute value) {
+		spinner.setSelection(((Long) value.getValue()).intValue());
 		return null;
 	}
 

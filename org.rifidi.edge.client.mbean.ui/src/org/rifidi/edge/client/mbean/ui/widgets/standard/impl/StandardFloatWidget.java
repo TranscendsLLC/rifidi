@@ -56,7 +56,7 @@ public class StandardFloatWidget<T extends FloatWidgetData> extends
 	 * .lang.Object)
 	 */
 	@Override
-	public String setValue(Object value) {
+	public String setValue(Attribute value) {
 		// TODO Auto-generated method stub
 		return null;
 	}

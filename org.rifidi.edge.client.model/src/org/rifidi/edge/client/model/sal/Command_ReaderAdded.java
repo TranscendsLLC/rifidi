@@ -32,6 +32,7 @@ public class Command_ReaderAdded implements RemoteEdgeServerCommand {
 	/** The logger for this class */
 	private static final Log logger = LogFactory
 			.getLog(Command_ReaderAdded.class);
+	private ObservableMap remoteReaderFactories;
 
 	/**
 	 * Constructor
@@ -47,6 +48,7 @@ public class Command_ReaderAdded implements RemoteEdgeServerCommand {
 		this.id = notification.getReaderID();
 		this.disconnectCommand = new Command_Disconnect(server);
 		this.remoteReaders = server.getRemoteReaders();
+		this.remoteReaderFactories = server.readerFactories;
 	}
 
 	/*
@@ -76,9 +78,14 @@ public class Command_ReaderAdded implements RemoteEdgeServerCommand {
 	 */
 	@Override
 	public void executeEclipse() {
+
 		// add readerDTO to remote readers
 		if (readerDTO != null) {
-			remoteReaders.put(id, new RemoteReader(readerDTO));
+			RemoteReaderFactory factory = (RemoteReaderFactory) this.remoteReaderFactories
+					.get(readerDTO.getReaderFactoryID());
+			if (factory != null) {
+				remoteReaders.put(id, new RemoteReader(readerDTO, factory));
+			}
 		} else {
 			logger.warn("Cannot create a new Remote "
 					+ "Reader because DTO is null");
