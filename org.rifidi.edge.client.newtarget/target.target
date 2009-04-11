@@ -13,6 +13,8 @@
       <extraLocations>
          <location path="${workspace_loc}/org.rifidi.edge.client.newtarget/libraries"/>
          <location path="${workspace_loc}/org.rifidi.edge.client.newtarget/spring"/>
+         <location path="${workspace_loc}/org.rifidi.edge.client.newtarget/deltapack"/>
+         <location path="${workspace_loc}/org.rifidi.edge.client.newtarget/draw2d"/>
       </extraLocations>
    </content>
 
