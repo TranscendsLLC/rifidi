@@ -14,7 +14,6 @@ import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.rifidi.edge.client.twodview.exceptions.ReaderAlreadyInMapException;
 import org.rifidi.edge.client.twodview.sfx.ReaderAlphaImageFigure;
-import org.rifidi.services.registry.ServiceRegistry;
 
 /**
  * @author Tobias Hoppenthaler - tobias@pramari.com
@@ -29,7 +28,6 @@ public class ObjectLayer extends XYLayer {
 	 */
 	public ObjectLayer() {
 		super();
-		ServiceRegistry.getInstance().service(this);
 	}
 
 	public void addReader(ReaderAlphaImageFigure reader, Point location)

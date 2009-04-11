@@ -8,10 +8,8 @@ Bundle-Vendor: PRAMARI LLC
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.draw2d;bundle-version="3.4.0",
- org.rifidi.edge.services;bundle-version="1.0.0",
- org.eclipse.core.resources;bundle-version="3.4.1",
- org.rifidi.edge.client.connections;bundle-version="1.1.0",
- org.rifidi.logging;bundle-version="1.0.2"
+ org.eclipse.core.resources;bundle-version="3.4.1"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
-Import-Package: javax.jms
+Import-Package: javax.jms,
+ org.apache.commons.logging;version="1.1.1"
