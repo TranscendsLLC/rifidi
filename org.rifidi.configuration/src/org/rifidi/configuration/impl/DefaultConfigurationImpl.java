@@ -3,6 +3,7 @@
  */
 package org.rifidi.configuration.impl;
 
+import java.beans.PropertyChangeSupport;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -40,6 +41,7 @@ import org.rifidi.configuration.annotations.JMXMBean;
 import org.rifidi.configuration.annotations.Operation;
 import org.rifidi.configuration.annotations.Property;
 import org.rifidi.configuration.annotations.PropertyType;
+import org.rifidi.configuration.listeners.AttributesChangedListener;
 
 /**
  * @author Jochen Mader - jochen@pramari.com
@@ -67,12 +69,15 @@ public class DefaultConfigurationImpl implements Configuration, Cloneable {
 	protected String factoryID;
 	/** Attributes set while we diddn't have an actual instance. */
 	private Set<Attribute> attributes;
+	/** Listeners to changes of attributes on this object */
+	private Set<AttributesChangedListener> listeners;
 
 	/**
 	 * Protected constructor used by clone.
 	 */
 	protected DefaultConfigurationImpl() {
 		attributes = new HashSet<Attribute>();
+		listeners = new HashSet<AttributesChangedListener>();
 	}
 
 	/**
@@ -265,7 +270,8 @@ public class DefaultConfigurationImpl implements Configuration, Cloneable {
 				descriptor.setField(JMX.DEFAULT_VALUE_FIELD, PropertyType
 						.convert(prop.defaultValue(), prop.type()));
 			}
-			descriptor.setField("org.rifidi.edge.ordervalue", prop.orderValue());
+			descriptor
+					.setField("org.rifidi.edge.ordervalue", prop.orderValue());
 
 			attrs[counter] = new OpenMBeanAttributeInfoSupport(name, prop
 					.description(), PropertyType.getOpenType(prop.type()),
@@ -329,6 +335,76 @@ public class DefaultConfigurationImpl implements Configuration, Cloneable {
 	public void setAttribute(Attribute attribute)
 			throws AttributeNotFoundException, InvalidAttributeValueException,
 			MBeanException, ReflectionException {
+
+		_setAttribute(attribute);
+
+		// TODO: remove this once we have AspectJ
+		try {
+			AttributeList list = new AttributeList();
+			list.add(new Attribute(attribute.getName(), getAttribute(attribute
+					.getName())));
+			for (AttributesChangedListener l : listeners) {
+				l.attributesChanged(this.serviceID, list);
+			}
+		} catch (Exception e) {
+			// ignore if there was a problem
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * javax.management.DynamicMBean#setAttributes(javax.management.AttributeList
+	 * )
+	 */
+	@Override
+	public AttributeList setAttributes(AttributeList attributes) {
+		AttributeList ret = new AttributeList();
+		for (Object obj : attributes) {
+			if (target == null) {
+				this.attributes.add((Attribute) obj);
+			} else {
+				try {
+					_setAttribute((Attribute) obj);
+					ret.add(new Attribute(((Attribute) obj).getName(),
+							getAttribute(((Attribute) obj).getName())));
+				} catch (AttributeNotFoundException e) {
+					logger.error(e);
+				} catch (InvalidAttributeValueException e) {
+					logger.error(e);
+				} catch (MBeanException e) {
+					logger.error(e);
+				} catch (ReflectionException e) {
+					logger.error(e);
+				}
+			}
+		}
+
+		// TODO: remove this once we have AspectJ
+		for (AttributesChangedListener l : listeners) {
+			try {
+				l.attributesChanged(this.serviceID, ret);
+			} catch (Throwable e) {
+				e.printStackTrace();
+			}
+		}
+
+		return ret;
+	}
+
+	/**
+	 * Private helper method so I don't have to duplicate JMS Notification calls
+	 * 
+	 * @param attribute
+	 * @throws AttributeNotFoundException
+	 * @throws InvalidAttributeValueException
+	 * @throws MBeanException
+	 * @throws ReflectionException
+	 */
+	private void _setAttribute(Attribute attribute)
+			throws AttributeNotFoundException, InvalidAttributeValueException,
+			MBeanException, ReflectionException {
 		if (nameToProperty.containsKey(attribute.getName())) {
 			if (target == null) {
 				attributes.add(attribute);
@@ -364,39 +440,6 @@ public class DefaultConfigurationImpl implements Configuration, Cloneable {
 			}
 		}
 		throw new AttributeNotFoundException();
-
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * javax.management.DynamicMBean#setAttributes(javax.management.AttributeList
-	 * )
-	 */
-	@Override
-	public AttributeList setAttributes(AttributeList attributes) {
-		AttributeList ret = new AttributeList();
-		for (Object obj : attributes) {
-			if (target == null) {
-				this.attributes.add((Attribute) obj);
-			} else {
-				try {
-					setAttribute((Attribute) obj);
-					ret.add(new Attribute(((Attribute) obj).getName(),
-							getAttribute(((Attribute) obj).getName())));
-				} catch (AttributeNotFoundException e) {
-					logger.error(e);
-				} catch (InvalidAttributeValueException e) {
-					logger.error(e);
-				} catch (MBeanException e) {
-					logger.error(e);
-				} catch (ReflectionException e) {
-					logger.error(e);
-				}
-			}
-		}
-		return ret;
 	}
 
 	/*
@@ -456,5 +499,30 @@ public class DefaultConfigurationImpl implements Configuration, Cloneable {
 	public void setServiceRegistration(ServiceRegistration registration) {
 		this.registration = registration;
 
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.configuration.Configuration#addAttributesChangedListener(org
+	 * .rifidi.configuration.listeners.AttributesChangedListener)
+	 */
+	@Override
+	public void addAttributesChangedListener(AttributesChangedListener listener) {
+		listeners.add(listener);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.configuration.Configuration#removeAttributesChangedListener
+	 * (org.rifidi.configuration.listeners.AttributesChangedListener)
+	 */
+	@Override
+	public void removeAttributesChangedListener(
+			AttributesChangedListener listener) {
+		listeners.remove(listener);
 	}
 }

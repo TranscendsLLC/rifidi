@@ -140,8 +140,7 @@ public abstract class AbstractIPReaderSession extends AbstractReaderSession {
 	public void connect() throws IOException {
 		if ((getStatus() == SessionStatus.PROCESSING
 				|| getStatus() == SessionStatus.CREATED
-				|| getStatus() == SessionStatus.LOGGINGIN
-				|| getStatus() == SessionStatus.CLOSED)
+				|| getStatus() == SessionStatus.LOGGINGIN || getStatus() == SessionStatus.CLOSED)
 				&& connecting.compareAndSet(false, true)) {
 			try {
 				setStatus(SessionStatus.CONNECTING);
@@ -289,6 +288,14 @@ public abstract class AbstractIPReaderSession extends AbstractReaderSession {
 		if (processing.get()) {
 			if (processing.compareAndSet(true, false)) {
 				setStatus(SessionStatus.CLOSED);
+				synchronized (commands) {
+					for(Integer id : commands.keySet()){
+						if(idToData.get(id).future!=null){
+							idToData.get(id).future.cancel(true);
+							idToData.get(id).future=null;
+						}
+					}
+				}
 				this.executor.shutdown();
 				try {
 					socket.close();

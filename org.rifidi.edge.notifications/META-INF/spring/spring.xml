@@ -12,12 +12,20 @@
 		<property name="extNotificationTemplate" ref="extNotificationTemplate" />
 		<property name="readerDAO" ref="ReaderDAOService" />
 		<property name="commandDAO" ref="CommandDAOService" />
+		<property name="configurations" ref="ConfigurationSet" />
 	</bean>
 
 	<osgi:reference id="ReaderDAOService" interface="org.rifidi.edge.core.daos.ReaderDAO"
 		cardinality="1..1" />
 	<osgi:reference id="CommandDAOService"
 		interface="org.rifidi.edge.core.daos.CommandDAO" cardinality="1..1" />
+
+	<!-- Listener for Configuration Factories -->
+	<osgi:set id="ConfigurationSet" interface="org.rifidi.configuration.Configuration"
+		cardinality="0..N">
+		<osgi:listener ref="JMSNotifier" bind-method="bindConfiguration"
+			unbind-method="unbindConfiguration" />
+	</osgi:set>
 
 	<osgi:service id="JMSNotifierService" ref="JMSNotifier"
 		interface="org.rifidi.edge.core.notifications.NotifierService" />
@@ -67,10 +75,10 @@
 		<property name="brokerURL" value="vm://localhost" />
 	</bean>
 
-	<bean id="myMessageListener" class="org.rifidi.edge.notifications.internal.TagEventListener" >
+	<bean id="myMessageListener" class="org.rifidi.edge.notifications.internal.TagEventListener">
 		<property name="extNotificationDest" ref="externalTagDest" />
 		<property name="extNotificationTemplate" ref="extNotificationTemplate" />
 	</bean>
-	
+
 	<amq:queue id="externalTagDest" physicalName="org.rifidi.edge.external.tags" />
 </beans>
