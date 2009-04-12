@@ -59,22 +59,17 @@ public class ObjectLayer extends XYLayer {
 		}
 
 	}
-
-	public void refreshObjects() {
-		ReaderAlphaImageFigure raif;
-		/*
-		 * hand over layer; for each child call status refresh
-		 */
-		for (Object figure : getChildren()) {
-			try {
-				raif = (ReaderAlphaImageFigure) figure;
-				raif.updateStatus();
-
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-
-		}
-	}
+	/*
+	 * public void refreshObjects() { ReaderAlphaImageFigure raif;
+	 * 
+	 * hand over layer; for each child call status refresh
+	 * 
+	 * for (Object figure : getChildren()) { try { raif =
+	 * (ReaderAlphaImageFigure) figure; //raif.updateStatus();
+	 * 
+	 * } catch (Exception e) { e.printStackTrace(); }
+	 * 
+	 * } }
+	 */
 
 }

@@ -20,16 +20,11 @@ import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.MessageBox;
-import org.rifidi.edge.client.connections.registryservice.RemoteReaderConnectionRegistryService;
-import org.rifidi.edge.client.connections.remotereader.RemoteReader;
-import org.rifidi.edge.client.connections.remotereader.RemoteReaderID;
 import org.rifidi.edge.client.twodview.Activator;
 import org.rifidi.edge.client.twodview.exceptions.ReaderAlreadyInMapException;
 import org.rifidi.edge.client.twodview.layers.ObjectLayer;
 import org.rifidi.edge.client.twodview.sfx.ReaderAlphaImageFigure;
 import org.rifidi.edge.client.twodview.views.SiteView;
-import org.rifidi.services.annotations.Inject;
-import org.rifidi.services.registry.ServiceRegistry;
 
 /**
  * @author Tobias Hoppenthaler - tobias@pramari.com
@@ -43,8 +38,6 @@ public class SiteViewDropTargetListener implements DropTargetListener {
 
 	private Log logger;
 
-	private RemoteReaderConnectionRegistryService readerRegistry;
-
 	/**
 	 * 
 	 */
@@ -53,7 +46,6 @@ public class SiteViewDropTargetListener implements DropTargetListener {
 		this.siteView = siteView;
 		this.composite = composite;
 		logger = LogFactory.getLog(SiteViewDropTargetListener.class);
-		ServiceRegistry.getInstance().service(this);
 
 	}
 
@@ -118,45 +110,44 @@ public class SiteViewDropTargetListener implements DropTargetListener {
 	public void drop(DropTargetEvent event) {
 
 		if (TextTransfer.getInstance().isSupportedType(event.currentDataType)) {
-			Image image = Activator
-					.imageDescriptorFromPlugin(
-							"org.rifidi.edge.client.twodview",
-							"icons/reader-24x24.png").createImage();
-			// get Reader from ReaderRegistry
-			RemoteReader reader = readerRegistry.getRemoteReader(RemoteReaderID
-					.createIDFromString(event.data.toString()));
-			// create an ImageFigure that contains the reference to the reader
-			ReaderAlphaImageFigure raif = new ReaderAlphaImageFigure(image,
-					reader);
-
-			ObjectLayer layer = siteView.getObjectLayer();
-
-			Composite compost = composite;
-			int deltaX = 0, deltaY = 0;
-
-			while (compost != null) {
-				// logger.debug("in loop: " + compost.toString());
-				Rectangle temp = new Rectangle(compost.getBounds());
-				deltaX += temp.x;
-				deltaY += temp.y;
-				compost = compost.getParent();
-			}
-			// deltaY+=20;
-			logger.debug("deltas: " + deltaX + " " + deltaY);
-			raif.setBounds(new Rectangle(event.x - deltaX, event.y - deltaY,
-					raif.getImage().getBounds().width, raif.getImage()
-							.getBounds().height));
-			try {
-				layer.addReader(raif, null);
-			} catch (ReaderAlreadyInMapException e) {
-				// TODO : POPUP
-				logger.debug("ERROR: " + e.toString());
-				MessageBox mb = new MessageBox(siteView.getSite().getShell(),
-						SWT.ICON_WARNING);
-				mb.setText("Reader already in map");
-				mb.setMessage("Reader cannot be added to map more than once.");
-				mb.open();
-			}
+			System.out.println("DROP: " + event);
+//			Image image = Activator.getDefault().getImageRegistry().get(
+//					Activator.IMG_READER);
+//			// get Reader from ReaderRegistry
+//			RemoteReader reader = readerRegistry.getRemoteReader(RemoteReaderID
+//					.createIDFromString(event.data.toString()));
+//			// create an ImageFigure that contains the reference to the reader
+//			ReaderAlphaImageFigure raif = new ReaderAlphaImageFigure(image,
+//					reader);
+//
+//			ObjectLayer layer = siteView.getObjectLayer();
+//
+//			Composite compost = composite;
+//			int deltaX = 0, deltaY = 0;
+//
+//			while (compost != null) {
+//				// logger.debug("in loop: " + compost.toString());
+//				Rectangle temp = new Rectangle(compost.getBounds());
+//				deltaX += temp.x;
+//				deltaY += temp.y;
+//				compost = compost.getParent();
+//			}
+//			// deltaY+=20;
+//			logger.debug("deltas: " + deltaX + " " + deltaY);
+//			raif.setBounds(new Rectangle(event.x - deltaX, event.y - deltaY,
+//					raif.getImage().getBounds().width, raif.getImage()
+//							.getBounds().height));
+//			try {
+//				layer.addReader(raif, null);
+//			} catch (ReaderAlreadyInMapException e) {
+//				// TODO : POPUP
+//				logger.debug("ERROR: " + e.toString());
+//				MessageBox mb = new MessageBox(siteView.getSite().getShell(),
+//						SWT.ICON_WARNING);
+//				mb.setText("Reader already in map");
+//				mb.setMessage("Reader cannot be added to map more than once.");
+//				mb.open();
+//			}
 
 		}
 
@@ -172,13 +163,6 @@ public class SiteViewDropTargetListener implements DropTargetListener {
 	@Override
 	public void dropAccept(DropTargetEvent event) {
 		// TODO Auto-generated method stub
-
-	}
-
-	@Inject
-	public void setRemoteReaderRegistry(
-			RemoteReaderConnectionRegistryService remoteReaderConnectionRegistryService) {
-		this.readerRegistry = remoteReaderConnectionRegistryService;
 
 	}
 

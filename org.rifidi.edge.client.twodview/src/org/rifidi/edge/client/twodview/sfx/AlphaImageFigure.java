@@ -20,14 +20,17 @@ import org.eclipse.swt.graphics.Image;
  */
 public class AlphaImageFigure extends ImageFigure {
 
+	/** The alpha value for this Image */
+	private int alpha = 255;
+
 	/**
+	 * Constructor
+	 * 
 	 * @param image
 	 */
 	public AlphaImageFigure(Image image) {
 		super(image);
 	}
-
-	private int alpha = 255;
 
 	/*
 	 * (non-Javadoc)
@@ -54,6 +57,14 @@ public class AlphaImageFigure extends ImageFigure {
 	 */
 	public void setAlpha(int alpha) {
 		this.alpha = alpha;
+	}
+
+	/**
+	 * Should be called when we get rid of this AlphaImageFigure. Subclasses
+	 * should override this method and call super.dispose(). Suclasses should
+	 * also take care to dispose of the image if necessary
+	 */
+	public void dispose() {
 	}
 
 }
