@@ -17,13 +17,13 @@ import org.rifidi.edge.client.model.sal.RemoteEdgeServer;
  */
 public class ModelManagerService {
 
-	List<RemoteEdgeServer> input = new ArrayList<RemoteEdgeServer>();
-	private Set<Viewer> viewers;
+	private List<RemoteEdgeServer> model = new ArrayList<RemoteEdgeServer>();
+	private Set<ModelManagerServiceListener> controllers;
 	private static ModelManagerService instance;
 
 	private ModelManagerService() {
-		viewers = new HashSet<Viewer>();
-		input.add(new RemoteEdgeServer());
+		controllers = new HashSet<ModelManagerServiceListener>();
+		model.add(new RemoteEdgeServer());
 	}
 
 	public synchronized static ModelManagerService getInstance() {
@@ -33,20 +33,20 @@ public class ModelManagerService {
 		return instance;
 	}
 
-	public void addViewer(Viewer viewer) {
-		this.viewers.add(viewer);
-		viewer.setInput(input);
+	public void addController(ModelManagerServiceListener controller) {
+		this.controllers.add(controller);
+		controller.setModel(model);
 	}
 
-	public void removeViewwer(Viewer viewer) {
-		this.viewers.remove(viewer);
+	public void removeController(ModelManagerServiceListener controller) {
+		this.controllers.remove(controller);
 	}
 
 	public void setModel(RemoteEdgeServer server) {
-		this.input.clear();
-		this.input.add(server);
-		for (Viewer viewer : viewers) {
-			viewer.setInput(input);
+		this.model.clear();
+		this.model.add(server);
+		for (ModelManagerServiceListener controller: controllers) {
+			controller.setModel(model);
 		}
 	}
 

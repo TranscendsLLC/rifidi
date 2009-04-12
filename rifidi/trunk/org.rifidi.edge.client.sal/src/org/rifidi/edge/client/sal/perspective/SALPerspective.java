@@ -34,6 +34,7 @@ public class SALPerspective implements IPerspectiveFactory {
 				(float) .4, CommandView.ID);
 		IFolderLayout folder = layout.createFolder("left", IPageLayout.RIGHT,
 				.4f, EdgeServerView.ID);
+		folder.addView("org.rifidi.edge.client.twodview.views.SiteView");
 		folder.addPlaceholder(TagView.ID+":*");
 	}
 

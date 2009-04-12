@@ -20,6 +20,7 @@ import org.eclipse.ui.views.properties.tabbed.ITabbedPropertySheetPageContributo
 import org.rifidi.edge.client.sal.controller.commands.CommandTreeContentProvider;
 import org.rifidi.edge.client.sal.controller.commands.CommandTreeLabelProvider;
 import org.rifidi.edge.client.sal.modelmanager.ModelManagerService;
+import org.rifidi.edge.client.sal.modelmanager.ModelManagerServiceListener;
 
 /**
  * A view to display commands currently on the server
@@ -28,7 +29,7 @@ import org.rifidi.edge.client.sal.modelmanager.ModelManagerService;
  * 
  */
 public class CommandView extends ViewPart implements
-		ITabbedPropertySheetPageContributor {
+		ITabbedPropertySheetPageContributor, ModelManagerServiceListener {
 
 	public static final String ID = "org.rifidi.edge.client.sal.views.CommandView";
 	/** The tree viewer to use */
@@ -54,7 +55,7 @@ public class CommandView extends ViewPart implements
 		treeViewer.setComparator(new ViewerComparator());
 		createContextMenu();
 		this.getSite().setSelectionProvider(treeViewer);
-		ModelManagerService.getInstance().addViewer(treeViewer);
+		ModelManagerService.getInstance().addController(this);
 
 	}
 
@@ -100,12 +101,17 @@ public class CommandView extends ViewPart implements
 	@Override
 	public void dispose() {
 		super.dispose();
-		ModelManagerService.getInstance().removeViewwer(treeViewer);
+		ModelManagerService.getInstance().removeController(this);
 	}
 
 	@Override
 	public String getContributorId() {
 		return "org.rifidi.edge.client.sal.tabbedPropContributer";
+	}
+
+	@Override
+	public void setModel(Object model) {
+		this.treeViewer.setInput(model);
 	}
 
 }

@@ -28,7 +28,7 @@ import org.rifidi.edge.client.model.sal.RemoteEdgeServer;
 public class CommandTreeContentProvider implements ITreeContentProvider,
 		CommandController, PropertyChangeListener, IMapChangeListener {
 
-	/** The input Element */
+	/** The model Element */
 	private List<RemoteEdgeServer> edgeServerList;
 	/**
 	 * A hashmap that stores the RemoteCommandConfigurations mapped to their

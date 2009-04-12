@@ -46,7 +46,7 @@ public class EdgeServerTreeContentProvider implements ITreeContentProvider,
 	private Log logger = LogFactory.getLog(EdgeServerTreeContentProvider.class);
 	/** A static instance of this so we can use this object as a singleton */
 	private static EdgeServerTreeContentProvider instance;
-	/** The input Element */
+	/** The model Element */
 	private List<RemoteEdgeServer> edgeServerList;
 
 	/**

@@ -10,6 +10,11 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.ViewerComparator;
+import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.dnd.DragSourceEvent;
+import org.eclipse.swt.dnd.DragSourceListener;
+import org.eclipse.swt.dnd.TextTransfer;
+import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -20,6 +25,7 @@ import org.eclipse.ui.views.properties.tabbed.ITabbedPropertySheetPageContributo
 import org.rifidi.edge.client.sal.controller.edgeserver.EdgeServerTreeContentProvider;
 import org.rifidi.edge.client.sal.controller.edgeserver.EdgeServerTreeLabelProvider;
 import org.rifidi.edge.client.sal.modelmanager.ModelManagerService;
+import org.rifidi.edge.client.sal.modelmanager.ModelManagerServiceListener;
 
 /**
  * The View for displaying readers
@@ -28,7 +34,8 @@ import org.rifidi.edge.client.sal.modelmanager.ModelManagerService;
  * 
  */
 public class EdgeServerView extends ViewPart implements
-		ITabbedPropertySheetPageContributor {
+		ITabbedPropertySheetPageContributor, DragSourceListener,
+		ModelManagerServiceListener {
 
 	public static final String ID = "org.rifidi.edge.client.sal.views.EdgeServerView";
 	/** The tree viewer to use */
@@ -62,7 +69,9 @@ public class EdgeServerView extends ViewPart implements
 		treeViewer.setComparator(new ViewerComparator());
 		createContextMenu();
 		this.getSite().setSelectionProvider(treeViewer);
-		ModelManagerService.getInstance().addViewer(treeViewer);
+		ModelManagerService.getInstance().addController(this);
+		treeViewer.addDragSupport(DND.DROP_COPY|DND.DROP_MOVE|DND.DROP_LINK, new Transfer[] { TextTransfer
+				.getInstance() }, this);
 	}
 
 	/*
@@ -107,12 +116,42 @@ public class EdgeServerView extends ViewPart implements
 	@Override
 	public void dispose() {
 		super.dispose();
-		ModelManagerService.getInstance().removeViewwer(treeViewer);
+		ModelManagerService.getInstance().removeController(this);
 	}
 
 	@Override
 	public String getContributorId() {
 		return "org.rifidi.edge.client.sal.tabbedPropContributer";
+	}
+
+	@Override
+	public void dragFinished(DragSourceEvent event) {
+		System.out.println("DRAG FINISHED: ");
+
+	}
+
+	@Override
+	public void dragSetData(DragSourceEvent event) {
+		System.out.println("DRAG SET DATA: " + event.data);
+
+	}
+
+	@Override
+	public void dragStart(DragSourceEvent event) {
+		System.out.println("DRAG START: " + event.data);
+
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.client.sal.modelmanager.ModelManagerServiceListener#setModel
+	 * (java.lang.Object)
+	 */
+	@Override
+	public void setModel(Object model) {
+		this.treeViewer.setInput(model);
 	}
 
 }

@@ -5,6 +5,9 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.ImageRegistry;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
@@ -18,7 +21,12 @@ public class Activator extends AbstractUIPlugin {
 
 	// The shared instance
 	private static Activator plugin;
-	
+
+	public static final String IMG_READER = "reader";
+	public static final String IMG_READER_ON = "readeron";
+	public static final String IMG_READER_OFF = "readeroff";
+	//public static final String IMG_READER_ERR = "readererr";
+
 	/**
 	 * The folder for all scenes
 	 */
@@ -74,6 +82,34 @@ public class Activator extends AbstractUIPlugin {
 	 */
 	public static Activator getDefault() {
 		return plugin;
+	}
+
+	/**
+	 * Returns an image descriptor for the image file at the given plug-in
+	 * relative path.
+	 * 
+	 * @param path
+	 *            the path
+	 * @return the image descriptor
+	 */
+	public static ImageDescriptor getImageDescriptor(String path) {
+		return imageDescriptorFromPlugin(PLUGIN_ID, path);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.ui.plugin.AbstractUIPlugin#initializeImageRegistry(org.eclipse
+	 * .jface.resource.ImageRegistry)
+	 */
+	@Override
+	protected void initializeImageRegistry(ImageRegistry reg) {
+		super.initializeImageRegistry(reg);
+		reg.put(IMG_READER, getImageDescriptor("icons/reader-24x24.png"));
+		reg.put(IMG_READER_ON, getImageDescriptor("icons/reader-24x24_on.png"));
+		reg.put(IMG_READER_OFF,
+				getImageDescriptor("icons/reader-24x24_off.png"));
 	}
 
 }

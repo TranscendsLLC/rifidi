@@ -33,7 +33,10 @@ import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.part.ViewPart;
-import org.rifidi.edge.client.connections.remotereader.RemoteReader;
+import org.rifidi.edge.client.model.sal.RemoteEdgeServer;
+import org.rifidi.edge.client.model.sal.RemoteReader;
+import org.rifidi.edge.client.sal.modelmanager.ModelManagerService;
+import org.rifidi.edge.client.sal.modelmanager.ModelManagerServiceListener;
 import org.rifidi.edge.client.twodview.layers.EffectLayer;
 import org.rifidi.edge.client.twodview.layers.FloorPlanLayer;
 import org.rifidi.edge.client.twodview.layers.ListeningScalableLayeredPane;
@@ -48,9 +51,9 @@ import org.rifidi.edge.client.twodview.sfx.ReaderAlphaImageFigure;
  * @author Tobias Hoppenthaler - tobias@pramari.com
  * 
  */
-public class SiteView extends ViewPart implements ISelectionProvider {
+public class SiteView extends ViewPart implements ISelectionProvider,
+		ModelManagerServiceListener {
 
-	@SuppressWarnings("unused")
 	private Log logger = LogFactory.getLog(SiteView.class);
 
 	public final static String ID = "org.rifidi.edge.client.twodview.views.SiteView";
@@ -60,13 +63,14 @@ public class SiteView extends ViewPart implements ISelectionProvider {
 	private EffectLayer effectLayer;
 	private NoteLayer noteLayer;
 	private ArrayList<ISelectionChangedListener> listeners;
+	private ArrayList<RemoteEdgeServer> servers;
 
 	/**
 	 * 
 	 */
 	public SiteView() {
 		listeners = new ArrayList<ISelectionChangedListener>();
-
+		ModelManagerService.getInstance().addController(this);
 	}
 
 	/*
@@ -224,6 +228,30 @@ public class SiteView extends ViewPart implements ISelectionProvider {
 					getSelection());
 			listener.selectionChanged(sce);
 		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.client.sal.modelmanager.ModelManagerServiceListener#setModel
+	 * (java.lang.Object)
+	 */
+	@Override
+	public void setModel(Object model) {
+		logger.debug("MODEL SET! " + model);
+
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.part.WorkbenchPart#dispose()
+	 */
+	@Override
+	public void dispose() {
+		super.dispose();
+		ModelManagerService.getInstance().removeController(this);
 	}
 
 }
