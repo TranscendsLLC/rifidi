@@ -16,42 +16,54 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
+import org.rifidi.edge.client.ale.api.xsd.ale.epcglobal.ECReportSpec;
 
 /**
  * @author Tobias Hoppenthaler - tobias@pramari.com
- *
+ * 
  */
 public class AleEditorSelectionListener implements Listener {
-	ScrolledForm form=null;
-	ArrayList<Section> sections =null;
+	private ScrolledForm form = null;
+	private ArrayList<Section> sections = null;
+	private ECReportSpec spec;
+	private ArrayList<ECReportSpec> repSpecs;
+
 	/**
+	 * @param repSpecs
+	 * @param spec
 	 * 
 	 */
-	public AleEditorSelectionListener(ScrolledForm form, ArrayList<Section> sections) {
+	public AleEditorSelectionListener(ScrolledForm form,
+			ArrayList<Section> sections, ECReportSpec spec,
+			ArrayList<ECReportSpec> repSpecs) {
 		super();
-		this.form=form;
-		this.sections=sections;
-		
+		this.form = form;
+		this.sections = sections;
+		this.repSpecs = repSpecs;
+		this.spec = spec;
 	}
 
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.
+	 * Event)
 	 */
 	@Override
 	public void handleEvent(Event event) {
-		
+
 		for (Section section : this.sections) {
-			if(section.getClient()!=null){
+			if (section.getClient() != null) {
 				section.getClient().dispose();
 			}
-			section.dispose();	
-		}
-		
-		
-		form.reflow(true);
+			section.dispose();
 
-		
+		}
+
+		form.reflow(true);
+		repSpecs.remove(spec);
+
 	}
 
 }

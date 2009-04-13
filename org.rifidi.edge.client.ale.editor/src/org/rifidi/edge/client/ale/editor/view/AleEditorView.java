@@ -19,6 +19,8 @@ import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -38,14 +40,23 @@ import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
 import org.eclipse.ui.part.ViewPart;
+import org.rifidi.edge.client.ale.api.wsdl.ale.epcglobal.Define;
+import org.rifidi.edge.client.ale.api.wsdl.ale.epcglobal.DuplicateNameExceptionResponse;
+import org.rifidi.edge.client.ale.api.wsdl.ale.epcglobal.ECSpecValidationExceptionResponse;
 import org.rifidi.edge.client.ale.api.wsdl.alelr.epcglobal.EmptyParms;
 import org.rifidi.edge.client.ale.api.wsdl.alelr.epcglobal.ImplementationExceptionResponse;
 import org.rifidi.edge.client.ale.api.wsdl.alelr.epcglobal.SecurityExceptionResponse;
 import org.rifidi.edge.client.ale.api.xsd.ale.epcglobal.ECBoundarySpec;
+import org.rifidi.edge.client.ale.api.xsd.ale.epcglobal.ECFilterSpec;
 import org.rifidi.edge.client.ale.api.xsd.ale.epcglobal.ECReportOutputSpec;
 import org.rifidi.edge.client.ale.api.xsd.ale.epcglobal.ECReportSetSpec;
 import org.rifidi.edge.client.ale.api.xsd.ale.epcglobal.ECReportSpec;
 import org.rifidi.edge.client.ale.api.xsd.ale.epcglobal.ECSpec;
+import org.rifidi.edge.client.ale.api.xsd.ale.epcglobal.ECTime;
+import org.rifidi.edge.client.ale.api.xsd.ale.epcglobal.ECFilterSpec.ExcludePatterns;
+import org.rifidi.edge.client.ale.api.xsd.ale.epcglobal.ECFilterSpec.IncludePatterns;
+import org.rifidi.edge.client.ale.api.xsd.ale.epcglobal.ECSpec.LogicalReaders;
+import org.rifidi.edge.client.ale.api.xsd.ale.epcglobal.ECSpec.ReportSpecs;
 import org.rifidi.edge.client.ale.connection.service.ConnectionService;
 import org.rifidi.edge.client.ale.treeview.util.ConnectionWrapper.ConnectionWrapper;
 
@@ -63,9 +74,15 @@ public class AleEditorView extends ViewPart {
 	private Text txtRepeatAfter = null;
 	private Text txtDuration = null;
 	private ConnectionService conSvc = null;
-	private List lrList;
-	private Text txtSpecName;
-	private String name;
+	private List lrList = null;
+	private Text txtSpecName = null;
+	private String name = null;
+	private Define define = null;
+	private ECBoundarySpec bspec = new ECBoundarySpec();
+	private ECReportSpec ecrSpec = null;
+	private ECReportOutputSpec ros = null;
+	private ECFilterSpec fisp = null;
+	private ArrayList<ECReportSpec> repSpecs = null;
 
 	/*
 	 * (non-Javadoc)
@@ -90,7 +107,12 @@ public class AleEditorView extends ViewPart {
 		TableWrapLayout layout = new TableWrapLayout();
 		layout.numColumns = 2;
 		form.getBody().setLayout(layout);
-		this.init("NewEcSpec", new ECSpec());
+
+		// static for now:
+		Define def = new Define();
+		def.setSpec(new ECSpec());
+		def.setSpecName("NewEcSpec");
+		this.init(def);
 
 		createReportCtab();
 		createSubscriberCtab();
@@ -135,9 +157,10 @@ public class AleEditorView extends ViewPart {
 		super.dispose();
 	}
 
-	public void init(String name, ECSpec ecSpec) {
-		this.ecSpec = ecSpec;
-		this.name = name;
+	public void init(Define define) {
+		this.define = define;
+		this.ecSpec = define.getSpec();
+		this.name = define.getSpecName();
 		setPartName(this.name);
 
 		createHeader();
@@ -164,7 +187,28 @@ public class AleEditorView extends ViewPart {
 		toolkit.createSeparator(form.getBody(), Separator.HORIZONTAL);
 		btnSave.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
-				// TODO: assemble spec and save/define
+				// TODO:
+				// Always save back info to model
+				// save just submits/saves.
+				ReportSpecs rs = new ReportSpecs();
+				for (int i = 0; i < repSpecs.size(); i++) {
+					rs.getReportSpec().set(i, repSpecs.get(i));
+				}
+				try {
+					conSvc.getAleServicePortType().define(define);
+				} catch (org.rifidi.edge.client.ale.api.wsdl.ale.epcglobal.ImplementationExceptionResponse e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (org.rifidi.edge.client.ale.api.wsdl.ale.epcglobal.SecurityExceptionResponse e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (ECSpecValidationExceptionResponse e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (DuplicateNameExceptionResponse e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 				System.out.println("SAVE");
 			}
 
@@ -175,8 +219,9 @@ public class AleEditorView extends ViewPart {
 
 			@Override
 			public void focusLost(FocusEvent e) {
-				// form.setText(((Text)e.widget).getText());
+				// 
 				setPartName(((Text) e.widget).getText());
+				define.setSpecName(((Text) e.widget).getText());
 
 			}
 
@@ -190,17 +235,19 @@ public class AleEditorView extends ViewPart {
 
 		txtSpecName.setLayoutData(new TableWrapData(TableWrapData.FILL));
 
-		Label lblInclSpecInRep = toolkit.createLabel(form.getBody(),
-				"Include Spec in Reports?");
-		TableWrapData td = new TableWrapData();
-		td.colspan = 2;
-		lblInclSpecInRep.setLayoutData(td);
-		Button btnInclSpecInRepYes = toolkit.createButton(form.getBody(),
-				"Yes", SWT.RADIO);
-		Button btnInclSpecInRepNo = toolkit.createButton(form.getBody(), "No",
-				SWT.RADIO);
+		// Label lblInclSpecInRep = toolkit.createLabel(form.getBody(),
+		// "Include Spec in Reports?");
+		// TableWrapData td = new TableWrapData();
+		// td.colspan = 2;
+		// lblInclSpecInRep.setLayoutData(td);
+		// Button btnInclSpecInRepYes = toolkit.createButton(form.getBody(),
+		// "Yes", SWT.RADIO);
+		// Button btnInclSpecInRepNo = toolkit.createButton(form.getBody(),
+		// "No",
+		// SWT.RADIO);
 		// TODO:read from ecspec
-		btnInclSpecInRepNo.setSelection(true);
+
+		// btnInclSpecInRepNo.setSelection(true);
 
 	}
 
@@ -224,6 +271,29 @@ public class AleEditorView extends ViewPart {
 
 		lrList = new List(lrSectionClient, SWT.BORDER | SWT.MULTI
 				| SWT.V_SCROLL | SWT.FILL);
+		lrList.addFocusListener(new FocusListener() {
+
+			@Override
+			public void focusGained(FocusEvent e) {
+				// nothing to do here
+
+			}
+
+			@Override
+			public void focusLost(FocusEvent e) {
+				List list = ((List) e.widget);
+
+				int[] selection = list.getSelectionIndices();
+				for (int i = 0; i < selection.length; i++) {
+					LogicalReaders lr = new LogicalReaders();
+					lr.getLogicalReader().add(i, list.getItem(i));
+					ecSpec.setLogicalReaders(lr);
+				}
+
+			}
+
+		});
+
 		GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
 		data.verticalSpan = 2;
 		data.heightHint = 50;
@@ -275,34 +345,92 @@ public class AleEditorView extends ViewPart {
 		grid.numColumns = 2;
 		boundarySectionClient.setLayout(grid);
 		// TODO: get live data from spec
-		toolkit.createLabel(boundarySectionClient, "Stable Set (ms):");
-		txtStableSet = toolkit.createText(boundarySectionClient, "0",
-				SWT.BORDER);
-		txtStableSet.setLayoutData(new GridData(SWT.FILL, SWT.RIGHT, true,
-				false));
-
-		toolkit.createLabel(boundarySectionClient, "Repeat After (ms):");
-		txtRepeatAfter = toolkit.createText(boundarySectionClient, "0",
-				SWT.BORDER);
-		txtRepeatAfter.setLayoutData(new GridData(SWT.FILL, SWT.LEFT, true,
-				false));
-
-		toolkit.createLabel(boundarySectionClient, "Duration (ms):");
-		txtDuration = toolkit
-				.createText(boundarySectionClient, "0", SWT.BORDER);
-		txtDuration
-				.setLayoutData(new GridData(SWT.FILL, SWT.LEFT, true, false));
-		ECBoundarySpec bspec = null;
 
 		if (this.ecSpec.getBoundarySpec() != null) {
 			bspec = this.ecSpec.getBoundarySpec();
-			txtDuration.setText(Long.toString(bspec.getDuration().getValue()));
-			txtRepeatAfter.setText(Long.toString(bspec.getRepeatPeriod()
-					.getValue()));
-			txtStableSet.setText(Long.toString(bspec.getStableSetInterval()
-					.getValue()));
+		} else {
+			bspec = new ECBoundarySpec();
+			ECTime ectDuration = new ECTime();
+			ectDuration.setUnit("MS");
+			ectDuration.setValue(0);
+			bspec.setDuration(ectDuration);
+			ECTime ectRepeat = new ECTime();
+			ectRepeat.setUnit("MS");
+			ectRepeat.setValue(0);
+			bspec.setRepeatPeriod(ectRepeat);
+			ECTime ectStable = new ECTime();
+			ectStable.setUnit("MS");
+			ectStable.setValue(0);
+			bspec.setStableSetInterval(ectStable);
 		}
+		toolkit.createLabel(boundarySectionClient, "Stable Set (ms):");
+		txtStableSet = toolkit.createText(boundarySectionClient, Long
+				.toString(bspec.getStableSetInterval().getValue()), SWT.BORDER);
+		txtStableSet.setLayoutData(new GridData(SWT.FILL, SWT.RIGHT, true,
+				false));
+		txtStableSet.addFocusListener(new FocusListener() {
 
+			@Override
+			public void focusGained(FocusEvent e) {
+				// nothing to do here
+
+			}
+
+			@Override
+			public void focusLost(FocusEvent e) {
+				ECTime ectStable = new ECTime();
+				ectStable.setUnit("MS");
+				ectStable.setValue(Long.parseLong(txtStableSet.getText()));
+				bspec.setStableSetInterval(ectStable);
+			}
+
+		});
+
+		toolkit.createLabel(boundarySectionClient, "Repeat After (ms):");
+		txtRepeatAfter = toolkit.createText(boundarySectionClient, Long
+				.toString(bspec.getRepeatPeriod().getValue()), SWT.BORDER);
+		txtRepeatAfter.setLayoutData(new GridData(SWT.FILL, SWT.LEFT, true,
+				false));
+		txtRepeatAfter.addFocusListener(new FocusListener() {
+
+			@Override
+			public void focusGained(FocusEvent e) {
+				// nothing to do here
+
+			}
+
+			@Override
+			public void focusLost(FocusEvent e) {
+				ECTime ectRepeat = new ECTime();
+				ectRepeat.setUnit("MS");
+				ectRepeat.setValue(Long.parseLong(txtRepeatAfter.getText()));
+				bspec.setRepeatPeriod(ectRepeat);
+			}
+
+		});
+
+		toolkit.createLabel(boundarySectionClient, "Duration (ms):");
+		txtDuration = toolkit.createText(boundarySectionClient, Long
+				.toString(bspec.getDuration().getValue()), SWT.BORDER);
+		txtDuration
+				.setLayoutData(new GridData(SWT.FILL, SWT.LEFT, true, false));
+		txtDuration.addFocusListener(new FocusListener() {
+
+			@Override
+			public void focusGained(FocusEvent e) {
+				// nothing to do here
+
+			}
+
+			@Override
+			public void focusLost(FocusEvent e) {
+				ECTime ectDuration = new ECTime();
+				ectDuration.setUnit("MS");
+				ectDuration.setValue(Long.parseLong(txtDuration.getText()));
+				bspec.setDuration(ectDuration);
+			}
+
+		});
 		boundarySection.setClient(boundarySectionClient);
 
 	}
@@ -333,7 +461,19 @@ public class AleEditorView extends ViewPart {
 	}
 
 	private void addReportSpecSection(ECReportSpec spec) {
-		// spec. FIXME
+		repSpecs = new ArrayList<ECReportSpec>();
+		this.ecrSpec = spec;
+
+		if (ecrSpec.getOutput() != null)
+			this.ros = ecrSpec.getOutput();
+		else
+			this.ros = new ECReportOutputSpec();
+		if (ecrSpec.getFilterSpec() != null)
+			this.fisp = ecrSpec.getFilterSpec();
+		else
+			this.fisp = createEmptyFilterSpec();
+
+		repSpecs.add(ecrSpec);
 		ArrayList<Section> sections = new ArrayList<Section>();
 
 		// REPORT
@@ -351,15 +491,49 @@ public class AleEditorView extends ViewPart {
 				.getReportName(), SWT.BORDER);
 		txtRepSpecName.setLayoutData(new GridData(SWT.FILL, SWT.RIGHT, true,
 				false));
+		txtRepSpecName.addFocusListener(new FocusListener() {
+
+			@Override
+			public void focusGained(FocusEvent e) {
+				// nothing to do here
+
+			}
+
+			@Override
+			public void focusLost(FocusEvent e) {
+				Text text = (Text) e.widget;
+				ecrSpec.setReportName(text.getText());
+
+			}
+
+		});
 
 		toolkit.createLabel(reportSectionClient, "Report Set:");
 		Combo cboRepSet = new Combo(reportSectionClient, SWT.READ_ONLY);
 		String[] arRepSetData = new String[3];
 		arRepSetData[0] = "CURRENT";
 		arRepSetData[1] = "ADDITIONS";
-		arRepSetData[2] = "ADDITIONS";
+		arRepSetData[2] = "DELETIONS";
 
 		cboRepSet.setItems(arRepSetData);
+		cboRepSet.addSelectionListener(new SelectionListener() {
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				// nothing to do here
+
+			}
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				ECReportSetSpec rss = new ECReportSetSpec();
+				Combo combo = (Combo) e.widget;
+				rss.setSet(combo.getText());
+				ecrSpec.setReportSet(rss);
+
+			}
+
+		});
 
 		for (int i = 0; i < cboRepSet.getItemCount(); i++) {
 			if (spec.getReportSet().getSet().equalsIgnoreCase(
@@ -368,7 +542,6 @@ public class AleEditorView extends ViewPart {
 			}
 		}
 
-		// TODO:getlivedata
 		Label lblRiE = toolkit.createLabel(reportSectionClient,
 				"Report if Empty:");
 
@@ -376,16 +549,81 @@ public class AleEditorView extends ViewPart {
 
 		Button btnRepIfEmptyYes = toolkit.createButton(reportSectionClient,
 				"Yes", SWT.RADIO);
+		btnRepIfEmptyYes.setSelection(spec.isReportIfEmpty());
+		btnRepIfEmptyYes.addSelectionListener(new SelectionListener() {
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				// nothing to do here
+
+			}
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				ecrSpec.setReportIfEmpty(true);
+
+			}
+
+		});
 		Button btnRepIfEmptyNo = toolkit.createButton(reportSectionClient,
 				"No", SWT.RADIO);
+		btnRepIfEmptyNo.setSelection(!spec.isReportIfEmpty());
+		btnRepIfEmptyNo.addSelectionListener(new SelectionListener() {
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				// nothing to do here
+
+			}
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				ecrSpec.setReportIfEmpty(false);
+
+			}
+
+		});
 
 		Label lblRooC = toolkit.createLabel(reportSectionClient,
 				"Report only on Change:");
 		lblRooC.setLayoutData(createStandardGridData());
 		Button btnRepOnChangeYes = toolkit.createButton(reportSectionClient,
 				"Yes", SWT.RADIO);
+		btnRepOnChangeYes.setSelection(spec.isReportOnlyOnChange());
+		btnRepOnChangeYes.addSelectionListener(new SelectionListener() {
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				// nothing to do here
+
+			}
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				ecrSpec.setReportOnlyOnChange(true);
+
+			}
+
+		});
+
 		Button btnRepOnChangeNo = toolkit.createButton(reportSectionClient,
 				"No", SWT.RADIO);
+		btnRepOnChangeNo.setSelection(!spec.isReportOnlyOnChange());
+		btnRepOnChangeNo.addSelectionListener(new SelectionListener() {
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				// nothing to do here
+
+			}
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				ecrSpec.setReportOnlyOnChange(false);
+
+			}
+
+		});
 
 		reportSection.setClient(reportSectionClient);
 		form.reflow(true);
@@ -406,37 +644,199 @@ public class AleEditorView extends ViewPart {
 		lblInclTags.setData(createStandardGridData());
 		Button btnInclTagsYes = toolkit.createButton(outputSectionClient,
 				"Yes", SWT.RADIO);
+		btnInclTagsYes.setSelection(ros.isIncludeTag());
+		btnInclTagsYes.addSelectionListener(new SelectionListener() {
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				// nothing to do here
+
+			}
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				ros.setIncludeTag(true);
+
+			}
+
+		});
 		Button btnInclTagsNo = toolkit.createButton(outputSectionClient, "No",
 				SWT.RADIO);
-		// TODO: getlivedata
+		btnInclTagsNo.setSelection(!ros.isIncludeTag());
+		btnInclTagsNo.addSelectionListener(new SelectionListener() {
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				// nothing to do here
+
+			}
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				ros.setIncludeTag(false);
+
+			}
+
+		});
+
 		Label lblInclEpc = toolkit.createLabel(outputSectionClient,
 				"Include EPC:");
 		lblInclEpc.setData(createStandardGridData());
 		Button btnInclEpcYes = toolkit.createButton(outputSectionClient, "Yes",
 				SWT.RADIO);
+		btnInclEpcYes.setSelection(ros.isIncludeEPC());
+		btnInclEpcYes.addSelectionListener(new SelectionListener() {
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				// nothing to do here
+
+			}
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				ros.setIncludeEPC(true);
+
+			}
+
+		});
 		Button btnInclEpcNo = toolkit.createButton(outputSectionClient, "No",
 				SWT.RADIO);
+		btnInclEpcNo.setSelection(!ros.isIncludeEPC());
+		btnInclEpcNo.addSelectionListener(new SelectionListener() {
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				// nothing to do here
+
+			}
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				ros.setIncludeEPC(false);
+
+			}
+
+		});
 		Label lblInclHex = toolkit.createLabel(outputSectionClient,
 				"Include Raw Hex:");
 		lblInclHex.setData(createStandardGridData());
 		Button btnInclHexYes = toolkit.createButton(outputSectionClient, "Yes",
 				SWT.RADIO);
+		btnInclHexYes.setSelection(ros.isIncludeRawHex());
+		btnInclHexYes.addSelectionListener(new SelectionListener() {
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				// nothing to do here
+
+			}
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				ros.setIncludeRawHex(true);
+
+			}
+
+		});
 		Button btnInclHexNo = toolkit.createButton(outputSectionClient, "No",
 				SWT.RADIO);
+		btnInclHexNo.setSelection(!ros.isIncludeRawHex());
+		btnInclHexNo.addSelectionListener(new SelectionListener() {
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				// nothing to do here
+
+			}
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				ros.setIncludeRawHex(false);
+
+			}
+
+		});
+
 		Label lblInclDec = toolkit.createLabel(outputSectionClient,
 				"Include Raw Decimal (deprecated):");
 		lblInclDec.setData(createStandardGridData());
 		Button btnInclDecYes = toolkit.createButton(outputSectionClient, "Yes",
 				SWT.RADIO);
+		btnInclDecYes.setSelection(ros.isIncludeRawDecimal());
+		btnInclDecYes.addSelectionListener(new SelectionListener() {
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				// nothing to do here
+
+			}
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				ros.setIncludeRawDecimal(true);
+
+			}
+
+		});
+
 		Button btnInclDecNo = toolkit.createButton(outputSectionClient, "No",
 				SWT.RADIO);
+		btnInclDecNo.setSelection(!ros.isIncludeRawDecimal());
+		btnInclDecNo.addSelectionListener(new SelectionListener() {
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				// nothing to do here
+
+			}
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				ros.setIncludeRawDecimal(false);
+
+			}
+
+		});
 		Label lblInclCount = toolkit.createLabel(outputSectionClient,
 				"Include Tag Count:");
 		lblInclCount.setData(createStandardGridData());
 		Button btnInclCountYes = toolkit.createButton(outputSectionClient,
 				"Yes", SWT.RADIO);
+		btnInclCountYes.setSelection(ros.isIncludeCount());
+		btnInclCountYes.addSelectionListener(new SelectionListener() {
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				// nothing to do here
+
+			}
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				ros.setIncludeCount(true);
+
+			}
+
+		});
 		Button btnInclCountNo = toolkit.createButton(outputSectionClient, "No",
 				SWT.RADIO);
+		btnInclCountNo.setSelection(!ros.isIncludeCount());
+		btnInclCountNo.addSelectionListener(new SelectionListener() {
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				// nothing to do here
+
+			}
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				ros.setIncludeCount(false);
+
+			}
+
+		});
 
 		outputSection.setClient(outputSectionClient);
 		form.reflow(true);
@@ -453,12 +853,38 @@ public class AleEditorView extends ViewPart {
 		filterSectionClient.setLayout(glFilter);
 
 		toolkit.createLabel(filterSectionClient, "Exclude Patterns:");
-		// TODO: minsize=...
+
 		Text txtExclPatterns = toolkit.createText(filterSectionClient, "",
 				SWT.MULTI | SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
 		GridData txtExclPatData = new GridData(SWT.FILL, SWT.LEFT, true, false);
 		txtExclPatData.heightHint = 100;
 		txtExclPatterns.setLayoutData(txtExclPatData);
+		ArrayList<String> alExclPatterns = (ArrayList<String>) fisp
+				.getExcludePatterns().getExcludePattern();
+		for (String string : alExclPatterns) {
+			txtExclPatterns.setText(txtExclPatterns.getText() + "\n" + string);
+		}
+		txtExclPatterns.addFocusListener(new FocusListener() {
+
+			@Override
+			public void focusGained(FocusEvent e) {
+				// nothing to do here
+
+			}
+
+			@Override
+			public void focusLost(FocusEvent e) {
+				ExcludePatterns ep = new ExcludePatterns();
+				Text text = (Text) e.widget;
+				String[] alPatterns = text.getText().split("\n");
+				ep.getExcludePattern().clear();
+				for (int i = 0; i < alPatterns.length; i++) {
+					ep.getExcludePattern().set(i, alPatterns[i]);
+				}
+
+			}
+
+		});
 
 		toolkit.createLabel(filterSectionClient, "Include Patterns:");
 
@@ -467,25 +893,32 @@ public class AleEditorView extends ViewPart {
 		GridData txtInclPatData = new GridData(SWT.FILL, SWT.LEFT, true, false);
 		txtInclPatData.heightHint = 100;
 		txtInclPatterns.setLayoutData(txtInclPatData);
-
-		if (spec.getFilterSpec() != null) {
-			if (spec.getFilterSpec().getExcludePatterns() != null) {
-
-				for (String string : spec.getFilterSpec().getExcludePatterns()
-						.getExcludePattern()) {
-					txtExclPatterns.setText(txtExclPatterns.getText() + "\n"
-							+ string);
-				}
-			}
-			if (spec.getFilterSpec().getIncludePatterns() != null) {
-				for (String string : spec.getFilterSpec().getIncludePatterns()
-						.getIncludePattern()) {
-					txtInclPatterns.setText(txtInclPatterns.getText() + "\n"
-							+ string);
-				}
-			}
-
+		ArrayList<String> alInclPatterns = (ArrayList<String>) fisp
+				.getIncludePatterns().getIncludePattern();
+		for (String string : alInclPatterns) {
+			txtInclPatterns.setText(txtInclPatterns.getText() + "\n" + string);
 		}
+		txtInclPatterns.addFocusListener(new FocusListener(){
+
+			@Override
+			public void focusGained(FocusEvent e) {
+				// nothing to do here
+				
+			}
+
+			@Override
+			public void focusLost(FocusEvent e) {
+				IncludePatterns ep = new IncludePatterns();
+				Text text = (Text) e.widget;
+				String[] alPatterns = text.getText().split("\n");
+				ep.getIncludePattern().clear();
+				for (int i = 0; i < alPatterns.length; i++) {
+					ep.getIncludePattern().set(i, alPatterns[i]);
+				}
+				
+			}
+			
+		});
 
 		filterSection.setClient(filterSectionClient);
 
@@ -496,7 +929,7 @@ public class AleEditorView extends ViewPart {
 				"Remove this Report Spec", SWT.PUSH);
 
 		btnRemoveThisSection.addListener(SWT.Selection,
-				new AleEditorSelectionListener(form, sections));
+				new AleEditorSelectionListener(form, sections, spec, repSpecs));
 
 		form.reflow(true);
 
@@ -529,7 +962,17 @@ public class AleEditorView extends ViewPart {
 		spec.setOutput(ecros);
 		return spec;
 	}
-
+	
+	private ECFilterSpec createEmptyFilterSpec(){
+	ECFilterSpec spec =new ECFilterSpec();
+	ExcludePatterns ePatterns = new ExcludePatterns();
+	ePatterns.getExcludePattern().clear();
+	spec.setExcludePatterns(ePatterns);
+	IncludePatterns iPatterns = new IncludePatterns();
+	spec.setIncludePatterns(iPatterns);
+	return spec;
+	}
+	
 	private Section createStandardSection() {
 		Section section = toolkit.createSection(form.getBody(),
 				Section.DESCRIPTION | Section.TITLE_BAR | Section.TWISTIE
