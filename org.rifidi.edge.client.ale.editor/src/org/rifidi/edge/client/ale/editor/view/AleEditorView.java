@@ -235,19 +235,50 @@ public class AleEditorView extends ViewPart {
 
 		txtSpecName.setLayoutData(new TableWrapData(TableWrapData.FILL));
 
-		// Label lblInclSpecInRep = toolkit.createLabel(form.getBody(),
-		// "Include Spec in Reports?");
-		// TableWrapData td = new TableWrapData();
-		// td.colspan = 2;
-		// lblInclSpecInRep.setLayoutData(td);
-		// Button btnInclSpecInRepYes = toolkit.createButton(form.getBody(),
-		// "Yes", SWT.RADIO);
-		// Button btnInclSpecInRepNo = toolkit.createButton(form.getBody(),
-		// "No",
-		// SWT.RADIO);
-		// TODO:read from ecspec
+		 Label lblInclSpecInRep = toolkit.createLabel(form.getBody(),
+		 "Include Spec in Reports?");
+		 TableWrapData td = new TableWrapData();
+		 td.colspan = 2;
+		 lblInclSpecInRep.setLayoutData(td);
+		 Button btnInclSpecInRepYes = toolkit.createButton(form.getBody(),
+		 "Yes", SWT.RADIO);
+		 btnInclSpecInRepYes.setSelection(this.ecSpec.isIncludeSpecInReports());
+		 btnInclSpecInRepYes.addSelectionListener(new SelectionListener(){
 
-		// btnInclSpecInRepNo.setSelection(true);
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				// nothing to do
+				
+			}
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				ecSpec.setIncludeSpecInReports(true);
+				
+			}
+			 
+		 });
+		 Button btnInclSpecInRepNo = toolkit.createButton(form.getBody(),
+		 "No",
+		 SWT.RADIO);
+		 btnInclSpecInRepNo.setSelection(!this.ecSpec.isIncludeSpecInReports());
+		 btnInclSpecInRepNo.addSelectionListener(new SelectionListener(){
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				// nothing to do 
+				
+			}
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				ecSpec.setIncludeSpecInReports(false);
+				
+			}
+			 
+		 });
+
+		 btnInclSpecInRepNo.setSelection(true);
 
 	}
 
