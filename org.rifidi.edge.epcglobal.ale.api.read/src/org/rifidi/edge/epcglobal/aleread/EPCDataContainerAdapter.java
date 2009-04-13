@@ -16,6 +16,7 @@ import org.fosstrak.tdt.TDTEngine;
 import org.rifidi.edge.core.messages.DatacontainerEvent;
 import org.rifidi.edge.core.messages.EPCGeneration1Event;
 import org.rifidi.edge.core.messages.EPCGeneration2Event;
+import org.rifidi.edge.epcglobal.aleread.filters.ALEField;
 
 /**
  * @author Jochen Mader - jochen@pramari.com
@@ -37,7 +38,6 @@ public class EPCDataContainerAdapter {
 	 * Constructor.
 	 */
 	public EPCDataContainerAdapter() {
-
 		try {
 			engine = new TDTEngine();
 		} catch (IOException e) {
@@ -47,6 +47,13 @@ public class EPCDataContainerAdapter {
 		}
 	}
 
+	/**
+	 * Helper method for creating a string that can be consumed by tdt.
+	 * 
+	 * @param mem
+	 * @param length
+	 * @return
+	 */
 	private String createStringFromMem(BigInteger mem, int length) {
 		String memString = mem.toString(2);
 		int fill = length - memString.length();
@@ -58,37 +65,154 @@ public class EPCDataContainerAdapter {
 		}
 		return buildy.toString();
 	}
-
-	public String getEpc(DatacontainerEvent event) {
-		return getEpc(event, ALEDataTypes.EPC, ALEDataFormats.EPC_TAG);
+	/**
+	 * Get a field by it's field spec.
+	 * @param field
+	 * @param event
+	 * @return
+	 */
+	public String getField(ALEField field, DatacontainerEvent event){
+		if(ALEFields.EPC.equals(field.getName())){
+			ALEDataFormats format=field.getFormat();
+			ALEDataTypes type=field.getType();
+			if(ALEDataFormats.DEFAULT.equals(format)){
+				format=ALEDataFormats.EPC_TAG;
+			}
+			if(ALEDataTypes.DEFAULT.equals(type)){
+				type=ALEDataTypes.EPC;
+			}
+			return getEpc(event, type, format);
+		}
+		if(ALEFields.KILLPWD.equals(field.getName())){
+			ALEDataFormats format=field.getFormat();
+			ALEDataTypes type=field.getType();
+			if(ALEDataFormats.DEFAULT.equals(format)){
+				format=ALEDataFormats.HEX;
+			}
+			if(ALEDataTypes.DEFAULT.equals(type)){
+				type=ALEDataTypes.UINT;
+			}
+			return getKillPwd(event, type, format);
+		}
+		if(ALEFields.ACCESSPWD.equals(field.getName())){
+			ALEDataFormats format=field.getFormat();
+			ALEDataTypes type=field.getType();
+			if(ALEDataFormats.DEFAULT.equals(format)){
+				format=ALEDataFormats.HEX;
+			}
+			if(ALEDataTypes.DEFAULT.equals(type)){
+				type=ALEDataTypes.UINT;
+			}
+			return getAccessPwd(event, type, format);
+		}
+		if(ALEFields.EPCBANK.equals(field.getName())){
+			ALEDataFormats format=field.getFormat();
+			ALEDataTypes type=field.getType();
+			if(ALEDataFormats.DEFAULT.equals(format)){
+				format=ALEDataFormats.HEX;
+			}
+			if(ALEDataTypes.DEFAULT.equals(type)){
+				type=ALEDataTypes.BITS;
+			}
+			return getEpcBank(event, type, format);
+		}
+		if(ALEFields.TIDBANK.equals(field.getName())){
+			ALEDataFormats format=field.getFormat();
+			ALEDataTypes type=field.getType();
+			if(ALEDataFormats.DEFAULT.equals(format)){
+				format=ALEDataFormats.HEX;
+			}
+			if(ALEDataTypes.DEFAULT.equals(type)){
+				type=ALEDataTypes.BITS;
+			}
+			return getTidBank(event, type, format);
+		}
+		if(ALEFields.USERBANK.equals(field.getName())){
+			ALEDataFormats format=field.getFormat();
+			ALEDataTypes type=field.getType();
+			if(ALEDataFormats.DEFAULT.equals(format)){
+				format=ALEDataFormats.HEX;
+			}
+			if(ALEDataTypes.DEFAULT.equals(type)){
+				type=ALEDataTypes.BITS;
+			}
+			return getUserBank(event, type, format);
+		}
+		if(ALEFields.AFI.equals(field.getName())){
+			ALEDataFormats format=field.getFormat();
+			ALEDataTypes type=field.getType();
+			if(ALEDataFormats.DEFAULT.equals(format)){
+				format=ALEDataFormats.HEX;
+			}
+			if(ALEDataTypes.DEFAULT.equals(type)){
+				type=ALEDataTypes.UINT;
+			}
+			return getAfi(event, type, format);
+		}
+		if(ALEFields.NSI.equals(field.getName())){
+			ALEDataFormats format=field.getFormat();
+			ALEDataTypes type=field.getType();
+			if(ALEDataFormats.DEFAULT.equals(format)){
+				format=ALEDataFormats.HEX;
+			}
+			if(ALEDataTypes.DEFAULT.equals(type)){
+				type=ALEDataTypes.UINT;
+			}
+			return getNsi(event, type, format);
+		}		
+		if(ALEFields.ABSOLUTEADDRESS.equals(field.getName())){
+			ALEDataFormats format=field.getFormat();
+			ALEDataTypes type=field.getType();
+			if(ALEDataFormats.DEFAULT.equals(format)){
+				format=ALEDataFormats.HEX;
+			}
+			if(ALEDataTypes.DEFAULT.equals(type)){
+				type=ALEDataTypes.UINT;
+			}
+			return getAbsoluteAddressField(event, field.getBankId(), field.getLength(), field.getOffset(), type, format);
+		}
+		return null;
 	}
 
+	/**
+	 * Get the epc field.
+	 * @param event
+	 * @param type
+	 * @param format
+	 * @return
+	 */
 	public String getEpc(DatacontainerEvent event, ALEDataTypes type,
 			ALEDataFormats format) {
 		if (event instanceof EPCGeneration1Event) {
 			if (ALEDataTypes.EPC.equals(type)) {
 				if (ALEDataFormats.EPC_TAG.equals(format)) {
-					return engine.convert(createStringFromMem(
-							((EPCGeneration1Event) event).getEPCMemory(),
-							((EPCGeneration1Event) event).getEPCMemoryLength()),
+					return engine.convert(
+							createStringFromMem(((EPCGeneration1Event) event)
+									.getEPCMemory(),
+									((EPCGeneration1Event) event)
+											.getEPCMemoryLength()),
 							extraparams, LevelTypeList.TAG_ENCODING);
 				}
 				if (ALEDataFormats.EPC_PURE.equals(format)) {
-					return engine.convert(createStringFromMem(
-							((EPCGeneration1Event) event).getEPCMemory(),
-							((EPCGeneration1Event) event).getEPCMemoryLength()),
+					return engine.convert(
+							createStringFromMem(((EPCGeneration1Event) event)
+									.getEPCMemory(),
+									((EPCGeneration1Event) event)
+											.getEPCMemoryLength()),
 							extraparams, LevelTypeList.PURE_IDENTITY);
 				}
 				if (ALEDataFormats.EPC_HEX.equals(format)) {
 					return "urn:epc:raw:"
-							+ ((EPCGeneration1Event) event).getEPCMemoryLength()
+							+ ((EPCGeneration1Event) event)
+									.getEPCMemoryLength()
 							+ ".x"
 							+ ((EPCGeneration1Event) event).getEPCMemory()
 									.toString(16);
 				}
 				if (ALEDataFormats.EPC_DECIMAL.equals(format)) {
 					return "urn:epc:raw:"
-							+ ((EPCGeneration1Event) event).getEPCMemoryLength()
+							+ ((EPCGeneration1Event) event)
+									.getEPCMemoryLength()
 							+ "."
 							+ ((EPCGeneration1Event) event).getEPCMemory()
 									.toString(10);
@@ -97,10 +221,6 @@ public class EPCDataContainerAdapter {
 		}
 		// TODO: invalid request, handle it better
 		return null;
-	}
-
-	public String getKillPwd(DatacontainerEvent event) {
-		return getKillPwd(event, ALEDataTypes.UINT, ALEDataFormats.HEX);
 	}
 
 	public String getKillPwd(DatacontainerEvent event, ALEDataTypes type,
@@ -116,10 +236,6 @@ public class EPCDataContainerAdapter {
 			}
 		}
 		return null;
-	}
-
-	public String getAccessPwd(DatacontainerEvent event) {
-		return getAccessPwd(event, ALEDataTypes.UINT, ALEDataFormats.HEX);
 	}
 
 	public String getAccessPwd(DatacontainerEvent event, ALEDataTypes type,
@@ -138,10 +254,6 @@ public class EPCDataContainerAdapter {
 		return null;
 	}
 
-	public String getEpcBank(DatacontainerEvent event) {
-		return getEpcBank(event, ALEDataTypes.BITS, ALEDataFormats.HEX);
-	}
-
 	public String getEpcBank(DatacontainerEvent event, ALEDataTypes type,
 			ALEDataFormats format) {
 		// only epc tags have the bank
@@ -156,10 +268,6 @@ public class EPCDataContainerAdapter {
 			}
 		}
 		return null;
-	}
-
-	public String getTidBank(DatacontainerEvent event) {
-		return getTidBank(event, ALEDataTypes.BITS, ALEDataFormats.HEX);
 	}
 
 	public String getTidBank(DatacontainerEvent event, ALEDataTypes type,
@@ -178,10 +286,6 @@ public class EPCDataContainerAdapter {
 		return null;
 	}
 
-	public String getUserBank(DatacontainerEvent event) {
-		return getUserBank(event, ALEDataTypes.BITS, ALEDataFormats.HEX);
-	}
-
 	public String getUserBank(DatacontainerEvent event, ALEDataTypes type,
 			ALEDataFormats format) {
 		// only epc gen 2tags have the bank
@@ -196,10 +300,6 @@ public class EPCDataContainerAdapter {
 			}
 		}
 		return null;
-	}
-
-	public String getAfi(DatacontainerEvent event) {
-		return getEpc(event, ALEDataTypes.UINT, ALEDataFormats.HEX);
 	}
 
 	public String getAfi(DatacontainerEvent event, ALEDataTypes type,
@@ -218,10 +318,6 @@ public class EPCDataContainerAdapter {
 		return null;
 	}
 
-	public String getNsi(DatacontainerEvent event) {
-		return getNsi(event, ALEDataTypes.UINT, ALEDataFormats.HEX);
-	}
-
 	public String getNsi(DatacontainerEvent event, ALEDataTypes type,
 			ALEDataFormats format) {
 		// only epc gen 2 tags have an AFI
@@ -236,12 +332,6 @@ public class EPCDataContainerAdapter {
 			}
 		}
 		return null;
-	}
-
-	public String getAbsoluteAddressField(DatacontainerEvent event,
-			Integer bank, Integer length, Integer offset) {
-		return getAbsoluteAddressField(event, bank, length, offset,
-				ALEDataTypes.UINT, ALEDataFormats.HEX);
 	}
 
 	public String getAbsoluteAddressField(DatacontainerEvent event,

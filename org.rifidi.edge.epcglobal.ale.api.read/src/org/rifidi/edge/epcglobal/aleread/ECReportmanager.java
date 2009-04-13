@@ -4,8 +4,11 @@
 package org.rifidi.edge.epcglobal.aleread;
 
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -15,6 +18,11 @@ import org.rifidi.edge.core.messages.EPCGeneration1Event;
 import org.rifidi.edge.core.messages.TagReadEvent;
 import org.rifidi.edge.epcglobal.ale.api.read.data.ECFilterListMember;
 import org.rifidi.edge.epcglobal.ale.api.read.data.ECReportSpec;
+import org.rifidi.edge.epcglobal.aleread.filters.ALEField;
+import org.rifidi.edge.epcglobal.aleread.filters.FilterFactory;
+import org.rifidi.edge.epcglobal.aleread.filters.PatternMatcher;
+import org.rifidi.edge.epcglobal.aleread.groups.GroupFactory;
+import org.rifidi.edge.epcglobal.aleread.groups.GroupMatcher;
 
 import com.espertech.esper.client.EPServiceProvider;
 import com.espertech.esper.client.EPStatement;
@@ -52,6 +60,10 @@ public class ECReportmanager implements Runnable, StatementAwareUpdateListener {
 	private ConcurrentSkipListSet<URI> uris;
 	/** Esper instance used by this instance. */
 	private EPServiceProvider esper;
+	/** Factory for creating filter instances. */
+	private FilterFactory filterFactory;
+	/** Factory for creating grouping rules */
+	private GroupFactory groupFactory;
 
 	/**
 	 * Constructor.
@@ -60,6 +72,8 @@ public class ECReportmanager implements Runnable, StatementAwareUpdateListener {
 		reports = new HashSet<Report>();
 		eventQueue = new LinkedBlockingQueue<EventBean[]>();
 		uris = new ConcurrentSkipListSet<URI>();
+		filterFactory = new FilterFactory();
+		groupFactory = new GroupFactory();
 		this.esper = esper;
 	}
 
@@ -207,19 +221,38 @@ public class ECReportmanager implements Runnable, StatementAwareUpdateListener {
 		} else if ("CURRENT".equals(reportSpec.getReportSet().getSet())) {
 			reportSet = ReportSet.CURRENT;
 		}
-//		for (ECFilterListMember filter : reportSpec.getFilterSpec()
-//				.getExtension().getFilterList().getFilter()) {
-//			filter.getFieldspec().getFieldname();
-//			filter.getFieldspec().getDatatype();
-//			filter.getFieldspec().getFormat();
-//		}
+
+		Map<ALEField, List<PatternMatcher>> includeFilters = new HashMap<ALEField, List<PatternMatcher>>();
+		Map<ALEField, List<PatternMatcher>> excludeFilters = new HashMap<ALEField, List<PatternMatcher>>();
+		if (reportSpec.getFilterSpec() != null) {
+			for (ECFilterListMember filter : reportSpec.getFilterSpec()
+					.getExtension().getFilterList().getFilter()) {
+
+				if ("INCLUDE".equals(filter.getIncludeExclude())) {
+					includeFilters.putAll(filterFactory.createMatcher(filter));
+				} else if ("EXCLUDE".equals(filter.getIncludeExclude())) {
+					excludeFilters.putAll(filterFactory.createMatcher(filter));
+				}
+				filter.getPatList().getPat();
+			}
+		}
+		List<GroupMatcher> groups = new ArrayList<GroupMatcher>();
+		ALEField groupfield = null;
+		if (reportSpec.getGroupSpec() != null) {
+
+			groupfield = new ALEField(reportSpec.getGroupSpec().getExtension()
+					.getFieldspec());
+			for (String pattern : reportSpec.getGroupSpec().getPattern()) {
+				groups.add(groupFactory.createMatcher(groupfield, pattern));
+			}
+		}
 		// reportSpec.getOutput();
 		// reportSpec.getGroupSpec();
 		// reportSpec.getExtension().getStatProfileNames();
-		reports
-				.add(new Report(reportSpec.getReportName(), reportSet,
-						reportSpec.isReportIfEmpty(), reportSpec
-								.isReportOnlyOnChange()));
+		reports.add(new Report(reportSpec.getReportName(), reportSet,
+				reportSpec.isReportIfEmpty(),
+				reportSpec.isReportOnlyOnChange(), includeFilters,
+				excludeFilters, groupfield, groups));
 	}
 
 	/**
@@ -238,6 +271,10 @@ public class ECReportmanager implements Runnable, StatementAwareUpdateListener {
 		private Set<DatacontainerEvent> tagreads;
 		private Set<DatacontainerEvent> tagreadsToSend;
 		private EPCDataContainerAdapter adapter;
+		private Map<ALEField, List<PatternMatcher>> includeFilters;
+		private Map<ALEField, List<PatternMatcher>> excludeFilter;
+		private ALEField groupField;
+		private List<GroupMatcher> groups;
 
 		/**
 		 * @param name
@@ -246,12 +283,19 @@ public class ECReportmanager implements Runnable, StatementAwareUpdateListener {
 		 * @param reportOnlyOnchange
 		 */
 		public Report(String name, ReportSet reportSet, Boolean reportIfEmpty,
-				Boolean reportOnlyOnchange) {
+				Boolean reportOnlyOnchange,
+				Map<ALEField, List<PatternMatcher>> include,
+				Map<ALEField, List<PatternMatcher>> exclude,
+				ALEField groupField, List<GroupMatcher> groups) {
 			super();
 			this.name = name;
 			this.reportSet = reportSet;
 			this.reportIfEmpty = reportIfEmpty;
 			this.reportOnlyOnchange = reportOnlyOnchange;
+			this.groupField = groupField;
+			this.groups = groups;
+			includeFilters = include;
+			excludeFilter = exclude;
 			tagreads = new HashSet<DatacontainerEvent>();
 			tagreadsToSend = new HashSet<DatacontainerEvent>();
 			adapter = new EPCDataContainerAdapter();
@@ -263,6 +307,59 @@ public class ECReportmanager implements Runnable, StatementAwareUpdateListener {
 		}
 
 		public void processEvents(Set<DatacontainerEvent> incoming) {
+			if(includeFilters.size()>0 || excludeFilter.size()>0){
+				Set<DatacontainerEvent> notincluded = new HashSet<DatacontainerEvent>();
+				boolean matched = false;
+				for (DatacontainerEvent event : incoming) {
+					matched = false;
+					for (ALEField field : includeFilters.keySet()) {
+						String fieldString = adapter.getField(field, event);
+						for (PatternMatcher matcher : includeFilters.get(field)) {
+							if (matcher.match(fieldString)) {
+								// remove the event from the list of events that will
+								// be dropped
+								notincluded.remove(event);
+								matched = true;
+								break;
+							}
+							if (matched) {
+								break;
+							}
+						}
+						if (matched) {
+							break;
+						}
+					}
+					if (!matched) {
+						notincluded.add(event);
+						// we are already removing it, no need to prcess the exclude
+						// filters
+						continue;
+					}
+					for (ALEField field : excludeFilter.keySet()) {
+						String fieldString = adapter.getField(field, event);
+						for (PatternMatcher matcher : excludeFilter.get(field)) {
+							if (matcher.match(fieldString)) {
+								// add event to the list of events that will be
+								// dropped
+								notincluded.add(event);
+								matched = true;
+								break;
+							}
+							if (matched) {
+								break;
+							}
+						}
+						if (matched) {
+							break;
+						}
+					}
+					matched = false;
+				}
+				// remove all events that were not mathched by an include filter
+				incoming.removeAll(notincluded);	
+			}
+			
 			if (ReportSet.ADDITION.equals(reportSet)) {
 				// keep the tags that appear in both sets
 				tagreads.retainAll(incoming);
@@ -328,11 +425,30 @@ public class ECReportmanager implements Runnable, StatementAwareUpdateListener {
 		public void send() {
 			if (((!reportOnlyOnchange) || (reportOnlyOnchange && changed))
 					&& (tagreadsToSend.size() > 0 || (tagreadsToSend.size() == 0 && reportIfEmpty == true))) {
+				List<DatacontainerEvent> tags=new ArrayList<DatacontainerEvent>();
+				if(groupField!=null){
+					Set<DatacontainerEvent> matchedEvents=new HashSet<DatacontainerEvent>();
+					for(DatacontainerEvent event:tagreadsToSend){
+						String field=adapter.getField(groupField, event);
+						for(GroupMatcher matcher:groups){
+							if(matcher.match(field, event)){
+								matchedEvents.add(event);
+								break;
+							}
+						}	
+					}
+					tagreadsToSend.remove(matchedEvents);
+					for(GroupMatcher matcher:groups){
+						tags.addAll(matcher.getGrouped());
+					}
+				}
+				tags.addAll(tagreadsToSend);
 				System.out.println("sending: ");
 				for (DatacontainerEvent tagread : tagreadsToSend) {
 					if (tagread instanceof EPCGeneration1Event) {
 					}
-					System.out.println(adapter.getEpc(tagread));
+					System.out.println(adapter.getEpc(tagread,
+							ALEDataTypes.EPC, ALEDataFormats.EPC_TAG));
 				}
 			}
 		}

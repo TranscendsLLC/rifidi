@@ -243,10 +243,6 @@ class RifidiECSpec {
 		for(ECReportSpec reportSpec:spec.getReportSpecs().getReportSpec()){
 			ecReportmanager.addECReport(reportSpec);
 		}
-		// TODO: finish the report spec.
-		// for(ECReportSpec repspec:spec.getReportSpecs().getReportSpec()){
-		// repspec.getExtension().
-		// }
 	}
 
 	/**

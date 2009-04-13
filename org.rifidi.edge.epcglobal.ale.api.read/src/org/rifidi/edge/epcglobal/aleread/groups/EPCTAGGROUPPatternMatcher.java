@@ -1,0 +1,100 @@
+/**
+ * 
+ */
+package org.rifidi.edge.epcglobal.aleread.groups;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.rifidi.edge.core.messages.DatacontainerEvent;
+import org.rifidi.edge.epcglobal.aleread.filters.FieldMatcher;
+import org.rifidi.edge.epcglobal.aleread.filters.RangeFieldMatcher;
+
+/**
+ * @author jochen
+ * 
+ */
+public class EPCTAGGROUPPatternMatcher implements GroupMatcher {
+
+	private static Pattern matchrange = Pattern.compile("\\[(\\d*)-(\\d*)\\]");
+	private Pattern pattern;
+	private Map<Integer, FieldMatcher> matchers;
+	private static Pattern pattern_tag = Pattern
+			.compile("urn:epc:pat:(.*):(.*\\..*$)");
+	private Map<String, List<DatacontainerEvent>> groupsToTags;
+
+	public EPCTAGGROUPPatternMatcher(String input) {
+		groupsToTags = new HashMap<String, List<DatacontainerEvent>>();
+		matchers = new HashMap<Integer, FieldMatcher>();
+
+		Matcher mat = pattern_tag.matcher(input);
+		if (mat.find()) {
+			StringBuilder patternBuilder = new StringBuilder("urn:epc:tag:");
+			patternBuilder.append(mat.group(1));
+			patternBuilder.append(":");
+			String[] split = mat.group(2).split("\\.");
+			int count = 0;
+			for (String stuff : split) {
+				mat = matchrange.matcher(stuff);
+				if (mat.find()) {
+					matchers.put(count + 1, new RangeFieldMatcher(Long
+							.parseLong(mat.group(1)), Long.parseLong(mat
+							.group(2))));
+					patternBuilder.append("(\\d*)");
+					count++;
+				} else if (stuff.equals("X")) {
+					patternBuilder.append("(\\d*)");
+					count++;
+				} else if (stuff.equals("*")) {
+					patternBuilder.append("\\d*");
+				} else {
+					patternBuilder.append(stuff);
+				}
+				patternBuilder.append(".");
+			}
+			patternBuilder.deleteCharAt(patternBuilder.length() - 1);
+			patternBuilder.append("$");
+			pattern = Pattern.compile(patternBuilder.toString());
+		}
+	}
+
+	@Override
+	public List<DatacontainerEvent> getGrouped() {
+		ArrayList<DatacontainerEvent> ret = new ArrayList<DatacontainerEvent>();
+		for (List<DatacontainerEvent> strList : groupsToTags.values()) {
+			ret.addAll(strList);
+		}
+		return ret;
+	}
+
+	@Override
+	public boolean match(String input, DatacontainerEvent event) {
+		Matcher match = pattern.matcher(input);
+		if (!match.find()) {
+			return false;
+		}
+		StringBuilder groupnameBuilder = new StringBuilder();
+		for (int count = 1; count <= match.groupCount(); count++) {
+			// check if a regular matcher exists for the group
+			if (matchers.get(count) != null) {
+				// match it
+				if (!matchers.get(count).match(match.group(count))) {
+					continue;
+				}
+			} else {
+				// create the groupname
+				groupnameBuilder.append(match.group(count));
+			}
+		}
+		String groupname = groupnameBuilder.toString();
+		if (!groupsToTags.containsKey(groupname)) {
+			groupsToTags.put(groupname, new ArrayList<DatacontainerEvent>());
+		}
+		groupsToTags.get(groupname).add(event);
+		return true;
+	}
+}
