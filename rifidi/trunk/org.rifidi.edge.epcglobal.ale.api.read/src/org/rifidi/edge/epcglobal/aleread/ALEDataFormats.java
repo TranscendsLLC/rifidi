@@ -8,5 +8,5 @@ package org.rifidi.edge.epcglobal.aleread;
  * 
  */
 public enum ALEDataFormats {
-	EPC_TAG, EPC_PURE, EPC_HEX, EPC_DECIMAL, HEX, DECIMAL, STRING;
+	EPC_TAG, EPC_PURE, EPC_HEX, EPC_DECIMAL, HEX, DECIMAL, STRING, DEFAULT;
 }

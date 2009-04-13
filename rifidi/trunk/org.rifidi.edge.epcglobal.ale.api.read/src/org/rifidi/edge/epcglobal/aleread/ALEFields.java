@@ -1,0 +1,5 @@
+package org.rifidi.edge.epcglobal.aleread;
+
+public enum ALEFields {
+	EPC,KILLPWD,ACCESSPWD,EPCBANK,TIDBANK,USERBANK,AFI,NSI,ABSOLUTEADDRESS,VARIABLEFIELD;
+}
