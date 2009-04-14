@@ -16,7 +16,7 @@ import org.rifidi.edge.epcglobal.aleread.ALEFields;
  * 
  */
 public class ALEField {
-	
+
 	private static Pattern pattern_abs = Pattern
 			.compile("@(\\d*)\\.(\\d*)(\\.\\d*)?$");
 	private static Pattern pattern_var = Pattern.compile("@\\d*\\.[a-zA-Z]$");
@@ -26,11 +26,16 @@ public class ALEField {
 	private Integer bankId = 0;
 	private Integer offset = 0;
 	private Integer length = 0;
+	/** The spec this object was created from. */
+	private ECFieldSpec fieldSpec;
 
 	/**
+	 * Constructor.
 	 * 
+	 * @param spec
 	 */
 	public ALEField(ECFieldSpec spec) {
+		fieldSpec = spec;
 		Matcher absMatcher = pattern_abs.matcher(spec.getFieldname());
 		if ("epc".equals(spec.getFieldname())) {
 			this.name = ALEFields.EPC;
@@ -56,8 +61,8 @@ public class ALEField {
 		} else if (pattern_var.matcher(spec.getFieldname()).find()) {
 			this.name = ALEFields.VARIABLEFIELD;
 		}
-		
-		if (spec.getDatatype() == null|| spec.getDatatype() == "") {
+
+		if (spec.getDatatype() == null || spec.getDatatype() == "") {
 			type = ALEDataTypes.DEFAULT;
 		} else if ("bits".equals(spec.getDatatype())) {
 			type = ALEDataTypes.BITS;
@@ -69,7 +74,7 @@ public class ALEField {
 			type = ALEDataTypes.UINT;
 		}
 
-		if(spec.getFormat() == null || spec.getFormat() == ""){
+		if (spec.getFormat() == null || spec.getFormat() == "") {
 			format = ALEDataFormats.DEFAULT;
 		} else if ("decimal".equals(spec.getFormat())) {
 			format = ALEDataFormats.DECIMAL;
@@ -86,8 +91,14 @@ public class ALEField {
 		} else if ("string".equals(spec.getFormat())) {
 			format = ALEDataFormats.STRING;
 		}
-		
 
+	}
+
+	/**
+	 * @return the fieldSpec
+	 */
+	public ECFieldSpec getFieldSpec() {
+		return fieldSpec;
 	}
 
 	/**

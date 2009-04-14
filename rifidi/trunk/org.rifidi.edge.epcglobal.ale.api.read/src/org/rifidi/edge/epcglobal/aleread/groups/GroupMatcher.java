@@ -4,6 +4,7 @@
 package org.rifidi.edge.epcglobal.aleread.groups;
 
 import java.util.List;
+import java.util.Map;
 
 import org.rifidi.edge.core.messages.DatacontainerEvent;
 
@@ -20,10 +21,9 @@ public interface GroupMatcher {
 	public boolean match(String input, DatacontainerEvent event);
 
 	/**
-	 * Get an ordered list of tags that are in this group. This list will also
-	 * contain subgroups.
+	 * Get a map containing the group name as key and a list of tags as value.
 	 * 
 	 * @return
 	 */
-	public List<DatacontainerEvent> getGrouped();
+	public Map<String, List<DatacontainerEvent>> getGrouped();
 }

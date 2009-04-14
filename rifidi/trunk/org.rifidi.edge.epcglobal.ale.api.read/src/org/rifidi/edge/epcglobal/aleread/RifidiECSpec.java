@@ -85,10 +85,13 @@ class RifidiECSpec {
 	/**
 	 * Constructor.
 	 * 
+	 * @param name
 	 * @param spec
-	 * @param managerServiceImpl
+	 * @param lrService
 	 * @param esper
+	 * @param triggerpool
 	 * @throws InvalidURIExceptionResponse
+	 * @throws ECSpecValidationExceptionResponse
 	 */
 	public RifidiECSpec(String name, ECSpec spec,
 			LogicalReaderManagementService lrService, EPServiceProvider esper,
@@ -106,7 +109,12 @@ class RifidiECSpec {
 		stopTriggerStatements = new ArrayList<EPStatement>();
 		stableSetIntervalStatements = new ArrayList<EPStatement>();
 		readers = new HashSet<LogicalReader>();
-		ecReportmanager = new ECReportmanager(esper);
+		if (!spec.isIncludeSpecInReports()) {
+			ecReportmanager = new ECReportmanager(name, esper);
+		}
+		else {
+			ecReportmanager = new ECReportmanager(name, esper, spec);
+		}
 		// check if we got valid logical readers line 2135 of spec
 		String currentReader = "";
 		try {
@@ -240,7 +248,7 @@ class RifidiECSpec {
 		if (primarykeys.size() == 0) {
 			primarykeys.add("EPC");
 		}
-		for(ECReportSpec reportSpec:spec.getReportSpecs().getReportSpec()){
+		for (ECReportSpec reportSpec : spec.getReportSpecs().getReportSpec()) {
 			ecReportmanager.addECReport(reportSpec);
 		}
 	}

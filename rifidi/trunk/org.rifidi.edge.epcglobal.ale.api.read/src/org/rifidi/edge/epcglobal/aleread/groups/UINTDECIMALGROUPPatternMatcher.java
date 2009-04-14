@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -75,11 +74,10 @@ public class UINTDECIMALGROUPPatternMatcher implements GroupMatcher {
 	}
 
 	@Override
-	public List<DatacontainerEvent> getGrouped() {
-		ArrayList<DatacontainerEvent> ret = new ArrayList<DatacontainerEvent>();
-		for (List<DatacontainerEvent> strList : groupsToTags.values()) {
-			ret.addAll(strList);
-		}
+	public Map<String, List<DatacontainerEvent>> getGrouped() {
+		Map<String, List<DatacontainerEvent>> ret = new HashMap<String, List<DatacontainerEvent>>(
+				groupsToTags);
+		groupsToTags.clear();
 		return ret;
 	}
 
