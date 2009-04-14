@@ -66,12 +66,10 @@ public class UINTHEXGROUPPatternMatcher implements GroupMatcher {
 	}
 
 	@Override
-	public List<DatacontainerEvent> getGrouped() {
-		ArrayList<DatacontainerEvent> ret = new ArrayList<DatacontainerEvent>();
-		for (List<DatacontainerEvent> strList : groupsToTags.values()) {
-			ret.addAll(strList);
-		}
+	public Map<String, List<DatacontainerEvent>> getGrouped() {
+		Map<String, List<DatacontainerEvent>> ret = new HashMap<String, List<DatacontainerEvent>>(
+				groupsToTags);
+		groupsToTags.clear();
 		return ret;
 	}
-
 }

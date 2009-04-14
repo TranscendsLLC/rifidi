@@ -5,6 +5,7 @@ package org.rifidi.edge.epcglobal.aleread;
 
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -13,14 +14,30 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
+
 import org.rifidi.edge.core.messages.DatacontainerEvent;
-import org.rifidi.edge.core.messages.EPCGeneration1Event;
 import org.rifidi.edge.core.messages.TagReadEvent;
+import org.rifidi.edge.epcglobal.ale.api.read.EPC;
 import org.rifidi.edge.epcglobal.ale.api.read.data.ECFilterListMember;
+import org.rifidi.edge.epcglobal.ale.api.read.data.ECReport;
+import org.rifidi.edge.epcglobal.ale.api.read.data.ECReportGroup;
+import org.rifidi.edge.epcglobal.ale.api.read.data.ECReportGroupCount;
+import org.rifidi.edge.epcglobal.ale.api.read.data.ECReportGroupList;
+import org.rifidi.edge.epcglobal.ale.api.read.data.ECReportGroupListMember;
+import org.rifidi.edge.epcglobal.ale.api.read.data.ECReportGroupListMemberExtension;
+import org.rifidi.edge.epcglobal.ale.api.read.data.ECReportMemberField;
+import org.rifidi.edge.epcglobal.ale.api.read.data.ECReportOutputFieldSpec;
 import org.rifidi.edge.epcglobal.ale.api.read.data.ECReportSpec;
+import org.rifidi.edge.epcglobal.ale.api.read.data.ECReports;
+import org.rifidi.edge.epcglobal.ale.api.read.data.ECSpec;
+import org.rifidi.edge.epcglobal.ale.api.read.data.ECReports.Reports;
 import org.rifidi.edge.epcglobal.aleread.filters.ALEField;
 import org.rifidi.edge.epcglobal.aleread.filters.FilterFactory;
 import org.rifidi.edge.epcglobal.aleread.filters.PatternMatcher;
+import org.rifidi.edge.epcglobal.aleread.filters.ReportALEField;
 import org.rifidi.edge.epcglobal.aleread.groups.GroupFactory;
 import org.rifidi.edge.epcglobal.aleread.groups.GroupMatcher;
 
@@ -37,9 +54,9 @@ import com.espertech.esper.event.map.MapEventBean;
  * 
  */
 public class ECReportmanager implements Runnable, StatementAwareUpdateListener {
-	/** What tags should be returned? */
-	public enum ReportSet {
-		ADDITION, DELETION, CURRENT
+
+	private enum TriggerCondition {
+		DATA_AVAILABLE, STABLE_SET, STOP_TRIGGER, INTERVAL
 	};
 
 	/** Reports that need to be processed. */
@@ -55,7 +72,7 @@ public class ECReportmanager implements Runnable, StatementAwareUpdateListener {
 	/** List containing statements that trigger when data is available. */
 	private List<EPStatement> whenDataAvailableStatements;
 	/** Incoming events. */
-	private LinkedBlockingQueue<EventBean[]> eventQueue;
+	private LinkedBlockingQueue<EventTuple> eventQueue;
 	/** Target uris for the reports. */
 	private ConcurrentSkipListSet<URI> uris;
 	/** Esper instance used by this instance. */
@@ -64,17 +81,33 @@ public class ECReportmanager implements Runnable, StatementAwareUpdateListener {
 	private FilterFactory filterFactory;
 	/** Factory for creating grouping rules */
 	private GroupFactory groupFactory;
+	/** Name of the ec spec. */
+	private String specName;
+	/**
+	 * The spec associated with this reportmanager. Null if the spec is not sent
+	 * back with the reports.
+	 */
+	private ECSpec spec;
 
 	/**
 	 * Constructor.
 	 */
-	public ECReportmanager(EPServiceProvider esper) {
+	public ECReportmanager(String specName, EPServiceProvider esper) {
 		reports = new HashSet<Report>();
-		eventQueue = new LinkedBlockingQueue<EventBean[]>();
+		eventQueue = new LinkedBlockingQueue<EventTuple>();
 		uris = new ConcurrentSkipListSet<URI>();
 		filterFactory = new FilterFactory();
 		groupFactory = new GroupFactory();
 		this.esper = esper;
+		this.specName = specName;
+	}
+
+	/**
+	 * Constructor.
+	 */
+	public ECReportmanager(String specName, EPServiceProvider esper, ECSpec spec) {
+		this(specName, esper);
+		this.spec = spec;
 	}
 
 	public void addURI(URI uri) {
@@ -88,10 +121,10 @@ public class ECReportmanager implements Runnable, StatementAwareUpdateListener {
 	/**
 	 * Add the incoming list of events to the processing queue.
 	 * 
-	 * @param events
+	 * @param eventTuple
 	 */
-	public void addEvents(EventBean[] events) {
-		eventQueue.add(events);
+	public void addEvents(EventTuple eventTuple) {
+		eventQueue.add(eventTuple);
 	}
 
 	/**
@@ -142,20 +175,21 @@ public class ECReportmanager implements Runnable, StatementAwareUpdateListener {
 			EPServiceProvider arg3) {
 		// TODO: fix, needs timing
 		esper.getEPRuntime().sendEvent(new StartEvent("wuhu"));
-		boolean empty = false;
+		EventTuple tuple = new EventTuple();
 		if (whenDataAvailableStatements.contains(arg2)) {
-			System.out.println("when data available");
+			tuple.condition = TriggerCondition.DATA_AVAILABLE;
 		}
 		if (stableSetIntervalStatements.contains(arg2)) {
-			System.out.println("stable set");
+			tuple.condition = TriggerCondition.STABLE_SET;
 		}
 		if (stopTriggerStatements.contains(arg2)) {
-			System.out.println("stop trigger");
+			tuple.condition = TriggerCondition.STOP_TRIGGER;
 		}
 		if (intervalStatements.contains(arg2)) {
-			System.out.println("interval statement");
+			tuple.condition = TriggerCondition.INTERVAL;
 		}
-		addEvents(arg0);
+		tuple.beans = arg0;
+		addEvents(tuple);
 	}
 
 	/*
@@ -180,10 +214,10 @@ public class ECReportmanager implements Runnable, StatementAwareUpdateListener {
 		}
 		while (!Thread.currentThread().isInterrupted()) {
 			try {
-				EventBean[] tagevents = eventQueue.take();
+				EventTuple tagevents = eventQueue.take();
 				Set<DatacontainerEvent> events = new HashSet<DatacontainerEvent>();
 				// collect tags from event beans
-				for (EventBean tagevent : tagevents) {
+				for (EventBean tagevent : tagevents.beans) {
 					if (((MapEventBean) tagevent).getProperties().containsKey(
 							"tags")) {
 						events.add(((TagReadEvent) ((MapEventBean) tagevent)
@@ -197,8 +231,34 @@ public class ECReportmanager implements Runnable, StatementAwareUpdateListener {
 					report.processEvents(events);
 				}
 				// send the report
+				ECReports ecreports = new ECReports();
+				ecreports.setALEID("Rifidi Edge Server");
+				ecreports.setDate(getCurrentCalendar());
+				if (spec != null) {
+					ecreports.setECSpec(spec);
+				}
+				// one of TRIGGER REPEAT_PERIOD REQUESTED UNDEFINE
+				ecreports.setInitiationCondition("TRIGGER");
+				if (ecreports.getInitiationCondition().equals("TRIGGER")) {
+					ecreports.setInitiationTrigger("FUUUUUUUUUUUUUUUUUUUUUCK");
+				}
+				ecreports.setTerminationCondition("TRIGGER");
+				// one of TRIGGER DURATION STABLE_SET DATA_AVAILABLE
+				// UNREQUEST
+				// UNDEFINE
+				if (ecreports.getTerminationCondition().equals("TRIGGER")) {
+					ecreports.setTerminationTrigger("DAAAAAAAARRRRRRRRRN");
+				}
+				ecreports.setSpecName(specName);
+				// running time
+				ecreports.setTotalMilliseconds(10);
+				Reports reportsPoltergeist = new Reports();
+				ecreports.setReports(reportsPoltergeist);
 				for (Report report : reports) {
-					report.send();
+					ECReport rep = report.send(tagevents.condition);
+					if (rep != null) {
+						ecreports.getReports().getReport().add(rep);
+					}
 				}
 			} catch (InterruptedException e) {
 				Thread.currentThread().interrupt();
@@ -212,16 +272,14 @@ public class ECReportmanager implements Runnable, StatementAwareUpdateListener {
 	 * @param reportSpec
 	 */
 	public void addECReport(ECReportSpec reportSpec) {
-		// check the report set
-		ReportSet reportSet = null;
+		int options = 0;
 		if ("ADDITION".equals(reportSpec.getReportSet().getSet())) {
-			reportSet = ReportSet.ADDITION;
+			options |= ECReportOptions.REPORT_ADDITIONS;
 		} else if ("DELETION".equals(reportSpec.getReportSet().getSet())) {
-			reportSet = ReportSet.DELETION;
+			options |= ECReportOptions.REPORT_DELETIONS;
 		} else if ("CURRENT".equals(reportSpec.getReportSet().getSet())) {
-			reportSet = ReportSet.CURRENT;
+			options |= ECReportOptions.REPORT_CURRENT;
 		}
-
 		Map<ALEField, List<PatternMatcher>> includeFilters = new HashMap<ALEField, List<PatternMatcher>>();
 		Map<ALEField, List<PatternMatcher>> excludeFilters = new HashMap<ALEField, List<PatternMatcher>>();
 		if (reportSpec.getFilterSpec() != null) {
@@ -246,13 +304,52 @@ public class ECReportmanager implements Runnable, StatementAwareUpdateListener {
 				groups.add(groupFactory.createMatcher(groupfield, pattern));
 			}
 		}
-		// reportSpec.getOutput();
-		// reportSpec.getGroupSpec();
-		// reportSpec.getExtension().getStatProfileNames();
-		reports.add(new Report(reportSpec.getReportName(), reportSet,
-				reportSpec.isReportIfEmpty(),
-				reportSpec.isReportOnlyOnChange(), includeFilters,
-				excludeFilters, groupfield, groups));
+		if (reportSpec.getOutput().isIncludeCount()) {
+			options = options | ECReportOptions.INCLUDE_COUNT;
+		}
+		if (reportSpec.getOutput().isIncludeEPC()) {
+			options = options | ECReportOptions.INCLUDE_EPC;
+		}
+		if (reportSpec.getOutput().isIncludeRawDecimal()) {
+			options = options | ECReportOptions.INCLUDE_RAW_DECIMAL;
+		}
+		if (reportSpec.getOutput().isIncludeRawDecimal()) {
+			options = options | ECReportOptions.INCLUDE_RAW_HEX;
+		}
+		if (reportSpec.getOutput().isIncludeTag()) {
+			options = options | ECReportOptions.INCLUDE_TAG;
+		}
+		if (reportSpec.isReportIfEmpty()) {
+			options = options | ECReportOptions.REPORT_IF_EMPTY;
+		}
+		if (reportSpec.isReportOnlyOnChange()) {
+			options = options | ECReportOptions.REPORT_ONLY_ON_CHANGE;
+		}
+		Set<ReportALEField> reportFields = new HashSet<ReportALEField>();
+		if (reportSpec.getOutput().getExtension() != null
+				&& reportSpec.getOutput().getExtension().getFieldList() != null) {
+			for (ECReportOutputFieldSpec spec : reportSpec.getOutput()
+					.getExtension().getFieldList().getField()) {
+				reportFields.add(new ReportALEField(spec.getName(), spec
+						.getFieldspec()));
+			}
+		}
+
+		reports.add(new Report(reportSpec.getReportName(), options,
+				includeFilters, excludeFilters, groupfield, groups,
+				reportFields));
+	}
+
+	private XMLGregorianCalendar getCurrentCalendar() {
+		GregorianCalendar gc = (GregorianCalendar) GregorianCalendar
+				.getInstance();
+		DatatypeFactory dataTypeFactory = null;
+		try {
+			dataTypeFactory = DatatypeFactory.newInstance();
+		} catch (DatatypeConfigurationException ex) {
+			System.out.println("epic fail: " + ex);
+		}
+		return dataTypeFactory.newXMLGregorianCalendar(gc);
 	}
 
 	/**
@@ -264,9 +361,6 @@ public class ECReportmanager implements Runnable, StatementAwareUpdateListener {
 	private class Report {
 		/** Name of the report. */
 		private String name;
-		private ReportSet reportSet;
-		private Boolean reportIfEmpty;
-		private Boolean reportOnlyOnchange;
 		private Boolean changed = true;
 		private Set<DatacontainerEvent> tagreads;
 		private Set<DatacontainerEvent> tagreadsToSend;
@@ -275,25 +369,31 @@ public class ECReportmanager implements Runnable, StatementAwareUpdateListener {
 		private Map<ALEField, List<PatternMatcher>> excludeFilter;
 		private ALEField groupField;
 		private List<GroupMatcher> groups;
+		private int options = 0;
+		private Set<ReportALEField> reportFields;
 
 		/**
+		 * Constructor.
+		 * 
 		 * @param name
+		 * @param options
 		 * @param reportSet
-		 * @param reportIfEmpty
-		 * @param reportOnlyOnchange
+		 * @param include
+		 * @param exclude
+		 * @param groupField
+		 * @param groups
 		 */
-		public Report(String name, ReportSet reportSet, Boolean reportIfEmpty,
-				Boolean reportOnlyOnchange,
+		public Report(String name, int options,
 				Map<ALEField, List<PatternMatcher>> include,
 				Map<ALEField, List<PatternMatcher>> exclude,
-				ALEField groupField, List<GroupMatcher> groups) {
+				ALEField groupField, List<GroupMatcher> groups,
+				Set<ReportALEField> reportFields) {
 			super();
 			this.name = name;
-			this.reportSet = reportSet;
-			this.reportIfEmpty = reportIfEmpty;
-			this.reportOnlyOnchange = reportOnlyOnchange;
+			this.options = options;
 			this.groupField = groupField;
 			this.groups = groups;
+			this.reportFields = reportFields;
 			includeFilters = include;
 			excludeFilter = exclude;
 			tagreads = new HashSet<DatacontainerEvent>();
@@ -307,7 +407,7 @@ public class ECReportmanager implements Runnable, StatementAwareUpdateListener {
 		}
 
 		public void processEvents(Set<DatacontainerEvent> incoming) {
-			if(includeFilters.size()>0 || excludeFilter.size()>0){
+			if (includeFilters.size() > 0 || excludeFilter.size() > 0) {
 				Set<DatacontainerEvent> notincluded = new HashSet<DatacontainerEvent>();
 				boolean matched = false;
 				for (DatacontainerEvent event : incoming) {
@@ -316,7 +416,8 @@ public class ECReportmanager implements Runnable, StatementAwareUpdateListener {
 						String fieldString = adapter.getField(field, event);
 						for (PatternMatcher matcher : includeFilters.get(field)) {
 							if (matcher.match(fieldString)) {
-								// remove the event from the list of events that will
+								// remove the event from the list of events that
+								// will
 								// be dropped
 								notincluded.remove(event);
 								matched = true;
@@ -332,7 +433,8 @@ public class ECReportmanager implements Runnable, StatementAwareUpdateListener {
 					}
 					if (!matched) {
 						notincluded.add(event);
-						// we are already removing it, no need to prcess the exclude
+						// we are already removing it, no need to process the
+						// exclude
 						// filters
 						continue;
 					}
@@ -357,10 +459,10 @@ public class ECReportmanager implements Runnable, StatementAwareUpdateListener {
 					matched = false;
 				}
 				// remove all events that were not mathched by an include filter
-				incoming.removeAll(notincluded);	
+				incoming.removeAll(notincluded);
 			}
-			
-			if (ReportSet.ADDITION.equals(reportSet)) {
+
+			if ((options & ECReportOptions.REPORT_ADDITIONS) > 0) {
 				// keep the tags that appear in both sets
 				tagreads.retainAll(incoming);
 				// remove the common tags from incoming
@@ -369,7 +471,7 @@ public class ECReportmanager implements Runnable, StatementAwareUpdateListener {
 				tagreads.addAll(incoming);
 				// prepare tags to send out
 				// check if the set changes at all
-				if (reportOnlyOnchange) {
+				if ((options & ECReportOptions.REPORT_ONLY_ON_CHANGE) > 0) {
 					if (!(tagreadsToSend.containsAll(incoming) && incoming
 							.containsAll(tagreadsToSend))) {
 						tagreadsToSend.clear();
@@ -382,12 +484,12 @@ public class ECReportmanager implements Runnable, StatementAwareUpdateListener {
 					tagreadsToSend.clear();
 					tagreadsToSend.addAll(incoming);
 				}
-			} else if (ReportSet.DELETION.equals(reportSet)) {
+			} else if ((options & ECReportOptions.REPORT_DELETIONS) > 0) {
 				// remove the tags that appear in both sets
 				tagreads.removeAll(incoming);
 				// prepare tags that are about to be sent out
 				// check if the set changes at all
-				if (reportOnlyOnchange) {
+				if ((options & ECReportOptions.REPORT_ONLY_ON_CHANGE) > 0) {
 					if (!(tagreadsToSend.containsAll(incoming) && incoming
 							.containsAll(tagreadsToSend))) {
 						tagreadsToSend.clear();
@@ -402,9 +504,9 @@ public class ECReportmanager implements Runnable, StatementAwareUpdateListener {
 				}
 				// create the current set of tags
 				tagreads.addAll(incoming);
-			} else if (ReportSet.CURRENT.equals(reportSet)) {
+			} else if ((options & ECReportOptions.REPORT_CURRENT) > 0) {
 				// check if the set changes at all
-				if (reportOnlyOnchange) {
+				if ((options & ECReportOptions.REPORT_ONLY_ON_CHANGE) > 0) {
 					if (!(tagreadsToSend.containsAll(incoming) && incoming
 							.containsAll(tagreadsToSend))) {
 						tagreads.clear();
@@ -414,43 +516,122 @@ public class ECReportmanager implements Runnable, StatementAwareUpdateListener {
 						changed = false;
 					}
 				} else {
-					tagreads.clear();
-					tagreads.addAll(incoming);
+					tagreadsToSend.clear();
+					tagreadsToSend.addAll(incoming);
 				}
 			} else {
 				System.out.println("wtf?");
 			}
 		}
 
-		public void send() {
-			if (((!reportOnlyOnchange) || (reportOnlyOnchange && changed))
-					&& (tagreadsToSend.size() > 0 || (tagreadsToSend.size() == 0 && reportIfEmpty == true))) {
-				List<DatacontainerEvent> tags=new ArrayList<DatacontainerEvent>();
-				if(groupField!=null){
-					Set<DatacontainerEvent> matchedEvents=new HashSet<DatacontainerEvent>();
-					for(DatacontainerEvent event:tagreadsToSend){
-						String field=adapter.getField(groupField, event);
-						for(GroupMatcher matcher:groups){
-							if(matcher.match(field, event)){
+		public ECReport send(TriggerCondition condition) {
+			ECReport report = new ECReport();
+			if (((!((options & ECReportOptions.REPORT_ONLY_ON_CHANGE) > 0)) || ((options & ECReportOptions.REPORT_ONLY_ON_CHANGE) > 0 && changed))
+					&& (tagreadsToSend.size() > 0 || (tagreadsToSend.size() == 0 && (options & ECReportOptions.REPORT_IF_EMPTY) > 0 == true))) {
+				report.setReportName(name);
+
+				List<DatacontainerEvent> tags = new ArrayList<DatacontainerEvent>();
+
+				if (groupField != null) {
+					Set<DatacontainerEvent> matchedEvents = new HashSet<DatacontainerEvent>();
+					for (DatacontainerEvent event : tagreadsToSend) {
+						String field = adapter.getField(groupField, event);
+						for (GroupMatcher matcher : groups) {
+							if (matcher.match(field, event)) {
 								matchedEvents.add(event);
 								break;
 							}
-						}	
+						}
 					}
 					tagreadsToSend.remove(matchedEvents);
-					for(GroupMatcher matcher:groups){
-						tags.addAll(matcher.getGrouped());
+					for (GroupMatcher matcher : groups) {
+						ECReportGroup group = new ECReportGroup();
+						Map<String, List<DatacontainerEvent>> grouped = matcher
+								.getGrouped();
+						if (grouped.keySet().size() == 1) {
+							String name = grouped.keySet().iterator().next();
+							group.setGroupName(name);
+							fillGroup(group, grouped.get(name));
+							tags.addAll(grouped.get(name));
+							report.getGroup().add(group);
+						}
 					}
 				}
 				tags.addAll(tagreadsToSend);
+				// create the default group
+				ECReportGroup group = new ECReportGroup();
+				fillGroup(group, tags);
+				report.getGroup().add(group);
+
 				System.out.println("sending: ");
-				for (DatacontainerEvent tagread : tagreadsToSend) {
-					if (tagread instanceof EPCGeneration1Event) {
+				for (ECReportGroup gr : report.getGroup()) {
+					if(gr.getGroupList() != null){
+						for (ECReportGroupListMember mem : gr.getGroupList()
+								.getMember()) {
+							System.out.println(mem.getTag().getValue());
+						}	
 					}
-					System.out.println(adapter.getEpc(tagread,
-							ALEDataTypes.EPC, ALEDataFormats.EPC_TAG));
+					
 				}
+				return report;
+			}
+			return null;
+		}
+
+		private void fillGroup(ECReportGroup group,
+				List<DatacontainerEvent> grouped) {
+
+			if ((options & ECReportOptions.INCLUDE_COUNT) > 0) {
+				ECReportGroupCount count = new ECReportGroupCount();
+				count.setCount(grouped.size());
+			}
+			for (DatacontainerEvent event : grouped) {
+
+				ECReportGroupList ecReportGroupList = new ECReportGroupList();
+				group.setGroupList(ecReportGroupList);
+				group.getGroupList().getMember();
+				ECReportGroupListMember member = new ECReportGroupListMember();
+				if ((options & ECReportOptions.INCLUDE_RAW_DECIMAL) > 0) {
+					EPC epc = new EPC();
+					epc.setValue(adapter.getEpc(event, ALEDataTypes.EPC,
+							ALEDataFormats.EPC_DECIMAL));
+					member.setRawDecimal(epc);
+				}
+				if ((options & ECReportOptions.INCLUDE_RAW_HEX) > 0) {
+					EPC epc = new EPC();
+					epc.setValue(adapter.getEpc(event, ALEDataTypes.EPC,
+							ALEDataFormats.EPC_HEX));
+					member.setRawHex(epc);
+				}
+				if ((options & ECReportOptions.INCLUDE_TAG) > 0) {
+					EPC epc = new EPC();
+					epc.setValue(adapter.getEpc(event, ALEDataTypes.EPC,
+							ALEDataFormats.EPC_TAG));
+					member.setTag(epc);
+				}
+				if ((options & ECReportOptions.INCLUDE_EPC) > 0) {
+					EPC epc = new EPC();
+					epc.setValue(adapter.getEpc(event, ALEDataTypes.EPC,
+							ALEDataFormats.EPC_PURE));
+					member.setEpc(epc);
+				}
+				if (reportFields.size() > 0) {
+					ECReportGroupListMemberExtension ext = new ECReportGroupListMemberExtension();
+					for (ReportALEField field : reportFields) {
+						ECReportMemberField ecrepfield = new ECReportMemberField();
+						ecrepfield.setFieldspec(field.getFieldSpec());
+						ecrepfield.setName(field.getFieldName());
+						ecrepfield.setValue(adapter.getField(field, event));
+					}
+					member.setExtension(ext);
+				}
+				group.getGroupList().getMember().add(member);
 			}
 		}
+	}
+
+	private class EventTuple {
+		public EventBean[] beans;
+		public TriggerCondition condition;
 	}
 }

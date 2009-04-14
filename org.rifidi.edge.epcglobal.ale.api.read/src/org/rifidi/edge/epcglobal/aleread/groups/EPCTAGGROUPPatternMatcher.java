@@ -26,16 +26,19 @@ public class EPCTAGGROUPPatternMatcher implements GroupMatcher {
 	private static Pattern pattern_tag = Pattern
 			.compile("urn:epc:pat:(.*):(.*\\..*$)");
 	private Map<String, List<DatacontainerEvent>> groupsToTags;
-
+	private String name_base;
 	public EPCTAGGROUPPatternMatcher(String input) {
 		groupsToTags = new HashMap<String, List<DatacontainerEvent>>();
 		matchers = new HashMap<Integer, FieldMatcher>();
-
+		
 		Matcher mat = pattern_tag.matcher(input);
 		if (mat.find()) {
 			StringBuilder patternBuilder = new StringBuilder("urn:epc:tag:");
+			StringBuilder nameBuilder = new StringBuilder("urn:epc:tag:");
 			patternBuilder.append(mat.group(1));
 			patternBuilder.append(":");
+			nameBuilder.append(mat.group(1));
+			nameBuilder.append(":");
 			String[] split = mat.group(2).split("\\.");
 			int count = 0;
 			for (String stuff : split) {
@@ -45,29 +48,35 @@ public class EPCTAGGROUPPatternMatcher implements GroupMatcher {
 							.parseLong(mat.group(1)), Long.parseLong(mat
 							.group(2))));
 					patternBuilder.append("(\\d*)");
+					nameBuilder.append("<>");
 					count++;
 				} else if (stuff.equals("X")) {
 					patternBuilder.append("(\\d*)");
+					nameBuilder.append("<>");
 					count++;
 				} else if (stuff.equals("*")) {
 					patternBuilder.append("\\d*");
+					nameBuilder.append("*");
 				} else {
 					patternBuilder.append(stuff);
+					nameBuilder.append(stuff);
 				}
 				patternBuilder.append(".");
+				nameBuilder.append(".");
 			}
 			patternBuilder.deleteCharAt(patternBuilder.length() - 1);
 			patternBuilder.append("$");
 			pattern = Pattern.compile(patternBuilder.toString());
+			nameBuilder.deleteCharAt(nameBuilder.length() - 1);
+			name_base=nameBuilder.toString();
 		}
 	}
 
 	@Override
-	public List<DatacontainerEvent> getGrouped() {
-		ArrayList<DatacontainerEvent> ret = new ArrayList<DatacontainerEvent>();
-		for (List<DatacontainerEvent> strList : groupsToTags.values()) {
-			ret.addAll(strList);
-		}
+	public Map<String, List<DatacontainerEvent>> getGrouped() {
+		Map<String, List<DatacontainerEvent>> ret = new HashMap<String, List<DatacontainerEvent>>(
+				groupsToTags);
+		groupsToTags.clear();
 		return ret;
 	}
 
@@ -77,7 +86,7 @@ public class EPCTAGGROUPPatternMatcher implements GroupMatcher {
 		if (!match.find()) {
 			return false;
 		}
-		StringBuilder groupnameBuilder = new StringBuilder();
+		String groupname=name_base;
 		for (int count = 1; count <= match.groupCount(); count++) {
 			// check if a regular matcher exists for the group
 			if (matchers.get(count) != null) {
@@ -87,10 +96,9 @@ public class EPCTAGGROUPPatternMatcher implements GroupMatcher {
 				}
 			} else {
 				// create the groupname
-				groupnameBuilder.append(match.group(count));
+				name_base.replaceFirst("<>", match.group(count));
 			}
 		}
-		String groupname = groupnameBuilder.toString();
 		if (!groupsToTags.containsKey(groupname)) {
 			groupsToTags.put(groupname, new ArrayList<DatacontainerEvent>());
 		}
