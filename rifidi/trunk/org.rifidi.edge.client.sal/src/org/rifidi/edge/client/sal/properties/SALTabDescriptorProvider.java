@@ -4,16 +4,14 @@
 package org.rifidi.edge.client.sal.properties;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import javax.management.MBeanAttributeInfo;
 
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.TreeSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.views.properties.tabbed.ITabDescriptor;
 import org.eclipse.ui.views.properties.tabbed.ITabDescriptorProvider;
@@ -38,7 +36,7 @@ public class SALTabDescriptorProvider implements ITabDescriptorProvider {
 	@Override
 	public ITabDescriptor[] getTabDescriptors(IWorkbenchPart part,
 			ISelection selection) {
-		Object obj = ((TreeSelection) selection).getFirstElement();
+		Object obj = ((StructuredSelection) selection).getFirstElement();
 		if (obj instanceof RemoteEdgeServer) {
 			return new ITabDescriptor[] { new EdgeServerTabDescriptor() };
 		} else if (obj instanceof RemoteReader) {

@@ -38,6 +38,7 @@ public class ReaderAlphaImageFigure extends AlphaImageFigure implements
 	/** The remote reader for this AlphaImage */
 	private RemoteReader reader;
 	private Set<RemoteSession> sessions;
+	private ReaderState state;
 
 	/**
 	 * Constructor. Must be called from within eclipse thread
@@ -84,12 +85,13 @@ public class ReaderAlphaImageFigure extends AlphaImageFigure implements
 		if (reader == null) {
 			ttl = new Label("I AM JUST A DUMMY\nsorry, no status here");
 		} else {
-			ttl = new Label(reader.getID() + "\n");
+			ttl = new Label(reader.getID() + "\n" + state);
 		}
 		return ttl;
 	}
 
 	private void updateStatus(ReaderState state) {
+		this.state = state;
 		switch (state) {
 		case CONNECTED:
 			this.setImage(Activator.getDefault().getImageRegistry().get(
@@ -141,7 +143,7 @@ public class ReaderAlphaImageFigure extends AlphaImageFigure implements
 	public void propertyChange(PropertyChangeEvent evt) {
 		if (evt.getPropertyName().equals(
 				SessionStatePropertyBean.SESSION_STATUS_PROPERTY)) {
-			// TODO: compute state of reader
+			computeState();
 		}
 
 	}

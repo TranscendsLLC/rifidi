@@ -21,8 +21,6 @@ import org.rifidi.edge.client.twodview.sfx.ReaderAlphaImageFigure;
  */
 public class ObjectLayer extends XYLayer {
 
-	// private Log logger;
-
 	/**
 	 * Creates a new Layer with MouseListener and MouseMotionListener
 	 */
@@ -39,37 +37,15 @@ public class ObjectLayer extends XYLayer {
 					.getBounds().height));
 		}
 
-		// FIXME: bug #40
-		if (!this.getChildren().isEmpty()) {
+		for (Object fig : this.getChildren()) {
+			ReaderAlphaImageFigure raif = (ReaderAlphaImageFigure) fig;
+			if (raif.getReaderId().equals(reader.getReaderId())) {
+				throw new ReaderAlreadyInMapException("Drag and Drop failed");
 
-			for (Object fig : this.getChildren()) {
-				ReaderAlphaImageFigure raif = (ReaderAlphaImageFigure) fig;
-				if (raif.getReaderId().equals(reader.getReaderId())) {
-					throw new ReaderAlreadyInMapException(
-							"Drag and Drop failed");
-
-				}
 			}
-			add(reader);
-			return;
-
-		} else {
-			add(reader);
-			return;
 		}
+		add(reader);
+		return;
 
 	}
-	/*
-	 * public void refreshObjects() { ReaderAlphaImageFigure raif;
-	 * 
-	 * hand over layer; for each child call status refresh
-	 * 
-	 * for (Object figure : getChildren()) { try { raif =
-	 * (ReaderAlphaImageFigure) figure; //raif.updateStatus();
-	 * 
-	 * } catch (Exception e) { e.printStackTrace(); }
-	 * 
-	 * } }
-	 */
-
 }

@@ -592,6 +592,27 @@
             </visibleWhen>
          </command>
       </menuContribution>
+      <menuContribution
+            locationURI="toolbar:org.rifidi.edge.client.sal.views.EdgeServerView?after=additions">
+         <command
+               commandId="org.rifidi.edge.client.sal.commands.edgeserver.connect"
+               icon="icons/connect.png"
+               label="Connect"
+               style="push">
+         </command>
+         <command
+               commandId="org.rifidi.edge.client.sal.commands.edgeserver.disconnect"
+               icon="icons/disconnect.png"
+               label="Disconnect"
+               style="push">
+         </command>
+         <command
+               commandId="org.rifidi.edge.client.sal.commands.edgeserver.update"
+               icon="icons/arrow_refresh.png"
+               label="Update"
+               style="push">
+         </command>
+      </menuContribution>
    </extension>
    <extension
          point="org.eclipse.ui.commands">

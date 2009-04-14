@@ -10,6 +10,8 @@
  */
 package org.rifidi.edge.client.twodview.listeners;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.ScalableLayeredPane;
 import org.eclipse.draw2d.geometry.Rectangle;
@@ -24,6 +26,8 @@ import org.eclipse.swt.widgets.Listener;
 public class SiteViewMouseWheelListener implements Listener {
 
 	private ScalableLayeredPane sp = null;
+	private static final Log logger = LogFactory
+			.getLog(SiteViewMouseWheelListener.class);
 
 	public SiteViewMouseWheelListener(ScalableLayeredPane sp) {
 		super();
@@ -65,8 +69,8 @@ public class SiteViewMouseWheelListener implements Listener {
 			}
 			((IFigure) object).repaint();
 		}
-		System.out.println(sp.getBounds());
-		System.out.println(event.x + " " + event.y);
+		// logger.debug(sp.getBounds());
+		// logger.debug(event.x + " " + event.y);
 	}
 
 }
