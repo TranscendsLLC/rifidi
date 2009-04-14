@@ -38,11 +38,10 @@ public class TagMessageMessageCreator implements MessageCreator {
 			tags.add(new TagDTO(((EPCGeneration1Event) event).getEPCMemory(),
 					tagRead.getAntennaID(), tagRead.getTimestamp()));
 		}
-		TagReadEvent e = cycle.getTags().iterator().next();
-		if (e != null) {
-			tagBatch = new TagBatch(e.getReaderID(), cycle.getEventTimestamp(),
-					tags);
-		}
+
+		tagBatch = new TagBatch(cycle.getReaderID(), cycle.getEventTimestamp(),
+				tags);
+
 	}
 
 	/*

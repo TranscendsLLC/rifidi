@@ -162,17 +162,17 @@ public class AlienGetTagListCommand extends AbstractAlien9800Command {
 					String tagData = splitString2[0];
 					String timeStamp = splitString2[1];
 					String antennaID = splitString2[2];
-					int epcLength=tagData.length();
+					int epcLength = tagData.length();
 					BigInteger data = new BigInteger(tagData, 16);
 
 					EPCGeneration2Event gen2event = new EPCGeneration2Event();
 					// make some wild guesses on the length of the epc field
 					if (epcLength > 96) {
-						gen2event.setEPCMemory(data,192);
+						gen2event.setEPCMemory(data, 192);
 					} else if (data.bitLength() > 64) {
-						gen2event.setEPCMemory(data,96);
+						gen2event.setEPCMemory(data, 96);
 					} else {
-						gen2event.setEPCMemory(data,64);
+						gen2event.setEPCMemory(data, 64);
 					}
 					int antennaID_int = 0;
 
@@ -214,7 +214,7 @@ public class AlienGetTagListCommand extends AbstractAlien9800Command {
 			objectMessage = new ActiveMQObjectMessage();
 
 			try {
-				objectMessage.setObject(new ReadCycle(tags, System
+				objectMessage.setObject(new ReadCycle(tags, reader, System
 						.currentTimeMillis()));
 			} catch (JMSException e) {
 				logger.warn("Unable to set tag event: " + e);
