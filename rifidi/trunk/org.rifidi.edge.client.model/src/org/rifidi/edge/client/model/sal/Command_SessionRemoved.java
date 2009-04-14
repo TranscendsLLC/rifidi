@@ -59,11 +59,14 @@ public class Command_SessionRemoved implements RemoteEdgeServerCommand {
 
 		RemoteReader reader = (RemoteReader) server.getRemoteReaders().get(
 				readerID);
-		RemoteSession session = ((RemoteSession) reader.getRemoteSessions().get(sessionID));
-		if(session!=null){
-			session.getRemoteJobs().clear();
+		if (reader != null) {
+			RemoteSession session = ((RemoteSession) reader.getRemoteSessions()
+					.get(sessionID));
+			if (session != null) {
+				session.getRemoteJobs().clear();
+			}
+			reader.getRemoteSessions().remove(sessionID);
 		}
-		reader.getRemoteSessions().remove(sessionID);
 
 	}
 

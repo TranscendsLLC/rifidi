@@ -14,17 +14,26 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.commands.IHandlerListener;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.handlers.HandlerUtil;
+import org.rifidi.edge.client.model.sal.RemoteReader;
+import org.rifidi.edge.client.twodview.sfx.ReaderAlphaImageFigure;
 import org.rifidi.edge.client.twodview.views.SiteView;
 
 /**
  * @author Tobias Hoppenthaler - tobias@pramari.com
- *
+ * 
  */
 public class RemoveReader implements IHandler {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.commands.IHandler#addHandlerListener(org.eclipse.core.commands.IHandlerListener)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.core.commands.IHandler#addHandlerListener(org.eclipse.core
+	 * .commands.IHandlerListener)
 	 */
 	@Override
 	public void addHandlerListener(IHandlerListener handlerListener) {
@@ -32,7 +41,9 @@ public class RemoveReader implements IHandler {
 
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.core.commands.IHandler#dispose()
 	 */
 	@Override
@@ -41,22 +52,30 @@ public class RemoveReader implements IHandler {
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.commands.IHandler#execute(org.eclipse.core.commands.ExecutionEvent)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.core.commands.IHandler#execute(org.eclipse.core.commands.
+	 * ExecutionEvent)
 	 */
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		SiteView siteView = null;
-		siteView = (SiteView) PlatformUI.getWorkbench()
+		SiteView siteView = (SiteView) PlatformUI.getWorkbench()
 				.getActiveWorkbenchWindow().getActivePage().findView(
 						"org.rifidi.edge.client.twodview.views.SiteView");
+		ISelection sel = HandlerUtil.getCurrentSelection(event);
+		ReaderAlphaImageFigure reader = (ReaderAlphaImageFigure) ((StructuredSelection) sel)
+				.getFirstElement();
 		if (siteView != null) {
-			siteView.getLayeredPane().removeCurrentSelection();
+			siteView.getController().deleteReader(reader.getReaderId());
 		}
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.core.commands.IHandler#isEnabled()
 	 */
 	@Override
@@ -65,7 +84,9 @@ public class RemoveReader implements IHandler {
 		return true;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.core.commands.IHandler#isHandled()
 	 */
 	@Override
@@ -74,8 +95,12 @@ public class RemoveReader implements IHandler {
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.commands.IHandler#removeHandlerListener(org.eclipse.core.commands.IHandlerListener)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.core.commands.IHandler#removeHandlerListener(org.eclipse.
+	 * core.commands.IHandlerListener)
 	 */
 	@Override
 	public void removeHandlerListener(IHandlerListener handlerListener) {

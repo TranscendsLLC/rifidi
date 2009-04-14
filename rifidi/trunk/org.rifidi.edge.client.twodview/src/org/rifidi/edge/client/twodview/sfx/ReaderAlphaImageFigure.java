@@ -21,6 +21,7 @@ import org.eclipse.core.databinding.observable.map.ObservableMap;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.Label;
 import org.eclipse.swt.graphics.Image;
+import org.rifidi.edge.client.model.sal.RemoteJob;
 import org.rifidi.edge.client.model.sal.RemoteReader;
 import org.rifidi.edge.client.model.sal.RemoteSession;
 import org.rifidi.edge.client.model.sal.properties.SessionStatePropertyBean;
@@ -28,6 +29,9 @@ import org.rifidi.edge.client.twodview.Activator;
 import org.rifidi.edge.core.api.SessionStatus;
 
 /**
+ * The readerID of this ReaderAlphaImageFigure should not change througout the
+ * lifetime of it, although the model might be swapped in and out
+ * 
  * @author Tobias Hoppenthaler - tobias@pramari.com
  * @author Kyle Neumeier - kyle@pramari.com
  * 
@@ -39,6 +43,7 @@ public class ReaderAlphaImageFigure extends AlphaImageFigure implements
 	private RemoteReader reader;
 	private Set<RemoteSession> sessions;
 	private ReaderState state;
+	private final String readerID;
 
 	/**
 	 * Constructor. Must be called from within eclipse thread
@@ -48,19 +53,22 @@ public class ReaderAlphaImageFigure extends AlphaImageFigure implements
 	 */
 	public ReaderAlphaImageFigure(Image image, RemoteReader reader) {
 		super(image);
-		this.reader = reader;
+		this.readerID = reader.getID();
 		this.sessions = new HashSet<RemoteSession>();
-		ObservableMap map = this.reader.getRemoteSessions();
-		map.addMapChangeListener(this);
-		for (Object session : map.values()) {
-			if (session instanceof RemoteSession) {
-				addRemoteSession((RemoteSession) session);
-			}
-		}
-
 		// TODO: this might be deprecated...
 		setToolTip(this.createToolTip());
+		addModel(reader);
 		computeState();
+	}
+
+	/**
+	 * The readerID of this ReaderAlphaImageFigure. It will not change through
+	 * the lifetime of this reader
+	 * 
+	 * @return
+	 */
+	public String getReaderId() {
+		return readerID;
 	}
 
 	/**
@@ -70,37 +78,67 @@ public class ReaderAlphaImageFigure extends AlphaImageFigure implements
 		return reader;
 	}
 
+	/**
+	 * Used to swap the model out from the Alpha Image. If null is passed in,
+	 * this ReaderAlphaImageFigure will have no underlying ReaderModel.
+	 * 
+	 * @param reader
+	 * @return
+	 */
+	public void setReader(RemoteReader reader) {
+		if (this.reader != null) {
+			cleanupRemoteReader();
+		}
+		if (reader != null) {
+			addModel(reader);
+		}
+		computeState();
+	}
+
+	/**
+	 * Private helper method to add a model. Reader should not be null
+	 * 
+	 * @param reader
+	 */
+	private void addModel(RemoteReader reader) {
+		this.reader = reader;
+		ObservableMap map = this.reader.getRemoteSessions();
+		map.addMapChangeListener(this);
+		for (Object session : map.values()) {
+			if (session instanceof RemoteSession) {
+				addRemoteSession((RemoteSession) session);
+			}
+		}
+	}
+
 	@Override
 	public IFigure getToolTip() {
 		this.setToolTip(this.createToolTip());
 		return super.getToolTip();
 	}
 
-	public String getReaderId() {
-		return this.reader.getID();
-	}
-
 	private IFigure createToolTip() {
-		Label ttl = null;
-		if (reader == null) {
-			ttl = new Label("I AM JUST A DUMMY\nsorry, no status here");
-		} else {
-			ttl = new Label(reader.getID() + "\n" + state);
-		}
-		return ttl;
+		return new Label(this.readerID + "\n" + state);
 	}
 
 	private void updateStatus(ReaderState state) {
 		this.state = state;
 		switch (state) {
+		case UNKNOWN:
+			this.setImage(Activator.getDefault().getImageRegistry().get(
+					Activator.IMG_READER_UNKNOWN));
+			break;
 		case CONNECTED:
 			this.setImage(Activator.getDefault().getImageRegistry().get(
 					Activator.IMG_READER_ON));
 			break;
-		case CONNECTING:
-			// TODO need a better image for this
+		case WORKING:
 			this.setImage(Activator.getDefault().getImageRegistry().get(
-					Activator.IMG_READER));
+					Activator.IMG_READER_WORKING));
+			break;
+		case CONNECTING:
+			this.setImage(Activator.getDefault().getImageRegistry().get(
+					Activator.IMG_READER_CONNECTING));
 			break;
 		case DISCONNECTED:
 			this.setImage(Activator.getDefault().getImageRegistry().get(
@@ -119,14 +157,27 @@ public class ReaderAlphaImageFigure extends AlphaImageFigure implements
 	private void computeState() {
 		boolean connected = false;
 		boolean connecting = false;
+		boolean working = false;
+		if (this.reader == null) {
+			updateStatus(ReaderState.UNKNOWN);
+			return;
+		}
 		for (RemoteSession s : this.sessions) {
 			if (s.getStateOfSession().equals(SessionStatus.PROCESSING)) {
 				connected = true;
+				if (!s.getRemoteJobs().isEmpty()) {
+					working = true;
+				}
 				break;
 			}
-			if (s.getStateOfSession().equals(SessionStatus.LOGGINGIN)) {
+			if (s.getStateOfSession().equals(SessionStatus.LOGGINGIN)
+					|| s.getStateOfSession().equals(SessionStatus.CONNECTING)) {
 				connecting = true;
 			}
+		}
+		if (working) {
+			updateStatus(ReaderState.WORKING);
+			return;
 		}
 		if (connected) {
 			updateStatus(ReaderState.CONNECTED);
@@ -150,7 +201,7 @@ public class ReaderAlphaImageFigure extends AlphaImageFigure implements
 
 	@Override
 	public void handleMapChange(MapChangeEvent event) {
-		// handle event when reader is swapped out
+		// handle event when obj is swapped out
 		for (Object key : event.diff.getChangedKeys()) {
 			Object newVal = event.diff.getNewValue(key);
 			Object oldVal = event.diff.getOldValue(key);
@@ -158,23 +209,31 @@ public class ReaderAlphaImageFigure extends AlphaImageFigure implements
 					&& (oldVal instanceof RemoteSession)) {
 				removeRemoteSession((RemoteSession) oldVal);
 				addRemoteSession((RemoteSession) newVal);
+			} else if (newVal instanceof RemoteJob) {
+				computeState();
 			}
 		}
 
-		// handle event when reader is added
+		// handle event when obj is added
 		for (Object key : event.diff.getAddedKeys()) {
 			Object val = event.diff.getNewValue(key);
 			if (val instanceof RemoteSession) {
 				addRemoteSession((RemoteSession) val);
 			}
+			if (val instanceof RemoteJob) {
+				computeState();
+			}
 
 		}
 
-		// handle event when reader is removed
+		// handle event when obj is removed
 		for (Object key : event.diff.getRemovedKeys()) {
 			Object val = event.diff.getOldValue(key);
 			if (val instanceof RemoteSession) {
 				removeRemoteSession((RemoteSession) val);
+			}
+			if (val instanceof RemoteJob) {
+				computeState();
 			}
 		}
 
@@ -186,8 +245,11 @@ public class ReaderAlphaImageFigure extends AlphaImageFigure implements
 	 * @param newVal
 	 */
 	private void addRemoteSession(RemoteSession newVal) {
-		((RemoteSession) newVal).addPropertyChangeListener(this);
-		sessions.add((RemoteSession) newVal);
+		RemoteSession session = (RemoteSession) newVal;
+		session.addPropertyChangeListener(this);
+		session.getRemoteJobs().addMapChangeListener(this);
+		sessions.add(session);
+		computeState();
 
 	}
 
@@ -197,8 +259,11 @@ public class ReaderAlphaImageFigure extends AlphaImageFigure implements
 	 * @param oldVal
 	 */
 	private void removeRemoteSession(RemoteSession oldVal) {
-		((RemoteSession) oldVal).removePropertyChangeListener(this);
+		RemoteSession session = (RemoteSession) oldVal;
+		session.removePropertyChangeListener(this);
+		session.getRemoteJobs().removeMapChangeListener(this);
 		sessions.remove((RemoteSession) oldVal);
+		computeState();
 
 	}
 
@@ -210,12 +275,23 @@ public class ReaderAlphaImageFigure extends AlphaImageFigure implements
 	@Override
 	public void dispose() {
 		super.dispose();
+		if (reader != null) {
+			cleanupRemoteReader();
+		}
+	}
+
+	/**
+	 * Helper method to clean up the Remote reader when it is set to null
+	 */
+	private void cleanupRemoteReader() {
 		this.reader.getRemoteSessions().removeMapChangeListener(this);
+		this.reader.removePropertyChangeListener(this);
 		Set<RemoteSession> sessionsToRemove = new HashSet<RemoteSession>(
 				this.sessions);
 		for (RemoteSession session : sessionsToRemove) {
 			removeRemoteSession(session);
 		}
+		this.reader = null;
 	}
 
 	/**
@@ -226,7 +302,16 @@ public class ReaderAlphaImageFigure extends AlphaImageFigure implements
 	 * 
 	 */
 	private enum ReaderState {
-		CONNECTED, DISCONNECTED, CONNECTING
+		/** If the RemoteReader is connected */
+		CONNECTED,
+		/** If the remote reader is disconnected */
+		DISCONNECTED,
+		/** If the remote reader is connecting */
+		CONNECTING,
+		/** If the remote reader is executing a command */
+		WORKING,
+		/** If the remote reader is not avaiable */
+		UNKNOWN
 	}
 
 }

@@ -76,6 +76,7 @@ public class ReaderSectionDescriptor extends AbstractSectionDescriptor {
 	public List getInputTypes() {
 		List<String> types = new ArrayList<String>();
 		types.add(RemoteReader.class.getName());
+		types.add("org.rifidi.edge.client.twodview.sfx.ReaderAlphaImageFigure");
 		return types;
 	}
 

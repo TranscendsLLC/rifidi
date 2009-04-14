@@ -18,7 +18,6 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.draw2d.LightweightSystem;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DropTarget;
@@ -28,8 +27,6 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
-import org.eclipse.ui.ISelectionListener;
-import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.views.properties.tabbed.ITabbedPropertySheetPageContributor;
 import org.rifidi.edge.client.model.sal.RemoteEdgeServer;
@@ -40,7 +37,7 @@ import org.rifidi.edge.client.twodview.layers.FloorPlanLayer;
 import org.rifidi.edge.client.twodview.layers.ListeningScalableLayeredPane;
 import org.rifidi.edge.client.twodview.layers.NoteLayer;
 import org.rifidi.edge.client.twodview.layers.ObjectLayer;
-import org.rifidi.edge.client.twodview.listeners.SiteViewDropTargetListener;
+import org.rifidi.edge.client.twodview.listeners.SiteViewController;
 import org.rifidi.edge.client.twodview.listeners.SiteViewKeyListener;
 import org.rifidi.edge.client.twodview.listeners.SiteViewMouseWheelListener;
 
@@ -49,7 +46,7 @@ import org.rifidi.edge.client.twodview.listeners.SiteViewMouseWheelListener;
  * 
  */
 public class SiteView extends ViewPart implements ModelManagerServiceListener,
-		ISelectionListener, ITabbedPropertySheetPageContributor, IAdaptable {
+		ITabbedPropertySheetPageContributor, IAdaptable {
 
 	private Log logger = LogFactory.getLog(SiteView.class);
 
@@ -61,7 +58,7 @@ public class SiteView extends ViewPart implements ModelManagerServiceListener,
 	private NoteLayer noteLayer;
 
 	private List<RemoteEdgeServer> servers;
-	private SiteViewDropTargetListener dropTargetListener;
+	private SiteViewController siteViewController;
 	private SiteViewSelectionProvider selectionProvider;
 
 	/**
@@ -113,11 +110,11 @@ public class SiteView extends ViewPart implements ModelManagerServiceListener,
 
 		DropTarget dt = new DropTarget(canvas, DND.DROP_MOVE);
 		dt.setTransfer(new Transfer[] { TextTransfer.getInstance() });
-		this.dropTargetListener = new SiteViewDropTargetListener(this, canvas);
+		this.siteViewController = new SiteViewController(this, canvas);
 		if (this.servers != null) {
-			this.dropTargetListener.SetModel(this.servers.get(0));
+			this.siteViewController.SetModel(this.servers.get(0));
 		}
-		dt.addDropListener(dropTargetListener);
+		dt.addDropListener(siteViewController);
 
 		MenuManager menuMgr = new MenuManager();
 		menuMgr.add(new GroupMarker("twodview"));
@@ -127,9 +124,6 @@ public class SiteView extends ViewPart implements ModelManagerServiceListener,
 		this.selectionProvider = new SiteViewSelectionProvider(lp);
 		getSite().setSelectionProvider(selectionProvider);
 		getSite().registerContextMenu(menuMgr, selectionProvider);
-
-		getSite().getWorkbenchWindow().getSelectionService()
-				.addSelectionListener(this);
 
 	}
 
@@ -176,6 +170,10 @@ public class SiteView extends ViewPart implements ModelManagerServiceListener,
 		return lp;
 	}
 
+	public SiteViewController getController() {
+		return this.siteViewController;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -186,8 +184,8 @@ public class SiteView extends ViewPart implements ModelManagerServiceListener,
 	@Override
 	public void setModel(Object model) {
 		this.servers = (List<RemoteEdgeServer>) model;
-		if (this.dropTargetListener != null) {
-			this.dropTargetListener.SetModel(servers.get(0));
+		if (this.siteViewController != null) {
+			this.siteViewController.SetModel(servers.get(0));
 		}
 	}
 
@@ -203,18 +201,9 @@ public class SiteView extends ViewPart implements ModelManagerServiceListener,
 		super.dispose();
 	}
 
-	/**
-	 * TODO: REMOVE THIS LATER. ONLY FOR DEBUG PURPOSES!
-	 */
-	@Override
-	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
-		// logger.debug("Selection: " + selection);
-
-	}
-
 	@Override
 	public String getContributorId() {
-		return "org.rifidi.edge.client.sal.tabbedPropContributer";
+		return "org.rifidi.edge.client.twodview.propertyContributor";
 	}
 
 }

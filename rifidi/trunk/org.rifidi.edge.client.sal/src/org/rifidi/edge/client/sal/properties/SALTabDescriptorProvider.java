@@ -53,7 +53,7 @@ public class SALTabDescriptorProvider implements ITabDescriptorProvider {
 	 * @param reader
 	 * @return
 	 */
-	private ITabDescriptor[] getReaderTabDescriptors(RemoteReader reader) {
+	public static ITabDescriptor[] getReaderTabDescriptors(RemoteReader reader) {
 		List<ITabDescriptor> tabDescriptors = new ArrayList<ITabDescriptor>();
 		// create a new TabDescriptor for each MBeanAttributeCategory
 		Set<String> categories = new HashSet<String>();

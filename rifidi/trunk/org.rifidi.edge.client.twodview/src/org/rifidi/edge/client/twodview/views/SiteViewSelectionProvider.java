@@ -12,13 +12,14 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.rifidi.edge.client.model.sal.RemoteReader;
 import org.rifidi.edge.client.twodview.layers.ListeningScalableLayeredPane;
 import org.rifidi.edge.client.twodview.listeners.SiteViewFigureSelectionListener;
 import org.rifidi.edge.client.twodview.sfx.ReaderAlphaImageFigure;
 
 /**
- * @author kyle
+ * The selection provider for the SiteView
+ * 
+ * @author Kyle Neumeier - kyle@pramari.com
  * 
  */
 public class SiteViewSelectionProvider implements ISelectionProvider,
@@ -95,25 +96,20 @@ public class SiteViewSelectionProvider implements ISelectionProvider,
 	}
 
 	public void dispose() {
-		if(pane!=null){
+		if (pane != null) {
 			pane.remoteImageSelectionListener(this);
 		}
 	}
 
 	@Override
 	public void figureSelected(IFigure figure) {
-		if (figure == null) {
-			setSelection(new StructuredSelection());
-			return;
-		}
-		if (figure instanceof ReaderAlphaImageFigure) {
-			RemoteReader reader = ((ReaderAlphaImageFigure) figure).getReader();
-			setSelection(new StructuredSelection(reader));
+		if ((figure instanceof ReaderAlphaImageFigure) && (figure != null)) {
+			
+			setSelection(new StructuredSelection(figure));
 			return;
 		}
 		setSelection(new StructuredSelection());
 
 	}
-
 
 }

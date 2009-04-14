@@ -21,6 +21,7 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.services.IEvaluationService;
 import org.rifidi.edge.client.model.sal.RemoteCommandConfiguration;
 import org.rifidi.edge.client.model.sal.RemoteEdgeServer;
 import org.rifidi.edge.client.model.sal.RemoteJob;
@@ -525,6 +526,9 @@ public class EdgeServerTreeContentProvider implements ITreeContentProvider,
 	public void propertyChange(PropertyChangeEvent arg0) {
 		if (arg0.getPropertyName().equals(RemoteEdgeServer.STATE_PROPERTY)) {
 			viewer.refresh(edgeServerList.get(0));
+			IEvaluationService service = (IEvaluationService) PlatformUI
+					.getWorkbench().getService(IEvaluationService.class);
+			service.requestEvaluation("org.rifidi.edge.client.sal.edgeserver.state");
 		} else if (arg0.getPropertyName().equals(
 				SessionStatePropertyBean.SESSION_STATUS_PROPERTY)) {
 			SessionStatePropertyBean bean = (SessionStatePropertyBean) arg0
