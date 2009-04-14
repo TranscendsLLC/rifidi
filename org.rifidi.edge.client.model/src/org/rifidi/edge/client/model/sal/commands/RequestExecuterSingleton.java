@@ -77,7 +77,7 @@ public class RequestExecuterSingleton implements Runnable {
 				final RemoteEdgeServerCommand request = requestQueue.take();
 				logger.debug("executing: " + request.getType());
 				request.execute();
-				Display.getDefault().asyncExec(new Runnable() {
+				Display.getDefault().syncExec(new Runnable() {
 					@Override
 					public void run() {
 						request.executeEclipse();

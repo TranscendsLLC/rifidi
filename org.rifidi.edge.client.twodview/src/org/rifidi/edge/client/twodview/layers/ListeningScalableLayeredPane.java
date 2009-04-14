@@ -10,7 +10,11 @@
  */
 package org.rifidi.edge.client.twodview.layers;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.MouseEvent;
 import org.eclipse.draw2d.MouseListener;
@@ -18,9 +22,7 @@ import org.eclipse.draw2d.MouseMotionListener;
 import org.eclipse.draw2d.ScalableLayeredPane;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Rectangle;
-import org.eclipse.ui.PlatformUI;
-import org.rifidi.edge.client.twodview.Activator;
-import org.rifidi.edge.client.twodview.sfx.AlphaImageFigure;
+import org.rifidi.edge.client.twodview.listeners.SiteViewFigureSelectionListener;
 import org.rifidi.edge.client.twodview.views.SiteView;
 
 /**
@@ -30,22 +32,23 @@ import org.rifidi.edge.client.twodview.views.SiteView;
 public class ListeningScalableLayeredPane extends ScalableLayeredPane implements
 		MouseListener, MouseMotionListener {
 
-	private IFigure selectedImage;
-	private SiteView siteView;
+	/** The figure that is currently selected */
+	private IFigure selectedFigure;
 	private int deltaX, deltaY, startX, startY;
 
 	public static final int FLOORPLANLAYER = 0;
 	public static final int OBJECTLAYER = 1;
 	public static final int EFFECTLAYER = 2;
 	public static final int NOTELAYER = 3;
-	private Log logger;
+	private Log logger = LogFactory.getLog(ListeningScalableLayeredPane.class);
+	private Set<SiteViewFigureSelectionListener> listeners;
 
 	public ListeningScalableLayeredPane() {
 		super();
 		setMaximumSize(new Dimension(1024, 768));
 		addMouseListener(this);
 		addMouseMotionListener(this);
-
+		this.listeners = new HashSet<SiteViewFigureSelectionListener>();
 	}
 
 	/*
@@ -57,21 +60,6 @@ public class ListeningScalableLayeredPane extends ScalableLayeredPane implements
 	 */
 	@Override
 	public void mouseDoubleClicked(MouseEvent arg0) {
-		if (arg0.button == 1) {
-
-			AlphaImageFigure mockReader = new AlphaImageFigure(Activator
-					.imageDescriptorFromPlugin(
-							"org.rifidi.edge.client.twodview",
-							"icons/reader-24x24.png").createImage());
-			mockReader.setBounds(new Rectangle(arg0.x, arg0.y, mockReader
-					.getImage().getBounds().width, mockReader.getImage()
-					.getBounds().height));
-			getLayer(OBJECTLAYER).add(mockReader);
-
-		} else {
-			getLayer(OBJECTLAYER).removeAll();
-		}
-
 	}
 
 	/*
@@ -83,30 +71,24 @@ public class ListeningScalableLayeredPane extends ScalableLayeredPane implements
 	 */
 	@Override
 	public void mousePressed(MouseEvent arg0) {
-		// selectedImage = null;
 		// sets the starting point of the movement
 		startX = arg0.x;
 		startY = arg0.y;
 
 		try {
-			siteView = (SiteView) PlatformUI.getWorkbench()
-					.getActiveWorkbenchWindow().getActivePage().findView(
-							"org.rifidi.edge.client.twodview.views.SiteView");
 
-			selectedImage = findFigureAt(arg0.getLocation()); // Gets
-			// ImageFigure
-			// at current
-			// Location
+			selectedFigure = findFigureAt(arg0.getLocation()); // Gets
 
 		} catch (Exception e) {
-			logger.debug("ERROR: " +e.toString());
-			selectedImage = null;
+			logger.error("ERROR: ", e);
+			selectedFigure = null;
 
 		} finally {
-			if (siteView != null) {
-				System.out.println("strucselec: " + siteView.getSelection());
-				siteView.fireSelectionChanged();
+
+			for (SiteViewFigureSelectionListener l : listeners) {
+				l.figureSelected(selectedFigure);
 			}
+
 		}
 
 		// Mouse Events should be consumed after usage to avoid ugly
@@ -124,7 +106,7 @@ public class ListeningScalableLayeredPane extends ScalableLayeredPane implements
 	 */
 	@Override
 	public void mouseReleased(MouseEvent arg0) {
-		// selectedImage = null;
+		// selectedFigure = null;
 
 	}
 
@@ -137,7 +119,7 @@ public class ListeningScalableLayeredPane extends ScalableLayeredPane implements
 	 */
 	@Override
 	public void mouseDragged(MouseEvent arg0) {
-		if (selectedImage != null) {
+		if (selectedFigure != null) {
 			// calculates the moving distance in x and y direction
 			deltaX = arg0.x - startX;
 			deltaY = arg0.y - startY;
@@ -145,12 +127,13 @@ public class ListeningScalableLayeredPane extends ScalableLayeredPane implements
 			try {
 				// are we dragging the floorplan? yes -> panning
 				@SuppressWarnings("unused")
-				FloorPlanLayer fpl = (FloorPlanLayer) selectedImage.getParent();
+				FloorPlanLayer fpl = (FloorPlanLayer) selectedFigure
+						.getParent();
 				pan();
 			} catch (ClassCastException e) {
 				// not dragging the floorplan? -> just move the selected figure
-				moveFigure(selectedImage);
-				selectedImage.getParent().repaint();
+				moveFigure(selectedFigure);
+				selectedFigure.getParent().repaint();
 			}
 			// make sure to get the right delta
 			startX = arg0.x;
@@ -245,32 +228,24 @@ public class ListeningScalableLayeredPane extends ScalableLayeredPane implements
 	 * Returns the currently selected IFigure element on the pane can be in each
 	 * one of the layers
 	 * 
-	 * @return selectedImage - IFigure
+	 * @return selectedFigure - IFigure
 	 */
 	public IFigure getSelectedImage() {
-		try {
-			if (selectedImage != null) {
-				return this.selectedImage;
-			} else
-				return null;
-		} catch (Exception e) {
-			logger.debug("ERROR: " +e.toString());
-			return null;
-		}
-
-	}
-
-	/**
-	 * Sets the selected Image in the pane.
-	 * 
-	 * @param selectedImage
-	 */
-	public void setSelectedImage(IFigure selectedImage) {
-		this.selectedImage = selectedImage;
+		return this.selectedFigure;
 	}
 
 	public void removeCurrentSelection() {
-		getLayer(OBJECTLAYER).remove(selectedImage);
+		getLayer(OBJECTLAYER).remove(selectedFigure);
+	}
+
+	public void addImageSelectionListener(
+			SiteViewFigureSelectionListener listener) {
+		this.listeners.add(listener);
+	}
+
+	public void remoteImageSelectionListener(
+			SiteViewFigureSelectionListener listener) {
+		this.listeners.remove(listener);
 	}
 
 }

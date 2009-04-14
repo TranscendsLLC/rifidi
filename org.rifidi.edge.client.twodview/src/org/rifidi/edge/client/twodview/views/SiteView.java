@@ -10,19 +10,15 @@
  */
 package org.rifidi.edge.client.twodview.views;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.eclipse.draw2d.IFigure;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.draw2d.LightweightSystem;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DropTarget;
@@ -32,9 +28,11 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.ui.ISelectionListener;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.part.ViewPart;
+import org.eclipse.ui.views.properties.tabbed.ITabbedPropertySheetPageContributor;
 import org.rifidi.edge.client.model.sal.RemoteEdgeServer;
-import org.rifidi.edge.client.model.sal.RemoteReader;
 import org.rifidi.edge.client.sal.modelmanager.ModelManagerService;
 import org.rifidi.edge.client.sal.modelmanager.ModelManagerServiceListener;
 import org.rifidi.edge.client.twodview.layers.EffectLayer;
@@ -45,14 +43,13 @@ import org.rifidi.edge.client.twodview.layers.ObjectLayer;
 import org.rifidi.edge.client.twodview.listeners.SiteViewDropTargetListener;
 import org.rifidi.edge.client.twodview.listeners.SiteViewKeyListener;
 import org.rifidi.edge.client.twodview.listeners.SiteViewMouseWheelListener;
-import org.rifidi.edge.client.twodview.sfx.ReaderAlphaImageFigure;
 
 /**
  * @author Tobias Hoppenthaler - tobias@pramari.com
  * 
  */
-public class SiteView extends ViewPart implements ISelectionProvider,
-		ModelManagerServiceListener {
+public class SiteView extends ViewPart implements ModelManagerServiceListener,
+		ISelectionListener, ITabbedPropertySheetPageContributor, IAdaptable {
 
 	private Log logger = LogFactory.getLog(SiteView.class);
 
@@ -62,14 +59,15 @@ public class SiteView extends ViewPart implements ISelectionProvider,
 	private ObjectLayer objectLayer;
 	private EffectLayer effectLayer;
 	private NoteLayer noteLayer;
-	private ArrayList<ISelectionChangedListener> listeners;
-	private ArrayList<RemoteEdgeServer> servers;
+
+	private List<RemoteEdgeServer> servers;
+	private SiteViewDropTargetListener dropTargetListener;
+	private SiteViewSelectionProvider selectionProvider;
 
 	/**
 	 * 
 	 */
 	public SiteView() {
-		listeners = new ArrayList<ISelectionChangedListener>();
 		ModelManagerService.getInstance().addController(this);
 	}
 
@@ -113,18 +111,25 @@ public class SiteView extends ViewPart implements ISelectionProvider,
 
 		// Drop Target and DT-Listener for Drag and Drop
 
-		DropTarget dt = new DropTarget(canvas, DND.DROP_COPY | DND.DROP_MOVE
-				| DND.DROP_LINK | DND.DROP_DEFAULT);
+		DropTarget dt = new DropTarget(canvas, DND.DROP_MOVE);
 		dt.setTransfer(new Transfer[] { TextTransfer.getInstance() });
-		dt.addDropListener(new SiteViewDropTargetListener(this, canvas));
+		this.dropTargetListener = new SiteViewDropTargetListener(this, canvas);
+		if (this.servers != null) {
+			this.dropTargetListener.SetModel(this.servers.get(0));
+		}
+		dt.addDropListener(dropTargetListener);
 
 		MenuManager menuMgr = new MenuManager();
 		menuMgr.add(new GroupMarker("twodview"));
 
 		Menu menu = menuMgr.createContextMenu(canvas);
 		canvas.setMenu(menu);
-		getSite().setSelectionProvider(this);
-		getSite().registerContextMenu(menuMgr, this);
+		this.selectionProvider = new SiteViewSelectionProvider(lp);
+		getSite().setSelectionProvider(selectionProvider);
+		getSite().registerContextMenu(menuMgr, selectionProvider);
+
+		getSite().getWorkbenchWindow().getSelectionService()
+				.addSelectionListener(this);
 
 	}
 
@@ -167,67 +172,8 @@ public class SiteView extends ViewPart implements ISelectionProvider,
 		return noteLayer;
 	}
 
-	@Override
-	public void addSelectionChangedListener(ISelectionChangedListener listener) {
-		// logger.debug("addSelectionChangedListener");
-		this.listeners.add(listener);
-
-	}
-
-	@Override
-	public ISelection getSelection() {
-		// logger.debug("getSelection() called");
-		RemoteReader rr = null;
-
-		if (lp != null) {
-			// logger.debug("LP not null");
-			try {
-				IFigure ifig = lp.getSelectedImage();
-				if (ifig == null)
-					return new StructuredSelection();
-				ReaderAlphaImageFigure raif = (ReaderAlphaImageFigure) ifig;
-
-				rr = raif.getReader();
-				StructuredSelection ss = new StructuredSelection(rr);
-				// logger.debug("returning RemoteReader in StructuredSelection: "
-				// + ss.toString());
-				return ss;
-			} catch (ClassCastException e) {
-				return new StructuredSelection();
-			} catch (Exception e) {
-				// logger.debug("ERROR: "+e.toString());
-				return new StructuredSelection();
-			}
-
-		} else
-			return new StructuredSelection();
-
-	}
-
-	@Override
-	public void removeSelectionChangedListener(
-			ISelectionChangedListener listener) {
-		// logger.debug("removeSelectionChangedListener");
-		listeners.remove(listener);
-	}
-
-	@Override
-	public void setSelection(ISelection selection) {
-		// logger.debug("setSelection");
-		// from objectLayer get Image where Reader is...
-	}
-
 	public ListeningScalableLayeredPane getLayeredPane() {
 		return lp;
-	}
-
-	public void fireSelectionChanged() {
-
-		for (ISelectionChangedListener listener : listeners) {
-			SelectionChangedEvent sce = new SelectionChangedEvent(this,
-					getSelection());
-			listener.selectionChanged(sce);
-		}
 	}
 
 	/*
@@ -239,8 +185,10 @@ public class SiteView extends ViewPart implements ISelectionProvider,
 	 */
 	@Override
 	public void setModel(Object model) {
-		logger.debug("MODEL SET! " + model);
-
+		this.servers = (List<RemoteEdgeServer>) model;
+		if (this.dropTargetListener != null) {
+			this.dropTargetListener.SetModel(servers.get(0));
+		}
 	}
 
 	/*
@@ -250,8 +198,23 @@ public class SiteView extends ViewPart implements ISelectionProvider,
 	 */
 	@Override
 	public void dispose() {
-		super.dispose();
 		ModelManagerService.getInstance().removeController(this);
+		this.selectionProvider.dispose();
+		super.dispose();
+	}
+
+	/**
+	 * TODO: REMOVE THIS LATER. ONLY FOR DEBUG PURPOSES!
+	 */
+	@Override
+	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
+		// logger.debug("Selection: " + selection);
+
+	}
+
+	@Override
+	public String getContributorId() {
+		return "org.rifidi.edge.client.sal.tabbedPropContributer";
 	}
 
 }

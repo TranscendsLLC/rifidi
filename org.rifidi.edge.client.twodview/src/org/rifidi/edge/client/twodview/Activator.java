@@ -7,7 +7,6 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
@@ -17,7 +16,7 @@ import org.osgi.framework.BundleContext;
 public class Activator extends AbstractUIPlugin {
 
 	// The plug-in ID
-	public static final String PLUGIN_ID = "org.rifidi.dashboard.twodview";
+	public static final String PLUGIN_ID = "org.rifidi.edge.client.twodview";
 
 	// The shared instance
 	private static Activator plugin;
@@ -25,7 +24,6 @@ public class Activator extends AbstractUIPlugin {
 	public static final String IMG_READER = "reader";
 	public static final String IMG_READER_ON = "readeron";
 	public static final String IMG_READER_OFF = "readeroff";
-	//public static final String IMG_READER_ERR = "readererr";
 
 	/**
 	 * The folder for all scenes

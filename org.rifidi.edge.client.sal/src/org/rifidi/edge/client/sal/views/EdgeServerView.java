@@ -8,6 +8,8 @@ import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.dnd.DND;
@@ -22,6 +24,7 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.views.properties.tabbed.ITabbedPropertySheetPageContributor;
+import org.rifidi.edge.client.model.sal.RemoteReader;
 import org.rifidi.edge.client.sal.controller.edgeserver.EdgeServerTreeContentProvider;
 import org.rifidi.edge.client.sal.controller.edgeserver.EdgeServerTreeLabelProvider;
 import org.rifidi.edge.client.sal.modelmanager.ModelManagerService;
@@ -70,7 +73,7 @@ public class EdgeServerView extends ViewPart implements
 		createContextMenu();
 		this.getSite().setSelectionProvider(treeViewer);
 		ModelManagerService.getInstance().addController(this);
-		treeViewer.addDragSupport(DND.DROP_COPY|DND.DROP_MOVE|DND.DROP_LINK, new Transfer[] { TextTransfer
+		treeViewer.addDragSupport(DND.DROP_MOVE, new Transfer[] { TextTransfer
 				.getInstance() }, this);
 	}
 
@@ -126,20 +129,28 @@ public class EdgeServerView extends ViewPart implements
 
 	@Override
 	public void dragFinished(DragSourceEvent event) {
-		System.out.println("DRAG FINISHED: ");
 
 	}
 
 	@Override
 	public void dragSetData(DragSourceEvent event) {
-		System.out.println("DRAG SET DATA: " + event.data);
+		if (TextTransfer.getInstance().isSupportedType(event.dataType)) {
+			ISelection sel = treeViewer.getSelection();
+			Object o = ((TreeSelection) sel).getFirstElement();
+			event.data = ((RemoteReader) o).getID();
+		}
 
 	}
 
 	@Override
 	public void dragStart(DragSourceEvent event) {
-		System.out.println("DRAG START: " + event.data);
-
+		ISelection sel = treeViewer.getSelection();
+		Object o = ((TreeSelection) sel).getFirstElement();
+		if (o instanceof RemoteReader) {
+			event.doit = true;
+			return;
+		}
+		event.doit = false;
 	}
 
 	/*

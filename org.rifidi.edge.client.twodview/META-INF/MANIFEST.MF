@@ -11,7 +11,8 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.core.resources;bundle-version="3.4.1",
  org.eclipse.core.databinding;bundle-version="1.1.1",
  org.eclipse.jface.databinding;bundle-version="1.2.1",
- org.rifidi.edge.client.sal;bundle-version="1.0.0"
+ org.rifidi.edge.client.sal;bundle-version="1.0.0",
+ org.eclipse.ui.views.properties.tabbed;bundle-version="3.4.1"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Import-Package: javax.jms,

@@ -65,7 +65,6 @@ public class ChangeFloorPlan implements IHandler {
 	 */
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-//		System.out.println("Ich tue was...");
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		IWorkspaceRoot root = workspace.getRoot();
 		IProject project = root.getProject("MyProject");
@@ -96,7 +95,6 @@ public class ChangeFloorPlan implements IHandler {
 				.getActiveWorkbenchWindow().getActivePage().findView(
 						"org.rifidi.edge.client.twodview.views.SiteView");
 		if(siteView!=null)siteView.getFloorplanLayer().setFloorplan(selected);
-//		System.out.println(selected);
 
 		return null;
 	}
