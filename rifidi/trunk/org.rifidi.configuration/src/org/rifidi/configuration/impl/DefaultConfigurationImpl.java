@@ -3,7 +3,6 @@
  */
 package org.rifidi.configuration.impl;
 
-import java.beans.PropertyChangeSupport;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
