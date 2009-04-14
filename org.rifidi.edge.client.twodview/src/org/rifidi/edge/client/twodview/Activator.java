@@ -21,9 +21,11 @@ public class Activator extends AbstractUIPlugin {
 	// The shared instance
 	private static Activator plugin;
 
-	public static final String IMG_READER = "reader";
+	public static final String IMG_READER_UNKNOWN = "readerunknown";
 	public static final String IMG_READER_ON = "readeron";
 	public static final String IMG_READER_OFF = "readeroff";
+	public static final String IMG_READER_CONNECTING = "readerconnecting";
+	public static final String IMG_READER_WORKING = "readeroworking";
 
 	/**
 	 * The folder for all scenes
@@ -104,10 +106,13 @@ public class Activator extends AbstractUIPlugin {
 	@Override
 	protected void initializeImageRegistry(ImageRegistry reg) {
 		super.initializeImageRegistry(reg);
-		reg.put(IMG_READER, getImageDescriptor("icons/reader-24x24.png"));
-		reg.put(IMG_READER_ON, getImageDescriptor("icons/reader-24x24_on.png"));
-		reg.put(IMG_READER_OFF,
-				getImageDescriptor("icons/reader-24x24_off.png"));
+		reg.put(IMG_READER_UNKNOWN, getImageDescriptor("icons/reader-unknown.png"));
+		reg.put(IMG_READER_ON, getImageDescriptor("icons/reader-connected.png"));
+		reg.put(IMG_READER_OFF, getImageDescriptor("icons/reader-disconnected.png"));
+		reg.put(IMG_READER_CONNECTING,
+				getImageDescriptor("icons/reader-connecting.png"));
+		reg.put(IMG_READER_WORKING,
+				getImageDescriptor("icons/reader-working.png"));
 	}
 
 }

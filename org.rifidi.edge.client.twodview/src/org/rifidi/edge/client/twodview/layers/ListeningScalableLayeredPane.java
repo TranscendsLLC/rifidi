@@ -23,7 +23,6 @@ import org.eclipse.draw2d.ScalableLayeredPane;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.rifidi.edge.client.twodview.listeners.SiteViewFigureSelectionListener;
-import org.rifidi.edge.client.twodview.views.SiteView;
 
 /**
  * @author Tobias Hoppenthaler - tobias@pramari.com

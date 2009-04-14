@@ -51,10 +51,12 @@ public class Command_TagBatchReceived implements RemoteEdgeServerCommand {
 	public void executeEclipse() {
 		RemoteReader reader = (RemoteReader) edgeServer.getRemoteReaders().get(
 				batch.getReaderID());
-		// remove all tags that are not in the new set
-		reader.getTags().retainAll(tags);
-		// add all the new tags
-		reader.getTags().addAll(tags);
+		if (reader != null) {
+			// remove all tags that are not in the new set
+			reader.getTags().retainAll(tags);
+			// add all the new tags
+			reader.getTags().addAll(tags);
+		}
 	}
 
 	/*

@@ -3,8 +3,8 @@
  */
 package org.rifidi.edge.client.model.sal.commands;
 
-import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -34,7 +34,7 @@ public class RequestExecuterSingleton implements Runnable {
 	 * Constructor
 	 */
 	private RequestExecuterSingleton() {
-		requestQueue = new ArrayBlockingQueue<RemoteEdgeServerCommand>(1);
+		requestQueue = new LinkedBlockingQueue<RemoteEdgeServerCommand>();
 	}
 
 	/**

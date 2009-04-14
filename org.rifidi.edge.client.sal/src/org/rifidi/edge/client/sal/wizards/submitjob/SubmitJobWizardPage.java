@@ -160,7 +160,7 @@ public class SubmitJobWizardPage extends WizardPage {
 	private void fillTree(Tree tree) {
 		Map<String, TreeItem> commandTypesToTreeItem = new HashMap<String, TreeItem>();
 		for (RemoteCommandConfiguration config : this.commandConfigurations) {
-			TreeItem item = commandTypesToTreeItem.get(config);
+			TreeItem item = commandTypesToTreeItem.get(config.getCommandType());
 			if (item == null) {
 				item = new TreeItem(tree, SWT.None);
 				item.setData(config.getCommandType());

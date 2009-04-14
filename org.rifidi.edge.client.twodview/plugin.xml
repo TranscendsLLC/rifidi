@@ -46,7 +46,7 @@
                <iterate
                      ifEmpty="false">
                   <instanceof
-                        value="org.rifidi.edge.client.model.sal.RemoteReader">
+                        value="org.rifidi.edge.client.twodview.sfx.AlphaImageFigure">
                   </instanceof>
                </iterate>
             </visibleWhen>
@@ -73,6 +73,13 @@
                type="org.eclipse.ui.views.properties.IPropertySheetPage">
          </adapter>
       </factory>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views.properties.tabbed.propertyContributor">
+      <propertyContributor
+            contributorId="org.rifidi.edge.client.twodview.propertyContributor"
+            tabDescriptorProvider="org.rifidi.edge.client.twodview.properties.SiteViewTabDescriptorProvider">
+      </propertyContributor>
    </extension>
 
 </plugin>
