@@ -53,7 +53,7 @@ public class Command_Disconnect implements RemoteEdgeServerCommand {
 			remoteEdgeServer.session.close();
 			remoteEdgeServer.consumer.close();
 		} catch (JMSException e) {
-			logger.error("Error when disconnecting: ", e);
+			logger.warn("Error when disconnecting: " + e.getMessage());
 		}
 
 	}

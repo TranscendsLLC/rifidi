@@ -82,6 +82,7 @@ public class Command_Update implements RemoteEdgeServerCommand {
 			if ((!startupTime.equals(0l)) && (!timestamp.equals(startupTime))) {
 				RequestExecuterSingleton.getInstance().scheduleRequest(
 						new Command_Refresh(remoteEdgeServer));
+				error=true;
 				return;
 			}
 			remoteEdgeServer.startupTime = timestamp;
@@ -115,7 +116,6 @@ public class Command_Update implements RemoteEdgeServerCommand {
 			error = true;
 			remoteEdgeServer.disconnect();
 		}
-
 	}
 
 	/*
