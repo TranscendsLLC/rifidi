@@ -95,10 +95,10 @@ public class LLRPReaderSession extends AbstractReaderSession implements
 		boolean connected = false;
 		for (int connCount = 0; connCount < maxConAttempts && !connected; connCount++) {
 			try {
-				System.out.println("JUST BEFORE THE CONNECTION ATTEMPT");
+				// System.out.println("JUST BEFORE THE CONNECTION ATTEMPT");
 				((LLRPConnector) connection).connect();
 				connected = true;
-				System.out.println("JUST AFTER THE CONNECTION ATTEMPT");
+				// System.out.println("JUST AFTER THE CONNECTION ATTEMPT");
 			} catch (LLRPConnectionAttemptFailedException e) {
 				logger.debug("Unable to connect to LLRP");
 			}
@@ -116,7 +116,7 @@ public class LLRPReaderSession extends AbstractReaderSession implements
 		if (!connected) {
 			return;
 		}
-		
+
 		executor = new ScheduledThreadPoolExecutor(1);
 
 		try {
@@ -128,9 +128,8 @@ public class LLRPReaderSession extends AbstractReaderSession implements
 
 			StatusCode sc = config_response.getLLRPStatus().getStatusCode();
 			if (sc.intValue() != StatusCode.M_Success) {
-				logger
-						.debug("SET_READER_CONFIG_RESPONSE returned with status code "
-								+ sc.intValue());
+				logger.debug("SET_READER_CONFIG_RESPONSE "
+						+ "returned with status code " + sc.intValue());
 			}
 
 			if (!processing.compareAndSet(false, true)) {
@@ -158,14 +157,14 @@ public class LLRPReaderSession extends AbstractReaderSession implements
 			}
 		}
 		executor.shutdownNow();
-		executor=null;
+		executor = null;
 	}
 
 	/**
 	 * 
 	 */
 	public LLRPMessage transact(LLRPMessage message) {
-		System.out.println("Sending an LLRP message: " + message.getName());
+		// System.out.println("Sending an LLRP message: " + message.getName());
 		LLRPMessage retVal = null;
 		try {
 			retVal = this.connection.transact(message);
@@ -198,6 +197,7 @@ public class LLRPReaderSession extends AbstractReaderSession implements
 	@Override
 	public void messageReceived(LLRPMessage arg0) {
 		logger.debug("Asynchronous message recieved");
+		// System.out.println("Asynchronous message recieved");
 		if (arg0 instanceof RO_ACCESS_REPORT) {
 			RO_ACCESS_REPORT rar = (RO_ACCESS_REPORT) arg0;
 			List<TagReportData> trdl = rar.getTagReportDataList();
@@ -206,13 +206,17 @@ public class LLRPReaderSession extends AbstractReaderSession implements
 
 			for (TagReportData t : trdl) {
 				// AntennaID antid = t.getAntennaID();
+				// System.out.println("EPC data recieved");
 				EPC_96 id = (EPC_96) t.getEPCParameter();
 				tagdatastring.add(id.getEPC().toString(16));
+				// System.out.println("EPC data processed");
 			}
 
 			for (BigInteger m : parseString(tagdatastring)) {
+				// System.out.println("Sending the bigint to the template");
 				this.getTemplate().send(this.getDestination(),
 						new ObjectMessageCreator(m));
+				// System.out.println("Finished sending the bigint to the template");
 			}
 		}
 	}
@@ -308,7 +312,6 @@ public class LLRPReaderSession extends AbstractReaderSession implements
 	private class ObjectMessageCreator implements MessageCreator {
 
 		/** The message that should be part of the object. */
-		private BigInteger message;
 		private ActiveMQObjectMessage objectMessage;
 
 		/**
@@ -318,7 +321,6 @@ public class LLRPReaderSession extends AbstractReaderSession implements
 		 */
 		public ObjectMessageCreator(BigInteger message) {
 			super();
-			this.message = message;
 			objectMessage = new ActiveMQObjectMessage();
 			EPCGeneration2Event gen2event = new EPCGeneration2Event();
 			gen2event.setEPCMemory(message);
