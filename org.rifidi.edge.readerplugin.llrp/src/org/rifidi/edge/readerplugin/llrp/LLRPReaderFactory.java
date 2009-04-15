@@ -35,6 +35,8 @@ public class LLRPReaderFactory extends AbstractReaderFactory<LLRPReader> {
 	private static final String description = "The LLRP is an EPC standard protocol";
 	/** Name of the readerSession. */
 	private static final String name = "LLRP";
+	/** A JMS event notification sender*/
+	private NotifierServiceWrapper notifierServiceWrapper;
 	
 	
 	private Destination destination;
@@ -45,6 +47,15 @@ public class LLRPReaderFactory extends AbstractReaderFactory<LLRPReader> {
 	 * 
 	 */
 	public LLRPReaderFactory() {
+	}
+	
+	/**
+	 * Called by spring
+	 * 
+	 * @param wrapper
+	 */
+	public void setNotifierServiceWrapper(NotifierServiceWrapper wrapper) {
+		this.notifierServiceWrapper = wrapper;
 	}
 	
 	/**
@@ -89,6 +100,7 @@ public class LLRPReaderFactory extends AbstractReaderFactory<LLRPReader> {
 	public void customConfig(LLRPReader instance) {
 		instance.setDestination(destination);
 		instance.setTemplate(template);
+		instance.setNotifiyServiceWrapper(this.notifierServiceWrapper);
 		Set<String> interfaces = new HashSet<String>();
 		interfaces.add(AbstractReader.class.getName());
 		instance.register(getContext(), interfaces);

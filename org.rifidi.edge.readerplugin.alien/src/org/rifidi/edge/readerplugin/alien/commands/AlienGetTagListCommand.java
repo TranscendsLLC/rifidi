@@ -140,7 +140,7 @@ public class AlienGetTagListCommand extends AbstractAlien9800Command {
 		} catch (IOException ex) {
 			logger.warn("IOException while executing command: " + ex);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.warn("Exception while executing command: " + e);
 		}
 	}
 
