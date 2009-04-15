@@ -39,7 +39,7 @@ public class LLRPGetTagListCommandConfiguration extends
 	 * org.rifidi.edge.core.commands.AbstractCommandConfiguration#getCommand()
 	 */
 	@Override
-	public LLRPGetTagListCommand getCommand() {
+	public LLRPGetTagListCommand getCommand(String readerID) {
 		LLRPGetTagListCommand llrpgtlc = new LLRPGetTagListCommand(super
 				.getID());
 		return llrpgtlc;

@@ -37,7 +37,7 @@ public class LLRPROSpecCommandConfiguration extends
 	 * @see org.rifidi.edge.core.commands.AbstractCommandConfiguration#getCommand()
 	 */
 	@Override
-	public LLRPROSpecCommand getCommand() {
+	public LLRPROSpecCommand getCommand(String readerID) {
 		LLRPROSpecCommand llrprsc = new LLRPROSpecCommand(super.getID());
 		llrprsc.setRoSpecID(roSpecID);
 		return llrprsc;
