@@ -1,4 +1,4 @@
-package org.rifidi.edge.epcglobal.aleread;
+package org.rifidi.edge.epcglobal.aleread.wrappers;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -19,6 +19,9 @@ import org.rifidi.edge.epcglobal.ale.api.read.ws.DuplicateSubscriptionExceptionR
 import org.rifidi.edge.epcglobal.ale.api.read.ws.ECSpecValidationExceptionResponse;
 import org.rifidi.edge.epcglobal.ale.api.read.ws.InvalidURIExceptionResponse;
 import org.rifidi.edge.epcglobal.ale.api.read.ws.NoSuchSubscriberExceptionResponse;
+import org.rifidi.edge.epcglobal.aleread.ECReportmanager;
+import org.rifidi.edge.epcglobal.aleread.StartEvent;
+import org.rifidi.edge.epcglobal.aleread.Trigger;
 import org.rifidi.edge.lr.LogicalReader;
 import org.rifidi.edge.lr.LogicalReaderManagementService;
 
@@ -62,7 +65,7 @@ public class RifidiECSpec {
 	private List<EPStatement> stopTriggerStatements;
 	/** List containing statements that trigger when data is available. */
 	private List<EPStatement> whenDataAvailableStatements;
-	/** Report manager for this spec. */
+	/** RifidiReport manager for this spec. */
 	private ECReportmanager ecReportmanager = null;
 	/** Thread that runs the reportmanager. */
 	private Thread reportThread = null;
@@ -80,13 +83,14 @@ public class RifidiECSpec {
 	 * @param rifidiBoundarySpec
 	 * @param readers
 	 * @param primarykeys
+	 * @param reports
 	 * @throws InvalidURIExceptionResponse
 	 * @throws ECSpecValidationExceptionResponse
 	 */
 	public RifidiECSpec(String name, ECSpec spec, EPServiceProvider esper,
 			ScheduledExecutorService triggerpool,
 			RifidiBoundarySpec rifidiBoundarySpec, Set<LogicalReader> readers,
-			Set<String> primarykeys) {
+			Set<String> primarykeys, List<RifidiReport> reports) {
 		this.rifidiBoundarySpec = rifidiBoundarySpec;
 		this.triggerpool = triggerpool;
 		this.spec = spec;
@@ -102,9 +106,9 @@ public class RifidiECSpec {
 		stableSetIntervalStatements = new ArrayList<EPStatement>();
 		readers = new HashSet<LogicalReader>();
 		if (!spec.isIncludeSpecInReports()) {
-			ecReportmanager = new ECReportmanager(name, esper);
+			ecReportmanager = new ECReportmanager(name, esper, reports);
 		} else {
-			ecReportmanager = new ECReportmanager(name, esper, spec);
+			ecReportmanager = new ECReportmanager(name, esper, spec, reports);
 		}
 
 		for (ECReportSpec reportSpec : spec.getReportSpecs().getReportSpec()) {
@@ -405,13 +409,13 @@ public class RifidiECSpec {
 			}
 			// kill all queries
 			for (EPStatement statement : collectQueryStatements()) {
-				statement.destroy();
+				statement.stop();
 			}
 			// reverse the collection to prevent inconsistencies while deleting
-			Collections.reverse(statements);
+			Collections.reverse(new ArrayList<EPStatement>(statements));
 			// destroy statements
 			for (EPStatement statement : statements) {
-				statement.destroy();
+				statement.stop();
 			}
 			// kill all triggers
 			for (ScheduledFuture<?> future : futures) {
@@ -421,6 +425,7 @@ public class RifidiECSpec {
 					logger.fatal("Unable to kill trigger: " + e);
 				}
 			}
+			futures.clear();
 		}
 	}
 
@@ -431,6 +436,16 @@ public class RifidiECSpec {
 		synchronized (statements) {
 			// make sure we are stopped
 			stop();
+			// destroy all statements
+			for (EPStatement statement : collectQueryStatements()) {
+				statement.destroy();
+			}
+			// reverse the collection to prevent inconsistencies while deleting
+			Collections.reverse(statements);
+			// destroy statements
+			for (EPStatement statement : statements) {
+				statement.destroy();
+			}
 			// release all readers that have already been aquired
 			for (String reader : spec.getLogicalReaders().getLogicalReader()) {
 				try {

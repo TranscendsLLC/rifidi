@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.rifidi.edge.epcglobal.aleread;
+package org.rifidi.edge.epcglobal.aleread.wrappers;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -11,6 +11,7 @@ import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.epcglobal.ale.api.read.data.ECBoundarySpec;
 import org.rifidi.edge.epcglobal.ale.api.read.ws.ECSpecValidationExceptionResponse;
 import org.rifidi.edge.epcglobal.ale.api.read.ws.InvalidURIExceptionResponse;
+import org.rifidi.edge.epcglobal.aleread.Trigger;
 import org.rifidi.edge.epcglobal.aleread.service.TriggerFactoryService;
 
 /**

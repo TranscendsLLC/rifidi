@@ -4,6 +4,7 @@ import java.util.TimeZone;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.rifidi.edge.epcglobal.aleread.wrappers.RifidiECSpec;
 
 import com.espertech.esper.client.EPRuntime;
 

@@ -4,8 +4,8 @@
 package org.rifidi.edge.epcglobal.aleread.service;
 
 import org.rifidi.edge.epcglobal.ale.api.read.ws.InvalidURIExceptionResponse;
-import org.rifidi.edge.epcglobal.aleread.RifidiECSpec;
 import org.rifidi.edge.epcglobal.aleread.Trigger;
+import org.rifidi.edge.epcglobal.aleread.wrappers.RifidiECSpec;
 import org.rifidi.edge.esper.EsperManagementService;
 
 import com.espertech.esper.client.EPServiceProvider;
