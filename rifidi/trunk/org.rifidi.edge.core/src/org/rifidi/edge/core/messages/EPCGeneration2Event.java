@@ -81,7 +81,7 @@ public class EPCGeneration2Event extends EPCGeneration1Event {
 	 * 
 	 * @return
 	 */
-	public String getAFI() {
+	public String getAfi() {
 		return readMemory(1, 8, 24).toString(16);
 	}
 	
@@ -89,7 +89,7 @@ public class EPCGeneration2Event extends EPCGeneration1Event {
 	 * Get the AFI in DEC
 	 * @return
 	 */
-	public String getAFIDecimal() {
+	public String getAfiDecimal() {
 		return readMemory(1, 8, 24).toString(10);
 	}
 	
@@ -98,7 +98,7 @@ public class EPCGeneration2Event extends EPCGeneration1Event {
 	 * 
 	 * @return
 	 */
-	public String getNSI() {
+	public String getNsi() {
 		return readMemory(1, 9, 23).toString(16);
 	}
 
@@ -107,7 +107,7 @@ public class EPCGeneration2Event extends EPCGeneration1Event {
 	 * 
 	 * @return
 	 */
-	public String getNSIDecimal() {
+	public String getNsiDecimal() {
 		return readMemory(1, 9, 23).toString(10);
 	}
 	
