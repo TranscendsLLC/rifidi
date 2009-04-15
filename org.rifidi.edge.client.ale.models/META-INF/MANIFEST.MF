@@ -1,0 +1,21 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Models Plug-in
+Bundle-SymbolicName: org.rifidi.edge.client.ale.models
+Bundle-Version: 1.0.0
+Bundle-Activator: org.rifidi.edge.client.ale.models.Activator
+Bundle-Vendor: PRAMARI LLC
+Require-Bundle: org.eclipse.core.runtime,
+ org.apache.cxf;bundle-version="1.0.0",
+ org.rifidi.edge.client.ale.api;bundle-version="1.0.0",
+ org.eclipse.core.databinding;bundle-version="1.1.1",
+ org.rifidi.edge.client.ale.connection;bundle-version="1.0.0",
+ org.rifidi.logging;bundle-version="1.0.2"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ActivationPolicy: lazy
+Export-Package: org.rifidi.edge.client.ale.models.aleserviceporttype,
+ org.rifidi.edge.client.ale.models.ecspec,
+ org.rifidi.edge.client.ale.models.enums,
+ org.rifidi.edge.client.ale.models.exceptions,
+ org.rifidi.edge.client.ale.models.listeners,
+ org.rifidi.edge.client.ale.models.serviceprovider
