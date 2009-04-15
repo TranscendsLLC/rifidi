@@ -16,6 +16,7 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import javax.jms.Destination;
@@ -49,7 +50,10 @@ import org.llrp.ltk.types.Bit;
 import org.llrp.ltk.types.LLRPMessage;
 import org.llrp.ltk.types.UnsignedInteger;
 import org.llrp.ltk.types.UnsignedShort;
+import org.rifidi.edge.core.api.SessionStatus;
+import org.rifidi.edge.core.commands.Command;
 import org.rifidi.edge.core.messages.EPCGeneration2Event;
+import org.rifidi.edge.core.notifications.NotifierService;
 import org.rifidi.edge.core.readers.impl.AbstractReaderSession;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
@@ -67,6 +71,10 @@ public class LLRPReaderSession extends AbstractReaderSession implements
 			.getLog(LLRPReaderSession.class);
 
 	private LLRPConnection connection = null;
+	/** Service used to send out notifications */
+	private NotifierServiceWrapper notifierService;
+	/** The ID of the reader this session belongs to */
+	private String readerID;
 
 	int messageID = 1;
 	int maxConAttempts = -1;
@@ -76,12 +84,16 @@ public class LLRPReaderSession extends AbstractReaderSession implements
 	 * 
 	 */
 	public LLRPReaderSession(String id, String host, int reconnectionInterval,
-			int maxConAttempts, Destination destination, JmsTemplate template) {
+			int maxConAttempts, Destination destination, JmsTemplate template,
+			NotifierServiceWrapper notifierService, String readerID) {
 		super(id, destination, template);
 		System.out.println(host);
 		this.connection = new LLRPConnector(this, host);
 		this.maxConAttempts = maxConAttempts;
 		this.reconnectionInterval = reconnectionInterval;
+		this.notifierService = notifierService;
+		this.readerID = readerID;
+		this.setStatus(SessionStatus.CLOSED);
 	}
 
 	/*
@@ -92,15 +104,19 @@ public class LLRPReaderSession extends AbstractReaderSession implements
 	@Override
 	public void connect() throws IOException {
 		logger.debug("Connecting");
+		this.setStatus(SessionStatus.CONNECTING);
 		boolean connected = false;
 		for (int connCount = 0; connCount < maxConAttempts && !connected; connCount++) {
 			try {
 				// System.out.println("JUST BEFORE THE CONNECTION ATTEMPT");
 				((LLRPConnector) connection).connect();
 				connected = true;
+				
 				// System.out.println("JUST AFTER THE CONNECTION ATTEMPT");
 			} catch (LLRPConnectionAttemptFailedException e) {
-				logger.debug("Unable to connect to LLRP");
+				logger.debug("Attempt to connect to LLRP reader failed: " + connCount);
+			}catch(org.apache.mina.common.RuntimeIOException e){
+				logger.debug("Attempt to connect to LLRP reader failed: " + connCount);
 			}
 
 			if (!connected) {
@@ -114,9 +130,11 @@ public class LLRPReaderSession extends AbstractReaderSession implements
 		}
 
 		if (!connected) {
-			return;
+			setStatus(SessionStatus.CLOSED);
+			throw new IOException("Cannot connect");
 		}
-
+		
+		setStatus(SessionStatus.LOGGINGIN);
 		executor = new ScheduledThreadPoolExecutor(1);
 
 		try {
@@ -135,8 +153,9 @@ public class LLRPReaderSession extends AbstractReaderSession implements
 			if (!processing.compareAndSet(false, true)) {
 				logger.warn("Executor was already active! ");
 			}
+			setStatus(SessionStatus.PROCESSING);
 		} catch (TimeoutException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 			disconnect();
 		} catch (ClassCastException ex) {
 			logger.error(ex.getMessage());
@@ -150,14 +169,19 @@ public class LLRPReaderSession extends AbstractReaderSession implements
 	 */
 	@Override
 	public void disconnect() {
+		try{
 		if (processing.get()) {
 			if (processing.compareAndSet(true, false)) {
 				logger.debug("Disconnecting");
 				((LLRPConnector) connection).disconnect();
 			}
 		}
-		executor.shutdownNow();
-		executor = null;
+		}finally{			
+			executor.shutdownNow();
+			executor = null;
+			setStatus(SessionStatus.CLOSED);
+		}
+		
 	}
 
 	/**
@@ -169,7 +193,8 @@ public class LLRPReaderSession extends AbstractReaderSession implements
 		try {
 			retVal = this.connection.transact(message);
 		} catch (TimeoutException e) {
-			e.printStackTrace();
+			logger.error("Cannot send LLRP Message: ", e);
+			disconnect();
 		}
 
 		return retVal;
@@ -188,7 +213,8 @@ public class LLRPReaderSession extends AbstractReaderSession implements
 	 */
 	@Override
 	public void errorOccured(String arg0) {
-
+		logger.error("LLRP Error Occurred: " + arg0);
+		//TODO: should we disconnect?
 	}
 
 	/**
@@ -355,5 +381,57 @@ public class LLRPReaderSession extends AbstractReaderSession implements
 			return objectMessage;
 		}
 	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.core.readers.impl.AbstractReaderSession#setStatus(org
+	 * .rifidi.edge.core.api.SessionStatus)
+	 */
+	@Override
+	protected synchronized void setStatus(SessionStatus status) {
+		super.setStatus(status);
+		// TODO: Remove this once we have aspectJ
+		NotifierService service = notifierService.getNotifierService();
+		if (service != null) {
+			service.sessionStatusChanged(this.readerID, this.getID(), status);
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.readers.impl.AbstractReaderSession#submit(org.rifidi.edge.core.commands.Command, long, java.util.concurrent.TimeUnit)
+	 */
+	@Override
+	public Integer submit(Command command, long interval, TimeUnit unit) {
+		Integer retVal= super.submit(command, interval, unit);
+		// TODO: Remove this once we have aspectJ
+		try {
+			NotifierService service = notifierService.getNotifierService();
+			if (service != null) {
+				service.jobSubmitted(this.readerID, this.getID(), retVal,
+						command.getCommandID());
+			}
+		} catch (Exception e) {
+			// make sure the notification doesn't cause this method to exit
+			// under any circumstances
+		}
+		return retVal;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.readers.impl.AbstractReaderSession#killComand(java.lang.Integer)
+	 */
+	@Override
+	public void killComand(Integer id) {
+		super.killComand(id);
+		// TODO: Remove this once we have aspectJ
+		NotifierService service = notifierService.getNotifierService();
+		if (service != null) {
+			service.jobDeleted(this.readerID, this.getID(), id);
+		}
+	}
+	
+	
 
 }

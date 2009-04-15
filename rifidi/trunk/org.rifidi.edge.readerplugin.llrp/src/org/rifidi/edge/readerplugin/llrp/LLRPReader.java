@@ -19,8 +19,10 @@ import javax.jms.Destination;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.rifidi.configuration.annotations.JMXMBean;
 import org.rifidi.configuration.annotations.Property;
 import org.rifidi.configuration.annotations.PropertyType;
+import org.rifidi.edge.core.notifications.NotifierService;
 import org.rifidi.edge.core.readers.AbstractReader;
 import org.rifidi.edge.core.readers.ReaderSession;
 import org.springframework.jms.core.JmsTemplate;
@@ -30,6 +32,7 @@ import org.springframework.jms.core.JmsTemplate;
  * 
  * @author Matthew Dean
  */
+@JMXMBean
 public class LLRPReader extends AbstractReader<LLRPReaderSession> {
 	/** Logger for this class. */
 	private Log logger = LogFactory.getLog(LLRPReader.class);
@@ -39,6 +42,8 @@ public class LLRPReader extends AbstractReader<LLRPReaderSession> {
 	private ConcurrentHashMap<String, String> readerProperties;
 	/** IP address of the readerSession. */
 	private String ipAddress = "127.0.0.1";
+	/** Port to connect to */
+	private int port = 5084;
 	/** Time between two connection attempts. */
 	private Long reconnectionInterval = 500l;
 	/** Number of connection attempts before a connection goes into fail state. */
@@ -49,6 +54,8 @@ public class LLRPReader extends AbstractReader<LLRPReaderSession> {
 	private JmsTemplate template;
 	/** The ID of the session */
 	private int sessionID = 0;
+	/** A wrapper containing the service to send jms notifications */
+	private NotifierServiceWrapper notifyServiceWrapper;
 
 	/**
 	 * 
@@ -68,10 +75,27 @@ public class LLRPReader extends AbstractReader<LLRPReaderSession> {
 			sessionID++;
 			session = new LLRPReaderSession(Integer.toString(sessionID),
 					ipAddress, (int) (long) reconnectionInterval,
-					maxNumConnectionAttempts, destination, template);
+					maxNumConnectionAttempts, destination, template,
+					notifyServiceWrapper, super.getID());
+			
+			//TODO: remove this once we get AspectJ in here!
+			NotifierService service = notifyServiceWrapper.getNotifierService();
+			if (service != null) {
+				service.addSessionEvent(this.getID(), Integer
+						.toString(sessionID));
+			}
 			return session;
 		}
 		return null;
+	}
+
+	/***
+	 * 
+	 * @param wrapper
+	 *            The JMS Notifier to set
+	 */
+	public void setNotifiyServiceWrapper(NotifierServiceWrapper wrapper) {
+		this.notifyServiceWrapper = wrapper;
 	}
 
 	/*
@@ -83,7 +107,20 @@ public class LLRPReader extends AbstractReader<LLRPReaderSession> {
 	 */
 	@Override
 	public void destroyReaderSession(ReaderSession session) {
-		logger.debug("Destroying reader session");
+		if (session != null) {
+			for(Integer id : session.currentCommands().keySet()){
+				session.killComand(id);
+			}
+			this.session.disconnect();
+			this.session = null;
+			
+			//TODO: remove this once we get AspectJ in here!
+			NotifierService service = notifyServiceWrapper.getNotifierService();
+			if (service != null) {
+				service.removeSessionEvent(this.getID(), Integer
+						.toString(sessionID));
+			}
+		}
 	}
 
 	/*
@@ -108,6 +145,45 @@ public class LLRPReader extends AbstractReader<LLRPReaderSession> {
 	@Override
 	public void applyPropertyChanges() {
 		session.transact(session.createSetReaderConfig());
+	}
+
+	/**
+	 * @return the ipAddress
+	 */
+	@Property(displayName = "IP Address", description = "IP Address of the Reader", writable = true, type = PropertyType.PT_STRING, category = "connection", orderValue = 0, defaultValue = "127.0.0.1")
+	public String getIpAddress() {
+		return ipAddress;
+	}
+
+	/**
+	 * @param ipAddress
+	 *            the ipAddress to set
+	 */
+	public void setIpAddress(String ipAddress) {
+		this.ipAddress = ipAddress;
+	}
+
+	/**
+	 * @return the port
+	 */
+	@Property(displayName = "IP Address", description = "Port of the Reader", writable = true, type = PropertyType.PT_INTEGER, category = "connection", orderValue = 1, minValue = "0", maxValue = "65535")
+	public Integer getPort() {
+		return port;
+	}
+
+	/**
+	 * @param port
+	 *            the port to set
+	 */
+	public void setPort(Integer port) {
+		this.port = port;
+	}
+
+	/**
+	 * @return the reconnectionInterval
+	 */
+	public Long getReconnectionInterval() {
+		return reconnectionInterval;
 	}
 
 	/**
@@ -160,7 +236,8 @@ public class LLRPReader extends AbstractReader<LLRPReaderSession> {
 
 	@Override
 	public void destroy() {
-		// TODO Auto-generated method stub
+		super.unregister();
+		destroyReaderSession(this.session);
 
 	}
 }
