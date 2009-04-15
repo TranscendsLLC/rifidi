@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.rifidi.edge.epcglobal.aleread;
+package org.rifidi.edge.epcglobal.aleread.service;
 
 import java.util.Set;
 
@@ -12,6 +12,8 @@ import org.rifidi.edge.epcglobal.ale.api.read.ws.ECSpecValidationExceptionRespon
 import org.rifidi.edge.epcglobal.ale.api.read.ws.InvalidURIExceptionResponse;
 import org.rifidi.edge.epcglobal.ale.api.read.ws.NoSuchNameExceptionResponse;
 import org.rifidi.edge.epcglobal.ale.api.read.ws.NoSuchSubscriberExceptionResponse;
+import org.rifidi.edge.epcglobal.aleread.RifidiBoundarySpec;
+import org.rifidi.edge.lr.LogicalReader;
 
 /**
  * @author Jochen Mader - jochen@pramari.com
@@ -56,11 +58,15 @@ public interface ECSPECManagerService {
 	 * 
 	 * @param name
 	 * @param spec
+	 * @param rifidiBoundarySpec
+	 * @param readers
+	 * @param primarykeys
 	 * @throws DuplicateNameExceptionResponse
 	 * @throws ECSpecValidationExceptionResponse
 	 */
-	public void createSpec(String name, ECSpec spec)
-			throws DuplicateNameExceptionResponse,
+	public void createSpec(String name, ECSpec spec,
+			RifidiBoundarySpec rifidiBoundarySpec, Set<LogicalReader> readers,
+			Set<String> primarykeys) throws DuplicateNameExceptionResponse,
 			ECSpecValidationExceptionResponse;
 
 	/**
