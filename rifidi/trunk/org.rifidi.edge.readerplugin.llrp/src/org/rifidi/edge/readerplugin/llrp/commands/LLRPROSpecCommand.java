@@ -82,6 +82,8 @@ public class LLRPROSpecCommand extends AbstractLLRPCommand {
 	public void setRoSpecID(int rospec_id) {
 		this.rospec_id = rospec_id;
 	}
+	
+	
 
 	/*
 	 * (non-Javadoc)
@@ -91,20 +93,17 @@ public class LLRPROSpecCommand extends AbstractLLRPCommand {
 	@Override
 	public void run() {
 		this.session = (LLRPReaderSession)this.readerSession;
-		System.out.println("Session has been set: " + this.session);
-		System.out.println("Running LLRPROSpecCommand");
+		//System.out.println("Session has been set: " + this.session);
+		//System.out.println("Running LLRPROSpecCommand");
 		try {
 			boolean is_taken = false;
 			GET_ROSPECS rospecs = new GET_ROSPECS();
-			System.out.println("Just before get rospecs transact");
 			GET_ROSPECS_RESPONSE response = null;
 			try {
 				response = (GET_ROSPECS_RESPONSE) session.transact(rospecs);
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
-
-			System.out.println("Just after get rospecs transact");
 			List<ROSpec> rospecList = response.getROSpecList();
 			for (ROSpec rspec : rospecList) {
 				if (this.rospec_id == rspec.getROSpecID().intValue()) {
@@ -152,7 +151,7 @@ public class LLRPROSpecCommand extends AbstractLLRPCommand {
 
 				ROReportSpec rrs = new ROReportSpec();
 				rrs.setROReportTrigger(new ROReportTriggerType(
-						ROReportTriggerType.Upon_N_Tags_Or_End_Of_AISpec));
+						ROReportTriggerType.None));
 				rrs.setN(new UnsignedShort(1));
 				TagReportContentSelector trcs = new TagReportContentSelector();
 				trcs.setEnableROSpecID(new Bit(1));
