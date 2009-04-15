@@ -40,7 +40,7 @@ public class EPCGeneration1Event extends DatacontainerEvent {
 	 * 
 	 * @return
 	 */
-	public String getEPC() {
+	public String getEpc() {
 		return hex;
 	}
 
