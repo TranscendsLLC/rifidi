@@ -14,6 +14,9 @@ import java.util.Map;
 public class ALEReadAPI {
 	public static final String EC_TIME_UNIT_MS = "MS";
 	public static final Map<String, ALEFields> aleIdToEnum;
+	public enum TriggerCondition {
+		DATA_AVAILABLE, STABLE_SET, STOP_TRIGGER, INTERVAL
+	};
 	static{
 		Map<String, ALEFields> fields=new HashMap<String, ALEFields>();
 		fields.put("epc", ALEFields.EPC);

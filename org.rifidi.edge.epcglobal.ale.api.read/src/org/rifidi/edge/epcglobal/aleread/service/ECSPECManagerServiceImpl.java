@@ -7,6 +7,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ScheduledExecutorService;
@@ -17,11 +18,13 @@ import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.epcglobal.ale.api.read.data.ECSpec;
 import org.rifidi.edge.epcglobal.ale.api.read.ws.DuplicateNameExceptionResponse;
 import org.rifidi.edge.epcglobal.ale.api.read.ws.DuplicateSubscriptionExceptionResponse;
+import org.rifidi.edge.epcglobal.ale.api.read.ws.ECSpecValidationExceptionResponse;
 import org.rifidi.edge.epcglobal.ale.api.read.ws.InvalidURIExceptionResponse;
 import org.rifidi.edge.epcglobal.ale.api.read.ws.NoSuchNameExceptionResponse;
 import org.rifidi.edge.epcglobal.ale.api.read.ws.NoSuchSubscriberExceptionResponse;
-import org.rifidi.edge.epcglobal.aleread.RifidiBoundarySpec;
-import org.rifidi.edge.epcglobal.aleread.RifidiECSpec;
+import org.rifidi.edge.epcglobal.aleread.wrappers.RifidiBoundarySpec;
+import org.rifidi.edge.epcglobal.aleread.wrappers.RifidiECSpec;
+import org.rifidi.edge.epcglobal.aleread.wrappers.RifidiReport;
 import org.rifidi.edge.esper.EsperManagementService;
 import org.rifidi.edge.lr.LogicalReader;
 
@@ -67,18 +70,21 @@ public class ECSPECManagerServiceImpl implements ECSPECManagerService {
 	 * @see
 	 * org.rifidi.edge.epcglobal.aleread.service.ECSPECManagerService#createSpec
 	 * (java.lang.String, org.rifidi.edge.epcglobal.ale.api.read.data.ECSpec,
-	 * org.rifidi.edge.epcglobal.aleread.RifidiBoundarySpec, java.util.Set,
-	 * java.util.Set)
+	 * org.rifidi.edge.epcglobal.aleread.wrappers.RifidiBoundarySpec,
+	 * java.util.Set, java.util.Set, java.util.List)
 	 */
 	@Override
 	public void createSpec(String name, ECSpec spec,
 			RifidiBoundarySpec rifidiBoundarySpec, Set<LogicalReader> readers,
-			Set<String> primarykeys) throws DuplicateNameExceptionResponse {
+			Set<String> primarykeys, List<RifidiReport> reports)
+			throws DuplicateNameExceptionResponse,
+			ECSpecValidationExceptionResponse {
 		synchronized (this) {
-			logger.debug("Defining " + name);
+			logger.debug("Creating " + name);
 			if (!nameToSpec.containsKey(name)) {
 				RifidiECSpec ecSpec = new RifidiECSpec(name, spec, esper,
-						triggerpool, rifidiBoundarySpec, readers, primarykeys);
+						triggerpool, rifidiBoundarySpec, readers, primarykeys,
+						reports);
 				nameToSpec.put(name, ecSpec);
 				logger.debug("Created " + name);
 				return;
@@ -98,6 +104,7 @@ public class ECSPECManagerServiceImpl implements ECSPECManagerService {
 	@Override
 	public void destroySpec(String name) throws NoSuchNameExceptionResponse {
 		synchronized (this) {
+			logger.debug("Destroying " + name);
 			if (!nameToSpec.containsKey(name)) {
 				throw new NoSuchNameExceptionResponse(name + " doesn't exist.");
 			}
@@ -151,11 +158,13 @@ public class ECSPECManagerServiceImpl implements ECSPECManagerService {
 			throws NoSuchNameExceptionResponse,
 			DuplicateSubscriptionExceptionResponse, InvalidURIExceptionResponse {
 		synchronized (this) {
+			logger.debug("Subscribing " + uri + " to " + specName);
 			try {
 				URI target = new URI(uri);
 				// check if the spec actually exists
 				if (nameToSpec.containsKey(specName)) {
 					nameToSpec.get(specName).subscribe(target);
+					logger.debug("Subscribed " + uri + " to " + specName);
 					return;
 				}
 				throw new NoSuchNameExceptionResponse("A spec named "
@@ -178,11 +187,13 @@ public class ECSPECManagerServiceImpl implements ECSPECManagerService {
 			throws NoSuchNameExceptionResponse,
 			NoSuchSubscriberExceptionResponse, InvalidURIExceptionResponse {
 		synchronized (this) {
+			logger.debug("Unubscribing " + uri + " from " + specName);
 			try {
 				URI target = new URI(uri);
 				// check if the spec actually exists
 				if (nameToSpec.containsKey(specName)) {
 					nameToSpec.get(specName).unsubscribe(target);
+					logger.debug("Unubscribed " + uri + " from " + specName);
 					return;
 				}
 				throw new NoSuchNameExceptionResponse("A spec named "

@@ -15,7 +15,9 @@
 		<property name="ecspecManagerService" ref="ecspecManager" />
 		<property name="triggerFactoryService" ref="triggerFactory" />
 		<property name="lrService" ref="lrManagement" />
+		<property name="reportFactory" ref="reportFactory" />
 	</bean>
+	
 	<bean id="ecspecManager"
 		class="org.rifidi.edge.epcglobal.aleread.service.ECSPECManagerServiceImpl">
 		<property name="esperManagement" ref="esperManagerService"></property>
@@ -25,6 +27,9 @@
 		class="org.rifidi.edge.epcglobal.aleread.service.TriggerFactoryServiceImpl">
 		<property name="esperManagement" ref="esperManagerService"></property>
 	</bean>
+
+	<bean id="reportFactory"
+		class="org.rifidi.edge.epcglobal.aleread.service.RifidiReportFactoryimpl"/>
 
 	<osgi:service id="aleReadService" ref="aleReadAPIService">
 		<osgi:interfaces>

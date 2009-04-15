@@ -7,15 +7,20 @@ package org.rifidi.edge.epcglobal.ale.api.read.ws;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.rifidi.edge.epcglobal.ale.api.read.data.ECReportSpec;
 import org.rifidi.edge.epcglobal.aleread.ALEReadAPI;
-import org.rifidi.edge.epcglobal.aleread.RifidiBoundarySpec;
 import org.rifidi.edge.epcglobal.aleread.service.ECSPECManagerService;
+import org.rifidi.edge.epcglobal.aleread.service.RifidiReportFactory;
 import org.rifidi.edge.epcglobal.aleread.service.TriggerFactoryService;
+import org.rifidi.edge.epcglobal.aleread.wrappers.RifidiBoundarySpec;
+import org.rifidi.edge.epcglobal.aleread.wrappers.RifidiReport;
 import org.rifidi.edge.lr.LogicalReader;
 import org.rifidi.edge.lr.LogicalReaderManagementService;
 import org.rifidi.edge.wsmanagement.WebService;
@@ -38,6 +43,8 @@ public class ALEServicePortTypeImpl implements ALEServicePortType, WebService {
 	private TriggerFactoryService triggerFactoryService;
 	/** Service for managing logical readers. */
 	private LogicalReaderManagementService lrService;
+	/** Factory for creating reports. */
+	private RifidiReportFactory reportFactory;
 
 	/*
 	 * (non-Javadoc)
@@ -177,8 +184,24 @@ public class ALEServicePortTypeImpl implements ALEServicePortType, WebService {
 			primarykeys.add("epc");
 		}
 
+		// create the reports
+		if (parms.getSpec().getReportSpecs() == null
+				|| parms.getSpec().getReportSpecs().getReportSpec() == null
+				|| parms.getSpec().getReportSpecs().getReportSpec().size() == 0) {
+			throw new ECSpecValidationExceptionResponse("No ECSpecs specified.");
+		}
+		List<RifidiReport> reports = new ArrayList<RifidiReport>();
+		for (ECReportSpec spec : parms.getSpec().getReportSpecs()
+				.getReportSpec()) {
+			if (spec.getOutput() == null) {
+				throw new ECSpecValidationExceptionResponse(
+						"Output spec is missing.");
+			}
+			reports.add(reportFactory.createReport(spec));
+		}
+
 		ecspecManagerService.createSpec(parms.getSpecName(), parms.getSpec(),
-				rifidiBoundarySpec, readers, primarykeys);
+				rifidiBoundarySpec, readers, primarykeys, reports);
 		org.rifidi.edge.epcglobal.ale.api.read.ws.VoidHolder _return = null;
 		return _return;
 	}
@@ -329,7 +352,7 @@ public class ALEServicePortTypeImpl implements ALEServicePortType, WebService {
 	 */
 	@Override
 	public URL getUrl() {
-		// TODO: provide the currect url
+		// TODO: provide the correct url
 		try {
 			return new URL("http://127.0.0.1:8081/aleread");
 		} catch (MalformedURLException e) {
@@ -362,5 +385,13 @@ public class ALEServicePortTypeImpl implements ALEServicePortType, WebService {
 	 */
 	public void setLrService(LogicalReaderManagementService lrService) {
 		this.lrService = lrService;
+	}
+
+	/**
+	 * @param reportFactory
+	 *            the reportFactory to set
+	 */
+	public void setReportFactory(RifidiReportFactory reportFactory) {
+		this.reportFactory = reportFactory;
 	}
 }
