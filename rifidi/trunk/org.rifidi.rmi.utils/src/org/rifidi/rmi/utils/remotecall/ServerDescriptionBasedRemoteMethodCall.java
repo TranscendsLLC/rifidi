@@ -69,7 +69,7 @@ public abstract class ServerDescriptionBasedRemoteMethodCall<T, E extends Except
 
 	@Override
 	protected void remoteExceptionOccurred(RemoteException remoteException) {
-		logger.error("Remote Exception: " , remoteException);
+		logger.warn("Remote Exception: " + remoteException.getMessage());
 		RemoteStubCache.removeStubFromCache(_serverDescription);
 	}
 }
