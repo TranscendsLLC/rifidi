@@ -65,117 +65,121 @@ public class EPCDataContainerAdapter {
 		}
 		return buildy.toString();
 	}
+
 	/**
 	 * Get a field by it's field spec.
+	 * 
 	 * @param field
 	 * @param event
 	 * @return
 	 */
-	public String getField(ALEField field, DatacontainerEvent event){
-		if(ALEFields.EPC.equals(field.getName())){
-			ALEDataFormats format=field.getFormat();
-			ALEDataTypes type=field.getType();
-			if(ALEDataFormats.DEFAULT.equals(format)){
-				format=ALEDataFormats.EPC_TAG;
+	public String getField(ALEField field, DatacontainerEvent event) {
+		if (ALEFields.EPC.equals(field.getName())) {
+			ALEDataFormats format = field.getFormat();
+			ALEDataTypes type = field.getType();
+			if (ALEDataFormats.DEFAULT.equals(format)) {
+				format = ALEDataFormats.EPC_TAG;
 			}
-			if(ALEDataTypes.DEFAULT.equals(type)){
-				type=ALEDataTypes.EPC;
+			if (ALEDataTypes.DEFAULT.equals(type)) {
+				type = ALEDataTypes.EPC;
 			}
 			return getEpc(event, type, format);
 		}
-		if(ALEFields.KILLPWD.equals(field.getName())){
-			ALEDataFormats format=field.getFormat();
-			ALEDataTypes type=field.getType();
-			if(ALEDataFormats.DEFAULT.equals(format)){
-				format=ALEDataFormats.HEX;
+		if (ALEFields.KILLPWD.equals(field.getName())) {
+			ALEDataFormats format = field.getFormat();
+			ALEDataTypes type = field.getType();
+			if (ALEDataFormats.DEFAULT.equals(format)) {
+				format = ALEDataFormats.HEX;
 			}
-			if(ALEDataTypes.DEFAULT.equals(type)){
-				type=ALEDataTypes.UINT;
+			if (ALEDataTypes.DEFAULT.equals(type)) {
+				type = ALEDataTypes.UINT;
 			}
 			return getKillPwd(event, type, format);
 		}
-		if(ALEFields.ACCESSPWD.equals(field.getName())){
-			ALEDataFormats format=field.getFormat();
-			ALEDataTypes type=field.getType();
-			if(ALEDataFormats.DEFAULT.equals(format)){
-				format=ALEDataFormats.HEX;
+		if (ALEFields.ACCESSPWD.equals(field.getName())) {
+			ALEDataFormats format = field.getFormat();
+			ALEDataTypes type = field.getType();
+			if (ALEDataFormats.DEFAULT.equals(format)) {
+				format = ALEDataFormats.HEX;
 			}
-			if(ALEDataTypes.DEFAULT.equals(type)){
-				type=ALEDataTypes.UINT;
+			if (ALEDataTypes.DEFAULT.equals(type)) {
+				type = ALEDataTypes.UINT;
 			}
 			return getAccessPwd(event, type, format);
 		}
-		if(ALEFields.EPCBANK.equals(field.getName())){
-			ALEDataFormats format=field.getFormat();
-			ALEDataTypes type=field.getType();
-			if(ALEDataFormats.DEFAULT.equals(format)){
-				format=ALEDataFormats.HEX;
+		if (ALEFields.EPCBANK.equals(field.getName())) {
+			ALEDataFormats format = field.getFormat();
+			ALEDataTypes type = field.getType();
+			if (ALEDataFormats.DEFAULT.equals(format)) {
+				format = ALEDataFormats.HEX;
 			}
-			if(ALEDataTypes.DEFAULT.equals(type)){
-				type=ALEDataTypes.BITS;
+			if (ALEDataTypes.DEFAULT.equals(type)) {
+				type = ALEDataTypes.BITS;
 			}
 			return getEpcBank(event, type, format);
 		}
-		if(ALEFields.TIDBANK.equals(field.getName())){
-			ALEDataFormats format=field.getFormat();
-			ALEDataTypes type=field.getType();
-			if(ALEDataFormats.DEFAULT.equals(format)){
-				format=ALEDataFormats.HEX;
+		if (ALEFields.TIDBANK.equals(field.getName())) {
+			ALEDataFormats format = field.getFormat();
+			ALEDataTypes type = field.getType();
+			if (ALEDataFormats.DEFAULT.equals(format)) {
+				format = ALEDataFormats.HEX;
 			}
-			if(ALEDataTypes.DEFAULT.equals(type)){
-				type=ALEDataTypes.BITS;
+			if (ALEDataTypes.DEFAULT.equals(type)) {
+				type = ALEDataTypes.BITS;
 			}
 			return getTidBank(event, type, format);
 		}
-		if(ALEFields.USERBANK.equals(field.getName())){
-			ALEDataFormats format=field.getFormat();
-			ALEDataTypes type=field.getType();
-			if(ALEDataFormats.DEFAULT.equals(format)){
-				format=ALEDataFormats.HEX;
+		if (ALEFields.USERBANK.equals(field.getName())) {
+			ALEDataFormats format = field.getFormat();
+			ALEDataTypes type = field.getType();
+			if (ALEDataFormats.DEFAULT.equals(format)) {
+				format = ALEDataFormats.HEX;
 			}
-			if(ALEDataTypes.DEFAULT.equals(type)){
-				type=ALEDataTypes.BITS;
+			if (ALEDataTypes.DEFAULT.equals(type)) {
+				type = ALEDataTypes.BITS;
 			}
 			return getUserBank(event, type, format);
 		}
-		if(ALEFields.AFI.equals(field.getName())){
-			ALEDataFormats format=field.getFormat();
-			ALEDataTypes type=field.getType();
-			if(ALEDataFormats.DEFAULT.equals(format)){
-				format=ALEDataFormats.HEX;
+		if (ALEFields.AFI.equals(field.getName())) {
+			ALEDataFormats format = field.getFormat();
+			ALEDataTypes type = field.getType();
+			if (ALEDataFormats.DEFAULT.equals(format)) {
+				format = ALEDataFormats.HEX;
 			}
-			if(ALEDataTypes.DEFAULT.equals(type)){
-				type=ALEDataTypes.UINT;
+			if (ALEDataTypes.DEFAULT.equals(type)) {
+				type = ALEDataTypes.UINT;
 			}
 			return getAfi(event, type, format);
 		}
-		if(ALEFields.NSI.equals(field.getName())){
-			ALEDataFormats format=field.getFormat();
-			ALEDataTypes type=field.getType();
-			if(ALEDataFormats.DEFAULT.equals(format)){
-				format=ALEDataFormats.HEX;
+		if (ALEFields.NSI.equals(field.getName())) {
+			ALEDataFormats format = field.getFormat();
+			ALEDataTypes type = field.getType();
+			if (ALEDataFormats.DEFAULT.equals(format)) {
+				format = ALEDataFormats.HEX;
 			}
-			if(ALEDataTypes.DEFAULT.equals(type)){
-				type=ALEDataTypes.UINT;
+			if (ALEDataTypes.DEFAULT.equals(type)) {
+				type = ALEDataTypes.UINT;
 			}
 			return getNsi(event, type, format);
-		}		
-		if(ALEFields.ABSOLUTEADDRESS.equals(field.getName())){
-			ALEDataFormats format=field.getFormat();
-			ALEDataTypes type=field.getType();
-			if(ALEDataFormats.DEFAULT.equals(format)){
-				format=ALEDataFormats.HEX;
+		}
+		if (ALEFields.ABSOLUTEADDRESS.equals(field.getName())) {
+			ALEDataFormats format = field.getFormat();
+			ALEDataTypes type = field.getType();
+			if (ALEDataFormats.DEFAULT.equals(format)) {
+				format = ALEDataFormats.HEX;
 			}
-			if(ALEDataTypes.DEFAULT.equals(type)){
-				type=ALEDataTypes.UINT;
+			if (ALEDataTypes.DEFAULT.equals(type)) {
+				type = ALEDataTypes.UINT;
 			}
-			return getAbsoluteAddressField(event, field.getBankId(), field.getLength(), field.getOffset(), type, format);
+			return getAbsoluteAddressField(event, field.getBankId(), field
+					.getLength(), field.getOffset(), type, format);
 		}
 		return null;
 	}
 
 	/**
 	 * Get the epc field.
+	 * 
 	 * @param event
 	 * @param type
 	 * @param format
@@ -223,6 +227,14 @@ public class EPCDataContainerAdapter {
 		return null;
 	}
 
+	/**
+	 * Access the kill password field.
+	 * 
+	 * @param event
+	 * @param type
+	 * @param format
+	 * @return
+	 */
 	public String getKillPwd(DatacontainerEvent event, ALEDataTypes type,
 			ALEDataFormats format) {
 		// gen2 doesn't have the kill password
@@ -238,6 +250,14 @@ public class EPCDataContainerAdapter {
 		return null;
 	}
 
+	/**
+	 * Access the access password field.
+	 * 
+	 * @param event
+	 * @param type
+	 * @param format
+	 * @return
+	 */
 	public String getAccessPwd(DatacontainerEvent event, ALEDataTypes type,
 			ALEDataFormats format) {
 		// gen2 doesn't have the kill password
@@ -254,6 +274,14 @@ public class EPCDataContainerAdapter {
 		return null;
 	}
 
+	/**
+	 * Access the epc bank.
+	 * 
+	 * @param event
+	 * @param type
+	 * @param format
+	 * @return
+	 */
 	public String getEpcBank(DatacontainerEvent event, ALEDataTypes type,
 			ALEDataFormats format) {
 		// only epc tags have the bank
@@ -270,6 +298,14 @@ public class EPCDataContainerAdapter {
 		return null;
 	}
 
+	/**
+	 * Acces the tid bank.
+	 * 
+	 * @param event
+	 * @param type
+	 * @param format
+	 * @return
+	 */
 	public String getTidBank(DatacontainerEvent event, ALEDataTypes type,
 			ALEDataFormats format) {
 		// only epc gen 2tags have the bank
@@ -286,6 +322,14 @@ public class EPCDataContainerAdapter {
 		return null;
 	}
 
+	/**
+	 * Access the user bank.
+	 * 
+	 * @param event
+	 * @param type
+	 * @param format
+	 * @return
+	 */
 	public String getUserBank(DatacontainerEvent event, ALEDataTypes type,
 			ALEDataFormats format) {
 		// only epc gen 2tags have the bank
@@ -302,38 +346,65 @@ public class EPCDataContainerAdapter {
 		return null;
 	}
 
+	/**
+	 * Get the afi value.
+	 * 
+	 * @param event
+	 * @param type
+	 * @param format
+	 * @return
+	 */
 	public String getAfi(DatacontainerEvent event, ALEDataTypes type,
 			ALEDataFormats format) {
 		// only epc gen 2 tags have an AFI
 		if (event instanceof EPCGeneration2Event) {
 			if (ALEDataTypes.UINT.equals(type)) {
 				if (ALEDataFormats.HEX.equals(format)) {
-					return ((EPCGeneration2Event) event).getAFI();
+					return ((EPCGeneration2Event) event).getAfi();
 				}
 				if (ALEDataFormats.DECIMAL.equals(format)) {
-					return ((EPCGeneration2Event) event).getAFIDecimal();
+					return ((EPCGeneration2Event) event).getAfiDecimal();
 				}
 			}
 		}
 		return null;
 	}
 
+	/**
+	 * Get the nsi value.
+	 * 
+	 * @param event
+	 * @param type
+	 * @param format
+	 * @return
+	 */
 	public String getNsi(DatacontainerEvent event, ALEDataTypes type,
 			ALEDataFormats format) {
 		// only epc gen 2 tags have an AFI
 		if (event instanceof EPCGeneration2Event) {
 			if (ALEDataTypes.UINT.equals(type)) {
 				if (ALEDataFormats.HEX.equals(format)) {
-					return ((EPCGeneration2Event) event).getNSI();
+					return ((EPCGeneration2Event) event).getNsi();
 				}
 				if (ALEDataFormats.DECIMAL.equals(format)) {
-					return ((EPCGeneration2Event) event).getNSIDecimal();
+					return ((EPCGeneration2Event) event).getNsiDecimal();
 				}
 			}
 		}
 		return null;
 	}
 
+	/**
+	 * Access a field by it's absolute address.
+	 * 
+	 * @param event
+	 * @param bank
+	 * @param length
+	 * @param offset
+	 * @param type
+	 * @param format
+	 * @return
+	 */
 	public String getAbsoluteAddressField(DatacontainerEvent event,
 			Integer bank, Integer length, Integer offset, ALEDataTypes type,
 			ALEDataFormats format) {
@@ -384,12 +455,30 @@ public class EPCDataContainerAdapter {
 		return null;
 	}
 
+	/**
+	 * Acces a variable field. Currently not supported. TODO: Not supported,
+	 * need access to ISO 5962 to implement.
+	 * 
+	 * @param event
+	 * @param bank
+	 * @param OID
+	 * @return
+	 */
 	public String getVariableField(DatacontainerEvent event, Integer bank,
 			String OID) {
-		// TODO: Not supported, need access to ISO 5962 to implement
+
 		return null;
 	}
 
+	/**
+	 * Acces a variable field. Currently not supported. TODO: Not supported,
+	 * need access to ISO 5962 to implement.
+	 * 
+	 * @param event
+	 * @param bank
+	 * @param OID
+	 * @return
+	 */
 	public String getVariablePatternField(DatacontainerEvent event,
 			Integer bank, String OID) {
 		// TODO: Not supported, need access to ISO 5962 to implement

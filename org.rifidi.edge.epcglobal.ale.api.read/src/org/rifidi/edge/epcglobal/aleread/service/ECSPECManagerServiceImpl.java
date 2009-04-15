@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.rifidi.edge.epcglobal.aleread;
+package org.rifidi.edge.epcglobal.aleread.service;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -17,12 +17,13 @@ import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.epcglobal.ale.api.read.data.ECSpec;
 import org.rifidi.edge.epcglobal.ale.api.read.ws.DuplicateNameExceptionResponse;
 import org.rifidi.edge.epcglobal.ale.api.read.ws.DuplicateSubscriptionExceptionResponse;
-import org.rifidi.edge.epcglobal.ale.api.read.ws.ECSpecValidationExceptionResponse;
 import org.rifidi.edge.epcglobal.ale.api.read.ws.InvalidURIExceptionResponse;
 import org.rifidi.edge.epcglobal.ale.api.read.ws.NoSuchNameExceptionResponse;
 import org.rifidi.edge.epcglobal.ale.api.read.ws.NoSuchSubscriberExceptionResponse;
+import org.rifidi.edge.epcglobal.aleread.RifidiBoundarySpec;
+import org.rifidi.edge.epcglobal.aleread.RifidiECSpec;
 import org.rifidi.edge.esper.EsperManagementService;
-import org.rifidi.edge.lr.LogicalReaderManagementService;
+import org.rifidi.edge.lr.LogicalReader;
 
 import com.espertech.esper.client.EPServiceProvider;
 
@@ -38,10 +39,9 @@ public class ECSPECManagerServiceImpl implements ECSPECManagerService {
 	private Map<String, RifidiECSpec> nameToSpec;
 	/** Esper engine isntance. */
 	private EPServiceProvider esper;
+	/** */
 	/** Threadpool for executing the scheduled triggers. */
 	private ScheduledExecutorService triggerpool;
-	/** Service for managing logical readers. */
-	private LogicalReaderManagementService lrService;
 
 	/**
 	 * Constructor.
@@ -65,32 +65,23 @@ public class ECSPECManagerServiceImpl implements ECSPECManagerService {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.epcglobal.aleread.ECSPECManagerService#createSpec(java
-	 * .lang.String, org.rifidi.edge.epcglobal.ale.api.read.data.ECSpec)
+	 * org.rifidi.edge.epcglobal.aleread.service.ECSPECManagerService#createSpec
+	 * (java.lang.String, org.rifidi.edge.epcglobal.ale.api.read.data.ECSpec,
+	 * org.rifidi.edge.epcglobal.aleread.RifidiBoundarySpec, java.util.Set,
+	 * java.util.Set)
 	 */
 	@Override
-	public synchronized void createSpec(String name, ECSpec spec)
-			throws DuplicateNameExceptionResponse,
-			ECSpecValidationExceptionResponse {
+	public void createSpec(String name, ECSpec spec,
+			RifidiBoundarySpec rifidiBoundarySpec, Set<LogicalReader> readers,
+			Set<String> primarykeys) throws DuplicateNameExceptionResponse {
 		synchronized (this) {
 			logger.debug("Defining " + name);
 			if (!nameToSpec.containsKey(name)) {
-				try {
-					// check if we got logical readers line 2135 of spec
-					if (spec.getLogicalReaders() == null
-							|| spec.getLogicalReaders().getLogicalReader() == null
-							|| spec.getLogicalReaders().getLogicalReader()
-									.size() == 0) {
-						throw new ECSpecValidationExceptionResponse(
-								"No logical readers were provided.");
-					}
-					RifidiECSpec ecSpec = new RifidiECSpec(name, spec,
-							lrService, esper, triggerpool);
-					nameToSpec.put(name, ecSpec);
-					return;
-				} catch (InvalidURIExceptionResponse e) {
-					throw new ECSpecValidationExceptionResponse(e.toString());
-				}
+				RifidiECSpec ecSpec = new RifidiECSpec(name, spec, esper,
+						triggerpool, rifidiBoundarySpec, readers, primarykeys);
+				nameToSpec.put(name, ecSpec);
+				logger.debug("Created " + name);
+				return;
 			}
 			throw new DuplicateNameExceptionResponse("A spec named " + name
 					+ " already exists.");
@@ -113,6 +104,7 @@ public class ECSPECManagerServiceImpl implements ECSPECManagerService {
 			RifidiECSpec spec = nameToSpec.remove(name);
 			spec.stop();
 			spec.destroy();
+			logger.debug("Destroied " + name);
 		}
 	}
 
@@ -199,13 +191,5 @@ public class ECSPECManagerServiceImpl implements ECSPECManagerService {
 				throw new InvalidURIExceptionResponse(e.toString());
 			}
 		}
-	}
-
-	/**
-	 * @param lrService
-	 *            the lrService to set
-	 */
-	public void setLrService(LogicalReaderManagementService lrService) {
-		this.lrService = lrService;
 	}
 }

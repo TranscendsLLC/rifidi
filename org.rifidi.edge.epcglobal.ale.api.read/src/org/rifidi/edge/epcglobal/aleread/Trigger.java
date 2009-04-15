@@ -2,6 +2,9 @@ package org.rifidi.edge.epcglobal.aleread;
 
 import java.util.TimeZone;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import com.espertech.esper.client.EPRuntime;
 
 /**
@@ -10,7 +13,9 @@ import com.espertech.esper.client.EPRuntime;
  * @author Jochen Mader - jochen@pramari.com
  * 
  */
-class Trigger implements Runnable {
+public class Trigger implements Runnable {
+	/** Logger for this class. */
+	private static final Log logger = LogFactory.getLog(Trigger.class);
 	/** True if this is a start trigger. */
 	private boolean start = true;
 	/** Target of the start/stop operations. */
@@ -32,12 +37,10 @@ class Trigger implements Runnable {
 	 * @param timezone
 	 * @param target
 	 */
-	public Trigger(Long period, Long offset, Long timezone,
-			RifidiECSpec target, EPRuntime runtime) {
+	public Trigger(Long period, Long offset, Long timezone, EPRuntime runtime) {
 		super();
 		this.period = period;
 		this.offset = offset;
-		this.target = target;
 		this.delta = timezone - TimeZone.getDefault().getRawOffset();
 		this.runtime = runtime;
 	}
@@ -89,11 +92,23 @@ class Trigger implements Runnable {
 	 */
 	@Override
 	public void run() {
-		if (start) {
-			runtime.sendEvent(new StartEvent(target.getName()));
+		if (target != null) {
+			if (start) {
+				runtime.sendEvent(new StartEvent(target.getName()));
+				return;
+			}
+			target.stop();
 			return;
 		}
-		target.stop();
+		logger.warn("No target associated with trigger " + this);
+	}
+
+	/**
+	 * @param target
+	 *            the target to set
+	 */
+	public void setTarget(RifidiECSpec target) {
+		this.target = target;
 	}
 
 }

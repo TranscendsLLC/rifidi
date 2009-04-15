@@ -7,10 +7,16 @@ package org.rifidi.edge.epcglobal.ale.api.read.ws;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.rifidi.edge.epcglobal.aleread.ECSPECManagerService;
+import org.rifidi.edge.epcglobal.aleread.ALEReadAPI;
+import org.rifidi.edge.epcglobal.aleread.RifidiBoundarySpec;
+import org.rifidi.edge.epcglobal.aleread.service.ECSPECManagerService;
+import org.rifidi.edge.epcglobal.aleread.service.TriggerFactoryService;
+import org.rifidi.edge.lr.LogicalReader;
 import org.rifidi.edge.lr.LogicalReaderManagementService;
 import org.rifidi.edge.wsmanagement.WebService;
 
@@ -28,6 +34,10 @@ public class ALEServicePortTypeImpl implements ALEServicePortType, WebService {
 			.getLog(ALEServicePortTypeImpl.class);
 	/** Service that manages the ecspecs. */
 	private ECSPECManagerService ecspecManagerService;
+	/** Service for creating triggers. */
+	private TriggerFactoryService triggerFactoryService;
+	/** Service for managing logical readers. */
+	private LogicalReaderManagementService lrService;
 
 	/*
 	 * (non-Javadoc)
@@ -39,7 +49,7 @@ public class ALEServicePortTypeImpl implements ALEServicePortType, WebService {
 	public org.rifidi.edge.epcglobal.ale.api.read.ws.VoidHolder undefine(
 			Undefine parms) throws ImplementationExceptionResponse,
 			NoSuchNameExceptionResponse, SecurityExceptionResponse {
-		logger.info("Executing operation undefine");
+		ecspecManagerService.destroySpec(parms.getSpecName());
 		return new VoidHolder();
 	}
 
@@ -97,7 +107,78 @@ public class ALEServicePortTypeImpl implements ALEServicePortType, WebService {
 			SecurityExceptionResponse, ECSpecValidationExceptionResponse,
 			DuplicateNameExceptionResponse {
 		logger.info("Executing operation define");
-		ecspecManagerService.createSpec(parms.getSpecName(), parms.getSpec());
+		// check if we got a boundary spec line 2137
+		if (parms.getSpec().getBoundarySpec() == null) {
+			throw new ECSpecValidationExceptionResponse(
+					"No boundar spec specified.");
+		}
+
+		// validate boundary spec and extract data
+		RifidiBoundarySpec rifidiBoundarySpec = null;
+		try {
+			rifidiBoundarySpec = new RifidiBoundarySpec(parms.getSpec()
+					.getBoundarySpec(), triggerFactoryService);
+		} catch (InvalidURIExceptionResponse e) {
+			throw new ECSpecValidationExceptionResponse(e.toString());
+		}
+
+		// check if we got valid logical readers line 2135 of spec
+		if (parms.getSpec().getLogicalReaders() == null
+				|| parms.getSpec().getLogicalReaders().getLogicalReader() == null
+				|| parms.getSpec().getLogicalReaders().getLogicalReader()
+						.size() == 0) {
+			throw new ECSpecValidationExceptionResponse(
+					"No logical readers were provided.");
+		}
+		Set<LogicalReader> readers = new HashSet<LogicalReader>();
+		String currentReader = "";
+		try {
+			for (String reader : parms.getSpec().getLogicalReaders()
+					.getLogicalReader()) {
+				currentReader = reader;
+				lrService.getLogicalReaderByName(reader).aquire(this);
+				readers.add(lrService.getLogicalReaderByName(reader));
+			}
+		} catch (org.rifidi.edge.epcglobal.ale.api.lr.ws.NoSuchNameExceptionResponse e) {
+			// release all readers that have already been aquired
+			for (String reader : parms.getSpec().getLogicalReaders()
+					.getLogicalReader()) {
+				try {
+					lrService.getLogicalReaderByName(reader).release(this);
+				} catch (org.rifidi.edge.epcglobal.ale.api.lr.ws.NoSuchNameExceptionResponse ex) {
+					logger.debug("Reader " + reader + " doesn't exist");
+				}
+			}
+			throw new ECSpecValidationExceptionResponse("Logical reader "
+					+ currentReader + " doesn't exist.");
+		}
+		// collect the primary keys
+		Set<String> primarykeys = new HashSet<String>();
+		if (parms.getSpec().getExtension() != null
+				&& parms.getSpec().getExtension().getPrimaryKeyFields() != null) {
+			primarykeys.addAll(parms.getSpec().getExtension()
+					.getPrimaryKeyFields().getPrimaryKeyField());
+		} else {
+			primarykeys = new HashSet<String>();
+		}
+		// check if all keys are valid.
+		// TODO: find a way to use @ keys in esper
+		for (String key : primarykeys) {
+			if (!ALEReadAPI.aleIdToEnum.keySet().contains(key)) {
+				throw new ECSpecValidationExceptionResponse(key
+						+ " is not a valid field.");
+			} else if (key.startsWith("@")) {
+				throw new ECSpecValidationExceptionResponse("Fields of type "
+						+ key + " are currently not supported.");
+			}
+		}
+		// if no primary key is given the epc is the key
+		if (primarykeys.size() == 0) {
+			primarykeys.add("epc");
+		}
+
+		ecspecManagerService.createSpec(parms.getSpecName(), parms.getSpec(),
+				rifidiBoundarySpec, readers, primarykeys);
 		org.rifidi.edge.epcglobal.ale.api.read.ws.VoidHolder _return = null;
 		return _return;
 	}
@@ -248,6 +329,7 @@ public class ALEServicePortTypeImpl implements ALEServicePortType, WebService {
 	 */
 	@Override
 	public URL getUrl() {
+		// TODO: provide the currect url
 		try {
 			return new URL("http://127.0.0.1:8081/aleread");
 		} catch (MalformedURLException e) {
@@ -255,7 +337,7 @@ public class ALEServicePortTypeImpl implements ALEServicePortType, WebService {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * @param ecspecManagerService
 	 *            the ecspecManagerService to set
@@ -263,5 +345,22 @@ public class ALEServicePortTypeImpl implements ALEServicePortType, WebService {
 	public void setEcspecManagerService(
 			ECSPECManagerService ecspecManagerService) {
 		this.ecspecManagerService = ecspecManagerService;
+	}
+
+	/**
+	 * @param triggerFactoryService
+	 *            the triggerFactoryService to set
+	 */
+	public void setTriggerFactoryService(
+			TriggerFactoryService triggerFactoryService) {
+		this.triggerFactoryService = triggerFactoryService;
+	}
+
+	/**
+	 * @param lrService
+	 *            the lrService to set
+	 */
+	public void setLrService(LogicalReaderManagementService lrService) {
+		this.lrService = lrService;
 	}
 }

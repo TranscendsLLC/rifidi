@@ -13,7 +13,6 @@ import java.util.concurrent.TimeUnit;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.epcglobal.ale.api.lr.ws.NoSuchNameExceptionResponse;
-import org.rifidi.edge.epcglobal.ale.api.read.data.ECBoundarySpec;
 import org.rifidi.edge.epcglobal.ale.api.read.data.ECReportSpec;
 import org.rifidi.edge.epcglobal.ale.api.read.data.ECSpec;
 import org.rifidi.edge.epcglobal.ale.api.read.ws.DuplicateSubscriptionExceptionResponse;
@@ -33,23 +32,9 @@ import com.espertech.esper.client.EPStatement;
  * @author Jochen Mader - jochen@pramari.com
  * 
  */
-class RifidiECSpec {
+public class RifidiECSpec {
 	/** Logger for this class. */
 	private static final Log logger = LogFactory.getLog(RifidiECSpec.class);
-	/** Start and stop triggers. */
-	private Set<Trigger> startTriggers;
-	private Set<Trigger> stopTriggers;
-	/**
-	 * Start the next spec of this type after this amount of time has passed
-	 * since the start of the last one.
-	 */
-	private long repeatInterval;
-	/** Stop processing of the spec after this time has expired. */
-	private long duration;
-	/** If no tags arrive within this interval stop processing. */
-	private long stableSetInterval;
-	/** Kill the spec as soon as data becomes available. */
-	private boolean whenDataAvailable;
 	/** Fields in here constitute the primary keys for the tags. */
 	private Set<String> primarykeys;
 	/** The spec this object was created from. */
@@ -82,28 +67,35 @@ class RifidiECSpec {
 	/** Thread that runs the reportmanager. */
 	private Thread reportThread = null;
 
+	/** Boundary spec for this spec. */
+	private RifidiBoundarySpec rifidiBoundarySpec;
+
 	/**
 	 * Constructor.
 	 * 
 	 * @param name
 	 * @param spec
-	 * @param lrService
 	 * @param esper
 	 * @param triggerpool
+	 * @param rifidiBoundarySpec
+	 * @param readers
+	 * @param primarykeys
 	 * @throws InvalidURIExceptionResponse
 	 * @throws ECSpecValidationExceptionResponse
 	 */
-	public RifidiECSpec(String name, ECSpec spec,
-			LogicalReaderManagementService lrService, EPServiceProvider esper,
-			ScheduledExecutorService triggerpool)
-			throws InvalidURIExceptionResponse,
-			ECSpecValidationExceptionResponse {
+	public RifidiECSpec(String name, ECSpec spec, EPServiceProvider esper,
+			ScheduledExecutorService triggerpool,
+			RifidiBoundarySpec rifidiBoundarySpec, Set<LogicalReader> readers,
+			Set<String> primarykeys) {
+		this.rifidiBoundarySpec = rifidiBoundarySpec;
 		this.triggerpool = triggerpool;
 		this.spec = spec;
 		this.name = name;
 		this.statements = new ArrayList<EPStatement>();
 		this.futures = new HashSet<ScheduledFuture<?>>();
 		this.esper = esper;
+		this.readers = readers;
+		this.primarykeys = primarykeys;
 		whenDataAvailableStatements = new ArrayList<EPStatement>();
 		intervalStatements = new ArrayList<EPStatement>();
 		stopTriggerStatements = new ArrayList<EPStatement>();
@@ -111,143 +103,10 @@ class RifidiECSpec {
 		readers = new HashSet<LogicalReader>();
 		if (!spec.isIncludeSpecInReports()) {
 			ecReportmanager = new ECReportmanager(name, esper);
-		}
-		else {
+		} else {
 			ecReportmanager = new ECReportmanager(name, esper, spec);
 		}
-		// check if we got valid logical readers line 2135 of spec
-		String currentReader = "";
-		try {
-			for (String reader : spec.getLogicalReaders().getLogicalReader()) {
-				currentReader = reader;
-				lrService.getLogicalReaderByName(reader).aquire(this);
-				readers.add(lrService.getLogicalReaderByName(reader));
-			}
-		} catch (NoSuchNameExceptionResponse e) {
-			// release all readers that have already been aquired
-			for (String reader : spec.getLogicalReaders().getLogicalReader()) {
-				try {
-					lrService.getLogicalReaderByName(reader).release(this);
-				} catch (NoSuchNameExceptionResponse ex) {
-					logger.debug("Reader " + reader + " doesn't exist");
-				}
-			}
-			throw new ECSpecValidationExceptionResponse("Logical reader "
-					+ currentReader + " doesn't exist.");
-		}
 
-		// check if we got a boundary spec line 2137
-		ECBoundarySpec boundaryspec = spec.getBoundarySpec();
-		if (boundaryspec == null) {
-			throw new ECSpecValidationExceptionResponse(
-					"No boundar spec specified.");
-		}
-		startTriggers = new HashSet<Trigger>();
-		// collect start triggers
-		if (boundaryspec.getStartTrigger() != null) {
-			Trigger trig = createTrigger(boundaryspec.getStartTrigger());
-			trig.setStart(true);
-			startTriggers.add(trig);
-		}
-		if (boundaryspec.getExtension() != null
-				&& boundaryspec.getExtension().getStartTriggerList() != null) {
-			for (String uri : boundaryspec.getExtension().getStartTriggerList()
-					.getStartTrigger()) {
-				Trigger trig = createTrigger(uri);
-				trig.setStart(true);
-				startTriggers.add(trig);
-			}
-		}
-		// collect stop triggers
-		stopTriggers = new HashSet<Trigger>();
-		if (boundaryspec.getStopTrigger() != null) {
-			Trigger trig = createTrigger(boundaryspec.getStartTrigger());
-			trig.setStart(false);
-			stopTriggers.add(trig);
-		}
-		if (boundaryspec.getExtension() != null
-				&& boundaryspec.getExtension().getStopTriggerList() != null) {
-			for (String uri : boundaryspec.getExtension().getStopTriggerList()
-					.getStopTrigger()) {
-				Trigger trig = createTrigger(uri);
-				trig.setStart(false);
-				stopTriggers.add(trig);
-			}
-		}
-		// get the interval between the starts of two ecspecs
-		if (spec.getBoundarySpec().getRepeatPeriod() != null) {
-			if (!"MS"
-					.equals(spec.getBoundarySpec().getRepeatPeriod().getUnit())) {
-				throw new ECSpecValidationExceptionResponse(
-						"Only MS is accepted as time unit. Got "
-								+ spec.getBoundarySpec().getRepeatPeriod()
-										.getUnit());
-			}
-			repeatInterval = spec.getBoundarySpec().getRepeatPeriod()
-					.getValue();
-		}
-		// time after a spec gets killed
-		if (spec.getBoundarySpec().getDuration() != null) {
-			if (!"MS".equals(spec.getBoundarySpec().getDuration().getUnit())) {
-				throw new ECSpecValidationExceptionResponse(
-						"Only MS is accepted as time unit. Got "
-								+ spec.getBoundarySpec().getDuration()
-										.getUnit());
-			}
-			duration = spec.getBoundarySpec().getDuration().getValue();
-		}
-		// time after a spec gets killed if no tags have arrived
-		if (spec.getBoundarySpec().getStableSetInterval() != null) {
-			if (!"MS".equals(spec.getBoundarySpec().getStableSetInterval()
-					.getUnit())) {
-				throw new ECSpecValidationExceptionResponse(
-						"Only MS is accepted as time unit. Got "
-								+ spec.getBoundarySpec().getStableSetInterval()
-										.getUnit());
-			}
-			stableSetInterval = spec.getBoundarySpec().getStableSetInterval()
-					.getValue();
-		}
-
-		// check if the time values are valid line 2197
-		if (duration < 0) {
-			throw new ECSpecValidationExceptionResponse(
-					"Duration is smaller than 0.");
-		}
-		if (stableSetInterval < 0) {
-			throw new ECSpecValidationExceptionResponse(
-					"Stable set interval is smaller than 0.");
-		}
-		if (repeatInterval < 0) {
-			throw new ECSpecValidationExceptionResponse(
-					"Repeat interval is smaller than 0.");
-		}
-		// when data available indicates if the spec should stop as soon as the
-		// first dataset has arrived
-		if (spec.getBoundarySpec().getExtension() != null) {
-			whenDataAvailable = spec.getBoundarySpec().getExtension()
-					.isWhenDataAvailable();
-		} else {
-			whenDataAvailable = false;
-		}
-		// check if we can stop line 2203
-		if (stopTriggers.size() == 0 && duration == 0 && stableSetInterval == 0
-				&& !whenDataAvailable) {
-
-		}
-		// collect the primary keys
-		// TODO: we need to check if the keys actually exist!!!!!
-		if (spec.getExtension() != null
-				&& spec.getExtension().getPrimaryKeyFields() != null) {
-			primarykeys = new HashSet<String>(spec.getExtension()
-					.getPrimaryKeyFields().getPrimaryKeyField());
-		} else {
-			primarykeys = new HashSet<String>();
-		}
-		// if no primary key is given the epc is the key
-		if (primarykeys.size() == 0) {
-			primarykeys.add("EPC");
-		}
 		for (ECReportSpec reportSpec : spec.getReportSpecs().getReportSpec()) {
 			ecReportmanager.addECReport(reportSpec);
 		}
@@ -265,52 +124,6 @@ class RifidiECSpec {
 	 */
 	public String getName() {
 		return name;
-	}
-
-	/**
-	 * Creat a trigger from a given URI.
-	 * 
-	 * @param uri
-	 * @return
-	 * @throws InvalidURIExceptionResponse
-	 */
-	private Trigger createTrigger(String uri)
-			throws InvalidURIExceptionResponse {
-		if (uri.startsWith("urn:epcglobal:ale:trigger:rtc:")) {
-			String[] values = uri.substring(31).split(".");
-			try {
-				// <period>.<offset>.<timezone>
-				// the first value is the period and has to be supplied
-				Long period = Long.parseLong(values[0]);
-				Long offset = 0l;
-				Long timezone = 0l;
-				// get the offset if it exists
-				if (values.length > 1) {
-					offset = Long.parseLong(values[1]);
-				}
-				// get the timezone if it exists
-				if (values.length == 3) {
-					if (!(values[2].charAt(0) == 'Z')) {
-						String[] timeVals = values[2].substring(1).split(":");
-						timezone = (long) (Integer.parseInt(timeVals[0]) * 60 + Integer
-								.parseInt(timeVals[1])) * 60 * 1000;
-						if (values[2].charAt(0) == '-') {
-							timezone *= -1;
-						}
-					}
-				}
-				return new Trigger(period, offset, timezone, this, esper
-						.getEPRuntime());
-			} catch (NumberFormatException e) {
-				throw new InvalidURIExceptionResponse(uri
-						+ " is not a valid trigger URI.");
-			} catch (ArrayIndexOutOfBoundsException e) {
-				throw new InvalidURIExceptionResponse(uri
-						+ " is not a valid trigger URI.");
-			}
-		}
-		throw new InvalidURIExceptionResponse(uri
-				+ " is not a valid trigger URI.");
 	}
 
 	/**
@@ -349,8 +162,12 @@ class RifidiECSpec {
 										"create window "
 												+ name
 												+ "_collectwin.win:time("
-												+ (duration > repeatInterval ? duration
-														: repeatInterval)
+												+ (rifidiBoundarySpec
+														.getDuration() > rifidiBoundarySpec
+														.getRepeatInterval() ? rifidiBoundarySpec
+														.getDuration()
+														: rifidiBoundarySpec
+																.getRepeatInterval())
 												+ " msec) org.rifidi.edge.core.messages.TagReadEvent"));
 				// create the where conditions for primary fields
 				StringBuilder prims = new StringBuilder();
@@ -403,13 +220,14 @@ class RifidiECSpec {
 				// INTERVAL TIMING
 				// regular timing using intervals, don't use if data available
 				// is set
-				if (!whenDataAvailable) {
+				if (!rifidiBoundarySpec.isWhenDataAvailable()) {
 					intervalStatements
 							.add(esper
 									.getEPAdministrator()
 									.createEPL(
 											"on pattern[every org.rifidi.edge.epcglobal.aleread.StartEvent -> (timer:interval("
-													+ duration
+													+ rifidiBoundarySpec
+															.getDuration()
 													+ " msec) and not org.rifidi.edge.epcglobal.aleread.StopEvent)] select tags from "
 													+ name
 													+ "_collectwin as tags"));
@@ -425,7 +243,8 @@ class RifidiECSpec {
 											"on pattern[every (org.rifidi.edge.epcglobal.aleread.StartEvent -> "
 													+ name
 													+ "_collectwin where timer:within("
-													+ duration
+													+ rifidiBoundarySpec
+															.getDuration()
 													+ " msec))] select count(whine) from "
 													+ name
 													+ "_collectwin as whine"));
@@ -435,7 +254,7 @@ class RifidiECSpec {
 									"on pattern[every (org.rifidi.edge.epcglobal.aleread.StartEvent -> "
 											+ name
 											+ "_collectwin where timer:within("
-											+ duration
+											+ rifidiBoundarySpec.getDuration()
 											+ " msec))] select tags from "
 											+ name + "_collectwin as tags"));
 
@@ -450,13 +269,14 @@ class RifidiECSpec {
 								.getEPAdministrator()
 								.createEPL(
 										"on pattern[every org.rifidi.edge.epcglobal.aleread.StartEvent -> (timer:interval("
-												+ duration
+												+ rifidiBoundarySpec
+														.getDuration()
 												+ " msec) and not "
 												+ name
 												+ "_collectwin and not org.rifidi.edge.epcglobal.aleread.StopEvent)] select count(whine) from "
 												+ name + "_collectwin as whine"));
 				// STOP TRIGGERS
-				if (stopTriggers.size() > 0) {
+				if (rifidiBoundarySpec.getStopTriggers().size() > 0) {
 					// timing using a stop trigger
 					stopTriggerStatements
 							.add(esper
@@ -465,7 +285,8 @@ class RifidiECSpec {
 											"on pattern[every (org.rifidi.edge.epcglobal.aleread.StartEvent -> [0..] "
 													+ name
 													+ "_collectwin until (timer:interval("
-													+ duration
+													+ rifidiBoundarySpec
+															.getDuration()
 													+ " msec) and org.rifidi.edge.epcglobal.aleread.StopEvent))] select count(whine) from "
 													+ name
 													+ "_collectwin as whine"));
@@ -477,14 +298,15 @@ class RifidiECSpec {
 											"on pattern[every (org.rifidi.edge.epcglobal.aleread.StartEvent -> [0..] "
 													+ name
 													+ "_collectwin until (timer:interval("
-													+ duration
+													+ rifidiBoundarySpec
+															.getDuration()
 													+ " msec) and org.rifidi.edge.epcglobal.aleread.StopEvent))] select tags from "
 													+ name
 													+ "_collectwin as tags"));
 
 				}
 
-				if (stableSetInterval > 0) {
+				if (rifidiBoundarySpec.getStableSetInterval() > 0) {
 					// TODO: incorporate INTERVAL!!!!
 					// timing using stable set
 					stableSetIntervalStatements
@@ -494,7 +316,8 @@ class RifidiECSpec {
 											"on pattern[every (org.rifidi.edge.epcglobal.aleread.StartEvent -> "
 													+ name
 													+ "_collectwin -> (timer:interval("
-													+ stableSetInterval
+													+ rifidiBoundarySpec
+															.getStableSetInterval()
 													+ " msec) and not "
 													+ name
 													+ "_collectwin))] select tags  from "
@@ -506,7 +329,8 @@ class RifidiECSpec {
 									.getEPAdministrator()
 									.createEPL(
 											"on pattern[every (org.rifidi.edge.epcglobal.aleread.StartEvent -> (timer:interval("
-													+ stableSetInterval
+													+ rifidiBoundarySpec
+															.getStableSetInterval()
 													+ " msec) and not "
 													+ name
 													+ "_collectwin))] select count(whine) from "
@@ -521,6 +345,8 @@ class RifidiECSpec {
 								+ name + "_collectwin"));
 
 				esper.getEPRuntime().sendEvent(new StartEvent("buhu"));
+
+				// debug output
 				StringBuilder builder = new StringBuilder();
 				builder.append("Statements:\n");
 				for (EPStatement statement : statements) {
@@ -532,6 +358,8 @@ class RifidiECSpec {
 				}
 				logger.debug("The following statements were created: \n"
 						+ builder.toString());
+
+				// Register statements to the manager.
 				ecReportmanager.setIntervalStatements(intervalStatements);
 				ecReportmanager
 						.setStableSetIntervalStatements(stableSetIntervalStatements);
@@ -539,6 +367,7 @@ class RifidiECSpec {
 				ecReportmanager
 						.setWhenDataAvailableStatements(whenDataAvailableStatements);
 				logger.debug("Spec " + getName() + " started.");
+				// start the manager
 				reportThread = new Thread(ecReportmanager);
 				reportThread.start();
 			}
@@ -641,13 +470,14 @@ class RifidiECSpec {
 	 */
 	public void init() {
 		// schedule the start triggers
-		if (startTriggers.size() != 0) {
-			for (Trigger trigger : startTriggers) {
+		if (rifidiBoundarySpec.getStartTriggers().size() != 0) {
+			for (Trigger trigger : rifidiBoundarySpec.getStartTriggers()) {
 				triggerpool.scheduleAtFixedRate(trigger, trigger
 						.getDelayToNextExec(), trigger.getPeriod(),
 						TimeUnit.MILLISECONDS);
 			}
-			logger.debug("Scheduled " + startTriggers.size()
+			logger.debug("Scheduled "
+					+ rifidiBoundarySpec.getStartTriggers().size()
 					+ " start triggers. ");
 		} else {
 			// if there are no start triggers the spec gets instantly
@@ -655,13 +485,14 @@ class RifidiECSpec {
 			start();
 		}
 		// schedule the stop triggers
-		if (stopTriggers.size() != 0) {
-			for (Trigger trigger : stopTriggers) {
+		if (rifidiBoundarySpec.getStopTriggers().size() != 0) {
+			for (Trigger trigger : rifidiBoundarySpec.getStopTriggers()) {
 				triggerpool.scheduleAtFixedRate(trigger, trigger
 						.getDelayToNextExec(), trigger.getPeriod(),
 						TimeUnit.MILLISECONDS);
 			}
-			logger.debug("Scheduled " + stopTriggers.size()
+			logger.debug("Scheduled "
+					+ rifidiBoundarySpec.getStopTriggers().size()
 					+ " start triggers. ");
 		}
 	}
