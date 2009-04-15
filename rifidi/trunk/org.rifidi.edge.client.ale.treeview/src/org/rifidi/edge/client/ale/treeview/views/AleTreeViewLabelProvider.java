@@ -12,10 +12,12 @@ package org.rifidi.edge.client.ale.treeview.views;
 
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
-import org.eclipse.jface.viewers.TreeNode;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
+import org.rifidi.edge.client.ale.models.aleserviceporttype.AleServicePortTypeWrapper;
+import org.rifidi.edge.client.ale.models.ecspec.EcSpecModelWrapper;
+import org.rifidi.edge.client.ale.models.serviceprovider.IEcSpecDataManager;
 
 /**
  * @author Tobias Hoppenthaler - tobias@pramari.com
@@ -39,14 +41,16 @@ public class AleTreeViewLabelProvider implements ILabelProvider {
 	@Override
 	public Image getImage(Object element) {
 
-		if (element instanceof TreeNode)
-			return PlatformUI.getWorkbench().getSharedImages().getImage(
-					ISharedImages.IMG_OBJ_FOLDER);
+		if (element instanceof AleServicePortTypeWrapper) {
+			if (((AleServicePortTypeWrapper) element).isConnected()) {
+				return PlatformUI.getWorkbench().getSharedImages().getImage(
+						ISharedImages.IMG_OBJ_FOLDER);
+			} else {
+				return PlatformUI.getWorkbench().getSharedImages().getImage(
+						ISharedImages.IMG_OBJS_ERROR_TSK);
+			}
 
-		// if (element instanceof ALEServicePortType
-		// || element instanceof ALELRServicePortType)
-		// return PlatformUI.getWorkbench().getSharedImages().getImage(
-		// ISharedImages.IMG_OBJ_ELEMENT);
+		}
 
 		return PlatformUI.getWorkbench().getSharedImages().getImage(
 				ISharedImages.IMG_OBJ_FILE);
@@ -59,18 +63,16 @@ public class AleTreeViewLabelProvider implements ILabelProvider {
 	 */
 	@Override
 	public String getText(Object element) {
-		if (element instanceof TreeNode)
-			return ((TreeNode) element).getValue().toString();
+		if (element instanceof IEcSpecDataManager) {
+			return ((IEcSpecDataManager) element).getName();
+		}
 
-		// if (element instanceof ALEServicePortType) {
-		// return "ECSpecs";
-		// }
-		//
-		// if (element instanceof ALELRServicePortType) {
-		// return "Logical Readers";
-		// }
+		if (element instanceof EcSpecModelWrapper) {
+			return ((EcSpecModelWrapper) element).getName();
+		}
 
-		return ((String) element);
+		return element.toString();
+
 	}
 
 	/*
