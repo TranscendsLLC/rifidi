@@ -323,18 +323,19 @@ public class LLRPReaderSession extends AbstractReaderSession implements
 			super();
 			objectMessage = new ActiveMQObjectMessage();
 			EPCGeneration2Event gen2event = new EPCGeneration2Event();
-			gen2event.setEPCMemory(message);
+			int length;
 			// make some wild guesses on the length of the epc field
 			if (message.bitLength() > 96) {
 				// 192 bits
-				gen2event.setEpcLength(192);
+				length = 192;
 			} else if (message.bitLength() > 64) {
 				// 96 bits
-				gen2event.setEpcLength(96);
+				length = 96;
 			} else {
 				// 64 bits
-				gen2event.setEpcLength(64);
+				length = 64;
 			}
+			gen2event.setEPCMemory(message, length);
 			try {
 				objectMessage.setObject(gen2event);
 			} catch (JMSException e) {
