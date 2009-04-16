@@ -5,6 +5,10 @@ package org.rifidi.edge.client.mbean.ui.widgets.standard.impl;
 
 import javax.management.Attribute;
 
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Spinner;
 import org.rifidi.edge.client.mbean.ui.widgets.abstractwidgets.AbstractNumberWidget;
 import org.rifidi.edge.client.mbean.ui.widgets.data.FloatWidgetData;
 
@@ -25,40 +29,45 @@ public class StandardFloatWidget<T extends FloatWidgetData> extends
 		super(data);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.client.mbean.ui.widgets.abstractwidgets.AbstractNumberWidget#createSpinner(org.eclipse.swt.widgets.Composite)
+	 */
 	@Override
-	protected void buildCustomSpinner() {
+	protected void createSpinner(Composite parent) {
+		spinner = new Spinner(parent, SWT.BORDER);
+		GridData gridData = new GridData();
+		gridData.horizontalAlignment = GridData.FILL;
+		gridData.grabExcessHorizontalSpace = true;
+		gridData.minimumWidth = 150;
+		spinner.setLayoutData(gridData);
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.client.mbean.ui.widgets.abstractwidgets.AbstractNumberWidget#initializeSpinner()
+	 */
+	@Override
+	protected void initializeSpinner() {
 		spinner.setDigits(data.getNumDecimalPlaces());
 		int offset = (int) Math.pow(10, data.getNumDecimalPlaces());
 		int max = data.maxValue().intValue() * offset;
 		int min = data.minValue().intValue() * offset;
 		int value = (data.getDefaultValue().intValue() * offset);
-
+	
 		if (max > Integer.MAX_VALUE) {
 			spinner.setMaximum(Integer.MAX_VALUE);
 		} else {
 			spinner.setMaximum(max);
 		}
-
+	
 		if (min < Integer.MIN_VALUE) {
 			spinner.setMinimum(min);
 		} else {
 			spinner.setMinimum(min);
 		}
-
+	
 		spinner.setSelection(value);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.rifidi.dynamicswtforms.ui.widgets.DynamicSWTFormWidget#setValue(java
-	 * .lang.Object)
-	 */
-	@Override
-	public String setValue(Attribute value) {
-		// TODO Auto-generated method stub
-		return null;
+		
 	}
 
 	/*
@@ -71,6 +80,13 @@ public class StandardFloatWidget<T extends FloatWidgetData> extends
 	public Attribute getAttribute() {
 		return new Attribute(getElementName(), Float.parseFloat(spinner
 				.getText()));
+	}
+
+	@Override
+	protected Integer getValueAsInteger(Attribute value) {
+		Float f = (Float)value.getValue();
+		int offset = (int) Math.pow(10, data.getNumDecimalPlaces());
+		return f.intValue() * offset;
 	}
 
 }

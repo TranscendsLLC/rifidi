@@ -35,7 +35,7 @@ public class SynchPropertyChangesHandler extends AbstractHandler implements
 		EdgeServerController controller = EdgeServerTreeContentProvider
 				.getEdgeServerController();
 		Object obj = ((TreeSelection) sel).getFirstElement();
-		controller.clearPropertyChanges(((RemoteReader) obj).getID());
+		controller.synchPropertyChanges(((RemoteReader) obj).getID());
 		return null;
 	}
 

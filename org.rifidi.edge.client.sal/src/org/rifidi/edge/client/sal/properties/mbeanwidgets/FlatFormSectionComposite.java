@@ -3,6 +3,7 @@
  */
 package org.rifidi.edge.client.sal.properties.mbeanwidgets;
 
+import java.util.HashMap;
 import java.util.Set;
 
 import javax.management.MBeanAttributeInfo;
@@ -16,6 +17,8 @@ import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetWidgetFactory;
 import org.rifidi.edge.client.mbean.ui.AbstractMBeanInfoComposite;
 import org.rifidi.edge.client.mbean.ui.widgets.abstractwidgets.AbstractWidget;
 import org.rifidi.edge.client.mbean.ui.widgets.data.AbstractWidgetData;
+import org.rifidi.edge.client.mbean.ui.widgets.data.IntegerWidgetData;
+import org.rifidi.edge.client.mbean.ui.widgets.data.LongWidgetData;
 import org.rifidi.edge.client.mbean.ui.widgets.data.StringWidgetData;
 
 /**
@@ -24,9 +27,12 @@ import org.rifidi.edge.client.mbean.ui.widgets.data.StringWidgetData;
  */
 public class FlatFormSectionComposite extends AbstractMBeanInfoComposite {
 
+	private HashMap<String, Section> widgetNameToSection;
+
 	public FlatFormSectionComposite(MBeanInfo info, Set<String> categories,
 			boolean includeExclude) {
 		super(info, categories, includeExclude);
+		widgetNameToSection = new HashMap<String, Section>();
 	}
 
 	/*
@@ -45,6 +51,12 @@ public class FlatFormSectionComposite extends AbstractMBeanInfoComposite {
 			if (String.class.getName().equals(info.getType())) {
 				widget = new FlatFormStringMbeanWidget<StringWidgetData>(
 						new StringWidgetData(info), factory);
+			} else if (Integer.class.getName().equals(info.getType())) {
+				widget = new FlatFormIntegerMbeanWidget<IntegerWidgetData>(
+						new IntegerWidgetData(info), factory);
+			} else if (Long.class.getName().equals(info.getType())) {
+				widget = new FlatFormLongMbeanWidget<LongWidgetData>(
+						new LongWidgetData(info), factory);
 			}
 
 			if (widget != null) {
@@ -72,6 +84,8 @@ public class FlatFormSectionComposite extends AbstractMBeanInfoComposite {
 			section.setDescription(description);
 			section.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
 			section.setLayout(new TableWrapLayout());
+
+			widgetNameToSection.put(widget.getElementName(), section);
 
 			Composite sectionComposite = factory
 					.createFlatFormComposite(section);
@@ -109,4 +123,44 @@ public class FlatFormSectionComposite extends AbstractMBeanInfoComposite {
 
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.client.mbean.ui.AbstractMBeanInfoComposite#dataChanged
+	 * (java.lang.String, java.lang.String)
+	 */
+	@Override
+	public void dataChanged(String widgetName, String newData) {
+		super.dataChanged(widgetName, newData);
+		Section section = widgetNameToSection.get(widgetName);
+		if (section != null) {
+			String title = section.getText();
+			if (title.charAt(0) != '*') {
+				section.setText("*" + title);
+				section.layout();
+			}
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.client.mbean.ui.AbstractMBeanInfoComposite#clean(java
+	 * .lang.String)
+	 */
+	@Override
+	public void clean(String widgetName) {
+		super.clean(widgetName);
+		Section section = widgetNameToSection.get(widgetName);
+		if (section != null) {
+			String title = section.getText();
+			if (title.charAt(0) == '*') {
+				title = title.substring(1);
+				section.setText(title);
+				section.layout();
+			}
+		}
+	}
 }

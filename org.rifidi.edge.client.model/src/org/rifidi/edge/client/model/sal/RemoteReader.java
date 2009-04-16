@@ -6,8 +6,6 @@ package org.rifidi.edge.client.model.sal;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
 
 import javax.management.Attribute;
 import javax.management.AttributeList;
@@ -16,6 +14,7 @@ import org.eclipse.core.databinding.observable.map.ObservableMap;
 import org.eclipse.core.databinding.observable.map.WritableMap;
 import org.eclipse.core.databinding.observable.set.ObservableSet;
 import org.eclipse.core.databinding.observable.set.WritableSet;
+import org.rifidi.edge.client.model.sal.commands.RequestExecuterSingleton;
 import org.rifidi.edge.client.model.sal.properties.DirtyReaderPropertyBean;
 import org.rifidi.edge.client.model.sal.properties.ReaderPropertyBean;
 import org.rifidi.edge.core.api.rmi.dto.ReaderDTO;
@@ -242,10 +241,21 @@ public class RemoteReader {
 	 * Send the list of changed properties to the reader and update them on the
 	 * reader. Must be called from whithin eclipse thread
 	 */
-	public void synchUpdatedProperties() {
+	public void synchUpdatedProperties(RemoteEdgeServer server) {
 		if (updatedProperties.size() > 0) {
 			HashMap<String, Attribute> attrsTosynch = new HashMap<String, Attribute>(
 					this.updatedProperties);
+
+			AttributeList list = new AttributeList();
+			for (Attribute attr : attrsTosynch.values()) {
+				list.add(attr);
+			}
+
+			Command_SynchPropertyChanges request = new Command_SynchPropertyChanges(
+					server, this.getID(), list);
+
+			RequestExecuterSingleton.getInstance().scheduleRequest(request);
+
 			this.updatedProperties.clear();
 			DirtyReaderPropertyBean oldEvent = new DirtyReaderPropertyBean(this
 					.getID(), true);
@@ -254,8 +264,7 @@ public class RemoteReader {
 			pcs.firePropertyChange(
 					DirtyReaderPropertyBean.DIRTY_EVENT_PROPERTY, oldEvent,
 					newEvent);
-			
-			
+
 		}
 	}
 

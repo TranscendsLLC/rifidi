@@ -11,7 +11,7 @@ public interface MBeanInfoWidgetListener {
 
 	/**
 	 * This is called when the user has finished editing data in a widget (and
-	 * has hit the enter key, for example)
+	 * has hit the enter key, for example). This means that the widget is dirty
 	 * 
 	 * @param newData
 	 *            The new value of the widget
@@ -23,5 +23,12 @@ public interface MBeanInfoWidgetListener {
 	 * do validation on key stroked, for example
 	 */
 	public void keyReleased(String widgetName);
+
+	/**
+	 * Called whenever a widget decides that it is no longer dirty.
+	 * 
+	 * @param widgetName
+	 */
+	public void clean(String widgetName);
 
 }

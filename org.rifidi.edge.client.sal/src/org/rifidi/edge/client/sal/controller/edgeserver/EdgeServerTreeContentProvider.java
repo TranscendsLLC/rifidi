@@ -342,7 +342,7 @@ public class EdgeServerTreeContentProvider implements ITreeContentProvider,
 		RemoteReader reader = (RemoteReader) this.edgeServerList.get(0)
 				.getRemoteReaders().get(readerID);
 		if (reader != null) {
-			reader.clearUpdatedProperties();
+			reader.synchUpdatedProperties(this.edgeServerList.get(0));
 		}
 
 	}
@@ -528,7 +528,8 @@ public class EdgeServerTreeContentProvider implements ITreeContentProvider,
 			viewer.refresh(edgeServerList.get(0));
 			IEvaluationService service = (IEvaluationService) PlatformUI
 					.getWorkbench().getService(IEvaluationService.class);
-			service.requestEvaluation("org.rifidi.edge.client.sal.edgeserver.state");
+			service
+					.requestEvaluation("org.rifidi.edge.client.sal.edgeserver.state");
 		} else if (arg0.getPropertyName().equals(
 				SessionStatePropertyBean.SESSION_STATUS_PROPERTY)) {
 			SessionStatePropertyBean bean = (SessionStatePropertyBean) arg0

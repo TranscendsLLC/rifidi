@@ -23,12 +23,6 @@ import org.rifidi.edge.client.mbean.ui.widgets.data.StringWidgetData;
 public class StringWidget<T extends StringWidgetData> extends AbstractStringWidget<T> {
 
 	/**
-	 * Set to true if the user has modified the data since the last time the
-	 * listeners have been notified
-	 */
-	private boolean dirty;
-
-	/**
 	 * Contstruct a new StringWidget
 	 * 
 	 * @param data
@@ -38,11 +32,11 @@ public class StringWidget<T extends StringWidgetData> extends AbstractStringWidg
 		super(data);
 	}
 
-	/**
-	 * {@link AbstractStringWidget#createControl(Composite)}
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.client.mbean.ui.widgets.abstractwidgets.AbstractStringWidget#createText(org.eclipse.swt.widgets.Composite)
 	 */
 	@Override
-	public void createControl(Composite parent) {
+	protected void createText(Composite parent) {
 		// Create a text control that will wrap if the width of the text exceeds
 		// 150 pixels
 		text = new Text(parent, SWT.MULTI | SWT.BORDER | SWT.WRAP);
@@ -51,55 +45,17 @@ public class StringWidget<T extends StringWidgetData> extends AbstractStringWidg
 		gridData.grabExcessHorizontalSpace = true;
 		gridData.widthHint = 150;
 		text.setLayoutData(gridData);
-		text.setEditable(data.isEditable());
-		text.setText(data.getDefaultValue());
-
-		// Set dirty=true if the user modifies the text
-		text.addModifyListener(new ModifyListener() {
-
-			@Override
-			public void modifyText(ModifyEvent e) {
-				dirty = true;
-
-			}
-
-		});
-
-		// take control of verify listeners so when the user hits return, a
-		// newline is not created on the Text control
-		text.addVerifyListener(new VerifyListener() {
-
-			@Override
-			public void verifyText(VerifyEvent e) {
-				if (e.character == SWT.CR) {
-					if (dirty == true) {
-						dirty = false;
-						notifyListenersDataChanged(text.getText());
-					}
-					e.doit = false;
-				}
-
-			}
-
-		});
-
-		// notify listeners of a user typing a key
-		text.addKeyListener(new KeyListener() {
-
-			@Override
-			public void keyPressed(KeyEvent e) {
-				// TODO Auto-generated method stub
-
-			}
-
-			@Override
-			public void keyReleased(KeyEvent e) {
-				if (e.character != SWT.CR) {
-					notifyListenersKeyReleased();
-				}
-
-			}
-		});
+		
 	}
+
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.client.mbean.ui.widgets.abstractwidgets.AbstractStringWidget#initializeText()
+	 */
+	@Override
+	protected void initializeText() {
+		text.setText(data.getDefaultValue());
+	}
+	
+	
 
 }

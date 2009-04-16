@@ -123,6 +123,18 @@ public class EditConnectionInfoPage extends WizardPage implements
 		validate();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.client.mbean.ui.MBeanInfoWidgetListener#clean(java.lang
+	 * .String)
+	 */
+	@Override
+	public void clean(String widgetName) {
+
+	}
+
 	/**
 	 * Validate all controls and decide whether or not this page is complete
 	 */
