@@ -21,28 +21,26 @@ import org.rifidi.edge.client.ale.models.aleserviceporttype.AleServicePortTypeWr
 
 /**
  * @author Tobias Hoppenthaler - tobias@pramari.com
- *
+ * 
  */
 public class AleLrServicePortTypeWrapper {
-	
-	private ALELRServicePortType aleLrServicePortType=null;
-	private AleServicePortTypeWrapper wrapper=null;
+
+	private ALELRServicePortType aleLrServicePortType = null;
+	private AleServicePortTypeWrapper wrapper = null;
 	private WritableSet logicalReaders = new WritableSet();
-	private ConnectionService consService=null;
-	private Log logger=LogFactory.getLog(AleLrServicePortTypeWrapper.class);
+	private ConnectionService consService = null;
+	private Log logger = LogFactory.getLog(AleLrServicePortTypeWrapper.class);
 	private URL endpoint = null;
-	
+
 	/**
 	 * 
 	 */
 	public AleLrServicePortTypeWrapper(AleServicePortTypeWrapper wrapper) {
 		this.wrapper = wrapper;
 	}
-	
-	private String getName(){
-		wrapper.getName()
+
+	public String getName() {
+		return wrapper.getName();
 	}
-	
-	
 
 }

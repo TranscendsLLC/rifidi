@@ -15,6 +15,7 @@ import org.apache.commons.logging.LogFactory;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.TreeNode;
 import org.eclipse.jface.viewers.Viewer;
+import org.rifidi.edge.client.ale.models.alelrserviceporttype.AleLrServicePortTypeWrapper;
 import org.rifidi.edge.client.ale.models.aleserviceporttype.AleServicePortTypeWrapper;
 import org.rifidi.edge.client.ale.models.ecspec.EcSpecModelWrapper;
 
@@ -26,9 +27,9 @@ public class AleTreeViewContentProvider implements ITreeContentProvider {
 
 	@SuppressWarnings("unused")
 	private Log logger = null;
-	private AleTreeView view=null;
-	private AleServicePortTypeWrapper aWrapper=null;
-	private AleLrServicePortTypeWrapper lWrapper=null;
+	private AleTreeView view = null;
+	private AleServicePortTypeWrapper aWrapper = null;
+	private AleLrServicePortTypeWrapper lWrapper = null;
 
 	/**
 	 * @param aleTreeView
@@ -116,7 +117,7 @@ public class AleTreeViewContentProvider implements ITreeContentProvider {
 			aWrapper.addSetChangeListener(this.view);
 			}
 			if(lWrapper==null){
-				lwra
+//				TODO: same as above for logical readers
 			}
 			obj[0] = aWrapper;
 

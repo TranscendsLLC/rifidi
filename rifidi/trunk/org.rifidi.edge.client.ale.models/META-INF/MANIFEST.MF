@@ -13,7 +13,8 @@ Require-Bundle: org.eclipse.core.runtime,
  org.rifidi.logging;bundle-version="1.0.2"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
-Export-Package: org.rifidi.edge.client.ale.models.aleserviceporttype,
+Export-Package: org.rifidi.edge.client.ale.models.alelrserviceporttype,
+ org.rifidi.edge.client.ale.models.aleserviceporttype,
  org.rifidi.edge.client.ale.models.ecspec,
  org.rifidi.edge.client.ale.models.enums,
  org.rifidi.edge.client.ale.models.exceptions,
