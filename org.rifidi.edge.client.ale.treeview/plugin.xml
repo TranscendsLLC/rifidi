@@ -56,12 +56,28 @@
             id="org.rifidi.edge.client.ale.treeview.deleteremoteecspec"
             name="Delete">
       </command>
+      <command
+            id="org.rifidi.edge.client.ale.treeview.connectale"
+            name="Connect">
+      </command>
+      <command
+            id="org.rifidi.edge.client.ale.treeview.disconnectale"
+            name="Disconnect">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
       <handler
             class="org.rifidi.edge.client.ale.treeview.handlers.DeleteRemoteEcSpecHandler"
             commandId="org.rifidi.edge.client.ale.treeview.deleteremoteecspec">
+      </handler>
+      <handler
+            class="org.rifidi.edge.client.ale.treeview.handlers.ConnectAle"
+            commandId="org.rifidi.edge.client.ale.treeview.connectale">
+      </handler>
+      <handler
+            class="org.rifidi.edge.client.ale.treeview.handlers.DisconnectAle"
+            commandId="org.rifidi.edge.client.ale.treeview.disconnectale">
       </handler>
    </extension>
    <extension
@@ -70,14 +86,51 @@
             locationURI="popup:org.rifidi.edge.client.ale.treeview.views.AleTreeView?after=aletreeview">
          <command
                commandId="org.rifidi.edge.client.ale.treeview.deleteremoteecspec"
-               id="RemoveRemoteEcSpec"
-               label="Delete"
+               id="UndefineRemoteEcSpec"
                style="push">
             <visibleWhen>
                <iterate
                      ifEmpty="false">
                   <instanceof
-                        value="java.lang.String">
+                        value="org.rifidi.edge.client.ale.models.ecspec.EcSpecModelWrapper">
+                  </instanceof>
+               </iterate>
+            </visibleWhen>
+         </command>
+         <command
+               commandId="org.rifidi.edge.client.ale.treeview.connectale"
+               id="ConnectToEdgeServer"
+               style="push">
+            <visibleWhen>
+               <iterate
+                     ifEmpty="false">
+                  <instanceof
+                        value="org.rifidi.edge.client.ale.models.aleserviceporttype.AleServicePortTypeWrapper">
+                  </instanceof>
+               </iterate>
+            </visibleWhen>
+         </command>
+         <command
+               commandId="org.rifidi.edge.client.ale.treeview.disconnectale"
+               id="DisconnectEdgeServer"
+               style="push">
+            <visibleWhen>
+               <iterate
+                     ifEmpty="false">
+                  <instanceof
+                        value="org.rifidi.edge.client.ale.models.aleserviceporttype.AleServicePortTypeWrapper">
+                  </instanceof>
+               </iterate>
+            </visibleWhen>
+         </command>
+         <command
+               commandId="org.rifidi.edge.client.ale.editor.editspec"
+               style="push">
+            <visibleWhen>
+               <iterate
+                     ifEmpty="false">
+                  <instanceof
+                        value="org.rifidi.edge.client.ale.models.ecspec.EcSpecModelWrapper">
                   </instanceof>
                </iterate>
             </visibleWhen>
