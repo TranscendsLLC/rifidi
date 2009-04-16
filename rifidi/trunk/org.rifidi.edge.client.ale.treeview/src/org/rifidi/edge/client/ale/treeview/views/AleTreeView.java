@@ -1,5 +1,7 @@
 package org.rifidi.edge.client.ale.treeview.views;
 
+import org.eclipse.core.databinding.observable.set.ISetChangeListener;
+import org.eclipse.core.databinding.observable.set.SetChangeEvent;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IMenuListener;
@@ -23,7 +25,10 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.DrillDownAdapter;
+import org.eclipse.ui.part.ISetSelectionTarget;
 import org.eclipse.ui.part.ViewPart;
+import org.rifidi.edge.client.ale.models.enums.ConnectionStatus;
+import org.rifidi.edge.client.ale.models.listeners.ConnectionChangeListener;
 
 /**
  * This sample class demonstrates how to plug-in a new workbench view. The view
@@ -40,7 +45,7 @@ import org.eclipse.ui.part.ViewPart;
  * <p>
  */
 
-public class AleTreeView extends ViewPart {
+public class AleTreeView extends ViewPart implements ConnectionChangeListener,ISetChangeListener {
 	private TreeViewer viewer;
 	private DrillDownAdapter drillDownAdapter;
 	private Action action1;
@@ -61,7 +66,7 @@ public class AleTreeView extends ViewPart {
 		parent.setLayout(new FillLayout());
 		viewer = new TreeViewer(parent);
 		drillDownAdapter = new DrillDownAdapter(viewer);
-		viewer.setContentProvider(new AleTreeViewContentProvider());
+		viewer.setContentProvider(new AleTreeViewContentProvider(this));
 		viewer.setLabelProvider(new AleTreeViewLabelProvider());
 		viewer.setSorter(new ViewerSorter());
 		viewer.setInput(getInitialInput());
@@ -78,6 +83,7 @@ public class AleTreeView extends ViewPart {
 		Menu menu = menuMgr.createContextMenu(viewer.getControl());
 		viewer.getControl().setMenu(menu);
 		getSite().registerContextMenu(menuMgr, viewer);
+		
 	}
 
 	/**
@@ -193,5 +199,23 @@ public class AleTreeView extends ViewPart {
 	 */
 	public TreeViewer getViewer() {
 		return viewer;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.client.ale.models.listeners.ConnectionChangeListener#connectionStatusChanged(org.rifidi.edge.client.ale.models.enums.ConnectionStatus)
+	 */
+	@Override
+	public void connectionStatusChanged(ConnectionStatus status) {
+		this.viewer.refresh();
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.databinding.observable.set.ISetChangeListener#handleSetChange(org.eclipse.core.databinding.observable.set.SetChangeEvent)
+	 */
+	@Override
+	public void handleSetChange(SetChangeEvent event) {
+		this.viewer.refresh();
+		
 	}
 }

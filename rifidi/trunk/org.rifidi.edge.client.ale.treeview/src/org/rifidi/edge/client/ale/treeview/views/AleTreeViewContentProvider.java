@@ -10,21 +10,11 @@
  */
 package org.rifidi.edge.client.ale.treeview.views;
 
-import java.util.ArrayList;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.TreeNode;
 import org.eclipse.jface.viewers.Viewer;
-import org.osgi.service.prefs.Preferences;
-import org.rifidi.edge.client.ale.api.wsdl.ale.epcglobal.EmptyParms;
-import org.rifidi.edge.client.ale.api.wsdl.ale.epcglobal.ImplementationExceptionResponse;
-import org.rifidi.edge.client.ale.api.wsdl.ale.epcglobal.SecurityExceptionResponse;
-import org.rifidi.edge.client.ale.connection.service.ConnectionService;
-import org.rifidi.edge.client.ale.treeview.Activator;
-import org.rifidi.edge.client.ale.treeview.preferences.AleTreeViewPreferences;
 import org.rifidi.edge.client.ale.models.aleserviceporttype.AleServicePortTypeWrapper;
 import org.rifidi.edge.client.ale.models.ecspec.EcSpecModelWrapper;
 
@@ -36,16 +26,18 @@ public class AleTreeViewContentProvider implements ITreeContentProvider {
 
 	@SuppressWarnings("unused")
 	private Log logger = null;
-	
-	
+	private AleTreeView view=null;
+	private AleServicePortTypeWrapper aWrapper=null;
+	private AleLrServicePortTypeWrapper lWrapper=null;
 
 	/**
+	 * @param aleTreeView
 	 * 
 	 */
-	public AleTreeViewContentProvider() {
+	public AleTreeViewContentProvider(AleTreeView aleTreeView) {
 		logger = LogFactory.getLog(AleTreeViewContentProvider.class);
-		
-		
+		this.view = aleTreeView;
+
 	}
 
 	/*
@@ -58,14 +50,14 @@ public class AleTreeViewContentProvider implements ITreeContentProvider {
 	@Override
 	public Object[] getChildren(Object parentElement) {
 
-		if(parentElement instanceof AleServicePortTypeWrapper){
-			return ((AleServicePortTypeWrapper)parentElement).getEcSpecs();
+		if (parentElement instanceof AleServicePortTypeWrapper) {
+			return ((AleServicePortTypeWrapper) parentElement).getEcSpecs();
 		}
-		
-//		if(parentElement instanceof EcSpecModelWrapper){
-//			return new Object[0]; //return info
-//		}
-		
+
+		// if(parentElement instanceof EcSpecModelWrapper){
+		// return new Object[0]; //return info
+		// }
+
 		return new Object[0];
 	}
 
@@ -78,8 +70,8 @@ public class AleTreeViewContentProvider implements ITreeContentProvider {
 	 */
 	@Override
 	public Object getParent(Object element) {
-		if(element instanceof EcSpecModelWrapper){
-			return ((EcSpecModelWrapper)element).getParent();
+		if (element instanceof EcSpecModelWrapper) {
+			return ((EcSpecModelWrapper) element).getParent();
 		}
 		return null;
 	}
@@ -96,9 +88,11 @@ public class AleTreeViewContentProvider implements ITreeContentProvider {
 		if (element instanceof TreeNode) {
 			return true;
 		}
-		if(element instanceof AleServicePortTypeWrapper){
-			if(((AleServicePortTypeWrapper)element).isConnected())return true;
-			else return false;
+		if (element instanceof AleServicePortTypeWrapper) {
+			if (((AleServicePortTypeWrapper) element).isConnected())
+				return true;
+			else
+				return false;
 		}
 
 		return false;
@@ -115,8 +109,17 @@ public class AleTreeViewContentProvider implements ITreeContentProvider {
 	@Override
 	public Object[] getElements(Object inputElement) {
 		if (inputElement instanceof TreeNode) {
-			Object[] obj = new Object[1];
-				obj[0] = new AleServicePortTypeWrapper();
+			Object[] obj = new Object[2];
+			if(aWrapper==null){
+			aWrapper = new AleServicePortTypeWrapper();
+			aWrapper.addConnectionChangeListener(this.view);
+			aWrapper.addSetChangeListener(this.view);
+			}
+			if(lWrapper==null){
+				lwra
+			}
+			obj[0] = aWrapper;
+
 			return obj;
 		} else if (hasChildren(inputElement))
 			return getChildren(inputElement);
