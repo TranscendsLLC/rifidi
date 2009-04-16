@@ -103,6 +103,16 @@ public abstract class AbstractWidget<T extends AbstractWidgetData> implements
 	}
 
 	/**
+	 * Helper method for sublcasses to user. Notify listeners when they change
+	 * from dirty to clean
+	 */
+	protected void notifyListenersClean() {
+		for (MBeanInfoWidgetListener l : listners) {
+			l.clean(this.data.getName());
+		}
+	}
+
+	/**
 	 * Create the control for this widget
 	 * 
 	 * @param parent

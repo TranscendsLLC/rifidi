@@ -3,12 +3,13 @@
  */
 package org.rifidi.edge.client.mbean.ui.widgets.abstractwidgets;
 
+import javax.management.Attribute;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Spinner;
 import org.rifidi.edge.client.mbean.ui.widgets.data.AbstractWidgetData;
@@ -40,6 +41,66 @@ public abstract class AbstractNumberWidget<T extends AbstractWidgetData>
 	 */
 	public AbstractNumberWidget(T data) {
 		super(data);
+	}
+
+	/**
+	 * {@link AbstractNumberWidget#createControl(Composite)}
+	 */
+	@Override
+	public void createControl(Composite parent) {
+		createSpinner(parent);
+		initializeSpinner();
+		spinner.setEnabled(data.isEditable());
+		addSpinnerListeners();
+	}
+
+	/**
+	 * Subclasses should use this method to actually create the spinner control.
+	 * They should assign the newly created spinner to the protected spinner
+	 * variable. They should also set the spinner's layout data.
+	 * 
+	 * @param parent
+	 */
+	protected abstract void createSpinner(Composite parent);
+
+	/**
+	 * Subclasses should use this method to set the spinner's min, max, and
+	 * initial values.
+	 */
+	protected abstract void initializeSpinner();
+
+	/**
+	 * This method adds swt listeners to the spinner control and notifies
+	 * MBeanInfoWidgetListeners when the value of the spinner changes in some
+	 * way. By default it adds a a modify listener and a keylistener. Subclasses
+	 * can override this method if they want to provide different behavior for
+	 * this spinner.
+	 */
+	protected void addSpinnerListeners() {
+		spinner.addModifyListener(new ModifyListener() {
+			@Override
+			public void modifyText(ModifyEvent e) {
+				dirty = true;
+			}
+		});
+	
+		spinner.addKeyListener(new KeyListener() {
+	
+			@Override
+			public void keyPressed(KeyEvent e) {
+			}
+	
+			@Override
+			public void keyReleased(KeyEvent e) {
+				if (e.character == SWT.CR) {
+					if (dirty == true) {
+						dirty = false;
+						notifyListenersDataChanged(spinner.getText());
+					}
+				} else
+					notifyListenersKeyReleased();
+			}
+		});
 	}
 
 	/*
@@ -76,51 +137,27 @@ public abstract class AbstractNumberWidget<T extends AbstractWidgetData>
 		return null;
 	}
 
-	/**
-	 * {@link AbstractNumberWidget#createControl(Composite)}
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.client.mbean.ui.widgets.abstractwidgets.AbstractWidget
+	 * #setValue(javax.management.Attribute)
 	 */
 	@Override
-	public void createControl(Composite parent) {
-		spinner = new Spinner(parent, SWT.BORDER);
-		GridData gridData = new GridData();
-		gridData.horizontalAlignment = GridData.FILL;
-		gridData.grabExcessHorizontalSpace = true;
-		gridData.minimumWidth = 150;
-		spinner.setLayoutData(gridData);
-		buildCustomSpinner();
-		spinner.setEnabled(data.isEditable());
-		spinner.addModifyListener(new ModifyListener() {
-
-			@Override
-			public void modifyText(ModifyEvent e) {
-				dirty = true;
-			}
-		});
-
-		spinner.addKeyListener(new KeyListener() {
-
-			@Override
-			public void keyPressed(KeyEvent e) {
-			}
-
-			@Override
-			public void keyReleased(KeyEvent e) {
-				if (e.character == SWT.CR) {
-					if (dirty == true) {
-						dirty = false;
-						notifyListenersDataChanged(spinner.getText());
-					}
-				} else
-					notifyListenersKeyReleased();
-			}
-		});
-
+	public String setValue(Attribute value) {
+		spinner.setSelection(getValueAsInteger(value));
+		dirty = false;
+		super.notifyListenersClean();
+		return null;
 	}
 
 	/**
-	 * This method handles custom configuration of the sinner control based on
-	 * the data type being used, such as decimal places or min/max
+	 * Subclasses should return the value in the attribute as an Integer
+	 * 
+	 * @param value
+	 * @return
 	 */
-	protected abstract void buildCustomSpinner();
+	protected abstract Integer getValueAsInteger(Attribute value);
 
 }

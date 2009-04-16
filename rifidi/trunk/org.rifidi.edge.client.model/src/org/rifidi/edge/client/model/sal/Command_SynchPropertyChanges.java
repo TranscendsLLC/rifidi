@@ -6,8 +6,8 @@ package org.rifidi.edge.client.model.sal;
 import javax.management.AttributeList;
 
 import org.rifidi.edge.client.model.sal.commands.RemoteEdgeServerCommand;
-import org.rifidi.edge.core.rmi.client.readerconfigurationstub.RS_ServerDescription;
 import org.rifidi.edge.core.rmi.client.readerconfigurationstub.RS_SetReaderProperties;
+import org.rifidi.rmi.utils.exceptions.ServerUnavailable;
 
 /**
  * @author kyle
@@ -16,9 +16,14 @@ import org.rifidi.edge.core.rmi.client.readerconfigurationstub.RS_SetReaderPrope
 public class Command_SynchPropertyChanges implements RemoteEdgeServerCommand {
 
 	private RemoteEdgeServer server;
+	private String readerID;
+	private AttributeList attributes;
 
-	public Command_SynchPropertyChanges(RemoteEdgeServer server, String readerID) {
-
+	public Command_SynchPropertyChanges(RemoteEdgeServer server,
+			String readerID, AttributeList attributes) {
+		this.server = server;
+		this.readerID = readerID;
+		this.attributes = attributes;
 	}
 
 	/*
@@ -30,6 +35,14 @@ public class Command_SynchPropertyChanges implements RemoteEdgeServerCommand {
 	 */
 	@Override
 	public void execute() {
+
+		RS_SetReaderProperties setProperties = new RS_SetReaderProperties(
+				server.getRSServerDescription(), readerID, attributes);
+		try {
+			setProperties.makeCall();
+		} catch (ServerUnavailable su) {
+			server.disconnect();
+		}
 
 	}
 

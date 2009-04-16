@@ -237,4 +237,18 @@ public abstract class AbstractMBeanInfoComposite implements
 
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.client.mbean.ui.MBeanInfoWidgetListener#clean(java.lang
+	 * .String)
+	 */
+	@Override
+	public void clean(String widgetName) {
+		for (MBeanInfoWidgetListener l : listeners) {
+			l.clean(widgetName);
+		}
+	}
+
 }

@@ -8,6 +8,12 @@ import java.util.regex.Pattern;
 
 import javax.management.Attribute;
 
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.FocusListener;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
 import org.rifidi.edge.client.mbean.ui.widgets.data.StringWidgetData;
 
@@ -28,6 +34,8 @@ public abstract class AbstractStringWidget<T extends StringWidgetData> extends
 	private Pattern regexPattern;
 	/** The regular expression matcher object used for validation */
 	private Matcher matcher;
+	/** True if the text control has been modified */
+	private boolean dirty = false;
 
 	/**
 	 * @param data
@@ -40,6 +48,61 @@ public abstract class AbstractStringWidget<T extends StringWidgetData> extends
 		} else {
 			regexPattern = Pattern.compile(regexString);
 		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.client.mbean.ui.widgets.abstractwidgets.AbstractWidget
+	 * #createControl(org.eclipse.swt.widgets.Composite)
+	 */
+	@Override
+	public void createControl(Composite parent) {
+		createText(parent);
+		initializeText();
+		text.setEnabled(data.isEditable());
+		addTextListeners();
+	}
+
+	protected abstract void createText(Composite parent);
+
+	protected abstract void initializeText();
+
+	protected void addTextListeners() {
+		// notify listeners of a user typing a key
+		text.addKeyListener(new KeyListener() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+			}
+
+			@Override
+			public void keyReleased(KeyEvent e) {
+				if (e.character != SWT.CR) {
+					dirty = true;
+					notifyListenersKeyReleased();
+				} else {
+					if (dirty == true) {
+						dirty = false;
+						notifyListenersDataChanged(text.getText());
+					}
+				}
+			}
+		});
+
+		text.addFocusListener(new FocusListener() {
+			@Override
+			public void focusGained(FocusEvent e) {
+			}
+
+			@Override
+			public void focusLost(FocusEvent e) {
+				if (dirty == true) {
+					dirty = false;
+					notifyListenersDataChanged(text.getText());
+				}
+			}
+		});
 	}
 
 	/*
@@ -85,9 +148,11 @@ public abstract class AbstractStringWidget<T extends StringWidgetData> extends
 	 */
 	@Override
 	public String setValue(Attribute value) {
-		if(text!=null){
-			text.setText((String)value.getValue());
+		if (text != null) {
+			text.setText((String) value.getValue());
 		}
+		dirty = false;
+		notifyListenersClean();
 		return null;
 	}
 

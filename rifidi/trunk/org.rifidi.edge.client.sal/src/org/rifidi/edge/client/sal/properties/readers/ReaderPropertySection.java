@@ -86,7 +86,7 @@ public class ReaderPropertySection extends AbstractPropertySection implements
 	public void setInput(IWorkbenchPart part, ISelection selection) {
 		// TODO Auto-generated method stub
 		super.setInput(part, selection);
-		
+
 	}
 
 	/*
@@ -110,7 +110,17 @@ public class ReaderPropertySection extends AbstractPropertySection implements
 	 */
 	@Override
 	public void keyReleased(String widget) {
+	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.client.mbean.ui.MBeanInfoWidgetListener#clean(java.lang
+	 * .String)
+	 */
+	@Override
+	public void clean(String widgetName) {
 	}
 
 	/*
