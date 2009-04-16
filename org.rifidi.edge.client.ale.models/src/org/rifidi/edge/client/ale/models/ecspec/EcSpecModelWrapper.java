@@ -63,25 +63,26 @@ public class EcSpecModelWrapper {
 	 * 
 	 * @return ECSpec
 	 */
-	public ECSpec getEcSpec() {//loadfromfile-local
-		if(isParentRemote()){
-		GetECSpec parms = new GetECSpec();
-		parms.setSpecName(this.name);
-		try {
-			return ((AleServicePortTypeWrapper)this.parent).getAleServicePortType().getECSpec(parms);
-		} catch (ImplementationExceptionResponse e) {
-			logger.error(e.getMessage());
-		} catch (NoSuchNameExceptionResponse e) {
-			logger.debug(e.getMessage());
-		} catch (SecurityExceptionResponse e) {
-			logger.error(e.getMessage());
-		}
-		
+	public ECSpec getEcSpec() {// loadfromfile-local
+		if (isParentRemote()) {
+			GetECSpec parms = new GetECSpec();
+			parms.setSpecName(this.name);
+			try {
+				return ((AleServicePortTypeWrapper) this.parent)
+						.getAleServicePortType().getECSpec(parms);
+			} catch (ImplementationExceptionResponse e) {
+				logger.error(e.getMessage());
+			} catch (NoSuchNameExceptionResponse e) {
+				logger.debug(e.getMessage());
+			} catch (SecurityExceptionResponse e) {
+				logger.error(e.getMessage());
+			}
+
 		}
 		return new ECSpec();
-//		if(parent instanceof LocalFileStorage){
-			//unmarshal file
-//		}
+		// if(parent instanceof LocalFileStorage){
+		// unmarshal file
+		// }
 
 	}
 
@@ -93,7 +94,8 @@ public class EcSpecModelWrapper {
 	}
 
 	/**
-	 * @param parent the parent to set
+	 * @param parent
+	 *            the parent to set
 	 */
 	public void setParent(IEcSpecDataManager parent) {
 		this.parent = parent;
@@ -107,202 +109,219 @@ public class EcSpecModelWrapper {
 	}
 
 	/**
-	 * @param name the name to set
+	 * @param name
+	 *            the name to set
 	 */
 	public void setName(String name) {
 		this.name = name;
 	}
 
 	private void disconnectParent() {
-		if(isParentRemote())
-		((AleServicePortTypeWrapper)parent).disconnect();
+		if (isParentRemote())
+			((AleServicePortTypeWrapper) parent).disconnect();
 
 	}
 
-	public String define() { //save-local
-		if(isParentRemote()){
-		Define parms = new Define();
-		parms.setSpecName(this.name);
-		parms.setSpec(getEcSpec());
-		String retVal = "";
-		try {
-			((AleServicePortTypeWrapper)this.parent).getAleServicePortType().define(parms);
+	public String define() { // save-local
+		if (isParentRemote()) {
+			AleServicePortTypeWrapper wrapper = (AleServicePortTypeWrapper) this.parent;
+			Define parms = new Define();
+			parms.setSpecName(this.name);
+			parms.setSpec(getEcSpec());
+			String retVal = "";
+			try {
+				wrapper.getAleServicePortType().define(parms);
+				return retVal;
+			} catch (ImplementationExceptionResponse e) {
+				retVal = e.getMessage();
+				logger.error(retVal);
+			} catch (SecurityExceptionResponse e) {
+				retVal = e.getMessage();
+				logger.error(retVal);
+			} catch (ECSpecValidationExceptionResponse e) {
+				retVal = e.getMessage();
+				logger.error(retVal);
+			} catch (DuplicateNameExceptionResponse e) {
+				retVal = e.getMessage();
+				logger.error(retVal);
+			}
 			return retVal;
-		} catch (ImplementationExceptionResponse e) {
-			retVal = e.getMessage();
-			logger.error(retVal);
-		} catch (SecurityExceptionResponse e) {
-			retVal = e.getMessage();
-			logger.error(retVal);
-		} catch (ECSpecValidationExceptionResponse e) {
-			retVal = e.getMessage();
-			logger.error(retVal);
-		} catch (DuplicateNameExceptionResponse e) {
-			retVal = e.getMessage();
-			logger.error(retVal);
-		}
-		return retVal;
-		}else return "parent unknown Object";
-//		if(parent instanceof LocalFileStorage)
+		} else
+			return "parent unknown Object";
+		// if(parent instanceof LocalFileStorage)
 
 	}
 
-	public String undefine() { //delete-local
-		if(isParentRemote()){
-		Undefine parms = new Undefine();
-		parms.setSpecName(this.name);
-		String retVal = "";
-		try {
-			((AleServicePortTypeWrapper)this.parent).getAleServicePortType().undefine(parms);
+	public String undefine() { // delete-local
+		if (isParentRemote()) {
+			AleServicePortTypeWrapper wrapper = (AleServicePortTypeWrapper) this.parent;
+			Undefine parms = new Undefine();
+			parms.setSpecName(this.name);
+			String retVal = "";
+			try {
+				wrapper.getAleServicePortType().undefine(parms);
+				return retVal;
+			} catch (ImplementationExceptionResponse e) {
+				retVal = e.getMessage();
+				logger.error(retVal);
+			} catch (NoSuchNameExceptionResponse e) {
+				retVal = e.getMessage();
+				logger.error(retVal);
+			} catch (SecurityExceptionResponse e) {
+				retVal = e.getMessage();
+				logger.error(retVal);
+			}
 			return retVal;
-		} catch (ImplementationExceptionResponse e) {
-			retVal = e.getMessage();
-			logger.error(retVal);
-		} catch (NoSuchNameExceptionResponse e) {
-			retVal = e.getMessage();
-			logger.error(retVal);
-		} catch (SecurityExceptionResponse e) {
-			retVal = e.getMessage();
-			logger.error(retVal);
-		}
-		return retVal;
-		}else return "parent unknown Object";
+		} else
+			return "parent unknown Object";
 	}
 
 	public String subscribe(String notificationUri) {
-		if(isParentRemote()){
-		Subscribe parms = new Subscribe();
-		parms.setNotificationURI(notificationUri);
-		parms.setSpecName(this.name);
-		String retVal = "";
-		try {
-			((AleServicePortTypeWrapper)this.parent).getAleServicePortType().subscribe(parms);
+		if (isParentRemote()) {
+			Subscribe parms = new Subscribe();
+			parms.setNotificationURI(notificationUri);
+			parms.setSpecName(this.name);
+			String retVal = "";
+			try {
+				((AleServicePortTypeWrapper) this.parent)
+						.getAleServicePortType().subscribe(parms);
+				return retVal;
+			} catch (ImplementationExceptionResponse e) {
+				retVal = e.getMessage();
+				logger.error(retVal);
+			} catch (NoSuchNameExceptionResponse e) {
+				retVal = e.getMessage();
+				logger.error(retVal);
+			} catch (DuplicateSubscriptionExceptionResponse e) {
+				retVal = e.getMessage();
+				logger.error(retVal);
+			} catch (SecurityExceptionResponse e) {
+				retVal = e.getMessage();
+				logger.error(retVal);
+			} catch (InvalidURIExceptionResponse e) {
+				retVal = e.getMessage();
+				logger.error(retVal);
+			}
 			return retVal;
-		} catch (ImplementationExceptionResponse e) {
-			retVal = e.getMessage();
-			logger.error(retVal);
-		} catch (NoSuchNameExceptionResponse e) {
-			retVal = e.getMessage();
-			logger.error(retVal);
-		} catch (DuplicateSubscriptionExceptionResponse e) {
-			retVal = e.getMessage();
-			logger.error(retVal);
-		} catch (SecurityExceptionResponse e) {
-			retVal = e.getMessage();
-			logger.error(retVal);
-		} catch (InvalidURIExceptionResponse e) {
-			retVal = e.getMessage();
-			logger.error(retVal);
-		}
-		return retVal;
-		}else return "parent unknown Object";
+		} else
+			return "parent unknown Object";
 	}
 
 	public String unsubscribe(String notificationUri) {
-		if(isParentRemote()){
-		Unsubscribe parms = new Unsubscribe();
-		parms.setNotificationURI(notificationUri);
-		parms.setSpecName(this.name);
+		if (isParentRemote()) {
+			Unsubscribe parms = new Unsubscribe();
+			parms.setNotificationURI(notificationUri);
+			parms.setSpecName(this.name);
+			String retVal = "";
+			try {
+				((AleServicePortTypeWrapper) this.parent)
+						.getAleServicePortType().unsubscribe(parms);
+				return retVal;
+			} catch (ImplementationExceptionResponse e) {
+				retVal = e.getMessage();
+				logger.error(retVal);
+			} catch (NoSuchNameExceptionResponse e) {
+				retVal = e.getMessage();
+				logger.error(retVal);
+			} catch (NoSuchSubscriberExceptionResponse e) {
+				retVal = e.getMessage();
+				logger.error(retVal);
+			} catch (SecurityExceptionResponse e) {
+				retVal = e.getMessage();
+				logger.error(retVal);
+			} catch (InvalidURIExceptionResponse e) {
+				retVal = e.getMessage();
+				logger.error(retVal);
+			}
+			return retVal;
+		} else
+			return "parent unknown Object";
+	}
+
+	public String poll() {
+		if (isParentRemote()) {
+			Poll parms = new Poll();
+			parms.setSpecName(this.name);
+			String retVal = "";
+			try {
+				((AleServicePortTypeWrapper) this.parent)
+						.getAleServicePortType().poll(parms);
+				return retVal;
+			} catch (ImplementationExceptionResponse e) {
+				retVal = e.getMessage();
+				logger.error(retVal);
+			} catch (NoSuchNameExceptionResponse e) {
+				retVal = e.getMessage();
+				logger.error(retVal);
+			} catch (SecurityExceptionResponse e) {
+				retVal = e.getMessage();
+				logger.error(retVal);
+			}
+			return retVal;
+		} else
+			return "parent unknown Object";
+
+	}
+
+	public String immediate() {
 		String retVal = "";
-		try {
-			((AleServicePortTypeWrapper)this.parent).getAleServicePortType().unsubscribe(parms);
+		if (isParentRemote()) {
+			Immediate parms = new Immediate();
+			parms.setSpec(getEcSpec());
+
+			try {
+				((AleServicePortTypeWrapper) this.parent)
+						.getAleServicePortType().immediate(parms);
+			} catch (ImplementationExceptionResponse e) {
+				retVal = e.getMessage();
+				logger.error(retVal);
+			} catch (SecurityExceptionResponse e) {
+				retVal = e.getMessage();
+				logger.error(retVal);
+			} catch (ECSpecValidationExceptionResponse e) {
+				retVal = e.getMessage();
+				logger.error(retVal);
+			}
 			return retVal;
-		} catch (ImplementationExceptionResponse e) {
-			retVal = e.getMessage();
-			logger.error(retVal);
-		} catch (NoSuchNameExceptionResponse e) {
-			retVal = e.getMessage();
-			logger.error(retVal);
-		} catch (NoSuchSubscriberExceptionResponse e) {
-			retVal = e.getMessage();
-			logger.error(retVal);
-		} catch (SecurityExceptionResponse e) {
-			retVal = e.getMessage();
-			logger.error(retVal);
-		} catch (InvalidURIExceptionResponse e) {
-			retVal = e.getMessage();
-			logger.error(retVal);
-		}
-		return retVal;
-		}else return "parent unknown Object";
+		} else
+			return "parent unknown Object";
+
 	}
-	
-	public String poll(){
-		if(isParentRemote()){
-		Poll parms = new Poll();
-		parms.setSpecName(this.name);
-		String retVal="";
-		try {
-			((AleServicePortTypeWrapper)this.parent).getAleServicePortType().poll(parms);
-			return retVal;
-		} catch (ImplementationExceptionResponse e) {
-			retVal = e.getMessage();
-			logger.error(retVal);
-		} catch (NoSuchNameExceptionResponse e) {
-			retVal = e.getMessage();
-			logger.error(retVal);
-		} catch (SecurityExceptionResponse e) {
-			retVal = e.getMessage();
-			logger.error(retVal);
-		}
-		return retVal;
-		}else return "parent unknown Object";
-		
-	}
-	
-	public String immediate(){
-		String retVal="";
-		if(isParentRemote()){
-		Immediate parms=new Immediate();
-		parms.setSpec(getEcSpec());
-		
-		try {
-			((AleServicePortTypeWrapper)this.parent).getAleServicePortType().immediate(parms);
-		} catch (ImplementationExceptionResponse e) {
-			retVal = e.getMessage();
-			logger.error(retVal);
-		} catch (SecurityExceptionResponse e) {
-			retVal = e.getMessage();
-			logger.error(retVal);
-		} catch (ECSpecValidationExceptionResponse e) {
-			retVal = e.getMessage();
-			logger.error(retVal);
-		}
-		return retVal;
-		}else return "parent unknown Object";
-		
-	}
-	
-	public ArrayList<String> getSubscribers(){
-		if(isParentRemote()){
-		GetSubscribers parms = new GetSubscribers();
-		parms.setSpecName(this.name);
-		ArrayList<String> al;
-		try {
-			al = (ArrayList<String>) ((AleServicePortTypeWrapper)this.parent).getAleServicePortType().getSubscribers(parms).getString();
-			return al;
-		} catch (ImplementationExceptionResponse e) {
-			logger.error(e.getMessage());
-		} catch (NoSuchNameExceptionResponse e) {
-			logger.error(e.getMessage());
-		} catch (SecurityExceptionResponse e) {
-			logger.error(e.getMessage());
-		}
-		
+
+	public ArrayList<String> getSubscribers() {
+		if (isParentRemote()) {
+			GetSubscribers parms = new GetSubscribers();
+			parms.setSpecName(this.name);
+			ArrayList<String> al;
+			try {
+				al = (ArrayList<String>) ((AleServicePortTypeWrapper) this.parent)
+						.getAleServicePortType().getSubscribers(parms)
+						.getString();
+				return al;
+			} catch (ImplementationExceptionResponse e) {
+				logger.error(e.getMessage());
+			} catch (NoSuchNameExceptionResponse e) {
+				logger.error(e.getMessage());
+			} catch (SecurityExceptionResponse e) {
+				logger.error(e.getMessage());
+			}
+
 		}
 		return new ArrayList<String>();
-		
+
 	}
-	
-	private boolean isParentRemote(){
-		if(parent instanceof AleServicePortTypeWrapper)return true;
-		else return false;
-	}
-	
-	private boolean isParentLocal(){
-//		if(parent instanceof LocalFileStorage)return true;
-//		else 
+
+	private boolean isParentRemote() {
+		if (parent instanceof AleServicePortTypeWrapper)
+			return true;
+		else
 			return false;
+	}
+
+	private boolean isParentLocal() {
+		// if(parent instanceof LocalFileStorage)return true;
+		// else
+		return false;
 	}
 
 }

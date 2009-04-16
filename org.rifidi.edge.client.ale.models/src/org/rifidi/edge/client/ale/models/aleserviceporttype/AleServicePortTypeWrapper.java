@@ -17,6 +17,7 @@ import javax.management.ServiceNotFoundException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.eclipse.core.databinding.observable.set.ISetChangeListener;
 import org.eclipse.core.databinding.observable.set.WritableSet;
 import org.rifidi.edge.client.ale.api.wsdl.ale.epcglobal.ALEServicePortType;
 import org.rifidi.edge.client.ale.api.wsdl.ale.epcglobal.EmptyParms;
@@ -54,7 +55,8 @@ public class AleServicePortTypeWrapper implements ConnectionChangeListener,
 	}
 
 	/**
-	 * @param name the name to set
+	 * @param name
+	 *            the name to set
 	 */
 	public void setName(String name) {
 		this.name = name;
@@ -147,7 +149,10 @@ public class AleServicePortTypeWrapper implements ConnectionChangeListener,
 						new EmptyParms()).getString()) {
 					alEsWrs.add(new EcSpecModelWrapper(string, this));
 				}
-				ecSpecs.retainAll(alEsWrs);
+				if (ecSpecs.size() == 0) {
+					ecSpecs.addAll(alEsWrs);
+				} else
+					ecSpecs.retainAll(alEsWrs);
 			} catch (ImplementationExceptionResponse e) {
 				logger.error(e.getMessage());
 			} catch (SecurityExceptionResponse e) {
@@ -166,9 +171,14 @@ public class AleServicePortTypeWrapper implements ConnectionChangeListener,
 	}
 
 	public boolean isConnected() {
-		if (this.connectionStatus == ConnectionStatus.CONNECTED)
-			return true;
-		else
-			return false;
+		return (this.connectionStatus == ConnectionStatus.CONNECTED);
+	}
+
+	public void addSetChangeListener(ISetChangeListener listener) {
+		this.ecSpecs.addSetChangeListener(listener);
+	}
+
+	public void removeSetChangeListener(ISetChangeListener listener) {
+		this.ecSpecs.removeSetChangeListener(listener);
 	}
 }
