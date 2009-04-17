@@ -24,3 +24,5 @@ Import-Package: javax.jms;version="1.1.0",
 Require-Bundle: org.rifidi.configuration;bundle-version="1.0.0"
 Export-Package: org.rifidi.edge.readerplugin.thingmagic
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Spring-Context: *;create-asynchronously:=true
+Eclipse-BuddyPolicy: global

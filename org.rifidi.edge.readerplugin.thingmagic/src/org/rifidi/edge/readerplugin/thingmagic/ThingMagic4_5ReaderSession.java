@@ -53,14 +53,19 @@ public class ThingMagic4_5ReaderSession extends AbstractIPReaderSession {
 	 */
 	@Override
 	public byte[] isMessage(byte message) {
-		if (NEWLINE == message) {
-			byte[] ret = _messageBuilder;
-			_messageBuilder = new byte[0];
-			return ret;
-		}
 		_messageBuilder = Arrays.copyOf(_messageBuilder,
 				_messageBuilder.length + 1);
 		_messageBuilder[_messageBuilder.length - 1] = message;
+		
+		if ( (_messageBuilder[_messageBuilder.length - 1] == NEWLINE) && 
+				(_messageBuilder[_messageBuilder.length - 2] == NEWLINE)){
+			byte[] retVal = Arrays.copyOf(_messageBuilder,
+					_messageBuilder.length - 2);
+			
+			_messageBuilder = new byte[0];
+			
+			return retVal;
+		}
 		return null;
 	}
 
