@@ -59,7 +59,8 @@ public abstract class AbstractCommandConfiguration<T extends Command> extends
 	 */
 	public CommandConfigurationDTO getDTO(Configuration configuration) {
 		return new CommandConfigurationDTO(this.getID(), configuration
-				.getFactoryID());
+				.getFactoryID(), configuration.getAttributes(configuration
+				.getAttributeNames()));
 	}
 
 }
