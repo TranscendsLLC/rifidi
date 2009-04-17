@@ -10,8 +10,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -42,18 +40,12 @@ public class ECSPECManagerServiceImpl implements ECSPECManagerService {
 	private Map<String, RifidiECSpec> nameToSpec;
 	/** Esper engine isntance. */
 	private EPServiceProvider esper;
-	/** */
-	/** Threadpool for executing the scheduled triggers. */
-	private ScheduledExecutorService triggerpool;
 
 	/**
 	 * Constructor.
 	 */
 	public ECSPECManagerServiceImpl() {
 		nameToSpec = new HashMap<String, RifidiECSpec>();
-		// TODO: we might have to manage the size of the pool size but that
-		// requires profiling
-		triggerpool = new ScheduledThreadPoolExecutor(10);
 	}
 
 	/**
@@ -83,8 +75,7 @@ public class ECSPECManagerServiceImpl implements ECSPECManagerService {
 			logger.debug("Creating " + name);
 			if (!nameToSpec.containsKey(name)) {
 				RifidiECSpec ecSpec = new RifidiECSpec(name, spec, esper,
-						triggerpool, rifidiBoundarySpec, readers, primarykeys,
-						reports);
+						rifidiBoundarySpec, readers, primarykeys, reports);
 				nameToSpec.put(name, ecSpec);
 				logger.debug("Created " + name);
 				return;

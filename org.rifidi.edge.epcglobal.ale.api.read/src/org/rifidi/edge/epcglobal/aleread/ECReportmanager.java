@@ -8,21 +8,23 @@ import java.util.GregorianCalendar;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.messages.DatacontainerEvent;
 import org.rifidi.edge.core.messages.TagReadEvent;
 import org.rifidi.edge.epcglobal.ale.api.read.data.ECReport;
-import org.rifidi.edge.epcglobal.ale.api.read.data.ECReportSpec;
 import org.rifidi.edge.epcglobal.ale.api.read.data.ECReports;
 import org.rifidi.edge.epcglobal.ale.api.read.data.ECSpec;
 import org.rifidi.edge.epcglobal.ale.api.read.data.ECReports.Reports;
 import org.rifidi.edge.epcglobal.aleread.ALEReadAPI.TriggerCondition;
+import org.rifidi.edge.epcglobal.aleread.rifidievents.StartEvent;
+import org.rifidi.edge.epcglobal.aleread.wrappers.RifidiECSpec;
 import org.rifidi.edge.epcglobal.aleread.wrappers.RifidiReport;
 
 import com.espertech.esper.client.EPServiceProvider;
@@ -38,60 +40,69 @@ import com.espertech.esper.event.map.MapEventBean;
  * 
  */
 public class ECReportmanager implements Runnable, StatementAwareUpdateListener {
-
+	/** Logger for this class. */
+	private static final Log logger = LogFactory.getLog(ECReportmanager.class);
 	/** Reports that need to be processed. */
 	private List<RifidiReport> rifidiReports;
 
 	// TODO: synchronization?
-	/** List containing statements that trigger when interval ran out. */
-	private List<EPStatement> intervalStatements;
+	/** List containing statements that trigger when duration ran out. */
+	private List<EPStatement> durationStatements;
 	/** List containing statements that trigger when the tag set is stable. */
 	private List<EPStatement> stableSetIntervalStatements;
 	/** List containing statements that trigger when a stop trigger arrived. */
 	private List<EPStatement> stopTriggerStatements;
 	/** List containing statements that trigger when data is available. */
 	private List<EPStatement> whenDataAvailableStatements;
+	/**
+	 * List containing statements that trigger when a destroy event was
+	 * received.
+	 */
+	private List<EPStatement> destroyStatements;
 	/** Incoming events. */
 	private LinkedBlockingQueue<EventTuple> eventQueue;
 	/** Target uris for the rifidiReports. */
-	private ConcurrentSkipListSet<URI> uris;
+	private List<URI> uris;
 	/** Esper instance used by this instance. */
 	private EPServiceProvider esper;
 	/** Name of the ec spec. */
 	private String specName;
+	/** True if the spec has been destroied by a delete event. */
+	private boolean destroied;
 	/**
 	 * The spec associated with this reportmanager. Null if the spec is not sent
 	 * back with the rifidiReports.
 	 */
 	private ECSpec spec;
+	/** Rifidi ec spec owning this manager. */
+	private RifidiECSpec owner;
+	/** Handler for the triggers. */
+	private ReadTriggerHandler readTriggerHandler;
 
 	/**
 	 * Constructor.
 	 */
 	public ECReportmanager(String specName, EPServiceProvider esper,
-			List<RifidiReport> reports) {
+			List<RifidiReport> reports, RifidiECSpec owner, List<URI> uris) {
 		rifidiReports = reports;
 		eventQueue = new LinkedBlockingQueue<EventTuple>();
-		uris = new ConcurrentSkipListSet<URI>();
+		destroied = false;
+		readTriggerHandler = new ReadTriggerHandler(this, owner
+				.getRifidiBoundarySpec());
+		this.uris = uris;
 		this.esper = esper;
 		this.specName = specName;
+		this.owner = owner;
 	}
 
 	/**
 	 * Constructor.
 	 */
 	public ECReportmanager(String specName, EPServiceProvider esper,
-			ECSpec spec, List<RifidiReport> reports) {
-		this(specName, esper, reports);
+			ECSpec spec, List<RifidiReport> reports, RifidiECSpec owner,
+			List<URI> uris) {
+		this(specName, esper, reports, owner, uris);
 		this.spec = spec;
-	}
-
-	public void addURI(URI uri) {
-		uris.add(uri);
-	}
-
-	public void removeURI(URI uri) {
-		uris.remove(uri);
 	}
 
 	/**
@@ -104,11 +115,11 @@ public class ECReportmanager implements Runnable, StatementAwareUpdateListener {
 	}
 
 	/**
-	 * @param intervalStatements
-	 *            the intervalStatements to set
+	 * @param durationStatements
+	 *            the durationStatements to set
 	 */
-	public void setIntervalStatements(List<EPStatement> intervalStatements) {
-		this.intervalStatements = intervalStatements;
+	public void setDurationStatements(List<EPStatement> durationStatements) {
+		this.durationStatements = durationStatements;
 	}
 
 	/**
@@ -137,6 +148,22 @@ public class ECReportmanager implements Runnable, StatementAwareUpdateListener {
 		this.whenDataAvailableStatements = whenDataAvailableStatements;
 	}
 
+	/**
+	 * @param destroyStatements
+	 *            the destroyStatements to set
+	 */
+	public void setDestroyStatements(List<EPStatement> destroyStatements) {
+		this.destroyStatements = destroyStatements;
+	}
+
+	protected void startTrigger(String uri) {
+		logger.debug("Start trigger went off: " + uri);
+	}
+
+	protected void stopTrigger(String uri) {
+		logger.debug("Stop trigger went off: " + uri);
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -147,11 +174,25 @@ public class ECReportmanager implements Runnable, StatementAwareUpdateListener {
 	 * com.espertech.esper.client.EPServiceProvider)
 	 */
 	@Override
-	public void update(EventBean[] arg0, EventBean[] arg1, EPStatement arg2,
-			EPServiceProvider arg3) {
+	public synchronized void update(EventBean[] arg0, EventBean[] arg1,
+			EPStatement arg2, EPServiceProvider arg3) {
+		EventTuple tuple = null;
+		if (destroied) {
+			// ECSpec is destroied.
+			return;
+		}
+		if (destroyStatements.contains(arg2)) {
+			destroied = true;
+			tuple = new EventTuple();
+			tuple.condition = TriggerCondition.DESTROIED;
+			// callback for destroying the statements
+			owner.discard();
+		} else {
+			tuple = new EventTuple();
+		}
+
 		// TODO: fix, needs timing
 		esper.getEPRuntime().sendEvent(new StartEvent("wuhu"));
-		EventTuple tuple = new EventTuple();
 		if (whenDataAvailableStatements.contains(arg2)) {
 			tuple.condition = TriggerCondition.DATA_AVAILABLE;
 		}
@@ -161,8 +202,11 @@ public class ECReportmanager implements Runnable, StatementAwareUpdateListener {
 		if (stopTriggerStatements.contains(arg2)) {
 			tuple.condition = TriggerCondition.STOP_TRIGGER;
 		}
-		if (intervalStatements.contains(arg2)) {
-			tuple.condition = TriggerCondition.INTERVAL;
+		if (durationStatements.contains(arg2)) {
+			tuple.condition = TriggerCondition.DURATION;
+		}
+		if (destroyStatements.contains(arg2)) {
+			tuple.condition = TriggerCondition.UNDEFINE;
 		}
 		tuple.beans = arg0;
 		addEvents(tuple);
@@ -175,8 +219,9 @@ public class ECReportmanager implements Runnable, StatementAwareUpdateListener {
 	 */
 	@Override
 	public void run() {
+		readTriggerHandler.start();
 		// subscribe to all statements
-		for (EPStatement statement : intervalStatements) {
+		for (EPStatement statement : durationStatements) {
 			statement.addListener(this);
 		}
 		for (EPStatement statement : stableSetIntervalStatements) {
@@ -188,8 +233,13 @@ public class ECReportmanager implements Runnable, StatementAwareUpdateListener {
 		for (EPStatement statement : whenDataAvailableStatements) {
 			statement.addListener(this);
 		}
+		for (EPStatement statement : destroyStatements) {
+			statement.addListener(this);
+		}
 		while (!Thread.currentThread().isInterrupted()) {
 			try {
+
+				// get the eventtuple submitted last
 				EventTuple tagevents = eventQueue.take();
 				Set<DatacontainerEvent> events = new HashSet<DatacontainerEvent>();
 				// collect tags from event beans
@@ -214,17 +264,20 @@ public class ECReportmanager implements Runnable, StatementAwareUpdateListener {
 					ecreports.setECSpec(spec);
 				}
 				// one of TRIGGER REPEAT_PERIOD REQUESTED UNDEFINE
-				ecreports.setInitiationCondition("TRIGGER");
+				ecreports.setInitiationCondition(ALEReadAPI.conditionToName
+						.get(tagevents.condition));
 				if (ecreports.getInitiationCondition().equals("TRIGGER")) {
-					ecreports.setInitiationTrigger("FUUUUUUUUUUUUUUUUUUUUUCK");
 				}
 				ecreports.setTerminationCondition("TRIGGER");
 				// one of TRIGGER DURATION STABLE_SET DATA_AVAILABLE
 				// UNREQUEST
 				// UNDEFINE
-				if (ecreports.getTerminationCondition().equals("TRIGGER")) {
-					ecreports.setTerminationTrigger("DAAAAAAAARRRRRRRRRN");
+				ecreports.setTerminationCondition(ALEReadAPI.conditionToName
+						.get(tagevents.condition));
+				if (TriggerCondition.STOP_TRIGGER.equals(tagevents.condition)) {
+					// ecreports.setTerminationTrigger(value);
 				}
+
 				ecreports.setSpecName(specName);
 				// running time
 				ecreports.setTotalMilliseconds(10);
@@ -237,20 +290,14 @@ public class ECReportmanager implements Runnable, StatementAwareUpdateListener {
 					}
 				}
 			} catch (InterruptedException e) {
+				readTriggerHandler.stop();
 				Thread.currentThread().interrupt();
 			}
 		}
+		readTriggerHandler.stop();
 	}
 
-	/**
-	 * Add a new report to the list of rifidiReports to be generated.
-	 * 
-	 * @param reportSpec
-	 */
-	public void addECReport(ECReportSpec reportSpec) {
-
-	}
-
+	// TODO: aaaargh performance!!!!!!!!!!!
 	private XMLGregorianCalendar getCurrentCalendar() {
 		GregorianCalendar gc = (GregorianCalendar) GregorianCalendar
 				.getInstance();
@@ -258,7 +305,7 @@ public class ECReportmanager implements Runnable, StatementAwareUpdateListener {
 		try {
 			dataTypeFactory = DatatypeFactory.newInstance();
 		} catch (DatatypeConfigurationException ex) {
-			System.out.println("epic fail: " + ex);
+			logger.fatal("epic fail: " + ex);
 		}
 		return dataTypeFactory.newXMLGregorianCalendar(gc);
 	}

@@ -166,6 +166,9 @@ public class CompositeLogicalReaderImpl implements CompositeLogicalReader {
 	 */
 	@Override
 	public boolean isInUse() {
+		for(Object usr:users){
+			System.out.println(usr);
+		}
 		return !users.isEmpty();
 	}
 
@@ -178,6 +181,9 @@ public class CompositeLogicalReaderImpl implements CompositeLogicalReader {
 	public void release(Object user) {
 		synchronized (users) {
 			users.remove(user);
+			for (LogicalReader reader : readers) {
+				reader.release(user);
+			}
 		}
 	}
 

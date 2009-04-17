@@ -9,16 +9,19 @@ import java.util.Map;
 
 /**
  * @author Jochen Mader - jochen@pramari.com
- *
+ * 
  */
 public class ALEReadAPI {
 	public static final String EC_TIME_UNIT_MS = "MS";
 	public static final Map<String, ALEFields> aleIdToEnum;
+	public static final Map<TriggerCondition, String> conditionToName;
+
 	public enum TriggerCondition {
-		DATA_AVAILABLE, STABLE_SET, STOP_TRIGGER, INTERVAL
+		DATA_AVAILABLE, STABLE_SET, STOP_TRIGGER, DURATION, DESTROIED, UNREQUEST, UNDEFINE
 	};
-	static{
-		Map<String, ALEFields> fields=new HashMap<String, ALEFields>();
+
+	static {
+		Map<String, ALEFields> fields = new HashMap<String, ALEFields>();
 		fields.put("epc", ALEFields.EPC);
 		fields.put("accessPwd", ALEFields.ACCESSPWD);
 		fields.put("killPwd", ALEFields.KILLPWD);
@@ -27,6 +30,15 @@ public class ALEReadAPI {
 		fields.put("nsi", ALEFields.NSI);
 		fields.put("tidBank", ALEFields.TIDBANK);
 		fields.put("userBank", ALEFields.USERBANK);
-		aleIdToEnum=Collections.unmodifiableMap(fields);
+		aleIdToEnum = Collections.unmodifiableMap(fields);
+
+		Map<TriggerCondition, String> conditions = new HashMap<TriggerCondition, String>();
+		conditions.put(TriggerCondition.STOP_TRIGGER, "TRIGGER");
+		conditions.put(TriggerCondition.DURATION, "DURATION");
+		conditions.put(TriggerCondition.STABLE_SET, "STABLE_SET");
+		conditions.put(TriggerCondition.DATA_AVAILABLE, "DATA_AVAILABLE");
+		conditions.put(TriggerCondition.UNREQUEST, "UNREQUEST");
+		conditions.put(TriggerCondition.UNDEFINE, "UNDEFINE");
+		conditionToName = Collections.unmodifiableMap(conditions);
 	}
 }
