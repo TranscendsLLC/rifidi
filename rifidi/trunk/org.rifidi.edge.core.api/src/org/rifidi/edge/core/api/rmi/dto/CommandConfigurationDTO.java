@@ -5,6 +5,8 @@ package org.rifidi.edge.core.api.rmi.dto;
 
 import java.io.Serializable;
 
+import javax.management.AttributeList;
+
 /**
  * @author kyle
  * 
@@ -16,6 +18,8 @@ public class CommandConfigurationDTO implements Serializable {
 	
 	private String commandConfigID;
 	private String commandConfigType;
+	/** The list of attributes of the commandConfiguration */
+	private AttributeList attributes;
 	
 	/**
 	 * @param commandConfigID
@@ -23,10 +27,11 @@ public class CommandConfigurationDTO implements Serializable {
 	 * @param readerFactoryID
 	 */
 	public CommandConfigurationDTO(String commandConfigID,
-			String commandConfigType) {
+			String commandConfigType, AttributeList attributes) {
 		super();
 		this.commandConfigID = commandConfigID;
 		this.commandConfigType = commandConfigType;
+		this.attributes = attributes;
 	}
 
 	/**
@@ -41,5 +46,12 @@ public class CommandConfigurationDTO implements Serializable {
 	 */
 	public String getCommandConfigType() {
 		return commandConfigType;
+	}
+
+	/**
+	 * @return the attributes
+	 */
+	public AttributeList getAttributes() {
+		return attributes;
 	}
 }
