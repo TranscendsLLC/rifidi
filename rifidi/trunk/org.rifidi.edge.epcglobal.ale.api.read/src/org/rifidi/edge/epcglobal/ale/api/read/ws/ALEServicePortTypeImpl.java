@@ -15,6 +15,7 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.epcglobal.ale.api.read.data.ECReportSpec;
+import org.rifidi.edge.epcglobal.ale.api.read.data.ECSpec.LogicalReaders;
 import org.rifidi.edge.epcglobal.aleread.ALEReadAPI;
 import org.rifidi.edge.epcglobal.aleread.service.ECSPECManagerService;
 import org.rifidi.edge.epcglobal.aleread.service.RifidiReportFactory;
@@ -53,9 +54,16 @@ public class ALEServicePortTypeImpl implements ALEServicePortType, WebService {
 	 * org.rifidi.edge.epcglobal.ale.api.read.ws.ALEServicePortType#undefine
 	 * (org.rifidi.edge.epcglobal.ale.api.read.ws.Undefine parms )
 	 */
-	public org.rifidi.edge.epcglobal.ale.api.read.ws.VoidHolder undefine(
+	public synchronized org.rifidi.edge.epcglobal.ale.api.read.ws.VoidHolder undefine(
 			Undefine parms) throws ImplementationExceptionResponse,
 			NoSuchNameExceptionResponse, SecurityExceptionResponse {
+		try {
+			for(String reader:ecspecManagerService.getSpecByName(parms.getSpecName()).getLogicalReaders().getLogicalReader()){
+				lrService.getLogicalReaderByName(reader).release(parms.getSpecName());	
+			}
+		} catch (org.rifidi.edge.epcglobal.ale.api.lr.ws.NoSuchNameExceptionResponse e) {
+			logger.warn("Spec "+parms.getSpecName()+" was registered to non existend reader.");
+		}
 		ecspecManagerService.destroySpec(parms.getSpecName());
 		return new VoidHolder();
 	}
@@ -143,7 +151,7 @@ public class ALEServicePortTypeImpl implements ALEServicePortType, WebService {
 			for (String reader : parms.getSpec().getLogicalReaders()
 					.getLogicalReader()) {
 				currentReader = reader;
-				lrService.getLogicalReaderByName(reader).aquire(this);
+				lrService.getLogicalReaderByName(reader).aquire(parms.getSpecName());
 				readers.add(lrService.getLogicalReaderByName(reader));
 			}
 		} catch (org.rifidi.edge.epcglobal.ale.api.lr.ws.NoSuchNameExceptionResponse e) {

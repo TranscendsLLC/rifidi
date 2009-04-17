@@ -1,21 +1,21 @@
 /**
  * 
  */
-package org.rifidi.edge.epcglobal.aleread;
+package org.rifidi.edge.epcglobal.aleread.rifidievents;
 
 /**
  * @author Jochen Mader - jochen@pramari.com
- * 
+ *
  */
-public class StopEvent {
+public class DestroyEvent {
 	/** Name of the associated ec spec. */
 	private String name;
 
 	/**
 	 * @param name
+	 *            name of the associated ec spec
 	 */
-	public StopEvent(String name) {
-		super();
+	public DestroyEvent(String name) {
 		this.name = name;
 	}
 

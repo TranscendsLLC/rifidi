@@ -4,9 +4,6 @@ import java.util.TimeZone;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.rifidi.edge.epcglobal.aleread.wrappers.RifidiECSpec;
-
-import com.espertech.esper.client.EPRuntime;
 
 /**
  * Runnable for time based triggers.
@@ -20,30 +17,31 @@ public class Trigger implements Runnable {
 	/** True if this is a start trigger. */
 	private boolean start = true;
 	/** Target of the start/stop operations. */
-	private RifidiECSpec target = null;
+	private ECReportmanager target = null;
 	/** Period between two trigger events. */
 	private Long period;
 	/** Offset from midnight. */
 	private Long offset;
 	/** Difference between system and ale timezone. */
 	private Long delta;
-	/** The esper runtime. */
-	private EPRuntime runtime;
+	/** Name of this trigger */
+	private String uri;
 
 	/**
 	 * Constructor.
 	 * 
+	 * @param uri
 	 * @param period
 	 * @param offset
 	 * @param timezone
 	 * @param target
 	 */
-	public Trigger(Long period, Long offset, Long timezone, EPRuntime runtime) {
+	public Trigger(String uri, Long period, Long offset, Long timezone) {
 		super();
+		this.uri = uri;
 		this.period = period;
 		this.offset = offset;
 		this.delta = timezone - TimeZone.getDefault().getRawOffset();
-		this.runtime = runtime;
 	}
 
 	public long getDelayToNextExec() {
@@ -68,8 +66,16 @@ public class Trigger implements Runnable {
 	/**
 	 * @return the target
 	 */
-	public RifidiECSpec getTarget() {
+	public ECReportmanager getTarget() {
 		return target;
+	}
+
+	/**
+	 * @param target
+	 *            the target to set
+	 */
+	public void setTarget(ECReportmanager target) {
+		this.target = target;
 	}
 
 	/**
@@ -95,21 +101,13 @@ public class Trigger implements Runnable {
 	public void run() {
 		if (target != null) {
 			if (start) {
-				runtime.sendEvent(new StartEvent(target.getName()));
+				target.startTrigger(uri);
 				return;
 			}
-			target.stop();
+			target.stopTrigger(uri);
 			return;
 		}
 		logger.warn("No target associated with trigger " + this);
-	}
-
-	/**
-	 * @param target
-	 *            the target to set
-	 */
-	public void setTarget(RifidiECSpec target) {
-		this.target = target;
 	}
 
 }
