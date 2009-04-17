@@ -23,7 +23,7 @@ public class ThingMagic4_5ReaderFactory extends
 			private static final String description = 
 				"The ThingMagic4_5 is a IP RIFD reader session than can connect to versions 4 or 5 ThingMagic RFID reader.";
 			/** Name of the readerSession. */
-			private static final String name = "Alien9800";
+			private static final String name = "ThingMagic4_5";
 			/** A JMS event notification sender*/
 			private NotifierServiceWrapper notifierServiceWrapper;
 
