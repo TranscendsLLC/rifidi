@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.rifidi.edge.client.sal.properties.readers;
+package org.rifidi.edge.client.sal.properties.commandconfigurations;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,6 +10,7 @@ import javax.management.MBeanInfo;
 
 import org.eclipse.ui.views.properties.tabbed.AbstractSectionDescriptor;
 import org.eclipse.ui.views.properties.tabbed.ISection;
+import org.rifidi.edge.client.model.sal.RemoteCommandConfiguration;
 import org.rifidi.edge.client.model.sal.RemoteReader;
 import org.rifidi.edge.client.sal.properties.MBeanModelObjectPropertySection;
 
@@ -17,20 +18,20 @@ import org.rifidi.edge.client.sal.properties.MBeanModelObjectPropertySection;
  * @author kyle
  * 
  */
-public class ReaderSectionDescriptor extends AbstractSectionDescriptor {
+public class CommandConfigSectionDescriptor extends AbstractSectionDescriptor {
 
 	private String tabID;
 	private MBeanInfo info;
-	private RemoteReader reader;
-	private final String ID;
+	private RemoteCommandConfiguration commandConfig;
 	private String category;
+	private final String ID;
 
-	public ReaderSectionDescriptor(String tabID, MBeanInfo info,
-			RemoteReader reader, String category) {
-		this.tabID = tabID;
-		this.info = info;
-		this.reader = reader;
+	public CommandConfigSectionDescriptor(String tabID, MBeanInfo info,
+			RemoteCommandConfiguration commandConfig, String category) {
 		this.ID = tabID + "." + "section";
+		this.info = info;
+		this.tabID = tabID;
+		this.commandConfig = commandConfig;
 		this.category = category;
 	}
 
@@ -53,7 +54,7 @@ public class ReaderSectionDescriptor extends AbstractSectionDescriptor {
 	 */
 	@Override
 	public ISection getSectionClass() {
-		return new MBeanModelObjectPropertySection(info, reader, category);
+		return new MBeanModelObjectPropertySection(info, commandConfig, category);
 	}
 
 	/*
@@ -76,8 +77,7 @@ public class ReaderSectionDescriptor extends AbstractSectionDescriptor {
 	@Override
 	public List getInputTypes() {
 		List<String> types = new ArrayList<String>();
-		types.add(RemoteReader.class.getName());
-		types.add("org.rifidi.edge.client.twodview.sfx.ReaderAlphaImageFigure");
+		types.add(RemoteCommandConfiguration.class.getName());
 		return types;
 	}
 

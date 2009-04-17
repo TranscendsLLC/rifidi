@@ -151,9 +151,6 @@ public class StandardMBeanInfoComposite extends AbstractMBeanInfoComposite {
 
 			// add a label
 			widget.createLabel(widgetCompsoite);
-
-			// add a listner
-			widget.addListener(this);
 			widget.createControl(widgetCompsoite);
 		}
 	}

@@ -19,4 +19,8 @@ public interface CommandController {
 	public void deleteCommand(String commandConfigID);
 	
 	public Set<RemoteCommandConfiguration> getCommandConfigurations();
+	
+	void clearPropertyChanges(String commandID);
+	
+	void synchPropertyChanges(String commandID);
 }

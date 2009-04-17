@@ -6,23 +6,32 @@ package org.rifidi.edge.client.model.sal;
 import javax.management.AttributeList;
 
 import org.rifidi.edge.client.model.sal.commands.RemoteEdgeServerCommand;
-import org.rifidi.edge.core.rmi.client.readerconfigurationstub.RS_SetReaderProperties;
+import org.rifidi.edge.core.rmi.client.commandconfigurationstub.CCSetCommandConfigProperties;
 import org.rifidi.rmi.utils.exceptions.ServerUnavailable;
 
 /**
  * @author kyle
  * 
  */
-public class Command_SynchPropertyChanges implements RemoteEdgeServerCommand {
+public class Command_SynchCommandConfigPropertyChanges implements
+		RemoteEdgeServerCommand {
 
 	private RemoteEdgeServer server;
-	private String readerID;
+	private String commandConfigID;
 	private AttributeList attributes;
 
-	public Command_SynchPropertyChanges(RemoteEdgeServer server,
-			String readerID, AttributeList attributes) {
+	/**
+	 * Constructor
+	 * 
+	 * @param server
+	 * @param commandConfigID
+	 * @param attributes
+	 */
+	public Command_SynchCommandConfigPropertyChanges(RemoteEdgeServer server,
+			String commandConfigID, AttributeList attributes) {
+		super();
 		this.server = server;
-		this.readerID = readerID;
+		this.commandConfigID = commandConfigID;
 		this.attributes = attributes;
 	}
 
@@ -35,9 +44,8 @@ public class Command_SynchPropertyChanges implements RemoteEdgeServerCommand {
 	 */
 	@Override
 	public void execute() {
-
-		RS_SetReaderProperties setProperties = new RS_SetReaderProperties(
-				server.getRSServerDescription(), readerID, attributes);
+		CCSetCommandConfigProperties setProperties = new CCSetCommandConfigProperties(
+				server.getCCServerDescription(), this.commandConfigID, this.attributes);
 		try {
 			setProperties.makeCall();
 		} catch (ServerUnavailable su) {
@@ -67,8 +75,7 @@ public class Command_SynchPropertyChanges implements RemoteEdgeServerCommand {
 	 */
 	@Override
 	public String getType() {
-		// TODO Auto-generated method stub
-		return null;
+		return "COMMAND_SYNCH_COMMAND_CONFIG_PROPERTY_CHANGES";
 	}
 
 }

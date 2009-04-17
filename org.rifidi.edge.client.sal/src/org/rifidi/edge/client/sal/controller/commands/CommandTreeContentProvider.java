@@ -20,6 +20,8 @@ import org.rifidi.edge.client.model.sal.RemoteCommandConfigFactory;
 import org.rifidi.edge.client.model.sal.RemoteCommandConfigType;
 import org.rifidi.edge.client.model.sal.RemoteCommandConfiguration;
 import org.rifidi.edge.client.model.sal.RemoteEdgeServer;
+import org.rifidi.edge.client.model.sal.RemoteReader;
+import org.rifidi.edge.client.model.sal.properties.RemoteObjectDirtyEvent;
 
 /**
  * @author kyle
@@ -196,6 +198,15 @@ public class CommandTreeContentProvider implements ITreeContentProvider,
 	public void propertyChange(PropertyChangeEvent evt) {
 		if (evt.getPropertyName().equals(RemoteEdgeServer.STATE_PROPERTY)) {
 			viewer.refresh(edgeServerList.get(0));
+		} else if (evt.getPropertyName().equals(
+				RemoteObjectDirtyEvent.DIRTY_EVENT_PROPERTY)) {
+			RemoteObjectDirtyEvent bean = (RemoteObjectDirtyEvent) evt
+					.getNewValue();
+			RemoteCommandConfiguration commandConfig = (RemoteCommandConfiguration) edgeServerList
+					.get(0).getCommandConfigurations().get(bean.getModelID());
+
+			viewer.update(commandConfig, null);
+
 		}
 
 	}
@@ -251,6 +262,11 @@ public class CommandTreeContentProvider implements ITreeContentProvider,
 		viewer.setExpandedState(edgeServerList.get(0), true);
 	}
 
+	/**
+	 * Helper method to process a RemoteCommandConfig being added
+	 * 
+	 * @param config
+	 */
 	private void addRemoteCommandConfiguration(RemoteCommandConfiguration config) {
 		Collection<RemoteCommandConfigFactory> factories = edgeServerList
 				.get(0).getRemoteCommandConfigFactories().values();
@@ -266,7 +282,7 @@ public class CommandTreeContentProvider implements ITreeContentProvider,
 							.getCommandConfigType(), commandSet);
 				}
 				commandSet.add(config);
-
+				config.addPropertyChangeListener(this);
 				viewer.add(type, config);
 				viewer.setExpandedState(type, true);
 				break;
@@ -274,6 +290,11 @@ public class CommandTreeContentProvider implements ITreeContentProvider,
 		}
 	}
 
+	/**
+	 * Helper method to process a commandconfig being removed
+	 * 
+	 * @param config
+	 */
 	private void removeRemoteCommandConfiguration(
 			RemoteCommandConfiguration config) {
 		Set<RemoteCommandConfiguration> foundSet = null;
@@ -290,7 +311,7 @@ public class CommandTreeContentProvider implements ITreeContentProvider,
 		if (foundSet != null && foundConfig != null) {
 			foundSet.remove(foundConfig);
 		}
-
+		config.removePropertyChangeListener(this);
 		viewer.remove(config);
 	}
 
@@ -336,5 +357,25 @@ public class CommandTreeContentProvider implements ITreeContentProvider,
 			configurations.addAll(configSets);
 		}
 		return configurations;
+	}
+
+	@Override
+	public void clearPropertyChanges(String commandID) {
+		RemoteCommandConfiguration config = (RemoteCommandConfiguration) edgeServerList
+				.get(0).getCommandConfigurations().get(commandID);
+		if (config != null) {
+			config.clearUpdatedProperties();
+		}
+
+	}
+
+	@Override
+	public void synchPropertyChanges(String commandID) {
+		RemoteCommandConfiguration config = (RemoteCommandConfiguration) edgeServerList
+				.get(0).getCommandConfigurations().get(commandID);
+		if (config != null) {
+			config.synchUpdatedProperties(edgeServerList.get(0));
+		}
+
 	}
 }

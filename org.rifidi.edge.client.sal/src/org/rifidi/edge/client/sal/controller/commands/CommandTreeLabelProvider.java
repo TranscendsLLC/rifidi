@@ -70,7 +70,12 @@ public class CommandTreeLabelProvider implements ILabelProvider {
 		} else if (element instanceof RemoteCommandConfigType) {
 			return ((RemoteCommandConfigType) element).getCommandConfigType();
 		} else if (element instanceof RemoteCommandConfiguration) {
-			return ((RemoteCommandConfiguration) element).getID();
+			RemoteCommandConfiguration config = (RemoteCommandConfiguration)element;
+			if(config.isDirty()){
+				return "*"+config.getID();
+			}else{
+				return config.getID();
+			}
 		} else
 			return element.toString();
 	}

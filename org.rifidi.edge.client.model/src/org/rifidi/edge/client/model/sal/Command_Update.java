@@ -17,8 +17,10 @@ import org.rifidi.edge.core.api.rmi.dto.CommandConfigFactoryDTO;
 import org.rifidi.edge.core.api.rmi.dto.CommandConfigurationDTO;
 import org.rifidi.edge.core.api.rmi.dto.ReaderDTO;
 import org.rifidi.edge.core.api.rmi.dto.ReaderFactoryDTO;
+import org.rifidi.edge.core.rmi.client.commandconfigurationstub.CCGetCommandConfigDescription;
 import org.rifidi.edge.core.rmi.client.commandconfigurationstub.CCGetCommandConfigFactories;
 import org.rifidi.edge.core.rmi.client.commandconfigurationstub.CCGetCommandConfigurations;
+import org.rifidi.edge.core.rmi.client.commandconfigurationstub.CCServerDescription;
 import org.rifidi.edge.core.rmi.client.edgeserverstub.ESGetStartupTimestamp;
 import org.rifidi.edge.core.rmi.client.readerconfigurationstub.RS_GetReaderDescription;
 import org.rifidi.edge.core.rmi.client.readerconfigurationstub.RS_GetReaderFactories;
@@ -47,6 +49,8 @@ public class Command_Update implements RemoteEdgeServerCommand {
 	private Set<CommandConfigFactoryDTO> commandConfigFactoryDTO;
 	/** A mapping between Reader Factories and MBeans */
 	private Map<String, MBeanInfo> factoryIDToMBeanInfo;
+	/** <readerID, Map<commandType, MBeanInfo> */
+	private Map<String, Map<String, MBeanInfo>> readerIdsToCommandMBeanMap;
 	/** The set of command configuration DTOS */
 	private Set<CommandConfigurationDTO> commandConfigurationDTOs;
 	/** Variable that is set in case of an error */
@@ -61,6 +65,7 @@ public class Command_Update implements RemoteEdgeServerCommand {
 	public Command_Update(RemoteEdgeServer server) {
 		this.remoteEdgeServer = server;
 		factoryIDToMBeanInfo = new HashMap<String, MBeanInfo>();
+		readerIdsToCommandMBeanMap = new HashMap<String, Map<String, MBeanInfo>>();
 	}
 
 	/*
@@ -82,13 +87,15 @@ public class Command_Update implements RemoteEdgeServerCommand {
 			if ((!startupTime.equals(0l)) && (!timestamp.equals(startupTime))) {
 				RequestExecuterSingleton.getInstance().scheduleRequest(
 						new Command_Refresh(remoteEdgeServer));
-				error=true;
+				error = true;
 				return;
 			}
 			remoteEdgeServer.startupTime = timestamp;
 
 			RS_ServerDescription rs_description = remoteEdgeServer
 					.getRSServerDescription();
+			CCServerDescription cc_description = remoteEdgeServer
+					.getCCServerDescription();
 			RS_GetReaderFactories rsGetFactoriesCall = new RS_GetReaderFactories(
 					rs_description);
 			readerFactoryDTOs = rsGetFactoriesCall.makeCall();
@@ -97,15 +104,28 @@ public class Command_Update implements RemoteEdgeServerCommand {
 						rs_description, factory.getReaderFactoryID());
 				factoryIDToMBeanInfo.put(factory.getReaderFactoryID(),
 						descriptionCall.makeCall());
-
 			}
 
 			RS_GetReaders rsGetReaderCall = new RS_GetReaders(rs_description);
 			readerDTOs = rsGetReaderCall.makeCall();
 
 			CCGetCommandConfigFactories getCommandTypes = new CCGetCommandConfigFactories(
-					remoteEdgeServer.getCCServerDescription());
+					cc_description);
 			this.commandConfigFactoryDTO = getCommandTypes.makeCall();
+			for (CommandConfigFactoryDTO factory : commandConfigFactoryDTO) {
+				HashMap<String, MBeanInfo> commandTypeToMbeanInfo = new HashMap<String, MBeanInfo>();
+				for (String type : factory.getCommandConfigTypeIDs()) {
+					CCGetCommandConfigDescription getDescription = new CCGetCommandConfigDescription(
+							cc_description, type);
+					MBeanInfo info = getDescription.makeCall();
+					if (info == null) {
+						logger.warn("Info for " + type + " is null!");
+					}
+					commandTypeToMbeanInfo.put(type, info);
+				}
+				this.readerIdsToCommandMBeanMap.put(factory
+						.getReaderFactoryID(), commandTypeToMbeanInfo);
+			}
 
 			CCGetCommandConfigurations getCommandConfigurations = new CCGetCommandConfigurations(
 					remoteEdgeServer.getCCServerDescription());
@@ -143,18 +163,25 @@ public class Command_Update implements RemoteEdgeServerCommand {
 			}
 
 			for (CommandConfigFactoryDTO commandPlugin : this.commandConfigFactoryDTO) {
+				Map<String, MBeanInfo> infos = readerIdsToCommandMBeanMap
+						.get(commandPlugin.getReaderFactoryID());
 				remoteEdgeServer.commandConfigFactories.put(commandPlugin
 						.getReaderFactoryID(), new RemoteCommandConfigFactory(
-						commandPlugin));
+						commandPlugin, infos));
 			}
 			for (CommandConfigurationDTO commandConfig : this.commandConfigurationDTOs) {
 				for (CommandConfigFactoryDTO factoryDTO : commandConfigFactoryDTO) {
 					if (factoryDTO.getCommandConfigTypeIDs().contains(
 							commandConfig.getCommandConfigType())) {
-						remoteEdgeServer.commandConfigurations.put(
-								commandConfig.getCommandConfigID(),
-								new RemoteCommandConfiguration(factoryDTO
-										.getReaderFactoryID(), commandConfig));
+						RemoteCommandConfigFactory factory = (RemoteCommandConfigFactory) remoteEdgeServer.commandConfigFactories
+								.get(factoryDTO.getReaderFactoryID());
+
+						if (factory != null) {
+							remoteEdgeServer.commandConfigurations.put(
+									commandConfig.getCommandConfigID(),
+									new RemoteCommandConfiguration(
+											commandConfig, factory));
+						}
 					}
 				}
 

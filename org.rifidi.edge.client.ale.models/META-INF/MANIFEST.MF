@@ -9,8 +9,7 @@ Require-Bundle: org.eclipse.core.runtime,
  org.apache.cxf;bundle-version="1.0.0",
  org.rifidi.edge.client.ale.api;bundle-version="1.0.0",
  org.eclipse.core.databinding;bundle-version="1.1.1",
- org.rifidi.edge.client.ale.connection;bundle-version="1.0.0",
- org.rifidi.logging;bundle-version="1.0.2"
+ org.rifidi.edge.client.ale.connection;bundle-version="1.0.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Export-Package: org.rifidi.edge.client.ale.models.alelrserviceporttype,
@@ -20,3 +19,4 @@ Export-Package: org.rifidi.edge.client.ale.models.alelrserviceporttype,
  org.rifidi.edge.client.ale.models.exceptions,
  org.rifidi.edge.client.ale.models.listeners,
  org.rifidi.edge.client.ale.models.serviceprovider
+Import-Package: org.apache.commons.logging;version="1.1.1"

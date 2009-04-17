@@ -8,7 +8,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.eclipse.jface.viewers.Viewer;
 import org.rifidi.edge.client.model.sal.RemoteEdgeServer;
 
 /**

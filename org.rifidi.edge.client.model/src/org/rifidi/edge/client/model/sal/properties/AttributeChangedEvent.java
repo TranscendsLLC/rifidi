@@ -2,38 +2,38 @@ package org.rifidi.edge.client.model.sal.properties;
 
 import javax.management.Attribute;
 
-public class ReaderPropertyBean {
+public class AttributeChangedEvent {
 
 	/** The name of the state property */
-	public static final String READER_PROPERTY_BEAN = "org.rifidi.edge.client.model.sal.RemoteReader.property";
-	/** The readerID */
-	private String readerID;
+	public static final String ATTRIBUTE_CHANGED_EVENT = "org.rifidi.edge.client.model.sal.modelobject.attribute";
+	/** The modelID */
+	private String modelID;
 	/** The attribute to change */
 	private Attribute attribute;
 	private String hashstring;
 
 	/**
-	 * @param readerID
+	 * @param modelID
 	 * @param attribute
 	 */
-	public ReaderPropertyBean(String readerID, Attribute attribute) {
+	public AttributeChangedEvent(String modelID, Attribute attribute) {
 		super();
-		this.readerID = readerID;
+		this.modelID = modelID;
 		this.attribute = attribute;
 		if (attribute != null) {
-			this.hashstring = READER_PROPERTY_BEAN + "." + readerID + "."
+			this.hashstring = ATTRIBUTE_CHANGED_EVENT + "." + modelID + "."
 					+ attribute.getName() + "." + attribute.getValue();
 		} else {
-			this.hashstring = READER_PROPERTY_BEAN + "." + readerID + "."
+			this.hashstring = ATTRIBUTE_CHANGED_EVENT + "." + modelID + "."
 					+ attribute;
 		}
 	}
 
 	/**
-	 * @return the readerID
+	 * @return the modelID
 	 */
-	public String getReaderID() {
-		return readerID;
+	public String getModelID() {
+		return modelID;
 	}
 
 	/**
@@ -50,8 +50,8 @@ public class ReaderPropertyBean {
 	 */
 	@Override
 	public boolean equals(Object obj) {
-		if (obj != null && obj instanceof ReaderPropertyBean) {
-			ReaderPropertyBean bean = (ReaderPropertyBean) obj;
+		if (obj != null && obj instanceof AttributeChangedEvent) {
+			AttributeChangedEvent bean = (AttributeChangedEvent) obj;
 			return this.hashstring.equals(bean.hashstring);
 		}
 		return false;

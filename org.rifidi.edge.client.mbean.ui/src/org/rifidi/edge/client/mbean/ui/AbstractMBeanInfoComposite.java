@@ -251,4 +251,15 @@ public abstract class AbstractMBeanInfoComposite implements
 		}
 	}
 
+	/**
+	 * Remove listeners and clean up.
+	 */
+	public void dispose() {
+		for (AbstractWidget<?> w : this.widgets.values()) {
+			w.removeListener(this);
+			w.dispose();
+		}
+		this.widgets.clear();
+	}
+
 }

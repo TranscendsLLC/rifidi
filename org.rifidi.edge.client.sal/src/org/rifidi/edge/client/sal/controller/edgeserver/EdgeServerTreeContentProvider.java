@@ -28,7 +28,7 @@ import org.rifidi.edge.client.model.sal.RemoteJob;
 import org.rifidi.edge.client.model.sal.RemoteReader;
 import org.rifidi.edge.client.model.sal.RemoteReaderFactory;
 import org.rifidi.edge.client.model.sal.RemoteSession;
-import org.rifidi.edge.client.model.sal.properties.DirtyReaderPropertyBean;
+import org.rifidi.edge.client.model.sal.properties.RemoteObjectDirtyEvent;
 import org.rifidi.edge.client.model.sal.properties.SessionStatePropertyBean;
 import org.rifidi.edge.client.sal.views.tags.TagView;
 
@@ -541,11 +541,11 @@ public class EdgeServerTreeContentProvider implements ITreeContentProvider,
 			viewer.refresh(session);
 
 		} else if (arg0.getPropertyName().equals(
-				DirtyReaderPropertyBean.DIRTY_EVENT_PROPERTY)) {
-			DirtyReaderPropertyBean bean = (DirtyReaderPropertyBean) arg0
+				RemoteObjectDirtyEvent.DIRTY_EVENT_PROPERTY)) {
+			RemoteObjectDirtyEvent bean = (RemoteObjectDirtyEvent) arg0
 					.getNewValue();
 			RemoteReader reader = (RemoteReader) edgeServerList.get(0)
-					.getRemoteReaders().get(bean.getReaderID());
+					.getRemoteReaders().get(bean.getModelID());
 
 			viewer.update(reader, null);
 

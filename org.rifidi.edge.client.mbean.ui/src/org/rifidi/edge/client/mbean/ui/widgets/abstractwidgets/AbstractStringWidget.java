@@ -177,4 +177,18 @@ public abstract class AbstractStringWidget<T extends StringWidgetData> extends
 		return null;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.client.mbean.ui.widgets.abstractwidgets.AbstractWidget
+	 * #dispose()
+	 */
+	@Override
+	public void dispose() {
+		if (text != null) {
+			text.dispose();
+		}
+	}
+
 }

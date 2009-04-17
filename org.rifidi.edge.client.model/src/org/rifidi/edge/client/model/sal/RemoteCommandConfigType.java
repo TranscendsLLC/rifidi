@@ -13,13 +13,22 @@ public class RemoteCommandConfigType {
 
 	private String commandConfigType;
 
-	private MBeanInfo mbean;
-	
+	private MBeanInfo mbeanInfo;
+
 	private String readerFactoryID;
 
-	public RemoteCommandConfigType(String typeID, String readerFactoryID) {
+	public RemoteCommandConfigType(String typeID, String readerFactoryID,
+			MBeanInfo info) {
 		this.commandConfigType = typeID;
 		this.readerFactoryID = readerFactoryID;
+		this.mbeanInfo = info;
+	}
+
+	/**
+	 * @return the mbeanInfo
+	 */
+	public MBeanInfo getMbeanInfo() {
+		return mbeanInfo;
 	}
 
 	/**
