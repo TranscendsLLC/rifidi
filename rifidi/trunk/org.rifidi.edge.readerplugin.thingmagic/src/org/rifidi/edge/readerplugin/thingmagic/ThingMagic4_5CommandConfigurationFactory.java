@@ -10,6 +10,7 @@ import java.util.Set;
 import org.rifidi.edge.core.commands.AbstractCommandConfiguration;
 import org.rifidi.edge.core.commands.AbstractCommandConfigurationFactory;
 import org.rifidi.edge.core.commands.Command;
+import org.rifidi.edge.readerplugin.thingmagic.command.ThingMagicGetTagListCommandConfiguration;
 
 public class ThingMagic4_5CommandConfigurationFactory extends
 		AbstractCommandConfigurationFactory {
@@ -24,7 +25,7 @@ public class ThingMagic4_5CommandConfigurationFactory extends
 	public ThingMagic4_5CommandConfigurationFactory() {
 		super();
 		factoryIdToClass = new HashMap<String, Class<?>>();
-		
+		factoryIdToClass.put("ThingMagic4_5-GetTagList", ThingMagicGetTagListCommandConfiguration.class);
 	}
 	
 	/* 
