@@ -324,6 +324,41 @@
             </iterate>
          </enabledWhen>
       </handler>
+      <handler
+            class="org.rifidi.edge.client.sal.controller.commands.handlers.ClearCommandConfigPropChanges"
+            commandId="org.rifidi.edge.client.sal.commands.commandconfig.clearpropertychanges">
+         <enabledWhen>
+            <iterate>
+               <and>
+                  <instanceof
+                        value="org.rifidi.edge.client.model.sal.RemoteCommandConfiguration">
+                  </instanceof>
+                  <test
+                        property="org.rifidi.edge.client.sal.commandconfig.dirty"
+                        value="true">
+                  </test>
+               </and>
+            </iterate>
+         </enabledWhen>
+      </handler>
+      <handler
+            class="org.rifidi.edge.client.sal.controller.commands.handlers.SynchCommandConfigPropertyChanges"
+            commandId="org.rifidi.edge.client.sal.commands.commandconfig.synchpropertychanges">
+         <enabledWhen>
+            <iterate
+                  ifEmpty="false">
+               <and>
+                  <instanceof
+                        value="org.rifidi.edge.client.model.sal.RemoteCommandConfiguration">
+                  </instanceof>
+                  <test
+                        property="org.rifidi.edge.client.sal.commandconfig.dirty"
+                        value="true">
+                  </test>
+               </and>
+            </iterate>
+         </enabledWhen>
+      </handler>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -591,6 +626,36 @@
                </iterate>
             </visibleWhen>
          </command>
+         <command
+               commandId="org.rifidi.edge.client.sal.commands.commandconfig.clearpropertychanges"
+               icon="icons/table_delete.png"
+               label="Clear Property Changes"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <iterate
+                     ifEmpty="false">
+                  <instanceof
+                        value="org.rifidi.edge.client.model.sal.RemoteCommandConfiguration">
+                  </instanceof>
+               </iterate>
+            </visibleWhen>
+         </command>
+         <command
+               commandId="org.rifidi.edge.client.sal.commands.commandconfig.synchpropertychanges"
+               icon="icons/table_go.png"
+               label="Commit Property Changes"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <iterate
+                     ifEmpty="false">
+                  <instanceof
+                        value="org.rifidi.edge.client.model.sal.RemoteCommandConfiguration">
+                  </instanceof>
+               </iterate>
+            </visibleWhen>
+         </command>
       </menuContribution>
       <menuContribution
             locationURI="toolbar:org.rifidi.edge.client.sal.views.EdgeServerView?after=additions">
@@ -678,11 +743,19 @@
       </command>
       <command
             id="org.rifidi.edge.client.sal.commands.reader.clearpropertychanges"
-            name="ClearPropertyChanges">
+            name="ClearReaderPropertyChanges">
       </command>
       <command
             id="org.rifidi.edge.client.sal.commands.reader.synchpropertychanges"
-            name="SynchPropertyChanges">
+            name="SynchReaderPropertyChanges">
+      </command>
+      <command
+            id="org.rifidi.edge.client.sal.commands.commandconfig.clearpropertychanges"
+            name="ClearCommandConfigPropertyChanges">
+      </command>
+      <command
+            id="org.rifidi.edge.client.sal.commands.commandconfig.synchpropertychanges"
+            name="SynchCommandConfigPropertyChanges">
       </command>
    </extension>
    <extension
@@ -705,6 +778,13 @@
             class="org.rifidi.edge.client.sal.controller.edgeserver.handlers.ReaderPropertyTester"
             id="org.rifidi.edge.client.sal.reader"
             namespace="org.rifidi.edge.client.sal.reader"
+            properties="dirty"
+            type="java.lang.Object">
+      </propertyTester>
+      <propertyTester
+            class="org.rifidi.edge.client.sal.controller.commands.handlers.RemoteCommandConfigPropTester"
+            id="org.rifidi.edge.client.sal.commandconfig"
+            namespace="org.rifidi.edge.client.sal.commandconfig"
             properties="dirty"
             type="java.lang.Object">
       </propertyTester>

@@ -70,4 +70,13 @@ public class StandardBooleanWidget<T extends BooleanWidgetData> extends Abstract
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.client.mbean.ui.widgets.abstractwidgets.AbstractWidget#dispose()
+	 */
+	@Override
+	public void dispose() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

@@ -152,6 +152,11 @@ public abstract class AbstractWidget<T extends AbstractWidgetData> implements
 	 * @return null if the value is valid, an error message if it is not
 	 */
 	public abstract String validate();
+	
+	/**
+	 * Clean up this widget
+	 */
+	public abstract void dispose();
 
 	/*
 	 * (non-Javadoc)

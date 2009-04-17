@@ -83,13 +83,13 @@ public abstract class AbstractNumberWidget<T extends AbstractWidgetData>
 				dirty = true;
 			}
 		});
-	
+
 		spinner.addKeyListener(new KeyListener() {
-	
+
 			@Override
 			public void keyPressed(KeyEvent e) {
 			}
-	
+
 			@Override
 			public void keyReleased(KeyEvent e) {
 				if (e.character == SWT.CR) {
@@ -159,5 +159,19 @@ public abstract class AbstractNumberWidget<T extends AbstractWidgetData>
 	 * @return
 	 */
 	protected abstract Integer getValueAsInteger(Attribute value);
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.client.mbean.ui.widgets.abstractwidgets.AbstractWidget
+	 * #dispose()
+	 */
+	@Override
+	public void dispose() {
+		if (spinner != null) {
+			spinner.dispose();
+		}
+	}
 
 }

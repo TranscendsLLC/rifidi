@@ -87,8 +87,7 @@ public class Command_CommandConfigurationAdded implements
 			for (RemoteCommandConfigFactory factory : factories) {
 				if (factory.containsType(dto.getCommandConfigType())) {
 					this.commandConfigurations.put(this.commandConfigurationID,
-							new RemoteCommandConfiguration(factory
-									.getReaderFactoryID(), dto));
+							new RemoteCommandConfiguration(dto, factory));
 				}
 			}
 

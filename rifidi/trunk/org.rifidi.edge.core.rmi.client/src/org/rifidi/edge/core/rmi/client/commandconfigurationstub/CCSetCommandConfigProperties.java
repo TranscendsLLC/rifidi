@@ -6,7 +6,6 @@ import java.rmi.RemoteException;
 import javax.management.AttributeList;
 
 import org.rifidi.edge.core.api.rmi.CommandStub;
-import org.rifidi.rmi.utils.cache.ServerDescription;
 import org.rifidi.rmi.utils.remotecall.ServerDescriptionBasedRemoteMethodCall;
 
 /**
@@ -34,7 +33,7 @@ public class CCSetCommandConfigProperties extends
 	 * @param properties
 	 *            The properties to set on the CommandConfiguration
 	 */
-	public CCSetCommandConfigProperties(ServerDescription serverDescription,
+	public CCSetCommandConfigProperties(CCServerDescription serverDescription,
 			String commandConfigurationID, AttributeList properties) {
 		super(serverDescription);
 		this.commandConfigurationID = commandConfigurationID;

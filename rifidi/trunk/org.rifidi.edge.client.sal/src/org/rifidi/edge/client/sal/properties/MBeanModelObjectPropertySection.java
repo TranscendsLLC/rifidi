@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.rifidi.edge.client.sal.properties.readers;
+package org.rifidi.edge.client.sal.properties;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -17,30 +17,33 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.views.properties.tabbed.AbstractPropertySection;
 import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetPage;
 import org.rifidi.edge.client.mbean.ui.MBeanInfoWidgetListener;
-import org.rifidi.edge.client.model.sal.RemoteReader;
-import org.rifidi.edge.client.model.sal.properties.ReaderPropertyBean;
+import org.rifidi.edge.client.model.sal.AbstractAttributeContributorModelObject;
+import org.rifidi.edge.client.model.sal.properties.AttributeChangedEvent;
 import org.rifidi.edge.client.sal.properties.mbeanwidgets.FlatFormSectionComposite;
 
 /**
+ * This displays a Tabbed Property Section for a
+ * AbstractAttributeContributorModelObject
+ * 
  * @author Kyle Neumeier
  * 
  */
-public class ReaderPropertySection extends AbstractPropertySection implements
-		MBeanInfoWidgetListener, PropertyChangeListener {
+public class MBeanModelObjectPropertySection extends AbstractPropertySection
+		implements MBeanInfoWidgetListener, PropertyChangeListener {
 
 	private MBeanInfo info;
-	private RemoteReader reader;
+	private AbstractAttributeContributorModelObject modelObject;
 	private FlatFormSectionComposite composite;
 
-	public ReaderPropertySection(MBeanInfo mbeanInfo, RemoteReader reader,
-			String category) {
+	public MBeanModelObjectPropertySection(MBeanInfo mbeanInfo,
+			AbstractAttributeContributorModelObject modelObject, String category) {
 		this.info = mbeanInfo;
-		this.reader = reader;
+		this.modelObject = modelObject;
 		Set<String> categories = new HashSet<String>();
 		categories.add(category);
 		composite = new FlatFormSectionComposite(mbeanInfo, categories, true);
 		composite.addListner(this);
-		reader.addPropertyChangeListener(this);
+		modelObject.addPropertyChangeListener(this);
 	}
 
 	/*
@@ -56,7 +59,7 @@ public class ReaderPropertySection extends AbstractPropertySection implements
 			TabbedPropertySheetPage tabbedPropertySheetPage) {
 		super.createControls(parent, tabbedPropertySheetPage);
 		composite.createControls(parent, super.getWidgetFactory());
-		for (Attribute attr : reader.getAttributes().asList()) {
+		for (Attribute attr : modelObject.getAttributes().asList()) {
 			composite.setValue(attr);
 		}
 	}
@@ -71,8 +74,9 @@ public class ReaderPropertySection extends AbstractPropertySection implements
 	public void dispose() {
 		// TODO Auto-generated method stub
 		super.dispose();
-		reader.removePropertyChangeListener(this);
+		modelObject.removePropertyChangeListener(this);
 		composite.removeListner(this);
+		composite.dispose();
 	}
 
 	/*
@@ -99,7 +103,8 @@ public class ReaderPropertySection extends AbstractPropertySection implements
 	@Override
 	public void dataChanged(String widgetName, String newData) {
 		// TODO: verify the data?
-		this.reader.updateProperty(this.composite.getAttribute(widgetName));
+		this.modelObject
+				.updateProperty(this.composite.getAttribute(widgetName));
 	}
 
 	/*
@@ -132,8 +137,9 @@ public class ReaderPropertySection extends AbstractPropertySection implements
 	@Override
 	public void propertyChange(PropertyChangeEvent arg0) {
 		if (arg0.getPropertyName().equals(
-				ReaderPropertyBean.READER_PROPERTY_BEAN)) {
-			ReaderPropertyBean bean = (ReaderPropertyBean) arg0.getNewValue();
+				AttributeChangedEvent.ATTRIBUTE_CHANGED_EVENT)) {
+			AttributeChangedEvent bean = (AttributeChangedEvent) arg0
+					.getNewValue();
 			composite.setValue(bean.getAttribute());
 		}
 	}

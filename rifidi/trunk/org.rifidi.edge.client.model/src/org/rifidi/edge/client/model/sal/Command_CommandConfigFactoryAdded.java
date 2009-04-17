@@ -3,6 +3,11 @@
  */
 package org.rifidi.edge.client.model.sal;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.management.MBeanInfo;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eclipse.core.databinding.observable.map.ObservableMap;
@@ -10,6 +15,7 @@ import org.rifidi.edge.client.model.sal.commands.RemoteEdgeServerCommand;
 import org.rifidi.edge.client.model.sal.commands.RequestExecuterSingleton;
 import org.rifidi.edge.core.api.jms.notifications.CommandConfigFactoryAdded;
 import org.rifidi.edge.core.api.rmi.dto.CommandConfigFactoryDTO;
+import org.rifidi.edge.core.rmi.client.commandconfigurationstub.CCGetCommandConfigDescription;
 import org.rifidi.edge.core.rmi.client.commandconfigurationstub.CCGetCommandConfigFactory;
 import org.rifidi.edge.core.rmi.client.commandconfigurationstub.CCServerDescription;
 import org.rifidi.rmi.utils.exceptions.ServerUnavailable;
@@ -37,6 +43,8 @@ public class Command_CommandConfigFactoryAdded implements
 	/** The logger for this class */
 	private Log logger = LogFactory
 			.getLog(Command_CommandConfigFactoryAdded.class);
+	/** The meta information about the properties for this factory */
+	private Map<String, MBeanInfo> commandTypeTombeanInfo;
 
 	/**
 	 * Constructor
@@ -52,6 +60,7 @@ public class Command_CommandConfigFactoryAdded implements
 		this.readerFactoryID = notification.getReaderFactoryID();
 		this.serverDescription = server.getCCServerDescription();
 		this.disconnectCommand = new Command_Disconnect(server);
+		this.commandTypeTombeanInfo = new HashMap<String, MBeanInfo>();
 	}
 
 	/*
@@ -65,8 +74,18 @@ public class Command_CommandConfigFactoryAdded implements
 	public void execute() {
 		CCGetCommandConfigFactory getFactory = new CCGetCommandConfigFactory(
 				serverDescription, readerFactoryID);
+
 		try {
 			dto = getFactory.makeCall();
+			for (String type : dto.getCommandConfigTypeIDs()) {
+				CCGetCommandConfigDescription getDescription = new CCGetCommandConfigDescription(
+						serverDescription, readerFactoryID);
+				MBeanInfo info = getDescription.makeCall();
+				if (info == null) {
+					logger.warn("Info for " + type + " is null!");
+				}
+				this.commandTypeTombeanInfo.put(type, info);
+			}
 		} catch (ServerUnavailable e) {
 			logger.error("Error while getting Command Factory: ", e);
 			RequestExecuterSingleton.getInstance().scheduleRequest(
@@ -84,7 +103,8 @@ public class Command_CommandConfigFactoryAdded implements
 	public void executeEclipse() {
 		if (dto != null) {
 			commandConfigFactories.put(readerFactoryID,
-					new RemoteCommandConfigFactory(dto));
+					new RemoteCommandConfigFactory(dto,
+							this.commandTypeTombeanInfo));
 		}
 
 	}

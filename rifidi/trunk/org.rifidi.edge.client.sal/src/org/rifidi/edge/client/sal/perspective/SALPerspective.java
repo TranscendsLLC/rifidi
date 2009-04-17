@@ -28,14 +28,18 @@ public class SALPerspective implements IPerspectiveFactory {
 		layout.setEditorAreaVisible(false);
 		layout.addView(EdgeServerView.ID, IPageLayout.LEFT, (float) .6, layout
 				.getEditorArea());
+		layout.getViewLayout(EdgeServerView.ID).setCloseable(false);
 		layout.addView(CommandView.ID, IPageLayout.BOTTOM, (float) .5,
 				EdgeServerView.ID);
+		layout.getViewLayout(CommandView.ID).setCloseable(false);
 		layout.addView(IPageLayout.ID_PROP_SHEET, IPageLayout.RIGHT,
 				(float) .4, CommandView.ID);
+		layout.getViewLayout(IPageLayout.ID_PROP_SHEET).setCloseable(false);
 		IFolderLayout folder = layout.createFolder("left", IPageLayout.RIGHT,
 				.4f, EdgeServerView.ID);
 		folder.addView("org.rifidi.edge.client.twodview.views.SiteView");
 		folder.addPlaceholder(TagView.ID+":*");
+		
 	}
 
 }

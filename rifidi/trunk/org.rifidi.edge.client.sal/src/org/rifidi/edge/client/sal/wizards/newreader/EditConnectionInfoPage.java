@@ -151,4 +151,16 @@ public class EditConnectionInfoPage extends WizardPage implements
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.DialogPage#dispose()
+	 */
+	@Override
+	public void dispose() {
+		super.dispose();
+		mbeanWidgetComposite.removeListner(this);
+		mbeanWidgetComposite.dispose();
+	}
+	
+	
+
 }
