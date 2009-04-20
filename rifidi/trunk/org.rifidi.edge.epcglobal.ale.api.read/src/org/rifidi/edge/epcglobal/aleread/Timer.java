@@ -109,8 +109,10 @@ public class Timer {
 	public void stop() {
 		mainLock.lock();
 		try {
-			executor.shutdownNow();
-			executor = null;
+			if(executor!=null){
+				executor.shutdownNow();
+				executor = null;
+			}
 		} finally {
 			mainLock.unlock();
 		}

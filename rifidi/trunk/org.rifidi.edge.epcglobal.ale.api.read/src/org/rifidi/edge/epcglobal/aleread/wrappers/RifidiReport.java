@@ -206,7 +206,6 @@ public class RifidiReport {
 			report.setReportName(name);
 
 			List<DatacontainerEvent> tags = new ArrayList<DatacontainerEvent>();
-
 			if (groupField != null) {
 				Set<DatacontainerEvent> matchedEvents = new HashSet<DatacontainerEvent>();
 				for (DatacontainerEvent event : tagreadsToSend) {
@@ -248,11 +247,9 @@ public class RifidiReport {
 			ECReportGroupCount count = new ECReportGroupCount();
 			count.setCount(grouped.size());
 		}
+		ECReportGroupList ecReportGroupList = new ECReportGroupList();
+		group.setGroupList(ecReportGroupList);
 		for (DatacontainerEvent event : grouped) {
-
-			ECReportGroupList ecReportGroupList = new ECReportGroupList();
-			group.setGroupList(ecReportGroupList);
-			group.getGroupList().getMember();
 			ECReportGroupListMember member = new ECReportGroupListMember();
 			if ((options & ECReportOptions.INCLUDE_RAW_DECIMAL) > 0) {
 				EPC epc = new EPC();
