@@ -63,8 +63,6 @@ public class ECReportmanager implements Runnable, StatementAwareUpdateListener {
 
 	/** Target uris for the rifidiReports. */
 	private List<URI> uris;
-	/** Esper instance used by this instance. */
-	private EPServiceProvider esper;
 	/** Name of the ec spec. */
 	private String specName;
 	/** True if the spec has been destroied by a delete event. */
@@ -93,7 +91,6 @@ public class ECReportmanager implements Runnable, StatementAwareUpdateListener {
 				.getStopTriggers(), esper);
 
 		this.uris = uris;
-		this.esper = esper;
 		this.specName = specName;
 		this.owner = owner;
 	}
@@ -284,10 +281,6 @@ public class ECReportmanager implements Runnable, StatementAwareUpdateListener {
 				ecreports.setTotalMilliseconds(10);
 				Reports reportsPoltergeist = new Reports();
 				ecreports.setReports(reportsPoltergeist);
-				System.out.println(ecreports.getInitiationCondition() + " "
-						+ ecreports.getInitiationTrigger());
-				System.out.println(ecreports.getTerminationCondition() + " "
-						+ ecreports.getTerminationTrigger());
 				for (RifidiReport rifidiReport : rifidiReports) {
 					ECReport rep = rifidiReport.send();
 					if (rep != null) {
