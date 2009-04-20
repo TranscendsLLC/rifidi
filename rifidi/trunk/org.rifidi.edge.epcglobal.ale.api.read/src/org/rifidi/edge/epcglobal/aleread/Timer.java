@@ -35,8 +35,11 @@ public class Timer {
 
 	private EPServiceProvider esper;
 
-	public Timer(long interval, Set<Trigger> startTriggers,
+	private String specName;
+
+	public Timer(String specName, long interval, Set<Trigger> startTriggers,
 			Set<Trigger> stopTriggers, EPServiceProvider esper) {
+		this.specName = specName;
 		for (Trigger trigger : startTriggers) {
 			trigger.setTarget(this);
 		}
@@ -108,7 +111,7 @@ public class Timer {
 	public void startEventCycle(ECReports report) {
 		intervalStart = System.currentTimeMillis();
 		if (currentReport.compareAndSet(null, report)) {
-			esper.getEPRuntime().sendEvent(new StartEvent("bubble"));
+			esper.getEPRuntime().sendEvent(new StartEvent(specName));
 		}
 	}
 
@@ -151,7 +154,7 @@ public class Timer {
 					ALEReadAPI.conditionToName
 							.get(ALEReadAPI.TriggerCondition.TRIGGER));
 			currentReport.get().setTerminationTrigger(trigger.getUri());
-			esper.getEPRuntime().sendEvent(new StopEvent("waha"));
+			esper.getEPRuntime().sendEvent(new StopEvent(specName));
 		}
 	}
 
