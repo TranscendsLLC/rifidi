@@ -17,7 +17,7 @@ import org.eclipse.core.commands.IHandler;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.handlers.HandlerUtil;
-import org.rifidi.edge.client.ale.models.ecspec.EcSpecModelWrapper;
+import org.rifidi.edge.client.ale.models.ecspec.RemoteSpecModelWrapper;
 
 /**
  * @author Tobias Hoppenthaler - tobias@pramari.com
@@ -40,10 +40,10 @@ public class DeleteRemoteEcSpecHandler extends AbstractHandler implements
 
 		Object spec = ((IStructuredSelection) sel).getFirstElement();
 
-		if (spec instanceof EcSpecModelWrapper) {
-			EcSpecModelWrapper wrapper = (EcSpecModelWrapper) spec;
+		if (spec instanceof RemoteSpecModelWrapper) {
+			RemoteSpecModelWrapper wrapper = (RemoteSpecModelWrapper) spec;
 			wrapper.undefine();
-			wrapper.getParent().getEcSpecs();
+			wrapper.getParent().getSpecs();
 		}
 		return null;
 	}

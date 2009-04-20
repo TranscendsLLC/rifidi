@@ -18,12 +18,20 @@
             class="org.rifidi.edge.client.ale.editor.handlers.EditSpec"
             commandId="org.rifidi.edge.client.ale.editor.editspec">
       </handler>
+      <handler
+            class="org.rifidi.edge.client.ale.editor.handlers.NewSpec"
+            commandId="org.rifidi.edge.client.ale.editor.newremotespec">
+      </handler>
    </extension>
    <extension
          point="org.eclipse.ui.commands">
       <command
             id="org.rifidi.edge.client.ale.editor.editspec"
             name="Edit">
+      </command>
+      <command
+            id="org.rifidi.edge.client.ale.editor.newremotespec"
+            name="New">
       </command>
    </extension>
 

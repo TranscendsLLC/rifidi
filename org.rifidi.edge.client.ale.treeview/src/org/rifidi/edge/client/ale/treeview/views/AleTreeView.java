@@ -1,34 +1,19 @@
 package org.rifidi.edge.client.ale.treeview.views;
 
-import org.eclipse.core.databinding.observable.set.ISetChangeListener;
-import org.eclipse.core.databinding.observable.set.SetChangeEvent;
-import org.eclipse.jface.action.Action;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.jface.action.GroupMarker;
-import org.eclipse.jface.action.IMenuListener;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.IDoubleClickListener;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.TreeNode;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
-import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.ISharedImages;
-import org.eclipse.ui.IWorkbenchActionConstants;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.part.DrillDownAdapter;
-import org.eclipse.ui.part.ISetSelectionTarget;
 import org.eclipse.ui.part.ViewPart;
-import org.rifidi.edge.client.ale.models.enums.ConnectionStatus;
-import org.rifidi.edge.client.ale.models.listeners.ConnectionChangeListener;
+import org.rifidi.edge.client.ale.models.aleserviceporttype.AleServicePortTypeWrapper;
+import org.rifidi.edge.client.ale.models.serviceprovider.SpecDataManager;
+import org.rifidi.edge.client.ale.treeview.modelmanagerservice.ModelManagerService;
 
 /**
  * This sample class demonstrates how to plug-in a new workbench view. The view
@@ -45,12 +30,16 @@ import org.rifidi.edge.client.ale.models.listeners.ConnectionChangeListener;
  * <p>
  */
 
-public class AleTreeView extends ViewPart implements ConnectionChangeListener,ISetChangeListener {
+public class AleTreeView extends ViewPart {
+	
+	public static final String ID = "org.rifidi.edge.client.ale.treeview.views.AleTreeView";
+	
 	private TreeViewer viewer;
-	private DrillDownAdapter drillDownAdapter;
-	private Action action1;
-	private Action action2;
-	private Action doubleClickAction;
+//	private DrillDownAdapter drillDownAdapter;
+//	private Action action1;
+//	private Action action2;
+
+	// private Action doubleClickAction;
 
 	/**
 	 * The constructor.
@@ -65,127 +54,129 @@ public class AleTreeView extends ViewPart implements ConnectionChangeListener,IS
 	public void createPartControl(Composite parent) {
 		parent.setLayout(new FillLayout());
 		viewer = new TreeViewer(parent);
-		drillDownAdapter = new DrillDownAdapter(viewer);
-		viewer.setContentProvider(new AleTreeViewContentProvider(this));
+		// drillDownAdapter = new DrillDownAdapter(viewer);
+		viewer.setContentProvider(new AleTreeViewContentProvider());
 		viewer.setLabelProvider(new AleTreeViewLabelProvider());
 		viewer.setSorter(new ViewerSorter());
-		viewer.setInput(getInitialInput());
+		// viewer.setInput(createInitialInput());
 		getSite().setSelectionProvider(viewer);
-
+		ModelManagerService.getInstance().addViewer(viewer);
 		// viewer.expandAll();
-		makeActions();
+		// makeActions();
 		// hookContextMenu();
 		// hookDoubleClickAction();
-		contributeToActionBars();
+		// contributeToActionBars();
 		MenuManager menuMgr = new MenuManager();
 		menuMgr.add(new GroupMarker("aletreeview"));
 
 		Menu menu = menuMgr.createContextMenu(viewer.getControl());
 		viewer.getControl().setMenu(menu);
 		getSite().registerContextMenu(menuMgr, viewer);
-		
+
 	}
 
 	/**
 	 * @return
 	 */
-	private Object getInitialInput() {
-		return new TreeNode("");
+	private List createInitialInput() {
+		ArrayList<SpecDataManager> input = new ArrayList<SpecDataManager>();
+		input.add(new AleServicePortTypeWrapper());
+		return input;
 	}
 
-	private void hookContextMenu() {
-		MenuManager menuMgr = new MenuManager("#PopupMenu");
-		menuMgr.setRemoveAllWhenShown(true);
-		menuMgr.addMenuListener(new IMenuListener() {
-			public void menuAboutToShow(IMenuManager manager) {
-				AleTreeView.this.fillContextMenu(manager);
-			}
-		});
-		Menu menu = menuMgr.createContextMenu(viewer.getControl());
-		viewer.getControl().setMenu(menu);
-		getSite().registerContextMenu(menuMgr, viewer);
-	}
+	// private void hookContextMenu() {
+	// MenuManager menuMgr = new MenuManager("#PopupMenu");
+	// menuMgr.setRemoveAllWhenShown(true);
+	// menuMgr.addMenuListener(new IMenuListener() {
+	// public void menuAboutToShow(IMenuManager manager) {
+	// AleTreeView.this.fillContextMenu(manager);
+	// }
+	// });
+	// Menu menu = menuMgr.createContextMenu(viewer.getControl());
+	// viewer.getControl().setMenu(menu);
+	// getSite().registerContextMenu(menuMgr, viewer);
+	// }
 
-	private void contributeToActionBars() {
-		IActionBars bars = getViewSite().getActionBars();
-		fillLocalPullDown(bars.getMenuManager());
-		fillLocalToolBar(bars.getToolBarManager());
-	}
+	// private void contributeToActionBars() {
+	// IActionBars bars = getViewSite().getActionBars();
+	// fillLocalPullDown(bars.getMenuManager());
+	// fillLocalToolBar(bars.getToolBarManager());
+	// }
 
-	private void fillLocalPullDown(IMenuManager manager) {
-		manager.add(action1);
-		manager.add(new Separator());
-		manager.add(action2);
-	}
+	// private void fillLocalPullDown(IMenuManager manager) {
+	// manager.add(action1);
+	// manager.add(new Separator());
+	// manager.add(action2);
+	// }
 
-	private void fillContextMenu(IMenuManager manager) {
-		manager.add(action1);
-		manager.add(action2);
-		manager.add(new Separator());
-		drillDownAdapter.addNavigationActions(manager);
-		// Other plug-ins can contribute there actions here
-		manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
-	}
+	// private void fillContextMenu(IMenuManager manager) {
+	// manager.add(action1);
+	// manager.add(action2);
+	// manager.add(new Separator());
+	// drillDownAdapter.addNavigationActions(manager);
+	// // Other plug-ins can contribute there actions here
+	// manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
+	// }
 
-	private void fillLocalToolBar(IToolBarManager manager) {
-		manager.add(action1);
-		manager.add(action2);
-		manager.add(new Separator());
-		drillDownAdapter.addNavigationActions(manager);
-	}
+	// private void fillLocalToolBar(IToolBarManager manager) {
+	// manager.add(action1);
+	// manager.add(action2);
+	// manager.add(new Separator());
+	// drillDownAdapter.addNavigationActions(manager);
+	// }
 
-	private void makeActions() {
-		action1 = new Action() {
-			public void run() {
-				// showMessage("Action 1 executed");
-				viewer.refresh();
-				// viewer.expandAll();
-			}
-		};
-		action1.setText("Refresh");
-		action1.setToolTipText("Refresh");
-		action1.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
-				.getImageDescriptor(ISharedImages.IMG_ETOOL_HOME_NAV));
+	// private void makeActions() {
+	// action1 = new Action() {
+	// public void run() {
+	// // showMessage("Action 1 executed");
+	// viewer.refresh();
+	// // viewer.expandAll();
+	// }
+	// };
+	// action1.setText("Refresh");
+	// action1.setToolTipText("Refresh");
+	// action1.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
+	// .getImageDescriptor(ISharedImages.IMG_ETOOL_HOME_NAV));
+	//
+	// action2 = new Action() {
+	// public void run() {
+	//
+	// ISelection selection = viewer.getSelection();
+	// Object obj = ((IStructuredSelection) selection)
+	// .getFirstElement();
+	// if (obj instanceof String) {
+	// showMessage(obj.toString());
+	// }
+	//
+	// // showMessage("Action 2 executed");
+	// }
+	// };
+	// action2.setText("Action 2");
+	// action2.setToolTipText("Action 2 tooltip");
+	// action2.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
+	// .getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));
+	// doubleClickAction = new Action() {
+	// public void run() {
+	// ISelection selection = viewer.getSelection();
+	// Object obj = ((IStructuredSelection) selection)
+	// .getFirstElement();
+	// showMessage("Double-click detected on " + obj.toString());
+	// }
+	// };
+	// }
 
-		action2 = new Action() {
-			public void run() {
+	// private void hookDoubleClickAction() {
+	// viewer.addDoubleClickListener(new IDoubleClickListener() {
+	// public void doubleClick(DoubleClickEvent event) {
+	// doubleClickAction.run();
+	// }
+	// });
+	// }
 
-				ISelection selection = viewer.getSelection();
-				Object obj = ((IStructuredSelection) selection)
-						.getFirstElement();
-				if (obj instanceof String) {
-					showMessage(obj.toString());
-				}
-
-				// showMessage("Action 2 executed");
-			}
-		};
-		action2.setText("Action 2");
-		action2.setToolTipText("Action 2 tooltip");
-		action2.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
-				.getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));
-		doubleClickAction = new Action() {
-			public void run() {
-				ISelection selection = viewer.getSelection();
-				Object obj = ((IStructuredSelection) selection)
-						.getFirstElement();
-				showMessage("Double-click detected on " + obj.toString());
-			}
-		};
-	}
-
-	private void hookDoubleClickAction() {
-		viewer.addDoubleClickListener(new IDoubleClickListener() {
-			public void doubleClick(DoubleClickEvent event) {
-				doubleClickAction.run();
-			}
-		});
-	}
-
-	private void showMessage(String message) {
-		MessageDialog.openInformation(viewer.getControl().getShell(),
-				"EC Spec View", message);
-	}
+	// private void showMessage(String message) {
+	// MessageDialog.openInformation(viewer.getControl().getShell(),
+	// "EC Spec View", message);
+	// }
 
 	/**
 	 * Passing the focus request to the viewer's control.
@@ -201,21 +192,4 @@ public class AleTreeView extends ViewPart implements ConnectionChangeListener,IS
 		return viewer;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.rifidi.edge.client.ale.models.listeners.ConnectionChangeListener#connectionStatusChanged(org.rifidi.edge.client.ale.models.enums.ConnectionStatus)
-	 */
-	@Override
-	public void connectionStatusChanged(ConnectionStatus status) {
-		this.viewer.refresh();
-		
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.databinding.observable.set.ISetChangeListener#handleSetChange(org.eclipse.core.databinding.observable.set.SetChangeEvent)
-	 */
-	@Override
-	public void handleSetChange(SetChangeEvent event) {
-		this.viewer.refresh();
-		
-	}
 }

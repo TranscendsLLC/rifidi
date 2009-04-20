@@ -16,8 +16,8 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.rifidi.edge.client.ale.models.aleserviceporttype.AleServicePortTypeWrapper;
-import org.rifidi.edge.client.ale.models.ecspec.EcSpecModelWrapper;
-import org.rifidi.edge.client.ale.models.serviceprovider.IEcSpecDataManager;
+import org.rifidi.edge.client.ale.models.ecspec.RemoteSpecModelWrapper;
+import org.rifidi.edge.client.ale.models.serviceprovider.SpecDataManager;
 
 /**
  * @author Tobias Hoppenthaler - tobias@pramari.com
@@ -63,12 +63,12 @@ public class AleTreeViewLabelProvider implements ILabelProvider {
 	 */
 	@Override
 	public String getText(Object element) {
-		if (element instanceof IEcSpecDataManager) {
-			return ((IEcSpecDataManager) element).getName();
+		if (element instanceof SpecDataManager) {
+			return ((SpecDataManager) element).getName();
 		}
 
-		if (element instanceof EcSpecModelWrapper) {
-			return ((EcSpecModelWrapper) element).getName();
+		if (element instanceof RemoteSpecModelWrapper) {
+			return ((RemoteSpecModelWrapper) element).getName();
 		}
 
 		return element.toString();

@@ -10,21 +10,31 @@
  */
 package org.rifidi.edge.client.ale.treeview.perspective;
 
+import org.eclipse.ui.IFolderLayout;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveFactory;
+import org.rifidi.edge.client.ale.editor.view.AleEditorView;
+import org.rifidi.edge.client.ale.treeview.views.AleTreeView;
 
 /**
  * @author Tobias Hoppenthaler - tobias@pramari.com
- *
+ * 
  */
 public class AlePerspective implements IPerspectiveFactory {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPerspectiveFactory#createInitialLayout(org.eclipse.ui.IPageLayout)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.ui.IPerspectiveFactory#createInitialLayout(org.eclipse.ui
+	 * .IPageLayout)
 	 */
 	@Override
 	public void createInitialLayout(IPageLayout layout) {
 		layout.setEditorAreaVisible(false);
+		IFolderLayout folder = layout.createFolder("left", IPageLayout.RIGHT,
+				.4f, AleTreeView.ID);
+		folder.addPlaceholder(AleEditorView.ID + ":*");
 	}
 
 }

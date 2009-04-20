@@ -11,7 +11,8 @@ Require-Bundle: org.eclipse.ui,
  org.rifidi.edge.client.ale.connection;bundle-version="1.0.0",
  org.eclipse.ui.views;bundle-version="3.3.0",
  org.rifidi.edge.client.ale.models;bundle-version="1.0.0",
- org.eclipse.core.databinding;bundle-version="1.1.1"
+ org.eclipse.core.databinding;bundle-version="1.1.1",
+ org.rifidi.edge.client.ale.editor;bundle-version="1.0.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Import-Package: org.apache.commons.logging;version="1.1.1"

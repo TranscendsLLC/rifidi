@@ -16,7 +16,7 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.handlers.HandlerUtil;
-import org.rifidi.edge.client.ale.models.ecspec.EcSpecModelWrapper;
+import org.rifidi.edge.client.ale.models.ecspec.RemoteSpecModelWrapper;
 
 /**
  * @author Tobias Hoppenthaler - tobias@pramari.com
@@ -33,8 +33,8 @@ public class DefineRemoteEcSpec extends AbstractHandler {
 		
 		Object spec = ((IStructuredSelection) sel).getFirstElement();
 
-		if (spec instanceof EcSpecModelWrapper) {
-			((EcSpecModelWrapper) spec).define();
+		if (spec instanceof RemoteSpecModelWrapper) {
+			((RemoteSpecModelWrapper) spec).define();
 		}
 		return null;
 	}
