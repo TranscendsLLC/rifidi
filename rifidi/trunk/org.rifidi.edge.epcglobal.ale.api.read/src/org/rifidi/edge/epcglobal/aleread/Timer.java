@@ -7,8 +7,10 @@ import java.util.Set;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.locks.ReentrantLock;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.epcglobal.ale.api.read.data.ECReports;
 import org.rifidi.edge.epcglobal.aleread.rifidievents.StartEvent;
 import org.rifidi.edge.epcglobal.aleread.rifidievents.StopEvent;
@@ -20,18 +22,21 @@ import com.espertech.esper.client.EPServiceProvider;
  * 
  */
 public class Timer {
+	/** Logger for this class. */
+	private static final Log logger = LogFactory.getLog(Timer.class);
 	private ScheduledThreadPoolExecutor executor;
 	private TimeRunnable runny;
 	private long interval;
 	private long intervalStart;
 	private Set<Trigger> startTriggers;
 	private Set<Trigger> stopTriggers;
+	//if anybody sees this I am retiring to a job in fast food
+	private ReentrantLock mainLock = new ReentrantLock();
 	/** True if the runnable is executing. */
 	private AtomicBoolean running = new AtomicBoolean(false);
-	private AtomicReference<Trigger> trigger = new AtomicReference<Trigger>();
-	private AtomicReference<ECReports> currentReport = new AtomicReference<ECReports>();
-
-	private AtomicBoolean executing = new AtomicBoolean(false);
+	private boolean started = false;
+	private Trigger lastTrigger = null;
+	private ECReports currentReport = null;
 
 	private EPServiceProvider esper;
 
@@ -69,17 +74,18 @@ public class Timer {
 	 * Called when the ECSpec becomes requested. NOT THREADSAFE!
 	 */
 	public void start() {
-		if (executing.compareAndSet(false, true)) {
+		mainLock.lock();
+		try {
 			running.compareAndSet(true, false);
-			trigger.set(null);
+			lastTrigger = null;
+			currentReport = new ECReports();
 			executor = new ScheduledThreadPoolExecutor(startTriggers.size()
 					+ stopTriggers.size() + 1);
 			// no triggers, start right now
 			if (startTriggers.size() == 0) {
-				ECReports report = new ECReports();
-				report.setInitiationTrigger(ALEReadAPI.conditionToName
+				currentReport.setInitiationCondition(ALEReadAPI.conditionToName
 						.get(ALEReadAPI.TriggerCondition.REQUESTED));
-				startEventCycle(report);
+				startEventCycle();
 			} else {
 				for (Trigger trigger : startTriggers) {
 					executor.scheduleAtFixedRate(trigger, trigger
@@ -92,6 +98,8 @@ public class Timer {
 						.getDelayToNextExec(), trigger.getPeriod(),
 						TimeUnit.MILLISECONDS);
 			}
+		} finally {
+			mainLock.unlock();
 		}
 	}
 
@@ -99,19 +107,27 @@ public class Timer {
 	 * Stop the timer. NOT THREADSAFE!
 	 */
 	public void stop() {
-		if (executing.compareAndSet(true, false)) {
+		mainLock.lock();
+		try {
 			executor.shutdownNow();
 			executor = null;
+		} finally {
+			mainLock.unlock();
 		}
 	}
 
 	/**
 	 * Called by interval timers.
 	 */
-	public void startEventCycle(ECReports report) {
-		intervalStart = System.currentTimeMillis();
-		if (currentReport.compareAndSet(null, report)) {
+	public void startEventCycle() {
+		mainLock.lock();
+		try {
+			logger.debug("Starting event cycle");
+			intervalStart = System.currentTimeMillis();
 			esper.getEPRuntime().sendEvent(new StartEvent(specName));
+			started = true;
+		} finally {
+			mainLock.unlock();
 		}
 	}
 
@@ -121,40 +137,43 @@ public class Timer {
 	 * @param trigger
 	 */
 	public void startEventCycle(Trigger trigger) {
-		// fastest way to get the last trigger that executed
-		// if the trigger in trigger and the input for the method are the same
-		// this means the trigger executed before the previous event cycle ended
-		// the newly arrived trigger is stored in trigger
-		if (this.trigger.compareAndSet(trigger, null)) {
-			ECReports report = new ECReports();
-			report.setInitiationTrigger(ALEReadAPI.conditionToName
-					.get(ALEReadAPI.TriggerCondition.TRIGGER));
-			report.setInitiationTrigger(trigger.getUri());
-			startEventCycle(report);
+		mainLock.lock();
+		try {
+			logger.debug("Received start trigger " + trigger.getUri());
+			if (started == true) {
+				if (lastTrigger == null) {
+					lastTrigger = trigger;
+				}
+				return;
+			} else {
+				currentReport.setInitiationCondition(ALEReadAPI.conditionToName
+						.get(ALEReadAPI.TriggerCondition.TRIGGER));
+				currentReport.setInitiationTrigger(trigger.getUri());
+				startEventCycle();
+			}
+		} finally {
+			mainLock.unlock();
 		}
-		// if the trigger in trigger and the input for the method are not the
-		// same
-		// the trigger executed after the previous event cycle has ended
-		else if (this.trigger.compareAndSet(null, trigger)) {
-			ECReports report = new ECReports();
-			report.setInitiationTrigger(ALEReadAPI.conditionToName
-					.get(ALEReadAPI.TriggerCondition.TRIGGER));
-			report.setInitiationTrigger(trigger.getUri());
-			startEventCycle(report);
-		}
-
 	}
 
 	/**
 	 * Stop the event cycle. Only called by stop triggers.
 	 */
 	public void stopEventCycle(Trigger trigger) {
-		if (currentReport.get() != null) {
-			currentReport.get().setTerminationCondition(
-					ALEReadAPI.conditionToName
-							.get(ALEReadAPI.TriggerCondition.TRIGGER));
-			currentReport.get().setTerminationTrigger(trigger.getUri());
-			esper.getEPRuntime().sendEvent(new StopEvent(specName));
+		mainLock.lock();
+		try {
+			logger.debug("Received stop trigger " + trigger.getUri());
+			if (started) {
+				currentReport
+						.setTerminationCondition(ALEReadAPI.conditionToName
+								.get(ALEReadAPI.TriggerCondition.TRIGGER));
+				currentReport.setTerminationTrigger(trigger.getUri());
+				logger.debug("Sending StopEvent for " + specName);
+				esper.getEPRuntime().sendEvent(new StopEvent(specName));
+				started = false;
+			}
+		} finally {
+			mainLock.unlock();
 		}
 	}
 
@@ -162,26 +181,35 @@ public class Timer {
 	 * Called when an ECReport is ready.
 	 */
 	public ECReports callback() {
-		ECReports ret = currentReport.getAndSet(null);
-		if (startTriggers.size() == 0) {
-			long currentTime = System.currentTimeMillis();
-			if (intervalStart + interval <= currentTime) {
-				intervalStart = currentTime;
-
-				ECReports report = new ECReports();
-				report.setInitiationTrigger(ALEReadAPI.conditionToName
-						.get(ALEReadAPI.TriggerCondition.REPEAT_PERIOD));
-				startEventCycle(report);
+		mainLock.lock();
+		try {
+			ECReports ret = currentReport;
+			currentReport = new ECReports();
+			if (startTriggers.size() == 0) {
+				long currentTime = System.currentTimeMillis();
+				if (intervalStart + interval <= currentTime) {
+					intervalStart = currentTime;
+					currentReport
+							.setInitiationCondition(ALEReadAPI.conditionToName
+									.get(ALEReadAPI.TriggerCondition.REPEAT_PERIOD));
+					startEventCycle();
+				} else {
+					time(intervalStart + interval - currentTime);
+				}
 			} else {
-				time(intervalStart + interval - currentTime);
+				if (lastTrigger != null) {
+					currentReport
+							.setInitiationCondition(ALEReadAPI.conditionToName
+									.get(ALEReadAPI.TriggerCondition.TRIGGER));
+					currentReport.setInitiationTrigger(lastTrigger.getUri());
+					lastTrigger = null;
+					startEventCycle();
+				}
 			}
-		} else {
-			Trigger trig = trigger.get();
-			if (trig != null) {
-				startEventCycle(trig);
-			}
+			return ret;
+		} finally {
+			mainLock.unlock();
 		}
-		return ret;
 	}
 
 	/**
@@ -198,10 +226,7 @@ public class Timer {
 		 */
 		@Override
 		public void run() {
-			ECReports report = new ECReports();
-			report.setInitiationTrigger(ALEReadAPI.conditionToName
-					.get(ALEReadAPI.TriggerCondition.REPEAT_PERIOD));
-			startEventCycle(report);
+			startEventCycle();
 			running.compareAndSet(true, false);
 		}
 

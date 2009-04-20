@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.messages.DatacontainerEvent;
 import org.rifidi.edge.epcglobal.ale.api.read.EPC;
 import org.rifidi.edge.epcglobal.ale.api.read.data.ECReport;
@@ -31,6 +33,8 @@ import org.rifidi.edge.epcglobal.aleread.groups.GroupMatcher;
  * 
  */
 public class RifidiReport {
+	/** Logger for this class. */
+	private static final Log logger = LogFactory.getLog(RifidiReport.class);
 	/** Name of the report. */
 	private String name;
 	private Boolean changed = true;
@@ -233,17 +237,6 @@ public class RifidiReport {
 			ECReportGroup group = new ECReportGroup();
 			fillGroup(group, tags);
 			report.getGroup().add(group);
-
-			System.out.println("sending: ");
-			for (ECReportGroup gr : report.getGroup()) {
-				if (gr.getGroupList() != null) {
-					for (ECReportGroupListMember mem : gr.getGroupList()
-							.getMember()) {
-						System.out.println(mem.getTag().getValue());
-					}
-				}
-
-			}
 			return report;
 		}
 		return null;

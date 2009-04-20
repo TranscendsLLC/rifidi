@@ -19,6 +19,8 @@ import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.messages.DatacontainerEvent;
 import org.rifidi.edge.core.messages.TagReadEvent;
 import org.rifidi.edge.epcglobal.ale.api.read.data.ECReport;
+import org.rifidi.edge.epcglobal.ale.api.read.data.ECReportGroup;
+import org.rifidi.edge.epcglobal.ale.api.read.data.ECReportGroupListMember;
 import org.rifidi.edge.epcglobal.ale.api.read.data.ECReports;
 import org.rifidi.edge.epcglobal.ale.api.read.data.ECSpec;
 import org.rifidi.edge.epcglobal.ale.api.read.data.ECReports.Reports;
@@ -172,30 +174,33 @@ public class ECReportmanager implements Runnable, StatementAwareUpdateListener {
 	@Override
 	public synchronized void update(EventBean[] arg0, EventBean[] arg1,
 			EPStatement arg2, EPServiceProvider arg3) {
-		EventTuple tuple = null;
+		for (EventBean tagevent : arg0) {
+			if (((MapEventBean) tagevent).getProperties().containsKey(
+					"count(whine)")) {
+				if ((Long) ((MapEventBean) tagevent).getProperties().get(
+						"count(whine)") > 0) {
+					return;
+				}
+			}
+		}
 		if (destroied) {
 			// ECSpec is destroied.
 			return;
 		}
+		EventTuple tuple = new EventTuple();
+		tuple.report = timer.callback();
+		if (tuple.report == null
+				|| tuple.report.getInitiationCondition() == null) {
+			// we got a really fast stop trigger
+			return;
+		}
 		if (destroyStatements.contains(arg2)) {
 			destroied = true;
-			tuple = new EventTuple();
-			tuple.report = timer.callback();
-			if (tuple.report == null) {
-				// we got a really fast stop trigger
-				return;
-			}
 			tuple.report.setTerminationCondition(ALEReadAPI.conditionToName
 					.get(TriggerCondition.UNDEFINE));
 			// callback for destroying the statements
 			owner.discard();
 		} else {
-			tuple = new EventTuple();
-			tuple.report = timer.callback();
-			if (tuple.report == null) {
-				// we got a really fast stop trigger
-				return;
-			}
 			if (!ALEReadAPI.conditionToName.get(
 					ALEReadAPI.TriggerCondition.TRIGGER).equals(
 					tuple.report.getTerminationCondition())) {
@@ -281,12 +286,31 @@ public class ECReportmanager implements Runnable, StatementAwareUpdateListener {
 				ecreports.setTotalMilliseconds(10);
 				Reports reportsPoltergeist = new Reports();
 				ecreports.setReports(reportsPoltergeist);
+				StringBuilder buildy = new StringBuilder("startcondition: "
+						+ ecreports.getInitiationCondition() + "\n");
+				buildy.append("starttrigger: "
+						+ ecreports.getInitiationTrigger() + "\n");
+				buildy.append("stopcondition: "
+						+ ecreports.getTerminationCondition() + "\n");
+				buildy.append("stoptrigger: "
+						+ ecreports.getTerminationTrigger() + "\n");
 				for (RifidiReport rifidiReport : rifidiReports) {
 					ECReport rep = rifidiReport.send();
 					if (rep != null) {
 						ecreports.getReports().getReport().add(rep);
+						for (ECReportGroup gr : rep.getGroup()) {
+							if (gr.getGroupList() != null) {
+								for (ECReportGroupListMember mem : gr
+										.getGroupList().getMember()) {
+									buildy.append(mem.getTag().getValue()
+											+ "\n");
+								}
+							}
+						}
 					}
 				}
+				logger.debug(buildy.toString());
+
 			} catch (InterruptedException e) {
 				timer.stop();
 				Thread.currentThread().interrupt();
