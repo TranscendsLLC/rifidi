@@ -92,7 +92,7 @@
                <iterate
                      ifEmpty="false">
                   <instanceof
-                        value="org.rifidi.edge.client.ale.models.ecspec.EcSpecModelWrapper">
+                        value="org.rifidi.edge.client.ale.models.ecspec.RemoteSpecModelWrapper">
                   </instanceof>
                </iterate>
             </visibleWhen>
@@ -130,7 +130,19 @@
                <iterate
                      ifEmpty="false">
                   <instanceof
-                        value="org.rifidi.edge.client.ale.models.ecspec.EcSpecModelWrapper">
+                        value="org.rifidi.edge.client.ale.models.ecspec.RemoteSpecModelWrapper">
+                  </instanceof>
+               </iterate>
+            </visibleWhen>
+         </command>
+         <command
+               commandId="org.rifidi.edge.client.ale.editor.newremotespec"
+               style="push">
+            <visibleWhen>
+               <iterate
+                     ifEmpty="false">
+                  <instanceof
+                        value="org.rifidi.edge.client.ale.models.serviceprovider.SpecDataManager">
                   </instanceof>
                </iterate>
             </visibleWhen>

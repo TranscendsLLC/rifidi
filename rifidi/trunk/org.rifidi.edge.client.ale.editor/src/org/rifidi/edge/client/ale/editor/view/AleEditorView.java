@@ -28,7 +28,6 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
@@ -54,13 +53,15 @@ import org.rifidi.edge.client.ale.api.xsd.ale.epcglobal.ECFilterSpec.IncludePatt
 import org.rifidi.edge.client.ale.api.xsd.ale.epcglobal.ECSpec.LogicalReaders;
 import org.rifidi.edge.client.ale.api.xsd.ale.epcglobal.ECSpec.ReportSpecs;
 import org.rifidi.edge.client.ale.models.aleserviceporttype.AleServicePortTypeWrapper;
-import org.rifidi.edge.client.ale.models.ecspec.EcSpecModelWrapper;
+import org.rifidi.edge.client.ale.models.ecspec.RemoteSpecModelWrapper;
 
 /**
  * @author Tobias Hoppenthaler - tobias@pramari.com
  * 
  */
 public class AleEditorView extends ViewPart {
+	
+	public final static String ID = "org.rifidi.edge.client.ale.editor.view.aleeditorview";
 
 	private FormToolkit toolkit = null;
 	private ScrolledForm form = null;
@@ -78,7 +79,7 @@ public class AleEditorView extends ViewPart {
 	private ECFilterSpec fisp = null;
 	private ECGroupSpec grsp = null;
 	private ArrayList<ECReportSpec> repSpecs = null;
-	private EcSpecModelWrapper specWrapper = null;
+	private RemoteSpecModelWrapper specWrapper = null;
 	private CTabItem ctiEdit;
 
 	/*
@@ -152,7 +153,7 @@ public class AleEditorView extends ViewPart {
 		super.dispose();
 	}
 
-	public void init(EcSpecModelWrapper spec) {
+	public void init(RemoteSpecModelWrapper spec) {
 		this.specWrapper = spec;
 		this.ecSpec = spec.getEcSpec();
 		this.name = spec.getName();
@@ -182,7 +183,7 @@ public class AleEditorView extends ViewPart {
 		toolkit.createSeparator(form.getBody(), Separator.HORIZONTAL);
 		btnSave.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
-				// TODO:
+
 				// Always save back info to model
 				// save just submits/saves.
 				ReportSpecs rs = new ReportSpecs();
@@ -221,15 +222,14 @@ public class AleEditorView extends ViewPart {
 
 		txtSpecName.setLayoutData(new TableWrapData(TableWrapData.FILL));
 
-		Label lblInclSpecInRep = toolkit.createLabel(form.getBody(),
-				"Include Spec in Reports?");
 		TableWrapData td = new TableWrapData();
 		td.colspan = 2;
-		lblInclSpecInRep.setLayoutData(td);
-		Button btnInclSpecInRepYes = toolkit.createButton(form.getBody(),
-				"Yes", SWT.RADIO);
-		btnInclSpecInRepYes.setSelection(this.ecSpec.isIncludeSpecInReports());
-		btnInclSpecInRepYes.addSelectionListener(new SelectionListener() {
+
+		Button btnInclSpecInRep = toolkit.createButton(form.getBody(),
+				"Include Spec in Reports?", SWT.CHECK);
+		btnInclSpecInRep.setLayoutData(td);
+		btnInclSpecInRep.setSelection(this.ecSpec.isIncludeSpecInReports());
+		btnInclSpecInRep.addSelectionListener(new SelectionListener() {
 
 			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
@@ -239,31 +239,12 @@ public class AleEditorView extends ViewPart {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				ecSpec.setIncludeSpecInReports(true);
-
+				Button button = (Button) e.widget;
+				ecSpec.setIncludeSpecInReports(button.getSelection());
+				System.out.println("Selection is: " + button.getSelection());
 			}
 
 		});
-		Button btnInclSpecInRepNo = toolkit.createButton(form.getBody(), "No",
-				SWT.RADIO);
-		btnInclSpecInRepNo.setSelection(!this.ecSpec.isIncludeSpecInReports());
-		btnInclSpecInRepNo.addSelectionListener(new SelectionListener() {
-
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {
-				// nothing to do
-
-			}
-
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				ecSpec.setIncludeSpecInReports(false);
-
-			}
-
-		});
-
-		btnInclSpecInRepNo.setSelection(true);
 
 	}
 
@@ -313,7 +294,7 @@ public class AleEditorView extends ViewPart {
 		GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
 		data.verticalSpan = 2;
 		data.heightHint = 50;
-		// data.grabExcessHorizontalSpace=true;
+
 		lrList.setLayoutData(data);
 
 		ArrayList<String> strings = new ArrayList<String>();
@@ -561,15 +542,11 @@ public class AleEditorView extends ViewPart {
 			}
 		}
 
-		Label lblRiE = toolkit.createLabel(reportSectionClient,
-				"Report if Empty:");
-
-		lblRiE.setLayoutData(createStandardGridData());
-
-		Button btnRepIfEmptyYes = toolkit.createButton(reportSectionClient,
-				"Yes", SWT.RADIO);
-		btnRepIfEmptyYes.setSelection(spec.isReportIfEmpty());
-		btnRepIfEmptyYes.addSelectionListener(new SelectionListener() {
+		Button btnRepIfEmpty = toolkit.createButton(reportSectionClient,
+				"Report if Empty", SWT.CHECK);
+		btnRepIfEmpty.setLayoutData(createStandardGridData());
+		btnRepIfEmpty.setSelection(spec.isReportIfEmpty());
+		btnRepIfEmpty.addSelectionListener(new SelectionListener() {
 
 			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
@@ -579,15 +556,18 @@ public class AleEditorView extends ViewPart {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				ecrSpec.setReportIfEmpty(true);
+				Button button = (Button) e.widget;
+				ecrSpec.setReportIfEmpty(button.getSelection());
 
 			}
 
 		});
-		Button btnRepIfEmptyNo = toolkit.createButton(reportSectionClient,
-				"No", SWT.RADIO);
-		btnRepIfEmptyNo.setSelection(!spec.isReportIfEmpty());
-		btnRepIfEmptyNo.addSelectionListener(new SelectionListener() {
+
+		Button btnRepOnChange = toolkit.createButton(reportSectionClient,
+				"Report only on Change", SWT.CHECK);
+		btnRepOnChange.setLayoutData(createStandardGridData());
+		btnRepOnChange.setSelection(spec.isReportOnlyOnChange());
+		btnRepOnChange.addSelectionListener(new SelectionListener() {
 
 			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
@@ -597,53 +577,12 @@ public class AleEditorView extends ViewPart {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				ecrSpec.setReportIfEmpty(false);
+				Button button = (Button) e.widget;
+				ecrSpec.setReportOnlyOnChange(button.getSelection());
 
 			}
 
 		});
-
-		Label lblRooC = toolkit.createLabel(reportSectionClient,
-				"Report only on Change:");
-		lblRooC.setLayoutData(createStandardGridData());
-		Button btnRepOnChangeYes = toolkit.createButton(reportSectionClient,
-				"Yes", SWT.RADIO);
-		btnRepOnChangeYes.setSelection(spec.isReportOnlyOnChange());
-		btnRepOnChangeYes.addSelectionListener(new SelectionListener() {
-
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {
-				// nothing to do here
-
-			}
-
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				ecrSpec.setReportOnlyOnChange(true);
-
-			}
-
-		});
-
-		Button btnRepOnChangeNo = toolkit.createButton(reportSectionClient,
-				"No", SWT.RADIO);
-		btnRepOnChangeNo.setSelection(!spec.isReportOnlyOnChange());
-		btnRepOnChangeNo.addSelectionListener(new SelectionListener() {
-
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {
-				// nothing to do here
-
-			}
-
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				ecrSpec.setReportOnlyOnChange(false);
-
-			}
-
-		});
-
 		reportSection.setClient(reportSectionClient);
 		form.reflow(true);
 
@@ -658,13 +597,11 @@ public class AleEditorView extends ViewPart {
 		// glOutput.numColumns=2;
 		outputSectionClient.setLayout(glOutput);
 
-		Label lblInclTags = toolkit.createLabel(outputSectionClient,
-				"Include Tags:");
-		lblInclTags.setData(createStandardGridData());
-		Button btnInclTagsYes = toolkit.createButton(outputSectionClient,
-				"Yes", SWT.RADIO);
-		btnInclTagsYes.setSelection(ros.isIncludeTag());
-		btnInclTagsYes.addSelectionListener(new SelectionListener() {
+		Button btnInclTags = toolkit.createButton(outputSectionClient,
+				"Include Tags", SWT.CHECK);
+		btnInclTags.setLayoutData(createStandardGridData());
+		btnInclTags.setSelection(ros.isIncludeTag());
+		btnInclTags.addSelectionListener(new SelectionListener() {
 
 			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
@@ -674,15 +611,18 @@ public class AleEditorView extends ViewPart {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				ros.setIncludeTag(true);
+				Button button = (Button) e.widget;
+				ros.setIncludeTag(button.getSelection());
 
 			}
 
 		});
-		Button btnInclTagsNo = toolkit.createButton(outputSectionClient, "No",
-				SWT.RADIO);
-		btnInclTagsNo.setSelection(!ros.isIncludeTag());
-		btnInclTagsNo.addSelectionListener(new SelectionListener() {
+
+		Button btnInclEpc = toolkit.createButton(outputSectionClient,
+				"Include EPC", SWT.CHECK);
+		btnInclEpc.setData(createStandardGridData());
+		btnInclEpc.setSelection(ros.isIncludeEPC());
+		btnInclEpc.addSelectionListener(new SelectionListener() {
 
 			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
@@ -692,19 +632,18 @@ public class AleEditorView extends ViewPart {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				ros.setIncludeTag(false);
+				Button button = (Button) e.widget;
+				ros.setIncludeEPC(button.getSelection());
 
 			}
 
 		});
 
-		Label lblInclEpc = toolkit.createLabel(outputSectionClient,
-				"Include EPC:");
-		lblInclEpc.setData(createStandardGridData());
-		Button btnInclEpcYes = toolkit.createButton(outputSectionClient, "Yes",
-				SWT.RADIO);
-		btnInclEpcYes.setSelection(ros.isIncludeEPC());
-		btnInclEpcYes.addSelectionListener(new SelectionListener() {
+		Button btnInclHex = toolkit.createButton(outputSectionClient,
+				"Include Raw Hex", SWT.CHECK);
+		btnInclHex.setLayoutData(createStandardGridData());
+		btnInclHex.setSelection(ros.isIncludeRawHex());
+		btnInclHex.addSelectionListener(new SelectionListener() {
 
 			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
@@ -714,15 +653,18 @@ public class AleEditorView extends ViewPart {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				ros.setIncludeEPC(true);
+				Button button = (Button) e.widget;
+				ros.setIncludeRawHex(button.getSelection());
 
 			}
 
 		});
-		Button btnInclEpcNo = toolkit.createButton(outputSectionClient, "No",
-				SWT.RADIO);
-		btnInclEpcNo.setSelection(!ros.isIncludeEPC());
-		btnInclEpcNo.addSelectionListener(new SelectionListener() {
+
+		Button btnInclDec = toolkit.createButton(outputSectionClient,
+				"Include Raw Decimal (deprecated)", SWT.CHECK);
+		btnInclDec.setLayoutData(createStandardGridData());
+		btnInclDec.setSelection(ros.isIncludeRawDecimal());
+		btnInclDec.addSelectionListener(new SelectionListener() {
 
 			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
@@ -732,18 +674,18 @@ public class AleEditorView extends ViewPart {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				ros.setIncludeEPC(false);
+				Button button = (Button) e.widget;
+				ros.setIncludeRawDecimal(button.getSelection());
 
 			}
 
 		});
-		Label lblInclHex = toolkit.createLabel(outputSectionClient,
-				"Include Raw Hex:");
-		lblInclHex.setData(createStandardGridData());
-		Button btnInclHexYes = toolkit.createButton(outputSectionClient, "Yes",
-				SWT.RADIO);
-		btnInclHexYes.setSelection(ros.isIncludeRawHex());
-		btnInclHexYes.addSelectionListener(new SelectionListener() {
+
+		Button btnInclCount = toolkit.createButton(outputSectionClient,
+				"Include Tag Count", SWT.CHECK);
+		btnInclCount.setLayoutData(createStandardGridData());
+		btnInclCount.setSelection(ros.isIncludeCount());
+		btnInclCount.addSelectionListener(new SelectionListener() {
 
 			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
@@ -753,110 +695,12 @@ public class AleEditorView extends ViewPart {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				ros.setIncludeRawHex(true);
+				Button button = (Button) e.widget;
+				ros.setIncludeCount(button.getSelection());
 
 			}
 
 		});
-		Button btnInclHexNo = toolkit.createButton(outputSectionClient, "No",
-				SWT.RADIO);
-		btnInclHexNo.setSelection(!ros.isIncludeRawHex());
-		btnInclHexNo.addSelectionListener(new SelectionListener() {
-
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {
-				// nothing to do here
-
-			}
-
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				ros.setIncludeRawHex(false);
-
-			}
-
-		});
-
-		Label lblInclDec = toolkit.createLabel(outputSectionClient,
-				"Include Raw Decimal (deprecated):");
-		lblInclDec.setData(createStandardGridData());
-		Button btnInclDecYes = toolkit.createButton(outputSectionClient, "Yes",
-				SWT.RADIO);
-		btnInclDecYes.setSelection(ros.isIncludeRawDecimal());
-		btnInclDecYes.addSelectionListener(new SelectionListener() {
-
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {
-				// nothing to do here
-
-			}
-
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				ros.setIncludeRawDecimal(true);
-
-			}
-
-		});
-
-		Button btnInclDecNo = toolkit.createButton(outputSectionClient, "No",
-				SWT.RADIO);
-		btnInclDecNo.setSelection(!ros.isIncludeRawDecimal());
-		btnInclDecNo.addSelectionListener(new SelectionListener() {
-
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {
-				// nothing to do here
-
-			}
-
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				ros.setIncludeRawDecimal(false);
-
-			}
-
-		});
-		Label lblInclCount = toolkit.createLabel(outputSectionClient,
-				"Include Tag Count:");
-		lblInclCount.setData(createStandardGridData());
-		Button btnInclCountYes = toolkit.createButton(outputSectionClient,
-				"Yes", SWT.RADIO);
-		btnInclCountYes.setSelection(ros.isIncludeCount());
-		btnInclCountYes.addSelectionListener(new SelectionListener() {
-
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {
-				// nothing to do here
-
-			}
-
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				ros.setIncludeCount(true);
-
-			}
-
-		});
-		Button btnInclCountNo = toolkit.createButton(outputSectionClient, "No",
-				SWT.RADIO);
-		btnInclCountNo.setSelection(!ros.isIncludeCount());
-		btnInclCountNo.addSelectionListener(new SelectionListener() {
-
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {
-				// nothing to do here
-
-			}
-
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				ros.setIncludeCount(false);
-
-			}
-
-		});
-
 		outputSection.setClient(outputSectionClient);
 		form.reflow(true);
 

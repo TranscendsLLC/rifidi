@@ -10,34 +10,45 @@
  */
 package org.rifidi.edge.client.ale.treeview.views;
 
+import java.util.List;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.eclipse.core.databinding.observable.set.ISetChangeListener;
+import org.eclipse.core.databinding.observable.set.SetChangeEvent;
+import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.TreeNode;
 import org.eclipse.jface.viewers.Viewer;
 import org.rifidi.edge.client.ale.models.alelrserviceporttype.AleLrServicePortTypeWrapper;
 import org.rifidi.edge.client.ale.models.aleserviceporttype.AleServicePortTypeWrapper;
-import org.rifidi.edge.client.ale.models.ecspec.EcSpecModelWrapper;
+import org.rifidi.edge.client.ale.models.ecspec.RemoteSpecModelWrapper;
+import org.rifidi.edge.client.ale.models.enums.ConnectionStatus;
+import org.rifidi.edge.client.ale.models.listeners.ConnectionChangeListener;
+import org.rifidi.edge.client.ale.models.serviceprovider.SpecDataManager;
 
 /**
  * @author Tobias Hoppenthaler - tobias@pramari.com
  * 
  */
-public class AleTreeViewContentProvider implements ITreeContentProvider {
+public class AleTreeViewContentProvider implements ITreeContentProvider,
+		ConnectionChangeListener, ISetChangeListener {
 
 	@SuppressWarnings("unused")
 	private Log logger = null;
-	private AleTreeView view = null;
+
 	private AleServicePortTypeWrapper aWrapper = null;
 	private AleLrServicePortTypeWrapper lWrapper = null;
+	private AbstractTreeViewer viewer = null;
+	private List<SpecDataManager> dataManagers = null;
 
 	/**
+	 * @param viewer
 	 * @param aleTreeView
 	 * 
 	 */
-	public AleTreeViewContentProvider(AleTreeView aleTreeView) {
+	public AleTreeViewContentProvider() {
 		logger = LogFactory.getLog(AleTreeViewContentProvider.class);
-		this.view = aleTreeView;
 
 	}
 
@@ -50,12 +61,16 @@ public class AleTreeViewContentProvider implements ITreeContentProvider {
 	 */
 	@Override
 	public Object[] getChildren(Object parentElement) {
-
-		if (parentElement instanceof AleServicePortTypeWrapper) {
-			return ((AleServicePortTypeWrapper) parentElement).getEcSpecs();
+		if(parentElement instanceof List){
+			return ((List)parentElement).toArray();
 		}
 
-		// if(parentElement instanceof EcSpecModelWrapper){
+		if (parentElement instanceof SpecDataManager) {
+			return ((SpecDataManager) parentElement).getSpecs();
+			
+		}
+
+		// if(parentElement instanceof RemoteSpecModelWrapper){
 		// return new Object[0]; //return info
 		// }
 
@@ -71,8 +86,8 @@ public class AleTreeViewContentProvider implements ITreeContentProvider {
 	 */
 	@Override
 	public Object getParent(Object element) {
-		if (element instanceof EcSpecModelWrapper) {
-			return ((EcSpecModelWrapper) element).getParent();
+		if (element instanceof RemoteSpecModelWrapper) {
+			return ((RemoteSpecModelWrapper) element).getParent();
 		}
 		return null;
 	}
@@ -86,9 +101,7 @@ public class AleTreeViewContentProvider implements ITreeContentProvider {
 	 */
 	@Override
 	public boolean hasChildren(Object element) {
-		if (element instanceof TreeNode) {
-			return true;
-		}
+		
 		if (element instanceof AleServicePortTypeWrapper) {
 			if (((AleServicePortTypeWrapper) element).isConnected())
 				return true;
@@ -109,24 +122,7 @@ public class AleTreeViewContentProvider implements ITreeContentProvider {
 	 */
 	@Override
 	public Object[] getElements(Object inputElement) {
-		if (inputElement instanceof TreeNode) {
-			Object[] obj = new Object[2];
-			if(aWrapper==null){
-			aWrapper = new AleServicePortTypeWrapper();
-			aWrapper.addConnectionChangeListener(this.view);
-			aWrapper.addSetChangeListener(this.view);
-			}
-			if(lWrapper==null){
-//				TODO: same as above for logical readers
-			}
-			obj[0] = aWrapper;
-
-			return obj;
-		} else if (hasChildren(inputElement))
-			return getChildren(inputElement);
-		else {
-			return new Object[0];
-		}
+		return getChildren(inputElement);
 	}
 
 	/*
@@ -136,7 +132,8 @@ public class AleTreeViewContentProvider implements ITreeContentProvider {
 	 */
 	@Override
 	public void dispose() {
-		// TODO Auto-generated method stub
+		aWrapper.removeConnectionChangeListener(this);
+		aWrapper.removeSetChangeListener(this);
 
 	}
 
@@ -148,8 +145,61 @@ public class AleTreeViewContentProvider implements ITreeContentProvider {
 	 * .viewers.Viewer, java.lang.Object, java.lang.Object)
 	 */
 	@Override
-	public void inputChanged(Viewer arg0, Object arg1, Object arg2) {
-		// TODO Auto-generated method stub
+	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+
+		if (this.viewer != viewer) {
+			if (viewer instanceof AbstractTreeViewer) {
+				this.viewer = (AbstractTreeViewer) viewer;
+			} else {
+				throw new RuntimeException(
+						"ObservableTreeContentProvider supports AbstractTreeViewer but got "
+								+ viewer.getClass());
+			}
+		}
+		if (oldInput != newInput) {
+			this.dataManagers = (List<SpecDataManager>) newInput;
+			List<SpecDataManager> oldDataManagers = (List<SpecDataManager>) oldInput;
+			if (oldDataManagers != null) {
+				for (SpecDataManager specDataManager : oldDataManagers) {
+					specDataManager.removeConnectionChangeListener(this);
+					specDataManager.removeSetChangeListener(this);
+				}
+			}
+			if (dataManagers != null) {
+				for (SpecDataManager specDataManager : dataManagers) {
+					specDataManager.addConnectionChangeListener(this);
+					specDataManager.addSetChangeListener(this);
+				}
+			}
+			viewer.refresh();
+		}
+
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.client.ale.models.listeners.ConnectionChangeListener#
+	 * connectionStatusChanged
+	 * (org.rifidi.edge.client.ale.models.enums.ConnectionStatus)
+	 */
+	@Override
+	public void connectionStatusChanged(ConnectionStatus status) {
+		viewer.refresh();
+
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seeorg.eclipse.core.databinding.observable.set.ISetChangeListener#
+	 * handleSetChange
+	 * (org.eclipse.core.databinding.observable.set.SetChangeEvent)
+	 */
+	@Override
+	public void handleSetChange(SetChangeEvent event) {
+		viewer.refresh();
 
 	}
 
