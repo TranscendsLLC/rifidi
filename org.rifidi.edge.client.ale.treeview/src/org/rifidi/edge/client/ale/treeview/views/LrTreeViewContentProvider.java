@@ -1,6 +1,6 @@
 /* 
- *  AleTreeViewContentProvider.java
- *  Created:	Mar 12, 2009
+ *  LrTreeViewContentProvider.java
+ *  Created:	Apr 20, 2009
  *  Project:	RiFidi org.rifidi.edge.client.ale.treeview
  *  				http://www.rifidi.org
  *  				http://rifidi.sourceforge.net
@@ -19,23 +19,20 @@ import org.eclipse.core.databinding.observable.set.SetChangeEvent;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
-import org.rifidi.edge.client.ale.models.aleserviceporttype.AleServicePortTypeWrapper;
-import org.rifidi.edge.client.ale.models.ecspec.RemoteSpecModelWrapper;
+import org.rifidi.edge.client.ale.models.alelrserviceporttype.AleLrServicePortTypeWrapper;
 import org.rifidi.edge.client.ale.models.enums.ConnectionStatus;
 import org.rifidi.edge.client.ale.models.listeners.ConnectionChangeListener;
-import org.rifidi.edge.client.ale.models.serviceprovider.SpecDataManager;
 
 /**
  * @author Tobias Hoppenthaler - tobias@pramari.com
  * 
  */
-public class AleTreeViewContentProvider implements ITreeContentProvider,
+public class LrTreeViewContentProvider implements ITreeContentProvider,
 		ConnectionChangeListener, ISetChangeListener {
 
-	@SuppressWarnings("unused")
-	private Log logger = LogFactory.getLog(AleTreeViewContentProvider.class);
+	private Log logger = LogFactory.getLog(LrTreeViewContentProvider.class);
 	private AbstractTreeViewer viewer = null;
-	private List<SpecDataManager> dataManagers = null;
+	private List<AleLrServicePortTypeWrapper> dataManagers = null;
 
 	/*
 	 * (non-Javadoc)
@@ -50,11 +47,9 @@ public class AleTreeViewContentProvider implements ITreeContentProvider,
 			return ((List) parentElement).toArray();
 		}
 
-		if (parentElement instanceof SpecDataManager) {
-			return ((SpecDataManager) parentElement).getSpecs();
-
+		if (parentElement instanceof AleLrServicePortTypeWrapper) {
+			return ((AleLrServicePortTypeWrapper) parentElement).getSpecs();
 		}
-
 		return new Object[0];
 	}
 
@@ -67,9 +62,7 @@ public class AleTreeViewContentProvider implements ITreeContentProvider,
 	 */
 	@Override
 	public Object getParent(Object element) {
-		if (element instanceof RemoteSpecModelWrapper) {
-			return ((RemoteSpecModelWrapper) element).getParent();
-		}
+
 		return null;
 	}
 
@@ -82,15 +75,12 @@ public class AleTreeViewContentProvider implements ITreeContentProvider,
 	 */
 	@Override
 	public boolean hasChildren(Object element) {
-
-		if (element instanceof AleServicePortTypeWrapper) {
-			if (((AleServicePortTypeWrapper) element).isConnected())
+		if (element instanceof AleLrServicePortTypeWrapper) {
+			if (((AleLrServicePortTypeWrapper) element).isConnected()) {
 				return true;
-
+			}
 		}
-
 		return false;
-
 	}
 
 	/*
@@ -112,6 +102,7 @@ public class AleTreeViewContentProvider implements ITreeContentProvider,
 	 */
 	@Override
 	public void dispose() {
+		// TODO Auto-generated method stub
 
 	}
 
@@ -124,7 +115,6 @@ public class AleTreeViewContentProvider implements ITreeContentProvider,
 	 */
 	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-
 		if (this.viewer != viewer) {
 			if (viewer instanceof AbstractTreeViewer) {
 				this.viewer = (AbstractTreeViewer) viewer;
@@ -135,16 +125,16 @@ public class AleTreeViewContentProvider implements ITreeContentProvider,
 			}
 		}
 		if (oldInput != newInput) {
-			this.dataManagers = (List<SpecDataManager>) newInput;
-			List<SpecDataManager> oldDataManagers = (List<SpecDataManager>) oldInput;
+			this.dataManagers = (List<AleLrServicePortTypeWrapper>) newInput;
+			List<AleLrServicePortTypeWrapper> oldDataManagers = (List<AleLrServicePortTypeWrapper>) oldInput;
 			if (oldDataManagers != null) {
-				for (SpecDataManager specDataManager : oldDataManagers) {
+				for (AleLrServicePortTypeWrapper specDataManager : oldDataManagers) {
 					specDataManager.removeConnectionChangeListener(this);
 					specDataManager.removeSetChangeListener(this);
 				}
 			}
 			if (dataManagers != null) {
-				for (SpecDataManager specDataManager : dataManagers) {
+				for (AleLrServicePortTypeWrapper specDataManager : dataManagers) {
 					specDataManager.addConnectionChangeListener(this);
 					specDataManager.addSetChangeListener(this);
 				}
@@ -180,5 +170,4 @@ public class AleTreeViewContentProvider implements ITreeContentProvider,
 		viewer.refresh();
 
 	}
-
 }

@@ -17,7 +17,6 @@ import javax.management.ServiceNotFoundException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.eclipse.core.databinding.observable.set.WritableSet;
 import org.rifidi.edge.client.ale.api.wsdl.ale.epcglobal.ALEServicePortType;
 import org.rifidi.edge.client.ale.api.wsdl.ale.epcglobal.EmptyParms;
 import org.rifidi.edge.client.ale.api.wsdl.ale.epcglobal.ImplementationExceptionResponse;
@@ -41,23 +40,6 @@ public class AleServicePortTypeWrapper extends SpecDataManager {
 	private Log logger = LogFactory.getLog(AleServicePortTypeWrapper.class);
 	private URL endpoint = null;
 
-	// private String name = "EdgeServer";
-	//
-	// /**
-	// * @return the name
-	// */
-	// public String getName() {
-	// return name;
-	// }
-	//
-	// /**
-	// * @param name
-	// * the name to set
-	// */
-	// public void setName(String name) {
-	// this.name = name;
-	// }
-
 	/**
 	 * 
 	 */
@@ -72,7 +54,7 @@ public class AleServicePortTypeWrapper extends SpecDataManager {
 	}
 
 	public void connect() throws RifidiNoEndpointDefinedException {
-		logger.debug("Trying to connect...");
+		logger.debug("Trying to connect ALE...");
 		if (this.endpoint != null) {
 			ConnectionHandler conHan = new ConnectionHandler();
 
@@ -106,13 +88,13 @@ public class AleServicePortTypeWrapper extends SpecDataManager {
 	}
 
 	public void disconnect() {
-		logger.debug("disconnecting...");
+		logger.debug("disconnecting ALE...");
 		this.aleServicePortType = null;
 		connectionStatusChanged(ConnectionStatus.DISCONNECTED);
 	}
 
 	public Object[] getSpecs() {
-		WritableSet set = this.getSpecWrappers();
+
 		if (this.aleServicePortType != null) {
 
 			try {
@@ -122,20 +104,20 @@ public class AleServicePortTypeWrapper extends SpecDataManager {
 					alEsWrs.add(new RemoteSpecModelWrapper(string, this));
 				}
 
-				if (set.size() == 0) {
-					set.addAll(alEsWrs);
+				if (this.specWrappers.size() == 0) {
+					this.specWrappers.addAll(alEsWrs);
 				} else
-					set.retainAll(alEsWrs);
+					this.specWrappers.retainAll(alEsWrs);
 			} catch (ImplementationExceptionResponse e) {
-				logger.error(e.getMessage());
+				logger.debug(e.getMessage());
 				disconnect();
 			} catch (SecurityExceptionResponse e) {
-				logger.error(e.getMessage());
+				logger.debug(e.getMessage());
 				disconnect();
 			}
 		}
 
-		return set.toArray();
+		return this.specWrappers.toArray();
 	}
 
 	/**
@@ -143,6 +125,24 @@ public class AleServicePortTypeWrapper extends SpecDataManager {
 	 */
 	public ALEServicePortType getAleServicePortType() {
 		return aleServicePortType;
+	}
+
+	public String getStandardVersion() {
+		try {
+			return this.aleServicePortType.getStandardVersion(new EmptyParms());
+		} catch (ImplementationExceptionResponse e) {
+			logger.debug(e.getMessage());
+			return e.getMessage();
+		}
+	}
+
+	public String getVendorVersion() {
+		try {
+			return this.aleServicePortType.getVendorVersion(new EmptyParms());
+		} catch (ImplementationExceptionResponse e) {
+			logger.debug(e.getMessage());
+			return e.getMessage();
+		}
 	}
 
 }

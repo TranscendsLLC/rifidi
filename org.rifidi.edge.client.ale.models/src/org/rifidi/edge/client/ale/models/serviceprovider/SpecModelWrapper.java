@@ -19,6 +19,21 @@ import org.rifidi.edge.client.ale.api.xsd.ale.epcglobal.ECSpec;
 public abstract class SpecModelWrapper {
 	protected SpecDataManager parent = null;
 	protected String name = "NewEcSpec";
+	protected ECSpec ecSpec=new ECSpec();
+
+	/**
+	 * @return the ecSpec
+	 */
+	public ECSpec getEcSpec() {
+		return ecSpec;
+	}
+
+	/**
+	 * @param ecSpec the ecSpec to set
+	 */
+	public void setEcSpec(ECSpec ecSpec) {
+		this.ecSpec = ecSpec;
+	}
 
 	/**
 	 * @return the parent
@@ -58,7 +73,7 @@ public abstract class SpecModelWrapper {
 		this.name = name;
 	}
 
-	public abstract ECSpec getEcSpec();
+	public abstract ECSpec getExtEcSpec();
 	
 	public abstract String define();
 	
