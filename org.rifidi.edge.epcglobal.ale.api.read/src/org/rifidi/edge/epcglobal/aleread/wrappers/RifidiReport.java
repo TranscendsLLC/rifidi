@@ -19,7 +19,6 @@ import org.rifidi.edge.epcglobal.aleread.ALEDataFormats;
 import org.rifidi.edge.epcglobal.aleread.ALEDataTypes;
 import org.rifidi.edge.epcglobal.aleread.ECReportOptions;
 import org.rifidi.edge.epcglobal.aleread.EPCDataContainerAdapter;
-import org.rifidi.edge.epcglobal.aleread.ALEReadAPI.TriggerCondition;
 import org.rifidi.edge.epcglobal.aleread.filters.ALEField;
 import org.rifidi.edge.epcglobal.aleread.filters.PatternMatcher;
 import org.rifidi.edge.epcglobal.aleread.filters.ReportALEField;
@@ -196,7 +195,7 @@ public class RifidiReport {
 		}
 	}
 
-	public ECReport send(TriggerCondition condition) {
+	public ECReport send() {
 		ECReport report = new ECReport();
 		if (((!((options & ECReportOptions.REPORT_ONLY_ON_CHANGE) > 0)) || ((options & ECReportOptions.REPORT_ONLY_ON_CHANGE) > 0 && changed))
 				&& (tagreadsToSend.size() > 0 || (tagreadsToSend.size() == 0 && (options & ECReportOptions.REPORT_IF_EMPTY) > 0 == true))) {

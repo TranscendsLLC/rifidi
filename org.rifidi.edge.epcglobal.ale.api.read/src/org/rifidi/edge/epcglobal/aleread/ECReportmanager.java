@@ -23,7 +23,6 @@ import org.rifidi.edge.epcglobal.ale.api.read.data.ECReports;
 import org.rifidi.edge.epcglobal.ale.api.read.data.ECSpec;
 import org.rifidi.edge.epcglobal.ale.api.read.data.ECReports.Reports;
 import org.rifidi.edge.epcglobal.aleread.ALEReadAPI.TriggerCondition;
-import org.rifidi.edge.epcglobal.aleread.rifidievents.StartEvent;
 import org.rifidi.edge.epcglobal.aleread.wrappers.RifidiECSpec;
 import org.rifidi.edge.epcglobal.aleread.wrappers.RifidiReport;
 
@@ -61,6 +60,7 @@ public class ECReportmanager implements Runnable, StatementAwareUpdateListener {
 	private List<EPStatement> destroyStatements;
 	/** Incoming events. */
 	private LinkedBlockingQueue<EventTuple> eventQueue;
+
 	/** Target uris for the rifidiReports. */
 	private List<URI> uris;
 	/** Esper instance used by this instance. */
@@ -76,8 +76,8 @@ public class ECReportmanager implements Runnable, StatementAwareUpdateListener {
 	private ECSpec spec;
 	/** Rifidi ec spec owning this manager. */
 	private RifidiECSpec owner;
-	/** Handler for the triggers. */
-	private ReadTriggerHandler readTriggerHandler;
+	/** Timer for triggers and intervals. */
+	private Timer timer;
 
 	/**
 	 * Constructor.
@@ -87,8 +87,9 @@ public class ECReportmanager implements Runnable, StatementAwareUpdateListener {
 		rifidiReports = reports;
 		eventQueue = new LinkedBlockingQueue<EventTuple>();
 		destroied = false;
-		readTriggerHandler = new ReadTriggerHandler(this, owner
-				.getRifidiBoundarySpec());
+		timer = new Timer(owner.getRifidiBoundarySpec().getRepeatInterval(),
+				owner.getRifidiBoundarySpec().getStartTriggers(), esper);
+
 		this.uris = uris;
 		this.esper = esper;
 		this.specName = specName;
@@ -156,10 +157,6 @@ public class ECReportmanager implements Runnable, StatementAwareUpdateListener {
 		this.destroyStatements = destroyStatements;
 	}
 
-	protected void startTrigger(String uri) {
-		logger.debug("Start trigger went off: " + uri);
-	}
-
 	protected void stopTrigger(String uri) {
 		logger.debug("Stop trigger went off: " + uri);
 	}
@@ -184,29 +181,29 @@ public class ECReportmanager implements Runnable, StatementAwareUpdateListener {
 		if (destroyStatements.contains(arg2)) {
 			destroied = true;
 			tuple = new EventTuple();
-			tuple.condition = TriggerCondition.DESTROIED;
+			tuple.stopCondition = TriggerCondition.DESTROIED;
 			// callback for destroying the statements
 			owner.discard();
 		} else {
 			tuple = new EventTuple();
 		}
 
-		// TODO: fix, needs timing
-		esper.getEPRuntime().sendEvent(new StartEvent("wuhu"));
+		tuple.report = timer.callback();
+
 		if (whenDataAvailableStatements.contains(arg2)) {
-			tuple.condition = TriggerCondition.DATA_AVAILABLE;
+			tuple.stopCondition = TriggerCondition.DATA_AVAILABLE;
 		}
 		if (stableSetIntervalStatements.contains(arg2)) {
-			tuple.condition = TriggerCondition.STABLE_SET;
+			tuple.stopCondition = TriggerCondition.STABLE_SET;
 		}
 		if (stopTriggerStatements.contains(arg2)) {
-			tuple.condition = TriggerCondition.STOP_TRIGGER;
+			tuple.stopCondition = TriggerCondition.STOP_TRIGGER;
 		}
 		if (durationStatements.contains(arg2)) {
-			tuple.condition = TriggerCondition.DURATION;
+			tuple.stopCondition = TriggerCondition.DURATION;
 		}
 		if (destroyStatements.contains(arg2)) {
-			tuple.condition = TriggerCondition.UNDEFINE;
+			tuple.stopCondition = TriggerCondition.UNDEFINE;
 		}
 		tuple.beans = arg0;
 		addEvents(tuple);
@@ -219,7 +216,6 @@ public class ECReportmanager implements Runnable, StatementAwareUpdateListener {
 	 */
 	@Override
 	public void run() {
-		readTriggerHandler.start();
 		// subscribe to all statements
 		for (EPStatement statement : durationStatements) {
 			statement.addListener(this);
@@ -236,6 +232,10 @@ public class ECReportmanager implements Runnable, StatementAwareUpdateListener {
 		for (EPStatement statement : destroyStatements) {
 			statement.addListener(this);
 		}
+		timer.start();
+
+		// Always true because we hit this one only if run was hit and that
+		// means the spec was requested.
 		while (!Thread.currentThread().isInterrupted()) {
 			try {
 
@@ -257,25 +257,11 @@ public class ECReportmanager implements Runnable, StatementAwareUpdateListener {
 					rifidiReport.processEvents(events);
 				}
 				// send the report
-				ECReports ecreports = new ECReports();
+				ECReports ecreports = tagevents.report;
 				ecreports.setALEID("Rifidi Edge Server");
 				ecreports.setDate(getCurrentCalendar());
 				if (spec != null) {
 					ecreports.setECSpec(spec);
-				}
-				// one of TRIGGER REPEAT_PERIOD REQUESTED UNDEFINE
-				ecreports.setInitiationCondition(ALEReadAPI.conditionToName
-						.get(tagevents.condition));
-				if (ecreports.getInitiationCondition().equals("TRIGGER")) {
-				}
-				ecreports.setTerminationCondition("TRIGGER");
-				// one of TRIGGER DURATION STABLE_SET DATA_AVAILABLE
-				// UNREQUEST
-				// UNDEFINE
-				ecreports.setTerminationCondition(ALEReadAPI.conditionToName
-						.get(tagevents.condition));
-				if (TriggerCondition.STOP_TRIGGER.equals(tagevents.condition)) {
-					// ecreports.setTerminationTrigger(value);
 				}
 
 				ecreports.setSpecName(specName);
@@ -283,18 +269,19 @@ public class ECReportmanager implements Runnable, StatementAwareUpdateListener {
 				ecreports.setTotalMilliseconds(10);
 				Reports reportsPoltergeist = new Reports();
 				ecreports.setReports(reportsPoltergeist);
+				System.out.println(ecreports.getInitiationCondition()+" "+ecreports.getInitiationTrigger());
 				for (RifidiReport rifidiReport : rifidiReports) {
-					ECReport rep = rifidiReport.send(tagevents.condition);
+					ECReport rep = rifidiReport.send();
 					if (rep != null) {
 						ecreports.getReports().getReport().add(rep);
 					}
 				}
 			} catch (InterruptedException e) {
-				readTriggerHandler.stop();
+				timer.stop();
 				Thread.currentThread().interrupt();
 			}
 		}
-		readTriggerHandler.stop();
+		timer.stop();
 	}
 
 	// TODO: aaaargh performance!!!!!!!!!!!
@@ -312,6 +299,7 @@ public class ECReportmanager implements Runnable, StatementAwareUpdateListener {
 
 	private class EventTuple {
 		public EventBean[] beans;
-		public TriggerCondition condition;
+		public TriggerCondition stopCondition;
+		public ECReports report;
 	}
 }
