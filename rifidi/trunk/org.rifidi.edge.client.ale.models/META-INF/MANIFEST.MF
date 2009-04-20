@@ -18,5 +18,6 @@ Export-Package: org.rifidi.edge.client.ale.models.alelrserviceporttype,
  org.rifidi.edge.client.ale.models.enums,
  org.rifidi.edge.client.ale.models.exceptions,
  org.rifidi.edge.client.ale.models.listeners,
+ org.rifidi.edge.client.ale.models.lrspec,
  org.rifidi.edge.client.ale.models.serviceprovider
 Import-Package: org.apache.commons.logging;version="1.1.1"

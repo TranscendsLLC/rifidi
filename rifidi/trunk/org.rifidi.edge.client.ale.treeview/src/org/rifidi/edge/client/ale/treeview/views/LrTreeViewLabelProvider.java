@@ -1,6 +1,6 @@
 /* 
- *  AleTreeViewLabelProvider.java
- *  Created:	Mar 13, 2009
+ *  LrViewLabelProvider.java
+ *  Created:	Apr 20, 2009
  *  Project:	RiFidi org.rifidi.edge.client.ale.treeview
  *  				http://www.rifidi.org
  *  				http://rifidi.sourceforge.net
@@ -15,15 +15,14 @@ import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
-import org.rifidi.edge.client.ale.models.aleserviceporttype.AleServicePortTypeWrapper;
-import org.rifidi.edge.client.ale.models.ecspec.RemoteSpecModelWrapper;
-import org.rifidi.edge.client.ale.models.serviceprovider.SpecDataManager;
+import org.rifidi.edge.client.ale.models.alelrserviceporttype.AleLrServicePortTypeWrapper;
+import org.rifidi.edge.client.ale.models.lrspec.RemoteLrSpecModelWrapper;
 
 /**
  * @author Tobias Hoppenthaler - tobias@pramari.com
  * 
  */
-public class AleTreeViewLabelProvider implements ILabelProvider {
+public class LrTreeViewLabelProvider implements ILabelProvider {
 
 	/*
 	 * (non-Javadoc)
@@ -32,9 +31,8 @@ public class AleTreeViewLabelProvider implements ILabelProvider {
 	 */
 	@Override
 	public Image getImage(Object element) {
-
-		if (element instanceof AleServicePortTypeWrapper) {
-			if (((AleServicePortTypeWrapper) element).isConnected()) {
+		if (element instanceof AleLrServicePortTypeWrapper) {
+			if (((AleLrServicePortTypeWrapper) element).isConnected()) {
 				return PlatformUI.getWorkbench().getSharedImages().getImage(
 						ISharedImages.IMG_OBJ_FOLDER);
 			} else {
@@ -55,12 +53,12 @@ public class AleTreeViewLabelProvider implements ILabelProvider {
 	 */
 	@Override
 	public String getText(Object element) {
-		if (element instanceof SpecDataManager) {
-			return ((SpecDataManager) element).getName();
+		if (element instanceof AleLrServicePortTypeWrapper) {
+			return ((AleLrServicePortTypeWrapper) element).getName();
 		}
 
-		if (element instanceof RemoteSpecModelWrapper) {
-			return ((RemoteSpecModelWrapper) element).getName();
+		if (element instanceof RemoteLrSpecModelWrapper) {
+			return ((RemoteLrSpecModelWrapper) element).getName();
 		}
 
 		return element.toString();
@@ -75,7 +73,8 @@ public class AleTreeViewLabelProvider implements ILabelProvider {
 	 * jface.viewers.ILabelProviderListener)
 	 */
 	@Override
-	public void addListener(ILabelProviderListener arg0) {
+	public void addListener(ILabelProviderListener listener) {
+		// TODO Auto-generated method stub
 
 	}
 
@@ -86,6 +85,7 @@ public class AleTreeViewLabelProvider implements ILabelProvider {
 	 */
 	@Override
 	public void dispose() {
+		// TODO Auto-generated method stub
 
 	}
 
@@ -97,8 +97,8 @@ public class AleTreeViewLabelProvider implements ILabelProvider {
 	 * .Object, java.lang.String)
 	 */
 	@Override
-	public boolean isLabelProperty(Object arg0, String arg1) {
-
+	public boolean isLabelProperty(Object element, String property) {
+		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -110,7 +110,8 @@ public class AleTreeViewLabelProvider implements ILabelProvider {
 	 * .jface.viewers.ILabelProviderListener)
 	 */
 	@Override
-	public void removeListener(ILabelProviderListener arg0) {
+	public void removeListener(ILabelProviderListener listener) {
+		// TODO Auto-generated method stub
 
 	}
 

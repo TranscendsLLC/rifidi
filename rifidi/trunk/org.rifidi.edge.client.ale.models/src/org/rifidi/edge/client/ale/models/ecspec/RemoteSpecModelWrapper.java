@@ -41,6 +41,8 @@ import org.rifidi.edge.client.ale.models.serviceprovider.SpecModelWrapper;
  */
 public class RemoteSpecModelWrapper extends SpecModelWrapper {
 
+	private Log logger = LogFactory.getLog(RemoteSpecModelWrapper.class);
+
 	/**
 	 * @param name
 	 * @param parent
@@ -50,15 +52,13 @@ public class RemoteSpecModelWrapper extends SpecModelWrapper {
 
 	}
 
-	private Log logger = LogFactory.getLog(RemoteSpecModelWrapper.class);
-
 	/**
 	 * Gets the corresponding spec for that string from the server, returns null
 	 * if error occured.
 	 * 
 	 * @return ECSpec
 	 */
-	public ECSpec getEcSpec() {// loadfromfile-local
+	public ECSpec getExtEcSpec() {// loadfromfile-local
 
 		GetECSpec parms = new GetECSpec();
 		parms.setSpecName(this.name);
@@ -66,44 +66,45 @@ public class RemoteSpecModelWrapper extends SpecModelWrapper {
 			return ((AleServicePortTypeWrapper) this.parent)
 					.getAleServicePortType().getECSpec(parms);
 		} catch (ImplementationExceptionResponse e) {
-			logger.error(e.getMessage());
+			logger.debug(e.getMessage());
 		} catch (NoSuchNameExceptionResponse e) {
 			logger.debug(e.getMessage());
 		} catch (SecurityExceptionResponse e) {
-			logger.error(e.getMessage());
+			logger.debug(e.getMessage());
 		}
 
 		return new ECSpec();
 
 	}
 
-	private void disconnectParent() {
-		((AleServicePortTypeWrapper) parent).disconnect();
-
-	}
+	// private void disconnectParent() {
+	// ((AleServicePortTypeWrapper) parent).disconnect();
+	//
+	// }
 
 	public String define() { // save-local
 
 		AleServicePortTypeWrapper wrapper = (AleServicePortTypeWrapper) this.parent;
 		Define parms = new Define();
 		parms.setSpecName(this.name);
-		parms.setSpec(getEcSpec());
+		parms.setSpec(this.ecSpec);
 		String retVal = "";
 		try {
 			wrapper.getAleServicePortType().define(parms);
-			return retVal;
+
 		} catch (ImplementationExceptionResponse e) {
 			retVal = e.getMessage();
-			logger.error(retVal);
+			logger.debug(retVal);
 		} catch (SecurityExceptionResponse e) {
 			retVal = e.getMessage();
-			logger.error(retVal);
+			logger.debug(retVal);
 		} catch (ECSpecValidationExceptionResponse e) {
 			retVal = e.getMessage();
-			logger.error(retVal);
+			logger.debug(retVal);
 		} catch (DuplicateNameExceptionResponse e) {
-			retVal = e.getMessage();
-			logger.error(retVal);
+			logger.debug(e.getMessage() + "trying undefine->define");
+			undefine();
+			define();
 		}
 		return retVal;
 
@@ -117,16 +118,16 @@ public class RemoteSpecModelWrapper extends SpecModelWrapper {
 		String retVal = "";
 		try {
 			wrapper.getAleServicePortType().undefine(parms);
-			return retVal;
+
 		} catch (ImplementationExceptionResponse e) {
 			retVal = e.getMessage();
-			logger.error(retVal);
+			logger.debug(retVal);
 		} catch (NoSuchNameExceptionResponse e) {
 			retVal = e.getMessage();
-			logger.error(retVal);
+			logger.debug(retVal);
 		} catch (SecurityExceptionResponse e) {
 			retVal = e.getMessage();
-			logger.error(retVal);
+			logger.debug(retVal);
 		}
 		return retVal;
 
@@ -141,22 +142,22 @@ public class RemoteSpecModelWrapper extends SpecModelWrapper {
 		try {
 			((AleServicePortTypeWrapper) this.parent).getAleServicePortType()
 					.subscribe(parms);
-			return retVal;
+
 		} catch (ImplementationExceptionResponse e) {
 			retVal = e.getMessage();
-			logger.error(retVal);
+			logger.debug(retVal);
 		} catch (NoSuchNameExceptionResponse e) {
 			retVal = e.getMessage();
-			logger.error(retVal);
+			logger.debug(retVal);
 		} catch (DuplicateSubscriptionExceptionResponse e) {
 			retVal = e.getMessage();
-			logger.error(retVal);
+			logger.debug(retVal);
 		} catch (SecurityExceptionResponse e) {
 			retVal = e.getMessage();
-			logger.error(retVal);
+			logger.debug(retVal);
 		} catch (InvalidURIExceptionResponse e) {
 			retVal = e.getMessage();
-			logger.error(retVal);
+			logger.debug(retVal);
 		}
 		return retVal;
 
@@ -171,22 +172,22 @@ public class RemoteSpecModelWrapper extends SpecModelWrapper {
 		try {
 			((AleServicePortTypeWrapper) this.parent).getAleServicePortType()
 					.unsubscribe(parms);
-			return retVal;
+
 		} catch (ImplementationExceptionResponse e) {
 			retVal = e.getMessage();
-			logger.error(retVal);
+			logger.debug(retVal);
 		} catch (NoSuchNameExceptionResponse e) {
 			retVal = e.getMessage();
-			logger.error(retVal);
+			logger.debug(retVal);
 		} catch (NoSuchSubscriberExceptionResponse e) {
 			retVal = e.getMessage();
-			logger.error(retVal);
+			logger.debug(retVal);
 		} catch (SecurityExceptionResponse e) {
 			retVal = e.getMessage();
-			logger.error(retVal);
+			logger.debug(retVal);
 		} catch (InvalidURIExceptionResponse e) {
 			retVal = e.getMessage();
-			logger.error(retVal);
+			logger.debug(retVal);
 		}
 		return retVal;
 
@@ -200,16 +201,16 @@ public class RemoteSpecModelWrapper extends SpecModelWrapper {
 		try {
 			((AleServicePortTypeWrapper) this.parent).getAleServicePortType()
 					.poll(parms);
-			return retVal;
+
 		} catch (ImplementationExceptionResponse e) {
 			retVal = e.getMessage();
-			logger.error(retVal);
+			logger.debug(retVal);
 		} catch (NoSuchNameExceptionResponse e) {
 			retVal = e.getMessage();
-			logger.error(retVal);
+			logger.debug(retVal);
 		} catch (SecurityExceptionResponse e) {
 			retVal = e.getMessage();
-			logger.error(retVal);
+			logger.debug(retVal);
 		}
 		return retVal;
 
@@ -226,13 +227,13 @@ public class RemoteSpecModelWrapper extends SpecModelWrapper {
 					.immediate(parms);
 		} catch (ImplementationExceptionResponse e) {
 			retVal = e.getMessage();
-			logger.error(retVal);
+			logger.debug(retVal);
 		} catch (SecurityExceptionResponse e) {
 			retVal = e.getMessage();
-			logger.error(retVal);
+			logger.debug(retVal);
 		} catch (ECSpecValidationExceptionResponse e) {
 			retVal = e.getMessage();
-			logger.error(retVal);
+			logger.debug(retVal);
 		}
 		return retVal;
 
@@ -248,11 +249,11 @@ public class RemoteSpecModelWrapper extends SpecModelWrapper {
 					.getAleServicePortType().getSubscribers(parms).getString();
 			return al;
 		} catch (ImplementationExceptionResponse e) {
-			logger.error(e.getMessage());
+			logger.debug(e.getMessage());
 		} catch (NoSuchNameExceptionResponse e) {
-			logger.error(e.getMessage());
+			logger.debug(e.getMessage());
 		} catch (SecurityExceptionResponse e) {
-			logger.error(e.getMessage());
+			logger.debug(e.getMessage());
 		}
 
 		return new ArrayList<String>();

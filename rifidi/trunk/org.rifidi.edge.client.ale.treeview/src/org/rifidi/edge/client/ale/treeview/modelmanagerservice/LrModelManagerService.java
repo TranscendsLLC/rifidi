@@ -1,16 +1,16 @@
 package org.rifidi.edge.client.ale.treeview.modelmanagerservice;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import org.eclipse.jface.viewers.Viewer;
-import org.rifidi.edge.client.ale.models.aleserviceporttype.AleServicePortTypeWrapper;
-import org.rifidi.edge.client.ale.models.serviceprovider.SpecDataManager;
+import org.rifidi.edge.client.ale.models.alelrserviceporttype.AleLrServicePortTypeWrapper;
 
 /* 
- *  ModelManagerService.java
- *  Created:	Apr 17, 2009
+ *  LrModelManagerService.java
+ *  Created:	Apr 20, 2009
  *  Project:	RiFidi org.rifidi.edge.client.ale.treeview
  *  				http://www.rifidi.org
  *  				http://rifidi.sourceforge.net
@@ -23,22 +23,23 @@ import org.rifidi.edge.client.ale.models.serviceprovider.SpecDataManager;
  * @author Tobias Hoppenthaler - tobias@pramari.com
  * 
  */
-public class ModelManagerService {
+public class LrModelManagerService {
 
-	private List<SpecDataManager> input = new ArrayList<SpecDataManager>();
+	private List<AleLrServicePortTypeWrapper> input = new ArrayList<AleLrServicePortTypeWrapper>();
 	private Set<Viewer> viewers;
-	private static ModelManagerService instance;
+	private static LrModelManagerService instance;
 
-	private ModelManagerService() {
+	private LrModelManagerService() {
 		viewers = new HashSet<Viewer>();
-		input.add(new AleServicePortTypeWrapper());
+		input.add(new AleLrServicePortTypeWrapper());
 	}
 
-	public synchronized static ModelManagerService getInstance() {
+	public synchronized static LrModelManagerService getInstance() {
 		if (instance == null) {
-			instance = new ModelManagerService();
+			instance = new LrModelManagerService();
 		}
 		return instance;
+
 	}
 
 	public void addViewer(Viewer viewer) {
@@ -50,13 +51,4 @@ public class ModelManagerService {
 		this.viewers.remove(viewer);
 		viewer.setInput(input);
 	}
-
-	public void setModel(List list) {
-		this.input.clear();
-		this.input = list;
-		for (Viewer viewer : viewers) {
-			viewer.setInput(input);
-		}
-	}
-
 }
