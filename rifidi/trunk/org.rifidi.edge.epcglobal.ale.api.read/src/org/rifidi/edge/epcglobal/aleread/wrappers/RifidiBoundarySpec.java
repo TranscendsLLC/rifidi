@@ -72,7 +72,7 @@ public class RifidiBoundarySpec {
 		stopTriggers = new HashSet<Trigger>();
 		if (boundaryspec.getStopTrigger() != null) {
 			Trigger trig = triggerFactoryService.createTrigger(boundaryspec
-					.getStartTrigger());
+					.getStopTrigger());
 			trig.setStart(false);
 			stopTriggers.add(trig);
 		}

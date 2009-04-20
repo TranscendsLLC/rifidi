@@ -11,6 +11,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import org.rifidi.edge.epcglobal.ale.api.read.data.ECReports;
 import org.rifidi.edge.epcglobal.aleread.rifidievents.StartEvent;
+import org.rifidi.edge.epcglobal.aleread.rifidievents.StopEvent;
 
 import com.espertech.esper.client.EPServiceProvider;
 
@@ -23,7 +24,8 @@ public class Timer {
 	private TimeRunnable runny;
 	private long interval;
 	private long intervalStart;
-	private Set<Trigger> triggers;
+	private Set<Trigger> startTriggers;
+	private Set<Trigger> stopTriggers;
 	/** True if the runnable is executing. */
 	private AtomicBoolean running = new AtomicBoolean(false);
 	private AtomicReference<Trigger> trigger = new AtomicReference<Trigger>();
@@ -33,11 +35,16 @@ public class Timer {
 
 	private EPServiceProvider esper;
 
-	public Timer(long interval, Set<Trigger> triggers, EPServiceProvider esper) {
-		for (Trigger trigger : triggers) {
+	public Timer(long interval, Set<Trigger> startTriggers,
+			Set<Trigger> stopTriggers, EPServiceProvider esper) {
+		for (Trigger trigger : startTriggers) {
 			trigger.setTarget(this);
 		}
-		this.triggers = triggers;
+		for (Trigger trigger : stopTriggers) {
+			trigger.setTarget(this);
+		}
+		this.startTriggers = startTriggers;
+		this.stopTriggers = stopTriggers;
 		runny = new TimeRunnable();
 		this.interval = interval;
 		this.esper = esper;
@@ -62,19 +69,25 @@ public class Timer {
 		if (executing.compareAndSet(false, true)) {
 			running.compareAndSet(true, false);
 			trigger.set(null);
-			executor = new ScheduledThreadPoolExecutor(triggers.size() + 1);
+			executor = new ScheduledThreadPoolExecutor(startTriggers.size()
+					+ stopTriggers.size() + 1);
 			// no triggers, start right now
-			if (triggers.size() == 0) {
+			if (startTriggers.size() == 0) {
 				ECReports report = new ECReports();
 				report.setInitiationTrigger(ALEReadAPI.conditionToName
 						.get(ALEReadAPI.TriggerCondition.REQUESTED));
 				startEventCycle(report);
 			} else {
-				for (Trigger trigger : triggers) {
+				for (Trigger trigger : startTriggers) {
 					executor.scheduleAtFixedRate(trigger, trigger
 							.getDelayToNextExec(), trigger.getPeriod(),
 							TimeUnit.MILLISECONDS);
 				}
+			}
+			for (Trigger trigger : stopTriggers) {
+				executor.scheduleAtFixedRate(trigger, trigger
+						.getDelayToNextExec(), trigger.getPeriod(),
+						TimeUnit.MILLISECONDS);
 			}
 		}
 	}
@@ -96,7 +109,7 @@ public class Timer {
 		intervalStart = System.currentTimeMillis();
 		if (currentReport.compareAndSet(null, report)) {
 			esper.getEPRuntime().sendEvent(new StartEvent("bubble"));
-		}	
+		}
 	}
 
 	/**
@@ -130,11 +143,24 @@ public class Timer {
 	}
 
 	/**
+	 * Stop the event cycle. Only called by stop triggers.
+	 */
+	public void stopEventCycle(Trigger trigger) {
+		if (currentReport.get() != null) {
+			currentReport.get().setTerminationCondition(
+					ALEReadAPI.conditionToName
+							.get(ALEReadAPI.TriggerCondition.TRIGGER));
+			currentReport.get().setTerminationTrigger(trigger.getUri());
+			esper.getEPRuntime().sendEvent(new StopEvent("waha"));
+		}
+	}
+
+	/**
 	 * Called when an ECReport is ready.
 	 */
 	public ECReports callback() {
 		ECReports ret = currentReport.getAndSet(null);
-		if (triggers.size() == 0) {
+		if (startTriggers.size() == 0) {
 			long currentTime = System.currentTimeMillis();
 			if (intervalStart + interval <= currentTime) {
 				intervalStart = currentTime;
