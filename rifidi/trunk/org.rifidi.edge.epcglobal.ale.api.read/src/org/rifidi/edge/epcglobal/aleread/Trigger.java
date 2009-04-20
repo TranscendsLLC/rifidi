@@ -17,7 +17,7 @@ public class Trigger implements Runnable {
 	/** True if this is a start trigger. */
 	private boolean start = true;
 	/** Target of the start/stop operations. */
-	private ECReportmanager target = null;
+	private Timer target = null;
 	/** Period between two trigger events. */
 	private Long period;
 	/** Offset from midnight. */
@@ -66,7 +66,7 @@ public class Trigger implements Runnable {
 	/**
 	 * @return the target
 	 */
-	public ECReportmanager getTarget() {
+	public Timer getTarget() {
 		return target;
 	}
 
@@ -74,7 +74,7 @@ public class Trigger implements Runnable {
 	 * @param target
 	 *            the target to set
 	 */
-	public void setTarget(ECReportmanager target) {
+	public void setTarget(Timer target) {
 		this.target = target;
 	}
 
@@ -92,6 +92,13 @@ public class Trigger implements Runnable {
 		return offset;
 	}
 
+	/**
+	 * @return the uri
+	 */
+	public String getUri() {
+		return uri;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -101,10 +108,11 @@ public class Trigger implements Runnable {
 	public void run() {
 		if (target != null) {
 			if (start) {
-				target.startTrigger(uri);
+				target.startEventCycle(this);
 				return;
 			}
-			target.stopTrigger(uri);
+			//TODO: reenable
+//			target.stopTrigger(uri);
 			return;
 		}
 		logger.warn("No target associated with trigger " + this);

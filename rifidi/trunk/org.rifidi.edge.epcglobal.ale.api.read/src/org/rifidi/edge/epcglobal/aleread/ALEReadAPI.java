@@ -17,7 +17,7 @@ public class ALEReadAPI {
 	public static final Map<TriggerCondition, String> conditionToName;
 
 	public enum TriggerCondition {
-		DATA_AVAILABLE, STABLE_SET, STOP_TRIGGER, DURATION, DESTROIED, UNREQUEST, UNDEFINE
+		DATA_AVAILABLE, STABLE_SET, STOP_TRIGGER, DURATION, DESTROIED, UNREQUEST, UNDEFINE, REQUESTED, REPEAT_PERIOD, TRIGGER
 	};
 
 	static {
@@ -39,6 +39,9 @@ public class ALEReadAPI {
 		conditions.put(TriggerCondition.DATA_AVAILABLE, "DATA_AVAILABLE");
 		conditions.put(TriggerCondition.UNREQUEST, "UNREQUEST");
 		conditions.put(TriggerCondition.UNDEFINE, "UNDEFINE");
+		conditions.put(TriggerCondition.REQUESTED, "REQUESTED");
+		conditions.put(TriggerCondition.REPEAT_PERIOD, "REPEAT_PERIOD");
+		conditions.put(TriggerCondition.TRIGGER, "TRIGGER");
 		conditionToName = Collections.unmodifiableMap(conditions);
 	}
 }

@@ -431,7 +431,6 @@ public class RifidiECSpec {
 				// start the manager
 				reportThread = new Thread(ecReportmanager);
 				reportThread.start();
-				esper.getEPRuntime().sendEvent(new StartEvent("buhu"));
 				logger.debug("Spec " + getName() + " started.");
 				started = true;
 			}
