@@ -27,14 +27,14 @@ public class TriggerFactoryServiceImpl implements TriggerFactoryService {
 		// TODO: throw an exception if esper is not there{
 		if (uri.startsWith("urn:epcglobal:ale:trigger:rtc:")) {
 			String triggerValues = uri.substring(30);
-			String[] values = triggerValues.split(".");
+			String[] values = triggerValues.split("\\.");
 			try {
 				// <period>.<offset>.<timezone>
 				// the first value is the period and has to be supplied
 				Long period = 0l;
 				Long offset = 0l;
 				Long timezone = 0l;
-				if (values.length == 0) {
+				if (values.length == 1) {
 					period = Long.parseLong(triggerValues);
 				}
 				// get the offset if it exists
@@ -58,7 +58,6 @@ public class TriggerFactoryServiceImpl implements TriggerFactoryService {
 				throw new InvalidURIExceptionResponse(uri
 						+ " is not a valid trigger URI.");
 			} catch (ArrayIndexOutOfBoundsException e) {
-				e.printStackTrace();
 				throw new InvalidURIExceptionResponse(uri
 						+ " is not a valid trigger URI.");
 			}
