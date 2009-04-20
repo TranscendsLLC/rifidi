@@ -88,7 +88,8 @@ public class ECReportmanager implements Runnable, StatementAwareUpdateListener {
 		eventQueue = new LinkedBlockingQueue<EventTuple>();
 		destroied = false;
 		timer = new Timer(owner.getRifidiBoundarySpec().getRepeatInterval(),
-				owner.getRifidiBoundarySpec().getStartTriggers(), esper);
+				owner.getRifidiBoundarySpec().getStartTriggers(), owner
+						.getRifidiBoundarySpec().getStopTriggers(), esper);
 
 		this.uris = uris;
 		this.esper = esper;
@@ -181,30 +182,43 @@ public class ECReportmanager implements Runnable, StatementAwareUpdateListener {
 		if (destroyStatements.contains(arg2)) {
 			destroied = true;
 			tuple = new EventTuple();
-			tuple.stopCondition = TriggerCondition.DESTROIED;
+			tuple.report = timer.callback();
+			if(tuple.report==null){
+				//we got a really fast stop trigger
+				return;
+			}
+			tuple.report.setTerminationCondition(ALEReadAPI.conditionToName
+					.get(TriggerCondition.UNDEFINE));
 			// callback for destroying the statements
 			owner.discard();
 		} else {
 			tuple = new EventTuple();
+			tuple.report = timer.callback();
+			if(tuple.report==null){
+				//we got a really fast stop trigger
+				return;
+			}
+			if (!ALEReadAPI.conditionToName.get(
+					ALEReadAPI.TriggerCondition.TRIGGER).equals(
+					tuple.report.getTerminationCondition())) {
+				if (whenDataAvailableStatements.contains(arg2)) {
+					tuple.report
+							.setTerminationCondition(ALEReadAPI.conditionToName
+									.get(TriggerCondition.DATA_AVAILABLE));
+				}
+				if (stableSetIntervalStatements.contains(arg2)) {
+					tuple.report
+							.setTerminationCondition(ALEReadAPI.conditionToName
+									.get(TriggerCondition.STABLE_SET));
+				}
+				if (durationStatements.contains(arg2)) {
+					tuple.report
+							.setTerminationCondition(ALEReadAPI.conditionToName
+									.get(TriggerCondition.DURATION));
+				}
+			}
 		}
 
-		tuple.report = timer.callback();
-
-		if (whenDataAvailableStatements.contains(arg2)) {
-			tuple.stopCondition = TriggerCondition.DATA_AVAILABLE;
-		}
-		if (stableSetIntervalStatements.contains(arg2)) {
-			tuple.stopCondition = TriggerCondition.STABLE_SET;
-		}
-		if (stopTriggerStatements.contains(arg2)) {
-			tuple.stopCondition = TriggerCondition.STOP_TRIGGER;
-		}
-		if (durationStatements.contains(arg2)) {
-			tuple.stopCondition = TriggerCondition.DURATION;
-		}
-		if (destroyStatements.contains(arg2)) {
-			tuple.stopCondition = TriggerCondition.UNDEFINE;
-		}
 		tuple.beans = arg0;
 		addEvents(tuple);
 	}
@@ -269,7 +283,10 @@ public class ECReportmanager implements Runnable, StatementAwareUpdateListener {
 				ecreports.setTotalMilliseconds(10);
 				Reports reportsPoltergeist = new Reports();
 				ecreports.setReports(reportsPoltergeist);
-				System.out.println(ecreports.getInitiationCondition()+" "+ecreports.getInitiationTrigger());
+				System.out.println(ecreports.getInitiationCondition() + " "
+						+ ecreports.getInitiationTrigger());
+				System.out.println(ecreports.getTerminationCondition() + " "
+						+ ecreports.getTerminationTrigger());
 				for (RifidiReport rifidiReport : rifidiReports) {
 					ECReport rep = rifidiReport.send();
 					if (rep != null) {
@@ -299,7 +316,6 @@ public class ECReportmanager implements Runnable, StatementAwareUpdateListener {
 
 	private class EventTuple {
 		public EventBean[] beans;
-		public TriggerCondition stopCondition;
 		public ECReports report;
 	}
 }

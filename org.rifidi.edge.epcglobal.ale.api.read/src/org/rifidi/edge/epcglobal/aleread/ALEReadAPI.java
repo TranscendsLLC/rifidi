@@ -17,7 +17,7 @@ public class ALEReadAPI {
 	public static final Map<TriggerCondition, String> conditionToName;
 
 	public enum TriggerCondition {
-		DATA_AVAILABLE, STABLE_SET, STOP_TRIGGER, DURATION, DESTROIED, UNREQUEST, UNDEFINE, REQUESTED, REPEAT_PERIOD, TRIGGER
+		DATA_AVAILABLE, STABLE_SET, DURATION, UNREQUEST, UNDEFINE, REQUESTED, REPEAT_PERIOD, TRIGGER
 	};
 
 	static {
@@ -33,7 +33,6 @@ public class ALEReadAPI {
 		aleIdToEnum = Collections.unmodifiableMap(fields);
 
 		Map<TriggerCondition, String> conditions = new HashMap<TriggerCondition, String>();
-		conditions.put(TriggerCondition.STOP_TRIGGER, "TRIGGER");
 		conditions.put(TriggerCondition.DURATION, "DURATION");
 		conditions.put(TriggerCondition.STABLE_SET, "STABLE_SET");
 		conditions.put(TriggerCondition.DATA_AVAILABLE, "DATA_AVAILABLE");

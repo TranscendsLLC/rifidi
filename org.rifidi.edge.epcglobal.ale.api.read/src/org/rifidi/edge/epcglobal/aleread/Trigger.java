@@ -112,7 +112,7 @@ public class Trigger implements Runnable {
 				return;
 			}
 			//TODO: reenable
-//			target.stopTrigger(uri);
+			target.stopEventCycle(this);
 			return;
 		}
 		logger.warn("No target associated with trigger " + this);
