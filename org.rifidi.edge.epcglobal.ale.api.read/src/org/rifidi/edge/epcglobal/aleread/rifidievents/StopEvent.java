@@ -21,16 +21,6 @@ public class StopEvent {
 	}
 
 	/**
-	 * @param name
-	 * @param trigger
-	 */
-	public StopEvent(String name, String trigger) {
-		super();
-		this.name = name;
-		this.trigger = trigger;
-	}
-
-	/**
 	 * @return the name
 	 */
 	public String getName() {

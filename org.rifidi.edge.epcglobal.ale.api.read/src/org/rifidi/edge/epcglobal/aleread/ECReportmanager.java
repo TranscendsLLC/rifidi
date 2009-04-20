@@ -87,9 +87,10 @@ public class ECReportmanager implements Runnable, StatementAwareUpdateListener {
 		rifidiReports = reports;
 		eventQueue = new LinkedBlockingQueue<EventTuple>();
 		destroied = false;
-		timer = new Timer(owner.getRifidiBoundarySpec().getRepeatInterval(),
-				owner.getRifidiBoundarySpec().getStartTriggers(), owner
-						.getRifidiBoundarySpec().getStopTriggers(), esper);
+		timer = new Timer(specName, owner.getRifidiBoundarySpec()
+				.getRepeatInterval(), owner.getRifidiBoundarySpec()
+				.getStartTriggers(), owner.getRifidiBoundarySpec()
+				.getStopTriggers(), esper);
 
 		this.uris = uris;
 		this.esper = esper;
@@ -183,8 +184,8 @@ public class ECReportmanager implements Runnable, StatementAwareUpdateListener {
 			destroied = true;
 			tuple = new EventTuple();
 			tuple.report = timer.callback();
-			if(tuple.report==null){
-				//we got a really fast stop trigger
+			if (tuple.report == null) {
+				// we got a really fast stop trigger
 				return;
 			}
 			tuple.report.setTerminationCondition(ALEReadAPI.conditionToName
@@ -194,8 +195,8 @@ public class ECReportmanager implements Runnable, StatementAwareUpdateListener {
 		} else {
 			tuple = new EventTuple();
 			tuple.report = timer.callback();
-			if(tuple.report==null){
-				//we got a really fast stop trigger
+			if (tuple.report == null) {
+				// we got a really fast stop trigger
 				return;
 			}
 			if (!ALEReadAPI.conditionToName.get(
