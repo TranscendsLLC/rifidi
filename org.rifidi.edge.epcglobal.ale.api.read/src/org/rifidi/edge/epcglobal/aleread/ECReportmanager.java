@@ -12,7 +12,6 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -254,6 +253,14 @@ public class ECReportmanager implements Runnable, StatementAwareUpdateListener {
 		// Always true because we hit this one only if run was hit and that
 		// means the spec was requested.
 		while (!Thread.currentThread().isInterrupted()) {
+			GregorianCalendar gc = (GregorianCalendar) GregorianCalendar
+					.getInstance();
+			DatatypeFactory dataTypeFactory = null;
+			try {
+				dataTypeFactory = DatatypeFactory.newInstance();
+			} catch (DatatypeConfigurationException ex) {
+				logger.fatal("epic fail: " + ex);
+			}
 			try {
 
 				// get the eventtuple submitted last
@@ -276,7 +283,7 @@ public class ECReportmanager implements Runnable, StatementAwareUpdateListener {
 				// send the report
 				ECReports ecreports = tagevents.report;
 				ecreports.setALEID("Rifidi Edge Server");
-				ecreports.setDate(getCurrentCalendar());
+				ecreports.setDate(dataTypeFactory.newXMLGregorianCalendar(gc));
 				if (spec != null) {
 					ecreports.setECSpec(spec);
 				}
@@ -286,7 +293,7 @@ public class ECReportmanager implements Runnable, StatementAwareUpdateListener {
 				ecreports.setTotalMilliseconds(10);
 				Reports reportsPoltergeist = new Reports();
 				ecreports.setReports(reportsPoltergeist);
-				
+
 				StringBuilder buildy = new StringBuilder("startcondition: "
 						+ ecreports.getInitiationCondition() + "\n");
 				buildy.append("starttrigger: "
@@ -311,26 +318,12 @@ public class ECReportmanager implements Runnable, StatementAwareUpdateListener {
 					}
 				}
 				logger.debug(buildy.toString());
-
 			} catch (InterruptedException e) {
 				timer.stop();
 				Thread.currentThread().interrupt();
 			}
 		}
 		timer.stop();
-	}
-
-	// TODO: aaaargh performance!!!!!!!!!!!
-	private XMLGregorianCalendar getCurrentCalendar() {
-		GregorianCalendar gc = (GregorianCalendar) GregorianCalendar
-				.getInstance();
-		DatatypeFactory dataTypeFactory = null;
-		try {
-			dataTypeFactory = DatatypeFactory.newInstance();
-		} catch (DatatypeConfigurationException ex) {
-			logger.fatal("epic fail: " + ex);
-		}
-		return dataTypeFactory.newXMLGregorianCalendar(gc);
 	}
 
 	private class EventTuple {
