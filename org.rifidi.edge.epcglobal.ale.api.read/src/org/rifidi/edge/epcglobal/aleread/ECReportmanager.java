@@ -286,6 +286,7 @@ public class ECReportmanager implements Runnable, StatementAwareUpdateListener {
 				ecreports.setTotalMilliseconds(10);
 				Reports reportsPoltergeist = new Reports();
 				ecreports.setReports(reportsPoltergeist);
+				
 				StringBuilder buildy = new StringBuilder("startcondition: "
 						+ ecreports.getInitiationCondition() + "\n");
 				buildy.append("starttrigger: "
