@@ -9,10 +9,9 @@ Require-Bundle: org.eclipse.core.runtime,
  org.rifidi.edge.client.ale.api;bundle-version="1.0.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
-Export-Package: org.rifidi.edge.client.ale.connection.commands,
- org.rifidi.edge.client.ale.connection.commands.impl,
- org.rifidi.edge.client.ale.connection.handler,
+Export-Package: org.rifidi.edge.client.ale.connection.handler,
  org.rifidi.edge.client.ale.connection.listeners,
- org.rifidi.edge.client.ale.connection.service
+ org.rifidi.edge.client.ale.connection.service,
+ org.rifidi.edge.client.ale.connection.service.impl
 Import-Package: org.apache.cxf.frontend;version="2.1.4",
  org.apache.cxf.jaxws;version="2.1.4"

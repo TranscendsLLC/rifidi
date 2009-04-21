@@ -14,6 +14,8 @@ import java.util.ArrayList;
 
 import javax.swing.JPopupMenu.Separator;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
@@ -27,14 +29,10 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.IViewPart;
-import org.eclipse.ui.IViewReference;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.events.ExpansionAdapter;
 import org.eclipse.ui.forms.events.ExpansionEvent;
 import org.eclipse.ui.forms.events.IExpansionListener;
@@ -44,6 +42,9 @@ import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
 import org.eclipse.ui.part.ViewPart;
+import org.rifidi.edge.client.ale.api.wsdl.alelr.epcglobal.EmptyParms;
+import org.rifidi.edge.client.ale.api.wsdl.alelr.epcglobal.ImplementationExceptionResponse;
+import org.rifidi.edge.client.ale.api.wsdl.alelr.epcglobal.SecurityExceptionResponse;
 import org.rifidi.edge.client.ale.api.xsd.ale.epcglobal.ECBoundarySpec;
 import org.rifidi.edge.client.ale.api.xsd.ale.epcglobal.ECFilterSpec;
 import org.rifidi.edge.client.ale.api.xsd.ale.epcglobal.ECGroupSpec;
@@ -58,14 +59,14 @@ import org.rifidi.edge.client.ale.api.xsd.ale.epcglobal.ECSpec.LogicalReaders;
 import org.rifidi.edge.client.ale.api.xsd.ale.epcglobal.ECSpec.ReportSpecs;
 import org.rifidi.edge.client.ale.models.aleserviceporttype.AleServicePortTypeWrapper;
 import org.rifidi.edge.client.ale.models.ecspec.RemoteSpecModelWrapper;
-import org.rifidi.edge.client.ale.treeview.views.LrTreeView;
+import org.rifidi.edge.client.ale.treeview.util.ConnectionWrapper.ConnectionWrapper;
 
 /**
  * @author Tobias Hoppenthaler - tobias@pramari.com
  * 
  */
 public class AleEditorView extends ViewPart {
-	
+
 	public final static String ID = "org.rifidi.edge.client.ale.editor.view.aleeditorview";
 
 	private FormToolkit toolkit = null;
@@ -86,6 +87,9 @@ public class AleEditorView extends ViewPart {
 	private ArrayList<ECReportSpec> repSpecs = null;
 	private RemoteSpecModelWrapper specWrapper = null;
 	private CTabItem ctiEdit;
+	private Log logger = LogFactory.getLog(AleEditorView.class);
+
+	// private ConnectionService connectionService = null;
 
 	/*
 	 * (non-Javadoc)
@@ -158,7 +162,21 @@ public class AleEditorView extends ViewPart {
 		super.dispose();
 	}
 
+	
 	public void init(RemoteSpecModelWrapper spec) {
+		// BundleContext context = InternalPlatform.getDefault()
+		// .getBundleContext();
+		//
+		// ServiceReference serviceReference = context
+		// .getServiceReference(ConnectionService.class.getName());
+		// if (serviceReference != null) {
+		// connectionService = (ConnectionService) context
+		// .getService(serviceReference);
+		//
+		// }
+		//
+		// connectionService = (ConnectionService) context
+		// .getService(serviceReference);
 		this.specWrapper = spec;
 		this.ecSpec = spec.getEcSpec();
 		this.name = spec.getName();
@@ -191,14 +209,39 @@ public class AleEditorView extends ViewPart {
 
 				// Always save back info to model
 				// save just submits/saves.
-				ReportSpecs rs = new ReportSpecs();
-				for (int i = 0; i < repSpecs.size(); i++) {
-					rs.getReportSpec().set(i, repSpecs.get(i));
-				}
+				//				
+				// ReportSpecs rs = new ReportSpecs();
+				// for (int i = 0; i < repSpecs.size(); i++) {
+				// rs.getReportSpec().set(i, repSpecs.get(i));
+				// }
 				if (specWrapper.getParent() instanceof AleServicePortTypeWrapper) {
+					if (grsp != null)
+						ecrSpec.setGroupSpec(grsp);
+					if (fisp != null)
+						ecrSpec.setFilterSpec(fisp);
+					if (ros != null)
+						ecrSpec.setOutput(ros);
+					ReportSpecs rs = ecSpec.getReportSpecs();
+					if(rs==null)rs = new ReportSpecs();
+					if (rs.getReportSpec()!=null&&!rs.getReportSpec().isEmpty()) {
+						rs.getReportSpec().clear();
+					}
+
+					for (ECReportSpec spec : repSpecs) {
+						rs.getReportSpec().add(spec);
+					}
+
+					ecSpec.setReportSpecs(rs);
+					if (bspec != null)
+						ecSpec.setBoundarySpec(bspec);
+
+					specWrapper.setEcSpec(ecSpec);
+
 					String result = specWrapper.define();
 					if (!result.isEmpty()) {
+						System.out.println(result);
 						showMessage(result);
+						closeThisView();
 					}
 				}
 
@@ -270,18 +313,28 @@ public class AleEditorView extends ViewPart {
 				.setDescription("Mark the logical readers that should be used in the query.");
 		Composite lrSectionClient = toolkit.createComposite(lrSection);
 		lrSectionClient.setLayout(new GridLayout());
-		LrTreeView view = (LrTreeView)getView(LrTreeView.ID);
-		
+		// LrTreeView view = (LrTreeView)getView(LrTreeView.ID);
 
 		lrList = new List(lrSectionClient, SWT.BORDER | SWT.MULTI
 				| SWT.V_SCROLL | SWT.FILL);
-		
-		Control[] controls=view.getViewer().getTree().getChildren();
-		lrList.removeAll();
-		for(int i=0;i<controls.length;i++){
-			lrList.add(controls[i].toString());
+
+		ConnectionWrapper wrapper = new ConnectionWrapper();
+		ArrayList<String> lstReaders = new ArrayList<String>();
+		try {
+			lstReaders = (ArrayList<String>) wrapper.getConnectionService()
+					.getAleLrServicePortType().getLogicalReaderNames(
+							new EmptyParms()).getString();
+		} catch (SecurityExceptionResponse e1) {
+			logger.debug(e1.getMessage());
+		} catch (ImplementationExceptionResponse e1) {
+			logger.debug(e1.getMessage());
 		}
-		
+		// Control[] controls=view.getViewer().getTree().getChildren();
+		// lrList.removeAll();
+		// for(int i=0;i<controls.length;i++){
+		// lrList.add(controls[i].toString());
+		// }
+		lrList.setItems(lstReaders.toArray(new String[lstReaders.size()]));
 		lrList.addFocusListener(new FocusListener() {
 
 			@Override
@@ -296,9 +349,11 @@ public class AleEditorView extends ViewPart {
 
 				int[] selection = list.getSelectionIndices();
 				for (int i = 0; i < selection.length; i++) {
-					LogicalReaders lr = new LogicalReaders();
-					lr.getLogicalReader().add(i, list.getItem(i));
-					ecSpec.setLogicalReaders(lr);
+					if (!list.getItem(i).isEmpty()) {
+						LogicalReaders lr = new LogicalReaders();
+						lr.getLogicalReader().add(i, list.getItem(i));
+						ecSpec.setLogicalReaders(lr);
+					}
 				}
 
 			}
@@ -311,19 +366,20 @@ public class AleEditorView extends ViewPart {
 
 		lrList.setLayoutData(data);
 
-		ArrayList<String> strings = new ArrayList<String>();
+		// ArrayList<String> strings = new ArrayList<String>();
 		// try {
-		// strings = (ArrayList<String>) conSvc.getAleLrServicePortType()
+		//			
+		// strings = (ArrayList<String>)
+		// connectionService.getAleLrServicePortType()
 		// .getLogicalReaderNames(new EmptyParms()).getString();
 		// } catch (SecurityExceptionResponse e1) {
-		// // TODO Auto-generated catch block
-		// e1.printStackTrace();
+		// logger.debug(e1.getMessage());
 		// } catch (ImplementationExceptionResponse e1) {
-		// // TODO Auto-generated catch block
+		// logger.debug(e1.getMessage());
 		// e1.printStackTrace();
 		// }
 
-		lrList.setItems((strings.toArray(new String[strings.size()])));
+		// lrList.setItems((strings.toArray(new String[strings.size()])));
 
 		// select readers
 		if (this.ecSpec.getLogicalReaders() != null) {
@@ -922,15 +978,19 @@ public class AleEditorView extends ViewPart {
 		MessageDialog.openInformation(folder.getShell(), this.name, message);
 	}
 	
-	private IViewPart getView(String id) {
-		IViewReference viewReferences[] = PlatformUI.getWorkbench()
-				.getActiveWorkbenchWindow().getActivePage().getViewReferences();
-		for (int i = 0; i < viewReferences.length; i++) {
-			if (id.equals(viewReferences[i].getId())) {
-				return viewReferences[i].getView(false);
-			}
-		}
-		return null;
+	private void closeThisView(){
+		this.dispose();
 	}
+
+	// private IViewPart getView(String id) {
+	// IViewReference viewReferences[] = PlatformUI.getWorkbench()
+	// .getActiveWorkbenchWindow().getActivePage().getViewReferences();
+	// for (int i = 0; i < viewReferences.length; i++) {
+	// if (id.equals(viewReferences[i].getId())) {
+	// return viewReferences[i].getView(false);
+	// }
+	// }
+	// return null;
+	// }
 
 }
