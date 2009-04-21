@@ -108,12 +108,6 @@ public class AleEditorView extends ViewPart {
 		layout.numColumns = 2;
 		form.getBody().setLayout(layout);
 
-		// static for now:
-		// Define def = new Define();
-		// def.setSpec(new ECSpec());
-		// def.setSpecName("NewEcSpec");
-		// this.init(def);
-
 		createReportCtab();
 		createSubscriberCtab();
 
@@ -474,7 +468,7 @@ public class AleEditorView extends ViewPart {
 		// Start trigger
 		toolkit.createLabel(boundarySectionClient, "Start Trigger:");
 		Text txtStartTr = toolkit.createText(boundarySectionClient, this.ecSpec
-				.getBoundarySpec().getStartTrigger());
+				.getBoundarySpec().getStartTrigger(), SWT.BORDER);
 		txtStartTr.setLayoutData(new GridData(SWT.FILL, SWT.LEFT, true, false));
 		txtStartTr.addFocusListener(new FocusListener() {
 
@@ -498,7 +492,7 @@ public class AleEditorView extends ViewPart {
 		// Stop Trigger
 		toolkit.createLabel(boundarySectionClient, "Stop Trigger:");
 		Text txtStopTr = toolkit.createText(boundarySectionClient, this.ecSpec
-				.getBoundarySpec().getStopTrigger());
+				.getBoundarySpec().getStopTrigger(), SWT.BORDER);
 		txtStopTr.setLayoutData(new GridData(SWT.FILL, SWT.LEFT, true, false));
 		txtStopTr.addFocusListener(new FocusListener() {
 
