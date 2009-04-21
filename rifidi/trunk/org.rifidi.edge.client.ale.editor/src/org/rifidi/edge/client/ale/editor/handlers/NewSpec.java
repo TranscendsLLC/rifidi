@@ -51,7 +51,7 @@ public class NewSpec extends AbstractHandler {
 				AleEditorView view = (AleEditorView) window.getActivePage()
 						.showView(AleEditorView.ID, wrapper.getName(),
 								IWorkbenchPage.VIEW_VISIBLE);
-				view.init(wrapper);
+				view.initSpecView(wrapper.getName(),wrapper.getEcSpec());
 			} catch (PartInitException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

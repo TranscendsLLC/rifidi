@@ -29,9 +29,11 @@ public class AleEditorSelectionListener implements Listener {
 	private ArrayList<ECReportSpec> repSpecs;
 
 	/**
-	 * @param repSpecs
-	 * @param spec
-	 * 
+	 * Removes a report section
+	 * @param form - form to remove it from
+	 * @param sections - sections to remove
+	 * @param spec - ECReportSpec to remove from the list
+	 * @param repSpecs list to remove it from
 	 */
 	public AleEditorSelectionListener(ScrolledForm form,
 			ArrayList<Section> sections, ECReportSpec spec,
