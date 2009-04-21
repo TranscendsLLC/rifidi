@@ -15,7 +15,6 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.epcglobal.ale.api.read.data.ECReportSpec;
-import org.rifidi.edge.epcglobal.ale.api.read.data.ECSpec.LogicalReaders;
 import org.rifidi.edge.epcglobal.aleread.ALEReadAPI;
 import org.rifidi.edge.epcglobal.aleread.service.ECSPECManagerService;
 import org.rifidi.edge.epcglobal.aleread.service.RifidiReportFactory;
@@ -58,11 +57,14 @@ public class ALEServicePortTypeImpl implements ALEServicePortType, WebService {
 			Undefine parms) throws ImplementationExceptionResponse,
 			NoSuchNameExceptionResponse, SecurityExceptionResponse {
 		try {
-			for(String reader:ecspecManagerService.getSpecByName(parms.getSpecName()).getLogicalReaders().getLogicalReader()){
-				lrService.getLogicalReaderByName(reader).release(parms.getSpecName());	
+			for (String reader : ecspecManagerService.getSpecByName(
+					parms.getSpecName()).getLogicalReaders().getLogicalReader()) {
+				lrService.getLogicalReaderByName(reader).release(
+						parms.getSpecName());
 			}
 		} catch (org.rifidi.edge.epcglobal.ale.api.lr.ws.NoSuchNameExceptionResponse e) {
-			logger.warn("Spec "+parms.getSpecName()+" was registered to non existend reader.");
+			logger.warn("Spec " + parms.getSpecName()
+					+ " was registered to non existend reader.");
 		}
 		ecspecManagerService.destroySpec(parms.getSpecName());
 		return new VoidHolder();
@@ -125,7 +127,7 @@ public class ALEServicePortTypeImpl implements ALEServicePortType, WebService {
 		// check if we got a boundary spec line 2137
 		if (parms.getSpec().getBoundarySpec() == null) {
 			throw new ECSpecValidationExceptionResponse(
-					"No boundar spec specified.");
+					"No boundary spec specified.");
 		}
 
 		// validate boundary spec and extract data
@@ -151,7 +153,8 @@ public class ALEServicePortTypeImpl implements ALEServicePortType, WebService {
 			for (String reader : parms.getSpec().getLogicalReaders()
 					.getLogicalReader()) {
 				currentReader = reader;
-				lrService.getLogicalReaderByName(reader).aquire(parms.getSpecName());
+				lrService.getLogicalReaderByName(reader).aquire(
+						parms.getSpecName());
 				readers.add(lrService.getLogicalReaderByName(reader));
 			}
 		} catch (org.rifidi.edge.epcglobal.ale.api.lr.ws.NoSuchNameExceptionResponse e) {
