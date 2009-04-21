@@ -42,6 +42,7 @@ import org.rifidi.edge.client.ale.models.serviceprovider.SpecModelWrapper;
 public class RemoteSpecModelWrapper extends SpecModelWrapper {
 
 	private Log logger = LogFactory.getLog(RemoteSpecModelWrapper.class);
+	
 
 	/**
 	 * @param name
