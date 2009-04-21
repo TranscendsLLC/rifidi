@@ -27,10 +27,14 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IViewReference;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.events.ExpansionAdapter;
 import org.eclipse.ui.forms.events.ExpansionEvent;
 import org.eclipse.ui.forms.events.IExpansionListener;
@@ -54,6 +58,7 @@ import org.rifidi.edge.client.ale.api.xsd.ale.epcglobal.ECSpec.LogicalReaders;
 import org.rifidi.edge.client.ale.api.xsd.ale.epcglobal.ECSpec.ReportSpecs;
 import org.rifidi.edge.client.ale.models.aleserviceporttype.AleServicePortTypeWrapper;
 import org.rifidi.edge.client.ale.models.ecspec.RemoteSpecModelWrapper;
+import org.rifidi.edge.client.ale.treeview.views.LrTreeView;
 
 /**
  * @author Tobias Hoppenthaler - tobias@pramari.com
@@ -265,9 +270,18 @@ public class AleEditorView extends ViewPart {
 				.setDescription("Mark the logical readers that should be used in the query.");
 		Composite lrSectionClient = toolkit.createComposite(lrSection);
 		lrSectionClient.setLayout(new GridLayout());
+		LrTreeView view = (LrTreeView)getView(LrTreeView.ID);
+		
 
 		lrList = new List(lrSectionClient, SWT.BORDER | SWT.MULTI
 				| SWT.V_SCROLL | SWT.FILL);
+		
+		Control[] controls=view.getViewer().getTree().getChildren();
+		lrList.removeAll();
+		for(int i=0;i<controls.length;i++){
+			lrList.add(controls[i].toString());
+		}
+		
 		lrList.addFocusListener(new FocusListener() {
 
 			@Override
@@ -907,4 +921,16 @@ public class AleEditorView extends ViewPart {
 	private void showMessage(String message) {
 		MessageDialog.openInformation(folder.getShell(), this.name, message);
 	}
+	
+	private IViewPart getView(String id) {
+		IViewReference viewReferences[] = PlatformUI.getWorkbench()
+				.getActiveWorkbenchWindow().getActivePage().getViewReferences();
+		for (int i = 0; i < viewReferences.length; i++) {
+			if (id.equals(viewReferences[i].getId())) {
+				return viewReferences[i].getView(false);
+			}
+		}
+		return null;
+	}
+
 }

@@ -9,7 +9,7 @@
             id="org.rifidi.edge.client.ale.treeview">
       </category>
       <view
-            name="Edge Server Connections"
+            name="EC Specs"
             icon="icons/sample.gif"
             category="org.rifidi.edge.client.ale.treeview"
             class="org.rifidi.edge.client.ale.treeview.views.AleTreeView"
@@ -19,7 +19,7 @@
             category="org.rifidi.edge.client.ale.treeview"
             class="org.rifidi.edge.client.ale.treeview.views.LrTreeView"
             icon="icons/sample.gif"
-            id="org.rifidi.edge.client.ale.treeview.LrTreeView"
+            id="org.rifidi.edge.client.ale.treeview.views.LrTreeView"
             name="Logical Readers"
             restorable="true">
       </view>
@@ -35,7 +35,7 @@
                id="org.rifidi.edge.client.ale.treeview.views.AleTreeView">
          </view>
          <view
-               id="org.rifidi.edge.client.ale.treeview.LrTreeView"
+               id="org.rifidi.edge.client.ale.treeview.views.LrTreeView"
                minimized="false"
                ratio="0.7"
                relationship="bottom"
@@ -172,9 +172,10 @@
          </command>
       </menuContribution>
       <menuContribution
-            locationURI="popup:org.rifidi.edge.client.ale.treeview.views.LrTreeView">
+            locationURI="popup:org.rifidi.edge.client.ale.treeview.views.LrTreeView?after=lrtreeview">
          <command
                commandId="org.rifidi.edge.client.ale.treeview.connectlr"
+               id="Connect"
                style="push">
             <visibleWhen>
                <iterate
