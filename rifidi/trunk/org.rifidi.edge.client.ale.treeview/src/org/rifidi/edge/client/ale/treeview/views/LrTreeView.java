@@ -27,6 +27,13 @@ import org.rifidi.edge.client.ale.treeview.modelmanagerservice.LrModelManagerSer
  */
 public class LrTreeView extends ViewPart {
 
+	/**
+	 * @return the viewer
+	 */
+	public TreeViewer getViewer() {
+		return viewer;
+	}
+
 	public static final String ID = "org.rifidi.edge.client.ale.treeview.views.LrTreeView";
 	private TreeViewer viewer;
 
@@ -48,7 +55,7 @@ public class LrTreeView extends ViewPart {
 		LrModelManagerService.getInstance().addViewer(viewer);
 		//add Button(s) for wizard
 		MenuManager menuMgr = new MenuManager();
-		menuMgr.add(new GroupMarker("lrtableview"));
+		menuMgr.add(new GroupMarker("lrtreeview"));
 		Menu menu = menuMgr.createContextMenu(viewer.getControl());
 		viewer.getControl().setMenu(menu);
 		getSite().registerContextMenu(menuMgr, viewer);
