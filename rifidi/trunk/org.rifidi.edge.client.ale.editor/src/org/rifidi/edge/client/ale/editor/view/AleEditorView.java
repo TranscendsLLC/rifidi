@@ -211,9 +211,7 @@ public class AleEditorView extends ViewPart {
 					reportSpecs.getReportSpec().add(ecrs);
 				}
 				ecSpec.setReportSpecs(reportSpecs);
-				//TODO: define spec
-				
-				
+				// TODO: define spec
 
 			}
 
@@ -413,6 +411,7 @@ public class AleEditorView extends ViewPart {
 				ectStable.setValue(Long.parseLong(txtStableSet.getText()));
 				ECBoundarySpec bspec = ecSpec.getBoundarySpec();
 				bspec.setStableSetInterval(ectStable);
+				ecSpec.setBoundarySpec(bspec);
 			}
 
 		});
@@ -440,6 +439,7 @@ public class AleEditorView extends ViewPart {
 				ectRepeat.setValue(Long.parseLong(txtRepeatAfter.getText()));
 				ECBoundarySpec bspec = ecSpec.getBoundarySpec();
 				bspec.setRepeatPeriod(ectRepeat);
+				ecSpec.setBoundarySpec(bspec);
 			}
 
 		});
@@ -466,9 +466,59 @@ public class AleEditorView extends ViewPart {
 				ectDuration.setValue(Long.parseLong(txtDuration.getText()));
 				ECBoundarySpec bspec = ecSpec.getBoundarySpec();
 				bspec.setDuration(ectDuration);
+				ecSpec.setBoundarySpec(bspec);
 			}
 
 		});
+
+		// Start trigger
+		toolkit.createLabel(boundarySectionClient, "Start Trigger:");
+		Text txtStartTr = toolkit.createText(boundarySectionClient, this.ecSpec
+				.getBoundarySpec().getStartTrigger());
+		txtStartTr.setLayoutData(new GridData(SWT.FILL, SWT.LEFT, true, false));
+		txtStartTr.addFocusListener(new FocusListener() {
+
+			@Override
+			public void focusGained(FocusEvent e) {
+				// nothing
+
+			}
+
+			@Override
+			public void focusLost(FocusEvent e) {
+				Text text = (Text) e.widget;
+				ECBoundarySpec bspec = ecSpec.getBoundarySpec();
+				bspec.setStartTrigger(text.getText());
+				ecSpec.setBoundarySpec(bspec);
+
+			}
+
+		});
+
+		// Stop Trigger
+		toolkit.createLabel(boundarySectionClient, "Stop Trigger:");
+		Text txtStopTr = toolkit.createText(boundarySectionClient, this.ecSpec
+				.getBoundarySpec().getStopTrigger());
+		txtStopTr.setLayoutData(new GridData(SWT.FILL, SWT.LEFT, true, false));
+		txtStopTr.addFocusListener(new FocusListener() {
+
+			@Override
+			public void focusGained(FocusEvent e) {
+				// nothing
+
+			}
+
+			@Override
+			public void focusLost(FocusEvent e) {
+				Text text = (Text) e.widget;
+				ECBoundarySpec bspec = ecSpec.getBoundarySpec();
+				bspec.setStopTrigger(text.getText());
+				ecSpec.setBoundarySpec(bspec);
+
+			}
+
+		});
+
 		boundarySection.setClient(boundarySectionClient);
 
 	}
