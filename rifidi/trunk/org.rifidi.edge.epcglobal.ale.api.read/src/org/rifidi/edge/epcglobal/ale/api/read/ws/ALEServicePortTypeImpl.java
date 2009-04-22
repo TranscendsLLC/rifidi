@@ -363,9 +363,21 @@ public class ALEServicePortTypeImpl implements ALEServicePortType, WebService {
 	 */
 	@Override
 	public URL getUrl() {
-		// TODO: provide the correct url
+		String ALEHost = System.getProperty("org.rifidi.edge.ale.host");
+		if(ALEHost==null||ALEHost.equals("")){
+			ALEHost="127.0.0.1";
+		}
+		String ALEPort = System.getProperty("org.rifidi.edge.ale.port");
+		if(ALEPort==null || ALEPort.equals("")){
+			ALEPort="8081";
+		}
+		String ALEReadPath = System.getProperty("org.rifidi.edge.ale.read");
+		if(ALEReadPath==null || ALEReadPath.equals("")){
+			ALEReadPath="aleread";
+		}
+		String url = "http://"+ALEHost+":"+ALEPort+"/"+ALEReadPath;
 		try {
-			return new URL("http://127.0.0.1:8081/aleread");
+			return new URL(url);
 		} catch (MalformedURLException e) {
 			logger.fatal("That should not happen: " + e);
 		}
