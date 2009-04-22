@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            allowMultiple="false"
+            category="org.rifidi.edge.client.ale"
+            class="org.rifidi.edge.client.ale.ecspecview.views.ECSpecView"
+            id="org.rifidi.edge.client.ale.ecspecview"
+            name="ECSpec View"
+            restorable="true">
+      </view>
+      <category
+            id="org.rifidi.edge.client.ale"
+            name="ALE">
+      </category>
+      <view
+            allowMultiple="true"
+            category="org.rifidi.edge.client.ale"
+            class="org.rifidi.edge.client.ale.ecspecview.views.ALEEditorView"
+            id="org.rifidi.edge.client.ale.ecspecview.views.ALEEditorView"
+            name="ECSpec Editor View"
+            restorable="true">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="org.rifidi.edge.client.ale.ecspecview.preference.ALEPreferenceInitializer">
+      </initializer>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="org.rifidi.edge.client.ale.ecspecview.preference.ALEPreferencePage"
+            id="org.rifidi.edge.client.ale.ecspecview.alepreference"
+            name="ALE Preference Page">
+      </page>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectives">
+      <perspective
+            class="org.rifidi.edge.client.ale.ecspecview.perspective.ALEPerspectiveFactory"
+            id="org.rifidi.edge.client.ale"
+            name="ALE Perspective">
+      </perspective>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="org.rifidi.edge.client.ale">
+         <perspectiveShortcut
+               id="org.rifidi.edge.client.ale">
+         </perspectiveShortcut>
+      </perspectiveExtension>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            categoryId="org.rifidi.edge.client.ale.ecspec"
+            description="Create a new ECSpec"
+            id="org.rifidi.edge.client.ale.ecspecview.newecspec"
+            name="New ECSpec">
+      </command>
+      <category
+            id="org.rifidi.edge.client.ale.ecspec"
+            name="ECSpec">
+      </category>
+      <command
+            description="Display A ECSpec"
+            id="org.rifidi.edge.client.ale.ecspecview.displayECSpec"
+            name="Display ECSpec">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="org.rifidi.edge.client.ale.ecspecview.handlers.NewECSpec"
+            commandId="org.rifidi.edge.client.ale.ecspecview.newecspec">
+         <enabledWhen>
+            <iterate
+                  ifEmpty="false">
+               <instanceof
+                     value="org.rifidi.edge.client.ale.api.wsdl.ale.epcglobal.ALEServicePortType">
+               </instanceof>
+            </iterate>
+         </enabledWhen>
+      </handler>
+      <handler
+            class="org.rifidi.edge.client.ale.ecspecview.handlers.DisplayECSpecHandler"
+            commandId="org.rifidi.edge.client.ale.ecspecview.displayECSpec">
+         <enabledWhen>
+            <iterate>
+               <instanceof
+                     value="org.rifidi.edge.client.ale.api.xsd.ale.epcglobal.ECSpec">
+               </instanceof>
+            </iterate>
+         </enabledWhen>
+      </handler>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="popup:org.rifidi.edge.client.ale.ecspecview?after=additions">
+         <command
+               commandId="org.rifidi.edge.client.ale.ecspecview.newecspec"
+               label="New ECSpec"
+               style="push">
+         </command>
+         <command
+               commandId="org.rifidi.edge.client.ale.ecspecview.displayECSpec"
+               label="Display ECSPec"
+               style="push">
+         </command>
+      </menuContribution>
+   </extension>
+
+</plugin>
