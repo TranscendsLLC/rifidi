@@ -126,7 +126,7 @@ public class AleEditorView extends ViewPart {
 	 * creates the subscriber tab
 	 */
 	private void createSubscriberCtab() {
-		CTabItem ctiSubscribers =new CTabItem(folder, SWT.NONE); 
+		CTabItem ctiSubscribers = new CTabItem(folder, SWT.NONE); 
 		ctiSubscribers.setText("Subscribers");
 	}
 

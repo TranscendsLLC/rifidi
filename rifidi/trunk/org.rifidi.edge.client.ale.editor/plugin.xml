@@ -22,6 +22,10 @@
             class="org.rifidi.edge.client.ale.editor.handlers.NewSpec"
             commandId="org.rifidi.edge.client.ale.editor.newremotespec">
       </handler>
+      <handler
+            class="org.rifidi.edge.client.ale.editor.handlers.SubscribeToSpec"
+            commandId="org.rifidi.edge.client.ale.editor.subscribetospec">
+      </handler>
    </extension>
    <extension
          point="org.eclipse.ui.commands">
@@ -32,6 +36,10 @@
       <command
             id="org.rifidi.edge.client.ale.editor.newremotespec"
             name="New">
+      </command>
+      <command
+            id="org.rifidi.edge.client.ale.editor.subscribetospec"
+            name="Subscribe">
       </command>
    </extension>
 
