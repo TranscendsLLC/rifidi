@@ -54,6 +54,7 @@ import org.rifidi.edge.client.ale.api.xsd.ale.epcglobal.ECFilterSpec.ExcludePatt
 import org.rifidi.edge.client.ale.api.xsd.ale.epcglobal.ECFilterSpec.IncludePatterns;
 import org.rifidi.edge.client.ale.api.xsd.ale.epcglobal.ECSpec.LogicalReaders;
 import org.rifidi.edge.client.ale.api.xsd.ale.epcglobal.ECSpec.ReportSpecs;
+import org.rifidi.edge.client.ale.editor.reports.ReportCtabItem;
 import org.rifidi.edge.client.ale.models.ecspec.RemoteSpecModelWrapper;
 
 /**
@@ -114,18 +115,18 @@ public class AleEditorView extends ViewPart {
 	}
 
 	/**
-	 * creates the subscriber tab
-	 */
-	private void createSubscriberCtab() {
-		CTabItem ctiReport = new CTabItem(folder, SWT.NONE);
-		ctiReport.setText("Reports (5)");
-	}
-
-	/**
 	 * creates the report tab
 	 */
 	private void createReportCtab() {
-		CTabItem ctiSubscribers = new CTabItem(folder, SWT.NONE);
+		CTabItem ctiReport = new ReportCtabItem(folder, SWT.NONE);
+		ctiReport.setText("Reports");
+	}
+
+	/**
+	 * creates the subscriber tab
+	 */
+	private void createSubscriberCtab() {
+		CTabItem ctiSubscribers =new CTabItem(folder, SWT.NONE); 
 		ctiSubscribers.setText("Subscribers");
 	}
 
@@ -198,6 +199,7 @@ public class AleEditorView extends ViewPart {
 		Button btnSave = toolkit.createButton(form.getBody(), "Save", SWT.PUSH);
 		toolkit.createSeparator(form.getBody(), Separator.HORIZONTAL);
 		btnSave.addListener(SWT.Selection, new Listener() {
+			@Override
 			public void handleEvent(Event e) {
 				// set report specs
 				ReportSpecs reportSpecs = new ReportSpecs();
