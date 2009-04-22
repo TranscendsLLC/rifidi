@@ -1,10 +1,10 @@
 /**
  * 
  */
-package org.rifidi.edge.ale.lr.decorators;
+package org.rifidi.edge.client.alelr.decorators;
 
-import org.rifidi.edge.ale.lr.LRTreeContentProvider;
 import org.rifidi.edge.client.ale.api.xsd.alelr.epcglobal.LRSpec;
+import org.rifidi.edge.client.alelr.LRTreeContentProvider;
 
 /**
  * @author Jochen Mader - jochen@pramari.com

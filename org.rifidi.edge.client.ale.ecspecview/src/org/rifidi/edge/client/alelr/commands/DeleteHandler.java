@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.rifidi.edge.ale.lr.commands;
+package org.rifidi.edge.client.alelr.commands;
 
 import java.util.List;
 
@@ -9,7 +9,7 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.expressions.IEvaluationContext;
-import org.rifidi.edge.ale.lr.decorators.LRSpecDecorator;
+import org.rifidi.edge.client.alelr.decorators.LRSpecDecorator;
 
 /**
  * @author Jochen Mader - jochen@pramari.com

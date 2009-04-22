@@ -27,7 +27,7 @@ public class ALEPerspectiveFactory implements IPerspectiveFactory {
 		IFolderLayout folder = layout.createFolder("left", IPageLayout.RIGHT,
 				.4f, ECSpecView.ID);
 		folder.addPlaceholder(ALEEditorView.ID+":*");
-		layout.addStandaloneView("org.rifidi.edge.ale.lr.LRTreeView", false,
+		layout.addStandaloneView("org.rifidi.edge.client.alelr.LRTreeView", false,
 				IPageLayout.TOP, 0.5f, ECSpecView.ID);
 	}
 

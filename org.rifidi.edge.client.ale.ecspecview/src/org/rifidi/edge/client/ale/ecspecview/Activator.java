@@ -18,7 +18,7 @@ public class Activator extends AbstractUIPlugin {
 	/** The Default ALE port URL preference */
 	public static final String ALE_PORT_URL_DEFAULT_ = "http://127.0.0.1:8081/aleread";
 	/** Logical reader preferences. */
-	public final static String ALELR_ENDPOINT = "org.rifidi.edge.ale.lr.endpoint";
+	public final static String ALELR_ENDPOINT = "org.rifidi.edge.client.alelr.endpoint";
 	public final static String ALELR_ENDPOINT_DEFAULT = "http://127.0.0.1:8081/lr";
 	/** Icons for the readers. */
 	public static final String ICON_READER = "icon_reader";
