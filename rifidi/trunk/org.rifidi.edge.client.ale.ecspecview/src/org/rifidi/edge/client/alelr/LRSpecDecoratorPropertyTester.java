@@ -1,12 +1,12 @@
 /**
  * 
  */
-package org.rifidi.edge.ale.lr;
+package org.rifidi.edge.client.alelr;
 
 import java.util.Collection;
 
 import org.eclipse.core.expressions.PropertyTester;
-import org.rifidi.edge.ale.lr.decorators.LRSpecDecorator;
+import org.rifidi.edge.client.alelr.decorators.LRSpecDecorator;
 
 /**
  * @author Jochen Mader - jochen@pramari.com

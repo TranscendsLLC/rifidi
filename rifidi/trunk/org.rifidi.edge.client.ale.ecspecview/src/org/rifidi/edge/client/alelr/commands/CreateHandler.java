@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.rifidi.edge.ale.lr.commands;
+package org.rifidi.edge.client.alelr.commands;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,8 +12,8 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.swt.widgets.Display;
-import org.rifidi.edge.ale.lr.LRTreeContentProvider;
-import org.rifidi.edge.ale.lr.decorators.LRSpecDecorator;
+import org.rifidi.edge.client.alelr.LRTreeContentProvider;
+import org.rifidi.edge.client.alelr.decorators.LRSpecDecorator;
 
 /**
  * @author Jochen Mader - jochen@pramari.com

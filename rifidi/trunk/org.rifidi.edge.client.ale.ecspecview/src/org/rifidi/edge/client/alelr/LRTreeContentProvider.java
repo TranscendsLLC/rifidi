@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.rifidi.edge.ale.lr;
+package org.rifidi.edge.client.alelr;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,8 +17,6 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.ui.PlatformUI;
-import org.rifidi.edge.ale.lr.decorators.LRSpecDecorator;
-import org.rifidi.edge.ale.lr.decorators.LRSpecSubnodeDecorator;
 import org.rifidi.edge.client.ale.api.wsdl.alelr.epcglobal.ALELRServicePortType;
 import org.rifidi.edge.client.ale.api.wsdl.alelr.epcglobal.Define;
 import org.rifidi.edge.client.ale.api.wsdl.alelr.epcglobal.DuplicateNameExceptionResponse;
@@ -32,6 +30,8 @@ import org.rifidi.edge.client.ale.api.wsdl.alelr.epcglobal.SecurityExceptionResp
 import org.rifidi.edge.client.ale.api.wsdl.alelr.epcglobal.Undefine;
 import org.rifidi.edge.client.ale.api.wsdl.alelr.epcglobal.ValidationExceptionResponse;
 import org.rifidi.edge.client.ale.api.xsd.alelr.epcglobal.LRSpec;
+import org.rifidi.edge.client.alelr.decorators.LRSpecDecorator;
+import org.rifidi.edge.client.alelr.decorators.LRSpecSubnodeDecorator;
 
 /**
  * @author Jochen Mader - jochen@pramari.com

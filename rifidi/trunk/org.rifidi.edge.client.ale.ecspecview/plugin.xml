@@ -26,8 +26,8 @@
       <view
             allowMultiple="false"
             category="org.rifidi.edge.client.ale"
-            class="org.rifidi.edge.ale.lr.LRTreeViewPart"
-            id="org.rifidi.edge.ale.lr.LRTreeView"
+            class="org.rifidi.edge.client.alelr.LRTreeViewPart"
+            id="org.rifidi.edge.client.alelr.LRTreeView"
             name="Logical Reader View"
             restorable="true">
       </view>
@@ -38,7 +38,7 @@
             class="org.rifidi.edge.client.ale.ecspecview.preference.ALEPreferenceInitializer">
       </initializer>
       <initializer
-            class="org.rifidi.edge.ale.lr.EndpointInitializer">
+            class="org.rifidi.edge.client.alelr.EndpointInitializer">
       </initializer>
    </extension>
    <extension
@@ -49,7 +49,7 @@
             name="ALE Preference Page">
       </page>
       <page
-            class="org.rifidi.edge.ale.lr.EndpointPreferencePage"
+            class="org.rifidi.edge.client.alelr.EndpointPreferencePage"
             id="org.rifidi.edge.ale.lr.endpoint"
             name="ALE Logical Reader Endpoint">
       </page>
@@ -132,18 +132,18 @@
          </enabledWhen>
       </handler>
       <handler
-            class="org.rifidi.edge.ale.lr.commands.DeleteHandler"
+            class="org.rifidi.edge.client.alelr.commands.DeleteHandler"
             commandId="org.rifidi.edge.ale.lr.commands.delete">
       </handler>
       <handler
-            class="org.rifidi.edge.ale.lr.commands.CreateHandler"
+            class="org.rifidi.edge.client.alelr.commands.CreateHandler"
             commandId="org.rifidi.edge.ale.lr.commands.create">
       </handler>
    </extension>
       <extension
          point="org.eclipse.core.expressions.propertyTesters">
       <propertyTester
-            class="org.rifidi.edge.ale.lr.LRSpecDecoratorPropertyTester"
+            class="org.rifidi.edge.client.alelr.LRSpecDecoratorPropertyTester"
             id="org.rifidi.edge.ale.lr"
             namespace="org.rifidi.edge.ale.lr"
             properties="locked"
@@ -175,7 +175,7 @@
                <and>
                   <iterate>
                      <instanceof
-                           value="org.rifidi.edge.ale.lr.decorators.LRSpecDecorator">
+                           value="org.rifidi.edge.client.alelr.decorators.LRSpecDecorator">
                      </instanceof>
                   </iterate>
                   <test
@@ -184,7 +184,7 @@
                   <not>
                      <iterate>
                         <instanceof
-                              value="org.rifidi.edge.ale.lr.decorators.LRSpecSubnodeDecorator">
+                              value="org.rifidi.edge.client.alelr.decorators.LRSpecSubnodeDecorator">
                         </instanceof>
                      </iterate>
                   </not>
@@ -202,13 +202,13 @@
                   </count>
                   <iterate>
                      <instanceof
-                           value="org.rifidi.edge.ale.lr.decorators.LRSpecDecorator">
+                           value="org.rifidi.edge.client.alelr.decorators.LRSpecDecorator">
                      </instanceof>
                   </iterate>
                   <not>
                      <iterate>
                         <instanceof
-                              value="org.rifidi.edge.ale.lr.decorators.LRSpecSubnodeDecorator">
+                              value="org.rifidi.edge.client.alelr.decorators.LRSpecSubnodeDecorator">
                         </instanceof>
                      </iterate>
                   </not>

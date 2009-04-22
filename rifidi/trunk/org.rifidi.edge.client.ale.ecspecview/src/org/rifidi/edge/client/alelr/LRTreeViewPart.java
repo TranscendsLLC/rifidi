@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.rifidi.edge.ale.lr;
+package org.rifidi.edge.client.alelr;
 
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
 import org.eclipse.jface.action.GroupMarker;

@@ -1,13 +1,13 @@
 /**
  * 
  */
-package org.rifidi.edge.ale.lr;
+package org.rifidi.edge.client.alelr;
 
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
-import org.rifidi.edge.ale.lr.decorators.LRSpecDecorator;
-import org.rifidi.edge.ale.lr.decorators.LRSpecSubnodeDecorator;
 import org.rifidi.edge.client.ale.ecspecview.Activator;
+import org.rifidi.edge.client.alelr.decorators.LRSpecDecorator;
+import org.rifidi.edge.client.alelr.decorators.LRSpecSubnodeDecorator;
 
 /**
  * @author Jochen Mader - jochen@pramari.com
