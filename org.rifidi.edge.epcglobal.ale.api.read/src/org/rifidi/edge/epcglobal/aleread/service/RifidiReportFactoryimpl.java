@@ -62,7 +62,10 @@ public class RifidiReportFactoryimpl implements RifidiReportFactory {
 		}
 		Map<ALEField, List<PatternMatcher>> includeFilters = new HashMap<ALEField, List<PatternMatcher>>();
 		Map<ALEField, List<PatternMatcher>> excludeFilters = new HashMap<ALEField, List<PatternMatcher>>();
-		if (reportSpec.getFilterSpec() != null) {
+		if (reportSpec.getFilterSpec() != null && reportSpec.getFilterSpec().getExtension()!=null) {
+			//TODO: ALE1.0 Take care of this
+			//reportSpec.getFilterSpec().getExcludePatterns();
+			//reportSpec.getFilterSpec().getIncludePatterns();
 			for (ECFilterListMember filter : reportSpec.getFilterSpec()
 					.getExtension().getFilterList().getFilter()) {
 
@@ -81,8 +84,9 @@ public class RifidiReportFactoryimpl implements RifidiReportFactory {
 
 		List<GroupMatcher> groups = new ArrayList<GroupMatcher>();
 		ALEField groupfield = null;
-		if (reportSpec.getGroupSpec() != null) {
-
+		if (reportSpec.getGroupSpec() != null && reportSpec.getGroupSpec().getExtension()!=null) {
+			//TODO: ALE 1.0 take care of this
+			//reportSpec.getGroupSpec().getPattern()
 			groupfield = new ALEField(reportSpec.getGroupSpec().getExtension()
 					.getFieldspec());
 			for (String pattern : reportSpec.getGroupSpec().getPattern()) {
