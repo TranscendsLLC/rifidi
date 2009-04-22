@@ -1,5 +1,7 @@
 package org.rifidi.edge.client.ale.ecspecview;
 
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
@@ -15,6 +17,12 @@ public class Activator extends AbstractUIPlugin {
 			+ ".ALE_PORT_URL";
 	/** The Default ALE port URL preference */
 	public static final String ALE_PORT_URL_DEFAULT_ = "http://127.0.0.1:8081/aleread";
+	/** Logical reader preferences. */
+	public final static String ALELR_ENDPOINT = "org.rifidi.edge.ale.lr.endpoint";
+	public final static String ALELR_ENDPOINT_DEFAULT = "http://127.0.0.1:8081/lr";
+	/** Icons for the readers. */
+	public static final String ICON_READER = "icon_reader";
+	public static final String ICON_READER_LOCKED = "icon_reader_locked";
 
 	// The shared instance
 	private static Activator plugin;
@@ -58,4 +66,30 @@ public class Activator extends AbstractUIPlugin {
 		return plugin;
 	}
 
+	/**
+	 * Returns an image descriptor for the image file at the given plug-in
+	 * relative path.
+	 * 
+	 * @param path
+	 *            the path
+	 * @return the image descriptor
+	 */
+	public static ImageDescriptor getImageDescriptor(String path) {
+		return imageDescriptorFromPlugin(PLUGIN_ID, path);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.ui.plugin.AbstractUIPlugin#initializeImageRegistry(org.eclipse
+	 * .jface.resource.ImageRegistry)
+	 */
+	@Override
+	protected void initializeImageRegistry(ImageRegistry reg) {
+		super.initializeImageRegistry(reg);
+		reg.put(ICON_READER, getImageDescriptor("icons/reader-16x16.png"));
+		reg.put(ICON_READER_LOCKED,
+				getImageDescriptor("icons/reader_locked-16x16.png"));
+	}
 }

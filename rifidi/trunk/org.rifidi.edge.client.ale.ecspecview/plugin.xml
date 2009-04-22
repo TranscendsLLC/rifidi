@@ -23,11 +23,22 @@
             name="ECSpec Editor View"
             restorable="true">
       </view>
+      <view
+            allowMultiple="false"
+            category="org.rifidi.edge.client.ale"
+            class="org.rifidi.edge.ale.lr.LRTreeViewPart"
+            id="org.rifidi.edge.ale.lr.LRTreeView"
+            name="Logical Reader View"
+            restorable="true">
+      </view>
    </extension>
    <extension
          point="org.eclipse.core.runtime.preferences">
       <initializer
             class="org.rifidi.edge.client.ale.ecspecview.preference.ALEPreferenceInitializer">
+      </initializer>
+      <initializer
+            class="org.rifidi.edge.ale.lr.EndpointInitializer">
       </initializer>
    </extension>
    <extension
@@ -36,6 +47,11 @@
             class="org.rifidi.edge.client.ale.ecspecview.preference.ALEPreferencePage"
             id="org.rifidi.edge.client.ale.ecspecview.alepreference"
             name="ALE Preference Page">
+      </page>
+      <page
+            class="org.rifidi.edge.ale.lr.EndpointPreferencePage"
+            id="org.rifidi.edge.ale.lr.endpoint"
+            name="ALE Logical Reader Endpoint">
       </page>
    </extension>
    <extension
@@ -72,6 +88,23 @@
             id="org.rifidi.edge.client.ale.ecspecview.displayECSpec"
             name="Display ECSpec">
       </command>
+      <command
+            categoryId="org.rifidi.edge.ale.lr.category"
+            description="Delete a logical reader"
+            id="org.rifidi.edge.ale.lr.commands.delete"
+            name="Delete Reader">
+      </command>
+      <command
+            categoryId="org.rifidi.edge.ale.lr.category"
+            description="Create a new reader from a list of readers"
+            id="org.rifidi.edge.ale.lr.commands.create"
+            name="Create Composite Reader">
+      </command>
+      <category
+            description="Commands for ALE Logical Readers"
+            id="org.rifidi.edge.ale.lr.category"
+            name="ALE LR">
+      </category>
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
@@ -98,6 +131,24 @@
             </iterate>
          </enabledWhen>
       </handler>
+      <handler
+            class="org.rifidi.edge.ale.lr.commands.DeleteHandler"
+            commandId="org.rifidi.edge.ale.lr.commands.delete">
+      </handler>
+      <handler
+            class="org.rifidi.edge.ale.lr.commands.CreateHandler"
+            commandId="org.rifidi.edge.ale.lr.commands.create">
+      </handler>
+   </extension>
+      <extension
+         point="org.eclipse.core.expressions.propertyTesters">
+      <propertyTester
+            class="org.rifidi.edge.ale.lr.LRSpecDecoratorPropertyTester"
+            id="org.rifidi.edge.ale.lr"
+            namespace="org.rifidi.edge.ale.lr"
+            properties="locked"
+            type="java.lang.Object">
+      </propertyTester>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -112,6 +163,57 @@
                commandId="org.rifidi.edge.client.ale.ecspecview.displayECSpec"
                label="Display ECSPec"
                style="push">
+         </command>
+      </menuContribution>
+      <menuContribution
+            locationURI="popup:org.eclipse.ui.popup.any?after=additions">
+         <command
+               commandId="org.rifidi.edge.ale.lr.commands.delete"
+               label="Delete"
+               style="push">
+            <visibleWhen>
+               <and>
+                  <iterate>
+                     <instanceof
+                           value="org.rifidi.edge.ale.lr.decorators.LRSpecDecorator">
+                     </instanceof>
+                  </iterate>
+                  <test
+                        property="org.rifidi.edge.ale.lr.locked">
+                  </test>
+                  <not>
+                     <iterate>
+                        <instanceof
+                              value="org.rifidi.edge.ale.lr.decorators.LRSpecSubnodeDecorator">
+                        </instanceof>
+                     </iterate>
+                  </not>
+               </and>
+            </visibleWhen>
+         </command>
+         <command
+               commandId="org.rifidi.edge.ale.lr.commands.create"
+               label="Create"
+               style="push">
+            <visibleWhen>
+               <and>
+                  <count
+                        value="+">
+                  </count>
+                  <iterate>
+                     <instanceof
+                           value="org.rifidi.edge.ale.lr.decorators.LRSpecDecorator">
+                     </instanceof>
+                  </iterate>
+                  <not>
+                     <iterate>
+                        <instanceof
+                              value="org.rifidi.edge.ale.lr.decorators.LRSpecSubnodeDecorator">
+                        </instanceof>
+                     </iterate>
+                  </not>
+               </and>
+            </visibleWhen>
          </command>
       </menuContribution>
    </extension>
