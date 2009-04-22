@@ -3,6 +3,7 @@
  */
 package org.rifidi.edge.client.ale.ecspecview.views;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.jface.action.GroupMarker;
@@ -19,25 +20,28 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.part.ViewPart;
 import org.rifidi.edge.client.ale.api.wsdl.ale.epcglobal.ALEServicePortType;
-import org.rifidi.edge.client.ale.ecspecview.modelmanager.ALEModelManager;
-import org.rifidi.edge.client.ale.ecspecview.modelmanager.ModelChangedListener;
+import org.rifidi.edge.client.ale.ecspecview.Activator;
+import org.rifidi.edge.client.alelr.ALEListener;
+import org.rifidi.edge.client.alelr.ALEService;
 
 /**
  * @author Kyle Neumeier - kyle@pramari.com
  * 
  */
-public class ECSpecView extends ViewPart implements ModelChangedListener {
+public class ECSpecView extends ViewPart implements ALEListener {
 
 	/** The ID for this view */
 	public static final String ID = "org.rifidi.edge.client.ale.ecspecview";
 	/** The tree viewer to use */
 	private AbstractTreeViewer treeViewer;
+	/** Service that manages the ale connections. */
+	private ALEService service;
 
 	/**
 	 * 
 	 */
 	public ECSpecView() {
-
+		this.service=Activator.getDefault().getAleService();
 	}
 
 	/*
@@ -60,10 +64,8 @@ public class ECSpecView extends ViewPart implements ModelChangedListener {
 		treeViewer.setLabelProvider(new ECSpecViewLabelProvider());
 		treeViewer.setComparator(new ViewerComparator());
 		createContextMenu();
+		service.registerALEListener(this);
 		this.getSite().setSelectionProvider(treeViewer);
-		treeViewer.setInput(ALEModelManager.getInstance().getModel());
-		ALEModelManager.getInstance().addModelChangedListener(this);
-
 	}
 
 	/**
@@ -97,7 +99,7 @@ public class ECSpecView extends ViewPart implements ModelChangedListener {
 	@Override
 	public void dispose() {
 		super.dispose();
-		ALEModelManager.getInstance().removeModelChangedListener(this);
+		service.unregisterALEListener(this);
 	}
 
 	/*
@@ -111,9 +113,14 @@ public class ECSpecView extends ViewPart implements ModelChangedListener {
 
 	}
 
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.client.alelr.ALEListener#setALEStub(org.rifidi.edge.client.ale.api.wsdl.ale.epcglobal.ALEServicePortType)
+	 */
 	@Override
-	public void modelUpdated(List<ALEServicePortType> model) {
-		treeViewer.setInput(model);
+	public void setALEStub(ALEServicePortType stub) {
+		List<ALEServicePortType> stubby=new ArrayList<ALEServicePortType>();
+		stubby.add(stub);
+		treeViewer.setInput(stubby);
 	}
 
 }

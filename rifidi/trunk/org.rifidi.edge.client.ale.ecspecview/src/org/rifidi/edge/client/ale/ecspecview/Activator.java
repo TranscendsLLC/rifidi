@@ -4,6 +4,9 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
+import org.rifidi.edge.client.alelr.ALELRService;
+import org.rifidi.edge.client.alelr.ALELRServiceImpl;
+import org.rifidi.edge.client.alelr.ALEService;
 
 /**
  * The activator class controls the plug-in life cycle
@@ -27,6 +30,10 @@ public class Activator extends AbstractUIPlugin {
 	// The shared instance
 	private static Activator plugin;
 
+	//TODO: temporary, move to spring ASAP
+	private ALELRService alelrService = null;
+	private ALEService aleService = null;
+	
 	/**
 	 * The constructor
 	 */
@@ -43,8 +50,19 @@ public class Activator extends AbstractUIPlugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
+		alelrService = new ALELRServiceImpl();
+		aleService=(ALEService)alelrService;
+		plugin.getPreferenceStore().addPropertyChangeListener(alelrService);
 	}
 
+	public ALEService getAleService() {
+		return aleService;
+	}
+
+	public ALELRService getAleLrService() {
+		return alelrService;
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 

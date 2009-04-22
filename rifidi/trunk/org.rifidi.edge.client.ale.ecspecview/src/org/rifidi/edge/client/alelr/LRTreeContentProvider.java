@@ -8,9 +8,6 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
@@ -47,6 +44,7 @@ public class LRTreeContentProvider implements ITreeContentProvider {
 	private ALELRServicePortType lrService;
 	/** Logical readers. */
 	private List<LRSpecDecorator> lrspecs;
+
 	/*
 	 * (non-Javadoc)
 	 * 
