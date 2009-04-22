@@ -291,10 +291,23 @@ public class ALELRServicePortTypeImpl implements ALELRServicePortType,
 	 */
 	@Override
 	public URL getUrl() {
+		String ALEHost = System.getProperty("org.rifidi.edge.ale.host");
+		if(ALEHost==null||ALEHost.equals("")){
+			ALEHost="127.0.0.1";
+		}
+		String ALEPort = System.getProperty("org.rifidi.edge.ale.port");
+		if(ALEPort==null || ALEPort.equals("")){
+			ALEPort="8081";
+		}
+		String ALELRPath = System.getProperty("org.rifidi.edge.ale.logicalreader");
+		if(ALELRPath==null || ALELRPath.equals("")){
+			ALELRPath="lr";
+		}
+		String url = "http://"+ALEHost+":"+ALEPort+"/"+ALELRPath;
 		try {
-			return new URL("http://127.0.0.1:8081/lr");
+			return new URL(url);
 		} catch (MalformedURLException e) {
-			logger.fatal("That should never ever happen: " + e);
+			logger.fatal("That should not happen: " + e);
 		}
 		return null;
 	}
