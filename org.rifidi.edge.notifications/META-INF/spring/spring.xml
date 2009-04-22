@@ -33,7 +33,7 @@
 	<!--  External JMS Message Queue for events -->
 	<amq:broker useJmx="false" persistent="false">
 		<amq:transportConnectors>
-			<amq:transportConnector uri="tcp://localhost:1099" />
+			<amq:transportConnector uri="tcp://localhost:1097" />
 		</amq:transportConnectors>
 
 	</amq:broker>
@@ -44,7 +44,7 @@
 		XML
 	-->
 	<amq:connectionFactory id="externalConFac"
-		brokerURL="tcp://localhost:1099" />
+		brokerURL="tcp://localhost:1097" />
 
 	<!-- Spring JMS Template -->
 	<bean id="extNotificationTemplate" class="org.springframework.jms.core.JmsTemplate">
