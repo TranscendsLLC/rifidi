@@ -19,6 +19,12 @@ import org.eclipse.core.databinding.observable.map.MapChangeEvent;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.dnd.DropTarget;
+import org.eclipse.swt.dnd.DropTargetEvent;
+import org.eclipse.swt.dnd.DropTargetListener;
+import org.eclipse.swt.dnd.TextTransfer;
+import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.services.IEvaluationService;
@@ -161,7 +167,6 @@ public class EdgeServerTreeContentProvider implements ITreeContentProvider,
 	 */
 	@Override
 	public void dispose() {
-		// TODO Auto-generated method stub
 
 	}
 
@@ -381,7 +386,14 @@ public class EdgeServerTreeContentProvider implements ITreeContentProvider,
 					// TODO: should we be listening for ReaderFactories?
 				}
 			}
-			viewer.refresh();
+			// ADD DRAG AND DROP SUPPORT
+			EdgeServerDropTargetListener dropTargetListener = new EdgeServerDropTargetListener(
+					edgeServerList.get(0).getCommandConfigurations(), this,
+					this.viewer);
+			this.viewer.addDropSupport(DND.DROP_MOVE,
+					new Transfer[] { TextTransfer.getInstance() },
+					dropTargetListener);
+			this.viewer.refresh();
 		}
 
 	}
