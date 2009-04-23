@@ -15,6 +15,7 @@
          point="org.eclipse.ui.views">
       <view
             allowMultiple="false"
+            category="org.rifidi.edge.client.sal.view.category"
             class="org.rifidi.edge.client.sal.views.EdgeServerView"
             icon="icons/server.png"
             id="org.rifidi.edge.client.sal.views.EdgeServerView"
@@ -23,6 +24,7 @@
       </view>
       <view
             allowMultiple="false"
+            category="org.rifidi.edge.client.sal.view.category"
             class="org.rifidi.edge.client.sal.views.CommandView"
             icon="icons/cog.png"
             id="org.rifidi.edge.client.sal.views.CommandView"
@@ -31,12 +33,17 @@
       </view>
       <view
             allowMultiple="true"
+            category="org.rifidi.edge.client.sal.view.category"
             class="org.rifidi.edge.client.sal.views.tags.TagView"
             icon="icons/transmit.png"
             id="org.rifidi.edge.client.sal.tags"
             name="Tag View"
             restorable="true">
       </view>
+      <category
+            id="org.rifidi.edge.client.sal.view.category"
+            name="Sensor Abstraction Layer">
+      </category>
    </extension>
    <extension
          point="org.eclipse.ui.perspectiveExtensions">
@@ -45,6 +52,12 @@
          <perspectiveShortcut
                id="org.rifidi.edge.client.sal.perspective">
          </perspectiveShortcut>
+         <viewShortcut
+               id="org.rifidi.edge.client.sal.views.CommandView">
+         </viewShortcut>
+         <viewShortcut
+               id="org.rifidi.edge.client.sal.views.EdgeServerView">
+         </viewShortcut>
       </perspectiveExtension>
    </extension>
    <extension
@@ -682,81 +695,139 @@
    <extension
          point="org.eclipse.ui.commands">
       <command
+            category="org.rifidi.edge.client.categories.commands.sal.EdgeServer"
+            categoryId="org.rifidi.edge.client.categories.commands.sal.EdgeServer"
+            description="Connect to a Remote Edge Server"
             id="org.rifidi.edge.client.sal.commands.edgeserver.connect"
             name="EdgeServerConnect">
       </command>
       <command
+            category="org.rifidi.edge.client.categories.commands.sal.EdgeServer"
+            categoryId="org.rifidi.edge.client.categories.commands.sal.EdgeServer"
+            description="Refresh the Connection with the Edge Server"
             id="org.rifidi.edge.client.sal.commands.edgeserver.update"
             name="EdgeServerUpdate">
       </command>
       <command
+            category="org.rifidi.edge.client.categories.commands.sal.EdgeServer"
+            categoryId="org.rifidi.edge.client.categories.commands.sal.EdgeServer"
+            description="Disconnect From the Edge Server"
             id="org.rifidi.edge.client.sal.commands.edgeserver.disconnect"
             name="EdgeServerDisconnect">
       </command>
       <command
+            category="org.rifidi.edge.client.categories.commands.sal.EdgeServer"
+            categoryId="org.rifidi.edge.client.categories.commands.sal.EdgeServer"
+            description="Save an Edge Server Configuration"
             id="org.rifidi.edge.client.sal.commands.edgeserver.save"
             name="EdgeServerSave">
       </command>
       <command
+            category="org.rifidi.edge.client.categories.commands.sal.Reader"
+            description="Create a new Reader"
             id="org.rifidi.edge.client.sal.commands.edgeserver.newreader"
             name="EdgeServerNewReader">
       </command>
       <command
+            category="org.rifidi.edge.client.categories.commands.sal.Reader"
+            description="Delete a Reader"
             id="org.rifidi.edge.client.sal.commands.reader.delete"
             name="DeleteReader">
       </command>
       <command
+            category="org.rifidi.edge.client.categories.commands.sal.Session"
+            description="Create a Session"
             id="org.rifidi.edge.client.sal.commands.reader.createsession"
             name="CreateSession">
       </command>
       <command
+            category="org.rifidi.edge.client.categories.commands.sal.Session"
+            description="Delete a Session"
             id="org.rifidi.edge.client.sal.commands.session.delete"
             name="DeleteSession">
       </command>
       <command
+            category="org.rifidi.edge.client.categories.commands.sal.Session"
+            description="Start a Session"
             id="org.rifidi.edge.client.sal.commands.session.start"
             name="StartSession">
       </command>
       <command
+            category="org.rifidi.edge.client.categories.commands.sal.Session"
+            description="Stop a Session"
             id="org.rifidi.edge.client.sal.commands.session.stop"
             name="StopSession">
       </command>
       <command
-            id="rg.rifidi.edge.client.sal.commands.commandconfig.create"
+            category="org.rifidi.edge.client.categories.commands.sal.Configuration"
+            description="Create a Command Configuration"
+            id="org.rifidi.edge.client.categories.commands.sal.Configuration"
             name="CreateCommandConfiguration">
       </command>
       <command
+            category="org.rifidi.edge.client.categories.commands.sal.Configuration"
+            description="Delete a Command Configuration"
             id="rg.rifidi.edge.client.sal.commands.commandconfig.delete"
             name="DeleteCommandConfiguration">
       </command>
       <command
+            category="org.rifidi.edge.client.categories.commands.sal.Session"
+            description="Kill a Job"
             id="org.rifidi.edge.client.sal.commands.jobs.kill"
             name="Kill Job">
       </command>
       <command
+            category="org.rifidi.edge.client.categories.commands.sal.Session"
+            description="Submit a Job"
             id="org.rifidi.edge.client.sal.commands.jobs.submit"
             name="Submit Job">
       </command>
       <command
+            category="org.rifidi.edge.client.categories.commands.sal.Reader"
+            description="Open the Tag View"
             id="org.rifidi.edge.client.sal.commands.reader.opentagview"
             name="Open Tag View">
       </command>
       <command
+            category="org.rifidi.edge.client.categories.commands.sal.Reader"
+            description="Clear Reader properties"
             id="org.rifidi.edge.client.sal.commands.reader.clearpropertychanges"
             name="ClearReaderPropertyChanges">
       </command>
       <command
+            category="org.rifidi.edge.client.categories.commands.sal.Reader"
+            description="Sync Reader properties"
             id="org.rifidi.edge.client.sal.commands.reader.synchpropertychanges"
             name="SynchReaderPropertyChanges">
       </command>
       <command
+            category="org.rifidi.edge.client.categories.commands.sal.Configuration"
+            description="Clear Command properties"
             id="org.rifidi.edge.client.sal.commands.commandconfig.clearpropertychanges"
             name="ClearCommandConfigPropertyChanges">
       </command>
       <command
+            category="org.rifidi.edge.client.categories.commands.sal.Configuration"
+            description="Sync Command properties"
             id="org.rifidi.edge.client.sal.commands.commandconfig.synchpropertychanges"
             name="SynchCommandConfigPropertyChanges">
       </command>
+      <category
+            id="org.rifidi.edge.client.categories.commands.sal.EdgeServer"
+            name="Edge Server Commands">
+      </category>
+      <category
+            id="org.rifidi.edge.client.categories.commands.sal.Reader"
+            name="Reader Commands">
+      </category>
+      <category
+            id="org.rifidi.edge.client.categories.commands.sal.Session"
+            name="Session Commands">
+      </category>
+      <category
+            id="org.rifidi.edge.client.categories.commands.sal.Configuration"
+            name="Configuration Commands">
+      </category>
    </extension>
    <extension
          point="org.eclipse.core.expressions.propertyTesters">
