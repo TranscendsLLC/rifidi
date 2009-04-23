@@ -13,29 +13,36 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.rifidi.edge.client.model.sal.RemoteCommandConfiguration;
 import org.rifidi.edge.client.sal.SALPluginActivator;
 
 /**
+ * A Wizard Page used to submit commands to the session. Allows the user to
+ * choose the commad to submit
+ * 
  * @author Kyle Neumeier - kyle@pramari.com
  * 
  */
 public class SubmitJobWizardPage extends WizardPage {
 
+	/** The set of possible commands */
 	private Set<RemoteCommandConfiguration> commandConfigurations;
+	/** The chosen command */
 	private RemoteCommandConfiguration selection;
-	private Composite timingComposite;
-	private Spinner spinner;
-	private boolean recurring = true;
-	private Label spinnerLabel;
+	/** A composite to allow users to choose the execution interval */
+	private IntervalChooserComposite intervalChooserComposite;
 
+	/***
+	 * Constructor
+	 * 
+	 * @param pageName
+	 * @param commandConfigurations
+	 *            Set of possible commands to choose from
+	 */
 	protected SubmitJobWizardPage(String pageName,
 			Set<RemoteCommandConfiguration> commandConfigurations) {
 		super(pageName);
@@ -92,75 +99,28 @@ public class SubmitJobWizardPage extends WizardPage {
 			bottomGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 			bottomGroup.setText("Scheduling Options");
 			bottomGroup.setLayout(new GridLayout(1, true));
-
-			Button button1 = new Button(bottomGroup, SWT.RADIO);
-			button1.setText("One Time Execution");
-			button1.addSelectionListener(new SelectionListener() {
-				@Override
-				public void widgetDefaultSelected(SelectionEvent e) {
-					recurring = false;
-					spinner.setEnabled(false);
-					spinnerLabel.setEnabled(false);
-				}
-
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					recurring = false;
-					spinner.setEnabled(false);
-					spinnerLabel.setEnabled(false);
-				}
-
-			});
-			Button button2 = new Button(bottomGroup, SWT.RADIO);
-			button2.setText("Recurring Execution");
-			button2.addSelectionListener(new SelectionListener() {
-				@Override
-				public void widgetDefaultSelected(SelectionEvent e) {
-					recurring = true;
-					spinnerLabel.setEnabled(true);
-					spinner.setEnabled(true);
-
-				}
-
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					recurring = true;
-					spinnerLabel.setEnabled(true);
-					spinner.setEnabled(true);
-				}
-			});
-
-			timingComposite = new Composite(bottomGroup, SWT.NONE);
-			timingComposite.setLayout(new GridLayout(2, false));
-			GridData timingCompositeGridData = new GridData(
-					GridData.FILL_HORIZONTAL);
-			timingCompositeGridData.horizontalIndent = 20;
-			timingCompositeGridData.verticalIndent = 0;
-			timingComposite.setLayoutData(timingCompositeGridData);
-			spinnerLabel = new Label(timingComposite, SWT.None);
-			spinnerLabel.setText("Interval (ms): ");
-			spinner = new Spinner(timingComposite, SWT.BORDER);
-			GridData spinnerGridData = new GridData();
-			spinnerGridData.grabExcessHorizontalSpace = true;
-			spinnerGridData.widthHint = 100;
-			spinner.setLayoutData(spinnerGridData);
-			spinner.setMinimum(0);
-			spinner.setMaximum(Integer.MAX_VALUE);
-			spinner.setSelection(1000);
-
+			this.intervalChooserComposite = new IntervalChooserComposite(
+					bottomGroup, SWT.None);
 			setControl(composite);
 			setPageComplete(false);
-			button2.setSelection(true);
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
 	}
 
+	/**
+	 * Private helper method to fill the tree with possible command choices
+	 * 
+	 * @param tree
+	 */
 	private void fillTree(Tree tree) {
 		Map<String, TreeItem> commandTypesToTreeItem = new HashMap<String, TreeItem>();
+		// step through each command.
 		for (RemoteCommandConfiguration config : this.commandConfigurations) {
 			TreeItem item = commandTypesToTreeItem.get(config.getCommandType());
+			// create a command category if one does not exist
 			if (item == null) {
 				item = new TreeItem(tree, SWT.None);
 				item.setData(config.getCommandType());
@@ -179,18 +139,29 @@ public class SubmitJobWizardPage extends WizardPage {
 
 	}
 
+	/**
+	 * Private method called once a command has been chosen
+	 */
 	private void validate() {
 		setPageComplete(true);
 	}
 
+	/**
+	 * Get the selected command
+	 * 
+	 * @return
+	 */
 	protected RemoteCommandConfiguration getSelectedConfiguration() {
 		return this.selection;
 	}
 
+	/**
+	 * Get the selected execution interval
+	 * 
+	 * @return
+	 */
 	protected Long getInterval() {
-		if (recurring) {
-			return new Long(spinner.getSelection());
-		} else
-			return 0l;
+		return this.intervalChooserComposite.getInterval();
 	}
+
 }

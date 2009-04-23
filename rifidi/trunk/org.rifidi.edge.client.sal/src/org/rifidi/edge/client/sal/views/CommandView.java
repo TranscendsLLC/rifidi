@@ -8,8 +8,15 @@ import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.ViewerComparator;
+import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.dnd.DragSourceEvent;
+import org.eclipse.swt.dnd.DragSourceListener;
+import org.eclipse.swt.dnd.TextTransfer;
+import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -17,6 +24,8 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.views.properties.tabbed.ITabbedPropertySheetPageContributor;
+import org.rifidi.edge.client.model.sal.RemoteCommandConfiguration;
+import org.rifidi.edge.client.model.sal.RemoteReader;
 import org.rifidi.edge.client.sal.controller.commands.CommandTreeContentProvider;
 import org.rifidi.edge.client.sal.controller.commands.CommandTreeLabelProvider;
 import org.rifidi.edge.client.sal.modelmanager.ModelManagerService;
@@ -29,7 +38,7 @@ import org.rifidi.edge.client.sal.modelmanager.ModelManagerServiceListener;
  * 
  */
 public class CommandView extends ViewPart implements
-		ITabbedPropertySheetPageContributor, ModelManagerServiceListener {
+		ITabbedPropertySheetPageContributor, ModelManagerServiceListener, DragSourceListener {
 
 	public static final String ID = "org.rifidi.edge.client.sal.views.CommandView";
 	/** The tree viewer to use */
@@ -54,8 +63,10 @@ public class CommandView extends ViewPart implements
 		treeViewer.setLabelProvider(new CommandTreeLabelProvider());
 		treeViewer.setComparator(new ViewerComparator());
 		createContextMenu();
-		this.getSite().setSelectionProvider(treeViewer);
+		treeViewer.addDragSupport(DND.DROP_MOVE, new Transfer[] { TextTransfer
+				.getInstance() }, this);
 		ModelManagerService.getInstance().addController(this);
+		this.getSite().setSelectionProvider(treeViewer);
 
 	}
 
@@ -112,6 +123,35 @@ public class CommandView extends ViewPart implements
 	@Override
 	public void setModel(Object model) {
 		this.treeViewer.setInput(model);
+	}
+
+	
+	@Override
+	public void dragFinished(DragSourceEvent event) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void dragSetData(DragSourceEvent event) {
+		if (TextTransfer.getInstance().isSupportedType(event.dataType)) {
+			ISelection sel = treeViewer.getSelection();
+			Object o = ((TreeSelection) sel).getFirstElement();
+			event.data = ((RemoteCommandConfiguration) o).getID();
+		}
+		
+	}
+
+	@Override
+	public void dragStart(DragSourceEvent event) {
+		ISelection sel = treeViewer.getSelection();
+		Object o = ((TreeSelection) sel).getFirstElement();
+		if (o instanceof RemoteCommandConfiguration) {
+			event.doit = true;
+			return;
+		}
+		event.doit = false;
+		
 	}
 
 }

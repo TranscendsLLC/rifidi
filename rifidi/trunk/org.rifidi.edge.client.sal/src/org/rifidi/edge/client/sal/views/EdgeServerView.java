@@ -71,10 +71,11 @@ public class EdgeServerView extends ViewPart implements
 		treeViewer.setLabelProvider(new EdgeServerTreeLabelProvider());
 		treeViewer.setComparator(new ViewerComparator());
 		createContextMenu();
-		this.getSite().setSelectionProvider(treeViewer);
+		
 		ModelManagerService.getInstance().addController(this);
 		treeViewer.addDragSupport(DND.DROP_MOVE, new Transfer[] { TextTransfer
 				.getInstance() }, this);
+		this.getSite().setSelectionProvider(treeViewer);
 	}
 
 	/*
