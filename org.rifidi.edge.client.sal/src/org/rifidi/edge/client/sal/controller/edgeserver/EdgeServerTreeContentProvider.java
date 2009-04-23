@@ -20,9 +20,6 @@ import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.dnd.DND;
-import org.eclipse.swt.dnd.DropTarget;
-import org.eclipse.swt.dnd.DropTargetEvent;
-import org.eclipse.swt.dnd.DropTargetListener;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.ui.IViewReference;
@@ -384,15 +381,17 @@ public class EdgeServerTreeContentProvider implements ITreeContentProvider,
 					edgeServer.addPropertyChangeListener(this);
 					edgeServer.getRemoteReaders().addMapChangeListener(this);
 					// TODO: should we be listening for ReaderFactories?
+
+					// ADD DRAG AND DROP SUPPORT
+					EdgeServerDropTargetListener dropTargetListener = new EdgeServerDropTargetListener(
+							edgeServerList.get(0).getCommandConfigurations(),
+							this, this.viewer);
+					this.viewer.addDropSupport(DND.DROP_MOVE,
+							new Transfer[] { TextTransfer.getInstance() },
+							dropTargetListener);
 				}
 			}
-			// ADD DRAG AND DROP SUPPORT
-			EdgeServerDropTargetListener dropTargetListener = new EdgeServerDropTargetListener(
-					edgeServerList.get(0).getCommandConfigurations(), this,
-					this.viewer);
-			this.viewer.addDropSupport(DND.DROP_MOVE,
-					new Transfer[] { TextTransfer.getInstance() },
-					dropTargetListener);
+
 			this.viewer.refresh();
 		}
 

@@ -56,7 +56,13 @@ public class Command_PropertyChanged implements RemoteEdgeServerCommand {
 				}
 			}
 		} else {
-			// TODO: handle command configuration update
+			RemoteCommandConfiguration config = (RemoteCommandConfiguration) server.commandConfigurations
+					.get(notification.getConfigIDID());
+			if (config != null) {
+				for (Attribute a : notification.getAttributes().asList()) {
+					config.setAttribute(a);
+				}
+			}
 		}
 
 	}

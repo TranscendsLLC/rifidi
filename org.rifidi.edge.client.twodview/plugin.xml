@@ -79,6 +79,7 @@
          point="org.eclipse.ui.views.properties.tabbed.propertyContributor">
       <propertyContributor
             contributorId="org.rifidi.edge.client.twodview.propertyContributor"
+            labelProvider="org.rifidi.edge.client.twodview.properties.SiteViewLabelProvider"
             tabDescriptorProvider="org.rifidi.edge.client.twodview.properties.SiteViewTabDescriptorProvider">
       </propertyContributor>
    </extension>
