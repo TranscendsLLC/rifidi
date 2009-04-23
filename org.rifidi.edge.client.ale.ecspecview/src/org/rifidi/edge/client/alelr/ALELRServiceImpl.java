@@ -393,7 +393,6 @@ public class ALELRServiceImpl implements ALELRService, ALEService {
 			List<ALEServicePortType> serviceList = new ArrayList<ALEServicePortType>();
 			serviceList.add(aleServicePortType);
 			for (Viewer viewer : aleViewers) {
-				System.out.println("refreshig");
 				viewer.setInput(serviceList);
 				viewer.refresh();
 			}
