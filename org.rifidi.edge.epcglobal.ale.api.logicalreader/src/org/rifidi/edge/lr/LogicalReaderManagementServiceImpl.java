@@ -126,11 +126,15 @@ public class LogicalReaderManagementServiceImpl implements
 			throw new ImmutableReaderExceptionResponse("Reader " + name
 					+ " is immutable. ");
 		}
-		readers.remove(name);
 		if (reader.isInUse()) {
 			throw new InUseExceptionResponse("Reader " + name
-					+ " is currently in use.");
+					+ " is currently in use by an ECSpec.");
 		}
+		if (reader.hasParents()) {
+			throw new InUseExceptionResponse("Reader " + name
+					+ " is currently in use by other readers.");
+		}
+		readers.remove(name);
 		reader.destroy();
 		logger.debug("Destroied " + name);
 	}

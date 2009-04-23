@@ -29,6 +29,8 @@ public class LogicalReaderImpl implements LogicalReader {
 	private Map<String, String> properties;
 	/** True if the reader can't be changed or deleted. */
 	private Boolean immutable;
+	/** Set containing all parents of this reader. */
+	private Set<LogicalReader> parents;
 
 	/**
 	 * Constructor.
@@ -55,6 +57,10 @@ public class LogicalReaderImpl implements LogicalReader {
 		this.name = name;
 		this.properties = new ConcurrentHashMap<String, String>(properties);
 		this.users = new HashSet<Object>();
+		this.parents = new HashSet<LogicalReader>();
+		for(LogicalReader reader:readers){
+			reader.makeChildOf(this);	
+		}
 	}
 
 	/*
@@ -83,6 +89,10 @@ public class LogicalReaderImpl implements LogicalReader {
 		if (!users.isEmpty()) {
 			throw new InUseExceptionResponse("There are " + users.size()
 					+ " users using the reader.");
+		}
+		if (hasParents()){
+			throw new InUseExceptionResponse("There are " + parents.size()
+					+ " readers using the reader.");
 		}
 	}
 
@@ -236,4 +246,35 @@ public class LogicalReaderImpl implements LogicalReader {
 		return Collections.emptySet();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.lr.LogicalReader#growUp(org.rifidi.edge.lr.LogicalReader)
+	 */
+	@Override
+	public void growUp(LogicalReader parent) {
+		parents.remove(parent);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.lr.LogicalReader#makeChildOf(org.rifidi.edge.lr.LogicalReader
+	 * )
+	 */
+	@Override
+	public void makeChildOf(LogicalReader parent) {
+		parents.add(parent);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.lr.LogicalReader#hasparents()
+	 */
+	@Override
+	public boolean hasParents() {
+		return !parents.isEmpty();
+	}
+	
 }
