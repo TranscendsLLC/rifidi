@@ -1,9 +1,8 @@
 package org.rifidi.edge.client.ale.ecspecview.views;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -11,53 +10,31 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.rifidi.edge.client.ale.api.wsdl.ale.epcglobal.ALEServicePortType;
 import org.rifidi.edge.client.ale.api.wsdl.ale.epcglobal.ArrayOfString;
-import org.rifidi.edge.client.ale.api.wsdl.ale.epcglobal.Define;
-import org.rifidi.edge.client.ale.api.wsdl.ale.epcglobal.DuplicateNameExceptionResponse;
-import org.rifidi.edge.client.ale.api.wsdl.ale.epcglobal.ECSpecValidationExceptionResponse;
-import org.rifidi.edge.client.ale.api.wsdl.ale.epcglobal.EmptyParms;
-import org.rifidi.edge.client.ale.api.wsdl.ale.epcglobal.GetECSpec;
-import org.rifidi.edge.client.ale.api.wsdl.ale.epcglobal.GetSubscribers;
-import org.rifidi.edge.client.ale.api.wsdl.ale.epcglobal.ImplementationExceptionResponse;
 import org.rifidi.edge.client.ale.api.wsdl.ale.epcglobal.NoSuchNameExceptionResponse;
-import org.rifidi.edge.client.ale.api.wsdl.ale.epcglobal.SecurityExceptionResponse;
-import org.rifidi.edge.client.ale.api.xsd.ale.epcglobal.ECSpec;
 import org.rifidi.edge.client.ale.api.xsd.ale.epcglobal.ECSpec.LogicalReaders;
+import org.rifidi.edge.client.ale.ecspecview.Activator;
 import org.rifidi.edge.client.ale.ecspecview.model.ECSpecDecorator;
+import org.rifidi.edge.client.alelr.ALEService;
 
 /**
  * @author kyle
  * 
  */
-public class ECSpecViewContentProvider implements ITreeContentProvider,
-		ECSpecController {
+public class ECSpecViewContentProvider implements ITreeContentProvider {
 
+	/** Logger for this class. */
+	private Log logger = LogFactory.getLog(ECSpecViewContentProvider.class);
 	/** The viewer that this content provider works for */
 	private Viewer viewer;
-	/**
-	 * The service port type this content provider works for. For now should
-	 * only ever be one thing in here!
-	 */
-	private List<ALEServicePortType> servicePortType;
-	/** The map of ECSpeNames to ECSpec Objects */
-	private Map<String, ECSpec> specNameToSpec;
-	/** The map of ECSpeNames to subscribers */
-	private Map<String, ArrayOfString> specNameToSubscribers;
-	/**The map of ECSpecNames to logicalReaders*/
-	private Map<String, LogicalReaders>specNameToLogicalReaders;
-	/** The static reference to this class */
-	private static ECSpecViewContentProvider controller;
-	private Log logger = LogFactory.getLog(ECSpecViewContentProvider.class);
+	/** Service for managing ecspecs. */
+	private ALEService service;
 
 	/**
 	 * Constructor called by eclipse framerwork
 	 */
 	public ECSpecViewContentProvider() {
 		super();
-		controller = this;
-	}
-
-	public static ECSpecController getController() {
-		return controller;
+		service = Activator.getDefault().getAleService();
 	}
 
 	/*
@@ -70,7 +47,7 @@ public class ECSpecViewContentProvider implements ITreeContentProvider,
 	@Override
 	public Object[] getChildren(Object parentElement) {
 		if (parentElement instanceof List) {
-			List list = (List) parentElement;
+			List<?> list = (List<?>) parentElement;
 			if (list.size() > 0) {
 				Object o = list.get(0);
 				if (o != null && o instanceof ALEServicePortType) {
@@ -82,31 +59,40 @@ public class ECSpecViewContentProvider implements ITreeContentProvider,
 			}
 		}
 		if (parentElement instanceof ALEServicePortType) {
-			Object[] retVal = new Object[specNameToSpec.values().size()];
-			specNameToSpec.values().toArray(retVal);
-			return retVal;
-		} else if (parentElement instanceof ECSpec) {
+			List<ECSpecDecorator> ret = new ArrayList<ECSpecDecorator>();
+			for (String name : service.getAvailableECSpecNames()) {
+				try {
+					ret.add(new ECSpecDecorator(name, service.getECSpec(name)));
+				} catch (NoSuchNameExceptionResponse e) {
+					logger.warn(e);
+				}
+			}
+			return ret.toArray();
+		} else if (parentElement instanceof ECSpecDecorator) {
 			Object[] retVal = new Object[2];
-			ECSpecDecorator dec = (ECSpecDecorator)parentElement;
-			retVal[0] = specNameToLogicalReaders.get(dec.getName());
-			retVal[1] = specNameToSubscribers.get(dec.getName());
+			ECSpecDecorator dec = (ECSpecDecorator) parentElement;
+			retVal[0] = dec.getLogicalReaders();
+			try {
+				retVal[1] = service.getSubscribers(dec.getName());
+			} catch (NoSuchNameExceptionResponse e) {
+				logger.fatal(e);
+			}
 			return retVal;
-		}else if(parentElement instanceof ArrayOfString){
-			ArrayOfString aos = (ArrayOfString)parentElement;
-			if(aos.getString()!=null){
+		} else if (parentElement instanceof ArrayOfString) {
+			ArrayOfString aos = (ArrayOfString) parentElement;
+			if (aos.getString() != null) {
 				Object[] retVal = new Object[aos.getString().size()];
 				aos.getString().toArray(retVal);
 				return retVal;
 			}
-		}else if(parentElement instanceof LogicalReaders){
-			LogicalReaders readers = (LogicalReaders)parentElement;
-			if(readers.getLogicalReader()!=null){
+		} else if (parentElement instanceof LogicalReaders) {
+			LogicalReaders readers = (LogicalReaders) parentElement;
+			if (readers.getLogicalReader() != null) {
 				Object[] retVal = new Object[readers.getLogicalReader().size()];
 				readers.getLogicalReader().toArray(retVal);
 				return retVal;
 			}
-		}
-		else{
+		} else {
 			logger.debug(parentElement);
 		}
 		return new Object[] {};
@@ -134,19 +120,19 @@ public class ECSpecViewContentProvider implements ITreeContentProvider,
 	@Override
 	public boolean hasChildren(Object element) {
 		if (element instanceof ALEServicePortType) {
-			return !this.specNameToSpec.isEmpty();
-		} else if (element instanceof ECSpec) {
+			return true;
+		} else if (element instanceof ECSpecDecorator) {
 			return true;
 		} else if (element instanceof Collection) {
-			return !((Collection) element).isEmpty();
-		} else if(element instanceof LogicalReaders){
-			LogicalReaders readers = (LogicalReaders)element;
-			if(readers.getLogicalReader()!=null){
+			return !((Collection<?>) element).isEmpty();
+		} else if (element instanceof LogicalReaders) {
+			LogicalReaders readers = (LogicalReaders) element;
+			if (readers.getLogicalReader() != null) {
 				return !readers.getLogicalReader().isEmpty();
 			}
-		}else if(element instanceof ArrayOfString){
-			ArrayOfString subscribers = (ArrayOfString)element;
-			if(subscribers.getString()!=null){
+		} else if (element instanceof ArrayOfString) {
+			ArrayOfString subscribers = (ArrayOfString) element;
+			if (subscribers.getString() != null) {
 				return !subscribers.getString().isEmpty();
 			}
 		}
@@ -195,81 +181,7 @@ public class ECSpecViewContentProvider implements ITreeContentProvider,
 							+ newInput.getClass());
 		}
 		this.viewer = viewer;
-		this.servicePortType = (List) newInput;
-		refresh();
-
-	}
-
-	/**
-	 * Method to connect to the ALEPort and get the current list of ECSpecs.
-	 */
-	private void refresh() {
-		try {
-			ArrayOfString names = this.servicePortType.get(0).getECSpecNames(
-					new EmptyParms());
-			specNameToSpec = new HashMap<String, ECSpec>();
-			specNameToSubscribers = new HashMap<String, ArrayOfString>();
-			specNameToLogicalReaders=new HashMap<String, LogicalReaders>();
-
-			// Get the LogicalReader and Subscribers for each ecspec name
-			for (String name : names.getString()) {
-				GetECSpec getECSpec = new GetECSpec();
-				getECSpec.setSpecName(name);
-				GetSubscribers getSubscribers = new GetSubscribers();
-				getSubscribers.setSpecName(name);
-				try {
-
-					ECSpec spec = this.servicePortType.get(0).getECSpec(
-							getECSpec);
-					specNameToSpec.put(name, new ECSpecDecorator(name, spec));
-					ArrayOfString subscribers = this.servicePortType.get(0)
-							.getSubscribers(getSubscribers);
-					if (subscribers!=null) {
-						specNameToSubscribers
-								.put(name, subscribers);
-					} else {
-						specNameToSubscribers
-								.put(name, new ArrayOfString());
-					}
-					specNameToLogicalReaders.put(name, spec.getLogicalReaders());
-
-				} catch (NoSuchNameExceptionResponse e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-
-		} catch (ImplementationExceptionResponse e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (SecurityExceptionResponse e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		this.viewer.refresh();
-	}
-
-	@Override
-	public void define(String name, ECSpec spec) {
-		Define define = new Define();
-		define.setSpec(spec);
-		define.setSpecName(name);
-		try {
-			this.servicePortType.get(0).define(define);
-		} catch (ImplementationExceptionResponse e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (SecurityExceptionResponse e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ECSpecValidationExceptionResponse e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (DuplicateNameExceptionResponse e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		refresh();
+		viewer.refresh();
 	}
 
 }

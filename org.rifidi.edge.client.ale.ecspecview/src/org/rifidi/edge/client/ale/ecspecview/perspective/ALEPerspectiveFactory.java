@@ -6,7 +6,7 @@ package org.rifidi.edge.client.ale.ecspecview.perspective;
 import org.eclipse.ui.IFolderLayout;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveFactory;
-import org.rifidi.edge.client.ale.ecspecview.views.ALEEditorView;
+import org.rifidi.edge.client.ale.ecspecview.views.ECSpecEditorView;
 import org.rifidi.edge.client.ale.ecspecview.views.ECSpecView;
 
 /**
@@ -26,7 +26,7 @@ public class ALEPerspectiveFactory implements IPerspectiveFactory {
 		layout.getViewLayout(ECSpecView.ID).setCloseable(false);
 		IFolderLayout folder = layout.createFolder("left", IPageLayout.RIGHT,
 				.4f, ECSpecView.ID);
-		folder.addPlaceholder(ALEEditorView.ID+":*");
+		folder.addPlaceholder(ECSpecEditorView.ID+":*");
 		layout.addStandaloneView("org.rifidi.edge.client.alelr.LRTreeView", false,
 				IPageLayout.TOP, 0.5f, ECSpecView.ID);
 	}

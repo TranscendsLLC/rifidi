@@ -11,8 +11,14 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.jface.dialogs.InputDialog;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
-import org.rifidi.edge.client.alelr.LRTreeContentProvider;
+import org.eclipse.swt.widgets.MessageBox;
+import org.eclipse.ui.PlatformUI;
+import org.rifidi.edge.client.ale.api.wsdl.alelr.epcglobal.DuplicateNameExceptionResponse;
+import org.rifidi.edge.client.ale.api.wsdl.alelr.epcglobal.ValidationExceptionResponse;
+import org.rifidi.edge.client.ale.ecspecview.Activator;
+import org.rifidi.edge.client.alelr.ALELRService;
 import org.rifidi.edge.client.alelr.decorators.LRSpecDecorator;
 
 /**
@@ -20,6 +26,13 @@ import org.rifidi.edge.client.alelr.decorators.LRSpecDecorator;
  * 
  */
 public class CreateHandler extends AbstractHandler {
+
+	private ALELRService service;
+
+	public CreateHandler() {
+		super();
+		service = Activator.getDefault().getAleLrService();
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -34,7 +47,6 @@ public class CreateHandler extends AbstractHandler {
 		List<String> readers = new ArrayList<String>();
 		// holds a name suggestion <reader1>_<reader2>...
 		StringBuilder suggestedName = new StringBuilder();
-		LRTreeContentProvider provider = null;
 		if (event.getApplicationContext() instanceof IEvaluationContext) {
 			// collect the selected readers
 			for (Object selected : (List<?>) ((IEvaluationContext) event
@@ -43,8 +55,6 @@ public class CreateHandler extends AbstractHandler {
 				// create a name suggestion
 				suggestedName.append(((LRSpecDecorator) selected).getName()
 						+ "_");
-				provider = ((LRSpecDecorator) selected)
-						.getLrTreeContentProvider();
 			}
 		}
 		// get rid of the trailing _
@@ -56,7 +66,22 @@ public class CreateHandler extends AbstractHandler {
 		// wait for the result of the window input
 		dialog.setBlockOnOpen(true);
 		if (dialog.open() == InputDialog.OK) {
-			provider.createReader(dialog.getValue(), readers);
+			try {
+				service.createReader(dialog.getValue(), readers);
+			} catch (DuplicateNameExceptionResponse e) {
+				MessageBox messageBox = new MessageBox(PlatformUI
+						.getWorkbench().getActiveWorkbenchWindow().getShell(),
+						SWT.ICON_ERROR | SWT.OK);
+				messageBox.setMessage(e.toString());
+				messageBox.open();
+			} catch (ValidationExceptionResponse e) {
+				MessageBox messageBox = new MessageBox(PlatformUI
+						.getWorkbench().getActiveWorkbenchWindow().getShell(),
+						SWT.ICON_ERROR | SWT.OK);
+				messageBox.setMessage(e.toString());
+				messageBox.open();
+			}
+
 		}
 		return null;
 	}

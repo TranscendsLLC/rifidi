@@ -64,7 +64,7 @@ public class ECSpecView extends ViewPart implements ALEListener {
 		treeViewer.setLabelProvider(new ECSpecViewLabelProvider());
 		treeViewer.setComparator(new ViewerComparator());
 		createContextMenu();
-		service.registerALEListener(this);
+		service.registerALEViewer(treeViewer);
 		this.getSite().setSelectionProvider(treeViewer);
 	}
 
