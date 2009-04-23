@@ -5,6 +5,7 @@
          point="org.eclipse.ui.views">
       <view
             allowMultiple="false"
+            category="org.rifidi.edge.client.sal.view.category"
             class="org.rifidi.edge.client.twodview.views.SiteView"
             icon="icons/map.png"
             id="org.rifidi.edge.client.twodview.views.SiteView"
@@ -80,6 +81,15 @@
             contributorId="org.rifidi.edge.client.twodview.propertyContributor"
             tabDescriptorProvider="org.rifidi.edge.client.twodview.properties.SiteViewTabDescriptorProvider">
       </propertyContributor>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="org.rifidi.edge.client.sal.perspective">
+         <viewShortcut
+               id="org.rifidi.edge.client.twodview.views.SiteView">
+         </viewShortcut>
+      </perspectiveExtension>
    </extension>
 
 </plugin>
