@@ -137,6 +137,19 @@ public class ECSPECManagerServiceImpl implements ECSPECManagerService {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.epcglobal.aleread.service.ECSPECManagerService#getSubscriptions(java.lang.String)
+	 */
+	@Override
+	public List<URI> getSubscriptions(String specName)
+			throws NoSuchNameExceptionResponse {
+		if (nameToSpec.containsKey(specName)) {
+			return nameToSpec.get(specName).getSubscriptions();
+		}
+		throw new NoSuchNameExceptionResponse("A spec named "
+				+ specName + " doesn't exist. ");
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 

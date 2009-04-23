@@ -3,6 +3,7 @@
  */
 package org.rifidi.edge.epcglobal.aleread.service;
 
+import java.net.URI;
 import java.util.List;
 import java.util.Set;
 
@@ -56,6 +57,16 @@ public interface ECSPECManagerService {
 			NoSuchSubscriberExceptionResponse, InvalidURIExceptionResponse;
 
 	/**
+	 * Get a list containing all currently subscribed URIs.
+	 * 
+	 * @param specName
+	 * @return
+	 * @throws NoSuchSubscriberExceptionResponse
+	 */
+	public List<URI> getSubscriptions(String specName)
+			throws NoSuchNameExceptionResponse;
+
+	/**
 	 * Create a new spec with the given name.
 	 * 
 	 * @param name
@@ -69,7 +80,8 @@ public interface ECSPECManagerService {
 	 */
 	public void createSpec(String name, ECSpec spec,
 			RifidiBoundarySpec rifidiBoundarySpec, Set<LogicalReader> readers,
-			Set<String> primarykeys, List<RifidiReport> reports) throws DuplicateNameExceptionResponse,
+			Set<String> primarykeys, List<RifidiReport> reports)
+			throws DuplicateNameExceptionResponse,
 			ECSpecValidationExceptionResponse;
 
 	/**

@@ -49,9 +49,9 @@ public class RifidiReportFactoryimpl implements RifidiReportFactory {
 	public RifidiReport createReport(ECReportSpec reportSpec)
 			throws ECSpecValidationExceptionResponse {
 		int options = 0;
-		if ("ADDITION".equals(reportSpec.getReportSet().getSet())) {
+		if ("ADDITIONS".equals(reportSpec.getReportSet().getSet())) {
 			options |= ECReportOptions.REPORT_ADDITIONS;
-		} else if ("DELETION".equals(reportSpec.getReportSet().getSet())) {
+		} else if ("DELETIONS".equals(reportSpec.getReportSet().getSet())) {
 			options |= ECReportOptions.REPORT_DELETIONS;
 		} else if ("CURRENT".equals(reportSpec.getReportSet().getSet())) {
 			options |= ECReportOptions.REPORT_CURRENT;
