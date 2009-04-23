@@ -30,6 +30,8 @@ public class CompositeLogicalReaderImpl implements CompositeLogicalReader {
 	private Boolean immutable;
 	/** Set containing all readers that are part of this reader. */
 	private Set<LogicalReader> readers;
+	/** Set containing all parents of this reader. */
+	private Set<LogicalReader> parents;
 
 	/**
 	 * Constructor.
@@ -55,9 +57,13 @@ public class CompositeLogicalReaderImpl implements CompositeLogicalReader {
 		this.name = name;
 		this.properties = new ConcurrentHashMap<String, String>(properties);
 		this.users = new HashSet<Object>();
+		this.parents = new HashSet<LogicalReader>();
 		this.readers = readers;
 		this.immutable = immutable;
 		readers.addAll(readers);
+		for (LogicalReader reader : readers) {
+			reader.makeChildOf(this);
+		}
 	}
 
 	/*
@@ -90,6 +96,13 @@ public class CompositeLogicalReaderImpl implements CompositeLogicalReader {
 			throw new InUseExceptionResponse("There are " + users.size()
 					+ " users using the reader.");
 		}
+		if (hasParents()) {
+			throw new InUseExceptionResponse("There are " + parents.size()
+					+ " readers using the reader.");
+		}
+		for (LogicalReader reader : readers) {
+			reader.growUp(this);
+		}
 	}
 
 	/*
@@ -100,7 +113,7 @@ public class CompositeLogicalReaderImpl implements CompositeLogicalReader {
 	@Override
 	public LRSpec getLRSpec() {
 		LRSpec lrSpec = new LRSpec();
-		lrSpec.setIsComposite(false);
+		lrSpec.setIsComposite(true);
 		Properties props = new Properties();
 		for (String key : properties.keySet()) {
 			LRProperty prop = new LRProperty();
@@ -166,7 +179,7 @@ public class CompositeLogicalReaderImpl implements CompositeLogicalReader {
 	 */
 	@Override
 	public boolean isInUse() {
-		for(Object usr:users){
+		for (Object usr : users) {
 			System.out.println(usr);
 		}
 		return !users.isEmpty();
@@ -365,6 +378,39 @@ public class CompositeLogicalReaderImpl implements CompositeLogicalReader {
 	@Override
 	public Set<LogicalReader> getReaders() {
 		return new HashSet<LogicalReader>(readers);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.lr.LogicalReader#growUp(org.rifidi.edge.lr.LogicalReader)
+	 */
+	@Override
+	public void growUp(LogicalReader parent) {
+		parents.remove(parent);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.lr.LogicalReader#makeChildOf(org.rifidi.edge.lr.LogicalReader
+	 * )
+	 */
+	@Override
+	public void makeChildOf(LogicalReader parent) {
+		parents.add(parent);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.rifidi.edge.lr.LogicalReader#hasparents()
+	 */
+	@Override
+	public boolean hasParents() {
+		return !parents.isEmpty();
 	}
 
 }

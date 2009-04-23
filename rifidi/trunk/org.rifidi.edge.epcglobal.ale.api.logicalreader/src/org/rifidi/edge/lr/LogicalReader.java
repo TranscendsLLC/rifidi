@@ -110,4 +110,25 @@ public interface LogicalReader {
 	 */
 	Set<LogicalReader> getReaders();
 
+	/**
+	 * This reader becomes a child of this other reader.
+	 * 
+	 * @param parent
+	 */
+	void makeChildOf(LogicalReader parent);
+
+	/**
+	 * The child has grown up and leaves its parents for a better life. Possibly
+	 * in the garbage collector.
+	 * 
+	 * @param parent
+	 */
+	void growUp(LogicalReader parent);
+
+	/**
+	 * Check if he got a parent. If not you can kill him.
+	 * 
+	 * @return
+	 */
+	boolean hasParents();
 }
