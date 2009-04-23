@@ -71,7 +71,8 @@ import org.rifidi.edge.client.alelr.ALEService;
  * 
  */
 public class ECSpecEditorView extends ViewPart {
-
+	/** Logger for this class. */
+	private static final Log logger = LogFactory.getLog(ECSpecEditorView.class);
 	public final static String ID = "org.rifidi.edge.client.ale.ecspecview.views.ECSpecEditorView";
 
 	private FormToolkit toolkit = null;
@@ -91,7 +92,6 @@ public class ECSpecEditorView extends ViewPart {
 	// private ECGroupSpec grsp = null;
 	private ArrayList<ECReportSpec> repSpecs = new ArrayList<ECReportSpec>();
 	private CTabItem ctiEdit;
-	private Log logger = LogFactory.getLog(ECSpecEditorView.class);
 
 	private ALEService service;
 	private ALELRService lrService;
@@ -347,11 +347,11 @@ public class ECSpecEditorView extends ViewPart {
 				List list = ((List) e.widget);
 
 				int[] selection = list.getSelectionIndices();
+				LogicalReaders lr = new LogicalReaders();
 				for (int i = 0; i < selection.length; i++) {
-					LogicalReaders lr = new LogicalReaders();
 					lr.getLogicalReader().add(i, list.getItem(i));
-					ecSpec.setLogicalReaders(lr);
 				}
+				ecSpec.setLogicalReaders(lr);
 
 			}
 
