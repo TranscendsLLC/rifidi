@@ -22,13 +22,28 @@ import org.rifidi.edge.client.mbean.ui.widgets.data.LongWidgetData;
 import org.rifidi.edge.client.mbean.ui.widgets.data.StringWidgetData;
 
 /**
+ * This is a class that dynamically displays MBeanWidgets and works with the
+ * Eclipse Forms UI
+ * 
  * @author Kyle Neumeier - kyle@pramari.com
  * 
  */
 public class FlatFormSectionComposite extends AbstractMBeanInfoComposite {
 
+	/** The widgets to display */
 	private HashMap<String, Section> widgetNameToSection;
 
+	/***
+	 * Constructor
+	 * 
+	 * @param info
+	 *            The MbeanInfo to display
+	 * @param categories
+	 *            The categories to display or filter out
+	 * @param includeExclude
+	 *            true if we should display the categories in the list, false if
+	 *            we should display categories except thos in the list
+	 */
 	public FlatFormSectionComposite(MBeanInfo info, Set<String> categories,
 			boolean includeExclude) {
 		super(info, categories, includeExclude);
@@ -45,6 +60,7 @@ public class FlatFormSectionComposite extends AbstractMBeanInfoComposite {
 	public void createControls(Composite parent,
 			TabbedPropertySheetWidgetFactory factory) {
 
+		//create the widgets
 		Set<MBeanAttributeInfo> children = filterAttributes();
 		for (MBeanAttributeInfo info : children) {
 			AbstractWidget<?> widget = null;
@@ -65,11 +81,13 @@ public class FlatFormSectionComposite extends AbstractMBeanInfoComposite {
 
 		}
 
+		//create a composite
 		Composite composite = factory.createFlatFormComposite(parent);
 		TableWrapLayout layout = new TableWrapLayout();
 		layout.numColumns = 1;
 		composite.setLayout(layout);
 
+		//sort widgets and add to sections
 		for (AbstractWidget<?> widget : super.getSortedListOfWidgets()) {
 			AbstractWidgetData data = widget.getWidgetData();
 			Section section = factory.createSection(composite, Section.EXPANDED

@@ -11,7 +11,6 @@ import javax.management.MBeanInfo;
 import org.eclipse.ui.views.properties.tabbed.AbstractSectionDescriptor;
 import org.eclipse.ui.views.properties.tabbed.ISection;
 import org.rifidi.edge.client.model.sal.RemoteCommandConfiguration;
-import org.rifidi.edge.client.model.sal.RemoteReader;
 import org.rifidi.edge.client.sal.properties.MBeanModelObjectPropertySection;
 
 /**

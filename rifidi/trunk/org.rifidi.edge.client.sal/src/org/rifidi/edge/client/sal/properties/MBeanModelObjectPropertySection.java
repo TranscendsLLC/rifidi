@@ -31,10 +31,23 @@ import org.rifidi.edge.client.sal.properties.mbeanwidgets.FlatFormSectionComposi
 public class MBeanModelObjectPropertySection extends AbstractPropertySection
 		implements MBeanInfoWidgetListener, PropertyChangeListener {
 
+	/** The MBeanInfo to display */
 	private MBeanInfo info;
+	/** The model object (either a reader or a commandConfig) */
 	private AbstractAttributeContributorModelObject modelObject;
+	/** The composite to display this on */
 	private FlatFormSectionComposite composite;
 
+	/***
+	 * Constructor
+	 * 
+	 * @param mbeanInfo
+	 *            The MBeanInfo to display
+	 * @param modelObject
+	 *            The ModelOBject (either a reader or a command config)
+	 * @param category
+	 *            The Category to display
+	 */
 	public MBeanModelObjectPropertySection(MBeanInfo mbeanInfo,
 			AbstractAttributeContributorModelObject modelObject, String category) {
 		this.info = mbeanInfo;
@@ -88,7 +101,6 @@ public class MBeanModelObjectPropertySection extends AbstractPropertySection
 	 */
 	@Override
 	public void setInput(IWorkbenchPart part, ISelection selection) {
-		// TODO Auto-generated method stub
 		super.setInput(part, selection);
 
 	}
