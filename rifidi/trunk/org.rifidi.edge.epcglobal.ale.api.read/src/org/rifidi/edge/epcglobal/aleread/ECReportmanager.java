@@ -3,13 +3,20 @@
  */
 package org.rifidi.edge.epcglobal.aleread;
 
-import java.net.URI;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.GregorianCalendar;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 
@@ -18,12 +25,11 @@ import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.messages.DatacontainerEvent;
 import org.rifidi.edge.core.messages.TagReadEvent;
 import org.rifidi.edge.epcglobal.ale.api.read.data.ECReport;
-import org.rifidi.edge.epcglobal.ale.api.read.data.ECReportGroup;
-import org.rifidi.edge.epcglobal.ale.api.read.data.ECReportGroupListMember;
 import org.rifidi.edge.epcglobal.ale.api.read.data.ECReports;
 import org.rifidi.edge.epcglobal.ale.api.read.data.ECSpec;
 import org.rifidi.edge.epcglobal.ale.api.read.data.ECReports.Reports;
 import org.rifidi.edge.epcglobal.aleread.ALEReadAPI.TriggerCondition;
+import org.rifidi.edge.epcglobal.aleread.wrappers.ReportAnswer;
 import org.rifidi.edge.epcglobal.aleread.wrappers.RifidiECSpec;
 import org.rifidi.edge.epcglobal.aleread.wrappers.RifidiReport;
 
@@ -63,7 +69,7 @@ public class ECReportmanager implements Runnable, StatementAwareUpdateListener {
 	private LinkedBlockingQueue<EventTuple> eventQueue;
 
 	/** Target uris for the rifidiReports. */
-	private List<URI> uris;
+	private List<String> uris;
 	/** Name of the ec spec. */
 	private String specName;
 	/** True if the spec has been destroied by a delete event. */
@@ -78,11 +84,17 @@ public class ECReportmanager implements Runnable, StatementAwareUpdateListener {
 	/** Timer for triggers and intervals. */
 	private Timer timer;
 
+	/** Thread pool for sending reports. */
+	private ScheduledThreadPoolExecutor threadPoolExecutor;
+
+	private JAXBContext cont;
+	private Marshaller marsh;
+
 	/**
 	 * Constructor.
 	 */
 	public ECReportmanager(String specName, EPServiceProvider esper,
-			List<RifidiReport> reports, RifidiECSpec owner, List<URI> uris) {
+			List<RifidiReport> reports, RifidiECSpec owner, List<String> uris) {
 		rifidiReports = reports;
 		eventQueue = new LinkedBlockingQueue<EventTuple>();
 		destroied = false;
@@ -94,6 +106,14 @@ public class ECReportmanager implements Runnable, StatementAwareUpdateListener {
 		this.uris = uris;
 		this.specName = specName;
 		this.owner = owner;
+		try {
+			cont = JAXBContext.newInstance(ReportAnswer.class, ECReports.class);
+			marsh = cont.createMarshaller();
+		} catch (JAXBException e) {
+			logger.fatal("Unabel to create JAXB marshaller: " + e);
+		}
+
+		threadPoolExecutor = new ScheduledThreadPoolExecutor(10);
 	}
 
 	/**
@@ -101,7 +121,7 @@ public class ECReportmanager implements Runnable, StatementAwareUpdateListener {
 	 */
 	public ECReportmanager(String specName, EPServiceProvider esper,
 			ECSpec spec, List<RifidiReport> reports, RifidiECSpec owner,
-			List<URI> uris) {
+			List<String> uris) {
 		this(specName, esper, reports, owner, uris);
 		this.spec = spec;
 	}
@@ -178,6 +198,9 @@ public class ECReportmanager implements Runnable, StatementAwareUpdateListener {
 					"count(whine)")) {
 				if ((Long) ((MapEventBean) tagevent).getProperties().get(
 						"count(whine)") > 0) {
+					logger.debug("count "
+							+ (Long) ((MapEventBean) tagevent).getProperties()
+									.get("count(whine)"));
 					return;
 				}
 			}
@@ -302,22 +325,17 @@ public class ECReportmanager implements Runnable, StatementAwareUpdateListener {
 						+ ecreports.getTerminationCondition() + "\n");
 				buildy.append("stoptrigger: "
 						+ ecreports.getTerminationTrigger() + "\n");
+				logger.debug(buildy.toString());
 				for (RifidiReport rifidiReport : rifidiReports) {
 					ECReport rep = rifidiReport.send();
 					if (rep != null) {
 						ecreports.getReports().getReport().add(rep);
-						for (ECReportGroup gr : rep.getGroup()) {
-							if (gr.getGroupList() != null) {
-								for (ECReportGroupListMember mem : gr
-										.getGroupList().getMember()) {
-									buildy.append(mem.getTag().getValue()
-											+ "\n");
-								}
-							}
-						}
 					}
 				}
-				logger.debug(buildy.toString());
+				for (String uri : uris) {
+					logger.debug("Sending to " + uri);
+					threadPoolExecutor.submit(new SendRunnable(uri, ecreports));
+				}
 			} catch (InterruptedException e) {
 				timer.stop();
 				Thread.currentThread().interrupt();
@@ -329,5 +347,55 @@ public class ECReportmanager implements Runnable, StatementAwareUpdateListener {
 	private class EventTuple {
 		public EventBean[] beans;
 		public ECReports report;
+	}
+
+	private class SendRunnable implements Runnable {
+		/** Target of the report */
+		private String uri;
+		private ECReports reports;
+
+		/**
+		 * @param uri
+		 * @param reports
+		 */
+		public SendRunnable(String uri, ECReports reports) {
+			this.uri = uri;
+			this.reports = reports;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see java.lang.Runnable#run()
+		 */
+		@Override
+		public void run() {
+			String[] str = uri.toString().split(":");
+			try {
+				Socket socket = new Socket(str[0], Integer.parseInt(str[1]));
+				PrintWriter out = new PrintWriter(socket.getOutputStream(),
+						true);
+
+				try {
+					reports.setECSpec(spec);
+					ReportAnswer answer = new ReportAnswer();
+					answer.reports = reports;
+					marsh.marshal(answer, out);
+				} catch (JAXBException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				out.flush();
+				out.close();
+				socket.close();
+			} catch (NumberFormatException e) {
+				logger.warn(e);
+			} catch (UnknownHostException e) {
+				logger.warn(e);
+			} catch (IOException e) {
+				logger.warn(e);
+			}
+		}
+
 	}
 }

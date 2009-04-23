@@ -36,11 +36,10 @@ public interface ECSPECManagerService {
 	 *            target for the reports
 	 * @throws NoSuchNameExceptionResponse
 	 * @throws DuplicateSubscriptionExceptionResponse
-	 * @throws InvalidURIExceptionResponse
 	 */
 	public void subscribe(String specName, String uri)
 			throws NoSuchNameExceptionResponse,
-			DuplicateSubscriptionExceptionResponse, InvalidURIExceptionResponse;
+			DuplicateSubscriptionExceptionResponse;
 
 	/**
 	 * Unsubscribe from a spec.
@@ -50,11 +49,10 @@ public interface ECSPECManagerService {
 	 *            target for the reports
 	 * @throws NoSuchNameExceptionResponse
 	 * @throws DuplicateSubscriptionExceptionResponse
-	 * @throws InvalidURIExceptionResponse
 	 */
 	public void unsubscribe(String specName, String uri)
 			throws NoSuchNameExceptionResponse,
-			NoSuchSubscriberExceptionResponse, InvalidURIExceptionResponse;
+			NoSuchSubscriberExceptionResponse;
 
 	/**
 	 * Get a list containing all currently subscribed URIs.
@@ -63,7 +61,7 @@ public interface ECSPECManagerService {
 	 * @return
 	 * @throws NoSuchSubscriberExceptionResponse
 	 */
-	public List<URI> getSubscriptions(String specName)
+	public List<String> getSubscriptions(String specName)
 			throws NoSuchNameExceptionResponse;
 
 	/**
