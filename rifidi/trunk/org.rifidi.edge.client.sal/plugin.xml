@@ -761,7 +761,7 @@
       <command
             category="org.rifidi.edge.client.categories.commands.sal.Configuration"
             description="Create a Command Configuration"
-            id="org.rifidi.edge.client.categories.commands.sal.Configuration"
+            id="rg.rifidi.edge.client.sal.commands.commandconfig.create"
             name="CreateCommandConfiguration">
       </command>
       <command
