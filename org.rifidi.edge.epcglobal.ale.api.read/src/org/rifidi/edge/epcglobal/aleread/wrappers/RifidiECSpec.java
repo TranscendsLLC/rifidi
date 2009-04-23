@@ -239,10 +239,14 @@ public class RifidiECSpec {
 								.add(esper
 										.getEPAdministrator()
 										.createEPL(
-												"on pattern[every org.rifidi.edge.epcglobal.aleread.rifidievents.StartEvent(name='"+name+"') -> (timer:interval("
+												"on pattern[every org.rifidi.edge.epcglobal.aleread.rifidievents.StartEvent(name='"
+														+ name
+														+ "') -> (timer:interval("
 														+ rifidiBoundarySpec
 																.getDuration()
-														+ " msec) and not org.rifidi.edge.epcglobal.aleread.rifidievents.StopEvent(name='"+name+"'))] select tags from "
+														+ " msec) and not org.rifidi.edge.epcglobal.aleread.rifidievents.StopEvent(name='"
+														+ name
+														+ "'))] select tags from "
 														+ name
 														+ "_collectwin as tags"));
 					} else {
@@ -255,7 +259,9 @@ public class RifidiECSpec {
 								.add(esper
 										.getEPAdministrator()
 										.createEPL(
-												"on pattern[every (org.rifidi.edge.epcglobal.aleread.rifidievents.StartEvent(name='"+name+"') -> "
+												"on pattern[every (org.rifidi.edge.epcglobal.aleread.rifidievents.StartEvent(name='"
+														+ name
+														+ "') -> "
 														+ name
 														+ "_collectwin where timer:within("
 														+ rifidiBoundarySpec
@@ -268,7 +274,9 @@ public class RifidiECSpec {
 								.add(esper
 										.getEPAdministrator()
 										.createEPL(
-												"on pattern[every (org.rifidi.edge.epcglobal.aleread.rifidievents.StartEvent(name='"+name+"') -> "
+												"on pattern[every (org.rifidi.edge.epcglobal.aleread.rifidievents.StartEvent(name='"
+														+ name
+														+ "') -> "
 														+ name
 														+ "_collectwin where timer:within("
 														+ rifidiBoundarySpec
@@ -289,12 +297,16 @@ public class RifidiECSpec {
 							.add(esper
 									.getEPAdministrator()
 									.createEPL(
-											"on pattern[every org.rifidi.edge.epcglobal.aleread.rifidievents.StartEvent(name='"+name+"') -> (timer:interval("
+											"on pattern[every org.rifidi.edge.epcglobal.aleread.rifidievents.StartEvent(name='"
+													+ name
+													+ "') -> (timer:interval("
 													+ rifidiBoundarySpec
 															.getDuration()
 													+ " msec) and not "
 													+ name
-													+ "_collectwin and not org.rifidi.edge.epcglobal.aleread.rifidievents.StopEvent(name='"+name+"'))] select count(whine) from "
+													+ "_collectwin and not org.rifidi.edge.epcglobal.aleread.rifidievents.StopEvent(name='"
+													+ name
+													+ "'))] select count(whine) from "
 													+ name
 													+ "_collectwin as whine"));
 					// STOP TRIGGERS
@@ -304,12 +316,16 @@ public class RifidiECSpec {
 								.add(esper
 										.getEPAdministrator()
 										.createEPL(
-												"on pattern[every (org.rifidi.edge.epcglobal.aleread.rifidievents.StartEvent(name='"+name+"') -> [0..] "
+												"on pattern[every (org.rifidi.edge.epcglobal.aleread.rifidievents.StartEvent(name='"
+														+ name
+														+ "') -> [0..] "
 														+ name
 														+ "_collectwin until (timer:interval("
 														+ rifidiBoundarySpec
 																.getDuration()
-														+ " msec) and org.rifidi.edge.epcglobal.aleread.rifidievents.StopEvent(name='"+name+"')))] select count(whine) from "
+														+ " msec) and org.rifidi.edge.epcglobal.aleread.rifidievents.StopEvent(name='"
+														+ name
+														+ "')))] select count(whine) from "
 														+ name
 														+ "_collectwin as whine"));
 
@@ -317,12 +333,16 @@ public class RifidiECSpec {
 								.add(esper
 										.getEPAdministrator()
 										.createEPL(
-												"on pattern[every (org.rifidi.edge.epcglobal.aleread.rifidievents.StartEvent(name='"+name+"') -> [0..] "
+												"on pattern[every (org.rifidi.edge.epcglobal.aleread.rifidievents.StartEvent(name='"
+														+ name
+														+ "') -> [0..] "
 														+ name
 														+ "_collectwin until (timer:interval("
 														+ rifidiBoundarySpec
 																.getDuration()
-														+ " msec) and org.rifidi.edge.epcglobal.aleread.rifidievents.StopEvent(name='"+name+"')))] select tags from "
+														+ " msec) and org.rifidi.edge.epcglobal.aleread.rifidievents.StopEvent(name='"
+														+ name
+														+ "')))] select tags from "
 														+ name
 														+ "_collectwin as tags"));
 
@@ -335,7 +355,9 @@ public class RifidiECSpec {
 								.add(esper
 										.getEPAdministrator()
 										.createEPL(
-												"on pattern[every (org.rifidi.edge.epcglobal.aleread.rifidievents.StartEvent(name='"+name+"') -> "
+												"on pattern[every (org.rifidi.edge.epcglobal.aleread.rifidievents.StartEvent(name='"
+														+ name
+														+ "') -> "
 														+ name
 														+ "_collectwin -> (timer:interval("
 														+ rifidiBoundarySpec
@@ -350,7 +372,9 @@ public class RifidiECSpec {
 								.add(esper
 										.getEPAdministrator()
 										.createEPL(
-												"on pattern[every (org.rifidi.edge.epcglobal.aleread.rifidievents.StartEvent(name='"+name+"') -> (timer:interval("
+												"on pattern[every (org.rifidi.edge.epcglobal.aleread.rifidievents.StartEvent(name='"
+														+ name
+														+ "') -> (timer:interval("
 														+ rifidiBoundarySpec
 																.getStableSetInterval()
 														+ " msec) and not "
@@ -365,22 +389,18 @@ public class RifidiECSpec {
 							.add(esper
 									.getEPAdministrator()
 									.createEPL(
-											"on pattern[every org.rifidi.edge.epcglobal.aleread.rifidievents.StartEvent(name='"+name+"')] delete from "
+											"on pattern[every org.rifidi.edge.epcglobal.aleread.rifidievents.StartEvent(name='"
+													+ name
+													+ "')] delete from "
 													+ name + "_collectwin"));
-					destroyStatements
-							.add(esper
-									.getEPAdministrator()
-									.createEPL(
-											"on org.rifidi.edge.epcglobal.aleread.rifidievents.DestroyEvent(name='"+name+"') select count(whine) from "
-													+ name
-													+ "_collectwin as whine"));
-					destroyStatements
-							.add(esper
-									.getEPAdministrator()
-									.createEPL(
-											"on org.rifidi.edge.epcglobal.aleread.rifidievents.DestroyEvent(name='"+name+"') select tags  from "
-													+ name
-													+ "_collectwin as tags"));
+					destroyStatements.add(esper.getEPAdministrator().createEPL(
+							"on org.rifidi.edge.epcglobal.aleread.rifidievents.DestroyEvent(name='"
+									+ name + "') select count(whine) from "
+									+ name + "_collectwin as whine"));
+					destroyStatements.add(esper.getEPAdministrator().createEPL(
+							"on org.rifidi.edge.epcglobal.aleread.rifidievents.DestroyEvent(name='"
+									+ name + "') select tags  from " + name
+									+ "_collectwin as tags"));
 
 					allNonCollectionStatements.addAll(durationStatements);
 					allNonCollectionStatements
@@ -547,6 +567,15 @@ public class RifidiECSpec {
 				stop();
 			}
 		}
+	}
+
+	/**
+	 * Get all subscription URIs for this spec.
+	 * 
+	 * @return
+	 */
+	public List<URI> getSubscriptions() {
+		return new ArrayList<URI>(subscriptionURIs);
 	}
 
 	/**

@@ -6,6 +6,7 @@
 package org.rifidi.edge.epcglobal.ale.api.read.ws;
 
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -273,9 +274,11 @@ public class ALEServicePortTypeImpl implements ALEServicePortType, WebService {
 			GetSubscribers parms) throws ImplementationExceptionResponse,
 			NoSuchNameExceptionResponse, SecurityExceptionResponse {
 		logger.info("Executing operation getSubscribers");
-		System.out.println(parms);
 		try {
-			org.rifidi.edge.epcglobal.ale.api.read.ws.ArrayOfString _return = null;
+			org.rifidi.edge.epcglobal.ale.api.read.ws.ArrayOfString _return = new ArrayOfString();
+			for(URI uri:ecspecManagerService.getSubscriptions(parms.getSpecName())){
+				_return.getString().add(uri.toASCIIString());
+			}
 			return _return;
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -299,7 +302,6 @@ public class ALEServicePortTypeImpl implements ALEServicePortType, WebService {
 			throws ImplementationExceptionResponse,
 			NoSuchNameExceptionResponse, SecurityExceptionResponse {
 		logger.info("Executing operation poll");
-		System.out.println(parms);
 		try {
 			org.rifidi.edge.epcglobal.ale.api.read.data.ECReports _return = null;
 			return _return;
