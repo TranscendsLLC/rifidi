@@ -18,8 +18,8 @@
       <view
             allowMultiple="true"
             category="org.rifidi.edge.client.ale"
-            class="org.rifidi.edge.client.ale.ecspecview.views.ALEEditorView"
-            id="org.rifidi.edge.client.ale.ecspecview.views.ALEEditorView"
+            class="org.rifidi.edge.client.ale.ecspecview.views.ECSpecEditorView"
+            id="org.rifidi.edge.client.ale.ecspecview.views.ECSpecEditorView"
             name="ECSpec Editor View"
             restorable="true">
       </view>
@@ -84,7 +84,7 @@
             name="ECSpec">
       </category>
       <command
-            description="Display A ECSpec"
+            description="Display an ECSpec"
             id="org.rifidi.edge.client.ale.ecspecview.displayECSpec"
             name="Display ECSpec">
       </command>
@@ -105,6 +105,11 @@
             id="org.rifidi.edge.ale.lr.category"
             name="ALE LR">
       </category>
+      <command
+            description="Delete an ECSpec"
+            id="org.rifidi.edge.client.ale.ecspecview.deleteECSpec"
+            name="Delete">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
@@ -139,6 +144,10 @@
             class="org.rifidi.edge.client.alelr.commands.CreateHandler"
             commandId="org.rifidi.edge.ale.lr.commands.create">
       </handler>
+      <handler
+            class="org.rifidi.edge.client.ale.ecspecview.handlers.DeleteECSpecHandler"
+            commandId="org.rifidi.edge.client.ale.ecspecview.deleteECSpec">
+      </handler>
    </extension>
       <extension
          point="org.eclipse.core.expressions.propertyTesters">
@@ -161,8 +170,31 @@
          </command>
          <command
                commandId="org.rifidi.edge.client.ale.ecspecview.displayECSpec"
-               label="Display ECSPec"
+               label="Display"
                style="push">
+            <visibleWhen>
+               <and>
+                  <iterate>
+                     <instanceof
+                           value="org.rifidi.edge.client.ale.api.xsd.ale.epcglobal.ECSpec">
+                     </instanceof>
+                  </iterate>
+               </and>
+            </visibleWhen>
+         </command>
+         <command
+               commandId="org.rifidi.edge.client.ale.ecspecview.deleteECSpec"
+               label="Delete"
+               style="push">
+            <visibleWhen>
+               <and>
+                  <iterate>
+                     <instanceof
+                           value="org.rifidi.edge.client.ale.api.xsd.ale.epcglobal.ECSpec">
+                     </instanceof>
+                  </iterate>
+               </and>
+            </visibleWhen>
          </command>
       </menuContribution>
       <menuContribution

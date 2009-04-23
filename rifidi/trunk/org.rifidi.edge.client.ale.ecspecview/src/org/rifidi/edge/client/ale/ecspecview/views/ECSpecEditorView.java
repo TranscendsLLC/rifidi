@@ -32,7 +32,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.events.ExpansionAdapter;
 import org.eclipse.ui.forms.events.ExpansionEvent;
 import org.eclipse.ui.forms.events.IExpansionListener;
@@ -42,6 +44,8 @@ import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
 import org.eclipse.ui.part.ViewPart;
+import org.rifidi.edge.client.ale.api.wsdl.ale.epcglobal.DuplicateNameExceptionResponse;
+import org.rifidi.edge.client.ale.api.wsdl.ale.epcglobal.ECSpecValidationExceptionResponse;
 import org.rifidi.edge.client.ale.api.xsd.ale.epcglobal.ECBoundarySpec;
 import org.rifidi.edge.client.ale.api.xsd.ale.epcglobal.ECFieldSpec;
 import org.rifidi.edge.client.ale.api.xsd.ale.epcglobal.ECFilterSpec;
@@ -58,14 +62,17 @@ import org.rifidi.edge.client.ale.api.xsd.ale.epcglobal.ECFilterSpec.IncludePatt
 import org.rifidi.edge.client.ale.api.xsd.ale.epcglobal.ECFilterSpecExtension.FilterList;
 import org.rifidi.edge.client.ale.api.xsd.ale.epcglobal.ECSpec.LogicalReaders;
 import org.rifidi.edge.client.ale.api.xsd.ale.epcglobal.ECSpec.ReportSpecs;
+import org.rifidi.edge.client.ale.ecspecview.Activator;
+import org.rifidi.edge.client.alelr.ALELRService;
+import org.rifidi.edge.client.alelr.ALEService;
 
 /**
  * @author Tobias Hoppenthaler - tobias@pramari.com
  * 
  */
-public class ALEEditorView extends ViewPart {
+public class ECSpecEditorView extends ViewPart {
 
-	public final static String ID = "org.rifidi.edge.client.ale.ecspecview.views.ALEEditorView";
+	public final static String ID = "org.rifidi.edge.client.ale.ecspecview.views.ECSpecEditorView";
 
 	private FormToolkit toolkit = null;
 	private ScrolledForm form = null;
@@ -84,9 +91,18 @@ public class ALEEditorView extends ViewPart {
 	// private ECGroupSpec grsp = null;
 	private ArrayList<ECReportSpec> repSpecs = new ArrayList<ECReportSpec>();
 	private CTabItem ctiEdit;
-	private Log logger = LogFactory.getLog(ALEEditorView.class);
+	private Log logger = LogFactory.getLog(ECSpecEditorView.class);
+
+	private ALEService service;
+	private ALELRService lrService;
 
 	// private ConnectionService connectionService = null;
+
+	public ECSpecEditorView() {
+		super();
+		service = Activator.getDefault().getAleService();
+		lrService = Activator.getDefault().getAleLrService();
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -207,7 +223,21 @@ public class ALEEditorView extends ViewPart {
 					reportSpecs.getReportSpec().add(ecrs);
 				}
 				ecSpec.setReportSpecs(reportSpecs);
-				ECSpecViewContentProvider.getController().define(name, ecSpec);
+				try {
+					service.createECSpec(name, ecSpec);
+				} catch (ECSpecValidationExceptionResponse e1) {
+					MessageBox messageBox = new MessageBox(PlatformUI
+							.getWorkbench().getActiveWorkbenchWindow()
+							.getShell(), SWT.ICON_ERROR | SWT.OK);
+					messageBox.setMessage(e1.toString());
+					messageBox.open();
+				} catch (DuplicateNameExceptionResponse e1) {
+					MessageBox messageBox = new MessageBox(PlatformUI
+							.getWorkbench().getActiveWorkbenchWindow()
+							.getShell(), SWT.ICON_ERROR | SWT.OK);
+					messageBox.setMessage(e1.toString());
+					messageBox.open();
+				}
 
 			}
 
@@ -285,7 +315,7 @@ public class ALEEditorView extends ViewPart {
 		// List widget that contains the logical readers and allows for their
 		// de-/selection
 		lrList = new List(lrSectionClient, SWT.BORDER | SWT.MULTI
-				| SWT.V_SCROLL | SWT.FILL);
+				| SWT.V_SCROLL);
 
 		// TODO: Former code to retrieve readers from server - probably will
 		// change with models.
@@ -299,12 +329,10 @@ public class ALEEditorView extends ViewPart {
 		 * (ImplementationExceptionResponse e1) { logger.debug(e1.getMessage());
 		 * }
 		 */
-		// TODO: static fix to display readers
-		ArrayList<String> lstReaders = new ArrayList<String>();
-		lstReaders.add("Alien9800-1");
-		lstReaders.add("Alien9800-2");
+
 		// list gets passed to the widget.
-		lrList.setItems(lstReaders.toArray(new String[lstReaders.size()]));
+		lrList.setItems(lrService.getAvailableReaderNames().toArray(
+				new String[] {}));
 		// when focus is lost, data gets written back to the spec.
 		lrList.addFocusListener(new FocusListener() {
 
@@ -330,8 +358,9 @@ public class ALEEditorView extends ViewPart {
 		});
 
 		GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
-		data.verticalSpan = 2;
-		data.heightHint = 50;
+		data.verticalSpan = 4;
+		data.heightHint = 200;
+		data.widthHint = 300;
 
 		lrList.setLayoutData(data);
 
@@ -874,14 +903,13 @@ public class ALEEditorView extends ViewPart {
 			filter.setExcludePatterns(expat);
 			IncludePatterns inpat = new IncludePatterns();
 			filter.setIncludePatterns(inpat);
-			//TODO: adding a null filter list
+			// TODO: adding a null filter list
 			ECFilterSpecExtension ext = new ECFilterSpecExtension();
 			ext.setFilterList(new FilterList());
 			filter.setExtension(ext);
-			
+
 			spec.setFilterSpec(filter);
-			
-			
+
 		}
 
 		toolkit.createLabel(filterSectionClient, "Exclude Patterns:");
@@ -1018,12 +1046,12 @@ public class ALEEditorView extends ViewPart {
 				for (int i = 0; i < alPatterns.length; i++) {
 					group.getPattern().add(alPatterns[i]);
 				}
-				//TODO: Supply a null GroupSpec
+				// TODO: Supply a null GroupSpec
 				ECGroupSpecExtension groupExt = new ECGroupSpecExtension();
 				ECFieldSpec fieldSpec = new ECFieldSpec();
 				groupExt.setFieldspec(fieldSpec);
 				group.setExtension(groupExt);
-				
+
 				spec.setGroupSpec(group);
 			}
 

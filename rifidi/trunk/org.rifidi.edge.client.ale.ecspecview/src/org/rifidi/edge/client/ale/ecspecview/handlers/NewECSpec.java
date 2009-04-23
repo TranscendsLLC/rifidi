@@ -12,7 +12,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.rifidi.edge.client.ale.api.xsd.ale.epcglobal.ECSpec;
-import org.rifidi.edge.client.ale.ecspecview.views.ALEEditorView;
+import org.rifidi.edge.client.ale.ecspecview.views.ECSpecEditorView;
 
 /**
  * @author kyle
@@ -31,15 +31,14 @@ public class NewECSpec extends AbstractHandler implements IHandler {
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindow(event);
 		String generatedName = Long.toString(System.currentTimeMillis());
-		ALEEditorView view;
+		ECSpecEditorView view;
 		try {
-			view = (ALEEditorView) window.getActivePage().showView(
-					ALEEditorView.ID, generatedName,
+			view = (ECSpecEditorView) window.getActivePage().showView(
+					ECSpecEditorView.ID, generatedName,
 					IWorkbenchPage.VIEW_VISIBLE);
 			view.initSpecView(generatedName, new ECSpec());
 		} catch (PartInitException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new RuntimeException(e);
 		}
 		return null;
 	}

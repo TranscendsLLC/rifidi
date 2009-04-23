@@ -13,14 +13,13 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.part.ViewPart;
-import org.rifidi.edge.client.ale.api.wsdl.alelr.epcglobal.ALELRServicePortType;
 import org.rifidi.edge.client.ale.ecspecview.Activator;
 
 /**
  * @author Jochen Mader - jochen@pramari.com
  * 
  */
-public class LRTreeViewPart extends ViewPart implements ALELRListener {
+public class LRTreeViewPart extends ViewPart {
 	/** Treeviewer. */
 	private TreeViewer treeViewer;
 	/** Service that manages connections to ALE. */
@@ -55,7 +54,7 @@ public class LRTreeViewPart extends ViewPart implements ALELRListener {
 		treeViewer.getControl().setMenu(menu);
 		treeViewer.setSorter(new ViewerSorter());
 		getSite().setSelectionProvider(treeViewer);
-		service.registerALELRListener(this);
+		service.registerALELRViewer(treeViewer);
 	}
 
 	/*
@@ -69,21 +68,4 @@ public class LRTreeViewPart extends ViewPart implements ALELRListener {
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.part.WorkbenchPart#dispose()
-	 */
-	@Override
-	public void dispose() {
-		super.dispose();
-		service.unregisterALELRListener(this);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.rifidi.edge.client.alelr.ALELRListener#setALELRStub(org.rifidi.edge.client.ale.api.wsdl.alelr.epcglobal.ALELRServicePortType)
-	 */
-	@Override
-	public void setALELRStub(ALELRServicePortType stub) {
-		treeViewer.setInput(stub);
-	}
-	
 }

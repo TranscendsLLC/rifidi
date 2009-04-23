@@ -5,22 +5,27 @@ package org.rifidi.edge.client.ale.ecspecview.handlers;
 
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.expressions.IEvaluationContext;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.PlatformUI;
+import org.rifidi.edge.client.ale.api.wsdl.ale.epcglobal.NoSuchNameExceptionResponse;
+import org.rifidi.edge.client.ale.ecspecview.Activator;
 import org.rifidi.edge.client.ale.ecspecview.model.ECSpecDecorator;
-import org.rifidi.edge.client.ale.ecspecview.views.ECSpecEditorView;
+import org.rifidi.edge.client.alelr.ALEService;
 
 /**
- * @author kyle
+ * @author Jochen Mader - jochen@pramari.com
  * 
  */
-public class DisplayECSpecHandler extends AbstractHandler implements IHandler {
+public class DeleteECSpecHandler extends AbstractHandler {
+	/** Logger for this class. */
+	private static final Log logger = LogFactory
+			.getLog(DeleteECSpecHandler.class);
+	/** ALE management service. */
+	private ALEService service;
 
 	/*
 	 * (non-Javadoc)
@@ -29,29 +34,25 @@ public class DisplayECSpecHandler extends AbstractHandler implements IHandler {
 	 * org.eclipse.core.commands.IHandler#execute(org.eclipse.core.commands.
 	 * ExecutionEvent)
 	 */
+	public DeleteECSpecHandler() {
+		super();
+		service = Activator.getDefault().getAleService();
+	}
+
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		if (event.getApplicationContext() instanceof IEvaluationContext) {
 			for (Object selected : (List<?>) ((IEvaluationContext) event
 					.getApplicationContext()).getDefaultVariable()) {
 				if (selected instanceof ECSpecDecorator) {
-					ECSpecDecorator ecspec = (ECSpecDecorator) selected;
-
-					ECSpecEditorView view;
 					try {
-						view = (ECSpecEditorView) PlatformUI.getWorkbench()
-								.getActiveWorkbenchWindow().getActivePage()
-								.showView(ECSpecEditorView.ID,
-										ecspec.getName(),
-										IWorkbenchPage.VIEW_VISIBLE);
-						view.initSpecView(ecspec.getName(), ecspec.getSpec());
-					} catch (PartInitException e) {
-						throw new RuntimeException(e);
+						service.deleteECSpec(((ECSpecDecorator) selected).getName());
+					} catch (NoSuchNameExceptionResponse e) {
+						logger.warn(e);
 					}
 				}
 			}
 		}
 		return null;
 	}
-
 }

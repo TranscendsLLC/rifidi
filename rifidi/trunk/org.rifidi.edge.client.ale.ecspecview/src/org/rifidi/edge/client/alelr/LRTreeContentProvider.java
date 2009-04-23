@@ -11,22 +11,12 @@ import org.apache.commons.logging.LogFactory;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.MessageBox;
-import org.eclipse.ui.PlatformUI;
 import org.rifidi.edge.client.ale.api.wsdl.alelr.epcglobal.ALELRServicePortType;
-import org.rifidi.edge.client.ale.api.wsdl.alelr.epcglobal.Define;
-import org.rifidi.edge.client.ale.api.wsdl.alelr.epcglobal.DuplicateNameExceptionResponse;
 import org.rifidi.edge.client.ale.api.wsdl.alelr.epcglobal.EmptyParms;
 import org.rifidi.edge.client.ale.api.wsdl.alelr.epcglobal.GetLRSpec;
-import org.rifidi.edge.client.ale.api.wsdl.alelr.epcglobal.ImmutableReaderExceptionResponse;
 import org.rifidi.edge.client.ale.api.wsdl.alelr.epcglobal.ImplementationExceptionResponse;
-import org.rifidi.edge.client.ale.api.wsdl.alelr.epcglobal.InUseExceptionResponse;
 import org.rifidi.edge.client.ale.api.wsdl.alelr.epcglobal.NoSuchNameExceptionResponse;
 import org.rifidi.edge.client.ale.api.wsdl.alelr.epcglobal.SecurityExceptionResponse;
-import org.rifidi.edge.client.ale.api.wsdl.alelr.epcglobal.Undefine;
-import org.rifidi.edge.client.ale.api.wsdl.alelr.epcglobal.ValidationExceptionResponse;
-import org.rifidi.edge.client.ale.api.xsd.alelr.epcglobal.LRSpec;
 import org.rifidi.edge.client.alelr.decorators.LRSpecDecorator;
 import org.rifidi.edge.client.alelr.decorators.LRSpecSubnodeDecorator;
 
@@ -134,75 +124,6 @@ public class LRTreeContentProvider implements ITreeContentProvider {
 
 	}
 
-	public void deleteReader(LRSpecDecorator reader) {
-		Undefine undefine = new Undefine();
-		undefine.setName(reader.getName());
-		try {
-			lrService.undefine(undefine);
-		} catch (SecurityExceptionResponse e) {
-			logger.fatal(e);
-		} catch (InUseExceptionResponse e) {
-			MessageBox messageBox = new MessageBox(PlatformUI.getWorkbench()
-					.getActiveWorkbenchWindow().getShell(), SWT.ICON_ERROR
-					| SWT.OK);
-			messageBox.setMessage(e.toString());
-			messageBox.open();
-		} catch (ImplementationExceptionResponse e) {
-			logger.fatal(e);
-		} catch (ImmutableReaderExceptionResponse e) {
-			MessageBox messageBox = new MessageBox(PlatformUI.getWorkbench()
-					.getActiveWorkbenchWindow().getShell(), SWT.ICON_ERROR
-					| SWT.OK);
-			messageBox.setMessage(e.toString());
-			messageBox.open();
-		} catch (NoSuchNameExceptionResponse e) {
-			MessageBox messageBox = new MessageBox(PlatformUI.getWorkbench()
-					.getActiveWorkbenchWindow().getShell(), SWT.ICON_ERROR
-					| SWT.OK);
-			messageBox.setMessage(e.toString());
-			messageBox.open();
-
-		}
-		updateReaderList(getReaderList());
-	}
-
-	/**
-	 * Create a new reader.
-	 * 
-	 * @param name
-	 * @param readerNames
-	 */
-	public void createReader(String name, List<String> readerNames) {
-		Define define = new Define();
-		define.setName(name);
-		LRSpec spec = new LRSpec();
-		spec.setIsComposite(true);
-		LRSpec.Readers readers = new LRSpec.Readers();
-		readers.getReader().addAll(readerNames);
-		spec.setReaders(readers);
-		define.setSpec(spec);
-		try {
-			lrService.define(define);
-		} catch (SecurityExceptionResponse e) {
-			logger.fatal(e);
-		} catch (ImplementationExceptionResponse e) {
-			logger.fatal(e);
-		} catch (DuplicateNameExceptionResponse e) {
-			MessageBox messageBox = new MessageBox(PlatformUI.getWorkbench()
-					.getActiveWorkbenchWindow().getShell(), SWT.ICON_ERROR
-					| SWT.OK);
-			messageBox.setMessage(e.toString());
-			messageBox.open();
-		} catch (ValidationExceptionResponse e) {
-			MessageBox messageBox = new MessageBox(PlatformUI.getWorkbench()
-					.getActiveWorkbenchWindow().getShell(), SWT.ICON_ERROR
-					| SWT.OK);
-			messageBox.setMessage(e.toString());
-			messageBox.open();
-		}
-		updateReaderList(getReaderList());
-	}
-
 	private void updateReaderList(List<LRSpecDecorator> newList) {
 		lrspecs.clear();
 		lrspecs.addAll(newList);
@@ -217,8 +138,9 @@ public class LRTreeContentProvider implements ITreeContentProvider {
 				GetLRSpec spec = new GetLRSpec();
 				spec.setName(name);
 				// we need the reader names, decorate the reader
-				lrspecs.add(new LRSpecDecorator(name,
-						lrService.getLRSpec(spec), this));
+				lrspecs
+						.add(new LRSpecDecorator(name, lrService
+								.getLRSpec(spec)));
 			}
 			return lrspecs;
 		} catch (SecurityExceptionResponse e) {

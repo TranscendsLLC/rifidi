@@ -16,7 +16,7 @@ public class LRSpecSubnodeDecorator extends LRSpecDecorator {
 
 	public LRSpecSubnodeDecorator(String name, LRSpec decorated,
 			LRSpecDecorator parent, LRTreeContentProvider lrTreeContentProvider) {
-		super(name, decorated, lrTreeContentProvider);
+		super(name, decorated);
 		this.parent = parent;
 	}
 

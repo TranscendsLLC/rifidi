@@ -23,8 +23,6 @@ public class LRSpecDecorator extends LRSpec {
 	private String name;
 	/** Decorated reader. */
 	private LRSpec decorated;
-	/** Content provider that created this decorator. */
-	private LRTreeContentProvider lrTreeContentProvider;
 
 	/**
 	 * Constructor.
@@ -32,12 +30,10 @@ public class LRSpecDecorator extends LRSpec {
 	 * @param name
 	 * @param decorated
 	 */
-	public LRSpecDecorator(String name, LRSpec decorated,
-			LRTreeContentProvider lrTreeContentProvider) {
+	public LRSpecDecorator(String name, LRSpec decorated) {
 		super();
 		this.name = name;
 		this.decorated = decorated;
-		this.lrTreeContentProvider = lrTreeContentProvider;
 	}
 
 	/**
@@ -47,13 +43,6 @@ public class LRSpecDecorator extends LRSpec {
 	 */
 	public String getName() {
 		return name;
-	}
-
-	/**
-	 * @return the lrTreeContentProvider
-	 */
-	public LRTreeContentProvider getLrTreeContentProvider() {
-		return lrTreeContentProvider;
 	}
 
 	/**
