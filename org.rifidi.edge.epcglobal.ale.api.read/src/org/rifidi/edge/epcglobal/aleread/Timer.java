@@ -30,7 +30,7 @@ public class Timer {
 	private long intervalStart;
 	private Set<Trigger> startTriggers;
 	private Set<Trigger> stopTriggers;
-	//if anybody sees this I am retiring to a job in fast food
+	// if anybody sees this I am retiring to a job in fast food
 	private ReentrantLock mainLock = new ReentrantLock();
 	/** True if the runnable is executing. */
 	private AtomicBoolean running = new AtomicBoolean(false);
@@ -109,7 +109,7 @@ public class Timer {
 	public void stop() {
 		mainLock.lock();
 		try {
-			if(executor!=null){
+			if (executor != null) {
 				executor.shutdownNow();
 				executor = null;
 			}
@@ -126,6 +126,7 @@ public class Timer {
 		try {
 			logger.debug("Starting event cycle");
 			intervalStart = System.currentTimeMillis();
+			logger.debug("event " + currentReport);
 			esper.getEPRuntime().sendEvent(new StartEvent(specName));
 			started = true;
 		} finally {
@@ -189,7 +190,10 @@ public class Timer {
 			currentReport = new ECReports();
 			if (startTriggers.size() == 0) {
 				long currentTime = System.currentTimeMillis();
+				currentReport.setInitiationCondition(ALEReadAPI.conditionToName
+						.get(ALEReadAPI.TriggerCondition.REPEAT_PERIOD));
 				if (intervalStart + interval <= currentTime) {
+					logger.debug("REPEAT");
 					intervalStart = currentTime;
 					currentReport
 							.setInitiationCondition(ALEReadAPI.conditionToName
@@ -199,7 +203,9 @@ public class Timer {
 					time(intervalStart + interval - currentTime);
 				}
 			} else {
+				logger.debug("TRIGGER");
 				if (lastTrigger != null) {
+					logger.debug("TRIGGER NOW");
 					currentReport
 							.setInitiationCondition(ALEReadAPI.conditionToName
 									.get(ALEReadAPI.TriggerCondition.TRIGGER));
@@ -212,6 +218,13 @@ public class Timer {
 		} finally {
 			mainLock.unlock();
 		}
+	}
+
+	/**
+	 * @return the esper
+	 */
+	public EPServiceProvider getEsper() {
+		return esper;
 	}
 
 	/**

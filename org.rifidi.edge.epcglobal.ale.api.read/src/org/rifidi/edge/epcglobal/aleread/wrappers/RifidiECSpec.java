@@ -77,7 +77,7 @@ public class RifidiECSpec {
 	/** True if the spec was destroied. */
 	private boolean destroied;
 	/** Threadsafe list for subscription uri. */
-	private List<URI> subscriptionURIs;
+	private List<String> subscriptionURIs;
 
 	/**
 	 * Constructor.
@@ -102,7 +102,7 @@ public class RifidiECSpec {
 		this.esper = esper;
 		this.readers = readers;
 		this.primarykeys = primarykeys;
-		this.subscriptionURIs = new CopyOnWriteArrayList<URI>();
+		this.subscriptionURIs = new CopyOnWriteArrayList<String>();
 		started = false;
 		whenDataAvailableStatements = new ArrayList<EPStatement>();
 		durationStatements = new ArrayList<EPStatement>();
@@ -235,6 +235,7 @@ public class RifidiECSpec {
 					// available
 					// is set
 					if (!rifidiBoundarySpec.isWhenDataAvailable()) {
+						logger.debug("Creating duration timer.");
 						durationStatements
 								.add(esper
 										.getEPAdministrator()
@@ -255,6 +256,7 @@ public class RifidiECSpec {
 						// regular
 						// timing if
 						// provided!!!
+						logger.debug("Creating when data avilabale timer.");
 						whenDataAvailableStatements
 								.add(esper
 										.getEPAdministrator()
@@ -351,6 +353,7 @@ public class RifidiECSpec {
 					if (rifidiBoundarySpec.getStableSetInterval() > 0) {
 						// TODO: incorporate INTERVAL!!!!
 						// timing using stable set
+						logger.debug("Creating stable set timer.");
 						stableSetIntervalStatements
 								.add(esper
 										.getEPAdministrator()
@@ -536,7 +539,7 @@ public class RifidiECSpec {
 	 * @param uri
 	 * @throws DuplicateSubscriptionExceptionResponse
 	 */
-	public void subscribe(URI uri)
+	public void subscribe(String uri)
 			throws DuplicateSubscriptionExceptionResponse {
 		synchronized (subscriptionURIs) {
 			if (subscriptionURIs.contains(uri)) {
@@ -556,7 +559,7 @@ public class RifidiECSpec {
 	 * @param uri
 	 * @throws NoSuchSubscriberExceptionResponse
 	 */
-	public void unsubscribe(URI uri) throws NoSuchSubscriberExceptionResponse {
+	public void unsubscribe(String uri) throws NoSuchSubscriberExceptionResponse {
 		synchronized (subscriptionURIs) {
 			if (!subscriptionURIs.contains(uri)) {
 				throw new NoSuchSubscriberExceptionResponse("Uri " + uri
@@ -574,8 +577,8 @@ public class RifidiECSpec {
 	 * 
 	 * @return
 	 */
-	public List<URI> getSubscriptions() {
-		return new ArrayList<URI>(subscriptionURIs);
+	public List<String> getSubscriptions() {
+		return new ArrayList<String>(subscriptionURIs);
 	}
 
 	/**

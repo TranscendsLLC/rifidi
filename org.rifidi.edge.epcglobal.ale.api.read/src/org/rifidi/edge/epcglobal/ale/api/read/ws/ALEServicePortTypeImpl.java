@@ -6,7 +6,6 @@
 package org.rifidi.edge.epcglobal.ale.api.read.ws;
 
 import java.net.MalformedURLException;
-import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -276,9 +275,8 @@ public class ALEServicePortTypeImpl implements ALEServicePortType, WebService {
 		logger.info("Executing operation getSubscribers");
 		try {
 			org.rifidi.edge.epcglobal.ale.api.read.ws.ArrayOfString _return = new ArrayOfString();
-			for(URI uri:ecspecManagerService.getSubscriptions(parms.getSpecName())){
-				_return.getString().add(uri.toASCIIString());
-			}
+			_return.getString().addAll(
+					ecspecManagerService.getSubscriptions(parms.getSpecName()));
 			return _return;
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -366,18 +364,18 @@ public class ALEServicePortTypeImpl implements ALEServicePortType, WebService {
 	@Override
 	public URL getUrl() {
 		String ALEHost = System.getProperty("org.rifidi.edge.ale.host");
-		if(ALEHost==null||ALEHost.equals("")){
-			ALEHost="127.0.0.1";
+		if (ALEHost == null || ALEHost.equals("")) {
+			ALEHost = "127.0.0.1";
 		}
 		String ALEPort = System.getProperty("org.rifidi.edge.ale.port");
-		if(ALEPort==null || ALEPort.equals("")){
-			ALEPort="8081";
+		if (ALEPort == null || ALEPort.equals("")) {
+			ALEPort = "8081";
 		}
 		String ALEReadPath = System.getProperty("org.rifidi.edge.ale.read");
-		if(ALEReadPath==null || ALEReadPath.equals("")){
-			ALEReadPath="aleread";
+		if (ALEReadPath == null || ALEReadPath.equals("")) {
+			ALEReadPath = "aleread";
 		}
-		String url = "http://"+ALEHost+":"+ALEPort+"/"+ALEReadPath;
+		String url = "http://" + ALEHost + ":" + ALEPort + "/" + ALEReadPath;
 		try {
 			return new URL(url);
 		} catch (MalformedURLException e) {

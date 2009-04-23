@@ -3,8 +3,6 @@
  */
 package org.rifidi.edge.epcglobal.aleread.service;
 
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -17,7 +15,6 @@ import org.rifidi.edge.epcglobal.ale.api.read.data.ECSpec;
 import org.rifidi.edge.epcglobal.ale.api.read.ws.DuplicateNameExceptionResponse;
 import org.rifidi.edge.epcglobal.ale.api.read.ws.DuplicateSubscriptionExceptionResponse;
 import org.rifidi.edge.epcglobal.ale.api.read.ws.ECSpecValidationExceptionResponse;
-import org.rifidi.edge.epcglobal.ale.api.read.ws.InvalidURIExceptionResponse;
 import org.rifidi.edge.epcglobal.ale.api.read.ws.NoSuchNameExceptionResponse;
 import org.rifidi.edge.epcglobal.ale.api.read.ws.NoSuchSubscriberExceptionResponse;
 import org.rifidi.edge.epcglobal.aleread.wrappers.RifidiBoundarySpec;
@@ -137,17 +134,20 @@ public class ECSPECManagerServiceImpl implements ECSPECManagerService {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.rifidi.edge.epcglobal.aleread.service.ECSPECManagerService#getSubscriptions(java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seeorg.rifidi.edge.epcglobal.aleread.service.ECSPECManagerService#
+	 * getSubscriptions(java.lang.String)
 	 */
 	@Override
-	public List<URI> getSubscriptions(String specName)
+	public List<String> getSubscriptions(String specName)
 			throws NoSuchNameExceptionResponse {
 		if (nameToSpec.containsKey(specName)) {
 			return nameToSpec.get(specName).getSubscriptions();
 		}
-		throw new NoSuchNameExceptionResponse("A spec named "
-				+ specName + " doesn't exist. ");
+		throw new NoSuchNameExceptionResponse("A spec named " + specName
+				+ " doesn't exist. ");
 	}
 
 	/*
@@ -160,22 +160,17 @@ public class ECSPECManagerServiceImpl implements ECSPECManagerService {
 	@Override
 	public void subscribe(String specName, String uri)
 			throws NoSuchNameExceptionResponse,
-			DuplicateSubscriptionExceptionResponse, InvalidURIExceptionResponse {
+			DuplicateSubscriptionExceptionResponse {
 		synchronized (this) {
 			logger.debug("Subscribing " + uri + " to " + specName);
-			try {
-				URI target = new URI(uri);
-				// check if the spec actually exists
-				if (nameToSpec.containsKey(specName)) {
-					nameToSpec.get(specName).subscribe(target);
-					logger.debug("Subscribed " + uri + " to " + specName);
-					return;
-				}
-				throw new NoSuchNameExceptionResponse("A spec named "
-						+ specName + " doesn't exist. ");
-			} catch (URISyntaxException e) {
-				throw new InvalidURIExceptionResponse(e.toString());
+			// check if the spec actually exists
+			if (nameToSpec.containsKey(specName)) {
+				nameToSpec.get(specName).subscribe(uri);
+				logger.debug("Subscribed " + uri + " to " + specName);
+				return;
 			}
+			throw new NoSuchNameExceptionResponse("A spec named " + specName
+					+ " doesn't exist. ");
 		}
 	}
 
@@ -189,22 +184,17 @@ public class ECSPECManagerServiceImpl implements ECSPECManagerService {
 	@Override
 	public void unsubscribe(String specName, String uri)
 			throws NoSuchNameExceptionResponse,
-			NoSuchSubscriberExceptionResponse, InvalidURIExceptionResponse {
+			NoSuchSubscriberExceptionResponse {
 		synchronized (this) {
 			logger.debug("Unubscribing " + uri + " from " + specName);
-			try {
-				URI target = new URI(uri);
-				// check if the spec actually exists
-				if (nameToSpec.containsKey(specName)) {
-					nameToSpec.get(specName).unsubscribe(target);
-					logger.debug("Unubscribed " + uri + " from " + specName);
-					return;
-				}
-				throw new NoSuchNameExceptionResponse("A spec named "
-						+ specName + " doesn't exist. ");
-			} catch (URISyntaxException e) {
-				throw new InvalidURIExceptionResponse(e.toString());
+			// check if the spec actually exists
+			if (nameToSpec.containsKey(specName)) {
+				nameToSpec.get(specName).unsubscribe(uri);
+				logger.debug("Unubscribed " + uri + " from " + specName);
+				return;
 			}
+			throw new NoSuchNameExceptionResponse("A spec named " + specName
+					+ " doesn't exist. ");
 		}
 	}
 }
