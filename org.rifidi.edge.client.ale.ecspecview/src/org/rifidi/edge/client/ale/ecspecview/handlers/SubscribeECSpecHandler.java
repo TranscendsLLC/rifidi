@@ -1,10 +1,12 @@
 /**
  * 
  */
-package org.rifidi.edge.client.alelr.commands;
+package org.rifidi.edge.client.ale.ecspecview.handlers;
 
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
@@ -12,24 +14,23 @@ import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.ui.PlatformUI;
-import org.rifidi.edge.client.ale.api.wsdl.alelr.epcglobal.InUseExceptionResponse;
-import org.rifidi.edge.client.ale.api.wsdl.alelr.epcglobal.NoSuchNameExceptionResponse;
+import org.rifidi.edge.client.ale.api.wsdl.ale.epcglobal.DuplicateSubscriptionExceptionResponse;
+import org.rifidi.edge.client.ale.api.wsdl.ale.epcglobal.InvalidURIExceptionResponse;
+import org.rifidi.edge.client.ale.api.wsdl.ale.epcglobal.NoSuchNameExceptionResponse;
 import org.rifidi.edge.client.ale.ecspecview.Activator;
-import org.rifidi.edge.client.alelr.ALELRService;
-import org.rifidi.edge.client.alelr.decorators.LRSpecDecorator;
+import org.rifidi.edge.client.ale.ecspecview.model.ECSpecDecorator;
+import org.rifidi.edge.client.alelr.ALEService;
 
 /**
  * @author Jochen Mader - jochen@pramari.com
  * 
  */
-public class DeleteHandler extends AbstractHandler {
-
-	private ALELRService service;
-
-	public DeleteHandler() {
-		super();
-		service = Activator.getDefault().getAleLrService();
-	}
+public class SubscribeECSpecHandler extends AbstractHandler {
+	/** Logger for this class. */
+	private static final Log logger = LogFactory
+			.getLog(DeleteECSpecHandler.class);
+	/** ALE management service. */
+	private ALEService service;
 
 	/*
 	 * (non-Javadoc)
@@ -38,22 +39,29 @@ public class DeleteHandler extends AbstractHandler {
 	 * org.eclipse.core.commands.IHandler#execute(org.eclipse.core.commands.
 	 * ExecutionEvent)
 	 */
+	public SubscribeECSpecHandler() {
+		super();
+		service = Activator.getDefault().getAleService();
+	}
+
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		if (event.getApplicationContext() instanceof IEvaluationContext) {
-			// collect the selected tags and pair them with their parents
 			for (Object selected : (List<?>) ((IEvaluationContext) event
 					.getApplicationContext()).getDefaultVariable()) {
-				if (selected instanceof LRSpecDecorator) {
+				if (selected instanceof ECSpecDecorator) {
 					try {
-						service.deleteReader((LRSpecDecorator) selected);
-					} catch (InUseExceptionResponse e) {
+						service.subscribeECSpec(((ECSpecDecorator) selected)
+								.getName(), "127.0.0.1:10000");
+					} catch (NoSuchNameExceptionResponse e) {
+						logger.warn(e);
+					} catch (InvalidURIExceptionResponse e) {
 						MessageBox messageBox = new MessageBox(PlatformUI
 								.getWorkbench().getActiveWorkbenchWindow()
 								.getShell(), SWT.ICON_ERROR | SWT.OK);
 						messageBox.setMessage(e.toString());
 						messageBox.open();
-					} catch (NoSuchNameExceptionResponse e) {
+					} catch (DuplicateSubscriptionExceptionResponse e) {
 						MessageBox messageBox = new MessageBox(PlatformUI
 								.getWorkbench().getActiveWorkbenchWindow()
 								.getShell(), SWT.ICON_ERROR | SWT.OK);

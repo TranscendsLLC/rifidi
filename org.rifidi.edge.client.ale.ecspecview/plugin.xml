@@ -31,6 +31,14 @@
             name="Logical Reader View"
             restorable="true">
       </view>
+      <view
+            allowMultiple="false"
+            category="org.rifidi.edge.client.ale"
+            class="org.rifidi.edge.client.alelr.ReportReceiverViewPart"
+            id="org.rifidi.edge.client.ale.ReportReceiverView"
+            name="Report Receiver View"
+            restorable="true">
+      </view>
    </extension>
    <extension
          point="org.eclipse.core.runtime.preferences">
@@ -84,6 +92,7 @@
             name="ECSpec">
       </category>
       <command
+            categoryId="org.rifidi.edge.client.ale.ecspec"
             description="Display an ECSpec"
             id="org.rifidi.edge.client.ale.ecspecview.displayECSpec"
             name="Display ECSpec">
@@ -106,9 +115,22 @@
             name="ALE LR">
       </category>
       <command
+            categoryId="org.rifidi.edge.client.ale.ecspec"
             description="Delete an ECSpec"
             id="org.rifidi.edge.client.ale.ecspecview.deleteECSpec"
             name="Delete">
+      </command>
+      <command
+            categoryId="org.rifidi.edge.client.ale.ecspec"
+            description="Subscribe to an ECSpec"
+            id="org.rifidi.edge.client.ale.ecspecview.subscribeECSpec"
+            name="Subscribe">
+      </command>
+      <command
+            categoryId="org.rifidi.edge.client.ale.ecspec"
+            description="Clear the report view"
+            id="org.rifidi.edge.client.ale.reportview.clearcommand"
+            name="Clear">
       </command>
    </extension>
    <extension
@@ -148,6 +170,14 @@
             class="org.rifidi.edge.client.ale.ecspecview.handlers.DeleteECSpecHandler"
             commandId="org.rifidi.edge.client.ale.ecspecview.deleteECSpec">
       </handler>
+      <handler
+            class="org.rifidi.edge.client.ale.ecspecview.handlers.SubscribeECSpecHandler"
+            commandId="org.rifidi.edge.client.ale.ecspecview.subscribeECSpec">
+      </handler>
+      <handler
+            class="org.rifidi.edge.client.ale.ecspecview.handlers.ClearReportViewHandler"
+            commandId="org.rifidi.edge.client.ale.reportview.clearcommand">
+      </handler>
    </extension>
       <extension
          point="org.eclipse.core.expressions.propertyTesters">
@@ -185,6 +215,20 @@
          <command
                commandId="org.rifidi.edge.client.ale.ecspecview.deleteECSpec"
                label="Delete"
+               style="push">
+            <visibleWhen>
+               <and>
+                  <iterate>
+                     <instanceof
+                           value="org.rifidi.edge.client.ale.api.xsd.ale.epcglobal.ECSpec">
+                     </instanceof>
+                  </iterate>
+               </and>
+            </visibleWhen>
+         </command>
+         <command
+               commandId="org.rifidi.edge.client.ale.ecspecview.subscribeECSpec"
+               label="Subscribe"
                style="push">
             <visibleWhen>
                <and>
@@ -246,6 +290,14 @@
                   </not>
                </and>
             </visibleWhen>
+         </command>
+      </menuContribution>
+      <menuContribution
+            locationURI="toolbar:org.rifidi.edge.client.ale.ReportReceiverView?after=additions">
+         <command
+               commandId="org.rifidi.edge.client.ale.reportview.clearcommand"
+               label="Clear"
+               style="push">
          </command>
       </menuContribution>
    </extension>

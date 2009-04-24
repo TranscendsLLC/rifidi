@@ -9,8 +9,11 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.viewers.Viewer;
 import org.rifidi.edge.client.ale.api.wsdl.ale.epcglobal.ArrayOfString;
 import org.rifidi.edge.client.ale.api.wsdl.ale.epcglobal.DuplicateNameExceptionResponse;
+import org.rifidi.edge.client.ale.api.wsdl.ale.epcglobal.DuplicateSubscriptionExceptionResponse;
 import org.rifidi.edge.client.ale.api.wsdl.ale.epcglobal.ECSpecValidationExceptionResponse;
+import org.rifidi.edge.client.ale.api.wsdl.ale.epcglobal.InvalidURIExceptionResponse;
 import org.rifidi.edge.client.ale.api.wsdl.ale.epcglobal.NoSuchNameExceptionResponse;
+import org.rifidi.edge.client.ale.api.wsdl.ale.epcglobal.NoSuchSubscriberExceptionResponse;
 import org.rifidi.edge.client.ale.api.xsd.ale.epcglobal.ECSpec;
 
 /**
@@ -54,7 +57,7 @@ public interface ALEService extends IPropertyChangeListener {
 	 * @throws ECSpecValidationExceptionResponse
 	 * @throws DuplicateNameExceptionResponse
 	 */
-	public void createECSpec(String name, ECSpec spec)
+	void createECSpec(String name, ECSpec spec)
 			throws ECSpecValidationExceptionResponse,
 			DuplicateNameExceptionResponse;
 
@@ -64,14 +67,13 @@ public interface ALEService extends IPropertyChangeListener {
 	 * @param specName
 	 * @throws NoSuchNameExceptionResponse
 	 */
-	public void deleteECSpec(String specName)
-			throws NoSuchNameExceptionResponse;
+	void deleteECSpec(String specName) throws NoSuchNameExceptionResponse;
 
 	/**
 	 * Get all currently defined ECSpecs.
 	 * 
 	 */
-	public List<String> getAvailableECSpecNames();
+	List<String> getAvailableECSpecNames();
 
 	/**
 	 * Get an ECSpec.
@@ -79,7 +81,33 @@ public interface ALEService extends IPropertyChangeListener {
 	 * @param specName
 	 * @throws NoSuchNameExceptionResponse
 	 */
-	public ECSpec getECSpec(String specName) throws NoSuchNameExceptionResponse;
+	ECSpec getECSpec(String specName) throws NoSuchNameExceptionResponse;
+
+	/**
+	 * Subscribe a URI to a spec.
+	 * 
+	 * @param specName
+	 * @param uri
+	 * @throws org.rifidi.edge.client.ale.api.wsdl.ale.epcglobal.NoSuchNameExceptionResponse
+	 * @throws InvalidURIExceptionResponse
+	 * @throws DuplicateSubscriptionExceptionResponse
+	 */
+	void subscribeECSpec(String specName, String uri)
+			throws org.rifidi.edge.client.ale.api.wsdl.ale.epcglobal.NoSuchNameExceptionResponse,
+			InvalidURIExceptionResponse, DuplicateSubscriptionExceptionResponse;
+
+	/**
+	 * Unsubscribe a URI from a spec.
+	 * 
+	 * @param specName
+	 * @param uri
+	 * @throws org.rifidi.edge.client.ale.api.wsdl.ale.epcglobal.NoSuchNameExceptionResponse
+	 * @throws InvalidURIExceptionResponse
+	 * @throws NoSuchSubscriberExceptionResponse
+	 */
+	void unsubscribeECSpec(String specName, String uri)
+			throws org.rifidi.edge.client.ale.api.wsdl.ale.epcglobal.NoSuchNameExceptionResponse,
+			InvalidURIExceptionResponse, NoSuchSubscriberExceptionResponse;
 
 	/**
 	 * Get subscribers for a certain ECSpec.
@@ -87,6 +115,6 @@ public interface ALEService extends IPropertyChangeListener {
 	 * @param specName
 	 * @throws NoSuchNameExceptionResponse
 	 */
-	public ArrayOfString getSubscribers(String specName)
+	ArrayOfString getSubscribers(String specName)
 			throws NoSuchNameExceptionResponse;
 }
