@@ -22,7 +22,7 @@ public class AlienGetTagListCommandConfiguration extends
 	/** Interval between two reads. */
 	private int interval = 10;
 	/** Type of tag to read */
-	private int tagType = 0;
+	private int tagType = 2;
 	/** Length of time tags stay in taglist */
 	private int persistTime = -1;
 	/** Antennas to scan */
@@ -70,7 +70,7 @@ public class AlienGetTagListCommandConfiguration extends
 	/**
 	 * @return the tagType
 	 */
-	@Property(displayName = "Tag Type", description = "0=Gen1, 1=Gen2, 2=Both", writable = true, type = PropertyType.PT_INTEGER, minValue = "0", maxValue = "2")
+	@Property(displayName = "Tag Type", description = "0=Gen1, 1=Gen2, 2=Both", writable = true, type = PropertyType.PT_INTEGER, minValue = "0", maxValue = "2", defaultValue="2")
 	public Integer getTagType() {
 		return tagType;
 	}

@@ -121,6 +121,9 @@ public class Alien9800Reader extends AbstractReader<Alien9800ReaderSession> {
 		readerProperties.put(PROP_UPTIME, "0");
 		readerProperties.put(PROP_EXTERNAL_OUTPUT, "0");
 		readerProperties.put(PROP_RF_ATTENUATION, "0");
+		readerProperties.put(PROP_INVERT_EXTERNAL_OUTPUT, "0");
+		readerProperties.put(PROP_INVERT_EXTERNAL_INPUT, "0");
+		
 
 		propCommandsToBeExecuted = new LinkedBlockingQueue<AlienCommandObjectWrapper>();
 		propCommandsToBeExecuted.add(new AlienCommandObjectWrapper(
@@ -172,8 +175,8 @@ public class Alien9800Reader extends AbstractReader<Alien9800ReaderSession> {
 					ipAddress, port, (int) (long) reconnectionInterval,
 					maxNumConnectionAttempts, username, password, destination,
 					template, notifyServiceWrapper, this.getID());
-			
-			//TODO: remove this once we get AspectJ in here!
+
+			// TODO: remove this once we get AspectJ in here!
 			NotifierService service = notifyServiceWrapper.getNotifierService();
 			if (service != null) {
 				service.addSessionEvent(this.getID(), Integer
@@ -230,13 +233,13 @@ public class Alien9800Reader extends AbstractReader<Alien9800ReaderSession> {
 	@Override
 	public void destroyReaderSession(ReaderSession session) {
 		if (session != null) {
-			for(Integer id : session.currentCommands().keySet()){
+			for (Integer id : session.currentCommands().keySet()) {
 				session.killComand(id);
 			}
 			this.session.disconnect();
 			this.session = null;
-			
-			//TODO: remove this once we get AspectJ in here!
+
+			// TODO: remove this once we get AspectJ in here!
 			NotifierService service = notifyServiceWrapper.getNotifierService();
 			if (service != null) {
 				service.removeSessionEvent(this.getID(), Integer
@@ -266,7 +269,7 @@ public class Alien9800Reader extends AbstractReader<Alien9800ReaderSession> {
 	/**
 	 * @return the ipAddress
 	 */
-	@Property(displayName = "IP Address", description = "Address of the readerSession.", writable = true, category = "connection", defaultValue = AlienReaderDefaultValues.ipAddress, orderValue = 0)
+	@Property(displayName = "IP Address", description = "Address of the readerSession.", writable = true, category = "Connection", defaultValue = AlienReaderDefaultValues.ipAddress, orderValue = 0)
 	public String getIpAddress() {
 		return ipAddress;
 	}
@@ -282,7 +285,7 @@ public class Alien9800Reader extends AbstractReader<Alien9800ReaderSession> {
 	/**
 	 * @return the port
 	 */
-	@Property(displayName = "Port", description = "Port of the readerSession.", writable = true, type = PropertyType.PT_INTEGER, category = "connection", defaultValue = AlienReaderDefaultValues.port, orderValue = 1, minValue = "0", maxValue = "65535")
+	@Property(displayName = "Port", description = "Port of the readerSession.", writable = true, type = PropertyType.PT_INTEGER, category = "Connection", defaultValue = AlienReaderDefaultValues.port, orderValue = 1, minValue = "0", maxValue = "65535")
 	public Integer getPort() {
 		return port;
 	}
@@ -298,7 +301,7 @@ public class Alien9800Reader extends AbstractReader<Alien9800ReaderSession> {
 	/**
 	 * @return the username
 	 */
-	@Property(displayName = "Username", description = "Username for logging into the readerSession.", writable = true, category = "connection", defaultValue = AlienReaderDefaultValues.username, orderValue = 2)
+	@Property(displayName = "Username", description = "Username for logging into the readerSession.", writable = true, category = "Connection", defaultValue = AlienReaderDefaultValues.username, orderValue = 2)
 	public String getUsername() {
 		return username;
 	}
@@ -314,7 +317,7 @@ public class Alien9800Reader extends AbstractReader<Alien9800ReaderSession> {
 	/**
 	 * @return the password
 	 */
-	@Property(displayName = "Password", description = "Password for logging into the readerSession.", writable = true, category = "connection", defaultValue = AlienReaderDefaultValues.password, orderValue = 3)
+	@Property(displayName = "Password", description = "Password for logging into the readerSession.", writable = true, category = "Connection", defaultValue = AlienReaderDefaultValues.password, orderValue = 3)
 	public String getPassword() {
 		return password;
 	}
@@ -330,7 +333,7 @@ public class Alien9800Reader extends AbstractReader<Alien9800ReaderSession> {
 	/**
 	 * @return the reconnectionInterval
 	 */
-	@Property(displayName = "Reconnection Interval", description = "Time between two connection attempts (ms).", writable = true, type = PropertyType.PT_LONG, category = "connection", defaultValue = AlienReaderDefaultValues.reconnectionInterval, orderValue = 4, minValue = "0")
+	@Property(displayName = "Reconnection Interval", description = "Time between two connection attempts (ms).", writable = true, type = PropertyType.PT_LONG, category = "Connection", defaultValue = AlienReaderDefaultValues.reconnectionInterval, orderValue = 4, minValue = "0")
 	public Long getReconnectionInterval() {
 		return reconnectionInterval;
 	}
@@ -346,7 +349,7 @@ public class Alien9800Reader extends AbstractReader<Alien9800ReaderSession> {
 	/**
 	 * @return the maxNumConnectionAttempts
 	 */
-	@Property(displayName = "Maximum Connection Attempts", description = "Number of times to try to connect to the readerSession before the connection is marked as failed.", writable = true, type = PropertyType.PT_INTEGER, category = "connection", defaultValue = AlienReaderDefaultValues.maxNumConnectionAttempts, orderValue = 5, minValue = "0")
+	@Property(displayName = "Maximum Connection Attempts", description = "Number of times to try to connect to the readerSession before the connection is marked as failed.", writable = true, type = PropertyType.PT_INTEGER, category = "Connection", defaultValue = AlienReaderDefaultValues.maxNumConnectionAttempts, orderValue = 5, minValue = "0")
 	public Integer getMaxNumConnectionAttempts() {
 		return maxNumConnectionAttempts;
 	}
@@ -359,7 +362,7 @@ public class Alien9800Reader extends AbstractReader<Alien9800ReaderSession> {
 		this.maxNumConnectionAttempts = maxNumConnectionAttempts;
 	}
 
-	@Property(displayName = "GPO Output", description = "Ouput of GPO", writable = true, type = PropertyType.PT_INTEGER, minValue = "0", maxValue = "255")
+	@Property(displayName = "GPO Output", description = "Ouput of GPO", writable = true, type = PropertyType.PT_INTEGER, minValue = "0", maxValue = "255", category = "GPIO")
 	public Integer getExternalOutput() {
 		return Integer.parseInt(readerProperties.get(PROP_EXTERNAL_OUTPUT));
 	}
@@ -376,6 +379,50 @@ public class Alien9800Reader extends AbstractReader<Alien9800ReaderSession> {
 		}
 		logger.warn("ExternalOutput must be an"
 				+ " integer between 0 and 255, but was " + externalOutput);
+	}
+
+	@Property(displayName = "Invert External Output", description = "Inverts the output of GPO", writable = true, type = PropertyType.PT_INTEGER, minValue = "0", maxValue = "1", category = "GPIO", defaultValue = "0")
+	public Integer getInvertExternalOuput() {
+		return Integer.parseInt(readerProperties
+				.get(PROP_INVERT_EXTERNAL_OUTPUT));
+	}
+
+	public void setInvertExternalOutput(Integer invertExternalOutput) {
+		if (invertExternalOutput >= 0 && invertExternalOutput <= 1) {
+			readerProperties.put(PROP_INVERT_EXTERNAL_OUTPUT, Integer
+					.toString(invertExternalOutput));
+			propCommandsToBeExecuted
+					.add(new AlienCommandObjectWrapper(
+							PROP_INVERT_EXTERNAL_OUTPUT,
+							new AlienSetCommandObject(
+									Alien9800ReaderSession.COMMAND_INVERT_EXTERNAL_OUTPUT,
+									Integer.toString(invertExternalOutput))));
+			return;
+		}
+		logger.warn("InvertExternalOutput must be an"
+				+ " integer between 0 and 1, but was " + invertExternalOutput);
+	}
+
+	@Property(displayName = "Invert External Input", description = "Inverts the input of GPI", writable = true, type = PropertyType.PT_INTEGER, minValue = "0", maxValue = "1", category = "GPIO", defaultValue = "0")
+	public Integer getInvertExternalInput() {
+		return Integer.parseInt(readerProperties
+				.get(PROP_INVERT_EXTERNAL_OUTPUT));
+	}
+
+	public void setInvertExternalInput(Integer invertExternalInput) {
+		if (invertExternalInput >= 0 && invertExternalInput <= 1) {
+			readerProperties.put(PROP_INVERT_EXTERNAL_INPUT, Integer
+					.toString(invertExternalInput));
+			propCommandsToBeExecuted
+					.add(new AlienCommandObjectWrapper(
+							PROP_INVERT_EXTERNAL_INPUT,
+							new AlienSetCommandObject(
+									Alien9800ReaderSession.COMMAND_INVERT_EXTERNAL_INPUT,
+									Integer.toString(invertExternalInput))));
+			return;
+		}
+		logger.warn("InvertExternalInput must be an"
+				+ " integer between 0 and 1, but was " + invertExternalInput);
 	}
 
 	@Property(displayName = "RF Attenuation", description = "RF Attenuation", writable = true, type = PropertyType.PT_INTEGER)
@@ -397,7 +444,7 @@ public class Alien9800Reader extends AbstractReader<Alien9800ReaderSession> {
 		}
 	}
 
-	@Property(displayName = "Reader Number", description = "Reader Number", writable = true, type = PropertyType.PT_STRING)
+	@Property(displayName = "Reader Number", description = "Reader Number", writable = true, type = PropertyType.PT_STRING, category="General")
 	public String getReaderNumber() {
 		return readerProperties.get(PROP_READER_NUMBER);
 	}
@@ -410,7 +457,7 @@ public class Alien9800Reader extends AbstractReader<Alien9800ReaderSession> {
 						readerNumber)));
 	}
 
-	@Property(displayName = "ReaderSession Version", description = "Version Number of the readerSession", writable = false)
+	@Property(displayName = "ReaderSession Version", description = "Version Number of the readerSession", writable = false, category = "General")
 	public String getReaderVersion() {
 		return (String) readerProperties.get(PROP_READER_VERSION);
 	}
@@ -420,22 +467,22 @@ public class Alien9800Reader extends AbstractReader<Alien9800ReaderSession> {
 		return (String) readerProperties.get(PROP_READER_TYPE);
 	}
 
-	@Property(displayName = "Max Antennas", description = "Maximum number of antennas", writable = false, type = PropertyType.PT_INTEGER)
+	@Property(displayName = "Max Antennas", description = "Maximum number of antennas", writable = false, type = PropertyType.PT_INTEGER, category = "General")
 	public Integer getMaxAntennas() {
 		return Integer.parseInt(readerProperties.get(PROP_MAX_ANTENNA));
 	}
 
-	@Property(displayName = "MAC Address", description = "MAC Address of readerSession", writable = false)
+	@Property(displayName = "MAC Address", description = "MAC Address of readerSession", writable = false, category="General")
 	public String getMACAddress() {
 		return (String) readerProperties.get(PROP_MAC_ADDRESS);
 	}
 
-	@Property(displayName = "GPI Input", description = "Input of GPI", writable = false, type = PropertyType.PT_INTEGER)
+	@Property(displayName = "GPI Input", description = "Input of GPI", writable = false, type = PropertyType.PT_INTEGER, category="GPIO")
 	public Integer getExternalInput() {
 		return Integer.parseInt(readerProperties.get(PROP_EXTERNAL_INPUT));
 	}
 
-	@Property(displayName = "Uptime", description = "Uptime of readerSession", writable = false, type = PropertyType.PT_INTEGER)
+	@Property(displayName = "Uptime", description = "Uptime of readerSession", writable = false, type = PropertyType.PT_INTEGER, category="General")
 	public Integer getUptime() {
 		return Integer.parseInt(readerProperties.get(PROP_UPTIME));
 	}

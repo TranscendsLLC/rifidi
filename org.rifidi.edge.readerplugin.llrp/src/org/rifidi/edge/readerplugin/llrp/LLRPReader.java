@@ -71,14 +71,15 @@ public class LLRPReader extends AbstractReader<LLRPReaderSession> {
 	 */
 	@Override
 	public synchronized ReaderSession createReaderSession() {
+		logger.debug("creating the reader session");
 		if (session == null) {
 			sessionID++;
 			session = new LLRPReaderSession(Integer.toString(sessionID),
 					ipAddress, (int) (long) reconnectionInterval,
 					maxNumConnectionAttempts, destination, template,
 					notifyServiceWrapper, super.getID());
-			
-			//TODO: remove this once we get AspectJ in here!
+
+			// TODO: remove this once we get AspectJ in here!
 			NotifierService service = notifyServiceWrapper.getNotifierService();
 			if (service != null) {
 				service.addSessionEvent(this.getID(), Integer
@@ -108,13 +109,13 @@ public class LLRPReader extends AbstractReader<LLRPReaderSession> {
 	@Override
 	public void destroyReaderSession(ReaderSession session) {
 		if (session != null) {
-			for(Integer id : session.currentCommands().keySet()){
+			for (Integer id : session.currentCommands().keySet()) {
 				session.killComand(id);
 			}
 			this.session.disconnect();
 			this.session = null;
-			
-			//TODO: remove this once we get AspectJ in here!
+
+			// TODO: remove this once we get AspectJ in here!
 			NotifierService service = notifyServiceWrapper.getNotifierService();
 			if (service != null) {
 				service.removeSessionEvent(this.getID(), Integer
@@ -150,7 +151,9 @@ public class LLRPReader extends AbstractReader<LLRPReaderSession> {
 	/**
 	 * @return the ipAddress
 	 */
-	@Property(displayName = "IP Address", description = "IP Address of the Reader", writable = true, type = PropertyType.PT_STRING, category = "connection", orderValue = 0, defaultValue = "127.0.0.1")
+	@Property(displayName = "IP Address", description = "IP Address of "
+			+ "the Reader", writable = true, type = PropertyType.PT_STRING, category = "conn"
+			+ "ection", orderValue = 0, defaultValue = LLRPConstants.LOCALHOST)
 	public String getIpAddress() {
 		return ipAddress;
 	}
@@ -166,7 +169,8 @@ public class LLRPReader extends AbstractReader<LLRPReaderSession> {
 	/**
 	 * @return the port
 	 */
-	@Property(displayName = "IP Address", description = "Port of the Reader", writable = true, type = PropertyType.PT_INTEGER, category = "connection", orderValue = 1, minValue = "0", maxValue = "65535")
+	@Property(displayName = "Port", description = "Port of the Reader", writable = true, type = PropertyType.PT_INTEGER, category = "c"
+			+ "onnection", orderValue = 1, minValue = LLRPConstants.PORT_MIN, maxValue = LLRPConstants.PORT_MAX, defaultValue = LLRPConstants.PORT)
 	public Integer getPort() {
 		return port;
 	}
@@ -182,6 +186,9 @@ public class LLRPReader extends AbstractReader<LLRPReaderSession> {
 	/**
 	 * @return the reconnectionInterval
 	 */
+	@Property(displayName = "Reconnection Interval", description = "The interval to wait between"
+			+ "reconnection attempts", writable = true, type = PropertyType.PT_LONG, category = "connec"
+			+ "tion", orderValue = 3, defaultValue = LLRPConstants.RECONNECTION_INTERVAL)
 	public Long getReconnectionInterval() {
 		return reconnectionInterval;
 	}
@@ -198,7 +205,8 @@ public class LLRPReader extends AbstractReader<LLRPReaderSession> {
 	 * @return the maxNumConnectionAttempts
 	 */
 	@Property(displayName = "Maximum Connection Attempts", description = "Number of times to try to connect to the readerSession"
-			+ ": before the connection is marked as failed.", writable = true, type = PropertyType.PT_INTEGER)
+			+ ": before the connection is marked as failed.", writable = true, category = "conne"
+			+ "ction", type = PropertyType.PT_INTEGER, orderValue = 2, defaultValue = LLRPConstants.MAX_CONNECTION_ATTEMPTS)
 	public Integer getMaxNumConnectionAttempts() {
 		return maxNumConnectionAttempts;
 	}
@@ -234,6 +242,10 @@ public class LLRPReader extends AbstractReader<LLRPReaderSession> {
 		return readerProperties;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.rifidi.configuration.RifidiService#destroy()
+	 */
 	@Override
 	public void destroy() {
 		super.unregister();
