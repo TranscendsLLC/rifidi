@@ -183,6 +183,7 @@ public abstract class AbstractIPReaderSession extends AbstractReaderSession {
 				}
 				executor = new ScheduledThreadPoolExecutor(1);
 				// try to open the socket
+				logger.info("Attempting to connect to : " + host + ":" + port);
 				for (int connCount = 0; connCount < maxConAttempts; connCount++) {
 					try {
 						socket = new Socket(host, port);
@@ -243,6 +244,8 @@ public abstract class AbstractIPReaderSession extends AbstractReaderSession {
 							// don't try to connect again if we are closing down
 							if (getStatus() != SessionStatus.CLOSED) {
 								setStatus(SessionStatus.CREATED);
+								readQueue.clear();
+								writeQueue.clear();
 								connect();
 							}
 						} catch (InterruptedException e) {
@@ -289,10 +292,10 @@ public abstract class AbstractIPReaderSession extends AbstractReaderSession {
 			if (processing.compareAndSet(true, false)) {
 				setStatus(SessionStatus.CLOSED);
 				synchronized (commands) {
-					for(Integer id : commands.keySet()){
-						if(idToData.get(id).future!=null){
+					for (Integer id : commands.keySet()) {
+						if (idToData.get(id).future != null) {
 							idToData.get(id).future.cancel(true);
-							idToData.get(id).future=null;
+							idToData.get(id).future = null;
 						}
 					}
 				}
