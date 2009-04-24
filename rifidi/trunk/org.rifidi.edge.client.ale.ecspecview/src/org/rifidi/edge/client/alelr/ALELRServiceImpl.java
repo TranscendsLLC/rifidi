@@ -19,9 +19,14 @@ import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.ui.PlatformUI;
 import org.rifidi.edge.client.ale.api.wsdl.ale.epcglobal.ALEServicePortType;
 import org.rifidi.edge.client.ale.api.wsdl.ale.epcglobal.ArrayOfString;
+import org.rifidi.edge.client.ale.api.wsdl.ale.epcglobal.DuplicateSubscriptionExceptionResponse;
 import org.rifidi.edge.client.ale.api.wsdl.ale.epcglobal.ECSpecValidationExceptionResponse;
 import org.rifidi.edge.client.ale.api.wsdl.ale.epcglobal.GetECSpec;
 import org.rifidi.edge.client.ale.api.wsdl.ale.epcglobal.GetSubscribers;
+import org.rifidi.edge.client.ale.api.wsdl.ale.epcglobal.InvalidURIExceptionResponse;
+import org.rifidi.edge.client.ale.api.wsdl.ale.epcglobal.NoSuchSubscriberExceptionResponse;
+import org.rifidi.edge.client.ale.api.wsdl.ale.epcglobal.Subscribe;
+import org.rifidi.edge.client.ale.api.wsdl.ale.epcglobal.Unsubscribe;
 import org.rifidi.edge.client.ale.api.wsdl.alelr.epcglobal.ALELRServicePortType;
 import org.rifidi.edge.client.ale.api.wsdl.alelr.epcglobal.Define;
 import org.rifidi.edge.client.ale.api.wsdl.alelr.epcglobal.DuplicateNameExceptionResponse;
@@ -389,14 +394,7 @@ public class ALELRServiceImpl implements ALELRService, ALEService {
 		} catch (org.rifidi.edge.client.ale.api.wsdl.ale.epcglobal.SecurityExceptionResponse e) {
 			logger.fatal(e);
 		}
-		if (aleServicePortType != null) {
-			List<ALEServicePortType> serviceList = new ArrayList<ALEServicePortType>();
-			serviceList.add(aleServicePortType);
-			for (Viewer viewer : aleViewers) {
-				viewer.setInput(serviceList);
-				viewer.refresh();
-			}
-		}
+		updateALE();
 	}
 
 	/*
@@ -417,14 +415,7 @@ public class ALELRServiceImpl implements ALELRService, ALEService {
 		} catch (org.rifidi.edge.client.ale.api.wsdl.ale.epcglobal.SecurityExceptionResponse e) {
 			logger.fatal(e);
 		}
-		if (aleServicePortType != null) {
-			List<ALEServicePortType> serviceList = new ArrayList<ALEServicePortType>();
-			serviceList.add(aleServicePortType);
-			for (Viewer viewer : aleViewers) {
-				viewer.setInput(serviceList);
-				viewer.refresh();
-			}
-		}
+		updateALE();
 	}
 
 	/*
@@ -488,4 +479,62 @@ public class ALELRServiceImpl implements ALELRService, ALEService {
 		return null;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.client.alelr.ALEService#subscribeECSpec(java.lang.String,
+	 * java.lang.String)
+	 */
+	@Override
+	public void subscribeECSpec(String specName, String uri)
+			throws org.rifidi.edge.client.ale.api.wsdl.ale.epcglobal.NoSuchNameExceptionResponse,
+			InvalidURIExceptionResponse, DuplicateSubscriptionExceptionResponse {
+		Subscribe subs = new Subscribe();
+		subs.setNotificationURI(uri);
+		subs.setSpecName(specName);
+		try {
+			aleServicePortType.subscribe(subs);
+		} catch (org.rifidi.edge.client.ale.api.wsdl.ale.epcglobal.ImplementationExceptionResponse e) {
+			logger.fatal(e);
+		} catch (org.rifidi.edge.client.ale.api.wsdl.ale.epcglobal.SecurityExceptionResponse e) {
+			logger.fatal(e);
+		}
+		updateALE();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.client.alelr.ALEService#unsubscribeECSpec(java.lang.String
+	 * , java.lang.String)
+	 */
+	@Override
+	public void unsubscribeECSpec(String specName, String uri)
+			throws org.rifidi.edge.client.ale.api.wsdl.ale.epcglobal.NoSuchNameExceptionResponse,
+			InvalidURIExceptionResponse, NoSuchSubscriberExceptionResponse {
+		Unsubscribe unsubs = new Unsubscribe();
+		unsubs.setNotificationURI(uri);
+		unsubs.setSpecName(specName);
+		try {
+			aleServicePortType.unsubscribe(unsubs);
+		} catch (org.rifidi.edge.client.ale.api.wsdl.ale.epcglobal.ImplementationExceptionResponse e) {
+			logger.fatal(e);
+		} catch (org.rifidi.edge.client.ale.api.wsdl.ale.epcglobal.SecurityExceptionResponse e) {
+			logger.fatal(e);
+		}
+		updateALE();
+	}
+
+	private void updateALE(){
+		if (aleServicePortType != null) {
+			List<ALEServicePortType> serviceList = new ArrayList<ALEServicePortType>();
+			serviceList.add(aleServicePortType);
+			for (Viewer viewer : aleViewers) {
+				viewer.setInput(serviceList);
+				viewer.refresh();
+			}
+		}
+	}
 }
