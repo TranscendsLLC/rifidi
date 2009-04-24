@@ -126,7 +126,7 @@ public class ECSpecEditorView extends ViewPart {
 		layout.numColumns = 2;
 		form.getBody().setLayout(layout);
 
-		createReportCtab();
+//		createReportCtab();
 		createSubscriberCtab();
 
 	}
@@ -134,16 +134,17 @@ public class ECSpecEditorView extends ViewPart {
 	/**
 	 * creates the subscriber tab
 	 */
-	private void createSubscriberCtab() {
+	private void createReportCtab() {
 		CTabItem ctiReport = new CTabItem(folder, SWT.NONE);
-		ctiReport.setText("Reports (5)");
+		ctiReport.setText("Reports");
 	}
 
 	/**
 	 * creates the report tab
 	 */
-	private void createReportCtab() {
-		CTabItem ctiSubscribers = new CTabItem(folder, SWT.NONE);
+	private void createSubscriberCtab() {
+		CTabItem ctiSubscribers =EcSpecEditorTabFactory.getInstance().createSubscribersTab(folder);
+//		CTabItem ctiSubscribers = new CTabItem(folder, SWT.NONE);
 		ctiSubscribers.setText("Subscribers");
 	}
 
@@ -243,12 +244,12 @@ public class ECSpecEditorView extends ViewPart {
 
 		});
 		toolkit.createLabel(form.getBody(), "EcSpec Name:");
-		/*
+		/**
 		 * Text widget for changing the the name of the spec. Initial value is
 		 * the name (String) passed in in the init method.
 		 */
 		txtSpecName = toolkit.createText(form.getBody(), this.name, SWT.BORDER);
-		/*
+		/**
 		 * Set name when focus is lost.
 		 */
 		txtSpecName.addFocusListener(new FocusListener() {
