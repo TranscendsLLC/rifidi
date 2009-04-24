@@ -130,14 +130,18 @@ public class RemoteReader extends AbstractAttributeContributorModelObject
 		}
 		for (Object o : event.diff.getRemovedKeys()) {
 			RemoteSession session = (RemoteSession) event.diff.getNewValue(o);
-			session.removePropertyChangeListener(this);
+			if (session != null) {
+				session.removePropertyChangeListener(this);
+			}
 		}
 		for (Object o : event.diff.getChangedKeys()) {
 			RemoteSession oldSession = (RemoteSession) event.diff
 					.getOldValue(o);
 			RemoteSession newSession = (RemoteSession) event.diff
 					.getNewValue(o);
-			oldSession.removePropertyChangeListener(this);
+			if (oldSession != null) {
+				oldSession.removePropertyChangeListener(this);
+			}
 			newSession.addPropertyChangeListener(this);
 		}
 		// if there are no more sessions, clear tag list
