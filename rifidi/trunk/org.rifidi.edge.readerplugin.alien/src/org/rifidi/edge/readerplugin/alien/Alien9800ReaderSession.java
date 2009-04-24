@@ -158,7 +158,7 @@ public class Alien9800ReaderSession extends AbstractIPReaderSession {
 	public boolean onConnect() throws IOException {
 		logger.debug("getting the welcome response");
 		String welcome = new String(receiveMessage().message);
-		logger.debug(welcome);
+		logger.debug("welcome message: " + welcome);
 
 		if (welcome == null
 				|| !welcome.contains(Alien9800ReaderSession.WELCOME)) {
