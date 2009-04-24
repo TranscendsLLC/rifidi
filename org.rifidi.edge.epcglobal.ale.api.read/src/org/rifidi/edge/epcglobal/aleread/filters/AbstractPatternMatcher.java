@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class AbstractPatternMatcher implements PatternMatcher{
+public abstract class AbstractPatternMatcher implements PatternMatcher{
 
 	protected static Pattern matchrange = Pattern.compile("\\[(\\d*)-(\\d*)\\]");
 	protected List<FieldMatcher> matchers;
@@ -22,6 +22,5 @@ public class AbstractPatternMatcher implements PatternMatcher{
 			}
 		}
 		return true;
-	}
-
+	} 
 }
