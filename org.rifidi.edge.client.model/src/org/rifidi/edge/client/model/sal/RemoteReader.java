@@ -3,13 +3,20 @@
  */
 package org.rifidi.edge.client.model.sal;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+
 import javax.management.AttributeList;
 
+import org.eclipse.core.databinding.observable.map.IMapChangeListener;
+import org.eclipse.core.databinding.observable.map.MapChangeEvent;
 import org.eclipse.core.databinding.observable.map.ObservableMap;
 import org.eclipse.core.databinding.observable.map.WritableMap;
 import org.eclipse.core.databinding.observable.set.ObservableSet;
 import org.eclipse.core.databinding.observable.set.WritableSet;
 import org.rifidi.edge.client.model.sal.commands.RequestExecuterSingleton;
+import org.rifidi.edge.client.model.sal.properties.SessionStatePropertyBean;
+import org.rifidi.edge.core.api.SessionStatus;
 import org.rifidi.edge.core.api.rmi.dto.ReaderDTO;
 import org.rifidi.edge.core.api.rmi.dto.SessionDTO;
 
@@ -19,7 +26,8 @@ import org.rifidi.edge.core.api.rmi.dto.SessionDTO;
  * @author Kyle Neumeier - kyle@pramari.com
  * 
  */
-public class RemoteReader extends AbstractAttributeContributorModelObject {
+public class RemoteReader extends AbstractAttributeContributorModelObject
+		implements IMapChangeListener, PropertyChangeListener {
 
 	/** The ID of the Reader */
 	private ReaderDTO readerDTO;
@@ -42,6 +50,7 @@ public class RemoteReader extends AbstractAttributeContributorModelObject {
 		super(readerDTO.getReaderID(), readerDTO.getAttributes());
 		this.readerDTO = readerDTO;
 		remoteSessions = new WritableMap();
+		remoteSessions.addMapChangeListener(this);
 		tags = new WritableSet();
 		for (SessionDTO dto : readerDTO.getSessions()) {
 			_addSession(new RemoteSession(readerDTO.getReaderID(), readerDTO
@@ -102,13 +111,65 @@ public class RemoteReader extends AbstractAttributeContributorModelObject {
 	}
 
 	@Override
-	protected void doSynchAttributeChange(RemoteEdgeServer server, String modelID,
-			AttributeList list) {
+	protected void doSynchAttributeChange(RemoteEdgeServer server,
+			String modelID, AttributeList list) {
 
 		Command_SynchReaderPropertyChanges request = new Command_SynchReaderPropertyChanges(
 				server, modelID, list);
 
 		RequestExecuterSingleton.getInstance().scheduleRequest(request);
+
+	}
+
+	@Override
+	public void handleMapChange(MapChangeEvent event) {
+		// Add and remove listeners to sessions as they appear
+		for (Object o : event.diff.getAddedKeys()) {
+			RemoteSession session = (RemoteSession) event.diff.getNewValue(o);
+			session.addPropertyChangeListener(this);
+		}
+		for (Object o : event.diff.getRemovedKeys()) {
+			RemoteSession session = (RemoteSession) event.diff.getNewValue(o);
+			session.removePropertyChangeListener(this);
+		}
+		for (Object o : event.diff.getChangedKeys()) {
+			RemoteSession oldSession = (RemoteSession) event.diff
+					.getOldValue(o);
+			RemoteSession newSession = (RemoteSession) event.diff
+					.getNewValue(o);
+			oldSession.removePropertyChangeListener(this);
+			newSession.addPropertyChangeListener(this);
+		}
+		// if there are no more sessions, clear tag list
+		if (this.remoteSessions.isEmpty()) {
+			this.tags.clear();
+		}
+
+	}
+
+	@Override
+	public void propertyChange(PropertyChangeEvent arg0) {
+		if (arg0.getPropertyName().equals(
+				SessionStatePropertyBean.SESSION_STATUS_PROPERTY)) {
+			boolean atLeastOneSessionExecuting = false;
+
+			// step through each session and see if there is at least on which
+			// is executing
+			for (Object obj : this.remoteSessions.values()) {
+				RemoteSession session = (RemoteSession) obj;
+				SessionStatus status = session.getStateOfSession();
+				if (status == SessionStatus.PROCESSING
+						|| status == SessionStatus.CONNECTING
+						|| status == SessionStatus.LOGGINGIN) {
+					atLeastOneSessionExecuting = true;
+					break;
+
+				}
+			}
+			if (!atLeastOneSessionExecuting) {
+				tags.clear();
+			}
+		}
 
 	}
 }
