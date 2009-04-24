@@ -15,6 +15,10 @@ public class EPCPUREPatternMatcher extends AbstractPatternMatcher {
 	private static Pattern pattern_pure = Pattern
 			.compile("urn:epc:idpat:(.*):(.*\\..*$)");
 
+	public static boolean isValidPattern(String pattern){
+		return pattern_pure.matcher(pattern).groupCount()==2;
+	}
+	
 	public EPCPUREPatternMatcher(String input) {
 		matchers = new ArrayList<FieldMatcher>();
 

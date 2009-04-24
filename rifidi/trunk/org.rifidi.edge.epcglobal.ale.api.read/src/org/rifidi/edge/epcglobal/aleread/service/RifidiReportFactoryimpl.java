@@ -10,12 +10,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.rifidi.edge.epcglobal.ale.api.read.data.ECFieldSpec;
 import org.rifidi.edge.epcglobal.ale.api.read.data.ECFilterListMember;
 import org.rifidi.edge.epcglobal.ale.api.read.data.ECReportOutputFieldSpec;
 import org.rifidi.edge.epcglobal.ale.api.read.data.ECReportSpec;
 import org.rifidi.edge.epcglobal.ale.api.read.ws.ECSpecValidationExceptionResponse;
 import org.rifidi.edge.epcglobal.aleread.ECReportOptions;
 import org.rifidi.edge.epcglobal.aleread.filters.ALEField;
+import org.rifidi.edge.epcglobal.aleread.filters.EPCTAGPatternMatcher;
 import org.rifidi.edge.epcglobal.aleread.filters.FilterFactory;
 import org.rifidi.edge.epcglobal.aleread.filters.PatternMatcher;
 import org.rifidi.edge.epcglobal.aleread.filters.ReportALEField;
@@ -43,8 +45,12 @@ public class RifidiReportFactoryimpl implements RifidiReportFactory {
 		groupFactory = new GroupFactory();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.rifidi.edge.epcglobal.aleread.service.RifidiReportFactory#createReport(org.rifidi.edge.epcglobal.ale.api.read.data.ECReportSpec)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.epcglobal.aleread.service.RifidiReportFactory#createReport
+	 * (org.rifidi.edge.epcglobal.ale.api.read.data.ECReportSpec)
 	 */
 	public RifidiReport createReport(ECReportSpec reportSpec)
 			throws ECSpecValidationExceptionResponse {
@@ -62,13 +68,11 @@ public class RifidiReportFactoryimpl implements RifidiReportFactory {
 		}
 		Map<ALEField, List<PatternMatcher>> includeFilters = new HashMap<ALEField, List<PatternMatcher>>();
 		Map<ALEField, List<PatternMatcher>> excludeFilters = new HashMap<ALEField, List<PatternMatcher>>();
-		if (reportSpec.getFilterSpec() != null && reportSpec.getFilterSpec().getExtension()!=null) {
-			//TODO: ALE1.0 Take care of this
-			//reportSpec.getFilterSpec().getExcludePatterns();
-			//reportSpec.getFilterSpec().getIncludePatterns();
+		if (reportSpec.getFilterSpec() != null
+				&& reportSpec.getFilterSpec().getExtension() != null) {
+			// ALE 1.1
 			for (ECFilterListMember filter : reportSpec.getFilterSpec()
 					.getExtension().getFilterList().getFilter()) {
-
 				if ("INCLUDE".equals(filter.getIncludeExclude())) {
 					includeFilters.putAll(filterFactory.createMatcher(filter));
 				} else if ("EXCLUDE".equals(filter.getIncludeExclude())) {
@@ -77,16 +81,49 @@ public class RifidiReportFactoryimpl implements RifidiReportFactory {
 					throw new ECSpecValidationExceptionResponse(
 							"Unknown filter type " + filter.getIncludeExclude());
 				}
-				// TODO: implement, this is an ALE 1.0 remnant
-				filter.getPatList().getPat();
+			}
+
+			// ALE 1.0
+			ECFieldSpec spec = new ECFieldSpec();
+			spec.setDatatype("epc");
+			spec.setFieldname("epc");
+			spec.setFormat("epc-tag");
+			ALEField field = new ALEField(spec);
+			// TODO: kinda crappy, reimplement
+			if (reportSpec.getFilterSpec().getExcludePatterns() != null) {
+				for (String pattern : reportSpec.getFilterSpec()
+						.getExcludePatterns().getExcludePattern()) {
+					if (EPCTAGPatternMatcher.isValidPattern(pattern)) {
+						if (excludeFilters.get(field) == null) {
+							excludeFilters.put(field,
+									new ArrayList<PatternMatcher>());
+						}
+						excludeFilters.get(field).add(
+								new EPCTAGPatternMatcher(pattern));
+					}
+				}
+			}
+			if (reportSpec.getFilterSpec().getIncludePatterns() != null) {
+				for (String pattern : reportSpec.getFilterSpec()
+						.getIncludePatterns().getIncludePattern()) {
+					if (EPCTAGPatternMatcher.isValidPattern(pattern)) {
+						if (includeFilters.get(field) == null) {
+							includeFilters.put(field,
+									new ArrayList<PatternMatcher>());
+						}
+						includeFilters.get(field).add(
+								new EPCTAGPatternMatcher(pattern));
+					}
+				}
 			}
 		}
 
 		List<GroupMatcher> groups = new ArrayList<GroupMatcher>();
 		ALEField groupfield = null;
-		if (reportSpec.getGroupSpec() != null && reportSpec.getGroupSpec().getExtension()!=null) {
-			//TODO: ALE 1.0 take care of this
-			//reportSpec.getGroupSpec().getPattern()
+		if (reportSpec.getGroupSpec() != null
+				&& reportSpec.getGroupSpec().getExtension() != null) {
+			// TODO: ALE 1.0 take care of this
+			// reportSpec.getGroupSpec().getPattern()
 			groupfield = new ALEField(reportSpec.getGroupSpec().getExtension()
 					.getFieldspec());
 			for (String pattern : reportSpec.getGroupSpec().getPattern()) {
@@ -133,7 +170,6 @@ public class RifidiReportFactoryimpl implements RifidiReportFactory {
 			throw new ECSpecValidationExceptionResponse("No output specified. ");
 		}
 		return new RifidiReport(reportSpec.getReportName(), options,
-				includeFilters, excludeFilters, groupfield, groups,
-				reportFields);
+				includeFilters, excludeFilters,groupfield, groups, reportFields);
 	}
 }

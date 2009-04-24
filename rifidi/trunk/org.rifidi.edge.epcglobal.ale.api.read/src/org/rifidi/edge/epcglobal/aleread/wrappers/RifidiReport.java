@@ -53,11 +53,11 @@ public class RifidiReport {
 	 * 
 	 * @param name
 	 * @param options
-	 * @param reportSet
 	 * @param include
 	 * @param exclude
 	 * @param groupField
 	 * @param groups
+	 * @param reportFields
 	 */
 	public RifidiReport(String name, int options,
 			Map<ALEField, List<PatternMatcher>> include,
@@ -106,12 +106,14 @@ public class RifidiReport {
 						break;
 					}
 				}
-				if (!matched) {
-					notincluded.add(event);
-					// we are already removing it, no need to process the
-					// exclude
-					// filters
-					continue;
+				if(includeFilters.size()>0){
+					if (!matched) {
+						notincluded.add(event);
+						// we are already removing it, no need to process the
+						// exclude
+						// filters
+						continue;
+					}	
 				}
 				for (ALEField field : excludeFilter.keySet()) {
 					String fieldString = adapter.getField(field, event);
