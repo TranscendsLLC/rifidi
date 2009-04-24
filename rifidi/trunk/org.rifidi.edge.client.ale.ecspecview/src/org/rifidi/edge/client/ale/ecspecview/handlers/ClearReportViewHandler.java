@@ -9,7 +9,7 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.PlatformUI;
-import org.rifidi.edge.client.alelr.ReportReceiverViewPart;
+import org.rifidi.edge.client.reports.ReportReceiverViewPart;
 
 /**
  * @author Jochen Mader - jochen@pramari.com

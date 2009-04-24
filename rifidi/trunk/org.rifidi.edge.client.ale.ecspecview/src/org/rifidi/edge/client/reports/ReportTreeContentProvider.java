@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.rifidi.edge.client.alelr;
+package org.rifidi.edge.client.reports;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -124,6 +124,9 @@ public class ReportTreeContentProvider implements ITreeContentProvider,
 	 */
 	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+		if (newInput == null) {
+			return;
+		}
 		if (!(newInput instanceof ObservableList)) {
 			throw new RuntimeException("Expected an ObservableList but got "
 					+ newInput.getClass());

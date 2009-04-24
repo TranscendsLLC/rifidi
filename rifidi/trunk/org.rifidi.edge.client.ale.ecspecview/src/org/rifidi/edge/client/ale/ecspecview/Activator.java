@@ -27,6 +27,8 @@ public class Activator extends AbstractUIPlugin {
 	public static final String ICON_READER = "icon_reader";
 	public static final String ICON_READER_LOCKED = "icon_reader_locked";
 
+	public static final String REPORT_RECEIVER_ADR = "127.0.0.1:10000";
+	public static final String REPORT_RECEIVER_ADR_DEFAULT = "127.0.0.1:10000";
 	// The shared instance
 	private static Activator plugin;
 

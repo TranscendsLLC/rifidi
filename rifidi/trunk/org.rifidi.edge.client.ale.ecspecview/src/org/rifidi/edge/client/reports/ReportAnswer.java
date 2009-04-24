@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.rifidi.edge.client.alelr;
+package org.rifidi.edge.client.reports;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
