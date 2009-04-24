@@ -126,7 +126,6 @@ public class Timer {
 		try {
 			logger.debug("Starting event cycle");
 			intervalStart = System.currentTimeMillis();
-			logger.debug("event " + currentReport);
 			esper.getEPRuntime().sendEvent(new StartEvent(specName));
 			started = true;
 		} finally {
