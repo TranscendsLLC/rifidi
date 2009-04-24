@@ -196,6 +196,8 @@ public class ECReportmanager implements Runnable, StatementAwareUpdateListener {
 		for (EventBean tagevent : arg0) {
 			if (((MapEventBean) tagevent).getProperties().containsKey(
 					"count(whine)")) {
+				System.out.println((Long) ((MapEventBean) tagevent).getProperties()
+						.get("count(whine)"));
 				if ((Long) ((MapEventBean) tagevent).getProperties().get(
 						"count(whine)") > 0) {
 					logger.debug("count "
