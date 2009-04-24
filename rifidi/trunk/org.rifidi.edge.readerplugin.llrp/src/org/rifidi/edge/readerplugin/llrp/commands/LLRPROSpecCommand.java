@@ -65,6 +65,8 @@ public class LLRPROSpecCommand extends AbstractLLRPCommand {
 	 * 
 	 */
 	private LLRPReaderSession session = null;
+	
+	private String antennaSequence = "0";
 
 	/**
 	 * 
@@ -81,6 +83,21 @@ public class LLRPROSpecCommand extends AbstractLLRPCommand {
 	 */
 	public void setRoSpecID(int rospec_id) {
 		this.rospec_id = rospec_id;
+	}
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public String getAntennaIDs() {
+		return antennaSequence;
+	}
+	
+	/**
+	 * 
+	 */
+	public void setAntennaIDs(String antennaIDs) {
+		
 	}
 	
 	

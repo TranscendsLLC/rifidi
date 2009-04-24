@@ -234,8 +234,8 @@ public class LLRPReaderSession extends AbstractReaderSession implements
 				// AntennaID antid = t.getAntennaID();
 				// System.out.println("EPC data recieved");
 				EPC_96 id = (EPC_96) t.getEPCParameter();
+				System.out.println("EPC data processed : " + id.getEPC().toString(16));
 				tagdatastring.add(id.getEPC().toString(16));
-				// System.out.println("EPC data processed");
 			}
 
 			for (BigInteger m : parseString(tagdatastring)) {
