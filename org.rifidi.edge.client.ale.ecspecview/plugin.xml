@@ -34,7 +34,7 @@
       <view
             allowMultiple="false"
             category="org.rifidi.edge.client.ale"
-            class="org.rifidi.edge.client.alelr.ReportReceiverViewPart"
+            class="org.rifidi.edge.client.reports.ReportReceiverViewPart"
             id="org.rifidi.edge.client.ale.ReportReceiverView"
             name="Report Receiver View"
             restorable="true">
@@ -48,6 +48,9 @@
       <initializer
             class="org.rifidi.edge.client.alelr.EndpointInitializer">
       </initializer>
+      <initializer
+            class="org.rifidi.edge.client.reports.ReportPreferenceInitializer">
+      </initializer>
    </extension>
    <extension
          point="org.eclipse.ui.preferencePages">
@@ -60,6 +63,11 @@
             class="org.rifidi.edge.client.alelr.EndpointPreferencePage"
             id="org.rifidi.edge.ale.lr.endpoint"
             name="ALE Logical Reader Endpoint">
+      </page>
+      <page
+            class="org.rifidi.edge.client.reports.ReportPreferencePage"
+            id="org.rifidi.edge.client.reportpreferences"
+            name="Report Preference Page">
       </page>
    </extension>
    <extension
