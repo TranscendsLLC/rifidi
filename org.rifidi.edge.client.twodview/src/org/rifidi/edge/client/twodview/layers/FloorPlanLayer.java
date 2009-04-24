@@ -64,7 +64,7 @@ public class FloorPlanLayer extends XYLayer {
 
 	public void init() {
 		setFloorplan(Activator.imageDescriptorFromPlugin(
-				"org.rifidi.edge.client.twodview", "icons/badwarehouse.gif")
+				"org.rifidi.edge.client.twodview", "icons/3d_room_blueprint.jpg")
 				.createImage());
 	}
 
