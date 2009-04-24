@@ -29,13 +29,35 @@ public class ReportLabelProvider extends LabelProvider {
 			return ((ECReport) element).getReportName();
 		}
 		if (element instanceof ECReportGroup) {
-			if(((ECReportGroup) element).getGroupName()==null){
+			if (((ECReportGroup) element).getGroupName() == null) {
 				return "defaultgroup";
 			}
 			return ((ECReportGroup) element).getGroupName();
 		}
 		if (element instanceof ECReportGroupListMember) {
-			return ((ECReportGroupListMember) element).getEpc().getValue();
+			StringBuilder buildy = new StringBuilder();
+			if (((ECReportGroupListMember) element).getEpc() != null) {
+				buildy.append(((ECReportGroupListMember) element).getEpc()
+						.getValue()
+						+ "\n");
+			}
+			if (((ECReportGroupListMember) element).getRawDecimal() != null) {
+				buildy.append(((ECReportGroupListMember) element)
+						.getRawDecimal().getValue()
+						+ "\n");
+			}
+			if (((ECReportGroupListMember) element).getRawHex() != null) {
+				buildy.append(((ECReportGroupListMember) element).getRawHex()
+						.getValue()
+						+ "\n");
+			}
+			if (((ECReportGroupListMember) element).getTag() != null) {
+				buildy.append(((ECReportGroupListMember) element).getTag()
+						.getValue()
+						+ "\n");
+			}
+			buildy.deleteCharAt(buildy.length() - 1);
+			return buildy.toString();
 		}
 		return super.getText(element);
 	}
