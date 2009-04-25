@@ -15,7 +15,7 @@ import org.rifidi.edge.client.ale.reports.ReportReceiverViewPart;
  * @author Jochen Mader - jochen@pramari.com
  * 
  */
-public class ClearReportViewHandler extends AbstractHandler implements IHandler {
+public class ClearReportViewHandler extends AbstractHandler {
 
 	/*
 	 * (non-Javadoc)

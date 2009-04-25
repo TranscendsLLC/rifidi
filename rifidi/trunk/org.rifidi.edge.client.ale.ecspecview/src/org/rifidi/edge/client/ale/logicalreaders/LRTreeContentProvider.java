@@ -149,6 +149,8 @@ public class LRTreeContentProvider implements ITreeContentProvider {
 			logger.fatal(e);
 		} catch (NoSuchNameExceptionResponse e) {
 			logger.warn(e);
+		} catch (Throwable t) {
+			logger.warn(t);
 		}
 		return lrspecs;
 	}

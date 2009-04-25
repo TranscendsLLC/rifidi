@@ -22,6 +22,11 @@ import org.rifidi.edge.client.ale.api.xsd.ale.epcglobal.ECSpec;
  */
 public interface ALEService extends IPropertyChangeListener {
 	/**
+	 * Reload the model.
+	 */
+	void reload();
+
+	/**
 	 * Register a listener for changes to the ALE stub.
 	 * 
 	 * @param listener

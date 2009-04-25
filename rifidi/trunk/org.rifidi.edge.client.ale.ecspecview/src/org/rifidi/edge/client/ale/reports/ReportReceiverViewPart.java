@@ -71,8 +71,6 @@ public class ReportReceiverViewPart extends ViewPart implements
 	 */
 	@Override
 	public void createPartControl(Composite parent) {
-		// IToolBarManager tbm =
-		// getViewSite().getActionBars().getToolBarManager();
 		parent.setLayout(new FillLayout());
 		viewer = new TreeViewer(parent, SWT.None);
 

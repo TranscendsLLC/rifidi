@@ -20,6 +20,11 @@ import org.rifidi.edge.client.ale.logicalreaders.decorators.LRSpecDecorator;
 public interface ALELRService extends IPropertyChangeListener {
 
 	/**
+	 * Reload the model. 
+	 */
+	void reload();
+	
+	/**
 	 * Register a listener for changes to the ALE LR stub.
 	 * 
 	 * @param listener
