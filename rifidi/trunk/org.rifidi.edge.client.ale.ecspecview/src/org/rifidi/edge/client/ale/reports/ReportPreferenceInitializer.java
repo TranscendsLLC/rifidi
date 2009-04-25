@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.rifidi.edge.client.reports;
+package org.rifidi.edge.client.ale.reports;
 
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.core.runtime.preferences.DefaultScope;

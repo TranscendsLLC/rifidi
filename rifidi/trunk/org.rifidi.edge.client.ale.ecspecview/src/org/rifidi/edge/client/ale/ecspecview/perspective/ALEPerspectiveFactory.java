@@ -8,6 +8,8 @@ import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveFactory;
 import org.rifidi.edge.client.ale.ecspecview.views.ECSpecEditorView;
 import org.rifidi.edge.client.ale.ecspecview.views.ECSpecView;
+import org.rifidi.edge.client.ale.logicalreaders.LRTreeViewPart;
+import org.rifidi.edge.client.ale.reports.ReportReceiverViewPart;
 
 /**
  * @author kyle
@@ -37,19 +39,15 @@ public class ALEPerspectiveFactory implements IPerspectiveFactory {
 		folder.addPlaceholder(ECSpecEditorView.ID + ":*");
 		
 		leftfolder.addView(ECSpecView.ID);
-		leftfolder.addView("org.rifidi.edge.client.ale.ReportReceiverView");
+		leftfolder.addView(ReportReceiverViewPart.ID);
 		
-		layout.addStandaloneView("org.rifidi.edge.client.alelr.LRTreeView",
+		layout.addStandaloneView(LRTreeViewPart.ID,
 				true, IPageLayout.BOTTOM, 0.5f, ECSpecView.ID);
 		
 		
-		layout.getViewLayout("org.rifidi.edge.client.alelr.LRTreeView")
+		layout.getViewLayout(LRTreeViewPart.ID)
 				.setCloseable(false);
-//		layout.addStandaloneView(
-//				"org.rifidi.edge.client.ale.ReportReceiverView", true,
-//				IPageLayout.BOTTOM, 0.5f,
-//				"org.rifidi.edge.client.alelr.LRTreeView");
-		layout.getViewLayout("org.rifidi.edge.client.ale.ReportReceiverView")
+		layout.getViewLayout(ReportReceiverViewPart.ID)
 				.setCloseable(false);
 		layout.getViewLayout(ECSpecView.ID).setCloseable(false);
 	}

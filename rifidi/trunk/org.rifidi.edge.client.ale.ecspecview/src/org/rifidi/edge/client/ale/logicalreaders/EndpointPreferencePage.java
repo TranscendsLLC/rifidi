@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.rifidi.edge.client.alelr;
+package org.rifidi.edge.client.ale.logicalreaders;
 
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.IPreferenceStore;

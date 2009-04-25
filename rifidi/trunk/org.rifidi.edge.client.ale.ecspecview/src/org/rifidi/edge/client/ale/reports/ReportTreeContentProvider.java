@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.rifidi.edge.client.reports;
+package org.rifidi.edge.client.ale.reports;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

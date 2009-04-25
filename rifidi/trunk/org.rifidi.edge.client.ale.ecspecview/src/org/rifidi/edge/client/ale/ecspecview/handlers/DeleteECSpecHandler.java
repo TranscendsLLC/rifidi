@@ -14,7 +14,7 @@ import org.eclipse.core.expressions.IEvaluationContext;
 import org.rifidi.edge.client.ale.api.wsdl.ale.epcglobal.NoSuchNameExceptionResponse;
 import org.rifidi.edge.client.ale.ecspecview.Activator;
 import org.rifidi.edge.client.ale.ecspecview.model.ECSpecDecorator;
-import org.rifidi.edge.client.alelr.ALEService;
+import org.rifidi.edge.client.ale.logicalreaders.ALEService;
 
 /**
  * @author Jochen Mader - jochen@pramari.com

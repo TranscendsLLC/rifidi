@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.rifidi.edge.client.alelr.commands;
+package org.rifidi.edge.client.ale.logicalreaders.commands;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,8 +18,8 @@ import org.eclipse.ui.PlatformUI;
 import org.rifidi.edge.client.ale.api.wsdl.alelr.epcglobal.DuplicateNameExceptionResponse;
 import org.rifidi.edge.client.ale.api.wsdl.alelr.epcglobal.ValidationExceptionResponse;
 import org.rifidi.edge.client.ale.ecspecview.Activator;
-import org.rifidi.edge.client.alelr.ALELRService;
-import org.rifidi.edge.client.alelr.decorators.LRSpecDecorator;
+import org.rifidi.edge.client.ale.logicalreaders.ALELRService;
+import org.rifidi.edge.client.ale.logicalreaders.decorators.LRSpecDecorator;
 
 /**
  * @author Jochen Mader - jochen@pramari.com

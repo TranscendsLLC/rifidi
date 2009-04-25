@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.rifidi.edge.client.alelr;
+package org.rifidi.edge.client.ale.logicalreaders;
 
 import java.util.List;
 
@@ -11,7 +11,7 @@ import org.rifidi.edge.client.ale.api.wsdl.alelr.epcglobal.DuplicateNameExceptio
 import org.rifidi.edge.client.ale.api.wsdl.alelr.epcglobal.InUseExceptionResponse;
 import org.rifidi.edge.client.ale.api.wsdl.alelr.epcglobal.NoSuchNameExceptionResponse;
 import org.rifidi.edge.client.ale.api.wsdl.alelr.epcglobal.ValidationExceptionResponse;
-import org.rifidi.edge.client.alelr.decorators.LRSpecDecorator;
+import org.rifidi.edge.client.ale.logicalreaders.decorators.LRSpecDecorator;
 
 /**
  * @author Jochen Mader - jochen@pramari.com

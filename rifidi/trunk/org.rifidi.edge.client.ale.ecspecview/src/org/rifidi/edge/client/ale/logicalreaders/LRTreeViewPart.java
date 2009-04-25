@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.rifidi.edge.client.alelr;
+package org.rifidi.edge.client.ale.logicalreaders;
 
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.MenuManager;
@@ -20,6 +20,7 @@ import org.rifidi.edge.client.ale.ecspecview.Activator;
  * 
  */
 public class LRTreeViewPart extends ViewPart {
+	public static final String ID="org.rifidi.edge.client.ale.logicalreaders.LRView";
 	/** Treeviewer. */
 	private TreeViewer treeViewer;
 	/** Service that manages connections to ALE. */

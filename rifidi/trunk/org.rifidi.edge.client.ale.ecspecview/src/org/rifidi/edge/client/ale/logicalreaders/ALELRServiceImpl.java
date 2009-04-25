@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.rifidi.edge.client.alelr;
+package org.rifidi.edge.client.ale.logicalreaders;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -41,7 +41,7 @@ import org.rifidi.edge.client.ale.api.wsdl.alelr.epcglobal.ValidationExceptionRe
 import org.rifidi.edge.client.ale.api.xsd.ale.epcglobal.ECSpec;
 import org.rifidi.edge.client.ale.api.xsd.alelr.epcglobal.LRSpec;
 import org.rifidi.edge.client.ale.ecspecview.Activator;
-import org.rifidi.edge.client.alelr.decorators.LRSpecDecorator;
+import org.rifidi.edge.client.ale.logicalreaders.decorators.LRSpecDecorator;
 
 /**
  * Not threadsafe because we only use this class inside of eclipse!!!!
@@ -166,7 +166,7 @@ public class ALELRServiceImpl implements ALELRService, ALEService {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.client.alelr.ALELRService#registerALELRListener(org.rifidi
+	 * org.rifidi.edge.client.ale.logicalreaders.ALELRService#registerALELRListener(org.rifidi
 	 * .edge.client.alelr.ALELRListener)
 	 */
 	@Override
@@ -181,7 +181,7 @@ public class ALELRServiceImpl implements ALELRService, ALEService {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.client.alelr.ALELRService#unregisterALELRListener(org
+	 * org.rifidi.edge.client.ale.logicalreaders.ALELRService#unregisterALELRListener(org
 	 * .rifidi.edge.client.alelr.ALELRListener)
 	 */
 	@Override
@@ -193,7 +193,7 @@ public class ALELRServiceImpl implements ALELRService, ALEService {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.client.alelr.ALEService#registerALEListener(org.rifidi
+	 * org.rifidi.edge.client.ale.logicalreaders.ALEService#registerALEListener(org.rifidi
 	 * .edge.client.alelr.ALEListener)
 	 */
 	@Override
@@ -208,7 +208,7 @@ public class ALELRServiceImpl implements ALELRService, ALEService {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.client.alelr.ALEService#unregisterALEListener(org.rifidi
+	 * org.rifidi.edge.client.ale.logicalreaders.ALEService#unregisterALEListener(org.rifidi
 	 * .edge.client.alelr.ALEListener)
 	 */
 	@Override
@@ -220,7 +220,7 @@ public class ALELRServiceImpl implements ALELRService, ALEService {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.client.alelr.ALELRService#registerViewer(org.eclipse.
+	 * org.rifidi.edge.client.ale.logicalreaders.ALELRService#registerViewer(org.eclipse.
 	 * jface.viewers.Viewer)
 	 */
 	@Override
@@ -236,7 +236,7 @@ public class ALELRServiceImpl implements ALELRService, ALEService {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.client.alelr.ALELRService#unregisterViewer(org.eclipse
+	 * org.rifidi.edge.client.ale.logicalreaders.ALELRService#unregisterViewer(org.eclipse
 	 * .jface.viewers.Viewer)
 	 */
 	@Override
@@ -248,7 +248,7 @@ public class ALELRServiceImpl implements ALELRService, ALEService {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.client.alelr.ALEService#registerALEViewer(org.eclipse
+	 * org.rifidi.edge.client.ale.logicalreaders.ALEService#registerALEViewer(org.eclipse
 	 * .jface.viewers.Viewer)
 	 */
 	@Override
@@ -266,7 +266,7 @@ public class ALELRServiceImpl implements ALELRService, ALEService {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.client.alelr.ALEService#unregisterALEViewer(org.eclipse
+	 * org.rifidi.edge.client.ale.logicalreaders.ALEService#unregisterALEViewer(org.eclipse
 	 * .jface.viewers.Viewer)
 	 */
 	@Override
@@ -277,7 +277,7 @@ public class ALELRServiceImpl implements ALELRService, ALEService {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.client.alelr.ALELRService#getAvailableReaderNames()
+	 * @see org.rifidi.edge.client.ale.logicalreaders.ALELRService#getAvailableReaderNames()
 	 */
 	@Override
 	public List<String> getAvailableReaderNames() {
@@ -296,7 +296,7 @@ public class ALELRServiceImpl implements ALELRService, ALEService {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.client.alelr.ALELRService#deleteReader(org.rifidi.edge
+	 * org.rifidi.edge.client.ale.logicalreaders.ALELRService#deleteReader(org.rifidi.edge
 	 * .client.alelr.decorators.LRSpecDecorator)
 	 */
 	@Override
@@ -334,7 +334,7 @@ public class ALELRServiceImpl implements ALELRService, ALEService {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.client.alelr.ALELRService#createReader(java.lang.String,
+	 * org.rifidi.edge.client.ale.logicalreaders.ALELRService#createReader(java.lang.String,
 	 * java.util.List)
 	 */
 	@Override
@@ -377,7 +377,7 @@ public class ALELRServiceImpl implements ALELRService, ALEService {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.client.alelr.ALEService#createECSpec(java.lang.String,
+	 * org.rifidi.edge.client.ale.logicalreaders.ALEService#createECSpec(java.lang.String,
 	 * org.rifidi.edge.client.ale.api.xsd.ale.epcglobal.ECSpec)
 	 */
 	@Override
@@ -401,7 +401,7 @@ public class ALELRServiceImpl implements ALELRService, ALEService {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.client.alelr.ALEService#deleteECSpec(java.lang.String)
+	 * org.rifidi.edge.client.ale.logicalreaders.ALEService#deleteECSpec(java.lang.String)
 	 */
 	@Override
 	public void deleteECSpec(String specName)
@@ -421,7 +421,7 @@ public class ALELRServiceImpl implements ALELRService, ALEService {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.client.alelr.ALEService#getECSpec(java.lang.String)
+	 * @see org.rifidi.edge.client.ale.logicalreaders.ALEService#getECSpec(java.lang.String)
 	 */
 	@Override
 	public ECSpec getECSpec(String specName)
@@ -442,7 +442,7 @@ public class ALELRServiceImpl implements ALELRService, ALEService {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.client.alelr.ALEService#getSubscribers(java.lang.String)
+	 * org.rifidi.edge.client.ale.logicalreaders.ALEService#getSubscribers(java.lang.String)
 	 */
 	@Override
 	public ArrayOfString getSubscribers(String specName)
@@ -462,7 +462,7 @@ public class ALELRServiceImpl implements ALELRService, ALEService {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.client.alelr.ALEService#getAvailableECSpecNames()
+	 * @see org.rifidi.edge.client.ale.logicalreaders.ALEService#getAvailableECSpecNames()
 	 */
 	@Override
 	public List<String> getAvailableECSpecNames() {
@@ -483,7 +483,7 @@ public class ALELRServiceImpl implements ALELRService, ALEService {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.client.alelr.ALEService#subscribeECSpec(java.lang.String,
+	 * org.rifidi.edge.client.ale.logicalreaders.ALEService#subscribeECSpec(java.lang.String,
 	 * java.lang.String)
 	 */
 	@Override
@@ -507,7 +507,7 @@ public class ALELRServiceImpl implements ALELRService, ALEService {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.client.alelr.ALEService#unsubscribeECSpec(java.lang.String
+	 * org.rifidi.edge.client.ale.logicalreaders.ALEService#unsubscribeECSpec(java.lang.String
 	 * , java.lang.String)
 	 */
 	@Override
