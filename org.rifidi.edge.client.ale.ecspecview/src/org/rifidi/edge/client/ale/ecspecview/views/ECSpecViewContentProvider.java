@@ -14,7 +14,7 @@ import org.rifidi.edge.client.ale.api.wsdl.ale.epcglobal.NoSuchNameExceptionResp
 import org.rifidi.edge.client.ale.api.xsd.ale.epcglobal.ECSpec.LogicalReaders;
 import org.rifidi.edge.client.ale.ecspecview.Activator;
 import org.rifidi.edge.client.ale.ecspecview.model.ECSpecDecorator;
-import org.rifidi.edge.client.alelr.ALEService;
+import org.rifidi.edge.client.ale.logicalreaders.ALEService;
 
 /**
  * @author kyle

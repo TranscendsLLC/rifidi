@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.rifidi.edge.client.alelr;
+package org.rifidi.edge.client.ale.logicalreaders;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,8 +17,8 @@ import org.rifidi.edge.client.ale.api.wsdl.alelr.epcglobal.GetLRSpec;
 import org.rifidi.edge.client.ale.api.wsdl.alelr.epcglobal.ImplementationExceptionResponse;
 import org.rifidi.edge.client.ale.api.wsdl.alelr.epcglobal.NoSuchNameExceptionResponse;
 import org.rifidi.edge.client.ale.api.wsdl.alelr.epcglobal.SecurityExceptionResponse;
-import org.rifidi.edge.client.alelr.decorators.LRSpecDecorator;
-import org.rifidi.edge.client.alelr.decorators.LRSpecSubnodeDecorator;
+import org.rifidi.edge.client.ale.logicalreaders.decorators.LRSpecDecorator;
+import org.rifidi.edge.client.ale.logicalreaders.decorators.LRSpecSubnodeDecorator;
 
 /**
  * @author Jochen Mader - jochen@pramari.com

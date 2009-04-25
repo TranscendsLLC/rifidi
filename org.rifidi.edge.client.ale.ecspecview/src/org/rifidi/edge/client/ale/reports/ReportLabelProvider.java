@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.rifidi.edge.client.reports;
+package org.rifidi.edge.client.ale.reports;
 
 import org.eclipse.jface.viewers.LabelProvider;
 import org.rifidi.edge.client.ale.api.xsd.ale.epcglobal.ECReport;

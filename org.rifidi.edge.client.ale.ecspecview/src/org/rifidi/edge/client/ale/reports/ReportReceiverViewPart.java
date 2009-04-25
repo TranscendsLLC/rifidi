@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.rifidi.edge.client.reports;
+package org.rifidi.edge.client.ale.reports;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -34,6 +34,7 @@ import org.rifidi.edge.client.ale.ecspecview.Activator;
  */
 public class ReportReceiverViewPart extends ViewPart implements
 		IPropertyChangeListener {
+	public static final String ID="org.rifidi.edge.client.ale.reports.ReportReceiverView";
 	/** Logger for this class. */
 	private static final Log logger = LogFactory
 			.getLog(ReportReceiverViewPart.class);

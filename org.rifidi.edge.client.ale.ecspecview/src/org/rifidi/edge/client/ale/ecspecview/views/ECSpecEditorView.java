@@ -63,8 +63,8 @@ import org.rifidi.edge.client.ale.api.xsd.ale.epcglobal.ECFilterSpecExtension.Fi
 import org.rifidi.edge.client.ale.api.xsd.ale.epcglobal.ECSpec.LogicalReaders;
 import org.rifidi.edge.client.ale.api.xsd.ale.epcglobal.ECSpec.ReportSpecs;
 import org.rifidi.edge.client.ale.ecspecview.Activator;
-import org.rifidi.edge.client.alelr.ALELRService;
-import org.rifidi.edge.client.alelr.ALEService;
+import org.rifidi.edge.client.ale.logicalreaders.ALELRService;
+import org.rifidi.edge.client.ale.logicalreaders.ALEService;
 
 /**
  * @author Tobias Hoppenthaler - tobias@pramari.com
@@ -244,12 +244,12 @@ public class ECSpecEditorView extends ViewPart {
 
 		});
 		toolkit.createLabel(form.getBody(), "EcSpec Name:");
-		/**
+		/*
 		 * Text widget for changing the the name of the spec. Initial value is
 		 * the name (String) passed in in the init method.
 		 */
 		txtSpecName = toolkit.createText(form.getBody(), this.name, SWT.BORDER);
-		/**
+		/*
 		 * Set name when focus is lost.
 		 */
 		txtSpecName.addFocusListener(new FocusListener() {

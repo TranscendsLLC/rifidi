@@ -26,16 +26,16 @@
       <view
             allowMultiple="false"
             category="org.rifidi.edge.client.ale"
-            class="org.rifidi.edge.client.alelr.LRTreeViewPart"
-            id="org.rifidi.edge.client.alelr.LRTreeView"
+            class="org.rifidi.edge.client.ale.logicalreaders.LRTreeViewPart"
+            id="org.rifidi.edge.client.ale.logicalreaders.LRView"
             name="Logical Reader View"
             restorable="true">
       </view>
       <view
             allowMultiple="false"
             category="org.rifidi.edge.client.ale"
-            class="org.rifidi.edge.client.reports.ReportReceiverViewPart"
-            id="org.rifidi.edge.client.ale.ReportReceiverView"
+            class="org.rifidi.edge.client.ale.reports.ReportReceiverViewPart"
+            id="org.rifidi.edge.client.ale.reports.ReportReceiverView"
             name="Report Receiver View"
             restorable="true">
       </view>
@@ -46,10 +46,10 @@
             class="org.rifidi.edge.client.ale.ecspecview.preference.ALEPreferenceInitializer">
       </initializer>
       <initializer
-            class="org.rifidi.edge.client.alelr.EndpointInitializer">
+            class="org.rifidi.edge.client.ale.logicalreaders.EndpointInitializer">
       </initializer>
       <initializer
-            class="org.rifidi.edge.client.reports.ReportPreferenceInitializer">
+            class="org.rifidi.edge.client.ale.reports.ReportPreferenceInitializer">
       </initializer>
    </extension>
    <extension
@@ -60,12 +60,12 @@
             name="ALE Preference Page">
       </page>
       <page
-            class="org.rifidi.edge.client.alelr.EndpointPreferencePage"
+            class="org.rifidi.edge.client.ale.logicalreaders.EndpointPreferencePage"
             id="org.rifidi.edge.ale.lr.endpoint"
             name="ALE Logical Reader Endpoint">
       </page>
       <page
-            class="org.rifidi.edge.client.reports.ReportPreferencePage"
+            class="org.rifidi.edge.client.ale.reports.ReportPreferencePage"
             id="org.rifidi.edge.client.reportpreferences"
             name="Report Preference Page">
       </page>
@@ -167,11 +167,11 @@
          </enabledWhen>
       </handler>
       <handler
-            class="org.rifidi.edge.client.alelr.commands.DeleteHandler"
+            class="org.rifidi.edge.client.ale.logicalreaders.commands.DeleteHandler"
             commandId="org.rifidi.edge.ale.lr.commands.delete">
       </handler>
       <handler
-            class="org.rifidi.edge.client.alelr.commands.CreateHandler"
+            class="org.rifidi.edge.client.ale.logicalreaders.commands.CreateHandler"
             commandId="org.rifidi.edge.ale.lr.commands.create">
       </handler>
       <handler
@@ -190,7 +190,7 @@
       <extension
          point="org.eclipse.core.expressions.propertyTesters">
       <propertyTester
-            class="org.rifidi.edge.client.alelr.LRSpecDecoratorPropertyTester"
+            class="org.rifidi.edge.client.ale.logicalreaders.LRSpecDecoratorPropertyTester"
             id="org.rifidi.edge.ale.lr"
             namespace="org.rifidi.edge.ale.lr"
             properties="locked"
@@ -259,7 +259,7 @@
                <and>
                   <iterate>
                      <instanceof
-                           value="org.rifidi.edge.client.alelr.decorators.LRSpecDecorator">
+                           value="org.rifidi.edge.client.ale.logicalreaders.decorators.LRSpecDecorator">
                      </instanceof>
                   </iterate>
                   <test
@@ -268,7 +268,7 @@
                   <not>
                      <iterate>
                         <instanceof
-                              value="org.rifidi.edge.client.alelr.decorators.LRSpecSubnodeDecorator">
+                              value="org.rifidi.edge.client.ale.logicalreaders.decorators.LRSpecSubnodeDecorator">
                         </instanceof>
                      </iterate>
                   </not>
@@ -286,13 +286,13 @@
                   </count>
                   <iterate>
                      <instanceof
-                           value="org.rifidi.edge.client.alelr.decorators.LRSpecDecorator">
+                           value="org.rifidi.edge.client.ale.logicalreaders.decorators.LRSpecDecorator">
                      </instanceof>
                   </iterate>
                   <not>
                      <iterate>
                         <instanceof
-                              value="org.rifidi.edge.client.alelr.decorators.LRSpecSubnodeDecorator">
+                              value="org.rifidi.edge.client.ale.logicalreaders.decorators.LRSpecSubnodeDecorator">
                         </instanceof>
                      </iterate>
                   </not>

@@ -21,8 +21,8 @@ import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.part.ViewPart;
 import org.rifidi.edge.client.ale.api.wsdl.ale.epcglobal.ALEServicePortType;
 import org.rifidi.edge.client.ale.ecspecview.Activator;
-import org.rifidi.edge.client.alelr.ALEListener;
-import org.rifidi.edge.client.alelr.ALEService;
+import org.rifidi.edge.client.ale.logicalreaders.ALEListener;
+import org.rifidi.edge.client.ale.logicalreaders.ALEService;
 
 /**
  * @author Kyle Neumeier - kyle@pramari.com
@@ -114,7 +114,7 @@ public class ECSpecView extends ViewPart implements ALEListener {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.rifidi.edge.client.alelr.ALEListener#setALEStub(org.rifidi.edge.client.ale.api.wsdl.ale.epcglobal.ALEServicePortType)
+	 * @see org.rifidi.edge.client.ale.logicalreaders.ALEListener#setALEStub(org.rifidi.edge.client.ale.api.wsdl.ale.epcglobal.ALEServicePortType)
 	 */
 	@Override
 	public void setALEStub(ALEServicePortType stub) {

@@ -4,9 +4,9 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
-import org.rifidi.edge.client.alelr.ALELRService;
-import org.rifidi.edge.client.alelr.ALELRServiceImpl;
-import org.rifidi.edge.client.alelr.ALEService;
+import org.rifidi.edge.client.ale.logicalreaders.ALELRService;
+import org.rifidi.edge.client.ale.logicalreaders.ALELRServiceImpl;
+import org.rifidi.edge.client.ale.logicalreaders.ALEService;
 
 /**
  * The activator class controls the plug-in life cycle
@@ -21,7 +21,7 @@ public class Activator extends AbstractUIPlugin {
 	/** The Default ALE port URL preference */
 	public static final String ALE_PORT_URL_DEFAULT_ = "http://127.0.0.1:8081/aleread";
 	/** Logical reader preferences. */
-	public final static String ALELR_ENDPOINT = "org.rifidi.edge.client.alelr.endpoint";
+	public final static String ALELR_ENDPOINT = "org.rifidi.edge.client.ale.logicalreaders.endpoint";
 	public final static String ALELR_ENDPOINT_DEFAULT = "http://127.0.0.1:8081/lr";
 	/** Icons for the readers. */
 	public static final String ICON_READER = "icon_reader";
