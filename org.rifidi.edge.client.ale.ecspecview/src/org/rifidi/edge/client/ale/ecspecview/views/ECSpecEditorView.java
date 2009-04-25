@@ -188,7 +188,6 @@ public class ECSpecEditorView extends ViewPart {
 		this.name = name;
 		// Changes the name of the view (tab).
 		setPartName(this.name);
-
 		// Here all the sections of the form get created.
 		createHeader();
 		createSecLogRds();
