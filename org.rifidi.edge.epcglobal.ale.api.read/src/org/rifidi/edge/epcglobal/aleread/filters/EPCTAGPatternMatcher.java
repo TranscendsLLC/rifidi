@@ -14,7 +14,7 @@ import java.util.regex.Pattern;
 public class EPCTAGPatternMatcher extends AbstractPatternMatcher implements
 		PatternMatcher {
 	private static Pattern pattern_tag = Pattern
-			.compile("urn:epc:pat:([a-zA-Z0-9\\-]+):(((\\d*|\\*)\\.)*(\\d+|\\*))$");
+			.compile("urn:epc:pat:([a-zA-Z0-9\\-]+):(((\\d+|\\[\\d+\\-\\d+\\]|\\*)\\.)*(\\d+|\\*|\\[\\d+\\-\\d+\\]))$");
 
 	public static boolean isValidPattern(String pattern) {
 		return pattern_tag.matcher(pattern).find();
