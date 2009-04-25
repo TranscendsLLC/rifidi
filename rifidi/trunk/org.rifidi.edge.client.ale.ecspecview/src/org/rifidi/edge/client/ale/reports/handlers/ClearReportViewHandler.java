@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.rifidi.edge.client.ale.ecspecview.handlers;
+package org.rifidi.edge.client.ale.reports.handlers;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;

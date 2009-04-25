@@ -140,6 +140,12 @@
             id="org.rifidi.edge.client.ale.reportview.clearcommand"
             name="Clear">
       </command>
+      <command
+            categoryId="org.rifidi.edge.client.ale.ecspec"
+            description="Unsubscribe from an ECSpec"
+            id="org.rifidi.edge.client.ale.ecspecview.unsubscribeECSpec"
+            name="Unsubscribe">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
@@ -183,8 +189,12 @@
             commandId="org.rifidi.edge.client.ale.ecspecview.subscribeECSpec">
       </handler>
       <handler
-            class="org.rifidi.edge.client.ale.ecspecview.handlers.ClearReportViewHandler"
+            class="org.rifidi.edge.client.ale.reports.handlers.ClearReportViewHandler"
             commandId="org.rifidi.edge.client.ale.reportview.clearcommand">
+      </handler>
+      <handler
+            class="org.rifidi.edge.client.ale.ecspecview.handlers.UnsubscribeECSpecHandler"
+            commandId="org.rifidi.edge.client.ale.ecspecview.unsubscribeECSpec">
       </handler>
    </extension>
       <extension
@@ -237,6 +247,20 @@
          <command
                commandId="org.rifidi.edge.client.ale.ecspecview.subscribeECSpec"
                label="Subscribe"
+               style="push">
+            <visibleWhen>
+               <and>
+                  <iterate>
+                     <instanceof
+                           value="org.rifidi.edge.client.ale.api.xsd.ale.epcglobal.ECSpec">
+                     </instanceof>
+                  </iterate>
+               </and>
+            </visibleWhen>
+         </command>
+         <command
+               commandId="org.rifidi.edge.client.ale.ecspecview.unsubscribeECSpec"
+               label="Unsubscribe"
                style="push">
             <visibleWhen>
                <and>
