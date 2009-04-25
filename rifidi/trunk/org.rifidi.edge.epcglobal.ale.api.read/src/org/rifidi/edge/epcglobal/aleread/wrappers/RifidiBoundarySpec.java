@@ -53,7 +53,8 @@ public class RifidiBoundarySpec {
 			InvalidURIExceptionResponse {
 		startTriggers = new HashSet<Trigger>();
 		// collect start triggers
-		if (boundaryspec.getStartTrigger() != null) {
+		if (boundaryspec.getStartTrigger() != null
+				&& !"".equals(boundaryspec.getStartTrigger())) {
 			Trigger trig = triggerFactoryService.createTrigger(boundaryspec
 					.getStartTrigger());
 			trig.setStart(true);
@@ -70,7 +71,8 @@ public class RifidiBoundarySpec {
 		}
 		// collect stop triggers
 		stopTriggers = new HashSet<Trigger>();
-		if (boundaryspec.getStopTrigger() != null) {
+		if (boundaryspec.getStopTrigger() != null
+				&& !"".equals(boundaryspec.getStopTrigger())) {
 			Trigger trig = triggerFactoryService.createTrigger(boundaryspec
 					.getStopTrigger());
 			trig.setStart(false);
@@ -183,6 +185,5 @@ public class RifidiBoundarySpec {
 	public boolean isWhenDataAvailable() {
 		return whenDataAvailable;
 	}
-	
-	
+
 }
