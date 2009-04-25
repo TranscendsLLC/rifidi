@@ -68,18 +68,22 @@ public class RifidiReportFactoryimpl implements RifidiReportFactory {
 		}
 		Map<ALEField, List<PatternMatcher>> includeFilters = new HashMap<ALEField, List<PatternMatcher>>();
 		Map<ALEField, List<PatternMatcher>> excludeFilters = new HashMap<ALEField, List<PatternMatcher>>();
-		if (reportSpec.getFilterSpec() != null
-				&& reportSpec.getFilterSpec().getExtension() != null) {
+		if (reportSpec.getFilterSpec() != null) {
 			// ALE 1.1
-			for (ECFilterListMember filter : reportSpec.getFilterSpec()
-					.getExtension().getFilterList().getFilter()) {
-				if ("INCLUDE".equals(filter.getIncludeExclude())) {
-					includeFilters.putAll(filterFactory.createMatcher(filter));
-				} else if ("EXCLUDE".equals(filter.getIncludeExclude())) {
-					excludeFilters.putAll(filterFactory.createMatcher(filter));
-				} else {
-					throw new ECSpecValidationExceptionResponse(
-							"Unknown filter type " + filter.getIncludeExclude());
+			if (reportSpec.getFilterSpec().getExtension() != null) {
+				for (ECFilterListMember filter : reportSpec.getFilterSpec()
+						.getExtension().getFilterList().getFilter()) {
+					if ("INCLUDE".equals(filter.getIncludeExclude())) {
+						includeFilters.putAll(filterFactory
+								.createMatcher(filter));
+					} else if ("EXCLUDE".equals(filter.getIncludeExclude())) {
+						excludeFilters.putAll(filterFactory
+								.createMatcher(filter));
+					} else {
+						throw new ECSpecValidationExceptionResponse(
+								"Unknown filter type "
+										+ filter.getIncludeExclude());
+					}
 				}
 			}
 
@@ -93,26 +97,30 @@ public class RifidiReportFactoryimpl implements RifidiReportFactory {
 			if (reportSpec.getFilterSpec().getExcludePatterns() != null) {
 				for (String pattern : reportSpec.getFilterSpec()
 						.getExcludePatterns().getExcludePattern()) {
-					if (EPCTAGPatternMatcher.isValidPattern(pattern)) {
-						if (excludeFilters.get(field) == null) {
-							excludeFilters.put(field,
-									new ArrayList<PatternMatcher>());
+					if (!pattern.equals("")) {
+						if (EPCTAGPatternMatcher.isValidPattern(pattern)) {
+							if (excludeFilters.get(field) == null) {
+								excludeFilters.put(field,
+										new ArrayList<PatternMatcher>());
+							}
+							excludeFilters.get(field).add(
+									new EPCTAGPatternMatcher(pattern));
 						}
-						excludeFilters.get(field).add(
-								new EPCTAGPatternMatcher(pattern));
 					}
 				}
 			}
 			if (reportSpec.getFilterSpec().getIncludePatterns() != null) {
 				for (String pattern : reportSpec.getFilterSpec()
 						.getIncludePatterns().getIncludePattern()) {
-					if (EPCTAGPatternMatcher.isValidPattern(pattern)) {
-						if (includeFilters.get(field) == null) {
-							includeFilters.put(field,
-									new ArrayList<PatternMatcher>());
+					if (!pattern.equals("")) {
+						if (EPCTAGPatternMatcher.isValidPattern(pattern)) {
+							if (includeFilters.get(field) == null) {
+								includeFilters.put(field,
+										new ArrayList<PatternMatcher>());
+							}
+							includeFilters.get(field).add(
+									new EPCTAGPatternMatcher(pattern));
 						}
-						includeFilters.get(field).add(
-								new EPCTAGPatternMatcher(pattern));
 					}
 				}
 			}
@@ -120,14 +128,27 @@ public class RifidiReportFactoryimpl implements RifidiReportFactory {
 
 		List<GroupMatcher> groups = new ArrayList<GroupMatcher>();
 		ALEField groupfield = null;
-		if (reportSpec.getGroupSpec() != null
-				&& reportSpec.getGroupSpec().getExtension() != null) {
-			// TODO: ALE 1.0 take care of this
-			// reportSpec.getGroupSpec().getPattern()
-			groupfield = new ALEField(reportSpec.getGroupSpec().getExtension()
-					.getFieldspec());
+		if (reportSpec.getGroupSpec() != null) {
+			// ALE 1.1
+			if (reportSpec.getGroupSpec().getExtension() != null) {
+				if (reportSpec.getGroupSpec().getExtension().getFieldspec()
+						.getFieldname() != null) {
+					groupfield = new ALEField(reportSpec.getGroupSpec()
+							.getExtension().getFieldspec());
+				}
+			}
+			// ALE 1.0
+			if (groupfield == null) {
+				ECFieldSpec spec = new ECFieldSpec();
+				spec.setDatatype("epc");
+				spec.setFieldname("epc");
+				spec.setFormat("epc-tag");
+				groupfield = new ALEField(spec);
+			}
 			for (String pattern : reportSpec.getGroupSpec().getPattern()) {
-				groups.add(groupFactory.createMatcher(groupfield, pattern));
+				if (!pattern.equals("")) {
+					groups.add(groupFactory.createMatcher(groupfield, pattern));
+				}
 			}
 		}
 		// collect the different options
@@ -170,6 +191,7 @@ public class RifidiReportFactoryimpl implements RifidiReportFactory {
 			throw new ECSpecValidationExceptionResponse("No output specified. ");
 		}
 		return new RifidiReport(reportSpec.getReportName(), options,
-				includeFilters, excludeFilters,groupfield, groups, reportFields);
+				includeFilters, excludeFilters, groupfield, groups,
+				reportFields);
 	}
 }

@@ -12,7 +12,7 @@ import java.util.regex.Pattern;
  */
 public class UINTDECIMALPatternMatcher implements PatternMatcher {
 	private static Pattern range = Pattern
-			.compile("^\\[(\\d*)-(\\d*)\\]$");
+			.compile("^\\[(\\d+)-(\\d+)\\]$");
 	private boolean always = false;
 	private String match = null;
 	private Long lo;

@@ -24,13 +24,14 @@ public class EPCTAGGROUPPatternMatcher implements GroupMatcher {
 	private Pattern pattern;
 	private Map<Integer, FieldMatcher> matchers;
 	private static Pattern pattern_tag = Pattern
-			.compile("urn:epc:pat:(.*):(.*\\..*$)");
+			.compile("urn:epc:pat:([a-zA-Z0-9\\-]+):(((\\d+|\\[\\d+\\-\\d+\\]|\\*|X)\\.)*(\\d+|X|\\*|\\[\\d+\\-\\d+\\]))$");
 	private Map<String, List<DatacontainerEvent>> groupsToTags;
 	private String name_base;
+
 	public EPCTAGGROUPPatternMatcher(String input) {
 		groupsToTags = new HashMap<String, List<DatacontainerEvent>>();
 		matchers = new HashMap<Integer, FieldMatcher>();
-		
+
 		Matcher mat = pattern_tag.matcher(input);
 		if (mat.find()) {
 			StringBuilder patternBuilder = new StringBuilder("urn:epc:tag:");
@@ -47,28 +48,30 @@ public class EPCTAGGROUPPatternMatcher implements GroupMatcher {
 					matchers.put(count + 1, new RangeFieldMatcher(Long
 							.parseLong(mat.group(1)), Long.parseLong(mat
 							.group(2))));
-					patternBuilder.append("(\\d*)");
+					patternBuilder.append("(\\d+)");
 					nameBuilder.append("<>");
 					count++;
 				} else if (stuff.equals("X")) {
-					patternBuilder.append("(\\d*)");
+					patternBuilder.append("(\\d+)");
 					nameBuilder.append("<>");
 					count++;
 				} else if (stuff.equals("*")) {
-					patternBuilder.append("\\d*");
+					patternBuilder.append("\\d+");
 					nameBuilder.append("*");
 				} else {
 					patternBuilder.append(stuff);
 					nameBuilder.append(stuff);
 				}
-				patternBuilder.append(".");
+				patternBuilder.append("\\.");
 				nameBuilder.append(".");
 			}
 			patternBuilder.deleteCharAt(patternBuilder.length() - 1);
+			patternBuilder.deleteCharAt(patternBuilder.length() - 1);
 			patternBuilder.append("$");
+			System.out.println(patternBuilder.toString());
 			pattern = Pattern.compile(patternBuilder.toString());
 			nameBuilder.deleteCharAt(nameBuilder.length() - 1);
-			name_base=nameBuilder.toString();
+			name_base = nameBuilder.toString();
 		}
 	}
 
@@ -86,17 +89,22 @@ public class EPCTAGGROUPPatternMatcher implements GroupMatcher {
 		if (!match.find()) {
 			return false;
 		}
-		String groupname=name_base;
+		String groupname = name_base;
 		for (int count = 1; count <= match.groupCount(); count++) {
 			// check if a regular matcher exists for the group
 			if (matchers.get(count) != null) {
 				// match it
 				if (!matchers.get(count).match(match.group(count))) {
-					continue;
+					return false;
+				} else {
+					// create the groupname
+					groupname = groupname
+							.replaceFirst("<>", match.group(count));
 				}
-			} else {
-				// create the groupname
-				name_base.replaceFirst("<>", match.group(count));
+			}
+			// should be an X-field
+			else {
+				groupname = groupname.replaceFirst("<>", match.group(count));
 			}
 		}
 		if (!groupsToTags.containsKey(groupname)) {

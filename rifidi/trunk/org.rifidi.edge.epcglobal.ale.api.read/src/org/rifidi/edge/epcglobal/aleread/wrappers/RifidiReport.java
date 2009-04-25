@@ -219,16 +219,14 @@ public class RifidiReport {
 						}
 					}
 				}
-				tagreadsToSend.remove(matchedEvents);
+				tagreadsToSend.removeAll(matchedEvents);
 				for (GroupMatcher matcher : groups) {
-					ECReportGroup group = new ECReportGroup();
 					Map<String, List<DatacontainerEvent>> grouped = matcher
 							.getGrouped();
-					if (grouped.keySet().size() == 1) {
-						String name = grouped.keySet().iterator().next();
+					for(String name:grouped.keySet()){
+						ECReportGroup group = new ECReportGroup();
 						group.setGroupName(name);
 						fillGroup(group, grouped.get(name));
-						tags.addAll(grouped.get(name));
 						report.getGroup().add(group);
 					}
 				}

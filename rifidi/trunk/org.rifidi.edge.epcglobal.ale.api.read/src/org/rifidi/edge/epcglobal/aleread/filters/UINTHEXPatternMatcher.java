@@ -13,9 +13,9 @@ import java.util.regex.Pattern;
  */
 public class UINTHEXPatternMatcher implements PatternMatcher {
 	private static Pattern hexRange = Pattern
-			.compile("^\\[x([A-D0-9]*)-x([A-D0-9]*)\\]$");
+			.compile("^\\[x([A-D0-9]+)-x([A-D0-9]+)\\]$");
 	private static Pattern andComp = Pattern
-		.compile("^&x([A-D0-9]*)=x([A-D0-9]*)$");
+		.compile("^&x([A-D0-9]+)=x([A-D0-9]+)$");
 	private boolean always = false;
 	private String match = null;
 	private Long lo;

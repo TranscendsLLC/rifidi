@@ -13,12 +13,12 @@ import java.util.regex.Pattern;
  */
 public class EPCPUREPatternMatcher extends AbstractPatternMatcher {
 	private static Pattern pattern_pure = Pattern
-			.compile("urn:epc:idpat:(.*):(.*\\..*$)");
+			.compile("urn:epc:idpat:([a-zA-Z0-9\\-]+):((\\d+|\\*|\\[\\d+\\-\\d+\\])\\.(\\d+|\\*|\\[\\d+\\-\\d+\\])\\.(\\d+|\\*|\\[\\d+\\-\\d+\\]))$");
 
-	public static boolean isValidPattern(String pattern){
-		return pattern_pure.matcher(pattern).groupCount()==2;
+	public static boolean isValidPattern(String pattern) {
+		return pattern_pure.matcher(pattern).groupCount() == 2;
 	}
-	
+
 	public EPCPUREPatternMatcher(String input) {
 		matchers = new ArrayList<FieldMatcher>();
 
