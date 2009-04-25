@@ -356,10 +356,10 @@
          </command>
       </menuContribution>
       <menuContribution
-            locationURI="toolbar:org.rifidi.edge.client.ale.logicalreaders.LRView?after=additions">
+            locationURI="toolbar:org.rifidi.edge.client.ale.ecspecview?after=additions">
          <command
                commandId="org.rifidi.edge.ale.lr.commands.refresh"
-               icon="icons/report_delete.png"
+               icon="icons/arrow_refresh.png"
                label="Reload"
                style="push">
          </command>
