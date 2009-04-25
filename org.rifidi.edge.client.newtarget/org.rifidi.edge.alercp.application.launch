@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<launchConfiguration type="org.eclipse.pde.ui.RuntimeWorkbench">
+<booleanAttribute key="append.args" value="true"/>
+<stringAttribute key="application" value="org.rifidi.edge.alercp.application"/>
+<booleanAttribute key="askclear" value="true"/>
+<booleanAttribute key="automaticAdd" value="false"/>
+<booleanAttribute key="automaticValidate" value="true"/>
+<stringAttribute key="bootstrap" value=""/>
+<stringAttribute key="checked" value="[NONE]"/>
+<booleanAttribute key="clearConfig" value="false"/>
+<booleanAttribute key="clearws" value="false"/>
+<booleanAttribute key="clearwslog" value="false"/>
+<stringAttribute key="configLocation" value="${workspace_loc}/.metadata/.plugins/org.eclipse.pde.core/org.rifidi.edge.alercp.application"/>
+<booleanAttribute key="default" value="false"/>
+<booleanAttribute key="includeOptional" value="false"/>
+<stringAttribute key="location" value="${workspace_loc}/../runtime-org.rifidi.edge.alercp.application"/>
+<stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="-os ${target.os} -ws ${target.ws} -arch ${target.arch} -nl ${target.nl}"/>
+<stringAttribute key="org.eclipse.jdt.launching.SOURCE_PATH_PROVIDER" value="org.eclipse.pde.ui.workbenchClasspathProvider"/>
+<booleanAttribute key="pde.generated.config" value="false"/>
+<stringAttribute key="pde.version" value="3.3"/>
+<stringAttribute key="product" value="org.eclipse.equinox.p2.director.app.product"/>
+<stringAttribute key="selected_target_plugins" value="javax.servlet,org.eclipse.ui,org.eclipse.ui.forms,org.apache.geronimo.specs.geronimo-jms_1.1_spec,org.eclipse.swt.gtk.linux.x86,org.objectweb.asm,org.jdom,org.eclipse.core.databinding,org.eclipse.core.runtime,org.eclipse.osgi,jcl.over.slf4j,org.eclipse.core.expressions,org.springframework.bundle.spring,slf4j.log4j12,org.eclipse.equinox.preferences,org.eclipse.core.contenttype,org.fosstrak.tdt,org.eclipse.core.commands,org.eclipse.core.runtime.compatibility.auth,org.eclipse.equinox.registry,org.apache.log4j,slf4j.api,com.ibm.icu,org.eclipse.ui.workbench,org.eclipse.jface.databinding,org.eclipse.jface,org.eclipse.help,org.eclipse.equinox.app,org.junit4,com.springsource.net.sf.cglib,org.eclipse.osgi.services,javax.servlet.jsp,org.eclipse.equinox.common,org.eclipse.core.jobs,org.eclipse.swt,org.eclipse.core.runtime.compatibility.registry"/>
+<stringAttribute key="selected_workspace_plugins" value="org.rifidi.log4j.configuration,org.rifidi.edge.alercp,org.apache.cxf,org.rifidi.edge.client.ale.ecspecview,org.rifidi.edge.client.ale.api"/>
+<booleanAttribute key="show_selected_only" value="false"/>
+<booleanAttribute key="tracing" value="false"/>
+<booleanAttribute key="useDefaultConfig" value="true"/>
+<booleanAttribute key="useDefaultConfigArea" value="true"/>
+<booleanAttribute key="useProduct" value="false"/>
+<booleanAttribute key="usefeatures" value="false"/>
+</launchConfiguration>
