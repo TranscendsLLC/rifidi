@@ -4,10 +4,12 @@
 package org.rifidi.edge.client.ale.reports;
 
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.swt.graphics.Image;
 import org.rifidi.edge.client.ale.api.xsd.ale.epcglobal.ECReport;
 import org.rifidi.edge.client.ale.api.xsd.ale.epcglobal.ECReportGroup;
 import org.rifidi.edge.client.ale.api.xsd.ale.epcglobal.ECReportGroupListMember;
 import org.rifidi.edge.client.ale.api.xsd.ale.epcglobal.ECReports;
+import org.rifidi.edge.client.ale.ecspecview.Activator;
 
 /**
  * @author Jochen Mader - jochen@pramari.com
@@ -61,5 +63,22 @@ public class ReportLabelProvider extends LabelProvider {
 		}
 		return super.getText(element);
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.LabelProvider#getImage(java.lang.Object)
+	 */
+	@Override
+	public Image getImage(Object element) {
+		if(element instanceof ECReports){
+			return Activator.getDefault().getImageRegistry().get(Activator.ICON_ECREPORTS);
+		}else if (element instanceof ECReport){
+			return Activator.getDefault().getImageRegistry().get(Activator.ICON_ECREPORT);
+		}else if(element instanceof ECReportGroup){
+			return Activator.getDefault().getImageRegistry().get(Activator.ICON_ECREPORT_GROUP);
+		}
+		return super.getImage(element);
+	}
+	
+	
 
 }

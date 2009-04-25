@@ -26,6 +26,12 @@ public class Activator extends AbstractUIPlugin {
 	/** Icons for the readers. */
 	public static final String ICON_READER = "icon_reader";
 	public static final String ICON_READER_LOCKED = "icon_reader_locked";
+	public static final String ICON_SERVER = "icon_server";
+	public static final String ICON_ECSPEC = "icon_ecspec";
+	public static final String ICON_SUBSCRIBERS = "icon_subscribers";
+	public static final String ICON_ECREPORT = "icon_ecreport";
+	public static final String ICON_ECREPORTS = "icon_ecreports";
+	public static final String ICON_ECREPORT_GROUP = "icon_ecreport_group";
 
 	public static final String REPORT_RECEIVER_ADR = "127.0.0.1:10000";
 	public static final String REPORT_RECEIVER_ADR_DEFAULT = "127.0.0.1:10000";
@@ -110,6 +116,18 @@ public class Activator extends AbstractUIPlugin {
 		super.initializeImageRegistry(reg);
 		reg.put(ICON_READER, getImageDescriptor("icons/reader-16x16.png"));
 		reg.put(ICON_READER_LOCKED,
-				getImageDescriptor("icons/reader_locked-16x16.png"));
+				getImageDescriptor("icons/reader-lock.png"));
+		reg.put(ICON_SERVER,
+				getImageDescriptor("icons/server.png"));
+		reg.put(ICON_ECSPEC,
+				getImageDescriptor("icons/page.png"));
+		reg.put(ICON_SUBSCRIBERS,
+				getImageDescriptor("icons/email.png"));
+		reg.put(ICON_ECREPORT,
+				getImageDescriptor("icons/report.png"));
+		reg.put(ICON_ECREPORTS,
+				getImageDescriptor("icons/report_go.png"));
+		reg.put(ICON_ECREPORT_GROUP,
+				getImageDescriptor("icons/folder.png"));
 	}
 }

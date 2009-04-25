@@ -7,6 +7,7 @@
             allowMultiple="false"
             category="org.rifidi.edge.client.ale"
             class="org.rifidi.edge.client.ale.ecspecview.views.ECSpecView"
+            icon="icons/page.png"
             id="org.rifidi.edge.client.ale.ecspecview"
             name="ECSpec View"
             restorable="true">
@@ -19,6 +20,7 @@
             allowMultiple="true"
             category="org.rifidi.edge.client.ale"
             class="org.rifidi.edge.client.ale.ecspecview.views.ECSpecEditorView"
+            icon="icons/page_edit.png"
             id="org.rifidi.edge.client.ale.ecspecview.views.ECSpecEditorView"
             name="ECSpec Editor View"
             restorable="true">
@@ -27,6 +29,7 @@
             allowMultiple="false"
             category="org.rifidi.edge.client.ale"
             class="org.rifidi.edge.client.ale.logicalreaders.LRTreeViewPart"
+            icon="icons/reader-16x16.png"
             id="org.rifidi.edge.client.ale.logicalreaders.LRView"
             name="Logical Reader View"
             restorable="true">
@@ -35,6 +38,7 @@
             allowMultiple="false"
             category="org.rifidi.edge.client.ale"
             class="org.rifidi.edge.client.ale.reports.ReportReceiverViewPart"
+            icon="icons/email.png"
             id="org.rifidi.edge.client.ale.reports.ReportReceiverView"
             name="Report Receiver View"
             restorable="true">
@@ -74,6 +78,7 @@
          point="org.eclipse.ui.perspectives">
       <perspective
             class="org.rifidi.edge.client.ale.ecspecview.perspective.ALEPerspectiveFactory"
+            icon="icons/page.png"
             id="org.rifidi.edge.client.ale"
             name="ALE Perspective">
       </perspective>
@@ -213,11 +218,13 @@
             locationURI="popup:org.rifidi.edge.client.ale.ecspecview?after=additions">
          <command
                commandId="org.rifidi.edge.client.ale.ecspecview.newecspec"
+               icon="icons/page_add.png"
                label="New ECSpec"
                style="push">
          </command>
          <command
                commandId="org.rifidi.edge.client.ale.ecspecview.displayECSpec"
+               icon="icons/page_go.png"
                label="Display"
                style="push">
             <visibleWhen>
@@ -232,6 +239,7 @@
          </command>
          <command
                commandId="org.rifidi.edge.client.ale.ecspecview.deleteECSpec"
+               icon="icons/page_delete.png"
                label="Delete"
                style="push">
             <visibleWhen>
@@ -246,6 +254,7 @@
          </command>
          <command
                commandId="org.rifidi.edge.client.ale.ecspecview.subscribeECSpec"
+               icon="icons/page-subscribe.png"
                label="Subscribe"
                style="push">
             <visibleWhen>
@@ -260,6 +269,7 @@
          </command>
          <command
                commandId="org.rifidi.edge.client.ale.ecspecview.unsubscribeECSpec"
+               icon="icons/page-unsubscribe.png"
                label="Unsubscribe"
                style="push">
             <visibleWhen>
@@ -277,6 +287,7 @@
             locationURI="popup:org.eclipse.ui.popup.any?after=additions">
          <command
                commandId="org.rifidi.edge.ale.lr.commands.delete"
+               icon="icons/readerdelete.png"
                label="Delete"
                style="push">
             <visibleWhen>
@@ -301,6 +312,7 @@
          </command>
          <command
                commandId="org.rifidi.edge.ale.lr.commands.create"
+               icon="icons/readeradd.png"
                label="Create"
                style="push">
             <visibleWhen>
@@ -328,6 +340,7 @@
             locationURI="toolbar:org.rifidi.edge.client.ale.reports.ReportReceiverView?after=additions">
          <command
                commandId="org.rifidi.edge.client.ale.reportview.clearcommand"
+               icon="icons/report_delete.png"
                label="Clear"
                style="push">
          </command>
