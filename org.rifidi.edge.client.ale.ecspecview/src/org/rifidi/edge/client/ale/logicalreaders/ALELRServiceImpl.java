@@ -91,7 +91,7 @@ public class ALELRServiceImpl implements ALELRService, ALEService {
 			EmptyParms parms = new EmptyParms();
 			lrServicePortType.getVendorVersion(parms);
 		} catch (Throwable e) {
-			lrServicePortType = null;
+			logger.warn(e);
 		}
 	}
 
@@ -124,15 +124,15 @@ public class ALELRServiceImpl implements ALELRService, ALEService {
 		// see if it works
 		try {
 			lrServicePortType.getVendorVersion(new EmptyParms());
+			for (ALELRListener listener : alelrListeners) {
+				listener.setALELRStub(lrServicePortType);
+			}
+			for (Viewer viewer : viewers) {
+				viewer.setInput(lrServicePortType);
+				viewer.refresh();
+			}
 		} catch (Throwable e) {
-			lrServicePortType = null;
-		}
-		for (ALELRListener listener : alelrListeners) {
-			listener.setALELRStub(lrServicePortType);
-		}
-		for (Viewer viewer : viewers) {
-			viewer.setInput(lrServicePortType);
-			viewer.refresh();
+			logger.warn(e);
 		}
 	}
 
@@ -146,19 +146,17 @@ public class ALELRServiceImpl implements ALELRService, ALEService {
 		try {
 			aleServicePortType
 					.getVendorVersion(new org.rifidi.edge.client.ale.api.wsdl.ale.epcglobal.EmptyParms());
-		} catch (Throwable e) {
-			aleServicePortType = null;
-		}
-		for (ALEListener listener : aleListeners) {
-			listener.setALEStub(aleServicePortType);
-		}
-		if (aleServicePortType != null) {
+			for (ALEListener listener : aleListeners) {
+				listener.setALEStub(aleServicePortType);
+			}
 			List<ALEServicePortType> serviceList = new ArrayList<ALEServicePortType>();
 			serviceList.add(aleServicePortType);
 			for (Viewer viewer : aleViewers) {
 				viewer.setInput(serviceList);
 				viewer.refresh();
 			}
+		} catch (Throwable e) {
+			logger.warn(e);
 		}
 	}
 
@@ -166,8 +164,8 @@ public class ALELRServiceImpl implements ALELRService, ALEService {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.client.ale.logicalreaders.ALELRService#registerALELRListener(org.rifidi
-	 * .edge.client.alelr.ALELRListener)
+	 * org.rifidi.edge.client.ale.logicalreaders.ALELRService#registerALELRListener
+	 * (org.rifidi .edge.client.alelr.ALELRListener)
 	 */
 	@Override
 	public void registerALELRListener(ALELRListener listener) {
@@ -180,9 +178,8 @@ public class ALELRServiceImpl implements ALELRService, ALEService {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.rifidi.edge.client.ale.logicalreaders.ALELRService#unregisterALELRListener(org
-	 * .rifidi.edge.client.alelr.ALELRListener)
+	 * @seeorg.rifidi.edge.client.ale.logicalreaders.ALELRService#
+	 * unregisterALELRListener(org .rifidi.edge.client.alelr.ALELRListener)
 	 */
 	@Override
 	public void unregisterALELRListener(ALELRListener listener) {
@@ -193,8 +190,8 @@ public class ALELRServiceImpl implements ALELRService, ALEService {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.client.ale.logicalreaders.ALEService#registerALEListener(org.rifidi
-	 * .edge.client.alelr.ALEListener)
+	 * org.rifidi.edge.client.ale.logicalreaders.ALEService#registerALEListener
+	 * (org.rifidi .edge.client.alelr.ALEListener)
 	 */
 	@Override
 	public void registerALEListener(ALEListener listener) {
@@ -208,8 +205,8 @@ public class ALELRServiceImpl implements ALELRService, ALEService {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.client.ale.logicalreaders.ALEService#unregisterALEListener(org.rifidi
-	 * .edge.client.alelr.ALEListener)
+	 * org.rifidi.edge.client.ale.logicalreaders.ALEService#unregisterALEListener
+	 * (org.rifidi .edge.client.alelr.ALEListener)
 	 */
 	@Override
 	public void unregisterALEListener(ALEListener listener) {
@@ -220,8 +217,8 @@ public class ALELRServiceImpl implements ALELRService, ALEService {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.client.ale.logicalreaders.ALELRService#registerViewer(org.eclipse.
-	 * jface.viewers.Viewer)
+	 * org.rifidi.edge.client.ale.logicalreaders.ALELRService#registerViewer
+	 * (org.eclipse. jface.viewers.Viewer)
 	 */
 	@Override
 	public void registerALELRViewer(Viewer viewer) {
@@ -236,8 +233,8 @@ public class ALELRServiceImpl implements ALELRService, ALEService {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.client.ale.logicalreaders.ALELRService#unregisterViewer(org.eclipse
-	 * .jface.viewers.Viewer)
+	 * org.rifidi.edge.client.ale.logicalreaders.ALELRService#unregisterViewer
+	 * (org.eclipse .jface.viewers.Viewer)
 	 */
 	@Override
 	public void unregisterALELRViewer(Viewer viewer) {
@@ -248,8 +245,8 @@ public class ALELRServiceImpl implements ALELRService, ALEService {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.client.ale.logicalreaders.ALEService#registerALEViewer(org.eclipse
-	 * .jface.viewers.Viewer)
+	 * org.rifidi.edge.client.ale.logicalreaders.ALEService#registerALEViewer
+	 * (org.eclipse .jface.viewers.Viewer)
 	 */
 	@Override
 	public void registerALEViewer(Viewer viewer) {
@@ -266,8 +263,8 @@ public class ALELRServiceImpl implements ALELRService, ALEService {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.client.ale.logicalreaders.ALEService#unregisterALEViewer(org.eclipse
-	 * .jface.viewers.Viewer)
+	 * org.rifidi.edge.client.ale.logicalreaders.ALEService#unregisterALEViewer
+	 * (org.eclipse .jface.viewers.Viewer)
 	 */
 	@Override
 	public void unregisterALEViewer(Viewer viewer) {
@@ -277,7 +274,8 @@ public class ALELRServiceImpl implements ALELRService, ALEService {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.client.ale.logicalreaders.ALELRService#getAvailableReaderNames()
+	 * @seeorg.rifidi.edge.client.ale.logicalreaders.ALELRService#
+	 * getAvailableReaderNames()
 	 */
 	@Override
 	public List<String> getAvailableReaderNames() {
@@ -296,8 +294,8 @@ public class ALELRServiceImpl implements ALELRService, ALEService {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.client.ale.logicalreaders.ALELRService#deleteReader(org.rifidi.edge
-	 * .client.alelr.decorators.LRSpecDecorator)
+	 * org.rifidi.edge.client.ale.logicalreaders.ALELRService#deleteReader(org
+	 * .rifidi.edge .client.alelr.decorators.LRSpecDecorator)
 	 */
 	@Override
 	public void deleteReader(LRSpecDecorator reader)
@@ -334,8 +332,8 @@ public class ALELRServiceImpl implements ALELRService, ALEService {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.client.ale.logicalreaders.ALELRService#createReader(java.lang.String,
-	 * java.util.List)
+	 * org.rifidi.edge.client.ale.logicalreaders.ALELRService#createReader(java
+	 * .lang.String, java.util.List)
 	 */
 	@Override
 	public void createReader(String name, List<String> readerNames)
@@ -377,8 +375,8 @@ public class ALELRServiceImpl implements ALELRService, ALEService {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.client.ale.logicalreaders.ALEService#createECSpec(java.lang.String,
-	 * org.rifidi.edge.client.ale.api.xsd.ale.epcglobal.ECSpec)
+	 * org.rifidi.edge.client.ale.logicalreaders.ALEService#createECSpec(java
+	 * .lang.String, org.rifidi.edge.client.ale.api.xsd.ale.epcglobal.ECSpec)
 	 */
 	@Override
 	public void createECSpec(String name, ECSpec spec)
@@ -401,7 +399,8 @@ public class ALELRServiceImpl implements ALELRService, ALEService {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.client.ale.logicalreaders.ALEService#deleteECSpec(java.lang.String)
+	 * org.rifidi.edge.client.ale.logicalreaders.ALEService#deleteECSpec(java
+	 * .lang.String)
 	 */
 	@Override
 	public void deleteECSpec(String specName)
@@ -421,7 +420,9 @@ public class ALELRServiceImpl implements ALELRService, ALEService {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.client.ale.logicalreaders.ALEService#getECSpec(java.lang.String)
+	 * @see
+	 * org.rifidi.edge.client.ale.logicalreaders.ALEService#getECSpec(java.lang
+	 * .String)
 	 */
 	@Override
 	public ECSpec getECSpec(String specName)
@@ -442,7 +443,8 @@ public class ALELRServiceImpl implements ALELRService, ALEService {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.client.ale.logicalreaders.ALEService#getSubscribers(java.lang.String)
+	 * org.rifidi.edge.client.ale.logicalreaders.ALEService#getSubscribers(java
+	 * .lang.String)
 	 */
 	@Override
 	public ArrayOfString getSubscribers(String specName)
@@ -462,7 +464,9 @@ public class ALELRServiceImpl implements ALELRService, ALEService {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.client.ale.logicalreaders.ALEService#getAvailableECSpecNames()
+	 * @see
+	 * org.rifidi.edge.client.ale.logicalreaders.ALEService#getAvailableECSpecNames
+	 * ()
 	 */
 	@Override
 	public List<String> getAvailableECSpecNames() {
@@ -483,8 +487,8 @@ public class ALELRServiceImpl implements ALELRService, ALEService {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.client.ale.logicalreaders.ALEService#subscribeECSpec(java.lang.String,
-	 * java.lang.String)
+	 * org.rifidi.edge.client.ale.logicalreaders.ALEService#subscribeECSpec(
+	 * java.lang.String, java.lang.String)
 	 */
 	@Override
 	public void subscribeECSpec(String specName, String uri)
@@ -507,8 +511,8 @@ public class ALELRServiceImpl implements ALELRService, ALEService {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.client.ale.logicalreaders.ALEService#unsubscribeECSpec(java.lang.String
-	 * , java.lang.String)
+	 * org.rifidi.edge.client.ale.logicalreaders.ALEService#unsubscribeECSpec
+	 * (java.lang.String , java.lang.String)
 	 */
 	@Override
 	public void unsubscribeECSpec(String specName, String uri)
@@ -527,7 +531,7 @@ public class ALELRServiceImpl implements ALELRService, ALEService {
 		updateALE();
 	}
 
-	private void updateALE(){
+	private void updateALE() {
 		if (aleServicePortType != null) {
 			List<ALEServicePortType> serviceList = new ArrayList<ALEServicePortType>();
 			serviceList.add(aleServicePortType);
@@ -537,4 +541,39 @@ public class ALELRServiceImpl implements ALELRService, ALEService {
 			}
 		}
 	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.rifidi.edge.client.ale.logicalreaders.ALELRService#reload()
+	 */
+	@Override
+	public void reload() {
+		if (aleServicePortType != null) {
+			try {
+				List<ALEServicePortType> serviceList = new ArrayList<ALEServicePortType>();
+				serviceList.add(aleServicePortType);
+				for (Viewer viewer : aleViewers) {
+					viewer.setInput(serviceList);
+					viewer.refresh();
+				}
+			} catch (Throwable t) {
+				logger.warn(t);
+			}
+		}
+		if (lrServicePortType != null) {
+			try {
+				for (ALELRListener listener : alelrListeners) {
+					listener.setALELRStub(lrServicePortType);
+				}
+				for (Viewer viewer : viewers) {
+					viewer.setInput(lrServicePortType);
+					viewer.refresh();
+				}
+			} catch (Throwable t) {
+				logger.warn(t);
+			}
+		}
+	}
+
 }

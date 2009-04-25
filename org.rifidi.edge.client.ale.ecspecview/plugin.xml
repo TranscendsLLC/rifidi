@@ -151,6 +151,12 @@
             id="org.rifidi.edge.client.ale.ecspecview.unsubscribeECSpec"
             name="Unsubscribe">
       </command>
+      <command
+            categoryId="org.rifidi.edge.ale.lr.category"
+            description="Refresh the list of logical readers"
+            id="org.rifidi.edge.ale.lr.commands.refresh"
+            name="Refresh Logical Readers">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
@@ -200,6 +206,10 @@
       <handler
             class="org.rifidi.edge.client.ale.ecspecview.handlers.UnsubscribeECSpecHandler"
             commandId="org.rifidi.edge.client.ale.ecspecview.unsubscribeECSpec">
+      </handler>
+      <handler
+            class="org.rifidi.edge.client.ale.logicalreaders.commands.RefreshHandler"
+            commandId="org.rifidi.edge.ale.lr.commands.refresh">
       </handler>
    </extension>
       <extension
@@ -342,6 +352,15 @@
                commandId="org.rifidi.edge.client.ale.reportview.clearcommand"
                icon="icons/report_delete.png"
                label="Clear"
+               style="push">
+         </command>
+      </menuContribution>
+      <menuContribution
+            locationURI="toolbar:org.rifidi.edge.client.ale.logicalreaders.LRView?after=additions">
+         <command
+               commandId="org.rifidi.edge.ale.lr.commands.refresh"
+               icon="icons/report_delete.png"
+               label="Reload"
                style="push">
          </command>
       </menuContribution>
