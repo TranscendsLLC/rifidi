@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?pde version="3.2"?>
+
+<target>
+
+   <location path="${workspace_loc}/org.rifidi.edge.client.target"/>
+
+   <content useAllPlugins="true">
+      <plugins>
+      </plugins>
+      <features>
+      </features>
+      <extraLocations>
+         <location path="${workspace_loc}/org.rifidi.edge.client.target/draw2d"/>
+         <location path="${workspace_loc}/org.rifidi.edge.client.target/libraries"/>
+      </extraLocations>
+   </content>
+
+</target>
