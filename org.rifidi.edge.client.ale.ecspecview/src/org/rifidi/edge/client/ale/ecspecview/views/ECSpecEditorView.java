@@ -1045,7 +1045,7 @@ public class ECSpecEditorView extends ViewPart {
 				ECReportSpec spec = (ECReportSpec) text.getData();
 				ECGroupSpec group = spec.getGroupSpec();
 				String[] alPatterns = text.getText().split("\n");
-
+				group.getPattern().clear();
 				for (int i = 0; i < alPatterns.length; i++) {
 					group.getPattern().add(alPatterns[i]);
 				}
