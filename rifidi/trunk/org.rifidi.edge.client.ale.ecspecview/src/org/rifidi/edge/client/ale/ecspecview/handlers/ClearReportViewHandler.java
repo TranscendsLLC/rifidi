@@ -29,7 +29,7 @@ public class ClearReportViewHandler extends AbstractHandler implements IHandler 
 		for (IViewReference ref : PlatformUI.getWorkbench()
 				.getActiveWorkbenchWindow().getActivePage().getViewReferences()) {
 			if (ref.getId().equals(
-					"org.rifidi.edge.client.ale.ReportReceiverView")) {
+					ReportReceiverViewPart.ID)) {
 				ReportReceiverViewPart vi = (ReportReceiverViewPart) ref
 						.getView(true);
 				vi.clear();
