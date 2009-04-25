@@ -6,6 +6,16 @@ Bundle-Version: 1.0.0
 Bundle-Vendor: Pramari, LLC
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: javax.servlet;version="2.5.0",
+ net.sf.cglib.asm;version="2.1.3",
+ net.sf.cglib.asm.attrs;version="2.1.3",
+ net.sf.cglib.beans;version="2.1.3",
+ net.sf.cglib.core;version="2.1.3",
+ net.sf.cglib.proxy;version="2.1.3",
+ net.sf.cglib.reflect;version="2.1.3",
+ net.sf.cglib.transform;version="2.1.3",
+ net.sf.cglib.transform.hook;version="2.1.3",
+ net.sf.cglib.transform.impl;version="2.1.3",
+ net.sf.cglib.util;version="2.1.3",
  org.apache.commons.logging;version="1.1.1",
  org.apache.cxf.transport.servlet;version="2.1.4",
  org.osgi.service.http;version="1.2.0"
