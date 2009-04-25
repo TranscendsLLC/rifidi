@@ -126,7 +126,7 @@ public class ECSpecEditorView extends ViewPart {
 		layout.numColumns = 2;
 		form.getBody().setLayout(layout);
 
-//		createReportCtab();
+		// createReportCtab();
 		createSubscriberCtab();
 
 	}
@@ -143,8 +143,9 @@ public class ECSpecEditorView extends ViewPart {
 	 * creates the report tab
 	 */
 	private void createSubscriberCtab() {
-		CTabItem ctiSubscribers =EcSpecEditorTabFactory.getInstance().createSubscribersTab(folder);
-//		CTabItem ctiSubscribers = new CTabItem(folder, SWT.NONE);
+		CTabItem ctiSubscribers = EcSpecEditorTabFactory.getInstance()
+				.createSubscribersTab(folder);
+		// CTabItem ctiSubscribers = new CTabItem(folder, SWT.NONE);
 		ctiSubscribers.setText("Subscribers");
 	}
 
@@ -943,14 +944,15 @@ public class ECSpecEditorView extends ViewPart {
 				Text text = (Text) e.widget;
 				ECReportSpec spec = (ECReportSpec) text.getData();
 				ECFilterSpec filter = spec.getFilterSpec();
-				String[] alPatterns = text.getText().split("\n");
+				if (!"".equals(text.getText().trim())) {
+					String[] alPatterns = text.getText().split("\n");
 
-				for (int i = 0; i < alPatterns.length; i++) {
-					ep.getExcludePattern().add(alPatterns[i]);
+					for (String pattern : alPatterns) {
+						ep.getExcludePattern().add(pattern);
+					}
 				}
 				filter.setExcludePatterns(ep);
 				spec.setFilterSpec(filter);
-
 			}
 
 		});

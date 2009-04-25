@@ -301,7 +301,7 @@
          </command>
       </menuContribution>
       <menuContribution
-            locationURI="toolbar:org.rifidi.edge.client.ale.ReportReceiverView?after=additions">
+            locationURI="toolbar:org.rifidi.edge.client.ale.reports.ReportReceiverView?after=additions">
          <command
                commandId="org.rifidi.edge.client.ale.reportview.clearcommand"
                label="Clear"
