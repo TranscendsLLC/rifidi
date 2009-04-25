@@ -10,13 +10,9 @@
       <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts</vmArgsMac>
    </launcherArgs>
 
-   <windowImages i16="/org.rifidi.edge.client/icons/alt_window_16.gif" i32="/org.rifidi.edge.client/icons/alt_window_32.gif"/>
+   <windowImages/>
 
-   <splash
-      location="org.rifidi.edge.client"
-      startupProgressRect="5,275,445,15" />
    <launcher name="edgeclient">
-      <linux icon="/org.rifidi.edge.client/icons/alt_launcher.xpm"/>
       <solaris/>
       <win useIco="false">
          <bmp/>
@@ -48,10 +44,8 @@
       <plugin id="org.eclipse.core.filesystem.win32.x86" fragment="true"/>
       <plugin id="org.eclipse.core.jobs"/>
       <plugin id="org.eclipse.core.resources"/>
-      <plugin id="org.eclipse.core.resources.compatibility" fragment="true"/>
       <plugin id="org.eclipse.core.resources.win32.x86" fragment="true"/>
       <plugin id="org.eclipse.core.runtime"/>
-      <plugin id="org.eclipse.core.runtime.compatibility.registry" fragment="true"/>
       <plugin id="org.eclipse.draw2d"/>
       <plugin id="org.eclipse.equinox.app"/>
       <plugin id="org.eclipse.equinox.common"/>
