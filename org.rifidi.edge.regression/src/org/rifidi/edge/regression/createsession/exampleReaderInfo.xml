@@ -1,8 +1,0 @@
-<AlienReaderInfo>
-	<ipAddress>127.0.0.1</ipAddress>
-	<port>23</port>
-	<username>alien</username>
-	<password>password</password>
-	<reconnectionInterval>1000</reconnectionInterval>
-	<maxNumConnectionsAttempts>3</maxNumConnectionsAttempts>
-</AlienReaderInfo>
