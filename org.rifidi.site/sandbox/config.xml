@@ -1,9 +1,0 @@
-<config>
-	<include>org.rifidi.edge.common.utilities@1.jar</include>
-	<include>org.rifidi.edge.core.communication@1.jar</include>
-	<include>org.rifidi.edge.core@1.jar</include>
-	<include>org.rifidi.edge.jms@1.jar</include>
-	<include>org.rifidi.edge.log4j@1.jar</include>
-	<include>org.rifidi.edge.rmi@1.jar</include>
-	<include>org.rifidi.edge.services@1.jar</include>
-</config>
