@@ -1,5 +1,0 @@
--- listing properties --
-org.fosstrak.tdt.Entry=org.fosstrak.tdt.EntryDescriptor
-org.fosstrak.tdt.GEPC64=org.fosstrak.tdt.GEPC64Descriptor
-org.fosstrak.tdt.GEPC64Table=org.fosstrak.tdt.GEPC64TableDescriptor
-org.fosstrak.tdt.GEPC64Entry=org.fosstrak.tdt.GEPC64EntryDescriptor
