@@ -1,0 +1,2 @@
+This plugin is required by activeMQ.  It appears that this jar was not released as an OSGi
+bundle so I had to make my own.
