@@ -2,7 +2,7 @@
  * 
  */
 package org.rifidi.edge.core.exceptions;
-
+//TODO: Comments
 /**
  * Thrown if somebody tried to use a command that either doesn't exist or got
  * removed from the registry.

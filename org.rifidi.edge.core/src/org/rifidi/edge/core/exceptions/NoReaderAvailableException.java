@@ -2,7 +2,7 @@
  * 
  */
 package org.rifidi.edge.core.exceptions;
-
+//TODO: Comments
 /**
  * Thrown if a readerSession is not available.
  * 

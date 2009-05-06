@@ -10,7 +10,7 @@
  *  				http://www.opensource.org/licenses/lgpl-license.html
  */
 package org.rifidi.edge.readerplugin.llrp.commandobject;
-
+//TODO: Comments
 import java.io.IOException;
 
 import org.llrp.ltk.types.LLRPMessage;

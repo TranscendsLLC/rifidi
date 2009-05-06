@@ -10,7 +10,7 @@
  *  				http://www.opensource.org/licenses/lgpl-license.html
  */
 package org.rifidi.edge.core.utilities;
-
+//TODO: Comments
 public class ByteAndHexConvertingUtility {
 
 	public static String toHexString(byte b) {

@@ -1,5 +1,5 @@
 package org.rifidi.edge.readerplugin.alien.commandobject;
-
+//TODO: Comments
 import java.io.IOException;
 
 import org.rifidi.edge.readerplugin.alien.Alien9800ReaderSession;

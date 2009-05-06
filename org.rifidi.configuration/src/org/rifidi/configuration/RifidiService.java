@@ -2,7 +2,7 @@
  * 
  */
 package org.rifidi.configuration;
-
+//TODO: Comments
 import java.util.Hashtable;
 import java.util.Set;
 

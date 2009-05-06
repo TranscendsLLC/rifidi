@@ -2,7 +2,7 @@ package org.rifidi.edge.readerplugin.llrp;
 
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
-
+//TODO: Comments
 public class Activator implements BundleActivator {
 
 	/*

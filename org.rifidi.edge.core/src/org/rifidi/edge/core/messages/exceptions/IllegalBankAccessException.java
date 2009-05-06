@@ -10,7 +10,7 @@
  */
 
 package org.rifidi.edge.core.messages.exceptions;
-
+//TODO: Comments
 /**
  * This exception is thrown when someone tries to access memory in an illegal
  * way
