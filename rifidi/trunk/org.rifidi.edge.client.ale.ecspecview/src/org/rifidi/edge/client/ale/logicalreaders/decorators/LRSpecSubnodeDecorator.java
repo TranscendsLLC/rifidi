@@ -2,7 +2,7 @@
  * 
  */
 package org.rifidi.edge.client.ale.logicalreaders.decorators;
-
+//TODO: Comments
 import org.rifidi.edge.client.ale.api.xsd.alelr.epcglobal.LRSpec;
 import org.rifidi.edge.client.ale.logicalreaders.LRTreeContentProvider;
 

@@ -1,7 +1,7 @@
 package org.rifidi.edge.client.model.sal.properties;
 
 import javax.management.Attribute;
-
+//TODO: Comments
 public class AttributeChangedEvent {
 
 	/** The name of the state property */

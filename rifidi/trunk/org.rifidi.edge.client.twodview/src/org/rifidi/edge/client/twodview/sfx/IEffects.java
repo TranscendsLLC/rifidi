@@ -9,7 +9,7 @@
  *  				http://www.opensource.org/licenses/lgpl-license.html
  */
 package org.rifidi.edge.client.twodview.sfx;
-
+//TODO: Comments
 import org.eclipse.swt.graphics.Color;
 
 /**

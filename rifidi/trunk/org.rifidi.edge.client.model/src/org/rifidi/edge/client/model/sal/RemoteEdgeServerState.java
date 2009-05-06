@@ -2,7 +2,7 @@
  * 
  */
 package org.rifidi.edge.client.model.sal;
-
+//TODO: Comments
 /**
  * Possible states for the Remote Edge Server
  * 

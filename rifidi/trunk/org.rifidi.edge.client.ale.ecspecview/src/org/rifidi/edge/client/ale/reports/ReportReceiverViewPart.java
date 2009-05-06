@@ -2,7 +2,7 @@
  * 
  */
 package org.rifidi.edge.client.ale.reports;
-
+//TODO: Comments
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;

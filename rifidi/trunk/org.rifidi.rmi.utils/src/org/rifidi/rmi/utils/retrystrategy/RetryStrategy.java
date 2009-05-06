@@ -8,7 +8,7 @@
  *  License: Lesser GNU Public License (LGPL)
  *  http://www.opensource.org/licenses/lgpl-license.html
  */
-
+//TODO: Comments
 package org.rifidi.rmi.utils.retrystrategy;
 
 import org.rifidi.rmi.utils.exceptions.RetryException;

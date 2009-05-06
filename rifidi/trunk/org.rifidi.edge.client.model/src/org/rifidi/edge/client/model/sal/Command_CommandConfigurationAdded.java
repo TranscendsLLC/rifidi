@@ -2,7 +2,7 @@
  * 
  */
 package org.rifidi.edge.client.model.sal;
-
+//TODO: Comments
 import java.rmi.Remote;
 import java.util.Collection;
 

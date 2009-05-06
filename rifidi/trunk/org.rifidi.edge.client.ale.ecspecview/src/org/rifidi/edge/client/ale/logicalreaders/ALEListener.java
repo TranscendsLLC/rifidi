@@ -2,7 +2,7 @@
  * 
  */
 package org.rifidi.edge.client.ale.logicalreaders;
-
+//TODO: Comments
 import org.rifidi.edge.client.ale.api.wsdl.ale.epcglobal.ALEServicePortType;
 
 /**

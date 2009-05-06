@@ -2,7 +2,7 @@
  * 
  */
 package org.rifidi.edge.client.sal.wizards.newreader;
-
+//TODO: Comments
 import java.util.HashSet;
 
 import org.eclipse.jface.wizard.WizardPage;

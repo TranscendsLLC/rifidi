@@ -2,7 +2,7 @@
  * 
  */
 package org.rifidi.edge.client.sal.properties;
-
+//TODO: Comments
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.ui.views.properties.IPropertySource;
 import org.eclipse.ui.views.properties.IPropertySource2;

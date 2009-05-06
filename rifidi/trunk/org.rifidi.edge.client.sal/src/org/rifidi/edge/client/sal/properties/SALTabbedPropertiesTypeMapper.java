@@ -2,7 +2,7 @@
  * 
  */
 package org.rifidi.edge.client.sal.properties;
-
+//TODO: Comments
 import org.eclipse.ui.views.properties.tabbed.AbstractTypeMapper;
 import org.eclipse.ui.views.properties.tabbed.ITypeMapper;
 

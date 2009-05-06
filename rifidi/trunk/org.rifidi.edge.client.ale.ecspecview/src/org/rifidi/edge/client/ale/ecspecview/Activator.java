@@ -7,7 +7,7 @@ import org.osgi.framework.BundleContext;
 import org.rifidi.edge.client.ale.logicalreaders.ALELRService;
 import org.rifidi.edge.client.ale.logicalreaders.ALELRServiceImpl;
 import org.rifidi.edge.client.ale.logicalreaders.ALEService;
-
+//TODO: Comments
 /**
  * The activator class controls the plug-in life cycle
  */

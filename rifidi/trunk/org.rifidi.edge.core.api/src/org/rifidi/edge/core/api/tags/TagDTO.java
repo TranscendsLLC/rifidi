@@ -2,7 +2,7 @@
  * 
  */
 package org.rifidi.edge.core.api.tags;
-
+//TODO: Comments
 import java.io.Serializable;
 import java.math.BigInteger;
 

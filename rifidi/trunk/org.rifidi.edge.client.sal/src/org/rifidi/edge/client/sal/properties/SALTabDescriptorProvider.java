@@ -2,7 +2,7 @@
  * 
  */
 package org.rifidi.edge.client.sal.properties;
-
+//TODO: Comments
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;

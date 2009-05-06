@@ -2,7 +2,7 @@
  * 
  */
 package org.rifidi.edge.client.model.sal;
-
+//TODO: Comments
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eclipse.core.databinding.observable.map.ObservableMap;

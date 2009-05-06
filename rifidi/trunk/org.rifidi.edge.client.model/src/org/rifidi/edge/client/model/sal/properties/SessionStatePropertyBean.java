@@ -2,7 +2,7 @@
  * 
  */
 package org.rifidi.edge.client.model.sal.properties;
-
+//TODO: Comments
 import org.rifidi.edge.core.api.SessionStatus;
 
 /**

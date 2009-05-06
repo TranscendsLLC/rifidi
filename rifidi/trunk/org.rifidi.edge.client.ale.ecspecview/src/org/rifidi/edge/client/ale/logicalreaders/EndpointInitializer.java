@@ -2,7 +2,7 @@
  * 
  */
 package org.rifidi.edge.client.ale.logicalreaders;
-
+//TODO: Comments
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;

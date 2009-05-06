@@ -1,8 +1,10 @@
 package org.rifidi.edge.client;
 
 import org.eclipse.ui.IPageLayout;
+
 import org.eclipse.ui.IPerspectiveFactory;
 
+//TODO: Comments
 public class Perspective implements IPerspectiveFactory {
 
 	public void createInitialLayout(IPageLayout layout) {

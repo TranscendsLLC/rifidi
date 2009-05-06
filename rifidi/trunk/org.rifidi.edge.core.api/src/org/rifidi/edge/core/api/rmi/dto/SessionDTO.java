@@ -1,5 +1,5 @@
 package org.rifidi.edge.core.api.rmi.dto;
-
+//TODO: Comments
 import java.io.Serializable;
 import java.util.Map;
 

@@ -2,7 +2,7 @@
  * 
  */
 package org.rifidi.edge.client.ale.ecspecview.model;
-
+//TODO: Comments
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;

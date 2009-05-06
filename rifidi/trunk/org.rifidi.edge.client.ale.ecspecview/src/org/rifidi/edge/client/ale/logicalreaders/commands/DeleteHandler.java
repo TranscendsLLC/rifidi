@@ -2,7 +2,7 @@
  * 
  */
 package org.rifidi.edge.client.ale.logicalreaders.commands;
-
+//TODO: Comments
 import java.util.List;
 
 import org.eclipse.core.commands.AbstractHandler;

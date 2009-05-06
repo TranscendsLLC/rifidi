@@ -1,5 +1,5 @@
 package org.rifidi.edge.client.model;
-
+//TODO: Comments
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
