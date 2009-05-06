@@ -2,7 +2,7 @@
  * 
  */
 package org.rifidi.edge.core.messages;
-
+//TODO: Comments
 /**
  * @author Jochen Mader - jochen@pramari.com
  * 

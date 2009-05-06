@@ -2,7 +2,7 @@
  * 
  */
 package org.rifidi.edge.core.notifications;
-
+//TODO: Comments
 import org.rifidi.edge.core.api.SessionStatus;
 
 /**

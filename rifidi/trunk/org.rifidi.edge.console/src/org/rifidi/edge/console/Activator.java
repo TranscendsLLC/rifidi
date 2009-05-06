@@ -1,5 +1,5 @@
 package org.rifidi.edge.console;
-
+//TODO: Comments
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 

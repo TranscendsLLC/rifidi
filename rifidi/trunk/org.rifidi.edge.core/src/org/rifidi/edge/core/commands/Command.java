@@ -2,7 +2,7 @@
  * 
  */
 package org.rifidi.edge.core.commands;
-
+//TODO: Comments
 import javax.jms.Destination;
 
 import org.rifidi.edge.core.readers.ReaderSession;

@@ -10,7 +10,7 @@
  *  				http://www.opensource.org/licenses/lgpl-license.html
  */
 package org.rifidi.edge.readerplugin.llrp.commands;
-
+//TODO: Comments
 import org.llrp.ltk.generated.messages.GET_REPORT;
 import org.rifidi.edge.readerplugin.llrp.AbstractLLRPCommand;
 import org.rifidi.edge.readerplugin.llrp.LLRPReaderSession;

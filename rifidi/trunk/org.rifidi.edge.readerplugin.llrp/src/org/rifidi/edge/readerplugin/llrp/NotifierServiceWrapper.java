@@ -3,7 +3,7 @@ package org.rifidi.edge.readerplugin.llrp;
 import java.util.Dictionary;
 
 import org.rifidi.edge.core.notifications.NotifierService;
-
+//TODO: Comments
 public class NotifierServiceWrapper {
 	/** The JMS notifier */
 	private NotifierService notifierService;

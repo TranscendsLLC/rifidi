@@ -6,7 +6,7 @@ import java.util.List;
 
 import org.rifidi.edge.core.readers.ByteMessage;
 import org.rifidi.edge.readerplugin.alien.Alien9800ReaderSession;
-
+//TODO: Comments
 public class GetTagListCommandObject {
 	/** The readerSession to send the command to */
 	private Alien9800ReaderSession readerSession;

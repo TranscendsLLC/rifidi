@@ -1,5 +1,5 @@
 package org.rifidi.edge.readerplugin.alien.commandobject;
-
+//TODO: Comments
 /**
  * This is an object to wrap CommandObjects along with the name of the property
  * that the command object will get/set

@@ -9,7 +9,7 @@
  *  				http://www.opensource.org/licenses/lgpl-license.html
  */
 package org.rifidi.edge.readerplugin.alien;
-
+//TODO: Comments
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
