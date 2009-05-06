@@ -9,7 +9,7 @@ import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.rifidi.edge.client.ale.ecspecview.Activator;
-
+//TODO: Comments
 /**
  * @author kyle
  *

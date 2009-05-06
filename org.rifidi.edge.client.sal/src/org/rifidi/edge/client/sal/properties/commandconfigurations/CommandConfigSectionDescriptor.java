@@ -2,7 +2,7 @@
  * 
  */
 package org.rifidi.edge.client.sal.properties.commandconfigurations;
-
+//TODO: Comments
 import java.util.ArrayList;
 import java.util.List;
 

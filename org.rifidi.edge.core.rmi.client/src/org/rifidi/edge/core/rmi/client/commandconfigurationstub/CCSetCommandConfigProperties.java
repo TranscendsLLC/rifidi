@@ -1,5 +1,5 @@
 package org.rifidi.edge.core.rmi.client.commandconfigurationstub;
-
+//TODO: Comments
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 

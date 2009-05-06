@@ -1,5 +1,5 @@
 package org.rifidi.rmi.utils.exceptions;
-
+//TODO: Comments
 import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;

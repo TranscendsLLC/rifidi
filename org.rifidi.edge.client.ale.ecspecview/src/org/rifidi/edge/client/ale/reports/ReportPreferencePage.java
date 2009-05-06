@@ -2,7 +2,7 @@
  * 
  */
 package org.rifidi.edge.client.ale.reports;
-
+//TODO: Comments
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.StringFieldEditor;

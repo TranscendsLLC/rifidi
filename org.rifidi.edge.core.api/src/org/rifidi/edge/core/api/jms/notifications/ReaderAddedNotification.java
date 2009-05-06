@@ -1,5 +1,5 @@
 package org.rifidi.edge.core.api.jms.notifications;
-
+//TODO: Comments
 import java.io.Serializable;
 
 public class ReaderAddedNotification implements Serializable{

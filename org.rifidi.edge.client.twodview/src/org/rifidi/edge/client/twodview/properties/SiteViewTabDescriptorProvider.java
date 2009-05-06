@@ -2,7 +2,7 @@
  * 
  */
 package org.rifidi.edge.client.twodview.properties;
-
+//TODO: Comments
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.IWorkbenchPart;

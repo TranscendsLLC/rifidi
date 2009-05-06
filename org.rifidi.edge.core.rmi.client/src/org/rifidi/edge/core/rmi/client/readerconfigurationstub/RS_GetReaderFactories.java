@@ -2,7 +2,7 @@
  * 
  */
 package org.rifidi.edge.core.rmi.client.readerconfigurationstub;
-
+//TODO: Comments
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.Set;
