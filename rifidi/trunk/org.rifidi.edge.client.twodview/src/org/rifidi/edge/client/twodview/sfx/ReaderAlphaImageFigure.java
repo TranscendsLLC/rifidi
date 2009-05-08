@@ -46,19 +46,21 @@ public class ReaderAlphaImageFigure extends AlphaImageFigure implements
 	private final String readerID;
 
 	/**
-	 * Constructor. Must be called from within eclipse thread
+	 * Constructor. Must be called from within eclipse thread.
+	 * After calling the constructor the setReader method must be called,
+	 * to set the model (reader).
 	 * 
 	 * @param image
-	 * @param reader
+	 * @param readerID
 	 */
-	public ReaderAlphaImageFigure(Image image, RemoteReader reader) {
+	public ReaderAlphaImageFigure(Image image, String readerID) {
 		super(image);
-		this.readerID = reader.getID();
+		this.readerID = readerID;
 		this.sessions = new HashSet<RemoteSession>();
 		// TODO: this might be deprecated...
 		setToolTip(this.createToolTip());
-		addModel(reader);
-		computeState();
+//		addModel(reader);
+//		computeState();
 	}
 
 	/**
