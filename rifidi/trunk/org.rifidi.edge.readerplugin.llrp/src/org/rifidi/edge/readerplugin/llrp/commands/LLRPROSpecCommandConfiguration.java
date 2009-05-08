@@ -137,6 +137,8 @@ public class LLRPROSpecCommandConfiguration extends
 	}
 	
 	/**
+	 * Sets the ROSpecID.
+	 * 
 	 * @param roSpecID
 	 *            the roSpecID to set
 	 */
@@ -145,6 +147,8 @@ public class LLRPROSpecCommandConfiguration extends
 	}
 
 	/**
+	 * Gets teh ROSpecID.  
+	 * 
 	 * @return the roSpecID
 	 */
 	@Property(displayName = "ROSpecID", description = "The ID of the ROSpec", writable = true, type = PropertyType.PT_INTEGER)
