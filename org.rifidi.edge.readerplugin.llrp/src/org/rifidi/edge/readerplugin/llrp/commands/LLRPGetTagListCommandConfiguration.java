@@ -2,22 +2,22 @@
  *  LLRPGetTagListCommandConfiguration.java
  *
  *  Created:	Mar 9, 2009
- *  Project:	RiFidi Emulator - A Software Simulation Tool for RFID Devices
+ *  Project:	Rifidi Edge Server - A middleware platform for RFID applications
  *  				http://www.rifidi.org
  *  				http://rifidi.sourceforge.net
  *  Copyright:	Pramari LLC and the Rifidi Project
- *  License:	Lesser GNU Public License (LGPL)
- *  				http://www.opensource.org/licenses/lgpl-license.html
+ *  License:	GNU Public License (GPL)
+ *  				http://www.opensource.org/licenses/gpl-3.0.html
  */
 package org.rifidi.edge.readerplugin.llrp.commands;
-//TODO: Comments
+
 import org.rifidi.configuration.annotations.JMXMBean;
 import org.rifidi.configuration.annotations.Property;
 import org.rifidi.configuration.annotations.PropertyType;
 import org.rifidi.edge.core.commands.AbstractCommandConfiguration;
 
 /**
- * 
+ * This class configures a GetTagList command.  
  * 
  * @author Matthew Dean
  */
@@ -27,7 +27,7 @@ public class LLRPGetTagListCommandConfiguration extends
 	private int roSpecID = 0;
 
 	/**
-	 * 
+	 * Constructor of LLRPGetTagListCommandConfiguration.  
 	 */
 	public LLRPGetTagListCommandConfiguration() {
 	}
@@ -69,6 +69,8 @@ public class LLRPGetTagListCommandConfiguration extends
 	}
 
 	/**
+	 * Sets the ROSpecID.  
+	 * 
 	 * @param roSpecID
 	 *            the roSpecID to set
 	 */
@@ -78,6 +80,8 @@ public class LLRPGetTagListCommandConfiguration extends
 	}
 
 	/**
+	 * Gets the ROSpecID.  
+	 * 
 	 * @return the roSpecID
 	 */
 	@Property(displayName = "roSpecID", description = "The ID of the ROSpec for the GetTagList command", writable = true, type = PropertyType.PT_INTEGER)

@@ -2,15 +2,15 @@
  *  LLRPReaderSession.java
  *
  *  Created:	Mar 9, 2009
- *  Project:	RiFidi Emulator - A Software Simulation Tool for RFID Devices
+ *  Project:	Rifidi Edge Server - A middleware platform for RFID applications
  *  				http://www.rifidi.org
  *  				http://rifidi.sourceforge.net
  *  Copyright:	Pramari LLC and the Rifidi Project
- *  License:	Lesser GNU Public License (LGPL)
- *  				http://www.opensource.org/licenses/lgpl-license.html
+ *  License:	GNU Public License (GPL)
+ *  				http://www.opensource.org/licenses/gpl-3.0.html
  */
 package org.rifidi.edge.readerplugin.llrp;
-//TODO: Comments
+
 import java.io.IOException;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -59,7 +59,8 @@ import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
 
 /**
- * 
+ * This class represents a session with an LLRP reader. It handles connecting
+ * and disconnecting, as well as recieving tag data.
  * 
  * @author Matthew Dean
  */
@@ -111,12 +112,14 @@ public class LLRPReaderSession extends AbstractReaderSession implements
 				// System.out.println("JUST BEFORE THE CONNECTION ATTEMPT");
 				((LLRPConnector) connection).connect();
 				connected = true;
-				
+
 				// System.out.println("JUST AFTER THE CONNECTION ATTEMPT");
 			} catch (LLRPConnectionAttemptFailedException e) {
-				logger.debug("Attempt to connect to LLRP reader failed: " + connCount);
-			}catch(org.apache.mina.common.RuntimeIOException e){
-				logger.debug("Attempt to connect to LLRP reader failed: " + connCount);
+				logger.debug("Attempt to connect to LLRP reader failed: "
+						+ connCount);
+			} catch (org.apache.mina.common.RuntimeIOException e) {
+				logger.debug("Attempt to connect to LLRP reader failed: "
+						+ connCount);
 			}
 
 			if (!connected) {
@@ -133,7 +136,7 @@ public class LLRPReaderSession extends AbstractReaderSession implements
 			setStatus(SessionStatus.CLOSED);
 			throw new IOException("Cannot connect");
 		}
-		
+
 		setStatus(SessionStatus.LOGGINGIN);
 		executor = new ScheduledThreadPoolExecutor(1);
 
@@ -169,19 +172,19 @@ public class LLRPReaderSession extends AbstractReaderSession implements
 	 */
 	@Override
 	public void disconnect() {
-		try{
-		if (processing.get()) {
-			if (processing.compareAndSet(true, false)) {
-				logger.debug("Disconnecting");
-				((LLRPConnector) connection).disconnect();
+		try {
+			if (processing.get()) {
+				if (processing.compareAndSet(true, false)) {
+					logger.debug("Disconnecting");
+					((LLRPConnector) connection).disconnect();
+				}
 			}
-		}
-		}finally{			
+		} finally {
 			executor.shutdownNow();
 			executor = null;
 			setStatus(SessionStatus.CLOSED);
 		}
-		
+
 	}
 
 	/**
@@ -214,7 +217,7 @@ public class LLRPReaderSession extends AbstractReaderSession implements
 	@Override
 	public void errorOccured(String arg0) {
 		logger.error("LLRP Error Occurred: " + arg0);
-		//TODO: should we disconnect?
+		// TODO: should we disconnect?
 	}
 
 	/**
@@ -234,7 +237,8 @@ public class LLRPReaderSession extends AbstractReaderSession implements
 				// AntennaID antid = t.getAntennaID();
 				// System.out.println("EPC data recieved");
 				EPC_96 id = (EPC_96) t.getEPCParameter();
-				System.out.println("EPC data processed : " + id.getEPC().toString(16));
+				System.out.println("EPC data processed : "
+						+ id.getEPC().toString(16));
 				tagdatastring.add(id.getEPC().toString(16));
 			}
 
@@ -399,12 +403,16 @@ public class LLRPReaderSession extends AbstractReaderSession implements
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.rifidi.edge.core.readers.impl.AbstractReaderSession#submit(org.rifidi.edge.core.commands.Command, long, java.util.concurrent.TimeUnit)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.core.readers.impl.AbstractReaderSession#submit(org.rifidi
+	 * .edge.core.commands.Command, long, java.util.concurrent.TimeUnit)
 	 */
 	@Override
 	public Integer submit(Command command, long interval, TimeUnit unit) {
-		Integer retVal= super.submit(command, interval, unit);
+		Integer retVal = super.submit(command, interval, unit);
 		// TODO: Remove this once we have aspectJ
 		try {
 			NotifierService service = notifierService.getNotifierService();
@@ -419,8 +427,12 @@ public class LLRPReaderSession extends AbstractReaderSession implements
 		return retVal;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.rifidi.edge.core.readers.impl.AbstractReaderSession#killComand(java.lang.Integer)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.core.readers.impl.AbstractReaderSession#killComand(java
+	 * .lang.Integer)
 	 */
 	@Override
 	public void killComand(Integer id) {
@@ -431,7 +443,5 @@ public class LLRPReaderSession extends AbstractReaderSession implements
 			service.jobDeleted(this.readerID, this.getID(), id);
 		}
 	}
-	
-	
 
 }

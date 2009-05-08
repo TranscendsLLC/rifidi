@@ -2,15 +2,15 @@
  *  LLRPReader.java
  *
  *  Created:	Mar 9, 2009
- *  Project:	RiFidi Emulator - A Software Simulation Tool for RFID Devices
+ *  Project:	Rifidi Edge Server - A middleware platform for RFID applications
  *  				http://www.rifidi.org
  *  				http://rifidi.sourceforge.net
  *  Copyright:	Pramari LLC and the Rifidi Project
- *  License:	Lesser GNU Public License (LGPL)
- *  				http://www.opensource.org/licenses/lgpl-license.html
+ *  License:	GNU Public License (GPL)
+ *  				http://www.opensource.org/licenses/gpl-3.0.html
  */
 package org.rifidi.edge.readerplugin.llrp;
-//TODO: Comments
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -28,7 +28,7 @@ import org.rifidi.edge.core.readers.ReaderSession;
 import org.springframework.jms.core.JmsTemplate;
 
 /**
- * 
+ * This class represents an LLRP reader.  It handles the session and sets up the properties.  
  * 
  * @author Matthew Dean
  */
@@ -91,6 +91,7 @@ public class LLRPReader extends AbstractReader<LLRPReaderSession> {
 	}
 
 	/***
+	 * Set the wrapper for the Notify Service.  
 	 * 
 	 * @param wrapper
 	 *            The JMS Notifier to set
@@ -149,6 +150,8 @@ public class LLRPReader extends AbstractReader<LLRPReaderSession> {
 	}
 
 	/**
+	 * Returns the IP address of the reader.  
+	 * 
 	 * @return the ipAddress
 	 */
 	@Property(displayName = "IP Address", description = "IP Address of "
@@ -159,6 +162,8 @@ public class LLRPReader extends AbstractReader<LLRPReaderSession> {
 	}
 
 	/**
+	 * Sets the IP address of the reader.  
+	 * 
 	 * @param ipAddress
 	 *            the ipAddress to set
 	 */
@@ -167,6 +172,8 @@ public class LLRPReader extends AbstractReader<LLRPReaderSession> {
 	}
 
 	/**
+	 * Gets the port.  
+	 * 
 	 * @return the port
 	 */
 	@Property(displayName = "Port", description = "Port of the Reader", writable = true, type = PropertyType.PT_INTEGER, category = "c"
@@ -176,6 +183,8 @@ public class LLRPReader extends AbstractReader<LLRPReaderSession> {
 	}
 
 	/**
+	 * Sets the port.  
+	 * 
 	 * @param port
 	 *            the port to set
 	 */
@@ -184,6 +193,8 @@ public class LLRPReader extends AbstractReader<LLRPReaderSession> {
 	}
 
 	/**
+	 * Gets the reconnect interval.  
+	 * 
 	 * @return the reconnectionInterval
 	 */
 	@Property(displayName = "Reconnection Interval", description = "The interval to wait between"
@@ -194,6 +205,8 @@ public class LLRPReader extends AbstractReader<LLRPReaderSession> {
 	}
 
 	/**
+	 * Sets the reconnect interval.  
+	 * 
 	 * @param reconnectionInterval
 	 *            the reconnectionInterval to set
 	 */
@@ -202,6 +215,8 @@ public class LLRPReader extends AbstractReader<LLRPReaderSession> {
 	}
 
 	/**
+	 * Gets the number of connection attempts to try before giving up.  
+	 * 
 	 * @return the maxNumConnectionAttempts
 	 */
 	@Property(displayName = "Maximum Connection Attempts", description = "Number of times to try to connect to the readerSession"
@@ -212,6 +227,8 @@ public class LLRPReader extends AbstractReader<LLRPReaderSession> {
 	}
 
 	/**
+	 * Sets the number of connection attempts to try before giving up.  
+	 * 
 	 * @param maxNumConnectionAttempts
 	 *            the maxNumConnectionAttempts to set
 	 */
@@ -220,6 +237,8 @@ public class LLRPReader extends AbstractReader<LLRPReaderSession> {
 	}
 
 	/**
+	 * Sets the JMS destination.  
+	 * 
 	 * @param destination
 	 *            the destination to set
 	 */
@@ -228,6 +247,8 @@ public class LLRPReader extends AbstractReader<LLRPReaderSession> {
 	}
 
 	/**
+	 * Sets the JMS template.  
+	 * 
 	 * @param template
 	 *            the template to set
 	 */
@@ -236,6 +257,8 @@ public class LLRPReader extends AbstractReader<LLRPReaderSession> {
 	}
 
 	/**
+	 * Gets the properties for the reader.  
+	 * 
 	 * @return the readerProperties
 	 */
 	public ConcurrentHashMap<String, String> getReaderProperties() {

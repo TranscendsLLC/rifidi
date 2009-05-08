@@ -1,16 +1,16 @@
 /*
  *  LLRPROSpecCommand.java
  *
- *  Created:	Mar 20, 2009
- *  Project:	RiFidi Emulator - A Software Simulation Tool for RFID Devices
+ *  Created:	Mar 9, 2009
+ *  Project:	Rifidi Edge Server - A middleware platform for RFID applications
  *  				http://www.rifidi.org
  *  				http://rifidi.sourceforge.net
  *  Copyright:	Pramari LLC and the Rifidi Project
- *  License:	Lesser GNU Public License (LGPL)
- *  				http://www.opensource.org/licenses/lgpl-license.html
+ *  License:	GNU Public License (GPL)
+ *  				http://www.opensource.org/licenses/gpl-3.0.html
  */
 package org.rifidi.edge.readerplugin.llrp.commands;
-//TODO: Comments
+
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -46,7 +46,7 @@ import org.rifidi.edge.readerplugin.llrp.AbstractLLRPCommand;
 import org.rifidi.edge.readerplugin.llrp.LLRPReaderSession;
 
 /**
- * 
+ * This class creates a ROSpec which can be used for a GetTagList command.
  * 
  * @author Matthew Dean
  */
@@ -57,50 +57,53 @@ public class LLRPROSpecCommand extends AbstractLLRPCommand {
 			.getLog(LLRPROSpecCommand.class);
 
 	/**
-	 * 
+	 * The ROSpecID.
 	 */
 	private int rospec_id = -1;
 
 	/**
-	 * 
+	 * The session.
 	 */
 	private LLRPReaderSession session = null;
-	
+
+	/**
+	 * The initial antennaSequence.
+	 */
 	private String antennaSequence = "0";
 
 	/**
+	 * The constructor for the LLRPROSpecCommand.
 	 * 
 	 * @param commandID
-	 * @param session
 	 */
 	public LLRPROSpecCommand(String commandID) {
 		super(commandID);
 	}
 
 	/**
+	 * Sets teh ROSpecID.  
 	 * 
 	 * @param rospec_id
 	 */
 	public void setRoSpecID(int rospec_id) {
 		this.rospec_id = rospec_id;
 	}
-	
+
 	/**
+	 * Gets the AntennaID.  
 	 * 
 	 * @return
 	 */
 	public String getAntennaIDs() {
 		return antennaSequence;
 	}
-	
+
 	/**
-	 * 
+	 * Sets teh antennaIDs.
 	 */
 	public void setAntennaIDs(String antennaIDs) {
-		
+		this.antennaSequence = antennaIDs;
 	}
-	
-	
 
 	/*
 	 * (non-Javadoc)
@@ -109,9 +112,9 @@ public class LLRPROSpecCommand extends AbstractLLRPCommand {
 	 */
 	@Override
 	public void run() {
-		this.session = (LLRPReaderSession)this.readerSession;
-		//System.out.println("Session has been set: " + this.session);
-		//System.out.println("Running LLRPROSpecCommand");
+		this.session = (LLRPReaderSession) this.readerSession;
+		// System.out.println("Session has been set: " + this.session);
+		// System.out.println("Running LLRPROSpecCommand");
 		try {
 			boolean is_taken = false;
 			GET_ROSPECS rospecs = new GET_ROSPECS();

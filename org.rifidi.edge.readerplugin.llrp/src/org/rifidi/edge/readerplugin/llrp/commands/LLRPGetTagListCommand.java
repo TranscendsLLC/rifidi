@@ -2,21 +2,21 @@
  *  LLRPGetTagListCommand.java
  *
  *  Created:	Mar 9, 2009
- *  Project:	RiFidi Emulator - A Software Simulation Tool for RFID Devices
+ *  Project:	Rifidi Edge Server - A middleware platform for RFID applications
  *  				http://www.rifidi.org
  *  				http://rifidi.sourceforge.net
  *  Copyright:	Pramari LLC and the Rifidi Project
- *  License:	Lesser GNU Public License (LGPL)
- *  				http://www.opensource.org/licenses/lgpl-license.html
+ *  License:	GNU Public License (GPL)
+ *  				http://www.opensource.org/licenses/gpl-3.0.html
  */
 package org.rifidi.edge.readerplugin.llrp.commands;
-//TODO: Comments
+
 import org.llrp.ltk.generated.messages.GET_REPORT;
 import org.rifidi.edge.readerplugin.llrp.AbstractLLRPCommand;
 import org.rifidi.edge.readerplugin.llrp.LLRPReaderSession;
 
 /**
- * 
+ * This command will get a tag list from an LLRP reader for a given ROSpec.  
  * 
  * @author Matthew Dean
  */
@@ -27,7 +27,9 @@ public class LLRPGetTagListCommand extends AbstractLLRPCommand {
 	private int roSpecID = 0;
 	
 	/**
-	 * @param commandID
+	 * Constructor for LLRPGetTagListCommand
+	 * 
+	 * @param commandID	The ID for this command.  
 	 */
 	public LLRPGetTagListCommand(String commandID) {
 		super(commandID);
@@ -48,6 +50,8 @@ public class LLRPGetTagListCommand extends AbstractLLRPCommand {
 	}
 
 	/**
+	 * Sets the ROSpecID of this command.  
+	 * 
 	 * @param roSpecID the roSpecID to set
 	 */
 	public void setRoSpecID(int roSpecID) {
@@ -57,6 +61,8 @@ public class LLRPGetTagListCommand extends AbstractLLRPCommand {
 
 
 	/**
+	 * Returns the ROSpecID of this Command.  
+	 * 
 	 * @return the roSpecID
 	 */
 	public int getRoSpecID() {
