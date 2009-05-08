@@ -51,10 +51,11 @@ public class SiteViewController implements DropTargetListener,
 	private static final Log logger = LogFactory
 			.getLog(SiteViewController.class);
 	private RemoteEdgeServer server;
-
-	/**
-	 * 
-	 */
+/**
+ * Constructor.
+ * @param siteView
+ * @param composite
+ */
 	public SiteViewController(SiteView siteView, Composite composite) {
 		super();
 		this.siteView = siteView;
@@ -138,8 +139,8 @@ public class SiteViewController implements DropTargetListener,
 				return;
 			}
 			// create an ImageFigure that contains the reference to the
-			ReaderAlphaImageFigure raif = new ReaderAlphaImageFigure(image,
-					reader);
+			ReaderAlphaImageFigure raif = new ReaderAlphaImageFigure(image, reader.getID());
+			raif.setReader(reader);
 			this.readerIDsToReaderFigures.put(raif.getReaderId(), raif);
 
 			ObjectLayer layer = siteView.getObjectLayer();
