@@ -2,27 +2,29 @@
  *  AbstractLLRPCommand.java
  *
  *  Created:	Mar 9, 2009
- *  Project:	RiFidi Emulator - A Software Simulation Tool for RFID Devices
+ *  Project:	Rifidi Edge Server - A middleware platform for RFID applications
  *  				http://www.rifidi.org
  *  				http://rifidi.sourceforge.net
  *  Copyright:	Pramari LLC and the Rifidi Project
- *  License:	Lesser GNU Public License (LGPL)
- *  				http://www.opensource.org/licenses/lgpl-license.html
+ *  License:	GNU Public License (GPL)
+ *  				http://www.opensource.org/licenses/gpl-3.0.html
  */
 package org.rifidi.edge.readerplugin.llrp;
-//TODO: Comments
+
 import org.rifidi.edge.core.commands.Command;
 
 /**
- * 
+ * This class represents an abstract command for an LLRP reader. Extend it to
+ * create an LLRP command.
  * 
  * @author Matthew Dean
  */
 public abstract class AbstractLLRPCommand extends Command {
 
 	/**
+	 * Constructor for the AbstractLLRPCommand.  
 	 * 
-	 * @param commandID
+	 * @param commandID	
 	 */
 	public AbstractLLRPCommand(String commandID) {
 		super(commandID);
