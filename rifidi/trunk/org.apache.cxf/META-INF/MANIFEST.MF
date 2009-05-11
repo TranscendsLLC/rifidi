@@ -1,10 +1,10 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Cxf Plug-in
+Bundle-Name: Rifidi Apache CXF Plug-in
 Bundle-SymbolicName: org.apache.cxf
 Bundle-Version: 1.0.0
 Bundle-Activator: org.rifidi.edge.client.cxf.Activator
-Bundle-Vendor: PRAMARI LLC
+Bundle-Vendor: Pramari, LLC.
 Require-Bundle: org.eclipse.core.runtime
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
