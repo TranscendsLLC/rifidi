@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Logical Reader Plug-in
+Bundle-Name: Rifidi Edge ALE Logical Reader Plug-in
 Bundle-SymbolicName: org.rifidi.edge.epcglobal.ale.api.logicalreader
 Bundle-Version: 1.0.0
 Import-Package: org.apache.commons.logging;version="1.1.1",
@@ -13,3 +13,4 @@ Export-Package: org.rifidi.edge.epcglobal.ale.api.lr,
  org.rifidi.edge.epcglobal.ale.api.lr.data,
  org.rifidi.edge.epcglobal.ale.api.lr.ws,
  org.rifidi.edge.lr
+Bundle-Vendor: Pramari, LLC
