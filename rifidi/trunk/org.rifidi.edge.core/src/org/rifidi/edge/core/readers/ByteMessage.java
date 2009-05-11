@@ -2,8 +2,11 @@
  * 
  */
 package org.rifidi.edge.core.readers;
-//TODO: Comments
+
 /**
+ * A wrapper around a byte array for sending and receiving messages to and from
+ * a reader
+ * 
  * @author Jochen Mader - jochen@pramari.com
  * 
  */

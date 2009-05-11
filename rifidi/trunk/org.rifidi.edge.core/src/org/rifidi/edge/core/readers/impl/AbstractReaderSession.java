@@ -2,7 +2,7 @@
  * 
  */
 package org.rifidi.edge.core.readers.impl;
-//TODO: Comments
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Queue;
@@ -22,6 +22,12 @@ import org.rifidi.edge.core.readers.ReaderSession;
 import org.springframework.jms.core.JmsTemplate;
 
 /**
+ * An Abstract class for concreate ReaderSessions to extend. This
+ * AbstractReaderSession class provides a base implementation of the command
+ * handeling of a reader session (i.e. submitting, deleting, executing
+ * commands). It does not provide any implementation of connection methods in a
+ * session
+ * 
  * @author Kyle Neumeier - kyle@pramari.com
  * 
  */
@@ -48,9 +54,20 @@ public abstract class AbstractReaderSession extends ReaderSession {
 	 * inactive.
 	 */
 	protected Queue<Command> commandQueue = new ConcurrentLinkedQueue<Command>();
+	/** Logger */
 	private static final Log logger = LogFactory
 			.getLog(AbstractReaderSession.class);
 
+	/**
+	 * Constructor
+	 * 
+	 * @param ID
+	 *            ID of this ReaderSession
+	 * @param destination
+	 *            The JMS Queue to add Tag Data to
+	 * @param template
+	 *            The Template used to send Tag data to the internal queue
+	 */
 	public AbstractReaderSession(String ID, Destination destination,
 			JmsTemplate template) {
 		super(ID);
@@ -146,12 +163,24 @@ public abstract class AbstractReaderSession extends ReaderSession {
 		}
 	}
 
+	/**
+	 * Private class used to wrap an executing command
+	 * 
+	 * @author Jochen Mader - jochen@pramari.com
+	 * 
+	 */
 	protected class CommandExecutionData {
 		public long interval;
 		public TimeUnit unit;
 		public ScheduledFuture<?> future;
 	}
 
+	/**
+	 * Change the status of this session
+	 * 
+	 * @param status
+	 *            The status to set
+	 */
 	protected synchronized void setStatus(SessionStatus status) {
 		logger.debug("Changing state: " + status);
 		this.status = status;

@@ -2,7 +2,6 @@
  * 
  */
 package org.rifidi.edge.core.commands;
-//TODO: Comments
 import org.rifidi.configuration.Configuration;
 import org.rifidi.configuration.RifidiService;
 import org.rifidi.edge.core.api.rmi.dto.CommandConfigurationDTO;
@@ -62,5 +61,4 @@ public abstract class AbstractCommandConfiguration<T extends Command> extends
 				.getFactoryID(), configuration.getAttributes(configuration
 				.getAttributeNames()));
 	}
-
 }

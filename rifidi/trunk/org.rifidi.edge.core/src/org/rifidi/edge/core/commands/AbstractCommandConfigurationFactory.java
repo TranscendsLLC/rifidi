@@ -2,7 +2,7 @@
  * 
  */
 package org.rifidi.edge.core.commands;
-//TODO: Comments
+
 import java.util.HashSet;
 
 import org.rifidi.configuration.impl.AbstractMultiServiceFactory;
@@ -28,8 +28,16 @@ public abstract class AbstractCommandConfigurationFactory extends
 	 *         commands for
 	 */
 	public abstract String getReaderFactoryID();
-	
-	public CommandConfigFactoryDTO getDTO(){
-		return new CommandConfigFactoryDTO(getReaderFactoryID(), new HashSet<String>(this.getFactoryIDs()));
+
+	/**
+	 * Get the Data Transfer Object for the CommandConfigFactory.
+	 * 
+	 * TODO: Should be moved out of here
+	 * 
+	 * @return The DTO for this object
+	 */
+	public CommandConfigFactoryDTO getDTO() {
+		return new CommandConfigFactoryDTO(getReaderFactoryID(),
+				new HashSet<String>(this.getFactoryIDs()));
 	}
 }

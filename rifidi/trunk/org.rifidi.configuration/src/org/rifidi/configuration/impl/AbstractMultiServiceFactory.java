@@ -2,7 +2,7 @@
  * 
  */
 package org.rifidi.configuration.impl;
-//TODO: Comments
+
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -16,9 +16,9 @@ import org.rifidi.configuration.ServiceFactory;
 
 /**
  * Base class for a service factory. This class is meant for scenarios where
- * there is one service class that can exist in several configurations.
- * Overwrite the factoryID and clazz attributes! The service gets registered
- * using a generated name of the form <factoryid>-<counter>.
+ * there is one service class that can exist in several configurations. The
+ * service gets registered using a generated name of the form
+ * <factoryid>-<counter>.
  * 
  * 
  * @author Jochen Mader - jochen@pramari.com
@@ -35,6 +35,13 @@ public abstract class AbstractMultiServiceFactory implements ServiceFactory {
 	/** Chache for configs that have already benn processed. */
 	private Map<String, DefaultConfigurationImpl> factoryIDToConfig;
 
+	/**
+	 * Constructor
+	 */
+	public AbstractMultiServiceFactory() {
+		factoryIDToConfig = new HashMap<String, DefaultConfigurationImpl>();
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -42,13 +49,6 @@ public abstract class AbstractMultiServiceFactory implements ServiceFactory {
 	 * org.rifidi.configuration.ServiceFactory#getEmptyConfiguration(java.lang
 	 * .String)
 	 */
-	/**
-	 * 
-	 */
-	public AbstractMultiServiceFactory() {
-		factoryIDToConfig = new HashMap<String, DefaultConfigurationImpl>();
-	}
-
 	@Override
 	public Configuration getEmptyConfiguration(String factoryID) {
 		if (!factoryIDToConfig.containsKey(factoryID)) {
@@ -112,9 +112,13 @@ public abstract class AbstractMultiServiceFactory implements ServiceFactory {
 	}
 
 	/**
-	 * Do custom initialization here.
+	 * This is a hook for initializing the service (e.g. registering it in osgi
+	 * registry under a custom interface). Called before the Configuration
+	 * wrapper around this service is registered as a Configuration object in
+	 * the OSGi registry
 	 * 
 	 * @param instance
+	 *            The instance of the service
 	 */
 	public abstract void customInit(Object instance);
 
@@ -135,7 +139,7 @@ public abstract class AbstractMultiServiceFactory implements ServiceFactory {
 	}
 
 	/**
-	 * Get the bundel context for this factory.
+	 * Get the bundle context for this factory.
 	 * 
 	 * @return
 	 */

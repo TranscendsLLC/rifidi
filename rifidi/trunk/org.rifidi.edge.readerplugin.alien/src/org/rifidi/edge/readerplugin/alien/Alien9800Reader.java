@@ -1,13 +1,5 @@
-/*
- *  Alien9800CommandConfigurationFactory.java
- *
- *  Created:	Mar 9, 2009
- *  Project:	Rifidi Edge Server - A middleware platform for RFID applications
- *  				http://www.rifidi.org
- *  				http://rifidi.sourceforge.net
- *  Copyright:	Pramari LLC and the Rifidi Project
- *  License:	GNU Public License (GPL)
- *  				http://www.opensource.org/licenses/gpl-3.0.html
+/**
+ * 
  */
 package org.rifidi.edge.readerplugin.alien;
 
@@ -35,10 +27,10 @@ import org.rifidi.edge.readerplugin.alien.commands.internal.AlienPropertyCommand
 import org.springframework.jms.core.JmsTemplate;
 
 /**
- * This class represents an Alien9800 reader. It contains all the values used to
- * set the properties, as well as the JMS information.  
+ * The plugin that connects to an Alien9800 reader
  * 
  * @author Jochen Mader - jochen@pramari.com
+ * 
  */
 @JMXMBean
 public class Alien9800Reader extends AbstractReader<Alien9800ReaderSession> {

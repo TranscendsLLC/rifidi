@@ -1,13 +1,5 @@
-/*
- *  Alien9800ReaderFactory.java
- *
- *  Created:	Mar 9, 2009
- *  Project:	Rifidi Edge Server - A middleware platform for RFID applications
- *  				http://www.rifidi.org
- *  				http://rifidi.sourceforge.net
- *  Copyright:	Pramari LLC and the Rifidi Project
- *  License:	GNU Public License (GPL)
- *  				http://www.opensource.org/licenses/gpl-3.0.html
+/**
+ * 
  */
 package org.rifidi.edge.readerplugin.alien;
 
@@ -23,20 +15,17 @@ import org.rifidi.edge.core.readers.AbstractReaderFactory;
 import org.springframework.jms.core.JmsTemplate;
 
 /**
- * A factory class for Alien readers.  
+ * The Factory for producing Alien9800 Readers
  * 
  * @author Jochen Mader - jochen@pramari.com
+ * 
  */
 public class Alien9800ReaderFactory extends
 		AbstractReaderFactory<Alien9800Reader> {
 
-	/**
-	 * JMS destination.
-	 */
+	/** The JMS Queue for tag data */
 	private Destination destination;
-	/**
-	 * JMS template.  
-	 */
+	/** JMS template for sending tag data to JMS Queue */
 	private JmsTemplate template;
 	/** The Unique ID for this Factory */
 	public static final String FACTORY_ID = "Alien9800";
@@ -44,7 +33,7 @@ public class Alien9800ReaderFactory extends
 	private static final String description = "The Alien 9800 is an IP based RFID ReaderSession using a telnet interface.";
 	/** Name of the readerSession. */
 	private static final String name = "Alien9800";
-	/** A JMS event notification sender*/
+	/** A JMS event notification sender */
 	private NotifierServiceWrapper notifierServiceWrapper;
 
 	/**
@@ -57,8 +46,6 @@ public class Alien9800ReaderFactory extends
 	}
 
 	/**
-	 * Returns the JMS destination.  
-	 * 
 	 * @return the destination
 	 */
 	public Destination getDestination() {
@@ -66,8 +53,6 @@ public class Alien9800ReaderFactory extends
 	}
 
 	/**
-	 * Sets the JMS destination.  
-	 * 
 	 * @param destination
 	 *            the destination to set
 	 */
@@ -76,8 +61,6 @@ public class Alien9800ReaderFactory extends
 	}
 
 	/**
-	 * Returns the JMS template.  
-	 * 
 	 * @return the template
 	 */
 	public JmsTemplate getTemplate() {
@@ -85,8 +68,6 @@ public class Alien9800ReaderFactory extends
 	}
 
 	/**
-	 * Sets the JMS template.  
-	 * 
 	 * @param template
 	 *            the template to set
 	 */
@@ -132,19 +113,11 @@ public class Alien9800ReaderFactory extends
 		instance.register(getContext(), interfaces);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.rifidi.edge.core.readers.AbstractReaderFactory#getDescription()
-	 */
 	@Override
 	public String getDescription() {
 		return description;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.rifidi.edge.core.readers.AbstractReaderFactory#getDisplayName()
-	 */
 	@Override
 	public String getDisplayName() {
 		return name;

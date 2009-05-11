@@ -3,9 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Rifidi Edge Alien Adapter Plug-in
 Bundle-SymbolicName: org.rifidi.edge.readerplugin.alien
 Bundle-Version: 2.0.0
-Bundle-Activator: org.rifidi.edge.readerplugin.alien.Activator
 Bundle-Vendor: Pramari, LLC
-Bundle-ActivationPolicy: lazy
 Import-Package: javax.jms;version="1.1.0",
  org.apache.activemq;version="5.1.0",
  org.apache.activemq.broker;version="5.1.0",
