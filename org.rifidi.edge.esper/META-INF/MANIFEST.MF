@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Esper Plug-in
+Bundle-Name: Rifidi Edge Esper Plug-in
 Bundle-SymbolicName: org.rifidi.edge.esper
 Bundle-Version: 1.0.0
 Bundle-Vendor: Pramari, LLC
