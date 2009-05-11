@@ -1,9 +1,9 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Ale Plug-in
+Bundle-Name: Rifidi Client ALE API Plug-in
 Bundle-SymbolicName: org.rifidi.edge.client.ale.api
 Bundle-Version: 1.0.0
-Bundle-Vendor: PRAMARI LLC
+Bundle-Vendor: Pramari, LLC
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: org.rifidi.edge.client.ale.api.alelr.xsd.epcglobal,
  org.rifidi.edge.client.ale.api.util,
