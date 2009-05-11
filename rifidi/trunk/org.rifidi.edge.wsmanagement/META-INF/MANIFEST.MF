@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Wsmanagement Plug-in
+Bundle-Name: Rifidi Edge Wsmanagement Plug-in
 Bundle-SymbolicName: org.rifidi.edge.wsmanagement
 Bundle-Version: 1.0.0
 Bundle-Vendor: Pramari, LLC
