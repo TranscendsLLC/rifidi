@@ -1,3 +1,14 @@
+/*
+ *  AlienGetCommandObject.java
+ *
+ *  Created:	Mar 9, 2009
+ *  Project:	Rifidi Edge Server - A middleware platform for RFID applications
+ *  				http://www.rifidi.org
+ *  				http://rifidi.sourceforge.net
+ *  Copyright:	Pramari LLC and the Rifidi Project
+ *  License:	GNU Public License (GPL)
+ *  				http://www.opensource.org/licenses/gpl-3.0.html
+ */
 package org.rifidi.edge.readerplugin.alien.commandobject;
 
 import java.io.IOException;
@@ -6,7 +17,7 @@ import java.util.List;
 
 import org.rifidi.edge.core.readers.ByteMessage;
 import org.rifidi.edge.readerplugin.alien.Alien9800ReaderSession;
-//TODO: Comments
+
 public class GetTagListCommandObject {
 	/** The readerSession to send the command to */
 	private Alien9800ReaderSession readerSession;

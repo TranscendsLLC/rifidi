@@ -1,15 +1,16 @@
-/* 
- * Activator.java
- *  Created:	Jun 20, 2008
- *  Project:	RiFidi Emulator - A Software Simulation Tool for RFID Devices
+/*
+ *  Activator.java
+ *
+ *  Created:	Mar 9, 2009
+ *  Project:	Rifidi Edge Server - A middleware platform for RFID applications
  *  				http://www.rifidi.org
  *  				http://rifidi.sourceforge.net
  *  Copyright:	Pramari LLC and the Rifidi Project
- *  License:	Lesser GNU Public License (LGPL)
- *  				http://www.opensource.org/licenses/lgpl-license.html
+ *  License:	GNU Public License (GPL)
+ *  				http://www.opensource.org/licenses/gpl-3.0.html
  */
 package org.rifidi.edge.readerplugin.alien;
-//TODO: Comments
+
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 

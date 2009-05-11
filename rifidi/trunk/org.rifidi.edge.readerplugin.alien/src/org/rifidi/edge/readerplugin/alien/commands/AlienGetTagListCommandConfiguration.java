@@ -1,16 +1,25 @@
-/**
- * 
+/*
+ *  AlienGetTagListCommandConfiguration.java
+ *
+ *  Created:	Mar 9, 2009
+ *  Project:	Rifidi Edge Server - A middleware platform for RFID applications
+ *  				http://www.rifidi.org
+ *  				http://rifidi.sourceforge.net
+ *  Copyright:	Pramari LLC and the Rifidi Project
+ *  License:	GNU Public License (GPL)
+ *  				http://www.opensource.org/licenses/gpl-3.0.html
  */
 package org.rifidi.edge.readerplugin.alien.commands;
-//TODO: Comments
+
 import org.rifidi.configuration.annotations.JMXMBean;
 import org.rifidi.configuration.annotations.Property;
 import org.rifidi.configuration.annotations.PropertyType;
 import org.rifidi.edge.core.commands.AbstractCommandConfiguration;
 
 /**
- * @author Jochen Mader - jochen@pramari.com
+ * Configuration class for the GetTagList command for 
  * 
+ * @author Jochen Mader - jochen@pramari.com
  */
 @JMXMBean
 public class AlienGetTagListCommandConfiguration extends
@@ -70,7 +79,7 @@ public class AlienGetTagListCommandConfiguration extends
 	/**
 	 * @return the tagType
 	 */
-	@Property(displayName = "Tag Type", description = "0=Gen1, 1=Gen2, 2=Both", writable = true, type = PropertyType.PT_INTEGER, minValue = "0", maxValue = "2", defaultValue="2")
+	@Property(displayName = "Tag Type", description = "0=Gen1, 1=Gen2, 2=Both", writable = true, type = PropertyType.PT_INTEGER, minValue = "0", maxValue = "2", defaultValue = "2")
 	public Integer getTagType() {
 		return tagType;
 	}
@@ -123,7 +132,8 @@ public class AlienGetTagListCommandConfiguration extends
 	 */
 	@Override
 	public AlienGetTagListCommand getCommand(String readerID) {
-		AlienGetTagListCommand c = new AlienGetTagListCommand(super.getID(), readerID);
+		AlienGetTagListCommand c = new AlienGetTagListCommand(super.getID(),
+				readerID);
 		c.setAntennasequence(antenna_sequence);
 		c.setPersistTime(persistTime);
 		c.setTagType(tagType);
