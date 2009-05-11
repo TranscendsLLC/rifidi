@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: JMS Notifications Plug-in
+Bundle-Name: Rifidi JMS Notifications Plug-in
 Bundle-SymbolicName: org.rifidi.edge.notifications
 Bundle-Version: 1.0.0
 Bundle-Vendor: Pramari, LLC
