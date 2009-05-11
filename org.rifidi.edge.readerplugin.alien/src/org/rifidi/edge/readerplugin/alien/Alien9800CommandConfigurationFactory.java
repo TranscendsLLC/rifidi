@@ -1,13 +1,5 @@
-/*
- *  Alien9800CommandConfigurationFactory.java
- *
- *  Created:	Mar 9, 2009
- *  Project:	Rifidi Edge Server - A middleware platform for RFID applications
- *  				http://www.rifidi.org
- *  				http://rifidi.sourceforge.net
- *  Copyright:	Pramari LLC and the Rifidi Project
- *  License:	GNU Public License (GPL)
- *  				http://www.opensource.org/licenses/gpl-3.0.html
+/**
+ * 
  */
 package org.rifidi.edge.readerplugin.alien;
 
@@ -23,21 +15,24 @@ import org.rifidi.edge.core.commands.AbstractCommandConfigurationFactory;
 import org.rifidi.edge.readerplugin.alien.commands.AlienGetTagListCommandConfiguration;
 
 /**
- * The factory for Alien Command classes. 
- * 
- * TODO: Comments
+ * The CommandConfigurationFactory for an Alien9800 reader
  * 
  * @author Jochen Mader - jochen@pramari.com
+ * 
  */
 public class Alien9800CommandConfigurationFactory extends
 		AbstractCommandConfigurationFactory {
 
+	/**
+	 * A map between IDs of command configutions factories and the classes of
+	 * the commandconfigurations factories
+	 */
 	private Map<String, Class<?>> factoryIdToClass;
 	/** The gloabaly unique name for this factory */
 	public static final String uniqueID = "Alien9800CommandConfigurationFactory";
 
 	/**
-	 * Constructor for Alien9800CommandConfigurationFactory.  
+	 * Constructor
 	 */
 	public Alien9800CommandConfigurationFactory() {
 		super();
@@ -85,9 +80,8 @@ public class Alien9800CommandConfigurationFactory extends
 		return new ArrayList<String>(factoryIdToClass.keySet());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.rifidi.edge.core.commands.AbstractCommandConfigurationFactory#getReaderFactoryID()
+	/**
+	 * @return the ID of the factory these commands work with
 	 */
 	@Override
 	public String getReaderFactoryID() {

@@ -3,7 +3,6 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Rifidi Edge Console Plug-in
 Bundle-SymbolicName: org.rifidi.edge.console
 Bundle-Version: 1.0.0
-Bundle-Activator: org.rifidi.edge.console.Activator
 Bundle-Vendor: Pramari, LLC
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: org.eclipse.osgi.framework.console;version="1.0.0",
@@ -15,4 +14,3 @@ Import-Package: org.eclipse.osgi.framework.console;version="1.0.0",
  org.rifidi.edge.core.daos,
  org.rifidi.edge.core.exceptions,
  org.rifidi.edge.core.readers
-Bundle-ActivationPolicy: lazy

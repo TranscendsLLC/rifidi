@@ -2,13 +2,15 @@
  * 
  */
 package org.rifidi.edge.core.commands;
-//TODO: Comments
+
 import javax.jms.Destination;
 
 import org.rifidi.edge.core.readers.ReaderSession;
 import org.springframework.jms.core.JmsTemplate;
 
 /**
+ * An Abstract base class that must be extended by all Reader Commands.
+ * 
  * @author Jochen Mader - jochen@pramari.com
  * 
  */
@@ -22,14 +24,21 @@ public abstract class Command implements Runnable {
 	/** The ID of the commandConfiguraiton (the RifidiService) */
 	private String commandID;
 
-	public Command(String commandID){
+	/**
+	 * Constructor
+	 * 
+	 * @param commandID
+	 *            The ID of the commandconfiguration that produced this
+	 *            command(The RifidiService)
+	 */
+	public Command(String commandID) {
 		this.commandID = commandID;
 	}
-	
+
 	/**
 	 * @return the commandID
 	 */
-	public String getCommandID(){
+	public String getCommandID() {
 		return this.commandID;
 	}
 

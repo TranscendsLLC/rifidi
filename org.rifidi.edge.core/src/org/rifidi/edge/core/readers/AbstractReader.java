@@ -2,7 +2,7 @@
  * 
  */
 package org.rifidi.edge.core.readers;
-//TODO: Comments
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -15,23 +15,18 @@ import org.rifidi.edge.core.api.rmi.dto.ReaderDTO;
 import org.rifidi.edge.core.api.rmi.dto.SessionDTO;
 
 /**
- * Factory that provides and manages readerSession instances
- * {@link ReaderSession}.<br/>
- * A factory creates and manages instances of readers. The factory itself holds
- * all configuration parameters and creates the readers according to these. The
- * connection to the readerSession combined with the given properties represents
- * a certain state of the readerSession which is then used by the command.<br/>
- * The returned readerSession objects are immutable and if some parameters of
- * the factory change while a readerSession has been aquired the aquired
- * readerSession has to be destroyed and the process using the readerSession
- * will have to aquire a new one.
+ * A reader creates and manages instances of sessions. The reader itself holds
+ * all configuration parameters and creates the sessions according to these. The
+ * returned readerSession objects are immutable and if some parameters of the
+ * factory change after a session has been created, the created session will
+ * retain its configuration until it is destroyed and a new one is created
  * 
  * @author Jochen Mader - jochen@pramari.com
  * 
  */
 public abstract class AbstractReader<T extends ReaderSession> extends
 		RifidiService {
-	
+
 	/**
 	 * Create a new reader session. If there are no more sessions available null
 	 * is returned.
@@ -56,7 +51,7 @@ public abstract class AbstractReader<T extends ReaderSession> extends
 	abstract public void destroyReaderSession(ReaderSession session);
 
 	/**
-	 * Apply Property changes to the reader
+	 * Send properties that have been modified to the physical reader
 	 */
 	abstract public void applyPropertyChanges();
 

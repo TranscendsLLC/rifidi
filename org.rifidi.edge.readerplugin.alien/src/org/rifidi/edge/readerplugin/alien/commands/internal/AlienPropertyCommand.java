@@ -1,16 +1,7 @@
-/*
- *  AlienPropertyCommand.java
- *
- *  Created:	Mar 9, 2009
- *  Project:	Rifidi Edge Server - A middleware platform for RFID applications
- *  				http://www.rifidi.org
- *  				http://rifidi.sourceforge.net
- *  Copyright:	Pramari LLC and the Rifidi Project
- *  License:	GNU Public License (GPL)
- *  				http://www.opensource.org/licenses/gpl-3.0.html
+/**
+ * 
  */
 package org.rifidi.edge.readerplugin.alien.commands.internal;
-
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -27,12 +18,13 @@ import org.rifidi.edge.readerplugin.alien.commandobject.AlienException;
  * supplied hashmap
  * 
  * @author Kyle Neumeier - kyle@pramari.com
+ * 
  */
 public class AlienPropertyCommand extends AbstractAlien9800Command {
 
 	/**
 	 * The shared hashmap containing all the reader properties from the
-	 * Alien9800Reader.
+	 * Alien9800Reader
 	 */
 	private Map<String, String> attributes;
 	/** The command to execute */
@@ -59,10 +51,6 @@ public class AlienPropertyCommand extends AbstractAlien9800Command {
 		this.commands = commands;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Runnable#run()
-	 */
 	@Override
 	public void run() {
 		try {
@@ -79,5 +67,6 @@ public class AlienPropertyCommand extends AbstractAlien9800Command {
 		} catch (IOException e) {
 			logger.warn("IOException while executing command ", e);
 		}
+
 	}
 }

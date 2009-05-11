@@ -2,7 +2,7 @@
  * 
  */
 package org.rifidi.edge.core.readers.impl;
-//TODO: Comments
+
 import java.io.IOException;
 import java.net.Socket;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -21,10 +21,12 @@ import org.rifidi.edge.core.readers.impl.threads.WriteThread;
 import org.springframework.jms.core.JmsTemplate;
 
 /**
- * Base implementation of a reader. Extend for your own readers.
+ * Base implementation of a ReaderPlugin that uses TCP/IP as a means of
+ * communicating with a physical reader. This base class handles socket I/O and
+ * threads.
  * 
  * @author Jochen Mader - jochen@pramari.com
- * 
+ * @author Kyle Neumeier - kyle@pramari.com
  */
 public abstract class AbstractIPReaderSession extends AbstractReaderSession {
 	/** Logger for this class. */
@@ -62,10 +64,17 @@ public abstract class AbstractIPReaderSession extends AbstractReaderSession {
 	 * Constructor.
 	 * 
 	 * @param host
+	 *            HostName of the hardware reader
 	 * @param port
-	 * @param nrThreads
+	 *            Port of the hardware reader
 	 * @param reconnectionInterval
+	 *            Length of time between reconnects. Specified in MS
 	 * @param maxConAttempts
+	 *            Maximum number of reconnect attempts to make
+	 * @param destination
+	 *            JMS Queue to put tag data on
+	 * @param template
+	 *            JMSTemplate to use to send tag data
 	 */
 	public AbstractIPReaderSession(String ID, String host, int port,
 			int reconnectionInterval, int maxConAttempts,

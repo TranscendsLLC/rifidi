@@ -2,7 +2,6 @@
  * 
  */
 package org.rifidi.configuration.listeners;
-//TODO: Comments
 import javax.management.AttributeList;
 
 /**

@@ -2,7 +2,7 @@
  * 
  */
 package org.rifidi.edge.core.api.jms.notifications;
-//TODO: Comments
+
 import java.io.Serializable;
 
 /**
@@ -18,14 +18,17 @@ public class CommandConfigFactoryAdded implements Serializable {
 	private String readerFactoryID;
 
 	/**
+	 * Constructor
+	 * 
 	 * @param readerFactoryID
+	 *            The ID of the factory that was added
 	 */
 	public CommandConfigFactoryAdded(String readerFactoryID) {
 		this.readerFactoryID = readerFactoryID;
 	}
 
 	/**
-	 * @return the readerFactoryID
+	 * @return The ID of the factory that was added
 	 */
 	public String getReaderFactoryID() {
 		return readerFactoryID;

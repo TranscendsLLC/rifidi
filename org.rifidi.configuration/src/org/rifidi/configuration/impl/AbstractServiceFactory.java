@@ -2,7 +2,7 @@
  * 
  */
 package org.rifidi.configuration.impl;
-//TODO: Comments
+
 import java.util.Dictionary;
 import java.util.Hashtable;
 
@@ -15,9 +15,9 @@ import org.rifidi.configuration.ServiceFactory;
 
 /**
  * Base class for a service factory. This class is meant for scenarios where
- * there is one service class that can exist in several configurations.
- * Overwrite the factoryID and clazz attributes! The service gets registered
- * using a generated name of the form <factoryid>-<counter>.
+ * there is one service class that can exist in several configurations. The
+ * service gets registered using a generated name of the form
+ * <factoryid>-<counter>.
  * 
  * 
  * @author Jochen Mader - jochen@pramari.com
@@ -91,8 +91,8 @@ public abstract class AbstractServiceFactory<T extends RifidiService>
 			// NOTE: it is important for customInit to happen before registering
 			// the service!
 			customConfig(instance);
-			configuration.setServiceRegistration(context.registerService(Configuration.class.getName(),
-					configuration, params));
+			configuration.setServiceRegistration(context.registerService(
+					Configuration.class.getName(), configuration, params));
 		} catch (InstantiationException e) {
 			logger.error(getClazz() + " cannot be instantiated. " + e);
 		} catch (IllegalAccessException e) {
@@ -100,6 +100,15 @@ public abstract class AbstractServiceFactory<T extends RifidiService>
 		}
 	}
 
+	/**
+	 * This is a hook for initializing the service (e.g. registering it in osgi
+	 * registry under a custom interface). Called before the Configuration
+	 * wrapper around this service is registered as a Configuration object in
+	 * the OSGi registry
+	 * 
+	 * @param instance
+	 *            The instance of the service
+	 */
 	public abstract void customConfig(T instance);
 
 	/**

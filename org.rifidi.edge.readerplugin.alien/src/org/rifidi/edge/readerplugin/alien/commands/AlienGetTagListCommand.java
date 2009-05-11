@@ -1,13 +1,5 @@
-/*
- *  AlienGetTagListCommand.java
- *
- *  Created:	Mar 9, 2009
- *  Project:	Rifidi Edge Server - A middleware platform for RFID applications
- *  				http://www.rifidi.org
- *  				http://rifidi.sourceforge.net
- *  Copyright:	Pramari LLC and the Rifidi Project
- *  License:	GNU Public License (GPL)
- *  				http://www.opensource.org/licenses/gpl-3.0.html
+/**
+ * 
  */
 package org.rifidi.edge.readerplugin.alien.commands;
 
@@ -39,9 +31,11 @@ import org.rifidi.edge.readerplugin.alien.commandobject.GetTagListCommandObject;
 import org.springframework.jms.core.MessageCreator;
 
 /**
- * A command which gets and returns tags from an Alien reader.  
+ * An Command that runs on an AlienSession to get Tags back from an AlienReader
  * 
  * @author Jochen Mader - jochen@pramari.com
+ * @author Kyle Neumeier - kyle@pramari.com
+ * 
  */
 public class AlienGetTagListCommand extends AbstractAlien9800Command {
 
@@ -78,8 +72,6 @@ public class AlienGetTagListCommand extends AbstractAlien9800Command {
 	}
 
 	/**
-	 * Sets the antennasequence.  
-	 * 
 	 * @param antennasequence
 	 *            the antennasequence to set
 	 */
@@ -88,8 +80,6 @@ public class AlienGetTagListCommand extends AbstractAlien9800Command {
 	}
 
 	/**
-	 * Sets the PersistTime.  
-	 * 
 	 * @param persistTime
 	 *            the persistTime to set
 	 */
@@ -98,8 +88,6 @@ public class AlienGetTagListCommand extends AbstractAlien9800Command {
 	}
 
 	/**
-	 * Sets the TagType.  
-	 * 
 	 * @param tagType
 	 *            the tagType to set
 	 */
@@ -215,14 +203,22 @@ public class AlienGetTagListCommand extends AbstractAlien9800Command {
 		return retVal;
 	}
 
+	/**
+	 * Used to create a JMS message to send to the Queue that collects Tag Data
+	 * 
+	 * @author Kyle Neumeier - kyle@pramari.com
+	 * 
+	 */
 	private class ObjectMessageCreator implements MessageCreator {
 
+		/** Message to send */
 		private ActiveMQObjectMessage objectMessage;
 
 		/**
 		 * Constructor.
 		 * 
-		 * @param message
+		 * @param tags
+		 *            the tags to add to this message
 		 */
 		public ObjectMessageCreator(Set<TagReadEvent> tags) {
 			super();

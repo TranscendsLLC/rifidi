@@ -1,13 +1,5 @@
-/*
- *  AlienGetTagListCommandConfiguration.java
- *
- *  Created:	Mar 9, 2009
- *  Project:	Rifidi Edge Server - A middleware platform for RFID applications
- *  				http://www.rifidi.org
- *  				http://rifidi.sourceforge.net
- *  Copyright:	Pramari LLC and the Rifidi Project
- *  License:	GNU Public License (GPL)
- *  				http://www.opensource.org/licenses/gpl-3.0.html
+/**
+ * 
  */
 package org.rifidi.edge.readerplugin.alien.commands;
 
@@ -17,9 +9,11 @@ import org.rifidi.configuration.annotations.PropertyType;
 import org.rifidi.edge.core.commands.AbstractCommandConfiguration;
 
 /**
- * Configuration class for the GetTagList command for 
+ * A CommandConfiguration for creating commands that collect tags from an
+ * Alien9800 Reader
  * 
  * @author Jochen Mader - jochen@pramari.com
+ * 
  */
 @JMXMBean
 public class AlienGetTagListCommandConfiguration extends
