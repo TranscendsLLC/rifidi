@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: ALE Read API Plug-in
+Bundle-Name: Rifidi Edge ALE Read API Plug-in
 Bundle-SymbolicName: org.rifidi.edge.epcglobal.ale.api.read
 Bundle-Version: 1.0.0
 Import-Package: com.espertech.esper.client,
@@ -23,3 +23,4 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-Activator: org.rifidi.edge.epcglobal.ale.api.read.activator.Activator
 Bundle-ActivationPolicy: lazy
 Require-Bundle: org.rifidi.edge.epcglobal.ale.api.logicalreader;bundle-version="1.0.0"
+Bundle-Vendor: Pramari, LLC
