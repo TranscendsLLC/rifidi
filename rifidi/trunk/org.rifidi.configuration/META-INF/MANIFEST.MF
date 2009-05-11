@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Configuration Plug-in
+Bundle-Name: Rifidi Edge Configuration Plug-in
 Bundle-SymbolicName: org.rifidi.configuration
 Bundle-Version: 1.0.0
 Bundle-Vendor: Pramari, LLC
