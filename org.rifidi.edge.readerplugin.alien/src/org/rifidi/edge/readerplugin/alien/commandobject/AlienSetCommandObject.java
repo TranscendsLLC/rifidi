@@ -1,8 +1,16 @@
-/**
- * 
+/*
+ *  AlienGetCommandObject.java
+ *
+ *  Created:	Mar 9, 2009
+ *  Project:	Rifidi Edge Server - A middleware platform for RFID applications
+ *  				http://www.rifidi.org
+ *  				http://rifidi.sourceforge.net
+ *  Copyright:	Pramari LLC and the Rifidi Project
+ *  License:	GNU Public License (GPL)
+ *  				http://www.opensource.org/licenses/gpl-3.0.html
  */
 package org.rifidi.edge.readerplugin.alien.commandobject;
-//TODO: Comments
+
 import java.io.IOException;
 
 import org.apache.commons.logging.Log;
@@ -14,7 +22,6 @@ import org.rifidi.edge.readerplugin.alien.Alien9800ReaderSession;
  * A command object that will set an property on the Alien Reader
  * 
  * @author Kyle Neumeier - kyle@pramari.com
- * 
  */
 public class AlienSetCommandObject extends AlienCommandObject {
 
@@ -55,6 +62,10 @@ public class AlienSetCommandObject extends AlienCommandObject {
 		super.setSession(session);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.rifidi.edge.readerplugin.alien.commandobject.AlienCommandObject#execute()
+	 */
 	@Override
 	public String execute() throws IOException, AlienException {
 		assert (value != null);

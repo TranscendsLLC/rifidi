@@ -1,8 +1,16 @@
-/**
- * 
+/*
+ *  Alien9800CommandConfigurationFactory.java
+ *
+ *  Created:	Mar 9, 2009
+ *  Project:	Rifidi Edge Server - A middleware platform for RFID applications
+ *  				http://www.rifidi.org
+ *  				http://rifidi.sourceforge.net
+ *  Copyright:	Pramari LLC and the Rifidi Project
+ *  License:	GNU Public License (GPL)
+ *  				http://www.opensource.org/licenses/gpl-3.0.html
  */
 package org.rifidi.edge.readerplugin.alien;
-//TODO: Comments
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -27,8 +35,10 @@ import org.rifidi.edge.readerplugin.alien.commands.internal.AlienPropertyCommand
 import org.springframework.jms.core.JmsTemplate;
 
 /**
- * @author Jochen Mader - jochen@pramari.com
+ * This class represents an Alien9800 reader. It contains all the values used to
+ * set the properties, as well as the JMS information.  
  * 
+ * @author Jochen Mader - jochen@pramari.com
  */
 @JMXMBean
 public class Alien9800Reader extends AbstractReader<Alien9800ReaderSession> {
@@ -123,7 +133,6 @@ public class Alien9800Reader extends AbstractReader<Alien9800ReaderSession> {
 		readerProperties.put(PROP_RF_ATTENUATION, "0");
 		readerProperties.put(PROP_INVERT_EXTERNAL_OUTPUT, "0");
 		readerProperties.put(PROP_INVERT_EXTERNAL_INPUT, "0");
-		
 
 		propCommandsToBeExecuted = new LinkedBlockingQueue<AlienCommandObjectWrapper>();
 		propCommandsToBeExecuted.add(new AlienCommandObjectWrapper(
@@ -444,7 +453,7 @@ public class Alien9800Reader extends AbstractReader<Alien9800ReaderSession> {
 		}
 	}
 
-	@Property(displayName = "Reader Number", description = "Reader Number", writable = true, type = PropertyType.PT_STRING, category="General")
+	@Property(displayName = "Reader Number", description = "Reader Number", writable = true, type = PropertyType.PT_STRING, category = "General")
 	public String getReaderNumber() {
 		return readerProperties.get(PROP_READER_NUMBER);
 	}
@@ -472,17 +481,17 @@ public class Alien9800Reader extends AbstractReader<Alien9800ReaderSession> {
 		return Integer.parseInt(readerProperties.get(PROP_MAX_ANTENNA));
 	}
 
-	@Property(displayName = "MAC Address", description = "MAC Address of readerSession", writable = false, category="General")
+	@Property(displayName = "MAC Address", description = "MAC Address of readerSession", writable = false, category = "General")
 	public String getMACAddress() {
 		return (String) readerProperties.get(PROP_MAC_ADDRESS);
 	}
 
-	@Property(displayName = "GPI Input", description = "Input of GPI", writable = false, type = PropertyType.PT_INTEGER, category="GPIO")
+	@Property(displayName = "GPI Input", description = "Input of GPI", writable = false, type = PropertyType.PT_INTEGER, category = "GPIO")
 	public Integer getExternalInput() {
 		return Integer.parseInt(readerProperties.get(PROP_EXTERNAL_INPUT));
 	}
 
-	@Property(displayName = "Uptime", description = "Uptime of readerSession", writable = false, type = PropertyType.PT_INTEGER, category="General")
+	@Property(displayName = "Uptime", description = "Uptime of readerSession", writable = false, type = PropertyType.PT_INTEGER, category = "General")
 	public Integer getUptime() {
 		return Integer.parseInt(readerProperties.get(PROP_UPTIME));
 	}
