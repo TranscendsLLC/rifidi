@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: RMI Client Utils Plug-in
+Bundle-Name: Rifidi Edge RMI Utils Plug-in
 Bundle-SymbolicName: org.rifidi.rmi.utils
 Bundle-Version: 2.0.0
 Bundle-Activator: org.rifidi.rmi.utils.Activator
