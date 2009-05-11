@@ -1,10 +1,10 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Twodview Plug-in
+Bundle-Name: Rifidi Edge Client Twodview Plug-in
 Bundle-SymbolicName: org.rifidi.edge.client.twodview;singleton:=true
 Bundle-Version: 1.0.0
 Bundle-Activator: org.rifidi.edge.client.twodview.Activator
-Bundle-Vendor: PRAMARI LLC
+Bundle-Vendor: Pramari, LLC
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.draw2d;bundle-version="3.4.0",
