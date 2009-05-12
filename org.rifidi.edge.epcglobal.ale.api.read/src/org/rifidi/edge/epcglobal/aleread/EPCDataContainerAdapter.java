@@ -19,6 +19,8 @@ import org.rifidi.edge.core.messages.EPCGeneration2Event;
 import org.rifidi.edge.epcglobal.aleread.filters.ALEField;
 
 /**
+ * Adapter for extracting information from an EPC tag using TDT.
+ * 
  * @author Jochen Mader - jochen@pramari.com
  * 
  *         TODO: we are missing the ability to handle non epc tags!!!!!!!!
@@ -260,7 +262,7 @@ public class EPCDataContainerAdapter {
 	 */
 	public String getAccessPwd(DatacontainerEvent event, ALEDataTypes type,
 			ALEDataFormats format) {
-		// gen2 doesn't have the kill password
+		// gen2 doesn't have the access password
 		if (event instanceof EPCGeneration2Event) {
 			if (ALEDataTypes.UINT.equals(type)) {
 				if (ALEDataFormats.HEX.equals(format)) {

@@ -40,7 +40,9 @@ import com.espertech.esper.client.StatementAwareUpdateListener;
 import com.espertech.esper.event.map.MapEventBean;
 
 /**
- * 
+ * ECReportmanager manages all reports associated with a certain ECSpec. It
+ * starts and stops the esper queries, sends out reports and keeps track of
+ * subscriptions.
  * 
  * @author Jochen Mader - jochen@pramari.com
  * 
@@ -73,7 +75,7 @@ public class ECReportmanager implements Runnable, StatementAwareUpdateListener {
 	/** Name of the ec spec. */
 	private String specName;
 	/** True if the spec has been destroied by a delete event. */
-	private boolean destroied;
+	private boolean destroyed;
 	/**
 	 * The spec associated with this reportmanager. Null if the spec is not sent
 	 * back with the rifidiReports.
@@ -97,7 +99,7 @@ public class ECReportmanager implements Runnable, StatementAwareUpdateListener {
 			List<RifidiReport> reports, RifidiECSpec owner, List<String> uris) {
 		rifidiReports = reports;
 		eventQueue = new LinkedBlockingQueue<EventTuple>();
-		destroied = false;
+		destroyed = false;
 		timer = new Timer(specName, owner.getRifidiBoundarySpec()
 				.getRepeatInterval(), owner.getRifidiBoundarySpec()
 				.getStartTriggers(), owner.getRifidiBoundarySpec()
@@ -177,10 +179,6 @@ public class ECReportmanager implements Runnable, StatementAwareUpdateListener {
 		this.destroyStatements = destroyStatements;
 	}
 
-	protected void stopTrigger(String uri) {
-		logger.debug("Stop trigger went off: " + uri);
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -194,10 +192,11 @@ public class ECReportmanager implements Runnable, StatementAwareUpdateListener {
 	public synchronized void update(EventBean[] arg0, EventBean[] arg1,
 			EPStatement arg2, EPServiceProvider arg3) {
 		for (EventBean tagevent : arg0) {
+			// check if this is the count result
 			if (((MapEventBean) tagevent).getProperties().containsKey(
 					"count(whine)")) {
-				System.out.println((Long) ((MapEventBean) tagevent).getProperties()
-						.get("count(whine)"));
+				// if the count is bigger than 0 the event is ignored because an
+				// event containing the tags will follow.
 				if ((Long) ((MapEventBean) tagevent).getProperties().get(
 						"count(whine)") > 0) {
 					logger.debug("count "
@@ -207,8 +206,8 @@ public class ECReportmanager implements Runnable, StatementAwareUpdateListener {
 				}
 			}
 		}
-		if (destroied) {
-			// ECSpec is destroied.
+		// Check if the ECSpec is destroyed.		
+		if (destroyed) {
 			return;
 		}
 		EventTuple tuple = new EventTuple();
@@ -219,7 +218,7 @@ public class ECReportmanager implements Runnable, StatementAwareUpdateListener {
 			return;
 		}
 		if (destroyStatements.contains(arg2)) {
-			destroied = true;
+			destroyed = true;
 			tuple.report.setTerminationCondition(ALEReadAPI.conditionToName
 					.get(TriggerCondition.UNDEFINE));
 			// callback for destroying the statements
@@ -346,11 +345,23 @@ public class ECReportmanager implements Runnable, StatementAwareUpdateListener {
 		timer.stop();
 	}
 
+	/**
+	 * Just a small container. Oh Scala tuples, I miss you.
+	 * 
+	 * @author Jochen Mader - jochen@pramari.com
+	 * 
+	 */
 	private class EventTuple {
 		public EventBean[] beans;
 		public ECReports report;
 	}
 
+	/**
+	 * Runnable for sending out reports.
+	 * 
+	 * @author Jochen Mader - jochen@pramari.com
+	 * 
+	 */
 	private class SendRunnable implements Runnable {
 		/** Target of the report */
 		private String uri;

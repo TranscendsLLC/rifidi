@@ -164,7 +164,7 @@ public class RifidiECSpec {
 					}
 
 					// SETUP
-					// create the window window
+					// create the window 
 					collectionStatements
 							.add(esper
 									.getEPAdministrator()
