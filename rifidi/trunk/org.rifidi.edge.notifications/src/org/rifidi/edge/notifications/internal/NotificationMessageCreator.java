@@ -17,14 +17,17 @@ import javax.jms.Session;
 import org.springframework.jms.core.MessageCreator;
 //TODO: Comments
 /**
- * @author kyle
+ * This class creates notification messages for JMS.  
  * 
+ * @author kyle
  */
 public class NotificationMessageCreator implements MessageCreator {
 
 	private Serializable notification;
 
 	/**
+	 * Constructor.   
+	 * 
 	 * @param message
 	 */
 	public NotificationMessageCreator(Serializable notification) {
@@ -51,9 +54,5 @@ public class NotificationMessageCreator implements MessageCreator {
 		} catch (IOException e) {
 			throw new JMSException(e.getMessage());
 		}
-
-
-		
 	}
-
 }
