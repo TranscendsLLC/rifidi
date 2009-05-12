@@ -18,6 +18,8 @@ import org.rifidi.edge.epcglobal.aleread.rifidievents.StopEvent;
 import com.espertech.esper.client.EPServiceProvider;
 
 /**
+ * External timer for sending out start and stop events.
+ * 
  * @author Jochen Mader - jochen@pramari.com
  * 
  */
@@ -42,6 +44,15 @@ public class Timer {
 
 	private String specName;
 
+	/**
+	 * Constructor.
+	 * 
+	 * @param specName
+	 * @param interval
+	 * @param startTriggers
+	 * @param stopTriggers
+	 * @param esper
+	 */
 	public Timer(String specName, long interval, Set<Trigger> startTriggers,
 			Set<Trigger> stopTriggers, EPServiceProvider esper) {
 		this.specName = specName;
@@ -180,13 +191,14 @@ public class Timer {
 	}
 
 	/**
-	 * Called when an ECReport is ready.
+	 * Called when an ECReport is ready. Starts a new event cycle if required.
 	 */
 	public ECReports callback() {
 		mainLock.lock();
 		try {
 			ECReports ret = currentReport;
 			currentReport = new ECReports();
+			// if there are no start triggers check the interval
 			if (startTriggers.size() == 0) {
 				long currentTime = System.currentTimeMillis();
 				currentReport.setInitiationCondition(ALEReadAPI.conditionToName
@@ -203,6 +215,7 @@ public class Timer {
 				}
 			} else {
 				logger.debug("TRIGGER");
+				// another trigger already fired
 				if (lastTrigger != null) {
 					logger.debug("TRIGGER NOW");
 					currentReport
