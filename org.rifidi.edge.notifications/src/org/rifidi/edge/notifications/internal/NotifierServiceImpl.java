@@ -40,7 +40,6 @@ import org.springframework.jms.core.JmsTemplate;
  * notifications
  * 
  * @author Kyle Neumeier - kyle@pramari.com
- * 
  */
 public class NotifierServiceImpl implements NotifierService,
 		AttributesChangedListener {
