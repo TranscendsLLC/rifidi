@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.wsmanagement;
-//TODO: Comments
+
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.HashSet;
