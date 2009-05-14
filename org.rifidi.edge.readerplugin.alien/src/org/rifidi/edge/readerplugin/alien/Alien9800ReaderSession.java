@@ -118,10 +118,10 @@ public class Alien9800ReaderSession extends AbstractIPReaderSession {
 	 */
 	public Alien9800ReaderSession(String id, String host, int port,
 			int reconnectionInterval, int maxConAttempts, String username,
-			String password, Destination destination, JmsTemplate template,
+			String password, JmsTemplate template,
 			NotifierServiceWrapper notifierService, String readerID) {
-		super(id, host, port, reconnectionInterval, maxConAttempts,
-				destination, template);
+		super(id, host, port, reconnectionInterval, maxConAttempts, template
+				.getDefaultDestination(), template);
 		this.username = username;
 		this.password = password;
 		this.notifierService = notifierService;

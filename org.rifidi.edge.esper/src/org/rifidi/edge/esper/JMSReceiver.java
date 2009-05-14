@@ -3,8 +3,6 @@
  */
 package org.rifidi.edge.esper;
 //TODO: Comments
-import java.util.HashMap;
-
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageListener;

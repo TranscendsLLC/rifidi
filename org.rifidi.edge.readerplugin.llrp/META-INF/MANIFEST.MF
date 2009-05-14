@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Rifidi Edge LLRP Plug-in
 Bundle-SymbolicName: org.rifidi.edge.readerplugin.llrp
-Bundle-Version: 2.0.0
+Bundle-Version: 2.0.1
 Bundle-Activator: org.rifidi.edge.readerplugin.llrp.Activator
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6

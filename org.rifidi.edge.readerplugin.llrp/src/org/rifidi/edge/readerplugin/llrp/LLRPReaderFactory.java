@@ -35,9 +35,6 @@ public class LLRPReaderFactory extends AbstractReaderFactory<LLRPReader> {
 	private static final String name = "LLRP";
 	/** A JMS event notification sender */
 	private NotifierServiceWrapper notifierServiceWrapper;
-
-	/** JMS Destination */
-	private Destination destination;
 	/** JMS Template */
 	private JmsTemplate template;
 	/** The ID for this factory */
@@ -56,25 +53,6 @@ public class LLRPReaderFactory extends AbstractReaderFactory<LLRPReader> {
 	 */
 	public void setNotifierServiceWrapper(NotifierServiceWrapper wrapper) {
 		this.notifierServiceWrapper = wrapper;
-	}
-
-	/**
-	 * Returns the JMS destination.
-	 * 
-	 * @return the destination
-	 */
-	public Destination getDestination() {
-		return destination;
-	}
-
-	/**
-	 * Sets the JMS destination.
-	 * 
-	 * @param destination
-	 *            the destination to set
-	 */
-	public void setDestination(Destination destination) {
-		this.destination = destination;
 	}
 
 	/*
@@ -107,7 +85,7 @@ public class LLRPReaderFactory extends AbstractReaderFactory<LLRPReader> {
 	 */
 	@Override
 	public void customConfig(LLRPReader instance) {
-		instance.setDestination(destination);
+		instance.setDestination(template.getDefaultDestination());
 		instance.setTemplate(template);
 		instance.setNotifiyServiceWrapper(this.notifierServiceWrapper);
 		Set<String> interfaces = new HashSet<String>();

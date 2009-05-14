@@ -1,0 +1,94 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:osgi="http://www.springframework.org/schema/osgi"
+	xmlns:amq="http://activemq.apache.org/schema/core"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+     http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi.xsd
+     http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd">
+
+	<!--  Embedded broker to use for external message -->
+	<amq:broker brokerName="externalBroker" useJmx="false"
+		persistent="false" start="true">
+		<amq:transportConnectors>
+			<amq:transportConnector uri="tcp://localhost:1099" />
+		</amq:transportConnectors>
+	</amq:broker>
+
+	<!--  Embedded broker to use as internal JMS Queue -->
+	<amq:broker brokerName="internalBroker" useJmx="false"
+		persistent="false" start="true" />
+
+	<!-- Topic to use as internal Message Bus -->
+	<amq:topic id="internalDest" physicalName="org.rifidi.edge.internal" />
+
+	<!--
+		Topic to use as Destination for sending tags to external Consumers
+	-->
+	<amq:topic id="externalTagsDest" physicalName="org.rifidi.edge.external.tags" />
+
+	<!--
+		Topic to use as Destination for sending notifications to external
+		Consumers
+	-->
+	<amq:topic id="externalNotificationsDest" physicalName="org.rifidi.edge.external.notifications" />
+
+	<!-- connection factory to use to connect to internal broker -->
+	<amq:connectionFactory id="internalBrokerConFac"
+		brokerURL="vm://internalBroker?create=false" />
+
+	<!-- connection factory to use to connect to external broker -->
+	<amq:connectionFactory id="externalBrokerConFac"
+		brokerURL="vm://externalBroker?create=false" />
+
+	<!--
+		JMS Template to use for putting data on the internal message bus.
+	-->
+	<bean id="internalJMSTemplate" class="org.springframework.jms.core.JmsTemplate">
+		<property name="connectionFactory">
+			<!-- lets wrap in a pool to avoid creating a connection per send -->
+			<bean class="org.apache.activemq.pool.PooledConnectionFactory"
+				destroy-method="stop">
+				<property name="connectionFactory" ref="internalBrokerConFac" />
+				<property name="maxConnections" value="50" />
+			</bean>
+		</property>
+		<property name="defaultDestination" ref="internalDest" />
+	</bean>
+
+	<!--
+		JMS Template to use for putting data on the external message bus. No
+		default destination
+	-->
+	<bean id="externalJMSTemplate" class="org.springframework.jms.core.JmsTemplate">
+		<property name="connectionFactory">
+			<!-- lets wrap in a pool to avoid creating a connection per send -->
+			<bean class="org.apache.activemq.pool.PooledConnectionFactory"
+				destroy-method="stop">
+				<property name="connectionFactory" ref="externalBrokerConFac" />
+				<property name="maxConnections" value="50" />
+			</bean>
+		</property>
+	</bean>
+
+
+	<!--
+		The following lines add the destinations, connectionFactories, and
+		Templates to the OSGi service registry
+	-->
+
+	<osgi:service id="internalDestService" interface="javax.jms.Topic"
+		ref="internalDest" />
+	<osgi:service id="externalTagsDestService" interface="javax.jms.Topic"
+		ref="externalTagsDest" />
+	<osgi:service id="externalNotificationsDestService"
+		interface="javax.jms.Topic" ref="externalNotificationsDest" />
+	<osgi:service id="internalBrokerConFacService" interface="javax.jms.ConnectionFactory"
+		ref="internalBrokerConFac" />
+	<osgi:service id="externalBrokerConFacService" interface="javax.jms.ConnectionFactory"
+		ref="externalBrokerConFac" />
+	<osgi:service id="internalJMSTemplateService"
+		interface="org.springframework.jms.core.JmsTemplate" ref="internalJMSTemplate" />
+	<osgi:service id="externalJMSTemplateService"
+		interface="org.springframework.jms.core.JmsTemplate" ref="externalJMSTemplate" />
+
+
+</beans>

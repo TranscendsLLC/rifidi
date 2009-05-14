@@ -2,32 +2,19 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Rifidi Edge Core Plug-in
 Bundle-SymbolicName: org.rifidi.edge.core
-Bundle-Version: 5.0.0
+Bundle-Version: 5.0.1
 Bundle-Vendor: Pramari, LLC
 Bundle-ActivationPolicy: lazy
 Eclipse-BuddyPolicy: global
 Import-Package: javax.jms;version="1.1.0",
  org.apache.activemq;version="5.1.0",
- org.apache.activemq.broker;version="5.1.0",
- org.apache.activemq.command;version="5.1.0",
+ org.apache.activemq.pool;version="5.2.0",
  org.apache.commons.logging;version="1.0.4",
  org.osgi.framework;version="1.4.0",
  org.rifidi.edge.core.api,
  org.rifidi.edge.core.api.jms.notifications,
  org.rifidi.edge.core.api.rmi.dto,
- org.springframework.jms;version="2.5.5",
- org.springframework.jms.config;version="2.5.5",
- org.springframework.jms.connection;version="2.5.5",
- org.springframework.jms.core;version="2.5.5",
- org.springframework.jms.core.support;version="2.5.5",
- org.springframework.jms.listener;version="2.5.5",
- org.springframework.jms.listener.adapter;version="2.5.5",
- org.springframework.jms.listener.endpoint;version="2.5.5",
- org.springframework.jms.listener.serversession;version="2.5.5",
- org.springframework.jms.remoting;version="2.5.5",
- org.springframework.jms.support;version="2.5.5",
- org.springframework.jms.support.converter;version="2.5.5",
- org.springframework.jms.support.destination;version="2.5.5"
+ org.springframework.jms.core;version="2.5.5"
 Export-Package: org.rifidi.edge.core.commands,
  org.rifidi.edge.core.daos,
  org.rifidi.edge.core.exceptions,
