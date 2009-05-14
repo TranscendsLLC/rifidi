@@ -39,4 +39,5 @@ Import-Package: com.espertech.esper.client,
  org.w3c.dom,
  org.xml.sax
 Eclipse-BuddyPolicy: global
-Export-Package: org.rifidi.edge.esper
+Export-Package: org.rifidi.edge.esper,
+ org.rifidi.edge.esper.events
