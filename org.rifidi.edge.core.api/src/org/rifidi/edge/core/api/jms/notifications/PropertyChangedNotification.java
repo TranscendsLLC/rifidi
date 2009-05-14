@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.core.api.jms.notifications;
-//TODO: Comments
+
 import java.io.Serializable;
 
 import javax.management.AttributeList;
@@ -12,7 +10,6 @@ import javax.management.AttributeList;
  * changed (either on a reader or a command)
  * 
  * @author Kyle Neumeier - kyle@pramari.com
- * 
  */
 public class PropertyChangedNotification implements Serializable {
 
@@ -26,7 +23,7 @@ public class PropertyChangedNotification implements Serializable {
 	private boolean isReader;
 
 	/**
-	 * Constructor
+	 * Constructor.
 	 * 
 	 * @param configurationID
 	 *            The ID of the configuration that has the attributes
@@ -45,6 +42,8 @@ public class PropertyChangedNotification implements Serializable {
 	}
 
 	/**
+	 * TODO: Method level comment. 
+	 * 
 	 * @return the configIDID
 	 */
 	public String getConfigIDID() {
@@ -52,6 +51,8 @@ public class PropertyChangedNotification implements Serializable {
 	}
 
 	/**
+	 * Returns the attributes for these properties.  
+	 * 
 	 * @return the attributes
 	 */
 	public AttributeList getAttributes() {
@@ -59,6 +60,8 @@ public class PropertyChangedNotification implements Serializable {
 	}
 
 	/**
+	 * Is the PropertyChangeNotification for a reader?  
+	 * 
 	 * @return true if the configuration is for a reader. False if it is for a
 	 *         command
 	 */

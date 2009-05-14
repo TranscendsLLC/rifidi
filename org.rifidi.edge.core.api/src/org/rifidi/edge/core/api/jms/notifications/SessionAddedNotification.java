@@ -1,7 +1,12 @@
 package org.rifidi.edge.core.api.jms.notifications;
-//TODO: Comments
+
 import java.io.Serializable;
 
+/**
+ * TODO: Class level comment.  
+ * 
+ * @author kyle
+ */
 public class SessionAddedNotification implements Serializable{
 	
 	/** SerialVersionID */
@@ -12,7 +17,10 @@ public class SessionAddedNotification implements Serializable{
 	private String sessionID;
 
 	/**
+	 * Constructor.  
+	 * 
 	 * @param readerID
+	 * @param sessionID
 	 */
 	public SessionAddedNotification(String readerID, String sessionID) {
 		this.readerID = readerID;
@@ -20,6 +28,8 @@ public class SessionAddedNotification implements Serializable{
 	}
 
 	/**
+	 * Returns the reader ID.  
+	 * 
 	 * @return the readerID
 	 */
 	public String getReaderID() {
@@ -27,6 +37,8 @@ public class SessionAddedNotification implements Serializable{
 	}
 
 	/**
+	 * Returns the session ID.  
+	 * 
 	 * @return the sessionID
 	 */
 	public String getSessionID() {

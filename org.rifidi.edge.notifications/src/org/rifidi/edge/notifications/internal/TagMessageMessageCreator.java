@@ -2,7 +2,7 @@
  * 
  */
 package org.rifidi.edge.notifications.internal;
-//TODO: Comments
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutput;
@@ -24,13 +24,19 @@ import org.rifidi.edge.core.messages.TagReadEvent;
 import org.springframework.jms.core.MessageCreator;
 
 /**
- * @author kyle
+ * TODO: Class level comment.  
  * 
+ * @author kyle
  */
 public class TagMessageMessageCreator implements MessageCreator {
 
 	private TagBatch tagBatch;
 
+	/**
+	 * Constructor.  
+	 * 
+	 * @param cycle
+	 */
 	public TagMessageMessageCreator(ReadCycle cycle) {
 		Set<TagDTO> tags = new HashSet<TagDTO>();
 		for (TagReadEvent tagRead : cycle.getTags()) {

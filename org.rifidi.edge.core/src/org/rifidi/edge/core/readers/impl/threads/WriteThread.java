@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.core.readers.impl.threads;
-//TODO: Comments
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.concurrent.BlockingQueue;
@@ -15,7 +13,6 @@ import org.rifidi.edge.core.readers.ByteMessage;
  * Runnable for writing messages to an outputstream.
  * 
  * @author Jochen Mader - jochen@pramari.com
- * 
  */
 public class WriteThread implements Runnable {
 	/** Logger for this class. */

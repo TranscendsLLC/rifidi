@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.core.messages;
-//TODO: Comments
+
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.Set;
@@ -11,7 +9,6 @@ import java.util.Set;
  * This represents a read cycle from a reader.
  * 
  * @author Kyle Neumeier - kyle@pramari.com
- * 
  */
 public class ReadCycle implements Serializable {
 
@@ -24,6 +21,8 @@ public class ReadCycle implements Serializable {
 	private String readerID;
 
 	/**
+	 * Constructor.  
+	 * 
 	 * @param tags
 	 * @param eventTimestamp
 	 */
@@ -35,6 +34,8 @@ public class ReadCycle implements Serializable {
 	}
 
 	/**
+	 * Returns the set of tags.  
+	 * 
 	 * @return the tags
 	 */
 	public Set<TagReadEvent> getTags() {
@@ -42,6 +43,8 @@ public class ReadCycle implements Serializable {
 	}
 
 	/**
+	 * Returns the timestamp for this event.  
+	 * 
 	 * @return the eventTimestamp
 	 */
 	public long getEventTimestamp() {
@@ -49,6 +52,7 @@ public class ReadCycle implements Serializable {
 	}
 
 	/**
+	 * Returns the ID for this reader.  
 	 * 
 	 * @return The ID of the reader this was seen on
 	 */

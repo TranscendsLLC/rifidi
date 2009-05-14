@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.core.api.rmi;
-//TODO: Comments
+
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.Set;
@@ -15,16 +13,15 @@ import org.rifidi.edge.core.api.rmi.dto.CommandConfigurationDTO;
 
 /**
  * This is the interface for a stub that allows clients to interact with
- * commands on the edge server
+ * commands on the edge server.
  * 
  * @author Kyle Neumeier - kyle@pramari.com
- * 
  */
 public interface CommandStub extends Remote {
 
 	/**
 	 * This method gets the available command types on the edge server and the
-	 * ID of the ReaderFactory that the command type works with
+	 * ID of the ReaderFactory that the command type works with.
 	 * 
 	 * @return A set of CommandConfigPluginDTOs
 	 * @throws RemoteException
@@ -33,7 +30,7 @@ public interface CommandStub extends Remote {
 			throws RemoteException;
 
 	/**
-	 * Get the CommandConfigFactoryID associated with a readerFactoryID
+	 * Get the CommandConfigFactoryID associated with a readerFactoryID.
 	 * 
 	 * @param readerFactoryID
 	 * @return
@@ -42,7 +39,7 @@ public interface CommandStub extends Remote {
 			throws RemoteException;
 
 	/**
-	 * Gets the DTOs for configured commands
+	 * Gets the DTOs for configured commands.
 	 * 
 	 * @return a set of configured commands
 	 * @throws RemoteException
@@ -50,7 +47,7 @@ public interface CommandStub extends Remote {
 	Set<CommandConfigurationDTO> getCommands() throws RemoteException;
 
 	/**
-	 * Gets the DTO for a given Command Configuration
+	 * Gets the DTO for a given Command Configuration.
 	 * 
 	 * @param commandConfigurationID
 	 *            The ID of the commandConfiguration to get
@@ -62,7 +59,7 @@ public interface CommandStub extends Remote {
 			String commandConfigurationID) throws RemoteException;
 
 	/**
-	 * Gets the meta information necessary to construct a new Command
+	 * Gets the meta information necessary to construct a new Command.
 	 * 
 	 * @param commandType
 	 *            the type of command to make
@@ -72,7 +69,7 @@ public interface CommandStub extends Remote {
 	MBeanInfo getCommandDescription(String commandType) throws RemoteException;
 
 	/**
-	 * Create a new Command
+	 * Create a new Command.
 	 * 
 	 * @param commandType
 	 *            The type of the Command to make
@@ -85,7 +82,7 @@ public interface CommandStub extends Remote {
 			throws RemoteException;
 
 	/**
-	 * Sets the properties of a Command
+	 * Sets the properties of a Command.
 	 * 
 	 * @param commandID
 	 *            the ID of the command to set
@@ -98,7 +95,7 @@ public interface CommandStub extends Remote {
 			AttributeList properties) throws RemoteException;
 
 	/**
-	 * Delete a command configuration
+	 * Delete a command configuration.
 	 * 
 	 * @param commandConfigurationID
 	 *            the ID of the commandConfiguration to delete

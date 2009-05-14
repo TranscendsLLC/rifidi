@@ -1,11 +1,10 @@
-/**
- * 
- */
+
 package org.rifidi.edge.core.messages;
-//TODO: Comments
+
 /**
- * @author Kyle Neumeier - kyle@pramari.com
+ * TODO: Class level comment.  
  * 
+ * @author Kyle Neumeier - kyle@pramari.com
  */
 public interface EventQueue {
 

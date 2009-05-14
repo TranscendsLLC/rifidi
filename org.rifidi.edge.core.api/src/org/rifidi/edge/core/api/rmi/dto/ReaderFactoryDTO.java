@@ -1,13 +1,12 @@
-/**
- * 
- */
+
 package org.rifidi.edge.core.api.rmi.dto;
-//TODO: Comments
+
 import java.io.Serializable;
 
 /**
- * @author Kyle Neumeier - kyle@pramari.com
+ * TODO: Class level comment. 
  * 
+ * @author Kyle Neumeier - kyle@pramari.com
  */
 public class ReaderFactoryDTO implements Serializable {
 
@@ -36,6 +35,8 @@ public class ReaderFactoryDTO implements Serializable {
 	}
 
 	/**
+	 * Return the ID for the factory.  
+	 * 
 	 * @return the readerFactoryID
 	 */
 	public String getReaderFactoryID() {
@@ -43,6 +44,8 @@ public class ReaderFactoryDTO implements Serializable {
 	}
 
 	/**
+	 * Gets the displayname for the readerfactory.  
+	 * 
 	 * @return the readerFactoryDisplayName
 	 */
 	public String getReaderFactoryDisplayName() {
@@ -50,6 +53,8 @@ public class ReaderFactoryDTO implements Serializable {
 	}
 
 	/**
+	 * Returns the description for this readerfactory.  
+	 * 
 	 * @return the readerFactoryDescription
 	 */
 	public String getReaderFactoryDescription() {

@@ -1,15 +1,12 @@
-/**
- * 
- */
+
 package org.rifidi.edge.core.api.jms.notifications;
-//TODO: Comments
+
 import java.io.Serializable;
 
 /**
  * A notification that is sent when a command is submitted
  * 
  * @author Kyle Neumeier - kyle@pramari.com
- * 
  */
 public class JobSubmittedNotification implements Serializable {
 
@@ -25,6 +22,8 @@ public class JobSubmittedNotification implements Serializable {
 	private String commandConfigurationID;
 
 	/**
+	 * Constructor.  
+	 * 
 	 * @param readerID
 	 * @param sessionID
 	 * @param jobID
@@ -39,6 +38,8 @@ public class JobSubmittedNotification implements Serializable {
 	}
 
 	/**
+	 * Returns the readerID.  
+	 * 
 	 * @return the readerID
 	 */
 	public String getReaderID() {
@@ -46,6 +47,8 @@ public class JobSubmittedNotification implements Serializable {
 	}
 
 	/**
+	 * Returns the sessionID.  
+	 * 
 	 * @return the sessionID
 	 */
 	public String getSessionID() {
@@ -53,6 +56,8 @@ public class JobSubmittedNotification implements Serializable {
 	}
 
 	/**
+	 * Returns the jobID.  
+	 * 
 	 * @return the jobID
 	 */
 	public Integer getJobID() {
@@ -60,6 +65,8 @@ public class JobSubmittedNotification implements Serializable {
 	}
 
 	/**
+	 * Returns the command configuration ID.  
+	 * 
 	 * @return the commandConfigurationID
 	 */
 	public String getCommandConfigurationID() {

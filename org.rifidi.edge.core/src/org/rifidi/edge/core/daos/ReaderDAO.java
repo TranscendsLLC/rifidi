@@ -1,16 +1,15 @@
-/**
- * 
- */
+
 package org.rifidi.edge.core.daos;
-//TODO: Comments
+
 import java.util.Set;
 
 import org.rifidi.edge.core.readers.AbstractReader;
 import org.rifidi.edge.core.readers.AbstractReaderFactory;
 
 /**
- * @author Jochen Mader - jochen@pramari.com
+ * TODO: Class level comment. 
  * 
+ * @author Jochen Mader - jochen@pramari.com
  */
 public interface ReaderDAO {
 	/**

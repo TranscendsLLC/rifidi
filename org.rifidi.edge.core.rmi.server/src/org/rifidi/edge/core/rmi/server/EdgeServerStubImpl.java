@@ -1,8 +1,5 @@
-/**
- * 
- */
+
 package org.rifidi.edge.core.rmi.server;
-//TODO: Comments
 import java.rmi.RemoteException;
 
 import org.apache.commons.logging.Log;
@@ -14,7 +11,6 @@ import org.rifidi.edge.core.api.rmi.EdgeServerStub;
  * This is the implementation for the Edge Server RMI Stub
  * 
  * @author Kyle Neumeier - kyle@pramari.com
- * 
  */
 public class EdgeServerStubImpl implements EdgeServerStub {
 
@@ -25,12 +21,19 @@ public class EdgeServerStubImpl implements EdgeServerStub {
 	/** The timestamp of when the edgeserver was started up */
 	private Long startupDate;
 
+	/**
+	 * Constructor.  
+	 */
 	public EdgeServerStubImpl() {
 		// TODO: this should probably really be the startup of the core plugin
 		// and not the startup of the RMI plugin
 		startupDate = System.currentTimeMillis();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.rifidi.edge.core.api.rmi.EdgeServerStub#save()
+	 */
 	@Override
 	public void save() throws RemoteException {
 		logger.debug("RMI Call: Save");
@@ -49,6 +52,8 @@ public class EdgeServerStubImpl implements EdgeServerStub {
 	}
 
 	/**
+	 * Sets the configuration service for this class.  
+	 * 
 	 * @param configurationService
 	 *            the configurationService to set
 	 */

@@ -1,13 +1,9 @@
-/**
- * 
- */
+
 package org.rifidi.configuration;
-//TODO: Comments
 /**
  * Constants for the configuration services.
  * 
  * @author Jochen Mader - jochen@pramari.com
- * 
  */
 public class Constants {
 	/**

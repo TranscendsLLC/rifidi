@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.configuration;
-//TODO: Comments
+
 import java.util.List;
 
 /**
@@ -11,7 +9,6 @@ import java.util.List;
  * carry a factoryname property.
  * 
  * @author Jochen Mader - jochen@pramari.com
- * 
  */
 public interface ServiceFactory {
 

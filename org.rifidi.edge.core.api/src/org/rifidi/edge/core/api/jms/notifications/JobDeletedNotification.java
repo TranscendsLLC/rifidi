@@ -1,15 +1,12 @@
-/**
- * 
- */
+
 package org.rifidi.edge.core.api.jms.notifications;
-//TODO: Comments
+
 import java.io.Serializable;
 
 /**
  * A Notification that is sent when a Job is deleted from a session
  * 
  * @author Kyle Neumeier - kyle@pramari.com
- * 
  */
 public class JobDeletedNotification implements Serializable {
 
@@ -23,6 +20,8 @@ public class JobDeletedNotification implements Serializable {
 	private Integer jobID;
 
 	/**
+	 * Constructor.   
+	 * 
 	 * @param readerID
 	 * @param sessionID
 	 * @param jobID
@@ -35,6 +34,8 @@ public class JobDeletedNotification implements Serializable {
 	}
 
 	/**
+	 * Returns the ID for the reader.  
+	 * 
 	 * @return the readerID
 	 */
 	public String getReaderID() {
@@ -42,6 +43,8 @@ public class JobDeletedNotification implements Serializable {
 	}
 
 	/**
+	 * Returns the session ID.  
+	 * 
 	 * @return the sessionID
 	 */
 	public String getSessionID() {
@@ -49,6 +52,8 @@ public class JobDeletedNotification implements Serializable {
 	}
 
 	/**
+	 * Returns the jobID.
+	 *  
 	 * @return the jobID
 	 */
 	public Integer getJobID() {

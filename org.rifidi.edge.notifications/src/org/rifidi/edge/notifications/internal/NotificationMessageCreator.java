@@ -1,6 +1,4 @@
-/**
- * 
- */
+
 package org.rifidi.edge.notifications.internal;
 
 import java.io.ByteArrayOutputStream;
@@ -15,7 +13,7 @@ import javax.jms.Message;
 import javax.jms.Session;
 
 import org.springframework.jms.core.MessageCreator;
-//TODO: Comments
+
 /**
  * This class creates notification messages for JMS.  
  * 

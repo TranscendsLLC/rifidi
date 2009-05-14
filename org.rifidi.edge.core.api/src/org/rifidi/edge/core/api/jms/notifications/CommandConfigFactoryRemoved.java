@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.core.api.jms.notifications;
-//TODO: Comments
+
 import java.io.Serializable;
 
 /**
@@ -10,7 +8,6 @@ import java.io.Serializable;
  * CommandConfigurationFactory become unavailable
  * 
  * @author Kyle Neumeier - kyle@pramari.com
- * 
  */
 public class CommandConfigFactoryRemoved implements Serializable {
 
@@ -27,6 +24,8 @@ public class CommandConfigFactoryRemoved implements Serializable {
 	}
 
 	/**
+	 * Returns the readerFactoryID for this class.  
+	 * 
 	 * @return the readerFactoryID
 	 */
 	public String getReaderFactoryID() {

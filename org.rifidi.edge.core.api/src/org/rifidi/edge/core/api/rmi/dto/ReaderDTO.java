@@ -1,16 +1,15 @@
-/**
- * 
- */
+
 package org.rifidi.edge.core.api.rmi.dto;
-//TODO: Comments
+
 import java.io.Serializable;
 import java.util.List;
 
 import javax.management.AttributeList;
 
 /**
- * @author kyle
+ * TODO: Class level comment. 
  * 
+ * @author kyle
  */
 public class ReaderDTO implements Serializable{
 
@@ -26,6 +25,8 @@ public class ReaderDTO implements Serializable{
 	private List<SessionDTO> sessions;
 
 	/**
+	 * Constructor.  
+	 * 
 	 * @param readerID
 	 *            The ID of the reader
 	 * @param readerFactoryID
@@ -44,6 +45,8 @@ public class ReaderDTO implements Serializable{
 	}
 
 	/**
+	 * Returns the reader ID.  
+	 * 
 	 * @return the readerID
 	 */
 	public String getReaderID() {
@@ -51,6 +54,8 @@ public class ReaderDTO implements Serializable{
 	}
 
 	/**
+	 * Returns the factory ID.  
+	 * 
 	 * @return the readerFactoryID
 	 */
 	public String getReaderFactoryID() {
@@ -58,6 +63,8 @@ public class ReaderDTO implements Serializable{
 	}
 
 	/**
+	 * Returns the list of attributes.  
+	 * 
 	 * @return the attributes
 	 */
 	public AttributeList getAttributes() {
@@ -65,6 +72,8 @@ public class ReaderDTO implements Serializable{
 	}
 
 	/**
+	 * Returns the sessions.  
+	 * 
 	 * @return the sessions
 	 */
 	public List<SessionDTO> getSessions() {

@@ -1,15 +1,12 @@
-/**
- * 
- */
+
 package org.rifidi.edge.core.api.jms.notifications;
-//TODO: Comments
+
 import java.io.Serializable;
 
 /**
  * A notification that is sent when a commandconfiguration is removed
  * 
  * @author Kyle Neumeier - kyle@pramari.com
- * 
  */
 public class CommandConfigurationRemovedNotification implements Serializable {
 
@@ -29,6 +26,8 @@ public class CommandConfigurationRemovedNotification implements Serializable {
 	}
 
 	/**
+	 * Returns the ID for the CommandConfiguration to be removed.  
+	 * 
 	 * @return the commandConfigurationID
 	 */
 	public String getCommandConfigurationID() {

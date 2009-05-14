@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.console;
-//TODO: Comments
+
 import java.io.IOException;
 import java.util.Map;
 import java.util.Set;
@@ -26,8 +24,9 @@ import org.rifidi.edge.core.readers.AbstractReaderFactory;
 import org.rifidi.edge.core.readers.ReaderSession;
 
 /**
- * @author Jochen Mader - jochen@pramari.com
+ * Command line commands for the edge server.  
  * 
+ * @author Jochen Mader - jochen@pramari.com
  */
 public class RifidiEdgeServerCommands implements CommandProvider {
 	/** DAO for accessing readers. */
@@ -40,6 +39,8 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 	private ConfigurationDAO configDAO;
 
 	/**
+	 * Sets the configuration service for this class.  
+	 * 
 	 * @param configService
 	 *            the configService to set
 	 */
@@ -48,6 +49,8 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 	}
 
 	/**
+	 * TODO: Method level comment.  
+	 * 
 	 * @param commandDAO
 	 *            the commandDAO to set
 	 */
@@ -56,6 +59,8 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 	}
 
 	/**
+	 * TODO: Method level comment.  
+	 * 
 	 * @param readerDAO
 	 *            the readerDAO to set
 	 */
@@ -64,6 +69,8 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 	}
 
 	/**
+	 * TODO: Method level comment.  
+	 * 
 	 * @param configDAO
 	 *            the configDAO to set
 	 */
@@ -107,6 +114,12 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 		return null;
 	}
 
+	/**
+	 * TODO: Method level comment.  
+	 * 
+	 * @param intp
+	 * @return
+	 */
 	public Object _configurations(CommandInterpreter intp) {
 		for (Configuration config : configDAO.getConfigurations()) {
 			intp.println("ID: " + config.getServiceID());
@@ -114,6 +127,12 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 		return null;
 	}
 
+	/**
+	 * Creates a reader with the given arguments.  
+	 * 
+	 * @param intp
+	 * @return
+	 */
 	public Object _createreader(CommandInterpreter intp) {
 		String readerFacID = intp.nextArgument();
 		if (readerFacID == null) {
@@ -143,6 +162,12 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 		return null;
 	}
 
+	/**
+	 * Deletes a reader with the given ID.  
+	 * 
+	 * @param intp
+	 * @return
+	 */
 	public Object _deletereader(CommandInterpreter intp) {
 		String readerID = intp.nextArgument();
 		if (readerID == null) {
@@ -158,6 +183,12 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 		return null;
 	}
 
+	/**
+	 * Gets the properties of a reader with the given ID.  
+	 * 
+	 * @param intp
+	 * @return
+	 */
 	public Object _getproperties(CommandInterpreter intp) {
 		String readerID = intp.nextArgument();
 		if (readerID == null) {
@@ -178,7 +209,13 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 		return null;
 
 	}
-
+	
+	/**
+	 * Sets the properties of a reader with the given ID.  
+	 * 
+	 * @param intp
+	 * @return
+	 */
 	public Object _setproperties(CommandInterpreter intp) {
 		String readerID = intp.nextArgument();
 		if (readerID == null) {
@@ -207,6 +244,12 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 
 	}
 
+	/**
+	 * Applies the property changes to a reader with the given ID.  
+	 * 
+	 * @param intp
+	 * @return
+	 */
 	public Object _applypropchanges(CommandInterpreter intp) {
 		String readerID = intp.nextArgument();
 		if (readerID == null) {
@@ -253,6 +296,12 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 		return null;
 	}
 
+	/**
+	 * Creates a command with the given ID and properties.  
+	 * 
+	 * @param intp
+	 * @return
+	 */
 	public Object _createcommand(CommandInterpreter intp) {
 		String commandFacID = intp.nextArgument();
 		if (commandFacID == null) {
@@ -281,6 +330,12 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 		return null;
 	}
 
+	/**
+	 * 
+	 * 
+	 * @param intp
+	 * @return
+	 */
 	public Object _deletecommand(CommandInterpreter intp) {
 		String commandID = intp.nextArgument();
 		if (commandID == null) {
@@ -511,6 +566,12 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 		return null;
 	}
 
+	/**
+	 * Saves the configuration.  
+	 * 
+	 * @param intp
+	 * @return
+	 */
 	public Object _save(CommandInterpreter intp) {
 		configService.storeConfiguration();
 		intp.println("Configuration Saved!");

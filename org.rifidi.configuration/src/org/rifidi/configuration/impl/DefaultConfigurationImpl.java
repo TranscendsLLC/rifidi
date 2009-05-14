@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.configuration.impl;
-//TODO: Comments
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -43,9 +41,10 @@ import org.rifidi.configuration.annotations.PropertyType;
 import org.rifidi.configuration.listeners.AttributesChangedListener;
 
 /**
+ * TODO: Class level comment.  
+ * 
  * @author Jochen Mader - jochen@pramari.com
  * @author Kyle Neumeier - kyle@pramari.com
- * 
  */
 public class DefaultConfigurationImpl implements Configuration, Cloneable {
 	/** Logger for this class. */
@@ -117,6 +116,8 @@ public class DefaultConfigurationImpl implements Configuration, Cloneable {
 	}
 
 	/**
+	 * TODO: Method level comment.  
+	 * 
 	 * @param serviceID
 	 *            the serviceID to set
 	 */
@@ -129,6 +130,8 @@ public class DefaultConfigurationImpl implements Configuration, Cloneable {
 	}
 
 	/**
+	 * TODO: Method level comment.  
+	 * 
 	 * @param target
 	 *            the target to set
 	 */

@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.core.readers;
-//TODO: Comments
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -13,14 +11,20 @@ import org.rifidi.edge.core.api.rmi.dto.SessionDTO;
 import org.rifidi.edge.core.commands.Command;
 
 /**
- * @author Jochen Mader - jochen@pramari.com
+ * This class represents a session with a reader.  
  * 
+ * @author Jochen Mader - jochen@pramari.com
  */
 public abstract class ReaderSession {
 	
 	/** The ID for this session*/
 	private String ID;
 	
+	/**
+	 * Constructor.  
+	 * 
+	 * @param ID
+	 */
 	public ReaderSession(String ID){
 		this.ID = ID;
 	}
@@ -35,7 +39,6 @@ public abstract class ReaderSession {
 
 	/**
 	 * Close the connection and stop processing of commands.
-	 * 
 	 */
 	public abstract void disconnect();
 
@@ -76,6 +79,7 @@ public abstract class ReaderSession {
 	public abstract SessionStatus getStatus();
 
 	/**
+	 * TODO: Method level comment. 
 	 * 
 	 * @return Data Transfer Object for this Session
 	 */
@@ -88,6 +92,11 @@ public abstract class ReaderSession {
 		return new SessionDTO(this.getID(), this.getStatus(), commandMap);
 	}
 	
+	/**
+	 * Returns the ID for this session.  
+	 * 
+	 * @return
+	 */
 	public String getID(){
 		return this.ID;
 	}

@@ -1,11 +1,11 @@
+
+
 package org.rifidi.edge.esper;
+
 /**
+ * TODO: Class level comment.
  * 
- */
-//TODO: Comments
-/**
  * @author Jochen Mader - jochen@pramari.com
- *
  */
 public class ApplicationLayerEvent {
 

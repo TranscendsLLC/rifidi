@@ -1,11 +1,10 @@
-/**
- * 
- */
+
 package org.rifidi.edge.core.messages;
-//TODO: Comments
 import java.math.BigInteger;
 
 /**
+ * TODO: Class level comment.  
+ * 
  * @author Kyle Neumeier - kyle@pramari.com
  * @author Jochen Mader - jochen@pramari.com
  */
@@ -54,6 +53,8 @@ public class EPCGeneration1Event extends DatacontainerEvent {
 	}
 
 	/**
+	 * Returns the length of the memory bank.  
+	 * 
 	 * @return the epcLength
 	 */
 	public Integer getEPCMemoryLength() {

@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.core.daos;
-//TODO: Comments
+
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -19,7 +17,6 @@ import org.rifidi.edge.core.notifications.NotifierServiceWrapper;
  * This is the implementation that listens for OSGi services for Configurations.
  * 
  * @author Kyle Neumeier - kyle@pramari.com
- * 
  */
 public class ConfigurationDAOImpl implements ConfigurationDAO {
 
@@ -50,7 +47,7 @@ public class ConfigurationDAOImpl implements ConfigurationDAO {
 	}
 
 	/**
-	 * Called by Spring
+	 * Called by Spring.
 	 * 
 	 * @param notifierService
 	 *            the notifierService to set
@@ -115,7 +112,7 @@ public class ConfigurationDAOImpl implements ConfigurationDAO {
 	}
 
 	/**
-	 * Used by spring to give the initial list of readerSession configuration
+	 * Used by spring to give the initial list of readerSession configuration.
 	 * 
 	 * 
 	 * @param configurations

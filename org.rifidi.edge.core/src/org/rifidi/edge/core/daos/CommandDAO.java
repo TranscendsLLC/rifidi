@@ -1,20 +1,19 @@
-/**
- * 
- */
+
 package org.rifidi.edge.core.daos;
-//TODO: Comments
+
 import java.util.Set;
 
 import org.rifidi.edge.core.commands.AbstractCommandConfiguration;
 import org.rifidi.edge.core.commands.AbstractCommandConfigurationFactory;
 
 /**
- * @author Jochen Mader - jochen@pramari.com
+ * TODO: Class level comment.  
  * 
+ * @author Jochen Mader - jochen@pramari.com
  */
 public interface CommandDAO {
 	/**
-	 * Get commands currently created.
+	 * Get commands currently created. 
 	 * 
 	 * @return
 	 */
@@ -23,7 +22,7 @@ public interface CommandDAO {
 	/**
 	 * Get a command by its ID.
 	 * 
-	 * @param id
+	 * @param id	The ID of the desired command.  
 	 * @return
 	 */
 	AbstractCommandConfiguration<?> getCommandByID(String id);
@@ -38,13 +37,15 @@ public interface CommandDAO {
 	/**
 	 * Get a command factory by its id.
 	 * 
-	 * @param id
+	 * @param id	The ID of the desired factory.  
 	 * @return
 	 */
 	AbstractCommandConfigurationFactory getCommandFactoryByID(String id);
 	
 	/**
-	 * Get a command factory by the reader ID that it is associated with
+	 * Get a command factory by the reader ID that it is associated with.
+	 * 
+	 * 
 	 * @param id The ID of the ReaderFactory
 	 * @return The CommandConfigurationFactory
 	 */
