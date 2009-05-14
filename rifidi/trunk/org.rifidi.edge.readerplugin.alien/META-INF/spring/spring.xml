@@ -9,9 +9,8 @@
 	<bean id="configurationFactory"
 		class="org.rifidi.edge.readerplugin.alien.Alien9800ReaderFactory">
 		<property name="context" ref="bundleContext" />
-		<property name="template" ref="myJmsTemplate" />
-		<property name="destination" ref="destination2" />
-		<property name="notifierServiceWrapper" ref="NotifierServiceWrapper"/>
+		<property name="template" ref="internalMB" />
+		<property name="notifierServiceWrapper" ref="NotifierServiceWrapper" />
 	</bean>
 
 	<bean id="NotifierServiceWrapper"
@@ -50,26 +49,7 @@
 		</osgi:interfaces>
 	</osgi:service>
 
-	<!--  ActiveMQ destinations to use  -->
-	<amq:queue id="destination2"
-		physicalName="org.apache.activemq.spring.Test.spring.embedded" />
-	<!--
-		JMS ConnectionFactory to use, configuring the embedded broker using
-		XML
-	-->
-	<amq:connectionFactory id="jmsFactory2"
-		brokerURL="vm://localhost" />
-
-	<!-- Spring JMS Template -->
-	<bean id="myJmsTemplate" class="org.springframework.jms.core.JmsTemplate">
-		<property name="connectionFactory">
-			<!-- lets wrap in a pool to avoid creating a connection per send -->
-			<bean class="org.springframework.jms.connection.SingleConnectionFactory">
-				<property name="targetConnectionFactory">
-					<ref local="jmsFactory2" />
-				</property>
-			</bean>
-		</property>
-	</bean>
+	<osgi:reference id="internalMB"
+		interface="org.springframework.jms.core.JmsTemplate" bean-name="internalJMSTemplate" />
 
 </beans>

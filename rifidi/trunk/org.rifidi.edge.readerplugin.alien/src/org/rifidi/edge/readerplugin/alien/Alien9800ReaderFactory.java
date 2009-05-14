@@ -8,10 +8,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.jms.Destination;
-
 import org.rifidi.edge.core.readers.AbstractReader;
 import org.rifidi.edge.core.readers.AbstractReaderFactory;
+import org.springframework.jms.core.JmsOperations;
 import org.springframework.jms.core.JmsTemplate;
 
 /**
@@ -23,8 +22,6 @@ import org.springframework.jms.core.JmsTemplate;
 public class Alien9800ReaderFactory extends
 		AbstractReaderFactory<Alien9800Reader> {
 
-	/** The JMS Queue for tag data */
-	private Destination destination;
 	/** JMS template for sending tag data to JMS Queue */
 	private JmsTemplate template;
 	/** The Unique ID for this Factory */
@@ -46,21 +43,6 @@ public class Alien9800ReaderFactory extends
 	}
 
 	/**
-	 * @return the destination
-	 */
-	public Destination getDestination() {
-		return destination;
-	}
-
-	/**
-	 * @param destination
-	 *            the destination to set
-	 */
-	public void setDestination(Destination destination) {
-		this.destination = destination;
-	}
-
-	/**
 	 * @return the template
 	 */
 	public JmsTemplate getTemplate() {
@@ -68,6 +50,8 @@ public class Alien9800ReaderFactory extends
 	}
 
 	/**
+	 * Called by spring
+	 * 
 	 * @param template
 	 *            the template to set
 	 */
@@ -105,8 +89,7 @@ public class Alien9800ReaderFactory extends
 	 */
 	@Override
 	public void customConfig(Alien9800Reader instance) {
-		instance.setDestination(destination);
-		instance.setTemplate(template);
+		instance.setTemplate((JmsTemplate) template);
 		instance.setNotifiyServiceWrapper(notifierServiceWrapper);
 		Set<String> interfaces = new HashSet<String>();
 		interfaces.add(AbstractReader.class.getName());

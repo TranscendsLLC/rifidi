@@ -2,12 +2,10 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Rifidi Edge Alien Adapter Plug-in
 Bundle-SymbolicName: org.rifidi.edge.readerplugin.alien
-Bundle-Version: 2.0.0
+Bundle-Version: 2.0.1
 Bundle-Vendor: Pramari, LLC
 Import-Package: javax.jms;version="1.1.0",
- org.apache.activemq;version="5.1.0",
- org.apache.activemq.broker;version="5.1.0",
- org.apache.activemq.command;version="5.1.0",
+ org.apache.activemq.command;version="5.2.0",
  org.apache.commons.logging;version="1.0.4",
  org.osgi.framework;version="1.3.0",
  org.rifidi.edge.core.api,
@@ -15,7 +13,7 @@ Import-Package: javax.jms;version="1.1.0",
  org.rifidi.edge.core.exceptions,
  org.rifidi.edge.core.messages,
  org.rifidi.edge.core.messages.exceptions,
- org.rifidi.edge.core.notifications;resolution:=optional,
+ org.rifidi.edge.core.notifications,
  org.rifidi.edge.core.readers,
  org.rifidi.edge.core.readers.impl,
  org.springframework.jms.core;version="2.5.5"

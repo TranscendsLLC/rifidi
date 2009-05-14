@@ -56,8 +56,6 @@ public class Alien9800Reader extends AbstractReader<Alien9800ReaderSession> {
 	/** Number of connection attempts before a connection goes into fail state. */
 	private Integer maxNumConnectionAttempts = Integer
 			.parseInt(AlienReaderDefaultValues.maxNumConnectionAttempts);
-	/** JMS destination. */
-	private Destination destination;
 	/** Spring JMS template */
 	private JmsTemplate template;
 	/** The ID of the session */
@@ -174,7 +172,7 @@ public class Alien9800Reader extends AbstractReader<Alien9800ReaderSession> {
 			sessionID++;
 			session = new Alien9800ReaderSession(Integer.toString(sessionID),
 					ipAddress, port, (int) (long) reconnectionInterval,
-					maxNumConnectionAttempts, username, password, destination,
+					maxNumConnectionAttempts, username, password,
 					template, notifyServiceWrapper, this.getID());
 
 			// TODO: remove this once we get AspectJ in here!
@@ -197,14 +195,6 @@ public class Alien9800Reader extends AbstractReader<Alien9800ReaderSession> {
 	public void destroy() {
 		super.unregister();
 		destroyReaderSession(this.session);
-	}
-
-	/**
-	 * @param destination
-	 *            the destination to set
-	 */
-	public void setDestination(Destination destination) {
-		this.destination = destination;
 	}
 
 	/**

@@ -8,23 +8,26 @@
 	<bean id="jmsContainer"
 		class="org.springframework.jms.listener.SimpleMessageListenerContainer">
 		<property name="autoStartup" value="true" />
-		<property name="connectionFactory" ref="myConnectionFactory" />
-		<property name="destination" ref="myDestination" />
+		<property name="connectionFactory" ref="confac" />
+		<property name="destination" ref="internalMB" />
 		<property name="messageListener" ref="myMessageListener" />
 		<property name="acceptMessagesWhileStopping" value="true" />
 	</bean>
 
-	<bean id="myDestination" class="org.apache.activemq.command.ActiveMQQueue">
-		<constructor-arg value="org.apache.activemq.spring.Test.spring.embedded" />
-	</bean>
-	<bean id="myConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
-		<property name="brokerURL" value="vm://localhost" />
-	</bean>
+	<!-- Get reference to connection factory to internal Broker -->
+	<osgi:reference id="confac" interface="javax.jms.ConnectionFactory"
+		bean-name="internalBrokerConFac" />
+
+	<!-- Get a reference to the internal Message Buffer -->
+	<osgi:reference id="internalMB" interface="javax.jms.Topic"
+		bean-name="internalDest" />
 
 	<bean id="myMessageListener" class="org.rifidi.edge.esper.JMSReceiver">
 		<property name="esperManagement" ref="esperManager" />
 	</bean>
+
 	<bean id="esperManager" class="org.rifidi.edge.esper.EsperManagementServiceImpl" />
+
 	<osgi:service id="esperManagerService" ref="esperManager"
 		interface="org.rifidi.edge.esper.EsperManagementService" />
 </beans>
