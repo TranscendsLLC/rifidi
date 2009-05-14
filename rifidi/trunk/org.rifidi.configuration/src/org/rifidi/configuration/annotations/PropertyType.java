@@ -1,5 +1,5 @@
 package org.rifidi.configuration.annotations;
-//TODO: Comments
+
 import javax.management.openmbean.OpenType;
 import javax.management.openmbean.SimpleType;
 
@@ -7,7 +7,6 @@ import javax.management.openmbean.SimpleType;
  * This enum represents the possible types for a property type
  * 
  * @author Kyle Neumeier - kyle@pramari.com
- * 
  */
 public enum PropertyType {
 	PT_STRING, PT_INTEGER, PT_BOOLEAN, PT_LONG;

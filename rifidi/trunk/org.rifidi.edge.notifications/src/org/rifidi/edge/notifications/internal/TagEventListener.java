@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.notifications.internal;
-//TODO: Comments
+
 import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.Message;
@@ -14,8 +12,9 @@ import org.springframework.jms.core.JmsOperations;
 import org.springframework.jms.core.JmsTemplate;
 
 /**
- * @author kyle
+ * TODO: Class level comment.  
  * 
+ * @author kyle
  */
 public class TagEventListener implements MessageListener {
 

@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.core.api.rmi;
-//TODO: Comments
+
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.Set;
@@ -20,7 +18,6 @@ import org.rifidi.edge.core.api.rmi.dto.SessionDTO;
  * on the edge server
  * 
  * @author Kyle Neumeier - kyle@pramari.com
- * 
  */
 public interface ReaderStub extends Remote {
 
@@ -110,6 +107,7 @@ public interface ReaderStub extends Remote {
 	void deleteReader(String readerID) throws RemoteException;
 
 	/**
+	 * TODO: Method level comment. 
 	 * 
 	 * @param readerID
 	 *            The ID of the reader that contains the session

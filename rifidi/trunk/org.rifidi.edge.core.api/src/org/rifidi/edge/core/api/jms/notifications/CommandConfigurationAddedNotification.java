@@ -1,15 +1,12 @@
-/**
- * 
- */
+
 package org.rifidi.edge.core.api.jms.notifications;
-//TODO: Comments
+
 import java.io.Serializable;
 
 /**
  * A notification that is sent whenever a CommandConfiguration becomes available
  * 
  * @author Kyle Neumeier - kyle@pramari.com
- * 
  */
 public class CommandConfigurationAddedNotification implements Serializable {
 
@@ -29,6 +26,8 @@ public class CommandConfigurationAddedNotification implements Serializable {
 	}
 
 	/**
+	 * Returns the commandConfigurationID for this notification.  
+	 * 
 	 * @return the commandConfigurationID
 	 */
 	public String getCommandConfigurationID() {

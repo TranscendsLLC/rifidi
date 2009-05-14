@@ -1,14 +1,11 @@
-/**
- * 
- */
+
 package org.rifidi.edge.core.exceptions;
-//TODO: Comments
+
 /**
  * Thrown if somebody tried to use a readerSession that either doesn't exist or got
  * removed from the registry.
  * 
  * @author Jochen Mader - jochen@pramari.com
- * 
  */
 public class NonExistentReaderConfigurationException extends Exception {
 

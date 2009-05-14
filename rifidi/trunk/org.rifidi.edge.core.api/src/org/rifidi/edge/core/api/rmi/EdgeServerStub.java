@@ -1,5 +1,5 @@
 package org.rifidi.edge.core.api.rmi;
-//TODO: Comments
+
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
@@ -7,7 +7,6 @@ import java.rmi.RemoteException;
  * This is the interface for the Edge Server RMI Stub.
  * 
  * @author Kyle Neumeier - kyle@pramari.com
- * 
  */
 public interface EdgeServerStub extends Remote {
 
@@ -19,6 +18,7 @@ public interface EdgeServerStub extends Remote {
 	void save() throws RemoteException;
 
 	/**
+	 * Returns the last time this server was started.  
 	 * 
 	 * @return The timestamp of the last time this server was started
 	 * @throws RemoteException

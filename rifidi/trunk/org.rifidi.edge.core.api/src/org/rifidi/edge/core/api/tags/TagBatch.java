@@ -1,14 +1,13 @@
-/**
- * 
- */
+
 package org.rifidi.edge.core.api.tags;
-//TODO: Comments
+
 import java.io.Serializable;
 import java.util.Set;
 
 /**
- * @author Kyle Neumeier - kyle@pramari.com
+ * TODO: Class level comment.  
  * 
+ * @author Kyle Neumeier - kyle@pramari.com
  */
 public class TagBatch implements Serializable {
 
@@ -22,6 +21,8 @@ public class TagBatch implements Serializable {
 	private Set<TagDTO> tags;
 
 	/**
+	 * Constructor.  
+	 * 
 	 * @param readerID
 	 * @param timestamp
 	 * @param tags
@@ -33,6 +34,8 @@ public class TagBatch implements Serializable {
 	}
 
 	/**
+	 * Returns the ID of the reader.   
+	 * 
 	 * @return the readerID
 	 */
 	public String getReaderID() {
@@ -40,6 +43,8 @@ public class TagBatch implements Serializable {
 	}
 
 	/**
+	 * Returns the timestamp for this batch.  
+	 * 
 	 * @return the timestamp
 	 */
 	public long getTimestamp() {
@@ -47,6 +52,8 @@ public class TagBatch implements Serializable {
 	}
 
 	/**
+	 * Returns the set of tags.  
+	 * 
 	 * @return the tags
 	 */
 	public Set<TagDTO> getTags() {

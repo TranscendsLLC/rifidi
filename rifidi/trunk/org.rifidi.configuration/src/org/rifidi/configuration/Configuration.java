@@ -1,8 +1,5 @@
-/**
- * 
- */
+
 package org.rifidi.configuration;
-//TODO: Comments
 import java.util.Map;
 
 import javax.management.DynamicMBean;
@@ -15,7 +12,6 @@ import org.rifidi.configuration.listeners.AttributesChangedListener;
  * configuration/management interface.
  * 
  * @author Jochen Mader - jochen@pramari.com
- * 
  */
 public interface Configuration extends DynamicMBean {
 
@@ -29,6 +25,7 @@ public interface Configuration extends DynamicMBean {
 	/**
 	 * Set the id for the governed service.
 	 * 
+	 * @param id
 	 */
 	void setServiceID(String id);
 
@@ -41,7 +38,9 @@ public interface Configuration extends DynamicMBean {
 
 	/**
 	 * Used for persistence. Should only be called when saving because it
-	 * returns attributes as a Map<String,String>
+	 * returns attributes as a Map<String,String>.
+	 * 
+	 * @return
 	 */
 	Map<String, String> getAttributes();
 
@@ -55,7 +54,7 @@ public interface Configuration extends DynamicMBean {
 
 	/**
 	 * Get the names of all the DynamicMBean Properties. For use with the
-	 * DynamicMBean getAttributes(String[]) method
+	 * DynamicMBean getAttributes(String[]) method.
 	 * 
 	 * @return An array of names of all the properties in this Configuration
 	 */
@@ -71,7 +70,7 @@ public interface Configuration extends DynamicMBean {
 
 	/**
 	 * Remote a listener that is notified of Attribute changes on this
-	 * configuration. Remove this method when AspectJ is available
+	 * configuration. Remove this method when AspectJ is available.
 	 * 
 	 * @param listener
 	 */

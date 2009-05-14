@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.core.rmi.server;
-//TODO: Comments
+
 import java.rmi.RemoteException;
 import java.util.HashSet;
 import java.util.Set;
@@ -22,8 +20,9 @@ import org.rifidi.edge.core.daos.CommandDAO;
 import org.rifidi.edge.core.daos.ConfigurationDAO;
 
 /**
- * @author Kyle Neumeier - kyle@pramari.com
+ * TODO: Class level comment.  
  * 
+ * @author Kyle Neumeier - kyle@pramari.com
  */
 public class CommandConfigurationStubImpl implements CommandStub {
 

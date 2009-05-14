@@ -1,15 +1,14 @@
-/**
- * 
- */
+
 package org.rifidi.configuration.mbeans;
-//TODO: Comments
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.configuration.services.ConfigurationService;
 
 /**
- * @author Jochen Mader - jochen@pramari.com
+ * TODO: Class level comment.  
  * 
+ * @author Jochen Mader - jochen@pramari.com
  */
 public class ConfigurationControl implements ConfigurationControlMBean {
 	/** Logger for this class. */
@@ -19,6 +18,8 @@ public class ConfigurationControl implements ConfigurationControlMBean {
 	private ConfigurationService impl;
 
 	/**
+	 * Constructor.  
+	 * 
 	 * @param impl
 	 */
 	public ConfigurationControl() {
@@ -46,6 +47,8 @@ public class ConfigurationControl implements ConfigurationControlMBean {
 	}
 
 	/**
+	 * Sets the configuration service for this class.  
+	 * 
 	 * @param impl
 	 *            the impl to set
 	 */

@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.core.api.jms.notifications;
-//TODO: Comments
+
 import java.io.Serializable;
 
 import org.rifidi.edge.core.api.SessionStatus;
@@ -11,7 +9,6 @@ import org.rifidi.edge.core.api.SessionStatus;
  * A notification sent to a client when the status of a session changes.
  * 
  * @author Kyle Neumeier - kyle@pramari.com
- * 
  */
 public class SessionStatusChangedNotification implements Serializable {
 
@@ -25,6 +22,8 @@ public class SessionStatusChangedNotification implements Serializable {
 	private SessionStatus status;
 
 	/**
+	 * Constructor.  
+	 * 
 	 * @param readerID
 	 *            The ID of the reader that this session belongs to
 	 * @param sessionID
@@ -41,6 +40,8 @@ public class SessionStatusChangedNotification implements Serializable {
 	}
 
 	/**
+	 * Returns the ID for the reader.  
+	 * 
 	 * @return the readerID
 	 */
 	public String getReaderID() {
@@ -48,6 +49,8 @@ public class SessionStatusChangedNotification implements Serializable {
 	}
 
 	/**
+	 * Returns the ID for the session.  
+	 * 
 	 * @return the sessioID
 	 */
 	public String getSessionID() {
@@ -55,6 +58,8 @@ public class SessionStatusChangedNotification implements Serializable {
 	}
 
 	/**
+	 * Returns the status of the session.  
+	 * 
 	 * @return the status
 	 */
 	public SessionStatus getStatus() {

@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.notifications.internal;
-//TODO: Comments
+
 import java.util.Dictionary;
 import java.util.Set;
 
@@ -58,7 +56,7 @@ public class NotifierServiceImpl implements NotifierService,
 	private ConfigurationDAO configurationDAO;
 
 	/**
-	 * Called by spring
+	 * Called by spring.
 	 * 
 	 * @param readerDAO
 	 *            the readerDAO to set
@@ -68,7 +66,7 @@ public class NotifierServiceImpl implements NotifierService,
 	}
 
 	/**
-	 * called by spring
+	 * Called by spring.
 	 * 
 	 * @param commandDAO
 	 *            the commandDAO to set
@@ -77,16 +75,33 @@ public class NotifierServiceImpl implements NotifierService,
 		this.commandDAO = commandDAO;
 	}
 
+	/**
+	 * TODO: Method level comment. 
+	 * 
+	 * @param configuration
+	 * @param parameters
+	 */
 	public void bindConfiguration(Configuration configuration,
 			Dictionary<String, String> parameters) {
 		configuration.addAttributesChangedListener(this);
 	}
 
+	/**
+	 * TODO: Method level comment. 
+	 * 
+	 * @param configuration
+	 * @param parameters
+	 */
 	public void unbindConfiguration(Configuration configuration,
 			Dictionary<String, String> parameters) {
 		configuration.removeAttributesChangedListener(this);
 	}
 
+	/**
+	 * TODO: Method level comment. 
+	 * 
+	 * @param configurations
+	 */
 	public void setConfigurations(Set<Configuration> configurations) {
 		for (Configuration config : configurations) {
 			config.addAttributesChangedListener(this);

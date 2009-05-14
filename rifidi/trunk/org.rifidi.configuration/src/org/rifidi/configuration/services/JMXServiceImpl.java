@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.configuration.services;
-//TODO: Comments
+
 import java.lang.management.ManagementFactory;
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -27,8 +25,9 @@ import org.rifidi.configuration.mbeans.ConfigurationControlMBean;
 import org.springframework.osgi.service.importer.OsgiServiceLifecycleListener;
 
 /**
- * @author Jochen Mader - jochen@pramari.com
+ * TODO: Class level comment.  
  * 
+ * @author Jochen Mader - jochen@pramari.com
  */
 public class JMXServiceImpl implements JMXService, OsgiServiceLifecycleListener {
 	/** Logger for this instance. */
@@ -117,7 +116,6 @@ public class JMXServiceImpl implements JMXService, OsgiServiceLifecycleListener 
 	 * Used to store results of reflections calls.
 	 * 
 	 * @author Jochen Mader - jochen@pramari.com
-	 * 
 	 */
 	protected class CachedReflectionsResults {
 		public Map<String, Property> nameToProperty = new HashMap<String, Property>();
@@ -126,6 +124,10 @@ public class JMXServiceImpl implements JMXService, OsgiServiceLifecycleListener 
 	}
 
 	/**
+	 * Sets the configuration services.  
+	 * 
+	 * TODO: Method level comment.  
+	 * 
 	 * @param persistentServices
 	 *            the persistentServices to set
 	 */

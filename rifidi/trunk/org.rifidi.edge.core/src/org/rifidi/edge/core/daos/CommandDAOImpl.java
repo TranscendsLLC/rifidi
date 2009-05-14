@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.core.daos;
-//TODO: Comments
+
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -17,8 +15,9 @@ import org.rifidi.edge.core.notifications.NotifierService;
 import org.rifidi.edge.core.notifications.NotifierServiceWrapper;
 
 /**
- * @author Jochen Mader - jochen@pramari.com
+ * TODO: Class level comment.  
  * 
+ * @author Jochen Mader - jochen@pramari.com
  */
 public class CommandDAOImpl implements CommandDAO {
 

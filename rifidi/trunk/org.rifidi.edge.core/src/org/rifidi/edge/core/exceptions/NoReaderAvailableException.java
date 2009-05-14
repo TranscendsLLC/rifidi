@@ -1,13 +1,10 @@
-/**
- * 
- */
+
 package org.rifidi.edge.core.exceptions;
-//TODO: Comments
+
 /**
  * Thrown if a readerSession is not available.
  * 
  * @author Jochen Mader - jochen@pramari.com
- * 
  */
 public class NoReaderAvailableException extends Exception {
 
@@ -15,13 +12,15 @@ public class NoReaderAvailableException extends Exception {
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * 
+	 * Constructor.  
 	 */
 	public NoReaderAvailableException() {
 		super();
 	}
 
 	/**
+	 * Constructor.  
+	 * 
 	 * @param arg0
 	 * @param arg1
 	 */
@@ -30,6 +29,8 @@ public class NoReaderAvailableException extends Exception {
 	}
 
 	/**
+	 * Constructor.  
+	 * 
 	 * @param arg0
 	 */
 	public NoReaderAvailableException(String arg0) {
@@ -37,6 +38,8 @@ public class NoReaderAvailableException extends Exception {
 	}
 
 	/**
+	 * Constructor.  
+	 * 
 	 * @param arg0
 	 */
 	public NoReaderAvailableException(Throwable arg0) {

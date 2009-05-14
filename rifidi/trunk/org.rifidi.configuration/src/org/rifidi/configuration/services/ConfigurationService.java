@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.configuration.services;
-//TODO: Comments
+
 /**
  * Services implementing this interface are supposed to provide a link between
  * custom properties/preference storage (ini files, xml) and the OSGi config

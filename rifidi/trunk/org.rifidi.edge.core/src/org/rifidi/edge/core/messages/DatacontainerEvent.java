@@ -1,14 +1,14 @@
-/**
- * 
- */
+
 package org.rifidi.edge.core.messages;
-//TODO: Comments
+
 import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * TODO: Class level comment.  
+ * 
  * @author Jochen Mader - jochen@pramari.com
  * @author Kyle Neumeier - kyle@pramari.com
  */
@@ -59,7 +59,6 @@ public abstract class DatacontainerEvent implements Serializable {
 	 * swallows zeroes.
 	 * 
 	 * @author Jochen Mader - jochen@pramari.com
-	 * 
 	 */
 	public class MemoryBankLengthTuple implements Serializable {
 		/** Default. */
@@ -70,6 +69,8 @@ public abstract class DatacontainerEvent implements Serializable {
 		private Integer length;
 
 		/**
+		 * Constructor.  
+		 * 
 		 * @param memory
 		 * @param length
 		 */
@@ -80,6 +81,8 @@ public abstract class DatacontainerEvent implements Serializable {
 		}
 
 		/**
+		 * Returns the memory location of this tuple.  
+		 * 
 		 * @return the memory
 		 */
 		public BigInteger getMemory() {
@@ -87,6 +90,8 @@ public abstract class DatacontainerEvent implements Serializable {
 		}
 
 		/**
+		 * Sets the memory location.  
+		 * 
 		 * @param memory
 		 *            the memory to set
 		 */
@@ -95,6 +100,8 @@ public abstract class DatacontainerEvent implements Serializable {
 		}
 
 		/**
+		 * Gets the length of the tuple.  
+		 * 
 		 * @return the length
 		 */
 		public Integer getLength() {
@@ -102,6 +109,8 @@ public abstract class DatacontainerEvent implements Serializable {
 		}
 
 		/**
+		 * Sets the length of the tuple.  
+		 * 
 		 * @param length
 		 *            the length to set
 		 */

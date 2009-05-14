@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.core.daos;
-//TODO: Comments
+
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -17,9 +15,10 @@ import org.rifidi.edge.core.readers.AbstractReader;
 import org.rifidi.edge.core.readers.AbstractReaderFactory;
 
 /**
+ * TODO: Class level comment. 
+ * 
  * @author Jochen Mader - jochen@pramari.com
  * @author Kyle Neumeier - kyle@pramari.com
- * 
  */
 public class ReaderDAOImpl implements ReaderDAO {
 

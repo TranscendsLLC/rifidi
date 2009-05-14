@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.core.readers.impl.threads;
-//TODO: Comments
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Queue;
@@ -16,7 +14,6 @@ import org.rifidi.edge.core.readers.impl.AbstractIPReaderSession;
  * Runnable used to read from an inputstream.
  * 
  * @author Jochen Mader - jochen@pramari.com
- * 
  */
 public class ReadThread implements Runnable {
 	/** Logger for this class. */

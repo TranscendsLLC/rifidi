@@ -1,10 +1,5 @@
-/**
- * 
- */
+
 package org.rifidi.edge.core.notifications;
-//TODO: Comments
-
-
 
 /**
  * This object is instantiated by spring and wraps the NotifierService. This
@@ -12,12 +7,14 @@ package org.rifidi.edge.core.notifications;
  * the Notifier Service if it is available
  * 
  * @author Kyle Neumeier - kyle@pramari.com
- * 
  */
 public interface NotifierServiceWrapper {
 	
+	/**
+	 * TODO: Method level comment. 
+	 * 
+	 * @return
+	 */
 	public NotifierService getService();
-
-
 
 }

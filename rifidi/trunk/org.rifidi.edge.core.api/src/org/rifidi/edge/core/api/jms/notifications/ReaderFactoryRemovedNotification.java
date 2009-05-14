@@ -1,7 +1,13 @@
+
 package org.rifidi.edge.core.api.jms.notifications;
-//TODO: Comments
+
 import java.io.Serializable;
 
+/**
+ * TODO: Class level comment. 
+ * 
+ * @author kyle
+ */
 public class ReaderFactoryRemovedNotification implements Serializable {
 
 	/** SerialVersionID */
@@ -10,6 +16,8 @@ public class ReaderFactoryRemovedNotification implements Serializable {
 	private String readerFactoryID;
 
 	/**
+	 * Constructor.  
+	 * 
 	 * @param readerFactoryID
 	 */
 	public ReaderFactoryRemovedNotification(String readerFactoryID) {
@@ -17,10 +25,11 @@ public class ReaderFactoryRemovedNotification implements Serializable {
 	}
 
 	/**
+	 * TODO: Method level comment. 
+	 * 
 	 * @return the readerFactoryID
 	 */
 	public String getReaderFactoryID() {
 		return readerFactoryID;
 	}
-
 }

@@ -2,7 +2,7 @@
  * 
  */
 package org.rifidi.edge.core.messages;
-//TODO: Comments
+
 import java.io.Serializable;
 
 /**
@@ -11,7 +11,6 @@ import java.io.Serializable;
  * the antenna that the tag was seen on
  * 
  * @author Kyle Neumeier - kyle@pramari.com
- * 
  */
 public class TagReadEvent implements Serializable {
 
@@ -27,6 +26,8 @@ public class TagReadEvent implements Serializable {
 	private String readerID;
 
 	/**
+	 * Constructor.  
+	 * 
 	 * @param tag
 	 * @param antennaID
 	 * @param timestamp
@@ -40,6 +41,8 @@ public class TagReadEvent implements Serializable {
 	}
 
 	/**
+	 * Returns the ID for the reader.  
+	 * 
 	 * @return the readerID
 	 */
 	public String getReaderID() {
@@ -47,6 +50,8 @@ public class TagReadEvent implements Serializable {
 	}
 
 	/**
+	 * TODO: Method level comment.  
+	 * 
 	 * @return the tag
 	 */
 	public DatacontainerEvent getTag() {
@@ -54,6 +59,8 @@ public class TagReadEvent implements Serializable {
 	}
 
 	/**
+	 * Returns the ID of the antenna.  
+	 * 
 	 * @return the antennaID
 	 */
 	public int getAntennaID() {
@@ -61,6 +68,8 @@ public class TagReadEvent implements Serializable {
 	}
 
 	/**
+	 * Returns the timestamp.  
+	 * 
 	 * @return the timestamp
 	 */
 	public long getTimestamp() {

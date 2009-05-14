@@ -1,5 +1,6 @@
+
 package org.rifidi.edge.core.api.rmi.dto;
-//TODO: Comments
+
 import java.io.Serializable;
 import java.util.Map;
 
@@ -9,7 +10,6 @@ import org.rifidi.edge.core.api.SessionStatus;
  * A Data Transfer Object for information about a session
  * 
  * @author Kyle Neumeier - kyle@pramari.com
- * 
  */
 public class SessionDTO implements Serializable {
 
@@ -41,6 +41,8 @@ public class SessionDTO implements Serializable {
 	}
 
 	/**
+	 * TODO: Method level comment.  
+	 * 
 	 * @return the status of the session
 	 */
 	public SessionStatus getStatus() {
@@ -48,6 +50,8 @@ public class SessionDTO implements Serializable {
 	}
 
 	/**
+	 * TODO: Method level comment.  
+	 * 
 	 * @return The Commands being executed. Integer is process ID for this
 	 *         session, String is Command ID
 	 */

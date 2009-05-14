@@ -1,7 +1,13 @@
+
 package org.rifidi.edge.core.api.jms.notifications;
-//TODO: Comments
+
 import java.io.Serializable;
 
+/**
+ * TODO: Class level comment.  
+ * 
+ * @author Matthew Dean
+ */
 public class SessionRemovedNotification implements Serializable {
 
 	/** SerialVersionID */
@@ -20,6 +26,8 @@ public class SessionRemovedNotification implements Serializable {
 	}
 
 	/**
+	 * Returns the ID of the reader.  
+	 *  
 	 * @return the readerID
 	 */
 	public String getReaderID() {
@@ -27,6 +35,8 @@ public class SessionRemovedNotification implements Serializable {
 	}
 
 	/**
+	 * Returns the ID of the session.  
+	 * 
 	 * @return the sessionID
 	 */
 	public String getSessionID() {

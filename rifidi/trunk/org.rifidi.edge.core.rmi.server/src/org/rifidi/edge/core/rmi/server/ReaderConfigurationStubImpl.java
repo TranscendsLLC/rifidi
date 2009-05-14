@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.core.rmi.server;
-//TODO: Comments
+
 import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.HashSet;
@@ -29,8 +27,9 @@ import org.rifidi.edge.core.readers.AbstractReaderFactory;
 import org.rifidi.edge.core.readers.ReaderSession;
 
 /**
- * @author kyle
  * 
+ * 
+ * @author kyle
  */
 public class ReaderConfigurationStubImpl implements ReaderStub {
 
@@ -462,6 +461,8 @@ public class ReaderConfigurationStubImpl implements ReaderStub {
 	}
 
 	/**
+	 * TODO: Method level comment. 
+	 * 
 	 * @param configurationDAO
 	 *            the configurationDAO to set
 	 */
@@ -470,6 +471,8 @@ public class ReaderConfigurationStubImpl implements ReaderStub {
 	}
 
 	/**
+	 * TODO: Method level comment. 
+	 * 
 	 * @param commandDAO
 	 *            the commandDAO to set
 	 */

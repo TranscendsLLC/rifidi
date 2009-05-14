@@ -1,14 +1,13 @@
-/**
- * 
- */
+
 package org.rifidi.edge.core.messages;
-//TODO: Comments
+
 import java.math.BigInteger;
 
 /**
+ * TODO: Class level comment.  
+ * 
  * @author Jochen Mader - jochen@pramari.com
  * @author Kyle Neumeier - kyle@pramari.com
- * 
  */
 public class EPCGeneration2Event extends EPCGeneration1Event {
 

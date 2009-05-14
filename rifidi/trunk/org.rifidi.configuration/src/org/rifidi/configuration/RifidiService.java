@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.configuration;
-//TODO: Comments
+
 import java.util.Hashtable;
 import java.util.Set;
 
@@ -16,7 +14,6 @@ import org.osgi.framework.ServiceRegistration;
  * 
  * @author Jochen Mader - jochen@pramari.com
  * @author Kyle Neumeier - kyle@pramari.com
- * 
  */
 public abstract class RifidiService {
 
@@ -77,5 +74,8 @@ public abstract class RifidiService {
 		}
 	}
 
+	/**
+	 * TODO: Method level comment.  
+	 */
 	public abstract void destroy();
 }
