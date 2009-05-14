@@ -9,6 +9,7 @@
  *  				http://www.opensource.org/licenses/lgpl-license.html
  */
 package org.rifidi.edge.client.twodview.listeners;
+
 //TODO: Comments
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -51,11 +52,13 @@ public class SiteViewController implements DropTargetListener,
 	private static final Log logger = LogFactory
 			.getLog(SiteViewController.class);
 	private RemoteEdgeServer server;
-/**
- * Constructor.
- * @param siteView
- * @param composite
- */
+
+	/**
+	 * Constructor.
+	 * 
+	 * @param siteView
+	 * @param composite
+	 */
 	public SiteViewController(SiteView siteView, Composite composite) {
 		super();
 		this.siteView = siteView;
@@ -139,8 +142,10 @@ public class SiteViewController implements DropTargetListener,
 				return;
 			}
 			// create an ImageFigure that contains the reference to the
-			ReaderAlphaImageFigure raif = new ReaderAlphaImageFigure(image, reader.getID());
+			ReaderAlphaImageFigure raif = new ReaderAlphaImageFigure(image,
+					reader.getID());
 			raif.setReader(reader);
+
 			this.readerIDsToReaderFigures.put(raif.getReaderId(), raif);
 
 			ObjectLayer layer = siteView.getObjectLayer();
@@ -163,7 +168,7 @@ public class SiteViewController implements DropTargetListener,
 			try {
 				layer.addReader(raif, null);
 			} catch (ReaderAlreadyInMapException e) {
-				// TODO : POPUP
+
 				logger.error("ERROR: Cannot add a reader More than once ");
 				MessageBox mb = new MessageBox(siteView.getSite().getShell(),
 						SWT.ICON_WARNING);
@@ -217,7 +222,7 @@ public class SiteViewController implements DropTargetListener,
 				}
 			}
 		}
-		
+
 		for (Object key : event.diff.getAddedKeys()) {
 			Object newVal = event.diff.getNewValue(key);
 			if ((newVal != null) && (newVal instanceof RemoteReader)) {
