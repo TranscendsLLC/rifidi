@@ -1,9 +1,7 @@
-/**
- * 
- */
+
 package org.rifidi.edge.esper;
 
-//TODO: Comments
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.messages.TagReadEvent;
@@ -19,7 +17,6 @@ import com.espertech.esper.client.EPServiceProviderManager;
  * Service that configures and manages the esper provider.
  * 
  * @author Jochen Mader - jochen@pramari.com
- * 
  */
 public class EsperManagementServiceImpl implements EsperManagementService {
 	/** Logger for this class. */

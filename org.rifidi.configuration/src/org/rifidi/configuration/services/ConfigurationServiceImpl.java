@@ -1,9 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.configuration.services;
 
-//TODO: Comments
 import java.io.File;
 import java.io.IOException;
 import java.util.Dictionary;
@@ -32,8 +29,9 @@ import org.rifidi.configuration.RifidiService;
 import org.rifidi.configuration.ServiceFactory;
 
 /**
- * @author Jochen Mader - jochen@pramari.com
+ * TODO: Class level comment.  
  * 
+ * @author Jochen Mader - jochen@pramari.com
  */
 public class ConfigurationServiceImpl implements ConfigurationService {
 	/** Logger for this class */
@@ -278,6 +276,8 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	}
 
 	/**
+	 * TODO: Method level comment.  
+	 * 
 	 * @param IDToConfigurations
 	 *            the IDToConfigurations to set
 	 */
@@ -291,18 +291,29 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	 * Just a container for service IDToConfigurations.
 	 * 
 	 * @author Jochen Mader - jochen@pramari.com
-	 * 
 	 */
 	protected class ServiceConfiguration {
 		public HashMap<String, String> properties;
 		public String serviceID;
 	}
 
+	/**
+	 * TODO: Method level comment.  
+	 * 
+	 * @param service
+	 * @param parameters
+	 */
 	public void bindRifidiService(RifidiService service,
 			Dictionary<String, String> parameters) {
 		logger.info("Service detected: " + service.getID());
 	}
 
+	/**
+	 * TODO: Method level comment.  
+	 * 
+	 * @param service
+	 * @param parameters
+	 */
 	public void unbindRifidiService(RifidiService service,
 			Dictionary<String, String> parameters) {
 		logger.warn("about to call destroy");
@@ -312,6 +323,11 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 		}
 	}
 
+	/**
+	 * TODO: Method level comment.  
+	 * 
+	 * @param services
+	 */
 	public void setRifidiService(Set<RifidiService> services) {
 		logger.info("Rifidi Services Set: " + services);
 	}

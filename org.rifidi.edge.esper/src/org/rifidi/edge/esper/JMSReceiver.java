@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.esper;
-//TODO: Comments
+
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageListener;
@@ -20,7 +18,6 @@ import com.espertech.esper.client.EPServiceProvider;
  * esper.
  * 
  * @author Jochen Mader - jochen@pramari.com
- * 
  */
 public class JMSReceiver implements MessageListener {
 	/** Logger for this class. */
@@ -29,6 +26,8 @@ public class JMSReceiver implements MessageListener {
 	private EPServiceProvider epService;
 
 	/**
+	 * TODO: Method level comment.  
+	 * 
 	 * @param esperManagement
 	 *            the esperManagement to set
 	 */
