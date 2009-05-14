@@ -68,11 +68,15 @@ public abstract class AbstractServiceFactory<T extends RifidiService>
 			counter++;
 			if (configuration.getServiceID() == null) {
 				// TODO: baaad, we are depending on a concrete implementation!!!
+				// serviceIDs can only have alphanumeric characters and
+				// underscore character in them
+				String serviceID = getFactoryIDs().get(0);
+				serviceID = serviceID.replaceAll("[^A-Z^a-z^0-9^_]", "_");
+				serviceID = serviceID + "_" + Integer.toString(counter);
 				((DefaultConfigurationImpl) configuration)
-						.setServiceID(getFactoryIDs().get(0) + "-"
-								+ Integer.toString(counter));
+						.setServiceID(serviceID);
 			} else {
-				String[] splitString = configuration.getServiceID().split("-");
+				String[] splitString = configuration.getServiceID().split("_");
 				if (splitString.length > 0) {
 					String idNumString = splitString[splitString.length - 1];
 					try {
