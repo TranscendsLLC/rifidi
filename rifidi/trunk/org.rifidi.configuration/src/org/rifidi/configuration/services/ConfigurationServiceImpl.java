@@ -2,6 +2,7 @@
  * 
  */
 package org.rifidi.configuration.services;
+
 //TODO: Comments
 import java.io.File;
 import java.io.IOException;
@@ -83,6 +84,14 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 							+ sectionName);
 					continue;
 				}
+				String serviceID = (String)sectionName;
+				if (!checkName(serviceID)) {
+					logger.fatal("service id " + serviceID
+							+ " is invalid.  FactoryIDs must consist only of "
+							+ "alphanumeric characters and the "
+							+ "underscore character");
+					continue;
+				}
 				if (ret.get(factoryName) == null) {
 					ret.put(factoryName, new HashSet<ServiceConfiguration>());
 				}
@@ -110,6 +119,19 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 			logger.fatal("Can't open configuration: " + e);
 		}
 		return ret;
+	}
+
+	/**
+	 * Configuration names may only consist of alpha-numeric characters and the
+	 * underscore character because of esper
+	 * 
+	 * @param configurationName
+	 *            The name of a configuration that is read in
+	 * @return true if the configuration name passes the check. False otherwise.
+	 */
+	private boolean checkName(String configurationName) {
+		String regex = "([A-Za-z0-9_])+";
+		return configurationName.matches(regex);
 	}
 
 	/**

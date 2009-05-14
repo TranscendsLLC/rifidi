@@ -73,11 +73,15 @@ public abstract class AbstractMultiServiceFactory implements ServiceFactory {
 			counter++;
 			((DefaultConfigurationImpl) configuration).setTarget(instance);
 			if (configuration.getServiceID() == null) {
+				// serviceids can only have alphanumeric characters and _ in
+				// them.
+				String serviceID = configuration.getFactoryID();
+				serviceID = serviceID.replaceAll("[^A-Z^a-z^0-9^_]", "_");
+				serviceID = serviceID + "_" + Integer.toString(counter);
 				((DefaultConfigurationImpl) configuration)
-						.setServiceID(configuration.getFactoryID() + "-"
-								+ Integer.toString(counter));
+						.setServiceID(serviceID);
 			} else {
-				String[] splitString = configuration.getServiceID().split("-");
+				String[] splitString = configuration.getServiceID().split("_");
 				if (splitString.length > 0) {
 					String idNumString = splitString[splitString.length - 1];
 					try {
