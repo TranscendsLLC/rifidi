@@ -2,14 +2,22 @@
  * 
  */
 package org.rifidi.edge.esper;
+
 //TODO: Comments
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.rifidi.edge.core.messages.TagReadEvent;
+import org.rifidi.edge.esper.events.DestroyEvent;
+import org.rifidi.edge.esper.events.StartEvent;
+import org.rifidi.edge.esper.events.StopEvent;
 
+import com.espertech.esper.client.Configuration;
 import com.espertech.esper.client.EPServiceProvider;
 import com.espertech.esper.client.EPServiceProviderManager;
 
 /**
+ * Service that configures and manages the esper provider.
+ * 
  * @author Jochen Mader - jochen@pramari.com
  * 
  */
@@ -25,7 +33,12 @@ public class EsperManagementServiceImpl implements EsperManagementService {
 	 */
 	public EsperManagementServiceImpl() {
 		logger.info("EsperManagementServiceImpl created.");
-		epService = EPServiceProviderManager.getDefaultProvider();
+		Configuration config = new Configuration();
+		config.addEventType("StopEvent", StopEvent.class);
+		config.addEventType("StartEvent", StartEvent.class);
+		config.addEventType("DestroyEvent", DestroyEvent.class);
+		config.addEventType("TagReadEvent", TagReadEvent.class);
+		epService = EPServiceProviderManager.getDefaultProvider(config);
 	}
 
 	/*
