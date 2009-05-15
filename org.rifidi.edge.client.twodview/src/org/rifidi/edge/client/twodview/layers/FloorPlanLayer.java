@@ -23,6 +23,14 @@ import org.rifidi.edge.client.twodview.Activator;
 public class FloorPlanLayer extends XYLayer {
 
 	public static final Dimension MAXSIZE = new Dimension(1024, 768);
+	private String floorPlanImageFile="";
+
+	/**
+	 * @return the floorPlanImageFile
+	 */
+	public String getFloorPlanImageFile() {
+		return floorPlanImageFile;
+	}
 
 	public FloorPlanLayer() {
 		super();
@@ -46,7 +54,7 @@ public class FloorPlanLayer extends XYLayer {
 	 * @param floorplan
 	 *            the floorplan to set
 	 */
-	public void setFloorplan(Image floorplan) {
+	private void setFloorplan(Image floorplan) {
 		removeAll();
 		if (floorplan.getBounds().width > MAXSIZE.width
 				|| floorplan.getBounds().height > MAXSIZE.height) {
@@ -59,6 +67,7 @@ public class FloorPlanLayer extends XYLayer {
 	public void setFloorplan(String absPathToImage) {
 		Image floorplan = new Image(null, absPathToImage);
 		setFloorplan(floorplan);
+		floorPlanImageFile=absPathToImage;
 	
 	}
 
