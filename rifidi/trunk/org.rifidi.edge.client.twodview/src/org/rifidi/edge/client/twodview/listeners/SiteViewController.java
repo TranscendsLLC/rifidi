@@ -132,51 +132,65 @@ public class SiteViewController implements DropTargetListener,
 	@Override
 	public void drop(DropTargetEvent event) {
 		if (TextTransfer.getInstance().isSupportedType(event.currentDataType)) {
-			Image image = Activator.getDefault().getImageRegistry().get(
-					Activator.IMG_READER_UNKNOWN);
-			// get Reader from ReaderRegistry
-			RemoteReader reader = (RemoteReader) server.getRemoteReaders().get(
-					(String) event.data);
-			if (reader == null) {
-				logger.warn("No reader with ID " + event.data + " was found");
-				return;
-			}
-			// create an ImageFigure that contains the reference to the
-			ReaderAlphaImageFigure raif = new ReaderAlphaImageFigure(image,
-					reader.getID());
-			raif.setReader(reader);
+			addReaderToMap((String) event.data, event.x, event.y, true);
+		}
 
-			this.readerIDsToReaderFigures.put(raif.getReaderId(), raif);
+	}
+	
+	/**
+	 * Adds an image representation of the reader identified by readerID to the map and positions it at readerPosition x/y-coordinates.
+	 *
+	 * @param readerID
+	 * @param readerPositionX
+	 * @param readerPositionY
+	 * @param dnd - defines whether the method is called by a Drop event (true) or not.
+	 */
+	public void addReaderToMap(String readerID, int readerPositionX, int readerPositionY, boolean dnd){
+		Image image = Activator.getDefault().getImageRegistry().get(
+				Activator.IMG_READER_UNKNOWN);
+		// get Reader from ReaderRegistry
+		RemoteReader reader = (RemoteReader) server.getRemoteReaders().get(
+				readerID);
+		if (reader == null) {
+			logger.warn("No reader with ID " + readerID + " was found");
+			return;
+		}
+		// create an ImageFigure that contains the reference to the
+		ReaderAlphaImageFigure raif = new ReaderAlphaImageFigure(image,
+				reader.getID());
+		raif.setReader(reader);
 
-			ObjectLayer layer = siteView.getObjectLayer();
+		this.readerIDsToReaderFigures.put(raif.getReaderId(), raif);
 
-			Composite compost = composite;
-			int deltaX = 0, deltaY = 0;
+		ObjectLayer layer = siteView.getObjectLayer();
 
-			while (compost != null) {
-				// logger.debug("in loop: " + compost.toString());
-				Rectangle temp = new Rectangle(compost.getBounds());
-				deltaX += temp.x;
-				deltaY += temp.y;
-				compost = compost.getParent();
-			}
-			// deltaY+=20;
-			// logger.debug("deltas: " + deltaX + " " + deltaY);
-			raif.setBounds(new Rectangle(event.x - deltaX, event.y - deltaY,
-					raif.getImage().getBounds().width, raif.getImage()
-							.getBounds().height));
-			try {
-				layer.addReader(raif, null);
-			} catch (ReaderAlreadyInMapException e) {
+		Composite compost = composite;
+		int deltaX = 0, deltaY = 0;
+		
+		if(dnd){
+		while (compost != null) {
+			// logger.debug("in loop: " + compost.toString());
+			Rectangle temp = new Rectangle(compost.getBounds());
+			deltaX += temp.x;
+			deltaY += temp.y;
+			compost = compost.getParent();
+		}
+		}
+		// deltaY+=20;
+		// logger.debug("deltas: " + deltaX + " " + deltaY);
+		raif.setBounds(new Rectangle(readerPositionX - deltaX, readerPositionY - deltaY,
+				raif.getImage().getBounds().width, raif.getImage()
+						.getBounds().height));
+		try {
+			layer.addReader(raif, null);
+		} catch (ReaderAlreadyInMapException e) {
 
-				logger.error("ERROR: Cannot add a reader More than once ");
-				MessageBox mb = new MessageBox(siteView.getSite().getShell(),
-						SWT.ICON_WARNING);
-				mb.setText("Reader already in map");
-				mb.setMessage("Reader cannot be added to map more than once.");
-				mb.open();
-			}
-
+			logger.error("ERROR: Cannot add a reader More than once ");
+			MessageBox mb = new MessageBox(siteView.getSite().getShell(),
+					SWT.ICON_WARNING);
+			mb.setText("Reader already in map");
+			mb.setMessage("Reader cannot be added to map more than once.");
+			mb.open();
 		}
 
 	}

@@ -1,4 +1,5 @@
 package org.rifidi.edge.client.twodview;
+
 //TODO: Comments
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -30,7 +31,22 @@ public class Activator extends AbstractUIPlugin {
 	/**
 	 * The folder for all scenes
 	 */
-	public IFolder folder;
+	private static IFolder floorplanFolder;
+	private static IFolder saveFolder;
+
+	/**
+	 * @return the floorplanFolder
+	 */
+	public static IFolder getFloorplanFolder() {
+		return floorplanFolder;
+	}
+
+	/**
+	 * @return the saveFolder
+	 */
+	public static IFolder getSaveFolder() {
+		return saveFolder;
+	}
 
 	/**
 	 * The constructor
@@ -56,9 +72,13 @@ public class Activator extends AbstractUIPlugin {
 			project.create(null);
 		}
 		project.open(null);
-		folder = project.getFolder("Floorplans");
-		if (!folder.exists()) {
-			folder.create(true, true, null);
+		floorplanFolder = project.getFolder("Floorplans");
+		if (!floorplanFolder.exists()) {
+			floorplanFolder.create(true, true, null);
+		}
+		saveFolder = project.getFolder("SaveFiles");
+		if (!saveFolder.exists()) {
+			saveFolder.create(true, true, null);
 		}
 
 	}
@@ -106,9 +126,13 @@ public class Activator extends AbstractUIPlugin {
 	@Override
 	protected void initializeImageRegistry(ImageRegistry reg) {
 		super.initializeImageRegistry(reg);
-		reg.put(IMG_READER_UNKNOWN, getImageDescriptor("icons/reader-unknown.png"));
-		reg.put(IMG_READER_ON, getImageDescriptor("icons/reader-connected.png"));
-		reg.put(IMG_READER_OFF, getImageDescriptor("icons/reader-disconnected.png"));
+		reg.put(IMG_READER_UNKNOWN,
+				getImageDescriptor("icons/reader-unknown.png"));
+		reg
+				.put(IMG_READER_ON,
+						getImageDescriptor("icons/reader-connected.png"));
+		reg.put(IMG_READER_OFF,
+				getImageDescriptor("icons/reader-disconnected.png"));
 		reg.put(IMG_READER_CONNECTING,
 				getImageDescriptor("icons/reader-connecting.png"));
 		reg.put(IMG_READER_WORKING,

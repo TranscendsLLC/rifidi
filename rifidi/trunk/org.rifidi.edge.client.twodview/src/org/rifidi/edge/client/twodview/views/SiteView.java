@@ -9,12 +9,19 @@
  *  				http://www.opensource.org/licenses/lgpl-license.html
  */
 package org.rifidi.edge.client.twodview.views;
+
 //TODO: Comments
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.LightweightSystem;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.MenuManager;
@@ -32,6 +39,7 @@ import org.eclipse.ui.views.properties.tabbed.ITabbedPropertySheetPageContributo
 import org.rifidi.edge.client.model.sal.RemoteEdgeServer;
 import org.rifidi.edge.client.sal.modelmanager.ModelManagerService;
 import org.rifidi.edge.client.sal.modelmanager.ModelManagerServiceListener;
+import org.rifidi.edge.client.twodview.Activator;
 import org.rifidi.edge.client.twodview.layers.EffectLayer;
 import org.rifidi.edge.client.twodview.layers.FloorPlanLayer;
 import org.rifidi.edge.client.twodview.layers.ListeningScalableLayeredPane;
@@ -40,6 +48,11 @@ import org.rifidi.edge.client.twodview.layers.ObjectLayer;
 import org.rifidi.edge.client.twodview.listeners.SiteViewController;
 import org.rifidi.edge.client.twodview.listeners.SiteViewKeyListener;
 import org.rifidi.edge.client.twodview.listeners.SiteViewMouseWheelListener;
+import org.rifidi.edge.client.twodview.sfx.ReaderAlphaImageFigure;
+import org.rifidi.edge.client.twodview.util.DeserializerUtil;
+import org.rifidi.edge.client.twodview.util.EdgeUi;
+import org.rifidi.edge.client.twodview.util.ReaderPos;
+import org.rifidi.edge.client.twodview.util.SerializerUtil;
 
 /**
  * @author Tobias Hoppenthaler - tobias@pramari.com
@@ -56,16 +69,18 @@ public class SiteView extends ViewPart implements ModelManagerServiceListener,
 	private ObjectLayer objectLayer;
 	private EffectLayer effectLayer;
 	private NoteLayer noteLayer;
-
+	private IFolder saveFolder;
 	private List<RemoteEdgeServer> servers;
 	private SiteViewController siteViewController;
 	private SiteViewSelectionProvider selectionProvider;
+	private IFile saveFile;
 
 	/**
 	 * 
 	 */
 	public SiteView() {
 		ModelManagerService.getInstance().addController(this);
+		this.saveFolder = Activator.getSaveFolder();
 	}
 
 	/*
@@ -124,6 +139,8 @@ public class SiteView extends ViewPart implements ModelManagerServiceListener,
 		this.selectionProvider = new SiteViewSelectionProvider(lp);
 		getSite().setSelectionProvider(selectionProvider);
 		getSite().registerContextMenu(menuMgr, selectionProvider);
+		/** The file where the data is saved */
+		saveFile = saveFolder.getFile("SiteView.xml");
 
 	}
 
@@ -204,6 +221,81 @@ public class SiteView extends ViewPart implements ModelManagerServiceListener,
 	@Override
 	public String getContributorId() {
 		return "org.rifidi.edge.client.twodview.propertyContributor";
+	}
+
+	/**
+	 * Saves the information of this view to a file.
+	 */
+	public void persist() {
+
+		/** check if it exists - else create it */
+		if (!saveFile.exists()) {
+			try {
+				saveFile.create(null, true, null);
+			} catch (CoreException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		double scaleFactor = lp.getScale();
+		lp.setScale(1);
+		/** Creating an object to put the map information in */
+		EdgeUi eui = new EdgeUi();
+		/** Background picture */
+		eui.setImgUrl(this.getFloorplanLayer().getFloorPlanImageFile());
+		/** getting all the readers on the map */
+		ArrayList<IFigure> readerImages = (ArrayList<IFigure>) this.objectLayer
+				.getChildren();
+		/** Coordinates and ID of the readers in the map */
+		HashSet<ReaderPos> readerPosSet = new HashSet<ReaderPos>();
+		for (IFigure iFigure : readerImages) {
+			try {
+				ReaderAlphaImageFigure raif = (ReaderAlphaImageFigure) iFigure;
+				ReaderPos rp = new ReaderPos();
+				rp.setID(raif.getReaderId());
+				rp.setX(raif.getBounds().x);
+				rp.setY(raif.getBounds().y);
+				readerPosSet.add(rp);
+
+			} catch (ClassCastException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		/** Add the xy + id info to our object */
+		eui.setReaderPositions(readerPosSet);
+		/** Write it out to the savefile */
+		SerializerUtil.serializeEdgeUi(eui, saveFile);
+		lp.setScale(scaleFactor);
+	}
+
+	/**
+	 * Retrieves the map information from the savefile and restores it.
+	 */
+	public void initMap() {
+		double scaleFactor = lp.getScale();
+		lp.setScale(1);
+		
+		/** check for the savefile */
+		if (saveFile != null && saveFile.exists()) {
+			/** getting stuff out of the file */
+			EdgeUi eui = DeserializerUtil.deserializeEdgeUi(saveFile);
+			/** do not change if there is no path to file */
+			if (!eui.getImgUrl().isEmpty())
+				this.floorplanLayer.setFloorplan(eui.getImgUrl());
+			/** get ids and positions of the persisted readers */
+			HashSet<ReaderPos> readerPositions = (HashSet<ReaderPos>) eui
+					.getReaderPositions();
+			/** iterate over the set */
+			for (ReaderPos readerPos : readerPositions) {
+				/** if for some strange reason we do not have an id - skip it */
+				if (!readerPos.getID().isEmpty()) {
+					siteViewController.addReaderToMap(readerPos.getID(),
+							readerPos.getX(), readerPos.getY(), false);
+				}
+			}
+		}
+		lp.setScale(scaleFactor);
 	}
 
 }

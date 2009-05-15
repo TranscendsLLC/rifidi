@@ -25,6 +25,14 @@
             id="org.rifidi.edge.client.twodview.removereader"
             name="Remove Reader">
       </command>
+      <command
+            id="org.rifidi.edge.client.twodview.saveui"
+            name="SaveUi">
+      </command>
+      <command
+            id="org.rifidi.edge.client.twodview.restoreui"
+            name="LoadUi">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -63,6 +71,14 @@
       <handler
             class="org.rifidi.edge.client.twodview.handlers.RemoveReader"
             commandId="org.rifidi.edge.client.twodview.removereader">
+      </handler>
+      <handler
+            class="org.rifidi.edge.client.twodview.handlers.SaveUi"
+            commandId="org.rifidi.edge.client.twodview.saveui">
+      </handler>
+      <handler
+            class="org.rifidi.edge.client.twodview.handlers.RestoreUi"
+            commandId="org.rifidi.edge.client.twodview.restoreui">
       </handler>
    </extension>
    <extension
