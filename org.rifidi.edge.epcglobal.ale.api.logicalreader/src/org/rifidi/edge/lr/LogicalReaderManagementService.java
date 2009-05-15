@@ -7,24 +7,28 @@ import java.util.Set;
 
 import org.rifidi.edge.epcglobal.ale.api.lr.data.LRSpec;
 import org.rifidi.edge.epcglobal.ale.api.lr.ws.DuplicateNameExceptionResponse;
-import org.rifidi.edge.epcglobal.ale.api.lr.ws.ImmutableReaderExceptionResponse;
 import org.rifidi.edge.epcglobal.ale.api.lr.ws.InUseExceptionResponse;
-import org.rifidi.edge.epcglobal.ale.api.lr.ws.NoSuchNameExceptionResponse;
 import org.rifidi.edge.epcglobal.ale.api.lr.ws.ValidationExceptionResponse;
+import org.rifidi.edge.lr.exceptions.DuplicateReaderNameException;
+import org.rifidi.edge.lr.exceptions.ImmutableReaderException;
+import org.rifidi.edge.lr.exceptions.NoSuchReaderNameException;
+import org.rifidi.edge.lr.exceptions.ReaderInUseException;
 
 /**
  * @author Jochen Mader - jochen@pramari.com
  * 
  */
 public interface LogicalReaderManagementService {
+
 	/**
 	 * Get a reader by its name. returns null if none is found.
 	 * 
 	 * @param name
 	 * @return
+	 * @throws NoSuchReaderNameException
 	 */
 	LogicalReader getLogicalReaderByName(String name)
-			throws NoSuchNameExceptionResponse;
+			throws NoSuchReaderNameException;
 
 	/**
 	 * Get a set containing the names of all currently available readers. The
@@ -48,8 +52,8 @@ public interface LogicalReaderManagementService {
 	 * 
 	 * @param name
 	 */
-	void destroyLogicalReader(String name) throws NoSuchNameExceptionResponse,
-			ImmutableReaderExceptionResponse, InUseExceptionResponse;
+	void destroyLogicalReader(String name) throws NoSuchReaderNameException,
+			ImmutableReaderException, ReaderInUseException;
 
 	/**
 	 * Create a new logical reader.
@@ -59,5 +63,5 @@ public interface LogicalReaderManagementService {
 	 * @param immutable
 	 */
 	void createLogicalReader(String name, LRSpec lrSpec, Boolean immuatable)
-			throws DuplicateNameExceptionResponse, ValidationExceptionResponse;
+			throws DuplicateReaderNameException, NoSuchReaderNameException;
 }

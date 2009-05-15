@@ -1,6 +1,5 @@
 package org.rifidi.edge.epcglobal.aleread.wrappers;
 
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -17,9 +16,10 @@ import org.rifidi.edge.epcglobal.ale.api.read.ws.ECSpecValidationExceptionRespon
 import org.rifidi.edge.epcglobal.ale.api.read.ws.InvalidURIExceptionResponse;
 import org.rifidi.edge.epcglobal.ale.api.read.ws.NoSuchSubscriberExceptionResponse;
 import org.rifidi.edge.epcglobal.aleread.ECReportmanager;
-import org.rifidi.edge.epcglobal.aleread.rifidievents.DestroyEvent;
+import org.rifidi.edge.esper.events.DestroyEvent;
 import org.rifidi.edge.lr.LogicalReader;
 import org.rifidi.edge.lr.LogicalReaderManagementService;
+import org.rifidi.edge.lr.exceptions.NoSuchReaderNameException;
 
 import com.espertech.esper.client.EPServiceProvider;
 import com.espertech.esper.client.EPStatement;
@@ -135,22 +135,6 @@ public class RifidiECSpec {
 	}
 
 	/**
-	 * Helper method for filling the given set with the names of physicals
-	 * readers.
-	 * 
-	 * @param readerNames
-	 */
-	private void getReaderNames(LogicalReader reader, Set<String> readerNames) {
-		if (reader.getReaders().size() == 0) {
-			readerNames.add(reader.getName());
-			return;
-		}
-		for (LogicalReader subReader : reader.getReaders()) {
-			getReaderNames(subReader, readerNames);
-		}
-	}
-
-	/**
 	 * Start the spec.
 	 */
 	public void start() {
@@ -158,13 +142,8 @@ public class RifidiECSpec {
 			if (!started && !destroied) {
 				if (collectionStatements.size() == 0) {
 					logger.debug("Constructing statements");
-					HashSet<String> readerNames = new HashSet<String>();
-					for (LogicalReader reader : readers) {
-						getReaderNames(reader, readerNames);
-					}
-
 					// SETUP
-					// create the window 
+					// create the window
 					collectionStatements
 							.add(esper
 									.getEPAdministrator()
@@ -178,7 +157,7 @@ public class RifidiECSpec {
 															.getDuration()
 															: rifidiBoundarySpec
 																	.getRepeatInterval())
-													+ " msec) org.rifidi.edge.core.messages.TagReadEvent"));
+													+ " msec) as TagReadEvent"));
 					// create the where conditions for primary fields
 					StringBuilder prims = new StringBuilder();
 					boolean first = true;
@@ -203,49 +182,38 @@ public class RifidiECSpec {
 							prims.append("?");
 						}
 					}
-					// assemble the set of allowed source readers from the list
-					// of
-					// readers provided by the logical reader
-					StringBuilder readersBuilder = new StringBuilder("( ");
-					for (String readerName : readerNames) {
-						readersBuilder.append("'");
-						readersBuilder.append(readerName);
-						readersBuilder.append("'");
-						readersBuilder.append(",");
-					}
-					// remove trailing commas
-					readersBuilder.deleteCharAt(readersBuilder.length() - 1);
-					readersBuilder.append(" )");
 					// fill the window
-					collectionStatements
-							.add(esper
-									.getEPAdministrator()
-									.createEPL(
-											"insert into "
-													+ name
-													+ "_collectwin select * from org.rifidi.edge.core.messages.TagReadEvent as tagevent where "
-													+ "not exists (select * from "
-													+ name
-													+ "_collectwin as collected where "
-													+ prims.toString()
-													+ ") and readerID in "
-													+ readersBuilder.toString()));
+					for (LogicalReader reader : readers) {
+						collectionStatements
+								.add(esper
+										.getEPAdministrator()
+										.createEPL(
+												"insert into "
+														+ name
+														+ "_collectwin select * from "
+														+ reader.getName()
+														+ " as tagevent where "
+														+ "not exists (select * from "
+														+ name
+														+ "_collectwin as collected where "
+														+ prims.toString()
+														+ ")"));
+					}
 					// DURATION TIMING
 					// regular timing using intervals, don't use if data
-					// available
-					// is set
+					// available is set
 					if (!rifidiBoundarySpec.isWhenDataAvailable()) {
 						logger.debug("Creating duration timer.");
 						durationStatements
 								.add(esper
 										.getEPAdministrator()
 										.createEPL(
-												"on pattern[every org.rifidi.edge.epcglobal.aleread.rifidievents.StartEvent(name='"
+												"on pattern[every StartEvent(name='"
 														+ name
 														+ "') -> (timer:interval("
 														+ rifidiBoundarySpec
 																.getDuration()
-														+ " msec) and not org.rifidi.edge.epcglobal.aleread.rifidievents.StopEvent(name='"
+														+ " msec) and not StopEvent(name='"
 														+ name
 														+ "'))] select tags from "
 														+ name
@@ -253,15 +221,13 @@ public class RifidiECSpec {
 					} else {
 						// WHEN DATA AVAILABLE
 						// timing for when data available, should replace
-						// regular
-						// timing if
-						// provided!!!
+						// regular timing if provided!!!
 						logger.debug("Creating when data avilabale timer.");
 						whenDataAvailableStatements
 								.add(esper
 										.getEPAdministrator()
 										.createEPL(
-												"on pattern[every (org.rifidi.edge.epcglobal.aleread.rifidievents.StartEvent(name='"
+												"on pattern[every (StartEvent(name='"
 														+ name
 														+ "') -> "
 														+ name
@@ -276,7 +242,7 @@ public class RifidiECSpec {
 								.add(esper
 										.getEPAdministrator()
 										.createEPL(
-												"on pattern[every (org.rifidi.edge.epcglobal.aleread.rifidievents.StartEvent(name='"
+												"on pattern[every (StartEvent(name='"
 														+ name
 														+ "') -> "
 														+ name
@@ -299,14 +265,14 @@ public class RifidiECSpec {
 							.add(esper
 									.getEPAdministrator()
 									.createEPL(
-											"on pattern[every org.rifidi.edge.epcglobal.aleread.rifidievents.StartEvent(name='"
+											"on pattern[every StartEvent(name='"
 													+ name
 													+ "') -> (timer:interval("
 													+ rifidiBoundarySpec
 															.getDuration()
 													+ " msec) and not "
 													+ name
-													+ "_collectwin and not org.rifidi.edge.epcglobal.aleread.rifidievents.StopEvent(name='"
+													+ "_collectwin and not StopEvent(name='"
 													+ name
 													+ "'))] select count(whine) from "
 													+ name
@@ -318,14 +284,14 @@ public class RifidiECSpec {
 								.add(esper
 										.getEPAdministrator()
 										.createEPL(
-												"on pattern[every (org.rifidi.edge.epcglobal.aleread.rifidievents.StartEvent(name='"
+												"on pattern[every (StartEvent(name='"
 														+ name
 														+ "') -> [0..] "
 														+ name
 														+ "_collectwin until (timer:interval("
 														+ rifidiBoundarySpec
 																.getDuration()
-														+ " msec) and org.rifidi.edge.epcglobal.aleread.rifidievents.StopEvent(name='"
+														+ " msec) and StopEvent(name='"
 														+ name
 														+ "')))] select count(whine) from "
 														+ name
@@ -335,14 +301,14 @@ public class RifidiECSpec {
 								.add(esper
 										.getEPAdministrator()
 										.createEPL(
-												"on pattern[every (org.rifidi.edge.epcglobal.aleread.rifidievents.StartEvent(name='"
+												"on pattern[every (StartEvent(name='"
 														+ name
 														+ "') -> [0..] "
 														+ name
 														+ "_collectwin until (timer:interval("
 														+ rifidiBoundarySpec
 																.getDuration()
-														+ " msec) and org.rifidi.edge.epcglobal.aleread.rifidievents.StopEvent(name='"
+														+ " msec) and StopEvent(name='"
 														+ name
 														+ "')))] select tags from "
 														+ name
@@ -358,7 +324,7 @@ public class RifidiECSpec {
 								.add(esper
 										.getEPAdministrator()
 										.createEPL(
-												"on pattern[every (org.rifidi.edge.epcglobal.aleread.rifidievents.StartEvent(name='"
+												"on pattern[every (StartEvent(name='"
 														+ name
 														+ "') -> "
 														+ name
@@ -375,7 +341,7 @@ public class RifidiECSpec {
 								.add(esper
 										.getEPAdministrator()
 										.createEPL(
-												"on pattern[every (org.rifidi.edge.epcglobal.aleread.rifidievents.StartEvent(name='"
+												"on pattern[every (StartEvent(name='"
 														+ name
 														+ "') -> (timer:interval("
 														+ rifidiBoundarySpec
@@ -388,22 +354,20 @@ public class RifidiECSpec {
 					}
 
 					// clean up before collecting
-					collectionStatements
-							.add(esper
-									.getEPAdministrator()
-									.createEPL(
-											"on pattern[every org.rifidi.edge.epcglobal.aleread.rifidievents.StartEvent(name='"
-													+ name
-													+ "')] delete from "
-													+ name + "_collectwin"));
-					destroyStatements.add(esper.getEPAdministrator().createEPL(
-							"on org.rifidi.edge.epcglobal.aleread.rifidievents.DestroyEvent(name='"
-									+ name + "') select count(whine) from "
-									+ name + "_collectwin as whine"));
-					destroyStatements.add(esper.getEPAdministrator().createEPL(
-							"on org.rifidi.edge.epcglobal.aleread.rifidievents.DestroyEvent(name='"
-									+ name + "') select tags  from " + name
-									+ "_collectwin as tags"));
+					collectionStatements.add(esper.getEPAdministrator()
+							.createEPL(
+									"on pattern[every StartEvent(name='" + name
+											+ "')] delete from " + name
+											+ "_collectwin"));
+					// TOO: wtf, review destruction of specs!!
+					// destroyStatements.add(esper.getEPAdministrator().createEPL(
+					// "DestroyEvent(name='" + name
+					// + "') select count(whine) from " + name
+					// + "_collectwin as whine"));
+					// destroyStatements.add(esper.getEPAdministrator().createEPL(
+					// "DestroyEvent(name='" + name
+					// + "') select tags  from " + name
+					// + "_collectwin as tags"));
 
 					allNonCollectionStatements.addAll(durationStatements);
 					allNonCollectionStatements
@@ -523,7 +487,7 @@ public class RifidiECSpec {
 						.getLogicalReader()) {
 					try {
 						lrService.getLogicalReaderByName(reader).release(this);
-					} catch (NoSuchNameExceptionResponse ex) {
+					} catch (NoSuchReaderNameException ex) {
 						logger.debug("Reader " + reader + " doesn't exist");
 					}
 				}
@@ -559,7 +523,8 @@ public class RifidiECSpec {
 	 * @param uri
 	 * @throws NoSuchSubscriberExceptionResponse
 	 */
-	public void unsubscribe(String uri) throws NoSuchSubscriberExceptionResponse {
+	public void unsubscribe(String uri)
+			throws NoSuchSubscriberExceptionResponse {
 		synchronized (subscriptionURIs) {
 			if (!subscriptionURIs.contains(uri)) {
 				throw new NoSuchSubscriberExceptionResponse("Uri " + uri

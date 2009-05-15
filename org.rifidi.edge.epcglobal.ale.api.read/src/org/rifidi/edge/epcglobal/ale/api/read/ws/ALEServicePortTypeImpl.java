@@ -23,6 +23,7 @@ import org.rifidi.edge.epcglobal.aleread.wrappers.RifidiBoundarySpec;
 import org.rifidi.edge.epcglobal.aleread.wrappers.RifidiReport;
 import org.rifidi.edge.lr.LogicalReader;
 import org.rifidi.edge.lr.LogicalReaderManagementService;
+import org.rifidi.edge.lr.exceptions.NoSuchReaderNameException;
 import org.rifidi.edge.wsmanagement.WebService;
 
 /**
@@ -62,7 +63,7 @@ public class ALEServicePortTypeImpl implements ALEServicePortType, WebService {
 				lrService.getLogicalReaderByName(reader).release(
 						parms.getSpecName());
 			}
-		} catch (org.rifidi.edge.epcglobal.ale.api.lr.ws.NoSuchNameExceptionResponse e) {
+		} catch (NoSuchReaderNameException e) {
 			logger.warn("Spec " + parms.getSpecName()
 					+ " was registered to non existend reader.");
 		}
@@ -157,13 +158,13 @@ public class ALEServicePortTypeImpl implements ALEServicePortType, WebService {
 						parms.getSpecName());
 				readers.add(lrService.getLogicalReaderByName(reader));
 			}
-		} catch (org.rifidi.edge.epcglobal.ale.api.lr.ws.NoSuchNameExceptionResponse e) {
+		} catch (NoSuchReaderNameException e) {
 			// release all readers that have already been aquired
 			for (String reader : parms.getSpec().getLogicalReaders()
 					.getLogicalReader()) {
 				try {
 					lrService.getLogicalReaderByName(reader).release(this);
-				} catch (org.rifidi.edge.epcglobal.ale.api.lr.ws.NoSuchNameExceptionResponse ex) {
+				} catch (NoSuchReaderNameException ex) {
 					logger.debug("Reader " + reader + " doesn't exist");
 				}
 			}

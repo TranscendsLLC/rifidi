@@ -12,8 +12,8 @@ import java.util.concurrent.locks.ReentrantLock;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.epcglobal.ale.api.read.data.ECReports;
-import org.rifidi.edge.epcglobal.aleread.rifidievents.StartEvent;
-import org.rifidi.edge.epcglobal.aleread.rifidievents.StopEvent;
+import org.rifidi.edge.esper.events.StartEvent;
+import org.rifidi.edge.esper.events.StopEvent;
 
 import com.espertech.esper.client.EPServiceProvider;
 
