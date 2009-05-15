@@ -1,0 +1,6 @@
+createsession Alien9800_1
+createsession Alien9800_2
+executecommand Alien9800_1 1 Alien9800_GetTagList_1 2000
+executecommand Alien9800_2 1 Alien9800_GetTagList_1 2000
+startsession Alien9800_1 1
+startsession Alien9800_2 1

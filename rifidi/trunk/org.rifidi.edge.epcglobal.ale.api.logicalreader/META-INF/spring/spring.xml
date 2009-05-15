@@ -5,11 +5,14 @@
      http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi.xsd
      http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd">
 
-
+	<osgi:reference id="esperManagerService"
+		interface="org.rifidi.edge.esper.EsperManagementService" />
+		
 	<bean id="aleLRAPIService"
 		class="org.rifidi.edge.epcglobal.ale.api.lr.ws.ALELRServicePortTypeImpl">
 		<property name="LRService" ref="lrManagment" />
 	</bean>
+	
 	<osgi:service id="aleLRService" ref="aleLRAPIService">
 		<osgi:interfaces>
 			<value>org.rifidi.edge.wsmanagement.WebService
@@ -21,6 +24,7 @@
 
 
 	<bean id="lrManagment" class="org.rifidi.edge.lr.LogicalReaderManagementServiceImpl">
+		<property name="esperManagementService" ref="esperManagerService" />
 		<property name="realReaders" ref="readerSet" />
 	</bean>
 	<osgi:service id="lrManagmentService" ref="lrManagment">

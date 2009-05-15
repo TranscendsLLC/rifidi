@@ -25,6 +25,8 @@ import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.messages.DatacontainerEvent;
 import org.rifidi.edge.core.messages.TagReadEvent;
 import org.rifidi.edge.epcglobal.ale.api.read.data.ECReport;
+import org.rifidi.edge.epcglobal.ale.api.read.data.ECReportGroup;
+import org.rifidi.edge.epcglobal.ale.api.read.data.ECReportGroupListMember;
 import org.rifidi.edge.epcglobal.ale.api.read.data.ECReports;
 import org.rifidi.edge.epcglobal.ale.api.read.data.ECSpec;
 import org.rifidi.edge.epcglobal.ale.api.read.data.ECReports.Reports;

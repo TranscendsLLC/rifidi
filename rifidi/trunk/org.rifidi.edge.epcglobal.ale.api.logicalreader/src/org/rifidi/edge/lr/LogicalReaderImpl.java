@@ -8,6 +8,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.rifidi.edge.epcglobal.ale.api.lr.data.LRProperty;
 import org.rifidi.edge.epcglobal.ale.api.lr.data.LRSpec;
@@ -15,6 +17,8 @@ import org.rifidi.edge.epcglobal.ale.api.lr.data.LRSpec.Properties;
 import org.rifidi.edge.epcglobal.ale.api.lr.ws.ImmutableReaderExceptionResponse;
 import org.rifidi.edge.epcglobal.ale.api.lr.ws.InUseExceptionResponse;
 import org.rifidi.edge.epcglobal.ale.api.lr.ws.ReaderLoopExceptionResponse;
+import org.rifidi.edge.lr.exceptions.ImmutableReaderException;
+import org.rifidi.edge.lr.exceptions.ReaderInUseException;
 
 /**
  * @author Jochen Mader - jochen@pramari.com
@@ -31,6 +35,12 @@ public class LogicalReaderImpl implements LogicalReader {
 	private Boolean immutable;
 	/** Set containing all parents of this reader. */
 	private Set<LogicalReader> parents;
+	/** Locked during every update for a reader. */
+	private ReentrantLock updating = new ReentrantLock();
+	/** True if the reader was destroyed. */
+	private boolean destroyed = false;
+	/** true if the reader has parents or is used. */
+	private boolean inUse = false;
 
 	/**
 	 * Constructor.
@@ -47,8 +57,9 @@ public class LogicalReaderImpl implements LogicalReader {
 		if (name == null) {
 			throw new IllegalArgumentException("name must not be null");
 		}
-		if(readers != null && readers.size()>0){
-			throw new IllegalArgumentException("This type of reader can't have sub readers.");
+		if (readers != null && readers.size() > 0) {
+			throw new IllegalArgumentException(
+					"This type of reader can't have sub readers.");
 		}
 		if (properties == null) {
 			throw new IllegalArgumentException("properties must not be null");
@@ -56,10 +67,10 @@ public class LogicalReaderImpl implements LogicalReader {
 		this.immutable = immutable;
 		this.name = name;
 		this.properties = new ConcurrentHashMap<String, String>(properties);
-		this.users = new HashSet<Object>();
+		this.users = new CopyOnWriteArraySet<Object>();
 		this.parents = new HashSet<LogicalReader>();
-		for(LogicalReader reader:readers){
-			reader.makeChildOf(this);	
+		for (LogicalReader reader : readers) {
+			reader.makeChildOf(this);
 		}
 	}
 
@@ -70,8 +81,12 @@ public class LogicalReaderImpl implements LogicalReader {
 	 */
 	@Override
 	public void aquire(Object user) {
-		synchronized (users) {
+		updating.lock();
+		try {
 			users.add(user);
+			inUse = true;
+		} finally {
+			updating.unlock();
 		}
 	}
 
@@ -81,18 +96,23 @@ public class LogicalReaderImpl implements LogicalReader {
 	 * @see org.rifidi.edge.lr.LogicalReader#destroy()
 	 */
 	@Override
-	public void destroy() throws ImmutableReaderExceptionResponse,
-			InUseExceptionResponse {
-		if (isImmutable()) {
-			throw new ImmutableReaderExceptionResponse("Reader is immutable.");
-		}
-		if (!users.isEmpty()) {
-			throw new InUseExceptionResponse("There are " + users.size()
-					+ " users using the reader.");
-		}
-		if (hasParents()){
-			throw new InUseExceptionResponse("There are " + parents.size()
-					+ " readers using the reader.");
+	public void destroy() throws ImmutableReaderException, ReaderInUseException {
+		updating.lock();
+		try {
+			if (immutable) {
+				throw new ImmutableReaderException("Reader is immutable.");
+			}
+			if (!users.isEmpty()) {
+				throw new ReaderInUseException("There are " + users.size()
+						+ " users using the reader.");
+			}
+			if (hasParents()) {
+				throw new ReaderInUseException("There are " + parents.size()
+						+ " readers using the reader.");
+			}
+			destroyed = true;
+		} finally {
+			updating.unlock();
 		}
 	}
 
@@ -145,9 +165,7 @@ public class LogicalReaderImpl implements LogicalReader {
 	 */
 	@Override
 	public Set<Object> getUsers() {
-		synchronized (users) {
-			return new HashSet<Object>(users);
-		}
+		return new HashSet<Object>(users);
 	}
 
 	/*
@@ -167,7 +185,7 @@ public class LogicalReaderImpl implements LogicalReader {
 	 */
 	@Override
 	public boolean isInUse() {
-		return !users.isEmpty();
+		return inUse;
 	}
 
 	/*
@@ -177,8 +195,14 @@ public class LogicalReaderImpl implements LogicalReader {
 	 */
 	@Override
 	public void release(Object user) {
-		synchronized (users) {
+		updating.lock();
+		try {
 			users.remove(user);
+			if (parents.isEmpty() && users.isEmpty()) {
+				inUse = false;
+			}
+		} finally {
+			updating.unlock();
 		}
 	}
 
@@ -191,9 +215,10 @@ public class LogicalReaderImpl implements LogicalReader {
 	@Override
 	public void setProperty(String propertyName, String propertyValue)
 			throws ImmutableReaderExceptionResponse, InUseExceptionResponse {
-		synchronized (users) {
-			if (!isInUse()) {
-				if (!isImmutable()) {
+		updating.lock();
+		try {
+			if (!inUse) {
+				if (!immutable) {
 					this.properties.put(propertyName, propertyValue);
 					return;
 				} else {
@@ -202,6 +227,8 @@ public class LogicalReaderImpl implements LogicalReader {
 				}
 			}
 			throw new InUseExceptionResponse("Reader is in use.");
+		} finally {
+			updating.unlock();
 		}
 	}
 
@@ -216,11 +243,13 @@ public class LogicalReaderImpl implements LogicalReader {
 			Set<LogicalReader> readers)
 			throws ImmutableReaderExceptionResponse, InUseExceptionResponse,
 			ReaderLoopExceptionResponse {
-		if(readers != null && readers.size()>0){
-			throw new IllegalArgumentException("This type of reader can't have sub readers.");
-		}
-		synchronized (users) {
-			if (!isInUse()) {
+		updating.lock();
+		try {
+			if (readers != null && readers.size() > 0) {
+				throw new IllegalArgumentException(
+						"This type of reader can't have sub readers.");
+			}
+			if (!inUse) {
 				if (!isImmutable()) {
 					this.properties.clear();
 					for (String key : properties.keySet()) {
@@ -233,6 +262,8 @@ public class LogicalReaderImpl implements LogicalReader {
 				}
 			}
 			throw new InUseExceptionResponse("Reader is in use.");
+		} finally {
+			updating.unlock();
 		}
 	}
 
@@ -254,7 +285,15 @@ public class LogicalReaderImpl implements LogicalReader {
 	 */
 	@Override
 	public void growUp(LogicalReader parent) {
-		parents.remove(parent);
+		updating.lock();
+		try {
+			parents.remove(parent);
+			if (parents.isEmpty() && users.isEmpty()) {
+				inUse = false;
+			}
+		} finally {
+			updating.unlock();
+		}
 	}
 
 	/*
@@ -266,15 +305,22 @@ public class LogicalReaderImpl implements LogicalReader {
 	 */
 	@Override
 	public void makeChildOf(LogicalReader parent) {
-		parents.add(parent);
+		try {
+			parents.add(parent);
+			inUse = true;
+		} finally {
+			updating.unlock();
+		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.rifidi.edge.lr.LogicalReader#hasparents()
 	 */
 	@Override
 	public boolean hasParents() {
 		return !parents.isEmpty();
 	}
-	
+
 }

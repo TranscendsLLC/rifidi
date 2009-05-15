@@ -10,6 +10,8 @@ import org.rifidi.edge.epcglobal.ale.api.lr.data.LRSpec;
 import org.rifidi.edge.epcglobal.ale.api.lr.ws.ImmutableReaderExceptionResponse;
 import org.rifidi.edge.epcglobal.ale.api.lr.ws.InUseExceptionResponse;
 import org.rifidi.edge.epcglobal.ale.api.lr.ws.ReaderLoopExceptionResponse;
+import org.rifidi.edge.lr.exceptions.ImmutableReaderException;
+import org.rifidi.edge.lr.exceptions.ReaderInUseException;
 
 /**
  * @author Jochen Mader - jochen@pramari.com
@@ -25,7 +27,7 @@ public interface LogicalReader {
 	LRSpec getLRSpec();
 
 	/**
-	 * Update the reader with the given properties and readers..
+	 * Update the reader with the given properties and readers.
 	 * 
 	 * @param properties
 	 * @param readers
@@ -65,8 +67,7 @@ public interface LogicalReader {
 	 * @throws ImmutableReaderExceptionResponse
 	 * @throws InUseExceptionResponse
 	 */
-	void destroy() throws ImmutableReaderExceptionResponse,
-			InUseExceptionResponse;
+	void destroy() throws ImmutableReaderException, ReaderInUseException;
 
 	/**
 	 * Returns true if the reader is immutable.
@@ -104,7 +105,7 @@ public interface LogicalReader {
 	void release(Object user);
 
 	/**
-	 * Get readers contained by this reader.
+	 * Get readers contained by this reader. Return is never null.
 	 * 
 	 * @return
 	 */
