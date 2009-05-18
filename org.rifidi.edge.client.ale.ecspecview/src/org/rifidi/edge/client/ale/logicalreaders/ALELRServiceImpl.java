@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.client.ale.logicalreaders;
-//TODO: Comments
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -46,8 +44,9 @@ import org.rifidi.edge.client.ale.logicalreaders.decorators.LRSpecDecorator;
 /**
  * Not threadsafe because we only use this class inside of eclipse!!!!
  * 
- * @author Jochen Mader - jochen@pramari.com
+ * TODO: Class level comment.  
  * 
+ * @author Jochen Mader - jochen@pramari.com
  */
 public class ALELRServiceImpl implements ALELRService, ALEService {
 	/** Logger for this class. */

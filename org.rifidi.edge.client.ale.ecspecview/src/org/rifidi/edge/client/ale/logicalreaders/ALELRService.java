@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.client.ale.logicalreaders;
-//TODO: Comments
+
 import java.util.List;
 
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -14,8 +12,9 @@ import org.rifidi.edge.client.ale.api.wsdl.alelr.epcglobal.ValidationExceptionRe
 import org.rifidi.edge.client.ale.logicalreaders.decorators.LRSpecDecorator;
 
 /**
- * @author Jochen Mader - jochen@pramari.com
+ * TODO: Class level comment.  
  * 
+ * @author Jochen Mader - jochen@pramari.com
  */
 public interface ALELRService extends IPropertyChangeListener {
 

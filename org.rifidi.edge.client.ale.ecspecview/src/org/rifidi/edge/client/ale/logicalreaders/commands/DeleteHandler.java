@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.client.ale.logicalreaders.commands;
-//TODO: Comments
+
 import java.util.List;
 
 import org.eclipse.core.commands.AbstractHandler;
@@ -19,8 +17,9 @@ import org.rifidi.edge.client.ale.logicalreaders.ALELRService;
 import org.rifidi.edge.client.ale.logicalreaders.decorators.LRSpecDecorator;
 
 /**
- * @author Jochen Mader - jochen@pramari.com
+ * TODO: Class level comment.  
  * 
+ * @author Jochen Mader - jochen@pramari.com
  */
 public class DeleteHandler extends AbstractHandler {
 

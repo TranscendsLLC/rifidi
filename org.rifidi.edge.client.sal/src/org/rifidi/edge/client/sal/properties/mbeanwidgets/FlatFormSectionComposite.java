@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.client.sal.properties.mbeanwidgets;
-//TODO: Comments
+
 import java.util.HashMap;
 import java.util.Set;
 
@@ -26,7 +24,6 @@ import org.rifidi.edge.client.mbean.ui.widgets.data.StringWidgetData;
  * Eclipse Forms UI
  * 
  * @author Kyle Neumeier - kyle@pramari.com
- * 
  */
 public class FlatFormSectionComposite extends AbstractMBeanInfoComposite {
 
@@ -124,7 +121,6 @@ public class FlatFormSectionComposite extends AbstractMBeanInfoComposite {
 	 */
 	@Override
 	public void setError(String widgetName, String message) {
-		// TODO Auto-generated method stub
 
 	}
 
@@ -137,7 +133,6 @@ public class FlatFormSectionComposite extends AbstractMBeanInfoComposite {
 	 */
 	@Override
 	public void unsetError(String widgetName) {
-		// TODO Auto-generated method stub
 
 	}
 

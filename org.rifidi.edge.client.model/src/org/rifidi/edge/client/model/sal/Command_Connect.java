@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.client.model.sal;
-//TODO: Comments
+
 import javax.jms.JMSException;
 import javax.jms.Session;
 
@@ -14,7 +12,6 @@ import org.rifidi.edge.client.model.sal.preferences.EdgeServerPreferences;
  * This makes a new connection to the edge server
  * 
  * @author Kyle Neumeier - kyle@pramari.com
- * 
  */
 public class Command_Connect implements RemoteEdgeServerCommand {
 

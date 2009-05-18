@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.core.rmi.client.edgeserverstub;
-//TODO: Comments
+
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
@@ -13,12 +11,13 @@ import org.rifidi.rmi.utils.remotecall.ServerDescriptionBasedRemoteMethodCall;
  * This call gets the timestamp of when the server started up
  * 
  * @author Kyle Neumeier - kyle@pramari.com
- * 
  */
 public class ESGetStartupTimestamp extends
 		ServerDescriptionBasedRemoteMethodCall<Long, RuntimeException> {
 
 	/**
+	 * Constructor.  
+	 * 
 	 * @param serverDescription
 	 *            the server description to use
 	 */

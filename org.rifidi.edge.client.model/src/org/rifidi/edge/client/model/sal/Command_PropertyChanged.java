@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.client.model.sal;
-//TODO: Comments
+
 import javax.management.Attribute;
 
 import org.rifidi.edge.client.model.sal.commands.RemoteEdgeServerCommand;
@@ -13,7 +11,6 @@ import org.rifidi.edge.core.api.jms.notifications.PropertyChangedNotification;
  * either of a Reader or a CommandConfiguration)
  * 
  * @author Kyle Neumeier - kyle@pramari.com
- * 
  */
 public class Command_PropertyChanged implements RemoteEdgeServerCommand {
 

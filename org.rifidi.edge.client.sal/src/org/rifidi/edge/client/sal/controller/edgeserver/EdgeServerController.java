@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.client.sal.controller.edgeserver;
-//TODO: Comments
+
 import java.util.Set;
 
 import javax.management.AttributeList;
@@ -16,7 +14,6 @@ import org.rifidi.edge.client.model.sal.RemoteSession;
  * An interface for controlling a RemoteEdgeServer
  * 
  * @author Kyle Neumeier - kyle@pramari.com
- * 
  */
 public interface EdgeServerController {
 

@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.client.model.sal;
-//TODO: Comments
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -33,7 +31,6 @@ import org.rifidi.rmi.utils.exceptions.ServerUnavailable;
  * RemoteEdgeServer is really in synch with the server
  * 
  * @author Kyle Neumeier - kyle@pramari.com
- * 
  */
 public class Command_Update implements RemoteEdgeServerCommand {
 

@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.client.sal.wizards.newreader;
-//TODO: Comments
+
 import java.util.HashSet;
 
 import org.eclipse.jface.wizard.WizardPage;
@@ -17,7 +15,6 @@ import org.rifidi.edge.client.mbean.ui.widgets.standard.StandardMBeanInfoComposi
  * about a new reader.
  * 
  * @author Kyle Neumeier - kyle@pramari.com
- * 
  */
 public class EditConnectionInfoPage extends WizardPage implements
 		MBeanInfoWidgetListener {

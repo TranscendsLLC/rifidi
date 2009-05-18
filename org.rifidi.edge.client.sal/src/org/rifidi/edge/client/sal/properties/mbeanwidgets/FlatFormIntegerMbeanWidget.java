@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.client.sal.properties.mbeanwidgets;
-//TODO: Comments
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Spinner;
@@ -12,8 +10,9 @@ import org.rifidi.edge.client.mbean.ui.widgets.data.IntegerWidgetData;
 import org.rifidi.edge.client.mbean.ui.widgets.standard.impl.StandardIntegerWidget;
 
 /**
- * @author kyle
+ * TODO: Class level comment.  
  * 
+ * @author kyle
  */
 public class FlatFormIntegerMbeanWidget<T extends IntegerWidgetData> extends
 		StandardIntegerWidget<T> {
@@ -24,7 +23,6 @@ public class FlatFormIntegerMbeanWidget<T extends IntegerWidgetData> extends
 	 * Constructor
 	 * 
 	 * @param data
-	 * 
 	 */
 	public FlatFormIntegerMbeanWidget(T data,
 			TabbedPropertySheetWidgetFactory factory) {

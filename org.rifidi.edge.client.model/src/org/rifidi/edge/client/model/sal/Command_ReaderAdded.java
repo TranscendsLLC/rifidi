@@ -1,5 +1,6 @@
+
 package org.rifidi.edge.client.model.sal;
-//TODO: Comments
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eclipse.core.databinding.observable.map.ObservableMap;
@@ -15,7 +16,6 @@ import org.rifidi.rmi.utils.exceptions.ServerUnavailable;
  * A command that is executed when a reader has been added
  * 
  * @author Kyle Neumeier - kyle@pramari.com
- * 
  */
 public class Command_ReaderAdded implements RemoteEdgeServerCommand {
 

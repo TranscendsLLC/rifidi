@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.client.sal.controller.edgeserver.handlers;
-//TODO: Comments
+
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
@@ -14,7 +12,6 @@ import org.rifidi.edge.client.sal.controller.edgeserver.EdgeServerTreeContentPro
  * happen if the Edge Server is in the disconnected state
  * 
  * @author Kyle Neumeier - kyle@pramari.com
- * 
  */
 public class ConnectHandler extends AbstractHandler implements IHandler2 {
 

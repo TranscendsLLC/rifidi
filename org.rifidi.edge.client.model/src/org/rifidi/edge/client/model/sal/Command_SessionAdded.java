@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.client.model.sal;
-//TODO: Comments
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eclipse.core.databinding.observable.map.ObservableMap;
@@ -18,7 +16,6 @@ import org.rifidi.rmi.utils.exceptions.ServerUnavailable;
  * A command that is executed when a new Session was added
  * 
  * @author Kyle Neumeier - Kyle@pramari.com
- * 
  */
 public class Command_SessionAdded implements RemoteEdgeServerCommand {
 

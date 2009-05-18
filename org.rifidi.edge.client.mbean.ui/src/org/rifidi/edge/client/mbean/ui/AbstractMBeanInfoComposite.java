@@ -1,5 +1,6 @@
+
 package org.rifidi.edge.client.mbean.ui;
-//TODO: Comments
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -21,7 +22,6 @@ import org.rifidi.edge.client.mbean.ui.widgets.abstractwidgets.AbstractWidget;
  * this class.
  * 
  * @author Kyle Neumeier - kyle@pramari.com
- * 
  */
 public abstract class AbstractMBeanInfoComposite implements
 		MBeanInfoWidgetListener {
@@ -37,6 +37,13 @@ public abstract class AbstractMBeanInfoComposite implements
 	/** True if we should regard the categories as include */
 	protected boolean includeExcelude;
 
+	/**
+	 * Constructor.  
+	 * 
+	 * @param info
+	 * @param categories
+	 * @param includeExclude
+	 */
 	public AbstractMBeanInfoComposite(MBeanInfo info, Set<String> categories,
 			boolean includeExclude) {
 		this.formRoot = info;
@@ -74,6 +81,11 @@ public abstract class AbstractMBeanInfoComposite implements
 		widget.addListener(this);
 	}
 
+	/**
+	 * TODO: Method level comment.  
+	 * 
+	 * @return
+	 */
 	protected List<AbstractWidget<?>> getSortedListOfWidgets() {
 		List<AbstractWidget<?>> list = new ArrayList<AbstractWidget<?>>(widgets
 				.values());
@@ -81,11 +93,18 @@ public abstract class AbstractMBeanInfoComposite implements
 		return list;
 	}
 
+	/**
+	 * TODO: Method level comment.  
+	 * 
+	 * @param widgetName
+	 * @return
+	 */
 	protected AbstractWidget<?> getWidget(String widgetName) {
 		return widgets.get(widgetName);
 	}
 
 	/**
+	 * TODO: Method level comment.  
 	 * 
 	 * @return A list of MBeanAttributeInfos that are filtered according to the
 	 *         filterSet

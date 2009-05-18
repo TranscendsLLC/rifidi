@@ -1,5 +1,6 @@
+
 package org.rifidi.edge.client.mbean.ui.widgets.data;
-//TODO: Comments
+
 import java.util.ArrayList;
 
 import javax.management.JMX;
@@ -9,7 +10,6 @@ import javax.management.MBeanAttributeInfo;
  * This is the concrete class for data used to construct a Choice Widget
  * 
  * @author Kyle Neumeier - kyle@pramari.com
- * 
  */
 public class ChoiceWidgetData extends AbstractWidgetData {
 

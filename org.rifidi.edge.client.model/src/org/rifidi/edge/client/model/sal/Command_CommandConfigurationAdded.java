@@ -1,9 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.client.model.sal;
-//TODO: Comments
-import java.rmi.Remote;
+
 import java.util.Collection;
 
 import org.apache.commons.logging.Log;
@@ -21,7 +18,6 @@ import org.rifidi.rmi.utils.exceptions.ServerUnavailable;
  * This is a command that is executed when a new command configuration is added
  * 
  * @author Kyle Neumeier - kyle@pramari.com
- * 
  */
 public class Command_CommandConfigurationAdded implements
 		RemoteEdgeServerCommand {
@@ -42,6 +38,12 @@ public class Command_CommandConfigurationAdded implements
 	private Log logger = LogFactory
 			.getLog(Command_CommandConfigurationAdded.class);
 
+	/**
+	 * Constructor.  
+	 * 
+	 * @param server
+	 * @param notification
+	 */
 	public Command_CommandConfigurationAdded(RemoteEdgeServer server,
 			CommandConfigurationAddedNotification notification) {
 		this.commandConfigurations = server.commandConfigurations;

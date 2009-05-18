@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.client.model.sal;
-//TODO: Comments
+
 import javax.management.AttributeList;
 
 import org.rifidi.edge.client.model.sal.commands.RemoteEdgeServerCommand;
@@ -10,8 +8,9 @@ import org.rifidi.edge.core.rmi.client.commandconfigurationstub.CCSetCommandConf
 import org.rifidi.rmi.utils.exceptions.ServerUnavailable;
 
 /**
- * @author kyle
+ * TODO: Class level comment.  
  * 
+ * @author kyle
  */
 public class Command_SynchCommandConfigPropertyChanges implements
 		RemoteEdgeServerCommand {

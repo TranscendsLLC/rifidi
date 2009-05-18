@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.client.model.sal.preferences;
-//TODO: Comments
+
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.osgi.service.prefs.Preferences;
@@ -12,7 +10,6 @@ import org.rifidi.edge.client.model.SALModelPlugin;
  * Put default values in the Preference Store
  * 
  * @author Kyle Neumeier - kyle@pramari.com
- * 
  */
 public class EdgeServerPreferenceInitializer extends
 		AbstractPreferenceInitializer {

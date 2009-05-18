@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.client.sal.views;
-//TODO: Comments
+
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -34,7 +32,6 @@ import org.rifidi.edge.client.sal.modelmanager.ModelManagerServiceListener;
  * The View for displaying readers
  * 
  * @author Kyle Neumeier - kyle@pramari.com
- * 
  */
 public class EdgeServerView extends ViewPart implements
 		ITabbedPropertySheetPageContributor, DragSourceListener,
@@ -45,7 +42,7 @@ public class EdgeServerView extends ViewPart implements
 	private AbstractTreeViewer treeViewer;
 
 	/**
-	 * 
+	 * Constructor.  
 	 */
 	public EdgeServerView() {
 	}
@@ -123,16 +120,28 @@ public class EdgeServerView extends ViewPart implements
 		ModelManagerService.getInstance().removeController(this);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.ui.views.properties.tabbed.ITabbedPropertySheetPageContributor#getContributorId()
+	 */
 	@Override
 	public String getContributorId() {
 		return "org.rifidi.edge.client.sal.tabbedPropContributer";
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.swt.dnd.DragSourceListener#dragFinished(org.eclipse.swt.dnd.DragSourceEvent)
+	 */
 	@Override
 	public void dragFinished(DragSourceEvent event) {
 
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.swt.dnd.DragSourceListener#dragSetData(org.eclipse.swt.dnd.DragSourceEvent)
+	 */
 	@Override
 	public void dragSetData(DragSourceEvent event) {
 		if (TextTransfer.getInstance().isSupportedType(event.dataType)) {
@@ -143,6 +152,10 @@ public class EdgeServerView extends ViewPart implements
 
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.swt.dnd.DragSourceListener#dragStart(org.eclipse.swt.dnd.DragSourceEvent)
+	 */
 	@Override
 	public void dragStart(DragSourceEvent event) {
 		ISelection sel = treeViewer.getSelection();

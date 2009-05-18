@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.client.sal.controller.edgeserver.handlers;
-//TODO: Comments
+
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
@@ -18,7 +16,6 @@ import org.rifidi.edge.client.sal.controller.edgeserver.EdgeServerTreeContentPro
  * Delete a Job from a session. Selection must be a remote job.
  * 
  * @author Kyle Neumeier - kyle@pramari.com
- * 
  */
 public class DeleteJobHandler extends AbstractHandler implements IHandler2 {
 

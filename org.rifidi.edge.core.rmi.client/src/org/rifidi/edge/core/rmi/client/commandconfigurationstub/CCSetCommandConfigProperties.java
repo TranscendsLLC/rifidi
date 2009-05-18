@@ -1,5 +1,6 @@
+
 package org.rifidi.edge.core.rmi.client.commandconfigurationstub;
-//TODO: Comments
+
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
@@ -40,6 +41,10 @@ public class CCSetCommandConfigProperties extends
 		this.properties = properties;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.rifidi.rmi.utils.remotecall.AbstractRemoteMethodCall#performRemoteCall(java.rmi.Remote)
+	 */
 	@Override
 	protected AttributeList performRemoteCall(Remote remoteObject)
 			throws RemoteException, RuntimeException {

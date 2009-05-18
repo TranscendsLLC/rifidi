@@ -1,5 +1,6 @@
+
 package org.rifidi.edge.client.mbean.ui.widgets.data;
-//TODO: Comments
+
 import javax.management.JMX;
 import javax.management.MBeanAttributeInfo;
 
@@ -7,15 +8,21 @@ import javax.management.MBeanAttributeInfo;
  * This is the concrete class for data used to construct an Integer Widget
  * 
  * @author Kyle Neumeier - kyle@pramari.com
- * 
  */
 public class IntegerWidgetData extends AbstractWidgetData {
 
+	/**
+	 * Constructor.  
+	 * 
+	 * @param element
+	 */
 	public IntegerWidgetData(MBeanAttributeInfo element) {
 		super(element);
 	}
 	
 	/**
+	 * TODO: Method level comment.  
+	 * 
 	 * @return The maximum value of this widget
 	 */
 	public int maxValue(){
@@ -28,6 +35,8 @@ public class IntegerWidgetData extends AbstractWidgetData {
 	}
 	
 	/**
+	 * TODO: Method level comment.  
+	 * 
 	 * @return The minimum value for this widget
 	 */
 	public int minValue(){

@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.client.ale.ecspecview.model;
-//TODO: Comments
+
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
@@ -17,7 +15,6 @@ import org.rifidi.edge.client.ale.api.xsd.ale.epcglobal.ECSpecExtension;
 /**
  * A decorator around an ECSpec
  * @author Kyle Neumeier - kyle@pramari.com
- *
  */
 public class ECSpecDecorator extends ECSpec {
 	
@@ -36,6 +33,8 @@ public class ECSpecDecorator extends ECSpec {
 	}
 	
 	/**
+	 * Returns the name of the ECSpecDecorator.  
+	 * 
 	 * @return the name
 	 */
 	public String getName() {
@@ -43,6 +42,8 @@ public class ECSpecDecorator extends ECSpec {
 	}
 
 	/**
+	 * Returns the ECSpec.  
+	 * 
 	 * @return the spec
 	 */
 	public ECSpec getSpec() {
@@ -106,6 +107,7 @@ public class ECSpecDecorator extends ECSpec {
 	public ReportSpecs getReportSpecs() {
 		return spec.getReportSpecs();
 	}
+	
 	/**
 	 * @return
 	 * @see org.rifidi.edge.client.ale.api.xsd.epcglobal.Document#getSchemaVersion()
@@ -127,6 +129,7 @@ public class ECSpecDecorator extends ECSpec {
 	public boolean isIncludeSpecInReports() {
 		return spec.isIncludeSpecInReports();
 	}
+	
 	/**
 	 * @param value
 	 * @see org.rifidi.edge.client.ale.api.xsd.ale.epcglobal.ECSpec#setBoundarySpec(org.rifidi.edge.client.ale.api.xsd.ale.epcglobal.ECBoundarySpec)
@@ -141,6 +144,7 @@ public class ECSpecDecorator extends ECSpec {
 	public void setCreationDate(XMLGregorianCalendar value) {
 		spec.setCreationDate(value);
 	}
+	
 	/**
 	 * @param value
 	 * @see org.rifidi.edge.client.ale.api.xsd.ale.epcglobal.ECSpec#setExtension(org.rifidi.edge.client.ale.api.xsd.ale.epcglobal.ECSpecExtension)
@@ -148,6 +152,7 @@ public class ECSpecDecorator extends ECSpec {
 	public void setExtension(ECSpecExtension value) {
 		spec.setExtension(value);
 	}
+	
 	/**
 	 * @param value
 	 * @see org.rifidi.edge.client.ale.api.xsd.ale.epcglobal.ECSpec#setIncludeSpecInReports(java.lang.Boolean)

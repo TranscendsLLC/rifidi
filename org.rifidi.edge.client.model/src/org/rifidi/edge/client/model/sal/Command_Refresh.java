@@ -1,15 +1,12 @@
-/**
- * 
- */
+
 package org.rifidi.edge.client.model.sal;
-//TODO: Comments
+
 import org.rifidi.edge.client.model.sal.commands.RemoteEdgeServerCommand;
 
 /**
  * A command that is executed to refresh the connection
  * 
  * @author Kyle Neumeier - kyle@pramari.com
- * 
  */
 public class Command_Refresh implements RemoteEdgeServerCommand {
 

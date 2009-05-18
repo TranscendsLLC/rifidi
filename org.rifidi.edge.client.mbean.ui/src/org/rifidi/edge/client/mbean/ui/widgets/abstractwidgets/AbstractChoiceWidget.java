@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.client.mbean.ui.widgets.abstractwidgets;
-//TODO: Comments
+
 import java.util.List;
 
 import javax.management.Attribute;
@@ -16,7 +14,6 @@ import org.rifidi.edge.client.mbean.ui.widgets.data.ChoiceWidgetData;
  * control
  * 
  * @author Kyle Neumeier - kyle@pramari.com
- * 
  */
 public abstract class AbstractChoiceWidget<T extends ChoiceWidgetData> extends
 		AbstractWidget<T> {
@@ -27,6 +24,8 @@ public abstract class AbstractChoiceWidget<T extends ChoiceWidgetData> extends
 	protected Combo combo;
 
 	/**
+	 * Constructor.  
+	 * 
 	 * @param data
 	 */
 	public AbstractChoiceWidget(T data) {

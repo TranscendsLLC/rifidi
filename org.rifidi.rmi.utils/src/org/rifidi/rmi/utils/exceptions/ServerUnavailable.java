@@ -1,5 +1,5 @@
 package org.rifidi.rmi.utils.exceptions;
-//TODO: Comments
+
 import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
@@ -15,10 +15,17 @@ import java.io.ObjectOutput;
  */
 
 public class ServerUnavailable extends Exception implements Externalizable {
+	
+	/**
+	 * TODO: Method level comment.  
+	 */
 	public void readExternal(ObjectInput in) throws IOException,
 			ClassNotFoundException {
 	}
 
+	/**
+	 * TODO: Method level comment.  
+	 */
 	public void writeExternal(ObjectOutput out) throws IOException {
 	}
 }

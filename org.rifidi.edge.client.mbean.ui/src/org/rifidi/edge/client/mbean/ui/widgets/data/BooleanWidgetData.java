@@ -1,22 +1,22 @@
-/**
- * 
- */
+
 package org.rifidi.edge.client.mbean.ui.widgets.data;
-//TODO: Comments
+
 import javax.management.MBeanAttributeInfo;
 
 /**
+ * TODO: Class level comment.  
+ * 
  * @author Kyle Neumeier - kyle@pramari.com
- *
  */
 public class BooleanWidgetData extends AbstractWidgetData {
 
 	/**
+	 * Constructor.  
+	 * 
 	 * @param element
 	 */
 	public BooleanWidgetData(MBeanAttributeInfo element) {
 		super(element);
-		// TODO Auto-generated constructor stub
 	}
 
 	/* (non-Javadoc)

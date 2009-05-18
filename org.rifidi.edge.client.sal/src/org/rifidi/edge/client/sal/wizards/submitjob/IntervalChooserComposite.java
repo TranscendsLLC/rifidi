@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.client.sal.wizards.submitjob;
-//TODO: Comments
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -19,7 +17,6 @@ import org.eclipse.swt.widgets.Spinner;
  * should be of recurring commands
  * 
  * @author Kyle Neumeier - kyle@pramari.com
- * 
  */
 public class IntervalChooserComposite{
 

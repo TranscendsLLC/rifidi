@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.client.sal.controller.edgeserver;
-//TODO: Comments
+
 import org.eclipse.core.databinding.observable.map.ObservableMap;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerDropAdapter;
@@ -19,7 +17,6 @@ import org.rifidi.edge.client.sal.wizards.submitjob.SimpleSubmitJobWizard;
  * A DroptTargetListener for the EdgeServerView
  * 
  * @author Kyle Neumeier - kyle@pramari.com
- * 
  */
 public class EdgeServerDropTargetListener extends ViewerDropAdapter {
 
@@ -37,6 +34,10 @@ public class EdgeServerDropTargetListener extends ViewerDropAdapter {
 		this.remoteCommandConfigurations = remoteCommandConfigurations;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.ViewerDropAdapter#performDrop(java.lang.Object)
+	 */
 	@Override
 	public boolean performDrop(Object data) {
 		Object target = getCurrentTarget();
@@ -61,6 +62,10 @@ public class EdgeServerDropTargetListener extends ViewerDropAdapter {
 		return false;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.ViewerDropAdapter#validateDrop(java.lang.Object, int, org.eclipse.swt.dnd.TransferData)
+	 */
 	@Override
 	public boolean validateDrop(Object target, int operation,
 			TransferData transferType) {

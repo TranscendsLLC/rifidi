@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.client.sal.properties.edgeserver;
-//TODO: Comments
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,8 +8,9 @@ import org.eclipse.ui.views.properties.tabbed.AbstractTabDescriptor;
 import org.eclipse.ui.views.properties.tabbed.ISectionDescriptor;
 
 /**
- * @author kyle
+ * TODO: Class level comment.  
  * 
+ * @author kyle
  */
 public class EdgeServerTabDescriptor extends AbstractTabDescriptor {
 

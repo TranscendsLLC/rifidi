@@ -1,14 +1,24 @@
 package org.rifidi.edge.client.mbean.ui.widgets.standard.impl;
-//TODO: Comments
+
 import javax.management.Attribute;
 
 import org.eclipse.swt.widgets.Composite;
 import org.rifidi.edge.client.mbean.ui.widgets.abstractwidgets.AbstractWidget;
 import org.rifidi.edge.client.mbean.ui.widgets.data.BooleanWidgetData;
 
+/**
+ * TODO: Class level comment and param comment.  
+ * 
+ * 
+ * @author jochen
+ *
+ * @param <T>
+ */
 public class StandardBooleanWidget<T extends BooleanWidgetData> extends AbstractWidget<T> {
 
 	/**
+	 * Constructor.  
+	 * 
 	 * @param data
 	 */
 	public StandardBooleanWidget(T data) {
