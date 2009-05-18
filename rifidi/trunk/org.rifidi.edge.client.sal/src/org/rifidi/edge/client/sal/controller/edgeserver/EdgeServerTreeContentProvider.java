@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.client.sal.controller.edgeserver;
-//TODO: Comments
+
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Collection;
@@ -39,7 +37,6 @@ import org.rifidi.edge.client.sal.views.tags.TagView;
  * This is the content provider for the Edge Server Reader View
  * 
  * @author Kyle Neumeier - kyle@pramari.com
- * 
  */
 public class EdgeServerTreeContentProvider implements ITreeContentProvider,
 		IMapChangeListener, PropertyChangeListener, EdgeServerController {
@@ -247,6 +244,10 @@ public class EdgeServerTreeContentProvider implements ITreeContentProvider,
 		this.edgeServerList.get(0).deleteReader(readerID);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.rifidi.edge.client.sal.controller.edgeserver.EdgeServerController#createSession(java.lang.String)
+	 */
 	@Override
 	public void createSession(String readerID) {
 		this.edgeServerList.get(0).createSession(readerID);
@@ -339,6 +340,10 @@ public class EdgeServerTreeContentProvider implements ITreeContentProvider,
 
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.rifidi.edge.client.sal.controller.edgeserver.EdgeServerController#synchPropertyChanges(java.lang.String)
+	 */
 	@Override
 	public void synchPropertyChanges(String readerID) {
 		RemoteReader reader = (RemoteReader) this.edgeServerList.get(0)
@@ -397,6 +402,10 @@ public class EdgeServerTreeContentProvider implements ITreeContentProvider,
 
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.core.databinding.observable.map.IMapChangeListener#handleMapChange(org.eclipse.core.databinding.observable.map.MapChangeEvent)
+	 */
 	@Override
 	public void handleMapChange(MapChangeEvent event) {
 

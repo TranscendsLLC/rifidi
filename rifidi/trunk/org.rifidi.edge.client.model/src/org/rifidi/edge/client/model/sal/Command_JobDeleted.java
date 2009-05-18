@@ -1,21 +1,25 @@
-/**
- * 
- */
+
 package org.rifidi.edge.client.model.sal;
-//TODO: Comments
+
 import org.rifidi.edge.client.model.sal.commands.RemoteEdgeServerCommand;
 import org.rifidi.edge.core.api.jms.notifications.JobDeletedNotification;
-import org.rifidi.edge.core.api.jms.notifications.JobSubmittedNotification;
 
 /**
- * @author kyle
+ * TODO: Class level comment.  
  * 
+ * @author kyle
  */
 public class Command_JobDeleted implements RemoteEdgeServerCommand {
 
 	private RemoteEdgeServer server;
 	private JobDeletedNotification notification;
 
+	/**
+	 * Constructor
+	 * 
+	 * @param server
+	 * @param notification
+	 */
 	public Command_JobDeleted(RemoteEdgeServer server,
 			JobDeletedNotification notification) {
 		this.server = server;

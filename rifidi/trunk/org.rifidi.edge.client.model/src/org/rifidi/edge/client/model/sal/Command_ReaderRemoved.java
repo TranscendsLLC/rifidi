@@ -1,5 +1,6 @@
+
 package org.rifidi.edge.client.model.sal;
-//TODO: Comments
+
 import org.eclipse.core.databinding.observable.map.ObservableMap;
 import org.rifidi.edge.client.model.sal.commands.RemoteEdgeServerCommand;
 import org.rifidi.edge.core.api.jms.notifications.ReaderRemovedNotification;
@@ -8,7 +9,6 @@ import org.rifidi.edge.core.api.jms.notifications.ReaderRemovedNotification;
  * A command that is executed when a reader was removed
  * 
  * @author Kyle Neumeier - kyle@pramari.com
- * 
  */
 public class Command_ReaderRemoved implements RemoteEdgeServerCommand {
 
@@ -31,11 +31,19 @@ public class Command_ReaderRemoved implements RemoteEdgeServerCommand {
 		this.readerID = notification.getReaderID();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.rifidi.edge.client.model.sal.commands.RemoteEdgeServerCommand#execute()
+	 */
 	@Override
 	public void execute() {
 		// do nothing
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.rifidi.edge.client.model.sal.commands.RemoteEdgeServerCommand#executeEclipse()
+	 */
 	@Override
 	public void executeEclipse() {
 		((RemoteReader)remoteReaders.get(readerID)).getRemoteSessions().clear();
@@ -43,6 +51,10 @@ public class Command_ReaderRemoved implements RemoteEdgeServerCommand {
 
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.rifidi.edge.client.model.sal.commands.RemoteEdgeServerCommand#getType()
+	 */
 	@Override
 	public String getType() {
 		return "READER_REMOVED";

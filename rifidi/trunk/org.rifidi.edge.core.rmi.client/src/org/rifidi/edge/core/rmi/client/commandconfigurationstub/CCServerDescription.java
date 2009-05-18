@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.core.rmi.client.commandconfigurationstub;
-//TODO: Comments
+
 import java.rmi.AccessException;
 import java.rmi.NotBoundException;
 import java.rmi.Remote;
@@ -15,7 +13,6 @@ import org.rifidi.rmi.utils.cache.ServerDescription;
  * The ServerDescription for the CommandStub
  * 
  * @author Kyle Neumeier - kyle@pramari.com
- * 
  */
 public class CCServerDescription extends ServerDescription {
 

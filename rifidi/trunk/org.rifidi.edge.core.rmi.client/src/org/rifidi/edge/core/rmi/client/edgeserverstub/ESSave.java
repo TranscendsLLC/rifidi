@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.core.rmi.client.edgeserverstub;
-//TODO: Comments
+
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
@@ -16,7 +14,6 @@ import org.rifidi.rmi.utils.remotecall.ServerDescriptionBasedRemoteMethodCall;
  * makeCall() currently returns a null object
  * 
  * @author Kyle Neumeier - kyle@pramari.com
- * 
  */
 public class ESSave extends
 		ServerDescriptionBasedRemoteMethodCall<Object, RuntimeException> {
@@ -31,6 +28,10 @@ public class ESSave extends
 		super(serverDescription);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.rifidi.rmi.utils.remotecall.AbstractRemoteMethodCall#performRemoteCall(java.rmi.Remote)
+	 */
 	@Override
 	protected Object performRemoteCall(Remote remoteObject)
 			throws RemoteException, RuntimeException {

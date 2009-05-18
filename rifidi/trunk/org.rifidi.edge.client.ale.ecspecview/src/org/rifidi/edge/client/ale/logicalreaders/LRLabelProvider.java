@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.client.ale.logicalreaders;
-//TODO: Comments
+
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 import org.rifidi.edge.client.ale.ecspecview.Activator;
@@ -10,11 +8,16 @@ import org.rifidi.edge.client.ale.logicalreaders.decorators.LRSpecDecorator;
 import org.rifidi.edge.client.ale.logicalreaders.decorators.LRSpecSubnodeDecorator;
 
 /**
- * @author Jochen Mader - jochen@pramari.com
  * 
+ * 
+ * @author Jochen Mader - jochen@pramari.com
  */
 public class LRLabelProvider extends LabelProvider {
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.LabelProvider#getText(java.lang.Object)
+	 */
 	@Override
 	public String getText(Object element) {
 		if (element instanceof LRSpecDecorator) {

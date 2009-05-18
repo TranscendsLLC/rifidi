@@ -1,5 +1,6 @@
+
 package org.rifidi.edge.client.ale.ecspecview.views;
-//TODO: Comments
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -17,8 +18,9 @@ import org.rifidi.edge.client.ale.ecspecview.model.ECSpecDecorator;
 import org.rifidi.edge.client.ale.logicalreaders.ALEService;
 
 /**
- * @author kyle
+ * TODO: Class level comment.  
  * 
+ * @author kyle
  */
 public class ECSpecViewContentProvider implements ITreeContentProvider {
 

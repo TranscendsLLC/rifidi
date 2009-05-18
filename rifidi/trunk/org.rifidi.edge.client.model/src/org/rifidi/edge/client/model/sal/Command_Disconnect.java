@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.client.model.sal;
-//TODO: Comments
+
 import javax.jms.JMSException;
 
 import org.apache.commons.logging.Log;
@@ -13,7 +11,6 @@ import org.rifidi.edge.client.model.sal.commands.RemoteEdgeServerCommand;
  * A command that disconnects from the edge server
  * 
  * @author Kyle Neumeier - kyle@pramari.com
- * 
  */
 public class Command_Disconnect implements RemoteEdgeServerCommand {
 

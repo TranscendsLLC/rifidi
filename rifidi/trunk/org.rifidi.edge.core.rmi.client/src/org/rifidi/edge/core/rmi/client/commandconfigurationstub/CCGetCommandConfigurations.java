@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.core.rmi.client.commandconfigurationstub;
-//TODO: Comments
+
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.Set;
@@ -17,7 +15,6 @@ import org.rifidi.rmi.utils.remotecall.ServerDescriptionBasedRemoteMethodCall;
  * configurations that are available
  * 
  * @author Kyle Neumeier - kyle@pramari.com
- * 
  */
 public class CCGetCommandConfigurations
 		extends
@@ -33,6 +30,10 @@ public class CCGetCommandConfigurations
 		super(serverDescription);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.rifidi.rmi.utils.remotecall.AbstractRemoteMethodCall#performRemoteCall(java.rmi.Remote)
+	 */
 	@Override
 	protected Set<CommandConfigurationDTO> performRemoteCall(Remote remoteObject)
 			throws RemoteException, RuntimeException {

@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.core.rmi.client.commandconfigurationstub;
-//TODO: Comments
+
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
@@ -15,7 +13,6 @@ import org.rifidi.rmi.utils.remotecall.ServerDescriptionBasedRemoteMethodCall;
  * It returns null if a readerFactory with the given ID is not avaialable
  * 
  * @author Kyle Neumeier - kyle@pramari.com
- * 
  */
 public class CCGetCommandConfigFactory
 		extends
@@ -24,6 +21,8 @@ public class CCGetCommandConfigFactory
 	private String readerFactoryID;
 
 	/**
+	 * Constructor.  
+	 * 
 	 * @param serverDescription
 	 */
 	public CCGetCommandConfigFactory(CCServerDescription serverDescription,

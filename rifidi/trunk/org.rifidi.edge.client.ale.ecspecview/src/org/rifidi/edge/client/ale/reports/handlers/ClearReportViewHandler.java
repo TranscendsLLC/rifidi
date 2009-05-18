@@ -1,19 +1,17 @@
-/**
- * 
- */
+
 package org.rifidi.edge.client.ale.reports.handlers;
-//TODO: Comments
+
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.commands.IHandler;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.PlatformUI;
 import org.rifidi.edge.client.ale.reports.ReportReceiverViewPart;
 
 /**
- * @author Jochen Mader - jochen@pramari.com
+ * TODO: Class level comment.  
  * 
+ * @author Jochen Mader - jochen@pramari.com
  */
 public class ClearReportViewHandler extends AbstractHandler {
 

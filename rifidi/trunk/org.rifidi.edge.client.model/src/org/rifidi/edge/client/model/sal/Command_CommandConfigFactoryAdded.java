@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.client.model.sal;
-//TODO: Comments
+
 import java.util.HashMap;
 import java.util.Map;
 

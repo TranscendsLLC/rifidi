@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.client.model.sal;
-//TODO: Comments
+
 import org.eclipse.core.databinding.observable.map.ObservableMap;
 import org.rifidi.edge.client.model.sal.commands.RemoteEdgeServerCommand;
 import org.rifidi.edge.core.api.jms.notifications.ReaderFactoryRemovedNotification;
@@ -11,7 +9,6 @@ import org.rifidi.edge.core.api.jms.notifications.ReaderFactoryRemovedNotificati
  * A command that is executed whenever a ReaderFactory is removed
  * 
  * @author Kyle Neumeier - kyle@pramari.com
- * 
  */
 public class Command_ReaderFactoryRemoved implements RemoteEdgeServerCommand {
 

@@ -1,4 +1,4 @@
-//TODO: Comments
+
 package org.rifidi.edge.client.ale.api.alelr.xsd.epcglobal;
 
 import java.math.BigDecimal;

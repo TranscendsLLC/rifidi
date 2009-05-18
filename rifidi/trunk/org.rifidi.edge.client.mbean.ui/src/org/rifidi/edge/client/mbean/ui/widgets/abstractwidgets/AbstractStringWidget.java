@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.client.mbean.ui.widgets.abstractwidgets;
-//TODO: Comments
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -23,7 +21,6 @@ import org.rifidi.edge.client.mbean.ui.widgets.data.StringWidgetData;
  * control
  * 
  * @author Kyle Neumeier - kyle@pramari.com
- * 
  */
 public abstract class AbstractStringWidget<T extends StringWidgetData> extends
 		AbstractWidget<T> {
@@ -38,6 +35,8 @@ public abstract class AbstractStringWidget<T extends StringWidgetData> extends
 	private boolean dirty = false;
 
 	/**
+	 * Constructor.  
+	 * 
 	 * @param data
 	 */
 	public AbstractStringWidget(T data) {
@@ -65,10 +64,21 @@ public abstract class AbstractStringWidget<T extends StringWidgetData> extends
 		addTextListeners();
 	}
 
+	/**
+	 * TODO: Method level comment.  
+	 * 
+	 * @param parent
+	 */
 	protected abstract void createText(Composite parent);
 
+	/**
+	 * TODO: Method level comment.    
+	 */
 	protected abstract void initializeText();
 
+	/**
+	 * TODO: Method level comment.   
+	 */
 	protected void addTextListeners() {
 		// notify listeners of a user typing a key
 		text.addKeyListener(new KeyListener() {

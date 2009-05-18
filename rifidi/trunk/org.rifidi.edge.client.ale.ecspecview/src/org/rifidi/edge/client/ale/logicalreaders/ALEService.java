@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.client.ale.logicalreaders;
-//TODO: Comments
+
 import java.util.List;
 
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -17,8 +15,9 @@ import org.rifidi.edge.client.ale.api.wsdl.ale.epcglobal.NoSuchSubscriberExcepti
 import org.rifidi.edge.client.ale.api.xsd.ale.epcglobal.ECSpec;
 
 /**
- * @author Jochen Mader - jochen@pramari.com
+ * TODO: Class level comment.  
  * 
+ * @author Jochen Mader - jochen@pramari.com
  */
 public interface ALEService extends IPropertyChangeListener {
 	/**
@@ -76,7 +75,6 @@ public interface ALEService extends IPropertyChangeListener {
 
 	/**
 	 * Get all currently defined ECSpecs.
-	 * 
 	 */
 	List<String> getAvailableECSpecNames();
 

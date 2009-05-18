@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.client.ale.ecspecview.handlers;
-//TODO: Comments
+
 import java.util.List;
 
 import org.eclipse.core.commands.AbstractHandler;
@@ -17,8 +15,9 @@ import org.rifidi.edge.client.ale.ecspecview.model.ECSpecDecorator;
 import org.rifidi.edge.client.ale.ecspecview.views.ECSpecEditorView;
 
 /**
- * @author kyle
+ * TODO: Class level comment.  
  * 
+ * @author kyle
  */
 public class DisplayECSpecHandler extends AbstractHandler implements IHandler {
 

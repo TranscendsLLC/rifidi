@@ -1,5 +1,5 @@
 package org.rifidi.edge.client.mbean.ui.widgets.data;
-//TODO: Comments
+
 import javax.management.JMX;
 import javax.management.MBeanAttributeInfo;
 
@@ -7,10 +7,14 @@ import javax.management.MBeanAttributeInfo;
  * This is the concrete class for data used to construct an String Widget
  * 
  * @author Kyle Neumeier - kyle@pramari.com
- * 
  */
 public class StringWidgetData extends AbstractWidgetData {
 
+	/**
+	 * Constructor.  
+	 * 
+	 * @param element
+	 */
 	public StringWidgetData(MBeanAttributeInfo element) {
 		super(element);
 	}

@@ -1,5 +1,6 @@
+
 package org.rifidi.rmi.utils.remotecall;
-//TODO: Comments
+
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
@@ -22,9 +23,7 @@ import org.rifidi.rmi.utils.retrystrategy.impl.AdditiveWaitRetryStrategy;
  * @see ServerDescriptionBasedMethodCall
  * 
  * Kyle Neumeier - kyle@pramari.com
- * 
  */
-
 public abstract class AbstractRemoteMethodCall<T, E extends Exception> {
 
 	/**
@@ -70,7 +69,6 @@ public abstract class AbstractRemoteMethodCall<T, E extends Exception> {
 	 * getRemoteObject is a template method which should, in most cases, return
 	 * the stub.
 	 */
-
 	protected abstract Remote getRemoteObject() throws ServerUnavailable;
 
 	/**
@@ -81,6 +79,7 @@ public abstract class AbstractRemoteMethodCall<T, E extends Exception> {
 			throws RemoteException, E;
 
 	/**
+	 * TODO: Method level comment.  
 	 * 
 	 * @return The retry Stategy to use
 	 */

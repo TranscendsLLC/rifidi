@@ -1,5 +1,5 @@
 package org.rifidi.edge.client.mbean.ui.widgets.standard.impl;
-//TODO: Comments
+
 import javax.management.Attribute;
 
 import org.eclipse.swt.SWT;
@@ -13,7 +13,6 @@ import org.rifidi.edge.client.mbean.ui.widgets.data.IntegerWidgetData;
  * A control used to display an integer
  * 
  * @author Kyle Neumeier - kyle@pramari.com
- * 
  */
 public class StandardIntegerWidget<T extends IntegerWidgetData> extends
 		AbstractNumberWidget<T> {

@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.client.sal.properties.commandconfigurations;
-//TODO: Comments
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,8 +12,9 @@ import org.rifidi.edge.client.model.sal.RemoteCommandConfiguration;
 import org.rifidi.edge.client.sal.properties.MBeanModelObjectPropertySection;
 
 /**
- * @author kyle
+ * TODO: Class level interview.  
  * 
+ * @author kyle
  */
 public class CommandConfigSectionDescriptor extends AbstractSectionDescriptor {
 
@@ -25,6 +24,14 @@ public class CommandConfigSectionDescriptor extends AbstractSectionDescriptor {
 	private String category;
 	private final String ID;
 
+	/**
+	 * Constructor.  
+	 * 
+	 * @param tabID
+	 * @param info
+	 * @param commandConfig
+	 * @param category
+	 */
 	public CommandConfigSectionDescriptor(String tabID, MBeanInfo info,
 			RemoteCommandConfiguration commandConfig, String category) {
 		this.ID = tabID + "." + "section";

@@ -1,12 +1,11 @@
 package org.rifidi.edge.client.mbean.ui.widgets.data;
-//TODO: Comments
+
 import javax.management.MBeanAttributeInfo;
 
 /**
  * The base abstract class for the data used to construct widgets
  * 
  * @author Kyle Neumeier - kyle@pramari.com
- * 
  */
 public abstract class AbstractWidgetData {
 
@@ -31,6 +30,8 @@ public abstract class AbstractWidgetData {
 	}
 
 	/**
+	 * 
+	 * 
 	 * @return The display name of this 'form element'
 	 */
 	public String getDisplayName() {
@@ -38,11 +39,15 @@ public abstract class AbstractWidgetData {
 	}
 
 	/**
+	 * 
+	 * 
 	 * @return the default value for this 'form element'
 	 */
 	public abstract Object getDefaultValue();
 
 	/**
+	 * 
+	 * 
 	 * @return true if this 'form element' should be allowed to be edited by the
 	 *         user, false otherwise
 	 */

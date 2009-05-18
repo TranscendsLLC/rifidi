@@ -1,11 +1,11 @@
+
 package org.rifidi.edge.client.mbean.ui;
-//TODO: Comments
+
 /**
  * A class that wants to listen to changes to widgets in a form should use this
  * interface
  * 
  * @author Kyle Neumeier - kyle@pramari.com
- * 
  */
 public interface MBeanInfoWidgetListener {
 

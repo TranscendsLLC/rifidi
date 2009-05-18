@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.client.sal.controller.edgeserver;
-//TODO: Comments
+
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.swt.graphics.Image;
@@ -13,8 +11,9 @@ import org.rifidi.edge.client.model.sal.RemoteSession;
 import org.rifidi.edge.client.sal.SALPluginActivator;
 
 /**
- * @author Kyle Neumeier - kyle@pramari.com
+ * TODO: Class level comment.  
  * 
+ * @author Kyle Neumeier - kyle@pramari.com
  */
 public class EdgeServerTreeLabelProvider implements ILabelProvider {
 

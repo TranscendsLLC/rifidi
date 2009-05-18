@@ -9,7 +9,7 @@
  *  				http://www.opensource.org/licenses/lgpl-license.html
  */
 package org.rifidi.edge.client.ale.ecspecview.views;
-//TODO: Comments
+
 import java.util.ArrayList;
 
 import org.eclipse.swt.widgets.Event;
@@ -19,8 +19,9 @@ import org.eclipse.ui.forms.widgets.Section;
 import org.rifidi.edge.client.ale.api.xsd.ale.epcglobal.ECReportSpec;
 
 /**
- * @author Tobias Hoppenthaler - tobias@pramari.com
+ * TODO: Class level comment.  
  * 
+ * @author Tobias Hoppenthaler - tobias@pramari.com
  */
 public class ALEEditorSelectionListener implements Listener {
 	private ScrolledForm form = null;

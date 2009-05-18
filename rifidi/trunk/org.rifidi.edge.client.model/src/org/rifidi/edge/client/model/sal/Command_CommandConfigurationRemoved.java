@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.client.model.sal;
-//TODO: Comments
+
 import org.eclipse.core.databinding.observable.map.ObservableMap;
 import org.rifidi.edge.client.model.sal.commands.RemoteEdgeServerCommand;
 import org.rifidi.edge.core.api.jms.notifications.CommandConfigurationRemovedNotification;
@@ -11,7 +9,6 @@ import org.rifidi.edge.core.api.jms.notifications.CommandConfigurationRemovedNot
  * This is a command that is executed when a CommandConfiguration is removed
  * 
  * @author Kyle Neumeier - kyle@pramari.com
- * 
  */
 public class Command_CommandConfigurationRemoved implements
 		RemoteEdgeServerCommand {

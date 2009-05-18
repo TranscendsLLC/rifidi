@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.client.ale.logicalreaders.commands;
-//TODO: Comments
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,13 +20,17 @@ import org.rifidi.edge.client.ale.logicalreaders.ALELRService;
 import org.rifidi.edge.client.ale.logicalreaders.decorators.LRSpecDecorator;
 
 /**
- * @author Jochen Mader - jochen@pramari.com
+ * TODO: Class level comment.  
  * 
+ * @author Jochen Mader - jochen@pramari.com
  */
 public class CreateHandler extends AbstractHandler {
 
 	private ALELRService service;
 
+	/**
+	 * Public 
+	 */
 	public CreateHandler() {
 		super();
 		service = Activator.getDefault().getAleLrService();

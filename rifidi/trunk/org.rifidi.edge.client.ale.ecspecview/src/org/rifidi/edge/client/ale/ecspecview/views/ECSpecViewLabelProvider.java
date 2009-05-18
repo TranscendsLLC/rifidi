@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.client.ale.ecspecview.views;
-//TODO: Comments
+
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 import org.rifidi.edge.client.ale.api.wsdl.ale.epcglobal.ALEServicePortType;
@@ -12,8 +10,9 @@ import org.rifidi.edge.client.ale.ecspecview.Activator;
 import org.rifidi.edge.client.ale.ecspecview.model.ECSpecDecorator;
 
 /**
- * @author kyle
+ * TODO: Class level comment.  
  * 
+ * @author kyle
  */
 public class ECSpecViewLabelProvider extends LabelProvider {
 

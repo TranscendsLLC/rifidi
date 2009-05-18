@@ -1,7 +1,12 @@
 package org.rifidi.edge.client.model.sal.properties;
 
 import javax.management.Attribute;
-//TODO: Comments
+
+/**
+ * An event that triggers when an attribute changes.  
+ * 
+ * @author jochen
+ */
 public class AttributeChangedEvent {
 
 	/** The name of the state property */
@@ -13,6 +18,8 @@ public class AttributeChangedEvent {
 	private String hashstring;
 
 	/**
+	 * 
+	 * 
 	 * @param modelID
 	 * @param attribute
 	 */
@@ -30,6 +37,8 @@ public class AttributeChangedEvent {
 	}
 
 	/**
+	 * Returns the Model ID.  
+	 * 
 	 * @return the modelID
 	 */
 	public String getModelID() {
@@ -37,6 +46,8 @@ public class AttributeChangedEvent {
 	}
 
 	/**
+	 * Returns the attribute in question.  
+	 * 
 	 * @return the attribute
 	 */
 	public Attribute getAttribute() {

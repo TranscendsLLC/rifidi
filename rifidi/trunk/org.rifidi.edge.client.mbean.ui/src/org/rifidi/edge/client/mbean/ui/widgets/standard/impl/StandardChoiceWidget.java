@@ -1,5 +1,5 @@
 package org.rifidi.edge.client.mbean.ui.widgets.standard.impl;
-//TODO: Comments
+
 import java.util.List;
 
 import org.eclipse.swt.SWT;
@@ -18,7 +18,6 @@ import org.rifidi.edge.client.mbean.ui.widgets.data.ChoiceWidgetData;
  * allow users to pick between choices
  * 
  * @author Kyle Neumeier - kyle@pramari.com
- * 
  */
 public class StandardChoiceWidget<T extends ChoiceWidgetData> extends AbstractChoiceWidget<T> {
 

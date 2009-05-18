@@ -1,5 +1,5 @@
 package org.rifidi.edge.client.mbean.ui.widgets.standard.impl;
-//TODO: Comments
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
@@ -12,7 +12,6 @@ import org.rifidi.edge.client.mbean.ui.widgets.data.StringWidgetData;
  * Strings.
  * 
  * @author Kyle Neumeier - kyle@pramari.com
- * 
  */
 public class StringWidget<T extends StringWidgetData> extends AbstractStringWidget<T> {
 

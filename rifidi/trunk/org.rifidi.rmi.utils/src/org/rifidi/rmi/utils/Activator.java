@@ -1,8 +1,14 @@
+
 package org.rifidi.rmi.utils;
-//TODO: Comments
+
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
+/**
+ * Activator for the RMI utility package.  
+ * 
+ * @author jochen
+ */
 public class Activator implements BundleActivator {
 
 	/*

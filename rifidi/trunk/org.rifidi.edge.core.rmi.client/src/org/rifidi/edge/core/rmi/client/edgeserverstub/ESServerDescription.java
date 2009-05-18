@@ -1,5 +1,6 @@
+
 package org.rifidi.edge.core.rmi.client.edgeserverstub;
-//TODO: Comments
+
 import java.rmi.AccessException;
 import java.rmi.NotBoundException;
 import java.rmi.Remote;
@@ -13,10 +14,15 @@ import org.rifidi.rmi.utils.cache.ServerDescription;
  * Remote stub in the RMI registry
  * 
  * @author Kyle Neumeier - kyle@pramari.com
- * 
  */
 public class ESServerDescription extends ServerDescription {
 	
+	/**
+	 * Constructor.  
+	 * 
+	 * @param serverIP
+	 * @param serverPort
+	 */
 	public ESServerDescription(String serverIP, int serverPort) {
 		super(serverIP, serverPort, "EdgeServerStub");
 	}

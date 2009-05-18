@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.client.sal.properties.mbeanwidgets;
-//TODO: Comments
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Spinner;
@@ -12,8 +10,9 @@ import org.rifidi.edge.client.mbean.ui.widgets.data.LongWidgetData;
 import org.rifidi.edge.client.mbean.ui.widgets.standard.impl.StandardLongWidget;
 
 /**
- * @author kyle
+ * TODO: Class level comment.  
  * 
+ * @author kyle
  */
 public class FlatFormLongMbeanWidget<T extends LongWidgetData> extends
 		StandardLongWidget<T> {
@@ -21,6 +20,8 @@ public class FlatFormLongMbeanWidget<T extends LongWidgetData> extends
 	private TabbedPropertySheetWidgetFactory factory;
 
 	/**
+	 * Constructor.  
+	 * 
 	 * @param data
 	 */
 	public FlatFormLongMbeanWidget(T data,

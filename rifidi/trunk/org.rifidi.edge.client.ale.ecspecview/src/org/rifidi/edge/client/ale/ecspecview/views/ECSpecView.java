@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.client.ale.ecspecview.views;
-//TODO: Comments
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,8 +23,9 @@ import org.rifidi.edge.client.ale.logicalreaders.ALEListener;
 import org.rifidi.edge.client.ale.logicalreaders.ALEService;
 
 /**
- * @author Kyle Neumeier - kyle@pramari.com
+ * TODO: Class level comment.  
  * 
+ * @author Kyle Neumeier - kyle@pramari.com
  */
 public class ECSpecView extends ViewPart implements ALEListener {
 
@@ -38,7 +37,7 @@ public class ECSpecView extends ViewPart implements ALEListener {
 	private ALEService service;
 
 	/**
-	 * 
+	 * Constructor.  
 	 */
 	public ECSpecView() {
 		this.service=Activator.getDefault().getAleService();

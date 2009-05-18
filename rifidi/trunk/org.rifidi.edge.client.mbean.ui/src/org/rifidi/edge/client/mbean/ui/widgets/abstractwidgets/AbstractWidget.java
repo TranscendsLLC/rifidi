@@ -1,5 +1,5 @@
 package org.rifidi.edge.client.mbean.ui.widgets.abstractwidgets;
-//TODO: Comments
+
 import java.util.ArrayList;
 
 import javax.management.Attribute;
@@ -14,7 +14,6 @@ import org.rifidi.edge.client.mbean.ui.widgets.data.AbstractWidgetData;
  * An abstract implementation of a Widget. Most widgets should extend this class
  * 
  * @author Kyle Neumeier - kyle@pramari.com
- * 
  */
 public abstract class AbstractWidget<T extends AbstractWidgetData> implements
 		Comparable<AbstractWidget<T>> {
@@ -36,6 +35,8 @@ public abstract class AbstractWidget<T extends AbstractWidgetData> implements
 	}
 
 	/**
+	 * Returns the element name.  
+	 * 
 	 * @return 'form element' name for this widget
 	 */
 	public String getElementName() {

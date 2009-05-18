@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.client.sal.controller.commands.handlers;
-//TODO: Comments
+
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
@@ -19,7 +17,6 @@ import org.rifidi.edge.client.sal.controller.commands.CommandTreeContentProvider
  * selection is a RemoteCommandConfiguration
  * 
  * @author Kyle Neumeier - kyle@pramari.com
- * 
  */
 public class DeleteCommandHandler extends AbstractHandler implements IHandler2 {
 

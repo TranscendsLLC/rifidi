@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.client.mbean.ui.widgets.abstractwidgets;
-//TODO: Comments
+
 import javax.management.Attribute;
 
 import org.eclipse.swt.SWT;
@@ -20,7 +18,6 @@ import org.rifidi.edge.client.mbean.ui.widgets.data.AbstractWidgetData;
  * control
  * 
  * @author Kyle Neumeier - kyle@pramari.com
- * 
  */
 public abstract class AbstractNumberWidget<T extends AbstractWidgetData>
 		extends AbstractWidget<T> {

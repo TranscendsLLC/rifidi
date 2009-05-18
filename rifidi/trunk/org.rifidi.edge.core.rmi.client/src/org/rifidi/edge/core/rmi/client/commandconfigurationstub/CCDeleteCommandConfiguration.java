@@ -1,5 +1,6 @@
+
 package org.rifidi.edge.core.rmi.client.commandconfigurationstub;
-//TODO: Comments
+
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
@@ -11,7 +12,6 @@ import org.rifidi.rmi.utils.remotecall.ServerDescriptionBasedRemoteMethodCall;
  * null.
  * 
  * @author Kyle Neumeier - kyle@pramari.com
- * 
  */
 public class CCDeleteCommandConfiguration extends
 		ServerDescriptionBasedRemoteMethodCall<Object, RuntimeException> {
@@ -33,6 +33,10 @@ public class CCDeleteCommandConfiguration extends
 		this.commandConfigurationID = commandConfigurationID;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.rifidi.rmi.utils.remotecall.AbstractRemoteMethodCall#performRemoteCall(java.rmi.Remote)
+	 */
 	@Override
 	protected Object performRemoteCall(Remote remoteObject)
 			throws RemoteException, RuntimeException {

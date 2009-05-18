@@ -1,5 +1,5 @@
 package org.rifidi.edge.client.mbean.ui.widgets.standard;
-//TODO: Comments
+
 import java.util.HashMap;
 import java.util.Set;
 
@@ -34,7 +34,6 @@ import org.rifidi.edge.client.mbean.ui.widgets.standard.impl.StringWidget;
  * It uses standard SWT widgets
  * 
  * @author Kyle Neumeier - kyle@pramari.com
- * 
  */
 public class StandardMBeanInfoComposite extends AbstractMBeanInfoComposite {
 

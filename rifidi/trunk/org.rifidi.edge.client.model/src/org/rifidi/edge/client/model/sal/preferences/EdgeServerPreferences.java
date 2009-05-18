@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.client.model.sal.preferences;
-//TODO: Comments
+
 /**
  * Preference names and default values
  * 

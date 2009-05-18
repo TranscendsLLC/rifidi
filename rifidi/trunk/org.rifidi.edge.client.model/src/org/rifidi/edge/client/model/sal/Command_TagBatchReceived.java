@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.client.model.sal;
-//TODO: Comments
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -11,8 +9,9 @@ import org.rifidi.edge.core.api.tags.TagBatch;
 import org.rifidi.edge.core.api.tags.TagDTO;
 
 /**
- * @author Kyle Neumeier - kyle@pramari.com
+ * TODO: Class level comment.  
  * 
+ * @author Kyle Neumeier - kyle@pramari.com
  */
 public class Command_TagBatchReceived implements RemoteEdgeServerCommand {
 

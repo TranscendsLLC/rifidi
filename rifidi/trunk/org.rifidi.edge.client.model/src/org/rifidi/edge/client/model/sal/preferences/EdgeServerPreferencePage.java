@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.client.model.sal.preferences;
-//TODO: Comments
+
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.IntegerFieldEditor;
@@ -15,11 +13,14 @@ import org.rifidi.edge.client.model.SALModelPlugin;
  * The contributed preference page for the RemoteEdgeServer
  * 
  * @author Kyle Neumeier - kyle@pramari.com
- * 
  */
 public class EdgeServerPreferencePage extends FieldEditorPreferencePage
 		implements IWorkbenchPreferencePage {
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.jface.preference.FieldEditorPreferencePage#createFieldEditors()
+	 */
 	@Override
 	protected void createFieldEditors() {
 
@@ -39,6 +40,10 @@ public class EdgeServerPreferencePage extends FieldEditorPreferencePage
 				"Edge Server JMS Tags Queue Name", getFieldEditorParent()));
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
+	 */
 	@Override
 	public void init(IWorkbench workbench) {
 

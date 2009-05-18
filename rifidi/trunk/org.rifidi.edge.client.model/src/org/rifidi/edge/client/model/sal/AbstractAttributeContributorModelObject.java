@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.client.model.sal;
-//TODO: Comments
+
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.HashMap;
@@ -10,7 +8,6 @@ import java.util.HashMap;
 import javax.management.Attribute;
 import javax.management.AttributeList;
 
-import org.rifidi.edge.client.model.sal.commands.RequestExecuterSingleton;
 import org.rifidi.edge.client.model.sal.properties.AttributeChangedEvent;
 import org.rifidi.edge.client.model.sal.properties.RemoteObjectDirtyEvent;
 
@@ -19,7 +16,6 @@ import org.rifidi.edge.client.model.sal.properties.RemoteObjectDirtyEvent;
  * with them. This class abstracts some of that functionality into a super class
  * 
  * @author Kyle Neumeier - kyle@pramari.com
- * 
  */
 public abstract class AbstractAttributeContributorModelObject {
 	/** The properties of this reader */
@@ -31,6 +27,12 @@ public abstract class AbstractAttributeContributorModelObject {
 	/** The ID of the model object */
 	private String modelID;
 
+	/**
+	 * Constructor.  
+	 * 
+	 * @param id
+	 * @param attributeList
+	 */
 	public AbstractAttributeContributorModelObject(String id,
 			AttributeList attributeList) {
 		pcs = new PropertyChangeSupport(this);

@@ -1,5 +1,5 @@
 package org.rifidi.edge.client.sal;
-//TODO: Comments
+
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.ui.plugin.AbstractUIPlugin;

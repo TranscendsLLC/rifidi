@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.client.sal.properties.commandconfigurations;
-//TODO: Comments
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,8 +10,9 @@ import org.eclipse.ui.views.properties.tabbed.AbstractTabDescriptor;
 import org.rifidi.edge.client.model.sal.RemoteCommandConfiguration;
 
 /**
- * @author kyle
+ * TODO: Class level comment.  
  * 
+ * @author kyle
  */
 public class CommandConfigTabDescriptor extends AbstractTabDescriptor {
 
@@ -21,6 +20,8 @@ public class CommandConfigTabDescriptor extends AbstractTabDescriptor {
 	private String category;
 
 	/**
+	 * Constructor.  
+	 * 
 	 * @param info
 	 * @param commandConfig
 	 * @param category

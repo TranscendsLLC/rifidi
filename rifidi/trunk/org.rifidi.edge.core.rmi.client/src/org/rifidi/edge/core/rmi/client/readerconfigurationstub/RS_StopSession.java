@@ -1,5 +1,6 @@
+
 package org.rifidi.edge.core.rmi.client.readerconfigurationstub;
-//TODO: Comments
+
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
@@ -11,7 +12,6 @@ import org.rifidi.rmi.utils.remotecall.ServerDescriptionBasedRemoteMethodCall;
  * null
  * 
  * @author Kyle Neumeier - kyle@pramari.com
- * 
  */
 public class RS_StopSession extends
 		ServerDescriptionBasedRemoteMethodCall<Object, RuntimeException> {
@@ -22,7 +22,11 @@ public class RS_StopSession extends
 	private String sessionID;
 
 	/**
+	 * Constructor.  
+	 * 
 	 * @param serverDescription
+	 * @param readerID
+	 * @param sessionID
 	 */
 	public RS_StopSession(RS_ServerDescription serverDescription, String readerID,
 			String sessionID) {

@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.client.sal.controller.commands;
-//TODO: Comments
+
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Collection;
@@ -20,12 +18,12 @@ import org.rifidi.edge.client.model.sal.RemoteCommandConfigFactory;
 import org.rifidi.edge.client.model.sal.RemoteCommandConfigType;
 import org.rifidi.edge.client.model.sal.RemoteCommandConfiguration;
 import org.rifidi.edge.client.model.sal.RemoteEdgeServer;
-import org.rifidi.edge.client.model.sal.RemoteReader;
 import org.rifidi.edge.client.model.sal.properties.RemoteObjectDirtyEvent;
 
 /**
- * @author kyle
+ * TODO: Class level comment.  
  * 
+ * @author kyle
  */
 public class CommandTreeContentProvider implements ITreeContentProvider,
 		CommandController, PropertyChangeListener, IMapChangeListener {
@@ -42,6 +40,9 @@ public class CommandTreeContentProvider implements ITreeContentProvider,
 	/** The singleton instance */
 	private static CommandTreeContentProvider instance;
 
+	/**
+	 * Constructor.  
+	 */
 	public CommandTreeContentProvider() {
 		super();
 		instance = this;
@@ -253,10 +254,20 @@ public class CommandTreeContentProvider implements ITreeContentProvider,
 
 	}
 
+	/**
+	 * Remove the remote command plugin specified.  
+	 * 
+	 * @param plugin
+	 */
 	private void removeRemoteCommandPlugin(RemoteCommandConfigFactory plugin) {
 		viewer.remove(plugin);
 	}
 
+	/**
+	 * TODO: Method level comment.  
+	 * 
+	 * @param plugin
+	 */
 	private void addRemoteCommandPlugin(RemoteCommandConfigFactory plugin) {
 		viewer.add(edgeServerList.get(0), plugin);
 		viewer.setExpandedState(edgeServerList.get(0), true);
@@ -315,6 +326,9 @@ public class CommandTreeContentProvider implements ITreeContentProvider,
 		viewer.remove(config);
 	}
 
+	/**
+	 * TODO: Method level comment.  
+	 */
 	public static CommandController getController() {
 		return (CommandController) instance;
 	}
@@ -359,6 +373,10 @@ public class CommandTreeContentProvider implements ITreeContentProvider,
 		return configurations;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.rifidi.edge.client.sal.controller.commands.CommandController#clearPropertyChanges(java.lang.String)
+	 */
 	@Override
 	public void clearPropertyChanges(String commandID) {
 		RemoteCommandConfiguration config = (RemoteCommandConfiguration) edgeServerList
@@ -369,6 +387,10 @@ public class CommandTreeContentProvider implements ITreeContentProvider,
 
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.rifidi.edge.client.sal.controller.commands.CommandController#synchPropertyChanges(java.lang.String)
+	 */
 	@Override
 	public void synchPropertyChanges(String commandID) {
 		RemoteCommandConfiguration config = (RemoteCommandConfiguration) edgeServerList

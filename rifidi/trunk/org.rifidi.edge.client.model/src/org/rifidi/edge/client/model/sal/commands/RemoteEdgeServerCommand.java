@@ -1,5 +1,6 @@
+
 package org.rifidi.edge.client.model.sal.commands;
-//TODO: Comments
+
 /**
  * An interface that should be implemented by commands that are executed by the
  * RequestExecutor. The execute command should do work that should be done
@@ -8,7 +9,6 @@ package org.rifidi.edge.client.model.sal.commands;
  * before the executeEclipse() method is invoked
  * 
  * @author Kyle Neumeier - kyle@pramari.com
- * 
  */
 public interface RemoteEdgeServerCommand {
 
@@ -26,6 +26,7 @@ public interface RemoteEdgeServerCommand {
 	public abstract void executeEclipse();
 
 	/**
+	 * Returns the name of the command that is executed.  
 	 * 
 	 * @return the name of the command that is executed
 	 */

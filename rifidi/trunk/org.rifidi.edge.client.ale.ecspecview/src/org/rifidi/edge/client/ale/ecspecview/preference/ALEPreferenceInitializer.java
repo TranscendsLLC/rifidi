@@ -1,16 +1,15 @@
-/**
- * 
- */
+
 package org.rifidi.edge.client.ale.ecspecview.preference;
 
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.osgi.service.prefs.Preferences;
 import org.rifidi.edge.client.ale.ecspecview.Activator;
-//TODO: Comments
+
 /**
- * @author kyle
+ * TODO: Class level comment.  
  * 
+ * @author kyle
  */
 public class ALEPreferenceInitializer extends AbstractPreferenceInitializer {
 

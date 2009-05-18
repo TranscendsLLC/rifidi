@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.client.sal.views;
-//TODO: Comments
+
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -25,7 +23,6 @@ import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.views.properties.tabbed.ITabbedPropertySheetPageContributor;
 import org.rifidi.edge.client.model.sal.RemoteCommandConfiguration;
-import org.rifidi.edge.client.model.sal.RemoteReader;
 import org.rifidi.edge.client.sal.controller.commands.CommandTreeContentProvider;
 import org.rifidi.edge.client.sal.controller.commands.CommandTreeLabelProvider;
 import org.rifidi.edge.client.sal.modelmanager.ModelManagerService;
@@ -35,7 +32,6 @@ import org.rifidi.edge.client.sal.modelmanager.ModelManagerServiceListener;
  * A view to display commands currently on the server
  * 
  * @author Kyle Neumeier - kyle@pramari.com
- * 
  */
 public class CommandView extends ViewPart implements
 		ITabbedPropertySheetPageContributor, ModelManagerServiceListener, DragSourceListener {
@@ -115,23 +111,38 @@ public class CommandView extends ViewPart implements
 		ModelManagerService.getInstance().removeController(this);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.ui.views.properties.tabbed.ITabbedPropertySheetPageContributor#getContributorId()
+	 */
 	@Override
 	public String getContributorId() {
 		return "org.rifidi.edge.client.sal.tabbedPropContributer";
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.rifidi.edge.client.sal.modelmanager.ModelManagerServiceListener#setModel(java.lang.Object)
+	 */
 	@Override
 	public void setModel(Object model) {
 		this.treeViewer.setInput(model);
 	}
 
-	
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.swt.dnd.DragSourceListener#dragFinished(org.eclipse.swt.dnd.DragSourceEvent)
+	 */
 	@Override
 	public void dragFinished(DragSourceEvent event) {
 		// TODO Auto-generated method stub
 		
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.swt.dnd.DragSourceListener#dragSetData(org.eclipse.swt.dnd.DragSourceEvent)
+	 */
 	@Override
 	public void dragSetData(DragSourceEvent event) {
 		if (TextTransfer.getInstance().isSupportedType(event.dataType)) {
@@ -142,6 +153,10 @@ public class CommandView extends ViewPart implements
 		
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.swt.dnd.DragSourceListener#dragStart(org.eclipse.swt.dnd.DragSourceEvent)
+	 */
 	@Override
 	public void dragStart(DragSourceEvent event) {
 		ISelection sel = treeViewer.getSelection();

@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.client.ale.ecspecview.perspective;
-//TODO: Comments
+
 import org.eclipse.ui.IFolderLayout;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveFactory;
@@ -12,8 +10,9 @@ import org.rifidi.edge.client.ale.logicalreaders.LRTreeViewPart;
 import org.rifidi.edge.client.ale.reports.ReportReceiverViewPart;
 
 /**
- * @author kyle
+ * TODO: Class level comment.  
  * 
+ * @author kyle
  */
 public class ALEPerspectiveFactory implements IPerspectiveFactory {
 

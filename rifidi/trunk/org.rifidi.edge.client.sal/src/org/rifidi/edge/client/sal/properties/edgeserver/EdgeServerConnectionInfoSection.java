@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.client.sal.properties.edgeserver;
-//TODO: Comments
+
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
@@ -31,8 +29,9 @@ import org.rifidi.edge.client.model.sal.RemoteEdgeServerState;
 import org.rifidi.edge.client.model.sal.preferences.EdgeServerPreferences;
 
 /**
- * @author kyle
  * 
+ * 
+ * @author kyle
  */
 public class EdgeServerConnectionInfoSection extends AbstractPropertySection
 		implements FocusListener, PropertyChangeListener,
@@ -214,6 +213,10 @@ public class EdgeServerConnectionInfoSection extends AbstractPropertySection
 
 	private String textOnFocus;
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.swt.events.FocusListener#focusGained(org.eclipse.swt.events.FocusEvent)
+	 */
 	@Override
 	public void focusGained(FocusEvent e) {
 		if (e.widget == ipText) {
@@ -222,6 +225,10 @@ public class EdgeServerConnectionInfoSection extends AbstractPropertySection
 
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.swt.events.FocusListener#focusLost(org.eclipse.swt.events.FocusEvent)
+	 */
 	@Override
 	public void focusLost(FocusEvent e) {
 
@@ -260,6 +267,10 @@ public class EdgeServerConnectionInfoSection extends AbstractPropertySection
 
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see java.beans.PropertyChangeListener#propertyChange(java.beans.PropertyChangeEvent)
+	 */
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
 		if (evt.getPropertyName().equals(RemoteEdgeServer.STATE_PROPERTY)) {
@@ -278,6 +289,10 @@ public class EdgeServerConnectionInfoSection extends AbstractPropertySection
 
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see java.beans.PropertyChangeListener#propertyChange(java.beans.PropertyChangeEvent)
+	 */
 	@Override
 	public void propertyChange(org.eclipse.jface.util.PropertyChangeEvent event) {
 		if (event.getProperty().equals(EdgeServerPreferences.EDGE_SERVER_IP)) {

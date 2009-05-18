@@ -1,6 +1,4 @@
-/**
- * 
- */
+
 package org.rifidi.edge.client.ale.ecspecview.preference;
 
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
@@ -9,10 +7,11 @@ import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.rifidi.edge.client.ale.ecspecview.Activator;
-//TODO: Comments
+
 /**
+ * TODO: Class level comment.  
+ * 
  * @author kyle
- *
  */
 public class ALEPreferencePage extends FieldEditorPreferencePage implements
 		IWorkbenchPreferencePage {
