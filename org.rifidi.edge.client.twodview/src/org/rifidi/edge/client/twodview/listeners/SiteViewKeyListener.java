@@ -9,13 +9,12 @@
  *  				http://www.opensource.org/licenses/lgpl-license.html
  */
 package org.rifidi.edge.client.twodview.listeners;
+
 //TODO: Comments
-import org.eclipse.draw2d.IFigure;
-import org.eclipse.draw2d.ScalableLayeredPane;
-import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
+import org.rifidi.edge.client.twodview.layers.ListeningScalableLayeredPane;
 
 /**
  * @author Tobias Hoppenthaler - tobias@pramari.com
@@ -23,9 +22,9 @@ import org.eclipse.swt.events.KeyListener;
  */
 public class SiteViewKeyListener implements KeyListener {
 
-	private ScalableLayeredPane lp;
+	private ListeningScalableLayeredPane lp;
 
-	public SiteViewKeyListener(ScalableLayeredPane lp) {
+	public SiteViewKeyListener(ListeningScalableLayeredPane lp) {
 		super();
 		this.lp = lp;
 
@@ -62,16 +61,19 @@ public class SiteViewKeyListener implements KeyListener {
 			y = -10;
 		}
 
-		for (Object object : lp.getChildren()) {
-			for (Object obj : ((IFigure) object).getChildren()) {
-				IFigure ifig = (IFigure) obj;
-				Rectangle bounds = ifig.getBounds();
-				bounds.x += x;
-				bounds.y += y;
-				ifig.setBounds(bounds);
-			}
-			((IFigure)object).repaint();
-		}
+		lp.translatePane(x, y);
+		
+		// TODO:probably obsolete
+//		for (Object object : lp.getChildren()) {
+//			for (Object obj : ((IFigure) object).getChildren()) {
+//				IFigure ifig = (IFigure) obj;
+//				Rectangle bounds = ifig.getBounds();
+//				bounds.x += x;
+//				bounds.y += y;
+//				ifig.setBounds(bounds);
+//			}
+//			((IFigure)object).repaint();
+//		}
 	}
 
 	@Override

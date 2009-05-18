@@ -12,7 +12,6 @@ package org.rifidi.edge.client.twodview.util;
 
 import java.util.Set;
 
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -23,25 +22,75 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement
 public class EdgeUi {
-
-	
-	private String imgUrl;
-	
+	/** path to the floorplan */
+	private String pathToImageFile;
+	/** scale factor of the scalable layered pane */
+	private double scaleFactor;
+	/** x offset of the map */
+	private int xOffset;
+	/** y offset of the map */
+	private int yOffset;
+	/** Reader positions and ids */
 	private Set<ReaderPos> readerPositions;
 
 	/**
-	 * @return the imgUrl
+	 * @return the pathToImageFile
 	 */
-	public String getImgUrl() {
-		return imgUrl;
+	public String getPathToImageFile() {
+		return pathToImageFile;
 	}
 
 	/**
-	 * @param imgUrl
-	 *            the imgUrl to set
+	 * @param pathToImageFile
+	 *            the pathToImageFile to set
 	 */
-	public void setImgUrl(String imgUrl) {
-		this.imgUrl = imgUrl;
+	public void setPathToImageFile(String pathToImageFile) {
+		this.pathToImageFile = pathToImageFile;
+	}
+
+	/**
+	 * @return the scaleFactor
+	 */
+	public double getScaleFactor() {
+		return scaleFactor;
+	}
+
+	/**
+	 * @param scaleFactor
+	 *            the scaleFactor to set
+	 */
+	public void setScaleFactor(double scaleFactor) {
+		this.scaleFactor = scaleFactor;
+	}
+
+	/**
+	 * @return the xOffset
+	 */
+	public int getxOffset() {
+		return xOffset;
+	}
+
+	/**
+	 * @param xOffset
+	 *            the xOffset to set
+	 */
+	public void setxOffset(int xOffset) {
+		this.xOffset = xOffset;
+	}
+
+	/**
+	 * @return the yOffset
+	 */
+	public int getyOffset() {
+		return yOffset;
+	}
+
+	/**
+	 * @param yOffset
+	 *            the yOffset to set
+	 */
+	public void setyOffset(int yOffset) {
+		this.yOffset = yOffset;
 	}
 
 	/**

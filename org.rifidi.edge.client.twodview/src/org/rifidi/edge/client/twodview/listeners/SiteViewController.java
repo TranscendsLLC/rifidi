@@ -136,29 +136,54 @@ public class SiteViewController implements DropTargetListener,
 		}
 
 	}
-	
+
 	/**
-	 * Adds an image representation of the reader identified by readerID to the map and positions it at readerPosition x/y-coordinates.
-	 *
+	 * Adds an image representation of the reader identified by readerID to the
+	 * map and positions it at readerPosition x/y-coordinates.
+	 * 
 	 * @param readerID
 	 * @param readerPositionX
 	 * @param readerPositionY
-	 * @param dnd - defines whether the method is called by a Drop event (true) or not.
+	 * @param dnd
+	 *            - defines whether the method is called by a Drop event (true)
+	 *            or not.
 	 */
-	public void addReaderToMap(String readerID, int readerPositionX, int readerPositionY, boolean dnd){
+	public void addReaderToMap(String readerID, int readerPositionX,
+			int readerPositionY, boolean dnd) {
+
+		if (checkReaderAlreadyOnMap(readerID)) {
+			if (dnd) {
+				logger.error("ERROR: Cannot add a reader More than once ");
+				MessageBox mb = new MessageBox(siteView.getSite().getShell(),
+						SWT.ICON_WARNING);
+				mb.setText("Reader already in map");
+				mb.setMessage("Reader cannot be added to map more than once.");
+				mb.open();
+				return;
+			} else {
+
+				ReaderAlphaImageFigure fig = this.readerIDsToReaderFigures
+						.get(readerID);
+				Rectangle rect = fig.getBounds();
+				rect.x = readerPositionX;
+				rect.y = readerPositionY;
+				fig.setBounds(rect);
+				return;
+			}
+
+		}
 		Image image = Activator.getDefault().getImageRegistry().get(
 				Activator.IMG_READER_UNKNOWN);
 		// get Reader from ReaderRegistry
 		RemoteReader reader = (RemoteReader) server.getRemoteReaders().get(
 				readerID);
-		if (reader == null) {
-			logger.warn("No reader with ID " + readerID + " was found");
-			return;
-		}
+
 		// create an ImageFigure that contains the reference to the
 		ReaderAlphaImageFigure raif = new ReaderAlphaImageFigure(image,
-				reader.getID());
-		raif.setReader(reader);
+				readerID);
+		if (reader != null) {
+			raif.setReader(reader);
+		}
 
 		this.readerIDsToReaderFigures.put(raif.getReaderId(), raif);
 
@@ -166,31 +191,25 @@ public class SiteViewController implements DropTargetListener,
 
 		Composite compost = composite;
 		int deltaX = 0, deltaY = 0;
-		
-		if(dnd){
-		while (compost != null) {
-			// logger.debug("in loop: " + compost.toString());
-			Rectangle temp = new Rectangle(compost.getBounds());
-			deltaX += temp.x;
-			deltaY += temp.y;
-			compost = compost.getParent();
-		}
+
+		if (dnd) {
+			while (compost != null) {
+				// logger.debug("in loop: " + compost.toString());
+				Rectangle temp = new Rectangle(compost.getBounds());
+				deltaX += temp.x;
+				deltaY += temp.y;
+				compost = compost.getParent();
+			}
 		}
 		// deltaY+=20;
 		// logger.debug("deltas: " + deltaX + " " + deltaY);
-		raif.setBounds(new Rectangle(readerPositionX - deltaX, readerPositionY - deltaY,
-				raif.getImage().getBounds().width, raif.getImage()
-						.getBounds().height));
+		raif.setBounds(new Rectangle(readerPositionX - deltaX, readerPositionY
+				- deltaY, raif.getImage().getBounds().width, raif.getImage()
+				.getBounds().height));
 		try {
 			layer.addReader(raif, null);
 		} catch (ReaderAlreadyInMapException e) {
 
-			logger.error("ERROR: Cannot add a reader More than once ");
-			MessageBox mb = new MessageBox(siteView.getSite().getShell(),
-					SWT.ICON_WARNING);
-			mb.setText("Reader already in map");
-			mb.setMessage("Reader cannot be added to map more than once.");
-			mb.open();
 		}
 
 	}
@@ -271,5 +290,9 @@ public class SiteViewController implements DropTargetListener,
 			}
 		}
 
+	}
+
+	public boolean checkReaderAlreadyOnMap(String readerID) {
+		return readerIDsToReaderFigures.containsKey(readerID);
 	}
 }

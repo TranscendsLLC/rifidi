@@ -83,9 +83,9 @@ public class SiteViewMouseWheelListener implements Listener {
 			 * walk through all the figures, placed on the layers and add the
 			 * difference to center on the given x/y coordinates.
 			 */
-			for (Object obj : ((IFigure) object).getChildren()) {
+//			for (Object obj : ((IFigure) object).getChildren()) {
 				/** cast the resulting object to an IFigure */
-				IFigure ifig = (IFigure) obj;
+				IFigure ifig = (IFigure) object;
 				/** getting the bounds of the figure */
 				Rectangle bounds = ifig.getBounds();
 				/** move this figure horizontally */
@@ -94,7 +94,7 @@ public class SiteViewMouseWheelListener implements Listener {
 				bounds.y += yOffset;
 				/** set the changes */
 				ifig.setBounds(bounds);
-			}
+//			}
 			/** repaint the layers to see the effect of the changes */
 			((IFigure) object).repaint();
 		}
