@@ -62,7 +62,7 @@ public class SiteView extends ViewPart implements ModelManagerServiceListener,
 		ITabbedPropertySheetPageContributor, IAdaptable {
 
 	private Log logger = LogFactory.getLog(SiteView.class);
-
+	private final static String FILENAME = "SiteView.xml";
 	public final static String ID = "org.rifidi.edge.client.twodview.views.SiteView";
 	private ListeningScalableLayeredPane lp;
 	private FloorPlanLayer floorplanLayer;
@@ -140,7 +140,7 @@ public class SiteView extends ViewPart implements ModelManagerServiceListener,
 		getSite().setSelectionProvider(selectionProvider);
 		getSite().registerContextMenu(menuMgr, selectionProvider);
 		/** The file where the data is saved */
-		saveFile = saveFolder.getFile("SiteView.xml");
+		saveFile = saveFolder.getFile(FILENAME);
 
 	}
 
@@ -228,21 +228,19 @@ public class SiteView extends ViewPart implements ModelManagerServiceListener,
 	 */
 	public void persist() {
 
-		/** check if it exists - else create it */
-		if (!saveFile.exists()) {
-			try {
-				saveFile.create(null, true, null);
-			} catch (CoreException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		double scaleFactor = lp.getScale();
-		lp.setScale(1);
+		
+
 		/** Creating an object to put the map information in */
 		EdgeUi eui = new EdgeUi();
 		/** Background picture */
-		eui.setImgUrl(this.getFloorplanLayer().getFloorPlanImageFile());
+		eui
+				.setPathToImageFile(this.getFloorplanLayer()
+						.getFloorPlanImageFile());
+		/** scale factor of the map */
+		eui.setScaleFactor(lp.getScale());
+		/** offset of the map from the original position */
+		eui.setxOffset(lp.getxOffset());
+		eui.setyOffset(lp.getyOffset());
 		/** getting all the readers on the map */
 		ArrayList<IFigure> readerImages = (ArrayList<IFigure>) this.objectLayer
 				.getChildren();
@@ -261,28 +259,37 @@ public class SiteView extends ViewPart implements ModelManagerServiceListener,
 				e.printStackTrace();
 			}
 		}
-		
+
 		/** Add the xy + id info to our object */
 		eui.setReaderPositions(readerPosSet);
 		/** Write it out to the savefile */
 		SerializerUtil.serializeEdgeUi(eui, saveFile);
-		lp.setScale(scaleFactor);
+
 	}
 
 	/**
 	 * Retrieves the map information from the savefile and restores it.
 	 */
 	public void initMap() {
-		double scaleFactor = lp.getScale();
-		lp.setScale(1);
-		
+
 		/** check for the savefile */
 		if (saveFile != null && saveFile.exists()) {
+
 			/** getting stuff out of the file */
 			EdgeUi eui = DeserializerUtil.deserializeEdgeUi(saveFile);
 			/** do not change if there is no path to file */
-			if (!eui.getImgUrl().isEmpty())
-				this.floorplanLayer.setFloorplan(eui.getImgUrl());
+			if (!eui.getPathToImageFile().isEmpty())
+				this.floorplanLayer.setFloorplan(eui.getPathToImageFile());
+
+			/** restore zoom */
+			lp.setScale(eui.getScaleFactor());
+			/**
+			 * restore offset - needs to happen before the reader placement on
+			 * the map since the coordinates of the readers are already saved
+			 * for the zoom/translation
+			 */
+			lp.translatePane(eui.getxOffset(), eui.getyOffset());
+			// lp.resetDeltaValues();
 			/** get ids and positions of the persisted readers */
 			HashSet<ReaderPos> readerPositions = (HashSet<ReaderPos>) eui
 					.getReaderPositions();
@@ -290,12 +297,15 @@ public class SiteView extends ViewPart implements ModelManagerServiceListener,
 			for (ReaderPos readerPos : readerPositions) {
 				/** if for some strange reason we do not have an id - skip it */
 				if (!readerPos.getID().isEmpty()) {
+
 					siteViewController.addReaderToMap(readerPos.getID(),
 							readerPos.getX(), readerPos.getY(), false);
+
 				}
 			}
+
 		}
-		lp.setScale(scaleFactor);
+
 	}
 
 }

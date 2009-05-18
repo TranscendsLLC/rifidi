@@ -38,9 +38,13 @@ public class SerializerUtil {
 					new Boolean(true));
 			ByteArrayOutputStream fileOutput = new ByteArrayOutputStream();
 			marshaller.marshal(edgeUi, fileOutput);
+			if(iFile.exists()){
 			iFile.setContents(
 					new ByteArrayInputStream(fileOutput.toByteArray()),
 					IFile.FORCE, null);
+			}else{
+				iFile.create(new ByteArrayInputStream(fileOutput.toByteArray()), IFile.FORCE, null);
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

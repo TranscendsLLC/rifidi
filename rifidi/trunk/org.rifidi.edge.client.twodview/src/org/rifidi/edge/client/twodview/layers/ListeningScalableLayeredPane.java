@@ -9,6 +9,7 @@
  *  				http://www.opensource.org/licenses/lgpl-license.html
  */
 package org.rifidi.edge.client.twodview.layers;
+
 //TODO: Comments
 import java.util.HashSet;
 import java.util.Set;
@@ -41,6 +42,7 @@ public class ListeningScalableLayeredPane extends ScalableLayeredPane implements
 	public static final int NOTELAYER = 3;
 	private Log logger = LogFactory.getLog(ListeningScalableLayeredPane.class);
 	private Set<SiteViewFigureSelectionListener> listeners;
+	private int xOffset = 0, yOffset = 0;
 
 	public ListeningScalableLayeredPane() {
 		super();
@@ -129,6 +131,7 @@ public class ListeningScalableLayeredPane extends ScalableLayeredPane implements
 				FloorPlanLayer fpl = (FloorPlanLayer) selectedFigure
 						.getParent();
 				pan();
+
 			} catch (ClassCastException e) {
 				// not dragging the floorplan? -> just move the selected figure
 				moveFigure(selectedFigure);
@@ -140,6 +143,20 @@ public class ListeningScalableLayeredPane extends ScalableLayeredPane implements
 			arg0.consume();
 
 		}
+	}
+
+	/**
+	 * @return the xOffset
+	 */
+	public int getxOffset() {
+		return xOffset;
+	}
+
+	/**
+	 * @return the yOffset
+	 */
+	public int getyOffset() {
+		return yOffset;
 	}
 
 	/*
@@ -212,6 +229,7 @@ public class ListeningScalableLayeredPane extends ScalableLayeredPane implements
 	 * moves all the figures on all the layers + repaint
 	 */
 	private void pan() {
+
 		// get all layers
 		for (Object object : getChildren()) {
 			// get all objects in them
@@ -221,6 +239,14 @@ public class ListeningScalableLayeredPane extends ScalableLayeredPane implements
 			}
 			((IFigure) object).repaint();
 		}
+		xOffset += deltaX;
+		yOffset += deltaY;
+	}
+
+	public void translatePane(int xValue, int yValue) {
+		this.deltaX = xValue;
+		this.deltaY = yValue;
+		pan();
 	}
 
 	/**
@@ -245,6 +271,11 @@ public class ListeningScalableLayeredPane extends ScalableLayeredPane implements
 	public void remoteImageSelectionListener(
 			SiteViewFigureSelectionListener listener) {
 		this.listeners.remove(listener);
+	}
+
+	public void resetDeltaValues() {
+		this.deltaX = 0;
+		this.deltaY = 0;
 	}
 
 }
