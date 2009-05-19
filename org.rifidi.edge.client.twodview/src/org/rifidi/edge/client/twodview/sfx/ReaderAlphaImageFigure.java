@@ -1,15 +1,6 @@
-/* 
- *  ReaderAlphaImageFigure.java
- *  Created:	Sep 4, 2008
- *  Project:	RiFidi Dashboard - An RFID infrastructure monitoring tool
- *  				http://www.rifidi.org
- *  				http://rifidi.sourceforge.net
- *  Copyright:	Pramari LLC and the Rifidi Project
- *  License:	Lesser GNU Public License (LGPL)
- *  				http://www.opensource.org/licenses/lgpl-license.html
- */
+
 package org.rifidi.edge.client.twodview.sfx;
-//TODO: Comments
+
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.HashSet;
@@ -113,16 +104,26 @@ public class ReaderAlphaImageFigure extends AlphaImageFigure implements
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.draw2d.Figure#getToolTip()
+	 */
 	@Override
 	public IFigure getToolTip() {
 		this.setToolTip(this.createToolTip());
 		return super.getToolTip();
 	}
 
+	
 	private IFigure createToolTip() {
 		return new Label(this.readerID + "\n" + state);
 	}
 
+	/**
+	 * Updates the onscreen status of the reader based on its state.  
+	 * 
+	 * @param state
+	 */
 	private void updateStatus(ReaderState state) {
 		this.state = state;
 		switch (state) {
@@ -192,6 +193,10 @@ public class ReaderAlphaImageFigure extends AlphaImageFigure implements
 		updateStatus(ReaderState.DISCONNECTED);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see java.beans.PropertyChangeListener#propertyChange(java.beans.PropertyChangeEvent)
+	 */
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
 		if (evt.getPropertyName().equals(
@@ -201,6 +206,10 @@ public class ReaderAlphaImageFigure extends AlphaImageFigure implements
 
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.core.databinding.observable.map.IMapChangeListener#handleMapChange(org.eclipse.core.databinding.observable.map.MapChangeEvent)
+	 */
 	@Override
 	public void handleMapChange(MapChangeEvent event) {
 		// handle event when obj is swapped out

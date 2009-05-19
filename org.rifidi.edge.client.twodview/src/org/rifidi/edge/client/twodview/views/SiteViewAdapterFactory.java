@@ -1,16 +1,15 @@
-/**
- * 
- */
+
 package org.rifidi.edge.client.twodview.views;
-//TODO: Comments
+
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.ui.views.properties.IPropertySheetPage;
 import org.eclipse.ui.views.properties.tabbed.ITabbedPropertySheetPageContributor;
 import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetPage;
 
 /**
- * @author kyle
+ * TODO: Class level comment.  
  * 
+ * @author kyle
  */
 public class SiteViewAdapterFactory implements IAdapterFactory {
 

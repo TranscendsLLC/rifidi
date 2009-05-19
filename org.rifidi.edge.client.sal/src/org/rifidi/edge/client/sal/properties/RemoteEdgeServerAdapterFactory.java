@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.client.sal.properties;
-//TODO: Comments
+
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.ui.views.properties.IPropertySource;
 import org.eclipse.ui.views.properties.IPropertySource2;
@@ -11,7 +9,6 @@ import org.eclipse.ui.views.properties.IPropertySource2;
  * An adapter factory for the RemoteEdgeServer model object
  * 
  * @author Kyle Neumeier - kyle@pramari.com
- * 
  */
 public class RemoteEdgeServerAdapterFactory implements IAdapterFactory {
 

@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.core.rmi.client.readerconfigurationstub;
-//TODO: Comments
+
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
@@ -11,8 +9,9 @@ import org.rifidi.edge.core.api.rmi.dto.SessionDTO;
 import org.rifidi.rmi.utils.remotecall.ServerDescriptionBasedRemoteMethodCall;
 
 /**
- * @author kyle
+ * TODO: Class level comment.  
  * 
+ * @author kyle
  */
 public class RS_GetSession extends
 		ServerDescriptionBasedRemoteMethodCall<SessionDTO, RuntimeException> {
@@ -21,6 +20,8 @@ public class RS_GetSession extends
 	private String sessionID;
 
 	/**
+	 * Constructor.  
+	 * 
 	 * @param serverDescription
 	 */
 	public RS_GetSession(RS_ServerDescription serverDescription, String readerID,

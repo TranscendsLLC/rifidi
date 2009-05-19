@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.client.ale.reports;
-//TODO: Comments
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eclipse.core.databinding.observable.list.IListChangeListener;
@@ -17,8 +15,9 @@ import org.rifidi.edge.client.ale.api.xsd.ale.epcglobal.ECReportGroup;
 import org.rifidi.edge.client.ale.api.xsd.ale.epcglobal.ECReports;
 
 /**
- * @author Jochen Mader - jochen@pramari.com
+ * TODO: Class level comment.  
  * 
+ * @author Jochen Mader - jochen@pramari.com
  */
 public class ReportTreeContentProvider implements ITreeContentProvider,
 		IListChangeListener {

@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.client.twodview.views;
-//TODO: Comments
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -20,7 +18,6 @@ import org.rifidi.edge.client.twodview.sfx.ReaderAlphaImageFigure;
  * The selection provider for the SiteView
  * 
  * @author Kyle Neumeier - kyle@pramari.com
- * 
  */
 public class SiteViewSelectionProvider implements ISelectionProvider,
 		SiteViewFigureSelectionListener {
@@ -95,12 +92,19 @@ public class SiteViewSelectionProvider implements ISelectionProvider,
 		this.listeners.remove(listener);
 	}
 
+	/**
+	 * TODO: Method level comment.  
+	 */
 	public void dispose() {
 		if (pane != null) {
 			pane.remoteImageSelectionListener(this);
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.rifidi.edge.client.twodview.listeners.SiteViewFigureSelectionListener#figureSelected(org.eclipse.draw2d.IFigure)
+	 */
 	@Override
 	public void figureSelected(IFigure figure) {
 		if ((figure instanceof ReaderAlphaImageFigure) && (figure != null)) {

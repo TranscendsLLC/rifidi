@@ -1,14 +1,13 @@
-/**
- * 
- */
+
 package org.rifidi.edge.client.sal.properties;
-//TODO: Comments
+
 import org.eclipse.ui.views.properties.tabbed.AbstractTypeMapper;
 import org.eclipse.ui.views.properties.tabbed.ITypeMapper;
 
 /**
- * @author Kyle Neumeier - kyle@pramari.com
+ * TODO: Class level comment.  
  * 
+ * @author Kyle Neumeier - kyle@pramari.com
  */
 public class SALTabbedPropertiesTypeMapper extends AbstractTypeMapper implements
 		ITypeMapper {

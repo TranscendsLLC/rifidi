@@ -9,10 +9,11 @@
  *  				http://www.opensource.org/licenses/lgpl-license.html
  */
 package org.rifidi.edge.client.twodview.layers;
-//TODO: Comments
+
 /**
- * @author Tobias Hoppenthaler - tobias@pramari.com
+ * TODO: Class level comment.  
  * 
+ * @author Tobias Hoppenthaler - tobias@pramari.com
  */
 public class NoteLayer extends XYLayer {
 

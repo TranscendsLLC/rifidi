@@ -1,23 +1,15 @@
-/* 
- *  ObjectLayer.java
- *  Created:	Aug 19, 2008
- *  Project:	RiFidi Dashboard - An RFID infrastructure monitoring tool
- *  				http://www.rifidi.org
- *  				http://rifidi.sourceforge.net
- *  Copyright:	Pramari LLC and the Rifidi Project
- *  License:	Lesser GNU Public License (LGPL)
- *  				http://www.opensource.org/licenses/lgpl-license.html
- */
+
 package org.rifidi.edge.client.twodview.layers;
-//TODO: Comments
+
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.rifidi.edge.client.twodview.exceptions.ReaderAlreadyInMapException;
 import org.rifidi.edge.client.twodview.sfx.ReaderAlphaImageFigure;
 
 /**
- * @author Tobias Hoppenthaler - tobias@pramari.com
+ * TODO: Class level comment.  
  * 
+ * @author Tobias Hoppenthaler - tobias@pramari.com
  */
 public class ObjectLayer extends XYLayer {
 
@@ -28,6 +20,13 @@ public class ObjectLayer extends XYLayer {
 		super();
 	}
 
+	/**
+	 * Adds a reader to the XYLayer.  
+	 * 
+	 * @param reader
+	 * @param location
+	 * @throws ReaderAlreadyInMapException
+	 */
 	public void addReader(ReaderAlphaImageFigure reader, Point location)
 			throws ReaderAlreadyInMapException {
 

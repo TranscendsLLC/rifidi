@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.core.rmi.client.readerconfigurationstub;
-//TODO: Comments
+
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
@@ -13,7 +11,6 @@ import org.rifidi.rmi.utils.remotecall.ServerDescriptionBasedRemoteMethodCall;
  * This command starts a session on the reader. It returns null.
  * 
  * @author Kyle Nuemeier - kyle@pramari.com
- * 
  */
 public class RS_StartSession extends
 		ServerDescriptionBasedRemoteMethodCall<Object, RuntimeException> {

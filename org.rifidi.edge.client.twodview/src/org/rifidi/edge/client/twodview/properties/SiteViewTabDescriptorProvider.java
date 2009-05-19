@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.client.twodview.properties;
-//TODO: Comments
+
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.IWorkbenchPart;
@@ -13,8 +11,9 @@ import org.rifidi.edge.client.sal.properties.SALTabDescriptorProvider;
 import org.rifidi.edge.client.twodview.sfx.ReaderAlphaImageFigure;
 
 /**
- * @author kyle
+ * TODO: Class level comment.  
  * 
+ * @author kyle
  */
 public class SiteViewTabDescriptorProvider implements ITabDescriptorProvider {
 

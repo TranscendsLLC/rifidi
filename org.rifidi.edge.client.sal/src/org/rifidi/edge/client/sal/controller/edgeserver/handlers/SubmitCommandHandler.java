@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.client.sal.controller.edgeserver.handlers;
-//TODO: Comments
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -25,7 +23,6 @@ import org.rifidi.edge.client.sal.wizards.submitjob.SubmitJobWizard;
  * be a RemoteSession
  * 
  * @author Kyle Neumeier - kyle@pramari.com
- * 
  */
 public class SubmitCommandHandler extends AbstractHandler implements IHandler2 {
 

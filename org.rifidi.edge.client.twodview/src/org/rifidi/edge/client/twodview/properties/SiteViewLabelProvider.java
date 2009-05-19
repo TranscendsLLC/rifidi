@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.client.twodview.properties;
-//TODO: Comments
+
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.swt.graphics.Image;
@@ -10,8 +8,9 @@ import org.rifidi.edge.client.model.sal.RemoteReader;
 import org.rifidi.edge.client.twodview.Activator;
 
 /**
- * @author kyle
+ * TODO: Class level comment.  
  * 
+ * @author kyle
  */
 public class SiteViewLabelProvider implements ILabelProvider {
 

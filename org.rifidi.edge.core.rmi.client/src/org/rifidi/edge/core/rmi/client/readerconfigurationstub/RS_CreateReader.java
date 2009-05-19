@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.core.rmi.client.readerconfigurationstub;
-//TODO: Comments
+
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
@@ -15,7 +13,6 @@ import org.rifidi.rmi.utils.remotecall.ServerDescriptionBasedRemoteMethodCall;
  * This call creates a new Reader on the server.
  * 
  * @author Kyle Neumeier - kyle@pramari.com
- * 
  */
 public class RS_CreateReader extends
 		ServerDescriptionBasedRemoteMethodCall<String, RuntimeException> {

@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.client.mbean.ui.widgets.standard.impl;
-//TODO: Comments
+
 import javax.management.Attribute;
 
 import org.eclipse.swt.SWT;
@@ -17,18 +15,23 @@ import org.rifidi.edge.client.mbean.ui.widgets.data.LongWidgetData;
  * a spinner, it can only display values within the integer range
  * 
  * @author Kyle Neumeier - kyle@pramari.com
- * 
  */
 public class StandardLongWidget<T extends LongWidgetData> extends
 		AbstractNumberWidget<T> {
 
 	/**
+	 * Constructor.  
+	 * 
 	 * @param data
 	 */
 	public StandardLongWidget(T data) {
 		super(data);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.rifidi.edge.client.mbean.ui.widgets.abstractwidgets.AbstractNumberWidget#createSpinner(org.eclipse.swt.widgets.Composite)
+	 */
 	@Override
 	protected void createSpinner(Composite parent) {
 		spinner = new Spinner(parent, SWT.BORDER);
@@ -40,6 +43,10 @@ public class StandardLongWidget<T extends LongWidgetData> extends
 	
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.rifidi.edge.client.mbean.ui.widgets.abstractwidgets.AbstractNumberWidget#initializeSpinner()
+	 */
 	@Override
 	protected void initializeSpinner() {
 		if (data.maxValue() > Integer.MAX_VALUE) {
@@ -57,12 +64,20 @@ public class StandardLongWidget<T extends LongWidgetData> extends
 	
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.rifidi.edge.client.mbean.ui.widgets.abstractwidgets.AbstractWidget#getAttribute()
+	 */
 	@Override
 	public Attribute getAttribute() {
 		return new Attribute(getElementName(), Long
 				.parseLong(spinner.getText()));
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.rifidi.edge.client.mbean.ui.widgets.abstractwidgets.AbstractNumberWidget#getValueAsInteger(javax.management.Attribute)
+	 */
 	@Override
 	protected Integer getValueAsInteger(Attribute value) {
 		return ((Long) value.getValue()).intValue();

@@ -7,7 +7,7 @@ import org.osgi.framework.BundleContext;
 import org.rifidi.edge.client.ale.logicalreaders.ALELRService;
 import org.rifidi.edge.client.ale.logicalreaders.ALELRServiceImpl;
 import org.rifidi.edge.client.ale.logicalreaders.ALEService;
-//TODO: Comments
+
 /**
  * The activator class controls the plug-in life cycle
  */
@@ -63,10 +63,20 @@ public class Activator extends AbstractUIPlugin {
 		plugin.getPreferenceStore().addPropertyChangeListener(alelrService);
 	}
 
+	/**
+	 * TODO: Method level comment.  
+	 * 
+	 * @return
+	 */
 	public ALEService getAleService() {
 		return aleService;
 	}
 
+	/**
+	 * TODO: Method level comment.  
+	 * 
+	 * @return
+	 */
 	public ALELRService getAleLrService() {
 		return alelrService;
 	}

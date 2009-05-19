@@ -8,7 +8,7 @@
  *  License: Lesser GNU Public License (LGPL)
  *  http://www.opensource.org/licenses/lgpl-license.html
  */
-//TODO: Comments
+
 package org.rifidi.rmi.utils.retrystrategy.impl;
 
 import org.rifidi.rmi.utils.retrystrategy.RetryStrategy;
@@ -26,7 +26,6 @@ import org.rifidi.rmi.utils.retrystrategy.RetryStrategy;
  * difficulties occur anyway.
  * 
  * Kyle Neumeier - kyle@pramari.com
- * 
  */
 public class AdditiveWaitRetryStrategy extends RetryStrategy {
 	public static final long STARTING_WAIT_TIME = 500;
@@ -36,10 +35,20 @@ public class AdditiveWaitRetryStrategy extends RetryStrategy {
 	private long _currentTimeToWait;
 	private long _waitTimeIncrement;
 
+	/**
+	 * Default constructor.  
+	 */
 	public AdditiveWaitRetryStrategy() {
 		this(DEFAULT_NUMBER_OF_RETRIES, STARTING_WAIT_TIME, WAIT_TIME_INCREMENT);
 	}
 
+	/**
+	 * Constructor.  
+	 * 
+	 * @param numberOfRetries
+	 * @param startingWaitTime
+	 * @param waitTimeIncrement
+	 */
 	public AdditiveWaitRetryStrategy(int numberOfRetries,
 			long startingWaitTime, long waitTimeIncrement) {
 		super(numberOfRetries);
@@ -49,6 +58,10 @@ public class AdditiveWaitRetryStrategy extends RetryStrategy {
 
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.rifidi.rmi.utils.retrystrategy.RetryStrategy#getTimeToWait()
+	 */
 	protected long getTimeToWait() {
 		long returnValue = _currentTimeToWait;
 

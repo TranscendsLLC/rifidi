@@ -1,15 +1,6 @@
-/* 
- *  RemoveReader.java
- *  Created:	Nov 10, 2008
- *  Project:	RiFidi Dashboard - An RFID infrastructure monitoring tool
- *  				http://www.rifidi.org
- *  				http://rifidi.sourceforge.net
- *  Copyright:	Pramari LLC and the Rifidi Project
- *  License:	Lesser GNU Public License (LGPL)
- *  				http://www.opensource.org/licenses/lgpl-license.html
- */
+
 package org.rifidi.edge.client.twodview.handlers;
-//TODO: Comments
+
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
@@ -18,13 +9,13 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.HandlerUtil;
-import org.rifidi.edge.client.model.sal.RemoteReader;
 import org.rifidi.edge.client.twodview.sfx.ReaderAlphaImageFigure;
 import org.rifidi.edge.client.twodview.views.SiteView;
 
 /**
- * @author Tobias Hoppenthaler - tobias@pramari.com
+ * Removes a reader from the view.  
  * 
+ * @author Tobias Hoppenthaler - tobias@pramari.com
  */
 public class RemoveReader implements IHandler {
 

@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.client.sal.properties;
-//TODO: Comments
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -23,8 +21,9 @@ import org.rifidi.edge.client.sal.properties.edgeserver.EdgeServerTabDescriptor;
 import org.rifidi.edge.client.sal.properties.readers.ReaderTabDescriptor;
 
 /**
- * @author Kyle Neumeier - kyle@pramari.com
+ * TODO: Class level comment.  
  * 
+ * @author Kyle Neumeier - kyle@pramari.com
  */
 public class SALTabDescriptorProvider implements ITabDescriptorProvider {
 

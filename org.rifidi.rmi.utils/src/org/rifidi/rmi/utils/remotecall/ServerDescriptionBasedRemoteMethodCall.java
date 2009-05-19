@@ -8,7 +8,6 @@
  *  License: Lesser GNU Public License (LGPL)
  *  http://www.opensource.org/licenses/lgpl-license.html
  */
-//TODO: Comments
 package org.rifidi.rmi.utils.remotecall;
 
 import java.rmi.Remote;
@@ -28,9 +27,7 @@ import org.rifidi.rmi.utils.exceptions.ServerUnavailable;
  * objects. Most command objects should use this class
  * 
  * @author Kyle Neumeier - kyle@pramari.com
- * 
  */
-
 public abstract class ServerDescriptionBasedRemoteMethodCall<T, E extends Exception>
 		extends AbstractRemoteMethodCall<T, E> {
 	protected ServerDescription _serverDescription;
@@ -38,6 +35,11 @@ public abstract class ServerDescriptionBasedRemoteMethodCall<T, E extends Except
 	private Log logger = LogFactory
 			.getLog(ServerDescriptionBasedRemoteMethodCall.class);
 
+	/**
+	 * Constructor.  
+	 * 
+	 * @param serverDescription
+	 */
 	public ServerDescriptionBasedRemoteMethodCall(
 			ServerDescription serverDescription) {
 		_serverDescription = serverDescription;
@@ -66,7 +68,11 @@ public abstract class ServerDescriptionBasedRemoteMethodCall<T, E extends Except
 			throw serverUnavailable;
 		}
 	}
-
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.rifidi.rmi.utils.remotecall.AbstractRemoteMethodCall#remoteExceptionOccurred(java.rmi.RemoteException)
+	 */
 	@Override
 	protected void remoteExceptionOccurred(RemoteException remoteException) {
 		logger.warn("Remote Exception: " + remoteException.getMessage());

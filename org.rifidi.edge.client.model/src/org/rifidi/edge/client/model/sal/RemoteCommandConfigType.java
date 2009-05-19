@@ -1,13 +1,12 @@
-/**
- * 
- */
+
 package org.rifidi.edge.client.model.sal;
-//TODO: Comments
+
 import javax.management.MBeanInfo;
 
 /**
- * @author kyle
+ * TODO: Class level comment.  
  * 
+ * @author kyle
  */
 public class RemoteCommandConfigType {
 
@@ -17,6 +16,13 @@ public class RemoteCommandConfigType {
 
 	private String readerFactoryID;
 
+	/**
+	 * Constructor.  
+	 * 
+	 * @param typeID
+	 * @param readerFactoryID
+	 * @param info
+	 */
 	public RemoteCommandConfigType(String typeID, String readerFactoryID,
 			MBeanInfo info) {
 		this.commandConfigType = typeID;
@@ -25,6 +31,8 @@ public class RemoteCommandConfigType {
 	}
 
 	/**
+	 * TODO: Method level comment.  
+	 * 
 	 * @return the mbeanInfo
 	 */
 	public MBeanInfo getMbeanInfo() {
@@ -32,6 +40,8 @@ public class RemoteCommandConfigType {
 	}
 
 	/**
+	 * TODO: Method level comment.  
+	 * 
 	 * @return the type
 	 */
 	public String getCommandConfigType() {
@@ -39,6 +49,8 @@ public class RemoteCommandConfigType {
 	}
 
 	/**
+	 * TODO: Method level comment.  
+	 * 
 	 * @return the readerFactoryID
 	 */
 	public String getReaderFactoryID() {

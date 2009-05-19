@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.client.sal.wizards.submitjob;
-//TODO: Comments
+
 import org.eclipse.jface.wizard.Wizard;
 import org.rifidi.edge.client.model.sal.RemoteCommandConfiguration;
 import org.rifidi.edge.client.model.sal.RemoteSession;
@@ -13,7 +11,6 @@ import org.rifidi.edge.client.sal.controller.edgeserver.EdgeServerTreeContentPro
  * and RemoteCommandConfiguration are already known
  * 
  * @author Kyle Neumeier - kyle@pramari.com
- * 
  */
 public class SimpleSubmitJobWizard extends Wizard {
 

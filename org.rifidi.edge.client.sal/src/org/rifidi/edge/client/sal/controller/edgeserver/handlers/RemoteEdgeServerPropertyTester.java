@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.client.sal.controller.edgeserver.handlers;
-//TODO: Comments
+
 import org.eclipse.core.expressions.PropertyTester;
 import org.rifidi.edge.client.model.sal.RemoteEdgeServer;
 import org.rifidi.edge.client.model.sal.RemoteEdgeServerState;
@@ -11,7 +9,6 @@ import org.rifidi.edge.client.model.sal.RemoteEdgeServerState;
  * A property tester to test the state of the edge server
  * 
  * @author Kyle Neumeier - kyle@pramari.com
- * 
  */
 public class RemoteEdgeServerPropertyTester extends PropertyTester {
 
@@ -30,9 +27,7 @@ public class RemoteEdgeServerPropertyTester extends PropertyTester {
 			return ((RemoteEdgeServer) receiver).getState().equals(
 					RemoteEdgeServerState.valueOf(val));
 		}
-
 		return false;
-
 	}
 
 }

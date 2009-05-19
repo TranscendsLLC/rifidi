@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.client.sal.perspective;
-//TODO: Comments
+
 import org.eclipse.ui.IFolderLayout;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveFactory;
@@ -11,8 +9,9 @@ import org.rifidi.edge.client.sal.views.EdgeServerView;
 import org.rifidi.edge.client.sal.views.tags.TagView;
 
 /**
- * @author Kyle Neumeier - kyle@pramari.com
+ * TODO: Class level comment.  
  * 
+ * @author Kyle Neumeier - kyle@pramari.com
  */
 public class SALPerspective implements IPerspectiveFactory {
 

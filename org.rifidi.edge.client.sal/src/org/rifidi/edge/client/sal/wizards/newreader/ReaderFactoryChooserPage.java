@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.client.sal.wizards.newreader;
-//TODO: Comments
+
 import java.util.HashMap;
 import java.util.Set;
 
@@ -21,7 +19,6 @@ import org.rifidi.edge.client.model.sal.RemoteReaderFactory;
  * A wizard page that allows a user to chose a new reader type to create
  * 
  * @author Kyle Neumeier - kyle@pramari.com
- * 
  */
 public class ReaderFactoryChooserPage extends WizardPage {
 

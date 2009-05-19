@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.client.mbean.ui.widgets.standard.impl;
-//TODO: Comments
+
 import javax.management.Attribute;
 
 import org.eclipse.swt.SWT;
@@ -17,7 +15,6 @@ import org.rifidi.edge.client.mbean.ui.widgets.data.FloatWidgetData;
  * ranges are limited
  * 
  * @author Kyle Neumeier - kyle@pramari.com
- * 
  */
 public class StandardFloatWidget<T extends FloatWidgetData> extends
 		AbstractNumberWidget<T> {
@@ -82,6 +79,10 @@ public class StandardFloatWidget<T extends FloatWidgetData> extends
 				.getText()));
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.rifidi.edge.client.mbean.ui.widgets.abstractwidgets.AbstractNumberWidget#getValueAsInteger(javax.management.Attribute)
+	 */
 	@Override
 	protected Integer getValueAsInteger(Attribute value) {
 		Float f = (Float)value.getValue();

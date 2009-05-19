@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.client.sal.controller.edgeserver.handlers;
-//TODO: Comments
+
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
@@ -15,9 +13,9 @@ import org.rifidi.edge.client.sal.controller.edgeserver.EdgeServerController;
 import org.rifidi.edge.client.sal.controller.edgeserver.EdgeServerTreeContentProvider;
 
 /**
+ * TODO: Class level comment.  
  * 
  * @author Kyle Neumeier - kyle@pramari.com
- * 
  */
 public class SynchPropertyChangesHandler extends AbstractHandler implements
 		IHandler {

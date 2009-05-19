@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.core.rmi.client.readerconfigurationstub;
-//TODO: Comments
+
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.concurrent.TimeUnit;
@@ -16,7 +14,6 @@ import org.rifidi.rmi.utils.remotecall.ServerDescriptionBasedRemoteMethodCall;
  * It returns null if there was a problem.
  * 
  * @author Kyle Neumeier - kyle@pramari.com
- * 
  */
 public class RS_SubmitCommand extends
 		ServerDescriptionBasedRemoteMethodCall<Integer, RuntimeException> {

@@ -8,7 +8,7 @@
  *  License: Lesser GNU Public License (LGPL)
  *  http://www.opensource.org/licenses/lgpl-license.html
  */
-//TODO: Comments
+
 package org.rifidi.rmi.utils.retrystrategy.impl;
 
 import org.rifidi.rmi.utils.retrystrategy.RetryStrategy;
@@ -25,24 +25,35 @@ import org.rifidi.rmi.utils.retrystrategy.RetryStrategy;
  * (e.g. in the Swing event handling thread).
  * 
  * Kyle Neumeier - kyle@pramari.com
- * 
  */
-
 public class ExponentialBackoffRetryStrategy extends RetryStrategy {
 	public static final long STARTING_WAIT_TIME = 3000;
 
 	private long _currentTimeToWait;
 
+	/**
+	 * Default constructor.  
+	 */
 	public ExponentialBackoffRetryStrategy() {
 		this(DEFAULT_NUMBER_OF_RETRIES, STARTING_WAIT_TIME);
 	}
 
+	/**
+	 * Constructor.  
+	 * 
+	 * @param numberOfRetries
+	 * @param startingWaitTime
+	 */
 	public ExponentialBackoffRetryStrategy(int numberOfRetries,
 			long startingWaitTime) {
 		super(numberOfRetries);
 		_currentTimeToWait = startingWaitTime;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.rifidi.rmi.utils.retrystrategy.RetryStrategy#getTimeToWait()
+	 */
 	protected long getTimeToWait() {
 		long returnValue = _currentTimeToWait;
 		_currentTimeToWait *= 2;

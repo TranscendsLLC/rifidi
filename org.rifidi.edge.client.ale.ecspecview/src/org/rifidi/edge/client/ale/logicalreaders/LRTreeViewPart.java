@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.client.ale.logicalreaders;
-//TODO: Comments
+
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -16,8 +14,9 @@ import org.eclipse.ui.part.ViewPart;
 import org.rifidi.edge.client.ale.ecspecview.Activator;
 
 /**
- * @author Jochen Mader - jochen@pramari.com
+ * TODO: Class level comment.  
  * 
+ * @author Jochen Mader - jochen@pramari.com
  */
 public class LRTreeViewPart extends ViewPart {
 	public static final String ID="org.rifidi.edge.client.ale.logicalreaders.LRView";

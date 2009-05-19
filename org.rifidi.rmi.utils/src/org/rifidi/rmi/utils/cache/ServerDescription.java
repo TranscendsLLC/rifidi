@@ -8,7 +8,7 @@
  *  License: Lesser GNU Public License (LGPL)
  *  http://www.opensource.org/licenses/lgpl-license.html
  */
-//TODO: Comments
+
 package org.rifidi.rmi.utils.cache;
 
 import java.rmi.AccessException;
@@ -53,6 +53,7 @@ public abstract class ServerDescription {
 	private String _hashString;
 	
 	/**
+	 * Constructor.  
 	 * 
 	 * @param serverIP
 	 *            The IP address of the remote machine that has the RMI registry
@@ -71,10 +72,18 @@ public abstract class ServerDescription {
 
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
 	public int hashCode() {
 		return _hashString.hashCode();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
 	public boolean equals(Object object) {
 		if (!(object instanceof ServerDescription)) {
 			return false;
@@ -84,7 +93,6 @@ public abstract class ServerDescription {
 	}
 
 	/**
-	 * 
 	 * @return the unique string
 	 */
 	private String getHashstring() {
@@ -99,7 +107,6 @@ public abstract class ServerDescription {
 	}
 
 	/**
-	 * 
 	 * @return the port number of the remote machine
 	 */
 	public int getServerPort() {
@@ -107,7 +114,6 @@ public abstract class ServerDescription {
 	}
 
 	/**
-	 * 
 	 * @return The name of the remote stub in the RMI registry
 	 */
 	public String getStubName() {

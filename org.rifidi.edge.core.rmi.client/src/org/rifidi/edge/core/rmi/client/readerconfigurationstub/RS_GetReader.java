@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.core.rmi.client.readerconfigurationstub;
-//TODO: Comments
+
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
@@ -14,7 +12,6 @@ import org.rifidi.rmi.utils.remotecall.ServerDescriptionBasedRemoteMethodCall;
  * This method gets the Reader Data Transfer Object for a specified Reader
  * 
  * @author Kyle Neumeier -kyle@pramari.com
- * 
  */
 public class RS_GetReader extends
 		ServerDescriptionBasedRemoteMethodCall<ReaderDTO, RuntimeException> {

@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.core.rmi.client.readerconfigurationstub;
-//TODO: Comments
+
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
@@ -14,7 +12,6 @@ import org.rifidi.rmi.utils.remotecall.ServerDescriptionBasedRemoteMethodCall;
  * is not currently used and will return null
  * 
  * @author Kyle Neumeier - kyle@pramari.com
- * 
  */
 public class RS_DeleteReader extends
 		ServerDescriptionBasedRemoteMethodCall<Object, RuntimeException> {
@@ -36,6 +33,10 @@ public class RS_DeleteReader extends
 		this.readerID = readerID;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.rifidi.rmi.utils.remotecall.AbstractRemoteMethodCall#performRemoteCall(java.rmi.Remote)
+	 */
 	@Override
 	protected Object performRemoteCall(Remote remoteObject)
 			throws RemoteException, RuntimeException {

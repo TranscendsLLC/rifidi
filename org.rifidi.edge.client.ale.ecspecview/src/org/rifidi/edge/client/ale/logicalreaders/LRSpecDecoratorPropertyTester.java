@@ -1,21 +1,20 @@
-/**
- * 
- */
+
 package org.rifidi.edge.client.ale.logicalreaders;
-//TODO: Comments
+
 import java.util.Collection;
 
 import org.eclipse.core.expressions.PropertyTester;
 import org.rifidi.edge.client.ale.logicalreaders.decorators.LRSpecDecorator;
 
 /**
+ * TODO: Class level comment.  
+ * 
  * @author Jochen Mader - jochen@pramari.com
- *
  */
 public class LRSpecDecoratorPropertyTester extends PropertyTester {
 
 	/**
-	 * 
+	 * Constructor.  
 	 */
 	public LRSpecDecoratorPropertyTester() {
 		// TODO Auto-generated constructor stub

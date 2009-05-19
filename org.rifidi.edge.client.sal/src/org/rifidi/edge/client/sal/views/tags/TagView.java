@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.client.sal.views.tags;
-//TODO: Comments
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -22,8 +20,9 @@ import org.rifidi.edge.client.model.sal.RemoteReader;
 import org.rifidi.edge.client.model.sal.RemoteTag;
 
 /**
- * @author Kyle Neumeier - kyle@pramari.com
+ * View for tag tab.  
  * 
+ * @author Kyle Neumeier - kyle@pramari.com
  */
 public class TagView extends ViewPart implements ISetChangeListener {
 
@@ -105,6 +104,10 @@ public class TagView extends ViewPart implements ISetChangeListener {
 		this.tags.removeSetChangeListener(this);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.core.databinding.observable.set.ISetChangeListener#handleSetChange(org.eclipse.core.databinding.observable.set.SetChangeEvent)
+	 */
 	@Override
 	public void handleSetChange(SetChangeEvent event) {
 		Set additions = event.diff.getAdditions();

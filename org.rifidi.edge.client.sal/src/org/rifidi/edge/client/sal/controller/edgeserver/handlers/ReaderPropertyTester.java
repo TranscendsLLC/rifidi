@@ -1,19 +1,18 @@
-/**
- * 
- */
+
 package org.rifidi.edge.client.sal.controller.edgeserver.handlers;
-//TODO: Comments
+
 import org.eclipse.core.expressions.PropertyTester;
 import org.rifidi.edge.client.model.sal.RemoteReader;
 
 /**
- * @author kyle
+ * TODO: Class level comment.  
  * 
+ * @author kyle
  */
 public class ReaderPropertyTester extends PropertyTester {
 
 	/**
-	 * 
+	 * Constructor.  
 	 */
 	public ReaderPropertyTester() {
 		// TODO Auto-generated constructor stub
