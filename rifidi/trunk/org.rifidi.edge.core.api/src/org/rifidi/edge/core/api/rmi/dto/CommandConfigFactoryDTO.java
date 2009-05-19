@@ -1,11 +1,11 @@
-
 package org.rifidi.edge.core.api.rmi.dto;
 
 import java.io.Serializable;
 import java.util.Set;
 
 /**
- * A Data Transfer Object for sending CommandConfigurationFactories to clients
+ * A Data Transfer Object for CommandConfigurationFactories. For serializing
+ * information about a CommandConfiguraitonFactoy
  * 
  * @author Kyle Neumeier - kyle@pramari.com
  */
@@ -34,7 +34,7 @@ public class CommandConfigFactoryDTO implements Serializable {
 	}
 
 	/**
-	 * Returns the ReaderFactoryID for this class.  
+	 * Returns the ReaderFactoryID for this class.
 	 * 
 	 * @return the readerFactoryID
 	 */
@@ -43,7 +43,7 @@ public class CommandConfigFactoryDTO implements Serializable {
 	}
 
 	/**
-	 * Returns the CommandConfigTypeIDs for thsi class.  
+	 * Returns the CommandConfigTypeIDs for thsi class.
 	 * 
 	 * @return the commandConfigFactoryIDs
 	 */

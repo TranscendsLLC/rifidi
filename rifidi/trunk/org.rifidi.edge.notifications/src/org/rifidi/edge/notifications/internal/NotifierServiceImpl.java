@@ -1,4 +1,3 @@
-
 package org.rifidi.edge.notifications.internal;
 
 import java.util.Dictionary;
@@ -76,7 +75,7 @@ public class NotifierServiceImpl implements NotifierService,
 	}
 
 	/**
-	 * TODO: Method level comment. 
+	 * Called by spring when a new configuration is added
 	 * 
 	 * @param configuration
 	 * @param parameters
@@ -87,7 +86,7 @@ public class NotifierServiceImpl implements NotifierService,
 	}
 
 	/**
-	 * TODO: Method level comment. 
+	 * Called by spring when a configuration goes away
 	 * 
 	 * @param configuration
 	 * @param parameters
@@ -98,7 +97,7 @@ public class NotifierServiceImpl implements NotifierService,
 	}
 
 	/**
-	 * TODO: Method level comment. 
+	 * Called by spring to set the initial list of configurations
 	 * 
 	 * @param configurations
 	 */
@@ -308,15 +307,12 @@ public class NotifierServiceImpl implements NotifierService,
 
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Helper method to add send a add command configuration event
 	 * 
-	 * @see
-	 * org.rifidi.edge.core.notifications.NotifierService#addCommandConfiguration
-	 * (java.lang.String)
+	 * @param commandConfigurationID
 	 */
-	@Override
-	public void addCommandConfiguration(String commandConfigurationID) {
+	private void addCommandConfiguration(String commandConfigurationID) {
 		try {
 			extNotificationTemplate.send(this.extNotificationDest,
 					new NotificationMessageCreator(
@@ -328,15 +324,12 @@ public class NotifierServiceImpl implements NotifierService,
 
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Helper method to send a remove command configuraiton event
 	 * 
-	 * @see
-	 * org.rifidi.edge.core.notifications.NotifierService#removeCommandConfiguration
-	 * (java.lang.String)
+	 * @param commandConfigurationID
 	 */
-	@Override
-	public void removeCommandConfiguration(String commandConfigurationID) {
+	private void removeCommandConfiguration(String commandConfigurationID) {
 		try {
 			extNotificationTemplate.send(this.extNotificationDest,
 					new NotificationMessageCreator(

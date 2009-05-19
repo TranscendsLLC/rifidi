@@ -1,4 +1,3 @@
-
 package org.rifidi.edge.core.notifications.internal;
 
 import java.util.Dictionary;
@@ -7,17 +6,19 @@ import org.rifidi.edge.core.notifications.NotifierService;
 import org.rifidi.edge.core.notifications.NotifierServiceWrapper;
 
 /**
- * TODO: Class level comment. 
+ * Implementation of Notifier Service Wrapper
  * 
- * @author kyle
+ * @author Kyle Neumeier - kyle@pramari.com
  */
-public class NotifyServiceWrapperImpl implements NotifierServiceWrapper{
-	
+public class NotifyServiceWrapperImpl implements NotifierServiceWrapper {
+
 	private NotifierService service = null;
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.rifidi.edge.core.notifications.NotifierServiceWrapper#getService()
+	 * 
+	 * @see
+	 * org.rifidi.edge.core.notifications.NotifierServiceWrapper#getService()
 	 */
 	@Override
 	public NotifierService getService() {

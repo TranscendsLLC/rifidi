@@ -1,4 +1,3 @@
-
 package org.rifidi.edge.core.api.rmi.dto;
 
 import java.io.Serializable;
@@ -7,7 +6,8 @@ import java.util.Map;
 import org.rifidi.edge.core.api.SessionStatus;
 
 /**
- * A Data Transfer Object for information about a session
+ * A Data Transfer Object for Sessions. For serializing information about
+ * Sessions.
  * 
  * @author Kyle Neumeier - kyle@pramari.com
  */
@@ -41,7 +41,7 @@ public class SessionDTO implements Serializable {
 	}
 
 	/**
-	 * TODO: Method level comment.  
+	 * Return the status of the session
 	 * 
 	 * @return the status of the session
 	 */
@@ -50,7 +50,7 @@ public class SessionDTO implements Serializable {
 	}
 
 	/**
-	 * TODO: Method level comment.  
+	 * The set of jobs that are currently scheduled on the session
 	 * 
 	 * @return The Commands being executed. Integer is process ID for this
 	 *         session, String is Command ID

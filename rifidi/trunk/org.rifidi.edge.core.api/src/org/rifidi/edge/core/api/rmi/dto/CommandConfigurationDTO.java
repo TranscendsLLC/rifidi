@@ -1,4 +1,3 @@
-
 package org.rifidi.edge.core.api.rmi.dto;
 
 import java.io.Serializable;
@@ -6,26 +5,31 @@ import java.io.Serializable;
 import javax.management.AttributeList;
 
 /**
- * TODO: Class level comment.  
+ * A Data Transfer Object that is used to send a CommandConfiguration to a
+ * client
  * 
- * @author kyle
+ * @author Kyle Neumeier - kyle@pramari.com
  */
 public class CommandConfigurationDTO implements Serializable {
 
 	/** Default SerialVersionID */
 	private static final long serialVersionUID = 1L;
-	
+	/** The ID of the command configuration */
 	private String commandConfigID;
+	/** The type of the command configuration */
 	private String commandConfigType;
 	/** The list of attributes of the commandConfiguration */
 	private AttributeList attributes;
-	
+
 	/**
-	 * Constructor.  
+	 * Constructor.
 	 * 
 	 * @param commandConfigID
+	 *            The ID of the CommandConfiguration
 	 * @param commandConfigType
+	 *            The type of the command configuration
 	 * @param readerFactoryID
+	 *            The ID of the reader factory this command works with
 	 */
 	public CommandConfigurationDTO(String commandConfigID,
 			String commandConfigType, AttributeList attributes) {
@@ -36,7 +40,7 @@ public class CommandConfigurationDTO implements Serializable {
 	}
 
 	/**
-	 * Returns the ID for this CommandConfiguration.  
+	 * Returns the ID for this CommandConfiguration.
 	 * 
 	 * @return the commandConfigID
 	 */
@@ -45,7 +49,7 @@ public class CommandConfigurationDTO implements Serializable {
 	}
 
 	/**
-	 * Returns the type of the CommandConfiguration.  
+	 * Returns the type of the CommandConfiguration.
 	 * 
 	 * @return the commandConfigType
 	 */
@@ -54,7 +58,7 @@ public class CommandConfigurationDTO implements Serializable {
 	}
 
 	/**
-	 * Returns the AttributeList for this CommandConfiguration.  
+	 * Returns the AttributeList for this CommandConfiguration.
 	 * 
 	 * @return the attributes
 	 */

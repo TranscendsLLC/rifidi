@@ -1,12 +1,11 @@
-
 package org.rifidi.edge.core.api.jms.notifications;
 
 import java.io.Serializable;
 
 /**
- * TODO: Class level comment.  
+ * A notification send to a client when a session has been deleted
  * 
- * @author Matthew Dean
+ * @author Kyle Neumeier - kyle@pramari.com
  */
 public class SessionRemovedNotification implements Serializable {
 
@@ -26,8 +25,8 @@ public class SessionRemovedNotification implements Serializable {
 	}
 
 	/**
-	 * Returns the ID of the reader.  
-	 *  
+	 * Returns the ID of the reader.
+	 * 
 	 * @return the readerID
 	 */
 	public String getReaderID() {
@@ -35,7 +34,7 @@ public class SessionRemovedNotification implements Serializable {
 	}
 
 	/**
-	 * Returns the ID of the session.  
+	 * Returns the ID of the session.
 	 * 
 	 * @return the sessionID
 	 */

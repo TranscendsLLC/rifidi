@@ -1,4 +1,3 @@
-
 package org.rifidi.configuration.mbeans;
 
 import org.apache.commons.logging.Log;
@@ -6,7 +5,7 @@ import org.apache.commons.logging.LogFactory;
 import org.rifidi.configuration.services.ConfigurationService;
 
 /**
- * TODO: Class level comment.  
+ * Object that wraps a ConfigurationService for JMX
  * 
  * @author Jochen Mader - jochen@pramari.com
  */
@@ -18,7 +17,7 @@ public class ConfigurationControl implements ConfigurationControlMBean {
 	private ConfigurationService impl;
 
 	/**
-	 * Constructor.  
+	 * Constructor.
 	 * 
 	 * @param impl
 	 */
@@ -47,7 +46,7 @@ public class ConfigurationControl implements ConfigurationControlMBean {
 	}
 
 	/**
-	 * Sets the configuration service for this class.  
+	 * Sets the configuration service for this class.
 	 * 
 	 * @param impl
 	 *            the impl to set

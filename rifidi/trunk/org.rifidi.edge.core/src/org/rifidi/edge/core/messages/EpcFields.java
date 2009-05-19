@@ -1,7 +1,7 @@
 package org.rifidi.edge.core.messages;
 
 /**
- * TODO: Class level comment.  
+ * The fields on an EPC tag
  * 
  * @author Jochen Mader - jochen@pramari.com
  */

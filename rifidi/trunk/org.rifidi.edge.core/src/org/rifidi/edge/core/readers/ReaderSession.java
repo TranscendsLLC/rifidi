@@ -1,4 +1,3 @@
-
 package org.rifidi.edge.core.readers;
 
 import java.io.IOException;
@@ -11,24 +10,24 @@ import org.rifidi.edge.core.api.rmi.dto.SessionDTO;
 import org.rifidi.edge.core.commands.Command;
 
 /**
- * This class represents a session with a reader.  
+ * This class represents a session with a reader.
  * 
  * @author Jochen Mader - jochen@pramari.com
  */
 public abstract class ReaderSession {
-	
-	/** The ID for this session*/
+
+	/** The ID for this session */
 	private String ID;
-	
+
 	/**
-	 * Constructor.  
+	 * Constructor.
 	 * 
 	 * @param ID
 	 */
-	public ReaderSession(String ID){
+	public ReaderSession(String ID) {
 		this.ID = ID;
 	}
-	
+
 	/**
 	 * Open the connection to the readerSession.
 	 * 
@@ -51,16 +50,23 @@ public abstract class ReaderSession {
 	public abstract Map<Integer, Command> currentCommands();
 
 	/**
-	 * Submit a command for execution.
+	 * Submit a command for a one-time execution.
 	 * 
 	 * @param command
+	 *            The command to execute
 	 */
 	public abstract void submit(Command command);
 
 	/**
-	 * Submit a command for execution.
+	 * Schedule a command to a reader session for repeated execution.
 	 * 
 	 * @param command
+	 *            The command to execute
+	 * @param interval
+	 *            The interval between executions
+	 * @param unit
+	 *            The Unit of time to measure the interval
+	 * @return The ID of the job
 	 */
 	public abstract Integer submit(Command command, long interval, TimeUnit unit);
 
@@ -68,18 +74,19 @@ public abstract class ReaderSession {
 	 * Kill a command.
 	 * 
 	 * @param id
+	 *            The ID of the command to kill
 	 */
 	public abstract void killComand(Integer id);
 
 	/**
 	 * Get the status of the readerSession.
 	 * 
-	 * @return
+	 * @return The status of the ReaderSession
 	 */
 	public abstract SessionStatus getStatus();
 
 	/**
-	 * TODO: Method level comment. 
+	 * Get the Data Transfer Object used to serialize a Reader Session
 	 * 
 	 * @return Data Transfer Object for this Session
 	 */
@@ -91,13 +98,13 @@ public abstract class ReaderSession {
 		}
 		return new SessionDTO(this.getID(), this.getStatus(), commandMap);
 	}
-	
+
 	/**
-	 * Returns the ID for this session.  
+	 * Returns the ID for this session.
 	 * 
-	 * @return
+	 * @return the ID of the session
 	 */
-	public String getID(){
+	public String getID() {
 		return this.ID;
 	}
 }

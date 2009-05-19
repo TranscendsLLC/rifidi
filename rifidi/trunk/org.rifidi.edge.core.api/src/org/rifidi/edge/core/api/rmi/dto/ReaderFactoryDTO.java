@@ -1,10 +1,10 @@
-
 package org.rifidi.edge.core.api.rmi.dto;
 
 import java.io.Serializable;
 
 /**
- * TODO: Class level comment. 
+ * Data Transfer Object for Reader Factory. For serializing information about a
+ * ReaderFactory
  * 
  * @author Kyle Neumeier - kyle@pramari.com
  */
@@ -35,7 +35,7 @@ public class ReaderFactoryDTO implements Serializable {
 	}
 
 	/**
-	 * Return the ID for the factory.  
+	 * Return the ID for the factory.
 	 * 
 	 * @return the readerFactoryID
 	 */
@@ -44,7 +44,7 @@ public class ReaderFactoryDTO implements Serializable {
 	}
 
 	/**
-	 * Gets the displayname for the readerfactory.  
+	 * Gets the displayname for the readerfactory.
 	 * 
 	 * @return the readerFactoryDisplayName
 	 */
@@ -53,7 +53,7 @@ public class ReaderFactoryDTO implements Serializable {
 	}
 
 	/**
-	 * Returns the description for this readerfactory.  
+	 * Returns the description for this readerfactory.
 	 * 
 	 * @return the readerFactoryDescription
 	 */

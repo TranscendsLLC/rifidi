@@ -26,7 +26,7 @@ public class TagReadEvent implements Serializable {
 	private String readerID;
 
 	/**
-	 * Constructor.  
+	 * Constructor.
 	 * 
 	 * @param tag
 	 * @param antennaID
@@ -41,7 +41,7 @@ public class TagReadEvent implements Serializable {
 	}
 
 	/**
-	 * Returns the ID for the reader.  
+	 * Returns the ID for the reader.
 	 * 
 	 * @return the readerID
 	 */
@@ -50,7 +50,7 @@ public class TagReadEvent implements Serializable {
 	}
 
 	/**
-	 * TODO: Method level comment.  
+	 * Returns the tag
 	 * 
 	 * @return the tag
 	 */
@@ -59,7 +59,7 @@ public class TagReadEvent implements Serializable {
 	}
 
 	/**
-	 * Returns the ID of the antenna.  
+	 * Returns the ID of the antenna.
 	 * 
 	 * @return the antennaID
 	 */
@@ -68,7 +68,7 @@ public class TagReadEvent implements Serializable {
 	}
 
 	/**
-	 * Returns the timestamp.  
+	 * Returns the timestamp.
 	 * 
 	 * @return the timestamp
 	 */

@@ -1,4 +1,3 @@
-
 package org.rifidi.edge.core.rmi.server;
 
 import java.io.IOException;
@@ -461,7 +460,7 @@ public class ReaderConfigurationStubImpl implements ReaderStub {
 	}
 
 	/**
-	 * TODO: Method level comment. 
+	 * Called by spring to set the ConfigurationDAO
 	 * 
 	 * @param configurationDAO
 	 *            the configurationDAO to set
@@ -471,7 +470,7 @@ public class ReaderConfigurationStubImpl implements ReaderStub {
 	}
 
 	/**
-	 * TODO: Method level comment. 
+	 * Called by spring to set the commandDAO
 	 * 
 	 * @param commandDAO
 	 *            the commandDAO to set

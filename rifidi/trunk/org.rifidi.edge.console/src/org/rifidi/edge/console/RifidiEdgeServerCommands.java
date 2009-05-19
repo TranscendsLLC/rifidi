@@ -1,4 +1,3 @@
-
 package org.rifidi.edge.console;
 
 import java.io.IOException;
@@ -24,7 +23,7 @@ import org.rifidi.edge.core.readers.AbstractReaderFactory;
 import org.rifidi.edge.core.readers.ReaderSession;
 
 /**
- * Command line commands for the edge server.  
+ * Command line commands for the edge server.
  * 
  * @author Jochen Mader - jochen@pramari.com
  */
@@ -39,7 +38,7 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 	private ConfigurationDAO configDAO;
 
 	/**
-	 * Sets the configuration service for this class.  
+	 * Sets the configuration service for this class.
 	 * 
 	 * @param configService
 	 *            the configService to set
@@ -49,7 +48,7 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 	}
 
 	/**
-	 * TODO: Method level comment.  
+	 * Called by spring to inject the CommandDAO
 	 * 
 	 * @param commandDAO
 	 *            the commandDAO to set
@@ -59,7 +58,7 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 	}
 
 	/**
-	 * TODO: Method level comment.  
+	 * Called by spring to inject the ReaderDAO
 	 * 
 	 * @param readerDAO
 	 *            the readerDAO to set
@@ -69,7 +68,7 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 	}
 
 	/**
-	 * TODO: Method level comment.  
+	 * Called by spring to inject the ConfigurationDAO
 	 * 
 	 * @param configDAO
 	 *            the configDAO to set
@@ -115,7 +114,7 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 	}
 
 	/**
-	 * TODO: Method level comment.  
+	 * List the available configurations
 	 * 
 	 * @param intp
 	 * @return
@@ -128,7 +127,7 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 	}
 
 	/**
-	 * Creates a reader with the given arguments.  
+	 * Creates a reader with the given arguments.
 	 * 
 	 * @param intp
 	 * @return
@@ -163,7 +162,7 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 	}
 
 	/**
-	 * Deletes a reader with the given ID.  
+	 * Deletes a reader with the given ID.
 	 * 
 	 * @param intp
 	 * @return
@@ -184,7 +183,7 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 	}
 
 	/**
-	 * Gets the properties of a reader with the given ID.  
+	 * Gets the properties of a reader with the given ID.
 	 * 
 	 * @param intp
 	 * @return
@@ -209,9 +208,9 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 		return null;
 
 	}
-	
+
 	/**
-	 * Sets the properties of a reader with the given ID.  
+	 * Sets the properties of a reader with the given ID.
 	 * 
 	 * @param intp
 	 * @return
@@ -245,7 +244,7 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 	}
 
 	/**
-	 * Applies the property changes to a reader with the given ID.  
+	 * Applies the property changes to a reader with the given ID.
 	 * 
 	 * @param intp
 	 * @return
@@ -297,7 +296,7 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 	}
 
 	/**
-	 * Creates a command with the given ID and properties.  
+	 * Creates a command with the given ID and properties.
 	 * 
 	 * @param intp
 	 * @return
@@ -446,7 +445,7 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 		intp.println("Session started.");
 		return null;
 	}
-	
+
 	/**
 	 * Create a new reader session. Takes a reader id as argument.
 	 * 
@@ -483,7 +482,6 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 		intp.println("Session stopped.");
 		return null;
 	}
-
 
 	/**
 	 * Execute a command in a given session.
@@ -567,7 +565,7 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 	}
 
 	/**
-	 * Saves the configuration.  
+	 * Saves the configuration.
 	 * 
 	 * @param intp
 	 * @return

@@ -1,4 +1,3 @@
-
 package org.rifidi.edge.core.messages;
 
 import java.io.Serializable;
@@ -7,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * TODO: Class level comment.  
+ * Object that services as a basis for a tag read
  * 
  * @author Jochen Mader - jochen@pramari.com
  * @author Kyle Neumeier - kyle@pramari.com
@@ -18,6 +17,19 @@ public abstract class DatacontainerEvent implements Serializable {
 	private static final long serialVersionUID = 1L;
 	protected List<MemoryBankLengthTuple> memoryBanks = new ArrayList<MemoryBankLengthTuple>();
 
+	/**
+	 * Read the content of a bank
+	 * 
+	 * @param bankid
+	 *            The ID of the bank to read
+	 * @param offset
+	 *            The offset (in bits)
+	 * @param length
+	 *            The number of bits to read
+	 * @return The bits that were read
+	 * @throws IndexOutOfBoundsException
+	 *             if there was a problem accessing a bank or a memory location
+	 */
 	public BigInteger readMemory(int bankid, int offset, int length)
 			throws IndexOutOfBoundsException {
 		BigInteger comp = new BigInteger(Double.toString(Math.pow(2, length)),
@@ -69,7 +81,7 @@ public abstract class DatacontainerEvent implements Serializable {
 		private Integer length;
 
 		/**
-		 * Constructor.  
+		 * Constructor.
 		 * 
 		 * @param memory
 		 * @param length
@@ -81,7 +93,7 @@ public abstract class DatacontainerEvent implements Serializable {
 		}
 
 		/**
-		 * Returns the memory location of this tuple.  
+		 * Returns the memory location of this tuple.
 		 * 
 		 * @return the memory
 		 */
@@ -90,7 +102,7 @@ public abstract class DatacontainerEvent implements Serializable {
 		}
 
 		/**
-		 * Sets the memory location.  
+		 * Sets the memory location.
 		 * 
 		 * @param memory
 		 *            the memory to set
@@ -100,7 +112,7 @@ public abstract class DatacontainerEvent implements Serializable {
 		}
 
 		/**
-		 * Gets the length of the tuple.  
+		 * Gets the length of the tuple.
 		 * 
 		 * @return the length
 		 */
@@ -109,7 +121,7 @@ public abstract class DatacontainerEvent implements Serializable {
 		}
 
 		/**
-		 * Sets the length of the tuple.  
+		 * Sets the length of the tuple.
 		 * 
 		 * @param length
 		 *            the length to set

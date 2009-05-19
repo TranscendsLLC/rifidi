@@ -1,4 +1,3 @@
-
 package org.rifidi.edge.readerplugin.alien;
 
 import java.util.Dictionary;
@@ -6,9 +5,10 @@ import java.util.Dictionary;
 import org.rifidi.edge.core.notifications.NotifierService;
 
 /**
- * TODO: Class level comment. 
+ * A wrapper around the JMS Notifier Service so that it can be passed in to
+ * created objects even if the notifier is not available
  * 
- * @author kyle
+ * @author Kyle Neumeier - kyle@pramari.com
  */
 public class NotifierServiceWrapper {
 
@@ -16,7 +16,7 @@ public class NotifierServiceWrapper {
 	private NotifierService notifierService;
 
 	/**
-	 * Returns the NotifierService.  
+	 * Returns the NotifierService.
 	 * 
 	 * @return
 	 */

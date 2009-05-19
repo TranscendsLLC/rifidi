@@ -3,9 +3,9 @@ package org.rifidi.edge.core.api.jms.notifications;
 import java.io.Serializable;
 
 /**
- * TODO: Class level comment. 
+ * A notification sent to a client when a ReaderFactory has become available
  * 
- * @author Matthew Dean
+ * @author Kyle Neumeier - kyle@pramari.com
  */
 public class ReaderFactoryAddedNotification implements Serializable {
 
@@ -15,7 +15,7 @@ public class ReaderFactoryAddedNotification implements Serializable {
 	private String readerFactoryID;
 
 	/**
-	 * Constructor.  
+	 * Constructor.
 	 * 
 	 * @param readerFactoryID
 	 */
@@ -25,7 +25,7 @@ public class ReaderFactoryAddedNotification implements Serializable {
 	}
 
 	/**
-	 * Returns the ID for this readerfactory.  
+	 * Returns the ID for this readerfactory.
 	 * 
 	 * @return the readerFactoryID
 	 */

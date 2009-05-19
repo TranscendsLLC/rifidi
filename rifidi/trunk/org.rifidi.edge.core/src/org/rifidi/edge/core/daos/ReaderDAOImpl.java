@@ -1,4 +1,3 @@
-
 package org.rifidi.edge.core.daos;
 
 import java.util.Dictionary;
@@ -15,7 +14,8 @@ import org.rifidi.edge.core.readers.AbstractReader;
 import org.rifidi.edge.core.readers.AbstractReaderFactory;
 
 /**
- * TODO: Class level comment. 
+ * Implementation of Reader Data Access Object. Allows components to access
+ * readers
  * 
  * @author Jochen Mader - jochen@pramari.com
  * @author Kyle Neumeier - kyle@pramari.com
@@ -127,7 +127,8 @@ public class ReaderDAOImpl implements ReaderDAO {
 		}
 		NotifierService service = notifierService.getService();
 		if (service != null) {
-			service.removeReaderFactoryEvent(readerFactory.getFactoryIDs().get(0));
+			service.removeReaderFactoryEvent(readerFactory.getFactoryIDs().get(
+					0));
 		}
 	}
 
@@ -148,7 +149,7 @@ public class ReaderDAOImpl implements ReaderDAO {
 		}
 		NotifierService service = notifierService.getService();
 		if (service != null) {
-			for(AbstractReaderFactory<?> factory : factories){
+			for (AbstractReaderFactory<?> factory : factories) {
 				service.addReaderFactoryEvent(factory.getFactoryIDs().get(0));
 			}
 		}
@@ -192,7 +193,7 @@ public class ReaderDAOImpl implements ReaderDAO {
 			abstractReaders.put(reader.getID(), reader);
 		}
 	}
-	
+
 	/**
 	 * Called by Spring
 	 * 
