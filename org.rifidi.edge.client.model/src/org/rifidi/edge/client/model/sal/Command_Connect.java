@@ -1,6 +1,8 @@
-
+/**
+ * 
+ */
 package org.rifidi.edge.client.model.sal;
-
+//TODO: Comments
 import javax.jms.JMSException;
 import javax.jms.Session;
 
@@ -12,6 +14,7 @@ import org.rifidi.edge.client.model.sal.preferences.EdgeServerPreferences;
  * This makes a new connection to the edge server
  * 
  * @author Kyle Neumeier - kyle@pramari.com
+ * 
  */
 public class Command_Connect implements RemoteEdgeServerCommand {
 
@@ -59,7 +62,7 @@ public class Command_Connect implements RemoteEdgeServerCommand {
 					false, Session.AUTO_ACKNOWLEDGE);
 
 			remoteEdgeServer.dest = remoteEdgeServer.session
-					.createQueue(queuename);
+					.createTopic(queuename);
 			remoteEdgeServer.consumer = remoteEdgeServer.session
 					.createConsumer(remoteEdgeServer.dest);
 			remoteEdgeServer.jmsMessageHandler = new JMSMessageHandler(
@@ -68,7 +71,7 @@ public class Command_Connect implements RemoteEdgeServerCommand {
 					.setMessageListener(remoteEdgeServer.jmsMessageHandler);
 
 			remoteEdgeServer.dest_tags = remoteEdgeServer.session
-					.createQueue(tagQueueName);
+					.createTopic(tagQueueName);
 			remoteEdgeServer.consumer_tags = remoteEdgeServer.session
 					.createConsumer(remoteEdgeServer.dest_tags);
 			remoteEdgeServer.consumer_tags
