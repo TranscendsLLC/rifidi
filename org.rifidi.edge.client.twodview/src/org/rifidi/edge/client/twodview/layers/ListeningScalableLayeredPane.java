@@ -244,6 +244,7 @@ public class ListeningScalableLayeredPane extends ScalableLayeredPane implements
 	}
 
 	public void translatePane(int xValue, int yValue) {
+		if(xValue!=this.deltaX)
 		this.deltaX = xValue;
 		this.deltaY = yValue;
 		pan();
