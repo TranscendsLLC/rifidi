@@ -1,4 +1,3 @@
-
 package org.rifidi.configuration;
 
 import java.util.Hashtable;
@@ -64,7 +63,8 @@ public abstract class RifidiService {
 	}
 
 	/**
-	 * Unregister this service from the OSGi registry
+	 * Unregister this service from the OSGi registry. Should normally be called
+	 * when the RifidiService is destroyed
 	 */
 	protected void unregister() {
 		if (serviceRegistration != null) {
@@ -75,7 +75,8 @@ public abstract class RifidiService {
 	}
 
 	/**
-	 * TODO: Method level comment.  
+	 * Destroy the RifidiService. Should normally at least unregister this
+	 * service
 	 */
 	public abstract void destroy();
 }

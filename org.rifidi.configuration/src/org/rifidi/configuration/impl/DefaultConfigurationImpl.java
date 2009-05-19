@@ -1,4 +1,3 @@
-
 package org.rifidi.configuration.impl;
 
 import java.lang.reflect.InvocationTargetException;
@@ -41,7 +40,9 @@ import org.rifidi.configuration.annotations.PropertyType;
 import org.rifidi.configuration.listeners.AttributesChangedListener;
 
 /**
- * TODO: Class level comment.  
+ * A default implementation of a configuration by wrapping a service object. It
+ * also registers itself in the OSGi service registry under the Configuration
+ * Interface.
  * 
  * @author Jochen Mader - jochen@pramari.com
  * @author Kyle Neumeier - kyle@pramari.com
@@ -116,7 +117,7 @@ public class DefaultConfigurationImpl implements Configuration, Cloneable {
 	}
 
 	/**
-	 * TODO: Method level comment.  
+	 * Set the service ID for this configuration
 	 * 
 	 * @param serviceID
 	 *            the serviceID to set
@@ -130,7 +131,7 @@ public class DefaultConfigurationImpl implements Configuration, Cloneable {
 	}
 
 	/**
-	 * TODO: Method level comment.  
+	 * Set the service that this configuration wraps
 	 * 
 	 * @param target
 	 *            the target to set

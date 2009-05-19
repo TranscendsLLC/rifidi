@@ -1,4 +1,3 @@
-
 package org.rifidi.configuration.services;
 
 import java.lang.management.ManagementFactory;
@@ -25,7 +24,7 @@ import org.rifidi.configuration.mbeans.ConfigurationControlMBean;
 import org.springframework.osgi.service.importer.OsgiServiceLifecycleListener;
 
 /**
- * TODO: Class level comment.  
+ * Allows services to be exposed via JMX
  * 
  * @author Jochen Mader - jochen@pramari.com
  */
@@ -124,9 +123,7 @@ public class JMXServiceImpl implements JMXService, OsgiServiceLifecycleListener 
 	}
 
 	/**
-	 * Sets the configuration services.  
-	 * 
-	 * TODO: Method level comment.  
+	 * Sets the configuration services. Called by spring.
 	 * 
 	 * @param persistentServices
 	 *            the persistentServices to set

@@ -1,4 +1,3 @@
-
 package org.rifidi.edge.core.notifications;
 
 /**
@@ -9,11 +8,10 @@ package org.rifidi.edge.core.notifications;
  * @author Kyle Neumeier - kyle@pramari.com
  */
 public interface NotifierServiceWrapper {
-	
+
 	/**
-	 * TODO: Method level comment. 
 	 * 
-	 * @return
+	 * @return The Notifier Service
 	 */
 	public NotifierService getService();
 

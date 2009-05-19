@@ -1,8 +1,7 @@
-
 package org.rifidi.configuration.services;
 
 /**
- * TODO: Class level comment.  
+ * Interface for a JMX Service to implement
  * 
  * @author Jochen Mader - jochen@pramari.com
  */

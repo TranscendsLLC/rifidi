@@ -1,4 +1,3 @@
-
 package org.rifidi.edge.core.daos;
 
 import java.util.Set;
@@ -7,7 +6,7 @@ import org.rifidi.edge.core.readers.AbstractReader;
 import org.rifidi.edge.core.readers.AbstractReaderFactory;
 
 /**
- * TODO: Class level comment. 
+ * Interface for Data Access Objects used to access reader objects
  * 
  * @author Jochen Mader - jochen@pramari.com
  */

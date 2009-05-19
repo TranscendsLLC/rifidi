@@ -1,4 +1,3 @@
-
 package org.rifidi.edge.core.rmi.server;
 
 import java.rmi.RemoteException;
@@ -20,7 +19,8 @@ import org.rifidi.edge.core.daos.CommandDAO;
 import org.rifidi.edge.core.daos.ConfigurationDAO;
 
 /**
- * TODO: Class level comment.  
+ * The Implementation of the CommandStub -- an RMI stub for managing
+ * CommandConfigurations (creating, deleting, changing properties, etc)
  * 
  * @author Kyle Neumeier - kyle@pramari.com
  */

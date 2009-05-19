@@ -1,4 +1,3 @@
-
 package org.rifidi.edge.notifications.internal;
 
 import javax.jms.Destination;
@@ -12,9 +11,10 @@ import org.springframework.jms.core.JmsOperations;
 import org.springframework.jms.core.JmsTemplate;
 
 /**
- * TODO: Class level comment.  
+ * An object that listens to the internal message bus for tag events and places
+ * them on the external message topic
  * 
- * @author kyle
+ * @author Kyle Neumeier - kyle@pramari.com
  */
 public class TagEventListener implements MessageListener {
 
@@ -30,7 +30,7 @@ public class TagEventListener implements MessageListener {
 	 *            the exextNotificationQueue to set
 	 */
 	public void setExtNotificationTemplate(JmsOperations extNotificationTemplate) {
-		this.extNotificationTemplate = (JmsTemplate)extNotificationTemplate;
+		this.extNotificationTemplate = (JmsTemplate) extNotificationTemplate;
 	}
 
 	/**

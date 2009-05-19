@@ -1,9 +1,9 @@
-
 package org.rifidi.edge.core.messages;
+
 import java.math.BigInteger;
 
 /**
- * TODO: Class level comment.  
+ * A class that represents a EPC Class 1 Gen 1 Tag
  * 
  * @author Kyle Neumeier - kyle@pramari.com
  * @author Jochen Mader - jochen@pramari.com
@@ -53,7 +53,7 @@ public class EPCGeneration1Event extends DatacontainerEvent {
 	}
 
 	/**
-	 * Returns the length of the memory bank.  
+	 * Returns the length of the memory bank.
 	 * 
 	 * @return the epcLength
 	 */

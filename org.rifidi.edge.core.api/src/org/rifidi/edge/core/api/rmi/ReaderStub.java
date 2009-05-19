@@ -1,4 +1,3 @@
-
 package org.rifidi.edge.core.api.rmi;
 
 import java.rmi.Remote;
@@ -107,7 +106,7 @@ public interface ReaderStub extends Remote {
 	void deleteReader(String readerID) throws RemoteException;
 
 	/**
-	 * TODO: Method level comment. 
+	 * Get a session with the given IDs
 	 * 
 	 * @param readerID
 	 *            The ID of the reader that contains the session

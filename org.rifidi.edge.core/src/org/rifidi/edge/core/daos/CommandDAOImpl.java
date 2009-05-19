@@ -1,4 +1,3 @@
-
 package org.rifidi.edge.core.daos;
 
 import java.util.Dictionary;
@@ -15,7 +14,8 @@ import org.rifidi.edge.core.notifications.NotifierService;
 import org.rifidi.edge.core.notifications.NotifierServiceWrapper;
 
 /**
- * TODO: Class level comment.  
+ * Implementation of Command Data Access Object. Helps access objects used for
+ * managing command configurations
  * 
  * @author Jochen Mader - jochen@pramari.com
  */

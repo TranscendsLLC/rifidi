@@ -3,12 +3,12 @@ package org.rifidi.edge.core.api.jms.notifications;
 import java.io.Serializable;
 
 /**
- * TODO: Class level comment.  
+ * A notification sent to a client when a session has been created
  * 
- * @author kyle
+ * @author Kyle Neumeier - kyle@pramari.com
  */
-public class SessionAddedNotification implements Serializable{
-	
+public class SessionAddedNotification implements Serializable {
+
 	/** SerialVersionID */
 	private static final long serialVersionUID = 1L;
 	/** The ID of the reader */
@@ -17,7 +17,7 @@ public class SessionAddedNotification implements Serializable{
 	private String sessionID;
 
 	/**
-	 * Constructor.  
+	 * Constructor.
 	 * 
 	 * @param readerID
 	 * @param sessionID
@@ -28,7 +28,7 @@ public class SessionAddedNotification implements Serializable{
 	}
 
 	/**
-	 * Returns the reader ID.  
+	 * Returns the reader ID.
 	 * 
 	 * @return the readerID
 	 */
@@ -37,7 +37,7 @@ public class SessionAddedNotification implements Serializable{
 	}
 
 	/**
-	 * Returns the session ID.  
+	 * Returns the session ID.
 	 * 
 	 * @return the sessionID
 	 */

@@ -1,11 +1,11 @@
-
 package org.rifidi.edge.core.api.tags;
 
 import java.io.Serializable;
 import java.math.BigInteger;
 
 /**
- * TODO: Class level comment.  
+ * A data transfer object for a tag read. For serializing information about a
+ * single tag event
  * 
  * @author Kyle Neumeier - kyle@pramari.com
  */
@@ -21,7 +21,7 @@ public class TagDTO implements Serializable {
 	private long timestamp;
 
 	/**
-	 * Constructor.  
+	 * Constructor.
 	 * 
 	 * @param tagID
 	 * @param antennaNumber
@@ -34,7 +34,7 @@ public class TagDTO implements Serializable {
 	}
 
 	/**
-	 * Returns the ID for this tag.  
+	 * Returns the ID for this tag.
 	 * 
 	 * @return the tagID
 	 */
@@ -43,7 +43,7 @@ public class TagDTO implements Serializable {
 	}
 
 	/**
-	 * Returns the antenna that this tag was seen on.  
+	 * Returns the antenna that this tag was seen on.
 	 * 
 	 * @return the antennaNumber
 	 */
@@ -52,7 +52,7 @@ public class TagDTO implements Serializable {
 	}
 
 	/**
-	 * Returns the timestamp.  
+	 * Returns the timestamp.
 	 * 
 	 * @return the timestamp
 	 */

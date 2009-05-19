@@ -1,10 +1,9 @@
-
 package org.rifidi.edge.core.messages;
 
 import java.math.BigInteger;
 
 /**
- * TODO: Class level comment.  
+ * A class that represnets an EPC Class 1 Gen 2 tag
  * 
  * @author Jochen Mader - jochen@pramari.com
  * @author Kyle Neumeier - kyle@pramari.com
@@ -83,15 +82,16 @@ public class EPCGeneration2Event extends EPCGeneration1Event {
 	public String getAfi() {
 		return readMemory(1, 8, 24).toString(16);
 	}
-	
+
 	/**
 	 * Get the AFI in DEC
+	 * 
 	 * @return
 	 */
 	public String getAfiDecimal() {
 		return readMemory(1, 8, 24).toString(10);
 	}
-	
+
 	/**
 	 * Get the NSI in HEX.
 	 * 
@@ -109,7 +109,7 @@ public class EPCGeneration2Event extends EPCGeneration1Event {
 	public String getNsiDecimal() {
 		return readMemory(1, 9, 23).toString(10);
 	}
-	
+
 	/**
 	 * Set the reserved memory bank.
 	 * 
@@ -160,9 +160,12 @@ public class EPCGeneration2Event extends EPCGeneration1Event {
 	public BigInteger getEPCMemory() {
 		return memoryBanks.get(1).getMemory();
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.rifidi.edge.core.messages.EPCGeneration1Event#getEPCMemoryLength()
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.core.messages.EPCGeneration1Event#getEPCMemoryLength()
 	 */
 	@Override
 	public Integer getEPCMemoryLength() {

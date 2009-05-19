@@ -81,7 +81,7 @@ public class LLRPROSpecCommand extends AbstractLLRPCommand {
 	}
 
 	/**
-	 * Sets teh ROSpecID.  
+	 * Sets teh ROSpecID.
 	 * 
 	 * @param rospec_id
 	 */
@@ -90,7 +90,7 @@ public class LLRPROSpecCommand extends AbstractLLRPCommand {
 	}
 
 	/**
-	 * Gets the AntennaID.  
+	 * Gets the AntennaID.
 	 * 
 	 * @return
 	 */
@@ -210,10 +210,9 @@ public class LLRPROSpecCommand extends AbstractLLRPCommand {
 
 			}
 		} catch (ClassCastException e) {
-			e.printStackTrace();
+			logger.error(e);
 		} catch (InvalidLLRPMessageException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e);
 		}
 	}
 

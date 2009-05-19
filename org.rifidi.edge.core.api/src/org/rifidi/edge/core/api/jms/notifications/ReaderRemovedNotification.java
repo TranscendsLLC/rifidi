@@ -1,12 +1,11 @@
-
 package org.rifidi.edge.core.api.jms.notifications;
 
 import java.io.Serializable;
 
 /**
- * TODO: Class level comment. 
+ * A notification sent to a client when a reader has become unavailable
  * 
- * @author kyle
+ * @author Kyle Neumeier - kyle@pramari.com
  */
 public class ReaderRemovedNotification implements Serializable {
 	/** SerialVersionID */
@@ -15,7 +14,7 @@ public class ReaderRemovedNotification implements Serializable {
 	private String readerID;
 
 	/**
-	 * Constructor.  
+	 * Constructor.
 	 * 
 	 * @param readerID
 	 */
@@ -24,8 +23,8 @@ public class ReaderRemovedNotification implements Serializable {
 	}
 
 	/**
-	 * Returns the ID for the reader.  
-	 *  
+	 * Returns the ID for the reader.
+	 * 
 	 * @return the readerID
 	 */
 	public String getReaderID() {

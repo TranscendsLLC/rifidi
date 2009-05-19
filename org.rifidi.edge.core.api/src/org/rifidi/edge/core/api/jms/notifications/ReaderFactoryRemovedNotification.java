@@ -1,12 +1,11 @@
-
 package org.rifidi.edge.core.api.jms.notifications;
 
 import java.io.Serializable;
 
 /**
- * TODO: Class level comment. 
+ * A notification sent to a client when a ReaderFactory has become unavailable
  * 
- * @author kyle
+ * @author Kyle Neumeier - kyle@pramari.com
  */
 public class ReaderFactoryRemovedNotification implements Serializable {
 
@@ -16,7 +15,7 @@ public class ReaderFactoryRemovedNotification implements Serializable {
 	private String readerFactoryID;
 
 	/**
-	 * Constructor.  
+	 * Constructor.
 	 * 
 	 * @param readerFactoryID
 	 */
@@ -25,8 +24,6 @@ public class ReaderFactoryRemovedNotification implements Serializable {
 	}
 
 	/**
-	 * TODO: Method level comment. 
-	 * 
 	 * @return the readerFactoryID
 	 */
 	public String getReaderFactoryID() {

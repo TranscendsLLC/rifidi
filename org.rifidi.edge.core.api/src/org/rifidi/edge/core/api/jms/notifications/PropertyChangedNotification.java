@@ -1,4 +1,3 @@
-
 package org.rifidi.edge.core.api.jms.notifications;
 
 import java.io.Serializable;
@@ -16,7 +15,7 @@ public class PropertyChangedNotification implements Serializable {
 	/** default serialversion ID */
 	private static final long serialVersionUID = 1L;
 	/** The ID of the reader or the command */
-	private String configIDID;
+	private String configID;
 	/** The attributes that have changed */
 	private AttributeList attributes;
 	/** True if the configuration is a reader, false if it is a command */
@@ -36,22 +35,22 @@ public class PropertyChangedNotification implements Serializable {
 	public PropertyChangedNotification(String configurationID,
 			AttributeList attributes, boolean isReader) {
 		super();
-		this.configIDID = configurationID;
+		this.configID = configurationID;
 		this.attributes = attributes;
 		this.isReader = isReader;
 	}
 
 	/**
-	 * TODO: Method level comment. 
+	 * Returns the ID of the configuration
 	 * 
-	 * @return the configIDID
+	 * @return the configID
 	 */
-	public String getConfigIDID() {
-		return configIDID;
+	public String getConfigID() {
+		return configID;
 	}
 
 	/**
-	 * Returns the attributes for these properties.  
+	 * Returns the attributes for these properties.
 	 * 
 	 * @return the attributes
 	 */
@@ -60,7 +59,7 @@ public class PropertyChangedNotification implements Serializable {
 	}
 
 	/**
-	 * Is the PropertyChangeNotification for a reader?  
+	 * Is the PropertyChangeNotification for a reader?
 	 * 
 	 * @return true if the configuration is for a reader. False if it is for a
 	 *         command

@@ -24,16 +24,17 @@ import org.rifidi.edge.core.messages.TagReadEvent;
 import org.springframework.jms.core.MessageCreator;
 
 /**
- * TODO: Class level comment.  
+ * An object that helps create Tag Messages for placing on the external JMS
+ * Destination
  * 
- * @author kyle
+ * @author Kyle Neumeier - kyle@pramari.com
  */
 public class TagMessageMessageCreator implements MessageCreator {
 
 	private TagBatch tagBatch;
 
 	/**
-	 * Constructor.  
+	 * Constructor.
 	 * 
 	 * @param cycle
 	 */

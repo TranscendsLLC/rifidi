@@ -1,4 +1,3 @@
-
 package org.rifidi.configuration.services;
 
 import java.io.File;
@@ -29,9 +28,10 @@ import org.rifidi.configuration.RifidiService;
 import org.rifidi.configuration.ServiceFactory;
 
 /**
- * TODO: Class level comment.  
+ * Implementation of service for managing configurations.
  * 
  * @author Jochen Mader - jochen@pramari.com
+ * @author Kyle Neumeier - kyle@pramari.com
  */
 public class ConfigurationServiceImpl implements ConfigurationService {
 	/** Logger for this class */
@@ -82,7 +82,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 							+ sectionName);
 					continue;
 				}
-				String serviceID = (String)sectionName;
+				String serviceID = (String) sectionName;
 				if (!checkName(serviceID)) {
 					logger.fatal("service id " + serviceID
 							+ " is invalid.  FactoryIDs must consist only of "
@@ -276,7 +276,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	}
 
 	/**
-	 * TODO: Method level comment.  
+	 * Called by spring
 	 * 
 	 * @param IDToConfigurations
 	 *            the IDToConfigurations to set
@@ -298,9 +298,10 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	}
 
 	/**
-	 * TODO: Method level comment.  
+	 * Called by spring to register new RifidiServices
 	 * 
 	 * @param service
+	 *            The Rifidi Server to regiter
 	 * @param parameters
 	 */
 	public void bindRifidiService(RifidiService service,
@@ -309,9 +310,10 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	}
 
 	/**
-	 * TODO: Method level comment.  
+	 * Called by spring when a Rifidi Service has gone away
 	 * 
 	 * @param service
+	 *            Service that has become unavailable
 	 * @param parameters
 	 */
 	public void unbindRifidiService(RifidiService service,
@@ -324,7 +326,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	}
 
 	/**
-	 * TODO: Method level comment.  
+	 * Called by spring.
 	 * 
 	 * @param services
 	 */
