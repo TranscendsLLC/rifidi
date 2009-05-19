@@ -19,6 +19,16 @@
                id="org.rifidi.edge.client.menus.file"
                label="File">
             <command
+                  commandId="org.rifidi.edge.client.twodview.restoreui"
+                  label="Load"
+                  style="push">
+            </command>
+            <command
+                  commandId="org.rifidi.edge.client.twodview.saveui"
+                  label="Save"
+                  style="push">
+            </command>
+            <command
                   commandId="org.eclipse.ui.file.exit"
                   id="Exit"
                   label="Exit"
