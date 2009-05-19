@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.client.model.sal;
-//TODO: Comments
+
 import javax.management.MBeanInfo;
 
 import org.rifidi.edge.core.api.rmi.dto.ReaderFactoryDTO;
@@ -11,7 +9,6 @@ import org.rifidi.edge.core.api.rmi.dto.ReaderFactoryDTO;
  * Model object that represents a ReaderFactory on the server
  * 
  * @author Kyle Neumeier - kyle@pramari.com
- * 
  */
 public class RemoteReaderFactory {
 
@@ -35,6 +32,7 @@ public class RemoteReaderFactory {
 	}
 
 	/**
+	 * Returns the ID of the readerFactory.  
 	 * 
 	 * @return The ID of this factory
 	 */
@@ -43,6 +41,7 @@ public class RemoteReaderFactory {
 	}
 
 	/**
+	 * Returns the display name.  
 	 * 
 	 * @return The display name for this factory
 	 */
@@ -51,6 +50,7 @@ public class RemoteReaderFactory {
 	}
 
 	/**
+	 * Returns the description of the reader factory.  .  
 	 * 
 	 * @return The description of this reader factory
 	 */
@@ -59,6 +59,7 @@ public class RemoteReaderFactory {
 	}
 
 	/**
+	 * Returns the mbeanInfo.  
 	 * 
 	 * @return The MBeanInfo that describes this factory
 	 */

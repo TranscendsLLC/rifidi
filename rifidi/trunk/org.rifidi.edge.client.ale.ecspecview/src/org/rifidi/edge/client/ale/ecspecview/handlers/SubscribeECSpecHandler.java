@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.client.ale.ecspecview.handlers;
-//TODO: Comments
+
 import java.util.List;
 
 import org.apache.commons.logging.Log;

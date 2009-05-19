@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.client.sal.properties;
-//TODO: Comments
+
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.HashSet;
@@ -26,7 +24,6 @@ import org.rifidi.edge.client.sal.properties.mbeanwidgets.FlatFormSectionComposi
  * AbstractAttributeContributorModelObject
  * 
  * @author Kyle Neumeier
- * 
  */
 public class MBeanModelObjectPropertySection extends AbstractPropertySection
 		implements MBeanInfoWidgetListener, PropertyChangeListener {

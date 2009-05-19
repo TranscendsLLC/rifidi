@@ -1,15 +1,6 @@
-/* 
- *  ChangeFloorPlan.java
- *  Created:	Nov 5, 2008
- *  Project:	RiFidi Dashboard - An RFID infrastructure monitoring tool
- *  				http://www.rifidi.org
- *  				http://rifidi.sourceforge.net
- *  Copyright:	Pramari LLC and the Rifidi Project
- *  License:	Lesser GNU Public License (LGPL)
- *  				http://www.opensource.org/licenses/lgpl-license.html
- */
+
 package org.rifidi.edge.client.twodview.handlers;
-//TODO: Comments
+
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
@@ -27,8 +18,9 @@ import org.eclipse.ui.PlatformUI;
 import org.rifidi.edge.client.twodview.views.SiteView;
 
 /**
- * @author Tobias Hoppenthaler - tobias@pramari.com
+ * TODO: Class level comment.  
  * 
+ * @author Tobias Hoppenthaler - tobias@pramari.com
  */
 public class ChangeFloorPlan implements IHandler {
 

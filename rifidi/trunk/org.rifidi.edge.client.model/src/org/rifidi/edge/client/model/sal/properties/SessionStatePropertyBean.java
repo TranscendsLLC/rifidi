@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.client.model.sal.properties;
-//TODO: Comments
+
 import org.rifidi.edge.core.api.SessionStatus;
 
 /**
@@ -10,7 +8,6 @@ import org.rifidi.edge.core.api.SessionStatus;
  * session changes state
  * 
  * @author Kyle Neumeier - kyle@pramari.com
- * 
  */
 public class SessionStatePropertyBean {
 
@@ -26,6 +23,8 @@ public class SessionStatePropertyBean {
 	private String hashString;
 
 	/**
+	 * Constructor.  
+	 * 
 	 * @param readerID
 	 * @param sessionID
 	 * @param status

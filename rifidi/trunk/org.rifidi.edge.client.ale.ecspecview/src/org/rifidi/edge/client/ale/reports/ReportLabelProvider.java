@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.client.ale.reports;
-//TODO: Comments
+
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 import org.rifidi.edge.client.ale.api.xsd.ale.epcglobal.ECReport;
@@ -12,8 +10,9 @@ import org.rifidi.edge.client.ale.api.xsd.ale.epcglobal.ECReports;
 import org.rifidi.edge.client.ale.ecspecview.Activator;
 
 /**
- * @author Jochen Mader - jochen@pramari.com
+ * TODO: Class level comment.  
  * 
+ * @author Jochen Mader - jochen@pramari.com
  */
 public class ReportLabelProvider extends LabelProvider {
 

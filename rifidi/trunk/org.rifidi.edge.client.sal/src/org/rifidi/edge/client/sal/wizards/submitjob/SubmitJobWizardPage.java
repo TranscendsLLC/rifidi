@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.client.sal.wizards.submitjob;
-//TODO: Comments
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -25,7 +23,6 @@ import org.rifidi.edge.client.sal.SALPluginActivator;
  * choose the commad to submit
  * 
  * @author Kyle Neumeier - kyle@pramari.com
- * 
  */
 public class SubmitJobWizardPage extends WizardPage {
 

@@ -21,8 +21,6 @@ package org.rifidi.edge.client.ale.api.util;
  * Boston, MA  02110-1301  USA
  */
 
-//TODO: Comments
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;

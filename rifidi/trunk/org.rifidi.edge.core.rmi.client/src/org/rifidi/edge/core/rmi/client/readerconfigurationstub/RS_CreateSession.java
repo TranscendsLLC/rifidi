@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.core.rmi.client.readerconfigurationstub;
-//TODO: Comments
+
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.Set;
@@ -17,7 +15,6 @@ import org.rifidi.rmi.utils.remotecall.ServerDescriptionBasedRemoteMethodCall;
  * sessions currently available on that reader
  * 
  * @author Kyle Neumeier - kyle@pramari.com
- * 
  */
 public class RS_CreateSession
 		extends
@@ -27,6 +24,8 @@ public class RS_CreateSession
 	private String readerID;
 
 	/**
+	 * Constructor.  
+	 * 
 	 * @param serverDescription
 	 */
 	public RS_CreateSession(RS_ServerDescription serverDescription, String readerID) {

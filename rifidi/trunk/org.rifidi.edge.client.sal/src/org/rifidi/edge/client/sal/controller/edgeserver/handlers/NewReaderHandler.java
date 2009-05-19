@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.client.sal.controller.edgeserver.handlers;
-//TODO: Comments
+
 import java.util.Set;
 
 import org.eclipse.core.commands.AbstractHandler;
@@ -21,7 +19,6 @@ import org.rifidi.edge.client.sal.wizards.newreader.NewReaderWizard;
  * connected state and selection is RemoteEdgeServer
  * 
  * @author Kyle Neumeier - kyle@pramari.com
- * 
  */
 public class NewReaderHandler extends AbstractHandler implements IHandler2 {
 

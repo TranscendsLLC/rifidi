@@ -1,15 +1,6 @@
-/* 
- *  SiteViewMouseWheelListener.java
- *  Created:	Nov 7, 2008
- *  Project:	RiFidi Dashboard - An RFID infrastructure monitoring tool
- *  				http://www.rifidi.org
- *  				http://rifidi.sourceforge.net
- *  Copyright:	Pramari LLC and the Rifidi Project
- *  License:	Lesser GNU Public License (LGPL)
- *  				http://www.opensource.org/licenses/lgpl-license.html
- */
+
 package org.rifidi.edge.client.twodview.listeners;
-//TODO: Comments
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eclipse.draw2d.IFigure;
@@ -20,6 +11,8 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
 /**
+ * TODO: Class level comment.  
+ * 
  * @author Tobias Hoppenthaler - tobias@pramari.com
  */
 public class SiteViewMouseWheelListener implements Listener {
@@ -29,12 +22,17 @@ public class SiteViewMouseWheelListener implements Listener {
 	private static final Log logger = LogFactory
 			.getLog(SiteViewMouseWheelListener.class);
 
+	
 	public SiteViewMouseWheelListener(ScalableLayeredPane sp) {
 		super();
 		this.sp = sp;
 
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
+	 */
 	@Override
 	public void handleEvent(Event event) {
 		

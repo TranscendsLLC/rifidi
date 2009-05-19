@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.core.rmi.client.readerconfigurationstub;
-//TODO: Comments
+
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
@@ -13,7 +11,6 @@ import org.rifidi.rmi.utils.remotecall.ServerDescriptionBasedRemoteMethodCall;
  * A command to kill commands that are repeated. It returns null
  * 
  * @author Kyle Neumeier - kyle@pramari.com
- * 
  */
 public class RS_KillCommand extends
 		ServerDescriptionBasedRemoteMethodCall<Object, RuntimeException> {

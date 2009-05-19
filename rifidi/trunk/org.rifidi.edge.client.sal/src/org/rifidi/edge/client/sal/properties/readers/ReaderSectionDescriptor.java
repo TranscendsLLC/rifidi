@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.client.sal.properties.readers;
-//TODO: Comments
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,8 +12,9 @@ import org.rifidi.edge.client.model.sal.RemoteReader;
 import org.rifidi.edge.client.sal.properties.MBeanModelObjectPropertySection;
 
 /**
- * @author kyle
+ * TODO: Class level comment.  
  * 
+ * @author kyle
  */
 public class ReaderSectionDescriptor extends AbstractSectionDescriptor {
 
@@ -25,6 +24,13 @@ public class ReaderSectionDescriptor extends AbstractSectionDescriptor {
 	private final String ID;
 	private String category;
 
+	/**
+	 * 
+	 * @param tabID
+	 * @param info
+	 * @param reader
+	 * @param category
+	 */
 	public ReaderSectionDescriptor(String tabID, MBeanInfo info,
 			RemoteReader reader, String category) {
 		this.tabID = tabID;

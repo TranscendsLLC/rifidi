@@ -6,17 +6,34 @@ import org.eclipse.ui.application.IActionBarConfigurer;
 import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
 import org.eclipse.ui.application.WorkbenchWindowAdvisor;
 
-//TODO: Comments
+/**
+ * TODO: Class level comment.  
+ * 
+ * @author jochen
+ */
 public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 
+	/**
+	 * Constructor.  
+	 * 
+	 * @param configurer
+	 */
     public ApplicationWorkbenchWindowAdvisor(IWorkbenchWindowConfigurer configurer) {
         super(configurer);
     }
 
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.ui.application.WorkbenchWindowAdvisor#createActionBarAdvisor(org.eclipse.ui.application.IActionBarConfigurer)
+     */
     public ActionBarAdvisor createActionBarAdvisor(IActionBarConfigurer configurer) {
         return new ApplicationActionBarAdvisor(configurer);
     }
     
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.ui.application.WorkbenchWindowAdvisor#preWindowOpen()
+     */
     public void preWindowOpen() {
         IWorkbenchWindowConfigurer configurer = getWindowConfigurer();
         configurer.setInitialSize(new Point(1024, 768));

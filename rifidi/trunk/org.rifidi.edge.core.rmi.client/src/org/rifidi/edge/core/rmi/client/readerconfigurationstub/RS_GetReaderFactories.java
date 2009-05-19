@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.core.rmi.client.readerconfigurationstub;
-//TODO: Comments
+
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.Set;
@@ -16,7 +14,6 @@ import org.rifidi.rmi.utils.remotecall.ServerDescriptionBasedRemoteMethodCall;
  * to the "reader plugins" that are available.
  * 
  * @author Kyle Neumeier - Kyle Neumeier
- * 
  */
 public class RS_GetReaderFactories
 		extends
@@ -32,6 +29,10 @@ public class RS_GetReaderFactories
 		super(serverDescription);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.rifidi.rmi.utils.remotecall.AbstractRemoteMethodCall#performRemoteCall(java.rmi.Remote)
+	 */
 	@Override
 	protected Set<ReaderFactoryDTO> performRemoteCall(Remote remoteObject)
 			throws RemoteException, RuntimeException {

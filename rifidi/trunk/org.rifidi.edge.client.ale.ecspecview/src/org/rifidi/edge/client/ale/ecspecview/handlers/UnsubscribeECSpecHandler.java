@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.client.ale.ecspecview.handlers;
-//TODO: Comments
+
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -22,8 +20,9 @@ import org.rifidi.edge.client.ale.ecspecview.model.ECSpecDecorator;
 import org.rifidi.edge.client.ale.logicalreaders.ALEService;
 
 /**
- * @author Jochen Mader - jochen@pramari.com
+ * TODO: Class level comment.  
  * 
+ * @author Jochen Mader - jochen@pramari.com
  */
 public class UnsubscribeECSpecHandler extends AbstractHandler {
 	/** Logger for this class. */

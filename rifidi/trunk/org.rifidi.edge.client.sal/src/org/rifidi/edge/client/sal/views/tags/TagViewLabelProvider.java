@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.client.sal.views.tags;
-//TODO: Comments
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -13,8 +11,9 @@ import org.rifidi.edge.client.model.sal.RemoteTag;
 import org.rifidi.edge.client.sal.SALPluginActivator;
 
 /**
- * @author kyle
+ * Label provider for the TagView.  
  * 
+ * @author kyle
  */
 public class TagViewLabelProvider implements ITableLabelProvider {
 

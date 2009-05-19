@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.client.ale.reports;
-//TODO: Comments
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -29,8 +27,9 @@ import org.rifidi.edge.client.ale.api.xsd.ale.epcglobal.ECReports;
 import org.rifidi.edge.client.ale.ecspecview.Activator;
 
 /**
- * @author Jochen Mader - jochen@pramari.com
+ * TODO: Class level comment.  
  * 
+ * @author Jochen Mader - jochen@pramari.com
  */
 public class ReportReceiverViewPart extends ViewPart implements
 		IPropertyChangeListener {
@@ -46,7 +45,7 @@ public class ReportReceiverViewPart extends ViewPart implements
 	private ReceiveRunner runny;
 
 	/**
-	 * 
+	 * TODO: Method level comment.  
 	 */
 	public ReportReceiverViewPart() {
 		list = new WritableList();
@@ -58,6 +57,9 @@ public class ReportReceiverViewPart extends ViewPart implements
 		}
 	}
 
+	/**
+	 * TODO: Method level comment.  
+	 */
 	public void clear() {
 		list.clear();
 	}

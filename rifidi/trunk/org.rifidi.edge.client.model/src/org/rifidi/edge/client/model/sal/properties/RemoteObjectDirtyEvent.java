@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.client.model.sal.properties;
-//TODO: Comments
+
 /**
  * An event that gets fired when the 'dirty' state of a model object changes.
  * The ditry state changes to true when a user modifies a property of the model
@@ -10,7 +8,6 @@ package org.rifidi.edge.client.model.sal.properties;
  * object
  * 
  * @author Kyle Neumeier - kyle@pramari.com
- * 
  */
 public class RemoteObjectDirtyEvent {
 
@@ -24,6 +21,8 @@ public class RemoteObjectDirtyEvent {
 	private String hashString;
 
 	/**
+	 * Constructor.  
+	 * 
 	 * @param modelID
 	 * @param dirty
 	 */
@@ -35,6 +34,8 @@ public class RemoteObjectDirtyEvent {
 	}
 
 	/**
+	 * Returns the modelID.  
+	 * 
 	 * @return the modelID
 	 */
 	public String getModelID() {
@@ -42,6 +43,8 @@ public class RemoteObjectDirtyEvent {
 	}
 
 	/**
+	 * TODO: Method level comment.  Seriously, what the hell?  
+	 * 
 	 * @return the dirty
 	 */
 	public boolean isDirty() {

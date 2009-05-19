@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.client.sal.properties.readers;
-//TODO: Comments
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,8 +10,9 @@ import org.eclipse.ui.views.properties.tabbed.AbstractTabDescriptor;
 import org.rifidi.edge.client.model.sal.RemoteReader;
 
 /**
- * @author Kyle Neumeier - kyle@pramari.com
+ * TODO: Class level comment.  
  * 
+ * @author Kyle Neumeier - kyle@pramari.com
  */
 public class ReaderTabDescriptor extends AbstractTabDescriptor {
 
@@ -21,6 +20,13 @@ public class ReaderTabDescriptor extends AbstractTabDescriptor {
 	private RemoteReader reader;
 	private String category;
 	
+	/**
+	 * Constructor.  
+	 * 
+	 * @param info
+	 * @param reader
+	 * @param category
+	 */
 	public ReaderTabDescriptor(MBeanInfo info, RemoteReader reader, String category) {
 		super();
 		this.reader = reader;

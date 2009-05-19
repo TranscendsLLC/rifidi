@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.client.twodview.sfx;
-//TODO: Comments
+
 import org.eclipse.draw2d.Graphics;
 import org.eclipse.draw2d.ImageFigure;
 import org.eclipse.draw2d.ScalableFigure;
@@ -11,20 +9,19 @@ import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.swt.graphics.Image;
 
 /**
- * @author tobias
  * 
+ * 
+ * @author tobias
  */
 public class ScalableImageFigure extends ImageFigure implements ScalableFigure {
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.draw2d.ScalableFigure#getScale()
-	 */
 
 	private double scale = 1.0;
 	private Dimension imageSize;
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.draw2d.ScalableFigure#getScale()
+	 */
 	@Override
 	public double getScale() {
 		return scale;
@@ -41,6 +38,10 @@ public class ScalableImageFigure extends ImageFigure implements ScalableFigure {
 
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.draw2d.ImageFigure#paintFigure(org.eclipse.draw2d.Graphics)
+	 */
 	@Override
 	protected void paintFigure(Graphics graphics) {
 		super.paintFigure(graphics);
@@ -74,6 +75,11 @@ public class ScalableImageFigure extends ImageFigure implements ScalableFigure {
 		// graphics.drawRectangle(area.crop(new Insets(0,0,1,1)));
 	}
 
+	/**
+	 * Constructor.  
+	 * 
+	 * @param image
+	 */
 	public ScalableImageFigure(Image image) {
 		super(image);
 		this.setImage(image);

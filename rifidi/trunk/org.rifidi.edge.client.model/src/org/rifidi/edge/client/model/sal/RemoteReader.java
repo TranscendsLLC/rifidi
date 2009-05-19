@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.client.model.sal;
-//TODO: Comments
+
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
@@ -24,7 +22,6 @@ import org.rifidi.edge.core.api.rmi.dto.SessionDTO;
  * A model object that represents a reader on the server
  * 
  * @author Kyle Neumeier - kyle@pramari.com
- * 
  */
 public class RemoteReader extends AbstractAttributeContributorModelObject
 		implements IMapChangeListener, PropertyChangeListener {
@@ -60,6 +57,8 @@ public class RemoteReader extends AbstractAttributeContributorModelObject
 	}
 
 	/**
+	 * Returns the ID.  
+	 * 
 	 * @return the iD
 	 */
 	public String getID() {
@@ -67,6 +66,7 @@ public class RemoteReader extends AbstractAttributeContributorModelObject
 	}
 
 	/**
+	 * Returns the ID.  
 	 * 
 	 * @return the factory ID of this reader
 	 */
@@ -90,6 +90,8 @@ public class RemoteReader extends AbstractAttributeContributorModelObject
 	}
 
 	/**
+	 * Returns the remoteSession.  
+	 * 
 	 * @return the remoteSessions
 	 */
 	public ObservableMap getRemoteSessions() {
@@ -97,6 +99,8 @@ public class RemoteReader extends AbstractAttributeContributorModelObject
 	}
 
 	/**
+	 * Returns the set of tags.  
+	 * 
 	 * @return The tags seen by this reader
 	 */
 	public ObservableSet getTags() {
@@ -104,12 +108,18 @@ public class RemoteReader extends AbstractAttributeContributorModelObject
 	}
 
 	/**
+	 * Returns the remote reader factory.  
+	 * 
 	 * @return the factory
 	 */
 	public RemoteReaderFactory getFactory() {
 		return factory;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.rifidi.edge.client.model.sal.AbstractAttributeContributorModelObject#doSynchAttributeChange(org.rifidi.edge.client.model.sal.RemoteEdgeServer, java.lang.String, javax.management.AttributeList)
+	 */
 	@Override
 	protected void doSynchAttributeChange(RemoteEdgeServer server,
 			String modelID, AttributeList list) {
@@ -121,6 +131,10 @@ public class RemoteReader extends AbstractAttributeContributorModelObject
 
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.core.databinding.observable.map.IMapChangeListener#handleMapChange(org.eclipse.core.databinding.observable.map.MapChangeEvent)
+	 */
 	@Override
 	public void handleMapChange(MapChangeEvent event) {
 		// Add and remove listeners to sessions as they appear
@@ -151,6 +165,10 @@ public class RemoteReader extends AbstractAttributeContributorModelObject
 
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see java.beans.PropertyChangeListener#propertyChange(java.beans.PropertyChangeEvent)
+	 */
 	@Override
 	public void propertyChange(PropertyChangeEvent arg0) {
 		if (arg0.getPropertyName().equals(

@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.client.ale.logicalreaders;
-//TODO: Comments
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,8 +19,9 @@ import org.rifidi.edge.client.ale.logicalreaders.decorators.LRSpecDecorator;
 import org.rifidi.edge.client.ale.logicalreaders.decorators.LRSpecSubnodeDecorator;
 
 /**
- * @author Jochen Mader - jochen@pramari.com
+ * TODO: Class level comment.  
  * 
+ * @author Jochen Mader - jochen@pramari.com
  */
 public class LRTreeContentProvider implements ITreeContentProvider {
 	/** Logger for this class. */
@@ -124,12 +123,18 @@ public class LRTreeContentProvider implements ITreeContentProvider {
 
 	}
 
+	/*
+	 * 
+	 */
 	private void updateReaderList(List<LRSpecDecorator> newList) {
 		lrspecs.clear();
 		lrspecs.addAll(newList);
 		viewer.setInput(viewer.getInput());
 	}
 
+	/*
+	 * 
+	 */
 	private List<LRSpecDecorator> getReaderList() {
 		List<LRSpecDecorator> lrspecs = new ArrayList<LRSpecDecorator>();
 		try {

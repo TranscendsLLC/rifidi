@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.client.sal.wizards.submitjob;
-//TODO: Comments
+
 import java.util.Set;
 
 import org.eclipse.jface.wizard.IWizard;
@@ -16,7 +14,6 @@ import org.rifidi.edge.client.sal.controller.edgeserver.EdgeServerTreeContentPro
  * known
  * 
  * @author Kyle Neumeier - kyle@pramari.com
- * 
  */
 public class SubmitJobWizard extends Wizard implements IWizard {
 

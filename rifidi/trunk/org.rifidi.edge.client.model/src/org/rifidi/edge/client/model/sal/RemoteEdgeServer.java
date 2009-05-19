@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.client.model.sal;
-//TODO: Comments
+
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.concurrent.TimeUnit;
@@ -42,7 +40,6 @@ import org.rifidi.rmi.utils.exceptions.ServerUnavailable;
  * The Edge Server Model Object
  * 
  * @author Kyle Neumeier
- * 
  */
 public class RemoteEdgeServer {
 
@@ -350,6 +347,11 @@ public class RemoteEdgeServer {
 
 	}
 
+	/**
+	 * Deletes the command configuration with the given ID.  
+	 * 
+	 * @param readerConfigurationID
+	 */
 	public void deleteCommandConfiguration(String readerConfigurationID) {
 		if (this.state != RemoteEdgeServerState.CONNECTED) {
 			logger.warn("Cannot create command configuration when Edge Server "
@@ -368,6 +370,11 @@ public class RemoteEdgeServer {
 
 	}
 
+	/**
+	 * Deletes the given job.  
+	 * 
+	 * @param job
+	 */
 	public void deleteRemoteJob(RemoteJob job) {
 		if (this.state != RemoteEdgeServerState.CONNECTED) {
 			logger.warn("Cannot delete remote job when Edge Server "
@@ -385,6 +392,13 @@ public class RemoteEdgeServer {
 
 	}
 
+	/**
+	 * TODO: Method level comment.  
+	 * 
+	 * @param session
+	 * @param configuration
+	 * @param interval
+	 */
 	public void scheduleJob(RemoteSession session,
 			RemoteCommandConfiguration configuration, Long interval) {
 		if (this.state != RemoteEdgeServerState.CONNECTED) {
@@ -422,6 +436,11 @@ public class RemoteEdgeServer {
 		return remoteReaders;
 	}
 
+	/**
+	 * Returns the list of remote command configuration factories.  
+	 * 
+	 * @return
+	 */
 	public ObservableMap getRemoteCommandConfigFactories() {
 		return commandConfigFactories;
 	}

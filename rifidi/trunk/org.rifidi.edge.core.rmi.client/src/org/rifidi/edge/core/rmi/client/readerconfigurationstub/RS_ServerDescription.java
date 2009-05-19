@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.core.rmi.client.readerconfigurationstub;
-//TODO: Comments
+
 import java.rmi.AccessException;
 import java.rmi.NotBoundException;
 import java.rmi.Remote;
@@ -15,7 +13,6 @@ import org.rifidi.rmi.utils.cache.ServerDescription;
  * This is a server description for a ReaderStub
  * 
  * @author Kyle Neumeier - kyl@pramari.com
- * 
  */
 public class RS_ServerDescription extends ServerDescription {
 

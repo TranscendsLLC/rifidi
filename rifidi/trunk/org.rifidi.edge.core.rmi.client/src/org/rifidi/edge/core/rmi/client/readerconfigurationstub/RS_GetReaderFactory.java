@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.core.rmi.client.readerconfigurationstub;
-//TODO: Comments
+
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
@@ -15,7 +13,6 @@ import org.rifidi.rmi.utils.remotecall.ServerDescriptionBasedRemoteMethodCall;
  * one is not available for the supplied ID
  * 
  * @author Kyle Neumeier - kyle@pramari.com
- * 
  */
 public class RS_GetReaderFactory
 		extends

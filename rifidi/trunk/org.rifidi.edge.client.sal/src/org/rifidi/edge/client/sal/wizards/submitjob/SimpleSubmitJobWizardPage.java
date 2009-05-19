@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.client.sal.wizards.submitjob;
-//TODO: Comments
+
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -16,7 +14,6 @@ import org.eclipse.swt.widgets.Group;
  * CommandConfiguraiton)
  * 
  * @author Kyle Neumeier - kyle@pramari.com
- * 
  */
 public class SimpleSubmitJobWizardPage extends WizardPage {
 
@@ -54,8 +51,7 @@ public class SimpleSubmitJobWizardPage extends WizardPage {
 
 	}
 
-	/**
-	 * 
+	/** 
 	 * @return The interval that the user chose
 	 */
 	public Long getInterval() {

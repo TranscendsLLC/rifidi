@@ -1,8 +1,6 @@
-/**
- * 
- */
+
 package org.rifidi.edge.core.rmi.client.readerconfigurationstub;
-//TODO: Comments
+
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
@@ -17,7 +15,6 @@ import org.rifidi.rmi.utils.remotecall.ServerDescriptionBasedRemoteMethodCall;
  * reader
  * 
  * @author Kyle Neumeier - kyle@pramari.com
- * 
  */
 public class RS_GetReaderDescription extends
 		ServerDescriptionBasedRemoteMethodCall<MBeanInfo, RuntimeException> {
