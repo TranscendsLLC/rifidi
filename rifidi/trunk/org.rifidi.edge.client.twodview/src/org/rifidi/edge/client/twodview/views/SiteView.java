@@ -19,10 +19,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.LightweightSystem;
+import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.swt.SWT;
@@ -228,8 +228,6 @@ public class SiteView extends ViewPart implements ModelManagerServiceListener,
 	 */
 	public void persist() {
 
-		
-
 		/** Creating an object to put the map information in */
 		EdgeUi eui = new EdgeUi();
 		/** Background picture */
@@ -288,7 +286,8 @@ public class SiteView extends ViewPart implements ModelManagerServiceListener,
 			 * the map since the coordinates of the readers are already saved
 			 * for the zoom/translation
 			 */
-			lp.translatePane(eui.getxOffset(), eui.getyOffset());
+			((IFigure) this.floorplanLayer.getChildren().get(0))
+					.setLocation(new Point(eui.getxOffset(), eui.getyOffset()));
 			// lp.resetDeltaValues();
 			/** get ids and positions of the persisted readers */
 			HashSet<ReaderPos> readerPositions = (HashSet<ReaderPos>) eui
@@ -303,6 +302,7 @@ public class SiteView extends ViewPart implements ModelManagerServiceListener,
 
 				}
 			}
+			lp.repaint();
 
 		}
 
