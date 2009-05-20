@@ -1,4 +1,3 @@
-
 package org.rifidi.edge.client.sal.controller.commands;
 
 import org.eclipse.jface.viewers.ILabelProvider;
@@ -11,9 +10,9 @@ import org.rifidi.edge.client.model.sal.RemoteEdgeServer;
 import org.rifidi.edge.client.sal.SALPluginActivator;
 
 /**
- * TODO: Class level comment.  
+ * Label Provider for the Command Tree Viewer
  * 
- * @author kyle
+ * @author Kyle Neumeier - kyle@pramari.com
  */
 public class CommandTreeLabelProvider implements ILabelProvider {
 
@@ -69,10 +68,10 @@ public class CommandTreeLabelProvider implements ILabelProvider {
 		} else if (element instanceof RemoteCommandConfigType) {
 			return ((RemoteCommandConfigType) element).getCommandConfigType();
 		} else if (element instanceof RemoteCommandConfiguration) {
-			RemoteCommandConfiguration config = (RemoteCommandConfiguration)element;
-			if(config.isDirty()){
-				return "*"+config.getID();
-			}else{
+			RemoteCommandConfiguration config = (RemoteCommandConfiguration) element;
+			if (config.isDirty()) {
+				return "*" + config.getID();
+			} else {
 				return config.getID();
 			}
 		} else
@@ -88,8 +87,6 @@ public class CommandTreeLabelProvider implements ILabelProvider {
 	 */
 	@Override
 	public void addListener(ILabelProviderListener listener) {
-		// TODO Auto-generated method stub
-
 	}
 
 	/*
@@ -117,7 +114,6 @@ public class CommandTreeLabelProvider implements ILabelProvider {
 	 */
 	@Override
 	public boolean isLabelProperty(Object element, String property) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -130,8 +126,6 @@ public class CommandTreeLabelProvider implements ILabelProvider {
 	 */
 	@Override
 	public void removeListener(ILabelProviderListener listener) {
-		// TODO Auto-generated method stub
-
 	}
 
 }

@@ -82,7 +82,6 @@ public class EdgeServerView extends ViewPart implements
 	 */
 	@Override
 	public void setFocus() {
-		// TODO Auto-generated method stub
 
 	}
 

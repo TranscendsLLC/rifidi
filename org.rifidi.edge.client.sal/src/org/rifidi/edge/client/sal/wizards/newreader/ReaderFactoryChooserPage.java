@@ -70,14 +70,11 @@ public class ReaderFactoryChooserPage extends WizardPage {
 
 			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
-				// TODO Auto-generated method stub
-
 			}
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				update();
-
 			}
 
 		});

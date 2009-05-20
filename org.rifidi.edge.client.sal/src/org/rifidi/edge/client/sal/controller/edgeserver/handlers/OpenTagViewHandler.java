@@ -1,4 +1,3 @@
-
 package org.rifidi.edge.client.sal.controller.edgeserver.handlers;
 
 import org.eclipse.core.commands.AbstractHandler;
@@ -16,7 +15,7 @@ import org.rifidi.edge.client.model.sal.RemoteReader;
 import org.rifidi.edge.client.sal.views.tags.TagView;
 
 /**
- * TODO: Class level comment.  
+ * The Handler for the command that opens up the TagView
  * 
  * @author kyle
  */
@@ -39,13 +38,11 @@ public class OpenTagViewHandler extends AbstractHandler implements IHandler2 {
 		IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindow(event);
 
 		try {
-			IViewPart part = window.getActivePage().showView(
-					TagView.ID, reader.getID(),
-					IWorkbenchPage.VIEW_VISIBLE);
+			IViewPart part = window.getActivePage().showView(TagView.ID,
+					reader.getID(), IWorkbenchPage.VIEW_VISIBLE);
 			TagView view = (TagView) part;
 			view.setReader(reader);
 		} catch (PartInitException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return null;

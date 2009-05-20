@@ -21,8 +21,6 @@ public class FloatWidgetData extends AbstractWidgetData {
 	}
 
 	/**
-	 * TODO: Method level comment.  
-	 * 
 	 * @return The maximum value of this widget
 	 */
 	public Float maxValue() {
@@ -35,8 +33,6 @@ public class FloatWidgetData extends AbstractWidgetData {
 	}
 
 	/**
-	 * TODO: Method level comment.  
-	 * 
 	 * @return The minimum value for this widget
 	 */
 	public Float minValue() {

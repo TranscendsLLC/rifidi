@@ -1,4 +1,3 @@
-
 package org.rifidi.edge.core.rmi.client.readerconfigurationstub;
 
 import java.rmi.Remote;
@@ -9,23 +8,31 @@ import org.rifidi.edge.core.api.rmi.dto.SessionDTO;
 import org.rifidi.rmi.utils.remotecall.ServerDescriptionBasedRemoteMethodCall;
 
 /**
- * TODO: Class level comment.  
+ * This Remote call gets the session with the given ID and remote reader ID. It
+ * returns the DTO for a session
  * 
- * @author kyle
+ * @author Kyle Neumeier - kyle@pramari.com
  */
 public class RS_GetSession extends
 		ServerDescriptionBasedRemoteMethodCall<SessionDTO, RuntimeException> {
 
+	/** The ID of the reader where the session exists */
 	private String readerID;
+	/** The ID of the session to get */
 	private String sessionID;
 
 	/**
-	 * Constructor.  
+	 * Constructor
 	 * 
 	 * @param serverDescription
+	 *            The ServerDescription to use
+	 * @param readerID
+	 *            The ID of the reader where the session exists
+	 * @param sessionID
+	 *            The ID of the session to get
 	 */
-	public RS_GetSession(RS_ServerDescription serverDescription, String readerID,
-			String sessionID) {
+	public RS_GetSession(RS_ServerDescription serverDescription,
+			String readerID, String sessionID) {
 		super(serverDescription);
 		this.readerID = readerID;
 		this.sessionID = sessionID;

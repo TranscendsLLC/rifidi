@@ -1,4 +1,3 @@
-
 package org.rifidi.edge.client.sal.controller.commands;
 
 import java.beans.PropertyChangeEvent;
@@ -21,9 +20,10 @@ import org.rifidi.edge.client.model.sal.RemoteEdgeServer;
 import org.rifidi.edge.client.model.sal.properties.RemoteObjectDirtyEvent;
 
 /**
- * TODO: Class level comment.  
+ * Content Provider for the Commands. Also serves as the controller in the MVC
+ * pattern
  * 
- * @author kyle
+ * @author Kyle Neumeier -kyle@pramari.com
  */
 public class CommandTreeContentProvider implements ITreeContentProvider,
 		CommandController, PropertyChangeListener, IMapChangeListener {
@@ -41,7 +41,7 @@ public class CommandTreeContentProvider implements ITreeContentProvider,
 	private static CommandTreeContentProvider instance;
 
 	/**
-	 * Constructor.  
+	 * Constructor.
 	 */
 	public CommandTreeContentProvider() {
 		super();
@@ -92,7 +92,6 @@ public class CommandTreeContentProvider implements ITreeContentProvider,
 	 */
 	@Override
 	public Object getParent(Object element) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -140,7 +139,7 @@ public class CommandTreeContentProvider implements ITreeContentProvider,
 	 */
 	@Override
 	public void dispose() {
-		// TODO Auto-generated method stub
+		// TODO Handle dispose!
 
 	}
 
@@ -227,8 +226,8 @@ public class CommandTreeContentProvider implements ITreeContentProvider,
 			Object oldVal = event.diff.getOldValue(key);
 			if ((newVal instanceof RemoteCommandConfigFactory)
 					&& (oldVal instanceof RemoteCommandConfigFactory)) {
-				removeRemoteCommandPlugin((RemoteCommandConfigFactory) oldVal);
-				addRemoteCommandPlugin((RemoteCommandConfigFactory) newVal);
+				removeRemoteCommandConfigFactory((RemoteCommandConfigFactory) oldVal);
+				addRemoteCommandConfigFactory((RemoteCommandConfigFactory) newVal);
 			}
 		}
 
@@ -236,7 +235,7 @@ public class CommandTreeContentProvider implements ITreeContentProvider,
 		for (Object key : event.diff.getAddedKeys()) {
 			Object val = event.diff.getNewValue(key);
 			if (val instanceof RemoteCommandConfigFactory) {
-				addRemoteCommandPlugin((RemoteCommandConfigFactory) val);
+				addRemoteCommandConfigFactory((RemoteCommandConfigFactory) val);
 			} else if (val instanceof RemoteCommandConfiguration) {
 				addRemoteCommandConfiguration((RemoteCommandConfiguration) val);
 			}
@@ -246,7 +245,7 @@ public class CommandTreeContentProvider implements ITreeContentProvider,
 		for (Object key : event.diff.getRemovedKeys()) {
 			Object val = event.diff.getOldValue(key);
 			if (val instanceof RemoteCommandConfigFactory) {
-				removeRemoteCommandPlugin((RemoteCommandConfigFactory) val);
+				removeRemoteCommandConfigFactory((RemoteCommandConfigFactory) val);
 			} else if (val instanceof RemoteCommandConfiguration) {
 				removeRemoteCommandConfiguration((RemoteCommandConfiguration) val);
 			}
@@ -255,21 +254,25 @@ public class CommandTreeContentProvider implements ITreeContentProvider,
 	}
 
 	/**
-	 * Remove the remote command plugin specified.  
+	 * Helper method to remove RemoteCommandConfigFactory from viewer
 	 * 
-	 * @param plugin
+	 * @param factory
+	 *            the factory to add
 	 */
-	private void removeRemoteCommandPlugin(RemoteCommandConfigFactory plugin) {
-		viewer.remove(plugin);
+	private void removeRemoteCommandConfigFactory(
+			RemoteCommandConfigFactory factory) {
+		viewer.remove(factory);
 	}
 
 	/**
-	 * TODO: Method level comment.  
+	 * Helper method to add a RemoteCommandConfigFactory to viewer
 	 * 
-	 * @param plugin
+	 * @param factory
+	 *            the factory to add
 	 */
-	private void addRemoteCommandPlugin(RemoteCommandConfigFactory plugin) {
-		viewer.add(edgeServerList.get(0), plugin);
+	private void addRemoteCommandConfigFactory(
+			RemoteCommandConfigFactory factory) {
+		viewer.add(edgeServerList.get(0), factory);
 		viewer.setExpandedState(edgeServerList.get(0), true);
 	}
 
@@ -327,7 +330,7 @@ public class CommandTreeContentProvider implements ITreeContentProvider,
 	}
 
 	/**
-	 * TODO: Method level comment.  
+	 * Return the Command MVC controller
 	 */
 	public static CommandController getController() {
 		return (CommandController) instance;
@@ -375,7 +378,9 @@ public class CommandTreeContentProvider implements ITreeContentProvider,
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.rifidi.edge.client.sal.controller.commands.CommandController#clearPropertyChanges(java.lang.String)
+	 * 
+	 * @seeorg.rifidi.edge.client.sal.controller.commands.CommandController#
+	 * clearPropertyChanges(java.lang.String)
 	 */
 	@Override
 	public void clearPropertyChanges(String commandID) {
@@ -389,7 +394,9 @@ public class CommandTreeContentProvider implements ITreeContentProvider,
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.rifidi.edge.client.sal.controller.commands.CommandController#synchPropertyChanges(java.lang.String)
+	 * 
+	 * @seeorg.rifidi.edge.client.sal.controller.commands.CommandController#
+	 * synchPropertyChanges(java.lang.String)
 	 */
 	@Override
 	public void synchPropertyChanges(String commandID) {

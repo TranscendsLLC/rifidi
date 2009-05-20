@@ -1,4 +1,3 @@
-
 package org.rifidi.rmi.utils.exceptions;
 
 import java.io.Externalizable;
@@ -15,17 +14,22 @@ import java.io.ObjectOutput;
  * bandwidth).
  */
 public class RetryException extends Exception implements Externalizable {
-	
-	/**
-	 * TODO: Method level comment.  
+
+	/* (non-Javadoc)
+	 * @see java.io.Externalizable#readExternal(java.io.ObjectInput)
 	 */
-	public void readExternal(ObjectInput in) throws IOException,
+	@Override
+	public void readExternal(ObjectInput arg0) throws IOException,
 			ClassNotFoundException {
+		
 	}
 
-	/**
-	 * TODO: Method level comment.  
+	/* (non-Javadoc)
+	 * @see java.io.Externalizable#writeExternal(java.io.ObjectOutput)
 	 */
-	public void writeExternal(ObjectOutput out) throws IOException {
+	@Override
+	public void writeExternal(ObjectOutput arg0) throws IOException {
+		
 	}
+	
 }

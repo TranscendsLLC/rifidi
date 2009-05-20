@@ -1,4 +1,3 @@
-
 package org.rifidi.edge.client.sal.modelmanager;
 
 import java.util.ArrayList;
@@ -9,18 +8,24 @@ import java.util.Set;
 import org.rifidi.edge.client.model.sal.RemoteEdgeServer;
 
 /**
- * TODO: Class level comment.  
+ * This class is a singleton that injects a RemoteEdgeServer into listeners.
  * 
- * @author kyle
+ * TODO: look at how the problem of injecting a model into views is handled in
+ * the ALE view.
+ * 
+ * @author Kyle Neumeier - kyle@pramari.com
  */
 public class ModelManagerService {
 
+	/** The model to inject */
 	private List<RemoteEdgeServer> model = new ArrayList<RemoteEdgeServer>();
+	/** Listeners who should have model injected */
 	private Set<ModelManagerServiceListener> controllers;
+	/** The singleton instance of this */
 	private static ModelManagerService instance;
 
 	/**
-	 * Constructor.  
+	 * Constructor.
 	 */
 	private ModelManagerService() {
 		controllers = new HashSet<ModelManagerServiceListener>();
@@ -28,7 +33,7 @@ public class ModelManagerService {
 	}
 
 	/**
-	 * Returns a singleton instance.  
+	 * Returns a singleton instance.
 	 * 
 	 * @return
 	 */
@@ -40,8 +45,7 @@ public class ModelManagerService {
 	}
 
 	/**
-	 * Adds the provided controller to the map.  
-	 * TODO: Method level comment.  
+	 * Adds the provided controller to the map.
 	 * 
 	 * @param controller
 	 */
@@ -51,8 +55,7 @@ public class ModelManagerService {
 	}
 
 	/**
-	 * Removes the given controller from the map.  
-	 * TODO: Method level comment.  
+	 * Removes the given controller from the map.
 	 * 
 	 * @param controller
 	 */
@@ -61,14 +64,14 @@ public class ModelManagerService {
 	}
 
 	/**
-	 * TODO: Method level comment.  
+	 * Inject the model
 	 * 
 	 * @param server
 	 */
 	public void setModel(RemoteEdgeServer server) {
 		this.model.clear();
 		this.model.add(server);
-		for (ModelManagerServiceListener controller: controllers) {
+		for (ModelManagerServiceListener controller : controllers) {
 			controller.setModel(model);
 		}
 	}

@@ -1,18 +1,17 @@
-
 package org.rifidi.edge.client.mbean.ui.widgets.data;
 
 import javax.management.JMX;
 import javax.management.MBeanAttributeInfo;
 
 /**
- * TODO: Class level comment.  
+ * Concreate class for data used to construct a Long Widget
  * 
  * @author Kyle Neumeier - kyle@pramari.com
  */
 public class LongWidgetData extends AbstractWidgetData {
 
 	/**
-	 * Constructor.  
+	 * Constructor.
 	 * 
 	 * @param element
 	 */

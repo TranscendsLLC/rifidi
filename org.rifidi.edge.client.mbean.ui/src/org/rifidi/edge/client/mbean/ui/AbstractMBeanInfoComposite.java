@@ -1,4 +1,3 @@
-
 package org.rifidi.edge.client.mbean.ui;
 
 import java.util.ArrayList;
@@ -38,11 +37,16 @@ public abstract class AbstractMBeanInfoComposite implements
 	protected boolean includeExcelude;
 
 	/**
-	 * Constructor.  
+	 * Constructor.
 	 * 
 	 * @param info
+	 *            The MBeanInfo that has the description of the attributes to
+	 *            display in this form
 	 * @param categories
+	 *            The categories to filter on
 	 * @param includeExclude
+	 *            if true, include only the listed categories. If false, exclude
+	 *            the listed categories
 	 */
 	public AbstractMBeanInfoComposite(MBeanInfo info, Set<String> categories,
 			boolean includeExclude) {
@@ -82,9 +86,10 @@ public abstract class AbstractMBeanInfoComposite implements
 	}
 
 	/**
-	 * TODO: Method level comment.  
+	 * Return a list of widgets which have been sorted according to their order
+	 * variable
 	 * 
-	 * @return
+	 * @return A sorted list of widgets
 	 */
 	protected List<AbstractWidget<?>> getSortedListOfWidgets() {
 		List<AbstractWidget<?>> list = new ArrayList<AbstractWidget<?>>(widgets
@@ -94,9 +99,10 @@ public abstract class AbstractMBeanInfoComposite implements
 	}
 
 	/**
-	 * TODO: Method level comment.  
+	 * Get the widget with the specified name
 	 * 
 	 * @param widgetName
+	 *            The name of the widget to get
 	 * @return
 	 */
 	protected AbstractWidget<?> getWidget(String widgetName) {
@@ -104,8 +110,6 @@ public abstract class AbstractMBeanInfoComposite implements
 	}
 
 	/**
-	 * TODO: Method level comment.  
-	 * 
 	 * @return A list of MBeanAttributeInfos that are filtered according to the
 	 *         filterSet
 	 */

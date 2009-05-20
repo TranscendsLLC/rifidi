@@ -110,7 +110,6 @@ public class EdgeServerTreeContentProvider implements ITreeContentProvider,
 	 */
 	@Override
 	public Object getParent(Object element) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 

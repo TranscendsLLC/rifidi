@@ -1,4 +1,3 @@
-
 package org.rifidi.edge.client.sal.controller.commands.handlers;
 
 import org.eclipse.core.commands.AbstractHandler;
@@ -13,9 +12,10 @@ import org.rifidi.edge.client.sal.controller.commands.CommandController;
 import org.rifidi.edge.client.sal.controller.commands.CommandTreeContentProvider;
 
 /**
- * TODO: Class level comment.  
+ * Handler for the clearcommandConfigPropChanges command. Selection must be a
+ * RemoteCommandConfiguration
  * 
- * @author kyle
+ * @author Kyle Neumeier - kyle@pramari.com
  */
 public class ClearCommandConfigPropChanges extends AbstractHandler implements
 		IHandler {

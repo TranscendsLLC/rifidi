@@ -1,4 +1,3 @@
-
 package org.rifidi.edge.client.model.sal;
 
 import javax.management.AttributeList;
@@ -8,16 +7,31 @@ import org.rifidi.edge.core.rmi.client.readerconfigurationstub.RS_SetReaderPrope
 import org.rifidi.rmi.utils.exceptions.ServerUnavailable;
 
 /**
- * TODO: Class level comment.  
+ * A command that commits property changes to a reader
  * 
- * @author kyle
+ * @author Kyle Neumeier - kyle@pramari.com
+ * 
  */
-public class Command_SynchReaderPropertyChanges implements RemoteEdgeServerCommand {
+public class Command_SynchReaderPropertyChanges implements
+		RemoteEdgeServerCommand {
 
+	/** The edge server model object */
 	private RemoteEdgeServer server;
+	/** The ID of the reader */
 	private String readerID;
+	/** The attributes that have changed */
 	private AttributeList attributes;
 
+	/**
+	 * Constructor
+	 * 
+	 * @param server
+	 *            The Edge server model object
+	 * @param readerID
+	 *            The ID of the reader
+	 * @param attributes
+	 *            The attributes that have changed
+	 */
 	public Command_SynchReaderPropertyChanges(RemoteEdgeServer server,
 			String readerID, AttributeList attributes) {
 		this.server = server;
@@ -53,7 +67,7 @@ public class Command_SynchReaderPropertyChanges implements RemoteEdgeServerComma
 	 */
 	@Override
 	public void executeEclipse() {
-		// TODO Auto-generated method stub
+		// DO NOTHING
 
 	}
 
@@ -66,7 +80,6 @@ public class Command_SynchReaderPropertyChanges implements RemoteEdgeServerComma
 	 */
 	@Override
 	public String getType() {
-		// TODO Auto-generated method stub
 		return "COMMAND_SYNCH_READER_PROPERTY_CHANGES";
 	}
 

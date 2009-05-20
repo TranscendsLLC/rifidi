@@ -1,4 +1,3 @@
-
 package org.rifidi.edge.client.sal.properties.edgeserver;
 
 import java.beans.PropertyChangeEvent;
@@ -17,18 +16,21 @@ import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetPage;
 import org.rifidi.edge.client.model.sal.RemoteEdgeServer;
 
 /**
- * TODO: Class level comment.  
+ * A Section that displays the current connection state of the Edge Server in
+ * the Tabbed Properties View
  * 
- * @author kyle
+ * @author Kyle Neumeier - kyle@pramari.com
  */
 public class EdgeServerStateSection extends AbstractPropertySection implements
 		PropertyChangeListener {
 
+	/** The Control to display the text */
 	private FormText stateText = null;
+	/** The Remote Edge server */
 	private RemoteEdgeServer server;
 
 	/**
-	 * Constructor.  
+	 * Constructor.
 	 */
 	public EdgeServerStateSection() {
 	}
@@ -70,7 +72,7 @@ public class EdgeServerStateSection extends AbstractPropertySection implements
 		super.setInput(part, selection);
 		Object input = ((IStructuredSelection) selection).getFirstElement();
 		RemoteEdgeServer server = (RemoteEdgeServer) input;
-		if (server != null && this.server!=server) {
+		if (server != null && this.server != server) {
 			stateText.setText(server.getState().toString(), false, false);
 			server.addPropertyChangeListener(this);
 			this.server = server;
@@ -79,7 +81,9 @@ public class EdgeServerStateSection extends AbstractPropertySection implements
 
 	/*
 	 * (non-Javadoc)
-	 * @see java.beans.PropertyChangeListener#propertyChange(java.beans.PropertyChangeEvent)
+	 * 
+	 * @seejava.beans.PropertyChangeListener#propertyChange(java.beans.
+	 * PropertyChangeEvent)
 	 */
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {

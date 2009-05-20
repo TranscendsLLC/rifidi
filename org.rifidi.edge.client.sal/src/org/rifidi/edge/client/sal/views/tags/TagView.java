@@ -74,7 +74,6 @@ public class TagView extends ViewPart implements ISetChangeListener {
 	 */
 	@Override
 	public void setFocus() {
-		// TODO Auto-generated method stub
 
 	}
 

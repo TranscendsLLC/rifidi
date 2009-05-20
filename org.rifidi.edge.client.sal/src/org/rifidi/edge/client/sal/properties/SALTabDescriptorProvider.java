@@ -1,4 +1,3 @@
-
 package org.rifidi.edge.client.sal.properties;
 
 import java.util.ArrayList;
@@ -21,7 +20,8 @@ import org.rifidi.edge.client.sal.properties.edgeserver.EdgeServerTabDescriptor;
 import org.rifidi.edge.client.sal.properties.readers.ReaderTabDescriptor;
 
 /**
- * TODO: Class level comment.  
+ * This is a TabbedProperties DescriptorProvider that creates an array of
+ * TabDescriptors for the model object of a selection
  * 
  * @author Kyle Neumeier - kyle@pramari.com
  */
@@ -49,6 +49,14 @@ public class SALTabDescriptorProvider implements ITabDescriptorProvider {
 		return new ITabDescriptor[] {};
 	}
 
+	/**
+	 * Helper method that creates a new CommandeConfigTabDescriptor for all of
+	 * the categories in the MBeanInfo for a CommandConfiguration
+	 * 
+	 * @param config
+	 *            The CommandConfiguration to create TabDescriptors for
+	 * @return An array of tab descriptors
+	 */
 	private static ITabDescriptor[] getCommandTabDescriptors(
 			RemoteCommandConfiguration config) {
 		List<ITabDescriptor> tabDescriptors = new ArrayList<ITabDescriptor>();

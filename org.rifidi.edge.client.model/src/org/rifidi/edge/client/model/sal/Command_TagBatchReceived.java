@@ -1,4 +1,3 @@
-
 package org.rifidi.edge.client.model.sal;
 
 import java.util.HashSet;
@@ -9,16 +8,27 @@ import org.rifidi.edge.core.api.tags.TagBatch;
 import org.rifidi.edge.core.api.tags.TagDTO;
 
 /**
- * TODO: Class level comment.  
+ * A handler method for when a TagBatch notification is sent
  * 
  * @author Kyle Neumeier - kyle@pramari.com
  */
 public class Command_TagBatchReceived implements RemoteEdgeServerCommand {
 
+	/** The edge server model object */
 	private RemoteEdgeServer edgeServer;
+	/** The Tags that were seeen */
 	private TagBatch batch;
-	private Set<RemoteTag> tags;
+	/** The set of tag model objects */
+	private Set<RemoteTag> tags = null;
 
+	/**
+	 * Constructor
+	 * 
+	 * @param server
+	 *            The edge server model object
+	 * @param batch
+	 *            The batch of tags that were read
+	 */
 	public Command_TagBatchReceived(RemoteEdgeServer server, TagBatch batch) {
 		this.edgeServer = server;
 		this.batch = batch;

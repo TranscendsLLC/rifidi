@@ -1,4 +1,3 @@
-
 package org.rifidi.edge.client.model.sal.properties;
 
 /**
@@ -21,7 +20,7 @@ public class RemoteObjectDirtyEvent {
 	private String hashString;
 
 	/**
-	 * Constructor.  
+	 * Constructor.
 	 * 
 	 * @param modelID
 	 * @param dirty
@@ -34,7 +33,7 @@ public class RemoteObjectDirtyEvent {
 	}
 
 	/**
-	 * Returns the modelID.  
+	 * Returns the modelID.
 	 * 
 	 * @return the modelID
 	 */
@@ -43,9 +42,8 @@ public class RemoteObjectDirtyEvent {
 	}
 
 	/**
-	 * TODO: Method level comment.  Seriously, what the hell?  
 	 * 
-	 * @return the dirty
+	 * @return true if the model is dirty
 	 */
 	public boolean isDirty() {
 		return dirty;
