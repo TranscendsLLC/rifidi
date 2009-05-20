@@ -9,7 +9,7 @@
  *  				http://www.opensource.org/licenses/lgpl-license.html
  */
 package org.rifidi.edge.client.twodview.layers;
-//TODO: Comments
+
 import org.eclipse.draw2d.ImageFigure;
 import org.eclipse.draw2d.Layer;
 import org.eclipse.draw2d.XYLayout;
@@ -17,8 +17,9 @@ import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.swt.graphics.Image;
 
 /**
- * @author Tobias Hoppenthaler - tobias@pramari.com
+ * TODO: Class level comment.  
  * 
+ * @author Tobias Hoppenthaler - tobias@pramari.com
  */
 public class XYLayer extends Layer {
 

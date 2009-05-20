@@ -1,16 +1,7 @@
-/* 
- *  ListeningScalableLayeredPane.java
- *  Created:	Nov 27, 2008
- *  Project:	RiFidi Edge Client
- *  				http://www.rifidi.org
- *  				http://rifidi.sourceforge.net
- *  Copyright:	Pramari LLC and the Rifidi Project
- *  License:	Lesser GNU Public License (LGPL)
- *  				http://www.opensource.org/licenses/lgpl-license.html
- */
+
 package org.rifidi.edge.client.twodview.layers;
 
-//TODO: Comments
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -26,8 +17,9 @@ import org.eclipse.draw2d.geometry.Rectangle;
 import org.rifidi.edge.client.twodview.listeners.SiteViewFigureSelectionListener;
 
 /**
- * @author Tobias Hoppenthaler - tobias@pramari.com
+ * TODO: Class level comment.  
  * 
+ * @author Tobias Hoppenthaler - tobias@pramari.com
  */
 public class ListeningScalableLayeredPane extends ScalableLayeredPane implements
 		MouseListener, MouseMotionListener {
@@ -44,6 +36,9 @@ public class ListeningScalableLayeredPane extends ScalableLayeredPane implements
 	private Set<SiteViewFigureSelectionListener> listeners;
 	private int xOffset = 0, yOffset = 0;
 
+	/**
+	 * Constructor.  
+	 */
 	public ListeningScalableLayeredPane() {
 		super();
 		setMaximumSize(new Dimension(1024, 768));
@@ -260,20 +255,36 @@ public class ListeningScalableLayeredPane extends ScalableLayeredPane implements
 		return this.selectedFigure;
 	}
 
+	/**
+	 * TODO: Method level comment.  
+	 */
 	public void removeCurrentSelection() {
 		getLayer(OBJECTLAYER).remove(selectedFigure);
 	}
 
+	/**
+	 * TODO: Method level comment.  
+	 * 
+	 * @param listener
+	 */
 	public void addImageSelectionListener(
 			SiteViewFigureSelectionListener listener) {
 		this.listeners.add(listener);
 	}
 
+	/**
+	 * TODO: Method level comment.  
+	 * 
+	 * @param listener
+	 */
 	public void remoteImageSelectionListener(
 			SiteViewFigureSelectionListener listener) {
 		this.listeners.remove(listener);
 	}
 
+	/**
+	 * Resets the deltaY and deltaX.  
+	 */
 	public void resetDeltaValues() {
 		this.deltaX = 0;
 		this.deltaY = 0;

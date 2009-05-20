@@ -22,7 +22,11 @@ public class SiteViewMouseWheelListener implements Listener {
 	private static final Log logger = LogFactory
 			.getLog(SiteViewMouseWheelListener.class);
 
-	
+	/**
+	 * Constructor.  
+	 * 
+	 * @param sp
+	 */
 	public SiteViewMouseWheelListener(ScalableLayeredPane sp) {
 		super();
 		this.sp = sp;
@@ -40,6 +44,11 @@ public class SiteViewMouseWheelListener implements Listener {
 
 	}
 
+	/**
+	 * This class interprets mousewheel movements that zoom in and out of the picture on screen.  
+	 * 
+	 * @param event
+	 */
 	private void zoom(Event event) {
 		/** if the event is caused by the wheel */
 		if (event.type == SWT.MouseWheel) {
@@ -60,6 +69,11 @@ public class SiteViewMouseWheelListener implements Listener {
 		}
 	}
 
+	/**
+	 * Centers the frame of the picture on the given event.  
+	 * 
+	 * @param event
+	 */
 	public void centerPaneOnThisEvent(Event event) {
 		centerPaneOnThisXY(event.x, event.y);
 	}
@@ -75,6 +89,12 @@ public class SiteViewMouseWheelListener implements Listener {
 
 	}
 
+	/**
+	 * TODO: Method level comment.  
+	 * 
+	 * @param xOffset
+	 * @param yOffset
+	 */
 	private void addOffsetToPane(int xOffset, int yOffset) {
 		for (Object object : sp.getChildren()) {
 			/**

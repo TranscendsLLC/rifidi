@@ -1,35 +1,36 @@
-/* 
- *  SiteViewKeyListener.java
- *  Created:	Nov 10, 2008
- *  Project:	RiFidi Dashboard - An RFID infrastructure monitoring tool
- *  				http://www.rifidi.org
- *  				http://rifidi.sourceforge.net
- *  Copyright:	Pramari LLC and the Rifidi Project
- *  License:	Lesser GNU Public License (LGPL)
- *  				http://www.opensource.org/licenses/lgpl-license.html
- */
+
 package org.rifidi.edge.client.twodview.listeners;
 
-//TODO: Comments
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.rifidi.edge.client.twodview.layers.ListeningScalableLayeredPane;
 
 /**
- * @author Tobias Hoppenthaler - tobias@pramari.com
+ * TODO: Class level comment.  
  * 
+ * @author Tobias Hoppenthaler - tobias@pramari.com
  */
 public class SiteViewKeyListener implements KeyListener {
 
 	private ListeningScalableLayeredPane lp;
 
+	/**
+	 * Constructor.  
+	 * 
+	 * @param lp
+	 */
 	public SiteViewKeyListener(ListeningScalableLayeredPane lp) {
 		super();
 		this.lp = lp;
 
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.swt.events.KeyListener#keyPressed(org.eclipse.swt.events.KeyEvent)
+	 */
 	@Override
 	public void keyPressed(KeyEvent e) {
 		int x = 0, y = 0;
@@ -76,6 +77,10 @@ public class SiteViewKeyListener implements KeyListener {
 //		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.swt.events.KeyListener#keyReleased(org.eclipse.swt.events.KeyEvent)
+	 */
 	@Override
 	public void keyReleased(KeyEvent e) {
 		// TODO Auto-generated method stub

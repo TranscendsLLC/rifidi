@@ -15,10 +15,11 @@ import org.rifidi.edge.client.ale.api.wsdl.ale.epcglobal.NoSuchNameExceptionResp
 import org.rifidi.edge.client.ale.ecspecview.Activator;
 import org.rifidi.edge.client.ale.ecspecview.model.ECSpecDecorator;
 import org.rifidi.edge.client.ale.logicalreaders.ALEService;
-//TODO: Comments
+
 /**
- * @author Jochen Mader - jochen@pramari.com
+ * This class represents a command to delete an EC spec.  
  * 
+ * @author Jochen Mader - jochen@pramari.com
  */
 public class DeleteECSpecHandler extends AbstractHandler {
 	/** Logger for this class. */
@@ -39,6 +40,10 @@ public class DeleteECSpecHandler extends AbstractHandler {
 		service = Activator.getDefault().getAleService();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.core.commands.AbstractHandler#execute(org.eclipse.core.commands.ExecutionEvent)
+	 */
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		if (event.getApplicationContext() instanceof IEvaluationContext) {
