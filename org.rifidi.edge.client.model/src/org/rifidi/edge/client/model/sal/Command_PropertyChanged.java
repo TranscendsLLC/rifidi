@@ -46,7 +46,7 @@ public class Command_PropertyChanged implements RemoteEdgeServerCommand {
 	public void executeEclipse() {
 		if (notification.isReader()) {
 			RemoteReader reader = (RemoteReader) server.remoteReaders
-					.get(notification.getConfigIDID());
+					.get(notification.getConfigID());
 			if (reader != null) {
 				for (Attribute a : notification.getAttributes().asList()) {
 					reader.setAttribute(a);
@@ -54,7 +54,7 @@ public class Command_PropertyChanged implements RemoteEdgeServerCommand {
 			}
 		} else {
 			RemoteCommandConfiguration config = (RemoteCommandConfiguration) server.commandConfigurations
-					.get(notification.getConfigIDID());
+					.get(notification.getConfigID());
 			if (config != null) {
 				for (Attribute a : notification.getAttributes().asList()) {
 					config.setAttribute(a);
