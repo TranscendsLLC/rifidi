@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Edge Server Client Model Plug-in
 Bundle-SymbolicName: org.rifidi.edge.client.model;singleton:=true
-Bundle-Version: 1.0.0
+Bundle-Version: 1.0.1
 Bundle-Activator: org.rifidi.edge.client.model.SALModelPlugin
 Bundle-Vendor: Pramari, LLC
 Require-Bundle: org.eclipse.ui,
