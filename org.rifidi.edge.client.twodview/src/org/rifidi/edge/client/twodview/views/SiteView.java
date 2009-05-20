@@ -10,7 +10,7 @@
  */
 package org.rifidi.edge.client.twodview.views;
 
-//TODO: Comments
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -55,8 +55,9 @@ import org.rifidi.edge.client.twodview.util.ReaderPos;
 import org.rifidi.edge.client.twodview.util.SerializerUtil;
 
 /**
- * @author Tobias Hoppenthaler - tobias@pramari.com
+ * TODO: Class level comments.  
  * 
+ * @author Tobias Hoppenthaler - tobias@pramari.com
  */
 public class SiteView extends ViewPart implements ModelManagerServiceListener,
 		ITabbedPropertySheetPageContributor, IAdaptable {
@@ -183,10 +184,20 @@ public class SiteView extends ViewPart implements ModelManagerServiceListener,
 		return noteLayer;
 	}
 
+	/**
+	 * Returns the layered pane.  
+	 * 
+	 * @return
+	 */
 	public ListeningScalableLayeredPane getLayeredPane() {
 		return lp;
 	}
 
+	/**
+	 * 
+	 * 
+	 * @return
+	 */
 	public SiteViewController getController() {
 		return this.siteViewController;
 	}
@@ -218,6 +229,10 @@ public class SiteView extends ViewPart implements ModelManagerServiceListener,
 		super.dispose();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.ui.views.properties.tabbed.ITabbedPropertySheetPageContributor#getContributorId()
+	 */
 	@Override
 	public String getContributorId() {
 		return "org.rifidi.edge.client.twodview.propertyContributor";

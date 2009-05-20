@@ -1,6 +1,4 @@
-/**
- * 
- */
+
 package org.rifidi.edge.client.ale.ecspecview.handlers;
 
 import org.eclipse.core.commands.AbstractHandler;
@@ -13,10 +11,11 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.rifidi.edge.client.ale.api.xsd.ale.epcglobal.ECSpec;
 import org.rifidi.edge.client.ale.ecspecview.views.ECSpecEditorView;
-//TODO: Comments
+
 /**
- * @author kyle
+ * TODO: Class level comment.  
  * 
+ * @author kyle
  */
 public class NewECSpec extends AbstractHandler implements IHandler {
 

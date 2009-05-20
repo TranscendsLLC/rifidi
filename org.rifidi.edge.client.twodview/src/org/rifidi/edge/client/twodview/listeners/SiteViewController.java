@@ -1,16 +1,7 @@
-/* 
- *  SiteViewController.java
- *  Created:	Aug 21, 2008
- *  Project:	RiFidi Dashboard - An RFID infrastructure monitoring tool
- *  				http://www.rifidi.org
- *  				http://rifidi.sourceforge.net
- *  Copyright:	Pramari LLC and the Rifidi Project
- *  License:	Lesser GNU Public License (LGPL)
- *  				http://www.opensource.org/licenses/lgpl-license.html
- */
+
 package org.rifidi.edge.client.twodview.listeners;
 
-//TODO: Comments
+
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.HashMap;
@@ -37,8 +28,9 @@ import org.rifidi.edge.client.twodview.sfx.ReaderAlphaImageFigure;
 import org.rifidi.edge.client.twodview.views.SiteView;
 
 /**
- * @author Tobias Hoppenthaler - tobias@pramari.com
+ * TODO: Class level comment.  
  * 
+ * @author Tobias Hoppenthaler - tobias@pramari.com
  */
 public class SiteViewController implements DropTargetListener,
 		IMapChangeListener, PropertyChangeListener {
@@ -66,6 +58,11 @@ public class SiteViewController implements DropTargetListener,
 		this.readerIDsToReaderFigures = new HashMap<String, ReaderAlphaImageFigure>();
 	}
 
+	/**
+	 * TODO: Method level comment.  
+	 * 
+	 * @param server
+	 */
 	public void SetModel(RemoteEdgeServer server) {
 		if (this.server != null) {
 			this.server.removePropertyChangeListener(this);
@@ -270,11 +267,20 @@ public class SiteViewController implements DropTargetListener,
 
 	}
 
+	/**
+	 * Delete the reader with the given ID.  
+	 * 
+	 * @param readerID
+	 */
 	public void deleteReader(String readerID) {
 		siteView.getLayeredPane().removeCurrentSelection();
 		this.readerIDsToReaderFigures.remove(readerID).dispose();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see java.beans.PropertyChangeListener#propertyChange(java.beans.PropertyChangeEvent)
+	 */
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
 		if (evt.getPropertyName().equals(RemoteEdgeServer.STATE_PROPERTY)) {
@@ -292,6 +298,12 @@ public class SiteViewController implements DropTargetListener,
 
 	}
 
+	/**
+	 * Checks and sees if the given reader is already on the map.  
+	 * 
+	 * @param readerID
+	 * @return
+	 */
 	public boolean checkReaderAlreadyOnMap(String readerID) {
 		return readerIDsToReaderFigures.containsKey(readerID);
 	}
