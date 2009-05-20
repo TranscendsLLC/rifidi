@@ -1,4 +1,3 @@
-
 package org.rifidi.edge.client.model.sal;
 
 import java.util.HashMap;
@@ -11,20 +10,24 @@ import javax.management.MBeanInfo;
 import org.rifidi.edge.core.api.rmi.dto.CommandConfigFactoryDTO;
 
 /**
- * TODO: Class level comment.  
+ * The Model object for A CommandConfigurationFactory
  * 
- * @author kyle
+ * @author Kyle Neumeier - kyle@pramari.com
  */
 public class RemoteCommandConfigFactory {
 
+	/** The ID of the reader this factory is associated with */
 	private String readerFactoryID;
+	/** The types of commands this factory can produce */
 	private HashMap<String, RemoteCommandConfigType> commandTypes;
 
 	/**
-	 * Constructor.  
+	 * Constructor.
 	 * 
 	 * @param dto
+	 *            the Data Transfer Object for the CommandConfigurationFactory
 	 * @param typeToMbeanInfo
+	 *            A map of types to their related MBeanInfos
 	 */
 	public RemoteCommandConfigFactory(CommandConfigFactoryDTO dto,
 			Map<String, MBeanInfo> typeToMbeanInfo) {
@@ -51,20 +54,22 @@ public class RemoteCommandConfigFactory {
 	}
 
 	/**
-	 * TODO: Method level comment.  
+	 * Return a CommandConfigType model object for the ID of the type
 	 * 
 	 * @param commandType
-	 * @return
+	 *            The ID of the type
+	 * @return The Type model object
 	 */
 	public RemoteCommandConfigType getCommandType(String commandType) {
 		return commandTypes.get(commandType);
 	}
 
 	/**
-	 * TODO: Method level comment. 
 	 * 
 	 * @param commandType
-	 * @return
+	 *            the ID of the ComamndType
+	 * @return true if this factory can produces command configurations of the
+	 *         given type
 	 */
 	public boolean containsType(String commandType) {
 		return this.commandTypes.keySet().contains(commandType);

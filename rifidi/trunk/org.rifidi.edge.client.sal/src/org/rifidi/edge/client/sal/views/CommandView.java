@@ -96,7 +96,6 @@ public class CommandView extends ViewPart implements
 	 */
 	@Override
 	public void setFocus() {
-		// TODO Auto-generated method stub
 
 	}
 
@@ -135,7 +134,6 @@ public class CommandView extends ViewPart implements
 	 */
 	@Override
 	public void dragFinished(DragSourceEvent event) {
-		// TODO Auto-generated method stub
 		
 	}
 

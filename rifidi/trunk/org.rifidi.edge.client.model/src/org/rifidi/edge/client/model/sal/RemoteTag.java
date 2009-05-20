@@ -1,4 +1,3 @@
-
 package org.rifidi.edge.client.model.sal;
 
 import java.util.Hashtable;
@@ -8,22 +7,28 @@ import org.fosstrak.tdt.TDTEngine;
 import org.rifidi.edge.core.api.tags.TagDTO;
 
 /**
- * TODO: Class level comment.  
+ * A Model Object for a tag read
  * 
- * @author kyle
+ * @author Kyle Neumeier - kyle@pramari.com
  */
 public class RemoteTag {
 
+	/** The ID of the tag */
 	private String id;
+	/** The antenna this tag was seen on */
 	private int antenna;
+	/** A hashcode used for comparing RemoteTags */
 	private String hashcode;
+	/** The timestamp of when this tag was seen */
 	private long timestamp;
 
 	/**
-	 * Constructor.  
+	 * Constructor.
 	 * 
 	 * @param dto
+	 *            Data Transfer Object for the tag
 	 * @param engine
+	 *            The TDT Engine for converting the tag data to an EPC URN
 	 */
 	public RemoteTag(TagDTO dto, TDTEngine engine) {
 		String bin = dto.getTagID().toString(2).toUpperCase();
@@ -44,7 +49,7 @@ public class RemoteTag {
 	}
 
 	/**
-	 * Returns the ID of this tag.  
+	 * Returns the ID of this tag.
 	 * 
 	 * @return
 	 */
@@ -53,7 +58,7 @@ public class RemoteTag {
 	}
 
 	/**
-	 * Returns the antenna this tag was seen on.  
+	 * Returns the antenna this tag was seen on.
 	 * 
 	 * @return
 	 */

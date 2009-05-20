@@ -79,8 +79,6 @@ public abstract class AbstractRemoteMethodCall<T, E extends Exception> {
 			throws RemoteException, E;
 
 	/**
-	 * TODO: Method level comment.  
-	 * 
 	 * @return The retry Stategy to use
 	 */
 	protected RetryStrategy getRetryStrategy() {

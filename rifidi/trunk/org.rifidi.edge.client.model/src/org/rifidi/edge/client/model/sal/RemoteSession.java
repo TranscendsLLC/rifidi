@@ -1,4 +1,3 @@
-
 package org.rifidi.edge.client.model.sal;
 
 import java.beans.PropertyChangeListener;
@@ -54,7 +53,7 @@ public class RemoteSession {
 	}
 
 	/**
-	 * Returns the state of the RemoteSession.  
+	 * Returns the state of the RemoteSession.
 	 * 
 	 * @return the stateOfSession
 	 */
@@ -63,7 +62,7 @@ public class RemoteSession {
 	}
 
 	/**
-	 * Sets the state of the RemoteSession.  
+	 * Sets the state of the RemoteSession.
 	 * 
 	 * @param stateOfSession
 	 *            the stateOfSession to set
@@ -73,7 +72,7 @@ public class RemoteSession {
 	}
 
 	/**
-	 * Returns the ID of the sessionDTO.  
+	 * Returns the ID of the sessionDTO.
 	 * 
 	 * @return the sessionID
 	 */
@@ -82,7 +81,7 @@ public class RemoteSession {
 	}
 
 	/**
-	 * Returns the ID of the reader.  
+	 * Returns the ID of the reader.
 	 * 
 	 * @return the readerID
 	 */
@@ -91,7 +90,7 @@ public class RemoteSession {
 	}
 
 	/**
-	 * Returns the ID of the readerFactory.  
+	 * Returns the ID of the readerFactory.
 	 * 
 	 * @return the readerFactoryID
 	 */
@@ -118,18 +117,17 @@ public class RemoteSession {
 	}
 
 	/**
-	 * TODO: Method level comment.  
-	 * 
-	 * @return the remoteJobs
+	 * @return the The Remote Jobs that are currently running on the session
 	 */
 	public ObservableMap getRemoteJobs() {
 		return remoteJobs;
 	}
 
 	/**
-	 * TODO: Method level comment.  
-	 *
+	 * helper method to add a remote job to the observable map
+	 * 
 	 * @param job
+	 *            the job to add
 	 */
 	private void _addRemoteJob(final RemoteJob job) {
 		remoteJobs.getRealm().asyncExec(new Runnable() {

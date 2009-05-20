@@ -1,23 +1,18 @@
-
 package org.rifidi.edge.client.sal.controller.commands.handlers;
 
 import org.eclipse.core.expressions.PropertyTester;
 import org.rifidi.edge.client.model.sal.RemoteCommandConfiguration;
 
 /**
- * TODO: Class level comment.  
+ * A property tester that tests properties of CommandConfigurations model
+ * objects. Currently the only property is "dirty" which is true if the
+ * CommandConfiguration has properties that have been modified and not yet
+ * committed to the server
  * 
- * @author kyle
+ * @author Kyle Neumeier - kyle@pramari.com
  */
 public class RemoteCommandConfigPropTester extends PropertyTester {
-
-	/**
-	 * Constructor.  
-	 */
-	public RemoteCommandConfigPropTester() {
-		// TODO Auto-generated constructor stub
-	}
-
+	
 	/*
 	 * (non-Javadoc)
 	 * 

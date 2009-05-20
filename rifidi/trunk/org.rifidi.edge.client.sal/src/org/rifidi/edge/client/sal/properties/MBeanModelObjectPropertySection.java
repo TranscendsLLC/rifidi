@@ -82,7 +82,6 @@ public class MBeanModelObjectPropertySection extends AbstractPropertySection
 	 */
 	@Override
 	public void dispose() {
-		// TODO Auto-generated method stub
 		super.dispose();
 		modelObject.removePropertyChangeListener(this);
 		composite.removeListner(this);

@@ -15,17 +15,26 @@ import java.io.ObjectOutput;
  */
 
 public class ServerUnavailable extends Exception implements Externalizable {
-	
-	/**
-	 * TODO: Method level comment.  
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.io.Externalizable#readExternal(java.io.ObjectInput)
 	 */
+	@Override
 	public void readExternal(ObjectInput in) throws IOException,
 			ClassNotFoundException {
+
 	}
 
-	/**
-	 * TODO: Method level comment.  
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.io.Externalizable#writeExternal(java.io.ObjectOutput)
 	 */
+	@Override
 	public void writeExternal(ObjectOutput out) throws IOException {
+
 	}
+
 }

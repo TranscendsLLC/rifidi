@@ -1,4 +1,3 @@
-
 package org.rifidi.edge.client.sal.properties;
 
 import org.eclipse.jface.viewers.ILabelProvider;
@@ -10,9 +9,9 @@ import org.rifidi.edge.client.model.sal.RemoteReader;
 import org.rifidi.edge.client.sal.SALPluginActivator;
 
 /**
- * TODO: Class level comment.  
+ * This is the label provider for the tabbed properties view
  * 
- * @author kyle
+ * @author Kyle Neumeier - kyle@pramari.com
  */
 public class SALTabbedPropertiesLabelProvider implements ILabelProvider {
 
@@ -70,7 +69,6 @@ public class SALTabbedPropertiesLabelProvider implements ILabelProvider {
 	 */
 	@Override
 	public void addListener(ILabelProviderListener listener) {
-		// TODO Auto-generated method stub
 
 	}
 
@@ -97,7 +95,6 @@ public class SALTabbedPropertiesLabelProvider implements ILabelProvider {
 	 */
 	@Override
 	public boolean isLabelProperty(Object element, String property) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -110,7 +107,6 @@ public class SALTabbedPropertiesLabelProvider implements ILabelProvider {
 	 */
 	@Override
 	public void removeListener(ILabelProviderListener listener) {
-		// TODO Auto-generated method stub
 
 	}
 

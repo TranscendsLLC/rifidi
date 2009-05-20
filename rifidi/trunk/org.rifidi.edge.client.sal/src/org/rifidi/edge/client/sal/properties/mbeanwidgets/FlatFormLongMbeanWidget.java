@@ -1,4 +1,3 @@
-
 package org.rifidi.edge.client.sal.properties.mbeanwidgets;
 
 import org.eclipse.swt.SWT;
@@ -10,17 +9,18 @@ import org.rifidi.edge.client.mbean.ui.widgets.data.LongWidgetData;
 import org.rifidi.edge.client.mbean.ui.widgets.standard.impl.StandardLongWidget;
 
 /**
- * TODO: Class level comment.  
+ * A widget for drawing a Long widget using the forms UI
  * 
- * @author kyle
+ * @author Kyle Neumeier - kyle@pramari.com
  */
 public class FlatFormLongMbeanWidget<T extends LongWidgetData> extends
 		StandardLongWidget<T> {
 
+	/** The factory for producing forms UI widgets */
 	private TabbedPropertySheetWidgetFactory factory;
 
 	/**
-	 * Constructor.  
+	 * Constructor.
 	 * 
 	 * @param data
 	 */

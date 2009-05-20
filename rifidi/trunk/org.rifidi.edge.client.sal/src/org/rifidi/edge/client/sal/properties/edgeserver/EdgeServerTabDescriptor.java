@@ -1,4 +1,3 @@
-
 package org.rifidi.edge.client.sal.properties.edgeserver;
 
 import java.util.ArrayList;
@@ -8,14 +7,19 @@ import org.eclipse.ui.views.properties.tabbed.AbstractTabDescriptor;
 import org.eclipse.ui.views.properties.tabbed.ISectionDescriptor;
 
 /**
- * TODO: Class level comment.  
+ * A TabbedProperties View TabDescriptor for displaying information about the
+ * Edge Server
  * 
- * @author kyle
+ * @author Kyle Neumeier - kyle@pramari.com
  */
 public class EdgeServerTabDescriptor extends AbstractTabDescriptor {
 
+	/** The ID for the Edge Server Tab */
 	public static final String ID = "org.rifidi.edge.client.sal.props.edgeserver";
 
+	/**
+	 * Constructor
+	 */
 	public EdgeServerTabDescriptor() {
 		super();
 		List<ISectionDescriptor> descriptors = new ArrayList<ISectionDescriptor>();
@@ -53,5 +57,5 @@ public class EdgeServerTabDescriptor extends AbstractTabDescriptor {
 	public String getLabel() {
 		return "Edge Server";
 	}
-	
+
 }

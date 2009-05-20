@@ -1,21 +1,21 @@
-
 package org.rifidi.edge.client.sal.controller.edgeserver.handlers;
 
 import org.eclipse.core.expressions.PropertyTester;
 import org.rifidi.edge.client.model.sal.RemoteReader;
 
 /**
- * TODO: Class level comment.  
+ * A PropertyTester for RemoteReaders. Receiver should be a RemoteReader.
+ * Currently there is only one property called 'dirty' that is true if the
+ * reader has uncommitted property changes
  * 
- * @author kyle
+ * @author Kyle Neumeier - kyle@pramari.com
  */
 public class ReaderPropertyTester extends PropertyTester {
 
 	/**
-	 * Constructor.  
+	 * Constructor.
 	 */
 	public ReaderPropertyTester() {
-		// TODO Auto-generated constructor stub
 	}
 
 	/*

@@ -1,4 +1,3 @@
-
 package org.rifidi.edge.client.sal.controller.edgeserver.handlers;
 
 import org.eclipse.core.commands.AbstractHandler;
@@ -13,7 +12,8 @@ import org.rifidi.edge.client.sal.controller.edgeserver.EdgeServerController;
 import org.rifidi.edge.client.sal.controller.edgeserver.EdgeServerTreeContentProvider;
 
 /**
- * TODO: Class level comment.  
+ * A handler method for a command that commits property changes to a reader. The
+ * selection must be a reader
  * 
  * @author Kyle Neumeier - kyle@pramari.com
  */

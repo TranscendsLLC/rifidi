@@ -1,4 +1,3 @@
-
 package org.rifidi.edge.client.model.sal;
 
 import javax.management.AttributeList;
@@ -7,9 +6,9 @@ import org.rifidi.edge.client.model.sal.commands.RequestExecuterSingleton;
 import org.rifidi.edge.core.api.rmi.dto.CommandConfigurationDTO;
 
 /**
- * TODO: Class level comment.  
- *
- * @author kyle
+ * A model object for RemoteCommandConfigurations
+ * 
+ * @author Kyle Neumeier - kyle@pramari.com
  */
 public class RemoteCommandConfiguration extends
 		AbstractAttributeContributorModelObject {
@@ -39,7 +38,7 @@ public class RemoteCommandConfiguration extends
 	}
 
 	/**
-	 * Returns the command type.  
+	 * Returns the command type.
 	 * 
 	 * @return The ID of the type
 	 */
@@ -48,7 +47,7 @@ public class RemoteCommandConfiguration extends
 	}
 
 	/**
-	 * Returns the ID.  
+	 * Returns the ID.
 	 * 
 	 * @return The ID of the command configuration
 	 */
@@ -64,7 +63,7 @@ public class RemoteCommandConfiguration extends
 	}
 
 	/**
-	 * Returns the factory.  
+	 * Returns the factory.
 	 * 
 	 * @return the factory
 	 */
@@ -72,7 +71,7 @@ public class RemoteCommandConfiguration extends
 		return factory;
 	}
 
-	/** 
+	/**
 	 * @return the Remote Command Type object
 	 */
 	public RemoteCommandConfigType getRemoteType() {

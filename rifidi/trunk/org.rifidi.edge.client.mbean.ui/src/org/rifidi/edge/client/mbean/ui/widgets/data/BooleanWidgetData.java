@@ -1,17 +1,16 @@
-
 package org.rifidi.edge.client.mbean.ui.widgets.data;
 
 import javax.management.MBeanAttributeInfo;
 
 /**
- * TODO: Class level comment.  
+ * This is the concrete class for data used to construct a Boolean Widget
  * 
  * @author Kyle Neumeier - kyle@pramari.com
  */
 public class BooleanWidgetData extends AbstractWidgetData {
 
 	/**
-	 * Constructor.  
+	 * Constructor.
 	 * 
 	 * @param element
 	 */
@@ -19,12 +18,14 @@ public class BooleanWidgetData extends AbstractWidgetData {
 		super(element);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.rifidi.edge.client.mbean.ui.widgets.data.AbstractWidgetData#getDefaultValue()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seeorg.rifidi.edge.client.mbean.ui.widgets.data.AbstractWidgetData#
+	 * getDefaultValue()
 	 */
 	@Override
 	public Object getDefaultValue() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 

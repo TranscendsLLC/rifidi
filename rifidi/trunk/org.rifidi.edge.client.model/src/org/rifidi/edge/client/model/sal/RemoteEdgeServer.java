@@ -1,4 +1,3 @@
-
 package org.rifidi.edge.client.model.sal;
 
 import java.beans.PropertyChangeListener;
@@ -348,7 +347,7 @@ public class RemoteEdgeServer {
 	}
 
 	/**
-	 * Deletes the command configuration with the given ID.  
+	 * Deletes the command configuration with the given ID.
 	 * 
 	 * @param readerConfigurationID
 	 */
@@ -371,7 +370,7 @@ public class RemoteEdgeServer {
 	}
 
 	/**
-	 * Deletes the given job.  
+	 * Deletes the given job.
 	 * 
 	 * @param job
 	 */
@@ -393,11 +392,14 @@ public class RemoteEdgeServer {
 	}
 
 	/**
-	 * TODO: Method level comment.  
+	 * Submits a command to a session
 	 * 
 	 * @param session
+	 *            The Session to schedule the command on
 	 * @param configuration
+	 *            the command to submit
 	 * @param interval
+	 *            the time repeat interval (in ms)
 	 */
 	public void scheduleJob(RemoteSession session,
 			RemoteCommandConfiguration configuration, Long interval) {
@@ -437,7 +439,7 @@ public class RemoteEdgeServer {
 	}
 
 	/**
-	 * Returns the list of remote command configuration factories.  
+	 * Returns the list of remote command configuration factories.
 	 * 
 	 * @return
 	 */

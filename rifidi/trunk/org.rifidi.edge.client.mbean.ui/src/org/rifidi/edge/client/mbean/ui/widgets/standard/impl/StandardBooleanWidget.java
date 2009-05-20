@@ -7,86 +7,99 @@ import org.rifidi.edge.client.mbean.ui.widgets.abstractwidgets.AbstractWidget;
 import org.rifidi.edge.client.mbean.ui.widgets.data.BooleanWidgetData;
 
 /**
- * TODO: Class level comment and param comment.  
+ * This is a Widget that draws a control for a boolean MBean
  * 
+ * @author Kyle Neumeier - kyle@pramari.com
  * 
- * @author jochen
- *
- * @param <T>
  */
-public class StandardBooleanWidget<T extends BooleanWidgetData> extends AbstractWidget<T> {
+public class StandardBooleanWidget<T extends BooleanWidgetData> extends
+		AbstractWidget<T> {
 
 	/**
-	 * Constructor.  
+	 * Constructor.
 	 * 
 	 * @param data
 	 */
 	public StandardBooleanWidget(T data) {
 		super(data);
-		// TODO Auto-generated constructor stub
 	}
 
-	/* (non-Javadoc)
-	 * @see org.rifidi.dynamicswtforms.ui.widgets.DynamicSWTFormWidget#createControl(org.eclipse.swt.widgets.Composite)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.dynamicswtforms.ui.widgets.DynamicSWTFormWidget#createControl
+	 * (org.eclipse.swt.widgets.Composite)
 	 */
 	@Override
 	public void createControl(Composite parent) {
-		// TODO Auto-generated method stub
-		
+
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.rifidi.dynamicswtforms.ui.widgets.DynamicSWTFormWidget#disable()
 	 */
 	@Override
 	public void disable() {
-		// TODO Auto-generated method stub
-		
+
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.rifidi.dynamicswtforms.ui.widgets.DynamicSWTFormWidget#enable()
 	 */
 	@Override
 	public void enable() {
-		// TODO Auto-generated method stub
-		
+
 	}
 
-	/* (non-Javadoc)
-	 * @see org.rifidi.dynamicswtforms.ui.widgets.DynamicSWTFormWidget#getValue()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.dynamicswtforms.ui.widgets.DynamicSWTFormWidget#getValue()
 	 */
 	@Override
 	public Attribute getAttribute() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.rifidi.dynamicswtforms.ui.widgets.DynamicSWTFormWidget#setValue(java.lang.Object)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.dynamicswtforms.ui.widgets.DynamicSWTFormWidget#setValue(java
+	 * .lang.Object)
 	 */
 	@Override
 	public String setValue(Attribute value) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.rifidi.dynamicswtforms.ui.widgets.DynamicSWTFormWidget#validate()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.dynamicswtforms.ui.widgets.DynamicSWTFormWidget#validate()
 	 */
 	@Override
 	public String validate() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.rifidi.edge.client.mbean.ui.widgets.abstractwidgets.AbstractWidget#dispose()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.client.mbean.ui.widgets.abstractwidgets.AbstractWidget
+	 * #dispose()
 	 */
 	@Override
 	public void dispose() {
-		// TODO Auto-generated method stub
-		
+
 	}
 
 }

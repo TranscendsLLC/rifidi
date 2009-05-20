@@ -1,4 +1,3 @@
-
 package org.rifidi.edge.client.sal.properties.readers;
 
 import java.util.ArrayList;
@@ -10,30 +9,37 @@ import org.eclipse.ui.views.properties.tabbed.AbstractTabDescriptor;
 import org.rifidi.edge.client.model.sal.RemoteReader;
 
 /**
- * TODO: Class level comment.  
+ * A TabbedProperties Tab Descriptor for a Reader. There is one tab created for
+ * each distinct category in the MbeanInfo Attributes
  * 
  * @author Kyle Neumeier - kyle@pramari.com
  */
 public class ReaderTabDescriptor extends AbstractTabDescriptor {
 
-	public final String ID; 
+	/** The ID of the tab */
+	public final String ID;
+	/** The reader that contains the properties to display */
 	private RemoteReader reader;
+	/** The category of properties to display in this tab */
 	private String category;
-	
+
 	/**
-	 * Constructor.  
+	 * Constructor.
 	 * 
 	 * @param info
 	 * @param reader
 	 * @param category
 	 */
-	public ReaderTabDescriptor(MBeanInfo info, RemoteReader reader, String category) {
+	public ReaderTabDescriptor(MBeanInfo info, RemoteReader reader,
+			String category) {
 		super();
 		this.reader = reader;
 		this.category = category;
-		ID = "org.rifidi.edge.client.sal.props.edgeserver.reader."+reader.getID()+"."+category;
+		ID = "org.rifidi.edge.client.sal.props.edgeserver.reader."
+				+ reader.getID() + "." + category;
 		List<ReaderSectionDescriptor> descriptors = new ArrayList<ReaderSectionDescriptor>();
-		descriptors.add(new ReaderSectionDescriptor(ID, info, reader, category));
+		descriptors
+				.add(new ReaderSectionDescriptor(ID, info, reader, category));
 		super.setSectionDescriptors(descriptors);
 	}
 
@@ -44,7 +50,7 @@ public class ReaderTabDescriptor extends AbstractTabDescriptor {
 	 */
 	@Override
 	public String getCategory() {
-		return reader.getID()+"."+category;
+		return reader.getID() + "." + category;
 	}
 
 	/*
@@ -66,7 +72,5 @@ public class ReaderTabDescriptor extends AbstractTabDescriptor {
 	public String getLabel() {
 		return category;
 	}
-	
-	
 
 }

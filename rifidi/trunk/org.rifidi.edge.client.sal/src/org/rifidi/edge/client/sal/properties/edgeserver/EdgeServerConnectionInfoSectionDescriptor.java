@@ -1,4 +1,3 @@
-
 package org.rifidi.edge.client.sal.properties.edgeserver;
 
 import java.util.ArrayList;
@@ -9,13 +8,15 @@ import org.eclipse.ui.views.properties.tabbed.ISection;
 import org.rifidi.edge.client.model.sal.RemoteEdgeServer;
 
 /**
- * TODO: Class level comment.  
+ * A TabbedProperties Section Descriptor for displaying information about
+ * connecting to an edge server
  * 
- * @author kyle
+ * @author Kyle Neumeier - kyle@pramari.com
  */
 public class EdgeServerConnectionInfoSectionDescriptor extends
 		AbstractSectionDescriptor {
 
+	/** ID of the Edge Server Connection Section Descriptor */
 	public static final String ID = "org.rifidi.edge.client.sal.props.edgeserver.connection";
 
 	/*

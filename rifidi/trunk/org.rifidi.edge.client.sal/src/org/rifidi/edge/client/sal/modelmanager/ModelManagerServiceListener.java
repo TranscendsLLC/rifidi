@@ -1,14 +1,14 @@
-
 package org.rifidi.edge.client.sal.modelmanager;
 
 /**
- * TODO: Class level comment.  
+ * This is an interface that anyone who needs a model injected into them should
+ * use
  * 
- * @author jochen
+ * @author Kyle Neumeier - kyle@pramari.com
  */
 public interface ModelManagerServiceListener {
 	/**
-	 * TODO: Method level comment.  
+	 * Called when the model changes or becomes available
 	 * 
 	 * @param model
 	 */

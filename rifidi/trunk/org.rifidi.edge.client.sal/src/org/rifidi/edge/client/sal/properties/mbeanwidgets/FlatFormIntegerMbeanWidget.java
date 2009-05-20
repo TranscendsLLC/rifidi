@@ -1,4 +1,3 @@
-
 package org.rifidi.edge.client.sal.properties.mbeanwidgets;
 
 import org.eclipse.swt.SWT;
@@ -10,13 +9,14 @@ import org.rifidi.edge.client.mbean.ui.widgets.data.IntegerWidgetData;
 import org.rifidi.edge.client.mbean.ui.widgets.standard.impl.StandardIntegerWidget;
 
 /**
- * TODO: Class level comment.  
+ * A Widget for drawing an integer control using the FormsUI
  * 
- * @author kyle
+ * @author Kyle Neumeier - kyle@pramari.com
  */
 public class FlatFormIntegerMbeanWidget<T extends IntegerWidgetData> extends
 		StandardIntegerWidget<T> {
 
+	/** The factory for creating formsUI widgets */
 	private TabbedPropertySheetWidgetFactory factory;
 
 	/**

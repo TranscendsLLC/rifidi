@@ -1,4 +1,3 @@
-
 package org.rifidi.edge.client.sal.controller.edgeserver;
 
 import org.eclipse.jface.viewers.ILabelProvider;
@@ -11,7 +10,7 @@ import org.rifidi.edge.client.model.sal.RemoteSession;
 import org.rifidi.edge.client.sal.SALPluginActivator;
 
 /**
- * TODO: Class level comment.  
+ * Label Provider for the Edge Server Tree View
  * 
  * @author Kyle Neumeier - kyle@pramari.com
  */
@@ -84,10 +83,10 @@ public class EdgeServerTreeLabelProvider implements ILabelProvider {
 			return "Edge Server";
 		}
 		if (element instanceof RemoteReader) {
-			RemoteReader reader = (RemoteReader)element;
-			if(reader.isDirty()){
-				return "*"+((RemoteReader) element).getID();
-			}else{
+			RemoteReader reader = (RemoteReader) element;
+			if (reader.isDirty()) {
+				return "*" + ((RemoteReader) element).getID();
+			} else {
 				return ((RemoteReader) element).getID();
 			}
 		}
@@ -111,7 +110,6 @@ public class EdgeServerTreeLabelProvider implements ILabelProvider {
 	 */
 	@Override
 	public void addListener(ILabelProviderListener listener) {
-		// TODO Auto-generated method stub
 
 	}
 
@@ -148,7 +146,6 @@ public class EdgeServerTreeLabelProvider implements ILabelProvider {
 	 */
 	@Override
 	public boolean isLabelProperty(Object element, String property) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -161,7 +158,6 @@ public class EdgeServerTreeLabelProvider implements ILabelProvider {
 	 */
 	@Override
 	public void removeListener(ILabelProviderListener listener) {
-		// TODO Auto-generated method stub
 
 	}
 

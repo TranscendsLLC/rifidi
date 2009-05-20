@@ -1,4 +1,3 @@
-
 package org.rifidi.edge.client.sal.properties.commandconfigurations;
 
 import java.util.ArrayList;
@@ -12,25 +11,36 @@ import org.rifidi.edge.client.model.sal.RemoteCommandConfiguration;
 import org.rifidi.edge.client.sal.properties.MBeanModelObjectPropertySection;
 
 /**
- * TODO: Class level interview.  
+ * This is a TabbedProperties Section Descriptor for a CommandConfiguration. For
+ * CommandConfigurations, there is only one section per tab.
  * 
- * @author kyle
+ * @author Kyle Neumeier - kyle@pramari.com
  */
 public class CommandConfigSectionDescriptor extends AbstractSectionDescriptor {
 
+	/** The id of the tab this section descriptor */
 	private String tabID;
+	/** The MBeanInfo that describes the properties of a command configuration */
 	private MBeanInfo info;
+	/** The model object */
 	private RemoteCommandConfiguration commandConfig;
+	/** The category of properties to display on this section */
 	private String category;
+	/** The ID of the section descriptor */
 	private final String ID;
 
 	/**
-	 * Constructor.  
+	 * Constructor.
 	 * 
 	 * @param tabID
+	 *            The ID of the tab this sectiondescriptor works with
 	 * @param info
+	 *            the MBeanInfo that contains the description of the attributes
+	 *            of the command configuration
 	 * @param commandConfig
+	 *            The model object for this section
 	 * @param category
+	 *            the type of attributes to display
 	 */
 	public CommandConfigSectionDescriptor(String tabID, MBeanInfo info,
 			RemoteCommandConfiguration commandConfig, String category) {
@@ -60,7 +70,8 @@ public class CommandConfigSectionDescriptor extends AbstractSectionDescriptor {
 	 */
 	@Override
 	public ISection getSectionClass() {
-		return new MBeanModelObjectPropertySection(info, commandConfig, category);
+		return new MBeanModelObjectPropertySection(info, commandConfig,
+				category);
 	}
 
 	/*

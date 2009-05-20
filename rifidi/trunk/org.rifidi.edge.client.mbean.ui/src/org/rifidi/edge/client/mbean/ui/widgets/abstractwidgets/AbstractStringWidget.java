@@ -1,4 +1,3 @@
-
 package org.rifidi.edge.client.mbean.ui.widgets.abstractwidgets;
 
 import java.util.regex.Matcher;
@@ -35,7 +34,7 @@ public abstract class AbstractStringWidget<T extends StringWidgetData> extends
 	private boolean dirty = false;
 
 	/**
-	 * Constructor.  
+	 * Constructor.
 	 * 
 	 * @param data
 	 */
@@ -65,19 +64,22 @@ public abstract class AbstractStringWidget<T extends StringWidgetData> extends
 	}
 
 	/**
-	 * TODO: Method level comment.  
+	 * Concrete subclasses should use this method to create the text control.
+	 * Sublcasses should create a new Text control and assign it to the text
+	 * control in this class
 	 * 
 	 * @param parent
 	 */
 	protected abstract void createText(Composite parent);
 
 	/**
-	 * TODO: Method level comment.    
+	 * Concrete subclasses should use this method to initialize the text control
 	 */
 	protected abstract void initializeText();
 
 	/**
-	 * TODO: Method level comment.   
+	 * Adds a key listener and a focus listener to listen for changes to the
+	 * text control
 	 */
 	protected void addTextListeners() {
 		// notify listeners of a user typing a key

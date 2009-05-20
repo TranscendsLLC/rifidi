@@ -1,13 +1,12 @@
-
 package org.rifidi.edge.client.model.sal;
 
 import org.rifidi.edge.client.model.sal.commands.RemoteEdgeServerCommand;
 import org.rifidi.edge.core.api.jms.notifications.JobDeletedNotification;
 
 /**
- * TODO: Class level comment.  
+ * A handler for a notification when a Job is deleted from a session
  * 
- * @author kyle
+ * @author Kyle Neumeier - kyle@pramari.com
  */
 public class Command_JobDeleted implements RemoteEdgeServerCommand {
 
@@ -18,7 +17,9 @@ public class Command_JobDeleted implements RemoteEdgeServerCommand {
 	 * Constructor
 	 * 
 	 * @param server
+	 *            instance of a RemoteEdgeServer
 	 * @param notification
+	 *            the notification message
 	 */
 	public Command_JobDeleted(RemoteEdgeServer server,
 			JobDeletedNotification notification) {

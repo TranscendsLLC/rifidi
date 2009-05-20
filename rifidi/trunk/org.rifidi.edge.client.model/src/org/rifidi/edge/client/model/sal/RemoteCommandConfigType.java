@@ -1,27 +1,33 @@
-
 package org.rifidi.edge.client.model.sal;
 
 import javax.management.MBeanInfo;
 
 /**
- * TODO: Class level comment.  
+ * Model Object for a CommandConfigurationType
  * 
- * @author kyle
+ * @author Kyle Neumeier - kyle@pramari.com
  */
 public class RemoteCommandConfigType {
 
+	/** The ID of the type */
 	private String commandConfigType;
-
+	/** The MBeanInfo that describes the properties of this type */
 	private MBeanInfo mbeanInfo;
-
+	/**
+	 * The ID of the ReaderFactory this type produces command configurations for
+	 */
 	private String readerFactoryID;
 
 	/**
-	 * Constructor.  
+	 * Constructor.
 	 * 
 	 * @param typeID
+	 *            THe ID of the type
 	 * @param readerFactoryID
+	 *            The ID of the readerFactory this commandtype works with
 	 * @param info
+	 *            the MBeanInfo that describes the attributes associated with
+	 *            this type
 	 */
 	public RemoteCommandConfigType(String typeID, String readerFactoryID,
 			MBeanInfo info) {
@@ -31,7 +37,8 @@ public class RemoteCommandConfigType {
 	}
 
 	/**
-	 * TODO: Method level comment.  
+	 * The MBeanInfo describes the attributes (types, min/mix, categories,
+	 * description, etc)
 	 * 
 	 * @return the mbeanInfo
 	 */
@@ -40,18 +47,17 @@ public class RemoteCommandConfigType {
 	}
 
 	/**
-	 * TODO: Method level comment.  
 	 * 
-	 * @return the type
+	 * @return The ID of the type
 	 */
 	public String getCommandConfigType() {
 		return commandConfigType;
 	}
 
 	/**
-	 * TODO: Method level comment.  
 	 * 
-	 * @return the readerFactoryID
+	 * @return The ID of the reader factory this type produces command
+	 *         configuraitons for
 	 */
 	public String getReaderFactoryID() {
 		return readerFactoryID;

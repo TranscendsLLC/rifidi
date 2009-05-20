@@ -1,4 +1,3 @@
-
 package org.rifidi.edge.client.sal.perspective;
 
 import org.eclipse.ui.IFolderLayout;
@@ -9,7 +8,7 @@ import org.rifidi.edge.client.sal.views.EdgeServerView;
 import org.rifidi.edge.client.sal.views.tags.TagView;
 
 /**
- * TODO: Class level comment.  
+ * The Perspective Factory for the SAL Perspective
  * 
  * @author Kyle Neumeier - kyle@pramari.com
  */
@@ -37,8 +36,8 @@ public class SALPerspective implements IPerspectiveFactory {
 		IFolderLayout folder = layout.createFolder("left", IPageLayout.RIGHT,
 				.4f, EdgeServerView.ID);
 		folder.addView("org.rifidi.edge.client.twodview.views.SiteView");
-		folder.addPlaceholder(TagView.ID+":*");
-		
+		folder.addPlaceholder(TagView.ID + ":*");
+
 	}
 
 }
