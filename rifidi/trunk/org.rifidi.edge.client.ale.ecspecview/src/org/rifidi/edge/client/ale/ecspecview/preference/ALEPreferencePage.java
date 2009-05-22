@@ -9,7 +9,7 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.rifidi.edge.client.ale.ecspecview.Activator;
 
 /**
- * TODO: Class level comment.  
+ * Creates the preference page for the ALE endpoint.  
  * 
  * @author kyle
  */

@@ -7,7 +7,7 @@ import org.osgi.service.prefs.Preferences;
 import org.rifidi.edge.client.ale.ecspecview.Activator;
 
 /**
- * TODO: Class level comment.  
+ * Sets the initial (default) preference values for the ALE port.  
  * 
  * @author kyle
  */

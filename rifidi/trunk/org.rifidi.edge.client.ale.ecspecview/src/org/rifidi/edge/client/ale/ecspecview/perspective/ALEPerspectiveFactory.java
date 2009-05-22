@@ -10,7 +10,7 @@ import org.rifidi.edge.client.ale.logicalreaders.LRTreeViewPart;
 import org.rifidi.edge.client.ale.reports.ReportReceiverViewPart;
 
 /**
- * TODO: Class level comment.  
+ * This class sets up the Perspective for the ALE part of the Client.
  * 
  * @author kyle
  */

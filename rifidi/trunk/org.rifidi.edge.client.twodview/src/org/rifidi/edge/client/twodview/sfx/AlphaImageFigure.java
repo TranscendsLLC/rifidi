@@ -6,7 +6,7 @@ import org.eclipse.draw2d.ImageFigure;
 import org.eclipse.swt.graphics.Image;
 
 /**
- * TODO: Class level comment.  
+ * Extends the capabilities of an ImageFigure with the ability to change the alpha value.
  * 
  * @author Tobias Hoppenthaler - tobias@pramari.com
  */
