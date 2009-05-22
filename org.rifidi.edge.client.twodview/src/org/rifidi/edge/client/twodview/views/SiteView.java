@@ -10,7 +10,6 @@
  */
 package org.rifidi.edge.client.twodview.views;
 
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -40,10 +39,8 @@ import org.rifidi.edge.client.model.sal.RemoteEdgeServer;
 import org.rifidi.edge.client.sal.modelmanager.ModelManagerService;
 import org.rifidi.edge.client.sal.modelmanager.ModelManagerServiceListener;
 import org.rifidi.edge.client.twodview.Activator;
-import org.rifidi.edge.client.twodview.layers.EffectLayer;
 import org.rifidi.edge.client.twodview.layers.FloorPlanLayer;
 import org.rifidi.edge.client.twodview.layers.ListeningScalableLayeredPane;
-import org.rifidi.edge.client.twodview.layers.NoteLayer;
 import org.rifidi.edge.client.twodview.layers.ObjectLayer;
 import org.rifidi.edge.client.twodview.listeners.SiteViewController;
 import org.rifidi.edge.client.twodview.listeners.SiteViewKeyListener;
@@ -55,7 +52,7 @@ import org.rifidi.edge.client.twodview.util.ReaderPos;
 import org.rifidi.edge.client.twodview.util.SerializerUtil;
 
 /**
- * TODO: Class level comments.  
+ * TODO: Class level comments.
  * 
  * @author Tobias Hoppenthaler - tobias@pramari.com
  */
@@ -68,8 +65,6 @@ public class SiteView extends ViewPart implements ModelManagerServiceListener,
 	private ListeningScalableLayeredPane lp;
 	private FloorPlanLayer floorplanLayer;
 	private ObjectLayer objectLayer;
-	private EffectLayer effectLayer;
-	private NoteLayer noteLayer;
 	private IFolder saveFolder;
 	private List<RemoteEdgeServer> servers;
 	private SiteViewController siteViewController;
@@ -112,8 +107,6 @@ public class SiteView extends ViewPart implements ModelManagerServiceListener,
 		floorplanLayer = new FloorPlanLayer();
 		floorplanLayer.init();
 		objectLayer = new ObjectLayer();
-		effectLayer = new EffectLayer();
-		noteLayer = new NoteLayer();
 
 		lp.add(floorplanLayer, 0);
 		lp.add(objectLayer, 1);
@@ -171,21 +164,7 @@ public class SiteView extends ViewPart implements ModelManagerServiceListener,
 	}
 
 	/**
-	 * @return the effectLayer
-	 */
-	public EffectLayer getEffectLayer() {
-		return effectLayer;
-	}
-
-	/**
-	 * @return the noteLayer
-	 */
-	public NoteLayer getNoteLayer() {
-		return noteLayer;
-	}
-
-	/**
-	 * Returns the layered pane.  
+	 * Returns the layered pane.
 	 * 
 	 * @return
 	 */
@@ -231,7 +210,10 @@ public class SiteView extends ViewPart implements ModelManagerServiceListener,
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.eclipse.ui.views.properties.tabbed.ITabbedPropertySheetPageContributor#getContributorId()
+	 * 
+	 * @see
+	 * org.eclipse.ui.views.properties.tabbed.ITabbedPropertySheetPageContributor
+	 * #getContributorId()
 	 */
 	@Override
 	public String getContributorId() {
