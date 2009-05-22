@@ -11,7 +11,7 @@ import org.rifidi.edge.client.sal.properties.SALTabDescriptorProvider;
 import org.rifidi.edge.client.twodview.sfx.ReaderAlphaImageFigure;
 
 /**
- * TODO: Class level comment.  
+ * TODO: Kyle: Class level comment.  
  * 
  * @author kyle
  */

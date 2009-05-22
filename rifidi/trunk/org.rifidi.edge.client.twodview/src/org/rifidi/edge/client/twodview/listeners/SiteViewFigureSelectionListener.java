@@ -4,7 +4,7 @@ package org.rifidi.edge.client.twodview.listeners;
 import org.eclipse.draw2d.IFigure;
 
 /**
- * TODO: Class level comment.  
+ * TODO: Jochen: Class level comment.  
  * 
  * @author jochen
  */

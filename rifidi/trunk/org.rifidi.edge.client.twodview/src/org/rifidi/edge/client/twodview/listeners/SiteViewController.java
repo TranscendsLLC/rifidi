@@ -28,7 +28,8 @@ import org.rifidi.edge.client.twodview.sfx.ReaderAlphaImageFigure;
 import org.rifidi.edge.client.twodview.views.SiteView;
 
 /**
- * TODO: Class level comment.  
+ * Handles the the visual representations of readers on the map (add, remove,...).
+ * Enables drag and drop.  
  * 
  * @author Tobias Hoppenthaler - tobias@pramari.com
  */
@@ -59,7 +60,7 @@ public class SiteViewController implements DropTargetListener,
 	}
 
 	/**
-	 * TODO: Method level comment.  
+	 * Sets the server model object for this controller.
 	 * 
 	 * @param server
 	 */

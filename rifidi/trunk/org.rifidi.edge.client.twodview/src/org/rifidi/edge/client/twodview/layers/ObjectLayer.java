@@ -1,4 +1,3 @@
-
 package org.rifidi.edge.client.twodview.layers;
 
 import org.eclipse.draw2d.geometry.Point;
@@ -7,7 +6,7 @@ import org.rifidi.edge.client.twodview.exceptions.ReaderAlreadyInMapException;
 import org.rifidi.edge.client.twodview.sfx.ReaderAlphaImageFigure;
 
 /**
- * TODO: Class level comment.  
+ * This layer holds the visual representations of the readers.
  * 
  * @author Tobias Hoppenthaler - tobias@pramari.com
  */
@@ -21,7 +20,7 @@ public class ObjectLayer extends XYLayer {
 	}
 
 	/**
-	 * Adds a reader to the XYLayer.  
+	 * Adds a reader to the layer.
 	 * 
 	 * @param reader
 	 * @param location
