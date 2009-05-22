@@ -136,10 +136,9 @@ public class DeserializerUtil {
 	 * @throws Exception if deserialization fails
 	 */
 	public static LRProperty deserializeLRProperty(InputStream inputStream) throws Exception {
-		// FIXME : throws Exception
 		LRProperty prop = null;
 		try {
-			String JAXB_CONTEXT = "org.rifidi.edge.client.ale.api.wsdl.alelr.epcglobal";
+			String JAXB_CONTEXT = "org.rifidi.edge.client.ale.api.xsd.alelr.epcglobal";
 			
 			// initialize jaxb context and unmarshaller
 			JAXBContext context = JAXBContext.newInstance(JAXB_CONTEXT);
