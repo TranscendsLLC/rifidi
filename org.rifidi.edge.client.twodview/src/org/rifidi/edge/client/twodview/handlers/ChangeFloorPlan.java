@@ -18,7 +18,7 @@ import org.eclipse.ui.PlatformUI;
 import org.rifidi.edge.client.twodview.views.SiteView;
 
 /**
- * TODO: Class level comment.  
+ * Initiates a change of the background image - the floorplan in the twodview.  
  * 
  * @author Tobias Hoppenthaler - tobias@pramari.com
  */

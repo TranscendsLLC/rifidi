@@ -19,7 +19,9 @@ import org.eclipse.ui.forms.widgets.Section;
 import org.rifidi.edge.client.ale.api.xsd.ale.epcglobal.ECReportSpec;
 
 /**
- * TODO: Class level comment.  
+ * A selection listener for the ScrollableForm in the ECSpecView.
+ * It takes care of the actions required by the RemoveReportSpec Button.
+ * It both removes the ReportSpec from the form (UI), as well as from the ArrayList(Model).  
  * 
  * @author Tobias Hoppenthaler - tobias@pramari.com
  */
