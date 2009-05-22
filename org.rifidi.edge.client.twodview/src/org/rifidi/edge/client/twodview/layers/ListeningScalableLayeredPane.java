@@ -1,6 +1,4 @@
-
 package org.rifidi.edge.client.twodview.layers;
-
 
 import java.util.HashSet;
 import java.util.Set;
@@ -17,7 +15,8 @@ import org.eclipse.draw2d.geometry.Rectangle;
 import org.rifidi.edge.client.twodview.listeners.SiteViewFigureSelectionListener;
 
 /**
- * TODO: Class level comment.  
+ * Listens to mouse events and allows for interaction with the layers and the
+ * pane itself.
  * 
  * @author Tobias Hoppenthaler - tobias@pramari.com
  */
@@ -30,14 +29,15 @@ public class ListeningScalableLayeredPane extends ScalableLayeredPane implements
 
 	public static final int FLOORPLANLAYER = 0;
 	public static final int OBJECTLAYER = 1;
-	public static final int EFFECTLAYER = 2;
-	public static final int NOTELAYER = 3;
+	// public static final int EFFECTLAYER = 2;
+	// public static final int NOTELAYER = 3;
 	private Log logger = LogFactory.getLog(ListeningScalableLayeredPane.class);
 	private Set<SiteViewFigureSelectionListener> listeners;
+	/** Offset values: how far did the scene get moved around **/
 	private int xOffset = 0, yOffset = 0;
 
 	/**
-	 * Constructor.  
+	 * Constructor.
 	 */
 	public ListeningScalableLayeredPane() {
 		super();
@@ -72,15 +72,15 @@ public class ListeningScalableLayeredPane extends ScalableLayeredPane implements
 		startY = arg0.y;
 
 		try {
-
-			selectedFigure = findFigureAt(arg0.getLocation()); // Gets
+			/** find figure at xy of mouse event. */
+			selectedFigure = findFigureAt(arg0.getLocation());
 
 		} catch (Exception e) {
 			logger.error("ERROR: ", e);
 			selectedFigure = null;
 
 		} finally {
-
+			/** notify listeners */
 			for (SiteViewFigureSelectionListener l : listeners) {
 				l.figureSelected(selectedFigure);
 			}
@@ -135,6 +135,7 @@ public class ListeningScalableLayeredPane extends ScalableLayeredPane implements
 			// make sure to get the right delta
 			startX = arg0.x;
 			startY = arg0.y;
+			// consume event - avoid side effects...
 			arg0.consume();
 
 		}
@@ -163,7 +164,7 @@ public class ListeningScalableLayeredPane extends ScalableLayeredPane implements
 	 */
 	@Override
 	public void mouseEntered(MouseEvent arg0) {
-		// TODO Auto-generated method stub
+		// Auto-generated method stub
 
 	}
 
@@ -176,7 +177,7 @@ public class ListeningScalableLayeredPane extends ScalableLayeredPane implements
 	 */
 	@Override
 	public void mouseExited(MouseEvent arg0) {
-		// TODO Auto-generated method stub
+		// Auto-generated method stub
 
 	}
 
@@ -189,7 +190,7 @@ public class ListeningScalableLayeredPane extends ScalableLayeredPane implements
 	 */
 	@Override
 	public void mouseHover(MouseEvent arg0) {
-		// TODO Auto-generated method stub
+		// Auto-generated method stub
 
 	}
 
@@ -202,7 +203,7 @@ public class ListeningScalableLayeredPane extends ScalableLayeredPane implements
 	 */
 	@Override
 	public void mouseMoved(MouseEvent arg0) {
-		// TODO Auto-generated method stub
+		// Auto-generated method stub
 
 	}
 
@@ -238,9 +239,15 @@ public class ListeningScalableLayeredPane extends ScalableLayeredPane implements
 		yOffset += deltaY;
 	}
 
+	/**
+	 * Moves the pane by the given values.
+	 * 
+	 * @param xValue
+	 * @param yValue
+	 */
 	public void translatePane(int xValue, int yValue) {
-		if(xValue!=this.deltaX)
-		this.deltaX = xValue;
+		if (xValue != this.deltaX)
+			this.deltaX = xValue;
 		this.deltaY = yValue;
 		pan();
 	}
@@ -256,14 +263,14 @@ public class ListeningScalableLayeredPane extends ScalableLayeredPane implements
 	}
 
 	/**
-	 * TODO: Method level comment.  
+	 * Removes the currently selected figure frome the ObjectLayer.
 	 */
 	public void removeCurrentSelection() {
 		getLayer(OBJECTLAYER).remove(selectedFigure);
 	}
 
 	/**
-	 * TODO: Method level comment.  
+	 * Adds an ImageSelectionListener to this pane.
 	 * 
 	 * @param listener
 	 */
@@ -273,21 +280,13 @@ public class ListeningScalableLayeredPane extends ScalableLayeredPane implements
 	}
 
 	/**
-	 * TODO: Method level comment.  
+	 * Removes an ImageSelectionListener from this pane.
 	 * 
 	 * @param listener
 	 */
-	public void remoteImageSelectionListener(
+	public void removeImageSelectionListener(
 			SiteViewFigureSelectionListener listener) {
 		this.listeners.remove(listener);
-	}
-
-	/**
-	 * Resets the deltaY and deltaX.  
-	 */
-	public void resetDeltaValues() {
-		this.deltaX = 0;
-		this.deltaY = 0;
 	}
 
 }

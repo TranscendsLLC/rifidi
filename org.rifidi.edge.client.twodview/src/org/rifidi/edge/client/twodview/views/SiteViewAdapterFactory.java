@@ -7,7 +7,7 @@ import org.eclipse.ui.views.properties.tabbed.ITabbedPropertySheetPageContributo
 import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetPage;
 
 /**
- * TODO: Class level comment.  
+ * TODO: Kyle: Class level comment.  
  * 
  * @author kyle
  */

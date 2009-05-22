@@ -52,13 +52,15 @@ import org.rifidi.edge.client.twodview.util.ReaderPos;
 import org.rifidi.edge.client.twodview.util.SerializerUtil;
 
 /**
- * TODO: Class level comments.
+ * This class is the basis of the twodview. The view contains a layered pane that hosts
+ * the different layers.
  * 
  * @author Tobias Hoppenthaler - tobias@pramari.com
  */
 public class SiteView extends ViewPart implements ModelManagerServiceListener,
 		ITabbedPropertySheetPageContributor, IAdaptable {
 
+	@SuppressWarnings("unused")
 	private Log logger = LogFactory.getLog(SiteView.class);
 	private final static String FILENAME = "SiteView.xml";
 	public final static String ID = "org.rifidi.edge.client.twodview.views.SiteView";
@@ -72,7 +74,7 @@ public class SiteView extends ViewPart implements ModelManagerServiceListener,
 	private IFile saveFile;
 
 	/**
-	 * 
+	 * The constructor.
 	 */
 	public SiteView() {
 		ModelManagerService.getInstance().addController(this);
@@ -145,7 +147,7 @@ public class SiteView extends ViewPart implements ModelManagerServiceListener,
 	 */
 	@Override
 	public void setFocus() {
-		// TODO Auto-generated method stub
+		// Auto-generated method stub
 
 	}
 
@@ -166,16 +168,16 @@ public class SiteView extends ViewPart implements ModelManagerServiceListener,
 	/**
 	 * Returns the layered pane.
 	 * 
-	 * @return
+	 * @return the layered pane
 	 */
 	public ListeningScalableLayeredPane getLayeredPane() {
 		return lp;
 	}
 
 	/**
+	 * Returns the site view controller. 
 	 * 
-	 * 
-	 * @return
+	 * @return site view controller
 	 */
 	public SiteViewController getController() {
 		return this.siteViewController;

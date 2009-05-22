@@ -17,7 +17,7 @@ import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.swt.graphics.Image;
 
 /**
- * TODO: Class level comment.  
+ * Provides a layer with improved functionality for adding images.
  * 
  * @author Tobias Hoppenthaler - tobias@pramari.com
  */
@@ -52,15 +52,7 @@ public class XYLayer extends Layer {
 		imf.setBounds(new Rectangle(x, y, image.getBounds().width, image
 				.getBounds().height));
 		add(imf);
-		// Rectangle imfBound = new Rectangle(x, y, image.getBounds().width,
-		// image
-		// .getBounds().height);
-		// getLayoutManager().setConstraint(imf, imfBound);
-	}
 
-	// public void setImageFigurePosition(ImageFigure imageFigure, Point point){
-	// this.setConstraint(imageFigure, new
-	// Rectangle(point.x,point.y,imageFigure.getImage().getBounds().width,imageFigure.getImage().getBounds().height));
-	// }
+	}
 
 }

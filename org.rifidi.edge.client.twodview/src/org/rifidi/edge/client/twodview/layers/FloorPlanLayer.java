@@ -8,29 +8,33 @@ import org.eclipse.swt.widgets.Display;
 import org.rifidi.edge.client.twodview.Activator;
 
 /**
- * TODO: Class level comment.  
+ * The layer which contains the floorplan image in the twodview.
  * 
  * @author Tobias Hoppenthaler - tobias@pramari.com
  */
 public class FloorPlanLayer extends XYLayer {
 
+	/** Defines the maximum size of images for the floorplan - bigger images will be resized to that size or smaller (proportional) */
 	public static final Dimension MAXSIZE = new Dimension(1024, 768);
 	private String floorPlanImageFile="";
 
 	/**
-	 * @return the floorPlanImageFile
+	 * @return the path to the floorPlanImageFile
 	 */
 	public String getFloorPlanImageFile() {
 		return floorPlanImageFile;
 	}
 
+	/**
+	 * The constructor.
+	 */
 	public FloorPlanLayer() {
 		super();
 		setMaximumSize(MAXSIZE);
 	}
 
 	/**
-	 * @return the floorplan
+	 * @return the floorplan image
 	 */
 	public Image getFloorplan() {
 		if (getChildren().isEmpty())
@@ -56,19 +60,30 @@ public class FloorPlanLayer extends XYLayer {
 
 	}
 
+	/**
+	 * Sets the floorplan and takes in the absolute path to the image file.
+	 * @param absPathToImage
+	 */
 	public void setFloorplan(String absPathToImage) {
 		Image floorplan = new Image(null, absPathToImage);
 		setFloorplan(floorplan);
 		floorPlanImageFile=absPathToImage;
 	
 	}
-
+/**
+ * Initializes the layer with an image.
+ */
 	public void init() {
 		setFloorplan(Activator.imageDescriptorFromPlugin(
 				"org.rifidi.edge.client.twodview", "icons/3d_room_blueprint.jpg")
 				.createImage());
 	}
-
+	
+/**
+ * This method gets called if the image exceeds MAXSIZE. The resulting image will fit the MAXSIZE requirements.
+ * @param original image
+ * @return resized image
+ */
 	private Image resizeMap(Image original) {
 		/*
 		 * get difference in width and height get the better suited one

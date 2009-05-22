@@ -1,4 +1,3 @@
-
 package org.rifidi.edge.client.twodview.listeners;
 
 import org.apache.commons.logging.Log;
@@ -11,19 +10,20 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
 /**
- * TODO: Class level comment.  
+ * Implementation of a MouseWheelListener for the SiteView. Allows for zooming
+ * in and out with the mouse wheel.
  * 
  * @author Tobias Hoppenthaler - tobias@pramari.com
  */
 public class SiteViewMouseWheelListener implements Listener {
 
 	private ScalableLayeredPane sp = null;
-	
+
 	private static final Log logger = LogFactory
 			.getLog(SiteViewMouseWheelListener.class);
 
 	/**
-	 * Constructor.  
+	 * Constructor.
 	 * 
 	 * @param sp
 	 */
@@ -35,17 +35,21 @@ public class SiteViewMouseWheelListener implements Listener {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
+	 * 
+	 * @see
+	 * org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.
+	 * Event)
 	 */
 	@Override
 	public void handleEvent(Event event) {
-		
+
 		zoom(event);
 
 	}
 
 	/**
-	 * This class interprets mousewheel movements that zoom in and out of the picture on screen.  
+	 * This method interprets mousewheel movements to zoom in and out of the
+	 * picture on screen.
 	 * 
 	 * @param event
 	 */
@@ -70,7 +74,7 @@ public class SiteViewMouseWheelListener implements Listener {
 	}
 
 	/**
-	 * Centers the frame of the picture on the given event.  
+	 * Centers the frame of the picture on the given event.
 	 * 
 	 * @param event
 	 */
@@ -78,6 +82,12 @@ public class SiteViewMouseWheelListener implements Listener {
 		centerPaneOnThisXY(event.x, event.y);
 	}
 
+	/**
+	 * Centers the pane on the given x/y coordinates.
+	 * 
+	 * @param x
+	 * @param y
+	 */
 	public void centerPaneOnThisXY(int x, int y) {
 		logger.debug("Centering on " + x + ":" + y);
 		/** horizontal difference of the x value to the center of the pane */
@@ -90,7 +100,7 @@ public class SiteViewMouseWheelListener implements Listener {
 	}
 
 	/**
-	 * TODO: Method level comment.  
+	 * Moves the pane by xOffset to the right and yOffset down.
 	 * 
 	 * @param xOffset
 	 * @param yOffset
@@ -101,23 +111,21 @@ public class SiteViewMouseWheelListener implements Listener {
 			 * walk through all the figures, placed on the layers and add the
 			 * difference to center on the given x/y coordinates.
 			 */
-//			for (Object obj : ((IFigure) object).getChildren()) {
-				/** cast the resulting object to an IFigure */
-				IFigure ifig = (IFigure) object;
-				/** getting the bounds of the figure */
-				Rectangle bounds = ifig.getBounds();
-				/** move this figure horizontally */
-				bounds.x += xOffset;
-				/** move this figure vertically */
-				bounds.y += yOffset;
-				/** set the changes */
-				ifig.setBounds(bounds);
-//			}
+			// for (Object obj : ((IFigure) object).getChildren()) {
+			/** cast the resulting object to an IFigure */
+			IFigure ifig = (IFigure) object;
+			/** getting the bounds of the figure */
+			Rectangle bounds = ifig.getBounds();
+			/** move this figure horizontally */
+			bounds.x += xOffset;
+			/** move this figure vertically */
+			bounds.y += yOffset;
+			/** set the changes */
+			ifig.setBounds(bounds);
+			// }
 			/** repaint the layers to see the effect of the changes */
 			((IFigure) object).repaint();
 		}
 	}
-
-	
 
 }

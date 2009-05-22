@@ -8,7 +8,7 @@ import org.rifidi.edge.client.model.sal.RemoteReader;
 import org.rifidi.edge.client.twodview.Activator;
 
 /**
- * TODO: Class level comment.  
+ * LabelProvider for the SiteView i.e. for the readers in the twodview.  
  * 
  * @author kyle
  */

@@ -93,11 +93,11 @@ public class SiteViewSelectionProvider implements ISelectionProvider,
 	}
 
 	/**
-	 * TODO: Method level comment.  
+	 * Cleanup: remove this as a selectionlistener from a pane.
 	 */
 	public void dispose() {
 		if (pane != null) {
-			pane.remoteImageSelectionListener(this);
+			pane.removeImageSelectionListener(this);
 		}
 	}
 
