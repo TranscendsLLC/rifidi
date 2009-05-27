@@ -305,6 +305,7 @@ public class LogicalReaderImpl implements LogicalReader {
 	 */
 	@Override
 	public void makeChildOf(LogicalReader parent) {
+		updating.lock();
 		try {
 			parents.add(parent);
 			inUse = true;
