@@ -97,7 +97,6 @@ public class ECSPECManagerServiceImpl implements ECSPECManagerService {
 				throw new NoSuchNameExceptionResponse(name + " doesn't exist.");
 			}
 			RifidiECSpec spec = nameToSpec.remove(name);
-			spec.stop();
 			spec.destroy();
 			logger.debug("Destroied " + name);
 		}
