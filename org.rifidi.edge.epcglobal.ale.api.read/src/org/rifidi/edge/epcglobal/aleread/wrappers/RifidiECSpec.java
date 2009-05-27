@@ -1,15 +1,22 @@
 package org.rifidi.edge.epcglobal.aleread.wrappers;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.rifidi.edge.epcglobal.ale.api.lr.ws.NoSuchNameExceptionResponse;
+import org.rifidi.edge.ale.esper.SignalListener;
+import org.rifidi.edge.ale.esper.StatementController;
+import org.rifidi.edge.ale.esper.starters.IntervalTimingStatement;
+import org.rifidi.edge.ale.esper.starters.StartEventStatement;
+import org.rifidi.edge.ale.esper.stoppers.DurationTimingStatement;
+import org.rifidi.edge.ale.esper.stoppers.StableSetTimingStatement;
+import org.rifidi.edge.ale.esper.stoppers.StopEventTimingStatement;
+import org.rifidi.edge.core.messages.TagReadEvent;
 import org.rifidi.edge.epcglobal.ale.api.read.data.ECSpec;
 import org.rifidi.edge.epcglobal.ale.api.read.ws.DuplicateSubscriptionExceptionResponse;
 import org.rifidi.edge.epcglobal.ale.api.read.ws.ECSpecValidationExceptionResponse;
@@ -19,7 +26,6 @@ import org.rifidi.edge.epcglobal.aleread.ECReportmanager;
 import org.rifidi.edge.esper.events.DestroyEvent;
 import org.rifidi.edge.lr.LogicalReader;
 import org.rifidi.edge.lr.LogicalReaderManagementService;
-import org.rifidi.edge.lr.exceptions.NoSuchReaderNameException;
 
 import com.espertech.esper.client.EPServiceProvider;
 import com.espertech.esper.client.EPStatement;
@@ -31,7 +37,14 @@ import com.espertech.esper.client.EPStatement;
  * @author Jochen Mader - jochen@pramari.com
  * 
  */
-public class RifidiECSpec {
+public class RifidiECSpec implements SignalListener {
+	public static final int STARTREASON_INTERVAL = 1;
+	public static final int STARTREASON_STARTEVENT = 2;
+	public static final int STOPREASON_DURATION = 3;
+	public static final int STOPREASON_STABLESET = 4;
+	public static final int STOPREASON_STOPEVENT = 5;
+	public static final int STOPREASON_DESTROYEVENT = 6;
+
 	/** Logger for this class. */
 	private static final Log logger = LogFactory.getLog(RifidiECSpec.class);
 	/** Fields in here constitute the primary keys for the tags. */
@@ -42,42 +55,36 @@ public class RifidiECSpec {
 	private String name;
 	/** Esper instance to use. */
 	private EPServiceProvider esper;
-	/** Statements created for this spec. */
-	private ArrayList<EPStatement> collectionStatements;
 	/** TODO: this needs fixing as the service might go away and reappear!!! */
 	private LogicalReaderManagementService lrService;
 	/** Readers used by this spec. */
 	private Set<LogicalReader> readers;
-
-	/** List containing statements that trigger when duration ran out. */
-	private List<EPStatement> durationStatements;
-	/** List containing statements that trigger when the tag set is stable. */
-	private List<EPStatement> stableSetIntervalStatements;
-	/** List containing statements that trigger when a stop trigger arrived. */
-	private List<EPStatement> stopTriggerStatements;
-	/** List containing statements that trigger when data is available. */
-	private List<EPStatement> whenDataAvailableStatements;
-	/**
-	 * List containing statements that trigger when a destroy event is received.
-	 */
-	private List<EPStatement> destroyStatements;
-	/**
-	 * List containing all statements that are not in collectionStatements but
-	 * in ALL of the lists above.
-	 */
-	private List<EPStatement> allNonCollectionStatements;
 	/** RifidiReport manager for this spec. */
 	private ECReportmanager ecReportmanager = null;
 	/** Thread that runs the reportmanager. */
 	private Thread reportThread = null;
 	/** Boundary spec for this spec. */
 	private RifidiBoundarySpec rifidiBoundarySpec;
-	/** True if the spec is active. */
-	private boolean started;
-	/** True if the spec was destroied. */
-	private boolean destroied;
 	/** Threadsafe list for subscription uri. */
 	private List<String> subscriptionURIs;
+
+	private List<StatementController> startStatementControllers;
+	private List<StatementController> stopStatementControllers;
+	private EPStatement collectionStatement;
+
+	private ReentrantLock startLock;
+	/**
+	 * Indicates if after an event cycle ends we need to wait for a start
+	 * signal.
+	 */
+	private Boolean needsStartCondition = false;
+	/**
+	 * Only false if a start event was specified and we need to wait for it to
+	 * happen.
+	 */
+	private Boolean instantStart = true;
+	private Boolean running = false;
+	private Boolean restart = false;
 
 	/**
 	 * Constructor.
@@ -92,365 +99,209 @@ public class RifidiECSpec {
 	 * @throws InvalidURIExceptionResponse
 	 * @throws ECSpecValidationExceptionResponse
 	 */
-	public RifidiECSpec(String name, ECSpec spec, EPServiceProvider esper,
-			RifidiBoundarySpec rifidiBoundarySpec, Set<LogicalReader> readers,
-			Set<String> primarykeys, List<RifidiReport> reports) {
+	public RifidiECSpec(final String name, final ECSpec spec,
+			final EPServiceProvider esper,
+			final RifidiBoundarySpec rifidiBoundarySpec,
+			final Set<LogicalReader> readers, final Set<String> primarykeys,
+			final List<RifidiReport> reports) {
+		this.startLock = new ReentrantLock();
 		this.rifidiBoundarySpec = rifidiBoundarySpec;
 		this.spec = spec;
 		this.name = name;
-		this.collectionStatements = new ArrayList<EPStatement>();
 		this.esper = esper;
-		this.readers = readers;
-		this.primarykeys = primarykeys;
+		this.readers = new HashSet<LogicalReader>();
+		this.readers.addAll(readers);
+
+		this.primarykeys = new HashSet<String>();
+		if (this.primarykeys.isEmpty()) {
+			this.primarykeys.add("epc");
+		}
 		this.subscriptionURIs = new CopyOnWriteArrayList<String>();
-		started = false;
-		whenDataAvailableStatements = new ArrayList<EPStatement>();
-		durationStatements = new ArrayList<EPStatement>();
-		stopTriggerStatements = new ArrayList<EPStatement>();
-		stableSetIntervalStatements = new ArrayList<EPStatement>();
-		allNonCollectionStatements = new ArrayList<EPStatement>();
-		destroyStatements = new ArrayList<EPStatement>();
-		readers = new HashSet<LogicalReader>();
-		if (!spec.isIncludeSpecInReports()) {
-			ecReportmanager = new ECReportmanager(name, esper, reports, this,
-					subscriptionURIs);
-		} else {
-			ecReportmanager = new ECReportmanager(name, esper, spec, reports,
-					this, subscriptionURIs);
+
+		startStatementControllers = new ArrayList<StatementController>();
+		stopStatementControllers = new ArrayList<StatementController>();
+
+		collectionStatement = esper.getEPAdministrator().createEPL(
+				"insert into LogicalReader select * from "
+						+ assembleLogicalReader(readers));
+		if (rifidiBoundarySpec.isWhenDataAvailable()) {
+			logger.fatal("'When data available' not yet implemented!");
 		}
+		if (rifidiBoundarySpec.getDuration() > 0) {
+			logger.debug("Initializing duration timing with duration="
+					+ rifidiBoundarySpec.getDuration());
+			DurationTimingStatement durationTimingStatement = new DurationTimingStatement(
+					esper.getEPAdministrator(), rifidiBoundarySpec
+							.getDuration(), primarykeys);
+			stopStatementControllers.add(durationTimingStatement);
+		}
+		if (rifidiBoundarySpec.getStableSetInterval() > 0) {
+			logger
+					.debug("Initializing 'stable set interval' timing with interval="
+							+ rifidiBoundarySpec.getStableSetInterval());
+			StableSetTimingStatement stableSetTimingStatement = new StableSetTimingStatement(
+					esper.getEPAdministrator(), rifidiBoundarySpec
+							.getStableSetInterval(), primarykeys);
+			stopStatementControllers.add(stableSetTimingStatement);
+		}
+		if (rifidiBoundarySpec.getStopTriggers().size() > 0) {
+			// TODO: create triggers
+			StopEventTimingStatement stopEventTimingStatement = new StopEventTimingStatement(
+					esper.getEPAdministrator(), primarykeys);
+			stopStatementControllers.add(stopEventTimingStatement);
+		}
+		if (rifidiBoundarySpec.getStartTriggers().size() > 0) {
+			needsStartCondition = true;
+			instantStart = false;
+			StartEventStatement startEventStatement = new StartEventStatement(
+					esper.getEPAdministrator());
+			startStatementControllers.add(startEventStatement);
+		}
+		if (rifidiBoundarySpec.getRepeatInterval() > 0) {
+			needsStartCondition = true;
+			IntervalTimingStatement intervalTimingStatement = new IntervalTimingStatement(
+					esper.getEPAdministrator(), rifidiBoundarySpec
+							.getRepeatInterval());
+			startStatementControllers.add(intervalTimingStatement);
+		}
+
+		// if (!spec.isIncludeSpecInReports()) {
+		// ecReportmanager = new ECReportmanager(name, esper, reports, this,
+		// subscriptionURIs);
+		// } else {
+		// ecReportmanager = new ECReportmanager(name, esper, spec, reports,
+		// this, subscriptionURIs);
+		// }
 	}
 
 	/**
-	 * @return the spec
+	 * Helper method for generating a String to be used in the logical reader
+	 * statement.
+	 * 
+	 * @param primarykeys
+	 * @return
 	 */
-	public ECSpec getSpec() {
-		return spec;
+	protected String assembleLogicalReader(Set<LogicalReader> readers) {
+		StringBuilder builder = new StringBuilder();
+		for (LogicalReader reader : readers) {
+			builder.append(reader.getName());
+			builder.append(",");
+		}
+		builder.deleteCharAt(builder.length() - 1);
+		return builder.toString();
 	}
 
 	/**
-	 * @return the name
+	 * Start a new event cycle.
 	 */
-	public String getName() {
-		return name;
-	}
-
-	/**
-	 * Start the spec.
-	 */
-	public void start() {
-		synchronized (collectionStatements) {
-			if (!started && !destroied) {
-				if (collectionStatements.size() == 0) {
-					logger.debug("Constructing statements");
-					// SETUP
-					// create the window
-					collectionStatements
-							.add(esper
-									.getEPAdministrator()
-									.createEPL(
-											"create window "
-													+ name
-													+ "_collectwin.win:time("
-													+ (rifidiBoundarySpec
-															.getDuration() > rifidiBoundarySpec
-															.getRepeatInterval() ? rifidiBoundarySpec
-															.getDuration()
-															: rifidiBoundarySpec
-																	.getRepeatInterval())
-													+ " msec) as TagReadEvent"));
-					// create the where conditions for primary fields
-					StringBuilder prims = new StringBuilder();
-					boolean first = true;
-					for (String key : primarykeys) {
-						if (!first) {
-							prims.append(" and");
-							first = false;
-						}
-						// direct memory access
-						// TODO: test if this is actually working
-						if (key.startsWith("@")) {
-							prims.append(" collected.tag.readMemory('");
-							prims.append(key);
-							prims.append("')=tagevent.tag.readMemory('");
-							prims.append(key);
-							prims.append("')");
-						} else {
-							prims.append(" collected.tag.");
-							prims.append(key);
-							prims.append("?=tagevent.tag.");
-							prims.append(key);
-							prims.append("?");
-						}
-					}
-					// fill the window
-					for (LogicalReader reader : readers) {
-						collectionStatements
-								.add(esper
-										.getEPAdministrator()
-										.createEPL(
-												"insert into "
-														+ name
-														+ "_collectwin select * from "
-														+ reader.getName()
-														+ " as tagevent where "
-														+ "not exists (select * from "
-														+ name
-														+ "_collectwin as collected where "
-														+ prims.toString()
-														+ ")"));
-					}
-					// DURATION TIMING
-					// regular timing using intervals, don't use if data
-					// available is set
-					if (!rifidiBoundarySpec.isWhenDataAvailable()) {
-						logger.debug("Creating duration timer.");
-						durationStatements
-								.add(esper
-										.getEPAdministrator()
-										.createEPL(
-												"on pattern[every StartEvent(name='"
-														+ name
-														+ "') -> (timer:interval("
-														+ rifidiBoundarySpec
-																.getDuration()
-														+ " msec) and not StopEvent(name='"
-														+ name
-														+ "'))] select tags from "
-														+ name
-														+ "_collectwin as tags"));
-					} else {
-						// WHEN DATA AVAILABLE
-						// timing for when data available, should replace
-						// regular timing if provided!!!
-						logger.debug("Creating when data avilabale timer.");
-						whenDataAvailableStatements
-								.add(esper
-										.getEPAdministrator()
-										.createEPL(
-												"on pattern[every (StartEvent(name='"
-														+ name
-														+ "') -> "
-														+ name
-														+ "_collectwin where timer:within("
-														+ rifidiBoundarySpec
-																.getDuration()
-														+ " msec))] select count(whine) from "
-														+ name
-														+ "_collectwin as whine"));
-
-						whenDataAvailableStatements
-								.add(esper
-										.getEPAdministrator()
-										.createEPL(
-												"on pattern[every (StartEvent(name='"
-														+ name
-														+ "') -> "
-														+ name
-														+ "_collectwin where timer:within("
-														+ rifidiBoundarySpec
-																.getDuration()
-														+ " msec))] select tags from "
-														+ name
-														+ "_collectwin as tags"));
-
-					}
-
-					// triggers if a startevent arrives without followup
-					// processed
-					// events
-					// needs to be used with both the regular and the data
-					// available
-					// queries
-					durationStatements
-							.add(esper
-									.getEPAdministrator()
-									.createEPL(
-											"on pattern[every StartEvent(name='"
-													+ name
-													+ "') -> (timer:interval("
-													+ rifidiBoundarySpec
-															.getDuration()
-													+ " msec) and not "
-													+ name
-													+ "_collectwin and not StopEvent(name='"
-													+ name
-													+ "'))] select count(whine) from "
-													+ name
-													+ "_collectwin as whine"));
-					// STOP TRIGGERS
-					if (rifidiBoundarySpec.getStopTriggers().size() > 0) {
-						// timing using a stop trigger
-						stopTriggerStatements
-								.add(esper
-										.getEPAdministrator()
-										.createEPL(
-												"on pattern[every (StartEvent(name='"
-														+ name
-														+ "') -> [0..] "
-														+ name
-														+ "_collectwin until (timer:interval("
-														+ rifidiBoundarySpec
-																.getDuration()
-														+ " msec) and StopEvent(name='"
-														+ name
-														+ "')))] select count(whine) from "
-														+ name
-														+ "_collectwin as whine"));
-
-						stopTriggerStatements
-								.add(esper
-										.getEPAdministrator()
-										.createEPL(
-												"on pattern[every (StartEvent(name='"
-														+ name
-														+ "') -> [0..] "
-														+ name
-														+ "_collectwin until (timer:interval("
-														+ rifidiBoundarySpec
-																.getDuration()
-														+ " msec) and StopEvent(name='"
-														+ name
-														+ "')))] select tags from "
-														+ name
-														+ "_collectwin as tags"));
-
-					}
-
-					if (rifidiBoundarySpec.getStableSetInterval() > 0) {
-						// TODO: incorporate INTERVAL!!!!
-						// timing using stable set
-						logger.debug("Creating stable set timer.");
-						stableSetIntervalStatements
-								.add(esper
-										.getEPAdministrator()
-										.createEPL(
-												"on pattern[every (StartEvent(name='"
-														+ name
-														+ "') -> "
-														+ name
-														+ "_collectwin -> (timer:interval("
-														+ rifidiBoundarySpec
-																.getStableSetInterval()
-														+ " msec) and not "
-														+ name
-														+ "_collectwin))] select tags  from "
-														+ name
-														+ "_collectwin as tags"));
-
-						stableSetIntervalStatements
-								.add(esper
-										.getEPAdministrator()
-										.createEPL(
-												"on pattern[every (StartEvent(name='"
-														+ name
-														+ "') -> (timer:interval("
-														+ rifidiBoundarySpec
-																.getStableSetInterval()
-														+ " msec) and not "
-														+ name
-														+ "_collectwin))] select count(whine) from "
-														+ name
-														+ "_collectwin as whine"));
-					}
-
-					// clean up before collecting
-					collectionStatements.add(esper.getEPAdministrator()
-							.createEPL(
-									"on pattern[every StartEvent(name='" + name
-											+ "')] delete from " + name
-											+ "_collectwin"));
-					// TOO: wtf, review destruction of specs!!
-					// destroyStatements.add(esper.getEPAdministrator().createEPL(
-					// "DestroyEvent(name='" + name
-					// + "') select count(whine) from " + name
-					// + "_collectwin as whine"));
-					// destroyStatements.add(esper.getEPAdministrator().createEPL(
-					// "DestroyEvent(name='" + name
-					// + "') select tags  from " + name
-					// + "_collectwin as tags"));
-
-					allNonCollectionStatements.addAll(durationStatements);
-					allNonCollectionStatements
-							.addAll(stableSetIntervalStatements);
-					allNonCollectionStatements.addAll(stopTriggerStatements);
-					allNonCollectionStatements
-							.addAll(whenDataAvailableStatements);
-					allNonCollectionStatements.addAll(destroyStatements);
-
-					// debug output
-					StringBuilder builder = new StringBuilder();
-					builder.append("Statements:\n");
-					for (EPStatement statement : collectionStatements) {
-						builder.append(statement.getText() + "\n");
-					}
-					builder.append("Query Statements:\n");
-					for (EPStatement statement : allNonCollectionStatements) {
-						builder.append(statement.getText() + "\n");
-					}
-					logger
-							.debug("The following collectionStatements were created: \n"
-									+ builder.toString());
-
-					// Register collectionStatements to the manager.
-					ecReportmanager.setDurationStatements(durationStatements);
-					ecReportmanager
-							.setStableSetIntervalStatements(stableSetIntervalStatements);
-					ecReportmanager
-							.setStopTriggerStatements(stopTriggerStatements);
-					ecReportmanager
-							.setWhenDataAvailableStatements(whenDataAvailableStatements);
-					ecReportmanager.setDestroyStatements(destroyStatements);
-					logger.debug("Done constructing statements");
-				} else {
-
-					logger.debug("Starting statements");
-					// start statements for collecting data
-					for (EPStatement statement : collectionStatements) {
-						statement.start();
-					}
-					// start statements for filtering and reporting
-					for (EPStatement statement : allNonCollectionStatements) {
-						statement.start();
-					}
-					logger.debug("Done starting statements");
-				}
-				// start the manager
-				reportThread = new Thread(ecReportmanager);
-				reportThread.start();
-				logger.debug("Spec " + getName() + " started.");
-				started = true;
+	private void startNewCycle() {
+		running = true;
+		restart = false;
+		for (StatementController ctrl : stopStatementControllers) {
+			if (ctrl.needsRestart()) {
+				ctrl.start();
+			}
+		}
+		for (StatementController ctrl : startStatementControllers) {
+			if (ctrl.needsRestart()) {
+				ctrl.start();
 			}
 		}
 	}
 
 	/**
-	 * Stop the spec.
+	 * Start a new event cycle after a start signal has arrived.
 	 */
-	public void stop() {
-		synchronized (collectionStatements) {
-			if (started && !destroied) {
-				started = false;
-				logger.debug("Stopping spec " + getName());
-				reportThread.interrupt();
-				try {
-					reportThread.join();
-				} catch (InterruptedException e1) {
-					Thread.currentThread().interrupt();
-				}
-				// stop all queries
-				for (EPStatement statement : allNonCollectionStatements) {
-					statement.stop();
-				}
-				// reverse the collection to prevent inconsistencies while
-				// deleting
-				Collections.reverse(new ArrayList<EPStatement>(
-						collectionStatements));
-				// destroy collectionStatements
-				for (EPStatement statement : collectionStatements) {
-					statement.stop();
-				}
-				logger.debug("Stopping spec " + getName() + " stopped.");
+	private void startNewCycleAfterStartSignal() {
+		for (StatementController ctrl : startStatementControllers) {
+			if (ctrl.needsRestart()) {
+				ctrl.start();
 			}
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.rifidi.edge.ale.esper.SignalListener#startSignal(int,
+	 * java.lang.Object)
+	 */
+	@Override
+	public void startSignal(int type, Object cause) {
+		startLock.lock();
+		try {
+			// system is waiting for a start signal
+			if (type == STARTREASON_INTERVAL) {
+				System.out.println("interval " + System.currentTimeMillis()
+						/ 1000);
+			}
+			if (type == STARTREASON_STARTEVENT) {
+			}
+			// we received a start signal so we can stop all statements that
+			// require a restart
+			for (StatementController ctrl : startStatementControllers) {
+				if (ctrl.needsRestart()) {
+					ctrl.stop();
+				}
+			}
+			if (running) {
+				restart = true;
+			} else {
+				restart = false;
+				startNewCycle();
+			}
+			// ignore start signals if the system can already start again
+		} finally {
+			startLock.unlock();
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.rifidi.edge.ale.esper.SignalListener#stopSignal(int,
+	 * java.lang.Object, java.util.List)
+	 */
+	@Override
+	public void stopSignal(int type, Object cause, List<TagReadEvent> events) {
+		startLock.lock();
+		try {
+			// stop all currently executing statements
+			for (StatementController ctrl : stopStatementControllers) {
+				if (ctrl.needsRestart()) {
+					ctrl.stop();
+				}
+			}
+			if (type == STOPREASON_DURATION) {
+				System.out.println("duration " + System.currentTimeMillis()
+						/ 1000);
+				for (TagReadEvent event : (List<TagReadEvent>) events) {
+					System.out.println(event);
+				}
+			}
+			if (type == STOPREASON_STABLESET) {
+				System.out.println("stableset");
+				for (TagReadEvent event : (List<TagReadEvent>) events) {
+					System.out.println(event);
+				}
+			}
+			if (type == STOPREASON_STOPEVENT) {
+				System.out.println("stopevent " + cause);
+				for (TagReadEvent event : (List<TagReadEvent>) events) {
+					System.out.println(event);
+				}
+			}
+			if (type == STOPREASON_DESTROYEVENT) {
+				System.out.println("destroyevent " + cause);
+				for (TagReadEvent event : (List<TagReadEvent>) events) {
+					System.out.println(event);
+				}
+			} else if (restart) {
+				// only restart if we didn't get a destroy event
+				startNewCycle();
+			}
+		} finally {
+			startLock.unlock();
 		}
 	}
 
@@ -467,34 +318,6 @@ public class RifidiECSpec {
 	 * thing that C++ got right :(
 	 */
 	public void discard() {
-		synchronized (collectionStatements) {
-			if (!destroied) {
-				// make sure we are stopped
-				stop();
-				// destroy all collectionStatements
-				for (EPStatement statement : allNonCollectionStatements) {
-					statement.destroy();
-				}
-				// reverse the collection to prevent inconsistencies while
-				// deleting
-				Collections.reverse(collectionStatements);
-				// destroy collectionStatements
-				for (EPStatement statement : collectionStatements) {
-					statement.destroy();
-				}
-				// release all readers that have already been aquired
-				for (String reader : spec.getLogicalReaders()
-						.getLogicalReader()) {
-					try {
-						lrService.getLogicalReaderByName(reader).release(this);
-					} catch (NoSuchReaderNameException ex) {
-						logger.debug("Reader " + reader + " doesn't exist");
-					}
-				}
-				readers.clear();
-				destroied = true;
-			}
-		}
 	}
 
 	/**
@@ -512,7 +335,11 @@ public class RifidiECSpec {
 			}
 			subscriptionURIs.add(uri);
 			if (subscriptionURIs.size() == 1) {
-				start();
+				if (instantStart) {
+					startNewCycle();
+				} else {
+					startNewCycleAfterStartSignal();
+				}
 			}
 		}
 	}
@@ -532,7 +359,7 @@ public class RifidiECSpec {
 			}
 			subscriptionURIs.remove(uri);
 			if (subscriptionURIs.size() == 0) {
-				stop();
+				destroy();
 			}
 		}
 	}
@@ -551,5 +378,19 @@ public class RifidiECSpec {
 	 */
 	public RifidiBoundarySpec getRifidiBoundarySpec() {
 		return rifidiBoundarySpec;
+	}
+
+	/**
+	 * @return the spec
+	 */
+	public ECSpec getSpec() {
+		return spec;
+	}
+
+	/**
+	 * @return the name
+	 */
+	public String getName() {
+		return name;
 	}
 }
