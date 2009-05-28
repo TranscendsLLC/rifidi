@@ -197,6 +197,7 @@ public class RifidiECSpec implements SignalListener {
 		// swap the result containers
 		currentResult = nextResult;
 		nextResult = null;
+		currentResult.startTime=System.currentTimeMillis();
 		// start the collectors
 		for (StatementController ctrl : stopStatementControllers) {
 			if (ctrl.needsRestart()) {
@@ -269,6 +270,7 @@ public class RifidiECSpec implements SignalListener {
 		startLock.lock();
 		try {
 			running = false;
+			currentResult.stopTime=System.currentTimeMillis();
 			// stop all currently executing statements
 			for (StatementController ctrl : stopStatementControllers) {
 				if (ctrl.needsRestart()) {
@@ -384,7 +386,9 @@ public class RifidiECSpec implements SignalListener {
 		public ALEReadAPI.TriggerCondition stopReason;
 		public Object stopCause;
 		public List<TagReadEvent> events;
-
+		public long startTime;
+		public long stopTime;
+		
 		/**
 		 * Constructor.
 		 * 
