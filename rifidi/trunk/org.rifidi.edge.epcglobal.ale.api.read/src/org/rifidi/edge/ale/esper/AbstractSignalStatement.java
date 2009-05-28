@@ -8,6 +8,7 @@ import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 import org.rifidi.edge.core.messages.TagReadEvent;
+import org.rifidi.edge.epcglobal.aleread.ALEReadAPI;
 
 import com.espertech.esper.client.EPAdministrator;
 
@@ -36,9 +37,9 @@ public abstract class AbstractSignalStatement implements SignalStatement,
 	protected String assembleKeys(Set<String> primarykeys) {
 		StringBuilder builder = new StringBuilder();
 		for (String key : primarykeys) {
-			builder.append("res.");
+			builder.append("res.tag.");
 			builder.append(key);
-			builder.append(",");
+			builder.append("?,");
 		}
 		builder.deleteCharAt(builder.length() - 1);
 		return builder.toString();
@@ -73,9 +74,9 @@ public abstract class AbstractSignalStatement implements SignalStatement,
 	 * @param type
 	 * @param cause
 	 */
-	protected void signalStart(int type, Object cause) {
+	protected void signalStart(ALEReadAPI.TriggerCondition condition, Object cause) {
 		for (SignalListener listener : listeners) {
-			listener.startSignal(type, cause);
+			listener.startSignal(condition, cause);
 		}
 	}
 
@@ -86,9 +87,9 @@ public abstract class AbstractSignalStatement implements SignalStatement,
 	 * @param cause
 	 * @param events
 	 */
-	protected void signalStop(int type, Object cause, List<TagReadEvent> events) {
+	protected void signalStop(ALEReadAPI.TriggerCondition condition, Object cause, List<TagReadEvent> events) {
 		for (SignalListener listener : listeners) {
-			listener.stopSignal(type, cause, events);
+			listener.stopSignal(condition, cause, events);
 		}
 	}
 }

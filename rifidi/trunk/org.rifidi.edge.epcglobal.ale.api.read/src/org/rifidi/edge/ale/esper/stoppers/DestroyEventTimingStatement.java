@@ -9,6 +9,7 @@ import java.util.Set;
 
 import org.rifidi.edge.ale.esper.AbstractSignalStatement;
 import org.rifidi.edge.core.messages.TagReadEvent;
+import org.rifidi.edge.epcglobal.aleread.ALEReadAPI;
 import org.rifidi.edge.epcglobal.aleread.wrappers.RifidiECSpec;
 import org.rifidi.edge.esper.events.StopEvent;
 
@@ -63,7 +64,7 @@ public class DestroyEventTimingStatement extends AbstractSignalStatement {
 						}
 						stopper = (StopEvent) eventBean.get("destroyEvent");
 					}
-					signalStop(RifidiECSpec.STOPREASON_DESTROYEVENT, stopper,
+					signalStop(ALEReadAPI.TriggerCondition.UNDEFINE, stopper,
 							testEvents);
 				}
 			}

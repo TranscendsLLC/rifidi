@@ -4,6 +4,7 @@
 package org.rifidi.edge.ale.esper.starters;
 
 import org.rifidi.edge.ale.esper.AbstractSignalStatement;
+import org.rifidi.edge.epcglobal.aleread.ALEReadAPI;
 import org.rifidi.edge.epcglobal.aleread.wrappers.RifidiECSpec;
 import org.rifidi.edge.esper.events.StartEvent;
 
@@ -39,7 +40,7 @@ public class StartEventStatement extends AbstractSignalStatement {
 
 			@Override
 			public void update(EventBean[] newEvents, EventBean[] oldEvents) {
-				signalStart(RifidiECSpec.STARTREASON_STARTEVENT,
+				signalStart(ALEReadAPI.TriggerCondition.TRIGGER,
 						(StartEvent) newEvents[0].get("startEvent"));
 			}
 		});

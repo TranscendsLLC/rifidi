@@ -22,6 +22,7 @@ import org.rifidi.edge.epcglobal.ale.api.read.ws.DuplicateSubscriptionExceptionR
 import org.rifidi.edge.epcglobal.ale.api.read.ws.ECSpecValidationExceptionResponse;
 import org.rifidi.edge.epcglobal.ale.api.read.ws.InvalidURIExceptionResponse;
 import org.rifidi.edge.epcglobal.ale.api.read.ws.NoSuchSubscriberExceptionResponse;
+import org.rifidi.edge.epcglobal.aleread.ALEReadAPI;
 import org.rifidi.edge.epcglobal.aleread.ECReportmanager;
 import org.rifidi.edge.esper.events.DestroyEvent;
 import org.rifidi.edge.lr.LogicalReader;
@@ -38,12 +39,6 @@ import com.espertech.esper.client.EPStatement;
  * 
  */
 public class RifidiECSpec implements SignalListener {
-	public static final int STARTREASON_INTERVAL = 1;
-	public static final int STARTREASON_STARTEVENT = 2;
-	public static final int STOPREASON_DURATION = 3;
-	public static final int STOPREASON_STABLESET = 4;
-	public static final int STOPREASON_STOPEVENT = 5;
-	public static final int STOPREASON_DESTROYEVENT = 6;
 
 	/** Logger for this class. */
 	private static final Log logger = LogFactory.getLog(RifidiECSpec.class);
@@ -65,19 +60,14 @@ public class RifidiECSpec implements SignalListener {
 	private Thread reportThread = null;
 	/** Boundary spec for this spec. */
 	private RifidiBoundarySpec rifidiBoundarySpec;
-	/** Threadsafe list for subscription uri. */
+	/** Threadsafe list for subscription uris. */
 	private List<String> subscriptionURIs;
 
 	private List<StatementController> startStatementControllers;
 	private List<StatementController> stopStatementControllers;
-	private EPStatement collectionStatement;
+	private List<EPStatement> collectionStatements;
 
 	private ReentrantLock startLock;
-	/**
-	 * Indicates if after an event cycle ends we need to wait for a start
-	 * signal.
-	 */
-	private Boolean needsStartCondition = false;
 	/**
 	 * Only false if a start event was specified and we need to wait for it to
 	 * happen.
@@ -85,6 +75,13 @@ public class RifidiECSpec implements SignalListener {
 	private Boolean instantStart = true;
 	private Boolean running = false;
 	private Boolean restart = false;
+
+	/** The result currently being processed */
+	private ResultContainer currentResult;
+	/** The result being processed next */
+	private ResultContainer nextResult;
+	/** Sends out the data. */
+	private ReportSender sender;
 
 	/**
 	 * Constructor.
@@ -112,6 +109,10 @@ public class RifidiECSpec implements SignalListener {
 		this.readers = new HashSet<LogicalReader>();
 		this.readers.addAll(readers);
 
+		// configure the report sender
+		this.sender = new ReportSender(reports, name, spec);
+		Thread senderThread = new Thread(sender);
+		senderThread.start();
 		this.primarykeys = new HashSet<String>();
 		if (this.primarykeys.isEmpty()) {
 			this.primarykeys.add("epc");
@@ -120,10 +121,13 @@ public class RifidiECSpec implements SignalListener {
 
 		startStatementControllers = new ArrayList<StatementController>();
 		stopStatementControllers = new ArrayList<StatementController>();
+		collectionStatements = new ArrayList<EPStatement>();
+		for (LogicalReader reader : readers) {
+			collectionStatements.add(esper.getEPAdministrator().createEPL(
+					"insert into LogicalReader select * from "
+							+ reader.getName()));
+		}
 
-		collectionStatement = esper.getEPAdministrator().createEPL(
-				"insert into LogicalReader select * from "
-						+ assembleLogicalReader(readers));
 		if (rifidiBoundarySpec.isWhenDataAvailable()) {
 			logger.fatal("'When data available' not yet implemented!");
 		}
@@ -133,6 +137,7 @@ public class RifidiECSpec implements SignalListener {
 			DurationTimingStatement durationTimingStatement = new DurationTimingStatement(
 					esper.getEPAdministrator(), rifidiBoundarySpec
 							.getDuration(), primarykeys);
+			durationTimingStatement.registerSignalListener(this);
 			stopStatementControllers.add(durationTimingStatement);
 		}
 		if (rifidiBoundarySpec.getStableSetInterval() > 0) {
@@ -142,36 +147,30 @@ public class RifidiECSpec implements SignalListener {
 			StableSetTimingStatement stableSetTimingStatement = new StableSetTimingStatement(
 					esper.getEPAdministrator(), rifidiBoundarySpec
 							.getStableSetInterval(), primarykeys);
+			stableSetTimingStatement.registerSignalListener(this);
 			stopStatementControllers.add(stableSetTimingStatement);
 		}
 		if (rifidiBoundarySpec.getStopTriggers().size() > 0) {
 			// TODO: create triggers
 			StopEventTimingStatement stopEventTimingStatement = new StopEventTimingStatement(
 					esper.getEPAdministrator(), primarykeys);
+			stopEventTimingStatement.registerSignalListener(this);
 			stopStatementControllers.add(stopEventTimingStatement);
 		}
 		if (rifidiBoundarySpec.getStartTriggers().size() > 0) {
-			needsStartCondition = true;
 			instantStart = false;
 			StartEventStatement startEventStatement = new StartEventStatement(
 					esper.getEPAdministrator());
+			startEventStatement.registerSignalListener(this);
 			startStatementControllers.add(startEventStatement);
 		}
 		if (rifidiBoundarySpec.getRepeatInterval() > 0) {
-			needsStartCondition = true;
 			IntervalTimingStatement intervalTimingStatement = new IntervalTimingStatement(
 					esper.getEPAdministrator(), rifidiBoundarySpec
 							.getRepeatInterval());
+			intervalTimingStatement.registerSignalListener(this);
 			startStatementControllers.add(intervalTimingStatement);
 		}
-
-		// if (!spec.isIncludeSpecInReports()) {
-		// ecReportmanager = new ECReportmanager(name, esper, reports, this,
-		// subscriptionURIs);
-		// } else {
-		// ecReportmanager = new ECReportmanager(name, esper, spec, reports,
-		// this, subscriptionURIs);
-		// }
 	}
 
 	/**
@@ -197,11 +196,16 @@ public class RifidiECSpec implements SignalListener {
 	private void startNewCycle() {
 		running = true;
 		restart = false;
+		// swap the result containers
+		currentResult = nextResult;
+		nextResult = null;
+		// start the collectors
 		for (StatementController ctrl : stopStatementControllers) {
 			if (ctrl.needsRestart()) {
 				ctrl.start();
 			}
 		}
+		// start the statements for processing start signals
 		for (StatementController ctrl : startStatementControllers) {
 			if (ctrl.needsRestart()) {
 				ctrl.start();
@@ -223,30 +227,29 @@ public class RifidiECSpec implements SignalListener {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.ale.esper.SignalListener#startSignal(int,
-	 * java.lang.Object)
+	 * @seeorg.rifidi.edge.ale.esper.SignalListener#startSignal(ALEReadAPI.
+	 * TriggerCondition, java.lang.Object)
 	 */
 	@Override
-	public void startSignal(int type, Object cause) {
+	public void startSignal(ALEReadAPI.TriggerCondition type, Object cause) {
 		startLock.lock();
 		try {
-			// system is waiting for a start signal
-			if (type == STARTREASON_INTERVAL) {
-				System.out.println("interval " + System.currentTimeMillis()
-						/ 1000);
-			}
-			if (type == STARTREASON_STARTEVENT) {
-			}
-			// we received a start signal so we can stop all statements that
-			// require a restart
+			// we received a start signal so we can stop all start statements
+			// that require a restart
 			for (StatementController ctrl : startStatementControllers) {
 				if (ctrl.needsRestart()) {
 					ctrl.stop();
 				}
 			}
 			if (running) {
+				if (nextResult == null) {
+					nextResult = new ResultContainer(type, cause);
+				}
 				restart = true;
 			} else {
+				if (nextResult == null) {
+					nextResult = new ResultContainer(type, cause);
+				}
 				restart = false;
 				startNewCycle();
 			}
@@ -259,44 +262,27 @@ public class RifidiECSpec implements SignalListener {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.ale.esper.SignalListener#stopSignal(int,
-	 * java.lang.Object, java.util.List)
+	 * @seeorg.rifidi.edge.ale.esper.SignalListener#stopSignal(ALEReadAPI.
+	 * TriggerCondition, java.lang.Object, java.util.List)
 	 */
 	@Override
-	public void stopSignal(int type, Object cause, List<TagReadEvent> events) {
+	public void stopSignal(ALEReadAPI.TriggerCondition type, Object cause,
+			List<TagReadEvent> events) {
 		startLock.lock();
 		try {
+			running = false;
 			// stop all currently executing statements
 			for (StatementController ctrl : stopStatementControllers) {
 				if (ctrl.needsRestart()) {
 					ctrl.stop();
 				}
 			}
-			if (type == STOPREASON_DURATION) {
-				System.out.println("duration " + System.currentTimeMillis()
-						/ 1000);
-				for (TagReadEvent event : (List<TagReadEvent>) events) {
-					System.out.println(event);
-				}
-			}
-			if (type == STOPREASON_STABLESET) {
-				System.out.println("stableset");
-				for (TagReadEvent event : (List<TagReadEvent>) events) {
-					System.out.println(event);
-				}
-			}
-			if (type == STOPREASON_STOPEVENT) {
-				System.out.println("stopevent " + cause);
-				for (TagReadEvent event : (List<TagReadEvent>) events) {
-					System.out.println(event);
-				}
-			}
-			if (type == STOPREASON_DESTROYEVENT) {
-				System.out.println("destroyevent " + cause);
-				for (TagReadEvent event : (List<TagReadEvent>) events) {
-					System.out.println(event);
-				}
-			} else if (restart) {
+			currentResult.stopReason = type;
+			currentResult.stopCause = cause;
+			currentResult.events = events;
+			sender.enqueueResultContainer(currentResult);
+			currentResult = null;
+			if (ALEReadAPI.TriggerCondition.UNDEFINE.equals(type) && restart) {
 				// only restart if we didn't get a destroy event
 				startNewCycle();
 			}
@@ -328,18 +314,19 @@ public class RifidiECSpec implements SignalListener {
 	 */
 	public void subscribe(String uri)
 			throws DuplicateSubscriptionExceptionResponse {
-		synchronized (subscriptionURIs) {
-			if (subscriptionURIs.contains(uri)) {
-				throw new DuplicateSubscriptionExceptionResponse("Uri " + uri
-						+ " is already subscribed.");
-			}
-			subscriptionURIs.add(uri);
-			if (subscriptionURIs.size() == 1) {
-				if (instantStart) {
-					startNewCycle();
-				} else {
-					startNewCycleAfterStartSignal();
-				}
+		if (subscriptionURIs.contains(uri)) {
+			throw new DuplicateSubscriptionExceptionResponse("Uri " + uri
+					+ " is already subscribed.");
+		}
+		subscriptionURIs.add(uri);
+		sender.subscribe(uri);
+		if (subscriptionURIs.size() == 1) {
+			if (instantStart) {
+				nextResult = new ResultContainer(
+						ALEReadAPI.TriggerCondition.REQUESTED, null);
+				startNewCycle();
+			} else {
+				startNewCycleAfterStartSignal();
 			}
 		}
 	}
@@ -352,15 +339,14 @@ public class RifidiECSpec implements SignalListener {
 	 */
 	public void unsubscribe(String uri)
 			throws NoSuchSubscriberExceptionResponse {
-		synchronized (subscriptionURIs) {
-			if (!subscriptionURIs.contains(uri)) {
-				throw new NoSuchSubscriberExceptionResponse("Uri " + uri
-						+ " is not subscribed to this spec.");
-			}
-			subscriptionURIs.remove(uri);
-			if (subscriptionURIs.size() == 0) {
-				destroy();
-			}
+		if (!subscriptionURIs.contains(uri)) {
+			throw new NoSuchSubscriberExceptionResponse("Uri " + uri
+					+ " is not subscribed to this spec.");
+		}
+		subscriptionURIs.remove(uri);
+		sender.unsubscribe(uri);
+		if (subscriptionURIs.size() == 0) {
+			destroy();
 		}
 	}
 
@@ -392,5 +378,26 @@ public class RifidiECSpec implements SignalListener {
 	 */
 	public String getName() {
 		return name;
+	}
+
+	public class ResultContainer {
+		public ALEReadAPI.TriggerCondition startReason;
+		public Object startCause;
+		public ALEReadAPI.TriggerCondition stopReason;
+		public Object stopCause;
+		public List<TagReadEvent> events;
+
+		/**
+		 * Constructor.
+		 * 
+		 * @param startReason
+		 * @param startCause
+		 */
+		public ResultContainer(ALEReadAPI.TriggerCondition startReason,
+				Object startCause) {
+			super();
+			this.startReason = startReason;
+			this.startCause = startCause;
+		}
 	}
 }
