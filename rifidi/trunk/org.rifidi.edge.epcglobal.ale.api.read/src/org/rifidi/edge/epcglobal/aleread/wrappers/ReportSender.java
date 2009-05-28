@@ -51,6 +51,7 @@ public class ReportSender implements Runnable {
 	private ECSpec spec;
 	/** Name of the spec. */
 	private String specName;
+
 	/**
 	 * Constructor.
 	 */
@@ -58,7 +59,7 @@ public class ReportSender implements Runnable {
 		rifidiReports = reports;
 		subscriptionURIs = new CopyOnWriteArrayList<String>();
 		resultQueue = new LinkedBlockingQueue<ResultContainer>();
-		this.specName=specName;
+		this.specName = specName;
 		this.spec = spec;
 		try {
 			cont = JAXBContext.newInstance(ReportAnswer.class, ECReports.class);
@@ -133,6 +134,8 @@ public class ReportSender implements Runnable {
 					reports.setECSpec(spec);
 				}
 				reports.setSpecName(specName);
+				reports.setTotalMilliseconds(container.stopTime
+						- container.startTime);
 				// send it
 				for (String uri : subscriptionURIs) {
 					logger.debug("Sending report to " + uri);
