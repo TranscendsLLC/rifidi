@@ -74,7 +74,8 @@ public abstract class AbstractSignalStatement implements SignalStatement,
 	 * @param type
 	 * @param cause
 	 */
-	protected void signalStart(ALEReadAPI.TriggerCondition condition, Object cause) {
+	protected void signalStart(ALEReadAPI.TriggerCondition condition,
+			Object cause) {
 		for (SignalListener listener : listeners) {
 			listener.startSignal(condition, cause);
 		}
@@ -87,7 +88,8 @@ public abstract class AbstractSignalStatement implements SignalStatement,
 	 * @param cause
 	 * @param events
 	 */
-	protected void signalStop(ALEReadAPI.TriggerCondition condition, Object cause, List<TagReadEvent> events) {
+	protected void signalStop(ALEReadAPI.TriggerCondition condition,
+			Object cause, List<TagReadEvent> events) {
 		for (SignalListener listener : listeners) {
 			listener.stopSignal(condition, cause, events);
 		}

@@ -10,7 +10,6 @@ import java.util.Set;
 import org.rifidi.edge.ale.esper.AbstractSignalStatement;
 import org.rifidi.edge.core.messages.TagReadEvent;
 import org.rifidi.edge.epcglobal.aleread.ALEReadAPI;
-import org.rifidi.edge.epcglobal.aleread.wrappers.RifidiECSpec;
 
 import com.espertech.esper.client.EPAdministrator;
 import com.espertech.esper.client.EPServiceProvider;
@@ -50,8 +49,7 @@ public class DurationTimingStatement extends AbstractSignalStatement {
 		durationTiming = administrator
 				.createEPL("select res from pattern[every-distinct("
 						+ assembleKeys(primarykeys)
-						+ ") res=LogicalReader].win:time_batch("
-						+ durationInMs
+						+ ") res=LogicalReader].win:time_batch(" + durationInMs
 						+ " msec, \"FORCE_UPDATE, START_EAGER\")");
 		durationTiming.addListener(new StatementAwareUpdateListener() {
 
@@ -106,7 +104,9 @@ public class DurationTimingStatement extends AbstractSignalStatement {
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see esperplayground.esper.StatementController#needsRestart()
 	 */
 	@Override

@@ -5,7 +5,6 @@ package org.rifidi.edge.ale.esper.starters;
 
 import org.rifidi.edge.ale.esper.AbstractSignalStatement;
 import org.rifidi.edge.epcglobal.aleread.ALEReadAPI;
-import org.rifidi.edge.epcglobal.aleread.wrappers.RifidiECSpec;
 import org.rifidi.edge.esper.events.StartEvent;
 
 import com.espertech.esper.client.EPAdministrator;
@@ -25,6 +24,7 @@ public class StartEventStatement extends AbstractSignalStatement {
 	 * Constructor.
 	 * 
 	 * @param administrator
+	 * @param specName
 	 */
 	public StartEventStatement(EPAdministrator administrator) {
 		super(administrator);
@@ -79,7 +79,9 @@ public class StartEventStatement extends AbstractSignalStatement {
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see esperplayground.esper.StatementController#needsRestart()
 	 */
 	@Override
