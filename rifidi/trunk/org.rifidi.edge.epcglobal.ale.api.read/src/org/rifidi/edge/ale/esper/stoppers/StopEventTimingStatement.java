@@ -10,7 +10,6 @@ import java.util.Set;
 import org.rifidi.edge.ale.esper.AbstractSignalStatement;
 import org.rifidi.edge.core.messages.TagReadEvent;
 import org.rifidi.edge.epcglobal.aleread.ALEReadAPI;
-import org.rifidi.edge.epcglobal.aleread.wrappers.RifidiECSpec;
 import org.rifidi.edge.esper.events.StopEvent;
 
 import com.espertech.esper.client.EPAdministrator;
@@ -34,8 +33,7 @@ public class StopEventTimingStatement extends AbstractSignalStatement {
 	 * @param administrator
 	 * @param primarykeys
 	 */
-	public StopEventTimingStatement(EPAdministrator administrator,
-			Set<String> primarykeys) {
+	public StopEventTimingStatement(EPAdministrator administrator, Set<String> primarykeys) {
 		super(administrator);
 		this.primarykeys = primarykeys;
 	}

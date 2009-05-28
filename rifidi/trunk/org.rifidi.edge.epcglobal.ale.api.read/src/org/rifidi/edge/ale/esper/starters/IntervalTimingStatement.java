@@ -5,7 +5,6 @@ package org.rifidi.edge.ale.esper.starters;
 
 import org.rifidi.edge.ale.esper.AbstractSignalStatement;
 import org.rifidi.edge.epcglobal.aleread.ALEReadAPI;
-import org.rifidi.edge.epcglobal.aleread.wrappers.RifidiECSpec;
 
 import com.espertech.esper.client.EPAdministrator;
 import com.espertech.esper.client.EPServiceProvider;
@@ -17,7 +16,7 @@ import com.espertech.esper.client.StatementAwareUpdateListener;
  * @author jochen
  * 
  */
-public class IntervalTimingStatement extends AbstractSignalStatement{
+public class IntervalTimingStatement extends AbstractSignalStatement {
 	/** Timing statement. */
 	private EPStatement intervalTimer;
 	/** Interval length. */
@@ -29,7 +28,8 @@ public class IntervalTimingStatement extends AbstractSignalStatement{
 	 * @param administrator
 	 * @param intervalInMs
 	 */
-	public IntervalTimingStatement(EPAdministrator administrator, long intervalInMs) {
+	public IntervalTimingStatement(EPAdministrator administrator,
+			long intervalInMs) {
 		super(administrator);
 		this.intervalInMs = intervalInMs;
 	}
