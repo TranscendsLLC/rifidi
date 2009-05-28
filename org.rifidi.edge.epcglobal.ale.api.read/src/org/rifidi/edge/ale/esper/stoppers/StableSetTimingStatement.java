@@ -10,6 +10,7 @@ import java.util.Set;
 
 import org.rifidi.edge.ale.esper.AbstractSignalStatement;
 import org.rifidi.edge.core.messages.TagReadEvent;
+import org.rifidi.edge.epcglobal.aleread.ALEReadAPI;
 import org.rifidi.edge.epcglobal.aleread.wrappers.RifidiECSpec;
 
 import com.espertech.esper.client.EPAdministrator;
@@ -59,7 +60,7 @@ public class StableSetTimingStatement extends AbstractSignalStatement {
 						stableSet.stop();
 					}
 					List<TagReadEvent> ret = Collections.emptyList();
-					signalStop(RifidiECSpec.STOPREASON_STABLESET, null, ret);
+					signalStop(ALEReadAPI.TriggerCondition.STABLE_SET, null, ret);
 				}
 			}
 		});
@@ -80,7 +81,7 @@ public class StableSetTimingStatement extends AbstractSignalStatement {
 					for (EventBean eventBean : newEvents) {
 						testEvents.add((TagReadEvent) eventBean.get("res"));
 					}
-					signalStop(RifidiECSpec.STOPREASON_STABLESET, null,
+					signalStop(ALEReadAPI.TriggerCondition.STABLE_SET, null,
 							testEvents);
 				}
 			}

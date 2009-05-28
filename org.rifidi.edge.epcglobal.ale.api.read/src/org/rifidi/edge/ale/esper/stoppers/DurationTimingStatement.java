@@ -9,6 +9,7 @@ import java.util.Set;
 
 import org.rifidi.edge.ale.esper.AbstractSignalStatement;
 import org.rifidi.edge.core.messages.TagReadEvent;
+import org.rifidi.edge.epcglobal.aleread.ALEReadAPI;
 import org.rifidi.edge.epcglobal.aleread.wrappers.RifidiECSpec;
 
 import com.espertech.esper.client.EPAdministrator;
@@ -65,7 +66,7 @@ public class DurationTimingStatement extends AbstractSignalStatement {
 							testEvents.add((TagReadEvent) eventBean.get("res"));
 						}
 					}
-					signalStop(RifidiECSpec.STOPREASON_DURATION, null,
+					signalStop(ALEReadAPI.TriggerCondition.DURATION, null,
 							testEvents);
 				}
 			}

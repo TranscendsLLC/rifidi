@@ -4,6 +4,7 @@
 package org.rifidi.edge.ale.esper.starters;
 
 import org.rifidi.edge.ale.esper.AbstractSignalStatement;
+import org.rifidi.edge.epcglobal.aleread.ALEReadAPI;
 import org.rifidi.edge.epcglobal.aleread.wrappers.RifidiECSpec;
 
 import com.espertech.esper.client.EPAdministrator;
@@ -48,7 +49,7 @@ public class IntervalTimingStatement extends AbstractSignalStatement{
 				} else {
 					// order matters, first stop it, then signal listeners
 					statement.stop();
-					signalStart(RifidiECSpec.STARTREASON_INTERVAL, null);
+					signalStart(ALEReadAPI.TriggerCondition.REPEAT_PERIOD, null);
 				}
 			}
 		});

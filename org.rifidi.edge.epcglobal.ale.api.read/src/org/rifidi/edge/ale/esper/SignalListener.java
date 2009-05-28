@@ -6,6 +6,7 @@ package org.rifidi.edge.ale.esper;
 import java.util.List;
 
 import org.rifidi.edge.core.messages.TagReadEvent;
+import org.rifidi.edge.epcglobal.aleread.ALEReadAPI;
 
 /**
  * This listener can be used on a SignalStatement and will be called when a
@@ -22,7 +23,7 @@ public interface SignalListener {
 	 * @param cause
 	 *            the event causing the signal
 	 */
-	void startSignal(int type, Object cause);
+	void startSignal(ALEReadAPI.TriggerCondition type, Object cause);
 
 	/**
 	 * Called when a stopper has triggered.
@@ -31,5 +32,5 @@ public interface SignalListener {
 	 * @param cause
 	 * @param events
 	 */
-	void stopSignal(int type, Object cause, List<TagReadEvent> events);
+	void stopSignal(ALEReadAPI.TriggerCondition type, Object cause, List<TagReadEvent> events);
 }
