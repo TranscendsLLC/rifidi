@@ -8,11 +8,10 @@ import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.rifidi.edge.ale.esper.timer.Trigger;
 import org.rifidi.edge.epcglobal.ale.api.read.data.ECBoundarySpec;
 import org.rifidi.edge.epcglobal.ale.api.read.ws.ECSpecValidationExceptionResponse;
 import org.rifidi.edge.epcglobal.ale.api.read.ws.InvalidURIExceptionResponse;
-import org.rifidi.edge.epcglobal.aleread.Trigger;
-import org.rifidi.edge.epcglobal.aleread.service.TriggerFactoryService;
 
 /**
  * This class parses a boundary spec and extracts the required values.
@@ -47,15 +46,14 @@ public class RifidiBoundarySpec {
 	 * @throws ECSpecValidationExceptionResponse
 	 * @throws InvalidURIExceptionResponse
 	 */
-	public RifidiBoundarySpec(ECBoundarySpec boundaryspec,
-			TriggerFactoryService triggerFactoryService)
+	public RifidiBoundarySpec(ECBoundarySpec boundaryspec)
 			throws ECSpecValidationExceptionResponse,
 			InvalidURIExceptionResponse {
 		startTriggers = new HashSet<Trigger>();
 		// collect start triggers
 		if (boundaryspec.getStartTrigger() != null
 				&& !"".equals(boundaryspec.getStartTrigger())) {
-			Trigger trig = triggerFactoryService.createTrigger(boundaryspec
+			Trigger trig = new Trigger(boundaryspec
 					.getStartTrigger());
 			trig.setStart(true);
 			startTriggers.add(trig);
@@ -64,7 +62,7 @@ public class RifidiBoundarySpec {
 				&& boundaryspec.getExtension().getStartTriggerList() != null) {
 			for (String uri : boundaryspec.getExtension().getStartTriggerList()
 					.getStartTrigger()) {
-				Trigger trig = triggerFactoryService.createTrigger(uri);
+				Trigger trig = new Trigger(uri);
 				trig.setStart(true);
 				startTriggers.add(trig);
 			}
@@ -73,7 +71,7 @@ public class RifidiBoundarySpec {
 		stopTriggers = new HashSet<Trigger>();
 		if (boundaryspec.getStopTrigger() != null
 				&& !"".equals(boundaryspec.getStopTrigger())) {
-			Trigger trig = triggerFactoryService.createTrigger(boundaryspec
+			Trigger trig = new Trigger(boundaryspec
 					.getStopTrigger());
 			trig.setStart(false);
 			stopTriggers.add(trig);
@@ -82,7 +80,7 @@ public class RifidiBoundarySpec {
 				&& boundaryspec.getExtension().getStopTriggerList() != null) {
 			for (String uri : boundaryspec.getExtension().getStopTriggerList()
 					.getStopTrigger()) {
-				Trigger trig = triggerFactoryService.createTrigger(uri);
+				Trigger trig = new Trigger(uri);
 				trig.setStart(false);
 				stopTriggers.add(trig);
 			}

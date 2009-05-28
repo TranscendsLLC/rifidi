@@ -18,7 +18,6 @@ import org.rifidi.edge.epcglobal.ale.api.read.data.ECReportSpec;
 import org.rifidi.edge.epcglobal.aleread.ALEReadAPI;
 import org.rifidi.edge.epcglobal.aleread.service.ECSPECManagerService;
 import org.rifidi.edge.epcglobal.aleread.service.RifidiReportFactory;
-import org.rifidi.edge.epcglobal.aleread.service.TriggerFactoryService;
 import org.rifidi.edge.epcglobal.aleread.wrappers.RifidiBoundarySpec;
 import org.rifidi.edge.epcglobal.aleread.wrappers.RifidiReport;
 import org.rifidi.edge.lr.LogicalReader;
@@ -40,8 +39,6 @@ public class ALEServicePortTypeImpl implements ALEServicePortType, WebService {
 			.getLog(ALEServicePortTypeImpl.class);
 	/** Service that manages the ecspecs. */
 	private ECSPECManagerService ecspecManagerService;
-	/** Service for creating triggers. */
-	private TriggerFactoryService triggerFactoryService;
 	/** Service for managing logical readers. */
 	private LogicalReaderManagementService lrService;
 	/** Factory for creating reports. */
@@ -135,7 +132,7 @@ public class ALEServicePortTypeImpl implements ALEServicePortType, WebService {
 		RifidiBoundarySpec rifidiBoundarySpec = null;
 		try {
 			rifidiBoundarySpec = new RifidiBoundarySpec(parms.getSpec()
-					.getBoundarySpec(), triggerFactoryService);
+					.getBoundarySpec());
 		} catch (InvalidURIExceptionResponse e) {
 			throw new ECSpecValidationExceptionResponse(e.toString());
 		}
@@ -392,15 +389,6 @@ public class ALEServicePortTypeImpl implements ALEServicePortType, WebService {
 	public void setEcspecManagerService(
 			ECSPECManagerService ecspecManagerService) {
 		this.ecspecManagerService = ecspecManagerService;
-	}
-
-	/**
-	 * @param triggerFactoryService
-	 *            the triggerFactoryService to set
-	 */
-	public void setTriggerFactoryService(
-			TriggerFactoryService triggerFactoryService) {
-		this.triggerFactoryService = triggerFactoryService;
 	}
 
 	/**
