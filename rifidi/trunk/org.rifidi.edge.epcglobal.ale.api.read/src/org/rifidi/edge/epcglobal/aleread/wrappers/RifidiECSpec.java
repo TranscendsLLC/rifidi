@@ -16,6 +16,7 @@ import org.rifidi.edge.ale.esper.starters.StartEventStatement;
 import org.rifidi.edge.ale.esper.stoppers.DurationTimingStatement;
 import org.rifidi.edge.ale.esper.stoppers.StableSetTimingStatement;
 import org.rifidi.edge.ale.esper.stoppers.StopEventTimingStatement;
+import org.rifidi.edge.ale.esper.timer.Timer;
 import org.rifidi.edge.core.messages.TagReadEvent;
 import org.rifidi.edge.epcglobal.ale.api.read.data.ECSpec;
 import org.rifidi.edge.epcglobal.ale.api.read.ws.DuplicateSubscriptionExceptionResponse;
@@ -23,7 +24,6 @@ import org.rifidi.edge.epcglobal.ale.api.read.ws.ECSpecValidationExceptionRespon
 import org.rifidi.edge.epcglobal.ale.api.read.ws.InvalidURIExceptionResponse;
 import org.rifidi.edge.epcglobal.ale.api.read.ws.NoSuchSubscriberExceptionResponse;
 import org.rifidi.edge.epcglobal.aleread.ALEReadAPI;
-import org.rifidi.edge.epcglobal.aleread.ECReportmanager;
 import org.rifidi.edge.esper.events.DestroyEvent;
 import org.rifidi.edge.lr.LogicalReader;
 import org.rifidi.edge.lr.LogicalReaderManagementService;
@@ -39,7 +39,6 @@ import com.espertech.esper.client.EPStatement;
  * 
  */
 public class RifidiECSpec implements SignalListener {
-
 	/** Logger for this class. */
 	private static final Log logger = LogFactory.getLog(RifidiECSpec.class);
 	/** Fields in here constitute the primary keys for the tags. */
@@ -54,8 +53,6 @@ public class RifidiECSpec implements SignalListener {
 	private LogicalReaderManagementService lrService;
 	/** Readers used by this spec. */
 	private Set<LogicalReader> readers;
-	/** RifidiReport manager for this spec. */
-	private ECReportmanager ecReportmanager = null;
 	/** Thread that runs the reportmanager. */
 	private Thread reportThread = null;
 	/** Boundary spec for this spec. */
@@ -108,7 +105,6 @@ public class RifidiECSpec implements SignalListener {
 		this.esper = esper;
 		this.readers = new HashSet<LogicalReader>();
 		this.readers.addAll(readers);
-
 		// configure the report sender
 		this.sender = new ReportSender(reports, name, spec);
 		Thread senderThread = new Thread(sender);
@@ -127,7 +123,8 @@ public class RifidiECSpec implements SignalListener {
 					"insert into LogicalReader select * from "
 							+ reader.getName()));
 		}
-
+		Timer timer = new Timer(rifidiBoundarySpec.getStartTriggers(),
+				rifidiBoundarySpec.getStopTriggers(), esper);
 		if (rifidiBoundarySpec.isWhenDataAvailable()) {
 			logger.fatal("'When data available' not yet implemented!");
 		}
@@ -162,6 +159,7 @@ public class RifidiECSpec implements SignalListener {
 			StartEventStatement startEventStatement = new StartEventStatement(
 					esper.getEPAdministrator());
 			startEventStatement.registerSignalListener(this);
+			startEventStatement.start();
 			startStatementControllers.add(startEventStatement);
 		}
 		if (rifidiBoundarySpec.getRepeatInterval() > 0) {

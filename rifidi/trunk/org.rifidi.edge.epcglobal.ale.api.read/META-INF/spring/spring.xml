@@ -13,7 +13,6 @@
 	<bean id="aleReadAPIService"
 		class="org.rifidi.edge.epcglobal.ale.api.read.ws.ALEServicePortTypeImpl">
 		<property name="ecspecManagerService" ref="ecspecManager" />
-		<property name="triggerFactoryService" ref="triggerFactory" />
 		<property name="lrService" ref="lrManagement" />
 		<property name="reportFactory" ref="reportFactory" />
 	</bean>
@@ -22,9 +21,6 @@
 		class="org.rifidi.edge.epcglobal.aleread.service.ECSPECManagerServiceImpl">
 		<property name="esperManagement" ref="esperManagerService"></property>
 	</bean>
-
-	<bean id="triggerFactory"
-		class="org.rifidi.edge.epcglobal.aleread.service.TriggerFactoryServiceImpl" />
 
 	<bean id="reportFactory"
 		class="org.rifidi.edge.epcglobal.aleread.service.RifidiReportFactoryimpl" />

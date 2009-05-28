@@ -35,7 +35,7 @@ public class StartEventStatement extends AbstractSignalStatement {
 	 */
 	private void init() {
 		startTimer = administrator
-				.createPattern("select startEvent from StartEvent as startEvent");
+				.createEPL("select startEvent from StartEvent as startEvent");
 		startTimer.addListener(new UpdateListener() {
 
 			@Override
