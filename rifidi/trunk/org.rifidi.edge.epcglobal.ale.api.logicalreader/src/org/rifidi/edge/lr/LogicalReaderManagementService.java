@@ -6,15 +6,14 @@ package org.rifidi.edge.lr;
 import java.util.Set;
 
 import org.rifidi.edge.epcglobal.ale.api.lr.data.LRSpec;
-import org.rifidi.edge.epcglobal.ale.api.lr.ws.DuplicateNameExceptionResponse;
-import org.rifidi.edge.epcglobal.ale.api.lr.ws.InUseExceptionResponse;
-import org.rifidi.edge.epcglobal.ale.api.lr.ws.ValidationExceptionResponse;
 import org.rifidi.edge.lr.exceptions.DuplicateReaderNameException;
 import org.rifidi.edge.lr.exceptions.ImmutableReaderException;
 import org.rifidi.edge.lr.exceptions.NoSuchReaderNameException;
 import org.rifidi.edge.lr.exceptions.ReaderInUseException;
 
 /**
+ * Service for managing logical readers.
+ * 
  * @author Jochen Mader - jochen@pramari.com
  * 
  */

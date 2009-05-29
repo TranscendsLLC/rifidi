@@ -10,6 +10,8 @@ import org.rifidi.edge.lr.exceptions.ImmutableReaderException;
 import org.rifidi.edge.lr.exceptions.ReaderInUseException;
 
 /**
+ * A logical reader that contains other readers.
+ * 
  * @author Jochen Mader - jochen@pramari.com
  * 
  */

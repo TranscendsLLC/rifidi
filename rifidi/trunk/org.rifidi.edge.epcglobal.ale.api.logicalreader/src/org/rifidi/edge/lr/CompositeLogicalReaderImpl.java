@@ -20,6 +20,9 @@ import org.rifidi.edge.lr.exceptions.ImmutableReaderException;
 import org.rifidi.edge.lr.exceptions.ReaderInUseException;
 
 /**
+ * This implementation allows to create a tree of logical readers and expose
+ * them as a single reader.
+ * 
  * @author Jochen Mader - jochen@pramari.com
  * 
  */
@@ -286,8 +289,7 @@ public class CompositeLogicalReaderImpl implements CompositeLogicalReader {
 	 * .LogicalReader)
 	 */
 	@Override
-	public void addReader(LogicalReader reader)
-			throws ReaderInUseException,
+	public void addReader(LogicalReader reader) throws ReaderInUseException,
 			ImmutableReaderException {
 		updating.lock();
 		try {
@@ -312,8 +314,7 @@ public class CompositeLogicalReaderImpl implements CompositeLogicalReader {
 	 */
 	@Override
 	public void addReaders(Set<LogicalReader> reader)
-			throws ReaderInUseException,
-			ImmutableReaderException {
+			throws ReaderInUseException, ImmutableReaderException {
 		updating.lock();
 		try {
 			if (inUse) {
@@ -388,8 +389,7 @@ public class CompositeLogicalReaderImpl implements CompositeLogicalReader {
 	 */
 	@Override
 	public void setReaders(Set<LogicalReader> reader)
-			throws ReaderInUseException,
-			ImmutableReaderException {
+			throws ReaderInUseException, ImmutableReaderException {
 		updating.lock();
 		try {
 			if (inUse) {

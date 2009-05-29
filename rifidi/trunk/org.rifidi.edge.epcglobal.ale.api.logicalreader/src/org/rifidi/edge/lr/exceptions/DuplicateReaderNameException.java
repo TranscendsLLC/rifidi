@@ -4,6 +4,8 @@
 package org.rifidi.edge.lr.exceptions;
 
 /**
+ * Raised if a reader with that name already exists.
+ * 
  * @author Jochen Mader - jochen@pramari.com
  * 
  */
