@@ -13,7 +13,9 @@ import com.espertech.esper.client.EventBean;
 import com.espertech.esper.client.UpdateListener;
 
 /**
- * @author jochen
+ * Statement that sends a signal as soon as a start event arrives.
+ * 
+ * @author Jochen Mader - jochen@pramari.com
  * 
  */
 public class StartEventStatement extends AbstractSignalStatement {

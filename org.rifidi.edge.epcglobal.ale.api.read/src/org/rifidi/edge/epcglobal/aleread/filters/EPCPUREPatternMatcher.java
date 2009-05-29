@@ -8,7 +8,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * @author jochen
+ * Identifies an epc pure encoding. urn:epc:id:number.number.number
+ * 
+ * @author Jochen Mader - jochen@pramari.com
  * 
  */
 public class EPCPUREPatternMatcher extends AbstractPatternMatcher {

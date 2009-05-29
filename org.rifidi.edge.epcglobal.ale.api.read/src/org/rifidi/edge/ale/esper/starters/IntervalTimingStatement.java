@@ -13,7 +13,12 @@ import com.espertech.esper.client.EventBean;
 import com.espertech.esper.client.StatementAwareUpdateListener;
 
 /**
- * @author jochen
+ * Timing statement that sends a signal whenever the interval expires. According
+ * to the ale spec this statement needs to be startet as soon as a new event
+ * cycle begins, creating wobbly intervals doing so (the time between two
+ * interval starts may vary).
+ * 
+ * @author Jochen Mader - jochen@pramari.com
  * 
  */
 public class IntervalTimingStatement extends AbstractSignalStatement {

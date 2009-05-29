@@ -32,6 +32,9 @@ import org.rifidi.edge.epcglobal.aleread.ALEReadAPI;
 import org.rifidi.edge.epcglobal.aleread.wrappers.RifidiECSpec.ResultContainer;
 
 /**
+ * Very simple report sender. Takes in the reports, serialiyes them to XML and
+ * pumps em out to the receivers.
+ * 
  * @author Jochen Mader - jochen@pramari.com
  * 
  */

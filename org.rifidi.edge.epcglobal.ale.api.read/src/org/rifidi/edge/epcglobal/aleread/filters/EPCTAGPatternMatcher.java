@@ -8,7 +8,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * @author jochen
+ * Dientifies a tag pattern: urn:epc:pat:tagtypeidentifier:*
+ * 
+ * @author Jochen Mader - jochen@pramari.com
  * 
  */
 public class EPCTAGPatternMatcher extends AbstractPatternMatcher implements

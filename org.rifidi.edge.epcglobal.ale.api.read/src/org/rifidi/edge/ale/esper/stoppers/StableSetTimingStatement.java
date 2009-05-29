@@ -18,7 +18,11 @@ import com.espertech.esper.client.EventBean;
 import com.espertech.esper.client.UpdateListener;
 
 /**
- * @author jochen
+ * A set is stable when after certain time interval no new tags have appeared.
+ * This statement will wait for that condition, terminate and return the
+ * collected tags.
+ * 
+ * @author Jochen Mader - jochen@pramari.com
  * 
  */
 public class StableSetTimingStatement extends AbstractSignalStatement {

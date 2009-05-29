@@ -13,7 +13,9 @@ import java.util.regex.Pattern;
 import org.rifidi.edge.core.messages.DatacontainerEvent;
 
 /**
- * @author jochen
+ * Group matcher for UINT DECIMAL patterns. See ALE 1.1 6.2.2.3.
+ * 
+ * @author Jochen Mader - jochen@pramari.com
  * 
  */
 public class UINTDECIMALGROUPPatternMatcher implements GroupMatcher {
@@ -25,6 +27,11 @@ public class UINTDECIMALGROUPPatternMatcher implements GroupMatcher {
 	private Map<String, List<DatacontainerEvent>> groupsToTags;
 	private boolean distinct = true;
 
+	/**
+	 * Constructor.
+	 * 
+	 * @param input
+	 */
 	public UINTDECIMALGROUPPatternMatcher(String input) {
 		groupsToTags = new HashMap<String, List<DatacontainerEvent>>();
 		if (input.equals("*")) {
@@ -44,6 +51,13 @@ public class UINTDECIMALGROUPPatternMatcher implements GroupMatcher {
 		match = input;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.epcglobal.aleread.groups.GroupMatcher#match(java.lang
+	 * .String, org.rifidi.edge.core.messages.DatacontainerEvent)
+	 */
 	@Override
 	public boolean match(String input, DatacontainerEvent event) {
 		if (always) {
@@ -66,6 +80,12 @@ public class UINTDECIMALGROUPPatternMatcher implements GroupMatcher {
 		return false;
 	}
 
+	/**
+	 * Add the given value to the key.
+	 * 
+	 * @param key
+	 * @param value
+	 */
 	private void addToGroup(String key, DatacontainerEvent value) {
 		if (!groupsToTags.containsKey(key)) {
 			groupsToTags.put(key, new ArrayList<DatacontainerEvent>());
@@ -73,6 +93,11 @@ public class UINTDECIMALGROUPPatternMatcher implements GroupMatcher {
 		groupsToTags.get(key).add(value);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.rifidi.edge.epcglobal.aleread.groups.GroupMatcher#getGrouped()
+	 */
 	@Override
 	public Map<String, List<DatacontainerEvent>> getGrouped() {
 		Map<String, List<DatacontainerEvent>> ret = new HashMap<String, List<DatacontainerEvent>>(

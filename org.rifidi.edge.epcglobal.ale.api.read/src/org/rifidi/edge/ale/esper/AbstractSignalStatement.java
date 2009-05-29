@@ -13,7 +13,9 @@ import org.rifidi.edge.epcglobal.aleread.ALEReadAPI;
 import com.espertech.esper.client.EPAdministrator;
 
 /**
- * @author jochen
+ * Extend this class to listen for results from esper statements.
+ * 
+ * @author Jochen Mader - jochen@pramari.com
  * 
  */
 public abstract class AbstractSignalStatement implements SignalStatement,

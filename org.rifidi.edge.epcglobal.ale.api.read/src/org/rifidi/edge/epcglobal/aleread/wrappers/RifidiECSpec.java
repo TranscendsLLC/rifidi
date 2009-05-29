@@ -26,7 +26,6 @@ import org.rifidi.edge.epcglobal.ale.api.read.ws.NoSuchSubscriberExceptionRespon
 import org.rifidi.edge.epcglobal.aleread.ALEReadAPI;
 import org.rifidi.edge.esper.events.DestroyEvent;
 import org.rifidi.edge.lr.LogicalReader;
-import org.rifidi.edge.lr.LogicalReaderManagementService;
 
 import com.espertech.esper.client.EPServiceProvider;
 import com.espertech.esper.client.EPStatement;
@@ -49,17 +48,13 @@ public class RifidiECSpec implements SignalListener {
 	private String name;
 	/** Esper instance to use. */
 	private EPServiceProvider esper;
-	/** TODO: this needs fixing as the service might go away and reappear!!! */
-	private LogicalReaderManagementService lrService;
 	/** Readers used by this spec. */
 	private Set<LogicalReader> readers;
-	/** Thread that runs the reportmanager. */
-	private Thread reportThread = null;
 	/** Boundary spec for this spec. */
 	private RifidiBoundarySpec rifidiBoundarySpec;
 	/** Threadsafe list for subscription uris. */
 	private List<String> subscriptionURIs;
-
+	/** All statements that got created. */
 	private List<StatementController> startStatementControllers;
 	private List<StatementController> stopStatementControllers;
 	private List<EPStatement> collectionStatements;
@@ -79,6 +74,8 @@ public class RifidiECSpec implements SignalListener {
 	private ResultContainer nextResult;
 	/** Sends out the data. */
 	private ReportSender sender;
+	/** Sender for the start/stop triggers. */
+	private Timer timer;
 
 	/**
 	 * Constructor.
@@ -123,7 +120,7 @@ public class RifidiECSpec implements SignalListener {
 					"insert into LogicalReader select * from "
 							+ reader.getName()));
 		}
-		Timer timer = new Timer(rifidiBoundarySpec.getStartTriggers(),
+		timer = new Timer(rifidiBoundarySpec.getStartTriggers(),
 				rifidiBoundarySpec.getStopTriggers(), esper);
 		if (rifidiBoundarySpec.isWhenDataAvailable()) {
 			logger.fatal("'When data available' not yet implemented!");
@@ -197,7 +194,7 @@ public class RifidiECSpec implements SignalListener {
 		// swap the result containers
 		currentResult = nextResult;
 		nextResult = null;
-		currentResult.startTime=System.currentTimeMillis();
+		currentResult.startTime = System.currentTimeMillis();
 		// start the collectors
 		for (StatementController ctrl : stopStatementControllers) {
 			if (ctrl.needsRestart()) {
@@ -270,7 +267,7 @@ public class RifidiECSpec implements SignalListener {
 		startLock.lock();
 		try {
 			running = false;
-			currentResult.stopTime=System.currentTimeMillis();
+			currentResult.stopTime = System.currentTimeMillis();
 			// stop all currently executing statements
 			for (StatementController ctrl : stopStatementControllers) {
 				if (ctrl.needsRestart()) {
@@ -388,7 +385,7 @@ public class RifidiECSpec implements SignalListener {
 		public List<TagReadEvent> events;
 		public long startTime;
 		public long stopTime;
-		
+
 		/**
 		 * Constructor.
 		 * 

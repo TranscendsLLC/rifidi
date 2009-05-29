@@ -4,13 +4,21 @@
 package org.rifidi.edge.epcglobal.aleread.filters;
 
 /**
- * @author jochen
+ * Matches a field against a number range.
+ * 
+ * @author Jochen Mader - jochen@pramari.com
  * 
  */
 public class RangeFieldMatcher implements FieldMatcher {
-
+	/** Low and high value of the range. */
 	private Long lo, hi;
 
+	/**
+	 * Constructor.
+	 * 
+	 * @param lo
+	 * @param hi
+	 */
 	public RangeFieldMatcher(Long lo, Long hi) {
 		this.lo = lo;
 		this.hi = hi;

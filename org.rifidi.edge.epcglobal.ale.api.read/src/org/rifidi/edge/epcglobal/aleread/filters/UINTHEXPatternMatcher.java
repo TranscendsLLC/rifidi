@@ -8,21 +8,28 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * @author jochen
+ * Matcher for UINT HEX fields.
+ * 
+ * @author Jochen Mader - jochen@pramari.com
  * 
  */
 public class UINTHEXPatternMatcher implements PatternMatcher {
 	private static Pattern hexRange = Pattern
 			.compile("^\\[x([A-D0-9]+)-x([A-D0-9]+)\\]$");
 	private static Pattern andComp = Pattern
-		.compile("^&x([A-D0-9]+)=x([A-D0-9]+)$");
+			.compile("^&x([A-D0-9]+)=x([A-D0-9]+)$");
 	private boolean always = false;
 	private String match = null;
 	private Long lo;
 	private Long hi;
 	private BigInteger mask;
 	private BigInteger compare;
-	
+
+	/**
+	 * Constructor.
+	 * 
+	 * @param input
+	 */
 	public UINTHEXPatternMatcher(String input) {
 		if (input.equals("*")) {
 			always = true;
@@ -35,9 +42,9 @@ public class UINTHEXPatternMatcher implements PatternMatcher {
 			return;
 		}
 		mat = andComp.matcher(input);
-		if(mat.find()){
-			mask=new BigInteger(mat.group(1),16);
-			compare=new BigInteger(mat.group(2),16);
+		if (mat.find()) {
+			mask = new BigInteger(mat.group(1), 16);
+			compare = new BigInteger(mat.group(2), 16);
 		}
 		match = input;
 	}
@@ -55,11 +62,11 @@ public class UINTHEXPatternMatcher implements PatternMatcher {
 		if (matchee.equals(match)) {
 			return true;
 		}
-		if(mask!=null){
-			BigInteger input=new BigInteger(matchee, 16);
+		if (mask != null) {
+			BigInteger input = new BigInteger(matchee, 16);
 			return mask.and(input).equals(compare);
 		}
-		//strip the leading x
+		// strip the leading x
 		Long val = Long.parseLong(matchee.substring(1), 16);
 		return val >= lo && val <= hi ? true : false;
 	}

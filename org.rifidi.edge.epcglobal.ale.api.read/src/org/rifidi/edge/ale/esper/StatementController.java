@@ -4,7 +4,9 @@
 package org.rifidi.edge.ale.esper;
 
 /**
- * @author jochen
+ * Control the lifecycle of a statement.
+ * 
+ * @author Jochen Mader - jochen@pramari.com
  * 
  */
 public interface StatementController {

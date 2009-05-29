@@ -7,17 +7,28 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * @author jochen
+ * matcher for a UINT decimal range.
+ * 
+ * @author Jochen Mader - jochen@pramari.com
  * 
  */
 public class UINTDECIMALPatternMatcher implements PatternMatcher {
-	private static Pattern range = Pattern
-			.compile("^\\[(\\d+)-(\\d+)\\]$");
+	/** Pattern to collect the fields. */
+	private static Pattern range = Pattern.compile("^\\[(\\d+)-(\\d+)\\]$");
+	/** True if pattern matches always*/
 	private boolean always = false;
+	/** Raw pattern. */
 	private String match = null;
+	/** Lowest value allowed. */
 	private Long lo;
+	/** Highest value allowed. */
 	private Long hi;
 
+	/**
+	 * Constructor.
+	 * 
+	 * @param input
+	 */
 	public UINTDECIMALPatternMatcher(String input) {
 		if (input.equals("*")) {
 			always = true;

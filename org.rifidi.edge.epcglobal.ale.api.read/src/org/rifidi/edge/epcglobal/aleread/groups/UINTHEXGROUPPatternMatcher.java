@@ -13,7 +13,9 @@ import java.util.regex.Pattern;
 import org.rifidi.edge.core.messages.DatacontainerEvent;
 
 /**
- * @author jochen
+ * Group matcher for UINT HEX patterns. See ALE 1.1 6.2.2.3.
+ * 
+ * @author Jochen Mader - jochen@pramari.com
  * 
  */
 public class UINTHEXGROUPPatternMatcher implements GroupMatcher {
@@ -25,6 +27,11 @@ public class UINTHEXGROUPPatternMatcher implements GroupMatcher {
 	private Long hi;
 	private Map<String, List<DatacontainerEvent>> groupsToTags;
 
+	/**
+	 * Constructor.
+	 * 
+	 * @param input
+	 */
 	public UINTHEXGROUPPatternMatcher(String input) {
 		groupsToTags = new HashMap<String, List<DatacontainerEvent>>();
 		if (input.equals("*")) {
@@ -40,6 +47,11 @@ public class UINTHEXGROUPPatternMatcher implements GroupMatcher {
 		match = input;
 	}
 
+
+
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.epcglobal.aleread.groups.GroupMatcher#match(java.lang.String, org.rifidi.edge.core.messages.DatacontainerEvent)
+	 */
 	@Override
 	public boolean match(String input, DatacontainerEvent event) {
 		if (always) {
@@ -58,6 +70,12 @@ public class UINTHEXGROUPPatternMatcher implements GroupMatcher {
 		return false;
 	}
 
+	/**
+	 * Add to the group.
+	 * 
+	 * @param key
+	 * @param value
+	 */
 	private void addToGroup(String key, DatacontainerEvent value) {
 		if (!groupsToTags.containsKey(key)) {
 			groupsToTags.put(key, new ArrayList<DatacontainerEvent>());
@@ -65,6 +83,9 @@ public class UINTHEXGROUPPatternMatcher implements GroupMatcher {
 		groupsToTags.get(key).add(value);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.epcglobal.aleread.groups.GroupMatcher#getGrouped()
+	 */
 	@Override
 	public Map<String, List<DatacontainerEvent>> getGrouped() {
 		Map<String, List<DatacontainerEvent>> ret = new HashMap<String, List<DatacontainerEvent>>(
@@ -72,4 +93,5 @@ public class UINTHEXGROUPPatternMatcher implements GroupMatcher {
 		groupsToTags.clear();
 		return ret;
 	}
+
 }

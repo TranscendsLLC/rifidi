@@ -12,6 +12,9 @@ import org.rifidi.edge.epcglobal.aleread.ALEDataTypes;
 import org.rifidi.edge.epcglobal.aleread.ALEFields;
 
 /**
+ * This matcher extracts field information from a pattern. All ALE fields and encodings 
+ * specified in ALE 1.1 chapter 6 are supported.
+ * 
  * @author Jochen Mader - jochen@pramari.com
  * 
  */
