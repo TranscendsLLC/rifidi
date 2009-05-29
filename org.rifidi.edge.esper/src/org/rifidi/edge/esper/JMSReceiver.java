@@ -12,6 +12,7 @@ import org.rifidi.edge.core.messages.ReadCycle;
 import org.rifidi.edge.core.messages.TagReadEvent;
 
 import com.espertech.esper.client.EPServiceProvider;
+import com.espertech.esper.client.EventSender;
 
 /**
  * Instances of this class are used to receive JMS messages and forward them to
@@ -24,7 +25,8 @@ public class JMSReceiver implements MessageListener {
 	private static final Log log = LogFactory.getLog(JMSReceiver.class);
 	/** Instance of esper engine. */
 	private EPServiceProvider epService;
-
+	/** TYpded event sender. */
+	private EventSender eventSender;
 	/**
 	 * TODO: Method level comment.  
 	 * 
@@ -34,6 +36,7 @@ public class JMSReceiver implements MessageListener {
 	public void setEsperManagement(EsperManagementService esperManagement) {
 		// TODO: we might want to do something if we already got a service
 		epService = esperManagement.getProvider();
+		eventSender=epService.getEPRuntime().getEventSender("TagReadEvent");
 	}
 
 	/*
@@ -50,7 +53,7 @@ public class JMSReceiver implements MessageListener {
 				if (obj instanceof ReadCycle) {
 					ReadCycle cycle = (ReadCycle) obj;
 					for (TagReadEvent ev : cycle.getTags()) {
-						epService.getEPRuntime().sendEvent(ev);
+						eventSender.sendEvent(ev);
 					}
 					return;
 				}
