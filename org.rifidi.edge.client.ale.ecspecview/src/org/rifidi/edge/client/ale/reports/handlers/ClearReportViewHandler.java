@@ -6,7 +6,6 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.PlatformUI;
 import org.rifidi.edge.client.ale.ecspecview.views.ECSpecEditorView;
-import org.rifidi.edge.client.ale.reports.ReportReceiverViewPart;
 
 /**
  * Handler for removing all reports from the report view.
@@ -27,9 +26,8 @@ public class ClearReportViewHandler extends AbstractHandler {
 		for (IViewReference ref : PlatformUI.getWorkbench()
 				.getActiveWorkbenchWindow().getActivePage().getViewReferences()) {
 			if (ref.getId().equals(ECSpecEditorView.ID)) {
-				ReportReceiverViewPart vi = (ReportReceiverViewPart) ref
-						.getView(true);
-				vi.clear();
+				ECSpecEditorView esevi = (ECSpecEditorView) ref.getView(true);
+				esevi.clearReports();
 			}
 		}
 
