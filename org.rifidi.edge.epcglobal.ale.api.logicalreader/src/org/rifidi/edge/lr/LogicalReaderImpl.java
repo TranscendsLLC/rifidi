@@ -21,6 +21,8 @@ import org.rifidi.edge.lr.exceptions.ImmutableReaderException;
 import org.rifidi.edge.lr.exceptions.ReaderInUseException;
 
 /**
+ * Only physical readers are represented by this type of logical readers.
+ * 
  * @author Jochen Mader - jochen@pramari.com
  * 
  */

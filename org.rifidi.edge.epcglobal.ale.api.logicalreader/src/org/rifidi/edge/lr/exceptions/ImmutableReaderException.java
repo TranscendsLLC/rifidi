@@ -4,6 +4,8 @@
 package org.rifidi.edge.lr.exceptions;
 
 /**
+ * Raised if soemone tries to change values on an immutable reader.
+ * 
  * @author Jochen Mader - jochen@pramari.com
  * 
  */

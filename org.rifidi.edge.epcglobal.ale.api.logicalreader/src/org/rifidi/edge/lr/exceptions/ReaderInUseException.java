@@ -4,6 +4,8 @@
 package org.rifidi.edge.lr.exceptions;
 
 /**
+ * Thrown if somebody wants to change/delete a reader that is currently in use.
+ * 
  * @author Jochen Mader - jochen@pramari.com
  * 
  */

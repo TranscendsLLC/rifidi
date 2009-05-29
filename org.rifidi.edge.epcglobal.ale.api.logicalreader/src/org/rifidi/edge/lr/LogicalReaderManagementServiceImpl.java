@@ -14,10 +14,6 @@ import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.readers.AbstractReader;
 import org.rifidi.edge.epcglobal.ale.api.lr.data.LRProperty;
 import org.rifidi.edge.epcglobal.ale.api.lr.data.LRSpec;
-import org.rifidi.edge.epcglobal.ale.api.lr.ws.DuplicateNameExceptionResponse;
-import org.rifidi.edge.epcglobal.ale.api.lr.ws.ImmutableReaderExceptionResponse;
-import org.rifidi.edge.epcglobal.ale.api.lr.ws.InUseExceptionResponse;
-import org.rifidi.edge.epcglobal.ale.api.lr.ws.ValidationExceptionResponse;
 import org.rifidi.edge.esper.EsperManagementService;
 import org.rifidi.edge.lr.exceptions.DuplicateReaderNameException;
 import org.rifidi.edge.lr.exceptions.ImmutableReaderException;
@@ -27,6 +23,8 @@ import org.rifidi.edge.lr.exceptions.ReaderInUseException;
 import com.espertech.esper.client.EPStatement;
 
 /**
+ * Thread safe implementation of the logical reader service.
+ * 
  * @author Jochen Mader - jochen@pramari.com
  * 
  */
@@ -292,6 +290,7 @@ public class LogicalReaderManagementServiceImpl implements
 		}
 	}
 
+	/** Container for the reader and the associated statements. */
 	private class ReaderStatementTuple {
 		public LogicalReader reader;
 		public EPStatement statement;

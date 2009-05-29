@@ -14,6 +14,8 @@ import org.rifidi.edge.lr.exceptions.ImmutableReaderException;
 import org.rifidi.edge.lr.exceptions.ReaderInUseException;
 
 /**
+ * Basic logical reader.
+ * 
  * @author Jochen Mader - jochen@pramari.com
  * 
  */
