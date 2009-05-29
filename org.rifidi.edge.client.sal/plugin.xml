@@ -898,8 +898,7 @@
       <propertyContributor
             contributorId="org.rifidi.edge.client.sal.tabbedPropContributer"
             labelProvider="org.rifidi.edge.client.sal.properties.SALTabbedPropertiesLabelProvider"
-            tabDescriptorProvider="org.rifidi.edge.client.sal.properties.SALTabDescriptorProvider"
-            typeMapper="org.rifidi.edge.client.sal.properties.SALTabbedPropertiesTypeMapper">
+            tabDescriptorProvider="org.rifidi.edge.client.sal.properties.SALTabDescriptorProvider">
       </propertyContributor>
    </extension>
 
