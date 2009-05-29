@@ -18,7 +18,9 @@ import com.espertech.esper.client.EventBean;
 import com.espertech.esper.client.UpdateListener;
 
 /**
- * @author jochen
+ * Statement that collects stop events.
+ * 
+ * @author Jochen Mader - jochen@pramari.com
  * 
  */
 public class StopEventTimingStatement extends AbstractSignalStatement {
@@ -33,7 +35,8 @@ public class StopEventTimingStatement extends AbstractSignalStatement {
 	 * @param administrator
 	 * @param primarykeys
 	 */
-	public StopEventTimingStatement(EPAdministrator administrator, Set<String> primarykeys) {
+	public StopEventTimingStatement(EPAdministrator administrator,
+			Set<String> primarykeys) {
 		super(administrator);
 		this.primarykeys = primarykeys;
 	}
@@ -53,6 +56,7 @@ public class StopEventTimingStatement extends AbstractSignalStatement {
 					StopEvent stopper = null;
 					stopTiming.stop();
 					List<TagReadEvent> testEvents = new ArrayList<TagReadEvent>();
+					// extract the collected stop event
 					for (EventBean eventBean : newEvents) {
 						if ((TagReadEvent[]) eventBean.get("res") != null) {
 							for (TagReadEvent event : (TagReadEvent[]) eventBean
@@ -62,6 +66,7 @@ public class StopEventTimingStatement extends AbstractSignalStatement {
 						}
 						stopper = (StopEvent) eventBean.get("stopEvent");
 					}
+					// send stop signal
 					signalStop(ALEReadAPI.TriggerCondition.TRIGGER, stopper,
 							testEvents);
 				}

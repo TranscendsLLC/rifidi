@@ -18,7 +18,10 @@ import com.espertech.esper.client.EventBean;
 import com.espertech.esper.client.StatementAwareUpdateListener;
 
 /**
- * @author jochen
+ * This statement gets started when a new event cycle gets started and waits
+ * until the duration expires.
+ * 
+ * @author Jochen Mader - jochen@pramari.com
  * 
  */
 public class DurationTimingStatement extends AbstractSignalStatement {

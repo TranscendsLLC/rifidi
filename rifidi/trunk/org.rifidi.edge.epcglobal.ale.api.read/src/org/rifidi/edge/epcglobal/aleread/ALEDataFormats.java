@@ -4,6 +4,8 @@
 package org.rifidi.edge.epcglobal.aleread;
 
 /**
+ * Formats of data stored on epc data sources.
+ * 
  * @author Jochen Mader - jochen@pramari.com
  * 
  */

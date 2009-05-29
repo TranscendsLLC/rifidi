@@ -13,10 +13,18 @@ import org.rifidi.edge.epcglobal.aleread.ALEDataFormats;
 import org.rifidi.edge.epcglobal.aleread.ALEDataTypes;
 
 /**
+ * Create filter from the ALE filter descriptions.
+ * 
  * @author Jochen Mader - jochen@pramari.com
  * 
  */
 public class FilterFactory {
+	/**
+	 * Create a matcher.
+	 * 
+	 * @param filter
+	 * @return
+	 */
 	public Map<ALEField, List<PatternMatcher>> createMatcher(
 			ECFilterListMember filter) {
 		Map<ALEField, List<PatternMatcher>> retMap = new HashMap<ALEField, List<PatternMatcher>>();

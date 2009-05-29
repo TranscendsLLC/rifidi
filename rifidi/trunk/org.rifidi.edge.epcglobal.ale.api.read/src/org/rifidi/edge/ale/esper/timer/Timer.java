@@ -23,9 +23,6 @@ public class Timer {
 	/** Logger for this class. */
 	private static final Log logger = LogFactory.getLog(Timer.class);
 	private ScheduledThreadPoolExecutor executor;
-	private Set<Trigger> startTriggers;
-	private Set<Trigger> stopTriggers;
-	private EPServiceProvider esper;
 
 	/**
 	 * Constructor.
@@ -36,6 +33,7 @@ public class Timer {
 	 */
 	public Timer(Set<Trigger> startTriggers, Set<Trigger> stopTriggers,
 			EPServiceProvider esper) {
+		logger.debug("New timer created. ");
 		executor = new ScheduledThreadPoolExecutor(2);
 		EventSender startSender=esper.getEPRuntime().getEventSender("StartEvent");
 		EventSender stopSender=esper.getEPRuntime().getEventSender("StopEvent");
@@ -49,18 +47,15 @@ public class Timer {
 			trigger.setEventSender(stopSender);
 			trigger.setStart(false);
 		}
-		this.startTriggers = startTriggers;
-		this.stopTriggers = stopTriggers;
 		for (Trigger trigger : startTriggers) {
-			System.out.println("startdelay "+trigger.getDelayToNextExec());
+			logger.debug("start trigger created: "+trigger.getPeriod()+" ms");
 			executor.scheduleAtFixedRate(trigger, trigger.getDelayToNextExec(),
 					trigger.getPeriod(), TimeUnit.MILLISECONDS);
 		}
 		for (Trigger trigger : stopTriggers) {
-			System.out.println("stopdelay "+trigger.getDelayToNextExec());
+			logger.debug("stop trigger created: "+trigger.getPeriod()+" ms");
 			executor.scheduleAtFixedRate(trigger, trigger.getDelayToNextExec(),
 					trigger.getPeriod(), TimeUnit.MILLISECONDS);
 		}
-		this.esper = esper;
 	}
 }

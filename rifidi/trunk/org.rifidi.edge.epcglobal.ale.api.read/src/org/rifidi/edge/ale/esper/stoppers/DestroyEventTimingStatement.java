@@ -18,7 +18,9 @@ import com.espertech.esper.client.EventBean;
 import com.espertech.esper.client.UpdateListener;
 
 /**
- * @author jochen
+ * Statement to listen for destroy events.
+ * 
+ * @author Jochen Mader - jochen@pramari.com
  * 
  */
 public class DestroyEventTimingStatement extends AbstractSignalStatement {
@@ -34,7 +36,8 @@ public class DestroyEventTimingStatement extends AbstractSignalStatement {
 	 * @param specName
 	 * @param primarykeys
 	 */
-	public DestroyEventTimingStatement(EPAdministrator administrator, Set<String> primarykeys) {
+	public DestroyEventTimingStatement(EPAdministrator administrator,
+			Set<String> primarykeys) {
 		super(administrator);
 		this.primarykeys = primarykeys;
 	}

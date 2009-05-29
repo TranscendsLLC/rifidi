@@ -3,7 +3,6 @@
  */
 package org.rifidi.edge.epcglobal.aleread.service;
 
-import java.net.URI;
 import java.util.List;
 import java.util.Set;
 
@@ -11,7 +10,6 @@ import org.rifidi.edge.epcglobal.ale.api.read.data.ECSpec;
 import org.rifidi.edge.epcglobal.ale.api.read.ws.DuplicateNameExceptionResponse;
 import org.rifidi.edge.epcglobal.ale.api.read.ws.DuplicateSubscriptionExceptionResponse;
 import org.rifidi.edge.epcglobal.ale.api.read.ws.ECSpecValidationExceptionResponse;
-import org.rifidi.edge.epcglobal.ale.api.read.ws.InvalidURIExceptionResponse;
 import org.rifidi.edge.epcglobal.ale.api.read.ws.NoSuchNameExceptionResponse;
 import org.rifidi.edge.epcglobal.ale.api.read.ws.NoSuchSubscriberExceptionResponse;
 import org.rifidi.edge.epcglobal.aleread.wrappers.RifidiBoundarySpec;
@@ -19,6 +17,9 @@ import org.rifidi.edge.epcglobal.aleread.wrappers.RifidiReport;
 import org.rifidi.edge.lr.LogicalReader;
 
 /**
+ * This service manages the lifecycle of all ECSPECs. TODO: remove dependencies
+ * to generated code!
+ * 
  * @author Jochen Mader - jochen@pramari.com
  * 
  */

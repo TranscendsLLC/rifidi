@@ -12,7 +12,7 @@ import org.rifidi.edge.epcglobal.aleread.ALEReadAPI;
  * This listener can be used on a SignalStatement and will be called when a
  * certain event condition has arrived.
  * 
- * @author Jochen Mader
+ * @author Jochen Mader - jochen@pramari.com
  * 
  */
 public interface SignalListener {

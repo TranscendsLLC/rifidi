@@ -15,7 +15,9 @@ import org.rifidi.edge.epcglobal.aleread.filters.FieldMatcher;
 import org.rifidi.edge.epcglobal.aleread.filters.RangeFieldMatcher;
 
 /**
- * @author jochen
+ * Group matcher for EPC TAG patterns. See ALE 1.1 6.2.1.4.
+ * 
+ * @author Jochen Mader - jochen@pramari.com
  * 
  */
 public class EPCTAGGROUPPatternMatcher implements GroupMatcher {

@@ -8,14 +8,21 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * Helper class for quick translation between string representation and field
+ * enums.
+ * 
  * @author Jochen Mader - jochen@pramari.com
  * 
  */
 public class ALEReadAPI {
+	/** Millisecond timing is currently the only one supported in ALE */
 	public static final String EC_TIME_UNIT_MS = "MS";
+	/** Translate between the ALE string field name and the enum. */
 	public static final Map<String, ALEFields> aleIdToEnum;
+	/** Translate between the ALE string condition name and the enum. */
 	public static final Map<TriggerCondition, String> conditionToName;
 
+	/** Conditions that lead to the starting or stopping of an event cycle. */
 	public enum TriggerCondition {
 		DATA_AVAILABLE, STABLE_SET, DURATION, UNREQUEST, UNDEFINE, REQUESTED, REPEAT_PERIOD, TRIGGER
 	};

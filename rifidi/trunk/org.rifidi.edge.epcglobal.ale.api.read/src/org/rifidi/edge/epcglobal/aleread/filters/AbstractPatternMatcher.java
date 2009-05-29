@@ -4,9 +4,17 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public abstract class AbstractPatternMatcher implements PatternMatcher{
+/**
+ * Abstract base class for matchers. Provides a basic range matcher for values
+ * like [10-20]
+ * 
+ * @author Jochen Mader - jochen@pramari.com
+ * 
+ */
+public abstract class AbstractPatternMatcher implements PatternMatcher {
 
-	protected static Pattern matchrange = Pattern.compile("\\[(\\d*)-(\\d*)\\]");
+	protected static Pattern matchrange = Pattern
+			.compile("\\[(\\d*)-(\\d*)\\]");
 	protected List<FieldMatcher> matchers;
 	protected Pattern pattern;
 
@@ -22,5 +30,5 @@ public abstract class AbstractPatternMatcher implements PatternMatcher{
 			}
 		}
 		return true;
-	} 
+	}
 }

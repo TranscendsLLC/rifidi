@@ -152,6 +152,7 @@ public class Trigger implements Runnable {
 	 */
 	@Override
 	public void run() {
+		//TODO: do separate classes for the triggers
 		if (target != null) {
 			if (start) {
 				eventSender.sendEvent(new StartEvent(uri));
