@@ -1,4 +1,3 @@
-
 package org.rifidi.edge.client.ale.ecspecview.views;
 
 import java.util.ArrayList;
@@ -34,7 +33,9 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
+import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.part.ViewPart;
+import org.eclipse.ui.services.IServiceLocator;
 import org.rifidi.edge.client.ale.api.wsdl.ale.epcglobal.DuplicateNameExceptionResponse;
 import org.rifidi.edge.client.ale.api.wsdl.ale.epcglobal.ECSpecValidationExceptionResponse;
 import org.rifidi.edge.client.ale.api.xsd.ale.epcglobal.ECBoundarySpec;
@@ -56,9 +57,11 @@ import org.rifidi.edge.client.ale.api.xsd.ale.epcglobal.ECSpec.ReportSpecs;
 import org.rifidi.edge.client.ale.ecspecview.Activator;
 import org.rifidi.edge.client.ale.logicalreaders.ALELRService;
 import org.rifidi.edge.client.ale.logicalreaders.ALEService;
+import org.rifidi.edge.client.ale.reports.ReportReceiverSingleton;
+import org.rifidi.edge.client.ale.reports.ReportTabDataContainer;
 
 /**
- * Editor View for an ECSpec.  
+ * Editor View for an ECSpec.
  * 
  * @author Tobias Hoppenthaler - tobias@pramari.com
  */
@@ -87,6 +90,8 @@ public class ECSpecEditorView extends ViewPart {
 
 	private ALEService service;
 	private ALELRService lrService;
+	private CTabItem ctiReport;
+	CTabItem ctiSubscribers;
 
 	// private ConnectionService connectionService = null;
 
@@ -118,16 +123,16 @@ public class ECSpecEditorView extends ViewPart {
 		layout.numColumns = 2;
 		form.getBody().setLayout(layout);
 
-		// createReportCtab();
-		createSubscriberCtab();
-
 	}
 
 	/**
 	 * creates the subscriber tab
 	 */
 	private void createReportCtab() {
-		CTabItem ctiReport = new CTabItem(folder, SWT.NONE);
+		if(ctiReport!=null)
+			ctiReport.dispose();
+		ctiReport = EcSpecEditorTabFactory.getInstance().createReportTab(
+				folder, this.name);
 		ctiReport.setText("Reports");
 	}
 
@@ -135,7 +140,7 @@ public class ECSpecEditorView extends ViewPart {
 	 * creates the report tab
 	 */
 	private void createSubscriberCtab() {
-		CTabItem ctiSubscribers = EcSpecEditorTabFactory.getInstance()
+		ctiSubscribers = EcSpecEditorTabFactory.getInstance()
 				.createSubscribersTab(folder);
 		// CTabItem ctiSubscribers = new CTabItem(folder, SWT.NONE);
 		ctiSubscribers.setText("Subscribers");
@@ -186,6 +191,8 @@ public class ECSpecEditorView extends ViewPart {
 		createSecBoundary();
 		createSecReport();
 		createFooter();
+		createReportCtab();
+//		createSubscriberCtab();
 
 	}
 
@@ -1169,7 +1176,13 @@ public class ECSpecEditorView extends ViewPart {
 	private void closeThisView() {
 		this.dispose();
 	}
+	
+	public void clearReports(){
+		ReportTabDataContainer container =(ReportTabDataContainer) ReportReceiverSingleton.getInstance().getSubscriber(name);
+		container.clear();
+	}
 
+	
 	// private IViewPart getView(String id) {
 	// IViewReference viewReferences[] = PlatformUI.getWorkbench()
 	// .getActiveWorkbenchWindow().getActivePage().getViewReferences();

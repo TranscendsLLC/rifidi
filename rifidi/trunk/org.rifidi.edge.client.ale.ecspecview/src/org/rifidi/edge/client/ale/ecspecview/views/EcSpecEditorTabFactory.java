@@ -17,10 +17,13 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
+import org.rifidi.edge.client.ale.reports.ReportReceiverSingleton;
+import org.rifidi.edge.client.ale.reports.ReportTabDataContainer;
 
 /**
- * TODO: Class level comment.  
+ * This factory creates tabs (subscriber and reporttab) for the ecspeceditorview.
  * 
+ * @author Kyle
  * @author Tobias Hoppenthaler - tobias@pramari.com
  */
 public class EcSpecEditorTabFactory {
@@ -63,8 +66,11 @@ public class EcSpecEditorTabFactory {
 	 * @param parent
 	 * @return CTabItem
 	 */
-	public CTabItem createReportTab(CTabFolder parent) {
-		return null;
+	public CTabItem createReportTab(CTabFolder parent, String specName) {
+		ReportTabDataContainer container = new ReportTabDataContainer(parent,specName);
+		
+		
+		return container.getItem();
 
 	}
 
@@ -75,48 +81,50 @@ public class EcSpecEditorTabFactory {
 	 * @return CTabItem
 	 */
 	public CTabItem createSubscribersTab(CTabFolder parent) {
-		/** the CTabItem that will be returned later on */
-		CTabItem subscriberTab = new CTabItem(parent, SWT.NONE);
-		
-		/** the toolkit that creates all the forms/widgets */
-		subscriberToolkit = new FormToolkit(parent.getDisplay());
-		subscriberForm = subscriberToolkit.createScrolledForm(parent);
-		subscriberTab.setControl(subscriberForm);
-		TableWrapLayout subscrLayout = new TableWrapLayout();
-		subscrLayout.numColumns = 3;
-		subscriberForm.getBody().setLayout(subscrLayout);
-		subscriberForm.setText("Subscribers");
-		/** button for saving the subscribers */
-		Button btnSaveSubscribers = subscriberToolkit.createButton(
-				subscriberForm.getBody(), "Save", SWT.PUSH);
-		/** button for adding one more subscriber */
-		Button btnAddSubscriber = subscriberToolkit.createButton(subscriberForm
-				.getBody(), "Add", SWT.PUSH);
-		TableWrapData twdd = new TableWrapData();
-		twdd.colspan=2;
-		btnAddSubscriber.setLayoutData(twdd);
-		/** selection listener */
-		btnAddSubscriber.addSelectionListener(new SelectionListener() {
-
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {
-				// nothing to do here
-
-			}
-
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				addSubscriber(subscriberForm.getBody());
-				subscriberForm.reflow(true);
-
-			}
-
-		});
-		/** add one subscriber line for starters */
-		addSubscriber(subscriberForm.getBody());
-		/** never forget the reflow */
-		subscriberForm.reflow(true);
-		return subscriberTab;
+//		/** the CTabItem that will be returned later on */
+//		CTabItem subscriberTab = new CTabItem(parent, SWT.NONE);
+//		
+//		/** the toolkit that creates all the forms/widgets */
+//		subscriberToolkit = new FormToolkit(parent.getDisplay());
+//		subscriberForm = subscriberToolkit.createScrolledForm(parent);
+//		subscriberTab.setControl(subscriberForm);
+//		TableWrapLayout subscrLayout = new TableWrapLayout();
+//		subscrLayout.numColumns = 3;
+//		subscriberForm.getBody().setLayout(subscrLayout);
+//		subscriberForm.setText("Subscribers");
+//		/** button for saving the subscribers */
+//		Button btnSaveSubscribers = subscriberToolkit.createButton(
+//				subscriberForm.getBody(), "Save", SWT.PUSH);
+//		/** button for adding one more subscriber */
+//		Button btnAddSubscriber = subscriberToolkit.createButton(subscriberForm
+//				.getBody(), "Add", SWT.PUSH);
+//		TableWrapData twdd = new TableWrapData();
+//		twdd.colspan=2;
+//		btnAddSubscriber.setLayoutData(twdd);
+//		/** selection listener */
+//		btnAddSubscriber.addSelectionListener(new SelectionListener() {
+//
+//			@Override
+//			public void widgetDefaultSelected(SelectionEvent e) {
+//				// nothing to do here
+//
+//			}
+//
+//			@Override
+//			public void widgetSelected(SelectionEvent e) {
+//				if(i<9){
+//				addSubscriber(subscriberForm.getBody());
+//				subscriberForm.reflow(true);
+//				}
+//			}
+//
+//		});
+//		/** add one subscriber line for starters */
+//		addSubscriber(subscriberForm.getBody());
+//		/** never forget the reflow */
+//		subscriberForm.reflow(true);
+//		return subscriberTab;
+		return null;
 
 	}
 

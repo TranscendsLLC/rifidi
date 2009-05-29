@@ -347,7 +347,7 @@
          </command>
       </menuContribution>
       <menuContribution
-            locationURI="toolbar:org.rifidi.edge.client.ale.reports.ReportReceiverView?after=additions">
+            locationURI="toolbar:org.rifidi.edge.client.ale.ecspecview.views.ECSpecEditorView?after=additions">
          <command
                commandId="org.rifidi.edge.client.ale.reportview.clearcommand"
                icon="icons/report_delete.png"

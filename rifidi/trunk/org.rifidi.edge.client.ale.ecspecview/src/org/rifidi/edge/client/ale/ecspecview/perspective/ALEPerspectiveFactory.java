@@ -38,7 +38,7 @@ public class ALEPerspectiveFactory implements IPerspectiveFactory {
 		folder.addPlaceholder(ECSpecEditorView.ID + ":*");
 		
 		leftfolder.addView(ECSpecView.ID);
-		leftfolder.addView(ReportReceiverViewPart.ID);
+//		leftfolder.addView(ReportReceiverViewPart.ID);
 		
 		layout.addStandaloneView(LRTreeViewPart.ID,
 				true, IPageLayout.BOTTOM, 0.5f, ECSpecView.ID);
