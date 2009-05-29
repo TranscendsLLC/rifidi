@@ -14,7 +14,8 @@ import com.espertech.esper.client.EPServiceProvider;
 import com.espertech.esper.client.EventSender;
 
 /**
- * External timer for sending out start and stop events.
+ * External timer for sending out start and stop events. TODO: create a global
+ * timer!
  * 
  * @author Jochen Mader - jochen@pramari.com
  * 
@@ -35,8 +36,10 @@ public class Timer {
 			EPServiceProvider esper) {
 		logger.debug("New timer created. ");
 		executor = new ScheduledThreadPoolExecutor(2);
-		EventSender startSender=esper.getEPRuntime().getEventSender("StartEvent");
-		EventSender stopSender=esper.getEPRuntime().getEventSender("StopEvent");
+		EventSender startSender = esper.getEPRuntime().getEventSender(
+				"StartEvent");
+		EventSender stopSender = esper.getEPRuntime().getEventSender(
+				"StopEvent");
 		for (Trigger trigger : startTriggers) {
 			trigger.setTarget(this);
 			trigger.setEventSender(startSender);
@@ -48,12 +51,15 @@ public class Timer {
 			trigger.setStart(false);
 		}
 		for (Trigger trigger : startTriggers) {
-			logger.debug("start trigger created: "+trigger.getPeriod()+" ms");
+			logger.debug("start trigger created: " + trigger.getPeriod()
+					+ " ms");
 			executor.scheduleAtFixedRate(trigger, trigger.getDelayToNextExec(),
 					trigger.getPeriod(), TimeUnit.MILLISECONDS);
 		}
 		for (Trigger trigger : stopTriggers) {
-			logger.debug("stop trigger created: "+trigger.getPeriod()+" ms");
+			logger
+					.debug("stop trigger created: " + trigger.getPeriod()
+							+ " ms");
 			executor.scheduleAtFixedRate(trigger, trigger.getDelayToNextExec(),
 					trigger.getPeriod(), TimeUnit.MILLISECONDS);
 		}
