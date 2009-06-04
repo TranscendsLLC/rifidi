@@ -16,8 +16,6 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 import org.rifidi.edge.client.ale.api.xsd.ale.epcglobal.ECReports;
 
 /**
@@ -29,17 +27,18 @@ public class ReportTabDataContainer implements IReportSubscriber {
 	private CTabItem item;
 	private ObservableList list;
 	private TreeViewer viewer;
-	private int reportCount=0;
+	private int reportCount = 0;
 
 	/**
 	 * 
 	 */
 	public ReportTabDataContainer(CTabFolder parent, String specName) {
-		final String tempSpecName=specName;
-		item = new CTabItem(parent, SWT.NONE){
+		final String tempSpecName = specName;
+		item = new CTabItem(parent, SWT.NONE) {
 			@Override
-			public void dispose(){
-				ReportReceiverSingleton.getInstance().removeSubscriber(tempSpecName);
+			public void dispose() {
+				ReportReceiverSingleton.getInstance().removeSubscriber(
+						tempSpecName);
 				super.dispose();
 			}
 		};
@@ -50,7 +49,7 @@ public class ReportTabDataContainer implements IReportSubscriber {
 		viewer.setLabelProvider(new ReportLabelProvider());
 		viewer.setInput(list);
 		item.setControl(viewer.getControl());
-		
+
 		ReportReceiverSingleton.getInstance().addSubscriber(specName, this);
 	}
 
@@ -70,17 +69,19 @@ public class ReportTabDataContainer implements IReportSubscriber {
 	 */
 	@Override
 	public void pushReport(ECReports reports) {
+		/** add report to list of reports */
 		list.add(reports);
+		/** increase report counter */
 		reportCount++;
-		item.setText("Reports("+reportCount+")");
+		/** show the counter on the report tab */
+		item.setText("Reports(" + reportCount + ")");
 
 	}
-	
-	public void clear(){
+
+	public void clear() {
 		list.clear();
-		reportCount=0;
+		reportCount = 0;
 		item.setText("Reports");
 	}
-	
 
 }

@@ -24,6 +24,7 @@ import javax.xml.bind.Unmarshaller;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.eclipse.core.databinding.observable.IChangeListener;
 import org.eclipse.core.databinding.observable.list.IListChangeListener;
 import org.eclipse.core.databinding.observable.list.ListChangeEvent;
 import org.eclipse.core.databinding.observable.list.ListDiffEntry;
@@ -37,6 +38,7 @@ import org.rifidi.edge.client.ale.ecspecview.Activator;
 
 /**
  * Non-threadsafe report receiver singleton.
+ * This class handles the ECReports that are sent from the server.
  * 
  * @author Tobias Hoppenthaler - tobias@pramari.com
  * 
@@ -77,7 +79,7 @@ public class ReportReceiverSingleton implements IPropertyChangeListener,
 		} catch (Exception e) {
 			logger.warn(e);
 		}
-		list.addListChangeListener(this);
+		
 	}
 
 	/**
@@ -95,10 +97,14 @@ public class ReportReceiverSingleton implements IPropertyChangeListener,
 
 	public void addSubscriber(String specName, IReportSubscriber subscriber) {
 		subscriberMap.put(specName, subscriber);
+		if(subscriberMap.size()==1)
+			list.addListChangeListener(this);
 	}
 
 	public void removeSubscriber(String specName) {
 		subscriberMap.remove(specName);
+		if(subscriberMap.size()==0)
+			list.removeChangeListener((IChangeListener)this);
 	}
 	
 	public IReportSubscriber getSubscriber(String specName){
@@ -197,7 +203,6 @@ public class ReportReceiverSingleton implements IPropertyChangeListener,
 
 		public void run() {
 			try {
-				System.out.println("receive runner running...");
 				socket = new ServerSocket();
 				socket.bind(addr);
 				while (!socket.isClosed()

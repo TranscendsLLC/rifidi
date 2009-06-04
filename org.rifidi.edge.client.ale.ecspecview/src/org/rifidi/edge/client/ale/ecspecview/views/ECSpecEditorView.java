@@ -129,6 +129,7 @@ public class ECSpecEditorView extends ViewPart {
 	 * creates the subscriber tab
 	 */
 	private void createReportCtab() {
+		//TODO: instead of ctabitem get dataholder back to reset it easier.
 		if(ctiReport!=null)
 			ctiReport.dispose();
 		ctiReport = EcSpecEditorTabFactory.getInstance().createReportTab(
@@ -225,6 +226,7 @@ public class ECSpecEditorView extends ViewPart {
 				ecSpec.setReportSpecs(reportSpecs);
 				try {
 					service.createECSpec(name, ecSpec);
+					//TODO: add subscriber here
 				} catch (ECSpecValidationExceptionResponse e1) {
 					MessageBox messageBox = new MessageBox(PlatformUI
 							.getWorkbench().getActiveWorkbenchWindow()
