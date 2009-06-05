@@ -1,6 +1,4 @@
-/**
- * 
- */
+
 package org.rifidi.edge.readerplugin.alien.commands;
 
 import java.io.IOException;
@@ -35,7 +33,6 @@ import org.springframework.jms.core.MessageCreator;
  * 
  * @author Jochen Mader - jochen@pramari.com
  * @author Kyle Neumeier - kyle@pramari.com
- * 
  */
 public class AlienGetTagListCommand extends AbstractAlien9800Command {
 

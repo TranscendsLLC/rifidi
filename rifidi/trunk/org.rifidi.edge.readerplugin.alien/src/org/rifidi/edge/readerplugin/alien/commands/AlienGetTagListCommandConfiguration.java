@@ -13,7 +13,6 @@ import org.rifidi.edge.core.commands.AbstractCommandConfiguration;
  * Alien9800 Reader
  * 
  * @author Jochen Mader - jochen@pramari.com
- * 
  */
 @JMXMBean
 public class AlienGetTagListCommandConfiguration extends

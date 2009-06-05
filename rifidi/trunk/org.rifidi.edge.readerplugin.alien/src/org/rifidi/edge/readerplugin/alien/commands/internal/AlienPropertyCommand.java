@@ -18,7 +18,6 @@ import org.rifidi.edge.readerplugin.alien.commandobject.AlienException;
  * supplied hashmap
  * 
  * @author Kyle Neumeier - kyle@pramari.com
- * 
  */
 public class AlienPropertyCommand extends AbstractAlien9800Command {
 
@@ -51,6 +50,10 @@ public class AlienPropertyCommand extends AbstractAlien9800Command {
 		this.commands = commands;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Runnable#run()
+	 */
 	@Override
 	public void run() {
 		try {
