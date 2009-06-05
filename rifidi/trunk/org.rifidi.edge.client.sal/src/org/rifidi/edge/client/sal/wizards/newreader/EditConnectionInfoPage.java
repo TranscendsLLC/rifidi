@@ -1,4 +1,3 @@
-
 package org.rifidi.edge.client.sal.wizards.newreader;
 
 import java.util.HashSet;
@@ -148,16 +147,18 @@ public class EditConnectionInfoPage extends WizardPage implements
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.dialogs.DialogPage#dispose()
 	 */
 	@Override
 	public void dispose() {
 		super.dispose();
-		mbeanWidgetComposite.removeListner(this);
-		mbeanWidgetComposite.dispose();
+		if (mbeanWidgetComposite != null) {
+			mbeanWidgetComposite.removeListner(this);
+			mbeanWidgetComposite.dispose();
+		}
 	}
-	
-	
 
 }
