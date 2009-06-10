@@ -162,18 +162,18 @@ public class ReportReceiverSingleton implements IPropertyChangeListener,
 				} catch (ClassCastException e) {
 					logger.error(e);
 				}
-
+				/** If there is a subscriber to the reports of this spec... */
 				if (subscriberMap.containsKey(key)) {
-					// notify subscriber
+					/** ... let's get that subscriber ... */
 					IReportSubscriber subscriber = subscriberMap.get(key);
+					/** ... and send him the reports. */
 					subscriber.pushReport(ecReports);
-				}
-				{
+				} else {
 					logger.debug("Key not found.");
 				}
 				// TODO: check name viewer.add(model, entry.getElement());
 			} else {
-				logger.debug("watch me");
+				logger.debug("entry is not an addition...");
 			}
 		}
 
