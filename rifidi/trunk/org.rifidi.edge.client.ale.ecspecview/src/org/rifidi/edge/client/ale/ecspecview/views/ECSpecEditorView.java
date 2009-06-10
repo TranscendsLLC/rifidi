@@ -6,7 +6,6 @@ import javax.swing.JPopupMenu.Separator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
@@ -33,9 +32,7 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
-import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.part.ViewPart;
-import org.eclipse.ui.services.IServiceLocator;
 import org.rifidi.edge.client.ale.api.wsdl.ale.epcglobal.DuplicateNameExceptionResponse;
 import org.rifidi.edge.client.ale.api.wsdl.ale.epcglobal.ECSpecValidationExceptionResponse;
 import org.rifidi.edge.client.ale.api.xsd.ale.epcglobal.ECBoundarySpec;
@@ -67,6 +64,7 @@ import org.rifidi.edge.client.ale.reports.ReportTabDataContainer;
  */
 public class ECSpecEditorView extends ViewPart {
 	/** Logger for this class. */
+	@SuppressWarnings("unused")
 	private static final Log logger = LogFactory.getLog(ECSpecEditorView.class);
 	public final static String ID = "org.rifidi.edge.client.ale.ecspecview.views.ECSpecEditorView";
 
@@ -80,11 +78,6 @@ public class ECSpecEditorView extends ViewPart {
 	private List lrList = null;
 	private Text txtSpecName = null;
 	private String name = null;
-	// private ECBoundarySpec bspec = new ECBoundarySpec();
-	// private ECReportSpec ecrSpec = null;
-	// private ECReportOutputSpec ros = null;
-	// private ECFilterSpec fisp = null;
-	// private ECGroupSpec grsp = null;
 	private ArrayList<ECReportSpec> repSpecs = new ArrayList<ECReportSpec>();
 	private CTabItem ctiEdit;
 
@@ -129,8 +122,8 @@ public class ECSpecEditorView extends ViewPart {
 	 * creates the subscriber tab
 	 */
 	private void createReportCtab() {
-		//TODO: instead of ctabitem get dataholder back to reset it easier.
-		if(ctiReport!=null)
+		// TODO: instead of ctabitem get dataholder back to reset it easier.
+		if (ctiReport != null)
 			ctiReport.dispose();
 		ctiReport = EcSpecEditorTabFactory.getInstance().createReportTab(
 				folder, this.name);
@@ -140,12 +133,12 @@ public class ECSpecEditorView extends ViewPart {
 	/**
 	 * creates the report tab
 	 */
-	private void createSubscriberCtab() {
-		ctiSubscribers = EcSpecEditorTabFactory.getInstance()
-				.createSubscribersTab(folder);
-		// CTabItem ctiSubscribers = new CTabItem(folder, SWT.NONE);
-		ctiSubscribers.setText("Subscribers");
-	}
+	// private void createSubscriberCtab() {
+	// ctiSubscribers = EcSpecEditorTabFactory.getInstance()
+	// .createSubscribersTab(folder);
+	// // CTabItem ctiSubscribers = new CTabItem(folder, SWT.NONE);
+	// ctiSubscribers.setText("Subscribers");
+	// }
 
 	/*
 	 * (non-Javadoc)
@@ -193,8 +186,8 @@ public class ECSpecEditorView extends ViewPart {
 		createSecReport();
 		createFooter();
 		createReportCtab();
-//		createSubscriberCtab();
-
+		// createSubscriberCtab();
+		this.form.redraw();
 	}
 
 	/**
@@ -226,7 +219,8 @@ public class ECSpecEditorView extends ViewPart {
 				ecSpec.setReportSpecs(reportSpecs);
 				try {
 					service.createECSpec(name, ecSpec);
-					//TODO: add subscriber here
+					// TODO: add subscriber here
+
 				} catch (ECSpecValidationExceptionResponse e1) {
 					MessageBox messageBox = new MessageBox(PlatformUI
 							.getWorkbench().getActiveWorkbenchWindow()
@@ -347,11 +341,11 @@ public class ECSpecEditorView extends ViewPart {
 			@Override
 			public void focusLost(FocusEvent e) {
 				List list = ((List) e.widget);
-
-				int[] selection = list.getSelectionIndices();
+				
 				LogicalReaders lr = new LogicalReaders();
-				for (int i = 0; i < selection.length; i++) {
-					lr.getLogicalReader().add(i, list.getItem(i));
+				String[] selection = list.getSelection();
+				for(int i=0;i<selection.length;i++){
+					lr.getLogicalReader().add(selection[i]);
 				}
 				ecSpec.setLogicalReaders(lr);
 
@@ -1124,15 +1118,15 @@ public class ECSpecEditorView extends ViewPart {
 	 * 
 	 * @return ECFilterSpec
 	 */
-	private ECFilterSpec createEmptyFilterSpec() {
-		ECFilterSpec spec = new ECFilterSpec();
-		ExcludePatterns ePatterns = new ExcludePatterns();
-		ePatterns.getExcludePattern().clear();
-		spec.setExcludePatterns(ePatterns);
-		IncludePatterns iPatterns = new IncludePatterns();
-		spec.setIncludePatterns(iPatterns);
-		return spec;
-	}
+	// private ECFilterSpec createEmptyFilterSpec() {
+	// ECFilterSpec spec = new ECFilterSpec();
+	// ExcludePatterns ePatterns = new ExcludePatterns();
+	// ePatterns.getExcludePattern().clear();
+	// spec.setExcludePatterns(ePatterns);
+	// IncludePatterns iPatterns = new IncludePatterns();
+	// spec.setIncludePatterns(iPatterns);
+	// return spec;
+	// }
 
 	/**
 	 * Creates a section with the standard values that are always the same.
@@ -1168,23 +1162,23 @@ public class ECSpecEditorView extends ViewPart {
 	 * @param message
 	 *            to show
 	 */
-	private void showMessage(String message) {
-		MessageDialog.openInformation(folder.getShell(), this.name, message);
-	}
+	// private void showMessage(String message) {
+	// MessageDialog.openInformation(folder.getShell(), this.name, message);
+	// }
 
 	/**
 	 * Closes the view. (After successfully defining the spec)
 	 */
-	private void closeThisView() {
-		this.dispose();
-	}
-	
-	public void clearReports(){
-		ReportTabDataContainer container =(ReportTabDataContainer) ReportReceiverSingleton.getInstance().getSubscriber(name);
+	// private void closeThisView() {
+	// this.dispose();
+	// }
+
+	public void clearReports() {
+		ReportTabDataContainer container = (ReportTabDataContainer) ReportReceiverSingleton
+				.getInstance().getSubscriber(name);
 		container.clear();
 	}
 
-	
 	// private IViewPart getView(String id) {
 	// IViewReference viewReferences[] = PlatformUI.getWorkbench()
 	// .getActiveWorkbenchWindow().getActivePage().getViewReferences();
