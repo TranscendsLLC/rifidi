@@ -37,8 +37,8 @@ import org.rifidi.edge.client.ale.api.xsd.ale.epcglobal.ECReports;
 import org.rifidi.edge.client.ale.ecspecview.Activator;
 
 /**
- * Non-threadsafe report receiver singleton.
- * This class handles the ECReports that are sent from the server.
+ * Non-threadsafe report receiver singleton. This class handles the ECReports
+ * that are sent from the server. Replaces ReportRecieverViewPart.
  * 
  * @author Tobias Hoppenthaler - tobias@pramari.com
  * 
@@ -60,7 +60,9 @@ public class ReportReceiverSingleton implements IPropertyChangeListener,
 	 * The private constructor - singleton.
 	 */
 	private ReportReceiverSingleton() {
+		/** initializing list of reports */
 		list = new WritableList();
+		/** creating JAXB context and unmarshaller */
 		try {
 			context = JAXBContext.newInstance(ReportAnswer.class,
 					ECReports.class);
@@ -69,17 +71,21 @@ public class ReportReceiverSingleton implements IPropertyChangeListener,
 		} catch (JAXBException e) {
 			logger.fatal("Unable to create JAXB marshaller: " + e);
 		}
+		/** getting report destination from the preferences */
 		try {
 			String adr[] = Activator.getDefault().getPreferenceStore()
 					.getString(Activator.REPORT_RECEIVER_ADR).split(":");
+			/** initializing runnable with the data gained from preference store */
 			runny = new ReceiveRunner(new InetSocketAddress(adr[0], Integer
 					.parseInt(adr[1])));
+			/** handing our thread the runnable to execute */
 			thread = new Thread(runny);
+			/** starting the thread */
 			thread.start();
 		} catch (Exception e) {
 			logger.warn(e);
 		}
-		
+
 	}
 
 	/**
@@ -89,25 +95,50 @@ public class ReportReceiverSingleton implements IPropertyChangeListener,
 	 */
 	public static ReportReceiverSingleton getInstance() {
 		if (rrs == null) {
+			logger.debug("creating new ReportReceiverSingleton...");
 			rrs = new ReportReceiverSingleton();
 
 		}
 		return rrs;
 	}
 
+	/**
+	 * Adding a report subscriber to this singleton.
+	 * 
+	 * @param specName
+	 *            - name of the spec to subscribe to for reports
+	 * @param subscriber
+	 *            - the subscriber object
+	 */
 	public void addSubscriber(String specName, IReportSubscriber subscriber) {
+		logger.debug("adding Subscriber " + specName + " to ReportReceivers");
 		subscriberMap.put(specName, subscriber);
-		if(subscriberMap.size()==1)
+		if (subscriberMap.size() == 1)
 			list.addListChangeListener(this);
 	}
 
+	/**
+	 * Remove the report subscriber for the respective spec.
+	 * 
+	 * @param specName
+	 *            - name of the spec to remove the subscriber from
+	 */
 	public void removeSubscriber(String specName) {
+		logger.debug("removing Subscriber " + specName
+				+ " from ReportReceivers");
 		subscriberMap.remove(specName);
-		if(subscriberMap.size()==0)
-			list.removeChangeListener((IChangeListener)this);
+		if (subscriberMap.size() == 0)
+			list.removeChangeListener((IChangeListener) this);
 	}
-	
-	public IReportSubscriber getSubscriber(String specName){
+
+	/**
+	 * Get the subscriber object for the respective ECSpec.
+	 * 
+	 * @param specName
+	 * @return subscriber object
+	 */
+	public IReportSubscriber getSubscriber(String specName) {
+		logger.debug("Retrieving Subscriber for " + specName);
 		return subscriberMap.get(specName);
 	}
 
@@ -120,6 +151,7 @@ public class ReportReceiverSingleton implements IPropertyChangeListener,
 	 */
 	@Override
 	public void handleListChange(ListChangeEvent event) {
+		logger.debug("handling listChange...");
 		for (ListDiffEntry entry : event.diff.getDifferences()) {
 			if (entry.isAddition()) {
 				ECReports ecReports = null;
@@ -136,9 +168,12 @@ public class ReportReceiverSingleton implements IPropertyChangeListener,
 					IReportSubscriber subscriber = subscriberMap.get(key);
 					subscriber.pushReport(ecReports);
 				}
+				{
+					logger.debug("Key not found.");
+				}
 				// TODO: check name viewer.add(model, entry.getElement());
 			} else {
-				logger.debug("Key not found.");
+				logger.debug("watch me");
 			}
 		}
 
@@ -153,6 +188,10 @@ public class ReportReceiverSingleton implements IPropertyChangeListener,
 	 */
 	@Override
 	public void propertyChange(PropertyChangeEvent event) {
+		/**
+		 * if report receiver destination is changed stop and start with new
+		 * address
+		 */
 		if (event.getProperty().equals(Activator.REPORT_RECEIVER_ADR)) {
 			if (thread != null && thread.isAlive()) {
 				runny.killSocket();
@@ -172,6 +211,11 @@ public class ReportReceiverSingleton implements IPropertyChangeListener,
 
 	}
 
+	/**
+	 * This Runnable updates the list and is being injected into the eclipse
+	 * thread.
+	 * 
+	 */
 	private class ListUpdater implements Runnable {
 		private ECReports reports;
 
@@ -187,11 +231,18 @@ public class ReportReceiverSingleton implements IPropertyChangeListener,
 		 */
 		@Override
 		public void run() {
+			logger.debug("Listupdater adding reports...");
 			list.add(reports);
 		}
 
 	}
 
+	/**
+	 * This runnable opens the socket for the reports to come in from the
+	 * server. It also injects the ListUpdater runnable into the eclipse thread
+	 * when there is something to update.
+	 * 
+	 */
 	private class ReceiveRunner implements Runnable {
 		private InetSocketAddress addr;
 		private ServerSocket socket;
@@ -203,23 +254,33 @@ public class ReportReceiverSingleton implements IPropertyChangeListener,
 
 		public void run() {
 			try {
+				logger.debug("new serversocket...");
 				socket = new ServerSocket();
+				System.out.println("socket.bind...");
 				socket.bind(addr);
+				logger.debug("while socket !closed and thread !interrupted");
 				while (!socket.isClosed()
 						&& !Thread.currentThread().isInterrupted()) {
+					logger.debug("socket accept...");
 					Socket sock = socket.accept();
+					logger
+							.debug("new buffered reader : sock.getinputstream...");
 					BufferedReader streamy = new BufferedReader(
 							new InputStreamReader(sock.getInputStream()));
 					try {
+						logger.debug("unmarshal answer...");
 						ReportAnswer answer = (ReportAnswer) umarsh
 								.unmarshal(streamy);
+						logger.debug("starting listupdater runnable");
 						Display.getDefault().asyncExec(
-										new ListUpdater(answer.reports));
+								new ListUpdater(answer.reports));
 					} catch (JAXBException e) {
 						logger.warn(e);
 					}
+					logger.debug("closing socket...");
 					sock.close();
 				}
+				logger.debug("closing serversocket...");
 				socket.close();
 				socket = null;
 			} catch (IOException e) {
@@ -227,7 +288,11 @@ public class ReportReceiverSingleton implements IPropertyChangeListener,
 			}
 		}
 
+		/**
+		 * Closes the socket.
+		 */
 		public void killSocket() {
+			logger.debug("killsocket called...");
 			if (socket != null) {
 				try {
 					socket.close();

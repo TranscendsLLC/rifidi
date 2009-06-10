@@ -341,10 +341,10 @@ public class ECSpecEditorView extends ViewPart {
 			@Override
 			public void focusLost(FocusEvent e) {
 				List list = ((List) e.widget);
-				
+
 				LogicalReaders lr = new LogicalReaders();
 				String[] selection = list.getSelection();
-				for(int i=0;i<selection.length;i++){
+				for (int i = 0; i < selection.length; i++) {
 					lr.getLogicalReader().add(selection[i]);
 				}
 				ecSpec.setLogicalReaders(lr);

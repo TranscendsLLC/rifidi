@@ -1,4 +1,3 @@
-
 package org.rifidi.edge.client.ale.ecspecview.handlers;
 
 import org.eclipse.core.commands.AbstractHandler;
@@ -13,7 +12,7 @@ import org.rifidi.edge.client.ale.api.xsd.ale.epcglobal.ECSpec;
 import org.rifidi.edge.client.ale.ecspecview.views.ECSpecEditorView;
 
 /**
- * TODO: Class level comment.  
+ * TODO: Class level comment.
  * 
  * @author kyle
  */
