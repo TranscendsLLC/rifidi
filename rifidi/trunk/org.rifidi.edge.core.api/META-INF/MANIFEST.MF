@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Edge Server API Plug-in
 Bundle-SymbolicName: org.rifidi.edge.core.api
-Bundle-Version: 1.1.0
+Bundle-Version: 1.1.1
 Bundle-Vendor: Pramari, LLC
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: org.rifidi.edge.core.api,
