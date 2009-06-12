@@ -4,7 +4,6 @@
 <product name="EdgeServerProd" id="org.rifidi.edge.app.EdgeServer" application="org.rifidi.edge.app.application" useFeatures="false">
 
    <configIni use="default">
-      <linux>/org.rifidi.edge.app/config.ini</linux>
    </configIni>
 
    <launcherArgs>
@@ -18,9 +17,9 @@
 -Dorg.osgi.framework.bootdelegation=javax.xml.ws
 -Dcom.sun.management.jmxremote
 -Dcom.sun.management.jmxremote.authenticate=false
--Djava.rmi.server.hostname=192.168.1.118
+-Djava.rmi.server.hostname=127.0.0.1
 -Dorg.rifidi.edge.ale.port=8081
--Dorg.rifidi.edge.ale.host=192.168.1.118
+-Dorg.rifidi.edge.ale.host=127.0.0.1
 -Dorg.rifidi.edge.ale.read=aleread
 -Dorg.rifidi.edge.ale.logicalreader=lr
 -Dosgi.clean=true</vmArgs>
@@ -28,7 +27,6 @@
    </launcherArgs>
 
    <windowImages/>
-
 
    <launcher name="EdgeServer">
       <solaris/>
@@ -41,7 +39,7 @@
    </vm>
 
    <plugins>
-      <plugin id="com.espertech.esper_v3.0.0"/>
+      <plugin id="com.espertech.esper"/>
       <plugin id="com.springsource.net.sf.cglib"/>
       <plugin id="fastinfoset_1.2.2.v20090311"/>
       <plugin id="javax.servlet"/>
@@ -49,10 +47,11 @@
       <plugin id="jcl.over.slf4j"/>
       <plugin id="org.antlr.runtime_3.1.1.v20090225"/>
       <plugin id="org.apache.activemq.activemq-core"/>
-      <plugin id="org.apache.ant"/>
+      <plugin id="org.apache.activemq.activemq-pool"/>
       <plugin id="org.apache.commons.collections"/>
       <plugin id="org.apache.commons.configuration"/>
       <plugin id="org.apache.commons.lang"/>
+      <plugin id="org.apache.commons.pool"/>
       <plugin id="org.apache.cxf.cxf-bundle"/>
       <plugin id="org.apache.geronimo.j2ee.management"/>
       <plugin id="org.apache.geronimo.specs.geronimo-activation_1.1_spec"/>
@@ -63,7 +62,6 @@
       <plugin id="org.apache.geronimo.specs.geronimo-stax-api_1.0_spec"/>
       <plugin id="org.apache.geronimo.specs.geronimo-ws-metadata_2.0_spec"/>
       <plugin id="org.apache.log4j"/>
-      <plugin id="org.apache.mina-core"/>
       <plugin id="org.apache.neethi"/>
       <plugin id="org.apache.ws.commons.axiom.axiom-api"/>
       <plugin id="org.apache.ws.commons.axiom.axiom-impl"/>
@@ -79,7 +77,6 @@
       <plugin id="org.eclipse.osgi.services"/>
       <plugin id="org.fosstrak.tdt"/>
       <plugin id="org.jdom"/>
-      <plugin id="org.llrp.ltk"/>
       <plugin id="org.mortbay.jetty"/>
       <plugin id="org.mortbay.jetty.server"/>
       <plugin id="org.mortbay.jetty.util"/>
@@ -94,7 +91,6 @@
       <plugin id="org.rifidi.edge.esper"/>
       <plugin id="org.rifidi.edge.notifications"/>
       <plugin id="org.rifidi.edge.readerplugin.alien"/>
-      <plugin id="org.rifidi.edge.readerplugin.llrp"/>
       <plugin id="org.rifidi.edge.wsmanagement"/>
       <plugin id="org.rifidi.log4j.configuration" fragment="true"/>
       <plugin id="org.springframework.bundle.osgi.core"/>
