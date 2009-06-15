@@ -1,4 +1,3 @@
-
 package org.rifidi.edge.core.rmi.client.readerconfigurationstub;
 
 import java.rmi.Remote;
@@ -6,17 +5,20 @@ import java.rmi.RemoteException;
 import java.util.concurrent.TimeUnit;
 
 import org.rifidi.edge.core.api.rmi.ReaderStub;
+import org.rifidi.edge.core.api.rmi.exceptions.CommandSubmissionException;
 import org.rifidi.rmi.utils.remotecall.ServerDescriptionBasedRemoteMethodCall;
 
 /**
- * This command allows you to submit commands to a reader session. It returns
- * the process ID of the submitted job, which can be used to kill the command.
- * It returns null if there was a problem.
+ * This command allows you to submit commands to a reader session for repeated
+ * executions. It returns the process ID of the submitted job, which can be used
+ * to kill the command. It throws a CommandSubmissionException if there was a
+ * problem
  * 
  * @author Kyle Neumeier - kyle@pramari.com
  */
-public class RS_SubmitCommand extends
-		ServerDescriptionBasedRemoteMethodCall<Integer, RuntimeException> {
+public class RS_SubmitCommand
+		extends
+		ServerDescriptionBasedRemoteMethodCall<Integer, CommandSubmissionException> {
 
 	/** The ID of the reader */
 	private String readerID;
@@ -67,7 +69,7 @@ public class RS_SubmitCommand extends
 	 */
 	@Override
 	protected Integer performRemoteCall(Remote remoteObject)
-			throws RemoteException, RuntimeException {
+			throws RemoteException, CommandSubmissionException {
 		ReaderStub stub = (ReaderStub) remoteObject;
 		return stub.submitCommand(readerID, sessionID, commandID,
 				repeatInterval, timeUnit);

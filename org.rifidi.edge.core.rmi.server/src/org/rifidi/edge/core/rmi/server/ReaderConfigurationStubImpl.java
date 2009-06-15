@@ -16,6 +16,7 @@ import org.rifidi.edge.core.api.rmi.ReaderStub;
 import org.rifidi.edge.core.api.rmi.dto.ReaderDTO;
 import org.rifidi.edge.core.api.rmi.dto.ReaderFactoryDTO;
 import org.rifidi.edge.core.api.rmi.dto.SessionDTO;
+import org.rifidi.edge.core.api.rmi.exceptions.CommandSubmissionException;
 import org.rifidi.edge.core.commands.AbstractCommandConfiguration;
 import org.rifidi.edge.core.commands.Command;
 import org.rifidi.edge.core.daos.CommandDAO;
@@ -394,33 +395,83 @@ public class ReaderConfigurationStubImpl implements ReaderStub {
 	@Override
 	public Integer submitCommand(String readerID, String sessionID,
 			String commandID, Long repeatInterval, TimeUnit timeUnit)
-			throws RemoteException {
+			throws RemoteException, CommandSubmissionException {
 		logger.debug("RMI call: submitCommand");
+		return submit(readerID, sessionID, commandID, repeatInterval, timeUnit);
+	}
+
+	@Override
+	public void submitSingleShotCommand(String readerID, String sessionID,
+			String commandID) throws RemoteException,
+			CommandSubmissionException {
+		logger.debug("RMI call: submitSingleShotCommand");
+		submit(readerID, sessionID, commandID, null, null);
+
+	}
+
+	/**
+	 * Handles the work of submitting a command. A command can either be
+	 * submitted as a single-shot or repeating command. Returns null if the
+	 * command was
+	 * 
+	 * @param readerID
+	 *            The ID of the reader to submit the command to
+	 * @param sessionID
+	 *            The session on the reader to submit the comand to
+	 * @param commandID
+	 *            The ID of the command to submit.
+	 * @param repeatInterval
+	 *            The repeat interval. If singleshot command, should be null
+	 * @param timeUnit
+	 *            The TimeIneterval. If singleshot command should be null
+	 * @return JobID if recurring command, or null if singleshot command
+	 */
+	private Integer submit(String readerID, String sessionID, String commandID,
+			Long repeatInterval, TimeUnit timeUnit)
+			throws CommandSubmissionException {
 		AbstractReader<?> reader = readerDAO.getReaderByID(readerID);
 		if (reader == null) {
-			logger.warn("No reader with ID " + readerID + " is available");
-			return null;
+			String error = "No reader with ID " + readerID + " is available";
+			logger.warn(error);
+			throw new CommandSubmissionException(error);
 		}
 		AbstractCommandConfiguration<?> commandConfig = commandDAO
 				.getCommandByID(commandID);
 		if (commandConfig == null) {
+			String error = "No command with ID " + commandID + " is available";
 			logger.warn("No command with ID " + commandID + " is available");
-			return null;
+			throw new CommandSubmissionException(error);
 		}
 
 		ReaderSession session = reader.getReaderSessions().get(sessionID);
-		if (session != null) {
-			Command command = commandConfig.getCommand(readerID);
+		if (session == null) {
+			String error = "No session with ID " + sessionID + " is available";
+			logger.warn(error);
+			throw new CommandSubmissionException(error);
+		}
+		Command command = commandConfig.getCommand(readerID);
+		if (command == null) {
+			String error = "There was a problem creating a command with ID "
+					+ commandID + " on reader with ID " + readerID;
+			logger.warn(error);
+			throw new CommandSubmissionException(error);
+		}
+
+		// if sinleshot command
+		if (repeatInterval == null) {
+			session.submit(command);
+			logger.info("Command with ID " + commandID
+					+ " submitted to session " + sessionID + " of reader "
+					+ readerID + " for single shot execution");
+			return null;
+		} else {
 			Integer processID = session.submit(command, repeatInterval,
 					timeUnit);
 			logger.info("Command with ID " + commandID
 					+ " submitted to session " + sessionID + " of reader "
 					+ readerID + " with repeat interval " + repeatInterval
-					+ " " + timeUnit);
+					+ " " + timeUnit + " processID=" + processID);
 			return processID;
-		} else {
-			logger.warn("No session with ID " + sessionID + " is available");
-			return null;
 		}
 
 	}
