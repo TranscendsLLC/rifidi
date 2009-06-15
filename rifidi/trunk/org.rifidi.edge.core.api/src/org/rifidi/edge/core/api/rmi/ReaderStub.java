@@ -11,6 +11,7 @@ import javax.management.MBeanInfo;
 import org.rifidi.edge.core.api.rmi.dto.ReaderDTO;
 import org.rifidi.edge.core.api.rmi.dto.ReaderFactoryDTO;
 import org.rifidi.edge.core.api.rmi.dto.SessionDTO;
+import org.rifidi.edge.core.api.rmi.exceptions.CommandSubmissionException;
 
 /**
  * This is the interface for a stub that allows users to interact with readers
@@ -179,7 +180,21 @@ public interface ReaderStub extends Remote {
 	 * @return The processID of the submitted command
 	 */
 	Integer submitCommand(String readerID, String sessionID, String commandID,
-			Long repeatInterval, TimeUnit timeUnit) throws RemoteException;
+			Long repeatInterval, TimeUnit timeUnit) throws RemoteException, CommandSubmissionException;
+
+	/**
+	 * Submit a command to be executed only once on the reader session
+	 * 
+	 * @param readerID
+	 *            The reader to use
+	 * @param sessionID
+	 *            The session to use
+	 * @param commandID
+	 *            The commad to submit
+	 * @throws RemoteException
+	 */
+	void submitSingleShotCommand(String readerID, String sessionID, String commandID)
+			throws RemoteException, CommandSubmissionException;
 
 	/**
 	 * Stop a repeated command. The is removed from the executor and will not be

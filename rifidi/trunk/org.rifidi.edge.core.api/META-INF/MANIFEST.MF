@@ -9,4 +9,5 @@ Export-Package: org.rifidi.edge.core.api,
  org.rifidi.edge.core.api.jms.notifications,
  org.rifidi.edge.core.api.rmi,
  org.rifidi.edge.core.api.rmi.dto,
+ org.rifidi.edge.core.api.rmi.exceptions,
  org.rifidi.edge.core.api.tags
