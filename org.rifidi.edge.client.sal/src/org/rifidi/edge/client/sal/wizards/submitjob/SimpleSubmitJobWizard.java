@@ -46,7 +46,7 @@ public class SimpleSubmitJobWizard extends Wizard {
 			Long interval = page.getInterval();
 			if (configuration != null && interval != null) {
 				EdgeServerTreeContentProvider.getEdgeServerController()
-						.scheduleJob(session, configuration, interval);
+						.submitCommand(session, configuration, interval);
 				return true;
 			}
 		}
