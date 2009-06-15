@@ -1,4 +1,3 @@
-
 package org.rifidi.edge.client.sal.controller.edgeserver;
 
 import java.util.Set;
@@ -97,11 +96,20 @@ public interface EdgeServerController {
 	 */
 	void deleteRemoteJob(RemoteJob job);
 
-	void scheduleJob(RemoteSession session,
+	/**
+	 * Submit a command to run on a session. If interval >0, then the command
+	 * will be a submitted as a job, which will execute every interval
+	 * milliseconds. If interval <=0, then the command will only run once.
+	 * 
+	 * @param session
+	 * @param configuration
+	 * @param interval
+	 */
+	void submitCommand(RemoteSession session,
 			RemoteCommandConfiguration configuration, Long interval);
-	
+
 	void clearPropertyChanges(String readerID);
-	
+
 	void synchPropertyChanges(String readerID);
 
 }
