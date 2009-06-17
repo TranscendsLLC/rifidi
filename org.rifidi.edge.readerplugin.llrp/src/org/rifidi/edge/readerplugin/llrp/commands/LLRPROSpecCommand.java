@@ -70,6 +70,8 @@ public class LLRPROSpecCommand extends AbstractLLRPCommand {
 	 * The initial antennaSequence.
 	 */
 	private String antennaSequence = "0";
+	
+	private UnsignedShortArray antenna_array = null;
 
 	/**
 	 * The constructor for the LLRPROSpecCommand.
@@ -78,6 +80,7 @@ public class LLRPROSpecCommand extends AbstractLLRPCommand {
 	 */
 	public LLRPROSpecCommand(String commandID) {
 		super(commandID);
+		antenna_array = new UnsignedShortArray();
 	}
 
 	/**
@@ -99,10 +102,15 @@ public class LLRPROSpecCommand extends AbstractLLRPCommand {
 	}
 
 	/**
-	 * Sets teh antennaIDs.
+	 * Sets the antennaIDs.
 	 */
 	public void setAntennaIDs(String antennaIDs) {
 		this.antennaSequence = antennaIDs;
+		String[] splitstring = antennaIDs.split(",");
+		
+		for(String i:splitstring) {
+			antenna_array.add(new UnsignedShort(i));
+		}
 	}
 
 	/*
@@ -113,8 +121,7 @@ public class LLRPROSpecCommand extends AbstractLLRPCommand {
 	@Override
 	public void run() {
 		this.session = (LLRPReaderSession) this.readerSession;
-		// System.out.println("Session has been set: " + this.session);
-		// System.out.println("Running LLRPROSpecCommand");
+		
 		try {
 			boolean is_taken = false;
 			GET_ROSPECS rospecs = new GET_ROSPECS();
@@ -153,8 +160,7 @@ public class LLRPROSpecCommand extends AbstractLLRPCommand {
 				ro.setROBoundarySpec(rbs);
 
 				AISpec ais = new AISpec();
-				UnsignedShortArray usa = new UnsignedShortArray();
-				usa.add(new UnsignedShort(0));
+				UnsignedShortArray usa = antenna_array;
 				ais.setAntennaIDs(usa);
 				AISpecStopTrigger ast = new AISpecStopTrigger();
 				ast.setAISpecStopTriggerType(new AISpecStopTriggerType(
