@@ -136,7 +136,7 @@ public class LLRPROSpecCommand extends AbstractLLRPCommand {
 				ADD_ROSPEC addRospec = new ADD_ROSPEC();
 
 				ROSpec ro = new ROSpec();
-				ro.setROSpecID(new UnsignedInteger(1));
+				ro.setROSpecID(new UnsignedInteger(this.rospec_id));
 				ro.setPriority(new UnsignedByte(0));
 				ro.setCurrentState(new ROSpecState(ROSpecState.Disabled));
 
