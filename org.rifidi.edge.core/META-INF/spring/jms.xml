@@ -6,38 +6,75 @@
      http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd">
 
 	<!--  Embedded broker to use for external message -->
-	<amq:broker brokerName="externalBroker" useJmx="false"
-		persistent="false" start="true">
-		<amq:transportConnectors>
-			<amq:transportConnector uri="tcp://localhost:1099" />
-		</amq:transportConnectors>
-	</amq:broker>
+	<bean id="externalBroker" class="org.apache.activemq.broker.BrokerService"
+		init-method="start">
+		<property name="brokerName" value="externalBroker" />
+		<property name="persistent" value="false" />
+		<property name="useJmx" value="false" />
+		<property name="transportConnectorURIs">
+			<list>
+				<value>tcp://localhost:1099</value>
+			</list>
+		</property>
+	</bean>
 
 	<!--  Embedded broker to use as internal JMS Queue -->
-	<amq:broker brokerName="internalBroker" useJmx="false"
-		persistent="false" start="true" />
+	<bean id="internalBroker" class="org.apache.activemq.broker.BrokerService"
+		init-method="start">
+		<property name="brokerName" value="internalBroker" />
+		<property name="persistent" value="false" />
+		<property name="useJmx" value="false" />
+	</bean>
 
 	<!-- Topic to use as internal Message Bus -->
-	<amq:topic id="internalDest" physicalName="org.rifidi.edge.internal" />
+	<bean id="internalDest" class="org.apache.activemq.command.ActiveMQTopic">
+		<property name="physicalName" value="org.rifidi.edge.internal" />
+	</bean>
+	<!--
+		<amq:topic id="internalDest" physicalName="org.rifidi.edge.internal"
+		/>
+	-->
 
 	<!--
 		Topic to use as Destination for sending tags to external Consumers
 	-->
-	<amq:topic id="externalTagsDest" physicalName="org.rifidi.edge.external.tags" />
+	<bean id="externalTagsDest" class="org.apache.activemq.command.ActiveMQTopic">
+		<property name="physicalName" value="org.rifidi.edge.external.tags" />
+	</bean>
+	<!--
+		<amq:topic id="externalTagsDest"
+		physicalName="org.rifidi.edge.external.tags" />
+	-->
 
 	<!--
 		Topic to use as Destination for sending notifications to external
 		Consumers
 	-->
-	<amq:topic id="externalNotificationsDest" physicalName="org.rifidi.edge.external.notifications" />
+	<bean id="externalNotificationsDest" class="org.apache.activemq.command.ActiveMQTopic">
+		<property name="physicalName" value="org.rifidi.edge.external.notifications" />
+	</bean>
+	<!--
+		<amq:topic id="externalNotificationsDest"
+		physicalName="org.rifidi.edge.external.notifications" />
+	-->
 
 	<!-- connection factory to use to connect to internal broker -->
-	<amq:connectionFactory id="internalBrokerConFac"
+	<bean id="internalBrokerConFac" class="org.apache.activemq.spring.ActiveMQConnectionFactory">
+		<property name="brokerURL" value="vm://internalBroker?create=false" />
+	</bean>
+	<!--
+		<amq:connectionFactory id="internalBrokerConFac"
 		brokerURL="vm://internalBroker?create=false" />
+	-->
 
 	<!-- connection factory to use to connect to external broker -->
-	<amq:connectionFactory id="externalBrokerConFac"
+	<bean id="externalBrokerConFac" class="org.apache.activemq.spring.ActiveMQConnectionFactory">
+		<property name="brokerURL" value="vm://externalBroker?create=false" />
+	</bean>
+	<!--
+		<amq:connectionFactory id="externalBrokerConFac"
 		brokerURL="vm://externalBroker?create=false" />
+	-->
 
 	<!--
 		JMS Template to use for putting data on the internal message bus.
@@ -52,6 +89,7 @@
 			</bean>
 		</property>
 		<property name="defaultDestination" ref="internalDest" />
+		<property name="sessionTransacted" value="false" />
 	</bean>
 
 	<!--
@@ -67,28 +105,6 @@
 				<property name="maxConnections" value="50" />
 			</bean>
 		</property>
+		<property name="sessionTransacted" value="false" />
 	</bean>
-
-
-	<!--
-		The following lines add the destinations, connectionFactories, and
-		Templates to the OSGi service registry
-	-->
-
-	<osgi:service id="internalDestService" interface="javax.jms.Topic"
-		ref="internalDest" />
-	<osgi:service id="externalTagsDestService" interface="javax.jms.Topic"
-		ref="externalTagsDest" />
-	<osgi:service id="externalNotificationsDestService"
-		interface="javax.jms.Topic" ref="externalNotificationsDest" />
-	<osgi:service id="internalBrokerConFacService" interface="javax.jms.ConnectionFactory"
-		ref="internalBrokerConFac" />
-	<osgi:service id="externalBrokerConFacService" interface="javax.jms.ConnectionFactory"
-		ref="externalBrokerConFac" />
-	<osgi:service id="internalJMSTemplateService"
-		interface="org.springframework.jms.core.JmsTemplate" ref="internalJMSTemplate" />
-	<osgi:service id="externalJMSTemplateService"
-		interface="org.springframework.jms.core.JmsTemplate" ref="externalJMSTemplate" />
-
-
 </beans>
