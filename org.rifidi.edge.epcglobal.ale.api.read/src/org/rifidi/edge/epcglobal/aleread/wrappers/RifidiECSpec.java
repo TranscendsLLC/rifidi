@@ -189,6 +189,7 @@ public class RifidiECSpec implements SignalListener {
 	 * Start a new event cycle.
 	 */
 	private void startNewCycle() {
+		logger.debug("starting new cycle");
 		running = true;
 		restart = false;
 		// swap the result containers
@@ -210,7 +211,10 @@ public class RifidiECSpec implements SignalListener {
 	}
 
 	/**
-	 * Start a new event cycle after a start signal has arrived.
+	 * Start a new event cycle after a start signal has arrived. Only used when
+	 * a start trigger was provided as the event cycle has to wait until that
+	 * event occurs. Under all other circumstances the eventcycle start
+	 * instantly.
 	 */
 	private void startNewCycleAfterStartSignal() {
 		for (StatementController ctrl : startStatementControllers) {
@@ -228,30 +232,36 @@ public class RifidiECSpec implements SignalListener {
 	 */
 	@Override
 	public void startSignal(ALEReadAPI.TriggerCondition type, Object cause) {
+		logger.trace("start signal received");
 		startLock.lock();
+		logger.trace("start signal: locked");
 		try {
-			// we received a start signal so we can stop all start statements
-			// that require a restart
-			for (StatementController ctrl : startStatementControllers) {
-				if (ctrl.needsRestart()) {
-					ctrl.stop();
+			// ignore start signals if the system can already start again
+			if (running && restart == false) {
+				logger.debug("Running, marking for restart.");
+				// we received a start signal so we can stop all start
+				// statements
+				// that require a restart
+				for (StatementController ctrl : startStatementControllers) {
+					if (ctrl.needsRestart()) {
+						ctrl.stop();
+					}
 				}
-			}
-			if (running) {
 				if (nextResult == null) {
 					nextResult = new ResultContainer(type, cause);
 				}
 				restart = true;
-			} else {
+			} else if (!running) {
+				logger.debug("Not running, restarting.");
+				restart = false;
 				if (nextResult == null) {
 					nextResult = new ResultContainer(type, cause);
 				}
-				restart = false;
 				startNewCycle();
 			}
-			// ignore start signals if the system can already start again
 		} finally {
 			startLock.unlock();
+			logger.trace("start signal: unlocked");
 		}
 	}
 
@@ -264,27 +274,33 @@ public class RifidiECSpec implements SignalListener {
 	@Override
 	public void stopSignal(ALEReadAPI.TriggerCondition type, Object cause,
 			List<TagReadEvent> events) {
+		logger.trace("stop signal received");
 		startLock.lock();
+		logger.trace("stop signal: locked");
 		try {
-			running = false;
-			currentResult.stopTime = System.currentTimeMillis();
-			// stop all currently executing statements
-			for (StatementController ctrl : stopStatementControllers) {
-				if (ctrl.needsRestart()) {
-					ctrl.stop();
+			if (running) {
+				running = false;
+				currentResult.stopTime = System.currentTimeMillis();
+				// stop all currently executing statements
+				for (StatementController ctrl : stopStatementControllers) {
+					if (ctrl.needsRestart()) {
+						ctrl.stop();
+					}
 				}
-			}
-			currentResult.stopReason = type;
-			currentResult.stopCause = cause;
-			currentResult.events = events;
-			sender.enqueueResultContainer(currentResult);
-			currentResult = null;
-			if (ALEReadAPI.TriggerCondition.UNDEFINE.equals(type) && restart) {
-				// only restart if we didn't get a destroy event
-				startNewCycle();
+				currentResult.stopReason = type;
+				currentResult.stopCause = cause;
+				currentResult.events = events;
+				sender.enqueueResultContainer(currentResult);
+				currentResult = null;
+				if (!ALEReadAPI.TriggerCondition.UNDEFINE.equals(type)
+						&& restart) {
+					// only restart if we didn't get a destroy event
+					startNewCycle();
+				}
 			}
 		} finally {
 			startLock.unlock();
+			logger.trace("stop signal: unlocked");
 		}
 	}
 
@@ -377,6 +393,12 @@ public class RifidiECSpec implements SignalListener {
 		return name;
 	}
 
+	/**
+	 * Class that holds the results of an event cycle.
+	 * 
+	 * @author Jochen Mader - jochen@pramari.com
+	 * 
+	 */
 	public class ResultContainer {
 		public ALEReadAPI.TriggerCondition startReason;
 		public Object startCause;
