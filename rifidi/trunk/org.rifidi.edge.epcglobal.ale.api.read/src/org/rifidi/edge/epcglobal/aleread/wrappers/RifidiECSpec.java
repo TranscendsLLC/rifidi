@@ -24,7 +24,6 @@ import org.rifidi.edge.epcglobal.ale.api.read.ws.ECSpecValidationExceptionRespon
 import org.rifidi.edge.epcglobal.ale.api.read.ws.InvalidURIExceptionResponse;
 import org.rifidi.edge.epcglobal.ale.api.read.ws.NoSuchSubscriberExceptionResponse;
 import org.rifidi.edge.epcglobal.aleread.ALEReadAPI;
-import org.rifidi.edge.esper.events.DestroyEvent;
 import org.rifidi.edge.lr.LogicalReader;
 
 import com.espertech.esper.client.EPServiceProvider;
@@ -74,6 +73,8 @@ public class RifidiECSpec implements SignalListener {
 	private ResultContainer nextResult;
 	/** Sends out the data. */
 	private ReportSender sender;
+	/** Sender runs in this thread. */
+	private Thread senderThread;
 	/** Sender for the start/stop triggers. */
 	private Timer timer;
 
@@ -104,8 +105,8 @@ public class RifidiECSpec implements SignalListener {
 		this.readers.addAll(readers);
 		// configure the report sender
 		this.sender = new ReportSender(reports, name, spec);
-		Thread senderThread = new Thread(sender);
-		senderThread.start();
+
+		// collect the primary keys
 		this.primarykeys = new HashSet<String>();
 		if (this.primarykeys.isEmpty()) {
 			this.primarykeys.add("epc");
@@ -120,8 +121,13 @@ public class RifidiECSpec implements SignalListener {
 					"insert into LogicalReader select * from "
 							+ reader.getName()));
 		}
-		timer = new Timer(rifidiBoundarySpec.getStartTriggers(),
-				rifidiBoundarySpec.getStopTriggers(), esper);
+		// add a timer if we got triggers
+		if (rifidiBoundarySpec.getStartTriggers().size() != 0
+				|| rifidiBoundarySpec.getStopTriggers() != null) {
+			timer = new Timer(rifidiBoundarySpec.getStartTriggers(),
+					rifidiBoundarySpec.getStopTriggers(), esper);
+		}
+		// TODO: When data available needs to be added ASAP!!!
 		if (rifidiBoundarySpec.isWhenDataAvailable()) {
 			logger.fatal("'When data available' not yet implemented!");
 		}
@@ -305,18 +311,23 @@ public class RifidiECSpec implements SignalListener {
 	}
 
 	/**
-	 * Destroy the spec and clean up.
-	 */
-	public void destroy() {
-		esper.getEPRuntime().sendEvent(new DestroyEvent(name));
-	}
-
-	/**
 	 * Shoot it, kill it, destroy it. And because java doesn't have friends I
 	 * need this method to be declared public. Why!Why!Why!Why!Why! The one
 	 * thing that C++ got right :(
 	 */
-	public void discard() {
+	public void destroy() {
+		senderThread.interrupt();
+		if (timer != null) {
+			timer.destroy();
+		}
+		// start the collectors
+		for (StatementController ctrl : stopStatementControllers) {
+			ctrl.stop();
+		}
+		// start the statements for processing start signals
+		for (StatementController ctrl : startStatementControllers) {
+			ctrl.stop();
+		}
 	}
 
 	/**
@@ -331,15 +342,19 @@ public class RifidiECSpec implements SignalListener {
 			throw new DuplicateSubscriptionExceptionResponse("Uri " + uri
 					+ " is already subscribed.");
 		}
-		subscriptionURIs.add(uri);
-		sender.subscribe(uri);
-		if (subscriptionURIs.size() == 1) {
-			if (instantStart) {
-				nextResult = new ResultContainer(
-						ALEReadAPI.TriggerCondition.REQUESTED, null);
-				startNewCycle();
-			} else {
-				startNewCycleAfterStartSignal();
+		synchronized (subscriptionURIs) {
+			subscriptionURIs.add(uri);
+			sender.subscribe(uri);
+			if (subscriptionURIs.size() == 1) {
+				senderThread = new Thread(sender);
+				senderThread.start();
+				if (instantStart) {
+					nextResult = new ResultContainer(
+							ALEReadAPI.TriggerCondition.REQUESTED, null);
+					startNewCycle();
+				} else {
+					startNewCycleAfterStartSignal();
+				}
 			}
 		}
 	}
@@ -356,10 +371,21 @@ public class RifidiECSpec implements SignalListener {
 			throw new NoSuchSubscriberExceptionResponse("Uri " + uri
 					+ " is not subscribed to this spec.");
 		}
-		subscriptionURIs.remove(uri);
-		sender.unsubscribe(uri);
-		if (subscriptionURIs.size() == 0) {
-			destroy();
+		synchronized (subscriptionURIs) {
+			subscriptionURIs.remove(uri);
+			sender.unsubscribe(uri);
+			if (subscriptionURIs.size() == 0) {
+				logger.debug("Stopping ECSpec: " + name);
+				senderThread.interrupt();
+				// start the collectors
+				for (StatementController ctrl : stopStatementControllers) {
+					ctrl.stop();
+				}
+				// start the statements for processing start signals
+				for (StatementController ctrl : startStatementControllers) {
+					ctrl.stop();
+				}
+			}
 		}
 	}
 

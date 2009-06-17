@@ -64,4 +64,11 @@ public class Timer {
 					trigger.getPeriod(), TimeUnit.MILLISECONDS);
 		}
 	}
+
+	/**
+	 * Destroy the timer.
+	 */
+	public void destroy() {
+		executor.shutdownNow();
+	}
 }
