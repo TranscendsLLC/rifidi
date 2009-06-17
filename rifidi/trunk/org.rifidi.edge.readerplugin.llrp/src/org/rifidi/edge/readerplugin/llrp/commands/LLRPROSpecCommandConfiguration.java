@@ -11,8 +11,6 @@
  */
 package org.rifidi.edge.readerplugin.llrp.commands;
 
-import java.util.ArrayList;
-
 import org.rifidi.configuration.annotations.JMXMBean;
 import org.rifidi.configuration.annotations.Property;
 import org.rifidi.configuration.annotations.PropertyType;
@@ -36,8 +34,6 @@ public class LLRPROSpecCommandConfiguration extends
 	 * 
 	 */
 	private String antennaSequence = "0";
-	
-	private ArrayList<Integer> antennaList = new ArrayList<Integer>();
 
 	/**
 	 * 
@@ -55,6 +51,7 @@ public class LLRPROSpecCommandConfiguration extends
 	public LLRPROSpecCommand getCommand(String readerID) {
 		LLRPROSpecCommand llrprsc = new LLRPROSpecCommand(super.getID());
 		llrprsc.setRoSpecID(roSpecID);
+		llrprsc.setAntennaIDs(antennaSequence);
 		return llrprsc;
 	}
 
@@ -96,8 +93,7 @@ public class LLRPROSpecCommandConfiguration extends
 	 * Sets the AntennaID.  
 	 */
 	public void setAntennaIDs(String antennaIDs) {
-		this.antennaList = new ArrayList<Integer>();
-		if(isAListOfIntegers(antennaIDs)) {
+		if(isAListOfShorts(antennaIDs)) {
 			this.antennaSequence = antennaIDs;
 		}
 	}
@@ -105,13 +101,13 @@ public class LLRPROSpecCommandConfiguration extends
 	/*
 	 * Checks to see if the string that has come in is a comma delimited list of integers
 	 */
-	private boolean isAListOfIntegers(String list) {
+	private boolean isAListOfShorts(String list) {
 		String[] strArray = list.split(",");
 		
 		boolean retVal = true;
 		
 		for(String number:strArray) {
-			if(!isAnInt(number)) {
+			if(!isANaturalShort(number)) {
 				retVal=false;
 			}
 		}
@@ -122,9 +118,9 @@ public class LLRPROSpecCommandConfiguration extends
 	/*
 	 * Checks to see if an incoming string is a list of integers.  
 	 */
-	private boolean isAnInt(String i) {
+	private boolean isANaturalShort(String i) {
 		try {
-			Integer number = Integer.valueOf(1);
+			Short number = Short.valueOf(i);
 			if(number<0) {
 				return false;
 			}
