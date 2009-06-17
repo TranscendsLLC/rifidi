@@ -24,6 +24,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.messages.DatacontainerEvent;
 import org.rifidi.edge.core.messages.TagReadEvent;
+import org.rifidi.edge.epcglobal.ale.api.read.data.ECReport;
 import org.rifidi.edge.epcglobal.ale.api.read.data.ECReports;
 import org.rifidi.edge.epcglobal.ale.api.read.data.ECSpec;
 import org.rifidi.edge.epcglobal.ale.api.read.ws.DuplicateSubscriptionExceptionResponse;
@@ -117,8 +118,12 @@ public class ReportSender implements Runnable {
 				// process the set of events
 				for (RifidiReport rifidiReport : rifidiReports) {
 					rifidiReport.processEvents(events);
-					reports.getReports().getReport().add(rifidiReport.send());
+					ECReport rep=rifidiReport.send();
+					if(rep!=null){
+						reports.getReports().getReport().add(rep);	
+					}
 				}
+				
 				reports.setInitiationCondition(ALEReadAPI.conditionToName
 						.get(container.startReason));
 				// TODO: dummy code, replace with correct typing
@@ -154,8 +159,7 @@ public class ReportSender implements Runnable {
 							answer.reports = reports;
 							marsh.marshal(answer, out);
 						} catch (JAXBException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
+							logger.fatal("Problem serializing to xml: "+e);
 						}
 						out.flush();
 						out.close();
