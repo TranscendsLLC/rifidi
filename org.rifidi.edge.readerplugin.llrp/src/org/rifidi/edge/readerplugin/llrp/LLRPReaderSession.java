@@ -13,8 +13,9 @@ package org.rifidi.edge.readerplugin.llrp;
 
 import java.io.IOException;
 import java.math.BigInteger;
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -35,6 +36,7 @@ import org.llrp.ltk.generated.messages.RO_ACCESS_REPORT;
 import org.llrp.ltk.generated.messages.SET_READER_CONFIG;
 import org.llrp.ltk.generated.messages.SET_READER_CONFIG_RESPONSE;
 import org.llrp.ltk.generated.parameters.AccessReportSpec;
+import org.llrp.ltk.generated.parameters.AntennaID;
 import org.llrp.ltk.generated.parameters.C1G2EPCMemorySelector;
 import org.llrp.ltk.generated.parameters.EPC_96;
 import org.llrp.ltk.generated.parameters.EventNotificationState;
@@ -53,6 +55,8 @@ import org.llrp.ltk.types.UnsignedShort;
 import org.rifidi.edge.core.api.SessionStatus;
 import org.rifidi.edge.core.commands.Command;
 import org.rifidi.edge.core.messages.EPCGeneration2Event;
+import org.rifidi.edge.core.messages.ReadCycle;
+import org.rifidi.edge.core.messages.TagReadEvent;
 import org.rifidi.edge.core.notifications.NotifierService;
 import org.rifidi.edge.core.readers.impl.AbstractReaderSession;
 import org.springframework.jms.core.JmsTemplate;
@@ -221,60 +225,6 @@ public class LLRPReaderSession extends AbstractReaderSession implements
 	}
 
 	/**
-	 * 
-	 */
-	@Override
-	public void messageReceived(LLRPMessage arg0) {
-		logger.debug("Asynchronous message recieved");
-		// System.out.println("Asynchronous message recieved");
-		if (arg0 instanceof RO_ACCESS_REPORT) {
-			RO_ACCESS_REPORT rar = (RO_ACCESS_REPORT) arg0;
-			List<TagReportData> trdl = rar.getTagReportDataList();
-
-			List<String> tagdatastring = new ArrayList<String>();
-
-			for (TagReportData t : trdl) {
-				// AntennaID antid = t.getAntennaID();
-				// System.out.println("EPC data recieved");
-				EPC_96 id = (EPC_96) t.getEPCParameter();
-				System.out.println("EPC data processed : "
-						+ id.getEPC().toString(16));
-				tagdatastring.add(id.getEPC().toString(16));
-			}
-
-			for (BigInteger m : parseString(tagdatastring)) {
-				// System.out.println("Sending the bigint to the template");
-				this.getTemplate().send(this.getDestination(),
-						new ObjectMessageCreator(m));
-				// System.out.println("Finished sending the bigint to the template");
-			}
-		}
-	}
-
-	/**
-	 * Parse the given string for results.
-	 * 
-	 * @param input
-	 * @return
-	 */
-	private List<BigInteger> parseString(List<String> input) {
-
-		List<BigInteger> retVal = new ArrayList<BigInteger>();
-
-		try {
-			for (String s : input) {
-				s = s.trim();
-
-				retVal.add(new BigInteger(s, 16));
-			}
-		} catch (Exception e) {
-			logger.warn("There was a problem when parsing LLRP Tags.  "
-					+ "tag has not been added", e);
-		}
-		return retVal;
-	}
-
-	/**
 	 * This method creates a SET_READER_CONFIG method.
 	 * 
 	 * @return The SET_READER_CONFIG object.
@@ -339,53 +289,6 @@ public class LLRPReaderSession extends AbstractReaderSession implements
 		return setReaderConfig;
 	}
 
-	private class ObjectMessageCreator implements MessageCreator {
-
-		/** The message that should be part of the object. */
-		private ActiveMQObjectMessage objectMessage;
-
-		/**
-		 * Constructor.
-		 * 
-		 * @param message
-		 */
-		public ObjectMessageCreator(BigInteger message) {
-			super();
-			objectMessage = new ActiveMQObjectMessage();
-			EPCGeneration2Event gen2event = new EPCGeneration2Event();
-			int length;
-			// make some wild guesses on the length of the epc field
-			if (message.bitLength() > 96) {
-				// 192 bits
-				length = 192;
-			} else if (message.bitLength() > 64) {
-				// 96 bits
-				length = 96;
-			} else {
-				// 64 bits
-				length = 64;
-			}
-			gen2event.setEPCMemory(message, length);
-			try {
-				objectMessage.setObject(gen2event);
-			} catch (JMSException e) {
-				logger.warn("Unable to set tag event: " + e);
-			}
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see
-		 * org.springframework.jms.core.MessageCreator#createMessage(javax.jms
-		 * .Session)
-		 */
-		@Override
-		public Message createMessage(Session arg0) throws JMSException {
-			return objectMessage;
-		}
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -442,6 +345,101 @@ public class LLRPReaderSession extends AbstractReaderSession implements
 		if (service != null) {
 			service.jobDeleted(this.readerID, this.getID(), id);
 		}
+	}
+
+	/**
+	 * 
+	 */
+	@Override
+	public void messageReceived(LLRPMessage arg0) {
+		logger.debug("Asynchronous message recieved");
+		// System.out.println("Asynchronous message recieved");
+		if (arg0 instanceof RO_ACCESS_REPORT) {
+			RO_ACCESS_REPORT rar = (RO_ACCESS_REPORT) arg0;
+			List<TagReportData> trdl = rar.getTagReportDataList();
+
+			// List<String> tagdatastring = new ArrayList<String>();
+			Set<TagReadEvent> tagreaderevents = new HashSet<TagReadEvent>();
+
+			for (TagReportData t : trdl) {
+				AntennaID antid = t.getAntennaID();
+				EPC_96 id = (EPC_96) t.getEPCParameter();
+				System.out.println("EPC data processed : "
+						+ id.getEPC().toString(16));
+				String EPCData = id.getEPC().toString(16);
+				EPCGeneration2Event gen2event = new EPCGeneration2Event();
+				gen2event.setEPCMemory(this.parseString(EPCData), 96);
+				
+				TagReadEvent tag = new TagReadEvent(readerID, gen2event, antid
+						.getAntennaID().intValue(), System.currentTimeMillis());
+				tagreaderevents.add(tag);
+			}
+
+			this.getTemplate().send(this.getDestination(),
+					new ObjectMessageCreator(tagreaderevents));
+		}
+	}
+
+	/**
+	 * Used to create a JMS message to send to the Queue that collects Tag Data
+	 * 
+	 * @author Kyle Neumeier - kyle@pramari.com
+	 * 
+	 */
+	private class ObjectMessageCreator implements MessageCreator {
+
+		/** Message to send */
+		private ActiveMQObjectMessage objectMessage;
+
+		/**
+		 * Constructor.
+		 * 
+		 * @param tags
+		 *            the tags to add to this message
+		 */
+		public ObjectMessageCreator(Set<TagReadEvent> tags) {
+			super();
+			objectMessage = new ActiveMQObjectMessage();
+
+			try {
+				objectMessage.setObject(new ReadCycle(tags, readerID, System
+						.currentTimeMillis()));
+			} catch (JMSException e) {
+				logger.warn("Unable to set tag event: " + e);
+			}
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * org.springframework.jms.core.MessageCreator#createMessage(javax.jms
+		 * .Session)
+		 */
+		@Override
+		public Message createMessage(Session arg0) throws JMSException {
+			return objectMessage;
+		}
+
+	}
+
+	/**
+	 * Parse the given string for results.
+	 * 
+	 * @param input
+	 * @return
+	 */
+	private BigInteger parseString(String input) {
+		BigInteger retVal = null;
+
+		try {
+			input = input.trim();
+			retVal = new BigInteger(input, 16);
+		} catch (Exception e) {
+			logger.warn("There was a problem when parsing LLRP Tags.  "
+					+ "tag has not been added", e);
+		}
+		return retVal;
 	}
 
 }

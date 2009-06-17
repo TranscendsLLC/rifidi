@@ -99,8 +99,6 @@ public class LLRPROSpecCommandConfiguration extends
 		this.antennaList = new ArrayList<Integer>();
 		if(isAListOfIntegers(antennaIDs)) {
 			this.antennaSequence = antennaIDs;
-			
-			
 		}
 	}
 
