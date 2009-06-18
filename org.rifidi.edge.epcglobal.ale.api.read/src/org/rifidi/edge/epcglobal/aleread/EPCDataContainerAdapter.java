@@ -11,7 +11,7 @@ import javax.xml.bind.JAXBException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.epcglobalinc.LevelTypeList;
+import org.epcglobalinc.tdt.LevelTypeList;
 import org.fosstrak.tdt.TDTEngine;
 import org.rifidi.edge.core.messages.DatacontainerEvent;
 import org.rifidi.edge.core.messages.EPCGeneration1Event;
