@@ -161,6 +161,21 @@ public class LLRPReaderSession extends AbstractReaderSession implements
 				logger.warn("Executor was already active! ");
 			}
 			setStatus(SessionStatus.PROCESSING);
+			
+			// resubmit commands
+			while (commandQueue.peek() != null) {
+				executor.submit(commandQueue.poll());
+			}
+			synchronized (commands) {
+				for (Integer id : commands.keySet()) {
+					if (idToData.get(id).future == null) {
+						idToData.get(id).future = executor
+								.scheduleWithFixedDelay(commands.get(id),
+										0, idToData.get(id).interval,
+										idToData.get(id).unit);
+					}
+				}
+			}
 		} catch (TimeoutException e) {
 			logger.error(e.getMessage());
 			disconnect();
@@ -181,6 +196,14 @@ public class LLRPReaderSession extends AbstractReaderSession implements
 				if (processing.compareAndSet(true, false)) {
 					logger.debug("Disconnecting");
 					((LLRPConnector) connection).disconnect();
+				}
+			}
+			synchronized (commands) {
+				for (Integer id : commands.keySet()) {
+					if (idToData.get(id).future != null) {
+						idToData.get(id).future.cancel(true);
+						idToData.get(id).future = null;
+					}
 				}
 			}
 		} finally {
