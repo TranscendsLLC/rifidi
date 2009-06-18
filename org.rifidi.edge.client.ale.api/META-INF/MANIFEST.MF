@@ -13,4 +13,4 @@ Export-Package: org.rifidi.edge.client.ale.api.alelr.xsd.epcglobal,
  org.rifidi.edge.client.ale.api.xsd.alelr.epcglobal,
  org.rifidi.edge.client.ale.api.xsd.epcglobal
 Import-Package: org.apache.commons.logging;version="1.1.1"
-Require-Bundle: org.apache.cxf;bundle-version="1.0.0"
+Require-Bundle: org.rifidi.org.apache.cxf;bundle-version="2.1.4"
