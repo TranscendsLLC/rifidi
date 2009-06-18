@@ -203,7 +203,7 @@ public class ECSpecEditorView extends ViewPart {
 	private void createHeader() {
 
 		/*
-		 * TODO: here is the button that magically initiates the transfer of the
+		 * here is the button that magically initiates the transfer of the
 		 * ECSpec Object to the server.
 		 */
 
