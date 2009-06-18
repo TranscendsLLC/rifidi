@@ -1,4 +1,3 @@
-
 package org.rifidi.edge.client.ale.logicalreaders;
 
 import java.util.ArrayList;
@@ -11,6 +10,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.MessageBox;
@@ -44,7 +44,7 @@ import org.rifidi.edge.client.ale.logicalreaders.decorators.LRSpecDecorator;
 /**
  * Not threadsafe because we only use this class inside of eclipse!!!!
  * 
- * TODO: Class level comment.  
+ * TODO: Class level comment.
  * 
  * @author Jochen Mader - jochen@pramari.com
  */
@@ -537,6 +537,9 @@ public class ALELRServiceImpl implements ALELRService, ALEService {
 			for (Viewer viewer : aleViewers) {
 				viewer.setInput(serviceList);
 				viewer.refresh();
+				if (viewer instanceof AbstractTreeViewer) {
+					((AbstractTreeViewer) viewer).expandToLevel(2);
+				}
 			}
 		}
 	}
