@@ -11,6 +11,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
+import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.MessageBox;
@@ -536,9 +537,13 @@ public class ALELRServiceImpl implements ALELRService, ALEService {
 			serviceList.add(aleServicePortType);
 			for (Viewer viewer : aleViewers) {
 				viewer.setInput(serviceList);
-				viewer.refresh();
+
 				if (viewer instanceof AbstractTreeViewer) {
-					((AbstractTreeViewer) viewer).expandToLevel(2);
+					AbstractTreeViewer aViewer = ((AbstractTreeViewer) viewer);
+					aViewer.refresh();
+					aViewer.expandToLevel(2);
+				} else {
+					viewer.refresh();
 				}
 			}
 		}
