@@ -36,9 +36,11 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
      */
     public void preWindowOpen() {
         IWorkbenchWindowConfigurer configurer = getWindowConfigurer();
+        configurer.setShowPerspectiveBar(true);
         configurer.setInitialSize(new Point(1024, 768));
         configurer.setShowCoolBar(false);
         configurer.setShowStatusLine(false);
         configurer.setTitle("Rifidi EdgeServer Client");
+        
     }
 }
