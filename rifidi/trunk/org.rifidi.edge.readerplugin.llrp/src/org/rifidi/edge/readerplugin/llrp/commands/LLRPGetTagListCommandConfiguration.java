@@ -53,7 +53,7 @@ public class LLRPGetTagListCommandConfiguration extends
 	 */
 	@Override
 	public String getCommandDescription() {
-		return "LLRP get tag description";
+		return "Returns the taglist as seen by the LLRP via a polling.";
 	}
 
 	/*
