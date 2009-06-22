@@ -540,8 +540,9 @@ public class ALELRServiceImpl implements ALELRService, ALEService {
 
 				if (viewer instanceof AbstractTreeViewer) {
 					AbstractTreeViewer aViewer = ((AbstractTreeViewer) viewer);
+					TreePath[] path = aViewer.getExpandedTreePaths();
 					aViewer.refresh();
-					aViewer.expandToLevel(2);
+					aViewer.setExpandedTreePaths(path);
 				} else {
 					viewer.refresh();
 				}
@@ -562,7 +563,15 @@ public class ALELRServiceImpl implements ALELRService, ALEService {
 				serviceList.add(aleServicePortType);
 				for (Viewer viewer : aleViewers) {
 					viewer.setInput(serviceList);
-					viewer.refresh();
+
+					if (viewer instanceof AbstractTreeViewer) {
+						AbstractTreeViewer aViewer = ((AbstractTreeViewer) viewer);
+						TreePath[] path = aViewer.getExpandedTreePaths();
+						aViewer.refresh();
+						aViewer.setExpandedTreePaths(path);
+					} else {
+						viewer.refresh();
+					}
 				}
 			} catch (Throwable t) {
 				logger.warn(t);
