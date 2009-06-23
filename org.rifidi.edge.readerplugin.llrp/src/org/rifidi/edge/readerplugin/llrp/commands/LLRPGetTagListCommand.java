@@ -33,7 +33,6 @@ public class LLRPGetTagListCommand extends AbstractLLRPCommand {
 	 */
 	public LLRPGetTagListCommand(String commandID) {
 		super(commandID);
-		//this.session = (LLRPReaderSession)this.readerSession;
 	}
 	
 	
