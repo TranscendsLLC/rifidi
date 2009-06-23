@@ -25,3 +25,16 @@ Require-Bundle: org.rifidi.edge.epcglobal.ale.api.logicalreader;bundle-version="
  org.rifidi.edge.core.services.esper;bundle-version="1.0.1",
  org.rifidi.edge.core.services;bundle-version="1.0.0",
  org.rifidi.edge.core;bundle-version="5.0.1"
+Export-Package: org.rifidi.edge.ale.esper,
+ org.rifidi.edge.ale.esper.starters,
+ org.rifidi.edge.ale.esper.stoppers,
+ org.rifidi.edge.ale.esper.timer,
+ org.rifidi.edge.epcglobal.ale.api.read,
+ org.rifidi.edge.epcglobal.ale.api.read.activator,
+ org.rifidi.edge.epcglobal.ale.api.read.data,
+ org.rifidi.edge.epcglobal.ale.api.read.ws,
+ org.rifidi.edge.epcglobal.aleread,
+ org.rifidi.edge.epcglobal.aleread.filters,
+ org.rifidi.edge.epcglobal.aleread.groups,
+ org.rifidi.edge.epcglobal.aleread.service,
+ org.rifidi.edge.epcglobal.aleread.wrappers

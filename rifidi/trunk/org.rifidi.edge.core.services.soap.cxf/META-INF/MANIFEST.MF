@@ -20,5 +20,5 @@ Import-Package: javax.servlet;version="2.5.0",
  org.apache.cxf.transport.servlet;version="2.1.4",
  org.osgi.service.http;version="1.2.0"
 Export-Package: org.rifidi.edge.core.services.soap.cxf.internal
-Eclipse-BuddyPolicy: dependent
+Eclipse-BuddyPolicy: global
 Require-Bundle: org.rifidi.edge.core.services;bundle-version="1.0.0"
