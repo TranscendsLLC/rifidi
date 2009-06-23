@@ -1,5 +1,5 @@
 
-package org.rifidi.edge.wsmanagement;
+package org.rifidi.edge.core.services.soap;
 
 import java.net.URL;
 

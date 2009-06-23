@@ -1,6 +1,6 @@
-package org.rifidi.edge.core.notifications;
+package org.rifidi.edge.core.services.notification;
 
-import org.rifidi.edge.core.api.SessionStatus;
+import org.rifidi.edge.api.SessionStatus;
 
 /**
  * Interface for a Service that other components can use to send notifications

@@ -11,8 +11,8 @@ import javax.management.AttributeList;
 
 import org.rifidi.configuration.Configuration;
 import org.rifidi.configuration.RifidiService;
-import org.rifidi.edge.core.api.rmi.dto.ReaderDTO;
-import org.rifidi.edge.core.api.rmi.dto.SessionDTO;
+import org.rifidi.edge.api.rmi.dto.ReaderDTO;
+import org.rifidi.edge.api.rmi.dto.SessionDTO;
 
 /**
  * A reader creates and manages instances of sessions. The reader itself holds

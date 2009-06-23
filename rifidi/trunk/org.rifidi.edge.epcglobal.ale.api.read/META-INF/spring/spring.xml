@@ -19,7 +19,7 @@
 	<osgi:reference id="lrManagement"
 		interface="org.rifidi.edge.lr.LogicalReaderManagementService" />
 	<osgi:reference id="esperManagerService"
-		interface="org.rifidi.edge.esper.EsperManagementService" />
+		interface="org.rifidi.edge.core.services.esper.EsperManagementService" />
 
 	<bean id="aleReadAPIService"
 		class="org.rifidi.edge.epcglobal.ale.api.read.ws.ALEServicePortTypeImpl">
@@ -41,7 +41,7 @@
 
 	<osgi:service id="aleReadService" ref="aleReadAPIService">
 		<osgi:interfaces>
-			<value>org.rifidi.edge.wsmanagement.WebService
+			<value>org.rifidi.edge.core.services.soap.WebService
 			</value>
 			<value>org.rifidi.edge.epcglobal.ale.api.read.ws.ALEServicePortType
 			</value>

@@ -29,5 +29,5 @@
 	<bean id="esperManager" class="org.rifidi.edge.esper.EsperManagementServiceImpl" />
 
 	<osgi:service id="esperManagerService" ref="esperManager"
-		interface="org.rifidi.edge.esper.EsperManagementService" />
+		interface="org.rifidi.edge.core.services.esper.EsperManagementService" />
 </beans>

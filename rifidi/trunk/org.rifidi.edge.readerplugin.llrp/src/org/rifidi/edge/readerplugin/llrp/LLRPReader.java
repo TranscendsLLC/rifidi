@@ -22,9 +22,9 @@ import org.apache.commons.logging.LogFactory;
 import org.rifidi.configuration.annotations.JMXMBean;
 import org.rifidi.configuration.annotations.Property;
 import org.rifidi.configuration.annotations.PropertyType;
-import org.rifidi.edge.core.notifications.NotifierService;
 import org.rifidi.edge.core.readers.AbstractReader;
 import org.rifidi.edge.core.readers.ReaderSession;
+import org.rifidi.edge.core.services.notification.NotifierService;
 import org.springframework.jms.core.JmsTemplate;
 
 /**

@@ -2,8 +2,8 @@ package org.rifidi.edge.core.notifications.internal;
 
 import java.util.Dictionary;
 
-import org.rifidi.edge.core.notifications.NotifierService;
-import org.rifidi.edge.core.notifications.NotifierServiceWrapper;
+import org.rifidi.edge.core.services.notification.NotifierService;
+import org.rifidi.edge.core.services.notification.NotifierServiceWrapper;
 
 /**
  * Implementation of Notifier Service Wrapper

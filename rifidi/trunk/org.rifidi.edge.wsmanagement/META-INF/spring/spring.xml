@@ -8,9 +8,9 @@
 	</bean>
 	<osgi:reference id="httpService" interface="org.osgi.service.http.HttpService"/>
 	<osgi:service id="wsManagementService"
-		interface="org.rifidi.edge.wsmanagement.WSManagementService" ref="wsManagement" />
+		interface="org.rifidi.edge.core.services.soap.WSManagementService" ref="wsManagement" />
 	<!-- Set for WebServices -->
-	<osgi:set id="webServicesSet" interface="org.rifidi.edge.wsmanagement.WebService"
+	<osgi:set id="webServicesSet" interface="org.rifidi.edge.core.services.soap.WebService"
 		cardinality="0..N">
 		<osgi:listener ref="wsManagement" bind-method="registerService"
 			unbind-method="unregisterService" />

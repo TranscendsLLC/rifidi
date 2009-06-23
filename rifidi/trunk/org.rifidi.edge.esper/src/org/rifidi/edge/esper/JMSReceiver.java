@@ -10,6 +10,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.messages.ReadCycle;
 import org.rifidi.edge.core.messages.TagReadEvent;
+import org.rifidi.edge.core.services.esper.EsperManagementService;
 
 import com.espertech.esper.client.EPServiceProvider;
 import com.espertech.esper.client.EventSender;

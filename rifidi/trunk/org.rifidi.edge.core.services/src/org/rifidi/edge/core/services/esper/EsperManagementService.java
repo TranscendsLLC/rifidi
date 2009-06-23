@@ -1,5 +1,5 @@
 
-package org.rifidi.edge.esper;
+package org.rifidi.edge.core.services.esper;
 
 import com.espertech.esper.client.EPServiceProvider;
 

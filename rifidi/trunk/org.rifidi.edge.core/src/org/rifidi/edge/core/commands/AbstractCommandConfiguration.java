@@ -4,7 +4,7 @@
 package org.rifidi.edge.core.commands;
 import org.rifidi.configuration.Configuration;
 import org.rifidi.configuration.RifidiService;
-import org.rifidi.edge.core.api.rmi.dto.CommandConfigurationDTO;
+import org.rifidi.edge.api.rmi.dto.CommandConfigurationDTO;
 
 /**
  * Command configurations represent all properties of a command and will create

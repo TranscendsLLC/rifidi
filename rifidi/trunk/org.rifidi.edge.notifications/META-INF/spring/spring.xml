@@ -33,7 +33,7 @@
 	</osgi:set>
 
 	<osgi:service id="JMSNotifierService" ref="JMSNotifier"
-		interface="org.rifidi.edge.core.notifications.NotifierService" />
+		interface="org.rifidi.edge.core.services.notification.NotifierService" />
 
 	
 	

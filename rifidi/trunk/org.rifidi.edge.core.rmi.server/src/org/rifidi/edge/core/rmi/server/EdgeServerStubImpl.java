@@ -5,7 +5,7 @@ import java.rmi.RemoteException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.configuration.services.ConfigurationService;
-import org.rifidi.edge.core.api.rmi.EdgeServerStub;
+import org.rifidi.edge.api.rmi.EdgeServerStub;
 
 /**
  * This is the implementation for the Edge Server RMI Stub
@@ -32,7 +32,7 @@ public class EdgeServerStubImpl implements EdgeServerStub {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.rifidi.edge.core.api.rmi.EdgeServerStub#save()
+	 * @see org.rifidi.edge.api.rmi.EdgeServerStub#save()
 	 */
 	@Override
 	public void save() throws RemoteException {
@@ -43,7 +43,7 @@ public class EdgeServerStubImpl implements EdgeServerStub {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.api.rmi.EdgeServerStub#getStartupTime()
+	 * @see org.rifidi.edge.api.rmi.EdgeServerStub#getStartupTime()
 	 */
 	@Override
 	public Long getStartupTime() throws RemoteException {

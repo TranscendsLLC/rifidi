@@ -2,7 +2,7 @@ package org.rifidi.edge.readerplugin.alien;
 
 import java.util.Dictionary;
 
-import org.rifidi.edge.core.notifications.NotifierService;
+import org.rifidi.edge.core.services.notification.NotifierService;
 
 /**
  * A wrapper around the JMS Notifier Service so that it can be passed in to

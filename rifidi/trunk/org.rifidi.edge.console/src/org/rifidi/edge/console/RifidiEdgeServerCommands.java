@@ -16,7 +16,6 @@ import org.rifidi.edge.core.commands.AbstractCommandConfiguration;
 import org.rifidi.edge.core.commands.AbstractCommandConfigurationFactory;
 import org.rifidi.edge.core.commands.Command;
 import org.rifidi.edge.core.daos.CommandDAO;
-import org.rifidi.edge.core.daos.ConfigurationDAO;
 import org.rifidi.edge.core.daos.ReaderDAO;
 import org.rifidi.edge.core.readers.AbstractReader;
 import org.rifidi.edge.core.readers.AbstractReaderFactory;
@@ -34,8 +33,6 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 	private CommandDAO commandDAO;
 	/** Configuration Service */
 	private ConfigurationService configService;
-	/** The DAO for managing configurations */
-	private ConfigurationDAO configDAO;
 
 	/**
 	 * Sets the configuration service for this class.
@@ -65,16 +62,6 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 	 */
 	public void setReaderDAO(ReaderDAO readerDAO) {
 		this.readerDAO = readerDAO;
-	}
-
-	/**
-	 * Called by spring to inject the ConfigurationDAO
-	 * 
-	 * @param configDAO
-	 *            the configDAO to set
-	 */
-	public void setConfigDAO(ConfigurationDAO configDAO) {
-		this.configDAO = configDAO;
 	}
 
 	/**
@@ -120,7 +107,7 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 	 * @return
 	 */
 	public Object _configurations(CommandInterpreter intp) {
-		for (Configuration config : configDAO.getConfigurations()) {
+		for (Configuration config : configService.getConfigurations()) {
 			intp.println("ID: " + config.getServiceID());
 		}
 		return null;
@@ -194,7 +181,7 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 			intp.println("Give a ReaderFactoryID");
 			return null;
 		}
-		Configuration configuration = configDAO.getConfiguration(readerID);
+		Configuration configuration = configService.getConfiguration(readerID);
 		if (configuration == null) {
 			intp.println("Reader with ID " + readerID + " is not available");
 			return null;
@@ -221,7 +208,7 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 			intp.println("Give a ReaderFactoryID");
 			return null;
 		}
-		Configuration configuration = configDAO.getConfiguration(readerID);
+		Configuration configuration = configService.getConfiguration(readerID);
 		if (configuration == null) {
 			intp.println("Reader with ID " + readerID + " is not available");
 			return null;

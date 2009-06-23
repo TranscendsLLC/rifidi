@@ -17,7 +17,7 @@
 	</bean>
 
 	<osgi:reference id="esperManagerService"
-		interface="org.rifidi.edge.esper.EsperManagementService" />
+		interface="org.rifidi.edge.core.services.esper.EsperManagementService" />
 
 	<bean id="aleLRAPIService"
 		class="org.rifidi.edge.epcglobal.ale.api.lr.ws.ALELRServicePortTypeImpl">
@@ -29,7 +29,7 @@
 
 	<osgi:service id="aleLRService" ref="aleLRAPIService">
 		<osgi:interfaces>
-			<value>org.rifidi.edge.wsmanagement.WebService
+			<value>org.rifidi.edge.core.services.soap.WebService
 			</value>
 			<value>org.rifidi.edge.epcglobal.ale.api.lr.ws.ALELRServicePortType
 			</value>

@@ -6,7 +6,7 @@ package org.rifidi.edge.core.commands;
 import java.util.HashSet;
 
 import org.rifidi.configuration.impl.AbstractMultiServiceFactory;
-import org.rifidi.edge.core.api.rmi.dto.CommandConfigFactoryDTO;
+import org.rifidi.edge.api.rmi.dto.CommandConfigFactoryDTO;
 
 /**
  * A base class that all CommandConfigurationFactories should extend. Concrete

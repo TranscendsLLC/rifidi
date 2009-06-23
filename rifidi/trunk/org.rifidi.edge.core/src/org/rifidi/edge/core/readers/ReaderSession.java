@@ -5,8 +5,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import org.rifidi.edge.core.api.SessionStatus;
-import org.rifidi.edge.core.api.rmi.dto.SessionDTO;
+import org.rifidi.edge.api.SessionStatus;
+import org.rifidi.edge.api.rmi.dto.SessionDTO;
 import org.rifidi.edge.core.commands.Command;
 
 /**

@@ -5,6 +5,7 @@ package org.rifidi.edge.esper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.messages.TagReadEvent;
+import org.rifidi.edge.core.services.esper.EsperManagementService;
 import org.rifidi.edge.esper.events.DestroyEvent;
 import org.rifidi.edge.esper.events.StartEvent;
 import org.rifidi.edge.esper.events.StopEvent;

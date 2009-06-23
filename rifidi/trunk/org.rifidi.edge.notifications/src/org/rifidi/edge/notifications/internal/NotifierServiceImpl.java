@@ -10,25 +10,24 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.configuration.Configuration;
 import org.rifidi.configuration.listeners.AttributesChangedListener;
-import org.rifidi.edge.core.api.SessionStatus;
-import org.rifidi.edge.core.api.jms.notifications.CommandConfigFactoryAdded;
-import org.rifidi.edge.core.api.jms.notifications.CommandConfigFactoryRemoved;
-import org.rifidi.edge.core.api.jms.notifications.CommandConfigurationAddedNotification;
-import org.rifidi.edge.core.api.jms.notifications.CommandConfigurationRemovedNotification;
-import org.rifidi.edge.core.api.jms.notifications.JobDeletedNotification;
-import org.rifidi.edge.core.api.jms.notifications.JobSubmittedNotification;
-import org.rifidi.edge.core.api.jms.notifications.PropertyChangedNotification;
-import org.rifidi.edge.core.api.jms.notifications.ReaderAddedNotification;
-import org.rifidi.edge.core.api.jms.notifications.ReaderFactoryAddedNotification;
-import org.rifidi.edge.core.api.jms.notifications.ReaderFactoryRemovedNotification;
-import org.rifidi.edge.core.api.jms.notifications.ReaderRemovedNotification;
-import org.rifidi.edge.core.api.jms.notifications.SessionAddedNotification;
-import org.rifidi.edge.core.api.jms.notifications.SessionRemovedNotification;
-import org.rifidi.edge.core.api.jms.notifications.SessionStatusChangedNotification;
+import org.rifidi.edge.api.SessionStatus;
+import org.rifidi.edge.api.jms.notifications.CommandConfigFactoryAdded;
+import org.rifidi.edge.api.jms.notifications.CommandConfigFactoryRemoved;
+import org.rifidi.edge.api.jms.notifications.CommandConfigurationAddedNotification;
+import org.rifidi.edge.api.jms.notifications.CommandConfigurationRemovedNotification;
+import org.rifidi.edge.api.jms.notifications.JobDeletedNotification;
+import org.rifidi.edge.api.jms.notifications.JobSubmittedNotification;
+import org.rifidi.edge.api.jms.notifications.PropertyChangedNotification;
+import org.rifidi.edge.api.jms.notifications.ReaderAddedNotification;
+import org.rifidi.edge.api.jms.notifications.ReaderFactoryAddedNotification;
+import org.rifidi.edge.api.jms.notifications.ReaderFactoryRemovedNotification;
+import org.rifidi.edge.api.jms.notifications.ReaderRemovedNotification;
+import org.rifidi.edge.api.jms.notifications.SessionAddedNotification;
+import org.rifidi.edge.api.jms.notifications.SessionRemovedNotification;
+import org.rifidi.edge.api.jms.notifications.SessionStatusChangedNotification;
 import org.rifidi.edge.core.daos.CommandDAO;
-import org.rifidi.edge.core.daos.ConfigurationDAO;
 import org.rifidi.edge.core.daos.ReaderDAO;
-import org.rifidi.edge.core.notifications.NotifierService;
+import org.rifidi.edge.core.services.notification.NotifierService;
 import org.springframework.jms.core.JmsTemplate;
 
 /**
@@ -51,8 +50,6 @@ public class NotifierServiceImpl implements NotifierService,
 	private ReaderDAO readerDAO;
 	/** commanddao. won't be needed once we have aspects */
 	private CommandDAO commandDAO;
-	/** ConfigurationDAO. Won't be needed once we have aspects */
-	private ConfigurationDAO configurationDAO;
 
 	/**
 	 * Called by spring.

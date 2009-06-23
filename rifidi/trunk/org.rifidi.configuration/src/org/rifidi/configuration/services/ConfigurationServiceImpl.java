@@ -26,6 +26,8 @@ import org.rifidi.configuration.Configuration;
 import org.rifidi.configuration.Constants;
 import org.rifidi.configuration.RifidiService;
 import org.rifidi.configuration.ServiceFactory;
+import org.rifidi.edge.core.services.notification.NotifierService;
+import org.rifidi.edge.core.services.notification.NotifierServiceWrapper;
 
 /**
  * Implementation of service for managing configurations.
@@ -43,6 +45,8 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	private Map<String, Set<ServiceConfiguration>> factoryToConfigurations;
 	/** Currently registered services. */
 	private Map<String, Configuration> IDToConfigurations;
+	/** A notifier for JMS. Remove once we have aspects */
+	private NotifierServiceWrapper notifierService;
 
 	/**
 	 * Currently available factories by their names.
@@ -53,7 +57,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	 * Constructor.
 	 */
 	public ConfigurationServiceImpl(String path) {
-		this.path=path;
+		this.path = path;
 		factoryToConfigurations = new HashMap<String, Set<ServiceConfiguration>>(
 				loadConfig());
 		factories = new HashMap<String, ServiceFactory>();
@@ -202,6 +206,15 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	 */
 	public void register(Configuration config, Map<?, ?> properties) {
 		IDToConfigurations.put(config.getServiceID(), config);
+
+		// TODO: Get rid of this code once we get aspects!!!!!
+		if (this.notifierService == null) {
+			return;
+		}
+		NotifierService service = this.notifierService.getService();
+		if (service != null) {
+			service.addConfigurationEvent(config.getServiceID());
+		}
 	}
 
 	/**
@@ -212,6 +225,14 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	 */
 	public void unregister(Configuration config, Map<?, ?> properties) {
 		IDToConfigurations.remove(config.getServiceID());
+		// TODO: Get rid of this code once we get aspects!!!!!
+		if (this.notifierService == null) {
+			return;
+		}
+		NotifierService service = this.notifierService.getService();
+		if (service != null) {
+			service.removeConfigurationEvent(config.getServiceID());
+		}
 	}
 
 	/*
@@ -273,6 +294,30 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 		for (ServiceFactory serviceFactory : serviceFactories) {
 			bind(serviceFactory, null);
 		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.configuration.services.ConfigurationService#getConfiguration
+	 * (java.lang.String)
+	 */
+	@Override
+	public Configuration getConfiguration(String serviceID) {
+		return IDToConfigurations.get(serviceID);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.configuration.services.ConfigurationService#getConfigurations
+	 * ()
+	 */
+	@Override
+	public Set<Configuration> getConfigurations() {
+		return new HashSet<Configuration>(IDToConfigurations.values());
 	}
 
 	/**

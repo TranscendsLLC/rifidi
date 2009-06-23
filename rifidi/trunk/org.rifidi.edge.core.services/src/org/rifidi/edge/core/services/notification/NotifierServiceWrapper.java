@@ -1,4 +1,4 @@
-package org.rifidi.edge.core.notifications;
+package org.rifidi.edge.core.services.notification;
 
 /**
  * This object is instantiated by spring and wraps the NotifierService. This
