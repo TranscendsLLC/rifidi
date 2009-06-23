@@ -4,8 +4,8 @@
 package org.rifidi.edge.ale.esper.starters;
 
 import org.rifidi.edge.ale.esper.AbstractSignalStatement;
+import org.rifidi.edge.core.services.esper.events.StartEvent;
 import org.rifidi.edge.epcglobal.aleread.ALEReadAPI;
-import org.rifidi.edge.esper.events.StartEvent;
 
 import com.espertech.esper.client.EPAdministrator;
 import com.espertech.esper.client.EPStatement;

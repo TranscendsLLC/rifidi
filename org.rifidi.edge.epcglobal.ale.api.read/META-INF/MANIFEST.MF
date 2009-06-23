@@ -22,7 +22,6 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-Activator: org.rifidi.edge.epcglobal.ale.api.read.activator.Activator
 Bundle-ActivationPolicy: lazy
 Require-Bundle: org.rifidi.edge.epcglobal.ale.api.logicalreader;bundle-version="1.0.0",
- org.rifidi.edge.esper;bundle-version="1.0.1",
+ org.rifidi.edge.core.services.esper;bundle-version="1.0.1",
  org.rifidi.edge.core.services;bundle-version="1.0.0",
- org.rifidi.edge.wsmanagement;bundle-version="1.0.0",
  org.rifidi.edge.core;bundle-version="5.0.1"
