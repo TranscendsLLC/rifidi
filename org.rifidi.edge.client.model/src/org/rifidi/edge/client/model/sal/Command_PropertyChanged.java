@@ -4,7 +4,7 @@ package org.rifidi.edge.client.model.sal;
 import javax.management.Attribute;
 
 import org.rifidi.edge.client.model.sal.commands.RemoteEdgeServerCommand;
-import org.rifidi.edge.core.api.jms.notifications.PropertyChangedNotification;
+import org.rifidi.edge.api.jms.notifications.PropertyChangedNotification;
 
 /**
  * This command is executed when there was a property changed event (a property

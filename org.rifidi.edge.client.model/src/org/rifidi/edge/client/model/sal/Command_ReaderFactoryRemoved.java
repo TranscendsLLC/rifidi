@@ -3,7 +3,7 @@ package org.rifidi.edge.client.model.sal;
 
 import org.eclipse.core.databinding.observable.map.ObservableMap;
 import org.rifidi.edge.client.model.sal.commands.RemoteEdgeServerCommand;
-import org.rifidi.edge.core.api.jms.notifications.ReaderFactoryRemovedNotification;
+import org.rifidi.edge.api.jms.notifications.ReaderFactoryRemovedNotification;
 
 /**
  * A command that is executed whenever a ReaderFactory is removed

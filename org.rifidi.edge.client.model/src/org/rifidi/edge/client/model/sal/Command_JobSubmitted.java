@@ -1,7 +1,7 @@
 package org.rifidi.edge.client.model.sal;
 
 import org.rifidi.edge.client.model.sal.commands.RemoteEdgeServerCommand;
-import org.rifidi.edge.core.api.jms.notifications.JobSubmittedNotification;
+import org.rifidi.edge.api.jms.notifications.JobSubmittedNotification;
 
 /**
  * A handler for a notification that is sent when a new Job is submitted to the

@@ -19,7 +19,7 @@ import org.fosstrak.tdt.TDTEngine;
 import org.rifidi.edge.client.model.SALModelPlugin;
 import org.rifidi.edge.client.model.sal.commands.RequestExecuterSingleton;
 import org.rifidi.edge.client.model.sal.preferences.EdgeServerPreferences;
-import org.rifidi.edge.core.api.rmi.exceptions.CommandSubmissionException;
+import org.rifidi.edge.api.rmi.exceptions.CommandSubmissionException;
 import org.rifidi.edge.core.rmi.client.commandconfigurationstub.CCCreateCommandConfiguration;
 import org.rifidi.edge.core.rmi.client.commandconfigurationstub.CCDeleteCommandConfiguration;
 import org.rifidi.edge.core.rmi.client.commandconfigurationstub.CCServerDescription;

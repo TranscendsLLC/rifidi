@@ -1,7 +1,7 @@
 package org.rifidi.edge.client.model.sal;
 
 import org.rifidi.edge.client.model.sal.commands.RemoteEdgeServerCommand;
-import org.rifidi.edge.core.api.jms.notifications.JobDeletedNotification;
+import org.rifidi.edge.api.jms.notifications.JobDeletedNotification;
 
 /**
  * A handler for a notification when a Job is deleted from a session

@@ -4,7 +4,7 @@ import java.util.Hashtable;
 
 import org.epcglobalinc.LevelTypeList;
 import org.fosstrak.tdt.TDTEngine;
-import org.rifidi.edge.core.api.tags.TagDTO;
+import org.rifidi.edge.api.tags.TagDTO;
 
 /**
  * A Model Object for a tag read

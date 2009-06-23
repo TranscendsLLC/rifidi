@@ -6,7 +6,7 @@ import java.rmi.RemoteException;
 
 import javax.management.AttributeList;
 
-import org.rifidi.edge.core.api.rmi.CommandStub;
+import org.rifidi.edge.api.rmi.CommandStub;
 import org.rifidi.rmi.utils.remotecall.ServerDescriptionBasedRemoteMethodCall;
 
 /**

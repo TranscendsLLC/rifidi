@@ -7,7 +7,7 @@ import java.util.Set;
 
 import javax.management.MBeanInfo;
 
-import org.rifidi.edge.core.api.rmi.dto.CommandConfigFactoryDTO;
+import org.rifidi.edge.api.rmi.dto.CommandConfigFactoryDTO;
 
 /**
  * The Model object for A CommandConfigurationFactory

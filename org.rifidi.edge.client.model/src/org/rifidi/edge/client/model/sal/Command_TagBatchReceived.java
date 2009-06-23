@@ -4,8 +4,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.rifidi.edge.client.model.sal.commands.RemoteEdgeServerCommand;
-import org.rifidi.edge.core.api.tags.TagBatch;
-import org.rifidi.edge.core.api.tags.TagDTO;
+import org.rifidi.edge.api.tags.TagBatch;
+import org.rifidi.edge.api.tags.TagDTO;
 
 /**
  * A handler method for when a TagBatch notification is sent

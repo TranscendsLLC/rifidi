@@ -1,7 +1,7 @@
 
 package org.rifidi.edge.client.model.sal.properties;
 
-import org.rifidi.edge.core.api.SessionStatus;
+import org.rifidi.edge.api.SessionStatus;
 
 /**
  * A class that wraps a bean property for property change events for when a

@@ -4,8 +4,8 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.concurrent.TimeUnit;
 
-import org.rifidi.edge.core.api.rmi.ReaderStub;
-import org.rifidi.edge.core.api.rmi.exceptions.CommandSubmissionException;
+import org.rifidi.edge.api.rmi.ReaderStub;
+import org.rifidi.edge.api.rmi.exceptions.CommandSubmissionException;
 import org.rifidi.rmi.utils.remotecall.ServerDescriptionBasedRemoteMethodCall;
 
 /**
