@@ -353,7 +353,7 @@ public class ALEServicePortTypeImpl implements ALEServicePortType, WebService {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.wsmanagement.WebService#getService()
+	 * @see org.rifidi.edge.core.services.soap.cxf.internal.WebService#getService()
 	 */
 	@Override
 	public Object getService() {
@@ -363,7 +363,7 @@ public class ALEServicePortTypeImpl implements ALEServicePortType, WebService {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.wsmanagement.WebService#getUrl()
+	 * @see org.rifidi.edge.core.services.soap.cxf.internal.WebService#getUrl()
 	 */
 	@Override
 	public URL getUrl() {
