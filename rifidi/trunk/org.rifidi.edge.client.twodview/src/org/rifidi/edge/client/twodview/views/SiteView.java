@@ -36,8 +36,9 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.views.properties.tabbed.ITabbedPropertySheetPageContributor;
 import org.rifidi.edge.client.model.sal.RemoteEdgeServer;
-import org.rifidi.edge.client.sal.modelmanager.ModelManagerService;
-import org.rifidi.edge.client.sal.modelmanager.ModelManagerServiceListener;
+import org.rifidi.edge.client.sal.SALPluginActivator;
+import org.rifidi.edge.client.sal.modelmanager.SALModelService;
+import org.rifidi.edge.client.sal.modelmanager.SALModelServiceListener;
 import org.rifidi.edge.client.twodview.Activator;
 import org.rifidi.edge.client.twodview.layers.FloorPlanLayer;
 import org.rifidi.edge.client.twodview.layers.ListeningScalableLayeredPane;
@@ -52,12 +53,12 @@ import org.rifidi.edge.client.twodview.util.ReaderPos;
 import org.rifidi.edge.client.twodview.util.SerializerUtil;
 
 /**
- * This class is the basis of the twodview. The view contains a layered pane that hosts
- * the different layers.
+ * This class is the basis of the twodview. The view contains a layered pane
+ * that hosts the different layers.
  * 
  * @author Tobias Hoppenthaler - tobias@pramari.com
  */
-public class SiteView extends ViewPart implements ModelManagerServiceListener,
+public class SiteView extends ViewPart implements SALModelServiceListener,
 		ITabbedPropertySheetPageContributor, IAdaptable {
 
 	@SuppressWarnings("unused")
@@ -68,16 +69,17 @@ public class SiteView extends ViewPart implements ModelManagerServiceListener,
 	private FloorPlanLayer floorplanLayer;
 	private ObjectLayer objectLayer;
 	private IFolder saveFolder;
-	private List<RemoteEdgeServer> servers;
+	private RemoteEdgeServer server;
 	private SiteViewController siteViewController;
 	private SiteViewSelectionProvider selectionProvider;
 	private IFile saveFile;
+	private SALModelService modelService;
 
 	/**
 	 * The constructor.
 	 */
 	public SiteView() {
-		ModelManagerService.getInstance().addController(this);
+		modelService = SALPluginActivator.getDefault().getSALModelService();
 		this.saveFolder = Activator.getSaveFolder();
 	}
 
@@ -122,9 +124,6 @@ public class SiteView extends ViewPart implements ModelManagerServiceListener,
 		DropTarget dt = new DropTarget(canvas, DND.DROP_MOVE);
 		dt.setTransfer(new Transfer[] { TextTransfer.getInstance() });
 		this.siteViewController = new SiteViewController(this, canvas);
-		if (this.servers != null) {
-			this.siteViewController.SetModel(this.servers.get(0));
-		}
 		dt.addDropListener(siteViewController);
 
 		MenuManager menuMgr = new MenuManager();
@@ -132,6 +131,7 @@ public class SiteView extends ViewPart implements ModelManagerServiceListener,
 
 		Menu menu = menuMgr.createContextMenu(canvas);
 		canvas.setMenu(menu);
+		modelService.registerListener(this);
 		this.selectionProvider = new SiteViewSelectionProvider(lp);
 		getSite().setSelectionProvider(selectionProvider);
 		getSite().registerContextMenu(menuMgr, selectionProvider);
@@ -175,7 +175,7 @@ public class SiteView extends ViewPart implements ModelManagerServiceListener,
 	}
 
 	/**
-	 * Returns the site view controller. 
+	 * Returns the site view controller.
 	 * 
 	 * @return site view controller
 	 */
@@ -187,14 +187,14 @@ public class SiteView extends ViewPart implements ModelManagerServiceListener,
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.client.sal.modelmanager.ModelManagerServiceListener#setModel
+	 * org.rifidi.edge.client.sal.modelmanager.SALModelServiceListener#setModel
 	 * (java.lang.Object)
 	 */
 	@Override
-	public void setModel(Object model) {
-		this.servers = (List<RemoteEdgeServer>) model;
+	public void setModel(RemoteEdgeServer model) {
+		this.server = model;
 		if (this.siteViewController != null) {
-			this.siteViewController.SetModel(servers.get(0));
+			this.siteViewController.SetModel(server);
 		}
 	}
 
@@ -205,7 +205,7 @@ public class SiteView extends ViewPart implements ModelManagerServiceListener,
 	 */
 	@Override
 	public void dispose() {
-		ModelManagerService.getInstance().removeController(this);
+		this.modelService.unregisterListener(this);
 		this.selectionProvider.dispose();
 		super.dispose();
 	}
