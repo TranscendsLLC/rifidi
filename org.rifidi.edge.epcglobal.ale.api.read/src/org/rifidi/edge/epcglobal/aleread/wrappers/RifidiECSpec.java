@@ -17,7 +17,7 @@ import org.rifidi.edge.ale.esper.stoppers.DurationTimingStatement;
 import org.rifidi.edge.ale.esper.stoppers.StableSetTimingStatement;
 import org.rifidi.edge.ale.esper.stoppers.StopEventTimingStatement;
 import org.rifidi.edge.ale.esper.timer.Timer;
-import org.rifidi.edge.core.messages.TagReadEvent;
+import org.rifidi.edge.core.services.notification.data.TagReadEvent;
 import org.rifidi.edge.epcglobal.ale.api.read.data.ECSpec;
 import org.rifidi.edge.epcglobal.ale.api.read.ws.DuplicateSubscriptionExceptionResponse;
 import org.rifidi.edge.epcglobal.ale.api.read.ws.ECSpecValidationExceptionResponse;

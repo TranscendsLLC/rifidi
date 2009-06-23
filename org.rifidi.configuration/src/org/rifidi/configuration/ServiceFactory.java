@@ -1,4 +1,3 @@
-
 package org.rifidi.configuration;
 
 import java.util.List;
@@ -30,5 +29,13 @@ public interface ServiceFactory {
 	 * @param factoryID
 	 * @return
 	 */
-	public Configuration getEmptyConfiguration(String factoryID);
+	Configuration getEmptyConfiguration(String factoryID);
+
+	/**
+	 * Return the type of configuration created by this factory TODO: this is a
+	 * hack!
+	 * 
+	 * @return
+	 */
+	ConfigurationType getConfigurationType();
 }

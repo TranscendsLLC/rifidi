@@ -12,7 +12,6 @@ import org.rifidi.edge.core.daos.ReaderDAO;
 import org.rifidi.edge.core.readers.AbstractReader;
 import org.rifidi.edge.core.readers.AbstractReaderFactory;
 import org.rifidi.edge.core.services.notification.NotifierService;
-import org.rifidi.edge.core.services.notification.NotifierServiceWrapper;
 
 /**
  * Implementation of Reader Data Access Object. Allows components to access
@@ -30,7 +29,7 @@ public class ReaderDAOImpl implements ReaderDAO {
 	/** The logger for this class */
 	private Log logger = LogFactory.getLog(ReaderDAOImpl.class);
 	/** A notifier for JMS. Remove once we have aspects */
-	private NotifierServiceWrapper notifierService;
+	private NotifierService notifierService;
 
 	/**
 	 * Constructor.
@@ -99,12 +98,9 @@ public class ReaderDAOImpl implements ReaderDAO {
 				readerFactory);
 
 		// TODO: Remove once we have aspects
-		if (notifierService == null) {
-			return;
-		}
-		NotifierService service = notifierService.getService();
-		if (service != null) {
-			service.addReaderFactoryEvent(readerFactory.getFactoryIDs().get(0));
+		if (notifierService != null) {
+			notifierService.addReaderFactoryEvent(readerFactory.getFactoryIDs()
+					.get(0));
 		}
 	}
 
@@ -123,13 +119,9 @@ public class ReaderDAOImpl implements ReaderDAO {
 		readerConfigFactories.remove(readerFactory.getFactoryIDs().get(0));
 
 		// TODO: Remove once we have aspects
-		if (notifierService == null) {
-			return;
-		}
-		NotifierService service = notifierService.getService();
-		if (service != null) {
-			service.removeReaderFactoryEvent(readerFactory.getFactoryIDs().get(
-					0));
+		if (notifierService != null) {
+			notifierService.removeReaderFactoryEvent(readerFactory
+					.getFactoryIDs().get(0));
 		}
 	}
 
@@ -145,15 +137,13 @@ public class ReaderDAOImpl implements ReaderDAO {
 		}
 
 		// TODO: Remove once we have aspects
-		if (notifierService == null) {
-			return;
-		}
-		NotifierService service = notifierService.getService();
-		if (service != null) {
+		if (notifierService != null) {
 			for (AbstractReaderFactory<?> factory : factories) {
-				service.addReaderFactoryEvent(factory.getFactoryIDs().get(0));
+				notifierService.addReaderFactoryEvent(factory.getFactoryIDs()
+						.get(0));
 			}
 		}
+
 	}
 
 	/**
@@ -201,7 +191,7 @@ public class ReaderDAOImpl implements ReaderDAO {
 	 * @param notifierService
 	 *            the notifierService to set
 	 */
-	public void setNotifierService(NotifierServiceWrapper notifierService) {
+	public void setNotifierService(NotifierService notifierService) {
 		this.notifierService = notifierService;
 	}
 }

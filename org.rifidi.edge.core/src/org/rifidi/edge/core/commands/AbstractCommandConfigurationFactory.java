@@ -5,6 +5,7 @@ package org.rifidi.edge.core.commands;
 
 import java.util.HashSet;
 
+import org.rifidi.configuration.ConfigurationType;
 import org.rifidi.configuration.impl.AbstractMultiServiceFactory;
 import org.rifidi.edge.api.rmi.dto.CommandConfigFactoryDTO;
 
@@ -39,5 +40,15 @@ public abstract class AbstractCommandConfigurationFactory extends
 	public CommandConfigFactoryDTO getDTO() {
 		return new CommandConfigFactoryDTO(getReaderFactoryID(),
 				new HashSet<String>(this.getFactoryIDs()));
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.rifidi.configuration.ServiceFactory#getConfigurationType()
+	 */
+	@Override
+	public ConfigurationType getConfigurationType() {
+		return ConfigurationType.COMMAND;
 	}
 }

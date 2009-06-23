@@ -1,4 +1,4 @@
-package org.rifidi.edge.core.messages;
+package org.rifidi.edge.core.services.notification.data;
 
 import java.io.Serializable;
 import java.math.BigInteger;

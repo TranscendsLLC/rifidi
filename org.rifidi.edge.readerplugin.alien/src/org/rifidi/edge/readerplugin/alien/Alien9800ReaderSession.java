@@ -37,7 +37,7 @@ public class Alien9800ReaderSession extends AbstractIPReaderSession {
 	/** Character that terminates a message from alien. */
 	public static final char TERMINATION_CHAR = '\0';
 	/** Service used to send out notifications */
-	private NotifierServiceWrapper notifierService;
+	private NotifierService notifierService;
 	/** The ID of the reader this session belongs to */
 	private String readerID;
 
@@ -117,7 +117,7 @@ public class Alien9800ReaderSession extends AbstractIPReaderSession {
 	public Alien9800ReaderSession(String id, String host, int port,
 			int reconnectionInterval, int maxConAttempts, String username,
 			String password, JmsTemplate template,
-			NotifierServiceWrapper notifierService, String readerID) {
+			NotifierService notifierService, String readerID) {
 		super(id, host, port, reconnectionInterval, maxConAttempts, template
 				.getDefaultDestination(), template);
 		this.username = username;
@@ -201,10 +201,8 @@ public class Alien9800ReaderSession extends AbstractIPReaderSession {
 		super.setStatus(status);
 
 		// TODO: Remove this once we have aspectJ
-		NotifierService service = notifierService.getNotifierService();
-		if (service != null) {
-			service.sessionStatusChanged(this.readerID, this.getID(), status);
-		}
+		notifierService.sessionStatusChanged(this.readerID, this.getID(),
+				status);
 	}
 
 	/*
@@ -219,10 +217,7 @@ public class Alien9800ReaderSession extends AbstractIPReaderSession {
 		super.killComand(id);
 
 		// TODO: Remove this once we have aspectJ
-		NotifierService service = notifierService.getNotifierService();
-		if (service != null) {
-			service.jobDeleted(this.readerID, this.getID(), id);
-		}
+		notifierService.jobDeleted(this.readerID, this.getID(), id);
 	}
 
 	/*
@@ -238,11 +233,9 @@ public class Alien9800ReaderSession extends AbstractIPReaderSession {
 
 		// TODO: Remove this once we have aspectJ
 		try {
-			NotifierService service = notifierService.getNotifierService();
-			if (service != null) {
-				service.jobSubmitted(this.readerID, this.getID(), retVal,
-						command.getCommandID());
-			}
+
+			notifierService.jobSubmitted(this.readerID, this.getID(), retVal,
+					command.getCommandID());
 		} catch (Exception e) {
 			// make sure the notification doesn't cause this method to exit
 			// under any circumstances

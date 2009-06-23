@@ -1,25 +1,20 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:osgi="http://www.springframework.org/schema/osgi"
 	xmlns:amq="http://activemq.apache.org/schema/core"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
-     http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi.xsd
-     http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd">
-
-	<bean id="NotifierServiceWrapper"
-		class="org.rifidi.edge.core.notifications.internal.NotifyServiceWrapperImpl" />
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
 
 	<!-- Create Reader Configuration DAO Service -->
 	<bean id="ReaderDAOImpl" class="org.rifidi.edge.core.daos.internal.impl.ReaderDAOImpl">
 		<property name="readerFactories" ref="readerFactoriesSet" />
 		<property name="reader" ref="readerSet" />
-		<property name="notifierService" ref="NotifierServiceWrapper" />
+		<property name="notifierService" ref="JMSNotifierService" />
 	</bean>
 
 	<!-- Create Reader Configuration DAO Service -->
 	<bean id="CommandDAOImpl" class="org.rifidi.edge.core.daos.internal.impl.CommandDAOImpl">
 		<property name="commandFactories" ref="commandFactoriesSet" />
 		<property name="commands" ref="commandSet" />
-		<property name="notifierService" ref="NotifierServiceWrapper" />
+		<property name="notifierService" ref="JMSNotifierService" />
 	</bean>
-	
+
 </beans>

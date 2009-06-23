@@ -6,26 +6,17 @@ Bundle-Version: 5.0.1
 Bundle-Vendor: Pramari, LLC
 Bundle-ActivationPolicy: lazy
 Import-Package: javax.jms;version="1.1.0",
- org.apache.activemq;version="5.1.0",
- org.apache.activemq.broker;version="5.2.0",
- org.apache.activemq.command;version="5.2.0",
- org.apache.activemq.pool;version="5.2.0",
- org.apache.activemq.spring;version="5.2.0",
  org.apache.commons.logging;version="1.0.4",
  org.osgi.framework;version="1.4.0",
- org.rifidi.edge.api,
- org.rifidi.edge.api.jms.notifications,
- org.rifidi.edge.api.rmi.dto,
- org.springframework.beans.factory.config;version="2.5.5",
  org.springframework.jms.core;version="2.5.5"
 Export-Package: org.rifidi.edge.core.commands,
  org.rifidi.edge.core.daos,
  org.rifidi.edge.core.exceptions,
- org.rifidi.edge.core.messages,
  org.rifidi.edge.core.messages.exceptions,
  org.rifidi.edge.core.readers,
  org.rifidi.edge.core.readers.impl
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-Description: This bundle contains several core services needed by the edge server, such as ReaderSession service
 Require-Bundle: org.rifidi.configuration;bundle-version="1.0.1";visibility:=reexport,
- org.rifidi.edge.core.services;bundle-version="1.0.0"
+ org.rifidi.edge.core.services;bundle-version="1.0.0",
+ org.rifidi.edge.api;bundle-version="1.1.1"

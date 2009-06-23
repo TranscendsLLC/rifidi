@@ -10,7 +10,7 @@ import java.util.Set;
 
 import org.rifidi.edge.core.readers.AbstractReader;
 import org.rifidi.edge.core.readers.AbstractReaderFactory;
-import org.springframework.jms.core.JmsOperations;
+import org.rifidi.edge.core.services.notification.NotifierService;
 import org.springframework.jms.core.JmsTemplate;
 
 /**
@@ -31,15 +31,15 @@ public class Alien9800ReaderFactory extends
 	/** Name of the readerSession. */
 	private static final String name = "Alien9800";
 	/** A JMS event notification sender */
-	private NotifierServiceWrapper notifierServiceWrapper;
+	private NotifierService notifierService;
 
 	/**
 	 * Called by spring
 	 * 
 	 * @param wrapper
 	 */
-	public void setNotifierServiceWrapper(NotifierServiceWrapper wrapper) {
-		this.notifierServiceWrapper = wrapper;
+	public void setNotifierService(NotifierService notifierService) {
+		this.notifierService = notifierService;
 	}
 
 	/**
@@ -90,7 +90,7 @@ public class Alien9800ReaderFactory extends
 	@Override
 	public void customConfig(Alien9800Reader instance) {
 		instance.setTemplate((JmsTemplate) template);
-		instance.setNotifiyServiceWrapper(notifierServiceWrapper);
+		instance.setNotifiyService(notifierService);
 		Set<String> interfaces = new HashSet<String>();
 		interfaces.add(AbstractReader.class.getName());
 		instance.register(getContext(), interfaces);

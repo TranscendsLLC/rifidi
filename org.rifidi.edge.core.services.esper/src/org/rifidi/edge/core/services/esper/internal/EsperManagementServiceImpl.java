@@ -4,11 +4,11 @@ package org.rifidi.edge.core.services.esper.internal;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.rifidi.edge.core.messages.TagReadEvent;
 import org.rifidi.edge.core.services.esper.EsperManagementService;
 import org.rifidi.edge.core.services.esper.events.DestroyEvent;
 import org.rifidi.edge.core.services.esper.events.StartEvent;
 import org.rifidi.edge.core.services.esper.events.StopEvent;
+import org.rifidi.edge.core.services.notification.data.TagReadEvent;
 
 import com.espertech.esper.client.Configuration;
 import com.espertech.esper.client.EPServiceProvider;

@@ -1,0 +1,36 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:osgi="http://www.springframework.org/schema/osgi"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+                           http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi.xsd">
+
+	<!-- Exported Services -->
+
+	<osgi:service id="configurationServiceRegistration" ref="configurationService"
+		interface="org.rifidi.configuration.services.ConfigurationService" />
+	<osgi:service id="jmxServiceRegistration" ref="jmxService"
+		interface="org.rifidi.configuration.services.JMXService" />
+
+	<!-- Imported Services -->
+
+	<osgi:reference id="JMSNotifierService"
+		interface="org.rifidi.edge.core.services.notification.NotifierService" />
+
+	<osgi:set id="configurationSet" interface="org.rifidi.configuration.Configuration"
+		cardinality="0..N">
+		<osgi:listener ref="jmxService" />
+		<osgi:listener ref="configurationService" bind-method="register"
+			unbind-method="unregister" />
+	</osgi:set>
+	<osgi:set id="serviceFactoriesSet" interface="org.rifidi.configuration.ServiceFactory"
+		cardinality="0..N">
+		<osgi:listener ref="configurationService" bind-method="bind"
+			unbind-method="unbind" />
+	</osgi:set>
+
+	<osgi:set id="RifidiServiceSet" interface="org.rifidi.configuration.RifidiService"
+		cardinality="0..N">
+		<osgi:listener ref="configurationService" bind-method="bindRifidiService"
+			unbind-method="unbindRifidiService" />
+	</osgi:set>
+</beans>

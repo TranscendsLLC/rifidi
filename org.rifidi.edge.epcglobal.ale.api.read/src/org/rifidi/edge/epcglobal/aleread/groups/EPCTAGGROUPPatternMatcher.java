@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.rifidi.edge.core.messages.DatacontainerEvent;
+import org.rifidi.edge.core.services.notification.data.DatacontainerEvent;
 import org.rifidi.edge.epcglobal.aleread.filters.FieldMatcher;
 import org.rifidi.edge.epcglobal.aleread.filters.RangeFieldMatcher;
 

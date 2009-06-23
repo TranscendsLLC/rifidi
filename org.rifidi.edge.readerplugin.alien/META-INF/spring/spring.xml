@@ -10,46 +10,12 @@
 		class="org.rifidi.edge.readerplugin.alien.Alien9800ReaderFactory">
 		<property name="context" ref="bundleContext" />
 		<property name="template" ref="internalMB" />
-		<property name="notifierServiceWrapper" ref="NotifierServiceWrapper" />
+		<property name="notifierService" ref="JMSNotifierService" />
 	</bean>
-
-	<bean id="NotifierServiceWrapper"
-		class="org.rifidi.edge.readerplugin.alien.NotifierServiceWrapper" />
-
-	<osgi:reference id="JMSNotifierService"
-		interface="org.rifidi.edge.core.services.notification.NotifierService"
-		cardinality="0..1">
-		<osgi:listener ref="NotifierServiceWrapper" bind-method="bindNotifierService"
-			unbind-method="unbindNotifierService"></osgi:listener>
-	</osgi:reference>
 
 	<!--  Create Command Configuration Factory -->
 	<bean id="commandConfigurationFactory"
 		class="org.rifidi.edge.readerplugin.alien.Alien9800CommandConfigurationFactory">
 		<property name="context" ref="bundleContext" />
 	</bean>
-
-	<!-- Put reader configuration service in OSGi Registry -->
-	<osgi:service id="readerConfigurationFactoryService" ref="configurationFactory">
-		<osgi:interfaces>
-			<value>org.rifidi.configuration.ServiceFactory
-			</value>
-			<value>
-				org.rifidi.edge.core.readers.AbstractReaderFactory</value>
-		</osgi:interfaces>
-	</osgi:service>
-	<!-- Put command configuration service in OSGi Registry -->
-	<osgi:service id="commandConfigurationFactoryService" ref="commandConfigurationFactory">
-		<osgi:interfaces>
-			<value>org.rifidi.configuration.ServiceFactory
-			</value>
-			<value>
-				org.rifidi.edge.core.commands.AbstractCommandConfigurationFactory
-			</value>
-		</osgi:interfaces>
-	</osgi:service>
-
-	<osgi:reference id="internalMB"
-		interface="org.springframework.jms.core.JmsTemplate" bean-name="internalJMSTemplate" />
-
 </beans>

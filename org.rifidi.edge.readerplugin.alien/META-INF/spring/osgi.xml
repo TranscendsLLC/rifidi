@@ -1,0 +1,36 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:osgi="http://www.springframework.org/schema/osgi"
+	xmlns:amq="http://activemq.apache.org/schema/core"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+     http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi.xsd
+     http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd">
+
+	<!-- Put reader configuration service in OSGi Registry -->
+	<osgi:service id="readerConfigurationFactoryService" ref="configurationFactory">
+		<osgi:interfaces>
+			<value>org.rifidi.configuration.ServiceFactory
+			</value>
+			<value>
+				org.rifidi.edge.core.readers.AbstractReaderFactory</value>
+		</osgi:interfaces>
+	</osgi:service>
+
+	<osgi:reference id="JMSNotifierService"
+		interface="org.rifidi.edge.core.services.notification.NotifierService" />
+
+	<!-- Put command configuration service in OSGi Registry -->
+	<osgi:service id="commandConfigurationFactoryService" ref="commandConfigurationFactory">
+		<osgi:interfaces>
+			<value>org.rifidi.configuration.ServiceFactory
+			</value>
+			<value>
+				org.rifidi.edge.core.commands.AbstractCommandConfigurationFactory
+			</value>
+		</osgi:interfaces>
+	</osgi:service>
+
+	<osgi:reference id="internalMB"
+		interface="org.springframework.jms.core.JmsTemplate" bean-name="internalJMSTemplate" />
+
+
+</beans>

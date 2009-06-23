@@ -17,10 +17,10 @@ import javax.jms.Session;
 
 import org.rifidi.edge.api.tags.TagBatch;
 import org.rifidi.edge.api.tags.TagDTO;
-import org.rifidi.edge.core.messages.DatacontainerEvent;
-import org.rifidi.edge.core.messages.EPCGeneration1Event;
-import org.rifidi.edge.core.messages.ReadCycle;
-import org.rifidi.edge.core.messages.TagReadEvent;
+import org.rifidi.edge.core.services.notification.data.DatacontainerEvent;
+import org.rifidi.edge.core.services.notification.data.EPCGeneration1Event;
+import org.rifidi.edge.core.services.notification.data.ReadCycle;
+import org.rifidi.edge.core.services.notification.data.TagReadEvent;
 import org.springframework.jms.core.MessageCreator;
 
 /**
