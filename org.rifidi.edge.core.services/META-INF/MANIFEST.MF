@@ -1,0 +1,7 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Rifidi Edge Server Services Plug-in
+Bundle-SymbolicName: org.rifidi.edge.core.services
+Bundle-Version: 1.0.0
+Bundle-Vendor: Pramari Europe GmbH
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
