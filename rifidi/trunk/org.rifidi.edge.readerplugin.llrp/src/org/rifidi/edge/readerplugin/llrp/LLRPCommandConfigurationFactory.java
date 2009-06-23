@@ -20,6 +20,7 @@ import java.util.Set;
 
 import org.rifidi.edge.core.commands.AbstractCommandConfiguration;
 import org.rifidi.edge.core.commands.AbstractCommandConfigurationFactory;
+import org.rifidi.edge.readerplugin.llrp.commands.LLRPDeleteROSpecCommandConfiguration;
 import org.rifidi.edge.readerplugin.llrp.commands.LLRPGetTagListCommandConfiguration;
 import org.rifidi.edge.readerplugin.llrp.commands.LLRPROSpecCommandConfiguration;
 
@@ -42,6 +43,7 @@ public class LLRPCommandConfigurationFactory extends
 		factoryIdToClass.put("LLRP-GetTagList",
 				LLRPGetTagListCommandConfiguration.class);
 		factoryIdToClass.put("LLRP-CreateROSpec", LLRPROSpecCommandConfiguration.class);
+		factoryIdToClass.put("LLRP-DeleteROSpec", LLRPDeleteROSpecCommandConfiguration.class);
 	}
 
 	/*
