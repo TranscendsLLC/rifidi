@@ -73,6 +73,7 @@
       <plugin id="org.eclipse.ui.views.properties.tabbed"/>
       <plugin id="org.eclipse.ui.workbench"/>
       <plugin id="org.fosstrak.tdt"/>
+      <plugin id="org.rifidi.edge.api"/>
       <plugin id="org.rifidi.edge.client"/>
       <plugin id="org.rifidi.edge.client.ale.api"/>
       <plugin id="org.rifidi.edge.client.ale.ecspecview"/>
@@ -80,7 +81,6 @@
       <plugin id="org.rifidi.edge.client.model"/>
       <plugin id="org.rifidi.edge.client.sal"/>
       <plugin id="org.rifidi.edge.client.twodview"/>
-      <plugin id="org.rifidi.edge.core.api"/>
       <plugin id="org.rifidi.edge.core.rmi.client"/>
       <plugin id="org.rifidi.log4j.configuration" fragment="true"/>
       <plugin id="org.rifidi.rmi.utils"/>

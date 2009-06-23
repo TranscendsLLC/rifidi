@@ -13,21 +13,21 @@ import javax.jms.MessageListener;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.client.model.sal.commands.RequestExecuterSingleton;
-import org.rifidi.edge.core.api.jms.notifications.CommandConfigFactoryAdded;
-import org.rifidi.edge.core.api.jms.notifications.CommandConfigFactoryRemoved;
-import org.rifidi.edge.core.api.jms.notifications.CommandConfigurationAddedNotification;
-import org.rifidi.edge.core.api.jms.notifications.CommandConfigurationRemovedNotification;
-import org.rifidi.edge.core.api.jms.notifications.JobDeletedNotification;
-import org.rifidi.edge.core.api.jms.notifications.JobSubmittedNotification;
-import org.rifidi.edge.core.api.jms.notifications.PropertyChangedNotification;
-import org.rifidi.edge.core.api.jms.notifications.ReaderAddedNotification;
-import org.rifidi.edge.core.api.jms.notifications.ReaderFactoryAddedNotification;
-import org.rifidi.edge.core.api.jms.notifications.ReaderFactoryRemovedNotification;
-import org.rifidi.edge.core.api.jms.notifications.ReaderRemovedNotification;
-import org.rifidi.edge.core.api.jms.notifications.SessionAddedNotification;
-import org.rifidi.edge.core.api.jms.notifications.SessionRemovedNotification;
-import org.rifidi.edge.core.api.jms.notifications.SessionStatusChangedNotification;
-import org.rifidi.edge.core.api.tags.TagBatch;
+import org.rifidi.edge.api.jms.notifications.CommandConfigFactoryAdded;
+import org.rifidi.edge.api.jms.notifications.CommandConfigFactoryRemoved;
+import org.rifidi.edge.api.jms.notifications.CommandConfigurationAddedNotification;
+import org.rifidi.edge.api.jms.notifications.CommandConfigurationRemovedNotification;
+import org.rifidi.edge.api.jms.notifications.JobDeletedNotification;
+import org.rifidi.edge.api.jms.notifications.JobSubmittedNotification;
+import org.rifidi.edge.api.jms.notifications.PropertyChangedNotification;
+import org.rifidi.edge.api.jms.notifications.ReaderAddedNotification;
+import org.rifidi.edge.api.jms.notifications.ReaderFactoryAddedNotification;
+import org.rifidi.edge.api.jms.notifications.ReaderFactoryRemovedNotification;
+import org.rifidi.edge.api.jms.notifications.ReaderRemovedNotification;
+import org.rifidi.edge.api.jms.notifications.SessionAddedNotification;
+import org.rifidi.edge.api.jms.notifications.SessionRemovedNotification;
+import org.rifidi.edge.api.jms.notifications.SessionStatusChangedNotification;
+import org.rifidi.edge.api.tags.TagBatch;
 
 /**
  * An object who listens to a JMS Queue and schedules commands based on the kind

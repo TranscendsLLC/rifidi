@@ -3,7 +3,7 @@ package org.rifidi.edge.client.model.sal;
 
 import org.eclipse.core.databinding.observable.map.ObservableMap;
 import org.rifidi.edge.client.model.sal.commands.RemoteEdgeServerCommand;
-import org.rifidi.edge.core.api.jms.notifications.CommandConfigFactoryRemoved;
+import org.rifidi.edge.api.jms.notifications.CommandConfigFactoryRemoved;
 
 /**
  * This command removes a command configuration factory from the remote edge

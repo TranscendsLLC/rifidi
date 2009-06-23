@@ -3,7 +3,7 @@ package org.rifidi.edge.client.sal.controller.edgeserver.handlers;
 
 import org.eclipse.core.expressions.PropertyTester;
 import org.rifidi.edge.client.model.sal.RemoteSession;
-import org.rifidi.edge.core.api.SessionStatus;
+import org.rifidi.edge.api.SessionStatus;
 
 /**
  * A property tester to test the state of a session

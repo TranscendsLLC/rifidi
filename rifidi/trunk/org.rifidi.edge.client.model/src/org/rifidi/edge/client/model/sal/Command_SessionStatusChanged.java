@@ -2,8 +2,8 @@
 package org.rifidi.edge.client.model.sal;
 
 import org.rifidi.edge.client.model.sal.commands.RemoteEdgeServerCommand;
-import org.rifidi.edge.core.api.SessionStatus;
-import org.rifidi.edge.core.api.jms.notifications.SessionStatusChangedNotification;
+import org.rifidi.edge.api.SessionStatus;
+import org.rifidi.edge.api.jms.notifications.SessionStatusChangedNotification;
 
 /**
  * A command that is executed when the status of a session changes

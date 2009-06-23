@@ -7,8 +7,8 @@ import java.util.Map;
 import org.eclipse.core.databinding.observable.map.ObservableMap;
 import org.eclipse.core.databinding.observable.map.WritableMap;
 import org.rifidi.edge.client.model.sal.properties.SessionStatePropertyBean;
-import org.rifidi.edge.core.api.SessionStatus;
-import org.rifidi.edge.core.api.rmi.dto.SessionDTO;
+import org.rifidi.edge.api.SessionStatus;
+import org.rifidi.edge.api.rmi.dto.SessionDTO;
 
 /**
  * Model object that represents a Session on the server

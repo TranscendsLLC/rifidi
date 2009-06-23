@@ -2,7 +2,7 @@
 package org.rifidi.edge.client.model.sal;
 
 import org.rifidi.edge.client.model.sal.commands.RemoteEdgeServerCommand;
-import org.rifidi.edge.core.api.jms.notifications.SessionRemovedNotification;
+import org.rifidi.edge.api.jms.notifications.SessionRemovedNotification;
 
 /**
  * A command that is executed when a session is remvoed

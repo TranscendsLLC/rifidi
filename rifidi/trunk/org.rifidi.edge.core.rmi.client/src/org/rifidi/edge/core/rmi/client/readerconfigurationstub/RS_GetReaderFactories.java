@@ -5,8 +5,8 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.Set;
 
-import org.rifidi.edge.core.api.rmi.ReaderStub;
-import org.rifidi.edge.core.api.rmi.dto.ReaderFactoryDTO;
+import org.rifidi.edge.api.rmi.ReaderStub;
+import org.rifidi.edge.api.rmi.dto.ReaderFactoryDTO;
 import org.rifidi.rmi.utils.remotecall.ServerDescriptionBasedRemoteMethodCall;
 
 /**

@@ -24,7 +24,7 @@ Import-Package: org.apache.commons.logging;version="1.1.1",
  org.rifidi.edge.client.model.sal,
  org.rifidi.edge.client.model.sal.preferences,
  org.rifidi.edge.client.model.sal.properties,
- org.rifidi.edge.core.api
+ org.rifidi.edge.api
 Export-Package: org.rifidi.edge.client.sal.modelmanager,
  org.rifidi.edge.client.sal.properties,
  org.rifidi.edge.client.sal.properties.mbeanwidgets,

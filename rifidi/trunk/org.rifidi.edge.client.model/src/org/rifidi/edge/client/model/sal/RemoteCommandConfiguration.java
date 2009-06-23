@@ -3,7 +3,7 @@ package org.rifidi.edge.client.model.sal;
 import javax.management.AttributeList;
 
 import org.rifidi.edge.client.model.sal.commands.RequestExecuterSingleton;
-import org.rifidi.edge.core.api.rmi.dto.CommandConfigurationDTO;
+import org.rifidi.edge.api.rmi.dto.CommandConfigurationDTO;
 
 /**
  * A model object for RemoteCommandConfigurations

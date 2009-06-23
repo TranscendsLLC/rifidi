@@ -3,7 +3,7 @@ package org.rifidi.edge.client.model.sal;
 
 import javax.management.MBeanInfo;
 
-import org.rifidi.edge.core.api.rmi.dto.ReaderFactoryDTO;
+import org.rifidi.edge.api.rmi.dto.ReaderFactoryDTO;
 
 /**
  * Model object that represents a ReaderFactory on the server

@@ -14,9 +14,9 @@ import org.eclipse.core.databinding.observable.set.ObservableSet;
 import org.eclipse.core.databinding.observable.set.WritableSet;
 import org.rifidi.edge.client.model.sal.commands.RequestExecuterSingleton;
 import org.rifidi.edge.client.model.sal.properties.SessionStatePropertyBean;
-import org.rifidi.edge.core.api.SessionStatus;
-import org.rifidi.edge.core.api.rmi.dto.ReaderDTO;
-import org.rifidi.edge.core.api.rmi.dto.SessionDTO;
+import org.rifidi.edge.api.SessionStatus;
+import org.rifidi.edge.api.rmi.dto.ReaderDTO;
+import org.rifidi.edge.api.rmi.dto.SessionDTO;
 
 /**
  * A model object that represents a reader on the server

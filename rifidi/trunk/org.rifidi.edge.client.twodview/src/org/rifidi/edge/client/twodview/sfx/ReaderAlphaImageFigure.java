@@ -17,7 +17,7 @@ import org.rifidi.edge.client.model.sal.RemoteReader;
 import org.rifidi.edge.client.model.sal.RemoteSession;
 import org.rifidi.edge.client.model.sal.properties.SessionStatePropertyBean;
 import org.rifidi.edge.client.twodview.Activator;
-import org.rifidi.edge.core.api.SessionStatus;
+import org.rifidi.edge.api.SessionStatus;
 
 /**
  * The readerID of this ReaderAlphaImageFigure should not change througout the
