@@ -24,6 +24,7 @@
 		<property name="useJmx" value="false" />
 		<property name="transportConnectorURIs">
 			<list>
+				<!-- This next line must not have a newline -->
 				<value>tcp://${java.rmi.server.hostname}:${java.rmi.server.port}</value>
 			</list>
 		</property>

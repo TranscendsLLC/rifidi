@@ -6,7 +6,7 @@ package org.rifidi.edge.epcglobal.aleread.groups;
 import java.util.List;
 import java.util.Map;
 
-import org.rifidi.edge.core.messages.DatacontainerEvent;
+import org.rifidi.edge.core.services.notification.data.DatacontainerEvent;
 
 /**
  * @author jochen

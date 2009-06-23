@@ -58,8 +58,8 @@ public class Alien9800Reader extends AbstractReader<Alien9800ReaderSession> {
 	private JmsTemplate template;
 	/** The ID of the session */
 	private int sessionID = 0;
-	/** A wrapper containing the service to send jms notifications */
-	private NotifierServiceWrapper notifyServiceWrapper;
+	/** service used to send notifications */
+	private NotifierService notifierService;
 
 	/**
 	 * READER PROPERTIES - SETTABE, SET ON CONNECTION
@@ -171,14 +171,12 @@ public class Alien9800Reader extends AbstractReader<Alien9800ReaderSession> {
 			session = new Alien9800ReaderSession(Integer.toString(sessionID),
 					ipAddress, port, (int) (long) reconnectionInterval,
 					maxNumConnectionAttempts, username, password, template,
-					notifyServiceWrapper, this.getID());
+					notifierService, this.getID());
 
 			// TODO: remove this once we get AspectJ in here!
-			NotifierService service = notifyServiceWrapper.getNotifierService();
-			if (service != null) {
-				service.addSessionEvent(this.getID(), Integer
-						.toString(sessionID));
-			}
+			notifierService.addSessionEvent(this.getID(), Integer
+					.toString(sessionID));
+
 			return session;
 		}
 		return null;
@@ -208,8 +206,8 @@ public class Alien9800Reader extends AbstractReader<Alien9800ReaderSession> {
 	 * @param wrapper
 	 *            The JMS Notifier to set
 	 */
-	public void setNotifiyServiceWrapper(NotifierServiceWrapper wrapper) {
-		this.notifyServiceWrapper = wrapper;
+	public void setNotifiyService(NotifierService wrapper) {
+		this.notifierService = wrapper;
 	}
 
 	/*
@@ -229,11 +227,8 @@ public class Alien9800Reader extends AbstractReader<Alien9800ReaderSession> {
 			this.session = null;
 
 			// TODO: remove this once we get AspectJ in here!
-			NotifierService service = notifyServiceWrapper.getNotifierService();
-			if (service != null) {
-				service.removeSessionEvent(this.getID(), Integer
-						.toString(sessionID));
-			}
+			notifierService.removeSessionEvent(this.getID(), Integer
+					.toString(sessionID));
 		}
 	}
 
@@ -451,8 +446,7 @@ public class Alien9800Reader extends AbstractReader<Alien9800ReaderSession> {
 		}
 	}
 
-	@Property(displayName = "Reader Number", description = "Reader " + 
-			"Number", writable = true, type = PropertyType.PT_STRING, category = "General")
+	@Property(displayName = "Reader Number", description = "Reader " + "Number", writable = true, type = PropertyType.PT_STRING, category = "General")
 	public String getReaderNumber() {
 		return readerProperties.get(PROP_READER_NUMBER);
 	}

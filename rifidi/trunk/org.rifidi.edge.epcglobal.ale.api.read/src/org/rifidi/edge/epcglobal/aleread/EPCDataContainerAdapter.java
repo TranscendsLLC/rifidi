@@ -13,9 +13,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.epcglobalinc.tdt.LevelTypeList;
 import org.fosstrak.tdt.TDTEngine;
-import org.rifidi.edge.core.messages.DatacontainerEvent;
-import org.rifidi.edge.core.messages.EPCGeneration1Event;
-import org.rifidi.edge.core.messages.EPCGeneration2Event;
+import org.rifidi.edge.core.services.notification.data.DatacontainerEvent;
+import org.rifidi.edge.core.services.notification.data.EPCGeneration1Event;
+import org.rifidi.edge.core.services.notification.data.EPCGeneration2Event;
 import org.rifidi.edge.epcglobal.aleread.filters.ALEField;
 
 /**

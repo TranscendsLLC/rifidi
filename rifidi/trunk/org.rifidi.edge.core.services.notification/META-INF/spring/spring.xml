@@ -2,70 +2,27 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:osgi="http://www.springframework.org/schema/osgi"
 	xmlns:amq="http://activemq.apache.org/schema/core"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
-     http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi.xsd
-     http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd">
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
 
 	<bean id="JMSNotifier"
 		class="org.rifidi.edge.core.services.notification.internal.NotifierServiceImpl">
 		<property name="extNotificationDest" ref="externalNotificationsDest" />
-		<property name="extNotificationTemplate" ref="externalTemplate" />
-		<property name="readerDAO" ref="ReaderDAOService" />
-		<property name="commandDAO" ref="CommandDAOService" />
-		<property name="configurations" ref="ConfigurationSet" />
+		<property name="extNotificationTemplate" ref="externalJMSTemplate" />
 	</bean>
 
-	<bean id="tagEventListener" class="org.rifidi.edge.core.services.notification.internal.TagEventListener">
-		<property name="extNotificationTemplate" ref="externalTemplate" />
+	<bean id="tagEventListener"
+		class="org.rifidi.edge.core.services.notification.internal.TagEventListener">
+		<property name="extNotificationTemplate" ref="externalJMSTemplate" />
 		<property name="extNotificationDest" ref="externalTagsDest" />
 	</bean>
 
-	<osgi:reference id="ReaderDAOService" interface="org.rifidi.edge.core.daos.ReaderDAO"
-		cardinality="1..1" />
-	<osgi:reference id="CommandDAOService"
-		interface="org.rifidi.edge.core.daos.CommandDAO" cardinality="1..1" />
-
-	<!-- Listener for Configuration Factories -->
-	<osgi:set id="ConfigurationSet" interface="org.rifidi.configuration.Configuration"
-		cardinality="0..N">
-		<osgi:listener ref="JMSNotifier" bind-method="bindConfiguration"
-			unbind-method="unbindConfiguration" />
-	</osgi:set>
-
-	<osgi:service id="JMSNotifierService" ref="JMSNotifier"
-		interface="org.rifidi.edge.core.services.notification.NotifierService" />
-
-	
-	
-	<!-- Get a reference to the externalNotificationDestination -->
-	<osgi:reference id="externalNotificationsDest"
-		interface="javax.jms.Topic" bean-name="externalNotificationsDest" />
-
-	<!-- Get a reference to the external tags Destination -->
-	<osgi:reference id="externalTagsDest" interface="javax.jms.Topic"
-		bean-name="externalTagsDest" />
-
-	<!--
-		Get a reference to the JMSTemplate to use to add messages to the
-		external broker
-	-->
-	<osgi:reference id="externalTemplate"
-		interface="org.springframework.jms.core.JmsTemplate" bean-name="externalJMSTemplate" />
-
-	<!-- Get reference to connection factory to internal Broker -->
-	<osgi:reference id="confac" interface="javax.jms.ConnectionFactory"
-		bean-name="internalBrokerConFac" />
-		
-	<!-- Get a reference to the internal Message Buffer -->
-	<osgi:reference id="internalMB" interface="javax.jms.Topic"
-		bean-name="internalDest" />
 
 	<!-- Listen to the internal JMSQueue -->
 	<bean id="jmsContainer"
 		class="org.springframework.jms.listener.SimpleMessageListenerContainer">
 		<property name="autoStartup" value="true" />
-		<property name="connectionFactory" ref="confac" />
-		<property name="destination" ref="internalMB" />
+		<property name="connectionFactory" ref="internalBrokerConFac" />
+		<property name="destination" ref="internalDest" />
 		<property name="messageListener" ref="tagEventListener" />
 		<property name="acceptMessagesWhileStopping" value="true" />
 	</bean>

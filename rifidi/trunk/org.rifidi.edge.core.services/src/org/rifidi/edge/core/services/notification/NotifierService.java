@@ -1,5 +1,7 @@
 package org.rifidi.edge.core.services.notification;
 
+import javax.management.AttributeList;
+
 import org.rifidi.edge.api.SessionStatus;
 
 /**
@@ -31,22 +33,36 @@ public interface NotifierService {
 	public void removeSessionEvent(String readerID, String sessionID);
 
 	/**
-	 * Send a notification that a configuration (e.g. Reader, CommandConfig) was
-	 * added
+	 * Send a notification that a Reader was added
 	 * 
-	 * @param serviceID
-	 *            The ID of the configuration
+	 * @param readerID
+	 *            The ID of the reader
 	 */
-	public void addConfigurationEvent(String serviceID);
+	public void addReaderEvent(String readerID);
 
 	/**
-	 * Send a notification that a configuration (e.g. Reader, CommandConfig) was
-	 * removed
+	 * Send a notification that a reader was removed
 	 * 
-	 * @param serviceID
-	 *            The ID of the configuration
+	 * @param readerID
+	 *            the ID of the reader
 	 */
-	public void removeConfigurationEvent(String serviceID);
+	public void removeReaderEvent(String readerID);
+
+	/**
+	 * Send a notification that a command was added.
+	 * 
+	 * @param commandID
+	 *            the ID of the command
+	 */
+	public void addCommandEvent(String commandID);
+
+	/**
+	 * Send a notification that a command was removed
+	 * 
+	 * @param commandID
+	 *            The ID of the command
+	 */
+	public void removeCommandEvent(String commandID);
 
 	/**
 	 * Send a notification that a reader factory became available
@@ -123,5 +139,19 @@ public interface NotifierService {
 	 *            The ID of the job that was killed
 	 */
 	public void jobDeleted(String readerID, String sessionID, Integer jobID);
+
+	/**
+	 * Called when attributes of a configuration change
+	 * 
+	 * @param configurationID
+	 *            the ID of the configuration
+	 * @param attributes
+	 *            The changed attributes
+	 * @param isReader
+	 *            true if the type of the configuration is a reader, false if
+	 *            the type is a command
+	 */
+	void attributesChanged(String configurationID, AttributeList attributes,
+			boolean isReader);
 
 }

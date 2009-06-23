@@ -2,6 +2,8 @@
  * 
  */
 package org.rifidi.edge.core.readers;
+
+import org.rifidi.configuration.ConfigurationType;
 import org.rifidi.configuration.impl.AbstractServiceFactory;
 import org.rifidi.edge.api.rmi.dto.ReaderFactoryDTO;
 
@@ -40,4 +42,15 @@ public abstract class AbstractReaderFactory<T extends AbstractReader<?>>
 	 * @return
 	 */
 	public abstract String getDescription();
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.rifidi.configuration.ServiceFactory#getConfigurationType()
+	 */
+	@Override
+	public ConfigurationType getConfigurationType() {
+		return ConfigurationType.READER;
+	}
+
 }

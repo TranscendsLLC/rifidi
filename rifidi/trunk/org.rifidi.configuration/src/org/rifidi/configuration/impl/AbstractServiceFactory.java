@@ -75,6 +75,8 @@ public abstract class AbstractServiceFactory<T extends RifidiService>
 				serviceID = serviceID + "_" + Integer.toString(counter);
 				((DefaultConfigurationImpl) configuration)
 						.setServiceID(serviceID);
+				((DefaultConfigurationImpl) configuration).setType(this
+						.getConfigurationType());
 			} else {
 				String[] splitString = configuration.getServiceID().split("_");
 				if (splitString.length > 0) {

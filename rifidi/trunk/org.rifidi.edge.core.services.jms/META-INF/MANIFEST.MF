@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Jms Plug-in
+Bundle-SymbolicName: org.rifidi.edge.core.services.jms
+Bundle-Version: 1.0.0
+Bundle-Vendor: Pramari
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Import-Package: javax.jms;version="1.1.0",
+ org.apache.activemq.broker;version="5.2.0",
+ org.apache.activemq.command;version="5.2.0",
+ org.apache.activemq.pool;version="5.2.0",
+ org.apache.activemq.spring;version="5.2.0",
+ org.springframework.beans.factory.config;version="2.5.5",
+ org.springframework.jms.core;version="2.5.5"

@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.management.Attribute;
+import javax.management.AttributeList;
 import javax.management.AttributeNotFoundException;
 import javax.management.InvalidAttributeValueException;
 import javax.management.MBeanAttributeInfo;
@@ -26,8 +27,8 @@ import org.rifidi.configuration.Configuration;
 import org.rifidi.configuration.Constants;
 import org.rifidi.configuration.RifidiService;
 import org.rifidi.configuration.ServiceFactory;
+import org.rifidi.configuration.listeners.AttributesChangedListener;
 import org.rifidi.edge.core.services.notification.NotifierService;
-import org.rifidi.edge.core.services.notification.NotifierServiceWrapper;
 
 /**
  * Implementation of service for managing configurations.
@@ -35,7 +36,8 @@ import org.rifidi.edge.core.services.notification.NotifierServiceWrapper;
  * @author Jochen Mader - jochen@pramari.com
  * @author Kyle Neumeier - kyle@pramari.com
  */
-public class ConfigurationServiceImpl implements ConfigurationService {
+public class ConfigurationServiceImpl implements ConfigurationService,
+		AttributesChangedListener {
 	/** Logger for this class */
 	private static final Log logger = LogFactory
 			.getLog(ConfigurationServiceImpl.class);
@@ -46,7 +48,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	/** Currently registered services. */
 	private Map<String, Configuration> IDToConfigurations;
 	/** A notifier for JMS. Remove once we have aspects */
-	private NotifierServiceWrapper notifierService;
+	private NotifierService notifierService;
 
 	/**
 	 * Currently available factories by their names.
@@ -208,12 +210,14 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 		IDToConfigurations.put(config.getServiceID(), config);
 
 		// TODO: Get rid of this code once we get aspects!!!!!
-		if (this.notifierService == null) {
-			return;
-		}
-		NotifierService service = this.notifierService.getService();
-		if (service != null) {
-			service.addConfigurationEvent(config.getServiceID());
+		config.addAttributesChangedListener(this);
+		switch (config.getType()) {
+		case READER:
+			notifierService.addReaderEvent(config.getServiceID());
+			break;
+		case COMMAND:
+			notifierService.addCommandEvent(config.getServiceID());
+			break;
 		}
 	}
 
@@ -225,14 +229,45 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	 */
 	public void unregister(Configuration config, Map<?, ?> properties) {
 		IDToConfigurations.remove(config.getServiceID());
+
 		// TODO: Get rid of this code once we get aspects!!!!!
-		if (this.notifierService == null) {
-			return;
+		config.removeAttributesChangedListener(this);
+		switch (config.getType()) {
+		case READER:
+			notifierService.removeReaderEvent(config.getServiceID());
+			break;
+		case COMMAND:
+			notifierService.removeCommandEvent(config.getServiceID());
+			break;
 		}
-		NotifierService service = this.notifierService.getService();
-		if (service != null) {
-			service.removeConfigurationEvent(config.getServiceID());
+
+	}
+
+	@Override
+	public void attributesChanged(String configurationID,
+			AttributeList attributes) {
+		Configuration config = IDToConfigurations.get(configurationID);
+		if (config != null) {
+			switch (config.getType()) {
+			case READER:
+				notifierService.attributesChanged(configurationID, attributes,
+						true);
+				break;
+			case COMMAND:
+				notifierService.attributesChanged(configurationID, attributes,
+						false);
+				break;
+			}
 		}
+
+	}
+
+	/**
+	 * @param notifierService
+	 *            the notifierService to set
+	 */
+	public void setNotifierService(NotifierService notifierService) {
+		this.notifierService = notifierService;
 	}
 
 	/*

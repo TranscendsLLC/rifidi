@@ -32,6 +32,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.osgi.framework.ServiceRegistration;
 import org.rifidi.configuration.Configuration;
+import org.rifidi.configuration.ConfigurationType;
 import org.rifidi.configuration.RifidiService;
 import org.rifidi.configuration.annotations.JMXMBean;
 import org.rifidi.configuration.annotations.Operation;
@@ -70,6 +71,8 @@ public class DefaultConfigurationImpl implements Configuration, Cloneable {
 	private Set<Attribute> attributes;
 	/** Listeners to changes of attributes on this object */
 	private Set<AttributesChangedListener> listeners;
+	/** The type of configuraiton. This is a hack for now */
+	private ConfigurationType type;
 
 	/**
 	 * Protected constructor used by clone.
@@ -170,6 +173,22 @@ public class DefaultConfigurationImpl implements Configuration, Cloneable {
 	@Override
 	public String getFactoryID() {
 		return factoryID;
+	}
+
+	/**
+	 * @return the type
+	 */
+	@Override
+	public ConfigurationType getType() {
+		return type;
+	}
+
+	/**
+	 * @param type
+	 *            the type to set
+	 */
+	public void setType(ConfigurationType type) {
+		this.type = type;
 	}
 
 	/*

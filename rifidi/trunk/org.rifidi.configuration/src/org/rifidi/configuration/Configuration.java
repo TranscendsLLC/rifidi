@@ -1,5 +1,5 @@
-
 package org.rifidi.configuration;
+
 import java.util.Map;
 
 import javax.management.DynamicMBean;
@@ -75,4 +75,12 @@ public interface Configuration extends DynamicMBean {
 	 * @param listener
 	 */
 	void removeAttributesChangedListener(AttributesChangedListener listener);
+
+	/**
+	 * TODO: this is a hack because we need to know the type of service that is
+	 * stored in this configuration
+	 * 
+	 * @return the type of configuration this is
+	 */
+	ConfigurationType getType();
 }

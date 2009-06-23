@@ -12,7 +12,6 @@ import org.rifidi.edge.core.commands.AbstractCommandConfiguration;
 import org.rifidi.edge.core.commands.AbstractCommandConfigurationFactory;
 import org.rifidi.edge.core.daos.CommandDAO;
 import org.rifidi.edge.core.services.notification.NotifierService;
-import org.rifidi.edge.core.services.notification.NotifierServiceWrapper;
 
 /**
  * Implementation of Command Data Access Object. Helps access objects used for
@@ -29,7 +28,7 @@ public class CommandDAOImpl implements CommandDAO {
 	/** The logger for this class */
 	private static final Log logger = LogFactory.getLog(CommandDAOImpl.class);
 	/** A notifier for JMS. Remove once we have aspects */
-	private NotifierServiceWrapper notifierService;
+	private NotifierService notifierService;
 
 	/**
 	 * 
@@ -167,13 +166,10 @@ public class CommandDAOImpl implements CommandDAO {
 		commandFactories.add(commandConfigurationFactory);
 
 		// TODO: Remove once we have aspects
-		if (notifierService == null) {
-			return;
-		}
-		NotifierService service = notifierService.getService();
-		if (service != null) {
-			service.addCommandConfigFactoryEvent(commandConfigurationFactory
-					.getReaderFactoryID());
+		if (notifierService != null) {
+			notifierService
+					.addCommandConfigFactoryEvent(commandConfigurationFactory
+							.getReaderFactoryID());
 		}
 	}
 
@@ -193,12 +189,8 @@ public class CommandDAOImpl implements CommandDAO {
 		commandFactories.remove(commandConfigurationFactory);
 
 		// TODO: Remove once we have aspects
-		if (notifierService == null) {
-			return;
-		}
-		NotifierService service = notifierService.getService();
-		if (service != null) {
-			service.removeCommandConfigFactoryEvent(commandConfigurationFactory
+		if (notifierService != null) {
+			notifierService.removeCommandConfigFactoryEvent(commandConfigurationFactory
 					.getReaderFactoryID());
 		}
 	}
@@ -221,7 +213,7 @@ public class CommandDAOImpl implements CommandDAO {
 	 * @param notifierService
 	 *            the notifierService to set
 	 */
-	public void setNotifierService(NotifierServiceWrapper notifierService) {
+	public void setNotifierService(NotifierService notifierService) {
 		this.notifierService = notifierService;
 	}
 }

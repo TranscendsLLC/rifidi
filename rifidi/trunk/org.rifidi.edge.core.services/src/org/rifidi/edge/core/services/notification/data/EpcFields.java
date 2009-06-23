@@ -1,4 +1,4 @@
-package org.rifidi.edge.core.messages;
+package org.rifidi.edge.core.services.notification.data;
 
 /**
  * The fields on an EPC tag

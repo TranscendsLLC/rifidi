@@ -5,7 +5,7 @@ package org.rifidi.edge.ale.esper;
 
 import java.util.List;
 
-import org.rifidi.edge.core.messages.TagReadEvent;
+import org.rifidi.edge.core.services.notification.data.TagReadEvent;
 import org.rifidi.edge.epcglobal.aleread.ALEReadAPI;
 
 /**

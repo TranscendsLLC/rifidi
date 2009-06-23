@@ -1,0 +1,32 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:osgi="http://www.springframework.org/schema/osgi"
+	xmlns:amq="http://activemq.apache.org/schema/core"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+     http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi.xsd">
+
+	<!-- Exported Services -->
+	<osgi:service id="JMSNotifierService" ref="JMSNotifier"
+		interface="org.rifidi.edge.core.services.notification.NotifierService" />
+
+	
+	<!-- Imported Services -->
+	
+	<!-- Get a reference to the externalNotificationDestination -->
+	<osgi:reference id="externalNotificationsDest"
+		interface="javax.jms.Topic" bean-name="externalNotificationsDest" />
+	<!-- Get a reference to the external tags Destination -->
+	<osgi:reference id="externalTagsDest" interface="javax.jms.Topic"
+		bean-name="externalTagsDest" />
+	<!--
+		Get a reference to the JMSTemplate to use to add messages to the
+		external broker
+	-->
+	<osgi:reference id="externalJMSTemplate"
+		interface="org.springframework.jms.core.JmsTemplate" bean-name="externalJMSTemplate" />
+	<!-- Get reference to connection factory to internal Broker -->
+	<osgi:reference id="internalBrokerConFac" interface="javax.jms.ConnectionFactory"
+		bean-name="internalBrokerConFac" />
+	<!-- Get a reference to the internal Message Buffer -->
+	<osgi:reference id="internalDest" interface="javax.jms.Topic"
+		bean-name="internalDest" />
+</beans>

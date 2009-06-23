@@ -1,0 +1,23 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:osgi="http://www.springframework.org/schema/osgi"
+	xmlns:amq="http://activemq.apache.org/schema/core"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+     http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi.xsd">
+
+
+	<!-- Exported Services -->
+	<osgi:service id="internalDestService" interface="javax.jms.Topic"
+		ref="internalDest" />
+	<osgi:service id="externalTagsDestService" interface="javax.jms.Topic"
+		ref="externalTagsDest" />
+	<osgi:service id="externalNotificationsDestService"
+		interface="javax.jms.Topic" ref="externalNotificationsDest" />
+	<osgi:service id="internalBrokerConFacService" interface="javax.jms.ConnectionFactory"
+		ref="internalBrokerConFac" />
+	<osgi:service id="externalBrokerConFacService" interface="javax.jms.ConnectionFactory"
+		ref="externalBrokerConFac" />
+	<osgi:service id="internalJMSTemplateService"
+		interface="org.springframework.jms.core.JmsTemplate" ref="internalJMSTemplate" />
+	<osgi:service id="externalJMSTemplateService"
+		interface="org.springframework.jms.core.JmsTemplate" ref="externalJMSTemplate" />
+</beans>

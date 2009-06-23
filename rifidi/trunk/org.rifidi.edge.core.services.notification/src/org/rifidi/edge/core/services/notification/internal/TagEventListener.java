@@ -6,7 +6,7 @@ import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.jms.ObjectMessage;
 
-import org.rifidi.edge.core.messages.ReadCycle;
+import org.rifidi.edge.core.services.notification.data.ReadCycle;
 import org.springframework.jms.core.JmsOperations;
 import org.springframework.jms.core.JmsTemplate;
 

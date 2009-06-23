@@ -2,29 +2,10 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:osgi="http://www.springframework.org/schema/osgi"
 	xmlns:amq="http://activemq.apache.org/schema/core"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
-     http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi.xsd
-     http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd">
+     http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi.xsd">
 
-	<!--
-		The following lines add the destinations, connectionFactories, and
-		Templates to the OSGi service registry
-	-->
+	<!-- Exported Services -->
 
-	<osgi:service id="internalDestService" interface="javax.jms.Topic"
-		ref="internalDest" />
-	<osgi:service id="externalTagsDestService" interface="javax.jms.Topic"
-		ref="externalTagsDest" />
-	<osgi:service id="externalNotificationsDestService"
-		interface="javax.jms.Topic" ref="externalNotificationsDest" />
-	<osgi:service id="internalBrokerConFacService" interface="javax.jms.ConnectionFactory"
-		ref="internalBrokerConFac" />
-	<osgi:service id="externalBrokerConFacService" interface="javax.jms.ConnectionFactory"
-		ref="externalBrokerConFac" />
-	<osgi:service id="internalJMSTemplateService"
-		interface="org.springframework.jms.core.JmsTemplate" ref="internalJMSTemplate" />
-	<osgi:service id="externalJMSTemplateService"
-		interface="org.springframework.jms.core.JmsTemplate" ref="externalJMSTemplate" />
-	<!-- Bind the ReaderDAO as an OSGi Service. -->
 	<osgi:service id="ReaderDAOBinding" interface="org.rifidi.edge.core.daos.ReaderDAO"
 		ref="ReaderDAOImpl" />
 	<!-- Bind the CommandDAO as an OSGi Service. -->
@@ -32,16 +13,13 @@
 		ref="CommandDAOImpl" />
 
 
+	<!-- Imported Services -->
+
 	<osgi:reference id="configurationService"
 		interface="org.rifidi.configuration.services.ConfigurationService" />
-	<osgi:service id="NotifierServiceWrapperService" ref="NotifierServiceWrapper"
-		interface="org.rifidi.edge.core.services.notification.NotifierServiceWrapper" />
+
 	<osgi:reference id="JMSNotifierService"
-		interface="org.rifidi.edge.core.services.notification.NotifierService"
-		cardinality="0..1">
-		<osgi:listener ref="NotifierServiceWrapper" bind-method="bindNotifierService"
-			unbind-method="unbindNotifierService"></osgi:listener>
-	</osgi:reference>
+		interface="org.rifidi.edge.core.services.notification.NotifierService" />
 
 	<!-- Listener for Reader Configurations -->
 	<osgi:set id="readerSet" interface="org.rifidi.edge.core.readers.AbstractReader"
