@@ -1,5 +1,6 @@
-
 package org.rifidi.edge.client.sal.views;
+
+import java.util.ArrayList;
 
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IMenuListener;
@@ -22,11 +23,13 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.views.properties.tabbed.ITabbedPropertySheetPageContributor;
+import org.rifidi.edge.client.model.sal.RemoteEdgeServer;
 import org.rifidi.edge.client.model.sal.RemoteReader;
+import org.rifidi.edge.client.sal.SALPluginActivator;
 import org.rifidi.edge.client.sal.controller.edgeserver.EdgeServerTreeContentProvider;
 import org.rifidi.edge.client.sal.controller.edgeserver.EdgeServerTreeLabelProvider;
-import org.rifidi.edge.client.sal.modelmanager.ModelManagerService;
-import org.rifidi.edge.client.sal.modelmanager.ModelManagerServiceListener;
+import org.rifidi.edge.client.sal.modelmanager.SALModelService;
+import org.rifidi.edge.client.sal.modelmanager.SALModelServiceListener;
 
 /**
  * The View for displaying readers
@@ -35,16 +38,20 @@ import org.rifidi.edge.client.sal.modelmanager.ModelManagerServiceListener;
  */
 public class EdgeServerView extends ViewPart implements
 		ITabbedPropertySheetPageContributor, DragSourceListener,
-		ModelManagerServiceListener {
+		SALModelServiceListener {
 
 	public static final String ID = "org.rifidi.edge.client.sal.views.EdgeServerView";
 	/** The tree viewer to use */
 	private AbstractTreeViewer treeViewer;
+	/** The service that injects the model */
+	private SALModelService modelService;
 
 	/**
-	 * Constructor.  
+	 * 
 	 */
 	public EdgeServerView() {
+		super();
+		modelService = SALPluginActivator.getDefault().getSALModelService();
 	}
 
 	/*
@@ -68,8 +75,8 @@ public class EdgeServerView extends ViewPart implements
 		treeViewer.setLabelProvider(new EdgeServerTreeLabelProvider());
 		treeViewer.setComparator(new ViewerComparator());
 		createContextMenu();
-		
-		ModelManagerService.getInstance().addController(this);
+
+		modelService.registerListener(this);
 		treeViewer.addDragSupport(DND.DROP_MOVE, new Transfer[] { TextTransfer
 				.getInstance() }, this);
 		this.getSite().setSelectionProvider(treeViewer);
@@ -116,12 +123,15 @@ public class EdgeServerView extends ViewPart implements
 	@Override
 	public void dispose() {
 		super.dispose();
-		ModelManagerService.getInstance().removeController(this);
+		this.modelService.unregisterListener(this);
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.eclipse.ui.views.properties.tabbed.ITabbedPropertySheetPageContributor#getContributorId()
+	 * 
+	 * @see
+	 * org.eclipse.ui.views.properties.tabbed.ITabbedPropertySheetPageContributor
+	 * #getContributorId()
 	 */
 	@Override
 	public String getContributorId() {
@@ -130,7 +140,10 @@ public class EdgeServerView extends ViewPart implements
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.eclipse.swt.dnd.DragSourceListener#dragFinished(org.eclipse.swt.dnd.DragSourceEvent)
+	 * 
+	 * @see
+	 * org.eclipse.swt.dnd.DragSourceListener#dragFinished(org.eclipse.swt.dnd
+	 * .DragSourceEvent)
 	 */
 	@Override
 	public void dragFinished(DragSourceEvent event) {
@@ -139,7 +152,10 @@ public class EdgeServerView extends ViewPart implements
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.eclipse.swt.dnd.DragSourceListener#dragSetData(org.eclipse.swt.dnd.DragSourceEvent)
+	 * 
+	 * @see
+	 * org.eclipse.swt.dnd.DragSourceListener#dragSetData(org.eclipse.swt.dnd
+	 * .DragSourceEvent)
 	 */
 	@Override
 	public void dragSetData(DragSourceEvent event) {
@@ -153,7 +169,10 @@ public class EdgeServerView extends ViewPart implements
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.eclipse.swt.dnd.DragSourceListener#dragStart(org.eclipse.swt.dnd.DragSourceEvent)
+	 * 
+	 * @see
+	 * org.eclipse.swt.dnd.DragSourceListener#dragStart(org.eclipse.swt.dnd.
+	 * DragSourceEvent)
 	 */
 	@Override
 	public void dragStart(DragSourceEvent event) {
@@ -170,12 +189,14 @@ public class EdgeServerView extends ViewPart implements
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.client.sal.modelmanager.ModelManagerServiceListener#setModel
+	 * org.rifidi.edge.client.sal.modelmanager.SALModelServiceListener#setModel
 	 * (java.lang.Object)
 	 */
 	@Override
-	public void setModel(Object model) {
-		this.treeViewer.setInput(model);
+	public void setModel(RemoteEdgeServer model) {
+		ArrayList<RemoteEdgeServer> stubby = new ArrayList<RemoteEdgeServer>();
+		stubby.add(model);
+		this.treeViewer.setInput(stubby);
 	}
 
 }
