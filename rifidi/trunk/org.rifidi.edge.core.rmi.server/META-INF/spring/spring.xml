@@ -3,11 +3,22 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
      http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi.xsd">
 
+	<bean
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<value>classpath:META-INF/spring/bundle.properties
+			</value>
+		</property>
+		<property name="systemPropertiesMode">
+			<value>2</value>
+		</property>
+	</bean>
+
 	<bean class="org.springframework.remoting.rmi.RmiServiceExporter">
 		<property name="serviceName" value="ReaderStub" />
 		<property name="service" ref="readerStub" />
 		<property name="serviceInterface" value="org.rifidi.edge.core.api.rmi.ReaderStub" />
-		<property name="registryPort" value="1098" />
+		<property name="registryPort" value="${org.rifidi.edge.core.rmi.port}" />
 	</bean>
 
 	<bean id="readerStub"
@@ -21,7 +32,7 @@
 		<property name="serviceName" value="CommandStub" />
 		<property name="service" ref="commandStub" />
 		<property name="serviceInterface" value="org.rifidi.edge.core.api.rmi.CommandStub" />
-		<property name="registryPort" value="1098" />
+		<property name="registryPort" value="${org.rifidi.edge.core.rmi.port}" />
 	</bean>
 
 	<bean id="commandStub"
@@ -34,7 +45,7 @@
 		<property name="serviceName" value="EdgeServerStub" />
 		<property name="service" ref="edgeServerStub" />
 		<property name="serviceInterface" value="org.rifidi.edge.core.api.rmi.EdgeServerStub" />
-		<property name="registryPort" value="1098" />
+		<property name="registryPort" value="${org.rifidi.edge.core.rmi.port}" />
 	</bean>
 
 	<bean id="edgeServerStub" class="org.rifidi.edge.core.rmi.server.EdgeServerStubImpl">

@@ -5,6 +5,17 @@
      http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi.xsd
      http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd">
 
+	<bean
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<value>classpath:META-INF/spring/bundle.properties
+			</value>
+		</property>
+		<property name="systemPropertiesMode">
+			<value>2</value>
+		</property>
+	</bean>
+
 	<osgi:reference id="lrManagement"
 		interface="org.rifidi.edge.lr.LogicalReaderManagementService" />
 	<osgi:reference id="esperManagerService"
@@ -15,6 +26,9 @@
 		<property name="ecspecManagerService" ref="ecspecManager" />
 		<property name="lrService" ref="lrManagement" />
 		<property name="reportFactory" ref="reportFactory" />
+		<property name="aleHost" value="${org.rifidi.edge.ale.host}" />
+		<property name="alePort" value="${org.rifidi.edge.ale.port}" />
+		<property name="alePath" value="${org.rifidi.edge.ale.read}" />
 	</bean>
 
 	<bean id="ecspecManager"

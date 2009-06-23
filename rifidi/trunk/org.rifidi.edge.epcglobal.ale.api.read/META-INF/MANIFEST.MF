@@ -20,7 +20,8 @@ Import-Package: com.espertech.esper.client,
  org.rifidi.edge.core.messages,
  org.rifidi.edge.esper,
  org.rifidi.edge.esper.events,
- org.rifidi.edge.wsmanagement
+ org.rifidi.edge.wsmanagement,
+ org.springframework.beans.factory.config;version="2.5.5"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-Activator: org.rifidi.edge.epcglobal.ale.api.read.activator.Activator
 Bundle-ActivationPolicy: lazy

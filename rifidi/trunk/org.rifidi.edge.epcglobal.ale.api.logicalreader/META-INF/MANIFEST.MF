@@ -7,13 +7,14 @@ Import-Package: com.espertech.esper.client,
  com.espertech.esper.client.metric,
  com.espertech.esper.client.soda,
  com.espertech.esper.client.time,
- com.espertech.esper.event, 
+ com.espertech.esper.event,
  org.apache.commons.logging;version="1.1.1",
  org.osgi.framework;version="1.3.0",
  org.rifidi.configuration,
  org.rifidi.edge.core.readers,
  org.rifidi.edge.esper,
- org.rifidi.edge.wsmanagement
+ org.rifidi.edge.wsmanagement,
+ org.springframework.beans.factory.config;version="2.5.5"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: org.rifidi.edge.epcglobal.ale.api.lr,
  org.rifidi.edge.epcglobal.ale.api.lr.data,

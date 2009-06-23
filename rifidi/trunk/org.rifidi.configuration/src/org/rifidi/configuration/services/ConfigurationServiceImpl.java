@@ -38,7 +38,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	private static final Log logger = LogFactory
 			.getLog(ConfigurationServiceImpl.class);
 	/** Path to the configfile. */
-	private String path;
+	private final String path;
 	/** Configurations. */
 	private Map<String, Set<ServiceConfiguration>> factoryToConfigurations;
 	/** Currently registered services. */
@@ -52,8 +52,8 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	/**
 	 * Constructor.
 	 */
-	public ConfigurationServiceImpl() {
-		path = System.getProperty("org.rifidi.edge.configuration");
+	public ConfigurationServiceImpl(String path) {
+		this.path=path;
 		factoryToConfigurations = new HashMap<String, Set<ServiceConfiguration>>(
 				loadConfig());
 		factories = new HashMap<String, ServiceFactory>();

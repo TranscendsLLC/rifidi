@@ -43,6 +43,12 @@ public class ALEServicePortTypeImpl implements ALEServicePortType, WebService {
 	private LogicalReaderManagementService lrService;
 	/** Factory for creating reports. */
 	private RifidiReportFactory reportFactory;
+	/** The port to expose this ALE LR WS at */
+	private int alePort = -1;
+	/** The hostname of the machine that makes this ALE LR WS available */
+	private String aleHost = null;
+	/** The path to the ALE LR WS */
+	private String alePath = null;
 
 	/*
 	 * (non-Javadoc)
@@ -361,25 +367,37 @@ public class ALEServicePortTypeImpl implements ALEServicePortType, WebService {
 	 */
 	@Override
 	public URL getUrl() {
-		String ALEHost = System.getProperty("org.rifidi.edge.ale.host");
-		if (ALEHost == null || ALEHost.equals("")) {
-			ALEHost = "127.0.0.1";
-		}
-		String ALEPort = System.getProperty("org.rifidi.edge.ale.port");
-		if (ALEPort == null || ALEPort.equals("")) {
-			ALEPort = "8081";
-		}
-		String ALEReadPath = System.getProperty("org.rifidi.edge.ale.read");
-		if (ALEReadPath == null || ALEReadPath.equals("")) {
-			ALEReadPath = "aleread";
-		}
-		String url = "http://" + ALEHost + ":" + ALEPort + "/" + ALEReadPath;
+		String url = "http://" + aleHost + ":" + alePort + "/" + alePath;
 		try {
 			return new URL(url);
 		} catch (MalformedURLException e) {
 			logger.fatal("That should not happen: " + e);
 		}
 		return null;
+	}
+
+	/**
+	 * @param alePort
+	 *            the alePort to set
+	 */
+	public void setAlePort(int alePort) {
+		this.alePort = alePort;
+	}
+
+	/**
+	 * @param aleHost
+	 *            the aleHost to set
+	 */
+	public void setAleHost(String aleHost) {
+		this.aleHost = aleHost;
+	}
+
+	/**
+	 * @param alePath
+	 *            the alePath to set
+	 */
+	public void setAlePath(String alePath) {
+		this.alePath = alePath;
 	}
 
 	/**

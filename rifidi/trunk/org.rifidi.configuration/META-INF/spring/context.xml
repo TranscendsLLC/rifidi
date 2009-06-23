@@ -6,8 +6,21 @@
                            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
                            http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi.xsd">
 
+	<bean
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<value>classpath:META-INF/spring/bundle.properties
+			</value>
+		</property>
+		<property name="systemPropertiesMode">
+			<value>2</value>
+		</property>
+	</bean>
+
+
 	<osgi:service id="configurationServiceRegistration" ref="configurationService"
 		interface="org.rifidi.configuration.services.ConfigurationService" />
+	
 	<bean id="configurationService"
 		class="org.rifidi.configuration.services.ConfigurationServiceImpl"
 		scope="singleton">
@@ -15,6 +28,7 @@
 			<ref bean="serviceFactoriesSet" />
 		</property>
 		<property name="rifidiService" ref="RifidiServiceSet" />
+		<constructor-arg index="0" value="${org.rifidi.edge.configuration}"/>
 	</bean>
 	<osgi:service id="jmxServiceRegistration" ref="jmxService"
 		interface="org.rifidi.configuration.services.JMXService" />
@@ -44,7 +58,7 @@
 		<osgi:listener ref="configurationService" bind-method="bind"
 			unbind-method="unbind" />
 	</osgi:set>
-	
+
 	<osgi:set id="RifidiServiceSet" interface="org.rifidi.configuration.RifidiService"
 		cardinality="0..N">
 		<osgi:listener ref="configurationService" bind-method="bindRifidiService"
