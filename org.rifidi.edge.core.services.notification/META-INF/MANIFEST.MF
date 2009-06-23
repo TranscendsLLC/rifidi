@@ -1,0 +1,19 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Rifidi JMS Notifications Plug-in
+Bundle-SymbolicName: org.rifidi.edge.core.services.notification
+Bundle-Version: 1.0.0
+Bundle-Vendor: Pramari, LLC
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Import-Package: javax.jms;version="1.1.0",
+ org.apache.commons.logging;version="1.1.1",
+ org.rifidi.edge.api,
+ org.rifidi.edge.api.jms.notifications,
+ org.rifidi.edge.api.tags,
+ org.rifidi.edge.core.daos,
+ org.rifidi.edge.core.messages,
+ org.springframework.jms.core;version="2.5.5",
+ org.springframework.jms.listener;version="2.5.5"
+Require-Bundle: org.rifidi.configuration;bundle-version="1.0.0",
+ org.rifidi.edge.core.services;bundle-version="1.0.0"
+Eclipse-BuddyPolicy: global
