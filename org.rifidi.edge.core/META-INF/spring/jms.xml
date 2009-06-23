@@ -5,6 +5,17 @@
      http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi.xsd
      http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd">
 
+	<bean
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<value>classpath:META-INF/spring/bundle.properties
+			</value>
+		</property>
+		<property name="systemPropertiesMode">
+			<value>2</value>
+		</property>
+	</bean>
+
 	<!--  Embedded broker to use for external message -->
 	<bean id="externalBroker" class="org.apache.activemq.broker.BrokerService"
 		init-method="start">
@@ -13,7 +24,7 @@
 		<property name="useJmx" value="false" />
 		<property name="transportConnectorURIs">
 			<list>
-				<value>tcp://localhost:1099</value>
+				<value>tcp://${java.rmi.server.hostname}:${java.rmi.server.port}</value>
 			</list>
 		</property>
 	</bean>
@@ -39,7 +50,7 @@
 		Topic to use as Destination for sending tags to external Consumers
 	-->
 	<bean id="externalTagsDest" class="org.apache.activemq.command.ActiveMQTopic">
-		<property name="physicalName" value="org.rifidi.edge.external.tags" />
+		<property name="physicalName" value="${org.rifidi.jms.topic.tags}" />
 	</bean>
 	<!--
 		<amq:topic id="externalTagsDest"
@@ -51,7 +62,7 @@
 		Consumers
 	-->
 	<bean id="externalNotificationsDest" class="org.apache.activemq.command.ActiveMQTopic">
-		<property name="physicalName" value="org.rifidi.edge.external.notifications" />
+		<property name="physicalName" value="${org.rifidi.jms.topic.notifications}" />
 	</bean>
 	<!--
 		<amq:topic id="externalNotificationsDest"

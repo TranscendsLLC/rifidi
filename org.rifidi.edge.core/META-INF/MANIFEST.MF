@@ -16,6 +16,7 @@ Import-Package: javax.jms;version="1.1.0",
  org.rifidi.edge.core.api,
  org.rifidi.edge.core.api.jms.notifications,
  org.rifidi.edge.core.api.rmi.dto,
+ org.springframework.beans.factory.config;version="2.5.5",
  org.springframework.jms.core;version="2.5.5"
 Export-Package: org.rifidi.edge.core.commands,
  org.rifidi.edge.core.daos,
