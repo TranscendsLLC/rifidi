@@ -1,0 +1,18 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:osgi="http://www.springframework.org/schema/osgi"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+     http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi.xsd">
+	<bean id="wsManagement" class="org.rifidi.edge.core.services.soap.cxf.internal.WSManagementServiceCxfImpl">
+		<property name="services" ref="webServicesSet" />
+		<property name="httpService" ref="httpService" />
+	</bean>
+	<osgi:reference id="httpService" interface="org.osgi.service.http.HttpService"/>
+	<osgi:service id="wsManagementService"
+		interface="org.rifidi.edge.core.services.soap.WSManagementService" ref="wsManagement" />
+	<!-- Set for WebServices -->
+	<osgi:set id="webServicesSet" interface="org.rifidi.edge.core.services.soap.WebService"
+		cardinality="0..N">
+		<osgi:listener ref="wsManagement" bind-method="registerService"
+			unbind-method="unregisterService" />
+	</osgi:set>
+</beans>
