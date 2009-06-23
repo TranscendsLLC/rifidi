@@ -9,21 +9,16 @@
 		class="org.rifidi.edge.core.notifications.internal.NotifyServiceWrapperImpl" />
 
 	<!-- Create Reader Configuration DAO Service -->
-	<bean id="ReaderDAOImpl" class="org.rifidi.edge.core.daos.ReaderDAOImpl">
+	<bean id="ReaderDAOImpl" class="org.rifidi.edge.core.daos.internal.impl.ReaderDAOImpl">
 		<property name="readerFactories" ref="readerFactoriesSet" />
 		<property name="reader" ref="readerSet" />
 		<property name="notifierService" ref="NotifierServiceWrapper" />
 	</bean>
 
 	<!-- Create Reader Configuration DAO Service -->
-	<bean id="CommandDAOImpl" class="org.rifidi.edge.core.daos.CommandDAOImpl">
+	<bean id="CommandDAOImpl" class="org.rifidi.edge.core.daos.internal.impl.CommandDAOImpl">
 		<property name="commandFactories" ref="commandFactoriesSet" />
 		<property name="commands" ref="commandSet" />
-		<property name="notifierService" ref="NotifierServiceWrapper" />
-	</bean>
-
-	<bean id="ConfigurationDAOImpl" class="org.rifidi.edge.core.daos.ConfigurationDAOImpl">
-		<property name="configurations" ref="ConfigurationSet" />
 		<property name="notifierService" ref="NotifierServiceWrapper" />
 	</bean>
 	

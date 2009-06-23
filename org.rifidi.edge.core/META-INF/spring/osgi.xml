@@ -30,17 +30,14 @@
 	<!-- Bind the CommandDAO as an OSGi Service. -->
 	<osgi:service id="CommandDAOBinding" interface="org.rifidi.edge.core.daos.CommandDAO"
 		ref="CommandDAOImpl" />
-	<!-- Create Configuration DAO Service -->
-	<osgi:service id="ConfigurationDAOBinding"
-		interface="org.rifidi.edge.core.daos.ConfigurationDAO" ref="ConfigurationDAOImpl" />
 
 
 	<osgi:reference id="configurationService"
 		interface="org.rifidi.configuration.services.ConfigurationService" />
 	<osgi:service id="NotifierServiceWrapperService" ref="NotifierServiceWrapper"
-		interface="org.rifidi.edge.core.notifications.NotifierServiceWrapper" />
+		interface="org.rifidi.edge.core.services.notification.NotifierServiceWrapper" />
 	<osgi:reference id="JMSNotifierService"
-		interface="org.rifidi.edge.core.notifications.NotifierService"
+		interface="org.rifidi.edge.core.services.notification.NotifierService"
 		cardinality="0..1">
 		<osgi:listener ref="NotifierServiceWrapper" bind-method="bindNotifierService"
 			unbind-method="unbindNotifierService"></osgi:listener>
@@ -59,13 +56,6 @@
 		cardinality="0..N">
 		<osgi:listener ref="ReaderDAOImpl" bind-method="bindReaderFactory"
 			unbind-method="unbindReaderFactory" />
-	</osgi:set>
-
-	<!-- Listener for Configuration Factories -->
-	<osgi:set id="ConfigurationSet" interface="org.rifidi.configuration.Configuration"
-		cardinality="0..N">
-		<osgi:listener ref="ConfigurationDAOImpl" bind-method="bindConfiguration"
-			unbind-method="unbindConfiguration" />
 	</osgi:set>
 
 	<!-- Listener for Command Configurations -->

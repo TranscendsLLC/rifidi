@@ -31,7 +31,7 @@ import org.rifidi.edge.lr.exceptions.ReaderInUseException;
 
 @javax.jws.WebService(serviceName = "ALELRService", portName = "ALELRServicePort", targetNamespace = "urn:epcglobal:alelr:wsdl:1", wsdlLocation = "org/rifidi/edge/epcglobal/ale/api/lr/ws/epcglobal-ale-1_1-alelr.wsdl", endpointInterface = "org.rifidi.edge.epcglobal.ale.api.lr.ws.ALELRServicePortType")
 public class ALELRServicePortTypeImpl implements ALELRServicePortType,
-		org.rifidi.edge.wsmanagement.WebService {
+		org.rifidi.edge.core.services.soap.WebService {
 	/** Logger for this class. */
 	private static final Log logger = LogFactory
 			.getLog(ALELRServicePortTypeImpl.class);

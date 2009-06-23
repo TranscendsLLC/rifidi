@@ -30,8 +30,6 @@ Import-Package: com.espertech.esper.client,
  org.apache.commons.logging;version="1.1.1",
  org.epcglobalinc.tdt,
  org.fosstrak.tdt,
- org.rifidi.edge.core.messages,
- org.rifidi.edge.core.messages.exceptions,
  org.springframework.jms;version="2.5.5",
  org.springframework.jms.core;version="2.5.5",
  org.springframework.jms.core.support;version="2.5.5",
@@ -41,3 +39,5 @@ Import-Package: com.espertech.esper.client,
 Eclipse-BuddyPolicy: global
 Export-Package: org.rifidi.edge.esper,
  org.rifidi.edge.esper.events
+Require-Bundle: org.rifidi.edge.core;bundle-version="5.0.1",
+ org.rifidi.edge.core.services;bundle-version="1.0.0"

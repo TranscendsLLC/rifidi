@@ -7,15 +7,13 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
-import javax.jms.Destination;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.rifidi.edge.core.api.SessionStatus;
+import org.rifidi.edge.api.SessionStatus;
 import org.rifidi.edge.core.commands.Command;
-import org.rifidi.edge.core.notifications.NotifierService;
 import org.rifidi.edge.core.readers.ByteMessage;
 import org.rifidi.edge.core.readers.impl.AbstractIPReaderSession;
+import org.rifidi.edge.core.services.notification.NotifierService;
 import org.springframework.jms.core.JmsTemplate;
 
 /**

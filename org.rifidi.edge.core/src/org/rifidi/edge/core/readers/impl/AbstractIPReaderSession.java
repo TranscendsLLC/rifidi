@@ -14,7 +14,7 @@ import javax.jms.Destination;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.rifidi.edge.core.api.SessionStatus;
+import org.rifidi.edge.api.SessionStatus;
 import org.rifidi.edge.core.readers.ByteMessage;
 import org.rifidi.edge.core.readers.impl.threads.ReadThread;
 import org.rifidi.edge.core.readers.impl.threads.WriteThread;

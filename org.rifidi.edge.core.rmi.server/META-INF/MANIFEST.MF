@@ -6,13 +6,12 @@ Bundle-Version: 1.1.0
 Bundle-Vendor: Pramari, LLC
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: org.apache.commons.logging;version="1.1.1",
- org.rifidi.edge.core.api.rmi,
- org.rifidi.edge.core.api.rmi.dto,
- org.rifidi.edge.core.api.rmi.exceptions,
+ org.rifidi.edge.api.rmi,
+ org.rifidi.edge.api.rmi.dto,
+ org.rifidi.edge.api.rmi.exceptions,
  org.rifidi.edge.core.commands,
  org.rifidi.edge.core.daos,
  org.rifidi.edge.core.readers,
- org.rifidi.edge.core.readers.impl,
  org.springframework.beans.factory.config;version="2.5.5",
  org.springframework.remoting.rmi;version="2.5.5"
 Require-Bundle: org.rifidi.configuration;bundle-version="1.0.0"

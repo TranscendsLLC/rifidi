@@ -52,13 +52,13 @@ import org.llrp.ltk.types.Bit;
 import org.llrp.ltk.types.LLRPMessage;
 import org.llrp.ltk.types.UnsignedInteger;
 import org.llrp.ltk.types.UnsignedShort;
-import org.rifidi.edge.core.api.SessionStatus;
+import org.rifidi.edge.api.SessionStatus;
 import org.rifidi.edge.core.commands.Command;
 import org.rifidi.edge.core.messages.EPCGeneration2Event;
 import org.rifidi.edge.core.messages.ReadCycle;
 import org.rifidi.edge.core.messages.TagReadEvent;
-import org.rifidi.edge.core.notifications.NotifierService;
 import org.rifidi.edge.core.readers.impl.AbstractReaderSession;
+import org.rifidi.edge.core.services.notification.NotifierService;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
 

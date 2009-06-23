@@ -1,4 +1,4 @@
-package org.rifidi.edge.core.daos;
+package org.rifidi.edge.core.daos.internal.impl;
 
 import java.util.Dictionary;
 import java.util.HashMap;
@@ -10,8 +10,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.commands.AbstractCommandConfiguration;
 import org.rifidi.edge.core.commands.AbstractCommandConfigurationFactory;
-import org.rifidi.edge.core.notifications.NotifierService;
-import org.rifidi.edge.core.notifications.NotifierServiceWrapper;
+import org.rifidi.edge.core.daos.CommandDAO;
+import org.rifidi.edge.core.services.notification.NotifierService;
+import org.rifidi.edge.core.services.notification.NotifierServiceWrapper;
 
 /**
  * Implementation of Command Data Access Object. Helps access objects used for

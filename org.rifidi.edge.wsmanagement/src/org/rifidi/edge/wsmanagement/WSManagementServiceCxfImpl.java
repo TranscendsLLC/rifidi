@@ -15,6 +15,8 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.cxf.transport.servlet.CXFNonSpringServlet;
 import org.osgi.service.http.HttpService;
 import org.osgi.service.http.NamespaceException;
+import org.rifidi.edge.core.services.soap.WSManagementService;
+import org.rifidi.edge.core.services.soap.WebService;
 
 /**
  * This implementation uses CXF and the OSGi http service for publishing web

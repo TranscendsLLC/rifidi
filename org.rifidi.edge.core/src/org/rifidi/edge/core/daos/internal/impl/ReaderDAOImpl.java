@@ -1,4 +1,4 @@
-package org.rifidi.edge.core.daos;
+package org.rifidi.edge.core.daos.internal.impl;
 
 import java.util.Dictionary;
 import java.util.HashMap;
@@ -8,10 +8,11 @@ import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.rifidi.edge.core.notifications.NotifierService;
-import org.rifidi.edge.core.notifications.NotifierServiceWrapper;
+import org.rifidi.edge.core.daos.ReaderDAO;
 import org.rifidi.edge.core.readers.AbstractReader;
 import org.rifidi.edge.core.readers.AbstractReaderFactory;
+import org.rifidi.edge.core.services.notification.NotifierService;
+import org.rifidi.edge.core.services.notification.NotifierServiceWrapper;
 
 /**
  * Implementation of Reader Data Access Object. Allows components to access

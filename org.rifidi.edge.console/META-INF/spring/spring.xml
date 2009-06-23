@@ -7,7 +7,6 @@
 		<property name="readerDAO" ref="readerManagement" />
 		<property name="commandDAO" ref="commandManagement" />
 		<property name="configService" ref="configService" />
-		<property name="configDAO" ref="configDAO" />
 	</bean>
 	<osgi:service id="customCommandsService" ref="customCommands"
 		interface="org.eclipse.osgi.framework.console.CommandProvider" />
@@ -17,7 +16,5 @@
 		interface="org.rifidi.edge.core.daos.CommandDAO" />
 	<osgi:reference id="configService"
 		interface="org.rifidi.configuration.services.ConfigurationService" />
-	<osgi:reference id="configDAO"
-		interface="org.rifidi.edge.core.daos.ConfigurationDAO" />
 
 </beans>

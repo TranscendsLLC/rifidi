@@ -15,8 +15,8 @@ import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.Session;
 
-import org.rifidi.edge.core.api.tags.TagBatch;
-import org.rifidi.edge.core.api.tags.TagDTO;
+import org.rifidi.edge.api.tags.TagBatch;
+import org.rifidi.edge.api.tags.TagDTO;
 import org.rifidi.edge.core.messages.DatacontainerEvent;
 import org.rifidi.edge.core.messages.EPCGeneration1Event;
 import org.rifidi.edge.core.messages.ReadCycle;
