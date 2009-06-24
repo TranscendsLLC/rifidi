@@ -8,7 +8,7 @@
             fixed="false"
             icon="icons/reader-16x16.png"
             id="org.rifidi.edge.client.sal.perspective"
-            name="Sensor Abstraction Layer">
+            name="Sensor">
       </perspective>
    </extension>
    <extension

@@ -80,7 +80,7 @@
             class="org.rifidi.edge.client.ale.ecspecview.perspective.ALEPerspectiveFactory"
             icon="icons/page.png"
             id="org.rifidi.edge.client.ale"
-            name="ALE Perspective">
+            name="ALE">
       </perspective>
    </extension>
    <extension
