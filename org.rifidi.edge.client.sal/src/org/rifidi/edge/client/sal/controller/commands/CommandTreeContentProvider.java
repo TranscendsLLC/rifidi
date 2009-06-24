@@ -29,7 +29,7 @@ public class CommandTreeContentProvider implements ITreeContentProvider,
 		CommandController, PropertyChangeListener, IMapChangeListener {
 
 	/** The model Element */
-	private List<RemoteEdgeServer> edgeServerList;
+	private RemoteEdgeServer remoteEdgeServer;
 	/**
 	 * A hashmap that stores the RemoteCommandConfigurations mapped to their
 	 * type
@@ -162,10 +162,10 @@ public class CommandTreeContentProvider implements ITreeContentProvider,
 			}
 		}
 		if (oldInput != newInput) {
-			this.edgeServerList = (List<RemoteEdgeServer>) newInput;
-			List<RemoteEdgeServer> oldEdgeServerList = (List<RemoteEdgeServer>) oldInput;
-			if (oldEdgeServerList != null) {
-				for (RemoteEdgeServer edgeServer : oldEdgeServerList) {
+			List<RemoteEdgeServer> newInputList = (List<RemoteEdgeServer>) newInput;
+			List<RemoteEdgeServer> oldInputList = (List<RemoteEdgeServer>) oldInput;
+			if (oldInputList != null) {
+				for (RemoteEdgeServer edgeServer : oldInputList) {
 					edgeServer.removePropertyChangeListener(this);
 					edgeServer.getCommandConfigurations()
 							.removeMapChangeListener(this);
@@ -173,15 +173,17 @@ public class CommandTreeContentProvider implements ITreeContentProvider,
 							.removeMapChangeListener(this);
 				}
 			}
-			if (edgeServerList != null) {
-				for (RemoteEdgeServer edgeServer : edgeServerList) {
-					this.configTypeToCommandConfigSet = new HashMap<String, Set<RemoteCommandConfiguration>>();
-					edgeServer.addPropertyChangeListener(this);
-					edgeServer.getRemoteCommandConfigFactories()
-							.addMapChangeListener(this);
-					edgeServer.getCommandConfigurations().addMapChangeListener(
-							this);
-				}
+			if (newInputList.size() == 1) {
+				this.remoteEdgeServer = newInputList.get(0);
+				this.configTypeToCommandConfigSet = new HashMap<String, Set<RemoteCommandConfiguration>>();
+				remoteEdgeServer.addPropertyChangeListener(this);
+				remoteEdgeServer.getRemoteCommandConfigFactories()
+						.addMapChangeListener(this);
+				remoteEdgeServer.getCommandConfigurations()
+						.addMapChangeListener(this);
+
+			} else {
+				remoteEdgeServer = null;
 			}
 			viewer.refresh();
 		}
@@ -197,13 +199,13 @@ public class CommandTreeContentProvider implements ITreeContentProvider,
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
 		if (evt.getPropertyName().equals(RemoteEdgeServer.STATE_PROPERTY)) {
-			viewer.refresh(edgeServerList.get(0));
+			viewer.refresh(remoteEdgeServer);
 		} else if (evt.getPropertyName().equals(
 				RemoteObjectDirtyEvent.DIRTY_EVENT_PROPERTY)) {
 			RemoteObjectDirtyEvent bean = (RemoteObjectDirtyEvent) evt
 					.getNewValue();
-			RemoteCommandConfiguration commandConfig = (RemoteCommandConfiguration) edgeServerList
-					.get(0).getCommandConfigurations().get(bean.getModelID());
+			RemoteCommandConfiguration commandConfig = (RemoteCommandConfiguration) remoteEdgeServer
+					.getCommandConfigurations().get(bean.getModelID());
 
 			viewer.update(commandConfig, null);
 
@@ -272,8 +274,13 @@ public class CommandTreeContentProvider implements ITreeContentProvider,
 	 */
 	private void addRemoteCommandConfigFactory(
 			RemoteCommandConfigFactory factory) {
-		viewer.add(edgeServerList.get(0), factory);
-		viewer.setExpandedState(edgeServerList.get(0), true);
+		viewer.add(remoteEdgeServer, factory);
+		viewer.setExpandedState(remoteEdgeServer, true);
+		for(RemoteCommandConfigType type : factory.getCommandTypes()){
+			viewer.add(factory, type);
+			viewer.setExpandedState(factory, true);
+			viewer.refresh(factory, false);
+		}
 	}
 
 	/**
@@ -282,9 +289,10 @@ public class CommandTreeContentProvider implements ITreeContentProvider,
 	 * @param config
 	 */
 	private void addRemoteCommandConfiguration(RemoteCommandConfiguration config) {
-		Collection<RemoteCommandConfigFactory> factories = edgeServerList
-				.get(0).getRemoteCommandConfigFactories().values();
+		Collection<RemoteCommandConfigFactory> factories = remoteEdgeServer
+				.getRemoteCommandConfigFactories().values();
 		for (RemoteCommandConfigFactory factory : factories) {
+			//Look up the RemoteCommandConfigType for the config
 			RemoteCommandConfigType type = factory.getCommandType(config
 					.getCommandType());
 			if (type != null) {
@@ -344,7 +352,7 @@ public class CommandTreeContentProvider implements ITreeContentProvider,
 	 */
 	@Override
 	public void createCommand(String commandConfigType) {
-		edgeServerList.get(0).createCommandConfiguration(commandConfigType);
+		remoteEdgeServer.createCommandConfiguration(commandConfigType);
 
 	}
 
@@ -356,7 +364,7 @@ public class CommandTreeContentProvider implements ITreeContentProvider,
 	 */
 	@Override
 	public void deleteCommand(String commandConfigID) {
-		edgeServerList.get(0).deleteCommandConfiguration(commandConfigID);
+		remoteEdgeServer.deleteCommandConfiguration(commandConfigID);
 
 	}
 
@@ -384,8 +392,8 @@ public class CommandTreeContentProvider implements ITreeContentProvider,
 	 */
 	@Override
 	public void clearPropertyChanges(String commandID) {
-		RemoteCommandConfiguration config = (RemoteCommandConfiguration) edgeServerList
-				.get(0).getCommandConfigurations().get(commandID);
+		RemoteCommandConfiguration config = (RemoteCommandConfiguration) remoteEdgeServer
+				.getCommandConfigurations().get(commandID);
 		if (config != null) {
 			config.clearUpdatedProperties();
 		}
@@ -400,10 +408,10 @@ public class CommandTreeContentProvider implements ITreeContentProvider,
 	 */
 	@Override
 	public void synchPropertyChanges(String commandID) {
-		RemoteCommandConfiguration config = (RemoteCommandConfiguration) edgeServerList
-				.get(0).getCommandConfigurations().get(commandID);
+		RemoteCommandConfiguration config = (RemoteCommandConfiguration) remoteEdgeServer
+				.getCommandConfigurations().get(commandID);
 		if (config != null) {
-			config.synchUpdatedProperties(edgeServerList.get(0));
+			config.synchUpdatedProperties(remoteEdgeServer);
 		}
 
 	}

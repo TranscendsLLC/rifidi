@@ -1,4 +1,3 @@
-
 package org.rifidi.edge.client.sal.controller.edgeserver;
 
 import java.beans.PropertyChangeEvent;
@@ -48,7 +47,7 @@ public class EdgeServerTreeContentProvider implements ITreeContentProvider,
 	/** A static instance of this so we can use this object as a singleton */
 	private static EdgeServerTreeContentProvider instance;
 	/** The model Element */
-	private List<RemoteEdgeServer> edgeServerList;
+	private RemoteEdgeServer remoteEdgeServer;
 
 	/**
 	 * Constructor called by eclipse
@@ -172,7 +171,7 @@ public class EdgeServerTreeContentProvider implements ITreeContentProvider,
 	 */
 	@Override
 	public void connect() {
-		this.edgeServerList.get(0).connect();
+		this.remoteEdgeServer.connect();
 	}
 
 	/*
@@ -184,7 +183,7 @@ public class EdgeServerTreeContentProvider implements ITreeContentProvider,
 	 */
 	@Override
 	public void disconnect() {
-		this.edgeServerList.get(0).disconnect();
+		this.remoteEdgeServer.disconnect();
 	}
 
 	/*
@@ -196,12 +195,12 @@ public class EdgeServerTreeContentProvider implements ITreeContentProvider,
 	 */
 	@Override
 	public void update() {
-		this.edgeServerList.get(0).update();
+		this.remoteEdgeServer.update();
 	}
 
 	@Override
 	public Set<RemoteReaderFactory> getReaderfactories() {
-		return new HashSet<RemoteReaderFactory>(this.edgeServerList.get(0)
+		return new HashSet<RemoteReaderFactory>(this.remoteEdgeServer
 				.getReaderFactories().values());
 	}
 
@@ -214,7 +213,7 @@ public class EdgeServerTreeContentProvider implements ITreeContentProvider,
 	 */
 	@Override
 	public void saveConfiguration() {
-		this.edgeServerList.get(0).saveConfiguration();
+		this.remoteEdgeServer.saveConfiguration();
 	}
 
 	/*
@@ -228,7 +227,7 @@ public class EdgeServerTreeContentProvider implements ITreeContentProvider,
 	@Override
 	public void createReader(RemoteReaderFactory factory,
 			AttributeList attributes) {
-		this.edgeServerList.get(0).createReader(factory, attributes);
+		this.remoteEdgeServer.createReader(factory, attributes);
 	}
 
 	/*
@@ -240,16 +239,19 @@ public class EdgeServerTreeContentProvider implements ITreeContentProvider,
 	 */
 	@Override
 	public void deleteReader(String readerID) {
-		this.edgeServerList.get(0).deleteReader(readerID);
+		this.remoteEdgeServer.deleteReader(readerID);
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.rifidi.edge.client.sal.controller.edgeserver.EdgeServerController#createSession(java.lang.String)
+	 * 
+	 * @see
+	 * org.rifidi.edge.client.sal.controller.edgeserver.EdgeServerController
+	 * #createSession(java.lang.String)
 	 */
 	@Override
 	public void createSession(String readerID) {
-		this.edgeServerList.get(0).createSession(readerID);
+		this.remoteEdgeServer.createSession(readerID);
 
 	}
 
@@ -262,7 +264,7 @@ public class EdgeServerTreeContentProvider implements ITreeContentProvider,
 	 */
 	@Override
 	public void deleteSession(String readerID, String sessionID) {
-		this.edgeServerList.get(0).deleteSession(readerID, sessionID);
+		this.remoteEdgeServer.deleteSession(readerID, sessionID);
 
 	}
 
@@ -275,7 +277,7 @@ public class EdgeServerTreeContentProvider implements ITreeContentProvider,
 	 */
 	@Override
 	public void startSession(String readerID, String sessionID) {
-		this.edgeServerList.get(0).startSession(readerID, sessionID);
+		this.remoteEdgeServer.startSession(readerID, sessionID);
 
 	}
 
@@ -288,7 +290,7 @@ public class EdgeServerTreeContentProvider implements ITreeContentProvider,
 	 */
 	@Override
 	public void stopSession(String readerID, String sessionID) {
-		this.edgeServerList.get(0).stopSession(readerID, sessionID);
+		this.remoteEdgeServer.stopSession(readerID, sessionID);
 
 	}
 
@@ -301,7 +303,7 @@ public class EdgeServerTreeContentProvider implements ITreeContentProvider,
 	 */
 	@Override
 	public void deleteRemoteJob(RemoteJob job) {
-		this.edgeServerList.get(0).deleteRemoteJob(job);
+		this.remoteEdgeServer.deleteRemoteJob(job);
 
 	}
 
@@ -317,11 +319,10 @@ public class EdgeServerTreeContentProvider implements ITreeContentProvider,
 	@Override
 	public void submitCommand(RemoteSession session,
 			RemoteCommandConfiguration configuration, Long interval) {
-		if(interval<= (long)0){
-			this.edgeServerList.get(0).submitOneTimeCommand(session, configuration);
-		}else{
-			this.edgeServerList.get(0)
-			.scheduleJob(session, configuration, interval);
+		if (interval <= (long) 0) {
+			this.remoteEdgeServer.submitOneTimeCommand(session, configuration);
+		} else {
+			this.remoteEdgeServer.scheduleJob(session, configuration, interval);
 		}
 
 	}
@@ -335,7 +336,7 @@ public class EdgeServerTreeContentProvider implements ITreeContentProvider,
 	 */
 	@Override
 	public void clearPropertyChanges(String readerID) {
-		RemoteReader reader = (RemoteReader) this.edgeServerList.get(0)
+		RemoteReader reader = (RemoteReader) this.remoteEdgeServer
 				.getRemoteReaders().get(readerID);
 		if (reader != null) {
 			reader.clearUpdatedProperties();
@@ -345,14 +346,17 @@ public class EdgeServerTreeContentProvider implements ITreeContentProvider,
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.rifidi.edge.client.sal.controller.edgeserver.EdgeServerController#synchPropertyChanges(java.lang.String)
+	 * 
+	 * @see
+	 * org.rifidi.edge.client.sal.controller.edgeserver.EdgeServerController
+	 * #synchPropertyChanges(java.lang.String)
 	 */
 	@Override
 	public void synchPropertyChanges(String readerID) {
-		RemoteReader reader = (RemoteReader) this.edgeServerList.get(0)
+		RemoteReader reader = (RemoteReader) this.remoteEdgeServer
 				.getRemoteReaders().get(readerID);
 		if (reader != null) {
-			reader.synchUpdatedProperties(this.edgeServerList.get(0));
+			reader.synchUpdatedProperties(this.remoteEdgeServer);
 		}
 
 	}
@@ -376,28 +380,30 @@ public class EdgeServerTreeContentProvider implements ITreeContentProvider,
 			}
 		}
 		if (oldInput != newInput) {
-			this.edgeServerList = (List<RemoteEdgeServer>) newInput;
-			List<RemoteEdgeServer> oldEdgeServerList = (List<RemoteEdgeServer>) oldInput;
-			if (oldEdgeServerList != null) {
-				for (RemoteEdgeServer edgeServer : oldEdgeServerList) {
+
+			List<RemoteEdgeServer> newInputList = (List<RemoteEdgeServer>) newInput;
+			List<RemoteEdgeServer> oldInputList = (List<RemoteEdgeServer>) oldInput;
+			if (oldInputList != null) {
+				for (RemoteEdgeServer edgeServer : oldInputList) {
 					edgeServer.removePropertyChangeListener(this);
 					edgeServer.getRemoteReaders().removeMapChangeListener(this);
 				}
 			}
-			if (edgeServerList != null) {
-				for (RemoteEdgeServer edgeServer : edgeServerList) {
-					edgeServer.addPropertyChangeListener(this);
-					edgeServer.getRemoteReaders().addMapChangeListener(this);
-					// TODO: should we be listening for ReaderFactories?
+			if (newInputList.size() == 1) {
+				this.remoteEdgeServer = newInputList.get(0);
+				remoteEdgeServer.addPropertyChangeListener(this);
+				remoteEdgeServer.getRemoteReaders().addMapChangeListener(this);
+				// TODO: should we be listening for ReaderFactories?
 
-					// ADD DRAG AND DROP SUPPORT
-					EdgeServerDropTargetListener dropTargetListener = new EdgeServerDropTargetListener(
-							edgeServerList.get(0).getCommandConfigurations(),
-							this, this.viewer);
-					this.viewer.addDropSupport(DND.DROP_MOVE,
-							new Transfer[] { TextTransfer.getInstance() },
-							dropTargetListener);
-				}
+				// ADD DRAG AND DROP SUPPORT
+				EdgeServerDropTargetListener dropTargetListener = new EdgeServerDropTargetListener(
+						remoteEdgeServer.getCommandConfigurations(), this,
+						this.viewer);
+				this.viewer.addDropSupport(DND.DROP_MOVE,
+						new Transfer[] { TextTransfer.getInstance() },
+						dropTargetListener);
+			} else {
+				remoteEdgeServer = null;
 			}
 
 			this.viewer.refresh();
@@ -407,7 +413,10 @@ public class EdgeServerTreeContentProvider implements ITreeContentProvider,
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.eclipse.core.databinding.observable.map.IMapChangeListener#handleMapChange(org.eclipse.core.databinding.observable.map.MapChangeEvent)
+	 * 
+	 * @seeorg.eclipse.core.databinding.observable.map.IMapChangeListener#
+	 * handleMapChange
+	 * (org.eclipse.core.databinding.observable.map.MapChangeEvent)
 	 */
 	@Override
 	public void handleMapChange(MapChangeEvent event) {
@@ -460,8 +469,8 @@ public class EdgeServerTreeContentProvider implements ITreeContentProvider,
 	 */
 	private void addRemoteReader(RemoteReader reader) {
 		reader.getRemoteSessions().addMapChangeListener(this);
-		viewer.add(edgeServerList.get(0), reader);
-		viewer.setExpandedState(edgeServerList.get(0), true);
+		viewer.add(remoteEdgeServer, reader);
+		viewer.setExpandedState(remoteEdgeServer, true);
 		reader.addPropertyChangeListener(this);
 	}
 
@@ -493,7 +502,7 @@ public class EdgeServerTreeContentProvider implements ITreeContentProvider,
 	 * @param session
 	 */
 	private void addRemoteSession(RemoteSession session) {
-		RemoteReader reader = (RemoteReader) edgeServerList.get(0)
+		RemoteReader reader = (RemoteReader) remoteEdgeServer
 				.getRemoteReaders().get(session.getReaderID());
 		session.addPropertyChangeListener(this);
 		session.getRemoteJobs().addMapChangeListener(this);
@@ -518,13 +527,14 @@ public class EdgeServerTreeContentProvider implements ITreeContentProvider,
 	 * @param job
 	 */
 	private void addRemoteJob(RemoteJob job) {
-		RemoteReader reader = (RemoteReader) edgeServerList.get(0)
+		RemoteReader reader = (RemoteReader) remoteEdgeServer
 				.getRemoteReaders().get(job.getReaderID());
 		if (reader != null) {
 			RemoteSession session = (RemoteSession) reader.getRemoteSessions()
 					.get(job.getSessionID());
 			if (session != null) {
 				viewer.add(session, job);
+				viewer.setExpandedState(session, true);
 			}
 		}
 	}
@@ -548,7 +558,7 @@ public class EdgeServerTreeContentProvider implements ITreeContentProvider,
 	@Override
 	public void propertyChange(PropertyChangeEvent arg0) {
 		if (arg0.getPropertyName().equals(RemoteEdgeServer.STATE_PROPERTY)) {
-			viewer.refresh(edgeServerList.get(0));
+			viewer.refresh(remoteEdgeServer);
 			IEvaluationService service = (IEvaluationService) PlatformUI
 					.getWorkbench().getService(IEvaluationService.class);
 			service
@@ -557,7 +567,7 @@ public class EdgeServerTreeContentProvider implements ITreeContentProvider,
 				SessionStatePropertyBean.SESSION_STATUS_PROPERTY)) {
 			SessionStatePropertyBean bean = (SessionStatePropertyBean) arg0
 					.getNewValue();
-			RemoteReader reader = (RemoteReader) edgeServerList.get(0)
+			RemoteReader reader = (RemoteReader) remoteEdgeServer
 					.getRemoteReaders().get(bean.getReaderID());
 			RemoteSession session = (RemoteSession) reader.getRemoteSessions()
 					.get(bean.getSessionID());
@@ -567,7 +577,7 @@ public class EdgeServerTreeContentProvider implements ITreeContentProvider,
 				RemoteObjectDirtyEvent.DIRTY_EVENT_PROPERTY)) {
 			RemoteObjectDirtyEvent bean = (RemoteObjectDirtyEvent) arg0
 					.getNewValue();
-			RemoteReader reader = (RemoteReader) edgeServerList.get(0)
+			RemoteReader reader = (RemoteReader) remoteEdgeServer
 					.getRemoteReaders().get(bean.getModelID());
 
 			viewer.update(reader, null);
