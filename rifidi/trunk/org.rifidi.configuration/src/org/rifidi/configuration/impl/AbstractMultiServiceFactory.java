@@ -72,6 +72,8 @@ public abstract class AbstractMultiServiceFactory implements ServiceFactory {
 					configuration.getFactoryID()).newInstance();
 			counter++;
 			((DefaultConfigurationImpl) configuration).setTarget(instance);
+			
+			//if this is a new service
 			if (configuration.getServiceID() == null) {
 				// serviceids can only have alphanumeric characters and _ in
 				// them.
@@ -80,8 +82,8 @@ public abstract class AbstractMultiServiceFactory implements ServiceFactory {
 				serviceID = serviceID + "_" + Integer.toString(counter);
 				((DefaultConfigurationImpl) configuration)
 						.setServiceID(serviceID);
-				((DefaultConfigurationImpl) configuration).setType(this
-						.getConfigurationType());
+
+				//else if we are loading the service from a file
 			} else {
 				String[] splitString = configuration.getServiceID().split("_");
 				if (splitString.length > 0) {
@@ -101,6 +103,8 @@ public abstract class AbstractMultiServiceFactory implements ServiceFactory {
 			Dictionary<String, String> params = new Hashtable<String, String>();
 			params.put("type", getFactoryIDToClass().get(
 					configuration.getFactoryID()).getName());
+			((DefaultConfigurationImpl) configuration).setType(this
+					.getConfigurationType());
 			// NOTE: it is important for customInit to happen before registering
 			// the service!
 			customInit(instance);

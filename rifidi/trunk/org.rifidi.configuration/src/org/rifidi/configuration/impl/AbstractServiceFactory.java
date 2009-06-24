@@ -66,6 +66,8 @@ public abstract class AbstractServiceFactory<T extends RifidiService>
 			T instance = getClazz().newInstance();
 			((DefaultConfigurationImpl) configuration).setTarget(instance);
 			counter++;
+
+			// if this is a new service
 			if (configuration.getServiceID() == null) {
 				// TODO: baaad, we are depending on a concrete implementation!!!
 				// serviceIDs can only have alphanumeric characters and
@@ -75,8 +77,8 @@ public abstract class AbstractServiceFactory<T extends RifidiService>
 				serviceID = serviceID + "_" + Integer.toString(counter);
 				((DefaultConfigurationImpl) configuration)
 						.setServiceID(serviceID);
-				((DefaultConfigurationImpl) configuration).setType(this
-						.getConfigurationType());
+
+				// else if we are loading the service from a file
 			} else {
 				String[] splitString = configuration.getServiceID().split("_");
 				if (splitString.length > 0) {
@@ -94,6 +96,8 @@ public abstract class AbstractServiceFactory<T extends RifidiService>
 			}
 			Dictionary<String, String> params = new Hashtable<String, String>();
 			params.put("type", getClazz().getName());
+			((DefaultConfigurationImpl) configuration).setType(this
+					.getConfigurationType());
 			// NOTE: it is important for customInit to happen before registering
 			// the service!
 			customConfig(instance);
