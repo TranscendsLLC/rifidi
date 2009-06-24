@@ -126,12 +126,14 @@ public class SubmitJobWizardPage extends WizardPage {
 						.getImageRegistry()
 						.get(SALPluginActivator.IMAGE_FOLDER));
 				commandTypesToTreeItem.put(config.getCommandType(), item);
+				
 			}
 			TreeItem configItem = new TreeItem(item, SWT.None);
 			configItem.setText(config.getID());
 			configItem.setData(config);
 			configItem.setImage(SALPluginActivator.getDefault()
 					.getImageRegistry().get(SALPluginActivator.IMAGE_COG));
+			item.setExpanded(true);
 		}
 
 	}
