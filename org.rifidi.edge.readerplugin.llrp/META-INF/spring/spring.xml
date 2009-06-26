@@ -9,19 +9,12 @@
 	<bean id="configurationFactory" class="org.rifidi.edge.readerplugin.llrp.LLRPReaderFactory">
 		<property name="context" ref="bundleContext" />
 		<property name="template" ref="internalMB" />
-		<property name="notifierServiceWrapper" ref="NotifierServiceWrapper"/>
+		<property name="notifierService" ref="JMSNotifierService"/>
 	</bean>
 
 
-	<bean id="NotifierServiceWrapper"
-		class="org.rifidi.edge.readerplugin.llrp.NotifierServiceWrapper" />
-
 	<osgi:reference id="JMSNotifierService"
-		interface="org.rifidi.edge.core.services.notification.NotifierService"
-		cardinality="0..1">
-		<osgi:listener ref="NotifierServiceWrapper" bind-method="bindNotifierService"
-			unbind-method="unbindNotifierService"></osgi:listener>
-	</osgi:reference>
+		interface="org.rifidi.edge.core.services.notification.NotifierService"/>
 
 	<!--  Create Command Configuration Factory -->
 	<bean id="commandConfigurationFactory"

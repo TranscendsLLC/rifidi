@@ -54,11 +54,11 @@ import org.llrp.ltk.types.UnsignedInteger;
 import org.llrp.ltk.types.UnsignedShort;
 import org.rifidi.edge.api.SessionStatus;
 import org.rifidi.edge.core.commands.Command;
-import org.rifidi.edge.core.messages.EPCGeneration2Event;
-import org.rifidi.edge.core.messages.ReadCycle;
-import org.rifidi.edge.core.messages.TagReadEvent;
 import org.rifidi.edge.core.readers.impl.AbstractReaderSession;
 import org.rifidi.edge.core.services.notification.NotifierService;
+import org.rifidi.edge.core.services.notification.data.EPCGeneration2Event;
+import org.rifidi.edge.core.services.notification.data.ReadCycle;
+import org.rifidi.edge.core.services.notification.data.TagReadEvent;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
 
@@ -77,7 +77,7 @@ public class LLRPReaderSession extends AbstractReaderSession implements
 
 	private LLRPConnection connection = null;
 	/** Service used to send out notifications */
-	private NotifierServiceWrapper notifierService;
+	private NotifierService notifierService;
 	/** The ID of the reader this session belongs to */
 	private String readerID;
 
@@ -90,7 +90,7 @@ public class LLRPReaderSession extends AbstractReaderSession implements
 	 */
 	public LLRPReaderSession(String id, String host, int reconnectionInterval,
 			int maxConAttempts, Destination destination, JmsTemplate template,
-			NotifierServiceWrapper notifierService, String readerID) {
+			NotifierService notifierService, String readerID) {
 		super(id, destination, template);
 		System.out.println(host);
 		this.connection = new LLRPConnector(this, host);
@@ -323,7 +323,7 @@ public class LLRPReaderSession extends AbstractReaderSession implements
 	protected synchronized void setStatus(SessionStatus status) {
 		super.setStatus(status);
 		// TODO: Remove this once we have aspectJ
-		NotifierService service = notifierService.getNotifierService();
+		NotifierService service = notifierService;
 		if (service != null) {
 			service.sessionStatusChanged(this.readerID, this.getID(), status);
 		}
@@ -341,7 +341,7 @@ public class LLRPReaderSession extends AbstractReaderSession implements
 		Integer retVal = super.submit(command, interval, unit);
 		// TODO: Remove this once we have aspectJ
 		try {
-			NotifierService service = notifierService.getNotifierService();
+			NotifierService service = notifierService;
 			if (service != null) {
 				service.jobSubmitted(this.readerID, this.getID(), retVal,
 						command.getCommandID());
@@ -364,7 +364,7 @@ public class LLRPReaderSession extends AbstractReaderSession implements
 	public void killComand(Integer id) {
 		super.killComand(id);
 		// TODO: Remove this once we have aspectJ
-		NotifierService service = notifierService.getNotifierService();
+		NotifierService service = notifierService;
 		if (service != null) {
 			service.jobDeleted(this.readerID, this.getID(), id);
 		}
@@ -387,8 +387,8 @@ public class LLRPReaderSession extends AbstractReaderSession implements
 			for (TagReportData t : trdl) {
 				AntennaID antid = t.getAntennaID();
 				EPC_96 id = (EPC_96) t.getEPCParameter();
-				System.out.println("EPC data processed : "
-						+ id.getEPC().toString(16));
+				// System.out.println("EPC data processed : "
+				// + id.getEPC().toString(16));
 				String EPCData = id.getEPC().toString(16);
 				EPCGeneration2Event gen2event = new EPCGeneration2Event();
 				gen2event.setEPCMemory(this.parseString(EPCData), 96);

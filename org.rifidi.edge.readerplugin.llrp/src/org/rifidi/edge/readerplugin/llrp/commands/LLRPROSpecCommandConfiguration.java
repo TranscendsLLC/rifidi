@@ -17,13 +17,17 @@ import org.rifidi.configuration.annotations.PropertyType;
 import org.rifidi.edge.core.commands.AbstractCommandConfiguration;
 
 /**
- * The configuration class for the CommandConfiguration.  
+ * The configuration class for the CommandConfiguration.
  * 
  * @author Matthew Dean
  */
 @JMXMBean
 public class LLRPROSpecCommandConfiguration extends
 		AbstractCommandConfiguration<LLRPROSpecCommand> {
+
+	// public final TriggerPair NULL_TRIGGER_TYPE = new TriggerPair("NULL", 0);
+	// public final TriggerPair PERIODIC_TRIGGER_TYPE = new TriggerPair("PER",
+	// 2);
 
 	/**
 	 * 
@@ -34,6 +38,12 @@ public class LLRPROSpecCommandConfiguration extends
 	 * 
 	 */
 	private String antennaSequence = "0";
+
+//	private String triggerType = "NULL";
+//
+//	private String duration = "1000";
+//	
+//	private TriggerPair typePair = NULL_TRIGGER_TYPE;
 
 	/**
 	 * 
@@ -79,7 +89,7 @@ public class LLRPROSpecCommandConfiguration extends
 	}
 
 	/**
-	 * Gets the AntennaID.  
+	 * Gets the AntennaID.
 	 * 
 	 * @return
 	 */
@@ -90,46 +100,47 @@ public class LLRPROSpecCommandConfiguration extends
 	}
 
 	/**
-	 * Sets the AntennaID.  
+	 * Sets the AntennaID.
 	 */
 	public void setAntennaIDs(String antennaIDs) {
-		if(isAListOfShorts(antennaIDs)) {
+		if (isAListOfShorts(antennaIDs)) {
 			this.antennaSequence = antennaIDs;
 		}
 	}
 
 	/*
-	 * Checks to see if the string that has come in is a comma delimited list of integers
+	 * Checks to see if the string that has come in is a comma delimited list of
+	 * integers
 	 */
 	private boolean isAListOfShorts(String list) {
 		String[] strArray = list.split(",");
-		
+
 		boolean retVal = true;
-		
-		for(String number:strArray) {
-			if(!isANaturalShort(number)) {
-				retVal=false;
+
+		for (String number : strArray) {
+			if (!isANaturalShort(number)) {
+				retVal = false;
 			}
 		}
-		
+
 		return retVal;
 	}
-	
+
 	/*
-	 * Checks to see if an incoming string is a list of integers.  
+	 * Checks to see if an incoming string is a list of integers.
 	 */
 	private boolean isANaturalShort(String i) {
 		try {
 			Short number = Short.valueOf(i);
-			if(number<0) {
+			if (number < 0) {
 				return false;
 			}
-		}catch (NumberFormatException e) {
+		} catch (NumberFormatException e) {
 			return false;
 		}
 		return true;
 	}
-	
+
 	/**
 	 * Sets the ROSpecID.
 	 * 
@@ -141,13 +152,81 @@ public class LLRPROSpecCommandConfiguration extends
 	}
 
 	/**
-	 * Gets teh ROSpecID.  
+	 * Gets teh ROSpecID.
 	 * 
 	 * @return the roSpecID
 	 */
-	@Property(displayName = "ROSpecID", description = "The ID of the ROSpec", writable = true, type = PropertyType.PT_INTEGER)
+	@Property(displayName = "ROSpecID", description = "The ID of the "
+			+ "ROSpec", writable = true, type = PropertyType.PT_INTEGER, minValue = "0", maxValue = "16535")
 	public int getROSpecID() {
 		return roSpecID;
 	}
 
+//	/**
+//	 * @return
+//	 */
+//	public String getTriggerType() {
+//		return triggerType;
+//	}
+
+//	/**
+//	 * @param triggerType
+//	 */
+//	@Property(displayName = "ROSpecID", description = "The type of ROSpec it is, "
+//			+ "with \'NULL\' being a null trigger and \'PER\' being a periodic trigger.  "
+//			+ "Periodic triggers will send back tags using the duration value you set. "
+//			+ " ", writable = true, type = PropertyType.PT_STRING)
+//	public void setTriggerType(String triggerType) {
+//		if (this.triggerType.equalsIgnoreCase(this.PERIODIC_TRIGGER_TYPE
+//				.getString())) {
+//			this.triggerType = this.PERIODIC_TRIGGER_TYPE.getString();
+//		} else {
+//			this.triggerType = this.NULL_TRIGGER_TYPE.getString();
+//		}
+//	}
+
+//	/**
+//	 * @return
+//	 */
+//	public String getDuration() {
+//		return duration;
+//	}
+//
+//	/**
+//	 * @param duration
+//	 */
+//	public void setDuration(String duration) {
+//		this.duration = duration;
+//	}
+
+//	/**
+//	 * A class that links a trigger type string to a resulting integer value.
+//	 * 
+//	 * @author Matthew Dean
+//	 */
+//	public class TriggerPair {
+//		public String getString() {
+//			return a;
+//		}
+//
+//		public void setString(String a) {
+//			this.a = a;
+//		}
+//
+//		public int getInt() {
+//			return b;
+//		}
+//
+//		public void setInt(int b) {
+//			this.b = b;
+//		}
+//
+//		String a = "";
+//		int b = -1;
+//
+//		public TriggerPair(String a, int b) {
+//			this.a = a;
+//			this.b = b;
+//		}
+//	}
 }
