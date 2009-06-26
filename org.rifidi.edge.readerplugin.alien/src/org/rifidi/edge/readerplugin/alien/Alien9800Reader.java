@@ -67,7 +67,7 @@ public class Alien9800Reader extends AbstractReader<Alien9800ReaderSession> {
 	public static final String PROP_RF_ATTENUATION = "RFAttenuation";
 	public static final String PROP_EXTERNAL_OUTPUT = "externalOutput";
 	public static final String PROP_INVERT_EXTERNAL_INPUT = "invertExternalInput";
-	public static final String PROP_INVERT_EXTERNAL_OUTPUT = "inverExternalOutput";
+	public static final String PROP_INVERT_EXTERNAL_OUTPUT = "invertExternalOutput";
 
 	/**
 	 * READER PROPERTIES - SETTABLE, INITIALIZED BY AQUIRE READER PROPERTIES
@@ -378,9 +378,9 @@ public class Alien9800Reader extends AbstractReader<Alien9800ReaderSession> {
 				+ " integer between 0 and 255, but was " + externalOutput);
 	}
 
-	@Property(displayName = "Invert External Output", description = "Inverts the output"
-			+ " of GPO", writable = true, type = PropertyType.PT_INTEGER, minValue = "0", maxValue = "1", category = "GPIO", defaultValue = "0")
-	public Integer getInvertExternalOuput() {
+	@Property(displayName = "Invert External Output", description = "Inverts the "
+			+ "GPO", writable = true, type = PropertyType.PT_INTEGER, minValue = "0", maxValue = "1", category = "GPIO", defaultValue = "0")
+	public Integer getInvertExternalOutput() {
 		return Integer.parseInt(readerProperties
 				.get(PROP_INVERT_EXTERNAL_OUTPUT));
 	}
@@ -401,10 +401,9 @@ public class Alien9800Reader extends AbstractReader<Alien9800ReaderSession> {
 				+ " integer between 0 and 1, but was " + invertExternalOutput);
 	}
 
-	// @Property(displayName = "Invert External Input", description =
-	// "Inverts the input of GPI", writable = true, type =
-	// PropertyType.PT_INTEGER, minValue = "0", maxValue = "1", category =
-	// "GPIO", defaultValue = "0")
+	@Property(displayName = "Invert External Input", description = "Inverts the "
+			+ "GPI", writable = true, type = PropertyType.PT_INTEGER, minValue = "0", maxValue = "1", category = "GP"
+			+ "IO", defaultValue = "0")
 	public Integer getInvertExternalInput() {
 		return Integer.parseInt(readerProperties
 				.get(PROP_INVERT_EXTERNAL_OUTPUT));
