@@ -1,4 +1,3 @@
-
 package org.rifidi.edge.client.ale.ecspecview.views;
 
 import java.util.ArrayList;
@@ -23,7 +22,7 @@ import org.rifidi.edge.client.ale.logicalreaders.ALEListener;
 import org.rifidi.edge.client.ale.logicalreaders.ALEService;
 
 /**
- * TODO: Class level comment.  
+ * TODO: Class level comment.
  * 
  * @author Kyle Neumeier - kyle@pramari.com
  */
@@ -37,10 +36,10 @@ public class ECSpecView extends ViewPart implements ALEListener {
 	private ALEService service;
 
 	/**
-	 * Constructor.  
+	 * Constructor.
 	 */
 	public ECSpecView() {
-		this.service=Activator.getDefault().getAleService();
+		this.service = Activator.getDefault().getAleService();
 	}
 
 	/*
@@ -62,6 +61,7 @@ public class ECSpecView extends ViewPart implements ALEListener {
 		treeViewer.setContentProvider(new ECSpecViewContentProvider());
 		treeViewer.setLabelProvider(new ECSpecViewLabelProvider());
 		treeViewer.setComparator(new ViewerComparator());
+		treeViewer.setAutoExpandLevel(2);
 		createContextMenu();
 		service.registerALEViewer(treeViewer);
 		this.getSite().setSelectionProvider(treeViewer);
@@ -112,12 +112,16 @@ public class ECSpecView extends ViewPart implements ALEListener {
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.rifidi.edge.client.ale.logicalreaders.ALEListener#setALEStub(org.rifidi.edge.client.ale.api.wsdl.ale.epcglobal.ALEServicePortType)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.client.ale.logicalreaders.ALEListener#setALEStub(org.
+	 * rifidi.edge.client.ale.api.wsdl.ale.epcglobal.ALEServicePortType)
 	 */
 	@Override
 	public void setALEStub(ALEServicePortType stub) {
-		List<ALEServicePortType> stubby=new ArrayList<ALEServicePortType>();
+		List<ALEServicePortType> stubby = new ArrayList<ALEServicePortType>();
 		stubby.add(stub);
 		treeViewer.setInput(stubby);
 	}

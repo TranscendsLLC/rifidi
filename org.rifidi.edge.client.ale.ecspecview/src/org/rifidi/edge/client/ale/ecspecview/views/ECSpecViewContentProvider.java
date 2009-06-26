@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.rifidi.edge.client.ale.api.wsdl.ale.epcglobal.ALEServicePortType;
@@ -26,8 +27,6 @@ public class ECSpecViewContentProvider implements ITreeContentProvider {
 
 	/** Logger for this class. */
 	private Log logger = LogFactory.getLog(ECSpecViewContentProvider.class);
-	/** The viewer that this content provider works for */
-	private Viewer viewer;
 	/** Service for managing ecspecs. */
 	private ALEService service;
 
@@ -182,8 +181,10 @@ public class ECSpecViewContentProvider implements ITreeContentProvider {
 					"Expected object to be an ALEServicePortType but was "
 							+ newInput.getClass());
 		}
-		this.viewer = viewer;
 		viewer.refresh();
+		if(viewer instanceof AbstractTreeViewer){
+			((AbstractTreeViewer)viewer).expandToLevel(2);
+		}
 	}
 
 }

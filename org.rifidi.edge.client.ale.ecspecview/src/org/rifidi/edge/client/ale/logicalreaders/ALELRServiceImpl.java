@@ -11,7 +11,6 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
-import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.MessageBox;
@@ -535,17 +534,15 @@ public class ALELRServiceImpl implements ALELRService, ALEService {
 		if (aleServicePortType != null) {
 			List<ALEServicePortType> serviceList = new ArrayList<ALEServicePortType>();
 			serviceList.add(aleServicePortType);
-			for (Viewer viewer : aleViewers) {
-				viewer.setInput(serviceList);
 
-				if (viewer instanceof AbstractTreeViewer) {
-					AbstractTreeViewer aViewer = ((AbstractTreeViewer) viewer);
-					TreePath[] path = aViewer.getExpandedTreePaths();
-					aViewer.refresh();
-					aViewer.setExpandedTreePaths(path);
-				} else {
-					viewer.refresh();
+			for (Viewer viewer : aleViewers) {
+
+				viewer.setInput(serviceList);
+				viewer.refresh();
+				if(viewer instanceof AbstractTreeViewer){
+					((AbstractTreeViewer)viewer).expandToLevel(2);
 				}
+
 			}
 		}
 	}
@@ -562,16 +559,13 @@ public class ALELRServiceImpl implements ALELRService, ALEService {
 				List<ALEServicePortType> serviceList = new ArrayList<ALEServicePortType>();
 				serviceList.add(aleServicePortType);
 				for (Viewer viewer : aleViewers) {
-					viewer.setInput(serviceList);
 
-					if (viewer instanceof AbstractTreeViewer) {
-						AbstractTreeViewer aViewer = ((AbstractTreeViewer) viewer);
-						TreePath[] path = aViewer.getExpandedTreePaths();
-						aViewer.refresh();
-						aViewer.setExpandedTreePaths(path);
-					} else {
-						viewer.refresh();
+					viewer.setInput(serviceList);
+					viewer.refresh();
+					if(viewer instanceof AbstractTreeViewer){
+						((AbstractTreeViewer)viewer).expandToLevel(2);
 					}
+
 				}
 			} catch (Throwable t) {
 				logger.warn(t);
