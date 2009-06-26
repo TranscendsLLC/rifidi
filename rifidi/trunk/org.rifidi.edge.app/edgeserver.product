@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?pde version="3.4"?>
+<?pde version="3.5"?>
 
-<product name="EdgeServerProd" id="org.rifidi.edge.app.EdgeServer" application="org.rifidi.edge.app.application" useFeatures="false">
+<product name="EdgeServerProd" id="org.rifidi.edge.app.EdgeServer" application="org.rifidi.edge.app.application" useFeatures="false" includeLaunchers="true">
+
 
    <configIni use="default">
    </configIni>
@@ -28,6 +29,7 @@
 
    <windowImages/>
 
+
    <launcher name="EdgeServer">
       <solaris/>
       <win useIco="false">
@@ -35,25 +37,35 @@
       </win>
    </launcher>
 
+
    <vm>
    </vm>
 
+
    <plugins>
-      <plugin id="com.espertech.esper"/>
+      <plugin id="com.springsource.javax.ejb"/>
+      <plugin id="com.springsource.javax.el"/>
+      <plugin id="com.springsource.javax.management.j2ee"/>
+      <plugin id="com.springsource.javax.servlet"/>
+      <plugin id="com.springsource.javax.servlet.jsp"/>
+      <plugin id="com.springsource.javax.xml.rpc"/>
+      <plugin id="com.springsource.javax.xml.soap"/>
       <plugin id="com.springsource.net.sf.cglib"/>
-      <plugin id="fastinfoset_1.2.2.v20090311"/>
+      <plugin id="com.springsource.org.apache.commons.codec"/>
+      <plugin id="com.springsource.org.apache.tools.ant"/>
       <plugin id="javax.servlet"/>
       <plugin id="javax.wsdl"/>
       <plugin id="jcl.over.slf4j"/>
-      <plugin id="org.antlr.runtime_3.1.1.v20090225"/>
       <plugin id="org.apache.activemq.activemq-core"/>
       <plugin id="org.apache.activemq.activemq-pool"/>
+      <plugin id="org.apache.commons.beanutils"/>
       <plugin id="org.apache.commons.collections"/>
       <plugin id="org.apache.commons.configuration"/>
+      <plugin id="org.apache.commons.digester"/>
+      <plugin id="org.apache.commons.jxpath"/>
       <plugin id="org.apache.commons.lang"/>
       <plugin id="org.apache.commons.pool"/>
       <plugin id="org.apache.cxf.cxf-bundle"/>
-      <plugin id="org.apache.geronimo.j2ee.management"/>
       <plugin id="org.apache.geronimo.specs.geronimo-activation_1.1_spec"/>
       <plugin id="org.apache.geronimo.specs.geronimo-annotation_1.0_spec"/>
       <plugin id="org.apache.geronimo.specs.geronimo-javamail_1.4_spec"/>
@@ -62,11 +74,10 @@
       <plugin id="org.apache.geronimo.specs.geronimo-stax-api_1.0_spec"/>
       <plugin id="org.apache.geronimo.specs.geronimo-ws-metadata_2.0_spec"/>
       <plugin id="org.apache.log4j"/>
+      <plugin id="org.apache.mina-core"/>
       <plugin id="org.apache.neethi"/>
-      <plugin id="org.apache.ws.commons.axiom.axiom-api"/>
       <plugin id="org.apache.ws.commons.axiom.axiom-impl"/>
       <plugin id="org.apache.ws.commons.schema"/>
-      <plugin id="org.apache.xbean.xbean-spring"/>
       <plugin id="org.apache.xml.resolver"/>
       <plugin id="org.eclipse.equinox.common"/>
       <plugin id="org.eclipse.equinox.http.jetty"/>
@@ -75,31 +86,40 @@
       <plugin id="org.eclipse.equinox.registry"/>
       <plugin id="org.eclipse.osgi"/>
       <plugin id="org.eclipse.osgi.services"/>
-      <plugin id="org.fosstrak.tdt"/>
+      <plugin id="org.fosstrak.tdt.tdt"/>
       <plugin id="org.jdom"/>
       <plugin id="org.mortbay.jetty"/>
       <plugin id="org.mortbay.jetty.server"/>
       <plugin id="org.mortbay.jetty.util"/>
       <plugin id="org.objectweb.asm"/>
+      <plugin id="org.rifidi.com.espertech.esper"/>
       <plugin id="org.rifidi.configuration"/>
+      <plugin id="org.rifidi.edge.api"/>
       <plugin id="org.rifidi.edge.console"/>
       <plugin id="org.rifidi.edge.core"/>
-      <plugin id="org.rifidi.edge.core.api"/>
       <plugin id="org.rifidi.edge.core.rmi.server"/>
+      <plugin id="org.rifidi.edge.core.services"/>
+      <plugin id="org.rifidi.edge.core.services.esper"/>
+      <plugin id="org.rifidi.edge.core.services.jms"/>
+      <plugin id="org.rifidi.edge.core.services.notification"/>
+      <plugin id="org.rifidi.edge.core.services.soap.cxf"/>
       <plugin id="org.rifidi.edge.epcglobal.ale.api.logicalreader"/>
       <plugin id="org.rifidi.edge.epcglobal.ale.api.read"/>
-      <plugin id="org.rifidi.edge.esper"/>
-      <plugin id="org.rifidi.edge.notifications"/>
       <plugin id="org.rifidi.edge.readerplugin.alien"/>
-      <plugin id="org.rifidi.edge.wsmanagement"/>
+      <plugin id="org.rifidi.edge.readerplugin.llrp"/>
       <plugin id="org.rifidi.log4j.configuration" fragment="true"/>
+      <plugin id="org.rifidi.org.antlr.runtime"/>
+      <plugin id="org.rifidi.org.apache.ws.commons.axiom.axiom-api"/>
+      <plugin id="org.rifidi.org.codehaus.stax2"/>
+      <plugin id="org.rifidi.org.jvnet.fastinfoset"/>
+      <plugin id="org.rifidi.org.llrp.ltk"/>
       <plugin id="org.springframework.bundle.osgi.core"/>
       <plugin id="org.springframework.bundle.osgi.extender"/>
       <plugin id="org.springframework.bundle.osgi.io"/>
       <plugin id="org.springframework.bundle.spring"/>
       <plugin id="slf4j.api"/>
       <plugin id="slf4j.log4j12" fragment="true"/>
-      <plugin id="wstx_3.2.6.v20090311"/>
    </plugins>
+
 
 </product>
