@@ -28,7 +28,7 @@ public class NewECSpec extends AbstractHandler implements IHandler {
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindow(event);
-		String generatedName = "ECSpec";
+		String generatedName = "ECSpec"+System.currentTimeMillis();
 		ECSpecEditorView view;
 		try {
 			view = (ECSpecEditorView) window.getActivePage().showView(
