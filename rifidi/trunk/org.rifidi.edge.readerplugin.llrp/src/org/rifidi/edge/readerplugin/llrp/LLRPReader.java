@@ -55,7 +55,7 @@ public class LLRPReader extends AbstractReader<LLRPReaderSession> {
 	/** The ID of the session */
 	private int sessionID = 0;
 	/** A wrapper containing the service to send jms notifications */
-	private NotifierServiceWrapper notifyServiceWrapper;
+	private NotifierService notifyServiceWrapper;
 
 	/**
 	 * 
@@ -80,7 +80,7 @@ public class LLRPReader extends AbstractReader<LLRPReaderSession> {
 					notifyServiceWrapper, super.getID());
 
 			// TODO: remove this once we get AspectJ in here!
-			NotifierService service = notifyServiceWrapper.getNotifierService();
+			NotifierService service = notifyServiceWrapper;
 			if (service != null) {
 				service.addSessionEvent(this.getID(), Integer
 						.toString(sessionID));
@@ -96,7 +96,7 @@ public class LLRPReader extends AbstractReader<LLRPReaderSession> {
 	 * @param wrapper
 	 *            The JMS Notifier to set
 	 */
-	public void setNotifiyServiceWrapper(NotifierServiceWrapper wrapper) {
+	public void setNotifiyService(NotifierService wrapper) {
 		this.notifyServiceWrapper = wrapper;
 	}
 
@@ -117,7 +117,7 @@ public class LLRPReader extends AbstractReader<LLRPReaderSession> {
 			this.session = null;
 
 			// TODO: remove this once we get AspectJ in here!
-			NotifierService service = notifyServiceWrapper.getNotifierService();
+			NotifierService service = notifyServiceWrapper;
 			if (service != null) {
 				service.removeSessionEvent(this.getID(), Integer
 						.toString(sessionID));

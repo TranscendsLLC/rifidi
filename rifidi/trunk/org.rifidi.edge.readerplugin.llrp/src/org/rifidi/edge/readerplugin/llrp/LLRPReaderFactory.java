@@ -18,6 +18,7 @@ import java.util.Set;
 
 import org.rifidi.edge.core.readers.AbstractReader;
 import org.rifidi.edge.core.readers.AbstractReaderFactory;
+import org.rifidi.edge.core.services.notification.NotifierService;
 import org.springframework.jms.core.JmsTemplate;
 
 /**
@@ -32,7 +33,7 @@ public class LLRPReaderFactory extends AbstractReaderFactory<LLRPReader> {
 	/** Name of the readerSession. */
 	private static final String name = "LLRP";
 	/** A JMS event notification sender */
-	private NotifierServiceWrapper notifierServiceWrapper;
+	private NotifierService notifierService;
 	/** JMS Template */
 	private JmsTemplate template;
 	/** The ID for this factory */
@@ -49,8 +50,8 @@ public class LLRPReaderFactory extends AbstractReaderFactory<LLRPReader> {
 	 * 
 	 * @param wrapper
 	 */
-	public void setNotifierServiceWrapper(NotifierServiceWrapper wrapper) {
-		this.notifierServiceWrapper = wrapper;
+	public void setNotifierService(NotifierService wrapper) {
+		this.notifierService = wrapper;
 	}
 
 	/*
@@ -85,7 +86,7 @@ public class LLRPReaderFactory extends AbstractReaderFactory<LLRPReader> {
 	public void customConfig(LLRPReader instance) {
 		instance.setDestination(template.getDefaultDestination());
 		instance.setTemplate(template);
-		instance.setNotifiyServiceWrapper(this.notifierServiceWrapper);
+		instance.setNotifiyService(this.notifierService);
 		Set<String> interfaces = new HashSet<String>();
 		interfaces.add(AbstractReader.class.getName());
 		instance.register(getContext(), interfaces);
