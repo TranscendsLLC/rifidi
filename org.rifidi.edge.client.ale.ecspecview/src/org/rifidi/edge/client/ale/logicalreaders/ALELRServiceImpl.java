@@ -47,6 +47,7 @@ import org.rifidi.edge.client.ale.logicalreaders.decorators.LRSpecDecorator;
  * TODO: Class level comment.
  * 
  * @author Jochen Mader - jochen@pramari.com
+ * @author Tobias Hoppenthaler - tobias@pramari.com
  */
 public class ALELRServiceImpl implements ALELRService, ALEService {
 	/** Logger for this class. */
@@ -539,8 +540,9 @@ public class ALELRServiceImpl implements ALELRService, ALEService {
 
 				viewer.setInput(serviceList);
 				viewer.refresh();
-				if(viewer instanceof AbstractTreeViewer){
-					((AbstractTreeViewer)viewer).expandToLevel(2);
+				/** keep the tree always open to spec level */
+				if (viewer instanceof AbstractTreeViewer) {
+					((AbstractTreeViewer) viewer).expandToLevel(2);
 				}
 
 			}
@@ -562,8 +564,9 @@ public class ALELRServiceImpl implements ALELRService, ALEService {
 
 					viewer.setInput(serviceList);
 					viewer.refresh();
-					if(viewer instanceof AbstractTreeViewer){
-						((AbstractTreeViewer)viewer).expandToLevel(2);
+					/** keep the tree always open to spec level */
+					if (viewer instanceof AbstractTreeViewer) {
+						((AbstractTreeViewer) viewer).expandToLevel(2);
 					}
 
 				}
