@@ -29,7 +29,7 @@
 	</bean>
 
 	<bean class="org.springframework.remoting.jaxws.SimpleJaxWsServiceExporter">
-		<property name="baseAddress" value="http://${org.rifidi.edge.ale.host}:${org.rifidi.edge.ale.port}/" />
+		<property name="baseAddress" value="http://${org.rifidi.edge.ale.host}:8081/" />
 	</bean>
 
 	<bean id="ecspecManager"
