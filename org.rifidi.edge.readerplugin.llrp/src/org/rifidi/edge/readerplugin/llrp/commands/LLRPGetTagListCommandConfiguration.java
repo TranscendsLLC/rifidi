@@ -75,7 +75,6 @@ public class LLRPGetTagListCommandConfiguration extends
 	 *            the roSpecID to set
 	 */
 	public void setROSpecID(Integer roSpecID) {
-		System.out.println("Called the setROSpecID in LLRPGetTagList");
 		this.roSpecID = roSpecID;
 	}
 

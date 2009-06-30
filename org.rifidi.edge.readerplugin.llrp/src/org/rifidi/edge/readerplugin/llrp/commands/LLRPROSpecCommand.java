@@ -31,6 +31,7 @@ import org.llrp.ltk.generated.parameters.AISpec;
 import org.llrp.ltk.generated.parameters.AISpecStopTrigger;
 import org.llrp.ltk.generated.parameters.C1G2EPCMemorySelector;
 import org.llrp.ltk.generated.parameters.InventoryParameterSpec;
+import org.llrp.ltk.generated.parameters.PeriodicTriggerValue;
 import org.llrp.ltk.generated.parameters.ROBoundarySpec;
 import org.llrp.ltk.generated.parameters.ROReportSpec;
 import org.llrp.ltk.generated.parameters.ROSpec;
@@ -61,6 +62,10 @@ public class LLRPROSpecCommand extends AbstractLLRPCommand {
 	 */
 	private int rospec_id = -1;
 
+	private int rospec_trigger = -1;
+
+	private int rospec_duration = -1;
+
 	/**
 	 * The session.
 	 */
@@ -70,7 +75,7 @@ public class LLRPROSpecCommand extends AbstractLLRPCommand {
 	 * The initial antennaSequence.
 	 */
 	private String antennaSequence = "0";
-	
+
 	private UnsignedShortArray antenna_array = null;
 
 	/**
@@ -93,6 +98,24 @@ public class LLRPROSpecCommand extends AbstractLLRPCommand {
 	}
 
 	/**
+	 * Sets teh ROSpecID.
+	 * 
+	 * @param rospec_id
+	 */
+	public void setRoSpecTrigger(int rospec_trigger) {
+		this.rospec_trigger = rospec_trigger;
+	}
+
+	/**
+	 * Sets teh ROSpecID.
+	 * 
+	 * @param rospec_id
+	 */
+	public void setRoSpecDuration(int rospec_duration) {
+		this.rospec_duration = rospec_duration;
+	}
+
+	/**
 	 * Gets the AntennaID.
 	 * 
 	 * @return
@@ -107,8 +130,8 @@ public class LLRPROSpecCommand extends AbstractLLRPCommand {
 	public void setAntennaIDs(String antennaIDs) {
 		this.antennaSequence = antennaIDs;
 		String[] splitstring = antennaIDs.split(",");
-		
-		for(String i:splitstring) {
+
+		for (String i : splitstring) {
 			antenna_array.add(new UnsignedShort(i));
 		}
 	}
@@ -121,7 +144,7 @@ public class LLRPROSpecCommand extends AbstractLLRPCommand {
 	@Override
 	public void run() {
 		this.session = (LLRPReaderSession) this.readerSession;
-		
+
 		try {
 			boolean is_taken = false;
 			GET_ROSPECS rospecs = new GET_ROSPECS();
@@ -149,13 +172,30 @@ public class LLRPROSpecCommand extends AbstractLLRPCommand {
 
 				ROBoundarySpec rbs = new ROBoundarySpec();
 				ROSpecStartTrigger rst = new ROSpecStartTrigger();
-				rst.setROSpecStartTriggerType(new ROSpecStartTriggerType(
-						ROSpecStartTriggerType.Null));
+				if(this.rospec_trigger==2) {
+					rst.setROSpecStartTriggerType(new ROSpecStartTriggerType(
+							ROSpecStartTriggerType.Periodic));
+					PeriodicTriggerValue ptv = new PeriodicTriggerValue();
+					ptv.setPeriod(new UnsignedInteger(100));
+					ptv.setOffset(new UnsignedInteger(0));
+					rst.setPeriodicTriggerValue(ptv);
+				} else {
+					rst.setROSpecStartTriggerType(new ROSpecStartTriggerType(
+							ROSpecStartTriggerType.Null));
+				}
 				rbs.setROSpecStartTrigger(rst);
 				ROSpecStopTrigger rstopt = new ROSpecStopTrigger();
-				rstopt.setROSpecStopTriggerType(new ROSpecStopTriggerType(
-						ROSpecStopTriggerType.Null));
-				rstopt.setDurationTriggerValue(new UnsignedInteger(0));
+				if (this.rospec_trigger == 2) {
+					rstopt.setROSpecStopTriggerType(new ROSpecStopTriggerType(
+							ROSpecStopTriggerType.Duration));
+					rstopt.setDurationTriggerValue(new UnsignedInteger(
+							this.rospec_duration));
+				} else {
+					rstopt.setROSpecStopTriggerType(new ROSpecStopTriggerType(
+							ROSpecStopTriggerType.Null));
+					rstopt.setDurationTriggerValue(new UnsignedInteger(0));
+				}
+
 				rbs.setROSpecStopTrigger(rstopt);
 				ro.setROBoundarySpec(rbs);
 
@@ -176,9 +216,14 @@ public class LLRPROSpecCommand extends AbstractLLRPCommand {
 				ro.addToSpecParameterList(ais);
 
 				ROReportSpec rrs = new ROReportSpec();
-				rrs.setROReportTrigger(new ROReportTriggerType(
-						ROReportTriggerType.None));
-				rrs.setN(new UnsignedShort(1));
+				if (this.rospec_trigger == 2) {
+					rrs.setROReportTrigger(new ROReportTriggerType(
+							ROReportTriggerType.Upon_N_Tags_Or_End_Of_ROSpec));
+				} else {
+					rrs.setROReportTrigger(new ROReportTriggerType(
+							ROReportTriggerType.None));
+				}
+				rrs.setN(new UnsignedShort(0));
 				TagReportContentSelector trcs = new TagReportContentSelector();
 				trcs.setEnableROSpecID(new Bit(1));
 				trcs.setEnableSpecIndex(new Bit(1));
@@ -205,12 +250,18 @@ public class LLRPROSpecCommand extends AbstractLLRPCommand {
 				ENABLE_ROSPEC enRspec = new ENABLE_ROSPEC();
 				enRspec.setROSpecID(new UnsignedInteger(this.rospec_id));
 
-				START_ROSPEC sr = new START_ROSPEC();
-				sr.setROSpecID(new UnsignedInteger(this.rospec_id));
-
 				session.transact(enRspec);
+				
+				if(this.rospec_trigger!=2) {
+					START_ROSPEC sr = new START_ROSPEC();
+					sr.setROSpecID(new UnsignedInteger(this.rospec_id));
+					
+					session.transact(sr);
+				}
+			
 
-				session.transact(sr);
+
+				
 
 				logger.debug(response.toXMLString());
 

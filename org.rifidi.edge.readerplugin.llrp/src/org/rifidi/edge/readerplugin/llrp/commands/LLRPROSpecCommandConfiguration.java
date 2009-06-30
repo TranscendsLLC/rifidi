@@ -25,9 +25,8 @@ import org.rifidi.edge.core.commands.AbstractCommandConfiguration;
 public class LLRPROSpecCommandConfiguration extends
 		AbstractCommandConfiguration<LLRPROSpecCommand> {
 
-	// public final TriggerPair NULL_TRIGGER_TYPE = new TriggerPair("NULL", 0);
-	// public final TriggerPair PERIODIC_TRIGGER_TYPE = new TriggerPair("PER",
-	// 2);
+	public final TriggerPair NULL_TRIGGER_TYPE = new TriggerPair("NULL", 0);
+	public final TriggerPair PERIODIC_TRIGGER_TYPE = new TriggerPair("PER", 2);
 
 	/**
 	 * 
@@ -39,11 +38,11 @@ public class LLRPROSpecCommandConfiguration extends
 	 */
 	private String antennaSequence = "0";
 
-//	private String triggerType = "NULL";
-//
-//	private String duration = "1000";
-//	
-//	private TriggerPair typePair = NULL_TRIGGER_TYPE;
+	private String triggerType = "NULL";
+	
+	private int triggerInt = 0;
+
+	private int duration = 1000;
 
 	/**
 	 * 
@@ -62,6 +61,8 @@ public class LLRPROSpecCommandConfiguration extends
 		LLRPROSpecCommand llrprsc = new LLRPROSpecCommand(super.getID());
 		llrprsc.setRoSpecID(roSpecID);
 		llrprsc.setAntennaIDs(antennaSequence);
+		llrprsc.setRoSpecTrigger(triggerInt);
+		llrprsc.setRoSpecDuration(this.duration);
 		return llrprsc;
 	}
 
@@ -94,7 +95,8 @@ public class LLRPROSpecCommandConfiguration extends
 	 * @return
 	 */
 	@Property(displayName = "AntennaIDs", description = "Select which"
-			+ " antennas to scan.  Use a comma delimited string such as \"1,2,3\".", writable = true)
+			+ " antennas to scan.  Use a comma delimited string such"
+			+ " as \"1,2,3\".", writable = true)
 	public String getAntennaIDs() {
 		return antennaSequence;
 	}
@@ -157,76 +159,83 @@ public class LLRPROSpecCommandConfiguration extends
 	 * @return the roSpecID
 	 */
 	@Property(displayName = "ROSpecID", description = "The ID of the "
-			+ "ROSpec", writable = true, type = PropertyType.PT_INTEGER, minValue = "0", maxValue = "16535")
+			+ "ROSpec", writable = true, type = PropertyType.PT_INTEGER, minValue = ""
+			+ "0", maxValue = "16535")
 	public int getROSpecID() {
 		return roSpecID;
 	}
 
-//	/**
-//	 * @return
-//	 */
-//	public String getTriggerType() {
-//		return triggerType;
-//	}
+	/**
+	 * @return
+	 */
+	public String getTriggerType() {
+		return triggerType;
+	}
 
-//	/**
-//	 * @param triggerType
-//	 */
-//	@Property(displayName = "ROSpecID", description = "The type of ROSpec it is, "
-//			+ "with \'NULL\' being a null trigger and \'PER\' being a periodic trigger.  "
-//			+ "Periodic triggers will send back tags using the duration value you set. "
-//			+ " ", writable = true, type = PropertyType.PT_STRING)
-//	public void setTriggerType(String triggerType) {
-//		if (this.triggerType.equalsIgnoreCase(this.PERIODIC_TRIGGER_TYPE
-//				.getString())) {
-//			this.triggerType = this.PERIODIC_TRIGGER_TYPE.getString();
-//		} else {
-//			this.triggerType = this.NULL_TRIGGER_TYPE.getString();
-//		}
-//	}
+	/**
+	 * @param triggerType
+	 */
+	@Property(displayName = "ROSpecID", description = "The type of ROSpec it is, "
+			+ "with \'NULL\' being a null trigger and \'PER\' being a periodic trigger.  "
+			+ "Periodic triggers will send back tags using the duration value you set. "
+			+ " ", writable = true, type = PropertyType.PT_STRING)
+	public void setTriggerType(String triggerType) {
+		if (triggerType.equalsIgnoreCase(this.PERIODIC_TRIGGER_TYPE
+				.getString())) {
+			this.triggerType = this.PERIODIC_TRIGGER_TYPE.getString();
+			triggerInt = this.PERIODIC_TRIGGER_TYPE.getInt();
+		} else {
+			this.triggerType = this.NULL_TRIGGER_TYPE.getString();
+			this.triggerInt = this.NULL_TRIGGER_TYPE.getInt();
+		}
+	}
 
-//	/**
-//	 * @return
-//	 */
-//	public String getDuration() {
-//		return duration;
-//	}
-//
-//	/**
-//	 * @param duration
-//	 */
-//	public void setDuration(String duration) {
-//		this.duration = duration;
-//	}
+	/**
+	 * @return
+	 */
+	@Property(displayName = "ROSpecID", description = "The duration of the ROSpec trigger.  "
+			+ "Will only be used if you set the ROSpec trigger type to "
+			+ "\'Periodic\'.", writable = true, type = PropertyType.PT_INTEGER, defaultValue = ""
+			+ "1000", minValue = "0", maxValue = "65535")
+	public Integer getDuration() {
+		return this.duration;
+	}
 
-//	/**
-//	 * A class that links a trigger type string to a resulting integer value.
-//	 * 
-//	 * @author Matthew Dean
-//	 */
-//	public class TriggerPair {
-//		public String getString() {
-//			return a;
-//		}
-//
-//		public void setString(String a) {
-//			this.a = a;
-//		}
-//
-//		public int getInt() {
-//			return b;
-//		}
-//
-//		public void setInt(int b) {
-//			this.b = b;
-//		}
-//
-//		String a = "";
-//		int b = -1;
-//
-//		public TriggerPair(String a, int b) {
-//			this.a = a;
-//			this.b = b;
-//		}
-//	}
+	/**
+	 * @param duration
+	 */
+	public void setDuration(Integer duration) {
+		this.duration = duration;
+	}
+
+	/**
+	 * A class that links a trigger type string to a resulting integer value.
+	 * 
+	 * @author Matthew Dean
+	 */
+	public class TriggerPair {
+		public String getString() {
+			return a;
+		}
+
+		public void setString(String a) {
+			this.a = a;
+		}
+
+		public int getInt() {
+			return b;
+		}
+
+		public void setInt(int b) {
+			this.b = b;
+		}
+
+		private String a = "";
+		private int b = -1;
+
+		public TriggerPair(String a, int b) {
+			this.a = a;
+			this.b = b;
+		}
+	}
 }
