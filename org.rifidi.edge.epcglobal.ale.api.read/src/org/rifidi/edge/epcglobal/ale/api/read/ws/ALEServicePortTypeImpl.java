@@ -5,8 +5,6 @@
 
 package org.rifidi.edge.epcglobal.ale.api.read.ws;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -14,7 +12,6 @@ import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.rifidi.edge.core.services.soap.WebService;
 import org.rifidi.edge.epcglobal.ale.api.read.data.ECReportSpec;
 import org.rifidi.edge.epcglobal.aleread.ALEReadAPI;
 import org.rifidi.edge.epcglobal.aleread.service.ECSPECManagerService;
@@ -32,7 +29,7 @@ import org.rifidi.edge.lr.exceptions.NoSuchReaderNameException;
  */
 
 @javax.jws.WebService(serviceName = "ALEService", portName = "ALEServicePort", targetNamespace = "urn:epcglobal:ale:wsdl:1", wsdlLocation = "org/rifidi/edge/epcglobal/ale/api/read/ws/epcglobal-ale-1_1-ale.wsdl", endpointInterface = "org.rifidi.edge.epcglobal.ale.api.read.ws.ALEServicePortType")
-public class ALEServicePortTypeImpl implements ALEServicePortType, WebService {
+public class ALEServicePortTypeImpl implements ALEServicePortType {
 
 	/** Logger for this class. */
 	private static final Log logger = LogFactory
@@ -43,12 +40,6 @@ public class ALEServicePortTypeImpl implements ALEServicePortType, WebService {
 	private LogicalReaderManagementService lrService;
 	/** Factory for creating reports. */
 	private RifidiReportFactory reportFactory;
-	/** The port to expose this ALE LR WS at */
-	private int alePort = -1;
-	/** The hostname of the machine that makes this ALE LR WS available */
-	private String aleHost = null;
-	/** The path to the ALE LR WS */
-	private String alePath = null;
 
 	/*
 	 * (non-Javadoc)
@@ -348,56 +339,6 @@ public class ALEServicePortTypeImpl implements ALEServicePortType, WebService {
 		ecspecManagerService.subscribe(parms.getSpecName(), parms
 				.getNotificationURI());
 		return new VoidHolder();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.rifidi.edge.core.services.soap.cxf.internal.WebService#getService()
-	 */
-	@Override
-	public Object getService() {
-		return this;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.rifidi.edge.core.services.soap.cxf.internal.WebService#getUrl()
-	 */
-	@Override
-	public URL getUrl() {
-		String url = "http://" + aleHost + ":" + alePort + "/" + alePath;
-		try {
-			return new URL(url);
-		} catch (MalformedURLException e) {
-			logger.fatal("That should not happen: " + e);
-		}
-		return null;
-	}
-
-	/**
-	 * @param alePort
-	 *            the alePort to set
-	 */
-	public void setAlePort(int alePort) {
-		this.alePort = alePort;
-	}
-
-	/**
-	 * @param aleHost
-	 *            the aleHost to set
-	 */
-	public void setAleHost(String aleHost) {
-		this.aleHost = aleHost;
-	}
-
-	/**
-	 * @param alePath
-	 *            the alePath to set
-	 */
-	public void setAlePath(String alePath) {
-		this.alePath = alePath;
 	}
 
 	/**

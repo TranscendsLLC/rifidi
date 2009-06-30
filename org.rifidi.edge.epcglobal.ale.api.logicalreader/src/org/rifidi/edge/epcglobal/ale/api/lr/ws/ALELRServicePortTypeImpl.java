@@ -5,8 +5,6 @@
 
 package org.rifidi.edge.epcglobal.ale.api.lr.ws;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -30,20 +28,13 @@ import org.rifidi.edge.lr.exceptions.ReaderInUseException;
  */
 
 @javax.jws.WebService(serviceName = "ALELRService", portName = "ALELRServicePort", targetNamespace = "urn:epcglobal:alelr:wsdl:1", wsdlLocation = "org/rifidi/edge/epcglobal/ale/api/lr/ws/epcglobal-ale-1_1-alelr.wsdl", endpointInterface = "org.rifidi.edge.epcglobal.ale.api.lr.ws.ALELRServicePortType")
-public class ALELRServicePortTypeImpl implements ALELRServicePortType,
-		org.rifidi.edge.core.services.soap.WebService {
+public class ALELRServicePortTypeImpl implements ALELRServicePortType{
 	/** Logger for this class. */
 	private static final Log logger = LogFactory
 			.getLog(ALELRServicePortTypeImpl.class);
 	/** Logical readers management service. */
 	private LogicalReaderManagementService service;
-	/** The port to expose this ALE LR WS at */
-	private int alePort = -1;
-	/** The hostname of the machine that makes this ALE LR WS available */
-	private String aleHost = null;
-	/** The path to the ALE LR WS */
-	private String alePath = null;
-
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -340,62 +331,12 @@ public class ALELRServicePortTypeImpl implements ALELRServicePortType,
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.rifidi.edge.core.services.soap.cxf.internal.WebService#getService()
-	 */
-	@Override
-	public Object getService() {
-		return this;
-	}
-
 	/**
 	 * @param service
 	 *            the service to set
 	 */
 	public void setLRService(LogicalReaderManagementService service) {
 		this.service = service;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.rifidi.edge.core.services.soap.cxf.internal.WebService#getUrl()
-	 */
-	@Override
-	public URL getUrl() {
-		String url = "http://" + aleHost + ":" + alePort + "/" + alePath;
-		try {
-			return new URL(url);
-		} catch (MalformedURLException e) {
-			logger.fatal("That should not happen: " + e);
-		}
-		return null;
-	}
-
-	/**
-	 * @param alePort
-	 *            the alePort to set
-	 */
-	public void setAlePort(int alePort) {
-		this.alePort = alePort;
-	}
-
-	/**
-	 * @param aleHost
-	 *            the aleHost to set
-	 */
-	public void setAleHost(String aleHost) {
-		this.aleHost = aleHost;
-	}
-
-	/**
-	 * @param alePath
-	 *            the alePath to set
-	 */
-	public void setAlePath(String alePath) {
-		this.alePath = alePath;
 	}
 
 }

@@ -26,9 +26,10 @@
 		<property name="ecspecManagerService" ref="ecspecManager" />
 		<property name="lrService" ref="lrManagement" />
 		<property name="reportFactory" ref="reportFactory" />
-		<property name="aleHost" value="${org.rifidi.edge.ale.host}" />
-		<property name="alePort" value="${org.rifidi.edge.ale.port}" />
-		<property name="alePath" value="${org.rifidi.edge.ale.read}" />
+	</bean>
+
+	<bean class="org.springframework.remoting.jaxws.SimpleJaxWsServiceExporter">
+		<property name="baseAddress" value="http://${org.rifidi.edge.ale.host}:${org.rifidi.edge.ale.port}/" />
 	</bean>
 
 	<bean id="ecspecManager"
@@ -38,13 +39,4 @@
 
 	<bean id="reportFactory"
 		class="org.rifidi.edge.epcglobal.aleread.service.RifidiReportFactoryimpl" />
-
-	<osgi:service id="aleReadService" ref="aleReadAPIService">
-		<osgi:interfaces>
-			<value>org.rifidi.edge.core.services.soap.WebService
-			</value>
-			<value>org.rifidi.edge.epcglobal.ale.api.read.ws.ALEServicePortType
-			</value>
-		</osgi:interfaces>
-	</osgi:service>
 </beans>
