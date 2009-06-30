@@ -8,6 +8,5 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Require-Bundle: org.rifidi.edge.api;bundle-version="1.1.1"
 Export-Package: org.rifidi.edge.core.services.esper,
  org.rifidi.edge.core.services.notification,
- org.rifidi.edge.core.services.notification.data,
- org.rifidi.edge.core.services.soap
+ org.rifidi.edge.core.services.notification.data
 Import-Package: com.espertech.esper.client
