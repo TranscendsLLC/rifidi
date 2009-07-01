@@ -24,9 +24,8 @@ import org.springframework.jms.core.JmsTemplate;
 /**
  * An Abstract class for concreate ReaderSessions to extend. This
  * AbstractSensorSession class provides a base implementation of the command
- * handling of a reader session (i.e. submitting, deleting, executing
- * commands). It does not provide any implementation of connection methods in a
- * session
+ * handling of a reader session (i.e. submitting, deleting, executing commands).
+ * It does not provide any implementation of connection methods in a session
  * 
  * @author Kyle Neumeier - kyle@pramari.com
  * 
@@ -61,6 +60,7 @@ public abstract class AbstractSensorSession extends SensorSession {
 	/**
 	 * Constructor
 	 * 
+	 * @param sensor
 	 * @param ID
 	 *            ID of this SensorSession
 	 * @param destination
@@ -68,9 +68,9 @@ public abstract class AbstractSensorSession extends SensorSession {
 	 * @param template
 	 *            The Template used to send Tag data to the internal queue
 	 */
-	public AbstractSensorSession(String ID, Destination destination,
-			JmsTemplate template) {
-		super(ID);
+	public AbstractSensorSession(AbstractSensor<?> sensor, String ID,
+			Destination destination, JmsTemplate template) {
+		super(ID, sensor);
 		this.commands = new HashMap<Integer, Command>();
 		this.idToData = new HashMap<Integer, CommandExecutionData>();
 		this.template = template;

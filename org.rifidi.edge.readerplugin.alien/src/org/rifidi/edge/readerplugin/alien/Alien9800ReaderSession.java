@@ -11,6 +11,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.api.SessionStatus;
 import org.rifidi.edge.core.sensors.base.AbstractIPSensorSession;
+import org.rifidi.edge.core.sensors.base.AbstractSensor;
 import org.rifidi.edge.core.sensors.commands.Command;
 import org.rifidi.edge.core.sensors.messages.ByteMessage;
 import org.rifidi.edge.core.services.notification.NotifierService;
@@ -91,6 +92,7 @@ public class Alien9800ReaderSession extends AbstractIPSensorSession {
 	 * 
 	 * Constructor
 	 * 
+	 * @param sensor
 	 * @param id
 	 *            The ID of the session
 	 * @param host
@@ -114,11 +116,11 @@ public class Alien9800ReaderSession extends AbstractIPSensorSession {
 	 * @param readerID
 	 *            The ID of the reader that created this session
 	 */
-	public Alien9800ReaderSession(String id, String host, int port,
+	public Alien9800ReaderSession(AbstractSensor<?> sensor, String id, String host, int port,
 			int reconnectionInterval, int maxConAttempts, String username,
 			String password, JmsTemplate template,
 			NotifierService notifierService, String readerID) {
-		super(id, host, port, reconnectionInterval, maxConAttempts, template
+		super(sensor, id, host, port, reconnectionInterval, maxConAttempts, template
 				.getDefaultDestination(), template);
 		this.username = username;
 		this.password = password;

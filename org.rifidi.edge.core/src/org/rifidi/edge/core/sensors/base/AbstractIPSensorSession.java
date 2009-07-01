@@ -63,6 +63,7 @@ public abstract class AbstractIPSensorSession extends AbstractSensorSession {
 	/**
 	 * Constructor.
 	 * 
+	 * @param sensor
 	 * @param host
 	 *            HostName of the hardware reader
 	 * @param port
@@ -76,10 +77,10 @@ public abstract class AbstractIPSensorSession extends AbstractSensorSession {
 	 * @param template
 	 *            JMSTemplate to use to send tag data
 	 */
-	public AbstractIPSensorSession(String ID, String host, int port,
+	public AbstractIPSensorSession(AbstractSensor<?> sensor, String ID, String host, int port,
 			int reconnectionInterval, int maxConAttempts,
 			Destination destination, JmsTemplate template) {
-		super(ID, destination, template);
+		super(sensor, ID, destination, template);
 		this.host = host;
 		this.port = port;
 		this.maxConAttempts = maxConAttempts;

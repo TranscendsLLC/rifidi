@@ -53,6 +53,7 @@ import org.llrp.ltk.types.LLRPMessage;
 import org.llrp.ltk.types.UnsignedInteger;
 import org.llrp.ltk.types.UnsignedShort;
 import org.rifidi.edge.api.SessionStatus;
+import org.rifidi.edge.core.sensors.base.AbstractSensor;
 import org.rifidi.edge.core.sensors.base.AbstractSensorSession;
 import org.rifidi.edge.core.sensors.commands.Command;
 import org.rifidi.edge.core.services.notification.NotifierService;
@@ -87,11 +88,20 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 
 	/**
 	 * 
+	 * @param sensor
+	 * @param id
+	 * @param host
+	 * @param reconnectionInterval
+	 * @param maxConAttempts
+	 * @param destination
+	 * @param template
+	 * @param notifierService
+	 * @param readerID
 	 */
-	public LLRPReaderSession(String id, String host, int reconnectionInterval,
+	public LLRPReaderSession(AbstractSensor<?> sensor, String id, String host, int reconnectionInterval,
 			int maxConAttempts, Destination destination, JmsTemplate template,
 			NotifierService notifierService, String readerID) {
-		super(id, destination, template);
+		super(sensor, id, destination, template);
 		System.out.println(host);
 		this.connection = new LLRPConnector(this, host);
 		this.maxConAttempts = maxConAttempts;
