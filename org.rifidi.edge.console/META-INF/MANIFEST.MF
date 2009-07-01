@@ -6,10 +6,6 @@ Bundle-Version: 1.0.0
 Bundle-Vendor: Pramari, LLC
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: org.eclipse.osgi.framework.console;version="1.0.0",
- org.osgi.framework;version="1.3.0",
- org.rifidi.configuration,
- org.rifidi.configuration.impl,
- org.rifidi.configuration.services,
- org.rifidi.edge.core.daos,
- org.rifidi.edge.core.exceptions,
- org.rifidi.edge.core.sensors.commands
+ org.osgi.framework;version="1.3.0"
+Require-Bundle: org.rifidi.configuration;bundle-version="1.0.1",
+ org.rifidi.edge.core;bundle-version="5.0.1"
