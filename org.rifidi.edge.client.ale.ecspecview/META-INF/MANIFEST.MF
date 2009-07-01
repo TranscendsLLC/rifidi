@@ -6,17 +6,19 @@ Bundle-Version: 1.0.0
 Bundle-Activator: org.rifidi.edge.client.ale.ecspecview.Activator
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
- org.eclipse.ui.forms;bundle-version="3.3.101",
- org.rifidi.edge.client.ale.api;bundle-version="1.0.0",
  org.eclipse.core.expressions;bundle-version="3.4.0",
- org.eclipse.core.databinding;bundle-version="1.1.1"
+ org.eclipse.core.databinding;bundle-version="1.1.1",
+ org.eclipse.ui.forms;bundle-version="3.4.0"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-Vendor: Pramari, LLC
 Import-Package: org.apache.commons.logging;version="1.0.4",
  org.apache.cxf.frontend,
  org.apache.cxf.jaxws,
+ org.rifidi.edge.client.ale.api.alelr.xsd.epcglobal,
  org.rifidi.edge.client.ale.api.wsdl.ale.epcglobal,
+ org.rifidi.edge.client.ale.api.wsdl.alelr.epcglobal,
  org.rifidi.edge.client.ale.api.xsd.ale.epcglobal,
+ org.rifidi.edge.client.ale.api.xsd.alelr.epcglobal,
  org.rifidi.edge.client.ale.api.xsd.epcglobal
 Export-Package: org.rifidi.edge.client.ale.ecspecview.model

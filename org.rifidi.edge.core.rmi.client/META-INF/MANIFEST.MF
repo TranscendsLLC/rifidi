@@ -4,7 +4,6 @@ Bundle-Name: Rifidi Edge RMI Client Library
 Bundle-SymbolicName: org.rifidi.edge.core.rmi.client
 Bundle-Version: 3.1.0
 Bundle-Vendor: Pramari LLC
-Require-Bundle: org.rifidi.rmi.utils;bundle-version="1.0.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: .
@@ -13,7 +12,9 @@ Import-Package: org.apache.commons.logging;version="1.0.4",
  org.rifidi.edge.api,
  org.rifidi.edge.api.rmi,
  org.rifidi.edge.api.rmi.dto,
- org.rifidi.edge.api.rmi.exceptions
+ org.rifidi.edge.api.rmi.exceptions,
+ org.rifidi.rmi.utils.cache,
+ org.rifidi.rmi.utils.remotecall
 Bundle-Description: Classes used to access the Edge Server via RMI that handle RMI network calls.
 Export-Package: org.rifidi.edge.core.rmi.client.commandconfigurationstub,
  org.rifidi.edge.core.rmi.client.edgeserverstub,
