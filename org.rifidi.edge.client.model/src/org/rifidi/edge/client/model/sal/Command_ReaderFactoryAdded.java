@@ -1,17 +1,19 @@
-
 package org.rifidi.edge.client.model.sal;
 
 import javax.management.MBeanInfo;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.eclipse.core.databinding.observable.map.ObservableMap;
-import org.rifidi.edge.client.model.sal.commands.RemoteEdgeServerCommand;
-import org.rifidi.edge.client.model.sal.commands.RequestExecuterSingleton;
 import org.rifidi.edge.api.jms.notifications.ReaderFactoryAddedNotification;
 import org.rifidi.edge.api.rmi.dto.ReaderFactoryDTO;
+import org.rifidi.edge.client.model.sal.commands.RemoteEdgeServerCommand;
+import org.rifidi.edge.client.model.sal.commands.RequestExecuterSingleton;
 import org.rifidi.edge.core.rmi.client.readerconfigurationstub.RS_GetReaderDescription;
 import org.rifidi.edge.core.rmi.client.readerconfigurationstub.RS_GetReaderFactory;
 import org.rifidi.edge.core.rmi.client.readerconfigurationstub.RS_ServerDescription;
-import org.rifidi.rmi.utils.exceptions.ServerUnavailable;
+import org.rifidi.rmi.proxycache.exceptions.AuthenticationException;
+import org.rifidi.rmi.proxycache.exceptions.ServerUnavailable;
 
 /**
  * A Command that is executed when a reader factory has been added
@@ -20,6 +22,8 @@ import org.rifidi.rmi.utils.exceptions.ServerUnavailable;
  */
 public class Command_ReaderFactoryAdded implements RemoteEdgeServerCommand {
 
+	private static Log logger = LogFactory
+			.getLog(Command_ReaderFactoryAdded.class);
 	/** The DTO for the reader factory */
 	private ReaderFactoryDTO dto;
 	/** The description of the RMI stub */
@@ -68,7 +72,10 @@ public class Command_ReaderFactoryAdded implements RemoteEdgeServerCommand {
 			dto = call.makeCall();
 			info = descriptionCall.makeCall();
 		} catch (ServerUnavailable e) {
+			logger.error(e);
 			RequestExecuterSingleton.getInstance().scheduleRequest(disconnect);
+		} catch (AuthenticationException e) {
+			logger.warn("Authentication Exception ", e);
 		}
 
 	}

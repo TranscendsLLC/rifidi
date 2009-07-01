@@ -1,11 +1,7 @@
-
 package org.rifidi.edge.core.rmi.client.readerconfigurationstub;
 
-import java.rmi.Remote;
-import java.rmi.RemoteException;
-
-import org.rifidi.edge.api.rmi.ReaderStub;
-import org.rifidi.rmi.utils.remotecall.ServerDescriptionBasedRemoteMethodCall;
+import org.rifidi.edge.api.rmi.services.SensorManagerService;
+import org.rifidi.rmi.proxycache.cache.AbstractRMICommandObject;
 
 /**
  * This command stops a currently executing session on the reader. It returns
@@ -14,7 +10,7 @@ import org.rifidi.rmi.utils.remotecall.ServerDescriptionBasedRemoteMethodCall;
  * @author Kyle Neumeier - kyle@pramari.com
  */
 public class RS_StopSession extends
-		ServerDescriptionBasedRemoteMethodCall<Object, RuntimeException> {
+		AbstractRMICommandObject<Object, RuntimeException> {
 
 	/** The ID of the reader */
 	private String readerID;
@@ -22,14 +18,14 @@ public class RS_StopSession extends
 	private String sessionID;
 
 	/**
-	 * Constructor.  
+	 * Constructor.
 	 * 
 	 * @param serverDescription
 	 * @param readerID
 	 * @param sessionID
 	 */
-	public RS_StopSession(RS_ServerDescription serverDescription, String readerID,
-			String sessionID) {
+	public RS_StopSession(RS_ServerDescription serverDescription,
+			String readerID, String sessionID) {
 		super(serverDescription);
 		this.readerID = readerID;
 		this.sessionID = sessionID;
@@ -39,14 +35,15 @@ public class RS_StopSession extends
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.rmi.utils.remotecall.AbstractRemoteMethodCall#performRemoteCall
-	 * (java.rmi.Remote)
+	 * org.rifidi.rmi.proxycache.cache.AbstractRMICommandObject#performRemoteCall
+	 * (java.lang.Object)
 	 */
 	@Override
-	protected Object performRemoteCall(Remote remoteObject)
-			throws RemoteException, RuntimeException {
-		ReaderStub stub = (ReaderStub) remoteObject;
+	protected Object performRemoteCall(Object remoteObject)
+			throws RuntimeException {
+		SensorManagerService stub = (SensorManagerService) remoteObject;
 		stub.stopSession(readerID, sessionID);
 		return null;
 	}
+
 }

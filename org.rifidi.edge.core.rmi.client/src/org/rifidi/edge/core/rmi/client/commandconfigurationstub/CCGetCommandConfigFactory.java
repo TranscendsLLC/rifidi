@@ -1,12 +1,8 @@
-
 package org.rifidi.edge.core.rmi.client.commandconfigurationstub;
 
-import java.rmi.Remote;
-import java.rmi.RemoteException;
-
-import org.rifidi.edge.api.rmi.CommandStub;
 import org.rifidi.edge.api.rmi.dto.CommandConfigFactoryDTO;
-import org.rifidi.rmi.utils.remotecall.ServerDescriptionBasedRemoteMethodCall;
+import org.rifidi.edge.api.rmi.services.CommandManagerService;
+import org.rifidi.rmi.proxycache.cache.AbstractRMICommandObject;
 
 /**
  * This remote call gets a CommandConfigFactoryDTO for a given readerFactoryID.
@@ -14,14 +10,13 @@ import org.rifidi.rmi.utils.remotecall.ServerDescriptionBasedRemoteMethodCall;
  * 
  * @author Kyle Neumeier - kyle@pramari.com
  */
-public class CCGetCommandConfigFactory
-		extends
-		ServerDescriptionBasedRemoteMethodCall<CommandConfigFactoryDTO, RuntimeException> {
+public class CCGetCommandConfigFactory extends
+		AbstractRMICommandObject<CommandConfigFactoryDTO, RuntimeException> {
 
 	private String readerFactoryID;
 
 	/**
-	 * Constructor.  
+	 * Constructor.
 	 * 
 	 * @param serverDescription
 	 */
@@ -35,13 +30,14 @@ public class CCGetCommandConfigFactory
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.rmi.utils.remotecall.AbstractRemoteMethodCall#performRemoteCall
-	 * (java.rmi.Remote)
+	 * org.rifidi.rmi.proxycache.cache.AbstractRMICommandObject#performRemoteCall
+	 * (java.lang.Object)
 	 */
 	@Override
-	protected CommandConfigFactoryDTO performRemoteCall(Remote remoteObject)
-			throws RemoteException, RuntimeException {
-		CommandStub stub = (CommandStub) remoteObject;
+	protected CommandConfigFactoryDTO performRemoteCall(Object remoteObject)
+			throws RuntimeException {
+		CommandManagerService stub = (CommandManagerService) remoteObject;
 		return stub.getCommandConfigFactory(readerFactoryID);
 	}
+
 }

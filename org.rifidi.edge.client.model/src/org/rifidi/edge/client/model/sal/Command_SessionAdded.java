@@ -1,16 +1,16 @@
-
 package org.rifidi.edge.client.model.sal;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eclipse.core.databinding.observable.map.ObservableMap;
-import org.rifidi.edge.client.model.sal.commands.RemoteEdgeServerCommand;
-import org.rifidi.edge.client.model.sal.commands.RequestExecuterSingleton;
 import org.rifidi.edge.api.jms.notifications.SessionAddedNotification;
 import org.rifidi.edge.api.rmi.dto.SessionDTO;
+import org.rifidi.edge.client.model.sal.commands.RemoteEdgeServerCommand;
+import org.rifidi.edge.client.model.sal.commands.RequestExecuterSingleton;
 import org.rifidi.edge.core.rmi.client.readerconfigurationstub.RS_GetSession;
 import org.rifidi.edge.core.rmi.client.readerconfigurationstub.RS_ServerDescription;
-import org.rifidi.rmi.utils.exceptions.ServerUnavailable;
+import org.rifidi.rmi.proxycache.exceptions.AuthenticationException;
+import org.rifidi.rmi.proxycache.exceptions.ServerUnavailable;
 
 /**
  * A command that is executed when a new Session was added
@@ -72,6 +72,8 @@ public class Command_SessionAdded implements RemoteEdgeServerCommand {
 			error = true;
 			RequestExecuterSingleton.getInstance().scheduleRequest(
 					disconnectCommand);
+		} catch (AuthenticationException e) {
+			logger.warn("Authentication Exception ", e);
 		}
 
 	}

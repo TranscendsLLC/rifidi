@@ -1,11 +1,8 @@
 package org.rifidi.edge.core.rmi.client.readerconfigurationstub;
 
-import java.rmi.Remote;
-import java.rmi.RemoteException;
-
-import org.rifidi.edge.api.rmi.ReaderStub;
 import org.rifidi.edge.api.rmi.dto.SessionDTO;
-import org.rifidi.rmi.utils.remotecall.ServerDescriptionBasedRemoteMethodCall;
+import org.rifidi.edge.api.rmi.services.SensorManagerService;
+import org.rifidi.rmi.proxycache.cache.AbstractRMICommandObject;
 
 /**
  * This Remote call gets the session with the given ID and remote reader ID. It
@@ -14,7 +11,7 @@ import org.rifidi.rmi.utils.remotecall.ServerDescriptionBasedRemoteMethodCall;
  * @author Kyle Neumeier - kyle@pramari.com
  */
 public class RS_GetSession extends
-		ServerDescriptionBasedRemoteMethodCall<SessionDTO, RuntimeException> {
+		AbstractRMICommandObject<SessionDTO, RuntimeException> {
 
 	/** The ID of the reader where the session exists */
 	private String readerID;
@@ -42,13 +39,13 @@ public class RS_GetSession extends
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.rmi.utils.remotecall.AbstractRemoteMethodCall#performRemoteCall
-	 * (java.rmi.Remote)
+	 * org.rifidi.rmi.proxycache.cache.AbstractRMICommandObject#performRemoteCall
+	 * (java.lang.Object)
 	 */
 	@Override
-	protected SessionDTO performRemoteCall(Remote remoteObject)
-			throws RemoteException, RuntimeException {
-		ReaderStub stub = (ReaderStub) remoteObject;
+	protected SessionDTO performRemoteCall(Object remoteObject)
+			throws RuntimeException {
+		SensorManagerService stub = (SensorManagerService) remoteObject;
 		return stub.getSession(readerID, sessionID);
 	}
 

@@ -1,13 +1,9 @@
-
 package org.rifidi.edge.core.rmi.client.commandconfigurationstub;
-
-import java.rmi.Remote;
-import java.rmi.RemoteException;
 
 import javax.management.MBeanInfo;
 
-import org.rifidi.edge.api.rmi.CommandStub;
-import org.rifidi.rmi.utils.remotecall.ServerDescriptionBasedRemoteMethodCall;
+import org.rifidi.edge.api.rmi.services.CommandManagerService;
+import org.rifidi.rmi.proxycache.cache.AbstractRMICommandObject;
 
 /**
  * Get an MBeanInfo object that contains the meta information that describes
@@ -17,7 +13,7 @@ import org.rifidi.rmi.utils.remotecall.ServerDescriptionBasedRemoteMethodCall;
  * @author Kyle Neumeier - kyle@pramari.com
  */
 public class CCGetCommandConfigDescription extends
-		ServerDescriptionBasedRemoteMethodCall<MBeanInfo, RuntimeException> {
+		AbstractRMICommandObject<MBeanInfo, RuntimeException> {
 
 	/** The type to get the description fo */
 	private String commandConfigTypeID;
@@ -38,14 +34,17 @@ public class CCGetCommandConfigDescription extends
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.rifidi.rmi.utils.remotecall.AbstractRemoteMethodCall#performRemoteCall(java.rmi.Remote)
+	 * 
+	 * @see
+	 * org.rifidi.rmi.proxycache.cache.AbstractRMICommandObject#performRemoteCall
+	 * (java.lang.Object)
 	 */
 	@Override
-	protected MBeanInfo performRemoteCall(Remote remoteObject)
-			throws RemoteException, RuntimeException {
-		CommandStub stub = (CommandStub) remoteObject;
-		return stub
-				.getCommandDescription(this.commandConfigTypeID);
+	protected MBeanInfo performRemoteCall(Object remoteObject)
+			throws RuntimeException {
+		CommandManagerService stub = (CommandManagerService) remoteObject;
+		return stub.getCommandDescription(this.commandConfigTypeID);
+
 	}
 
 }

@@ -1,4 +1,3 @@
-
 package org.rifidi.edge.client.model.sal;
 
 import java.util.HashMap;
@@ -9,14 +8,15 @@ import javax.management.MBeanInfo;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eclipse.core.databinding.observable.map.ObservableMap;
-import org.rifidi.edge.client.model.sal.commands.RemoteEdgeServerCommand;
-import org.rifidi.edge.client.model.sal.commands.RequestExecuterSingleton;
 import org.rifidi.edge.api.jms.notifications.CommandConfigFactoryAdded;
 import org.rifidi.edge.api.rmi.dto.CommandConfigFactoryDTO;
+import org.rifidi.edge.client.model.sal.commands.RemoteEdgeServerCommand;
+import org.rifidi.edge.client.model.sal.commands.RequestExecuterSingleton;
 import org.rifidi.edge.core.rmi.client.commandconfigurationstub.CCGetCommandConfigDescription;
 import org.rifidi.edge.core.rmi.client.commandconfigurationstub.CCGetCommandConfigFactory;
 import org.rifidi.edge.core.rmi.client.commandconfigurationstub.CCServerDescription;
-import org.rifidi.rmi.utils.exceptions.ServerUnavailable;
+import org.rifidi.rmi.proxycache.exceptions.AuthenticationException;
+import org.rifidi.rmi.proxycache.exceptions.ServerUnavailable;
 
 /**
  * A Command that is executed when a command configuration factory has been
@@ -88,6 +88,8 @@ public class Command_CommandConfigFactoryAdded implements
 			logger.error("Error while getting Command Factory: ", e);
 			RequestExecuterSingleton.getInstance().scheduleRequest(
 					disconnectCommand);
+		} catch (AuthenticationException e) {
+			logger.warn("Authentication Exception ", e);
 		}
 	}
 

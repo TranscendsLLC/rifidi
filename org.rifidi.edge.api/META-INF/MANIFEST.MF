@@ -7,7 +7,7 @@ Bundle-Vendor: Pramari, LLC
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: org.rifidi.edge.api,
  org.rifidi.edge.api.jms.notifications,
- org.rifidi.edge.api.rmi,
  org.rifidi.edge.api.rmi.dto,
  org.rifidi.edge.api.rmi.exceptions,
+ org.rifidi.edge.api.rmi.services,
  org.rifidi.edge.api.tags

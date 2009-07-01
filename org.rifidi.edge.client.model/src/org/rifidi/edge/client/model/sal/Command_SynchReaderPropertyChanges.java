@@ -4,7 +4,8 @@ import javax.management.AttributeList;
 
 import org.rifidi.edge.client.model.sal.commands.RemoteEdgeServerCommand;
 import org.rifidi.edge.core.rmi.client.readerconfigurationstub.RS_SetReaderProperties;
-import org.rifidi.rmi.utils.exceptions.ServerUnavailable;
+import org.rifidi.rmi.proxycache.exceptions.AuthenticationException;
+import org.rifidi.rmi.proxycache.exceptions.ServerUnavailable;
 
 /**
  * A command that commits property changes to a reader
@@ -55,6 +56,8 @@ public class Command_SynchReaderPropertyChanges implements
 			setProperties.makeCall();
 		} catch (ServerUnavailable su) {
 			server.disconnect();
+		} catch (AuthenticationException e) {
+			server.handleAuthenticationException(e);
 		}
 
 	}

@@ -1,11 +1,7 @@
-
 package org.rifidi.edge.core.rmi.client.readerconfigurationstub;
 
-import java.rmi.Remote;
-import java.rmi.RemoteException;
-
-import org.rifidi.edge.api.rmi.ReaderStub;
-import org.rifidi.rmi.utils.remotecall.ServerDescriptionBasedRemoteMethodCall;
+import org.rifidi.edge.api.rmi.services.SensorManagerService;
+import org.rifidi.rmi.proxycache.cache.AbstractRMICommandObject;
 
 /**
  * A command to kill commands that are repeated. It returns null
@@ -13,7 +9,7 @@ import org.rifidi.rmi.utils.remotecall.ServerDescriptionBasedRemoteMethodCall;
  * @author Kyle Neumeier - kyle@pramari.com
  */
 public class RS_KillCommand extends
-		ServerDescriptionBasedRemoteMethodCall<Object, RuntimeException> {
+		AbstractRMICommandObject<Object, RuntimeException> {
 
 	/** The reader ID */
 	private String readerID;
@@ -34,11 +30,11 @@ public class RS_KillCommand extends
 	 * @param processID
 	 *            The process ID of the command to kill
 	 */
-	public RS_KillCommand(RS_ServerDescription serverDescription, String readerID,
-			String sessionID, Integer processID) {
+	public RS_KillCommand(RS_ServerDescription serverDescription,
+			String readerID, String sessionID, Integer processID) {
 		super(serverDescription);
 		this.readerID = readerID;
-		this.sessionID= sessionID;
+		this.sessionID = sessionID;
 		this.processID = processID;
 	}
 
@@ -46,15 +42,16 @@ public class RS_KillCommand extends
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.rmi.utils.remotecall.AbstractRemoteMethodCall#performRemoteCall
-	 * (java.rmi.Remote)
+	 * org.rifidi.rmi.proxycache.cache.AbstractRMICommandObject#performRemoteCall
+	 * (java.lang.Object)
 	 */
 	@Override
-	protected Object performRemoteCall(Remote remoteObject)
-			throws RemoteException, RuntimeException {
-		ReaderStub stub = (ReaderStub) remoteObject;
+	protected Object performRemoteCall(Object remoteObject)
+			throws RuntimeException {
+		SensorManagerService stub = (SensorManagerService) remoteObject;
 		stub.killCommand(readerID, sessionID, processID);
 		return null;
+
 	}
 
 }

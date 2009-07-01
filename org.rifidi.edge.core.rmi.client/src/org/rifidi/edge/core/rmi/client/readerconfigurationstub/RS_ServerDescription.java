@@ -1,13 +1,8 @@
-
 package org.rifidi.edge.core.rmi.client.readerconfigurationstub;
 
-import java.rmi.AccessException;
-import java.rmi.NotBoundException;
-import java.rmi.Remote;
-import java.rmi.RemoteException;
-import java.rmi.registry.Registry;
-
-import org.rifidi.rmi.utils.cache.ServerDescription;
+import org.rifidi.edge.api.rmi.services.SensorManagerService;
+import org.rifidi.rmi.proxycache.cache.ServerDescription;
+import org.springframework.security.Authentication;
 
 /**
  * This is a server description for a ReaderStub
@@ -24,21 +19,10 @@ public class RS_ServerDescription extends ServerDescription {
 	 * @param serverPort
 	 *            The RMI port that the ReaderStub is exposed on
 	 */
-	public RS_ServerDescription(String serverIP, int serverPort) {
-		super(serverIP, serverPort, "ReaderStub");
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.rifidi.rmi.utils.cache.ServerDescription#getStub(java.rmi.registry
-	 * .Registry)
-	 */
-	@Override
-	protected Remote getStub(Registry registry) throws AccessException,
-			RemoteException, NotBoundException {
-		return (Remote) registry.lookup(this.getStubName());
+	public RS_ServerDescription(String serverIP, int serverPort,
+			Authentication authentication) {
+		super(serverIP, serverPort, "SensorManagerService",
+				SensorManagerService.class, authentication);
 	}
 
 }

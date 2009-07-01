@@ -1,13 +1,8 @@
-
 package org.rifidi.edge.core.rmi.client.commandconfigurationstub;
 
-import java.rmi.AccessException;
-import java.rmi.NotBoundException;
-import java.rmi.Remote;
-import java.rmi.RemoteException;
-import java.rmi.registry.Registry;
-
-import org.rifidi.rmi.utils.cache.ServerDescription;
+import org.rifidi.edge.api.rmi.services.CommandManagerService;
+import org.rifidi.rmi.proxycache.cache.ServerDescription;
+import org.springframework.security.Authentication;
 
 /**
  * The ServerDescription for the CommandStub
@@ -24,21 +19,9 @@ public class CCServerDescription extends ServerDescription {
 	 * @param serverPort
 	 *            The RMI port of the server
 	 */
-	public CCServerDescription(String serverIP, int serverPort) {
-		super(serverIP, serverPort, "CommandStub");
+	public CCServerDescription(String serverIP, int serverPort,
+			Authentication authentication) {
+		super(serverIP, serverPort, "CommandManagerService",
+				CommandManagerService.class, authentication);
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.rifidi.rmi.utils.cache.ServerDescription#getStub(java.rmi.registry
-	 * .Registry)
-	 */
-	@Override
-	protected Remote getStub(Registry registry) throws AccessException,
-			RemoteException, NotBoundException {
-		return (Remote) registry.lookup(this.getStubName());
-	}
-
 }

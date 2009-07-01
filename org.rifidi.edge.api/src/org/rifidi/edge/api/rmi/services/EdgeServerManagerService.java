@@ -1,6 +1,5 @@
-package org.rifidi.edge.api.rmi;
+package org.rifidi.edge.api.rmi.services;
 
-import java.rmi.Remote;
 import java.rmi.RemoteException;
 
 /**
@@ -8,14 +7,14 @@ import java.rmi.RemoteException;
  * 
  * @author Kyle Neumeier - kyle@pramari.com
  */
-public interface EdgeServerStub extends Remote {
+public interface EdgeServerManagerService{
 
 	/**
 	 * Saves the current configurations to a file
 	 * 
 	 * @throws RemoteException
 	 */
-	void save() throws RemoteException;
+	void save();
 
 	/**
 	 * Returns the last time this server was started.  
@@ -23,5 +22,5 @@ public interface EdgeServerStub extends Remote {
 	 * @return The timestamp of the last time this server was started
 	 * @throws RemoteException
 	 */
-	Long getStartupTime() throws RemoteException;
+	Long getStartupTime();
 }

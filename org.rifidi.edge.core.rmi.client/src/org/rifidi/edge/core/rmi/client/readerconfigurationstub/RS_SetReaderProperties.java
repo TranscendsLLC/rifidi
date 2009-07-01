@@ -1,13 +1,9 @@
-
 package org.rifidi.edge.core.rmi.client.readerconfigurationstub;
-
-import java.rmi.Remote;
-import java.rmi.RemoteException;
 
 import javax.management.AttributeList;
 
-import org.rifidi.edge.api.rmi.ReaderStub;
-import org.rifidi.rmi.utils.remotecall.ServerDescriptionBasedRemoteMethodCall;
+import org.rifidi.edge.api.rmi.services.SensorManagerService;
+import org.rifidi.rmi.proxycache.cache.AbstractRMICommandObject;
 
 /**
  * This method sets properties on a specified Reader. The return value is not
@@ -16,7 +12,7 @@ import org.rifidi.rmi.utils.remotecall.ServerDescriptionBasedRemoteMethodCall;
  * @author Kyle Neumeier - kyle@pramari.com
  */
 public class RS_SetReaderProperties extends
-		ServerDescriptionBasedRemoteMethodCall<Object, RuntimeException> {
+		AbstractRMICommandObject<Object, RuntimeException> {
 
 	/** The new properties to set on the reader */
 	private AttributeList attributes;
@@ -42,14 +38,18 @@ public class RS_SetReaderProperties extends
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.rifidi.rmi.utils.remotecall.AbstractRemoteMethodCall#performRemoteCall(java.rmi.Remote)
+	 * 
+	 * @see
+	 * org.rifidi.rmi.proxycache.cache.AbstractRMICommandObject#performRemoteCall
+	 * (java.lang.Object)
 	 */
 	@Override
-	protected AttributeList performRemoteCall(Remote remoteObject)
-			throws RemoteException, RuntimeException {
-		ReaderStub stub = (ReaderStub) remoteObject;
+	protected Object performRemoteCall(Object remoteObject)
+			throws RuntimeException {
+		SensorManagerService stub = (SensorManagerService) remoteObject;
 		stub.setReaderProperties(readerID, attributes);
 		return null;
+
 	}
 
 }

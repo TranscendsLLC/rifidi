@@ -1,13 +1,9 @@
-
 package org.rifidi.edge.core.rmi.client.readerconfigurationstub;
-
-import java.rmi.Remote;
-import java.rmi.RemoteException;
 
 import javax.management.AttributeList;
 
-import org.rifidi.edge.api.rmi.ReaderStub;
-import org.rifidi.rmi.utils.remotecall.ServerDescriptionBasedRemoteMethodCall;
+import org.rifidi.edge.api.rmi.services.SensorManagerService;
+import org.rifidi.rmi.proxycache.cache.AbstractRMICommandObject;
 
 /**
  * This call creates a new Reader on the server.
@@ -15,7 +11,7 @@ import org.rifidi.rmi.utils.remotecall.ServerDescriptionBasedRemoteMethodCall;
  * @author Kyle Neumeier - kyle@pramari.com
  */
 public class RS_CreateReader extends
-		ServerDescriptionBasedRemoteMethodCall<String, RuntimeException> {
+		AbstractRMICommandObject<String, RuntimeException> {
 
 	/** The supplied readerConfigurationID to use */
 	private String readerFactoryID;
@@ -47,13 +43,13 @@ public class RS_CreateReader extends
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.rmi.utils.remotecall.AbstractRemoteMethodCall#performRemoteCall
-	 * (java.rmi.Remote)
+	 * org.rifidi.rmi.proxycache.cache.AbstractRMICommandObject#performRemoteCall
+	 * (java.lang.Object)
 	 */
 	@Override
-	protected String performRemoteCall(Remote remoteObject)
-			throws RemoteException, RuntimeException {
-		ReaderStub stub = (ReaderStub) remoteObject;
+	protected String performRemoteCall(Object remoteObject)
+			throws RuntimeException {
+		SensorManagerService stub = (SensorManagerService) remoteObject;
 		return stub.createReader(readerFactoryID, attributes);
 	}
 

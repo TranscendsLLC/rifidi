@@ -1,10 +1,10 @@
-
 package org.rifidi.edge.client.model.sal.preferences;
 
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.IntegerFieldEditor;
 import org.eclipse.jface.preference.StringFieldEditor;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.rifidi.edge.client.model.SALModelPlugin;
@@ -19,7 +19,10 @@ public class EdgeServerPreferencePage extends FieldEditorPreferencePage
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.eclipse.jface.preference.FieldEditorPreferencePage#createFieldEditors()
+	 * 
+	 * @see
+	 * org.eclipse.jface.preference.FieldEditorPreferencePage#createFieldEditors
+	 * ()
 	 */
 	@Override
 	protected void createFieldEditors() {
@@ -34,15 +37,27 @@ public class EdgeServerPreferencePage extends FieldEditorPreferencePage
 				"Edge Server JMS Port", getFieldEditorParent()));
 		addField(new StringFieldEditor(
 				EdgeServerPreferences.EDGE_SERVER_JMS_QUEUE,
-				"Edge Server JMS Notifications Queue Name", getFieldEditorParent()));
+				"Edge Server JMS Notifications Queue Name",
+				getFieldEditorParent()));
 		addField(new StringFieldEditor(
 				EdgeServerPreferences.EDGE_SERVER_JMS_QUEUE_TAGS,
 				"Edge Server JMS Tags Queue Name", getFieldEditorParent()));
+		addField(new StringFieldEditor(
+				EdgeServerPreferences.EDGE_SERVER_RMI_USERNAME, "Username",
+				getFieldEditorParent()));
+		Composite composite = getFieldEditorParent();
+		StringFieldEditor passwordeditor = new StringFieldEditor(
+				EdgeServerPreferences.EDGE_SERVER_RMI_PASSWORD, "Password",
+				composite);
+		passwordeditor.getTextControl(composite).setEchoChar('*');
+		addField(passwordeditor);
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
+	 * 
+	 * @see
+	 * org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
 	 */
 	@Override
 	public void init(IWorkbench workbench) {
