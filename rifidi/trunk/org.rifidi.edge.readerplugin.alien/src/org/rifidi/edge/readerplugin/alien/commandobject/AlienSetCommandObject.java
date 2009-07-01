@@ -27,7 +27,7 @@ public class AlienSetCommandObject extends AlienCommandObject {
 	 * 
 	 * @param command
 	 *            The command to execute
-	 * @param readerSession
+	 * @param sensorSession
 	 *            The session to execute the command on
 	 * @param value
 	 *            The value to set

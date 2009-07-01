@@ -26,9 +26,9 @@ public class Alien9800ReaderFactory extends
 	private JmsTemplate template;
 	/** The Unique ID for this Factory */
 	public static final String FACTORY_ID = "Alien9800";
-	/** Description of the readerSession. */
-	private static final String description = "The Alien 9800 is an IP based RFID ReaderSession using a telnet interface.";
-	/** Name of the readerSession. */
+	/** Description of the sensorSession. */
+	private static final String description = "The Alien 9800 is an IP based RFID SensorSession using a telnet interface.";
+	/** Name of the sensorSession. */
 	private static final String name = "Alien9800";
 	/** A JMS event notification sender */
 	private NotifierService notifierService;

@@ -36,7 +36,7 @@ public class AlienGetCommandObject extends AlienCommandObject {
 	 * 
 	 * @param command
 	 *            The command to execute
-	 * @param readerSession
+	 * @param sensorSession
 	 *            The reader session to execute the command on
 	 */
 	public AlienGetCommandObject(String command, Alien9800ReaderSession session) {

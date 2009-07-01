@@ -47,7 +47,7 @@ public class LLRPDeleteROSpecCommand extends AbstractLLRPCommand {
 	 */
 	@Override
 	public void run() {
-		this.session = (LLRPReaderSession) this.readerSession;
+		this.session = (LLRPReaderSession) this.sensorSession;
 
 		DELETE_ROSPEC delROSpec = new DELETE_ROSPEC();
 		delROSpec.setROSpecID(new UnsignedInteger(rospec_id));

@@ -22,7 +22,7 @@ import org.apache.commons.logging.LogFactory;
 import org.rifidi.configuration.annotations.JMXMBean;
 import org.rifidi.configuration.annotations.Property;
 import org.rifidi.configuration.annotations.PropertyType;
-import org.rifidi.edge.core.sensors.ReaderSession;
+import org.rifidi.edge.core.sensors.SensorSession;
 import org.rifidi.edge.core.sensors.base.AbstractSensor;
 import org.rifidi.edge.core.services.notification.NotifierService;
 import org.springframework.jms.core.JmsTemplate;
@@ -40,7 +40,7 @@ public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 	private LLRPReaderSession session;
 	/** A hashmap containing all the properties for this reader */
 	private ConcurrentHashMap<String, String> readerProperties;
-	/** IP address of the readerSession. */
+	/** IP address of the sensorSession. */
 	private String ipAddress = "127.0.0.1";
 	/** Port to connect to */
 	private int port = 5084;
@@ -70,7 +70,7 @@ public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 	 * @see org.rifidi.edge.core.readers.AbstractReader#createReaderSession()
 	 */
 	@Override
-	public synchronized ReaderSession createReaderSession() {
+	public synchronized SensorSession createReaderSession() {
 		logger.debug("creating the reader session");
 		if (session == null) {
 			sessionID++;
@@ -108,7 +108,7 @@ public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 	 * rifidi.edge.core.readers.ReaderSession)
 	 */
 	@Override
-	public void destroyReaderSession(ReaderSession session) {
+	public void destroyReaderSession(SensorSession session) {
 		if (session != null) {
 			for (Integer id : session.currentCommands().keySet()) {
 				session.killComand(id);
@@ -131,8 +131,8 @@ public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 	 * @see org.rifidi.edge.core.readers.AbstractReader#getReaderSessions()
 	 */
 	@Override
-	public Map<String, ReaderSession> getReaderSessions() {
-		Map<String, ReaderSession> ret = new HashMap<String, ReaderSession>();
+	public Map<String, SensorSession> getReaderSessions() {
+		Map<String, SensorSession> ret = new HashMap<String, SensorSession>();
 		if (session != null) {
 			ret.put(session.getID(), session);
 		}
@@ -219,7 +219,7 @@ public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 	 * 
 	 * @return the maxNumConnectionAttempts
 	 */
-	@Property(displayName = "Maximum Connection Attempts", description = "Number of times to try to connect to the readerSession"
+	@Property(displayName = "Maximum Connection Attempts", description = "Number of times to try to connect to the sensorSession"
 			+ ": before the connection is marked as failed.", writable = true, category = "conne"
 			+ "ction", type = PropertyType.PT_INTEGER, orderValue = 2, defaultValue = LLRPConstants.MAX_CONNECTION_ATTEMPTS)
 	public Integer getMaxNumConnectionAttempts() {

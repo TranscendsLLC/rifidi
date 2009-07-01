@@ -28,9 +28,9 @@ import org.springframework.jms.core.JmsTemplate;
  */
 public class LLRPReaderFactory extends AbstractSensorFactory<LLRPReader> {
 
-	/** Description of the readerSession. */
+	/** Description of the sensorSession. */
 	private static final String description = "The LLRP is an EPC standard protocol";
-	/** Name of the readerSession. */
+	/** Name of the sensorSession. */
 	private static final String name = "LLRP";
 	/** A JMS event notification sender */
 	private NotifierService notifierService;

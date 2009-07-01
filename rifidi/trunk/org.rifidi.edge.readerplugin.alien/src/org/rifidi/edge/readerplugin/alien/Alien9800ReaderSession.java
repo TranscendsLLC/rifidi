@@ -162,14 +162,14 @@ public class Alien9800ReaderSession extends AbstractIPSensorSession {
 
 		if (welcome == null
 				|| !welcome.contains(Alien9800ReaderSession.WELCOME)) {
-			logger.fatal("ReaderSession is not an alien readerSession: "
+			logger.fatal("SensorSession is not an alien sensorSession: "
 					+ welcome);
 			return false;
 		} else if (welcome.toLowerCase().contains("busy")) {
-			logger.error("ReaderSession is busy: " + welcome);
+			logger.error("SensorSession is busy: " + welcome);
 			return false;
 		} else {
-			logger.debug("ReaderSession is an alien.  Hoo-ray!");
+			logger.debug("SensorSession is an alien.  Hoo-ray!");
 		}
 
 		logger.debug("sending username");

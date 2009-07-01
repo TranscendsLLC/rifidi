@@ -43,7 +43,7 @@ public class AlienGetTagListCommand extends AbstractAlien9800Command {
 	private Integer[] tagTypes = new Integer[] { 7, 16, 31 };
 	/** Tagtypes to query for: 0 - GEN1 1 - GEN2 2 - ALL */
 	private Integer tagType = 2;
-	/** Timezone from the readerSession. */
+	/** Timezone from the sensorSession. */
 	private TimeZone timeZone;
 	/** Calendar for creating timestamps. */
 	private Calendar calendar;
@@ -105,7 +105,7 @@ public class AlienGetTagListCommand extends AbstractAlien9800Command {
 		try {
 			AlienCommandObject timeZoneCommand = new AlienGetCommandObject(
 					Alien9800ReaderSession.COMMAND_TIME_ZONE,
-					(Alien9800ReaderSession) this.readerSession);
+					(Alien9800ReaderSession) this.sensorSession);
 			String tz = timeZoneCommand.execute();
 			String timeZoneString = "GMT" + tz;
 			timeZone = TimeZone.getTimeZone(timeZoneString);
@@ -115,21 +115,21 @@ public class AlienGetTagListCommand extends AbstractAlien9800Command {
 			AlienCommandObject tagTypeCommand = new AlienSetCommandObject(
 					Alien9800ReaderSession.COMMAND_TAG_TYPE,
 					tagTypes[getTagType()].toString(),
-					(Alien9800ReaderSession) readerSession);
+					(Alien9800ReaderSession) sensorSession);
 			tagTypeCommand.execute();
 
 			// sending TagListFormat
 			AlienCommandObject tagListFormat = new AlienSetCommandObject(
 					Alien9800ReaderSession.COMMAND_TAG_LIST_FORMAT, "custom",
-					(Alien9800ReaderSession) readerSession);
+					(Alien9800ReaderSession) sensorSession);
 			tagListFormat.execute();
 			// sending TagListFormat
 			AlienCommandObject tagListCustomFormat = new AlienSetCommandObject(
 					Alien9800ReaderSession.COMMAND_TAG_LIST_CUSTOM_FORMAT,
-					"%k|%T|%a", (Alien9800ReaderSession) readerSession);
+					"%k|%T|%a", (Alien9800ReaderSession) sensorSession);
 			tagListCustomFormat.execute();
 			GetTagListCommandObject getTagListCommandObject = new GetTagListCommandObject(
-					(Alien9800ReaderSession) readerSession);
+					(Alien9800ReaderSession) sensorSession);
 			List<String> tags = getTagListCommandObject.executeGet();
 
 			template.send(destination, new ObjectMessageCreator(

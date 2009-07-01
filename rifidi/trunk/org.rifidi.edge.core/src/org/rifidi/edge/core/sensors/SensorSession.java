@@ -14,7 +14,7 @@ import org.rifidi.edge.core.sensors.commands.Command;
  * 
  * @author Jochen Mader - jochen@pramari.com
  */
-public abstract class ReaderSession {
+public abstract class SensorSession {
 
 	/** The ID for this session */
 	private String ID;
@@ -24,12 +24,12 @@ public abstract class ReaderSession {
 	 * 
 	 * @param ID
 	 */
-	public ReaderSession(String ID) {
+	public SensorSession(String ID) {
 		this.ID = ID;
 	}
 
 	/**
-	 * Open the connection to the readerSession.
+	 * Open the connection to the sensorSession.
 	 * 
 	 * @throws IOException
 	 *             if the connection fails
@@ -79,9 +79,9 @@ public abstract class ReaderSession {
 	public abstract void killComand(Integer id);
 
 	/**
-	 * Get the status of the readerSession.
+	 * Get the status of the sensorSession.
 	 * 
-	 * @return The status of the ReaderSession
+	 * @return The status of the SensorSession
 	 */
 	public abstract SessionStatus getStatus();
 

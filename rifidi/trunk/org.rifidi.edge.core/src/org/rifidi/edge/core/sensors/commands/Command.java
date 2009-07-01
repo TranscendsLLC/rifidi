@@ -5,7 +5,7 @@ package org.rifidi.edge.core.sensors.commands;
 
 import javax.jms.Destination;
 
-import org.rifidi.edge.core.sensors.ReaderSession;
+import org.rifidi.edge.core.sensors.SensorSession;
 import org.springframework.jms.core.JmsTemplate;
 
 /**
@@ -20,7 +20,7 @@ public abstract class Command implements Runnable {
 	/** Destination for JMS-Messages. */
 	protected Destination destination;
 	/** The session this command is executed in. */
-	protected ReaderSession readerSession;
+	protected SensorSession sensorSession;
 	/** The ID of the commandConfiguraiton (the RifidiService) */
 	private String commandID;
 
@@ -59,11 +59,11 @@ public abstract class Command implements Runnable {
 	}
 
 	/**
-	 * @param readerSession
-	 *            the readerSession to set
+	 * @param sensorSession
+	 *            the sensorSession to set
 	 */
-	public void setReaderSession(ReaderSession readerSession) {
-		this.readerSession = readerSession;
+	public void setReaderSession(SensorSession sensorSession) {
+		this.sensorSession = sensorSession;
 	}
 
 }

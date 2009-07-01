@@ -19,14 +19,14 @@ import org.rifidi.edge.core.sensors.messages.ByteMessage;
 import org.rifidi.edge.readerplugin.alien.Alien9800ReaderSession;
 
 public class GetTagListCommandObject {
-	/** The readerSession to send the command to */
+	/** The sensorSession to send the command to */
 	private Alien9800ReaderSession readerSession;
 
 	/**
 	 * Construct a command object.
 	 * 
-	 * @param readerSession
-	 *            A live readerSession to send the command to
+	 * @param sensorSession
+	 *            A live sensorSession to send the command to
 	 */
 	public GetTagListCommandObject(Alien9800ReaderSession readerSession) {
 		this.readerSession = readerSession;
@@ -35,7 +35,7 @@ public class GetTagListCommandObject {
 	/**
 	 * Execute A get
 	 * 
-	 * @return the value of the property on the alien readerSession
+	 * @return the value of the property on the alien sensorSession
 	 * @throws IOException
 	 */
 	public List<String> executeGet() throws IOException, AlienException {

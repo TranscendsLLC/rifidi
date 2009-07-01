@@ -59,7 +59,7 @@ public class AlienPropertyCommand extends AbstractAlien9800Command {
 		try {
 			for (AlienCommandObjectWrapper wrapper : commands) {
 				wrapper.getCommandObject().setSession(
-						(Alien9800ReaderSession) this.readerSession);
+						(Alien9800ReaderSession) this.sensorSession);
 				try {
 					this.attributes.put(wrapper.getPropertyName(), wrapper
 							.getCommandObject().execute());
