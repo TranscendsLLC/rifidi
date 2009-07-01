@@ -144,4 +144,16 @@ public class SensorManagementServiceImpl implements SensorManagementService {
 		logger.info("Reader unbound:" + reader.getID());
 		abstractSensors.remove(reader.getID());
 	}
+	
+	/**
+	 * Used by spring to give the initial list of readers
+	 * 
+	 * @param readers
+	 *            the initial list of available readers
+	 */
+	public void setReader(Set<AbstractSensor<?>> readers) {
+		for (AbstractSensor<?> reader : readers) {
+			abstractSensors.put(reader.getID(), reader);
+		}
+	}
 }
