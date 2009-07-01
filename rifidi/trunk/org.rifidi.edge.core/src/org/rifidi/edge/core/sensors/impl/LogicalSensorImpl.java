@@ -179,4 +179,15 @@ public class LogicalSensorImpl implements LogicalSensor {
 		return ret;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.rifidi.edge.core.sensors.PhysicalSensor#destroy()
+	 */
+	@Override
+	public void destroy() {
+		connectedSensors.clear();
+		containedSensors.clear();
+	}
+
 }

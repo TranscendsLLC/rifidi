@@ -57,4 +57,8 @@ public interface PhysicalSensor {
 	 */
 	Set<LogicalSensorImpl> getConnectedSensors();
 
+	/**
+	 * End of lifecycle.
+	 */
+	void destroy();
 }
