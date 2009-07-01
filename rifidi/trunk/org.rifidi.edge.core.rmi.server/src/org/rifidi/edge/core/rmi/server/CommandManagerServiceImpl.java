@@ -1,6 +1,5 @@
 package org.rifidi.edge.core.rmi.server;
 
-import java.rmi.RemoteException;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -11,7 +10,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.configuration.Configuration;
 import org.rifidi.configuration.services.ConfigurationService;
-import org.rifidi.edge.api.rmi.CommandStub;
+import org.rifidi.edge.api.rmi.services.CommandManagerService;
 import org.rifidi.edge.api.rmi.dto.CommandConfigFactoryDTO;
 import org.rifidi.edge.api.rmi.dto.CommandConfigurationDTO;
 import org.rifidi.edge.core.daos.CommandDAO;
@@ -24,7 +23,7 @@ import org.rifidi.edge.core.sensors.commands.AbstractCommandConfigurationFactory
  * 
  * @author Kyle Neumeier - kyle@pramari.com
  */
-public class CommandConfigurationStubImpl implements CommandStub {
+public class CommandManagerServiceImpl implements CommandManagerService {
 
 	/** Data Access object for accessing command configurations and factories */
 	private CommandDAO commandDAO;
@@ -32,7 +31,7 @@ public class CommandConfigurationStubImpl implements CommandStub {
 	private ConfigurationService configurationService;
 	/** The logger for this class */
 	private static final Log logger = LogFactory
-			.getLog(CommandConfigurationStubImpl.class);
+			.getLog(CommandManagerServiceImpl.class);
 
 	/**
 	 * Setter method used by spring
@@ -62,7 +61,7 @@ public class CommandConfigurationStubImpl implements CommandStub {
 	 */
 	@Override
 	public String createCommand(String commandConfigurationType,
-			AttributeList properties) throws RemoteException {
+			AttributeList properties) {
 		AbstractCommandConfigurationFactory factory = this.commandDAO
 				.getCommandFactoryByID(commandConfigurationType);
 		if (factory != null) {
@@ -86,8 +85,7 @@ public class CommandConfigurationStubImpl implements CommandStub {
 	 * (java.lang.String)
 	 */
 	@Override
-	public void deleteCommand(String commandConfigurationID)
-			throws RemoteException {
+	public void deleteCommand(String commandConfigurationID) {
 		Configuration config = configurationService
 				.getConfiguration(commandConfigurationID);
 		if (config != null) {
@@ -115,8 +113,7 @@ public class CommandConfigurationStubImpl implements CommandStub {
 	 * getCommandConfigurationDescription(java.lang.String)
 	 */
 	@Override
-	public MBeanInfo getCommandDescription(String commandConfigurationType)
-			throws RemoteException {
+	public MBeanInfo getCommandDescription(String commandConfigurationType) {
 		AbstractCommandConfigurationFactory factory = this.commandDAO
 				.getCommandFactoryByID(commandConfigurationType);
 		if (factory == null) {
@@ -137,8 +134,7 @@ public class CommandConfigurationStubImpl implements CommandStub {
 	 * getCommandConfigurationTypes()
 	 */
 	@Override
-	public Set<CommandConfigFactoryDTO> getCommandConfigFactories()
-			throws RemoteException {
+	public Set<CommandConfigFactoryDTO> getCommandConfigFactories() {
 		Set<CommandConfigFactoryDTO> retVal = new HashSet<CommandConfigFactoryDTO>();
 		for (AbstractCommandConfigurationFactory factory : commandDAO
 				.getCommandFactories()) {
@@ -156,7 +152,7 @@ public class CommandConfigurationStubImpl implements CommandStub {
 	 */
 	@Override
 	public CommandConfigFactoryDTO getCommandConfigFactory(
-			String readerFactoryID) throws RemoteException {
+			String readerFactoryID) {
 		AbstractCommandConfigurationFactory factory = commandDAO
 				.getCommandFactoryByReaderID(readerFactoryID);
 		if (factory != null) {
@@ -173,7 +169,7 @@ public class CommandConfigurationStubImpl implements CommandStub {
 	 * (java.lang.String)
 	 */
 	@Override
-	public Set<CommandConfigurationDTO> getCommands() throws RemoteException {
+	public Set<CommandConfigurationDTO> getCommands() {
 		Set<CommandConfigurationDTO> retVal = new HashSet<CommandConfigurationDTO>();
 		for (AbstractCommandConfiguration<?> commandconfig : commandDAO
 				.getCommands()) {
@@ -198,7 +194,7 @@ public class CommandConfigurationStubImpl implements CommandStub {
 	 */
 	@Override
 	public CommandConfigurationDTO getCommandConfiguration(
-			String commandConfigurationID) throws RemoteException {
+			String commandConfigurationID) {
 		AbstractCommandConfiguration<?> commandConfig = commandDAO
 				.getCommandByID(commandConfigurationID);
 		Configuration configObj = configurationService
@@ -218,7 +214,7 @@ public class CommandConfigurationStubImpl implements CommandStub {
 	 */
 	@Override
 	public AttributeList setCommandProperties(String commandConfigurationID,
-			AttributeList properties) throws RemoteException {
+			AttributeList properties) {
 		Configuration config = configurationService
 				.getConfiguration(commandConfigurationID);
 		if (config != null) {

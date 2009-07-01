@@ -1,7 +1,10 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:osgi="http://www.springframework.org/schema/osgi"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
-     http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi.xsd">
+	xmlns:security="http://www.springframework.org/schema/security"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans-2.0.xsd 
+	http://www.springframework.org/schema/security 
+	http://www.springframework.org/schema/security/spring-security-3.0.xsd ">
 
 	<bean
 		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
@@ -14,49 +17,76 @@
 		</property>
 	</bean>
 
-	<bean class="org.springframework.remoting.rmi.RmiServiceExporter">
-		<property name="serviceName" value="ReaderStub" />
-		<property name="service" ref="readerStub" />
-		<property name="serviceInterface" value="org.rifidi.edge.api.rmi.ReaderStub" />
-		<property name="registryPort" value="${org.rifidi.edge.core.rmi.port}" />
-	</bean>
-
-	<bean id="readerStub"
-		class="org.rifidi.edge.core.rmi.server.ReaderConfigurationStubImpl">
+	<bean id="sensorManagerStub"
+		class="org.rifidi.edge.core.rmi.server.SensorManagerServiceImpl">
 		<property name="readerDAO" ref="readerDAO" />
 		<property name="configurationService" ref="configurationService" />
 		<property name="commandDAO" ref="commandDAO" />
 	</bean>
 
-	<bean class="org.springframework.remoting.rmi.RmiServiceExporter">
-		<property name="serviceName" value="CommandStub" />
-		<property name="service" ref="commandStub" />
-		<property name="serviceInterface" value="org.rifidi.edge.api.rmi.CommandStub" />
-		<property name="registryPort" value="${org.rifidi.edge.core.rmi.port}" />
-	</bean>
-
-	<bean id="commandStub"
-		class="org.rifidi.edge.core.rmi.server.CommandConfigurationStubImpl">
+	<bean id="commandManagerStub"
+		class="org.rifidi.edge.core.rmi.server.CommandManagerServiceImpl">
 		<property name="configurationService" ref="configurationService" />
 		<property name="commandDAO" ref="commandDAO" />
 	</bean>
 
-	<bean class="org.springframework.remoting.rmi.RmiServiceExporter">
-		<property name="serviceName" value="EdgeServerStub" />
-		<property name="service" ref="edgeServerStub" />
-		<property name="serviceInterface" value="org.rifidi.edge.api.rmi.EdgeServerStub" />
-		<property name="registryPort" value="${org.rifidi.edge.core.rmi.port}" />
-	</bean>
-
-	<bean id="edgeServerStub" class="org.rifidi.edge.core.rmi.server.EdgeServerStubImpl">
+	<bean id="edgeServerManagerStub"
+		class="org.rifidi.edge.core.rmi.server.EdgeServerManagerServiceImpl">
 		<property name="configurationService" ref="configurationService" />
 	</bean>
 
-	<osgi:reference id="readerDAO" interface="org.rifidi.edge.core.daos.ReaderDAO" />
-	<osgi:reference id="commandDAO"
-		interface="org.rifidi.edge.core.daos.CommandDAO" />
-	<osgi:reference id="configurationService"
-		interface="org.rifidi.configuration.services.ConfigurationService" />
+	<bean class="org.springframework.remoting.rmi.RmiServiceExporter">
+		<property name="serviceName" value="SensorManagerService" />
+		<property name="service" ref="sensorManagerStub" />
+		<property name="serviceInterface"
+			value="org.rifidi.edge.api.rmi.services.SensorManagerService" />
+		<property name="registryPort" value="${org.rifidi.edge.core.rmi.port}" />
+		<property name="serverSocketFactory" ref="SSLserverSocketFactory" />
+		<property name="clientSocketFactory" ref="SSLclientSocketFactory" />
+	</bean>
 
+	<bean class="org.springframework.remoting.rmi.RmiServiceExporter">
+		<property name="serviceName" value="CommandManagerService" />
+		<property name="service" ref="commandManagerStub" />
+		<property name="serviceInterface"
+			value="org.rifidi.edge.api.rmi.services.CommandManagerService" />
+		<property name="registryPort" value="${org.rifidi.edge.core.rmi.port}" />
+		<property name="serverSocketFactory" ref="SSLserverSocketFactory" />
+		<property name="clientSocketFactory" ref="SSLclientSocketFactory" />
+	</bean>
+
+	<bean class="org.springframework.remoting.rmi.RmiServiceExporter">
+		<property name="serviceName" value="EdgeServerManagerService" />
+		<property name="service" ref="edgeServerManagerStub" />
+		<property name="serviceInterface"
+			value="org.rifidi.edge.api.rmi.services.EdgeServerManagerService" />
+		<property name="registryPort" value="${org.rifidi.edge.core.rmi.port}" />
+		<property name="serverSocketFactory" ref="SSLserverSocketFactory" />
+		<property name="clientSocketFactory" ref="SSLclientSocketFactory" />
+	</bean>
+
+	<security:global-method-security>
+		<security:protect-pointcut
+			expression="execution(* org.rifidi.edge.api.rmi.services.*.*(..))"
+			access="ROLE_ADMIN" />
+	</security:global-method-security>
+
+	<security:authentication-provider>
+		<security:user-service>
+			<security:user name="admin" password="admin"
+				authorities="ROLE_ADMIN" />
+		</security:user-service>
+	</security:authentication-provider>
+
+	<bean id="SSLclientSocketFactory" class="javax.rmi.ssl.SslRMIClientSocketFactory" />
+
+	<bean id="SSLserverSocketFactory" class="javax.rmi.ssl.SslRMIServerSocketFactory">
+		<constructor-arg index="0" value="SSL_DH_anon_WITH_RC4_128_MD5">
+		</constructor-arg>
+		<constructor-arg index="1">
+			<null />
+		</constructor-arg>
+		<constructor-arg index="2" value="false" />
+	</bean>
 
 </beans>
