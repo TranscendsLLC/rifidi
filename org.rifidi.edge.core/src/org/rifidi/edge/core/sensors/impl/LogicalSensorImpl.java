@@ -12,15 +12,15 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import org.rifidi.edge.core.sensors.LogicalSensor;
 import org.rifidi.edge.core.sensors.PhysicalSensor;
-import org.rifidi.edge.core.sensors.TagRead;
 import org.rifidi.edge.core.sensors.exceptions.DuplicateSubscriptionException;
 import org.rifidi.edge.core.sensors.exceptions.NotSubscribedException;
+import org.rifidi.edge.core.services.notification.data.TagReadEvent;
 
 /**
  * @author Jochen Mader - jochen@pramari.com
  * 
  */
-public class LogicalSensorImpl implements PhysicalSensor, LogicalSensor {
+public class LogicalSensorImpl implements LogicalSensor {
 	/** Sensors connected to this connectedSensors. */
 	private Set<LogicalSensorImpl> connectedSensors;
 	/** Sensors contained in this connectedSensors. */
@@ -29,7 +29,7 @@ public class LogicalSensorImpl implements PhysicalSensor, LogicalSensor {
 	 * Receivers are objects that need to gather tag reads. The tag reads are
 	 * stored in a queue.
 	 */
-	private Map<Object, LinkedBlockingQueue<Set<TagRead>>> receiversToQueues;
+	private Map<Object, LinkedBlockingQueue<Set<TagReadEvent>>> receiversToQueues;
 
 	/**
 	 * Constructor.
@@ -37,7 +37,7 @@ public class LogicalSensorImpl implements PhysicalSensor, LogicalSensor {
 	public LogicalSensorImpl() {
 		connectedSensors = new CopyOnWriteArraySet<LogicalSensorImpl>();
 		containedSensors = new CopyOnWriteArraySet<LogicalSensorImpl>();
-		receiversToQueues = new ConcurrentHashMap<Object, LinkedBlockingQueue<Set<TagRead>>>();
+		receiversToQueues = new ConcurrentHashMap<Object, LinkedBlockingQueue<Set<TagReadEvent>>>();
 	}
 
 	/*
@@ -46,8 +46,8 @@ public class LogicalSensorImpl implements PhysicalSensor, LogicalSensor {
 	 * @see org.rifidi.edge.core.sensors.LogicalSensor#send(java.util.Set)
 	 */
 	@Override
-	public void send(Set<TagRead> tagReads) {
-		for (LinkedBlockingQueue<Set<TagRead>> queue : receiversToQueues
+	public void send(Set<TagReadEvent> tagReads) {
+		for (LinkedBlockingQueue<Set<TagReadEvent>> queue : receiversToQueues
 				.values()) {
 			queue.add(tagReads);
 		}
@@ -63,11 +63,11 @@ public class LogicalSensorImpl implements PhysicalSensor, LogicalSensor {
 	 * org.rifidi.edge.core.sensors.PhysicalSensor#receive(java.lang.Object)
 	 */
 	@Override
-	public Set<TagRead> receive(Object receiver) {
-		Set<TagRead> ret = new HashSet<TagRead>();
-		Set<Set<TagRead>> process = new HashSet<Set<TagRead>>();
+	public Set<TagReadEvent> receive(Object receiver) {
+		Set<TagReadEvent> ret = new HashSet<TagReadEvent>();
+		Set<Set<TagReadEvent>> process = new HashSet<Set<TagReadEvent>>();
 		receiversToQueues.get(receiver).drainTo(process);
-		for (Set<TagRead> tags : receiversToQueues.get(receiver)) {
+		for (Set<TagReadEvent> tags : receiversToQueues.get(receiver)) {
 			ret.addAll(tags);
 		}
 		return ret;
@@ -84,7 +84,7 @@ public class LogicalSensorImpl implements PhysicalSensor, LogicalSensor {
 			throws DuplicateSubscriptionException {
 		if (!receiversToQueues.containsKey(receiver)) {
 			receiversToQueues.put(receiver,
-					new LinkedBlockingQueue<Set<TagRead>>());
+					new LinkedBlockingQueue<Set<TagReadEvent>>());
 			return;
 		}
 		throw new DuplicateSubscriptionException(receiver
@@ -100,9 +100,8 @@ public class LogicalSensorImpl implements PhysicalSensor, LogicalSensor {
 	@Override
 	public synchronized void unsubscribe(Object receiver)
 			throws NotSubscribedException {
-		if (!receiversToQueues.containsKey(receiver)) {
-			receiversToQueues.put(receiver,
-					new LinkedBlockingQueue<Set<TagRead>>());
+		if (receiversToQueues.containsKey(receiver)) {
+			receiversToQueues.remove(receiver);
 		}
 		throw new NotSubscribedException(receiver + " is not subscribed to "
 				+ this);

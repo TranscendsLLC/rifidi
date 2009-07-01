@@ -16,12 +16,13 @@ import org.rifidi.configuration.Configuration;
 import org.rifidi.configuration.RifidiService;
 import org.rifidi.edge.api.rmi.dto.ReaderDTO;
 import org.rifidi.edge.api.rmi.dto.SessionDTO;
+import org.rifidi.edge.core.sensors.LogicalSensor;
 import org.rifidi.edge.core.sensors.PhysicalSensor;
 import org.rifidi.edge.core.sensors.SensorSession;
-import org.rifidi.edge.core.sensors.TagRead;
 import org.rifidi.edge.core.sensors.exceptions.DuplicateSubscriptionException;
 import org.rifidi.edge.core.sensors.exceptions.NotSubscribedException;
 import org.rifidi.edge.core.sensors.impl.LogicalSensorImpl;
+import org.rifidi.edge.core.services.notification.data.TagReadEvent;
 
 /**
  * A reader creates and manages instances of sessions. The reader itself holds
@@ -41,7 +42,7 @@ public abstract class AbstractSensor<T extends SensorSession> extends
 	 * Receivers are objects that need to gather tag reads. The tag reads are
 	 * stored in a queue.
 	 */
-	protected Map<Object, LinkedBlockingQueue<Set<TagRead>>> receiversToQueues;
+	protected Map<Object, LinkedBlockingQueue<Set<TagReadEvent>>> receiversToQueues;
 
 	/**
 	 * Create a new reader session. If there are no more sessions available null
@@ -78,11 +79,11 @@ public abstract class AbstractSensor<T extends SensorSession> extends
 	 * org.rifidi.edge.core.sensors.PhysicalSensor#receive(java.lang.Object)
 	 */
 	@Override
-	public Set<TagRead> receive(Object receiver) {
-		Set<TagRead> ret = new HashSet<TagRead>();
-		Set<Set<TagRead>> process = new HashSet<Set<TagRead>>();
+	public Set<TagReadEvent> receive(Object receiver) {
+		Set<TagReadEvent> ret = new HashSet<TagReadEvent>();
+		Set<Set<TagReadEvent>> process = new HashSet<Set<TagReadEvent>>();
 		receiversToQueues.get(receiver).drainTo(process);
-		for (Set<TagRead> tags : receiversToQueues.get(receiver)) {
+		for (Set<TagReadEvent> tags : receiversToQueues.get(receiver)) {
 			ret.addAll(tags);
 		}
 		return ret;
@@ -99,7 +100,7 @@ public abstract class AbstractSensor<T extends SensorSession> extends
 			throws DuplicateSubscriptionException {
 		if (!receiversToQueues.containsKey(receiver)) {
 			receiversToQueues.put(receiver,
-					new LinkedBlockingQueue<Set<TagRead>>());
+					new LinkedBlockingQueue<Set<TagReadEvent>>());
 			return;
 		}
 		throw new DuplicateSubscriptionException(receiver
@@ -115,9 +116,8 @@ public abstract class AbstractSensor<T extends SensorSession> extends
 	@Override
 	public synchronized void unsubscribe(Object receiver)
 			throws NotSubscribedException {
-		if (!receiversToQueues.containsKey(receiver)) {
-			receiversToQueues.put(receiver,
-					new LinkedBlockingQueue<Set<TagRead>>());
+		if (receiversToQueues.containsKey(receiver)) {
+			receiversToQueues.remove(receiver);
 		}
 		throw new NotSubscribedException(receiver + " is not subscribed to "
 				+ getID());
@@ -159,6 +159,20 @@ public abstract class AbstractSensor<T extends SensorSession> extends
 		return ret;
 	}
 
+	/**
+	 * 
+	 * @param tagReads
+	 */
+	protected void send(Set<TagReadEvent> tagReads) {
+		for (LinkedBlockingQueue<Set<TagReadEvent>> queue : receiversToQueues
+				.values()) {
+			queue.add(tagReads);
+		}
+		for (LogicalSensor sensor : connectedSensors) {
+			sensor.send(tagReads);
+		}
+	}
+	
 	/***
 	 * This method returns the Data Transfer Object for this Reader
 	 * 
