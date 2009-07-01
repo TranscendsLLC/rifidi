@@ -1,10 +1,10 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Rifidi Edge RMI Client Library
-Bundle-SymbolicName: org.rifidi.edge.client.commands
+Bundle-SymbolicName: org.rifidi.edge.client.rmi.commands
 Bundle-Version: 3.1.0
 Bundle-Vendor: Pramari LLC
-Require-Bundle: org.rifidi.rmi.proxycache;bundle-version="1.0.0",
+Require-Bundle: org.rifidi.edge.client.rmi.proxycache;bundle-version="1.0.0",
  org.rifidi.edge.api;bundle-version="1.1.1"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
