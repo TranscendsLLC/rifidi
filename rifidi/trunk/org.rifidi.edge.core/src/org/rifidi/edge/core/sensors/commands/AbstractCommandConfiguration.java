@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.rifidi.edge.core.commands;
+package org.rifidi.edge.core.sensors.commands;
 import org.rifidi.configuration.Configuration;
 import org.rifidi.configuration.RifidiService;
 import org.rifidi.edge.api.rmi.dto.CommandConfigurationDTO;

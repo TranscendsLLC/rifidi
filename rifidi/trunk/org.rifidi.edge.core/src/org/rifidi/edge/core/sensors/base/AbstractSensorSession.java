@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.rifidi.edge.core.readers.impl;
+package org.rifidi.edge.core.sensors.base;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -17,13 +17,13 @@ import javax.jms.Destination;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.api.SessionStatus;
-import org.rifidi.edge.core.commands.Command;
-import org.rifidi.edge.core.readers.ReaderSession;
+import org.rifidi.edge.core.sensors.ReaderSession;
+import org.rifidi.edge.core.sensors.commands.Command;
 import org.springframework.jms.core.JmsTemplate;
 
 /**
  * An Abstract class for concreate ReaderSessions to extend. This
- * AbstractReaderSession class provides a base implementation of the command
+ * AbstractSensorSession class provides a base implementation of the command
  * handeling of a reader session (i.e. submitting, deleting, executing
  * commands). It does not provide any implementation of connection methods in a
  * session
@@ -31,7 +31,7 @@ import org.springframework.jms.core.JmsTemplate;
  * @author Kyle Neumeier - kyle@pramari.com
  * 
  */
-public abstract class AbstractReaderSession extends ReaderSession {
+public abstract class AbstractSensorSession extends ReaderSession {
 
 	/** Used to execute commands. */
 	protected ScheduledThreadPoolExecutor executor;
@@ -56,7 +56,7 @@ public abstract class AbstractReaderSession extends ReaderSession {
 	protected Queue<Command> commandQueue = new ConcurrentLinkedQueue<Command>();
 	/** Logger */
 	private static final Log logger = LogFactory
-			.getLog(AbstractReaderSession.class);
+			.getLog(AbstractSensorSession.class);
 
 	/**
 	 * Constructor
@@ -68,7 +68,7 @@ public abstract class AbstractReaderSession extends ReaderSession {
 	 * @param template
 	 *            The Template used to send Tag data to the internal queue
 	 */
-	public AbstractReaderSession(String ID, Destination destination,
+	public AbstractSensorSession(String ID, Destination destination,
 			JmsTemplate template) {
 		super(ID);
 		this.commands = new HashMap<Integer, Command>();

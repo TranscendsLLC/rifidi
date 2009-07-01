@@ -11,7 +11,7 @@
 			<value>org.rifidi.configuration.ServiceFactory
 			</value>
 			<value>
-				org.rifidi.edge.core.readers.AbstractReaderFactory</value>
+				org.rifidi.edge.core.sensors.base.AbstractSensorFactory</value>
 		</osgi:interfaces>
 	</osgi:service>
 
@@ -24,7 +24,7 @@
 			<value>org.rifidi.configuration.ServiceFactory
 			</value>
 			<value>
-				org.rifidi.edge.core.commands.AbstractCommandConfigurationFactory
+				org.rifidi.edge.core.sensors.commands.AbstractCommandConfigurationFactory
 			</value>
 		</osgi:interfaces>
 	</osgi:service>

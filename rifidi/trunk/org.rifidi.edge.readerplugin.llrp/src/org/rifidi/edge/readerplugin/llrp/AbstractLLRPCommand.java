@@ -11,7 +11,7 @@
  */
 package org.rifidi.edge.readerplugin.llrp;
 
-import org.rifidi.edge.core.commands.Command;
+import org.rifidi.edge.core.sensors.commands.Command;
 
 /**
  * This class represents an abstract command for an LLRP reader. Extend it to

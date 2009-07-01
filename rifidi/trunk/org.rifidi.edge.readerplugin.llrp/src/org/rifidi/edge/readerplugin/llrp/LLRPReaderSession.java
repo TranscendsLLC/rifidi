@@ -53,8 +53,8 @@ import org.llrp.ltk.types.LLRPMessage;
 import org.llrp.ltk.types.UnsignedInteger;
 import org.llrp.ltk.types.UnsignedShort;
 import org.rifidi.edge.api.SessionStatus;
-import org.rifidi.edge.core.commands.Command;
-import org.rifidi.edge.core.readers.impl.AbstractReaderSession;
+import org.rifidi.edge.core.sensors.base.AbstractSensorSession;
+import org.rifidi.edge.core.sensors.commands.Command;
 import org.rifidi.edge.core.services.notification.NotifierService;
 import org.rifidi.edge.core.services.notification.data.EPCGeneration2Event;
 import org.rifidi.edge.core.services.notification.data.ReadCycle;
@@ -68,7 +68,7 @@ import org.springframework.jms.core.MessageCreator;
  * 
  * @author Matthew Dean
  */
-public class LLRPReaderSession extends AbstractReaderSession implements
+public class LLRPReaderSession extends AbstractSensorSession implements
 		LLRPEndpoint {
 
 	/** Logger for this class. */

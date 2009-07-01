@@ -14,9 +14,9 @@ import org.rifidi.configuration.services.ConfigurationService;
 import org.rifidi.edge.api.rmi.CommandStub;
 import org.rifidi.edge.api.rmi.dto.CommandConfigFactoryDTO;
 import org.rifidi.edge.api.rmi.dto.CommandConfigurationDTO;
-import org.rifidi.edge.core.commands.AbstractCommandConfiguration;
-import org.rifidi.edge.core.commands.AbstractCommandConfigurationFactory;
 import org.rifidi.edge.core.daos.CommandDAO;
+import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
+import org.rifidi.edge.core.sensors.commands.AbstractCommandConfigurationFactory;
 
 /**
  * The Implementation of the CommandStub -- an RMI stub for managing

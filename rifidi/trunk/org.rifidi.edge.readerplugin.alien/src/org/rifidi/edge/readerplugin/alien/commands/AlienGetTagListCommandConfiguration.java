@@ -6,7 +6,7 @@ package org.rifidi.edge.readerplugin.alien.commands;
 import org.rifidi.configuration.annotations.JMXMBean;
 import org.rifidi.configuration.annotations.Property;
 import org.rifidi.configuration.annotations.PropertyType;
-import org.rifidi.edge.core.commands.AbstractCommandConfiguration;
+import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
 
 /**
  * A CommandConfiguration for creating commands that collect tags from an
@@ -45,7 +45,7 @@ public class AlienGetTagListCommandConfiguration extends
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.commands.AbstractCommandConfiguration#getCommandName
+	 * org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration#getCommandName
 	 * ()
 	 */
 	@Override
@@ -121,7 +121,7 @@ public class AlienGetTagListCommandConfiguration extends
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.commands.AbstractCommandConfiguration#getCommand()
+	 * org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration#getCommand()
 	 */
 	@Override
 	public AlienGetTagListCommand getCommand(String readerID) {

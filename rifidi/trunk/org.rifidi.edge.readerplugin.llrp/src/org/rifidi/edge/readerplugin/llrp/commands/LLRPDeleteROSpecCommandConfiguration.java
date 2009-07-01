@@ -14,7 +14,7 @@ package org.rifidi.edge.readerplugin.llrp.commands;
 import org.rifidi.configuration.annotations.JMXMBean;
 import org.rifidi.configuration.annotations.Property;
 import org.rifidi.configuration.annotations.PropertyType;
-import org.rifidi.edge.core.commands.AbstractCommandConfiguration;
+import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
 
 /**
  * 
@@ -31,7 +31,7 @@ public class LLRPDeleteROSpecCommandConfiguration extends
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.rifidi.edge.core.commands.AbstractCommandConfiguration#getCommand(java.lang.String)
+	 * @see org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration#getCommand(java.lang.String)
 	 */
 	@Override
 	public LLRPDeleteROSpecCommand getCommand(String readerID) {
@@ -42,7 +42,7 @@ public class LLRPDeleteROSpecCommandConfiguration extends
 	}
 
 	/* (non-Javadoc)
-	 * @see org.rifidi.edge.core.commands.AbstractCommandConfiguration#getCommandDescription()
+	 * @see org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration#getCommandDescription()
 	 */
 	@Override
 	public String getCommandDescription() {
@@ -50,7 +50,7 @@ public class LLRPDeleteROSpecCommandConfiguration extends
 	}
 
 	/* (non-Javadoc)
-	 * @see org.rifidi.edge.core.commands.AbstractCommandConfiguration#getCommandName()
+	 * @see org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration#getCommandName()
 	 */
 	@Override
 	public String getCommandName() {

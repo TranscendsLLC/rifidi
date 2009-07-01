@@ -15,7 +15,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.rifidi.edge.core.readers.ByteMessage;
+import org.rifidi.edge.core.sensors.messages.ByteMessage;
 import org.rifidi.edge.readerplugin.alien.Alien9800ReaderSession;
 
 public class GetTagListCommandObject {

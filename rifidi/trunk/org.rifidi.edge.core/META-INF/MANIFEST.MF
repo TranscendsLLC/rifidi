@@ -9,12 +9,14 @@ Import-Package: javax.jms;version="1.1.0",
  org.apache.commons.logging;version="1.0.4",
  org.osgi.framework;version="1.4.0",
  org.springframework.jms.core;version="2.5.5"
-Export-Package: org.rifidi.edge.core.commands,
- org.rifidi.edge.core.daos,
+Export-Package: org.rifidi.edge.core.daos,
  org.rifidi.edge.core.exceptions,
  org.rifidi.edge.core.messages.exceptions,
- org.rifidi.edge.core.readers,
- org.rifidi.edge.core.readers.impl
+ org.rifidi.edge.core.sensors,
+ org.rifidi.edge.core.sensors.base,
+ org.rifidi.edge.core.sensors.commands,
+ org.rifidi.edge.core.sensors.exceptions,
+ org.rifidi.edge.core.sensors.impl
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-Description: This bundle contains several core services needed by the edge server, such as ReaderSession service
 Require-Bundle: org.rifidi.configuration;bundle-version="1.0.1";visibility:=reexport,

@@ -14,7 +14,7 @@ package org.rifidi.edge.readerplugin.llrp.commands;
 import org.rifidi.configuration.annotations.JMXMBean;
 import org.rifidi.configuration.annotations.Property;
 import org.rifidi.configuration.annotations.PropertyType;
-import org.rifidi.edge.core.commands.AbstractCommandConfiguration;
+import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
 
 /**
  * This class configures a GetTagList command.  
@@ -36,7 +36,7 @@ public class LLRPGetTagListCommandConfiguration extends
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.commands.AbstractCommandConfiguration#getCommand()
+	 * org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration#getCommand()
 	 */
 	@Override
 	public LLRPGetTagListCommand getCommand(String readerID) {
@@ -60,7 +60,7 @@ public class LLRPGetTagListCommandConfiguration extends
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.commands.AbstractCommandConfiguration#getCommandName
+	 * org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration#getCommandName
 	 * ()
 	 */
 	@Override

@@ -1,5 +1,5 @@
 
-package org.rifidi.edge.core.readers.impl.threads;
+package org.rifidi.edge.core.sensors.base.threads;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -7,7 +7,7 @@ import java.util.concurrent.BlockingQueue;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.rifidi.edge.core.readers.ByteMessage;
+import org.rifidi.edge.core.sensors.messages.ByteMessage;
 
 /**
  * Runnable for writing messages to an outputstream.

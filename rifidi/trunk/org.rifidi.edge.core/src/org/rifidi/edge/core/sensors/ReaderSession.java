@@ -1,4 +1,4 @@
-package org.rifidi.edge.core.readers;
+package org.rifidi.edge.core.sensors;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -7,7 +7,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.rifidi.edge.api.SessionStatus;
 import org.rifidi.edge.api.rmi.dto.SessionDTO;
-import org.rifidi.edge.core.commands.Command;
+import org.rifidi.edge.core.sensors.commands.Command;
 
 /**
  * This class represents a session with a reader.

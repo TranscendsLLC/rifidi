@@ -22,8 +22,8 @@ import org.apache.commons.logging.LogFactory;
 import org.rifidi.configuration.annotations.JMXMBean;
 import org.rifidi.configuration.annotations.Property;
 import org.rifidi.configuration.annotations.PropertyType;
-import org.rifidi.edge.core.readers.AbstractReader;
-import org.rifidi.edge.core.readers.ReaderSession;
+import org.rifidi.edge.core.sensors.ReaderSession;
+import org.rifidi.edge.core.sensors.base.AbstractSensor;
 import org.rifidi.edge.core.services.notification.NotifierService;
 import org.springframework.jms.core.JmsTemplate;
 
@@ -33,7 +33,7 @@ import org.springframework.jms.core.JmsTemplate;
  * @author Matthew Dean
  */
 @JMXMBean
-public class LLRPReader extends AbstractReader<LLRPReaderSession> {
+public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 	/** Logger for this class. */
 	private Log logger = LogFactory.getLog(LLRPReader.class);
 	/** The only session an LLRP reader allows. */
