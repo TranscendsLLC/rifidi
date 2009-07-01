@@ -184,11 +184,11 @@
          </enabledWhen>
       </handler>
       <handler
-            class="org.rifidi.edge.client.ale.logicalreaders.commands.DeleteHandler"
+            class="org.rifidi.edge.client.ale.ecspecview.handlers.DeleteHandler"
             commandId="org.rifidi.edge.ale.lr.commands.delete">
       </handler>
       <handler
-            class="org.rifidi.edge.client.ale.logicalreaders.commands.CreateHandler"
+            class="org.rifidi.edge.client.ale.ecspecview.handlers.CreateHandler"
             commandId="org.rifidi.edge.ale.lr.commands.create">
       </handler>
       <handler
@@ -208,7 +208,7 @@
             commandId="org.rifidi.edge.client.ale.ecspecview.unsubscribeECSpec">
       </handler>
       <handler
-            class="org.rifidi.edge.client.ale.logicalreaders.commands.RefreshHandler"
+            class="org.rifidi.edge.client.ale.ecspecview.handlers.RefreshHandler"
             commandId="org.rifidi.edge.ale.lr.commands.refresh">
       </handler>
    </extension>

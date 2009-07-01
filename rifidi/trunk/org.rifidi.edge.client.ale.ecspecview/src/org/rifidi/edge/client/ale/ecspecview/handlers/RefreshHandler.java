@@ -1,5 +1,5 @@
 
-package org.rifidi.edge.client.ale.logicalreaders.commands;
+package org.rifidi.edge.client.ale.ecspecview.handlers;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;

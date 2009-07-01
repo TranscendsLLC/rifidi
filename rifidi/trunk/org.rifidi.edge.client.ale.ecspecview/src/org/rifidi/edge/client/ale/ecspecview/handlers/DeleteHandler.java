@@ -1,5 +1,5 @@
 
-package org.rifidi.edge.client.ale.logicalreaders.commands;
+package org.rifidi.edge.client.ale.ecspecview.handlers;
 
 import java.util.List;
 
