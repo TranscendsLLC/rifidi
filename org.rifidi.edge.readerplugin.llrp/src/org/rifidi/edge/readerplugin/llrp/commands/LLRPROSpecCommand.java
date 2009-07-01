@@ -143,7 +143,7 @@ public class LLRPROSpecCommand extends AbstractLLRPCommand {
 	 */
 	@Override
 	public void run() {
-		this.session = (LLRPReaderSession) this.readerSession;
+		this.session = (LLRPReaderSession) this.sensorSession;
 
 		try {
 			boolean is_taken = false;

@@ -15,7 +15,7 @@ import org.rifidi.configuration.annotations.JMXMBean;
 import org.rifidi.configuration.annotations.Operation;
 import org.rifidi.configuration.annotations.Property;
 import org.rifidi.configuration.annotations.PropertyType;
-import org.rifidi.edge.core.sensors.ReaderSession;
+import org.rifidi.edge.core.sensors.SensorSession;
 import org.rifidi.edge.core.sensors.base.AbstractSensor;
 import org.rifidi.edge.core.services.notification.NotifierService;
 import org.rifidi.edge.readerplugin.alien.commandobject.AlienCommandObjectWrapper;
@@ -40,7 +40,7 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 	private LinkedBlockingQueue<AlienCommandObjectWrapper> propCommandsToBeExecuted;
 	/** A hashmap containing all the properties for this reader */
 	private ConcurrentHashMap<String, String> readerProperties;
-	/** IP address of the readerSession. */
+	/** IP address of the sensorSession. */
 	private String ipAddress = AlienReaderDefaultValues.IPADDRESS;
 	/** Port to connect to. */
 	private Integer port = Integer.parseInt(AlienReaderDefaultValues.PORT);
@@ -86,23 +86,23 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 	private String time;
 	private String time_server;
 	private String time_zone;
-	/** The unique number of the readerSession */
+	/** The unique number of the sensorSession */
 	public static final String PROP_READER_NUMBER = "readerNumber";
 
 	/**
 	 * READER PROPERTIES - READ ONLY, INITIALZIED BY AQUIRE READER PROPERTIES
 	 */
-	/** MAC Address of the readerSession */
+	/** MAC Address of the sensorSession */
 	public static final String PROP_MAC_ADDRESS = "macAddress";
 	/** Maximum number of antennas supported */
 	public static final String PROP_MAX_ANTENNA = "maxAntenna";
-	/** The type of the alien readerSession */
+	/** The type of the alien sensorSession */
 	public static final String PROP_READER_TYPE = "readerType";
-	/** The version of the readerSession */
+	/** The version of the sensorSession */
 	public static final String PROP_READER_VERSION = "readerVersion";
 	/** GPO value */
 	public static final String PROP_EXTERNAL_INPUT = "externalinput";
-	/** Uptime of the readerSession */
+	/** Uptime of the sensorSession */
 	public static final String PROP_UPTIME = "uptime";
 
 	/**
@@ -165,7 +165,7 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 	 * @see org.rifidi.edge.core.readers.AbstractReader#createReaderSession()
 	 */
 	@Override
-	public synchronized ReaderSession createReaderSession() {
+	public synchronized SensorSession createReaderSession() {
 		if (session == null) {
 			sessionID++;
 			session = new Alien9800ReaderSession(Integer.toString(sessionID),
@@ -218,7 +218,7 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 	 * rifidi.edge.core.readers.ReaderSession)
 	 */
 	@Override
-	public void destroyReaderSession(ReaderSession session) {
+	public void destroyReaderSession(SensorSession session) {
 		if (session != null) {
 			for (Integer id : session.currentCommands().keySet()) {
 				session.killComand(id);
@@ -238,8 +238,8 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 	 * @see org.rifidi.edge.core.readers.AbstractReader#getReaderSessions()
 	 */
 	@Override
-	public Map<String, ReaderSession> getReaderSessions() {
-		Map<String, ReaderSession> ret = new HashMap<String, ReaderSession>();
+	public Map<String, SensorSession> getReaderSessions() {
+		Map<String, SensorSession> ret = new HashMap<String, SensorSession>();
 		if (session != null) {
 			ret.put(session.getID(), session);
 		}
@@ -290,7 +290,7 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 	 * @return the USERNAME
 	 */
 	@Property(displayName = "Username", description = "Username for logging "
-			+ "into the readerSession.", writable = true, category = "conn"
+			+ "into the sensorSession.", writable = true, category = "conn"
 			+ "ection", defaultValue = AlienReaderDefaultValues.USERNAME, orderValue = 2)
 	public String getUsername() {
 		return username;
@@ -308,7 +308,7 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 	 * @return the PASSWORD
 	 */
 	@Property(displayName = "Password", description = "Password for logging"
-			+ " into the readerSession.", writable = true, category = "conn"
+			+ " into the sensorSession.", writable = true, category = "conn"
 			+ "ection", defaultValue = AlienReaderDefaultValues.PASSWORD, orderValue = 3)
 	public String getPassword() {
 		return password;
@@ -344,7 +344,7 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 	 * @return the MAX_CONNECTION_ATTEMPTS
 	 */
 	@Property(displayName = "Maximum Connection Attempts", description = "Number of times to try to"
-			+ " connect to the readerSession before the connection is marked as "
+			+ " connect to the sensorSession before the connection is marked as "
 			+ "failed.", writable = true, type = PropertyType.PT_INTEGER, category = "conn"
 			+ "ection", defaultValue = AlienReaderDefaultValues.MAX_CONNECTION_ATTEMPTS, orderValue = 5, minValue = "0")
 	public Integer getMaxNumConnectionAttempts() {
@@ -458,14 +458,14 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 						readerNumber)));
 	}
 
-	@Property(displayName = "ReaderSession Version", description = "Version Number of "
-			+ "the readerSession", writable = false, category = "General")
+	@Property(displayName = "SensorSession Version", description = "Version Number of "
+			+ "the sensorSession", writable = false, category = "General")
 	public String getReaderVersion() {
 		return (String) readerProperties.get(PROP_READER_VERSION);
 	}
 
-	@Property(displayName = "ReaderSession Type", description = "Type of "
-			+ "ReaderSession", writable = false)
+	@Property(displayName = "SensorSession Type", description = "Type of "
+			+ "SensorSession", writable = false)
 	public String getReaderType() {
 		return (String) readerProperties.get(PROP_READER_TYPE);
 	}
@@ -478,7 +478,7 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 	}
 
 	@Property(displayName = "MAC Address", description = "MAC Address"
-			+ " of readerSession", writable = false, category = "General")
+			+ " of sensorSession", writable = false, category = "General")
 	public String getMACAddress() {
 		return (String) readerProperties.get(PROP_MAC_ADDRESS);
 	}
@@ -489,7 +489,7 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 	}
 
 	@Property(displayName = "Uptime", description = "Uptime of "
-			+ "readerSession", writable = false, type = PropertyType.PT_INTEGER, category = "General")
+			+ "sensorSession", writable = false, type = PropertyType.PT_INTEGER, category = "General")
 	public Integer getUptime() {
 		return Integer.parseInt(readerProperties.get(PROP_UPTIME));
 	}

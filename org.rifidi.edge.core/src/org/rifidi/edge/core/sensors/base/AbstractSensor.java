@@ -17,7 +17,7 @@ import org.rifidi.configuration.RifidiService;
 import org.rifidi.edge.api.rmi.dto.ReaderDTO;
 import org.rifidi.edge.api.rmi.dto.SessionDTO;
 import org.rifidi.edge.core.sensors.PhysicalSensor;
-import org.rifidi.edge.core.sensors.ReaderSession;
+import org.rifidi.edge.core.sensors.SensorSession;
 import org.rifidi.edge.core.sensors.TagRead;
 import org.rifidi.edge.core.sensors.exceptions.DuplicateSubscriptionException;
 import org.rifidi.edge.core.sensors.exceptions.NotSubscribedException;
@@ -26,14 +26,14 @@ import org.rifidi.edge.core.sensors.impl.LogicalSensorImpl;
 /**
  * A reader creates and manages instances of sessions. The reader itself holds
  * all configuration parameters and creates the sessions according to these. The
- * returned readerSession objects are immutable and if some parameters of the
+ * returned sensorSession objects are immutable and if some parameters of the
  * factory change after a session has been created, the created session will
  * retain its configuration until it is destroyed and a new one is created
  * 
  * @author Jochen Mader - jochen@pramari.com
  * 
  */
-public abstract class AbstractSensor<T extends ReaderSession> extends
+public abstract class AbstractSensor<T extends SensorSession> extends
 		RifidiService implements PhysicalSensor {
 	/** Sensors connected to this connectedSensors. */
 	protected Set<LogicalSensorImpl> connectedSensors;
@@ -49,7 +49,7 @@ public abstract class AbstractSensor<T extends ReaderSession> extends
 	 * 
 	 * @return
 	 */
-	abstract public ReaderSession createReaderSession();
+	abstract public SensorSession createReaderSession();
 
 	/**
 	 * Get all currently created reader sessions. The Key is the ID of the
@@ -57,14 +57,14 @@ public abstract class AbstractSensor<T extends ReaderSession> extends
 	 * 
 	 * @return
 	 */
-	abstract public Map<String, ReaderSession> getReaderSessions();
+	abstract public Map<String, SensorSession> getReaderSessions();
 
 	/**
 	 * Destroy a reader session.
 	 * 
 	 * @param session
 	 */
-	abstract public void destroyReaderSession(ReaderSession session);
+	abstract public void destroyReaderSession(SensorSession session);
 
 	/**
 	 * Send properties that have been modified to the physical reader
@@ -171,7 +171,7 @@ public abstract class AbstractSensor<T extends ReaderSession> extends
 		String factoryID = config.getFactoryID();
 		AttributeList attrs = config.getAttributes(config.getAttributeNames());
 		List<SessionDTO> sessionDTOs = new ArrayList<SessionDTO>();
-		for (ReaderSession s : this.getReaderSessions().values()) {
+		for (SensorSession s : this.getReaderSessions().values()) {
 			sessionDTOs.add(s.getDTO());
 		}
 		ReaderDTO dto = new ReaderDTO(readerID, factoryID, attrs, sessionDTOs);

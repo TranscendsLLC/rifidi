@@ -12,7 +12,7 @@ package org.rifidi.edge.readerplugin.alien;
  */
 public class AlienReaderDefaultValues {
 
-	/** IP address of the readerSession. */
+	/** IP address of the sensorSession. */
 	public static final String IPADDRESS = "127.0.0.1";
 	/** Port to connect to. */
 	public static final String PORT = "20000";

@@ -5,7 +5,7 @@ import org.rifidi.edge.readerplugin.alien.Alien9800ReaderSession;
 
 /**
  * This is an Command Object use to formulate individual request/response
- * interactions with an Alien ReaderSession. It provides default behavior for
+ * interactions with an Alien SensorSession. It provides default behavior for
  * getting and setting properties on a command where the command is of the form
  * 
  * get commandname\n
@@ -19,19 +19,19 @@ import org.rifidi.edge.readerplugin.alien.Alien9800ReaderSession;
  */
 public abstract class AlienCommandObject {
 
-	/** The command to be sent to the Alien ReaderSession */
+	/** The command to be sent to the Alien SensorSession */
 	protected String command;
-	/** The readerSession to send the command to */
+	/** The sensorSession to send the command to */
 	protected Alien9800ReaderSession readerSession;
 
 	/**
 	 * Construct a command object.
 	 * 
 	 * @param command
-	 *            A command to be send to the Alien readerSession (see the
+	 *            A command to be send to the Alien sensorSession (see the
 	 *            static command strings in AlienReader)
-	 * @param readerSession
-	 *            A live readerSession to send the command to
+	 * @param sensorSession
+	 *            A live sensorSession to send the command to
 	 */
 	public AlienCommandObject(String command) {
 		this.command = command;

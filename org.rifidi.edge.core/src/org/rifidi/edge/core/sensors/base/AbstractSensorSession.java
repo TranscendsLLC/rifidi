@@ -17,21 +17,21 @@ import javax.jms.Destination;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.api.SessionStatus;
-import org.rifidi.edge.core.sensors.ReaderSession;
+import org.rifidi.edge.core.sensors.SensorSession;
 import org.rifidi.edge.core.sensors.commands.Command;
 import org.springframework.jms.core.JmsTemplate;
 
 /**
  * An Abstract class for concreate ReaderSessions to extend. This
  * AbstractSensorSession class provides a base implementation of the command
- * handeling of a reader session (i.e. submitting, deleting, executing
+ * handling of a reader session (i.e. submitting, deleting, executing
  * commands). It does not provide any implementation of connection methods in a
  * session
  * 
  * @author Kyle Neumeier - kyle@pramari.com
  * 
  */
-public abstract class AbstractSensorSession extends ReaderSession {
+public abstract class AbstractSensorSession extends SensorSession {
 
 	/** Used to execute commands. */
 	protected ScheduledThreadPoolExecutor executor;
@@ -62,7 +62,7 @@ public abstract class AbstractSensorSession extends ReaderSession {
 	 * Constructor
 	 * 
 	 * @param ID
-	 *            ID of this ReaderSession
+	 *            ID of this SensorSession
 	 * @param destination
 	 *            The JMS Queue to add Tag Data to
 	 * @param template

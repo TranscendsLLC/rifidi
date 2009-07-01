@@ -2,7 +2,7 @@
 package org.rifidi.edge.core.exceptions;
 
 /**
- * Thrown if a readerSession is not available.
+ * Thrown if a sensorSession is not available.
  * 
  * @author Jochen Mader - jochen@pramari.com
  */

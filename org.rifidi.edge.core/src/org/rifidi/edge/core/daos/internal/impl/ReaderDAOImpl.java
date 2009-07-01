@@ -22,9 +22,9 @@ import org.rifidi.edge.core.services.notification.NotifierService;
  */
 public class ReaderDAOImpl implements ReaderDAO {
 
-	/** The available readerSession configuration factories */
+	/** The available sensorSession configuration factories */
 	private Map<String, AbstractSensorFactory<?>> readerConfigFactories;
-	/** The available set of readerSession configurations */
+	/** The available set of sensorSession configurations */
 	private Map<String, AbstractSensor<?>> abstractSensors;
 	/** The logger for this class */
 	private Log logger = LogFactory.getLog(ReaderDAOImpl.class);
