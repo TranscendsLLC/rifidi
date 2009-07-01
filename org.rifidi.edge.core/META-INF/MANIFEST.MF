@@ -16,7 +16,8 @@ Export-Package: org.rifidi.edge.core.daos,
  org.rifidi.edge.core.sensors.base,
  org.rifidi.edge.core.sensors.commands,
  org.rifidi.edge.core.sensors.exceptions,
- org.rifidi.edge.core.sensors.impl
+ org.rifidi.edge.core.sensors.impl,
+ org.rifidi.edge.core.sensors.messages
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-Description: This bundle contains several core services needed by the edge server, such as ReaderSession service
 Require-Bundle: org.rifidi.configuration;bundle-version="1.0.1";visibility:=reexport,
