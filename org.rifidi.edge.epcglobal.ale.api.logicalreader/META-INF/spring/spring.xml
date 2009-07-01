@@ -41,7 +41,7 @@
 	</osgi:service>
 
 	<!-- Set containing all real readers. -->
-	<osgi:set id="readerSet" interface="org.rifidi.edge.core.readers.AbstractReader"
+	<osgi:set id="readerSet" interface="org.rifidi.edge.core.sensors.base.AbstractSensor"
 		cardinality="0..N">
 		<osgi:listener ref="lrManagment" bind-method="bindReader"
 			unbind-method="unbindReader" />

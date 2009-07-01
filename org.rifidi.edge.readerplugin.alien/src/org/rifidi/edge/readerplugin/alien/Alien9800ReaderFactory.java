@@ -8,8 +8,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.rifidi.edge.core.readers.AbstractReader;
-import org.rifidi.edge.core.readers.AbstractReaderFactory;
+import org.rifidi.edge.core.sensors.base.AbstractSensor;
+import org.rifidi.edge.core.sensors.base.AbstractSensorFactory;
 import org.rifidi.edge.core.services.notification.NotifierService;
 import org.springframework.jms.core.JmsTemplate;
 
@@ -20,7 +20,7 @@ import org.springframework.jms.core.JmsTemplate;
  * 
  */
 public class Alien9800ReaderFactory extends
-		AbstractReaderFactory<Alien9800Reader> {
+		AbstractSensorFactory<Alien9800Reader> {
 
 	/** JMS template for sending tag data to JMS Queue */
 	private JmsTemplate template;
@@ -92,7 +92,7 @@ public class Alien9800ReaderFactory extends
 		instance.setTemplate((JmsTemplate) template);
 		instance.setNotifiyService(notifierService);
 		Set<String> interfaces = new HashSet<String>();
-		interfaces.add(AbstractReader.class.getName());
+		interfaces.add(AbstractSensor.class.getName());
 		instance.register(getContext(), interfaces);
 	}
 

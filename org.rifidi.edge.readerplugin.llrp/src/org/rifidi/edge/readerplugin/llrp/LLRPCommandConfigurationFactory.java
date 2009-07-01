@@ -18,8 +18,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.rifidi.edge.core.commands.AbstractCommandConfiguration;
-import org.rifidi.edge.core.commands.AbstractCommandConfigurationFactory;
+import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
+import org.rifidi.edge.core.sensors.commands.AbstractCommandConfigurationFactory;
 import org.rifidi.edge.readerplugin.llrp.commands.LLRPDeleteROSpecCommandConfiguration;
 import org.rifidi.edge.readerplugin.llrp.commands.LLRPGetTagListCommandConfiguration;
 import org.rifidi.edge.readerplugin.llrp.commands.LLRPROSpecCommandConfiguration;

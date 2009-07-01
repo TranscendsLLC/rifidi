@@ -6,7 +6,7 @@ import java.io.IOException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.rifidi.edge.core.readers.ByteMessage;
+import org.rifidi.edge.core.sensors.messages.ByteMessage;
 import org.rifidi.edge.readerplugin.alien.Alien9800ReaderSession;
 
 /**

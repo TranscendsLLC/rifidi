@@ -10,9 +10,9 @@ import java.util.concurrent.TimeUnit;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.api.SessionStatus;
-import org.rifidi.edge.core.commands.Command;
-import org.rifidi.edge.core.readers.ByteMessage;
-import org.rifidi.edge.core.readers.impl.AbstractIPReaderSession;
+import org.rifidi.edge.core.sensors.base.AbstractIPSensorSession;
+import org.rifidi.edge.core.sensors.commands.Command;
+import org.rifidi.edge.core.sensors.messages.ByteMessage;
 import org.rifidi.edge.core.services.notification.NotifierService;
 import org.springframework.jms.core.JmsTemplate;
 
@@ -22,7 +22,7 @@ import org.springframework.jms.core.JmsTemplate;
  * @author Jochen Mader - jochen@pramari.com
  * 
  */
-public class Alien9800ReaderSession extends AbstractIPReaderSession {
+public class Alien9800ReaderSession extends AbstractIPSensorSession {
 	/** Logger for this class. */
 	private static final Log logger = LogFactory
 			.getLog(Alien9800ReaderSession.class);

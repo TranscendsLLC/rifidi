@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.rifidi.edge.core.readers.impl;
+package org.rifidi.edge.core.sensors.base;
 
 import java.io.IOException;
 import java.net.Socket;
@@ -15,9 +15,9 @@ import javax.jms.Destination;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.api.SessionStatus;
-import org.rifidi.edge.core.readers.ByteMessage;
-import org.rifidi.edge.core.readers.impl.threads.ReadThread;
-import org.rifidi.edge.core.readers.impl.threads.WriteThread;
+import org.rifidi.edge.core.sensors.base.threads.ReadThread;
+import org.rifidi.edge.core.sensors.base.threads.WriteThread;
+import org.rifidi.edge.core.sensors.messages.ByteMessage;
 import org.springframework.jms.core.JmsTemplate;
 
 /**
@@ -28,10 +28,10 @@ import org.springframework.jms.core.JmsTemplate;
  * @author Jochen Mader - jochen@pramari.com
  * @author Kyle Neumeier - kyle@pramari.com
  */
-public abstract class AbstractIPReaderSession extends AbstractReaderSession {
+public abstract class AbstractIPSensorSession extends AbstractSensorSession {
 	/** Logger for this class. */
 	private static final Log logger = LogFactory
-			.getLog(AbstractIPReaderSession.class);
+			.getLog(AbstractIPSensorSession.class);
 
 	/** Host to connect to. */
 	private String host;
@@ -76,7 +76,7 @@ public abstract class AbstractIPReaderSession extends AbstractReaderSession {
 	 * @param template
 	 *            JMSTemplate to use to send tag data
 	 */
-	public AbstractIPReaderSession(String ID, String host, int port,
+	public AbstractIPSensorSession(String ID, String host, int port,
 			int reconnectionInterval, int maxConAttempts,
 			Destination destination, JmsTemplate template) {
 		super(ID, destination, template);

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.rifidi.edge.core.commands;
+package org.rifidi.edge.core.sensors.commands;
 
 import java.util.HashSet;
 

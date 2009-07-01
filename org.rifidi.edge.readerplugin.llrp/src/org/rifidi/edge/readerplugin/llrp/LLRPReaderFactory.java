@@ -16,8 +16,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.rifidi.edge.core.readers.AbstractReader;
-import org.rifidi.edge.core.readers.AbstractReaderFactory;
+import org.rifidi.edge.core.sensors.base.AbstractSensor;
+import org.rifidi.edge.core.sensors.base.AbstractSensorFactory;
 import org.rifidi.edge.core.services.notification.NotifierService;
 import org.springframework.jms.core.JmsTemplate;
 
@@ -26,7 +26,7 @@ import org.springframework.jms.core.JmsTemplate;
  * 
  * @author Matthew Dean
  */
-public class LLRPReaderFactory extends AbstractReaderFactory<LLRPReader> {
+public class LLRPReaderFactory extends AbstractSensorFactory<LLRPReader> {
 
 	/** Description of the readerSession. */
 	private static final String description = "The LLRP is an EPC standard protocol";
@@ -88,7 +88,7 @@ public class LLRPReaderFactory extends AbstractReaderFactory<LLRPReader> {
 		instance.setTemplate(template);
 		instance.setNotifiyService(this.notifierService);
 		Set<String> interfaces = new HashSet<String>();
-		interfaces.add(AbstractReader.class.getName());
+		interfaces.add(AbstractSensor.class.getName());
 		instance.register(getContext(), interfaces);
 	}
 

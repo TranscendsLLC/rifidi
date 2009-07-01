@@ -1,5 +1,5 @@
 
-package org.rifidi.edge.core.readers.impl.threads;
+package org.rifidi.edge.core.sensors.base.threads;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -7,8 +7,8 @@ import java.util.Queue;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.rifidi.edge.core.readers.ByteMessage;
-import org.rifidi.edge.core.readers.impl.AbstractIPReaderSession;
+import org.rifidi.edge.core.sensors.base.AbstractIPSensorSession;
+import org.rifidi.edge.core.sensors.messages.ByteMessage;
 
 /**
  * Runnable used to read from an inputstream.
@@ -23,7 +23,7 @@ public class ReadThread implements Runnable {
 	/** The input stream the thread reads from. */
 	private InputStream inputStream;
 	/** Reader the thread got started by. */
-	private AbstractIPReaderSession reader;
+	private AbstractIPSensorSession reader;
 
 	/**
 	 * Constructor.
@@ -31,7 +31,7 @@ public class ReadThread implements Runnable {
 	 * @param socket
 	 * @param messageQueue
 	 */
-	public ReadThread(AbstractIPReaderSession reader, InputStream inputStream,
+	public ReadThread(AbstractIPSensorSession reader, InputStream inputStream,
 			Queue<ByteMessage> messageQueue) {
 		this.messageQueue = messageQueue;
 		this.inputStream = inputStream;

@@ -8,9 +8,9 @@ import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.rifidi.edge.core.commands.AbstractCommandConfiguration;
-import org.rifidi.edge.core.commands.AbstractCommandConfigurationFactory;
 import org.rifidi.edge.core.daos.CommandDAO;
+import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
+import org.rifidi.edge.core.sensors.commands.AbstractCommandConfigurationFactory;
 import org.rifidi.edge.core.services.notification.NotifierService;
 
 /**

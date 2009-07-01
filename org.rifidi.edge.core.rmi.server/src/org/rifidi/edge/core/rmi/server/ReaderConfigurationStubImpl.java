@@ -18,13 +18,13 @@ import org.rifidi.edge.api.rmi.dto.ReaderDTO;
 import org.rifidi.edge.api.rmi.dto.ReaderFactoryDTO;
 import org.rifidi.edge.api.rmi.dto.SessionDTO;
 import org.rifidi.edge.api.rmi.exceptions.CommandSubmissionException;
-import org.rifidi.edge.core.commands.AbstractCommandConfiguration;
-import org.rifidi.edge.core.commands.Command;
 import org.rifidi.edge.core.daos.CommandDAO;
 import org.rifidi.edge.core.daos.ReaderDAO;
-import org.rifidi.edge.core.readers.AbstractReader;
-import org.rifidi.edge.core.readers.AbstractReaderFactory;
-import org.rifidi.edge.core.readers.ReaderSession;
+import org.rifidi.edge.core.sensors.ReaderSession;
+import org.rifidi.edge.core.sensors.base.AbstractSensor;
+import org.rifidi.edge.core.sensors.base.AbstractSensorFactory;
+import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
+import org.rifidi.edge.core.sensors.commands.Command;
 
 /**
  * 
@@ -56,7 +56,7 @@ public class ReaderConfigurationStubImpl implements ReaderStub {
 
 		// get the readerSession configuration factory that corresponds to the
 		// ID
-		AbstractReaderFactory<?> readerConfigFactory = this.readerDAO
+		AbstractSensorFactory<?> readerConfigFactory = this.readerDAO
 				.getReaderFactoryByID(readerConfigurationFactoryID);
 
 		// Get an empty configuration
@@ -85,7 +85,7 @@ public class ReaderConfigurationStubImpl implements ReaderStub {
 		logger.debug("RMI call: deleteReader");
 		Configuration config = configurationService
 				.getConfiguration(readerConfigurationID);
-		AbstractReader<?> readerConfig = readerDAO
+		AbstractSensor<?> readerConfig = readerDAO
 				.getReaderByID(readerConfigurationID);
 		if (config != null) {
 			config.destroy();
@@ -113,7 +113,7 @@ public class ReaderConfigurationStubImpl implements ReaderStub {
 	public Set<ReaderFactoryDTO> getReaderFactories() throws RemoteException {
 		logger.debug("RMI call: getReaderFactories");
 		Set<ReaderFactoryDTO> retVal = new HashSet<ReaderFactoryDTO>();
-		for (AbstractReaderFactory<?> factory : this.readerDAO
+		for (AbstractSensorFactory<?> factory : this.readerDAO
 				.getReaderFactories()) {
 			retVal.add(factory.getReaderFactoryDTO());
 		}
@@ -131,7 +131,7 @@ public class ReaderConfigurationStubImpl implements ReaderStub {
 	public ReaderFactoryDTO getReaderFactory(String readerFactoryID)
 			throws RemoteException {
 		logger.debug("RMI call: getReaderFactory");
-		AbstractReaderFactory<?> factory = this.readerDAO
+		AbstractSensorFactory<?> factory = this.readerDAO
 				.getReaderFactoryByID(readerFactoryID);
 		if (factory != null) {
 			return factory.getReaderFactoryDTO();
@@ -151,8 +151,8 @@ public class ReaderConfigurationStubImpl implements ReaderStub {
 		Set<ReaderDTO> retVal = new HashSet<ReaderDTO>();
 
 		// Get all ReaderConfigurations
-		Set<AbstractReader<?>> configurations = readerDAO.getReaders();
-		for (AbstractReader<?> readerConfig : configurations) {
+		Set<AbstractSensor<?>> configurations = readerDAO.getReaders();
+		for (AbstractSensor<?> readerConfig : configurations) {
 			// get the ID of the readerSession configuration
 			String readerID = readerConfig.getID();
 			// look up the associated service configuration object for the
@@ -179,7 +179,7 @@ public class ReaderConfigurationStubImpl implements ReaderStub {
 	public MBeanInfo getReaderDescription(String readerConfigurationFactoryID)
 			throws RemoteException {
 		logger.debug("RMI call: getReaderDescription");
-		AbstractReaderFactory<?> configFactory = readerDAO
+		AbstractSensorFactory<?> configFactory = readerDAO
 				.getReaderFactoryByID(readerConfigurationFactoryID);
 		if (configFactory != null) {
 			Configuration config = configFactory
@@ -204,7 +204,7 @@ public class ReaderConfigurationStubImpl implements ReaderStub {
 		logger.debug("RMI call: getReader");
 		Configuration config = configurationService
 				.getConfiguration(readerConfigurationID);
-		AbstractReader<?> reader = readerDAO
+		AbstractSensor<?> reader = readerDAO
 				.getReaderByID(readerConfigurationID);
 		if ((config != null) && (reader != null)) {
 			return reader.getDTO(config);
@@ -225,7 +225,7 @@ public class ReaderConfigurationStubImpl implements ReaderStub {
 	@Override
 	public SessionDTO getSession(String readerID, String sessionID)
 			throws RemoteException {
-		AbstractReader<?> reader = this.readerDAO.getReaderByID(readerID);
+		AbstractSensor<?> reader = this.readerDAO.getReaderByID(readerID);
 		if (reader != null) {
 			ReaderSession session = reader.getReaderSessions().get(sessionID);
 			if (session != null) {
@@ -245,7 +245,7 @@ public class ReaderConfigurationStubImpl implements ReaderStub {
 	public Set<SessionDTO> createSession(String readerID)
 			throws RemoteException {
 		logger.debug("RMI call: createSession");
-		AbstractReader<?> reader = this.readerDAO.getReaderByID(readerID);
+		AbstractSensor<?> reader = this.readerDAO.getReaderByID(readerID);
 		if (reader == null) {
 			logger.warn("No reader with ID " + readerID + " is available");
 			return null;
@@ -263,7 +263,7 @@ public class ReaderConfigurationStubImpl implements ReaderStub {
 	public void deleteSession(String readerID, String sessionID)
 			throws RemoteException {
 		logger.debug("RMI call: deleteSession");
-		AbstractReader<?> reader = this.readerDAO.getReaderByID(readerID);
+		AbstractSensor<?> reader = this.readerDAO.getReaderByID(readerID);
 		if (reader != null) {
 			ReaderSession session = reader.getReaderSessions().get(sessionID);
 			if (session != null) {
@@ -284,7 +284,7 @@ public class ReaderConfigurationStubImpl implements ReaderStub {
 	public void killCommand(String readerID, String sessionID, Integer processID)
 			throws RemoteException {
 		logger.debug("RMI call: killCommand");
-		AbstractReader<?> reader = readerDAO.getReaderByID(readerID);
+		AbstractSensor<?> reader = readerDAO.getReaderByID(readerID);
 		if (reader == null) {
 			logger.warn("No reader with ID " + readerID + " is available");
 			return;
@@ -324,7 +324,7 @@ public class ReaderConfigurationStubImpl implements ReaderStub {
 			 */
 			@Override
 			public void run() {
-				AbstractReader<?> reader = readerDAO
+				AbstractSensor<?> reader = readerDAO
 						.getReaderByID(finalReaderID);
 				if (reader == null) {
 					logger.warn("No reader with ID " + finalReaderID
@@ -368,7 +368,7 @@ public class ReaderConfigurationStubImpl implements ReaderStub {
 	public void stopSession(String readerID, String sessionID)
 			throws RemoteException {
 		logger.debug("RMI call: stopSession");
-		AbstractReader<?> reader = readerDAO.getReaderByID(readerID);
+		AbstractSensor<?> reader = readerDAO.getReaderByID(readerID);
 		if (reader == null) {
 			logger.warn("No reader with ID " + readerID + " is available");
 			return;
@@ -429,7 +429,7 @@ public class ReaderConfigurationStubImpl implements ReaderStub {
 	private Integer submit(String readerID, String sessionID, String commandID,
 			Long repeatInterval, TimeUnit timeUnit)
 			throws CommandSubmissionException {
-		AbstractReader<?> reader = readerDAO.getReaderByID(readerID);
+		AbstractSensor<?> reader = readerDAO.getReaderByID(readerID);
 		if (reader == null) {
 			String error = "No reader with ID " + readerID + " is available";
 			logger.warn(error);
@@ -489,7 +489,7 @@ public class ReaderConfigurationStubImpl implements ReaderStub {
 		logger.debug("RMI call: setReaderProperties");
 		Configuration config = configurationService
 				.getConfiguration(readerConfigurationID);
-		AbstractReader<?> reader = readerDAO
+		AbstractSensor<?> reader = readerDAO
 				.getReaderByID(readerConfigurationID);
 		if ((config != null) && (reader != null)) {
 			config.setAttributes(readerConfigurationProperties);

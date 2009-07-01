@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.rifidi.edge.core.readers;
+package org.rifidi.edge.core.sensors.messages;
 
 /**
  * A wrapper around a byte array for sending and receiving messages to and from

@@ -11,7 +11,7 @@ import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.rifidi.edge.core.readers.AbstractReader;
+import org.rifidi.edge.core.sensors.base.AbstractSensor;
 import org.rifidi.edge.core.services.esper.EsperManagementService;
 import org.rifidi.edge.epcglobal.ale.api.lr.data.LRProperty;
 import org.rifidi.edge.epcglobal.ale.api.lr.data.LRSpec;
@@ -185,7 +185,7 @@ public class LogicalReaderManagementServiceImpl implements
 	/**
 	 * Register a new physical reader.
 	 */
-	public void bindReader(AbstractReader<?> reader,
+	public void bindReader(AbstractSensor<?> reader,
 			Dictionary<Object, Object> props) {
 		logger.debug("Binding reader " + reader.getID());
 		synchronized (this.readers) {
@@ -201,7 +201,7 @@ public class LogicalReaderManagementServiceImpl implements
 	/**
 	 * Unregister a physical reader.
 	 */
-	public void unbindReader(AbstractReader<?> reader,
+	public void unbindReader(AbstractSensor<?> reader,
 			Dictionary<Object, Object> props) {
 		logger.debug("Unbinding reader " + reader.getID());
 		synchronized (this.readers) {
@@ -219,9 +219,9 @@ public class LogicalReaderManagementServiceImpl implements
 	 * 
 	 * @param readers
 	 */
-	public void setRealReaders(Set<AbstractReader<?>> readers) {
+	public void setRealReaders(Set<AbstractSensor<?>> readers) {
 		synchronized (this.readers) {
-			for (AbstractReader<?> reader : readers) {
+			for (AbstractSensor<?> reader : readers) {
 				bindReader(reader, null);
 			}
 		}

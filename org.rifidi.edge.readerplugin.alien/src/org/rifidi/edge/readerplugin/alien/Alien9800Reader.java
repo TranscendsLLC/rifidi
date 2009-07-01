@@ -15,8 +15,8 @@ import org.rifidi.configuration.annotations.JMXMBean;
 import org.rifidi.configuration.annotations.Operation;
 import org.rifidi.configuration.annotations.Property;
 import org.rifidi.configuration.annotations.PropertyType;
-import org.rifidi.edge.core.readers.AbstractReader;
-import org.rifidi.edge.core.readers.ReaderSession;
+import org.rifidi.edge.core.sensors.ReaderSession;
+import org.rifidi.edge.core.sensors.base.AbstractSensor;
 import org.rifidi.edge.core.services.notification.NotifierService;
 import org.rifidi.edge.readerplugin.alien.commandobject.AlienCommandObjectWrapper;
 import org.rifidi.edge.readerplugin.alien.commandobject.AlienGetCommandObject;
@@ -31,7 +31,7 @@ import org.springframework.jms.core.JmsTemplate;
  * 
  */
 @JMXMBean
-public class Alien9800Reader extends AbstractReader<Alien9800ReaderSession> {
+public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 	/** Logger for this class. */
 	private Log logger = LogFactory.getLog(Alien9800Reader.class);
 	/** The only session an alien reader allows. */

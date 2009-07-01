@@ -22,7 +22,7 @@
 		interface="org.rifidi.edge.core.services.notification.NotifierService" />
 
 	<!-- Listener for Reader Configurations -->
-	<osgi:set id="readerSet" interface="org.rifidi.edge.core.readers.AbstractReader"
+	<osgi:set id="readerSet" interface="org.rifidi.edge.core.sensors.base.AbstractSensor"
 		cardinality="0..N">
 		<osgi:listener ref="ReaderDAOImpl" bind-method="bindReader"
 			unbind-method="unbindReader" />
@@ -30,7 +30,7 @@
 
 	<!-- Listener for Reader Configuration Factories -->
 	<osgi:set id="readerFactoriesSet"
-		interface="org.rifidi.edge.core.readers.AbstractReaderFactory"
+		interface="org.rifidi.edge.core.sensors.base.AbstractSensorFactory"
 		cardinality="0..N">
 		<osgi:listener ref="ReaderDAOImpl" bind-method="bindReaderFactory"
 			unbind-method="unbindReaderFactory" />
@@ -38,14 +38,14 @@
 
 	<!-- Listener for Command Configurations -->
 	<osgi:set id="commandSet"
-		interface="org.rifidi.edge.core.commands.AbstractCommandConfiguration"
+		interface="org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration"
 		cardinality="0..N">
 		<osgi:listener ref="CommandDAOImpl" bind-method="bindCommand"
 			unbind-method="unbindCommand" />
 	</osgi:set>
 
 	<osgi:set id="commandFactoriesSet"
-		interface="org.rifidi.edge.core.commands.AbstractCommandConfigurationFactory"
+		interface="org.rifidi.edge.core.sensors.commands.AbstractCommandConfigurationFactory"
 		cardinality="0..N">
 		<osgi:listener ref="CommandDAOImpl" bind-method="bindCommandFactory"
 			unbind-method="unbindCommandFactory" />

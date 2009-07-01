@@ -2,8 +2,8 @@ package org.rifidi.edge.core.daos;
 
 import java.util.Set;
 
-import org.rifidi.edge.core.commands.AbstractCommandConfiguration;
-import org.rifidi.edge.core.commands.AbstractCommandConfigurationFactory;
+import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
+import org.rifidi.edge.core.sensors.commands.AbstractCommandConfigurationFactory;
 
 /**
  * Interface for Data Access Object that helps access objects for managing

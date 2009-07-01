@@ -2,8 +2,8 @@ package org.rifidi.edge.core.daos;
 
 import java.util.Set;
 
-import org.rifidi.edge.core.readers.AbstractReader;
-import org.rifidi.edge.core.readers.AbstractReaderFactory;
+import org.rifidi.edge.core.sensors.base.AbstractSensor;
+import org.rifidi.edge.core.sensors.base.AbstractSensorFactory;
 
 /**
  * Interface for Data Access Objects used to access reader objects
@@ -16,7 +16,7 @@ public interface ReaderDAO {
 	 * 
 	 * @return
 	 */
-	Set<AbstractReader<?>> getReaders();
+	Set<AbstractSensor<?>> getReaders();
 
 	/**
 	 * Get a certain reader by its id.
@@ -24,14 +24,14 @@ public interface ReaderDAO {
 	 * @param id
 	 * @return
 	 */
-	AbstractReader<?> getReaderByID(String id);
+	AbstractSensor<?> getReaderByID(String id);
 
 	/**
 	 * Get all factories currently available.
 	 * 
 	 * @return
 	 */
-	Set<AbstractReaderFactory<?>> getReaderFactories();
+	Set<AbstractSensorFactory<?>> getReaderFactories();
 
 	/**
 	 * Get a factory by its id.
@@ -39,5 +39,5 @@ public interface ReaderDAO {
 	 * @param id
 	 * @return
 	 */
-	AbstractReaderFactory<?> getReaderFactoryByID(String id);
+	AbstractSensorFactory<?> getReaderFactoryByID(String id);
 }

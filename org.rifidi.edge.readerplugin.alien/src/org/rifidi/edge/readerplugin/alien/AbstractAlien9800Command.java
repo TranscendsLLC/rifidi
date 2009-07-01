@@ -3,7 +3,7 @@
  */
 package org.rifidi.edge.readerplugin.alien;
 
-import org.rifidi.edge.core.commands.Command;
+import org.rifidi.edge.core.sensors.commands.Command;
 
 /**
  * A superclass for use by commands for the Alien9800 Reader
