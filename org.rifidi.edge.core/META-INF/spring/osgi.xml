@@ -5,13 +5,14 @@
      http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi.xsd">
 
 	<!-- Exported Services -->
-
 	<osgi:service id="ReaderDAOBinding" interface="org.rifidi.edge.core.daos.ReaderDAO"
 		ref="ReaderDAOImpl" />
+	<osgi:service id="SensorManagementBinding"
+		interface="org.rifidi.edge.core.sensors.management.SensorManagementService"
+		ref="SensorManagement" />
 	<!-- Bind the CommandDAO as an OSGi Service. -->
 	<osgi:service id="CommandDAOBinding" interface="org.rifidi.edge.core.daos.CommandDAO"
 		ref="CommandDAOImpl" />
-
 
 	<!-- Imported Services -->
 
@@ -22,7 +23,8 @@
 		interface="org.rifidi.edge.core.services.notification.NotifierService" />
 
 	<!-- Listener for Reader Configurations -->
-	<osgi:set id="readerSet" interface="org.rifidi.edge.core.sensors.base.AbstractSensor"
+	<osgi:set id="readerSet"
+		interface="org.rifidi.edge.core.sensors.base.AbstractSensor"
 		cardinality="0..N">
 		<osgi:listener ref="ReaderDAOImpl" bind-method="bindReader"
 			unbind-method="unbindReader" />

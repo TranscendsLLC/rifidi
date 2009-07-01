@@ -17,4 +17,9 @@
 		<property name="notifierService" ref="JMSNotifierService" />
 	</bean>
 
+	<!-- Create Logical Reader management Service -->
+	<bean id="SensorManagement" class="org.rifidi.edge.core.sensors.management.impl.SensorManagementServiceImpl">
+		<property name="reader" ref="readerSet" />
+	</bean>
+
 </beans>
