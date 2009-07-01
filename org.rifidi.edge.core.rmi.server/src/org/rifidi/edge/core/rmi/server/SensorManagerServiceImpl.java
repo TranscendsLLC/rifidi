@@ -1,7 +1,6 @@
 package org.rifidi.edge.core.rmi.server;
 
 import java.io.IOException;
-import java.rmi.RemoteException;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -13,11 +12,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.configuration.Configuration;
 import org.rifidi.configuration.services.ConfigurationService;
-import org.rifidi.edge.api.rmi.ReaderStub;
 import org.rifidi.edge.api.rmi.dto.ReaderDTO;
 import org.rifidi.edge.api.rmi.dto.ReaderFactoryDTO;
 import org.rifidi.edge.api.rmi.dto.SessionDTO;
 import org.rifidi.edge.api.rmi.exceptions.CommandSubmissionException;
+import org.rifidi.edge.api.rmi.services.SensorManagerService;
 import org.rifidi.edge.core.daos.CommandDAO;
 import org.rifidi.edge.core.daos.ReaderDAO;
 import org.rifidi.edge.core.sensors.SensorSession;
@@ -31,7 +30,7 @@ import org.rifidi.edge.core.sensors.commands.Command;
  * 
  * @author kyle
  */
-public class ReaderConfigurationStubImpl implements ReaderStub {
+public class SensorManagerServiceImpl implements SensorManagerService {
 
 	/** A data access object for the sensorSession configuration services */
 	private ReaderDAO readerDAO;
@@ -41,7 +40,7 @@ public class ReaderConfigurationStubImpl implements ReaderStub {
 	private CommandDAO commandDAO;
 	/** A logger for this class */
 	private static final Log logger = LogFactory
-			.getLog(ReaderConfigurationStubImpl.class);
+			.getLog(SensorManagerServiceImpl.class);
 
 	/*
 	 * (non-Javadoc)
@@ -51,7 +50,7 @@ public class ReaderConfigurationStubImpl implements ReaderStub {
 	 */
 	@Override
 	public String createReader(String readerConfigurationFactoryID,
-			AttributeList readerConfigurationProperties) throws RemoteException {
+			AttributeList readerConfigurationProperties) {
 		logger.debug("RMI call: createReader");
 
 		// get the sensorSession configuration factory that corresponds to the
@@ -80,8 +79,7 @@ public class ReaderConfigurationStubImpl implements ReaderStub {
 	 * (java.lang.String)
 	 */
 	@Override
-	public void deleteReader(String readerConfigurationID)
-			throws RemoteException {
+	public void deleteReader(String readerConfigurationID) {
 		logger.debug("RMI call: deleteReader");
 		Configuration config = configurationService
 				.getConfiguration(readerConfigurationID);
@@ -110,7 +108,7 @@ public class ReaderConfigurationStubImpl implements ReaderStub {
 	 * getAvailableReaderConfigurationFactories()
 	 */
 	@Override
-	public Set<ReaderFactoryDTO> getReaderFactories() throws RemoteException {
+	public Set<ReaderFactoryDTO> getReaderFactories() {
 		logger.debug("RMI call: getReaderFactories");
 		Set<ReaderFactoryDTO> retVal = new HashSet<ReaderFactoryDTO>();
 		for (AbstractSensorFactory<?> factory : this.readerDAO
@@ -123,13 +121,11 @@ public class ReaderConfigurationStubImpl implements ReaderStub {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.rifidi.edge.api.rmi.ReaderStub#getReaderFactory(java.lang.String
+	 * @see org.rifidi.edge.api.rmi.ReaderStub#getReaderFactory(java.lang.String
 	 * )
 	 */
 	@Override
-	public ReaderFactoryDTO getReaderFactory(String readerFactoryID)
-			throws RemoteException {
+	public ReaderFactoryDTO getReaderFactory(String readerFactoryID) {
 		logger.debug("RMI call: getReaderFactory");
 		AbstractSensorFactory<?> factory = this.readerDAO
 				.getReaderFactoryByID(readerFactoryID);
@@ -146,7 +142,7 @@ public class ReaderConfigurationStubImpl implements ReaderStub {
 	 * getAvailableReaderConfigurations()
 	 */
 	@Override
-	public Set<ReaderDTO> getReaders() throws RemoteException {
+	public Set<ReaderDTO> getReaders() {
 		logger.debug("RMI call: getReaders");
 		Set<ReaderDTO> retVal = new HashSet<ReaderDTO>();
 
@@ -157,7 +153,8 @@ public class ReaderConfigurationStubImpl implements ReaderStub {
 			String readerID = readerConfig.getID();
 			// look up the associated service configuration object for the
 			// sensorSession configuration
-			Configuration config = configurationService.getConfiguration(readerID);
+			Configuration config = configurationService
+					.getConfiguration(readerID);
 			if (config == null) {
 				logger.debug("No Configuration Object with ID " + readerID
 						+ " is available");
@@ -176,8 +173,7 @@ public class ReaderConfigurationStubImpl implements ReaderStub {
 	 * getReaderConfigurationDescription(java.lang.String)
 	 */
 	@Override
-	public MBeanInfo getReaderDescription(String readerConfigurationFactoryID)
-			throws RemoteException {
+	public MBeanInfo getReaderDescription(String readerConfigurationFactoryID) {
 		logger.debug("RMI call: getReaderDescription");
 		AbstractSensorFactory<?> configFactory = readerDAO
 				.getReaderFactoryByID(readerConfigurationFactoryID);
@@ -199,8 +195,7 @@ public class ReaderConfigurationStubImpl implements ReaderStub {
 	 * getReaderConfigurationProperties(java.lang.String)
 	 */
 	@Override
-	public ReaderDTO getReader(String readerConfigurationID)
-			throws RemoteException {
+	public ReaderDTO getReader(String readerConfigurationID) {
 		logger.debug("RMI call: getReader");
 		Configuration config = configurationService
 				.getConfiguration(readerConfigurationID);
@@ -223,8 +218,7 @@ public class ReaderConfigurationStubImpl implements ReaderStub {
 	 * java.lang.String)
 	 */
 	@Override
-	public SessionDTO getSession(String readerID, String sessionID)
-			throws RemoteException {
+	public SessionDTO getSession(String readerID, String sessionID) {
 		AbstractSensor<?> reader = this.readerDAO.getReaderByID(readerID);
 		if (reader != null) {
 			SensorSession session = reader.getReaderSessions().get(sessionID);
@@ -238,12 +232,10 @@ public class ReaderConfigurationStubImpl implements ReaderStub {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.rifidi.edge.api.rmi.ReaderStub#createSession(java.lang.String)
+	 * @see org.rifidi.edge.api.rmi.ReaderStub#createSession(java.lang.String)
 	 */
 	@Override
-	public Set<SessionDTO> createSession(String readerID)
-			throws RemoteException {
+	public Set<SessionDTO> createSession(String readerID) {
 		logger.debug("RMI call: createSession");
 		AbstractSensor<?> reader = this.readerDAO.getReaderByID(readerID);
 		if (reader == null) {
@@ -260,8 +252,7 @@ public class ReaderConfigurationStubImpl implements ReaderStub {
 	}
 
 	@Override
-	public void deleteSession(String readerID, String sessionID)
-			throws RemoteException {
+	public void deleteSession(String readerID, String sessionID) {
 		logger.debug("RMI call: deleteSession");
 		AbstractSensor<?> reader = this.readerDAO.getReaderByID(readerID);
 		if (reader != null) {
@@ -276,13 +267,11 @@ public class ReaderConfigurationStubImpl implements ReaderStub {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.rifidi.edge.api.rmi.ReaderStub#killCommand(java.lang.String,
+	 * @see org.rifidi.edge.api.rmi.ReaderStub#killCommand(java.lang.String,
 	 * java.lang.String, java.lang.String)
 	 */
 	@Override
-	public void killCommand(String readerID, String sessionID, Integer processID)
-			throws RemoteException {
+	public void killCommand(String readerID, String sessionID, Integer processID) {
 		logger.debug("RMI call: killCommand");
 		AbstractSensor<?> reader = readerDAO.getReaderByID(readerID);
 		if (reader == null) {
@@ -304,13 +293,11 @@ public class ReaderConfigurationStubImpl implements ReaderStub {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.rifidi.edge.api.rmi.ReaderStub#startSession(java.lang.String,
+	 * @see org.rifidi.edge.api.rmi.ReaderStub#startSession(java.lang.String,
 	 * java.lang.String)
 	 */
 	@Override
-	public void startSession(String readerID, String sessionID)
-			throws RemoteException {
+	public void startSession(String readerID, String sessionID) {
 		logger.debug("RMI call: startSession");
 		final String finalReaderID = readerID;
 		final String finalSessionIndex = sessionID;
@@ -360,13 +347,11 @@ public class ReaderConfigurationStubImpl implements ReaderStub {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.rifidi.edge.api.rmi.ReaderStub#stopSession(java.lang.String,
+	 * @see org.rifidi.edge.api.rmi.ReaderStub#stopSession(java.lang.String,
 	 * java.lang.String)
 	 */
 	@Override
-	public void stopSession(String readerID, String sessionID)
-			throws RemoteException {
+	public void stopSession(String readerID, String sessionID) {
 		logger.debug("RMI call: stopSession");
 		AbstractSensor<?> reader = readerDAO.getReaderByID(readerID);
 		if (reader == null) {
@@ -387,23 +372,21 @@ public class ReaderConfigurationStubImpl implements ReaderStub {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.rifidi.edge.api.rmi.ReaderStub#submitCommand(java.lang.String,
+	 * @see org.rifidi.edge.api.rmi.ReaderStub#submitCommand(java.lang.String,
 	 * java.lang.String, java.lang.String, java.lang.Long,
 	 * java.util.concurrent.TimeUnit)
 	 */
 	@Override
 	public Integer submitCommand(String readerID, String sessionID,
 			String commandID, Long repeatInterval, TimeUnit timeUnit)
-			throws RemoteException, CommandSubmissionException {
+			throws CommandSubmissionException {
 		logger.debug("RMI call: submitCommand");
 		return submit(readerID, sessionID, commandID, repeatInterval, timeUnit);
 	}
 
 	@Override
 	public void submitSingleShotCommand(String readerID, String sessionID,
-			String commandID) throws RemoteException,
-			CommandSubmissionException {
+			String commandID) throws CommandSubmissionException {
 		logger.debug("RMI call: submitSingleShotCommand");
 		submit(readerID, sessionID, commandID, null, null);
 
@@ -485,7 +468,7 @@ public class ReaderConfigurationStubImpl implements ReaderStub {
 	 */
 	@Override
 	public void setReaderProperties(String readerConfigurationID,
-			AttributeList readerConfigurationProperties) throws RemoteException {
+			AttributeList readerConfigurationProperties) {
 		logger.debug("RMI call: setReaderProperties");
 		Configuration config = configurationService
 				.getConfiguration(readerConfigurationID);
@@ -509,11 +492,13 @@ public class ReaderConfigurationStubImpl implements ReaderStub {
 	public void setReaderDAO(ReaderDAO readerConfigDAO) {
 		this.readerDAO = readerConfigDAO;
 	}
-	
+
 	/**
-	 * @param configurationService the configurationService to set
+	 * @param configurationService
+	 *            the configurationService to set
 	 */
-	public void setConfigurationService(ConfigurationService configurationService) {
+	public void setConfigurationService(
+			ConfigurationService configurationService) {
 		this.configurationService = configurationService;
 	}
 

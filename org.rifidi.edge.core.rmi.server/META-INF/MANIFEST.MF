@@ -5,9 +5,23 @@ Bundle-SymbolicName: org.rifidi.edge.core.rmi.server
 Bundle-Version: 1.1.0
 Bundle-Vendor: Pramari, LLC
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Import-Package: org.apache.commons.logging;version="1.1.1",
- org.springframework.beans.factory.config;version="2.5.5",
- org.springframework.remoting.rmi;version="2.5.5"
+Import-Package: org.aopalliance.aop;version="1.0.0",
+ org.aopalliance.intercept;version="1.0.0",
+ org.apache.commons.logging;version="1.1.1",
+ org.springframework.osgi.context;version="1.1.2",
+ org.springframework.osgi.service.importer.support;version="1.1.2",
+ org.springframework.security;version="2.0.4",
+ org.springframework.security.config;version="2.0.4",
+ org.springframework.security.intercept;version="2.0.4",
+ org.springframework.security.intercept.method.aopalliance;version="2.0.4",
+ org.springframework.security.providers;version="2.0.4",
+ org.springframework.security.providers.dao;version="2.0.4",
+ org.springframework.security.userdetails;version="2.0.4",
+ org.springframework.security.userdetails.memory;version="2.0.4",
+ org.springframework.security.vote;version="2.0.4"
 Require-Bundle: org.rifidi.configuration;bundle-version="1.0.0",
  org.rifidi.edge.api;bundle-version="1.1.1",
- org.rifidi.edge.core;bundle-version="5.0.1"
+ org.rifidi.edge.core;bundle-version="5.0.1",
+ org.rifidi.org.springframework.bundle.spring;bundle-version="2.5.5",
+ com.springsource.org.aspectj.weaver;bundle-version="1.6.5"
+
