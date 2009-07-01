@@ -3,6 +3,7 @@ package org.rifidi.edge.core.sensors;
 import java.util.Set;
 
 import org.rifidi.edge.core.sensors.impl.LogicalSensorImpl;
+import org.rifidi.edge.core.services.notification.data.TagReadEvent;
 
 public interface LogicalSensor extends PhysicalSensor {
 
@@ -12,7 +13,7 @@ public interface LogicalSensor extends PhysicalSensor {
 	 * 
 	 * @param tagReads
 	 */
-	void send(Set<TagRead> tagReads);
+	void send(Set<TagReadEvent> tagReads);
 
 	/**
 	 * Add a new sensor to the list of connectedSensors that form this sensor.

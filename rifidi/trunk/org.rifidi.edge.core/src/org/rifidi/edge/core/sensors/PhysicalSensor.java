@@ -5,6 +5,7 @@ import java.util.Set;
 import org.rifidi.edge.core.sensors.exceptions.DuplicateSubscriptionException;
 import org.rifidi.edge.core.sensors.exceptions.NotSubscribedException;
 import org.rifidi.edge.core.sensors.impl.LogicalSensorImpl;
+import org.rifidi.edge.core.services.notification.data.TagReadEvent;
 
 public interface PhysicalSensor {
 
@@ -14,7 +15,7 @@ public interface PhysicalSensor {
 	 * @param receiver
 	 * @return
 	 */
-	Set<TagRead> receive(Object receiver);
+	Set<TagReadEvent> receive(Object receiver);
 
 	/**
 	 * Subscribe an object as a receiver for tag reads.
