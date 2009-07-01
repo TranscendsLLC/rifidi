@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Rifidi RMI Proxy Cache
-Bundle-SymbolicName: org.rifidi.rmi.proxycache
+Bundle-SymbolicName: org.rifidi.edge.client.rmi.proxycache
 Bundle-Version: 1.0.0
 Bundle-Vendor: Pramari, LLC
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
