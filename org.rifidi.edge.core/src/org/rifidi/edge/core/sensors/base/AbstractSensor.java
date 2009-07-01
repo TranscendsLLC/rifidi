@@ -38,6 +38,7 @@ public abstract class AbstractSensor<T extends SensorSession> extends
 		RifidiService implements PhysicalSensor {
 	/** Sensors connected to this connectedSensors. */
 	protected Set<LogicalSensorImpl> connectedSensors;
+	
 	/**
 	 * Receivers are objects that need to gather tag reads. The tag reads are
 	 * stored in a queue.
@@ -191,4 +192,14 @@ public abstract class AbstractSensor<T extends SensorSession> extends
 		ReaderDTO dto = new ReaderDTO(readerID, factoryID, attrs, sessionDTOs);
 		return dto;
 	}
+
+	/* (non-Javadoc)
+	 * @see org.rifidi.configuration.RifidiService#destroy()
+	 */
+	@Override
+	public void destroy() {
+		connectedSensors.clear();
+	}
+	
+	
 }
