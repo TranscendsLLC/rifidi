@@ -15,4 +15,5 @@ Import-Package: org.osgi.framework;version="1.4.0",
  org.springframework.security.providers;version="2.0.4"
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: org.rifidi.rmi.proxycache.Activator
-Export-Package: org.rifidi.rmi.proxycache.cache
+Export-Package: org.rifidi.rmi.proxycache.cache,
+ org.rifidi.rmi.proxycache.exceptions
