@@ -7,6 +7,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.rifidi.edge.api.SessionStatus;
 import org.rifidi.edge.api.rmi.dto.SessionDTO;
+import org.rifidi.edge.core.sensors.base.AbstractSensor;
 import org.rifidi.edge.core.sensors.commands.Command;
 
 /**
@@ -18,14 +19,17 @@ public abstract class SensorSession {
 
 	/** The ID for this session */
 	private String ID;
-
+	/** The sensor this session is associated with. */
+	protected AbstractSensor<?> sensor;
 	/**
 	 * Constructor.
 	 * 
 	 * @param ID
+	 * @param sensor
 	 */
-	public SensorSession(String ID) {
+	public SensorSession(String ID, AbstractSensor<?> sensor) {
 		this.ID = ID;
+		this.sensor=sensor;
 	}
 
 	/**
@@ -107,4 +111,12 @@ public abstract class SensorSession {
 	public String getID() {
 		return this.ID;
 	}
+
+	/**
+	 * @return the sensor
+	 */
+	public AbstractSensor<?> getSensor() {
+		return sensor;
+	}
+	
 }

@@ -168,7 +168,7 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 	public synchronized SensorSession createReaderSession() {
 		if (session == null) {
 			sessionID++;
-			session = new Alien9800ReaderSession(Integer.toString(sessionID),
+			session = new Alien9800ReaderSession(this, Integer.toString(sessionID),
 					ipAddress, port, (int) (long) reconnectionInterval,
 					maxNumConnectionAttempts, username, password, template,
 					notifierService, this.getID());

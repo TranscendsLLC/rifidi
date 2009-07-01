@@ -28,7 +28,8 @@ import org.rifidi.edge.core.services.notification.NotifierService;
 import org.springframework.jms.core.JmsTemplate;
 
 /**
- * This class represents an LLRP reader.  It handles the session and sets up the properties.  
+ * This class represents an LLRP reader. It handles the session and sets up the
+ * properties.
  * 
  * @author Matthew Dean
  */
@@ -74,7 +75,7 @@ public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 		logger.debug("creating the reader session");
 		if (session == null) {
 			sessionID++;
-			session = new LLRPReaderSession(Integer.toString(sessionID),
+			session = new LLRPReaderSession(this, Integer.toString(sessionID),
 					ipAddress, (int) (long) reconnectionInterval,
 					maxNumConnectionAttempts, destination, template,
 					notifyServiceWrapper, super.getID());
@@ -91,7 +92,7 @@ public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 	}
 
 	/***
-	 * Set the wrapper for the Notify Service.  
+	 * Set the wrapper for the Notify Service.
 	 * 
 	 * @param wrapper
 	 *            The JMS Notifier to set
@@ -150,7 +151,7 @@ public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 	}
 
 	/**
-	 * Returns the IP address of the reader.  
+	 * Returns the IP address of the reader.
 	 * 
 	 * @return the ipAddress
 	 */
@@ -162,7 +163,7 @@ public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 	}
 
 	/**
-	 * Sets the IP address of the reader.  
+	 * Sets the IP address of the reader.
 	 * 
 	 * @param ipAddress
 	 *            the ipAddress to set
@@ -172,7 +173,7 @@ public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 	}
 
 	/**
-	 * Gets the port.  
+	 * Gets the port.
 	 * 
 	 * @return the port
 	 */
@@ -183,7 +184,7 @@ public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 	}
 
 	/**
-	 * Sets the port.  
+	 * Sets the port.
 	 * 
 	 * @param port
 	 *            the port to set
@@ -193,7 +194,7 @@ public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 	}
 
 	/**
-	 * Gets the reconnect interval.  
+	 * Gets the reconnect interval.
 	 * 
 	 * @return the reconnectionInterval
 	 */
@@ -205,7 +206,7 @@ public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 	}
 
 	/**
-	 * Sets the reconnect interval.  
+	 * Sets the reconnect interval.
 	 * 
 	 * @param reconnectionInterval
 	 *            the reconnectionInterval to set
@@ -215,7 +216,7 @@ public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 	}
 
 	/**
-	 * Gets the number of connection attempts to try before giving up.  
+	 * Gets the number of connection attempts to try before giving up.
 	 * 
 	 * @return the maxNumConnectionAttempts
 	 */
@@ -227,7 +228,7 @@ public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 	}
 
 	/**
-	 * Sets the number of connection attempts to try before giving up.  
+	 * Sets the number of connection attempts to try before giving up.
 	 * 
 	 * @param maxNumConnectionAttempts
 	 *            the maxNumConnectionAttempts to set
@@ -237,7 +238,7 @@ public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 	}
 
 	/**
-	 * Sets the JMS destination.  
+	 * Sets the JMS destination.
 	 * 
 	 * @param destination
 	 *            the destination to set
@@ -247,7 +248,7 @@ public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 	}
 
 	/**
-	 * Sets the JMS template.  
+	 * Sets the JMS template.
 	 * 
 	 * @param template
 	 *            the template to set
@@ -257,7 +258,7 @@ public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 	}
 
 	/**
-	 * Gets the properties for the reader.  
+	 * Gets the properties for the reader.
 	 * 
 	 * @return the readerProperties
 	 */
@@ -267,6 +268,7 @@ public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.rifidi.configuration.RifidiService#destroy()
 	 */
 	@Override
