@@ -4,7 +4,8 @@ import javax.management.AttributeList;
 
 import org.rifidi.edge.client.model.sal.commands.RemoteEdgeServerCommand;
 import org.rifidi.edge.core.rmi.client.commandconfigurationstub.CCSetCommandConfigProperties;
-import org.rifidi.rmi.utils.exceptions.ServerUnavailable;
+import org.rifidi.rmi.proxycache.exceptions.AuthenticationException;
+import org.rifidi.rmi.proxycache.exceptions.ServerUnavailable;
 
 /**
  * A command that commits property changes to a CommandConfiguration
@@ -55,6 +56,8 @@ public class Command_SynchCommandConfigPropertyChanges implements
 			setProperties.makeCall();
 		} catch (ServerUnavailable su) {
 			server.disconnect();
+		} catch (AuthenticationException e) {
+			server.handleAuthenticationException(e);
 		}
 
 	}
@@ -67,7 +70,7 @@ public class Command_SynchCommandConfigPropertyChanges implements
 	 */
 	@Override
 	public void executeEclipse() {
-		//DO NOTHING
+		// DO NOTHING
 	}
 
 	/*

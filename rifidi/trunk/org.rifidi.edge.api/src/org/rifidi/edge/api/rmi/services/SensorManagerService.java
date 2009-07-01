@@ -1,6 +1,5 @@
-package org.rifidi.edge.api.rmi;
+package org.rifidi.edge.api.rmi.services;
 
-import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -19,14 +18,14 @@ import org.rifidi.edge.api.rmi.exceptions.CommandSubmissionException;
  * 
  * @author Kyle Neumeier - kyle@pramari.com
  */
-public interface ReaderStub extends Remote {
+public interface SensorManagerService {
 
 	/**
 	 * These are the ReaderFactories that are available on the server
 	 * 
 	 * @return a list of IDs of ReaderFactories that are currently available
 	 */
-	Set<ReaderFactoryDTO> getReaderFactories() throws RemoteException;
+	Set<ReaderFactoryDTO> getReaderFactories();
 
 	/**
 	 * This returns the ReaderFactoryDTO for the given readerFactoryID
@@ -36,8 +35,7 @@ public interface ReaderStub extends Remote {
 	 * @return The DTO for the readerFactory
 	 * @throws RemoteException
 	 */
-	ReaderFactoryDTO getReaderFactory(String readerFactoryID)
-			throws RemoteException;
+	ReaderFactoryDTO getReaderFactory(String readerFactoryID);
 
 	/**
 	 * This method gets the readers that are currently available on the server
@@ -46,7 +44,7 @@ public interface ReaderStub extends Remote {
 	 *         reader for all the currently available readers
 	 * @throws RemoteException
 	 */
-	Set<ReaderDTO> getReaders() throws RemoteException;
+	Set<ReaderDTO> getReaders();
 
 	/**
 	 * Gets a description of a Reader. This will contain the information
@@ -58,8 +56,7 @@ public interface ReaderStub extends Remote {
 	 *         Reader
 	 * @throws RemoteException
 	 */
-	MBeanInfo getReaderDescription(String readerFactoryID)
-			throws RemoteException;
+	MBeanInfo getReaderDescription(String readerFactoryID);
 
 	/**
 	 * Creates a new Reader for the supplied configuration.
@@ -71,8 +68,7 @@ public interface ReaderStub extends Remote {
 	 * @return the ID of the newly created Reader
 	 * @throws RemoteException
 	 */
-	String createReader(String readerFactoryID, AttributeList readerProperties)
-			throws RemoteException;
+	String createReader(String readerFactoryID, AttributeList readerProperties);
 
 	/**
 	 * This method returns the DTO for a particular reader
@@ -82,7 +78,7 @@ public interface ReaderStub extends Remote {
 	 * @return The DTO for a reader
 	 * @throws RemoteException
 	 */
-	ReaderDTO getReader(String readerID) throws RemoteException;
+	ReaderDTO getReader(String readerID);
 
 	/**
 	 * This method is used to update the properties of a Reader. It may contain
@@ -94,8 +90,7 @@ public interface ReaderStub extends Remote {
 	 * @param readerProperties
 	 *            the new properties to set
 	 */
-	void setReaderProperties(String readerID, AttributeList readerProperties)
-			throws RemoteException;
+	void setReaderProperties(String readerID, AttributeList readerProperties);
 
 	/**
 	 * Remove a Reader from the Edge Server
@@ -104,7 +99,7 @@ public interface ReaderStub extends Remote {
 	 *            the ID of the Reader
 	 * @throws RemoteException
 	 */
-	void deleteReader(String readerID) throws RemoteException;
+	void deleteReader(String readerID);
 
 	/**
 	 * Get a session with the given IDs
@@ -116,8 +111,7 @@ public interface ReaderStub extends Remote {
 	 * @return The DTO of the Session
 	 * @throws RemoteException
 	 */
-	SessionDTO getSession(String readerID, String sessionID)
-			throws RemoteException;
+	SessionDTO getSession(String readerID, String sessionID);
 
 	/**
 	 * Create a new session on the reader.
@@ -126,7 +120,7 @@ public interface ReaderStub extends Remote {
 	 *            list of sessions currently on this reader
 	 * @throws RemoteException
 	 */
-	Set<SessionDTO> createSession(String readerID) throws RemoteException;
+	Set<SessionDTO> createSession(String readerID);
 
 	/**
 	 * Delete a reader session
@@ -137,8 +131,7 @@ public interface ReaderStub extends Remote {
 	 *            The session to delete
 	 * @throws RemoteException
 	 */
-	void deleteSession(String readerID, String sessionID)
-			throws RemoteException;
+	void deleteSession(String readerID, String sessionID);
 
 	/**
 	 * Starts a session on the reader
@@ -149,7 +142,7 @@ public interface ReaderStub extends Remote {
 	 *            The session to start
 	 * @throws RemoteException
 	 */
-	void startSession(String readerID, String sessionID) throws RemoteException;
+	void startSession(String readerID, String sessionID);
 
 	/**
 	 * Stops a session
@@ -160,7 +153,7 @@ public interface ReaderStub extends Remote {
 	 *            The session to stop
 	 * @throws RemoteException
 	 */
-	void stopSession(String readerID, String sessionID) throws RemoteException;
+	void stopSession(String readerID, String sessionID);
 
 	/**
 	 * Submit a command for execution on the reader
@@ -180,7 +173,8 @@ public interface ReaderStub extends Remote {
 	 * @return The processID of the submitted command
 	 */
 	Integer submitCommand(String readerID, String sessionID, String commandID,
-			Long repeatInterval, TimeUnit timeUnit) throws RemoteException, CommandSubmissionException;
+			Long repeatInterval, TimeUnit timeUnit)
+			throws CommandSubmissionException;
 
 	/**
 	 * Submit a command to be executed only once on the reader session
@@ -193,8 +187,8 @@ public interface ReaderStub extends Remote {
 	 *            The commad to submit
 	 * @throws RemoteException
 	 */
-	void submitSingleShotCommand(String readerID, String sessionID, String commandID)
-			throws RemoteException, CommandSubmissionException;
+	void submitSingleShotCommand(String readerID, String sessionID,
+			String commandID) throws CommandSubmissionException;
 
 	/**
 	 * Stop a repeated command. The is removed from the executor and will not be
@@ -207,7 +201,6 @@ public interface ReaderStub extends Remote {
 	 * @param processID
 	 *            The command to kill
 	 */
-	void killCommand(String readerID, String sessionID, Integer processID)
-			throws RemoteException;
+	void killCommand(String readerID, String sessionID, Integer processID);
 
 }

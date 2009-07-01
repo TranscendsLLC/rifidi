@@ -1,13 +1,9 @@
-
 package org.rifidi.edge.core.rmi.client.readerconfigurationstub;
-
-import java.rmi.Remote;
-import java.rmi.RemoteException;
 
 import javax.management.MBeanInfo;
 
-import org.rifidi.edge.api.rmi.ReaderStub;
-import org.rifidi.rmi.utils.remotecall.ServerDescriptionBasedRemoteMethodCall;
+import org.rifidi.edge.api.rmi.services.SensorManagerService;
+import org.rifidi.rmi.proxycache.cache.AbstractRMICommandObject;
 
 /**
  * This call gets an MBeanInfo object that describes the Readers that are
@@ -17,7 +13,7 @@ import org.rifidi.rmi.utils.remotecall.ServerDescriptionBasedRemoteMethodCall;
  * @author Kyle Neumeier - kyle@pramari.com
  */
 public class RS_GetReaderDescription extends
-		ServerDescriptionBasedRemoteMethodCall<MBeanInfo, RuntimeException> {
+		AbstractRMICommandObject<MBeanInfo, RuntimeException> {
 
 	/** The supplied readerConfiguraitonFactoryID */
 	private String readerFactoryID;
@@ -39,13 +35,13 @@ public class RS_GetReaderDescription extends
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.rmi.utils.remotecall.AbstractRemoteMethodCall#performRemoteCall
-	 * (java.rmi.Remote)
+	 * org.rifidi.rmi.proxycache.cache.AbstractRMICommandObject#performRemoteCall
+	 * (java.lang.Object)
 	 */
 	@Override
-	protected MBeanInfo performRemoteCall(Remote remoteObject)
-			throws RemoteException, RuntimeException {
-		ReaderStub stub = (ReaderStub) remoteObject;
+	protected MBeanInfo performRemoteCall(Object remoteObject)
+			throws RuntimeException {
+		SensorManagerService stub = (SensorManagerService) remoteObject;
 		return stub.getReaderDescription(readerFactoryID);
 	}
 

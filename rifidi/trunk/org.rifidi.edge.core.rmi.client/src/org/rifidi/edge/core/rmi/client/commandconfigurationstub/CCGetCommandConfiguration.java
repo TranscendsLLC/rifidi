@@ -1,11 +1,8 @@
 package org.rifidi.edge.core.rmi.client.commandconfigurationstub;
 
-import java.rmi.Remote;
-import java.rmi.RemoteException;
-
-import org.rifidi.edge.api.rmi.CommandStub;
 import org.rifidi.edge.api.rmi.dto.CommandConfigurationDTO;
-import org.rifidi.rmi.utils.remotecall.ServerDescriptionBasedRemoteMethodCall;
+import org.rifidi.edge.api.rmi.services.CommandManagerService;
+import org.rifidi.rmi.proxycache.cache.AbstractRMICommandObject;
 
 /**
  * This RMI call gets A CommandConfigurationDTO for a certain
@@ -14,9 +11,8 @@ import org.rifidi.rmi.utils.remotecall.ServerDescriptionBasedRemoteMethodCall;
  * 
  * @author Kyle Neumeier - kyle@pramari.com
  */
-public class CCGetCommandConfiguration
-		extends
-		ServerDescriptionBasedRemoteMethodCall<CommandConfigurationDTO, RuntimeException> {
+public class CCGetCommandConfiguration extends
+		AbstractRMICommandObject<CommandConfigurationDTO, RuntimeException> {
 
 	private String commandConfigurationID;
 
@@ -36,13 +32,13 @@ public class CCGetCommandConfiguration
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.rmi.utils.remotecall.AbstractRemoteMethodCall#performRemoteCall
-	 * (java.rmi.Remote)
+	 * org.rifidi.rmi.proxycache.cache.AbstractRMICommandObject#performRemoteCall
+	 * (java.lang.Object)
 	 */
 	@Override
-	protected CommandConfigurationDTO performRemoteCall(Remote remoteObject)
-			throws RemoteException, RuntimeException {
-		CommandStub stub = (CommandStub) remoteObject;
+	protected CommandConfigurationDTO performRemoteCall(Object remoteObject)
+			throws RuntimeException {
+		CommandManagerService stub = (CommandManagerService) remoteObject;
 		return stub.getCommandConfiguration(commandConfigurationID);
 	}
 

@@ -3,12 +3,9 @@
  */
 package org.rifidi.edge.core.rmi.client.readerconfigurationstub;
 
-import java.rmi.Remote;
-import java.rmi.RemoteException;
-
-import org.rifidi.edge.api.rmi.ReaderStub;
 import org.rifidi.edge.api.rmi.exceptions.CommandSubmissionException;
-import org.rifidi.rmi.utils.remotecall.ServerDescriptionBasedRemoteMethodCall;
+import org.rifidi.edge.api.rmi.services.SensorManagerService;
+import org.rifidi.rmi.proxycache.cache.AbstractRMICommandObject;
 
 /**
  * * This command allows you to submit commands to a reader session for a one
@@ -16,9 +13,8 @@ import org.rifidi.rmi.utils.remotecall.ServerDescriptionBasedRemoteMethodCall;
  * there was a problem * @author Kyle Neumeier - kyle@pramari.com
  * 
  */
-public class RS_SubmitSingleShotCommand
-		extends
-		ServerDescriptionBasedRemoteMethodCall<Object, CommandSubmissionException> {
+public class RS_SubmitSingleShotCommand extends
+		AbstractRMICommandObject<Object, CommandSubmissionException> {
 
 	/** The ID of the reader */
 	private String readerID;
@@ -47,10 +43,17 @@ public class RS_SubmitSingleShotCommand
 		this.commandID = commandID;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.rmi.proxycache.cache.AbstractRMICommandObject#performRemoteCall
+	 * (java.lang.Object)
+	 */
 	@Override
-	protected Object performRemoteCall(Remote remoteObject)
-			throws RemoteException, CommandSubmissionException {
-		ReaderStub stub = (ReaderStub) remoteObject;
+	protected Object performRemoteCall(Object remoteObject)
+			throws CommandSubmissionException {
+		SensorManagerService stub = (SensorManagerService) remoteObject;
 		stub.submitSingleShotCommand(readerID, sessionID, commandID);
 		return null;
 	}

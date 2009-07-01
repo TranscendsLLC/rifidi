@@ -1,4 +1,3 @@
-
 package org.rifidi.edge.client.model.sal.preferences;
 
 /**
@@ -18,4 +17,8 @@ public class EdgeServerPreferences {
 	public static final String EDGE_SERVER_JMS_QUEUE_DEFAULT = "org.rifidi.edge.external.notifications";
 	public static final String EDGE_SERVER_JMS_QUEUE_TAGS = "org.rifidi.edge.client.server.jms.tags";
 	public static final String EDGE_SERVER_JMS_QUEUE_TAGS_DEFAULT = "org.rifidi.edge.external.tags";
+	public static final String EDGE_SERVER_RMI_USERNAME = "org.rifidi.edge.client.rmi.username";
+	public static final String EDGE_SERVER_RMI_USERNAME_DEFAULT = "admin";
+	public static final String EDGE_SERVER_RMI_PASSWORD = "org.rifidi.edge.client.rmi.password";
+	public static final String EDGE_SERVER_RMI_PASSWORD_DEFAULT = "admin";
 }

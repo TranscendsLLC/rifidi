@@ -1,4 +1,3 @@
-
 package org.rifidi.edge.client.model.sal;
 
 import java.util.HashMap;
@@ -9,22 +8,23 @@ import javax.management.MBeanInfo;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.rifidi.edge.client.model.sal.commands.RemoteEdgeServerCommand;
-import org.rifidi.edge.client.model.sal.commands.RequestExecuterSingleton;
 import org.rifidi.edge.api.rmi.dto.CommandConfigFactoryDTO;
 import org.rifidi.edge.api.rmi.dto.CommandConfigurationDTO;
 import org.rifidi.edge.api.rmi.dto.ReaderDTO;
 import org.rifidi.edge.api.rmi.dto.ReaderFactoryDTO;
+import org.rifidi.edge.client.model.sal.commands.RemoteEdgeServerCommand;
+import org.rifidi.edge.client.model.sal.commands.RequestExecuterSingleton;
 import org.rifidi.edge.core.rmi.client.commandconfigurationstub.CCGetCommandConfigDescription;
 import org.rifidi.edge.core.rmi.client.commandconfigurationstub.CCGetCommandConfigFactories;
 import org.rifidi.edge.core.rmi.client.commandconfigurationstub.CCGetCommandConfigurations;
 import org.rifidi.edge.core.rmi.client.commandconfigurationstub.CCServerDescription;
-import org.rifidi.edge.core.rmi.client.edgeserverstub.ESGetStartupTimestamp;
+import org.rifidi.edge.core.rmi.client.edgeserverstub.ESMS_GetStartupTimestampCommand;
 import org.rifidi.edge.core.rmi.client.readerconfigurationstub.RS_GetReaderDescription;
 import org.rifidi.edge.core.rmi.client.readerconfigurationstub.RS_GetReaderFactories;
 import org.rifidi.edge.core.rmi.client.readerconfigurationstub.RS_GetReaders;
 import org.rifidi.edge.core.rmi.client.readerconfigurationstub.RS_ServerDescription;
-import org.rifidi.rmi.utils.exceptions.ServerUnavailable;
+import org.rifidi.rmi.proxycache.exceptions.AuthenticationException;
+import org.rifidi.rmi.proxycache.exceptions.ServerUnavailable;
 
 /**
  * A command that gets executed when someone wants to make sure the
@@ -74,7 +74,7 @@ public class Command_Update implements RemoteEdgeServerCommand {
 	public void execute() {
 		try {
 			// first get the timestamp from the server
-			ESGetStartupTimestamp getTimestampCall = new ESGetStartupTimestamp(
+			ESMS_GetStartupTimestampCommand getTimestampCall = new ESMS_GetStartupTimestampCommand(
 					remoteEdgeServer.getESServerDescription());
 			Long timestamp = getTimestampCall.makeCall();
 
@@ -132,6 +132,10 @@ public class Command_Update implements RemoteEdgeServerCommand {
 			logger.debug("Server Unavailable ", e);
 			error = true;
 			remoteEdgeServer.disconnect();
+		} catch (AuthenticationException e) {
+			error = true;
+			remoteEdgeServer.disconnect();
+			remoteEdgeServer.handleAuthenticationException(e);
 		}
 	}
 

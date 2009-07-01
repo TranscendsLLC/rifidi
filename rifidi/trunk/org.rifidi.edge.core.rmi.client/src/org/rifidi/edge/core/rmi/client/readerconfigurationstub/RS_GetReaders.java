@@ -1,13 +1,10 @@
-
 package org.rifidi.edge.core.rmi.client.readerconfigurationstub;
 
-import java.rmi.Remote;
-import java.rmi.RemoteException;
 import java.util.Set;
 
-import org.rifidi.edge.api.rmi.ReaderStub;
 import org.rifidi.edge.api.rmi.dto.ReaderDTO;
-import org.rifidi.rmi.utils.remotecall.ServerDescriptionBasedRemoteMethodCall;
+import org.rifidi.edge.api.rmi.services.SensorManagerService;
+import org.rifidi.rmi.proxycache.cache.AbstractRMICommandObject;
 
 /**
  * This Remote call returns the reader configurations that are available on the
@@ -16,9 +13,8 @@ import org.rifidi.rmi.utils.remotecall.ServerDescriptionBasedRemoteMethodCall;
  * 
  * @author Kyle Neumeier - kyle@pramari.com
  */
-public class RS_GetReaders
-		extends
-		ServerDescriptionBasedRemoteMethodCall<Set<ReaderDTO>, RuntimeException> {
+public class RS_GetReaders extends
+		AbstractRMICommandObject<Set<ReaderDTO>, RuntimeException> {
 
 	/**
 	 * Constructor
@@ -32,12 +28,15 @@ public class RS_GetReaders
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.rifidi.rmi.utils.remotecall.AbstractRemoteMethodCall#performRemoteCall(java.rmi.Remote)
+	 * 
+	 * @see
+	 * org.rifidi.rmi.proxycache.cache.AbstractRMICommandObject#performRemoteCall
+	 * (java.lang.Object)
 	 */
 	@Override
-	protected Set<ReaderDTO> performRemoteCall(Remote remoteObject)
-			throws RemoteException, RuntimeException {
-		ReaderStub stub = (ReaderStub) remoteObject;
+	protected Set<ReaderDTO> performRemoteCall(Object remoteObject)
+			throws RuntimeException {
+		SensorManagerService stub = (SensorManagerService) remoteObject;
 		return stub.getReaders();
 	}
 

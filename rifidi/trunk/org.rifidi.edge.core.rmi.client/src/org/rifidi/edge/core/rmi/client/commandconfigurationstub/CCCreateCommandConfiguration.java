@@ -1,13 +1,10 @@
 
 package org.rifidi.edge.core.rmi.client.commandconfigurationstub;
 
-import java.rmi.Remote;
-import java.rmi.RemoteException;
-
 import javax.management.AttributeList;
 
-import org.rifidi.edge.api.rmi.CommandStub;
-import org.rifidi.rmi.utils.remotecall.ServerDescriptionBasedRemoteMethodCall;
+import org.rifidi.edge.api.rmi.services.CommandManagerService;
+import org.rifidi.rmi.proxycache.cache.AbstractRMICommandObject;
 
 /**
  * Create a new CommandConfiguration. The call returns a String that is the ID
@@ -16,7 +13,7 @@ import org.rifidi.rmi.utils.remotecall.ServerDescriptionBasedRemoteMethodCall;
  * @author Kyle Neumeier - kyle@pramari.com
  */
 public class CCCreateCommandConfiguration extends
-		ServerDescriptionBasedRemoteMethodCall<String, RuntimeException> {
+		AbstractRMICommandObject<String, RuntimeException> {
 
 	/** The type of CommandConfiguration to create */
 	private String commandConfigurationType;
@@ -40,16 +37,17 @@ public class CCCreateCommandConfiguration extends
 		this.commandConfigurationType = comamndConfigurationType;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.rifidi.rmi.utils.remotecall.AbstractRemoteMethodCall#performRemoteCall(java.rmi.Remote)
+	/* (non-Javadoc)
+	 * @see org.rifidi.rmi.proxycache.cache.AbstractRMICommandObject#performRemoteCall(java.lang.Object)
 	 */
 	@Override
-	protected String performRemoteCall(Remote remoteObject)
-			throws RemoteException, RuntimeException {
-		CommandStub stub = (CommandStub) remoteObject;
+	protected String performRemoteCall(Object remoteObject)
+			throws RuntimeException {
+		CommandManagerService stub = (CommandManagerService) remoteObject;
 		return stub.createCommand(commandConfigurationType,
 				this.properties);
 	}
+
+	
 
 }

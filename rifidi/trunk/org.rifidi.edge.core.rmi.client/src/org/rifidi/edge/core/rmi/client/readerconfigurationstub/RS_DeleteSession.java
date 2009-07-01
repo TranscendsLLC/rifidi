@@ -1,11 +1,7 @@
-
 package org.rifidi.edge.core.rmi.client.readerconfigurationstub;
 
-import java.rmi.Remote;
-import java.rmi.RemoteException;
-
-import org.rifidi.edge.api.rmi.ReaderStub;
-import org.rifidi.rmi.utils.remotecall.ServerDescriptionBasedRemoteMethodCall;
+import org.rifidi.edge.api.rmi.services.SensorManagerService;
+import org.rifidi.rmi.proxycache.cache.AbstractRMICommandObject;
 
 /**
  * This command deletes a Reader Session.
@@ -13,7 +9,7 @@ import org.rifidi.rmi.utils.remotecall.ServerDescriptionBasedRemoteMethodCall;
  * @author Kyle Neumeier - kyle@pramari.com
  */
 public class RS_DeleteSession extends
-		ServerDescriptionBasedRemoteMethodCall<Object, RuntimeException> {
+		AbstractRMICommandObject<Object, RuntimeException> {
 
 	/** The ID of the reader */
 	private String readerID;
@@ -40,13 +36,13 @@ public class RS_DeleteSession extends
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.rmi.utils.remotecall.AbstractRemoteMethodCall#performRemoteCall
-	 * (java.rmi.Remote)
+	 * org.rifidi.rmi.proxycache.cache.AbstractRMICommandObject#performRemoteCall
+	 * (java.lang.Object)
 	 */
 	@Override
-	protected Object performRemoteCall(Remote remoteObject)
-			throws RemoteException, RuntimeException {
-		ReaderStub stub = (ReaderStub) remoteObject;
+	protected Object performRemoteCall(Object remoteObject)
+			throws RuntimeException {
+		SensorManagerService stub = (SensorManagerService) remoteObject;
 		stub.deleteSession(readerID, sessionID);
 		return null;
 	}

@@ -15,16 +15,20 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eclipse.core.databinding.observable.map.ObservableMap;
 import org.eclipse.core.databinding.observable.map.WritableMap;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.MessageBox;
+import org.eclipse.swt.widgets.Shell;
 import org.fosstrak.tdt.TDTEngine;
+import org.rifidi.edge.api.rmi.exceptions.CommandSubmissionException;
 import org.rifidi.edge.client.model.SALModelPlugin;
 import org.rifidi.edge.client.model.sal.commands.RequestExecuterSingleton;
 import org.rifidi.edge.client.model.sal.preferences.EdgeServerPreferences;
-import org.rifidi.edge.api.rmi.exceptions.CommandSubmissionException;
 import org.rifidi.edge.core.rmi.client.commandconfigurationstub.CCCreateCommandConfiguration;
 import org.rifidi.edge.core.rmi.client.commandconfigurationstub.CCDeleteCommandConfiguration;
 import org.rifidi.edge.core.rmi.client.commandconfigurationstub.CCServerDescription;
-import org.rifidi.edge.core.rmi.client.edgeserverstub.ESSave;
-import org.rifidi.edge.core.rmi.client.edgeserverstub.ESServerDescription;
+import org.rifidi.edge.core.rmi.client.edgeserverstub.ESMS_SaveCommand;
+import org.rifidi.edge.core.rmi.client.edgeserverstub.ESMS_ServerDescription;
 import org.rifidi.edge.core.rmi.client.readerconfigurationstub.RS_CreateReader;
 import org.rifidi.edge.core.rmi.client.readerconfigurationstub.RS_CreateSession;
 import org.rifidi.edge.core.rmi.client.readerconfigurationstub.RS_DeleteReader;
@@ -35,7 +39,10 @@ import org.rifidi.edge.core.rmi.client.readerconfigurationstub.RS_StartSession;
 import org.rifidi.edge.core.rmi.client.readerconfigurationstub.RS_StopSession;
 import org.rifidi.edge.core.rmi.client.readerconfigurationstub.RS_SubmitCommand;
 import org.rifidi.edge.core.rmi.client.readerconfigurationstub.RS_SubmitSingleShotCommand;
-import org.rifidi.rmi.utils.exceptions.ServerUnavailable;
+import org.rifidi.rmi.proxycache.exceptions.AuthenticationException;
+import org.rifidi.rmi.proxycache.exceptions.ServerUnavailable;
+import org.springframework.security.Authentication;
+import org.springframework.security.providers.UsernamePasswordAuthenticationToken;
 
 /**
  * The Edge Server Model Object
@@ -161,12 +168,15 @@ public class RemoteEdgeServer {
 			return;
 		}
 
-		ESSave saveCommand = new ESSave(getESServerDescription());
+		ESMS_SaveCommand saveCommand = new ESMS_SaveCommand(
+				getESServerDescription());
 		try {
 			saveCommand.makeCall();
 		} catch (ServerUnavailable e) {
 			logger.error("Exception while saving Remote Configuration", e);
 			disconnect();
+		} catch (AuthenticationException e) {
+			handleAuthenticationException(e);
 		}
 
 	}
@@ -190,6 +200,8 @@ public class RemoteEdgeServer {
 		} catch (ServerUnavailable e) {
 			logger.error("Exception while deleting reader", e);
 			disconnect();
+		} catch (AuthenticationException e) {
+			handleAuthenticationException(e);
 		}
 	}
 
@@ -223,6 +235,8 @@ public class RemoteEdgeServer {
 				} catch (ServerUnavailable e) {
 					logger.error("Server Unavailable: ", e);
 					disconnect();
+				} catch (AuthenticationException e) {
+					handleAuthenticationException(e);
 				}
 			}
 
@@ -249,6 +263,8 @@ public class RemoteEdgeServer {
 		} catch (ServerUnavailable e) {
 			logger.error("Exception while deleting reader", e);
 			disconnect();
+		} catch (AuthenticationException e) {
+			handleAuthenticationException(e);
 		}
 	}
 
@@ -273,6 +289,8 @@ public class RemoteEdgeServer {
 		} catch (ServerUnavailable e) {
 			logger.error("Exception while deleting reader", e);
 			disconnect();
+		} catch (AuthenticationException e) {
+			handleAuthenticationException(e);
 		}
 
 	}
@@ -299,6 +317,8 @@ public class RemoteEdgeServer {
 		} catch (ServerUnavailable e) {
 			logger.error("Exception while starting session", e);
 			disconnect();
+		} catch (AuthenticationException e) {
+			handleAuthenticationException(e);
 		}
 
 	}
@@ -325,6 +345,8 @@ public class RemoteEdgeServer {
 		} catch (ServerUnavailable e) {
 			logger.error("Exception while stopping session", e);
 			disconnect();
+		} catch (AuthenticationException e) {
+			handleAuthenticationException(e);
 		}
 
 	}
@@ -344,6 +366,8 @@ public class RemoteEdgeServer {
 		} catch (ServerUnavailable e) {
 			logger.error("Exception while creating command configuration ", e);
 			disconnect();
+		} catch (AuthenticationException e) {
+			handleAuthenticationException(e);
 		}
 
 	}
@@ -367,6 +391,8 @@ public class RemoteEdgeServer {
 		} catch (ServerUnavailable e) {
 			logger.error("Exception while deleting command configuration ", e);
 			disconnect();
+		} catch (AuthenticationException e) {
+			handleAuthenticationException(e);
 		}
 
 	}
@@ -389,6 +415,8 @@ public class RemoteEdgeServer {
 		} catch (ServerUnavailable e) {
 			logger.error("Exception while killing remote job ", e);
 			disconnect();
+		} catch (AuthenticationException e) {
+			handleAuthenticationException(e);
 		}
 
 	}
@@ -421,6 +449,8 @@ public class RemoteEdgeServer {
 			disconnect();
 		} catch (CommandSubmissionException e) {
 			logger.error("Exception while submitting remote job ", e);
+		} catch (AuthenticationException e) {
+			handleAuthenticationException(e);
 		}
 	}
 
@@ -450,6 +480,8 @@ public class RemoteEdgeServer {
 			disconnect();
 		} catch (CommandSubmissionException e) {
 			logger.error("Exception while submitting remote job ", e);
+		} catch (AuthenticationException e) {
+			handleAuthenticationException(e);
 		}
 	}
 
@@ -545,7 +577,8 @@ public class RemoteEdgeServer {
 		int port = Integer.parseInt(SALModelPlugin.getDefault()
 				.getPreferenceStore().getString(
 						EdgeServerPreferences.EDGE_SERVER_PORT_RMI));
-		return new RS_ServerDescription(ip, port);
+
+		return new RS_ServerDescription(ip, port, getAuthentication());
 	}
 
 	/**
@@ -555,13 +588,14 @@ public class RemoteEdgeServer {
 	 * 
 	 * @return
 	 */
-	ESServerDescription getESServerDescription() {
+	ESMS_ServerDescription getESServerDescription() {
 		String ip = SALModelPlugin.getDefault().getPreferenceStore().getString(
 				EdgeServerPreferences.EDGE_SERVER_IP);
 		int port = Integer.parseInt(SALModelPlugin.getDefault()
 				.getPreferenceStore().getString(
 						EdgeServerPreferences.EDGE_SERVER_PORT_RMI));
-		return new ESServerDescription(ip, port);
+
+		return new ESMS_ServerDescription(ip, port, getAuthentication());
 	}
 
 	/**
@@ -577,7 +611,34 @@ public class RemoteEdgeServer {
 		int port = Integer.parseInt(SALModelPlugin.getDefault()
 				.getPreferenceStore().getString(
 						EdgeServerPreferences.EDGE_SERVER_PORT_RMI));
-		return new CCServerDescription(ip, port);
+
+		return new CCServerDescription(ip, port, getAuthentication());
 	}
 
+	/**
+	 * Helper method to create a new Authentication Object
+	 * 
+	 * @return
+	 */
+	private Authentication getAuthentication() {
+		String username = SALModelPlugin.getDefault().getPreferenceStore()
+				.getString(EdgeServerPreferences.EDGE_SERVER_RMI_USERNAME);
+		String password = SALModelPlugin.getDefault().getPreferenceStore()
+				.getString(EdgeServerPreferences.EDGE_SERVER_RMI_PASSWORD);
+		return new UsernamePasswordAuthenticationToken(username, password);
+	}
+
+	public void handleAuthenticationException(AuthenticationException ex) {
+		logger.error("Authentication Exception ", ex);
+		Display.getDefault().asyncExec(new Runnable() {
+			@Override
+			public void run() {
+				Shell s = Display.getDefault().getActiveShell();
+				MessageBox box = new MessageBox(s, SWT.ICON_ERROR | SWT.OK);
+				box.setMessage("Invalid Username and Password");
+				box.setText("Authentication Exception");
+				box.open();
+			}
+		});
+	}
 }

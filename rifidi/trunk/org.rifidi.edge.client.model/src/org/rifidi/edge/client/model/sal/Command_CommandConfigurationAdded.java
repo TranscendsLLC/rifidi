@@ -1,4 +1,3 @@
-
 package org.rifidi.edge.client.model.sal;
 
 import java.util.Collection;
@@ -6,13 +5,14 @@ import java.util.Collection;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eclipse.core.databinding.observable.map.ObservableMap;
-import org.rifidi.edge.client.model.sal.commands.RemoteEdgeServerCommand;
-import org.rifidi.edge.client.model.sal.commands.RequestExecuterSingleton;
 import org.rifidi.edge.api.jms.notifications.CommandConfigurationAddedNotification;
 import org.rifidi.edge.api.rmi.dto.CommandConfigurationDTO;
+import org.rifidi.edge.client.model.sal.commands.RemoteEdgeServerCommand;
+import org.rifidi.edge.client.model.sal.commands.RequestExecuterSingleton;
 import org.rifidi.edge.core.rmi.client.commandconfigurationstub.CCGetCommandConfiguration;
 import org.rifidi.edge.core.rmi.client.commandconfigurationstub.CCServerDescription;
-import org.rifidi.rmi.utils.exceptions.ServerUnavailable;
+import org.rifidi.rmi.proxycache.exceptions.AuthenticationException;
+import org.rifidi.rmi.proxycache.exceptions.ServerUnavailable;
 
 /**
  * This is a command that is executed when a new command configuration is added
@@ -39,7 +39,7 @@ public class Command_CommandConfigurationAdded implements
 			.getLog(Command_CommandConfigurationAdded.class);
 
 	/**
-	 * Constructor.  
+	 * Constructor.
 	 * 
 	 * @param server
 	 * @param notification
@@ -70,6 +70,8 @@ public class Command_CommandConfigurationAdded implements
 			logger.error("Error while making getCommandConfiguration call", e);
 			RequestExecuterSingleton.getInstance().scheduleRequest(
 					disconnectCommand);
+		} catch (AuthenticationException e) {
+			logger.warn("Authentication Exception ", e);
 		}
 
 	}

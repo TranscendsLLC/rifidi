@@ -1,11 +1,7 @@
-
 package org.rifidi.edge.core.rmi.client.commandconfigurationstub;
 
-import java.rmi.Remote;
-import java.rmi.RemoteException;
-
-import org.rifidi.edge.api.rmi.CommandStub;
-import org.rifidi.rmi.utils.remotecall.ServerDescriptionBasedRemoteMethodCall;
+import org.rifidi.edge.api.rmi.services.CommandManagerService;
+import org.rifidi.rmi.proxycache.cache.AbstractRMICommandObject;
 
 /**
  * This call deletes a CommandConfiguration with the specified ID. It returns
@@ -14,7 +10,7 @@ import org.rifidi.rmi.utils.remotecall.ServerDescriptionBasedRemoteMethodCall;
  * @author Kyle Neumeier - kyle@pramari.com
  */
 public class CCDeleteCommandConfiguration extends
-		ServerDescriptionBasedRemoteMethodCall<Object, RuntimeException> {
+		AbstractRMICommandObject<Object, RuntimeException> {
 
 	/** The ID of the CommandConfiguration to delete */
 	private String commandConfigurationID;
@@ -35,14 +31,18 @@ public class CCDeleteCommandConfiguration extends
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.rifidi.rmi.utils.remotecall.AbstractRemoteMethodCall#performRemoteCall(java.rmi.Remote)
+	 * 
+	 * @see
+	 * org.rifidi.rmi.proxycache.cache.AbstractRMICommandObject#performRemoteCall
+	 * (java.lang.Object)
 	 */
 	@Override
-	protected Object performRemoteCall(Remote remoteObject)
-			throws RemoteException, RuntimeException {
-		CommandStub stub = (CommandStub) remoteObject;
+	protected Object performRemoteCall(Object remoteObject)
+			throws RuntimeException {
+		CommandManagerService stub = (CommandManagerService) remoteObject;
 		stub.deleteCommand(this.commandConfigurationID);
 		return null;
+
 	}
 
 }

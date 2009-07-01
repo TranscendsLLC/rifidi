@@ -1,4 +1,3 @@
-
 package org.rifidi.edge.client.model.sal.preferences;
 
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
@@ -33,6 +32,10 @@ public class EdgeServerPreferenceInitializer extends
 				EdgeServerPreferences.EDGE_SERVER_JMS_QUEUE_DEFAULT);
 		node.put(EdgeServerPreferences.EDGE_SERVER_JMS_QUEUE_TAGS,
 				EdgeServerPreferences.EDGE_SERVER_JMS_QUEUE_TAGS_DEFAULT);
+		node.put(EdgeServerPreferences.EDGE_SERVER_RMI_USERNAME,
+				EdgeServerPreferences.EDGE_SERVER_RMI_USERNAME_DEFAULT);
+		node.put(EdgeServerPreferences.EDGE_SERVER_RMI_PASSWORD,
+				EdgeServerPreferences.EDGE_SERVER_RMI_PASSWORD_DEFAULT);
 	}
 
 }
