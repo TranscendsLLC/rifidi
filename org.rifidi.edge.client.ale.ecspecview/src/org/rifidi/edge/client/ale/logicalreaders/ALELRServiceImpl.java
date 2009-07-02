@@ -63,6 +63,8 @@ public class ALELRServiceImpl implements ALELRService, ALEService {
 	private Set<Viewer> viewers;
 	/** Viewers registered to the model. */
 	private Set<Viewer> aleViewers;
+	/** ALE event listeners registered to the model */
+	private Set<AleEventListener> aleEventListeners;
 
 	/**
 	 * Constructor.
@@ -84,6 +86,7 @@ public class ALELRServiceImpl implements ALELRService, ALEService {
 
 		alelrListeners = new HashSet<ALELRListener>();
 		aleListeners = new HashSet<ALEListener>();
+		aleEventListeners = new HashSet<AleEventListener>();
 		viewers = new HashSet<Viewer>();
 		aleViewers = new HashSet<Viewer>();
 		// see if it works
@@ -271,6 +274,19 @@ public class ALELRServiceImpl implements ALELRService, ALEService {
 		aleViewers.remove(viewer);
 	}
 
+	/**
+	 * Adds a listener that reacts on events like add spec, remove reader,...
+	 * 
+	 * @param listener
+	 */
+	public void addAleEventListener(AleEventListener listener) {
+		aleEventListeners.add(listener);
+	}
+
+	public void removeAleEventListener(AleEventListener listener) {
+		aleEventListeners.remove(listener);
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -304,6 +320,9 @@ public class ALELRServiceImpl implements ALELRService, ALEService {
 		undefine.setName(reader.getName());
 		try {
 			lrServicePortType.undefine(undefine);
+			for (AleEventListener listener : aleEventListeners) {
+				listener.eventOccurred(AleEvents.LRremove, reader.getName());
+			}
 		} catch (SecurityExceptionResponse e) {
 			logger.fatal(e);
 		} catch (InUseExceptionResponse e) {
@@ -326,6 +345,7 @@ public class ALELRServiceImpl implements ALELRService, ALEService {
 			viewer.setInput(lrServicePortType);
 			viewer.refresh();
 		}
+
 	}
 
 	/*
@@ -348,6 +368,9 @@ public class ALELRServiceImpl implements ALELRService, ALEService {
 		define.setSpec(spec);
 		try {
 			lrServicePortType.define(define);
+			for (AleEventListener listener : aleEventListeners) {
+				listener.eventOccurred(AleEvents.LRadd, name);
+			}
 		} catch (SecurityExceptionResponse e) {
 			logger.fatal(e);
 		} catch (ImplementationExceptionResponse e) {
@@ -387,6 +410,9 @@ public class ALELRServiceImpl implements ALELRService, ALEService {
 		define.setSpecName(name);
 		try {
 			aleServicePortType.define(define);
+			for (AleEventListener listener : aleEventListeners) {
+				listener.eventOccurred(AleEvents.ALEadd, name);
+			}
 		} catch (org.rifidi.edge.client.ale.api.wsdl.ale.epcglobal.ImplementationExceptionResponse e) {
 			logger.fatal(e);
 		} catch (org.rifidi.edge.client.ale.api.wsdl.ale.epcglobal.SecurityExceptionResponse e) {
@@ -409,6 +435,9 @@ public class ALELRServiceImpl implements ALELRService, ALEService {
 		undefine.setSpecName(specName);
 		try {
 			aleServicePortType.undefine(undefine);
+			for (AleEventListener listener : aleEventListeners) {
+				listener.eventOccurred(AleEvents.ALEremove, specName);
+			}
 		} catch (org.rifidi.edge.client.ale.api.wsdl.ale.epcglobal.ImplementationExceptionResponse e) {
 			logger.fatal(e);
 		} catch (org.rifidi.edge.client.ale.api.wsdl.ale.epcglobal.SecurityExceptionResponse e) {
