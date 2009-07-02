@@ -49,7 +49,7 @@ public class Alien9800ReaderSession extends AbstractIPSensorSession {
 	public static final String PROMPT_SUPPRESS = "\1";
 
 	/** Set antenna sequence */
-	public static final String ANTENNA_SEQUENCE_COMMAND = ('\1' + "set AntennaSequence=");
+	public static final String ANTENNA_SEQUENCE_COMMAND = ("AntennaSequence");
 
 	/**
 	 * COMMANDS
