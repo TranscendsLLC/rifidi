@@ -54,6 +54,8 @@ import org.rifidi.edge.client.ale.api.xsd.ale.epcglobal.ECSpec.ReportSpecs;
 import org.rifidi.edge.client.ale.ecspecview.Activator;
 import org.rifidi.edge.client.ale.logicalreaders.ALELRService;
 import org.rifidi.edge.client.ale.logicalreaders.ALEService;
+import org.rifidi.edge.client.ale.logicalreaders.AleEventListener;
+import org.rifidi.edge.client.ale.logicalreaders.AleEvents;
 import org.rifidi.edge.client.ale.reports.ReportReceiverSingleton;
 import org.rifidi.edge.client.ale.reports.ReportTabDataContainer;
 
@@ -62,7 +64,7 @@ import org.rifidi.edge.client.ale.reports.ReportTabDataContainer;
  * 
  * @author Tobias Hoppenthaler - tobias@pramari.com
  */
-public class ECSpecEditorView extends ViewPart {
+public class ECSpecEditorView extends ViewPart implements AleEventListener {
 	/** Logger for this class. */
 	@SuppressWarnings("unused")
 	private static final Log logger = LogFactory.getLog(ECSpecEditorView.class);
@@ -84,7 +86,8 @@ public class ECSpecEditorView extends ViewPart {
 	private ALEService service;
 	private ALELRService lrService;
 	private CTabItem ctiReport;
-	CTabItem ctiSubscribers;
+
+	// private CTabItem ctiSubscribers;
 
 	// private ConnectionService connectionService = null;
 
@@ -313,22 +316,11 @@ public class ECSpecEditorView extends ViewPart {
 		lrList = new List(lrSectionClient, SWT.BORDER | SWT.MULTI
 				| SWT.V_SCROLL);
 
-		// TODO: Former code to retrieve readers from server - probably will
-		// change with models.
-		/*
-		 * ConnectionWrapper wrapper = new ConnectionWrapper();
-		 * ArrayList<String> lstReaders = new ArrayList<String>(); try {
-		 * lstReaders = (ArrayList<String>) wrapper.getConnectionService()
-		 * .getAleLrServicePortType().getLogicalReaderNames( new
-		 * EmptyParms()).getString(); } catch (SecurityExceptionResponse e1) {
-		 * logger.debug(e1.getMessage()); } catch
-		 * (ImplementationExceptionResponse e1) { logger.debug(e1.getMessage());
-		 * }
-		 */
-
 		// list gets passed to the widget.
 		lrList.setItems(lrService.getAvailableReaderNames().toArray(
 				new String[] {}));
+		// TODO: subscribe this as an ALELR listener to the lrservice... and
+		// first implement the listener, of course...
 		// when focus is lost, data gets written back to the spec.
 		lrList.addFocusListener(new FocusListener() {
 
@@ -1177,6 +1169,24 @@ public class ECSpecEditorView extends ViewPart {
 		ReportTabDataContainer container = (ReportTabDataContainer) ReportReceiverSingleton
 				.getInstance().getSubscriber(name);
 		container.clear();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.client.ale.logicalreaders.AleEventListener#eventOccurred
+	 * (org.rifidi.edge.client.ale.logicalreaders.AleEvents, java.lang.String)
+	 */
+	@Override
+	public void eventOccurred(AleEvents aleEvent, String eventSubject) {
+		if (aleEvent.equals(AleEvents.LRadd)) {
+			this.lrList.add(eventSubject);
+		}
+		if (aleEvent.equals(AleEvents.LRremove)) {
+			this.lrList.remove(eventSubject);
+		}
+
 	}
 
 	// private IViewPart getView(String id) {
