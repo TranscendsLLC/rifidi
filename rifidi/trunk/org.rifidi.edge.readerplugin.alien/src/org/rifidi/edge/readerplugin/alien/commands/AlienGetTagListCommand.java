@@ -1,4 +1,3 @@
-
 package org.rifidi.edge.readerplugin.alien.commands;
 
 import java.io.IOException;
@@ -110,6 +109,12 @@ public class AlienGetTagListCommand extends AbstractAlien9800Command {
 			String timeZoneString = "GMT" + tz;
 			timeZone = TimeZone.getTimeZone(timeZoneString);
 			calendar = Calendar.getInstance(timeZone);
+
+			AlienCommandObject antennaCommand = new AlienSetCommandObject(
+					Alien9800ReaderSession.ANTENNA_SEQUENCE_COMMAND,
+					this.antennasequence,
+					(Alien9800ReaderSession) this.sensorSession);
+			antennaCommand.execute();
 
 			// sending TagType
 			AlienCommandObject tagTypeCommand = new AlienSetCommandObject(
