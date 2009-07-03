@@ -45,7 +45,7 @@ public class ReportTabDataContainer implements IReportSubscriber {
 	 *            - Name of the ECSpec we want the reports for.
 	 */
 	public ReportTabDataContainer(CTabFolder parent, String specName) {
-		logger.debug("Creating a ReportTabDataContainer... ");
+		logger.trace("Creating a ReportTabDataContainer... ");
 		this.specName = specName;
 		/**
 		 * making sure the report subscription gets removed when CTabItem is

@@ -53,6 +53,7 @@ import org.rifidi.edge.client.ale.api.xsd.ale.epcglobal.ECSpec.LogicalReaders;
 import org.rifidi.edge.client.ale.api.xsd.ale.epcglobal.ECSpec.ReportSpecs;
 import org.rifidi.edge.client.ale.ecspecview.Activator;
 import org.rifidi.edge.client.ale.logicalreaders.ALELRService;
+import org.rifidi.edge.client.ale.logicalreaders.ALELRServiceImpl;
 import org.rifidi.edge.client.ale.logicalreaders.ALEService;
 import org.rifidi.edge.client.ale.logicalreaders.AleEventListener;
 import org.rifidi.edge.client.ale.logicalreaders.AleEvents;
@@ -161,6 +162,7 @@ public class ECSpecEditorView extends ViewPart implements AleEventListener {
 	 */
 	@Override
 	public void dispose() {
+		((ALELRServiceImpl)lrService).removeAleEventListener(this);
 		toolkit.dispose();
 		super.dispose();
 	}
@@ -190,6 +192,10 @@ public class ECSpecEditorView extends ViewPart implements AleEventListener {
 		createFooter();
 		createReportCtab();
 		// createSubscriberCtab();
+		/** makes the form listen to ALE events - necessary for the reader list
+		 * in the Logical Reader Section 
+		 * */
+		((ALELRServiceImpl)lrService).addAleEventListener(this);
 		this.form.redraw();
 	}
 
