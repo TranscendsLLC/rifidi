@@ -95,7 +95,7 @@ public class ReportReceiverSingleton implements IPropertyChangeListener,
 	 */
 	public static ReportReceiverSingleton getInstance() {
 		if (rrs == null) {
-			logger.debug("creating new ReportReceiverSingleton...");
+			logger.trace("creating new ReportReceiverSingleton...");
 			rrs = new ReportReceiverSingleton();
 
 		}
@@ -111,7 +111,7 @@ public class ReportReceiverSingleton implements IPropertyChangeListener,
 	 *            - the subscriber object
 	 */
 	public void addSubscriber(String specName, IReportSubscriber subscriber) {
-		logger.debug("adding Subscriber " + specName + " to ReportReceivers");
+		logger.trace("adding Subscriber " + specName + " to ReportReceivers");
 		subscriberMap.put(specName, subscriber);
 		if (subscriberMap.size() == 1)
 			list.addListChangeListener(this);
@@ -124,7 +124,7 @@ public class ReportReceiverSingleton implements IPropertyChangeListener,
 	 *            - name of the spec to remove the subscriber from
 	 */
 	public void removeSubscriber(String specName) {
-		logger.debug("removing Subscriber " + specName
+		logger.trace("removing Subscriber " + specName
 				+ " from ReportReceivers");
 		subscriberMap.remove(specName);
 		if (subscriberMap.size() == 0)
@@ -138,7 +138,7 @@ public class ReportReceiverSingleton implements IPropertyChangeListener,
 	 * @return subscriber object
 	 */
 	public IReportSubscriber getSubscriber(String specName) {
-		logger.debug("Retrieving Subscriber for " + specName);
+		logger.trace("Retrieving Subscriber for " + specName);
 		return subscriberMap.get(specName);
 	}
 
@@ -151,7 +151,7 @@ public class ReportReceiverSingleton implements IPropertyChangeListener,
 	 */
 	@Override
 	public void handleListChange(ListChangeEvent event) {
-		logger.debug("handling listChange...");
+		logger.trace("handling listChange...");
 		for (ListDiffEntry entry : event.diff.getDifferences()) {
 			if (entry.isAddition()) {
 				ECReports ecReports = null;
@@ -169,11 +169,11 @@ public class ReportReceiverSingleton implements IPropertyChangeListener,
 					/** ... and send him the reports. */
 					subscriber.pushReport(ecReports);
 				} else {
-					logger.debug("Key not found.");
+					logger.trace("Key not found.");
 				}
 				// TODO: check name viewer.add(model, entry.getElement());
 			} else {
-				logger.debug("entry is not an addition...");
+				logger.trace("entry is not an addition...");
 			}
 		}
 
@@ -231,7 +231,7 @@ public class ReportReceiverSingleton implements IPropertyChangeListener,
 		 */
 		@Override
 		public void run() {
-			logger.debug("Listupdater adding reports...");
+			logger.trace("Listupdater adding reports...");
 			list.add(reports);
 		}
 
@@ -254,33 +254,33 @@ public class ReportReceiverSingleton implements IPropertyChangeListener,
 
 		public void run() {
 			try {
-				logger.debug("new serversocket...");
+				logger.trace("new serversocket...");
 				socket = new ServerSocket();
 				System.out.println("socket.bind...");
 				socket.bind(addr);
-				logger.debug("while socket !closed and thread !interrupted");
+				logger.trace("while socket !closed and thread !interrupted");
 				while (!socket.isClosed()
 						&& !Thread.currentThread().isInterrupted()) {
-					logger.debug("socket accept...");
+					logger.trace("socket accept...");
 					Socket sock = socket.accept();
 					logger
-							.debug("new buffered reader : sock.getinputstream...");
+							.trace("new buffered reader : sock.getinputstream...");
 					BufferedReader streamy = new BufferedReader(
 							new InputStreamReader(sock.getInputStream()));
 					try {
-						logger.debug("unmarshal answer...");
+						logger.trace("unmarshal answer...");
 						ReportAnswer answer = (ReportAnswer) umarsh
 								.unmarshal(streamy);
-						logger.debug("starting listupdater runnable");
+						logger.trace("starting listupdater runnable");
 						Display.getDefault().asyncExec(
 								new ListUpdater(answer.reports));
 					} catch (JAXBException e) {
 						logger.warn(e);
 					}
-					logger.debug("closing socket...");
+					logger.trace("closing socket...");
 					sock.close();
 				}
-				logger.debug("closing serversocket...");
+				logger.trace("closing serversocket...");
 				socket.close();
 				socket = null;
 			} catch (IOException e) {
@@ -292,7 +292,7 @@ public class ReportReceiverSingleton implements IPropertyChangeListener,
 		 * Closes the socket.
 		 */
 		public void killSocket() {
-			logger.debug("killsocket called...");
+			logger.trace("killsocket called...");
 			if (socket != null) {
 				try {
 					socket.close();
