@@ -68,11 +68,6 @@ public abstract class AbstractRMICommandObject<T, E extends Exception> {
 		} catch (org.springframework.security.AuthenticationException ex) {
 			throw new AuthenticationException(
 					"Invalid security credentials when making remote call ", ex);
-		} catch (Exception e) {
-			// there was a problem with the server, so remove the proxy from the
-			// cache
-			proxyCache.removeProxy(_serverDescription);
-			throw new ServerUnavailable(e);
 		}
 	}
 
