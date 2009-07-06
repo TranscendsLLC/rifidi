@@ -26,7 +26,7 @@ public class AlienGetTagListCommandConfiguration extends
 	/** Type of tag to read */
 	private int tagType = 2;
 	/** Length of time tags stay in taglist */
-	private int persistTime = -1;
+	//private int persistTime = -1;
 	/** Antennas to scan */
 	private String antenna_sequence = "0";
 
@@ -92,26 +92,28 @@ public class AlienGetTagListCommandConfiguration extends
 		this.tagType = tagType;
 	}
 
-	/**
-	 * Returns the persist time.  
-	 * 
-	 * @return the persistTime
-	 */
-	@Property(displayName = "Persist Time", description = "Length of time a tag stays in memory "
-			+ "before it is read (in seconds, -1 is unlimited)", writable = true, type = PropertyType.PT_INTEGER)
-	public Integer getPersistTime() {
-		return persistTime;
-	}
-
-	/**
-	 * Sets the persist time.  
-	 * 
-	 * @param persistTime
-	 *            the persistTime to set
-	 */
-	public void setPersistTime(Integer persistTime) {
-		this.persistTime = persistTime;
-	}
+	// /**
+	// * Returns the persist time.
+	// *
+	// * @return the persistTime
+	// */
+	// @Property(displayName = "Persist Time", description =
+	// "Length of time a tag stays in memory "
+	// + "before it is read (in seconds, -1 is unlimited)", writable = true,
+	// type = PropertyType.PT_INTEGER)
+	// public Integer getPersistTime() {
+	// return persistTime;
+	// }
+	//
+	// /**
+	// * Sets the persist time.
+	// *
+	// * @param persistTime
+	// * the persistTime to set
+	// */
+	// public void setPersistTime(Integer persistTime) {
+	// this.persistTime = persistTime;
+	// }
 
 	/**
 	 * Gets the antenna sequence.  
@@ -169,7 +171,7 @@ public class AlienGetTagListCommandConfiguration extends
 		AlienGetTagListCommand c = new AlienGetTagListCommand(super.getID(),
 				readerID);
 		c.setAntennasequence(antenna_sequence);
-		c.setPersistTime(persistTime);
+		//c.setPersistTime(persistTime);
 		c.setTagType(tagType);
 		return c;
 	}

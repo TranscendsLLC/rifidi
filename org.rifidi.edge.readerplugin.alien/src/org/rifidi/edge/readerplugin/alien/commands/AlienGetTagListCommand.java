@@ -2,11 +2,9 @@ package org.rifidi.edge.readerplugin.alien.commands;
 
 import java.io.IOException;
 import java.math.BigInteger;
-import java.util.Calendar;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.TimeZone;
 
 import javax.jms.JMSException;
 import javax.jms.Message;
@@ -15,6 +13,7 @@ import javax.jms.Session;
 import org.apache.activemq.command.ActiveMQObjectMessage;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.rifidi.edge.core.services.notification.data.EPCGeneration1Event;
 import org.rifidi.edge.core.services.notification.data.EPCGeneration2Event;
 import org.rifidi.edge.core.services.notification.data.ReadCycle;
 import org.rifidi.edge.core.services.notification.data.TagReadEvent;
@@ -22,7 +21,6 @@ import org.rifidi.edge.readerplugin.alien.AbstractAlien9800Command;
 import org.rifidi.edge.readerplugin.alien.Alien9800ReaderSession;
 import org.rifidi.edge.readerplugin.alien.commandobject.AlienCommandObject;
 import org.rifidi.edge.readerplugin.alien.commandobject.AlienException;
-import org.rifidi.edge.readerplugin.alien.commandobject.AlienGetCommandObject;
 import org.rifidi.edge.readerplugin.alien.commandobject.AlienSetCommandObject;
 import org.rifidi.edge.readerplugin.alien.commandobject.GetTagListCommandObject;
 import org.springframework.jms.core.MessageCreator;
@@ -43,11 +41,12 @@ public class AlienGetTagListCommand extends AbstractAlien9800Command {
 	/** Tagtypes to query for: 0 - GEN1 1 - GEN2 2 - ALL */
 	private Integer tagType = 2;
 	/** Timezone from the sensorSession. */
-	private TimeZone timeZone;
+	// private TimeZone timeZone;
 	/** Calendar for creating timestamps. */
-	private Calendar calendar;
+	// private Calendar calendar;
 	private String antennasequence = "0";
-	private int persistTime = -1;
+
+	// private int persistTime = -1;
 	private final String reader;
 
 	/**
@@ -75,13 +74,13 @@ public class AlienGetTagListCommand extends AbstractAlien9800Command {
 		this.antennasequence = antennasequence;
 	}
 
-	/**
-	 * @param persistTime
-	 *            the persistTime to set
-	 */
-	public void setPersistTime(int persistTime) {
-		this.persistTime = persistTime;
-	}
+	// /**
+	// * @param persistTime
+	// * the persistTime to set
+	// */
+	// public void setPersistTime(int persistTime) {
+	// this.persistTime = persistTime;
+	// }
 
 	/**
 	 * @param tagType
@@ -102,13 +101,13 @@ public class AlienGetTagListCommand extends AbstractAlien9800Command {
 	@Override
 	public void run() {
 		try {
-			AlienCommandObject timeZoneCommand = new AlienGetCommandObject(
-					Alien9800ReaderSession.COMMAND_TIME_ZONE,
-					(Alien9800ReaderSession) this.sensorSession);
-			String tz = timeZoneCommand.execute();
-			String timeZoneString = "GMT" + tz;
-			timeZone = TimeZone.getTimeZone(timeZoneString);
-			calendar = Calendar.getInstance(timeZone);
+			// AlienCommandObject timeZoneCommand = new AlienGetCommandObject(
+			// Alien9800ReaderSession.COMMAND_TIME_ZONE,
+			// (Alien9800ReaderSession) this.sensorSession);
+			// String tz = timeZoneCommand.execute();
+			// String timeZoneString = "GMT" + tz;
+			// timeZone = TimeZone.getTimeZone(timeZoneString);
+			// calendar = Calendar.getInstance(timeZone);
 
 			AlienCommandObject antennaCommand = new AlienSetCommandObject(
 					Alien9800ReaderSession.ANTENNA_SEQUENCE_COMMAND,
@@ -131,7 +130,7 @@ public class AlienGetTagListCommand extends AbstractAlien9800Command {
 			// sending TagListFormat
 			AlienCommandObject tagListCustomFormat = new AlienSetCommandObject(
 					Alien9800ReaderSession.COMMAND_TAG_LIST_CUSTOM_FORMAT,
-					"%k|%T|%a", (Alien9800ReaderSession) sensorSession);
+					"%k|%T|%a|%p", (Alien9800ReaderSession) sensorSession);
 			tagListCustomFormat.execute();
 			GetTagListCommandObject getTagListCommandObject = new GetTagListCommandObject(
 					(Alien9800ReaderSession) sensorSession);
@@ -165,20 +164,43 @@ public class AlienGetTagListCommand extends AbstractAlien9800Command {
 				String[] splitString2 = s.split("\\|");
 				if (splitString2.length > 1) {
 					String tagData = splitString2[0];
-					String timeStamp = splitString2[1];
+					// String timeStamp = splitString2[1];
 					String antennaID = splitString2[2];
+					String epcID = splitString2[3];
 					int epcLength = tagData.length();
 					BigInteger data = new BigInteger(tagData, 16);
 
-					EPCGeneration2Event gen2event = new EPCGeneration2Event();
-					// make some wild guesses on the length of the epc field
-					if (epcLength > 96) {
-						gen2event.setEPCMemory(data, 192);
-					} else if (data.bitLength() > 64) {
-						gen2event.setEPCMemory(data, 96);
-					} else {
-						gen2event.setEPCMemory(data, 64);
+					int epcInt = 2;
+					try {
+						epcInt = Integer.valueOf(epcID);
+					} catch (NumberFormatException ex) {
 					}
+
+					EPCGeneration1Event genEvent = null;
+
+					if (epcInt == 1) {
+						EPCGeneration1Event gen1event = new EPCGeneration1Event();
+						if (epcLength > 96) {
+							gen1event.setEPCMemory(data, 192);
+						} else if (data.bitLength() > 64) {
+							gen1event.setEPCMemory(data, 96);
+						} else {
+							gen1event.setEPCMemory(data, 64);
+						}
+						genEvent = gen1event;
+					} else {
+						EPCGeneration2Event gen2event = new EPCGeneration2Event();
+						// make some wild guesses on the length of the epc field
+						if (epcLength > 96) {
+							gen2event.setEPCMemory(data, 192);
+						} else if (data.bitLength() > 64) {
+							gen2event.setEPCMemory(data, 96);
+						} else {
+							gen2event.setEPCMemory(data, 64);
+						}
+						genEvent = gen2event;
+					}
+
 					int antennaID_int = 0;
 
 					try {
@@ -189,7 +211,7 @@ public class AlienGetTagListCommand extends AbstractAlien9800Command {
 
 					// TODO: parse timestamp
 
-					TagReadEvent tag = new TagReadEvent(reader, gen2event,
+					TagReadEvent tag = new TagReadEvent(reader, genEvent,
 							antennaID_int, System.currentTimeMillis());
 					retVal.add(tag);
 
