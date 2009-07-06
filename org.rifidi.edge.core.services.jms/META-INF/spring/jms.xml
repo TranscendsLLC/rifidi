@@ -25,7 +25,7 @@
 		<property name="transportConnectorURIs">
 			<list>
 				<!-- This next line must not have a newline -->
-				<value>tcp://${java.rmi.server.hostname}:${java.rmi.server.port}</value>
+				<value>tcp://${org.rifidi.edge.jms.hostname}:${org.rifidi.edge.jms.port}</value>
 			</list>
 		</property>
 	</bean>
@@ -51,7 +51,7 @@
 		Topic to use as Destination for sending tags to external Consumers
 	-->
 	<bean id="externalTagsDest" class="org.apache.activemq.command.ActiveMQTopic">
-		<property name="physicalName" value="${org.rifidi.jms.topic.tags}" />
+		<property name="physicalName" value="${org.rifidi.edge.jms.topic.tags}" />
 	</bean>
 	<!--
 		<amq:topic id="externalTagsDest"
@@ -63,7 +63,7 @@
 		Consumers
 	-->
 	<bean id="externalNotificationsDest" class="org.apache.activemq.command.ActiveMQTopic">
-		<property name="physicalName" value="${org.rifidi.jms.topic.notifications}" />
+		<property name="physicalName" value="${org.rifidi.edge.jms.topic.notifications}" />
 	</bean>
 	<!--
 		<amq:topic id="externalNotificationsDest"
