@@ -1,12 +1,17 @@
 package org.rifidi.edge.core.sensors.management;
 
-import java.util.Set;
+import java.util.Collection;
 
-import org.rifidi.edge.core.sensors.LogicalSensor;
-import org.rifidi.edge.core.sensors.PhysicalSensor;
+import org.rifidi.edge.core.sensors.PollableSensor;
 import org.rifidi.edge.core.sensors.exceptions.DuplicateSensorNameException;
+import org.rifidi.edge.core.sensors.exceptions.DuplicateSubscriptionException;
+import org.rifidi.edge.core.sensors.exceptions.ImmutableException;
+import org.rifidi.edge.core.sensors.exceptions.InUseException;
+import org.rifidi.edge.core.sensors.exceptions.NoSuchSensorException;
+import org.rifidi.edge.core.sensors.exceptions.NotSubscribedException;
 
 /**
+ * Service for managing all modifiable aspects of the sensors.
  * 
  * @author Jochen Mader - jochen@pramari.com
  * 
@@ -14,38 +19,93 @@ import org.rifidi.edge.core.sensors.exceptions.DuplicateSensorNameException;
 public interface SensorManagementService {
 
 	/**
-	 * Factory method for creating a new sensor.
+	 * Create a new sensor.
 	 * 
-	 * @param name
+	 * @param sensorName
+	 * @throws DuplicateSensorNameException
 	 */
-	LogicalSensor createLogicalSensor(String name)
-			throws DuplicateSensorNameException;
+	void createSensor(String sensorName) throws DuplicateSensorNameException;
 
 	/**
-	 * Destroy the sensor with the given name.
+	 * Create a new sensor that is already hooked up to other sensors.
 	 * 
-	 * @param name
+	 * @param sensorName
+	 * @param childSensors
+	 * @throws DuplicateSensorNameException
+	 * @throws NoSuchSensorException
 	 */
-	void destroyLogicalSensor(String name);
+	void createSensor(String sensorName, Collection<String> childSensors)
+			throws DuplicateSensorNameException, NoSuchSensorException;
 
 	/**
-	 * Destroy the given sensor.
+	 * Change the name of a sensor.
 	 * 
-	 * @param name
+	 * @param oldName
+	 * @param newName
+	 * @throws NoSuchSensorException
+	 * @throws ImmutableException
+	 * @throws InUseException
 	 */
-	void destroyLogicalSensor(LogicalSensor name);
+	void renameSensor(String oldName, String newName)
+			throws NoSuchSensorException, ImmutableException, InUseException;
 
 	/**
-	 * Get a set containing all currently available sensors.
+	 * Add a new child to a sensor.
+	 * 
+	 * @param sensorName
+	 * @param childName
+	 * @throws ImmutableException
+	 * @throws InUseException
+	 * @throws NoSuchSensorException
 	 */
-	Set<PhysicalSensor> getSensors();
+	void addChild(String sensorName, String childName)
+			throws ImmutableException, InUseException, NoSuchSensorException;
 
 	/**
-	 * Get a sensor by its name. Returns null if non available.
+	 * Remove one child from a sensor.
 	 * 
-	 * @param name
+	 * @param sensorName
+	 * @param childName
+	 * @throws ImmutableException
+	 * @throws InUseException
+	 * @throws NoSuchSensorException
+	 */
+	void removeChild(String sensorName, String childName)
+			throws ImmutableException, InUseException, NoSuchSensorException;
+
+	/**
+	 * Remove a number of childrens from a sensor.
+	 * 
+	 * @param sensorName
+	 * @param childrenNames
+	 * @throws ImmutableException
+	 * @throws InUseException
+	 * @throws NoSuchSensorException
+	 */
+	void removeChildren(String sensorName, Collection<String> childrenNames)
+			throws ImmutableException, InUseException, NoSuchSensorException;
+
+	/**
+	 * Subscribe an object to a sensor.
+	 * 
+	 * @param subscriber
+	 * @param sensorName
 	 * @return
+	 * @throws NoSuchSensorException
+	 * @throws DuplicateSubscriptionException
 	 */
-	PhysicalSensor getSensor(String name);
+	PollableSensor subscribe(Object subscriber, String sensorName)
+			throws NoSuchSensorException, DuplicateSubscriptionException;
+
+	/**
+	 * Unsubscribe an object from a sensor.
+	 * 
+	 * @param subscriber
+	 * @param sensorName
+	 * @throws NoSuchSensorException
+	 * @throws NotSubscribedException
+	 */
+	void unsubscribe(Object subscriber, String sensorName)
+			throws NoSuchSensorException, NotSubscribedException;
 
 }
