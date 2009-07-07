@@ -1,9 +1,9 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:osgi="http://www.springframework.org/schema/osgi"
 	xmlns:amq="http://activemq.apache.org/schema/core"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
-     http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi.xsd
-     http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd">
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+     http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi.xsd">
 
 	<bean id="jmsContainer"
 		class="org.springframework.jms.listener.SimpleMessageListenerContainer">
@@ -26,7 +26,8 @@
 		<property name="esperManagement" ref="esperManager" />
 	</bean>
 
-	<bean id="esperManager" class="org.rifidi.edge.core.services.esper.internal.EsperManagementServiceImpl" />
+	<bean id="esperManager"
+		class="org.rifidi.edge.core.services.esper.internal.EsperManagementServiceImpl" />
 
 	<osgi:service id="esperManagerService" ref="esperManager"
 		interface="org.rifidi.edge.core.services.esper.EsperManagementService" />
