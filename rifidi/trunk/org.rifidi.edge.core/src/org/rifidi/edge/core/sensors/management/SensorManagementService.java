@@ -1,6 +1,7 @@
 package org.rifidi.edge.core.sensors.management;
 
 import java.util.Collection;
+import java.util.Set;
 
 import org.rifidi.edge.core.sensors.PollableSensor;
 import org.rifidi.edge.core.sensors.exceptions.DuplicateSensorNameException;
@@ -25,6 +26,17 @@ public interface SensorManagementService {
 	 * @throws DuplicateSensorNameException
 	 */
 	void createSensor(String sensorName) throws DuplicateSensorNameException;
+
+	/**
+	 * Destroy a sensor.
+	 * 
+	 * @param sensorName
+	 * @throws NoSuchSensorException
+	 * @throws ImmutableException
+	 * @throws InUseException
+	 */
+	void destroySensor(String sensorName) throws NoSuchSensorException,
+			ImmutableException, InUseException;
 
 	/**
 	 * Create a new sensor that is already hooked up to other sensors.
@@ -59,6 +71,30 @@ public interface SensorManagementService {
 	 * @throws NoSuchSensorException
 	 */
 	void addChild(String sensorName, String childName)
+			throws ImmutableException, InUseException, NoSuchSensorException;
+
+	/**
+	 * Add several sensors as children to the sensor.
+	 * 
+	 * @param sensorName
+	 * @param childNames
+	 * @throws ImmutableException
+	 * @throws InUseException
+	 * @throws NoSuchSensorException
+	 */
+	void addChildren(String sensorName, Collection<String> childNames)
+			throws ImmutableException, InUseException, NoSuchSensorException;
+
+	/**
+	 * Set the sensor's child sensors.
+	 * 
+	 * @param sensorName
+	 * @param childNames
+	 * @throws ImmutableException
+	 * @throws InUseException
+	 * @throws NoSuchSensorException
+	 */
+	void setChildren(String sensorName, Collection<String> childNames)
 			throws ImmutableException, InUseException, NoSuchSensorException;
 
 	/**
@@ -107,5 +143,12 @@ public interface SensorManagementService {
 	 */
 	void unsubscribe(Object subscriber, String sensorName)
 			throws NoSuchSensorException, NotSubscribedException;
+
+	/**
+	 * Get the names of all registered sensors.
+	 * 
+	 * @return
+	 */
+	Set<String> getSensors();
 
 }

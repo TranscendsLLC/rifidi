@@ -1,15 +1,17 @@
 package org.rifidi.edge.core.sensors;
 
 import java.util.Collection;
+import java.util.Set;
 
 import org.rifidi.edge.core.sensors.exceptions.ImmutableException;
 import org.rifidi.edge.core.sensors.exceptions.InUseException;
+
 /**
  * 
  * @author Jochen Mader - jochen@pramari.com
- *
+ * 
  */
-public interface CompositeUpdateableSensor extends UpdateableSensor{
+public interface CompositeUpdateableSensor extends UpdateableSensor {
 
 	/**
 	 * Add a new child sensor.
@@ -41,4 +43,10 @@ public interface CompositeUpdateableSensor extends UpdateableSensor{
 	void removeChildren(final Collection<UpdateableSensor> children)
 			throws ImmutableException, InUseException;
 
+	/**
+	 * Get the names of child sensors this sensor has.
+	 * 
+	 * @return
+	 */
+	Set<String> getChildren();
 }

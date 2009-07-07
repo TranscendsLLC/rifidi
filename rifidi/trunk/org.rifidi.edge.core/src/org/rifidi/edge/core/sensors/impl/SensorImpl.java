@@ -27,7 +27,7 @@ import org.rifidi.edge.core.services.notification.data.TagReadEvent;
  * @author Jochen Mader - jochen@pramari.com
  * 
  */
-public class SensorImpl implements Sensor, PollableSensor, UpdateableSensor {
+public class SensorImpl implements Sensor, CompositeUpdateableSensor {
 	private volatile String name;
 	/** Once a reader is immutable it can never be changed back. */
 	private final Boolean immutable;
@@ -109,12 +109,11 @@ public class SensorImpl implements Sensor, PollableSensor, UpdateableSensor {
 		childNodes.add(child);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.rifidi.edge.core.sensors.UpdateableSensor#removeChild(wtf.Sensor)
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.sensors.CompositeUpdateableSensor#removeChild(org.rifidi.edge.core.sensors.UpdateableSensor)
 	 */
-	public void removeChild(final CompositeUpdateableSensor child) throws ImmutableException,
+	@Override
+	public void removeChild(UpdateableSensor child) throws ImmutableException,
 			InUseException {
 		if (isImmutable()) {
 			throw new ImmutableException(getName() + " is immutable.");
