@@ -4,11 +4,13 @@
 package org.rifidi.edge.core.sensors.base;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.management.AttributeList;
 
@@ -16,12 +18,13 @@ import org.rifidi.configuration.Configuration;
 import org.rifidi.configuration.RifidiService;
 import org.rifidi.edge.api.rmi.dto.ReaderDTO;
 import org.rifidi.edge.api.rmi.dto.SessionDTO;
-import org.rifidi.edge.core.sensors.LogicalSensor;
-import org.rifidi.edge.core.sensors.PhysicalSensor;
+import org.rifidi.edge.core.sensors.PollableSensor;
 import org.rifidi.edge.core.sensors.SensorSession;
+import org.rifidi.edge.core.sensors.UpdateableSensor;
 import org.rifidi.edge.core.sensors.exceptions.DuplicateSubscriptionException;
+import org.rifidi.edge.core.sensors.exceptions.ImmutableException;
+import org.rifidi.edge.core.sensors.exceptions.InUseException;
 import org.rifidi.edge.core.sensors.exceptions.NotSubscribedException;
-import org.rifidi.edge.core.sensors.impl.LogicalSensorImpl;
 import org.rifidi.edge.core.services.notification.data.TagReadEvent;
 
 /**
@@ -35,15 +38,15 @@ import org.rifidi.edge.core.services.notification.data.TagReadEvent;
  * 
  */
 public abstract class AbstractSensor<T extends SensorSession> extends
-		RifidiService implements PhysicalSensor {
+		RifidiService implements UpdateableSensor {
 	/** Sensors connected to this connectedSensors. */
-	protected Set<LogicalSensorImpl> connectedSensors;
-	
+	protected Set<PollableSensor> receivers;
+
 	/**
 	 * Receivers are objects that need to gather tag reads. The tag reads are
 	 * stored in a queue.
 	 */
-	protected Map<Object, LinkedBlockingQueue<Set<TagReadEvent>>> receiversToQueues;
+	protected Map<Object, LinkedBlockingQueue<TagReadEvent>> subscriberToQueueMap;
 
 	/**
 	 * Create a new reader session. If there are no more sessions available null
@@ -73,39 +76,48 @@ public abstract class AbstractSensor<T extends SensorSession> extends
 	 */
 	abstract public void applyPropertyChanges();
 
+	/** True if the sensor is currently in use. */
+	protected AtomicBoolean inUse;
+
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.sensors.PhysicalSensor#receive(java.lang.Object)
+	 * org.rifidi.edge.core.sensors.PollableSensor#receive(java.lang.Object)
 	 */
 	@Override
-	public Set<TagReadEvent> receive(Object receiver) {
+	public Set<TagReadEvent> receive(Object receiver)
+			throws NotSubscribedException {
 		Set<TagReadEvent> ret = new HashSet<TagReadEvent>();
-		Set<Set<TagReadEvent>> process = new HashSet<Set<TagReadEvent>>();
-		receiversToQueues.get(receiver).drainTo(process);
-		for (Set<TagReadEvent> tags : receiversToQueues.get(receiver)) {
-			ret.addAll(tags);
-		}
+		subscriberToQueueMap.get(receiver).drainTo(ret);
 		return ret;
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.rifidi.edge.core.sensors.PhysicalSensor#subscribe(java.lang.Object)
+	 * @see org.rifidi.edge.core.sensors.PollableSensor#getName()
 	 */
 	@Override
-	public synchronized void subscribe(Object receiver)
+	public String getName() {
+		return getID();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.core.sensors.UpdateableSensor#subscribe(java.lang.Object)
+	 */
+	@Override
+	public void subscribe(Object receiver)
 			throws DuplicateSubscriptionException {
-		if (!receiversToQueues.containsKey(receiver)) {
-			receiversToQueues.put(receiver,
-					new LinkedBlockingQueue<Set<TagReadEvent>>());
-			return;
+		if (subscriberToQueueMap.containsKey(receiver)) {
+			throw new DuplicateSubscriptionException(receiver
+					+ " is already subscribed.");
 		}
-		throw new DuplicateSubscriptionException(receiver
-				+ " is already subscribed to " + getID());
+		subscriberToQueueMap.put(receiver, null);
+		inUse.compareAndSet(false, true);
 	}
 
 	/*
@@ -117,63 +129,70 @@ public abstract class AbstractSensor<T extends SensorSession> extends
 	@Override
 	public synchronized void unsubscribe(Object receiver)
 			throws NotSubscribedException {
-		if (receiversToQueues.containsKey(receiver)) {
-			receiversToQueues.remove(receiver);
+		if (!subscriberToQueueMap.containsKey(receiver)) {
+			throw new NotSubscribedException(receiver + " is not subscribed.");
 		}
-		throw new NotSubscribedException(receiver + " is not subscribed to "
-				+ getID());
+		subscriberToQueueMap.remove(receiver);
+		if (subscriberToQueueMap.isEmpty() && receivers.isEmpty()) {
+			inUse.compareAndSet(true, false);
+		}
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.sensors.PhysicalSensor#connectSensor(org.rifidi.
-	 * edge.core.sensors.LogicalSensorImpl)
+	 * org.rifidi.edge.core.sensors.UpdateableSensor#addReceiver(wtf.impl.SensorImpl
+	 * )
 	 */
-	@Override
-	public void connectSensor(LogicalSensorImpl sensor) {
-		connectedSensors.add(sensor);
+	public void addReceiver(PollableSensor receiver) {
+		receivers.add(receiver);
+		inUse.compareAndSet(false, true);
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.sensors.PhysicalSensor#disconnectSensor(org.rifidi
-	 * .edge.core.sensors.PhysicalSensor)
+	 * org.rifidi.edge.core.sensors.UpdateableSensor#removeReceiver(wtf.Sensor)
 	 */
-	@Override
-	public void disconnectSensor(PhysicalSensor sensor) {
-		connectedSensors.remove(sensor);
+	public void removeReceiver(PollableSensor receiver) {
+		if (subscriberToQueueMap.isEmpty() && receivers.isEmpty()) {
+			inUse.compareAndSet(true, false);
+		}
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.sensors.PhysicalSensor#getConnectedSensors()
+	 * @see
+	 * org.rifidi.edge.core.sensors.UpdateableSensor#setName(java.lang.String)
 	 */
 	@Override
-	public Set<LogicalSensorImpl> getConnectedSensors() {
-		Set<LogicalSensorImpl> ret = new HashSet<LogicalSensorImpl>();
-		ret.addAll(connectedSensors);
-		return ret;
+	public void setName(String name) throws ImmutableException, InUseException {
+		// TODO: should be possible when we merged the readers with the logical
+		// readers
+		throw new ImmutableException(getName() + " is immutable.");
 	}
 
-	/**
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @param tagReads
+	 * @see
+	 * org.rifidi.edge.core.sensors.PollableSensor#send(java.util.Collection)
 	 */
-	protected void send(Set<TagReadEvent> tagReads) {
-		for (LinkedBlockingQueue<Set<TagReadEvent>> queue : receiversToQueues
+	@Override
+	public void send(Collection<TagReadEvent> tagReads) {
+		for (PollableSensor receiver : receivers) {
+			receiver.send(tagReads);
+
+		}
+		for (LinkedBlockingQueue<TagReadEvent> queue : subscriberToQueueMap
 				.values()) {
-			queue.add(tagReads);
-		}
-		for (LogicalSensor sensor : connectedSensors) {
-			sensor.send(tagReads);
+			queue.addAll(tagReads);
 		}
 	}
-	
+
 	/***
 	 * This method returns the Data Transfer Object for this Reader
 	 * 
@@ -193,13 +212,14 @@ public abstract class AbstractSensor<T extends SensorSession> extends
 		return dto;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.rifidi.configuration.RifidiService#destroy()
 	 */
 	@Override
 	public void destroy() {
-		connectedSensors.clear();
+		receivers.clear();
 	}
-	
-	
+
 }
