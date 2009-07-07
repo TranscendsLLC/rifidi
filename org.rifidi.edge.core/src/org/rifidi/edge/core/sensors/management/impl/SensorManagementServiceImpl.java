@@ -95,6 +95,52 @@ public class SensorManagementServiceImpl implements SensorManagementService {
 	 * (non-Javadoc)
 	 * 
 	 * @see
+	 * org.rifidi.edge.core.sensors.management.SensorManagementService#destroySensor
+	 * (java.lang.String)
+	 */
+	@Override
+	public void destroySensor(String sensorName) throws NoSuchSensorException,
+			ImmutableException, InUseException {
+		sensorLock.lock();
+		try {
+			if (sensors.get(sensorName) == null
+					&& physicalSensors.get(sensorName) == null) {
+				throw new NoSuchSensorException("No sensor named " + sensorName
+						+ " available.");
+			}
+			if (sensors.get(sensorName) == null
+					&& physicalSensors.get(sensorName) != null) {
+				throw new ImmutableException("Sensor named " + sensorName
+						+ " is immutable.");
+			}
+			UpdateableSensor sensor = sensors.get(sensorName);
+			sensors.remove(sensor);
+
+			if (sensor instanceof CompositeUpdateableSensor) {
+
+				for (String child : ((CompositeUpdateableSensor) sensor)
+						.getChildren()) {
+					UpdateableSensor childSensors = sensors.get(child);
+					if (childSensors == null) {
+						childSensors = physicalSensors.get(child);
+					}
+					if (childSensors == null) {
+						logger.error("Trying to remove " + child + " from "
+								+ sensorName + " but it doesn't exist.");
+					}
+					childSensors.removeReceiver(sensor);
+				}
+			}
+			sensors.remove(sensorName);
+		} finally {
+			sensorLock.unlock();
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
 	 * org.rifidi.edge.core.sensors.management.SensorManagementService#createSensor
 	 * (java.lang.String)
 	 */
@@ -111,8 +157,9 @@ public class SensorManagementServiceImpl implements SensorManagementService {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.sensors.management.impl.SensorManagementService#subscribe(java.lang.Object,
-	 * java.lang.String)
+	 * @see
+	 * org.rifidi.edge.core.sensors.management.impl.SensorManagementService#
+	 * subscribe(java.lang.Object, java.lang.String)
 	 */
 	public PollableSensor subscribe(final Object subscriber,
 			final String sensorName) throws NoSuchSensorException,
@@ -134,8 +181,9 @@ public class SensorManagementServiceImpl implements SensorManagementService {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.sensors.management.impl.SensorManagementService#unsubscribe(java.lang.Object,
-	 * java.lang.String)
+	 * @see
+	 * org.rifidi.edge.core.sensors.management.impl.SensorManagementService#
+	 * unsubscribe(java.lang.Object, java.lang.String)
 	 */
 	public void unsubscribe(final Object subscriber, final String sensorName)
 			throws NoSuchSensorException, NotSubscribedException {
@@ -158,8 +206,9 @@ public class SensorManagementServiceImpl implements SensorManagementService {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.sensors.management.impl.SensorManagementService#renameSensor(java.lang.String,
-	 * java.lang.String)
+	 * @see
+	 * org.rifidi.edge.core.sensors.management.impl.SensorManagementService#
+	 * renameSensor(java.lang.String, java.lang.String)
 	 */
 	public void renameSensor(final String oldName, final String newName)
 			throws NoSuchSensorException, ImmutableException, InUseException {
@@ -184,8 +233,9 @@ public class SensorManagementServiceImpl implements SensorManagementService {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.sensors.management.impl.SensorManagementService#addChild(java.lang.String,
-	 * java.lang.String)
+	 * @see
+	 * org.rifidi.edge.core.sensors.management.impl.SensorManagementService#
+	 * addChild(java.lang.String, java.lang.String)
 	 */
 	public void addChild(final String sensorName, final String childName)
 			throws ImmutableException, InUseException, NoSuchSensorException {
@@ -218,13 +268,81 @@ public class SensorManagementServiceImpl implements SensorManagementService {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.sensors.management.impl.SensorUpdate#removeChild(org.rifidi.edge.core.sensors.management.Sensor)
+	 * @see
+	 * org.rifidi.edge.core.sensors.management.SensorManagementService#addChildren
+	 * (java.lang.String, java.util.Collection)
+	 */
+	@Override
+	public void addChildren(final String sensorName,
+			final Collection<String> childNames) throws ImmutableException,
+			InUseException, NoSuchSensorException {
+		sensorLock.lock();
+		try {
+			UpdateableSensor sensor = sensors.get(sensorName);
+			if (sensor == null && physicalSensors.get(sensorName) != null) {
+				throw new ImmutableException(sensorName + " is immutable.");
+			}
+			if (sensor == null) {
+				throw new NoSuchSensorException("A sensor named " + sensorName
+						+ " doesn't exist.");
+			}
+
+			if (!(sensor instanceof CompositeUpdateableSensor)) {
+				throw new ImmutableException(sensorName
+						+ " is not a composite sensor and can't be modified.");
+			}
+			Set<UpdateableSensor> children = new HashSet<UpdateableSensor>();
+			for (String childName : childNames) {
+				UpdateableSensor child = sensors.get(childName);
+				if (child == null) {
+					throw new NoSuchSensorException("A sensor named "
+							+ childName + " doesn't exist.");
+				}
+			}
+			for (UpdateableSensor child : children) {
+				((CompositeUpdateableSensor) sensor).addChild(child);
+				child.addReceiver(sensor);
+			}
+		} finally {
+			sensorLock.unlock();
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.core.sensors.management.SensorManagementService#setChildren
+	 * (java.lang.String, java.util.Collection)
+	 */
+	@Override
+	public void setChildren(String sensorName, Collection<String> childNames)
+			throws ImmutableException, InUseException, NoSuchSensorException {
+
+		UpdateableSensor sensor = sensors.get(sensorName);
+		if (sensor == null && physicalSensors.get(sensorName) != null) {
+			throw new ImmutableException(sensorName + " is immutable.");
+		}
+		if (sensor == null) {
+			throw new NoSuchSensorException("A sensor named " + sensorName
+					+ " doesn't exist.");
+		}
+		// TODO: finish
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.core.sensors.management.impl.SensorUpdate#removeChild
+	 * (org.rifidi.edge.core.sensors.management.Sensor)
 	 */
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.sensors.management.impl.SensorManagementService#removeChild(java.lang.String,
-	 * java.lang.String)
+	 * @see
+	 * org.rifidi.edge.core.sensors.management.impl.SensorManagementService#
+	 * removeChild(java.lang.String, java.lang.String)
 	 */
 	public void removeChild(final String sensorName, final String childName)
 			throws ImmutableException, InUseException, NoSuchSensorException {
@@ -303,8 +421,8 @@ public class SensorManagementServiceImpl implements SensorManagementService {
 	 *            the configuration to bind
 	 * @param parameters
 	 */
-	public void bindReader(AbstractSensor<?> reader,
-			Dictionary<String, String> parameters) {
+	public void bindReader(final AbstractSensor<?> reader,
+			final Dictionary<String, String> parameters) {
 		logger.info("Reader bound:" + reader.getID());
 		this.physicalSensors.put(reader.getID(), reader);
 	}
@@ -317,8 +435,8 @@ public class SensorManagementServiceImpl implements SensorManagementService {
 	 *            the AbstractSensor to unbind
 	 * @param parameters
 	 */
-	public void unbindReader(AbstractSensor<?> reader,
-			Dictionary<String, String> parameters) {
+	public void unbindReader(final AbstractSensor<?> reader,
+			final Dictionary<String, String> parameters) {
 		logger.info("Reader unbound:" + reader.getID());
 		physicalSensors.remove(reader.getID());
 	}
@@ -329,9 +447,25 @@ public class SensorManagementServiceImpl implements SensorManagementService {
 	 * @param readers
 	 *            the initial list of available readers
 	 */
-	public void setReader(Set<AbstractSensor<?>> readers) {
+	public void setReader(final Set<AbstractSensor<?>> readers) {
 		for (AbstractSensor<?> reader : readers) {
 			physicalSensors.put(reader.getID(), reader);
 		}
 	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.core.sensors.management.SensorManagementService#getSensors
+	 * ()
+	 */
+	@Override
+	public Set<String> getSensors() {
+		Set<String> ret = new HashSet<String>();
+		ret.addAll(sensors.keySet());
+		ret.addAll(physicalSensors.keySet());
+		return ret;
+	}
+
 }
