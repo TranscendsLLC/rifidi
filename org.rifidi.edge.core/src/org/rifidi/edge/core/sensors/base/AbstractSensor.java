@@ -8,6 +8,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -39,13 +41,13 @@ import org.rifidi.edge.core.services.notification.data.ReadCycle;
 public abstract class AbstractSensor<T extends SensorSession> extends
 		RifidiService implements UpdateableSensor {
 	/** Sensors connected to this connectedSensors. */
-	protected Set<PollableSensor> receivers;
+	protected Set<PollableSensor> receivers = new CopyOnWriteArraySet<PollableSensor>();
 
 	/**
 	 * Receivers are objects that need to gather tag reads. The tag reads are
 	 * stored in a queue.
 	 */
-	protected Map<Object, LinkedBlockingQueue<ReadCycle>> subscriberToQueueMap;
+	protected Map<Object, LinkedBlockingQueue<ReadCycle>> subscriberToQueueMap = new ConcurrentHashMap<Object, LinkedBlockingQueue<ReadCycle>>();
 
 	/**
 	 * Create a new reader session. If there are no more sessions available null
@@ -76,7 +78,7 @@ public abstract class AbstractSensor<T extends SensorSession> extends
 	abstract public void applyPropertyChanges();
 
 	/** True if the sensor is currently in use. */
-	protected AtomicBoolean inUse;
+	protected AtomicBoolean inUse = new AtomicBoolean(false);
 
 	/*
 	 * (non-Javadoc)

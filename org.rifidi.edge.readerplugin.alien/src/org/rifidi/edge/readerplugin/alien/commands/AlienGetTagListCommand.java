@@ -134,17 +134,17 @@ public class AlienGetTagListCommand extends AbstractAlien9800Command {
 			tagListCustomFormat.execute();
 			GetTagListCommandObject getTagListCommandObject = new GetTagListCommandObject(
 					(Alien9800ReaderSession) sensorSession);
-			List<String> tags = getTagListCommandObject.executeGet();
+			ReadCycle cycle=new ReadCycle(parseString(getTagListCommandObject.executeGet()), reader, System
+					.currentTimeMillis());
+			sensorSession.getSensor().send(cycle);
+			template.send(destination, new ObjectMessageCreator(cycle));
 
-			template.send(destination, new ObjectMessageCreator(
-					parseString(tags)));
-
-		} catch (AlienException ex) {
-			logger.warn("Exception while executing command: " + ex);
-		} catch (IOException ex) {
-			logger.warn("IOException while executing command: " + ex);
-		} catch (Exception e) {
+		} catch (AlienException e) {
 			logger.warn("Exception while executing command: " + e);
+		} catch (IOException e) {
+			logger.warn("IOException while executing command: " + e);
+		} catch (Exception e) {
+			logger.error("Exception while executing command: " + e);
 		}
 	}
 
@@ -244,13 +244,12 @@ public class AlienGetTagListCommand extends AbstractAlien9800Command {
 		 * @param tags
 		 *            the tags to add to this message
 		 */
-		public ObjectMessageCreator(Set<TagReadEvent> tags) {
+		public ObjectMessageCreator(ReadCycle readCycle) {
 			super();
 			objectMessage = new ActiveMQObjectMessage();
 
 			try {
-				objectMessage.setObject(new ReadCycle(tags, reader, System
-						.currentTimeMillis()));
+				objectMessage.setObject(readCycle);
 			} catch (JMSException e) {
 				logger.warn("Unable to set tag event: " + e);
 			}

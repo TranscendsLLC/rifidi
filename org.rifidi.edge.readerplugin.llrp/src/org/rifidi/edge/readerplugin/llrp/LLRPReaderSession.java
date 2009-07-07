@@ -53,6 +53,7 @@ import org.llrp.ltk.types.LLRPMessage;
 import org.llrp.ltk.types.UnsignedInteger;
 import org.llrp.ltk.types.UnsignedShort;
 import org.rifidi.edge.api.SessionStatus;
+import org.rifidi.edge.core.sensors.SensorSession;
 import org.rifidi.edge.core.sensors.base.AbstractSensor;
 import org.rifidi.edge.core.sensors.base.AbstractSensorSession;
 import org.rifidi.edge.core.sensors.commands.Command;
@@ -407,9 +408,11 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 						.getAntennaID().intValue(), System.currentTimeMillis());
 				tagreaderevents.add(tag);
 			}
-
+			ReadCycle cycle=new ReadCycle(tagreaderevents, readerID, System
+					.currentTimeMillis());
+			sensor.send(cycle);
 			this.getTemplate().send(this.getDestination(),
-					new ObjectMessageCreator(tagreaderevents));
+					new ObjectMessageCreator(cycle));
 		}
 	}
 
@@ -427,16 +430,15 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 		/**
 		 * Constructor.
 		 * 
-		 * @param tags
+		 * @param cycle
 		 *            the tags to add to this message
 		 */
-		public ObjectMessageCreator(Set<TagReadEvent> tags) {
+		public ObjectMessageCreator(ReadCycle cycle) {
 			super();
 			objectMessage = new ActiveMQObjectMessage();
 
 			try {
-				objectMessage.setObject(new ReadCycle(tags, readerID, System
-						.currentTimeMillis()));
+				objectMessage.setObject(cycle);
 			} catch (JMSException e) {
 				logger.warn("Unable to set tag event: " + e);
 			}
