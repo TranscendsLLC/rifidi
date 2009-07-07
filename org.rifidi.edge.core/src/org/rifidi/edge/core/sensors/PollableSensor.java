@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Set;
 
 import org.rifidi.edge.core.sensors.exceptions.NotSubscribedException;
+import org.rifidi.edge.core.services.notification.data.ReadCycle;
 import org.rifidi.edge.core.services.notification.data.TagReadEvent;
 
 public interface PollableSensor {
@@ -21,13 +22,13 @@ public interface PollableSensor {
 	 * 
 	 * @param reads
 	 */
-	Set<TagReadEvent> receive(Object object) throws NotSubscribedException;
+	Set<ReadCycle> receive(Object object) throws NotSubscribedException;
 
 	/**
 	 * Send sensor results to this sensor.
 	 * 
-	 * @param reads
+	 * @param cycle
 	 */
-	public void send(Collection<TagReadEvent> reads);
+	public void send(ReadCycle cycle);
 
 }

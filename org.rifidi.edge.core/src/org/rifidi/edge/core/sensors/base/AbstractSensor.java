@@ -4,7 +4,6 @@
 package org.rifidi.edge.core.sensors.base;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -25,7 +24,7 @@ import org.rifidi.edge.core.sensors.exceptions.DuplicateSubscriptionException;
 import org.rifidi.edge.core.sensors.exceptions.ImmutableException;
 import org.rifidi.edge.core.sensors.exceptions.InUseException;
 import org.rifidi.edge.core.sensors.exceptions.NotSubscribedException;
-import org.rifidi.edge.core.services.notification.data.TagReadEvent;
+import org.rifidi.edge.core.services.notification.data.ReadCycle;
 
 /**
  * A reader creates and manages instances of sessions. The reader itself holds
@@ -46,7 +45,7 @@ public abstract class AbstractSensor<T extends SensorSession> extends
 	 * Receivers are objects that need to gather tag reads. The tag reads are
 	 * stored in a queue.
 	 */
-	protected Map<Object, LinkedBlockingQueue<TagReadEvent>> subscriberToQueueMap;
+	protected Map<Object, LinkedBlockingQueue<ReadCycle>> subscriberToQueueMap;
 
 	/**
 	 * Create a new reader session. If there are no more sessions available null
@@ -86,9 +85,9 @@ public abstract class AbstractSensor<T extends SensorSession> extends
 	 * org.rifidi.edge.core.sensors.PollableSensor#receive(java.lang.Object)
 	 */
 	@Override
-	public Set<TagReadEvent> receive(Object receiver)
+	public Set<ReadCycle> receive(Object receiver)
 			throws NotSubscribedException {
-		Set<TagReadEvent> ret = new HashSet<TagReadEvent>();
+		Set<ReadCycle> ret = new HashSet<ReadCycle>();
 		subscriberToQueueMap.get(receiver).drainTo(ret);
 		return ret;
 	}
@@ -179,17 +178,17 @@ public abstract class AbstractSensor<T extends SensorSession> extends
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.sensors.PollableSensor#send(java.util.Collection)
+	 * org.rifidi.edge.core.sensors.PollableSensor#send(org.rifidi.edge.core
+	 * .services.notification.data.ReadCycle)
 	 */
 	@Override
-	public void send(Collection<TagReadEvent> tagReads) {
+	public void send(ReadCycle cycle) {
 		for (PollableSensor receiver : receivers) {
-			receiver.send(tagReads);
-
+			receiver.send(cycle);
 		}
-		for (LinkedBlockingQueue<TagReadEvent> queue : subscriberToQueueMap
+		for (LinkedBlockingQueue<ReadCycle> queue : subscriberToQueueMap
 				.values()) {
-			queue.addAll(tagReads);
+			queue.add(cycle);
 		}
 	}
 
