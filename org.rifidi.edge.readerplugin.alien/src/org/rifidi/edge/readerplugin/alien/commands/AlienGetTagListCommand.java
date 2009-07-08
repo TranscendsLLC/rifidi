@@ -46,7 +46,6 @@ public class AlienGetTagListCommand extends AbstractAlien9800Command {
 	// private Calendar calendar;
 	private String antennasequence = "0";
 
-	// private int persistTime = -1;
 	private final String reader;
 
 	/**
@@ -73,14 +72,6 @@ public class AlienGetTagListCommand extends AbstractAlien9800Command {
 	public void setAntennasequence(String antennasequence) {
 		this.antennasequence = antennasequence;
 	}
-
-	// /**
-	// * @param persistTime
-	// * the persistTime to set
-	// */
-	// public void setPersistTime(int persistTime) {
-	// this.persistTime = persistTime;
-	// }
 
 	/**
 	 * @param tagType
