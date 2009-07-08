@@ -49,7 +49,7 @@ public class Alien9800ReaderSession extends AbstractIPSensorSession {
 	public static final String PROMPT_SUPPRESS = "\1";
 
 	/** Set antenna sequence */
-	public static final String ANTENNA_SEQUENCE_COMMAND = ("AntennaSequence");
+	public static final String ANTENNA_SEQUENCE_COMMAND = "AntennaSequence";
 
 	/**
 	 * COMMANDS
@@ -75,6 +75,7 @@ public class Alien9800ReaderSession extends AbstractIPSensorSession {
 	public static final String COMMAND_INVERT_EXTERNAL_OUTPUT = "InvertExternalOutput";
 	public static final String COOMMAND_COMMAND_PORT = "CommandPort";
 	public static final String COMMAND_DHCP = "DHCP";
+	public static final String COMMAND_PERSIST_TIME = "PersistTime";
 	public static final String COMMAND_DNS = "DNS";
 	public static final String COMMAND_GATEWAY = "Gateway";
 	public static final String COMMAND_HEARTBEAT_COUNT = "HeartbeatCount";
@@ -116,12 +117,13 @@ public class Alien9800ReaderSession extends AbstractIPSensorSession {
 	 * @param readerID
 	 *            The ID of the reader that created this session
 	 */
-	public Alien9800ReaderSession(AbstractSensor<?> sensor, String id, String host, int port,
-			int reconnectionInterval, int maxConAttempts, String username,
-			String password, JmsTemplate template,
-			NotifierService notifierService, String readerID) {
-		super(sensor, id, host, port, reconnectionInterval, maxConAttempts, template
-				.getDefaultDestination(), template);
+	public Alien9800ReaderSession(AbstractSensor<?> sensor, String id,
+			String host, int port, int reconnectionInterval,
+			int maxConAttempts, String username, String password,
+			JmsTemplate template, NotifierService notifierService,
+			String readerID) {
+		super(sensor, id, host, port, reconnectionInterval, maxConAttempts,
+				template.getDefaultDestination(), template);
 		this.username = username;
 		this.password = password;
 		this.notifierService = notifierService;

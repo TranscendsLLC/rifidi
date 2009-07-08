@@ -25,8 +25,6 @@ public class AlienGetTagListCommandConfiguration extends
 	private int interval = 10;
 	/** Type of tag to read */
 	private int tagType = 2;
-	/** Length of time tags stay in taglist */
-	//private int persistTime = -1;
 	/** Antennas to scan */
 	private String antenna_sequence = "0";
 
@@ -55,13 +53,14 @@ public class AlienGetTagListCommandConfiguration extends
 	/**
 	 * @return the interval
 	 */
-	@Property(displayName = "Interval", description = "Interval between two reads", writable = true, type = PropertyType.PT_INTEGER)
+	@Property(displayName = "Interval", description = "Interval "
+			+ "between two reads", writable = true, type = PropertyType.PT_INTEGER)
 	public Integer getInterval() {
 		return interval;
 	}
 
 	/**
-	 * Sets the interval for the reader.  
+	 * Sets the interval for the reader.
 	 * 
 	 * @param interval
 	 *            the interval to set
@@ -83,7 +82,7 @@ public class AlienGetTagListCommandConfiguration extends
 	}
 
 	/**
-	 * Sets the tag type.  
+	 * Sets the tag type.
 	 * 
 	 * @param tagType
 	 *            the tagType to set
@@ -92,31 +91,8 @@ public class AlienGetTagListCommandConfiguration extends
 		this.tagType = tagType;
 	}
 
-	// /**
-	// * Returns the persist time.
-	// *
-	// * @return the persistTime
-	// */
-	// @Property(displayName = "Persist Time", description =
-	// "Length of time a tag stays in memory "
-	// + "before it is read (in seconds, -1 is unlimited)", writable = true,
-	// type = PropertyType.PT_INTEGER)
-	// public Integer getPersistTime() {
-	// return persistTime;
-	// }
-	//
-	// /**
-	// * Sets the persist time.
-	// *
-	// * @param persistTime
-	// * the persistTime to set
-	// */
-	// public void setPersistTime(Integer persistTime) {
-	// this.persistTime = persistTime;
-	// }
-
 	/**
-	 * Gets the antenna sequence.  
+	 * Gets the antenna sequence.
 	 * 
 	 * @return the antenna_sequence
 	 */
@@ -127,24 +103,25 @@ public class AlienGetTagListCommandConfiguration extends
 	}
 
 	/**
-	 * Sets the antenna sequence.  
+	 * Sets the antenna sequence.
 	 * 
 	 * @param antenna_sequence
 	 *            the antenna_sequence to set
 	 */
 	public void setAntennaSequence(String antenna_sequence) {
+		//System.out.println("Attempting to set antenna seq!");
 		if (isValidAntennaSequence(antenna_sequence)) {
 			this.antenna_sequence = antenna_sequence;
 		}
 	}
 
 	/**
-	 * Checks to see if the given antenna sequence is valid.  
+	 * Checks to see if the given antenna sequence is valid.
 	 * 
 	 * @return
 	 */
 	private boolean isValidAntennaSequence(String antennaSequence) {
-		boolean retVal = true;
+		//System.out.println("Setting the antenna sequence!");
 		try {
 			String splitString[] = antennaSequence.split(",");
 			for (String a : splitString) {
@@ -156,7 +133,7 @@ public class AlienGetTagListCommandConfiguration extends
 		} catch (NumberFormatException e) {
 			return false;
 		}
-		return retVal;
+		return true;
 	}
 
 	/*
@@ -171,7 +148,6 @@ public class AlienGetTagListCommandConfiguration extends
 		AlienGetTagListCommand c = new AlienGetTagListCommand(super.getID(),
 				readerID);
 		c.setAntennasequence(antenna_sequence);
-		//c.setPersistTime(persistTime);
 		c.setTagType(tagType);
 		return c;
 	}

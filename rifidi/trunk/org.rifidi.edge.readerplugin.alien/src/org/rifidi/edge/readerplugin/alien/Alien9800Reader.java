@@ -68,6 +68,7 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 	public static final String PROP_EXTERNAL_OUTPUT = "externalOutput";
 	public static final String PROP_INVERT_EXTERNAL_INPUT = "invertExternalInput";
 	public static final String PROP_INVERT_EXTERNAL_OUTPUT = "invertExternalOutput";
+	public static final String PROP_PERSIST_TIME = "PersistTime";
 
 	/**
 	 * READER PROPERTIES - SETTABLE, INITIALIZED BY AQUIRE READER PROPERTIES
@@ -121,6 +122,8 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 		readerProperties.put(PROP_RF_ATTENUATION, "0");
 		readerProperties.put(PROP_INVERT_EXTERNAL_OUTPUT, "0");
 		readerProperties.put(PROP_INVERT_EXTERNAL_INPUT, "0");
+		readerProperties.put(PROP_PERSIST_TIME, "-1");
+		
 
 		propCommandsToBeExecuted = new LinkedBlockingQueue<AlienCommandObjectWrapper>();
 		propCommandsToBeExecuted.add(new AlienCommandObjectWrapper(
@@ -155,6 +158,11 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 				PROP_RF_ATTENUATION, new AlienSetCommandObject(
 						Alien9800ReaderSession.COMMAND_RF_ATTENUATION,
 						this.readerProperties.get(PROP_RF_ATTENUATION))));
+		
+		propCommandsToBeExecuted.add(new AlienCommandObjectWrapper(
+				PROP_PERSIST_TIME, new AlienSetCommandObject(
+						Alien9800ReaderSession.COMMAND_PERSIST_TIME,
+						this.readerProperties.get(PROP_PERSIST_TIME))));
 
 		logger.debug("New instance of Alien9800Reader created.");
 	}
@@ -168,8 +176,9 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 	public synchronized SensorSession createReaderSession() {
 		if (session == null) {
 			sessionID++;
-			session = new Alien9800ReaderSession(this, Integer.toString(sessionID),
-					ipAddress, port, (int) (long) reconnectionInterval,
+			session = new Alien9800ReaderSession(this, Integer
+					.toString(sessionID), ipAddress, port,
+					(int) (long) reconnectionInterval,
 					maxNumConnectionAttempts, username, password, template,
 					notifierService, this.getID());
 
@@ -359,7 +368,8 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 		this.maxNumConnectionAttempts = maxNumConnectionAttempts;
 	}
 
-	@Property(displayName = "GPO Output", description = "Ouput of GPO", writable = true, type = PropertyType.PT_INTEGER, minValue = "0", maxValue = "255", category = "GPIO")
+	@Property(displayName = "GPO Output", description = "Ouput of GPO", writable = true, type = PropertyType.PT_INTEGER, minValue = "0"
+			+ "", maxValue = "255", category = "GPIO")
 	public Integer getExternalOutput() {
 		return Integer.parseInt(readerProperties.get(PROP_EXTERNAL_OUTPUT));
 	}
@@ -376,6 +386,37 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 		}
 		logger.warn("ExternalOutput must be an"
 				+ " integer between 0 and 255, but was " + externalOutput);
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	@Property(displayName = "Persist Time", description = "How long the tags will persist "
+			+ "in memory before they are read (-1 is an infinite amount of time)"
+			+ "", writable = true, type = PropertyType.PT_INTEGER, minValue = "-1"
+			+ "", maxValue = "16535", category = "General", defaultValue="-1")
+	public Integer getPersistTime() {
+		return Integer.parseInt(readerProperties.get(PROP_PERSIST_TIME));
+	}
+
+	/**
+	 * 
+	 * @param persistTime
+	 */
+	public void setPersistTime(Integer persistTime) {
+		System.out.println("Attempting to set the persist time");
+		if (persistTime >= -1 && persistTime <= 16535) {
+			readerProperties.put(PROP_PERSIST_TIME, Integer
+					.toString(persistTime));
+			propCommandsToBeExecuted.add(new AlienCommandObjectWrapper(
+					PROP_PERSIST_TIME, new AlienSetCommandObject(
+							Alien9800ReaderSession.COMMAND_PERSIST_TIME,
+							Integer.toString(persistTime))));
+			return;
+		}
+		logger.warn("Persist Time must be an"
+				+ " integer between -1 and 16535, but was " + persistTime);
 	}
 
 	@Property(displayName = "Invert External Output", description = "Inverts the "
