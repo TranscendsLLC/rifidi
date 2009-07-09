@@ -10,7 +10,7 @@ import org.rifidi.edge.core.sensors.exceptions.NotSubscribedException;
  * @author Jochen Mader - jochen@pramari.com
  *
  */
-public interface UpdateableSensor extends PollableSensor {
+public interface SensorUpdate extends Sensor {
 
 	/**
 	 * 
@@ -42,7 +42,7 @@ public interface UpdateableSensor extends PollableSensor {
 	 * 
 	 * @param receiver
 	 */
-	void addReceiver(PollableSensor receiver);
+	void addReceiver(Sensor receiver);
 
 	/**
 	 * Remove a sensor from the list of sensors that receive sensor reads from
@@ -50,6 +50,6 @@ public interface UpdateableSensor extends PollableSensor {
 	 * 
 	 * @param receiver
 	 */
-	void removeReceiver(PollableSensor receiver);
+	void removeReceiver(Sensor receiver);
 
 }

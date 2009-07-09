@@ -14,9 +14,10 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.rifidi.edge.core.sensors.CompositeUpdateableSensor;
-import org.rifidi.edge.core.sensors.PollableSensor;
-import org.rifidi.edge.core.sensors.UpdateableSensor;
+import org.rifidi.edge.core.sensors.CompositeSensor;
+import org.rifidi.edge.core.sensors.CompositeSensorUpdate;
+import org.rifidi.edge.core.sensors.Sensor;
+import org.rifidi.edge.core.sensors.SensorUpdate;
 import org.rifidi.edge.core.sensors.base.AbstractSensor;
 import org.rifidi.edge.core.sensors.exceptions.DuplicateSensorNameException;
 import org.rifidi.edge.core.sensors.exceptions.DuplicateSubscriptionException;
@@ -28,6 +29,8 @@ import org.rifidi.edge.core.sensors.impl.SensorImpl;
 import org.rifidi.edge.core.sensors.management.SensorManagementService;
 
 /**
+ * Thread asfe implementation of the {@link SensorManagementService}
+ * 
  * @author Jochen Mader - jochen@pramari.com
  * 
  */
@@ -41,7 +44,7 @@ public class SensorManagementServiceImpl implements SensorManagementService {
 	 */
 	private final Lock sensorLock;
 	/** Sensors created by this service. */
-	private final Map<String, UpdateableSensor> sensors;
+	private final Map<String, SensorUpdate> sensors;
 	/** Sensors created outside the service are all treated as physical sensors. */
 	// TODO: Handle reader that disappear.
 	private final Map<String, AbstractSensor<?>> physicalSensors;
@@ -51,7 +54,7 @@ public class SensorManagementServiceImpl implements SensorManagementService {
 	 */
 	public SensorManagementServiceImpl() {
 		this.sensorLock = new ReentrantLock();
-		this.sensors = new ConcurrentHashMap<String, UpdateableSensor>();
+		this.sensors = new ConcurrentHashMap<String, SensorUpdate>();
 		this.physicalSensors = new ConcurrentHashMap<String, AbstractSensor<?>>();
 	}
 
@@ -73,7 +76,7 @@ public class SensorManagementServiceImpl implements SensorManagementService {
 				throw new DuplicateSensorNameException("A sensor named "
 						+ sensorName + " already exists.");
 			}
-			Set<UpdateableSensor> children = new HashSet<UpdateableSensor>();
+			Set<SensorUpdate> children = new HashSet<SensorUpdate>();
 			for (String child : childSensors) {
 				if (sensors.get(child) != null) {
 					children.add(sensors.get(child));
@@ -83,7 +86,7 @@ public class SensorManagementServiceImpl implements SensorManagementService {
 			}
 			SensorImpl sensor = new SensorImpl(sensorName, children, false);
 			sensors.put(sensorName, sensor);
-			for (UpdateableSensor child : children) {
+			for (SensorUpdate child : children) {
 				child.addReceiver(sensor);
 			}
 		} finally {
@@ -99,8 +102,8 @@ public class SensorManagementServiceImpl implements SensorManagementService {
 	 * (java.lang.String)
 	 */
 	@Override
-	public void destroySensor(String sensorName) throws NoSuchSensorException,
-			ImmutableException, InUseException {
+	public void destroySensor(final String sensorName)
+			throws NoSuchSensorException, ImmutableException, InUseException {
 		sensorLock.lock();
 		try {
 			if (sensors.get(sensorName) == null
@@ -113,14 +116,13 @@ public class SensorManagementServiceImpl implements SensorManagementService {
 				throw new ImmutableException("Sensor named " + sensorName
 						+ " is immutable.");
 			}
-			UpdateableSensor sensor = sensors.get(sensorName);
+			SensorUpdate sensor = sensors.get(sensorName);
 			sensors.remove(sensor);
 
-			if (sensor instanceof CompositeUpdateableSensor) {
+			if (sensor instanceof CompositeSensorUpdate) {
 
-				for (String child : ((CompositeUpdateableSensor) sensor)
-						.getChildren()) {
-					UpdateableSensor childSensors = sensors.get(child);
+				for (String child : ((CompositeSensor) sensor).getChildren()) {
+					SensorUpdate childSensors = sensors.get(child);
 					if (childSensors == null) {
 						childSensors = physicalSensors.get(child);
 					}
@@ -161,12 +163,12 @@ public class SensorManagementServiceImpl implements SensorManagementService {
 	 * org.rifidi.edge.core.sensors.management.impl.SensorManagementService#
 	 * subscribe(java.lang.Object, java.lang.String)
 	 */
-	public PollableSensor subscribe(final Object subscriber,
-			final String sensorName) throws NoSuchSensorException,
-			DuplicateSubscriptionException {
+	@Override
+	public Sensor subscribe(final Object subscriber, final String sensorName)
+			throws NoSuchSensorException, DuplicateSubscriptionException {
 		sensorLock.lock();
 		try {
-			UpdateableSensor sensor = sensors.get(sensorName);
+			SensorUpdate sensor = sensors.get(sensorName);
 			if (sensor == null) {
 				throw new NoSuchSensorException("A sensor named " + sensorName
 						+ " doesn't exist.");
@@ -185,11 +187,12 @@ public class SensorManagementServiceImpl implements SensorManagementService {
 	 * org.rifidi.edge.core.sensors.management.impl.SensorManagementService#
 	 * unsubscribe(java.lang.Object, java.lang.String)
 	 */
+	@Override
 	public void unsubscribe(final Object subscriber, final String sensorName)
 			throws NoSuchSensorException, NotSubscribedException {
 		sensorLock.lock();
 		try {
-			UpdateableSensor sensor = sensors.get(sensorName);
+			SensorUpdate sensor = sensors.get(sensorName);
 			if (sensor == null) {
 				sensor = physicalSensors.get(sensorName);
 			}
@@ -210,11 +213,12 @@ public class SensorManagementServiceImpl implements SensorManagementService {
 	 * org.rifidi.edge.core.sensors.management.impl.SensorManagementService#
 	 * renameSensor(java.lang.String, java.lang.String)
 	 */
+	@Override
 	public void renameSensor(final String oldName, final String newName)
 			throws NoSuchSensorException, ImmutableException, InUseException {
 		sensorLock.lock();
 		try {
-			UpdateableSensor sensor = sensors.get(oldName);
+			SensorUpdate sensor = sensors.get(oldName);
 			if (sensor == null && physicalSensors.get(oldName) != null) {
 				throw new ImmutableException(oldName + " is immutable.");
 			}
@@ -237,12 +241,13 @@ public class SensorManagementServiceImpl implements SensorManagementService {
 	 * org.rifidi.edge.core.sensors.management.impl.SensorManagementService#
 	 * addChild(java.lang.String, java.lang.String)
 	 */
+	@Override
 	public void addChild(final String sensorName, final String childName)
 			throws ImmutableException, InUseException, NoSuchSensorException {
 		sensorLock.lock();
 		try {
-			UpdateableSensor sensor = sensors.get(sensorName);
-			UpdateableSensor child = sensors.get(childName);
+			SensorUpdate sensor = sensors.get(sensorName);
+			SensorUpdate child = sensors.get(childName);
 			if (sensor == null && physicalSensors.get(sensorName) != null) {
 				throw new ImmutableException(sensorName + " is immutable.");
 			}
@@ -254,11 +259,11 @@ public class SensorManagementServiceImpl implements SensorManagementService {
 				throw new NoSuchSensorException("A sensor named " + childName
 						+ " doesn't exist.");
 			}
-			if (!(sensor instanceof CompositeUpdateableSensor)) {
+			if (!(sensor instanceof CompositeSensorUpdate)) {
 				throw new ImmutableException(sensorName
 						+ " is not a composite sensor and can't be modified.");
 			}
-			((CompositeUpdateableSensor) sensor).addChild(child);
+			((CompositeSensorUpdate) sensor).addChild(child);
 			child.addReceiver(sensor);
 		} finally {
 			sensorLock.unlock();
@@ -278,7 +283,7 @@ public class SensorManagementServiceImpl implements SensorManagementService {
 			InUseException, NoSuchSensorException {
 		sensorLock.lock();
 		try {
-			UpdateableSensor sensor = sensors.get(sensorName);
+			SensorUpdate sensor = sensors.get(sensorName);
 			if (sensor == null && physicalSensors.get(sensorName) != null) {
 				throw new ImmutableException(sensorName + " is immutable.");
 			}
@@ -287,20 +292,20 @@ public class SensorManagementServiceImpl implements SensorManagementService {
 						+ " doesn't exist.");
 			}
 
-			if (!(sensor instanceof CompositeUpdateableSensor)) {
+			if (!(sensor instanceof CompositeSensorUpdate)) {
 				throw new ImmutableException(sensorName
 						+ " is not a composite sensor and can't be modified.");
 			}
-			Set<UpdateableSensor> children = new HashSet<UpdateableSensor>();
+			Set<SensorUpdate> children = new HashSet<SensorUpdate>();
 			for (String childName : childNames) {
-				UpdateableSensor child = sensors.get(childName);
+				SensorUpdate child = sensors.get(childName);
 				if (child == null) {
 					throw new NoSuchSensorException("A sensor named "
 							+ childName + " doesn't exist.");
 				}
 			}
-			for (UpdateableSensor child : children) {
-				((CompositeUpdateableSensor) sensor).addChild(child);
+			for (SensorUpdate child : children) {
+				((CompositeSensorUpdate) sensor).addChild(child);
 				child.addReceiver(sensor);
 			}
 		} finally {
@@ -316,10 +321,11 @@ public class SensorManagementServiceImpl implements SensorManagementService {
 	 * (java.lang.String, java.util.Collection)
 	 */
 	@Override
-	public void setChildren(String sensorName, Collection<String> childNames)
-			throws ImmutableException, InUseException, NoSuchSensorException {
+	public void setChildren(final String sensorName,
+			final Collection<String> childNames) throws ImmutableException,
+			InUseException, NoSuchSensorException {
 
-		UpdateableSensor sensor = sensors.get(sensorName);
+		SensorUpdate sensor = sensors.get(sensorName);
 		if (sensor == null && physicalSensors.get(sensorName) != null) {
 			throw new ImmutableException(sensorName + " is immutable.");
 		}
@@ -344,12 +350,13 @@ public class SensorManagementServiceImpl implements SensorManagementService {
 	 * org.rifidi.edge.core.sensors.management.impl.SensorManagementService#
 	 * removeChild(java.lang.String, java.lang.String)
 	 */
+	@Override
 	public void removeChild(final String sensorName, final String childName)
 			throws ImmutableException, InUseException, NoSuchSensorException {
 		sensorLock.lock();
 		try {
-			UpdateableSensor sensor = sensors.get(sensorName);
-			UpdateableSensor child = sensors.get(childName);
+			SensorUpdate sensor = sensors.get(sensorName);
+			SensorUpdate child = sensors.get(childName);
 			if (sensor == null && physicalSensors.get(sensorName) != null) {
 				throw new ImmutableException(sensorName + " is immutable.");
 			}
@@ -361,12 +368,12 @@ public class SensorManagementServiceImpl implements SensorManagementService {
 				throw new NoSuchSensorException("A sensor named " + childName
 						+ " doesn't exist.");
 			}
-			if (!(sensor instanceof CompositeUpdateableSensor)) {
+			if (!(sensor instanceof CompositeSensorUpdate)) {
 				throw new ImmutableException(sensorName
 						+ " is not a composite sensor and can't be modified.");
 			}
 			child.removeReceiver(sensor);
-			((CompositeUpdateableSensor) sensor).removeChild(child);
+			((CompositeSensorUpdate) sensor).removeChild(child);
 		} finally {
 			sensorLock.unlock();
 		}
@@ -379,12 +386,13 @@ public class SensorManagementServiceImpl implements SensorManagementService {
 	 * org.rifidi.edge.core.sensors.management.impl.SensorManagementService#
 	 * removeChildren(java.lang.String, java.util.Collection)
 	 */
+	@Override
 	public void removeChildren(final String sensorName,
 			final Collection<String> childrenNames) throws ImmutableException,
 			InUseException, NoSuchSensorException {
 		sensorLock.lock();
 		try {
-			UpdateableSensor sensor = sensors.get(sensorName);
+			SensorUpdate sensor = sensors.get(sensorName);
 			if (sensor == null && physicalSensors.get(sensorName) != null) {
 				throw new ImmutableException(sensorName + " is immutable.");
 			}
@@ -392,26 +400,41 @@ public class SensorManagementServiceImpl implements SensorManagementService {
 				throw new NoSuchSensorException("A sensor named " + sensorName
 						+ " doesn't exist.");
 			}
-			if (!(sensor instanceof CompositeUpdateableSensor)) {
+			if (!(sensor instanceof CompositeSensorUpdate)) {
 				throw new ImmutableException(sensorName
 						+ " is not a composite sensor and can't be modified.");
 			}
-			Set<UpdateableSensor> children = new HashSet<UpdateableSensor>();
+			Set<SensorUpdate> children = new HashSet<SensorUpdate>();
 			for (String childName : childrenNames) {
-				UpdateableSensor child = sensors.get(childName);
+				SensorUpdate child = sensors.get(childName);
 				if (child == null) {
 					throw new NoSuchSensorException("A sensor named "
 							+ childName + " doesn't exist.");
 				}
 				children.add(child);
 			}
-			for (UpdateableSensor child : children) {
+			for (SensorUpdate child : children) {
 				child.removeReceiver(sensor);
 			}
-			((CompositeUpdateableSensor) sensor).removeChildren(children);
+			((CompositeSensorUpdate) sensor).removeChildren(children);
 		} finally {
 			sensorLock.unlock();
 		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.core.sensors.management.SensorManagementService#getSensors
+	 * ()
+	 */
+	@Override
+	public Set<String> getSensors() {
+		Set<String> ret = new HashSet<String>();
+		ret.addAll(sensors.keySet());
+		ret.addAll(physicalSensors.keySet());
+		return ret;
 	}
 
 	/**
@@ -451,21 +474,6 @@ public class SensorManagementServiceImpl implements SensorManagementService {
 		for (AbstractSensor<?> reader : readers) {
 			physicalSensors.put(reader.getID(), reader);
 		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.rifidi.edge.core.sensors.management.SensorManagementService#getSensors
-	 * ()
-	 */
-	@Override
-	public Set<String> getSensors() {
-		Set<String> ret = new HashSet<String>();
-		ret.addAll(sensors.keySet());
-		ret.addAll(physicalSensors.keySet());
-		return ret;
 	}
 
 }

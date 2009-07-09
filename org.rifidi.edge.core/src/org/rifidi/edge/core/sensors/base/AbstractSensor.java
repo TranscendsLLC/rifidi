@@ -4,6 +4,7 @@
 package org.rifidi.edge.core.sensors.base;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -19,9 +20,10 @@ import org.rifidi.configuration.Configuration;
 import org.rifidi.configuration.RifidiService;
 import org.rifidi.edge.api.rmi.dto.ReaderDTO;
 import org.rifidi.edge.api.rmi.dto.SessionDTO;
-import org.rifidi.edge.core.sensors.PollableSensor;
+import org.rifidi.edge.core.sensors.CompositeSensor;
+import org.rifidi.edge.core.sensors.Sensor;
 import org.rifidi.edge.core.sensors.SensorSession;
-import org.rifidi.edge.core.sensors.UpdateableSensor;
+import org.rifidi.edge.core.sensors.SensorUpdate;
 import org.rifidi.edge.core.sensors.exceptions.DuplicateSubscriptionException;
 import org.rifidi.edge.core.sensors.exceptions.ImmutableException;
 import org.rifidi.edge.core.sensors.exceptions.InUseException;
@@ -39,15 +41,15 @@ import org.rifidi.edge.core.services.notification.data.ReadCycle;
  * 
  */
 public abstract class AbstractSensor<T extends SensorSession> extends
-		RifidiService implements UpdateableSensor {
+		RifidiService implements SensorUpdate, CompositeSensor {
 	/** Sensors connected to this connectedSensors. */
-	protected Set<PollableSensor> receivers = new CopyOnWriteArraySet<PollableSensor>();
+	protected final Set<Sensor> receivers = new CopyOnWriteArraySet<Sensor>();
 
 	/**
 	 * Receivers are objects that need to gather tag reads. The tag reads are
 	 * stored in a queue.
 	 */
-	protected Map<Object, LinkedBlockingQueue<ReadCycle>> subscriberToQueueMap = new ConcurrentHashMap<Object, LinkedBlockingQueue<ReadCycle>>();
+	protected final Map<Object, LinkedBlockingQueue<ReadCycle>> subscriberToQueueMap = new ConcurrentHashMap<Object, LinkedBlockingQueue<ReadCycle>>();
 
 	/**
 	 * Create a new reader session. If there are no more sessions available null
@@ -87,7 +89,7 @@ public abstract class AbstractSensor<T extends SensorSession> extends
 	 * org.rifidi.edge.core.sensors.PollableSensor#receive(java.lang.Object)
 	 */
 	@Override
-	public Set<ReadCycle> receive(Object receiver)
+	public Set<ReadCycle> receive(final Object receiver)
 			throws NotSubscribedException {
 		Set<ReadCycle> ret = new HashSet<ReadCycle>();
 		subscriberToQueueMap.get(receiver).drainTo(ret);
@@ -97,21 +99,11 @@ public abstract class AbstractSensor<T extends SensorSession> extends
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.sensors.PollableSensor#getName()
-	 */
-	@Override
-	public String getName() {
-		return getID();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
 	 * @see
-	 * org.rifidi.edge.core.sensors.UpdateableSensor#subscribe(java.lang.Object)
+	 * org.rifidi.edge.core.sensors.SensorUpdate#subscribe(java.lang.Object)
 	 */
 	@Override
-	public void subscribe(Object receiver)
+	public void subscribe(final Object receiver)
 			throws DuplicateSubscriptionException {
 		if (subscriberToQueueMap.containsKey(receiver)) {
 			throw new DuplicateSubscriptionException(receiver
@@ -124,11 +116,21 @@ public abstract class AbstractSensor<T extends SensorSession> extends
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.rifidi.edge.core.sensors.PhysicalSensor#unsubscribe(java.lang.Object)
+	 * @see org.rifidi.edge.core.sensors.Sensor#getName()
 	 */
 	@Override
-	public synchronized void unsubscribe(Object receiver)
+	public String getName() {
+		return getID();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.core.sensors.SensorUpdate#unsubscribe(java.lang.Object)
+	 */
+	@Override
+	public synchronized void unsubscribe(final Object receiver)
 			throws NotSubscribedException {
 		if (!subscriberToQueueMap.containsKey(receiver)) {
 			throw new NotSubscribedException(receiver + " is not subscribed.");
@@ -143,21 +145,11 @@ public abstract class AbstractSensor<T extends SensorSession> extends
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.sensors.UpdateableSensor#addReceiver(wtf.impl.SensorImpl
-	 * )
+	 * org.rifidi.edge.core.sensors.SensorUpdate#removeReceiver(org.rifidi.edge
+	 * .core.sensors.Sensor)
 	 */
-	public void addReceiver(PollableSensor receiver) {
-		receivers.add(receiver);
-		inUse.compareAndSet(false, true);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.rifidi.edge.core.sensors.UpdateableSensor#removeReceiver(wtf.Sensor)
-	 */
-	public void removeReceiver(PollableSensor receiver) {
+	@Override
+	public void removeReceiver(final Sensor receiver) {
 		if (subscriberToQueueMap.isEmpty() && receivers.isEmpty()) {
 			inUse.compareAndSet(true, false);
 		}
@@ -167,10 +159,23 @@ public abstract class AbstractSensor<T extends SensorSession> extends
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.sensors.UpdateableSensor#setName(java.lang.String)
+	 * org.rifidi.edge.core.sensors.SensorUpdate#addReceiver(org.rifidi.edge
+	 * .core.sensors.Sensor)
 	 */
 	@Override
-	public void setName(String name) throws ImmutableException, InUseException {
+	public void addReceiver(final Sensor receiver) {
+		receivers.add(receiver);
+		inUse.compareAndSet(false, true);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.rifidi.edge.core.sensors.SensorUpdate#setName(java.lang.String)
+	 */
+	@Override
+	public void setName(final String name) throws ImmutableException,
+			InUseException {
 		// TODO: should be possible when we merged the readers with the logical
 		// readers
 		throw new ImmutableException(getName() + " is immutable.");
@@ -184,14 +189,44 @@ public abstract class AbstractSensor<T extends SensorSession> extends
 	 * .services.notification.data.ReadCycle)
 	 */
 	@Override
-	public void send(ReadCycle cycle) {
-		for (PollableSensor receiver : receivers) {
+	public void send(final ReadCycle cycle) {
+		for (Sensor receiver : receivers) {
 			receiver.send(cycle);
 		}
 		for (LinkedBlockingQueue<ReadCycle> queue : subscriberToQueueMap
 				.values()) {
 			queue.add(cycle);
 		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.rifidi.edge.core.sensors.Sensor#isImmutable()
+	 */
+	@Override
+	public Boolean isImmutable() {
+		return true;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.rifidi.edge.core.sensors.Sensor#isInUse()
+	 */
+	@Override
+	public Boolean isInUse() {
+		return inUse.get();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.rifidi.edge.core.sensors.CompositeSensor#getChildren()
+	 */
+	@Override
+	public Set<String> getChildren() {
+		return Collections.emptySet();
 	}
 
 	/***
@@ -201,7 +236,7 @@ public abstract class AbstractSensor<T extends SensorSession> extends
 	 *            The Configuration Object for this AbstractSensor
 	 * @return A data transfer object for this reader
 	 */
-	public ReaderDTO getDTO(Configuration config) {
+	public ReaderDTO getDTO(final Configuration config) {
 		String readerID = config.getServiceID();
 		String factoryID = config.getFactoryID();
 		AttributeList attrs = config.getAttributes(config.getAttributeNames());

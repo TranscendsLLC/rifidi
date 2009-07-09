@@ -3,7 +3,7 @@ package org.rifidi.edge.core.sensors.management;
 import java.util.Collection;
 import java.util.Set;
 
-import org.rifidi.edge.core.sensors.PollableSensor;
+import org.rifidi.edge.core.sensors.Sensor;
 import org.rifidi.edge.core.sensors.exceptions.DuplicateSensorNameException;
 import org.rifidi.edge.core.sensors.exceptions.DuplicateSubscriptionException;
 import org.rifidi.edge.core.sensors.exceptions.ImmutableException;
@@ -130,7 +130,7 @@ public interface SensorManagementService {
 	 * @throws NoSuchSensorException
 	 * @throws DuplicateSubscriptionException
 	 */
-	PollableSensor subscribe(Object subscriber, String sensorName)
+	Sensor subscribe(Object subscriber, String sensorName)
 			throws NoSuchSensorException, DuplicateSubscriptionException;
 
 	/**
