@@ -2,6 +2,10 @@ package org.rifidi.edge.core.sensors;
 
 import java.util.Set;
 
+import org.rifidi.edge.core.sensors.exceptions.NotSubscribedException;
+import org.rifidi.edge.core.services.notification.data.ReadCycle;
+
+
 public interface Sensor {
 
 	/**
@@ -10,13 +14,6 @@ public interface Sensor {
 	 * @return
 	 */
 	String getName();
-
-	/**
-	 * Get the names of sensors that are children of this sensor.
-	 * 
-	 * @return
-	 */
-	Set<String> getChildren();
 
 	/**
 	 * Check if the sensor is immutable.
@@ -31,5 +28,20 @@ public interface Sensor {
 	 * @return
 	 */
 	Boolean isInUse();
+	
+	/**
+	 * Objects subscribed to the sensor use this method to acquire the read
+	 * results.
+	 * 
+	 * @param reads
+	 */
+	Set<ReadCycle> receive(Object object) throws NotSubscribedException;
+
+	/**
+	 * Send sensor results to this sensor.
+	 * 
+	 * @param cycle
+	 */
+	public void send(ReadCycle cycle);
 
 }

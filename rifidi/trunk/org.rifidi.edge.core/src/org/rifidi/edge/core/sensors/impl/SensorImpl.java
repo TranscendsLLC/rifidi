@@ -12,10 +12,9 @@ import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.rifidi.edge.core.sensors.CompositeUpdateableSensor;
-import org.rifidi.edge.core.sensors.PollableSensor;
+import org.rifidi.edge.core.sensors.CompositeSensorUpdate;
 import org.rifidi.edge.core.sensors.Sensor;
-import org.rifidi.edge.core.sensors.UpdateableSensor;
+import org.rifidi.edge.core.sensors.SensorUpdate;
 import org.rifidi.edge.core.sensors.exceptions.DuplicateSubscriptionException;
 import org.rifidi.edge.core.sensors.exceptions.ImmutableException;
 import org.rifidi.edge.core.sensors.exceptions.InUseException;
@@ -26,18 +25,18 @@ import org.rifidi.edge.core.services.notification.data.ReadCycle;
  * @author Jochen Mader - jochen@pramari.com
  * 
  */
-public class SensorImpl implements Sensor, CompositeUpdateableSensor {
+public class SensorImpl implements SensorUpdate, CompositeSensorUpdate {
 	private volatile String name;
 	/** Once a reader is immutable it can never be changed back. */
 	private final Boolean immutable;
 	/** True if the sensor is currently in use. */
 	private AtomicBoolean inUse;
 	/** Children of this node. */
-	private final Set<UpdateableSensor> childNodes;
+	private final Set<SensorUpdate> childNodes;
 	/** Map with the subscriber as key and it's queue as value. */
 	public final Map<Object, LinkedBlockingQueue<ReadCycle>> subscriberToQueueMap;
 	/** Set containing all nodes that are connected as receivers. */
-	private final Set<PollableSensor> receivers;
+	private final Set<Sensor> receivers;
 
 	/**
 	 * @param name
@@ -45,14 +44,13 @@ public class SensorImpl implements Sensor, CompositeUpdateableSensor {
 	 * @param immutable
 	 */
 	public SensorImpl(final String name,
-			final Collection<UpdateableSensor> childNodes,
-			final Boolean immutable) {
+			final Collection<SensorUpdate> childNodes, final Boolean immutable) {
 		this.name = name;
-		this.childNodes = new CopyOnWriteArraySet<UpdateableSensor>();
+		this.childNodes = new CopyOnWriteArraySet<SensorUpdate>();
 		this.childNodes.addAll(childNodes);
 		this.immutable = immutable;
 		this.subscriberToQueueMap = new ConcurrentHashMap<Object, LinkedBlockingQueue<ReadCycle>>();
-		this.receivers = new CopyOnWriteArraySet<PollableSensor>();
+		this.receivers = new CopyOnWriteArraySet<Sensor>();
 		this.inUse = new AtomicBoolean(false);
 	}
 
@@ -68,8 +66,7 @@ public class SensorImpl implements Sensor, CompositeUpdateableSensor {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.rifidi.edge.core.sensors.UpdateableSensor#setName(java.lang.String)
+	 * @see org.rifidi.edge.core.sensors.SensorUpdate#setName(java.lang.String)
 	 */
 	public void setName(String name) throws ImmutableException, InUseException {
 		if (isInUse()) {
@@ -88,7 +85,7 @@ public class SensorImpl implements Sensor, CompositeUpdateableSensor {
 	 */
 	public Set<String> getChildren() {
 		Set<String> ret = new HashSet<String>();
-		for (UpdateableSensor sensor : childNodes) {
+		for (SensorUpdate sensor : childNodes) {
 			ret.add(sensor.getName());
 		}
 		return ret;
@@ -98,11 +95,10 @@ public class SensorImpl implements Sensor, CompositeUpdateableSensor {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.sensors.UpdateableSensor#addChild(wtf.impl.SensorImpl
-	 * )
+	 * org.rifidi.edge.core.sensors.SensorUpdate#addChild(wtf.impl.SensorImpl )
 	 */
-	public void addChild(final UpdateableSensor child)
-			throws ImmutableException, InUseException {
+	public void addChild(final SensorUpdate child) throws ImmutableException,
+			InUseException {
 		if (isImmutable()) {
 			throw new ImmutableException(getName() + " is immutable.");
 		}
@@ -115,12 +111,11 @@ public class SensorImpl implements Sensor, CompositeUpdateableSensor {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.rifidi.edge.core.sensors.CompositeUpdateableSensor#removeChild(org
+	 * @see org.rifidi.edge.core.sensors.CompositeSensorUpdate#removeChild(org
 	 * .rifidi.edge.core.sensors.UpdateableSensor)
 	 */
 	@Override
-	public void removeChild(UpdateableSensor child) throws ImmutableException,
+	public void removeChild(SensorUpdate child) throws ImmutableException,
 			InUseException {
 		if (isImmutable()) {
 			throw new ImmutableException(getName() + " is immutable.");
@@ -134,11 +129,10 @@ public class SensorImpl implements Sensor, CompositeUpdateableSensor {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.rifidi.edge.core.sensors.UpdateableSensor#removeChildren(java.util
+	 * @see org.rifidi.edge.core.sensors.SensorUpdate#removeChildren(java.util
 	 * .Collection)
 	 */
-	public void removeChildren(final Collection<UpdateableSensor> children)
+	public void removeChildren(final Collection<SensorUpdate> children)
 			throws ImmutableException, InUseException {
 		if (isImmutable()) {
 			throw new ImmutableException(getName() + " is immutable.");
@@ -153,7 +147,7 @@ public class SensorImpl implements Sensor, CompositeUpdateableSensor {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.sensors.UpdateableSensor#subscribe(java.lang.Object)
+	 * org.rifidi.edge.core.sensors.SensorUpdate#subscribe(java.lang.Object)
 	 */
 	public void subscribe(Object object) throws DuplicateSubscriptionException {
 		if (subscriberToQueueMap.containsKey(object)) {
@@ -168,8 +162,7 @@ public class SensorImpl implements Sensor, CompositeUpdateableSensor {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.sensors.UpdateableSensor#unsubscribe(java.lang.Object
-	 * )
+	 * org.rifidi.edge.core.sensors.SensorUpdate#unsubscribe(java.lang.Object )
 	 */
 	public void unsubscribe(Object object) throws NotSubscribedException {
 		if (!subscriberToQueueMap.containsKey(object)) {
@@ -185,27 +178,28 @@ public class SensorImpl implements Sensor, CompositeUpdateableSensor {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.sensors.UpdateableSensor#addReceiver(wtf.impl.SensorImpl
+	 * org.rifidi.edge.core.sensors.SensorUpdate#addReceiver(wtf.impl.SensorImpl
 	 * )
 	 */
-	public void addReceiver(PollableSensor receiver) {
+	public void addReceiver(Sensor receiver) {
 		receivers.add(receiver);
 		inUse.compareAndSet(false, true);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.rifidi.edge.core.sensors.UpdateableSensor#removeReceiver(wtf.Sensor)
+
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.sensors.SensorUpdate#removeReceiver(org.rifidi.edge.core.sensors.Sensor)
 	 */
-	public void removeReceiver(PollableSensor receiver) {
+	@Override
+	public void removeReceiver(Sensor receiver) {
 		if (subscriberToQueueMap.isEmpty() && receivers.isEmpty()) {
 			inUse.compareAndSet(true, false);
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.rifidi.edge.core.sensors.Sensor#isImmutable()
 	 */
 	@Override
@@ -213,7 +207,9 @@ public class SensorImpl implements Sensor, CompositeUpdateableSensor {
 		return immutable;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.rifidi.edge.core.sensors.Sensor#isInUse()
 	 */
 	@Override
@@ -221,16 +217,13 @@ public class SensorImpl implements Sensor, CompositeUpdateableSensor {
 		return inUse.get();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.rifidi.edge.core.sensors.PollableSensor#send(org.rifidi.edge.core
-	 * .services.notification.data.ReadCycle)
+
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.sensors.Sensor#send(org.rifidi.edge.core.services.notification.data.ReadCycle)
 	 */
 	@Override
 	public void send(ReadCycle cycle) {
-		for (PollableSensor receiver : receivers) {
+		for (Sensor receiver : receivers) {
 			receiver.send(cycle);
 
 		}
@@ -241,8 +234,9 @@ public class SensorImpl implements Sensor, CompositeUpdateableSensor {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.rifidi.edge.core.sensors.PollableSensor#receive(java.lang.Object)
+	 * @see org.rifidi.edge.core.sensors.Sensor#receive(java.lang.Object)
 	 */
+	@Override
 	public Set<ReadCycle> receive(Object object) throws NotSubscribedException {
 		LinkedBlockingQueue<ReadCycle> queue = subscriberToQueueMap.get(object);
 		if (queue != null) {
@@ -253,5 +247,6 @@ public class SensorImpl implements Sensor, CompositeUpdateableSensor {
 			}
 		}
 		throw new NotSubscribedException(object + " is not subscribed.");
-	}	
+	}
+
 }
