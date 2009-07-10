@@ -19,5 +19,4 @@ Export-Package: org.rifidi.edge.epcglobal.ale.api.lr,
  org.rifidi.edge.lr,
  org.rifidi.edge.lr.exceptions
 Require-Bundle: org.rifidi.edge.core.services;bundle-version="1.0.0",
- org.rifidi.edge.core.services.esper;bundle-version="1.0.1",
  org.rifidi.edge.core;bundle-version="5.0.1"

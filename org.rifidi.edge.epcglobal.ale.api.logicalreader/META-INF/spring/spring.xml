@@ -5,7 +5,7 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans 
 	http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
      http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi.xsd">
-
+     
 	<bean
 		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
 		<property name="locations">
@@ -19,32 +19,16 @@
 
 	<osgi:reference id="esperManagerService"
 		interface="org.rifidi.edge.core.services.esper.EsperManagementService" />
-
+	<osgi:reference id="sensorManagementBinding"
+		interface="org.rifidi.edge.core.sensors.management.SensorManagementService" />
+		
 	<bean id="aleLRAPIService"
 		class="org.rifidi.edge.epcglobal.ale.api.lr.ws.ALELRServicePortTypeImpl">
-		<property name="LRService" ref="lrManagment" />
+		<property name="sensorManagementService" ref="sensorManagementBinding" />
 	</bean>
 
 	<bean class="org.springframework.remoting.jaxws.SimpleJaxWsServiceExporter">
 		<property name="baseAddress" value="http://${org.rifidi.edge.ale.host}:8081/" />
 	</bean>
 
-
-	<bean id="lrManagment" class="org.rifidi.edge.lr.LogicalReaderManagementServiceImpl">
-		<property name="esperManagementService" ref="esperManagerService" />
-		<property name="realReaders" ref="readerSet" />
-	</bean>
-	<osgi:service id="lrManagmentService" ref="lrManagment">
-		<osgi:interfaces>
-			<value>org.rifidi.edge.lr.LogicalReaderManagementService
-			</value>
-		</osgi:interfaces>
-	</osgi:service>
-
-	<!-- Set containing all real readers. -->
-	<osgi:set id="readerSet" interface="org.rifidi.edge.core.sensors.base.AbstractSensor"
-		cardinality="0..N">
-		<osgi:listener ref="lrManagment" bind-method="bindReader"
-			unbind-method="unbindReader" />
-	</osgi:set>
 </beans>
