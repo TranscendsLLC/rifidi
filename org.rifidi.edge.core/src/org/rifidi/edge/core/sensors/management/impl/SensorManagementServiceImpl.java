@@ -27,6 +27,16 @@ import org.rifidi.edge.core.sensors.exceptions.NoSuchSensorException;
 import org.rifidi.edge.core.sensors.exceptions.NotSubscribedException;
 import org.rifidi.edge.core.sensors.impl.SensorImpl;
 import org.rifidi.edge.core.sensors.management.SensorManagementService;
+import org.rifidi.edge.core.sensors.management.dtos.SensorDTO;
+import org.rifidi.edge.core.services.esper.EsperManagementService;
+import org.rifidi.edge.core.services.esper.internal.EsperReceiver;
+import org.rifidi.edge.core.services.notification.data.ReadCycle;
+import org.rifidi.edge.core.services.notification.data.TagReadEvent;
+
+import com.espertech.esper.client.EPRuntime;
+import com.espertech.esper.client.EPStatement;
+import com.espertech.esper.client.EventBean;
+import com.espertech.esper.client.UpdateListener;
 
 /**
  * Thread asfe implementation of the {@link SensorManagementService}
@@ -46,8 +56,16 @@ public class SensorManagementServiceImpl implements SensorManagementService {
 	/** Sensors created by this service. */
 	private final Map<String, SensorUpdate> sensors;
 	/** Sensors created outside the service are all treated as physical sensors. */
-	// TODO: Handle reader that disappear.
+	// TODO: Handle readers that disappear.
 	private final Map<String, AbstractSensor<?>> physicalSensors;
+	/** Reference to the esper service. */
+	private volatile EsperManagementService esperManager;
+	/** Esper runtime to publish the events to. */
+	private volatile EPRuntime esperRuntime;
+	/** Thread for receiving tag reads. */
+	private Thread esperReceiverThread;
+	/** Runnable for the receiver thread. */
+	private EsperReceiver esperReceiver;
 
 	/**
 	 * Constructor.
@@ -89,6 +107,7 @@ public class SensorManagementServiceImpl implements SensorManagementService {
 			for (SensorUpdate child : children) {
 				child.addReceiver(sensor);
 			}
+			publishToEsper(sensorName);
 		} finally {
 			sensorLock.unlock();
 		}
@@ -134,6 +153,7 @@ public class SensorManagementServiceImpl implements SensorManagementService {
 				}
 			}
 			sensors.remove(sensorName);
+			unpublishFromEsper(sensorName);
 		} finally {
 			sensorLock.unlock();
 		}
@@ -446,8 +466,20 @@ public class SensorManagementServiceImpl implements SensorManagementService {
 	 */
 	public void bindReader(final AbstractSensor<?> reader,
 			final Dictionary<String, String> parameters) {
-		logger.info("Reader bound:" + reader.getID());
-		this.physicalSensors.put(reader.getID(), reader);
+		sensorLock.lock();
+		try {
+			logger.info("Sensor bound:" + reader.getID());
+			physicalSensors.put(reader.getID(), reader);
+			if (esperReceiver != null) {
+				try {
+					publishToEsper(reader.getName());
+				} catch (NoSuchSensorException e) {
+					logger.fatal(e);
+				}
+			}
+		} finally {
+			sensorLock.unlock();
+		}
 	}
 
 	/**
@@ -460,8 +492,20 @@ public class SensorManagementServiceImpl implements SensorManagementService {
 	 */
 	public void unbindReader(final AbstractSensor<?> reader,
 			final Dictionary<String, String> parameters) {
-		logger.info("Reader unbound:" + reader.getID());
-		physicalSensors.remove(reader.getID());
+		sensorLock.lock();
+		try {
+			logger.info("Sensor unbound:" + reader.getID());
+			physicalSensors.remove(reader.getID());
+			if (esperReceiver != null) {
+				try {
+					unpublishFromEsper(reader.getName());
+				} catch (NoSuchSensorException e) {
+					logger.fatal(e);
+				}
+			}
+		} finally {
+			sensorLock.unlock();
+		}
 	}
 
 	/**
@@ -471,8 +515,137 @@ public class SensorManagementServiceImpl implements SensorManagementService {
 	 *            the initial list of available readers
 	 */
 	public void setReader(final Set<AbstractSensor<?>> readers) {
-		for (AbstractSensor<?> reader : readers) {
-			physicalSensors.put(reader.getID(), reader);
+		sensorLock.lock();
+		try {
+			for (AbstractSensor<?> reader : readers) {
+				physicalSensors.put(reader.getID(), reader);
+				logger.debug("Sensor bound "+reader.getID());
+			}
+			if (esperReceiver != null) {
+				for (Sensor sensor : physicalSensors.values()) {
+					try {
+						publishToEsper(sensor.getName());
+					} catch (NoSuchSensorException e) {
+						logger.fatal(e);
+					}
+				}
+			}
+		} finally {
+			sensorLock.unlock();
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seeorg.rifidi.edge.core.sensors.management.SensorManagementService#
+	 * publishToEsper(java.lang.String)
+	 */
+	@Override
+	public void publishToEsper(final String sensorName)
+			throws NoSuchSensorException {
+		sensorLock.lock();
+		try {
+			if (sensors.get(sensorName) != null) {
+				sensors.get(sensorName).subscribe(esperReceiver);
+				esperReceiver.addSensor(sensors.get(sensorName));
+				return;
+			}
+			if (physicalSensors.get(sensorName) != null) {
+				physicalSensors.get(sensorName).subscribe(esperReceiver);
+				esperReceiver.addSensor(physicalSensors.get(sensorName));
+				return;
+			}
+			throw new NoSuchSensorException("No sensor named " + sensorName);
+		} catch (DuplicateSubscriptionException e) {
+			logger.warn(e);
+		} finally {
+			sensorLock.unlock();
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seeorg.rifidi.edge.core.sensors.management.SensorManagementService#
+	 * unpublishFromEsper(java.lang.String)
+	 */
+	@Override
+	public void unpublishFromEsper(final String sensorName)
+			throws NoSuchSensorException {
+		sensorLock.lock();
+		try {
+			if (sensors.get(sensorName) != null) {
+				sensors.get(sensorName).unsubscribe(esperReceiver);
+				esperReceiver.removeSensor(sensors.get(sensorName));
+				return;
+			}
+			if (physicalSensors.get(sensorName) != null) {
+				physicalSensors.get(sensorName).unsubscribe(esperReceiver);
+				esperReceiver.removeSensor(physicalSensors.get(sensorName));
+				return;
+			}
+			throw new NoSuchSensorException("No sensor named " + sensorName);
+		} catch (NotSubscribedException e) {
+			logger.warn(e);
+		} finally {
+			sensorLock.unlock();
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.core.sensors.management.SensorManagementService#getDTO
+	 * (java.lang.String)
+	 */
+	@Override
+	public SensorDTO getDTO(String sensorName) throws NoSuchSensorException {
+		sensorLock.lock();
+		try {
+			SensorUpdate update = sensors.get(sensorName);
+			if (update == null && physicalSensors.get(sensorName) != null) {
+				update = physicalSensors.get(sensorName);
+			}
+			if (update == null) {
+				throw new NoSuchSensorException("There is no sensor named "
+						+ sensorName);
+			}
+			if (update instanceof CompositeSensor) {
+				return new SensorDTO(sensorName, ((CompositeSensor) update)
+						.getChildren(), true);
+			}
+			return new SensorDTO(sensorName, new HashSet<String>(), false);
+		} finally {
+			sensorLock.unlock();
+		}
+	}
+
+	/**
+	 * @param esperManager
+	 *            the esperManager to set
+	 */
+	public void setEsperManager(final EsperManagementService esperManager) {
+		sensorLock.lock();
+		try {
+			if (this.esperManager != null) {
+				logger.warn("Esper is set a second time.Should not happen!");
+			}
+			this.esperManager = esperManager;
+			this.esperRuntime = esperManager.getProvider().getEPRuntime();
+			esperReceiver = new EsperReceiver(esperRuntime);
+			for (Sensor sensor : physicalSensors.values()) {
+				try {
+					publishToEsper(sensor.getName());
+				} catch (NoSuchSensorException e) {
+					logger.fatal(e);
+				}
+			}
+			esperReceiverThread = new Thread(esperReceiver);
+			esperReceiverThread.start();
+		} finally {
+			sensorLock.unlock();
 		}
 	}
 

@@ -10,6 +10,7 @@ import org.rifidi.edge.core.sensors.exceptions.ImmutableException;
 import org.rifidi.edge.core.sensors.exceptions.InUseException;
 import org.rifidi.edge.core.sensors.exceptions.NoSuchSensorException;
 import org.rifidi.edge.core.sensors.exceptions.NotSubscribedException;
+import org.rifidi.edge.core.sensors.management.dtos.SensorDTO;
 
 /**
  * Service for managing all modifiable aspects of the sensors.
@@ -143,6 +144,31 @@ public interface SensorManagementService {
 	 */
 	void unsubscribe(Object subscriber, String sensorName)
 			throws NoSuchSensorException, NotSubscribedException;
+
+	/**
+	 * Publish all reads from a sensor to esper.
+	 * 
+	 * @param sensorName
+	 * @throws NoSuchSensorException
+	 */
+	void publishToEsper(String sensorName) throws NoSuchSensorException;
+
+	/**
+	 * Dont publish the reads from a given sensor.
+	 * 
+	 * @param sensorName
+	 * @throws NoSuchSensorException
+	 */
+	void unpublishFromEsper(String sensorName) throws NoSuchSensorException;
+
+	/**
+	 * Get a serializable representation of the given sensor.
+	 * 
+	 * @param sensorName
+	 * @return
+	 * @throws NoSuchSensorException
+	 */
+	SensorDTO getDTO(String sensorName) throws NoSuchSensorException;
 
 	/**
 	 * Get the names of all registered sensors.
