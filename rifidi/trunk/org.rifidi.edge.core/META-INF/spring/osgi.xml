@@ -22,12 +22,20 @@
 
 	<osgi:reference id="JMSNotifierService"
 		interface="org.rifidi.edge.core.services.notification.NotifierService" />
+	<!-- Get reference to connection factory to internal Broker -->
+	<osgi:reference id="confac" interface="javax.jms.ConnectionFactory"
+		bean-name="internalBrokerConFac" />
 
+	<!-- Get a reference to the internal Message Buffer -->
+	<osgi:reference id="internalMB" interface="javax.jms.Topic"
+		bean-name="internalDest" />
 	<!-- Listener for Reader Configurations -->
 	<osgi:set id="readerSet"
 		interface="org.rifidi.edge.core.sensors.base.AbstractSensor"
 		cardinality="0..N">
 		<osgi:listener ref="ReaderDAOImpl" bind-method="bindReader"
+			unbind-method="unbindReader" />
+		<osgi:listener ref="SensorManagement" bind-method="bindReader"
 			unbind-method="unbindReader" />
 	</osgi:set>
 
@@ -53,4 +61,7 @@
 		<osgi:listener ref="CommandDAOImpl" bind-method="bindCommandFactory"
 			unbind-method="unbindCommandFactory" />
 	</osgi:set>
+
+	<osgi:service id="esperManagerService" ref="esperManager"
+		interface="org.rifidi.edge.core.services.esper.EsperManagementService" />
 </beans>

@@ -29,6 +29,7 @@ import org.rifidi.edge.core.sensors.exceptions.ImmutableException;
 import org.rifidi.edge.core.sensors.exceptions.InUseException;
 import org.rifidi.edge.core.sensors.exceptions.NotSubscribedException;
 import org.rifidi.edge.core.services.notification.data.ReadCycle;
+import org.rifidi.edge.core.services.notification.data.TagReadEvent;
 
 /**
  * A reader creates and manages instances of sessions. The reader itself holds
@@ -89,11 +90,24 @@ public abstract class AbstractSensor<T extends SensorSession> extends
 	 * org.rifidi.edge.core.sensors.PollableSensor#receive(java.lang.Object)
 	 */
 	@Override
-	public Set<ReadCycle> receive(final Object receiver)
+	public ReadCycle receive(final Object receiver)
 			throws NotSubscribedException {
-		Set<ReadCycle> ret = new HashSet<ReadCycle>();
-		subscriberToQueueMap.get(receiver).drainTo(ret);
-		return ret;
+		LinkedBlockingQueue<ReadCycle> queue = subscriberToQueueMap
+				.get(receiver);
+		if (queue != null) {
+			synchronized (queue) {
+				Set<ReadCycle> rcs = new HashSet<ReadCycle>();
+				queue.drainTo(rcs);
+				long time = System.currentTimeMillis();
+				Set<TagReadEvent> tagReads = new HashSet<TagReadEvent>();
+				for (ReadCycle cycle : rcs) {
+					tagReads.addAll(cycle.getTags());
+				}
+				ReadCycle cycle = new ReadCycle(tagReads, getName(), time);
+				return cycle;
+			}
+		}
+		throw new NotSubscribedException(receiver + " is not subscribed.");
 	}
 
 	/*
@@ -109,7 +123,7 @@ public abstract class AbstractSensor<T extends SensorSession> extends
 			throw new DuplicateSubscriptionException(receiver
 					+ " is already subscribed.");
 		}
-		subscriberToQueueMap.put(receiver, null);
+		subscriberToQueueMap.put(receiver, new LinkedBlockingQueue<ReadCycle>());
 		inUse.compareAndSet(false, true);
 	}
 

@@ -20,6 +20,7 @@ import org.rifidi.edge.core.sensors.exceptions.ImmutableException;
 import org.rifidi.edge.core.sensors.exceptions.InUseException;
 import org.rifidi.edge.core.sensors.exceptions.NotSubscribedException;
 import org.rifidi.edge.core.services.notification.data.ReadCycle;
+import org.rifidi.edge.core.services.notification.data.TagReadEvent;
 
 /**
  * @author Jochen Mader - jochen@pramari.com
@@ -154,7 +155,7 @@ public class SensorImpl implements SensorUpdate, CompositeSensorUpdate {
 			throw new DuplicateSubscriptionException(object
 					+ " is already subscribed.");
 		}
-		subscriberToQueueMap.put(object, null);
+		subscriberToQueueMap.put(object, new LinkedBlockingQueue<ReadCycle>());
 		inUse.compareAndSet(false, true);
 	}
 
@@ -237,13 +238,19 @@ public class SensorImpl implements SensorUpdate, CompositeSensorUpdate {
 	 * @see org.rifidi.edge.core.sensors.Sensor#receive(java.lang.Object)
 	 */
 	@Override
-	public Set<ReadCycle> receive(Object object) throws NotSubscribedException {
+	public ReadCycle receive(Object object) throws NotSubscribedException {
 		LinkedBlockingQueue<ReadCycle> queue = subscriberToQueueMap.get(object);
 		if (queue != null) {
 			synchronized (queue) {
-				Set<ReadCycle> ret = new HashSet<ReadCycle>();
-				queue.drainTo(ret);
-				return ret;
+				Set<ReadCycle> rcs = new HashSet<ReadCycle>();
+				queue.drainTo(rcs);
+				long time=System.currentTimeMillis();
+				Set<TagReadEvent> tagReads=new HashSet<TagReadEvent>();
+				for(ReadCycle cycle:rcs){
+					tagReads.addAll(cycle.getTags());
+				}
+				ReadCycle cycle=new ReadCycle(tagReads,getName(),time);
+				return cycle;
 			}
 		}
 		throw new NotSubscribedException(object + " is not subscribed.");

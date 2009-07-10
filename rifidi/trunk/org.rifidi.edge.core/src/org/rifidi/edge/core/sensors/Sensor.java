@@ -35,7 +35,7 @@ public interface Sensor {
 	 * 
 	 * @param reads
 	 */
-	Set<ReadCycle> receive(Object object) throws NotSubscribedException;
+	ReadCycle receive(Object object) throws NotSubscribedException;
 
 	/**
 	 * Send sensor results to this sensor.
