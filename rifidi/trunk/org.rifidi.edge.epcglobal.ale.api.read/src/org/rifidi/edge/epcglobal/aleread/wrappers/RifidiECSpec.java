@@ -323,14 +323,15 @@ public class RifidiECSpec implements SignalListener {
 		if (timer != null) {
 			timer.destroy();
 		}
-		// start the collectors
+		// stop the collectors
 		for (StatementController ctrl : stopStatementControllers) {
 			ctrl.stop();
 		}
-		// start the statements for processing start signals
+		// stop the statements for processing start signals
 		for (StatementController ctrl : startStatementControllers) {
 			ctrl.stop();
 		}
+		esper.destroy();
 	}
 
 	/**

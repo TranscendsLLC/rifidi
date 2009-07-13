@@ -26,19 +26,19 @@ public class EsperManagementServiceImpl implements EsperManagementService {
 			.getLog(EsperManagementServiceImpl.class);
 	/** Instance of the esper service. */
 	private EPServiceProvider epService;
-
+	
+	private final Configuration config;
 	/**
 	 * Constructor.
 	 */
 	public EsperManagementServiceImpl() {
 		logger.info("EsperManagementServiceImpl created.");
-		Configuration config = new Configuration();
+		config = new Configuration();
 		config.addEventType("StopEvent", StopEvent.class);
 		config.addEventType("StartEvent", StartEvent.class);
 		config.addEventType("DestroyEvent", DestroyEvent.class);
 		config.addEventType("TagReadEvent", TagReadEvent.class);
 		config.addEventType("ReadCycle", ReadCycle.class);
-		epService = EPServiceProviderManager.getDefaultProvider(config);
 	}
 
 	/*
@@ -48,7 +48,7 @@ public class EsperManagementServiceImpl implements EsperManagementService {
 	 */
 	@Override
 	public EPServiceProvider getProvider() {
-		return epService;
+		return EPServiceProviderManager.getDefaultProvider(config);
 	}
 
 }
