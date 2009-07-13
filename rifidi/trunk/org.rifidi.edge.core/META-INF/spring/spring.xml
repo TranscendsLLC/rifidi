@@ -34,12 +34,6 @@
 		<property name="acceptMessagesWhileStopping" value="true" />
 	</bean>
 
-
-
-	<bean id="myMessageListener" class="org.rifidi.edge.core.services.esper.JMSReceiver">
-		<property name="esperManagement" ref="esperManager" />
-	</bean>
-
 	<bean id="esperManager"
 		class="org.rifidi.edge.core.services.esper.internal.EsperManagementServiceImpl" />
 </beans>
