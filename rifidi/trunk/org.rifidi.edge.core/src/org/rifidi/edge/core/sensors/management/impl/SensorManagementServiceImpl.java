@@ -644,6 +644,20 @@ public class SensorManagementServiceImpl implements SensorManagementService {
 			}
 			esperReceiverThread = new Thread(esperReceiver);
 			esperReceiverThread.start();
+//			EPStatement statement=esperManager.getProvider().getEPAdministrator().createEPL("select * from ReadCycle[select * from tags]");
+//			statement.addListener(new UpdateListener(){
+//
+//				/* (non-Javadoc)
+//				 * @see com.espertech.esper.client.UpdateListener#update(com.espertech.esper.client.EventBean[], com.espertech.esper.client.EventBean[])
+//				 */
+//				@Override
+//				public void update(EventBean[] arg0, EventBean[] arg1) {
+//					for(EventBean event:arg0){
+//						System.out.println(event.getUnderlying());
+//					}
+//				}
+//				
+//			});
 		} finally {
 			sensorLock.unlock();
 		}

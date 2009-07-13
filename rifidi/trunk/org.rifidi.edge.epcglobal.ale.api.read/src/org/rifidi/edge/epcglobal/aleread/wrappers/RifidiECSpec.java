@@ -1,6 +1,7 @@
 package org.rifidi.edge.epcglobal.aleread.wrappers;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -14,8 +15,6 @@ import org.rifidi.edge.ale.esper.StatementController;
 import org.rifidi.edge.ale.esper.starters.IntervalTimingStatement;
 import org.rifidi.edge.ale.esper.starters.StartEventStatement;
 import org.rifidi.edge.ale.esper.stoppers.DurationTimingStatement;
-import org.rifidi.edge.ale.esper.stoppers.StableSetTimingStatement;
-import org.rifidi.edge.ale.esper.stoppers.StopEventTimingStatement;
 import org.rifidi.edge.ale.esper.timer.Timer;
 import org.rifidi.edge.core.services.notification.data.TagReadEvent;
 import org.rifidi.edge.epcglobal.ale.api.read.data.ECSpec;
@@ -24,7 +23,6 @@ import org.rifidi.edge.epcglobal.ale.api.read.ws.ECSpecValidationExceptionRespon
 import org.rifidi.edge.epcglobal.ale.api.read.ws.InvalidURIExceptionResponse;
 import org.rifidi.edge.epcglobal.ale.api.read.ws.NoSuchSubscriberExceptionResponse;
 import org.rifidi.edge.epcglobal.aleread.ALEReadAPI;
-import org.rifidi.edge.lr.LogicalReader;
 
 import com.espertech.esper.client.EPServiceProvider;
 import com.espertech.esper.client.EPStatement;
@@ -48,7 +46,7 @@ public class RifidiECSpec implements SignalListener {
 	/** Esper instance to use. */
 	private EPServiceProvider esper;
 	/** Readers used by this spec. */
-	private Set<LogicalReader> readers;
+	private Set<String> readers;
 	/** Boundary spec for this spec. */
 	private RifidiBoundarySpec rifidiBoundarySpec;
 	/** Threadsafe list for subscription uris. */
@@ -94,20 +92,22 @@ public class RifidiECSpec implements SignalListener {
 	public RifidiECSpec(final String name, final ECSpec spec,
 			final EPServiceProvider esper,
 			final RifidiBoundarySpec rifidiBoundarySpec,
-			final Set<LogicalReader> readers, final Set<String> primarykeys,
-			final List<RifidiReport> reports) {
+			final Collection<String> readers,
+			final Collection<String> primarykeys,
+			final Collection<RifidiReport> reports) {
 		this.startLock = new ReentrantLock();
 		this.rifidiBoundarySpec = rifidiBoundarySpec;
 		this.spec = spec;
 		this.name = name;
 		this.esper = esper;
-		this.readers = new HashSet<LogicalReader>();
+		this.readers = new HashSet<String>();
 		this.readers.addAll(readers);
 		// configure the report sender
 		this.sender = new ReportSender(reports, name, spec);
 
 		// collect the primary keys
 		this.primarykeys = new HashSet<String>();
+		this.primarykeys.addAll(primarykeys);
 		if (this.primarykeys.isEmpty()) {
 			this.primarykeys.add("epc");
 		}
@@ -116,11 +116,10 @@ public class RifidiECSpec implements SignalListener {
 		startStatementControllers = new ArrayList<StatementController>();
 		stopStatementControllers = new ArrayList<StatementController>();
 		collectionStatements = new ArrayList<EPStatement>();
-		for (LogicalReader reader : readers) {
-			collectionStatements.add(esper.getEPAdministrator().createEPL(
-					"insert into LogicalReader select * from "
-							+ reader.getName()));
-		}
+		collectionStatements.add(esper.getEPAdministrator().createEPL(
+				"insert into ecspec_" + name
+						+ " select * from ReadCycle[select * from tags] where readerID in ("
+						+ assembleLogicalReader(readers) + ") "));
 		// add a timer if we got triggers
 		if (rifidiBoundarySpec.getStartTriggers().size() != 0
 				|| rifidiBoundarySpec.getStopTriggers() != null) {
@@ -135,28 +134,30 @@ public class RifidiECSpec implements SignalListener {
 			logger.debug("Initializing duration timing with duration="
 					+ rifidiBoundarySpec.getDuration());
 			DurationTimingStatement durationTimingStatement = new DurationTimingStatement(
-					esper.getEPAdministrator(), rifidiBoundarySpec
-							.getDuration(), primarykeys);
+					esper.getEPAdministrator(), "ecspec_" + name,
+					rifidiBoundarySpec.getDuration(), this.primarykeys);
 			durationTimingStatement.registerSignalListener(this);
 			stopStatementControllers.add(durationTimingStatement);
 		}
-		if (rifidiBoundarySpec.getStableSetInterval() > 0) {
-			logger
-					.debug("Initializing 'stable set interval' timing with interval="
-							+ rifidiBoundarySpec.getStableSetInterval());
-			StableSetTimingStatement stableSetTimingStatement = new StableSetTimingStatement(
-					esper.getEPAdministrator(), rifidiBoundarySpec
-							.getStableSetInterval(), primarykeys);
-			stableSetTimingStatement.registerSignalListener(this);
-			stopStatementControllers.add(stableSetTimingStatement);
-		}
-		if (rifidiBoundarySpec.getStopTriggers().size() > 0) {
-			// TODO: create triggers
-			StopEventTimingStatement stopEventTimingStatement = new StopEventTimingStatement(
-					esper.getEPAdministrator(), primarykeys);
-			stopEventTimingStatement.registerSignalListener(this);
-			stopStatementControllers.add(stopEventTimingStatement);
-		}
+		// if (rifidiBoundarySpec.getStableSetInterval() > 0) {
+		// logger
+		// .debug("Initializing 'stable set interval' timing with interval="
+		// + rifidiBoundarySpec.getStableSetInterval());
+		// StableSetTimingStatement stableSetTimingStatement = new
+		// StableSetTimingStatement(
+		// esper.getEPAdministrator(), rifidiBoundarySpec
+		// .getStableSetInterval(), primarykeys);
+		// stableSetTimingStatement.registerSignalListener(this);
+		// stopStatementControllers.add(stableSetTimingStatement);
+		// }
+		// if (rifidiBoundarySpec.getStopTriggers().size() > 0) {
+		// // TODO: create triggers
+		// StopEventTimingStatement stopEventTimingStatement = new
+		// StopEventTimingStatement(
+		// esper.getEPAdministrator(), primarykeys);
+		// stopEventTimingStatement.registerSignalListener(this);
+		// stopStatementControllers.add(stopEventTimingStatement);
+		// }
 		if (rifidiBoundarySpec.getStartTriggers().size() > 0) {
 			instantStart = false;
 			StartEventStatement startEventStatement = new StartEventStatement(
@@ -181,10 +182,12 @@ public class RifidiECSpec implements SignalListener {
 	 * @param primarykeys
 	 * @return
 	 */
-	protected String assembleLogicalReader(Set<LogicalReader> readers) {
+	protected String assembleLogicalReader(Collection<String> readers) {
 		StringBuilder builder = new StringBuilder();
-		for (LogicalReader reader : readers) {
-			builder.append(reader.getName());
+		for (String reader : readers) {
+			builder.append("'");
+			builder.append(reader);
+			builder.append("'");
 			builder.append(",");
 		}
 		builder.deleteCharAt(builder.length() - 1);

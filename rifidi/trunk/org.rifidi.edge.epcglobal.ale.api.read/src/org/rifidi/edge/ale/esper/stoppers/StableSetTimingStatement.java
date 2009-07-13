@@ -28,23 +28,27 @@ import com.espertech.esper.client.UpdateListener;
 public class StableSetTimingStatement extends AbstractSignalStatement {
 	private long stableSetInMs;
 	/** Timing statements. */
-	private EPStatement emptyStableSet;
-	private EPStatement stableSet;
+	private volatile EPStatement emptyStableSet;
+	private volatile EPStatement stableSet;
 	/** Primary keys to identify a unique tag. */
-	private Set<String> primarykeys;
+	private final Set<String> primarykeys;
+	private final String streamName;
 
 	/**
 	 * Constructor.
 	 * 
 	 * @param administrator
+	 * @param streamName
 	 * @param stableSetInMs
 	 * @param primarykeys
 	 */
-	public StableSetTimingStatement(EPAdministrator administrator,
-			long stableSetInMs, Set<String> primarykeys) {
+	public StableSetTimingStatement(final EPAdministrator administrator,
+			final String streamName, final long stableSetInMs,
+			final Set<String> primarykeys) {
 		super(administrator);
 		this.stableSetInMs = stableSetInMs;
 		this.primarykeys = primarykeys;
+		this.streamName = streamName;
 	}
 
 	/**
@@ -53,7 +57,7 @@ public class StableSetTimingStatement extends AbstractSignalStatement {
 	private void init() {
 		emptyStableSet = administrator
 				.createEPL("select 0 from pattern[timer:interval("
-						+ stableSetInMs + " msec) and not LogicalReader]");
+						+ stableSetInMs + " msec) and not " + streamName + "]");
 		emptyStableSet.addListener(new UpdateListener() {
 			@Override
 			public void update(EventBean[] newEvents, EventBean[] oldEvents) {
@@ -70,9 +74,8 @@ public class StableSetTimingStatement extends AbstractSignalStatement {
 		});
 		stableSet = administrator
 				.createEPL("select rstream res from pattern[every-distinct("
-						+ assembleKeys(primarykeys)
-						+ ") res=LogicalReader].win:time_accum("
-						+ stableSetInMs + " msec)");
+						+ assembleKeys(primarykeys) + ") res=" + streamName
+						+ "].win:time_accum(" + stableSetInMs + " msec)");
 		stableSet.addListener(new UpdateListener() {
 			@Override
 			public void update(EventBean[] newEvents, EventBean[] oldEvents) {

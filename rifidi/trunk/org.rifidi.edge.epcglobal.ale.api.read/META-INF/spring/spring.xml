@@ -15,16 +15,15 @@
 			<value>2</value>
 		</property>
 	</bean>
-
-	<osgi:reference id="lrManagement"
-		interface="org.rifidi.edge.lr.LogicalReaderManagementService" />
+	<osgi:reference id="sensorManagementBinding"
+		interface="org.rifidi.edge.core.sensors.management.SensorManagementService" />
 	<osgi:reference id="esperManagerService"
 		interface="org.rifidi.edge.core.services.esper.EsperManagementService" />
 
 	<bean id="aleReadAPIService"
 		class="org.rifidi.edge.epcglobal.ale.api.read.ws.ALEServicePortTypeImpl">
 		<property name="ecspecManagerService" ref="ecspecManager" />
-		<property name="lrService" ref="lrManagement" />
+		<property name="sensorManagementBinding" ref="sensorManagementBinding" />
 		<property name="reportFactory" ref="reportFactory" />
 	</bean>
 

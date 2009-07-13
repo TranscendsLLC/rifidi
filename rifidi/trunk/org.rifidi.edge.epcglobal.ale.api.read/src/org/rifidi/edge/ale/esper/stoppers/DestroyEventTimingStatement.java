@@ -25,21 +25,25 @@ import com.espertech.esper.client.UpdateListener;
  */
 public class DestroyEventTimingStatement extends AbstractSignalStatement {
 	/** Timing statement. */
-	private EPStatement stopTiming;
+	private volatile EPStatement stopTiming;
 	/** Primary keys to identify a unique tag. */
-	private Set<String> primarykeys;
+	private final Set<String> primarykeys;
+	/** Stream to collect data from. */
+	private final String streamName;
 
 	/**
 	 * Constructor.
 	 * 
 	 * @param administrator
+	 * @param streamName
 	 * @param specName
 	 * @param primarykeys
 	 */
 	public DestroyEventTimingStatement(EPAdministrator administrator,
-			Set<String> primarykeys) {
+			String streamName, Set<String> primarykeys) {
 		super(administrator);
 		this.primarykeys = primarykeys;
+		this.streamName = streamName;
 	}
 
 	/**
@@ -48,8 +52,8 @@ public class DestroyEventTimingStatement extends AbstractSignalStatement {
 	private void init() {
 		stopTiming = administrator
 				.createEPL("select res,stopEvent from pattern[every-distinct("
-						+ assembleKeys(primarykeys)
-						+ ") res=LogicalReader until destroyEvent=DestroyEvent]");
+						+ assembleKeys(primarykeys) + ") res=" + streamName
+						+ " until destroyEvent=DestroyEvent]");
 		stopTiming.addListener(new UpdateListener() {
 			@Override
 			public void update(EventBean[] newEvents, EventBean[] oldEvents) {

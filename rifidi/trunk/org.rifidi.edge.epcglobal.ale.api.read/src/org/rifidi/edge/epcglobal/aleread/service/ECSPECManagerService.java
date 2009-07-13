@@ -3,6 +3,7 @@
  */
 package org.rifidi.edge.epcglobal.aleread.service;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -14,7 +15,6 @@ import org.rifidi.edge.epcglobal.ale.api.read.ws.NoSuchNameExceptionResponse;
 import org.rifidi.edge.epcglobal.ale.api.read.ws.NoSuchSubscriberExceptionResponse;
 import org.rifidi.edge.epcglobal.aleread.wrappers.RifidiBoundarySpec;
 import org.rifidi.edge.epcglobal.aleread.wrappers.RifidiReport;
-import org.rifidi.edge.lr.LogicalReader;
 
 /**
  * This service manages the lifecycle of all ECSPECs. TODO: remove dependencies
@@ -78,8 +78,8 @@ public interface ECSPECManagerService {
 	 * @throws ECSpecValidationExceptionResponse
 	 */
 	public void createSpec(String name, ECSpec spec,
-			RifidiBoundarySpec rifidiBoundarySpec, Set<LogicalReader> readers,
-			Set<String> primarykeys, List<RifidiReport> reports)
+			RifidiBoundarySpec rifidiBoundarySpec, Collection<String> readers,
+			Collection<String> primarykeys, Collection<RifidiReport> reports)
 			throws DuplicateNameExceptionResponse,
 			ECSpecValidationExceptionResponse;
 

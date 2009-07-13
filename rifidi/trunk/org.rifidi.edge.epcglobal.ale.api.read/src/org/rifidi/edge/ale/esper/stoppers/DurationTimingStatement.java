@@ -4,6 +4,8 @@
 package org.rifidi.edge.ale.esper.stoppers;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -26,23 +28,30 @@ import com.espertech.esper.client.StatementAwareUpdateListener;
  */
 public class DurationTimingStatement extends AbstractSignalStatement {
 	/** Timing statement. */
-	private EPStatement durationTiming;
-	private long durationInMs;
+	private volatile EPStatement durationTiming;
+	private final long durationInMs;
 	/** Primary keys to identify a unique tag. */
-	private Set<String> primarykeys;
+	private final Set<String> primarykeys;
+	/** Name of the event stream used for the statement. */
+	private final String streamName;
 
 	/**
 	 * Constructor.
 	 * 
 	 * @param administrator
+	 * @param streamName
 	 * @param durationInMs
 	 * @param primarykeys
 	 */
-	public DurationTimingStatement(EPAdministrator administrator,
-			long durationInMs, Set<String> primarykeys) {
+	public DurationTimingStatement(final EPAdministrator administrator,
+			final String streamName, final long durationInMs,
+			final Collection<String> primarykeys) {
 		super(administrator);
 		this.durationInMs = durationInMs;
-		this.primarykeys = primarykeys;
+		this.primarykeys = new HashSet<String>();
+		this.primarykeys.addAll(primarykeys);
+		this.streamName = streamName;
+		primarykeys.addAll(primarykeys);
 	}
 
 	/**
@@ -51,8 +60,8 @@ public class DurationTimingStatement extends AbstractSignalStatement {
 	private void init() {
 		durationTiming = administrator
 				.createEPL("select res from pattern[every-distinct("
-						+ assembleKeys(primarykeys)
-						+ ") res=LogicalReader].win:time_batch(" + durationInMs
+						+ assembleKeys(primarykeys) + ") res=" + streamName
+						+ "].win:time_batch(" + durationInMs
 						+ " msec, \"FORCE_UPDATE, START_EAGER\")");
 		durationTiming.addListener(new StatementAwareUpdateListener() {
 

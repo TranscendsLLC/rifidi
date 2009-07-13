@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.GregorianCalendar;
 import java.util.HashSet;
 import java.util.List;
@@ -59,8 +61,9 @@ public class ReportSender implements Runnable {
 	/**
 	 * Constructor.
 	 */
-	public ReportSender(List<RifidiReport> reports, String specName, ECSpec spec) {
-		rifidiReports = reports;
+	public ReportSender(Collection<RifidiReport> reports, String specName, ECSpec spec) {
+		rifidiReports = new ArrayList<RifidiReport>();
+		rifidiReports.addAll(reports);
 		subscriptionURIs = new CopyOnWriteArrayList<String>();
 		resultQueue = new LinkedBlockingQueue<ResultContainer>();
 		this.specName = specName;

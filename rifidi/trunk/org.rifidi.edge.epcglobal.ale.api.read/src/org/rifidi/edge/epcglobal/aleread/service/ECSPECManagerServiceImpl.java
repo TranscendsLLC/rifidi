@@ -3,6 +3,7 @@
  */
 package org.rifidi.edge.epcglobal.aleread.service;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -21,7 +22,6 @@ import org.rifidi.edge.epcglobal.ale.api.read.ws.NoSuchSubscriberExceptionRespon
 import org.rifidi.edge.epcglobal.aleread.wrappers.RifidiBoundarySpec;
 import org.rifidi.edge.epcglobal.aleread.wrappers.RifidiECSpec;
 import org.rifidi.edge.epcglobal.aleread.wrappers.RifidiReport;
-import org.rifidi.edge.lr.LogicalReader;
 
 import com.espertech.esper.client.EPServiceProvider;
 
@@ -60,14 +60,15 @@ public class ECSPECManagerServiceImpl implements ECSPECManagerService {
 	 * org.rifidi.edge.epcglobal.aleread.service.ECSPECManagerService#createSpec
 	 * (java.lang.String, org.rifidi.edge.epcglobal.ale.api.read.data.ECSpec,
 	 * org.rifidi.edge.epcglobal.aleread.wrappers.RifidiBoundarySpec,
-	 * java.util.Set, java.util.Set, java.util.List)
+	 * java.util.Collection, java.util.Collection, java.util.Collection)
 	 */
 	@Override
 	public void createSpec(String name, ECSpec spec,
-			RifidiBoundarySpec rifidiBoundarySpec, Set<LogicalReader> readers,
-			Set<String> primarykeys, List<RifidiReport> reports)
+			RifidiBoundarySpec rifidiBoundarySpec, Collection<String> readers,
+			Collection<String> primarykeys, Collection<RifidiReport> reports)
 			throws DuplicateNameExceptionResponse,
 			ECSpecValidationExceptionResponse {
+
 		synchronized (this) {
 			logger.debug("Creating " + name);
 			if (!nameToSpec.containsKey(name)) {
