@@ -15,8 +15,6 @@ Import-Package: com.espertech.esper.client,
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: org.rifidi.edge.epcglobal.ale.api.lr,
  org.rifidi.edge.epcglobal.ale.api.lr.data,
- org.rifidi.edge.epcglobal.ale.api.lr.ws,
- org.rifidi.edge.lr,
- org.rifidi.edge.lr.exceptions
+ org.rifidi.edge.epcglobal.ale.api.lr.ws
 Require-Bundle: org.rifidi.edge.core.services;bundle-version="1.0.0",
  org.rifidi.edge.core;bundle-version="5.0.1"

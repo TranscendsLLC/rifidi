@@ -101,7 +101,9 @@ public abstract class AbstractSensor<T extends SensorSession> extends
 				long time = System.currentTimeMillis();
 				Set<TagReadEvent> tagReads = new HashSet<TagReadEvent>();
 				for (ReadCycle cycle : rcs) {
-					tagReads.addAll(cycle.getTags());
+					for(TagReadEvent event:cycle.getTags()){
+						tagReads.add(event);	
+					}
 				}
 				ReadCycle cycle = new ReadCycle(tagReads, getName(), time);
 				return cycle;

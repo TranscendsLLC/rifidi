@@ -48,19 +48,19 @@ public class JMSReceiver implements MessageListener {
 	@Override
 	public void onMessage(Message message) {
 		try {
-			log.debug("message " + message);
-			if(message instanceof ObjectMessage){
-				Object obj = ((ObjectMessage) message).getObject();
-				if (obj instanceof ReadCycle) {
-					ReadCycle cycle = (ReadCycle) obj;
-					for (TagReadEvent ev : cycle.getTags()) {
-						eventSender.sendEvent(ev);
-					}
-					return;
-				}
-				epService.getEPRuntime().sendEvent(obj);
-				// acknowledege as the last step, just to be sure	
-			}
+//			log.debug("message " + message);
+//			if(message instanceof ObjectMessage){
+//				Object obj = ((ObjectMessage) message).getObject();
+//				if (obj instanceof ReadCycle) {
+//					ReadCycle cycle = (ReadCycle) obj;
+//					for (TagReadEvent ev : cycle.getTags()) {
+//						eventSender.sendEvent(ev);
+//					}
+//					return;
+//				}
+//				epService.getEPRuntime().sendEvent(obj);
+//				// acknowledege as the last step, just to be sure	
+//			}
 			message.acknowledge();
 		} catch (JMSException e) {
 			log.error("Failed to acknowledge: " + e, e);
