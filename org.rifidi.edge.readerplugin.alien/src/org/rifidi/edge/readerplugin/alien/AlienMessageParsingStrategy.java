@@ -5,7 +5,7 @@ package org.rifidi.edge.readerplugin.alien;
 
 import java.util.Arrays;
 
-import org.rifidi.edge.core.sensors.base.threads.MessageParser;
+import org.rifidi.edge.core.sensors.base.threads.MessageParsingStrategy;
 
 /**
  * This object parses alien messages that come in byte by byte, for example from
@@ -17,7 +17,7 @@ import org.rifidi.edge.core.sensors.base.threads.MessageParser;
  * @author Kyle Neumeier - kyle@pramari.com
  * 
  */
-public class AlienMessageParser implements MessageParser {
+public class AlienMessageParsingStrategy implements MessageParsingStrategy {
 
 	/** The message currently being processed. */
 	private byte[] _messageBuilder = new byte[0];

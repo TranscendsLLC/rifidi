@@ -52,6 +52,7 @@ public class AlienPropertyCommand extends AbstractAlien9800Command {
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Runnable#run()
 	 */
 	@Override
@@ -64,7 +65,8 @@ public class AlienPropertyCommand extends AbstractAlien9800Command {
 					this.attributes.put(wrapper.getPropertyName(), wrapper
 							.getCommandObject().execute());
 				} catch (AlienException e) {
-					logger.warn("Alien Exception while executing command ", e);
+					logger.warn("Alien Exception while executing command "
+							+ wrapper.getPropertyName(), e);
 				}
 			}
 		} catch (IOException e) {

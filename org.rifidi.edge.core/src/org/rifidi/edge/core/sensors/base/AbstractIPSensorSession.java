@@ -15,8 +15,8 @@ import javax.jms.Destination;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.api.SessionStatus;
-import org.rifidi.edge.core.sensors.base.threads.MessageParser;
-import org.rifidi.edge.core.sensors.base.threads.ReadThread;
+import org.rifidi.edge.core.sensors.base.threads.MessageParsingStrategy;
+import org.rifidi.edge.core.sensors.base.threads.QueueingReadThread;
 import org.rifidi.edge.core.sensors.base.threads.WriteThread;
 import org.rifidi.edge.core.sensors.messages.ByteMessage;
 import org.springframework.jms.core.JmsTemplate;
@@ -29,7 +29,7 @@ import org.springframework.jms.core.JmsTemplate;
  * @author Jochen Mader - jochen@pramari.com
  * @author Kyle Neumeier - kyle@pramari.com
  */
-public abstract class AbstractIPSensorSession extends AbstractSensorSession implements MessageParser {
+public abstract class AbstractIPSensorSession extends AbstractSensorSession implements MessageParsingStrategy {
 	/** Logger for this class. */
 	private static final Log logger = LogFactory
 			.getLog(AbstractIPSensorSession.class);
@@ -218,7 +218,7 @@ public abstract class AbstractIPSensorSession extends AbstractSensorSession impl
 					connecting.compareAndSet(true, false);
 					throw new IOException("Unable to reach reader.");
 				}
-				readThread = new Thread(new ReadThread(this, socket
+				readThread = new Thread(new QueueingReadThread(this, socket
 						.getInputStream(), readQueue));
 				writeThread = new Thread(new WriteThread(socket
 						.getOutputStream(), writeQueue));

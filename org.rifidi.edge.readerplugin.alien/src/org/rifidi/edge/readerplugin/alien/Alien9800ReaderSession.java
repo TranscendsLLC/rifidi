@@ -39,7 +39,7 @@ public class Alien9800ReaderSession extends AbstractIPSensorSession {
 	/** The ID of the reader this session belongs to */
 	private String readerID;
 	/** The message parser that parses messages from the socket */
-	private AlienMessageParser messageParser;
+	private AlienMessageParsingStrategy messageParser;
 
 	/**
 	 * You can put this in front of a Alien command for terse output to come
@@ -127,7 +127,7 @@ public class Alien9800ReaderSession extends AbstractIPSensorSession {
 		this.password = password;
 		this.notifierService = notifierService;
 		this.readerID = readerID;
-		this.messageParser = new AlienMessageParser();
+		this.messageParser = new AlienMessageParsingStrategy();
 	}
 
 	/*
