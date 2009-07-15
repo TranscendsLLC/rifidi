@@ -18,9 +18,6 @@ public class SALPluginActivator extends AbstractUIPlugin {
 	// The shared instance
 	private static SALPluginActivator plugin;
 
-	/** The model service. Move to spring injection when possible */
-	private SALModelService salModelService;
-
 	public static final String IMAGE_FOLDER = "folder";
 
 	public static final String IMAGE_COG = "cog";
@@ -43,7 +40,6 @@ public class SALPluginActivator extends AbstractUIPlugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
-		salModelService = new SALModelServiceImpl();
 	}
 
 	/*
@@ -78,16 +74,7 @@ public class SALPluginActivator extends AbstractUIPlugin {
 	public static ImageDescriptor getImageDescriptor(String path) {
 		return imageDescriptorFromPlugin(PLUGIN_ID, path);
 	}
-
-	/**
-	 * Get the model serice
-	 * 
-	 * @return
-	 */
-	public SALModelService getSALModelService() {
-		return salModelService;
-	}
-
+	
 	/*
 	 * (non-Javadoc)
 	 * 

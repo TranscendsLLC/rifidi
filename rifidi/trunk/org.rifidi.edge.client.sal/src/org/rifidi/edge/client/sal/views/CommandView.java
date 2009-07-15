@@ -25,17 +25,19 @@ import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.views.properties.tabbed.ITabbedPropertySheetPageContributor;
 import org.rifidi.edge.client.model.sal.RemoteCommandConfiguration;
 import org.rifidi.edge.client.model.sal.RemoteEdgeServer;
-import org.rifidi.edge.client.sal.SALPluginActivator;
 import org.rifidi.edge.client.sal.controller.commands.CommandTreeContentProvider;
 import org.rifidi.edge.client.sal.controller.commands.CommandTreeLabelProvider;
 import org.rifidi.edge.client.sal.modelmanager.SALModelService;
+import org.rifidi.edge.client.sal.modelmanager.SALModelServiceImpl;
 import org.rifidi.edge.client.sal.modelmanager.SALModelServiceListener;
+import org.springframework.beans.factory.annotation.Configurable;
 
 /**
  * A view to display commands currently on the server
  * 
  * @author Kyle Neumeier - kyle@pramari.com
  */
+@Configurable
 public class CommandView extends ViewPart implements
 		ITabbedPropertySheetPageContributor, SALModelServiceListener,
 		DragSourceListener {
@@ -44,15 +46,21 @@ public class CommandView extends ViewPart implements
 	/** The tree viewer to use */
 	private AbstractTreeViewer treeViewer;
 	/** The service that injects the model */
-	private SALModelService modelService;
+	private volatile SALModelService modelService;
 
 	/**
 	 * 
 	 */
 	public CommandView() {
 		super();
-		this.modelService = SALPluginActivator.getDefault()
-				.getSALModelService();
+		this.modelService = new SALModelServiceImpl();
+	}
+
+	/**
+	 * @param modelService the modelService to set
+	 */
+	public void setModelService(SALModelService modelService) {
+		this.modelService = modelService;
 	}
 
 	/*

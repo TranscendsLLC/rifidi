@@ -1,0 +1,21 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:osgi="http://www.springframework.org/schema/osgi"
+	xmlns:amq="http://activemq.apache.org/schema/core"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+    http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi.xsd
+    http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+    <context:spring-configured/>
+	<context:annotation-config/>
+ 	<context:load-time-weaver weaver-class="org.springframework.instrument.classloading.InstrumentationLoadTimeWeaver"/>
+	<!-- Create SALModelService -->
+	<bean id="SALModelService" class="org.rifidi.edge.client.sal.modelmanager.SALModelServiceImpl"/>
+	<bean class="org.rifidi.edge.client.sal.views.EdgeServerView" scope="prototype">
+		<property name="modelService" ref="SALModelService"/>
+	</bean>
+	<bean class="org.rifidi.edge.client.sal.views.CommandView" scope="prototype">
+		<property name="modelService" ref="SALModelService"/>
+	</bean>
+	<osgi:service ref="SALModelService" interface="org.rifidi.edge.client.sal.modelmanager.SALModelService"/>
+</beans>

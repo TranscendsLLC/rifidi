@@ -11,8 +11,11 @@
       <features>
       </features>
       <extraLocations>
-         <location path="${workspace_loc}/org.rifidi.edge.client.target/draw2d"/>
          <location path="${workspace_loc}/org.rifidi.edge.client.target/libraries"/>
+         <location path="${workspace_loc}/org.rifidi.edge.client.target/eclipseaspects"/>
+         <location path="${workspace_loc}/org.rifidi.edge.client.target/spring"/>
+         <location path="${workspace_loc}/org.rifidi.edge.client.target/aspectj"/>
+         <location path="${workspace_loc}/org.rifidi.edge.client.target/draw2d"/>
       </extraLocations>
    </content>
 

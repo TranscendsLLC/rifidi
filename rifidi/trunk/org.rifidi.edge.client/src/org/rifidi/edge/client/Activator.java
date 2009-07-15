@@ -2,6 +2,7 @@ package org.rifidi.edge.client;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -27,6 +28,26 @@ public class Activator extends AbstractUIPlugin {
 	 */
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
+		//TODO: this REALLY sucks
+//		for(Bundle bundle:context.getBundles()){
+//			if(bundle.getSymbolicName().equals("org.eclipse.equinox.weaving.aspectj")){
+//				System.out.println(bundle.getSymbolicName());
+//				bundle.start();
+//			}
+//			if(bundle.getSymbolicName().equals("org.springframework.bundle.osgi.extender")){
+//				System.out.println(bundle.getSymbolicName());
+//				bundle.start();
+//			}
+//			if(bundle.getSymbolicName().equals("org.springframework.bundle.spring.aspects")){
+//				System.out.println(bundle.getSymbolicName());
+//				bundle.start();
+//			}
+//			if(bundle.getSymbolicName().equals("org.rifidi.org.springframework.bundle.spring")){
+//				System.out.println(bundle.getSymbolicName());
+//				bundle.start();
+//			}
+//			
+//		}
 		plugin = this;
 	}
 
