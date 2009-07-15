@@ -1,7 +1,11 @@
+
 package org.rifidi.edge.client.mbean.ui.widgets.abstractwidgets;
 
 import javax.management.Attribute;
 
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.widgets.Composite;
@@ -20,6 +24,12 @@ public abstract class AbstractNumberWidget<T extends AbstractWidgetData>
 
 	/** The spinner for this widget */
 	protected Spinner spinner;
+
+	/**
+	 * Set to true if the user has modified the data since the last time the
+	 * listeners have been notified
+	 */
+	private boolean dirty = false;
 
 	/**
 	 * Constructor
@@ -59,15 +69,34 @@ public abstract class AbstractNumberWidget<T extends AbstractWidgetData>
 	/**
 	 * This method adds swt listeners to the spinner control and notifies
 	 * MBeanInfoWidgetListeners when the value of the spinner changes in some
-	 * way. By default it adds a a modify listener, whicn notifies listeners
-	 * whenever data changes. Subclasses can override this method if they want
-	 * to provide different behavior for this spinner.
+	 * way. By default it adds a a modify listener and a keylistener. Subclasses
+	 * can override this method if they want to provide different behavior for
+	 * this spinner.
 	 */
 	protected void addSpinnerListeners() {
 		spinner.addModifyListener(new ModifyListener() {
 			@Override
 			public void modifyText(ModifyEvent e) {
-				notifyListenersDataChanged(spinner.getText());
+				dirty = true;
+				notifyListenersKeyReleased();
+			}
+		});
+
+		spinner.addKeyListener(new KeyListener() {
+
+			@Override
+			public void keyPressed(KeyEvent e) {
+			}
+
+			@Override
+			public void keyReleased(KeyEvent e) {
+				if (e.character == SWT.CR) {
+					if (dirty == true) {
+						dirty = false;
+						notifyListenersDataChanged(spinner.getText());
+					}
+				} else
+					notifyListenersKeyReleased();
 			}
 		});
 	}
@@ -116,6 +145,7 @@ public abstract class AbstractNumberWidget<T extends AbstractWidgetData>
 	@Override
 	public String setValue(Attribute value) {
 		spinner.setSelection(getValueAsInteger(value));
+		dirty = false;
 		super.notifyListenersClean();
 		return null;
 	}
