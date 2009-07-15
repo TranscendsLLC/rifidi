@@ -1,17 +1,24 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:osgi="http://www.springframework.org/schema/osgi"
-	xmlns:amq="http://activemq.apache.org/schema/core"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans 
 	http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
-     http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi.xsd">
+    http://www.springframework.org/schema/osgi 
+    http://www.springframework.org/schema/osgi/spring-osgi.xsd">
 
 	<!-- Put reader configuration service in OSGi Registry -->
 	<osgi:service id="readerConfigurationFactoryService" ref="configurationFactory">
 		<osgi:interfaces>
-			<value>org.rifidi.configuration.ServiceFactory
-			</value>
-			<value>
-				org.rifidi.edge.core.sensors.base.AbstractSensorFactory</value>
+			<value>org.rifidi.configuration.ServiceFactory</value>
+			<value>org.rifidi.edge.core.sensors.base.AbstractSensorFactory</value>
+		</osgi:interfaces>
+	</osgi:service>
+
+	<!-- Put reader configuration service in OSGi Registry -->
+	<osgi:service id="autonomousConfigurationFactoryService"
+		ref="AutoModeFactory">
+		<osgi:interfaces>
+			<value>org.rifidi.configuration.ServiceFactory</value>
+			<value> org.rifidi.edge.core.sensors.base.AbstractSensorFactory</value>
 		</osgi:interfaces>
 	</osgi:service>
 

@@ -18,9 +18,9 @@ import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
 public class AlienGetTagListCommandConfiguration extends
 		AbstractCommandConfiguration<AlienGetTagListCommand> {
 	/** Name of the command. */
-	private static final String name = "Alien9800-GetTagList";
+	public static final String name = "Alien9800-GetTagList";
 	/** Description of the command. */
-	private static final String description = "Get Tags";
+	private static final String description = "Poll the reader for its tag list";
 	/** Interval between two reads. */
 	private int interval = 10;
 	/** Type of tag to read */
@@ -48,6 +48,22 @@ public class AlienGetTagListCommandConfiguration extends
 	@Override
 	public String getCommandName() {
 		return name;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration#getCommand
+	 * ()
+	 */
+	@Override
+	public AlienGetTagListCommand getCommand(String readerID) {
+		AlienGetTagListCommand c = new AlienGetTagListCommand(super.getID(),
+				readerID);
+		c.setAntennasequence(antenna_sequence);
+		c.setTagType(tagType);
+		return c;
 	}
 
 	/**
@@ -109,7 +125,7 @@ public class AlienGetTagListCommandConfiguration extends
 	 *            the antenna_sequence to set
 	 */
 	public void setAntennaSequence(String antenna_sequence) {
-		//System.out.println("Attempting to set antenna seq!");
+		// System.out.println("Attempting to set antenna seq!");
 		if (isValidAntennaSequence(antenna_sequence)) {
 			this.antenna_sequence = antenna_sequence;
 		}
@@ -121,7 +137,7 @@ public class AlienGetTagListCommandConfiguration extends
 	 * @return
 	 */
 	private boolean isValidAntennaSequence(String antennaSequence) {
-		//System.out.println("Setting the antenna sequence!");
+		// System.out.println("Setting the antenna sequence!");
 		try {
 			String splitString[] = antennaSequence.split(",");
 			for (String a : splitString) {
@@ -134,22 +150,6 @@ public class AlienGetTagListCommandConfiguration extends
 			return false;
 		}
 		return true;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration#getCommand
-	 * ()
-	 */
-	@Override
-	public AlienGetTagListCommand getCommand(String readerID) {
-		AlienGetTagListCommand c = new AlienGetTagListCommand(super.getID(),
-				readerID);
-		c.setAntennasequence(antenna_sequence);
-		c.setTagType(tagType);
-		return c;
 	}
 
 }

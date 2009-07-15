@@ -12,6 +12,7 @@ import java.util.Set;
 
 import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
 import org.rifidi.edge.core.sensors.commands.AbstractCommandConfigurationFactory;
+import org.rifidi.edge.readerplugin.alien.commands.AlienAutonomousModeCommandConfiguration;
 import org.rifidi.edge.readerplugin.alien.commands.AlienGetTagListCommandConfiguration;
 
 /**
@@ -37,8 +38,10 @@ public class Alien9800CommandConfigurationFactory extends
 	public Alien9800CommandConfigurationFactory() {
 		super();
 		factoryIdToClass = new HashMap<String, Class<?>>();
-		factoryIdToClass.put("Alien9800-GetTagList",
+		factoryIdToClass.put(AlienGetTagListCommandConfiguration.name,
 				AlienGetTagListCommandConfiguration.class);
+		factoryIdToClass.put(AlienAutonomousModeCommandConfiguration.name,
+				AlienAutonomousModeCommandConfiguration.class);
 	}
 
 	/*

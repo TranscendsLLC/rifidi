@@ -66,14 +66,14 @@ public abstract class AbstractSensor<T extends SensorSession> extends
 	 * 
 	 * @return
 	 */
-	abstract public Map<String, SensorSession> getReaderSessions();
+	abstract public Map<String, SensorSession> getSensorSessions();
 
 	/**
-	 * Destroy a reader session.
+	 * Destroy a sesnor session.
 	 * 
 	 * @param session
 	 */
-	abstract public void destroyReaderSession(SensorSession session);
+	abstract public void destroySensorSession(SensorSession session);
 
 	/**
 	 * Send properties that have been modified to the physical reader
@@ -257,7 +257,7 @@ public abstract class AbstractSensor<T extends SensorSession> extends
 		String factoryID = config.getFactoryID();
 		AttributeList attrs = config.getAttributes(config.getAttributeNames());
 		List<SessionDTO> sessionDTOs = new ArrayList<SessionDTO>();
-		for (SensorSession s : this.getReaderSessions().values()) {
+		for (SensorSession s : this.getSensorSessions().values()) {
 			sessionDTOs.add(s.getDTO());
 		}
 		ReaderDTO dto = new ReaderDTO(readerID, factoryID, attrs, sessionDTOs);
