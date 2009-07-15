@@ -1,20 +1,13 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<?pde version="3.2"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?pde version="3.5"?>
 
 <target>
-
-   <location path="${workspace_loc}/org.rifidi.edge.target"/>
-
-   <content useAllPlugins="true">
-      <plugins>
-      </plugins>
-      <features>
-      </features>
-      <extraLocations>
-         <location path="${workspace_loc}/org.rifidi.edge.target/esper"/>
-         <location path="${workspace_loc}/org.rifidi.edge.target/spring"/>
-         <location path="${workspace_loc}/org.rifidi.edge.target/libraries"/>
-      </extraLocations>
-   </content>
-
+<locations>
+<location path="${workspace_loc}/org.rifidi.edge.target" type="Profile"/>
+<location path="${workspace_loc}/org.rifidi.edge.target/esper" type="Directory"/>
+<location path="${workspace_loc}/org.rifidi.edge.target/spring" type="Directory"/>
+<location path="${workspace_loc}/org.rifidi.edge.target/libraries" type="Directory"/>
+<location path="${workspace_loc}/org.rifidi.edge.target/aspectj" type="Directory"/>
+<location path="${workspace_loc}/org.rifidi.edge.target/eclipseaspects" type="Directory"/>
+</locations>
 </target>
