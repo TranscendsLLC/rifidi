@@ -23,8 +23,9 @@ import org.springframework.jms.core.JmsTemplate;
  * 
  */
 @JMXMBean
-public class AlienAutonomousSensor extends
-		AbstractSensor<AlienAutonomousSensorSession> {
+public class AlienAutonomousSensor
+		extends
+			AbstractSensor<AlienAutonomousSensorSession> {
 
 	/** The session for this reader */
 	private AlienAutonomousSensorSession session;
@@ -35,7 +36,9 @@ public class AlienAutonomousSensor extends
 	/** The ID of the session */
 	private int sessionID = 0;
 	/** The port of the server socket */
-	private int serverSocketPort = 54321;
+	private Integer serverSocketPort = 54321;
+	/** Maximum number of autonomous readers supported concurrently */
+	private Integer maxNumberAutonomousReaders = 15;
 
 	/**
 	 * @param template
@@ -77,7 +80,7 @@ public class AlienAutonomousSensor extends
 			sessionID++;
 			session = new AlienAutonomousSensorSession(this, Integer
 					.toString(sessionID), template, notifierService,
-					serverSocketPort);
+					serverSocketPort, maxNumberAutonomousReaders);
 			notifierService.addSessionEvent(getID(), Integer
 					.toString(sessionID));
 			return session;
@@ -132,7 +135,7 @@ public class AlienAutonomousSensor extends
 	/**
 	 * @return the serverSocketPort
 	 */
-	@Property(displayName = "Notify Port", category = "connection", defaultValue = "54321", description = "The port configured in the Alien's Notify Address", type = PropertyType.PT_INTEGER, writable = true)
+	@Property(displayName = "Notify Port", category = "connection", defaultValue = "54321", description = "The port configured in the Alien's Notify Address", type = PropertyType.PT_INTEGER, writable = true, minValue = "0", maxValue = "65535", orderValue=1)
 	public Integer getServerSocketPort() {
 		return serverSocketPort;
 	}
@@ -143,6 +146,26 @@ public class AlienAutonomousSensor extends
 	 */
 	public void setServerSocketPort(Integer serverSocketPort) {
 		this.serverSocketPort = serverSocketPort;
+	}
+
+	/**
+	 * @return the maxNumberAutonomousReaders
+	 */
+	@Property(category = "connection", displayName = "Maximum number of concurrent readers", defaultValue = "15", description = "The maximum number of Alien Readers that can send messages to this autonomous sensor simultaneously", minValue = "1", type = PropertyType.PT_INTEGER, writable = true)
+	public Integer getMaxNumberAutonomousReaders() {
+		return this.maxNumberAutonomousReaders;
+	}
+
+	/**
+	 * @param maxNumberAutonomousReaders
+	 *            the maxNumberAutonomousReaders to set
+	 */
+	public void setMaxNumberAutonomousReaders(Integer maxNumberAutonomousReaders) {
+		if (maxNumberAutonomousReaders < 1) {
+			throw new IllegalArgumentException(
+					"maxNumberAutonomousReaders must be greater than 0");
+		}
+		this.maxNumberAutonomousReaders = maxNumberAutonomousReaders;
 	}
 
 }

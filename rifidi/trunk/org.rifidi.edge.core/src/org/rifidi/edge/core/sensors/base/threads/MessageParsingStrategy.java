@@ -7,7 +7,7 @@ package org.rifidi.edge.core.sensors.base.threads;
  * @author Kyle Neumeier - kyle@pramari.com
  *
  */
-public interface MessageParser {
+public interface MessageParsingStrategy {
 	
 	/**
 	 * This method is called each time a new byte is read. It will return the

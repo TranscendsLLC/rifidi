@@ -58,7 +58,8 @@ public class AlienAutonomousModeCommand extends AbstractAlien9800Command {
 				"notifyAddress", notifyAddress,
 				(Alien9800ReaderSession) this.sensorSession);
 		AlienCommandObject setNotifyTime = new AlienSetCommandObject(
-				"notifyTime", notifyTime);
+				"notifyTime", notifyTime,
+				(Alien9800ReaderSession) this.sensorSession);
 		AlienCommandObject setAutoWaitOutput = new AlienSetCommandObject(
 				"autowaitoutput", autoWaitOutput,
 				(Alien9800ReaderSession) this.sensorSession);
@@ -102,7 +103,7 @@ public class AlienAutonomousModeCommand extends AbstractAlien9800Command {
 		AlienCommandObject setNotifyMode = new AlienSetCommandObject(
 				"notifyMode", "on", (Alien9800ReaderSession) this.sensorSession);
 		AlienCommandObject setAutoMode = new AlienSetCommandObject("automode",
-				"off", (Alien9800ReaderSession) this.sensorSession);
+				"on", (Alien9800ReaderSession) this.sensorSession);
 
 		// execute all command objects
 		try {
@@ -124,10 +125,13 @@ public class AlienAutonomousModeCommand extends AbstractAlien9800Command {
 			setAutoAction.execute();
 			setNotifyMode.execute();
 			setAutoMode.execute();
+
 		} catch (IOException e) {
-			logger.warn("Exception while executing command: " + e);
+			logger.warn("Exception while executing command: ", e);
 		} catch (AlienException e) {
-			logger.warn("Exception while executing command: " + e);
+			logger.warn("Exception while executing command: ", e);
+		} catch (Exception e) {
+			logger.warn("Exception while executing command: ", e);
 		}
 
 	}
@@ -149,7 +153,8 @@ public class AlienAutonomousModeCommand extends AbstractAlien9800Command {
 	}
 
 	/**
-	 * @param notifyTime the notifyTime to set
+	 * @param notifyTime
+	 *            the notifyTime to set
 	 */
 	void setNotifyTime(String notifyTime) {
 		this.notifyTime = notifyTime;

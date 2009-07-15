@@ -6,8 +6,9 @@ package org.rifidi.edge.readerplugin.alien.autonomous;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.logging.Log;
@@ -34,13 +35,15 @@ public class AlienAutonomousSensorSession extends AbstractSensorSession {
 	/** port of server socket */
 	private int serverSocketPort;
 	/** The executor service that executes all Handlers */
-	private ExecutorService executorService;
+	private ThreadPoolExecutor executorService;
 	/** The logger */
 	private final static Log logger = LogFactory
 			.getLog(AlienAutonomousSensorSession.class);
 	/** The server socket */
 	private ServerSocket serverSocket;
+	/** The notifierService used to send out notifications of session changes */
 	private NotifierService notifierService;
+	private int maxNumAutonomousReaders;
 
 	/**
 	 * Constructor
@@ -58,10 +61,11 @@ public class AlienAutonomousSensorSession extends AbstractSensorSession {
 	 */
 	public AlienAutonomousSensorSession(AbstractSensor<?> sensor, String ID,
 			JmsTemplate template, NotifierService notifierService,
-			int serverSocketPort) {
+			int serverSocketPort, int maxNumAutonomousReaders) {
 		super(sensor, ID, template.getDefaultDestination(), template);
 		this.serverSocketPort = serverSocketPort;
 		this.notifierService = notifierService;
+		this.maxNumAutonomousReaders = maxNumAutonomousReaders;
 
 	}
 
@@ -78,19 +82,25 @@ public class AlienAutonomousSensorSession extends AbstractSensorSession {
 			return;
 		}
 		setStatus(SessionStatus.CONNECTING);
-		// create a new executor service that will handle each new request
-		executorService = new ScheduledThreadPoolExecutor(15);
+
+		// create a new executor service that will handle each new request. Use
+		// SynchronousQueue so that tasks will be rejected if there is no free
+		// worker thread available
+		executorService = new ThreadPoolExecutor(0, maxNumAutonomousReaders, 5,
+				TimeUnit.MINUTES, new SynchronousQueue<Runnable>());
 
 		// open up server socket
 		try {
 			serverSocket = new ServerSocket(serverSocketPort);
 		} catch (IOException e) {
 			logger.error("Cannot start Alient Autonomous Sensor");
-			setStatus(SessionStatus.CLOSED);
+			disconnect();
 			throw e;
 		}
 		logger.info("Alien Autonomous Sensor listening on port "
-				+ serverSocket.getLocalPort());
+				+ serverSocket.getLocalPort()
+				+ ".  Maximum number of concurrent readers supported: "
+				+ maxNumAutonomousReaders);
 		setStatus(SessionStatus.PROCESSING);
 
 		// while session is not closed, process each request
@@ -100,10 +110,17 @@ public class AlienAutonomousSensorSession extends AbstractSensorSession {
 				Socket clientSocket = serverSocket.accept();
 				logger.info("Accepted client at "
 						+ clientSocket.getInetAddress());
+
 				// give the socket to the handler to do the dirty work
-				AlienAutonomousHandler handler = new AlienAutonomousHandler(
+				AlienAutonomousReadThread handler = new AlienAutonomousReadThread(
 						clientSocket, this, this.getTemplate());
-				executorService.execute(handler);
+				try {
+					executorService.execute(handler);
+				} catch (RejectedExecutionException e) {
+					logger.warn("Cannot create a handler thread for socket "
+							+ clientSocket.getInetAddress(), e);
+					clientSocket.close();
+				}
 			} catch (IOException e) {
 				// print an error message if we weren't the ones who caused the
 				// problem

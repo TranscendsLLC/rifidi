@@ -13,6 +13,7 @@ import java.util.Set;
 import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
 import org.rifidi.edge.core.sensors.commands.AbstractCommandConfigurationFactory;
 import org.rifidi.edge.readerplugin.alien.commands.AlienAutonomousModeCommandConfiguration;
+import org.rifidi.edge.readerplugin.alien.commands.AlienAutonomousModeStopCommandConfiguration;
 import org.rifidi.edge.readerplugin.alien.commands.AlienGetTagListCommandConfiguration;
 
 /**
@@ -21,8 +22,9 @@ import org.rifidi.edge.readerplugin.alien.commands.AlienGetTagListCommandConfigu
  * @author Jochen Mader - jochen@pramari.com
  * 
  */
-public class Alien9800CommandConfigurationFactory extends
-		AbstractCommandConfigurationFactory {
+public class Alien9800CommandConfigurationFactory
+		extends
+			AbstractCommandConfigurationFactory {
 
 	/**
 	 * A map between IDs of command configutions factories and the classes of
@@ -42,6 +44,8 @@ public class Alien9800CommandConfigurationFactory extends
 				AlienGetTagListCommandConfiguration.class);
 		factoryIdToClass.put(AlienAutonomousModeCommandConfiguration.name,
 				AlienAutonomousModeCommandConfiguration.class);
+		factoryIdToClass.put(AlienAutonomousModeStopCommandConfiguration.name,
+				AlienAutonomousModeStopCommandConfiguration.class);
 	}
 
 	/*
