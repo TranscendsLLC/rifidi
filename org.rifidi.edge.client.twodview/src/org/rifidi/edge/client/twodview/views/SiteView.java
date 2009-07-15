@@ -35,8 +35,8 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.views.properties.tabbed.ITabbedPropertySheetPageContributor;
 import org.rifidi.edge.client.model.sal.RemoteEdgeServer;
-import org.rifidi.edge.client.sal.SALPluginActivator;
 import org.rifidi.edge.client.sal.modelmanager.SALModelService;
+import org.rifidi.edge.client.sal.modelmanager.SALModelServiceImpl;
 import org.rifidi.edge.client.sal.modelmanager.SALModelServiceListener;
 import org.rifidi.edge.client.twodview.Activator;
 import org.rifidi.edge.client.twodview.layers.FloorPlanLayer;
@@ -50,6 +50,7 @@ import org.rifidi.edge.client.twodview.util.DeserializerUtil;
 import org.rifidi.edge.client.twodview.util.EdgeUi;
 import org.rifidi.edge.client.twodview.util.ReaderPos;
 import org.rifidi.edge.client.twodview.util.SerializerUtil;
+import org.springframework.beans.factory.annotation.Configurable;
 
 /**
  * This class is the basis of the twodview. The view contains a layered pane
@@ -57,6 +58,7 @@ import org.rifidi.edge.client.twodview.util.SerializerUtil;
  * 
  * @author Tobias Hoppenthaler - tobias@pramari.com
  */
+@Configurable
 public class SiteView extends ViewPart implements SALModelServiceListener,
 		ITabbedPropertySheetPageContributor, IAdaptable {
 
@@ -78,8 +80,15 @@ public class SiteView extends ViewPart implements SALModelServiceListener,
 	 * The constructor.
 	 */
 	public SiteView() {
-		modelService = SALPluginActivator.getDefault().getSALModelService();
+		modelService = new SALModelServiceImpl();
 		this.saveFolder = Activator.getSaveFolder();
+	}
+
+	/**
+	 * @param modelService the modelService to set
+	 */
+	public void setModelService(SALModelService modelService) {
+		this.modelService = modelService;
 	}
 
 	/*

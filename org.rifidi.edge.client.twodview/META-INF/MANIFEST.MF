@@ -11,7 +11,10 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.core.resources;bundle-version="3.4.1",
  org.eclipse.core.databinding;bundle-version="1.1.1",
  org.eclipse.jface.databinding;bundle-version="1.2.1",
- org.eclipse.ui.views.properties.tabbed;bundle-version="3.4.1"
+ org.eclipse.ui.views.properties.tabbed;bundle-version="3.4.1",
+ org.springframework.bundle.spring.aspects;bundle-version="2.5.5",
+ org.aspectj.runtime;bundle-version="1.6.3",
+ org.rifidi.org.springframework.bundle.spring;bundle-version="2.5.5"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Import-Package: javax.jms,

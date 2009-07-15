@@ -11,7 +11,10 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.ui.views;bundle-version="3.3.0",
  org.eclipse.core.expressions;bundle-version="3.4.0",
  org.eclipse.jface.databinding;bundle-version="1.2.1",
- org.eclipse.ui.views.properties.tabbed;bundle-version="3.4.1"
+ org.eclipse.ui.views.properties.tabbed;bundle-version="3.4.1",
+ org.springframework.bundle.spring.aspects;bundle-version="2.5.5",
+ org.aspectj.runtime;bundle-version="1.6.3",
+ org.rifidi.org.springframework.bundle.spring;bundle-version="2.5.5"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Import-Package: org.apache.commons.logging;version="1.1.1",
@@ -30,3 +33,4 @@ Export-Package: org.rifidi.edge.client.sal,
  org.rifidi.edge.client.sal.properties,
  org.rifidi.edge.client.sal.properties.mbeanwidgets,
  org.rifidi.edge.client.sal.properties.readers
+Spring-Context: *;create-asynchronously:=false
