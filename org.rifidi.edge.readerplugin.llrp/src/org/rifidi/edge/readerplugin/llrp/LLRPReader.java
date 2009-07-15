@@ -109,7 +109,7 @@ public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 	 * rifidi.edge.core.readers.ReaderSession)
 	 */
 	@Override
-	public void destroyReaderSession(SensorSession session) {
+	public void destroySensorSession(SensorSession session) {
 		if (session != null) {
 			for (Integer id : session.currentCommands().keySet()) {
 				session.killComand(id);
@@ -132,7 +132,7 @@ public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 	 * @see org.rifidi.edge.core.readers.AbstractReader#getReaderSessions()
 	 */
 	@Override
-	public Map<String, SensorSession> getReaderSessions() {
+	public Map<String, SensorSession> getSensorSessions() {
 		Map<String, SensorSession> ret = new HashMap<String, SensorSession>();
 		if (session != null) {
 			ret.put(session.getID(), session);
@@ -274,7 +274,7 @@ public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 	@Override
 	public void destroy() {
 		super.unregister();
-		destroyReaderSession(this.session);
+		destroySensorSession(this.session);
 
 	}
 }

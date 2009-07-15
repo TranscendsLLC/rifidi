@@ -221,7 +221,7 @@ public class SensorManagerServiceImpl implements SensorManagerService {
 	public SessionDTO getSession(String readerID, String sessionID) {
 		AbstractSensor<?> reader = this.readerDAO.getReaderByID(readerID);
 		if (reader != null) {
-			SensorSession session = reader.getReaderSessions().get(sessionID);
+			SensorSession session = reader.getSensorSessions().get(sessionID);
 			if (session != null) {
 				return session.getDTO();
 			}
@@ -245,7 +245,7 @@ public class SensorManagerServiceImpl implements SensorManagerService {
 		reader.createReaderSession();
 		logger.info("New reader session created on Reader " + readerID);
 		Set<SessionDTO> sessionDTOs = new HashSet<SessionDTO>();
-		for (SensorSession s : reader.getReaderSessions().values()) {
+		for (SensorSession s : reader.getSensorSessions().values()) {
 			sessionDTOs.add(s.getDTO());
 		}
 		return sessionDTOs;
@@ -256,9 +256,9 @@ public class SensorManagerServiceImpl implements SensorManagerService {
 		logger.debug("RMI call: deleteSession");
 		AbstractSensor<?> reader = this.readerDAO.getReaderByID(readerID);
 		if (reader != null) {
-			SensorSession session = reader.getReaderSessions().get(sessionID);
+			SensorSession session = reader.getSensorSessions().get(sessionID);
 			if (session != null) {
-				reader.destroyReaderSession(session);
+				reader.destroySensorSession(session);
 			}
 		}
 
@@ -278,9 +278,9 @@ public class SensorManagerServiceImpl implements SensorManagerService {
 			logger.warn("No reader with ID " + readerID + " is available");
 			return;
 		}
-		SensorSession session = reader.getReaderSessions().get(sessionID);
+		SensorSession session = reader.getSensorSessions().get(sessionID);
 		if (session != null) {
-			reader.getReaderSessions().get(sessionID).killComand(processID);
+			reader.getSensorSessions().get(sessionID).killComand(processID);
 			logger.info("Command with processID " + processID
 					+ " killed on Session " + sessionID + " on reader "
 					+ readerID);
@@ -319,7 +319,7 @@ public class SensorManagerServiceImpl implements SensorManagerService {
 					return;
 				}
 				try {
-					SensorSession session = reader.getReaderSessions().get(
+					SensorSession session = reader.getSensorSessions().get(
 							finalSessionIndex);
 					if (session != null) {
 						session.connect();
@@ -359,7 +359,7 @@ public class SensorManagerServiceImpl implements SensorManagerService {
 			return;
 		}
 
-		SensorSession session = reader.getReaderSessions().get(sessionID);
+		SensorSession session = reader.getSensorSessions().get(sessionID);
 		if (session != null) {
 			session.disconnect();
 		} else {
@@ -426,7 +426,7 @@ public class SensorManagerServiceImpl implements SensorManagerService {
 			throw new CommandSubmissionException(error);
 		}
 
-		SensorSession session = reader.getReaderSessions().get(sessionID);
+		SensorSession session = reader.getSensorSessions().get(sessionID);
 		if (session == null) {
 			String error = "No session with ID " + sessionID + " is available";
 			logger.warn(error);

@@ -88,7 +88,7 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 	public Object _readers(CommandInterpreter intp) {
 		for (AbstractSensor<?> reader : readerDAO.getReaders()) {
 			intp.println("ID: " + reader.getID());
-			for (SensorSession session : reader.getReaderSessions().values()) {
+			for (SensorSession session : reader.getSensorSessions().values()) {
 				intp.println("\tsession (" + session.getID() + "): " + session);
 				Map<Integer, Command> commands = session.currentCommands();
 				for (Integer commandId : commands.keySet()) {
@@ -383,12 +383,12 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 			intp.println("No reader with ID " + readerid + " is available");
 			return null;
 		}
-		SensorSession session = reader.getReaderSessions().get(sessionid);
+		SensorSession session = reader.getSensorSessions().get(sessionid);
 		if (session == null) {
 			intp.println("No session with ID " + sessionid + " is available");
 			return null;
 		}
-		reader.destroyReaderSession(session);
+		reader.destroySensorSession(session);
 		return null;
 	}
 
@@ -409,26 +409,35 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 			intp.println("Give a session id!");
 			return null;
 		}
-		AbstractSensor<?> reader = readerDAO.getReaderByID(readerid);
+		final AbstractSensor<?> reader = readerDAO.getReaderByID(readerid);
 		if (reader == null) {
 			intp.println("Non existent reader id!");
 			return null;
 		}
+		final SensorSession session;
 		try {
-			SensorSession session = reader.getReaderSessions().get(sessionid);
+			session = reader.getSensorSessions().get(sessionid);
 			if (session == null) {
 				intp.println("Non existent session id.");
 				return null;
 			}
-			session.connect();
-			reader.applyPropertyChanges();
 		} catch (NumberFormatException e) {
 			intp.println("Session id not an integer.");
 			return null;
-		} catch (IOException e) {
-			intp.println("Unable to connect: " + e);
-			return null;
 		}
+		Thread t = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					session.connect();
+					reader.applyPropertyChanges();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		});
+		t.start();
 		intp.println("Session started.");
 		return null;
 	}
@@ -456,7 +465,7 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 			return null;
 		}
 		try {
-			SensorSession session = reader.getReaderSessions().get(sessionid);
+			SensorSession session = reader.getSensorSessions().get(sessionid);
 			if (session == null) {
 				intp.println("Non existent session id.");
 				return null;
@@ -498,7 +507,7 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 			intp.println("Non existent command id.");
 			return null;
 		}
-		SensorSession session = reader.getReaderSessions().get(sessionid);
+		SensorSession session = reader.getSensorSessions().get(sessionid);
 		try {
 			if (session != null) {
 				Long ival = Long.parseLong(interval);
@@ -536,7 +545,7 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 			return null;
 		}
 		AbstractSensor<?> reader = readerDAO.getReaderByID(readerid);
-		SensorSession session = reader.getReaderSessions().get(sessionid);
+		SensorSession session = reader.getSensorSessions().get(sessionid);
 		try {
 			if (session != null) {
 				session.killComand(Integer.parseInt(commandid));

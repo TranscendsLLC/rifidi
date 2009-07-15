@@ -4,7 +4,6 @@
 package org.rifidi.edge.readerplugin.alien;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.logging.Log;
@@ -35,12 +34,12 @@ public class Alien9800ReaderSession extends AbstractIPSensorSession {
 	public static final String NEWLINE = "\n";
 	/** Welcome string. */
 	public static final String WELCOME = "Alien";
-	/** Character that terminates a message from alien. */
-	public static final char TERMINATION_CHAR = '\0';
 	/** Service used to send out notifications */
 	private NotifierService notifierService;
 	/** The ID of the reader this session belongs to */
 	private String readerID;
+	/** The message parser that parses messages from the socket */
+	private AlienMessageParser messageParser;
 
 	/**
 	 * You can put this in front of a Alien command for terse output to come
@@ -128,10 +127,8 @@ public class Alien9800ReaderSession extends AbstractIPSensorSession {
 		this.password = password;
 		this.notifierService = notifierService;
 		this.readerID = readerID;
+		this.messageParser = new AlienMessageParser();
 	}
-
-	/** The message currently being processed. */
-	private byte[] _messageBuilder = new byte[0];
 
 	/*
 	 * (non-Javadoc)
@@ -141,15 +138,7 @@ public class Alien9800ReaderSession extends AbstractIPSensorSession {
 	 */
 	@Override
 	public byte[] isMessage(byte message) {
-		if (TERMINATION_CHAR == message) {
-			byte[] ret = _messageBuilder;
-			_messageBuilder = new byte[0];
-			return ret;
-		}
-		_messageBuilder = Arrays.copyOf(_messageBuilder,
-				_messageBuilder.length + 1);
-		_messageBuilder[_messageBuilder.length - 1] = message;
-		return null;
+		return messageParser.isMessage(message);
 	}
 
 	/*

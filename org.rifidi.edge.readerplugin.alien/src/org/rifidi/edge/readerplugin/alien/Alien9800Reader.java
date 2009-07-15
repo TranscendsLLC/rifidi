@@ -198,8 +198,9 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 	 */
 	@Override
 	public void destroy() {
+		super.destroy();
 		super.unregister();
-		destroyReaderSession(this.session);
+		destroySensorSession(this.session);
 	}
 
 	/**
@@ -227,7 +228,7 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 	 * rifidi.edge.core.readers.ReaderSession)
 	 */
 	@Override
-	public void destroyReaderSession(SensorSession session) {
+	public void destroySensorSession(SensorSession session) {
 		if (session != null) {
 			for (Integer id : session.currentCommands().keySet()) {
 				session.killComand(id);
@@ -247,7 +248,7 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 	 * @see org.rifidi.edge.core.readers.AbstractReader#getReaderSessions()
 	 */
 	@Override
-	public Map<String, SensorSession> getReaderSessions() {
+	public Map<String, SensorSession> getSensorSessions() {
 		Map<String, SensorSession> ret = new HashMap<String, SensorSession>();
 		if (session != null) {
 			ret.put(session.getID(), session);

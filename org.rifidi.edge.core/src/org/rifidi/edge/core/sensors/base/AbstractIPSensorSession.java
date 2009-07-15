@@ -15,6 +15,7 @@ import javax.jms.Destination;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.api.SessionStatus;
+import org.rifidi.edge.core.sensors.base.threads.MessageParser;
 import org.rifidi.edge.core.sensors.base.threads.ReadThread;
 import org.rifidi.edge.core.sensors.base.threads.WriteThread;
 import org.rifidi.edge.core.sensors.messages.ByteMessage;
@@ -28,7 +29,7 @@ import org.springframework.jms.core.JmsTemplate;
  * @author Jochen Mader - jochen@pramari.com
  * @author Kyle Neumeier - kyle@pramari.com
  */
-public abstract class AbstractIPSensorSession extends AbstractSensorSession {
+public abstract class AbstractIPSensorSession extends AbstractSensorSession implements MessageParser {
 	/** Logger for this class. */
 	private static final Log logger = LogFactory
 			.getLog(AbstractIPSensorSession.class);
@@ -321,15 +322,6 @@ public abstract class AbstractIPSensorSession extends AbstractSensorSession {
 			}
 		}
 	}
-
-	/**
-	 * This method is called each time a new byte is read. It will return the
-	 * full message if a complete message has arrived, other wise null.
-	 * 
-	 * @param message
-	 * @return the message or null
-	 */
-	public abstract byte[] isMessage(byte message);
 
 	/**
 	 * Called after the initial socket connection got established.

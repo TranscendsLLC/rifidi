@@ -17,6 +17,7 @@ import java.util.List;
 
 import org.rifidi.edge.core.sensors.messages.ByteMessage;
 import org.rifidi.edge.readerplugin.alien.Alien9800ReaderSession;
+import org.rifidi.edge.readerplugin.alien.messages.AlienTag;
 
 public class GetTagListCommandObject {
 	/** The sensorSession to send the command to */
@@ -38,25 +39,29 @@ public class GetTagListCommandObject {
 	 * @return the value of the property on the alien sensorSession
 	 * @throws IOException
 	 */
-	public List<String> executeGet() throws IOException, AlienException {
+	public List<AlienTag> executeGet() throws IOException, AlienException {
 		String message = Alien9800ReaderSession.PROMPT_SUPPRESS + "get "
-				+ Alien9800ReaderSession.COMMAND_TAG_LIST+ Alien9800ReaderSession.NEWLINE;
+				+ Alien9800ReaderSession.COMMAND_TAG_LIST
+				+ Alien9800ReaderSession.NEWLINE;
 
 		readerSession.sendMessage(new ByteMessage(message.getBytes()));
 
 		ByteMessage incomingMessage = readerSession.receiveMessage();
 
 		String incoming = new String(incomingMessage.message).trim();
-		ArrayList<String> tags = new ArrayList<String>();
-		String[] splitString = incoming.split("\n");
-		if(splitString.length==0){
-			throw new AlienException("Error while parsing return from Get TagList");
+
+		ArrayList<AlienTag> tags = new ArrayList<AlienTag>();
+
+		String[] lines = incoming.split("\n");
+		if (lines.length == 0) {
+			throw new AlienException(
+					"Error while parsing return from Get TagList");
 		}
-		if(splitString[0].contains("(No Tags)")){
+		if (lines[0].contains("(No Tags)")) {
 			return tags;
-		}else{
-			for(int i=0; i<splitString.length; i++){
-				tags.add(splitString[i]);
+		} else {
+			for (String line : lines) {
+				tags.add(new AlienTag(line));
 			}
 		}
 		return tags;
