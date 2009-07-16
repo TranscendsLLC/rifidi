@@ -30,13 +30,8 @@ import org.rifidi.edge.core.sensors.management.SensorManagementService;
 import org.rifidi.edge.core.sensors.management.dtos.SensorDTO;
 import org.rifidi.edge.core.services.esper.EsperManagementService;
 import org.rifidi.edge.core.services.esper.internal.EsperReceiver;
-import org.rifidi.edge.core.services.notification.data.ReadCycle;
-import org.rifidi.edge.core.services.notification.data.TagReadEvent;
 
 import com.espertech.esper.client.EPRuntime;
-import com.espertech.esper.client.EPStatement;
-import com.espertech.esper.client.EventBean;
-import com.espertech.esper.client.UpdateListener;
 
 /**
  * Thread asfe implementation of the {@link SensorManagementService}
@@ -519,7 +514,7 @@ public class SensorManagementServiceImpl implements SensorManagementService {
 		try {
 			for (AbstractSensor<?> reader : readers) {
 				physicalSensors.put(reader.getID(), reader);
-				logger.debug("Sensor bound "+reader.getID());
+				logger.debug("Sensor bound " + reader.getID());
 			}
 			if (esperReceiver != null) {
 				for (Sensor sensor : physicalSensors.values()) {
@@ -644,20 +639,23 @@ public class SensorManagementServiceImpl implements SensorManagementService {
 			}
 			esperReceiverThread = new Thread(esperReceiver);
 			esperReceiverThread.start();
-//			EPStatement statement=esperManager.getProvider().getEPAdministrator().createEPL("select * from ReadCycle[select * from tags]");
-//			statement.addListener(new UpdateListener(){
-//
-//				/* (non-Javadoc)
-//				 * @see com.espertech.esper.client.UpdateListener#update(com.espertech.esper.client.EventBean[], com.espertech.esper.client.EventBean[])
-//				 */
-//				@Override
-//				public void update(EventBean[] arg0, EventBean[] arg1) {
-//					for(EventBean event:arg0){
-//						System.out.println(event.getUnderlying());
-//					}
-//				}
-//				
-//			});
+			// EPStatement
+			// statement=esperManager.getProvider().getEPAdministrator().createEPL("select * from ReadCycle[select * from tags]");
+			// statement.addListener(new UpdateListener(){
+			//
+			// /* (non-Javadoc)
+			// * @see
+			// com.espertech.esper.client.UpdateListener#update(com.espertech.esper.client.EventBean[],
+			// com.espertech.esper.client.EventBean[])
+			// */
+			// @Override
+			// public void update(EventBean[] arg0, EventBean[] arg1) {
+			// for(EventBean event:arg0){
+			// System.out.println(event.getUnderlying());
+			// }
+			// }
+			//				
+			// });
 		} finally {
 			sensorLock.unlock();
 		}
