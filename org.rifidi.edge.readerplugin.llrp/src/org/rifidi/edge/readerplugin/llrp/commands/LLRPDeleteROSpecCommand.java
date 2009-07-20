@@ -26,7 +26,7 @@ public class LLRPDeleteROSpecCommand extends AbstractLLRPCommand {
 	/**
 	 * The ROSpecID.
 	 */
-	private int rospec_id = -1;
+	private int rospec_id = 1;
 
 	/**
 	 * The session.

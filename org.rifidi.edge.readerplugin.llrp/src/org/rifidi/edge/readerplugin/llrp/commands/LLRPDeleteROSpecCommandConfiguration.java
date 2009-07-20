@@ -25,13 +25,17 @@ import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
 public class LLRPDeleteROSpecCommandConfiguration extends
 		AbstractCommandConfiguration<LLRPDeleteROSpecCommand> {
 
-	private int roSpecID = 0;
-	
+	private int roSpecID = 1;
+
 	public LLRPDeleteROSpecCommandConfiguration() {
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration#getCommand(java.lang.String)
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration#getCommand
+	 * (java.lang.String)
 	 */
 	@Override
 	public LLRPDeleteROSpecCommand getCommand(String readerID) {
@@ -41,25 +45,30 @@ public class LLRPDeleteROSpecCommandConfiguration extends
 		return llrpdrc;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration#getCommandDescription()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seeorg.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration#
+	 * getCommandDescription()
 	 */
 	@Override
 	public String getCommandDescription() {
 		return "Delete the ROSpec with the given ID.";
 	}
 
-	/* (non-Javadoc)
-	 * @see org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration#getCommandName()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seeorg.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration#
+	 * getCommandName()
 	 */
 	@Override
 	public String getCommandName() {
 		return "DeleteROSpec";
 	}
 
-	
 	/**
-	 * Sets the ROSpecID.  
+	 * Sets the ROSpecID.
 	 * 
 	 * @param roSpecID
 	 *            the roSpecID to set
@@ -70,11 +79,12 @@ public class LLRPDeleteROSpecCommandConfiguration extends
 	}
 
 	/**
-	 * Gets the ROSpecID.  
+	 * Gets the ROSpecID.
 	 * 
 	 * @return the roSpecID
 	 */
-	@Property(displayName = "roSpecID", description = "The ID of the ROSpec for the DeleteROSpec command", writable = true, type = PropertyType.PT_INTEGER)
+	@Property(displayName = "roSpecID", defaultValue = "1", description = "The ID of the ROSpec for the DeleteROSpec "
+			+ "command", writable = true, type = PropertyType.PT_INTEGER, minValue="1", maxValue="16535")
 	public int getROSpecID() {
 		return roSpecID;
 	}

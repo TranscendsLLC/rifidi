@@ -17,17 +17,17 @@ import org.rifidi.configuration.annotations.PropertyType;
 import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
 
 /**
- * This class configures a GetTagList command.  
+ * This class configures a GetTagList command.
  * 
  * @author Matthew Dean
  */
 @JMXMBean
 public class LLRPGetTagListCommandConfiguration extends
 		AbstractCommandConfiguration<LLRPGetTagListCommand> {
-	private int roSpecID = 0;
+	private int roSpecID = 1;
 
 	/**
-	 * Constructor of LLRPGetTagListCommandConfiguration.  
+	 * Constructor of LLRPGetTagListCommandConfiguration.
 	 */
 	public LLRPGetTagListCommandConfiguration() {
 	}
@@ -36,7 +36,8 @@ public class LLRPGetTagListCommandConfiguration extends
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration#getCommand()
+	 * org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration#getCommand
+	 * ()
 	 */
 	@Override
 	public LLRPGetTagListCommand getCommand(String readerID) {
@@ -59,9 +60,8 @@ public class LLRPGetTagListCommandConfiguration extends
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration#getCommandName
-	 * ()
+	 * @seeorg.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration#
+	 * getCommandName ()
 	 */
 	@Override
 	public String getCommandName() {
@@ -69,7 +69,7 @@ public class LLRPGetTagListCommandConfiguration extends
 	}
 
 	/**
-	 * Sets the ROSpecID.  
+	 * Sets the ROSpecID.
 	 * 
 	 * @param roSpecID
 	 *            the roSpecID to set
@@ -79,11 +79,13 @@ public class LLRPGetTagListCommandConfiguration extends
 	}
 
 	/**
-	 * Gets the ROSpecID.  
+	 * Gets the ROSpecID.
 	 * 
 	 * @return the roSpecID
 	 */
-	@Property(displayName = "roSpecID", description = "The ID of the ROSpec for the GetTagList command", writable = true, type = PropertyType.PT_INTEGER)
+	@Property(displayName = "roSpecID", description = "The ID of the ROSpec for the "
+			+ "GetTagList command", writable = true, type = PropertyType.PT_INTEGER, defaultValue = ""
+			+ "1", minValue = "1", maxValue = "16535")
 	public int getROSpecID() {
 		return roSpecID;
 	}
