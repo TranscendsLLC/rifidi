@@ -1,11 +1,8 @@
 package org.rifidi.configuration.services;
 
 import java.lang.management.ManagementFactory;
-import java.lang.reflect.Method;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 import javax.management.InstanceAlreadyExistsException;
 import javax.management.InstanceNotFoundException;
@@ -19,21 +16,18 @@ import javax.management.ObjectName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.configuration.Configuration;
-import org.rifidi.configuration.annotations.Operation;
-import org.rifidi.configuration.annotations.Property;
 import org.rifidi.configuration.mbeans.ConfigurationControlMBean;
-import org.springframework.osgi.service.importer.OsgiServiceLifecycleListener;
 
 /**
  * Allows services to be exposed via JMX
  * 
  * @author Jochen Mader - jochen@pramari.com
  */
-public class JMXServiceImpl implements JMXService, OsgiServiceLifecycleListener {
+public class JMXServiceImpl implements JMXService {
 	/** Logger for this instance. */
-	private static final Log logger = LogFactory.getLog(JMXServiceImpl.class);
+	static final Log logger = LogFactory.getLog(JMXServiceImpl.class);
 	/** The JMX server used by thi service instance. */
-	private MBeanServer mbs;
+	MBeanServer mbs;
 	/** Set containing the currently registered services. */
 	private Map<Configuration, ObjectName> persistentServicesToObjectNames;
 
@@ -51,30 +45,27 @@ public class JMXServiceImpl implements JMXService, OsgiServiceLifecycleListener 
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.springframework.osgi.service.importer.OsgiServiceLifecycleListener
-	 * #bind(java.lang.Object, java.util.Map)
+	 * org.rifidi.configuration.services.JMXService#publish(org.rifidi.configuration
+	 * .Configuration)
 	 */
 	@Override
-	public void bind(Object service, Map arg1) throws Exception {
-		// avoid double init
+	public void publish(Configuration config) {
 		synchronized (persistentServicesToObjectNames) {
-			if (!persistentServicesToObjectNames.containsKey(service)) {
-				logger.debug("Binding " + service + " to JMX.");
+			if (!persistentServicesToObjectNames.containsKey(config)) {
+				logger.debug("Binding " + config + " to JMX.");
 				// watch out, because of spring we are getting proxies, not the
 				// actual services
 				try {
-					Configuration mbean = (Configuration) service;
-					MBeanInfo info=mbean.getMBeanInfo();
-					if(info != null){
+					MBeanInfo info = config.getMBeanInfo();
+					if (info != null) {
 						ObjectName obname = new ObjectName("rifidi:type="
-								+ mbean.getServiceID());
-						mbs.registerMBean(mbean, obname);
-						persistentServicesToObjectNames.put(
-								(Configuration) service, obname);	
+								+ config.getServiceID());
+						mbs.registerMBean(config, obname);
+						persistentServicesToObjectNames.put(config, obname);
 					}
 				} catch (InstanceAlreadyExistsException e) {
 					logger.error("Tried to register object twice: "
-							+ service.toString() + " " + e);
+							+ config.toString() + " " + e);
 				} catch (MBeanRegistrationException e) {
 					logger.error(e);
 				} catch (NotCompliantMBeanException e) {
@@ -86,61 +77,29 @@ public class JMXServiceImpl implements JMXService, OsgiServiceLifecycleListener 
 				}
 			}
 		}
-
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.springframework.osgi.service.importer.OsgiServiceLifecycleListener
-	 * #unbind(java.lang.Object, java.util.Map)
+	 * @seeorg.rifidi.configuration.services.JMXService#unpublish(org.rifidi.
+	 * configuration.Configuration)
 	 */
 	@Override
-	public void unbind(Object service, Map arg1) throws Exception {
+	public void unpublish(Configuration config) {
 		synchronized (persistentServicesToObjectNames) {
-			if (persistentServicesToObjectNames.containsKey(service)) {
+			if (persistentServicesToObjectNames.containsKey(config)) {
 				// unregister from jmx
-				logger.debug("Unbinding " + service + " from JMX.");
+				logger.debug("Unbinding " + config + " from JMX.");
 				try {
 					mbs.unregisterMBean(persistentServicesToObjectNames
-							.get(service));
-					persistentServicesToObjectNames.remove(service);
+							.get(config));
+					persistentServicesToObjectNames.remove(config);
 				} catch (InstanceNotFoundException e) {
 					logger.error(e);
 				} catch (MBeanRegistrationException e) {
 					logger.error(e);
 				}
-			}
-		}
-	}
-
-	/**
-	 * Used to store results of reflections calls.
-	 * 
-	 * @author Jochen Mader - jochen@pramari.com
-	 */
-	protected class CachedReflectionsResults {
-		public Map<String, Property> nameToProperty = new HashMap<String, Property>();
-		public Map<String, Operation> nameToOperation = new HashMap<String, Operation>();
-		public Method name;
-	}
-
-	/**
-	 * Sets the configuration services. Called by spring.
-	 * 
-	 * @param persistentServices
-	 *            the persistentServices to set
-	 */
-	public void setConfigurations(Set<Configuration> configurationServices) {
-		// take a snapshot an initialize
-		Set<Configuration> tempServices = new HashSet<Configuration>(
-				configurationServices);
-		for (Configuration configurationService : tempServices) {
-			try {
-				bind(configurationService, null);
-			} catch (Exception e) {
-				logger.error(e);
 			}
 		}
 	}

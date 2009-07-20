@@ -32,22 +32,12 @@
 		<constructor-arg index="2">
 			<ref bean="JMSNotifierService" />
 		</constructor-arg>
+		<constructor-arg index="3">
+			<ref bean="jmxService" />
+		</constructor-arg>
 	</bean>
 
 	<bean id="jmxService" class="org.rifidi.configuration.services.JMXServiceImpl"
-		scope="singleton">
-		<property name="configurations">
-			<ref bean="configurationSet" />
-		</property>
-		<property name="configurationControlMBean">
-			<ref bean="configurationControlJMX" />
-		</property>
-	</bean>
-	<bean id="configurationControlJMX" class="org.rifidi.configuration.mbeans.ConfigurationControl"
-		scope="singleton">
-		<property name="configurationService">
-			<ref bean="configurationService" />
-		</property>
-	</bean>
+		scope="singleton"/>
 
 </beans>

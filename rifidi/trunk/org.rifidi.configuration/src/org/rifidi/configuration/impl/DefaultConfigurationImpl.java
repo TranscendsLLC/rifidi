@@ -29,6 +29,7 @@ import org.rifidi.configuration.RifidiService;
 import org.rifidi.configuration.annotations.Operation;
 import org.rifidi.configuration.annotations.Property;
 import org.rifidi.configuration.listeners.AttributesChangedListener;
+import org.rifidi.configuration.services.JMXService;
 import org.rifidi.edge.core.services.notification.NotifierService;
 import org.springframework.beans.factory.annotation.Configurable;
 
@@ -71,6 +72,8 @@ public class DefaultConfigurationImpl implements Configuration, ServiceListener 
 	private volatile BundleContext context;
 	/** Notifier service for jms messages. */
 	private final NotifierService notifierService;
+	/** JMXservice reference. */
+	private volatile JMXService jmxService;
 
 	/**
 	 * Constructor.
@@ -82,7 +85,7 @@ public class DefaultConfigurationImpl implements Configuration, ServiceListener 
 	 */
 	public DefaultConfigurationImpl(final String serviceID,
 			final String factoryID, final AttributeList attributes,
-			final NotifierService notifierService) {
+			final NotifierService notifierService, final JMXService jmxService) {
 		this.notifierService = notifierService;
 		this.nameToProperty = new HashMap<String, Property>();
 		this.nameToOperation = new HashMap<String, Operation>();
@@ -91,6 +94,7 @@ public class DefaultConfigurationImpl implements Configuration, ServiceListener 
 		this.attributes = (AttributeList) attributes.clone();
 		this.listeners = new CopyOnWriteArraySet<AttributesChangedListener>();
 		this.target = new AtomicReference<RifidiService>(null);
+		this.jmxService = jmxService;
 	}
 
 	/**
@@ -131,7 +135,10 @@ public class DefaultConfigurationImpl implements Configuration, ServiceListener 
 				for (int count = 0; count < attributes.size(); count++) {
 					nameToPos.put(attrs.get(count).getName(), count);
 				}
+				jmxService.publish(this);
+				return;
 			}
+			jmxService.unpublish(this);
 			return;
 		}
 		// if the value was already set we got a problem
