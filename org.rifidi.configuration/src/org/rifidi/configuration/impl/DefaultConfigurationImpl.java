@@ -306,7 +306,10 @@ public class DefaultConfigurationImpl implements Configuration, ServiceListener 
 	 */
 	@Override
 	public void destroy() {
-		logger.fatal("Implement destroy!!!");
+		RifidiService service=target.get();
+		if(service!=null){
+			service.destroy();
+		}
 	}
 
 	/*
