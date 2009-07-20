@@ -28,7 +28,6 @@ import org.rifidi.configuration.Configuration;
 import org.rifidi.configuration.Constants;
 import org.rifidi.configuration.ServiceFactory;
 import org.rifidi.configuration.impl.DefaultConfigurationImpl;
-import org.rifidi.configuration.listeners.AttributesChangedListener;
 import org.rifidi.edge.core.services.notification.NotifierService;
 
 /**
@@ -37,8 +36,7 @@ import org.rifidi.edge.core.services.notification.NotifierService;
  * @author Jochen Mader - jochen@pramari.com
  * @author Kyle Neumeier - kyle@pramari.com
  */
-public class ConfigurationServiceImpl implements ConfigurationService,
-		AttributesChangedListener {
+public class ConfigurationServiceImpl implements ConfigurationService {
 	/** Logger for this class */
 	private static final Log logger = LogFactory
 			.getLog(ConfigurationServiceImpl.class);
@@ -47,7 +45,7 @@ public class ConfigurationServiceImpl implements ConfigurationService,
 	/** Configurations. */
 	private final ConcurrentHashMap<String, Set<Configuration>> factoryToConfigurations;
 	/** Currently registered services. */
-	private final Map<String, Configuration> IDToConfigurations;
+	private final ConcurrentHashMap<String, Configuration> IDToConfigurations;
 	/** Service names that are already taken. */
 	private final List<String> serviceNames;
 	/** A notifier for JMS. Remove once we have aspects */
@@ -62,12 +60,13 @@ public class ConfigurationServiceImpl implements ConfigurationService,
 	/**
 	 * Constructor.
 	 */
-	public ConfigurationServiceImpl(BundleContext context, String path, NotifierService notifierService) {
-		this.notifierService=notifierService;
+	public ConfigurationServiceImpl(BundleContext context, String path,
+			NotifierService notifierService) {
+		this.notifierService = notifierService;
 		this.path = path;
 		this.context = context;
-		factories = new HashMap<String, ServiceFactory<?>>();
-		IDToConfigurations = new HashMap<String, Configuration>();
+		factories = new ConcurrentHashMap<String, ServiceFactory<?>>();
+		IDToConfigurations = new ConcurrentHashMap<String, Configuration>();
 		serviceNames = new ArrayList<String>();
 		factoryToConfigurations = loadConfig();
 		logger.debug("ConfigurationServiceImpl instantiated.");
@@ -136,6 +135,14 @@ public class ConfigurationServiceImpl implements ConfigurationService,
 		return ret;
 	}
 
+	/**
+	 * Helper for creating a configuration and registering it to jms.
+	 * 
+	 * @param serviceID
+	 * @param factoryID
+	 * @param attributes
+	 * @return
+	 */
 	private Configuration createAndRegisterConfiguration(String serviceID,
 			String factoryID, AttributeList attributes) {
 		DefaultConfigurationImpl config = new DefaultConfigurationImpl(
@@ -171,66 +178,6 @@ public class ConfigurationServiceImpl implements ConfigurationService,
 	private boolean checkName(String configurationName) {
 		String regex = "([A-Za-z0-9_])+";
 		return configurationName.matches(regex);
-	}
-
-	/**
-	 * The given service was bound to the registry.
-	 * 
-	 * @param serviceRef
-	 * @throws Exception
-	 */
-	public void bind(ServiceFactory<?> factory, Map<?, ?> properties) {
-		synchronized (factories) {
-			for (String factoryID : factory.getFactoryIDs()) {
-				if (factories.get(factoryID) == null) {
-					logger.debug("Registering " + factoryID);
-					factories.put(factoryID, factory);
-					if (factoryToConfigurations.get(factoryID) != null) {
-						for (Configuration serConf : factoryToConfigurations
-								.get(factoryID)) {
-							factory.createInstance(factoryID, serConf
-									.getServiceID());
-						}
-					}
-				}
-			}
-		}
-	}
-
-	/**
-	 * The given service has been removed.
-	 * 
-	 * @param serviceRef
-	 * @throws Exception
-	 */
-	public synchronized void unbind(ServiceFactory<?> factory,
-			Map<?, ?> properties) {
-		synchronized (factories) {
-			for (String factoryID : factory.getFactoryIDs()) {
-				logger.debug("Unregistering " + factoryID);
-				factories.remove(factoryID);
-			}
-		}
-
-	}
-
-	@Override
-	public void attributesChanged(String configurationID,
-			AttributeList attributes) {
-		Configuration config = IDToConfigurations.get(configurationID);
-		// if (config != null) {
-		// switch (config.getType()) {
-		// case READER:
-		// notifierService.attributesChanged(configurationID, attributes,
-		// true);
-		// break;
-		// case COMMAND:
-		// notifierService.attributesChanged(configurationID, attributes,
-		// false);
-		// break;
-		// }
-		// }
-
 	}
 
 	/*
@@ -293,19 +240,25 @@ public class ConfigurationServiceImpl implements ConfigurationService,
 	 */
 	@Override
 	public void createService(String factoryID, AttributeList attributes) {
+		ServiceFactory<?> factory = factories.get(factoryID);
+		if(factory==null){
+			logger.warn("Tried to use a nonexistent factory: "+factoryID);
+			return;
+		}
 		String serviceID = factoryID;
 		serviceID = serviceID.replaceAll("[^A-Z^a-z^0-9^_]", "_") + "_";
-		Integer counter = 1;
-		String tempServiceID = serviceID + 1;
-		// TODO: not nice but good enough for now
-		while (serviceNames.contains(tempServiceID)) {
-			counter++;
-			tempServiceID = serviceID + counter;
+		synchronized (serviceNames) {
+			Integer counter = 1;
+			String tempServiceID = serviceID + 1;
+			// TODO: not nice but good enough for now
+			while (serviceNames.contains(tempServiceID)) {
+				counter++;
+				tempServiceID = serviceID + counter;
+			}
+			serviceID = tempServiceID;
+			serviceNames.add(serviceID);
 		}
-		serviceID = tempServiceID;
-
-		// TODO: fix null factories
-		ServiceFactory<?> factory = factories.get(factoryID);
+		
 		Configuration config = createAndRegisterConfiguration(serviceID,
 				factoryID, attributes);
 
@@ -317,16 +270,6 @@ public class ConfigurationServiceImpl implements ConfigurationService,
 		}
 	}
 
-	/**
-	 * Set the current service factories.
-	 * 
-	 * @param serviceFactories
-	 */
-	public void setServiceFactories(Set<ServiceFactory<?>> serviceFactories) {
-		for (ServiceFactory<?> serviceFactory : serviceFactories) {
-			bind(serviceFactory, null);
-		}
-	}
 
 	/*
 	 * (non-Javadoc)
@@ -350,6 +293,61 @@ public class ConfigurationServiceImpl implements ConfigurationService,
 	@Override
 	public Set<Configuration> getConfigurations() {
 		return new HashSet<Configuration>(IDToConfigurations.values());
+	}
+	
+	
+	//Only used by Spring
+	
+	/**
+	 * Set the current service factories.
+	 * 
+	 * @param serviceFactories
+	 */
+	public void setServiceFactories(Set<ServiceFactory<?>> serviceFactories) {
+		for (ServiceFactory<?> serviceFactory : serviceFactories) {
+			bind(serviceFactory, null);
+		}
+	}
+	
+	/**
+	 * The given service was bound to the registry.
+	 * 
+	 * @param serviceRef
+	 * @throws Exception
+	 */
+	public void bind(ServiceFactory<?> factory, Map<?, ?> properties) {
+		synchronized (factories) {
+			for (String factoryID : factory.getFactoryIDs()) {
+				if (factories.get(factoryID) == null) {
+					logger.debug("Registering " + factoryID);
+					factories.put(factoryID, factory);
+					if (factoryToConfigurations.get(factoryID) != null) {
+						for (Configuration serConf : factoryToConfigurations
+								.get(factoryID)) {
+							factory.createInstance(factoryID, serConf
+									.getServiceID());
+						}
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	 * The given service has been removed.
+	 * 
+	 * @param serviceRef
+	 * @throws Exception
+	 */
+	public synchronized void unbind(ServiceFactory<?> factory,
+			Map<?, ?> properties) {
+		synchronized (factories) {
+			for (String factoryID : factory.getFactoryIDs()) {
+				logger.debug("Unregistering " + factoryID);
+				factories.remove(factoryID);
+			}
+		}
+
 	}
 
 }
