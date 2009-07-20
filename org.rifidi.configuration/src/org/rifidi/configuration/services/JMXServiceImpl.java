@@ -9,6 +9,7 @@ import java.util.Set;
 
 import javax.management.InstanceAlreadyExistsException;
 import javax.management.InstanceNotFoundException;
+import javax.management.MBeanInfo;
 import javax.management.MBeanRegistrationException;
 import javax.management.MBeanServer;
 import javax.management.MalformedObjectNameException;
@@ -63,11 +64,14 @@ public class JMXServiceImpl implements JMXService, OsgiServiceLifecycleListener 
 				// actual services
 				try {
 					Configuration mbean = (Configuration) service;
-					ObjectName obname = new ObjectName("rifidi:type="
-							+ mbean.getServiceID());
-					mbs.registerMBean(mbean, obname);
-					persistentServicesToObjectNames.put(
-							(Configuration) service, obname);
+					MBeanInfo info=mbean.getMBeanInfo();
+					if(info != null){
+						ObjectName obname = new ObjectName("rifidi:type="
+								+ mbean.getServiceID());
+						mbs.registerMBean(mbean, obname);
+						persistentServicesToObjectNames.put(
+								(Configuration) service, obname);	
+					}
 				} catch (InstanceAlreadyExistsException e) {
 					logger.error("Tried to register object twice: "
 							+ service.toString() + " " + e);
