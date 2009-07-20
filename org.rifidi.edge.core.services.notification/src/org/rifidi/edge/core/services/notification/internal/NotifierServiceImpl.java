@@ -286,17 +286,18 @@ public class NotifierServiceImpl implements NotifierService {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @seeorg.rifidi.configuration.listeners.AttributesChangedListener#
-	 * attributesChanged(java.lang.String, javax.management.AttributeList)
+	 * @see
+	 * org.rifidi.edge.core.services.notification.NotifierService#attributesChanged
+	 * (java.lang.String, javax.management.AttributeList)
 	 */
 	@Override
 	public void attributesChanged(String configurationID,
-			AttributeList attributes, boolean isReader) {
+			AttributeList attributes) {
 		try {
 			extNotificationTemplate.send(this.extNotificationDest,
 					new NotificationMessageCreator(
 							new PropertyChangedNotification(configurationID,
-									attributes, isReader)));
+									attributes)));
 		} catch (Exception e) {
 			logger.warn("property changed Notification not sent " + e);
 

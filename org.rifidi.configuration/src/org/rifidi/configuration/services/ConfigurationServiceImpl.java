@@ -62,7 +62,8 @@ public class ConfigurationServiceImpl implements ConfigurationService,
 	/**
 	 * Constructor.
 	 */
-	public ConfigurationServiceImpl(BundleContext context, String path) {
+	public ConfigurationServiceImpl(BundleContext context, String path, NotifierService notifierService) {
+		this.notifierService=notifierService;
 		this.path = path;
 		this.context = context;
 		factories = new HashMap<String, ServiceFactory<?>>();
@@ -138,7 +139,7 @@ public class ConfigurationServiceImpl implements ConfigurationService,
 	private Configuration createAndRegisterConfiguration(String serviceID,
 			String factoryID, AttributeList attributes) {
 		DefaultConfigurationImpl config = new DefaultConfigurationImpl(
-				serviceID, factoryID, attributes);
+				serviceID, factoryID, attributes, notifierService);
 		config.setContext(context);
 		IDToConfigurations.put(serviceID, config);
 
@@ -213,41 +214,6 @@ public class ConfigurationServiceImpl implements ConfigurationService,
 
 	}
 
-	/**
-	 * Called whenever a new Configuration got registered to OSGi.
-	 * 
-	 * @param config
-	 * @param properties
-	 */
-	public void register(Configuration config, Map<?, ?> properties) {
-		IDToConfigurations.put(config.getServiceID(), config);
-
-		// TODO: Get rid of this code once we get aspects!!!!!
-		config.addAttributesChangedListener(this);
-	}
-
-	/**
-	 * Called whenever a Configuration got removed from OSGi.
-	 * 
-	 * @param config
-	 * @param properties
-	 */
-	public void unregister(Configuration config, Map<?, ?> properties) {
-		IDToConfigurations.remove(config.getServiceID());
-
-		// TODO: Get rid of this code once we get aspects!!!!!
-		config.removeAttributesChangedListener(this);
-		// switch (config.getType()) {
-		// case READER:
-		// notifierService.removeReaderEvent(config.getServiceID());
-		// break;
-		// case COMMAND:
-		// notifierService.removeCommandEvent(config.getServiceID());
-		// break;
-		// }
-
-	}
-
 	@Override
 	public void attributesChanged(String configurationID,
 			AttributeList attributes) {
@@ -265,14 +231,6 @@ public class ConfigurationServiceImpl implements ConfigurationService,
 		// }
 		// }
 
-	}
-
-	/**
-	 * @param notifierService
-	 *            the notifierService to set
-	 */
-	public void setNotifierService(NotifierService notifierService) {
-		this.notifierService = notifierService;
 	}
 
 	/*
@@ -392,18 +350,6 @@ public class ConfigurationServiceImpl implements ConfigurationService,
 	@Override
 	public Set<Configuration> getConfigurations() {
 		return new HashSet<Configuration>(IDToConfigurations.values());
-	}
-
-	/**
-	 * Called by spring
-	 * 
-	 * @param IDToConfigurations
-	 *            the IDToConfigurations to set
-	 */
-	public void setConfigurations(Set<Configuration> configurations) {
-		for (Configuration config : configurations) {
-			register(config, null);
-		}
 	}
 
 }

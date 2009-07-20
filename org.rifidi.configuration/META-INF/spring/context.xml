@@ -24,11 +24,13 @@
 		<property name="serviceFactories">
 			<ref bean="serviceFactoriesSet" />
 		</property>
-		<property name="notifierService" ref="JMSNotifierService" />
-		<constructor-arg index="1"
-			value="${org.rifidi.edge.configuration}" />
 		<constructor-arg index="0">
 			<ref bean="bundleContext" />
+		</constructor-arg>
+		<constructor-arg index="1"
+			value="${org.rifidi.edge.configuration}" />
+		<constructor-arg index="2">
+			<ref bean="JMSNotifierService" />
 		</constructor-arg>
 	</bean>
 
