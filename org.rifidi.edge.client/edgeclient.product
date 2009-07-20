@@ -3,17 +3,15 @@
 
 <product name="Rifidi Edge Client" id="org.rifidi.edge.client.product" application="org.rifidi.edge.client.application" version="1.0.0.beta" useFeatures="false" includeLaunchers="true">
 
-
    <configIni use="default">
    </configIni>
 
    <launcherArgs>
-      <vmArgs>-Dosgi.framework.extensions=org.eclipse.equinox.weaving.hook -Dosgi.noShutdown=true -Dosgi.clean=true -Dorg.aspectj.osgi.verbose=true</vmArgs>
+      <vmArgs>-Dosgi.framework.extensions=org.eclipse.equinox.weaving.hook -Dosgi.clean=true -Dorg.aspectj.osgi.verbose=true</vmArgs>
       <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts</vmArgsMac>
    </launcherArgs>
 
    <windowImages/>
-
 
    <launcher name="edgeclient">
       <solaris/>
@@ -22,10 +20,8 @@
       </win>
    </launcher>
 
-
    <vm>
    </vm>
-
 
    <plugins>
       <plugin id="com.ibm.icu"/>
