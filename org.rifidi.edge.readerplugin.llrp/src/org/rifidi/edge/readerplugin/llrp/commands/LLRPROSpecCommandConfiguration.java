@@ -43,6 +43,8 @@ public class LLRPROSpecCommandConfiguration extends
 	private int triggerInt = 0;
 
 	private int duration = 1000;
+	
+	private static final String category = "RO Spec";
 
 	/**
 	 * 
@@ -158,16 +160,20 @@ public class LLRPROSpecCommandConfiguration extends
 	 * 
 	 * @return the roSpecID
 	 */
-	@Property(displayName = "ROSpecID", description = "The ID of the "
+	@Property(displayName = "RO Spec ID", description = "The ID of the "
 			+ "ROSpec", writable = true, type = PropertyType.PT_INTEGER, minValue = ""
-			+ "0", maxValue = "16535")
-	public int getROSpecID() {
+			+ "0", maxValue = "16535", category=category, orderValue=1)
+	public Integer getROSpecID() {
 		return roSpecID;
 	}
 
 	/**
 	 * @return
 	 */
+	@Property(displayName = "Trigger Type", description = "The type of ROSpec it is, "
+		+ "with \'NULL\' being a null trigger and \'PER\' being a periodic trigger.  "
+		+ "Periodic triggers will send back tags using the duration value you set. "
+		+ " ", writable = true, type = PropertyType.PT_STRING, category=category, orderValue=2)
 	public String getTriggerType() {
 		return triggerType;
 	}
@@ -175,10 +181,6 @@ public class LLRPROSpecCommandConfiguration extends
 	/**
 	 * @param triggerType
 	 */
-	@Property(displayName = "ROSpecID", description = "The type of ROSpec it is, "
-			+ "with \'NULL\' being a null trigger and \'PER\' being a periodic trigger.  "
-			+ "Periodic triggers will send back tags using the duration value you set. "
-			+ " ", writable = true, type = PropertyType.PT_STRING)
 	public void setTriggerType(String triggerType) {
 		if (triggerType.equalsIgnoreCase(this.PERIODIC_TRIGGER_TYPE
 				.getString())) {
@@ -193,10 +195,10 @@ public class LLRPROSpecCommandConfiguration extends
 	/**
 	 * @return
 	 */
-	@Property(displayName = "ROSpecID", description = "The duration of the ROSpec trigger.  "
+	@Property(displayName = "Duration", description = "The duration of the ROSpec trigger.  "
 			+ "Will only be used if you set the ROSpec trigger type to "
 			+ "\'Periodic\'.", writable = true, type = PropertyType.PT_INTEGER, defaultValue = ""
-			+ "1000", minValue = "0", maxValue = "65535")
+			+ "1000", minValue = "0", maxValue = "65535", category=category, orderValue=3)
 	public Integer getDuration() {
 		return this.duration;
 	}

@@ -221,7 +221,7 @@ public class DefaultConfigurationImpl implements Configuration, ServiceListener 
 		if (service != null) {
 			return service.getMBeanInfo();
 		}
-		//TODO: needs fixing to make JMX work again
+		// TODO: needs fixing to make JMX work again
 		return null;
 	}
 
@@ -273,7 +273,8 @@ public class DefaultConfigurationImpl implements Configuration, ServiceListener 
 		}
 
 		attributes.set(nameToPos.get(attribute.getName()), attribute);
-		notifierService.attributesChanged(getServiceID(), (AttributeList)attributes.clone());
+		notifierService.attributesChanged(getServiceID(),
+				(AttributeList) attributes.clone());
 	}
 
 	/*
@@ -292,10 +293,20 @@ public class DefaultConfigurationImpl implements Configuration, ServiceListener 
 		}
 
 		for (Attribute attribute : attributes.asList()) {
-			this.attributes.set(nameToPos.get(attribute.getName()), attribute);
+			try {
+				this.attributes.set(nameToPos.get(attribute.getName()),
+						attribute);
+			} catch (NullPointerException e) {
+				// need to catch this since it is common to have a mistake in
+				// the getter/setter methods in factories. Otherwise it's hard
+				// to debug
+				logger.error("Error when trying to set " + attribute.getName());
+				throw e;
+			}
 		}
-		
-		notifierService.attributesChanged(getServiceID(), (AttributeList)attributes.clone());
+
+		notifierService.attributesChanged(getServiceID(),
+				(AttributeList) attributes.clone());
 		return (AttributeList) attributes.clone();
 	}
 
@@ -306,8 +317,8 @@ public class DefaultConfigurationImpl implements Configuration, ServiceListener 
 	 */
 	@Override
 	public void destroy() {
-		RifidiService service=target.get();
-		if(service!=null){
+		RifidiService service = target.get();
+		if (service != null) {
 			service.destroy();
 		}
 	}
