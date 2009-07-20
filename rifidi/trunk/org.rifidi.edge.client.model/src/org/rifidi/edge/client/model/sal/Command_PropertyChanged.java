@@ -1,10 +1,9 @@
-
 package org.rifidi.edge.client.model.sal;
 
 import javax.management.Attribute;
 
-import org.rifidi.edge.client.model.sal.commands.RemoteEdgeServerCommand;
 import org.rifidi.edge.api.jms.notifications.PropertyChangedNotification;
+import org.rifidi.edge.client.model.sal.commands.RemoteEdgeServerCommand;
 
 /**
  * This command is executed when there was a property changed event (a property
@@ -44,7 +43,7 @@ public class Command_PropertyChanged implements RemoteEdgeServerCommand {
 	 */
 	@Override
 	public void executeEclipse() {
-		if (notification.isReader()) {
+		if (server.remoteReaders.get(notification.getConfigID()) != null) {
 			RemoteReader reader = (RemoteReader) server.remoteReaders
 					.get(notification.getConfigID());
 			if (reader != null) {
@@ -52,7 +51,8 @@ public class Command_PropertyChanged implements RemoteEdgeServerCommand {
 					reader.setAttribute(a);
 				}
 			}
-		} else {
+
+		} else if (server.commandConfigurations.get(notification.getConfigID()) != null) {
 			RemoteCommandConfiguration config = (RemoteCommandConfiguration) server.commandConfigurations
 					.get(notification.getConfigID());
 			if (config != null) {
