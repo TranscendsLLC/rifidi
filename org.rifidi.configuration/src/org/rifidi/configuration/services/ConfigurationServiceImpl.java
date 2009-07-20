@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 import javax.management.Attribute;
 import javax.management.AttributeList;
@@ -107,7 +108,10 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 					continue;
 				}
 				if (ret.get(factoryName) == null) {
-					ret.put(factoryName, new HashSet<DefaultConfigurationImpl>());
+					ret
+							.put(
+									factoryName,
+									new CopyOnWriteArraySet<DefaultConfigurationImpl>());
 				}
 
 				AttributeList attributes = new AttributeList();
@@ -147,8 +151,8 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	 * @param attributes
 	 * @return
 	 */
-	private DefaultConfigurationImpl createAndRegisterConfiguration(String serviceID,
-			String factoryID, AttributeList attributes) {
+	private DefaultConfigurationImpl createAndRegisterConfiguration(
+			String serviceID, String factoryID, AttributeList attributes) {
 		DefaultConfigurationImpl config = new DefaultConfigurationImpl(
 				serviceID, factoryID, attributes, notifierService);
 		config.setContext(context);
@@ -158,7 +162,8 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 				.getCanonicalName() };
 		Hashtable<String, String> params = new Hashtable<String, String>();
 		params.put("serviceid", config.getServiceID());
-		configToRegsitration.put(config, context.registerService(serviceInterfaces, config, params));
+		configToRegsitration.put(config, context.registerService(
+				serviceInterfaces, config, params));
 
 		try {
 			context.addServiceListener(config, "(serviceid="
@@ -245,8 +250,8 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	@Override
 	public void createService(String factoryID, AttributeList attributes) {
 		ServiceFactory<?> factory = factories.get(factoryID);
-		if(factory==null){
-			logger.warn("Tried to use a nonexistent factory: "+factoryID);
+		if (factory == null) {
+			logger.warn("Tried to use a nonexistent factory: " + factoryID);
 			return;
 		}
 		String serviceID = factoryID;
@@ -262,10 +267,14 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 			serviceID = tempServiceID;
 			serviceNames.add(serviceID);
 		}
-		
-		DefaultConfigurationImpl config = createAndRegisterConfiguration(serviceID,
-				factoryID, attributes);
 
+		DefaultConfigurationImpl config = createAndRegisterConfiguration(
+				serviceID, factoryID, attributes);
+
+		if (factoryToConfigurations.get(factoryID) == null) {
+			factoryToConfigurations.put(factoryID,
+					new CopyOnWriteArraySet<DefaultConfigurationImpl>());
+		}
 		factoryToConfigurations.get(factoryID).add(config);
 		IDToConfigurations.put(serviceID, config);
 
@@ -274,15 +283,19 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 		}
 	}
 
-
-	/* (non-Javadoc)
-	 * @see org.rifidi.configuration.services.ConfigurationService#destroyService(java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.configuration.services.ConfigurationService#destroyService
+	 * (java.lang.String)
 	 */
 	@Override
 	public void destroyService(String serviceID) {
 		synchronized (serviceNames) {
 			serviceNames.remove(serviceID);
-			DefaultConfigurationImpl config=IDToConfigurations.remove(serviceID);
+			DefaultConfigurationImpl config = IDToConfigurations
+					.remove(serviceID);
 			factoryToConfigurations.get(config.getFactoryID()).remove(config);
 			context.removeServiceListener(config);
 			configToRegsitration.remove(config).unregister();
@@ -313,10 +326,9 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	public Set<Configuration> getConfigurations() {
 		return new HashSet<Configuration>(IDToConfigurations.values());
 	}
-	
-	
-	//Only used by Spring
-	
+
+	// Only used by Spring
+
 	/**
 	 * Set the current service factories.
 	 * 
@@ -327,7 +339,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 			bind(serviceFactory, null);
 		}
 	}
-	
+
 	/**
 	 * The given service was bound to the registry.
 	 * 
