@@ -10,9 +10,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.configuration.Configuration;
 import org.rifidi.configuration.services.ConfigurationService;
-import org.rifidi.edge.api.rmi.services.CommandManagerService;
 import org.rifidi.edge.api.rmi.dto.CommandConfigFactoryDTO;
 import org.rifidi.edge.api.rmi.dto.CommandConfigurationDTO;
+import org.rifidi.edge.api.rmi.services.CommandManagerService;
 import org.rifidi.edge.core.daos.CommandDAO;
 import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
 import org.rifidi.edge.core.sensors.commands.AbstractCommandConfigurationFactory;
@@ -56,18 +56,14 @@ public class CommandManagerServiceImpl implements CommandManagerService {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.rmi.CommandConfigurationStub#createCommandConfiguration
-	 * (java.lang.String, javax.management.AttributeList)
+	 * org.rifidi.edge.api.rmi.services.CommandManagerService#createCommand(
+	 * java.lang.String, javax.management.AttributeList)
 	 */
 	@Override
-	public String createCommand(String commandConfigurationType,
+	public void createCommand(String commandConfigurationType,
 			AttributeList properties) {
-		AbstractCommandConfigurationFactory factory = this.commandDAO
-				.getCommandFactoryByID(commandConfigurationType);
-		if (factory != null) {
-			configurationService.createService(commandConfigurationType, properties);
-		}
-		return null;
+		configurationService
+				.createService(commandConfigurationType, properties);
 	}
 
 	/*
@@ -88,15 +84,6 @@ public class CommandManagerServiceImpl implements CommandManagerService {
 					+ " found");
 		}
 
-		AbstractCommandConfiguration<?> commandConfig = commandDAO
-				.getCommandByID(commandConfigurationID);
-		if (commandConfig != null) {
-			commandConfig.destroy();
-		} else {
-			logger.warn("No Configuration with ID " + commandConfigurationID
-					+ " found");
-		}
-
 	}
 
 	/*
@@ -109,17 +96,7 @@ public class CommandManagerServiceImpl implements CommandManagerService {
 	public MBeanInfo getCommandDescription(String commandConfigurationType) {
 		AbstractCommandConfigurationFactory factory = this.commandDAO
 				.getCommandFactoryByID(commandConfigurationType);
-		if (factory == null) {
-			logger.warn("No Command Configuration Factory"
-					+ " is available for type : " + commandConfigurationType);
-			return null;
-		}
-
-//		Configuration config = factory
-//				.getEmptyConfiguration(commandConfigurationType);
-//		return config.getMBeanInfo();
-		//TODO: needs fixing
-		return null;
+		return factory.getServiceDescription(commandConfigurationType);
 	}
 
 	/*
@@ -208,17 +185,11 @@ public class CommandManagerServiceImpl implements CommandManagerService {
 	 * javax.management.AttributeList)
 	 */
 	@Override
-	public AttributeList setCommandProperties(String commandConfigurationID,
+	public void setCommandProperties(String commandConfigurationID,
 			AttributeList properties) {
 		Configuration config = configurationService
 				.getConfiguration(commandConfigurationID);
-		if (config != null) {
-			return config.setAttributes(properties);
-		} else {
-			logger.warn("No Configuration object with ID "
-					+ commandConfigurationID + " is available");
-		}
-		return null;
+		config.setAttributes(properties);
 	}
 
 }

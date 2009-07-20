@@ -67,9 +67,8 @@ public interface CommandManagerService{
 	 *            The type of the Command to make
 	 * @param properties
 	 *            the properties of a Command
-	 * @return the ID of the newly created Command
 	 */
-	String createCommand(String commandType, AttributeList properties);
+	void createCommand(String commandType, AttributeList properties);
 
 	/**
 	 * Sets the properties of a Command.
@@ -78,9 +77,8 @@ public interface CommandManagerService{
 	 *            the ID of the command to set
 	 * @param properties
 	 *            the new properties of the command
-	 * @return A list of name-value pairs of all properties of the command
 	 */
-	AttributeList setCommandProperties(String commandID,
+	void setCommandProperties(String commandID,
 			AttributeList properties);
 
 	/**
