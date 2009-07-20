@@ -31,14 +31,20 @@ public interface ConfigurationService {
 	Configuration getConfiguration(String serviceID);
 
 	/**
-	 * Add a new configuration to the service.
+	 * Create a new service.
 	 * 
-	 * @param serviceID
-	 * @param instance
+	 * @param factoryID
 	 * @param attributes
 	 */
 	void createService(String factoryID, AttributeList attributes);
 
+	/**
+	 * Destroy a service.
+	 * 
+	 * @param serviceID
+	 */
+	void destroyService(String serviceID);
+	
 	/**
 	 * Get all configurations
 	 * 

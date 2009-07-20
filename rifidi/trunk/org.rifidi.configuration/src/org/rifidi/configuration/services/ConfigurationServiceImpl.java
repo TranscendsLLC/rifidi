@@ -24,6 +24,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.InvalidSyntaxException;
+import org.osgi.framework.ServiceRegistration;
 import org.rifidi.configuration.Configuration;
 import org.rifidi.configuration.Constants;
 import org.rifidi.configuration.ServiceFactory;
@@ -43,9 +44,11 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	/** Path to the configfile. */
 	private final String path;
 	/** Configurations. */
-	private final ConcurrentHashMap<String, Set<Configuration>> factoryToConfigurations;
+	private final ConcurrentHashMap<String, Set<DefaultConfigurationImpl>> factoryToConfigurations;
 	/** Currently registered services. */
-	private final ConcurrentHashMap<String, Configuration> IDToConfigurations;
+	private final ConcurrentHashMap<String, DefaultConfigurationImpl> IDToConfigurations;
+	/** Configurations with their registration objects. */
+	private final ConcurrentHashMap<Configuration, ServiceRegistration> configToRegsitration;
 	/** Service names that are already taken. */
 	private final List<String> serviceNames;
 	/** A notifier for JMS. Remove once we have aspects */
@@ -66,8 +69,9 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 		this.path = path;
 		this.context = context;
 		factories = new ConcurrentHashMap<String, ServiceFactory<?>>();
-		IDToConfigurations = new ConcurrentHashMap<String, Configuration>();
+		IDToConfigurations = new ConcurrentHashMap<String, DefaultConfigurationImpl>();
 		serviceNames = new ArrayList<String>();
+		configToRegsitration = new ConcurrentHashMap<Configuration, ServiceRegistration>();
 		factoryToConfigurations = loadConfig();
 		logger.debug("ConfigurationServiceImpl instantiated.");
 	}
@@ -78,8 +82,8 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	private ConcurrentHashMap<String, Set<Configuration>> loadConfig() {
-		ConcurrentHashMap<String, Set<Configuration>> ret = new ConcurrentHashMap<String, Set<Configuration>>();
+	private ConcurrentHashMap<String, Set<DefaultConfigurationImpl>> loadConfig() {
+		ConcurrentHashMap<String, Set<DefaultConfigurationImpl>> ret = new ConcurrentHashMap<String, Set<DefaultConfigurationImpl>>();
 		try {
 			HierarchicalINIConfiguration configuration = new HierarchicalINIConfiguration(
 					path);
@@ -103,7 +107,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 					continue;
 				}
 				if (ret.get(factoryName) == null) {
-					ret.put(factoryName, new HashSet<Configuration>());
+					ret.put(factoryName, new HashSet<DefaultConfigurationImpl>());
 				}
 
 				AttributeList attributes = new AttributeList();
@@ -143,7 +147,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	 * @param attributes
 	 * @return
 	 */
-	private Configuration createAndRegisterConfiguration(String serviceID,
+	private DefaultConfigurationImpl createAndRegisterConfiguration(String serviceID,
 			String factoryID, AttributeList attributes) {
 		DefaultConfigurationImpl config = new DefaultConfigurationImpl(
 				serviceID, factoryID, attributes, notifierService);
@@ -154,7 +158,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 				.getCanonicalName() };
 		Hashtable<String, String> params = new Hashtable<String, String>();
 		params.put("serviceid", config.getServiceID());
-		context.registerService(serviceInterfaces, config, params);
+		configToRegsitration.put(config, context.registerService(serviceInterfaces, config, params));
 
 		try {
 			context.addServiceListener(config, "(serviceid="
@@ -259,7 +263,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 			serviceNames.add(serviceID);
 		}
 		
-		Configuration config = createAndRegisterConfiguration(serviceID,
+		DefaultConfigurationImpl config = createAndRegisterConfiguration(serviceID,
 				factoryID, attributes);
 
 		factoryToConfigurations.get(factoryID).add(config);
@@ -270,6 +274,21 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 		}
 	}
 
+
+	/* (non-Javadoc)
+	 * @see org.rifidi.configuration.services.ConfigurationService#destroyService(java.lang.String)
+	 */
+	@Override
+	public void destroyService(String serviceID) {
+		synchronized (serviceNames) {
+			serviceNames.remove(serviceID);
+			DefaultConfigurationImpl config=IDToConfigurations.remove(serviceID);
+			factoryToConfigurations.get(config.getFactoryID()).remove(config);
+			context.removeServiceListener(config);
+			configToRegsitration.remove(config).unregister();
+			config.destroy();
+		}
+	}
 
 	/*
 	 * (non-Javadoc)
