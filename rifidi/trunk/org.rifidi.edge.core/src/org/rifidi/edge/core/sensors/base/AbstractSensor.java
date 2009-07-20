@@ -271,6 +271,7 @@ public abstract class AbstractSensor<T extends SensorSession> extends
 	 */
 	@Override
 	public void destroy() {
+		unregister();
 		receivers.clear();
 	}
 
