@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?pde version="3.5"?>
+
+<product name="Rifidi Edge Client" id="org.rifidi.edge.client.product" application="org.rifidi.edge.client.application" version="1.0.0.beta" useFeatures="false" includeLaunchers="true">
+
+   <configIni use="default">
+   </configIni>
+
+   <launcherArgs>
+      <vmArgs>-Dosgi.framework.extensions=org.eclipse.equinox.weaving.hook -Dosgi.noShutdown=true -Dosgi.clean=true -Dorg.aspectj.osgi.verbose=true</vmArgs>
+      <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts</vmArgsMac>
+   </launcherArgs>
+
+   <windowImages/>
+
+   <launcher>
+      <solaris/>
+      <win useIco="false">
+         <bmp/>
+      </win>
+   </launcher>
+
+   <vm>
+   </vm>
+
+   <plugins>
+      <plugin id="com.ibm.icu"/>
+      <plugin id="com.springsource.javax.el"/>
+      <plugin id="com.springsource.javax.mail"/>
+      <plugin id="com.springsource.javax.servlet"/>
+      <plugin id="com.springsource.javax.servlet.jsp"/>
+      <plugin id="com.springsource.net.sf.cglib"/>
+      <plugin id="com.springsource.org.apache.commons.beanutils"/>
+      <plugin id="com.springsource.org.apache.commons.codec"/>
+      <plugin id="com.springsource.org.apache.commons.collections"/>
+      <plugin id="com.springsource.org.apache.commons.digester"/>
+      <plugin id="com.springsource.org.apache.commons.jxpath"/>
+      <plugin id="com.springsource.org.apache.commons.lang"/>
+      <plugin id="com.springsource.org.apache.tools.ant"/>
+      <plugin id="com.springsource.org.jdom"/>
+      <plugin id="jcl.over.slf4j"/>
+      <plugin id="org.apache.activemq.activemq-core"/>
+      <plugin id="org.apache.geronimo.j2ee.management"/>
+      <plugin id="org.apache.geronimo.specs.geronimo-jms_1.1_spec"/>
+      <plugin id="org.apache.log4j"/>
+      <plugin id="org.aspectj.runtime"/>
+      <plugin id="org.aspectj.weaver"/>
+      <plugin id="org.eclipse.core.commands"/>
+      <plugin id="org.eclipse.core.contenttype"/>
+      <plugin id="org.eclipse.core.databinding"/>
+      <plugin id="org.eclipse.core.expressions"/>
+      <plugin id="org.eclipse.core.filesystem"/>
+      <plugin id="org.eclipse.core.filesystem.linux.x86" fragment="true"/>
+      <plugin id="org.eclipse.core.jobs"/>
+      <plugin id="org.eclipse.core.resources"/>
+      <plugin id="org.eclipse.core.runtime"/>
+      <plugin id="org.eclipse.core.runtime.compatibility.auth"/>
+      <plugin id="org.eclipse.draw2d"/>
+      <plugin id="org.eclipse.equinox.app"/>
+      <plugin id="org.eclipse.equinox.common"/>
+      <plugin id="org.eclipse.equinox.preferences"/>
+      <plugin id="org.eclipse.equinox.registry"/>
+      <plugin id="org.eclipse.equinox.weaving.aspectj"/>
+      <plugin id="org.eclipse.equinox.weaving.hook" fragment="true"/>
+      <plugin id="org.eclipse.help"/>
+      <plugin id="org.eclipse.jface"/>
+      <plugin id="org.eclipse.jface.databinding"/>
+      <plugin id="org.eclipse.osgi"/>
+      <plugin id="org.eclipse.swt"/>
+      <plugin id="org.eclipse.swt.gtk.linux.x86" fragment="true"/>
+      <plugin id="org.eclipse.ui"/>
+      <plugin id="org.eclipse.ui.forms"/>
+      <plugin id="org.eclipse.ui.views"/>
+      <plugin id="org.eclipse.ui.views.properties.tabbed"/>
+      <plugin id="org.eclipse.ui.workbench"/>
+      <plugin id="org.fosstrak.tdt"/>
+      <plugin id="org.rifidi.edge.api"/>
+      <plugin id="org.rifidi.edge.client"/>
+      <plugin id="org.rifidi.edge.client.ale.api"/>
+      <plugin id="org.rifidi.edge.client.ale.ecspecview"/>
+      <plugin id="org.rifidi.edge.client.log4j.configuration" fragment="true"/>
+      <plugin id="org.rifidi.edge.client.mbean.ui"/>
+      <plugin id="org.rifidi.edge.client.model"/>
+      <plugin id="org.rifidi.edge.client.rmi.commands"/>
+      <plugin id="org.rifidi.edge.client.rmi.proxycache"/>
+      <plugin id="org.rifidi.edge.client.sal"/>
+      <plugin id="org.rifidi.edge.client.twodview"/>
+      <plugin id="org.rifidi.org.apache.cxf"/>
+      <plugin id="org.rifidi.org.springframework.bundle.spring"/>
+      <plugin id="org.springframework.bundle.osgi.core"/>
+      <plugin id="org.springframework.bundle.osgi.extender"/>
+      <plugin id="org.springframework.bundle.osgi.io"/>
+      <plugin id="org.springframework.bundle.spring.aspects"/>
+      <plugin id="org.springframework.security.core"/>
+      <plugin id="slf4j.api"/>
+      <plugin id="slf4j.log4j12" fragment="true"/>
+   </plugins>
+
+   <configurations>
+      <plugin id="org.aspectj.runtime" autoStart="true" startLevel="3" />
+      <plugin id="org.aspectj.weaver" autoStart="true" startLevel="3" />
+      <plugin id="org.eclipse.core.runtime" autoStart="true" startLevel="0" />
+      <plugin id="org.eclipse.equinox.common" autoStart="true" startLevel="2" />
+      <plugin id="org.eclipse.equinox.weaving.aspectj" autoStart="true" startLevel="3" />
+      <plugin id="org.eclipse.osgi" autoStart="true" startLevel="-1" />
+      <plugin id="org.rifidi.org.springframework.bundle.spring" autoStart="true" startLevel="3" />
+      <plugin id="org.springframework.bundle.osgi.core" autoStart="true" startLevel="3" />
+      <plugin id="org.springframework.bundle.osgi.extender" autoStart="true" startLevel="3" />
+      <plugin id="org.springframework.bundle.osgi.io" autoStart="true" startLevel="3" />
+      <plugin id="org.springframework.bundle.spring.aspects" autoStart="true" startLevel="3" />
+      <plugin id="org.springframework.security.core" autoStart="true" startLevel="0" />
+   </configurations>
+
+</product>
