@@ -20,10 +20,6 @@
 	<osgi:reference id="JMSNotifierService"
 		interface="org.rifidi.edge.core.services.notification.NotifierService" />
 
-	<osgi:set id="configurationSet" interface="org.rifidi.configuration.Configuration"
-		cardinality="0..N">
-		<osgi:listener ref="jmxService" />
-	</osgi:set>
 	<osgi:set id="serviceFactoriesSet" interface="org.rifidi.configuration.ServiceFactory"
 		cardinality="0..N">
 		<osgi:listener ref="configurationService" bind-method="bind"

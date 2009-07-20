@@ -30,6 +30,7 @@ import org.rifidi.configuration.Configuration;
 import org.rifidi.configuration.Constants;
 import org.rifidi.configuration.ServiceFactory;
 import org.rifidi.configuration.impl.DefaultConfigurationImpl;
+import org.rifidi.configuration.mbeans.ConfigurationControlMBean;
 import org.rifidi.edge.core.services.notification.NotifierService;
 
 /**
@@ -38,7 +39,7 @@ import org.rifidi.edge.core.services.notification.NotifierService;
  * @author Jochen Mader - jochen@pramari.com
  * @author Kyle Neumeier - kyle@pramari.com
  */
-public class ConfigurationServiceImpl implements ConfigurationService {
+public class ConfigurationServiceImpl implements ConfigurationService, ConfigurationControlMBean {
 	/** Logger for this class */
 	private static final Log logger = LogFactory
 			.getLog(ConfigurationServiceImpl.class);
@@ -60,12 +61,15 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	private final Map<String, ServiceFactory<?>> factories;
 	/** Contex for the bundle we are running in. */
 	private final BundleContext context;
+	/** JMXservice reference. */
+	private volatile JMXService jmxService;
 
 	/**
 	 * Constructor.
 	 */
 	public ConfigurationServiceImpl(BundleContext context, String path,
-			NotifierService notifierService) {
+			NotifierService notifierService, JMXService jmxService) {
+		this.jmxService = jmxService;
 		this.notifierService = notifierService;
 		this.path = path;
 		this.context = context;
@@ -74,6 +78,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 		serviceNames = new ArrayList<String>();
 		configToRegsitration = new ConcurrentHashMap<Configuration, ServiceRegistration>();
 		factoryToConfigurations = loadConfig();
+		jmxService.setConfigurationControlMBean(this);
 		logger.debug("ConfigurationServiceImpl instantiated.");
 	}
 
@@ -154,7 +159,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	private DefaultConfigurationImpl createAndRegisterConfiguration(
 			String serviceID, String factoryID, AttributeList attributes) {
 		DefaultConfigurationImpl config = new DefaultConfigurationImpl(
-				serviceID, factoryID, attributes, notifierService);
+				serviceID, factoryID, attributes, notifierService, jmxService);
 		config.setContext(context);
 		IDToConfigurations.put(serviceID, config);
 
@@ -164,7 +169,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 		params.put("serviceid", config.getServiceID());
 		configToRegsitration.put(config, context.registerService(
 				serviceInterfaces, config, params));
-
+		
 		try {
 			context.addServiceListener(config, "(serviceid="
 					+ config.getServiceID() + ")");
@@ -328,6 +333,22 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	}
 
 	// Only used by Spring
+
+	/* (non-Javadoc)
+	 * @see org.rifidi.configuration.mbeans.ConfigurationControlMBean#reload()
+	 */
+	@Override
+	public void reload() {
+		logger.warn("Please implement reload");
+	}
+
+	/* (non-Javadoc)
+	 * @see org.rifidi.configuration.mbeans.ConfigurationControlMBean#save()
+	 */
+	@Override
+	public void save() {
+		storeConfiguration();
+	}
 
 	/**
 	 * Set the current service factories.
