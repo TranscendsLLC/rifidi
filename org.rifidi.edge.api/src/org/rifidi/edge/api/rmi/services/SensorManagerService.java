@@ -65,10 +65,9 @@ public interface SensorManagerService {
 	 *            the ID of the ReaderRactory
 	 * @param readerProperties
 	 *            all the properties to set on the new Reader
-	 * @return the ID of the newly created Reader
 	 * @throws RemoteException
 	 */
-	String createReader(String readerFactoryID, AttributeList readerProperties);
+	void createReader(String readerFactoryID, AttributeList readerProperties);
 
 	/**
 	 * This method returns the DTO for a particular reader
@@ -170,9 +169,8 @@ public interface SensorManagerService {
 	 * @param timeUnit
 	 *            Which time unit to use for the repeatInterval. Ignored if
 	 *            repeatInterval is set to 0
-	 * @return The processID of the submitted command
 	 */
-	Integer submitCommand(String readerID, String sessionID, String commandID,
+	void submitCommand(String readerID, String sessionID, String commandID,
 			Long repeatInterval, TimeUnit timeUnit)
 			throws CommandSubmissionException;
 

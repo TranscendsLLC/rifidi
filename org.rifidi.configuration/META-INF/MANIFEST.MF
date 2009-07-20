@@ -22,4 +22,7 @@ Export-Package: org.rifidi.configuration,
  org.rifidi.configuration.services
 Eclipse-BuddyPolicy: dependent
 Spring-Context: *;create-asynchronously:=true
-Require-Bundle: org.rifidi.edge.core.services;bundle-version="1.0.0"
+Require-Bundle: org.rifidi.edge.core.services;bundle-version="1.0.0",
+ org.aspectj.runtime;bundle-version="1.6.4",
+ org.springframework.bundle.spring.aspects;bundle-version="2.5.5",
+ org.rifidi.org.springframework.bundle.spring;bundle-version="2.5.5"

@@ -2,6 +2,8 @@ package org.rifidi.configuration;
 
 import java.util.List;
 
+import javax.management.MBeanInfo;
+
 /**
  * ServiceFactories create new services using a map as their input. They have to
  * be registered to the service registry under this interface and the have to
@@ -9,33 +11,29 @@ import java.util.List;
  * 
  * @author Jochen Mader - jochen@pramari.com
  */
-public interface ServiceFactory {
+public interface ServiceFactory<T> {
 
 	/**
-	 * Create a service from the given Configuration.
+	 * Create a service with the given attributes. The service will be
+	 * registered to OSGi.
 	 * 
-	 * @param configuration
+	 * @param factoryID
+	 * @param serviceID
+	 *            the id of the service to create, this will also be used in the
+	 *            service param named serviceid
 	 */
-	void createService(Configuration configuration);
+	void createInstance(String factoryID, String serviceID);
+
+	/**
+	 * Get a description for a service this factory creates.
+	 * 
+	 * @param factoryID
+	 * @return
+	 */
+	MBeanInfo getServiceDescription(String factoryID);
 
 	/**
 	 * Get the list of factory ids this factory should register for.
 	 */
 	List<String> getFactoryIDs();
-
-	/**
-	 * Create an empty configuration object for the given factory id.
-	 * 
-	 * @param factoryID
-	 * @return
-	 */
-	Configuration getEmptyConfiguration(String factoryID);
-
-	/**
-	 * Return the type of configuration created by this factory TODO: this is a
-	 * hack!
-	 * 
-	 * @return
-	 */
-	ConfigurationType getConfigurationType();
 }

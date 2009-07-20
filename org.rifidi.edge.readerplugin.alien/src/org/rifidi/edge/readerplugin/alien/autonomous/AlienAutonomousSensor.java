@@ -33,7 +33,7 @@ public class AlienAutonomousSensor
 	private JmsTemplate template;
 	/** Notifier Service */
 	private NotifierService notifierService;
-	/** The ID of the session */
+	/** The FACTORY_ID of the session */
 	private int sessionID = 0;
 	/** The port of the server socket */
 	private Integer serverSocketPort = 54321;

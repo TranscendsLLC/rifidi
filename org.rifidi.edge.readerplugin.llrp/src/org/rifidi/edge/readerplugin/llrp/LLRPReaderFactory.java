@@ -12,10 +12,15 @@
 package org.rifidi.edge.readerplugin.llrp;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
+import javax.management.MBeanInfo;
+
+import org.rifidi.configuration.ConfigurationType;
 import org.rifidi.edge.core.sensors.base.AbstractSensor;
 import org.rifidi.edge.core.sensors.base.AbstractSensorFactory;
 import org.rifidi.edge.core.services.notification.NotifierService;
@@ -34,15 +39,26 @@ public class LLRPReaderFactory extends AbstractSensorFactory<LLRPReader> {
 	private static final String name = "LLRP";
 	/** A JMS event notification sender */
 	private NotifierService notifierService;
-	/** JMS Template */
-	private JmsTemplate template;
 	/** The ID for this factory */
 	public static final String FACTORY_ID = "LLRP";
+	/** Template for sending jms messages. */
+	private volatile JmsTemplate template;
+	/** Blueprint for the reader. */
+	private final MBeanInfo readerInfo;
 
 	/**
 	 * The constructor for the factory class.
 	 */
 	public LLRPReaderFactory() {
+		readerInfo = (new LLRPReader()).getMBeanInfo();
+	}
+
+	/**
+	 * @param template
+	 *            the template to set
+	 */
+	public void setTemplate(JmsTemplate template) {
+		this.template = template;
 	}
 
 	/**
@@ -79,22 +95,6 @@ public class LLRPReaderFactory extends AbstractSensorFactory<LLRPReader> {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.configuration.AbstractServiceFactory#customConfig(java
-	 * .lang.Object)
-	 */
-	@Override
-	public void customConfig(LLRPReader instance) {
-		instance.setDestination(template.getDefaultDestination());
-		instance.setTemplate(template);
-		instance.setNotifiyService(this.notifierService);
-		Set<String> interfaces = new HashSet<String>();
-		interfaces.add(AbstractSensor.class.getName());
-		instance.register(getContext(), interfaces);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
 	 * @see org.rifidi.edge.core.readers.AbstractReader#getDescription()
 	 */
 	@Override
@@ -112,14 +112,37 @@ public class LLRPReaderFactory extends AbstractSensorFactory<LLRPReader> {
 		return name;
 	}
 
-	/**
-	 * Sets the JMS template.
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @param template
-	 *            the template to set
+	 * @see
+	 * org.rifidi.configuration.ServiceFactory#createInstance(java.lang.String,
+	 * java.lang.String)
 	 */
-	public void setTemplate(JmsTemplate template) {
-		this.template = template;
+	@Override
+	public void createInstance(String factoryID, String serviceID) {
+		LLRPReader instance = new LLRPReader();
+		instance.setID(serviceID);
+		instance.setDestination(template.getDefaultDestination());
+		instance.setTemplate(template);
+		instance.setNotifiyService(this.notifierService);
+		Set<String> interfaces = new HashSet<String>();
+		interfaces.add(AbstractSensor.class.getCanonicalName());
+		Map<String, String> parms = new HashMap<String, String>();
+		parms.put("type", ConfigurationType.READER.toString());
+		instance.register(getContext(), interfaces, parms);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.configuration.ServiceFactory#getServiceDescription(java.lang
+	 * .String)
+	 */
+	@Override
+	public MBeanInfo getServiceDescription(String factoryID) {
+		return (MBeanInfo) readerInfo.clone();
 	}
 
 }

@@ -4,7 +4,7 @@ import java.util.Map;
 
 import javax.management.DynamicMBean;
 
-import org.osgi.framework.ServiceRegistration;
+import org.osgi.framework.ServiceListener;
 import org.rifidi.configuration.listeners.AttributesChangedListener;
 
 /**
@@ -23,13 +23,6 @@ public interface Configuration extends DynamicMBean {
 	String getServiceID();
 
 	/**
-	 * Set the id for the governed service.
-	 * 
-	 * @param id
-	 */
-	void setServiceID(String id);
-
-	/**
 	 * Get the id of the factory that registered the configuration.
 	 * 
 	 * @return
@@ -42,15 +35,12 @@ public interface Configuration extends DynamicMBean {
 	 * 
 	 * @return
 	 */
-	Map<String, String> getAttributes();
+	Map<String, Object> getAttributes();
 
 	/**
 	 * Destroy the service and remove it from the registry.
 	 */
 	void destroy();
-
-	/** Set the OSGi service registration for this object */
-	void setServiceRegistration(ServiceRegistration registration);
 
 	/**
 	 * Get the names of all the DynamicMBean Properties. For use with the
@@ -66,7 +56,8 @@ public interface Configuration extends DynamicMBean {
 	 * 
 	 * @param listener
 	 */
-	void addAttributesChangedListener(AttributesChangedListener listener);
+	void addAttributesChangedListener(
+			AttributesChangedListener listener);
 
 	/**
 	 * Remote a listener that is notified of Attribute changes on this
@@ -74,13 +65,6 @@ public interface Configuration extends DynamicMBean {
 	 * 
 	 * @param listener
 	 */
-	void removeAttributesChangedListener(AttributesChangedListener listener);
-
-	/**
-	 * TODO: this is a hack because we need to know the type of service that is
-	 * stored in this configuration
-	 * 
-	 * @return the type of configuration this is
-	 */
-	ConfigurationType getType();
+	void removeAttributesChangedListener(
+			AttributesChangedListener listener);
 }

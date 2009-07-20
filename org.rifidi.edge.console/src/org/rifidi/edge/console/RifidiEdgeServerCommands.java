@@ -141,10 +141,8 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 			attrname = intp.nextArgument();
 			attrval = intp.nextArgument();
 		}
-		Configuration c = factory.getEmptyConfiguration(readerFacID);
-		c.setAttributes(list);
-		factory.createService(c);
-		intp.println("Reader Created.  ID is " + c.getServiceID());
+		configService.createService(readerFacID, list);
+		intp.println("Reader Created.");
 		return null;
 	}
 
@@ -186,11 +184,10 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 			intp.println("Reader with ID " + readerID + " is not available");
 			return null;
 		}
-		AttributeList list = configuration.getAttributes(configuration
-				.getAttributeNames());
+		Map<String, Object> attrs = configuration.getAttributes();
 		intp.println("Properties for Reader " + readerID);
-		for (Attribute a : list.asList()) {
-			intp.println("\t" + a.getName() + " : " + a.getValue());
+		for (String name : attrs.keySet()) {
+			intp.println("\t" + name + " : " + attrs.get(name));
 		}
 		return null;
 
@@ -273,7 +270,7 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 	 * @return
 	 */
 	public Object _commandtypes(CommandInterpreter intp) {
-		for (AbstractCommandConfigurationFactory factory : commandDAO
+		for (AbstractCommandConfigurationFactory<?> factory : commandDAO
 				.getCommandFactories()) {
 			for (String id : factory.getFactoryIDs()) {
 				intp.println("ID: " + id);
@@ -294,7 +291,7 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 			intp.println("Give a CommandFactoryID");
 			return null;
 		}
-		AbstractCommandConfigurationFactory factory = this.commandDAO
+		AbstractCommandConfigurationFactory<?> factory = this.commandDAO
 				.getCommandFactoryByID(commandFacID);
 		if (factory == null) {
 			intp.println("Factory with ID " + commandFacID
@@ -309,10 +306,8 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 			attrname = intp.nextArgument();
 			attrval = intp.nextArgument();
 		}
-		Configuration c = factory.getEmptyConfiguration(commandFacID);
-		c.setAttributes(list);
-		factory.createService(c);
-		intp.println("Command Created.  ID is " + c.getServiceID());
+		configService.createService(commandFacID, list);
+		intp.println("Command Created.");
 		return null;
 	}
 

@@ -42,14 +42,12 @@ public class SensorManagerServiceImpl implements SensorManagerService {
 	private static final Log logger = LogFactory
 			.getLog(SensorManagerServiceImpl.class);
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.rifidi.edge.core.rmi.ReaderStub#createReaderConfiguration
-	 * (java.lang.String, javax.management.AttributeList)
+
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.api.rmi.services.SensorManagerService#createReader(java.lang.String, javax.management.AttributeList)
 	 */
 	@Override
-	public String createReader(String readerConfigurationFactoryID,
+	public void createReader(String readerConfigurationFactoryID,
 			AttributeList readerConfigurationProperties) {
 		logger.debug("RMI call: createReader");
 
@@ -58,25 +56,12 @@ public class SensorManagerServiceImpl implements SensorManagerService {
 		AbstractSensorFactory<?> readerConfigFactory = this.readerDAO
 				.getReaderFactoryByID(readerConfigurationFactoryID);
 
-		// Get an empty configuration
-		Configuration readerConfiguration = readerConfigFactory
-				.getEmptyConfiguration(readerConfigurationFactoryID);
-
-		// set the attributes on the configuration
-		readerConfiguration.setAttributes(readerConfigurationProperties);
-
-		// create the service
-		readerConfigFactory.createService(readerConfiguration);
-
-		// return the ID
-		return readerConfiguration.getServiceID();
+		configurationService.createService(readerConfigurationFactoryID, readerConfigurationProperties);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.rifidi.edge.core.rmi.ReaderStub#deleteReaderConfiguration
-	 * (java.lang.String)
+
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.api.rmi.services.SensorManagerService#deleteReader(java.lang.String)
 	 */
 	@Override
 	public void deleteReader(String readerConfigurationID) {
@@ -101,11 +86,8 @@ public class SensorManagerServiceImpl implements SensorManagerService {
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @seeorg.rifidi.edge.core.rmi.ReaderConfigurationStub#
-	 * getAvailableReaderConfigurationFactories()
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.api.rmi.services.SensorManagerService#getReaderFactories()
 	 */
 	@Override
 	public Set<ReaderFactoryDTO> getReaderFactories() {
@@ -118,11 +100,9 @@ public class SensorManagerServiceImpl implements SensorManagerService {
 		return retVal;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.rifidi.edge.api.rmi.ReaderStub#getReaderFactory(java.lang.String
-	 * )
+
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.api.rmi.services.SensorManagerService#getReaderFactory(java.lang.String)
 	 */
 	@Override
 	public ReaderFactoryDTO getReaderFactory(String readerFactoryID) {
@@ -135,11 +115,10 @@ public class SensorManagerServiceImpl implements SensorManagerService {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @seeorg.rifidi.edge.core.rmi.ReaderConfigurationStub#
-	 * getAvailableReaderConfigurations()
+
+
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.api.rmi.services.SensorManagerService#getReaders()
 	 */
 	@Override
 	public Set<ReaderDTO> getReaders() {
@@ -166,11 +145,8 @@ public class SensorManagerServiceImpl implements SensorManagerService {
 		return retVal;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @seeorg.rifidi.edge.core.rmi.ReaderConfigurationStub#
-	 * getReaderConfigurationDescription(java.lang.String)
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.api.rmi.services.SensorManagerService#getReaderDescription(java.lang.String)
 	 */
 	@Override
 	public MBeanInfo getReaderDescription(String readerConfigurationFactoryID) {
@@ -178,9 +154,7 @@ public class SensorManagerServiceImpl implements SensorManagerService {
 		AbstractSensorFactory<?> configFactory = readerDAO
 				.getReaderFactoryByID(readerConfigurationFactoryID);
 		if (configFactory != null) {
-			Configuration config = configFactory
-					.getEmptyConfiguration(readerConfigurationFactoryID);
-			return config.getMBeanInfo();
+			return configFactory.getServiceDescription(readerConfigurationFactoryID);
 		} else {
 			logger.warn("No SensorSession Configuration Factory with ID "
 					+ readerConfigurationFactoryID + " is available");
@@ -188,11 +162,8 @@ public class SensorManagerServiceImpl implements SensorManagerService {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @seeorg.rifidi.edge.core.rmi.ReaderConfigurationStub#
-	 * getReaderConfigurationProperties(java.lang.String)
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.api.rmi.services.SensorManagerService#getReader(java.lang.String)
 	 */
 	@Override
 	public ReaderDTO getReader(String readerConfigurationID) {
@@ -211,11 +182,8 @@ public class SensorManagerServiceImpl implements SensorManagerService {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.rifidi.edge.api.rmi.ReaderStub#getSession(java.lang.String,
-	 * java.lang.String)
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.api.rmi.services.SensorManagerService#getSession(java.lang.String, java.lang.String)
 	 */
 	@Override
 	public SessionDTO getSession(String readerID, String sessionID) {
@@ -229,10 +197,8 @@ public class SensorManagerServiceImpl implements SensorManagerService {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.rifidi.edge.api.rmi.ReaderStub#createSession(java.lang.String)
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.api.rmi.services.SensorManagerService#createSession(java.lang.String)
 	 */
 	@Override
 	public Set<SessionDTO> createSession(String readerID) {
@@ -251,6 +217,9 @@ public class SensorManagerServiceImpl implements SensorManagerService {
 		return sessionDTOs;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.api.rmi.services.SensorManagerService#deleteSession(java.lang.String, java.lang.String)
+	 */
 	@Override
 	public void deleteSession(String readerID, String sessionID) {
 		logger.debug("RMI call: deleteSession");
@@ -264,11 +233,8 @@ public class SensorManagerServiceImpl implements SensorManagerService {
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.rifidi.edge.api.rmi.ReaderStub#killCommand(java.lang.String,
-	 * java.lang.String, java.lang.String)
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.api.rmi.services.SensorManagerService#killCommand(java.lang.String, java.lang.String, java.lang.Integer)
 	 */
 	@Override
 	public void killCommand(String readerID, String sessionID, Integer processID) {
@@ -290,11 +256,8 @@ public class SensorManagerServiceImpl implements SensorManagerService {
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.rifidi.edge.api.rmi.ReaderStub#startSession(java.lang.String,
-	 * java.lang.String)
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.api.rmi.services.SensorManagerService#startSession(java.lang.String, java.lang.String)
 	 */
 	@Override
 	public void startSession(String readerID, String sessionID) {
@@ -344,11 +307,8 @@ public class SensorManagerServiceImpl implements SensorManagerService {
 		connectThread.start();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.rifidi.edge.api.rmi.ReaderStub#stopSession(java.lang.String,
-	 * java.lang.String)
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.api.rmi.services.SensorManagerService#stopSession(java.lang.String, java.lang.String)
 	 */
 	@Override
 	public void stopSession(String readerID, String sessionID) {
@@ -369,28 +329,28 @@ public class SensorManagerServiceImpl implements SensorManagerService {
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.rifidi.edge.api.rmi.ReaderStub#submitCommand(java.lang.String,
-	 * java.lang.String, java.lang.String, java.lang.Long,
-	 * java.util.concurrent.TimeUnit)
+
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.api.rmi.services.SensorManagerService#submitCommand(java.lang.String, java.lang.String, java.lang.String, java.lang.Long, java.util.concurrent.TimeUnit)
 	 */
 	@Override
-	public Integer submitCommand(String readerID, String sessionID,
+	public void submitCommand(String readerID, String sessionID,
 			String commandID, Long repeatInterval, TimeUnit timeUnit)
 			throws CommandSubmissionException {
 		logger.debug("RMI call: submitCommand");
-		return submit(readerID, sessionID, commandID, repeatInterval, timeUnit);
+		submit(readerID, sessionID, commandID, repeatInterval, timeUnit);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.api.rmi.services.SensorManagerService#submitSingleShotCommand(java.lang.String, java.lang.String, java.lang.String)
+	 */
 	@Override
 	public void submitSingleShotCommand(String readerID, String sessionID,
 			String commandID) throws CommandSubmissionException {
 		logger.debug("RMI call: submitSingleShotCommand");
 		submit(readerID, sessionID, commandID, null, null);
-
 	}
+
 
 	/**
 	 * Handles the work of submitting a command. A command can either be
@@ -459,12 +419,8 @@ public class SensorManagerServiceImpl implements SensorManagerService {
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @seeorg.rifidi.edge.core.rmi.ReaderConfigurationStub#
-	 * setReaderConfigurationProperties(java.lang.String,
-	 * javax.management.AttributeList)
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.api.rmi.services.SensorManagerService#setReaderProperties(java.lang.String, javax.management.AttributeList)
 	 */
 	@Override
 	public void setReaderProperties(String readerConfigurationID,

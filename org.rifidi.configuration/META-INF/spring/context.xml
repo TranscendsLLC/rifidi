@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-	xmlns:osgi="http://www.springframework.org/schema/osgi"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:osgi="http://www.springframework.org/schema/osgi"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans 
 	http://www.springframework.org/schema/beans/spring-beans.xsd
     http://www.springframework.org/schema/context 
@@ -19,17 +18,18 @@
 		</property>
 	</bean>
 
-
 	<bean id="configurationService"
 		class="org.rifidi.configuration.services.ConfigurationServiceImpl"
 		scope="singleton">
 		<property name="serviceFactories">
 			<ref bean="serviceFactoriesSet" />
 		</property>
-		<property name="rifidiService" ref="RifidiServiceSet" />
-		<constructor-arg index="0"
-			value="${org.rifidi.edge.configuration}" />
 		<property name="notifierService" ref="JMSNotifierService" />
+		<constructor-arg index="1"
+			value="${org.rifidi.edge.configuration}" />
+		<constructor-arg index="0">
+			<ref bean="bundleContext" />
+		</constructor-arg>
 	</bean>
 
 	<bean id="jmxService" class="org.rifidi.configuration.services.JMXServiceImpl"

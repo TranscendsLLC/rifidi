@@ -13,7 +13,7 @@ import java.util.Date;
  */
 public class AlienTag {
 
-	/** The ID of the tag as a hex string */
+	/** The FACTORY_ID of the tag as a hex string */
 	private String id_hex;
 	/** The date (on the reader) the tag was discovered */
 	private Date discoverDate;

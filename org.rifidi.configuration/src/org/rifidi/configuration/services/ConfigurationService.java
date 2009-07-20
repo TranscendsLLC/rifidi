@@ -2,6 +2,8 @@ package org.rifidi.configuration.services;
 
 import java.util.Set;
 
+import javax.management.AttributeList;
+
 import org.rifidi.configuration.Configuration;
 
 /**
@@ -16,7 +18,7 @@ public interface ConfigurationService {
 	/**
 	 * Store the all configurations of persistent services.
 	 */
-	public void storeConfiguration();
+	void storeConfiguration();
 
 	/**
 	 * Get a configuration service by ID. Returns null if not avaialable
@@ -26,7 +28,16 @@ public interface ConfigurationService {
 	 * @return The configuration with the given ID, or null if none is
 	 *         available.
 	 */
-	public Configuration getConfiguration(String serviceID);
+	Configuration getConfiguration(String serviceID);
+
+	/**
+	 * Add a new configuration to the service.
+	 * 
+	 * @param serviceID
+	 * @param instance
+	 * @param attributes
+	 */
+	void createService(String factoryID, AttributeList attributes);
 
 	/**
 	 * Get all configurations

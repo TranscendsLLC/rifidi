@@ -36,7 +36,7 @@ public class AlienPropertyCommand extends AbstractAlien9800Command {
 	 * Constructor
 	 * 
 	 * @param commandID
-	 *            The ID for this command
+	 *            The FACTORY_ID for this command
 	 * @param attributes
 	 *            The shared property map from the Alien9800Reader
 	 * @param command

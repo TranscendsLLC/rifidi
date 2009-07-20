@@ -17,7 +17,7 @@ public abstract class AbstractAlien9800Command extends Command {
 	 * Default Constructor
 	 * 
 	 * @param commandID
-	 *            The ID of the command.
+	 *            The FACTORY_ID of the command.
 	 */
 	public AbstractAlien9800Command(String commandID) {
 		super(commandID);

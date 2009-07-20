@@ -22,7 +22,7 @@ import org.rifidi.edge.core.services.notification.NotifierService;
 public class CommandDAOImpl implements CommandDAO {
 
 	/** The available Command Configuration factory factories */
-	private Set<AbstractCommandConfigurationFactory> commandFactories;
+	private Set<AbstractCommandConfigurationFactory<?>> commandFactories;
 	/** The available Command Configuration Factories */
 	private Map<String, AbstractCommandConfiguration<?>> commands;
 	/** The logger for this class */
@@ -34,7 +34,7 @@ public class CommandDAOImpl implements CommandDAO {
 	 * 
 	 */
 	public CommandDAOImpl() {
-		commandFactories = new HashSet<AbstractCommandConfigurationFactory>();
+		commandFactories = new HashSet<AbstractCommandConfigurationFactory<?>>();
 		commands = new HashMap<String, AbstractCommandConfiguration<?>>();
 	}
 
@@ -55,8 +55,8 @@ public class CommandDAOImpl implements CommandDAO {
 	 * @see org.rifidi.edge.core.daos.CommandDAO#getCommandFactories()
 	 */
 	@Override
-	public Set<AbstractCommandConfigurationFactory> getCommandFactories() {
-		return new HashSet<AbstractCommandConfigurationFactory>(
+	public Set<AbstractCommandConfigurationFactory<?>> getCommandFactories() {
+		return new HashSet<AbstractCommandConfigurationFactory<?>>(
 				commandFactories);
 	}
 
@@ -68,8 +68,8 @@ public class CommandDAOImpl implements CommandDAO {
 	 * String)
 	 */
 	@Override
-	public AbstractCommandConfigurationFactory getCommandFactoryByID(String id) {
-		for (AbstractCommandConfigurationFactory factory : commandFactories) {
+	public AbstractCommandConfigurationFactory<?> getCommandFactoryByID(String id) {
+		for (AbstractCommandConfigurationFactory<?> factory : commandFactories) {
 			for (String fac : factory.getFactoryIDs()) {
 				if (fac.equals(id)) {
 					return factory;
@@ -87,9 +87,9 @@ public class CommandDAOImpl implements CommandDAO {
 	 * .lang.String)
 	 */
 	@Override
-	public AbstractCommandConfigurationFactory getCommandFactoryByReaderID(
+	public AbstractCommandConfigurationFactory<?> getCommandFactoryByReaderID(
 			String id) {
-		for (AbstractCommandConfigurationFactory factory : commandFactories) {
+		for (AbstractCommandConfigurationFactory<?> factory : commandFactories) {
 			if (factory.getReaderFactoryID().equals(id)) {
 				return factory;
 			}
@@ -182,7 +182,7 @@ public class CommandDAOImpl implements CommandDAO {
 	 * @param parameters
 	 */
 	public void unbindCommandFactory(
-			AbstractCommandConfigurationFactory commandConfigurationFactory,
+			AbstractCommandConfigurationFactory<?> commandConfigurationFactory,
 			Dictionary<String, String> parameters) {
 		logger.info("Command Configuration Factory Unbound: "
 				+ commandConfigurationFactory.getFactoryIDs());
@@ -203,7 +203,7 @@ public class CommandDAOImpl implements CommandDAO {
 	 *            the initial list of available command configuration factories
 	 */
 	public void setCommandFactories(
-			Set<AbstractCommandConfigurationFactory> factories) {
+			Set<AbstractCommandConfigurationFactory<?>> factories) {
 		commandFactories.addAll(factories);
 	}
 

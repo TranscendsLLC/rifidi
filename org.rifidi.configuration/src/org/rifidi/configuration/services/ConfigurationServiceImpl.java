@@ -2,20 +2,19 @@ package org.rifidi.configuration.services;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Dictionary;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.management.Attribute;
 import javax.management.AttributeList;
-import javax.management.AttributeNotFoundException;
-import javax.management.InvalidAttributeValueException;
 import javax.management.MBeanAttributeInfo;
-import javax.management.MBeanException;
-import javax.management.ReflectionException;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.HierarchicalINIConfiguration;
@@ -23,10 +22,12 @@ import org.apache.commons.configuration.SubnodeConfiguration;
 import org.apache.commons.configuration.tree.DefaultConfigurationNode;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.InvalidSyntaxException;
 import org.rifidi.configuration.Configuration;
 import org.rifidi.configuration.Constants;
-import org.rifidi.configuration.RifidiService;
 import org.rifidi.configuration.ServiceFactory;
+import org.rifidi.configuration.impl.DefaultConfigurationImpl;
 import org.rifidi.configuration.listeners.AttributesChangedListener;
 import org.rifidi.edge.core.services.notification.NotifierService;
 
@@ -44,36 +45,41 @@ public class ConfigurationServiceImpl implements ConfigurationService,
 	/** Path to the configfile. */
 	private final String path;
 	/** Configurations. */
-	private Map<String, Set<ServiceConfiguration>> factoryToConfigurations;
+	private final ConcurrentHashMap<String, Set<Configuration>> factoryToConfigurations;
 	/** Currently registered services. */
-	private Map<String, Configuration> IDToConfigurations;
+	private final Map<String, Configuration> IDToConfigurations;
+	/** Service names that are already taken. */
+	private final List<String> serviceNames;
 	/** A notifier for JMS. Remove once we have aspects */
-	private NotifierService notifierService;
-
+	private volatile NotifierService notifierService;
 	/**
 	 * Currently available factories by their names.
 	 */
-	private Map<String, ServiceFactory> factories;
+	private final Map<String, ServiceFactory<?>> factories;
+	/** Contex for the bundle we are running in. */
+	private final BundleContext context;
 
 	/**
 	 * Constructor.
 	 */
-	public ConfigurationServiceImpl(String path) {
+	public ConfigurationServiceImpl(BundleContext context, String path) {
 		this.path = path;
-		factoryToConfigurations = new HashMap<String, Set<ServiceConfiguration>>(
-				loadConfig());
-		factories = new HashMap<String, ServiceFactory>();
+		this.context = context;
+		factories = new HashMap<String, ServiceFactory<?>>();
 		IDToConfigurations = new HashMap<String, Configuration>();
+		serviceNames = new ArrayList<String>();
+		factoryToConfigurations = loadConfig();
 		logger.debug("ConfigurationServiceImpl instantiated.");
 	}
 
 	/**
-	 * Load the configuration.
+	 * Load the configuration. Not thread safe.
 	 * 
 	 * @return
 	 */
-	private Map<String, Set<ServiceConfiguration>> loadConfig() {
-		Map<String, Set<ServiceConfiguration>> ret = new HashMap<String, Set<ServiceConfiguration>>();
+	@SuppressWarnings("unchecked")
+	private ConcurrentHashMap<String, Set<Configuration>> loadConfig() {
+		ConcurrentHashMap<String, Set<Configuration>> ret = new ConcurrentHashMap<String, Set<Configuration>>();
 		try {
 			HierarchicalINIConfiguration configuration = new HierarchicalINIConfiguration(
 					path);
@@ -88,7 +94,7 @@ public class ConfigurationServiceImpl implements ConfigurationService,
 							+ sectionName);
 					continue;
 				}
-				String serviceID = (String) sectionName;
+				final String serviceID = (String) sectionName;
 				if (!checkName(serviceID)) {
 					logger.fatal("service id " + serviceID
 							+ " is invalid.  FactoryIDs must consist only of "
@@ -97,10 +103,10 @@ public class ConfigurationServiceImpl implements ConfigurationService,
 					continue;
 				}
 				if (ret.get(factoryName) == null) {
-					ret.put(factoryName, new HashSet<ServiceConfiguration>());
+					ret.put(factoryName, new HashSet<Configuration>());
 				}
 
-				HashMap<String, String> configurationDictionary = new HashMap<String, String>();
+				AttributeList attributes = new AttributeList();
 				// get all properties
 				Iterator<String> keys = section.getKeys();
 				while (keys.hasNext()) {
@@ -109,15 +115,19 @@ public class ConfigurationServiceImpl implements ConfigurationService,
 					if (Constants.FACTORYID.equals(key)) {
 						continue;
 					}
-					configurationDictionary.put(key, section.getString(key));
+					// type is already processed
+					if (Constants.FACTORY_TYPE.equals(key)) {
+						continue;
+					}
+					attributes.add(new Attribute(key, section.getString(key)));
 				}
 
-				ServiceConfiguration config = new ServiceConfiguration();
-				config.properties = configurationDictionary;
-				config.serviceID = (String) sectionName;
-				logger.debug("Read configuration for " + config.serviceID
-						+ " (" + factoryName + ")");
-				ret.get(factoryName).add(config);
+				ret.get(factoryName).add(
+						createAndRegisterConfiguration(serviceID, factoryName,
+								attributes));
+				serviceNames.add(serviceID);
+				logger.debug("Read configuration for " + serviceID + " ("
+						+ factoryName + ")");
 			}
 		} catch (ConfigurationException e) {
 			logger.fatal("Can't open configuration: " + e);
@@ -125,9 +135,33 @@ public class ConfigurationServiceImpl implements ConfigurationService,
 		return ret;
 	}
 
+	private Configuration createAndRegisterConfiguration(String serviceID,
+			String factoryID, AttributeList attributes) {
+		DefaultConfigurationImpl config = new DefaultConfigurationImpl(
+				serviceID, factoryID, attributes);
+		config.setContext(context);
+		IDToConfigurations.put(serviceID, config);
+
+		String[] serviceInterfaces = new String[] { Configuration.class
+				.getCanonicalName() };
+		Hashtable<String, String> params = new Hashtable<String, String>();
+		params.put("serviceid", config.getServiceID());
+		context.registerService(serviceInterfaces, config, params);
+
+		try {
+			context.addServiceListener(config, "(serviceid="
+					+ config.getServiceID() + ")");
+			logger.debug("Added listener for (serviceid="
+					+ config.getServiceID() + ")");
+		} catch (InvalidSyntaxException e) {
+			logger.fatal(e);
+		}
+		return config;
+	}
+
 	/**
 	 * Configuration names may only consist of alpha-numeric characters and the
-	 * underscore character because of esper
+	 * underscore character because of esper.
 	 * 
 	 * @param configurationName
 	 *            The name of a configuration that is read in
@@ -144,39 +178,17 @@ public class ConfigurationServiceImpl implements ConfigurationService,
 	 * @param serviceRef
 	 * @throws Exception
 	 */
-	@SuppressWarnings("unchecked")
-	public void bind(ServiceFactory factory, Map<?, ?> properties) {
+	public void bind(ServiceFactory<?> factory, Map<?, ?> properties) {
 		synchronized (factories) {
 			for (String factoryID : factory.getFactoryIDs()) {
 				if (factories.get(factoryID) == null) {
 					logger.debug("Registering " + factoryID);
 					factories.put(factoryID, factory);
 					if (factoryToConfigurations.get(factoryID) != null) {
-						for (ServiceConfiguration serConf : factoryToConfigurations
+						for (Configuration serConf : factoryToConfigurations
 								.get(factoryID)) {
-							Configuration configuration = factory
-									.getEmptyConfiguration(factoryID);
-							configuration.setServiceID(serConf.serviceID);
-							for (String prop : serConf.properties.keySet()) {
-								Attribute attribute = new Attribute(prop,
-										serConf.properties.get(prop));
-								try {
-									configuration.setAttribute(attribute);
-								} catch (AttributeNotFoundException e) {
-									logger.error("Unable to set attribute: "
-											+ attribute + " " + e);
-								} catch (InvalidAttributeValueException e) {
-									logger.error("Unable to set attribute: "
-											+ attribute + " " + e);
-								} catch (MBeanException e) {
-									logger.error("Unable to set attribute: "
-											+ attribute + " " + e);
-								} catch (ReflectionException e) {
-									logger.error("Unable to set attribute: "
-											+ attribute + " " + e);
-								}
-							}
-							factory.createService(configuration);
+							factory.createInstance(factoryID, serConf
+									.getServiceID());
 						}
 					}
 				}
@@ -190,7 +202,8 @@ public class ConfigurationServiceImpl implements ConfigurationService,
 	 * @param serviceRef
 	 * @throws Exception
 	 */
-	public synchronized void unbind(ServiceFactory factory, Map<?, ?> properties) {
+	public synchronized void unbind(ServiceFactory<?> factory,
+			Map<?, ?> properties) {
 		synchronized (factories) {
 			for (String factoryID : factory.getFactoryIDs()) {
 				logger.debug("Unregistering " + factoryID);
@@ -211,14 +224,6 @@ public class ConfigurationServiceImpl implements ConfigurationService,
 
 		// TODO: Get rid of this code once we get aspects!!!!!
 		config.addAttributesChangedListener(this);
-		switch (config.getType()) {
-		case READER:
-			notifierService.addReaderEvent(config.getServiceID());
-			break;
-		case COMMAND:
-			notifierService.addCommandEvent(config.getServiceID());
-			break;
-		}
 	}
 
 	/**
@@ -232,14 +237,14 @@ public class ConfigurationServiceImpl implements ConfigurationService,
 
 		// TODO: Get rid of this code once we get aspects!!!!!
 		config.removeAttributesChangedListener(this);
-		switch (config.getType()) {
-		case READER:
-			notifierService.removeReaderEvent(config.getServiceID());
-			break;
-		case COMMAND:
-			notifierService.removeCommandEvent(config.getServiceID());
-			break;
-		}
+		// switch (config.getType()) {
+		// case READER:
+		// notifierService.removeReaderEvent(config.getServiceID());
+		// break;
+		// case COMMAND:
+		// notifierService.removeCommandEvent(config.getServiceID());
+		// break;
+		// }
 
 	}
 
@@ -247,18 +252,18 @@ public class ConfigurationServiceImpl implements ConfigurationService,
 	public void attributesChanged(String configurationID,
 			AttributeList attributes) {
 		Configuration config = IDToConfigurations.get(configurationID);
-		if (config != null) {
-			switch (config.getType()) {
-			case READER:
-				notifierService.attributesChanged(configurationID, attributes,
-						true);
-				break;
-			case COMMAND:
-				notifierService.attributesChanged(configurationID, attributes,
-						false);
-				break;
-			}
-		}
+		// if (config != null) {
+		// switch (config.getType()) {
+		// case READER:
+		// notifierService.attributesChanged(configurationID, attributes,
+		// true);
+		// break;
+		// case COMMAND:
+		// notifierService.attributesChanged(configurationID, attributes,
+		// false);
+		// break;
+		// }
+		// }
 
 	}
 
@@ -290,11 +295,12 @@ public class ConfigurationServiceImpl implements ConfigurationService,
 			for (Configuration config : copy) {
 				DefaultConfigurationNode section = new DefaultConfigurationNode(
 						config.getServiceID());
-				DefaultConfigurationNode type = new DefaultConfigurationNode(
+				DefaultConfigurationNode factoryid = new DefaultConfigurationNode(
 						Constants.FACTORYID);
-				type.setValue(config.getFactoryID());
-				section.addChild(type);
-				Map<String, String> attrs = config.getAttributes();
+				factoryid.setValue(config.getFactoryID());
+				section.addChild(factoryid);
+
+				Map<String, Object> attrs = config.getAttributes();
 				MBeanAttributeInfo[] infos = config.getMBeanInfo()
 						.getAttributes();
 				Map<String, MBeanAttributeInfo> attrInfo = new HashMap<String, MBeanAttributeInfo>();
@@ -320,13 +326,46 @@ public class ConfigurationServiceImpl implements ConfigurationService,
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.configuration.services.ConfigurationService#createService(
+	 * java.lang.String, javax.management.AttributeList)
+	 */
+	@Override
+	public void createService(String factoryID, AttributeList attributes) {
+		String serviceID = factoryID;
+		serviceID = serviceID.replaceAll("[^A-Z^a-z^0-9^_]", "_") + "_";
+		Integer counter = 1;
+		String tempServiceID = serviceID + 1;
+		// TODO: not nice but good enough for now
+		while (serviceNames.contains(tempServiceID)) {
+			counter++;
+			tempServiceID = serviceID + counter;
+		}
+		serviceID = tempServiceID;
+
+		// TODO: fix null factories
+		ServiceFactory<?> factory = factories.get(factoryID);
+		Configuration config = createAndRegisterConfiguration(serviceID,
+				factoryID, attributes);
+
+		factoryToConfigurations.get(factoryID).add(config);
+		IDToConfigurations.put(serviceID, config);
+
+		if (factory != null) {
+			factory.createInstance(factoryID, serviceID);
+		}
+	}
+
 	/**
 	 * Set the current service factories.
 	 * 
 	 * @param serviceFactories
 	 */
-	public void setServiceFactories(Set<ServiceFactory> serviceFactories) {
-		for (ServiceFactory serviceFactory : serviceFactories) {
+	public void setServiceFactories(Set<ServiceFactory<?>> serviceFactories) {
+		for (ServiceFactory<?> serviceFactory : serviceFactories) {
 			bind(serviceFactory, null);
 		}
 	}
@@ -367,50 +406,4 @@ public class ConfigurationServiceImpl implements ConfigurationService,
 		}
 	}
 
-	/**
-	 * Just a container for service IDToConfigurations.
-	 * 
-	 * @author Jochen Mader - jochen@pramari.com
-	 */
-	protected class ServiceConfiguration {
-		public HashMap<String, String> properties;
-		public String serviceID;
-	}
-
-	/**
-	 * Called by spring to register new RifidiServices
-	 * 
-	 * @param service
-	 *            The Rifidi Server to regiter
-	 * @param parameters
-	 */
-	public void bindRifidiService(RifidiService service,
-			Dictionary<String, String> parameters) {
-		logger.info("Service detected: " + service.getID());
-	}
-
-	/**
-	 * Called by spring when a Rifidi Service has gone away
-	 * 
-	 * @param service
-	 *            Service that has become unavailable
-	 * @param parameters
-	 */
-	public void unbindRifidiService(RifidiService service,
-			Dictionary<String, String> parameters) {
-		logger.warn("about to call destroy");
-		Configuration config = this.IDToConfigurations.get(service.getID());
-		if (config != null) {
-			config.destroy();
-		}
-	}
-
-	/**
-	 * Called by spring.
-	 * 
-	 * @param services
-	 */
-	public void setRifidiService(Set<RifidiService> services) {
-		logger.info("Rifidi Services Set: " + services);
-	}
 }

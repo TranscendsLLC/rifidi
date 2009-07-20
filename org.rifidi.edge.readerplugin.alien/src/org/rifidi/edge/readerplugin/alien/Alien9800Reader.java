@@ -56,7 +56,7 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 			.parseInt(AlienReaderDefaultValues.MAX_CONNECTION_ATTEMPTS);
 	/** Spring JMS template */
 	private JmsTemplate template;
-	/** The ID of the session */
+	/** The FACTORY_ID of the session */
 	private int sessionID = 0;
 	/** service used to send notifications */
 	private NotifierService notifierService;
@@ -77,16 +77,6 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 	public static final String PROP_DHCP = "dhcp";
 	public static final String PROP_DNS = "dns";
 	public static final String PROP_GATEWAY = "gateway";
-	private String heartbeat_address;
-	private String heartbeat_count;
-	private String heartbeat_port;
-	private String heartbeat_time;
-	private String netmask;
-	private String network_timeout;
-	private String readername;
-	private String time;
-	private String time_server;
-	private String time_zone;
 	/** The unique number of the sensorSession */
 	public static final String PROP_READER_NUMBER = "readerNumber";
 
@@ -548,4 +538,6 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 			session.submit(command);
 		}
 	}
+	
+	
 }
