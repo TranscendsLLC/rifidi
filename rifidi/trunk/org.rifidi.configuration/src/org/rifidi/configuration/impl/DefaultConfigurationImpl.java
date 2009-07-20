@@ -120,7 +120,6 @@ public class DefaultConfigurationImpl implements Configuration, ServiceListener 
 	public void setTarget(final RifidiService target) {
 		if (this.target.compareAndSet(null, target)) {
 			if (target != null) {
-				target.setID(getServiceID());
 				// get the whole list of attributes from the target as we might
 				// only
 				// have a partial list from the config file
@@ -222,6 +221,7 @@ public class DefaultConfigurationImpl implements Configuration, ServiceListener 
 		if (service != null) {
 			return service.getMBeanInfo();
 		}
+		//TODO: needs fixing to make JMX work again
 		return null;
 	}
 
