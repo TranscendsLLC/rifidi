@@ -6,12 +6,10 @@ package org.rifidi.configuration;
  * @author Jochen Mader - jochen@pramari.com
  */
 public class Constants {
-	/**
-	 * Globally unique name of a service.
-	 */
+	/** Globally unique name of a service. */
 	public static final String SERVICEID = "serviceid";
-	/**
-	 * Globally unique id of a factory.
-	 */
+	/** Globally unique id of a factory. */
 	public static final String FACTORYID = "factoryid";
+	/** Type of the factory (reader,command, ...) */
+	public static final String FACTORY_TYPE = "type";
 }

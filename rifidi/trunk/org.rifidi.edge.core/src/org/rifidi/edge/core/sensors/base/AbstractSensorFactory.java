@@ -3,7 +3,6 @@
  */
 package org.rifidi.edge.core.sensors.base;
 
-import org.rifidi.configuration.ConfigurationType;
 import org.rifidi.configuration.impl.AbstractServiceFactory;
 import org.rifidi.edge.api.rmi.dto.ReaderFactoryDTO;
 
@@ -42,15 +41,5 @@ public abstract class AbstractSensorFactory<T extends AbstractSensor<?>>
 	 * @return
 	 */
 	public abstract String getDescription();
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.rifidi.configuration.ServiceFactory#getConfigurationType()
-	 */
-	@Override
-	public ConfigurationType getConfigurationType() {
-		return ConfigurationType.READER;
-	}
-
+	
 }

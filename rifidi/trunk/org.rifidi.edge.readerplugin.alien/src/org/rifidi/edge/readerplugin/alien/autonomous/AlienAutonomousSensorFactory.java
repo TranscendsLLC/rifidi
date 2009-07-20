@@ -4,10 +4,15 @@
 package org.rifidi.edge.readerplugin.alien.autonomous;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
+import javax.management.MBeanInfo;
+
+import org.rifidi.configuration.ConfigurationType;
 import org.rifidi.edge.core.sensors.base.AbstractSensor;
 import org.rifidi.edge.core.sensors.base.AbstractSensorFactory;
 import org.rifidi.edge.core.services.notification.NotifierService;
@@ -23,11 +28,21 @@ import org.springframework.jms.core.JmsTemplate;
  */
 public class AlienAutonomousSensorFactory extends
 		AbstractSensorFactory<AlienAutonomousSensor> {
-	public static final String ID = "AlienAutonomous";
+	public static final String FACTORY_ID = "AlienAutonomous";
 	/** The service used to send out notifications to the client */
 	private NotifierService notifierService;
 	/** The template used to send out tags */
 	private JmsTemplate template;
+	/** Blueprint for new readers. */
+	private final MBeanInfo readerInfo;
+
+	/**
+	 * Constructor.
+	 */
+	public AlienAutonomousSensorFactory() {
+		super();
+		this.readerInfo = (new AlienAutonomousSensor()).getMBeanInfo();
+	}
 
 	/**
 	 * Called by spring
@@ -75,17 +90,20 @@ public class AlienAutonomousSensorFactory extends
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.configuration.impl.AbstractServiceFactory#customConfig(org
-	 * .rifidi.configuration.RifidiService)
+	 * org.rifidi.configuration.ServiceFactory#createInstance(java.lang.String,
+	 * java.lang.String)
 	 */
 	@Override
-	public void customConfig(AlienAutonomousSensor instance) {
-		instance.setNotifierService(notifierService);
-		instance.setTemplate(template);
+	public void createInstance(String factoryID, String serviceID) {
+		assert (factoryID.equals(FACTORY_ID));
+		AlienAutonomousSensor instance = new AlienAutonomousSensor();
+		instance.setID(serviceID);
+		instance.setTemplate((JmsTemplate) template);
 		Set<String> interfaces = new HashSet<String>();
 		interfaces.add(AbstractSensor.class.getName());
-		instance.register(getContext(), interfaces);
-
+		Map<String, String> parms = new HashMap<String, String>();
+		parms.put("type", ConfigurationType.READER.toString());
+		instance.register(getContext(), interfaces, parms);
 	}
 
 	/*
@@ -106,8 +124,20 @@ public class AlienAutonomousSensorFactory extends
 	@Override
 	public List<String> getFactoryIDs() {
 		List<String> ids = new ArrayList<String>();
-		ids.add(ID);
+		ids.add(FACTORY_ID);
 		return ids;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.configuration.ServiceFactory#getServiceDescription(java.lang
+	 * .String)
+	 */
+	@Override
+	public MBeanInfo getServiceDescription(String factoryID) {
+		return (MBeanInfo) readerInfo.clone();
 	}
 
 }

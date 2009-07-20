@@ -26,7 +26,7 @@ public class AlienTagReadEventFactory {
 	 * Constructor
 	 * 
 	 * @param readrID
-	 *            The ID of the reader this factory is used for
+	 *            The FACTORY_ID of the reader this factory is used for
 	 */
 	public AlienTagReadEventFactory(String readerID) {
 		this.readerID = readerID;

@@ -50,8 +50,8 @@ public class AlienAutonomousSensorSession extends AbstractSensorSession {
 	 * 
 	 * @param sensor
 	 *            The sensor that this session connects
-	 * @param ID
-	 *            The ID of this session
+	 * @param FACTORY_ID
+	 *            The FACTORY_ID of this session
 	 * @param template
 	 *            The template used to send tags
 	 * @param NotifierService

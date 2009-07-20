@@ -10,6 +10,11 @@
 	<osgi:service id="JMSNotifierService" ref="JMSNotifier"
 		interface="org.rifidi.edge.core.services.notification.NotifierService" />
 
+	<osgi:set id="configurationSet" interface="org.rifidi.configuration.RifidiService" cardinality="0..N">
+		<osgi:listener ref="JMSNotifier" bind-method="register"
+			unbind-method="unregister" />
+	</osgi:set>
+
 	
 	<!-- Imported Services -->
 	

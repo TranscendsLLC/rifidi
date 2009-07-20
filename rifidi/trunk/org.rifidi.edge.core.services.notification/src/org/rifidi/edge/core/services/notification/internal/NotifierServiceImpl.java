@@ -1,10 +1,14 @@
 package org.rifidi.edge.core.services.notification.internal;
 
+import java.util.Map;
+
 import javax.jms.Destination;
 import javax.management.AttributeList;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.rifidi.configuration.ConfigurationType;
+import org.rifidi.configuration.RifidiService;
 import org.rifidi.edge.api.SessionStatus;
 import org.rifidi.edge.api.jms.notifications.CommandConfigFactoryAdded;
 import org.rifidi.edge.api.jms.notifications.CommandConfigFactoryRemoved;
@@ -298,5 +302,40 @@ public class NotifierServiceImpl implements NotifierService {
 
 		}
 
+	}
+
+	public void register(RifidiService config, Map<String, String> properties) {
+		if (properties.containsKey("type")
+				&& properties.get("type").equals(
+						ConfigurationType.READER.toString())) {
+			addReaderEvent(config.getID());
+			return;
+		}
+		if (properties.containsKey("type")
+				&& properties.get("type").equals(
+						ConfigurationType.COMMAND.toString())) {
+			addCommandEvent(config.getID());
+			return;
+		}
+	}
+
+	/**
+	 * Called whenever a Configuration got removed from OSGi.
+	 * 
+	 * @param config
+	 * @param properties
+	 */
+	public void unregister(RifidiService config, Map<String, String> properties) {
+		if (properties.containsKey("type")
+				&& properties.get("type").equals(
+						ConfigurationType.READER.toString())) {
+			removeReaderEvent(config.getID());
+		}
+		if (properties.containsKey("type")
+				&& properties.get("type").equals(
+						ConfigurationType.COMMAND.toString())) {
+			removeCommandEvent(config.getID());
+			return;
+		}
 	}
 }

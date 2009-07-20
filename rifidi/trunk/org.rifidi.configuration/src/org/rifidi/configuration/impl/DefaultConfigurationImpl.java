@@ -2,43 +2,35 @@ package org.rifidi.configuration.impl;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.concurrent.atomic.AtomicReference;
 
 import javax.management.Attribute;
 import javax.management.AttributeList;
 import javax.management.AttributeNotFoundException;
-import javax.management.Descriptor;
 import javax.management.InvalidAttributeValueException;
-import javax.management.JMX;
-import javax.management.MBeanAttributeInfo;
 import javax.management.MBeanException;
 import javax.management.MBeanInfo;
-import javax.management.MBeanOperationInfo;
 import javax.management.ReflectionException;
-import javax.management.modelmbean.DescriptorSupport;
-import javax.management.openmbean.OpenMBeanAttributeInfo;
-import javax.management.openmbean.OpenMBeanAttributeInfoSupport;
-import javax.management.openmbean.OpenMBeanInfoSupport;
-import javax.management.openmbean.OpenMBeanOperationInfo;
-import javax.management.openmbean.OpenMBeanOperationInfoSupport;
-import javax.management.openmbean.SimpleType;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.osgi.framework.ServiceRegistration;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceEvent;
+import org.osgi.framework.ServiceListener;
 import org.rifidi.configuration.Configuration;
 import org.rifidi.configuration.ConfigurationType;
 import org.rifidi.configuration.RifidiService;
-import org.rifidi.configuration.annotations.JMXMBean;
 import org.rifidi.configuration.annotations.Operation;
 import org.rifidi.configuration.annotations.Property;
-import org.rifidi.configuration.annotations.PropertyType;
 import org.rifidi.configuration.listeners.AttributesChangedListener;
+import org.springframework.beans.factory.annotation.Configurable;
 
 /**
  * A default implementation of a configuration by wrapping a service object. It
@@ -48,65 +40,76 @@ import org.rifidi.configuration.listeners.AttributesChangedListener;
  * @author Jochen Mader - jochen@pramari.com
  * @author Kyle Neumeier - kyle@pramari.com
  */
-public class DefaultConfigurationImpl implements Configuration, Cloneable {
+@Configurable
+public class DefaultConfigurationImpl implements Configuration, ServiceListener {
 	/** Logger for this class. */
 	private static final Log logger = LogFactory
 			.getLog(DefaultConfigurationImpl.class);
 
 	/** The object that gets serviced. */
-	private Object target;
+	private AtomicReference<RifidiService> target;
 	/** The id this service is registered by in the registry. */
-	private String serviceID;
-	/** Service registration for the instance. */
-	private ServiceRegistration registration;
-	/** Class this configuration is used for. */
-	private Class<?> clazz;
+	private final String serviceID;
 	/** Names of properties mapped to their annotations */
 	protected Map<String, Property> nameToProperty;
 	/** Names of operations mapped to their annotations */
 	protected Map<String, Operation> nameToOperation;
 	/** ID of the factory owning the configuration. */
-	protected String factoryID;
-	/** Attributes set while we diddn't have an actual instance. */
-	private Set<Attribute> attributes;
-	/** Listeners to changes of attributes on this object */
-	private Set<AttributesChangedListener> listeners;
-	/** The type of configuraiton. This is a hack for now */
-	private ConfigurationType type;
-
+	protected final String factoryID;
+	/** Attributes set while we didn't have an actual instance. */
+	private volatile AttributeList attributes;
 	/**
-	 * Protected constructor used by clone.
+	 * Map that has the attribute names as key and their position in the
+	 * attribute list as the value.
 	 */
-	protected DefaultConfigurationImpl() {
-		attributes = new HashSet<Attribute>();
-		listeners = new HashSet<AttributesChangedListener>();
-	}
+	private volatile Map<String, Integer> nameToPos;
+	/** Listeners to changes of attributes on this object */
+	private final Set<AttributesChangedListener> listeners;
+	/** The type of configuraiton. This is a hack for now */
+	private volatile ConfigurationType type;
+	/** The bundle context for registering services. */
+	private volatile BundleContext context;
 
 	/**
 	 * Constructor.
 	 * 
-	 * @param target
+	 * @param context
+	 * @param serviceID
+	 * @param factoryID
+	 * @param attributes
 	 */
-	public DefaultConfigurationImpl(Class<?> clazz, String factoryID) {
-		this.clazz = clazz;
+	public DefaultConfigurationImpl(final String serviceID,
+			final String factoryID, final AttributeList attributes) {
 		this.nameToProperty = new HashMap<String, Property>();
 		this.nameToOperation = new HashMap<String, Operation>();
 		this.factoryID = factoryID;
-		if (clazz.isAnnotationPresent(JMXMBean.class)) {
-			// check method annotations
-			for (Method method : clazz.getMethods()) {
-				// scan for operations annotation
-				if (method.isAnnotationPresent(Operation.class)) {
-					nameToOperation.put(method.getName(), (Operation) method
-							.getAnnotation(Operation.class));
-				}
-				// scan for property annotation
-				if (method.isAnnotationPresent(Property.class)) {
-					nameToProperty.put(method.getName().substring(3),
-							(Property) method.getAnnotation(Property.class));
-				}
-			}
-		}
+		this.serviceID = serviceID;
+		this.attributes = (AttributeList)attributes.clone();
+		this.listeners = new CopyOnWriteArraySet<AttributesChangedListener>();
+		this.target = new AtomicReference<RifidiService>(null);
+		// if (clazz.isAnnotationPresent(JMXMBean.class)) {
+		// // check method annotations
+		// for (Method method : clazz.getMethods()) {
+		// // scan for operations annotation
+		// if (method.isAnnotationPresent(Operation.class)) {
+		// nameToOperation.put(method.getName(), (Operation) method
+		// .getAnnotation(Operation.class));
+		// }
+		// // scan for property annotation
+		// if (method.isAnnotationPresent(Property.class)) {
+		// nameToProperty.put(method.getName().substring(3),
+		// (Property) method.getAnnotation(Property.class));
+		// }
+		// }
+		// }
+	}
+
+	/**
+	 * @param context
+	 *            the context to set
+	 */
+	public void setContext(BundleContext context) {
+		this.context = context;
 	}
 
 	/*
@@ -120,49 +123,31 @@ public class DefaultConfigurationImpl implements Configuration, Cloneable {
 	}
 
 	/**
-	 * Set the service ID for this configuration
-	 * 
-	 * @param serviceID
-	 *            the serviceID to set
-	 */
-	public void setServiceID(String serviceID) {
-		// TODO: check if the id ha already been set?
-		if (target instanceof RifidiService) {
-			((RifidiService) target).setID(serviceID);
-		}
-		this.serviceID = serviceID;
-	}
-
-	/**
 	 * Set the service that this configuration wraps
 	 * 
 	 * @param target
 	 *            the target to set
 	 */
-	public void setTarget(Object target) {
-		if (!target.getClass().equals(clazz)) {
-			throw new RuntimeException("Got " + target.getClass()
-					+ " expected " + clazz);
-		}
-		this.target = target;
-		// TODO: check if the id ha already been set?
-		if (target instanceof RifidiService) {
-			((RifidiService) target).setID(serviceID);
-		}
-		for (Attribute attribute : attributes) {
-			try {
-				setAttribute(attribute);
-			} catch (AttributeNotFoundException e) {
-				logger.warn("No Attribute with name " + attribute.getName()
-						+ " was found");
-			} catch (InvalidAttributeValueException e) {
-				logger.error("That should not happen: " + e);
-			} catch (MBeanException e) {
-				logger.error("That should not happen: " + e);
-			} catch (ReflectionException e) {
-				logger.error("That should not happen: " + e);
+	public void setTarget(final RifidiService target) {
+		if (this.target.compareAndSet(null, target)) {
+			if (target != null) {
+				target.setID(getServiceID());
+				// get the whole list of attributes from the target as we might
+				// only
+				// have a partial list from the config file
+				target.setAttributes(attributes);
+				// keep a local clone
+				attributes = (AttributeList) target.getAttributes().clone();
+				nameToPos = new HashMap<String, Integer>();
+				List<Attribute> attrs = attributes.asList();
+				for (int count = 0; count < attributes.size(); count++) {
+					nameToPos.put(attrs.get(count).getName(), count);
+				}
 			}
+			return;
 		}
+		// if the value was already set we got a problem
+		logger.warn("Tried to set the target but was already set.");
 	}
 
 	/*
@@ -176,18 +161,11 @@ public class DefaultConfigurationImpl implements Configuration, Cloneable {
 	}
 
 	/**
-	 * @return the type
-	 */
-	@Override
-	public ConfigurationType getType() {
-		return type;
-	}
-
-	/**
 	 * @param type
 	 *            the type to set
 	 */
-	public void setType(ConfigurationType type) {
+	public void setType(final ConfigurationType type) {
+		assert (type != null);
 		this.type = type;
 	}
 
@@ -197,25 +175,14 @@ public class DefaultConfigurationImpl implements Configuration, Cloneable {
 	 * @see javax.management.DynamicMBean#getAttribute(java.lang.String)
 	 */
 	@Override
-	public Object getAttribute(String attribute)
+	public Object getAttribute(final String attribute)
 			throws AttributeNotFoundException, MBeanException,
 			ReflectionException {
-		if (nameToProperty.containsKey(attribute)) {
-			try {
-				Method method = target.getClass().getMethod("get" + attribute);
-				return method.invoke(target);
-			} catch (SecurityException e) {
-				logger.error(e);
-			} catch (NoSuchMethodException e) {
-				logger.error(e);
-			} catch (IllegalArgumentException e) {
-				logger.error(e);
-			} catch (IllegalAccessException e) {
-				logger.error(e);
-			} catch (InvocationTargetException e) {
-				logger.error(e);
+		assert (attribute != null);
+		for (Attribute attr : attributes.asList()) {
+			if (attribute.equals(attr.getName())) {
+				return attribute;
 			}
-
 		}
 		throw new AttributeNotFoundException();
 	}
@@ -227,11 +194,11 @@ public class DefaultConfigurationImpl implements Configuration, Cloneable {
 	 */
 	@Override
 	public String[] getAttributeNames() {
-		ArrayList<String> attrNames = new ArrayList<String>();
-		for (MBeanAttributeInfo attrInfo : this.getMBeanInfo().getAttributes()) {
-			attrNames.add(attrInfo.getName());
+		Set<String> names = new HashSet<String>();
+		for (Attribute attr : attributes.asList()) {
+			names.add(attr.getName());
 		}
-		return attrNames.toArray(new String[attrNames.size()]);
+		return names.toArray(new String[0]);
 	}
 
 	/*
@@ -241,16 +208,15 @@ public class DefaultConfigurationImpl implements Configuration, Cloneable {
 	 */
 	@Override
 	public AttributeList getAttributes(String[] attributes) {
+		assert (attributes != null);
 		AttributeList ret = new AttributeList();
-		for (String obj : attributes) {
-			try {
-				ret.add(new Attribute(obj, getAttribute(obj)));
-			} catch (AttributeNotFoundException e) {
-				logger.error(e);
-			} catch (MBeanException e) {
-				logger.error(e);
-			} catch (ReflectionException e) {
-				logger.error(e);
+		Set<String> attribNames = new HashSet<String>();
+		for (int count = 0; count < attributes.length - 1; count++) {
+			attribNames.add(attributes[count]);
+		}
+		for (Attribute attr : this.attributes.asList()) {
+			if (attribNames.contains(attr.getName())) {
+				ret.add(attr);
 			}
 		}
 		return ret;
@@ -263,64 +229,15 @@ public class DefaultConfigurationImpl implements Configuration, Cloneable {
 	 */
 	@Override
 	public MBeanInfo getMBeanInfo() {
-		OpenMBeanAttributeInfo[] attrs = new OpenMBeanAttributeInfo[nameToProperty
-				.size()];
-		int counter = 0;
-		// assemble attributes
-		for (String name : nameToProperty.keySet()) {
-
-			// get the property annotation
-			Property prop = nameToProperty.get(name);
-
-			// build the descriptor
-			Descriptor descriptor = new DescriptorSupport();
-			descriptor.setField("immutableInfo", "true");
-			descriptor.setField("displayName", prop.displayName());
-			if (!prop.maxValue().equals("")) {
-				descriptor.setField(JMX.MAX_VALUE_FIELD, PropertyType.convert(
-						prop.maxValue(), prop.type()));
-			}
-			if (!prop.minValue().equals("")) {
-				descriptor.setField(JMX.MIN_VALUE_FIELD, PropertyType.convert(
-						prop.minValue(), prop.type()));
-			}
-			if (!prop.category().equals("")) {
-				descriptor
-						.setField("org.rifidi.edge.category", prop.category());
-			}
-			if (!prop.defaultValue().equals("")) {
-				descriptor.setField(JMX.DEFAULT_VALUE_FIELD, PropertyType
-						.convert(prop.defaultValue(), prop.type()));
-			}
-			descriptor
-					.setField("org.rifidi.edge.ordervalue", prop.orderValue());
-
-			attrs[counter] = new OpenMBeanAttributeInfoSupport(name, prop
-					.description(), PropertyType.getOpenType(prop.type()),
-					true, prop.writable(), false, descriptor);
-			counter++;
+		RifidiService service = target.get();
+		if (service != null) {
+			return service.getMBeanInfo();
 		}
-		counter = 0;
-		OpenMBeanOperationInfo[] opers = new OpenMBeanOperationInfo[nameToOperation
-				.size()];
-		// assemble operations
-		for (String name : nameToOperation.keySet()) {
-			Operation oper = nameToOperation.get(name);
-			opers[counter] = new OpenMBeanOperationInfoSupport(name, oper
-					.description(), null, SimpleType.VOID,
-					MBeanOperationInfo.ACTION);
-			counter++;
-		}
-
-		return new OpenMBeanInfoSupport(this.getClass().getName(),
-				"Property Manager MBean", attrs, null, opers, null);
+		return null;
 	}
 
-	/*
-	 * } catch (MBeanRegistrationException e) { (non-Javadoc)
-	 * 
-	 * @see javax.management.DynamicMBean#invoke(java.lang.String,
-	 * java.lang.Object[], java.lang.String[])
+	/* (non-Javadoc)
+	 * @see javax.management.DynamicMBean#invoke(java.lang.String, java.lang.Object[], java.lang.String[])
 	 */
 	@Override
 	public Object invoke(String actionName, Object[] params, String[] signature)
@@ -346,7 +263,7 @@ public class DefaultConfigurationImpl implements Configuration, Cloneable {
 		}
 		return null;
 	}
-
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -354,12 +271,16 @@ public class DefaultConfigurationImpl implements Configuration, Cloneable {
 	 * javax.management.DynamicMBean#setAttribute(javax.management.Attribute)
 	 */
 	@Override
-	public void setAttribute(Attribute attribute)
+	public void setAttribute(final Attribute attribute)
 			throws AttributeNotFoundException, InvalidAttributeValueException,
 			MBeanException, ReflectionException {
+		assert (attribute != null);
+		RifidiService service = target.get();
+		if (service != null) {
+			service.setAttribute(attribute);
+		}
 
-		_setAttribute(attribute);
-
+		attributes.set(nameToPos.get(attribute.getName()), attribute);
 		// TODO: remove this once we have AspectJ
 		try {
 			AttributeList list = new AttributeList();
@@ -381,87 +302,28 @@ public class DefaultConfigurationImpl implements Configuration, Cloneable {
 	 * )
 	 */
 	@Override
-	public AttributeList setAttributes(AttributeList attributes) {
-		AttributeList ret = new AttributeList();
-		for (Object obj : attributes) {
-			if (target == null) {
-				this.attributes.add((Attribute) obj);
-			} else {
-				try {
-					_setAttribute((Attribute) obj);
-					ret.add(new Attribute(((Attribute) obj).getName(),
-							getAttribute(((Attribute) obj).getName())));
-				} catch (AttributeNotFoundException e) {
-					logger.error(e);
-				} catch (InvalidAttributeValueException e) {
-					logger.error(e);
-				} catch (MBeanException e) {
-					logger.error(e);
-				} catch (ReflectionException e) {
-					logger.error(e);
-				}
-			}
+	public AttributeList setAttributes(final AttributeList attributes) {
+		assert (attributes != null);
+		RifidiService service = target.get();
+		if (service != null) {
+			service.setAttributes(attributes);
+		}
+		
+		for (Attribute attribute : attributes.asList()) {
+			this.attributes.set(nameToPos.get(attribute.getName()), attribute);
 		}
 
 		// TODO: remove this once we have AspectJ
-		for (AttributesChangedListener l : listeners) {
-			try {
-				l.attributesChanged(this.serviceID, ret);
-			} catch (Throwable e) {
-				e.printStackTrace();
+		try {
+			AttributeList list = (AttributeList) attributes.clone();
+			for (AttributesChangedListener l : listeners) {
+				l.attributesChanged(this.serviceID, list);
 			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			// ignore if there was a problem
 		}
-
-		return ret;
-	}
-
-	/**
-	 * Private helper method so I don't have to duplicate JMS Notification calls
-	 * 
-	 * @param attribute
-	 * @throws AttributeNotFoundException
-	 * @throws InvalidAttributeValueException
-	 * @throws MBeanException
-	 * @throws ReflectionException
-	 */
-	private void _setAttribute(Attribute attribute)
-			throws AttributeNotFoundException, InvalidAttributeValueException,
-			MBeanException, ReflectionException {
-		if (nameToProperty.containsKey(attribute.getName())) {
-			if (target == null) {
-				attributes.add(attribute);
-				return;
-			} else {
-				try {
-					Property prop = nameToProperty.get(attribute.getName());
-					Method method = target.getClass().getMethod(
-							"set" + attribute.getName(),
-							PropertyType.getClassFromType(prop.type()));
-
-					// if attribute is a string, but is supposed to be another
-					// type, convert it
-					if ((attribute.getValue() instanceof String)
-							&& prop.type() != PropertyType.PT_STRING) {
-						attribute = new Attribute(attribute.getName(),
-								PropertyType.convert((String) attribute
-										.getValue(), prop.type()));
-					}
-					method.invoke(target, attribute.getValue());
-					return;
-				} catch (SecurityException e) {
-					logger.error(e);
-				} catch (NoSuchMethodException e) {
-					logger.error(e);
-				} catch (IllegalArgumentException e) {
-					logger.error(e);
-				} catch (IllegalAccessException e) {
-					logger.error(e);
-				} catch (InvocationTargetException e) {
-					logger.error(e);
-				}
-			}
-		}
-		throw new AttributeNotFoundException();
+		return (AttributeList) attributes.clone();
 	}
 
 	/*
@@ -471,12 +333,7 @@ public class DefaultConfigurationImpl implements Configuration, Cloneable {
 	 */
 	@Override
 	public void destroy() {
-		if (registration != null) {
-			registration.unregister();
-			return;
-		}
-		logger
-				.error("Tried to unregister service that was not yet registered!");
+		logger.fatal("Implement destroy!!!");
 	}
 
 	/*
@@ -485,42 +342,12 @@ public class DefaultConfigurationImpl implements Configuration, Cloneable {
 	 * @see org.rifidi.configuration.Configuration#getAttributes()
 	 */
 	@Override
-	public Map<String, String> getAttributes() {
-		Map<String, String> ret = new HashMap<String, String>();
-		try {
-			for (String name : nameToProperty.keySet()) {
-				ret.put(name, getAttribute(name).toString());
-			}
-			return ret;
-		} catch (AttributeNotFoundException e) {
-			logger.error("Problem getting property: " + e);
-		} catch (MBeanException e) {
-			logger.error("Problem getting property: " + e);
-		} catch (ReflectionException e) {
-			logger.error("Problem getting property: " + e);
+	public Map<String, Object> getAttributes() {
+		Map<String, Object> ret=new HashMap<String, Object>();
+		for (Attribute attr : this.attributes.asList()) {
+			ret.put(attr.getName(), attr.getValue());
 		}
-		return Collections.emptyMap();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#clone()
-	 */
-	@Override
-	public Object clone() {
-		DefaultConfigurationImpl config = new DefaultConfigurationImpl();
-		config.nameToOperation = new HashMap<String, Operation>(nameToOperation);
-		config.nameToProperty = new HashMap<String, Property>(nameToProperty);
-		config.factoryID = factoryID;
-		config.clazz = clazz;
-		return config;
-	}
-
-	@Override
-	public void setServiceRegistration(ServiceRegistration registration) {
-		this.registration = registration;
-
+		return ret;
 	}
 
 	/*
@@ -547,4 +374,22 @@ public class DefaultConfigurationImpl implements Configuration, Cloneable {
 			AttributesChangedListener listener) {
 		listeners.remove(listener);
 	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.osgi.framework.ServiceListener#serviceChanged(org.osgi.framework.
+	 * ServiceEvent)
+	 */
+	@Override
+	public void serviceChanged(ServiceEvent arg0) {
+		if (arg0.getServiceReference().getProperty("serviceid") != null
+				&& arg0.getServiceReference().getProperty("serviceid").equals(
+						getServiceID())) {
+			setTarget((RifidiService) context.getService(arg0
+					.getServiceReference()));
+		}
+	}
+
 }

@@ -31,10 +31,4 @@
 		<osgi:listener ref="configurationService" bind-method="bind"
 			unbind-method="unbind" />
 	</osgi:set>
-
-	<osgi:set id="RifidiServiceSet" interface="org.rifidi.configuration.RifidiService"
-		cardinality="0..N">
-		<osgi:listener ref="configurationService" bind-method="bindRifidiService"
-			unbind-method="unbindRifidiService" />
-	</osgi:set>
 </beans>

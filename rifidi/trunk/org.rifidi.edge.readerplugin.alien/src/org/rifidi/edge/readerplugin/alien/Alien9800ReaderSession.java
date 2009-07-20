@@ -36,7 +36,7 @@ public class Alien9800ReaderSession extends AbstractIPSensorSession {
 	public static final String WELCOME = "Alien";
 	/** Service used to send out notifications */
 	private NotifierService notifierService;
-	/** The ID of the reader this session belongs to */
+	/** The FACTORY_ID of the reader this session belongs to */
 	private String readerID;
 	/** The message parser that parses messages from the socket */
 	private AlienMessageParsingStrategy messageParser;
@@ -94,7 +94,7 @@ public class Alien9800ReaderSession extends AbstractIPSensorSession {
 	 * 
 	 * @param sensor
 	 * @param id
-	 *            The ID of the session
+	 *            The FACTORY_ID of the session
 	 * @param host
 	 *            The IP to connect to
 	 * @param port
@@ -114,7 +114,7 @@ public class Alien9800ReaderSession extends AbstractIPSensorSession {
 	 * @param notifierService
 	 *            The service for sending client notifications
 	 * @param readerID
-	 *            The ID of the reader that created this session
+	 *            The FACTORY_ID of the reader that created this session
 	 */
 	public Alien9800ReaderSession(AbstractSensor<?> sensor, String id,
 			String host, int port, int reconnectionInterval,

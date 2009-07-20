@@ -11,7 +11,7 @@ package org.rifidi.edge.readerplugin.alien.commandobject;
  */
 public class AlienException extends Exception {
 
-	/** SerialVersion ID */
+	/** SerialVersion FACTORY_ID */
 	private static final long serialVersionUID = 1L;
 
 	/**

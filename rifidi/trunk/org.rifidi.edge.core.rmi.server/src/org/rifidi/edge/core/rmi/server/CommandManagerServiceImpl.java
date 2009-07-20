@@ -65,14 +65,7 @@ public class CommandManagerServiceImpl implements CommandManagerService {
 		AbstractCommandConfigurationFactory factory = this.commandDAO
 				.getCommandFactoryByID(commandConfigurationType);
 		if (factory != null) {
-			Configuration configuration = factory
-					.getEmptyConfiguration(commandConfigurationType);
-
-			if (configuration != null) {
-				configuration.setAttributes(properties);
-				factory.createService(configuration);
-				return configuration.getServiceID();
-			}
+			configurationService.createService(commandConfigurationType, properties);
 		}
 		return null;
 	}
@@ -122,9 +115,11 @@ public class CommandManagerServiceImpl implements CommandManagerService {
 			return null;
 		}
 
-		Configuration config = factory
-				.getEmptyConfiguration(commandConfigurationType);
-		return config.getMBeanInfo();
+//		Configuration config = factory
+//				.getEmptyConfiguration(commandConfigurationType);
+//		return config.getMBeanInfo();
+		//TODO: needs fixing
+		return null;
 	}
 
 	/*

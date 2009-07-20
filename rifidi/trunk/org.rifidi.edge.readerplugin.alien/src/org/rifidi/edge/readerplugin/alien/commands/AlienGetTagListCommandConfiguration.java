@@ -125,7 +125,6 @@ public class AlienGetTagListCommandConfiguration extends
 	 *            the antenna_sequence to set
 	 */
 	public void setAntennaSequence(String antenna_sequence) {
-		// System.out.println("Attempting to set antenna seq!");
 		if (isValidAntennaSequence(antenna_sequence)) {
 			this.antenna_sequence = antenna_sequence;
 		}

@@ -14,7 +14,6 @@
 	<bean id="AutoModeFactory"
 		class="org.rifidi.edge.readerplugin.alien.autonomous.AlienAutonomousSensorFactory">
 		<property name="context" ref="bundleContext" />
-		<property name="template" ref="internalMB" />
 		<property name="notifierService" ref="JMSNotifierService" />
 	</bean>
 
@@ -22,5 +21,6 @@
 	<bean id="commandConfigurationFactory"
 		class="org.rifidi.edge.readerplugin.alien.Alien9800CommandConfigurationFactory">
 		<property name="context" ref="bundleContext" />
+		<property name="template" ref="internalMB" />
 	</bean>
 </beans>

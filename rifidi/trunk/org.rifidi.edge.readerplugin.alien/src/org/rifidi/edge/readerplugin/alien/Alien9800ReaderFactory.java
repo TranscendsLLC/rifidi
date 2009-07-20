@@ -4,10 +4,15 @@
 package org.rifidi.edge.readerplugin.alien;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
+import javax.management.MBeanInfo;
+
+import org.rifidi.configuration.ConfigurationType;
 import org.rifidi.edge.core.sensors.base.AbstractSensor;
 import org.rifidi.edge.core.sensors.base.AbstractSensorFactory;
 import org.rifidi.edge.core.services.notification.NotifierService;
@@ -24,7 +29,7 @@ public class Alien9800ReaderFactory extends
 
 	/** JMS template for sending tag data to JMS Queue */
 	private JmsTemplate template;
-	/** The Unique ID for this Factory */
+	/** The Unique FACTORY_ID for this Factory */
 	public static final String FACTORY_ID = "Alien9800";
 	/** Description of the sensorSession. */
 	private static final String description = "The Alien 9800 is an IP based RFID SensorSession using a telnet interface.";
@@ -32,6 +37,16 @@ public class Alien9800ReaderFactory extends
 	private static final String name = "Alien9800";
 	/** A JMS event notification sender */
 	private NotifierService notifierService;
+	/** Blueprint for a reader. */
+	private final MBeanInfo readerInfo;
+
+	/**
+	 * Constructor.
+	 */
+	public Alien9800ReaderFactory() {
+		super();
+		readerInfo = (new Alien9800Reader()).getMBeanInfo();
+	}
 
 	/**
 	 * Called by spring
@@ -81,21 +96,6 @@ public class Alien9800ReaderFactory extends
 		return ret;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.rifidi.configuration.AbstractServiceFactory#customConfig(java
-	 * .lang.Object)
-	 */
-	@Override
-	public void customConfig(Alien9800Reader instance) {
-		instance.setTemplate((JmsTemplate) template);
-		instance.setNotifiyService(notifierService);
-		Set<String> interfaces = new HashSet<String>();
-		interfaces.add(AbstractSensor.class.getName());
-		instance.register(getContext(), interfaces);
-	}
-
 	@Override
 	public String getDescription() {
 		return description;
@@ -104,6 +104,39 @@ public class Alien9800ReaderFactory extends
 	@Override
 	public String getDisplayName() {
 		return name;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.configuration.ServiceFactory#createInstance(java.lang.String,
+	 * java.lang.String)
+	 */
+	@Override
+	public void createInstance(String factoryID, String serviceID) {
+		assert (factoryID.equals(FACTORY_ID));
+		Alien9800Reader instance = new Alien9800Reader();
+		instance.setID(serviceID);
+		instance.setTemplate((JmsTemplate) template);
+		instance.setNotifiyService(notifierService);
+		Set<String> interfaces = new HashSet<String>();
+		interfaces.add(AbstractSensor.class.getName());
+		Map<String, String> parms = new HashMap<String, String>();
+		parms.put("type", ConfigurationType.READER.toString());
+		instance.register(getContext(), interfaces, parms);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.configuration.ServiceFactory#getServiceDescription(java.lang
+	 * .String)
+	 */
+	@Override
+	public MBeanInfo getServiceDescription(String factoryID) {
+		return (MBeanInfo) readerInfo.clone();
 	}
 
 }

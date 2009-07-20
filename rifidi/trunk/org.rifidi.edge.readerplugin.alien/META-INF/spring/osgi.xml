@@ -28,11 +28,8 @@
 	<!-- Put command configuration service in OSGi Registry -->
 	<osgi:service id="commandConfigurationFactoryService" ref="commandConfigurationFactory">
 		<osgi:interfaces>
-			<value>org.rifidi.configuration.ServiceFactory
-			</value>
-			<value>
-				org.rifidi.edge.core.sensors.commands.AbstractCommandConfigurationFactory
-			</value>
+			<value>org.rifidi.configuration.ServiceFactory</value>
+			<value>org.rifidi.edge.core.sensors.commands.AbstractCommandConfigurationFactory</value>
 		</osgi:interfaces>
 	</osgi:service>
 
