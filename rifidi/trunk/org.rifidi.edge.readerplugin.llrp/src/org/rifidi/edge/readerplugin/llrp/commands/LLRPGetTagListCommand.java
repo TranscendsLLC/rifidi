@@ -24,7 +24,7 @@ public class LLRPGetTagListCommand extends AbstractLLRPCommand {
 
 	LLRPReaderSession session = null;
 	
-	private int roSpecID = 0;
+	private int roSpecID = 1;
 	
 	/**
 	 * Constructor for LLRPGetTagListCommand

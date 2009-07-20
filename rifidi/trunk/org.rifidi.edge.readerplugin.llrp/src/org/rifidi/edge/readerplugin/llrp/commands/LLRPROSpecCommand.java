@@ -60,7 +60,7 @@ public class LLRPROSpecCommand extends AbstractLLRPCommand {
 	/**
 	 * The ROSpecID.
 	 */
-	private int rospec_id = -1;
+	private int rospec_id = 1;
 
 	private int rospec_trigger = -1;
 

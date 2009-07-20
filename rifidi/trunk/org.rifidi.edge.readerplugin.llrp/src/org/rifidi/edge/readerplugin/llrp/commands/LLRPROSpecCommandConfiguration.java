@@ -31,7 +31,7 @@ public class LLRPROSpecCommandConfiguration extends
 	/**
 	 * 
 	 */
-	private int roSpecID = 0;
+	private int roSpecID = 1;
 
 	/**
 	 * 
@@ -160,9 +160,9 @@ public class LLRPROSpecCommandConfiguration extends
 	 * 
 	 * @return the roSpecID
 	 */
-	@Property(displayName = "RO Spec ID", description = "The ID of the "
+	@Property(displayName = "ROSpec ID", description = "The ID of the "
 			+ "ROSpec", writable = true, type = PropertyType.PT_INTEGER, minValue = ""
-			+ "0", maxValue = "16535", category=category, orderValue=1)
+			+ "1", maxValue = "16535", category=category, orderValue=1)
 	public Integer getROSpecID() {
 		return roSpecID;
 	}
@@ -173,7 +173,7 @@ public class LLRPROSpecCommandConfiguration extends
 	@Property(displayName = "Trigger Type", description = "The type of ROSpec it is, "
 		+ "with \'NULL\' being a null trigger and \'PER\' being a periodic trigger.  "
 		+ "Periodic triggers will send back tags using the duration value you set. "
-		+ " ", writable = true, type = PropertyType.PT_STRING, category=category, orderValue=2)
+		+ " ", defaultValue="NULL", writable = true, type = PropertyType.PT_STRING, category=category, orderValue=2)
 	public String getTriggerType() {
 		return triggerType;
 	}
