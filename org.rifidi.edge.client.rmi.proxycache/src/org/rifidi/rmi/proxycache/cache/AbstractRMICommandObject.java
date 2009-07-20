@@ -6,6 +6,7 @@ package org.rifidi.rmi.proxycache.cache;
 import org.rifidi.rmi.proxycache.Activator;
 import org.rifidi.rmi.proxycache.exceptions.AuthenticationException;
 import org.rifidi.rmi.proxycache.exceptions.ServerUnavailable;
+import org.springframework.remoting.RemoteLookupFailureException;
 import org.springframework.remoting.rmi.RmiProxyFactoryBean;
 import org.springframework.security.context.SecurityContextHolder;
 
@@ -68,6 +69,8 @@ public abstract class AbstractRMICommandObject<T, E extends Exception> {
 		} catch (org.springframework.security.AuthenticationException ex) {
 			throw new AuthenticationException(
 					"Invalid security credentials when making remote call ", ex);
+		} catch (RemoteLookupFailureException ex) {
+			throw new ServerUnavailable();
 		}
 	}
 
