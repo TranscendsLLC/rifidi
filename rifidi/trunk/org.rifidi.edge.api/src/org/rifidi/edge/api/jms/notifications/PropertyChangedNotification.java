@@ -18,9 +18,6 @@ public class PropertyChangedNotification implements Serializable {
 	private String configID;
 	/** The attributes that have changed */
 	private AttributeList attributes;
-	/** True if the configuration is a reader, false if it is a command */
-	private boolean isReader;
-
 	/**
 	 * Constructor.
 	 * 
@@ -33,11 +30,10 @@ public class PropertyChangedNotification implements Serializable {
 	 *            CommandConfiguration
 	 */
 	public PropertyChangedNotification(String configurationID,
-			AttributeList attributes, boolean isReader) {
+			AttributeList attributes) {
 		super();
 		this.configID = configurationID;
 		this.attributes = attributes;
-		this.isReader = isReader;
 	}
 
 	/**
@@ -56,16 +52,6 @@ public class PropertyChangedNotification implements Serializable {
 	 */
 	public AttributeList getAttributes() {
 		return attributes;
-	}
-
-	/**
-	 * Is the PropertyChangeNotification for a reader?
-	 * 
-	 * @return true if the configuration is for a reader. False if it is for a
-	 *         command
-	 */
-	public boolean isReader() {
-		return isReader;
 	}
 
 }
