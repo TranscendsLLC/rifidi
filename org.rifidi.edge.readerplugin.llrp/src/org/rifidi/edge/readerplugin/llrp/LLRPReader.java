@@ -273,8 +273,7 @@ public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 	 */
 	@Override
 	public void destroy() {
-		super.unregister();
+		super.destroy();
 		destroySensorSession(this.session);
-
 	}
 }

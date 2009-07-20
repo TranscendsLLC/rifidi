@@ -50,12 +50,6 @@ public class SensorManagerServiceImpl implements SensorManagerService {
 	public void createReader(String readerConfigurationFactoryID,
 			AttributeList readerConfigurationProperties) {
 		logger.debug("RMI call: createReader");
-
-		// get the sensorSession configuration factory that corresponds to the
-		// ID
-		AbstractSensorFactory<?> readerConfigFactory = this.readerDAO
-				.getReaderFactoryByID(readerConfigurationFactoryID);
-
 		configurationService.createService(readerConfigurationFactoryID, readerConfigurationProperties);
 	}
 
@@ -66,24 +60,7 @@ public class SensorManagerServiceImpl implements SensorManagerService {
 	@Override
 	public void deleteReader(String readerConfigurationID) {
 		logger.debug("RMI call: deleteReader");
-		Configuration config = configurationService
-				.getConfiguration(readerConfigurationID);
-		AbstractSensor<?> readerConfig = readerDAO
-				.getReaderByID(readerConfigurationID);
-		if (config != null) {
-			config.destroy();
-		} else {
-			logger.warn("No configuraion found with ID: "
-					+ readerConfigurationID);
-		}
-
-		if (readerConfig != null) {
-			readerConfig.destroy();
-		} else {
-			logger.warn("No sensorSession configuraion found with ID: "
-					+ readerConfigurationID);
-		}
-
+		configurationService.destroyService(readerConfigurationID);
 	}
 
 	/* (non-Javadoc)

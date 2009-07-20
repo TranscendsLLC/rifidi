@@ -128,7 +128,6 @@ public class AlienAutonomousSensor
 	@Override
 	public void destroy() {
 		super.destroy();
-		super.unregister();
 		destroySensorSession(session);
 	}
 

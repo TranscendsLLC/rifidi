@@ -189,7 +189,6 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 	@Override
 	public void destroy() {
 		super.destroy();
-		super.unregister();
 		destroySensorSession(this.session);
 	}
 
