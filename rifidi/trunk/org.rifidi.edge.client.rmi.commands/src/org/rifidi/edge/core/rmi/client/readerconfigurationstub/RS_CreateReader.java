@@ -50,7 +50,9 @@ public class RS_CreateReader extends
 	protected String performRemoteCall(Object remoteObject)
 			throws RuntimeException {
 		SensorManagerService stub = (SensorManagerService) remoteObject;
-		return stub.createReader(readerFactoryID, attributes);
+		stub.createReader(readerFactoryID, attributes);
+		//TODO: this might not be clean
+		return "";
 	}
 
 }

@@ -68,8 +68,10 @@ public class RS_SubmitCommand extends
 	protected Integer performRemoteCall(Object remoteObject)
 			throws CommandSubmissionException {
 		SensorManagerService stub = (SensorManagerService) remoteObject;
-		return stub.submitCommand(readerID, sessionID, commandID,
+		stub.submitCommand(readerID, sessionID, commandID,
 				repeatInterval, timeUnit);
+		//TODO: this might not be clean
+		return 0;
 
 	}
 
