@@ -147,11 +147,7 @@ public interface NotifierService {
 	 *            the ID of the configuration
 	 * @param attributes
 	 *            The changed attributes
-	 * @param isReader
-	 *            true if the type of the configuration is a reader, false if
-	 *            the type is a command
 	 */
-	void attributesChanged(String configurationID, AttributeList attributes,
-			boolean isReader);
+	void attributesChanged(String configurationID, AttributeList attributes);
 
 }

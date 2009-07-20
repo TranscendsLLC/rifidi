@@ -2,7 +2,6 @@ package org.rifidi.configuration.impl;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -30,6 +29,7 @@ import org.rifidi.configuration.RifidiService;
 import org.rifidi.configuration.annotations.Operation;
 import org.rifidi.configuration.annotations.Property;
 import org.rifidi.configuration.listeners.AttributesChangedListener;
+import org.rifidi.edge.core.services.notification.NotifierService;
 import org.springframework.beans.factory.annotation.Configurable;
 
 /**
@@ -69,6 +69,8 @@ public class DefaultConfigurationImpl implements Configuration, ServiceListener 
 	private volatile ConfigurationType type;
 	/** The bundle context for registering services. */
 	private volatile BundleContext context;
+	/** Notifier service for jms messages. */
+	private final NotifierService notifierService;
 
 	/**
 	 * Constructor.
@@ -79,29 +81,16 @@ public class DefaultConfigurationImpl implements Configuration, ServiceListener 
 	 * @param attributes
 	 */
 	public DefaultConfigurationImpl(final String serviceID,
-			final String factoryID, final AttributeList attributes) {
+			final String factoryID, final AttributeList attributes,
+			final NotifierService notifierService) {
+		this.notifierService = notifierService;
 		this.nameToProperty = new HashMap<String, Property>();
 		this.nameToOperation = new HashMap<String, Operation>();
 		this.factoryID = factoryID;
 		this.serviceID = serviceID;
-		this.attributes = (AttributeList)attributes.clone();
+		this.attributes = (AttributeList) attributes.clone();
 		this.listeners = new CopyOnWriteArraySet<AttributesChangedListener>();
 		this.target = new AtomicReference<RifidiService>(null);
-		// if (clazz.isAnnotationPresent(JMXMBean.class)) {
-		// // check method annotations
-		// for (Method method : clazz.getMethods()) {
-		// // scan for operations annotation
-		// if (method.isAnnotationPresent(Operation.class)) {
-		// nameToOperation.put(method.getName(), (Operation) method
-		// .getAnnotation(Operation.class));
-		// }
-		// // scan for property annotation
-		// if (method.isAnnotationPresent(Property.class)) {
-		// nameToProperty.put(method.getName().substring(3),
-		// (Property) method.getAnnotation(Property.class));
-		// }
-		// }
-		// }
 	}
 
 	/**
@@ -236,8 +225,11 @@ public class DefaultConfigurationImpl implements Configuration, ServiceListener 
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see javax.management.DynamicMBean#invoke(java.lang.String, java.lang.Object[], java.lang.String[])
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see javax.management.DynamicMBean#invoke(java.lang.String,
+	 * java.lang.Object[], java.lang.String[])
 	 */
 	@Override
 	public Object invoke(String actionName, Object[] params, String[] signature)
@@ -263,7 +255,7 @@ public class DefaultConfigurationImpl implements Configuration, ServiceListener 
 		}
 		return null;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -281,17 +273,7 @@ public class DefaultConfigurationImpl implements Configuration, ServiceListener 
 		}
 
 		attributes.set(nameToPos.get(attribute.getName()), attribute);
-		// TODO: remove this once we have AspectJ
-		try {
-			AttributeList list = new AttributeList();
-			list.add(new Attribute(attribute.getName(), getAttribute(attribute
-					.getName())));
-			for (AttributesChangedListener l : listeners) {
-				l.attributesChanged(this.serviceID, list);
-			}
-		} catch (Exception e) {
-			// ignore if there was a problem
-		}
+		notifierService.attributesChanged(getServiceID(), (AttributeList)attributes.clone());
 	}
 
 	/*
@@ -308,21 +290,12 @@ public class DefaultConfigurationImpl implements Configuration, ServiceListener 
 		if (service != null) {
 			service.setAttributes(attributes);
 		}
-		
+
 		for (Attribute attribute : attributes.asList()) {
 			this.attributes.set(nameToPos.get(attribute.getName()), attribute);
 		}
-
-		// TODO: remove this once we have AspectJ
-		try {
-			AttributeList list = (AttributeList) attributes.clone();
-			for (AttributesChangedListener l : listeners) {
-				l.attributesChanged(this.serviceID, list);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			// ignore if there was a problem
-		}
+		
+		notifierService.attributesChanged(getServiceID(), (AttributeList)attributes.clone());
 		return (AttributeList) attributes.clone();
 	}
 
@@ -343,7 +316,7 @@ public class DefaultConfigurationImpl implements Configuration, ServiceListener 
 	 */
 	@Override
 	public Map<String, Object> getAttributes() {
-		Map<String, Object> ret=new HashMap<String, Object>();
+		Map<String, Object> ret = new HashMap<String, Object>();
 		for (Attribute attr : this.attributes.asList()) {
 			ret.put(attr.getName(), attr.getValue());
 		}
