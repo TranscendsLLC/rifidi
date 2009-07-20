@@ -1,4 +1,3 @@
-
 package org.rifidi.edge.core.rmi.client.commandconfigurationstub;
 
 import javax.management.AttributeList;
@@ -37,17 +36,19 @@ public class CCCreateCommandConfiguration extends
 		this.commandConfigurationType = comamndConfigurationType;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.rifidi.rmi.proxycache.cache.AbstractRMICommandObject#performRemoteCall(java.lang.Object)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.rmi.proxycache.cache.AbstractRMICommandObject#performRemoteCall
+	 * (java.lang.Object)
 	 */
 	@Override
 	protected String performRemoteCall(Object remoteObject)
 			throws RuntimeException {
 		CommandManagerService stub = (CommandManagerService) remoteObject;
-		return stub.createCommand(commandConfigurationType,
-				this.properties);
+		stub.createCommand(commandConfigurationType, this.properties);
+		return "";
 	}
-
-	
 
 }

@@ -1,4 +1,3 @@
-
 package org.rifidi.edge.core.rmi.client.commandconfigurationstub;
 
 import javax.management.AttributeList;
@@ -38,17 +37,19 @@ public class CCSetCommandConfigProperties extends
 		this.properties = properties;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.rifidi.rmi.proxycache.cache.AbstractRMICommandObject#performRemoteCall(java.lang.Object)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.rmi.proxycache.cache.AbstractRMICommandObject#performRemoteCall
+	 * (java.lang.Object)
 	 */
 	@Override
 	protected AttributeList performRemoteCall(Object remoteObject)
 			throws RuntimeException {
 		CommandManagerService stub = (CommandManagerService) remoteObject;
-		return stub.setCommandProperties(
-				this.commandConfigurationID, this.properties);
+		stub.setCommandProperties(this.commandConfigurationID, this.properties);
+		return null;
 	}
-
-
 
 }
