@@ -1,14 +1,10 @@
 package org.rifidi.edge.core.services.notification.internal;
 
-import java.util.Map;
-
 import javax.jms.Destination;
 import javax.management.AttributeList;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.rifidi.configuration.ConfigurationType;
-import org.rifidi.configuration.RifidiService;
 import org.rifidi.edge.api.SessionStatus;
 import org.rifidi.edge.api.jms.notifications.CommandConfigFactoryAdded;
 import org.rifidi.edge.api.jms.notifications.CommandConfigFactoryRemoved;
