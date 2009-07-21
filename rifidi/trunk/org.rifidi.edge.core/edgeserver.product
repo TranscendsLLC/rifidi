@@ -13,18 +13,29 @@
 -Dorg.rifidi.edge.configuration=/home/jochen/Desktop/test.ini
 -Dosgi.clean=true
 -Dorg.eclipse.equinox.http.jetty.http.port=8080
--Dorg.eclipse.equinox.http.jetty.http.host=127.0.0.1
+-Dorg.eclipse.equinox.http.jetty.http.host=0.0.0.0
+-Dorg.rifidi.edge.ale.host=127.0.0.1
+-Dorg.rifidi.edge.jms.hostname=0.0.0.0
+-Djava.rmi.server.hostname=0.0.0.0
 -Dorg.osgi.framework.bootdelegation=javax.xml.ws
 -Dcom.sun.management.jmxremote
 -Dcom.sun.management.jmxremote.authenticate=false
--Djava.rmi.server.hostname=127.0.0.1
 -Dorg.rifidi.edge.ale.port=8081
--Dorg.rifidi.edge.ale.host=127.0.0.1
 -Dorg.rifidi.edge.ale.read=aleread
 -Dosgi.framework.extensions=org.eclipse.equinox.weaving.hook 
 -Dorg.aspectj.osgi.verbose=true</vmArgs>
       <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts</vmArgsMac>
    </launcherArgs>
+
+   <launcher>
+      <solaris/>
+      <win useIco="false">
+         <bmp/>
+      </win>
+   </launcher>
+
+   <vm>
+   </vm>
 
    <plugins>
       <plugin id="com.springsource.javax.ejb"/>
