@@ -29,7 +29,9 @@ import org.springframework.jms.core.JmsTemplate;
  * @author Jochen Mader - jochen@pramari.com
  * @author Kyle Neumeier - kyle@pramari.com
  */
-public abstract class AbstractIPSensorSession extends AbstractSensorSession implements MessageParsingStrategy {
+public abstract class AbstractIPSensorSession extends AbstractSensorSession
+		implements
+			MessageParsingStrategy {
 	/** Logger for this class. */
 	private static final Log logger = LogFactory
 			.getLog(AbstractIPSensorSession.class);
@@ -58,8 +60,10 @@ public abstract class AbstractIPSensorSession extends AbstractSensorSession impl
 	 * goes down.
 	 */
 	private Thread connectionGuardian;
-	/** True if the socket is currently being connected. */
+	/** True if we are currently in the connect method. */
 	private AtomicBoolean connecting = new AtomicBoolean(false);
+	/** True if we are currently in the reconnect loop */
+	private AtomicBoolean reconnectLoop = new AtomicBoolean(false);
 
 	/**
 	 * Constructor.
@@ -78,9 +82,9 @@ public abstract class AbstractIPSensorSession extends AbstractSensorSession impl
 	 * @param template
 	 *            JMSTemplate to use to send tag data
 	 */
-	public AbstractIPSensorSession(AbstractSensor<?> sensor, String ID, String host, int port,
-			int reconnectionInterval, int maxConAttempts,
-			Destination destination, JmsTemplate template) {
+	public AbstractIPSensorSession(AbstractSensor<?> sensor, String ID,
+			String host, int port, int reconnectionInterval,
+			int maxConAttempts, Destination destination, JmsTemplate template) {
 		super(sensor, ID, destination, template);
 		this.host = host;
 		this.port = port;
@@ -195,22 +199,45 @@ public abstract class AbstractIPSensorSession extends AbstractSensorSession impl
 				executor = new ScheduledThreadPoolExecutor(1);
 				// try to open the socket
 				logger.info("Attempting to connect to : " + host + ":" + port);
-				for (int connCount = 0; connCount < maxConAttempts; connCount++) {
-					try {
-						socket = new Socket(host, port);
-						break;
-					} catch (IOException e) {
-						logger.warn("Unable to connect to reader on try nr "
-								+ connCount + " " + e);
-					}
-					// sleep between to connection attempts
-					try {
-						Thread.sleep(reconnectionInterval);
-					} catch (InterruptedException e) {
-						Thread.currentThread().interrupt();
-						return;
-					}
+
+				// begin reconnect loop. We have an atomic boolean that should
+				// be true as long as we are in the loop
+				if (!reconnectLoop.compareAndSet(false, true)) {
+					logger.warn("atomic boolean for recconnect "
+							+ "loop was already true.");
 				}
+				try {
+					// reconnect loop. try to connect maxConAteempts number of
+					// times, unless maxConAttempts is -1, in which case try
+					// forever.
+					for (int connCount = 0; connCount < maxConAttempts
+							|| maxConAttempts == -1; connCount++) {
+						try {
+							socket = new Socket(host, port);
+							break;
+						} catch (IOException e) {
+							logger
+									.debug("Unable to connect to reader on try nr "
+											+ connCount + " " + e);
+						}
+
+						// wait for a specified number of ms or for a notify
+						// call
+						try {
+							synchronized (reconnectLoop) {
+								reconnectLoop.wait(this.reconnectionInterval);
+							}
+						} catch (InterruptedException e) {
+							Thread.currentThread().interrupt();
+							break;
+						}
+						if (!reconnectLoop.get())
+							break;
+					}
+				} finally {
+					reconnectLoop.compareAndSet(true, false);
+				}
+
 				// no socket, we are screwed
 				if (socket == null) {
 					// revert
@@ -320,6 +347,16 @@ public abstract class AbstractIPSensorSession extends AbstractSensorSession impl
 				writeThread.interrupt();
 
 			}
+		}
+		// this is intended to be able to stop the connect method when we are in
+		// the reconnect loop
+		if (reconnectLoop.getAndSet(false)) {
+			synchronized (reconnectLoop) {
+				reconnectLoop.notify();
+			}
+			this.executor.shutdown();
+			this.executor = null;
+
 		}
 	}
 

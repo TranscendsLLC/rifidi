@@ -19,6 +19,7 @@ import java.util.Set;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.jms.Destination;
 import javax.jms.JMSException;
@@ -53,7 +54,6 @@ import org.llrp.ltk.types.LLRPMessage;
 import org.llrp.ltk.types.UnsignedInteger;
 import org.llrp.ltk.types.UnsignedShort;
 import org.rifidi.edge.api.SessionStatus;
-import org.rifidi.edge.core.sensors.SensorSession;
 import org.rifidi.edge.core.sensors.base.AbstractSensor;
 import org.rifidi.edge.core.sensors.base.AbstractSensorSession;
 import org.rifidi.edge.core.sensors.commands.Command;
@@ -70,8 +70,9 @@ import org.springframework.jms.core.MessageCreator;
  * 
  * @author Matthew Dean
  */
-public class LLRPReaderSession extends AbstractSensorSession implements
-		LLRPEndpoint {
+public class LLRPReaderSession extends AbstractSensorSession
+		implements
+			LLRPEndpoint {
 
 	/** Logger for this class. */
 	private static final Log logger = LogFactory
@@ -87,6 +88,13 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 	int maxConAttempts = -1;
 	int reconnectionInterval = -1;
 
+	/** atomic boolean that is true if we are inside the connection attempt loop */
+	private AtomicBoolean connectingLoop = new AtomicBoolean(false);
+	/** LLRP host */
+	private String host;
+	/** LLRP port */
+	private int port;
+
 	/**
 	 * 
 	 * @param sensor
@@ -99,12 +107,14 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 	 * @param notifierService
 	 * @param readerID
 	 */
-	public LLRPReaderSession(AbstractSensor<?> sensor, String id, String host, int reconnectionInterval,
-			int maxConAttempts, Destination destination, JmsTemplate template,
+	public LLRPReaderSession(AbstractSensor<?> sensor, String id, String host,
+			int port, int reconnectionInterval, int maxConAttempts,
+			Destination destination, JmsTemplate template,
 			NotifierService notifierService, String readerID) {
 		super(sensor, id, destination, template);
-		System.out.println(host);
-		this.connection = new LLRPConnector(this, host);
+		this.host = host;
+		this.port = port;
+		this.connection = new LLRPConnector(this, host, port);
 		this.maxConAttempts = maxConAttempts;
 		this.reconnectionInterval = reconnectionInterval;
 		this.notifierService = notifierService;
@@ -119,34 +129,53 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 	 */
 	@Override
 	public void connect() throws IOException {
-		logger.debug("Connecting");
+		logger.info("LLRP Session " + this.getID() + " on sensor "
+				+ this.getSensor().getID() + " attempting to connect to "
+				+ host + ":" + port);
 		this.setStatus(SessionStatus.CONNECTING);
+		// conntected flag
 		boolean connected = false;
-		for (int connCount = 0; connCount < maxConAttempts && !connected; connCount++) {
-			try {
-				// System.out.println("JUST BEFORE THE CONNECTION ATTEMPT");
-				((LLRPConnector) connection).connect();
-				connected = true;
+		// try to connect up to MaxConAttempts number of times, unless
+		// maxConAttempts is -1, in which case, try forever
+		connectingLoop.set(true);
+		try {
+			for (int connCount = 0; connCount < maxConAttempts
+					|| maxConAttempts == -1; connCount++) {
 
-				// System.out.println("JUST AFTER THE CONNECTION ATTEMPT");
-			} catch (LLRPConnectionAttemptFailedException e) {
-				logger.debug("Attempt to connect to LLRP reader failed: "
-						+ connCount);
-			} catch (org.apache.mina.common.RuntimeIOException e) {
-				logger.debug("Attempt to connect to LLRP reader failed: "
-						+ connCount);
-			}
-
-			if (!connected) {
+				// attempt to make the connection
 				try {
-					Thread.sleep(reconnectionInterval);
+					((LLRPConnector) connection).connect();
+					connected = true;
+					break;
+				} catch (LLRPConnectionAttemptFailedException e) {
+					logger.debug("Attempt to connect to LLRP reader failed: "
+							+ connCount);
+				} catch (org.apache.mina.common.RuntimeIOException e) {
+					logger.debug("Attempt to connect to LLRP reader failed: "
+							+ connCount);
+				}
+
+				// wait for a specified number of ms or until someone calls
+				// notify on the connetingLoop object
+				try {
+					synchronized (connectingLoop) {
+						connectingLoop.wait(reconnectionInterval);
+					}
 				} catch (InterruptedException e) {
 					Thread.currentThread().interrupt();
-					return;
+					break;
 				}
+
+				// if someone else wants us to stop, break from the for loop
+				if (!connectingLoop.get())
+					break;
 			}
+		} finally {
+			// make sure connecting loop is false!
+			connectingLoop.set(false);
 		}
 
+		// if not connected, exit
 		if (!connected) {
 			setStatus(SessionStatus.CLOSED);
 			throw new IOException("Cannot connect");
@@ -172,7 +201,7 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 				logger.warn("Executor was already active! ");
 			}
 			setStatus(SessionStatus.PROCESSING);
-			
+
 			// resubmit commands
 			while (commandQueue.peek() != null) {
 				executor.submit(commandQueue.poll());
@@ -181,9 +210,9 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 				for (Integer id : commands.keySet()) {
 					if (idToData.get(id).future == null) {
 						idToData.get(id).future = executor
-								.scheduleWithFixedDelay(commands.get(id),
-										0, idToData.get(id).interval,
-										idToData.get(id).unit);
+								.scheduleWithFixedDelay(commands.get(id), 0,
+										idToData.get(id).interval, idToData
+												.get(id).unit);
 					}
 				}
 			}
@@ -196,19 +225,27 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 		}
 
 	}
-
 	/**
 	 * 
 	 */
 	@Override
 	public void disconnect() {
 		try {
+			// if in the connecting loop, set atomic boolean to false and call
+			// notify on the connectingLoop monitor
+			if (connectingLoop.getAndSet(false)) {
+				synchronized (connectingLoop) {
+					connectingLoop.notify();
+				}
+			}
+			// if already connected, disconnect
 			if (processing.get()) {
 				if (processing.compareAndSet(true, false)) {
 					logger.debug("Disconnecting");
 					((LLRPConnector) connection).disconnect();
 				}
 			}
+			// make sure commands are canceled
 			synchronized (commands) {
 				for (Integer id : commands.keySet()) {
 					if (idToData.get(id).future != null) {
@@ -218,8 +255,12 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 				}
 			}
 		} finally {
-			executor.shutdownNow();
-			executor = null;
+			// make sure executor is shutdown!
+			if (executor != null) {
+				executor.shutdownNow();
+				executor = null;
+			}
+			// notify anyone who cares that session is now closed
 			setStatus(SessionStatus.CLOSED);
 		}
 
@@ -403,12 +444,12 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 				String EPCData = id.getEPC().toString(16);
 				EPCGeneration2Event gen2event = new EPCGeneration2Event();
 				gen2event.setEPCMemory(this.parseString(EPCData), 96);
-				
+
 				TagReadEvent tag = new TagReadEvent(readerID, gen2event, antid
 						.getAntennaID().intValue(), System.currentTimeMillis());
 				tagreaderevents.add(tag);
 			}
-			ReadCycle cycle=new ReadCycle(tagreaderevents, readerID, System
+			ReadCycle cycle = new ReadCycle(tagreaderevents, readerID, System
 					.currentTimeMillis());
 			sensor.send(cycle);
 			this.getTemplate().send(this.getDestination(),
