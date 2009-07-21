@@ -157,6 +157,7 @@ public class ReaderDAOImpl implements ReaderDAO {
 			Dictionary<String, String> parameters) {
 		logger.info("Reader bound:" + reader.getID());
 		this.abstractSensors.put(reader.getID(), reader);
+		notifierService.addReaderEvent(reader.getID());
 	}
 
 	/**
@@ -171,6 +172,7 @@ public class ReaderDAOImpl implements ReaderDAO {
 			Dictionary<String, String> parameters) {
 		logger.info("Reader unbound:" + reader.getID());
 		abstractSensors.remove(reader.getID());
+		notifierService.removeReaderEvent(reader.getID());
 	}
 
 	/**

@@ -15,6 +15,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
 
 import javax.management.Attribute;
 import javax.management.AttributeList;
+import javax.management.DynamicMBean;
 import javax.management.MBeanAttributeInfo;
 
 import org.apache.commons.configuration.ConfigurationException;
@@ -78,7 +79,8 @@ public class ConfigurationServiceImpl implements ConfigurationService, Configura
 		serviceNames = new ArrayList<String>();
 		configToRegsitration = new ConcurrentHashMap<Configuration, ServiceRegistration>();
 		factoryToConfigurations = loadConfig();
-		jmxService.setConfigurationControlMBean(this);
+		//TODO: review and reenable
+//		jmxService.setConfigurationControlMBean(this);
 		logger.debug("ConfigurationServiceImpl instantiated.");
 	}
 
