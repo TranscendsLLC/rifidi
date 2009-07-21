@@ -49,8 +49,8 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 	/** Password for the telnet interface. */
 	private String password = AlienReaderDefaultValues.PASSWORD;
 	/** Time between two connection attempts. */
-	private Long reconnectionInterval = Long
-			.parseLong(AlienReaderDefaultValues.RECONNECTION_INTERVAL);
+	private Integer reconnectionInterval = Integer
+			.parseInt(AlienReaderDefaultValues.RECONNECTION_INTERVAL);
 	/** Number of connection attempts before a connection goes into fail state. */
 	private Integer maxNumConnectionAttempts = Integer
 			.parseInt(AlienReaderDefaultValues.MAX_CONNECTION_ATTEMPTS);
@@ -113,7 +113,6 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 		readerProperties.put(PROP_INVERT_EXTERNAL_OUTPUT, "0");
 		readerProperties.put(PROP_INVERT_EXTERNAL_INPUT, "0");
 		readerProperties.put(PROP_PERSIST_TIME, "-1");
-		
 
 		propCommandsToBeExecuted = new LinkedBlockingQueue<AlienCommandObjectWrapper>();
 		propCommandsToBeExecuted.add(new AlienCommandObjectWrapper(
@@ -148,7 +147,7 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 				PROP_RF_ATTENUATION, new AlienSetCommandObject(
 						Alien9800ReaderSession.COMMAND_RF_ATTENUATION,
 						this.readerProperties.get(PROP_RF_ATTENUATION))));
-		
+
 		propCommandsToBeExecuted.add(new AlienCommandObjectWrapper(
 				PROP_PERSIST_TIME, new AlienSetCommandObject(
 						Alien9800ReaderSession.COMMAND_PERSIST_TIME,
@@ -325,9 +324,9 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 	 * @return the RECONNECTION_INTERVAL
 	 */
 	@Property(displayName = "Reconnection Interval", description = "Time between two"
-			+ " connection attempts (ms).", writable = true, type = PropertyType.PT_LONG, category = "conn"
+			+ " connection attempts (ms).", writable = true, type = PropertyType.PT_INTEGER, category = "conn"
 			+ "ection", defaultValue = AlienReaderDefaultValues.RECONNECTION_INTERVAL, orderValue = 4, minValue = "0")
-	public Long getReconnectionInterval() {
+	public Integer getReconnectionInterval() {
 		return reconnectionInterval;
 	}
 
@@ -335,17 +334,16 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 	 * @param RECONNECTION_INTERVAL
 	 *            the RECONNECTION_INTERVAL to set
 	 */
-	public void setReconnectionInterval(Long reconnectionInterval) {
+	public void setReconnectionInterval(Integer reconnectionInterval) {
 		this.reconnectionInterval = reconnectionInterval;
 	}
 
 	/**
 	 * @return the MAX_CONNECTION_ATTEMPTS
 	 */
-	@Property(displayName = "Maximum Connection Attempts", description = "Number of times to try to"
-			+ " connect to the sensorSession before the connection is marked as "
-			+ "failed.", writable = true, type = PropertyType.PT_INTEGER, category = "conn"
-			+ "ection", defaultValue = AlienReaderDefaultValues.MAX_CONNECTION_ATTEMPTS, orderValue = 5, minValue = "0")
+	@Property(displayName = "Maximum Connection Attempts", description = "Number of times to attempt to recconnect. "
+			+ "If -1, then try forever", writable = true, type = PropertyType.PT_INTEGER, category = "conn"
+			+ "ection", defaultValue = AlienReaderDefaultValues.MAX_CONNECTION_ATTEMPTS, orderValue = 5, minValue = "-1")
 	public Integer getMaxNumConnectionAttempts() {
 		return maxNumConnectionAttempts;
 	}
@@ -385,7 +383,7 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 	@Property(displayName = "Persist Time", description = "How long the tags will persist "
 			+ "in memory before they are read (-1 is an infinite amount of time)"
 			+ "", writable = true, type = PropertyType.PT_INTEGER, minValue = "-1"
-			+ "", maxValue = "16535", category = "General", defaultValue="-1")
+			+ "", maxValue = "16535", category = "General", defaultValue = "-1")
 	public Integer getPersistTime() {
 		return Integer.parseInt(readerProperties.get(PROP_PERSIST_TIME));
 	}
@@ -537,6 +535,5 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 			session.submit(command);
 		}
 	}
-	
-	
+
 }

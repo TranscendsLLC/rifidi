@@ -40,7 +40,7 @@ public class LLRPConstants {
 	/**
 	 * THe interval between reconnect attempts.  
 	 */
-	public final static String RECONNECTION_INTERVAL = "5001";
+	public final static String RECONNECTION_INTERVAL = "500";
 	
 	/**
 	 * The max times to try to connect before giving up.  

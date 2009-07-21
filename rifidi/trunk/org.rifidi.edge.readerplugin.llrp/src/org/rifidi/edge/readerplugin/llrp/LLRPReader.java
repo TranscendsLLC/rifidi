@@ -46,7 +46,7 @@ public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 	/** Port to connect to */
 	private int port = 5084;
 	/** Time between two connection attempts. */
-	private Long reconnectionInterval = 500l;
+	private Integer reconnectionInterval = 500;
 	/** Number of connection attempts before a connection goes into fail state. */
 	private Integer maxNumConnectionAttempts = 10;
 	/** JMS destination. */
@@ -76,7 +76,7 @@ public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 		if (session == null) {
 			sessionID++;
 			session = new LLRPReaderSession(this, Integer.toString(sessionID),
-					ipAddress, (int) (long) reconnectionInterval,
+					ipAddress, port, reconnectionInterval,
 					maxNumConnectionAttempts, destination, template,
 					notifyServiceWrapper, super.getID());
 
@@ -147,7 +147,9 @@ public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 	 */
 	@Override
 	public void applyPropertyChanges() {
-		session.transact(session.createSetReaderConfig());
+		if (session != null) {
+			session.transact(session.createSetReaderConfig());
+		}
 	}
 
 	/**
@@ -199,9 +201,9 @@ public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 	 * @return the reconnectionInterval
 	 */
 	@Property(displayName = "Reconnection Interval", description = "The interval to wait between"
-			+ "reconnection attempts", writable = true, type = PropertyType.PT_LONG, category = "connec"
+			+ "reconnection attempts", writable = true, type = PropertyType.PT_INTEGER, category = "connec"
 			+ "tion", orderValue = 3, defaultValue = LLRPConstants.RECONNECTION_INTERVAL)
-	public Long getReconnectionInterval() {
+	public Integer getReconnectionInterval() {
 		return reconnectionInterval;
 	}
 
@@ -211,7 +213,7 @@ public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 	 * @param reconnectionInterval
 	 *            the reconnectionInterval to set
 	 */
-	public void setReconnectionInterval(Long reconnectionInterval) {
+	public void setReconnectionInterval(Integer reconnectionInterval) {
 		this.reconnectionInterval = reconnectionInterval;
 	}
 
@@ -220,9 +222,9 @@ public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 	 * 
 	 * @return the maxNumConnectionAttempts
 	 */
-	@Property(displayName = "Maximum Connection Attempts", description = "Number of times to try to connect to the sensorSession"
-			+ ": before the connection is marked as failed.", writable = true, category = "conne"
-			+ "ction", type = PropertyType.PT_INTEGER, orderValue = 2, defaultValue = LLRPConstants.MAX_CONNECTION_ATTEMPTS)
+	@Property(displayName = "Maximum Connection Attempts", description = "Number of times to attempt to connect to the reader."
+			+ "  If -1, then try forever.", writable = true, category = "conne"
+			+ "ction", type = PropertyType.PT_INTEGER, orderValue = 2, defaultValue = LLRPConstants.MAX_CONNECTION_ATTEMPTS, minValue = "-1")
 	public Integer getMaxNumConnectionAttempts() {
 		return maxNumConnectionAttempts;
 	}
