@@ -1,6 +1,4 @@
-
 package org.rifidi.edge.core.services.esper.internal;
-
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -24,10 +22,9 @@ public class EsperManagementServiceImpl implements EsperManagementService {
 	/** Logger for this class. */
 	private static final Log logger = LogFactory
 			.getLog(EsperManagementServiceImpl.class);
-	/** Instance of the esper service. */
-	private EPServiceProvider epService;
-	
+
 	private final Configuration config;
+
 	/**
 	 * Constructor.
 	 */
@@ -44,7 +41,8 @@ public class EsperManagementServiceImpl implements EsperManagementService {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.services.esper.EsperManagementService#getProvider()
+	 * @see
+	 * org.rifidi.edge.core.services.esper.EsperManagementService#getProvider()
 	 */
 	@Override
 	public EPServiceProvider getProvider() {
