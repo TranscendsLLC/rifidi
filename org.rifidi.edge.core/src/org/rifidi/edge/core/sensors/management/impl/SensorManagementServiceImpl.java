@@ -490,7 +490,6 @@ public class SensorManagementServiceImpl implements SensorManagementService {
 		sensorLock.lock();
 		try {
 			logger.info("Sensor unbound:" + reader.getID());
-			physicalSensors.remove(reader.getID());
 			if (esperReceiver != null) {
 				try {
 					unpublishFromEsper(reader.getName());
@@ -498,6 +497,7 @@ public class SensorManagementServiceImpl implements SensorManagementService {
 					logger.fatal(e);
 				}
 			}
+			physicalSensors.remove(reader.getID());
 		} finally {
 			sensorLock.unlock();
 		}
