@@ -120,6 +120,7 @@ public class CommandDAOImpl implements CommandDAO {
 		logger.info("Command Configuration Bound: "
 				+ commandConfiguration.getID());
 		commands.put(commandConfiguration.getID(), commandConfiguration);
+		notifierService.addCommandEvent(commandConfiguration.getID());
 	}
 
 	/**
@@ -136,6 +137,7 @@ public class CommandDAOImpl implements CommandDAO {
 		logger.info("Command Configuration Unbound: "
 				+ commandConfiguration.getID());
 		commands.remove(commandConfiguration.getID());
+		notifierService.removeCommandEvent(commandConfiguration.getID());
 	}
 
 	/**
