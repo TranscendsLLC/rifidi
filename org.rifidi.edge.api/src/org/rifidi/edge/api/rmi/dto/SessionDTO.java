@@ -23,6 +23,12 @@ public class SessionDTO implements Serializable {
 	/** The ID of the session */
 	private String ID;
 
+	/**
+	 * Constructor.
+	 */
+	public SessionDTO() {
+	}
+
 	/***
 	 * Constructor
 	 * 
@@ -63,6 +69,27 @@ public class SessionDTO implements Serializable {
 	 */
 	public String getID() {
 		return ID;
+	}
+
+	/**
+	 * @param status the status to set
+	 */
+	public void setStatus(SessionStatus status) {
+		this.status = status;
+	}
+
+	/**
+	 * @param commands the commands to set
+	 */
+	public void setCommands(Set<CommandDTO> commands) {
+		this.commands = commands;
+	}
+
+	/**
+	 * @param iD the iD to set
+	 */
+	public void setID(String iD) {
+		ID = iD;
 	}
 
 }

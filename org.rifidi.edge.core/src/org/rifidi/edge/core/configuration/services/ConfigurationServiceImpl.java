@@ -22,13 +22,17 @@ import org.apache.commons.logging.LogFactory;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceRegistration;
+import org.rifidi.edge.api.rmi.dto.SessionDTO;
 import org.rifidi.edge.core.configuration.Configuration;
 import org.rifidi.edge.core.configuration.ConfigurationStore;
 import org.rifidi.edge.core.configuration.Constants;
+import org.rifidi.edge.core.configuration.RifidiService;
 import org.rifidi.edge.core.configuration.ServiceFactory;
 import org.rifidi.edge.core.configuration.ServiceStore;
 import org.rifidi.edge.core.configuration.impl.DefaultConfigurationImpl;
 import org.rifidi.edge.core.configuration.mbeans.ConfigurationControlMBean;
+import org.rifidi.edge.core.sensors.SensorSession;
+import org.rifidi.edge.core.sensors.base.AbstractSensor;
 import org.rifidi.edge.core.services.notification.NotifierService;
 
 /**
@@ -196,11 +200,11 @@ public class ConfigurationServiceImpl implements ConfigurationService,
 	 */
 	@Override
 	public synchronized void storeConfiguration() {
-		HashSet<Configuration> copy = new HashSet<Configuration>(
+		HashSet<DefaultConfigurationImpl> copy = new HashSet<DefaultConfigurationImpl>(
 				IDToConfigurations.values());
 		ConfigurationStore store = new ConfigurationStore();
 		store.setServices(new ArrayList<ServiceStore>());
-		for (Configuration config : copy) {
+		for (DefaultConfigurationImpl config : copy) {
 			ServiceStore serviceStore = new ServiceStore();
 			serviceStore.setServiceID(config.getServiceID());
 			serviceStore.setFactoryID(config.getFactoryID());
@@ -213,6 +217,17 @@ public class ConfigurationServiceImpl implements ConfigurationService,
 				}
 			}
 			serviceStore.setAttributes(attributes);
+			try{
+				RifidiService target=config.getTarget();
+				if(target!=null && target instanceof AbstractSensor<?>){
+					serviceStore.setSessionDTOs(new HashSet<SessionDTO>());
+					for(SensorSession session:((AbstractSensor<?>)target).getSensorSessions().values()){
+						serviceStore.getSessionDTOs().add(session.getDTO());
+					}
+				}
+			}catch(RuntimeException e){
+				logger.info("Target went away while trying to store it: "+e);
+			}
 			store.getServices().add(serviceStore);
 		}
 		
