@@ -2,13 +2,13 @@ package org.rifidi.edge.client.model.sal;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
-import java.util.Map;
 
 import org.eclipse.core.databinding.observable.map.ObservableMap;
 import org.eclipse.core.databinding.observable.map.WritableMap;
-import org.rifidi.edge.client.model.sal.properties.SessionStatePropertyBean;
 import org.rifidi.edge.api.SessionStatus;
+import org.rifidi.edge.api.rmi.dto.CommandDTO;
 import org.rifidi.edge.api.rmi.dto.SessionDTO;
+import org.rifidi.edge.client.model.sal.properties.SessionStatePropertyBean;
 
 /**
  * Model object that represents a Session on the server
@@ -45,10 +45,9 @@ public class RemoteSession {
 		this.status = sessionDTO.getStatus();
 		this.readerID = readerID;
 		this.remoteJobs = new WritableMap();
-		for (Map.Entry<Integer, String> entry : sessionDTO.getCommands()
-				.entrySet()) {
+		for (CommandDTO entry : sessionDTO.getCommands()) {
 			_addRemoteJob(new RemoteJob(readerID, sessionDTO.getID(), entry
-					.getKey(), entry.getValue()));
+					.getProcessID(), entry.getCommandID()));
 		}
 	}
 
