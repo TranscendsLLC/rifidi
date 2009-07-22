@@ -3,13 +3,13 @@
  */
 package org.rifidi.edge.core.sensors.base;
 
-import org.rifidi.configuration.impl.AbstractServiceFactory;
 import org.rifidi.edge.api.rmi.dto.ReaderFactoryDTO;
+import org.rifidi.edge.core.configuration.impl.AbstractServiceFactory;
 
 /**
  * An abstract class for all ReaderConfigurationFactories to extend.
  * ReaderConfigurationFactories should register themselves to osgi under both
- * the AbstractSensorFactory and the org.rifidi.configuration.ServiceFactory
+ * the AbstractSensorFactory and the org.rifidi.edge.core.configuration.ServiceFactory
  * interfaces
  * 
  * @author Kyle Neumeier - kyle@pramari.com

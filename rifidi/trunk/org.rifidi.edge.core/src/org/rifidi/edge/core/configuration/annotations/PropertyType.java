@@ -1,4 +1,4 @@
-package org.rifidi.configuration.annotations;
+package org.rifidi.edge.core.configuration.annotations;
 
 import javax.management.openmbean.OpenType;
 import javax.management.openmbean.SimpleType;

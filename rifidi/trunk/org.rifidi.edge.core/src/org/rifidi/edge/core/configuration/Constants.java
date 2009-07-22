@@ -1,5 +1,5 @@
 
-package org.rifidi.configuration;
+package org.rifidi.edge.core.configuration;
 /**
  * Constants for the configuration services.
  * 

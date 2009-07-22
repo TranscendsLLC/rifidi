@@ -1,11 +1,11 @@
-package org.rifidi.configuration;
+package org.rifidi.edge.core.configuration;
 
 import java.util.Map;
 
 import javax.management.DynamicMBean;
 
 import org.osgi.framework.ServiceListener;
-import org.rifidi.configuration.listeners.AttributesChangedListener;
+import org.rifidi.edge.core.configuration.listeners.AttributesChangedListener;
 
 /**
  * Configurations provide a standard interface for handling services through a

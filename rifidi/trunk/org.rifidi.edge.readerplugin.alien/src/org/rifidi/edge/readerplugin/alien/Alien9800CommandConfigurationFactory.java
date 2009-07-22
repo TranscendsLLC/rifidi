@@ -12,7 +12,7 @@ import java.util.Set;
 
 import javax.management.MBeanInfo;
 
-import org.rifidi.configuration.ConfigurationType;
+import org.rifidi.edge.core.configuration.ConfigurationType;
 import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
 import org.rifidi.edge.core.sensors.commands.AbstractCommandConfigurationFactory;
 import org.rifidi.edge.readerplugin.alien.commands.AlienAutonomousModeCommandConfiguration;
@@ -73,7 +73,7 @@ public class Alien9800CommandConfigurationFactory
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.configuration.ServiceFactory#createInstance(java.lang.String,
+	 * org.rifidi.edge.core.configuration.ServiceFactory#createInstance(java.lang.String,
 	 * java.lang.String)
 	 */
 	@Override
@@ -103,7 +103,7 @@ public class Alien9800CommandConfigurationFactory
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.configuration.AbstractMultiServiceFactory#getFactoryIDToClass
+	 * org.rifidi.edge.core.configuration.AbstractMultiServiceFactory#getFactoryIDToClass
 	 * ()
 	 */
 	@Override
@@ -114,7 +114,7 @@ public class Alien9800CommandConfigurationFactory
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.configuration.ServiceFactory#getFactoryIDs()
+	 * @see org.rifidi.edge.core.configuration.ServiceFactory#getFactoryIDs()
 	 */
 	@Override
 	public List<String> getFactoryIDs() {
@@ -130,7 +130,7 @@ public class Alien9800CommandConfigurationFactory
 	}
 
 	/* (non-Javadoc)
-	 * @see org.rifidi.configuration.ServiceFactory#getServiceDescription(java.lang.String)
+	 * @see org.rifidi.edge.core.configuration.ServiceFactory#getServiceDescription(java.lang.String)
 	 */
 	@Override
 	public MBeanInfo getServiceDescription(String factoryID) {

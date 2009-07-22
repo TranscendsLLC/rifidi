@@ -1,5 +1,5 @@
 
-package org.rifidi.configuration.mbeans;
+package org.rifidi.edge.core.configuration.mbeans;
 
 /**
  * Configuration management.

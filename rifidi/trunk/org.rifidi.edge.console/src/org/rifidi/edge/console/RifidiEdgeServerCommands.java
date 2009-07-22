@@ -10,8 +10,8 @@ import javax.management.AttributeList;
 
 import org.eclipse.osgi.framework.console.CommandInterpreter;
 import org.eclipse.osgi.framework.console.CommandProvider;
-import org.rifidi.configuration.Configuration;
-import org.rifidi.configuration.services.ConfigurationService;
+import org.rifidi.edge.core.configuration.Configuration;
+import org.rifidi.edge.core.configuration.services.ConfigurationService;
 import org.rifidi.edge.core.daos.CommandDAO;
 import org.rifidi.edge.core.daos.ReaderDAO;
 import org.rifidi.edge.core.sensors.SensorSession;

@@ -1,4 +1,4 @@
-package org.rifidi.configuration.impl;
+package org.rifidi.edge.core.configuration.impl;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -23,13 +23,13 @@ import org.apache.commons.logging.LogFactory;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceEvent;
 import org.osgi.framework.ServiceListener;
-import org.rifidi.configuration.Configuration;
-import org.rifidi.configuration.ConfigurationType;
-import org.rifidi.configuration.RifidiService;
-import org.rifidi.configuration.annotations.Operation;
-import org.rifidi.configuration.annotations.Property;
-import org.rifidi.configuration.listeners.AttributesChangedListener;
-import org.rifidi.configuration.services.JMXService;
+import org.rifidi.edge.core.configuration.Configuration;
+import org.rifidi.edge.core.configuration.ConfigurationType;
+import org.rifidi.edge.core.configuration.RifidiService;
+import org.rifidi.edge.core.configuration.annotations.Operation;
+import org.rifidi.edge.core.configuration.annotations.Property;
+import org.rifidi.edge.core.configuration.listeners.AttributesChangedListener;
+import org.rifidi.edge.core.configuration.services.JMXService;
 import org.rifidi.edge.core.services.notification.NotifierService;
 import org.springframework.beans.factory.annotation.Configurable;
 
@@ -108,7 +108,7 @@ public class DefaultConfigurationImpl implements Configuration, ServiceListener 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.configuration.Configuration#getServiceID()
+	 * @see org.rifidi.edge.core.configuration.Configuration#getServiceID()
 	 */
 	@Override
 	public String getServiceID() {
@@ -148,7 +148,7 @@ public class DefaultConfigurationImpl implements Configuration, ServiceListener 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.configuration.Configuration#getFactoryID()
+	 * @see org.rifidi.edge.core.configuration.Configuration#getFactoryID()
 	 */
 	@Override
 	public String getFactoryID() {
@@ -185,7 +185,7 @@ public class DefaultConfigurationImpl implements Configuration, ServiceListener 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.configuration.Configuration#getAttributeNames()
+	 * @see org.rifidi.edge.core.configuration.Configuration#getAttributeNames()
 	 */
 	@Override
 	public String[] getAttributeNames() {
@@ -320,7 +320,7 @@ public class DefaultConfigurationImpl implements Configuration, ServiceListener 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.configuration.Configuration#destroy()
+	 * @see org.rifidi.edge.core.configuration.Configuration#destroy()
 	 */
 	@Override
 	public void destroy() {
@@ -333,7 +333,7 @@ public class DefaultConfigurationImpl implements Configuration, ServiceListener 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.configuration.Configuration#getAttributes()
+	 * @see org.rifidi.edge.core.configuration.Configuration#getAttributes()
 	 */
 	@Override
 	public Map<String, Object> getAttributes() {
@@ -348,7 +348,7 @@ public class DefaultConfigurationImpl implements Configuration, ServiceListener 
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.configuration.Configuration#addAttributesChangedListener(org
+	 * org.rifidi.edge.core.configuration.Configuration#addAttributesChangedListener(org
 	 * .rifidi.configuration.listeners.AttributesChangedListener)
 	 */
 	@Override
@@ -360,8 +360,8 @@ public class DefaultConfigurationImpl implements Configuration, ServiceListener 
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.configuration.Configuration#removeAttributesChangedListener
-	 * (org.rifidi.configuration.listeners.AttributesChangedListener)
+	 * org.rifidi.edge.core.configuration.Configuration#removeAttributesChangedListener
+	 * (org.rifidi.edge.core.configuration.listeners.AttributesChangedListener)
 	 */
 	@Override
 	public void removeAttributesChangedListener(

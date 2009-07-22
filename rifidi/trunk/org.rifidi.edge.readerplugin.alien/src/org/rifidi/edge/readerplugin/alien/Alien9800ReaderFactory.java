@@ -12,7 +12,7 @@ import java.util.Set;
 
 import javax.management.MBeanInfo;
 
-import org.rifidi.configuration.ConfigurationType;
+import org.rifidi.edge.core.configuration.ConfigurationType;
 import org.rifidi.edge.core.sensors.base.AbstractSensor;
 import org.rifidi.edge.core.sensors.base.AbstractSensorFactory;
 import org.rifidi.edge.core.services.notification.NotifierService;
@@ -77,7 +77,7 @@ public class Alien9800ReaderFactory extends
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.configuration.AbstractServiceFactory#getClazz()
+	 * @see org.rifidi.edge.core.configuration.AbstractServiceFactory#getClazz()
 	 */
 	@Override
 	public Class<Alien9800Reader> getClazz() {
@@ -87,7 +87,7 @@ public class Alien9800ReaderFactory extends
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.configuration.ServiceFactory#getFactoryID()
+	 * @see org.rifidi.edge.core.configuration.ServiceFactory#getFactoryID()
 	 */
 	@Override
 	public List<String> getFactoryIDs() {
@@ -110,7 +110,7 @@ public class Alien9800ReaderFactory extends
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.configuration.ServiceFactory#createInstance(java.lang.String,
+	 * org.rifidi.edge.core.configuration.ServiceFactory#createInstance(java.lang.String,
 	 * java.lang.String)
 	 */
 	@Override
@@ -131,7 +131,7 @@ public class Alien9800ReaderFactory extends
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.configuration.ServiceFactory#getServiceDescription(java.lang
+	 * org.rifidi.edge.core.configuration.ServiceFactory#getServiceDescription(java.lang
 	 * .String)
 	 */
 	@Override

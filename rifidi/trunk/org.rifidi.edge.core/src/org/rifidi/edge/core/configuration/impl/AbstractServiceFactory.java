@@ -1,14 +1,13 @@
 /**
  * 
  */
-package org.rifidi.configuration.impl;
+package org.rifidi.edge.core.configuration.impl;
 
-import java.util.Map;
+import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.osgi.framework.BundleContext;
-import org.rifidi.configuration.ServiceFactory;
+import org.rifidi.edge.core.configuration.RifidiService;
+import org.rifidi.edge.core.configuration.ServiceFactory;
 
 /**
  * Base class for a service factory. This class is meant for scenarios where
@@ -20,20 +19,27 @@ import org.rifidi.configuration.ServiceFactory;
  * @author Jochen Mader - jochen@pramari.com
  * 
  */
-public abstract class AbstractMultiServiceFactory<T> implements ServiceFactory<T> {
-	/** Logger for this class. */
-	private static final Log logger = LogFactory
-			.getLog(AbstractMultiServiceFactory.class);
+public abstract class AbstractServiceFactory<T extends RifidiService>
+		implements ServiceFactory<T> {
 	/** Context of the registering bundle. */
-	private BundleContext context;
+	private volatile BundleContext context;
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.rifidi.edge.core.configuration.ServiceFactory#getFactoryIDs()
+	 */
+	@Override
+	public List<String> getFactoryIDs() {
+		return null;
+	}
 
 	/**
-	 * A map containing the factoryids as key and the class that the factoryid
-	 * should produce as value.
+	 * Get the class this factory constructs.
 	 * 
 	 * @return
 	 */
-	public abstract Map<String, Class<?>> getFactoryIDToClass();
+	public abstract Class<T> getClazz();
 
 	/**
 	 * @param context
@@ -44,7 +50,7 @@ public abstract class AbstractMultiServiceFactory<T> implements ServiceFactory<T
 	}
 
 	/**
-	 * Get the bundle context for this factory.
+	 * Get the bundel context for this factory.
 	 * 
 	 * @return
 	 */

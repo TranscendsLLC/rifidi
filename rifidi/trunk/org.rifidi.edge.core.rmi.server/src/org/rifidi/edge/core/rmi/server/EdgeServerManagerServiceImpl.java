@@ -2,8 +2,8 @@
 package org.rifidi.edge.core.rmi.server;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.rifidi.configuration.services.ConfigurationService;
 import org.rifidi.edge.api.rmi.services.EdgeServerManagerService;
+import org.rifidi.edge.core.configuration.services.ConfigurationService;
 
 /**
  * This is the implementation for the Edge Server RMI Stub

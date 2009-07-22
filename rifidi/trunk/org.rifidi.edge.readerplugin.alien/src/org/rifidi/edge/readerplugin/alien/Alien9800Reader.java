@@ -11,10 +11,10 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.rifidi.configuration.annotations.JMXMBean;
-import org.rifidi.configuration.annotations.Operation;
-import org.rifidi.configuration.annotations.Property;
-import org.rifidi.configuration.annotations.PropertyType;
+import org.rifidi.edge.core.configuration.annotations.JMXMBean;
+import org.rifidi.edge.core.configuration.annotations.Operation;
+import org.rifidi.edge.core.configuration.annotations.Property;
+import org.rifidi.edge.core.configuration.annotations.PropertyType;
 import org.rifidi.edge.core.sensors.SensorSession;
 import org.rifidi.edge.core.sensors.base.AbstractSensor;
 import org.rifidi.edge.core.services.notification.NotifierService;
@@ -183,7 +183,7 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.configuration.RifidiService#destroy()
+	 * @see org.rifidi.edge.core.configuration.RifidiService#destroy()
 	 */
 	@Override
 	public void destroy() {

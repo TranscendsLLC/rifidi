@@ -16,10 +16,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.management.AttributeList;
 
-import org.rifidi.configuration.Configuration;
-import org.rifidi.configuration.RifidiService;
 import org.rifidi.edge.api.rmi.dto.ReaderDTO;
 import org.rifidi.edge.api.rmi.dto.SessionDTO;
+import org.rifidi.edge.core.configuration.Configuration;
+import org.rifidi.edge.core.configuration.RifidiService;
 import org.rifidi.edge.core.sensors.CompositeSensor;
 import org.rifidi.edge.core.sensors.Sensor;
 import org.rifidi.edge.core.sensors.SensorSession;
@@ -267,7 +267,7 @@ public abstract class AbstractSensor<T extends SensorSession> extends
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.configuration.RifidiService#destroy()
+	 * @see org.rifidi.edge.core.configuration.RifidiService#destroy()
 	 */
 	@Override
 	public void destroy() {

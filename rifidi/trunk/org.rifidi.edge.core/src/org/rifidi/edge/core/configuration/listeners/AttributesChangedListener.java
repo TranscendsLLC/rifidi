@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.rifidi.configuration.listeners;
+package org.rifidi.edge.core.configuration.listeners;
 import javax.management.AttributeList;
 
 /**

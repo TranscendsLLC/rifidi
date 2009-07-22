@@ -8,7 +8,7 @@
 	<!-- Put reader configuration service in OSGi Registry -->
 	<osgi:service id="readerConfigurationFactoryService" ref="configurationFactory">
 		<osgi:interfaces>
-			<value>org.rifidi.configuration.ServiceFactory</value>
+			<value>org.rifidi.edge.core.configuration.ServiceFactory</value>
 			<value>org.rifidi.edge.core.sensors.base.AbstractSensorFactory</value>
 		</osgi:interfaces>
 	</osgi:service>
@@ -17,7 +17,7 @@
 	<osgi:service id="autonomousConfigurationFactoryService"
 		ref="AutoModeFactory">
 		<osgi:interfaces>
-			<value>org.rifidi.configuration.ServiceFactory</value>
+			<value>org.rifidi.edge.core.configuration.ServiceFactory</value>
 			<value> org.rifidi.edge.core.sensors.base.AbstractSensorFactory</value>
 		</osgi:interfaces>
 	</osgi:service>
@@ -28,7 +28,7 @@
 	<!-- Put command configuration service in OSGi Registry -->
 	<osgi:service id="commandConfigurationFactoryService" ref="commandConfigurationFactory">
 		<osgi:interfaces>
-			<value>org.rifidi.configuration.ServiceFactory</value>
+			<value>org.rifidi.edge.core.configuration.ServiceFactory</value>
 			<value>org.rifidi.edge.core.sensors.commands.AbstractCommandConfigurationFactory</value>
 		</osgi:interfaces>
 	</osgi:service>

@@ -20,7 +20,7 @@ import java.util.Set;
 
 import javax.management.MBeanInfo;
 
-import org.rifidi.configuration.ConfigurationType;
+import org.rifidi.edge.core.configuration.ConfigurationType;
 import org.rifidi.edge.core.sensors.base.AbstractSensor;
 import org.rifidi.edge.core.sensors.base.AbstractSensorFactory;
 import org.rifidi.edge.core.services.notification.NotifierService;
@@ -73,7 +73,7 @@ public class LLRPReaderFactory extends AbstractSensorFactory<LLRPReader> {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.configuration.impl.AbstractServiceFactory#getClazz()
+	 * @see org.rifidi.edge.core.configuration.impl.AbstractServiceFactory#getClazz()
 	 */
 	@Override
 	public Class<LLRPReader> getClazz() {
@@ -83,7 +83,7 @@ public class LLRPReaderFactory extends AbstractSensorFactory<LLRPReader> {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.configuration.ServiceFactory#getFactoryIDs()
+	 * @see org.rifidi.edge.core.configuration.ServiceFactory#getFactoryIDs()
 	 */
 	@Override
 	public List<String> getFactoryIDs() {
@@ -116,7 +116,7 @@ public class LLRPReaderFactory extends AbstractSensorFactory<LLRPReader> {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.configuration.ServiceFactory#createInstance(java.lang.String,
+	 * org.rifidi.edge.core.configuration.ServiceFactory#createInstance(java.lang.String,
 	 * java.lang.String)
 	 */
 	@Override
@@ -137,7 +137,7 @@ public class LLRPReaderFactory extends AbstractSensorFactory<LLRPReader> {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.configuration.ServiceFactory#getServiceDescription(java.lang
+	 * org.rifidi.edge.core.configuration.ServiceFactory#getServiceDescription(java.lang
 	 * .String)
 	 */
 	@Override

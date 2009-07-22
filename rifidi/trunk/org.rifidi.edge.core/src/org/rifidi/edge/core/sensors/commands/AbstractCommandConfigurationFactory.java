@@ -5,14 +5,14 @@ package org.rifidi.edge.core.sensors.commands;
 
 import java.util.HashSet;
 
-import org.rifidi.configuration.impl.AbstractMultiServiceFactory;
 import org.rifidi.edge.api.rmi.dto.CommandConfigFactoryDTO;
+import org.rifidi.edge.core.configuration.impl.AbstractMultiServiceFactory;
 
 /**
  * A base class that all CommandConfigurationFactories should extend. Concrete
  * implementations should register themselves to OSGi under both the
  * AbstractCommandConfigurationFactory and
- * org.rifidi.configuration.ServiceFactory interfaces.
+ * org.rifidi.edge.core.configuration.ServiceFactory interfaces.
  * 
  * @author Jochen Mader - jochen@pramari.com
  * @author Kyle Neumeier - kyle@pramari.com

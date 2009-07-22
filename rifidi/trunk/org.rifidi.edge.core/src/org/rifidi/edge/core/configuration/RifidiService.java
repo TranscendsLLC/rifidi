@@ -1,4 +1,4 @@
-package org.rifidi.configuration;
+package org.rifidi.edge.core.configuration;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -29,10 +29,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
-import org.rifidi.configuration.annotations.JMXMBean;
-import org.rifidi.configuration.annotations.Operation;
-import org.rifidi.configuration.annotations.Property;
-import org.rifidi.configuration.annotations.PropertyType;
+import org.rifidi.edge.core.configuration.annotations.JMXMBean;
+import org.rifidi.edge.core.configuration.annotations.Operation;
+import org.rifidi.edge.core.configuration.annotations.Property;
+import org.rifidi.edge.core.configuration.annotations.PropertyType;
 
 /**
  * Interface for rifidi services.

@@ -1,10 +1,10 @@
-package org.rifidi.configuration.services;
+package org.rifidi.edge.core.configuration.services;
 
 import java.util.Set;
 
 import javax.management.AttributeList;
 
-import org.rifidi.configuration.Configuration;
+import org.rifidi.edge.core.configuration.Configuration;
 
 /**
  * Services implementing this interface are supposed to provide a link between
