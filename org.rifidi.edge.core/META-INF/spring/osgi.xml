@@ -15,10 +15,18 @@
 	<osgi:service id="CommandDAOBinding" interface="org.rifidi.edge.core.daos.CommandDAO"
 		ref="CommandDAOImpl" />
 
-	<!-- Imported Services -->
-
-	<osgi:reference id="configurationService"
+	<osgi:service id="configurationServiceRegistration" ref="configurationService"
 		interface="org.rifidi.configuration.services.ConfigurationService" />
+	<osgi:service id="jmxServiceRegistration" ref="jmxService"
+		interface="org.rifidi.configuration.services.JMXService" />
+
+	<!-- Imported Services -->
+	<osgi:set id="serviceFactoriesSet" interface="org.rifidi.configuration.ServiceFactory"
+		cardinality="0..N">
+		<osgi:listener ref="configurationService" bind-method="bind"
+			unbind-method="unbind" />
+	</osgi:set>
+	<!-- Imported Services -->
 
 	<osgi:reference id="JMSNotifierService"
 		interface="org.rifidi.edge.core.services.notification.NotifierService" />
