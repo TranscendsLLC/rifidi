@@ -12,10 +12,10 @@ import org.rifidi.edge.api.rmi.dto.CommandConfigFactoryDTO;
 import org.rifidi.edge.api.rmi.dto.CommandConfigurationDTO;
 import org.rifidi.edge.api.rmi.services.CommandManagerService;
 import org.rifidi.edge.core.configuration.Configuration;
+import org.rifidi.edge.core.configuration.impl.AbstractCommandConfigurationFactory;
 import org.rifidi.edge.core.configuration.services.ConfigurationService;
 import org.rifidi.edge.core.daos.CommandDAO;
 import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
-import org.rifidi.edge.core.sensors.commands.AbstractCommandConfigurationFactory;
 
 /**
  * The Implementation of the CommandStub -- an RMI stub for managing
@@ -94,7 +94,7 @@ public class CommandManagerServiceImpl implements CommandManagerService {
 	 */
 	@Override
 	public MBeanInfo getCommandDescription(String commandConfigurationType) {
-		AbstractCommandConfigurationFactory factory = this.commandDAO
+		AbstractCommandConfigurationFactory<?> factory = this.commandDAO
 				.getCommandFactoryByID(commandConfigurationType);
 		return factory.getServiceDescription(commandConfigurationType);
 	}
@@ -108,7 +108,7 @@ public class CommandManagerServiceImpl implements CommandManagerService {
 	@Override
 	public Set<CommandConfigFactoryDTO> getCommandConfigFactories() {
 		Set<CommandConfigFactoryDTO> retVal = new HashSet<CommandConfigFactoryDTO>();
-		for (AbstractCommandConfigurationFactory factory : commandDAO
+		for (AbstractCommandConfigurationFactory<?> factory : commandDAO
 				.getCommandFactories()) {
 			retVal.add(factory.getDTO());
 		}
@@ -125,7 +125,7 @@ public class CommandManagerServiceImpl implements CommandManagerService {
 	@Override
 	public CommandConfigFactoryDTO getCommandConfigFactory(
 			String readerFactoryID) {
-		AbstractCommandConfigurationFactory factory = commandDAO
+		AbstractCommandConfigurationFactory<?> factory = commandDAO
 				.getCommandFactoryByReaderID(readerFactoryID);
 		if (factory != null) {
 			return factory.getDTO();

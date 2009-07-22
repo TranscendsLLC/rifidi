@@ -9,6 +9,9 @@
 		<property name="context" ref="bundleContext" />
 		<property name="template" ref="internalMB" />
 		<property name="notifierService" ref="JMSNotifierService" />
+		<constructor-arg index="0">
+			<ref bean="commandConfigurationFactory" />
+		</constructor-arg>
 	</bean>
 
 	<bean id="AutoModeFactory"

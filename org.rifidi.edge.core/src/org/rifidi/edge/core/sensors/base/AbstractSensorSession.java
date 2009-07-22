@@ -19,6 +19,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.api.SessionStatus;
 import org.rifidi.edge.api.rmi.dto.CommandDTO;
+import org.rifidi.edge.core.configuration.impl.AbstractCommandConfigurationFactory;
 import org.rifidi.edge.core.sensors.SensorSession;
 import org.rifidi.edge.core.sensors.commands.Command;
 import org.springframework.jms.core.JmsTemplate;
@@ -38,9 +39,9 @@ public abstract class AbstractSensorSession extends SensorSession {
 	protected volatile ScheduledThreadPoolExecutor executor;
 	/** Status of the reader. */
 	private volatile SessionStatus status;
-	/** Map containing the periodic commands with the process id as key. */
-	protected final Map<Integer, Command> commands;
-	/** Map containing command process id as key and the future as value. */
+	/** Map containing the periodic commands with the process commandID as key. */
+	protected final Map<Integer, CommandExecutor> commands;
+	/** Map containing command process commandID as key and the future as value. */
 	protected final Map<Integer, CommandExecutionData> idToData;
 	/** Job counter */
 	private AtomicInteger counter = new AtomicInteger(0);
@@ -50,11 +51,13 @@ public abstract class AbstractSensorSession extends SensorSession {
 	private volatile JmsTemplate template;
 	/** True if the executor is up and running. */
 	protected AtomicBoolean processing = new AtomicBoolean(false);
+	/** Factory for creating command instances. */
+	private final AbstractCommandConfigurationFactory<?> commandFactory;
 	/**
 	 * Queue for single-shot commands that get submitted while the executor is
 	 * inactive.
 	 */
-	protected Queue<Command> commandQueue = new ConcurrentLinkedQueue<Command>();
+	protected Queue<CommandExecutor> commandQueue = new ConcurrentLinkedQueue<CommandExecutor>();
 	/** Logger */
 	private static final Log logger = LogFactory
 			.getLog(AbstractSensorSession.class);
@@ -69,14 +72,17 @@ public abstract class AbstractSensorSession extends SensorSession {
 	 *            The JMS Queue to add Tag Data to
 	 * @param template
 	 *            The Template used to send Tag data to the internal queue
+	 * @param commandFactory
 	 */
 	public AbstractSensorSession(AbstractSensor<?> sensor, String ID,
-			Destination destination, JmsTemplate template) {
+			Destination destination, JmsTemplate template,
+			AbstractCommandConfigurationFactory<?> commandFactory) {
 		super(ID, sensor);
-		this.commands = new HashMap<Integer, Command>();
+		this.commands = new HashMap<Integer, CommandExecutor>();
 		this.idToData = new HashMap<Integer, CommandExecutionData>();
 		this.template = template;
 		this.destination = destination;
+		this.commandFactory = commandFactory;
 		status = SessionStatus.CREATED;
 	}
 
@@ -86,8 +92,12 @@ public abstract class AbstractSensorSession extends SensorSession {
 	 * @see org.rifidi.edge.core.readers.ReaderSession#currentCommands()
 	 */
 	@Override
-	public Map<Integer, Command> currentCommands() {
-		return new HashMap<Integer, Command>(commands);
+	public Map<Integer, String> currentCommands() {
+		Map<Integer, String> ret=new HashMap<Integer, String>();
+		for(Integer id:commands.keySet()){
+			ret.put(id, commands.get(id).getCommandID());
+		}
+		return ret;
 	}
 
 	/*
@@ -122,48 +132,57 @@ public abstract class AbstractSensorSession extends SensorSession {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.rifidi.edge.core.readers.ReaderSession#submit(org.rifidi.edge.core
-	 * .readers.Command)
+	 * @see org.rifidi.edge.core.sensors.SensorSession#submit(java.lang.String,
+	 * long, java.util.concurrent.TimeUnit)
 	 */
 	@Override
-	public void submit(Command command) {
-		command.setReaderSession(this);
-		command.setTemplate(template);
-		command.setDestination(destination);
+	public Integer submit(String commandID, long interval, TimeUnit unit) {
+		Integer id = counter.getAndIncrement();
+		CommandExecutor exec = new CommandExecutor(commandID, this);
+		commands.put(id, exec);
+		CommandExecutionData data = new CommandExecutionData();
+		data.interval = interval;
+		data.unit = unit;
+		idToCommandDTO.put(id, new CommandDTO(true, interval, unit, id,
+				commandID));
 		if (processing.get()) {
-			executor.submit(command);
+			data.future = executor.scheduleWithFixedDelay(exec, 0, interval,
+					unit);
+		}
+		idToData.put(id, data);
+		return id;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.rifidi.edge.core.sensors.SensorSession#submit(java.lang.String)
+	 */
+	@Override
+	public void submit(String commandID) {
+		CommandExecutor exec = new CommandExecutor(commandID, this);
+		if (processing.get()) {
+			executor.submit(exec);
 			return;
 		}
-		commandQueue.add(command);
-
+		commandQueue.add(exec);
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.readers.ReaderSession#submit(org.rifidi.edge.core
-	 * .readers.Command, long, java.util.concurrent.TimeUnit)
+	 * org.rifidi.edge.core.sensors.SensorSession#submit(org.rifidi.edge.core
+	 * .sensors.commands.Command)
 	 */
 	@Override
-	public Integer submit(Command command, long interval, TimeUnit unit) {
-		Integer id = counter.getAndIncrement();
-		command.setReaderSession(this);
-		command.setTemplate(template);
-		command.setDestination(destination);
-		commands.put(id, command);
-		CommandExecutionData data = new CommandExecutionData();
-		data.interval = interval;
-		data.unit = unit;
-		idToCommandDTO.put(id, new CommandDTO(true, interval, unit, id, command
-				.getCommandID()));
+	public void submit(Command command) {
+		CommandExecutor exec = new CommandExecutor(command, this);
 		if (processing.get()) {
-			data.future = executor.scheduleWithFixedDelay(command, 0, interval,
-					unit);
+			executor.submit(exec);
+			return;
 		}
-		idToData.put(id, data);
-		return id;
+		commandQueue.add(exec);
 	}
 
 	/**
@@ -203,4 +222,59 @@ public abstract class AbstractSensorSession extends SensorSession {
 		return template;
 	}
 
+	private class CommandExecutor implements Runnable {
+
+		private String commandID;
+		private Command instance;
+		private SensorSession sensorSession;
+
+		/**
+		 * @param commandID
+		 * @param instance
+		 * @param sensorSession
+		 */
+		public CommandExecutor(String commandID, SensorSession sensorSession) {
+			this.commandID = commandID;
+			this.sensorSession = sensorSession;
+		}
+
+		/**
+		 * @param instance
+		 * @param sensorSession
+		 */
+		public CommandExecutor(Command instance, SensorSession sensorSession) {
+			super();
+			this.commandID = instance.getCommandID();
+			this.instance = instance;
+			this.sensorSession = sensorSession;
+		}
+
+		/**
+		 * @return the commandID
+		 */
+		public String getCommandID() {
+			return commandID;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see java.lang.Runnable#run()
+		 */
+		@Override
+		public void run() {
+			if (instance == null) {
+				instance = commandFactory.getCommandInstance(commandID, sensor
+						.getID());
+				if (instance != null) {
+					instance.setReaderSession(sensorSession);
+					instance.setTemplate(template);
+					instance.setDestination(destination);
+				}
+			}
+			if (instance != null) {
+				instance.run();
+			}
+		}
+	}
 }

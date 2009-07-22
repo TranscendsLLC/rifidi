@@ -43,6 +43,7 @@ Import-Package: com.espertech.esper.client,
  org.xml.sax
 Export-Package: org.rifidi.edge.core.configuration,
  org.rifidi.edge.core.configuration.annotations,
+ org.rifidi.edge.core.configuration.impl,
  org.rifidi.edge.core.configuration.listeners,
  org.rifidi.edge.core.configuration.services,
  org.rifidi.edge.core.daos,

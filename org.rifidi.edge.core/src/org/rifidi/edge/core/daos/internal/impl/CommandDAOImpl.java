@@ -8,9 +8,9 @@ import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.rifidi.edge.core.configuration.impl.AbstractCommandConfigurationFactory;
 import org.rifidi.edge.core.daos.CommandDAO;
 import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
-import org.rifidi.edge.core.sensors.commands.AbstractCommandConfigurationFactory;
 import org.rifidi.edge.core.services.notification.NotifierService;
 
 /**
@@ -60,12 +60,10 @@ public class CommandDAOImpl implements CommandDAO {
 				commandFactories);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.rifidi.edge.core.daos.CommandDAO#getCommandFactoryByID(java.lang.
-	 * String)
+	
+
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.daos.CommandDAO#getCommandFactoryByID(java.lang.String)
 	 */
 	@Override
 	public AbstractCommandConfigurationFactory<?> getCommandFactoryByID(String id) {
@@ -79,12 +77,9 @@ public class CommandDAOImpl implements CommandDAO {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.rifidi.edge.core.daos.CommandDAO#getCommandFactoryByReaderID(java
-	 * .lang.String)
+
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.daos.CommandDAO#getCommandFactoryByReaderID(java.lang.String)
 	 */
 	@Override
 	public AbstractCommandConfigurationFactory<?> getCommandFactoryByReaderID(
@@ -161,7 +156,7 @@ public class CommandDAOImpl implements CommandDAO {
 	 * @param parameters
 	 */
 	public void bindCommandFactory(
-			AbstractCommandConfigurationFactory commandConfigurationFactory,
+			AbstractCommandConfigurationFactory<?> commandConfigurationFactory,
 			Dictionary<String, String> parameters) {
 		logger.info("Command Configuration Factory Bound: "
 				+ commandConfigurationFactory.getFactoryIDs());

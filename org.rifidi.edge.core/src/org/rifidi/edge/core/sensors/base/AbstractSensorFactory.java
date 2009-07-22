@@ -4,6 +4,7 @@
 package org.rifidi.edge.core.sensors.base;
 
 import org.rifidi.edge.api.rmi.dto.ReaderFactoryDTO;
+import org.rifidi.edge.core.configuration.impl.AbstractCommandConfigurationFactory;
 import org.rifidi.edge.core.configuration.impl.AbstractServiceFactory;
 
 /**
@@ -17,6 +18,26 @@ import org.rifidi.edge.core.configuration.impl.AbstractServiceFactory;
  */
 public abstract class AbstractSensorFactory<T extends AbstractSensor<?>>
 		extends AbstractServiceFactory<T> {
+
+	/** Factory for creating command instances. */
+	protected final AbstractCommandConfigurationFactory<?> commandFactory;
+	
+	/**
+	 * This constructor is only for CGLIB. DO NOT OVERWRITE!
+	 */
+	public AbstractSensorFactory() {
+		super();
+		this.commandFactory=null;
+	}
+	
+	/**
+	 * @param commandFactory
+	 */
+	public AbstractSensorFactory(
+			AbstractCommandConfigurationFactory<?> commandFactory) {
+		super();
+		this.commandFactory = commandFactory;
+	}
 
 	/**
 	 * Construct a DTO for this ReaderFactory

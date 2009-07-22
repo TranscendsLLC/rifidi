@@ -4,6 +4,7 @@
 package org.rifidi.edge.core.sensors.base;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -16,10 +17,12 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.management.AttributeList;
 
+import org.rifidi.edge.api.rmi.dto.CommandDTO;
 import org.rifidi.edge.api.rmi.dto.ReaderDTO;
 import org.rifidi.edge.api.rmi.dto.SessionDTO;
 import org.rifidi.edge.core.configuration.Configuration;
 import org.rifidi.edge.core.configuration.RifidiService;
+import org.rifidi.edge.core.configuration.impl.AbstractCommandConfigurationFactory;
 import org.rifidi.edge.core.sensors.CompositeSensor;
 import org.rifidi.edge.core.sensors.Sensor;
 import org.rifidi.edge.core.sensors.SensorSession;
@@ -45,6 +48,25 @@ public abstract class AbstractSensor<T extends SensorSession> extends
 		RifidiService implements SensorUpdate, CompositeSensor {
 	/** Sensors connected to this connectedSensors. */
 	protected final Set<Sensor> receivers = new CopyOnWriteArraySet<Sensor>();
+	protected final AbstractCommandConfigurationFactory<?> commandFactory;
+	
+	
+	
+	/**
+	 * This constructor is only for CGLIB. DO NOT OVERWRITE!
+	 */
+	public AbstractSensor() {
+		super();
+		this.commandFactory=null;
+	}
+
+	/**
+	 * @param commandFactory
+	 */
+	public AbstractSensor(AbstractCommandConfigurationFactory<?> commandFactory) {
+		super();
+		this.commandFactory = commandFactory;
+	}
 
 	/**
 	 * Receivers are objects that need to gather tag reads. The tag reads are
@@ -245,6 +267,19 @@ public abstract class AbstractSensor<T extends SensorSession> extends
 		return Collections.emptySet();
 	}
 
+	/**
+	 * Get sessions up and going.
+	 * @param sessions
+	 */
+	public void recreateSessions(Collection<SessionDTO> sessions){
+		for(SessionDTO session:sessions){
+			SensorSession sensorSession=createReaderSession();
+			for(CommandDTO dto:session.getCommands()){
+				sensorSession.submit(dto.getCommandID(),dto.getInterval(),dto.getTimeUnit());
+			}
+		}
+	}
+	
 	/***
 	 * This method returns the Data Transfer Object for this Reader
 	 * 

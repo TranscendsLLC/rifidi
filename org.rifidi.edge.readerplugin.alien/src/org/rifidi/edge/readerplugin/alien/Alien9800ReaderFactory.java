@@ -43,9 +43,10 @@ public class Alien9800ReaderFactory extends
 	/**
 	 * Constructor.
 	 */
-	public Alien9800ReaderFactory() {
-		super();
-		readerInfo = (new Alien9800Reader()).getMBeanInfo();
+	public Alien9800ReaderFactory(
+			Alien9800CommandConfigurationFactory commandFactory) {
+		super(commandFactory);
+		readerInfo = (new Alien9800Reader(commandFactory)).getMBeanInfo();
 	}
 
 	/**
@@ -110,13 +111,13 @@ public class Alien9800ReaderFactory extends
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.configuration.ServiceFactory#createInstance(java.lang.String,
-	 * java.lang.String)
+	 * org.rifidi.edge.core.configuration.ServiceFactory#createInstance(java
+	 * .lang.String, java.lang.String)
 	 */
 	@Override
 	public void createInstance(String factoryID, String serviceID) {
 		assert (factoryID.equals(FACTORY_ID));
-		Alien9800Reader instance = new Alien9800Reader();
+		Alien9800Reader instance = new Alien9800Reader(commandFactory);
 		instance.setID(serviceID);
 		instance.setTemplate((JmsTemplate) template);
 		instance.setNotifiyService(notifierService);
@@ -131,8 +132,8 @@ public class Alien9800ReaderFactory extends
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.configuration.ServiceFactory#getServiceDescription(java.lang
-	 * .String)
+	 * org.rifidi.edge.core.configuration.ServiceFactory#getServiceDescription
+	 * (java.lang .String)
 	 */
 	@Override
 	public MBeanInfo getServiceDescription(String factoryID) {

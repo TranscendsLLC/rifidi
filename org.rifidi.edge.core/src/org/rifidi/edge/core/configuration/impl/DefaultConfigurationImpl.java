@@ -24,10 +24,8 @@ import org.apache.commons.logging.LogFactory;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceEvent;
 import org.osgi.framework.ServiceListener;
-import org.rifidi.edge.api.rmi.dto.CommandDTO;
 import org.rifidi.edge.api.rmi.dto.SessionDTO;
 import org.rifidi.edge.core.configuration.Configuration;
-import org.rifidi.edge.core.configuration.ConfigurationType;
 import org.rifidi.edge.core.configuration.RifidiService;
 import org.rifidi.edge.core.configuration.annotations.Operation;
 import org.rifidi.edge.core.configuration.annotations.Property;
@@ -35,7 +33,6 @@ import org.rifidi.edge.core.configuration.listeners.AttributesChangedListener;
 import org.rifidi.edge.core.configuration.services.JMXService;
 import org.rifidi.edge.core.sensors.base.AbstractSensor;
 import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
-import org.rifidi.edge.core.sensors.commands.Command;
 import org.rifidi.edge.core.services.notification.NotifierService;
 
 /**
@@ -105,7 +102,7 @@ public class DefaultConfigurationImpl implements Configuration, ServiceListener 
 		this.nameToCommandConfig=new ConcurrentHashMap<String, AbstractCommandConfiguration<?>>();
 		if (sessionDTOs != null) {
 			for (SessionDTO dto:sessionDTOs){
-				this.sessionDTOs.put(dto, null);
+				this.sessionDTOs.put(dto, "-1");
 			}
 		}
 	}
@@ -145,10 +142,8 @@ public class DefaultConfigurationImpl implements Configuration, ServiceListener 
 				attributes = (AttributeList) target.getAttributes().clone();
 				nameToPos = new HashMap<String, Integer>();
 				List<Attribute> attrs = attributes.asList();
-				for(SessionDTO dto:sessionDTOs.keySet()){
-					if(target instanceof AbstractSensor<?>){
-						sessionDTOs.put(dto, ((AbstractSensor<?>)target).createReaderSession().getID());
-					}
+				if(target instanceof AbstractSensor<?>){
+					((AbstractSensor<?>)target).recreateSessions(sessionDTOs.keySet());
 				}
 				for (int count = 0; count < attributes.size(); count++) {
 					nameToPos.put(attrs.get(count).getName(), count);
@@ -394,7 +389,6 @@ public class DefaultConfigurationImpl implements Configuration, ServiceListener 
 	 */
 	@Override
 	public synchronized  void serviceChanged(ServiceEvent arg0) {
-		// TODO: not 100% save, commands might come up early
 		if (arg0.getServiceReference().getProperty("serviceid") != null) {
 			if (arg0.getServiceReference().getProperty("serviceid").equals(
 					getServiceID())) {

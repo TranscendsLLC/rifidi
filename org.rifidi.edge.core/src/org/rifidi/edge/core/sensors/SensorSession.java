@@ -58,7 +58,15 @@ public abstract class SensorSession {
 	 * 
 	 * @return
 	 */
-	public abstract Map<Integer, Command> currentCommands();
+	public abstract Map<Integer, String> currentCommands();
+
+	/**
+	 * Submit a command for a one-time execution.
+	 * 
+	 * @param commandID
+	 *            The command to execute
+	 */
+	public abstract void submit(String commandID);
 
 	/**
 	 * Submit a command for a one-time execution.
@@ -67,11 +75,11 @@ public abstract class SensorSession {
 	 *            The command to execute
 	 */
 	public abstract void submit(Command command);
-
+	
 	/**
 	 * Schedule a command to a reader session for repeated execution.
 	 * 
-	 * @param command
+	 * @param commandID
 	 *            The command to execute
 	 * @param interval
 	 *            The interval between executions
@@ -79,7 +87,7 @@ public abstract class SensorSession {
 	 *            The Unit of time to measure the interval
 	 * @return The ID of the job
 	 */
-	public abstract Integer submit(Command command, long interval, TimeUnit unit);
+	public abstract Integer submit(String commandID, long interval, TimeUnit unit);
 
 	/**
 	 * Kill a command.
@@ -104,8 +112,7 @@ public abstract class SensorSession {
 	public SessionDTO getDTO() {
 		HashMap<Integer, String> commandMap = new HashMap<Integer, String>();
 		for (Integer processID : this.currentCommands().keySet()) {
-			commandMap.put(processID, this.currentCommands().get(processID)
-					.getCommandID());
+			commandMap.put(processID, this.currentCommands().get(processID));
 		}
 		return new SessionDTO(this.getID(), this.getStatus(), new HashSet<CommandDTO>(idToCommandDTO.values()));
 	}

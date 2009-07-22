@@ -9,6 +9,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.api.SessionStatus;
+import org.rifidi.edge.core.configuration.impl.AbstractCommandConfigurationFactory;
 import org.rifidi.edge.core.sensors.base.AbstractIPSensorSession;
 import org.rifidi.edge.core.sensors.base.AbstractSensor;
 import org.rifidi.edge.core.sensors.commands.Command;
@@ -27,20 +28,19 @@ public class Alien9800ReaderSession extends AbstractIPSensorSession {
 	private static final Log logger = LogFactory
 			.getLog(Alien9800ReaderSession.class);
 	/** Username for connecting to the reader. */
-	private String username;
+	private final String username;
 	/** Password for connnecting to the reader. */
-	private String password;
+	private final String password;
 	/** Each command needs to be terminated with a newline. */
 	public static final String NEWLINE = "\n";
 	/** Welcome string. */
 	public static final String WELCOME = "Alien";
 	/** Service used to send out notifications */
-	private NotifierService notifierService;
+	private volatile NotifierService notifierService;
 	/** The FACTORY_ID of the reader this session belongs to */
-	private String readerID;
+	private final String readerID;
 	/** The message parser that parses messages from the socket */
-	private AlienMessageParsingStrategy messageParser;
-
+	private volatile AlienMessageParsingStrategy messageParser;
 	/**
 	 * You can put this in front of a Alien command for terse output to come
 	 * back to you, making things faster and easier to parse.
@@ -120,9 +120,10 @@ public class Alien9800ReaderSession extends AbstractIPSensorSession {
 			String host, int port, int reconnectionInterval,
 			int maxConAttempts, String username, String password,
 			JmsTemplate template, NotifierService notifierService,
-			String readerID) {
+			String readerID,
+			AbstractCommandConfigurationFactory<?> commandFactory) {
 		super(sensor, id, host, port, reconnectionInterval, maxConAttempts,
-				template.getDefaultDestination(), template);
+				template.getDefaultDestination(), template, commandFactory);
 		this.username = username;
 		this.password = password;
 		this.notifierService = notifierService;
@@ -216,24 +217,53 @@ public class Alien9800ReaderSession extends AbstractIPSensorSession {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.rifidi.edge.core.readers.impl.AbstractReaderSession#submit(org.rifidi
-	 * .edge.core.commands.Command, long, java.util.concurrent.TimeUnit)
+	 * @see org.rifidi.edge.core.sensors.SensorSession#submit(java.lang.String,
+	 * long, java.util.concurrent.TimeUnit)
 	 */
 	@Override
-	public Integer submit(Command command, long interval, TimeUnit unit) {
-		Integer retVal = super.submit(command, interval, unit);
-
+	public Integer submit(String commandID, long interval, TimeUnit unit) {
+		Integer retVal = super.submit(commandID, interval, unit);
 		// TODO: Remove this once we have aspectJ
 		try {
-
 			notifierService.jobSubmitted(this.readerID, this.getID(), retVal,
-					command.getCommandID());
+					commandID);
 		} catch (Exception e) {
 			// make sure the notification doesn't cause this method to exit
 			// under any circumstances
+			logger.error(e);
 		}
 		return retVal;
+
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.rifidi.edge.core.sensors.SensorSession#submit(java.lang.String)
+	 */
+	@Override
+	public void submit(String commandID) {
+		super.submit(commandID);
+		try {
+			notifierService.jobSubmitted(this.readerID, this.getID(), -1,
+					commandID);
+		} catch (Exception e) {
+			// make sure the notification doesn't cause this method to exit
+			// under any circumstances
+			logger.error(e);
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.core.sensors.SensorSession#submit(org.rifidi.edge.core
+	 * .sensors.commands.Command)
+	 */
+	@Override
+	public void submit(Command command) {
+		super.submit(command);
 	}
 
 }
