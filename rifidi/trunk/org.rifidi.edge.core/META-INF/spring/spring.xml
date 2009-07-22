@@ -23,7 +23,38 @@
 		<property name="reader" ref="readerSet" />
 		<property name="esperManager" ref="esperManager"/>
 	</bean>
+	<bean
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<value>classpath:META-INF/spring/bundle.properties
+			</value>
+		</property>
+		<property name="systemPropertiesMode">
+			<value>2</value>
+		</property>
+	</bean>
 
+	<bean id="configurationService"
+		class="org.rifidi.configuration.services.ConfigurationServiceImpl"
+		scope="singleton">
+		<property name="serviceFactories">
+			<ref bean="serviceFactoriesSet" />
+		</property>
+		<constructor-arg index="0">
+			<ref bean="bundleContext" />
+		</constructor-arg>
+		<constructor-arg index="1"
+			value="${org.rifidi.edge.configuration}" />
+		<constructor-arg index="2">
+			<ref bean="JMSNotifierService" />
+		</constructor-arg>
+		<constructor-arg index="3">
+			<ref bean="jmxService" />
+		</constructor-arg>
+	</bean>
+
+	<bean id="jmxService" class="org.rifidi.configuration.services.JMXServiceImpl"
+		scope="singleton"/>
 	<bean id="esperManager"
 		class="org.rifidi.edge.core.services.esper.internal.EsperManagementServiceImpl" />
 </beans>

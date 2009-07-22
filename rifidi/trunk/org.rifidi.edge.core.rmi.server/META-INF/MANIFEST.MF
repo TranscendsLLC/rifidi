@@ -20,8 +20,7 @@ Import-Package: org.aopalliance.aop;version="1.0.0",
  org.springframework.security.userdetails;version="2.0.4",
  org.springframework.security.userdetails.memory;version="2.0.4",
  org.springframework.security.vote;version="2.0.4"
-Require-Bundle: org.rifidi.configuration;bundle-version="1.0.0",
- org.rifidi.edge.api;bundle-version="1.1.1",
+Require-Bundle: org.rifidi.edge.api;bundle-version="1.1.1",
  org.rifidi.edge.core;bundle-version="5.0.1",
  org.rifidi.org.springframework.bundle.spring;bundle-version="2.5.5"
 
