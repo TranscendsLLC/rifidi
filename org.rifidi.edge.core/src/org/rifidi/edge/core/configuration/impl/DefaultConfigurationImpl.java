@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -23,12 +24,18 @@ import org.apache.commons.logging.LogFactory;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceEvent;
 import org.osgi.framework.ServiceListener;
+import org.rifidi.edge.api.rmi.dto.CommandDTO;
+import org.rifidi.edge.api.rmi.dto.SessionDTO;
 import org.rifidi.edge.core.configuration.Configuration;
+import org.rifidi.edge.core.configuration.ConfigurationType;
 import org.rifidi.edge.core.configuration.RifidiService;
 import org.rifidi.edge.core.configuration.annotations.Operation;
 import org.rifidi.edge.core.configuration.annotations.Property;
 import org.rifidi.edge.core.configuration.listeners.AttributesChangedListener;
 import org.rifidi.edge.core.configuration.services.JMXService;
+import org.rifidi.edge.core.sensors.base.AbstractSensor;
+import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
+import org.rifidi.edge.core.sensors.commands.Command;
 import org.rifidi.edge.core.services.notification.NotifierService;
 
 /**
@@ -69,7 +76,9 @@ public class DefaultConfigurationImpl implements Configuration, ServiceListener 
 	private final NotifierService notifierService;
 	/** JMXservice reference. */
 	private volatile JMXService jmxService;
-
+	/** DTOs that describe the sessions if this config describes a reader. */
+	private final Map<SessionDTO, String> sessionDTOs;
+	private final Map<String, AbstractCommandConfiguration<?>> nameToCommandConfig;
 	/**
 	 * Constructor.
 	 * 
@@ -77,10 +86,12 @@ public class DefaultConfigurationImpl implements Configuration, ServiceListener 
 	 * @param serviceID
 	 * @param factoryID
 	 * @param attributes
+	 * @param sessionDTOs
 	 */
 	public DefaultConfigurationImpl(final String serviceID,
 			final String factoryID, final AttributeList attributes,
-			final NotifierService notifierService, final JMXService jmxService) {
+			final NotifierService notifierService, final JMXService jmxService,
+			Set<SessionDTO> sessionDTOs) {
 		this.notifierService = notifierService;
 		this.nameToProperty = new HashMap<String, Property>();
 		this.nameToOperation = new HashMap<String, Operation>();
@@ -90,6 +101,13 @@ public class DefaultConfigurationImpl implements Configuration, ServiceListener 
 		this.listeners = new CopyOnWriteArraySet<AttributesChangedListener>();
 		this.target = new AtomicReference<RifidiService>(null);
 		this.jmxService = jmxService;
+		this.sessionDTOs=new ConcurrentHashMap<SessionDTO, String>();
+		this.nameToCommandConfig=new ConcurrentHashMap<String, AbstractCommandConfiguration<?>>();
+		if (sessionDTOs != null) {
+			for (SessionDTO dto:sessionDTOs){
+				this.sessionDTOs.put(dto, null);
+			}
+		}
 	}
 
 	/**
@@ -127,6 +145,11 @@ public class DefaultConfigurationImpl implements Configuration, ServiceListener 
 				attributes = (AttributeList) target.getAttributes().clone();
 				nameToPos = new HashMap<String, Integer>();
 				List<Attribute> attrs = attributes.asList();
+				for(SessionDTO dto:sessionDTOs.keySet()){
+					if(target instanceof AbstractSensor<?>){
+						sessionDTOs.put(dto, ((AbstractSensor<?>)target).createReaderSession().getID());
+					}
+				}
 				for (int count = 0; count < attributes.size(); count++) {
 					nameToPos.put(attrs.get(count).getName(), count);
 				}
@@ -370,12 +393,18 @@ public class DefaultConfigurationImpl implements Configuration, ServiceListener 
 	 * ServiceEvent)
 	 */
 	@Override
-	public void serviceChanged(ServiceEvent arg0) {
-		if (arg0.getServiceReference().getProperty("serviceid") != null
-				&& arg0.getServiceReference().getProperty("serviceid").equals(
-						getServiceID())) {
-			setTarget((RifidiService) context.getService(arg0
-					.getServiceReference()));
+	public synchronized  void serviceChanged(ServiceEvent arg0) {
+		// TODO: not 100% save, commands might come up early
+		if (arg0.getServiceReference().getProperty("serviceid") != null) {
+			if (arg0.getServiceReference().getProperty("serviceid").equals(
+					getServiceID())) {
+				if (arg0.getType() == ServiceEvent.REGISTERED) {
+					setTarget((RifidiService) context.getService(arg0
+							.getServiceReference()));
+				} else if (arg0.getType() == ServiceEvent.UNREGISTERING) {
+					setTarget(null);
+				}
+			}
 		}
 	}
 
