@@ -13,6 +13,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
 
 import javax.management.Attribute;
 import javax.management.AttributeList;
+import javax.management.MBeanAttributeInfo;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 
@@ -202,12 +203,13 @@ public class ConfigurationServiceImpl implements ConfigurationService,
 			ServiceStore serviceStore = new ServiceStore();
 			serviceStore.setServiceID(config.getServiceID());
 			serviceStore.setFactoryID(config.getFactoryID());
-			Map<String, String> attributes = new HashMap<String, String>();
 
 			Map<String, Object> configAttrs = config.getAttributes();
-
-			for (String key : configAttrs.keySet()) {
-				attributes.put(key, configAttrs.get(key).toString());
+			Map<String, String> attributes = new HashMap<String, String>();
+			for (MBeanAttributeInfo attrInfo:config.getMBeanInfo().getAttributes()){
+				if(attrInfo.isWritable()){
+					attributes.put(attrInfo.getName(), configAttrs.get(attrInfo.getName()).toString());
+				}
 			}
 			serviceStore.setAttributes(attributes);
 			store.getServices().add(serviceStore);
