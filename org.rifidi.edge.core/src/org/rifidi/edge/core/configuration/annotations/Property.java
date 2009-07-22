@@ -1,5 +1,5 @@
 
-package org.rifidi.configuration.annotations;
+package org.rifidi.edge.core.configuration.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;

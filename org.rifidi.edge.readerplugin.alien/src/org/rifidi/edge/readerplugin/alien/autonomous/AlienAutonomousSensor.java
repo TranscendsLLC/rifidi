@@ -6,9 +6,9 @@ package org.rifidi.edge.readerplugin.alien.autonomous;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.rifidi.configuration.annotations.JMXMBean;
-import org.rifidi.configuration.annotations.Property;
-import org.rifidi.configuration.annotations.PropertyType;
+import org.rifidi.edge.core.configuration.annotations.JMXMBean;
+import org.rifidi.edge.core.configuration.annotations.Property;
+import org.rifidi.edge.core.configuration.annotations.PropertyType;
 import org.rifidi.edge.core.sensors.SensorSession;
 import org.rifidi.edge.core.sensors.base.AbstractSensor;
 import org.rifidi.edge.core.services.notification.NotifierService;

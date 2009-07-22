@@ -2,9 +2,9 @@
  * 
  */
 package org.rifidi.edge.core.sensors.commands;
-import org.rifidi.configuration.Configuration;
-import org.rifidi.configuration.RifidiService;
 import org.rifidi.edge.api.rmi.dto.CommandConfigurationDTO;
+import org.rifidi.edge.core.configuration.Configuration;
+import org.rifidi.edge.core.configuration.RifidiService;
 
 /**
  * Command configurations represent all properties of a command and will create
@@ -39,7 +39,7 @@ public abstract class AbstractCommandConfiguration<T extends Command> extends
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.configuration.RifidiService#destroy()
+	 * @see org.rifidi.edge.core.configuration.RifidiService#destroy()
 	 */
 	@Override
 	public void destroy() {

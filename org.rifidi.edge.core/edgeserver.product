@@ -74,7 +74,7 @@
       <plugin id="org.fosstrak.tdt.tdt"/>
       <plugin id="org.jdom"/>
       <plugin id="org.rifidi.com.espertech.esper"/>
-      <plugin id="org.rifidi.configuration"/>
+      <plugin id="org.rifidi.edge.core.configuration"/>
       <plugin id="org.rifidi.edge.api"/>
       <plugin id="org.rifidi.edge.console"/>
       <plugin id="org.rifidi.edge.core"/>
@@ -135,7 +135,7 @@
       <plugin id="org.fosstrak.tdt.tdt" autoStart="true" startLevel="4" />
       <plugin id="org.jdom" autoStart="true" startLevel="4" />
       <plugin id="org.rifidi.com.espertech.esper" autoStart="true" startLevel="4" />
-      <plugin id="org.rifidi.configuration" autoStart="true" startLevel="4" />
+      <plugin id="org.rifidi.edge.core.configuration" autoStart="true" startLevel="4" />
       <plugin id="org.rifidi.edge.api" autoStart="true" startLevel="4" />
       <plugin id="org.rifidi.edge.console" autoStart="true" startLevel="4" />
       <plugin id="org.rifidi.edge.core" autoStart="true" startLevel="4" />

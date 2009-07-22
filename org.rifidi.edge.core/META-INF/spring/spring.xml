@@ -35,7 +35,7 @@
 	</bean>
 
 	<bean id="configurationService"
-		class="org.rifidi.configuration.services.ConfigurationServiceImpl"
+		class="org.rifidi.edge.core.configuration.services.ConfigurationServiceImpl"
 		scope="singleton">
 		<property name="serviceFactories">
 			<ref bean="serviceFactoriesSet" />
@@ -53,7 +53,7 @@
 		</constructor-arg>
 	</bean>
 
-	<bean id="jmxService" class="org.rifidi.configuration.services.JMXServiceImpl"
+	<bean id="jmxService" class="org.rifidi.edge.core.configuration.services.JMXServiceImpl"
 		scope="singleton"/>
 	<bean id="esperManager"
 		class="org.rifidi.edge.core.services.esper.internal.EsperManagementServiceImpl" />

@@ -1,7 +1,7 @@
-package org.rifidi.configuration.services;
+package org.rifidi.edge.core.configuration.services;
 
-import org.rifidi.configuration.Configuration;
-import org.rifidi.configuration.mbeans.ConfigurationControlMBean;
+import org.rifidi.edge.core.configuration.Configuration;
+import org.rifidi.edge.core.configuration.mbeans.ConfigurationControlMBean;
 
 /**
  * Interface for a JMX Service to implement

@@ -19,9 +19,9 @@ import javax.jms.Destination;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.rifidi.configuration.annotations.JMXMBean;
-import org.rifidi.configuration.annotations.Property;
-import org.rifidi.configuration.annotations.PropertyType;
+import org.rifidi.edge.core.configuration.annotations.JMXMBean;
+import org.rifidi.edge.core.configuration.annotations.Property;
+import org.rifidi.edge.core.configuration.annotations.PropertyType;
 import org.rifidi.edge.core.sensors.SensorSession;
 import org.rifidi.edge.core.sensors.base.AbstractSensor;
 import org.rifidi.edge.core.services.notification.NotifierService;
@@ -271,7 +271,7 @@ public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.configuration.RifidiService#destroy()
+	 * @see org.rifidi.edge.core.configuration.RifidiService#destroy()
 	 */
 	@Override
 	public void destroy() {

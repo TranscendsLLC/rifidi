@@ -1,4 +1,4 @@
-package org.rifidi.configuration.services;
+package org.rifidi.edge.core.configuration.services;
 
 import java.io.File;
 import java.io.IOException;
@@ -27,11 +27,11 @@ import org.apache.commons.logging.LogFactory;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceRegistration;
-import org.rifidi.configuration.Configuration;
-import org.rifidi.configuration.Constants;
-import org.rifidi.configuration.ServiceFactory;
-import org.rifidi.configuration.impl.DefaultConfigurationImpl;
-import org.rifidi.configuration.mbeans.ConfigurationControlMBean;
+import org.rifidi.edge.core.configuration.Configuration;
+import org.rifidi.edge.core.configuration.Constants;
+import org.rifidi.edge.core.configuration.ServiceFactory;
+import org.rifidi.edge.core.configuration.impl.DefaultConfigurationImpl;
+import org.rifidi.edge.core.configuration.mbeans.ConfigurationControlMBean;
 import org.rifidi.edge.core.services.notification.NotifierService;
 
 /**
@@ -199,7 +199,7 @@ public class ConfigurationServiceImpl implements ConfigurationService, Configura
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.configuration.ConfigurationService#storeConfiguration()
+	 * @see org.rifidi.edge.core.configuration.ConfigurationService#storeConfiguration()
 	 */
 	@Override
 	public synchronized void storeConfiguration() {
@@ -251,7 +251,7 @@ public class ConfigurationServiceImpl implements ConfigurationService, Configura
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.configuration.services.ConfigurationService#createService(
+	 * org.rifidi.edge.core.configuration.services.ConfigurationService#createService(
 	 * java.lang.String, javax.management.AttributeList)
 	 */
 	@Override
@@ -294,7 +294,7 @@ public class ConfigurationServiceImpl implements ConfigurationService, Configura
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.configuration.services.ConfigurationService#destroyService
+	 * org.rifidi.edge.core.configuration.services.ConfigurationService#destroyService
 	 * (java.lang.String)
 	 */
 	@Override
@@ -314,7 +314,7 @@ public class ConfigurationServiceImpl implements ConfigurationService, Configura
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.configuration.services.ConfigurationService#getConfiguration
+	 * org.rifidi.edge.core.configuration.services.ConfigurationService#getConfiguration
 	 * (java.lang.String)
 	 */
 	@Override
@@ -326,7 +326,7 @@ public class ConfigurationServiceImpl implements ConfigurationService, Configura
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.configuration.services.ConfigurationService#getConfigurations
+	 * org.rifidi.edge.core.configuration.services.ConfigurationService#getConfigurations
 	 * ()
 	 */
 	@Override
@@ -337,7 +337,7 @@ public class ConfigurationServiceImpl implements ConfigurationService, Configura
 	// Only used by Spring
 
 	/* (non-Javadoc)
-	 * @see org.rifidi.configuration.mbeans.ConfigurationControlMBean#reload()
+	 * @see org.rifidi.edge.core.configuration.mbeans.ConfigurationControlMBean#reload()
 	 */
 	@Override
 	public void reload() {
@@ -345,7 +345,7 @@ public class ConfigurationServiceImpl implements ConfigurationService, Configura
 	}
 
 	/* (non-Javadoc)
-	 * @see org.rifidi.configuration.mbeans.ConfigurationControlMBean#save()
+	 * @see org.rifidi.edge.core.configuration.mbeans.ConfigurationControlMBean#save()
 	 */
 	@Override
 	public void save() {

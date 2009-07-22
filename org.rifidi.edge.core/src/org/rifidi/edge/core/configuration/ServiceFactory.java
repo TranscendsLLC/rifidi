@@ -1,4 +1,4 @@
-package org.rifidi.configuration;
+package org.rifidi.edge.core.configuration;
 
 import java.util.List;
 

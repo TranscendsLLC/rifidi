@@ -1,4 +1,4 @@
-package org.rifidi.configuration;
+package org.rifidi.edge.core.configuration;
 
 /**
  * Currenlty there are only two types of configurations that are possible:

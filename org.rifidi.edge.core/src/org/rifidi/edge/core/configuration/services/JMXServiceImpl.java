@@ -1,4 +1,4 @@
-package org.rifidi.configuration.services;
+package org.rifidi.edge.core.configuration.services;
 
 import java.lang.management.ManagementFactory;
 import java.util.HashMap;
@@ -15,8 +15,8 @@ import javax.management.ObjectName;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.rifidi.configuration.Configuration;
-import org.rifidi.configuration.mbeans.ConfigurationControlMBean;
+import org.rifidi.edge.core.configuration.Configuration;
+import org.rifidi.edge.core.configuration.mbeans.ConfigurationControlMBean;
 
 /**
  * Allows services to be exposed via JMX
@@ -45,7 +45,7 @@ public class JMXServiceImpl implements JMXService {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.configuration.services.JMXService#publish(org.rifidi.configuration
+	 * org.rifidi.edge.core.configuration.services.JMXService#publish(org.rifidi.edge.core.configuration
 	 * .Configuration)
 	 */
 	@Override

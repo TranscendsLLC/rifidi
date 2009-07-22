@@ -17,6 +17,6 @@
 	<osgi:reference id="commandManagement"
 		interface="org.rifidi.edge.core.daos.CommandDAO" />
 	<osgi:reference id="configService"
-		interface="org.rifidi.configuration.services.ConfigurationService" />
+		interface="org.rifidi.edge.core.configuration.services.ConfigurationService" />
 
 </beans>

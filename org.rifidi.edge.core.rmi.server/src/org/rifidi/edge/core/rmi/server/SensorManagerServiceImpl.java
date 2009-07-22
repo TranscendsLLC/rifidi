@@ -10,13 +10,13 @@ import javax.management.MBeanInfo;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.rifidi.configuration.Configuration;
-import org.rifidi.configuration.services.ConfigurationService;
 import org.rifidi.edge.api.rmi.dto.ReaderDTO;
 import org.rifidi.edge.api.rmi.dto.ReaderFactoryDTO;
 import org.rifidi.edge.api.rmi.dto.SessionDTO;
 import org.rifidi.edge.api.rmi.exceptions.CommandSubmissionException;
 import org.rifidi.edge.api.rmi.services.SensorManagerService;
+import org.rifidi.edge.core.configuration.Configuration;
+import org.rifidi.edge.core.configuration.services.ConfigurationService;
 import org.rifidi.edge.core.daos.CommandDAO;
 import org.rifidi.edge.core.daos.ReaderDAO;
 import org.rifidi.edge.core.sensors.SensorSession;

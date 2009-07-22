@@ -11,9 +11,9 @@
  */
 package org.rifidi.edge.readerplugin.llrp.commands;
 
-import org.rifidi.configuration.annotations.JMXMBean;
-import org.rifidi.configuration.annotations.Property;
-import org.rifidi.configuration.annotations.PropertyType;
+import org.rifidi.edge.core.configuration.annotations.JMXMBean;
+import org.rifidi.edge.core.configuration.annotations.Property;
+import org.rifidi.edge.core.configuration.annotations.PropertyType;
 import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
 
 /**

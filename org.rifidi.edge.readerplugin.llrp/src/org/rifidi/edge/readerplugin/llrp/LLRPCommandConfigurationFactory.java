@@ -22,7 +22,7 @@ import javax.management.MBeanInfo;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.rifidi.configuration.ConfigurationType;
+import org.rifidi.edge.core.configuration.ConfigurationType;
 import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
 import org.rifidi.edge.core.sensors.commands.AbstractCommandConfigurationFactory;
 import org.rifidi.edge.readerplugin.llrp.commands.LLRPDeleteROSpecCommandConfiguration;
@@ -67,7 +67,7 @@ public class LLRPCommandConfigurationFactory extends
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.configuration.impl.AbstractMultiServiceFactory#getFactoryIDToClass
+	 * org.rifidi.edge.core.configuration.impl.AbstractMultiServiceFactory#getFactoryIDToClass
 	 * ()
 	 */
 	@Override
@@ -78,7 +78,7 @@ public class LLRPCommandConfigurationFactory extends
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.configuration.ServiceFactory#getFactoryIDs()
+	 * @see org.rifidi.edge.core.configuration.ServiceFactory#getFactoryIDs()
 	 */
 	@Override
 	public List<String> getFactoryIDs() {
@@ -100,7 +100,7 @@ public class LLRPCommandConfigurationFactory extends
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.configuration.ServiceFactory#createInstance(java.lang.String,
+	 * org.rifidi.edge.core.configuration.ServiceFactory#createInstance(java.lang.String,
 	 * java.lang.String)
 	 */
 	@Override
@@ -126,7 +126,7 @@ public class LLRPCommandConfigurationFactory extends
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.configuration.ServiceFactory#getServiceDescription(java.lang
+	 * org.rifidi.edge.core.configuration.ServiceFactory#getServiceDescription(java.lang
 	 * .String)
 	 */
 	@Override

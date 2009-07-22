@@ -16,12 +16,12 @@
 		ref="CommandDAOImpl" />
 
 	<osgi:service id="configurationServiceRegistration" ref="configurationService"
-		interface="org.rifidi.configuration.services.ConfigurationService" />
+		interface="org.rifidi.edge.core.configuration.services.ConfigurationService" />
 	<osgi:service id="jmxServiceRegistration" ref="jmxService"
-		interface="org.rifidi.configuration.services.JMXService" />
+		interface="org.rifidi.edge.core.configuration.services.JMXService" />
 
 	<!-- Imported Services -->
-	<osgi:set id="serviceFactoriesSet" interface="org.rifidi.configuration.ServiceFactory"
+	<osgi:set id="serviceFactoriesSet" interface="org.rifidi.edge.core.configuration.ServiceFactory"
 		cardinality="0..N">
 		<osgi:listener ref="configurationService" bind-method="bind"
 			unbind-method="unbind" />
