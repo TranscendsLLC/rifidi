@@ -17,14 +17,16 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.management.MBeanInfo;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.configuration.ConfigurationType;
+import org.rifidi.edge.core.configuration.impl.AbstractCommandConfigurationFactory;
 import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
-import org.rifidi.edge.core.sensors.commands.AbstractCommandConfigurationFactory;
+import org.rifidi.edge.core.sensors.commands.Command;
 import org.rifidi.edge.readerplugin.llrp.commands.LLRPDeleteROSpecCommandConfiguration;
 import org.rifidi.edge.readerplugin.llrp.commands.LLRPGetTagListCommandConfiguration;
 import org.rifidi.edge.readerplugin.llrp.commands.LLRPROSpecCommandConfiguration;
@@ -41,6 +43,7 @@ public class LLRPCommandConfigurationFactory extends
 			.getLog(LLRPCommandConfigurationFactory.class);
 	private final Map<String, Class<?>> factoryIdToClass;
 	private final Map<String, MBeanInfo> commandIdToInfo;
+	private final Map<String, AbstractCommandConfiguration<?>> commandIdToConfig;
 
 	/**
 	 * LLRPCommandConfigurationFactory
@@ -61,18 +64,22 @@ public class LLRPCommandConfigurationFactory extends
 				(new LLRPROSpecCommandConfiguration()).getMBeanInfo());
 		commandIdToInfo.put("LLRP-DeleteROSpec",
 				(new LLRPDeleteROSpecCommandConfiguration()).getMBeanInfo());
+		commandIdToConfig = new ConcurrentHashMap<String, AbstractCommandConfiguration<?>>();
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.configuration.impl.AbstractMultiServiceFactory#getFactoryIDToClass
-	 * ()
+	 * org.rifidi.edge.core.configuration.impl.AbstractCommandConfigurationFactory
+	 * #getCommandInstance(java.lang.String, java.lang.String)
 	 */
 	@Override
-	public Map<String, Class<?>> getFactoryIDToClass() {
-		return new HashMap<String, Class<?>>(factoryIdToClass);
+	public Command getCommandInstance(String commandID, String readerID) {
+		if (commandIdToConfig.get(commandID) != null) {
+			commandIdToConfig.get(commandID).getCommand(readerID);
+		}
+		return null;
 	}
 
 	/*
@@ -100,8 +107,8 @@ public class LLRPCommandConfigurationFactory extends
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.configuration.ServiceFactory#createInstance(java.lang.String,
-	 * java.lang.String)
+	 * org.rifidi.edge.core.configuration.ServiceFactory#createInstance(java
+	 * .lang.String, java.lang.String)
 	 */
 	@Override
 	public void createInstance(String factoryID, String serviceID) {
@@ -114,6 +121,7 @@ public class LLRPCommandConfigurationFactory extends
 					.getCanonicalName());
 			Map<String, String> parms = new HashMap<String, String>();
 			parms.put("type", ConfigurationType.COMMAND.toString());
+			commandIdToConfig.put(serviceID, command);
 			command.register(getContext(), interfaces, parms);
 		} catch (InstantiationException e) {
 			logger.error(e);
@@ -126,8 +134,8 @@ public class LLRPCommandConfigurationFactory extends
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.configuration.ServiceFactory#getServiceDescription(java.lang
-	 * .String)
+	 * org.rifidi.edge.core.configuration.ServiceFactory#getServiceDescription
+	 * (java.lang .String)
 	 */
 	@Override
 	public MBeanInfo getServiceDescription(String factoryID) {
