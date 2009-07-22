@@ -98,7 +98,6 @@ public class ConfigurationServiceImpl implements ConfigurationService,
 	 * 
 	 * @return
 	 */
-	@SuppressWarnings("unchecked")
 	private ConcurrentHashMap<String, Set<DefaultConfigurationImpl>> loadConfig() {
 		ConcurrentHashMap<String, Set<DefaultConfigurationImpl>> ret = new ConcurrentHashMap<String, Set<DefaultConfigurationImpl>>();
 
@@ -130,7 +129,9 @@ public class ConfigurationServiceImpl implements ConfigurationService,
 					attributes.add(new Attribute(key, service.getAttributes().get(
 							key)));
 				}
-
+				if(!checkName(service.getServiceID())){
+					continue;
+				}
 				ret.get(service.getFactoryID()).add(
 						createAndRegisterConfiguration(service.getServiceID(),
 								service.getFactoryID(), attributes));
