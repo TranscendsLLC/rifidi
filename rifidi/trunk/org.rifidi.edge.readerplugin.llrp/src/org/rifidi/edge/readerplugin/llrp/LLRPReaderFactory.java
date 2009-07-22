@@ -21,6 +21,7 @@ import java.util.Set;
 import javax.management.MBeanInfo;
 
 import org.rifidi.edge.core.configuration.ConfigurationType;
+import org.rifidi.edge.core.configuration.impl.AbstractCommandConfigurationFactory;
 import org.rifidi.edge.core.sensors.base.AbstractSensor;
 import org.rifidi.edge.core.sensors.base.AbstractSensorFactory;
 import org.rifidi.edge.core.services.notification.NotifierService;
@@ -49,8 +50,9 @@ public class LLRPReaderFactory extends AbstractSensorFactory<LLRPReader> {
 	/**
 	 * The constructor for the factory class.
 	 */
-	public LLRPReaderFactory() {
-		readerInfo = (new LLRPReader()).getMBeanInfo();
+	public LLRPReaderFactory(
+			AbstractCommandConfigurationFactory<?> commandFactory) {
+		readerInfo = (new LLRPReader(commandFactory)).getMBeanInfo();
 	}
 
 	/**
@@ -73,7 +75,8 @@ public class LLRPReaderFactory extends AbstractSensorFactory<LLRPReader> {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.configuration.impl.AbstractServiceFactory#getClazz()
+	 * @see
+	 * org.rifidi.edge.core.configuration.impl.AbstractServiceFactory#getClazz()
 	 */
 	@Override
 	public Class<LLRPReader> getClazz() {
@@ -116,12 +119,12 @@ public class LLRPReaderFactory extends AbstractSensorFactory<LLRPReader> {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.configuration.ServiceFactory#createInstance(java.lang.String,
-	 * java.lang.String)
+	 * org.rifidi.edge.core.configuration.ServiceFactory#createInstance(java
+	 * .lang.String, java.lang.String)
 	 */
 	@Override
 	public void createInstance(String factoryID, String serviceID) {
-		LLRPReader instance = new LLRPReader();
+		LLRPReader instance = new LLRPReader(commandFactory);
 		instance.setID(serviceID);
 		instance.setDestination(template.getDefaultDestination());
 		instance.setTemplate(template);
@@ -137,8 +140,8 @@ public class LLRPReaderFactory extends AbstractSensorFactory<LLRPReader> {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.configuration.ServiceFactory#getServiceDescription(java.lang
-	 * .String)
+	 * org.rifidi.edge.core.configuration.ServiceFactory#getServiceDescription
+	 * (java.lang .String)
 	 */
 	@Override
 	public MBeanInfo getServiceDescription(String factoryID) {

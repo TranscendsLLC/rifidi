@@ -54,9 +54,9 @@ import org.llrp.ltk.types.LLRPMessage;
 import org.llrp.ltk.types.UnsignedInteger;
 import org.llrp.ltk.types.UnsignedShort;
 import org.rifidi.edge.api.SessionStatus;
+import org.rifidi.edge.core.configuration.impl.AbstractCommandConfigurationFactory;
 import org.rifidi.edge.core.sensors.base.AbstractSensor;
 import org.rifidi.edge.core.sensors.base.AbstractSensorSession;
-import org.rifidi.edge.core.sensors.commands.Command;
 import org.rifidi.edge.core.services.notification.NotifierService;
 import org.rifidi.edge.core.services.notification.data.EPCGeneration2Event;
 import org.rifidi.edge.core.services.notification.data.ReadCycle;
@@ -70,9 +70,8 @@ import org.springframework.jms.core.MessageCreator;
  * 
  * @author Matthew Dean
  */
-public class LLRPReaderSession extends AbstractSensorSession
-		implements
-			LLRPEndpoint {
+public class LLRPReaderSession extends AbstractSensorSession implements
+		LLRPEndpoint {
 
 	/** Logger for this class. */
 	private static final Log logger = LogFactory
@@ -106,12 +105,14 @@ public class LLRPReaderSession extends AbstractSensorSession
 	 * @param template
 	 * @param notifierService
 	 * @param readerID
+	 * @param commandFactory
 	 */
 	public LLRPReaderSession(AbstractSensor<?> sensor, String id, String host,
 			int port, int reconnectionInterval, int maxConAttempts,
 			Destination destination, JmsTemplate template,
-			NotifierService notifierService, String readerID) {
-		super(sensor, id, destination, template);
+			NotifierService notifierService, String readerID,
+			AbstractCommandConfigurationFactory<?> commandFactory) {
+		super(sensor, id, destination, template, commandFactory);
 		this.host = host;
 		this.port = port;
 		this.connection = new LLRPConnector(this, host, port);
@@ -225,6 +226,7 @@ public class LLRPReaderSession extends AbstractSensorSession
 		}
 
 	}
+
 	/**
 	 * 
 	 */
@@ -385,22 +387,23 @@ public class LLRPReaderSession extends AbstractSensorSession
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.readers.impl.AbstractReaderSession#submit(org.rifidi
-	 * .edge.core.commands.Command, long, java.util.concurrent.TimeUnit)
+	 * org.rifidi.edge.core.sensors.base.AbstractSensorSession#submit(java.lang
+	 * .String, long, java.util.concurrent.TimeUnit)
 	 */
 	@Override
-	public Integer submit(Command command, long interval, TimeUnit unit) {
-		Integer retVal = super.submit(command, interval, unit);
+	public Integer submit(String commandID, long interval, TimeUnit unit) {
+		Integer retVal = super.submit(commandID, interval, unit);
 		// TODO: Remove this once we have aspectJ
 		try {
 			NotifierService service = notifierService;
 			if (service != null) {
 				service.jobSubmitted(this.readerID, this.getID(), retVal,
-						command.getCommandID());
+						commandID);
 			}
 		} catch (Exception e) {
 			// make sure the notification doesn't cause this method to exit
 			// under any circumstances
+			logger.error(e);
 		}
 		return retVal;
 	}

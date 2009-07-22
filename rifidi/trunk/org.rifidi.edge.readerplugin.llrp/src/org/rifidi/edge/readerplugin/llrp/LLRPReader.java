@@ -22,6 +22,7 @@ import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.configuration.annotations.JMXMBean;
 import org.rifidi.edge.core.configuration.annotations.Property;
 import org.rifidi.edge.core.configuration.annotations.PropertyType;
+import org.rifidi.edge.core.configuration.impl.AbstractCommandConfigurationFactory;
 import org.rifidi.edge.core.sensors.SensorSession;
 import org.rifidi.edge.core.sensors.base.AbstractSensor;
 import org.rifidi.edge.core.services.notification.NotifierService;
@@ -59,9 +60,10 @@ public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 	private NotifierService notifyServiceWrapper;
 
 	/**
-	 * 
+	 * Constructor.
 	 */
-	public LLRPReader() {
+	public LLRPReader(AbstractCommandConfigurationFactory<?> commandFactory) {
+		super(commandFactory);
 		this.readerProperties = new ConcurrentHashMap<String, String>();
 	}
 
@@ -78,7 +80,7 @@ public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 			session = new LLRPReaderSession(this, Integer.toString(sessionID),
 					ipAddress, port, reconnectionInterval,
 					maxNumConnectionAttempts, destination, template,
-					notifyServiceWrapper, super.getID());
+					notifyServiceWrapper, super.getID(),commandFactory);
 
 			// TODO: remove this once we get AspectJ in here!
 			NotifierService service = notifyServiceWrapper;
