@@ -15,6 +15,7 @@ import javax.jms.Destination;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.api.SessionStatus;
+import org.rifidi.edge.core.configuration.impl.AbstractCommandConfigurationFactory;
 import org.rifidi.edge.core.sensors.base.threads.MessageParsingStrategy;
 import org.rifidi.edge.core.sensors.base.threads.QueueingReadThread;
 import org.rifidi.edge.core.sensors.base.threads.WriteThread;
@@ -30,8 +31,7 @@ import org.springframework.jms.core.JmsTemplate;
  * @author Kyle Neumeier - kyle@pramari.com
  */
 public abstract class AbstractIPSensorSession extends AbstractSensorSession
-		implements
-			MessageParsingStrategy {
+		implements MessageParsingStrategy {
 	/** Logger for this class. */
 	private static final Log logger = LogFactory
 			.getLog(AbstractIPSensorSession.class);
@@ -81,11 +81,13 @@ public abstract class AbstractIPSensorSession extends AbstractSensorSession
 	 *            JMS Queue to put tag data on
 	 * @param template
 	 *            JMSTemplate to use to send tag data
+	 * @param commandFactory
 	 */
 	public AbstractIPSensorSession(AbstractSensor<?> sensor, String ID,
 			String host, int port, int reconnectionInterval,
-			int maxConAttempts, Destination destination, JmsTemplate template) {
-		super(sensor, ID, destination, template);
+			int maxConAttempts, Destination destination, JmsTemplate template,
+			AbstractCommandConfigurationFactory<?> commandFactory) {
+		super(sensor, ID, destination, template, commandFactory);
 		this.host = host;
 		this.port = port;
 		this.maxConAttempts = maxConAttempts;

@@ -177,8 +177,6 @@ public class ConfigurationServiceImpl implements ConfigurationService,
 		try {
 			context.addServiceListener(config, "(serviceid="
 					+ config.getServiceID() + ")");
-			context.addServiceListener(config, "(objectclass="
-					+ AbstractCommandConfiguration.class.getCanonicalName() + ")");
 			logger.debug("Added listener for (serviceid="
 					+ config.getServiceID() + ")");
 		} catch (InvalidSyntaxException e) {

@@ -379,13 +379,13 @@ public class SensorManagerServiceImpl implements SensorManagerService {
 
 		// if sinleshot command
 		if (repeatInterval == null) {
-			session.submit(command);
+			session.submit(commandID);
 			logger.info("Command with ID " + commandID
 					+ " submitted to session " + sessionID + " of reader "
 					+ readerID + " for single shot execution");
 			return null;
 		} else {
-			Integer processID = session.submit(command, repeatInterval,
+			Integer processID = session.submit(commandID, repeatInterval,
 					timeUnit);
 			logger.info("Command with ID " + commandID
 					+ " submitted to session " + sessionID + " of reader "

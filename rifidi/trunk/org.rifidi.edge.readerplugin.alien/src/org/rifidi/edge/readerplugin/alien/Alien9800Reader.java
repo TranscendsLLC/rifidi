@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -15,6 +16,7 @@ import org.rifidi.edge.core.configuration.annotations.JMXMBean;
 import org.rifidi.edge.core.configuration.annotations.Operation;
 import org.rifidi.edge.core.configuration.annotations.Property;
 import org.rifidi.edge.core.configuration.annotations.PropertyType;
+import org.rifidi.edge.core.configuration.impl.AbstractCommandConfigurationFactory;
 import org.rifidi.edge.core.sensors.SensorSession;
 import org.rifidi.edge.core.sensors.base.AbstractSensor;
 import org.rifidi.edge.core.services.notification.NotifierService;
@@ -33,34 +35,33 @@ import org.springframework.jms.core.JmsTemplate;
 @JMXMBean
 public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 	/** Logger for this class. */
-	private Log logger = LogFactory.getLog(Alien9800Reader.class);
+	private static final Log logger = LogFactory.getLog(Alien9800Reader.class);
 	/** The only session an alien reader allows. */
-	private Alien9800ReaderSession session;
+	private volatile Alien9800ReaderSession session;
 	/** A queue for putting commands to be executed next */
-	private LinkedBlockingQueue<AlienCommandObjectWrapper> propCommandsToBeExecuted;
+	private final LinkedBlockingQueue<AlienCommandObjectWrapper> propCommandsToBeExecuted;
 	/** A hashmap containing all the properties for this reader */
-	private ConcurrentHashMap<String, String> readerProperties;
+	private final ConcurrentHashMap<String, String> readerProperties;
 	/** IP address of the sensorSession. */
-	private String ipAddress = AlienReaderDefaultValues.IPADDRESS;
+	private volatile String ipAddress = AlienReaderDefaultValues.IPADDRESS;
 	/** Port to connect to. */
-	private Integer port = Integer.parseInt(AlienReaderDefaultValues.PORT);
+	private volatile Integer port = Integer.parseInt(AlienReaderDefaultValues.PORT);
 	/** Username for the telnet interface. */
-	private String username = AlienReaderDefaultValues.USERNAME;
+	private volatile String username = AlienReaderDefaultValues.USERNAME;
 	/** Password for the telnet interface. */
-	private String password = AlienReaderDefaultValues.PASSWORD;
+	private volatile String password = AlienReaderDefaultValues.PASSWORD;
 	/** Time between two connection attempts. */
-	private Integer reconnectionInterval = Integer
+	private volatile Integer reconnectionInterval = Integer
 			.parseInt(AlienReaderDefaultValues.RECONNECTION_INTERVAL);
 	/** Number of connection attempts before a connection goes into fail state. */
-	private Integer maxNumConnectionAttempts = Integer
+	private volatile Integer maxNumConnectionAttempts = Integer
 			.parseInt(AlienReaderDefaultValues.MAX_CONNECTION_ATTEMPTS);
 	/** Spring JMS template */
-	private JmsTemplate template;
+	private volatile JmsTemplate template;
 	/** The FACTORY_ID of the session */
-	private int sessionID = 0;
+	private AtomicInteger sessionID = new AtomicInteger(0);
 	/** service used to send notifications */
-	private NotifierService notifierService;
-
+	private volatile NotifierService notifierService;
 	/**
 	 * READER PROPERTIES - SETTABE, SET ON CONNECTION
 	 */
@@ -99,7 +100,8 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 	/**
 	 * Constructor.
 	 */
-	public Alien9800Reader() {
+	public Alien9800Reader(AbstractCommandConfigurationFactory<?> commandFactory) {
+		super(commandFactory);
 		readerProperties = new ConcurrentHashMap<String, String>();
 		readerProperties.put(PROP_READER_NUMBER, "0");
 		readerProperties.put(PROP_READER_VERSION, "Unavailable");
@@ -155,7 +157,7 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 
 		logger.debug("New instance of Alien9800Reader created.");
 	}
-
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -164,12 +166,12 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 	@Override
 	public synchronized SensorSession createReaderSession() {
 		if (session == null) {
-			sessionID++;
+			Integer sessionID=this.sessionID.incrementAndGet(); 
 			session = new Alien9800ReaderSession(this, Integer
 					.toString(sessionID), ipAddress, port,
 					(int) (long) reconnectionInterval,
 					maxNumConnectionAttempts, username, password, template,
-					notifierService, this.getID());
+					notifierService, this.getID(), commandFactory);
 
 			// TODO: remove this once we get AspectJ in here!
 			notifierService.addSessionEvent(this.getID(), Integer
@@ -226,7 +228,7 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 
 			// TODO: remove this once we get AspectJ in here!
 			notifierService.removeSessionEvent(this.getID(), Integer
-					.toString(sessionID));
+					.toString(sessionID.get()));
 		}
 	}
 

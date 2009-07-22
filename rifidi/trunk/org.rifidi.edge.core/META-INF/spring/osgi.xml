@@ -64,7 +64,7 @@
 	</osgi:set>
 
 	<osgi:set id="commandFactoriesSet"
-		interface="org.rifidi.edge.core.sensors.commands.AbstractCommandConfigurationFactory"
+		interface="org.rifidi.edge.core.configuration.impl.AbstractCommandConfigurationFactory"
 		cardinality="0..N">
 		<osgi:listener ref="CommandDAOImpl" bind-method="bindCommandFactory"
 			unbind-method="unbindCommandFactory" />

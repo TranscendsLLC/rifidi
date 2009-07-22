@@ -11,6 +11,7 @@ import javax.management.AttributeList;
 import org.eclipse.osgi.framework.console.CommandInterpreter;
 import org.eclipse.osgi.framework.console.CommandProvider;
 import org.rifidi.edge.core.configuration.Configuration;
+import org.rifidi.edge.core.configuration.impl.AbstractCommandConfigurationFactory;
 import org.rifidi.edge.core.configuration.services.ConfigurationService;
 import org.rifidi.edge.core.daos.CommandDAO;
 import org.rifidi.edge.core.daos.ReaderDAO;
@@ -18,7 +19,6 @@ import org.rifidi.edge.core.sensors.SensorSession;
 import org.rifidi.edge.core.sensors.base.AbstractSensor;
 import org.rifidi.edge.core.sensors.base.AbstractSensorFactory;
 import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
-import org.rifidi.edge.core.sensors.commands.AbstractCommandConfigurationFactory;
 import org.rifidi.edge.core.sensors.commands.Command;
 
 /**
@@ -90,7 +90,7 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 			intp.println("ID: " + reader.getID());
 			for (SensorSession session : reader.getSensorSessions().values()) {
 				intp.println("\tsession (" + session.getID() + "): " + session);
-				Map<Integer, Command> commands = session.currentCommands();
+				Map<Integer, String> commands = session.currentCommands();
 				for (Integer commandId : commands.keySet()) {
 					intp.println("\t\tcommand (" + commandId + "): "
 							+ commands.get(commandId));
@@ -507,10 +507,10 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 			if (session != null) {
 				Long ival = Long.parseLong(interval);
 				if (ival > 0) {
-					session.submit(command.getCommand(readerid), ival,
+					session.submit(commandid, ival,
 							TimeUnit.MILLISECONDS);
 				} else {
-					session.submit(command.getCommand(readerid));
+					session.submit(commandid);
 				}
 			} else {
 				intp.print("Session ID not found " + sessionid);

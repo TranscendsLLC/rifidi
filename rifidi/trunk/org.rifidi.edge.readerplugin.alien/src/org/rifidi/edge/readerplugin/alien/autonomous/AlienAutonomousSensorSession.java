@@ -14,9 +14,9 @@ import java.util.concurrent.TimeUnit;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.api.SessionStatus;
+import org.rifidi.edge.core.configuration.impl.AbstractCommandConfigurationFactory;
 import org.rifidi.edge.core.sensors.base.AbstractSensor;
 import org.rifidi.edge.core.sensors.base.AbstractSensorSession;
-import org.rifidi.edge.core.sensors.commands.Command;
 import org.rifidi.edge.core.services.notification.NotifierService;
 import org.springframework.jms.core.JmsTemplate;
 
@@ -58,11 +58,14 @@ public class AlienAutonomousSensorSession extends AbstractSensorSession {
 	 *            Service used to send notifications to clients
 	 * @param serverSocketPort
 	 *            The port to bind to
+	 * @param commandFactory
 	 */
 	public AlienAutonomousSensorSession(AbstractSensor<?> sensor, String ID,
 			JmsTemplate template, NotifierService notifierService,
-			int serverSocketPort, int maxNumAutonomousReaders) {
-		super(sensor, ID, template.getDefaultDestination(), template);
+			int serverSocketPort, int maxNumAutonomousReaders,
+			AbstractCommandConfigurationFactory<?> commandFactory) {
+		super(sensor, ID, template.getDefaultDestination(), template,
+				commandFactory);
 		this.serverSocketPort = serverSocketPort;
 		this.notifierService = notifierService;
 		this.maxNumAutonomousReaders = maxNumAutonomousReaders;
@@ -181,11 +184,11 @@ public class AlienAutonomousSensorSession extends AbstractSensorSession {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.sensors.base.AbstractSensorSession#submit(org.rifidi
-	 * .edge.core.sensors.commands.Command, long, java.util.concurrent.TimeUnit)
+	 * org.rifidi.edge.core.sensors.base.AbstractSensorSession#submit(java.lang
+	 * .String, long, java.util.concurrent.TimeUnit)
 	 */
 	@Override
-	public Integer submit(Command command, long interval, TimeUnit unit) {
+	public Integer submit(String commandID, long interval, TimeUnit unit) {
 		logger.warn("Cannot submit a command to a passive session");
 		return null;
 	}
@@ -194,11 +197,11 @@ public class AlienAutonomousSensorSession extends AbstractSensorSession {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.sensors.base.AbstractSensorSession#submit(org.rifidi
-	 * .edge.core.sensors.commands.Command)
+	 * org.rifidi.edge.core.sensors.base.AbstractSensorSession#submit(java.lang
+	 * .String)
 	 */
 	@Override
-	public void submit(Command command) {
+	public void submit(String commandID) {
 		logger.warn("Cannot submit a command to a passive session");
 	}
 

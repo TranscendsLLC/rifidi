@@ -40,8 +40,8 @@ public class AlienAutonomousSensorFactory extends
 	 * Constructor.
 	 */
 	public AlienAutonomousSensorFactory() {
-		super();
-		this.readerInfo = (new AlienAutonomousSensor()).getMBeanInfo();
+		super(null);
+		this.readerInfo = (new AlienAutonomousSensor(null)).getMBeanInfo();
 	}
 
 	/**
@@ -96,7 +96,7 @@ public class AlienAutonomousSensorFactory extends
 	@Override
 	public void createInstance(String factoryID, String serviceID) {
 		assert (factoryID.equals(FACTORY_ID));
-		AlienAutonomousSensor instance = new AlienAutonomousSensor();
+		AlienAutonomousSensor instance = new AlienAutonomousSensor(null);
 		instance.setID(serviceID);
 		instance.setTemplate((JmsTemplate) template);
 		Set<String> interfaces = new HashSet<String>();

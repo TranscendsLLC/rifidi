@@ -9,6 +9,7 @@ import java.util.Map;
 import org.rifidi.edge.core.configuration.annotations.JMXMBean;
 import org.rifidi.edge.core.configuration.annotations.Property;
 import org.rifidi.edge.core.configuration.annotations.PropertyType;
+import org.rifidi.edge.core.configuration.impl.AbstractCommandConfigurationFactory;
 import org.rifidi.edge.core.sensors.SensorSession;
 import org.rifidi.edge.core.sensors.base.AbstractSensor;
 import org.rifidi.edge.core.services.notification.NotifierService;
@@ -39,6 +40,14 @@ public class AlienAutonomousSensor
 	private Integer serverSocketPort = 54321;
 	/** Maximum number of autonomous readers supported concurrently */
 	private Integer maxNumberAutonomousReaders = 15;
+
+	/**
+	 * @param commandFactory
+	 */
+	public AlienAutonomousSensor(
+			AbstractCommandConfigurationFactory<?> commandFactory) {
+		super(commandFactory);
+	}
 
 	/**
 	 * @param template
@@ -80,7 +89,7 @@ public class AlienAutonomousSensor
 			sessionID++;
 			session = new AlienAutonomousSensorSession(this, Integer
 					.toString(sessionID), template, notifierService,
-					serverSocketPort, maxNumberAutonomousReaders);
+					serverSocketPort, maxNumberAutonomousReaders, commandFactory);
 			notifierService.addSessionEvent(getID(), Integer
 					.toString(sessionID));
 			return session;
