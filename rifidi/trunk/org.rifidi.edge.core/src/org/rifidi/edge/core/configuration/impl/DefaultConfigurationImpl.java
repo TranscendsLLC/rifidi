@@ -24,14 +24,12 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceEvent;
 import org.osgi.framework.ServiceListener;
 import org.rifidi.edge.core.configuration.Configuration;
-import org.rifidi.edge.core.configuration.ConfigurationType;
 import org.rifidi.edge.core.configuration.RifidiService;
 import org.rifidi.edge.core.configuration.annotations.Operation;
 import org.rifidi.edge.core.configuration.annotations.Property;
 import org.rifidi.edge.core.configuration.listeners.AttributesChangedListener;
 import org.rifidi.edge.core.configuration.services.JMXService;
 import org.rifidi.edge.core.services.notification.NotifierService;
-import org.springframework.beans.factory.annotation.Configurable;
 
 /**
  * A default implementation of a configuration by wrapping a service object. It
@@ -41,7 +39,6 @@ import org.springframework.beans.factory.annotation.Configurable;
  * @author Jochen Mader - jochen@pramari.com
  * @author Kyle Neumeier - kyle@pramari.com
  */
-@Configurable
 public class DefaultConfigurationImpl implements Configuration, ServiceListener {
 	/** Logger for this class. */
 	private static final Log logger = LogFactory
@@ -66,8 +63,6 @@ public class DefaultConfigurationImpl implements Configuration, ServiceListener 
 	private volatile Map<String, Integer> nameToPos;
 	/** Listeners to changes of attributes on this object */
 	private final Set<AttributesChangedListener> listeners;
-	/** The type of configuraiton. This is a hack for now */
-	private volatile ConfigurationType type;
 	/** The bundle context for registering services. */
 	private volatile BundleContext context;
 	/** Notifier service for jms messages. */
@@ -145,6 +140,13 @@ public class DefaultConfigurationImpl implements Configuration, ServiceListener 
 		logger.warn("Tried to set the target but was already set.");
 	}
 
+	/**
+	 * @return the target
+	 */
+	public RifidiService getTarget() {
+		return target.get();
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -153,15 +155,6 @@ public class DefaultConfigurationImpl implements Configuration, ServiceListener 
 	@Override
 	public String getFactoryID() {
 		return factoryID;
-	}
-
-	/**
-	 * @param type
-	 *            the type to set
-	 */
-	public void setType(final ConfigurationType type) {
-		assert (type != null);
-		this.type = type;
 	}
 
 	/*
@@ -348,8 +341,8 @@ public class DefaultConfigurationImpl implements Configuration, ServiceListener 
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.configuration.Configuration#addAttributesChangedListener(org
-	 * .rifidi.configuration.listeners.AttributesChangedListener)
+	 * org.rifidi.edge.core.configuration.Configuration#addAttributesChangedListener
+	 * (org .rifidi.configuration.listeners.AttributesChangedListener)
 	 */
 	@Override
 	public void addAttributesChangedListener(AttributesChangedListener listener) {
@@ -359,8 +352,8 @@ public class DefaultConfigurationImpl implements Configuration, ServiceListener 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.rifidi.edge.core.configuration.Configuration#removeAttributesChangedListener
+	 * @seeorg.rifidi.edge.core.configuration.Configuration#
+	 * removeAttributesChangedListener
 	 * (org.rifidi.edge.core.configuration.listeners.AttributesChangedListener)
 	 */
 	@Override

@@ -2,10 +2,13 @@ package org.rifidi.edge.core.sensors;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 import org.rifidi.edge.api.SessionStatus;
+import org.rifidi.edge.api.rmi.dto.CommandDTO;
 import org.rifidi.edge.api.rmi.dto.SessionDTO;
 import org.rifidi.edge.core.sensors.base.AbstractSensor;
 import org.rifidi.edge.core.sensors.commands.Command;
@@ -18,9 +21,12 @@ import org.rifidi.edge.core.sensors.commands.Command;
 public abstract class SensorSession {
 
 	/** The ID for this session */
-	private String ID;
+	private final String ID;
 	/** The sensor this session is associated with. */
-	protected AbstractSensor<?> sensor;
+	protected final AbstractSensor<?> sensor;
+	/** Key is the process id, the commandDTO is the value. */
+	protected final Map<Integer, CommandDTO> idToCommandDTO;
+
 	/**
 	 * Constructor.
 	 * 
@@ -29,7 +35,8 @@ public abstract class SensorSession {
 	 */
 	public SensorSession(String ID, AbstractSensor<?> sensor) {
 		this.ID = ID;
-		this.sensor=sensor;
+		this.sensor = sensor;
+		this.idToCommandDTO=new ConcurrentHashMap<Integer, CommandDTO>();
 	}
 
 	/**
@@ -100,7 +107,7 @@ public abstract class SensorSession {
 			commandMap.put(processID, this.currentCommands().get(processID)
 					.getCommandID());
 		}
-		return new SessionDTO(this.getID(), this.getStatus(), commandMap);
+		return new SessionDTO(this.getID(), this.getStatus(), new HashSet<CommandDTO>(idToCommandDTO.values()));
 	}
 
 	/**
@@ -118,5 +125,5 @@ public abstract class SensorSession {
 	public AbstractSensor<?> getSensor() {
 		return sensor;
 	}
-	
+
 }

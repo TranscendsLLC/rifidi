@@ -11,12 +11,14 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.jms.Destination;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.api.SessionStatus;
+import org.rifidi.edge.api.rmi.dto.CommandDTO;
 import org.rifidi.edge.core.sensors.SensorSession;
 import org.rifidi.edge.core.sensors.commands.Command;
 import org.springframework.jms.core.JmsTemplate;
@@ -33,19 +35,19 @@ import org.springframework.jms.core.JmsTemplate;
 public abstract class AbstractSensorSession extends SensorSession {
 
 	/** Used to execute commands. */
-	protected ScheduledThreadPoolExecutor executor;
+	protected volatile ScheduledThreadPoolExecutor executor;
 	/** Status of the reader. */
-	private SessionStatus status;
+	private volatile SessionStatus status;
 	/** Map containing the periodic commands with the process id as key. */
-	protected Map<Integer, Command> commands;
+	protected final Map<Integer, Command> commands;
 	/** Map containing command process id as key and the future as value. */
-	protected Map<Integer, CommandExecutionData> idToData;
+	protected final Map<Integer, CommandExecutionData> idToData;
 	/** Job counter */
-	private int counter = 0;
+	private AtomicInteger counter = new AtomicInteger(0);
 	/** JMS destination. */
-	private Destination destination;
+	private volatile Destination destination;
 	/** Spring jms template */
-	private JmsTemplate template;
+	private volatile JmsTemplate template;
 	/** True if the executor is up and running. */
 	protected AtomicBoolean processing = new AtomicBoolean(false);
 	/**
@@ -107,6 +109,7 @@ public abstract class AbstractSensorSession extends SensorSession {
 	@Override
 	public void killComand(Integer id) {
 		commands.remove(id);
+		idToCommandDTO.remove(id);
 		CommandExecutionData data = idToData.remove(id);
 		if (data != null) {
 			if (data.future != null) {
@@ -145,22 +148,22 @@ public abstract class AbstractSensorSession extends SensorSession {
 	 */
 	@Override
 	public Integer submit(Command command, long interval, TimeUnit unit) {
-		synchronized (commands) {
-			command.setReaderSession(this);
-			command.setTemplate(template);
-			command.setDestination(destination);
-			Integer id = counter++;
-			commands.put(id, command);
-			CommandExecutionData data = new CommandExecutionData();
-			data.interval = interval;
-			data.unit = unit;
-			if (processing.get()) {
-				data.future = executor.scheduleWithFixedDelay(command, 0,
-						interval, unit);
-			}
-			idToData.put(id, data);
-			return id;
+		Integer id = counter.getAndIncrement();
+		command.setReaderSession(this);
+		command.setTemplate(template);
+		command.setDestination(destination);
+		commands.put(id, command);
+		CommandExecutionData data = new CommandExecutionData();
+		data.interval = interval;
+		data.unit = unit;
+		idToCommandDTO.put(id, new CommandDTO(true, interval, unit, id, command
+				.getCommandID()));
+		if (processing.get()) {
+			data.future = executor.scheduleWithFixedDelay(command, 0, interval,
+					unit);
 		}
+		idToData.put(id, data);
+		return id;
 	}
 
 	/**
