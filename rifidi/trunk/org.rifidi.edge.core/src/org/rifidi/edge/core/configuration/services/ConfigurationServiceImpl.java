@@ -33,6 +33,7 @@ import org.rifidi.edge.core.configuration.impl.DefaultConfigurationImpl;
 import org.rifidi.edge.core.configuration.mbeans.ConfigurationControlMBean;
 import org.rifidi.edge.core.sensors.SensorSession;
 import org.rifidi.edge.core.sensors.base.AbstractSensor;
+import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
 import org.rifidi.edge.core.services.notification.NotifierService;
 
 /**
@@ -72,8 +73,9 @@ public class ConfigurationServiceImpl implements ConfigurationService,
 	/**
 	 * Constructor.
 	 */
-	public ConfigurationServiceImpl(BundleContext context, String path,
-			NotifierService notifierService, JMXService jmxService) {
+	public ConfigurationServiceImpl(final BundleContext context,
+			final String path, final NotifierService notifierService,
+			final JMXService jmxService) {
 		this.jmxService = jmxService;
 		this.notifierService = notifierService;
 		this.path = path;
@@ -113,11 +115,13 @@ public class ConfigurationServiceImpl implements ConfigurationService,
 			logger.error(e);
 			return ret;
 		}
-		if(store.getServices()!=null){
+		if (store.getServices() != null) {
 			for (ServiceStore service : store.getServices()) {
 				if (ret.get(service.getFactoryID()) == null) {
-					ret.put(service.getFactoryID(),
-							new CopyOnWriteArraySet<DefaultConfigurationImpl>());
+					ret
+							.put(
+									service.getFactoryID(),
+									new CopyOnWriteArraySet<DefaultConfigurationImpl>());
 				}
 				AttributeList attributes = new AttributeList();
 				// get all properties
@@ -130,17 +134,18 @@ public class ConfigurationServiceImpl implements ConfigurationService,
 					if (Constants.FACTORY_TYPE.equals(key)) {
 						continue;
 					}
-					attributes.add(new Attribute(key, service.getAttributes().get(
-							key)));
+					attributes.add(new Attribute(key, service.getAttributes()
+							.get(key)));
 				}
-				if(!checkName(service.getServiceID())){
+				if (!checkName(service.getServiceID())) {
 					continue;
 				}
 				ret.get(service.getFactoryID()).add(
 						createAndRegisterConfiguration(service.getServiceID(),
-								service.getFactoryID(), attributes));
+								service.getFactoryID(), attributes, service
+										.getSessionDTOs()));
 				serviceNames.add(service.getServiceID());
-			}	
+			}
 		}
 		return ret;
 	}
@@ -154,9 +159,11 @@ public class ConfigurationServiceImpl implements ConfigurationService,
 	 * @return
 	 */
 	private DefaultConfigurationImpl createAndRegisterConfiguration(
-			String serviceID, String factoryID, AttributeList attributes) {
+			final String serviceID, final String factoryID,
+			final AttributeList attributes, final Set<SessionDTO> sessionDTOs) {
 		DefaultConfigurationImpl config = new DefaultConfigurationImpl(
-				serviceID, factoryID, attributes, notifierService, jmxService);
+				serviceID, factoryID, attributes, notifierService, jmxService,
+				sessionDTOs);
 		config.setContext(context);
 		IDToConfigurations.put(serviceID, config);
 
@@ -170,6 +177,8 @@ public class ConfigurationServiceImpl implements ConfigurationService,
 		try {
 			context.addServiceListener(config, "(serviceid="
 					+ config.getServiceID() + ")");
+			context.addServiceListener(config, "(objectclass="
+					+ AbstractCommandConfiguration.class.getCanonicalName() + ")");
 			logger.debug("Added listener for (serviceid="
 					+ config.getServiceID() + ")");
 		} catch (InvalidSyntaxException e) {
@@ -186,7 +195,7 @@ public class ConfigurationServiceImpl implements ConfigurationService,
 	 *            The name of a configuration that is read in
 	 * @return true if the configuration name passes the check. False otherwise.
 	 */
-	private boolean checkName(String configurationName) {
+	private boolean checkName(final String configurationName) {
 		String regex = "([A-Za-z0-9_])+";
 		return configurationName.matches(regex);
 	}
@@ -211,26 +220,29 @@ public class ConfigurationServiceImpl implements ConfigurationService,
 
 			Map<String, Object> configAttrs = config.getAttributes();
 			Map<String, String> attributes = new HashMap<String, String>();
-			for (MBeanAttributeInfo attrInfo:config.getMBeanInfo().getAttributes()){
-				if(attrInfo.isWritable()){
-					attributes.put(attrInfo.getName(), configAttrs.get(attrInfo.getName()).toString());
+			for (MBeanAttributeInfo attrInfo : config.getMBeanInfo()
+					.getAttributes()) {
+				if (attrInfo.isWritable()) {
+					attributes.put(attrInfo.getName(), configAttrs.get(
+							attrInfo.getName()).toString());
 				}
 			}
 			serviceStore.setAttributes(attributes);
-			try{
-				RifidiService target=config.getTarget();
-				if(target!=null && target instanceof AbstractSensor<?>){
+			try {
+				RifidiService target = config.getTarget();
+				if (target != null && target instanceof AbstractSensor<?>) {
 					serviceStore.setSessionDTOs(new HashSet<SessionDTO>());
-					for(SensorSession session:((AbstractSensor<?>)target).getSensorSessions().values()){
+					for (SensorSession session : ((AbstractSensor<?>) target)
+							.getSensorSessions().values()) {
 						serviceStore.getSessionDTOs().add(session.getDTO());
 					}
 				}
-			}catch(RuntimeException e){
-				logger.info("Target went away while trying to store it: "+e);
+			} catch (RuntimeException e) {
+				logger.info("Target went away while trying to store it: " + e);
 			}
 			store.getServices().add(serviceStore);
 		}
-		
+
 		try {
 			jaxbContext.createMarshaller().marshal(store, new File(path));
 		} catch (JAXBException e) {
@@ -245,7 +257,8 @@ public class ConfigurationServiceImpl implements ConfigurationService,
 	 * createService( java.lang.String, javax.management.AttributeList)
 	 */
 	@Override
-	public void createService(String factoryID, AttributeList attributes) {
+	public void createService(final String factoryID,
+			final AttributeList attributes) {
 		ServiceFactory<?> factory = factories.get(factoryID);
 		if (factory == null) {
 			logger.warn("Tried to use a nonexistent factory: " + factoryID);
@@ -266,7 +279,7 @@ public class ConfigurationServiceImpl implements ConfigurationService,
 		}
 
 		DefaultConfigurationImpl config = createAndRegisterConfiguration(
-				serviceID, factoryID, attributes);
+				serviceID, factoryID, attributes, new HashSet<SessionDTO>());
 
 		if (factoryToConfigurations.get(factoryID) == null) {
 			factoryToConfigurations.put(factoryID,
@@ -287,7 +300,7 @@ public class ConfigurationServiceImpl implements ConfigurationService,
 	 * destroyService (java.lang.String)
 	 */
 	@Override
-	public void destroyService(String serviceID) {
+	public void destroyService(final String serviceID) {
 		synchronized (serviceNames) {
 			serviceNames.remove(serviceID);
 			DefaultConfigurationImpl config = IDToConfigurations
@@ -306,7 +319,7 @@ public class ConfigurationServiceImpl implements ConfigurationService,
 	 * getConfiguration (java.lang.String)
 	 */
 	@Override
-	public Configuration getConfiguration(String serviceID) {
+	public Configuration getConfiguration(final String serviceID) {
 		return IDToConfigurations.get(serviceID);
 	}
 
@@ -352,7 +365,8 @@ public class ConfigurationServiceImpl implements ConfigurationService,
 	 * 
 	 * @param serviceFactories
 	 */
-	public void setServiceFactories(Set<ServiceFactory<?>> serviceFactories) {
+	public void setServiceFactories(
+			final Set<ServiceFactory<?>> serviceFactories) {
 		for (ServiceFactory<?> serviceFactory : serviceFactories) {
 			bind(serviceFactory, null);
 		}
@@ -364,7 +378,7 @@ public class ConfigurationServiceImpl implements ConfigurationService,
 	 * @param serviceRef
 	 * @throws Exception
 	 */
-	public void bind(ServiceFactory<?> factory, Map<?, ?> properties) {
+	public void bind(final ServiceFactory<?> factory, final Map<?, ?> properties) {
 		synchronized (factories) {
 			for (String factoryID : factory.getFactoryIDs()) {
 				if (factories.get(factoryID) == null) {
@@ -388,7 +402,7 @@ public class ConfigurationServiceImpl implements ConfigurationService,
 	 * @param serviceRef
 	 * @throws Exception
 	 */
-	public synchronized void unbind(ServiceFactory<?> factory,
+	public synchronized void unbind(final ServiceFactory<?> factory,
 			Map<?, ?> properties) {
 		synchronized (factories) {
 			for (String factoryID : factory.getFactoryIDs()) {
