@@ -1,12 +1,10 @@
 package org.rifidi.edge.core.configuration.services;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -15,21 +13,19 @@ import java.util.concurrent.CopyOnWriteArraySet;
 
 import javax.management.Attribute;
 import javax.management.AttributeList;
-import javax.management.DynamicMBean;
-import javax.management.MBeanAttributeInfo;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
 
-import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.HierarchicalINIConfiguration;
-import org.apache.commons.configuration.SubnodeConfiguration;
-import org.apache.commons.configuration.tree.DefaultConfigurationNode;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceRegistration;
 import org.rifidi.edge.core.configuration.Configuration;
+import org.rifidi.edge.core.configuration.ConfigurationStore;
 import org.rifidi.edge.core.configuration.Constants;
 import org.rifidi.edge.core.configuration.ServiceFactory;
+import org.rifidi.edge.core.configuration.ServiceStore;
 import org.rifidi.edge.core.configuration.impl.DefaultConfigurationImpl;
 import org.rifidi.edge.core.configuration.mbeans.ConfigurationControlMBean;
 import org.rifidi.edge.core.services.notification.NotifierService;
@@ -40,7 +36,8 @@ import org.rifidi.edge.core.services.notification.NotifierService;
  * @author Jochen Mader - jochen@pramari.com
  * @author Kyle Neumeier - kyle@pramari.com
  */
-public class ConfigurationServiceImpl implements ConfigurationService, ConfigurationControlMBean {
+public class ConfigurationServiceImpl implements ConfigurationService,
+		ConfigurationControlMBean {
 	/** Logger for this class */
 	private static final Log logger = LogFactory
 			.getLog(ConfigurationServiceImpl.class);
@@ -64,6 +61,8 @@ public class ConfigurationServiceImpl implements ConfigurationService, Configura
 	private final BundleContext context;
 	/** JMXservice reference. */
 	private volatile JMXService jmxService;
+	/** JAXB context. */
+	private final JAXBContext jaxbContext;
 
 	/**
 	 * Constructor.
@@ -78,9 +77,18 @@ public class ConfigurationServiceImpl implements ConfigurationService, Configura
 		IDToConfigurations = new ConcurrentHashMap<String, DefaultConfigurationImpl>();
 		serviceNames = new ArrayList<String>();
 		configToRegsitration = new ConcurrentHashMap<Configuration, ServiceRegistration>();
+		JAXBContext jcontext = null;
+		try {
+			jcontext = JAXBContext.newInstance(ConfigurationStore.class,
+					ServiceStore.class);
+		} catch (JAXBException e) {
+			logger.error(e);
+		}
+		jaxbContext = jcontext;
+
 		factoryToConfigurations = loadConfig();
-		//TODO: review and reenable
-//		jmxService.setConfigurationControlMBean(this);
+		// TODO: review and reenable
+		// jmxService.setConfigurationControlMBean(this);
 		logger.debug("ConfigurationServiceImpl instantiated.");
 	}
 
@@ -92,40 +100,24 @@ public class ConfigurationServiceImpl implements ConfigurationService, Configura
 	@SuppressWarnings("unchecked")
 	private ConcurrentHashMap<String, Set<DefaultConfigurationImpl>> loadConfig() {
 		ConcurrentHashMap<String, Set<DefaultConfigurationImpl>> ret = new ConcurrentHashMap<String, Set<DefaultConfigurationImpl>>();
-		try {
-			HierarchicalINIConfiguration configuration = new HierarchicalINIConfiguration(
-					path);
-			// loop over configs
-			for (Object sectionName : configuration.getSections()) {
-				SubnodeConfiguration section = configuration
-						.getSection((String) sectionName);
-				String factoryName = section.getString(Constants.FACTORYID);
-				// check if we have a type info
-				if (factoryName == null) {
-					logger.fatal("Missing factoryid attribute in config of "
-							+ sectionName);
-					continue;
-				}
-				final String serviceID = (String) sectionName;
-				if (!checkName(serviceID)) {
-					logger.fatal("service id " + serviceID
-							+ " is invalid.  FactoryIDs must consist only of "
-							+ "alphanumeric characters and the "
-							+ "underscore character");
-					continue;
-				}
-				if (ret.get(factoryName) == null) {
-					ret
-							.put(
-									factoryName,
-									new CopyOnWriteArraySet<DefaultConfigurationImpl>());
-				}
 
+		ConfigurationStore store;
+		try {
+			store = (ConfigurationStore) jaxbContext.createUnmarshaller()
+					.unmarshal(new File(path));
+		} catch (JAXBException e) {
+			logger.error(e);
+			return ret;
+		}
+		if(store.getServices()!=null){
+			for (ServiceStore service : store.getServices()) {
+				if (ret.get(service.getFactoryID()) == null) {
+					ret.put(service.getFactoryID(),
+							new CopyOnWriteArraySet<DefaultConfigurationImpl>());
+				}
 				AttributeList attributes = new AttributeList();
 				// get all properties
-				Iterator<String> keys = section.getKeys();
-				while (keys.hasNext()) {
-					String key = keys.next();
+				for (String key : service.getAttributes().keySet()) {
 					// factoryid is already processed
 					if (Constants.FACTORYID.equals(key)) {
 						continue;
@@ -134,18 +126,15 @@ public class ConfigurationServiceImpl implements ConfigurationService, Configura
 					if (Constants.FACTORY_TYPE.equals(key)) {
 						continue;
 					}
-					attributes.add(new Attribute(key, section.getString(key)));
+					attributes.add(new Attribute(key, service.getAttributes().get(
+							key)));
 				}
 
-				ret.get(factoryName).add(
-						createAndRegisterConfiguration(serviceID, factoryName,
-								attributes));
-				serviceNames.add(serviceID);
-				logger.debug("Read configuration for " + serviceID + " ("
-						+ factoryName + ")");
-			}
-		} catch (ConfigurationException e) {
-			logger.fatal("Can't open configuration: " + e);
+				ret.get(service.getFactoryID()).add(
+						createAndRegisterConfiguration(service.getServiceID(),
+								service.getFactoryID(), attributes));
+				serviceNames.add(service.getServiceID());
+			}	
 		}
 		return ret;
 	}
@@ -171,7 +160,7 @@ public class ConfigurationServiceImpl implements ConfigurationService, Configura
 		params.put("serviceid", config.getServiceID());
 		configToRegsitration.put(config, context.registerService(
 				serviceInterfaces, config, params));
-		
+
 		try {
 			context.addServiceListener(config, "(serviceid="
 					+ config.getServiceID() + ")");
@@ -199,50 +188,34 @@ public class ConfigurationServiceImpl implements ConfigurationService, Configura
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.configuration.ConfigurationService#storeConfiguration()
+	 * @see
+	 * org.rifidi.edge.core.configuration.ConfigurationService#storeConfiguration
+	 * ()
 	 */
 	@Override
 	public synchronized void storeConfiguration() {
 		HashSet<Configuration> copy = new HashSet<Configuration>(
 				IDToConfigurations.values());
-		try {
-			// TODO: copy file before deleting it!!
-			File file = new File(path);
-			file.delete();
-			file.createNewFile();
-			HierarchicalINIConfiguration configuration = new HierarchicalINIConfiguration(
-					path);
-			configuration.clear();
-			for (Configuration config : copy) {
-				DefaultConfigurationNode section = new DefaultConfigurationNode(
-						config.getServiceID());
-				DefaultConfigurationNode factoryid = new DefaultConfigurationNode(
-						Constants.FACTORYID);
-				factoryid.setValue(config.getFactoryID());
-				section.addChild(factoryid);
+		ConfigurationStore store = new ConfigurationStore();
+		store.setServices(new ArrayList<ServiceStore>());
+		for (Configuration config : copy) {
+			ServiceStore serviceStore = new ServiceStore();
+			serviceStore.setServiceID(config.getServiceID());
+			serviceStore.setFactoryID(config.getFactoryID());
+			Map<String, String> attributes = new HashMap<String, String>();
 
-				Map<String, Object> attrs = config.getAttributes();
-				MBeanAttributeInfo[] infos = config.getMBeanInfo()
-						.getAttributes();
-				Map<String, MBeanAttributeInfo> attrInfo = new HashMap<String, MBeanAttributeInfo>();
-				for (MBeanAttributeInfo i : infos) {
-					attrInfo.put(i.getName(), i);
-				}
-				for (String key : attrs.keySet()) {
-					if (attrInfo.get(key).isWritable()) {
-						DefaultConfigurationNode newNode = new DefaultConfigurationNode(
-								(String) key);
-						newNode.setValue(attrs.get(key));
-						section.addChild(newNode);
-					}
-				}
-				configuration.getRootNode().addChild(section);
+			Map<String, Object> configAttrs = config.getAttributes();
+
+			for (String key : configAttrs.keySet()) {
+				attributes.put(key, configAttrs.get(key).toString());
 			}
-
-			configuration.save();
-		} catch (ConfigurationException e) {
-			logger.error(e);
-		} catch (IOException e) {
+			serviceStore.setAttributes(attributes);
+			store.getServices().add(serviceStore);
+		}
+		
+		try {
+			jaxbContext.createMarshaller().marshal(store, new File(path));
+		} catch (JAXBException e) {
 			logger.error(e);
 		}
 	}
@@ -250,9 +223,8 @@ public class ConfigurationServiceImpl implements ConfigurationService, Configura
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.rifidi.edge.core.configuration.services.ConfigurationService#createService(
-	 * java.lang.String, javax.management.AttributeList)
+	 * @seeorg.rifidi.edge.core.configuration.services.ConfigurationService#
+	 * createService( java.lang.String, javax.management.AttributeList)
 	 */
 	@Override
 	public void createService(String factoryID, AttributeList attributes) {
@@ -293,9 +265,8 @@ public class ConfigurationServiceImpl implements ConfigurationService, Configura
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.rifidi.edge.core.configuration.services.ConfigurationService#destroyService
-	 * (java.lang.String)
+	 * @seeorg.rifidi.edge.core.configuration.services.ConfigurationService#
+	 * destroyService (java.lang.String)
 	 */
 	@Override
 	public void destroyService(String serviceID) {
@@ -313,9 +284,8 @@ public class ConfigurationServiceImpl implements ConfigurationService, Configura
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.rifidi.edge.core.configuration.services.ConfigurationService#getConfiguration
-	 * (java.lang.String)
+	 * @seeorg.rifidi.edge.core.configuration.services.ConfigurationService#
+	 * getConfiguration (java.lang.String)
 	 */
 	@Override
 	public Configuration getConfiguration(String serviceID) {
@@ -325,9 +295,8 @@ public class ConfigurationServiceImpl implements ConfigurationService, Configura
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.rifidi.edge.core.configuration.services.ConfigurationService#getConfigurations
-	 * ()
+	 * @seeorg.rifidi.edge.core.configuration.services.ConfigurationService#
+	 * getConfigurations ()
 	 */
 	@Override
 	public Set<Configuration> getConfigurations() {
@@ -336,16 +305,24 @@ public class ConfigurationServiceImpl implements ConfigurationService, Configura
 
 	// Only used by Spring
 
-	/* (non-Javadoc)
-	 * @see org.rifidi.edge.core.configuration.mbeans.ConfigurationControlMBean#reload()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.core.configuration.mbeans.ConfigurationControlMBean#reload
+	 * ()
 	 */
 	@Override
 	public void reload() {
 		logger.warn("Please implement reload");
 	}
 
-	/* (non-Javadoc)
-	 * @see org.rifidi.edge.core.configuration.mbeans.ConfigurationControlMBean#save()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.core.configuration.mbeans.ConfigurationControlMBean#save
+	 * ()
 	 */
 	@Override
 	public void save() {
