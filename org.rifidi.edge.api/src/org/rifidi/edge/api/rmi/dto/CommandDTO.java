@@ -3,19 +3,23 @@
  */
 package org.rifidi.edge.api.rmi.dto;
 
+import java.io.Serializable;
 import java.util.concurrent.TimeUnit;
 
 /**
  * @author Jochen Mader - jochen@pramari.com
  * 
  */
-public class CommandDTO {
+public class CommandDTO implements Serializable{
 	private Boolean repeat;
 	private Long interval;
 	private TimeUnit timeUnit;
 	private Integer processID;
 	private String commandID;
 
+	/** SerialVersionID */
+	private static final long serialVersionUID = 1L;
+	
 	/**
 	 * Constructor.
 	 */
