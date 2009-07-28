@@ -57,7 +57,7 @@ public class GetTagListCommandObject {
 			throw new AlienException(
 					"Error while parsing return from Get TagList");
 		}
-		if (lines[0].contains("(No Tags)")) {
+		if (incoming.contains("(No tags)")) {
 			return tags;
 		} else {
 			for (String line : lines) {
