@@ -73,7 +73,7 @@ public class EsperReceiver implements Runnable {
 				}
 				//when a service becomes unavailable the proxy throws a runtime exception
 				catch (RuntimeException re){
-					logger.info("A sensor went away.");
+					logger.info("A sensor went away. "+re);
 					sensors.remove(sensor);
 				}
 			}

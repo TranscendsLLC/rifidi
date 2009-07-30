@@ -1,8 +1,6 @@
-
 package org.rifidi.edge.core.services.notification.data;
 
 import java.io.Serializable;
-import java.util.Collections;
 import java.util.Set;
 
 /**
@@ -20,7 +18,7 @@ public class ReadCycle implements Serializable {
 	private String readerID;
 
 	/**
-	 * Constructor.  
+	 * Constructor.
 	 * 
 	 * @param tags
 	 * @param eventTimestamp
@@ -33,16 +31,16 @@ public class ReadCycle implements Serializable {
 	}
 
 	/**
-	 * Returns the tags 
+	 * Returns the tags
+	 * 
 	 * @return
 	 */
 	public TagReadEvent[] getTags() {
 		return tags;
 	}
 
-	
 	/**
-	 * Returns the timestamp for this event.  
+	 * Returns the timestamp for this event.
 	 * 
 	 * @return the eventTimestamp
 	 */
@@ -51,7 +49,7 @@ public class ReadCycle implements Serializable {
 	}
 
 	/**
-	 * Returns the ID for this reader.  
+	 * Returns the ID for this reader.
 	 * 
 	 * @return The ID of the reader this was seen on
 	 */
