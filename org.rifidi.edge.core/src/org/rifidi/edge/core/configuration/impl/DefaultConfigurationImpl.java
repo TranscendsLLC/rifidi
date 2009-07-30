@@ -76,6 +76,7 @@ public class DefaultConfigurationImpl implements Configuration, ServiceListener 
 	/** DTOs that describe the sessions if this config describes a reader. */
 	private final Map<SessionDTO, String> sessionDTOs;
 	private final Map<String, AbstractCommandConfiguration<?>> nameToCommandConfig;
+
 	/**
 	 * Constructor.
 	 * 
@@ -98,10 +99,10 @@ public class DefaultConfigurationImpl implements Configuration, ServiceListener 
 		this.listeners = new CopyOnWriteArraySet<AttributesChangedListener>();
 		this.target = new AtomicReference<RifidiService>(null);
 		this.jmxService = jmxService;
-		this.sessionDTOs=new ConcurrentHashMap<SessionDTO, String>();
-		this.nameToCommandConfig=new ConcurrentHashMap<String, AbstractCommandConfiguration<?>>();
+		this.sessionDTOs = new ConcurrentHashMap<SessionDTO, String>();
+		this.nameToCommandConfig = new ConcurrentHashMap<String, AbstractCommandConfiguration<?>>();
 		if (sessionDTOs != null) {
-			for (SessionDTO dto:sessionDTOs){
+			for (SessionDTO dto : sessionDTOs) {
 				this.sessionDTOs.put(dto, "-1");
 			}
 		}
@@ -142,8 +143,9 @@ public class DefaultConfigurationImpl implements Configuration, ServiceListener 
 				attributes = (AttributeList) target.getAttributes().clone();
 				nameToPos = new HashMap<String, Integer>();
 				List<Attribute> attrs = attributes.asList();
-				if(target instanceof AbstractSensor<?>){
-					((AbstractSensor<?>)target).recreateSessions(sessionDTOs.keySet());
+				if (target instanceof AbstractSensor<?>) {
+					((AbstractSensor<?>) target).recreateSessions(sessionDTOs
+							.keySet());
 				}
 				for (int count = 0; count < attributes.size(); count++) {
 					nameToPos.put(attrs.get(count).getName(), count);
@@ -309,23 +311,25 @@ public class DefaultConfigurationImpl implements Configuration, ServiceListener 
 		if (service != null) {
 			service.setAttributes(attributes);
 		}
+		
+		//keep track of changed attributes since there might be an error
+		AttributeList changedAttributes = new AttributeList();
 
 		for (Attribute attribute : attributes.asList()) {
-			try {
-				this.attributes.set(nameToPos.get(attribute.getName()),
-						attribute);
-			} catch (NullPointerException e) {
-				// need to catch this since it is common to have a mistake in
-				// the getter/setter methods in factories. Otherwise it's hard
-				// to debug
+
+			String attrName = attribute.getName();
+			Integer pos = nameToPos.get(attrName);
+			if (pos == null) {
 				logger.error("Error when trying to set " + attribute.getName());
-				throw e;
+			} else {
+				this.attributes.set(pos, attribute);
+				changedAttributes.add(this.attributes.get(pos));
 			}
+
 		}
 
-		notifierService.attributesChanged(getServiceID(),
-				(AttributeList) attributes.clone());
-		return (AttributeList) attributes.clone();
+		notifierService.attributesChanged(getServiceID(),(AttributeList) changedAttributes);
+		return (AttributeList) changedAttributes.clone();
 	}
 
 	/*
@@ -388,7 +392,7 @@ public class DefaultConfigurationImpl implements Configuration, ServiceListener 
 	 * ServiceEvent)
 	 */
 	@Override
-	public synchronized  void serviceChanged(ServiceEvent arg0) {
+	public synchronized void serviceChanged(ServiceEvent arg0) {
 		if (arg0.getServiceReference().getProperty("serviceid") != null) {
 			if (arg0.getServiceReference().getProperty("serviceid").equals(
 					getServiceID())) {
