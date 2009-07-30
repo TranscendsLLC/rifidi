@@ -1,20 +1,17 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:osgi="http://www.springframework.org/schema/osgi"
-	xmlns:amq="http://activemq.apache.org/schema/core"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
 	xsi:schemaLocation="http://www.springframework.org/schema/beans 
-	http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
-     http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi.xsd">
+	http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 
 	<!--  Create Reader Configuration Factory -->
 	<bean id="configurationFactory" class="org.rifidi.edge.readerplugin.llrp.LLRPReaderFactory">
 		<property name="context" ref="bundleContext" />
 		<property name="template" ref="internalMB" />
 		<property name="notifierService" ref="JMSNotifierService"/>
+		<constructor-arg index="0">
+			<ref bean="commandConfigurationFactory" />
+		</constructor-arg>
 	</bean>
-
-
-	<osgi:reference id="JMSNotifierService"
-		interface="org.rifidi.edge.core.services.notification.NotifierService"/>
 
 	<!--  Create Command Configuration Factory -->
 	<bean id="commandConfigurationFactory"
@@ -22,27 +19,5 @@
 		<property name="context" ref="bundleContext" />
 	</bean>
 
-	<!-- Put reader configuration service in OSGi Registry -->
-	<osgi:service id="readerConfigurationFactoryService" ref="configurationFactory">
-		<osgi:interfaces>
-			<value>org.rifidi.edge.core.configuration.ServiceFactory
-			</value>
-			<value>
-				org.rifidi.edge.core.sensors.base.AbstractSensorFactory</value>
-		</osgi:interfaces>
-	</osgi:service>
-	<!-- Put command configuration service in OSGi Registry -->
-	<osgi:service id="commandConfigurationFactoryService" ref="commandConfigurationFactory">
-		<osgi:interfaces>
-			<value>org.rifidi.edge.core.configuration.ServiceFactory
-			</value>
-			<value>
-				org.rifidi.edge.core.sensors.commands.AbstractCommandConfigurationFactory
-			</value>
-		</osgi:interfaces>
-	</osgi:service>
-
-	<osgi:reference id="internalMB"
-		interface="org.springframework.jms.core.JmsTemplate" bean-name="internalJMSTemplate" />
 
 </beans>
