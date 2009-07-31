@@ -17,22 +17,18 @@ import javax.jms.Session;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.osgi.framework.Bundle;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.BundleEvent;
-import org.osgi.framework.BundleListener;
 import org.rifidi.edge.core.services.esper.EsperManagementService;
 import org.rifidi.edge.demo1.api.HasArrivedMessage;
 import org.rifidi.edge.demo1.api.HasLeftMessage;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
-import org.springframework.osgi.context.BundleContextAware;
 
 import com.espertech.esper.client.EPServiceProvider;
 import com.espertech.esper.client.EPStatement;
 import com.espertech.esper.client.EventBean;
 import com.espertech.esper.client.StatementAwareUpdateListener;
 
-public class DemoController implements BundleContextAware, BundleListener {
+public class DemoController {
 
 	private static final Log logger = LogFactory.getLog(DemoController.class);
 	private volatile EsperManagementService esperManagementService;
@@ -72,7 +68,7 @@ public class DemoController implements BundleContextAware, BundleListener {
 				for (EventBean bean : arg0) {
 					if (template != null && destination != null) {
 						if (logger.isDebugEnabled())
-							logger.debug("sending departure event"
+							logger.debug("sending departure event "
 									+ (String) bean.get("epc") + " "
 									+ (Integer) bean.get("gateid"));
 						template.send(destination, new DemoMessageCreator(
@@ -82,6 +78,8 @@ public class DemoController implements BundleContextAware, BundleListener {
 				}
 			}
 		};
+		//TODO: UGLY !!!!!!!!!!!!!!!!
+		Activator.instance=this;
 	}
 
 	/**
@@ -94,34 +92,6 @@ public class DemoController implements BundleContextAware, BundleListener {
 			EsperManagementService esperManagementService) {
 		this.esperManagementService = esperManagementService;
 		start();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.springframework.osgi.context.BundleContextAware#setBundleContext(
-	 * org.osgi.framework.BundleContext)
-	 */
-	@Override
-	public void setBundleContext(BundleContext arg0) {
-		this.bundle = arg0.getBundle();
-		arg0.addBundleListener(this);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @seeorg.osgi.framework.BundleListener#bundleChanged(org.osgi.framework.
-	 * BundleEvent)
-	 */
-	@Override
-	public void bundleChanged(BundleEvent arg0) {
-		if (arg0.getBundle().equals(bundle)
-				&& arg0.getType() == BundleEvent.STOPPED) {
-			logger.info("Shutting down demo application.");
-
-		}
 	}
 
 	/**
@@ -207,6 +177,12 @@ public class DemoController implements BundleContextAware, BundleListener {
 		startGate(2);
 	}
 
+	public void stop(){
+		for(EPStatement statement:statements){
+			statement.destroy();
+		}
+	}
+	
 	private class DemoMessageCreator implements MessageCreator {
 
 		private Serializable notification;
