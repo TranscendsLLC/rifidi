@@ -3,8 +3,6 @@
  */
 package org.rifidi.edge.core.configuration.impl;
 
-import java.util.List;
-
 import org.osgi.framework.BundleContext;
 import org.rifidi.edge.core.configuration.RifidiService;
 import org.rifidi.edge.core.configuration.ServiceFactory;
@@ -23,16 +21,6 @@ public abstract class AbstractServiceFactory<T extends RifidiService>
 		implements ServiceFactory<T> {
 	/** Context of the registering bundle. */
 	private volatile BundleContext context;
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.rifidi.edge.core.configuration.ServiceFactory#getFactoryIDs()
-	 */
-	@Override
-	public List<String> getFactoryIDs() {
-		return null;
-	}
 
 	/**
 	 * Get the class this factory constructs.
