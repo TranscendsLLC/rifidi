@@ -21,3 +21,5 @@ Import-Package: javax.jms;version="1.1.0",
  org.springframework.remoting;version="2.5.5",
  org.springframework.remoting.rmi;version="2.5.5",
  org.springframework.remoting.support;version="2.5.5"
+Bundle-ActivationPolicy: lazy
+Bundle-Activator: org.rifidi.edge.demo1.Activator
