@@ -9,7 +9,6 @@ import java.util.Map;
 import org.rifidi.edge.core.configuration.annotations.JMXMBean;
 import org.rifidi.edge.core.configuration.annotations.Property;
 import org.rifidi.edge.core.configuration.annotations.PropertyType;
-import org.rifidi.edge.core.configuration.impl.AbstractCommandConfigurationFactory;
 import org.rifidi.edge.core.sensors.SensorSession;
 import org.rifidi.edge.core.sensors.base.AbstractSensor;
 import org.rifidi.edge.core.services.notification.NotifierService;
@@ -24,9 +23,8 @@ import org.springframework.jms.core.JmsTemplate;
  * 
  */
 @JMXMBean
-public class AlienAutonomousSensor
-		extends
-			AbstractSensor<AlienAutonomousSensorSession> {
+public class AlienAutonomousSensor extends
+		AbstractSensor<AlienAutonomousSensorSession> {
 
 	/** The session for this reader */
 	private AlienAutonomousSensorSession session;
@@ -40,14 +38,6 @@ public class AlienAutonomousSensor
 	private Integer serverSocketPort = 54321;
 	/** Maximum number of autonomous readers supported concurrently */
 	private Integer maxNumberAutonomousReaders = 15;
-
-	/**
-	 * @param commandFactory
-	 */
-	public AlienAutonomousSensor(
-			AbstractCommandConfigurationFactory<?> commandFactory) {
-		super(commandFactory);
-	}
 
 	/**
 	 * @param template
@@ -89,7 +79,7 @@ public class AlienAutonomousSensor
 			sessionID++;
 			session = new AlienAutonomousSensorSession(this, Integer
 					.toString(sessionID), template, notifierService,
-					serverSocketPort, maxNumberAutonomousReaders, commandFactory);
+					serverSocketPort, maxNumberAutonomousReaders);
 			notifierService.addSessionEvent(getID(), Integer
 					.toString(sessionID));
 			return session;
@@ -143,7 +133,7 @@ public class AlienAutonomousSensor
 	/**
 	 * @return the serverSocketPort
 	 */
-	@Property(displayName = "Notify Port", category = "connection", defaultValue = "54321", description = "The port configured in the Alien's Notify Address", type = PropertyType.PT_INTEGER, writable = true, minValue = "0", maxValue = "65535", orderValue=1)
+	@Property(displayName = "Notify Port", category = "connection", defaultValue = "54321", description = "The port configured in the Alien's Notify Address", type = PropertyType.PT_INTEGER, writable = true, minValue = "0", maxValue = "65535", orderValue = 1)
 	public Integer getServerSocketPort() {
 		return serverSocketPort;
 	}

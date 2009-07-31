@@ -4,21 +4,19 @@
 package org.rifidi.edge.readerplugin.alien.autonomous;
 
 import java.io.IOException;
-import java.net.Socket;
 import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.sensors.SensorSession;
-import org.rifidi.edge.core.sensors.base.threads.AbstractReadThread;
+import org.rifidi.edge.core.sensors.base.threads.MessageProcessingStrategy;
 import org.rifidi.edge.core.services.notification.data.ReadCycle;
+import org.rifidi.edge.core.services.notification.data.ReadCycleMessageCreator;
 import org.rifidi.edge.core.services.notification.data.TagReadEvent;
-import org.rifidi.edge.readerplugin.alien.AlienMessageParsingStrategy;
 import org.rifidi.edge.readerplugin.alien.messages.AlienMessage;
 import org.rifidi.edge.readerplugin.alien.messages.AlienTag;
 import org.rifidi.edge.readerplugin.alien.messages.AlienTagReadEventFactory;
-import org.rifidi.edge.readerplugin.alien.messages.ReadCycleMessageCreator;
 import org.springframework.jms.core.JmsTemplate;
 
 /**
@@ -28,12 +26,12 @@ import org.springframework.jms.core.JmsTemplate;
  * @author Kyle Neumeier - kyle@pramari.com
  * 
  */
-public class AlienAutonomousReadThread extends AbstractReadThread {
+public class AlienAutonomousMessageProcessingStrategy implements
+		MessageProcessingStrategy {
 
 	/** The logger for this class */
-	private Log logger = LogFactory.getLog(AlienAutonomousReadThread.class);
-	/** Client socket */
-	private Socket socket;
+	private Log logger = LogFactory
+			.getLog(AlienAutonomousMessageProcessingStrategy.class);
 	/** Session for this Handler */
 	private SensorSession session;
 	/** A factory for converting alien tag reads to TagReadEvents */
@@ -49,10 +47,8 @@ public class AlienAutonomousReadThread extends AbstractReadThread {
 	 *            The input stream from the socket
 	 * @throws IOException
 	 */
-	public AlienAutonomousReadThread(Socket clientSocket,
-			SensorSession session, JmsTemplate template) throws IOException {
-		super(clientSocket.getInputStream(), new AlienMessageParsingStrategy());
-		this.socket = clientSocket;
+	public AlienAutonomousMessageProcessingStrategy(SensorSession session,
+			JmsTemplate template) {
 		this.session = session;
 		this.template = template;
 		this.tagReadEventFactory = new AlienTagReadEventFactory(session
@@ -62,33 +58,11 @@ public class AlienAutonomousReadThread extends AbstractReadThread {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.sensors.base.threads.AbstractReadThread#run()
+	 * @seeorg.rifidi.edge.core.sensors.base.threads.MessageProcessingStrategy#
+	 * processMessage(byte[])
 	 */
 	@Override
-	public void run() {
-		// process messages while this thread has not been interrupted
-		try {
-			super.run();
-		} finally {
-			try {
-				socket.close();
-				logger.info("Socket: " + socket.getRemoteSocketAddress()
-						+ " closed. Exiting AlienAutonomousReadThread");
-			} catch (IOException e) {
-				// ignore
-			}
-		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.rifidi.edge.core.sensors.base.threads.AbstractReadThread#processMessage
-	 * (byte[])
-	 */
-	@Override
-	protected void processMessage(byte[] byteMessage) {
+	public void processMessage(byte[] byteMessage) {
 		String rawMessage = new String(byteMessage);
 		AlienMessage message = new AlienMessage(rawMessage);
 		Set<TagReadEvent> tagReadEvents = new HashSet<TagReadEvent>();

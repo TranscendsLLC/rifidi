@@ -41,7 +41,7 @@ public class AlienAutonomousSensorFactory extends
 	 */
 	public AlienAutonomousSensorFactory() {
 		super(null);
-		this.readerInfo = (new AlienAutonomousSensor(null)).getMBeanInfo();
+		this.readerInfo = (new AlienAutonomousSensor()).getMBeanInfo();
 	}
 
 	/**
@@ -96,9 +96,10 @@ public class AlienAutonomousSensorFactory extends
 	@Override
 	public void createInstance(String factoryID, String serviceID) {
 		assert (factoryID.equals(FACTORY_ID));
-		AlienAutonomousSensor instance = new AlienAutonomousSensor(null);
+		AlienAutonomousSensor instance = new AlienAutonomousSensor();
 		instance.setID(serviceID);
 		instance.setTemplate((JmsTemplate) template);
+		instance.setNotifierService(this.notifierService);
 		Set<String> interfaces = new HashSet<String>();
 		interfaces.add(AbstractSensor.class.getName());
 		Map<String, String> parms = new HashMap<String, String>();

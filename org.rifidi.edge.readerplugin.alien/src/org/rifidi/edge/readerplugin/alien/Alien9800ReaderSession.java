@@ -12,6 +12,7 @@ import org.rifidi.edge.api.SessionStatus;
 import org.rifidi.edge.core.configuration.impl.AbstractCommandConfigurationFactory;
 import org.rifidi.edge.core.sensors.base.AbstractIPSensorSession;
 import org.rifidi.edge.core.sensors.base.AbstractSensor;
+import org.rifidi.edge.core.sensors.base.threads.MessageParsingStrategyFactory;
 import org.rifidi.edge.core.sensors.commands.Command;
 import org.rifidi.edge.core.sensors.messages.ByteMessage;
 import org.rifidi.edge.core.services.notification.NotifierService;
@@ -134,12 +135,12 @@ public class Alien9800ReaderSession extends AbstractIPSensorSession {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.rifidi.edge.core.readers.impl.AbstractIPReaderSession#isMessage(byte)
+	 * @seeorg.rifidi.edge.core.sensors.base.AbstractIPSensorSession#
+	 * getMessageParsingStrategyFactory()
 	 */
 	@Override
-	public byte[] isMessage(byte message) {
-		return messageParser.isMessage(message);
+	public MessageParsingStrategyFactory getMessageParsingStrategyFactory() {
+		return new AlienMessageParsingStrategyFactory();
 	}
 
 	/*

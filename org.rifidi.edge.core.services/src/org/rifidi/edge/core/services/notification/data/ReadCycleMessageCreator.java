@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.rifidi.edge.readerplugin.alien.messages;
+package org.rifidi.edge.core.services.notification.data;
 
 import javax.jms.JMSException;
 import javax.jms.Message;
@@ -10,7 +10,6 @@ import javax.jms.Session;
 import org.apache.activemq.command.ActiveMQObjectMessage;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.rifidi.edge.core.services.notification.data.ReadCycle;
 import org.springframework.jms.core.MessageCreator;
 
 /**

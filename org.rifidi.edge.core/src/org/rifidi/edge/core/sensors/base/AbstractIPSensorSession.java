@@ -5,6 +5,7 @@ package org.rifidi.edge.core.sensors.base;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -16,8 +17,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.api.SessionStatus;
 import org.rifidi.edge.core.configuration.impl.AbstractCommandConfigurationFactory;
-import org.rifidi.edge.core.sensors.base.threads.MessageParsingStrategy;
-import org.rifidi.edge.core.sensors.base.threads.QueueingReadThread;
+import org.rifidi.edge.core.sensors.base.threads.MessageParsingStrategyFactory;
+import org.rifidi.edge.core.sensors.base.threads.MessageProcessingStrategy;
+import org.rifidi.edge.core.sensors.base.threads.MessageProcessingStrategyFactory;
+import org.rifidi.edge.core.sensors.base.threads.ReadThread;
 import org.rifidi.edge.core.sensors.base.threads.WriteThread;
 import org.rifidi.edge.core.sensors.messages.ByteMessage;
 import org.springframework.jms.core.JmsTemplate;
@@ -30,8 +33,7 @@ import org.springframework.jms.core.JmsTemplate;
  * @author Jochen Mader - jochen@pramari.com
  * @author Kyle Neumeier - kyle@pramari.com
  */
-public abstract class AbstractIPSensorSession extends AbstractSensorSession
-		implements MessageParsingStrategy {
+public abstract class AbstractIPSensorSession extends AbstractSensorSession {
 	/** Logger for this class. */
 	private static final Log logger = LogFactory
 			.getLog(AbstractIPSensorSession.class);
@@ -247,8 +249,11 @@ public abstract class AbstractIPSensorSession extends AbstractSensorSession
 					connecting.compareAndSet(true, false);
 					throw new IOException("Unable to reach reader.");
 				}
-				readThread = new Thread(new QueueingReadThread(this, socket
-						.getInputStream(), readQueue));
+				readThread = new Thread(
+						new ReadThread(socket.getInputStream(),
+								getMessageParsingStrategyFactory(),
+								new QueueingMessageProcessingStrategyFactory(
+										readQueue)));
 				writeThread = new Thread(new WriteThread(socket
 						.getOutputStream(), writeQueue));
 				readThread.start();
@@ -362,6 +367,22 @@ public abstract class AbstractIPSensorSession extends AbstractSensorSession
 		}
 	}
 
+	private class QueueingMessageProcessingStrategyFactory implements
+			MessageProcessingStrategyFactory {
+
+		private Queue<ByteMessage> queue;
+
+		public QueueingMessageProcessingStrategyFactory(Queue<ByteMessage> queue) {
+			this.queue = queue;
+		}
+
+		@Override
+		public MessageProcessingStrategy createMessageProcessor() {
+			return new QueueingMessageProcessingStrategy(queue);
+		}
+
+	}
+
 	/**
 	 * Called after the initial socket connection got established.
 	 * 
@@ -370,5 +391,12 @@ public abstract class AbstractIPSensorSession extends AbstractSensorSession
 	 *             if a connection problem occurs
 	 */
 	public abstract boolean onConnect() throws IOException;
+
+	/**
+	 * Get a MessageParsingStrategy for this IP based sensor session.
+	 * 
+	 * @return
+	 */
+	public abstract MessageParsingStrategyFactory getMessageParsingStrategyFactory();
 
 }

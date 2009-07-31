@@ -8,6 +8,7 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.services.notification.data.ReadCycle;
+import org.rifidi.edge.core.services.notification.data.ReadCycleMessageCreator;
 import org.rifidi.edge.core.services.notification.data.TagReadEvent;
 import org.rifidi.edge.readerplugin.alien.AbstractAlien9800Command;
 import org.rifidi.edge.readerplugin.alien.Alien9800ReaderSession;
@@ -17,7 +18,6 @@ import org.rifidi.edge.readerplugin.alien.commandobject.AlienSetCommandObject;
 import org.rifidi.edge.readerplugin.alien.commandobject.GetTagListCommandObject;
 import org.rifidi.edge.readerplugin.alien.messages.AlienTag;
 import org.rifidi.edge.readerplugin.alien.messages.AlienTagReadEventFactory;
-import org.rifidi.edge.readerplugin.alien.messages.ReadCycleMessageCreator;
 
 /**
  * An Command that runs on an AlienSession to get Tags back from an AlienReader
