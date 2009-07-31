@@ -18,6 +18,7 @@
 		class="org.rifidi.edge.readerplugin.alien.autonomous.AlienAutonomousSensorFactory">
 		<property name="context" ref="bundleContext" />
 		<property name="notifierService" ref="JMSNotifierService" />
+		<property name="template" ref="internalMB" />
 	</bean>
 
 	<!--  Create Command Configuration Factory -->
