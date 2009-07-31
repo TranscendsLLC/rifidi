@@ -1,0 +1,25 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:osgi="http://www.springframework.org/schema/osgi"
+	xmlns:amq="http://activemq.apache.org/schema/core"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+    http://www.springframework.org/schema/osgi 
+    http://www.springframework.org/schema/osgi/spring-osgi.xsd">
+
+	<bean id="rfidapp" class="org.rifidi.edge.demo1.DemoController">
+		<property name="esperManagementService" ref="esper" />
+		<property name="template" ref="externalJMSTemplate" />
+		<property name="destination" ref="acmeDestination"></property>
+	</bean>
+
+	<osgi:reference id="esper"
+		interface="org.rifidi.edge.core.services.esper.EsperManagementService" />
+
+	<bean id="acmeDestination" class="org.apache.activemq.command.ActiveMQTopic">
+		<property name="physicalName" value="com.acme.rfidapp.shipping.notifications" />
+	</bean>
+
+	<osgi:reference id="externalJMSTemplate"
+		interface="org.springframework.jms.core.JmsTemplate" bean-name="externalJMSTemplate" />
+
+</beans>
