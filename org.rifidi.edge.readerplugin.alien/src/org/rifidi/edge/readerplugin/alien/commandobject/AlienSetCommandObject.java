@@ -66,9 +66,9 @@ public class AlienSetCommandObject extends AlienCommandObject {
 			String[] splitString = incoming.split("=");
 			return splitString[1].trim();
 		} else if (incoming.contains("Error")) {
-			throw new AlienException(incoming.trim());
+			throw new AlienException(message+" : "+incoming.trim());
 		} else {
-			throw new AlienException(incoming.trim());
+			throw new AlienException(message+" : "+incoming.trim());
 		}
 
 	}
