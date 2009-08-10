@@ -152,8 +152,8 @@ public class DemoController {
 								+ " as gateid from pattern[every tag1=outside_gate_"
 								+ gateID + " -> ([0..]outside_gate_" + gateID
 								+ " until inside_gate_" + gateID
-								+ "(epc=tag1.epc) and not outside_gate_"
-								+ gateID + "(epc=tag1.epc))]");
+								+ "(epc=cast(tag1.tag.epc?, String)) and not outside_gate_"
+								+ gateID + "(epc=cast(tag1.tag.epc?, String)))]");
 
 		goingOutside = esperManagementService
 				.getProvider()
@@ -164,8 +164,8 @@ public class DemoController {
 								+ " as gateid from pattern[every tag1=inside_gate_"
 								+ gateID + " -> ([0..]inside_gate_" + gateID
 								+ " until outside_gate_" + gateID
-								+ "(epc=tag1.epc) and not inside_gate_"
-								+ gateID + "(epc=tag1.epc))]");
+								+ "(epc=cast(tag1.tag.epc?,String)) and not inside_gate_"
+								+ gateID + "(epc=cast(tag1.tag.epc?,String)))]");
 		statements.add(goingInside);
 		statements.add(goingOutside);
 		goingInside.addListener(incoming);
