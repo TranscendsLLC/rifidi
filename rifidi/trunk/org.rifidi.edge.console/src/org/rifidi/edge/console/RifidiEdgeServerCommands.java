@@ -19,7 +19,6 @@ import org.rifidi.edge.core.sensors.SensorSession;
 import org.rifidi.edge.core.sensors.base.AbstractSensor;
 import org.rifidi.edge.core.sensors.base.AbstractSensorFactory;
 import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
-import org.rifidi.edge.core.sensors.commands.Command;
 
 /**
  * Command line commands for the edge server.
@@ -507,8 +506,7 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 			if (session != null) {
 				Long ival = Long.parseLong(interval);
 				if (ival > 0) {
-					session.submit(commandid, ival,
-							TimeUnit.MILLISECONDS);
+					session.submit(commandid, ival, TimeUnit.MILLISECONDS);
 				} else {
 					session.submit(commandid);
 				}
