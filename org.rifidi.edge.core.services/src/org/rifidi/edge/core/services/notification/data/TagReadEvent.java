@@ -75,11 +75,4 @@ public class TagReadEvent implements Serializable {
 	public long getTimestamp() {
 		return timestamp;
 	}
-	//TODO: temproary fix because esper gets messed up while doing reflections
-	public String getEpc(){
-		if(tag instanceof EPCGeneration1Event){
-			return ((EPCGeneration1Event)tag).getEpc();
-		}
-		return "";
-	}
 }
