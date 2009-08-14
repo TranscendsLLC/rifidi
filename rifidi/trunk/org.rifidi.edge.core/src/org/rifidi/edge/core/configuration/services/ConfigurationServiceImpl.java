@@ -33,7 +33,6 @@ import org.rifidi.edge.core.configuration.impl.DefaultConfigurationImpl;
 import org.rifidi.edge.core.configuration.mbeans.ConfigurationControlMBean;
 import org.rifidi.edge.core.sensors.SensorSession;
 import org.rifidi.edge.core.sensors.base.AbstractSensor;
-import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
 import org.rifidi.edge.core.services.notification.NotifierService;
 
 /**
