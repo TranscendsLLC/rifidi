@@ -143,29 +143,31 @@ public class DemoController {
 
 		EPStatement goingInside;
 		EPStatement goingOutside;
-		goingInside = esperManagementService
-				.getProvider()
-				.getEPAdministrator()
-				.createEPL(
-						"select tag1.epc as epc,"
-								+ gateID
-								+ " as gateid from pattern[every tag1=outside_gate_"
-								+ gateID + " -> ([0..]outside_gate_" + gateID
-								+ " until inside_gate_" + gateID
-								+ "(epc=cast(tag1.tag.epc?, String)) and not outside_gate_"
-								+ gateID + "(epc=cast(tag1.tag.epc?, String)))]");
 
+		goingInside = esperManagementService
+		.getProvider()
+		.getEPAdministrator()
+		.createEPL(
+				"select tag1.tag.epc? as epc,"
+						+ gateID
+						+ " as gateid from pattern[every tag1=outside_gate_"
+						+ gateID + " -> ([0..]outside_gate_" + gateID
+						+ " until inside_gate_" + gateID
+						+ "(cast(tag.epc?, String)=cast(tag1.tag.epc?, String)) and not outside_gate_"
+						+ gateID + "(cast(tag.epc?, String)=cast(tag1.tag.epc?, String)))]");
+
+		
 		goingOutside = esperManagementService
 				.getProvider()
 				.getEPAdministrator()
 				.createEPL(
-						"select tag1.epc as epc ,"
+						"select tag1.tag.epc? as epc ,"
 								+ gateID
 								+ " as gateid from pattern[every tag1=inside_gate_"
 								+ gateID + " -> ([0..]inside_gate_" + gateID
 								+ " until outside_gate_" + gateID
-								+ "(epc=cast(tag1.tag.epc?,String)) and not inside_gate_"
-								+ gateID + "(epc=cast(tag1.tag.epc?,String)))]");
+								+ "(cast(tag.epc?, String)=cast(tag1.tag.epc?,String)) and not inside_gate_"
+								+ gateID + "(cast(tag.epc?, String)=cast(tag1.tag.epc?,String)))]");
 		statements.add(goingInside);
 		statements.add(goingOutside);
 		goingInside.addListener(incoming);
