@@ -399,4 +399,11 @@ public abstract class AbstractIPSensorSession extends AbstractSensorSession {
 	 */
 	public abstract MessageParsingStrategyFactory getMessageParsingStrategyFactory();
 
+	@Override
+	public String toString() {
+		return "IPSession: " + host+":"+port;
+	}
+	
+	
+
 }
