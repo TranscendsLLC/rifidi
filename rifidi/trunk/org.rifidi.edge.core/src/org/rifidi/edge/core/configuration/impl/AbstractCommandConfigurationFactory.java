@@ -3,14 +3,13 @@
  */
 package org.rifidi.edge.core.configuration.impl;
 
-import java.util.HashSet;
+import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.osgi.framework.BundleContext;
 import org.rifidi.edge.api.rmi.dto.CommandConfigFactoryDTO;
 import org.rifidi.edge.core.configuration.ServiceFactory;
-import org.rifidi.edge.core.sensors.commands.Command;
 
 /**
  * Base class for a service factory. This class is meant for scenarios where
@@ -22,7 +21,8 @@ import org.rifidi.edge.core.sensors.commands.Command;
  * @author Jochen Mader - jochen@pramari.com
  * 
  */
-public abstract class AbstractCommandConfigurationFactory<T> implements ServiceFactory<T> {
+public abstract class AbstractCommandConfigurationFactory<T> implements
+		ServiceFactory<T> {
 	/** Logger for this class. */
 	private static final Log logger = LogFactory
 			.getLog(AbstractCommandConfigurationFactory.class);
@@ -56,13 +56,6 @@ public abstract class AbstractCommandConfigurationFactory<T> implements ServiceF
 	public abstract String getReaderFactoryID();
 
 	/**
-	 * Aquire an instance of a command.
-	 * @param commandID
-	 * @return
-	 */
-	public abstract Command getCommandInstance(String commandID, String readerID);
-	
-	/**
 	 * Get the Data Transfer Object for the CommandConfigFactory.
 	 * 
 	 * TODO: Should be moved out of here
@@ -70,7 +63,6 @@ public abstract class AbstractCommandConfigurationFactory<T> implements ServiceF
 	 * @return The DTO for this object
 	 */
 	public CommandConfigFactoryDTO getDTO() {
-		return new CommandConfigFactoryDTO(getReaderFactoryID(),
-				new HashSet<String>(this.getFactoryIDs()));
+		return new CommandConfigFactoryDTO(getReaderFactoryID(), getFactoryID());
 	}
 }

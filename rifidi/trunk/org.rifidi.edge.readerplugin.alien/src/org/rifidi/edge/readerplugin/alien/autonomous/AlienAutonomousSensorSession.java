@@ -10,6 +10,7 @@ import org.rifidi.edge.core.sensors.base.AbstractSensor;
 import org.rifidi.edge.core.sensors.base.AbstractServerSocketSensorSession;
 import org.rifidi.edge.core.sensors.base.threads.MessageParsingStrategyFactory;
 import org.rifidi.edge.core.sensors.base.threads.MessageProcessingStrategyFactory;
+import org.rifidi.edge.core.sensors.commands.Command;
 import org.rifidi.edge.core.services.notification.NotifierService;
 import org.rifidi.edge.readerplugin.alien.AlienMessageParsingStrategyFactory;
 import org.springframework.jms.core.JmsTemplate;
@@ -88,4 +89,14 @@ public class AlienAutonomousSensorSession extends
 		notifierService.sessionStatusChanged(super.getSensor().getID(),
 				getID(), status);
 	}
+
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.sensors.base.AbstractSensorSession#getCommandInstance(java.lang.String)
+	 */
+	@Override
+	protected Command getCommandInstance(String commandID) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
 }

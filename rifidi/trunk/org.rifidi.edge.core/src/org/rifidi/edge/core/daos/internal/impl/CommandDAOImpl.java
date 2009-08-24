@@ -60,26 +60,30 @@ public class CommandDAOImpl implements CommandDAO {
 				commandFactories);
 	}
 
-	
-
-	/* (non-Javadoc)
-	 * @see org.rifidi.edge.core.daos.CommandDAO#getCommandFactoryByID(java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.core.daos.CommandDAO#getCommandFactoryByID(java.lang.
+	 * String)
 	 */
 	@Override
-	public AbstractCommandConfigurationFactory<?> getCommandFactoryByID(String id) {
+	public AbstractCommandConfigurationFactory<?> getCommandFactoryByID(
+			String id) {
 		for (AbstractCommandConfigurationFactory<?> factory : commandFactories) {
-			for (String fac : factory.getFactoryIDs()) {
-				if (fac.equals(id)) {
-					return factory;
-				}
+			if (id.equals(factory.getFactoryID())) {
+				return factory;
 			}
 		}
 		return null;
 	}
 
-
-	/* (non-Javadoc)
-	 * @see org.rifidi.edge.core.daos.CommandDAO#getCommandFactoryByReaderID(java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.core.daos.CommandDAO#getCommandFactoryByReaderID(java
+	 * .lang.String)
 	 */
 	@Override
 	public AbstractCommandConfigurationFactory<?> getCommandFactoryByReaderID(
@@ -159,7 +163,7 @@ public class CommandDAOImpl implements CommandDAO {
 			AbstractCommandConfigurationFactory<?> commandConfigurationFactory,
 			Dictionary<String, String> parameters) {
 		logger.info("Command Configuration Factory Bound: "
-				+ commandConfigurationFactory.getFactoryIDs());
+				+ commandConfigurationFactory.getFactoryID());
 		commandFactories.add(commandConfigurationFactory);
 
 		// TODO: Remove once we have aspects
@@ -182,13 +186,14 @@ public class CommandDAOImpl implements CommandDAO {
 			AbstractCommandConfigurationFactory<?> commandConfigurationFactory,
 			Dictionary<String, String> parameters) {
 		logger.info("Command Configuration Factory Unbound: "
-				+ commandConfigurationFactory.getFactoryIDs());
+				+ commandConfigurationFactory.getFactoryID());
 		commandFactories.remove(commandConfigurationFactory);
 
 		// TODO: Remove once we have aspects
 		if (notifierService != null) {
-			notifierService.removeCommandConfigFactoryEvent(commandConfigurationFactory
-					.getReaderFactoryID());
+			notifierService
+					.removeCommandConfigFactoryEvent(commandConfigurationFactory
+							.getReaderFactoryID());
 		}
 	}
 

@@ -31,24 +31,10 @@ public class AlienGetCommandObject extends AlienCommandObject {
 		super(command);
 	}
 
-	/**
-	 * Constructor
-	 * 
-	 * @param command
-	 *            The command to execute
-	 * @param sensorSession
-	 *            The reader session to execute the command on
-	 */
-	public AlienGetCommandObject(String command, Alien9800ReaderSession session) {
-		super(command);
-		super.setSession(session);
-	}
-
 	@Override
 	public String execute() throws IOException, AlienException {
 		String message = Alien9800ReaderSession.PROMPT_SUPPRESS + "get "
 				+ command + Alien9800ReaderSession.NEWLINE;
-
 		readerSession.sendMessage(new ByteMessage(message.getBytes()));
 
 		ByteMessage incomingMessage = readerSession.receiveMessage();

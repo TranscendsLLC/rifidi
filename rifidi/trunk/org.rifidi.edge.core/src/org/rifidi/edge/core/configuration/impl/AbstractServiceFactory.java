@@ -23,13 +23,6 @@ public abstract class AbstractServiceFactory<T extends RifidiService>
 	private volatile BundleContext context;
 
 	/**
-	 * Get the class this factory constructs.
-	 * 
-	 * @return
-	 */
-	public abstract Class<T> getClazz();
-
-	/**
 	 * @param context
 	 *            the context to set
 	 */

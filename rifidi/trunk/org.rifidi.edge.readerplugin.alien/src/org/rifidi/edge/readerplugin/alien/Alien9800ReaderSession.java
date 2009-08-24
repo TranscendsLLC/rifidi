@@ -4,15 +4,16 @@
 package org.rifidi.edge.readerplugin.alien;
 
 import java.io.IOException;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.api.SessionStatus;
-import org.rifidi.edge.core.configuration.impl.AbstractCommandConfigurationFactory;
 import org.rifidi.edge.core.sensors.base.AbstractIPSensorSession;
 import org.rifidi.edge.core.sensors.base.AbstractSensor;
 import org.rifidi.edge.core.sensors.base.threads.MessageParsingStrategyFactory;
+import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
 import org.rifidi.edge.core.sensors.commands.Command;
 import org.rifidi.edge.core.sensors.messages.ByteMessage;
 import org.rifidi.edge.core.services.notification.NotifierService;
@@ -42,6 +43,8 @@ public class Alien9800ReaderSession extends AbstractIPSensorSession {
 	private final String readerID;
 	/** The message parser that parses messages from the socket */
 	private volatile AlienMessageParsingStrategy messageParser;
+	/** Supplied by spring. */
+	private final Set<AbstractCommandConfiguration<AbstractAlien9800Command>> commands;
 	/**
 	 * You can put this in front of a Alien command for terse output to come
 	 * back to you, making things faster and easier to parse.
@@ -116,15 +119,18 @@ public class Alien9800ReaderSession extends AbstractIPSensorSession {
 	 *            The service for sending client notifications
 	 * @param readerID
 	 *            The FACTORY_ID of the reader that created this session
+	 * @param commands
+	 *            A thread safe set containing all available commands
 	 */
 	public Alien9800ReaderSession(AbstractSensor<?> sensor, String id,
 			String host, int port, int reconnectionInterval,
 			int maxConAttempts, String username, String password,
 			JmsTemplate template, NotifierService notifierService,
 			String readerID,
-			AbstractCommandConfigurationFactory<?> commandFactory) {
+			Set<AbstractCommandConfiguration<AbstractAlien9800Command>> commands) {
 		super(sensor, id, host, port, reconnectionInterval, maxConAttempts,
-				template.getDefaultDestination(), template, commandFactory);
+				template.getDefaultDestination(), template);
+		this.commands = commands;
 		this.username = username;
 		this.password = password;
 		this.notifierService = notifierService;
@@ -253,6 +259,32 @@ public class Alien9800ReaderSession extends AbstractIPSensorSession {
 			// under any circumstances
 			logger.error(e);
 		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.core.sensors.base.AbstractSensorSession#getCommandInstance
+	 * (java.lang.String)
+	 */
+	@Override
+	protected Command getCommandInstance(String commandID) {
+		if(logger.isDebugEnabled()){
+			logger.debug("Trying to find instance for "+commandID);
+		}
+		for (AbstractCommandConfiguration<?> config : commands) {
+			if(config.getID().equals(commandID)){
+				if(logger.isDebugEnabled()){
+					logger.debug("Found instance for "+commandID);
+				}
+				return config.getCommand(readerID);
+			}
+		}
+		if(logger.isDebugEnabled()){
+			logger.debug("Found no instance for "+commandID);
+		}
+		return null;
 	}
 
 	/*

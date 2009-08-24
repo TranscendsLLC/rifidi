@@ -73,7 +73,7 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 		Set<AbstractSensorFactory<?>> factories;
 		factories = readerDAO.getReaderFactories();
 		for (AbstractSensorFactory<?> factory : factories) {
-			intp.println(factory.getFactoryIDs().get(0));
+			intp.println(factory.getFactoryID());
 		}
 		return null;
 	}
@@ -271,9 +271,7 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 	public Object _commandtypes(CommandInterpreter intp) {
 		for (AbstractCommandConfigurationFactory<?> factory : commandDAO
 				.getCommandFactories()) {
-			for (String id : factory.getFactoryIDs()) {
-				intp.println("ID: " + id);
-			}
+			intp.println("ID: " + factory.getFactoryID());
 		}
 		return null;
 	}
