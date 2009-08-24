@@ -6,6 +6,7 @@ package org.rifidi.edge.readerplugin.alien;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -16,9 +17,9 @@ import org.rifidi.edge.core.configuration.annotations.JMXMBean;
 import org.rifidi.edge.core.configuration.annotations.Operation;
 import org.rifidi.edge.core.configuration.annotations.Property;
 import org.rifidi.edge.core.configuration.annotations.PropertyType;
-import org.rifidi.edge.core.configuration.impl.AbstractCommandConfigurationFactory;
 import org.rifidi.edge.core.sensors.SensorSession;
 import org.rifidi.edge.core.sensors.base.AbstractSensor;
+import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
 import org.rifidi.edge.core.services.notification.NotifierService;
 import org.rifidi.edge.readerplugin.alien.commandobject.AlienCommandObjectWrapper;
 import org.rifidi.edge.readerplugin.alien.commandobject.AlienGetCommandObject;
@@ -45,7 +46,8 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 	/** IP address of the sensorSession. */
 	private volatile String ipAddress = AlienReaderDefaultValues.IPADDRESS;
 	/** Port to connect to. */
-	private volatile Integer port = Integer.parseInt(AlienReaderDefaultValues.PORT);
+	private volatile Integer port = Integer
+			.parseInt(AlienReaderDefaultValues.PORT);
 	/** Username for the telnet interface. */
 	private volatile String username = AlienReaderDefaultValues.USERNAME;
 	/** Password for the telnet interface. */
@@ -96,12 +98,15 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 	public static final String PROP_EXTERNAL_INPUT = "externalinput";
 	/** Uptime of the sensorSession */
 	public static final String PROP_UPTIME = "uptime";
+	/** Provided by spring. */
+	private final Set<AbstractCommandConfiguration<AbstractAlien9800Command>> commands;
 
 	/**
 	 * Constructor.
 	 */
-	public Alien9800Reader(AbstractCommandConfigurationFactory<?> commandFactory) {
-		super(commandFactory);
+	public Alien9800Reader(
+			Set<AbstractCommandConfiguration<AbstractAlien9800Command>> commands) {
+		this.commands = commands;
 		readerProperties = new ConcurrentHashMap<String, String>();
 		readerProperties.put(PROP_READER_NUMBER, "0");
 		readerProperties.put(PROP_READER_VERSION, "Unavailable");
@@ -157,7 +162,7 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 
 		logger.debug("New instance of Alien9800Reader created.");
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -166,12 +171,12 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 	@Override
 	public synchronized SensorSession createReaderSession() {
 		if (session == null) {
-			Integer sessionID=this.sessionID.incrementAndGet(); 
+			Integer sessionID = this.sessionID.incrementAndGet();
 			session = new Alien9800ReaderSession(this, Integer
 					.toString(sessionID), ipAddress, port,
 					(int) (long) reconnectionInterval,
 					maxNumConnectionAttempts, username, password, template,
-					notifierService, this.getID(), commandFactory);
+					notifierService, this.getID(), commands);
 
 			// TODO: remove this once we get AspectJ in here!
 			notifierService.addSessionEvent(this.getID(), Integer

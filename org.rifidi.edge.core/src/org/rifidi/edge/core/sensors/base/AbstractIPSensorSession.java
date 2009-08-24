@@ -87,9 +87,8 @@ public abstract class AbstractIPSensorSession extends AbstractSensorSession {
 	 */
 	public AbstractIPSensorSession(AbstractSensor<?> sensor, String ID,
 			String host, int port, int reconnectionInterval,
-			int maxConAttempts, Destination destination, JmsTemplate template,
-			AbstractCommandConfigurationFactory<?> commandFactory) {
-		super(sensor, ID, destination, template, commandFactory);
+			int maxConAttempts, Destination destination, JmsTemplate template) {
+		super(sensor, ID, destination, template);
 		this.host = host;
 		this.port = port;
 		this.maxConAttempts = maxConAttempts;

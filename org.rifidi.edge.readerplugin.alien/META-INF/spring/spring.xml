@@ -9,22 +9,13 @@
 		<property name="context" ref="bundleContext" />
 		<property name="template" ref="internalMB" />
 		<property name="notifierService" ref="JMSNotifierService" />
-		<constructor-arg index="0">
-			<ref bean="commandConfigurationFactory" />
-		</constructor-arg>
+		<property name="commands" ref="commands" />
 	</bean>
 
 	<bean id="AutoModeFactory"
 		class="org.rifidi.edge.readerplugin.alien.autonomous.AlienAutonomousSensorFactory">
 		<property name="context" ref="bundleContext" />
 		<property name="notifierService" ref="JMSNotifierService" />
-		<property name="template" ref="internalMB" />
-	</bean>
-
-	<!--  Create Command Configuration Factory -->
-	<bean id="commandConfigurationFactory"
-		class="org.rifidi.edge.readerplugin.alien.Alien9800CommandConfigurationFactory">
-		<property name="context" ref="bundleContext" />
 		<property name="template" ref="internalMB" />
 	</bean>
 </beans>

@@ -22,7 +22,6 @@ import org.rifidi.edge.api.rmi.dto.ReaderDTO;
 import org.rifidi.edge.api.rmi.dto.SessionDTO;
 import org.rifidi.edge.core.configuration.Configuration;
 import org.rifidi.edge.core.configuration.RifidiService;
-import org.rifidi.edge.core.configuration.impl.AbstractCommandConfigurationFactory;
 import org.rifidi.edge.core.sensors.CompositeSensor;
 import org.rifidi.edge.core.sensors.Sensor;
 import org.rifidi.edge.core.sensors.SensorSession;
@@ -48,24 +47,12 @@ public abstract class AbstractSensor<T extends SensorSession> extends
 		RifidiService implements SensorUpdate, CompositeSensor {
 	/** Sensors connected to this connectedSensors. */
 	protected final Set<Sensor> receivers = new CopyOnWriteArraySet<Sensor>();
-	protected final AbstractCommandConfigurationFactory<?> commandFactory;
-	
-	
-	
+
 	/**
 	 * This constructor is only for CGLIB. DO NOT OVERWRITE!
 	 */
 	public AbstractSensor() {
 		super();
-		this.commandFactory=null;
-	}
-
-	/**
-	 * @param commandFactory
-	 */
-	public AbstractSensor(AbstractCommandConfigurationFactory<?> commandFactory) {
-		super();
-		this.commandFactory = commandFactory;
 	}
 
 	/**
@@ -123,8 +110,8 @@ public abstract class AbstractSensor<T extends SensorSession> extends
 				long time = System.currentTimeMillis();
 				Set<TagReadEvent> tagReads = new HashSet<TagReadEvent>();
 				for (ReadCycle cycle : rcs) {
-					for(TagReadEvent event:cycle.getTags()){
-						tagReads.add(event);	
+					for (TagReadEvent event : cycle.getTags()) {
+						tagReads.add(event);
 					}
 				}
 				ReadCycle cycle = new ReadCycle(tagReads, getName(), time);
@@ -147,7 +134,8 @@ public abstract class AbstractSensor<T extends SensorSession> extends
 			throw new DuplicateSubscriptionException(receiver
 					+ " is already subscribed.");
 		}
-		subscriberToQueueMap.put(receiver, new LinkedBlockingQueue<ReadCycle>());
+		subscriberToQueueMap
+				.put(receiver, new LinkedBlockingQueue<ReadCycle>());
 		inUse.compareAndSet(false, true);
 	}
 
@@ -269,17 +257,19 @@ public abstract class AbstractSensor<T extends SensorSession> extends
 
 	/**
 	 * Get sessions up and going.
+	 * 
 	 * @param sessions
 	 */
-	public void recreateSessions(Collection<SessionDTO> sessions){
-		for(SessionDTO session:sessions){
-			SensorSession sensorSession=createReaderSession();
-			for(CommandDTO dto:session.getCommands()){
-				sensorSession.submit(dto.getCommandID(),dto.getInterval(),dto.getTimeUnit());
+	public void recreateSessions(Collection<SessionDTO> sessions) {
+		for (SessionDTO session : sessions) {
+			SensorSession sensorSession = createReaderSession();
+			for (CommandDTO dto : session.getCommands()) {
+				sensorSession.submit(dto.getCommandID(), dto.getInterval(), dto
+						.getTimeUnit());
 			}
 		}
 	}
-	
+
 	/***
 	 * This method returns the Data Transfer Object for this Reader
 	 * 

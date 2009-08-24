@@ -19,7 +19,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.api.SessionStatus;
 import org.rifidi.edge.api.rmi.dto.CommandDTO;
-import org.rifidi.edge.core.configuration.impl.AbstractCommandConfigurationFactory;
 import org.rifidi.edge.core.sensors.SensorSession;
 import org.rifidi.edge.core.sensors.commands.Command;
 import org.springframework.jms.core.JmsTemplate;
@@ -51,8 +50,6 @@ public abstract class AbstractSensorSession extends SensorSession {
 	private volatile JmsTemplate template;
 	/** True if the executor is up and running. */
 	protected AtomicBoolean processing = new AtomicBoolean(false);
-	/** Factory for creating command instances. */
-	private final AbstractCommandConfigurationFactory<?> commandFactory;
 	/**
 	 * Queue for single-shot commands that get submitted while the executor is
 	 * inactive.
@@ -72,17 +69,14 @@ public abstract class AbstractSensorSession extends SensorSession {
 	 *            The JMS Queue to add Tag Data to
 	 * @param template
 	 *            The Template used to send Tag data to the internal queue
-	 * @param commandFactory
 	 */
 	public AbstractSensorSession(AbstractSensor<?> sensor, String ID,
-			Destination destination, JmsTemplate template,
-			AbstractCommandConfigurationFactory<?> commandFactory) {
+			Destination destination, JmsTemplate template) {
 		super(ID, sensor);
 		this.commands = new HashMap<Integer, CommandExecutor>();
 		this.idToData = new HashMap<Integer, CommandExecutionData>();
 		this.template = template;
 		this.destination = destination;
-		this.commandFactory = commandFactory;
 		status = SessionStatus.CREATED;
 	}
 
@@ -93,8 +87,8 @@ public abstract class AbstractSensorSession extends SensorSession {
 	 */
 	@Override
 	public Map<Integer, String> currentCommands() {
-		Map<Integer, String> ret=new HashMap<Integer, String>();
-		for(Integer id:commands.keySet()){
+		Map<Integer, String> ret = new HashMap<Integer, String>();
+		for (Integer id : commands.keySet()) {
 			ret.put(id, commands.get(id).getCommandID());
 		}
 		return ret;
@@ -177,6 +171,7 @@ public abstract class AbstractSensorSession extends SensorSession {
 	 */
 	@Override
 	public void submit(Command command) {
+		command.setReaderSession(this);
 		CommandExecutor exec = new CommandExecutor(command, this);
 		if (processing.get()) {
 			executor.submit(exec);
@@ -222,6 +217,8 @@ public abstract class AbstractSensorSession extends SensorSession {
 		return template;
 	}
 
+	protected abstract Command getCommandInstance(String commandID);
+
 	private class CommandExecutor implements Runnable {
 
 		private String commandID;
@@ -263,17 +260,20 @@ public abstract class AbstractSensorSession extends SensorSession {
 		 */
 		@Override
 		public void run() {
+			try {
 			if (instance == null) {
-				instance = commandFactory.getCommandInstance(commandID, sensor
-						.getID());
+				instance = getCommandInstance(commandID);
 				if (instance != null) {
 					instance.setReaderSession(sensorSession);
 					instance.setTemplate(template);
 					instance.setDestination(destination);
 				}
 			}
-			if (instance != null) {
-				instance.run();
+				if (instance != null) {
+					instance.run();
+				}
+			} catch (Throwable t) {
+				t.printStackTrace();
 			}
 		}
 	}

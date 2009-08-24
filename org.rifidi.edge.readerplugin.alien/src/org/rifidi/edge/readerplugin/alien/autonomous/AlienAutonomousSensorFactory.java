@@ -40,7 +40,6 @@ public class AlienAutonomousSensorFactory extends
 	 * Constructor.
 	 */
 	public AlienAutonomousSensorFactory() {
-		super(null);
 		this.readerInfo = (new AlienAutonomousSensor()).getMBeanInfo();
 	}
 
@@ -86,16 +85,13 @@ public class AlienAutonomousSensorFactory extends
 		return "Alien Autonomous Sensor";
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.rifidi.edge.core.configuration.ServiceFactory#createInstance(java.lang.String,
-	 * java.lang.String)
+	
+	
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.configuration.ServiceFactory#createInstance(java.lang.String)
 	 */
 	@Override
-	public void createInstance(String factoryID, String serviceID) {
-		assert (factoryID.equals(FACTORY_ID));
+	public void createInstance(String serviceID) {
 		AlienAutonomousSensor instance = new AlienAutonomousSensor();
 		instance.setID(serviceID);
 		instance.setTemplate((JmsTemplate) template);
@@ -107,26 +103,12 @@ public class AlienAutonomousSensorFactory extends
 		instance.register(getContext(), interfaces, parms);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.rifidi.edge.core.configuration.impl.AbstractServiceFactory#getClazz()
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.configuration.ServiceFactory#getFactoryID()
 	 */
 	@Override
-	public Class<AlienAutonomousSensor> getClazz() {
-		return AlienAutonomousSensor.class;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.rifidi.edge.core.configuration.ServiceFactory#getFactoryIDs()
-	 */
-	@Override
-	public List<String> getFactoryIDs() {
-		List<String> ids = new ArrayList<String>();
-		ids.add(FACTORY_ID);
-		return ids;
+	public String getFactoryID() {
+		return FACTORY_ID;
 	}
 
 	/*

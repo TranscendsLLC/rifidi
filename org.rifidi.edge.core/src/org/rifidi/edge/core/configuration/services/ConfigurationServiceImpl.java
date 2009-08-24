@@ -286,7 +286,7 @@ public class ConfigurationServiceImpl implements ConfigurationService,
 		IDToConfigurations.put(serviceID, config);
 
 		if (factory != null) {
-			factory.createInstance(factoryID, serviceID);
+			factory.createInstance(serviceID);
 		}
 	}
 
@@ -377,16 +377,13 @@ public class ConfigurationServiceImpl implements ConfigurationService,
 	 */
 	public void bind(final ServiceFactory<?> factory, final Map<?, ?> properties) {
 		synchronized (factories) {
-			for (String factoryID : factory.getFactoryIDs()) {
-				if (factories.get(factoryID) == null) {
-					logger.debug("Registering " + factoryID);
-					factories.put(factoryID, factory);
-					if (factoryToConfigurations.get(factoryID) != null) {
-						for (Configuration serConf : factoryToConfigurations
-								.get(factoryID)) {
-							factory.createInstance(factoryID, serConf
-									.getServiceID());
-						}
+			if (factories.get(factory.getFactoryID()) == null) {
+				logger.debug("Registering " + factory.getFactoryID());
+				factories.put(factory.getFactoryID(), factory);
+				if (factoryToConfigurations.get(factory.getFactoryID()) != null) {
+					for (Configuration serConf : factoryToConfigurations
+							.get(factory.getFactoryID())) {
+						factory.createInstance(serConf.getServiceID());
 					}
 				}
 			}
@@ -402,10 +399,7 @@ public class ConfigurationServiceImpl implements ConfigurationService,
 	public synchronized void unbind(final ServiceFactory<?> factory,
 			Map<?, ?> properties) {
 		synchronized (factories) {
-			for (String factoryID : factory.getFactoryIDs()) {
-				logger.debug("Unregistering " + factoryID);
-				factories.remove(factoryID);
-			}
+			factories.remove(factory.getFactoryID());
 		}
 
 	}

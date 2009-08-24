@@ -1,7 +1,6 @@
 package org.rifidi.edge.api.rmi.dto;
 
 import java.io.Serializable;
-import java.util.Set;
 
 /**
  * A Data Transfer Object for CommandConfigurationFactories. For serializing
@@ -15,8 +14,8 @@ public class CommandConfigFactoryDTO implements Serializable {
 	private static final long serialVersionUID = 1L;
 	/** The ID of the reader factory that this command config works with */
 	private String readerFactoryID;
-	/** The individual commands types that this factory produces */
-	private Set<String> commandConfigTypeIDs;
+	/** The commandconfiguration id this factory produces */
+	private String commandConfigTypeID;
 
 	/**
 	 * Constructor
@@ -24,13 +23,13 @@ public class CommandConfigFactoryDTO implements Serializable {
 	 * @param readerFactoryID
 	 *            The ID of the readerfactory that this command configuration
 	 *            factory works with
-	 * @param commandConfigTypeIDs
-	 *            The command types that this factory produces
+	 * @param commandConfigTypeID
+	 *            The command configuration id this factory produces
 	 */
 	public CommandConfigFactoryDTO(String readerFactoryID,
-			Set<String> commandConfigTypeIDs) {
+			String commandConfigTypeID) {
 		this.readerFactoryID = readerFactoryID;
-		this.commandConfigTypeIDs = commandConfigTypeIDs;
+		this.commandConfigTypeID = commandConfigTypeID;
 	}
 
 	/**
@@ -43,12 +42,12 @@ public class CommandConfigFactoryDTO implements Serializable {
 	}
 
 	/**
-	 * Returns the CommandConfigTypeIDs for thsi class.
+	 * Returns the command configuration id this factory produces.
 	 * 
-	 * @return the commandConfigFactoryIDs
+	 * @return the commandConfigFactoryID
 	 */
-	public Set<String> getCommandConfigTypeIDs() {
-		return commandConfigTypeIDs;
+	public String getCommandConfigTypeID() {
+		return commandConfigTypeID;
 	}
 
 }

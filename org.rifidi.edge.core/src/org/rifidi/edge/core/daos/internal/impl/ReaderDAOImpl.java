@@ -93,14 +93,13 @@ public class ReaderDAOImpl implements ReaderDAO {
 	public void bindReaderFactory(AbstractSensorFactory<?> readerFactory,
 			Dictionary<String, String> parameters) {
 		logger.info("Reader Factory Bound:"
-				+ readerFactory.getFactoryIDs().get(0));
-		readerConfigFactories.put(readerFactory.getFactoryIDs().get(0),
+				+ readerFactory.getFactoryID());
+		readerConfigFactories.put(readerFactory.getFactoryID(),
 				readerFactory);
 
 		// TODO: Remove once we have aspects
 		if (notifierService != null) {
-			notifierService.addReaderFactoryEvent(readerFactory.getFactoryIDs()
-					.get(0));
+			notifierService.addReaderFactoryEvent(readerFactory.getFactoryID());
 		}
 	}
 
@@ -115,13 +114,13 @@ public class ReaderDAOImpl implements ReaderDAO {
 	public void unbindReaderFactory(AbstractSensorFactory<?> readerFactory,
 			Dictionary<String, String> parameters) {
 		logger.info("Reader Factory unbound:"
-				+ readerFactory.getFactoryIDs().get(0));
-		readerConfigFactories.remove(readerFactory.getFactoryIDs().get(0));
+				+ readerFactory.getFactoryID());
+		readerConfigFactories.remove(readerFactory.getFactoryID());
 
 		// TODO: Remove once we have aspects
 		if (notifierService != null) {
 			notifierService.removeReaderFactoryEvent(readerFactory
-					.getFactoryIDs().get(0));
+					.getFactoryID());
 		}
 	}
 
@@ -133,14 +132,13 @@ public class ReaderDAOImpl implements ReaderDAO {
 	 */
 	public void setReaderFactories(Set<AbstractSensorFactory<?>> factories) {
 		for (AbstractSensorFactory<?> factory : factories) {
-			readerConfigFactories.put(factory.getFactoryIDs().get(0), factory);
+			readerConfigFactories.put(factory.getFactoryID(), factory);
 		}
 
 		// TODO: Remove once we have aspects
 		if (notifierService != null) {
 			for (AbstractSensorFactory<?> factory : factories) {
-				notifierService.addReaderFactoryEvent(factory.getFactoryIDs()
-						.get(0));
+				notifierService.addReaderFactoryEvent(factory.getFactoryID());
 			}
 		}
 

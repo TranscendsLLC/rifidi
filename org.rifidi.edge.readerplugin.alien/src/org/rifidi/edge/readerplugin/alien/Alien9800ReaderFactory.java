@@ -3,18 +3,19 @@
  */
 package org.rifidi.edge.readerplugin.alien;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicReference;
 
 import javax.management.MBeanInfo;
 
 import org.rifidi.edge.core.configuration.ConfigurationType;
+import org.rifidi.edge.core.configuration.mbeanstrategies.AnnotationMBeanInfoStrategy;
 import org.rifidi.edge.core.sensors.base.AbstractSensor;
 import org.rifidi.edge.core.sensors.base.AbstractSensorFactory;
+import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
 import org.rifidi.edge.core.services.notification.NotifierService;
 import org.springframework.jms.core.JmsTemplate;
 
@@ -39,14 +40,24 @@ public class Alien9800ReaderFactory extends
 	private NotifierService notifierService;
 	/** Blueprint for a reader. */
 	private final MBeanInfo readerInfo;
+	/** Provided by spring. */
+	private AtomicReference<Set<AbstractCommandConfiguration<AbstractAlien9800Command>>> commands = new AtomicReference<Set<AbstractCommandConfiguration<AbstractAlien9800Command>>>();
 
 	/**
 	 * Constructor.
 	 */
-	public Alien9800ReaderFactory(
-			Alien9800CommandConfigurationFactory commandFactory) {
-		super(commandFactory);
-		readerInfo = (new Alien9800Reader(commandFactory)).getMBeanInfo();
+	public Alien9800ReaderFactory() {
+		AnnotationMBeanInfoStrategy strategy = new AnnotationMBeanInfoStrategy();
+		readerInfo = strategy.getMBeanInfo(Alien9800Reader.class);
+	}
+
+	/**
+	 * @param commands
+	 *            the commands to set
+	 */
+	public void setCommands(
+			Set<AbstractCommandConfiguration<AbstractAlien9800Command>> commands) {
+		this.commands.set(commands);
 	}
 
 	/**
@@ -78,23 +89,11 @@ public class Alien9800ReaderFactory extends
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.configuration.AbstractServiceFactory#getClazz()
-	 */
-	@Override
-	public Class<Alien9800Reader> getClazz() {
-		return Alien9800Reader.class;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
 	 * @see org.rifidi.edge.core.configuration.ServiceFactory#getFactoryID()
 	 */
 	@Override
-	public List<String> getFactoryIDs() {
-		List<String> ret = new ArrayList<String>();
-		ret.add(FACTORY_ID);
-		return ret;
+	public String getFactoryID() {
+		return FACTORY_ID;
 	}
 
 	@Override
@@ -112,12 +111,11 @@ public class Alien9800ReaderFactory extends
 	 * 
 	 * @see
 	 * org.rifidi.edge.core.configuration.ServiceFactory#createInstance(java
-	 * .lang.String, java.lang.String)
+	 * .lang.String)
 	 */
 	@Override
-	public void createInstance(String factoryID, String serviceID) {
-		assert (factoryID.equals(FACTORY_ID));
-		Alien9800Reader instance = new Alien9800Reader(commandFactory);
+	public void createInstance(String serviceID) {
+		Alien9800Reader instance = new Alien9800Reader(commands.get());
 		instance.setID(serviceID);
 		instance.setTemplate((JmsTemplate) template);
 		instance.setNotifiyService(notifierService);

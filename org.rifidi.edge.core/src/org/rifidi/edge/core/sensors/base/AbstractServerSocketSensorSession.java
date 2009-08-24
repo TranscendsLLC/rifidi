@@ -63,7 +63,7 @@ public abstract class AbstractServerSocketSensorSession extends
 	public AbstractServerSocketSensorSession(AbstractSensor<?> sensor,
 			String ID, Destination destination, JmsTemplate template,
 			int serverSocketPort, int maxNumSensors) {
-		super(sensor, ID, destination, template, null);
+		super(sensor, ID, destination, template);
 		this.serverSocketPort = serverSocketPort;
 		this.maxNumSensors = maxNumSensors;
 	}
