@@ -9,7 +9,7 @@
 		<property name="context" ref="bundleContext" />
 		<property name="template" ref="internalMB" />
 		<property name="notifierService" ref="JMSNotifierService" />
-		<property name="commands" ref="commands" />
+		<property name="commandConfigurations" ref="commands" />
 	</bean>
 
 	<bean id="AutoModeFactory"

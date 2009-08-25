@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.atomic.AtomicReference;
 
 import javax.management.MBeanInfo;
@@ -40,13 +41,13 @@ public class Alien9800ReaderFactory extends
 	private NotifierService notifierService;
 	/** Blueprint for a reader. */
 	private final MBeanInfo readerInfo;
-	/** Provided by spring. */
-	private AtomicReference<Set<AbstractCommandConfiguration<AbstractAlien9800Command>>> commands = new AtomicReference<Set<AbstractCommandConfiguration<AbstractAlien9800Command>>>();
-
+	/** Collection holding the instances created by this reader. */
+	private final CopyOnWriteArraySet<Alien9800Reader> readerInstances;
 	/**
 	 * Constructor.
 	 */
 	public Alien9800ReaderFactory() {
+		readerInstances=new CopyOnWriteArraySet<Alien9800Reader>();
 		AnnotationMBeanInfoStrategy strategy = new AnnotationMBeanInfoStrategy();
 		readerInfo = strategy.getMBeanInfo(Alien9800Reader.class);
 	}
@@ -57,7 +58,30 @@ public class Alien9800ReaderFactory extends
 	 */
 	public void setCommands(
 			Set<AbstractCommandConfiguration<AbstractAlien9800Command>> commands) {
-		this.commands.set(commands);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.sensors.base.AbstractSensorFactory#bindCommandConfiguration(org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration, java.util.Map)
+	 */
+	@Override
+	public void bindCommandConfiguration(
+			AbstractCommandConfiguration<?> commandConfiguration,
+			Map<?, ?> properties) {
+		for(Alien9800Reader reader:readerInstances){
+			reader.bindCommandConfiguration(commandConfiguration, properties);
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.sensors.base.AbstractSensorFactory#unbindCommandConfiguration(org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration, java.util.Map)
+	 */
+	@Override
+	public void unbindCommandConfiguration(
+			AbstractCommandConfiguration<?> commandConfiguration,
+			Map<?, ?> properties) {
+		for(Alien9800Reader reader:readerInstances){
+			reader.unbindCommandConfiguration(commandConfiguration, properties);
+		}	
 	}
 
 	/**
@@ -124,6 +148,7 @@ public class Alien9800ReaderFactory extends
 		Map<String, String> parms = new HashMap<String, String>();
 		parms.put("type", ConfigurationType.READER.toString());
 		instance.register(getContext(), interfaces, parms);
+		readerInstances.add(instance);
 	}
 
 	/*

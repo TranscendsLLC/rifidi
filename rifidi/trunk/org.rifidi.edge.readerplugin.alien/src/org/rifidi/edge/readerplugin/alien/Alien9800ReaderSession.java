@@ -44,7 +44,7 @@ public class Alien9800ReaderSession extends AbstractIPSensorSession {
 	/** The message parser that parses messages from the socket */
 	private volatile AlienMessageParsingStrategy messageParser;
 	/** Supplied by spring. */
-	private final Set<AbstractCommandConfiguration<AbstractAlien9800Command>> commands;
+	private final Set<AbstractCommandConfiguration<?>> commands;
 	/**
 	 * You can put this in front of a Alien command for terse output to come
 	 * back to you, making things faster and easier to parse.
@@ -126,8 +126,7 @@ public class Alien9800ReaderSession extends AbstractIPSensorSession {
 			String host, int port, int reconnectionInterval,
 			int maxConAttempts, String username, String password,
 			JmsTemplate template, NotifierService notifierService,
-			String readerID,
-			Set<AbstractCommandConfiguration<AbstractAlien9800Command>> commands) {
+			String readerID, Set<AbstractCommandConfiguration<?>> commands) {
 		super(sensor, id, host, port, reconnectionInterval, maxConAttempts,
 				template.getDefaultDestination(), template);
 		this.commands = commands;
@@ -270,19 +269,19 @@ public class Alien9800ReaderSession extends AbstractIPSensorSession {
 	 */
 	@Override
 	protected Command getCommandInstance(String commandID) {
-		if(logger.isDebugEnabled()){
-			logger.debug("Trying to find instance for "+commandID);
+		if (logger.isDebugEnabled()) {
+			logger.debug("Trying to find instance for " + commandID);
 		}
 		for (AbstractCommandConfiguration<?> config : commands) {
-			if(config.getID().equals(commandID)){
-				if(logger.isDebugEnabled()){
-					logger.debug("Found instance for "+commandID);
+			if (config.getID().equals(commandID)) {
+				if (logger.isDebugEnabled()) {
+					logger.debug("Found instance for " + commandID);
 				}
 				return config.getCommand(readerID);
 			}
 		}
-		if(logger.isDebugEnabled()){
-			logger.debug("Found no instance for "+commandID);
+		if (logger.isDebugEnabled()) {
+			logger.debug("Found no instance for " + commandID);
 		}
 		return null;
 	}
@@ -298,5 +297,4 @@ public class Alien9800ReaderSession extends AbstractIPSensorSession {
 	public void submit(Command command) {
 		super.submit(command);
 	}
-
 }

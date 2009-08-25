@@ -14,13 +14,13 @@
 	</osgi:service>
 	
 	<osgi:set id="commands" interface="org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration"
-		cardinality="0..N" filter="(reader=alien9800)"/>
+		cardinality="0..N" filter="(reader=alien9800)">
+		<osgi:listener ref="configurationFactory" bind-method="bindCommandConfiguration" unbind-method="unbindCommandConfiguration"/>
+	</osgi:set>
 	
 	<osgi:reference id="JMSNotifierService"
 		interface="org.rifidi.edge.core.services.notification.NotifierService" />
 
 	<osgi:reference id="internalMB"
 		interface="org.springframework.jms.core.JmsTemplate" bean-name="internalJMSTemplate" />
-
-
 </beans>
