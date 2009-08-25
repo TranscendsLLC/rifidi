@@ -40,6 +40,8 @@ public abstract class AbstractSensorSession extends SensorSession {
 	private volatile SessionStatus status;
 	/** Map containing the periodic commands with the process commandID as key. */
 	protected final Map<Integer, CommandExecutor> commands;
+	/** Map containing the periodic commands with the process commandID as key. */
+	protected final Map<String, CommandExecutor> commandIDToExecutor;
 	/** Map containing command process commandID as key and the future as value. */
 	protected final Map<Integer, CommandExecutionData> idToData;
 	/** Job counter */
@@ -74,6 +76,7 @@ public abstract class AbstractSensorSession extends SensorSession {
 			Destination destination, JmsTemplate template) {
 		super(ID, sensor);
 		this.commands = new HashMap<Integer, CommandExecutor>();
+		this.commandIDToExecutor = new HashMap<String, CommandExecutor>();
 		this.idToData = new HashMap<Integer, CommandExecutionData>();
 		this.template = template;
 		this.destination = destination;
@@ -120,7 +123,6 @@ public abstract class AbstractSensorSession extends SensorSession {
 				data.future.cancel(true);
 			}
 		}
-
 	}
 
 	/*
@@ -134,6 +136,7 @@ public abstract class AbstractSensorSession extends SensorSession {
 		Integer id = counter.getAndIncrement();
 		CommandExecutor exec = new CommandExecutor(commandID, this);
 		commands.put(id, exec);
+		commandIDToExecutor.put(commandID, exec);
 		CommandExecutionData data = new CommandExecutionData();
 		data.interval = interval;
 		data.unit = unit;
@@ -180,6 +183,16 @@ public abstract class AbstractSensorSession extends SensorSession {
 		commandQueue.add(exec);
 	}
 
+	public void suspendCommand(String commandID){
+		if(logger.isDebugEnabled()){
+			logger.debug("Suspending "+commandID);
+		}
+		if(commandIDToExecutor.get(commandID)!=null){
+			commandIDToExecutor.get(commandID).suspend();	
+		}
+		
+	}
+	
 	/**
 	 * Private class used to wrap an executing command
 	 * 
@@ -222,7 +235,7 @@ public abstract class AbstractSensorSession extends SensorSession {
 	private class CommandExecutor implements Runnable {
 
 		private String commandID;
-		private Command instance;
+		private volatile Command instance;
 		private SensorSession sensorSession;
 
 		/**
@@ -261,14 +274,15 @@ public abstract class AbstractSensorSession extends SensorSession {
 		@Override
 		public void run() {
 			try {
-			if (instance == null) {
-				instance = getCommandInstance(commandID);
-				if (instance != null) {
-					instance.setReaderSession(sensorSession);
-					instance.setTemplate(template);
-					instance.setDestination(destination);
+				if (instance == null) {
+					System.out.println("aquiring");
+					instance = getCommandInstance(commandID);
+					if (instance != null) {
+						instance.setReaderSession(sensorSession);
+						instance.setTemplate(template);
+						instance.setDestination(destination);
+					}
 				}
-			}
 				if (instance != null) {
 					instance.run();
 				}
@@ -276,5 +290,13 @@ public abstract class AbstractSensorSession extends SensorSession {
 				t.printStackTrace();
 			}
 		}
+
+		/**
+		 * @param instance the instance to set
+		 */
+		public void suspend() {
+			this.instance = null;
+		}
+		
 	}
 }

@@ -15,6 +15,7 @@ import javax.management.MBeanInfo;
 import org.rifidi.edge.core.configuration.ConfigurationType;
 import org.rifidi.edge.core.sensors.base.AbstractSensor;
 import org.rifidi.edge.core.sensors.base.AbstractSensorFactory;
+import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
 import org.rifidi.edge.core.services.notification.NotifierService;
 import org.springframework.jms.core.JmsTemplate;
 
@@ -123,4 +124,38 @@ public class AlienAutonomousSensorFactory extends
 		return (MBeanInfo) readerInfo.clone();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.sensors.base.AbstractSensorFactory#setCommandConfigurations(java.util.Set)
+	 */
+	@Override
+	public void setCommandConfigurations(
+			Set<AbstractCommandConfiguration<?>> commandConfigurations) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.sensors.base.AbstractSensorFactory#bindCommandConfiguration(org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration, java.util.Map)
+	 */
+	@Override
+	public void bindCommandConfiguration(
+			AbstractCommandConfiguration<?> commandConfiguration,
+			Map<?, ?> properties) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.sensors.base.AbstractSensorFactory#unbindCommandConfiguration(org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration, java.util.Map)
+	 */
+	@Override
+	public void unbindCommandConfiguration(
+			AbstractCommandConfiguration<?> commandConfiguration,
+			Map<?, ?> properties) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	
+	
 }

@@ -99,13 +99,13 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 	/** Uptime of the sensorSession */
 	public static final String PROP_UPTIME = "uptime";
 	/** Provided by spring. */
-	private final Set<AbstractCommandConfiguration<AbstractAlien9800Command>> commands;
+	private final Set<AbstractCommandConfiguration<?>> commands;
 
 	/**
 	 * Constructor.
 	 */
 	public Alien9800Reader(
-			Set<AbstractCommandConfiguration<AbstractAlien9800Command>> commands) {
+			Set<AbstractCommandConfiguration<?>> commands) {
 		this.commands = commands;
 		readerProperties = new ConcurrentHashMap<String, String>();
 		readerProperties.put(PROP_READER_NUMBER, "0");
@@ -163,6 +163,22 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 		logger.debug("New instance of Alien9800Reader created.");
 	}
 
+	public void bindCommandConfiguration(
+			AbstractCommandConfiguration<?> commandConfiguration,
+			Map<?, ?> properties) {
+		if(session!=null){
+//			session.commandCreated(commandConfiguration.getID());
+		}
+	}
+
+	public void unbindCommandConfiguration(
+			AbstractCommandConfiguration<?> commandConfiguration,
+			Map<?, ?> properties) {
+		if(session!=null){
+			session.suspendCommand(commandConfiguration.getID());
+		}	
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -542,5 +558,4 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 			session.submit(command);
 		}
 	}
-
 }
