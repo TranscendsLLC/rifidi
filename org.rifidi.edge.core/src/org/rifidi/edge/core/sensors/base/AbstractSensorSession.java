@@ -275,7 +275,6 @@ public abstract class AbstractSensorSession extends SensorSession {
 		public void run() {
 			try {
 				if (instance == null) {
-					System.out.println("aquiring");
 					instance = getCommandInstance(commandID);
 					if (instance != null) {
 						instance.setReaderSession(sensorSession);
