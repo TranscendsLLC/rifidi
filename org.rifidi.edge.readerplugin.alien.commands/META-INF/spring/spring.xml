@@ -11,14 +11,39 @@
 		class="org.rifidi.edge.readerplugin.alien.commands.AlienGetTagListCommandConfigurationFactory">
 		<property name="context" ref="bundleContext" />
 	</bean>
-		<!-- Put command configuration service in OSGi Registry -->
+	<bean id="alienAutonomousModeCommandConfigurationFactory"
+		class="org.rifidi.edge.readerplugin.alien.commands.AlienAutonomousModeCommandConfigurationFactory">
+		<property name="context" ref="bundleContext" />
+	</bean>
+	<bean id="alienAutonomousModeStopCommandConfigurationFactory"
+		class="org.rifidi.edge.readerplugin.alien.commands.AlienAutonomousModeStopCommandConfigurationFactory">
+		<property name="context" ref="bundleContext" />
+	</bean>
+	
+	<!-- Put command configuration service in OSGi Registry -->
 	<osgi:service id="alienGetTagListCommandConfigurationFactoryReg" ref="alienGetTagListCommandConfigurationFactory">
 		<osgi:interfaces>
 			<value>org.rifidi.edge.core.configuration.ServiceFactory</value>
 			<value>org.rifidi.edge.core.configuration.impl.AbstractCommandConfigurationFactory</value>
 		</osgi:interfaces>
 	</osgi:service>
-		<osgi:reference id="internalMB"
+	
+	<osgi:service id="alienAutonomousModeCommandConfigurationFactoryReg" ref="alienAutonomousModeCommandConfigurationFactory">
+		<osgi:interfaces>
+			<value>org.rifidi.edge.core.configuration.ServiceFactory</value>
+			<value>org.rifidi.edge.core.configuration.impl.AbstractCommandConfigurationFactory</value>
+		</osgi:interfaces>
+	</osgi:service>
+	
+	<osgi:service id="alienAutonomousModeStopCommandConfigurationFactoryReg" ref="alienAutonomousModeStopCommandConfigurationFactory">
+		<osgi:interfaces>
+			<value>org.rifidi.edge.core.configuration.ServiceFactory</value>
+			<value>org.rifidi.edge.core.configuration.impl.AbstractCommandConfigurationFactory</value>
+		</osgi:interfaces>
+	</osgi:service>
+	
+	
+	<osgi:reference id="internalMB"
 		interface="org.springframework.jms.core.JmsTemplate" bean-name="internalJMSTemplate" />
 	
 </beans>

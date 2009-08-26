@@ -36,7 +36,7 @@ public class AlienAutonomousModeCommandConfiguration extends
 	private Integer autoFalsePause = 0;
 
 	/** The name of this command type */
-	public static final String name = "Alien-Autonomous";
+	public static final String name = "Alien-Autonomous-Configuration";
 
 	public static final MBeanInfo mbeaninfo;
 	static {
