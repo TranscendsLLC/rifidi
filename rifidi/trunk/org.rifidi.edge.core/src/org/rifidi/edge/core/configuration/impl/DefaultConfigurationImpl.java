@@ -144,8 +144,9 @@ public class DefaultConfigurationImpl implements Configuration, ServiceListener 
 				nameToPos = new HashMap<String, Integer>();
 				List<Attribute> attrs = attributes.asList();
 				if (target instanceof AbstractSensor<?>) {
-					((AbstractSensor<?>) target).recreateSessions(sessionDTOs
-							.keySet());
+					for(SessionDTO sessionDTO:sessionDTOs.keySet()){
+						((AbstractSensor<?>) target).createSensorSession(sessionDTO);
+					}
 				}
 				for (int count = 0; count < attributes.size(); count++) {
 					nameToPos.put(attrs.get(count).getName(), count);

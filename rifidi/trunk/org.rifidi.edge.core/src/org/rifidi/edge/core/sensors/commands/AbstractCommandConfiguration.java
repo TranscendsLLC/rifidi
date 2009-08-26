@@ -2,9 +2,17 @@
  * 
  */
 package org.rifidi.edge.core.sensors.commands;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
+import org.osgi.framework.BundleContext;
 import org.rifidi.edge.api.rmi.dto.CommandConfigurationDTO;
 import org.rifidi.edge.core.configuration.Configuration;
+import org.rifidi.edge.core.configuration.ConfigurationType;
 import org.rifidi.edge.core.configuration.RifidiService;
+import org.rifidi.edge.core.sensors.base.AbstractSensor;
 
 /**
  * Command configurations represent all properties of a command and will create
@@ -60,5 +68,22 @@ public abstract class AbstractCommandConfiguration<T extends Command> extends
 		return new CommandConfigurationDTO(this.getID(), configuration
 				.getFactoryID(), configuration.getAttributes(configuration
 				.getAttributeNames()));
+	}
+	
+
+	
+	/**
+	 * Register the reader to OSGi.
+	 * 
+	 * @param context
+	 * @param readerType
+	 */
+	public void register(BundleContext context, String readerType) {
+		Map<String, String> parms = new HashMap<String, String>();
+		parms.put("type", ConfigurationType.COMMAND.toString());
+		parms.put("reader", readerType);
+		Set<String> interfaces = new HashSet<String>();
+		interfaces.add(AbstractCommandConfiguration.class.getCanonicalName());
+		register(context, interfaces, parms);
 	}
 }

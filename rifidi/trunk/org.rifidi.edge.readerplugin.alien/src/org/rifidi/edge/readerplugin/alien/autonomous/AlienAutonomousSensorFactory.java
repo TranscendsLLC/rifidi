@@ -3,16 +3,11 @@
  */
 package org.rifidi.edge.readerplugin.alien.autonomous;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.management.MBeanInfo;
 
-import org.rifidi.edge.core.configuration.ConfigurationType;
+import org.rifidi.edge.core.configuration.mbeanstrategies.AnnotationMBeanInfoStrategy;
 import org.rifidi.edge.core.sensors.base.AbstractSensor;
 import org.rifidi.edge.core.sensors.base.AbstractSensorFactory;
 import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
@@ -41,7 +36,8 @@ public class AlienAutonomousSensorFactory extends
 	 * Constructor.
 	 */
 	public AlienAutonomousSensorFactory() {
-		this.readerInfo = (new AlienAutonomousSensor()).getMBeanInfo();
+		AnnotationMBeanInfoStrategy strategy = new AnnotationMBeanInfoStrategy();
+		readerInfo = strategy.getMBeanInfo(AlienAutonomousSensor.class);
 	}
 
 	/**
@@ -86,25 +82,25 @@ public class AlienAutonomousSensorFactory extends
 		return "Alien Autonomous Sensor";
 	}
 
-	
-	
-	/* (non-Javadoc)
-	 * @see org.rifidi.edge.core.configuration.ServiceFactory#createInstance(java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.core.configuration.ServiceFactory#createInstance(java
+	 * .lang.String)
 	 */
 	@Override
 	public void createInstance(String serviceID) {
-		AlienAutonomousSensor instance = new AlienAutonomousSensor();
+		AlienAutonomousSensor instance = new AlienAutonomousSensor(commands);
 		instance.setID(serviceID);
 		instance.setTemplate((JmsTemplate) template);
 		instance.setNotifierService(this.notifierService);
-		Set<String> interfaces = new HashSet<String>();
-		interfaces.add(AbstractSensor.class.getName());
-		Map<String, String> parms = new HashMap<String, String>();
-		parms.put("type", ConfigurationType.READER.toString());
-		instance.register(getContext(), interfaces, parms);
+		instance.register(getContext(), FACTORY_ID);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.rifidi.edge.core.configuration.ServiceFactory#getFactoryID()
 	 */
 	@Override
@@ -116,46 +112,43 @@ public class AlienAutonomousSensorFactory extends
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.configuration.ServiceFactory#getServiceDescription(java.lang
-	 * .String)
+	 * org.rifidi.edge.core.configuration.ServiceFactory#getServiceDescription
+	 * (java.lang .String)
 	 */
 	@Override
 	public MBeanInfo getServiceDescription(String factoryID) {
 		return (MBeanInfo) readerInfo.clone();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.rifidi.edge.core.sensors.base.AbstractSensorFactory#setCommandConfigurations(java.util.Set)
-	 */
-	@Override
-	public void setCommandConfigurations(
-			Set<AbstractCommandConfiguration<?>> commandConfigurations) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	/* (non-Javadoc)
-	 * @see org.rifidi.edge.core.sensors.base.AbstractSensorFactory#bindCommandConfiguration(org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration, java.util.Map)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seeorg.rifidi.edge.core.sensors.base.AbstractSensorFactory#
+	 * bindCommandConfiguration
+	 * (org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration,
+	 * java.util.Map)
 	 */
 	@Override
 	public void bindCommandConfiguration(
 			AbstractCommandConfiguration<?> commandConfiguration,
 			Map<?, ?> properties) {
-		// TODO Auto-generated method stub
-		
 	}
 
-	/* (non-Javadoc)
-	 * @see org.rifidi.edge.core.sensors.base.AbstractSensorFactory#unbindCommandConfiguration(org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration, java.util.Map)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seeorg.rifidi.edge.core.sensors.base.AbstractSensorFactory#
+	 * unbindCommandConfiguration
+	 * (org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration,
+	 * java.util.Map)
 	 */
 	@Override
 	public void unbindCommandConfiguration(
 			AbstractCommandConfiguration<?> commandConfiguration,
 			Map<?, ?> properties) {
-		// TODO Auto-generated method stub
-		
+		for (AbstractSensor<?> sensor : sensors) {
+			sensor.unbindCommandConfiguration(commandConfiguration, properties);
+		}
 	}
-	
-	
-	
+
 }

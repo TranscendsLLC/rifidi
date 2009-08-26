@@ -10,20 +10,10 @@ import java.util.Map;
 import javax.management.Attribute;
 import javax.management.AttributeList;
 import javax.management.AttributeNotFoundException;
-import javax.management.Descriptor;
 import javax.management.InvalidAttributeValueException;
-import javax.management.JMX;
 import javax.management.MBeanException;
 import javax.management.MBeanInfo;
-import javax.management.MBeanOperationInfo;
 import javax.management.ReflectionException;
-import javax.management.modelmbean.DescriptorSupport;
-import javax.management.openmbean.OpenMBeanAttributeInfo;
-import javax.management.openmbean.OpenMBeanAttributeInfoSupport;
-import javax.management.openmbean.OpenMBeanInfoSupport;
-import javax.management.openmbean.OpenMBeanOperationInfo;
-import javax.management.openmbean.OpenMBeanOperationInfoSupport;
-import javax.management.openmbean.SimpleType;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -55,7 +45,6 @@ public abstract class RifidiService {
 	/** Names of operations mapped to their annotations */
 	protected final Map<String, Operation> nameToOperation;
 
-
 	/**
 	 * Constructor.
 	 */
@@ -63,7 +52,7 @@ public abstract class RifidiService {
 		this.nameToProperty = new HashMap<String, Property>();
 		this.nameToOperation = new HashMap<String, Operation>();
 		this.nameToMethod = new HashMap<String, Method>();
-		Class<?> clazz=this.getClass();
+		Class<?> clazz = this.getClass();
 		if (clazz.isAnnotationPresent(JMXMBean.class)) {
 			// check method annotations
 			for (Method method : clazz.getMethods()) {
@@ -108,11 +97,11 @@ public abstract class RifidiService {
 	 * @return
 	 */
 	public AttributeList getAttributes() {
-		AttributeList ret=new AttributeList();
+		AttributeList ret = new AttributeList();
 		try {
-			for(String name:nameToMethod.keySet()){
+			for (String name : nameToMethod.keySet()) {
 				Object value = nameToMethod.get(name).invoke(this);
-				ret.add(new Attribute(name, value));	
+				ret.add(new Attribute(name, value));
 			}
 			return ret;
 		} catch (IllegalArgumentException e) {
@@ -134,11 +123,11 @@ public abstract class RifidiService {
 	public AttributeList getAttributes(Collection<String> attributeNames) {
 		AttributeList ret = new AttributeList();
 		try {
-			for(String name:nameToMethod.keySet()){
-				if(attributeNames.contains(name)){
+			for (String name : nameToMethod.keySet()) {
+				if (attributeNames.contains(name)) {
 					Object value = nameToMethod.get(name).invoke(this);
-					ret.add(new Attribute(name, value));	
-				}		
+					ret.add(new Attribute(name, value));
+				}
 			}
 			return ret;
 		} catch (IllegalArgumentException e) {
@@ -193,8 +182,8 @@ public abstract class RifidiService {
 				logger.error(e);
 			}
 		}
-		logger.warn("Unknown attribute: "+attribute);
-		//throw new AttributeNotFoundException();
+		logger.warn("Unknown attribute: " + attribute);
+		// throw new AttributeNotFoundException();
 	}
 
 	/**
@@ -270,7 +259,8 @@ public abstract class RifidiService {
 	 * @param params
 	 *            OSGi service params
 	 */
-	public void register(final BundleContext context, final Collection<String> interfaces,
+	protected void register(final BundleContext context,
+			final Collection<String> interfaces,
 			final Map<String, String> params) {
 		interfaces.add(RifidiService.class.getName());
 		String[] serviceInterfaces = new String[interfaces.size()];
@@ -296,62 +286,11 @@ public abstract class RifidiService {
 
 	/**
 	 * Get the MBean info.
+	 * 
 	 * @return
 	 */
-	public MBeanInfo getMBeanInfo() {
-		OpenMBeanAttributeInfo[] attrs = new OpenMBeanAttributeInfo[nameToProperty
-				.size()];
-		int counter = 0;
-		// assemble attributes
-		for (String name : nameToProperty.keySet()) {
+	public abstract MBeanInfo getMBeanInfo();
 
-			// get the property annotation
-			Property prop = nameToProperty.get(name);
-
-			// build the descriptor
-			Descriptor descriptor = new DescriptorSupport();
-			descriptor.setField("immutableInfo", "true");
-			descriptor.setField("displayName", prop.displayName());
-			if (!prop.maxValue().equals("")) {
-				descriptor.setField(JMX.MAX_VALUE_FIELD, PropertyType.convert(
-						prop.maxValue(), prop.type()));
-			}
-			if (!prop.minValue().equals("")) {
-				descriptor.setField(JMX.MIN_VALUE_FIELD, PropertyType.convert(
-						prop.minValue(), prop.type()));
-			}
-			if (!prop.category().equals("")) {
-				descriptor
-						.setField("org.rifidi.edge.category", prop.category());
-			}
-			if (!prop.defaultValue().equals("")) {
-				descriptor.setField(JMX.DEFAULT_VALUE_FIELD, PropertyType
-						.convert(prop.defaultValue(), prop.type()));
-			}
-			descriptor
-					.setField("org.rifidi.edge.ordervalue", prop.orderValue());
-
-			attrs[counter] = new OpenMBeanAttributeInfoSupport(name, prop
-					.description(), PropertyType.getOpenType(prop.type()),
-					true, prop.writable(), false, descriptor);
-			counter++;
-		}
-		counter = 0;
-		OpenMBeanOperationInfo[] opers = new OpenMBeanOperationInfo[nameToOperation
-				.size()];
-		// assemble operations
-		for (String name : nameToOperation.keySet()) {
-			Operation oper = nameToOperation.get(name);
-			opers[counter] = new OpenMBeanOperationInfoSupport(name, oper
-					.description(), null, SimpleType.VOID,
-					MBeanOperationInfo.ACTION);
-			counter++;
-		}
-
-		return new OpenMBeanInfoSupport(this.getClass().getName(),
-				"Property Manager MBean", attrs, null, opers, null);
-	}
-	
 	/**
 	 * Destroy the RifidiService. Should normally at least unregister this
 	 * service
