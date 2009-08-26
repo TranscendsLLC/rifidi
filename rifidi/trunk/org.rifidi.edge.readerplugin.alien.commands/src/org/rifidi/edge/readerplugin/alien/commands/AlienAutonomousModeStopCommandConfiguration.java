@@ -17,7 +17,7 @@ public class AlienAutonomousModeStopCommandConfiguration
 			AbstractCommandConfiguration<AlienAutonomousModeStopCommand> {
 
 	/** The name of this command type */
-	public static final String name = "Alien-Autonomous-Off";
+	public static final String name = "Alien-Autonomous-Stop";
 	public static final MBeanInfo mbeaninfo;
 	static{
 		AnnotationMBeanInfoStrategy strategy = new AnnotationMBeanInfoStrategy();
