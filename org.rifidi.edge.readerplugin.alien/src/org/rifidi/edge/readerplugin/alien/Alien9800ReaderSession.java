@@ -6,6 +6,7 @@ package org.rifidi.edge.readerplugin.alien;
 import java.io.IOException;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -29,6 +30,8 @@ public class Alien9800ReaderSession extends AbstractIPSensorSession {
 	/** Logger for this class. */
 	private static final Log logger = LogFactory
 			.getLog(Alien9800ReaderSession.class);
+	/** Set to true if the session is destroied. */
+	private AtomicBoolean destroied=new AtomicBoolean(false);
 	/** Username for connecting to the reader. */
 	private final String username;
 	/** Password for connnecting to the reader. */
@@ -197,7 +200,7 @@ public class Alien9800ReaderSession extends AbstractIPSensorSession {
 	 * .rifidi.edge.core.api.SessionStatus)
 	 */
 	@Override
-	protected synchronized void setStatus(SessionStatus status) {
+	protected void setStatus(SessionStatus status) {
 		super.setStatus(status);
 
 		// TODO: Remove this once we have aspectJ

@@ -3,8 +3,6 @@
  */
 package org.rifidi.edge.core.configuration.impl;
 
-import java.util.Set;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.osgi.framework.BundleContext;
@@ -23,9 +21,6 @@ import org.rifidi.edge.core.configuration.ServiceFactory;
  */
 public abstract class AbstractCommandConfigurationFactory<T> implements
 		ServiceFactory<T> {
-	/** Logger for this class. */
-	private static final Log logger = LogFactory
-			.getLog(AbstractCommandConfigurationFactory.class);
 	/** Context of the registering bundle. */
 	private BundleContext context;
 

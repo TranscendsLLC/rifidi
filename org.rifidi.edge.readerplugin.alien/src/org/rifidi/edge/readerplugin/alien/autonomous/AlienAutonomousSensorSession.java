@@ -3,6 +3,8 @@
  */
 package org.rifidi.edge.readerplugin.alien.autonomous;
 
+import java.util.Set;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.api.SessionStatus;
@@ -10,6 +12,7 @@ import org.rifidi.edge.core.sensors.base.AbstractSensor;
 import org.rifidi.edge.core.sensors.base.AbstractServerSocketSensorSession;
 import org.rifidi.edge.core.sensors.base.threads.MessageParsingStrategyFactory;
 import org.rifidi.edge.core.sensors.base.threads.MessageProcessingStrategyFactory;
+import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
 import org.rifidi.edge.core.sensors.commands.Command;
 import org.rifidi.edge.core.services.notification.NotifierService;
 import org.rifidi.edge.readerplugin.alien.AlienMessageParsingStrategyFactory;
@@ -33,7 +36,8 @@ public class AlienAutonomousSensorSession extends
 	private AlienMessageParsingStrategyFactory messageParserFactory;
 	/** The factory that produces Alien Autonomous Message Processing Strategies */
 	private AlienAutonomousMessageProcessingStrategyFactory messageProcessingFactory;
-
+	/** Provided by spring. */
+	private final Set<AbstractCommandConfiguration<?>> commands;
 	/**
 	 * 
 	 * @param sensor
@@ -42,12 +46,15 @@ public class AlienAutonomousSensorSession extends
 	 * @param notifierService
 	 * @param serverSocketPort
 	 * @param maxNumAutonomousReaders
+	 * @param commands
 	 */
 	public AlienAutonomousSensorSession(AbstractSensor<?> sensor, String ID,
 			JmsTemplate template, NotifierService notifierService,
-			int serverSocketPort, int maxNumAutonomousReaders) {
+			int serverSocketPort, int maxNumAutonomousReaders,
+			Set<AbstractCommandConfiguration<?>> commands) {
 		super(sensor, ID, template.getDefaultDestination(), template,
 				serverSocketPort, maxNumAutonomousReaders);
+		this.commands=commands;
 		this.notifierService = notifierService;
 		this.messageParserFactory = new AlienMessageParsingStrategyFactory();
 		this.messageProcessingFactory = new AlienAutonomousMessageProcessingStrategyFactory(
@@ -90,13 +97,30 @@ public class AlienAutonomousSensorSession extends
 				getID(), status);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.rifidi.edge.core.sensors.base.AbstractSensorSession#getCommandInstance(java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.core.sensors.base.AbstractSensorSession#getCommandInstance
+	 * (java.lang.String)
 	 */
 	@Override
 	protected Command getCommandInstance(String commandID) {
-		// TODO Auto-generated method stub
+		if (logger.isDebugEnabled()) {
+			logger.debug("Trying to find instance for " + commandID);
+		}
+		for (AbstractCommandConfiguration<?> config : commands) {
+			if (config.getID().equals(commandID)) {
+				if (logger.isDebugEnabled()) {
+					logger.debug("Found instance for " + commandID);
+				}
+				return config.getCommand(getID());
+			}
+		}
+		if (logger.isDebugEnabled()) {
+			logger.debug("Found no instance for " + commandID);
+		}
 		return null;
 	}
-	
+
 }

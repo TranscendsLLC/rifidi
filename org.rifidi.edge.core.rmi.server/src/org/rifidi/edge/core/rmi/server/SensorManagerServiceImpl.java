@@ -185,7 +185,7 @@ public class SensorManagerServiceImpl implements SensorManagerService {
 			logger.warn("No reader with ID " + readerID + " is available");
 			return null;
 		}
-		reader.createReaderSession();
+		reader.createSensorSession();
 		logger.info("New reader session created on Reader " + readerID);
 		Set<SessionDTO> sessionDTOs = new HashSet<SessionDTO>();
 		for (SensorSession s : reader.getSensorSessions().values()) {
@@ -202,10 +202,7 @@ public class SensorManagerServiceImpl implements SensorManagerService {
 		logger.debug("RMI call: deleteSession");
 		AbstractSensor<?> reader = this.readerDAO.getReaderByID(readerID);
 		if (reader != null) {
-			SensorSession session = reader.getSensorSessions().get(sessionID);
-			if (session != null) {
-				reader.destroySensorSession(session);
-			}
+			reader.destroySensorSession(sessionID);
 		}
 
 	}

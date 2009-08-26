@@ -5,7 +5,6 @@ package org.rifidi.edge.core.sensors.base;
 
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicReference;
 
 import org.rifidi.edge.api.rmi.dto.ReaderFactoryDTO;
 import org.rifidi.edge.core.configuration.impl.AbstractServiceFactory;
@@ -23,7 +22,9 @@ import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
 public abstract class AbstractSensorFactory<T extends AbstractSensor<?>>
 		extends AbstractServiceFactory<T> {
 	/** Provided by spring. */
-	protected AtomicReference<Set<AbstractCommandConfiguration<?>>> commands = new AtomicReference<Set<AbstractCommandConfiguration<?>>>();
+	protected volatile Set<AbstractCommandConfiguration<?>> commands;
+	/** Provided by spring. */
+	protected volatile Set<AbstractSensor<?>> sensors;
 
 	/**
 	 * This constructor is only for CGLIB. DO NOT OVERWRITE!
@@ -57,6 +58,17 @@ public abstract class AbstractSensorFactory<T extends AbstractSensor<?>>
 	public abstract String getDescription();
 
 	/**
+	 * Used by spring to provide the sensor instances registered to OSGi.
+	 * 
+	 * @param commands
+	 *            a thread safe set containing all currently available sensor
+	 *            instances
+	 */
+	public void setReaderInstances(Set<AbstractSensor<?>> sensors) {
+		this.sensors = sensors;
+	}
+
+	/**
 	 * Used by spring to provide the currently available command configurations
 	 * 
 	 * @param commands
@@ -65,7 +77,7 @@ public abstract class AbstractSensorFactory<T extends AbstractSensor<?>>
 	 */
 	public void setCommandConfigurations(
 			Set<AbstractCommandConfiguration<?>> commandConfigurations) {
-		this.commands.set(commandConfigurations);
+		this.commands = commandConfigurations;
 	}
 
 	/**

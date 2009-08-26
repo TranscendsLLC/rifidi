@@ -4,8 +4,8 @@
 package org.rifidi.edge.core.sensors.base;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -17,15 +17,17 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.management.AttributeList;
 
-import org.rifidi.edge.api.rmi.dto.CommandDTO;
+import org.osgi.framework.BundleContext;
 import org.rifidi.edge.api.rmi.dto.ReaderDTO;
 import org.rifidi.edge.api.rmi.dto.SessionDTO;
 import org.rifidi.edge.core.configuration.Configuration;
+import org.rifidi.edge.core.configuration.ConfigurationType;
 import org.rifidi.edge.core.configuration.RifidiService;
 import org.rifidi.edge.core.sensors.CompositeSensor;
 import org.rifidi.edge.core.sensors.Sensor;
 import org.rifidi.edge.core.sensors.SensorSession;
 import org.rifidi.edge.core.sensors.SensorUpdate;
+import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
 import org.rifidi.edge.core.sensors.exceptions.DuplicateSubscriptionException;
 import org.rifidi.edge.core.sensors.exceptions.ImmutableException;
 import org.rifidi.edge.core.sensors.exceptions.InUseException;
@@ -47,6 +49,8 @@ public abstract class AbstractSensor<T extends SensorSession> extends
 		RifidiService implements SensorUpdate, CompositeSensor {
 	/** Sensors connected to this connectedSensors. */
 	protected final Set<Sensor> receivers = new CopyOnWriteArraySet<Sensor>();
+	/** True if the sensor is currently in use. */
+	protected AtomicBoolean inUse = new AtomicBoolean(false);
 
 	/**
 	 * This constructor is only for CGLIB. DO NOT OVERWRITE!
@@ -62,12 +66,19 @@ public abstract class AbstractSensor<T extends SensorSession> extends
 	protected final Map<Object, LinkedBlockingQueue<ReadCycle>> subscriberToQueueMap = new ConcurrentHashMap<Object, LinkedBlockingQueue<ReadCycle>>();
 
 	/**
-	 * Create a new reader session. If there are no more sessions available null
-	 * is returned.
+	 * Create a new sensor session.
 	 * 
+	 * @return id of the created session
+	 */
+	abstract public String createSensorSession();
+
+	/**
+	 * Create a sensor session from DTO.
+	 * 
+	 * @param sessionDTO
 	 * @return
 	 */
-	abstract public SensorSession createReaderSession();
+	abstract public String createSensorSession(SessionDTO sessionDTO);
 
 	/**
 	 * Get all currently created reader sessions. The Key is the ID of the
@@ -82,15 +93,22 @@ public abstract class AbstractSensor<T extends SensorSession> extends
 	 * 
 	 * @param session
 	 */
-	abstract public void destroySensorSession(SensorSession session);
+	abstract public void destroySensorSession(String id);
 
 	/**
 	 * Send properties that have been modified to the physical reader
 	 */
 	abstract public void applyPropertyChanges();
 
-	/** True if the sensor is currently in use. */
-	protected AtomicBoolean inUse = new AtomicBoolean(false);
+	/**
+	 * Notifier the sensor that a command configuration has disappeared.
+	 * 
+	 * @param commandConfiguration
+	 * @param properties
+	 */
+	abstract public void unbindCommandConfiguration(
+			AbstractCommandConfiguration<?> commandConfiguration,
+			Map<?, ?> properties);
 
 	/*
 	 * (non-Javadoc)
@@ -255,21 +273,6 @@ public abstract class AbstractSensor<T extends SensorSession> extends
 		return Collections.emptySet();
 	}
 
-	/**
-	 * Get sessions up and going.
-	 * 
-	 * @param sessions
-	 */
-	public void recreateSessions(Collection<SessionDTO> sessions) {
-		for (SessionDTO session : sessions) {
-			SensorSession sensorSession = createReaderSession();
-			for (CommandDTO dto : session.getCommands()) {
-				sensorSession.submit(dto.getCommandID(), dto.getInterval(), dto
-						.getTimeUnit());
-			}
-		}
-	}
-
 	/***
 	 * This method returns the Data Transfer Object for this Reader
 	 * 
@@ -287,6 +290,21 @@ public abstract class AbstractSensor<T extends SensorSession> extends
 		}
 		ReaderDTO dto = new ReaderDTO(readerID, factoryID, attrs, sessionDTOs);
 		return dto;
+	}
+
+	/**
+	 * Register the reader to OSGi.
+	 * 
+	 * @param context
+	 * @param readerType
+	 */
+	public void register(BundleContext context, String readerType) {
+		Map<String, String> parms = new HashMap<String, String>();
+		parms.put("type", ConfigurationType.READER.toString());
+		parms.put("reader", readerType);
+		Set<String> interfaces = new HashSet<String>();
+		interfaces.add(AbstractSensor.class.getName());
+		register(context, interfaces, parms);
 	}
 
 	/*

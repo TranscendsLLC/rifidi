@@ -6,6 +6,7 @@ package org.rifidi.edge.core.sensors.base;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Queue;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
@@ -75,9 +76,9 @@ public abstract class AbstractSensorSession extends SensorSession {
 	public AbstractSensorSession(AbstractSensor<?> sensor, String ID,
 			Destination destination, JmsTemplate template) {
 		super(ID, sensor);
-		this.commands = new HashMap<Integer, CommandExecutor>();
-		this.commandIDToExecutor = new HashMap<String, CommandExecutor>();
-		this.idToData = new HashMap<Integer, CommandExecutionData>();
+		this.commands = new ConcurrentHashMap<Integer, CommandExecutor>();
+		this.commandIDToExecutor = new ConcurrentHashMap<String, CommandExecutor>();
+		this.idToData = new ConcurrentHashMap<Integer, CommandExecutionData>();
 		this.template = template;
 		this.destination = destination;
 		status = SessionStatus.CREATED;
@@ -183,16 +184,20 @@ public abstract class AbstractSensorSession extends SensorSession {
 		commandQueue.add(exec);
 	}
 
-	public void suspendCommand(String commandID){
-		if(logger.isDebugEnabled()){
-			logger.debug("Suspending "+commandID);
+	/**
+	 * Called if a command configuration temporarily disappears.
+	 * 
+	 * @param commandID
+	 */
+	public void suspendCommand(String commandID) {
+		if (logger.isDebugEnabled()) {
+			logger.debug("Suspending " + commandID);
 		}
-		if(commandIDToExecutor.get(commandID)!=null){
-			commandIDToExecutor.get(commandID).suspend();	
+		if (commandIDToExecutor.get(commandID) != null) {
+			commandIDToExecutor.get(commandID).suspend();
 		}
-		
 	}
-	
+
 	/**
 	 * Private class used to wrap an executing command
 	 * 
@@ -291,11 +296,12 @@ public abstract class AbstractSensorSession extends SensorSession {
 		}
 
 		/**
-		 * @param instance the instance to set
+		 * @param instance
+		 *            the instance to set
 		 */
 		public void suspend() {
 			this.instance = null;
 		}
-		
+
 	}
 }

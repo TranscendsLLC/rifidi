@@ -9,14 +9,21 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
+
+import javax.management.MBeanInfo;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.rifidi.edge.api.rmi.dto.CommandDTO;
+import org.rifidi.edge.api.rmi.dto.SessionDTO;
 import org.rifidi.edge.core.configuration.annotations.JMXMBean;
 import org.rifidi.edge.core.configuration.annotations.Operation;
 import org.rifidi.edge.core.configuration.annotations.Property;
 import org.rifidi.edge.core.configuration.annotations.PropertyType;
+import org.rifidi.edge.core.configuration.mbeanstrategies.AnnotationMBeanInfoStrategy;
 import org.rifidi.edge.core.sensors.SensorSession;
 import org.rifidi.edge.core.sensors.base.AbstractSensor;
 import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
@@ -38,7 +45,9 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 	/** Logger for this class. */
 	private static final Log logger = LogFactory.getLog(Alien9800Reader.class);
 	/** The only session an alien reader allows. */
-	private volatile Alien9800ReaderSession session;
+	private AtomicReference<Alien9800ReaderSession> session=new AtomicReference<Alien9800ReaderSession>();
+	/** Flag to check if this reader is destroied. */
+	private AtomicBoolean destroied = new AtomicBoolean(false);
 	/** A queue for putting commands to be executed next */
 	private final LinkedBlockingQueue<AlienCommandObjectWrapper> propCommandsToBeExecuted;
 	/** A hashmap containing all the properties for this reader */
@@ -100,12 +109,17 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 	public static final String PROP_UPTIME = "uptime";
 	/** Provided by spring. */
 	private final Set<AbstractCommandConfiguration<?>> commands;
-
+	/** Mbeaninfo for this class. */
+	public static final MBeanInfo mbeaninfo;
+	static{
+		AnnotationMBeanInfoStrategy strategy = new AnnotationMBeanInfoStrategy();
+		mbeaninfo = strategy.getMBeanInfo(Alien9800Reader.class);
+	}
+	
 	/**
 	 * Constructor.
 	 */
-	public Alien9800Reader(
-			Set<AbstractCommandConfiguration<?>> commands) {
+	public Alien9800Reader(Set<AbstractCommandConfiguration<?>> commands) {
 		this.commands = commands;
 		readerProperties = new ConcurrentHashMap<String, String>();
 		readerProperties.put(PROP_READER_NUMBER, "0");
@@ -163,42 +177,98 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 		logger.debug("New instance of Alien9800Reader created.");
 	}
 
-	public void bindCommandConfiguration(
-			AbstractCommandConfiguration<?> commandConfiguration,
-			Map<?, ?> properties) {
-		if(session!=null){
-//			session.commandCreated(commandConfiguration.getID());
-		}
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.configuration.RifidiService#getMBeanInfo()
+	 */
+	@Override
+	public MBeanInfo getMBeanInfo() {
+		return (MBeanInfo)mbeaninfo.clone();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.core.sensors.base.AbstractSensor#unbindCommandConfiguration
+	 * (org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration,
+	 * java.util.Map)
+	 */
+	@Override
 	public void unbindCommandConfiguration(
 			AbstractCommandConfiguration<?> commandConfiguration,
 			Map<?, ?> properties) {
-		if(session!=null){
-			session.suspendCommand(commandConfiguration.getID());
-		}	
+		if (!destroied.get()) {
+			Alien9800ReaderSession aliensession = session.get();
+			if (aliensession != null) {
+				aliensession.suspendCommand(commandConfiguration.getID());
+			}
+		}
 	}
-	
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.core.sensors.base.AbstractSensor#createReaderSession(
+	 * org.rifidi.edge.api.rmi.dto.SessionDTO)
+	 */
+	@Override
+	public String createSensorSession(SessionDTO sessionDTO) {
+		if (!destroied.get()) {
+			synchronized (session) {
+				Alien9800ReaderSession aliensession = session.get();
+				if (aliensession == null) {
+					Integer sessionID = Integer.parseInt(sessionDTO.getID());
+					if (session.compareAndSet(null, new Alien9800ReaderSession(
+							this, Integer.toString(sessionID), ipAddress, port,
+							(int) (long) reconnectionInterval,
+							maxNumConnectionAttempts, username, password,
+							template, notifierService, this.getID(), commands))) {
+						for (CommandDTO commandDTO : sessionDTO.getCommands()) {
+							session.get().submit(commandDTO.getCommandID(),
+									commandDTO.getInterval(),
+									commandDTO.getTimeUnit());
+						}
+						// TODO: remove this once we get AspectJ in here!
+						notifierService.addSessionEvent(this.getID(), Integer
+								.toString(sessionID));
+						return sessionID.toString();
+					}
+				}
+				if (aliensession != null) {
+					return aliensession.getID();
+				}
+			}
+		}
+		return null;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see org.rifidi.edge.core.readers.AbstractReader#createReaderSession()
 	 */
 	@Override
-	public synchronized SensorSession createReaderSession() {
-		if (session == null) {
-			Integer sessionID = this.sessionID.incrementAndGet();
-			session = new Alien9800ReaderSession(this, Integer
-					.toString(sessionID), ipAddress, port,
-					(int) (long) reconnectionInterval,
-					maxNumConnectionAttempts, username, password, template,
-					notifierService, this.getID(), commands);
+	public String createSensorSession() {
+		if (!destroied.get()) {
+			synchronized (session) {
+				Alien9800ReaderSession aliensession = session.get();
+				if (aliensession == null) {
+					Integer sessionID = this.sessionID.incrementAndGet();
+					if (session.compareAndSet(null, new Alien9800ReaderSession(
+							this, Integer.toString(sessionID), ipAddress, port,
+							(int) (long) reconnectionInterval,
+							maxNumConnectionAttempts, username, password,
+							template, notifierService, this.getID(), commands))) {
 
-			// TODO: remove this once we get AspectJ in here!
-			notifierService.addSessionEvent(this.getID(), Integer
-					.toString(sessionID));
-
-			return session;
+						// TODO: remove this once we get AspectJ in here!
+						notifierService.addSessionEvent(this.getID(), Integer
+								.toString(sessionID));
+						return sessionID.toString();
+					}
+				}
+				return aliensession.getID();
+			}
 		}
 		return null;
 	}
@@ -210,8 +280,13 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 	 */
 	@Override
 	public void destroy() {
-		super.destroy();
-		destroySensorSession(this.session);
+		if (destroied.compareAndSet(false, true)) {
+			super.destroy();
+			Alien9800ReaderSession aliensession = session.get();
+			if (aliensession != null) {
+				destroySensorSession(aliensession.getID());
+			}
+		}
 	}
 
 	/**
@@ -235,21 +310,23 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.readers.AbstractReader#destroyReaderSession(org.
-	 * rifidi.edge.core.readers.ReaderSession)
+	 * org.rifidi.edge.core.sensors.base.AbstractSensor#destroySensorSession
+	 * (java.lang.String)
 	 */
 	@Override
-	public void destroySensorSession(SensorSession session) {
-		if (session != null) {
-			for (Integer id : session.currentCommands().keySet()) {
-				session.killComand(id);
+	public void destroySensorSession(String sessionid) {
+		Alien9800ReaderSession aliensession = session.get();
+		if(session.compareAndSet(aliensession, null)){
+			if (aliensession != null && aliensession.getID().equals(sessionid)) {
+				for (Integer id : aliensession.currentCommands().keySet()) {
+					aliensession.killComand(id);
+				}
+				aliensession.disconnect();
+				// TODO: remove this once we get AspectJ in here!
+				notifierService.removeSessionEvent(this.getID(), Integer
+						.toString(sessionID.get()));
 			}
-			this.session.disconnect();
-			this.session = null;
-
-			// TODO: remove this once we get AspectJ in here!
-			notifierService.removeSessionEvent(this.getID(), Integer
-					.toString(sessionID.get()));
+			logger.warn("Tried to delete a non existend session: " + sessionid);			
 		}
 	}
 
@@ -261,8 +338,9 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 	@Override
 	public Map<String, SensorSession> getSensorSessions() {
 		Map<String, SensorSession> ret = new HashMap<String, SensorSession>();
-		if (session != null) {
-			ret.put(session.getID(), session);
+		Alien9800ReaderSession aliensession=session.get();
+		if (aliensession != null) {
+			ret.put(aliensession.getID(), aliensession);
 		}
 		return ret;
 	}
@@ -416,7 +494,9 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 	 * @param persistTime
 	 */
 	public void setPersistTime(Integer persistTime) {
-		System.out.println("Attempting to set the persist time");
+		if (logger.isInfoEnabled()) {
+			logger.info("Attempting to set the persist time");
+		}
 		if (persistTime >= -1 && persistTime <= 16535) {
 			readerProperties.put(PROP_PERSIST_TIME, Integer
 					.toString(persistTime));
@@ -550,12 +630,13 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 	@Operation(description = "Apply all property changes to reader")
 	public synchronized void applyPropertyChanges() {
 		// TODO: may need to synchnonize the hashmap before I clear it?
-		if (session != null) {
+		Alien9800ReaderSession aliensession=session.get();
+		if (aliensession != null) {
 			ArrayList<AlienCommandObjectWrapper> commands = new ArrayList<AlienCommandObjectWrapper>();
 			this.propCommandsToBeExecuted.drainTo(commands);
 			AlienPropertyCommand command = new AlienPropertyCommand("",
 					readerProperties, commands);
-			session.submit(command);
+			aliensession.submit(command);
 		}
 	}
 }

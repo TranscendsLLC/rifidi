@@ -3,17 +3,11 @@
  */
 package org.rifidi.edge.readerplugin.alien;
 
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.CopyOnWriteArraySet;
-import java.util.concurrent.atomic.AtomicReference;
 
 import javax.management.MBeanInfo;
 
-import org.rifidi.edge.core.configuration.ConfigurationType;
-import org.rifidi.edge.core.configuration.mbeanstrategies.AnnotationMBeanInfoStrategy;
 import org.rifidi.edge.core.sensors.base.AbstractSensor;
 import org.rifidi.edge.core.sensors.base.AbstractSensorFactory;
 import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
@@ -39,18 +33,6 @@ public class Alien9800ReaderFactory extends
 	private static final String name = "Alien9800";
 	/** A JMS event notification sender */
 	private NotifierService notifierService;
-	/** Blueprint for a reader. */
-	private final MBeanInfo readerInfo;
-	/** Collection holding the instances created by this reader. */
-	private final CopyOnWriteArraySet<Alien9800Reader> readerInstances;
-	/**
-	 * Constructor.
-	 */
-	public Alien9800ReaderFactory() {
-		readerInstances=new CopyOnWriteArraySet<Alien9800Reader>();
-		AnnotationMBeanInfoStrategy strategy = new AnnotationMBeanInfoStrategy();
-		readerInfo = strategy.getMBeanInfo(Alien9800Reader.class);
-	}
 
 	/**
 	 * @param commands
@@ -60,28 +42,36 @@ public class Alien9800ReaderFactory extends
 			Set<AbstractCommandConfiguration<AbstractAlien9800Command>> commands) {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.rifidi.edge.core.sensors.base.AbstractSensorFactory#bindCommandConfiguration(org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration, java.util.Map)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seeorg.rifidi.edge.core.sensors.base.AbstractSensorFactory#
+	 * bindCommandConfiguration
+	 * (org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration,
+	 * java.util.Map)
 	 */
 	@Override
 	public void bindCommandConfiguration(
 			AbstractCommandConfiguration<?> commandConfiguration,
 			Map<?, ?> properties) {
-		for(Alien9800Reader reader:readerInstances){
-			reader.bindCommandConfiguration(commandConfiguration, properties);
-		}
+		// TODO: ignored for now.
 	}
 
-	/* (non-Javadoc)
-	 * @see org.rifidi.edge.core.sensors.base.AbstractSensorFactory#unbindCommandConfiguration(org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration, java.util.Map)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seeorg.rifidi.edge.core.sensors.base.AbstractSensorFactory#
+	 * unbindCommandConfiguration
+	 * (org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration,
+	 * java.util.Map)
 	 */
 	@Override
 	public void unbindCommandConfiguration(
 			AbstractCommandConfiguration<?> commandConfiguration,
 			Map<?, ?> properties) {
-		for(Alien9800Reader reader:readerInstances){
+		for (AbstractSensor<?> reader : sensors) {
 			reader.unbindCommandConfiguration(commandConfiguration, properties);
-		}	
+		}
 	}
 
 	/**
@@ -139,16 +129,11 @@ public class Alien9800ReaderFactory extends
 	 */
 	@Override
 	public void createInstance(String serviceID) {
-		Alien9800Reader instance = new Alien9800Reader(commands.get());
+		Alien9800Reader instance = new Alien9800Reader(commands);
 		instance.setID(serviceID);
 		instance.setTemplate((JmsTemplate) template);
 		instance.setNotifiyService(notifierService);
-		Set<String> interfaces = new HashSet<String>();
-		interfaces.add(AbstractSensor.class.getName());
-		Map<String, String> parms = new HashMap<String, String>();
-		parms.put("type", ConfigurationType.READER.toString());
-		instance.register(getContext(), interfaces, parms);
-		readerInstances.add(instance);
+		instance.register(getContext(), FACTORY_ID);
 	}
 
 	/*
@@ -160,7 +145,7 @@ public class Alien9800ReaderFactory extends
 	 */
 	@Override
 	public MBeanInfo getServiceDescription(String factoryID) {
-		return (MBeanInfo) readerInfo.clone();
+		return (MBeanInfo) Alien9800Reader.mbeaninfo.clone();
 	}
 
 }

@@ -16,7 +16,6 @@ import javax.jms.Destination;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.api.SessionStatus;
-import org.rifidi.edge.core.configuration.impl.AbstractCommandConfigurationFactory;
 import org.rifidi.edge.core.sensors.base.threads.MessageParsingStrategyFactory;
 import org.rifidi.edge.core.sensors.base.threads.MessageProcessingStrategy;
 import org.rifidi.edge.core.sensors.base.threads.MessageProcessingStrategyFactory;
@@ -400,9 +399,7 @@ public abstract class AbstractIPSensorSession extends AbstractSensorSession {
 
 	@Override
 	public String toString() {
-		return "IPSession: " + host+":"+port;
+		return "IPSession: " + host + ":" + port;
 	}
-	
-	
 
 }
