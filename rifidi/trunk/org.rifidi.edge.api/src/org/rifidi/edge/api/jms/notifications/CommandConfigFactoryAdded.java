@@ -16,6 +16,8 @@ public class CommandConfigFactoryAdded implements Serializable {
 	private static final long serialVersionUID = 1L;
 	/** The readerFactoryID this CommandConfigurationFactory is associated with */
 	private String readerFactoryID;
+	/** The ID of the commandFactory */
+	private String commandFactoryID;
 
 	/**
 	 * Constructor
@@ -23,8 +25,17 @@ public class CommandConfigFactoryAdded implements Serializable {
 	 * @param readerFactoryID
 	 *            The ID of the factory that was added
 	 */
-	public CommandConfigFactoryAdded(String readerFactoryID) {
+	public CommandConfigFactoryAdded(String readerFactoryID,
+			String commandFactoryID) {
 		this.readerFactoryID = readerFactoryID;
+		this.commandFactoryID = commandFactoryID;
+	}
+
+	/**
+	 * @return the commandFactoryID
+	 */
+	public String getCommandFactoryID() {
+		return commandFactoryID;
 	}
 
 	/**

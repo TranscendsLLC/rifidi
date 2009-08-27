@@ -25,12 +25,20 @@ public interface CommandManagerService {
 	Set<CommandConfigFactoryDTO> getCommandConfigFactories();
 
 	/**
-	 * Get the CommandConfigFactoryID associated with a readerFactoryID.
+	 * Get all the CommandConfigFactoryID associated with a readerFactoryID.
 	 * 
 	 * @param readerFactoryID
 	 * @return
 	 */
-	Set<CommandConfigFactoryDTO> getCommandConfigFactory(String readerFactoryID);
+	Set<CommandConfigFactoryDTO> getCommandConfigFactoriesByReaderID(String readerFactoryID);
+
+	/**
+	 * Get the CommandConfigurationFactory
+	 * @param commandFactoryID
+	 * @return
+	 */
+	CommandConfigFactoryDTO getCommandConfigFactory(
+			String commandFactoryID);
 
 	/**
 	 * Gets the DTOs for configured commands.
