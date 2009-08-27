@@ -1,4 +1,3 @@
-
 package org.rifidi.edge.api.rmi.services;
 
 import java.util.Set;
@@ -15,7 +14,7 @@ import org.rifidi.edge.api.rmi.dto.CommandConfigurationDTO;
  * 
  * @author Kyle Neumeier - kyle@pramari.com
  */
-public interface CommandManagerService{
+public interface CommandManagerService {
 
 	/**
 	 * This method gets the available command types on the edge server and the
@@ -31,7 +30,7 @@ public interface CommandManagerService{
 	 * @param readerFactoryID
 	 * @return
 	 */
-	CommandConfigFactoryDTO getCommandConfigFactory(String readerFactoryID);
+	Set<CommandConfigFactoryDTO> getCommandConfigFactory(String readerFactoryID);
 
 	/**
 	 * Gets the DTOs for configured commands.
@@ -78,8 +77,7 @@ public interface CommandManagerService{
 	 * @param properties
 	 *            the new properties of the command
 	 */
-	void setCommandProperties(String commandID,
-			AttributeList properties);
+	void setCommandProperties(String commandID, AttributeList properties);
 
 	/**
 	 * Delete a command configuration.
