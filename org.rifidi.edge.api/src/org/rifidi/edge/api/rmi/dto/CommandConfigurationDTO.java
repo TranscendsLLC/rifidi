@@ -17,7 +17,7 @@ public class CommandConfigurationDTO implements Serializable {
 	/** The ID of the command configuration */
 	private String commandConfigID;
 	/** The type of the command configuration */
-	private String commandConfigType;
+	private String commandConfigFactoryID;
 	/** The list of attributes of the commandConfiguration */
 	private AttributeList attributes;
 
@@ -26,16 +26,16 @@ public class CommandConfigurationDTO implements Serializable {
 	 * 
 	 * @param commandConfigID
 	 *            The ID of the CommandConfiguration
-	 * @param commandConfigType
+	 * @param commandConfigFactoryID
 	 *            The type of the command configuration
 	 * @param readerFactoryID
 	 *            The ID of the reader factory this command works with
 	 */
 	public CommandConfigurationDTO(String commandConfigID,
-			String commandConfigType, AttributeList attributes) {
+			String commandConfigFactoryID, AttributeList attributes) {
 		super();
 		this.commandConfigID = commandConfigID;
-		this.commandConfigType = commandConfigType;
+		this.commandConfigFactoryID = commandConfigFactoryID;
 		this.attributes = attributes;
 	}
 
@@ -49,12 +49,12 @@ public class CommandConfigurationDTO implements Serializable {
 	}
 
 	/**
-	 * Returns the type of the CommandConfiguration.
+	 * Returns the ID of the CommandFactory that created this command.
 	 * 
 	 * @return the commandConfigType
 	 */
-	public String getCommandConfigType() {
-		return commandConfigType;
+	public String getCommandConfigFactoryID() {
+		return commandConfigFactoryID;
 	}
 
 	/**
