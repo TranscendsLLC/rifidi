@@ -209,11 +209,13 @@ public class NotifierServiceImpl implements NotifierService {
 	 * addCommandConfigFactoryEvent(java.lang.String, java.util.Set)
 	 */
 	@Override
-	public void addCommandConfigFactoryEvent(String readerFactoryID) {
+	public void addCommandConfigFactoryEvent(String readerFactoryID,
+			String commandConfigFactoryID) {
 		try {
 			extNotificationTemplate.send(this.extNotificationDest,
 					new NotificationMessageCreator(
-							new CommandConfigFactoryAdded(readerFactoryID)));
+							new CommandConfigFactoryAdded(readerFactoryID,
+									commandConfigFactoryID)));
 		} catch (Exception e) {
 			logger.warn("ReaderFactoryAdded Notification not sent " + e);
 		}
@@ -227,11 +229,11 @@ public class NotifierServiceImpl implements NotifierService {
 	 * removeCommandConfigFactoryEvent(java.lang.String)
 	 */
 	@Override
-	public void removeCommandConfigFactoryEvent(String readerFactoryID) {
+	public void removeCommandConfigFactoryEvent(String readerFactoryID, String commandFactoryID) {
 		try {
 			extNotificationTemplate.send(this.extNotificationDest,
 					new NotificationMessageCreator(
-							new CommandConfigFactoryRemoved(readerFactoryID)));
+							new CommandConfigFactoryRemoved(readerFactoryID, commandFactoryID)));
 		} catch (Exception e) {
 			logger.warn("ReaderFactoryRemoved Notification not sent " + e);
 		}

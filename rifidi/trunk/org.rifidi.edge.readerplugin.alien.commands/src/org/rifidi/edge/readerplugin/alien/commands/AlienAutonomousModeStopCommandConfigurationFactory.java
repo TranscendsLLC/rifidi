@@ -6,6 +6,7 @@ package org.rifidi.edge.readerplugin.alien.commands;
 import javax.management.MBeanInfo;
 
 import org.rifidi.edge.core.configuration.impl.AbstractCommandConfigurationFactory;
+import org.rifidi.edge.core.configuration.mbeanstrategies.AnnotationMBeanInfoStrategy;
 import org.rifidi.edge.readerplugin.alien.Alien9800ReaderFactory;
 
 /**
@@ -17,6 +18,13 @@ public class AlienAutonomousModeStopCommandConfigurationFactory
 		AbstractCommandConfigurationFactory<AlienGetTagListCommandConfiguration> {
 	/** Name of the command. */
 	public static final String name = "Alien-Autonomous-Stop-Factory";
+	/** Mbeaninfo for this class. */
+	public static final MBeanInfo mbeaninfo;
+	static {
+		AnnotationMBeanInfoStrategy strategy = new AnnotationMBeanInfoStrategy();
+		mbeaninfo = strategy
+				.getMBeanInfo(AlienAutonomousModeStopCommandConfiguration.class);
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -27,7 +35,7 @@ public class AlienAutonomousModeStopCommandConfigurationFactory
 	 */
 	@Override
 	public String getReaderFactoryID() {
-		return name;
+		return Alien9800ReaderFactory.FACTORY_ID;
 	}
 
 	/*
@@ -63,7 +71,7 @@ public class AlienAutonomousModeStopCommandConfigurationFactory
 	 */
 	@Override
 	public MBeanInfo getServiceDescription(String factoryID) {
-		return null;
+		return (MBeanInfo) mbeaninfo.clone();
 	}
 
 }

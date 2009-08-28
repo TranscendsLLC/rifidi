@@ -289,7 +289,7 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 			return null;
 		}
 		AbstractCommandConfigurationFactory<?> factory = this.commandDAO
-				.getCommandFactoryByID(commandFacID);
+				.getCommandFactory(commandFacID);
 		if (factory == null) {
 			intp.println("Factory with ID " + commandFacID
 					+ " is not available");

@@ -68,8 +68,7 @@ public class CommandDAOImpl implements CommandDAO {
 	 * String)
 	 */
 	@Override
-	public AbstractCommandConfigurationFactory<?> getCommandFactoryByID(
-			String id) {
+	public AbstractCommandConfigurationFactory<?> getCommandFactory(String id) {
 		for (AbstractCommandConfigurationFactory<?> factory : commandFactories) {
 			if (id.equals(factory.getFactoryID())) {
 				return factory;
@@ -86,14 +85,15 @@ public class CommandDAOImpl implements CommandDAO {
 	 * .lang.String)
 	 */
 	@Override
-	public AbstractCommandConfigurationFactory<?> getCommandFactoryByReaderID(
+	public Set<AbstractCommandConfigurationFactory<?>> getCommandFactoryByReaderID(
 			String id) {
+		Set<AbstractCommandConfigurationFactory<?>> factories = new HashSet<AbstractCommandConfigurationFactory<?>>();
 		for (AbstractCommandConfigurationFactory<?> factory : commandFactories) {
 			if (factory.getReaderFactoryID().equals(id)) {
-				return factory;
+				factories.add(factory);
 			}
 		}
-		return null;
+		return factories;
 	}
 
 	/*
@@ -168,9 +168,9 @@ public class CommandDAOImpl implements CommandDAO {
 
 		// TODO: Remove once we have aspects
 		if (notifierService != null) {
-			notifierService
-					.addCommandConfigFactoryEvent(commandConfigurationFactory
-							.getReaderFactoryID());
+			notifierService.addCommandConfigFactoryEvent(
+					commandConfigurationFactory.getReaderFactoryID(),
+					commandConfigurationFactory.getFactoryID());
 		}
 	}
 
@@ -191,9 +191,9 @@ public class CommandDAOImpl implements CommandDAO {
 
 		// TODO: Remove once we have aspects
 		if (notifierService != null) {
-			notifierService
-					.removeCommandConfigFactoryEvent(commandConfigurationFactory
-							.getReaderFactoryID());
+			notifierService.removeCommandConfigFactoryEvent(
+					commandConfigurationFactory.getReaderFactoryID(),
+					commandConfigurationFactory.getFactoryID());
 		}
 	}
 

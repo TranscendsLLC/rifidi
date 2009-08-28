@@ -3,8 +3,6 @@
  */
 package org.rifidi.edge.core.configuration.impl;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.osgi.framework.BundleContext;
 import org.rifidi.edge.api.rmi.dto.CommandConfigFactoryDTO;
 import org.rifidi.edge.core.configuration.ServiceFactory;
