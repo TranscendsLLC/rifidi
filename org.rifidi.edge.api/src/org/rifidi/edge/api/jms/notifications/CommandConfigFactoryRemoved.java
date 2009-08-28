@@ -1,4 +1,3 @@
-
 package org.rifidi.edge.api.jms.notifications;
 
 import java.io.Serializable;
@@ -15,16 +14,27 @@ public class CommandConfigFactoryRemoved implements Serializable {
 	private static final long serialVersionUID = 1L;
 	/** The readerFactoryID this CommandConfigurationFactory is associated with */
 	private String readerFactoryID;
+	/** The ID command configuraiton factory that was removed */
+	private String commandFactoryID;
 
 	/**
 	 * @param readerFactoryID
 	 */
-	public CommandConfigFactoryRemoved(String readerFactoryID) {
+	public CommandConfigFactoryRemoved(String readerFactoryID,
+			String commandFactoryID) {
 		this.readerFactoryID = readerFactoryID;
+		this.commandFactoryID = commandFactoryID;
 	}
 
 	/**
-	 * Returns the readerFactoryID for this class.  
+	 * @return the commandFactoryID
+	 */
+	public String getCommandFactoryID() {
+		return commandFactoryID;
+	}
+
+	/**
+	 * Returns the readerFactoryID for this class.
 	 * 
 	 * @return the readerFactoryID
 	 */
