@@ -60,11 +60,11 @@ public class SALTabDescriptorProvider implements ITabDescriptorProvider {
 	private static ITabDescriptor[] getCommandTabDescriptors(
 			RemoteCommandConfiguration config) {
 		List<ITabDescriptor> tabDescriptors = new ArrayList<ITabDescriptor>();
-		Set<String> categories = getCategories(config.getRemoteType()
+		Set<String> categories = getCategories(config.getFactory()
 				.getMbeanInfo().getAttributes());
 		for (String category : categories) {
 			tabDescriptors.add(new CommandConfigTabDescriptor(config
-					.getRemoteType().getMbeanInfo(), config, category));
+					.getFactory().getMbeanInfo(), config, category));
 		}
 		ITabDescriptor[] descriptorArray = new ITabDescriptor[tabDescriptors
 				.size()];

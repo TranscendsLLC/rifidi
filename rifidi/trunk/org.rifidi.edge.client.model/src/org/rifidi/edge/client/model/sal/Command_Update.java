@@ -102,26 +102,43 @@ public class Command_Update implements RemoteEdgeServerCommand {
 				factoryIDToMBeanInfo.put(factory.getReaderFactoryID(),
 						descriptionCall.makeCall());
 			}
+			logger.debug(readerFactoryDTOs.size() + " reader Factories found");
 
 			RS_GetReaders rsGetReaderCall = new RS_GetReaders(rs_description);
 			readerDTOs = rsGetReaderCall.makeCall();
+
+			logger.debug(readerDTOs.size() + " readers found");
 
 			CCGetCommandConfigFactories getCommandTypes = new CCGetCommandConfigFactories(
 					cc_description);
 			this.commandConfigFactoryDTO = getCommandTypes.makeCall();
 			for (CommandConfigFactoryDTO factory : commandConfigFactoryDTO) {
-				HashMap<String, MBeanInfo> commandTypeToMbeanInfo = new HashMap<String, MBeanInfo>();
-				for (String type : factory.getCommandConfigTypeIDs()) {
-					CCGetCommandConfigDescription getDescription = new CCGetCommandConfigDescription(
-							cc_description, type);
-					MBeanInfo info = getDescription.makeCall();
-					if (info == null) {
-						logger.warn("Info for " + type + " is null!");
-					}
-					commandTypeToMbeanInfo.put(type, info);
+
+				// add a new HashMap to the readerIdsToCommandMBeanMap if there
+				// is not already one there for the particular reader type this
+				// commandConfigFactory belongs to
+				if (!readerIdsToCommandMBeanMap.containsKey(factory
+						.getReaderFactoryID())) {
+					readerIdsToCommandMBeanMap.put(
+							factory.getReaderFactoryID(),
+							new HashMap<String, MBeanInfo>());
 				}
-				this.readerIdsToCommandMBeanMap.put(factory
-						.getReaderFactoryID(), commandTypeToMbeanInfo);
+				// get the commanFactoryMap for the particular reader type
+				Map<String, MBeanInfo> commandFactoryToMbeanInfo = readerIdsToCommandMBeanMap
+						.get(factory.getReaderFactoryID());
+
+				CCGetCommandConfigDescription getDescription = new CCGetCommandConfigDescription(
+						cc_description, factory.getCommandFactoryID());
+				MBeanInfo info = getDescription.makeCall();
+				if (info == null) {
+					logger.warn("Info for " + factory.getCommandFactoryID()
+							+ " is null!");
+				} else {
+					commandFactoryToMbeanInfo.put(
+							factory.getCommandFactoryID(), info);
+					this.readerIdsToCommandMBeanMap.put(factory
+							.getReaderFactoryID(), commandFactoryToMbeanInfo);
+				}
 			}
 
 			CCGetCommandConfigurations getCommandConfigurations = new CCGetCommandConfigurations(
@@ -163,20 +180,29 @@ public class Command_Update implements RemoteEdgeServerCommand {
 				}
 			}
 
-			for (CommandConfigFactoryDTO commandPlugin : this.commandConfigFactoryDTO) {
-				Map<String, MBeanInfo> infos = readerIdsToCommandMBeanMap
-						.get(commandPlugin.getReaderFactoryID());
-				remoteEdgeServer.commandConfigFactories.put(commandPlugin
-						.getReaderFactoryID(), new RemoteCommandConfigFactory(
-						commandPlugin, infos));
+			for (CommandConfigFactoryDTO commandFactory : this.commandConfigFactoryDTO) {
+				Map<String, MBeanInfo> commandMBeanMap = readerIdsToCommandMBeanMap
+						.get(commandFactory.getReaderFactoryID());
+				MBeanInfo info = commandMBeanMap.get(commandFactory
+						.getCommandFactoryID());
+				remoteEdgeServer.commandConfigFactories.put(commandFactory
+						.getCommandFactoryID(), new RemoteCommandConfigFactory(
+						commandFactory, info));
 			}
-			for (CommandConfigurationDTO commandConfig : this.commandConfigurationDTOs) {
-				for (CommandConfigFactoryDTO factoryDTO : commandConfigFactoryDTO) {
-					if (factoryDTO.getCommandConfigTypeIDs().contains(
-							commandConfig.getCommandConfigType())) {
-						RemoteCommandConfigFactory factory = (RemoteCommandConfigFactory) remoteEdgeServer.commandConfigFactories
-								.get(factoryDTO.getReaderFactoryID());
 
+			// for every command configuration, create a new
+			// RemoteCommandComnfiguration.
+			for (CommandConfigurationDTO commandConfig : this.commandConfigurationDTOs) {
+				// first we need to find the RemoteCommandConfigFactory which
+				// can create instances of this command
+				for (CommandConfigFactoryDTO factoryDTO : commandConfigFactoryDTO) {
+					if (factoryDTO.getCommandFactoryID().equals(
+							commandConfig.getCommandConfigFactoryID())) {
+
+						RemoteCommandConfigFactory factory = (RemoteCommandConfigFactory) remoteEdgeServer.commandConfigFactories
+								.get(factoryDTO.getCommandFactoryID());
+
+						// yay! We've found the right factory
 						if (factory != null) {
 							remoteEdgeServer.commandConfigurations.put(
 									commandConfig.getCommandConfigID(),

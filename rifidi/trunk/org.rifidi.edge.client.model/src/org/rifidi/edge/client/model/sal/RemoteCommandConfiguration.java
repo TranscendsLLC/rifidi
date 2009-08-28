@@ -17,8 +17,6 @@ public class RemoteCommandConfiguration extends
 	private String id;
 	/** The Configuraiton Factory which created this configuration */
 	private RemoteCommandConfigFactory factory;
-	/** The type of the command */
-	private RemoteCommandConfigType remoteCommandType;
 
 	/**
 	 * Constructor
@@ -33,8 +31,6 @@ public class RemoteCommandConfiguration extends
 		super(dto.getCommandConfigID(), dto.getAttributes());
 		this.id = dto.getCommandConfigID();
 		this.factory = factory;
-		this.remoteCommandType = factory.getCommandType(dto
-				.getCommandConfigType());
 	}
 
 	/**
@@ -43,7 +39,7 @@ public class RemoteCommandConfiguration extends
 	 * @return The ID of the type
 	 */
 	public String getCommandType() {
-		return remoteCommandType.getCommandConfigType();
+		return factory.getCommandConfigFactoryID();
 	}
 
 	/**
@@ -69,13 +65,6 @@ public class RemoteCommandConfiguration extends
 	 */
 	public RemoteCommandConfigFactory getFactory() {
 		return factory;
-	}
-
-	/**
-	 * @return the Remote Command Type object
-	 */
-	public RemoteCommandConfigType getRemoteType() {
-		return remoteCommandType;
 	}
 
 	/*

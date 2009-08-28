@@ -14,9 +14,9 @@ import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.rifidi.edge.client.model.sal.RemoteCommandConfigFactory;
-import org.rifidi.edge.client.model.sal.RemoteCommandConfigType;
 import org.rifidi.edge.client.model.sal.RemoteCommandConfiguration;
 import org.rifidi.edge.client.model.sal.RemoteEdgeServer;
+import org.rifidi.edge.client.model.sal.RemoteReaderFactory;
 import org.rifidi.edge.client.model.sal.properties.RemoteObjectDirtyEvent;
 
 /**
@@ -57,28 +57,40 @@ public class CommandTreeContentProvider implements ITreeContentProvider,
 	 */
 	@Override
 	public Object[] getChildren(Object parentElement) {
-		if (parentElement instanceof List) {
-			return ((List) parentElement).toArray();
-		} else if (parentElement instanceof RemoteEdgeServer) {
-			RemoteEdgeServer server = (RemoteEdgeServer) parentElement;
-			Collection<RemoteCommandConfigFactory> commandPlugins = server
-					.getRemoteCommandConfigFactories().values();
+		try {
+			if (parentElement instanceof List) {
+				return ((List) parentElement).toArray();
+			} else if (parentElement instanceof RemoteEdgeServer) {
+				RemoteEdgeServer server = (RemoteEdgeServer) parentElement;
+				Collection<RemoteReaderFactory> readerFactories = server
+						.getReaderFactories().values();
+				Object[] retVal = new Object[readerFactories.size()];
+				return readerFactories.toArray(retVal);
 
-			Object[] retVal = new Object[commandPlugins.size()];
-			return commandPlugins.toArray(retVal);
-		} else if (parentElement instanceof RemoteCommandConfigFactory) {
-			RemoteCommandConfigFactory factory = (RemoteCommandConfigFactory) parentElement;
-			Set<RemoteCommandConfigType> types = factory.getCommandTypes();
-			Object[] retVal = new Object[types.size()];
-			return types.toArray(retVal);
-		} else if (parentElement instanceof RemoteCommandConfigType) {
-			RemoteCommandConfigType type = (RemoteCommandConfigType) parentElement;
-			Set<RemoteCommandConfiguration> set = this.configTypeToCommandConfigSet
-					.get(type.getCommandConfigType());
-			if (set != null) {
-				Object[] retVal = new Object[set.size()];
-				return set.toArray(retVal);
+			} else if (parentElement instanceof RemoteReaderFactory) {
+				String readerFactoryID = ((RemoteReaderFactory) parentElement)
+						.getID();
+				Collection<RemoteCommandConfigFactory> commandFactories = (Collection<RemoteCommandConfigFactory>) remoteEdgeServer
+						.getRemoteCommandConfigFactories().values();
+				Set<RemoteCommandConfigFactory> retVal = new HashSet<RemoteCommandConfigFactory>();
+				for (RemoteCommandConfigFactory factory : commandFactories) {
+					if (factory.getReaderFactoryID().equals(readerFactoryID)) {
+						retVal.add(factory);
+					}
+				}
+				return retVal.toArray();
+
+			} else if (parentElement instanceof RemoteCommandConfigFactory) {
+				RemoteCommandConfigFactory factory = (RemoteCommandConfigFactory) parentElement;
+				Set<RemoteCommandConfiguration> commandConfigs = this.configTypeToCommandConfigSet
+						.get(factory.getCommandConfigFactoryID());
+				if (commandConfigs != null) {
+					return commandConfigs.toArray();
+				}
+
 			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 		return new Object[] {};
 	}
@@ -104,18 +116,36 @@ public class CommandTreeContentProvider implements ITreeContentProvider,
 	 */
 	@Override
 	public boolean hasChildren(Object element) {
-		if (element instanceof List) {
-			return !((List) element).isEmpty();
-		} else if (element instanceof RemoteCommandConfigFactory) {
-			return !((RemoteCommandConfigFactory) element).getCommandTypes()
-					.isEmpty();
-		} else if (element instanceof RemoteCommandConfigType) {
-			RemoteCommandConfigType type = (RemoteCommandConfigType) element;
-			Set<RemoteCommandConfiguration> set = this.configTypeToCommandConfigSet
-					.get(type.getCommandConfigType());
-			if (set != null) {
-				return !set.isEmpty();
+		try {
+			if (element instanceof List) {
+				return !((List) element).isEmpty();
+			} else if (element instanceof RemoteEdgeServer) {
+				return !((RemoteEdgeServer) element).getReaderFactories()
+						.values().isEmpty();
+
+			} else if (element instanceof RemoteReaderFactory) {
+				String readerFactoryID = ((RemoteReaderFactory) element)
+						.getID();
+				Collection<RemoteCommandConfigFactory> commandFactories = (Collection<RemoteCommandConfigFactory>) remoteEdgeServer
+						.getRemoteCommandConfigFactories().values();
+				Set<RemoteCommandConfigFactory> retVal = new HashSet<RemoteCommandConfigFactory>();
+				for (RemoteCommandConfigFactory factory : commandFactories) {
+					if (factory.getReaderFactoryID().equals(readerFactoryID)) {
+						return true;
+					}
+				}
+
+			} else if (element instanceof RemoteCommandConfigFactory) {
+				String factoryID = ((RemoteCommandConfigFactory) element)
+						.getCommandConfigFactoryID();
+				if (this.configTypeToCommandConfigSet.containsKey(factoryID)) {
+					return !configTypeToCommandConfigSet.get(factoryID)
+							.isEmpty();
+				}
+
 			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 		return false;
 	}
@@ -173,7 +203,7 @@ public class CommandTreeContentProvider implements ITreeContentProvider,
 							.removeMapChangeListener(this);
 				}
 			}
-			if (newInputList.size() == 1) {
+			if (newInputList != null && newInputList.size() == 1) {
 				this.remoteEdgeServer = newInputList.get(0);
 				this.configTypeToCommandConfigSet = new HashMap<String, Set<RemoteCommandConfiguration>>();
 				remoteEdgeServer.addPropertyChangeListener(this);
@@ -264,6 +294,8 @@ public class CommandTreeContentProvider implements ITreeContentProvider,
 	private void removeRemoteCommandConfigFactory(
 			RemoteCommandConfigFactory factory) {
 		viewer.remove(factory);
+		this.configTypeToCommandConfigSet.remove(factory
+				.getCommandConfigFactoryID());
 	}
 
 	/**
@@ -274,13 +306,11 @@ public class CommandTreeContentProvider implements ITreeContentProvider,
 	 */
 	private void addRemoteCommandConfigFactory(
 			RemoteCommandConfigFactory factory) {
-		viewer.add(remoteEdgeServer, factory);
-		viewer.setExpandedState(remoteEdgeServer, true);
-		for(RemoteCommandConfigType type : factory.getCommandTypes()){
-			viewer.add(factory, type);
-			viewer.setExpandedState(factory, true);
-			viewer.refresh(factory, false);
-		}
+		RemoteReaderFactory readerFac = (RemoteReaderFactory) remoteEdgeServer
+				.getReaderFactories().get(factory.getReaderFactoryID());
+		viewer.add(readerFac, factory);
+		viewer.setExpandedState(factory, true);
+		viewer.refresh();
 	}
 
 	/**
@@ -289,26 +319,21 @@ public class CommandTreeContentProvider implements ITreeContentProvider,
 	 * @param config
 	 */
 	private void addRemoteCommandConfiguration(RemoteCommandConfiguration config) {
-		Collection<RemoteCommandConfigFactory> factories = remoteEdgeServer
-				.getRemoteCommandConfigFactories().values();
-		for (RemoteCommandConfigFactory factory : factories) {
-			//Look up the RemoteCommandConfigType for the config
-			RemoteCommandConfigType type = factory.getCommandType(config
-					.getCommandType());
-			if (type != null) {
-				Set<RemoteCommandConfiguration> commandSet = this.configTypeToCommandConfigSet
-						.get(type.getCommandConfigType());
-				if (commandSet == null) {
-					commandSet = new HashSet<RemoteCommandConfiguration>();
-					configTypeToCommandConfigSet.put(type
-							.getCommandConfigType(), commandSet);
-				}
-				commandSet.add(config);
-				config.addPropertyChangeListener(this);
-				viewer.add(type, config);
-				viewer.setExpandedState(type, true);
-				break;
+
+		// Look up the RemoteCommandConfigType for the config
+		String factoryID = config.getCommandType();
+		if (factoryID != null) {
+			Set<RemoteCommandConfiguration> commandSet = this.configTypeToCommandConfigSet
+					.get(factoryID);
+			if (commandSet == null) {
+				commandSet = new HashSet<RemoteCommandConfiguration>();
+				configTypeToCommandConfigSet.put(factoryID, commandSet);
 			}
+			commandSet.add(config);
+			config.addPropertyChangeListener(this);
+			viewer.add(config.getFactory(), config);
+			viewer.setExpandedState(config.getFactory(), true);
+			viewer.refresh();
 		}
 	}
 

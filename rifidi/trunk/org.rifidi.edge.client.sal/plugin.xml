@@ -245,7 +245,7 @@
             <iterate>
                <and>
                   <instanceof
-                        value="org.rifidi.edge.client.model.sal.RemoteCommandConfigType">
+                        value="org.rifidi.edge.client.model.sal.RemoteCommandConfigFactory">
                   </instanceof>
                </and>
             </iterate>
@@ -619,7 +619,7 @@
                <iterate
                      ifEmpty="false">
                   <instanceof
-                        value="org.rifidi.edge.client.model.sal.RemoteCommandConfigType">
+                        value="org.rifidi.edge.client.model.sal.RemoteCommandConfigFactory">
                   </instanceof>
                </iterate>
             </visibleWhen>

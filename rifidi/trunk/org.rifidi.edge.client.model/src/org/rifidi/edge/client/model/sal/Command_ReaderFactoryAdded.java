@@ -88,6 +88,7 @@ public class Command_ReaderFactoryAdded implements RemoteEdgeServerCommand {
 	 */
 	@Override
 	public void executeEclipse() {
+		System.out.println("readerFac added: " + dto.getReaderFactoryID());
 		readerFactories.put(dto.getReaderFactoryID(), new RemoteReaderFactory(
 				dto, info));
 
