@@ -42,7 +42,7 @@ public interface CommandDAO {
 	 *            The ID of the desired factory.
 	 * @return
 	 */
-	AbstractCommandConfigurationFactory<?> getCommandFactoryByID(String id);
+	AbstractCommandConfigurationFactory<?> getCommandFactory(String id);
 
 	/**
 	 * Get a command factory by the reader ID that it is associated with.
@@ -52,6 +52,6 @@ public interface CommandDAO {
 	 *            The ID of the ReaderFactory
 	 * @return The CommandConfigurationFactory
 	 */
-	AbstractCommandConfigurationFactory<?> getCommandFactoryByReaderID(String id);
+	Set<AbstractCommandConfigurationFactory<?>> getCommandFactoryByReaderID(String id);
 
 }

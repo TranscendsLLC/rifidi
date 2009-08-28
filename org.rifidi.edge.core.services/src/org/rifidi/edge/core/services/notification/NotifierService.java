@@ -97,20 +97,27 @@ public interface NotifierService {
 	 * Send a notification that a CommandConfigurationFactory has become
 	 * available
 	 * 
+	 * @param readerFactoryID
+	 *            the ID of the readerFactory this command configuration factory
+	 *            works with
 	 * @param commandConfigFactoryID
 	 *            The ID of the command Configuration factory
 	 */
-	public void addCommandConfigFactoryEvent(String commandConfigFactoryID);
+	public void addCommandConfigFactoryEvent(String readerFactoryID,
+			String commandConfigFactoryID);
 
 	/**
 	 * Send a notification that a CommandCofifugrationFactory has become
 	 * unavailable.
 	 * 
+	 * @param readerFactoryID
+	 *            the ID of the readerFactory the command factory works with
 	 * @param commandConfigFactoryID
 	 *            The ID of the commandConfigurationFactory that is no longer
 	 *            available
 	 */
-	public void removeCommandConfigFactoryEvent(String commandConfigFactoryID);
+	public void removeCommandConfigFactoryEvent(String readerFactoryID,
+			String commandFactoryID);
 
 	/**
 	 * Send a notification that a job has been submitted to a session for

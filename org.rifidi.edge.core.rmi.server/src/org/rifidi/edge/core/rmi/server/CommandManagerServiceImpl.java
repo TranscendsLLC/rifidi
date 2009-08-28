@@ -62,6 +62,7 @@ public class CommandManagerServiceImpl implements CommandManagerService {
 	@Override
 	public void createCommand(String commandConfigurationType,
 			AttributeList properties) {
+		logger.info("RMI: Create Command called");
 		configurationService
 				.createService(commandConfigurationType, properties);
 	}
@@ -75,6 +76,7 @@ public class CommandManagerServiceImpl implements CommandManagerService {
 	 */
 	@Override
 	public void deleteCommand(String commandConfigurationID) {
+		logger.debug("RMI: Delete Command Called");
 		Configuration config = configurationService
 				.getConfiguration(commandConfigurationID);
 		if (config != null) {
@@ -94,8 +96,9 @@ public class CommandManagerServiceImpl implements CommandManagerService {
 	 */
 	@Override
 	public MBeanInfo getCommandDescription(String commandConfigurationType) {
+		logger.debug("RMI: Get Command Description called");
 		AbstractCommandConfigurationFactory<?> factory = this.commandDAO
-				.getCommandFactoryByID(commandConfigurationType);
+				.getCommandFactory(commandConfigurationType);
 		return factory.getServiceDescription(commandConfigurationType);
 	}
 
@@ -107,6 +110,7 @@ public class CommandManagerServiceImpl implements CommandManagerService {
 	 */
 	@Override
 	public Set<CommandConfigFactoryDTO> getCommandConfigFactories() {
+		logger.debug("RMI: Get Command Config Factories Called");
 		Set<CommandConfigFactoryDTO> retVal = new HashSet<CommandConfigFactoryDTO>();
 		for (AbstractCommandConfigurationFactory<?> factory : commandDAO
 				.getCommandFactories()) {
@@ -124,13 +128,29 @@ public class CommandManagerServiceImpl implements CommandManagerService {
 	 */
 	@Override
 	public CommandConfigFactoryDTO getCommandConfigFactory(
-			String readerFactoryID) {
+			String commandfactoryID) {
+		logger.debug("RMI: Get Command Config Factory called");
 		AbstractCommandConfigurationFactory<?> factory = commandDAO
-				.getCommandFactoryByReaderID(readerFactoryID);
+				.getCommandFactory(commandfactoryID);
 		if (factory != null) {
 			return factory.getDTO();
 		}
 		return null;
+	}
+
+	@Override
+	public Set<CommandConfigFactoryDTO> getCommandConfigFactoriesByReaderID(
+			String readerFactoryID) {
+		logger.debug("RMI: Get Command Config Factories By Reader ID called");
+		Set<AbstractCommandConfigurationFactory<?>> factories = commandDAO
+				.getCommandFactoryByReaderID(readerFactoryID);
+		Set<CommandConfigFactoryDTO> dtos = new HashSet<CommandConfigFactoryDTO>();
+		if (factories != null) {
+			for (AbstractCommandConfigurationFactory<?> factory : factories) {
+				dtos.add(factory.getDTO());
+			}
+		}
+		return dtos;
 	}
 
 	/*
@@ -142,6 +162,7 @@ public class CommandManagerServiceImpl implements CommandManagerService {
 	 */
 	@Override
 	public Set<CommandConfigurationDTO> getCommands() {
+		logger.debug("RMI: Get Commands Called");
 		Set<CommandConfigurationDTO> retVal = new HashSet<CommandConfigurationDTO>();
 		for (AbstractCommandConfiguration<?> commandconfig : commandDAO
 				.getCommands()) {
@@ -167,6 +188,7 @@ public class CommandManagerServiceImpl implements CommandManagerService {
 	@Override
 	public CommandConfigurationDTO getCommandConfiguration(
 			String commandConfigurationID) {
+		logger.debug("RMI: Get Command Configuration Called");
 		AbstractCommandConfiguration<?> commandConfig = commandDAO
 				.getCommandByID(commandConfigurationID);
 		Configuration configObj = configurationService
