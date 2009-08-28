@@ -31,7 +31,7 @@ public class Command_CommandConfigFactoryAdded implements
 	/** The map of command configuraiton factories */
 	private ObservableMap commandConfigFactories;
 	/** The ID of the readerfactory the new commandconfigFactory works with */
-	private String readerFactoryID;
+	private String commandFactoryID;
 	/** The DTO of the CommandConfigFactori */
 	private CommandConfigFactoryDTO dto;
 	/** The server description of the RMI Command stub */
@@ -42,7 +42,7 @@ public class Command_CommandConfigFactoryAdded implements
 	private Log logger = LogFactory
 			.getLog(Command_CommandConfigFactoryAdded.class);
 	/** The meta information about the properties for this factory */
-	private Map<String, MBeanInfo> commandTypeTombeanInfo;
+	private MBeanInfo mbeanInfo;
 
 	/**
 	 * Constructor
@@ -55,10 +55,9 @@ public class Command_CommandConfigFactoryAdded implements
 	public Command_CommandConfigFactoryAdded(RemoteEdgeServer server,
 			CommandConfigFactoryAdded notification) {
 		this.commandConfigFactories = server.commandConfigFactories;
-		this.readerFactoryID = notification.getReaderFactoryID();
+		this.commandFactoryID = notification.getCommandFactoryID();
 		this.serverDescription = server.getCCServerDescription();
 		this.disconnectCommand = new Command_Disconnect(server);
-		this.commandTypeTombeanInfo = new HashMap<String, MBeanInfo>();
 	}
 
 	/*
@@ -71,19 +70,17 @@ public class Command_CommandConfigFactoryAdded implements
 	@Override
 	public void execute() {
 		CCGetCommandConfigFactory getFactory = new CCGetCommandConfigFactory(
-				serverDescription, readerFactoryID);
+				serverDescription, commandFactoryID);
 
 		try {
 			dto = getFactory.makeCall();
-			for (String type : dto.getCommandConfigTypeIDs()) {
-				CCGetCommandConfigDescription getDescription = new CCGetCommandConfigDescription(
-						serverDescription, readerFactoryID);
-				MBeanInfo info = getDescription.makeCall();
-				if (info == null) {
-					logger.warn("Info for " + type + " is null!");
-				}
-				this.commandTypeTombeanInfo.put(type, info);
+			CCGetCommandConfigDescription getDescription = new CCGetCommandConfigDescription(
+					serverDescription, commandFactoryID);
+			MBeanInfo info = getDescription.makeCall();
+			if (info == null) {
+				logger.warn("Info for " + commandFactoryID + " is null!");
 			}
+			this.mbeanInfo = info;
 		} catch (ServerUnavailable e) {
 			logger.error("Error while getting Command Factory: ", e);
 			RequestExecuterSingleton.getInstance().scheduleRequest(
@@ -102,9 +99,8 @@ public class Command_CommandConfigFactoryAdded implements
 	@Override
 	public void executeEclipse() {
 		if (dto != null) {
-			commandConfigFactories.put(readerFactoryID,
-					new RemoteCommandConfigFactory(dto,
-							this.commandTypeTombeanInfo));
+			commandConfigFactories.put(commandFactoryID,
+					new RemoteCommandConfigFactory(dto, mbeanInfo));
 		}
 
 	}

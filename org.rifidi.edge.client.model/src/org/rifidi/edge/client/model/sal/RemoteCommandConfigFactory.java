@@ -1,10 +1,5 @@
 package org.rifidi.edge.client.model.sal;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
 import javax.management.MBeanInfo;
 
 import org.rifidi.edge.api.rmi.dto.CommandConfigFactoryDTO;
@@ -18,8 +13,10 @@ public class RemoteCommandConfigFactory {
 
 	/** The ID of the reader this factory is associated with */
 	private String readerFactoryID;
-	/** The types of commands this factory can produce */
-	private HashMap<String, RemoteCommandConfigType> commandTypes;
+	/** The ID of the type */
+	private String commandConfigFactoryID;
+	/** The MBeanInfo that describes the properties of this type */
+	private MBeanInfo mbeanInfo;
 
 	/**
 	 * Constructor.
@@ -30,13 +27,10 @@ public class RemoteCommandConfigFactory {
 	 *            A map of types to their related MBeanInfos
 	 */
 	public RemoteCommandConfigFactory(CommandConfigFactoryDTO dto,
-			Map<String, MBeanInfo> typeToMbeanInfo) {
+			MBeanInfo mbeanInfo) {
 		this.readerFactoryID = dto.getReaderFactoryID();
-		commandTypes = new HashMap<String, RemoteCommandConfigType>();
-		for (String typeID : dto.getCommandConfigTypeIDs()) {
-			commandTypes.put(typeID, new RemoteCommandConfigType(typeID,
-					readerFactoryID, typeToMbeanInfo.get(typeID)));
-		}
+		this.commandConfigFactoryID = dto.getCommandFactoryID();
+		this.mbeanInfo = mbeanInfo;
 	}
 
 	/**
@@ -47,32 +41,19 @@ public class RemoteCommandConfigFactory {
 	}
 
 	/**
-	 * @return the commandtypes associated with this CommandConfigFactory
+	 * @return the commandConfigID
 	 */
-	public Set<RemoteCommandConfigType> getCommandTypes() {
-		return new HashSet<RemoteCommandConfigType>(commandTypes.values());
+	public String getCommandConfigFactoryID() {
+		return commandConfigFactoryID;
 	}
 
 	/**
-	 * Return a CommandConfigType model object for the ID of the type
-	 * 
-	 * @param commandType
-	 *            The ID of the type
-	 * @return The Type model object
+	 * @return the mbeanInfo
 	 */
-	public RemoteCommandConfigType getCommandType(String commandType) {
-		return commandTypes.get(commandType);
+	public MBeanInfo getMbeanInfo() {
+		return mbeanInfo;
 	}
-
-	/**
-	 * 
-	 * @param commandType
-	 *            the ID of the ComamndType
-	 * @return true if this factory can produces command configurations of the
-	 *         given type
-	 */
-	public boolean containsType(String commandType) {
-		return this.commandTypes.keySet().contains(commandType);
-	}
+	
+	
 
 }

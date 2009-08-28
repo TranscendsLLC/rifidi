@@ -1,4 +1,3 @@
-
 package org.rifidi.edge.client.sal.controller.commands.handlers;
 
 import org.eclipse.core.commands.AbstractHandler;
@@ -8,7 +7,7 @@ import org.eclipse.core.commands.IHandler2;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.ui.handlers.HandlerUtil;
-import org.rifidi.edge.client.model.sal.RemoteCommandConfigType;
+import org.rifidi.edge.client.model.sal.RemoteCommandConfigFactory;
 import org.rifidi.edge.client.sal.controller.commands.CommandController;
 import org.rifidi.edge.client.sal.controller.commands.CommandTreeContentProvider;
 
@@ -34,8 +33,8 @@ public class CreateCommandHandler extends AbstractHandler implements IHandler2 {
 				.getController();
 
 		Object obj = ((TreeSelection) sel).getFirstElement();
-		controller.createCommand(((RemoteCommandConfigType) obj)
-				.getCommandConfigType());
+		controller.createCommand(((RemoteCommandConfigFactory) obj)
+				.getCommandConfigFactoryID());
 
 		return null;
 	}

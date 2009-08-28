@@ -85,11 +85,11 @@ public class Command_CommandConfigurationAdded implements
 	@Override
 	public void executeEclipse() {
 		if (dto != null) {
-			String readerID;
 			Collection<RemoteCommandConfigFactory> factories = (Collection<RemoteCommandConfigFactory>) this.commandConfigFactories
 					.values();
 			for (RemoteCommandConfigFactory factory : factories) {
-				if (factory.containsType(dto.getCommandConfigType())) {
+				if (factory.getCommandConfigFactoryID().equals(
+						dto.getCommandConfigFactoryID())) {
 					this.commandConfigurations.put(this.commandConfigurationID,
 							new RemoteCommandConfiguration(dto, factory));
 				}

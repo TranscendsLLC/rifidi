@@ -1,4 +1,3 @@
-
 package org.rifidi.edge.client.model.sal;
 
 import org.eclipse.core.databinding.observable.map.ObservableMap;
@@ -18,12 +17,12 @@ public class Command_CommandConfigFactoryRemoved implements
 	/** The commandConfigurationFactories */
 	private ObservableMap commandConfigFactories;
 	/** The ID of the readerFactory that the command factory belongs to */
-	private String readerFactoryID;
+	private String commandFactoryID;
 
 	public Command_CommandConfigFactoryRemoved(RemoteEdgeServer server,
 			CommandConfigFactoryRemoved notification) {
 		this.commandConfigFactories = server.commandConfigFactories;
-		this.readerFactoryID = notification.getReaderFactoryID();
+		this.commandFactoryID = notification.getCommandFactoryID();
 	}
 
 	/*
@@ -47,7 +46,7 @@ public class Command_CommandConfigFactoryRemoved implements
 	 */
 	@Override
 	public void executeEclipse() {
-		commandConfigFactories.remove(readerFactoryID);
+		commandConfigFactories.remove(commandFactoryID);
 
 	}
 

@@ -5,15 +5,15 @@ import org.rifidi.edge.api.rmi.services.CommandManagerService;
 import org.rifidi.rmi.proxycache.cache.AbstractRMICommandObject;
 
 /**
- * This remote call gets a CommandConfigFactoryDTO for a given readerFactoryID.
- * It returns null if a readerFactory with the given ID is not avaialable
+ * This remote call gets a CommandConfigFactoryDTO for a given commandFactoryID.
+ * It returns null if a commandFactory with the given ID is not avaialable
  * 
  * @author Kyle Neumeier - kyle@pramari.com
  */
 public class CCGetCommandConfigFactory extends
 		AbstractRMICommandObject<CommandConfigFactoryDTO, RuntimeException> {
 
-	private String readerFactoryID;
+	private String commandFactoryID;
 
 	/**
 	 * Constructor.
@@ -21,9 +21,9 @@ public class CCGetCommandConfigFactory extends
 	 * @param serverDescription
 	 */
 	public CCGetCommandConfigFactory(CCServerDescription serverDescription,
-			String readerFactoryID) {
+			String commandFactoryID) {
 		super(serverDescription);
-		this.readerFactoryID = readerFactoryID;
+		this.commandFactoryID = commandFactoryID;
 	}
 
 	/*
@@ -37,7 +37,7 @@ public class CCGetCommandConfigFactory extends
 	protected CommandConfigFactoryDTO performRemoteCall(Object remoteObject)
 			throws RuntimeException {
 		CommandManagerService stub = (CommandManagerService) remoteObject;
-		return stub.getCommandConfigFactory(readerFactoryID);
+		return stub.getCommandConfigFactory(commandFactoryID);
 	}
 
 }

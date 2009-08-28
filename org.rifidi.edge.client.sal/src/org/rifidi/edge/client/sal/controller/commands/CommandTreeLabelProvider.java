@@ -4,9 +4,9 @@ import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.swt.graphics.Image;
 import org.rifidi.edge.client.model.sal.RemoteCommandConfigFactory;
-import org.rifidi.edge.client.model.sal.RemoteCommandConfigType;
 import org.rifidi.edge.client.model.sal.RemoteCommandConfiguration;
 import org.rifidi.edge.client.model.sal.RemoteEdgeServer;
+import org.rifidi.edge.client.model.sal.RemoteReaderFactory;
 import org.rifidi.edge.client.sal.SALPluginActivator;
 
 /**
@@ -39,10 +39,10 @@ public class CommandTreeLabelProvider implements ILabelProvider {
 				return serverRed;
 			}
 		}
-		if (element instanceof RemoteCommandConfigFactory) {
+		if (element instanceof RemoteReaderFactory) {
 			return readerCog;
 		}
-		if (element instanceof RemoteCommandConfigType) {
+		if (element instanceof RemoteCommandConfigFactory) {
 			return SALPluginActivator.getDefault().getImageRegistry().get(
 					SALPluginActivator.IMAGE_FOLDER);
 		}
@@ -62,11 +62,11 @@ public class CommandTreeLabelProvider implements ILabelProvider {
 	public String getText(Object element) {
 		if (element instanceof RemoteEdgeServer) {
 			return "Edge Server";
+		} else if (element instanceof RemoteReaderFactory) {
+			return ((RemoteReaderFactory) element).getID() + " Commands";
 		} else if (element instanceof RemoteCommandConfigFactory) {
-			return ((RemoteCommandConfigFactory) element).getReaderFactoryID()
-					+ " Commands";
-		} else if (element instanceof RemoteCommandConfigType) {
-			return ((RemoteCommandConfigType) element).getCommandConfigType();
+			return ((RemoteCommandConfigFactory) element)
+					.getCommandConfigFactoryID();
 		} else if (element instanceof RemoteCommandConfiguration) {
 			RemoteCommandConfiguration config = (RemoteCommandConfiguration) element;
 			if (config.isDirty()) {
@@ -74,8 +74,8 @@ public class CommandTreeLabelProvider implements ILabelProvider {
 			} else {
 				return config.getID();
 			}
-		} else
-			return element.toString();
+		}
+		return element.toString();
 	}
 
 	/*
