@@ -71,6 +71,7 @@ public class AlienGetTagListCommandConfiguration extends
 		AlienGetTagListCommand c = new AlienGetTagListCommand(super.getID());
 		c.setAntennasequence(antenna_sequence);
 		c.setTagType(tagType);
+		c.setReader(readerID);
 		return c;
 	}
 
