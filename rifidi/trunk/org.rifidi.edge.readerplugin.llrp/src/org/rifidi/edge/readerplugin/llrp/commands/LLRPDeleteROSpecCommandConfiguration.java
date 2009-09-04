@@ -11,9 +11,14 @@
  */
 package org.rifidi.edge.readerplugin.llrp.commands;
 
+import javax.management.MBeanInfo;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.configuration.annotations.JMXMBean;
 import org.rifidi.edge.core.configuration.annotations.Property;
 import org.rifidi.edge.core.configuration.annotations.PropertyType;
+import org.rifidi.edge.core.configuration.mbeanstrategies.AnnotationMBeanInfoStrategy;
 import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
 
 /**
@@ -24,9 +29,23 @@ import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
 @JMXMBean
 public class LLRPDeleteROSpecCommandConfiguration extends
 		AbstractCommandConfiguration<LLRPDeleteROSpecCommand> {
-
+	/** Logger for this class. */
+	private static final Log logger=LogFactory.getLog(LLRPDeleteROSpecCommandConfiguration.class);
+	
+	/** ID of the RoSpec*/
 	private int roSpecID = 1;
+	
 
+	/** The name of this command type */
+	public static final String name = "DeleteROSpec-Configuration";
+	
+	public static final MBeanInfo mbeaninfo;
+	static {
+		AnnotationMBeanInfoStrategy strategy = new AnnotationMBeanInfoStrategy();
+		mbeaninfo = strategy
+				.getMBeanInfo(LLRPDeleteROSpecCommandConfiguration.class);
+	}
+	
 	public LLRPDeleteROSpecCommandConfiguration() {
 	}
 
@@ -64,7 +83,7 @@ public class LLRPDeleteROSpecCommandConfiguration extends
 	 */
 	@Override
 	public String getCommandName() {
-		return "DeleteROSpec";
+		return name;
 	}
 
 	/**
@@ -74,7 +93,9 @@ public class LLRPDeleteROSpecCommandConfiguration extends
 	 *            the roSpecID to set
 	 */
 	public void setROSpecID(Integer roSpecID) {
-		System.out.println("Called the setROSpecID in LLRPGetTagList");
+		if(logger.isTraceEnabled()){
+			logger.trace("Called the setROSpecID in LLRPGetTagList");	
+		}
 		this.roSpecID = roSpecID;
 	}
 
@@ -88,4 +109,14 @@ public class LLRPDeleteROSpecCommandConfiguration extends
 	public int getROSpecID() {
 		return roSpecID;
 	}
+
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.configuration.RifidiService#getMBeanInfo()
+	 */
+	@Override
+	public MBeanInfo getMBeanInfo() {
+		return (MBeanInfo) mbeaninfo.clone();
+	}
+	
+	
 }

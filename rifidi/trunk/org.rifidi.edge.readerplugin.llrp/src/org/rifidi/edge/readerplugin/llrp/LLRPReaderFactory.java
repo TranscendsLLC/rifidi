@@ -24,6 +24,7 @@ import org.rifidi.edge.core.configuration.ConfigurationType;
 import org.rifidi.edge.core.configuration.impl.AbstractCommandConfigurationFactory;
 import org.rifidi.edge.core.sensors.base.AbstractSensor;
 import org.rifidi.edge.core.sensors.base.AbstractSensorFactory;
+import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
 import org.rifidi.edge.core.services.notification.NotifierService;
 import org.springframework.jms.core.JmsTemplate;
 
@@ -39,22 +40,12 @@ public class LLRPReaderFactory extends AbstractSensorFactory<LLRPReader> {
 	/** Name of the sensorSession. */
 	private static final String name = "LLRP";
 	/** A JMS event notification sender */
-	private NotifierService notifierService;
+	private volatile NotifierService notifierService;
 	/** The ID for this factory */
 	public static final String FACTORY_ID = "LLRP";
 	/** Template for sending jms messages. */
 	private volatile JmsTemplate template;
-	/** Blueprint for the reader. */
-	private final MBeanInfo readerInfo;
-
-	/**
-	 * The constructor for the factory class.
-	 */
-	public LLRPReaderFactory(
-			AbstractCommandConfigurationFactory<?> commandFactory) {
-		readerInfo = (new LLRPReader(commandFactory)).getMBeanInfo();
-	}
-
+	
 	/**
 	 * @param template
 	 *            the template to set
@@ -70,29 +61,6 @@ public class LLRPReaderFactory extends AbstractSensorFactory<LLRPReader> {
 	 */
 	public void setNotifierService(NotifierService wrapper) {
 		this.notifierService = wrapper;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.rifidi.edge.core.configuration.impl.AbstractServiceFactory#getClazz()
-	 */
-	@Override
-	public Class<LLRPReader> getClazz() {
-		return LLRPReader.class;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.rifidi.edge.core.configuration.ServiceFactory#getFactoryIDs()
-	 */
-	@Override
-	public List<String> getFactoryIDs() {
-		List<String> ret = new ArrayList<String>();
-		ret.add(FACTORY_ID);
-		return ret;
 	}
 
 	/*
@@ -115,25 +83,50 @@ public class LLRPReaderFactory extends AbstractSensorFactory<LLRPReader> {
 		return name;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.sensors.base.AbstractSensorFactory#bindCommandConfiguration(org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration, java.util.Map)
+	 */
+	@Override
+	public void bindCommandConfiguration(
+			AbstractCommandConfiguration<?> commandConfiguration,
+			Map<?, ?> properties) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.sensors.base.AbstractSensorFactory#unbindCommandConfiguration(org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration, java.util.Map)
+	 */
+	@Override
+	public void unbindCommandConfiguration(
+			AbstractCommandConfiguration<?> commandConfiguration,
+			Map<?, ?> properties) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.configuration.ServiceFactory#getFactoryID()
+	 */
+	@Override
+	public String getFactoryID() {
+		return FACTORY_ID;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see
 	 * org.rifidi.edge.core.configuration.ServiceFactory#createInstance(java
-	 * .lang.String, java.lang.String)
+	 * .lang.String)
 	 */
 	@Override
-	public void createInstance(String factoryID, String serviceID) {
-		LLRPReader instance = new LLRPReader(commandFactory);
+	public void createInstance(String serviceID) {
+		LLRPReader instance = new LLRPReader(commands);
 		instance.setID(serviceID);
-		instance.setDestination(template.getDefaultDestination());
-		instance.setTemplate(template);
-		instance.setNotifiyService(this.notifierService);
-		Set<String> interfaces = new HashSet<String>();
-		interfaces.add(AbstractSensor.class.getCanonicalName());
-		Map<String, String> parms = new HashMap<String, String>();
-		parms.put("type", ConfigurationType.READER.toString());
-		instance.register(getContext(), interfaces, parms);
+		instance.setTemplate((JmsTemplate) template);
+		instance.setNotifiyService(notifierService);
+		instance.register(getContext(), FACTORY_ID);
 	}
 
 	/*
@@ -145,7 +138,7 @@ public class LLRPReaderFactory extends AbstractSensorFactory<LLRPReader> {
 	 */
 	@Override
 	public MBeanInfo getServiceDescription(String factoryID) {
-		return (MBeanInfo) readerInfo.clone();
+		return (MBeanInfo) LLRPReader.mbeaninfo.clone();
 	}
 
 }

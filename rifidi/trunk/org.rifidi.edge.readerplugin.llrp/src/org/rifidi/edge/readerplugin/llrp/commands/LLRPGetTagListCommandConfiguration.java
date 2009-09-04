@@ -11,9 +11,12 @@
  */
 package org.rifidi.edge.readerplugin.llrp.commands;
 
+import javax.management.MBeanInfo;
+
 import org.rifidi.edge.core.configuration.annotations.JMXMBean;
 import org.rifidi.edge.core.configuration.annotations.Property;
 import org.rifidi.edge.core.configuration.annotations.PropertyType;
+import org.rifidi.edge.core.configuration.mbeanstrategies.AnnotationMBeanInfoStrategy;
 import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
 
 /**
@@ -25,7 +28,15 @@ import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
 public class LLRPGetTagListCommandConfiguration extends
 		AbstractCommandConfiguration<LLRPGetTagListCommand> {
 	private int roSpecID = 1;
-
+	/** The name of this command type */
+	public static final String name = "LLRPGetTagList-Configuration";
+	
+	public static final MBeanInfo mbeaninfo;
+	static {
+		AnnotationMBeanInfoStrategy strategy = new AnnotationMBeanInfoStrategy();
+		mbeaninfo = strategy
+				.getMBeanInfo(LLRPGetTagListCommandConfiguration.class);
+	}
 	/**
 	 * Constructor of LLRPGetTagListCommandConfiguration.
 	 */
@@ -65,7 +76,7 @@ public class LLRPGetTagListCommandConfiguration extends
 	 */
 	@Override
 	public String getCommandName() {
-		return "LLRPGetTagList";
+		return name;
 	}
 
 	/**
@@ -90,4 +101,11 @@ public class LLRPGetTagListCommandConfiguration extends
 		return roSpecID;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.configuration.RifidiService#getMBeanInfo()
+	 */
+	@Override
+	public MBeanInfo getMBeanInfo() {
+		return (MBeanInfo) mbeaninfo.clone();
+	}
 }

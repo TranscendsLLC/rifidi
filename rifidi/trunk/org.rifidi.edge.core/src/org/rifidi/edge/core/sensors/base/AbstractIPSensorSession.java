@@ -6,6 +6,7 @@ package org.rifidi.edge.core.sensors.base;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.Queue;
+import java.util.Set;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -21,6 +22,7 @@ import org.rifidi.edge.core.sensors.base.threads.MessageProcessingStrategy;
 import org.rifidi.edge.core.sensors.base.threads.MessageProcessingStrategyFactory;
 import org.rifidi.edge.core.sensors.base.threads.ReadThread;
 import org.rifidi.edge.core.sensors.base.threads.WriteThread;
+import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
 import org.rifidi.edge.core.sensors.messages.ByteMessage;
 import org.springframework.jms.core.JmsTemplate;
 
@@ -82,12 +84,14 @@ public abstract class AbstractIPSensorSession extends AbstractSensorSession {
 	 *            JMS Queue to put tag data on
 	 * @param template
 	 *            JMSTemplate to use to send tag data
-	 * @param commandFactory
+	 * @param commandConfigurations
+	 * 
 	 */
 	public AbstractIPSensorSession(AbstractSensor<?> sensor, String ID,
 			String host, int port, int reconnectionInterval,
-			int maxConAttempts, Destination destination, JmsTemplate template) {
-		super(sensor, ID, destination, template);
+			int maxConAttempts, Destination destination, JmsTemplate template,
+			Set<AbstractCommandConfiguration<?>> commandConfigurations) {
+		super(sensor, ID, destination, template, commandConfigurations);
 		this.host = host;
 		this.port = port;
 		this.maxConAttempts = maxConAttempts;

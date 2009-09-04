@@ -54,9 +54,9 @@ import org.llrp.ltk.types.LLRPMessage;
 import org.llrp.ltk.types.UnsignedInteger;
 import org.llrp.ltk.types.UnsignedShort;
 import org.rifidi.edge.api.SessionStatus;
-import org.rifidi.edge.core.configuration.impl.AbstractCommandConfigurationFactory;
 import org.rifidi.edge.core.sensors.base.AbstractSensor;
 import org.rifidi.edge.core.sensors.base.AbstractSensorSession;
+import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
 import org.rifidi.edge.core.services.notification.NotifierService;
 import org.rifidi.edge.core.services.notification.data.EPCGeneration2Event;
 import org.rifidi.edge.core.services.notification.data.ReadCycle;
@@ -77,11 +77,11 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 	private static final Log logger = LogFactory
 			.getLog(LLRPReaderSession.class);
 
-	private LLRPConnection connection = null;
+	private volatile LLRPConnection connection = null;
 	/** Service used to send out notifications */
-	private NotifierService notifierService;
+	private volatile NotifierService notifierService;
 	/** The ID of the reader this session belongs to */
-	private String readerID;
+	private final String readerID;
 
 	int messageID = 1;
 	int maxConAttempts = -1;
@@ -105,14 +105,14 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 	 * @param template
 	 * @param notifierService
 	 * @param readerID
-	 * @param commandFactory
+	 * @param commands
 	 */
 	public LLRPReaderSession(AbstractSensor<?> sensor, String id, String host,
 			int port, int reconnectionInterval, int maxConAttempts,
 			Destination destination, JmsTemplate template,
 			NotifierService notifierService, String readerID,
-			AbstractCommandConfigurationFactory<?> commandFactory) {
-		super(sensor, id, destination, template, commandFactory);
+			Set<AbstractCommandConfiguration<?>> commands) {
+		super(sensor, id, destination, template, commands);
 		this.host = host;
 		this.port = port;
 		this.connection = new LLRPConnector(this, host, port);
@@ -129,7 +129,7 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 	 * @see org.rifidi.edge.core.readers.ReaderSession#connect()
 	 */
 	@Override
-	public void connect() throws IOException {
+	public synchronized void connect() throws IOException {
 		logger.info("LLRP Session " + this.getID() + " on sensor "
 				+ this.getSensor().getID() + " attempting to connect to "
 				+ host + ":" + port);
@@ -182,6 +182,11 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 			throw new IOException("Cannot connect");
 		}
 
+		// physical connection established, set up session
+		onConnect();
+	}
+
+	private void onConnect() {
 		setStatus(SessionStatus.LOGGINGIN);
 		executor = new ScheduledThreadPoolExecutor(1);
 
@@ -207,6 +212,15 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 			while (commandQueue.peek() != null) {
 				executor.submit(commandQueue.poll());
 			}
+
+			if (!processing.compareAndSet(false, true)) {
+				logger.warn("Executor was already active! ");
+			}
+			// resubmit commands
+			while (commandQueue.peek() != null) {
+				executor.submit(commandQueue.poll());
+			}
+
 			synchronized (commands) {
 				for (Integer id : commands.keySet()) {
 					if (idToData.get(id).future == null) {
@@ -248,12 +262,11 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 				}
 			}
 			// make sure commands are canceled
-			synchronized (commands) {
-				for (Integer id : commands.keySet()) {
-					if (idToData.get(id).future != null) {
-						idToData.get(id).future.cancel(true);
-						idToData.get(id).future = null;
-					}
+
+			for (CommandExecutionData data : idToData.values()) {
+				if (data.future != null) {
+					data.future.cancel(true);
+					data.future = null;
 				}
 			}
 		} finally {

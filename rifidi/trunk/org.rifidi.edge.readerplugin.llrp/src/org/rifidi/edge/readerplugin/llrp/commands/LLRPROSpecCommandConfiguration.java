@@ -11,9 +11,12 @@
  */
 package org.rifidi.edge.readerplugin.llrp.commands;
 
+import javax.management.MBeanInfo;
+
 import org.rifidi.edge.core.configuration.annotations.JMXMBean;
 import org.rifidi.edge.core.configuration.annotations.Property;
 import org.rifidi.edge.core.configuration.annotations.PropertyType;
+import org.rifidi.edge.core.configuration.mbeanstrategies.AnnotationMBeanInfoStrategy;
 import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
 
 /**
@@ -24,7 +27,9 @@ import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
 @JMXMBean
 public class LLRPROSpecCommandConfiguration extends
 		AbstractCommandConfiguration<LLRPROSpecCommand> {
-
+	/** The name of this command type */
+	public static final String name = "LLRPROSpecCommand-Configuration";
+	
 	public final TriggerPair NULL_TRIGGER_TYPE = new TriggerPair("NULL", 0);
 	public final TriggerPair PERIODIC_TRIGGER_TYPE = new TriggerPair("PER", 2);
 
@@ -45,7 +50,12 @@ public class LLRPROSpecCommandConfiguration extends
 	private int duration = 1000;
 	
 	private static final String category = "RO Spec";
-
+	public static final MBeanInfo mbeaninfo;
+	static {
+		AnnotationMBeanInfoStrategy strategy = new AnnotationMBeanInfoStrategy();
+		mbeaninfo = strategy
+				.getMBeanInfo(LLRPGetTagListCommandConfiguration.class);
+	}
 	/**
 	 * 
 	 */
@@ -88,7 +98,7 @@ public class LLRPROSpecCommandConfiguration extends
 	 */
 	@Override
 	public String getCommandName() {
-		return "LLRPROSpecCommand";
+		return name;
 	}
 
 	/**
@@ -239,5 +249,13 @@ public class LLRPROSpecCommandConfiguration extends
 			this.a = a;
 			this.b = b;
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.configuration.RifidiService#getMBeanInfo()
+	 */
+	@Override
+	public MBeanInfo getMBeanInfo() {
+		return (MBeanInfo) mbeaninfo.clone();
 	}
 }
