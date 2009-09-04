@@ -9,6 +9,7 @@ package org.rifidi.edge.api;
 public enum SessionStatus {
 	CREATED,
 	CONNECTING,
+	DISCONNECTING,
 	LOGGINGIN,
 	CLOSED,
 	PROCESSING,

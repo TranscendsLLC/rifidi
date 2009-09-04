@@ -13,7 +13,6 @@ import org.rifidi.edge.core.sensors.base.AbstractServerSocketSensorSession;
 import org.rifidi.edge.core.sensors.base.threads.MessageParsingStrategyFactory;
 import org.rifidi.edge.core.sensors.base.threads.MessageProcessingStrategyFactory;
 import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
-import org.rifidi.edge.core.sensors.commands.Command;
 import org.rifidi.edge.core.services.notification.NotifierService;
 import org.rifidi.edge.readerplugin.alien.AlienMessageParsingStrategyFactory;
 import org.springframework.jms.core.JmsTemplate;
@@ -36,8 +35,7 @@ public class AlienAutonomousSensorSession extends
 	private AlienMessageParsingStrategyFactory messageParserFactory;
 	/** The factory that produces Alien Autonomous Message Processing Strategies */
 	private AlienAutonomousMessageProcessingStrategyFactory messageProcessingFactory;
-	/** Provided by spring. */
-	private final Set<AbstractCommandConfiguration<?>> commands;
+
 	/**
 	 * 
 	 * @param sensor
@@ -53,8 +51,7 @@ public class AlienAutonomousSensorSession extends
 			int serverSocketPort, int maxNumAutonomousReaders,
 			Set<AbstractCommandConfiguration<?>> commands) {
 		super(sensor, ID, template.getDefaultDestination(), template,
-				serverSocketPort, maxNumAutonomousReaders);
-		this.commands=commands;
+				serverSocketPort, maxNumAutonomousReaders, commands);
 		this.notifierService = notifierService;
 		this.messageParserFactory = new AlienMessageParsingStrategyFactory();
 		this.messageProcessingFactory = new AlienAutonomousMessageProcessingStrategyFactory(
@@ -95,32 +92,6 @@ public class AlienAutonomousSensorSession extends
 		super.setStatus(status);
 		notifierService.sessionStatusChanged(super.getSensor().getID(),
 				getID(), status);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.rifidi.edge.core.sensors.base.AbstractSensorSession#getCommandInstance
-	 * (java.lang.String)
-	 */
-	@Override
-	protected Command getCommandInstance(String commandID) {
-		if (logger.isDebugEnabled()) {
-			logger.debug("Trying to find instance for " + commandID);
-		}
-		for (AbstractCommandConfiguration<?> config : commands) {
-			if (config.getID().equals(commandID)) {
-				if (logger.isDebugEnabled()) {
-					logger.debug("Found instance for " + commandID);
-				}
-				return config.getCommand(getID());
-			}
-		}
-		if (logger.isDebugEnabled()) {
-			logger.debug("Found no instance for " + commandID);
-		}
-		return null;
 	}
 
 }

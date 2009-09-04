@@ -4,7 +4,6 @@
 package org.rifidi.edge.readerplugin.alien;
 
 import java.util.Map;
-import java.util.Set;
 
 import javax.management.MBeanInfo;
 
@@ -29,18 +28,9 @@ public class Alien9800ReaderFactory extends
 	public static final String FACTORY_ID = "Alien9800";
 	/** Description of the sensorSession. */
 	private static final String description = "The Alien 9800 is an IP based RFID SensorSession using a telnet interface.";
-	/** Name of the sensorSession. */
-	private static final String name = "Alien9800";
+	private static final String displayname = "Alien 9800";
 	/** A JMS event notification sender */
 	private NotifierService notifierService;
-
-	/**
-	 * @param commands
-	 *            the commands to set
-	 */
-	public void setCommands(
-			Set<AbstractCommandConfiguration<AbstractAlien9800Command>> commands) {
-	}
 
 	/*
 	 * (non-Javadoc)
@@ -117,7 +107,7 @@ public class Alien9800ReaderFactory extends
 
 	@Override
 	public String getDisplayName() {
-		return name;
+		return displayname;
 	}
 
 	/*

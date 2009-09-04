@@ -131,7 +131,7 @@ public class Alien9800ReaderSession extends AbstractIPSensorSession {
 			JmsTemplate template, NotifierService notifierService,
 			String readerID, Set<AbstractCommandConfiguration<?>> commands) {
 		super(sensor, id, host, port, reconnectionInterval, maxConAttempts,
-				template.getDefaultDestination(), template);
+				template.getDefaultDestination(), template, commands);
 		this.commands = commands;
 		this.username = username;
 		this.password = password;
@@ -261,32 +261,6 @@ public class Alien9800ReaderSession extends AbstractIPSensorSession {
 			// under any circumstances
 			logger.error(e);
 		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.rifidi.edge.core.sensors.base.AbstractSensorSession#getCommandInstance
-	 * (java.lang.String)
-	 */
-	@Override
-	protected Command getCommandInstance(String commandID) {
-		if (logger.isDebugEnabled()) {
-			logger.debug("Trying to find instance for " + commandID);
-		}
-		for (AbstractCommandConfiguration<?> config : commands) {
-			if (config.getID().equals(commandID)) {
-				if (logger.isDebugEnabled()) {
-					logger.debug("Found instance for " + commandID);
-				}
-				return config.getCommand(readerID);
-			}
-		}
-		if (logger.isDebugEnabled()) {
-			logger.debug("Found no instance for " + commandID);
-		}
-		return null;
 	}
 
 	/*

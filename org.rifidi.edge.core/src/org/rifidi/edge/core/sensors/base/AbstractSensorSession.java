@@ -6,6 +6,7 @@ package org.rifidi.edge.core.sensors.base;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Queue;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ScheduledFuture;
@@ -21,6 +22,7 @@ import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.api.SessionStatus;
 import org.rifidi.edge.api.rmi.dto.CommandDTO;
 import org.rifidi.edge.core.sensors.SensorSession;
+import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
 import org.rifidi.edge.core.sensors.commands.Command;
 import org.springframework.jms.core.JmsTemplate;
 
@@ -41,8 +43,6 @@ public abstract class AbstractSensorSession extends SensorSession {
 	private volatile SessionStatus status;
 	/** Map containing the periodic commands with the process commandID as key. */
 	protected final Map<Integer, CommandExecutor> commands;
-	/** Map containing the periodic commands with the process commandID as key. */
-	protected final Map<String, CommandExecutor> commandIDToExecutor;
 	/** Map containing command process commandID as key and the future as value. */
 	protected final Map<Integer, CommandExecutionData> idToData;
 	/** Job counter */
@@ -53,11 +53,14 @@ public abstract class AbstractSensorSession extends SensorSession {
 	private volatile JmsTemplate template;
 	/** True if the executor is up and running. */
 	protected AtomicBoolean processing = new AtomicBoolean(false);
+	/** Supplied by spring. */
+	protected final Set<AbstractCommandConfiguration<?>> commandConfigurations;
+
 	/**
 	 * Queue for single-shot commands that get submitted while the executor is
 	 * inactive.
 	 */
-	protected Queue<CommandExecutor> commandQueue = new ConcurrentLinkedQueue<CommandExecutor>();
+	protected final Queue<CommandExecutor> commandQueue = new ConcurrentLinkedQueue<CommandExecutor>();
 	/** Logger */
 	private static final Log logger = LogFactory
 			.getLog(AbstractSensorSession.class);
@@ -72,15 +75,18 @@ public abstract class AbstractSensorSession extends SensorSession {
 	 *            The JMS Queue to add Tag Data to
 	 * @param template
 	 *            The Template used to send Tag data to the internal queue
+	 * @param commandConfigurations
+	 *            Provided by spring
 	 */
 	public AbstractSensorSession(AbstractSensor<?> sensor, String ID,
-			Destination destination, JmsTemplate template) {
+			Destination destination, JmsTemplate template,
+			Set<AbstractCommandConfiguration<?>> commandConfigurations) {
 		super(ID, sensor);
 		this.commands = new ConcurrentHashMap<Integer, CommandExecutor>();
-		this.commandIDToExecutor = new ConcurrentHashMap<String, CommandExecutor>();
 		this.idToData = new ConcurrentHashMap<Integer, CommandExecutionData>();
 		this.template = template;
 		this.destination = destination;
+		this.commandConfigurations = commandConfigurations;
 		status = SessionStatus.CREATED;
 	}
 
@@ -137,7 +143,6 @@ public abstract class AbstractSensorSession extends SensorSession {
 		Integer id = counter.getAndIncrement();
 		CommandExecutor exec = new CommandExecutor(commandID, this);
 		commands.put(id, exec);
-		commandIDToExecutor.put(commandID, exec);
 		CommandExecutionData data = new CommandExecutionData();
 		data.interval = interval;
 		data.unit = unit;
@@ -193,8 +198,8 @@ public abstract class AbstractSensorSession extends SensorSession {
 		if (logger.isDebugEnabled()) {
 			logger.debug("Suspending " + commandID);
 		}
-		if (commandIDToExecutor.get(commandID) != null) {
-			commandIDToExecutor.get(commandID).suspend();
+		if (commands.get(Integer.parseInt(commandID)) != null) {
+			commands.get(Integer.parseInt(commandID)).suspend();
 		}
 	}
 
@@ -235,7 +240,29 @@ public abstract class AbstractSensorSession extends SensorSession {
 		return template;
 	}
 
-	protected abstract Command getCommandInstance(String commandID);
+	/**
+	 * Used to aquire a command instance.
+	 * 
+	 * @param commandID
+	 * @return
+	 */
+	protected Command getCommandInstance(String commandID) {
+		if (logger.isDebugEnabled()) {
+			logger.debug("Trying to find instance for " + commandID);
+		}
+		for (AbstractCommandConfiguration<?> config : commandConfigurations) {
+			if (config.getID().equals(commandID)) {
+				if (logger.isDebugEnabled()) {
+					logger.debug("Found instance for " + commandID);
+				}
+				return config.getCommand(getID());
+			}
+		}
+		if (logger.isDebugEnabled()) {
+			logger.debug("Found no instance for " + commandID);
+		}
+		return null;
+	}
 
 	private class CommandExecutor implements Runnable {
 

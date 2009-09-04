@@ -6,6 +6,7 @@ package org.rifidi.edge.core.sensors.base;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Set;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -18,6 +19,7 @@ import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.api.SessionStatus;
 import org.rifidi.edge.core.sensors.base.threads.MessageParsingStrategyFactory;
 import org.rifidi.edge.core.sensors.base.threads.MessageProcessingStrategyFactory;
+import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
 import org.springframework.jms.core.JmsTemplate;
 
 /**
@@ -59,11 +61,13 @@ public abstract class AbstractServerSocketSensorSession extends
 	 *            The port of the socket
 	 * @param maxNumSensors
 	 *            The maximum number of concurrent clients supported
+	 * @param commandConfigurations
 	 */
 	public AbstractServerSocketSensorSession(AbstractSensor<?> sensor,
 			String ID, Destination destination, JmsTemplate template,
-			int serverSocketPort, int maxNumSensors) {
-		super(sensor, ID, destination, template);
+			int serverSocketPort, int maxNumSensors,
+			Set<AbstractCommandConfiguration<?>> commandConfigurations) {
+		super(sensor, ID, destination, template, commandConfigurations);
 		this.serverSocketPort = serverSocketPort;
 		this.maxNumSensors = maxNumSensors;
 	}
