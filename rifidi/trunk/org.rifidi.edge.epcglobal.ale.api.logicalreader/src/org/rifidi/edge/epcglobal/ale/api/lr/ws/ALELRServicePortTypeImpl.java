@@ -1,3 +1,15 @@
+/*
+ * 
+ * ALELRServicePortTypeImpl.java
+ *  
+ * Created:     July 8th, 2009
+ * Project:       Rifidi Edge Server - A middleware platform for RFID applications
+ *                   http://www.rifidi.org
+ *                   http://rifidi.sourceforge.net
+ * Copyright:   Pramari LLC and the Rifidi Project
+ * License:      The software in this package is published under the terms of the GPL License
+ *                   A copy of the license is included in this distribution under RifidiEdge-License.txt 
+ */
 /**
  * Please modify this class to meet your needs
  * This class is not complete
@@ -13,7 +25,6 @@ import org.rifidi.edge.core.sensors.exceptions.InUseException;
 import org.rifidi.edge.core.sensors.exceptions.NoSuchSensorException;
 import org.rifidi.edge.core.sensors.management.SensorManagementService;
 import org.rifidi.edge.core.sensors.management.dtos.SensorDTO;
-import org.rifidi.edge.epcglobal.ale.api.lr.data.LRProperty;
 import org.rifidi.edge.epcglobal.ale.api.lr.data.LRSpec;
 import org.rifidi.edge.epcglobal.ale.api.lr.data.LRSpec.Properties;
 

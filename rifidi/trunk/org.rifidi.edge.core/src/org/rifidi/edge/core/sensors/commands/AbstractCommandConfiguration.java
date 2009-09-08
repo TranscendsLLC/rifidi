@@ -1,3 +1,15 @@
+/*
+ * 
+ * AbstractCommandConfiguration.java
+ *  
+ * Created:     July 8th, 2009
+ * Project:       Rifidi Edge Server - A middleware platform for RFID applications
+ *                   http://www.rifidi.org
+ *                   http://rifidi.sourceforge.net
+ * Copyright:   Pramari LLC and the Rifidi Project
+ * License:      The software in this package is published under the terms of the GPL License
+ *                   A copy of the license is included in this distribution under RifidiEdge-License.txt 
+ */
 /**
  * 
  */
@@ -12,7 +24,6 @@ import org.rifidi.edge.api.rmi.dto.CommandConfigurationDTO;
 import org.rifidi.edge.core.configuration.Configuration;
 import org.rifidi.edge.core.configuration.ConfigurationType;
 import org.rifidi.edge.core.configuration.RifidiService;
-import org.rifidi.edge.core.sensors.base.AbstractSensor;
 
 /**
  * Command configurations represent all properties of a command and will create

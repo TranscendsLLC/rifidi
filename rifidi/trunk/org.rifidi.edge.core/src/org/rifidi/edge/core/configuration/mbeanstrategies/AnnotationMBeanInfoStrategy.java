@@ -1,3 +1,15 @@
+/*
+ * 
+ * AnnotationMBeanInfoStrategy.java
+ *  
+ * Created:     July 8th, 2009
+ * Project:       Rifidi Edge Server - A middleware platform for RFID applications
+ *                   http://www.rifidi.org
+ *                   http://rifidi.sourceforge.net
+ * Copyright:   Pramari LLC and the Rifidi Project
+ * License:      The software in this package is published under the terms of the GPL License
+ *                   A copy of the license is included in this distribution under RifidiEdge-License.txt 
+ */
 /**
  * 
  */
@@ -9,7 +21,6 @@ import java.util.Map;
 
 import javax.management.Descriptor;
 import javax.management.JMX;
-import javax.management.MBeanInfo;
 import javax.management.MBeanOperationInfo;
 import javax.management.modelmbean.DescriptorSupport;
 import javax.management.openmbean.OpenMBeanAttributeInfo;
