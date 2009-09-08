@@ -1,3 +1,15 @@
+/*
+ * 
+ * AlienAutonomousSensor.java
+ *  
+ * Created:     July 8th, 2009
+ * Project:       Rifidi Edge Server - A middleware platform for RFID applications
+ *                   http://www.rifidi.org
+ *                   http://rifidi.sourceforge.net
+ * Copyright:   Pramari LLC and the Rifidi Project
+ * License:      The software in this package is published under the terms of the GPL License
+ *                   A copy of the license is included in this distribution under RifidiEdge-License.txt 
+ */
 /**
  * 
  */
@@ -22,7 +34,6 @@ import org.rifidi.edge.core.sensors.SensorSession;
 import org.rifidi.edge.core.sensors.base.AbstractSensor;
 import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
 import org.rifidi.edge.core.services.notification.NotifierService;
-import org.rifidi.edge.readerplugin.alien.Alien9800Reader;
 import org.springframework.jms.core.JmsTemplate;
 
 /**

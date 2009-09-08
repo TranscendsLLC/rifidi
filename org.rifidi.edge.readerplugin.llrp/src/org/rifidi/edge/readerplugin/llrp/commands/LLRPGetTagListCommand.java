@@ -1,13 +1,13 @@
 /*
  *  LLRPGetTagListCommand.java
  *
- *  Created:	Mar 9, 2009
- *  Project:	Rifidi Edge Server - A middleware platform for RFID applications
- *  				http://www.rifidi.org
- *  				http://rifidi.sourceforge.net
- *  Copyright:	Pramari LLC and the Rifidi Project
- *  License:	GNU Public License (GPL)
- *  				http://www.opensource.org/licenses/gpl-3.0.html
+ * Created:     July 8th, 2009
+ * Project:       Rifidi Edge Server - A middleware platform for RFID applications
+ *                   http://www.rifidi.org
+ *                   http://rifidi.sourceforge.net
+ * Copyright:   Pramari LLC and the Rifidi Project
+ * License:      The software in this package is published under the terms of the GPL License
+ *                   A copy of the license is included in this distribution under RifidiEdge-License.txt 
  */
 package org.rifidi.edge.readerplugin.llrp.commands;
 
