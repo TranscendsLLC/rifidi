@@ -161,7 +161,7 @@ public class LLRPROSpecCommand extends AbstractLLRPCommand {
 				}
 			}
 			if (is_taken) {
-				// TODO: handle this
+				logger.warn("ROSPEC with ID " + this.rospec_id +" has already been created");
 			} else {
 				ADD_ROSPEC addRospec = new ADD_ROSPEC();
 
@@ -258,11 +258,6 @@ public class LLRPROSpecCommand extends AbstractLLRPCommand {
 					
 					session.transact(sr);
 				}
-			
-
-
-				
-
 				logger.debug(response.toXMLString());
 
 			}
