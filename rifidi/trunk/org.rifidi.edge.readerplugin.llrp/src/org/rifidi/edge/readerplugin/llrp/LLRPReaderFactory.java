@@ -14,6 +14,7 @@ package org.rifidi.edge.readerplugin.llrp;
 
 import java.util.Map;
 
+import javax.jms.Destination;
 import javax.management.MBeanInfo;
 
 import org.rifidi.edge.core.sensors.base.AbstractSensorFactory;
@@ -118,6 +119,7 @@ public class LLRPReaderFactory extends AbstractSensorFactory<LLRPReader> {
 		LLRPReader instance = new LLRPReader(commands);
 		instance.setID(serviceID);
 		instance.setTemplate((JmsTemplate) template);
+		instance.setDestination(template.getDefaultDestination());
 		instance.setNotifiyService(notifierService);
 		instance.register(getContext(), FACTORY_ID);
 	}

@@ -444,32 +444,36 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 	@Override
 	public void messageReceived(LLRPMessage arg0) {
 		logger.debug("Asynchronous message recieved");
-		// System.out.println("Asynchronous message recieved");
-		if (arg0 instanceof RO_ACCESS_REPORT) {
-			RO_ACCESS_REPORT rar = (RO_ACCESS_REPORT) arg0;
-			List<TagReportData> trdl = rar.getTagReportDataList();
+		try {
+			if (arg0 instanceof RO_ACCESS_REPORT) {
+				RO_ACCESS_REPORT rar = (RO_ACCESS_REPORT) arg0;
+				List<TagReportData> trdl = rar.getTagReportDataList();
 
-			// List<String> tagdatastring = new ArrayList<String>();
-			Set<TagReadEvent> tagreaderevents = new HashSet<TagReadEvent>();
+				// List<String> tagdatastring = new ArrayList<String>();
+				Set<TagReadEvent> tagreaderevents = new HashSet<TagReadEvent>();
 
-			for (TagReportData t : trdl) {
-				AntennaID antid = t.getAntennaID();
-				EPC_96 id = (EPC_96) t.getEPCParameter();
-				// System.out.println("EPC data processed : "
-				// + id.getEPC().toString(16));
-				String EPCData = id.getEPC().toString(16);
-				EPCGeneration2Event gen2event = new EPCGeneration2Event();
-				gen2event.setEPCMemory(this.parseString(EPCData), 96);
+				for (TagReportData t : trdl) {
+					AntennaID antid = t.getAntennaID();
+					EPC_96 id = (EPC_96) t.getEPCParameter();
+					// System.out.println("EPC data processed : "
+					// + id.getEPC().toString(16));
+					String EPCData = id.getEPC().toString(16);
+					EPCGeneration2Event gen2event = new EPCGeneration2Event();
+					gen2event.setEPCMemory(this.parseString(EPCData), 96);
 
-				TagReadEvent tag = new TagReadEvent(readerID, gen2event, antid
-						.getAntennaID().intValue(), System.currentTimeMillis());
-				tagreaderevents.add(tag);
+					TagReadEvent tag = new TagReadEvent(readerID, gen2event,
+							antid.getAntennaID().intValue(), System
+									.currentTimeMillis());
+					tagreaderevents.add(tag);
+				}
+				ReadCycle cycle = new ReadCycle(tagreaderevents, readerID,
+						System.currentTimeMillis());
+				sensor.send(cycle);
+				this.getTemplate().send(this.getDestination(),
+						new ObjectMessageCreator(cycle));
 			}
-			ReadCycle cycle = new ReadCycle(tagreaderevents, readerID, System
-					.currentTimeMillis());
-			sensor.send(cycle);
-			this.getTemplate().send(this.getDestination(),
-					new ObjectMessageCreator(cycle));
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 
