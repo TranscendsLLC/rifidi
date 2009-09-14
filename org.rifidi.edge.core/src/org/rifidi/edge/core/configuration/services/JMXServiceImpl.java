@@ -129,19 +129,14 @@ public class JMXServiceImpl implements JMXService {
 			logger.debug("ConfigurationControl registered to JMX.");
 		} catch (MalformedObjectNameException e) {
 			logger.error("Problem binding ConfigurationControl: " + e);
-			e.printStackTrace();
 		} catch (NullPointerException e) {
 			logger.error("Problem binding ConfigurationControl: " + e);
-			e.printStackTrace();
 		} catch (InstanceAlreadyExistsException e) {
 			logger.error("Problem binding ConfigurationControl: " + e);
-			e.printStackTrace();
 		} catch (MBeanRegistrationException e) {
 			logger.error("Problem binding ConfigurationControl: " + e);
-			e.printStackTrace();
 		} catch (NotCompliantMBeanException e) {
 			logger.error("Problem binding ConfigurationControl: " + e);
-			e.printStackTrace();
 		}
 	}
 }
