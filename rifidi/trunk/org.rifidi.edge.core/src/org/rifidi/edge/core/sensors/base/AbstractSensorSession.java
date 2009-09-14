@@ -330,7 +330,7 @@ public abstract class AbstractSensorSession extends SensorSession {
 					instance.run();
 				}
 			} catch (Throwable t) {
-				t.printStackTrace();
+				logger.error("error: ", t);
 			}
 		}
 
