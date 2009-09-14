@@ -28,6 +28,7 @@ import javax.management.AttributeList;
 import javax.management.MBeanAttributeInfo;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -247,13 +248,16 @@ public class ConfigurationServiceImpl implements ConfigurationService,
 					}
 				}
 			} catch (RuntimeException e) {
-				logger.info("Target went away while trying to store it: " + e);
+				logger.warn("Target went away while trying to store it: " + e);
 			}
 			store.getServices().add(serviceStore);
 		}
 
 		try {
-			jaxbContext.createMarshaller().marshal(store, new File(path));
+			Marshaller marshaller = jaxbContext.createMarshaller();
+			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+			marshaller.marshal(store, new File(path));
+			logger.info("configuration saved at " + path);
 		} catch (JAXBException e) {
 			logger.error(e);
 		}

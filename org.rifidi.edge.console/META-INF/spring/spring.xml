@@ -1,6 +1,5 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-	xmlns:osgi="http://www.springframework.org/schema/osgi"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:osgi="http://www.springframework.org/schema/osgi"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans 
 	http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
      http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi.xsd">
@@ -9,6 +8,7 @@
 		<property name="readerDAO" ref="readerManagement" />
 		<property name="commandDAO" ref="commandManagement" />
 		<property name="configService" ref="configService" />
+		<property name="loggingService" ref="rifidiLoggingService" />
 	</bean>
 	<osgi:service id="customCommandsService" ref="customCommands"
 		interface="org.eclipse.osgi.framework.console.CommandProvider" />
@@ -18,5 +18,7 @@
 		interface="org.rifidi.edge.core.daos.CommandDAO" />
 	<osgi:reference id="configService"
 		interface="org.rifidi.edge.core.configuration.services.ConfigurationService" />
+	<osgi:reference id="rifidiLoggingService"
+		interface="org.rifidi.edge.core.services.logging.LoggingService" />
 
 </beans>

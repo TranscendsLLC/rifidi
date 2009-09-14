@@ -230,13 +230,24 @@ public abstract class AbstractIPSensorSession extends AbstractSensorSession {
 					// forever.
 					for (int connCount = 0; connCount < maxConAttempts
 							|| maxConAttempts == -1; connCount++) {
+
 						try {
 							socket = new Socket(host, port);
+							if (logger.isDebugEnabled()) {
+								logger.info("Socket connection successful to "
+										+ this.host + ":" + this.port);
+							}
 							break;
 						} catch (IOException e) {
-							logger
-									.debug("Unable to connect to reader on try nr "
-											+ connCount + " " + e);
+							// do nothing
+						}
+
+						// print info message the first time
+						if (logger.isInfoEnabled() && connCount == 0) {
+							logger.info("Session " + this.getID() + " on "
+									+ this.getSensor().getID()
+									+ " Starting reconnect attempts to "
+									+ this.host + ":" + this.port);
 						}
 
 						// wait for a specified number of ms or for a notify
@@ -282,11 +293,14 @@ public abstract class AbstractIPSensorSession extends AbstractSensorSession {
 						return;
 					}
 				} catch (IOException e) {
-					logger.debug("Unable to connect during login: " + e);
+					logger.warn("Unable to connect during login: " + e);
 					connecting.compareAndSet(true, false);
 					connect();
 				}
-				logger.debug("Connected.");
+				logger.info("Session " + this.getID() + " on "
+						+ this.getSensor().getID()
+						+ " connected successfully to  " + this.host + ":"
+						+ this.port);
 				// create thread that checks if the write thread dies and
 				// restart it
 				connectionGuardian = new Thread() {
