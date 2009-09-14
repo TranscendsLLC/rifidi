@@ -31,6 +31,7 @@ import org.rifidi.edge.core.sensors.SensorSession;
 import org.rifidi.edge.core.sensors.base.AbstractSensor;
 import org.rifidi.edge.core.sensors.base.AbstractSensorFactory;
 import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
+import org.rifidi.edge.core.services.logging.LoggingService;
 
 /**
  * Command line commands for the edge server.
@@ -44,6 +45,8 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 	private CommandDAO commandDAO;
 	/** Configuration Service */
 	private ConfigurationService configService;
+	/** Service that allows you to change logging level at runtime */
+	private LoggingService loggingService;
 
 	/**
 	 * Sets the configuration service for this class.
@@ -73,6 +76,15 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 	 */
 	public void setReaderDAO(ReaderDAO readerDAO) {
 		this.readerDAO = readerDAO;
+	}
+
+	/**
+	 * Called by spring to inject LoggingService
+	 * 
+	 * @param loggingService
+	 */
+	public void setLoggingService(LoggingService loggingService) {
+		this.loggingService = loggingService;
 	}
 
 	/**
@@ -566,6 +578,26 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 		return null;
 	}
 
+	public Object _setloglevel(CommandInterpreter intp) {
+		String loggerName = intp.nextArgument();
+		if (loggerName == null) {
+			intp
+					.println("Please use the following command format: setloglevel <loggername> <loglevel>");
+			return null;
+		}
+		String loggerLevel = intp.nextArgument();
+		if (loggerLevel == null) {
+			intp
+					.println("Please use the following command format: setloglevel <loggername> <loglevel>");
+		}
+		try {
+			loggingService.setLoggingLevel(loggerName, loggerLevel);
+		} catch (IllegalArgumentException e) {
+			intp.println("loggerLevel is not valid");
+		}
+		return null;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -577,6 +609,8 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 		buffer.append("---Rifidi Edge Server Commands---\n");
 		buffer.append("  ----General commands----\n");
 		buffer.append("\tsave - save the configuration to a file\n");
+		buffer
+				.append("\tsetloglevel <loggerName> <logLevel> - Set the log level for a given logger.\n");
 		buffer.append("  ----Reader related commands----\n");
 		buffer
 				.append("\treadertypes - get the list of available reader types\n");
