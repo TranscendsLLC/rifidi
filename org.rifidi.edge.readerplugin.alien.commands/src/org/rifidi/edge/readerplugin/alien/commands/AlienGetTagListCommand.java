@@ -131,12 +131,11 @@ public class AlienGetTagListCommand extends AbstractAlien9800Command {
 			template.send(destination, new ReadCycleMessageCreator(cycle));
 
 		} catch (AlienException e) {
-			logger.warn("Exception while executing command: " + e);
+			logger.error("Exception while executing command: " + e);
 		} catch (IOException e) {
-			logger.warn("IOException while executing command: " + e);
+			logger.error("IOException while executing command: " + e);
 		} catch (Exception e) {
 			logger.error("Exception while executing command: " + e);
-			e.printStackTrace();
 		}
 	}
 
