@@ -44,6 +44,7 @@ import org.rifidi.edge.core.configuration.ServiceFactory;
 import org.rifidi.edge.core.configuration.ServiceStore;
 import org.rifidi.edge.core.configuration.impl.DefaultConfigurationImpl;
 import org.rifidi.edge.core.configuration.mbeans.ConfigurationControlMBean;
+import org.rifidi.edge.core.exceptions.InvalidStateException;
 import org.rifidi.edge.core.sensors.SensorSession;
 import org.rifidi.edge.core.sensors.base.AbstractSensor;
 import org.rifidi.edge.core.services.notification.NotifierService;
@@ -302,7 +303,14 @@ public class ConfigurationServiceImpl implements ConfigurationService,
 		IDToConfigurations.put(serviceID, config);
 
 		if (factory != null) {
-			factory.createInstance(serviceID);
+			//TODO: Ticket #236
+			try {
+				factory.createInstance(serviceID);
+			} catch (IllegalArgumentException e) {
+				logger.error("exception", e);
+			} catch (InvalidStateException e) {
+				logger.error("exception ", e);
+			}
 		}
 	}
 
@@ -399,7 +407,15 @@ public class ConfigurationServiceImpl implements ConfigurationService,
 				if (factoryToConfigurations.get(factory.getFactoryID()) != null) {
 					for (Configuration serConf : factoryToConfigurations
 							.get(factory.getFactoryID())) {
-						factory.createInstance(serConf.getServiceID());
+						
+						//TODO: Ticket #236
+						try {
+							factory.createInstance(serConf.getServiceID());
+						} catch (IllegalArgumentException e) {
+							logger.error("exception", e);
+						} catch (InvalidStateException e) {
+							logger.error("exception ", e);
+						}
 					}
 				}
 			}

@@ -13,6 +13,7 @@
 package org.rifidi.edge.core.rmi.server;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -31,6 +32,7 @@ import org.rifidi.edge.core.configuration.Configuration;
 import org.rifidi.edge.core.configuration.services.ConfigurationService;
 import org.rifidi.edge.core.daos.CommandDAO;
 import org.rifidi.edge.core.daos.ReaderDAO;
+import org.rifidi.edge.core.exceptions.CannotCreateSessionException;
 import org.rifidi.edge.core.sensors.SensorSession;
 import org.rifidi.edge.core.sensors.base.AbstractSensor;
 import org.rifidi.edge.core.sensors.base.AbstractSensorFactory;
@@ -197,13 +199,18 @@ public class SensorManagerServiceImpl implements SensorManagerService {
 			logger.warn("No reader with ID " + readerID + " is available");
 			return null;
 		}
-		reader.createSensorSession();
-		logger.info("New reader session created on Reader " + readerID);
-		Set<SessionDTO> sessionDTOs = new HashSet<SessionDTO>();
-		for (SensorSession s : reader.getSensorSessions().values()) {
-			sessionDTOs.add(s.getDTO());
+		try {
+			reader.createSensorSession();
+			logger.info("New reader session created on Reader " + readerID);
+			Set<SessionDTO> sessionDTOs = new HashSet<SessionDTO>();
+			for (SensorSession s : reader.getSensorSessions().values()) {
+				sessionDTOs.add(s.getDTO());
+			}
+			return sessionDTOs;
+		} catch (CannotCreateSessionException e) {
+			logger.error("Cannot Create Sensor Session for " + reader.getID(), e);
+			return Collections.emptySet();
 		}
-		return sessionDTOs;
 	}
 
 	/* (non-Javadoc)
