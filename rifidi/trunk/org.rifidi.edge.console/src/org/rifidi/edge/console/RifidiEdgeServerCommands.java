@@ -646,6 +646,8 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 		buffer
 				.append("\tstartsession <readerid> <sessionid> - start a session on the given reader\n");
 		buffer
+		.append("\tstopsession <readerid> <sessionid> - stop a session on the given reader\n");
+		buffer
 				.append("\texecutecommand <readerid> <sessionid> <commandid>  <interval>- execute a command in a session\n");
 		buffer
 				.append("\tkillcommand <readerid> <sessionid> <commandid> - execute a command in a session\n");
