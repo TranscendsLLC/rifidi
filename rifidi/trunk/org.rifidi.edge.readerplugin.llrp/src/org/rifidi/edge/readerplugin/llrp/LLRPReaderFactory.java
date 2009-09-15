@@ -17,6 +17,7 @@ import java.util.Map;
 import javax.jms.Destination;
 import javax.management.MBeanInfo;
 
+import org.rifidi.edge.core.exceptions.InvalidStateException;
 import org.rifidi.edge.core.sensors.base.AbstractSensorFactory;
 import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
 import org.rifidi.edge.core.services.notification.NotifierService;
@@ -39,7 +40,7 @@ public class LLRPReaderFactory extends AbstractSensorFactory<LLRPReader> {
 	public static final String FACTORY_ID = "LLRP";
 	/** Template for sending jms messages. */
 	private volatile JmsTemplate template;
-	
+
 	/**
 	 * @param template
 	 *            the template to set
@@ -77,29 +78,41 @@ public class LLRPReaderFactory extends AbstractSensorFactory<LLRPReader> {
 		return name;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.rifidi.edge.core.sensors.base.AbstractSensorFactory#bindCommandConfiguration(org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration, java.util.Map)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seeorg.rifidi.edge.core.sensors.base.AbstractSensorFactory#
+	 * bindCommandConfiguration
+	 * (org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration,
+	 * java.util.Map)
 	 */
 	@Override
 	public void bindCommandConfiguration(
 			AbstractCommandConfiguration<?> commandConfiguration,
 			Map<?, ?> properties) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
-	/* (non-Javadoc)
-	 * @see org.rifidi.edge.core.sensors.base.AbstractSensorFactory#unbindCommandConfiguration(org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration, java.util.Map)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seeorg.rifidi.edge.core.sensors.base.AbstractSensorFactory#
+	 * unbindCommandConfiguration
+	 * (org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration,
+	 * java.util.Map)
 	 */
 	@Override
 	public void unbindCommandConfiguration(
 			AbstractCommandConfiguration<?> commandConfiguration,
 			Map<?, ?> properties) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.rifidi.edge.core.configuration.ServiceFactory#getFactoryID()
 	 */
 	@Override
@@ -115,13 +128,21 @@ public class LLRPReaderFactory extends AbstractSensorFactory<LLRPReader> {
 	 * .lang.String)
 	 */
 	@Override
-	public void createInstance(String serviceID) {
+	public void createInstance(String serviceID)
+			throws IllegalArgumentException, InvalidStateException {
+		if (serviceID == null) {
+			throw new IllegalArgumentException("Service ID is null");
+		}
+		if (template == null || notifierService == null) {
+			throw new InvalidStateException("Required services are null");
+		}
 		LLRPReader instance = new LLRPReader(commands);
 		instance.setID(serviceID);
 		instance.setTemplate((JmsTemplate) template);
 		instance.setDestination(template.getDefaultDestination());
 		instance.setNotifiyService(notifierService);
 		instance.register(getContext(), FACTORY_ID);
+
 	}
 
 	/*

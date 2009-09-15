@@ -43,6 +43,7 @@ import org.rifidi.edge.core.configuration.annotations.Operation;
 import org.rifidi.edge.core.configuration.annotations.Property;
 import org.rifidi.edge.core.configuration.listeners.AttributesChangedListener;
 import org.rifidi.edge.core.configuration.services.JMXService;
+import org.rifidi.edge.core.exceptions.CannotCreateSessionException;
 import org.rifidi.edge.core.sensors.base.AbstractSensor;
 import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
 import org.rifidi.edge.core.services.notification.NotifierService;
@@ -157,7 +158,11 @@ public class DefaultConfigurationImpl implements Configuration, ServiceListener 
 				List<Attribute> attrs = attributes.asList();
 				if (target instanceof AbstractSensor<?>) {
 					for(SessionDTO sessionDTO:sessionDTOs.keySet()){
-						((AbstractSensor<?>) target).createSensorSession(sessionDTO);
+						try {
+							((AbstractSensor<?>) target).createSensorSession(sessionDTO);
+						} catch (CannotCreateSessionException e) {
+							logger.error("Exception ", e);
+						}
 					}
 				}
 				for (int count = 0; count < attributes.size(); count++) {

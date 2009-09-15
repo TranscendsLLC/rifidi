@@ -19,6 +19,7 @@ import java.util.Map;
 
 import javax.management.MBeanInfo;
 
+import org.rifidi.edge.core.exceptions.InvalidStateException;
 import org.rifidi.edge.core.sensors.base.AbstractSensor;
 import org.rifidi.edge.core.sensors.base.AbstractSensorFactory;
 import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
@@ -35,14 +36,14 @@ public class Alien9800ReaderFactory extends
 		AbstractSensorFactory<Alien9800Reader> {
 
 	/** JMS template for sending tag data to JMS Queue */
-	private JmsTemplate template;
+	private volatile JmsTemplate template;
 	/** The Unique FACTORY_ID for this Factory */
 	public static final String FACTORY_ID = "Alien9800";
 	/** Description of the sensorSession. */
 	private static final String description = "The Alien 9800 is an IP based RFID SensorSession using a telnet interface.";
 	private static final String displayname = "Alien 9800";
 	/** A JMS event notification sender */
-	private NotifierService notifierService;
+	private volatile NotifierService notifierService;
 
 	/*
 	 * (non-Javadoc)
@@ -130,12 +131,20 @@ public class Alien9800ReaderFactory extends
 	 * .lang.String)
 	 */
 	@Override
-	public void createInstance(String serviceID) {
+	public void createInstance(String serviceID)
+			throws IllegalArgumentException, InvalidStateException {
+		if (serviceID == null) {
+			throw new IllegalArgumentException("ServiceID is null");
+		}
+		if (template == null || notifierService == null) {
+			throw new InvalidStateException("All services are not set");
+		}
 		Alien9800Reader instance = new Alien9800Reader(commands);
 		instance.setID(serviceID);
 		instance.setTemplate((JmsTemplate) template);
 		instance.setNotifiyService(notifierService);
 		instance.register(getContext(), FACTORY_ID);
+
 	}
 
 	/*

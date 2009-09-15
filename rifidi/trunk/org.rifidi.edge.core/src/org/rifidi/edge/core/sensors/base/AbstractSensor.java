@@ -35,6 +35,7 @@ import org.rifidi.edge.api.rmi.dto.SessionDTO;
 import org.rifidi.edge.core.configuration.Configuration;
 import org.rifidi.edge.core.configuration.ConfigurationType;
 import org.rifidi.edge.core.configuration.RifidiService;
+import org.rifidi.edge.core.exceptions.CannotCreateSessionException;
 import org.rifidi.edge.core.sensors.CompositeSensor;
 import org.rifidi.edge.core.sensors.Sensor;
 import org.rifidi.edge.core.sensors.SensorSession;
@@ -81,16 +82,22 @@ public abstract class AbstractSensor<T extends SensorSession> extends
 	 * Create a new sensor session.
 	 * 
 	 * @return id of the created session
+	 * @exception CannotCreateSessionException
+	 *                - if the session cannot be created
 	 */
-	abstract public String createSensorSession();
+	abstract public String createSensorSession()
+			throws CannotCreateSessionException;
 
 	/**
 	 * Create a sensor session from DTO.
 	 * 
 	 * @param sessionDTO
-	 * @return
+	 * @return the ID of the session
+	 * @exception CannotCreateSessionException
+	 *                if the session cannot be created
 	 */
-	abstract public String createSensorSession(SessionDTO sessionDTO);
+	abstract public String createSensorSession(SessionDTO sessionDTO)
+			throws CannotCreateSessionException;
 
 	/**
 	 * Get all currently created reader sessions. The Key is the ID of the

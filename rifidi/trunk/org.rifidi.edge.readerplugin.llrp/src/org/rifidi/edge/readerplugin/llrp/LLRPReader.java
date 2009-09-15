@@ -31,6 +31,7 @@ import org.rifidi.edge.core.configuration.annotations.JMXMBean;
 import org.rifidi.edge.core.configuration.annotations.Property;
 import org.rifidi.edge.core.configuration.annotations.PropertyType;
 import org.rifidi.edge.core.configuration.mbeanstrategies.AnnotationMBeanInfoStrategy;
+import org.rifidi.edge.core.exceptions.CannotCreateSessionException;
 import org.rifidi.edge.core.sensors.SensorSession;
 import org.rifidi.edge.core.sensors.base.AbstractSensor;
 import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
@@ -46,15 +47,15 @@ import org.springframework.jms.core.JmsTemplate;
 @JMXMBean
 public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 	/** Logger for this class. */
-	private Log logger = LogFactory.getLog(LLRPReader.class);
+	private static final Log logger = LogFactory.getLog(LLRPReader.class);
 	/** The only session an LLRP reader allows. */
 	private AtomicReference<LLRPReaderSession> session = new AtomicReference<LLRPReaderSession>();
 	/** A hashmap containing all the properties for this reader */
-	private ConcurrentHashMap<String, String> readerProperties;
+	private final ConcurrentHashMap<String, String> readerProperties;
 	/** IP address of the sensorSession. */
-	private String ipAddress = "127.0.0.1";
+	private volatile String ipAddress = "127.0.0.1";
 	/** Port to connect to */
-	private int port = 5084;
+	private volatile int port = 5084;
 	/** Time between two connection attempts. */
 	private volatile Integer reconnectionInterval = 500;
 	/** Number of connection attempts before a connection goes into fail state. */
@@ -66,7 +67,7 @@ public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 	/** The ID of the session */
 	private AtomicInteger sessionIDcounter = new AtomicInteger(0);
 	/** A wrapper containing the service to send jms notifications */
-	private NotifierService notifyServiceWrapper;
+	private volatile NotifierService notifyServiceWrapper;
 	/** Provided by spring. */
 	private final Set<AbstractCommandConfiguration<?>> commands;
 	/** Flag to check if this reader is destroied. */
@@ -94,34 +95,26 @@ public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 	 * org.rifidi.edge.api.rmi.dto.SessionDTO)
 	 */
 	@Override
-	public String createSensorSession(SessionDTO sessionDTO) {
-		if (!destroied.get()) {
-			synchronized (session) {
-				LLRPReaderSession aliensession = session.get();
-				if (aliensession == null) {
-					Integer sessionID = Integer.parseInt(sessionDTO.getID());
-					if (session.compareAndSet(null, new LLRPReaderSession(this,
-							sessionID.toString(), ipAddress, port,
-							reconnectionInterval, maxNumConnectionAttempts,
-							destination, template, notifyServiceWrapper, super
-									.getID(), commands))) {
-						for (CommandDTO commandDTO : sessionDTO.getCommands()) {
-							session.get().submit(commandDTO.getCommandID(),
-									commandDTO.getInterval(),
-									commandDTO.getTimeUnit());
-						}
-						// TODO: remove this once we get AspectJ in here!
-						notifyServiceWrapper.addSessionEvent(this.getID(),
-								Integer.toString(sessionID));
-						return sessionID.toString();
-					}
+	public String createSensorSession(SessionDTO sessionDTO) throws CannotCreateSessionException{
+		if (!destroied.get() && session.get() == null) {
+			Integer sessionID = Integer.parseInt(sessionDTO.getID());
+			if (session.compareAndSet(null, new LLRPReaderSession(this,
+					sessionID.toString(), ipAddress, port,
+					reconnectionInterval, maxNumConnectionAttempts,
+					destination, template, notifyServiceWrapper, super.getID(),
+					commands))) {
+				for (CommandDTO commandDTO : sessionDTO.getCommands()) {
+					session.get().submit(commandDTO.getCommandID(),
+							commandDTO.getInterval(), commandDTO.getTimeUnit());
 				}
-				if (aliensession != null) {
-					return aliensession.getID();
-				}
+				// TODO: remove this once we get AspectJ in here!
+				notifyServiceWrapper.addSessionEvent(this.getID(), Integer
+						.toString(sessionID));
+				return sessionID.toString();
 			}
+
 		}
-		return null;
+		throw new CannotCreateSessionException();
 	}
 
 	/*
@@ -130,28 +123,22 @@ public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 	 * @see org.rifidi.edge.core.readers.AbstractReader#createReaderSession()
 	 */
 	@Override
-	public String createSensorSession() {
-		if (!destroied.get()) {
-			synchronized (session) {
-				LLRPReaderSession aliensession = session.get();
-				if (aliensession == null) {
-					Integer sessionID = this.sessionIDcounter.incrementAndGet();
-					if (session.compareAndSet(null, new LLRPReaderSession(this,
-							sessionID.toString(), ipAddress, port,
-							reconnectionInterval, maxNumConnectionAttempts,
-							destination, template, notifyServiceWrapper, super
-									.getID(), commands))) {
+	public String createSensorSession() throws CannotCreateSessionException{
+		if (!destroied.get() && session.get()==null) {
+				Integer sessionID = this.sessionIDcounter.incrementAndGet();
+				if (session.compareAndSet(null, new LLRPReaderSession(this,
+						sessionID.toString(), ipAddress, port,
+						reconnectionInterval, maxNumConnectionAttempts,
+						destination, template, notifyServiceWrapper, super
+								.getID(), commands))) {
 
-						// TODO: remove this once we get AspectJ in here!
-						notifyServiceWrapper.addSessionEvent(this.getID(),
-								Integer.toString(sessionID));
-						return sessionID.toString();
-					}
+					// TODO: remove this once we get AspectJ in here!
+					notifyServiceWrapper.addSessionEvent(this.getID(), Integer
+							.toString(sessionID));
+					return sessionID.toString();
 				}
-				return aliensession.getID();
-			}
 		}
-		return null;
+		throw new CannotCreateSessionException();
 	}
 
 	/*
@@ -163,18 +150,34 @@ public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 	 */
 	@Override
 	public void destroySensorSession(String sessionid) {
-		LLRPReaderSession aliensession = session.get();
-		if (session.compareAndSet(aliensession, null)) {
-			if (aliensession != null && aliensession.getID().equals(sessionid)) {
-				for (Integer id : aliensession.currentCommands().keySet()) {
-					aliensession.killComand(id);
+		LLRPReaderSession llrpsession = session.get();
+		if (session.compareAndSet(llrpsession, null)) {
+			if (llrpsession != null && llrpsession.getID().equals(sessionid)) {
+				for (Integer id : llrpsession.currentCommands().keySet()) {
+					llrpsession.killComand(id);
 				}
-				aliensession.disconnect();
+				llrpsession.disconnect();
 				// TODO: remove this once we get AspectJ in here!
 				notifyServiceWrapper
 						.removeSessionEvent(this.getID(), sessionid);
 			}
 			logger.warn("Tried to delete a non existend session: " + sessionid);
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.rifidi.edge.core.configuration.RifidiService#destroy()
+	 */
+	@Override
+	public void destroy() {
+		if (destroied.compareAndSet(false, true)) {
+			super.destroy();
+			LLRPReaderSession llrpsession = session.get();
+			if (llrpsession != null) {
+				destroySensorSession(llrpsession.getID());
+			}
 		}
 	}
 
@@ -356,21 +359,5 @@ public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 	@Override
 	public MBeanInfo getMBeanInfo() {
 		return (MBeanInfo) mbeaninfo.clone();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.rifidi.edge.core.configuration.RifidiService#destroy()
-	 */
-	@Override
-	public void destroy() {
-		if (destroied.compareAndSet(false, true)) {
-			super.destroy();
-			LLRPReaderSession llrpsession = session.get();
-			if (llrpsession != null) {
-				destroySensorSession(llrpsession.getID());
-			}
-		}
 	}
 }

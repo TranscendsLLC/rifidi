@@ -27,6 +27,7 @@ import org.rifidi.edge.core.configuration.impl.AbstractCommandConfigurationFacto
 import org.rifidi.edge.core.configuration.services.ConfigurationService;
 import org.rifidi.edge.core.daos.CommandDAO;
 import org.rifidi.edge.core.daos.ReaderDAO;
+import org.rifidi.edge.core.exceptions.CannotCreateSessionException;
 import org.rifidi.edge.core.sensors.SensorSession;
 import org.rifidi.edge.core.sensors.base.AbstractSensor;
 import org.rifidi.edge.core.sensors.base.AbstractSensorFactory;
@@ -368,8 +369,12 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 			return null;
 		}
 		AbstractSensor<?> reader = readerDAO.getReaderByID(readerid);
-		reader.createSensorSession();
-		intp.println("Session created.");
+		try {
+			reader.createSensorSession();
+			intp.println("Session created.");
+		} catch (CannotCreateSessionException e) {
+			intp.println("Session cannot be created");
+		}
 		return null;
 	}
 
