@@ -154,12 +154,12 @@ public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 		LLRPReaderSession llrpsession = session.get();
 		if (llrpsession != null){
 			if(llrpsession.getID().equals(sessionid)) {
-				session.set(null);
 				for (Integer id : llrpsession.currentCommands().keySet()) {
 					llrpsession.killComand(id);
 				}
 				llrpsession.disconnect();
 				// TODO: remove this once we get AspectJ in here!
+				session.set(null);
 				notifyServiceWrapper.removeSessionEvent(this.getID(), sessionid);
 				logger.warn("Tried to delete a non existend session: " + sessionid);
 			}
