@@ -151,9 +151,10 @@ public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 	 */
 	@Override
 	public void destroySensorSession(String sessionid) {
-		LLRPReaderSession llrpsession = session.getAndSet(null);
+		LLRPReaderSession llrpsession = session.get();
 		if (llrpsession != null){
 			if(llrpsession.getID().equals(sessionid)) {
+				session.set(null);
 				for (Integer id : llrpsession.currentCommands().keySet()) {
 					llrpsession.killComand(id);
 				}
