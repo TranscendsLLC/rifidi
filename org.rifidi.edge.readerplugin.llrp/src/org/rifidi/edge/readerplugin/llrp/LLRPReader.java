@@ -95,7 +95,8 @@ public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 	 * org.rifidi.edge.api.rmi.dto.SessionDTO)
 	 */
 	@Override
-	public String createSensorSession(SessionDTO sessionDTO) throws CannotCreateSessionException{
+	public String createSensorSession(SessionDTO sessionDTO)
+			throws CannotCreateSessionException {
 		if (!destroied.get() && session.get() == null) {
 			Integer sessionID = Integer.parseInt(sessionDTO.getID());
 			if (session.compareAndSet(null, new LLRPReaderSession(this,
@@ -123,20 +124,20 @@ public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 	 * @see org.rifidi.edge.core.readers.AbstractReader#createReaderSession()
 	 */
 	@Override
-	public String createSensorSession() throws CannotCreateSessionException{
-		if (!destroied.get() && session.get()==null) {
-				Integer sessionID = this.sessionIDcounter.incrementAndGet();
-				if (session.compareAndSet(null, new LLRPReaderSession(this,
-						sessionID.toString(), ipAddress, port,
-						reconnectionInterval, maxNumConnectionAttempts,
-						destination, template, notifyServiceWrapper, super
-								.getID(), commands))) {
+	public String createSensorSession() throws CannotCreateSessionException {
+		if (!destroied.get() && session.get() == null) {
+			Integer sessionID = this.sessionIDcounter.incrementAndGet();
+			if (session.compareAndSet(null, new LLRPReaderSession(this,
+					sessionID.toString(), ipAddress, port,
+					reconnectionInterval, maxNumConnectionAttempts,
+					destination, template, notifyServiceWrapper, super.getID(),
+					commands))) {
 
-					// TODO: remove this once we get AspectJ in here!
-					notifyServiceWrapper.addSessionEvent(this.getID(), Integer
-							.toString(sessionID));
-					return sessionID.toString();
-				}
+				// TODO: remove this once we get AspectJ in here!
+				notifyServiceWrapper.addSessionEvent(this.getID(), Integer
+						.toString(sessionID));
+				return sessionID.toString();
+			}
 		}
 		throw new CannotCreateSessionException();
 	}
@@ -150,18 +151,17 @@ public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 	 */
 	@Override
 	public void destroySensorSession(String sessionid) {
-		LLRPReaderSession llrpsession = session.get();
-		if (session.compareAndSet(llrpsession, null)) {
-			if (llrpsession != null && llrpsession.getID().equals(sessionid)) {
+		LLRPReaderSession llrpsession = session.getAndSet(null);
+		if (llrpsession != null){
+			if(llrpsession.getID().equals(sessionid)) {
 				for (Integer id : llrpsession.currentCommands().keySet()) {
 					llrpsession.killComand(id);
 				}
 				llrpsession.disconnect();
 				// TODO: remove this once we get AspectJ in here!
-				notifyServiceWrapper
-						.removeSessionEvent(this.getID(), sessionid);
+				notifyServiceWrapper.removeSessionEvent(this.getID(), sessionid);
+				logger.warn("Tried to delete a non existend session: " + sessionid);
 			}
-			logger.warn("Tried to delete a non existend session: " + sessionid);
 		}
 	}
 
