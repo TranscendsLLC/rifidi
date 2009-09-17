@@ -83,6 +83,7 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 	/** The ID of the reader this session belongs to */
 	private final String readerID;
 
+	/**Ok, because only accessed from synchronized block*/
 	int messageID = 1;
 	int maxConAttempts = -1;
 	int reconnectionInterval = -1;
@@ -286,9 +287,12 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 	 */
 	public LLRPMessage transact(LLRPMessage message) {
 		// System.out.println("Sending an LLRP message: " + message.getName());
+		
 		LLRPMessage retVal = null;
 		try {
-			retVal = this.connection.transact(message);
+			synchronized (connection) {
+				retVal = this.connection.transact(message);				
+			}
 		} catch (TimeoutException e) {
 			logger.error("Cannot send LLRP Message: ", e);
 			disconnect();
@@ -302,7 +306,9 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 	 * @param message
 	 */
 	public void send(LLRPMessage message) {
-		connection.send(message);
+		synchronized (connection) {
+			connection.send(message);			
+		}
 	}
 
 	/**
