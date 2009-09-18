@@ -267,7 +267,7 @@ public abstract class AbstractSensorSession extends SensorSession {
 				if (logger.isDebugEnabled()) {
 					logger.debug("Found instance for " + commandID);
 				}
-				return config.getCommand(getID());
+				return config.getCommand(this.getSensor().getID());
 			}
 		}
 		if (logger.isDebugEnabled()) {
