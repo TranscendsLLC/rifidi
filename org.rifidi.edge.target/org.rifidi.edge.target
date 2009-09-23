@@ -12,5 +12,6 @@
 <location path="${workspace_loc}/org.rifidi.edge.target/spring" type="Directory"/>
 <location path="${workspace_loc}/org.rifidi.edge.target/javax" type="Directory"/>
 <location path="${workspace_loc}/org.rifidi.edge.target/commons" type="Directory"/>
+<location path="${workspace_loc}/org.rifidi.edge.target/felix" type="Directory"/>
 </locations>
 </target>
