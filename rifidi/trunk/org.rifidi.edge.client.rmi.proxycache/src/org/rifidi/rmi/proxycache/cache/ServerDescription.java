@@ -173,7 +173,9 @@ public abstract class ServerDescription {
 		try {
 			proxy.afterPropertiesSet();
 		} catch (RemoteLookupFailureException ex) {
-			throw new ServerUnavailable();
+			throw new ServerUnavailable(ex);
+		} catch (IllegalArgumentException ex){
+			throw new ServerUnavailable(ex);
 		}
 		return proxy;
 	}
