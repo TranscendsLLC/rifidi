@@ -16,15 +16,16 @@ import java.util.Arrays;
 import org.rifidi.edge.core.sensors.base.threads.MessageParsingStrategy;
 
 /**
+ * 
+ * 
  * @author Matthew Dean
- *
  */
 public class ThingmagicMessageParsingStrategy implements MessageParsingStrategy {
 
 	/** The message currently being processed. */
 	private byte[] _messageBuilder = new byte[0];
 	/** Character that terminates a message from alien. */
-	public static final char TERMINATION_CHAR = '\0';
+	public static final char TERMINATION_CHAR = '.';
 	
 	/* (non-Javadoc)
 	 * @see org.rifidi.edge.core.sensors.base.threads.MessageParsingStrategy#isMessage(byte)
