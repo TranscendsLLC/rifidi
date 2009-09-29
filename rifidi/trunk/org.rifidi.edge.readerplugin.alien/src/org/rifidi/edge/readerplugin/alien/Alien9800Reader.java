@@ -492,8 +492,8 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 	 * @param persistTime
 	 */
 	public void setPersistTime(Integer persistTime) {
-		if (logger.isInfoEnabled()) {
-			logger.info("Attempting to set the persist time");
+		if (logger.isDebugEnabled()) {
+			logger.debug("Attempting to set the persist time");
 		}
 		if (persistTime >= -1 && persistTime <= 16535) {
 			readerProperties.put(PROP_PERSIST_TIME, Integer
