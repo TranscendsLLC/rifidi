@@ -11,64 +11,245 @@
  */
 package org.rifidi.edge.readerplugin.thingmagic;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 import javax.management.MBeanInfo;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.rifidi.edge.api.rmi.dto.CommandDTO;
 import org.rifidi.edge.api.rmi.dto.SessionDTO;
+import org.rifidi.edge.core.configuration.annotations.Operation;
+import org.rifidi.edge.core.configuration.mbeanstrategies.AnnotationMBeanInfoStrategy;
+import org.rifidi.edge.core.exceptions.CannotCreateSessionException;
 import org.rifidi.edge.core.sensors.SensorSession;
 import org.rifidi.edge.core.sensors.base.AbstractSensor;
 import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
+import org.rifidi.edge.core.services.notification.NotifierService;
+import org.rifidi.edge.readerplugin.thingmagic.commandobject.ThingmagicCommandObjectWrapper;
+import org.rifidi.edge.readerplugin.thingmagic.commands.internal.ThingmagicPropertyCommand;
+import org.springframework.jms.core.JmsTemplate;
 
 /**
- * 
+ * This plugin connects to the Thingmagic Reader.  
  * 
  * @author Matthew Dean
  */
 public class ThingmagicReader extends AbstractSensor<ThingmagicReaderSession> {
 
+	/** Logger for this class. */
+	private static final Log logger = LogFactory.getLog(ThingmagicReader.class);
+	/** The session for the reader. */
+	private AtomicReference<ThingmagicReaderSession> session = new AtomicReference<ThingmagicReaderSession>();
+	/** Flag to check if this reader is destroied. */
+	private AtomicBoolean destroied = new AtomicBoolean(false);
+	/** Time between two connection attempts. */
+	private volatile Integer reconnectionInterval = Integer
+			.parseInt(ThingmagicReaderDefaultValues.RECONNECTION_INTERVAL);
+	/** Number of connection attempts before a connection goes into fail state. */
+	private volatile Integer maxNumConnectionAttempts = Integer
+			.parseInt(ThingmagicReaderDefaultValues.MAX_CONNECTION_ATTEMPTS);
+	/** IP address of the sensorSession. */
+	private volatile String ipAddress = ThingmagicReaderDefaultValues.IPADDRESS;
+	/** Port to connect to. */
+	private volatile Integer port = Integer
+			.parseInt(ThingmagicReaderDefaultValues.PORT);
+	/** A hashmap containing all the properties for this reader */
+	private final ConcurrentHashMap<String, String> readerProperties;
+	/** A queue for putting commands to be executed next */
+	private final LinkedBlockingQueue<ThingmagicCommandObjectWrapper> propCommandsToBeExecuted;
+
+	/** Mbeaninfo for this class. */
+	public static final MBeanInfo mbeaninfo;
+	static {
+		AnnotationMBeanInfoStrategy strategy = new AnnotationMBeanInfoStrategy();
+		mbeaninfo = strategy.getMBeanInfo(ThingmagicReader.class);
+	}
+	/** Spring JMS template */
+	private volatile JmsTemplate template;
+	/** Provided by spring. */
+	private final Set<AbstractCommandConfiguration<?>> commands;
+	/** The FACTORY_ID of the session */
+	private AtomicInteger sessionID = new AtomicInteger(0);
+	/** service used to send notifications */
+	private volatile NotifierService notifierService;
+
+	/**
+	 * Constructor.
+	 */
+	public ThingmagicReader(Set<AbstractCommandConfiguration<?>> commands) {
+		this.commands = commands;
+		readerProperties = new ConcurrentHashMap<String, String>();
+		
+		propCommandsToBeExecuted = new LinkedBlockingQueue<ThingmagicCommandObjectWrapper>();
+		
+		logger.debug("New instance of ThingmagicReader created.");
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.core.sensors.base.AbstractSensor#applyPropertyChanges()
+	 */
 	@Override
+	@Operation(description = "Apply all property changes to reader")
 	public void applyPropertyChanges() {
-		// TODO Auto-generated method stub
-		
+		// TODO: may need to synchnonize the hashmap before I clear it?
+		ThingmagicReaderSession aliensession = session.get();
+		if (aliensession != null) {
+			ArrayList<ThingmagicCommandObjectWrapper> commands = new ArrayList<ThingmagicCommandObjectWrapper>();
+			this.propCommandsToBeExecuted.drainTo(commands);
+			ThingmagicPropertyCommand command = new ThingmagicPropertyCommand("",
+					readerProperties, commands);
+			aliensession.submit(command);
+		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.core.sensors.base.AbstractSensor#createSensorSession()
+	 */
 	@Override
-	public String createSensorSession() {
-		// TODO Auto-generated method stub
-		return null;
+	public String createSensorSession() throws CannotCreateSessionException {
+		if (!destroied.get() && session.get() == null) {
+			Integer sessionID = this.sessionID.incrementAndGet();
+			if (session.compareAndSet(null, new ThingmagicReaderSession(this,
+					Integer.toString(sessionID), ipAddress, port,
+					(int) (long) reconnectionInterval,
+					maxNumConnectionAttempts, template,
+					notifierService, this.getID(), commands))) {
+
+				// TODO: remove this once we get AspectJ in here!
+				notifierService.addSessionEvent(this.getID(), Integer
+						.toString(sessionID));
+				return sessionID.toString();
+			}
+		}
+		throw new CannotCreateSessionException();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.core.sensors.base.AbstractSensor#createSensorSession(
+	 * org.rifidi.edge.api.rmi.dto.SessionDTO)
+	 */
 	@Override
-	public String createSensorSession(SessionDTO sessionDTO) {
-		// TODO Auto-generated method stub
-		return null;
+	public String createSensorSession(SessionDTO sessionDTO)
+			throws CannotCreateSessionException {
+		if (!destroied.get() && session.get() == null) {
+			Integer sessionID = Integer.parseInt(sessionDTO.getID());
+			if (session.compareAndSet(null, new ThingmagicReaderSession(this,
+					Integer.toString(sessionID), ipAddress, port,
+					(int) (long) reconnectionInterval,
+					maxNumConnectionAttempts, template, notifierService, this
+							.getID(), commands))) {
+				for (CommandDTO commandDTO : sessionDTO.getCommands()) {
+					session.get().submit(commandDTO.getCommandID(),
+							commandDTO.getInterval(), commandDTO.getTimeUnit());
+				}
+				// TODO: remove this once we get AspectJ in here!
+				notifierService.addSessionEvent(this.getID(), Integer
+						.toString(sessionID));
+				return sessionID.toString();
+			}
+		}
+		throw new CannotCreateSessionException();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.core.sensors.base.AbstractSensor#destroySensorSession
+	 * (java.lang.String)
+	 */
 	@Override
-	public void destroySensorSession(String id) {
-		// TODO Auto-generated method stub
-		
+	public void destroySensorSession(String sessionid) {
+		ThingmagicReaderSession thingmagicsession = session.getAndSet(null);
+		if (thingmagicsession != null && thingmagicsession.getID().equals(sessionid)) {
+			for (Integer id : thingmagicsession.currentCommands().keySet()) {
+				thingmagicsession.killComand(id);
+			}
+			thingmagicsession.disconnect();
+			// TODO: remove this once we get AspectJ in here!
+			notifierService.removeSessionEvent(this.getID(), sessionid);
+		}
+		logger.warn("Tried to delete a non existend session: " + sessionid);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.rifidi.edge.core.sensors.base.AbstractSensor#getSensorSessions()
+	 */
 	@Override
 	public Map<String, SensorSession> getSensorSessions() {
-		// TODO Auto-generated method stub
-		return null;
+		Map<String, SensorSession> ret = new HashMap<String, SensorSession>();
+		ThingmagicReaderSession thingmagicsession = session.get();
+		if (thingmagicsession != null) {
+			ret.put(thingmagicsession.getID(), thingmagicsession);
+		}
+		return ret;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.core.sensors.base.AbstractSensor#unbindCommandConfiguration
+	 * (org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration,
+	 * java.util.Map)
+	 */
 	@Override
 	public void unbindCommandConfiguration(
 			AbstractCommandConfiguration<?> commandConfiguration,
 			Map<?, ?> properties) {
-		// TODO Auto-generated method stub
-		
+		if (!destroied.get()) {
+			ThingmagicReaderSession thingmagicsession = session.get();
+			if (thingmagicsession != null) {
+				thingmagicsession.suspendCommand(commandConfiguration.getID());
+			}
+		}
 	}
 
+	/**
+	 * @param template
+	 *            the template to set
+	 */
+	public void setTemplate(JmsTemplate template) {
+		this.template = template;
+	}
+
+	/***
+	 * 
+	 * @param wrapper
+	 *            The JMS Notifier to set
+	 */
+	public void setNotifiyService(NotifierService wrapper) {
+		this.notifierService = wrapper;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.rifidi.edge.core.configuration.RifidiService#getMBeanInfo()
+	 */
 	@Override
 	public MBeanInfo getMBeanInfo() {
-		// TODO Auto-generated method stub
-		return null;
+		return (MBeanInfo) mbeaninfo.clone();
 	}
 
 }
