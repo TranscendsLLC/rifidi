@@ -39,7 +39,7 @@ import org.rifidi.edge.readerplugin.thingmagic.commands.internal.ThingmagicPrope
 import org.springframework.jms.core.JmsTemplate;
 
 /**
- * This plugin connects to the Thingmagic Reader.  
+ * This plugin connects to the Thingmagic Reader.
  * 
  * @author Matthew Dean
  */
@@ -88,12 +88,12 @@ public class ThingmagicReader extends AbstractSensor<ThingmagicReaderSession> {
 	public ThingmagicReader(Set<AbstractCommandConfiguration<?>> commands) {
 		this.commands = commands;
 		readerProperties = new ConcurrentHashMap<String, String>();
-		
+
 		propCommandsToBeExecuted = new LinkedBlockingQueue<ThingmagicCommandObjectWrapper>();
-		
+
 		logger.debug("New instance of ThingmagicReader created.");
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -108,8 +108,8 @@ public class ThingmagicReader extends AbstractSensor<ThingmagicReaderSession> {
 		if (aliensession != null) {
 			ArrayList<ThingmagicCommandObjectWrapper> commands = new ArrayList<ThingmagicCommandObjectWrapper>();
 			this.propCommandsToBeExecuted.drainTo(commands);
-			ThingmagicPropertyCommand command = new ThingmagicPropertyCommand("",
-					readerProperties, commands);
+			ThingmagicPropertyCommand command = new ThingmagicPropertyCommand(
+					"", readerProperties, commands);
 			aliensession.submit(command);
 		}
 	}
@@ -127,8 +127,8 @@ public class ThingmagicReader extends AbstractSensor<ThingmagicReaderSession> {
 			if (session.compareAndSet(null, new ThingmagicReaderSession(this,
 					Integer.toString(sessionID), ipAddress, port,
 					(int) (long) reconnectionInterval,
-					maxNumConnectionAttempts, template,
-					notifierService, this.getID(), commands))) {
+					maxNumConnectionAttempts, template, notifierService, this
+							.getID(), commands))) {
 
 				// TODO: remove this once we get AspectJ in here!
 				notifierService.addSessionEvent(this.getID(), Integer
@@ -179,7 +179,8 @@ public class ThingmagicReader extends AbstractSensor<ThingmagicReaderSession> {
 	@Override
 	public void destroySensorSession(String sessionid) {
 		ThingmagicReaderSession thingmagicsession = session.getAndSet(null);
-		if (thingmagicsession != null && thingmagicsession.getID().equals(sessionid)) {
+		if (thingmagicsession != null
+				&& thingmagicsession.getID().equals(sessionid)) {
 			for (Integer id : thingmagicsession.currentCommands().keySet()) {
 				thingmagicsession.killComand(id);
 			}
