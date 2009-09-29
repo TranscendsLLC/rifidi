@@ -7,6 +7,7 @@ Bundle-Vendor: Pramari Europe GmbH
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Require-Bundle: org.rifidi.edge.api;bundle-version="1.1.1"
 Export-Package: org.rifidi.edge.core.services.esper,
+ org.rifidi.edge.core.services.logging,
  org.rifidi.edge.core.services.notification,
  org.rifidi.edge.core.services.notification.data
 Import-Package: com.espertech.esper.client,

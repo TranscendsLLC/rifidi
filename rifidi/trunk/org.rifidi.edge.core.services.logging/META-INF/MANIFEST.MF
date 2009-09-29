@@ -5,4 +5,4 @@ Bundle-SymbolicName: org.rifidi.edge.core.services.logging
 Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: org.apache.log4j;version="1.2.15"
-Export-Package: org.rifidi.edge.core.services.logging
+Require-Bundle: org.rifidi.edge.core.services;bundle-version="1.0.0"
