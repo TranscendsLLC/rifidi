@@ -13,12 +13,15 @@ package org.rifidi.edge.readerplugin.thingmagic;
 
 import java.io.IOException;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.sensors.base.AbstractIPSensorSession;
 import org.rifidi.edge.core.sensors.base.AbstractSensor;
 import org.rifidi.edge.core.sensors.base.threads.MessageParsingStrategyFactory;
 import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
+import org.rifidi.edge.core.sensors.commands.Command;
 import org.rifidi.edge.core.services.notification.NotifierService;
 import org.springframework.jms.core.JmsTemplate;
 
@@ -30,10 +33,10 @@ import org.springframework.jms.core.JmsTemplate;
 public class ThingmagicReaderSession extends AbstractIPSensorSession {
 
 	/** Logger for this class. */
-	// private static final Log logger = LogFactory
-	// .getLog(ThingmagicReaderSession.class);
+	private static final Log logger = LogFactory
+			.getLog(ThingmagicReaderSession.class);
 	/** Set to true if the session is destroied. */
-	private AtomicBoolean destroied = new AtomicBoolean(false);
+	//private AtomicBoolean destroied = new AtomicBoolean(false);
 	/** Each command needs to be terminated with a newline. */
 	public static final String NEWLINE = "\n";
 	/** Welcome string. */
@@ -81,7 +84,6 @@ public class ThingmagicReaderSession extends AbstractIPSensorSession {
 				template.getDefaultDestination(), template, commands);
 		this.notifierService = notifierService;
 		this.readerID = readerID;
-		// this.messageParser = new AlienMessageParsingStrategy();
 	}
 
 	/*
@@ -103,8 +105,59 @@ public class ThingmagicReaderSession extends AbstractIPSensorSession {
 	 */
 	@Override
 	public boolean onConnect() throws IOException {
-		//FIXME: Do something about this.  
+		// FIXME: Do something about this.
 		return true;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.rifidi.edge.core.sensors.SensorSession#submit(java.lang.String,
+	 * long, java.util.concurrent.TimeUnit)
+	 */
+	@Override
+	public Integer submit(String commandID, long interval, TimeUnit unit) {
+		Integer retVal = super.submit(commandID, interval, unit);
+		// TODO: Remove this once we have aspectJ
+		try {
+			notifierService.jobSubmitted(this.readerID, this.getID(), retVal,
+					commandID);
+		} catch (Exception e) {
+			// make sure the notification doesn't cause this method to exit
+			// under any circumstances
+			logger.error(e);
+		}
+		return retVal;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.core.sensors.SensorSession#submit(org.rifidi.edge.core
+	 * .sensors.commands.Command)
+	 */
+	@Override
+	public void submit(Command command) {
+		super.submit(command);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.rifidi.edge.core.sensors.SensorSession#submit(java.lang.String)
+	 */
+	@Override
+	public void submit(String commandID) {
+		super.submit(commandID);
+		try {
+			notifierService.jobSubmitted(this.readerID, this.getID(), -1,
+					commandID);
+		} catch (Exception e) {
+			// make sure the notification doesn't cause this method to exit
+			// under any circumstances
+			logger.error(e);
+		}
 	}
 
 }
