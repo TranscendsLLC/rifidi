@@ -123,11 +123,11 @@ public class ThingmagicReaderSession extends AbstractIPSensorSession {
 	 */
 	@Override
 	public boolean onConnect() throws IOException {
-		System.out.println("Sending tag message");
-		sendMessage(new ByteMessage("select id, protocol_id from tag_id;\r\n"
-				.getBytes()));
-		System.out.println(receiveMessage().message);
-		System.out.println("Recieving tag message");
+		// System.out.println("Sending tag message");
+		// sendMessage(new ByteMessage("select id, protocol_id from tag_id;\r\n"
+		// .getBytes()));
+		// System.out.println(receiveMessage().message);
+		// System.out.println("Recieving tag message");
 		
 		return true;
 	}
