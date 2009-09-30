@@ -25,15 +25,26 @@ public class ThingmagicMessageParsingStrategy implements MessageParsingStrategy 
 	/** The message currently being processed. */
 	private byte[] _messageBuilder = new byte[0];
 	/** Character that terminates a message from alien. */
-	public static final char TERMINATION_CHAR = '.';
-	
-	/* (non-Javadoc)
-	 * @see org.rifidi.edge.core.sensors.base.threads.MessageParsingStrategy#isMessage(byte)
+	public static final char TERMINATION_CHAR = 0x0a;
+
+	private byte lastbyte = 0;
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.core.sensors.base.threads.MessageParsingStrategy#isMessage
+	 * (byte)
 	 */
 	@Override
 	public byte[] isMessage(byte message) {
-		//FIXME: Not done yet
-		if (TERMINATION_CHAR == message) {
+		if (TERMINATION_CHAR == message && _messageBuilder.length == 0) {
+			lastbyte = 0;
+			return _messageBuilder;
+		}
+		// FIXME: This isn't perfect and might not work
+		if (TERMINATION_CHAR == message && lastbyte == TERMINATION_CHAR) {
+			lastbyte = 0;
 			byte[] ret = _messageBuilder;
 			_messageBuilder = new byte[0];
 			return ret;
@@ -41,6 +52,7 @@ public class ThingmagicMessageParsingStrategy implements MessageParsingStrategy 
 		_messageBuilder = Arrays.copyOf(_messageBuilder,
 				_messageBuilder.length + 1);
 		_messageBuilder[_messageBuilder.length - 1] = message;
+		lastbyte = message;
 		return null;
 	}
 
