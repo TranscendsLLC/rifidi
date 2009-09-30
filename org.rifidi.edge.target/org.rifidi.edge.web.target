@@ -3,16 +3,16 @@
 
 <target name="Restored Target">
 <locations>
-<location path="C:\Users\Owner\workspaces\edgeserver\org.rifidi.edge.target" type="Profile"/>
-<location path="C:\Users\Owner\workspaces\edgeserver\org.rifidi.edge.target\esper" type="Directory"/>
-<location path="C:\Users\Owner\workspaces\edgeserver\org.rifidi.edge.target\libraries" type="Directory"/>
-<location path="C:\Users\Owner\workspaces\edgeserver\org.rifidi.edge.target\aspectj" type="Directory"/>
-<location path="C:\Users\Owner\workspaces\edgeserver\org.rifidi.edge.target\eclipseaspects" type="Directory"/>
-<location path="C:\Users\Owner\workspaces\edgeserver\org.rifidi.edge.target\spring" type="Directory"/>
-<location path="C:\Users\Owner\workspaces\edgeserver\org.rifidi.edge.target\logging" type="Directory"/>
-<location path="C:\Users\Owner\workspaces\edgeserver\org.rifidi.edge.target\tomcat" type="Directory"/>
-<location path="C:\Users\Owner\workspaces\edgeserver\org.rifidi.edge.target\javax" type="Directory"/>
-<location path="C:\Users\Owner\workspaces\edgeserver\org.rifidi.edge.target\commons" type="Directory"/>
+<location path="${workspace_loc}\org.rifidi.edge.target\esper" type="Directory"/>
+<location path="${workspace_loc}\org.rifidi.edge.target\libraries" type="Directory"/>
+<location path="${workspace_loc}\org.rifidi.edge.target\eclipseaspects" type="Directory"/>
+<location path="${workspace_loc}\org.rifidi.edge.target\spring" type="Directory"/>
+<location path="${workspace_loc}\org.rifidi.edge.target\logging" type="Directory"/>
+<location path="${workspace_loc}\org.rifidi.edge.target\tomcat" type="Directory"/>
+<location path="${workspace_loc}\org.rifidi.edge.target\javax" type="Directory"/>
+<location path="${workspace_loc}\org.rifidi.edge.target\commons" type="Directory"/>
+<location path="${workspace_loc}\org.rifidi.edge.target\aspectj" type="Directory"/>
+<location path="${workspace_loc}\org.rifidi.edge.target" type="Profile"/>
 </locations>
 <environment>
 <os>win32</os>
