@@ -324,8 +324,9 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 			aliensession.disconnect();
 			// TODO: remove this once we get AspectJ in here!
 			notifierService.removeSessionEvent(this.getID(), sessionid);
+		}else{
+			logger.warn("Tried to delete a non existend session: " + sessionid);
 		}
-		logger.warn("Tried to delete a non existend session: " + sessionid);
 	}
 
 	/*
