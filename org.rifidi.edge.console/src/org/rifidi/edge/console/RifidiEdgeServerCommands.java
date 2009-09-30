@@ -27,11 +27,13 @@ import org.rifidi.edge.core.configuration.impl.AbstractCommandConfigurationFacto
 import org.rifidi.edge.core.configuration.services.ConfigurationService;
 import org.rifidi.edge.core.daos.CommandDAO;
 import org.rifidi.edge.core.daos.ReaderDAO;
+import org.rifidi.edge.core.exceptions.CannotCreateServiceException;
 import org.rifidi.edge.core.exceptions.CannotCreateSessionException;
 import org.rifidi.edge.core.sensors.SensorSession;
 import org.rifidi.edge.core.sensors.base.AbstractSensor;
 import org.rifidi.edge.core.sensors.base.AbstractSensorFactory;
 import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
+import org.rifidi.edge.core.sensors.exceptions.CannotDestroySensorException;
 import org.rifidi.edge.core.services.logging.LoggingService;
 
 /**
@@ -41,13 +43,13 @@ import org.rifidi.edge.core.services.logging.LoggingService;
  */
 public class RifidiEdgeServerCommands implements CommandProvider {
 	/** DAO for accessing readers. */
-	private ReaderDAO readerDAO;
+	private volatile ReaderDAO readerDAO;
 	/** DAO for managing commands. */
-	private CommandDAO commandDAO;
+	private volatile CommandDAO commandDAO;
 	/** Configuration Service */
-	private ConfigurationService configService;
+	private volatile ConfigurationService configService;
 	/** Service that allows you to change logging level at runtime */
-	private LoggingService loggingService;
+	private volatile LoggingService loggingService;
 
 	/**
 	 * Sets the configuration service for this class.
@@ -165,8 +167,13 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 			attrname = intp.nextArgument();
 			attrval = intp.nextArgument();
 		}
-		configService.createService(readerFacID, list);
-		intp.println("Reader Created.");
+		try {
+			String id = configService.createService(readerFacID, list);
+			intp.println("Reader Created with ID " + id );
+		} catch (CannotCreateServiceException e) {
+			intp.println("Cannot create reader");
+		}
+		
 		return null;
 	}
 
@@ -188,6 +195,7 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 			return null;
 		}
 		reader.destroy();
+		intp.println("Sensor with ID " + readerID + " has been deleted");
 		return null;
 	}
 
@@ -328,8 +336,12 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 			attrname = intp.nextArgument();
 			attrval = intp.nextArgument();
 		}
-		configService.createService(commandFacID, list);
-		intp.println("Command Created.");
+		try {
+			String id = configService.createService(commandFacID, list);
+			intp.println("Command Configuration Created with ID " + id);
+		} catch (CannotCreateServiceException e) {
+			intp.println("Cannot create command");
+		}
 		return null;
 	}
 
@@ -352,6 +364,7 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 			return null;
 		}
 		command.destroy();
+		intp.println("Command Configuration with id " + commandID + " has been deleted");
 		return null;
 
 	}
@@ -370,8 +383,8 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 		}
 		AbstractSensor<?> reader = readerDAO.getReaderByID(readerid);
 		try {
-			reader.createSensorSession();
-			intp.println("Session created.");
+			String sessionID = reader.createSensorSession();
+			intp.println("Session created: " + readerid+":"+sessionID);
 		} catch (CannotCreateSessionException e) {
 			intp.println("Session cannot be created");
 		}
@@ -400,7 +413,12 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 			intp.println("No reader with ID " + readerid + " is available");
 			return null;
 		}
-		reader.destroySensorSession(sessionid);
+		try {
+			reader.destroySensorSession(sessionid);
+			intp.println("Session " + readerid+":"+sessionid+ " destroyed");
+		} catch (CannotDestroySensorException e) {
+			intp.println("Cannot destroy session");
+		}
 		return null;
 	}
 
@@ -450,7 +468,7 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 			}
 		});
 		t.start();
-		intp.println("Session started.");
+		intp.println("Session "+readerid+":"+sessionid+" started.");
 		return null;
 	}
 
@@ -487,7 +505,7 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 			intp.println("Session id not an integer.");
 			return null;
 		}
-		intp.println("Session stopped.");
+		intp.println("Session "+readerid+":"+sessionid+" stopped.");
 		return null;
 	}
 

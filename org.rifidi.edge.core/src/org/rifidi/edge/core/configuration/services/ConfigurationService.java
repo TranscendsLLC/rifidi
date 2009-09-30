@@ -17,6 +17,7 @@ import java.util.Set;
 import javax.management.AttributeList;
 
 import org.rifidi.edge.core.configuration.Configuration;
+import org.rifidi.edge.core.exceptions.CannotCreateServiceException;
 
 /**
  * Services implementing this interface are supposed to provide a link between
@@ -45,10 +46,11 @@ public interface ConfigurationService {
 	/**
 	 * Create a new service.
 	 * 
-	 * @param factoryID
-	 * @param attributes
+	 * @param factoryID The ID of the factory to use to create the new service
+	 * @param attributes The Attributes to set on the new service
+	 * @return The ID of the newly created service
 	 */
-	void createService(String factoryID, AttributeList attributes);
+	String createService(String factoryID, AttributeList attributes) throws CannotCreateServiceException;
 
 	/**
 	 * Destroy a service.

@@ -32,12 +32,14 @@ import org.rifidi.edge.core.configuration.Configuration;
 import org.rifidi.edge.core.configuration.services.ConfigurationService;
 import org.rifidi.edge.core.daos.CommandDAO;
 import org.rifidi.edge.core.daos.ReaderDAO;
+import org.rifidi.edge.core.exceptions.CannotCreateServiceException;
 import org.rifidi.edge.core.exceptions.CannotCreateSessionException;
 import org.rifidi.edge.core.sensors.SensorSession;
 import org.rifidi.edge.core.sensors.base.AbstractSensor;
 import org.rifidi.edge.core.sensors.base.AbstractSensorFactory;
 import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
 import org.rifidi.edge.core.sensors.commands.Command;
+import org.rifidi.edge.core.sensors.exceptions.CannotDestroySensorException;
 
 /**
  * 
@@ -64,7 +66,11 @@ public class SensorManagerServiceImpl implements SensorManagerService {
 	public void createReader(String readerConfigurationFactoryID,
 			AttributeList readerConfigurationProperties) {
 		logger.debug("RMI call: createReader");
-		configurationService.createService(readerConfigurationFactoryID, readerConfigurationProperties);
+		try {
+			configurationService.createService(readerConfigurationFactoryID, readerConfigurationProperties);
+		} catch (CannotCreateServiceException e) {
+			logger.warn("Sensor not created");
+		}
 	}
 
 
@@ -221,7 +227,11 @@ public class SensorManagerServiceImpl implements SensorManagerService {
 		logger.debug("RMI call: deleteSession");
 		AbstractSensor<?> reader = this.readerDAO.getReaderByID(readerID);
 		if (reader != null) {
-			reader.destroySensorSession(sessionID);
+			try{
+				reader.destroySensorSession(sessionID);
+			}catch (CannotDestroySensorException ex){
+				logger.error(ex);
+			}
 		}
 
 	}

@@ -41,6 +41,7 @@ import org.rifidi.edge.core.sensors.Sensor;
 import org.rifidi.edge.core.sensors.SensorSession;
 import org.rifidi.edge.core.sensors.SensorUpdate;
 import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
+import org.rifidi.edge.core.sensors.exceptions.CannotDestroySensorException;
 import org.rifidi.edge.core.sensors.exceptions.DuplicateSubscriptionException;
 import org.rifidi.edge.core.sensors.exceptions.ImmutableException;
 import org.rifidi.edge.core.sensors.exceptions.InUseException;
@@ -112,7 +113,7 @@ public abstract class AbstractSensor<T extends SensorSession> extends
 	 * 
 	 * @param session
 	 */
-	abstract public void destroySensorSession(String id);
+	abstract public void destroySensorSession(String id) throws CannotDestroySensorException;
 
 	/**
 	 * Send properties that have been modified to the physical reader
