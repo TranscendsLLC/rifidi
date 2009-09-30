@@ -16,3 +16,6 @@ Import-Package: javax.jms;version="1.1.0",
 Require-Bundle: org.rifidi.edge.core;bundle-version="5.0.1",
  org.rifidi.edge.core.services;bundle-version="1.0.0",
  org.rifidi.edge.api;bundle-version="1.1.1"
+Export-Package: org.rifidi.edge.readerplugin.thingmagic,
+ org.rifidi.edge.readerplugin.thingmagic.commandobject,
+ org.rifidi.edge.readerplugin.thingmagic.commands.internal
