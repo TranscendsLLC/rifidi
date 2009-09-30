@@ -20,7 +20,7 @@ public class ThingmagicReaderDefaultValues {
 	/** IP address of the sensorSession. */
 	public static final String IPADDRESS = "127.0.0.1";
 	/** Port to connect to. */
-	public static final String PORT = "20000";
+	public static final String PORT = "8080";
 	/** Time between two connection attempts. */
 	public static final String RECONNECTION_INTERVAL = "500";
 	/** Number of connection attempts before a connection goes into fail state. */

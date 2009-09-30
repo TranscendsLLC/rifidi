@@ -6,29 +6,17 @@
     http://www.springframework.org/schema/osgi/spring-osgi.xsd">
 
 	<!-- Put reader configuration service in OSGi Registry -->
-<!--	<osgi:service id="alienConfigurationFactoryService" ref="alienConfigurationFactory">-->
-<!--		<osgi:interfaces>-->
-<!--			<value>org.rifidi.edge.core.configuration.ServiceFactory</value>-->
-<!--			<value>org.rifidi.edge.core.sensors.base.AbstractSensorFactory</value>-->
-<!--		</osgi:interfaces>-->
-<!--	</osgi:service>-->
+	<osgi:service id="thingmagicConfigurationFactoryService" ref="thingmagicConfigurationFactory">
+		<osgi:interfaces>
+			<value>org.rifidi.edge.core.configuration.ServiceFactory</value>
+			<value>org.rifidi.edge.core.sensors.base.AbstractSensorFactory</value>
+		</osgi:interfaces>
+	</osgi:service>
 	
-<!--	<osgi:service id="alienAutoConfigurationFactoryService" ref="alienAutoConfigurationFactory">-->
-<!--		<osgi:interfaces>-->
-<!--			<value>org.rifidi.edge.core.configuration.ServiceFactory</value>-->
-<!--			<value>org.rifidi.edge.core.sensors.base.AbstractSensorFactory</value>-->
-<!--		</osgi:interfaces>-->
-<!--	</osgi:service>-->
-<!--	-->
-<!--	<osgi:set id="alienCommands" interface="org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration"-->
-<!--		cardinality="0..N" filter="(reader=Alien9800)">-->
-<!--		<osgi:listener ref="alienConfigurationFactory" bind-method="bindCommandConfiguration" unbind-method="unbindCommandConfiguration"/>-->
-<!--	</osgi:set>-->
-<!--	-->
-<!--	<osgi:set id="alienautoCommands" interface="org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration"-->
-<!--		cardinality="0..N" filter="(reader=AlienAutonomous)">-->
-<!--		<osgi:listener ref="alienAutoConfigurationFactory" bind-method="bindCommandConfiguration" unbind-method="unbindCommandConfiguration"/>-->
-<!--	</osgi:set>-->
+	<osgi:set id="thingmagicCommands" interface="org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration"
+		cardinality="0..N" filter="(reader=Thingmagic)">
+		<osgi:listener ref="thingmagicConfigurationFactory" bind-method="bindCommandConfiguration" unbind-method="unbindCommandConfiguration"/>
+	</osgi:set>
 	
 	<osgi:reference id="JMSNotifierService"
 		interface="org.rifidi.edge.core.services.notification.NotifierService" />
