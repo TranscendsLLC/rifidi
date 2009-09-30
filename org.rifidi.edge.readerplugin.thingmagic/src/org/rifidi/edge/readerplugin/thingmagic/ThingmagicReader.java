@@ -28,6 +28,8 @@ import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.api.rmi.dto.CommandDTO;
 import org.rifidi.edge.api.rmi.dto.SessionDTO;
 import org.rifidi.edge.core.configuration.annotations.Operation;
+import org.rifidi.edge.core.configuration.annotations.Property;
+import org.rifidi.edge.core.configuration.annotations.PropertyType;
 import org.rifidi.edge.core.configuration.mbeanstrategies.AnnotationMBeanInfoStrategy;
 import org.rifidi.edge.core.exceptions.CannotCreateSessionException;
 import org.rifidi.edge.core.sensors.SensorSession;
@@ -88,9 +90,7 @@ public class ThingmagicReader extends AbstractSensor<ThingmagicReaderSession> {
 	public ThingmagicReader(Set<AbstractCommandConfiguration<?>> commands) {
 		this.commands = commands;
 		readerProperties = new ConcurrentHashMap<String, String>();
-
 		propCommandsToBeExecuted = new LinkedBlockingQueue<ThingmagicCommandObjectWrapper>();
-
 		logger.debug("New instance of ThingmagicReader created.");
 	}
 
@@ -189,6 +189,78 @@ public class ThingmagicReader extends AbstractSensor<ThingmagicReaderSession> {
 			notifierService.removeSessionEvent(this.getID(), sessionid);
 		}
 		logger.warn("Tried to delete a non existend session: " + sessionid);
+	}
+	
+	/**
+	 * @return the IPADDRESS
+	 */
+	@Property(displayName = "IP Address", description = "IP Address of "
+			+ "the Reader", writable = true, type = PropertyType.PT_STRING, category = "conn"
+			+ "ection", defaultValue = ThingmagicReaderDefaultValues.IPADDRESS, orderValue = 0)
+	public String getIpAddress() {
+		return ipAddress;
+	}
+
+	/**
+	 * @param IPADDRESS
+	 *            the IPADDRESS to set
+	 */
+	public void setIpAddress(String ipAddress) {
+		this.ipAddress = ipAddress;
+	}
+
+	/**
+	 * @return the PORT
+	 */
+	// 
+	@Property(displayName = "Port", description = "Port of the" + " Reader", writable = true, type = PropertyType.PT_INTEGER, category = "conn"
+			+ "ection", orderValue = 1, defaultValue = ThingmagicReaderDefaultValues.PORT, minValue = "0", maxValue = "65535")
+	public Integer getPort() {
+		return port;
+	}
+
+	/**
+	 * @param PORT
+	 *            the PORT to set
+	 */
+	public void setPort(Integer port) {
+		this.port = port;
+	}
+	
+	/**
+	 * @return the RECONNECTION_INTERVAL
+	 */
+	@Property(displayName = "Reconnection Interval", description = "Time between two"
+			+ " connection attempts (ms).", writable = true, type = PropertyType.PT_INTEGER, category = "conn"
+			+ "ection", defaultValue = ThingmagicReaderDefaultValues.RECONNECTION_INTERVAL, orderValue = 4, minValue = "0")
+	public Integer getReconnectionInterval() {
+		return reconnectionInterval;
+	}
+
+	/**
+	 * @param RECONNECTION_INTERVAL
+	 *            the RECONNECTION_INTERVAL to set
+	 */
+	public void setReconnectionInterval(Integer reconnectionInterval) {
+		this.reconnectionInterval = reconnectionInterval;
+	}
+
+	/**
+	 * @return the MAX_CONNECTION_ATTEMPTS
+	 */
+	@Property(displayName = "Maximum Connection Attempts", description = "Number of times to attempt to recconnect. "
+			+ "If -1, then try forever", writable = true, type = PropertyType.PT_INTEGER, category = "conn"
+			+ "ection", defaultValue = ThingmagicReaderDefaultValues.MAX_CONNECTION_ATTEMPTS, orderValue = 5, minValue = "-1")
+	public Integer getMaxNumConnectionAttempts() {
+		return maxNumConnectionAttempts;
+	}
+
+	/**
+	 * @param MAX_CONNECTION_ATTEMPTS
+	 *            the MAX_CONNECTION_ATTEMPTS to set
+	 */
+	public void setMaxNumConnectionAttempts(Integer maxNumConnectionAttempts) {
+		this.maxNumConnectionAttempts = maxNumConnectionAttempts;
 	}
 
 	/*
