@@ -29,6 +29,7 @@ import javax.jms.Session;
 import org.apache.activemq.command.ActiveMQObjectMessage;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.mina.common.RuntimeIOException;
 import org.llrp.ltk.generated.enumerations.AccessReportTriggerType;
 import org.llrp.ltk.generated.enumerations.NotificationEventType;
 import org.llrp.ltk.generated.enumerations.ROReportTriggerType;
@@ -152,7 +153,7 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 				} catch (LLRPConnectionAttemptFailedException e) {
 					logger.debug("Attempt to connect to LLRP reader failed: "
 							+ connCount);
-				} catch (org.apache.mina.common.RuntimeIOException e) {
+				} catch (RuntimeIOException e) {
 					logger.debug("Attempt to connect to LLRP reader failed: "
 							+ connCount);
 				}
