@@ -44,6 +44,7 @@ import org.rifidi.edge.core.configuration.ServiceFactory;
 import org.rifidi.edge.core.configuration.ServiceStore;
 import org.rifidi.edge.core.configuration.impl.DefaultConfigurationImpl;
 import org.rifidi.edge.core.configuration.mbeans.ConfigurationControlMBean;
+import org.rifidi.edge.core.exceptions.CannotCreateServiceException;
 import org.rifidi.edge.core.exceptions.InvalidStateException;
 import org.rifidi.edge.core.sensors.SensorSession;
 import org.rifidi.edge.core.sensors.base.AbstractSensor;
@@ -257,8 +258,9 @@ public class ConfigurationServiceImpl implements ConfigurationService,
 		try {
 			Marshaller marshaller = jaxbContext.createMarshaller();
 			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+			File f = new File(path);
 			marshaller.marshal(store, new File(path));
-			logger.info("configuration saved at " + path);
+			logger.info("configuration saved at " + f.getAbsolutePath());
 		} catch (JAXBException e) {
 			logger.error(e);
 		}
@@ -271,12 +273,12 @@ public class ConfigurationServiceImpl implements ConfigurationService,
 	 * createService( java.lang.String, javax.management.AttributeList)
 	 */
 	@Override
-	public void createService(final String factoryID,
-			final AttributeList attributes) {
+	public String createService(final String factoryID,
+			final AttributeList attributes) throws CannotCreateServiceException{
 		ServiceFactory<?> factory = factories.get(factoryID);
 		if (factory == null) {
 			logger.warn("Tried to use a nonexistent factory: " + factoryID);
-			return;
+			throw new CannotCreateServiceException();
 		}
 		String serviceID = factoryID;
 		serviceID = serviceID.replaceAll("[^A-Z^a-z^0-9^_]", "_") + "_";
@@ -306,12 +308,14 @@ public class ConfigurationServiceImpl implements ConfigurationService,
 			//TODO: Ticket #236
 			try {
 				factory.createInstance(serviceID);
+				return serviceID;
 			} catch (IllegalArgumentException e) {
 				logger.error("exception", e);
 			} catch (InvalidStateException e) {
 				logger.error("exception ", e);
 			}
 		}
+		throw new CannotCreateServiceException();
 	}
 
 	/*

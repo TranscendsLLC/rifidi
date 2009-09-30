@@ -10,9 +10,6 @@
  * License:      The software in this package is published under the terms of the GPL License
  *                   A copy of the license is included in this distribution under RifidiEdge-License.txt 
  */
-/**
- * 
- */
 package org.rifidi.edge.core.sensors.exceptions;
 
 /**

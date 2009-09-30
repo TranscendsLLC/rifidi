@@ -40,6 +40,7 @@ import org.rifidi.edge.core.exceptions.CannotCreateSessionException;
 import org.rifidi.edge.core.sensors.SensorSession;
 import org.rifidi.edge.core.sensors.base.AbstractSensor;
 import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
+import org.rifidi.edge.core.sensors.exceptions.CannotDestroySensorException;
 import org.rifidi.edge.core.services.notification.NotifierService;
 import org.rifidi.edge.readerplugin.alien.commandobject.AlienCommandObjectWrapper;
 import org.rifidi.edge.readerplugin.alien.commandobject.AlienGetCommandObject;
@@ -285,7 +286,11 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 			super.destroy();
 			Alien9800ReaderSession aliensession = session.get();
 			if (aliensession != null) {
-				destroySensorSession(aliensession.getID());
+				try {
+					destroySensorSession(aliensession.getID());
+				} catch (CannotDestroySensorException e) {
+					logger.warn(e.getMessage());
+				}
 			}
 		}
 	}
@@ -315,7 +320,7 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 	 * (java.lang.String)
 	 */
 	@Override
-	public void destroySensorSession(String sessionid) {
+	public void destroySensorSession(String sessionid) throws CannotDestroySensorException{
 		Alien9800ReaderSession aliensession = session.getAndSet(null);
 		if (aliensession != null && aliensession.getID().equals(sessionid)) {
 			for (Integer id : aliensession.currentCommands().keySet()) {
@@ -325,7 +330,9 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 			// TODO: remove this once we get AspectJ in here!
 			notifierService.removeSessionEvent(this.getID(), sessionid);
 		}else{
-			logger.warn("Tried to delete a non existend session: " + sessionid);
+			String error ="Tried to delete a non existend session: " + sessionid; 
+			logger.warn(error);
+			throw new CannotDestroySensorException(error); 
 		}
 	}
 

@@ -27,6 +27,7 @@ import org.rifidi.edge.core.configuration.Configuration;
 import org.rifidi.edge.core.configuration.impl.AbstractCommandConfigurationFactory;
 import org.rifidi.edge.core.configuration.services.ConfigurationService;
 import org.rifidi.edge.core.daos.CommandDAO;
+import org.rifidi.edge.core.exceptions.CannotCreateServiceException;
 import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
 
 /**
@@ -75,8 +76,12 @@ public class CommandManagerServiceImpl implements CommandManagerService {
 	public void createCommand(String commandConfigurationType,
 			AttributeList properties) {
 		logger.info("RMI: Create Command called");
-		configurationService
-				.createService(commandConfigurationType, properties);
+		try {
+			configurationService
+					.createService(commandConfigurationType, properties);
+		} catch (CannotCreateServiceException e) {
+			logger.warn("Command Configuraiton not created");
+		}
 	}
 
 	/*
