@@ -13,6 +13,9 @@ package org.rifidi.edge.readerplugin.thingmagic.commands;
 
 import javax.management.MBeanInfo;
 
+import org.rifidi.edge.core.configuration.annotations.JMXMBean;
+import org.rifidi.edge.core.configuration.annotations.Property;
+import org.rifidi.edge.core.configuration.annotations.PropertyType;
 import org.rifidi.edge.core.configuration.mbeanstrategies.AnnotationMBeanInfoStrategy;
 import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
 
@@ -21,6 +24,7 @@ import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
  * 
  * @author Matthew Dean
  */
+@JMXMBean
 public class ThingmagicGetTagListCommandConfiguration extends
 		AbstractCommandConfiguration<ThingmagicGetTagListCommand> {
 	
@@ -34,6 +38,7 @@ public class ThingmagicGetTagListCommandConfiguration extends
 		mbeaninfo = strategy
 				.getMBeanInfo(ThingmagicGetTagListCommandConfiguration.class);
 	}
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration#getCommand(java.lang.String)
@@ -44,7 +49,7 @@ public class ThingmagicGetTagListCommandConfiguration extends
 		c.setReader(readerID);
 		return c;
 	}
-
+	
 	/*
 	 * (non-Javadoc)
 	 * @see org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration#getCommandDescription()

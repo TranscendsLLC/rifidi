@@ -27,6 +27,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.api.rmi.dto.CommandDTO;
 import org.rifidi.edge.api.rmi.dto.SessionDTO;
+import org.rifidi.edge.core.configuration.annotations.JMXMBean;
 import org.rifidi.edge.core.configuration.annotations.Operation;
 import org.rifidi.edge.core.configuration.annotations.Property;
 import org.rifidi.edge.core.configuration.annotations.PropertyType;
@@ -45,6 +46,7 @@ import org.springframework.jms.core.JmsTemplate;
  * 
  * @author Matthew Dean
  */
+@JMXMBean
 public class ThingmagicReader extends AbstractSensor<ThingmagicReaderSession> {
 
 	/** Logger for this class. */
