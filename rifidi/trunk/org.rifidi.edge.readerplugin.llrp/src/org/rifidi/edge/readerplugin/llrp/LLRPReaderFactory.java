@@ -14,7 +14,6 @@ package org.rifidi.edge.readerplugin.llrp;
 
 import java.util.Map;
 
-import javax.jms.Destination;
 import javax.management.MBeanInfo;
 
 import org.rifidi.edge.core.exceptions.InvalidStateException;
