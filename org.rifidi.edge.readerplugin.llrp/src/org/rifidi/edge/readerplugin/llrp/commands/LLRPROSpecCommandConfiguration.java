@@ -108,7 +108,7 @@ public class LLRPROSpecCommandConfiguration extends
 	 */
 	@Property(displayName = "AntennaIDs", description = "Select which"
 			+ " antennas to scan.  Use a comma delimited string such"
-			+ " as \"1,2,3\".", writable = true)
+			+ " as \"1,2,3\"", writable = true)
 	public String getAntennaIDs() {
 		return antennaSequence;
 	}
@@ -182,7 +182,7 @@ public class LLRPROSpecCommandConfiguration extends
 	 */
 	@Property(displayName = "Trigger Type", description = "The type of ROSpec it is, "
 		+ "with \'NULL\' being a null trigger and \'PER\' being a periodic trigger.  "
-		+ "Periodic triggers will send back tags using the duration value you set. "
+		+ "Periodic triggers will send back tags using the duration value you set"
 		+ " ", defaultValue="NULL", writable = true, type = PropertyType.PT_STRING, category=category, orderValue=2)
 	public String getTriggerType() {
 		return triggerType;
@@ -207,7 +207,7 @@ public class LLRPROSpecCommandConfiguration extends
 	 */
 	@Property(displayName = "Duration", description = "The duration of the ROSpec trigger.  "
 			+ "Will only be used if you set the ROSpec trigger type to "
-			+ "\'Periodic\'.", writable = true, type = PropertyType.PT_INTEGER, defaultValue = ""
+			+ "\'Periodic\'", writable = true, type = PropertyType.PT_INTEGER, defaultValue = ""
 			+ "1000", minValue = "0", maxValue = "65535", category=category, orderValue=3)
 	public Integer getDuration() {
 		return this.duration;

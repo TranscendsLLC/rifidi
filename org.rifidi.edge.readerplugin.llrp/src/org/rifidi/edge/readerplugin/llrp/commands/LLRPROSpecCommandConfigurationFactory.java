@@ -27,7 +27,7 @@ public class LLRPROSpecCommandConfigurationFactory
 		extends
 		AbstractCommandConfigurationFactory<AbstractCommandConfiguration<?>> {
 	/** Name of the command. */
-	public static final String name = "LLRPROSpecCommand-Configuration-Factory";
+	public static final String name = "LLRPROSpecCommand-Configuration";
 	/** Mbeaninfo for this class. */
 	public static final MBeanInfo mbeaninfo;
 	static {
