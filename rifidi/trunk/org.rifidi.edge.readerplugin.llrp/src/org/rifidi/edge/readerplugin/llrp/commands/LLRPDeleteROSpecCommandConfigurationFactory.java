@@ -27,7 +27,7 @@ public class LLRPDeleteROSpecCommandConfigurationFactory
 		extends
 		AbstractCommandConfigurationFactory<AbstractCommandConfiguration<?>> {
 	/** Name of the command. */
-	public static final String name = "DeleteROSpec-Configuration-Factory";
+	public static final String name = "DeleteROSpec-Configuration";
 	/** Mbeaninfo for this class. */
 	public static final MBeanInfo mbeaninfo;
 	static {
