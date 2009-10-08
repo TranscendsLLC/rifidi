@@ -1,3 +1,14 @@
+/*
+ * AlienAutonomousModeCommandConfiguration.java
+ * 
+ * Created:     July 22nd, 2009
+ * Project:       Rifidi Edge Server - A middleware platform for RFID applications
+ *                    http://www.rifidi.org
+ *                    http://rifidi.sourceforge.net
+ * Copyright:   Pramari LLC and the Rifidi Project
+ * License:     The software in this package is published under the terms of the EPL License
+ *                   A copy of the license is included in this distribution under Rifidi-License.txt 
+ */
 /**
  * 
  */
@@ -134,7 +145,7 @@ public class AlienAutonomousModeCommandConfiguration extends
 	/**
 	 * @return the autoStopTimer
 	 */
-	@Property(category = "Autonomous", defaultValue = "1000", description = "Timer to jump from work state to evaluation state. -1 indicates the reader should remain in the work stateindefinitely, or until a configured AutoStopTrigger is received.", displayName = "Auto Stop Timer", type = PropertyType.PT_INTEGER, writable = true, minValue = "-1", orderValue = 1)
+	@Property(category = "Autonomous", defaultValue = "1000", description = "Timer to jump from work state to evaluation state. -1 indicates the reader should remain in the work stateindefinitely, or until a configured AutoStopTrigger is received", displayName = "Auto Stop Timer", type = PropertyType.PT_INTEGER, writable = true, minValue = "-1", orderValue = 1)
 	public Integer getAutoStopTimer() {
 		return autoStopTimer;
 	}
