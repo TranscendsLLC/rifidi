@@ -1,0 +1,40 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:osgi="http://www.springframework.org/schema/osgi"
+	xmlns:amq="http://activemq.apache.org/schema/core"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	META-INF/xsd/spring-beans-2.5.xsd
+    http://www.springframework.org/schema/osgi 
+    http://www.springframework.org/schema/osgi/spring-osgi.xsd">
+
+	<!-- Create the Controller -->
+	<bean name="/taglocation.htm" class="com.northwind.rfid.shipping.war.TagLocationController" >
+		<property name="tagLocationService" ref = "tagLocService"/>
+	</bean>
+	
+	<!-- Create the TagLocationService -->
+	<bean id="tagLocService" class="com.northwind.rfid.shipping.war.service.impl.TagLocationServiceImpl" />
+	
+	<!-- Create the JMS Message Receiver-->
+	<bean id="messageReceiver" class="com.northwind.rfid.shipping.war.MessageReceiver">
+		<property name="TLSManager" ref="tagLocService" />
+	</bean>
+	
+	<!-- Create the topic to connect to -->
+	<bean id="NorthwindTopic" class="org.apache.activemq.command.ActiveMQTopic">
+		<property name="physicalName" value="com.northwind.rfid.shipping.topic" />
+	</bean>
+	
+	<!-- JMS Connection Factory -->
+	<bean id="connectionFactory" class="org.apache.activemq.spring.ActiveMQConnectionFactory">
+		<property name="brokerURL" value="vm://externalBroker?create=false" />
+	</bean>
+	
+	<!-- Spring Helper to listen to a JMS Destination -->
+	<bean id="jmsContainer"
+		class="org.springframework.jms.listener.DefaultMessageListenerContainer">
+		<property name="connectionFactory" ref="connectionFactory" />
+		<property name="destination" ref="NorthwindTopic" />
+		<property name="messageListener" ref="messageReceiver" />
+	</bean>
+
+</beans>
