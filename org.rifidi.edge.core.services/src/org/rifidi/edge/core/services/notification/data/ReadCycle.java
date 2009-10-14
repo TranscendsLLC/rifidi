@@ -16,7 +16,9 @@ import java.io.Serializable;
 import java.util.Set;
 
 /**
- * This represents a read cycle from a reader.
+ * This represents a read cycle from a reader. It contains 0 to many
+ * TagReadEvents. The ReadCycle is a collection of tags read during a period of
+ * time.
  * 
  * @author Kyle Neumeier - kyle@pramari.com
  */
@@ -24,16 +26,20 @@ public class ReadCycle implements Serializable {
 
 	/** The serial version ID for this class */
 	private static final long serialVersionUID = 1L;
+	/** The tags that were read during this ReadCycle */
 	private final TagReadEvent[] tags;
 	/** The time this event was generated */
 	private long eventTimestamp;
+	/** The ReaderID which this ReadCycle belongs to */
 	private String readerID;
 
 	/**
 	 * Constructor.
 	 * 
 	 * @param tags
+	 *            The tags that were read during this ReadCycle
 	 * @param eventTimestamp
+	 *            The timestamp of when this ReadCycle was generated
 	 */
 	public ReadCycle(Set<TagReadEvent> tags, String readerID,
 			long eventTimestamp) {
@@ -43,16 +49,15 @@ public class ReadCycle implements Serializable {
 	}
 
 	/**
-	 * Returns the tags
 	 * 
-	 * @return
+	 * @return An array of TagReadEvent objects that represent the data read
+	 *         during this cycle.
 	 */
 	public TagReadEvent[] getTags() {
 		return tags;
 	}
 
 	/**
-	 * Returns the timestamp for this event.
 	 * 
 	 * @return the eventTimestamp
 	 */
@@ -61,9 +66,8 @@ public class ReadCycle implements Serializable {
 	}
 
 	/**
-	 * Returns the ID for this reader.
 	 * 
-	 * @return The ID of the reader this was seen on
+	 * @return The ID of the reader that produced this ReadCycle
 	 */
 	public String getReaderID() {
 		return this.readerID;

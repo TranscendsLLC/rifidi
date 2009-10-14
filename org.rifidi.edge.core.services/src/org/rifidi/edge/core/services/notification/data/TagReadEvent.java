@@ -20,7 +20,7 @@ import java.io.Serializable;
 /**
  * This class acts as a wrapper around a DataContainerEvent (which stores tag
  * data). This class stores extra information about a tag read event, such as
- * the antenna that the tag was seen on
+ * the antenna that the tag was seen on.
  * 
  * @author Kyle Neumeier - kyle@pramari.com
  */
@@ -38,11 +38,16 @@ public class TagReadEvent implements Serializable {
 	private String readerID;
 
 	/**
-	 * Constructor.
+	 * Constructor
 	 * 
+	 * @param readerID
+	 *            The ID of the reader that saw the tag
 	 * @param tag
+	 *            The tag data
 	 * @param antennaID
+	 *            The antenna the Tag was seen on
 	 * @param timestamp
+	 *            When the tag was seen.
 	 */
 	public TagReadEvent(String readerID, DatacontainerEvent tag, int antennaID,
 			long timestamp) {
@@ -53,35 +58,27 @@ public class TagReadEvent implements Serializable {
 	}
 
 	/**
-	 * Returns the ID for the reader.
-	 * 
-	 * @return the readerID
+	 * @return The ID of the reader that saw the tag
 	 */
 	public String getReaderID() {
 		return readerID;
 	}
 
 	/**
-	 * Returns the tag
-	 * 
-	 * @return the tag
+	 * @return the Tag data
 	 */
 	public DatacontainerEvent getTag() {
 		return tag;
 	}
 
 	/**
-	 * Returns the ID of the antenna.
-	 * 
-	 * @return the antennaID
+	 * @return The ID of the antenna that saw the tag
 	 */
 	public int getAntennaID() {
 		return antennaID;
 	}
 
 	/**
-	 * Returns the timestamp.
-	 * 
 	 * @return the timestamp
 	 */
 	public long getTimestamp() {
