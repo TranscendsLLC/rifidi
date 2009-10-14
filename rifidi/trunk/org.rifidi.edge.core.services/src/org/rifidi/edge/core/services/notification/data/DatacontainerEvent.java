@@ -18,7 +18,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Object that services as a basis for a tag read
+ * Class that serves as a base class for representing the data physically stored
+ * on a tag. It uses the metaphore of MemoryBanks and assumes that tags stores
+ * data on banks of memory. It can have 0 to many memory banks.
  * 
  * @author Jochen Mader - jochen@pramari.com
  * @author Kyle Neumeier - kyle@pramari.com
@@ -27,12 +29,13 @@ public abstract class DatacontainerEvent implements Serializable {
 
 	/** Serial Version for this class. */
 	private static final long serialVersionUID = 1L;
+	/** The set of memory banks that this Tag has */
 	protected List<MemoryBankLengthTuple> memoryBanks = new ArrayList<MemoryBankLengthTuple>();
 
 	/**
 	 * Read the content of a bank
 	 * 
-	 * @param bankid
+	 * @param bankID
 	 *            The ID of the bank to read
 	 * @param offset
 	 *            The offset (in bits)
@@ -42,30 +45,29 @@ public abstract class DatacontainerEvent implements Serializable {
 	 * @throws IndexOutOfBoundsException
 	 *             if there was a problem accessing a bank or a memory location
 	 */
-	public BigInteger readMemory(int bankid, int offset, int length)
+	public BigInteger readMemory(int bankID, int offset, int length)
 			throws IndexOutOfBoundsException {
 		BigInteger comp = new BigInteger(Double.toString(Math.pow(2, length)),
 				10);
-		return memoryBanks.get(bankid).getMemory().shiftRight(offset - 1).add(
+		return memoryBanks.get(bankID).getMemory().shiftRight(offset - 1).add(
 				comp);
 	}
 
 	/**
-	 * Get a memory bank.
-	 * 
-	 * @param id
-	 * @return
+	 * @param bankID
+	 *            The ID of the memory Bank
+	 * @return The memory bank specified
 	 */
-	public MemoryBankLengthTuple getMemoryBank(Integer id) {
-		return memoryBanks.get(id);
+	public MemoryBankLengthTuple getMemoryBank(Integer bankID) {
+		return memoryBanks.get(bankID);
 	}
 
 	/**
 	 * Read from a memory bank.
 	 * 
 	 * @param address
-	 *            address: @<bankid>.<length>(.<offset>)
-	 * @return
+	 *            address: @[bankID].[length](.[offset])
+	 * @return The contents of the specified address as a hex string
 	 */
 	public String readMemory(String address) {
 		String[] addrArray = address.substring(1).split(".");
@@ -79,7 +81,7 @@ public abstract class DatacontainerEvent implements Serializable {
 	}
 
 	/**
-	 * Class for holding a bank and it's length. Required because BigInteger
+	 * Class for holding a bank and its length. Required because BigInteger
 	 * swallows zeroes.
 	 * 
 	 * @author Jochen Mader - jochen@pramari.com

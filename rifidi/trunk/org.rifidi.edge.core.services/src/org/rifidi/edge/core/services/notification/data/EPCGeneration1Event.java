@@ -95,5 +95,4 @@ public class EPCGeneration1Event extends DatacontainerEvent {
 	public int hashCode() {
 		return hex.hashCode();
 	}
-
 }

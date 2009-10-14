@@ -33,16 +33,16 @@ public class EPCGeneration2Event extends EPCGeneration1Event {
 	}
 
 	/**
-	 * Get the kill password in hex.
+	 * Get the kill password as a hex string.  The first character of the return string is x
 	 * 
-	 * @return
+	 * @return A hex sting with the first character being an x.
 	 */
 	public String getKillPwd() {
 		return "x" + readMemory(0, 0, 32).toString(16);
 	}
 
 	/**
-	 * Get the kill password in binary.
+	 * Get the kill password as a decimal string.
 	 * 
 	 * @return
 	 */
@@ -51,16 +51,16 @@ public class EPCGeneration2Event extends EPCGeneration1Event {
 	}
 
 	/**
-	 * Get the access password in hex.
+	 * Get the access password as a hex string.  The first character of the return string is x
 	 * 
-	 * @return
+	 * @return a hex string with the first character being a x
 	 */
 	public String getAccessPwd() {
 		return "x" + readMemory(0, 32, 32).toString(16);
 	}
 
 	/**
-	 * Get the access password in binary.
+	 * Get the access password as a decimal string
 	 * 
 	 * @return
 	 */
@@ -69,7 +69,7 @@ public class EPCGeneration2Event extends EPCGeneration1Event {
 	}
 
 	/**
-	 * Get the tid memory in hex.
+	 * Get the tid memory as a hex string
 	 * 
 	 * @return
 	 */
@@ -78,7 +78,7 @@ public class EPCGeneration2Event extends EPCGeneration1Event {
 	}
 
 	/**
-	 * Get the user memory in hex.
+	 * Get the user memory as a hex string
 	 * 
 	 * @return
 	 */
@@ -87,7 +87,7 @@ public class EPCGeneration2Event extends EPCGeneration1Event {
 	}
 
 	/**
-	 * Get the AFI in HEX.
+	 * Get the AFI as a hex String
 	 * 
 	 * @return
 	 */
@@ -96,7 +96,7 @@ public class EPCGeneration2Event extends EPCGeneration1Event {
 	}
 
 	/**
-	 * Get the AFI in DEC
+	 * Get the AFI as a decimal string
 	 * 
 	 * @return
 	 */
@@ -105,7 +105,7 @@ public class EPCGeneration2Event extends EPCGeneration1Event {
 	}
 
 	/**
-	 * Get the NSI in HEX.
+	 * Get the NSI as a hex String
 	 * 
 	 * @return
 	 */
@@ -114,7 +114,7 @@ public class EPCGeneration2Event extends EPCGeneration1Event {
 	}
 
 	/**
-	 * Get the NSI in DEC.
+	 * Get the NSI as a decimal string
 	 * 
 	 * @return
 	 */
