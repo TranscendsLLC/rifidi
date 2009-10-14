@@ -58,7 +58,7 @@ public class WriteThread implements Runnable {
 						.write(((ByteMessage) messageQueue.take()).message);
 			}
 		} catch (IOException e) {
-			logger.error(e);
+			logger.debug(e);
 		} catch (InterruptedException e) {
 			Thread.currentThread().interrupt();
 		}
