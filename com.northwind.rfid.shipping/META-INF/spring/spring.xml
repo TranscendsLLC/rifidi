@@ -10,9 +10,20 @@
 	<!-- Create the  Application bean and inject dependencies-->
 	<bean id="rfidapp" class="com.northwind.rfid.shipping.ShippingApp">
 		<property name="esperService" ref="esperManagementService" />
+		<property name="destination" ref="NorthwindTopic" />
+		<property name="template" ref="jmsTemplate" />
 	</bean>
 
-	<!-- Get a reference to the Esper Management Service from the OSGi Service Registry -->
+	<!--Get a reference to the Esper Management Service from the OSGi Service Registry-->
 	<osgi:reference id="esperManagementService"
 		interface="org.rifidi.edge.core.services.esper.EsperManagementService" />
+
+	<!-- Create a new Topic to publish Notifications to -->
+	<bean id="NorthwindTopic" class="org.apache.activemq.command.ActiveMQTopic">
+		<property name="physicalName" value="com.northwind.rfid.shipping.topic" />
+	</bean>
+
+	<!-- Lookup the JMS Template from OSGi Service Registry -->
+	<osgi:reference id="jmsTemplate"
+		interface="org.springframework.jms.core.JmsTemplate" bean-name="externalJMSTemplate" />
 </beans>
