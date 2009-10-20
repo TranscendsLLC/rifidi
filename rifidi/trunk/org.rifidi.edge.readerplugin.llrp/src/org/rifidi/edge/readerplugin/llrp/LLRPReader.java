@@ -306,8 +306,8 @@ public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 	 * 
 	 * @return the maxNumConnectionAttempts
 	 */
-	@Property(displayName = "Maximum Connection Attempts", description = "Number of times to attempt to connect to the reader."
-			+ "  If -1, then try forever.", writable = true, category = "conne"
+	@Property(displayName = "Maximum Connection Attempts", description = "Number of times to attempt to connect to the reader"
+			+ "  (If -1, then try forever)", writable = true, category = "conne"
 			+ "ction", type = PropertyType.PT_INTEGER, orderValue = 2, defaultValue = LLRPConstants.MAX_CONNECTION_ATTEMPTS, minValue = "-1")
 	public Integer getMaxNumConnectionAttempts() {
 		return maxNumConnectionAttempts;
