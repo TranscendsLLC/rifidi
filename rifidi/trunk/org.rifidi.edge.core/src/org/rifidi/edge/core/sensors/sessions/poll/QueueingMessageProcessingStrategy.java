@@ -10,12 +10,12 @@
  * License:      The software in this package is published under the terms of the GPL License
  *                   A copy of the license is included in this distribution under RifidiEdge-License.txt 
  */
-package org.rifidi.edge.core.sensors.base;
+package org.rifidi.edge.core.sensors.sessions.poll;
 
 import java.util.Queue;
 
-import org.rifidi.edge.core.sensors.base.threads.MessageProcessingStrategy;
 import org.rifidi.edge.core.sensors.messages.ByteMessage;
+import org.rifidi.edge.core.sensors.sessions.MessageProcessingStrategy;
 
 /**
  * An implementation of MessageProcessingStrategy that puts incoming messages on a

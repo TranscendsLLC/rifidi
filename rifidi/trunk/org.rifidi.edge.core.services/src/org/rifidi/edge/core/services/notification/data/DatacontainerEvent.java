@@ -99,6 +99,7 @@ public abstract class DatacontainerEvent implements Serializable {
 		 * 
 		 * @param memory
 		 * @param length
+		 *            in bits
 		 */
 		public MemoryBankLengthTuple(BigInteger memory, Integer length) {
 			super();
@@ -126,16 +127,16 @@ public abstract class DatacontainerEvent implements Serializable {
 		}
 
 		/**
-		 * Gets the length of the tuple.
+		 * Gets the length in bits of the tuple.
 		 * 
-		 * @return the length
+		 * @return the length in bits
 		 */
 		public Integer getLength() {
 			return length;
 		}
 
 		/**
-		 * Sets the length of the tuple.
+		 * Sets the length of the tuple in bits.
 		 * 
 		 * @param length
 		 *            the length to set

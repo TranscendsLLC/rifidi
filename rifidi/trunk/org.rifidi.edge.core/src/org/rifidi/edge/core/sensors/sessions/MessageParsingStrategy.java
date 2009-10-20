@@ -13,7 +13,7 @@
 /**
  * 
  */
-package org.rifidi.edge.core.sensors.base.threads;
+package org.rifidi.edge.core.sensors.sessions;
 
 /**
  * This interface allows sensor plugins to implement the functionality to

@@ -61,7 +61,7 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 	/** The only session an alien reader allows. */
 	private AtomicReference<Alien9800ReaderSession> session = new AtomicReference<Alien9800ReaderSession>();
 	/** Flag to check if this reader is destroied. */
-	private AtomicBoolean destroied = new AtomicBoolean(false);
+	private AtomicBoolean destroyed = new AtomicBoolean(false);
 	/** A queue for putting commands to be executed next */
 	private final LinkedBlockingQueue<AlienCommandObjectWrapper> propCommandsToBeExecuted;
 	/** A hashmap containing all the properties for this reader */
@@ -83,7 +83,7 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 			.parseInt(AlienReaderDefaultValues.MAX_CONNECTION_ATTEMPTS);
 	/** Spring JMS template */
 	private volatile JmsTemplate template;
-	/** The FACTORY_ID of the session */
+	/** The ID of the session */
 	private AtomicInteger sessionID = new AtomicInteger(0);
 	/** service used to send notifications */
 	private volatile NotifierService notifierService;
@@ -121,7 +121,7 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 	public static final String PROP_EXTERNAL_INPUT = "externalinput";
 	/** Uptime of the sensorSession */
 	public static final String PROP_UPTIME = "uptime";
-	/** Provided by spring. */
+	/** The Commands this session can use*/
 	private final Set<AbstractCommandConfiguration<?>> commands;
 	/** Mbeaninfo for this class. */
 	public static final MBeanInfo mbeaninfo;
@@ -213,7 +213,7 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 	public void unbindCommandConfiguration(
 			AbstractCommandConfiguration<?> commandConfiguration,
 			Map<?, ?> properties) {
-		if (!destroied.get()) {
+		if (!destroyed.get()) {
 			Alien9800ReaderSession aliensession = session.get();
 			if (aliensession != null) {
 				aliensession.suspendCommand(commandConfiguration.getID());
@@ -231,7 +231,7 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 	@Override
 	public String createSensorSession(SessionDTO sessionDTO)
 			throws CannotCreateSessionException {
-		if (!destroied.get() && session.get() == null) {
+		if (!destroyed.get() && session.get() == null) {
 			Integer sessionID = Integer.parseInt(sessionDTO.getID());
 			if (session.compareAndSet(null, new Alien9800ReaderSession(this,
 					Integer.toString(sessionID), ipAddress, port,
@@ -258,7 +258,7 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 	 */
 	@Override
 	public String createSensorSession() throws CannotCreateSessionException {
-		if (!destroied.get() && session.get() == null) {
+		if (!destroyed.get() && session.get() == null) {
 			Integer sessionID = this.sessionID.incrementAndGet();
 			if (session.compareAndSet(null, new Alien9800ReaderSession(this,
 					Integer.toString(sessionID), ipAddress, port,
@@ -282,7 +282,7 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 	 */
 	@Override
 	public void destroy() {
-		if (destroied.compareAndSet(false, true)) {
+		if (destroyed.compareAndSet(false, true)) {
 			super.destroy();
 			Alien9800ReaderSession aliensession = session.get();
 			if (aliensession != null) {
@@ -321,8 +321,9 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 	 */
 	@Override
 	public void destroySensorSession(String sessionid) throws CannotDestroySensorException{
-		Alien9800ReaderSession aliensession = session.getAndSet(null);
+		Alien9800ReaderSession aliensession = session.get();
 		if (aliensession != null && aliensession.getID().equals(sessionid)) {
+			session.set(null);
 			for (Integer id : aliensession.currentCommands().keySet()) {
 				aliensession.killComand(id);
 			}
