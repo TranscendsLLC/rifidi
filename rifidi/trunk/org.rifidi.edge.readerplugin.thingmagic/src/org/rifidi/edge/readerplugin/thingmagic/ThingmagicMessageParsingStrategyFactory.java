@@ -11,8 +11,8 @@
  */
 package org.rifidi.edge.readerplugin.thingmagic;
 
-import org.rifidi.edge.core.sensors.base.threads.MessageParsingStrategy;
-import org.rifidi.edge.core.sensors.base.threads.MessageParsingStrategyFactory;
+import org.rifidi.edge.core.sensors.sessions.MessageParsingStrategy;
+import org.rifidi.edge.core.sensors.sessions.MessageParsingStrategyFactory;
 
 /**
  * 

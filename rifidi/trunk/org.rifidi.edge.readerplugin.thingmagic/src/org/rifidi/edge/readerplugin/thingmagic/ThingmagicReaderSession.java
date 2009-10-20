@@ -18,11 +18,12 @@ import java.util.concurrent.TimeUnit;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.api.SessionStatus;
-import org.rifidi.edge.core.sensors.base.AbstractIPSensorSession;
 import org.rifidi.edge.core.sensors.base.AbstractSensor;
-import org.rifidi.edge.core.sensors.base.threads.MessageParsingStrategyFactory;
 import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
 import org.rifidi.edge.core.sensors.commands.Command;
+import org.rifidi.edge.core.sensors.messages.ByteMessage;
+import org.rifidi.edge.core.sensors.sessions.MessageParsingStrategyFactory;
+import org.rifidi.edge.core.sensors.sessions.poll.AbstractPollIPSensorSession;
 import org.rifidi.edge.core.services.notification.NotifierService;
 import org.springframework.jms.core.JmsTemplate;
 
@@ -31,13 +32,13 @@ import org.springframework.jms.core.JmsTemplate;
  * 
  * @author Matthew Dean
  */
-public class ThingmagicReaderSession extends AbstractIPSensorSession {
+public class ThingmagicReaderSession extends AbstractPollIPSensorSession {
 
 	/** Logger for this class. */
 	private static final Log logger = LogFactory
 			.getLog(ThingmagicReaderSession.class);
 	/** Set to true if the session is destroied. */
-	//private AtomicBoolean destroied = new AtomicBoolean(false);
+	// private AtomicBoolean destroied = new AtomicBoolean(false);
 	/** Each command needs to be terminated with a newline. */
 	public static final String NEWLINE = "\n";
 	/** Welcome string. */
@@ -61,10 +62,6 @@ public class ThingmagicReaderSession extends AbstractIPSensorSession {
 	 *            The wait time between reconnect attempts
 	 * @param maxConAttempts
 	 *            The maximum number of times to try to connect
-	 * @param username
-	 *            The Alien username
-	 * @param password
-	 *            The Alien password
 	 * @param destination
 	 *            The JMS destination for tags
 	 * @param template
@@ -113,7 +110,7 @@ public class ThingmagicReaderSession extends AbstractIPSensorSession {
 		notifierService.sessionStatusChanged(this.readerID, this.getID(),
 				status);
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -127,7 +124,7 @@ public class ThingmagicReaderSession extends AbstractIPSensorSession {
 		// .getBytes()));
 		// System.out.println(receiveMessage().message);
 		// System.out.println("Recieving tag message");
-		
+
 		return true;
 	}
 
@@ -180,6 +177,33 @@ public class ThingmagicReaderSession extends AbstractIPSensorSession {
 			// under any circumstances
 			logger.error(e);
 		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.core.sensors.sessions.AbstractIPSensorSession#sendMessage
+	 * (org.rifidi.edge.core.sensors.messages.ByteMessage)
+	 */
+	@Override
+	public void sendMessage(ByteMessage message) throws IOException {
+		super.sendMessage(message);
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.core.readers.impl.AbstractReaderSession#killComand(java
+	 * .lang.Integer)
+	 */
+	@Override
+	public void killComand(Integer id) {
+		super.killComand(id);
+
+		// TODO: Remove this once we have aspectJ
+		notifierService.jobDeleted(this.readerID, this.getID(), id);
 	}
 
 }

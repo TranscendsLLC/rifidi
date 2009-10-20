@@ -17,11 +17,11 @@ import org.rifidi.edge.core.configuration.impl.AbstractCommandConfigurationFacto
 import org.rifidi.edge.core.configuration.mbeanstrategies.AnnotationMBeanInfoStrategy;
 import org.rifidi.edge.core.exceptions.InvalidStateException;
 import org.rifidi.edge.readerplugin.thingmagic.ThingmagicReaderFactory;
-import org.springframework.jms.core.JmsTemplate;
 
 /**
+ * 
+ * 
  * @author Matthew Dean
- *
  */
 public class ThingmagicGetTagListCommandConfigurationFactory
 		extends
