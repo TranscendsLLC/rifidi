@@ -93,7 +93,7 @@ public class ThingmagicGetTagListCommand extends AbstractThingmagicCommand {
 			sensorSession.getSensor().send(cycle);
 			template.send(destination, new ReadCycleMessageCreator(cycle));
 		} catch (IOException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 	}
 
