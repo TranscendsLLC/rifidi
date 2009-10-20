@@ -396,7 +396,7 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 	 * @return the USERNAME
 	 */
 	@Property(displayName = "Username", description = "Username for logging "
-			+ "into the sensorSession.", writable = true, category = "conn"
+			+ "into the sensorSession", writable = true, category = "conn"
 			+ "ection", defaultValue = AlienReaderDefaultValues.USERNAME, orderValue = 2)
 	public String getUsername() {
 		return username;
@@ -414,7 +414,7 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 	 * @return the PASSWORD
 	 */
 	@Property(displayName = "Password", description = "Password for logging"
-			+ " into the sensorSession.", writable = true, category = "conn"
+			+ " into the sensorSession", writable = true, category = "conn"
 			+ "ection", defaultValue = AlienReaderDefaultValues.PASSWORD, orderValue = 3)
 	public String getPassword() {
 		return password;
@@ -432,7 +432,7 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 	 * @return the RECONNECTION_INTERVAL
 	 */
 	@Property(displayName = "Reconnection Interval", description = "Time between two"
-			+ " connection attempts (ms).", writable = true, type = PropertyType.PT_INTEGER, category = "conn"
+			+ " connection attempts (ms)", writable = true, type = PropertyType.PT_INTEGER, category = "conn"
 			+ "ection", defaultValue = AlienReaderDefaultValues.RECONNECTION_INTERVAL, orderValue = 4, minValue = "0")
 	public Integer getReconnectionInterval() {
 		return reconnectionInterval;
@@ -449,8 +449,8 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 	/**
 	 * @return the MAX_CONNECTION_ATTEMPTS
 	 */
-	@Property(displayName = "Maximum Connection Attempts", description = "Number of times to attempt to recconnect. "
-			+ "If -1, then try forever", writable = true, type = PropertyType.PT_INTEGER, category = "conn"
+	@Property(displayName = "Maximum Connection Attempts", description = "Number of times to attempt to recconnect "
+			+ "(If -1, then try forever)", writable = true, type = PropertyType.PT_INTEGER, category = "conn"
 			+ "ection", defaultValue = AlienReaderDefaultValues.MAX_CONNECTION_ATTEMPTS, orderValue = 5, minValue = "-1")
 	public Integer getMaxNumConnectionAttempts() {
 		return maxNumConnectionAttempts;
@@ -597,18 +597,33 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 						readerNumber)));
 	}
 
+	/**
+	 * 
+	 * 
+	 * @return
+	 */
 	@Property(displayName = "SensorSession Version", description = "Version Number of "
 			+ "the sensorSession", writable = false, category = "General")
 	public String getReaderVersion() {
 		return (String) readerProperties.get(PROP_READER_VERSION);
 	}
 
+	/**
+	 * The type of reader that this is.  
+	 * 
+	 * @return
+	 */
 	@Property(displayName = "SensorSession Type", description = "Type of "
 			+ "SensorSession", writable = false)
 	public String getReaderType() {
 		return (String) readerProperties.get(PROP_READER_TYPE);
 	}
 
+	/**
+	 * The Maximum number of antennas this reader can possess.  
+	 * 
+	 * @return
+	 */
 	@Property(displayName = "Max Antennas", description = "Maximum number "
 			+ "of antennas", writable = false, type = PropertyType.PT_INTEGER, category = "G"
 			+ "eneral")
@@ -616,23 +631,42 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 		return Integer.parseInt(readerProperties.get(PROP_MAX_ANTENNA));
 	}
 
+	/**
+	 * Returns the MAC address for the reader.  
+	 * 
+	 * @return
+	 */
 	@Property(displayName = "MAC Address", description = "MAC Address"
 			+ " of sensorSession", writable = false, category = "General")
 	public String getMACAddress() {
 		return (String) readerProperties.get(PROP_MAC_ADDRESS);
 	}
 
+	/**
+	 * The input of the GPI for the reader.  
+	 * 
+	 * @return
+	 */
 	@Property(displayName = "GPI Input", description = "Input of" + " GPI", writable = false, type = PropertyType.PT_INTEGER, category = "GPIO")
 	public Integer getExternalInput() {
 		return Integer.parseInt(readerProperties.get(PROP_EXTERNAL_INPUT));
 	}
 
+	/**
+	 * The uptime of the reader.  
+	 * 
+	 * @return
+	 */
 	@Property(displayName = "Uptime", description = "Uptime of "
 			+ "sensorSession", writable = false, type = PropertyType.PT_INTEGER, category = "General")
 	public Integer getUptime() {
 		return Integer.parseInt(readerProperties.get(PROP_UPTIME));
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.rifidi.edge.core.sensors.base.AbstractSensor#applyPropertyChanges()
+	 */
 	@Override
 	@Operation(description = "Apply all property changes to reader")
 	public synchronized void applyPropertyChanges() {
