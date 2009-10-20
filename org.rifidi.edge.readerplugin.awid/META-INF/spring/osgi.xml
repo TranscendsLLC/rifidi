@@ -1,0 +1,26 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:osgi="http://www.springframework.org/schema/osgi"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+    http://www.springframework.org/schema/osgi 
+    http://www.springframework.org/schema/osgi/spring-osgi.xsd">
+
+	<!-- Put reader configuration service in OSGi Registry -->
+	<osgi:service id="awidSensorFactoryService" ref="awidSensorFactory">
+		<osgi:interfaces>
+			<value>org.rifidi.edge.core.configuration.ServiceFactory</value>
+			<value>org.rifidi.edge.core.sensors.base.AbstractSensorFactory</value>
+		</osgi:interfaces>
+	</osgi:service>
+	
+	<osgi:set id="awidCommands" interface="org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration"
+		cardinality="0..N" filter="(reader=Awid2010)">
+		<osgi:listener ref="awidSensorFactory" bind-method="bindCommandConfiguration" unbind-method="unbindCommandConfiguration"/>
+	</osgi:set>
+	
+	<osgi:reference id="JMSNotifierService"
+		interface="org.rifidi.edge.core.services.notification.NotifierService" />
+
+	<osgi:reference id="internalMB"
+		interface="org.springframework.jms.core.JmsTemplate" bean-name="internalJMSTemplate" />
+</beans>
