@@ -14,8 +14,6 @@ package org.rifidi.edge.readerplugin.thingmagic.commands;
 import javax.management.MBeanInfo;
 
 import org.rifidi.edge.core.configuration.annotations.JMXMBean;
-import org.rifidi.edge.core.configuration.annotations.Property;
-import org.rifidi.edge.core.configuration.annotations.PropertyType;
 import org.rifidi.edge.core.configuration.mbeanstrategies.AnnotationMBeanInfoStrategy;
 import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
 

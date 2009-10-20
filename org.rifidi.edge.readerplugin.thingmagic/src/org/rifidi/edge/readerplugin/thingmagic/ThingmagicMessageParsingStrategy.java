@@ -13,7 +13,7 @@ package org.rifidi.edge.readerplugin.thingmagic;
 
 import java.util.Arrays;
 
-import org.rifidi.edge.core.sensors.base.threads.MessageParsingStrategy;
+import org.rifidi.edge.core.sensors.sessions.MessageParsingStrategy;
 
 /**
  * 
