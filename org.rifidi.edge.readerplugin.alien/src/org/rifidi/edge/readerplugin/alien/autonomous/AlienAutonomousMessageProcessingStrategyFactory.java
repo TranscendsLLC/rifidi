@@ -15,8 +15,8 @@
  */
 package org.rifidi.edge.readerplugin.alien.autonomous;
 
-import org.rifidi.edge.core.sensors.base.threads.MessageProcessingStrategy;
-import org.rifidi.edge.core.sensors.base.threads.MessageProcessingStrategyFactory;
+import org.rifidi.edge.core.sensors.sessions.MessageProcessingStrategy;
+import org.rifidi.edge.core.sensors.sessions.MessageProcessingStrategyFactory;
 import org.springframework.jms.core.JmsTemplate;
 
 /**

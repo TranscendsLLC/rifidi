@@ -13,15 +13,13 @@
 /**
  * 
  */
-package org.rifidi.edge.core.sensors.base;
+package org.rifidi.edge.core.sensors.sessions;
 
 import java.io.IOException;
 import java.net.Socket;
-import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.jms.Destination;
@@ -29,19 +27,34 @@ import javax.jms.Destination;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.api.SessionStatus;
-import org.rifidi.edge.core.sensors.base.threads.MessageParsingStrategyFactory;
-import org.rifidi.edge.core.sensors.base.threads.MessageProcessingStrategy;
-import org.rifidi.edge.core.sensors.base.threads.MessageProcessingStrategyFactory;
-import org.rifidi.edge.core.sensors.base.threads.ReadThread;
-import org.rifidi.edge.core.sensors.base.threads.WriteThread;
+import org.rifidi.edge.core.sensors.base.AbstractSensor;
 import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
 import org.rifidi.edge.core.sensors.messages.ByteMessage;
+import org.rifidi.edge.core.sensors.sessions.threads.ReadThread;
+import org.rifidi.edge.core.sensors.sessions.threads.WriteThread;
 import org.springframework.jms.core.JmsTemplate;
 
 /**
  * Base implementation of a ReaderPlugin that uses TCP/IP as a means of
  * communicating with a physical reader. This base class handles socket I/O and
  * threads.
+ * 
+ * Some important features:
+ * 
+ * Handles automatic reconnection using two variables:
+ * maxNumReconnectionAttempts and reconnectInterval. If maxNumReconnectAttempts
+ * is set to -1, it will try to reconnect forever. reconnectInterval is the time
+ * in between two successive reconnection attempts.
+ * 
+ * Provides an onConnect method that is the first thing that is executed when a
+ * valid TCP/IP connection has been established. The implementation can, at this
+ * point send login credentials or receive a welcome message.
+ * 
+ * The MessageParsingStrategy lets the implementation determine when the bytes
+ * form a logical message.
+ * 
+ * The messageProcessingStrategy lets the implementaion determine what to do
+ * with the receieved messages
  * 
  * @author Jochen Mader - jochen@pramari.com
  * @author Kyle Neumeier - kyle@pramari.com
@@ -65,8 +78,6 @@ public abstract class AbstractIPSensorSession extends AbstractSensorSession {
 	private Thread readThread;
 	/** Thread for writing to the socket. */
 	private Thread writeThread;
-	/** Queue for reading messages. */
-	private LinkedBlockingQueue<ByteMessage> readQueue = new LinkedBlockingQueue<ByteMessage>();
 	/** Queue for writing messages. */
 	private LinkedBlockingQueue<ByteMessage> writeQueue = new LinkedBlockingQueue<ByteMessage>();
 
@@ -112,55 +123,13 @@ public abstract class AbstractIPSensorSession extends AbstractSensorSession {
 	}
 
 	/**
-	 * Check if a new message is available.
-	 * 
-	 * @return
-	 * @throws IOException
-	 */
-	public boolean isMessageAvailable() throws IOException {
-		return readQueue.peek() != null;
-	}
-
-	/**
-	 * Receive a message. This method blocks if there isn't a message available.
-	 * 
-	 * @return
-	 * @throws IOException
-	 */
-	public ByteMessage receiveMessage() throws IOException {
-		try {
-			ByteMessage ret = readQueue.take();
-			return ret;
-		} catch (InterruptedException e) {
-			Thread.currentThread().interrupt();
-			throw new IOException();
-		}
-	}
-
-	/**
-	 * Receive a message. This method blocks for the given amount of time. If
-	 * the time expires the method will return.
-	 * 
-	 * @param timeout
-	 * @return
-	 * @throws IOException
-	 */
-	public ByteMessage receiveMessage(long timeout) throws IOException {
-		try {
-			return readQueue.poll(timeout, TimeUnit.MILLISECONDS);
-		} catch (InterruptedException e) {
-			Thread.currentThread().interrupt();
-			throw new IOException();
-		}
-	}
-
-	/**
-	 * Send a message over the line.
+	 * Send a message over the line. This method is protected so that subclasses
+	 * can choose whether or not to expose it to clients.
 	 * 
 	 * @param o
 	 * @throws IOException
 	 */
-	public void sendMessage(ByteMessage message) throws IOException {
+	protected void sendMessage(ByteMessage message) throws IOException {
 		writeQueue.add(message);
 	}
 
@@ -274,11 +243,9 @@ public abstract class AbstractIPSensorSession extends AbstractSensorSession {
 					connecting.compareAndSet(true, false);
 					throw new IOException("Unable to reach reader.");
 				}
-				readThread = new Thread(
-						new ReadThread(socket.getInputStream(),
-								getMessageParsingStrategyFactory(),
-								new QueueingMessageProcessingStrategyFactory(
-										readQueue)));
+				readThread = new Thread(new ReadThread(socket.getInputStream(),
+						getMessageParsingStrategyFactory(),
+						getMessageProcessingStrategyFactory()));
 				writeThread = new Thread(new WriteThread(socket
 						.getOutputStream(), writeQueue));
 				readThread.start();
@@ -317,8 +284,8 @@ public abstract class AbstractIPSensorSession extends AbstractSensorSession {
 							// don't try to connect again if we are closing down
 							if (getStatus() != SessionStatus.CLOSED) {
 								setStatus(SessionStatus.CREATED);
-								readQueue.clear();
 								writeQueue.clear();
+								clearUndelieverdMessages();
 								connect();
 							}
 						} catch (InterruptedException e) {
@@ -395,37 +362,37 @@ public abstract class AbstractIPSensorSession extends AbstractSensorSession {
 		}
 	}
 
-	private class QueueingMessageProcessingStrategyFactory implements
-			MessageProcessingStrategyFactory {
-
-		private Queue<ByteMessage> queue;
-
-		public QueueingMessageProcessingStrategyFactory(Queue<ByteMessage> queue) {
-			this.queue = queue;
-		}
-
-		@Override
-		public MessageProcessingStrategy createMessageProcessor() {
-			return new QueueingMessageProcessingStrategy(queue);
-		}
-
-	}
-
 	/**
 	 * Called after the initial socket connection got established.
+	 * Implementations can use this method to send login credentials or receive
+	 * a welcome message.
 	 * 
 	 * @return true if the connect was successful
 	 * @throws IOException
 	 *             if a connection problem occurs
 	 */
-	public abstract boolean onConnect() throws IOException;
+	protected abstract boolean onConnect() throws IOException;
 
 	/**
-	 * Get a MessageParsingStrategy for this IP based sensor session.
+	 * Get a factory for MessageParsingStrategy objects
 	 * 
 	 * @return
 	 */
-	public abstract MessageParsingStrategyFactory getMessageParsingStrategyFactory();
+	protected abstract MessageParsingStrategyFactory getMessageParsingStrategyFactory();
+
+	/**
+	 * Get a Factory for MessageProcessingStrategy objects.
+	 * 
+	 * @return
+	 */
+	protected abstract MessageProcessingStrategyFactory getMessageProcessingStrategyFactory();
+
+	/**
+	 * This method is called when resetting the connection. It should wipe out
+	 * all undelivered messages so that the client does not receive old
+	 * messages.
+	 */
+	protected abstract void clearUndelieverdMessages();
 
 	@Override
 	public String toString() {

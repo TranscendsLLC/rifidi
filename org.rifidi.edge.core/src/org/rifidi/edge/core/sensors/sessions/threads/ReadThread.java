@@ -13,13 +13,17 @@
 /**
  * 
  */
-package org.rifidi.edge.core.sensors.base.threads;
+package org.rifidi.edge.core.sensors.sessions.threads;
 
 import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.rifidi.edge.core.sensors.sessions.MessageParsingStrategy;
+import org.rifidi.edge.core.sensors.sessions.MessageParsingStrategyFactory;
+import org.rifidi.edge.core.sensors.sessions.MessageProcessingStrategy;
+import org.rifidi.edge.core.sensors.sessions.MessageProcessingStrategyFactory;
 
 /**
  * Base class of a runnable used to read from an inputstream. It provides two
@@ -83,7 +87,7 @@ public class ReadThread implements Runnable {
 				}
 			}
 		} catch (IOException e) {
-			logger.debug(e);
+			logger.error(e);
 		}
 		logger.debug("Exiting read thread");
 	}

@@ -13,7 +13,7 @@
 /**
  * 
  */
-package org.rifidi.edge.core.sensors.base;
+package org.rifidi.edge.core.sensors.sessions;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -29,9 +29,9 @@ import javax.jms.Destination;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.api.SessionStatus;
-import org.rifidi.edge.core.sensors.base.threads.MessageParsingStrategyFactory;
-import org.rifidi.edge.core.sensors.base.threads.MessageProcessingStrategyFactory;
+import org.rifidi.edge.core.sensors.base.AbstractSensor;
 import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
+import org.rifidi.edge.core.sensors.sessions.threads.ServerSocketSensorSessionReadThread;
 import org.springframework.jms.core.JmsTemplate;
 
 /**

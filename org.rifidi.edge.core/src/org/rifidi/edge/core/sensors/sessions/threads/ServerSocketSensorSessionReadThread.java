@@ -13,16 +13,15 @@
 /**
  * 
  */
-package org.rifidi.edge.core.sensors.base;
+package org.rifidi.edge.core.sensors.sessions.threads;
 
 import java.io.IOException;
 import java.net.Socket;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.rifidi.edge.core.sensors.base.threads.MessageParsingStrategyFactory;
-import org.rifidi.edge.core.sensors.base.threads.MessageProcessingStrategyFactory;
-import org.rifidi.edge.core.sensors.base.threads.ReadThread;
+import org.rifidi.edge.core.sensors.sessions.MessageParsingStrategyFactory;
+import org.rifidi.edge.core.sensors.sessions.MessageProcessingStrategyFactory;
 
 /**
  * Override the read thread to ensure that the socket is closed when the thread

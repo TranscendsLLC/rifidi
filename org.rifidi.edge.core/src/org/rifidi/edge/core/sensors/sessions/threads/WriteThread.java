@@ -11,7 +11,7 @@
  *                   A copy of the license is included in this distribution under RifidiEdge-License.txt 
  */
 
-package org.rifidi.edge.core.sensors.base.threads;
+package org.rifidi.edge.core.sensors.sessions.threads;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -58,7 +58,7 @@ public class WriteThread implements Runnable {
 						.write(((ByteMessage) messageQueue.take()).message);
 			}
 		} catch (IOException e) {
-			logger.debug(e);
+			logger.error(e);
 		} catch (InterruptedException e) {
 			Thread.currentThread().interrupt();
 		}

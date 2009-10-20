@@ -1,0 +1,156 @@
+/*
+ * 
+ * AbstractPollIPSensorSession.java
+ *  
+ * Created:     July 8th, 2009
+ * Project:       Rifidi Edge Server - A middleware platform for RFID applications
+ *                   http://www.rifidi.org
+ *                   http://rifidi.sourceforge.net
+ * Copyright:   Pramari LLC and the Rifidi Project
+ * License:      The software in this package is published under the terms of the GPL License
+ *                   A copy of the license is included in this distribution under RifidiEdge-License.txt 
+ */
+package org.rifidi.edge.core.sensors.sessions.poll;
+
+import java.io.IOException;
+import java.util.Queue;
+import java.util.Set;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
+
+import javax.jms.Destination;
+
+import org.rifidi.edge.core.sensors.base.AbstractSensor;
+import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
+import org.rifidi.edge.core.sensors.messages.ByteMessage;
+import org.rifidi.edge.core.sensors.sessions.AbstractIPSensorSession;
+import org.rifidi.edge.core.sensors.sessions.MessageProcessingStrategy;
+import org.rifidi.edge.core.sensors.sessions.MessageProcessingStrategyFactory;
+import org.springframework.jms.core.JmsTemplate;
+
+/**
+ * An implementation of IPSensorSession that uses polling semantics.
+ * 
+ * @author Kyle Neumeier - kyle@pramari.com
+ * 
+ */
+public abstract class AbstractPollIPSensorSession extends
+		AbstractIPSensorSession {
+
+	/** Queue for reading messages. */
+	private final LinkedBlockingQueue<ByteMessage> readQueue;
+	/** The factory to produce MessageProcessingStrategy objects */
+	private final QueueingMessageProcessingStrategyFactory qmpsf;
+
+	/**
+	 * 
+	 * @param sensor
+	 * @param ID
+	 * @param host
+	 * @param port
+	 * @param reconnectionInterval
+	 * @param maxConAttempts
+	 * @param destination
+	 * @param template
+	 * @param commandConfigurations
+	 */
+	public AbstractPollIPSensorSession(AbstractSensor<?> sensor, String ID,
+			String host, int port, int reconnectionInterval,
+			int maxConAttempts, Destination destination, JmsTemplate template,
+			Set<AbstractCommandConfiguration<?>> commandConfigurations) {
+		super(sensor, ID, host, port, reconnectionInterval, maxConAttempts,
+				destination, template, commandConfigurations);
+		readQueue = new LinkedBlockingQueue<ByteMessage>();
+		qmpsf = new QueueingMessageProcessingStrategyFactory(readQueue);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seeorg.rifidi.edge.core.sensors.base.AbstractIPSensorSession#
+	 * getMessageProcessingStrategyFactory()
+	 */
+	@Override
+	public MessageProcessingStrategyFactory getMessageProcessingStrategyFactory() {
+		return qmpsf;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seeorg.rifidi.edge.core.sensors.base.AbstractIPSensorSession#
+	 * clearUndelieverdMessages()
+	 */
+	@Override
+	protected void clearUndelieverdMessages() {
+		// TODO: Not Thread safe!
+		this.readQueue.clear();
+	}
+
+	/**
+	 * Check if a new message is available.
+	 * 
+	 * @return
+	 * @throws IOException
+	 */
+	public boolean isMessageAvailable() throws IOException {
+		return readQueue.peek() != null;
+	}
+
+	/**
+	 * Receive a message. This method blocks if there isn't a message available.
+	 * 
+	 * @return
+	 * @throws IOException
+	 */
+	public ByteMessage receiveMessage() throws IOException {
+		try {
+			ByteMessage ret = readQueue.take();
+			return ret;
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
+			throw new IOException();
+		}
+	}
+
+	/**
+	 * Receive a message. This method blocks for the given amount of time. If
+	 * the time expires the method will return.
+	 * 
+	 * @param timeout
+	 * @return
+	 * @throws IOException
+	 */
+	public ByteMessage receiveMessage(long timeout) throws IOException {
+		try {
+			return readQueue.poll(timeout, TimeUnit.MILLISECONDS);
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
+			throw new IOException();
+		}
+	}
+
+	/**
+	 * A factory that produces new QueueingMessageProcessingStrategy objects
+	 * 
+	 * @author Kyle Neumeier - kyle@pramari.com
+	 * 
+	 */
+	private class QueueingMessageProcessingStrategyFactory implements
+			MessageProcessingStrategyFactory {
+
+		/**The queue to put new objects on*/
+		private final Queue<ByteMessage> queue;
+
+		public QueueingMessageProcessingStrategyFactory(Queue<ByteMessage> queue) {
+			this.queue = queue;
+		}
+
+		@Override
+		public MessageProcessingStrategy createMessageProcessor() {
+			return new QueueingMessageProcessingStrategy(queue);
+		}
+
+	}
+
+}

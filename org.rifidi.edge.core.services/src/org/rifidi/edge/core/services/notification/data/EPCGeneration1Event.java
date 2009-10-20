@@ -39,6 +39,7 @@ public class EPCGeneration1Event extends DatacontainerEvent {
 	 * 
 	 * @param memBank
 	 * @param length
+	 *            The size of the memory bank in bits
 	 */
 	public void setEPCMemory(BigInteger memBank, Integer length) {
 		memoryBanks.get(0).setLength(length);
@@ -67,7 +68,7 @@ public class EPCGeneration1Event extends DatacontainerEvent {
 	/**
 	 * Returns the length of the memory bank.
 	 * 
-	 * @return the epcLength
+	 * @return the number of bits in the EPC
 	 */
 	public Integer getEPCMemoryLength() {
 		return memoryBanks.get(0).getLength();

@@ -1,6 +1,6 @@
 /*
  * 
- * MessageParsingStrategyFactory.java
+ * MessageProcessingStrategy.java
  *  
  * Created:     July 8th, 2009
  * Project:       Rifidi Edge Server - A middleware platform for RFID applications
@@ -13,20 +13,25 @@
 /**
  * 
  */
-package org.rifidi.edge.core.sensors.base.threads;
+package org.rifidi.edge.core.sensors.sessions;
 
 /**
- * This interface allows sensor plugins to produce new MessageParsingStrategies.
+ * This interface allows sensor plugins to implement the functionality to
+ * determine what to do with a logical message once it has been read from the
+ * socket
  * 
  * @author Kyle Neumeier - kyle@pramari.com
  * 
  */
-public interface MessageParsingStrategyFactory {
+public interface MessageProcessingStrategy {
 
 	/**
-	 * Create a new instance of a MessageParsingStrategy.
+	 * A hook to allow implementations to do do something with the message when
+	 * it has been completely received from the socket
 	 * 
-	 * @return
+	 * @param message
+	 *            The complete message
 	 */
-	public MessageParsingStrategy createMessageParser();
+	abstract void processMessage(byte[] message);
+
 }

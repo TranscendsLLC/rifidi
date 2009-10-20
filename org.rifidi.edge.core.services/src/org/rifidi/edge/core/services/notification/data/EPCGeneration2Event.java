@@ -33,7 +33,8 @@ public class EPCGeneration2Event extends EPCGeneration1Event {
 	}
 
 	/**
-	 * Get the kill password as a hex string.  The first character of the return string is x
+	 * Get the kill password as a hex string. The first character of the return
+	 * string is x
 	 * 
 	 * @return A hex sting with the first character being an x.
 	 */
@@ -51,7 +52,8 @@ public class EPCGeneration2Event extends EPCGeneration1Event {
 	}
 
 	/**
-	 * Get the access password as a hex string.  The first character of the return string is x
+	 * Get the access password as a hex string. The first character of the
+	 * return string is x
 	 * 
 	 * @return a hex string with the first character being a x
 	 */
@@ -127,6 +129,7 @@ public class EPCGeneration2Event extends EPCGeneration1Event {
 	 * 
 	 * @param memory
 	 * @param length
+	 *            The number of bits in the reserved memory
 	 */
 	public void setReservedMemory(BigInteger memory, Integer length) {
 		memoryBanks.get(0).setMemory(memory);
@@ -141,7 +144,7 @@ public class EPCGeneration2Event extends EPCGeneration1Event {
 	}
 
 	/**
-	 * Get the length of the reserved memory.
+	 * Get number of bits in the reserved memory.
 	 * 
 	 * @return
 	 */
@@ -189,6 +192,7 @@ public class EPCGeneration2Event extends EPCGeneration1Event {
 	 * 
 	 * @param memory
 	 * @param length
+	 *            The number of bits in the memory
 	 */
 	public void setTIDMemory(BigInteger memory, Integer length) {
 		memoryBanks.get(2).setMemory(memory);
@@ -203,7 +207,7 @@ public class EPCGeneration2Event extends EPCGeneration1Event {
 	}
 
 	/**
-	 * Get the length of the tid memory.
+	 * Get the number of bits in the TID memory bank.
 	 * 
 	 * @return
 	 */
@@ -215,6 +219,8 @@ public class EPCGeneration2Event extends EPCGeneration1Event {
 	 * Set the user memory bank.
 	 * 
 	 * @param memory
+	 * @param length
+	 *            The number of bits in the User Memory
 	 */
 	public void setUserMemory(BigInteger memory, Integer length) {
 		memoryBanks.get(3).setLength(length);
@@ -229,7 +235,7 @@ public class EPCGeneration2Event extends EPCGeneration1Event {
 	}
 
 	/**
-	 * Get the length of the user memory.
+	 * Get the number of bits in the user memory.
 	 * 
 	 * @return
 	 */

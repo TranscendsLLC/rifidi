@@ -13,7 +13,7 @@
 /**
  * 
  */
-package org.rifidi.edge.core.sensors.base;
+package org.rifidi.edge.core.sensors.sessions;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -34,12 +34,13 @@ import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.api.SessionStatus;
 import org.rifidi.edge.api.rmi.dto.CommandDTO;
 import org.rifidi.edge.core.sensors.SensorSession;
+import org.rifidi.edge.core.sensors.base.AbstractSensor;
 import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
 import org.rifidi.edge.core.sensors.commands.Command;
 import org.springframework.jms.core.JmsTemplate;
 
 /**
- * An Abstract class for concreate ReaderSessions to extend. This
+ * An Abstract class for concrete ReaderSessions to extend. This
  * AbstractSensorSession class provides a base implementation of the command
  * handling of a reader session (i.e. submitting, deleting, executing commands).
  * It does not provide any implementation of connection methods in a session

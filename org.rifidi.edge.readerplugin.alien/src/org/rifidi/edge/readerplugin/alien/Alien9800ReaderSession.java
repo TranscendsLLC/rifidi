@@ -23,12 +23,12 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.api.SessionStatus;
-import org.rifidi.edge.core.sensors.base.AbstractIPSensorSession;
 import org.rifidi.edge.core.sensors.base.AbstractSensor;
-import org.rifidi.edge.core.sensors.base.threads.MessageParsingStrategyFactory;
 import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
 import org.rifidi.edge.core.sensors.commands.Command;
 import org.rifidi.edge.core.sensors.messages.ByteMessage;
+import org.rifidi.edge.core.sensors.sessions.MessageParsingStrategyFactory;
+import org.rifidi.edge.core.sensors.sessions.poll.AbstractPollIPSensorSession;
 import org.rifidi.edge.core.services.notification.NotifierService;
 import org.springframework.jms.core.JmsTemplate;
 
@@ -38,12 +38,12 @@ import org.springframework.jms.core.JmsTemplate;
  * @author Jochen Mader - jochen@pramari.com
  * 
  */
-public class Alien9800ReaderSession extends AbstractIPSensorSession {
+public class Alien9800ReaderSession extends AbstractPollIPSensorSession {
 	/** Logger for this class. */
 	private static final Log logger = LogFactory
 			.getLog(Alien9800ReaderSession.class);
 	/** Set to true if the session is destroied. */
-	private AtomicBoolean destroied=new AtomicBoolean(false);
+	private AtomicBoolean destroyed = new AtomicBoolean(false);
 	/** Username for connecting to the reader. */
 	private final String username;
 	/** Password for connnecting to the reader. */
@@ -202,6 +202,18 @@ public class Alien9800ReaderSession extends AbstractIPSensorSession {
 			return false;
 		}
 		return true;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.core.sensors.sessions.AbstractIPSensorSession#sendMessage
+	 * (org.rifidi.edge.core.sensors.messages.ByteMessage)
+	 */
+	@Override
+	public void sendMessage(ByteMessage message) throws IOException {
+		super.sendMessage(message);
 	}
 
 	/*
