@@ -42,8 +42,6 @@ public class Alien9800ReaderSession extends AbstractPollIPSensorSession {
 	/** Logger for this class. */
 	private static final Log logger = LogFactory
 			.getLog(Alien9800ReaderSession.class);
-	/** Set to true if the session is destroied. */
-	private AtomicBoolean destroyed = new AtomicBoolean(false);
 	/** Username for connecting to the reader. */
 	private final String username;
 	/** Password for connnecting to the reader. */
@@ -56,10 +54,6 @@ public class Alien9800ReaderSession extends AbstractPollIPSensorSession {
 	private volatile NotifierService notifierService;
 	/** The FACTORY_ID of the reader this session belongs to */
 	private final String readerID;
-	/** The message parser that parses messages from the socket */
-	private volatile AlienMessageParsingStrategy messageParser;
-	/** Supplied by spring. */
-	private final Set<AbstractCommandConfiguration<?>> commands;
 	/**
 	 * You can put this in front of a Alien command for terse output to come
 	 * back to you, making things faster and easier to parse.
@@ -144,12 +138,10 @@ public class Alien9800ReaderSession extends AbstractPollIPSensorSession {
 			String readerID, Set<AbstractCommandConfiguration<?>> commands) {
 		super(sensor, id, host, port, reconnectionInterval, maxConAttempts,
 				template.getDefaultDestination(), template, commands);
-		this.commands = commands;
 		this.username = username;
 		this.password = password;
 		this.notifierService = notifierService;
 		this.readerID = readerID;
-		this.messageParser = new AlienMessageParsingStrategy();
 	}
 
 	/*
