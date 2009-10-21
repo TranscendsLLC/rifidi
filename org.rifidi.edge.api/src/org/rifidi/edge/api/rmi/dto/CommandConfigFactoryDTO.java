@@ -27,6 +27,8 @@ public class CommandConfigFactoryDTO implements Serializable {
 	private String readerFactoryID;
 	/** The commandconfiguration id this factory produces */
 	private String commandFactoryID;
+	private String displayName;
+	private String description;
 
 	/**
 	 * Constructor
@@ -36,9 +38,13 @@ public class CommandConfigFactoryDTO implements Serializable {
 	 *            factory works with
 	 * @param commandFactoryID
 	 *            The command configuration id this factory produces
+	 * @param displayName
+	 *            The display name for the command
+	 * @param description
+	 *            The description of this command
 	 */
 	public CommandConfigFactoryDTO(String readerFactoryID,
-			String commandFactoryID) {
+			String commandFactoryID, String displayName, String description) {
 		this.readerFactoryID = readerFactoryID;
 		this.commandFactoryID = commandFactoryID;
 	}
@@ -59,6 +65,22 @@ public class CommandConfigFactoryDTO implements Serializable {
 	 */
 	public String getCommandFactoryID() {
 		return commandFactoryID;
+	}
+
+	/**
+	 * 
+	 * @return The display name for the command
+	 */
+	public String getDisplayName() {
+		return displayName;
+	}
+
+	/**
+	 * 
+	 * @return The description of the command
+	 */
+	public String getDescription() {
+		return description;
 	}
 
 }
