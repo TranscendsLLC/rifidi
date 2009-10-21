@@ -28,8 +28,6 @@ import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
 public class LLRPGetTagListCommandConfiguration extends
 		AbstractCommandConfiguration<LLRPGetTagListCommand> {
 	private int roSpecID = 1;
-	/** The name of this command type */
-	public static final String name = "LLRPGetTagList-Configuration";
 	
 	public static final MBeanInfo mbeaninfo;
 	static {
@@ -57,28 +55,6 @@ public class LLRPGetTagListCommandConfiguration extends
 		return llrpgtlc;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @seeorg.rifidi.edge.core.commands.AbstractCommandConfiguration#
-	 * getCommandDescription()
-	 */
-	@Override
-	public String getCommandDescription() {
-		return "Returns the taglist as seen by the LLRP via a polling.";
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @seeorg.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration#
-	 * getCommandName ()
-	 */
-	@Override
-	public String getCommandName() {
-		return name;
-	}
-
 	/**
 	 * Sets the ROSpecID.
 	 * 
@@ -94,8 +70,8 @@ public class LLRPGetTagListCommandConfiguration extends
 	 * 
 	 * @return the roSpecID
 	 */
-	@Property(displayName = "roSpecID", description = "The ID of the ROSpec for the "
-			+ "GetTagList command", writable = true, type = PropertyType.PT_INTEGER, defaultValue = ""
+	@Property(displayName = "RO Spec ID", description = "The ID of the ROSpec for the "
+			+ "Poll command", writable = true, type = PropertyType.PT_INTEGER, defaultValue = ""
 			+ "1", minValue = "1", maxValue = "16535")
 	public int getROSpecID() {
 		return roSpecID;

@@ -38,16 +38,6 @@ public class Awid2010StopCommandConfiguration extends
 	}
 
 	@Override
-	public String getCommandDescription() {
-		return "Stop the current executing command on the Awid";
-	}
-
-	@Override
-	public String getCommandName() {
-		return "Awid Stop Command";
-	}
-
-	@Override
 	public MBeanInfo getMBeanInfo() {
 		return (MBeanInfo)mbeaninfo.clone();
 	}

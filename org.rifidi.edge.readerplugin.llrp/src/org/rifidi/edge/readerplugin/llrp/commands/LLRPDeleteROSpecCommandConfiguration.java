@@ -64,28 +64,6 @@ public class LLRPDeleteROSpecCommandConfiguration extends
 		return llrpdrc;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @seeorg.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration#
-	 * getCommandDescription()
-	 */
-	@Override
-	public String getCommandDescription() {
-		return "Delete the ROSpec with the given ID.";
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @seeorg.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration#
-	 * getCommandName()
-	 */
-	@Override
-	public String getCommandName() {
-		return name;
-	}
-
 	/**
 	 * Sets the ROSpecID.
 	 * 
@@ -104,7 +82,7 @@ public class LLRPDeleteROSpecCommandConfiguration extends
 	 * 
 	 * @return the roSpecID
 	 */
-	@Property(displayName = "roSpecID", defaultValue = "1", description = "The ID of the ROSpec for the DeleteROSpec "
+	@Property(displayName = "RO Spec ID", defaultValue = "1", description = "The ID of the RO Spec to delete"
 			+ "command", writable = true, type = PropertyType.PT_INTEGER, minValue="1", maxValue="16535")
 	public int getROSpecID() {
 		return roSpecID;

@@ -241,9 +241,13 @@ public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 	 * 
 	 * @return the ipAddress
 	 */
-	@Property(displayName = "IP Address", description = "IP Address of "
-			+ "the Reader", writable = true, type = PropertyType.PT_STRING, category = "conn"
-			+ "ection", orderValue = 0, defaultValue = LLRPConstants.LOCALHOST)
+	@Property(displayName = "IP Address", 
+			  description = "IP Address of the Reader", 
+			  writable = true, 
+			  type = PropertyType.PT_STRING,
+			  category = "connection", 
+		      defaultValue = LLRPConstants.LOCALHOST, 
+			  orderValue = 0)
 	public String getIpAddress() {
 		return ipAddress;
 	}
@@ -263,8 +267,15 @@ public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 	 * 
 	 * @return the port
 	 */
-	@Property(displayName = "Port", description = "Port of the Reader", writable = true, type = PropertyType.PT_INTEGER, category = "c"
-			+ "onnection", orderValue = 1, minValue = LLRPConstants.PORT_MIN, maxValue = LLRPConstants.PORT_MAX, defaultValue = LLRPConstants.PORT)
+	@Property(displayName = "Port", 
+			  description = "Port of the Reader", 
+			  writable = true, 
+		      type = PropertyType.PT_INTEGER, 
+		      category = "connection", 
+		      orderValue = 1, 
+			  defaultValue = LLRPConstants.PORT,
+			  minValue = "0",
+			  maxValue = "65535")
 	public Integer getPort() {
 		return port;
 	}
@@ -284,9 +295,14 @@ public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 	 * 
 	 * @return the reconnectionInterval
 	 */
-	@Property(displayName = "Reconnection Interval", description = "The interval to wait between"
-			+ "reconnection attempts", writable = true, type = PropertyType.PT_INTEGER, category = "connec"
-			+ "tion", orderValue = 3, defaultValue = LLRPConstants.RECONNECTION_INTERVAL)
+	@Property(displayName = "Reconnection Interval", 
+			  description = "Upon connection failure, the time to wait between two connection attempts (ms)", 
+			  writable = true, 
+			  type = PropertyType.PT_INTEGER, 
+			  category = "connection", 
+			  defaultValue = LLRPConstants.RECONNECTION_INTERVAL, 
+			  orderValue = 4, 
+			  minValue = "0")
 	public Integer getReconnectionInterval() {
 		return reconnectionInterval;
 	}
@@ -306,9 +322,14 @@ public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 	 * 
 	 * @return the maxNumConnectionAttempts
 	 */
-	@Property(displayName = "Maximum Connection Attempts", description = "Number of times to attempt to connect to the reader"
-			+ "  (If -1, then try forever)", writable = true, category = "conne"
-			+ "ction", type = PropertyType.PT_INTEGER, orderValue = 2, defaultValue = LLRPConstants.MAX_CONNECTION_ATTEMPTS, minValue = "-1")
+	@Property(displayName = "Maximum Connection Attempts", 
+			  description = "Upon connection failure, the number of times to attempt to recconnect before giving up. If set to '-1', then try forever", 
+			  writable = true, 
+			  type = PropertyType.PT_INTEGER, 
+		      category = "connection", 
+			  defaultValue = LLRPConstants.MAX_CONNECTION_ATTEMPTS, 
+		      orderValue = 5, 
+		      minValue = "-1")
 	public Integer getMaxNumConnectionAttempts() {
 		return maxNumConnectionAttempts;
 	}

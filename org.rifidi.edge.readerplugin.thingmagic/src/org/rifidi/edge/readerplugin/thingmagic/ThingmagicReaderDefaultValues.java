@@ -24,5 +24,5 @@ public class ThingmagicReaderDefaultValues {
 	/** Time between two connection attempts. */
 	public static final String RECONNECTION_INTERVAL = "500";
 	/** Number of connection attempts before a connection goes into fail state. */
-	public static final String MAX_CONNECTION_ATTEMPTS = "10";
+	public static final String MAX_CONNECTION_ATTEMPTS = "-1";
 }

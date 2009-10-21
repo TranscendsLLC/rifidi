@@ -30,7 +30,7 @@ public class LLRPGetTagListCommandConfigurationFactory
 		extends
 		AbstractCommandConfigurationFactory<AbstractCommandConfiguration<?>> {
 	/** Name of the command. */
-	public static final String name = "LLRPGetTagList-Configuration";
+	public static final String name = "LLRP-Poll";
 	/** Mbeaninfo for this class. */
 	public static final MBeanInfo mbeaninfo;
 	static {
@@ -86,5 +86,25 @@ public class LLRPGetTagListCommandConfigurationFactory
 	public MBeanInfo getServiceDescription(String factoryID) {
 		return (MBeanInfo) mbeaninfo.clone();
 	}
+
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.configuration.impl.AbstractCommandConfigurationFactory#getCommandDescription()
+	 */
+	@Override
+	public String getCommandDescription() {
+		return "Poll the LLRP reader for its tags. "
+		+ "For monitoring of the read zone, submit this command for "
+		+ "recurring execution.";
+	}
+
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.configuration.impl.AbstractCommandConfigurationFactory#getDisplayName()
+	 */
+	@Override
+	public String getDisplayName() {
+		return "LLRP Poll";
+	}
+	
+	
 
 }

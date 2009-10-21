@@ -33,16 +33,6 @@ public class Awid2010PortalIDCommandConfiguration extends
 	}
 
 	@Override
-	public String getCommandName() {
-		return "Get Tags";
-	}
-
-	@Override
-	public String getCommandDescription() {
-		return "Read multiple EPC C1G2 tags present in the reading field";
-	}
-
-	@Override
 	public Awid2010PortalIDCommand getCommand(String readerID) {
 		return new Awid2010PortalIDCommand(super.getID());
 	}

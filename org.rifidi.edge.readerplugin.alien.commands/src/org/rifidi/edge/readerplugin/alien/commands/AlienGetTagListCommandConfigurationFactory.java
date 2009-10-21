@@ -26,7 +26,7 @@ public class AlienGetTagListCommandConfigurationFactory
 		extends
 		AbstractCommandConfigurationFactory<AlienGetTagListCommandConfiguration> {
 	/** Name of the command. */
-	public static final String name = "Alien9800-GetTagList";
+	public static final String ID = "Alien-Poll";
 	/** Mbeaninfo for this class. */
 	public static final MBeanInfo mbeaninfo;
 	static {
@@ -68,7 +68,7 @@ public class AlienGetTagListCommandConfigurationFactory
 	 */
 	@Override
 	public String getFactoryID() {
-		return name;
+		return ID;
 	}
 
 	/*
@@ -81,6 +81,32 @@ public class AlienGetTagListCommandConfigurationFactory
 	@Override
 	public MBeanInfo getServiceDescription(String factoryID) {
 		return (MBeanInfo) mbeaninfo.clone();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.core.configuration.impl.AbstractCommandConfigurationFactory
+	 * #getCommandDescription()
+	 */
+	@Override
+	public String getCommandDescription() {
+		return "Poll the Alien reader for its tag list. "
+				+ "For monitoring of the read zone, submit this command for "
+				+ "recurring execution.";
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.core.configuration.impl.AbstractCommandConfigurationFactory
+	 * #getDisplayName()
+	 */
+	@Override
+	public String getDisplayName() {
+		return "Alien Poll";
 	}
 
 }

@@ -26,7 +26,7 @@ public class Awid2010PortalIDCommandConfigurationFactory
 		extends
 		AbstractCommandConfigurationFactory<Awid2010PortalIDCommandConfiguration> {
 
-	public static final String FACTORY_ID = "AwidGetTags";
+	public static final String FACTORY_ID = "Awid-Push-Start";
 
 	/*
 	 * (non-Javadoc)
@@ -79,4 +79,20 @@ public class Awid2010PortalIDCommandConfigurationFactory
 
 	}
 
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.configuration.impl.AbstractCommandConfigurationFactory#getCommandDescription()
+	 */
+	@Override
+	public String getCommandDescription() {
+		return "Configure the Awid reader to send back tags using the Gen 2 Portal ID command. "
+		+ "To monitor a read zone, submit this command for a one-time execution.";
+	}
+
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.configuration.impl.AbstractCommandConfigurationFactory#getDisplayName()
+	 */
+	@Override
+	public String getDisplayName() {
+		return "Awid Push Start";
+	}
 }

@@ -68,6 +68,21 @@ public abstract class AbstractCommandConfigurationFactory<T> implements
 	 * @return The DTO for this object
 	 */
 	public CommandConfigFactoryDTO getDTO() {
-		return new CommandConfigFactoryDTO(getReaderFactoryID(), getFactoryID());
+		return new CommandConfigFactoryDTO(getReaderFactoryID(),
+				getFactoryID(), getDisplayName(), getCommandDescription());
 	}
+
+	/**
+	 * Get the name of the command
+	 * 
+	 * @return
+	 */
+	public abstract String getDisplayName();
+
+	/**
+	 * Get the description of the command.
+	 * 
+	 * @return
+	 */
+	public abstract String getCommandDescription();
 }

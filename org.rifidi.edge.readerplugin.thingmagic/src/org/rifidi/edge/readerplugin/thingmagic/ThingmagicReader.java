@@ -232,8 +232,7 @@ public class ThingmagicReader extends AbstractSensor<ThingmagicReaderSession> {
 	/**
 	 * @return the RECONNECTION_INTERVAL
 	 */
-	@Property(displayName = "Reconnection Interval", description = "Time between two"
-			+ " connection attempts (ms).", writable = true, type = PropertyType.PT_INTEGER, category = "conn"
+	@Property(displayName = "Reconnection Interval", description = "Upon connection failure, the time to wait between two connection attempts (ms)", writable = true, type = PropertyType.PT_INTEGER, category = "conn"
 			+ "ection", defaultValue = ThingmagicReaderDefaultValues.RECONNECTION_INTERVAL, orderValue = 4, minValue = "0")
 	public Integer getReconnectionInterval() {
 		return reconnectionInterval;
@@ -250,8 +249,7 @@ public class ThingmagicReader extends AbstractSensor<ThingmagicReaderSession> {
 	/**
 	 * @return the MAX_CONNECTION_ATTEMPTS
 	 */
-	@Property(displayName = "Maximum Connection Attempts", description = "Number of times to attempt to recconnect. "
-			+ "If -1, then try forever", writable = true, type = PropertyType.PT_INTEGER, category = "conn"
+	@Property(displayName = "Maximum Connection Attempts", description = "Upon connection failure, the number of times to attempt to recconnect before giving up. If set to '-1', then try forever", writable = true, type = PropertyType.PT_INTEGER, category = "conn"
 			+ "ection", defaultValue = ThingmagicReaderDefaultValues.MAX_CONNECTION_ATTEMPTS, orderValue = 5, minValue = "-1")
 	public Integer getMaxNumConnectionAttempts() {
 		return maxNumConnectionAttempts;

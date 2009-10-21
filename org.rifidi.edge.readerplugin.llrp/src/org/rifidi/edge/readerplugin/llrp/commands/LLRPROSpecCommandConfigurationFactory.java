@@ -27,7 +27,7 @@ public class LLRPROSpecCommandConfigurationFactory
 		extends
 		AbstractCommandConfigurationFactory<AbstractCommandConfiguration<?>> {
 	/** Name of the command. */
-	public static final String name = "LLRPROSpecCommand-Configuration";
+	public static final String name = "LLRP-Push-Start";
 	/** Mbeaninfo for this class. */
 	public static final MBeanInfo mbeaninfo;
 	static {
@@ -83,5 +83,24 @@ public class LLRPROSpecCommandConfigurationFactory
 	public MBeanInfo getServiceDescription(String factoryID) {
 		return (MBeanInfo) mbeaninfo.clone();
 	}
+
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.configuration.impl.AbstractCommandConfigurationFactory#getCommandDescription()
+	 */
+	@Override
+	public String getCommandDescription() {
+		return "Configure the LLRP reader to send back tags automatically. "
+		+ "To monitor a read zone, submit this command for a one-time execution.";
+	}
+
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.configuration.impl.AbstractCommandConfigurationFactory#getDisplayName()
+	 */
+	@Override
+	public String getDisplayName() {
+		return "LLRP Push Start";
+	}
+	
+	
 
 }

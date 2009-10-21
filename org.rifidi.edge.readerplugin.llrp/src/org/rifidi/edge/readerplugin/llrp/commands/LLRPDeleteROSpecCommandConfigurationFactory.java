@@ -23,11 +23,10 @@ import org.rifidi.edge.readerplugin.llrp.LLRPReaderFactory;
  * @author Jochen Mader - jochen@pramari.com
  * 
  */
-public class LLRPDeleteROSpecCommandConfigurationFactory
-		extends
+public class LLRPDeleteROSpecCommandConfigurationFactory extends
 		AbstractCommandConfigurationFactory<AbstractCommandConfiguration<?>> {
 	/** Name of the command. */
-	public static final String name = "DeleteROSpec-Configuration";
+	public static final String name = "LLRP-Push-Stop";
 	/** Mbeaninfo for this class. */
 	public static final MBeanInfo mbeaninfo;
 	static {
@@ -82,6 +81,32 @@ public class LLRPDeleteROSpecCommandConfigurationFactory
 	@Override
 	public MBeanInfo getServiceDescription(String factoryID) {
 		return (MBeanInfo) mbeaninfo.clone();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.core.configuration.impl.AbstractCommandConfigurationFactory
+	 * #getCommandDescription()
+	 */
+	@Override
+	public String getCommandDescription() {
+		return "Command the LLRP reader to stop sending back tags.  "
+				+ "To use, supply the RO Spec that is currently executing on the reader, and"
+				+ " submit this command for a one-time execution.";
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.core.configuration.impl.AbstractCommandConfigurationFactory
+	 * #getDisplayName()
+	 */
+	@Override
+	public String getDisplayName() {
+		return "LLRP Push Stop";
 	}
 
 }

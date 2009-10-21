@@ -396,7 +396,7 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 	 * @return the USERNAME
 	 */
 	@Property(displayName = "Username", description = "Username for logging "
-			+ "into the sensorSession", writable = true, category = "conn"
+			+ "into the Alien Reader", writable = true, category = "conn"
 			+ "ection", defaultValue = AlienReaderDefaultValues.USERNAME, orderValue = 2)
 	public String getUsername() {
 		return username;
@@ -414,7 +414,7 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 	 * @return the PASSWORD
 	 */
 	@Property(displayName = "Password", description = "Password for logging"
-			+ " into the sensorSession", writable = true, category = "conn"
+			+ " into the Alien Reader", writable = true, category = "conn"
 			+ "ection", defaultValue = AlienReaderDefaultValues.PASSWORD, orderValue = 3)
 	public String getPassword() {
 		return password;
@@ -431,8 +431,7 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 	/**
 	 * @return the RECONNECTION_INTERVAL
 	 */
-	@Property(displayName = "Reconnection Interval", description = "Time between two"
-			+ " connection attempts (ms)", writable = true, type = PropertyType.PT_INTEGER, category = "conn"
+	@Property(displayName = "Reconnection Interval", description = "Upon connection failure, the time to wait between two connection attempts (ms)", writable = true, type = PropertyType.PT_INTEGER, category = "conn"
 			+ "ection", defaultValue = AlienReaderDefaultValues.RECONNECTION_INTERVAL, orderValue = 4, minValue = "0")
 	public Integer getReconnectionInterval() {
 		return reconnectionInterval;
@@ -449,9 +448,14 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 	/**
 	 * @return the MAX_CONNECTION_ATTEMPTS
 	 */
-	@Property(displayName = "Maximum Connection Attempts", description = "Number of times to attempt to recconnect "
-			+ "(If -1, then try forever)", writable = true, type = PropertyType.PT_INTEGER, category = "conn"
-			+ "ection", defaultValue = AlienReaderDefaultValues.MAX_CONNECTION_ATTEMPTS, orderValue = 5, minValue = "-1")
+	@Property(displayName = "Maximum Connection Attempts", 
+			  description = "Upon connection failure, the number of times to attempt to recconnect before giving up. If set to '-1', then try forever", 
+			  writable = true, 
+			  type = PropertyType.PT_INTEGER, 
+		      category = "connection", 
+			  defaultValue = AlienReaderDefaultValues.MAX_CONNECTION_ATTEMPTS, 
+		      orderValue = 5, 
+		      minValue = "-1")
 	public Integer getMaxNumConnectionAttempts() {
 		return maxNumConnectionAttempts;
 	}
@@ -464,7 +468,7 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 		this.maxNumConnectionAttempts = maxNumConnectionAttempts;
 	}
 
-	@Property(displayName = "GPO Output", description = "Ouput of GPO", writable = true, type = PropertyType.PT_INTEGER, minValue = "0"
+	@Property(displayName = "GPO Output", description = "Set the GPO bitmap value", writable = true, type = PropertyType.PT_INTEGER, minValue = "0"
 			+ "", maxValue = "255", category = "GPIO")
 	public Integer getExternalOutput() {
 		return Integer.parseInt(readerProperties.get(PROP_EXTERNAL_OUTPUT));
@@ -488,8 +492,8 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 	 * 
 	 * @return
 	 */
-	@Property(displayName = "Persist Time", description = "How long the tags will persist "
-			+ "in memory before they are read (-1 is an infinite amount of time)"
+	@Property(displayName = "Persist Time", description = "Time in seconds the tags will persist "
+			+ "in memory before they are removed (-1 is an infinite amount of time)"
 			+ "", writable = true, type = PropertyType.PT_INTEGER, minValue = "-1"
 			+ "", maxValue = "16535", category = "General", defaultValue = "-1")
 	public Integer getPersistTime() {
@@ -584,7 +588,7 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 		}
 	}
 
-	@Property(displayName = "Reader Number", description = "Reader " + "Number", writable = true, type = PropertyType.PT_STRING, category = "General")
+	@Property(displayName = "Reader Number", description = "Reader Number", writable = true, type = PropertyType.PT_STRING, category = "General")
 	public String getReaderNumber() {
 		return readerProperties.get(PROP_READER_NUMBER);
 	}
@@ -602,8 +606,8 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 	 * 
 	 * @return
 	 */
-	@Property(displayName = "SensorSession Version", description = "Version Number of "
-			+ "the sensorSession", writable = false, category = "General")
+	@Property(displayName = "Alien Reader Version", description = "Version Number of "
+			+ "the Alien Reader", writable = false, category = "General")
 	public String getReaderVersion() {
 		return (String) readerProperties.get(PROP_READER_VERSION);
 	}
@@ -613,8 +617,8 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 	 * 
 	 * @return
 	 */
-	@Property(displayName = "SensorSession Type", description = "Type of "
-			+ "SensorSession", writable = false)
+	@Property(displayName = "Alien Reader Type", description = "Type of "
+			+ " Alien Reader", writable = false)
 	public String getReaderType() {
 		return (String) readerProperties.get(PROP_READER_TYPE);
 	}
@@ -636,8 +640,7 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 	 * 
 	 * @return
 	 */
-	@Property(displayName = "MAC Address", description = "MAC Address"
-			+ " of sensorSession", writable = false, category = "General")
+	@Property(displayName = "MAC Address", description = "MAC address of the reader", writable = false, category = "General")
 	public String getMACAddress() {
 		return (String) readerProperties.get(PROP_MAC_ADDRESS);
 	}
@@ -647,7 +650,7 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 	 * 
 	 * @return
 	 */
-	@Property(displayName = "GPI Input", description = "Input of" + " GPI", writable = false, type = PropertyType.PT_INTEGER, category = "GPIO")
+	@Property(displayName = "GPI Input", description = "Current GPI Bitmap Value", writable = false, type = PropertyType.PT_INTEGER, category = "GPIO")
 	public Integer getExternalInput() {
 		return Integer.parseInt(readerProperties.get(PROP_EXTERNAL_INPUT));
 	}
@@ -658,7 +661,7 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 	 * @return
 	 */
 	@Property(displayName = "Uptime", description = "Uptime of "
-			+ "sensorSession", writable = false, type = PropertyType.PT_INTEGER, category = "General")
+			+ "Alien Reader", writable = false, type = PropertyType.PT_INTEGER, category = "General")
 	public Integer getUptime() {
 		return Integer.parseInt(readerProperties.get(PROP_UPTIME));
 	}

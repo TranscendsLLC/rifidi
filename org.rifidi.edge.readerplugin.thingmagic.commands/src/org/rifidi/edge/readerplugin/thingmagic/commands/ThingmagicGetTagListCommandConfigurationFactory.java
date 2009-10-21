@@ -28,7 +28,7 @@ public class ThingmagicGetTagListCommandConfigurationFactory
 		AbstractCommandConfigurationFactory<ThingmagicGetTagListCommandConfiguration> {
 
 	/** Name of the command. */
-	public static final String name = "Thingmagic-GetTagList";
+	public static final String name = "ThingMagic-Poll";
 	/** Mbeaninfo for this class. */
 	public static final MBeanInfo mbeaninfo;
 	
@@ -73,6 +73,26 @@ public class ThingmagicGetTagListCommandConfigurationFactory
 	public MBeanInfo getServiceDescription(String factoryID) {
 		return (MBeanInfo) mbeaninfo.clone();
 	}
+
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.configuration.impl.AbstractCommandConfigurationFactory#getCommandDescription()
+	 */
+	@Override
+	public String getCommandDescription() {
+		return "Poll the ThingMagic reader for its tags. "
+		+ "For monitoring of the read zone, submit this command for "
+		+ "recurring execution.";
+	}
+
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.configuration.impl.AbstractCommandConfigurationFactory#getDisplayName()
+	 */
+	@Override
+	public String getDisplayName() {
+		return "ThingMagic Poll";
+	}
+	
+	
 	
 
 }

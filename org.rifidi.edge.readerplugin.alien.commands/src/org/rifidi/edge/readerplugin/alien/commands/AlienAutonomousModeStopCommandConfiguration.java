@@ -44,28 +44,6 @@ public class AlienAutonomousModeStopCommandConfiguration
 		return new AlienAutonomousModeStopCommand(super.getID());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @seeorg.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration#
-	 * getCommandDescription()
-	 */
-	@Override
-	public String getCommandDescription() {
-		return "A command to turn off autonomous mode";
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @seeorg.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration#
-	 * getCommandName()
-	 */
-	@Override
-	public String getCommandName() {
-		return name;
-	}
-
 	/* (non-Javadoc)
 	 * @see org.rifidi.edge.core.configuration.RifidiService#getMBeanInfo()
 	 */

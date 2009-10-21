@@ -41,20 +41,6 @@ public abstract class AbstractCommandConfiguration<T extends Command> extends
 	 */
 	public abstract T getCommand(String readerID);
 
-	/**
-	 * Get the name of the command
-	 * 
-	 * @return
-	 */
-	public abstract String getCommandName();
-
-	/**
-	 * Get the description of the command.
-	 * 
-	 * @return
-	 */
-	public abstract String getCommandDescription();
-
 	/*
 	 * (non-Javadoc)
 	 * 

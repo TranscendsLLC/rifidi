@@ -32,7 +32,7 @@ public class Awid2010SensorFactory extends
 		AbstractSensorFactory<Awid2010Sensor> {
 
 	/** The Factory ID */
-	public static final String FACTORY_ID = "Awid2010";
+	public static final String FACTORY_ID = "Awid";
 	/** A JMS event notification sender */
 	private volatile NotifierService notifierService;
 	/** JMS template for sending tag data to JMS Queue */
@@ -76,7 +76,7 @@ public class Awid2010SensorFactory extends
 	 */
 	@Override
 	public String getDisplayName() {
-		return "Awid 2010";
+		return "Awid";
 	}
 
 	/*
@@ -87,7 +87,7 @@ public class Awid2010SensorFactory extends
 	 */
 	@Override
 	public String getDescription() {
-		return "Awid 2010 is a TCP/IP Gen2 Reader";
+		return "The Rifidi Awid adapater supports the Awid TCP/IP protocol on the 2010 and 3014";
 
 	}
 
