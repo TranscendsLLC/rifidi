@@ -47,6 +47,8 @@ public class CommandConfigFactoryDTO implements Serializable {
 			String commandFactoryID, String displayName, String description) {
 		this.readerFactoryID = readerFactoryID;
 		this.commandFactoryID = commandFactoryID;
+		this.displayName = displayName;
+		this.description = description;
 	}
 
 	/**
