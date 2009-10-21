@@ -28,6 +28,10 @@ public class RemoteCommandConfigFactory {
 	private String commandConfigFactoryID;
 	/** The MBeanInfo that describes the properties of this type */
 	private MBeanInfo mbeanInfo;
+	/** The display name of the factory */
+	private String displayName;
+	/** The description of the factory */
+	private String description;
 
 	/**
 	 * Constructor.
@@ -42,6 +46,8 @@ public class RemoteCommandConfigFactory {
 		this.readerFactoryID = dto.getReaderFactoryID();
 		this.commandConfigFactoryID = dto.getCommandFactoryID();
 		this.mbeanInfo = mbeanInfo;
+		this.displayName = dto.getDisplayName();
+		this.description = dto.getDescription();
 	}
 
 	/**
@@ -64,7 +70,13 @@ public class RemoteCommandConfigFactory {
 	public MBeanInfo getMbeanInfo() {
 		return mbeanInfo;
 	}
-	
-	
+
+	public String getDisplayName() {
+		return displayName;
+	}
+
+	public String getDescription() {
+		return description;
+	}
 
 }

@@ -23,10 +23,12 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.views.properties.tabbed.ITabDescriptor;
 import org.eclipse.ui.views.properties.tabbed.ITabDescriptorProvider;
+import org.rifidi.edge.client.model.sal.RemoteCommandConfigFactory;
 import org.rifidi.edge.client.model.sal.RemoteCommandConfiguration;
 import org.rifidi.edge.client.model.sal.RemoteEdgeServer;
 import org.rifidi.edge.client.model.sal.RemoteReader;
 import org.rifidi.edge.client.sal.properties.commandconfigurations.CommandConfigTabDescriptor;
+import org.rifidi.edge.client.sal.properties.commandfactories.CommandFactoryTabDescriptor;
 import org.rifidi.edge.client.sal.properties.edgeserver.EdgeServerTabDescriptor;
 import org.rifidi.edge.client.sal.properties.readers.ReaderTabDescriptor;
 
@@ -55,6 +57,9 @@ public class SALTabDescriptorProvider implements ITabDescriptorProvider {
 			return getReaderTabDescriptors((RemoteReader) obj);
 		} else if (obj instanceof RemoteCommandConfiguration) {
 			return getCommandTabDescriptors((RemoteCommandConfiguration) obj);
+		} else if (obj instanceof RemoteCommandConfigFactory) {
+			return new ITabDescriptor[] { new CommandFactoryTabDescriptor(
+					(RemoteCommandConfigFactory) obj) };
 		}
 
 		return new ITabDescriptor[] {};

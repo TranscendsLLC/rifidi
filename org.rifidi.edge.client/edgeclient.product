@@ -1,7 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="Rifidi Edge Client" id="org.rifidi.edge.client.product" application="org.rifidi.edge.client.application" version="1.0.0.beta" useFeatures="false" includeLaunchers="true">
+<product name="Rifidi Workbench" id="org.rifidi.edge.client.product" application="org.rifidi.edge.client.application" version="1.0.0" useFeatures="false" includeLaunchers="true">
+
+   <aboutInfo>
+      <image path="/org.rifidi.edge.client/about.gif"/>
+      <text>
+         Thank you for using Rifidi Workbench version 1.0.0.  For assistance, please see our forums at http://forums.rifidi.org
+      </text>
+   </aboutInfo>
 
    <configIni use="default">
    </configIni>
@@ -11,17 +18,32 @@
       <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts</vmArgsMac>
    </launcherArgs>
 
-   <windowImages/>
+   <windowImages i16="/org.rifidi.edge.client/icons/title_rifidi_16x16.gif" i32="/org.rifidi.edge.client/icons/title_rifidi_32x32.gif"/>
 
-   <launcher name="edgeclient">
+   <splash
+      startupProgressRect="5,275,575,15"
+      startupMessageRect="5,252,445,20"
+      startupForegroundColor="FFFFFF" />
+   <launcher name="workbench">
+      <linux icon="/org.rifidi.edge.client/icons/title_rifidi_32x32.xpm"/>
       <solaris/>
       <win useIco="false">
-         <bmp/>
+         <bmp
+            winSmallHigh="/org.rifidi.edge.client/icons/title_rifidi_16x16.bmp"
+            winSmallLow="/org.rifidi.edge.client/icons/title_rifidi_16x16.bmp"
+            winMediumHigh="/org.rifidi.edge.client/icons/title_rifidi_32x32.bmp"
+            winMediumLow="/org.rifidi.edge.client/icons/title_rifidi_32x32.bmp"/>
       </win>
    </launcher>
 
    <vm>
    </vm>
+
+   <license>
+        <text>
+   The Rifidi Workbench is made available under the terms of the Eclipse Public License.
+         </text>
+   </license>
 
    <plugins>
       <plugin id="com.ibm.icu"/>

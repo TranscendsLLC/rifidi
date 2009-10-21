@@ -21,9 +21,12 @@ import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
 import org.rifidi.edge.client.model.sal.RemoteReaderFactory;
 
 /**
@@ -44,6 +47,8 @@ public class ReaderFactoryChooserPage extends WizardPage {
 	/** A logger for this class */
 	private static final Log logger = LogFactory
 			.getLog(ReaderFactoryChooserPage.class);
+	private Text descriptionText;
+	private Composite composite;
 
 	/**
 	 * Constructor
@@ -58,7 +63,7 @@ public class ReaderFactoryChooserPage extends WizardPage {
 	protected ReaderFactoryChooserPage(String pageName,
 			Set<RemoteReaderFactory> factories, NewReaderWizardData data) {
 		super(pageName);
-		setTitle("New Reader Wizard");
+		setTitle("Reader Adapter Configuration Wizard");
 		setDescription("Please choose a reader type");
 		this.readerFactories = factories;
 		this.displayNameMap = new HashMap<String, RemoteReaderFactory>();
@@ -74,7 +79,7 @@ public class ReaderFactoryChooserPage extends WizardPage {
 	 */
 	@Override
 	public void createControl(Composite parent) {
-		Composite composite = new Composite(parent, SWT.NONE);
+		composite = new Composite(parent, SWT.NONE);
 		composite.setLayout(new GridLayout(1, false));
 		combo = new Combo(composite, SWT.NONE);
 		combo.addSelectionListener(new SelectionListener() {
@@ -96,6 +101,13 @@ public class ReaderFactoryChooserPage extends WizardPage {
 			combo.add(displayName);
 
 		}
+		descriptionText = new Text(composite, SWT.MULTI|SWT.WRAP|SWT.READ_ONLY);
+		descriptionText.setEditable(false);
+		descriptionText.setEnabled(false);
+		GridData data = new GridData(GridData.FILL_BOTH);
+		data.grabExcessHorizontalSpace=true;
+		data.grabExcessVerticalSpace=true;
+		descriptionText.setLayoutData(data);
 		setControl(composite);
 		setPageComplete(false);
 	}
@@ -106,7 +118,9 @@ public class ReaderFactoryChooserPage extends WizardPage {
 	private void update() {
 		wizardData.factory = displayNameMap.get(combo.getItem(combo
 				.getSelectionIndex()));
-		logger.debug("choice is " + wizardData.factory);
+		descriptionText.setText(wizardData.factory.getDescription());
+		descriptionText.redraw();
+		composite.getShell().layout(true);
 		((EditConnectionInfoPage) this.getNextPage()).setWizardData(wizardData);
 		setPageComplete(true);
 	}
