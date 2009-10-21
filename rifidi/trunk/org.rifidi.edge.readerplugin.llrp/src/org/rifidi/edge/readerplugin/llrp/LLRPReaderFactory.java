@@ -29,10 +29,6 @@ import org.springframework.jms.core.JmsTemplate;
  */
 public class LLRPReaderFactory extends AbstractSensorFactory<LLRPReader> {
 
-	/** Description of the sensorSession. */
-	private static final String description = "The LLRP is an EPC standard protocol";
-	/** Name of the sensorSession. */
-	private static final String name = "LLRP";
 	/** A JMS event notification sender */
 	private volatile NotifierService notifierService;
 	/** The ID for this factory */
@@ -64,7 +60,7 @@ public class LLRPReaderFactory extends AbstractSensorFactory<LLRPReader> {
 	 */
 	@Override
 	public String getDescription() {
-		return description;
+		return "The Rifidi LLRP adapter supports any reader that exposes a Low Level Reader Protocol (LLRP) interface. LLRP is a standard from EPCglobal.";
 	}
 
 	/*
@@ -74,7 +70,7 @@ public class LLRPReaderFactory extends AbstractSensorFactory<LLRPReader> {
 	 */
 	@Override
 	public String getDisplayName() {
-		return name;
+		return "LLRP";
 	}
 
 	/*

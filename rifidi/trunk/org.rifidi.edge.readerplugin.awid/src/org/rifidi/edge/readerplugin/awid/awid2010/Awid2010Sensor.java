@@ -270,7 +270,13 @@ public class Awid2010Sensor extends AbstractSensor<Awid2010Session> {
 	/**
 	 * @return the host
 	 */
-	@Property(category = "connection", defaultValue = Awid2010DefaultValues.HOST, description = "IP Address of the reader", displayName = "IP Address", orderValue = 1, writable = true, type = PropertyType.PT_STRING)
+	@Property(displayName = "IP Address", 
+			  description = "IP Address of the Reader", 
+			  writable = true, 
+			  type = PropertyType.PT_STRING,
+			  category = "connection", 
+		      defaultValue = Awid2010DefaultValues.HOST, 
+			  orderValue = 0)
 	public String getHost() {
 		return host;
 	}
@@ -286,7 +292,15 @@ public class Awid2010Sensor extends AbstractSensor<Awid2010Session> {
 	/**
 	 * @return the port
 	 */
-	@Property(category = "connection", defaultValue = Awid2010DefaultValues.PORT, description = "Port of the reader", displayName = "Port", orderValue = 2, writable = false, type = PropertyType.PT_INTEGER, minValue = "0")
+	@Property(displayName = "Port", 
+			  description = "Port of the Reader", 
+			  writable = true, 
+		      type = PropertyType.PT_INTEGER, 
+		      category = "connection", 
+		      orderValue = 1, 
+			  defaultValue = Awid2010DefaultValues.PORT,
+			  minValue = "0",
+			  maxValue = "65535")
 	public Integer getPort() {
 		return port;
 	}
@@ -294,7 +308,14 @@ public class Awid2010Sensor extends AbstractSensor<Awid2010Session> {
 	/**
 	 * @return the maxNumConnectionAttempts
 	 */
-	@Property(category = "connection", defaultValue = Awid2010DefaultValues.MAX_NUM_RECON_ATTEMPS, description = "Maximum number of reconnection attempts.  -1 Indicates unlimited.", displayName = "Max Num Reconnection Attempts", orderValue = 3, writable = true, type = PropertyType.PT_INTEGER, minValue = "-1")
+	@Property(displayName = "Maximum Connection Attempts", 
+			  description = "Upon connection failure, the number of times to attempt to recconnect before giving up. If set to '-1', then try forever", 
+			  writable = true, 
+			  type = PropertyType.PT_INTEGER, 
+		      category = "connection", 
+			  defaultValue = Awid2010DefaultValues.MAX_NUM_RECON_ATTEMPS, 
+		      orderValue = 2, 
+		      minValue = "-1")
 	public Integer getMaxNumConnectionAttempts() {
 		return maxNumConnectionAttempts;
 	}
@@ -310,7 +331,14 @@ public class Awid2010Sensor extends AbstractSensor<Awid2010Session> {
 	/**
 	 * @return the reconnectionInterval
 	 */
-	@Property(category = "connection", defaultValue = Awid2010DefaultValues.RECON_INTERVAL, description = "Length of time in ms between sucessive reconnection attempts", displayName = "Reconnection Interval", orderValue = 4, writable = true, type = PropertyType.PT_INTEGER, minValue = "0")
+	@Property(displayName = "Reconnection Interval", 
+			  description = "Upon connection failure, the time to wait between two connection attempts (ms)", 
+			  writable = true, 
+			  type = PropertyType.PT_INTEGER, 
+			  category = "connection", 
+			  defaultValue = Awid2010DefaultValues.RECON_INTERVAL, 
+			  orderValue = 3, 
+			  minValue = "0")
 	public Integer getReconnectionInterval() {
 		return reconnectionInterval;
 	}

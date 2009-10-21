@@ -24,7 +24,7 @@ import org.rifidi.edge.readerplugin.awid.awid2010.Awid2010SensorFactory;
 public class Awid2010StopCommandConfigurationFactory extends
 		AbstractCommandConfigurationFactory<Awid2010StopCommandConfiguration> {
 
-	public static final String FACTORY_ID = "AwidStop";
+	public static final String FACTORY_ID = "Awid-Push-Stop";
 
 	@Override
 	public String getReaderFactoryID() {
@@ -48,5 +48,24 @@ public class Awid2010StopCommandConfigurationFactory extends
 	public MBeanInfo getServiceDescription(String factoryID) {
 		return (MBeanInfo) Awid2010StopCommandConfiguration.mbeaninfo.clone();
 	}
+
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.configuration.impl.AbstractCommandConfigurationFactory#getCommandDescription()
+	 */
+	@Override
+	public String getCommandDescription() {
+		return "Command the Awid reader to stop sending back tags. "
+		+ "To use, submit this command for a one-time execution.";
+	}
+
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.configuration.impl.AbstractCommandConfigurationFactory#getDisplayName()
+	 */
+	@Override
+	public String getDisplayName() {
+		return "Awid Push Stop";
+	}
+	
+	
 
 }

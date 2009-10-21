@@ -20,7 +20,7 @@ package org.rifidi.edge.readerplugin.awid.awid2010;
 public class Awid2010DefaultValues {
 
 	/** The Default IP address */
-	public final static String HOST = "192.168.1.2";
+	public final static String HOST = "192.168.1.91";
 	/** The default port */
 	public final static String PORT = "4000";
 	/** Default max number of reconnection attempts */

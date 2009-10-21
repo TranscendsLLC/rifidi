@@ -28,7 +28,7 @@ public class AlienAutonomousModeStopCommandConfigurationFactory
 		extends
 		AbstractCommandConfigurationFactory<AlienGetTagListCommandConfiguration> {
 	/** Name of the command. */
-	public static final String name = "Alien-Autonomous-Stop";
+	public static final String ID = "Alien-Push-Stop";
 	/** Mbeaninfo for this class. */
 	public static final MBeanInfo mbeaninfo;
 	static {
@@ -70,7 +70,7 @@ public class AlienAutonomousModeStopCommandConfigurationFactory
 	 */
 	@Override
 	public String getFactoryID() {
-		return name;
+		return ID;
 	}
 
 	/*
@@ -83,6 +83,31 @@ public class AlienAutonomousModeStopCommandConfigurationFactory
 	@Override
 	public MBeanInfo getServiceDescription(String factoryID) {
 		return (MBeanInfo) mbeaninfo.clone();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.core.configuration.impl.AbstractCommandConfigurationFactory
+	 * #getCommandDescription()
+	 */
+	@Override
+	public String getCommandDescription() {
+		return "Command the Alien reader to stop sending back tags in autonomous mode.  "
+				+ "To use, submit this command for a one-time execution.";
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.core.configuration.impl.AbstractCommandConfigurationFactory
+	 * #getDisplayName()
+	 */
+	@Override
+	public String getDisplayName() {
+		return "Alien Push Stop";
 	}
 
 }

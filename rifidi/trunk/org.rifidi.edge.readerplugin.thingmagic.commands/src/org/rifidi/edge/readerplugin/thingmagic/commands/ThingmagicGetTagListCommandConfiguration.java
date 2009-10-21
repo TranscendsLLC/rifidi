@@ -26,10 +26,7 @@ import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
 public class ThingmagicGetTagListCommandConfiguration extends
 		AbstractCommandConfiguration<ThingmagicGetTagListCommand> {
 	
-	/** Name of the command. */
-	public static final String name = "Thingmagic-GetTagList-Configuration";
 	/** Description of the command. */
-	private static final String description = "Poll the reader for its tag list";
 	public static final MBeanInfo mbeaninfo;
 	static {
 		AnnotationMBeanInfoStrategy strategy = new AnnotationMBeanInfoStrategy();
@@ -46,24 +43,6 @@ public class ThingmagicGetTagListCommandConfiguration extends
 		ThingmagicGetTagListCommand c = new ThingmagicGetTagListCommand(super.getID());
 		c.setReader(readerID);
 		return c;
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration#getCommandDescription()
-	 */
-	@Override
-	public String getCommandDescription() {
-		return description;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration#getCommandName()
-	 */
-	@Override
-	public String getCommandName() {
-		return name;
 	}
 
 	/*

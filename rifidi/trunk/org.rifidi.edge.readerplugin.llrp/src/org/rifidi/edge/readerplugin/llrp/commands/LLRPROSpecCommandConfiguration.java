@@ -78,29 +78,6 @@ public class LLRPROSpecCommandConfiguration extends
 		return llrprsc;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @seeorg.rifidi.edge.core.commands.AbstractCommandConfiguration#
-	 * getCommandDescription()
-	 */
-	@Override
-	public String getCommandDescription() {
-		return "LLRP RoSpec Command";
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration#getCommandName
-	 * ()
-	 */
-	@Override
-	public String getCommandName() {
-		return name;
-	}
-
 	/**
 	 * Gets the AntennaID.
 	 * 
@@ -108,7 +85,7 @@ public class LLRPROSpecCommandConfiguration extends
 	 */
 	@Property(displayName = "AntennaIDs", description = "Select which"
 			+ " antennas to scan.  Use a comma delimited string such"
-			+ " as \"1,2,3\"", writable = true)
+			+ " as \"1,2,3\"", writable = true, orderValue=2)
 	public String getAntennaIDs() {
 		return antennaSequence;
 	}
@@ -170,7 +147,7 @@ public class LLRPROSpecCommandConfiguration extends
 	 * 
 	 * @return the roSpecID
 	 */
-	@Property(displayName = "ROSpec ID", description = "The ID of the "
+	@Property(displayName = "RO Spec ID", description = "The ID of the "
 			+ "ROSpec", writable = true, type = PropertyType.PT_INTEGER, minValue = ""
 			+ "1", maxValue = "16535", category=category, orderValue=1)
 	public Integer getROSpecID() {
@@ -182,8 +159,8 @@ public class LLRPROSpecCommandConfiguration extends
 	 */
 	@Property(displayName = "Trigger Type", description = "The type of ROSpec it is, "
 		+ "with \'NULL\' being a null trigger and \'PER\' being a periodic trigger.  "
-		+ "Periodic triggers will send back tags using the duration value you set"
-		+ " ", defaultValue="NULL", writable = true, type = PropertyType.PT_STRING, category=category, orderValue=2)
+		+ "Periodic triggers use the duration trigger"
+		+ " ", defaultValue="PER", writable = true, type = PropertyType.PT_STRING, category=category, orderValue=3)
 	public String getTriggerType() {
 		return triggerType;
 	}
@@ -208,7 +185,7 @@ public class LLRPROSpecCommandConfiguration extends
 	@Property(displayName = "Duration", description = "The duration of the ROSpec trigger.  "
 			+ "Will only be used if you set the ROSpec trigger type to "
 			+ "\'Periodic\'", writable = true, type = PropertyType.PT_INTEGER, defaultValue = ""
-			+ "1000", minValue = "0", maxValue = "65535", category=category, orderValue=3)
+			+ "1000", minValue = "0", maxValue = "65535", category=category, orderValue=4)
 	public Integer getDuration() {
 		return this.duration;
 	}

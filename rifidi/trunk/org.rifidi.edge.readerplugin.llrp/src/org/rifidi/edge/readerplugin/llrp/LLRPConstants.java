@@ -46,5 +46,5 @@ public class LLRPConstants {
 	/**
 	 * The max times to try to connect before giving up.  
 	 */
-	public final static String MAX_CONNECTION_ATTEMPTS = "10";
+	public final static String MAX_CONNECTION_ATTEMPTS = "-1";
 }

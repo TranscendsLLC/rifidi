@@ -32,10 +32,7 @@ public class ThingmagicReaderFactory extends AbstractSensorFactory<ThingmagicRea
 	/** JMS template for sending tag data to JMS Queue */
 	private volatile JmsTemplate template;
 	/** The Unique FACTORY_ID for this Factory */
-	public static final String FACTORY_ID = "Thingmagic";
-	/** Description of the sensorSession. */
-	private static final String description = "The Thingmagic is an IP based RFID SensorSession using a telnet interface.";
-	private static final String displayname = "Thingmagic";
+	public static final String FACTORY_ID = "ThingMagic";
 	/** A JMS event notification sender */
 	private volatile NotifierService notifierService;
 	
@@ -73,7 +70,7 @@ public class ThingmagicReaderFactory extends AbstractSensorFactory<ThingmagicRea
 	 */
 	@Override
 	public String getDescription() {
-		return description;
+		return "The Rifidi ThingMagic adapater supports the ThingMagic RQL protocol on the Mercury 4 and Mercury 5 readers";
 	}
 	
 	/**
@@ -91,7 +88,7 @@ public class ThingmagicReaderFactory extends AbstractSensorFactory<ThingmagicRea
 	 */
 	@Override
 	public String getDisplayName() {
-		return displayname;
+		return "ThingMagic";
 	}
 
 	/*

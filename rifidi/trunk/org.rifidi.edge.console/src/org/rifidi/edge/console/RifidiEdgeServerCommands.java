@@ -289,8 +289,7 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 	 */
 	public Object _commands(CommandInterpreter intp) {
 		for (AbstractCommandConfiguration<?> command : commandDAO.getCommands()) {
-			intp.println("ID: " + command.getID() + " Name: "
-					+ command.getCommandName());
+			intp.println("ID: " + command.getID());
 		}
 		return null;
 	}

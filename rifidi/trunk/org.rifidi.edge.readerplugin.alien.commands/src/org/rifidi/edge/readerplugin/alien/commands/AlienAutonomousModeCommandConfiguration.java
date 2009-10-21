@@ -23,7 +23,7 @@ import org.rifidi.edge.core.configuration.mbeanstrategies.AnnotationMBeanInfoStr
 import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
 
 /**
- * @author kyle
+ * @author Kyle Nuemeier - kyle@pramari.com
  * 
  */
 @JMXMBean
@@ -45,9 +45,6 @@ public class AlienAutonomousModeCommandConfiguration extends
 	private Integer autoTruePause = 0;
 	private Integer autoFalseOutput = 0;
 	private Integer autoFalsePause = 0;
-
-	/** The name of this command type */
-	public static final String name = "Alien-Autonomous-Configuration";
 
 	public static final MBeanInfo mbeaninfo;
 	static {
@@ -82,28 +79,6 @@ public class AlienAutonomousModeCommandConfiguration extends
 		command.setAutoFalseOutput(autoFalseOutput.toString());
 		command.setAutoFalsePause(autoFalsePause.toString());
 		return command;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @seeorg.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration#
-	 * getCommandDescription()
-	 */
-	@Override
-	public String getCommandDescription() {
-		return "Configure the Alien reader to send back tags using the autonomous mode";
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @seeorg.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration#
-	 * getCommandName()
-	 */
-	@Override
-	public String getCommandName() {
-		return name;
 	}
 
 	/**
@@ -145,7 +120,7 @@ public class AlienAutonomousModeCommandConfiguration extends
 	/**
 	 * @return the autoStopTimer
 	 */
-	@Property(category = "Autonomous", defaultValue = "1000", description = "Timer to jump from work state to evaluation state. -1 indicates the reader should remain in the work stateindefinitely, or until a configured AutoStopTrigger is received", displayName = "Auto Stop Timer", type = PropertyType.PT_INTEGER, writable = true, minValue = "-1", orderValue = 1)
+	@Property(category = "Autonomous", defaultValue = "1000", description = "Time in MS to wait in the work state before jumping to the evaluation state. A value of -1 indicates the reader should remain in the work state indefinitely or until an AutoStopTrigger is received", displayName = "Auto Stop Timer", type = PropertyType.PT_INTEGER, writable = true, minValue = "-1", orderValue = 1)
 	public Integer getAutoStopTimer() {
 		return autoStopTimer;
 	}

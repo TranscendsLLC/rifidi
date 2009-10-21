@@ -29,12 +29,6 @@ import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
 @JMXMBean
 public class AlienGetTagListCommandConfiguration extends
 		AbstractCommandConfiguration<AlienGetTagListCommand> {
-	/** Name of the command. */
-	public static final String name = "Alien9800-GetTagList-Configuration";
-	/** Description of the command. */
-	private static final String description = "Poll the reader for its tag list";
-	/** Interval between two reads. */
-	private int interval = 10;
 	/** Type of tag to read */
 	private int tagType = 2;
 	/** Antennas to scan */
@@ -46,27 +40,6 @@ public class AlienGetTagListCommandConfiguration extends
 				.getMBeanInfo(AlienGetTagListCommandConfiguration.class);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @seeorg.rifidi.edge.core.commands.AbstractCommandConfiguration#
-	 * getCommandDescription ()
-	 */
-	@Override
-	public String getCommandDescription() {
-		return description;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @seeorg.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration#
-	 * getCommandName ()
-	 */
-	@Override
-	public String getCommandName() {
-		return name;
-	}
 
 	/*
 	 * (non-Javadoc)
@@ -82,25 +55,6 @@ public class AlienGetTagListCommandConfiguration extends
 		c.setTagType(tagType);
 		c.setReader(readerID);
 		return c;
-	}
-
-	/**
-	 * @return the interval
-	 */
-	@Property(displayName = "Interval", description = "Interval "
-			+ "between two reads", writable = true, type = PropertyType.PT_INTEGER)
-	public Integer getInterval() {
-		return interval;
-	}
-
-	/**
-	 * Sets the interval for the reader.
-	 * 
-	 * @param interval
-	 *            the interval to set
-	 */
-	public void setInterval(Integer interval) {
-		this.interval = interval;
 	}
 
 	/**

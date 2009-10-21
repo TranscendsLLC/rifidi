@@ -36,7 +36,7 @@ import org.springframework.jms.core.JmsTemplate;
  */
 public class AlienAutonomousSensorFactory extends
 		AbstractSensorFactory<AlienAutonomousSensor> {
-	public static final String FACTORY_ID = "AlienAutonomous";
+	public static final String FACTORY_ID = "Alien-Autonomous";
 	/** The service used to send out notifications to the client */
 	private NotifierService notifierService;
 	/** The template used to send out tags */
@@ -80,7 +80,8 @@ public class AlienAutonomousSensorFactory extends
 	 */
 	@Override
 	public String getDescription() {
-		return "A sensor adapter that recieves data from Alien readers using autonomous mode";
+		return "The Rifidi Alien autonomous adapter is an endpoint to passively receive tag reads from an "
+				+ "Alien reader operating in autonomous mode. You cannot send any commands on the alien autonomous session";
 	}
 
 	/*
@@ -91,7 +92,7 @@ public class AlienAutonomousSensorFactory extends
 	 */
 	@Override
 	public String getDisplayName() {
-		return "Alien Autonomous Sensor";
+		return "Alien Autonomous";
 	}
 
 	/*

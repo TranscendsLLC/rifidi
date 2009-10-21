@@ -38,10 +38,11 @@ public class Alien9800ReaderFactory extends
 	/** JMS template for sending tag data to JMS Queue */
 	private volatile JmsTemplate template;
 	/** The Unique FACTORY_ID for this Factory */
-	public static final String FACTORY_ID = "Alien9800";
+	public static final String FACTORY_ID = "Alien";
 	/** Description of the sensorSession. */
-	private static final String description = "The Alien 9800 is an IP based RFID SensorSession using a telnet interface.";
-	private static final String displayname = "Alien 9800";
+	private static final String description = "The Rifidi Alien adapter supports the Alien ALR " +
+			"protocol on the 9900, 9800, 8800 readers. ";
+	private static final String displayname = "Alien";
 	/** A JMS event notification sender */
 	private volatile NotifierService notifierService;
 
