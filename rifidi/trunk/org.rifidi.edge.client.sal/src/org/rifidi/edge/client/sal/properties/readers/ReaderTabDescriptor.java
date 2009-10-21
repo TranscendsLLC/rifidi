@@ -81,7 +81,10 @@ public class ReaderTabDescriptor extends AbstractTabDescriptor {
 	 */
 	@Override
 	public String getLabel() {
-		return category;
+		StringBuffer buf = new StringBuffer(category);
+		//ensure first letter of Category is capitalized
+		buf.setCharAt(0,Character.toUpperCase(buf.charAt(0)));
+		return buf.toString();
 	}
 
 }

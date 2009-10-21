@@ -30,16 +30,6 @@
                id="org.rifidi.edge.client.menus.file"
                label="File">
             <command
-                  commandId="org.rifidi.edge.client.twodview.restoreui"
-                  label="Load"
-                  style="push">
-            </command>
-            <command
-                  commandId="org.rifidi.edge.client.twodview.saveui"
-                  label="Save"
-                  style="push">
-            </command>
-            <command
                   commandId="org.eclipse.ui.file.exit"
                   id="Exit"
                   label="Exit"
@@ -57,11 +47,6 @@
             <command
                   commandId="org.eclipse.ui.perspectives.showPerspective"
                   label="Show Perspectives"
-                  style="push">
-            </command>
-            <command
-                  commandId="org.eclipse.ui.views.showView"
-                  label="Show Views"
                   style="push">
             </command>
          </menu>
@@ -97,6 +82,30 @@
          <property
                name="preferenceCustomization"
                value="plugin_customization.ini">
+         </property>
+         <property
+               name="startupProgressRect"
+               value="5,275,575,15">
+         </property>
+         <property
+               name="startupForegroundColor"
+               value="FFFFFF">
+         </property>
+         <property
+               name="startupMessageRect"
+               value="5,252,445,20">
+         </property>
+         <property
+               name="aboutImage"
+               value="about.gif">
+         </property>
+         <property
+               name="aboutText"
+               value="Thank you for using Rifidi Workbench version 1.0.0.  For assistance, please see our forums at http://forums.rifidi.org">
+         </property>
+         <property
+               name="windowImages"
+               value="icons/title_rifidi_16x16.gif,icons/title_rifidi_32x32.gif">
          </property>
       </product>
    </extension>

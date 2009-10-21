@@ -95,7 +95,7 @@ public class ReportReceiverSingleton implements IPropertyChangeListener,
 	 */
 	public static ReportReceiverSingleton getInstance() {
 		if (rrs == null) {
-			logger.trace("creating new ReportReceiverSingleton...");
+			logger.debug("creating new ReportReceiverSingleton...");
 			rrs = new ReportReceiverSingleton();
 
 		}
@@ -169,11 +169,11 @@ public class ReportReceiverSingleton implements IPropertyChangeListener,
 					/** ... and send him the reports. */
 					subscriber.pushReport(ecReports);
 				} else {
-					logger.trace("Key not found.");
+					logger.debug("Key not found.");
 				}
 				// TODO: check name viewer.add(model, entry.getElement());
 			} else {
-				logger.trace("entry is not an addition...");
+				logger.debug("entry is not an addition...");
 			}
 		}
 
@@ -231,7 +231,7 @@ public class ReportReceiverSingleton implements IPropertyChangeListener,
 		 */
 		@Override
 		public void run() {
-			logger.trace("Listupdater adding reports...");
+			logger.debug("Listupdater adding reports...");
 			list.add(reports);
 		}
 
@@ -254,33 +254,33 @@ public class ReportReceiverSingleton implements IPropertyChangeListener,
 
 		public void run() {
 			try {
-				logger.trace("new serversocket...");
+				logger.debug("new serversocket...");
 				socket = new ServerSocket();
 				System.out.println("socket.bind...");
 				socket.bind(addr);
-				logger.trace("while socket !closed and thread !interrupted");
+				logger.debug("while socket !closed and thread !interrupted");
 				while (!socket.isClosed()
 						&& !Thread.currentThread().isInterrupted()) {
-					logger.trace("socket accept...");
+					logger.debug("socket accept...");
 					Socket sock = socket.accept();
 					logger
-							.trace("new buffered reader : sock.getinputstream...");
+							.debug("new buffered reader : sock.getinputstream...");
 					BufferedReader streamy = new BufferedReader(
 							new InputStreamReader(sock.getInputStream()));
 					try {
-						logger.trace("unmarshal answer...");
+						logger.debug("unmarshal answer...");
 						ReportAnswer answer = (ReportAnswer) umarsh
 								.unmarshal(streamy);
-						logger.trace("starting listupdater runnable");
+						logger.debug("starting listupdater runnable");
 						Display.getDefault().asyncExec(
 								new ListUpdater(answer.reports));
 					} catch (JAXBException e) {
 						logger.warn(e);
 					}
-					logger.trace("closing socket...");
+					logger.debug("closing socket...");
 					sock.close();
 				}
-				logger.trace("closing serversocket...");
+				logger.debug("closing serversocket...");
 				socket.close();
 				socket = null;
 			} catch (IOException e) {

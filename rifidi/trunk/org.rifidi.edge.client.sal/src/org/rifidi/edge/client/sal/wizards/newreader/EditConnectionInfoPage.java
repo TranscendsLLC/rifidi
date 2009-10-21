@@ -87,7 +87,7 @@ public class EditConnectionInfoPage extends WizardPage implements
 
 		setTitle("New Reader Connection: "
 				+ wizardData.factory.getDisplayName());
-		setDescription(wizardData.factory.getDescription());
+		setDescription("Edit the connection properties of the adapter");
 		assert (parent != null);
 		assert (wizardData != null);
 

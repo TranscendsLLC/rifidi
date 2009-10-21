@@ -15,6 +15,8 @@ import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.graphics.Image;
+import org.rifidi.edge.client.model.sal.RemoteCommandConfigFactory;
+import org.rifidi.edge.client.model.sal.RemoteCommandConfiguration;
 import org.rifidi.edge.client.model.sal.RemoteEdgeServer;
 import org.rifidi.edge.client.model.sal.RemoteReader;
 import org.rifidi.edge.client.sal.SALPluginActivator;
@@ -65,6 +67,12 @@ public class SALTabbedPropertiesLabelProvider implements ILabelProvider {
 			}
 			if (o instanceof RemoteReader) {
 				return "Reader: " + ((RemoteReader) o).getID();
+			}
+			if (o instanceof RemoteCommandConfiguration) {
+				return ((RemoteCommandConfiguration) o).getID();
+			}
+			if (o instanceof RemoteCommandConfigFactory) {
+				return ((RemoteCommandConfigFactory) o).getDisplayName();
 			}
 
 		}
