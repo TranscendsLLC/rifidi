@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Rifidi Client ALE API Plug-in
+Bundle-Name: Rifidi Workbench ALE API
 Bundle-SymbolicName: org.rifidi.edge.client.ale.api
 Bundle-Version: 1.0.0
 Bundle-Vendor: Pramari, LLC

@@ -320,8 +320,9 @@ public class CommandTreeContentProvider implements ITreeContentProvider,
 		RemoteReaderFactory readerFac = (RemoteReaderFactory) remoteEdgeServer
 				.getReaderFactories().get(factory.getReaderFactoryID());
 		viewer.add(readerFac, factory);
-		viewer.setExpandedState(factory, true);
+		viewer.expandToLevel(2);
 		viewer.refresh();
+		
 	}
 
 	/**

@@ -74,26 +74,14 @@
          point="org.eclipse.core.runtime.products">
       <product
             application="org.rifidi.edge.client.application"
-            name="Rifidi Edge Client">
+            name="Rifidi Workbench">
          <property
                name="appName"
-               value="Rifidi Edge Client">
+               value="Rifidi Workbench">
          </property>
          <property
                name="preferenceCustomization"
                value="plugin_customization.ini">
-         </property>
-         <property
-               name="startupProgressRect"
-               value="5,275,575,15">
-         </property>
-         <property
-               name="startupForegroundColor"
-               value="FFFFFF">
-         </property>
-         <property
-               name="startupMessageRect"
-               value="5,252,445,20">
          </property>
          <property
                name="aboutImage"
@@ -106,6 +94,18 @@
          <property
                name="windowImages"
                value="icons/title_rifidi_16x16.gif,icons/title_rifidi_32x32.gif">
+         </property>
+         <property
+               name="startupForegroundColor"
+               value="FFFFFF">
+         </property>
+         <property
+               name="startupMessageRect"
+               value="5,252,445,20">
+         </property>
+         <property
+               name="startupProgressRect"
+               value="5,275,590,15">
          </property>
       </product>
    </extension>
