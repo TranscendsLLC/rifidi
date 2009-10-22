@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Rifidi Edge Client Plug-in
+Bundle-Name: Rifidi Workbench
 Bundle-SymbolicName: org.rifidi.edge.client; singleton:=true
 Bundle-Version: 1.0.1
 Bundle-Activator: org.rifidi.edge.client.Activator

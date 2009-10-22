@@ -21,7 +21,7 @@
    <windowImages i16="/org.rifidi.edge.client/icons/title_rifidi_16x16.gif" i32="/org.rifidi.edge.client/icons/title_rifidi_32x32.gif"/>
 
    <splash
-      startupProgressRect="5,275,575,15"
+      startupProgressRect="5,275,590,15"
       startupMessageRect="5,252,445,20"
       startupForegroundColor="FFFFFF" />
    <launcher name="workbench">
@@ -35,6 +35,7 @@
             winMediumLow="/org.rifidi.edge.client/icons/title_rifidi_32x32.bmp"/>
       </win>
    </launcher>
+
 
    <vm>
    </vm>

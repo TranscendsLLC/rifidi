@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Rifidi Edge SAL Plug-in
+Bundle-Name: Rifidi Workbench SAL
 Bundle-SymbolicName: org.rifidi.edge.client.sal;singleton:=true
 Bundle-Version: 1.0.2
 Bundle-Activator: org.rifidi.edge.client.sal.SALPluginActivator
