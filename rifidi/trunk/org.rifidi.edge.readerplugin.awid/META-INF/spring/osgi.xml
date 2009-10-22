@@ -14,7 +14,7 @@
 	</osgi:service>
 	
 	<osgi:set id="awidCommands" interface="org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration"
-		cardinality="0..N" filter="(reader=Awid2010)">
+		cardinality="0..N" filter="(reader=Awid)">
 		<osgi:listener ref="awidSensorFactory" bind-method="bindCommandConfiguration" unbind-method="unbindCommandConfiguration"/>
 	</osgi:set>
 	

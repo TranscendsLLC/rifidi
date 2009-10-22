@@ -62,7 +62,7 @@ public class LLRPROSpecCommand extends AbstractLLRPCommand {
 	 */
 	private int rospec_id = 1;
 
-	private int rospec_trigger = -1;
+	private String triggerType;
 
 	private int rospec_duration = -1;
 
@@ -102,8 +102,8 @@ public class LLRPROSpecCommand extends AbstractLLRPCommand {
 	 * 
 	 * @param rospec_id
 	 */
-	public void setRoSpecTrigger(int rospec_trigger) {
-		this.rospec_trigger = rospec_trigger;
+	public void setRoSpecTrigger(String type) {
+		this.triggerType = type;
 	}
 
 	/**
@@ -172,11 +172,11 @@ public class LLRPROSpecCommand extends AbstractLLRPCommand {
 
 				ROBoundarySpec rbs = new ROBoundarySpec();
 				ROSpecStartTrigger rst = new ROSpecStartTrigger();
-				if(this.rospec_trigger==2) {
+				if(triggerType.equals("PUSH")) {
 					rst.setROSpecStartTriggerType(new ROSpecStartTriggerType(
 							ROSpecStartTriggerType.Periodic));
 					PeriodicTriggerValue ptv = new PeriodicTriggerValue();
-					ptv.setPeriod(new UnsignedInteger(100));
+					ptv.setPeriod(new UnsignedInteger(1000));
 					ptv.setOffset(new UnsignedInteger(0));
 					rst.setPeriodicTriggerValue(ptv);
 				} else {
@@ -185,7 +185,7 @@ public class LLRPROSpecCommand extends AbstractLLRPCommand {
 				}
 				rbs.setROSpecStartTrigger(rst);
 				ROSpecStopTrigger rstopt = new ROSpecStopTrigger();
-				if (this.rospec_trigger == 2) {
+				if (triggerType.equals("PUSH")) {
 					rstopt.setROSpecStopTriggerType(new ROSpecStopTriggerType(
 							ROSpecStopTriggerType.Duration));
 					rstopt.setDurationTriggerValue(new UnsignedInteger(
@@ -216,7 +216,7 @@ public class LLRPROSpecCommand extends AbstractLLRPCommand {
 				ro.addToSpecParameterList(ais);
 
 				ROReportSpec rrs = new ROReportSpec();
-				if (this.rospec_trigger == 2) {
+				if (triggerType.equals("PUSH")) {
 					rrs.setROReportTrigger(new ROReportTriggerType(
 							ROReportTriggerType.Upon_N_Tags_Or_End_Of_ROSpec));
 				} else {
@@ -252,7 +252,7 @@ public class LLRPROSpecCommand extends AbstractLLRPCommand {
 
 				session.transact(enRspec);
 				
-				if(this.rospec_trigger!=2) {
+				if(!triggerType.equals("PUSH")) {
 					START_ROSPEC sr = new START_ROSPEC();
 					sr.setROSpecID(new UnsignedInteger(this.rospec_id));
 					
