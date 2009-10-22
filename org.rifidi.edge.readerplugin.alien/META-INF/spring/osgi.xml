@@ -21,12 +21,12 @@
 	</osgi:service>
 	
 	<osgi:set id="alienCommands" interface="org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration"
-		cardinality="0..N" filter="(reader=Alien9800)">
+		cardinality="0..N" filter="(reader=Alien)">
 		<osgi:listener ref="alienConfigurationFactory" bind-method="bindCommandConfiguration" unbind-method="unbindCommandConfiguration"/>
 	</osgi:set>
 	
 	<osgi:set id="alienautoCommands" interface="org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration"
-		cardinality="0..N" filter="(reader=AlienAutonomous)">
+		cardinality="0..N" filter="(reader=Alien-Autonomous)">
 		<osgi:listener ref="alienAutoConfigurationFactory" bind-method="bindCommandConfiguration" unbind-method="unbindCommandConfiguration"/>
 	</osgi:set>
 	

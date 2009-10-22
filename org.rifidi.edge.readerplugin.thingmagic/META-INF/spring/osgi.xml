@@ -14,7 +14,7 @@
 	</osgi:service>
 	
 	<osgi:set id="thingmagicCommands" interface="org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration"
-		cardinality="0..N" filter="(reader=Thingmagic)">
+		cardinality="0..N" filter="(reader=ThingMagic)">
 		<osgi:listener ref="thingmagicConfigurationFactory" bind-method="bindCommandConfiguration" unbind-method="unbindCommandConfiguration"/>
 	</osgi:set>
 	

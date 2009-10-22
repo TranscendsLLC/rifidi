@@ -82,8 +82,7 @@ public class LLRPDeleteROSpecCommandConfiguration extends
 	 * 
 	 * @return the roSpecID
 	 */
-	@Property(displayName = "RO Spec ID", defaultValue = "1", description = "The ID of the RO Spec to delete"
-			+ "command", writable = true, type = PropertyType.PT_INTEGER, minValue="1", maxValue="16535")
+	@Property(displayName = "RO Spec ID", defaultValue = "1", description = "The ID of the RO Spec to delete", writable = true, type = PropertyType.PT_INTEGER, minValue="1", maxValue="16535")
 	public int getROSpecID() {
 		return roSpecID;
 	}

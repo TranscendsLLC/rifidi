@@ -26,7 +26,7 @@ import org.rifidi.edge.readerplugin.llrp.LLRPReaderFactory;
 public class LLRPDeleteROSpecCommandConfigurationFactory extends
 		AbstractCommandConfigurationFactory<AbstractCommandConfiguration<?>> {
 	/** Name of the command. */
-	public static final String name = "LLRP-Push-Stop";
+	private static final String name = "LLRP-Push-Stop";
 	/** Mbeaninfo for this class. */
 	public static final MBeanInfo mbeaninfo;
 	static {
