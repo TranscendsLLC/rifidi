@@ -260,34 +260,4 @@ public class Alien9800ReaderSession extends AbstractPollIPSensorSession {
 		return retVal;
 
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.rifidi.edge.core.sensors.SensorSession#submit(java.lang.String)
-	 */
-	@Override
-	public void submit(String commandID) {
-		super.submit(commandID);
-		try {
-			notifierService.jobSubmitted(this.readerID, this.getID(), -1,
-					commandID);
-		} catch (Exception e) {
-			// make sure the notification doesn't cause this method to exit
-			// under any circumstances
-			logger.error(e);
-		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.rifidi.edge.core.sensors.SensorSession#submit(org.rifidi.edge.core
-	 * .sensors.commands.Command)
-	 */
-	@Override
-	public void submit(Command command) {
-		super.submit(command);
-	}
 }
