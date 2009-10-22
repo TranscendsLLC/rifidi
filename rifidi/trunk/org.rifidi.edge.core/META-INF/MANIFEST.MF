@@ -1,10 +1,9 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Rifidi Edge Core Plug-in
+Bundle-Name: Rifidi Edge Core
 Bundle-SymbolicName: org.rifidi.edge.core
 Bundle-Version: 5.1.0
 Bundle-Vendor: Pramari, LLC
-Bundle-ActivationPolicy: lazy
 Import-Package: com.espertech.esper.client,
  com.espertech.esper.client.metric,
  com.espertech.esper.client.soda,

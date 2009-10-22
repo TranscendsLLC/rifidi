@@ -1,10 +1,8 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Rifidi Edge Alien Adapter Plug-in
+Bundle-Name: Rifidi Edge ThingMagic Adapter
 Bundle-SymbolicName: org.rifidi.edge.readerplugin.thingmagic
 Bundle-Version: 1.0.0
-Bundle-Activator: org.rifidi.edge.readerplugin.thingmagic.Activator
-Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: javax.jms;version="1.1.0",
  org.apache.activemq.command;version="5.2.0",

@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Rifidi Edge RMI Server Plug-in
+Bundle-Name: Rifidi Edge RMI Service Exporter
 Bundle-SymbolicName: org.rifidi.edge.core.rmi.server
 Bundle-Version: 1.1.0
 Bundle-Vendor: Pramari, LLC

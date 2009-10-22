@@ -30,6 +30,7 @@ import org.apache.activemq.command.ActiveMQObjectMessage;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.mina.common.RuntimeIOException;
+import org.llrp.ltk.generated.enumerations.AISpecStopTriggerType;
 import org.llrp.ltk.generated.enumerations.AccessReportTriggerType;
 import org.llrp.ltk.generated.enumerations.NotificationEventType;
 import org.llrp.ltk.generated.enumerations.ROReportTriggerType;
@@ -37,7 +38,10 @@ import org.llrp.ltk.generated.enumerations.StatusCode;
 import org.llrp.ltk.generated.messages.RO_ACCESS_REPORT;
 import org.llrp.ltk.generated.messages.SET_READER_CONFIG;
 import org.llrp.ltk.generated.messages.SET_READER_CONFIG_RESPONSE;
+import org.llrp.ltk.generated.parameters.AISpec;
+import org.llrp.ltk.generated.parameters.AISpecStopTrigger;
 import org.llrp.ltk.generated.parameters.AccessReportSpec;
+import org.llrp.ltk.generated.parameters.AntennaConfiguration;
 import org.llrp.ltk.generated.parameters.AntennaID;
 import org.llrp.ltk.generated.parameters.C1G2EPCMemorySelector;
 import org.llrp.ltk.generated.parameters.EPC_96;
@@ -54,6 +58,7 @@ import org.llrp.ltk.types.Bit;
 import org.llrp.ltk.types.LLRPMessage;
 import org.llrp.ltk.types.UnsignedInteger;
 import org.llrp.ltk.types.UnsignedShort;
+import org.llrp.ltk.types.UnsignedShortArray;
 import org.rifidi.edge.api.SessionStatus;
 import org.rifidi.edge.core.sensors.base.AbstractSensor;
 import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
@@ -381,6 +386,7 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 		eventNoteSpec.addToEventNotificationStateList(noteState);
 		setReaderConfig.setReaderEventNotificationSpec(eventNoteSpec);
 
+
 		setReaderConfig.setResetToFactoryDefault(new Bit(0));
 
 		return setReaderConfig;
@@ -455,6 +461,7 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 			if (arg0 instanceof RO_ACCESS_REPORT) {
 				RO_ACCESS_REPORT rar = (RO_ACCESS_REPORT) arg0;
 				List<TagReportData> trdl = rar.getTagReportDataList();
+				logger.debug("Got a RO_ACCESS_REPORT with " + trdl.size() + " tags");
 
 				// List<String> tagdatastring = new ArrayList<String>();
 				Set<TagReadEvent> tagreaderevents = new HashSet<TagReadEvent>();

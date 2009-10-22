@@ -1,9 +1,9 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Jms Plug-in
+Bundle-Name: Rifidi Edge JMS Service
 Bundle-SymbolicName: org.rifidi.edge.core.services.jms
 Bundle-Version: 1.0.0
-Bundle-Vendor: Pramari
+Bundle-Vendor: Pramari, LLC
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: javax.jms;version="1.1.0",
  org.apache.activemq.broker;version="5.2.0",

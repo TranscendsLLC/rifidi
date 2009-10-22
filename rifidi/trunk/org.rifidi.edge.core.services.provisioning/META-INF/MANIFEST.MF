@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Rifidi Edge Server Provisioning
+Bundle-Name: Rifidi Edge Provisioning Service
 Bundle-SymbolicName: org.rifidi.edge.core.services.provisioning
 Bundle-Version: 1.0.0
 Bundle-Vendor: Pramari, LLC
