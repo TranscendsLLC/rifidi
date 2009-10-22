@@ -7,13 +7,13 @@
 
 
 	<!--  Create Command Configuration Factory -->
-	<bean id="thignmagicGetTagListCommandConfigurationFactory"
+	<bean id="thingmagicGetTagListCommandConfigurationFactory"
 		class="org.rifidi.edge.readerplugin.thingmagic.commands.ThingmagicGetTagListCommandConfigurationFactory">
 		<property name="context" ref="bundleContext" />
 	</bean>
 	
 	<!-- Put command configuration service in OSGi Registry -->
-	<osgi:service id="thingmagicGetTagListCommandConfigurationFactoryReg" ref="thignmagicGetTagListCommandConfigurationFactory">
+	<osgi:service id="thingmagicGetTagListCommandConfigurationFactoryReg" ref="thingmagicGetTagListCommandConfigurationFactory">
 		<osgi:interfaces>
 			<value>org.rifidi.edge.core.configuration.ServiceFactory</value>
 			<value>org.rifidi.edge.core.configuration.impl.AbstractCommandConfigurationFactory</value>
