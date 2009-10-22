@@ -30,8 +30,8 @@ public class LLRPROSpecCommandConfiguration extends
 	/** The name of this command type */
 	public static final String name = "LLRPROSpecCommand-Configuration";
 	
-	public final TriggerPair NULL_TRIGGER_TYPE = new TriggerPair("NULL", 0);
-	public final TriggerPair PERIODIC_TRIGGER_TYPE = new TriggerPair("PER", 2);
+	public final TriggerPair NULL_TRIGGER_TYPE = new TriggerPair("POLL", 0);
+	public final TriggerPair PERIODIC_TRIGGER_TYPE = new TriggerPair("PUSH", 2);
 
 	/**
 	 * 
@@ -43,7 +43,7 @@ public class LLRPROSpecCommandConfiguration extends
 	 */
 	private String antennaSequence = "0";
 
-	private String triggerType = "NULL";
+	private String triggerType = "PUSH";
 	
 	private int triggerInt = 0;
 
@@ -157,10 +157,8 @@ public class LLRPROSpecCommandConfiguration extends
 	/**
 	 * @return
 	 */
-	@Property(displayName = "Trigger Type", description = "The type of ROSpec it is, "
-		+ "with \'NULL\' being a null trigger and \'PER\' being a periodic trigger.  "
-		+ "Periodic triggers use the duration trigger"
-		+ " ", defaultValue="PER", writable = true, type = PropertyType.PT_STRING, category=category, orderValue=3)
+	@Property(displayName = "Read Mode", description = "If read mode is set to POLL, you will need to use the LLRP Poll command to receieve tags. If it is set to PUSH, the reader will send back tags according to the Push Duration"
+		+ " ", defaultValue="PUSH", writable = true, type = PropertyType.PT_STRING, category=category, orderValue=3)
 	public String getTriggerType() {
 		return triggerType;
 	}
@@ -182,9 +180,9 @@ public class LLRPROSpecCommandConfiguration extends
 	/**
 	 * @return
 	 */
-	@Property(displayName = "Duration", description = "The duration of the ROSpec trigger.  "
-			+ "Will only be used if you set the ROSpec trigger type to "
-			+ "\'Periodic\'", writable = true, type = PropertyType.PT_INTEGER, defaultValue = ""
+	@Property(displayName = "Push Duration", description = "Rate that tags are sent back in push mode. "
+			+ "Will only be used if you set the Read Mode to "
+			+ "\'PUSH\'", writable = true, type = PropertyType.PT_INTEGER, defaultValue = ""
 			+ "1000", minValue = "0", maxValue = "65535", category=category, orderValue=4)
 	public Integer getDuration() {
 		return this.duration;

@@ -23,17 +23,13 @@ import org.rifidi.edge.readerplugin.llrp.LLRPReaderFactory;
  * @author Jochen Mader - jochen@pramari.com
  * 
  */
-public class LLRPROSpecCommandConfigurationFactory
-		extends
+public class LLRPROSpecCommandConfigurationFactory extends
 		AbstractCommandConfigurationFactory<AbstractCommandConfiguration<?>> {
-	/** Name of the command. */
-	public static final String name = "LLRP-Push-Start";
 	/** Mbeaninfo for this class. */
 	public static final MBeanInfo mbeaninfo;
 	static {
 		AnnotationMBeanInfoStrategy strategy = new AnnotationMBeanInfoStrategy();
-		mbeaninfo = strategy
-				.getMBeanInfo(LLRPROSpecCommandConfiguration.class);
+		mbeaninfo = strategy.getMBeanInfo(LLRPROSpecCommandConfiguration.class);
 	}
 
 	/*
@@ -69,7 +65,7 @@ public class LLRPROSpecCommandConfigurationFactory
 	 */
 	@Override
 	public String getFactoryID() {
-		return name;
+		return "LLRP-Configure";
 	}
 
 	/*
@@ -84,23 +80,32 @@ public class LLRPROSpecCommandConfigurationFactory
 		return (MBeanInfo) mbeaninfo.clone();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.rifidi.edge.core.configuration.impl.AbstractCommandConfigurationFactory#getCommandDescription()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.core.configuration.impl.AbstractCommandConfigurationFactory
+	 * #getCommandDescription()
 	 */
 	@Override
 	public String getCommandDescription() {
-		return "Configure the LLRP reader to send back tags automatically. "
-		+ "To monitor a read zone, submit this command for a one-time execution.";
+		return "Configure the LLRP reader to collect tags.  By default, " +
+				"this command will cause the LLRP reader to push back tag reads " +
+				"automatically.  If you would rather use the Poll mode, you " +
+				"will need to use the LLRP Poll command. To use the LLRP Configure " +
+				"command, submit it for a one-time execution";
 	}
 
-	/* (non-Javadoc)
-	 * @see org.rifidi.edge.core.configuration.impl.AbstractCommandConfigurationFactory#getDisplayName()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.core.configuration.impl.AbstractCommandConfigurationFactory
+	 * #getDisplayName()
 	 */
 	@Override
 	public String getDisplayName() {
-		return "LLRP Push Start";
+		return "LLRP Configure";
 	}
-	
-	
 
 }

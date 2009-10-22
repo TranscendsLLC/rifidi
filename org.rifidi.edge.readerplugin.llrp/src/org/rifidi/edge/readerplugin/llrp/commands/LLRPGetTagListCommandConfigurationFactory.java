@@ -93,8 +93,9 @@ public class LLRPGetTagListCommandConfigurationFactory
 	@Override
 	public String getCommandDescription() {
 		return "Poll the LLRP reader for its tags. "
-		+ "For monitoring of the read zone, submit this command for "
-		+ "recurring execution.";
+		+ "For monitoring of the read zone, first use the LLRP Configure command to configure the " +
+				"LLRP reader for Poll Mode. Then submit " +
+				"this command for recurring execution.";
 	}
 
 	/* (non-Javadoc)

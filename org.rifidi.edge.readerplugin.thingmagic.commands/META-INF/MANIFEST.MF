@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Commands
+Bundle-Name: Rifidi Edge ThingMagic Adapter Commands
 Bundle-SymbolicName: org.rifidi.edge.readerplugin.thingmagic.commands
 Bundle-Version: 1.0.0
 Bundle-Vendor: Pramari, LLC

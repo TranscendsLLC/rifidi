@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Rifidi Awid Reader Plugin
+Bundle-Name: Rifidi Edge Awid Adapter
 Bundle-SymbolicName: org.rifidi.edge.readerplugin.awid
 Bundle-Version: 1.0.0
 Bundle-Vendor: Pramari, LLC

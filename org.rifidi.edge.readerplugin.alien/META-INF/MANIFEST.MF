@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Rifidi Edge Alien Adapter Plug-in
+Bundle-Name: Rifidi Edge Alien Adapter
 Bundle-SymbolicName: org.rifidi.edge.readerplugin.alien
 Bundle-Version: 2.0.2
 Bundle-Vendor: Pramari, LLC
