@@ -126,7 +126,7 @@ public class AlienAutonomousModeCommand extends AbstractAlien9800Command {
 			setAutoWorkOutput.execute();
 			setAutoStopTrigger.execute();
 			setStopTimer.execute();
-			setAutoStopPause.execute();
+			//setAutoStopPause.execute();
 			setAutoTrueOutput.execute();
 			setAutoTruePuase.execute();
 			setAutoFalseOutput.execute();
