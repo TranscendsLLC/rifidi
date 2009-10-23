@@ -51,8 +51,8 @@ public class Gen2PortalIDResponse extends AbstractAwidMessage implements
 		EPCGeneration2Event gen2Event = new EPCGeneration2Event();
 		gen2Event.setEPCMemory(new BigInteger(Arrays.copyOfRange(
 				super.rawmessage, 5, 17)), 12 * 8);
-		TagReadEvent tre = new TagReadEvent(readerID, gen2Event,
-				super.rawmessage[17], timestamp);
+		//TODO: Ignore the antenna bit for now
+		TagReadEvent tre = new TagReadEvent(readerID, gen2Event,0, timestamp);
 		return tre;
 	}
 
