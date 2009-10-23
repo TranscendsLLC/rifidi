@@ -28,7 +28,7 @@ public class AckMessage extends AbstractAwidMessage {
 	 */
 	public AckMessage(byte[] rawmessage) {
 		super(rawmessage);
-		if (rawmessage[0] != (byte) 0x00 || rawmessage[0] != (byte) 0xFF) {
+		if (rawmessage[0] != (byte) 0x00 && rawmessage[0] != (byte) 0xFF) {
 			throw new IllegalArgumentException(
 					"AckMessage must be a 0x00 or 0xFF");
 		}

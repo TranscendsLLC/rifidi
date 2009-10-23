@@ -294,7 +294,7 @@ public class Awid2010Sensor extends AbstractSensor<Awid2010Session> {
 	 */
 	@Property(displayName = "Port", 
 			  description = "Port of the Reader", 
-			  writable = true, 
+			  writable = false, 
 		      type = PropertyType.PT_INTEGER, 
 		      category = "connection", 
 		      orderValue = 1, 
@@ -303,6 +303,10 @@ public class Awid2010Sensor extends AbstractSensor<Awid2010Session> {
 			  maxValue = "65535")
 	public Integer getPort() {
 		return port;
+	}
+	
+	public void setPort(Integer port){
+		this.port = port;
 	}
 
 	/**
