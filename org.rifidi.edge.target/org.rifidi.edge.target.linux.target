@@ -13,6 +13,7 @@
 <location path="${workspace_loc}/org.rifidi.edge.target/commons" type="Directory"/>
 <location path="${workspace_loc}/org.rifidi.edge.target/aspectj" type="Directory"/>
 <location path="${workspace_loc}/org.rifidi.edge.target" type="Profile"/>
+<location path="${workspace_loc}/org.rifidi.edge.target/rifidi" type="Directory"/>
 </locations>
 <environment>
 <os>win32</os>
