@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <?pde version="3.5"?>
 
-<target name="Linux Rifidi Edge Server Target">
+<target name="Rifidi Edge Server Target">
 <locations>
 <location path="${workspace_loc}/org.rifidi.edge.target/esper" type="Directory"/>
 <location path="${workspace_loc}/org.rifidi.edge.target/libraries" type="Directory"/>
