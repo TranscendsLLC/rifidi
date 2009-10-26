@@ -98,8 +98,8 @@ public class ShippingApp {
 		//Insert information into the named windows
 		statements.add(esperService.getProvider().getEPAdministrator().createEPL(
 			"on ReadCycle[select * from tags]" +
-			"insert into dockdoor select cast(tag.epc?, String) as tag_ID where readerID = 'Alien9800_1'" +
-			"insert into weighstation select cast(tag.epc?, String) as tag_ID where readerID = 'Alien9800_2'"));
+			"insert into dockdoor select cast(tag.epc?, String) as tag_ID where readerID = 'Alien_1'" +
+			"insert into weighstation select cast(tag.epc?, String) as tag_ID where readerID = 'Alien_2'"));
 		
 		//Remove events from the Dock Door Named Window
 		statements.add(esperService.getProvider().getEPAdministrator().createEPL(
