@@ -121,7 +121,7 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 	public static final String PROP_EXTERNAL_INPUT = "externalinput";
 	/** Uptime of the sensorSession */
 	public static final String PROP_UPTIME = "uptime";
-	/** The Commands this session can use*/
+	/** The Commands this session can use */
 	private final Set<AbstractCommandConfiguration<?>> commands;
 	/** Mbeaninfo for this class. */
 	public static final MBeanInfo mbeaninfo;
@@ -238,13 +238,17 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 					(int) (long) reconnectionInterval,
 					maxNumConnectionAttempts, username, password, template,
 					notifierService, this.getID(), commands))) {
-				for (CommandDTO commandDTO : sessionDTO.getCommands()) {
-					session.get().submit(commandDTO.getCommandID(),
-							commandDTO.getInterval(), commandDTO.getTimeUnit());
+				if (sessionDTO.getCommands() != null) {
+					for (CommandDTO commandDTO : sessionDTO.getCommands()) {
+						session.get().submit(commandDTO.getCommandID(),
+								commandDTO.getInterval(),
+								commandDTO.getTimeUnit());
+					}
 				}
 				// TODO: remove this once we get AspectJ in here!
 				notifierService.addSessionEvent(this.getID(), Integer
 						.toString(sessionID));
+
 				return sessionID.toString();
 			}
 		}
@@ -320,7 +324,8 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 	 * (java.lang.String)
 	 */
 	@Override
-	public void destroySensorSession(String sessionid) throws CannotDestroySensorException{
+	public void destroySensorSession(String sessionid)
+			throws CannotDestroySensorException {
 		Alien9800ReaderSession aliensession = session.get();
 		if (aliensession != null && aliensession.getID().equals(sessionid)) {
 			session.set(null);
@@ -330,10 +335,11 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 			aliensession.disconnect();
 			// TODO: remove this once we get AspectJ in here!
 			notifierService.removeSessionEvent(this.getID(), sessionid);
-		}else{
-			String error ="Tried to delete a non existend session: " + sessionid; 
+		} else {
+			String error = "Tried to delete a non existend session: "
+					+ sessionid;
 			logger.warn(error);
-			throw new CannotDestroySensorException(error); 
+			throw new CannotDestroySensorException(error);
 		}
 	}
 
@@ -448,14 +454,7 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 	/**
 	 * @return the MAX_CONNECTION_ATTEMPTS
 	 */
-	@Property(displayName = "Maximum Connection Attempts", 
-			  description = "Upon connection failure, the number of times to attempt to recconnect before giving up. If set to '-1', then try forever", 
-			  writable = true, 
-			  type = PropertyType.PT_INTEGER, 
-		      category = "connection", 
-			  defaultValue = AlienReaderDefaultValues.MAX_CONNECTION_ATTEMPTS, 
-		      orderValue = 5, 
-		      minValue = "-1")
+	@Property(displayName = "Maximum Connection Attempts", description = "Upon connection failure, the number of times to attempt to recconnect before giving up. If set to '-1', then try forever", writable = true, type = PropertyType.PT_INTEGER, category = "connection", defaultValue = AlienReaderDefaultValues.MAX_CONNECTION_ATTEMPTS, orderValue = 5, minValue = "-1")
 	public Integer getMaxNumConnectionAttempts() {
 		return maxNumConnectionAttempts;
 	}
@@ -613,7 +612,7 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 	}
 
 	/**
-	 * The type of reader that this is.  
+	 * The type of reader that this is.
 	 * 
 	 * @return
 	 */
@@ -624,7 +623,7 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 	}
 
 	/**
-	 * The Maximum number of antennas this reader can possess.  
+	 * The Maximum number of antennas this reader can possess.
 	 * 
 	 * @return
 	 */
@@ -636,7 +635,7 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 	}
 
 	/**
-	 * Returns the MAC address for the reader.  
+	 * Returns the MAC address for the reader.
 	 * 
 	 * @return
 	 */
@@ -646,7 +645,7 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 	}
 
 	/**
-	 * The input of the GPI for the reader.  
+	 * The input of the GPI for the reader.
 	 * 
 	 * @return
 	 */
@@ -656,7 +655,7 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 	}
 
 	/**
-	 * The uptime of the reader.  
+	 * The uptime of the reader.
 	 * 
 	 * @return
 	 */
@@ -668,7 +667,9 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.rifidi.edge.core.sensors.base.AbstractSensor#applyPropertyChanges()
+	 * 
+	 * @see
+	 * org.rifidi.edge.core.sensors.base.AbstractSensor#applyPropertyChanges()
 	 */
 	@Override
 	@Operation(description = "Apply all property changes to reader")
