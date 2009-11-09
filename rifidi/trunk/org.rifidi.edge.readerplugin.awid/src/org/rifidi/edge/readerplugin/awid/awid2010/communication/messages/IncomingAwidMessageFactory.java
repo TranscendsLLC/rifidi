@@ -48,6 +48,7 @@ public class IncomingAwidMessageFactory {
 	public AbstractAwidMessage getMessage(byte[] message)
 			throws InvalidAwidMessageException {
 		if (message == null || message.length == 0) {
+			logger.warn("Throwing an InvalidAwidMessageException due to null message or 0 length message");
 			throw new InvalidAwidMessageException();
 		}
 
@@ -55,6 +56,7 @@ public class IncomingAwidMessageFactory {
 			if (message[0] == (byte) 0x00 || message[0] == (byte) 0xFF) {
 				return new AckMessage(message);
 			} else {
+				logger.warn("Throwing an InvalidAwidMessageException due to malforned acknowledgement");
 				throw new InvalidAwidMessageException();
 			}
 		} else if (message[0] == (byte) 'i' && message[1] == (byte) 'i') {
