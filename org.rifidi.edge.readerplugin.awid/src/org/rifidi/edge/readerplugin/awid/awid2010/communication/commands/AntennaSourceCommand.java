@@ -24,7 +24,7 @@ public class AntennaSourceCommand extends AbstractAwidCommand {
 	 * 
 	 */
 	public AntennaSourceCommand() {
-		this.rawmessage = new byte[] { 06, 00, 53, 01 };
+		this.rawmessage = new byte[] { 06, 00, 0x53, 01 };
 	}
 
 }
