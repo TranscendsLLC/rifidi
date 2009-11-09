@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Rifidi Edge Awid Adapter Commands
 Bundle-SymbolicName: org.rifidi.edge.readerplugin.awid.commands
-Bundle-Version: 1.0.0
+Bundle-Version: 1.0.1
 Bundle-Vendor: Pramari, LLC
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Require-Bundle: org.rifidi.edge.core;bundle-version="5.0.1",
