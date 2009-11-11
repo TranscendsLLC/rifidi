@@ -21,8 +21,7 @@ import java.util.concurrent.TimeUnit;
  * @author Jochen Mader - jochen@pramari.com
  * 
  */
-public class CommandDTO implements Serializable{
-	private Boolean repeat;
+public class CommandDTO implements Serializable {
 	private Long interval;
 	private TimeUnit timeUnit;
 	private Integer processID;
@@ -30,7 +29,7 @@ public class CommandDTO implements Serializable{
 
 	/** SerialVersionID */
 	private static final long serialVersionUID = 1L;
-	
+
 	/**
 	 * Constructor.
 	 */
@@ -38,15 +37,13 @@ public class CommandDTO implements Serializable{
 	}
 
 	/**
-	 * @param repeat
 	 * @param interval
 	 * @param timeUnit
 	 * @param processID
 	 * @param commandID
 	 */
-	public CommandDTO(Boolean repeat, Long interval, TimeUnit timeUnit,
-			Integer processID, String commandID) {
-		this.repeat = repeat;
+	public CommandDTO(Long interval, TimeUnit timeUnit, Integer processID,
+			String commandID) {
 		this.interval = interval;
 		this.timeUnit = timeUnit;
 		this.processID = processID;
@@ -72,15 +69,7 @@ public class CommandDTO implements Serializable{
 	 * @return the repeat
 	 */
 	public Boolean getRepeat() {
-		return repeat;
-	}
-
-	/**
-	 * @param repeat
-	 *            the repeat to set
-	 */
-	public void setRepeat(Boolean repeat) {
-		this.repeat = repeat;
+		return interval > 0;
 	}
 
 	/**

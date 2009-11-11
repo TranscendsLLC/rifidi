@@ -13,7 +13,6 @@ package org.rifidi.edge.api.rmi.dto;
 
 import java.io.Serializable;
 import java.util.List;
-import java.util.Set;
 
 import org.rifidi.edge.api.SessionStatus;
 
@@ -29,8 +28,8 @@ public class SessionDTO implements Serializable {
 	private static final long serialVersionUID = 1L;
 	/** The status of this session */
 	private SessionStatus status;
-	/** The Commands being executed. Integer is processID, String is command ID */
-	private Set<CommandDTO> commands;
+	/** The Commands being executed. */
+	private List<CommandDTO> commands;
 	/** The ID of the session */
 	private String ID;
 
@@ -48,10 +47,10 @@ public class SessionDTO implements Serializable {
 	 * @param status
 	 *            The status of the session
 	 * @param commands
-	 *            The Commands being executed. Integer is processID, String is
-	 *            command ID
+	 *            The Commands executing on this session, both single-shot and
+	 *            repeated commands
 	 */
-	public SessionDTO(String ID, SessionStatus status, Set<CommandDTO> commands) {
+	public SessionDTO(String ID, SessionStatus status, List<CommandDTO> commands) {
 		this.ID = ID;
 		this.status = status;
 		this.commands = commands;
@@ -67,40 +66,42 @@ public class SessionDTO implements Serializable {
 	}
 
 	/**
-	 * The set of jobs that are currently scheduled on the session
 	 * 
-	 * @return
+	 * @return The set of commands executing on this session, both single-shot
+	 *         and repeated
 	 */
-	public Set<CommandDTO> getCommands() {
+	public List<CommandDTO> getCommands() {
 		return commands;
 	}
 
 	/**
-	 * @return the iD
+	 * @return the ID of the Session
 	 */
 	public String getID() {
 		return ID;
 	}
 
 	/**
-	 * @param status the status to set
+	 * @param status
+	 *            the status to set
 	 */
 	public void setStatus(SessionStatus status) {
 		this.status = status;
 	}
 
 	/**
-	 * @param commands the commands to set
+	 * @param commands
+	 *            the commands to set
 	 */
-	public void setCommands(Set<CommandDTO> commands) {
+	public void setCommands(List<CommandDTO> commands) {
 		this.commands = commands;
 	}
 
 	/**
-	 * @param iD the iD to set
+	 * @param iD
+	 *            the iD to set
 	 */
 	public void setID(String iD) {
 		ID = iD;
 	}
-
 }
