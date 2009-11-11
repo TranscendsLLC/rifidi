@@ -23,7 +23,7 @@ import org.osgi.framework.BundleContext;
 import org.rifidi.edge.api.rmi.dto.CommandConfigurationDTO;
 import org.rifidi.edge.core.configuration.Configuration;
 import org.rifidi.edge.core.configuration.ConfigurationType;
-import org.rifidi.edge.core.configuration.RifidiService;
+import org.rifidi.edge.core.configuration.services.RifidiService;
 
 /**
  * Command configurations represent all properties of a command and will create
@@ -47,7 +47,7 @@ public abstract class AbstractCommandConfiguration<T extends Command> extends
 	 * @see org.rifidi.edge.core.configuration.RifidiService#destroy()
 	 */
 	@Override
-	public void destroy() {
+	protected void destroy() {
 		// TODO: we also need to figure out how to tell commands that have been
 		// produced to not run the next time they are executed
 		super.unregister();

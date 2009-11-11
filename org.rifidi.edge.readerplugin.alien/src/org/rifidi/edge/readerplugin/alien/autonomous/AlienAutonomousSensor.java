@@ -218,7 +218,7 @@ public class AlienAutonomousSensor extends
 	 * @see org.rifidi.edge.core.configuration.RifidiService#destroy()
 	 */
 	@Override
-	public void destroy() {
+	protected void destroy() {
 		if (destroied.compareAndSet(false, true)) {
 			super.destroy();
 			AlienAutonomousSensorSession aliensession = session.get();

@@ -49,11 +49,6 @@ public interface Configuration extends DynamicMBean {
 	Map<String, Object> getAttributes();
 
 	/**
-	 * Destroy the service and remove it from the registry.
-	 */
-	void destroy();
-
-	/**
 	 * Get the names of all the DynamicMBean Properties. For use with the
 	 * DynamicMBean getAttributes(String[]) method.
 	 * 

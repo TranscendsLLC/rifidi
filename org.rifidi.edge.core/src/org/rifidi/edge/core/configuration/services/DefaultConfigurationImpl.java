@@ -10,7 +10,7 @@
  * License:      The software in this package is published under the terms of the GPL License
  *                   A copy of the license is included in this distribution under RifidiEdge-License.txt 
  */
-package org.rifidi.edge.core.configuration.impl;
+package org.rifidi.edge.core.configuration.services;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -40,11 +40,9 @@ import org.osgi.framework.ServiceListener;
 import org.rifidi.edge.api.SessionStatus;
 import org.rifidi.edge.api.rmi.dto.SessionDTO;
 import org.rifidi.edge.core.configuration.Configuration;
-import org.rifidi.edge.core.configuration.RifidiService;
 import org.rifidi.edge.core.configuration.annotations.Operation;
 import org.rifidi.edge.core.configuration.annotations.Property;
 import org.rifidi.edge.core.configuration.listeners.AttributesChangedListener;
-import org.rifidi.edge.core.configuration.services.JMXService;
 import org.rifidi.edge.core.exceptions.CannotCreateSessionException;
 import org.rifidi.edge.core.sensors.SensorSession;
 import org.rifidi.edge.core.sensors.base.AbstractSensor;
@@ -418,13 +416,7 @@ public class DefaultConfigurationImpl implements Configuration, ServiceListener 
 		return (AttributeList) changedAttributes.clone();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.rifidi.edge.core.configuration.Configuration#destroy()
-	 */
-	@Override
-	public void destroy() {
+	protected void destroy() {
 		RifidiService service = target.get();
 		if (service != null) {
 			service.destroy();
