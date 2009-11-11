@@ -20,27 +20,31 @@ package org.rifidi.edge.client.model.sal;
  */
 public class RemoteJob {
 
-	/**The reader ID this job is running on*/
+	/** The reader ID this job is running on */
 	private String readerID;
-	/**The session ID this job is running on*/
+	/** The session ID this job is running on */
 	private String sessionID;
-	/**The ID of this job*/
+	/** The ID of this job */
 	private Integer jobID;
-	/**The ID of the commandConfiguration of this job*/
+	/** The ID of the commandConfiguration of this job */
 	private String commandConfigurationID;
+	/** True if this is a recurring command */
+	private boolean recurring;
 
 	/**
 	 * @param readerID
 	 * @param sessionID
 	 * @param jobID
 	 * @param commandConfigurationID
+	 * @param recurring
 	 */
 	public RemoteJob(String readerID, String sessionID, Integer jobID,
-			String commandConfigurationID) {
+			String commandConfigurationID, boolean recurring) {
 		this.readerID = readerID;
 		this.sessionID = sessionID;
 		this.jobID = jobID;
 		this.commandConfigurationID = commandConfigurationID;
+		this.recurring = recurring;
 	}
 
 	/**
@@ -69,5 +73,12 @@ public class RemoteJob {
 	 */
 	public String getCommandConfigurationID() {
 		return commandConfigurationID;
+	}
+
+	/**
+	 * @return the recurring
+	 */
+	public boolean isRecurring() {
+		return recurring;
 	}
 }

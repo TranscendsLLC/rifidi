@@ -106,8 +106,13 @@ public class EdgeServerTreeLabelProvider implements ILabelProvider {
 		}
 		if (element instanceof RemoteJob) {
 			RemoteJob job = (RemoteJob) element;
-			return "Command " + job.getJobID() + " : "
-					+ job.getCommandConfigurationID();
+			if (job.isRecurring()) {
+				return "Command " + job.getJobID() + " : "
+						+ job.getCommandConfigurationID() + " (Recurring)";
+			} else {
+				return "Command " + job.getJobID() + " : "
+						+ job.getCommandConfigurationID();
+			}
 		}
 		return element.toString();
 	}

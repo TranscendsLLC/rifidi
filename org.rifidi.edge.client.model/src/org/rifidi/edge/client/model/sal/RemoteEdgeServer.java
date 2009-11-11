@@ -49,7 +49,6 @@ import org.rifidi.edge.core.rmi.client.readerconfigurationstub.RS_ServerDescript
 import org.rifidi.edge.core.rmi.client.readerconfigurationstub.RS_StartSession;
 import org.rifidi.edge.core.rmi.client.readerconfigurationstub.RS_StopSession;
 import org.rifidi.edge.core.rmi.client.readerconfigurationstub.RS_SubmitCommand;
-import org.rifidi.edge.core.rmi.client.readerconfigurationstub.RS_SubmitSingleShotCommand;
 import org.rifidi.rmi.proxycache.exceptions.AuthenticationException;
 import org.rifidi.rmi.proxycache.exceptions.ServerUnavailable;
 import org.springframework.security.Authentication;
@@ -453,37 +452,6 @@ public class RemoteEdgeServer {
 				getRSServerDescription(), session.getReaderID(), session
 						.getSessionID(), configuration.getID(), interval,
 				TimeUnit.MILLISECONDS);
-		try {
-			command.makeCall();
-		} catch (ServerUnavailable e) {
-			logger.error("Exception while submitting remote job ", e);
-			disconnect();
-		} catch (CommandSubmissionException e) {
-			logger.error("Exception while submitting remote job ", e);
-		} catch (AuthenticationException e) {
-			handleAuthenticationException(e);
-		}
-	}
-
-	/**
-	 * Submits a one-shot command to a session. The command only runs briefly
-	 * and does not execute again
-	 * 
-	 * @param session
-	 *            The session to send the coommand to
-	 * @param configuration
-	 *            The command to submit
-	 */
-	public void submitOneTimeCommand(RemoteSession session,
-			RemoteCommandConfiguration configuration) {
-		if (this.state != RemoteEdgeServerState.CONNECTED) {
-			logger.warn("Cannot submit a one-time command when Edge Server "
-					+ "is in the Disconnected State!");
-			return;
-		}
-		RS_SubmitSingleShotCommand command = new RS_SubmitSingleShotCommand(
-				getRSServerDescription(), session.getReaderID(), session
-						.getSessionID(), configuration.getID());
 		try {
 			command.makeCall();
 		} catch (ServerUnavailable e) {

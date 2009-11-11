@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Rifidi Workbench SAL
 Bundle-SymbolicName: org.rifidi.edge.client.sal;singleton:=true
-Bundle-Version: 1.0.2
+Bundle-Version: 1.0.3
 Bundle-Activator: org.rifidi.edge.client.sal.SALPluginActivator
 Bundle-Vendor: Pramari, LLC
 Require-Bundle: org.eclipse.ui,
@@ -15,7 +15,7 @@ Require-Bundle: org.eclipse.ui,
  org.springframework.bundle.spring.aspects;bundle-version="2.5.5",
  org.aspectj.runtime;bundle-version="1.6.3",
  org.rifidi.org.springframework.bundle.spring;bundle-version="2.5.5",
- org.rifidi.edge.api;bundle-version="1.1.1"
+ org.rifidi.edge.api;bundle-version="1.2.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Import-Package: org.apache.commons.logging;version="1.1.1",
