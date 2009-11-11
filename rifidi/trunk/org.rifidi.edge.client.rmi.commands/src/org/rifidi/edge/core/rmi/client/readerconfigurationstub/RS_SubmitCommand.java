@@ -18,7 +18,8 @@ import org.rifidi.edge.api.rmi.services.SensorManagerService;
 import org.rifidi.rmi.proxycache.cache.AbstractRMICommandObject;
 
 /**
- * This command allows you to submit commands to a reader session for repeated
+ * This command allows you to submit commands to a reader session. If the
+ * repeatInterval >0, then the command will be scheduled for repeated
  * executions. It returns the process ID of the submitted job, which can be used
  * to kill the command. It throws a CommandSubmissionException if there was a
  * problem
@@ -79,11 +80,9 @@ public class RS_SubmitCommand extends
 	protected Integer performRemoteCall(Object remoteObject)
 			throws CommandSubmissionException {
 		SensorManagerService stub = (SensorManagerService) remoteObject;
-		stub.submitCommand(readerID, sessionID, commandID,
-				repeatInterval, timeUnit);
-		//TODO: this might not be clean
+		stub.submitCommand(readerID, sessionID, commandID, repeatInterval,
+				timeUnit);
+		// TODO: this might not be clean
 		return 0;
-
 	}
-
 }

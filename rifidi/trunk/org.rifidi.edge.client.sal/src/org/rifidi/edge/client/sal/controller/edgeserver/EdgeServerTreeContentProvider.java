@@ -330,12 +330,7 @@ public class EdgeServerTreeContentProvider implements ITreeContentProvider,
 	@Override
 	public void submitCommand(RemoteSession session,
 			RemoteCommandConfiguration configuration, Long interval) {
-		if (interval <= (long) 0) {
-			this.remoteEdgeServer.submitOneTimeCommand(session, configuration);
-		} else {
-			this.remoteEdgeServer.scheduleJob(session, configuration, interval);
-		}
-
+		this.remoteEdgeServer.scheduleJob(session, configuration, interval);
 	}
 
 	/*

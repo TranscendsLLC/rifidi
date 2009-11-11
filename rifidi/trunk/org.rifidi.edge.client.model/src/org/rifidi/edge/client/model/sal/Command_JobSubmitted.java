@@ -18,7 +18,7 @@ import org.rifidi.edge.api.jms.notifications.JobSubmittedNotification;
  * A handler for a notification that is sent when a new Job is submitted to the
  * edge server
  * 
- * @author kyle
+ * @author Kyle Neumeier - kyle@pramari.com
  */
 public class Command_JobSubmitted implements RemoteEdgeServerCommand {
 
@@ -72,7 +72,8 @@ public class Command_JobSubmitted implements RemoteEdgeServerCommand {
 						this.notification.getJobID(),
 						new RemoteJob(notification.getReaderID(), notification
 								.getSessionID(), notification.getJobID(),
-								notification.getCommandConfigurationID()));
+								notification.getCommandConfigurationID(),
+								notification.isRecurring()));
 			}
 		}
 

@@ -58,7 +58,7 @@ public class RemoteSession {
 		this.remoteJobs = new WritableMap();
 		for (CommandDTO entry : sessionDTO.getCommands()) {
 			_addRemoteJob(new RemoteJob(readerID, sessionDTO.getID(), entry
-					.getProcessID(), entry.getCommandID()));
+					.getProcessID(), entry.getCommandID(), entry.getRepeat()));
 		}
 	}
 
