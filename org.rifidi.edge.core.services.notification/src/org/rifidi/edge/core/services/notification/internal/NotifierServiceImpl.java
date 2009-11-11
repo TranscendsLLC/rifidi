@@ -241,11 +241,13 @@ public class NotifierServiceImpl implements NotifierService {
 	 * removeCommandConfigFactoryEvent(java.lang.String)
 	 */
 	@Override
-	public void removeCommandConfigFactoryEvent(String readerFactoryID, String commandFactoryID) {
+	public void removeCommandConfigFactoryEvent(String readerFactoryID,
+			String commandFactoryID) {
 		try {
 			extNotificationTemplate.send(this.extNotificationDest,
 					new NotificationMessageCreator(
-							new CommandConfigFactoryRemoved(readerFactoryID, commandFactoryID)));
+							new CommandConfigFactoryRemoved(readerFactoryID,
+									commandFactoryID)));
 		} catch (Exception e) {
 			logger.warn("ReaderFactoryRemoved Notification not sent " + e);
 		}
@@ -281,12 +283,12 @@ public class NotifierServiceImpl implements NotifierService {
 	 */
 	@Override
 	public void jobSubmitted(String readerID, String sessionID, Integer jobID,
-			String commandID) {
+			String commandID, boolean recurring) {
 		try {
 			extNotificationTemplate.send(this.extNotificationDest,
 					new NotificationMessageCreator(
 							new JobSubmittedNotification(readerID, sessionID,
-									jobID, commandID)));
+									jobID, commandID, recurring)));
 		} catch (Exception e) {
 			logger.warn("job submitted Notification not sent " + e);
 

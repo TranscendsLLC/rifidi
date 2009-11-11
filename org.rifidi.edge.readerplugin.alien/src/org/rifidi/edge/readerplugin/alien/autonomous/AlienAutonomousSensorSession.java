@@ -22,6 +22,7 @@ import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.api.SessionStatus;
 import org.rifidi.edge.core.sensors.base.AbstractSensor;
 import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
+import org.rifidi.edge.core.sensors.commands.Command;
 import org.rifidi.edge.core.sensors.sessions.AbstractServerSocketSensorSession;
 import org.rifidi.edge.core.sensors.sessions.MessageParsingStrategyFactory;
 import org.rifidi.edge.core.sensors.sessions.MessageProcessingStrategyFactory;
@@ -90,6 +91,14 @@ public class AlienAutonomousSensorSession extends
 	@Override
 	protected MessageProcessingStrategyFactory getMessageProcessingStrategyFactory() {
 		return this.messageProcessingFactory;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.sensors.SensorSession#getResetCommand()
+	 */
+	@Override
+	protected Command getResetCommand() {
+		return null;
 	}
 
 	/*

@@ -29,8 +29,10 @@ import javax.jms.Destination;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.api.SessionStatus;
+import org.rifidi.edge.api.rmi.dto.SessionDTO;
 import org.rifidi.edge.core.sensors.base.AbstractSensor;
 import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
+import org.rifidi.edge.core.sensors.commands.Command;
 import org.rifidi.edge.core.sensors.sessions.threads.ServerSocketSensorSessionReadThread;
 import org.springframework.jms.core.JmsTemplate;
 
@@ -104,7 +106,7 @@ public abstract class AbstractServerSocketSensorSession extends
 	 * @see org.rifidi.edge.core.sensors.SensorSession#connect()
 	 */
 	@Override
-	public void connect() throws IOException {
+	protected void _connect() throws IOException {
 		if (getStatus() == SessionStatus.CONNECTING
 				|| getStatus() == SessionStatus.PROCESSING) {
 			logger.warn("Session already started");
@@ -217,11 +219,24 @@ public abstract class AbstractServerSocketSensorSession extends
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.sensors.base.AbstractSensorSession#submit(java.lang
-	 * .String)
+	 * org.rifidi.edge.core.sensors.sessions.AbstractSensorSession#submit(org
+	 * .rifidi.edge.core.sensors.commands.Command)
 	 */
 	@Override
-	public void submit(String commandID) {
+	public void submit(Command command) {
 		logger.warn("Cannot submit a command to a passive session");
 	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.core.sensors.SensorSession#restoreCommands(org.rifidi
+	 * .edge.api.rmi.dto.SessionDTO)
+	 */
+	@Override
+	public void restoreCommands(SessionDTO dto) {
+		logger.info("Cannot restore commands on a passive session");
+	}
+
 }

@@ -139,7 +139,7 @@ public abstract class AbstractIPSensorSession extends AbstractSensorSession {
 	 * @see org.rifidi.edge.core.newreaders.Reader#connect()
 	 */
 	@Override
-	public void connect() throws IOException {
+	protected void _connect() throws IOException {
 		if ((getStatus() == SessionStatus.PROCESSING
 				|| getStatus() == SessionStatus.CREATED
 				|| getStatus() == SessionStatus.LOGGINGIN || getStatus() == SessionStatus.CLOSED)
@@ -153,11 +153,12 @@ public abstract class AbstractIPSensorSession extends AbstractSensorSession {
 						logger
 								.warn("Killed a non active executor. That should not happen. ");
 					}
+					// TODO: better would be to have a method in
+					// AbstractSensorSession that handles the shutdown of the
+					// executor
 					executor.shutdownNow();
 					executor = null;
-					for (Integer id : commands.keySet()) {
-						idToData.get(id).future = null;
-					}
+					resetCommands();
 				}
 				// check if somebody is currently reading
 				if (readThread != null) {
@@ -301,20 +302,6 @@ public abstract class AbstractIPSensorSession extends AbstractSensorSession {
 				if (!processing.compareAndSet(false, true)) {
 					logger.warn("Executor was already active! ");
 				}
-				// resubmit commands
-				while (commandQueue.peek() != null) {
-					executor.submit(commandQueue.poll());
-				}
-				synchronized (commands) {
-					for (Integer id : commands.keySet()) {
-						if (idToData.get(id).future == null) {
-							idToData.get(id).future = executor
-									.scheduleWithFixedDelay(commands.get(id),
-											0, idToData.get(id).interval,
-											idToData.get(id).unit);
-						}
-					}
-				}
 			} finally {
 				connecting.compareAndSet(true, false);
 			}
@@ -331,14 +318,7 @@ public abstract class AbstractIPSensorSession extends AbstractSensorSession {
 		if (processing.get()) {
 			if (processing.compareAndSet(true, false)) {
 				setStatus(SessionStatus.CLOSED);
-				synchronized (commands) {
-					for (Integer id : commands.keySet()) {
-						if (idToData.get(id).future != null) {
-							idToData.get(id).future.cancel(true);
-							idToData.get(id).future = null;
-						}
-					}
-				}
+				super.resetCommands();
 				this.executor.shutdown();
 				try {
 					socket.close();
@@ -396,7 +376,7 @@ public abstract class AbstractIPSensorSession extends AbstractSensorSession {
 
 	@Override
 	public String toString() {
-		return "IPSession: " + host + ":" + port;
+		return "IPSession: " + host + ":" + port + " (" + getStatus() + ")";
 	}
 
 }

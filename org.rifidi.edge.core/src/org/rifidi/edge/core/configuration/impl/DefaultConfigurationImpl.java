@@ -12,6 +12,7 @@
  */
 package org.rifidi.edge.core.configuration.impl;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -36,6 +37,7 @@ import org.apache.commons.logging.LogFactory;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceEvent;
 import org.osgi.framework.ServiceListener;
+import org.rifidi.edge.api.SessionStatus;
 import org.rifidi.edge.api.rmi.dto.SessionDTO;
 import org.rifidi.edge.core.configuration.Configuration;
 import org.rifidi.edge.core.configuration.RifidiService;
@@ -44,8 +46,8 @@ import org.rifidi.edge.core.configuration.annotations.Property;
 import org.rifidi.edge.core.configuration.listeners.AttributesChangedListener;
 import org.rifidi.edge.core.configuration.services.JMXService;
 import org.rifidi.edge.core.exceptions.CannotCreateSessionException;
+import org.rifidi.edge.core.sensors.SensorSession;
 import org.rifidi.edge.core.sensors.base.AbstractSensor;
-import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
 import org.rifidi.edge.core.services.notification.NotifierService;
 
 /**
@@ -88,7 +90,6 @@ public class DefaultConfigurationImpl implements Configuration, ServiceListener 
 	private volatile JMXService jmxService;
 	/** DTOs that describe the sessions if this config describes a reader. */
 	private final Map<SessionDTO, String> sessionDTOs;
-	private final Map<String, AbstractCommandConfiguration<?>> nameToCommandConfig;
 
 	/**
 	 * Constructor.
@@ -113,7 +114,6 @@ public class DefaultConfigurationImpl implements Configuration, ServiceListener 
 		this.target = new AtomicReference<RifidiService>(null);
 		this.jmxService = jmxService;
 		this.sessionDTOs = new ConcurrentHashMap<SessionDTO, String>();
-		this.nameToCommandConfig = new ConcurrentHashMap<String, AbstractCommandConfiguration<?>>();
 		if (sessionDTOs != null) {
 			for (SessionDTO dto : sessionDTOs) {
 				this.sessionDTOs.put(dto, "-1");
@@ -157,9 +157,16 @@ public class DefaultConfigurationImpl implements Configuration, ServiceListener 
 				nameToPos = new HashMap<String, Integer>();
 				List<Attribute> attrs = attributes.asList();
 				if (target instanceof AbstractSensor<?>) {
-					for(SessionDTO sessionDTO:sessionDTOs.keySet()){
+					for (SessionDTO sessionDTO : sessionDTOs.keySet()) {
 						try {
-							((AbstractSensor<?>) target).createSensorSession(sessionDTO);
+							((AbstractSensor<?>) target)
+									.createSensorSession(sessionDTO);
+							// test to see if the session should be restarted
+							if (shouldStartSession(sessionDTO)) {
+								// if it should, restart it
+								restartSession((AbstractSensor<?>) target,
+										sessionDTO);
+							}
 						} catch (CannotCreateSessionException e) {
 							logger.error("Exception ", e);
 						}
@@ -176,6 +183,66 @@ public class DefaultConfigurationImpl implements Configuration, ServiceListener 
 		}
 		// if the value was already set we got a problem
 		logger.warn("Tried to set the target but was already set.");
+	}
+
+	/**
+	 * A helper method to determine if the supplied sessionDTO should restart;
+	 * 
+	 * @param dto
+	 *            The DTO of the session
+	 * @return
+	 */
+	private boolean shouldStartSession(SessionDTO dto) {
+		//test to see  if the autostart system property is true
+		if (System.getProperties().getProperty("org.rifidi.edge.autostart")
+				.equalsIgnoreCase("true")) {
+			SessionStatus stat = dto.getStatus();
+			//check to see if the session was saved in a connecting state
+			if (stat == SessionStatus.CONNECTING
+					|| stat == SessionStatus.LOGGINGIN
+					|| stat == SessionStatus.PROCESSING) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * A helper method to start a session.
+	 * 
+	 * TODO: Would be better to replace this with a sessioin starter service
+	 * that would allow a strategy to be provided on how many session can be
+	 * started at once, since sessions have alot of threads and may be expensive
+	 * to start. The service could also be used by the console and the RMI
+	 * server.
+	 * 
+	 * @param sensor
+	 *            The sensor that contains the session
+	 * @param sessionDTO
+	 *            The DTO of the session
+	 */
+	private void restartSession(final AbstractSensor<?> sensor,
+			final SessionDTO sessionDTO) {
+		final SensorSession session = sensor.getSensorSessions().get(
+				sessionDTO.getID());
+		if (session == null) {
+			logger.warn("Session not available: " + sensor.getID() + ":"
+					+ sessionDTO.getID());
+		}
+		logger.info("Restarting session: " + session);
+		Thread t = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					session.connect();
+					sensor.applyPropertyChanges();
+				} catch (IOException e) {
+					logger.warn("Cannot start session: " + sensor.getID() + ":"
+							+ session.getID());
+				}
+			}
+		});
+		t.start();
 	}
 
 	/**
@@ -329,8 +396,8 @@ public class DefaultConfigurationImpl implements Configuration, ServiceListener 
 		if (service != null) {
 			service.setAttributes(attributes);
 		}
-		
-		//keep track of changed attributes since there might be an error
+
+		// keep track of changed attributes since there might be an error
 		AttributeList changedAttributes = new AttributeList();
 
 		for (Attribute attribute : attributes.asList()) {
@@ -346,7 +413,8 @@ public class DefaultConfigurationImpl implements Configuration, ServiceListener 
 
 		}
 
-		notifierService.attributesChanged(getServiceID(),(AttributeList) changedAttributes);
+		notifierService.attributesChanged(getServiceID(),
+				(AttributeList) changedAttributes);
 		return (AttributeList) changedAttributes.clone();
 	}
 

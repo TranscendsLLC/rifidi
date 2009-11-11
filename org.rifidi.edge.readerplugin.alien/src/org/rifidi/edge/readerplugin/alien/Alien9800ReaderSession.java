@@ -18,7 +18,6 @@ package org.rifidi.edge.readerplugin.alien;
 import java.io.IOException;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -30,6 +29,7 @@ import org.rifidi.edge.core.sensors.messages.ByteMessage;
 import org.rifidi.edge.core.sensors.sessions.MessageParsingStrategyFactory;
 import org.rifidi.edge.core.sensors.sessions.poll.AbstractPollIPSensorSession;
 import org.rifidi.edge.core.services.notification.NotifierService;
+import org.rifidi.edge.readerplugin.alien.commands.internal.AlienResetCommand;
 import org.springframework.jms.core.JmsTemplate;
 
 /**
@@ -199,6 +199,16 @@ public class Alien9800ReaderSession extends AbstractPollIPSensorSession {
 	/*
 	 * (non-Javadoc)
 	 * 
+	 * @see org.rifidi.edge.core.sensors.SensorSession#getResetCommand()
+	 */
+	@Override
+	protected Command getResetCommand() {
+		return new AlienResetCommand("AlienResetCommand");
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see
 	 * org.rifidi.edge.core.sensors.sessions.AbstractIPSensorSession#sendMessage
 	 * (org.rifidi.edge.core.sensors.messages.ByteMessage)
@@ -251,7 +261,7 @@ public class Alien9800ReaderSession extends AbstractPollIPSensorSession {
 		// TODO: Remove this once we have aspectJ
 		try {
 			notifierService.jobSubmitted(this.readerID, this.getID(), retVal,
-					commandID);
+					commandID, (interval > 0L));
 		} catch (Exception e) {
 			// make sure the notification doesn't cause this method to exit
 			// under any circumstances

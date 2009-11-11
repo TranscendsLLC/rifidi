@@ -183,16 +183,14 @@ public class ThingmagicReader extends AbstractSensor<ThingmagicReaderSession> {
 		ThingmagicReaderSession thingmagicsession = session.getAndSet(null);
 		if (thingmagicsession != null
 				&& thingmagicsession.getID().equals(sessionid)) {
-			for (Integer id : thingmagicsession.currentCommands().keySet()) {
-				thingmagicsession.killComand(id);
-			}
+			thingmagicsession.killAllCommands();
 			thingmagicsession.disconnect();
 			// TODO: remove this once we get AspectJ in here!
 			notifierService.removeSessionEvent(this.getID(), sessionid);
 		}
 		logger.warn("Tried to delete a non existend session: " + sessionid);
 	}
-	
+
 	/**
 	 * @return the IPADDRESS
 	 */
@@ -228,7 +226,7 @@ public class ThingmagicReader extends AbstractSensor<ThingmagicReaderSession> {
 	public void setPort(Integer port) {
 		this.port = port;
 	}
-	
+
 	/**
 	 * @return the RECONNECTION_INTERVAL
 	 */
