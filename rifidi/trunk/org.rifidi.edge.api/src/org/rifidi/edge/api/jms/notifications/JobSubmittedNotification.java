@@ -31,9 +31,11 @@ public class JobSubmittedNotification implements Serializable {
 	private Integer jobID;
 	/** The ID of the commandConfiguration of this job */
 	private String commandConfigurationID;
+	/** True if this is a recurring command */
+	private boolean recurring;
 
 	/**
-	 * Constructor.  
+	 * Constructor.
 	 * 
 	 * @param readerID
 	 * @param sessionID
@@ -41,15 +43,16 @@ public class JobSubmittedNotification implements Serializable {
 	 * @param commandConfigurationID
 	 */
 	public JobSubmittedNotification(String readerID, String sessionID,
-			Integer jobID, String commandConfigurationID) {
+			Integer jobID, String commandConfigurationID, boolean recurring) {
 		this.readerID = readerID;
 		this.sessionID = sessionID;
 		this.jobID = jobID;
 		this.commandConfigurationID = commandConfigurationID;
+		this.recurring = recurring;
 	}
 
 	/**
-	 * Returns the readerID.  
+	 * Returns the readerID.
 	 * 
 	 * @return the readerID
 	 */
@@ -58,7 +61,7 @@ public class JobSubmittedNotification implements Serializable {
 	}
 
 	/**
-	 * Returns the sessionID.  
+	 * Returns the sessionID.
 	 * 
 	 * @return the sessionID
 	 */
@@ -67,7 +70,7 @@ public class JobSubmittedNotification implements Serializable {
 	}
 
 	/**
-	 * Returns the jobID.  
+	 * Returns the jobID.
 	 * 
 	 * @return the jobID
 	 */
@@ -76,7 +79,7 @@ public class JobSubmittedNotification implements Serializable {
 	}
 
 	/**
-	 * Returns the command configuration ID.  
+	 * Returns the command configuration ID.
 	 * 
 	 * @return the commandConfigurationID
 	 */
@@ -84,4 +87,10 @@ public class JobSubmittedNotification implements Serializable {
 		return commandConfigurationID;
 	}
 
+	/**
+	 * @return the recurring
+	 */
+	public boolean isRecurring() {
+		return recurring;
+	}
 }
