@@ -26,6 +26,13 @@
 		<property name="provisioningService" ref="provisioningService" />
 	</bean>
 
+	<bean id="ApplicationLoader"
+		class="org.rifidi.edge.core.services.provisioning.impl.ApplicationLoader">
+		<property name="provisioningService" ref="provisioningService" />
+		<property name="defaultApplicationsFileName" value="${org.rifidi.edge.applications.initial}" />
+		<property name="pathToAppFolder" value="${org.rifidi.edge.applications}" />
+	</bean>
+
 	<osgi:reference id="repoAdmin"
 		interface="org.osgi.service.obr.RepositoryAdmin" />
 
