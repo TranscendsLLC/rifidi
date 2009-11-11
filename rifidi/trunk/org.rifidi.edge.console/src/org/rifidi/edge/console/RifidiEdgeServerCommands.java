@@ -13,6 +13,7 @@
 package org.rifidi.edge.console;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -22,6 +23,7 @@ import javax.management.AttributeList;
 
 import org.eclipse.osgi.framework.console.CommandInterpreter;
 import org.eclipse.osgi.framework.console.CommandProvider;
+import org.rifidi.edge.api.rmi.dto.CommandDTO;
 import org.rifidi.edge.core.configuration.Configuration;
 import org.rifidi.edge.core.configuration.impl.AbstractCommandConfigurationFactory;
 import org.rifidi.edge.core.configuration.services.ConfigurationService;
@@ -116,10 +118,16 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 			intp.println("ID: " + reader.getID());
 			for (SensorSession session : reader.getSensorSessions().values()) {
 				intp.println("\tsession (" + session.getID() + "): " + session);
-				Map<Integer, String> commands = session.currentCommands();
-				for (Integer commandId : commands.keySet()) {
-					intp.println("\t\tcommand (" + commandId + "): "
-							+ commands.get(commandId));
+				List<CommandDTO> commands = session.getCommands();
+				for (CommandDTO dto : commands) {
+					String type = null;
+					if (dto.getRepeat()) {
+						type = "Recurring Command";
+					} else {
+						type = "Single-Shot Command";
+					}
+					intp.println("\t\t" + type + "(" + dto.getProcessID()
+							+ "): " + dto.getCommandID());
 				}
 			}
 		}
@@ -169,11 +177,11 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 		}
 		try {
 			String id = configService.createService(readerFacID, list);
-			intp.println("Reader Created with ID " + id );
+			intp.println("Reader Created with ID " + id);
 		} catch (CannotCreateServiceException e) {
 			intp.println("Cannot create reader");
 		}
-		
+
 		return null;
 	}
 
@@ -363,7 +371,8 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 			return null;
 		}
 		command.destroy();
-		intp.println("Command Configuration with id " + commandID + " has been deleted");
+		intp.println("Command Configuration with id " + commandID
+				+ " has been deleted");
 		return null;
 
 	}
@@ -383,7 +392,7 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 		AbstractSensor<?> reader = readerDAO.getReaderByID(readerid);
 		try {
 			String sessionID = reader.createSensorSession();
-			intp.println("Session created: " + readerid+":"+sessionID);
+			intp.println("Session created: " + readerid + ":" + sessionID);
 		} catch (CannotCreateSessionException e) {
 			intp.println("Session cannot be created");
 		}
@@ -414,7 +423,9 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 		}
 		try {
 			reader.destroySensorSession(sessionid);
-			intp.println("Session " + readerid+":"+sessionid+ " destroyed");
+			intp
+					.println("Session " + readerid + ":" + sessionid
+							+ " destroyed");
 		} catch (CannotDestroySensorException e) {
 			intp.println("Cannot destroy session");
 		}
@@ -467,7 +478,7 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 			}
 		});
 		t.start();
-		intp.println("Session "+readerid+":"+sessionid+" started.");
+		intp.println("Session " + readerid + ":" + sessionid + " started.");
 		return null;
 	}
 
@@ -504,7 +515,7 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 			intp.println("Session id not an integer.");
 			return null;
 		}
-		intp.println("Session "+readerid+":"+sessionid+" stopped.");
+		intp.println("Session " + readerid + ":" + sessionid + " stopped.");
 		return null;
 	}
 
@@ -540,11 +551,7 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 		try {
 			if (session != null) {
 				Long ival = Long.parseLong(interval);
-				if (ival > 0) {
-					session.submit(commandid, ival, TimeUnit.MILLISECONDS);
-				} else {
-					session.submit(commandid);
-				}
+				session.submit(commandid, ival, TimeUnit.MILLISECONDS);
 			} else {
 				intp.print("Session ID not found " + sessionid);
 				return null;
@@ -663,7 +670,7 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 		buffer
 				.append("\tstartsession <readerid> <sessionid> - start a session on the given reader\n");
 		buffer
-		.append("\tstopsession <readerid> <sessionid> - stop a session on the given reader\n");
+				.append("\tstopsession <readerid> <sessionid> - stop a session on the given reader\n");
 		buffer
 				.append("\texecutecommand <readerid> <sessionid> <commandid>  <interval>- execute a command in a session\n");
 		buffer

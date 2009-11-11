@@ -90,7 +90,8 @@ public abstract class AbstractSensor<T extends SensorSession> extends
 			throws CannotCreateSessionException;
 
 	/**
-	 * Create a sensor session from DTO.
+	 * This method is called when a sensor session is being created from a DTO,
+	 * such as restoring the session from persistance.
 	 * 
 	 * @param sessionDTO
 	 * @return the ID of the session
@@ -99,6 +100,7 @@ public abstract class AbstractSensor<T extends SensorSession> extends
 	 */
 	abstract public String createSensorSession(SessionDTO sessionDTO)
 			throws CannotCreateSessionException;
+
 
 	/**
 	 * Get all currently created reader sessions. The Key is the ID of the
@@ -113,7 +115,8 @@ public abstract class AbstractSensor<T extends SensorSession> extends
 	 * 
 	 * @param session
 	 */
-	abstract public void destroySensorSession(String id) throws CannotDestroySensorException;
+	abstract public void destroySensorSession(String id)
+			throws CannotDestroySensorException;
 
 	/**
 	 * Send properties that have been modified to the physical reader

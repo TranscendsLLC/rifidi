@@ -29,7 +29,6 @@ import javax.management.MBeanInfo;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.rifidi.edge.api.rmi.dto.CommandDTO;
 import org.rifidi.edge.api.rmi.dto.SessionDTO;
 import org.rifidi.edge.core.configuration.annotations.JMXMBean;
 import org.rifidi.edge.core.configuration.annotations.Operation;
@@ -238,13 +237,7 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 					(int) (long) reconnectionInterval,
 					maxNumConnectionAttempts, username, password, template,
 					notifierService, this.getID(), commands))) {
-				if (sessionDTO.getCommands() != null) {
-					for (CommandDTO commandDTO : sessionDTO.getCommands()) {
-						session.get().submit(commandDTO.getCommandID(),
-								commandDTO.getInterval(),
-								commandDTO.getTimeUnit());
-					}
-				}
+				this.session.get().restoreCommands(sessionDTO);
 				// TODO: remove this once we get AspectJ in here!
 				notifierService.addSessionEvent(this.getID(), Integer
 						.toString(sessionID));
@@ -329,9 +322,7 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 		Alien9800ReaderSession aliensession = session.get();
 		if (aliensession != null && aliensession.getID().equals(sessionid)) {
 			session.set(null);
-			for (Integer id : aliensession.currentCommands().keySet()) {
-				aliensession.killComand(id);
-			}
+			aliensession.killAllCommands();
 			aliensession.disconnect();
 			// TODO: remove this once we get AspectJ in here!
 			notifierService.removeSessionEvent(this.getID(), sessionid);

@@ -25,7 +25,6 @@ import javax.management.MBeanInfo;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.rifidi.edge.api.rmi.dto.CommandDTO;
 import org.rifidi.edge.api.rmi.dto.SessionDTO;
 import org.rifidi.edge.core.configuration.annotations.JMXMBean;
 import org.rifidi.edge.core.configuration.annotations.Property;
@@ -104,10 +103,7 @@ public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 					reconnectionInterval, maxNumConnectionAttempts,
 					destination, template, notifyServiceWrapper, super.getID(),
 					commands))) {
-				for (CommandDTO commandDTO : sessionDTO.getCommands()) {
-					session.get().submit(commandDTO.getCommandID(),
-							commandDTO.getInterval(), commandDTO.getTimeUnit());
-				}
+				session.get().restoreCommands(sessionDTO);
 				// TODO: remove this once we get AspectJ in here!
 				notifyServiceWrapper.addSessionEvent(this.getID(), Integer
 						.toString(sessionID));
@@ -154,9 +150,7 @@ public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 		LLRPReaderSession llrpsession = session.get();
 		if (llrpsession != null){
 			if(llrpsession.getID().equals(sessionid)) {
-				for (Integer id : llrpsession.currentCommands().keySet()) {
-					llrpsession.killComand(id);
-				}
+				llrpsession.killAllCommands();
 				llrpsession.disconnect();
 				// TODO: remove this once we get AspectJ in here!
 				session.set(null);

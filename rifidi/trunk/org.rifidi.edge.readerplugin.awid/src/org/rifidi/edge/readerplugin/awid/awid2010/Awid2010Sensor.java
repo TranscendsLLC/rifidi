@@ -180,9 +180,7 @@ public class Awid2010Sensor extends AbstractSensor<Awid2010Session> {
 		Awid2010Session awidSession = session.get();
 		if (awidSession != null && awidSession.getID().equals(id)) {
 			session.set(null);
-			for (Integer commandID : awidSession.currentCommands().keySet()) {
-				awidSession.killComand(commandID);
-			}
+			awidSession.killAllCommands();
 			awidSession.disconnect();
 			awidSession.destroy();
 			// TODO: remove this once we get AspectJ in here!

@@ -30,7 +30,6 @@ import org.apache.activemq.command.ActiveMQObjectMessage;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.mina.common.RuntimeIOException;
-import org.llrp.ltk.generated.enumerations.AISpecStopTriggerType;
 import org.llrp.ltk.generated.enumerations.AccessReportTriggerType;
 import org.llrp.ltk.generated.enumerations.NotificationEventType;
 import org.llrp.ltk.generated.enumerations.ROReportTriggerType;
@@ -38,10 +37,7 @@ import org.llrp.ltk.generated.enumerations.StatusCode;
 import org.llrp.ltk.generated.messages.RO_ACCESS_REPORT;
 import org.llrp.ltk.generated.messages.SET_READER_CONFIG;
 import org.llrp.ltk.generated.messages.SET_READER_CONFIG_RESPONSE;
-import org.llrp.ltk.generated.parameters.AISpec;
-import org.llrp.ltk.generated.parameters.AISpecStopTrigger;
 import org.llrp.ltk.generated.parameters.AccessReportSpec;
-import org.llrp.ltk.generated.parameters.AntennaConfiguration;
 import org.llrp.ltk.generated.parameters.AntennaID;
 import org.llrp.ltk.generated.parameters.C1G2EPCMemorySelector;
 import org.llrp.ltk.generated.parameters.EPC_96;
@@ -58,15 +54,16 @@ import org.llrp.ltk.types.Bit;
 import org.llrp.ltk.types.LLRPMessage;
 import org.llrp.ltk.types.UnsignedInteger;
 import org.llrp.ltk.types.UnsignedShort;
-import org.llrp.ltk.types.UnsignedShortArray;
 import org.rifidi.edge.api.SessionStatus;
 import org.rifidi.edge.core.sensors.base.AbstractSensor;
 import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
+import org.rifidi.edge.core.sensors.commands.Command;
 import org.rifidi.edge.core.sensors.sessions.AbstractSensorSession;
 import org.rifidi.edge.core.services.notification.NotifierService;
 import org.rifidi.edge.core.services.notification.data.EPCGeneration2Event;
 import org.rifidi.edge.core.services.notification.data.ReadCycle;
 import org.rifidi.edge.core.services.notification.data.TagReadEvent;
+import org.rifidi.edge.readerplugin.llrp.commands.internal.LLRPReset;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
 
@@ -89,7 +86,7 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 	/** The ID of the reader this session belongs to */
 	private final String readerID;
 
-	/**Ok, because only accessed from synchronized block*/
+	/** Ok, because only accessed from synchronized block */
 	int messageID = 1;
 	int maxConAttempts = -1;
 	int reconnectionInterval = -1;
@@ -136,7 +133,7 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 	 * @see org.rifidi.edge.core.readers.ReaderSession#connect()
 	 */
 	@Override
-	public synchronized void connect() throws IOException {
+	protected synchronized void _connect() throws IOException {
 		logger.info("LLRP Session " + this.getID() + " on sensor "
 				+ this.getSensor().getID() + " attempting to connect to "
 				+ host + ":" + port);
@@ -215,29 +212,6 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 			}
 			setStatus(SessionStatus.PROCESSING);
 
-			// resubmit commands
-			while (commandQueue.peek() != null) {
-				executor.submit(commandQueue.poll());
-			}
-
-			if (!processing.compareAndSet(false, true)) {
-				logger.warn("Executor was already active! ");
-			}
-			// resubmit commands
-			while (commandQueue.peek() != null) {
-				executor.submit(commandQueue.poll());
-			}
-
-			synchronized (commands) {
-				for (Integer id : commands.keySet()) {
-					if (idToData.get(id).future == null) {
-						idToData.get(id).future = executor
-								.scheduleWithFixedDelay(commands.get(id), 0,
-										idToData.get(id).interval, idToData
-												.get(id).unit);
-					}
-				}
-			}
 		} catch (TimeoutException e) {
 			logger.error(e.getMessage());
 			disconnect();
@@ -246,6 +220,16 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 			disconnect();
 		}
 
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.rifidi.edge.core.sensors.SensorSession#getResetCommand()
+	 */
+	@Override
+	protected Command getResetCommand() {
+		return new LLRPReset("LLRPResetCommand");
 	}
 
 	/**
@@ -269,13 +253,7 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 				}
 			}
 			// make sure commands are canceled
-
-			for (CommandExecutionData data : idToData.values()) {
-				if (data.future != null) {
-					data.future.cancel(true);
-					data.future = null;
-				}
-			}
+			resetCommands();
 		} finally {
 			// make sure executor is shutdown!
 			if (executor != null) {
@@ -293,11 +271,11 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 	 */
 	public LLRPMessage transact(LLRPMessage message) {
 		// System.out.println("Sending an LLRP message: " + message.getName());
-		
+
 		LLRPMessage retVal = null;
 		try {
 			synchronized (connection) {
-				retVal = this.connection.transact(message);				
+				retVal = this.connection.transact(message);
 			}
 		} catch (TimeoutException e) {
 			logger.error("Cannot send LLRP Message: ", e);
@@ -313,7 +291,7 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 	 */
 	public void send(LLRPMessage message) {
 		synchronized (connection) {
-			connection.send(message);			
+			connection.send(message);
 		}
 	}
 
@@ -386,7 +364,6 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 		eventNoteSpec.addToEventNotificationStateList(noteState);
 		setReaderConfig.setReaderEventNotificationSpec(eventNoteSpec);
 
-
 		setReaderConfig.setResetToFactoryDefault(new Bit(0));
 
 		return setReaderConfig;
@@ -424,7 +401,7 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 			NotifierService service = notifierService;
 			if (service != null) {
 				service.jobSubmitted(this.readerID, this.getID(), retVal,
-						commandID);
+						commandID, (interval > 0));
 			}
 		} catch (Exception e) {
 			// make sure the notification doesn't cause this method to exit
@@ -461,7 +438,8 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 			if (arg0 instanceof RO_ACCESS_REPORT) {
 				RO_ACCESS_REPORT rar = (RO_ACCESS_REPORT) arg0;
 				List<TagReportData> trdl = rar.getTagReportDataList();
-				logger.debug("Got a RO_ACCESS_REPORT with " + trdl.size() + " tags");
+				logger.debug("Got a RO_ACCESS_REPORT with " + trdl.size()
+						+ " tags");
 
 				// List<String> tagdatastring = new ArrayList<String>();
 				Set<TagReadEvent> tagreaderevents = new HashSet<TagReadEvent>();
@@ -550,6 +528,16 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 					+ "tag has not been added", e);
 		}
 		return retVal;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "LLRPSession: " + host + ":" + port + " (" + getStatus() + ")";
 	}
 
 }

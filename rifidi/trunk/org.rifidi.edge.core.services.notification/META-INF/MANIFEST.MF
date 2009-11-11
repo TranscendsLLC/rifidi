@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Rifidi Edge Notification Service
 Bundle-SymbolicName: org.rifidi.edge.core.services.notification
-Bundle-Version: 1.0.0
+Bundle-Version: 1.0.1
 Bundle-Vendor: Pramari, LLC
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: javax.jms;version="1.1.0",
@@ -12,5 +12,5 @@ Import-Package: javax.jms;version="1.1.0",
  org.springframework.core;version="2.5.5",
  org.springframework.jms.core;version="2.5.5",
  org.springframework.jms.listener;version="2.5.5"
-Require-Bundle: org.rifidi.edge.core.services;bundle-version="1.0.0",
- org.rifidi.edge.api;bundle-version="1.1.1"
+Require-Bundle: org.rifidi.edge.core.services;bundle-version="1.1.0",
+ org.rifidi.edge.api;bundle-version="1.2.0"

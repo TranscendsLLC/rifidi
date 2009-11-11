@@ -143,9 +143,11 @@ public interface NotifierService {
 	 *            The ID of the job
 	 * @param commandID
 	 *            The ID of the command configuration which produced the job
+	 * @param recurring
+	 *            True if the command is a recurring command
 	 */
 	public void jobSubmitted(String readerID, String sessionID, Integer jobID,
-			String commandID);
+			String commandID, boolean recurring);
 
 	/**
 	 * Send a notification that a job has been killed.

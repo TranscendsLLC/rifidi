@@ -13,12 +13,14 @@ package org.rifidi.edge.readerplugin.awid.awid2010;
 
 import java.io.IOException;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.api.SessionStatus;
 import org.rifidi.edge.core.sensors.base.AbstractSensor;
 import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
+import org.rifidi.edge.core.sensors.commands.Command;
 import org.rifidi.edge.core.sensors.messages.ByteMessage;
 import org.rifidi.edge.core.sensors.sessions.MessageParsingStrategyFactory;
 import org.rifidi.edge.core.sensors.sessions.pubsub.AbstractPubSubIPSensorSession;
@@ -26,6 +28,7 @@ import org.rifidi.edge.core.services.notification.NotifierService;
 import org.rifidi.edge.readerplugin.awid.awid2010.communication.AwidEndpoint;
 import org.rifidi.edge.readerplugin.awid.awid2010.communication.AwidTagHandler;
 import org.rifidi.edge.readerplugin.awid.awid2010.communication.commands.AbstractAwidCommand;
+import org.rifidi.edge.readerplugin.awid.awid2010.communication.commands.StopCommand;
 import org.springframework.jms.core.JmsTemplate;
 
 /**
@@ -127,6 +130,56 @@ public class Awid2010Session extends AbstractPubSubIPSensorSession {
 			logger.warn("No Awid Welcome Message Received");
 			return false;
 		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.rifidi.edge.core.sensors.SensorSession#getResetCommand()
+	 */
+	@Override
+	protected Command getResetCommand() {
+		return new Command("AwidResetCommand") {
+			@Override
+			public void run() {
+				StopCommand command = new StopCommand();
+				try {
+					((Awid2010Session) super.sensorSession)
+							.sendMessage(command);
+				} catch (IOException e) {
+				}
+
+			}
+		};
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.core.sensors.sessions.AbstractSensorSession#submit(java
+	 * .lang.String, long, java.util.concurrent.TimeUnit)
+	 */
+	@Override
+	public Integer submit(String commandID, long interval, TimeUnit unit) {
+		int id = super.submit(commandID, interval, unit);
+		this.notifierService.jobSubmitted(this.getSensor().getID(), this
+				.getID(), id, commandID, (interval > 0L));
+		return id;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.core.sensors.sessions.AbstractSensorSession#killComand
+	 * (java.lang.Integer)
+	 */
+	@Override
+	public void killComand(Integer id) {
+		super.killComand(id);
+		this.notifierService.jobDeleted(this.getSensor().getID(), this.getID(),
+				id);
 	}
 
 	/**
