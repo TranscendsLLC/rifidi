@@ -166,7 +166,8 @@ public interface SensorManagerService {
 	void stopSession(String readerID, String sessionID);
 
 	/**
-	 * Submit a command for execution on the reader
+	 * Submit a command for execution on the reader. If the repeatInterval is <
+	 * 0, this command will execute only once.
 	 * 
 	 * @param readerID
 	 *            The reader to use
@@ -184,20 +185,6 @@ public interface SensorManagerService {
 	void submitCommand(String readerID, String sessionID, String commandID,
 			Long repeatInterval, TimeUnit timeUnit)
 			throws CommandSubmissionException;
-
-	/**
-	 * Submit a command to be executed only once on the reader session
-	 * 
-	 * @param readerID
-	 *            The reader to use
-	 * @param sessionID
-	 *            The session to use
-	 * @param commandID
-	 *            The commad to submit
-	 * @throws RemoteException
-	 */
-	void submitSingleShotCommand(String readerID, String sessionID,
-			String commandID) throws CommandSubmissionException;
 
 	/**
 	 * Stop a repeated command. The is removed from the executor and will not be
