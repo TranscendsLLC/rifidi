@@ -53,6 +53,11 @@ public class ProvisioningServiceImpl implements ProvisioningService {
 	@Override
 	public Set<String> provision(String application)
 			throws CannotProvisionException {
+		return provision(application, 0);
+	}
+
+	private Set<String> provision(String application, int attempt)
+			throws CannotProvisionException {
 		// retrun values
 		Set<String> retVal = new HashSet<String>();
 		try {
@@ -80,7 +85,16 @@ public class ProvisioningServiceImpl implements ProvisioningService {
 		if (resolver.resolve()) {
 			try {
 				resolver.deploy(true);
-
+			} catch (IllegalStateException e) {
+				if (attempt < 3) {
+					logger.warn("Illegal State Exception when loading "
+							+ application + ", attempt again");
+					return provision(application, attempt++);
+				} else {
+					logger.warn("Tried to load " + application
+							+ " application 3 times. Giving up.");
+					throw new CannotProvisionException(e);
+				}
 			} catch (Throwable e) {
 				throw new CannotProvisionException(e);
 			}
@@ -93,7 +107,6 @@ public class ProvisioningServiceImpl implements ProvisioningService {
 			}
 			throw new CannotProvisionException("Unresolved Dependencies");
 		}
-
 	}
 
 	/**
