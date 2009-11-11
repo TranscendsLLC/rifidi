@@ -34,7 +34,7 @@ import org.rifidi.edge.api.rmi.dto.ReaderDTO;
 import org.rifidi.edge.api.rmi.dto.SessionDTO;
 import org.rifidi.edge.core.configuration.Configuration;
 import org.rifidi.edge.core.configuration.ConfigurationType;
-import org.rifidi.edge.core.configuration.RifidiService;
+import org.rifidi.edge.core.configuration.services.RifidiService;
 import org.rifidi.edge.core.exceptions.CannotCreateSessionException;
 import org.rifidi.edge.core.sensors.CompositeSensor;
 import org.rifidi.edge.core.sensors.Sensor;
@@ -336,7 +336,7 @@ public abstract class AbstractSensor<T extends SensorSession> extends
 	 * @see org.rifidi.edge.core.configuration.RifidiService#destroy()
 	 */
 	@Override
-	public void destroy() {
+	protected void destroy() {
 		unregister();
 		receivers.clear();
 	}

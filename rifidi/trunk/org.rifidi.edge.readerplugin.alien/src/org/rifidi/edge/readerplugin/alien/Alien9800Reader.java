@@ -278,7 +278,7 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 	 * @see org.rifidi.edge.core.configuration.RifidiService#destroy()
 	 */
 	@Override
-	public void destroy() {
+	protected void destroy() {
 		if (destroyed.compareAndSet(false, true)) {
 			super.destroy();
 			Alien9800ReaderSession aliensession = session.get();

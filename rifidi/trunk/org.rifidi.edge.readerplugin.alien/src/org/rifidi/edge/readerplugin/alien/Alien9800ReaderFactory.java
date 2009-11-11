@@ -40,8 +40,8 @@ public class Alien9800ReaderFactory extends
 	/** The Unique FACTORY_ID for this Factory */
 	public static final String FACTORY_ID = "Alien";
 	/** Description of the sensorSession. */
-	private static final String description = "The Rifidi Alien adapter supports the Alien ALR " +
-			"protocol on the 9900, 9800, 8800 readers. ";
+	private static final String description = "The Rifidi Alien adapter supports the Alien ALR "
+			+ "protocol on the 9900, 9800, 8800 readers. ";
 	private static final String displayname = "Alien";
 	/** A JMS event notification sender */
 	private volatile NotifierService notifierService;
@@ -73,8 +73,11 @@ public class Alien9800ReaderFactory extends
 	public void unbindCommandConfiguration(
 			AbstractCommandConfiguration<?> commandConfiguration,
 			Map<?, ?> properties) {
-		for (AbstractSensor<?> reader : sensors) {
-			reader.unbindCommandConfiguration(commandConfiguration, properties);
+		if (sensors != null) {
+			for (AbstractSensor<?> reader : sensors) {
+				reader.unbindCommandConfiguration(commandConfiguration,
+						properties);
+			}
 		}
 	}
 

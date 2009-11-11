@@ -10,7 +10,7 @@
  * License:      The software in this package is published under the terms of the GPL License
  *                   A copy of the license is included in this distribution under RifidiEdge-License.txt 
  */
-package org.rifidi.edge.core.configuration;
+package org.rifidi.edge.core.configuration.services;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -307,5 +307,5 @@ public abstract class RifidiService {
 	 * Destroy the RifidiService. Should normally at least unregister this
 	 * service
 	 */
-	public abstract void destroy();
+	protected abstract void destroy();
 }

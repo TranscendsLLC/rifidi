@@ -16,8 +16,8 @@
 package org.rifidi.edge.core.configuration.impl;
 
 import org.osgi.framework.BundleContext;
-import org.rifidi.edge.core.configuration.RifidiService;
 import org.rifidi.edge.core.configuration.ServiceFactory;
+import org.rifidi.edge.core.configuration.services.RifidiService;
 
 /**
  * Base class for a service factory. This class is meant for scenarios where

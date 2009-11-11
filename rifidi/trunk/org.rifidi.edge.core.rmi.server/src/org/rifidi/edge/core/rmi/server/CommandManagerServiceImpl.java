@@ -77,8 +77,8 @@ public class CommandManagerServiceImpl implements CommandManagerService {
 			AttributeList properties) {
 		logger.info("RMI: Create Command called");
 		try {
-			configurationService
-					.createService(commandConfigurationType, properties);
+			configurationService.createService(commandConfigurationType,
+					properties);
 		} catch (CannotCreateServiceException e) {
 			logger.warn("Command Configuraiton not created");
 		}
@@ -94,14 +94,7 @@ public class CommandManagerServiceImpl implements CommandManagerService {
 	@Override
 	public void deleteCommand(String commandConfigurationID) {
 		logger.debug("RMI: Delete Command Called");
-		Configuration config = configurationService
-				.getConfiguration(commandConfigurationID);
-		if (config != null) {
-			config.destroy();
-		} else {
-			logger.warn("No Configuration with ID " + commandConfigurationID
-					+ " found");
-		}
+		configurationService.destroyService(commandConfigurationID);
 
 	}
 

@@ -155,9 +155,9 @@ public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 				// TODO: remove this once we get AspectJ in here!
 				session.set(null);
 				notifyServiceWrapper.removeSessionEvent(this.getID(), sessionid);
-				logger.warn("Tried to delete a non existend session: " + sessionid);
 			}
 		}
+		logger.warn("Tried to delete a non existant session: " + sessionid);
 	}
 
 	/*
@@ -166,7 +166,7 @@ public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 	 * @see org.rifidi.edge.core.configuration.RifidiService#destroy()
 	 */
 	@Override
-	public void destroy() {
+	protected void destroy() {
 		if (destroied.compareAndSet(false, true)) {
 			super.destroy();
 			LLRPReaderSession llrpsession = session.get();

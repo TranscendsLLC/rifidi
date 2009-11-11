@@ -197,7 +197,7 @@ public class Awid2010Sensor extends AbstractSensor<Awid2010Session> {
 	 * @see org.rifidi.edge.core.sensors.base.AbstractSensor#destroy()
 	 */
 	@Override
-	public void destroy() {
+	protected void destroy() {
 		if (destroyed.compareAndSet(false, true)) {
 			super.destroy();
 			Awid2010Session awidSession = session.get();

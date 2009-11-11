@@ -202,7 +202,7 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 			intp.println("No reader with ID " + readerID + " is available");
 			return null;
 		}
-		reader.destroy();
+		configService.destroyService(readerID);
 		intp.println("Sensor with ID " + readerID + " has been deleted");
 		return null;
 	}
@@ -370,7 +370,7 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 			intp.println("No Command with ID " + commandID + " is avaialbe");
 			return null;
 		}
-		command.destroy();
+		this.configService.destroyService(commandID);
 		intp.println("Command Configuration with id " + commandID
 				+ " has been deleted");
 		return null;
