@@ -86,6 +86,7 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 	private AtomicInteger sessionID = new AtomicInteger(0);
 	/** service used to send notifications */
 	private volatile NotifierService notifierService;
+	private String displayName="Alien";
 	/**
 	 * READER PROPERTIES - SETTABE, SET ON CONNECTION
 	 */
@@ -349,10 +350,29 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 		return ret;
 	}
 
+
 	/*
 	 * JMX PROPERTY GETTER/SETTERS
 	 */
 
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.sensors.base.AbstractSensor#getDisplayName()
+	 */
+	@Override
+	@Property(displayName="Display Name", 
+			description="Logical Name of Reader",
+			writable=true,
+			type=PropertyType.PT_STRING,
+			category="connection",
+			defaultValue="Alien",
+			orderValue=0)
+	public String getDisplayName() {
+		return displayName;
+	}
+	
+	public void setDisplayName(String displayName){
+		this.displayName = displayName;
+	}
 	/**
 	 * @return the IPADDRESS
 	 */

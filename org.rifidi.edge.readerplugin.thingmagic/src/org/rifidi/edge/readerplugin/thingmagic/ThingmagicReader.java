@@ -70,6 +70,7 @@ public class ThingmagicReader extends AbstractSensor<ThingmagicReaderSession> {
 	private final ConcurrentHashMap<String, String> readerProperties;
 	/** A queue for putting commands to be executed next */
 	private final LinkedBlockingQueue<ThingmagicCommandObjectWrapper> propCommandsToBeExecuted;
+	private String displayName;
 
 	/** Mbeaninfo for this class. */
 	public static final MBeanInfo mbeaninfo;
@@ -189,6 +190,25 @@ public class ThingmagicReader extends AbstractSensor<ThingmagicReaderSession> {
 			notifierService.removeSessionEvent(this.getID(), sessionid);
 		}
 		logger.warn("Tried to delete a non existend session: " + sessionid);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.sensors.base.AbstractSensor#getDisplayName()
+	 */
+	@Override
+	@Property(displayName="Display Name", 
+			description="Logical Name of Reader",
+			writable=true,
+			type=PropertyType.PT_STRING,
+			category="connection",
+			defaultValue="ThingMagic",
+			orderValue=0)
+	public String getDisplayName() {
+		return displayName;
+	}
+	
+	public void setDisplayName(String displayName){
+		this.displayName = displayName;
 	}
 
 	/**

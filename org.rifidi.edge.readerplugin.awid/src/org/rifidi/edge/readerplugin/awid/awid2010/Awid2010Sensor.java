@@ -72,6 +72,7 @@ public class Awid2010Sensor extends AbstractSensor<Awid2010Session> {
 	private final Set<AbstractCommandConfiguration<?>> commands;
 	/** Mbeaninfo for this class. */
 	public static final MBeanInfo mbeaninfo;
+	private String displayName;
 	static {
 		AnnotationMBeanInfoStrategy strategy = new AnnotationMBeanInfoStrategy();
 		mbeaninfo = strategy.getMBeanInfo(Awid2010Sensor.class);
@@ -263,6 +264,25 @@ public class Awid2010Sensor extends AbstractSensor<Awid2010Session> {
 	 */
 	public void setNotifiyService(NotifierService wrapper) {
 		this.notifierService = wrapper;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.sensors.base.AbstractSensor#getDisplayName()
+	 */
+	@Override
+	@Property(displayName="Display Name", 
+			description="Logical Name of Reader",
+			writable=true,
+			type=PropertyType.PT_STRING,
+			category="connection",
+			defaultValue="Awid",
+			orderValue=0)
+	public String getDisplayName() {
+		return displayName;
+	}
+	
+	public void setDisplayName(String displayName){
+		this.displayName = displayName;
 	}
 
 	/**
