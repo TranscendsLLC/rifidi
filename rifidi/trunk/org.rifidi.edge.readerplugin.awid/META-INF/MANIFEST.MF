@@ -2,10 +2,10 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Rifidi Edge Awid Adapter
 Bundle-SymbolicName: org.rifidi.edge.readerplugin.awid
-Bundle-Version: 1.0.2
+Bundle-Version: 1.0.3
 Bundle-Vendor: Pramari, LLC
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Require-Bundle: org.rifidi.edge.core;bundle-version="5.2.0",
+Require-Bundle: org.rifidi.edge.core;bundle-version="5.3.0",
  org.rifidi.edge.api;bundle-version="1.1.1",
  org.rifidi.edge.core.services;bundle-version="1.0.0"
 Import-Package: javax.jms;version="1.1.0",

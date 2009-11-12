@@ -64,6 +64,7 @@ public class AlienAutonomousSensor extends
 	private volatile Integer maxNumberAutonomousReaders = 15;
 	/** Provided by spring. */
 	private final Set<AbstractCommandConfiguration<?>> commands;
+	private String displayName;
 	/** Mbeaninfo for this class. */
 	public static final MBeanInfo mbeaninfo;
 	static{
@@ -102,7 +103,7 @@ public class AlienAutonomousSensor extends
 	 */
 	@Override
 	public void applyPropertyChanges() {
-		// TODO Auto-generated method stub
+		//Nothing to do here.
 
 	}
 
@@ -226,6 +227,25 @@ public class AlienAutonomousSensor extends
 				destroySensorSession(aliensession.getID());
 			}
 		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.sensors.base.AbstractSensor#getDisplayName()
+	 */
+	@Override
+	@Property(displayName="Display Name", 
+			description="Logical Name of Reader",
+			writable=true,
+			type=PropertyType.PT_STRING,
+			category="connection",
+			defaultValue="Alien",
+			orderValue=0)
+	public String getDisplayName() {
+		return displayName;
+	}
+	
+	public void setDisplayName(String displayName){
+		this.displayName = displayName;
 	}
 
 	/**

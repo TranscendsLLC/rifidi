@@ -73,6 +73,7 @@ public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 	private AtomicBoolean destroied = new AtomicBoolean(false);
 	/** Mbeaninfo for this class. */
 	public static final MBeanInfo mbeaninfo;
+	private String displayName;
 	static {
 		AnnotationMBeanInfoStrategy strategy = new AnnotationMBeanInfoStrategy();
 		mbeaninfo = strategy.getMBeanInfo(LLRPReader.class);
@@ -228,6 +229,25 @@ public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 		if (readerSession != null) {
 			readerSession.transact(readerSession.createSetReaderConfig());
 		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.sensors.base.AbstractSensor#getDisplayName()
+	 */
+	@Override
+	@Property(displayName="Display Name", 
+			description="Logical Name of Reader",
+			writable=true,
+			type=PropertyType.PT_STRING,
+			category="connection",
+			defaultValue="LLRP",
+			orderValue=0)
+	public String getDisplayName() {
+		return displayName;
+	}
+	
+	public void setDisplayName(String displayName){
+		this.displayName = displayName;
 	}
 
 	/**

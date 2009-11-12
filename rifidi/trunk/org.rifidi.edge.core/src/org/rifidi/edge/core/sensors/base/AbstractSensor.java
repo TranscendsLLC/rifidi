@@ -101,7 +101,6 @@ public abstract class AbstractSensor<T extends SensorSession> extends
 	abstract public String createSensorSession(SessionDTO sessionDTO)
 			throws CannotCreateSessionException;
 
-
 	/**
 	 * Get all currently created reader sessions. The Key is the ID of the
 	 * session, and the value is the actual session
@@ -122,6 +121,14 @@ public abstract class AbstractSensor<T extends SensorSession> extends
 	 * Send properties that have been modified to the physical reader
 	 */
 	abstract public void applyPropertyChanges();
+
+	/**
+	 * This method returns a display name for clients to use. This way readers
+	 * can have user-friendly names (such as "Dock Door") in a client.
+	 * 
+	 * @return The display name of the Sensor
+	 */
+	abstract protected String getDisplayName();
 
 	/**
 	 * Notifier the sensor that a command configuration has disappeared.
@@ -311,7 +318,7 @@ public abstract class AbstractSensor<T extends SensorSession> extends
 		for (SensorSession s : this.getSensorSessions().values()) {
 			sessionDTOs.add(s.getDTO());
 		}
-		ReaderDTO dto = new ReaderDTO(readerID, factoryID, attrs, sessionDTOs);
+		ReaderDTO dto = new ReaderDTO(readerID, factoryID, attrs, sessionDTOs, getDisplayName());
 		return dto;
 	}
 
