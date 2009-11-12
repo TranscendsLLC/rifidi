@@ -33,6 +33,8 @@ public class ReaderDTO implements Serializable {
 	private AttributeList attributes;
 	/** The list of sessions in the reader */
 	private List<SessionDTO> sessions;
+	/** The display name of the reader */
+	private String displayName;
 
 	/**
 	 * Constructor.
@@ -45,13 +47,16 @@ public class ReaderDTO implements Serializable {
 	 *            The list of properties currently set on the reader
 	 * @param sessions
 	 *            The Sessions currently created on the reader
+	 * @param displayName
 	 */
 	public ReaderDTO(String readerID, String readerFactoryID,
-			AttributeList attributes, List<SessionDTO> sessions) {
+			AttributeList attributes, List<SessionDTO> sessions,
+			String displayName) {
 		this.readerID = readerID;
 		this.readerFactoryID = readerFactoryID;
 		this.attributes = attributes;
 		this.sessions = sessions;
+		this.displayName = displayName;
 	}
 
 	/**
@@ -88,6 +93,13 @@ public class ReaderDTO implements Serializable {
 	 */
 	public List<SessionDTO> getSessions() {
 		return sessions;
+	}
+
+	/**
+	 * @return the displayName
+	 */
+	public String getDisplayName() {
+		return displayName;
 	}
 
 }
