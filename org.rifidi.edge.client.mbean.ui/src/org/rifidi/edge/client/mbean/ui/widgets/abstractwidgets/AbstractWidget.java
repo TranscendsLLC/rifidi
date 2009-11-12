@@ -180,6 +180,10 @@ public abstract class AbstractWidget<T extends AbstractWidgetData> implements
 		if (o.data.getOrder() == -1) {
 			return 1;
 		}
-		return data.getOrder().compareTo(o.data.getOrder());
+		if(! data.getOrder().equals(o.data.getOrder())){
+			return data.getOrder().compareTo(o.data.getOrder());
+		}else{
+			return data.getDisplayName().compareTo(o.data.getDisplayName());
+		}
 	}
 }
