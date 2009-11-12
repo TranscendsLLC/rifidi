@@ -75,6 +75,10 @@ public class RemoteReader extends AbstractAttributeContributorModelObject
 	public String getID() {
 		return readerDTO.getReaderID();
 	}
+	
+	public String getDisplayName(){
+		return readerDTO.getDisplayName();
+	}
 
 	/**
 	 * Returns the ID.  
@@ -203,6 +207,5 @@ public class RemoteReader extends AbstractAttributeContributorModelObject
 				tags.clear();
 			}
 		}
-
 	}
 }
