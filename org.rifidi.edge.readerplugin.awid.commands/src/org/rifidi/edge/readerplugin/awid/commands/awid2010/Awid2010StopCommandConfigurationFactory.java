@@ -24,7 +24,7 @@ import org.rifidi.edge.readerplugin.awid.awid2010.Awid2010SensorFactory;
 public class Awid2010StopCommandConfigurationFactory extends
 		AbstractCommandConfigurationFactory<Awid2010StopCommandConfiguration> {
 
-	public static final String FACTORY_ID = "Awid-Push-Stop";
+	public static final String FACTORY_ID = "Awid2010-Push-Stop";
 
 	@Override
 	public String getReaderFactoryID() {

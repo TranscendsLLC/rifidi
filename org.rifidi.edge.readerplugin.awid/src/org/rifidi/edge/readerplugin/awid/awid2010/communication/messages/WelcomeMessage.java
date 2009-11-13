@@ -19,8 +19,26 @@ package org.rifidi.edge.readerplugin.awid.awid2010.communication.messages;
  */
 public class WelcomeMessage extends AbstractAwidMessage {
 
+	private String message = null;
+	
+	public static final String WELCOME_PHRASE_3014 = "3014";
+	
+	/**
+	 * 
+	 * @param rawmessage
+	 */
 	public WelcomeMessage(byte[] rawmessage) {
 		super(rawmessage);
+		message = new String(rawmessage);
 	}
+	
+	public boolean is3014() {
+		if(message != null && message.contains(WELCOME_PHRASE_3014)) {
+			return true;
+		}
+		return false;
+	}
+	
+	
 
 }

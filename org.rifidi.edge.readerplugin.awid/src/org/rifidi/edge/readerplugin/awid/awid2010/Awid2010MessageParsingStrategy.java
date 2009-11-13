@@ -42,7 +42,7 @@ public class Awid2010MessageParsingStrategy implements MessageParsingStrategy {
 	/** bytes seen so far */
 	private int count = 0;
 	/** A boolean that is set to true if the first two bytes are 'i' */
-	private boolean isWelcomMessage = false;
+	private boolean isWelcomeMessage = false;
 	/**
 	 * A string builder to append characters to if we are reading in a welcome
 	 * message
@@ -75,7 +75,7 @@ public class Awid2010MessageParsingStrategy implements MessageParsingStrategy {
 			typeByte = message;
 			// if the message is a welcome message
 			if (lengthByte == (byte) 'i' && typeByte == (byte) 'i') {
-				isWelcomMessage = true;
+				isWelcomeMessage = true;
 				welcomeMessage = new StringBuilder();
 				welcomeMessage.append((char) lengthByte);
 				welcomeMessage.append((char) typeByte);
@@ -90,7 +90,7 @@ public class Awid2010MessageParsingStrategy implements MessageParsingStrategy {
 		}
 		// Do this block for every byte after the first two
 		else {
-			if (!isWelcomMessage) {
+			if (!isWelcomeMessage) {
 				// add the byte to the array
 				bytes[count - 1] = message;
 				// check to see if we have received everything.
@@ -123,7 +123,7 @@ public class Awid2010MessageParsingStrategy implements MessageParsingStrategy {
 		lengthByte = -1;
 		typeByte = -1;
 		count = 0;
-		isWelcomMessage = false;
+		isWelcomeMessage = false;
 		welcomeMessage = new StringBuilder();
 	}
 }

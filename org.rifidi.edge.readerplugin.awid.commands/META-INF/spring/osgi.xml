@@ -6,14 +6,28 @@
     http://www.springframework.org/schema/osgi/spring-osgi.xsd">
 
 	<!-- Put command configuration service in OSGi Registry -->
-	<osgi:service ref="awidPortalId">
+	<osgi:service ref="awid2010PortalId">
 		<osgi:interfaces>
 			<value>org.rifidi.edge.core.configuration.ServiceFactory</value>
 			<value>org.rifidi.edge.core.configuration.impl.AbstractCommandConfigurationFactory</value>
 		</osgi:interfaces>
 	</osgi:service>
 
-	<osgi:service ref="awidstop">
+	<osgi:service ref="awid2010Stop">
+		<osgi:interfaces>
+			<value>org.rifidi.edge.core.configuration.ServiceFactory</value>
+			<value>org.rifidi.edge.core.configuration.impl.AbstractCommandConfigurationFactory</value>
+		</osgi:interfaces>
+	</osgi:service>
+	
+	<osgi:service ref="awid3014PortalId">
+		<osgi:interfaces>
+			<value>org.rifidi.edge.core.configuration.ServiceFactory</value>
+			<value>org.rifidi.edge.core.configuration.impl.AbstractCommandConfigurationFactory</value>
+		</osgi:interfaces>
+	</osgi:service>
+
+	<osgi:service ref="awid3014Stop">
 		<osgi:interfaces>
 			<value>org.rifidi.edge.core.configuration.ServiceFactory</value>
 			<value>org.rifidi.edge.core.configuration.impl.AbstractCommandConfigurationFactory</value>

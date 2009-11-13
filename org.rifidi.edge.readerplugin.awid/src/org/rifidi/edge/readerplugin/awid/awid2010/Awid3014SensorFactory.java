@@ -1,13 +1,13 @@
 /*
- * Awid2010SensorFactory.java
- * 
- * Created:     Oct 20th, 2009
- * Project:       Rifidi Edge Server - A middleware platform for RFID applications
- *                    http://www.rifidi.org
- *                    http://rifidi.sourceforge.net
- * Copyright:   Pramari LLC and the Rifidi Project
- * License:     The software in this package is published under the terms of the EPL License
- *                   A copy of the license is included in this distribution under Rifidi-License.txt 
+ *  Awid3014SensorFactory.java
+ *
+ *  Created:	Nov 12, 2009
+ *  Project:	Rifidi Edge Server - A middleware platform for RFID applications
+ *  				http://www.rifidi.org
+ *  				http://rifidi.sourceforge.net
+ *  Copyright:	Pramari LLC and the Rifidi Project
+ *  License:	GNU Public License (GPL)
+ *  				http://www.opensource.org/licenses/gpl-3.0.html
  */
 package org.rifidi.edge.readerplugin.awid.awid2010;
 
@@ -23,22 +23,23 @@ import org.rifidi.edge.core.services.notification.NotifierService;
 import org.springframework.jms.core.JmsTemplate;
 
 /**
- * A factory that produces Awid2010Sensors.
+ * Sensor factory for the 3014.  
  * 
- * @author Kyle Neumeier - kyle@pramari.com
  * 
+ * @author Matthew Dean
  */
-public class Awid2010SensorFactory extends
+public class Awid3014SensorFactory extends
 		AbstractSensorFactory<Awid2010Sensor> {
 
+
 	/** The Factory ID */
-	public static final String FACTORY_ID = "Awid2010";
+	public static final String FACTORY_ID = "Awid3014";
 	/** A JMS event notification sender */
 	private volatile NotifierService notifierService;
 	/** JMS template for sending tag data to JMS Queue */
 	private volatile JmsTemplate template;
 
-	private static final boolean IS3014 = false;
+	private static final boolean IS3014 = true;
 
 	/**
 	 * Called by Spring
@@ -78,7 +79,7 @@ public class Awid2010SensorFactory extends
 	 */
 	@Override
 	public String getDisplayName() {
-		return "Awid MPR-2010";
+		return "Awid MPR-3014";
 	}
 
 	/*
@@ -160,5 +161,4 @@ public class Awid2010SensorFactory extends
 		}
 
 	}
-
 }
