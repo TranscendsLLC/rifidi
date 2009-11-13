@@ -51,6 +51,8 @@ public class Awid2010Session extends AbstractPubSubIPSensorSession {
 	/** Sends out JMS notifications about the state */
 	private final NotifierService notifierService;
 
+	private boolean is3014 = false;
+
 	/**
 	 * Constructor
 	 * 
@@ -77,7 +79,7 @@ public class Awid2010Session extends AbstractPubSubIPSensorSession {
 			int port, int reconnectionInterval, int maxConAttempts,
 			JmsTemplate template,
 			Set<AbstractCommandConfiguration<?>> commandConfigurations,
-			NotifierService notifierSerivce) {
+			NotifierService notifierSerivce, boolean is3014) {
 		super(sensor, ID, host, port, reconnectionInterval, maxConAttempts,
 				template.getDefaultDestination(), template,
 				commandConfigurations);
@@ -90,6 +92,7 @@ public class Awid2010Session extends AbstractPubSubIPSensorSession {
 		// subscribe the endpoint
 		this.subscribe(awidEndpoint);
 		this.notifierService = notifierSerivce;
+		this.is3014 = is3014;
 	}
 
 	/*
@@ -226,5 +229,14 @@ public class Awid2010Session extends AbstractPubSubIPSensorSession {
 	 */
 	protected void destroy() {
 		this.unsubscribe(this.awidEndpoint);
+	}
+
+	/**
+	 * Is the reader a 3014?
+	 * 
+	 * @return
+	 */
+	public boolean is3014() {
+		return is3014;
 	}
 }

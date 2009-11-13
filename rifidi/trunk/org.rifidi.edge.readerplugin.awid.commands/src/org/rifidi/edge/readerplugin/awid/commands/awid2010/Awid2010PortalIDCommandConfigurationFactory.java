@@ -26,7 +26,7 @@ public class Awid2010PortalIDCommandConfigurationFactory
 		extends
 		AbstractCommandConfigurationFactory<Awid2010PortalIDCommandConfiguration> {
 
-	public static final String FACTORY_ID = "Awid-Push-Start";
+	public static final String FACTORY_ID = "Awid2010-Push-Start";
 
 	/*
 	 * (non-Javadoc)

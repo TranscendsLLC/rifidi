@@ -41,13 +41,17 @@ public class Awid2010PortalIDCommand extends Command {
 		AntennaSourceCommand antennaCommand = new AntennaSourceCommand();
 		Gen2PortalIDCommand command = new Gen2PortalIDCommand();
 		try {
-			((Awid2010Session) super.sensorSession).sendMessage(antennaCommand);
-			try {
-				// Sleep for 1 second while the reader thinks about the antenna
-				// command. Can be removed when the Emulator is fixed.
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-				//Do nothing.  
+			if (((Awid2010Session) super.sensorSession).is3014()) {
+				((Awid2010Session) super.sensorSession)
+						.sendMessage(antennaCommand);
+				try {
+					// Sleep for 1 second while the reader thinks about the
+					// antenna
+					// command. Can be removed when the Emulator is fixed.
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+					// Do nothing.
+				}
 			}
 			((Awid2010Session) super.sensorSession).sendMessage(command);
 		} catch (IOException e) {
