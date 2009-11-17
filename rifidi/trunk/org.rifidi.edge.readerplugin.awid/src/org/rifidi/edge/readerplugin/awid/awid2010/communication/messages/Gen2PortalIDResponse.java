@@ -32,11 +32,15 @@ public class Gen2PortalIDResponse extends AbstractAwidMessage implements
 	private final long timestamp;
 	/** The ID this tag was seen on */
 	private final String readerID;
+	/** Is the reader a 3014? */
+	private boolean is3014 = false;
 
-	public Gen2PortalIDResponse(byte[] rawmessage, String readerID) {
+	public Gen2PortalIDResponse(byte[] rawmessage, String readerID,
+			boolean is3014) {
 		super(rawmessage);
 		this.timestamp = System.currentTimeMillis();
 		this.readerID = readerID;
+		this.is3014 = is3014;
 	}
 
 	/*
@@ -51,8 +55,13 @@ public class Gen2PortalIDResponse extends AbstractAwidMessage implements
 		EPCGeneration2Event gen2Event = new EPCGeneration2Event();
 		gen2Event.setEPCMemory(new BigInteger(Arrays.copyOfRange(
 				super.rawmessage, 5, 17)), 12 * 8);
-		//TODO: Ignore the antenna bit for now
-		TagReadEvent tre = new TagReadEvent(readerID, gen2Event,0, timestamp);
+		int antenna = 0;
+		if (this.is3014) {
+			antenna = rawmessage[19];
+		}
+		// TODO: Ignore the antenna bit for now
+		TagReadEvent tre = new TagReadEvent(readerID, gen2Event, antenna,
+				timestamp);
 		return tre;
 	}
 

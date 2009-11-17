@@ -49,6 +49,15 @@ public class Awid2010MessageParsingStrategy implements MessageParsingStrategy {
 	 */
 	private StringBuilder welcomeMessage;
 
+	private static final String AWID_2010_WELCOME_STRING_ENDING = "MODULE";
+
+	private static final String AWID_3014_WELCOME_STRING_ENDING = ("MODULE" + new String(
+			new byte[] { (byte) 0x00 }));
+
+	private static final String AWID_3014_IDENTIFIER = "1518";
+
+	boolean is3014 = false;
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -102,12 +111,26 @@ public class Awid2010MessageParsingStrategy implements MessageParsingStrategy {
 			}
 			// if the message is a welcome message
 			else {
+				if (!is3014
+						&& welcomeMessage.toString().contains(
+								AWID_3014_IDENTIFIER)) {
+					is3014 = true;
+				}
 				// append every byte to the string builder
 				welcomeMessage.append((char) message);
 				String wm = welcomeMessage.toString();
-				if (wm.endsWith("MODULE")) {
-					reset();
-					return wm.getBytes();
+				//TODO: Might be a bug here if someone initially connects to a 3014, then tries to connect to a 2010 using the same module. 
+				//It would be stupid if they did do that, but it would lead to some problems.  
+				if (!is3014) {
+					if (wm.endsWith(AWID_2010_WELCOME_STRING_ENDING)) {
+						reset();
+						return wm.getBytes();
+					}
+				} else {
+					if (wm.endsWith(AWID_3014_WELCOME_STRING_ENDING)) {
+						reset();
+						return wm.getBytes();
+					}
 				}
 			}
 		}
