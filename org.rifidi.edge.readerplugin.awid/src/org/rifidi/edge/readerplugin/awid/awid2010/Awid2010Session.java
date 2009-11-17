@@ -88,7 +88,7 @@ public class Awid2010Session extends AbstractPubSubIPSensorSession {
 		AwidTagHandler tagHandler = new AwidTagHandler(template,
 				(Awid2010Sensor) super.getSensor());
 		// create a new object that listens for incoming messages
-		awidEndpoint = new AwidEndpoint(tagHandler, sensor.getID());
+		awidEndpoint = new AwidEndpoint(tagHandler, sensor.getID(), is3014);
 		// subscribe the endpoint
 		this.subscribe(awidEndpoint);
 		this.notifierService = notifierSerivce;

@@ -28,12 +28,15 @@ public class IncomingAwidMessageFactory {
 	private static final Log logger = LogFactory
 			.getLog(IncomingAwidMessageFactory.class);
 
+	private boolean is3014 = false;
+
 	/**
 	 * @param readerID
 	 */
-	public IncomingAwidMessageFactory(String readerID) {
+	public IncomingAwidMessageFactory(String readerID, boolean is3014) {
 		super();
 		this.readerID = readerID;
+		this.is3014 = is3014;
 	}
 
 	/**
@@ -48,7 +51,8 @@ public class IncomingAwidMessageFactory {
 	public AbstractAwidMessage getMessage(byte[] message)
 			throws InvalidAwidMessageException {
 		if (message == null || message.length == 0) {
-			logger.warn("Throwing an InvalidAwidMessageException due to null message or 0 length message");
+			logger
+					.warn("Throwing an InvalidAwidMessageException due to null message or 0 length message");
 			throw new InvalidAwidMessageException();
 		}
 
@@ -56,13 +60,14 @@ public class IncomingAwidMessageFactory {
 			if (message[0] == (byte) 0x00 || message[0] == (byte) 0xFF) {
 				return new AckMessage(message);
 			} else {
-				logger.warn("Throwing an InvalidAwidMessageException due to malforned acknowledgement");
+				logger
+						.warn("Throwing an InvalidAwidMessageException due to malforned acknowledgement");
 				throw new InvalidAwidMessageException();
 			}
 		} else if (message[0] == (byte) 'i' && message[1] == (byte) 'i') {
 			return new WelcomeMessage(message);
 		} else if (message[1] == 0x20 && message[2] == 0x1E) {
-			return new Gen2PortalIDResponse(message, readerID);
+			return new Gen2PortalIDResponse(message, readerID, is3014);
 		} else if (message[1] == (byte) 0xFF && message[2] == 0x1E) {
 			return new PortalIDError(message);
 		} else if (message.length > 3) {
