@@ -55,7 +55,7 @@ public class Gen2PortalIDResponse extends AbstractAwidMessage implements
 		EPCGeneration2Event gen2Event = new EPCGeneration2Event();
 		gen2Event.setEPCMemory(new BigInteger(Arrays.copyOfRange(
 				super.rawmessage, 5, 17)), 12 * 8);
-		int antenna = 0;
+		int antenna = 1;
 		if (this.is3014) {
 			antenna = rawmessage[19];
 		}
