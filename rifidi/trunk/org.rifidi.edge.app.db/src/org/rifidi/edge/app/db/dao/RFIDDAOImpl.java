@@ -3,7 +3,6 @@
  */
 package org.rifidi.edge.app.db.dao;
 
-import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.Map;
@@ -14,7 +13,6 @@ import org.rifidi.edge.app.db.domain.RFIDEvent;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
-import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
 /**
