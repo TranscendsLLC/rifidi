@@ -4,14 +4,21 @@
 package org.rifidi.edge.app.db.domain;
 
 /**
- * @author kyle
+ * This is a data container object that contains the data from an RFID event
+ * that should be written to the data source.
+ * 
+ * @author Kyle Neumeier - kyle@pramari.com
  * 
  */
 public class RFIDEvent {
 
+	/** The ID of the tag */
 	private String id;
+	/** The ID of the reader that collected the tag */
 	private String reader;
+	/** The ID of the antenna that saw the tag */
 	private Integer antenna;
+	/** When the tag was seen */
 	private Long timestamp;
 
 	/**

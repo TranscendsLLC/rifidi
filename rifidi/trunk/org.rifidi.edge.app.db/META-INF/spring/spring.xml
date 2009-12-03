@@ -5,6 +5,12 @@
     http://www.springframework.org/schema/osgi 
     http://www.springframework.org/schema/osgi/spring-osgi.xsd">
 
+	<!--
+		This bean loads java properties that can be used in this spring config
+		file using the ${} notation. Default values are stored in the
+		bundle.propeties file. Default values are overriden by values supplied
+		in the VM arguments (i.e. the 'edge server.ini') file
+	-->
 	<bean
 		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
 		<property name="locations">
@@ -16,16 +22,21 @@
 		</property>
 	</bean>
 
-	<!-- Create the  Application bean and inject dependencies-->
+	<!-- Create The data access object and inject the data source-->
 	<bean id="rfidDAO" class="org.rifidi.edge.app.db.dao.RFIDDAOImpl">
 		<property name="dataSource" ref="datasource" />
 	</bean>
 
+	<!-- Create the application and inject the DAO and esper -->
 	<bean id="app" class="org.rifidi.edge.app.db.DBApp">
 		<property name="rfidDAO" ref="rfidDAO"></property>
 		<property name="esperService" ref="esperManagementService" />
 	</bean>
 
+	<!--
+		Create the datasource object. Values are java properties that are
+		loaded by the PropertyPlaceholderConfigure bean.
+	-->
 	<bean id="datasource" destroy-method="close"
 		class="org.springframework.jdbc.datasource.SimpleDriverDataSource">
 		<property name="driverClass" value="${org.rifidi.jdbc.driver}" />
@@ -33,6 +44,12 @@
 		<property name="username" value="${org.rifidi.jdbc.user}" />
 		<property name="password" value="${org.rifidi.jdbc.pass}" />
 	</bean>
+
+	<!-- Create the CommandProivder object and inject the db application -->
+	<bean id="DBCommands" class="org.rifidi.edge.app.db.commands.DBAppCommandProvider">
+		<property name="app" ref="app" />
+	</bean>
+
 	<!--
 		Get a reference to the Esper Management Service from the OSGi Service
 		Registry
@@ -40,10 +57,10 @@
 	<osgi:reference id="esperManagementService"
 		interface="org.rifidi.edge.core.services.esper.EsperManagementService" />
 
-	<bean id="DBCommands" class="org.rifidi.edge.app.db.commands.DBAppCommandProvider">
-		<property name="app" ref="app" />
-	</bean>
-
+	<!--
+		Register the command provider service in the OSGi registry. This
+		allows it to be hooked up the the eclipse console.
+	-->
 	<osgi:service id="customCommandsService" ref="DBCommands"
 		interface="org.eclipse.osgi.framework.console.CommandProvider" />
 </beans>

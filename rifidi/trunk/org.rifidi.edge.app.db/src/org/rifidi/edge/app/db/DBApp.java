@@ -8,7 +8,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.rifidi.edge.app.db.dao.RFIDDAO;
+import org.rifidi.edge.app.db.dao.RFID_DAO;
 import org.rifidi.edge.app.db.domain.RFIDEvent;
 import org.rifidi.edge.core.services.esper.EsperManagementService;
 import org.rifidi.edge.core.services.notification.data.EPCGeneration1Event;
@@ -20,7 +20,10 @@ import com.espertech.esper.client.EventBean;
 import com.espertech.esper.client.StatementAwareUpdateListener;
 
 /**
- * @author kyle
+ * This class controls the lifecycle of the Rifidi Application. It handles the
+ * submission of esper statements and handles esper events.
+ * 
+ * @author Kyle Neumeier - kyle@pramari.com
  * 
  */
 public class DBApp {
@@ -29,21 +32,33 @@ public class DBApp {
 	private volatile EsperManagementService esperService;
 	/** All statements that have been defined so far */
 	private final Set<EPStatement> statements = new CopyOnWriteArraySet<EPStatement>();
-	private volatile RFIDDAO rfidDAO;
+	/** The Data Access Object */
+	private volatile RFID_DAO rfidDAO;
+	/** The logger for this class */
 	private static Log logger = LogFactory.getLog(DBApp.class);
 
+	/**
+	 * The constructor
+	 */
 	public DBApp() {
 		Activator.myApp = this;
 	}
 
+	/**
+	 * Start the application. This method submits the esper statements to the
+	 * esper runtime.
+	 */
 	public void start() {
 		if (rfidDAO == null || esperService == null) {
 			logger.warn("Cannot start DBApp. "
 					+ "Either DAO or EsperService is null");
 		}
+
+		// submit a query to get all tags
 		EPStatement queryAllTags = esperService.getProvider()
 				.getEPAdministrator().createEPL(
 						"select * from ReadCycle[select * from tags]");
+		// add a listener to the above statement
 		queryAllTags.addListener(new StatementAwareUpdateListener() {
 
 			@Override
@@ -52,6 +67,9 @@ public class DBApp {
 				if (arg0 != null) {
 					for (EventBean b : arg0) {
 						Object o = b.getUnderlying();
+
+						// if we have seen a tag, create a new RFIDEvent, and
+						// add it to the DAO
 						if (o instanceof TagReadEvent) {
 							TagReadEvent tre = (TagReadEvent) o;
 							RFIDEvent e = new RFIDEvent();
@@ -96,7 +114,7 @@ public class DBApp {
 	 * @param rfidDAO
 	 *            the rfidDAO to set
 	 */
-	public void setRfidDAO(RFIDDAO rfidDAO) {
+	public void setRfidDAO(RFID_DAO rfidDAO) {
 		this.rfidDAO = rfidDAO;
 	}
 
