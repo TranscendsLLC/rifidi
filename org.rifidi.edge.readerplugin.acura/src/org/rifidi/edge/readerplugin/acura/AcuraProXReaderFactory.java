@@ -22,8 +22,9 @@ import org.rifidi.edge.core.services.notification.NotifierService;
 import org.springframework.jms.core.JmsTemplate;
 
 /**
+ * 
+ * 
  * @author Matthew Dean
- *
  */
 public class AcuraProXReaderFactory extends
 		AbstractSensorFactory<AcuraProXReader> {
