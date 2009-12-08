@@ -11,11 +11,17 @@
  */
 package org.rifidi.edge.readerplugin.acura;
 
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 import javax.management.MBeanInfo;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.api.rmi.dto.SessionDTO;
 import org.rifidi.edge.core.configuration.annotations.Property;
 import org.rifidi.edge.core.configuration.annotations.PropertyType;
@@ -29,11 +35,14 @@ import org.rifidi.edge.core.services.notification.NotifierService;
 import org.springframework.jms.core.JmsTemplate;
 
 /**
- * @author Matthew Dean
  * 
+ * 
+ * @author Matthew Dean
  */
 public class AcuraProXReader extends AbstractSensor<AcuraProXReaderSession> {
 
+	/** Logger for this class. */
+	private static final Log logger = LogFactory.getLog(AcuraProXReader.class);
 	/** Spring JMS template */
 	private volatile JmsTemplate template;
 	/** The ID of the session */
@@ -42,6 +51,12 @@ public class AcuraProXReader extends AbstractSensor<AcuraProXReaderSession> {
 	private volatile NotifierService notifierService;
 	/** The name of the reader that will be displayed */
 	private String displayName = "Acura";
+	/** Flag to check if this reader is destroied. */
+	private AtomicBoolean destroyed = new AtomicBoolean(false);
+	/** The only session an alien reader allows. */
+	private AtomicReference<AcuraProXReaderSession> session = new AtomicReference<AcuraProXReaderSession>();
+
+	private String serialPort = null;
 
 	/** Mbeaninfo for this class. */
 	public static final MBeanInfo mbeaninfo;
@@ -58,6 +73,7 @@ public class AcuraProXReader extends AbstractSensor<AcuraProXReaderSession> {
 	 */
 	@Override
 	public void applyPropertyChanges() {
+		// No properties for this reader. Safely ignored.
 	}
 
 	/*
@@ -68,8 +84,18 @@ public class AcuraProXReader extends AbstractSensor<AcuraProXReaderSession> {
 	 */
 	@Override
 	public String createSensorSession() throws CannotCreateSessionException {
-		// TODO Auto-generated method stub
-		return null;
+		if (!destroyed.get() && session.get() == null) {
+			Integer sessionID = this.sessionID.incrementAndGet();
+			if (session.compareAndSet(null, new AcuraProXReaderSession(this,
+					Integer.toString(sessionID), serialPort, template, null))) {
+
+				// TODO: remove this once we get AspectJ in here!
+				notifierService.addSessionEvent(this.getID(), Integer
+						.toString(sessionID));
+				return sessionID.toString();
+			}
+		}
+		throw new CannotCreateSessionException();
 	}
 
 	/*
@@ -82,8 +108,19 @@ public class AcuraProXReader extends AbstractSensor<AcuraProXReaderSession> {
 	@Override
 	public String createSensorSession(SessionDTO sessionDTO)
 			throws CannotCreateSessionException {
-		// TODO Auto-generated method stub
-		return null;
+		if (!destroyed.get() && session.get() == null) {
+			Integer sessionID = this.sessionID.incrementAndGet();
+			if (session.compareAndSet(null, new AcuraProXReaderSession(this,
+					Integer.toString(sessionID), serialPort, template,
+					new HashSet<AbstractCommandConfiguration<?>>()))) {
+
+				// TODO: remove this once we get AspectJ in here!
+				notifierService.addSessionEvent(this.getID(), Integer
+						.toString(sessionID));
+				return sessionID.toString();
+			}
+		}
+		throw new CannotCreateSessionException();
 	}
 
 	/*
@@ -96,8 +133,18 @@ public class AcuraProXReader extends AbstractSensor<AcuraProXReaderSession> {
 	@Override
 	public void destroySensorSession(String id)
 			throws CannotDestroySensorException {
-		// TODO Auto-generated method stub
-
+		AcuraProXReaderSession acurasession = session.get();
+		if (acurasession != null && acurasession.getID().equals(id)) {
+			session.set(null);
+			acurasession.killAllCommands();
+			acurasession.disconnect();
+			// TODO: remove this once we get AspectJ in here!
+			notifierService.removeSessionEvent(this.getID(), id);
+		} else {
+			String error = "Tried to delete a non existend session: " + id;
+			logger.warn(error);
+			throw new CannotDestroySensorException(error);
+		}
 	}
 
 	/*
@@ -124,8 +171,12 @@ public class AcuraProXReader extends AbstractSensor<AcuraProXReaderSession> {
 	 */
 	@Override
 	public Map<String, SensorSession> getSensorSessions() {
-		// TODO Auto-generated method stub
-		return null;
+		Map<String, SensorSession> ret = new HashMap<String, SensorSession>();
+		AcuraProXReaderSession acurasession = session.get();
+		if (acurasession != null) {
+			ret.put(acurasession.getID(), acurasession);
+		}
+		return ret;
 	}
 
 	/*
@@ -140,20 +191,35 @@ public class AcuraProXReader extends AbstractSensor<AcuraProXReaderSession> {
 	public void unbindCommandConfiguration(
 			AbstractCommandConfiguration<?> commandConfiguration,
 			Map<?, ?> properties) {
-		// TODO Auto-generated method stub
+		// No commands for this plugin, it can be safely ignored.
+	}
 
+	/**
+	 * @return the MAX_CONNECTION_ATTEMPTS
+	 */
+	@Property(displayName = "Serial Port", description = "The serial port that the server "
+			+ "will attempt to connect to", writable = true, type = PropertyType.PT_STRING, category = "connection"
+			+ "", defaultValue = "COM1", orderValue = 3)
+	public String getMaxNumConnectionAttempts() {
+		return this.serialPort;
+	}
+
+	/**
+	 * @param MAX_CONNECTION_ATTEMPTS
+	 *            the MAX_CONNECTION_ATTEMPTS to set
+	 */
+	public void setMaxNumConnectionAttempts(String serialPort) {
+		this.serialPort = serialPort;
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.rifidi.edge.core.configuration.services.RifidiService#getMBeanInfo()
+	 * @see org.rifidi.edge.core.configuration.RifidiService#getMBeanInfo()
 	 */
 	@Override
 	public MBeanInfo getMBeanInfo() {
-		// TODO Auto-generated method stub
-		return null;
+		return (MBeanInfo) mbeaninfo.clone();
 	}
 
 	/**
