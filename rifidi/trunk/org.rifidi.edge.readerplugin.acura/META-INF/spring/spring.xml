@@ -1,0 +1,14 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+	<!--  Create Reader Configuration Factory -->
+	<bean id="acuraConfigurationFactory"
+		class="org.rifidi.edge.readerplugin.acura.AcuraProXReaderFactory">
+		<property name="context" ref="bundleContext" />
+		<property name="template" ref="internalMB" />
+		<property name="notifierService" ref="JMSNotifierService" />
+		<property name="commandConfigurations" ref="alienCommands" />
+	</bean>
+</beans>

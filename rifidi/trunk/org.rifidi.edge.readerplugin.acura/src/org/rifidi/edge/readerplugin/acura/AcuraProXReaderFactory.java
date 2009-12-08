@@ -16,6 +16,7 @@ import java.util.Map;
 import javax.management.MBeanInfo;
 
 import org.rifidi.edge.core.exceptions.InvalidStateException;
+import org.rifidi.edge.core.sensors.base.AbstractSensor;
 import org.rifidi.edge.core.sensors.base.AbstractSensorFactory;
 import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
 import org.rifidi.edge.core.services.notification.NotifierService;
@@ -29,7 +30,6 @@ import org.springframework.jms.core.JmsTemplate;
 public class AcuraProXReaderFactory extends
 		AbstractSensorFactory<AcuraProXReader> {
 
-	
 	/** JMS template for sending tag data to JMS Queue */
 	private volatile JmsTemplate template;
 	/** The Unique FACTORY_ID for this Factory */
@@ -40,46 +40,70 @@ public class AcuraProXReaderFactory extends
 	private static final String displayname = "Acura";
 	/** A JMS event notification sender */
 	private volatile NotifierService notifierService;
-	
-	/* (non-Javadoc)
-	 * @see org.rifidi.edge.core.sensors.base.AbstractSensorFactory#bindCommandConfiguration(org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration, java.util.Map)
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seeorg.rifidi.edge.core.sensors.base.AbstractSensorFactory#
+	 * bindCommandConfiguration
+	 * (org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration,
+	 * java.util.Map)
 	 */
 	@Override
 	public void bindCommandConfiguration(
 			AbstractCommandConfiguration<?> commandConfiguration,
 			Map<?, ?> properties) {
-
+		//Ignored.  
 	}
 
-	/* (non-Javadoc)
-	 * @see org.rifidi.edge.core.sensors.base.AbstractSensorFactory#getDescription()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.core.sensors.base.AbstractSensorFactory#getDescription()
 	 */
 	@Override
 	public String getDescription() {
 		return description;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.rifidi.edge.core.sensors.base.AbstractSensorFactory#getDisplayName()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.core.sensors.base.AbstractSensorFactory#getDisplayName()
 	 */
 	@Override
 	public String getDisplayName() {
 		return displayname;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.rifidi.edge.core.sensors.base.AbstractSensorFactory#unbindCommandConfiguration(org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration, java.util.Map)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seeorg.rifidi.edge.core.sensors.base.AbstractSensorFactory#
+	 * unbindCommandConfiguration
+	 * (org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration,
+	 * java.util.Map)
 	 */
 	@Override
 	public void unbindCommandConfiguration(
 			AbstractCommandConfiguration<?> commandConfiguration,
 			Map<?, ?> properties) {
-		// TODO Auto-generated method stub
-		
+		if (sensors != null) {
+			for (AbstractSensor<?> reader : sensors) {
+				reader.unbindCommandConfiguration(commandConfiguration,
+						properties);
+			}
+		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.rifidi.edge.core.configuration.ServiceFactory#createInstance(java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.core.configuration.ServiceFactory#createInstance(java
+	 * .lang.String)
 	 */
 	@Override
 	public void createInstance(String serviceID)
@@ -98,7 +122,9 @@ public class AcuraProXReaderFactory extends
 
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.rifidi.edge.core.configuration.ServiceFactory#getFactoryID()
 	 */
 	@Override
@@ -106,8 +132,12 @@ public class AcuraProXReaderFactory extends
 		return FACTORY_ID;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.rifidi.edge.core.configuration.ServiceFactory#getServiceDescription(java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.core.configuration.ServiceFactory#getServiceDescription
+	 * (java.lang.String)
 	 */
 	@Override
 	public MBeanInfo getServiceDescription(String factoryID) {
