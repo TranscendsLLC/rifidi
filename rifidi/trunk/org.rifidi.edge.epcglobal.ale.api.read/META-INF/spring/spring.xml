@@ -27,8 +27,12 @@
 		<property name="reportFactory" ref="reportFactory" />
 	</bean>
 
-	<bean class="org.springframework.remoting.jaxws.SimpleJaxWsServiceExporter">
-		<property name="baseAddress" value="http://${org.rifidi.edge.ale.host}:8081/" />
+	<bean id="ReadWebServiceDeployer" class="org.rifidi.edge.core.utilities.JaxWsServiceExporter"
+		init-method="start" destroy-method="stop">
+		<property name="port" value="${org.rifidi.edge.ale.port}" />
+		<property name="host" value="http://${org.rifidi.edge.ale.host}" />
+		<property name="deploy" value="${org.rifidi.edge.ale.read.deploy}" />
+		<property name="service" ref="aleReadAPIService" />
 	</bean>
 
 	<bean id="ecspecManager"

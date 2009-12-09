@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Rifidi Edge ALE Read API Implementation
 Bundle-SymbolicName: org.rifidi.edge.epcglobal.ale.api.read
-Bundle-Version: 1.0.0
+Bundle-Version: 1.0.1
 Import-Package: com.espertech.esper.client,
  com.espertech.esper.client.metric,
  com.espertech.esper.client.soda,
@@ -21,7 +21,7 @@ Bundle-Activator: org.rifidi.edge.epcglobal.ale.api.read.activator.Activator
 Bundle-ActivationPolicy: lazy
 Require-Bundle: org.rifidi.edge.epcglobal.ale.api.logicalreader;bundle-version="1.0.0",
  org.rifidi.edge.core.services;bundle-version="1.0.0",
- org.rifidi.edge.core;bundle-version="5.0.1"
+ org.rifidi.edge.core;bundle-version="5.3.1"
 Export-Package: org.rifidi.edge.ale.esper,
  org.rifidi.edge.ale.esper.starters,
  org.rifidi.edge.ale.esper.stoppers,
