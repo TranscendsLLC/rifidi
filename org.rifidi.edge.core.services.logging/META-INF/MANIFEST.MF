@@ -4,5 +4,6 @@ Bundle-Name: Rifidi Edge Logging Service
 Bundle-SymbolicName: org.rifidi.edge.core.services.logging
 Bundle-Version: 1.0.0
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Import-Package: org.apache.log4j;version="1.2.15"
+Import-Package: org.apache.log4j;version="1.2.15",
+ org.springframework.beans.factory.config;version="2.5.6.SEC01"
 Require-Bundle: org.rifidi.edge.core.services;bundle-version="1.0.0"

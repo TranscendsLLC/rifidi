@@ -21,6 +21,7 @@ import org.rifidi.edge.api.SessionStatus;
 import org.rifidi.edge.core.sensors.base.AbstractSensor;
 import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
 import org.rifidi.edge.core.sensors.commands.Command;
+import org.rifidi.edge.core.sensors.messages.ByteMessage;
 import org.rifidi.edge.core.sensors.sessions.MessageParsingStrategyFactory;
 import org.rifidi.edge.core.sensors.sessions.poll.AbstractPollIPSensorSession;
 import org.rifidi.edge.core.services.notification.NotifierService;
@@ -170,6 +171,18 @@ public class ThingmagicReaderSession extends AbstractPollIPSensorSession {
 
 		// TODO: Remove this once we have aspectJ
 		notifierService.jobDeleted(this.readerID, this.getID(), id);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.core.sensors.sessions.AbstractIPSensorSession#sendMessage
+	 * (org.rifidi.edge.core.sensors.messages.ByteMessage)
+	 */
+	@Override
+	public void sendMessage(ByteMessage message) throws IOException {
+		super.sendMessage(message);
 	}
 
 }
