@@ -12,11 +12,8 @@
  */
 package org.rifidi.edge.core.services.logging.impl;
 
-import java.io.File;
-
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
 import org.rifidi.edge.core.services.logging.LoggingService;
 
 /**
@@ -45,19 +42,6 @@ public class LoggingServiceImpl implements LoggingService {
 		}
 		logger.info("setting logger to " + level);
 		logger.setLevel(newLevel);
-
-	}
-
-	public void setConfigFile(String configFilename) {
-		File f = new File(configFilename);
-		if (f.exists()) {
-			PropertyConfigurator.configure(configFilename);
-		} else {
-			System.out.println("Cannot find log properties file at "
-					+ configFilename + " Using default log4j properties");
-			PropertyConfigurator.configure(getClass().getResource(
-					"/log4j.properties"));
-		}
 
 	}
 }
