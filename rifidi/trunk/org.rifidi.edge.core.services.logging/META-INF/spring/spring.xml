@@ -4,20 +4,8 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans 
 	http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 
-	<bean
-		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-		<property name="locations">
-			<value>classpath:META-INF/spring/bundle.properties
-			</value>
-		</property>
-		<property name="systemPropertiesMode">
-			<value>2</value>
-		</property>
-	</bean>
-
 	<bean id="rifidiLoggingService"
 		class="org.rifidi.edge.core.services.logging.impl.LoggingServiceImpl">
-		<property name="configFile" value="${org.rifidi.edge.logging}" />
 	</bean>
 
 </beans>
