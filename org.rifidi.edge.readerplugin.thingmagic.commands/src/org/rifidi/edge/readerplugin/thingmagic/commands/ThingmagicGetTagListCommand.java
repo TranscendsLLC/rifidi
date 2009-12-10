@@ -17,8 +17,6 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
-import javax.swing.DebugGraphics;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.sensors.messages.ByteMessage;
@@ -68,8 +66,8 @@ public class ThingmagicGetTagListCommand extends AbstractThingmagicCommand {
 	public void run() {
 		String splitregex = "" + new Character((char) 0x0a);
 
-		//Output will look like this:
-		// Ox123570981301283123|2
+		// Output will look like this:
+		// Ox303512B1F1FF795511B64E38|1
 		String message = "select id,antenna_id from tag_id;\r\n";
 
 		try {
@@ -86,18 +84,18 @@ public class ThingmagicGetTagListCommand extends AbstractThingmagicCommand {
 		try {
 			incomingMessage = ((ThingmagicReaderSession) this.sensorSession)
 					.receiveMessage();
+			if(logger.isDebugEnabled()){
+				logger.debug("raw msg as string: " + new String(incomingMessage.message));
+			}
 			String incoming = new String(incomingMessage.message).trim();
 			String[] tagString = incoming.split(splitregex);
 			for (String i : tagString) {
 				i = i.trim();
 				if (!i.isEmpty()) {
-					//remove the 0x from the tagID
+					// remove the 0x from the tagID
 					i = i.substring(2);
 					TagReadEvent tre = this.parseThingmagicTagString(i);
 					events.add(tre);
-					if(logger.isDebugEnabled()){
-						logger.debug(tre);
-					}
 				}
 			}
 
@@ -119,7 +117,7 @@ public class ThingmagicGetTagListCommand extends AbstractThingmagicCommand {
 	 * @return
 	 */
 	private TagReadEvent parseThingmagicTagString(String tagDataString) {
-		if(logger.isDebugEnabled()){
+		if (logger.isDebugEnabled()) {
 			logger.debug("New String to parse: " + tagDataString);
 		}
 		// the new event
@@ -141,6 +139,11 @@ public class ThingmagicGetTagListCommand extends AbstractThingmagicCommand {
 		tagData = gen2event;
 
 		Integer antennaID = Integer.parseInt(splitString[1]);
+
+		if (logger.isDebugEnabled()) {
+			logger.debug("Tag Read: " + gen2event.getEpc() + " reader: "
+					+ this.reader.get() + " ant " + antennaID);
+		}
 
 		return new TagReadEvent(this.reader.get(), tagData, antennaID, System
 				.currentTimeMillis());
