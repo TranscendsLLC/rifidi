@@ -70,7 +70,7 @@ public class ThingmagicReader extends AbstractSensor<ThingmagicReaderSession> {
 	private final ConcurrentHashMap<String, String> readerProperties;
 	/** A queue for putting commands to be executed next */
 	private final LinkedBlockingQueue<ThingmagicCommandObjectWrapper> propCommandsToBeExecuted;
-	private String displayName;
+	private String displayName = "ThingMagic";
 
 	/** Mbeaninfo for this class. */
 	public static final MBeanInfo mbeaninfo;
@@ -107,13 +107,13 @@ public class ThingmagicReader extends AbstractSensor<ThingmagicReaderSession> {
 	@Operation(description = "Apply all property changes to reader")
 	public void applyPropertyChanges() {
 		// TODO: may need to synchnonize the hashmap before I clear it?
-		ThingmagicReaderSession aliensession = session.get();
-		if (aliensession != null) {
+		ThingmagicReaderSession thingmagicSession = session.get();
+		if (thingmagicSession != null) {
 			ArrayList<ThingmagicCommandObjectWrapper> commands = new ArrayList<ThingmagicCommandObjectWrapper>();
 			this.propCommandsToBeExecuted.drainTo(commands);
 			ThingmagicPropertyCommand command = new ThingmagicPropertyCommand(
 					"", readerProperties, commands);
-			aliensession.submit(command);
+			thingmagicSession.submit(command);
 		}
 	}
 

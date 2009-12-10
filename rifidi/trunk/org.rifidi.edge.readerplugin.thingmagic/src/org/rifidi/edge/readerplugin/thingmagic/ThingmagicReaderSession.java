@@ -100,6 +100,10 @@ public class ThingmagicReaderSession extends AbstractPollIPSensorSession {
 	protected void setStatus(SessionStatus status) {
 		super.setStatus(status);
 
+		if (logger.isDebugEnabled()) {
+			logger.debug(this.getID() + " is " + status);
+		}
+
 		// TODO: Remove this once we have aspectJ
 		notifierService.sessionStatusChanged(this.readerID, this.getID(),
 				status);
@@ -113,11 +117,6 @@ public class ThingmagicReaderSession extends AbstractPollIPSensorSession {
 	 */
 	@Override
 	public boolean onConnect() throws IOException {
-		// System.out.println("Sending tag message");
-		// sendMessage(new ByteMessage("select id, protocol_id from tag_id;\r\n"
-		// .getBytes()));
-		// System.out.println(receiveMessage().message);
-		// System.out.println("Recieving tag message");
 
 		return true;
 	}

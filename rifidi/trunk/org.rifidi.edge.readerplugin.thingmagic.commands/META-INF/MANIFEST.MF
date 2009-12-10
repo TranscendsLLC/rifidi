@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Rifidi Edge ThingMagic Adapter Commands
 Bundle-SymbolicName: org.rifidi.edge.readerplugin.thingmagic.commands
-Bundle-Version: 1.0.0
+Bundle-Version: 1.0.1
 Bundle-Vendor: Pramari, LLC
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Require-Bundle: org.rifidi.edge.readerplugin.thingmagic;bundle-version="1.0.0",
