@@ -143,5 +143,31 @@ public class AcuraProXReaderFactory extends
 	public MBeanInfo getServiceDescription(String factoryID) {
 		return (MBeanInfo) AcuraProXReader.mbeaninfo.clone();
 	}
+	
+	/**
+	 * @return the template
+	 */
+	public JmsTemplate getTemplate() {
+		return template;
+	}
+
+	/**
+	 * Called by spring
+	 * 
+	 * @param template
+	 *            the template to set
+	 */
+	public void setTemplate(JmsTemplate template) {
+		this.template = template;
+	}
+	
+	/**
+	 * Called by spring
+	 * 
+	 * @param wrapper
+	 */
+	public void setNotifierService(NotifierService notifierService) {
+		this.notifierService = notifierService;
+	}
 
 }
