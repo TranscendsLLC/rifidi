@@ -17,6 +17,10 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
+import javax.swing.DebugGraphics;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.sensors.messages.ByteMessage;
 import org.rifidi.edge.core.services.notification.data.DatacontainerEvent;
 import org.rifidi.edge.core.services.notification.data.EPCGeneration2Event;
@@ -35,6 +39,8 @@ public class ThingmagicGetTagListCommand extends AbstractThingmagicCommand {
 
 	/** The readeriD */
 	private AtomicReference<String> reader = new AtomicReference<String>();
+	/** The logger for this class */
+	private Log logger = LogFactory.getLog(ThingmagicGetTagListCommand.class);
 
 	/**
 	 * 
@@ -62,7 +68,9 @@ public class ThingmagicGetTagListCommand extends AbstractThingmagicCommand {
 	public void run() {
 		String splitregex = "" + new Character((char) 0x0a);
 
-		String message = "select id from tag_id;\r\n";
+		//Output will look like this:
+		// Ox123570981301283123|2
+		String message = "select id,antenna_id from tag_id;\r\n";
 
 		try {
 			((ThingmagicReaderSession) this.sensorSession)
@@ -79,36 +87,47 @@ public class ThingmagicGetTagListCommand extends AbstractThingmagicCommand {
 			incomingMessage = ((ThingmagicReaderSession) this.sensorSession)
 					.receiveMessage();
 			String incoming = new String(incomingMessage.message).trim();
-			String[] splitstring = incoming.split(splitregex);
-			for (String i : splitstring) {
+			String[] tagString = incoming.split(splitregex);
+			for (String i : tagString) {
 				i = i.trim();
 				if (!i.isEmpty()) {
+					//remove the 0x from the tagID
 					i = i.substring(2);
-					TagReadEvent tre = this.getTagReadEvent(i);
+					TagReadEvent tre = this.parseThingmagicTagString(i);
 					events.add(tre);
+					if(logger.isDebugEnabled()){
+						logger.debug(tre);
+					}
 				}
 			}
+
 			ReadCycle cycle = new ReadCycle(events, reader.get(), System
 					.currentTimeMillis());
 			sensorSession.getSensor().send(cycle);
 			template.send(destination, new ReadCycleMessageCreator(cycle));
 		} catch (IOException e) {
-			//e.printStackTrace();
+			// e.printStackTrace();
 		}
 	}
 
 	/**
-	 * Convert an AlienTag into a TagReadEvent. This method is threadsafe.
+	 * Convert a single ThingMagic tag string into a TagReadEvent. This method
+	 * is threadsafe.
 	 * 
-	 * @param alienTag
+	 * @param tagDataString
 	 *            The tag to convert
 	 * @return
 	 */
-	private TagReadEvent getTagReadEvent(String tagDataString) {
+	private TagReadEvent parseThingmagicTagString(String tagDataString) {
+		if(logger.isDebugEnabled()){
+			logger.debug("New String to parse: " + tagDataString);
+		}
 		// the new event
 		DatacontainerEvent tagData = null;
+		String[] splitString = tagDataString.split("\\|");
+
 		// a big integer representation of the epc
-		BigInteger epc = new BigInteger(tagDataString, 16);
+		BigInteger epc = new BigInteger(splitString[0], 16);
 
 		EPCGeneration2Event gen2event = new EPCGeneration2Event();
 		// make some wild guesses on the length of the epc field
@@ -121,7 +140,9 @@ public class ThingmagicGetTagListCommand extends AbstractThingmagicCommand {
 		}
 		tagData = gen2event;
 
-		return new TagReadEvent(this.reader.get(), tagData, 0, System
+		Integer antennaID = Integer.parseInt(splitString[1]);
+
+		return new TagReadEvent(this.reader.get(), tagData, antennaID, System
 				.currentTimeMillis());
 	}
 
