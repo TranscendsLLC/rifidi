@@ -17,13 +17,19 @@ import gnu.io.SerialPort;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.api.SessionStatus;
 import org.rifidi.edge.core.sensors.base.AbstractSensor;
 import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
 import org.rifidi.edge.core.sensors.commands.Command;
 import org.rifidi.edge.core.sensors.sessions.AbstractSensorSession;
+import org.rifidi.edge.readerplugin.acura.commands.internal.AcuraProXResetCommand;
 import org.springframework.jms.core.JmsTemplate;
 
 /**
@@ -32,6 +38,10 @@ import org.springframework.jms.core.JmsTemplate;
  * @author Matthew Dean
  */
 public class AcuraProXReaderSession extends AbstractSensorSession {
+
+	/** Logger for this class. */
+	private static final Log logger = LogFactory
+			.getLog(AcuraProXReaderSession.class);
 
 	private OneWaySerialComm serialPort = null;
 
@@ -56,7 +66,8 @@ public class AcuraProXReaderSession extends AbstractSensorSession {
 	public AcuraProXReaderSession(AbstractSensor<?> sensor, String id,
 			String comm, JmsTemplate template,
 			Set<AbstractCommandConfiguration<?>> commandConfigurations) {
-		super(sensor, id, template.getDefaultDestination(), template, commandConfigurations);
+		super(sensor, id, template.getDefaultDestination(), template,
+				commandConfigurations);
 
 		commPort = comm;
 		serialPort = new OneWaySerialComm();
@@ -69,8 +80,20 @@ public class AcuraProXReaderSession extends AbstractSensorSession {
 	 */
 	@Override
 	protected void _connect() throws IOException {
-		boolean success = true;
 		this.setStatus(SessionStatus.CONNECTING);
+		if (processing.get()) {
+			if (!processing.compareAndSet(true, false)) {
+				logger
+						.warn("Killed a non active executor. That should not happen. ");
+			}
+			// TODO: better would be to have a method in
+			// AbstractSensorSession that handles the shutdown of the
+			// executor
+			executor.shutdownNow();
+			executor = null;
+			resetCommands();
+		}
+		boolean success = true;
 		try {
 			serialPort.connect(commPort);
 		} catch (Exception e) {
@@ -78,8 +101,10 @@ public class AcuraProXReaderSession extends AbstractSensorSession {
 			this.setStatus(SessionStatus.CLOSED);
 			throw new IOException(e.getMessage());
 		}
+		executor = new ScheduledThreadPoolExecutor(1);
 		if (success) {
 			this.setStatus(SessionStatus.PROCESSING);
+			processing.compareAndSet(false, true);
 		}
 	}
 
@@ -103,7 +128,7 @@ public class AcuraProXReaderSession extends AbstractSensorSession {
 	 */
 	@Override
 	protected Command getResetCommand() {
-		return null;
+		return new AcuraProXResetCommand("AcuraProXResetCommand");
 	}
 
 	/**
@@ -111,6 +136,9 @@ public class AcuraProXReaderSession extends AbstractSensorSession {
 	 */
 	public class OneWaySerialComm {
 		private CommPort commPort = null;
+
+		public static final byte END_OF_TEXT = 0x03;
+		public static final byte START_OF_TEXT = 0x02;
 
 		/**
 		 * 
@@ -155,7 +183,9 @@ public class AcuraProXReaderSession extends AbstractSensorSession {
 			commPort.close();
 		}
 
-		/** */
+		/**
+		 * 
+		 */
 		public class SerialReader implements Runnable {
 			InputStream in;
 
@@ -164,11 +194,26 @@ public class AcuraProXReaderSession extends AbstractSensorSession {
 			}
 
 			public void run() {
-				byte[] buffer = new byte[1024];
-				int len = -1;
+				List<Byte> byteBuffer = new ArrayList<Byte>();
+				int current = -1;
 				try {
-					while ((len = this.in.read(buffer)) > -1) {
-						System.out.print(new String(buffer, 0, len));
+					while ((current = this.in.read()) > -1) {
+						// Either it is a start byte, and end byte, or a middle
+						// byte
+						if (((byte) current) == START_OF_TEXT) {
+							//Make sure there is nothing in the list for the start
+							byteBuffer.clear();
+						} else if (((byte) current) == END_OF_TEXT) {
+							//Send the completed buffer off for processing
+							
+							//Clear the list, we don't need it anymore.  
+							byteBuffer.clear();
+						} else {
+							//We don't care about any bytes after the first 10.  
+							if (byteBuffer.size() < 10) {
+								byteBuffer.add(new Byte((byte)current));
+							}
+						}
 					}
 				} catch (IOException e) {
 					e.printStackTrace();

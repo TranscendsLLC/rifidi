@@ -23,6 +23,7 @@ import javax.management.MBeanInfo;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.api.rmi.dto.SessionDTO;
+import org.rifidi.edge.core.configuration.annotations.JMXMBean;
 import org.rifidi.edge.core.configuration.annotations.Property;
 import org.rifidi.edge.core.configuration.annotations.PropertyType;
 import org.rifidi.edge.core.configuration.mbeanstrategies.AnnotationMBeanInfoStrategy;
@@ -39,6 +40,7 @@ import org.springframework.jms.core.JmsTemplate;
  * 
  * @author Matthew Dean
  */
+@JMXMBean
 public class AcuraProXReader extends AbstractSensor<AcuraProXReaderSession> {
 
 	/** Logger for this class. */
@@ -53,7 +55,7 @@ public class AcuraProXReader extends AbstractSensor<AcuraProXReaderSession> {
 	private String displayName = "Acura";
 	/** Flag to check if this reader is destroied. */
 	private AtomicBoolean destroyed = new AtomicBoolean(false);
-	/** The only session an alien reader allows. */
+	/** The only session an acura reader allows. */
 	private AtomicReference<AcuraProXReaderSession> session = new AtomicReference<AcuraProXReaderSession>();
 
 	private String serialPort = null;
