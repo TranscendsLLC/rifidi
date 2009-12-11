@@ -29,11 +29,12 @@ import org.rifidi.edge.core.sensors.base.AbstractSensor;
 import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
 import org.rifidi.edge.core.sensors.commands.Command;
 import org.rifidi.edge.core.sensors.sessions.AbstractSensorSession;
+import org.rifidi.edge.core.services.notification.NotifierService;
 import org.rifidi.edge.readerplugin.acura.commands.internal.AcuraProXResetCommand;
 import org.springframework.jms.core.JmsTemplate;
 
 /**
- * 
+ * The Session for the AcuraProXReader.
  * 
  * @author Matthew Dean
  */
@@ -45,10 +46,17 @@ public class AcuraProXReaderSession extends AbstractSensorSession {
 
 	private OneWaySerialComm serialPort = null;
 
+	/** Service used to send out notifications */
+	private volatile NotifierService notifierService;
+
 	/**
 	 * The Serial Port the reader will connect with.
 	 */
 	private String commPort = null;
+
+	private String readerID = null;
+
+	private JmsTemplate template = null;
 
 	/**
 	 * 
@@ -64,13 +72,32 @@ public class AcuraProXReaderSession extends AbstractSensorSession {
 	 * @param commandConfigurations
 	 */
 	public AcuraProXReaderSession(AbstractSensor<?> sensor, String id,
-			String comm, JmsTemplate template,
+			String comm, JmsTemplate template, NotifierService notifierService,
 			Set<AbstractCommandConfiguration<?>> commandConfigurations) {
 		super(sensor, id, template.getDefaultDestination(), template,
 				commandConfigurations);
-
+		this.readerID = id;
+		this.template = template;
+		this.notifierService = notifierService;
 		commPort = comm;
-		serialPort = new OneWaySerialComm();
+		serialPort = new OneWaySerialComm(this);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.core.readers.impl.AbstractReaderSession#setStatus(org
+	 * .rifidi.edge.core.api.SessionStatus)
+	 */
+	@Override
+	protected synchronized void setStatus(SessionStatus status) {
+		super.setStatus(status);
+		// TODO: Remove this once we have aspectJ
+		NotifierService service = notifierService;
+		if (service != null) {
+			service.sessionStatusChanged(this.readerID, this.getID(), status);
+		}
 	}
 
 	/*
@@ -83,8 +110,8 @@ public class AcuraProXReaderSession extends AbstractSensorSession {
 		this.setStatus(SessionStatus.CONNECTING);
 		if (processing.get()) {
 			if (!processing.compareAndSet(true, false)) {
-				logger
-						.warn("Killed a non active executor. That should not happen. ");
+				logger.warn("Killed a non active executor. "
+						+ "That should not happen. ");
 			}
 			// TODO: better would be to have a method in
 			// AbstractSensorSession that handles the shutdown of the
@@ -103,8 +130,8 @@ public class AcuraProXReaderSession extends AbstractSensorSession {
 		}
 		executor = new ScheduledThreadPoolExecutor(1);
 		if (success) {
-			this.setStatus(SessionStatus.PROCESSING);
 			processing.compareAndSet(false, true);
+			this.setStatus(SessionStatus.PROCESSING);
 		}
 	}
 
@@ -119,6 +146,13 @@ public class AcuraProXReaderSession extends AbstractSensorSession {
 			this.serialPort.closeConnection();
 			this.setStatus(SessionStatus.CLOSED);
 		}
+	}
+
+	/**
+	 * 
+	 */
+	public JmsTemplate getTemplate() {
+		return template;
 	}
 
 	/*
@@ -140,11 +174,14 @@ public class AcuraProXReaderSession extends AbstractSensorSession {
 		public static final byte END_OF_TEXT = 0x03;
 		public static final byte START_OF_TEXT = 0x02;
 
+		private AcuraProXReaderSession session;
+
 		/**
 		 * 
 		 */
-		public OneWaySerialComm() {
-			super();
+		public OneWaySerialComm(AcuraProXReaderSession session) {
+			// super();
+			this.session = session;
 		}
 
 		/**
@@ -168,7 +205,7 @@ public class AcuraProXReaderSession extends AbstractSensorSession {
 
 					InputStream in = serialPort.getInputStream();
 
-					(new Thread(new SerialReader(in))).start();
+					(new Thread(new SerialReader(in, session))).start();
 				} else {
 					System.out
 							.println("Error: Only serial ports are handled by this example.");
@@ -180,7 +217,15 @@ public class AcuraProXReaderSession extends AbstractSensorSession {
 		 * Close the connection for the comm port.
 		 */
 		public void closeConnection() {
-			commPort.close();
+			try {
+				SerialPort serialPort = (SerialPort) commPort;
+				serialPort.getInputStream().close();
+			} catch (IOException e) {
+				// e.printStackTrace();
+			} finally {
+				commPort.close();
+				commPort = null;
+			}
 		}
 
 		/**
@@ -189,30 +234,32 @@ public class AcuraProXReaderSession extends AbstractSensorSession {
 		public class SerialReader implements Runnable {
 			InputStream in;
 
-			public SerialReader(InputStream in) {
+			AcuraProXTagHandler tagHandler = null;
+
+			public SerialReader(InputStream in, AcuraProXReaderSession session) {
 				this.in = in;
+				tagHandler = new AcuraProXTagHandler(session, readerID);
 			}
 
 			public void run() {
-				List<Byte> byteBuffer = new ArrayList<Byte>();
+				byte[] buffer = new byte[16];
 				int current = -1;
 				try {
-					while ((current = this.in.read()) > -1) {
-						// Either it is a start byte, and end byte, or a middle
-						// byte
-						if (((byte) current) == START_OF_TEXT) {
-							//Make sure there is nothing in the list for the start
-							byteBuffer.clear();
-						} else if (((byte) current) == END_OF_TEXT) {
-							//Send the completed buffer off for processing
-							
-							//Clear the list, we don't need it anymore.  
-							byteBuffer.clear();
-						} else {
-							//We don't care about any bytes after the first 10.  
-							if (byteBuffer.size() < 10) {
-								byteBuffer.add(new Byte((byte)current));
+					List<Byte> byteBuffer = new ArrayList<Byte>();
+					while ((current = this.in.read(buffer)) > -1) {
+						if (current != 0) {
+							for (int i = 0; i < current; i++) {
+								byteBuffer.add(buffer[i]);
+								if (byteBuffer.size() == 14) {
+									List<Byte> tempBuffer = new ArrayList<Byte>();
+									for (int x = 1; x < 11; x++) {
+										tempBuffer.add(byteBuffer.get(x));
+									}
+									tagHandler.processTag(tempBuffer);
+									byteBuffer.clear();
+								}
 							}
+
 						}
 					}
 				} catch (IOException e) {

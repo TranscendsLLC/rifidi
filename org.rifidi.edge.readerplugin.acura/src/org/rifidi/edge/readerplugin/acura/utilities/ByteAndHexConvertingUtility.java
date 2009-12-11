@@ -36,6 +36,20 @@ public class ByteAndHexConvertingUtility {
 		}
 		return sb.toString();
 	}
+	
+	/**
+	 * From http://mindprod.com/jgloss/hex.html
+	 * 
+	 * @param b
+	 * @return
+	 */
+	public static String toHexStringNoSpaces(byte[] b) {
+		StringBuffer sb = new StringBuffer(b.length * 2);
+		for (int i = 0; i < b.length; i++) {
+			sb.append(toHexString(b[i]));
+		}
+		return sb.toString();
+	}
 
 	// table to convert a nibble to a hex char.
 	private static char[] hexChar = { '0', '1', '2', '3', '4', '5', '6', '7',

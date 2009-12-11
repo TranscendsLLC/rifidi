@@ -89,7 +89,7 @@ public class AcuraProXReader extends AbstractSensor<AcuraProXReaderSession> {
 		if (!destroyed.get() && session.get() == null) {
 			Integer sessionID = this.sessionID.incrementAndGet();
 			if (session.compareAndSet(null, new AcuraProXReaderSession(this,
-					Integer.toString(sessionID), serialPort, template, null))) {
+					Integer.toString(sessionID), serialPort, template, notifierService, null))) {
 
 				// TODO: remove this once we get AspectJ in here!
 				notifierService.addSessionEvent(this.getID(), Integer
@@ -113,7 +113,7 @@ public class AcuraProXReader extends AbstractSensor<AcuraProXReaderSession> {
 		if (!destroyed.get() && session.get() == null) {
 			Integer sessionID = this.sessionID.incrementAndGet();
 			if (session.compareAndSet(null, new AcuraProXReaderSession(this,
-					Integer.toString(sessionID), serialPort, template,
+					Integer.toString(sessionID), serialPort, template, notifierService,
 					new HashSet<AbstractCommandConfiguration<?>>()))) {
 
 				// TODO: remove this once we get AspectJ in here!
