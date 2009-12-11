@@ -55,7 +55,7 @@ public class AcuraProXReaderFactory extends
 			Map<?, ?> properties) {
 		//Ignored.  
 	}
-
+	
 	/*
 	 * (non-Javadoc)
 	 * 
