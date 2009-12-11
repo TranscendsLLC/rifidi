@@ -49,8 +49,8 @@ public class AcuraProXReader extends AbstractSensor<AcuraProXReaderSession> {
 	private volatile JmsTemplate template;
 	/** The ID of the session */
 	private AtomicInteger sessionID = new AtomicInteger(0);
-	/** service used to send notifications */
-	private volatile NotifierService notifierService;
+	/** A wrapper containing the service to send jms notifications */
+	private volatile NotifierService notifyServiceWrapper;
 	/** The name of the reader that will be displayed */
 	private String displayName = "Acura";
 	/** Flag to check if this reader is destroied. */
@@ -89,10 +89,10 @@ public class AcuraProXReader extends AbstractSensor<AcuraProXReaderSession> {
 		if (!destroyed.get() && session.get() == null) {
 			Integer sessionID = this.sessionID.incrementAndGet();
 			if (session.compareAndSet(null, new AcuraProXReaderSession(this,
-					Integer.toString(sessionID), serialPort, template, notifierService, null))) {
+					Integer.toString(sessionID), serialPort, template, notifyServiceWrapper, super.getID(), null))) {
 
 				// TODO: remove this once we get AspectJ in here!
-				notifierService.addSessionEvent(this.getID(), Integer
+				notifyServiceWrapper.addSessionEvent(this.getID(), Integer
 						.toString(sessionID));
 				return sessionID.toString();
 			}
@@ -113,11 +113,11 @@ public class AcuraProXReader extends AbstractSensor<AcuraProXReaderSession> {
 		if (!destroyed.get() && session.get() == null) {
 			Integer sessionID = this.sessionID.incrementAndGet();
 			if (session.compareAndSet(null, new AcuraProXReaderSession(this,
-					Integer.toString(sessionID), serialPort, template, notifierService,
+					Integer.toString(sessionID), serialPort, template, notifyServiceWrapper, super.getID(),
 					new HashSet<AbstractCommandConfiguration<?>>()))) {
 
 				// TODO: remove this once we get AspectJ in here!
-				notifierService.addSessionEvent(this.getID(), Integer
+				notifyServiceWrapper.addSessionEvent(this.getID(), Integer
 						.toString(sessionID));
 				return sessionID.toString();
 			}
@@ -141,7 +141,7 @@ public class AcuraProXReader extends AbstractSensor<AcuraProXReaderSession> {
 			acurasession.killAllCommands();
 			acurasession.disconnect();
 			// TODO: remove this once we get AspectJ in here!
-			notifierService.removeSessionEvent(this.getID(), id);
+			notifyServiceWrapper.removeSessionEvent(this.getID(), id);
 		} else {
 			String error = "Tried to delete a non existend session: " + id;
 			logger.warn(error);
@@ -238,7 +238,7 @@ public class AcuraProXReader extends AbstractSensor<AcuraProXReaderSession> {
 	 *            The JMS Notifier to set
 	 */
 	public void setNotifiyService(NotifierService wrapper) {
-		this.notifierService = wrapper;
+		this.notifyServiceWrapper = wrapper;
 	}
 
 }

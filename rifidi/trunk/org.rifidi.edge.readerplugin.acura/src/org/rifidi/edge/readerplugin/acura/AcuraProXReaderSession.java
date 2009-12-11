@@ -73,10 +73,11 @@ public class AcuraProXReaderSession extends AbstractSensorSession {
 	 */
 	public AcuraProXReaderSession(AbstractSensor<?> sensor, String id,
 			String comm, JmsTemplate template, NotifierService notifierService,
+			String readerID,
 			Set<AbstractCommandConfiguration<?>> commandConfigurations) {
 		super(sensor, id, template.getDefaultDestination(), template,
 				commandConfigurations);
-		this.readerID = id;
+		this.readerID = readerID;
 		this.template = template;
 		this.notifierService = notifierService;
 		commPort = comm;
@@ -142,9 +143,28 @@ public class AcuraProXReaderSession extends AbstractSensorSession {
 	 */
 	@Override
 	public void disconnect() {
-		if (this.getStatus().equals(SessionStatus.PROCESSING)) {
-			this.serialPort.closeConnection();
-			this.setStatus(SessionStatus.CLOSED);
+		//System.out.println("Disconnecting");
+		try {
+			this.setStatus(SessionStatus.DISCONNECTING);
+			//System.out.println("attempting to close the connection");
+			//System.out.flush();
+			if (this.getStatus().equals(SessionStatus.PROCESSING)) {
+				this.serialPort.closeConnection();
+			}
+			//System.out.println("closed connection successfully!");
+		} catch(Exception e) {
+			e.printStackTrace();
+		} finally {
+			//System.out.println("In the finally!");
+			// make sure executor is shutdown!
+			if (executor != null) {
+				executor.shutdownNow();
+				executor = null;
+			}
+			//System.out.println("All done, closing the session.  ");
+			// notify anyone who cares that session is now closed
+			this.processing.compareAndSet(true, false);
+			setStatus(SessionStatus.CLOSED);
 		}
 	}
 
@@ -170,6 +190,7 @@ public class AcuraProXReaderSession extends AbstractSensorSession {
 	 */
 	public class OneWaySerialComm {
 		private CommPort commPort = null;
+		CommPortIdentifier portIdentifier = null;
 
 		public static final byte END_OF_TEXT = 0x03;
 		public static final byte START_OF_TEXT = 0x02;
@@ -191,10 +212,10 @@ public class AcuraProXReaderSession extends AbstractSensorSession {
 		 * @throws Exception
 		 */
 		public void connect(String portName) throws Exception {
-			CommPortIdentifier portIdentifier = CommPortIdentifier
+			portIdentifier = CommPortIdentifier
 					.getPortIdentifier(portName);
 			if (portIdentifier.isCurrentlyOwned()) {
-				System.out.println("Error: Port is currently in use");
+				logger.warn("Error: Port is currently in use");
 			} else {
 				commPort = portIdentifier.open(this.getClass().getName(), 2000);
 
@@ -207,8 +228,7 @@ public class AcuraProXReaderSession extends AbstractSensorSession {
 
 					(new Thread(new SerialReader(in, session))).start();
 				} else {
-					System.out
-							.println("Error: Only serial ports are handled by this example.");
+					logger.warn("Error: Port is not a serial port.");
 				}
 			}
 		}
@@ -221,10 +241,10 @@ public class AcuraProXReaderSession extends AbstractSensorSession {
 				SerialPort serialPort = (SerialPort) commPort;
 				serialPort.getInputStream().close();
 			} catch (IOException e) {
-				// e.printStackTrace();
+				e.printStackTrace();
 			} finally {
 				commPort.close();
-				commPort = null;
+				//commPort = null;
 			}
 		}
 
@@ -249,8 +269,19 @@ public class AcuraProXReaderSession extends AbstractSensorSession {
 					while ((current = this.in.read(buffer)) > -1) {
 						if (current != 0) {
 							for (int i = 0; i < current; i++) {
-								byteBuffer.add(buffer[i]);
+								if (byteBuffer.isEmpty()) {
+									if (buffer[i] == 0x02) {
+										byteBuffer.add(buffer[i]);
+									}
+								} else {
+									byteBuffer.add(buffer[i]);
+								}
 								if (byteBuffer.size() == 14) {
+									// System.out.println("The bytes:");
+									// for(Byte b:byteBuffer) {
+									// System.out.print(b + " ");
+									// }
+									// System.out.println();
 									List<Byte> tempBuffer = new ArrayList<Byte>();
 									for (int x = 1; x < 11; x++) {
 										tempBuffer.add(byteBuffer.get(x));
