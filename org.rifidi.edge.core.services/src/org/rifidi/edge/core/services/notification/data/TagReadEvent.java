@@ -17,6 +17,8 @@ package org.rifidi.edge.core.services.notification.data;
 
 import java.io.Serializable;
 
+import org.rifidi.edge.api.tags.TagDTO;
+
 /**
  * This class acts as a wrapper around a DataContainerEvent (which stores tag
  * data). This class stores extra information about a tag read event, such as
@@ -83,5 +85,15 @@ public class TagReadEvent implements Serializable {
 	 */
 	public long getTimestamp() {
 		return timestamp;
+	}
+
+	/**
+	 * @return A TagDTO which contains the ID for the tag, the Antenna ID, and
+	 *         the timestamp the tag was seen on. This may be expanded later,
+	 *         but currently the only client is the Edge Client, and this is all
+	 *         the information it needs.
+	 */
+	public TagDTO getTagDTO() {
+		return new TagDTO(tag.getID(), getAntennaID(), timestamp);
 	}
 }

@@ -13,7 +13,11 @@
 package org.rifidi.edge.core.services.notification.data;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Set;
+
+import org.rifidi.edge.api.tags.TagBatch;
+import org.rifidi.edge.api.tags.TagDTO;
 
 /**
  * This represents a read cycle from a reader. It contains 0 to many
@@ -71,5 +75,13 @@ public class ReadCycle implements Serializable {
 	 */
 	public String getReaderID() {
 		return this.readerID;
+	}
+	
+	public TagBatch getBatch(){
+		Set<TagDTO> dtos = new HashSet<TagDTO>();
+		for(TagReadEvent event : this.tags){
+			dtos.add(event.getTagDTO());
+		}
+		return new TagBatch(readerID, eventTimestamp, dtos);
 	}
 }
