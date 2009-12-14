@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.rifidi.edge.core.services.notification.data.ReadCycle;
+import org.rifidi.edge.core.services.notification.data.ReadCycleMessageCreator;
 import org.rifidi.edge.core.services.notification.data.TagReadEvent;
 import org.rifidi.edge.readerplugin.acura.tag.AcuraProXTagEvent;
 import org.rifidi.edge.readerplugin.acura.utilities.ByteAndHexConvertingUtility;
@@ -73,7 +74,8 @@ public class AcuraProXTagHandler {
 				.currentTimeMillis());
 
 		this.session.getSensor().send(cycle);
-		System.out.println("Sending tag: " + ByteAndHexConvertingUtility
-				.toHexStringNoSpaces(byteArray));
+		// System.out.println("Sending tag: " + ByteAndHexConvertingUtility
+		// .toHexStringNoSpaces(byteArray));
+		this.session.getTemplate().send(this.session.getTemplate().getDefaultDestination(), new ReadCycleMessageCreator(cycle));
 	}
 }

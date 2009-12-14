@@ -99,5 +99,14 @@ public class AcuraProXTagEvent extends DatacontainerEvent {
 	public int hashCode() {
 		return hex.hashCode();
 	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.rifidi.edge.core.services.notification.data.DatacontainerEvent#getID()
+	 */
+	@Override
+	public BigInteger getID() {
+		return this.memoryBanks.get(0).getMemory();
+	}
 	
 }
