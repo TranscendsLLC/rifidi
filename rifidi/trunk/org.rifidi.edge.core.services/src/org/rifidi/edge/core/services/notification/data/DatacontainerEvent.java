@@ -28,7 +28,7 @@ import java.util.List;
 public abstract class DatacontainerEvent implements Serializable {
 
 	/** Serial Version for this class. */
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = -3904919665346333337L;
 	/** The set of memory banks that this Tag has */
 	protected List<MemoryBankLengthTuple> memoryBanks = new ArrayList<MemoryBankLengthTuple>();
 
@@ -144,6 +144,12 @@ public abstract class DatacontainerEvent implements Serializable {
 		public void setLength(Integer length) {
 			this.length = length;
 		}
-
 	}
+	
+	/**
+	 * Returns the tag identity information.  
+	 * 
+	 * @return
+	 */
+	public abstract BigInteger getID();
 }

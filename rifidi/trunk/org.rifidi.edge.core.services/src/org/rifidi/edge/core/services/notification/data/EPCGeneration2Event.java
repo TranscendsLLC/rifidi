@@ -242,4 +242,13 @@ public class EPCGeneration2Event extends EPCGeneration1Event {
 	public Integer getUserMemoryLength() {
 		return memoryBanks.get(3).getLength();
 	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.rifidi.edge.core.services.notification.data.EPCGeneration1Event#getID()
+	 */
+	@Override
+	public BigInteger getID() {
+		return this.memoryBanks.get(0).getMemory();
+	}
 }
