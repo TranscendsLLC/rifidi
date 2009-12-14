@@ -67,10 +67,9 @@ public class TagEventListener implements MessageListener {
 			if (obj instanceof ReadCycle) {
 				ReadCycle event = (ReadCycle) obj;
 				extNotificationTemplate.send(extNotificationDest,
-						new TagMessageMessageCreator(event));
+						new TagMessageMessageCreator(event.getBatch()));
 			}
 		} catch (JMSException e) {
-
 		}
 
 	}
