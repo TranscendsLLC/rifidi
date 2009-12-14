@@ -19,8 +19,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
-import java.util.HashSet;
-import java.util.Set;
 
 import javax.jms.BytesMessage;
 import javax.jms.JMSException;
@@ -28,11 +26,6 @@ import javax.jms.Message;
 import javax.jms.Session;
 
 import org.rifidi.edge.api.tags.TagBatch;
-import org.rifidi.edge.api.tags.TagDTO;
-import org.rifidi.edge.core.services.notification.data.DatacontainerEvent;
-import org.rifidi.edge.core.services.notification.data.EPCGeneration1Event;
-import org.rifidi.edge.core.services.notification.data.ReadCycle;
-import org.rifidi.edge.core.services.notification.data.TagReadEvent;
 import org.springframework.jms.core.MessageCreator;
 
 /**
@@ -50,16 +43,8 @@ public class TagMessageMessageCreator implements MessageCreator {
 	 * 
 	 * @param cycle
 	 */
-	public TagMessageMessageCreator(ReadCycle cycle) {
-		Set<TagDTO> tags = new HashSet<TagDTO>();
-		for (TagReadEvent tagRead : cycle.getTags()) {
-			DatacontainerEvent event = tagRead.getTag();
-			tags.add(new TagDTO(((EPCGeneration1Event) event).getEPCMemory(),
-					tagRead.getAntennaID(), tagRead.getTimestamp()));
-		}
-
-		tagBatch = new TagBatch(cycle.getReaderID(), cycle.getEventTimestamp(),
-				tags);
+	public TagMessageMessageCreator(TagBatch batch) {
+		this.tagBatch = batch;
 
 	}
 
