@@ -68,7 +68,9 @@ public class ThingmagicGetTagListCommand extends AbstractThingmagicCommand {
 
 		// Output will look like this:
 		// Ox303512B1F1FF795511B64E38|1
-		String message = "select id,antenna_id from tag_id SET time_out=1000;\r\n";
+		String message = "SELECT id, antenna_id FROM tag_id WHERE " +
+				"protocol_id='GEN2') " +
+				"set time_out=250;\r\n";
 
 		try {
 			((ThingmagicReaderSession) this.sensorSession)
