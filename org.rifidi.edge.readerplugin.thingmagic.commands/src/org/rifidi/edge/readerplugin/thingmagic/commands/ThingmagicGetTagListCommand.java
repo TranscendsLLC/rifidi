@@ -69,7 +69,7 @@ public class ThingmagicGetTagListCommand extends AbstractThingmagicCommand {
 		// Output will look like this:
 		// Ox303512B1F1FF795511B64E38|1
 		String message = "SELECT id, antenna_id FROM tag_id WHERE " +
-				"protocol_id='GEN2') " +
+				"protocol_id='EPC1' " +
 				"set time_out=250;\r\n";
 
 		try {
