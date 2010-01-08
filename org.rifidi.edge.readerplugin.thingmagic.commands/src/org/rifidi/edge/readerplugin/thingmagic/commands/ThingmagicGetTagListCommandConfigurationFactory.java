@@ -31,34 +31,45 @@ public class ThingmagicGetTagListCommandConfigurationFactory
 	public static final String name = "ThingMagic-Poll";
 	/** Mbeaninfo for this class. */
 	public static final MBeanInfo mbeaninfo;
-	
-
 	static {
 		AnnotationMBeanInfoStrategy strategy = new AnnotationMBeanInfoStrategy();
 		mbeaninfo = strategy
 				.getMBeanInfo(ThingmagicGetTagListCommandConfiguration.class);
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.rifidi.edge.core.configuration.impl.AbstractCommandConfigurationFactory#getReaderFactoryID()
+
+
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.core.configuration.impl.AbstractCommandConfigurationFactory
+	 * #getReaderFactoryID()
 	 */
 	@Override
 	public String getReaderFactoryID() {
 		return ThingmagicReaderFactory.FACTORY_ID;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.rifidi.edge.core.configuration.ServiceFactory#createInstance(java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.core.configuration.ServiceFactory#createInstance(java
+	 * .lang.String)
 	 */
 	@Override
 	public void createInstance(String serviceID)
 			throws IllegalArgumentException, InvalidStateException {
 		ThingmagicGetTagListCommandConfiguration commandConfig = new ThingmagicGetTagListCommandConfiguration();
 		commandConfig.setID(serviceID);
-		commandConfig.register(getContext(), ThingmagicReaderFactory.FACTORY_ID);
+		commandConfig
+				.register(getContext(), ThingmagicReaderFactory.FACTORY_ID);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.rifidi.edge.core.configuration.ServiceFactory#getFactoryID()
 	 */
 	@Override
@@ -66,33 +77,42 @@ public class ThingmagicGetTagListCommandConfigurationFactory
 		return name;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.rifidi.edge.core.configuration.ServiceFactory#getServiceDescription(java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.core.configuration.ServiceFactory#getServiceDescription
+	 * (java.lang.String)
 	 */
 	@Override
 	public MBeanInfo getServiceDescription(String factoryID) {
 		return (MBeanInfo) mbeaninfo.clone();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.rifidi.edge.core.configuration.impl.AbstractCommandConfigurationFactory#getCommandDescription()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.core.configuration.impl.AbstractCommandConfigurationFactory
+	 * #getCommandDescription()
 	 */
 	@Override
 	public String getCommandDescription() {
 		return "Poll the ThingMagic reader for its tags. "
-		+ "For monitoring of the read zone, submit this command for "
-		+ "recurring execution.";
+				+ "For monitoring of the read zone, submit this command for "
+				+ "recurring execution.";
 	}
 
-	/* (non-Javadoc)
-	 * @see org.rifidi.edge.core.configuration.impl.AbstractCommandConfigurationFactory#getDisplayName()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.core.configuration.impl.AbstractCommandConfigurationFactory
+	 * #getDisplayName()
 	 */
 	@Override
 	public String getDisplayName() {
 		return "ThingMagic Poll";
 	}
-	
-	
-	
 
 }
