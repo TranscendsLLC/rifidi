@@ -249,6 +249,6 @@ public class EPCGeneration2Event extends EPCGeneration1Event {
 	 */
 	@Override
 	public BigInteger getID() {
-		return this.memoryBanks.get(0).getMemory();
+		return this.memoryBanks.get(1).getMemory();
 	}
 }
