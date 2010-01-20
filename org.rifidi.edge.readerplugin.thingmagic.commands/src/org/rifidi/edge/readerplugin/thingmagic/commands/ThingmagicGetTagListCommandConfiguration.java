@@ -80,7 +80,7 @@ public class ThingmagicGetTagListCommandConfiguration extends
 			+ " before the reader stops looking for tags.  If this value is too small, the reader will not "
 			+ "read from all of its antennas.  Because of this, it is recommended that the value be at least 500ms.  "
 			+ "", writable = true, type = PropertyType.PT_INTEGER, minValue = ""
-			+ "500", maxValue = "16535", defaultValue = "1000")
+			+ "500", maxValue = "16535", defaultValue = "1000", category="Timeout")
 	public Integer getTimeout() {
 		return timeout;
 	}
@@ -103,7 +103,7 @@ public class ThingmagicGetTagListCommandConfiguration extends
 			+ " to 1 will means the reader will look for class 0 tags.  If all the tag types are set to 0,"
 			+ " the function is ignored and all tag types will be searched for."
 			+ "", writable = true, type = PropertyType.PT_INTEGER, minValue = ""
-			+ "0", maxValue = "1", defaultValue = "0")
+			+ "0", maxValue = "1", defaultValue = "0", category="Protocols", orderValue=0)
 	public Integer getEpc0() {
 		return epc0;
 	}
@@ -124,7 +124,7 @@ public class ThingmagicGetTagListCommandConfiguration extends
 			+ " to 1 will means the reader will look for class 0 tags.  If all the tag types are set to 0,"
 			+ " the function is ignored and all tag types will be searched for."
 			+ "", writable = true, type = PropertyType.PT_INTEGER, minValue = ""
-			+ "0", maxValue = "1", defaultValue = "0")
+			+ "0", maxValue = "1", defaultValue = "0", category="Protocols", orderValue=1)
 	public Integer getEpc1() {
 		return epc1;
 	}
@@ -145,7 +145,7 @@ public class ThingmagicGetTagListCommandConfiguration extends
 			+ " to 1 will means the reader will look for class 0 tags.  If all the tag types are set to 0,"
 			+ " the function is ignored and all tag types will be searched for."
 			+ "", writable = true, type = PropertyType.PT_INTEGER, minValue = ""
-			+ "0", maxValue = "1", defaultValue = "1")
+			+ "0", maxValue = "1", defaultValue = "1", category="Protocols", orderValue=2)
 	public Integer getGen2() {
 		return gen2;
 	}
@@ -166,7 +166,7 @@ public class ThingmagicGetTagListCommandConfiguration extends
 			+ " to 1 will means the reader will look for class 0 tags.  If all the tag types are set to 0,"
 			+ " the function is ignored and all tag types will be searched for."
 			+ "", writable = true, type = PropertyType.PT_INTEGER, minValue = ""
-			+ "0", maxValue = "1", defaultValue = "0")
+			+ "0", maxValue = "1", defaultValue = "0", category="Protocols", orderValue=3)
 	public Integer getIso860006b() {
 		return iso860006b;
 	}
