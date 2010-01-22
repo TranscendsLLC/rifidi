@@ -1,0 +1,73 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:osgi="http://www.springframework.org/schema/osgi"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+    http://www.springframework.org/schema/osgi 
+    http://www.springframework.org/schema/osgi/spring-osgi.xsd">
+
+	<!--
+		This bean loads java properties that can be used in this spring config
+		file using the ${} notation. Default values are stored in the
+		bundle.propeties file. Default values are overriden by values supplied
+		in the VM arguments (i.e. the 'edge server.ini') file
+	-->
+	<bean
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<value>classpath:META-INF/spring/bundle.properties
+			</value>
+		</property>
+		<property name="systemPropertiesMode">
+			<value>2</value>
+		</property>
+	</bean>
+
+	<!-- Create the application and inject esper and teh JMS sender -->
+	<bean id="app" class="org.rifidi.edge.app.tracking.TrackingApp"
+		init-method="start" destroy-method="stop">
+		<property name="jmsSender" ref="JMSSender"></property>
+		<property name="esperService" ref="esperManagementService" />
+	</bean>
+
+	<!-- Creat the JMS Sender service -->
+	<bean id="JMSSender" class="org.rifidi.edge.app.tracking.JMSSenderImpl">
+		<property name="template" ref="externalJMSTemplate" />
+		<property name="destination" ref="topic" />
+		<property name="productsDAO" ref="dao" />
+		<property name="logicalReadersDAO" ref="dao" />
+	</bean>
+
+	<!-- the JMS Destination to send messages to-->
+	<bean id="topic" class="org.apache.activemq.command.ActiveMQTopic">
+		<property name="physicalName" value="org.rifidi.tracking" />
+	</bean>
+
+	<bean id="dao" class="org.rifidi.edge.app.tracking.dao.DAOImpl">
+		<property name="datasource" ref="datasource" />
+	</bean>
+
+	<!--
+		Create the datasource object. Values are java properties that are
+		loaded by the PropertyPlaceholderConfigure bean.
+	-->
+	<bean id="datasource" destroy-method="close"
+		class="org.springframework.jdbc.datasource.SimpleDriverDataSource">
+		<property name="driverClass" value="${org.rifidi.jdbc.driver}" />
+		<property name="url" value="${org.rifidi.jdbc.url}" />
+		<property name="username" value="${org.rifidi.jdbc.user}" />
+		<property name="password" value="${org.rifidi.jdbc.pass}" />
+	</bean>
+
+	<!--
+		Get a reference to the Esper Management Service from the OSGi Service
+		Registry
+	-->
+	<osgi:reference id="esperManagementService"
+		interface="org.rifidi.edge.core.services.esper.EsperManagementService" />
+	<!--
+		Get a reference to the JMS Template from the OSGi service registry
+	-->
+	<osgi:reference id="externalJMSTemplate"
+		interface="org.springframework.jms.core.JmsTemplate" bean-name="externalJMSTemplate" />
+
+</beans>
