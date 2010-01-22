@@ -17,7 +17,9 @@ import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
 
 /**
- * @author Owner
+ * This class is used to send message on the JMS queue.
+ * 
+ * @author Kyle Neumeier - kyle@pramari.com
  * 
  */
 public class JMSSenderImpl implements JMSSender {
@@ -26,23 +28,20 @@ public class JMSSenderImpl implements JMSSender {
 	private volatile Destination destination;
 	/** JMS Template to use to send messages */
 	private volatile JmsTemplate template;
+	/** Data access object to look up product names from a data source */
 	private volatile ProductsDAO productsDAO;
+	/** Data access object to look up logical reader names from a data source */
 	private LogicalReadersDAO logicalReadersDAO;
+	/** Logger for this class */
 	private static final Log logger = LogFactory.getLog(JMSSenderImpl.class);
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.rifidi.edge.app.db.dao.RFID_DAO#addRow(org.rifidi.edge.app.db.domain
-	 * .RFIDEvent)
-	 */
 	@Override
 	public void arrvied(RFIDEvent event) {
 		if (destination == null || template == null) {
 			logger.error("JMS is not properly configured");
 			return;
 		}
+		// form the message to send out over JMS
 		final String msg = "Product "
 				+ productsDAO.getProductName(event.getId())
 				+ " arrived at "
@@ -52,19 +51,11 @@ public class JMSSenderImpl implements JMSSender {
 
 			@Override
 			public Message createMessage(Session arg0) throws JMSException {
-				System.out.println("SENDING MESSAGE: " + msg);
 				return arg0.createTextMessage(msg);
 			}
 		});
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.rifidi.edge.app.db.dao.RFID_DAO#deleteRow(org.rifidi.edge.app.db.
-	 * domain.RFIDEvent)
-	 */
 	@Override
 	public void departed(RFIDEvent event) {
 		if (destination == null || template == null) {
@@ -80,7 +71,6 @@ public class JMSSenderImpl implements JMSSender {
 
 			@Override
 			public Message createMessage(Session arg0) throws JMSException {
-				System.out.println("SENDING MESSAGE: " + msg);
 				return arg0.createTextMessage(msg);
 			}
 		});

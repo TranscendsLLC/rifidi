@@ -14,14 +14,16 @@ import org.rifidi.edge.app.tracking.domain.RFIDEvent;
 public interface JMSSender {
 
 	/***
-	 * A new tag has arrived
+	 * Call this method to send out a new message over JMS when an RFID event
+	 * has arrived
 	 * 
 	 * @param event
 	 */
 	public void arrvied(RFIDEvent event);
 
 	/**
-	 * A tag has departed
+	 * Call this method to send out a new message over JMS when an RFID event
+	 * has departed.
 	 * 
 	 * @param event
 	 */

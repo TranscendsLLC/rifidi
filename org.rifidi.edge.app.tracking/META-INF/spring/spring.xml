@@ -29,7 +29,7 @@
 		<property name="esperService" ref="esperManagementService" />
 	</bean>
 
-	<!-- Creat the JMS Sender service -->
+	<!-- Create the JMS Sender service -->
 	<bean id="JMSSender" class="org.rifidi.edge.app.tracking.JMSSenderImpl">
 		<property name="template" ref="externalJMSTemplate" />
 		<property name="destination" ref="topic" />
