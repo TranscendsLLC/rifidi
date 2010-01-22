@@ -18,13 +18,6 @@ public class DAOImpl implements ProductsDAO, LogicalReadersDAO {
 	/** The Spring datasource object */
 	private SimpleDriverDataSource datasource = null;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.rifidi.edge.app.tracking.dao.ProductsDAO#getProductName(java.lang
-	 * .String)
-	 */
 	@Override
 	public String getProductName(String ID) {
 		if (datasource == null)
@@ -52,13 +45,6 @@ public class DAOImpl implements ProductsDAO, LogicalReadersDAO {
 		return ID;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.rifidi.edge.app.db.dao.LogicalReadersDAO#getLogicaReaderName(java
-	 * .lang.String, int)
-	 */
 	@Override
 	public String getLogicaReaderName(String readerID, int antenna) {
 		if (datasource == null)
