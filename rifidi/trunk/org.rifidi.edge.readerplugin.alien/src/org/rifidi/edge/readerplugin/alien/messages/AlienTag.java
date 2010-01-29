@@ -18,12 +18,22 @@ package org.rifidi.edge.readerplugin.alien.messages;
 import java.util.Date;
 
 /**
- * This class represents a tag read by an Alien Reader
+ * This class represents a tag read by an Alien Reader.
+ * 
+ * Added the extrainformation the Alien can sometimes have, including speed and
+ * rssi. This class makes no attempt to parse the extra data recieved, it only
+ * puts the data in a HashMap, to be used by whoever wants it. - Matt
  * 
  * @author Kyle Neumeier - kyle@pramari.com
- * 
+ * @author Matthew Dean - matt@pramari.com
  */
 public class AlienTag {
+
+	public static final String SPEED_ID = "Speed";
+
+	public static final String RSSI_ID = "RSSI";
+
+	public static final String DIRECTION = "Direction";
 
 	/** The FACTORY_ID of the tag as a hex string */
 	private String id_hex;
@@ -37,6 +47,12 @@ public class AlienTag {
 	private int antenna;
 	/** 1=Gen1, 2=Gen2 */
 	private int protocol;
+	/** Sets the */
+	private String speed;
+
+	private String direction;
+
+	private Float rssi;
 
 	/**
 	 * Creates a new AlienTag from the raw string received from the Alien
@@ -68,6 +84,15 @@ public class AlienTag {
 			} else if (field.startsWith("Proto")) {
 				String proto = field.substring(field.indexOf(':') + 1).trim();
 				this.protocol = Integer.parseInt(proto);
+			} else if (field.startsWith("Speed:")) {
+				String speed = field.substring(field.indexOf(':') + 1).trim();
+				this.speed = speed;
+			} else if (field.startsWith("Rssi:")) {
+				String rssi = field.substring(field.indexOf(':') + 1).trim();
+				this.rssi = Float.parseFloat(rssi);
+			} else if (field.startsWith("Dir:")) {
+				String dir = field.substring(field.indexOf(':') + 1).trim();
+				this.direction = dir;
 			}
 		}
 	}
@@ -160,6 +185,58 @@ public class AlienTag {
 	 */
 	public void setProtocol(int protocol) {
 		this.protocol = protocol;
+	}
+
+	/**
+	 * Gets the speed for this tag.
+	 * 
+	 * @return
+	 */
+	public String getSpeed() {
+		return speed;
+	}
+
+	/**
+	 * Sets the speed for this tag.
+	 * 
+	 * @param speed
+	 */
+	public void setSpeed(String speed) {
+		this.speed = speed;
+	}
+
+	/**
+	 * Gets the RSSI information for this tag.
+	 * 
+	 * @return
+	 */
+	public Float getRssi() {
+		return rssi;
+	}
+
+	/**
+	 * 
+	 * 
+	 * @param rssi
+	 */
+	public void setRssi(Float rssi) {
+		this.rssi = rssi;
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public String getDirection() {
+		return direction;
+	}
+
+	/**
+	 * @param direction
+	 *            the direction to set
+	 */
+	public void setDirection(String direction) {
+		this.direction = direction;
 	}
 
 }

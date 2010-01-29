@@ -30,7 +30,6 @@ import org.springframework.jms.core.JmsTemplate;
  * The Factory for producing Alien9800 Readers
  * 
  * @author Jochen Mader - jochen@pramari.com
- * 
  */
 public class Alien9800ReaderFactory extends
 		AbstractSensorFactory<Alien9800Reader> {
@@ -117,11 +116,19 @@ public class Alien9800ReaderFactory extends
 		return FACTORY_ID;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.rifidi.edge.core.sensors.base.AbstractSensorFactory#getDescription()
+	 */
 	@Override
 	public String getDescription() {
 		return description;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.rifidi.edge.core.sensors.base.AbstractSensorFactory#getDisplayName()
+	 */
 	@Override
 	public String getDisplayName() {
 		return displayname;
