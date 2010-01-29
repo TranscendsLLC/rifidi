@@ -16,6 +16,7 @@
 package org.rifidi.edge.core.services.notification.data;
 
 import java.io.Serializable;
+import java.util.HashMap;
 
 import org.rifidi.edge.api.tags.TagDTO;
 
@@ -38,6 +39,12 @@ public class TagReadEvent implements Serializable {
 	private long timestamp;
 	/** The ID of the reader that saw the tags */
 	private String readerID;
+	/**
+	 * Any extra information that a tag contains would be stored here. Velocity
+	 * or Distance information, or anything else about the tag which is not in
+	 * the regular interface can go in here
+	 */
+	private HashMap<String, Serializable> extraInformation = null;
 
 	/**
 	 * Constructor
@@ -57,6 +64,7 @@ public class TagReadEvent implements Serializable {
 		this.antennaID = antennaID;
 		this.timestamp = timestamp;
 		this.readerID = readerID;
+		this.extraInformation = new HashMap<String, Serializable>();
 	}
 
 	/**
@@ -95,5 +103,26 @@ public class TagReadEvent implements Serializable {
 	 */
 	public TagDTO getTagDTO() {
 		return new TagDTO(tag.getID(), getAntennaID(), timestamp);
+	}
+
+	/**
+	 * This returns the HashMap that stores the extra information for the
+	 * TagReadEvent. An example of some extra information that a TagReadEvent
+	 * might contain is the Velocity or RSSI information for an Alien tag.
+	 * 
+	 * @return
+	 */
+	public HashMap<String, Serializable> getExtraInformation() {
+		return extraInformation;
+	}
+
+	/**
+	 * Adds a value to the Extra Information HashMap.
+	 * 
+	 * @param key
+	 * @param value
+	 */
+	public void addExtraInformation(String key, Serializable value) {
+		this.extraInformation.put(key, value);
 	}
 }
