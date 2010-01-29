@@ -17,8 +17,6 @@ package org.rifidi.edge.readerplugin.alien.autonomous;
 
 import java.util.Set;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.api.SessionStatus;
 import org.rifidi.edge.core.sensors.base.AbstractSensor;
 import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
@@ -40,8 +38,8 @@ public class AlienAutonomousSensorSession extends
 		AbstractServerSocketSensorSession {
 
 	/** The logger */
-	private final static Log logger = LogFactory
-			.getLog(AlienAutonomousSensorSession.class);
+	// private final static Log logger = LogFactory
+	// .getLog(AlienAutonomousSensorSession.class);
 	/** The notifierService used to send out notifications of session changes */
 	private NotifierService notifierService;
 	/** The factory that produces Alien Message Parsing Strategy */
