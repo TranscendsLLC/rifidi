@@ -21,6 +21,7 @@ public class Activator implements BundleActivator {
 
 	@Override
 	public void start(BundleContext arg0) throws Exception {
+		System.out.println("START LOGGING BUNDLE");
 		String s = System.getProperty("org.rifidi.edge.logging");
 
 		if (s != null && new File(s).exists()) {
