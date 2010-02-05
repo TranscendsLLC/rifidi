@@ -48,6 +48,9 @@ public class AlienAutonomousModeCommand extends AbstractAlien9800Command {
 	private String autoFalseOutput;
 	private String autoFalsePause;
 
+	private final static String CUSTOM_NOTIFY_FORMAT = "Tag:%i, Disc:%d %T, Last:%d %T, Count:%r, "
+			+ "Ant:%a, Proto:%p, Rssi:%m, Speed:${SPEED}\n";
+
 	/**
 	 * Construct a new Command
 	 * 
@@ -126,7 +129,7 @@ public class AlienAutonomousModeCommand extends AbstractAlien9800Command {
 			setAutoWorkOutput.execute();
 			setAutoStopTrigger.execute();
 			setStopTimer.execute();
-			//setAutoStopPause.execute();
+			// setAutoStopPause.execute();
 			setAutoTrueOutput.execute();
 			setAutoTruePuase.execute();
 			setAutoFalseOutput.execute();
