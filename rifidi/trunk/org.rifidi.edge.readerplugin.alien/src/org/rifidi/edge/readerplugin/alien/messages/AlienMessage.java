@@ -58,7 +58,7 @@ public class AlienMessage {
 	 * @param rawMessage
 	 */
 	public AlienMessage(String rawMessage) {
-		System.out.println(rawMessage);
+		//System.out.println(rawMessage);
 		this.tagList = new HashSet<AlienTag>();
 		String[] lines = rawMessage.split("\n");
 		for (String line : lines) {

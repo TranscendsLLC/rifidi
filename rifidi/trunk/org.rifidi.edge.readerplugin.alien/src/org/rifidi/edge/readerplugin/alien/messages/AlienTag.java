@@ -48,7 +48,7 @@ public class AlienTag {
 	/** 1=Gen1, 2=Gen2 */
 	private int protocol;
 	/** Sets the */
-	private String speed;
+	private Float speed;
 
 	private String direction;
 
@@ -86,7 +86,7 @@ public class AlienTag {
 				this.protocol = Integer.parseInt(proto);
 			} else if (field.startsWith("Speed:")) {
 				String speed = field.substring(field.indexOf(':') + 1).trim();
-				this.speed = speed;
+				this.speed = Float.parseFloat(speed);
 			} else if (field.startsWith("Rssi:")) {
 				String rssi = field.substring(field.indexOf(':') + 1).trim();
 				this.rssi = Float.parseFloat(rssi);
@@ -192,7 +192,7 @@ public class AlienTag {
 	 * 
 	 * @return
 	 */
-	public String getSpeed() {
+	public Float getSpeed() {
 		return speed;
 	}
 
@@ -201,7 +201,7 @@ public class AlienTag {
 	 * 
 	 * @param speed
 	 */
-	public void setSpeed(String speed) {
+	public void setSpeed(Float speed) {
 		this.speed = speed;
 	}
 

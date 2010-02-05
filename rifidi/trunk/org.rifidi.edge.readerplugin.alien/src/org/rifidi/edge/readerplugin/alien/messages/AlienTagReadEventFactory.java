@@ -81,8 +81,18 @@ public class AlienTagReadEventFactory {
 			}
 			tagData = gen2event;
 		}
-		return new TagReadEvent(readerID, tagData, alienTag.getAntenna(),
+		TagReadEvent retVal = new TagReadEvent(readerID, tagData, alienTag.getAntenna(),
 				alienTag.getLastSeenDate().getTime());
+		if(alienTag.getSpeed()!= null) {
+			retVal.addExtraInformation(AlienTag.SPEED_ID, alienTag.getSpeed());
+		}
+		if(alienTag.getRssi()!= null) {
+			retVal.addExtraInformation(AlienTag.RSSI_ID, alienTag.getRssi());
+		}
+		if(alienTag.getDirection()!=null) {
+			retVal.addExtraInformation(AlienTag.DIRECTION, alienTag.getDirection());
+		}
+		return retVal;
 	}
 
 }
