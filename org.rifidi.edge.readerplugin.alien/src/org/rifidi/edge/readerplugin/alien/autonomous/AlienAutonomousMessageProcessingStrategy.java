@@ -85,7 +85,6 @@ public class AlienAutonomousMessageProcessingStrategy implements
 				.getID(), System.currentTimeMillis());
 		session.getSensor().send(readCycle);
 		template.send(new ReadCycleMessageCreator(readCycle));
-
 	}
 
 }
