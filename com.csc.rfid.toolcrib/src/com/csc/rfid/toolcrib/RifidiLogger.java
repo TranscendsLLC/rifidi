@@ -11,6 +11,7 @@
  */
 package com.csc.rfid.toolcrib;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.Date;
@@ -20,9 +21,9 @@ import java.text.SimpleDateFormat;
  * @author Matthew Dean
  * 
  */
-public class RifidiLogger {
+public final class RifidiLogger {
 
-	FileWriter fw = null;
+	private FileWriter fw = null;
 
 	public static final String CONSTANT_1 = "CTEH-LBLDG-COL-L9";
 
@@ -33,9 +34,14 @@ public class RifidiLogger {
 	public static final String OUTBOUND_SPACES = "    ";
 
 	public RifidiLogger(String filename) {
+		File file = new File(filename);
 		try {
-			fw = new FileWriter(filename, true);
+			if(!file.exists()) {
+				file.createNewFile();
+			}
+			fw = new FileWriter(file, true);
 		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -44,7 +50,11 @@ public class RifidiLogger {
 	 * @param inbound
 	 * @param direction
 	 */
-	public void writeToFile(String tag, boolean inbound, String direction) {
+	public void writeToFile(String tag, boolean inbound) {
+		if (tag.length() > 12) {
+			tag = tag.substring(0, 12);
+		}
+		tag = tag.toUpperCase();
 		try {
 			if (inbound) {
 				fw.write(tag + CONSTANT_1 + SPACES + this.createDate());
@@ -52,6 +62,8 @@ public class RifidiLogger {
 				fw.write(tag + CONSTANT_1 + OUTBOUND + OUTBOUND_SPACES
 						+ this.createDate());
 			}
+			fw.write("\r\n");
+			fw.flush();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
