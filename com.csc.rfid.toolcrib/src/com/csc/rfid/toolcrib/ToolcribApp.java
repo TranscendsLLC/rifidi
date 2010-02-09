@@ -8,6 +8,8 @@ import java.util.HashMap;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.services.esper.EsperManagementService;
 
 import com.espertech.esper.client.EPServiceProvider;
@@ -27,11 +29,15 @@ public class ToolcribApp {
 	private volatile EsperManagementService esperService;
 	/** All statements that have been defined so far */
 	private final Set<EPStatement> statements = new CopyOnWriteArraySet<EPStatement>();
+	/** This class writes anything we find to a file */
 	private final RifidiLogger logwriter = new RifidiLogger(System
 			.getProperty("org.rifidi.logfile"));
-	
+	private static final Log logger = LogFactory.getLog(ToolcribApp.class);
 	private final DirectionAlgorithm algorithm = new DirectionAlgorithm();
 
+	/**
+	 * Constructor.  
+	 */
 	public ToolcribApp() {
 		Activator.myApp = this;
 	}
@@ -96,7 +102,7 @@ public class ToolcribApp {
 						if (!speedMap.containsKey(epc)) {
 							speedMap.put(epc, new ArrayList<Float>());
 						}
-						System.out.println("Single tag read: " + speed + ", rssi is: " + rssi);
+						logger.debug("Single tag read: " + speed + ", rssi is: " + rssi);
 						speedMap.get(epc).add(speed);
 						//System.out.println(".");
 					}
@@ -105,11 +111,11 @@ public class ToolcribApp {
 					Float speed = algorithm.getSpeed(speedMap.get(key));
 					if (speed > 0) {
 						logwriter.writeToFile(key, true);
-						System.out.println("Tag is: " + key + ", Speed is: "
+						logger.debug("Tag is: " + key + ", Speed is: "
 								+ speed + ", Direction is: Incoming");
 					} else {
 						logwriter.writeToFile(key, false);
-						System.out.println("Tag is: " + key + ", Speed is: "
+						logger.debug("Tag is: " + key + ", Speed is: "
 								+ speed + ", Direction is: Outgoing");
 					}
 				}
