@@ -1,5 +1,5 @@
 /*
- * Awid2010DefaultValues.java
+ * AwidDefaultValues.java
  * 
  * Created:     Oct 20th, 2009
  * Project:       Rifidi Edge Server - A middleware platform for RFID applications
@@ -12,12 +12,12 @@
 package org.rifidi.edge.readerplugin.awid.awid2010;
 
 /**
- * Default values for the Awid2010
+ * Default values for the Awid
  * 
  * @author Kyle Neumeier - kyle@pramari.com
  * 
  */
-public class Awid2010DefaultValues {
+public class AwidDefaultValues {
 
 	/** The Default IP address */
 	public final static String HOST = "192.168.1.91";

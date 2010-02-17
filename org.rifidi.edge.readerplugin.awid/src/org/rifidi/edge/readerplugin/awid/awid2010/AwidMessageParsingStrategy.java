@@ -1,5 +1,5 @@
 /*
- * Awid2010MessageParsingStrategy.java
+ * Awid0MessageParsingStrategy.java
  * 
  * Created:     Oct 20th, 2009
  * Project:       Rifidi Edge Server - A middleware platform for RFID applications
@@ -14,7 +14,7 @@ package org.rifidi.edge.readerplugin.awid.awid2010;
 import org.rifidi.edge.core.sensors.sessions.MessageParsingStrategy;
 
 /**
- * The message parsing strategy for an Awid2010. The purpose of this class is to
+ * The message parsing strategy for an Awid. The purpose of this class is to
  * decide when a stream of bytes forms a logical Awid message. It works like
  * this: the isMessage method is called each time a byte is read from the
  * socket. If the collected bytes forms a complete message, it should reset
@@ -31,7 +31,7 @@ import org.rifidi.edge.core.sensors.sessions.MessageParsingStrategy;
  * @author Kyle Neumeier - kyle@pramari.com
  * 
  */
-public class Awid2010MessageParsingStrategy implements MessageParsingStrategy {
+public class AwidMessageParsingStrategy implements MessageParsingStrategy {
 
 	/** All the bytes seen so far. */
 	private byte[] bytes;
@@ -56,7 +56,7 @@ public class Awid2010MessageParsingStrategy implements MessageParsingStrategy {
 
 	private static final String AWID_3014_IDENTIFIER = "1518";
 
-	boolean is3014 = false;
+	private boolean is3014 = false;
 
 	/*
 	 * (non-Javadoc)

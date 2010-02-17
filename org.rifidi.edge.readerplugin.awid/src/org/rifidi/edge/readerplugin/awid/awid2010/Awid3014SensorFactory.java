@@ -29,8 +29,7 @@ import org.springframework.jms.core.JmsTemplate;
  * @author Matthew Dean
  */
 public class Awid3014SensorFactory extends
-		AbstractSensorFactory<Awid2010Sensor> {
-
+		AbstractSensorFactory<AwidSensor> {
 
 	/** The Factory ID */
 	public static final String FACTORY_ID = "Awid3014";
@@ -38,8 +37,6 @@ public class Awid3014SensorFactory extends
 	private volatile NotifierService notifierService;
 	/** JMS template for sending tag data to JMS Queue */
 	private volatile JmsTemplate template;
-
-	private static final boolean IS3014 = true;
 
 	/**
 	 * Called by Spring
@@ -103,7 +100,7 @@ public class Awid3014SensorFactory extends
 	 */
 	@Override
 	public MBeanInfo getServiceDescription(String factoryID) {
-		return (MBeanInfo) Awid2010Sensor.mbeaninfo.clone();
+		return (MBeanInfo) AwidSensor.mbeaninfo.clone();
 	}
 
 	/*
@@ -122,7 +119,7 @@ public class Awid3014SensorFactory extends
 		if (template == null || notifierService == null) {
 			throw new InvalidStateException("All services are not set");
 		}
-		Awid2010Sensor sensor = new Awid2010Sensor(commands, IS3014);
+		AwidSensor sensor = new AwidSensor(commands, true);
 		sensor.setID(serviceID);
 		sensor.setNotifiyService(notifierService);
 		sensor.setTemplate(template);

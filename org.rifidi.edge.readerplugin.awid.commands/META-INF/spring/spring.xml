@@ -25,4 +25,15 @@
 		<property name="context" ref="bundleContext" />
 	</bean>
 	
+	<bean id="awid2010PortalIDWithMask"
+	class="org.rifidi.edge.readerplugin.awid.commands.awid2010.Awid2010PortalIDWithMaskCommandConfigurationFactory">
+		<property name="context" ref="bundleContext" />
+	</bean>
+	
+	<bean id="awid2010ReadBlockData"
+	class="org.rifidi.edge.readerplugin.awid.commands.awid2010.Awid2010ReadBlockDataCommandConfigurationFactory">
+		<property name="context" ref="bundleContext" />
+	</bean>
+	
+	
 </beans>

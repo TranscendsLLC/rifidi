@@ -1,5 +1,5 @@
 /*
- * Awid2010MessageParsingStrategyFactory.java
+ * AwidMessageParsingStrategyFactory.java
  * 
  * Created:     Oct 20th, 2009
  * Project:       Rifidi Edge Server - A middleware platform for RFID applications
@@ -15,12 +15,12 @@ import org.rifidi.edge.core.sensors.sessions.MessageParsingStrategy;
 import org.rifidi.edge.core.sensors.sessions.MessageParsingStrategyFactory;
 
 /**
- * A factory that produces Awid2010MessageParsingStrategy objects.
+ * A factory that produces AwidMessageParsingStrategy objects.
  * 
  * @author Kyle Neumeier - kyle@pramari.com
  * 
  */
-public class Awid2010MessageParsingStrategyFactory implements
+public class AwidMessageParsingStrategyFactory implements
 		MessageParsingStrategyFactory {
 
 	/*
@@ -32,7 +32,7 @@ public class Awid2010MessageParsingStrategyFactory implements
 	 */
 	@Override
 	public MessageParsingStrategy createMessageParser() {
-		return new Awid2010MessageParsingStrategy();
+		return new AwidMessageParsingStrategy();
 	}
 
 }

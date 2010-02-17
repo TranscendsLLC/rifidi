@@ -22,19 +22,19 @@ import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
  * 
  */
 @JMXMBean
-public class Awid2010PortalIDCommandConfiguration extends
-		AbstractCommandConfiguration<Awid2010PortalIDCommand> {
+public class AwidPortalIDCommandConfiguration extends
+		AbstractCommandConfiguration<AwidPortalIDCommand> {
 	
 	public static final MBeanInfo mbeaninfo;
 	static {
 		AnnotationMBeanInfoStrategy strategy = new AnnotationMBeanInfoStrategy();
 		mbeaninfo = strategy
-				.getMBeanInfo(Awid2010PortalIDCommandConfiguration.class);
+				.getMBeanInfo(AwidPortalIDCommandConfiguration.class);
 	}
 
 	@Override
-	public Awid2010PortalIDCommand getCommand(String readerID) {
-		return new Awid2010PortalIDCommand(super.getID());
+	public AwidPortalIDCommand getCommand(String readerID) {
+		return new AwidPortalIDCommand(super.getID());
 	}
 
 	@Override
