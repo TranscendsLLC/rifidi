@@ -110,18 +110,21 @@ public abstract class RifidiService {
 	 */
 	public AttributeList getAttributes() {
 		AttributeList ret = new AttributeList();
-		try {
-			for (String name : nameToMethod.keySet()) {
+		for (String name : nameToMethod.keySet()) {
+			try {
+
 				Object value = nameToMethod.get(name).invoke(this);
 				ret.add(new Attribute(name, value));
+			} catch (IllegalArgumentException e) {
+				logger.error("Error when invoking getter "
+						+ nameToMethod.get(name) + ": " + e);
+			} catch (IllegalAccessException e) {
+				logger.error("Error when invoking getter "
+						+ nameToMethod.get(name) + ": " + e);
+			} catch (InvocationTargetException e) {
+				logger.error("Error when invoking getter "
+						+ nameToMethod.get(name) + ": " + e);
 			}
-			return ret;
-		} catch (IllegalArgumentException e) {
-			logger.error(e);
-		} catch (IllegalAccessException e) {
-			logger.error(e);
-		} catch (InvocationTargetException e) {
-			logger.error(e);
 		}
 		return ret;
 	}
@@ -207,13 +210,17 @@ public abstract class RifidiService {
 		try {
 			_setAttribute(attribute);
 		} catch (AttributeNotFoundException e) {
-			logger.error(e);
+			logger.error("Error when setting attribute " + attribute.getName()
+					+ " " + e);
 		} catch (InvalidAttributeValueException e) {
-			logger.error(e);
+			logger.error("Error when setting attribute " + attribute.getName()
+					+ " " + e);
 		} catch (MBeanException e) {
-			logger.error(e);
+			logger.error("Error when setting attribute " + attribute.getName()
+					+ " " + e);
 		} catch (ReflectionException e) {
-			logger.error(e);
+			logger.error("Error when setting attribute " + attribute.getName()
+					+ " " + e);
 		}
 	}
 

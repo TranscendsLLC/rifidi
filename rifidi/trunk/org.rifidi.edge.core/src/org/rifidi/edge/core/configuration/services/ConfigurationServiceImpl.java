@@ -230,12 +230,20 @@ public class ConfigurationServiceImpl implements ConfigurationService,
 
 			Map<String, Object> configAttrs = config.getAttributes();
 			Map<String, String> attributes = new HashMap<String, String>();
-			for (MBeanAttributeInfo attrInfo : config.getMBeanInfo()
-					.getAttributes()) {
-				if (attrInfo.isWritable()) {
-					attributes.put(attrInfo.getName(), configAttrs.get(
-							attrInfo.getName()).toString());
+			try {
+				for (MBeanAttributeInfo attrInfo : config.getMBeanInfo()
+						.getAttributes()) {
+					if (attrInfo.isWritable()) {
+						try {
+							attributes.put(attrInfo.getName(), configAttrs.get(
+									attrInfo.getName()).toString());
+						} catch (NullPointerException ex) {
+							logger.error("No property: " + attrInfo.getName());
+						}
+					}
 				}
+			} catch (NullPointerException ex) {
+				logger.error("Problem with config: " + config);
 			}
 			serviceStore.setAttributes(attributes);
 			try {
@@ -272,7 +280,7 @@ public class ConfigurationServiceImpl implements ConfigurationService,
 	 */
 	@Override
 	public String createService(final String factoryID,
-			final AttributeList attributes) throws CannotCreateServiceException{
+			final AttributeList attributes) throws CannotCreateServiceException {
 		ServiceFactory<?> factory = factories.get(factoryID);
 		if (factory == null) {
 			logger.warn("Tried to use a nonexistent factory: " + factoryID);
@@ -303,7 +311,7 @@ public class ConfigurationServiceImpl implements ConfigurationService,
 		IDToConfigurations.put(serviceID, config);
 
 		if (factory != null) {
-			//TODO: Ticket #236
+			// TODO: Ticket #236
 			try {
 				factory.createInstance(serviceID);
 				return serviceID;
@@ -409,8 +417,8 @@ public class ConfigurationServiceImpl implements ConfigurationService,
 				if (factoryToConfigurations.get(factory.getFactoryID()) != null) {
 					for (Configuration serConf : factoryToConfigurations
 							.get(factory.getFactoryID())) {
-						
-						//TODO: Ticket #236
+
+						// TODO: Ticket #236
 						try {
 							factory.createInstance(serConf.getServiceID());
 						} catch (IllegalArgumentException e) {

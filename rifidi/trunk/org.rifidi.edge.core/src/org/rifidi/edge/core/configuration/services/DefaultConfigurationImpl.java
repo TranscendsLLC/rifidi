@@ -159,15 +159,19 @@ public class DefaultConfigurationImpl implements Configuration, ServiceListener 
 						try {
 							((AbstractSensor<?>) target)
 									.createSensorSession(sessionDTO);
-							// test to see if the session should be restarted
+							// test to see if the session should be
+							// restarted
 							if (shouldStartSession(sessionDTO)) {
 								// if it should, restart it
 								restartSession((AbstractSensor<?>) target,
 										sessionDTO);
 							}
 						} catch (CannotCreateSessionException e) {
-							logger.error("Exception ", e);
+							logger.error("Cannot Create Session ", e);
+						} catch (Exception e) {
+							logger.error("Cannot restart session ", e);
 						}
+
 					}
 				}
 				for (int count = 0; count < attributes.size(); count++) {
@@ -191,11 +195,11 @@ public class DefaultConfigurationImpl implements Configuration, ServiceListener 
 	 * @return
 	 */
 	private boolean shouldStartSession(SessionDTO dto) {
-		//test to see  if the autostart system property is true
+		// test to see if the autostart system property is true
 		if (System.getProperties().getProperty("org.rifidi.edge.autostart")
 				.equalsIgnoreCase("true")) {
 			SessionStatus stat = dto.getStatus();
-			//check to see if the session was saved in a connecting state
+			// check to see if the session was saved in a connecting state
 			if (stat == SessionStatus.CONNECTING
 					|| stat == SessionStatus.LOGGINGIN
 					|| stat == SessionStatus.PROCESSING) {
@@ -482,6 +486,17 @@ public class DefaultConfigurationImpl implements Configuration, ServiceListener 
 				}
 			}
 		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "Configuration: " + getServiceID() + " Factory: "
+				+ getFactoryID();
 	}
 
 }

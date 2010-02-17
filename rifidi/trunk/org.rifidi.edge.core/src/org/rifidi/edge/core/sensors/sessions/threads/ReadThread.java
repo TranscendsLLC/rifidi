@@ -88,8 +88,9 @@ public class ReadThread implements Runnable {
 			}
 		} catch (IOException e) {
 			logger.error(e);
+		}finally{
+			logger.debug("Exiting read thread");
 		}
-		logger.debug("Exiting read thread");
 	}
 
 }
