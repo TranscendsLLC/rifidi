@@ -70,7 +70,6 @@ public abstract class SensorSession {
 	 */
 	public void connect() throws IOException {
 		_connect();
-		submit(getResetCommand());
 		submitQueuedCommands();
 	}
 

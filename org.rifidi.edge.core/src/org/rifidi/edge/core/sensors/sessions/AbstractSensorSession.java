@@ -214,11 +214,16 @@ public abstract class AbstractSensorSession extends SensorSession {
 	 */
 	@Override
 	protected void submitQueuedCommands() {
-		while (!queuedCommands.isEmpty()) {
-			submitExecutor(queuedCommands.poll());
+		if (processing.get()) {
+			submit(getResetCommand(), false);
+			while (!queuedCommands.isEmpty()) {
+				CommandExecutor e = queuedCommands.poll();
+				logger.debug("Submitting Queued Command" + e);
+				submitExecutor(e);
+			}
 		}
 	}
-
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -257,11 +262,15 @@ public abstract class AbstractSensorSession extends SensorSession {
 	 */
 	@Override
 	public void submit(Command command) {
+		submit(command, true);
+	}
+	
+	private void submit(Command command, boolean queueIfNotProcessing){
 		command.setReaderSession(this);
 		CommandExecutor commandExec = new CommandExecutor(command, this);
 		if (processing.get()) {
 			submitExecutor(commandExec);
-		} else {
+		} else if(queueIfNotProcessing){
 			logger.info("Session not in processing state. "
 					+ "Command will be executed when session connects: "
 					+ command.getCommandID());
@@ -375,7 +384,7 @@ public abstract class AbstractSensorSession extends SensorSession {
 		private volatile Command instance;
 		private SensorSession sensorSession;
 		private Integer jobID = -1;
-		private Long interval = 0L;
+		private long interval = 0L;
 		private TimeUnit timeunit = TimeUnit.MILLISECONDS;
 		private Future<?> future;
 		private boolean isInternal;
@@ -469,5 +478,13 @@ public abstract class AbstractSensorSession extends SensorSession {
 			this.instance = null;
 		}
 
+		/* (non-Javadoc)
+		 * @see java.lang.Object#toString()
+		 */
+		@Override
+		public String toString() {
+			return "CommandExecutor: " + getCommandID() + sensorSession;
+		}
+		
 	}
 }

@@ -255,9 +255,7 @@ public abstract class AbstractIPSensorSession extends AbstractSensorSession {
 				// do the logical connect
 				try {
 					if (!onConnect()) {
-						setStatus(SessionStatus.CREATED);
-						logger.warn("Unable to connect to reader " + host + ":"
-								+ port);
+						onConnectFailed();
 						return;
 					}
 				} catch (IOException e) {
@@ -352,6 +350,27 @@ public abstract class AbstractIPSensorSession extends AbstractSensorSession {
 	 *             if a connection problem occurs
 	 */
 	protected abstract boolean onConnect() throws IOException;
+
+	/**
+	 * This method is called if onConnect fails.
+	 */
+	protected void onConnectFailed() {
+		setStatus(SessionStatus.CLOSED);
+		logger.warn("Connection Failed " + host + ":" + port);
+		disconnect();
+		connecting.set(false);
+		this.executor.shutdown();
+		try {
+			socket.close();
+		} catch (IOException e) {
+			logger.debug("Failed closing socket: " + e);
+		}
+		readThread.interrupt();
+		writeThread.interrupt();
+
+
+		return;
+	}
 
 	/**
 	 * Get a factory for MessageParsingStrategy objects

@@ -238,5 +238,10 @@ public abstract class AbstractServerSocketSensorSession extends
 	public void restoreCommands(SessionDTO dto) {
 		logger.info("Cannot restore commands on a passive session");
 	}
+	
+	@Override
+	public String toString() {
+		return "IPServerSession: " + serverSocketPort + " (" + getStatus() + ")";
+	}
 
 }
