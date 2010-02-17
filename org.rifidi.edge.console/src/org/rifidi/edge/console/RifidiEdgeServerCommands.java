@@ -391,6 +391,10 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 		}
 		AbstractSensor<?> reader = readerDAO.getReaderByID(readerid);
 		try {
+			if(reader==null){
+				intp.print("No reader with ID " + readerid + " found");
+				return null;
+			}
 			String sessionID = reader.createSensorSession();
 			intp.println("Session created: " + readerid + ":" + sessionID);
 		} catch (CannotCreateSessionException e) {
