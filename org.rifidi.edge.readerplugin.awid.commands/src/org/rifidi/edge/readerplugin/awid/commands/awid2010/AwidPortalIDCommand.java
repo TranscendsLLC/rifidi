@@ -16,6 +16,7 @@ import java.io.IOException;
 import org.rifidi.edge.core.sensors.commands.Command;
 import org.rifidi.edge.readerplugin.awid.awid2010.AwidSession;
 import org.rifidi.edge.readerplugin.awid.awid2010.communication.commands.AntennaSourceCommand;
+import org.rifidi.edge.readerplugin.awid.awid2010.communication.commands.AntennaSwitchCommand;
 import org.rifidi.edge.readerplugin.awid.awid2010.communication.commands.Gen2PortalIDCommand;
 
 /**
@@ -38,23 +39,24 @@ public class AwidPortalIDCommand extends Command {
 	 */
 	@Override
 	public void run() {
+		AntennaSwitchCommand antennaSwitchCommand = new AntennaSwitchCommand(
+				true);
 		AntennaSourceCommand antennaCommand = new AntennaSourceCommand();
 		Gen2PortalIDCommand command = new Gen2PortalIDCommand();
 		try {
-			if (((AwidSession) super.sensorSession).is3014()) {
-				((AwidSession) super.sensorSession)
-						.sendMessage(antennaCommand);
-				try {
-					// Sleep for 1 second while the reader thinks about the
-					// antenna
-					// command. Can be removed when the Emulator is fixed.
-					Thread.sleep(1000);
-				} catch (InterruptedException e) {
-					// Do nothing.
-				}
-			}
+			((AwidSession) super.sensorSession)
+					.sendMessage(antennaSwitchCommand);
+			// Sleep for 1 second while the reader thinks about the antenna
+			// command. Can be removed when the Emulator is fixed.
+			Thread.sleep(500);
+			((AwidSession) super.sensorSession).sendMessage(antennaCommand);
+			// Sleep for 1 second while the reader thinks about the antenna
+			// command. Can be removed when the Emulator is fixed.
+			Thread.sleep(500);
 			((AwidSession) super.sensorSession).sendMessage(command);
 		} catch (IOException e) {
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
 		}
 
 	}
