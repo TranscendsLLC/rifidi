@@ -1,5 +1,5 @@
 /*
- * Awid2010Sensor.java
+ * AwidSensor.java
  * 
  * Created:     Oct 20th, 2009
  * Project:       Rifidi Edge Server - A middleware platform for RFID applications
@@ -22,7 +22,6 @@ import javax.management.MBeanInfo;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.rifidi.edge.api.rmi.dto.CommandDTO;
 import org.rifidi.edge.api.rmi.dto.SessionDTO;
 import org.rifidi.edge.core.configuration.annotations.JMXMBean;
 import org.rifidi.edge.core.configuration.annotations.Property;
@@ -37,29 +36,29 @@ import org.rifidi.edge.core.services.notification.NotifierService;
 import org.springframework.jms.core.JmsTemplate;
 
 /**
- * The Awid2010 Sensor. It produces Awid2010Sessions.
+ * The Awid Sensor. It produces AwidSessions.
  * 
  * @author Kyle Neumeier - kyle@pramari.com
  * 
  */
 @JMXMBean
-public class Awid2010Sensor extends AbstractSensor<Awid2010Session> {
+public class AwidSensor extends AbstractSensor<AwidSession> {
 
 	/** The logger for this class */
-	private final static Log logger = LogFactory.getLog(Awid2010Sensor.class);
+	private final static Log logger = LogFactory.getLog(AwidSensor.class);
 	/** The IP address of the Awid */
-	private volatile String host = Awid2010DefaultValues.HOST;
+	private volatile String host = AwidDefaultValues.HOST;
 	/** The port of the Awid */
 	private volatile Integer port = Integer
-			.parseInt(Awid2010DefaultValues.PORT);
+			.parseInt(AwidDefaultValues.PORT);
 	/** The maximum number of reconnection attempts before giving up */
 	private volatile Integer maxNumConnectionAttempts = Integer
-			.parseInt(Awid2010DefaultValues.MAX_NUM_RECON_ATTEMPS);
+			.parseInt(AwidDefaultValues.MAX_NUM_RECON_ATTEMPS);
 	/** The time to wait between successive reconnection attempts */
 	private volatile Integer reconnectionInterval = Integer
-			.parseInt(Awid2010DefaultValues.RECON_INTERVAL);
+			.parseInt(AwidDefaultValues.RECON_INTERVAL);
 	/** The session, if it has been created */
-	private final AtomicReference<Awid2010Session> session = new AtomicReference<Awid2010Session>();
+	private final AtomicReference<AwidSession> session = new AtomicReference<AwidSession>();
 	/** True if this sensor has been destroyed */
 	private final AtomicBoolean destroyed = new AtomicBoolean(false);
 	/** Spring JMS template */
@@ -74,10 +73,10 @@ public class Awid2010Sensor extends AbstractSensor<Awid2010Session> {
 	private boolean is3014 = false;
 	/** Mbeaninfo for this class. */
 	public static final MBeanInfo mbeaninfo;
-	private String displayName;
+	private String displayName = "Awid2010";
 	static {
 		AnnotationMBeanInfoStrategy strategy = new AnnotationMBeanInfoStrategy();
-		mbeaninfo = strategy.getMBeanInfo(Awid2010Sensor.class);
+		mbeaninfo = strategy.getMBeanInfo(AwidSensor.class);
 	}
 
 	/**
@@ -85,7 +84,7 @@ public class Awid2010Sensor extends AbstractSensor<Awid2010Session> {
 	 * 
 	 * @param commands
 	 */
-	public Awid2010Sensor(Set<AbstractCommandConfiguration<?>> commands,
+	public AwidSensor(Set<AbstractCommandConfiguration<?>> commands,
 			boolean is3014) {
 		super();
 		this.commands = commands;
@@ -110,7 +109,7 @@ public class Awid2010Sensor extends AbstractSensor<Awid2010Session> {
 	@Override
 	public Map<String, SensorSession> getSensorSessions() {
 		Map<String, SensorSession> retVal = new HashMap<String, SensorSession>();
-		Awid2010Session awidSession = session.get();
+		AwidSession awidSession = session.get();
 		if (awidSession != null) {
 			retVal.put(awidSession.getID(), awidSession);
 		}
@@ -127,7 +126,7 @@ public class Awid2010Sensor extends AbstractSensor<Awid2010Session> {
 	public String createSensorSession() throws CannotCreateSessionException {
 		if (!destroyed.get() && session.get() == null) {
 			Integer sessionID = this.sessionID.incrementAndGet();
-			if (session.compareAndSet(null, new Awid2010Session(this, Integer
+			if (session.compareAndSet(null, new AwidSession(this, Integer
 					.toString(sessionID), host, port, reconnectionInterval,
 					maxNumConnectionAttempts, template, commands,
 					notifierService, is3014))) {
@@ -153,15 +152,12 @@ public class Awid2010Sensor extends AbstractSensor<Awid2010Session> {
 			throws CannotCreateSessionException {
 		if (!destroyed.get() && session.get() == null) {
 			Integer sessionID = Integer.parseInt(sessionDTO.getID());
-			if (session.compareAndSet(null, new Awid2010Session(this, Integer
+			if (session.compareAndSet(null, new AwidSession(this, Integer
 					.toString(sessionID), host, port, reconnectionInterval,
 					maxNumConnectionAttempts, template, commands,
 					notifierService, is3014))) {
-
-				for (CommandDTO command : sessionDTO.getCommands()) {
-					session.get().submit(command.getCommandID(),
-							command.getInterval(), command.getTimeUnit());
-				}
+				
+				this.session.get().restoreCommands(sessionDTO);
 
 				// TODO: remove this once we get AspectJ in here!
 				notifierService.addSessionEvent(this.getID(), Integer
@@ -182,7 +178,7 @@ public class Awid2010Sensor extends AbstractSensor<Awid2010Session> {
 	@Override
 	public void destroySensorSession(String id)
 			throws CannotDestroySensorException {
-		Awid2010Session awidSession = session.get();
+		AwidSession awidSession = session.get();
 		if (awidSession != null && awidSession.getID().equals(id)) {
 			session.set(null);
 			awidSession.killAllCommands();
@@ -205,7 +201,7 @@ public class Awid2010Sensor extends AbstractSensor<Awid2010Session> {
 	protected void destroy() {
 		if (destroyed.compareAndSet(false, true)) {
 			super.destroy();
-			Awid2010Session awidSession = session.get();
+			AwidSession awidSession = session.get();
 			if (awidSession != null) {
 				try {
 					destroySensorSession(awidSession.getID());
@@ -242,7 +238,7 @@ public class Awid2010Sensor extends AbstractSensor<Awid2010Session> {
 			AbstractCommandConfiguration<?> commandConfiguration,
 			Map<?, ?> properties) {
 		if (!destroyed.get()) {
-			Awid2010Session awidSession = session.get();
+			AwidSession awidSession = session.get();
 			if (awidSession != null) {
 				awidSession.suspendCommand(commandConfiguration.getID());
 			}
@@ -288,7 +284,7 @@ public class Awid2010Sensor extends AbstractSensor<Awid2010Session> {
 	/**
 	 * @return the host
 	 */
-	@Property(displayName = "IP Address", description = "IP Address of the Reader", writable = true, type = PropertyType.PT_STRING, category = "connection", defaultValue = Awid2010DefaultValues.HOST, orderValue = 0)
+	@Property(displayName = "IP Address", description = "IP Address of the Reader", writable = true, type = PropertyType.PT_STRING, category = "connection", defaultValue = AwidDefaultValues.HOST, orderValue = 0)
 	public String getHost() {
 		return host;
 	}
@@ -304,7 +300,7 @@ public class Awid2010Sensor extends AbstractSensor<Awid2010Session> {
 	/**
 	 * @return the port
 	 */
-	@Property(displayName = "Port", description = "Port of the Reader", writable = false, type = PropertyType.PT_INTEGER, category = "connection", orderValue = 1, defaultValue = Awid2010DefaultValues.PORT, minValue = "0", maxValue = "65535")
+	@Property(displayName = "Port", description = "Port of the Reader", writable = true, type = PropertyType.PT_INTEGER, category = "connection", orderValue = 1, defaultValue = AwidDefaultValues.PORT, minValue = "0", maxValue = "65535")
 	public Integer getPort() {
 		return port;
 	}
@@ -316,7 +312,7 @@ public class Awid2010Sensor extends AbstractSensor<Awid2010Session> {
 	/**
 	 * @return the maxNumConnectionAttempts
 	 */
-	@Property(displayName = "Maximum Connection Attempts", description = "Upon connection failure, the number of times to attempt to recconnect before giving up. If set to '-1', then try forever", writable = true, type = PropertyType.PT_INTEGER, category = "connection", defaultValue = Awid2010DefaultValues.MAX_NUM_RECON_ATTEMPS, orderValue = 2, minValue = "-1")
+	@Property(displayName = "Maximum Connection Attempts", description = "Upon connection failure, the number of times to attempt to recconnect before giving up. If set to '-1', then try forever", writable = true, type = PropertyType.PT_INTEGER, category = "connection", defaultValue = AwidDefaultValues.MAX_NUM_RECON_ATTEMPS, orderValue = 2, minValue = "-1")
 	public Integer getMaxNumConnectionAttempts() {
 		return maxNumConnectionAttempts;
 	}
@@ -332,7 +328,7 @@ public class Awid2010Sensor extends AbstractSensor<Awid2010Session> {
 	/**
 	 * @return the reconnectionInterval
 	 */
-	@Property(displayName = "Reconnection Interval", description = "Upon connection failure, the time to wait between two connection attempts (ms)", writable = true, type = PropertyType.PT_INTEGER, category = "connection", defaultValue = Awid2010DefaultValues.RECON_INTERVAL, orderValue = 3, minValue = "0")
+	@Property(displayName = "Reconnection Interval", description = "Upon connection failure, the time to wait between two connection attempts (ms)", writable = true, type = PropertyType.PT_INTEGER, category = "connection", defaultValue = AwidDefaultValues.RECON_INTERVAL, orderValue = 3, minValue = "0")
 	public Integer getReconnectionInterval() {
 		return reconnectionInterval;
 	}

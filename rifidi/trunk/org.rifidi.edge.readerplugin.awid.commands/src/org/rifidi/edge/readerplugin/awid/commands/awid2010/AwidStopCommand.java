@@ -14,7 +14,7 @@ package org.rifidi.edge.readerplugin.awid.commands.awid2010;
 import java.io.IOException;
 
 import org.rifidi.edge.core.sensors.commands.Command;
-import org.rifidi.edge.readerplugin.awid.awid2010.Awid2010Session;
+import org.rifidi.edge.readerplugin.awid.awid2010.AwidSession;
 import org.rifidi.edge.readerplugin.awid.awid2010.communication.commands.StopCommand;
 
 /**
@@ -23,9 +23,9 @@ import org.rifidi.edge.readerplugin.awid.awid2010.communication.commands.StopCom
  * @author Kyle Neumeier - kyle@pramari.com
  * 
  */
-public class Awid2010StopCommand extends Command {
+public class AwidStopCommand extends Command {
 
-	public Awid2010StopCommand(String commandID) {
+	public AwidStopCommand(String commandID) {
 		super(commandID);
 	}
 
@@ -38,7 +38,7 @@ public class Awid2010StopCommand extends Command {
 	public void run() {
 		StopCommand command = new StopCommand();
 		try {
-			((Awid2010Session) super.sensorSession).sendMessage(command);
+			((AwidSession) super.sensorSession).sendMessage(command);
 		} catch (IOException e) {
 		}
 

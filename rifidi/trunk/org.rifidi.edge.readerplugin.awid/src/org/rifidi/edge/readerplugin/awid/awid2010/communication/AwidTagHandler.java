@@ -16,7 +16,7 @@ import java.util.Set;
 import org.rifidi.edge.core.services.notification.data.ReadCycle;
 import org.rifidi.edge.core.services.notification.data.ReadCycleMessageCreator;
 import org.rifidi.edge.core.services.notification.data.TagReadEvent;
-import org.rifidi.edge.readerplugin.awid.awid2010.Awid2010Sensor;
+import org.rifidi.edge.readerplugin.awid.awid2010.AwidSensor;
 import org.springframework.jms.core.JmsTemplate;
 
 /**
@@ -36,7 +36,7 @@ public class AwidTagHandler {
 	/** Helper class that sends out tag messages over JMS */
 	private final JmsTemplate jmsTemplate;
 	/** The sensor used to put the ReadCycle on Esper */
-	private final Awid2010Sensor sensor;
+	private final AwidSensor sensor;
 
 	/**
 	 * Constructor
@@ -46,7 +46,7 @@ public class AwidTagHandler {
 	 * @param sensor
 	 *            The sensor used to put the ReadCycle on Esper
 	 */
-	public AwidTagHandler(JmsTemplate jmsTemplate, Awid2010Sensor sensor) {
+	public AwidTagHandler(JmsTemplate jmsTemplate, AwidSensor sensor) {
 		this.jmsTemplate = jmsTemplate;
 		this.sensor = sensor;
 	}

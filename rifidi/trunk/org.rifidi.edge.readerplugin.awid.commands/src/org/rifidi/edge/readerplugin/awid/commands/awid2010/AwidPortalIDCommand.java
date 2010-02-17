@@ -14,7 +14,7 @@ package org.rifidi.edge.readerplugin.awid.commands.awid2010;
 import java.io.IOException;
 
 import org.rifidi.edge.core.sensors.commands.Command;
-import org.rifidi.edge.readerplugin.awid.awid2010.Awid2010Session;
+import org.rifidi.edge.readerplugin.awid.awid2010.AwidSession;
 import org.rifidi.edge.readerplugin.awid.awid2010.communication.commands.AntennaSourceCommand;
 import org.rifidi.edge.readerplugin.awid.awid2010.communication.commands.Gen2PortalIDCommand;
 
@@ -25,9 +25,9 @@ import org.rifidi.edge.readerplugin.awid.awid2010.communication.commands.Gen2Por
  * @author Kyle Neumeier - kyle@pramari.com
  * 
  */
-public class Awid2010PortalIDCommand extends Command {
+public class AwidPortalIDCommand extends Command {
 
-	public Awid2010PortalIDCommand(String commandID) {
+	public AwidPortalIDCommand(String commandID) {
 		super(commandID);
 	}
 
@@ -41,8 +41,8 @@ public class Awid2010PortalIDCommand extends Command {
 		AntennaSourceCommand antennaCommand = new AntennaSourceCommand();
 		Gen2PortalIDCommand command = new Gen2PortalIDCommand();
 		try {
-			if (((Awid2010Session) super.sensorSession).is3014()) {
-				((Awid2010Session) super.sensorSession)
+			if (((AwidSession) super.sensorSession).is3014()) {
+				((AwidSession) super.sensorSession)
 						.sendMessage(antennaCommand);
 				try {
 					// Sleep for 1 second while the reader thinks about the
@@ -53,7 +53,7 @@ public class Awid2010PortalIDCommand extends Command {
 					// Do nothing.
 				}
 			}
-			((Awid2010Session) super.sensorSession).sendMessage(command);
+			((AwidSession) super.sensorSession).sendMessage(command);
 		} catch (IOException e) {
 		}
 

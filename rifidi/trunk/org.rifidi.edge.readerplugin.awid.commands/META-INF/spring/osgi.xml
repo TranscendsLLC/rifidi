@@ -19,7 +19,7 @@
 			<value>org.rifidi.edge.core.configuration.impl.AbstractCommandConfigurationFactory</value>
 		</osgi:interfaces>
 	</osgi:service>
-	
+
 	<osgi:service ref="awid3014PortalId">
 		<osgi:interfaces>
 			<value>org.rifidi.edge.core.configuration.ServiceFactory</value>
@@ -33,6 +33,21 @@
 			<value>org.rifidi.edge.core.configuration.impl.AbstractCommandConfigurationFactory</value>
 		</osgi:interfaces>
 	</osgi:service>
+
+	<osgi:service ref="awid2010PortalIDWithMask">
+		<osgi:interfaces>
+			<value>org.rifidi.edge.core.configuration.ServiceFactory</value>
+			<value>org.rifidi.edge.core.configuration.impl.AbstractCommandConfigurationFactory</value>
+		</osgi:interfaces>
+	</osgi:service>
+
+	<osgi:service ref="awid2010ReadBlockData">
+		<osgi:interfaces>
+			<value>org.rifidi.edge.core.configuration.ServiceFactory</value>
+			<value>org.rifidi.edge.core.configuration.impl.AbstractCommandConfigurationFactory</value>
+		</osgi:interfaces>
+	</osgi:service>
+
 
 </beans>
 	

@@ -54,8 +54,8 @@ public class AwidEndpoint implements IPSessionEndpoint {
 	 * @param readerID
 	 *            The ID of the reader that created the session.
 	 */
-	public AwidEndpoint(final AwidTagHandler tagHandler, final String readerID, boolean is3014) {
-		factory = new IncomingAwidMessageFactory(readerID, is3014);
+	public AwidEndpoint(final AwidTagHandler tagHandler, final String readerID) {
+		factory = new IncomingAwidMessageFactory(readerID);
 		commandsAwaitingAck = new ConcurrentLinkedQueue<AbstractAwidCommand>();
 		this.tagHandler = tagHandler;
 	}

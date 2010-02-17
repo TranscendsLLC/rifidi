@@ -22,6 +22,10 @@ import org.rifidi.edge.readerplugin.awid.awid2010.communication.TagResponseMessa
  * This is a Response message from the Awid that contains a single Gen2 Tag. It
  * assumes that the antenna source is enabled.
  * 
+ * The response from the AWID reader looks like this:
+ * 
+ * 15 20 1E 30 00 00 01 08 15 80 00 80 04 28 19 53 88 yy yy 01 xx xx
+ * 
  * @author Kyle Neumeier - kyle@pramari.com
  * 
  */
@@ -32,15 +36,11 @@ public class Gen2PortalIDResponse extends AbstractAwidMessage implements
 	private final long timestamp;
 	/** The ID this tag was seen on */
 	private final String readerID;
-	/** Is the reader a 3014? */
-	private boolean is3014 = false;
 
-	public Gen2PortalIDResponse(byte[] rawmessage, String readerID,
-			boolean is3014) {
+	public Gen2PortalIDResponse(byte[] rawmessage, String readerID) {
 		super(rawmessage);
 		this.timestamp = System.currentTimeMillis();
 		this.readerID = readerID;
-		this.is3014 = is3014;
 	}
 
 	/*
@@ -49,19 +49,19 @@ public class Gen2PortalIDResponse extends AbstractAwidMessage implements
 	 * @see
 	 * org.rifidi.edge.readerplugin.awid.awid2010.communication.TagResponseMessage
 	 * #getTagReadEvent()
+	 * 
 	 */
 	@Override
 	public TagReadEvent getTagReadEvent() {
 		EPCGeneration2Event gen2Event = new EPCGeneration2Event();
 		gen2Event.setEPCMemory(new BigInteger(Arrays.copyOfRange(
-				super.rawmessage, 5, 17)), 12 * 8);
-		int antenna = 1;
-		if (this.is3014) {
-			antenna = rawmessage[19];
+				super.rawmessage, 5, 17)), 12*8);
+		TagReadEvent tre;
+		if(super.rawmessage.length==22){
+			tre = new TagReadEvent(readerID, gen2Event, super.rawmessage[19], timestamp);
+		}else{
+			tre = new TagReadEvent(readerID, gen2Event, 1, timestamp);
 		}
-		// TODO: Ignore the antenna bit for now
-		TagReadEvent tre = new TagReadEvent(readerID, gen2Event, antenna,
-				timestamp);
 		return tre;
 	}
 

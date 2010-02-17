@@ -1,5 +1,5 @@
 /*
- * Awid2010Session.java
+ * AwidSession.java
  * 
  * Created:     Oct 20th, 2009
  * Project:       Rifidi Edge Server - A middleware platform for RFID applications
@@ -40,14 +40,14 @@ import org.springframework.jms.core.JmsTemplate;
  * @author Kyle Neumeier - kyle@pramari.com
  * 
  */
-public class Awid2010Session extends AbstractPubSubIPSensorSession {
+public class AwidSession extends AbstractPubSubIPSensorSession {
 
 	/** The factory that produces the MessageParsingStrategy */
-	private final Awid2010MessageParsingStrategyFactory parsingStratFac;
+	private final AwidMessageParsingStrategyFactory parsingStratFac;
 	/** The endpoint handles incoming messages */
 	private final AwidEndpoint awidEndpoint;
 	/** The logger for this class */
-	private static final Log logger = LogFactory.getLog(Awid2010Session.class);
+	private static final Log logger = LogFactory.getLog(AwidSession.class);
 	/** Sends out JMS notifications about the state */
 	private final NotifierService notifierService;
 
@@ -75,7 +75,7 @@ public class Awid2010Session extends AbstractPubSubIPSensorSession {
 	 * @param notifierSerivce
 	 *            Helper object to send out notifications about the state
 	 */
-	public Awid2010Session(AbstractSensor<?> sensor, String ID, String host,
+	public AwidSession(AbstractSensor<?> sensor, String ID, String host,
 			int port, int reconnectionInterval, int maxConAttempts,
 			JmsTemplate template,
 			Set<AbstractCommandConfiguration<?>> commandConfigurations,
@@ -83,12 +83,12 @@ public class Awid2010Session extends AbstractPubSubIPSensorSession {
 		super(sensor, ID, host, port, reconnectionInterval, maxConAttempts,
 				template.getDefaultDestination(), template,
 				commandConfigurations);
-		this.parsingStratFac = new Awid2010MessageParsingStrategyFactory();
+		this.parsingStratFac = new AwidMessageParsingStrategyFactory();
 		// create an object to handle incoming tag messages
 		AwidTagHandler tagHandler = new AwidTagHandler(template,
-				(Awid2010Sensor) super.getSensor());
+				(AwidSensor) super.getSensor());
 		// create a new object that listens for incoming messages
-		awidEndpoint = new AwidEndpoint(tagHandler, sensor.getID(), is3014);
+		awidEndpoint = new AwidEndpoint(tagHandler, sensor.getID());
 		// subscribe the endpoint
 		this.subscribe(awidEndpoint);
 		this.notifierService = notifierSerivce;
@@ -116,12 +116,12 @@ public class Awid2010Session extends AbstractPubSubIPSensorSession {
 	public boolean onConnect() throws IOException {
 		// Wait for the welcome message to be received. If it's not recieved
 		// after 10*100 ms, give up
-		for (int i = 0; i < 10; i++) {
+		for (int i = 0; i < 15; i++) {
 			if (awidEndpoint.isConnected()) {
-				continue;
+				break;
 			}
 			try {
-				Thread.sleep(100);
+				Thread.sleep(200);
 			} catch (InterruptedException e) {
 				Thread.currentThread().interrupt();
 			}
@@ -138,6 +138,33 @@ public class Awid2010Session extends AbstractPubSubIPSensorSession {
 	/*
 	 * (non-Javadoc)
 	 * 
+	 * @see
+	 * org.rifidi.edge.core.sensors.sessions.AbstractIPSensorSession#onConnectFailed
+	 * ()
+	 */
+	@Override
+	protected void onConnectFailed() {
+		logger.warn("On Connect Failed. Attempt to connect again.");
+		super.onConnectFailed();
+
+		Thread t = new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+				try {
+					connect();
+				} catch (IOException e) {
+				}
+
+			}
+		});
+		t.start();
+
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.rifidi.edge.core.sensors.SensorSession#getResetCommand()
 	 */
 	@Override
@@ -147,7 +174,7 @@ public class Awid2010Session extends AbstractPubSubIPSensorSession {
 			public void run() {
 				StopCommand command = new StopCommand();
 				try {
-					((Awid2010Session) super.sensorSession)
+					((AwidSession) super.sensorSession)
 							.sendMessage(command);
 				} catch (IOException e) {
 				}

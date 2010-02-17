@@ -11,6 +11,7 @@
  */
 package org.rifidi.edge.readerplugin.awid.awid2010.communication.messages;
 
+import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -28,15 +29,12 @@ public class IncomingAwidMessageFactory {
 	private static final Log logger = LogFactory
 			.getLog(IncomingAwidMessageFactory.class);
 
-	private boolean is3014 = false;
-
 	/**
 	 * @param readerID
 	 */
-	public IncomingAwidMessageFactory(String readerID, boolean is3014) {
+	public IncomingAwidMessageFactory(String readerID) {
 		super();
 		this.readerID = readerID;
-		this.is3014 = is3014;
 	}
 
 	/**
@@ -50,31 +48,57 @@ public class IncomingAwidMessageFactory {
 	 */
 	public AbstractAwidMessage getMessage(byte[] message)
 			throws InvalidAwidMessageException {
+
+		logger.debug("Raw data " + new String(Hex.encodeHex(message)));
+
 		if (message == null || message.length == 0) {
-			logger
-					.warn("Throwing an InvalidAwidMessageException due to null message or 0 length message");
-			throw new InvalidAwidMessageException();
+			// throw new InvalidAwidMessageException();
 		}
 
 		if (message.length == 1) {
 			if (message[0] == (byte) 0x00 || message[0] == (byte) 0xFF) {
 				return new AckMessage(message);
 			} else {
-				logger
-						.warn("Throwing an InvalidAwidMessageException due to malforned acknowledgement");
 				throw new InvalidAwidMessageException();
 			}
 		} else if (message[0] == (byte) 'i' && message[1] == (byte) 'i') {
+			logger.debug("WelcomeMessage");
 			return new WelcomeMessage(message);
-		} else if (message[1] == 0x20 && message[2] == 0x1E) {
-			return new Gen2PortalIDResponse(message, readerID, is3014);
+		} else if (message[1] == 0x20
+				&& (message[2] == 0x1E || message[2] == 0x5E)) {
+			return new Gen2PortalIDResponse(message, readerID);
+		} else if (message[1] == 0x20 && message[2] == 0x0D) {
+			// TODO: this logic does not work. We cannot determine the memory
+			// bank based on the length of the message
+			if (message[0] == 0x13) {
+				return new Gen2ReadBlockDataResponse(message, 0, readerID);
+			} else if (message[0] == 0x1B) {
+				return new Gen2ReadBlockDataResponse(message, 1, readerID);
+			} else if (message[0] == 0x0F) {
+				return new Gen2ReadBlockDataResponse(message, 2, readerID);
+			} else if (message[0] == 0x0C) {
+				return new Gen2ReadBlockDataResponse(message, 3, readerID);
+			}
+			// 0x06 0xFF 0xFF 0x00 0x6F 0xC5
+		} else if (message[0] == 0x06 && message[1] == 0xFF
+				&& message[2] == 0xFF && message[3] == 0x00
+				&& message[4] == 0x6F && message[5] == 0xC5) {
+			// TODO success on output command execution.
+			logger.debug("success on output command execution.");
+
+		} else if (message[0] == 0x06 && message[1] == 0xFF
+				&& message[2] == 0xFF && message[3] == 0xFF
+				&& message[4] == 0x71 && message[5] == 0x35) {
+			// TODO Output command execution failed.
+			logger.warn("Output command execution failed.");
 		} else if (message[1] == (byte) 0xFF && message[2] == 0x1E) {
+			logger.debug("Other " + message[2]);
 			return new PortalIDError(message);
 		} else if (message.length > 3) {
 			String byte0 = Integer.toHexString(message[0]);
 			String byte1 = Integer.toHexString(message[1]);
 			String byte2 = Integer.toHexString(message[2]);
-			logger.debug("Unknown message header: " + byte0 + " " + byte1 + " "
+			logger.warn("Unknown message header: " + byte0 + " " + byte1 + " "
 					+ byte2);
 		}
 		throw new InvalidAwidMessageException();

@@ -24,7 +24,7 @@ import org.rifidi.edge.readerplugin.awid.awid2010.Awid2010SensorFactory;
  */
 public class Awid2010PortalIDCommandConfigurationFactory
 		extends
-		AbstractCommandConfigurationFactory<Awid2010PortalIDCommandConfiguration> {
+		AbstractCommandConfigurationFactory<AwidPortalIDCommandConfiguration> {
 
 	public static final String FACTORY_ID = "Awid2010-Push-Start";
 
@@ -59,7 +59,7 @@ public class Awid2010PortalIDCommandConfigurationFactory
 	 */
 	@Override
 	public MBeanInfo getServiceDescription(String factoryID) {
-		return (MBeanInfo) Awid2010PortalIDCommandConfiguration.mbeaninfo
+		return (MBeanInfo) AwidPortalIDCommandConfiguration.mbeaninfo
 				.clone();
 	}
 
@@ -73,7 +73,7 @@ public class Awid2010PortalIDCommandConfigurationFactory
 	@Override
 	public void createInstance(String serviceID)
 			throws IllegalArgumentException, InvalidStateException {
-		Awid2010PortalIDCommandConfiguration config = new Awid2010PortalIDCommandConfiguration();
+		AwidPortalIDCommandConfiguration config = new AwidPortalIDCommandConfiguration();
 		config.setID(serviceID);
 		config.register(super.getContext(), getReaderFactoryID());
 

@@ -1,7 +1,7 @@
 /*
- * AntennaSourceCommand.java
+ * Gen2ReadBlockDataCommand.java
  * 
- * Created:     Oct 20th, 2009
+ * Created:     Feb 15th, 2010
  * Project:       Rifidi Edge Server - A middleware platform for RFID applications
  *                    http://www.rifidi.org
  *                    http://rifidi.sourceforge.net
@@ -12,27 +12,37 @@
 package org.rifidi.edge.readerplugin.awid.awid2010.communication.commands;
 
 /**
- * This command enables the identification of the antenna in tag messages coming
- * from the awid reader.
+ * Command sent to the Awid reader that provides the ability to read EPC Gen2
+ * tags. Responses are sent back as tags are seen
+ * 
  * 
  * @author Kyle Neumeier - kyle@pramari.com
+ * @author Daniel Gómez - dgomez@idlinksolutions.com
  * 
  */
-public class AntennaSourceCommand extends AbstractAwidCommand {
+public class Gen2ReadBlockDataCommand extends AbstractAwidCommand {
 
 	/**
-	 * 
+	 * @param memoryBank
+	 * 			0x00 Access Code + Kill Code Bank
+	 * 			0x01 EPC bank
+	 * 			0x02 TID bank
+	 * 			0x03 User bank
 	 */
-	public AntennaSourceCommand() {
-		this.rawmessage = new byte[] { 06, 00, 0x53, 01 };
+	public Gen2ReadBlockDataCommand(byte memoryBank) {
+		
+		rawmessage = new byte[] {0x06, 0x20, 0x0D, memoryBank};
 	}
 
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
 	public String toString() {
-		return "Antenna Source Command";
+		return "Gen2 Read Block Data Command";
 	}
 
 }
