@@ -5,12 +5,20 @@ package org.rifidi.edge.readerplugin.motorola.mc9090;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 
+import javax.management.MBeanInfo;
+
+import org.rifidi.edge.api.rmi.dto.CommandDTO;
+import org.rifidi.edge.api.rmi.dto.SessionDTO;
 import org.rifidi.edge.core.configuration.annotations.JMXMBean;
 import org.rifidi.edge.core.configuration.annotations.Property;
 import org.rifidi.edge.core.configuration.annotations.PropertyType;
+import org.rifidi.edge.core.exceptions.CannotCreateSessionException;
 import org.rifidi.edge.core.sensors.SensorSession;
 import org.rifidi.edge.core.sensors.base.AbstractSensor;
+import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
 import org.rifidi.edge.core.services.notification.NotifierService;
 import org.springframework.jms.core.JmsTemplate;
 
@@ -33,26 +41,112 @@ public class MC9090Sensor extends AbstractSensor<MC9090Session> {
 	private MC9090Session session;
 	/** Notifier service to let clients know about events */
 	private NotifierService notifierService;
-
+	/** Flag to check if this reader is destroied. */
+	private AtomicBoolean destroyed = new AtomicBoolean(false);
 	/** The port of the server socket */
 	private Integer serverSocketPort = 51284;
 	/** Maximum number of autonomous readers supported concurrently */
 	private Integer maxNumberAutonomousReaders = 15;
+	/** Provided by spring. */
+	private final Set<AbstractCommandConfiguration<?>> commands;
 
-	/**
-	 * @param template
-	 *            the template to set
-	 */
-	public void setTemplate(JmsTemplate template) {
-		this.template = template;
+	public MC9090Sensor(Set<AbstractCommandConfiguration<?>> commands) {
+		super();
+		this.commands = commands;
 	}
 
-	/**
-	 * @param notifierService
-	 *            the notifierService to set
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.rifidi.edge.core.sensors.base.AbstractSensor#getSensorSessions()
 	 */
-	public void setNotifierService(NotifierService notifierService) {
-		this.notifierService = notifierService;
+	@Override
+	public Map<String, SensorSession> getSensorSessions() {
+		Map<String, SensorSession> map = new HashMap<String, SensorSession>();
+		if (session != null) {
+			map.put(session.getID(), session);
+		}
+		return map;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.core.sensors.base.AbstractSensor#createSensorSession(
+	 * org.rifidi.edge.api.rmi.dto.SessionDTO)
+	 */
+	@Override
+	public synchronized String createSensorSession(SessionDTO sessionDTO)
+			throws CannotCreateSessionException {
+		if (session == null) {
+			sessionID++;
+			session = new MC9090Session(this, Integer.toString(sessionID),
+					template, notifierService, this.serverSocketPort,
+					maxNumberAutonomousReaders, commands);
+			if (sessionDTO.getCommands() != null) {
+				for (CommandDTO command : sessionDTO.getCommands()) {
+					session.submit(command.getCommandID(), command
+							.getInterval(), command.getTimeUnit());
+				}
+			}
+
+			notifierService.addSessionEvent(getID(), Integer
+					.toString(sessionID));
+			return session.getID();
+		}
+		return null;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.core.sensors.base.AbstractSensor#createReaderSession()
+	 */
+	@Override
+	public synchronized String createSensorSession() {
+		if (session == null) {
+			sessionID++;
+			session = new MC9090Session(this, Integer.toString(sessionID),
+					template, notifierService, this.serverSocketPort,
+					maxNumberAutonomousReaders, commands);
+			notifierService.addSessionEvent(getID(), Integer
+					.toString(sessionID));
+			return session.getID();
+		}
+		return null;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.core.sensors.base.AbstractSensor#destroySensorSession
+	 * (java.lang.String)
+	 */
+	@Override
+	public void destroySensorSession(String id) {
+		if (session.getID().equals(id)) {
+			session.disconnect();
+			notifierService.removeSessionEvent(getID(), session.getID());
+			this.session = null;
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.rifidi.edge.core.configuration.RifidiService#destroy()
+	 */
+	@Override
+	protected void destroy() {
+		if (destroyed.compareAndSet(false, true)) {
+			super.destroy();
+			if (session != null) {
+				destroySensorSession(session.getID());
+			}
+		}
 	}
 
 	/*
@@ -71,19 +165,22 @@ public class MC9090Sensor extends AbstractSensor<MC9090Session> {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.sensors.base.AbstractSensor#createReaderSession()
+	 * org.rifidi.edge.core.configuration.services.RifidiService#getMBeanInfo()
 	 */
 	@Override
-	public synchronized MC9090Session createReaderSession() {
-		if (session == null) {
-			sessionID++;
-			session = new MC9090Session(this, Integer.toString(sessionID),
-					template, notifierService, this.serverSocketPort,
-					maxNumberAutonomousReaders);
-			notifierService.addSessionEvent(getID(), Integer
-					.toString(sessionID));
-			return session;
-		}
+	public MBeanInfo getMBeanInfo() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.rifidi.edge.core.sensors.base.AbstractSensor#getDisplayName()
+	 */
+	@Override
+	protected String getDisplayName() {
+		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -91,31 +188,16 @@ public class MC9090Sensor extends AbstractSensor<MC9090Session> {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.sensors.base.AbstractSensor#destroySensorSession
-	 * (org.rifidi.edge.core.sensors.SensorSession)
+	 * org.rifidi.edge.core.sensors.base.AbstractSensor#unbindCommandConfiguration
+	 * (org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration,
+	 * java.util.Map)
 	 */
 	@Override
-	public void destroySensorSession(SensorSession session) {
-		if (session != null) {
-			session.disconnect();
-			notifierService.removeSessionEvent(getID(), session.getID());
-			this.session = null;
-		}
+	public void unbindCommandConfiguration(
+			AbstractCommandConfiguration<?> commandConfiguration,
+			Map<?, ?> properties) {
+		// TODO Auto-generated method stub
 
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.rifidi.edge.core.sensors.base.AbstractSensor#getSensorSessions()
-	 */
-	@Override
-	public Map<String, SensorSession> getSensorSessions() {
-		Map<String, SensorSession> map = new HashMap<String, SensorSession>();
-		if (session != null) {
-			map.put(session.getID(), session);
-		}
-		return map;
 	}
 
 	/**
@@ -148,6 +230,22 @@ public class MC9090Sensor extends AbstractSensor<MC9090Session> {
 	 */
 	public void setMaxNumberAutonomousReaders(Integer maxNumberAutonomousReaders) {
 		this.maxNumberAutonomousReaders = maxNumberAutonomousReaders;
+	}
+
+	/**
+	 * @param notifierService
+	 *            the notifierService to set
+	 */
+	public void setNotifierService(NotifierService notifierService) {
+		this.notifierService = notifierService;
+	}
+
+	/**
+	 * @param template
+	 *            the template to set
+	 */
+	public void setTemplate(JmsTemplate template) {
+		this.template = template;
 	}
 
 }

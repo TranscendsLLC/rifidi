@@ -3,13 +3,17 @@
  */
 package org.rifidi.edge.readerplugin.motorola.mc9090;
 
+import java.util.Set;
+
 import org.rifidi.edge.api.SessionStatus;
 import org.rifidi.edge.core.sensors.base.AbstractSensor;
-import org.rifidi.edge.core.sensors.base.AbstractServerSocketSensorSession;
-import org.rifidi.edge.core.sensors.base.threads.MessageParsingStrategy;
-import org.rifidi.edge.core.sensors.base.threads.MessageParsingStrategyFactory;
-import org.rifidi.edge.core.sensors.base.threads.MessageProcessingStrategy;
-import org.rifidi.edge.core.sensors.base.threads.MessageProcessingStrategyFactory;
+import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
+import org.rifidi.edge.core.sensors.commands.Command;
+import org.rifidi.edge.core.sensors.sessions.AbstractServerSocketSensorSession;
+import org.rifidi.edge.core.sensors.sessions.MessageParsingStrategy;
+import org.rifidi.edge.core.sensors.sessions.MessageParsingStrategyFactory;
+import org.rifidi.edge.core.sensors.sessions.MessageProcessingStrategy;
+import org.rifidi.edge.core.sensors.sessions.MessageProcessingStrategyFactory;
 import org.rifidi.edge.core.services.notification.NotifierService;
 import org.springframework.jms.core.JmsTemplate;
 
@@ -54,9 +58,10 @@ public class MC9090Session extends AbstractServerSocketSensorSession {
 	 */
 	public MC9090Session(AbstractSensor<?> sensor, String ID,
 			JmsTemplate template, NotifierService notifierService,
-			int serverSocketPort, int maxNumSensors) {
+			int serverSocketPort, int maxNumSensors,
+			Set<AbstractCommandConfiguration<?>> commands) {
 		super(sensor, ID, template.getDefaultDestination(), template,
-				serverSocketPort, maxNumSensors);
+				serverSocketPort, maxNumSensors, commands);
 		this.messageParserFactory = new MC9090MessageParsingStategyFactory();
 		this.messageProcessorFactory = new MC9090MessageProcessingStrategyFactory(
 				this);
@@ -98,6 +103,16 @@ public class MC9090Session extends AbstractServerSocketSensorSession {
 		super.setStatus(status);
 		notifierService.sessionStatusChanged(this.sensor.getID(), this.getID(),
 				status);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.rifidi.edge.core.sensors.SensorSession#getResetCommand()
+	 */
+	@Override
+	protected Command getResetCommand() {
+		return null;
 	}
 
 	/**
@@ -151,5 +166,4 @@ public class MC9090Session extends AbstractServerSocketSensorSession {
 		}
 
 	}
-
 }

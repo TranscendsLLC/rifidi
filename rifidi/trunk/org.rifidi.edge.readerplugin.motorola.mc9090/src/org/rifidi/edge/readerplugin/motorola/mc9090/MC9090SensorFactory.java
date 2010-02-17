@@ -3,18 +3,14 @@
  */
 package org.rifidi.edge.readerplugin.motorola.mc9090;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.management.MBeanInfo;
 
-import org.rifidi.edge.core.configuration.ConfigurationType;
-import org.rifidi.edge.core.sensors.base.AbstractSensor;
+import org.rifidi.edge.core.configuration.mbeanstrategies.AnnotationMBeanInfoStrategy;
+import org.rifidi.edge.core.exceptions.InvalidStateException;
 import org.rifidi.edge.core.sensors.base.AbstractSensorFactory;
+import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
 import org.rifidi.edge.core.services.notification.NotifierService;
 import org.springframework.jms.core.JmsTemplate;
 
@@ -37,7 +33,8 @@ public class MC9090SensorFactory extends AbstractSensorFactory<MC9090Sensor> {
 
 	public MC9090SensorFactory() {
 		super();
-		this.readerInfo = (new MC9090Sensor()).getMBeanInfo();
+		AnnotationMBeanInfoStrategy strategy = new AnnotationMBeanInfoStrategy();
+		readerInfo = strategy.getMBeanInfo(MC9090Sensor.class);
 	}
 
 	/**
@@ -87,45 +84,23 @@ public class MC9090SensorFactory extends AbstractSensorFactory<MC9090Sensor> {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.configuration.impl.AbstractServiceFactory#getClazz()
-	 */
-	@Override
-	public Class<MC9090Sensor> getClazz() {
-		return MC9090Sensor.class;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.rifidi.edge.core.configuration.ServiceFactory#getFactoryIDs()
-	 */
-	@Override
-	public List<String> getFactoryIDs() {
-		List<String> ids = new ArrayList<String>();
-		ids.add(FACTORY_ID);
-		return ids;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
 	 * org.rifidi.edge.core.configuration.ServiceFactory#createInstance(java
 	 * .lang.String, java.lang.String)
 	 */
 	@Override
-	public void createInstance(String factoryID, String serviceID) {
-		assert (factoryID.equals(FACTORY_ID));
-		MC9090Sensor instance = new MC9090Sensor();
+	public void createInstance(String serviceID)
+			throws IllegalArgumentException, InvalidStateException {
+		if (serviceID == null) {
+			throw new IllegalArgumentException("ServiceID is null");
+		}
+		if (template == null || notifierService == null) {
+			throw new InvalidStateException("All services are not set");
+		}
+		MC9090Sensor instance = new MC9090Sensor(commands);
 		instance.setID(serviceID);
 		instance.setTemplate((JmsTemplate) template);
 		instance.setNotifierService(notifierService);
-		Set<String> interfaces = new HashSet<String>();
-		interfaces.add(AbstractSensor.class.getName());
-		Map<String, String> parms = new HashMap<String, String>();
-		parms.put("type", ConfigurationType.READER.toString());
-		instance.register(getContext(), interfaces, parms);
-
+		instance.register(getContext(), getFactoryID());
 	}
 
 	/*
@@ -138,6 +113,27 @@ public class MC9090SensorFactory extends AbstractSensorFactory<MC9090Sensor> {
 	@Override
 	public MBeanInfo getServiceDescription(String factoryID) {
 		return this.readerInfo;
+	}
+
+	@Override
+	public void bindCommandConfiguration(
+			AbstractCommandConfiguration<?> commandConfiguration,
+			Map<?, ?> properties) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void unbindCommandConfiguration(
+			AbstractCommandConfiguration<?> commandConfiguration,
+			Map<?, ?> properties) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public String getFactoryID() {
+		return FACTORY_ID;
 	}
 
 }

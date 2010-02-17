@@ -8,7 +8,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.rifidi.edge.core.sensors.SensorSession;
-import org.rifidi.edge.core.sensors.base.threads.MessageProcessingStrategy;
+import org.rifidi.edge.core.sensors.sessions.MessageProcessingStrategy;
 import org.rifidi.edge.core.services.notification.data.DatacontainerEvent;
 import org.rifidi.edge.core.services.notification.data.EPCGeneration2Event;
 import org.rifidi.edge.core.services.notification.data.ReadCycle;

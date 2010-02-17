@@ -5,7 +5,7 @@ package org.rifidi.edge.readerplugin.motorola.mc9090;
 
 import java.util.ArrayList;
 
-import org.rifidi.edge.core.sensors.base.threads.MessageParsingStrategy;
+import org.rifidi.edge.core.sensors.sessions.MessageParsingStrategy;
 
 /**
  * A Strategy that parses messages from the MC9090 Reader. MC9090 message are
