@@ -67,8 +67,10 @@ public class DataCollectorApp {
 					for (EventBean b : arg0) {
 						ArrayList<TagReadEvent> tagReadEvents = new ArrayList<TagReadEvent>();
 						TagReadEvent[] tags = (TagReadEvent[]) b.get("tag");
-						for (TagReadEvent e : tags) {
-							tagReadEvents.add(e);
+						if (tags != null) {
+							for (TagReadEvent e : tags) {
+								tagReadEvents.add(e);
+							}
 						}
 						StartCollectionEvent startEvent = (StartCollectionEvent) (b
 								.get("start"));
@@ -135,7 +137,8 @@ public class DataCollectorApp {
 			String appFolder = "applications";
 			String fileSep = System.getProperty("file.separator");
 			String fileName = "toolcrib-test.log";
-			String path = appFolder	+ fileSep + "toolcrib-test" + fileSep + fileName;
+			String path = appFolder + fileSep + "toolcrib-test" + fileSep
+					+ fileName;
 			FileAppender appender = new RollingFileAppender(layout, path);
 			dataLogger.addAppender(appender);
 		} catch (IOException e) {
