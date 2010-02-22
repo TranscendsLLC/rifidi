@@ -20,6 +20,7 @@ import java.net.Socket;
 import java.util.Set;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.jms.Destination;
@@ -29,6 +30,7 @@ import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.api.SessionStatus;
 import org.rifidi.edge.core.sensors.base.AbstractSensor;
 import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
+import org.rifidi.edge.core.sensors.commands.Command;
 import org.rifidi.edge.core.sensors.messages.ByteMessage;
 import org.rifidi.edge.core.sensors.sessions.threads.ReadThread;
 import org.rifidi.edge.core.sensors.sessions.threads.WriteThread;
@@ -267,34 +269,13 @@ public abstract class AbstractIPSensorSession extends AbstractSensorSession {
 						+ this.getSensor().getID()
 						+ " connected successfully to  " + this.host + ":"
 						+ this.port);
+
+				// TODO: paramaterize the keepalive frequency
+				submit(getKeepAliveCommand(), 10L, TimeUnit.SECONDS);
+
 				// create thread that checks if the write thread dies and
 				// restart it
-				connectionGuardian = new Thread() {
-
-					/*
-					 * (non-Javadoc)
-					 * 
-					 * @see java.lang.Thread#run()
-					 */
-					@Override
-					public void run() {
-						try {
-							readThread.join();
-							// don't try to connect again if we are closing down
-							if (getStatus() != SessionStatus.CLOSED) {
-								setStatus(SessionStatus.CREATED);
-								writeQueue.clear();
-								clearUndelieverdMessages();
-								connect();
-							}
-						} catch (InterruptedException e) {
-							Thread.currentThread().interrupt();
-						} catch (IOException e) {
-							logger.warn("Unable to reconnect.");
-						}
-					}
-
-				};
+				connectionGuardian = new ConnectionGaurdian();
 				connectionGuardian.start();
 				setStatus(SessionStatus.PROCESSING);
 				if (!processing.compareAndSet(false, true)) {
@@ -368,7 +349,6 @@ public abstract class AbstractIPSensorSession extends AbstractSensorSession {
 		readThread.interrupt();
 		writeThread.interrupt();
 
-
 		return;
 	}
 
@@ -393,9 +373,61 @@ public abstract class AbstractIPSensorSession extends AbstractSensorSession {
 	 */
 	protected abstract void clearUndelieverdMessages();
 
+	/**
+	 * This method should return a command that can be used as a test to either
+	 * make sure the TCP/IP connection does not close or to see whether or not
+	 * the connection is still active. By default, the command does nothing.
+	 * Typically the implementation of this should just use some command from
+	 * the reader's API that involves a short status message.
+	 * 
+	 * @return
+	 */
+	protected Command getKeepAliveCommand() {
+		return new Command("Default Keep Alive") {
+			@Override
+			public void run() {
+				// Do nothing
+			}
+		};
+	}
+
 	@Override
 	public String toString() {
 		return "IPSession: " + host + ":" + port + " (" + getStatus() + ")";
+	}
+
+	/**
+	 * A thread that waits for the readthread to die, then attempts to
+	 * reconnect, as long as the status isn't CLOSED
+	 * 
+	 * @author Kyle Neumeier - kyle@pramari.com
+	 * 
+	 */
+	private class ConnectionGaurdian extends Thread {
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see java.lang.Runnable#run()
+		 */
+		@Override
+		public void run() {
+			try {
+				readThread.join();
+				// don't try to connect again if we are closing down
+				if (getStatus() != SessionStatus.CLOSED) {
+					setStatus(SessionStatus.CREATED);
+					writeQueue.clear();
+					clearUndelieverdMessages();
+					connect();
+				}
+			} catch (InterruptedException e) {
+				Thread.currentThread().interrupt();
+			} catch (IOException e) {
+				logger.warn("Unable to reconnect.");
+			}
+		}
+
 	}
 
 }

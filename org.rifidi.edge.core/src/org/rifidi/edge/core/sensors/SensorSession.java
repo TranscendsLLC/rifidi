@@ -137,6 +137,18 @@ public abstract class SensorSession {
 	 *            The command to execute
 	 */
 	public abstract void submit(Command command);
+	
+	/**
+	 * Schedule a command for a repeated execution. This method is intended to be
+	 * used for internal commands (i.e. commands that do not have a
+	 * configuration and thus are not registered in OSGi). Commands submitted
+	 * using this method cannot be persisted, and will not restart automatically
+	 * if the session stops.
+	 * 
+	 * @param command
+	 *            The command to execute
+	 */
+	public abstract void submit(Command command, long interval, TimeUnit unit);
 
 	/**
 	 * This method deletes a command from the session, including the DTO. If the

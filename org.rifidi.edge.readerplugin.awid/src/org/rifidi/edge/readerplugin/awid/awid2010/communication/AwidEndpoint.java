@@ -11,6 +11,7 @@
  */
 package org.rifidi.edge.readerplugin.awid.awid2010.communication;
 
+import java.util.NoSuchElementException;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -68,12 +69,16 @@ public class AwidEndpoint implements IPSessionEndpoint {
 					.getMessage(message.message);
 			if (awidMessage instanceof AckMessage) {
 				AckMessage ackMsg = (AckMessage) awidMessage;
-				if (ackMsg.isSuccessful()) {
-					logger.debug("Command Acknowledge: "
-							+ commandsAwaitingAck.remove());
-				} else {
-					logger.warn("Command Error: "
-							+ commandsAwaitingAck.remove());
+				try {
+					if (ackMsg.isSuccessful()) {
+						logger.debug("Command Acknowledge: "
+								+ commandsAwaitingAck.remove());
+					} else {
+						logger.warn("Command Error: "
+								+ commandsAwaitingAck.remove());
+					}
+				} catch (NoSuchElementException ex) {
+					logger.warn("ACK message received for unknown command");
 				}
 			} else if (awidMessage instanceof WelcomeMessage) {
 				if (isConnected.compareAndSet(false, true)) {
@@ -89,6 +94,7 @@ public class AwidEndpoint implements IPSessionEndpoint {
 
 		} catch (InvalidAwidMessageException e) {
 			logger.warn("Invalid Awid Message received");
+			throw new IllegalStateException(e);
 		}
 
 	}

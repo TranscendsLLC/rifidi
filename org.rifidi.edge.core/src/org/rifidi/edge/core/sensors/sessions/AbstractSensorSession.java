@@ -215,7 +215,7 @@ public abstract class AbstractSensorSession extends SensorSession {
 	@Override
 	protected void submitQueuedCommands() {
 		if (processing.get()) {
-			submit(getResetCommand(), false);
+			submit(getResetCommand(), false, -1, null);
 			while (!queuedCommands.isEmpty()) {
 				CommandExecutor e = queuedCommands.poll();
 				logger.debug("Submitting Queued Command" + e);
@@ -223,7 +223,7 @@ public abstract class AbstractSensorSession extends SensorSession {
 			}
 		}
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -262,15 +262,29 @@ public abstract class AbstractSensorSession extends SensorSession {
 	 */
 	@Override
 	public void submit(Command command) {
-		submit(command, true);
+		submit(command, true, -1, null);
 	}
-	
-	private void submit(Command command, boolean queueIfNotProcessing){
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.core.sensors.SensorSession#submit(org.rifidi.edge.core
+	 * .sensors.commands.Command, long, java.util.concurrent.TimeUnit)
+	 */
+	@Override
+	public void submit(Command command, long interval, TimeUnit unit) {
+		submit(command, true, interval, unit);
+
+	}
+
+	private void submit(Command command, boolean queueIfNotProcessing,
+			long interval, TimeUnit unit) {
 		command.setReaderSession(this);
-		CommandExecutor commandExec = new CommandExecutor(command, this);
+		CommandExecutor commandExec = new CommandExecutor(command, this, interval, unit);;
 		if (processing.get()) {
 			submitExecutor(commandExec);
-		} else if(queueIfNotProcessing){
+		} else if (queueIfNotProcessing) {
 			logger.info("Session not in processing state. "
 					+ "Command will be executed when session connects: "
 					+ command.getCommandID());
@@ -425,18 +439,21 @@ public abstract class AbstractSensorSession extends SensorSession {
 		}
 
 		/**
-		 * Use this constructor for Internal Commands (single shot commands that
-		 * are not saved using a DTO and should not be resubmitted if the
-		 * session stops and is started again)
+		 * Use this constructor for Internal Commands (commands that are not
+		 * saved using a DTO and should not be resubmitted if the session stops
+		 * and is started again)
 		 * 
 		 * @param instance
 		 * @param sensorSession
 		 */
-		public CommandExecutor(Command instance, SensorSession sensorSession) {
+		public CommandExecutor(Command instance, SensorSession sensorSession,
+				Long interval, TimeUnit timeunit) {
 			this.commandID = instance.getCommandID();
 			this.instance = instance;
 			this.sensorSession = sensorSession;
 			this.isInternal = true;
+			this.interval = interval;
+			this.timeunit = timeunit;
 		}
 
 		/**
@@ -478,13 +495,15 @@ public abstract class AbstractSensorSession extends SensorSession {
 			this.instance = null;
 		}
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see java.lang.Object#toString()
 		 */
 		@Override
 		public String toString() {
 			return "CommandExecutor: " + getCommandID() + sensorSession;
 		}
-		
+
 	}
 }

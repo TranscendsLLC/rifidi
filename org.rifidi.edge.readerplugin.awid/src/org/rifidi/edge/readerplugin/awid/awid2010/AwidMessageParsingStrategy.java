@@ -11,6 +11,12 @@
  */
 package org.rifidi.edge.readerplugin.awid.awid2010;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.commons.codec.binary.Hex;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.sensors.sessions.MessageParsingStrategy;
 
 /**
@@ -35,8 +41,11 @@ public class AwidMessageParsingStrategy implements MessageParsingStrategy {
 
 	/** All the bytes seen so far. */
 	private byte[] bytes;
+	private ArrayList<Byte> debugBytes = new ArrayList<Byte>();
 	/** The first byte which normally represents the lengthByte */
 	private byte lengthByte = -1;
+	/** The message byte converted to an int */
+	private int messageLength = -1;
 	/** The second byte which normally represents the typeByte */
 	private byte typeByte = -1;
 	/** bytes seen so far */
@@ -58,6 +67,12 @@ public class AwidMessageParsingStrategy implements MessageParsingStrategy {
 
 	private boolean is3014 = false;
 
+	/** The logger */
+	private static final Log logger = LogFactory
+			.getLog(AwidMessageParsingStrategy.class);
+
+	private static final Log awidlogger = LogFactory.getLog("awid");
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -69,15 +84,23 @@ public class AwidMessageParsingStrategy implements MessageParsingStrategy {
 	public byte[] isMessage(byte message) {
 		// first increment the counter
 		count++;
+		debugBytes.add(message);
+		awidlogger.debug(getMessage(debugBytes));
 		// If this is the first byte of the message
 		if (count == 1) {
 			// if the message is a one-byte ack message
 			if (message == (byte) 0x00 || message == (byte) 0xFF) {
-				reset();
 				return new byte[] { message };
 			}
 			// otherwise, save the length bit
 			lengthByte = message;
+			messageLength = unsignedByteToInt(lengthByte);
+			if (messageLength <= 1) {
+				logger.error("Invalid length: " + messageLength);
+				awidlogger.error("error!");
+				throw new IllegalStateException("Invalid length: "
+						+ messageLength);
+			}
 		}
 		// if this is the second byte of the message
 		else if (count == 2) {
@@ -92,7 +115,7 @@ public class AwidMessageParsingStrategy implements MessageParsingStrategy {
 
 			// otherwise, its a normal message
 			else {
-				bytes = new byte[lengthByte];
+				bytes = new byte[messageLength];
 				bytes[0] = lengthByte;
 				bytes[1] = typeByte;
 			}
@@ -103,9 +126,8 @@ public class AwidMessageParsingStrategy implements MessageParsingStrategy {
 				// add the byte to the array
 				bytes[count - 1] = message;
 				// check to see if we have received everything.
-				if (count == (int) lengthByte) {
+				if (count == messageLength) {
 					byte[] retVal = bytes;
-					reset();
 					return retVal;
 				}
 			}
@@ -119,16 +141,16 @@ public class AwidMessageParsingStrategy implements MessageParsingStrategy {
 				// append every byte to the string builder
 				welcomeMessage.append((char) message);
 				String wm = welcomeMessage.toString();
-				//TODO: Might be a bug here if someone initially connects to a 3014, then tries to connect to a 2010 using the same module. 
-				//It would be stupid if they did do that, but it would lead to some problems.  
+				// TODO: Might be a bug here if someone initially connects to a
+				// 3014, then tries to connect to a 2010 using the same module.
+				// It would be stupid if they did do that, but it would lead to
+				// some problems.
 				if (!is3014) {
 					if (wm.endsWith(AWID_2010_WELCOME_STRING_ENDING)) {
-						reset();
 						return wm.getBytes();
 					}
 				} else {
 					if (wm.endsWith(AWID_3014_WELCOME_STRING_ENDING)) {
-						reset();
 						return wm.getBytes();
 					}
 				}
@@ -138,15 +160,29 @@ public class AwidMessageParsingStrategy implements MessageParsingStrategy {
 		return null;
 	}
 
-	/**
-	 * Resest the state back to empty
-	 */
-	private void reset() {
-		bytes = null;
-		lengthByte = -1;
-		typeByte = -1;
-		count = 0;
-		isWelcomeMessage = false;
-		welcomeMessage = new StringBuilder();
+	private int unsignedByteToInt(byte b) {
+		return (int) b & 0xFF;
 	}
+	
+	private String getMessage(List<Byte> message){
+		StringBuilder sb = new StringBuilder();
+		for(byte b : message){
+			String s = new String(Hex.encodeHex(new byte[]{b}));
+			sb.append(s);
+			sb.append(" ");
+		}
+		return sb.toString();
+	}
+	
+	private String getMessage(byte[] message){
+		StringBuilder sb = new StringBuilder();
+		for(byte b : message){
+			String s = new String(Hex.encodeHex(new byte[]{b}));
+			sb.append(s);
+			sb.append(" ");
+		}
+		return sb.toString();
+	}
+	
+	
 }

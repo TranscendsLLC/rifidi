@@ -17,7 +17,7 @@ package org.rifidi.edge.core.sensors.sessions;
 
 /**
  * This interface allows sensor plugins to implement the functionality to
- * determine what constitutes a logical message from the sensor
+ * determine what constitutes a logical message from the sensor. 
  * 
  * @author Kyle Neumeier - kyle@pramari.com
  * 
@@ -26,7 +26,7 @@ public interface MessageParsingStrategy {
 
 	/**
 	 * This method is called each time a new byte is read. It will return the
-	 * full message if a complete message has arrived, other wise null.
+	 * full message if a complete message has arrived, otherwise null.
 	 * 
 	 * @param message
 	 * @return the message or null
