@@ -44,7 +44,7 @@ public class ReadThread implements Runnable {
 	/** The input stream the thread reads from. */
 	private InputStream inputStream;
 	/** Message Parser used in this thread */
-	private MessageParsingStrategy messageParser;
+	private MessageParsingStrategyFactory messageParserFactory;
 	/** Message Processor to be used in this thread */
 	private MessageProcessingStrategy messageProcessor;
 
@@ -62,9 +62,9 @@ public class ReadThread implements Runnable {
 			MessageParsingStrategyFactory messageParserFactory,
 			MessageProcessingStrategyFactory messageProcessorFactory) {
 		this.inputStream = inputStream;
-		this.messageParser = messageParserFactory.createMessageParser();
 		this.messageProcessor = messageProcessorFactory
 				.createMessageProcessor();
+		this.messageParserFactory = messageParserFactory;
 	}
 
 	/*
@@ -76,7 +76,10 @@ public class ReadThread implements Runnable {
 	public void run() {
 		logger.debug("Starting Read Thread");
 		try {
+			MessageParsingStrategy messageParser = this.messageParserFactory
+					.createMessageParser();
 			while (!Thread.interrupted()) {
+
 				int input = inputStream.read();
 				if (input == -1) {
 					break;
@@ -84,11 +87,12 @@ public class ReadThread implements Runnable {
 				byte[] message = messageParser.isMessage((byte) input);
 				if (message != null) {
 					messageProcessor.processMessage(message);
+					messageParser = messageParserFactory.createMessageParser();
 				}
 			}
 		} catch (IOException e) {
 			logger.error(e);
-		}finally{
+		} finally {
 			logger.debug("Exiting read thread");
 		}
 	}

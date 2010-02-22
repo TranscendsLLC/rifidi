@@ -49,7 +49,7 @@ public class IncomingAwidMessageFactory {
 	public AbstractAwidMessage getMessage(byte[] message)
 			throws InvalidAwidMessageException {
 
-		logger.debug("Raw data " + new String(Hex.encodeHex(message)));
+		//logger.debug("Raw data " + new String(Hex.encodeHex(message)));
 
 		if (message == null || message.length == 0) {
 			// throw new InvalidAwidMessageException();
@@ -64,6 +64,9 @@ public class IncomingAwidMessageFactory {
 		} else if (message[0] == (byte) 'i' && message[1] == (byte) 'i') {
 			logger.debug("WelcomeMessage");
 			return new WelcomeMessage(message);
+		} else if(message[1]==0x00 && message[2]==0x0B){
+			logger.debug("Keep Alieve Ack");
+			return new ReaderStatusMessage(message);
 		} else if (message[1] == 0x20
 				&& (message[2] == 0x1E || message[2] == 0x5E)) {
 			return new Gen2PortalIDResponse(message, readerID);
@@ -95,12 +98,11 @@ public class IncomingAwidMessageFactory {
 			logger.debug("Other " + message[2]);
 			return new PortalIDError(message);
 		} else if (message.length > 3) {
-			String byte0 = Integer.toHexString(message[0]);
-			String byte1 = Integer.toHexString(message[1]);
-			String byte2 = Integer.toHexString(message[2]);
-			logger.warn("Unknown message header: " + byte0 + " " + byte1 + " "
-					+ byte2);
+			String s = new String(Hex.encodeHex(message)).toUpperCase();
+			logger.warn("Unknown message: " + s);
 		}
-		throw new InvalidAwidMessageException();
+		throw new InvalidAwidMessageException("Unknown Message: "
+				+ new String(Hex.encodeHex(message)));
+
 	}
 }

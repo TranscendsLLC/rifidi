@@ -28,6 +28,7 @@ import org.rifidi.edge.core.services.notification.NotifierService;
 import org.rifidi.edge.readerplugin.awid.awid2010.communication.AwidEndpoint;
 import org.rifidi.edge.readerplugin.awid.awid2010.communication.AwidTagHandler;
 import org.rifidi.edge.readerplugin.awid.awid2010.communication.commands.AbstractAwidCommand;
+import org.rifidi.edge.readerplugin.awid.awid2010.communication.commands.ReaderStatusCommand;
 import org.rifidi.edge.readerplugin.awid.awid2010.communication.commands.StopCommand;
 import org.springframework.jms.core.JmsTemplate;
 
@@ -177,8 +178,32 @@ public class AwidSession extends AbstractPubSubIPSensorSession {
 					((AwidSession) super.sensorSession)
 							.sendMessage(command);
 				} catch (IOException e) {
+					logger.warn("IOException on stop command");
 				}
 
+			}
+		};
+	}
+
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.sensors.sessions.AbstractIPSensorSession#getKeepAliveCommand()
+	 */
+	@Override
+	protected Command getKeepAliveCommand() {
+		return new Command("AWIDKeepAliveCommand") {
+			
+			@Override
+			public void run() {
+				ReaderStatusCommand command = new ReaderStatusCommand();
+				try{
+					if(logger.isDebugEnabled()){
+						logger.debug("AWID KEEP ALIVE");
+					}
+					((AwidSession)super.sensorSession).sendMessage(command);
+				}catch(IOException e){
+					logger.warn("IOException on keepalive");
+				}
+				
 			}
 		};
 	}
