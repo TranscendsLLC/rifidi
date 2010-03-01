@@ -51,7 +51,7 @@ public class AlienAutonomousSensor extends
 	/** The session for this reader */
 	private volatile AtomicReference<AlienAutonomousSensorSession> session = new AtomicReference<AlienAutonomousSensorSession>();
 	/** Flag to check if this reader is destroied. */
-	private AtomicBoolean destroied = new AtomicBoolean(false);
+	private AtomicBoolean destroyed = new AtomicBoolean(false);
 	/** The template to use to send tags */
 	private volatile JmsTemplate template;
 	/** Notifier Service */
@@ -64,13 +64,14 @@ public class AlienAutonomousSensor extends
 	private volatile Integer maxNumberAutonomousReaders = 15;
 	/** Provided by spring. */
 	private final Set<AbstractCommandConfiguration<?>> commands;
-	private String displayName;
+	private String displayName = "Alien Autonomous";
 	/** Mbeaninfo for this class. */
 	public static final MBeanInfo mbeaninfo;
-	static{
+	static {
 		AnnotationMBeanInfoStrategy strategy = new AnnotationMBeanInfoStrategy();
 		mbeaninfo = strategy.getMBeanInfo(AlienAutonomousSensor.class);
 	}
+
 	/**
 	 * Constructor.
 	 */
@@ -103,7 +104,7 @@ public class AlienAutonomousSensor extends
 	 */
 	@Override
 	public void applyPropertyChanges() {
-		//Nothing to do here.
+		// Nothing to do here.
 
 	}
 
@@ -121,9 +122,11 @@ public class AlienAutonomousSensor extends
 			if (session.compareAndSet(null, new AlienAutonomousSensorSession(
 					this, Integer.toString(id), template, notifierService,
 					serverSocketPort, maxNumberAutonomousReaders, commands))) {
-				for (CommandDTO command : sessionDTO.getCommands()) {
-					session.get().submit(command.getCommandID(),
-							command.getInterval(), command.getTimeUnit());
+				if (sessionDTO.getCommands() != null) {
+					for (CommandDTO command : sessionDTO.getCommands()) {
+						session.get().submit(command.getCommandID(),
+								command.getInterval(), command.getTimeUnit());
+					}
 				}
 				notifierService.addSessionEvent(getID(), id.toString());
 				return id.toString();
@@ -220,7 +223,7 @@ public class AlienAutonomousSensor extends
 	 */
 	@Override
 	protected void destroy() {
-		if (destroied.compareAndSet(false, true)) {
+		if (destroyed.compareAndSet(false, true)) {
 			super.destroy();
 			AlienAutonomousSensorSession aliensession = session.get();
 			if (aliensession != null) {
@@ -228,23 +231,19 @@ public class AlienAutonomousSensor extends
 			}
 		}
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.rifidi.edge.core.sensors.base.AbstractSensor#getDisplayName()
 	 */
 	@Override
-	@Property(displayName="Display Name", 
-			description="Logical Name of Reader",
-			writable=true,
-			type=PropertyType.PT_STRING,
-			category="connection",
-			defaultValue="Alien",
-			orderValue=0)
+	@Property(displayName = "Display Name", description = "Logical Name of Reader", writable = true, type = PropertyType.PT_STRING, category = "connection", defaultValue = "Alien", orderValue = 0)
 	public String getDisplayName() {
 		return displayName;
 	}
-	
-	public void setDisplayName(String displayName){
+
+	public void setDisplayName(String displayName) {
 		this.displayName = displayName;
 	}
 
@@ -284,12 +283,14 @@ public class AlienAutonomousSensor extends
 		this.maxNumberAutonomousReaders = maxNumberAutonomousReaders;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.rifidi.edge.core.configuration.RifidiService#getMBeanInfo()
 	 */
 	@Override
 	public MBeanInfo getMBeanInfo() {
-		return (MBeanInfo)mbeaninfo.clone();
+		return (MBeanInfo) mbeaninfo.clone();
 	}
 
 }

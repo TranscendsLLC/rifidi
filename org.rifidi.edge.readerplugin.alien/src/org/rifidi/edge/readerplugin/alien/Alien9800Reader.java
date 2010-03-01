@@ -21,6 +21,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
@@ -86,7 +88,7 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 	private AtomicInteger sessionID = new AtomicInteger(0);
 	/** service used to send notifications */
 	private volatile NotifierService notifierService;
-	private String displayName="Alien";
+	private String displayName = "Alien";
 	/**
 	 * READER PROPERTIES - SETTABE, SET ON CONNECTION
 	 */
@@ -350,29 +352,25 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 		return ret;
 	}
 
-
 	/*
 	 * JMX PROPERTY GETTER/SETTERS
 	 */
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.rifidi.edge.core.sensors.base.AbstractSensor#getDisplayName()
 	 */
 	@Override
-	@Property(displayName="Display Name", 
-			description="Logical Name of Reader",
-			writable=true,
-			type=PropertyType.PT_STRING,
-			category="connection",
-			defaultValue="Alien",
-			orderValue=0)
+	@Property(displayName = "Display Name", description = "Logical Name of Reader", writable = true, type = PropertyType.PT_STRING, category = "connection", defaultValue = "Alien", orderValue = 0)
 	public String getDisplayName() {
 		return displayName;
 	}
-	
-	public void setDisplayName(String displayName){
+
+	public void setDisplayName(String displayName) {
 		this.displayName = displayName;
 	}
+
 	/**
 	 * @return the IPADDRESS
 	 */
@@ -685,14 +683,27 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 	@Override
 	@Operation(description = "Apply all property changes to reader")
 	public synchronized void applyPropertyChanges() {
+		applyPropertyChanges(this.propCommandsToBeExecuted, false);
+	}
+
+	public synchronized boolean applyPropertyChanges(
+			LinkedBlockingQueue<AlienCommandObjectWrapper> propCommandsToBeExecuted,
+			boolean block) {
 		// TODO: may need to synchnonize the hashmap before I clear it?
 		Alien9800ReaderSession aliensession = session.get();
 		if (aliensession != null) {
 			ArrayList<AlienCommandObjectWrapper> commands = new ArrayList<AlienCommandObjectWrapper>();
-			this.propCommandsToBeExecuted.drainTo(commands);
+			propCommandsToBeExecuted.drainTo(commands);
 			AlienPropertyCommand command = new AlienPropertyCommand("",
 					readerProperties, commands);
-			aliensession.submit(command);
+			if (block) {
+				return aliensession.submitAndBlock(command, 2, TimeUnit.SECONDS);
+
+			} else {
+				aliensession.submit(command);
+				return true;
+			}
 		}
+		return false;
 	}
 }
