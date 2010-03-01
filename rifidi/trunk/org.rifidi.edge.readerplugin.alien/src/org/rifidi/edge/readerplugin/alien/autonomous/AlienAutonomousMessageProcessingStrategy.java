@@ -77,6 +77,9 @@ public class AlienAutonomousMessageProcessingStrategy implements
 	public void processMessage(byte[] byteMessage) {
 		String rawMessage = new String(byteMessage);
 		AlienMessage message = new AlienMessage(rawMessage);
+		if (logger.isDebugEnabled()) {
+			logger.debug("Tag: " + message);
+		}
 		Set<TagReadEvent> tagReadEvents = new HashSet<TagReadEvent>();
 		for (AlienTag tag : message.getTagList()) {
 			tagReadEvents.add(tagReadEventFactory.getTagReadEvent(tag));

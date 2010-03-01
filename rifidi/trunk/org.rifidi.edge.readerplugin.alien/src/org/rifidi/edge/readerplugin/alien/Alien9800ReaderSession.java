@@ -16,7 +16,9 @@
 package org.rifidi.edge.readerplugin.alien;
 
 import java.io.IOException;
+import java.util.BitSet;
 import java.util.Set;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.logging.Log;
@@ -27,8 +29,12 @@ import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
 import org.rifidi.edge.core.sensors.commands.Command;
 import org.rifidi.edge.core.sensors.messages.ByteMessage;
 import org.rifidi.edge.core.sensors.sessions.MessageParsingStrategyFactory;
+import org.rifidi.edge.core.sensors.sessions.interfaces.CannotExecuteException;
+import org.rifidi.edge.core.sensors.sessions.interfaces.GPIOController;
 import org.rifidi.edge.core.sensors.sessions.poll.AbstractPollIPSensorSession;
 import org.rifidi.edge.core.services.notification.NotifierService;
+import org.rifidi.edge.readerplugin.alien.commandobject.AlienCommandObjectWrapper;
+import org.rifidi.edge.readerplugin.alien.commandobject.AlienGetCommandObject;
 import org.rifidi.edge.readerplugin.alien.commands.internal.AlienResetCommand;
 import org.springframework.jms.core.JmsTemplate;
 
@@ -36,9 +42,11 @@ import org.springframework.jms.core.JmsTemplate;
  * A session that connects to an Alien9800Reader
  * 
  * @author Jochen Mader - jochen@pramari.com
+ * @author Kyle Neumeier - kyle@pramari.com
  * 
  */
-public class Alien9800ReaderSession extends AbstractPollIPSensorSession {
+public class Alien9800ReaderSession extends AbstractPollIPSensorSession
+		implements GPIOController {
 	/** Logger for this class. */
 	private static final Log logger = LogFactory
 			.getLog(Alien9800ReaderSession.class);
@@ -270,4 +278,57 @@ public class Alien9800ReaderSession extends AbstractPollIPSensorSession {
 		return retVal;
 
 	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.core.sensors.sessions.interfaces.GPIOController#setOutputPort
+	 * (BitSet)
+	 */
+	@Override
+	public void setOutputPort(BitSet ports) {
+		int value = 0;
+		for (int i = 0; i < ports.length(); i++) {
+			int bit = ports.get(i) ? 1 : 0;
+			value = value | bit << i;
+		}
+		if (value > 255) {
+			throw new IllegalArgumentException("No more than 8 ports allowed");
+		}
+		((Alien9800Reader) this.getSensor()).setExternalOutput(value);
+		((Alien9800Reader) this.getSensor()).applyPropertyChanges();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.core.sensors.sessions.interfaces.GPIOController#testInputPort
+	 * (int)
+	 */
+	@Override
+	public boolean testInputPort(int port) throws CannotExecuteException {
+		LinkedBlockingQueue<AlienCommandObjectWrapper> commandObj = new LinkedBlockingQueue<AlienCommandObjectWrapper>();
+		commandObj.add(new AlienCommandObjectWrapper(
+				Alien9800Reader.PROP_EXTERNAL_INPUT, new AlienGetCommandObject(
+						COMMAND_EXTERNAL_INPUT)));
+		boolean executed = ((Alien9800Reader) this.getSensor())
+				.applyPropertyChanges(commandObj, true);
+		if (executed) {
+			int external = ((Alien9800Reader) this.getSensor())
+					.getExternalInput();
+			// create a mask by bitshifting 1 port number of bits
+			int mask = 1 << port;
+			// if the mask AND the bitmap returned from the alien reader is
+			// greater than 1, then the bit specified by 'port' is high
+			return (external & mask) > 0;
+
+		} else {
+			throw new CannotExecuteException(
+					"The GPI command may not have executed");
+		}
+
+	}
+
 }
