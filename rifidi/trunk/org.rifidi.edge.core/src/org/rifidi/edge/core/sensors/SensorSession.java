@@ -137,10 +137,10 @@ public abstract class SensorSession {
 	 *            The command to execute
 	 */
 	public abstract void submit(Command command);
-	
+
 	/**
-	 * Schedule a command for a repeated execution. This method is intended to be
-	 * used for internal commands (i.e. commands that do not have a
+	 * Schedule a command for a repeated execution. This method is intended to
+	 * be used for internal commands (i.e. commands that do not have a
 	 * configuration and thus are not registered in OSGi). Commands submitted
 	 * using this method cannot be persisted, and will not restart automatically
 	 * if the session stops.
@@ -149,6 +149,31 @@ public abstract class SensorSession {
 	 *            The command to execute
 	 */
 	public abstract void submit(Command command, long interval, TimeUnit unit);
+
+	/**
+	 * Submit a command for a one-time execution. This method is intended to be
+	 * used for internal commands (i.e. commands that do not have a
+	 * configuration and thus are not registered in OSGi). Commands submitted
+	 * using this method cannot be persisted, and will not restart automatically
+	 * if the session stops.
+	 * 
+	 * This method will block until the command has finished its execution or
+	 * will throw a TimeoutException if the given amount of time has expired
+	 * before the command finished.
+	 * 
+	 * @param command
+	 *            The command to execute
+	 * @param timeout
+	 *            The amount of time to wait. If -1, wait forever before
+	 *            throwing a TimoutException
+	 * @param TimeUnit
+	 *            The unit of time used with timeout
+	 * @return true if the command returned. False if the command was not
+	 *         submitted or did not finish executing
+	 * 
+	 */
+	public abstract boolean submitAndBlock(Command command, long timeout,
+			TimeUnit unit);
 
 	/**
 	 * This method deletes a command from the session, including the DTO. If the

@@ -318,23 +318,60 @@ public abstract class AbstractSensor<T extends SensorSession> extends
 		for (SensorSession s : this.getSensorSessions().values()) {
 			sessionDTOs.add(s.getDTO());
 		}
-		ReaderDTO dto = new ReaderDTO(readerID, factoryID, attrs, sessionDTOs, getDisplayName());
+		ReaderDTO dto = new ReaderDTO(readerID, factoryID, attrs, sessionDTOs,
+				getDisplayName());
 		return dto;
 	}
 
 	/**
 	 * Register the reader to OSGi.
 	 * 
+	 * Registers the service with the following params:
+	 * <pre>
+	 * type - "reader"
+	 * reader - the reader type supplied as an argument
+	 * serviceid - the service ID of the reader
+	 * </pre>
+	 * 
 	 * @param context
+	 *            The Bundlecontext to use
 	 * @param readerType
+	 *            The Type of reader to register it as	 
 	 */
 	public void register(BundleContext context, String readerType) {
+		register(context, readerType, new HashMap<String, String>());
+	}
+
+	/**
+	 * Register the reader to OSGi.
+	 * 
+	 * Registers the service with the following params:
+	 * <pre>
+	 * type - "reader"
+	 * reader - the reader type supplied as an argument
+	 * serviceid - the service ID of the reader
+	 * </pre>
+	 * 
+	 * @param context
+	 *            The Bundlecontext to use
+	 * @param readerType
+	 *            The Type of reader to register it as
+	 * @param filterParams
+	 *            Any additional OSGi filter params to use when registering the
+	 *            service
+	 */
+	public void register(BundleContext context, String readerType,
+			Map<String, String> filterParams) {
 		Map<String, String> parms = new HashMap<String, String>();
 		parms.put("type", ConfigurationType.READER.toString());
 		parms.put("reader", readerType);
+		parms.put("serviceid", getID());
+		if (filterParams != null)
+			parms.putAll(filterParams);
 		Set<String> interfaces = new HashSet<String>();
 		interfaces.add(AbstractSensor.class.getName());
 		register(context, interfaces, parms);
+
 	}
 
 	/*
@@ -348,4 +385,11 @@ public abstract class AbstractSensor<T extends SensorSession> extends
 		receivers.clear();
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "Sensor: " + getID();
+	}
 }

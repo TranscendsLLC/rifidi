@@ -21,10 +21,12 @@ import java.util.List;
 import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -269,6 +271,49 @@ public abstract class AbstractSensorSession extends SensorSession {
 	 * (non-Javadoc)
 	 * 
 	 * @see
+	 * org.rifidi.edge.core.sensors.SensorSession#submitAndBlock(org.rifidi.
+	 * edge.core.sensors.commands.Command, long, java.util.concurrent.TimeUnit)
+	 */
+	@Override
+	public boolean submitAndBlock(Command command, long timeout, TimeUnit unit) {
+		// submit the command for execution
+		CommandExecutor ex = submit(command, true, -1, null);
+		try {
+			// if the command was submitted, then we have a non-null future
+			if (ex.future != null) {
+				// if we have a timeout
+				if (timeout > 0)
+					ex.future.get(timeout, unit);
+				// otherwise wait forever
+				else
+					ex.future.get();
+
+				// if everything went ok, return true;
+				return true;
+			} else {
+				logger.warn("Cannot wait on command " + command.getCommandID()
+						+ " because the session is not "
+						+ "in the processing state");
+			}
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
+		} catch (ExecutionException e) {
+			logger.warn("Command " + command.getCommandID()
+					+ " was interrupted before it finished executing", e);
+		} catch (TimeoutException e) {
+			logger.warn("Timed out waiting on command "
+					+ command.getCommandID(), e);
+		}
+		// For some reason, the command was not submitted, we timed out, or it
+		// was canceled before it executed. return false.
+		return false;
+
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
 	 * org.rifidi.edge.core.sensors.SensorSession#submit(org.rifidi.edge.core
 	 * .sensors.commands.Command, long, java.util.concurrent.TimeUnit)
 	 */
@@ -278,10 +323,11 @@ public abstract class AbstractSensorSession extends SensorSession {
 
 	}
 
-	private void submit(Command command, boolean queueIfNotProcessing,
-			long interval, TimeUnit unit) {
+	private CommandExecutor submit(Command command,
+			boolean queueIfNotProcessing, long interval, TimeUnit unit) {
 		command.setReaderSession(this);
-		CommandExecutor commandExec = new CommandExecutor(command, this, interval, unit);;
+		CommandExecutor commandExec = new CommandExecutor(command, this,
+				interval, unit);
 		if (processing.get()) {
 			submitExecutor(commandExec);
 		} else if (queueIfNotProcessing) {
@@ -290,6 +336,7 @@ public abstract class AbstractSensorSession extends SensorSession {
 					+ command.getCommandID());
 			this.queuedCommands.add(commandExec);
 		}
+		return commandExec;
 	}
 
 	/**
@@ -316,7 +363,7 @@ public abstract class AbstractSensorSession extends SensorSession {
 				logger.info("Executing single shot command: "
 						+ ex.getCommandID());
 			}
-			executor.execute(ex);
+			ex.future = executor.schedule(ex, 0, TimeUnit.MILLISECONDS);
 		}
 		if (!ex.isInternal) {
 			runningCommands.add(ex);
