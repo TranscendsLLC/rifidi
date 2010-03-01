@@ -5,6 +5,7 @@ package com.csc.rfid.toolcrib.test;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.BitSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
@@ -16,6 +17,11 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
 import org.apache.log4j.RollingFileAppender;
+import org.rifidi.edge.core.daos.ReaderDAO;
+import org.rifidi.edge.core.sensors.SensorSession;
+import org.rifidi.edge.core.sensors.base.AbstractSensor;
+import org.rifidi.edge.core.sensors.sessions.interfaces.CannotExecuteException;
+import org.rifidi.edge.core.sensors.sessions.interfaces.GPIOController;
 import org.rifidi.edge.core.services.esper.EsperManagementService;
 import org.rifidi.edge.core.services.notification.data.TagReadEvent;
 
@@ -40,6 +46,7 @@ public class DataCollectorApp {
 	private final List<TestRunData> data = new ArrayList<TestRunData>();
 	private Logger dataLogger;
 	private final Log logger = LogFactory.getLog(DataCollectorApp.class);
+	private ReaderDAO readerDAO;
 
 	public void start() {
 		configureLogger();
@@ -79,6 +86,22 @@ public class DataCollectorApp {
 						data.add(testRun);
 						dataLogger.debug(testRun.getPrintString());
 						logger.info(testRun.getPrintString());
+						BitSet ports = new BitSet();
+						
+						if(tags!=null && tags.length>0){
+							ports.set(0);
+						}else{
+							ports.clear(0);
+						}
+						getGPIOController().setOutputPort(ports);
+						try {
+							if(getGPIOController().testInputPort(1)){
+								System.out.println("port 1 is high");
+							}else{
+								System.out.println("port 1 is low");
+							}
+						} catch (CannotExecuteException e) {
+						}
 					}
 				}
 
@@ -127,6 +150,27 @@ public class DataCollectorApp {
 	public void setEsperService(EsperManagementService esperService) {
 		this.esperService = esperService;
 	}
+
+	/**
+	 * @param sensor the sensor to set
+	 */
+	public void setReaderDAO(ReaderDAO readerDAO) {
+		this.readerDAO = readerDAO;
+	}
+	
+	public GPIOController getGPIOController(){
+		if(readerDAO!=null){
+			AbstractSensor<?> reader = readerDAO.getReaderByID("Alien_1");
+			if(reader!=null){
+				for(SensorSession session : reader.getSensorSessions().values()){
+					if(session instanceof GPIOController)
+						return (GPIOController)session;
+				}
+			}
+		}
+		return null;
+	}
+	
 
 	private void configureLogger() {
 		try {

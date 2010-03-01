@@ -10,6 +10,7 @@
 	<bean id="rfidapp" class="com.csc.rfid.toolcrib.test.DataCollectorApp"
 		init-method="start" destroy-method="stop">
 		<property name="esperService" ref="esperManagementService" />
+		<property name="readerDAO" ref="readerDAO" />
 	</bean>
 
 	<!-- Create the CommandProivder object and inject the db application -->
@@ -24,6 +25,9 @@
 	-->
 	<osgi:reference id="esperManagementService"
 		interface="org.rifidi.edge.core.services.esper.EsperManagementService" />
+
+	<osgi:reference id="readerDAO"
+		interface="org.rifidi.edge.core.daos.ReaderDAO" />
 
 	<!--
 		Register the command provider service in the OSGi registry. This
