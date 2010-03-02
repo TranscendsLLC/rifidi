@@ -14,6 +14,8 @@ package org.rifidi.edge.core.services.notification.data;
 
 import java.math.BigInteger;
 
+import org.apache.commons.codec.binary.Hex;
+
 /**
  * A class that represnets an EPC Class 1 Gen 2 tag
  * 
@@ -161,7 +163,8 @@ public class EPCGeneration2Event extends EPCGeneration1Event {
 	 */
 	@Override
 	public void setEPCMemory(BigInteger memBank, Integer length) {
-		hex = memBank.toString(16);
+		//hex = memBank.toString(16);
+		hex = new String(Hex.encodeHex(memBank.toByteArray()));
 		memoryBanks.get(1).setMemory(memBank);
 		memoryBanks.get(1).setLength(length);
 	}
