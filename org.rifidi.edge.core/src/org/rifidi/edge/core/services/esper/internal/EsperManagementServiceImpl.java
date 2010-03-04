@@ -23,6 +23,7 @@ import org.rifidi.edge.core.services.notification.data.EPCGeneration1Event;
 import org.rifidi.edge.core.services.notification.data.EPCGeneration2Event;
 import org.rifidi.edge.core.services.notification.data.ReadCycle;
 import org.rifidi.edge.core.services.notification.data.TagReadEvent;
+import org.rifidi.edge.core.services.notification.data.gpio.GPIEvent;
 
 import com.espertech.esper.client.Configuration;
 import com.espertech.esper.client.EPServiceProvider;
@@ -54,6 +55,7 @@ public class EsperManagementServiceImpl implements EsperManagementService {
 		config.addEventType("EPCGeneration1Event", EPCGeneration1Event.class);
 		config.addEventType("EPCGeneration2Event", EPCGeneration2Event.class);
 		config.addEventType("ReadCycle", ReadCycle.class);
+		config.addEventType("GPIEvent", GPIEvent.class);
 	}
 
 	/*

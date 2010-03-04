@@ -84,11 +84,18 @@ public abstract class SensorSession {
 	/**
 	 * This method returns a command that is used to reset the reader to a known
 	 * state. This command will execute after the reader has successfully
-	 * connected.
+	 * connected. By default the command does nothing.
 	 * 
 	 * @return
 	 */
-	protected abstract Command getResetCommand();
+	protected Command getResetCommand() {
+		return new Command("Default Reset Command") {
+			@Override
+			public void run() {
+
+			}
+		};
+	}
 
 	/**
 	 * This method executes all commands that have been submitted while the

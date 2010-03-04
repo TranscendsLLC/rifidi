@@ -17,6 +17,8 @@ package org.rifidi.edge.core.sensors.sessions.threads;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.SocketTimeoutException;
+import java.util.concurrent.TimeoutException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -91,6 +93,8 @@ public class ReadThread implements Runnable {
 				}
 			}
 		} catch (IOException e) {
+			logger.error(e);
+		} catch (Exception e) {
 			logger.error(e);
 		} finally {
 			logger.debug("Exiting read thread");
