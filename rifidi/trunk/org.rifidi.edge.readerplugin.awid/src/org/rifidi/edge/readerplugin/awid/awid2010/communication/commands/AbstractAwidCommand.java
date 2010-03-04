@@ -13,6 +13,8 @@ package org.rifidi.edge.readerplugin.awid.awid2010.communication.commands;
 
 import java.util.Arrays;
 
+import org.apache.commons.codec.binary.Hex;
+
 /**
  * A AwidCommand is a message that is sent to the Awid reader. This class should
  * be extended for any concrete command to send to the Awid reader. Typically,
@@ -73,6 +75,19 @@ public class AbstractAwidCommand {
 		byte highbyte = (byte) (crc >> 8);
 		byte lowbyte = (byte) crc;
 		return new byte[] { highbyte, lowbyte };
+	}
+	
+	/**
+	 * A method to print the bytes of the command
+	 * @return
+	 */
+	protected String getCommandAsString(){
+		StringBuilder sb = new StringBuilder();
+		char[] chars = Hex.encodeHex(getCommand());
+		for(int i=0; i<chars.length; i=i+2){
+			sb.append("["+chars[i]+chars[i+1]+"]");
+		}
+		return sb.toString();
 	}
 
 }
