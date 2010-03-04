@@ -67,9 +67,9 @@ public abstract class AbstractIPSensorSession extends AbstractSensorSession {
 			.getLog(AbstractIPSensorSession.class);
 
 	/** Host to connect to. */
-	private String host;
+	private final String host;
 	/** Port to connect to. */
-	private int port;
+	private final int port;
 	/** The socket used for connecting to the reader. */
 	private Socket socket;
 	/** Number reconnection attempts. */
@@ -122,6 +122,24 @@ public abstract class AbstractIPSensorSession extends AbstractSensorSession {
 		this.maxConAttempts = maxConAttempts;
 		this.reconnectionInterval = reconnectionInterval;
 
+	}
+
+	/**
+	 * Get the host this session is connected to
+	 * 
+	 * @return the host
+	 */
+	public String getHost() {
+		return host;
+	}
+
+	/**
+	 * Get the port this session is connected to
+	 * 
+	 * @return the port
+	 */
+	public int getPort() {
+		return port;
 	}
 
 	/**
@@ -246,6 +264,9 @@ public abstract class AbstractIPSensorSession extends AbstractSensorSession {
 					connecting.compareAndSet(true, false);
 					throw new IOException("Unable to reach reader.");
 				}
+
+				// socket.setSoTimeout(10000);
+
 				readThread = new Thread(new ReadThread(socket.getInputStream(),
 						getMessageParsingStrategyFactory(),
 						getMessageProcessingStrategyFactory()));
@@ -412,8 +433,16 @@ public abstract class AbstractIPSensorSession extends AbstractSensorSession {
 		 */
 		@Override
 		public void run() {
+
 			try {
 				readThread.join();
+
+				try {
+					socket.close();
+				} catch (IOException e) {
+
+				}
+
 				// don't try to connect again if we are closing down
 				if (getStatus() != SessionStatus.CLOSED) {
 					setStatus(SessionStatus.CREATED);

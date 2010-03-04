@@ -5,8 +5,6 @@ package org.rifidi.edge.core.sensors.sessions.interfaces;
 
 import java.util.BitSet;
 
-import org.rifidi.edge.core.exceptions.InvalidStateException;
-
 /**
  * This interface can be implemented by SensorSessions that have General Purpose
  * IO Capabilities. It gives a common interface to allow Sensor Sessions to
@@ -27,8 +25,8 @@ public interface GPIOController {
 	 *            bit that is set causes the port which it represents to be set
 	 *            to high.
 	 */
-	public void setOutputPort(BitSet ports);
-
+	public void setOutputPort(final BitSet ports) throws CannotExecuteException;
+	
 	/**
 	 * Use this method to test an input port.
 	 * 
@@ -38,6 +36,6 @@ public interface GPIOController {
 	 * @throws CannotExecuteException
 	 *             If there is a problem when executing the request.
 	 */
-	public boolean testInputPort(int port) throws CannotExecuteException;
+	public boolean testInputPort(final int port) throws CannotExecuteException;
 
 }

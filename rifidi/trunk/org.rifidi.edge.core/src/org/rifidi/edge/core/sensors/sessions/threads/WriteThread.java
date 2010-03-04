@@ -15,6 +15,7 @@ package org.rifidi.edge.core.sensors.sessions.threads;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.SocketOptions;
 import java.util.concurrent.BlockingQueue;
 
 import org.apache.commons.logging.Log;
@@ -54,8 +55,10 @@ public class WriteThread implements Runnable {
 		logger.debug("Starting Write Thread");
 		try {
 			while (!Thread.interrupted()) {
-				outputStream
-						.write(((ByteMessage) messageQueue.take()).message);
+				ByteMessage m = messageQueue.take();
+				//SocketOutputStream sos = (SocketOu)
+				outputStream.write(m.message);
+				outputStream.flush();
 			}
 		} catch (IOException e) {
 			logger.error(e);
