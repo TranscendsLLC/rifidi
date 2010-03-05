@@ -10,7 +10,10 @@
 	<!-- Create the  Application bean and inject dependencies-->
 	<bean id="rfidapp" class="com.csc.rfid.toolcrib.ToolcribApp">
 		<property name="esperService" ref="esperManagementService" />
+		<property name="alienGPOController" ref="gpo" />
 	</bean>
+	
+	<bean id="gpo" class ="com.csc.rfid.toolcrib.AlienGPOController" />
 
 	<!--Get a reference to the Esper Management Service from the OSGi Service Registry-->
 	<osgi:reference id="esperManagementService"
