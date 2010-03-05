@@ -3,8 +3,9 @@
  */
 package com.csc.rfid.toolcrib;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
@@ -34,9 +35,10 @@ public class ToolcribApp {
 			.getProperty("org.rifidi.logfile"));
 	private static final Log logger = LogFactory.getLog(ToolcribApp.class);
 	private final DirectionAlgorithm algorithm = new DirectionAlgorithm();
+	private AlienGPOController gpoController;
 
 	/**
-	 * Constructor.  
+	 * Constructor.
 	 */
 	public ToolcribApp() {
 		Activator.myApp = this;
@@ -51,10 +53,13 @@ public class ToolcribApp {
 	public void start() {
 		// esper statement that creates a window.
 		// TODO: Add velocity information to be stored in this window
-		statements.add(esperService.getProvider().getEPAdministrator()
-				.createEPL(
-						"create window tags.win:keepall()"
-								+ "(tag_ID String, speed Float, rssi String)"));
+		statements
+				.add(esperService
+						.getProvider()
+						.getEPAdministrator()
+						.createEPL(
+								"create window tags.win:keepall()"
+										+ "(tag_ID String, speed Float, rssi String, readerID String)"));
 
 		// esper statement taht adds information to the window
 		// TODO make sure that velocity info is inserted into the window
@@ -65,7 +70,7 @@ public class ToolcribApp {
 						.createEPL(
 								"on ReadCycle[select * from tags]"
 										+ "insert into tags select cast(tag.epc?, String) as tag_ID , "
-										+ "cast(extraInformation('Speed'),Float) as speed , cast(extraInformation('RSSI'),String) as rssi"));
+										+ "cast(extraInformation('Speed'),Float) as speed , cast(extraInformation('RSSI'),String) as rssi, readerID as readerID"));
 
 		// esper statement that removes all tags with a given ID from the window
 		// if the tag has not been seen at the antenna in the last 60 seconds
@@ -90,38 +95,88 @@ public class ToolcribApp {
 					EPStatement arg2, EPServiceProvider arg3) {
 				// Map that will hold the tag ID bound to all the speed
 				// information that is retrieved.
-				HashMap<String, ArrayList<Float>> speedMap = new HashMap<String, ArrayList<Float>>();
+				// HashMap<String, List<CSCTag>> speedMap = new HashMap<String,
+				// List<CSCTag>>();
+				List<CSCTag> tags = new LinkedList<CSCTag>();
 
 				// arg1 contains all the tag reads. This works because we do all
 				// of the rmoves at once.
 				if (arg1 != null) {
 					for (EventBean b : arg1) {
-						String epc = (String) b.get("tag_ID");
-						Float speed = (Float) b.get("speed");
-						String rssi = (String) b.get("rssi");
-						if (!speedMap.containsKey(epc)) {
-							speedMap.put(epc, new ArrayList<Float>());
-						}
-						logger.debug("Single tag read: " + speed + ", rssi is: " + rssi);
-						speedMap.get(epc).add(speed);
-						//System.out.println(".");
+						CSCTag cscTag = new CSCTag();
+						cscTag.setEpc((String) b.get("tag_ID"));
+						cscTag.setSpeed((Float) b.get("speed"));
+						cscTag.setRssi((String) b.get("rssi"));
+						cscTag.setReaderID((String) b.get("readerID"));
+						tags.add(cscTag);
 					}
 				}
-				for (String key : speedMap.keySet()) {
-					Float speed = algorithm.getSpeed(speedMap.get(key));
-					if (speed > 0) {
-						logwriter.writeToFile(key, true);
-						logger.debug("Tag is: " + key + ", Speed is: "
-								+ speed + ", Direction is: Incoming");
-					} else {
-						logwriter.writeToFile(key, false);
-						logger.debug("Tag is: " + key + ", Speed is: "
-								+ speed + ", Direction is: Outgoing");
-					}
+
+				if (isGhost(tags)) {
+					handleGhost(tags);
+					return;
 				}
+
+				int direction = calculateDirection(tags);
+				boolean onWatchList = false;
+
+				if (onWatchlist(tags)) {
+					onWatchList = true;
+				}
+
+				triggerLight(tags.get(0).getEpc(), onWatchList, direction);
+				writeLog(tags.get(0).getEpc(), tags.get(0).getReaderID(),
+						direction, onWatchList);
+
 			}
 		});
 		statements.add(queryAllTags);
+	}
+
+	private boolean isGhost(Collection<CSCTag> tags) {
+
+		return false;
+	}
+
+	private void handleGhost(Collection<CSCTag> tags) {
+
+	}
+
+	private boolean onWatchlist(List<CSCTag> tags) {
+		String id = tags.get(0).getEpc();
+		// load wathclist file into Set
+		// iterate of set to see if id is in there
+		return false;
+	}
+
+	private void writeLog(String epc, String readerID, int direction,
+			boolean onWatchList) {
+
+	}
+
+	private void triggerLight(String readerID, boolean onWatchList,
+			int direction) {
+		// map to interactive
+		// flashGPO(interactiveReaderID, pin, seconds)
+	}
+
+	/**
+	 * >0 is incoming 0 is not sure <0 is outgoing
+	 * 
+	 * @param tags
+	 * @return
+	 */
+	private Integer calculateDirection(Collection<CSCTag> tags) {
+		/*
+		 * for (String key : speedMap.keySet()) { // if ghostread // handle
+		 * ghostread // exit // if tag is on badList // handle badlist event
+		 * 
+		 * Float speed = algorithm.getSpeed(speedMap.get(key)); if (speed > 0) {
+		 * logwriter.writeToFile(key, true); logger.debug("Tag is: " + key +
+		 * ", Speed is: " + speed + ", Direction is: Incoming"); } else {
+		 * logwriter.writeToFile(key, false); logger.debug("Tag is: " + key +
+		 * ", Speed is: " + speed + ", Direction is: Outgoing"); } }
+		 */return 0;
 	}
 
 	/**
@@ -142,5 +197,19 @@ public class ToolcribApp {
 	public void setEsperService(EsperManagementService esperService) {
 		this.esperService = esperService;
 		start();
+	}
+
+	/**
+	 * @return the gpoController
+	 */
+	public AlienGPOController getGpoController() {
+		return gpoController;
+	}
+
+	/**
+	 * @param gpoController the gpoController to set
+	 */
+	public void setGpoController(AlienGPOController gpoController) {
+		this.gpoController = gpoController;
 	}
 }
