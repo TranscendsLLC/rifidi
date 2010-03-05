@@ -108,7 +108,7 @@ public class AlienGetTagListCommand extends AbstractAlien9800Command {
 					Alien9800ReaderSession.ANTENNA_SEQUENCE_COMMAND,
 					this.antennasequence,
 					(Alien9800ReaderSession) this.sensorSession);
-			antennaCommand.setSession((Alien9800ReaderSession)sensorSession);
+			antennaCommand.setSession((Alien9800ReaderSession) sensorSession);
 			antennaCommand.execute();
 
 			// sending TagType
@@ -116,15 +116,33 @@ public class AlienGetTagListCommand extends AbstractAlien9800Command {
 					Alien9800ReaderSession.COMMAND_TAG_TYPE,
 					tagTypes[getTagType()].toString(),
 					(Alien9800ReaderSession) sensorSession);
-			tagTypeCommand.setSession((Alien9800ReaderSession)sensorSession);
+			tagTypeCommand.setSession((Alien9800ReaderSession) sensorSession);
 			tagTypeCommand.execute();
 
-			// sending TagListFormat
+			// Setting the custom tag list format. This lets us get the velocity
+			// and rssi information, in addition to all the regular information.
+			// This tag list looks exatcly like the list coming back if the
+			// taglistformat was set to "Text", except it has the speed and RSSI
+			// information as well.
 			AlienCommandObject tagListFormat = new AlienSetCommandObject(
-					Alien9800ReaderSession.COMMAND_TAG_LIST_FORMAT, "text",
+					Alien9800ReaderSession.COMMAND_TAG_LIST_FORMAT, "custom",
 					(Alien9800ReaderSession) sensorSession);
-			tagListFormat.setSession((Alien9800ReaderSession)sensorSession);
+			tagListFormat.setSession((Alien9800ReaderSession) sensorSession);
 			tagListFormat.execute();
+
+			// Setting the custom tag list format. This lets us get the velocity
+			// and rssi information, in addition to all the regular information.
+			// This tag list looks exatcly like the list coming back if the
+			// taglistformat was set to "Text", except it has the speed and RSSI
+			// information as well.
+			AlienCommandObject tagListCustomFormat = new AlienSetCommandObject(
+					Alien9800ReaderSession.COMMAND_TAG_LIST_CUSTOM_FORMAT,
+					"Tag:%i, Disc:%d %T, Last:%d %T, Count:%r, "
+							+ "Ant:%a, Proto:%p, Rssi:%m, Speed:${SPEED}, Dir:${DIR}",
+					(Alien9800ReaderSession) sensorSession);
+			tagListCustomFormat
+					.setSession((Alien9800ReaderSession) sensorSession);
+			tagListCustomFormat.execute();
 
 			GetTagListCommandObject getTagListCommandObject = new GetTagListCommandObject(
 					(Alien9800ReaderSession) sensorSession);
@@ -142,11 +160,11 @@ public class AlienGetTagListCommand extends AbstractAlien9800Command {
 			template.send(destination, new ReadCycleMessageCreator(cycle));
 
 		} catch (AlienException e) {
-			logger.error("Exception while executing command: ",  e);
+			logger.error("Exception while executing command: ", e);
 		} catch (IOException e) {
-			logger.debug("IOException while executing command: ",  e);
+			logger.debug("IOException while executing command: ", e);
 		} catch (Exception e) {
-			logger.error("Exception while executing command: ",  e);
+			logger.error("Exception while executing command: ", e);
 		}
 	}
 

@@ -53,7 +53,6 @@ import org.springframework.jms.core.JmsTemplate;
  * The plugin that connects to an Alien9800 reader
  * 
  * @author Jochen Mader - jochen@pramari.com
- * 
  */
 @JMXMBean
 public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
@@ -147,8 +146,8 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 		readerProperties.put(PROP_UPTIME, "0");
 		readerProperties.put(PROP_EXTERNAL_OUTPUT, "0");
 		readerProperties.put(PROP_RF_ATTENUATION, "0");
-		readerProperties.put(PROP_INVERT_EXTERNAL_OUTPUT, "0");
-		readerProperties.put(PROP_INVERT_EXTERNAL_INPUT, "0");
+		readerProperties.put(PROP_INVERT_EXTERNAL_OUTPUT, "OFF");
+		readerProperties.put(PROP_INVERT_EXTERNAL_INPUT, "OFF");
 		readerProperties.put(PROP_PERSIST_TIME, "-1");
 
 		propCommandsToBeExecuted = new LinkedBlockingQueue<AlienCommandObjectWrapper>();
@@ -530,50 +529,51 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 	}
 
 	@Property(displayName = "Invert External Output", description = "Inverts the "
-			+ "GPO", writable = true, type = PropertyType.PT_INTEGER, minValue = "0", maxValue = "1", category = "GPIO", defaultValue = "0")
+			+ "GPO", writable = true, type = PropertyType.PT_STRING, category = "GPIO", defaultValue = "OFF")
 	public Integer getInvertExternalOutput() {
 		return Integer.parseInt(readerProperties
 				.get(PROP_INVERT_EXTERNAL_OUTPUT));
 	}
 
-	public void setInvertExternalOutput(Integer invertExternalOutput) {
-		if (invertExternalOutput >= 0 && invertExternalOutput <= 1) {
-			readerProperties.put(PROP_INVERT_EXTERNAL_OUTPUT, Integer
-					.toString(invertExternalOutput));
+	public void setInvertExternalOutput(String invertExternalOutput) {
+		if (invertExternalOutput.equalsIgnoreCase("OFF")
+				|| invertExternalOutput.equalsIgnoreCase("ON")) {
+			readerProperties.put(PROP_INVERT_EXTERNAL_OUTPUT,
+					invertExternalOutput);
 			propCommandsToBeExecuted
 					.add(new AlienCommandObjectWrapper(
 							PROP_INVERT_EXTERNAL_OUTPUT,
 							new AlienSetCommandObject(
 									Alien9800ReaderSession.COMMAND_INVERT_EXTERNAL_OUTPUT,
-									Integer.toString(invertExternalOutput))));
+									invertExternalOutput)));
 			return;
 		}
-		logger.warn("InvertExternalOutput must be an"
-				+ " integer between 0 and 1, but was " + invertExternalOutput);
+		logger.warn("InvertExternalInput must be either"
+				+ " 'ON' or 'OFF', but was " + invertExternalOutput);
 	}
 
 	@Property(displayName = "Invert External Input", description = "Inverts the "
-			+ "GPI", writable = true, type = PropertyType.PT_INTEGER, minValue = "0", maxValue = "1", category = "GP"
-			+ "IO", defaultValue = "0")
-	public Integer getInvertExternalInput() {
-		return Integer.parseInt(readerProperties
-				.get(PROP_INVERT_EXTERNAL_OUTPUT));
+			+ "GPI", writable = true, type = PropertyType.PT_STRING, category = "GP"
+			+ "IO", defaultValue = "OFF")
+	public String getInvertExternalInput() {
+		return readerProperties.get(PROP_INVERT_EXTERNAL_OUTPUT);
 	}
 
-	public void setInvertExternalInput(Integer invertExternalInput) {
-		if (invertExternalInput >= 0 && invertExternalInput <= 1) {
-			readerProperties.put(PROP_INVERT_EXTERNAL_INPUT, Integer
-					.toString(invertExternalInput));
+	public void setInvertExternalInput(String invertExternalInput) {
+		if (invertExternalInput.equalsIgnoreCase("OFF")
+				|| invertExternalInput.equalsIgnoreCase("ON")) {
+			readerProperties.put(PROP_INVERT_EXTERNAL_INPUT,
+					invertExternalInput);
 			propCommandsToBeExecuted
 					.add(new AlienCommandObjectWrapper(
 							PROP_INVERT_EXTERNAL_INPUT,
 							new AlienSetCommandObject(
 									Alien9800ReaderSession.COMMAND_INVERT_EXTERNAL_INPUT,
-									Integer.toString(invertExternalInput))));
+									invertExternalInput)));
 			return;
 		}
-		logger.warn("InvertExternalInput must be an"
-				+ " integer between 0 and 1, but was " + invertExternalInput);
+		logger.warn("InvertExternalInput must be either"
+				+ " 'ON' or 'OFF', but was " + invertExternalInput);
 	}
 
 	@Property(displayName = "RF Attenuation", description = "RF "
