@@ -11,10 +11,6 @@
 		class="org.rifidi.edge.readerplugin.alien.commands.AlienGetTagListCommandConfigurationFactory">
 		<property name="context" ref="bundleContext" />
 	</bean>
-	<bean id="alienVelocityTagListCommandConfigurationFactory"
-		class="org.rifidi.edge.readerplugin.alien.commands.AlienVelocityTagListCommandConfigurationFactory">
-		<property name="context" ref="bundleContext" />
-	</bean>
 	<bean id="alienAutonomousModeCommandConfigurationFactory"
 		class="org.rifidi.edge.readerplugin.alien.commands.AlienAutonomousModeCommandConfigurationFactory">
 		<property name="context" ref="bundleContext" />
@@ -26,14 +22,6 @@
 	
 	<!-- Put command configuration service in OSGi Registry -->
 	<osgi:service id="alienGetTagListCommandConfigurationFactoryReg" ref="alienGetTagListCommandConfigurationFactory">
-		<osgi:interfaces>
-			<value>org.rifidi.edge.core.configuration.ServiceFactory</value>
-			<value>org.rifidi.edge.core.configuration.impl.AbstractCommandConfigurationFactory</value>
-		</osgi:interfaces>
-	</osgi:service>
-	
-		<!-- Put command configuration service in OSGi Registry -->
-	<osgi:service id="alienVelocityTagListCommandConfigurationFactoryReg" ref="alienVelocityTagListCommandConfigurationFactory">
 		<osgi:interfaces>
 			<value>org.rifidi.edge.core.configuration.ServiceFactory</value>
 			<value>org.rifidi.edge.core.configuration.impl.AbstractCommandConfigurationFactory</value>

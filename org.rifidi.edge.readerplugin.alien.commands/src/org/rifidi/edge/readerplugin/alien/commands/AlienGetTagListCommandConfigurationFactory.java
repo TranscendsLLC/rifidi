@@ -19,8 +19,10 @@ import org.rifidi.edge.core.configuration.mbeanstrategies.AnnotationMBeanInfoStr
 import org.rifidi.edge.readerplugin.alien.Alien9800ReaderFactory;
 
 /**
- * @author Jochen Mader - jochen@pramari.com
+ * This is the configuration class for the main Alien polling tag aggregator.  
  * 
+ * @author Jochen Mader - jochen@pramari.com
+ * @author Matthew Dean - matt@pramari.com
  */
 public class AlienGetTagListCommandConfigurationFactory
 		extends
