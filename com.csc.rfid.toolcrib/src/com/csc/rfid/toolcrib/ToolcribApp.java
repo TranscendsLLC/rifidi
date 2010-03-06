@@ -77,7 +77,6 @@ public class ToolcribApp {
 	 */
 	public void start() {
 		// esper statement that creates a window.
-		// TODO: Add velocity information to be stored in this window
 		statements.add(esperService.getProvider().getEPAdministrator()
 				.createEPL(
 						"create window tags.win:keepall()"
@@ -167,11 +166,8 @@ public class ToolcribApp {
 					inbound = false;
 				}
 
-				// Flips the
-				if (!System.getProperty("org.rifidi.directionorientation")
-						.equalsIgnoreCase("0")) {
-					inbound = !inbound;
-				}
+				// Flips the speed if this particular property is set.
+				inbound = check_orientations(tags.get(0).getReaderID(), inbound);
 
 				if (onWatchlist(tags)) {
 					onWatchList = true;
@@ -184,6 +180,34 @@ public class ToolcribApp {
 			}
 		});
 		statements.add(queryAllTags);
+	}
+
+	/*
+	 * Checks if the direction needs to be flipped for the given reader ID. If
+	 * it does, the return value will be the opposite of the "inbound" value. If
+	 * it isn't, the inbound return value will simply be returned.
+	 */
+	private boolean check_orientations(String readerID, boolean inbound) {
+		if (readerID.equalsIgnoreCase(System
+				.getProperty("org.rifidi.window_reader"))) {
+			if (!System.getProperty("org.rifidi.window_direction_flip")
+					.equalsIgnoreCase("0")) {
+				return !inbound;
+			}
+		} else if (readerID.equalsIgnoreCase(System
+				.getProperty("org.rifidi.door_reader"))) {
+			if (!System.getProperty("org.rifidi.door_direction_flip")
+					.equalsIgnoreCase("0")) {
+				return !inbound;
+			}
+		} else if (readerID.equalsIgnoreCase(System
+				.getProperty("org.rifidi.portal_reader"))) {
+			if (!System.getProperty("org.rifidi.portal_direction_flip")
+					.equalsIgnoreCase("0")) {
+				return !inbound;
+			}
+		}
+		return inbound;
 	}
 
 	/**
@@ -303,8 +327,6 @@ public class ToolcribApp {
 			speeds.add(tag.getSpeed());
 		}
 		Float speed = algorithm.getSpeed(speeds);
-
-		// TODO: If the polarity is 1, multiply the speed value by -1 here
 
 		if (speed > 0) {
 			// sap_log.writeToFile(epc, true);

@@ -16,12 +16,12 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 /**
- * Class that handles the inbound/outbound logging for the CSC.  
+ * Class that handles the inbound/outbound logging for the CSC.
  * 
  * @author Matthew Dean
  */
 public final class RifidiLogger {
-	
+
 	private File file = null;
 
 	public RifidiLogger(String filename) {
@@ -29,18 +29,21 @@ public final class RifidiLogger {
 	}
 
 	/**
+	 * This method will write a log entry to a given file. If the file doesn't
+	 * exist, it will be created.
+	 * 
 	 * @param tag
 	 * @param inbound
 	 * @param direction
 	 */
 	public void writeToFile(String data_to_write) {
-		//Check if file exists; if not, create it
-		//Write the data to the file
-		
+		// Check if file exists; if not, create it
+		// Write the data to the file
+
 		FileWriter fw = null;
-		
+
 		try {
-			if(!file.exists()) {
+			if (!file.exists()) {
 				file.createNewFile();
 			}
 			fw = new FileWriter(file, true);
@@ -50,6 +53,5 @@ public final class RifidiLogger {
 			e.printStackTrace();
 		}
 	}
-
 
 }
