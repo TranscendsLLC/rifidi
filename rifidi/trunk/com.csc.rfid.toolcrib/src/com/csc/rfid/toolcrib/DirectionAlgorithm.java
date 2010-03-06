@@ -11,7 +11,7 @@
  */
 package com.csc.rfid.toolcrib;
 
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 
@@ -33,7 +33,7 @@ public class DirectionAlgorithm {
 	 * @param speed
 	 * @return
 	 */
-	public Float getSpeed(ArrayList<Float> speed) {
+	public Float getSpeed(List<Float> speed) {
 		float retVal = 0.0f;
 
 		for (Float f : speed) {

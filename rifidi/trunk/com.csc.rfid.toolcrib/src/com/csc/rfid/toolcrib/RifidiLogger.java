@@ -14,35 +14,18 @@ package com.csc.rfid.toolcrib;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.sql.Date;
-import java.text.SimpleDateFormat;
 
 /**
- * @author Matthew Dean
+ * Class that handles the inbound/outbound logging for the CSC.  
  * 
+ * @author Matthew Dean
  */
 public final class RifidiLogger {
-
-	private FileWriter fw = null;
-
-	public static final String CONSTANT_1 = "CTEH-LBLDG-COL-L9";
-
-	public static final String OUTBOUND = "-OUTBOUND";
-
-	public static final String SPACES = "             ";
-
-	public static final String OUTBOUND_SPACES = "    ";
+	
+	private File file = null;
 
 	public RifidiLogger(String filename) {
-		File file = new File(filename);
-		try {
-			if(!file.exists()) {
-				file.createNewFile();
-			}
-			fw = new FileWriter(file, true);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		file = new File(filename);
 	}
 
 	/**
@@ -50,32 +33,23 @@ public final class RifidiLogger {
 	 * @param inbound
 	 * @param direction
 	 */
-	public void writeToFile(String tag, boolean inbound) {
-		if (tag.length() > 12) {
-			tag = tag.substring(0, 12);
-		}
-		tag = tag.toUpperCase();
+	public void writeToFile(String data_to_write) {
+		//Check if file exists; if not, create it
+		//Write the data to the file
+		
+		FileWriter fw = null;
+		
 		try {
-			if (inbound) {
-				fw.write(tag + CONSTANT_1 + SPACES + this.createDate());
-			} else {
-				fw.write(tag + CONSTANT_1 + OUTBOUND + OUTBOUND_SPACES
-						+ this.createDate());
+			if(!file.exists()) {
+				file.createNewFile();
 			}
-			fw.write("\r\n");
+			fw = new FileWriter(file, true);
+			fw.write(data_to_write);
 			fw.flush();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 
-	/**
-	 * 
-	 * @return
-	 */
-	private String createDate() {
-		Date now = new Date(System.currentTimeMillis());
-		SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss");
-		return format.format(now);
-	}
+
 }
