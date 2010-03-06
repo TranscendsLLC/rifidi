@@ -188,12 +188,12 @@ public class AcuraProXReaderSession extends AbstractSensorSession {
 	/**
 	 * Inner class taking care of serial communication.
 	 */
-	public class OneWaySerialComm {
+	private class OneWaySerialComm {
 		private CommPort commPort = null;
 		CommPortIdentifier portIdentifier = null;
 
-		public static final byte END_OF_TEXT = 0x03;
-		public static final byte START_OF_TEXT = 0x02;
+		//public static final byte END_OF_TEXT = 0x03;
+		//public static final byte START_OF_TEXT = 0x02;
 
 		private AcuraProXReaderSession session;
 
@@ -244,7 +244,6 @@ public class AcuraProXReaderSession extends AbstractSensorSession {
 				e.printStackTrace();
 			} finally {
 				commPort.close();
-				//commPort = null;
 			}
 		}
 
@@ -277,11 +276,6 @@ public class AcuraProXReaderSession extends AbstractSensorSession {
 									byteBuffer.add(buffer[i]);
 								}
 								if (byteBuffer.size() == 14) {
-									// System.out.println("The bytes:");
-									// for(Byte b:byteBuffer) {
-									// System.out.print(b + " ");
-									// }
-									// System.out.println();
 									List<Byte> tempBuffer = new ArrayList<Byte>();
 									for (int x = 1; x < 11; x++) {
 										tempBuffer.add(byteBuffer.get(x));
