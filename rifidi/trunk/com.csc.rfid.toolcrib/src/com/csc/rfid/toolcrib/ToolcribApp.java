@@ -14,6 +14,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.services.esper.EsperManagementService;
 
+import com.csc.rfid.toolcrib.utilities.AlienGPOController;
+import com.csc.rfid.toolcrib.utilities.DirectionAlgorithm;
+import com.csc.rfid.toolcrib.utilities.RifidiLogEntryCreationUtility;
+import com.csc.rfid.toolcrib.utilities.RifidiLogger;
+import com.csc.rfid.toolcrib.utilities.WatchlistReader;
 import com.espertech.esper.client.EPServiceProvider;
 import com.espertech.esper.client.EPStatement;
 import com.espertech.esper.client.EventBean;

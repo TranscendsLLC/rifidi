@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.csc.rfid.toolcrib;
+package com.csc.rfid.toolcrib.utilities;
 
 /**
  * @author Owner
