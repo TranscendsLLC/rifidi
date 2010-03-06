@@ -9,7 +9,7 @@
  *  License:	GNU Public License (GPL)
  *  				http://www.opensource.org/licenses/gpl-3.0.html
  */
-package com.csc.rfid.toolcrib;
+package com.csc.rfid.toolcrib.utilities;
 
 import java.io.File;
 import java.io.FileWriter;
