@@ -17,11 +17,6 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
 import org.apache.log4j.RollingFileAppender;
-import org.rifidi.edge.core.daos.ReaderDAO;
-import org.rifidi.edge.core.sensors.SensorSession;
-import org.rifidi.edge.core.sensors.base.AbstractSensor;
-import org.rifidi.edge.core.sensors.sessions.interfaces.CannotExecuteException;
-import org.rifidi.edge.core.sensors.sessions.interfaces.GPIOController;
 import org.rifidi.edge.core.services.esper.EsperManagementService;
 import org.rifidi.edge.core.services.notification.data.TagReadEvent;
 
@@ -46,7 +41,6 @@ public class DataCollectorApp {
 	private final List<TestRunData> data = new ArrayList<TestRunData>();
 	private Logger dataLogger;
 	private final Log logger = LogFactory.getLog(DataCollectorApp.class);
-	private ReaderDAO readerDAO;
 
 	public void start() {
 		configureLogger();
@@ -87,29 +81,47 @@ public class DataCollectorApp {
 						dataLogger.debug(testRun.getPrintString());
 						logger.info(testRun.getPrintString());
 						BitSet ports = new BitSet();
-						
-						if(tags!=null && tags.length>0){
+
+						if (tags != null && tags.length > 0) {
 							ports.set(0);
-						}else{
+						} else {
 							ports.clear(0);
 						}
-						getGPIOController().setOutputPort(ports);
-						try {
-							if(getGPIOController().testInputPort(1)){
-								System.out.println("port 1 is high");
-							}else{
-								System.out.println("port 1 is low");
-							}
-						} catch (CannotExecuteException e) {
-						}
+
 					}
 				}
 
 			}
 		});
 		statements.add(queryAllTags);
-		logger.info("Toolcrib test app started.");
 
+		EPStatement upStateListener = esperService.getProvider()
+				.getEPAdministrator().createEPL("select * from SessionUpEvent");
+
+		EPStatement downStateListener = esperService.getProvider()
+				.getEPAdministrator().createEPL(
+						"select * from SessionDownEvent");
+
+		StatementAwareUpdateListener listener = new StatementAwareUpdateListener() {
+
+			@Override
+			public void update(EventBean[] arg0, EventBean[] arg1,
+					EPStatement arg2, EPServiceProvider arg3) {
+				if (arg0 != null) {
+					for (EventBean event : arg0) {
+						logger.info(event.getUnderlying());
+					}
+				}
+
+			}
+		};
+
+		upStateListener.addListener(listener);
+		downStateListener.addListener(listener);
+
+		statements.add(upStateListener);
+
+		logger.info("Toolcrib test app started.");
 	}
 
 	public TestRunData getLastTestRunData() {
@@ -150,27 +162,6 @@ public class DataCollectorApp {
 	public void setEsperService(EsperManagementService esperService) {
 		this.esperService = esperService;
 	}
-
-	/**
-	 * @param sensor the sensor to set
-	 */
-	public void setReaderDAO(ReaderDAO readerDAO) {
-		this.readerDAO = readerDAO;
-	}
-	
-	public GPIOController getGPIOController(){
-		if(readerDAO!=null){
-			AbstractSensor<?> reader = readerDAO.getReaderByID("Alien_1");
-			if(reader!=null){
-				for(SensorSession session : reader.getSensorSessions().values()){
-					if(session instanceof GPIOController)
-						return (GPIOController)session;
-				}
-			}
-		}
-		return null;
-	}
-	
 
 	private void configureLogger() {
 		try {

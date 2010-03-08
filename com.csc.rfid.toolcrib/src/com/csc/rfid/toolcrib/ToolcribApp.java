@@ -12,9 +12,12 @@ import java.util.concurrent.CopyOnWriteArraySet;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.rifidi.edge.core.sensors.exceptions.CannotExecuteException;
+import org.rifidi.edge.core.sensors.management.AbstractGPIOService;
 import org.rifidi.edge.core.services.esper.EsperManagementService;
+import org.rifidi.edge.core.services.notification.data.management.SessionDownEvent;
+import org.rifidi.edge.core.services.notification.data.management.SessionUpEvent;
 
-import com.csc.rfid.toolcrib.utilities.AlienGPOController;
 import com.csc.rfid.toolcrib.utilities.DirectionAlgorithm;
 import com.csc.rfid.toolcrib.utilities.RifidiLogEntryCreationUtility;
 import com.csc.rfid.toolcrib.utilities.RifidiLogger;
@@ -32,42 +35,39 @@ import com.espertech.esper.client.StatementAwareUpdateListener;
  * @author Kyle Neumeier - kyle@pramari.com
  */
 public class ToolcribApp {
+	
+	public static final String LOG_SUFFIX = ".log";
+	
+	public static final String DAT_SUFFIX = ".dat";
 	/** Esper service */
 	private volatile EsperManagementService esperService;
 	/** All statements that have been defined so far */
 	private final Set<EPStatement> statements = new CopyOnWriteArraySet<EPStatement>();
 	/** This logger records directionality events only */
 	private final RifidiLogger sap_log = new RifidiLogger(System
-			.getProperty("org.rifidi.logfile"));
+			.getProperty("com.csc.saplogfile"), DAT_SUFFIX);
 	/** This is the general log file where many events are processed */
 	private final RifidiLogger standard_log = new RifidiLogger(System
-			.getProperty("org.rifidi.standardlog"));
+			.getProperty("com.csc.standardlog"), LOG_SUFFIX);
 	private final RifidiLogger ghost_log = new RifidiLogger(System
-			.getProperty("org.rifidi.ghostlog"));
+			.getProperty("com.csc.ghostlog"), LOG_SUFFIX);
 	private final RifidiLogger downtime_log = new RifidiLogger(System
-			.getProperty("org.rifidi.downtimelog"));
+			.getProperty("com.csc.downtimelog"), LOG_SUFFIX);
 	private final WatchlistReader watchlist_reader = new WatchlistReader(System
-			.getProperty("org.rifidi.watchlist"));
+			.getProperty("com.csc.watchlist"));
 	private static final Log logger = LogFactory.getLog(ToolcribApp.class);
 	private final DirectionAlgorithm algorithm = new DirectionAlgorithm();
-	private AlienGPOController gpoController;
+	private AbstractGPIOService<?> gpoController;
 
 	// GPIO values
 	private static final Integer FLASH_TIME = Integer.parseInt(System
-			.getProperty("org.rifidi.flashtime"));
+			.getProperty("com.csc.flashtime"));
 	private static final Integer RED_LIGHT_GPO = Integer.parseInt(System
-			.getProperty("org.rifidi.redlightgpo"));
+			.getProperty("com.csc.redlightgpo"));
 	private static final Integer YELLOW_LIGHT_GPO = Integer.parseInt(System
-			.getProperty("org.rifidi.yellowlightgpo"));
+			.getProperty("com.csc.yellowlightgpo"));
 	private static final Integer GREEN_LIGHT_GPO = Integer.parseInt(System
-			.getProperty("org.rifidi.greenlightgpo"));
-
-	/**
-	 * Constructor.
-	 */
-	public ToolcribApp() {
-		Activator.myApp = this;
-	}
+			.getProperty("com.csc.greenlightgpo"));
 
 	/**
 	 * Start the application. This method submits the esper statements to the
@@ -76,25 +76,27 @@ public class ToolcribApp {
 	 * This method is called by spring
 	 */
 	public void start() {
+		logger.debug("Starting CSC App");
+
 		// esper statement that creates a window.
 		statements.add(esperService.getProvider().getEPAdministrator()
 				.createEPL(
-						"create window tags.win:keepall()"
+						"create window tagwin.win:keepall()"
 								+ "(tag_ID String, speed Float, rssi "
-								+ "String, readerID String)"));
+								+ "String, readerID String, antennaID int)"));
 
 		// esper statement taht adds information to the window
-		// TODO make sure that velocity info is inserted into the window
+		// TODO make sure that velocity info is inserted into the window/
 		statements
 				.add(esperService
 						.getProvider()
 						.getEPAdministrator()
 						.createEPL(
 								"on ReadCycle[select * from tags]"
-										+ "insert into tags select cast(tag.epc?, String) as tag_ID , "
+										+ "insert into tagwin select cast(tag.epc?, String) as tag_ID , "
 										+ "cast(extraInformation('Speed'),Float) as speed , "
 										+ "cast(extraInformation('RSSI'),String) as rssi, "
-										+ "readerID as readerID"));
+										+ "readerID, antennaID"));
 
 		// esper statement that removes all tags with a given ID from the window
 		// if the tag has not been seen at the antenna in the last 60 seconds
@@ -103,35 +105,46 @@ public class ToolcribApp {
 						.getProvider()
 						.getEPAdministrator()
 						.createEPL(
-								"on pattern [every tag=tags ->"
+								"on pattern [every tag=tagwin ->"
 										+ "(timer:interval("
 										+ System
-												.getProperty("org.rifidi.tagreadcutofftime")
-										+ " sec) and not tags"
+												.getProperty("com.csc.tagreadcutofftime")
+										+ " sec) and not tagwin"
 										+ "(tag_ID = tag.tag_ID))]"
-										+ "delete from tags where "
+										+ "delete from tagwin where "
 										+ "tag_ID = tag.tag_ID"));
 
 		// esper statement that listens to add and remove events from the window
 		EPStatement queryAllTags = esperService.getProvider()
-				.getEPAdministrator().createEPL("select irstream * from tags");
+				.getEPAdministrator()
+				.createEPL("select irstream * from tagwin");
 
 		// add a listener to the above statement
-		queryAllTags.addListener(new StatementAwareUpdateListener() {
+		queryAllTags.addListener(getTagsUpdateListener());
 
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see
-			 * com.espertech.esper.client.StatementAwareUpdateListener#update
-			 * (com.espertech.esper.client.EventBean[],
-			 * com.espertech.esper.client.EventBean[],
-			 * com.espertech.esper.client.EPStatement,
-			 * com.espertech.esper.client.EPServiceProvider)
-			 */
+		EPStatement queryDownTimeEvent = esperService.getProvider()
+				.getEPAdministrator().createEPL(
+						"select * from SessionDownEvent");
+		statements.add(queryDownTimeEvent);
+
+		EPStatement queryUpTimeEvent = esperService.getProvider()
+				.getEPAdministrator().createEPL("select * from SessionUpEvent");
+		statements.add(queryUpTimeEvent);
+
+		StatementAwareUpdateListener stateUpdateListener = getSessionStateUpdateListener();
+		queryDownTimeEvent.addListener(stateUpdateListener);
+		queryUpTimeEvent.addListener(stateUpdateListener);
+
+		statements.add(queryAllTags);
+	}
+
+	public StatementAwareUpdateListener getTagsUpdateListener() {
+		return new StatementAwareUpdateListener() {
+
 			@Override
 			public void update(EventBean[] arg0, EventBean[] arg1,
 					EPStatement arg2, EPServiceProvider arg3) {
+
 				// Map that will hold the tag ID bound to all the speed
 				// information that is retrieved.
 				// HashMap<String, List<CSCTag>> speedMap = new HashMap<String,
@@ -147,39 +160,82 @@ public class ToolcribApp {
 						cscTag.setSpeed((Float) b.get("speed"));
 						cscTag.setRssi((String) b.get("rssi"));
 						cscTag.setReaderID((String) b.get("readerID"));
+						cscTag.setAntenna((Integer) b.get("antennaID"));
 						tags.add(cscTag);
+						logger.debug(cscTag);
+					}
+
+					if (isGhost(tags)) {
+						handleGhost(tags);
+						return;
+					}
+
+					float speed = calculateDirection(tags);
+					boolean onWatchList = false;
+
+					boolean inbound = false;
+					if (speed > 0.0f) {
+						inbound = true;
+					} else {
+						inbound = false;
+					}
+
+					// Flips the speed if this particular property is set.
+					inbound = check_orientations(tags.get(0).getReaderID(),
+							inbound);
+
+					logger.debug("Tag is: " + tags.get(0).getEpc()
+							+ ", Speed is: " + speed + ", Direction is: "
+							+ (inbound ? "Inbound" : "OutBound"));
+
+					if (onWatchlist(tags)) {
+						onWatchList = true;
+					}
+
+					System.out.println("Inbound: " + inbound);
+
+					triggerLight(tags.get(0).getReaderID(), onWatchList,
+							inbound);
+					writeLog(tags.get(0).getEpc(), tags.get(0).getReaderID(),
+							inbound, onWatchList);
+
+				}
+			}
+		};
+	}
+
+	public StatementAwareUpdateListener getSessionStateUpdateListener() {
+		return new StatementAwareUpdateListener() {
+
+			@Override
+			public void update(EventBean[] arg0, EventBean[] arg1,
+					EPStatement arg2, EPServiceProvider arg3) {
+				if (arg0 != null) {
+					for (EventBean b : arg0) {
+						if (b.getUnderlying() instanceof SessionUpEvent) {
+							logger.debug(b.getUnderlying());
+							SessionUpEvent sue = (SessionUpEvent) b
+									.getUnderlying();
+							downtime_log
+									.writeToFile(RifidiLogEntryCreationUtility
+											.createUptimeLogEntry(sue
+													.getReaderID(), sue
+													.getTimestamp()));
+						} else if (b.getUnderlying() instanceof SessionDownEvent) {
+							logger.debug(b.getUnderlying());
+							SessionDownEvent sue = (SessionDownEvent) b
+									.getUnderlying();
+							downtime_log
+									.writeToFile(RifidiLogEntryCreationUtility
+											.createDowntimeLogEntry(sue
+													.getReaderID(), sue
+													.getTimestamp()));
+						}
 					}
 				}
 
-				if (isGhost(tags)) {
-					handleGhost(tags);
-					return;
-				}
-
-				float speed = calculateDirection(tags);
-				boolean onWatchList = false;
-
-				boolean inbound = false;
-				if (speed > 0.0f) {
-					inbound = true;
-				} else {
-					inbound = false;
-				}
-
-				// Flips the speed if this particular property is set.
-				inbound = check_orientations(tags.get(0).getReaderID(), inbound);
-
-				if (onWatchlist(tags)) {
-					onWatchList = true;
-				}
-
-				triggerLight(tags.get(0).getEpc(), onWatchList, inbound);
-				writeLog(tags.get(0).getEpc(), tags.get(0).getReaderID(),
-						inbound, onWatchList);
-
 			}
-		});
-		statements.add(queryAllTags);
+		};
 	}
 
 	/*
@@ -189,20 +245,20 @@ public class ToolcribApp {
 	 */
 	private boolean check_orientations(String readerID, boolean inbound) {
 		if (readerID.equalsIgnoreCase(System
-				.getProperty("org.rifidi.window_reader"))) {
-			if (!System.getProperty("org.rifidi.window_direction_flip")
+				.getProperty("com.csc.window_reader"))) {
+			if (!System.getProperty("com.csc.window_direction_flip")
 					.equalsIgnoreCase("0")) {
 				return !inbound;
 			}
 		} else if (readerID.equalsIgnoreCase(System
-				.getProperty("org.rifidi.door_reader"))) {
-			if (!System.getProperty("org.rifidi.door_direction_flip")
+				.getProperty("com.csc.door_reader"))) {
+			if (!System.getProperty("com.csc.door_direction_flip")
 					.equalsIgnoreCase("0")) {
 				return !inbound;
 			}
 		} else if (readerID.equalsIgnoreCase(System
-				.getProperty("org.rifidi.portal_reader"))) {
-			if (!System.getProperty("org.rifidi.portal_direction_flip")
+				.getProperty("com.csc.portal_reader"))) {
+			if (!System.getProperty("com.csc.portal_direction_flip")
 					.equalsIgnoreCase("0")) {
 				return !inbound;
 			}
@@ -247,7 +303,7 @@ public class ToolcribApp {
 		String id = tags.get(0).getEpc();
 		List<String> watchList = this.watchlist_reader.getWatchlistTags();
 		for (String watchTag : watchList) {
-			if (id.substring(1).equalsIgnoreCase(watchTag)) {
+			if (id.substring(1, 12).equalsIgnoreCase(watchTag.substring(1))) {
 				return true;
 			}
 		}
@@ -299,15 +355,22 @@ public class ToolcribApp {
 	private void triggerLight(String readerID, boolean onWatchList,
 			boolean inbound) {
 
-		if (onWatchList) {
-			// Trigger watchlist (red) GPO 2
-			this.gpoController.flashGPO(readerID, RED_LIGHT_GPO, FLASH_TIME);
-		} else if (inbound) {
-			// Trigger inbound (yellow) GPO 3
-			this.gpoController.flashGPO(readerID, YELLOW_LIGHT_GPO, FLASH_TIME);
-		} else {
-			// Trigger outbound (green) GPO 4
-			this.gpoController.flashGPO(readerID, GREEN_LIGHT_GPO, FLASH_TIME);
+		try {
+			if (onWatchList) {
+				// Trigger watchlist (red) GPO 2
+				this.gpoController
+						.flashGPO(readerID, FLASH_TIME, RED_LIGHT_GPO);
+			} else if (inbound) {
+				// Trigger inbound (yellow) GPO 3
+				this.gpoController.flashGPO(readerID, FLASH_TIME,
+						YELLOW_LIGHT_GPO);
+			} else {
+				// Trigger outbound (green) GPO 4
+				this.gpoController.flashGPO(readerID, FLASH_TIME,
+						GREEN_LIGHT_GPO);
+			}
+		} catch (CannotExecuteException e) {
+			logger.warn("Problem executing GPO: " + e.getMessage());
 		}
 		// map to interactive
 	}
@@ -321,24 +384,13 @@ public class ToolcribApp {
 	private Float calculateDirection(List<CSCTag> tags) {
 		// if ghostread // handle ghostread
 		// exit // if tag is on badList // handle badlist event
-		String epc = tags.get(0).getEpc();
+		//String epc = tags.get(0).getEpc();
 		List<Float> speeds = new ArrayList<Float>();
 		for (CSCTag tag : tags) {
 			speeds.add(tag.getSpeed());
 		}
-		Float speed = algorithm.getSpeed(speeds);
+		return algorithm.getSpeed(speeds);
 
-		if (speed > 0) {
-			// sap_log.writeToFile(epc, true);
-			logger.debug("Tag is: " + epc + ", Speed is: " + speed
-					+ ", Direction is: Incoming");
-		} else {
-			// sap_log.writeToFile(epc, false);
-			logger.debug("Tag is: " + epc + ", Speed is: " + speed
-					+ ", Direction is: Outgoing");
-		}
-
-		return speed;
 	}
 
 	/**
@@ -358,21 +410,13 @@ public class ToolcribApp {
 	 */
 	public void setEsperService(EsperManagementService esperService) {
 		this.esperService = esperService;
-		start();
-	}
-
-	/**
-	 * @return the gpoController
-	 */
-	public AlienGPOController getGpoController() {
-		return gpoController;
 	}
 
 	/**
 	 * @param gpoController
 	 *            the gpoController to set
 	 */
-	public void setGpoController(AlienGPOController gpoController) {
+	public void setGpoController(AbstractGPIOService<?> gpoController) {
 		this.gpoController = gpoController;
 	}
 }
