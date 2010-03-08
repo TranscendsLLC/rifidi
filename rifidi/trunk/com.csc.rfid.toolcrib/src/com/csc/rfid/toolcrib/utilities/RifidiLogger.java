@@ -26,7 +26,7 @@ import java.text.SimpleDateFormat;
  */
 public final class RifidiLogger {
 
-	private static final String SUFFIX = ".log";
+	private String suffix;
 
 	private static final String HYPHEN = "-";
 
@@ -41,8 +41,9 @@ public final class RifidiLogger {
 	 * 
 	 * @param filenamePrefix
 	 */
-	public RifidiLogger(String filenamePrefix) {
+	public RifidiLogger(String filenamePrefix, String suffix) {
 		this.filenamePrefix = filenamePrefix;
+		this.suffix = suffix;
 	}
 
 	/**
@@ -77,7 +78,8 @@ public final class RifidiLogger {
 			e.printStackTrace();
 		} finally {
 			try {
-				fw.close();
+				if (fw != null)
+					fw.close();
 			} catch (IOException e) {
 				// Don't care
 			}
@@ -88,7 +90,7 @@ public final class RifidiLogger {
 	 * 
 	 */
 	private String createTimestampFile(String prefix) {
-		String filename = prefix + HYPHEN + this.createDate() + SUFFIX;
+		String filename = prefix + HYPHEN + this.createDate() + this.suffix;
 		return filename;
 	}
 

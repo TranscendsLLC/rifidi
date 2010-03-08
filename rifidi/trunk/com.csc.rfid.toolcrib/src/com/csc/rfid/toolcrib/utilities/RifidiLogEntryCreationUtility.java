@@ -70,7 +70,17 @@ public class RifidiLogEntryCreationUtility {
 	 * Returns the current time as a date in yyyyMMddHHmmss format.
 	 */
 	private static String createDate() {
-		Date now = new Date(System.currentTimeMillis());
+		return createDate(System.currentTimeMillis());
+	}
+
+	/**
+	 * 
+	 * @param timestamp
+	 *            The timestamp
+	 * @return
+	 */
+	private static String createDate(long timestamp) {
+		Date now = new Date(timestamp);
 		SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss");
 		return format.format(now);
 	}
@@ -120,14 +130,14 @@ public class RifidiLogEntryCreationUtility {
 	 */
 	private static String getWDPValue(String readerID) {
 		if (readerID.equalsIgnoreCase(System
-				.getProperty("org.rifidi.window_reader"))) {
-			return System.getProperty("org.rifidi.window_reader_id");
+				.getProperty("com.csc.window_reader"))) {
+			return System.getProperty("com.csc.window_reader_id");
 		} else if (readerID.equalsIgnoreCase(System
-				.getProperty("org.rifidi.door_reader"))) {
-			return System.getProperty("org.rifidi.door_reader_id");
+				.getProperty("com.csc.door_reader"))) {
+			return System.getProperty("com.csc.door_reader_id");
 		} else if (readerID.equalsIgnoreCase(System
-				.getProperty("org.rifidi.portal_reader"))) {
-			return System.getProperty("org.rifidi.portal_reader_id");
+				.getProperty("com.csc.portal_reader"))) {
+			return System.getProperty("com.csc.portal_reader_id");
 		}
 		// TODO: If it gets this far, something is wrong. Log it?
 		return "ERROR";
@@ -158,7 +168,7 @@ public class RifidiLogEntryCreationUtility {
 	public String createGhostReadLogEntry(String epc, Set<String> set) {
 		StringBuilder sb = new StringBuilder();
 
-		sb.append("Ghost read of tag" + epc + " at locations: ");
+		sb.append("Ghost read of tag " + epc + " at locations: ");
 
 		for (String r : set) {
 			sb.append(getWDPValue(r));
@@ -176,11 +186,25 @@ public class RifidiLogEntryCreationUtility {
 	 * the reader and generates the current time as a date for when the reader
 	 * went down.
 	 */
-	public String createDowntimeLogEntry(String readerID) {
+	public static String createDowntimeLogEntry(String readerID, long timestamp) {
 		StringBuilder sb = new StringBuilder();
 
 		sb.append("Reader " + getWDPValue(readerID) + " went down at "
-				+ createDate());
+				+ createDate(timestamp));
+
+		return sb.toString();
+	}
+
+	/**
+	 * This method logs downtime for a particular reader. It takes in the ID of
+	 * the reader and generates the current time as a date for when the reader
+	 * went down.
+	 */
+	public static String createUptimeLogEntry(String readerID, long timestamp) {
+		StringBuilder sb = new StringBuilder();
+
+		sb.append("Reader " + getWDPValue(readerID) + " went up at "
+				+ createDate(timestamp));
 
 		return sb.toString();
 	}
