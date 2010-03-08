@@ -20,4 +20,9 @@
 		<property name="notifierService" ref="JMSNotifierService" />
 		<property name="commandConfigurations" ref="awid3014Commands" />
 	</bean>
+	
+	<bean id = "awidGPIOService" class="org.rifidi.edge.readerplugin.awid.awid2010.gpio.AwidGPIOService">
+		<property name = "readerDAO" ref="readerDAO"/>
+	</bean>
+	
 </beans>

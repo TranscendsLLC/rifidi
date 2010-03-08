@@ -12,7 +12,6 @@
 package org.rifidi.edge.readerplugin.awid.awid2010;
 
 import java.io.IOException;
-import java.util.BitSet;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -24,8 +23,6 @@ import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
 import org.rifidi.edge.core.sensors.commands.Command;
 import org.rifidi.edge.core.sensors.messages.ByteMessage;
 import org.rifidi.edge.core.sensors.sessions.MessageParsingStrategyFactory;
-import org.rifidi.edge.core.sensors.sessions.interfaces.CannotExecuteException;
-import org.rifidi.edge.core.sensors.sessions.interfaces.GPIOController;
 import org.rifidi.edge.core.sensors.sessions.pubsub.AbstractPubSubIPSensorSession;
 import org.rifidi.edge.core.services.notification.NotifierService;
 import org.rifidi.edge.readerplugin.awid.awid2010.communication.AwidEndpoint;
@@ -45,8 +42,7 @@ import org.springframework.jms.core.JmsTemplate;
  * @author Kyle Neumeier - kyle@pramari.com
  * 
  */
-public class AwidSession extends AbstractPubSubIPSensorSession implements
-		GPIOController {
+public class AwidSession extends AbstractPubSubIPSensorSession {
 
 	/** The factory that produces the MessageParsingStrategy */
 	private final AwidMessageParsingStrategyFactory parsingStratFac;
@@ -101,6 +97,7 @@ public class AwidSession extends AbstractPubSubIPSensorSession implements
 		this.subscribe(awidEndpoint);
 		this.notifierService = notifierSerivce;
 		this.is3014 = is3014;
+		this.gpioSession = new AwidGPIOSession(sensor, "1", host, 4001);
 	}
 
 	/*
@@ -136,10 +133,7 @@ public class AwidSession extends AbstractPubSubIPSensorSession implements
 		}
 		if (awidEndpoint.isConnected()) {
 			logger.debug("Awid Welcome Message Received.");
-			if (gpioSession != null) {
-				gpioSession.disconnect();
-			}
-			gpioSession = null;
+			gpioSession.disconnect();
 			return true;
 		} else {
 			logger.warn("No Awid Welcome Message Received");
@@ -250,65 +244,9 @@ public class AwidSession extends AbstractPubSubIPSensorSession implements
 		this.notifierService.jobDeleted(this.getSensor().getID(), this.getID(),
 				id);
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.rifidi.edge.core.sensors.sessions.interfaces.GPIOController#setOutputPort
-	 * (java.util.BitSet)
-	 */
-	@Override
-	public void setOutputPort(final BitSet ports) throws CannotExecuteException {
-		if (gpioSession == null) {
-			gpioSession = new AwidGPIOSession(sensor, "1", getHost(), 4001);
-			try {
-				gpioSession.connect();
-			} catch (IOException e) {
-				gpioSession.disconnect();
-				gpioSession = null;
-				throw new CannotExecuteException(e);
-			}
-		}
-		gpioSession.setOutputPort(ports);
-
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.rifidi.edge.core.sensors.sessions.interfaces.GPIOController#testInputPort
-	 * (int)
-	 */
-	@Override
-	public boolean testInputPort(final int port) throws CannotExecuteException {
-		if (gpioSession == null) {
-			gpioSession = new AwidGPIOSession(sensor, "1", getHost(), 4001);
-			try {
-				gpioSession.connect();
-			} catch (IOException e) {
-				gpioSession.disconnect();
-				gpioSession = null;
-				throw new CannotExecuteException(e);
-			}
-		}
-		return gpioSession.testInputPort(port);
-	}
-
-	public void flashGPO(byte pin, byte onTime, byte offTime, byte totalCount)
-			throws CannotExecuteException {
-		if (gpioSession == null) {
-			gpioSession = new AwidGPIOSession(sensor, "1", getHost(), 4001);
-			try {
-				gpioSession.connect();
-			} catch (IOException e) {
-				gpioSession.disconnect();
-				gpioSession = null;
-				throw new CannotExecuteException(e);
-			}
-		}
-		gpioSession.flashOutputPort(pin, onTime, offTime, totalCount);
+	
+	public AwidGPIOSession getGPIOSession(){
+		return gpioSession;
 	}
 
 	/**
@@ -361,10 +299,7 @@ public class AwidSession extends AbstractPubSubIPSensorSession implements
 	public void disconnect() {
 		// TODO Auto-generated method stub
 		super.disconnect();
-		if (gpioSession != null) {
-			gpioSession.disconnect();
-		}
-		gpioSession = null;
+		gpioSession.disconnect();
 	}
 
 	/**
@@ -372,10 +307,7 @@ public class AwidSession extends AbstractPubSubIPSensorSession implements
 	 */
 	protected void destroy() {
 		this.unsubscribe(this.awidEndpoint);
-		if (gpioSession != null) {
-			gpioSession.disconnect();
-		}
-		gpioSession = null;
+		gpioSession.disconnect();
 	}
 
 	/**
@@ -386,4 +318,15 @@ public class AwidSession extends AbstractPubSubIPSensorSession implements
 	public boolean is3014() {
 		return is3014;
 	}
+
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.sensors.sessions.AbstractIPSensorSession#toString()
+	 */
+	@Override
+	public String toString() {
+		// TODO Auto-generated method stub
+		return super.toString() + ", " + gpioSession.toString();
+	}
+	
+	
 }

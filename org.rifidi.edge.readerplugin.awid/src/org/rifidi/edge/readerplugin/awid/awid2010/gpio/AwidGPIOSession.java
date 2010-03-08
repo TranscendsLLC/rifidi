@@ -9,16 +9,16 @@ import java.util.HashSet;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.sensors.base.AbstractSensor;
 import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
+import org.rifidi.edge.core.sensors.exceptions.CannotExecuteException;
 import org.rifidi.edge.core.sensors.messages.ByteMessage;
 import org.rifidi.edge.core.sensors.sessions.MessageParsingStrategy;
 import org.rifidi.edge.core.sensors.sessions.MessageParsingStrategyFactory;
-import org.rifidi.edge.core.sensors.sessions.interfaces.CannotExecuteException;
-import org.rifidi.edge.core.sensors.sessions.interfaces.GPIOController;
 import org.rifidi.edge.core.sensors.sessions.pubsub.AbstractPubSubIPSensorSession;
 import org.rifidi.edge.core.sensors.sessions.pubsub.IPSessionEndpoint;
-import org.rifidi.edge.core.services.notification.data.gpio.GPIEvent;
 import org.rifidi.edge.readerplugin.awid.awid2010.communication.commands.AbstractAwidCommand;
 
 /**
@@ -44,7 +44,9 @@ import org.rifidi.edge.readerplugin.awid.awid2010.communication.commands.Abstrac
  * 
  */
 public class AwidGPIOSession extends AbstractPubSubIPSensorSession implements
-		GPIOController, IPSessionEndpoint {
+		IPSessionEndpoint {
+
+	private static final Log logger = LogFactory.getLog(AwidGPIOSession.class);
 
 	/**
 	 * The current status of the GPI ports. This object is shared, so make sure
@@ -69,14 +71,11 @@ public class AwidGPIOSession extends AbstractPubSubIPSensorSession implements
 		messageQueue = new LinkedBlockingQueue<ByteMessage>();
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
 	 * 
-	 * @see
-	 * org.rifidi.edge.core.sensors.sessions.interfaces.GPIOController#setOutputPort
-	 * (java.util.BitSet)
+	 * @param ports
+	 * @throws CannotExecuteException
 	 */
-	@Override
 	public void setOutputPort(BitSet ports) throws CannotExecuteException {
 		try {
 			SetOutputPortCommand command = new SetOutputPortCommand(ports);
@@ -88,14 +87,12 @@ public class AwidGPIOSession extends AbstractPubSubIPSensorSession implements
 
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
 	 * 
-	 * @see
-	 * org.rifidi.edge.core.sensors.sessions.interfaces.GPIOController#testInputPort
-	 * (int)
+	 * @param port
+	 * @return
+	 * @throws CannotExecuteException
 	 */
-	@Override
 	public boolean testInputPort(int port) throws CannotExecuteException {
 		try {
 			TestInputPortsCommand command = new TestInputPortsCommand(GPIPorts);
@@ -120,13 +117,45 @@ public class AwidGPIOSession extends AbstractPubSubIPSensorSession implements
 	 * @param totalCount
 	 *            The number of times to flash.
 	 */
-	public void flashOutputPort(byte pin, byte onTime, byte offTime,
+	private void flashOutputPort(byte pin, byte onTime, byte offTime,
 			byte totalCount) throws CannotExecuteException {
 		GPOFlashCommand awidCommand = new GPOFlashCommand(pin, onTime, offTime,
 				totalCount);
 		FlashControlCommand command = new FlashControlCommand(awidCommand);
 		command.setReaderSession(this);
 		super.submit(command);
+	}
+
+	/**
+	 * 
+	 * @param ports
+	 * @param finalPorts
+	 * @param timeOn
+	 * @param timeOff
+	 * @param repeat
+	 * @throws CannotExecuteException
+	 */
+	public void flashOutput(final BitSet ports, final BitSet finalPorts,
+			final int timeOn, final int timeOff, final int repeat)
+			throws CannotExecuteException {
+		Thread t = new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+				try {
+					for (int i = 0; i < 4; i++) {
+						if (ports.get(i)) {
+							flashOutputPort((byte) i, (byte) timeOn,
+									(byte) timeOff, (byte) repeat);
+						}
+					}
+					setOutputPort(finalPorts);
+				} catch (CannotExecuteException e) {
+					logger.warn("Cannot Flash Output: " + e.getMessage());
+				}
+			}
+		});
+		t.start();
 	}
 
 	/*
@@ -249,5 +278,13 @@ public class AwidGPIOSession extends AbstractPubSubIPSensorSession implements
 			}
 		}
 		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.sensors.sessions.AbstractIPSensorSession#toString()
+	 */
+	@Override
+	public String toString() {
+		return "[GPIO Session " + super.toString() +"]";
 	}
 }
