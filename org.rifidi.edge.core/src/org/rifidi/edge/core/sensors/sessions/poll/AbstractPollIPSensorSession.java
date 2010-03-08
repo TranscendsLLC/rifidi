@@ -17,6 +17,7 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import javax.jms.Destination;
 
@@ -98,32 +99,38 @@ public abstract class AbstractPollIPSensorSession extends
 	}
 
 	/**
-	 * Receive a message. This method blocks if there isn't a message available.
+	 * Receive a message. This method blocks for the amount of time determined
+	 * by the org.rifidi.edge.sessions.timeout variable.
 	 * 
 	 * @return
 	 * @throws IOException
+	 * @throws if the timeout has expired while waiting.
 	 */
-	public ByteMessage receiveMessage() throws IOException {
-		try {
-			ByteMessage ret = readQueue.take();
-			return ret;
-		} catch (InterruptedException e) {
-			Thread.currentThread().interrupt();
-			throw new IOException();
-		}
+	public ByteMessage receiveMessage() throws IOException, TimeoutException {
+		return receiveMessage(getTimeout());
 	}
 
 	/**
-	 * Receive a message. This method blocks for the given amount of time. If
-	 * the time expires the method will return.
+	 * Receive a message. This method blocks until the message is received or
+	 * until the given amount of time has expired.
 	 * 
 	 * @param timeout
-	 * @return
+	 *            the time to wait for a response in milliseconds
+	 * @return The next message from the reader
 	 * @throws IOException
+	 * @throws TimeoutException
+	 *             if the timeout has expired while waiting.
 	 */
-	public ByteMessage receiveMessage(long timeout) throws IOException {
+	public ByteMessage receiveMessage(long timeout) throws IOException,
+			TimeoutException {
 		try {
-			return readQueue.poll(timeout, TimeUnit.MILLISECONDS);
+			ByteMessage response = readQueue.poll(timeout,
+					TimeUnit.MILLISECONDS);
+			if (response != null)
+				return response;
+			else
+				throw new TimeoutException(
+						"Timed out while waiting for a response");
 		} catch (InterruptedException e) {
 			Thread.currentThread().interrupt();
 			throw new IOException();
@@ -139,7 +146,7 @@ public abstract class AbstractPollIPSensorSession extends
 	private class QueueingMessageProcessingStrategyFactory implements
 			MessageProcessingStrategyFactory {
 
-		/**The queue to put new objects on*/
+		/** The queue to put new objects on */
 		private final Queue<ByteMessage> queue;
 
 		public QueueingMessageProcessingStrategyFactory(Queue<ByteMessage> queue) {
@@ -151,6 +158,17 @@ public abstract class AbstractPollIPSensorSession extends
 			return new QueueingMessageProcessingStrategy(queue);
 		}
 
+	}
+
+	/**
+	 * Get the amount of time to wait on a response before timing out by reading
+	 * the system property org.rifidi.edge.sessions.timeout. If that property is
+	 * not available, it returns 5000
+	 * 
+	 * @return
+	 */
+	protected int getTimeout() {
+		return Integer.getInteger("org.rifidi.edge.sessions.timeout", 5000);
 	}
 
 }

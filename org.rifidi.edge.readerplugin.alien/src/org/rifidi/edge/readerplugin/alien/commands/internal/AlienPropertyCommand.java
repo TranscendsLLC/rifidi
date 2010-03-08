@@ -17,6 +17,7 @@ package org.rifidi.edge.readerplugin.alien.commands.internal;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeoutException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -62,13 +63,9 @@ public class AlienPropertyCommand extends AbstractAlien9800Command {
 		this.commands = commands;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Runnable#run()
-	 */
+
 	@Override
-	public void run() {
+	public void execute() throws TimeoutException{
 		try {
 			for (AlienCommandObjectWrapper wrapper : commands) {
 				wrapper.getCommandObject().setSession(
@@ -78,11 +75,11 @@ public class AlienPropertyCommand extends AbstractAlien9800Command {
 							.getCommandObject().execute());
 				} catch (AlienException e) {
 					logger.warn("Alien Exception while executing command "
-							+ wrapper.getPropertyName(), e);
+							+ wrapper.getPropertyName() + e.getMessage());
 				}
 			}
 		} catch (IOException e) {
-			logger.warn("IOException while executing command ", e);
+			logger.warn("IOException while executing command " + e.getMessage());
 		}
 
 	}

@@ -13,8 +13,8 @@
 package org.rifidi.edge.core.sensors;
 
 import org.rifidi.edge.core.sensors.exceptions.NotSubscribedException;
+import org.rifidi.edge.core.services.esper.internal.EsperEventContainer;
 import org.rifidi.edge.core.services.notification.data.ReadCycle;
-
 
 public interface Sensor {
 
@@ -45,7 +45,7 @@ public interface Sensor {
 	 * 
 	 * @param reads
 	 */
-	ReadCycle receive(Object object) throws NotSubscribedException;
+	EsperEventContainer receive(Object object) throws NotSubscribedException;
 
 	/**
 	 * Send sensor results to this sensor.
@@ -54,4 +54,10 @@ public interface Sensor {
 	 */
 	public void send(ReadCycle cycle);
 
+	/**
+	 * Send a non ReadCycle event to esper.
+	 * 
+	 * @param event
+	 */
+	void sendEvent(Object event);
 }

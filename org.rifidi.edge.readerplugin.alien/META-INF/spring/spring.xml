@@ -19,4 +19,9 @@
 		<property name="template" ref="internalMB" />
 		<property name="commandConfigurations" ref="alienautoCommands" />
 	</bean>
+	
+	<bean id = "alienGPIOService" class="org.rifidi.edge.readerplugin.alien.AlienGPIOService">
+		<property name = "readerDAO" ref="readerDAO"/>
+	</bean>
+		
 </beans>

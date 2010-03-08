@@ -14,6 +14,7 @@ package org.rifidi.edge.readerplugin.alien.commandobject;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeoutException;
 
 import org.rifidi.edge.core.sensors.messages.ByteMessage;
 import org.rifidi.edge.readerplugin.alien.Alien9800ReaderSession;
@@ -28,6 +29,8 @@ public class GetTagListCommandObject {
 	 * 
 	 * @param sensorSession
 	 *            A live sensorSession to send the command to
+	 * @param timeout
+	 *            The amount of time to wait on a response
 	 */
 	public GetTagListCommandObject(Alien9800ReaderSession readerSession) {
 		this.readerSession = readerSession;
@@ -39,14 +42,17 @@ public class GetTagListCommandObject {
 	 * @return the value of the property on the alien sensorSession
 	 * @throws IOException
 	 */
-	public List<AlienTag> executeGet() throws IOException, AlienException {
+	public List<AlienTag> executeGet() throws IOException, AlienException,
+			TimeoutException {
 		String message = Alien9800ReaderSession.PROMPT_SUPPRESS + "get "
 				+ Alien9800ReaderSession.COMMAND_TAG_LIST
 				+ Alien9800ReaderSession.NEWLINE;
 
 		readerSession.sendMessage(new ByteMessage(message.getBytes()));
 
-		ByteMessage incomingMessage = readerSession.receiveMessage();
+		ByteMessage incomingMessage;
+
+		incomingMessage = readerSession.receiveMessage();
 
 		String incoming = new String(incomingMessage.message).trim();
 

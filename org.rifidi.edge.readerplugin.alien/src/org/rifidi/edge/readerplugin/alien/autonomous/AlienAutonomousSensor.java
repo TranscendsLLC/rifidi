@@ -59,7 +59,7 @@ public class AlienAutonomousSensor extends
 	/** The FACTORY_ID of the session */
 	private AtomicInteger sessionID = new AtomicInteger(0);
 	/** The port of the server socket */
-	private volatile Integer serverSocketPort = 54321;
+	private volatile Integer notifyPort = 54321;
 	/** Maximum number of autonomous readers supported concurrently */
 	private volatile Integer maxNumberAutonomousReaders = 15;
 	/** Provided by spring. */
@@ -121,7 +121,7 @@ public class AlienAutonomousSensor extends
 			Integer id = sessionID.incrementAndGet();
 			if (session.compareAndSet(null, new AlienAutonomousSensorSession(
 					this, Integer.toString(id), template, notifierService,
-					serverSocketPort, maxNumberAutonomousReaders, commands))) {
+					notifyPort, maxNumberAutonomousReaders, commands))) {
 				if (sessionDTO.getCommands() != null) {
 					for (CommandDTO command : sessionDTO.getCommands()) {
 						session.get().submit(command.getCommandID(),
@@ -151,7 +151,7 @@ public class AlienAutonomousSensor extends
 			Integer id = sessionID.incrementAndGet();
 			if (session.compareAndSet(null, new AlienAutonomousSensorSession(
 					this, Integer.toString(id), template, notifierService,
-					serverSocketPort, maxNumberAutonomousReaders, commands))) {
+					notifyPort, maxNumberAutonomousReaders, commands))) {
 				notifierService.addSessionEvent(getID(), id.toString());
 				return id.toString();
 			}
@@ -251,16 +251,16 @@ public class AlienAutonomousSensor extends
 	 * @return the serverSocketPort
 	 */
 	@Property(displayName = "Notify Port", category = "connection", defaultValue = "54321", description = "The port configured in the Alien's Notify Address", type = PropertyType.PT_INTEGER, writable = true, minValue = "0", maxValue = "65535", orderValue = 1)
-	public Integer getServerSocketPort() {
-		return serverSocketPort;
+	public Integer getNotifyPort() {
+		return notifyPort;
 	}
 
 	/**
 	 * @param serverSocketPort
 	 *            the serverSocketPort to set
 	 */
-	public void setServerSocketPort(Integer serverSocketPort) {
-		this.serverSocketPort = serverSocketPort;
+	public void setNotifyPort(Integer serverSocketPort) {
+		this.notifyPort = serverSocketPort;
 	}
 
 	/**

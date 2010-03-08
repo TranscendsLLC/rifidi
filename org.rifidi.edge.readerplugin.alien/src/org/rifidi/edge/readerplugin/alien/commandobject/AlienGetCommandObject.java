@@ -14,7 +14,9 @@
  * 
  */
 package org.rifidi.edge.readerplugin.alien.commandobject;
+
 import java.io.IOException;
+import java.util.concurrent.TimeoutException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -44,12 +46,20 @@ public class AlienGetCommandObject extends AlienCommandObject {
 	}
 
 	@Override
-	public String execute() throws IOException, AlienException {
+	public String execute() throws IOException, AlienException,
+			TimeoutException {
 		String message = Alien9800ReaderSession.PROMPT_SUPPRESS + "get "
 				+ command + Alien9800ReaderSession.NEWLINE;
 		readerSession.sendMessage(new ByteMessage(message.getBytes()));
 
-		ByteMessage incomingMessage = readerSession.receiveMessage();
+		ByteMessage incomingMessage;
+		try {
+			incomingMessage = readerSession.receiveMessage();
+		} catch (TimeoutException e) {
+			logger.warn("Timeout when waiting for the " + command
+					+ " command to execute");
+			throw e;
+		}
 
 		String incoming = new String(incomingMessage.message);
 		if (incoming.contains("=")) {

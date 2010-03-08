@@ -18,6 +18,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.api.SessionStatus;
 import org.rifidi.edge.api.rmi.dto.CommandDTO;
 import org.rifidi.edge.api.rmi.dto.SessionDTO;
@@ -46,6 +48,8 @@ public abstract class SensorSession {
 	protected final AbstractSensor<?> sensor;
 	/** Synchronized List of Submitted Commands */
 	protected final List<CommandDTO> commands;
+	/** Logger for this class */
+	private static final Log logger = LogFactory.getLog(SensorSession.class);
 
 	/**
 	 * Constructor.
@@ -108,6 +112,32 @@ public abstract class SensorSession {
 	 * Close the connection and stop processing of commands.
 	 */
 	public abstract void disconnect();
+
+	/**
+	 * This method is used to notify the session that a timeout has occurred. By
+	 * default this method disconnects then reconnects.
+	 */
+	public void handleTimeout() {
+		logger.error("Timeout Exception on " + getSensor() + ":" + this);
+
+		/**
+		 * Create a reconnect thread that disconnects and reconnects.
+		 */
+		Thread reconnectThread = new Thread(new Runnable() {
+			public void run() {
+				try {
+					disconnect();
+					connect();
+				} catch (IOException e) {
+					e.printStackTrace();
+					logger.warn("Cannot reconnect session.");
+				}
+			}
+		});
+
+		// start the thread
+		reconnectThread.start();
+	}
 
 	/**
 	 * Get a list of all commands in their execution order

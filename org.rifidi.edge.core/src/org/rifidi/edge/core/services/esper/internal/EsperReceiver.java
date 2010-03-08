@@ -22,7 +22,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.sensors.Sensor;
 import org.rifidi.edge.core.sensors.exceptions.NotSubscribedException;
-import org.rifidi.edge.core.services.notification.data.ReadCycle;
 
 import com.espertech.esper.client.EPRuntime;
 
@@ -34,7 +33,7 @@ import com.espertech.esper.client.EPRuntime;
  */
 public class EsperReceiver implements Runnable {
 	/** Logger for this class. */
-	private static final Log logger=LogFactory.getLog(EsperReceiver.class);
+	private static final Log logger = LogFactory.getLog(EsperReceiver.class);
 	/** Set containing the sensors the receiver currently handles. */
 	private final Set<Sensor> sensors;
 	/** The esper runtime. */
@@ -78,14 +77,18 @@ public class EsperReceiver implements Runnable {
 		while (!Thread.currentThread().isInterrupted()) {
 			for (Sensor sensor : sensors) {
 				try {
-					ReadCycle cycle = sensor.receive(this);
-					runtime.sendEvent(cycle);
+					EsperEventContainer container = sensor.receive(this);
+					runtime.sendEvent(container.getReadCycle());
+					for (Object event : container.getOtherEvents()) {
+						runtime.sendEvent(event);
+					}
 				} catch (NotSubscribedException e) {
 					throw new RuntimeException(e);
 				}
-				//when a service becomes unavailable the proxy throws a runtime exception
-				catch (RuntimeException re){
-					logger.debug("A sensor went away. "+re);
+				// when a service becomes unavailable the proxy throws a runtime
+				// exception
+				catch (RuntimeException re) {
+					logger.debug("A sensor went away. " + re);
 					sensors.remove(sensor);
 				}
 			}

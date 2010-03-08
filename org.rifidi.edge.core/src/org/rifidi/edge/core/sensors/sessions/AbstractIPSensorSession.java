@@ -34,6 +34,8 @@ import org.rifidi.edge.core.sensors.commands.Command;
 import org.rifidi.edge.core.sensors.messages.ByteMessage;
 import org.rifidi.edge.core.sensors.sessions.threads.ReadThread;
 import org.rifidi.edge.core.sensors.sessions.threads.WriteThread;
+import org.rifidi.edge.core.services.notification.data.management.SessionDownEvent;
+import org.rifidi.edge.core.services.notification.data.management.SessionUpEvent;
 import org.springframework.jms.core.JmsTemplate;
 
 /**
@@ -265,7 +267,6 @@ public abstract class AbstractIPSensorSession extends AbstractSensorSession {
 					throw new IOException("Unable to reach reader.");
 				}
 
-				// socket.setSoTimeout(10000);
 
 				readThread = new Thread(new ReadThread(socket.getInputStream(),
 						getMessageParsingStrategyFactory(),
@@ -327,7 +328,6 @@ public abstract class AbstractIPSensorSession extends AbstractSensorSession {
 				}
 				readThread.interrupt();
 				writeThread.interrupt();
-
 			}
 		}
 		// this is intended to be able to stop the connect method when we are in
@@ -435,13 +435,26 @@ public abstract class AbstractIPSensorSession extends AbstractSensorSession {
 		public void run() {
 
 			try {
+				
+				SessionUpEvent sue = new SessionUpEvent();
+				sue.setReaderID(getSensor().getID());
+				sue.setSessionID(getID());
+				sue.setTimestamp(System.currentTimeMillis());
+				sensor.sendEvent(sue);
+				
 				readThread.join();
 
 				try {
 					socket.close();
-				} catch (IOException e) {
-
+				} catch(Exception e){
+					e.printStackTrace();
 				}
+				
+				SessionDownEvent sde = new SessionDownEvent();
+				sde.setReaderID(getSensor().getID());
+				sde.setSessionID(getID());
+				sde.setTimestamp(System.currentTimeMillis());
+				getSensor().sendEvent(sde);
 
 				// don't try to connect again if we are closing down
 				if (getStatus() != SessionStatus.CLOSED) {

@@ -107,6 +107,11 @@ public abstract class AbstractServerSocketSensorSession extends
 	 */
 	@Override
 	protected void _connect() throws IOException {
+		if(serverSocketPort<1){
+			logger.info("Not starting server socket, since port < 1");
+			return;
+		}
+		
 		if (getStatus() == SessionStatus.CONNECTING
 				|| getStatus() == SessionStatus.PROCESSING) {
 			logger.warn("Session already started");
