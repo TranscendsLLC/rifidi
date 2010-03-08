@@ -18,6 +18,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -63,6 +64,6 @@ public class WatchlistReader {
 				// TODO: Log this here probably
 			}
 		}
-		return null;
+		return new LinkedList<String>();
 	}
 }
