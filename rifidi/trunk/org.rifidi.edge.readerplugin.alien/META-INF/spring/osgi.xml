@@ -20,6 +20,12 @@
 		</osgi:interfaces>
 	</osgi:service>
 	
+	<osgi:service id="alienGPIOServiceOSGi" ref="alienGPIOService" auto-export="all-classes">
+		  <service-properties>
+    		<entry key="reader" value="Alien"/>
+		  </service-properties>
+	</osgi:service>
+	
 	<osgi:set id="alienCommands" interface="org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration"
 		cardinality="0..N" filter="(reader=Alien)">
 		<osgi:listener ref="alienConfigurationFactory" bind-method="bindCommandConfiguration" unbind-method="unbindCommandConfiguration"/>
@@ -35,4 +41,7 @@
 
 	<osgi:reference id="internalMB"
 		interface="org.springframework.jms.core.JmsTemplate" bean-name="internalJMSTemplate" />
+	
+	<osgi:reference id="readerDAO"
+		interface="org.rifidi.edge.core.daos.ReaderDAO" />
 </beans>

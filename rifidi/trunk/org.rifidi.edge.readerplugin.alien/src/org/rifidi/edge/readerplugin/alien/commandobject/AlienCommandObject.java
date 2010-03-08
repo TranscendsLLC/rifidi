@@ -11,7 +11,9 @@
  *                   A copy of the license is included in this distribution under RifidiEdge-License.txt 
  */
 package org.rifidi.edge.readerplugin.alien.commandobject;
+
 import java.io.IOException;
+import java.util.concurrent.TimeoutException;
 
 import org.rifidi.edge.readerplugin.alien.Alien9800ReaderSession;
 
@@ -65,6 +67,7 @@ public abstract class AlienCommandObject {
 	 * @throws IOException
 	 * @throws AlienException
 	 */
-	public abstract String execute() throws IOException, AlienException;
+	public abstract String execute() throws IOException, AlienException,
+			TimeoutException;
 
 }

@@ -15,7 +15,7 @@
  */
 package org.rifidi.edge.readerplugin.alien;
 
-import org.rifidi.edge.core.sensors.commands.Command;
+import org.rifidi.edge.core.sensors.commands.TimeoutCommand;
 
 /**
  * A superclass for use by commands for the Alien9800 Reader
@@ -23,7 +23,7 @@ import org.rifidi.edge.core.sensors.commands.Command;
  * @author Jochen Mader - jochen@pramari.com
  * 
  */
-public abstract class AbstractAlien9800Command extends Command {
+public abstract class AbstractAlien9800Command extends TimeoutCommand {
 
 	/**
 	 * Default Constructor

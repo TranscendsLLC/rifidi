@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Rifidi Edge Core
 Bundle-SymbolicName: org.rifidi.edge.core
-Bundle-Version: 5.3.5
+Bundle-Version: 5.3.6
 Bundle-Vendor: Pramari, LLC
 Import-Package: com.espertech.esper.client,
  com.espertech.esper.client.metric,
@@ -58,7 +58,6 @@ Export-Package: org.rifidi.edge.core.configuration,
  org.rifidi.edge.core.sensors.management.dtos,
  org.rifidi.edge.core.sensors.messages,
  org.rifidi.edge.core.sensors.sessions,
- org.rifidi.edge.core.sensors.sessions.interfaces,
  org.rifidi.edge.core.sensors.sessions.poll,
  org.rifidi.edge.core.sensors.sessions.pubsub,
  org.rifidi.edge.core.sensors.sessions.threads,
@@ -66,5 +65,5 @@ Export-Package: org.rifidi.edge.core.configuration,
  org.rifidi.edge.core.utilities
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-Description: This bundle contains several core services needed by the edge server, such as ReaderSession service
-Require-Bundle: org.rifidi.edge.core.services;bundle-version="1.2.0",
+Require-Bundle: org.rifidi.edge.core.services;bundle-version="1.2.1",
  org.rifidi.edge.api;bundle-version="1.3.0"

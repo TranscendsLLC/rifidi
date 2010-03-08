@@ -21,7 +21,10 @@ import org.rifidi.edge.core.sensors.SensorSession;
 import org.springframework.jms.core.JmsTemplate;
 
 /**
- * An Abstract base class that must be extended by all Reader Commands.
+ * An Abstract base class that must be extended by all Reader Commands. Commands
+ * are given to the ThreadPoolExecutor in the Reader's Session for execution.
+ * The run method in the Commands should execute reasonably quickly and should
+ * not be long running.
  * 
  * @author Jochen Mader - jochen@pramari.com
  * 

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.rifidi.edge.core.sensors.sessions.interfaces;
+package org.rifidi.edge.core.sensors.exceptions;
 
 /**
  * This Exception is used when a method on the session cannot execute.

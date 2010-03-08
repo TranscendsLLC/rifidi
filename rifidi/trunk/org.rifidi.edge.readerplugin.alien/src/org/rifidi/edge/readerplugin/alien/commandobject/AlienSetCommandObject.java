@@ -14,7 +14,9 @@
  * 
  */
 package org.rifidi.edge.readerplugin.alien.commandobject;
+
 import java.io.IOException;
+import java.util.concurrent.TimeoutException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -39,8 +41,6 @@ public class AlienSetCommandObject extends AlienCommandObject {
 	 * 
 	 * @param command
 	 *            The command to execute
-	 * @param sensorSession
-	 *            The session to execute the command on
 	 * @param value
 	 *            The value to set
 	 */
@@ -67,20 +67,24 @@ public class AlienSetCommandObject extends AlienCommandObject {
 	}
 
 	@Override
-	public String execute() throws IOException, AlienException {
+	public String execute() throws IOException, AlienException,
+			TimeoutException {
 		assert (value != null);
 		String message = Alien9800ReaderSession.PROMPT_SUPPRESS + "set "
 				+ command + "=" + value + Alien9800ReaderSession.NEWLINE;
 		readerSession.sendMessage(new ByteMessage(message.getBytes()));
-		ByteMessage incomingMessage = readerSession.receiveMessage();
+		ByteMessage incomingMessage;
+
+		incomingMessage = readerSession.receiveMessage();
+
 		String incoming = new String(incomingMessage.message);
 		if (incoming.contains("=")) {
 			String[] splitString = incoming.split("=");
 			return splitString[1].trim();
 		} else if (incoming.contains("Error")) {
-			throw new AlienException(message+" : "+incoming.trim());
+			throw new AlienException(message + " : " + incoming.trim());
 		} else {
-			throw new AlienException(message+" : "+incoming.trim());
+			throw new AlienException(message + " : " + incoming.trim());
 		}
 
 	}

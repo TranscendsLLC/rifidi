@@ -46,6 +46,7 @@ import org.rifidi.edge.core.sensors.exceptions.DuplicateSubscriptionException;
 import org.rifidi.edge.core.sensors.exceptions.ImmutableException;
 import org.rifidi.edge.core.sensors.exceptions.InUseException;
 import org.rifidi.edge.core.sensors.exceptions.NotSubscribedException;
+import org.rifidi.edge.core.services.esper.internal.EsperEventContainer;
 import org.rifidi.edge.core.services.notification.data.ReadCycle;
 import org.rifidi.edge.core.services.notification.data.TagReadEvent;
 
@@ -77,7 +78,13 @@ public abstract class AbstractSensor<T extends SensorSession> extends
 	 * Receivers are objects that need to gather tag reads. The tag reads are
 	 * stored in a queue.
 	 */
-	protected final Map<Object, LinkedBlockingQueue<ReadCycle>> subscriberToQueueMap = new ConcurrentHashMap<Object, LinkedBlockingQueue<ReadCycle>>();
+	protected final Map<Object, LinkedBlockingQueue<ReadCycle>> tagSubscriberToQueueMap = new ConcurrentHashMap<Object, LinkedBlockingQueue<ReadCycle>>();
+
+	/**
+	 * This queue is just like the tag subscriber queue, except that it stores
+	 * all events which are not Tag Read Events.
+	 */
+	protected final Map<Object, LinkedBlockingQueue<Object>> eventSubscriberToQueueMap = new ConcurrentHashMap<Object, LinkedBlockingQueue<Object>>();
 
 	/**
 	 * Create a new sensor session.
@@ -147,26 +154,39 @@ public abstract class AbstractSensor<T extends SensorSession> extends
 	 * org.rifidi.edge.core.sensors.PollableSensor#receive(java.lang.Object)
 	 */
 	@Override
-	public ReadCycle receive(final Object receiver)
+	public EsperEventContainer receive(final Object receiver)
 			throws NotSubscribedException {
-		LinkedBlockingQueue<ReadCycle> queue = subscriberToQueueMap
+		LinkedBlockingQueue<ReadCycle> tagQueue = tagSubscriberToQueueMap
 				.get(receiver);
-		if (queue != null) {
-			synchronized (queue) {
-				Set<ReadCycle> rcs = new HashSet<ReadCycle>();
-				queue.drainTo(rcs);
-				long time = System.currentTimeMillis();
-				Set<TagReadEvent> tagReads = new HashSet<TagReadEvent>();
-				for (ReadCycle cycle : rcs) {
-					for (TagReadEvent event : cycle.getTags()) {
-						tagReads.add(event);
-					}
-				}
-				ReadCycle cycle = new ReadCycle(tagReads, getName(), time);
-				return cycle;
+		LinkedBlockingQueue<Object> eventQueue = eventSubscriberToQueueMap
+				.get(receiver);
+		if (tagQueue == null || eventQueue == null) {
+			throw new NotSubscribedException(receiver + " is not subscribed.");
+		}
+
+		Set<ReadCycle> rcs = new HashSet<ReadCycle>();
+		synchronized (tagQueue) {
+			tagQueue.drainTo(rcs);
+		}
+
+		Set<Object> events = new HashSet<Object>();
+		synchronized (eventQueue) {
+			eventQueue.drainTo(events);
+		}
+
+		long time = System.currentTimeMillis();
+		Set<TagReadEvent> tagReads = new HashSet<TagReadEvent>();
+		for (ReadCycle cycle : rcs) {
+			for (TagReadEvent event : cycle.getTags()) {
+				tagReads.add(event);
 			}
 		}
-		throw new NotSubscribedException(receiver + " is not subscribed.");
+		ReadCycle cycle = new ReadCycle(tagReads, getName(), time);
+		EsperEventContainer eventContainer = new EsperEventContainer();
+		eventContainer.setReadCycle(cycle);
+		eventContainer.setOtherEvents(events);
+		return eventContainer;
+
 	}
 
 	/*
@@ -178,12 +198,14 @@ public abstract class AbstractSensor<T extends SensorSession> extends
 	@Override
 	public void subscribe(final Object receiver)
 			throws DuplicateSubscriptionException {
-		if (subscriberToQueueMap.containsKey(receiver)) {
+		if (tagSubscriberToQueueMap.containsKey(receiver)) {
 			throw new DuplicateSubscriptionException(receiver
 					+ " is already subscribed.");
 		}
-		subscriberToQueueMap
-				.put(receiver, new LinkedBlockingQueue<ReadCycle>());
+		tagSubscriberToQueueMap.put(receiver,
+				new LinkedBlockingQueue<ReadCycle>());
+		eventSubscriberToQueueMap.put(receiver,
+				new LinkedBlockingQueue<Object>());
 		inUse.compareAndSet(false, true);
 	}
 
@@ -206,11 +228,12 @@ public abstract class AbstractSensor<T extends SensorSession> extends
 	@Override
 	public synchronized void unsubscribe(final Object receiver)
 			throws NotSubscribedException {
-		if (!subscriberToQueueMap.containsKey(receiver)) {
+		if (!tagSubscriberToQueueMap.containsKey(receiver)) {
 			throw new NotSubscribedException(receiver + " is not subscribed.");
 		}
-		subscriberToQueueMap.remove(receiver);
-		if (subscriberToQueueMap.isEmpty() && receivers.isEmpty()) {
+		tagSubscriberToQueueMap.remove(receiver);
+		eventSubscriberToQueueMap.remove(receiver);
+		if (tagSubscriberToQueueMap.isEmpty() && receivers.isEmpty()) {
 			inUse.compareAndSet(true, false);
 		}
 	}
@@ -224,7 +247,8 @@ public abstract class AbstractSensor<T extends SensorSession> extends
 	 */
 	@Override
 	public void removeReceiver(final Sensor receiver) {
-		if (subscriberToQueueMap.isEmpty() && receivers.isEmpty()) {
+		receivers.remove(receiver);
+		if (tagSubscriberToQueueMap.isEmpty() && receivers.isEmpty()) {
 			inUse.compareAndSet(true, false);
 		}
 	}
@@ -267,10 +291,27 @@ public abstract class AbstractSensor<T extends SensorSession> extends
 		for (Sensor receiver : receivers) {
 			receiver.send(cycle);
 		}
-		for (LinkedBlockingQueue<ReadCycle> queue : subscriberToQueueMap
+		for (LinkedBlockingQueue<ReadCycle> queue : tagSubscriberToQueueMap
 				.values()) {
 			queue.add(cycle);
 		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.rifidi.edge.core.sensors.Sensor#sendEvent(java.lang.Object)
+	 */
+	@Override
+	public void sendEvent(Object event) {
+		for (Sensor receiver : receivers) {
+			receiver.sendEvent(event);
+		}
+		for (LinkedBlockingQueue<Object> queue : eventSubscriberToQueueMap
+				.values()) {
+			queue.add(event);
+		}
+
 	}
 
 	/*
@@ -327,6 +368,7 @@ public abstract class AbstractSensor<T extends SensorSession> extends
 	 * Register the reader to OSGi.
 	 * 
 	 * Registers the service with the following params:
+	 * 
 	 * <pre>
 	 * type - "reader"
 	 * reader - the reader type supplied as an argument
@@ -336,7 +378,7 @@ public abstract class AbstractSensor<T extends SensorSession> extends
 	 * @param context
 	 *            The Bundlecontext to use
 	 * @param readerType
-	 *            The Type of reader to register it as	 
+	 *            The Type of reader to register it as
 	 */
 	public void register(BundleContext context, String readerType) {
 		register(context, readerType, new HashMap<String, String>());
@@ -346,6 +388,7 @@ public abstract class AbstractSensor<T extends SensorSession> extends
 	 * Register the reader to OSGi.
 	 * 
 	 * Registers the service with the following params:
+	 * 
 	 * <pre>
 	 * type - "reader"
 	 * reader - the reader type supplied as an argument
@@ -385,7 +428,9 @@ public abstract class AbstractSensor<T extends SensorSession> extends
 		receivers.clear();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override

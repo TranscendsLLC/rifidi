@@ -31,6 +31,7 @@ import org.rifidi.edge.core.sensors.exceptions.DuplicateSubscriptionException;
 import org.rifidi.edge.core.sensors.exceptions.ImmutableException;
 import org.rifidi.edge.core.sensors.exceptions.InUseException;
 import org.rifidi.edge.core.sensors.exceptions.NotSubscribedException;
+import org.rifidi.edge.core.services.esper.internal.EsperEventContainer;
 import org.rifidi.edge.core.services.notification.data.ReadCycle;
 import org.rifidi.edge.core.services.notification.data.TagReadEvent;
 
@@ -47,9 +48,14 @@ public class SensorImpl implements SensorUpdate, CompositeSensorUpdate {
 	/** Children of this node. */
 	private final Set<SensorUpdate> childNodes;
 	/** Map with the subscriber as key and it's queue as value. */
-	public final Map<Object, LinkedBlockingQueue<ReadCycle>> subscriberToQueueMap;
+	public final Map<Object, LinkedBlockingQueue<ReadCycle>> tagSubscriberToQueueMap;
 	/** Set containing all nodes that are connected as receivers. */
 	private final Set<Sensor> receivers;
+	/**
+	 * This queue is just like the tag subscriber queue, except that it stores
+	 * all events which are not Tag Read Events.
+	 */
+	protected final Map<Object, LinkedBlockingQueue<Object>> eventSubscriberToQueueMap;
 
 	/**
 	 * @param name
@@ -62,7 +68,8 @@ public class SensorImpl implements SensorUpdate, CompositeSensorUpdate {
 		this.childNodes = new CopyOnWriteArraySet<SensorUpdate>();
 		this.childNodes.addAll(childNodes);
 		this.immutable = immutable;
-		this.subscriberToQueueMap = new ConcurrentHashMap<Object, LinkedBlockingQueue<ReadCycle>>();
+		this.tagSubscriberToQueueMap = new ConcurrentHashMap<Object, LinkedBlockingQueue<ReadCycle>>();
+		eventSubscriberToQueueMap = new ConcurrentHashMap<Object, LinkedBlockingQueue<Object>>();
 		this.receivers = new CopyOnWriteArraySet<Sensor>();
 		this.inUse = new AtomicBoolean(false);
 	}
@@ -163,11 +170,14 @@ public class SensorImpl implements SensorUpdate, CompositeSensorUpdate {
 	 * org.rifidi.edge.core.sensors.SensorUpdate#subscribe(java.lang.Object)
 	 */
 	public void subscribe(Object object) throws DuplicateSubscriptionException {
-		if (subscriberToQueueMap.containsKey(object)) {
+		if (tagSubscriberToQueueMap.containsKey(object)) {
 			throw new DuplicateSubscriptionException(object
 					+ " is already subscribed.");
 		}
-		subscriberToQueueMap.put(object, new LinkedBlockingQueue<ReadCycle>());
+		tagSubscriberToQueueMap.put(object,
+				new LinkedBlockingQueue<ReadCycle>());
+		eventSubscriberToQueueMap
+				.put(object, new LinkedBlockingQueue<Object>());
 		inUse.compareAndSet(false, true);
 	}
 
@@ -178,11 +188,12 @@ public class SensorImpl implements SensorUpdate, CompositeSensorUpdate {
 	 * org.rifidi.edge.core.sensors.SensorUpdate#unsubscribe(java.lang.Object )
 	 */
 	public void unsubscribe(Object object) throws NotSubscribedException {
-		if (!subscriberToQueueMap.containsKey(object)) {
+		if (!tagSubscriberToQueueMap.containsKey(object)) {
 			throw new NotSubscribedException(object + " is not subscribed.");
 		}
-		subscriberToQueueMap.remove(object);
-		if (subscriberToQueueMap.isEmpty() && receivers.isEmpty()) {
+		tagSubscriberToQueueMap.remove(object);
+		eventSubscriberToQueueMap.remove(object);
+		if (tagSubscriberToQueueMap.isEmpty() && receivers.isEmpty()) {
 			inUse.compareAndSet(true, false);
 		}
 	}
@@ -199,13 +210,16 @@ public class SensorImpl implements SensorUpdate, CompositeSensorUpdate {
 		inUse.compareAndSet(false, true);
 	}
 
-
-	/* (non-Javadoc)
-	 * @see org.rifidi.edge.core.sensors.SensorUpdate#removeReceiver(org.rifidi.edge.core.sensors.Sensor)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.core.sensors.SensorUpdate#removeReceiver(org.rifidi.edge
+	 * .core.sensors.Sensor)
 	 */
 	@Override
 	public void removeReceiver(Sensor receiver) {
-		if (subscriberToQueueMap.isEmpty() && receivers.isEmpty()) {
+		if (tagSubscriberToQueueMap.isEmpty() && receivers.isEmpty()) {
 			inUse.compareAndSet(true, false);
 		}
 	}
@@ -230,9 +244,12 @@ public class SensorImpl implements SensorUpdate, CompositeSensorUpdate {
 		return inUse.get();
 	}
 
-
-	/* (non-Javadoc)
-	 * @see org.rifidi.edge.core.sensors.Sensor#send(org.rifidi.edge.core.services.notification.data.ReadCycle)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.core.sensors.Sensor#send(org.rifidi.edge.core.services
+	 * .notification.data.ReadCycle)
 	 */
 	@Override
 	public void send(ReadCycle cycle) {
@@ -240,34 +257,66 @@ public class SensorImpl implements SensorUpdate, CompositeSensorUpdate {
 			receiver.send(cycle);
 
 		}
-		for (LinkedBlockingQueue<ReadCycle> queue : subscriberToQueueMap
+		for (LinkedBlockingQueue<ReadCycle> queue : tagSubscriberToQueueMap
 				.values()) {
 			queue.add(cycle);
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.rifidi.edge.core.sensors.Sensor#sendEvent(java.lang.Object)
+	 */
+	@Override
+	public void sendEvent(Object event) {
+		for (Sensor receiver : receivers) {
+			receiver.sendEvent(event);
+		}
+		for (LinkedBlockingQueue<Object> queue : eventSubscriberToQueueMap
+				.values()) {
+			queue.add(event);
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.rifidi.edge.core.sensors.Sensor#receive(java.lang.Object)
 	 */
 	@Override
-	public ReadCycle receive(Object object) throws NotSubscribedException {
-		LinkedBlockingQueue<ReadCycle> queue = subscriberToQueueMap.get(object);
-		if (queue != null) {
-			synchronized (queue) {
-				Set<ReadCycle> rcs = new HashSet<ReadCycle>();
-				queue.drainTo(rcs);
-				long time=System.currentTimeMillis();
-				Set<TagReadEvent> tagReads=new HashSet<TagReadEvent>();
-				for(ReadCycle cycle:rcs){
-					for(TagReadEvent event:cycle.getTags()){
-						tagReads.add(event);	
-					}
-				}
-				ReadCycle cycle=new ReadCycle(tagReads,getName(),time);
-				return cycle;
+	public EsperEventContainer receive(Object object)
+			throws NotSubscribedException {
+		LinkedBlockingQueue<ReadCycle> tagQueue = tagSubscriberToQueueMap
+				.get(object);
+		LinkedBlockingQueue<Object> eventQueue = eventSubscriberToQueueMap
+				.get(object);
+		if (tagQueue == null || eventQueue == null) {
+			throw new NotSubscribedException(object + " is not subscribed.");
+		}
+
+		Set<ReadCycle> rcs = new HashSet<ReadCycle>();
+		synchronized (tagQueue) {
+			tagQueue.drainTo(rcs);
+		}
+
+		Set<Object> events = new HashSet<Object>();
+		synchronized (eventQueue) {
+			eventQueue.drainTo(events);
+		}
+
+		long time = System.currentTimeMillis();
+		Set<TagReadEvent> tagReads = new HashSet<TagReadEvent>();
+		for (ReadCycle cycle : rcs) {
+			for (TagReadEvent event : cycle.getTags()) {
+				tagReads.add(event);
 			}
 		}
-		throw new NotSubscribedException(object + " is not subscribed.");
+		ReadCycle cycle = new ReadCycle(tagReads, getName(), time);
+		EsperEventContainer eventContainer = new EsperEventContainer();
+		eventContainer.setReadCycle(cycle);
+		eventContainer.setOtherEvents(events);
+		return eventContainer;
 	}
 
 }

@@ -13,6 +13,7 @@
 package org.rifidi.edge.readerplugin.alien.commands;
 
 import java.io.IOException;
+import java.util.concurrent.TimeoutException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -43,7 +44,7 @@ public class AlienAutonomousModeStopCommand extends AbstractAlien9800Command {
 	 * @see java.lang.Runnable#run()
 	 */
 	@Override
-	public void run() {
+	public void execute() throws TimeoutException {
 		AlienCommandObject setNotifyMode = new AlienSetCommandObject(
 				"notifyMode", "off",
 				(Alien9800ReaderSession) this.sensorSession);
@@ -53,11 +54,11 @@ public class AlienAutonomousModeStopCommand extends AbstractAlien9800Command {
 			setNotifyMode.execute();
 			setAutoMode.execute();
 		} catch (IOException e) {
-			logger.warn("Exception while executing command: ", e);
+			logger.warn("Exception while executing command: " + e.getMessage());
 		} catch (AlienException e) {
-			logger.warn("Exception while executing command: ", e);
+			logger.warn("Exception while executing command: " + e.getMessage());
 		} catch (Exception e) {
-			logger.warn("Exception while executing command: ", e);
+			logger.warn("Exception while executing command: " + e.getMessage());
 		}
 
 	}

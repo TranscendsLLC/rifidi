@@ -17,9 +17,11 @@ package org.rifidi.edge.readerplugin.alien;
 
 import java.io.IOException;
 import java.util.BitSet;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -27,15 +29,15 @@ import org.rifidi.edge.api.SessionStatus;
 import org.rifidi.edge.core.sensors.base.AbstractSensor;
 import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
 import org.rifidi.edge.core.sensors.commands.Command;
+import org.rifidi.edge.core.sensors.commands.TimeoutCommand;
+import org.rifidi.edge.core.sensors.exceptions.CannotExecuteException;
 import org.rifidi.edge.core.sensors.messages.ByteMessage;
 import org.rifidi.edge.core.sensors.sessions.MessageParsingStrategyFactory;
-import org.rifidi.edge.core.sensors.sessions.interfaces.CannotExecuteException;
-import org.rifidi.edge.core.sensors.sessions.interfaces.GPIOController;
 import org.rifidi.edge.core.sensors.sessions.poll.AbstractPollIPSensorSession;
 import org.rifidi.edge.core.services.notification.NotifierService;
+import org.rifidi.edge.readerplugin.alien.autonomous.AlienAutonomousSensorSession;
 import org.rifidi.edge.readerplugin.alien.commandobject.AlienCommandObjectWrapper;
 import org.rifidi.edge.readerplugin.alien.commandobject.AlienGetCommandObject;
-import org.rifidi.edge.readerplugin.alien.commands.internal.AlienResetCommand;
 import org.springframework.jms.core.JmsTemplate;
 
 /**
@@ -46,7 +48,7 @@ import org.springframework.jms.core.JmsTemplate;
  * 
  */
 public class Alien9800ReaderSession extends AbstractPollIPSensorSession
-		implements GPIOController {
+		implements AlienCommandConstants {
 	/** Logger for this class. */
 	private static final Log logger = LogFactory
 			.getLog(Alien9800ReaderSession.class);
@@ -62,52 +64,7 @@ public class Alien9800ReaderSession extends AbstractPollIPSensorSession
 	private volatile NotifierService notifierService;
 	/** The FACTORY_ID of the reader this session belongs to */
 	private final String readerID;
-	/**
-	 * You can put this in front of a Alien command for terse output to come
-	 * back to you, making things faster and easier to parse.
-	 */
-	public static final String PROMPT_SUPPRESS = "\1";
-
-	/** Set antenna sequence */
-	public static final String ANTENNA_SEQUENCE_COMMAND = "AntennaSequence";
-
-	/**
-	 * COMMANDS
-	 */
-	public static final String COMMAND_HEARTBEAT_ADDRESS = "heartbeataddress";
-	public static final String COMMAND_ANTENNA_SEQUENCE = "antennasequence";
-	public static final String COMMAND_MAX_ANTENNA = "maxantenna";
-	public static final String COMMAND_PASSWORD = "password";
-	public static final String COMMAND_READERNAME = "ReaderName";
-	public static final String COMMAND_READERNUMBER = "ReaderNumber";
-	public static final String COMMAND_READER_TYPE = "ReaderType";
-	public static final String COMMAND_READER_VERSION = "ReaderVersion";
-	public static final String COMMAND_RF_ATTENUATION = "RFAttenuation";
-	public static final String COMMAND_EXTERNAL_INPUT = "ExternalInput";
-	public static final String COMMAND_USERNAME = "username";
-	public static final String COMMAND_UPTIME = "Uptime";
-	public static final String COMMAND_TAG_LIST = "taglist";
-	public static final String COMMAND_TAG_TYPE = "tagtype";
-	public static final String COMMAND_TAG_LIST_FORMAT = "TagListFormat";
-	public static final String COMMAND_TAG_LIST_CUSTOM_FORMAT = "TagListCustomFormat";
-	public static final String COMMAND_EXTERNAL_OUTPUT = "ExternalOutput";
-	public static final String COMMAND_INVERT_EXTERNAL_INPUT = "InvertExternalInput";
-	public static final String COMMAND_INVERT_EXTERNAL_OUTPUT = "InvertExternalOutput";
-	public static final String COOMMAND_COMMAND_PORT = "CommandPort";
-	public static final String COMMAND_DHCP = "DHCP";
-	public static final String COMMAND_PERSIST_TIME = "PersistTime";
-	public static final String COMMAND_DNS = "DNS";
-	public static final String COMMAND_GATEWAY = "Gateway";
-	public static final String COMMAND_HEARTBEAT_COUNT = "HeartbeatCount";
-	public static final String COMMAND_HEARTBEAT_PORT = "HeartbeatPort";
-	public static final String COMMAND_HEARTBEAT_TIME = "HeartbeatTime";
-	public static final String COMMAND_IPADDRESS = "IPAddress";
-	public static final String COMMAND_MAC_ADDRESS = "MACAddress";
-	public static final String COMMAND_NETMASK = "Netmask";
-	public static final String COMMAND_NETWORK_TIMEOUT = "NetworkTimeout";
-	public static final String COMMAND_TIME = "Time";
-	public static final String COMMAND_TIME_SERVER = "TimeServer";
-	public static final String COMMAND_TIME_ZONE = "TimeZone";
+	private AlienAutonomousSensorSession autonomousSession;
 
 	/**
 	 * 
@@ -120,6 +77,8 @@ public class Alien9800ReaderSession extends AbstractPollIPSensorSession
 	 *            The IP to connect to
 	 * @param port
 	 *            The port to connect to
+	 * @param notifyPort
+	 *            The port to use as a autonomous notify port
 	 * @param reconnectionInterval
 	 *            The wait time between reconnect attempts
 	 * @param maxConAttempts
@@ -140,7 +99,7 @@ public class Alien9800ReaderSession extends AbstractPollIPSensorSession
 	 *            A thread safe set containing all available commands
 	 */
 	public Alien9800ReaderSession(AbstractSensor<?> sensor, String id,
-			String host, int port, int reconnectionInterval,
+			String host, int port, int notifyPort, int reconnectionInterval,
 			int maxConAttempts, String username, String password,
 			JmsTemplate template, NotifierService notifierService,
 			String readerID, Set<AbstractCommandConfiguration<?>> commands) {
@@ -150,6 +109,9 @@ public class Alien9800ReaderSession extends AbstractPollIPSensorSession
 		this.password = password;
 		this.notifierService = notifierService;
 		this.readerID = readerID;
+		this.autonomousSession = new AlienAutonomousSensorSession(sensor, "1",
+				template, notifierService, notifyPort, 15,
+				new HashSet<AbstractCommandConfiguration<?>>());
 	}
 
 	/*
@@ -172,46 +134,103 @@ public class Alien9800ReaderSession extends AbstractPollIPSensorSession
 	@Override
 	public boolean onConnect() throws IOException {
 		logger.debug("getting the welcome response");
-		String welcome = new String(receiveMessage().message);
-		logger.debug("welcome message: " + welcome);
+		try {
+			String welcome = new String(receiveMessage().message);
+			logger.debug("welcome message: " + welcome);
 
-		if (welcome == null
-				|| !welcome.contains(Alien9800ReaderSession.WELCOME)) {
-			logger.fatal("SensorSession is not an alien sensorSession: "
-					+ welcome);
-			return false;
-		} else if (welcome.toLowerCase().contains("busy")) {
-			logger.error("SensorSession is busy: " + welcome);
-			return false;
-		} else {
-			logger.debug("SensorSession is an alien.  Hoo-ray!");
+			if (welcome == null
+					|| !welcome.contains(Alien9800ReaderSession.WELCOME)) {
+				logger.fatal("SensorSession is not an alien sensorSession: "
+						+ welcome);
+				return false;
+			} else if (welcome.toLowerCase().contains("busy")) {
+				logger.error("SensorSession is busy: " + welcome);
+				return false;
+			} else {
+				logger.debug("SensorSession is an alien.  Hoo-ray!");
+			}
+
+			logger.debug("sending username");
+			sendMessage(new ByteMessage((Alien9800ReaderSession.PROMPT_SUPPRESS
+					+ username + Alien9800ReaderSession.NEWLINE).getBytes()));
+			logger.debug("getting the username response");
+			receiveMessage();
+			logger.debug("sending the password. ");
+			sendMessage(new ByteMessage((Alien9800ReaderSession.PROMPT_SUPPRESS
+					+ password + Alien9800ReaderSession.NEWLINE).getBytes()));
+			logger.debug("recieving the password response");
+			String authMessage = new String(receiveMessage().message);
+			if (authMessage.contains("Invalid")) {
+				logger.warn("Incorrect Password");
+				return false;
+			}
+		} catch (TimeoutException ex) {
+			logger.warn("Timeout when logging in");
+			throw new IOException(ex);
 		}
 
-		logger.debug("sending username");
-		sendMessage(new ByteMessage((Alien9800ReaderSession.PROMPT_SUPPRESS
-				+ username + Alien9800ReaderSession.NEWLINE).getBytes()));
-		logger.debug("getting the username response");
-		receiveMessage();
-		logger.debug("sending the password. ");
-		sendMessage(new ByteMessage((Alien9800ReaderSession.PROMPT_SUPPRESS
-				+ password + Alien9800ReaderSession.NEWLINE).getBytes()));
-		logger.debug("recieving the password response");
-		String authMessage = new String(receiveMessage().message);
-		if (authMessage.contains("Invalid")) {
-			logger.warn("Incorrect Password");
-			return false;
-		}
+		Thread t = new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+				try {
+					autonomousSession.connect();
+				} catch (IOException ex) {
+					logger.warn("Cannot start Autonomous Session "
+							+ autonomousSession);
+				}
+			}
+		});
+		t.start();
 		return true;
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.sensors.SensorSession#getResetCommand()
+	 * @see
+	 * org.rifidi.edge.core.sensors.sessions.AbstractIPSensorSession#disconnect
+	 * ()
 	 */
 	@Override
-	protected Command getResetCommand() {
-		return new AlienResetCommand("AlienResetCommand");
+	public void disconnect() {
+		super.disconnect();
+		this.autonomousSession.disconnect();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seeorg.rifidi.edge.core.sensors.sessions.AbstractIPSensorSession#
+	 * getKeepAliveCommand()
+	 */
+	@Override
+	protected Command getKeepAliveCommand() {
+
+		/**
+		 * The Alien uptime command sends a 'get uptime' command to the alien
+		 * reader. If it gets no response within 10 seconds, it assumes the
+		 * reader has gone away and restarts the session.
+		 */
+		return new TimeoutCommand("Alien Keep Alive") {
+
+			@Override
+			public void execute() throws TimeoutException {
+				// the message to send
+				String message = PROMPT_SUPPRESS + "get " + COMMAND_UPTIME
+						+ NEWLINE;
+				try {
+					// send the message to the reader
+					sendMessage(new ByteMessage(message.getBytes()));
+
+					// wait for a response
+					receiveMessage();
+
+				} catch (IOException e) {
+					// Ignore
+				}
+			}
+		};
 	}
 
 	/*
@@ -279,18 +298,18 @@ public class Alien9800ReaderSession extends AbstractPollIPSensorSession
 
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * This method sets the External Output high for the given ports
 	 * 
-	 * @see
-	 * org.rifidi.edge.core.sensors.sessions.interfaces.GPIOController#setOutputPort
-	 * (BitSet)
+	 * @param ports
+	 *            The ports to set high
 	 */
-	@Override
 	public void setOutputPort(BitSet ports) {
 		int value = 0;
-		for (int i = 0; i < ports.length(); i++) {
-			int bit = ports.get(i) ? 1 : 0;
+		for (int i = 0; i < 8; i++) {
+			int bit = 0;
+			if (ports.size() > i + 1)
+				bit = ports.get(i) ? 1 : 0;
 			value = value | bit << i;
 		}
 		if (value > 255) {
@@ -300,14 +319,13 @@ public class Alien9800ReaderSession extends AbstractPollIPSensorSession
 		((Alien9800Reader) this.getSensor()).applyPropertyChanges();
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * This method tests if a given input port is high
 	 * 
-	 * @see
-	 * org.rifidi.edge.core.sensors.sessions.interfaces.GPIOController#testInputPort
-	 * (int)
+	 * @param port
+	 * @return
+	 * @throws CannotExecuteException
 	 */
-	@Override
 	public boolean testInputPort(int port) throws CannotExecuteException {
 		LinkedBlockingQueue<AlienCommandObjectWrapper> commandObj = new LinkedBlockingQueue<AlienCommandObjectWrapper>();
 		commandObj.add(new AlienCommandObjectWrapper(
@@ -329,6 +347,61 @@ public class Alien9800ReaderSession extends AbstractPollIPSensorSession
 					"The GPI command may not have executed");
 		}
 
+	}
+
+	/**
+	 * This method flashes the given output ports high for a given amount of
+	 * time. This method executes in a separate thread, so it returns
+	 * immediately.
+	 * 
+	 * @param ports
+	 *            The ports to set to high
+	 * @param finalPorts
+	 *            The configuration of the ports after the flashes are done
+	 * @param timeOn
+	 *            The time in seconds to set the ports high
+	 * @param timeOff
+	 *            The time in seconds to set the port low
+	 * @param repeat
+	 *            The number of times to reapeat the flashes.
+	 * @throws CannotExecuteException
+	 */
+	public void flashOutput(final BitSet ports, final BitSet finalPorts,
+			final int timeOn, final int timeOff, final int repeat)
+			throws CannotExecuteException {
+		Thread t = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					setOutputPort(new BitSet());
+					for (int i = 0; i < repeat; i++) {
+						setOutputPort(ports);
+						Thread.sleep(timeOn * 1000);
+						setOutputPort(new BitSet());
+						Thread.sleep(timeOff * 1000);
+					}
+					setOutputPort(finalPorts);
+				} catch (InterruptedException e) {
+					logger.warn("Could not complete flash output");
+					Thread.currentThread().interrupt();
+				} catch (Exception e) {
+					logger.warn("Could not complete flash output");
+				}
+			}
+		});
+		t.start();
+
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.core.sensors.sessions.AbstractIPSensorSession#toString()
+	 */
+	@Override
+	public String toString() {
+		return super.toString() + ", " + autonomousSession.toString();
 	}
 
 }

@@ -17,10 +17,11 @@ package org.rifidi.edge.readerplugin.alien.autonomous;
 
 import java.util.Set;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.api.SessionStatus;
 import org.rifidi.edge.core.sensors.base.AbstractSensor;
 import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
-import org.rifidi.edge.core.sensors.commands.Command;
 import org.rifidi.edge.core.sensors.sessions.AbstractServerSocketSensorSession;
 import org.rifidi.edge.core.sensors.sessions.MessageParsingStrategyFactory;
 import org.rifidi.edge.core.sensors.sessions.MessageProcessingStrategyFactory;
@@ -38,8 +39,8 @@ public class AlienAutonomousSensorSession extends
 		AbstractServerSocketSensorSession {
 
 	/** The logger */
-	// private final static Log logger = LogFactory
-	// .getLog(AlienAutonomousSensorSession.class);
+	private final static Log logger = LogFactory
+			.getLog(AlienAutonomousSensorSession.class);
 	/** The notifierService used to send out notifications of session changes */
 	private NotifierService notifierService;
 	/** The factory that produces Alien Message Parsing Strategy */
@@ -68,7 +69,7 @@ public class AlienAutonomousSensorSession extends
 		this.messageProcessingFactory = new AlienAutonomousMessageProcessingStrategyFactory(
 				this, template);
 	}
-
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -91,14 +92,6 @@ public class AlienAutonomousSensorSession extends
 		return this.messageProcessingFactory;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.rifidi.edge.core.sensors.SensorSession#getResetCommand()
-	 */
-	@Override
-	protected Command getResetCommand() {
-		return null;
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -111,6 +104,18 @@ public class AlienAutonomousSensorSession extends
 		super.setStatus(status);
 		notifierService.sessionStatusChanged(super.getSensor().getID(),
 				getID(), status);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.core.sensors.sessions.AbstractServerSocketSensorSession
+	 * #toString()
+	 */
+	@Override
+	public String toString() {
+		return "[Autonomous Session " + super.toString() + "]";
 	}
 
 }

@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.commons.logging.Log;
@@ -95,13 +96,8 @@ public class AlienGetTagListCommand extends AbstractAlien9800Command {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Runnable#run()
-	 */
 	@Override
-	public void run() {
+	public void execute() throws TimeoutException {
 		try {
 			// send antennaSequence
 			AlienCommandObject antennaCommand = new AlienSetCommandObject(
@@ -160,11 +156,19 @@ public class AlienGetTagListCommand extends AbstractAlien9800Command {
 			template.send(destination, new ReadCycleMessageCreator(cycle));
 
 		} catch (AlienException e) {
-			logger.error("Exception while executing command: ", e);
+			logger.error("Alien Exception while executing command: "
+					+ e.getMessage());
 		} catch (IOException e) {
-			logger.debug("IOException while executing command: ", e);
+			logger.debug("IOException while executing command: "
+					+ e.getMessage());
+		} catch (TimeoutException e) {
+			logger.warn("Timeout exception while executing command " + this);
+			throw e;
 		} catch (Exception e) {
-			logger.error("Exception while executing command: ", e);
+			e.printStackTrace();
+			logger
+					.error("Exception while executing command: "
+							+ e.getMessage());
 		}
 	}
 
