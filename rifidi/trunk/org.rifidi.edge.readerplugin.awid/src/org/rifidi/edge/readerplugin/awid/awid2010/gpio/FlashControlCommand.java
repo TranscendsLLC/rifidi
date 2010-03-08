@@ -54,7 +54,7 @@ public class FlashControlCommand extends Command {
 
 				// receive the Response
 				GPOFlashCommandResponse response = new GPOFlashCommandResponse(
-						session.receiveMessage(5000).message);
+						session.receiveMessage(30000).message);
 				// handle errors
 				if (!response.flashSuceeded()) {
 					if (response.pinBusy()) {

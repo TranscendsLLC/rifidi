@@ -21,6 +21,12 @@
 		</osgi:interfaces>
 	</osgi:service>
 	
+	<osgi:service id="awidGPIOServiceOSGi" ref="awidGPIOService" auto-export="all-classes">
+		  <service-properties>
+    		<entry key="reader" value="Awid2010"/>
+		  </service-properties>
+	</osgi:service>
+	
 	<osgi:set id="awid2010Commands" interface="org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration"
 		cardinality="0..N" filter="(reader=Awid2010)">
 		<osgi:listener ref="awid2010SensorFactory" bind-method="bindCommandConfiguration" unbind-method="unbindCommandConfiguration"/>
@@ -36,4 +42,7 @@
 
 	<osgi:reference id="internalMB"
 		interface="org.springframework.jms.core.JmsTemplate" bean-name="internalJMSTemplate" />
+		
+	<osgi:reference id="readerDAO"
+		interface="org.rifidi.edge.core.daos.ReaderDAO" />
 </beans>
