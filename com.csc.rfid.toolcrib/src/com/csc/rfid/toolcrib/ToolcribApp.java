@@ -22,7 +22,7 @@ import org.rifidi.edge.core.sensors.management.AbstractGPIOService;
 import org.rifidi.edge.core.services.esper.EsperManagementService;
 
 import com.csc.rfid.toolcrib.utilities.RifidiLogEntryCreationUtility;
-import com.csc.rfid.toolcrib.utilities.RifidiLogger;
+import com.csc.rfid.toolcrib.utilities.CSCLogger;
 import com.csc.rfid.toolcrib.utilities.WatchlistReader;
 
 /**
@@ -39,7 +39,7 @@ public abstract class ToolcribApp {
 	protected volatile EsperManagementService esperService;
 
 	/** This logger records directionality events only */
-	protected RifidiLogger logFile;
+	protected CSCLogger logFile;
 	private final WatchlistReader watchlist_reader = new WatchlistReader(System
 			.getProperty("com.csc.watchlist"));
 	private static final Log logger = LogFactory.getLog(ToolcribApp.class);
@@ -216,7 +216,7 @@ public abstract class ToolcribApp {
 	 * @param esperService
 	 *            the esperService to set
 	 */
-	public void setLogFile(RifidiLogger logFile) {
+	public void setLogFile(CSCLogger logFile) {
 		this.logFile = logFile;
 	}
 

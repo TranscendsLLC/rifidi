@@ -7,7 +7,7 @@
     http://www.springframework.org/schema/osgi/spring-osgi.xsd">
 
 	<!-- Create the  Application bean and inject dependencies-->
-	<bean id="rfidapp" class="com.csc.rfid.toolcrib.ToolcribApp"
+	<bean id="rfidapp" class="com.csc.rfid.toolcrib.ToolcribPortalApp"
 		init-method="start" destroy-method="stop">
 		<property name="esperService" ref="esperManagementService" />
 		<property name="gpoController" ref="alienGPIOService" />
@@ -18,8 +18,8 @@
 		interface="org.rifidi.edge.core.sensors.management.AbstractGPIOService"
 		filter="(reader=Alien)" />
 
-	<osgi:reference id="cscLogFileHandler"
-		interface="com.csc.rfid.toolcrib.utilities.RifidiLogger" />
+	<bean id="cscLogFileHandler"
+		class="com.csc.rfid.toolcrib.utilities.CSCLogger" />
 
 	<!--
 		Get a reference to the Esper Management Service from the OSGi Service

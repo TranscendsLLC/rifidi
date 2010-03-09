@@ -159,7 +159,7 @@ public class ToolcribPortalApp extends ToolcribApp {
 					inbound = check_orientations(tags.get(0).getReaderID(),
 							inbound);
 
-					logger.debug("Tag is: " + tags.get(0).getEpc()
+					logger.info("Tag is: " + tags.get(0).getEpc()
 							+ ", Speed is: " + speed + ", Direction is: "
 							+ (inbound ? "Inbound" : "OutBound"));
 

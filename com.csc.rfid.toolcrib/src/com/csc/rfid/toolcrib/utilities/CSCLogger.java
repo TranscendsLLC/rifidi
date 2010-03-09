@@ -1,5 +1,5 @@
 /*
- *  RifidiLogger.java
+ *  CSCLogger.java
  *
  *  Created:	Feb 4, 2010
  *  Project:	Rifidi Edge Server - A middleware platform for RFID applications
@@ -22,14 +22,14 @@ import java.io.IOException;
  * 
  * @author Matthew Dean
  */
-public final class RifidiLogger {
+public final class CSCLogger {
 
 	/**
 	 * Constrcutor.
 	 * 
 	 * @param filenamePrefix
 	 */
-	public RifidiLogger() {
+	public CSCLogger() {
 	}
 
 	/**
@@ -43,11 +43,11 @@ public final class RifidiLogger {
 			File file = new File(System.getProperty("com.csc.saplogfile"));
 			if (!file.exists()) {
 				file.createNewFile();
-
-				fw = new FileWriter(file, true);
-				fw.write(data_to_write);
-				fw.flush();
 			}
+			fw = new FileWriter(file, true);
+			fw.write(data_to_write);
+			fw.flush();
+
 		} catch (IOException e) {
 			// TODO: Handle this
 			e.printStackTrace();
@@ -72,11 +72,11 @@ public final class RifidiLogger {
 			File file = new File(System.getProperty("com.csc.standardlog"));
 			if (!file.exists()) {
 				file.createNewFile();
-
-				fw = new FileWriter(file, true);
-				fw.write(data_to_write);
-				fw.flush();
 			}
+			fw = new FileWriter(file, true);
+			fw.write(data_to_write);
+			fw.flush();
+
 		} catch (IOException e) {
 			// TODO: Handle this
 			e.printStackTrace();
@@ -101,11 +101,11 @@ public final class RifidiLogger {
 			File file = new File(System.getProperty("com.csc.ghostlog"));
 			if (!file.exists()) {
 				file.createNewFile();
-
-				fw = new FileWriter(file, true);
-				fw.write(data_to_write);
-				fw.flush();
 			}
+			fw = new FileWriter(file, true);
+			fw.write(data_to_write);
+			fw.flush();
+
 		} catch (IOException e) {
 			// TODO: Handle this
 			e.printStackTrace();
@@ -130,11 +130,11 @@ public final class RifidiLogger {
 			File file = new File(System.getProperty("com.csc.downtimelog"));
 			if (!file.exists()) {
 				file.createNewFile();
-
-				fw = new FileWriter(file, true);
-				fw.write(data_to_write);
-				fw.flush();
 			}
+			fw = new FileWriter(file, true);
+			fw.write(data_to_write);
+			fw.flush();
+
 		} catch (IOException e) {
 			// TODO: Handle this
 			e.printStackTrace();
