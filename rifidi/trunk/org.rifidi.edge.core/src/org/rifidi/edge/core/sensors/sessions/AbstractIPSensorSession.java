@@ -467,6 +467,7 @@ public abstract class AbstractIPSensorSession extends AbstractSensorSession {
 				Thread.currentThread().interrupt();
 			} catch (IOException e) {
 				logger.warn("Unable to reconnect.");
+				disconnect();
 			}
 		}
 

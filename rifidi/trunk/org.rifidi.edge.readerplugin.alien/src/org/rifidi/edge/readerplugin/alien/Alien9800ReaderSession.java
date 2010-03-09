@@ -38,6 +38,8 @@ import org.rifidi.edge.core.services.notification.NotifierService;
 import org.rifidi.edge.readerplugin.alien.autonomous.AlienAutonomousSensorSession;
 import org.rifidi.edge.readerplugin.alien.commandobject.AlienCommandObjectWrapper;
 import org.rifidi.edge.readerplugin.alien.commandobject.AlienGetCommandObject;
+import org.rifidi.edge.readerplugin.alien.gpio.AlienGPIOSession;
+import org.rifidi.edge.readerplugin.alien.gpio.messages.TextIOListMessageParsingStrategy;
 import org.springframework.jms.core.JmsTemplate;
 
 /**
@@ -65,6 +67,7 @@ public class Alien9800ReaderSession extends AbstractPollIPSensorSession
 	/** The FACTORY_ID of the reader this session belongs to */
 	private final String readerID;
 	private AlienAutonomousSensorSession autonomousSession;
+	private AlienGPIOSession gpiosession;
 
 	/**
 	 * 
@@ -99,7 +102,7 @@ public class Alien9800ReaderSession extends AbstractPollIPSensorSession
 	 *            A thread safe set containing all available commands
 	 */
 	public Alien9800ReaderSession(AbstractSensor<?> sensor, String id,
-			String host, int port, int notifyPort, int reconnectionInterval,
+			String host, int port, int notifyPort, int ioStreamPort, int reconnectionInterval,
 			int maxConAttempts, String username, String password,
 			JmsTemplate template, NotifierService notifierService,
 			String readerID, Set<AbstractCommandConfiguration<?>> commands) {
@@ -112,6 +115,8 @@ public class Alien9800ReaderSession extends AbstractPollIPSensorSession
 		this.autonomousSession = new AlienAutonomousSensorSession(sensor, "1",
 				template, notifierService, notifyPort, 15,
 				new HashSet<AbstractCommandConfiguration<?>>());
+		this.gpiosession = new AlienGPIOSession(sensor, "2", ioStreamPort,
+				new TextIOListMessageParsingStrategy());
 	}
 
 	/*
@@ -123,6 +128,54 @@ public class Alien9800ReaderSession extends AbstractPollIPSensorSession
 	@Override
 	public MessageParsingStrategyFactory getMessageParsingStrategyFactory() {
 		return new AlienMessageParsingStrategyFactory();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.rifidi.edge.core.sensors.SensorSession#connect()
+	 */
+	@Override
+	public void connect() throws IOException {
+		super.connect();
+
+		Thread autoSessionThread = new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+				try {
+					autonomousSession.connect();
+				} catch (IOException ex) {
+					logger.warn("Cannot start Autonomous Session "
+							+ autonomousSession);
+				}
+			}
+		});
+		autoSessionThread.start();
+		
+		final Alien9800ReaderSession interactiveSession = this;
+		
+		Thread gpioSessionThread = new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				try {
+					gpiosession.initialize(interactiveSession);
+					gpiosession.connect();
+				} catch (CannotExecuteException e) {
+					e.printStackTrace();
+					logger.warn("Cannot connect Alien GPIO Session: " + gpiosession);
+				} catch (IOException e) {
+					e.printStackTrace();
+					logger.warn("Cannot connect Alien GPIO Session: " + gpiosession);
+				}
+				
+			}
+		});
+		
+		gpioSessionThread.start();
+
+
 	}
 
 	/*
@@ -168,20 +221,7 @@ public class Alien9800ReaderSession extends AbstractPollIPSensorSession
 			logger.warn("Timeout when logging in");
 			throw new IOException(ex);
 		}
-
-		Thread t = new Thread(new Runnable() {
-
-			@Override
-			public void run() {
-				try {
-					autonomousSession.connect();
-				} catch (IOException ex) {
-					logger.warn("Cannot start Autonomous Session "
-							+ autonomousSession);
-				}
-			}
-		});
-		t.start();
+		
 		return true;
 	}
 
@@ -194,8 +234,21 @@ public class Alien9800ReaderSession extends AbstractPollIPSensorSession
 	 */
 	@Override
 	public void disconnect() {
-		super.disconnect();
-		this.autonomousSession.disconnect();
+		try {
+			super.disconnect();
+		} catch (Exception e) {
+
+		}
+		try {
+			this.autonomousSession.disconnect();
+		} catch (Exception e) {
+
+		}
+		try {
+			this.gpiosession.disconnect();
+		} catch (Exception e) {
+
+		}
 	}
 
 	/*
@@ -327,6 +380,23 @@ public class Alien9800ReaderSession extends AbstractPollIPSensorSession
 	 * @throws CannotExecuteException
 	 */
 	public boolean testInputPort(int port) throws CannotExecuteException {
+		int external = getExternalInput();
+		// create a mask by bitshifting 1 port number of bits
+		int mask = 1 << port;
+		// if the mask AND the bitmap returned from the alien reader is
+		// greater than 1, then the bit specified by 'port' is high
+		return (external & mask) > 0;
+
+	}
+
+	/**
+	 * helper method that sends a 'get externalInput' command to the reader. It
+	 * blocks until the response returns
+	 * 
+	 * @return the External Input
+	 * @throws CannotExecuteException
+	 */
+	public int getExternalInput() throws CannotExecuteException {
 		LinkedBlockingQueue<AlienCommandObjectWrapper> commandObj = new LinkedBlockingQueue<AlienCommandObjectWrapper>();
 		commandObj.add(new AlienCommandObjectWrapper(
 				Alien9800Reader.PROP_EXTERNAL_INPUT, new AlienGetCommandObject(
@@ -334,13 +404,7 @@ public class Alien9800ReaderSession extends AbstractPollIPSensorSession
 		boolean executed = ((Alien9800Reader) this.getSensor())
 				.applyPropertyChanges(commandObj, true);
 		if (executed) {
-			int external = ((Alien9800Reader) this.getSensor())
-					.getExternalInput();
-			// create a mask by bitshifting 1 port number of bits
-			int mask = 1 << port;
-			// if the mask AND the bitmap returned from the alien reader is
-			// greater than 1, then the bit specified by 'port' is high
-			return (external & mask) > 0;
+			return ((Alien9800Reader) this.getSensor()).getExternalInput();
 
 		} else {
 			throw new CannotExecuteException(
@@ -401,7 +465,7 @@ public class Alien9800ReaderSession extends AbstractPollIPSensorSession
 	 */
 	@Override
 	public String toString() {
-		return super.toString() + ", " + autonomousSession.toString();
+		return super.toString() + ", " + autonomousSession + "," + gpiosession;
 	}
 
 }

@@ -19,6 +19,9 @@ import java.util.concurrent.CopyOnWriteArraySet;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.rifidi.edge.core.services.notification.data.EPCGeneration2Event;
+import org.rifidi.edge.core.services.notification.data.TagReadEvent;
+import org.rifidi.edge.core.services.notification.data.gpio.GPIEvent;
 
 import com.csc.rfid.toolcrib.utilities.DirectionAlgorithm;
 import com.espertech.esper.client.EPServiceProvider;
@@ -38,7 +41,8 @@ public class ToolcribPortalApp extends ToolcribApp {
 	/** All statements that have been defined so far */
 	private final Set<EPStatement> statements = new CopyOnWriteArraySet<EPStatement>();
 
-	private static final Log logger = LogFactory.getLog(ToolcribPortalApp.class);
+	private static final Log logger = LogFactory
+			.getLog(ToolcribPortalApp.class);
 	private final DirectionAlgorithm algorithm = new DirectionAlgorithm();
 
 	/**
@@ -48,53 +52,21 @@ public class ToolcribPortalApp extends ToolcribApp {
 	 * This method is called by spring
 	 */
 	public void start() {
-		logger.debug("Starting CSC App");
-
-		// esper statement that creates a window.
-		statements.add(esperService.getProvider().getEPAdministrator()
+		logger.debug("Starting CSC Portal App");
+		String portalReaderID = System.getProperty("com.csc.portal_reader");
+		String cutOffTime = System.getProperty("com.csc.tagreadcutofftime");
+		System.out.println("readerID: " + portalReaderID);
+		EPStatement query = esperService.getProvider().getEPAdministrator()
 				.createEPL(
-						"create window tagwin.win:keepall()"
-								+ "(tag_ID String, speed Float, rssi "
-								+ "String, readerID String, antennaID int)"));
+						"select * from pattern [every gpievent=GPIEvent(state=false, readerID='"
+								+ portalReaderID + "')->"
+								+ "tags=ReadCycle(readerID='" + portalReaderID
+								+ "')[select * from tags] "
+								+ "until timer:interval(" + cutOffTime
+								+ " sec)]");
+		statements.add(query);
+		query.addListener(getTagsUpdateListener());
 
-		// esper statement taht adds information to the window
-		// TODO make sure that velocity info is inserted into the window/
-		statements
-				.add(esperService
-						.getProvider()
-						.getEPAdministrator()
-						.createEPL(
-								"on ReadCycle[select * from tags]"
-										+ "insert into tagwin select cast(tag.epc?, String) as tag_ID , "
-										+ "cast(extraInformation('Speed'),Float) as speed , "
-										+ "cast(extraInformation('RSSI'),String) as rssi, "
-										+ "readerID, antennaID"));
-
-		// esper statement that removes all tags with a given ID from the window
-		// if the tag has not been seen at the antenna in the last 60 seconds
-		statements
-				.add(esperService
-						.getProvider()
-						.getEPAdministrator()
-						.createEPL(
-								"on pattern [every tag=tagwin ->"
-										+ "(timer:interval("
-										+ System
-												.getProperty("com.csc.tagreadcutofftime")
-										+ " sec) and not tagwin"
-										+ "(tag_ID = tag.tag_ID))]"
-										+ "delete from tagwin where "
-										+ "tag_ID = tag.tag_ID"));
-
-		// esper statement that listens to add and remove events from the window
-		EPStatement queryAllTags = esperService.getProvider()
-				.getEPAdministrator()
-				.createEPL("select irstream * from tagwin");
-
-		// add a listener to the above statement
-		queryAllTags.addListener(getTagsUpdateListener());
-
-		statements.add(queryAllTags);
 	}
 
 	public StatementAwareUpdateListener getTagsUpdateListener() {
@@ -112,16 +84,28 @@ public class ToolcribPortalApp extends ToolcribApp {
 
 				// arg1 contains all the tag reads. This works because we do all
 				// of the rmoves at once.
-				if (arg1 != null) {
-					for (EventBean b : arg1) {
-						CSCTag cscTag = new CSCTag();
-						cscTag.setEpc((String) b.get("tag_ID"));
-						cscTag.setSpeed((Float) b.get("speed"));
-						cscTag.setRssi((String) b.get("rssi"));
-						cscTag.setReaderID((String) b.get("readerID"));
-						cscTag.setAntenna((Integer) b.get("antennaID"));
-						tags.add(cscTag);
-						logger.debug(cscTag);
+				if (arg0 != null) {
+					TagReadEvent[] tagReadEvents = null;
+					GPIEvent gpiEvent = null;
+					for (EventBean b : arg0) {
+						tagReadEvents = (TagReadEvent[]) b.get("tags");
+						gpiEvent = (GPIEvent) b.get("gpievent");
+					}
+					if (tagReadEvents == null || gpiEvent == null) {
+						return;
+					}
+
+					for (TagReadEvent tre : tagReadEvents) {
+						CSCTag tag = new CSCTag();
+						tag.setAntenna(tre.getAntennaID());
+						tag.setEpc(((EPCGeneration2Event) tre.getTag())
+								.getEpc());
+						tag.setReaderID(tre.getReaderID());
+						tag.setRssi((String) tre.getExtraInformation().get(
+								"RSSI"));
+						tag.setSpeed((Float) tre.getExtraInformation().get(
+								"Speed"));
+						tags.add(tag);
 					}
 
 					if (isGhost(tags)) {
@@ -129,14 +113,11 @@ public class ToolcribPortalApp extends ToolcribApp {
 						return;
 					}
 
-					float speed = calculateDirection(tags);
 					boolean onWatchList = false;
 
 					boolean inbound = false;
-					if (speed > 0.0f) {
+					if (gpiEvent.getPort() == 1) {
 						inbound = true;
-					} else {
-						inbound = false;
 					}
 
 					// Flips the speed if this particular property is set.
@@ -144,14 +125,12 @@ public class ToolcribPortalApp extends ToolcribApp {
 							inbound);
 
 					logger.info("Tag is: " + tags.get(0).getEpc()
-							+ ", Speed is: " + speed + ", Direction is: "
-							+ (inbound ? "Inbound" : "OutBound"));
+							+ ", Direction is: "
+							+ (inbound ? "Inbound" : "Outbound"));
 
 					if (onWatchlist(tags)) {
 						onWatchList = true;
 					}
-
-					System.out.println("Inbound: " + inbound);
 
 					triggerLight(tags.get(0).getReaderID(), onWatchList,
 							inbound);
