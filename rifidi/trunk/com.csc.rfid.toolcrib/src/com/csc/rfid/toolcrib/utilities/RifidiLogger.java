@@ -14,8 +14,6 @@ package com.csc.rfid.toolcrib.utilities;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.sql.Date;
-import java.text.SimpleDateFormat;
 
 /**
  * Class that handles the inbound/outbound logging for the CSC. This class
@@ -26,61 +24,32 @@ import java.text.SimpleDateFormat;
  */
 public final class RifidiLogger {
 
-	private String suffix;
-
-	private static final String HYPHEN = "-";
-
-	private String filenamePrefix = null;
-
-	private String currentFilename = null;
-
-	private File file = null;
-	
-	private boolean appendTimestamp = false;
-
 	/**
 	 * Constrcutor.
 	 * 
 	 * @param filenamePrefix
 	 */
-	public RifidiLogger(String filenamePrefix, String suffix,
-			boolean appendTimestamp) {
-		this.filenamePrefix = filenamePrefix;
-		this.suffix = suffix;
-		this.appendTimestamp = appendTimestamp;
+	public RifidiLogger() {
 	}
 
 	/**
-	 * This method will write a log entry to a given file. If the file doesn't
-	 * exist, it will be created.
 	 * 
-	 * @param tag
-	 * @param inbound
-	 * @param direction
+	 * 
+	 * @param entry_to_write
 	 */
-	public void writeToFile(String data_to_write) {
-		// Check if file exists; if not, create it
-		// Write the data to the file
+	public synchronized void writeToSAPLog(String data_to_write) {
 		FileWriter fw = null;
-		if (currentFilename != null) {
-			file = new File(this.currentFilename);
-		}
-
 		try {
-			if (file == null || !file.exists()) {
-				String newFileName = this
-						.createTimestampFile(this.filenamePrefix);
-				file = new File(newFileName);
-				if(!file.exists()){
-					file.createNewFile();
-				}
-				this.currentFilename = newFileName;
-			}
+			File file = new File(System.getProperty("com.csc.saplogfile"));
+			if (!file.exists()) {
+				file.createNewFile();
 
-			fw = new FileWriter(file, true);
-			fw.write(data_to_write);
-			fw.flush();
+				fw = new FileWriter(file, true);
+				fw.write(data_to_write);
+				fw.flush();
+			}
 		} catch (IOException e) {
+			// TODO: Handle this
 			e.printStackTrace();
 		} finally {
 			try {
@@ -94,24 +63,88 @@ public final class RifidiLogger {
 
 	/**
 	 * 
+	 * 
+	 * @param entry_to_write
 	 */
-	private String createTimestampFile(String prefix) {
-		String filename; 
-		if(appendTimestamp){
-			filename = prefix + HYPHEN + this.createDate() + this.suffix;
-			
-		}else{
-			filename = prefix + this.suffix;
+	public synchronized void writeToStandardLog(String data_to_write) {
+		FileWriter fw = null;
+		try {
+			File file = new File(System.getProperty("com.csc.standardlog"));
+			if (!file.exists()) {
+				file.createNewFile();
+
+				fw = new FileWriter(file, true);
+				fw.write(data_to_write);
+				fw.flush();
+			}
+		} catch (IOException e) {
+			// TODO: Handle this
+			e.printStackTrace();
+		} finally {
+			try {
+				if (fw != null)
+					fw.close();
+			} catch (IOException e) {
+				// Don't care
+			}
 		}
-		return filename;
 	}
 
-	/*
-	 * Returns the current time as a date in yyyyMMddHHmmss format.
+	/**
+	 * 
+	 * 
+	 * @param entry_to_write
 	 */
-	private String createDate() {
-		Date now = new Date(System.currentTimeMillis());
-		SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss");
-		return format.format(now);
+	public synchronized void writeToGhostLog(String data_to_write) {
+		FileWriter fw = null;
+		try {
+			File file = new File(System.getProperty("com.csc.ghostlog"));
+			if (!file.exists()) {
+				file.createNewFile();
+
+				fw = new FileWriter(file, true);
+				fw.write(data_to_write);
+				fw.flush();
+			}
+		} catch (IOException e) {
+			// TODO: Handle this
+			e.printStackTrace();
+		} finally {
+			try {
+				if (fw != null)
+					fw.close();
+			} catch (IOException e) {
+				// Don't care
+			}
+		}
+	}
+
+	/**
+	 * 
+	 * 
+	 * @param entry_to_write
+	 */
+	public synchronized void writeDowntimeLog(String data_to_write) {
+		FileWriter fw = null;
+		try {
+			File file = new File(System.getProperty("com.csc.downtimelog"));
+			if (!file.exists()) {
+				file.createNewFile();
+
+				fw = new FileWriter(file, true);
+				fw.write(data_to_write);
+				fw.flush();
+			}
+		} catch (IOException e) {
+			// TODO: Handle this
+			e.printStackTrace();
+		} finally {
+			try {
+				if (fw != null)
+					fw.close();
+			} catch (IOException e) {
+				// Don't care
+			}
+		}
 	}
 }
