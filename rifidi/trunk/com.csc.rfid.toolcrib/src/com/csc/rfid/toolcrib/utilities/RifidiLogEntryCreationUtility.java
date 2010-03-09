@@ -53,6 +53,8 @@ public class RifidiLogEntryCreationUtility {
 
 		if (tag.length() >= 14) {
 			tag = tag.substring(2, 14);
+		} else {
+			return "";
 		}
 		tag = tag.toUpperCase();
 		if (inbound) {

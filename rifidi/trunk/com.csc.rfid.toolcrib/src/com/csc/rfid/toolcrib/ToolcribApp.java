@@ -35,9 +35,9 @@ import com.espertech.esper.client.StatementAwareUpdateListener;
  * @author Kyle Neumeier - kyle@pramari.com
  */
 public class ToolcribApp {
-	
+
 	public static final String LOG_SUFFIX = ".log";
-	
+
 	public static final String DAT_SUFFIX = ".dat";
 	/** Esper service */
 	private volatile EsperManagementService esperService;
@@ -303,8 +303,12 @@ public class ToolcribApp {
 		String id = tags.get(0).getEpc();
 		List<String> watchList = this.watchlist_reader.getWatchlistTags();
 		for (String watchTag : watchList) {
-			if (id.substring(3, 13).equalsIgnoreCase(watchTag)) {
-				return true;
+			if (id.length() >= 14) {
+				if (id.substring(3, 13).equalsIgnoreCase(watchTag)) {
+					return true;
+				}
+			} else {
+				return false;
 			}
 		}
 		return false;
@@ -384,7 +388,7 @@ public class ToolcribApp {
 	private Float calculateDirection(List<CSCTag> tags) {
 		// if ghostread // handle ghostread
 		// exit // if tag is on badList // handle badlist event
-		//String epc = tags.get(0).getEpc();
+		// String epc = tags.get(0).getEpc();
 		List<Float> speeds = new ArrayList<Float>();
 		for (CSCTag tag : tags) {
 			speeds.add(tag.getSpeed());
