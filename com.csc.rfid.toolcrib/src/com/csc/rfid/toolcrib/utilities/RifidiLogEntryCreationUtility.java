@@ -34,9 +34,9 @@ public class RifidiLogEntryCreationUtility {
 
 	public static final String INBOUND = "-IN";
 
-	public static final String INBOUND_SPACES = "             ";
+	public static final String INBOUND_SPACES = "               ";
 
-	public static final String OUTBOUND_SPACES = "            ";
+	public static final String OUTBOUND_SPACES = "              ";
 
 	// *********************SAP LOG BELOW HERE***************************
 
@@ -51,8 +51,8 @@ public class RifidiLogEntryCreationUtility {
 	public String createSAPEntry(String tag, boolean inbound) {
 		StringBuilder sb = new StringBuilder();
 
-		if (tag.length() > 12) {
-			tag = tag.substring(0, 12);
+		if (tag.length() >= 14) {
+			tag = tag.substring(2, 14);
 		}
 		tag = tag.toUpperCase();
 		if (inbound) {

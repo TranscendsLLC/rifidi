@@ -47,10 +47,13 @@ public class WatchlistReader {
 	 */
 	public List<String> getWatchlistTags() {
 		if (file.exists()) {
+			FileInputStream fstream = null;
+			DataInputStream in = null;
+			BufferedReader br = null;
 			try {
-				FileInputStream fstream = new FileInputStream(file);
-				DataInputStream in = new DataInputStream(fstream);
-				BufferedReader br = new BufferedReader(
+				fstream = new FileInputStream(file);
+				in = new DataInputStream(fstream);
+				br = new BufferedReader(
 						new InputStreamReader(in));
 				String line;
 				List<String> tagList = new LinkedList<String>();
@@ -62,6 +65,25 @@ public class WatchlistReader {
 				// TODO: Probably should log this or something
 			} catch (IOException e) {
 				// TODO: Log this here probably
+			} finally{
+				if(fstream!=null){
+					try {
+						fstream.close();
+					} catch (IOException e) {
+					}
+				}
+				if(in !=null){
+					try {
+						in.close();
+					} catch (IOException e) {
+					}
+				}
+				if(br!=null){
+					try {
+						br.close();
+					} catch (IOException e) {
+					}
+				}
 			}
 		}
 		return new LinkedList<String>();
