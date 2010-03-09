@@ -19,11 +19,8 @@ import java.util.concurrent.CopyOnWriteArraySet;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.rifidi.edge.core.services.notification.data.management.SessionDownEvent;
-import org.rifidi.edge.core.services.notification.data.management.SessionUpEvent;
 
 import com.csc.rfid.toolcrib.utilities.DirectionAlgorithm;
-import com.csc.rfid.toolcrib.utilities.RifidiLogEntryCreationUtility;
 import com.espertech.esper.client.EPServiceProvider;
 import com.espertech.esper.client.EPStatement;
 import com.espertech.esper.client.EventBean;
@@ -41,7 +38,7 @@ public class ToolcribPortalApp extends ToolcribApp {
 	/** All statements that have been defined so far */
 	private final Set<EPStatement> statements = new CopyOnWriteArraySet<EPStatement>();
 
-	private static final Log logger = LogFactory.getLog(ToolcribApp.class);
+	private static final Log logger = LogFactory.getLog(ToolcribPortalApp.class);
 	private final DirectionAlgorithm algorithm = new DirectionAlgorithm();
 
 	/**
@@ -96,19 +93,6 @@ public class ToolcribPortalApp extends ToolcribApp {
 
 		// add a listener to the above statement
 		queryAllTags.addListener(getTagsUpdateListener());
-
-		EPStatement queryDownTimeEvent = esperService.getProvider()
-				.getEPAdministrator().createEPL(
-						"select * from SessionDownEvent");
-		statements.add(queryDownTimeEvent);
-
-		EPStatement queryUpTimeEvent = esperService.getProvider()
-				.getEPAdministrator().createEPL("select * from SessionUpEvent");
-		statements.add(queryUpTimeEvent);
-
-		StatementAwareUpdateListener stateUpdateListener = getSessionStateUpdateListener();
-		queryDownTimeEvent.addListener(stateUpdateListener);
-		queryUpTimeEvent.addListener(stateUpdateListener);
 
 		statements.add(queryAllTags);
 	}
@@ -175,40 +159,6 @@ public class ToolcribPortalApp extends ToolcribApp {
 							inbound, onWatchList);
 
 				}
-			}
-		};
-	}
-
-	public StatementAwareUpdateListener getSessionStateUpdateListener() {
-		return new StatementAwareUpdateListener() {
-
-			@Override
-			public void update(EventBean[] arg0, EventBean[] arg1,
-					EPStatement arg2, EPServiceProvider arg3) {
-				if (arg0 != null) {
-					for (EventBean b : arg0) {
-						if (b.getUnderlying() instanceof SessionUpEvent) {
-							logger.debug(b.getUnderlying());
-							SessionUpEvent sue = (SessionUpEvent) b
-									.getUnderlying();
-							logFile
-									.writeDowntimeLog(RifidiLogEntryCreationUtility
-											.createUptimeLogEntry(sue
-													.getReaderID(), sue
-													.getTimestamp()));
-						} else if (b.getUnderlying() instanceof SessionDownEvent) {
-							logger.debug(b.getUnderlying());
-							SessionDownEvent sue = (SessionDownEvent) b
-									.getUnderlying();
-							logFile
-									.writeDowntimeLog(RifidiLogEntryCreationUtility
-											.createDowntimeLogEntry(sue
-													.getReaderID(), sue
-													.getTimestamp()));
-						}
-					}
-				}
-
 			}
 		};
 	}

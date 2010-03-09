@@ -193,6 +193,8 @@ public class RifidiLogEntryCreationUtility {
 
 		sb.append("Reader " + getWDPValue(readerID) + " went down at "
 				+ createDate(timestamp));
+		
+		sb.append(NEWLINE);
 
 		return sb.toString();
 	}
