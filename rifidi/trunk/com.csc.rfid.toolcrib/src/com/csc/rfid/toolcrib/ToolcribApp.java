@@ -45,14 +45,14 @@ public class ToolcribApp {
 	private final Set<EPStatement> statements = new CopyOnWriteArraySet<EPStatement>();
 	/** This logger records directionality events only */
 	private final RifidiLogger sap_log = new RifidiLogger(System
-			.getProperty("com.csc.saplogfile"), DAT_SUFFIX);
+			.getProperty("com.csc.saplogfile"), DAT_SUFFIX, false);
 	/** This is the general log file where many events are processed */
 	private final RifidiLogger standard_log = new RifidiLogger(System
-			.getProperty("com.csc.standardlog"), LOG_SUFFIX);
+			.getProperty("com.csc.standardlog"), LOG_SUFFIX, true);
 	private final RifidiLogger ghost_log = new RifidiLogger(System
-			.getProperty("com.csc.ghostlog"), LOG_SUFFIX);
+			.getProperty("com.csc.ghostlog"), LOG_SUFFIX, true);
 	private final RifidiLogger downtime_log = new RifidiLogger(System
-			.getProperty("com.csc.downtimelog"), LOG_SUFFIX);
+			.getProperty("com.csc.downtimelog"), LOG_SUFFIX, true);
 	private final WatchlistReader watchlist_reader = new WatchlistReader(System
 			.getProperty("com.csc.watchlist"));
 	private static final Log logger = LogFactory.getLog(ToolcribApp.class);
@@ -303,7 +303,7 @@ public class ToolcribApp {
 		String id = tags.get(0).getEpc();
 		List<String> watchList = this.watchlist_reader.getWatchlistTags();
 		for (String watchTag : watchList) {
-			if (id.substring(1, 12).equalsIgnoreCase(watchTag.substring(1))) {
+			if (id.substring(3, 13).equalsIgnoreCase(watchTag)) {
 				return true;
 			}
 		}

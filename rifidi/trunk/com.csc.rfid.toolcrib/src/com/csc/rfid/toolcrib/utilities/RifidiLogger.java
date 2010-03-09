@@ -35,15 +35,19 @@ public final class RifidiLogger {
 	private String currentFilename = null;
 
 	private File file = null;
+	
+	private boolean appendTimestamp = false;
 
 	/**
 	 * Constrcutor.
 	 * 
 	 * @param filenamePrefix
 	 */
-	public RifidiLogger(String filenamePrefix, String suffix) {
+	public RifidiLogger(String filenamePrefix, String suffix,
+			boolean appendTimestamp) {
 		this.filenamePrefix = filenamePrefix;
 		this.suffix = suffix;
+		this.appendTimestamp = appendTimestamp;
 	}
 
 	/**
@@ -67,7 +71,9 @@ public final class RifidiLogger {
 				String newFileName = this
 						.createTimestampFile(this.filenamePrefix);
 				file = new File(newFileName);
-				file.createNewFile();
+				if(!file.exists()){
+					file.createNewFile();
+				}
 				this.currentFilename = newFileName;
 			}
 
@@ -90,7 +96,13 @@ public final class RifidiLogger {
 	 * 
 	 */
 	private String createTimestampFile(String prefix) {
-		String filename = prefix + HYPHEN + this.createDate() + this.suffix;
+		String filename; 
+		if(appendTimestamp){
+			filename = prefix + HYPHEN + this.createDate() + this.suffix;
+			
+		}else{
+			filename = prefix + this.suffix;
+		}
 		return filename;
 	}
 
