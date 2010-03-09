@@ -129,8 +129,8 @@ public abstract class SensorSession {
 					disconnect();
 					connect();
 				} catch (IOException e) {
-					e.printStackTrace();
-					logger.warn("Cannot reconnect session.");
+					logger.warn("Cannot reconnect session : " + e.getMessage());
+					disconnect();
 				}
 			}
 		});

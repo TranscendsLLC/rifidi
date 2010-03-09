@@ -82,6 +82,7 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 			.parseInt(AlienReaderDefaultValues.MAX_CONNECTION_ATTEMPTS);
 	/** The port of the server socket */
 	private volatile Integer notifyPort = 0;
+	private volatile Integer ioStreamPort = 0;
 	/** Spring JMS template */
 	private volatile JmsTemplate template;
 	/** The ID of the session */
@@ -175,20 +176,20 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 						new AlienGetCommandObject(
 								Alien9800ReaderSession.COMMAND_UPTIME)));
 
-		//propCommandsToBeExecuted.add(new AlienCommandObjectWrapper(
-		//		PROP_EXTERNAL_OUTPUT, new AlienSetCommandObject(
-		//				Alien9800ReaderSession.COMMAND_EXTERNAL_OUTPUT,
-		//				this.readerProperties.get(PROP_EXTERNAL_OUTPUT))));
+		// propCommandsToBeExecuted.add(new AlienCommandObjectWrapper(
+		// PROP_EXTERNAL_OUTPUT, new AlienSetCommandObject(
+		// Alien9800ReaderSession.COMMAND_EXTERNAL_OUTPUT,
+		// this.readerProperties.get(PROP_EXTERNAL_OUTPUT))));
 
-		//propCommandsToBeExecuted.add(new AlienCommandObjectWrapper(
-		//		PROP_RF_ATTENUATION, new AlienSetCommandObject(
-		//				Alien9800ReaderSession.COMMAND_RF_ATTENUATION,
-		//				this.readerProperties.get(PROP_RF_ATTENUATION))));
+		// propCommandsToBeExecuted.add(new AlienCommandObjectWrapper(
+		// PROP_RF_ATTENUATION, new AlienSetCommandObject(
+		// Alien9800ReaderSession.COMMAND_RF_ATTENUATION,
+		// this.readerProperties.get(PROP_RF_ATTENUATION))));
 
-		//propCommandsToBeExecuted.add(new AlienCommandObjectWrapper(
-		//		PROP_PERSIST_TIME, new AlienSetCommandObject(
-		//				Alien9800ReaderSession.COMMAND_PERSIST_TIME,
-		//				this.readerProperties.get(PROP_PERSIST_TIME))));
+		// propCommandsToBeExecuted.add(new AlienCommandObjectWrapper(
+		// PROP_PERSIST_TIME, new AlienSetCommandObject(
+		// Alien9800ReaderSession.COMMAND_PERSIST_TIME,
+		// this.readerProperties.get(PROP_PERSIST_TIME))));
 
 		logger.debug("New instance of Alien9800Reader created.");
 	}
@@ -237,7 +238,7 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 			Integer sessionID = Integer.parseInt(sessionDTO.getID());
 			if (session.compareAndSet(null, new Alien9800ReaderSession(this,
 					Integer.toString(sessionID), ipAddress, port, notifyPort,
-					(int) (long) reconnectionInterval,
+					ioStreamPort, (int) (long) reconnectionInterval,
 					maxNumConnectionAttempts, username, password, template,
 					notifierService, this.getID(), commands))) {
 				this.session.get().restoreCommands(sessionDTO);
@@ -262,7 +263,7 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 			Integer sessionID = this.sessionID.incrementAndGet();
 			if (session.compareAndSet(null, new Alien9800ReaderSession(this,
 					Integer.toString(sessionID), ipAddress, port, notifyPort,
-					(int) (long) reconnectionInterval,
+					ioStreamPort, (int) (long) reconnectionInterval,
 					maxNumConnectionAttempts, username, password, template,
 					notifierService, this.getID(), commands))) {
 
@@ -413,6 +414,22 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 	@Property(displayName = "Notify Port", category = "connection", defaultValue = "54321", description = "The port configured in the Alien's Notify Address", type = PropertyType.PT_INTEGER, writable = true, minValue = "0", maxValue = "65535", orderValue = 1.5f)
 	public Integer getNotifyPort() {
 		return notifyPort;
+	}
+
+	/**
+	 * @param ioStreamPort
+	 *            the serverSocketPort to set
+	 */
+	public void setIOStreamPort(Integer ioStreamPort) {
+		this.ioStreamPort = ioStreamPort;
+	}
+
+	/**
+	 * @return the serverSocketPort
+	 */
+	@Property(displayName = "Notify Port", category = "connection", defaultValue = "54322", description = "The port configured in the Alien's IO Stream Address", type = PropertyType.PT_INTEGER, writable = true, minValue = "0", maxValue = "65535", orderValue = 1.75f)
+	public Integer getIOStreamPort() {
+		return ioStreamPort;
 	}
 
 	/**

@@ -241,6 +241,7 @@ public class DefaultConfigurationImpl implements Configuration, ServiceListener 
 				} catch (IOException e) {
 					logger.warn("Cannot start session: " + sensor.getID() + ":"
 							+ session.getID());
+					session.disconnect();
 				}
 			}
 		});

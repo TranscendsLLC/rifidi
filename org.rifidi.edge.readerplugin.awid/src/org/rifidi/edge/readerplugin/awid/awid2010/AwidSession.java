@@ -161,6 +161,7 @@ public class AwidSession extends AbstractPubSubIPSensorSession {
 				try {
 					connect();
 				} catch (IOException e) {
+					disconnect();
 				}
 
 			}
@@ -244,8 +245,8 @@ public class AwidSession extends AbstractPubSubIPSensorSession {
 		this.notifierService.jobDeleted(this.getSensor().getID(), this.getID(),
 				id);
 	}
-	
-	public AwidGPIOSession getGPIOSession(){
+
+	public AwidGPIOSession getGPIOSession() {
 		return gpioSession;
 	}
 
@@ -319,14 +320,16 @@ public class AwidSession extends AbstractPubSubIPSensorSession {
 		return is3014;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.rifidi.edge.core.sensors.sessions.AbstractIPSensorSession#toString()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.core.sensors.sessions.AbstractIPSensorSession#toString()
 	 */
 	@Override
 	public String toString() {
 		// TODO Auto-generated method stub
 		return super.toString() + ", " + gpioSession.toString();
 	}
-	
-	
+
 }

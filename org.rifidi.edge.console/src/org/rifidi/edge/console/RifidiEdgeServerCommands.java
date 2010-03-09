@@ -476,8 +476,7 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 					session.connect();
 					reader.applyPropertyChanges();
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					session.disconnect();
 				}
 			}
 		});

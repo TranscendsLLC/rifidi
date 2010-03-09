@@ -18,7 +18,9 @@ import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
 import org.apache.log4j.RollingFileAppender;
 import org.rifidi.edge.core.services.esper.EsperManagementService;
+import org.rifidi.edge.core.services.notification.data.EPCGeneration2Event;
 import org.rifidi.edge.core.services.notification.data.TagReadEvent;
+import org.rifidi.edge.core.services.notification.data.gpio.GPIEvent;
 
 import com.csc.rfid.toolcrib.test.esper.CollectionType;
 import com.csc.rfid.toolcrib.test.esper.StartCollectionEvent;
@@ -102,6 +104,9 @@ public class DataCollectorApp {
 				.getEPAdministrator().createEPL(
 						"select * from SessionDownEvent");
 
+		EPStatement gpiListener = esperService.getProvider()
+				.getEPAdministrator().createEPL("select * from GPIEvent");
+
 		StatementAwareUpdateListener listener = new StatementAwareUpdateListener() {
 
 			@Override
@@ -118,8 +123,49 @@ public class DataCollectorApp {
 
 		upStateListener.addListener(listener);
 		downStateListener.addListener(listener);
+		gpiListener.addListener(listener);
 
 		statements.add(upStateListener);
+		statements.add(downStateListener);
+		statements.add(gpiListener);
+		
+
+		EPStatement queryGPIs = esperService.getProvider().getEPAdministrator().createEPL(
+			"select * from pattern [every gpievent=GPIEvent(state=false, readerID='Alien_1')->" +
+				"tags=ReadCycle(readerID='Alien_1')[select * from tags] " +
+				"until timer:interval(10 sec)]");
+		queryGPIs.addListener(new StatementAwareUpdateListener() {
+
+			@Override
+			public void update(EventBean[] arg0, EventBean[] arg1,
+					EPStatement arg2, EPServiceProvider arg3) {
+				if (arg0 != null) {
+					for (EventBean b : arg0) {
+						ArrayList<TagReadEvent> tagReadEvents = new ArrayList<TagReadEvent>();
+						TagReadEvent[] tags = (TagReadEvent[]) b.get("tags");
+						GPIEvent gpiEvent = (GPIEvent) b.get("gpievent");
+						if (tags != null) {
+							for (TagReadEvent e : tags) {
+								tagReadEvents.add(e);
+							}
+						}
+						if (gpiEvent.getPort() == 1 && !tagReadEvents.isEmpty()) {
+							System.out.println("Inbound: "
+									+ ((EPCGeneration2Event) tagReadEvents.get(
+											0).getTag()).getEpc());
+						} else if (gpiEvent.getPort() == 2
+								&& !tagReadEvents.isEmpty()) {
+							System.out.println("Outbound: "
+									+ ((EPCGeneration2Event) tagReadEvents.get(
+											0).getTag()).getEpc());
+						}
+
+					}
+				}
+
+			}
+		});
+		statements.add(queryGPIs);
 
 		logger.info("Toolcrib test app started.");
 	}
