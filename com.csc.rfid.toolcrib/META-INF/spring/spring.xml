@@ -1,6 +1,5 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-	xmlns:osgi="http://www.springframework.org/schema/osgi"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:osgi="http://www.springframework.org/schema/osgi"
 	xmlns:amq="http://activemq.apache.org/schema/core"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans 
 	http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
@@ -8,17 +7,24 @@
     http://www.springframework.org/schema/osgi/spring-osgi.xsd">
 
 	<!-- Create the  Application bean and inject dependencies-->
-	<bean id="rfidapp" class="com.csc.rfid.toolcrib.ToolcribApp" 
+	<bean id="rfidapp" class="com.csc.rfid.toolcrib.ToolcribApp"
 		init-method="start" destroy-method="stop">
 		<property name="esperService" ref="esperManagementService" />
 		<property name="gpoController" ref="alienGPIOService" />
+		<property name="logFile" ref="cscLogFileHandler" />
 	</bean>
-	
+
 	<osgi:reference id="alienGPIOService"
-		interface="org.rifidi.edge.core.sensors.management.AbstractGPIOService" 
+		interface="org.rifidi.edge.core.sensors.management.AbstractGPIOService"
 		filter="(reader=Alien)" />
 
-	<!--Get a reference to the Esper Management Service from the OSGi Service Registry-->
+	<osgi:reference id="cscLogFileHandler"
+		interface="com.csc.rfid.toolcrib.utilities.RifidiLogger" />
+
+	<!--
+		Get a reference to the Esper Management Service from the OSGi Service
+		Registry
+	-->
 	<osgi:reference id="esperManagementService"
 		interface="org.rifidi.edge.core.services.esper.EsperManagementService" />
 </beans>
