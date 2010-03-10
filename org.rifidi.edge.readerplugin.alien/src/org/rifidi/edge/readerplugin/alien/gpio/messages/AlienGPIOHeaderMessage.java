@@ -4,7 +4,9 @@
 package org.rifidi.edge.readerplugin.alien.gpio.messages;
 
 /**
- * @author kyle
+ * This class represents a header message from the IO Stream
+ * 
+ * @author Kyle Neumeier - kyle@pramari.com
  * 
  */
 public class AlienGPIOHeaderMessage extends AlienGPIOMessage {

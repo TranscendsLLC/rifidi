@@ -4,7 +4,9 @@
 package org.rifidi.edge.readerplugin.alien.gpio.messages;
 
 /**
- * @author kyle
+ * The type of message sent back from the Alien Reader on the IOStream
+ * 
+ * @author Kyle Neumeier - kyle@pramari.com
  * 
  */
 public enum GPIOEvent {

@@ -14,7 +14,8 @@ import org.rifidi.edge.core.sensors.management.AbstractGPIOService;
 
 /**
  * This class is a service that lets applications access the GPIO functionality
- * of registered Alien readers
+ * of registered Alien readers. It should be registered with a service property
+ * called 'reader' with a value of 'Alien'
  * 
  * @author Kyle Neumeier - kyle@pramari.com
  * 
