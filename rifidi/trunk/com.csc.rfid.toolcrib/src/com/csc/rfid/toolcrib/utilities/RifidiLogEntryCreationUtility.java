@@ -51,8 +51,8 @@ public class RifidiLogEntryCreationUtility {
 	public String createSAPEntry(String tag, boolean inbound) {
 		StringBuilder sb = new StringBuilder();
 
-		if (tag.length() >= 14) {
-			tag = tag.substring(2, 14);
+		if (tag.length() >= 12) {
+			tag = tag.substring(0, 12);
 		} else {
 			return "";
 		}

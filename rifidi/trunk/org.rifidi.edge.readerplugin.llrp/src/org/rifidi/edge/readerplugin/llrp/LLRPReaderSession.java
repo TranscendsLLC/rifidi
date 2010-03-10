@@ -27,6 +27,7 @@ import javax.jms.Message;
 import javax.jms.Session;
 
 import org.apache.activemq.command.ActiveMQObjectMessage;
+import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.mina.common.RuntimeIOException;
@@ -522,7 +523,7 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 
 		try {
 			input = input.trim();
-			retVal = new BigInteger(input, 16);
+			retVal = new BigInteger(Hex.decodeHex(input.toCharArray()));
 		} catch (Exception e) {
 			logger.warn("There was a problem when parsing LLRP Tags.  "
 					+ "tag has not been added", e);

@@ -226,8 +226,8 @@ public abstract class ToolcribApp {
 		}
 		List<String> watchList = this.watchlist_reader.getWatchlistTags();
 		for (String watchTag : watchList) {
-			if (id.length() >= 14) {
-				if (id.substring(3, 13).equalsIgnoreCase(watchTag)) {
+			if (id.length() >= 12) {
+				if (id.substring(1, 11).equalsIgnoreCase(watchTag)) {
 					logger.debug("On watch list");
 					return true;
 				}
