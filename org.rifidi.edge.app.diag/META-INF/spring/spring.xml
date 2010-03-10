@@ -1,0 +1,50 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:osgi="http://www.springframework.org/schema/osgi"
+	xmlns:amq="http://activemq.apache.org/schema/core"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+    http://www.springframework.org/schema/osgi 
+    http://www.springframework.org/schema/osgi/spring-osgi.xsd">
+	
+	<bean id="GPIOApp" class="org.rifidi.edge.app.diag.gpio.GPIOApp"
+		init-method="start" destroy-method="stop">
+		<property name="gpioService" ref="alienGPIOService" />
+	</bean>
+
+	<bean id="gpiocommands"
+		class="org.rifidi.edge.app.diag.gpio.GPIOAppCommandProvider">
+		<property name="gpioApp" ref="GPIOApp" />
+	</bean>
+	
+	<bean id="TagApp" class="org.rifidi.edge.app.diag.tags.TagApp"
+		init-method="start" destroy-method="stop">
+		<property name="esperService" ref="esperManagementService" />
+	</bean>
+
+	<bean id="tagscommands"
+		class="org.rifidi.edge.app.diag.tags.TagAppCommandProvider">
+		<property name="tagApp" ref="TagApp" />
+	</bean>
+
+	<!--
+		Get a reference to the Esper Management Service from the OSGi Service
+		Registry
+	-->
+	<osgi:reference id="esperManagementService"
+		interface="org.rifidi.edge.core.services.esper.EsperManagementService" />
+	
+	<osgi:reference id="alienGPIOService"
+		interface="org.rifidi.edge.core.sensors.management.AbstractGPIOService" 
+		filter="(reader=Alien)" />
+
+	<!--
+		Register the command provider service in the OSGi registry. This
+		allows it to be hooked up the the eclipse console.
+	-->
+	<osgi:service ref="gpiocommands"
+		interface="org.eclipse.osgi.framework.console.CommandProvider" />
+		
+	<osgi:service ref="tagscommands"
+		interface="org.eclipse.osgi.framework.console.CommandProvider" />
+
+</beans>
