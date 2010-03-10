@@ -16,7 +16,10 @@
 package org.rifidi.edge.readerplugin.alien.messages;
 
 import java.math.BigInteger;
+import javax.xml.bind.annotation.adapters.HexBinaryAdapter;
 
+import org.apache.commons.codec.DecoderException;
+import org.apache.commons.codec.binary.Hex;
 import org.rifidi.edge.core.services.notification.data.DatacontainerEvent;
 import org.rifidi.edge.core.services.notification.data.EPCGeneration1Event;
 import org.rifidi.edge.core.services.notification.data.EPCGeneration2Event;
@@ -55,42 +58,36 @@ public class AlienTagReadEventFactory {
 		// the new event
 		DatacontainerEvent tagData = null;
 		// a big integer representation of the epc
-		BigInteger epc = new BigInteger(alienTag.getId_hex(), 16);
+		BigInteger epc = null;
+		try {
+			epc = new BigInteger(Hex.decodeHex(alienTag.getId_hex().toCharArray()));
+		} catch (DecoderException e) {
+			throw new RuntimeException("Cannot decode tag: " + alienTag.getId_hex());
+		}
+		int numbits = alienTag.getId_hex().length() * 4;
 
 		// choose whether to make a gen1 or a gen2 tag
 		if (alienTag.getProtocol() == 1) {
 			EPCGeneration1Event gen1event = new EPCGeneration1Event();
 			// make some wild guesses on the length of the epc field
-			if (epc.bitLength() > 96) {
-				gen1event.setEPCMemory(epc, 192);
-			} else if (epc.bitLength() > 64) {
-				gen1event.setEPCMemory(epc, 96);
-			} else {
-				gen1event.setEPCMemory(epc, 64);
-			}
+			gen1event.setEPCMemory(epc, numbits);
 			tagData = gen1event;
 		} else {
 			EPCGeneration2Event gen2event = new EPCGeneration2Event();
-			// make some wild guesses on the length of the epc field
-			if (epc.bitLength() > 96) {
-				gen2event.setEPCMemory(epc, 192);
-			} else if (epc.bitLength() > 64) {
-				gen2event.setEPCMemory(epc, 96);
-			} else {
-				gen2event.setEPCMemory(epc, 64);
-			}
+			gen2event.setEPCMemory(epc, numbits);
 			tagData = gen2event;
 		}
-		TagReadEvent retVal = new TagReadEvent(readerID, tagData, alienTag.getAntenna(),
-				alienTag.getLastSeenDate().getTime());
-		if(alienTag.getSpeed()!= null) {
+		TagReadEvent retVal = new TagReadEvent(readerID, tagData, alienTag
+				.getAntenna(), alienTag.getLastSeenDate().getTime());
+		if (alienTag.getSpeed() != null) {
 			retVal.addExtraInformation(AlienTag.SPEED_ID, alienTag.getSpeed());
 		}
-		if(alienTag.getRssi()!= null) {
+		if (alienTag.getRssi() != null) {
 			retVal.addExtraInformation(AlienTag.RSSI_ID, alienTag.getRssi());
 		}
-		if(alienTag.getDirection()!=null) {
-			retVal.addExtraInformation(AlienTag.DIRECTION, alienTag.getDirection());
+		if (alienTag.getDirection() != null) {
+			retVal.addExtraInformation(AlienTag.DIRECTION, alienTag
+					.getDirection());
 		}
 		return retVal;
 	}

@@ -15,8 +15,11 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicReference;
 
+import org.apache.commons.codec.DecoderException;
+import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.sensors.messages.ByteMessage;
@@ -170,6 +173,9 @@ public class ThingmagicGetTagListCommand extends AbstractThingmagicCommand {
 			template.send(destination, new ReadCycleMessageCreator(cycle));
 		} catch (IOException e) {
 			// e.printStackTrace();
+		} catch (TimeoutException e) {
+			// TODO Auto-generated catch block
+			//e.printStackTrace();
 		}
 	}
 
@@ -190,17 +196,17 @@ public class ThingmagicGetTagListCommand extends AbstractThingmagicCommand {
 		String[] splitString = tagDataString.split("\\|");
 
 		// a big integer representation of the epc
-		BigInteger epc = new BigInteger(splitString[0], 16);
+		String id = splitString[0];
+		int numBits = id.length()*4;
+		BigInteger epc;
+		try {
+			epc = new BigInteger(Hex.decodeHex(id.toCharArray()));
+		} catch (DecoderException e) {
+			throw new RuntimeException("Cannot decode ID: " + id);
+		}
 
 		EPCGeneration2Event gen2event = new EPCGeneration2Event();
-		// make some wild guesses on the length of the epc field
-		if (epc.bitLength() > 96) {
-			gen2event.setEPCMemory(epc, 192);
-		} else if (epc.bitLength() > 64) {
-			gen2event.setEPCMemory(epc, 96);
-		} else {
-			gen2event.setEPCMemory(epc, 64);
-		}
+		gen2event.setEPCMemory(epc, numBits);
 		tagData = gen2event;
 
 		Integer antennaID = Integer.parseInt(splitString[1]);
