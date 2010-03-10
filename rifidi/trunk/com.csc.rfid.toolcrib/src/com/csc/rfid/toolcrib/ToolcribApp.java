@@ -12,18 +12,26 @@
 package com.csc.rfid.toolcrib;
 
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.rifidi.edge.core.sensors.exceptions.CannotExecuteException;
 import org.rifidi.edge.core.sensors.management.AbstractGPIOService;
 import org.rifidi.edge.core.services.esper.EsperManagementService;
+import org.rifidi.edge.core.services.notification.data.EPCGeneration2Event;
+import org.rifidi.edge.core.services.notification.data.TagReadEvent;
+import org.rifidi.edge.core.services.notification.data.gpio.GPIEvent;
 
-import com.csc.rfid.toolcrib.utilities.RifidiLogEntryCreationUtility;
 import com.csc.rfid.toolcrib.utilities.CSCLogger;
+import com.csc.rfid.toolcrib.utilities.RifidiLogEntryCreationUtility;
 import com.csc.rfid.toolcrib.utilities.WatchlistReader;
+import com.espertech.esper.client.EPServiceProvider;
+import com.espertech.esper.client.EPStatement;
+import com.espertech.esper.client.EventBean;
+import com.espertech.esper.client.StatementAwareUpdateListener;
 
 /**
  * This application will monitor the incoming and outgoing parts through a
@@ -37,6 +45,8 @@ public abstract class ToolcribApp {
 
 	/** Esper service */
 	protected volatile EsperManagementService esperService;
+	/** All statements that have been defined so far */
+	protected final Set<EPStatement> statements = new CopyOnWriteArraySet<EPStatement>();
 
 	/** This logger records directionality events only */
 	protected CSCLogger logFile;
@@ -44,16 +54,16 @@ public abstract class ToolcribApp {
 			.getProperty("com.csc.watchlist"));
 	private static final Log logger = LogFactory.getLog(ToolcribApp.class);
 	/** Controller for GPO of Alien */
-	private AbstractGPIOService<?> gpoController;
+	protected AbstractGPIOService<?> gpoController;
 
 	// GPIO values
-	private static final Integer FLASH_TIME = Integer.parseInt(System
+	protected static final Integer FLASH_TIME = Integer.parseInt(System
 			.getProperty("com.csc.flashtime"));
-	private static final Integer RED_LIGHT_GPO = Integer.parseInt(System
+	protected static final Integer RED_LIGHT_GPO = Integer.parseInt(System
 			.getProperty("com.csc.redlightgpo"));
-	private static final Integer YELLOW_LIGHT_GPO = Integer.parseInt(System
+	protected static final Integer YELLOW_LIGHT_GPO = Integer.parseInt(System
 			.getProperty("com.csc.yellowlightgpo"));
-	private static final Integer GREEN_LIGHT_GPO = Integer.parseInt(System
+	protected static final Integer GREEN_LIGHT_GPO = Integer.parseInt(System
 			.getProperty("com.csc.greenlightgpo"));
 
 	/**
@@ -63,6 +73,90 @@ public abstract class ToolcribApp {
 	 * This method is called by spring
 	 */
 	public abstract void start();
+
+	/**
+	 * Called by spring Iterate through all statements and stop them.
+	 */
+	public void stop() {
+		for (EPStatement statement : statements) {
+			statement.destroy();
+		}
+	}
+
+	protected StatementAwareUpdateListener getTagsUpdateListener() {
+		return new StatementAwareUpdateListener() {
+
+			@Override
+			public void update(EventBean[] arg0, EventBean[] arg1,
+					EPStatement arg2, EPServiceProvider arg3) {
+
+				// Map that will hold the tag ID bound to all the speed
+				// information that is retrieved.
+				// HashMap<String, List<CSCTag>> speedMap = new HashMap<String,
+				// List<CSCTag>>();
+				List<CSCTag> tags = new LinkedList<CSCTag>();
+
+				// arg1 contains all the tag reads. This works because we do all
+				// of the rmoves at once.
+				if (arg0 != null) {
+					TagReadEvent[] tagReadEvents = null;
+					GPIEvent gpiEvent = null;
+					for (EventBean b : arg0) {
+						tagReadEvents = (TagReadEvent[]) b.get("tags");
+						gpiEvent = (GPIEvent) b.get("gpievent");
+					}
+					if (tagReadEvents == null || gpiEvent == null) {
+						return;
+					}
+
+					for (TagReadEvent tre : tagReadEvents) {
+						CSCTag tag = new CSCTag();
+						tag.setAntenna(tre.getAntennaID());
+						tag.setEpc(((EPCGeneration2Event) tre.getTag())
+								.getEpc());
+						tag.setReaderID(tre.getReaderID());
+						tag.setRssi(((Float) tre.getExtraInformation().get(
+								"RSSI")).toString());
+						tag.setSpeed((Float) tre.getExtraInformation().get(
+								"Speed"));
+						tags.add(tag);
+					}
+
+					if (isGhost(tags)) {
+						handleGhost(tags);
+						return;
+					}
+
+					boolean onWatchList = false;
+
+					boolean inbound = determineDirection(gpiEvent);
+					// Flips the speed if this particular property is set.
+					inbound = check_orientations(tags.get(0).getReaderID(),
+							inbound);
+
+					logger.info("Tag is: " + tags.get(0).getEpc()
+							+ ", Direction is: "
+							+ (inbound ? "Inbound" : "Outbound"));
+
+					if (onWatchlist(tags)) {
+						onWatchList = true;
+					}
+					
+					triggerLight(tags.get(0).getReaderID(), onWatchList,
+							inbound);
+					writeLog(tags.get(0).getEpc(), tags.get(0).getReaderID(),
+							inbound, onWatchList);
+				}
+			}
+		};
+	}
+
+	/**
+	 * Return true if inbound, false if outbound
+	 * 
+	 * @return
+	 */
+	protected abstract boolean determineDirection(GPIEvent gpievent);
 
 	/*
 	 * Checks if the direction needs to be flipped for the given reader ID. If
@@ -127,13 +221,18 @@ public abstract class ToolcribApp {
 		// make it so they support regexs, which will make things very simple
 		// for us and very customizable for them.
 		String id = tags.get(0).getEpc();
+		if(logger.isDebugEnabled()){
+			logger.debug("Tag is " + id.substring(3,13));
+		}
 		List<String> watchList = this.watchlist_reader.getWatchlistTags();
 		for (String watchTag : watchList) {
 			if (id.length() >= 14) {
 				if (id.substring(3, 13).equalsIgnoreCase(watchTag)) {
+					logger.debug("On watch list");
 					return true;
 				}
 			} else {
+				logger.debug("not on watchlist");
 				return false;
 			}
 		}
@@ -182,33 +281,8 @@ public abstract class ToolcribApp {
 	 * @param onWatchList
 	 * @param direction
 	 */
-	protected void triggerLight(String readerID, boolean onWatchList,
-			boolean inbound) {
-
-		try {
-			if (onWatchList) {
-				// Trigger watchlist (red) GPO 2
-				this.gpoController
-						.flashGPO(readerID, FLASH_TIME, RED_LIGHT_GPO);
-			} else if (inbound) {
-				// Trigger inbound (yellow) GPO 3
-				this.gpoController.flashGPO(readerID, FLASH_TIME,
-						YELLOW_LIGHT_GPO);
-			} else {
-				// Trigger outbound (green) GPO 4
-				this.gpoController.flashGPO(readerID, FLASH_TIME,
-						GREEN_LIGHT_GPO);
-			}
-		} catch (CannotExecuteException e) {
-			logger.warn("Problem executing GPO: " + e.getMessage());
-		}
-		// map to interactive
-	}
-
-	/**
-	 * Called by spring Iterate through all statements and stop them.
-	 */
-	public abstract void stop();
+	protected abstract void triggerLight(String readerID, boolean onWatchList,
+			boolean inbound);
 
 	/**
 	 * Called by spring
