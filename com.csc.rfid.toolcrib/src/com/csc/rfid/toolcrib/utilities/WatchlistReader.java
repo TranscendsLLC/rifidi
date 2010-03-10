@@ -18,9 +18,11 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * This file reads in the list of tags which are "bad" and returns the list of
@@ -29,6 +31,8 @@ import java.util.List;
  * @author Matthew Dean
  */
 public class WatchlistReader {
+
+	private static final Log logger = LogFactory.getLog(WatchlistReader.class);
 
 	private File file = null;
 
@@ -53,32 +57,33 @@ public class WatchlistReader {
 			try {
 				fstream = new FileInputStream(file);
 				in = new DataInputStream(fstream);
-				br = new BufferedReader(
-						new InputStreamReader(in));
+				br = new BufferedReader(new InputStreamReader(in));
 				String line;
 				List<String> tagList = new LinkedList<String>();
 				while ((line = br.readLine()) != null) {
 					tagList.add(line);
 				}
+				if (logger.isDebugEnabled())
+					logger.debug("watchlist tags: " + tagList);
 				return tagList;
 			} catch (FileNotFoundException e) {
-				// TODO: Probably should log this or something
+				logger.warn("File not Found: " + e.getMessage());
 			} catch (IOException e) {
-				// TODO: Log this here probably
-			} finally{
-				if(fstream!=null){
+				logger.warn("IOException: " + e.getMessage());
+			} finally {
+				if (fstream != null) {
 					try {
 						fstream.close();
 					} catch (IOException e) {
 					}
 				}
-				if(in !=null){
+				if (in != null) {
 					try {
 						in.close();
 					} catch (IOException e) {
 					}
 				}
-				if(br!=null){
+				if (br != null) {
 					try {
 						br.close();
 					} catch (IOException e) {

@@ -14,6 +14,13 @@
 		<property name="logFile" ref="cscLogFileHandler" />
 	</bean>
 	
+	<bean id="windowapp" class="com.csc.rfid.toolcrib.ToolcribWindowApp"
+		init-method="start" destroy-method="stop">
+		<property name="esperService" ref="esperManagementService" />
+		<property name="gpoController" ref="alienGPIOService" />
+		<property name="logFile" ref="cscLogFileHandler" />
+	</bean>
+	
 	<bean id="cscdowntime" class="com.csc.rfid.toolcrib.ReaderUpDownEventHandler"
 		init-method="start" destroy-method="stop">
 		<property name="esperService" ref="esperManagementService" />
