@@ -4,11 +4,13 @@
 package org.rifidi.edge.readerplugin.alien.gpio.messages;
 
 /**
- * @author kyle
+ * This is an abstract class that represents a message received from the
+ * IOStream from an Alien reader.
  * 
+ * @author Kyle Neumeier - kyle@pramari.com @ *
  */
 public abstract class AlienGPIOMessage {
-	
+
 	/** The data int which represents the current state of the external IO */
 	private int data;
 
@@ -16,12 +18,12 @@ public abstract class AlienGPIOMessage {
 	private Long timestamp;
 
 	/**
-	 * @return the eventType
+	 * @return the type of IOEvent message received from the alien reader
 	 */
 	public abstract GPIOEvent getEventType();
 
 	/**
-	 * @return the timestamp
+	 * @return the timestamp that the event was received at
 	 */
 	public Long getTimestamp() {
 		return timestamp;
@@ -34,10 +36,9 @@ public abstract class AlienGPIOMessage {
 	public void setTimestamp(Long timestamp) {
 		this.timestamp = timestamp;
 	}
-	
 
 	/**
-	 * @return the data
+	 * @return the data byte
 	 */
 	public int getData() {
 		return data;
@@ -50,6 +51,5 @@ public abstract class AlienGPIOMessage {
 	public void setData(int data) {
 		this.data = data;
 	}
-
 
 }

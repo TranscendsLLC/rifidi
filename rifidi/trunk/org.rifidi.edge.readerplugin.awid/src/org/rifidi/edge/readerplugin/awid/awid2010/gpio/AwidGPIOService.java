@@ -14,7 +14,11 @@ import org.rifidi.edge.core.sensors.management.AbstractGPIOService;
 import org.rifidi.edge.readerplugin.awid.awid2010.AwidSession;
 
 /**
- * @author kyle
+ * This class is a service that lets applications access the GPIO functionality
+ * of registered Awid readers. It should be registered with a service property
+ * called 'reader' and a value called 'Awid'
+ * 
+ * @author Kyle Neumeier - kyle@pramari.com
  * 
  */
 public class AwidGPIOService extends AbstractGPIOService<AwidSession> {
