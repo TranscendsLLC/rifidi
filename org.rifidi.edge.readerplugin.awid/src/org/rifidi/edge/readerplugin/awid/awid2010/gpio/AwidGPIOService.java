@@ -3,6 +3,7 @@
  */
 package org.rifidi.edge.readerplugin.awid.awid2010.gpio;
 
+import java.io.IOException;
 import java.util.BitSet;
 import java.util.Collection;
 import java.util.Set;
@@ -100,8 +101,12 @@ public class AwidGPIOService extends AbstractGPIOService<AwidSession> {
 		AwidGPIOSession gpioSession = super.getSession(readerID)
 				.getGPIOSession();
 		if (gpioSession.getStatus() != SessionStatus.PROCESSING) {
-			throw new CannotExecuteException(
-					"GPIO Session is not in processing state");
+			try {
+				gpioSession.connect();
+			} catch (IOException e) {
+				gpioSession.disconnect();
+				throw new CannotExecuteException(e);
+			}
 		}
 		return gpioSession;
 	}
