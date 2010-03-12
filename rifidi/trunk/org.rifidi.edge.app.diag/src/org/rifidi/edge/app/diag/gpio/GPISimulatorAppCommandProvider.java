@@ -48,8 +48,7 @@ public class GPISimulatorAppCommandProvider implements CommandProvider {
 	public Object _simGPIHigh(CommandInterpreter intp) {
 		String readerArg = intp.nextArgument();
 		if (readerArg == null || readerArg.equals("")) {
-			intp.println("Usage: gpiHigh <readerID> <port1> "
-					+ "[port2] [port3] ...");
+			intp.println("Usage: simGPIHigh <readerID> <port1> [port2]* ");
 			return null;
 		}
 
@@ -66,8 +65,7 @@ public class GPISimulatorAppCommandProvider implements CommandProvider {
 			}
 		}
 		if (ports.isEmpty()) {
-			intp.println("Usage: gpiHigh <readerID> <port1> "
-					+ "[port2] [port3] ...");
+			intp.println("Usage: simGPIHigh <readerID> <port1> [port2]* ");
 			return null;
 		} else {
 			this.simApp.simGPIHigh(readerArg, ports);
@@ -84,8 +82,7 @@ public class GPISimulatorAppCommandProvider implements CommandProvider {
 	public Object _simGPILow(CommandInterpreter intp) {
 		String readerArg = intp.nextArgument();
 		if (readerArg == null || readerArg.equals("")) {
-			intp.println("Usage: gpiLow <readerID> <port1> "
-					+ "[port2] [port3] ...");
+			intp.println("Usage: simGPILow <readerID> <readerID> <port1> [port2]*");
 			return null;
 		}
 
@@ -102,8 +99,7 @@ public class GPISimulatorAppCommandProvider implements CommandProvider {
 			}
 		}
 		if (ports.isEmpty()) {
-			intp.println("Usage: gpiLow <readerID> <port1> "
-					+ "[port2] [port3] ...");
+			intp.println("Usage: simGPILow <readerID> <readerID> <port1> [port2]*");
 			return null;
 		} else {
 			this.simApp.simGPILow(readerArg, ports);
@@ -121,23 +117,20 @@ public class GPISimulatorAppCommandProvider implements CommandProvider {
 	public Object _simGPIFlashHigh(CommandInterpreter intp) {
 		String readerArg = intp.nextArgument();
 		if (readerArg == null || readerArg.equals("")) {
-			intp.println("Usage: gpiFlashHigh <readerID> <seconds> <port1> "
-					+ "[port2] [port3] ...");
+			intp.println("Usage: simGPIFlashHigh <readerID> <seconds> <port1> [port2]*");
 			return null;
 		}
 
 		String secondString = intp.nextArgument();
 		if (secondString == null || secondString.equals("")) {
-			intp.println("Usage: gpiFlashHigh <readerID> <seconds> <port1> "
-					+ "[port2] [port3] ...");
+			intp.println("Usage: simGPIFlashHigh <readerID> <seconds> <port1> [port2]*");
 			return null;
 		}
 		Integer seconds;
 		try {
 			seconds = Integer.parseInt(secondString);
 		} catch (NumberFormatException e) {
-			intp.println("Usage: gpiFlashHigh <readerID> <seconds> <port1> "
-					+ "[port2] [port3] ...");
+			intp.println("Usage: simGPIFlashHigh <readerID> <seconds> <port1> [port2]*");
 			return null;
 		}
 
@@ -154,8 +147,7 @@ public class GPISimulatorAppCommandProvider implements CommandProvider {
 			}
 		}
 		if (ports.isEmpty()) {
-			intp.println("Usage: gpiFlashHigh <readerID> <port1> "
-					+ "[port2] [port3] ...");
+			intp.println("Usage: simGPIFlashHigh <readerID> <seconds> <port1> [port2]*");
 			return null;
 		} else {
 			this.simApp.simGPIFlashHigh(readerArg, seconds, ports);
@@ -173,23 +165,20 @@ public class GPISimulatorAppCommandProvider implements CommandProvider {
 	public Object _simGPIFlashLow(CommandInterpreter intp) {
 		String readerArg = intp.nextArgument();
 		if (readerArg == null || readerArg.equals("")) {
-			intp.println("Usage: gpiFlashLow <readerID> <seconds> <port1> "
-					+ "[port2] [port3] ...");
+			intp.println("Usage: simGPIFlashLow <readerID> <seconds> <port1> [port2]*");
 			return null;
 		}
 
 		String secondString = intp.nextArgument();
 		if (secondString == null || secondString.equals("")) {
-			intp.println("Usage: gpiFlashLow <readerID> <seconds> <port1> "
-					+ "[port2] [port3] ...");
+			intp.println("Usage: simGPIFlashLow <readerID> <seconds> <port1> [port2]*");
 			return null;
 		}
 		Integer seconds;
 		try {
 			seconds = Integer.parseInt(secondString);
 		} catch (NumberFormatException e) {
-			intp.println("Usage: gpiFlashLow <readerID> <seconds> <port1> "
-					+ "[port2] [port3] ...");
+			intp.println("Usage: simGPIFlashLow <readerID> <seconds> <port1> [port2]*");
 			return null;
 		}
 
@@ -206,8 +195,7 @@ public class GPISimulatorAppCommandProvider implements CommandProvider {
 			}
 		}
 		if (ports.isEmpty()) {
-			intp.println("Usage: gpiFlashHigh <readerID> <port1> "
-					+ "[port2] [port3] ...");
+			intp.println("Usage: gpiFlashLow <readerID> <seconds> <port1> [port2]*");
 			return null;
 		} else {
 			this.simApp.simGPIFlashLow(readerArg, seconds, ports);
@@ -218,7 +206,7 @@ public class GPISimulatorAppCommandProvider implements CommandProvider {
 	@Override
 	public String getHelp() {
 		// TODO Auto-generated method stub
-		return null;
+		return "";
 	}
 
 }

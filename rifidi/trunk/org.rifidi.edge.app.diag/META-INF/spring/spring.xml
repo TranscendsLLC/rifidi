@@ -47,6 +47,8 @@
 
 	<osgi:service ref="gpisimulatorcommands"
 		interface="org.eclipse.osgi.framework.console.CommandProvider" />
+	<osgi:service ref="helpcommandprovider"
+		interface="org.eclipse.osgi.framework.console.CommandProvider" />
 
 	<bean id="gpisimulatorcommands"
 		class="org.rifidi.edge.app.diag.gpio.GPISimulatorAppCommandProvider">
@@ -57,6 +59,10 @@
 	<bean id="gpisimulationapp" class="org.rifidi.edge.app.diag.gpio.GPISimulatorApp"
 		init-method="start" destroy-method="stop">
 		<property name="esperService" ref="esperManagementService" />
+	</bean>
+	
+	<bean id="helpcommandprovider"
+		class="org.rifidi.edge.app.diag.help.HelpCommandProvider">
 	</bean>
 
 </beans>

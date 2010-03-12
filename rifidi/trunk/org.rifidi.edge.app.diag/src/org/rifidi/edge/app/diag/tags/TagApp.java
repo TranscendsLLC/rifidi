@@ -6,7 +6,6 @@ import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 import org.rifidi.edge.core.services.esper.EsperManagementService;
-import org.rifidi.edge.core.services.notification.data.gpio.GPIEvent;
 
 import com.espertech.esper.client.EPOnDemandQueryResult;
 import com.espertech.esper.client.EPStatement;
