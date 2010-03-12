@@ -42,7 +42,6 @@ public class GPISimulatorApp {
 	/**
 	 */
 	public void start() {
-		System.out.println("start method called");
 		EPStatement query = esperService.getProvider().getEPAdministrator()
 				.createEPL("select * from GPIEvent");
 		statements.add(query);
@@ -70,11 +69,11 @@ public class GPISimulatorApp {
 					for (EventBean eb : arg0) {
 						if (eb.getUnderlying() instanceof GPIEvent) {
 							logger.debug(eb.getUnderlying());
-							System.out.println(eb.getUnderlying());
+							//System.out.println(eb.getUnderlying());
 						}
 						if (eb.getUnderlying() instanceof GPOEvent) {
 							logger.debug(eb.getUnderlying());
-							System.out.println(eb.getUnderlying());
+							//System.out.println(eb.getUnderlying());
 						}
 					}
 				}
@@ -133,7 +132,7 @@ public class GPISimulatorApp {
 	 *            the esperService to set
 	 */
 	public void setEsperService(EsperManagementService esperService) {
-		System.out.println("Setting esper");
+		//System.out.println("Setting esper");
 		this.esperService = esperService;
 	}
 

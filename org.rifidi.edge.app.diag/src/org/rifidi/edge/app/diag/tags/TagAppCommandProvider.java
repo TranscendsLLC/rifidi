@@ -22,7 +22,7 @@ public class TagAppCommandProvider implements CommandProvider {
 	public Object _currenttags(CommandInterpreter intp) {
 		String readerID = intp.nextArgument();
 		if (readerID == null || readerID.isEmpty()) {
-			intp.println("Usage: recenttags <readerID>");
+			intp.println("Usage: currenttags <readerID>");
 			return null;
 		}
 		for (TagData tag : tagApp.getCurrentTags(readerID)) {
@@ -45,7 +45,7 @@ public class TagAppCommandProvider implements CommandProvider {
 	@Override
 	public String getHelp() {
 		// TODO Auto-generated method stub
-		return null;
+		return "";
 	}
 
 }

@@ -118,7 +118,7 @@ public class GPIOAppCommandProvider implements CommandProvider {
 	@Override
 	public String getHelp() {
 		// TODO Auto-generated method stub
-		return null;
+		return "";
 	}
 
 }
