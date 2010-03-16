@@ -58,7 +58,7 @@ public abstract class AbstractGPIOService<T extends AbstractSensorSession> {
 	public void setGPO(String readerID, Integer... ports)
 			throws CannotExecuteException {
 		Set<Integer> set = new HashSet<Integer>();
-		for(Integer i : ports){
+		for (Integer i : ports) {
 			set.add(i);
 		}
 		setGPO(readerID, set);
@@ -96,7 +96,7 @@ public abstract class AbstractGPIOService<T extends AbstractSensorSession> {
 	public void flashGPO(String readerID, int flashTime, Integer... ports)
 			throws CannotExecuteException {
 		Set<Integer> set = new HashSet<Integer>();
-		for(Integer i : ports){
+		for (Integer i : ports) {
 			set.add(i);
 		}
 		flashGPO(readerID, flashTime, set);
@@ -145,6 +145,16 @@ public abstract class AbstractGPIOService<T extends AbstractSensorSession> {
 	 */
 	public void setReaderDAO(ReaderDAO readerDAO) {
 		this.readerDAO = readerDAO;
+	}
+
+	/**
+	 * Returns true if a reader with the given ID is available to this service.
+	 * 
+	 * @param readerID
+	 * @return
+	 */
+	public boolean isReaderAvailable(String readerID) {
+		return readerDAO.getReaderByID(readerID) != null;
 	}
 
 }

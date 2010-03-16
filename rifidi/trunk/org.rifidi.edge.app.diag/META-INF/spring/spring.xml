@@ -8,7 +8,7 @@
 
 	<bean id="GPIOApp" class="org.rifidi.edge.app.diag.gpio.GPIOApp"
 		init-method="start" destroy-method="stop">
-		<property name="gpioService" ref="alienGPIOService" />
+		<property name="serviceSet" ref="abstractGPIOService" />
 	</bean>
 
 	<bean id="gpiocommands" class="org.rifidi.edge.app.diag.gpio.GPIOAppCommandProvider">
@@ -31,10 +31,11 @@
 	<osgi:reference id="esperManagementService"
 		interface="org.rifidi.edge.core.services.esper.EsperManagementService" />
 
-	<osgi:reference id="alienGPIOService"
-		interface="org.rifidi.edge.core.sensors.management.AbstractGPIOService"
-		filter="(reader=Alien)" />
-
+	<osgi:set id="abstractGPIOService"
+		interface="org.rifidi.edge.core.sensors.management.AbstractGPIOService" cardinality="0..N">
+		<osgi:listener ref="GPIOApp" bind-method="onBind" unbind-method="onUnbind"></osgi:listener>
+	</osgi:set>
+	
 	<!--
 		Register the command provider service in the OSGi registry. This
 		allows it to be hooked up the the eclipse console.
@@ -60,9 +61,8 @@
 		init-method="start" destroy-method="stop">
 		<property name="esperService" ref="esperManagementService" />
 	</bean>
-	
-	<bean id="helpcommandprovider"
-		class="org.rifidi.edge.app.diag.help.HelpCommandProvider">
+
+	<bean id="helpcommandprovider" class="org.rifidi.edge.app.diag.help.HelpCommandProvider">
 	</bean>
 
 </beans>
