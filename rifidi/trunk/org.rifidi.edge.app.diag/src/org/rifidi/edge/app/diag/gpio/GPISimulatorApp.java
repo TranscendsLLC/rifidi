@@ -44,9 +44,13 @@ public class GPISimulatorApp {
 	public void start() {
 		EPStatement query = esperService.getProvider().getEPAdministrator()
 				.createEPL("select * from GPIEvent");
+		EPStatement query2 = esperService.getProvider().getEPAdministrator()
+		.createEPL("select * from GPOEvent");
 		statements.add(query);
+		statements.add(query2);
 		StatementAwareUpdateListener stateUpdateListener = getSessionStateUpdateListener();
 		query.addListener(stateUpdateListener);
+		query2.addListener(stateUpdateListener);
 	}
 
 	public StatementAwareUpdateListener getSessionStateUpdateListener() {
