@@ -427,7 +427,7 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 	/**
 	 * @return the serverSocketPort
 	 */
-	@Property(displayName = "Notify Port", category = "connection", defaultValue = "54322", description = "The port configured in the Alien's IO Stream Address", type = PropertyType.PT_INTEGER, writable = true, minValue = "0", maxValue = "65535", orderValue = 1.75f)
+	@Property(displayName = "IO Stream Port", category = "connection", defaultValue = "54322", description = "The port configured in the Alien's IO Stream Address", type = PropertyType.PT_INTEGER, writable = true, minValue = "0", maxValue = "65535", orderValue = 1.75f)
 	public Integer getIOStreamPort() {
 		return ioStreamPort;
 	}
