@@ -564,9 +564,8 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 
 	@Property(displayName = "Invert External Output", description = "Inverts the "
 			+ "GPO", writable = true, type = PropertyType.PT_STRING, category = "GPIO", defaultValue = "OFF")
-	public Integer getInvertExternalOutput() {
-		return Integer.parseInt(readerProperties
-				.get(PROP_INVERT_EXTERNAL_OUTPUT));
+	public String getInvertExternalOutput() {
+		return readerProperties.get(PROP_INVERT_EXTERNAL_OUTPUT);
 	}
 
 	public void setInvertExternalOutput(String invertExternalOutput) {
