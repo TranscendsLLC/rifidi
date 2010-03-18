@@ -85,11 +85,23 @@ public class AlienTag {
 				String proto = field.substring(field.indexOf(':') + 1).trim();
 				this.protocol = Integer.parseInt(proto);
 			} else if (field.startsWith("Speed:")) {
-				String speed = field.substring(field.indexOf(':') + 1).trim();
-				this.speed = Float.parseFloat(speed);
+				try {
+					String speed = field.substring(field.indexOf(':') + 1)
+							.trim();
+					this.speed = Float.parseFloat(speed);
+				} catch (Exception e) {
+					// ignore exceptions here
+					this.speed = 0.0f;
+				}
 			} else if (field.startsWith("Rssi:")) {
-				String rssi = field.substring(field.indexOf(':') + 1).trim();
-				this.rssi = Float.parseFloat(rssi);
+				try {
+					String rssi = field.substring(field.indexOf(':') + 1)
+							.trim();
+					this.rssi = Float.parseFloat(rssi);
+				} catch (Exception e) {
+					// ignore exceptions here
+					this.rssi = 0.0f;
+				}
 			} else if (field.startsWith("Dir:")) {
 				String dir = field.substring(field.indexOf(':') + 1).trim();
 				this.direction = dir;
