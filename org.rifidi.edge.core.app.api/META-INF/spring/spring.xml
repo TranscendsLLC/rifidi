@@ -13,14 +13,10 @@
 		<property name="esperService" ref="esperManagementService" />
 	</bean>
 
-	<!--
-		Get a reference to the Esper Management Service from the OSGi Service
-		Registry
-	-->
-	<osgi:reference id="esperManagementService"
-		interface="org.rifidi.edge.core.services.esper.EsperManagementService" />
-
 	<osgi:service ref="readZoneMonitoringApp"
 		interface="org.rifidi.edge.core.app.api.impl.ReadZoneMonitoringServiceImpl" />
+
+	<osgi:reference id="esperManagementService"
+		interface="org.rifidi.edge.core.services.esper.EsperManagementService" />
 
 </beans>

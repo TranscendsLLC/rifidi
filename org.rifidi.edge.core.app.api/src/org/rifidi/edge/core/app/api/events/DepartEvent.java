@@ -12,8 +12,9 @@
 package org.rifidi.edge.core.app.api.events;
 
 /**
+ * Represents a tag departing the view of a reader.  
+ * 
  * @author Matthew Dean
- *
  */
 public class DepartEvent extends RFIDEvent {
 

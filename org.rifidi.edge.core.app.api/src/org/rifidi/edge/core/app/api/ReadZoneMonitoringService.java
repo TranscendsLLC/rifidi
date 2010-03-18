@@ -11,7 +11,7 @@
  */
 package org.rifidi.edge.core.app.api;
 
-import java.util.Set;
+import org.rifidi.edge.core.app.api.util.ReadZoneEsperConstructor;
 
 /**
  * An interfact to help get beginners started with a simple application.
@@ -26,10 +26,9 @@ public interface ReadZoneMonitoringService {
 	 *            The class that will recieve the events.
 	 * @param readerIDsToSubscribeTo
 	 *            A list of readerIDs you wish to subscribe to.
-	 * @return	True if the subscription was successful, false otherwise.  
+	 * @return True if the subscription was successful, false otherwise.
 	 */
-	public boolean subscribe(ReadZoneSubscriber rzs,
-			Set<String> readerIDsToSubscribeTo);
+	boolean subscribe(ReadZoneEsperConstructor rzec);
 
 	/**
 	 * Unsubscribe from this monitoring service.
@@ -38,4 +37,5 @@ public interface ReadZoneMonitoringService {
 	 * @return
 	 */
 	public boolean unsubscribe(ReadZoneSubscriber rzs);
+
 }

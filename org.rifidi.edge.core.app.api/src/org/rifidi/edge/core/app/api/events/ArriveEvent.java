@@ -12,8 +12,9 @@
 package org.rifidi.edge.core.app.api.events;
 
 /**
+ * Represents an arrival event for a tag.  
+ * 
  * @author Matthew Dean
- *
  */
 public class ArriveEvent extends RFIDEvent {
 
