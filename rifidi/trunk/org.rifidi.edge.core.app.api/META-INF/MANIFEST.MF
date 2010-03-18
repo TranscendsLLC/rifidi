@@ -16,4 +16,5 @@ Require-Bundle: org.rifidi.com.espertech.esper;bundle-version="3.1.0",
  org.rifidi.edge.core.services;bundle-version="1.0.0"
 Export-Package: org.rifidi.edge.core.app.api,
  org.rifidi.edge.core.app.api.events,
- org.rifidi.edge.core.app.api.impl
+ org.rifidi.edge.core.app.api.impl,
+ org.rifidi.edge.core.app.api.util
