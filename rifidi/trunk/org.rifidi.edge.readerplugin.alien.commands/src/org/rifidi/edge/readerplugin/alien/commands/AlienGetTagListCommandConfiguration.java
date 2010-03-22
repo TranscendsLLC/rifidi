@@ -31,8 +31,6 @@ public class AlienGetTagListCommandConfiguration extends
 		AbstractCommandConfiguration<AlienGetTagListCommand> {
 	/** Type of tag to read */
 	private int tagType = 2;
-	/** Antennas to scan */
-	private String antenna_sequence = "0";
 	public static final MBeanInfo mbeaninfo;
 	static {
 		AnnotationMBeanInfoStrategy strategy = new AnnotationMBeanInfoStrategy();
@@ -51,7 +49,6 @@ public class AlienGetTagListCommandConfiguration extends
 	@Override
 	public AlienGetTagListCommand getCommand(String readerID) {
 		AlienGetTagListCommand c = new AlienGetTagListCommand(super.getID());
-		c.setAntennasequence(antenna_sequence);
 		c.setTagType(tagType);
 		c.setReader(readerID);
 		return c;
@@ -77,50 +74,6 @@ public class AlienGetTagListCommandConfiguration extends
 	 */
 	public void setTagType(Integer tagType) {
 		this.tagType = tagType;
-	}
-
-	/**
-	 * Gets the antenna sequence.
-	 * 
-	 * @return the antenna_sequence
-	 */
-	@Property(displayName = "Antenna Sequence", description = "Antennas to scan, separated by "
-			+ "commas (ex \'0,2,1,0\')", writable = true, defaultValue = "0")
-	public String getAntennaSequence() {
-		return antenna_sequence;
-	}
-
-	/**
-	 * Sets the antenna sequence.
-	 * 
-	 * @param antenna_sequence
-	 *            the antenna_sequence to set
-	 */
-	public void setAntennaSequence(String antenna_sequence) {
-		if (isValidAntennaSequence(antenna_sequence)) {
-			this.antenna_sequence = antenna_sequence;
-		}
-	}
-
-	/**
-	 * Checks to see if the given antenna sequence is valid.
-	 * 
-	 * @return
-	 */
-	private boolean isValidAntennaSequence(String antennaSequence) {
-		// System.out.println("Setting the antenna sequence!");
-		try {
-			String splitString[] = antennaSequence.split(",");
-			for (String a : splitString) {
-				Integer antenna = Integer.parseInt(a);
-				if (antenna < 0 || antenna > 3) {
-					return false;
-				}
-			}
-		} catch (NumberFormatException e) {
-			return false;
-		}
-		return true;
 	}
 
 	/*

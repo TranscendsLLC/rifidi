@@ -47,8 +47,6 @@ public class AlienGetTagListCommand extends AbstractAlien9800Command {
 	private Integer[] tagTypes = new Integer[] { 7, 16, 31 };
 	/** Tagtypes to query for: 0 - GEN1 1 - GEN2 2 - ALL */
 	private Integer tagType = 2;
-	/** Antenna Sequence */
-	private String antennasequence = "0";
 	/** The readeriD */
 	private AtomicReference<String> reader = new AtomicReference<String>();
 
@@ -78,14 +76,6 @@ public class AlienGetTagListCommand extends AbstractAlien9800Command {
 	}
 
 	/**
-	 * @param antennasequence
-	 *            the antennasequence to set
-	 */
-	public void setAntennasequence(String antennasequence) {
-		this.antennasequence = antennasequence;
-	}
-
-	/**
 	 * @param tagType
 	 *            the tagType to set
 	 */
@@ -99,13 +89,6 @@ public class AlienGetTagListCommand extends AbstractAlien9800Command {
 	@Override
 	public void execute() throws TimeoutException {
 		try {
-			// send antennaSequence
-			AlienCommandObject antennaCommand = new AlienSetCommandObject(
-					Alien9800ReaderSession.ANTENNA_SEQUENCE_COMMAND,
-					this.antennasequence,
-					(Alien9800ReaderSession) this.sensorSession);
-			antennaCommand.setSession((Alien9800ReaderSession) sensorSession);
-			antennaCommand.execute();
 
 			// sending TagType
 			AlienCommandObject tagTypeCommand = new AlienSetCommandObject(
