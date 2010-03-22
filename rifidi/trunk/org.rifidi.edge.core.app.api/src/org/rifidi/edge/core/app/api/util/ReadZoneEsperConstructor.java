@@ -43,6 +43,10 @@ public class ReadZoneEsperConstructor {
 
 	private Integer time;
 
+	private boolean checkAntennas;
+
+	private Set<Integer> antennaList;
+
 	/**
 	 * @param time
 	 */
@@ -51,6 +55,19 @@ public class ReadZoneEsperConstructor {
 		this.readZoneSub = readzonesub;
 		this.readerToSubscribe = rts;
 		this.time = time;
+		this.checkAntennas = false;
+	}
+
+	/**
+	 * @param time
+	 */
+	public ReadZoneEsperConstructor(Integer time, String rts,
+			ReadZoneSubscriber readzonesub, Set<Integer> antennas) {
+		this.readZoneSub = readzonesub;
+		this.readerToSubscribe = rts;
+		this.time = time;
+		this.checkAntennas = true;
+		this.antennaList = antennas;
 	}
 
 	/**
@@ -72,12 +89,7 @@ public class ReadZoneEsperConstructor {
 
 		// esper statement taht adds information to the window
 		statements.add(esperService.getProvider().getEPAdministrator()
-				.createEPL(
-						"on ReadCycle[select * from tags] "
-								+ "insert into " + windowName
-								+ " select readerID as reader_ID, "
-								+ "antennaID as antenna, "
-								+ "cast(tag.epc?, String) as tag_ID"));
+				.createEPL(this.createFirstEsper(windowName)));
 
 		// esper statement that removes rows from the window if the tag has not
 		// been seen at
@@ -153,5 +165,30 @@ public class ReadZoneEsperConstructor {
 		});
 		statements.add(queryAllTags);
 		return statements;
+	}
+
+	private String createFirstEsper(String windowName) {
+		String retVal = "on ReadCycle[select * from tags] " + "insert into "
+				+ windowName + " select readerID as reader_ID, "
+				+ "antennaID as antenna, " + "cast(tag.epc?, String) as tag_ID";
+		if (this.checkAntennas) {
+			retVal += createAntennaWhere(antennaList);
+		}
+
+		return retVal;
+	}
+
+	private String createAntennaWhere(Set<Integer> antennaList) {
+		int counter = 0;
+		StringBuilder retVal = new StringBuilder();
+		retVal.append(" where antennaID=");
+		for (Integer i : antennaList) {
+			counter++;
+			retVal.append(i);
+			if (!(counter == antennaList.size())) {
+				retVal.append(" OR antennaID=");
+			}
+		}
+		return retVal.toString();
 	}
 }
