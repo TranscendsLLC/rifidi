@@ -13,8 +13,17 @@
 		<property name="esperService" ref="esperManagementService" />
 	</bean>
 
+	<bean id="readerUptimeMonitoringApp"
+		class="org.rifidi.edge.core.app.api.impl.ReaderUptimeMonitoringServiceImpl"
+		init-method="start" destroy-method="stop">
+		<property name="esperService" ref="esperManagementService" />
+	</bean>
+
 	<osgi:service ref="readZoneMonitoringApp"
 		interface="org.rifidi.edge.core.app.api.impl.ReadZoneMonitoringServiceImpl" />
+
+	<osgi:service ref="readerUptimeMonitoringApp"
+		interface="org.rifidi.edge.core.app.api.impl.ReaderUptimeMonitoringServiceImpl" />
 
 	<osgi:reference id="esperManagementService"
 		interface="org.rifidi.edge.core.services.esper.EsperManagementService" />
