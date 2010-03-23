@@ -83,7 +83,7 @@ public class ReadZoneEsperConstructor {
 		statements.add(esperService.getProvider().getEPAdministrator()
 				.createEPL(
 						"create window " + windowName + ".std:firstunique("
-								+ "tag_ID, reader_ID, antenna) "
+								+ "tag_ID, reader_ID) "
 								+ "(reader_ID String, antenna "
 								+ "int, tag_ID String)"));
 
@@ -96,14 +96,13 @@ public class ReadZoneEsperConstructor {
 		// the antenna in the last 2 seconds
 		statements.add(esperService.getProvider().getEPAdministrator()
 				.createEPL(
-						"on pattern [every tag=" + windowName + " ->"
-								+ "(timer:interval(" + time + " sec) and not "
-								+ windowName + "(tag_ID = tag."
-								+ "tag_ID, reader_ID=tag.reader_ID, "
-								+ "antenna=tag.antenna))]delete " + "from "
-								+ windowName + " where tag_ID = tag.tag_ID "
-								+ "AND reader_ID=tag.reader_ID AND "
-								+ "antenna=tag.antenna"));
+						"on pattern [every tag=" + windowName
+								+ " ->(timer:interval(" + time
+								+ " sec) and not " + windowName
+								+ "(tag_ID = tag.tag_ID, reader_ID=tag."
+								+ "reader_ID))]delete from " + windowName
+								+ " where tag_ID = tag.tag_ID "
+								+ "AND reader_ID=tag.reader_ID"));
 
 		// esper statement that listens to add and remove events from the window
 		EPStatement queryAllTags = esperService.getProvider()
