@@ -173,7 +173,7 @@ public class RifidiReportFactoryimpl implements RifidiReportFactory {
 		if (reportSpec.getOutput().isIncludeRawDecimal()) {
 			options = options | ECReportOptions.INCLUDE_RAW_DECIMAL;
 		}
-		if (reportSpec.getOutput().isIncludeRawDecimal()) {
+		if (reportSpec.getOutput().isIncludeRawHex()) {
 			options = options | ECReportOptions.INCLUDE_RAW_HEX;
 		}
 		if (reportSpec.getOutput().isIncludeTag()) {

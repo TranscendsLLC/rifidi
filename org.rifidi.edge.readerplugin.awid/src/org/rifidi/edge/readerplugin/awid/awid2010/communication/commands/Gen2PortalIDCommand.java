@@ -24,22 +24,21 @@ public class Gen2PortalIDCommand extends AbstractAwidCommand {
 	 * Create a new Gen2PortalID command
 	 * 
 	 * @param timeout
-	 *            Execute this command for timeout*100 ms. If set to 0x00,
-	 *            execute until stop command is sent
+	 *            Execute this command for timeout*100 ms. Because the session
+	 *            must ping the reader to make sure it is still connected to it,
+	 *            and the AWID reader doesn't respond to anything but a stop
+	 *            command when the portal ID is processing, a timeout of 0x00 is
+	 *            not allowed.
 	 * @param repeat
 	 *            Return results every repeat*100 ms. If set to 0x00
 	 *            continuously return tags.
 	 */
 	public Gen2PortalIDCommand(byte timeout, byte repeat) {
+		if (timeout == 0x00) {
+			throw new IllegalArgumentException(
+					"A timeout byte of 0x00 is not allowed");
+		}
 		rawmessage = new byte[] { 0x07, 0x20, 0x1E, timeout, repeat };
-	}
-
-	/**
-	 * Create a new Gen2PortalID command with default timeout of x00 and repeat
-	 * of x00.
-	 */
-	public Gen2PortalIDCommand() {
-		rawmessage = new byte[] { 0x07, 0x20, 0x1E, 0x00, 0x00 };
 	}
 
 	/*

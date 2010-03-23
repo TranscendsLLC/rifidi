@@ -331,7 +331,9 @@ public class RifidiECSpec implements SignalListener {
 	 * thing that C++ got right :(
 	 */
 	public void destroy() {
-		senderThread.interrupt();
+		if(senderThread!=null){
+			senderThread.interrupt();
+		}
 		if (timer != null) {
 			timer.destroy();
 		}
@@ -343,7 +345,8 @@ public class RifidiECSpec implements SignalListener {
 		for (StatementController ctrl : startStatementControllers) {
 			ctrl.stop();
 		}
-		esper.destroy();
+		//TODO: we were destroying esper here. Should that really be done?
+		//esper.destroy();
 	}
 
 	/**

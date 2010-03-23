@@ -23,7 +23,7 @@
 	
 	<osgi:service id="awidGPIOServiceOSGi" ref="awidGPIOService" auto-export="all-classes">
 		  <service-properties>
-    		<entry key="reader" value="Awid2010"/>
+    		<entry key="reader" value="Awid"/>
 		  </service-properties>
 	</osgi:service>
 	

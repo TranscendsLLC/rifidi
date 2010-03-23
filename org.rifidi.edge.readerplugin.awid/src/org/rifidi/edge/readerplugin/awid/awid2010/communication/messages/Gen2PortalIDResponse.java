@@ -36,11 +36,14 @@ public class Gen2PortalIDResponse extends AbstractAwidMessage implements
 	private final long timestamp;
 	/** The ID this tag was seen on */
 	private final String readerID;
+	private boolean includesAntennaByte;
 
-	public Gen2PortalIDResponse(byte[] rawmessage, String readerID) {
+	public Gen2PortalIDResponse(byte[] rawmessage, String readerID,
+			boolean includesAntennaByte) {
 		super(rawmessage);
 		this.timestamp = System.currentTimeMillis();
 		this.readerID = readerID;
+		this.includesAntennaByte = includesAntennaByte;
 	}
 
 	/*
@@ -49,17 +52,22 @@ public class Gen2PortalIDResponse extends AbstractAwidMessage implements
 	 * @see
 	 * org.rifidi.edge.readerplugin.awid.awid2010.communication.TagResponseMessage
 	 * #getTagReadEvent()
-	 * 
 	 */
 	@Override
 	public TagReadEvent getTagReadEvent() {
 		EPCGeneration2Event gen2Event = new EPCGeneration2Event();
+		int messageLength = super.rawmessage[0];
+		int numIDBytes = messageLength - (9 + (includesAntennaByte ? 1 : 0));
+
+		// copy the tag id payload, ignoring the PC bytes.
 		gen2Event.setEPCMemory(new BigInteger(Arrays.copyOfRange(
-				super.rawmessage, 5, 17)), 12*8);
+				super.rawmessage, 5, numIDBytes + 5)), numIDBytes * 8);
 		TagReadEvent tre;
-		if(super.rawmessage.length==22){
-			tre = new TagReadEvent(readerID, gen2Event, super.rawmessage[19], timestamp);
-		}else{
+		if (includesAntennaByte) {
+			// antenna byte is third from last byte
+			tre = new TagReadEvent(readerID, gen2Event,
+					super.rawmessage[messageLength - 3], timestamp);
+		} else {
 			tre = new TagReadEvent(readerID, gen2Event, 1, timestamp);
 		}
 		return tre;

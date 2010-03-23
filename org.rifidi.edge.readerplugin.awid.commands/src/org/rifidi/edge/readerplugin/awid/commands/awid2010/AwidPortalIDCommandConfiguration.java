@@ -34,7 +34,7 @@ public class AwidPortalIDCommandConfiguration extends
 
 	@Override
 	public AwidPortalIDCommand getCommand(String readerID) {
-		return new AwidPortalIDCommand(super.getID());
+		return new AwidPortalIDCommand(super.getID(), (byte)0x09);
 	}
 
 	@Override

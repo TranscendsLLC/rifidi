@@ -138,6 +138,18 @@ public abstract class SensorSession {
 		// start the thread
 		reconnectThread.start();
 	}
+	
+
+	/**
+	 * Get the amount of time to wait on a response before timing out by reading
+	 * the system property org.rifidi.edge.sessions.timeout. If that property is
+	 * not available, it returns 5000
+	 * 
+	 * @return
+	 */
+	public int getTimeout() {
+		return Integer.getInteger("org.rifidi.edge.sessions.timeout", 5000);
+	}
 
 	/**
 	 * Get a list of all commands in their execution order

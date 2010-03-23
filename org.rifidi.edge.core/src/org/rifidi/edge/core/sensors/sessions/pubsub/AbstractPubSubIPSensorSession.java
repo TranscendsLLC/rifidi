@@ -71,7 +71,6 @@ public abstract class AbstractPubSubIPSensorSession extends
 	 */
 	@Override
 	protected void clearUndelieverdMessages() {
-		// TODO Auto-generated method stub
 
 	}
 
