@@ -14,22 +14,24 @@ package org.rifidi.edge.readerplugin.awid.awid2010;
 import java.io.IOException;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.api.SessionStatus;
 import org.rifidi.edge.core.sensors.base.AbstractSensor;
 import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
-import org.rifidi.edge.core.sensors.commands.Command;
+import org.rifidi.edge.core.sensors.commands.TimeoutCommand;
 import org.rifidi.edge.core.sensors.messages.ByteMessage;
 import org.rifidi.edge.core.sensors.sessions.MessageParsingStrategyFactory;
 import org.rifidi.edge.core.sensors.sessions.pubsub.AbstractPubSubIPSensorSession;
 import org.rifidi.edge.core.services.notification.NotifierService;
 import org.rifidi.edge.readerplugin.awid.awid2010.communication.AwidEndpoint;
-import org.rifidi.edge.readerplugin.awid.awid2010.communication.AwidTagHandler;
 import org.rifidi.edge.readerplugin.awid.awid2010.communication.commands.AbstractAwidCommand;
 import org.rifidi.edge.readerplugin.awid.awid2010.communication.commands.ReaderStatusCommand;
 import org.rifidi.edge.readerplugin.awid.awid2010.communication.commands.StopCommand;
+import org.rifidi.edge.readerplugin.awid.awid2010.communication.messages.AckMessage;
+import org.rifidi.edge.readerplugin.awid.awid2010.communication.messages.ReaderStatusMessage;
 import org.rifidi.edge.readerplugin.awid.awid2010.gpio.AwidGPIOSession;
 import org.springframework.jms.core.JmsTemplate;
 
@@ -88,11 +90,8 @@ public class AwidSession extends AbstractPubSubIPSensorSession {
 				template.getDefaultDestination(), template,
 				commandConfigurations);
 		this.parsingStratFac = new AwidMessageParsingStrategyFactory();
-		// create an object to handle incoming tag messages
-		AwidTagHandler tagHandler = new AwidTagHandler(template,
-				(AwidSensor) super.getSensor());
 		// create a new object that listens for incoming messages
-		awidEndpoint = new AwidEndpoint(tagHandler, sensor.getID());
+		awidEndpoint = new AwidEndpoint(getTimeout());
 		// subscribe the endpoint
 		this.subscribe(awidEndpoint);
 		this.notifierService = notifierSerivce;
@@ -109,6 +108,29 @@ public class AwidSession extends AbstractPubSubIPSensorSession {
 	@Override
 	public MessageParsingStrategyFactory getMessageParsingStrategyFactory() {
 		return parsingStratFac;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.rifidi.edge.core.sensors.SensorSession#connect()
+	 */
+	@Override
+	public void connect() throws IOException {
+		super.connect();
+		Thread t = new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+				try {
+					gpioSession.connect();
+				} catch (Exception e) {
+					logger.warn("Cannot connect GPIOSessoin: " + gpioSession);
+				}
+
+			}
+		});
+		t.start();
 	}
 
 	/*
@@ -176,16 +198,21 @@ public class AwidSession extends AbstractPubSubIPSensorSession {
 	 * @see org.rifidi.edge.core.sensors.SensorSession#getResetCommand()
 	 */
 	@Override
-	protected Command getResetCommand() {
-		return new Command("AwidResetCommand") {
+	protected TimeoutCommand getResetCommand() {
+		return new TimeoutCommand("AwidResetCommand") {
 			@Override
-			public void run() {
+			public void execute() throws TimeoutException {
 				StopCommand command = new StopCommand();
 				try {
-					((AwidSession) super.sensorSession).sendMessage(command);
+					AwidSession session = (AwidSession) super.sensorSession;
+					clearUndelieverdMessages();
+					session.sendMessage(command);
+					ByteMessage response = session.getEndpoint()
+							.receiveMessage(session.getTimeout());
+					AckMessage ack = new AckMessage(response.message);
 				} catch (IOException e) {
 					logger.warn("IOException on stop command");
-				}
+				} 
 
 			}
 		};
@@ -198,17 +225,25 @@ public class AwidSession extends AbstractPubSubIPSensorSession {
 	 * getKeepAliveCommand()
 	 */
 	@Override
-	protected Command getKeepAliveCommand() {
-		return new Command("AWIDKeepAliveCommand") {
+	protected TimeoutCommand getKeepAliveCommand() {
+		return new TimeoutCommand("AWIDKeepAliveCommand") {
 
 			@Override
-			public void run() {
+			public void execute() throws TimeoutException {
 				ReaderStatusCommand command = new ReaderStatusCommand();
 				try {
-					if (logger.isDebugEnabled()) {
-						// logger.debug("AWID KEEP ALIVE");
-					}
-					((AwidSession) super.sensorSession).sendMessage(command);
+					AwidSession session = (AwidSession) super.sensorSession;
+					clearUndelieverdMessages();
+					session.sendMessage(command);
+					ByteMessage response = session.getEndpoint()
+							.receiveMessage(session.getTimeout());
+					AckMessage ack = new AckMessage(response.message);
+
+					response = session.getEndpoint().receiveMessage(
+							session.getTimeout());
+					ReaderStatusMessage status = new ReaderStatusMessage(
+							response.message);
+
 				} catch (IOException e) {
 					logger.warn("IOException on keepalive");
 				}
@@ -250,6 +285,10 @@ public class AwidSession extends AbstractPubSubIPSensorSession {
 		return gpioSession;
 	}
 
+	public AwidEndpoint getEndpoint() {
+		return this.awidEndpoint;
+	}
+
 	/**
 	 * Clients of the session should use this method to send commands to the
 	 * awid reader
@@ -259,15 +298,7 @@ public class AwidSession extends AbstractPubSubIPSensorSession {
 	 * @throws IOException
 	 */
 	public void sendMessage(AbstractAwidCommand command) throws IOException {
-		// tell the awid endpoint to listen for an ack for this command.
-		this.awidEndpoint.listenForAck(command);
-		try {
-			super.sendMessage(new ByteMessage(command.getCommand()));
-		} catch (IOException e) {
-			// if there was a problem, then there will be no ack.
-			this.awidEndpoint.stopListeningForAck(command);
-			throw e;
-		}
+		super.sendMessage(new ByteMessage(command.getCommand()));
 	}
 
 	/*
@@ -332,4 +363,11 @@ public class AwidSession extends AbstractPubSubIPSensorSession {
 		return super.toString() + ", " + gpioSession.toString();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.sensors.sessions.pubsub.AbstractPubSubIPSensorSession#clearUndelieverdMessages()
+	 */
+	@Override
+	protected void clearUndelieverdMessages() {
+		awidEndpoint.clearUndeliveredMessages();
+	}
 }

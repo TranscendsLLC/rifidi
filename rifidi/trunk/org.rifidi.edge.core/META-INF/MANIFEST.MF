@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Rifidi Edge Core
 Bundle-SymbolicName: org.rifidi.edge.core
-Bundle-Version: 5.3.6
+Bundle-Version: 5.3.7
 Bundle-Vendor: Pramari, LLC
 Import-Package: com.espertech.esper.client,
  com.espertech.esper.client.metric,
@@ -26,6 +26,7 @@ Import-Package: com.espertech.esper.client,
  org.apache.activemq;version="5.1.0",
  org.apache.activemq.broker;version="5.1.0",
  org.apache.activemq.command;version="5.1.0",
+ org.apache.commons.codec.binary;version="1.3.0",
  org.apache.commons.logging;version="1.1.1",
  org.epcglobalinc.tdt,
  org.fosstrak.tdt,

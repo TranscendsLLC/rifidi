@@ -21,12 +21,12 @@ import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
 
 /**
  * @author Kyle Neumeier - kyle@pramari.com
- * @author Daniel Gómez - dgomez@idlinksolutions.com
+ * @author Daniel Gï¿½mez - dgomez@idlinksolutions.com
  * 
  */
 @JMXMBean
 public class AwidPortalIDWithMaskCommandConfiguration extends
-		AbstractCommandConfiguration<AwidPortalIDWithMaskCommand> {
+		AbstractCommandConfiguration<AwidPortalIDCommand> {
 	// 0F 20 5E 02 04 01 20 06 FC 01 08 00 00 XX XX
 	private byte packetLength = 0x0F;
 	private byte memoryBank = 0x01;
@@ -45,8 +45,8 @@ public class AwidPortalIDWithMaskCommandConfiguration extends
 	}
 
 	@Override
-	public AwidPortalIDWithMaskCommand getCommand(String readerID) {
-		return new AwidPortalIDWithMaskCommand(super.getID(), packetLength,
+	public AwidPortalIDCommand getCommand(String readerID) {
+		return new AwidPortalIDCommand(super.getID(), packetLength,
 				memoryBank, startingBit, maskLength, maskValue, qValue,
 				timeout, repeat);
 	}

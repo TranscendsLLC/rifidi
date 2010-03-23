@@ -224,6 +224,7 @@ public class EPCDataContainerAdapter {
 							+ ((EPCGeneration1Event) event)
 									.getEPCMemoryLength()
 							+ ".x"
+							//TODO: We should use Hex.encode here!
 							+ ((EPCGeneration1Event) event).getEPCMemory()
 									.toString(16);
 				}
@@ -232,6 +233,7 @@ public class EPCDataContainerAdapter {
 							+ ((EPCGeneration1Event) event)
 									.getEPCMemoryLength()
 							+ "."
+							//TODO: do we need to use an equivalent of Hex.encode here?
 							+ ((EPCGeneration1Event) event).getEPCMemory()
 									.toString(10);
 				}

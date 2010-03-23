@@ -51,25 +51,9 @@ public class IncomingAwidMessageFactory {
 
 		//logger.debug("Raw data " + new String(Hex.encodeHex(message)));
 
-		if (message == null || message.length == 0) {
-			// throw new InvalidAwidMessageException();
-		}
-
-		if (message.length == 1) {
-			if (message[0] == (byte) 0x00 || message[0] == (byte) 0xFF) {
-				return new AckMessage(message);
-			} else {
-				throw new InvalidAwidMessageException();
-			}
-		} else if (message[0] == (byte) 'i' && message[1] == (byte) 'i') {
-			logger.debug("WelcomeMessage");
-			return new WelcomeMessage(message);
-		} else if(message[1]==0x00 && message[2]==0x0B){
-			logger.debug("Keep Alieve Ack");
-			return new ReaderStatusMessage(message);
-		} else if (message[1] == 0x20
+		if (message[1] == 0x20
 				&& (message[2] == 0x1E || message[2] == 0x5E)) {
-			return new Gen2PortalIDResponse(message, readerID);
+			return new Gen2PortalIDResponse(message, readerID, true);
 		} else if (message[1] == 0x20 && message[2] == 0x0D) {
 			// TODO: this logic does not work. We cannot determine the memory
 			// bank based on the length of the message

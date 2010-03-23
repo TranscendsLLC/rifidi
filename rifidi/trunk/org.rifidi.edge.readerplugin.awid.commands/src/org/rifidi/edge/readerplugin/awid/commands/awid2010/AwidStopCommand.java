@@ -12,10 +12,15 @@
 package org.rifidi.edge.readerplugin.awid.commands.awid2010;
 
 import java.io.IOException;
+import java.util.concurrent.TimeoutException;
 
-import org.rifidi.edge.core.sensors.commands.Command;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.rifidi.edge.core.sensors.commands.TimeoutCommand;
+import org.rifidi.edge.core.sensors.messages.ByteMessage;
 import org.rifidi.edge.readerplugin.awid.awid2010.AwidSession;
 import org.rifidi.edge.readerplugin.awid.awid2010.communication.commands.StopCommand;
+import org.rifidi.edge.readerplugin.awid.awid2010.communication.messages.AckMessage;
 
 /**
  * A command to stop commands running on the Awid
@@ -23,7 +28,9 @@ import org.rifidi.edge.readerplugin.awid.awid2010.communication.commands.StopCom
  * @author Kyle Neumeier - kyle@pramari.com
  * 
  */
-public class AwidStopCommand extends Command {
+public class AwidStopCommand extends TimeoutCommand {
+
+	private static final Log logger = LogFactory.getLog(AwidStopCommand.class);
 
 	public AwidStopCommand(String commandID) {
 		super(commandID);
@@ -32,14 +39,20 @@ public class AwidStopCommand extends Command {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see java.lang.Runnable#run()
+	 * @see org.rifidi.edge.core.sensors.commands.TimeoutCommand#execute()
 	 */
 	@Override
-	public void run() {
+	protected void execute() throws TimeoutException {
 		StopCommand command = new StopCommand();
+		AwidSession session = ((AwidSession) super.sensorSession);
 		try {
-			((AwidSession) super.sensorSession).sendMessage(command);
+			session.getEndpoint().clearUndeliveredMessages();
+			session.sendMessage(command);
+			ByteMessage response = session.getEndpoint().receiveMessage();
+			AckMessage ack = new AckMessage(response.message);
 		} catch (IOException e) {
+			logger.warn("PortalID Command did not complete because "
+					+ "there was a problem with the session: " + session);
 		}
 
 	}
