@@ -34,9 +34,9 @@ import com.espertech.esper.client.EventBean;
 import com.espertech.esper.client.StatementAwareUpdateListener;
 
 /**
- * This application will monitor the incoming and outgoing parts through a
- * window for CSC/UTC. It will be extended by the modules for the window, door,
- * and portal readers.
+ * This is a base class for applications that will monitor the incoming and
+ * outgoing parts through a window for CSC/UTC. It will be extended by the
+ * modules for the window, door, and portal readers.
  * 
  * @author Matthew Dean - matt@pramari.com
  * @author Kyle Neumeier - kyle@pramari.com
@@ -47,9 +47,9 @@ public abstract class ToolcribApp {
 	protected volatile EsperManagementService esperService;
 	/** All statements that have been defined so far */
 	protected final Set<EPStatement> statements = new CopyOnWriteArraySet<EPStatement>();
-
 	/** This logger records directionality events only */
 	protected CSCLogger logFile;
+	/** The object that writes to the watchlist file */
 	private final WatchlistReader watchlist_reader = new WatchlistReader(System
 			.getProperty("com.csc.watchlist"));
 	private static final Log logger = LogFactory.getLog(ToolcribApp.class);
@@ -68,7 +68,8 @@ public abstract class ToolcribApp {
 
 	/**
 	 * Start the application. This method submits the esper statements to the
-	 * esper runtime.
+	 * esper runtime. Implementations should make sure to add their esper
+	 * statements to the 'statements' set.
 	 * 
 	 * This method is called by spring
 	 */
@@ -83,6 +84,12 @@ public abstract class ToolcribApp {
 		}
 	}
 
+	/**
+	 * Creates a new Listener that Converts TagReadEvent objects int CSCTag
+	 * objects and processes them.
+	 * 
+	 * @return
+	 */
 	protected StatementAwareUpdateListener getTagsUpdateListener() {
 		return new StatementAwareUpdateListener() {
 
@@ -90,25 +97,25 @@ public abstract class ToolcribApp {
 			public void update(EventBean[] arg0, EventBean[] arg1,
 					EPStatement arg2, EPServiceProvider arg3) {
 
-				// Map that will hold the tag ID bound to all the speed
-				// information that is retrieved.
-				// HashMap<String, List<CSCTag>> speedMap = new HashMap<String,
-				// List<CSCTag>>();
+				// the CSCTags that were seen
 				List<CSCTag> tags = new LinkedList<CSCTag>();
 
-				// arg1 contains all the tag reads. This works because we do all
-				// of the rmoves at once.
+				// if there are any incoming events
 				if (arg0 != null) {
+					// the tag reads that were seen
 					TagReadEvent[] tagReadEvents = null;
+					// the GPI event that triggered the read
 					GPIEvent gpiEvent = null;
 					for (EventBean b : arg0) {
 						tagReadEvents = (TagReadEvent[]) b.get("tags");
 						gpiEvent = (GPIEvent) b.get("gpievent");
 					}
+					// if an event is missing return.
 					if (tagReadEvents == null || gpiEvent == null) {
 						return;
 					}
 
+					// convert TagReadEvents into CSCTags.
 					for (TagReadEvent tre : tagReadEvents) {
 						CSCTag tag = new CSCTag();
 						tag.setAntenna(tre.getAntennaID());
@@ -122,13 +129,15 @@ public abstract class ToolcribApp {
 						tags.add(tag);
 					}
 
+					// If we have a ghost read, then handle it and exit
 					if (isGhost(tags)) {
 						handleGhost(tags);
 						return;
 					}
 
+					// flag that marks if this tag is on the watch list
 					boolean onWatchList = false;
-
+					// the direction of the event
 					boolean inbound = determineDirection(gpiEvent);
 					// Flips the speed if this particular property is set.
 					inbound = check_orientations(tags.get(0).getReaderID(),
@@ -141,9 +150,11 @@ public abstract class ToolcribApp {
 					if (onWatchlist(tags)) {
 						onWatchList = true;
 					}
-					
+
+					// Set the GPIO lights according to the data
 					triggerLight(tags.get(0).getReaderID(), onWatchList,
 							inbound);
+					// write the log file according to the data
 					writeLog(tags.get(0).getEpc(), tags.get(0).getReaderID(),
 							inbound, onWatchList);
 				}
@@ -200,7 +211,7 @@ public abstract class ToolcribApp {
 		return false;
 	}
 
-	/*
+	/**
 	 * Handles the tags if we get a ghost read.
 	 */
 	protected void handleGhost(List<CSCTag> tags) {
@@ -209,7 +220,7 @@ public abstract class ToolcribApp {
 				.getEpc(), this.uniqueReaders(tags)));
 	}
 
-	/*
+	/**
 	 * Figures out if the given tag is on a watch list.
 	 */
 	protected boolean onWatchlist(List<CSCTag> tags) {

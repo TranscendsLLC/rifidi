@@ -28,23 +28,22 @@ import com.espertech.esper.client.EventBean;
 import com.espertech.esper.client.StatementAwareUpdateListener;
 
 /**
- * 
+ * This class handles the functionality of logging when a networked reader
+ * becomes unavailable.
  * 
  * @author Matthew Dean
  */
 public class ReaderUpDownEventHandler {
-	
-	
+
 	/** Esper service */
 	protected volatile EsperManagementService esperService;
-	
 	/** This logger records directionality events only */
 	protected CSCLogger logFile;
-
 	/** All statements that have been defined so far */
 	private final Set<EPStatement> statements = new CopyOnWriteArraySet<EPStatement>();
-
-	private static final Log logger = LogFactory.getLog(ReaderUpDownEventHandler.class);
+	/** The logger for this class */
+	private static final Log logger = LogFactory
+			.getLog(ReaderUpDownEventHandler.class);
 
 	/**
 	 * Start the application. This method submits the esper statements to the
@@ -69,27 +68,40 @@ public class ReaderUpDownEventHandler {
 		queryUpTimeEvent.addListener(stateUpdateListener);
 	}
 
-	public StatementAwareUpdateListener getSessionStateUpdateListener() {
+	/**
+	 * A private method that creates a listener for SessionUpEvents and
+	 * sessionDownEvents
+	 * 
+	 * @return
+	 */
+	private StatementAwareUpdateListener getSessionStateUpdateListener() {
 		return new StatementAwareUpdateListener() {
 
 			@Override
 			public void update(EventBean[] arg0, EventBean[] arg1,
 					EPStatement arg2, EPServiceProvider arg3) {
+				//if there is an arriving event
 				if (arg0 != null) {
 					for (EventBean b : arg0) {
+						//if we have a SessionUpEvent
 						if (b.getUnderlying() instanceof SessionUpEvent) {
 							logger.debug(b.getUnderlying());
 							SessionUpEvent sue = (SessionUpEvent) b
 									.getUnderlying();
+							//log the event!
 							logFile
 									.writeDowntimeLog(RifidiLogEntryCreationUtility
 											.createUptimeLogEntry(sue
 													.getReaderID(), sue
 													.getTimestamp()));
+							
+							//if we have a SessionDownEvent
 						} else if (b.getUnderlying() instanceof SessionDownEvent) {
 							logger.debug(b.getUnderlying());
 							SessionDownEvent sue = (SessionDownEvent) b
 									.getUnderlying();
+							
+							//log the event!
 							logFile
 									.writeDowntimeLog(RifidiLogEntryCreationUtility
 											.createDowntimeLogEntry(sue
@@ -102,7 +114,7 @@ public class ReaderUpDownEventHandler {
 			}
 		};
 	}
-	
+
 	/**
 	 * Called by spring
 	 * 
@@ -112,7 +124,7 @@ public class ReaderUpDownEventHandler {
 	public void setEsperService(EsperManagementService esperService) {
 		this.esperService = esperService;
 	}
-	
+
 	/**
 	 * Called by spring
 	 * 

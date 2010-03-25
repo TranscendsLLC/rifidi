@@ -22,12 +22,6 @@ import java.util.Set;
  */
 public class RifidiLogEntryCreationUtility {
 
-	/**
-	 * 
-	 */
-	public RifidiLogEntryCreationUtility() {
-	}
-
 	public static final String CONSTANT_1 = "RFID-CAL-LAB";
 
 	public static final String OUTBOUND = "-OUT";
