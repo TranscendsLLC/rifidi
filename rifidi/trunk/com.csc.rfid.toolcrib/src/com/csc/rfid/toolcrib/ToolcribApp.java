@@ -221,9 +221,6 @@ public abstract class ToolcribApp {
 		// make it so they support regexs, which will make things very simple
 		// for us and very customizable for them.
 		String id = tags.get(0).getEpc();
-		if(logger.isDebugEnabled()){
-			logger.debug("Tag is " + id.substring(3,13));
-		}
 		List<String> watchList = this.watchlist_reader.getWatchlistTags();
 		for (String watchTag : watchList) {
 			if (id.length() >= 12) {
