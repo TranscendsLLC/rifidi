@@ -14,12 +14,20 @@ import com.espertech.esper.client.EventBean;
 import com.espertech.esper.client.StatementAwareUpdateListener;
 
 /**
+ * This is the application for the Door. It's a bit different from the other two
+ * applications because it requires the pressure mat and the door latch. If
+ * latch event happens first, then it's a check out. If the mat event happens
+ * first, it's a check in.
+ * 
+ * 
  * GPI triggers: 1=Latch, 2=Mat
+ * 
  * @author Kyle Neumeier - kyle@pramari.com
  * 
  */
 public class ToolcribDoorApp extends ToolcribApp {
 
+	/**The logger for this class*/
 	private Log logger = LogFactory.getLog(ToolcribDoorApp.class);
 
 	@Override
@@ -66,6 +74,10 @@ public class ToolcribDoorApp extends ToolcribApp {
 	}
 	
 	
+	/**
+	 * Create the listener for the Door app.
+	 * @return
+	 */
 	private StatementAwareUpdateListener createListener() {
 		return new StatementAwareUpdateListener() {
 

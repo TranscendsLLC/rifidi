@@ -11,7 +11,7 @@ import org.rifidi.edge.core.services.notification.data.gpio.GPIEvent;
 import com.espertech.esper.client.EPStatement;
 
 /**
- * @author Owner
+ * @author Kyle Neumeier - kyle@pramari.com
  *
  */
 public class ToolcribWindowApp extends ToolcribApp {
@@ -55,15 +55,15 @@ public class ToolcribWindowApp extends ToolcribApp {
 			boolean inbound) {
 		try {
 			if (onWatchList) {
-				// Trigger watchlist (red) GPO 2
+				// Trigger watchlist light
 				this.gpoController
 						.flashGPO(readerID, FLASH_TIME, error_light);
 			} else if (inbound) {
-				// Trigger inbound (yellow) GPO 3
+				// Trigger inbound light
 				this.gpoController.flashGPO(readerID, FLASH_TIME,
 						inbound_light);
 			} else {
-				// Trigger outbound (green) GPO 4
+				// Trigger outbound light
 				this.gpoController.flashGPO(readerID, FLASH_TIME,
 						outbound_light);
 			}

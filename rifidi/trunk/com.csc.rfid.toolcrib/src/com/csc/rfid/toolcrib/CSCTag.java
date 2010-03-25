@@ -1,20 +1,27 @@
-/**
- * 
- */
 package com.csc.rfid.toolcrib;
 
 /**
- * @author Owner
+ * This class is a bean that represents a single tag read event for the toolcrib
+ * application
+ * 
+ * @author Kyle Neumeier - kyle@pramari.com
  * 
  */
 public class CSCTag {
+	/** The tag ID */
 	private String epc;
+	/** The ID of the reader */
 	private String readerID;
+	/** The speed the tag was moving */
 	private Float speed;
+	/** The Return signal strength indicator of the tag observation */
 	private String rssi;
+	/** The antenna the tag was seen at */
 	private int antenna;
 
 	/**
+	 * The antenna the tag was seen at
+	 * 
 	 * @return the antenna
 	 */
 	public int getAntenna() {
@@ -23,13 +30,15 @@ public class CSCTag {
 
 	/**
 	 * @param antenna
-	 *            the antenna to set
+	 *            The antenna the tag was seen at
 	 */
 	public void setAntenna(int antenna) {
 		this.antenna = antenna;
 	}
 
 	/**
+	 * The tag ID
+	 * 
 	 * @return the epc
 	 */
 	public String getEpc() {
@@ -38,13 +47,15 @@ public class CSCTag {
 
 	/**
 	 * @param epc
-	 *            the epc to set
+	 *            The tag ID
 	 */
 	public void setEpc(String epc) {
 		this.epc = epc;
 	}
 
 	/**
+	 * the ID of the reader
+	 * 
 	 * @return the readerID
 	 */
 	public String getReaderID() {
@@ -53,13 +64,15 @@ public class CSCTag {
 
 	/**
 	 * @param readerID
-	 *            the readerID to set
+	 *            the ID of the reader
 	 */
 	public void setReaderID(String readerID) {
 		this.readerID = readerID;
 	}
 
 	/**
+	 * The speed the tag was moving
+	 * 
 	 * @return the speed
 	 */
 	public Float getSpeed() {
@@ -68,13 +81,15 @@ public class CSCTag {
 
 	/**
 	 * @param speed
-	 *            the speed to set
+	 *            The speed the tag was moving
 	 */
 	public void setSpeed(Float speed) {
 		this.speed = speed;
 	}
 
 	/**
+	 * The Return signal strength indicator of the tag observation
+	 * 
 	 * @return the rssi
 	 */
 	public String getRssi() {
@@ -83,7 +98,7 @@ public class CSCTag {
 
 	/**
 	 * @param rssi
-	 *            the rssi to set
+	 *            The Return signal strength indicator of the tag observation
 	 */
 	public void setRssi(String rssi) {
 		this.rssi = rssi;
