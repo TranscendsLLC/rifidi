@@ -136,7 +136,8 @@ public class ReaderUpDownEventHandler {
 	}
 
 	/**
-	 * Called by spring Iterate through all statements and stop them.
+	 * Called by spring.
+	 * Iterate through all statements and stop them.
 	 */
 	public void stop() {
 		for (EPStatement statement : statements) {

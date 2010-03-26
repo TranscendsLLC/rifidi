@@ -16,7 +16,9 @@ import java.text.SimpleDateFormat;
 import java.util.Set;
 
 /**
- * 
+ * This class helps create the log entries for the CSC system. Log entries for
+ * the SAP file, the standard log, the ghost log, and the watchlist are
+ * generated here.
  * 
  * @author Matthew Dean
  */
@@ -69,11 +71,8 @@ public class RifidiLogEntryCreationUtility {
 		return createDate(System.currentTimeMillis());
 	}
 
-	/**
-	 * 
-	 * @param timestamp
-	 *            The timestamp
-	 * @return
+	/*
+	 * Creates the date in the format that UTC wants.  
 	 */
 	private static String createDate(long timestamp) {
 		Date now = new Date(timestamp);
@@ -187,7 +186,7 @@ public class RifidiLogEntryCreationUtility {
 
 		sb.append("Reader " + getWDPValue(readerID) + " went down at "
 				+ createDate(timestamp));
-		
+
 		sb.append(NEWLINE);
 
 		return sb.toString();

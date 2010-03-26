@@ -1,3 +1,14 @@
+/*
+ *  CSCTag.java
+ *
+ *  Created:	Mar 8, 2010
+ *  Project:	Rifidi Edge Server - A middleware platform for RFID applications
+ *  				http://www.rifidi.org
+ *  				http://rifidi.sourceforge.net
+ *  Copyright:	Pramari LLC and the Rifidi Project
+ *  License:	GNU Public License (GPL)
+ *  				http://www.opensource.org/licenses/gpl-3.0.html
+ */
 package com.csc.rfid.toolcrib;
 
 /**
@@ -5,7 +16,6 @@ package com.csc.rfid.toolcrib;
  * application
  * 
  * @author Kyle Neumeier - kyle@pramari.com
- * 
  */
 public class CSCTag {
 	/** The tag ID */
@@ -20,7 +30,7 @@ public class CSCTag {
 	private int antenna;
 
 	/**
-	 * The antenna the tag was seen at
+	 * Returns antenna the tag was last seen by.  
 	 * 
 	 * @return the antenna
 	 */
@@ -29,6 +39,8 @@ public class CSCTag {
 	}
 
 	/**
+	 * Sets the antenna that the tag was last seen by.  
+	 * 
 	 * @param antenna
 	 *            The antenna the tag was seen at
 	 */
@@ -37,7 +49,7 @@ public class CSCTag {
 	}
 
 	/**
-	 * The tag ID
+	 * Returns the ID of the tag as a String.   
 	 * 
 	 * @return the epc
 	 */
@@ -46,6 +58,8 @@ public class CSCTag {
 	}
 
 	/**
+	 * Sets the ID of the tag as a String.  
+	 * 
 	 * @param epc
 	 *            The tag ID
 	 */
@@ -54,7 +68,7 @@ public class CSCTag {
 	}
 
 	/**
-	 * the ID of the reader
+	 * Returns the ID of the reader.  
 	 * 
 	 * @return the readerID
 	 */
@@ -63,6 +77,8 @@ public class CSCTag {
 	}
 
 	/**
+	 * Sets the ID of the reader.  
+	 * 
 	 * @param readerID
 	 *            the ID of the reader
 	 */
@@ -71,7 +87,7 @@ public class CSCTag {
 	}
 
 	/**
-	 * The speed the tag was moving
+	 * The speed the tag was moving at.  
 	 * 
 	 * @return the speed
 	 */
@@ -80,6 +96,8 @@ public class CSCTag {
 	}
 
 	/**
+	 * Sets the speed that the tag was moving at.  
+	 * 
 	 * @param speed
 	 *            The speed the tag was moving
 	 */
@@ -88,7 +106,7 @@ public class CSCTag {
 	}
 
 	/**
-	 * The Return signal strength indicator of the tag observation
+	 * The Return signal strength indicator of the tag observation.
 	 * 
 	 * @return the rssi
 	 */
@@ -97,6 +115,8 @@ public class CSCTag {
 	}
 
 	/**
+	 * Sets the RSSI value for the tag.  
+	 * 
 	 * @param rssi
 	 *            The Return signal strength indicator of the tag observation
 	 */

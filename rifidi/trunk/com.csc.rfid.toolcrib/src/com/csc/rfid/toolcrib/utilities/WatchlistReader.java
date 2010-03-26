@@ -37,7 +37,7 @@ public class WatchlistReader {
 	private File file = null;
 
 	/**
-	 * 
+	 * Constructor.  
 	 */
 	public WatchlistReader(String filename) {
 		file = new File(filename);
