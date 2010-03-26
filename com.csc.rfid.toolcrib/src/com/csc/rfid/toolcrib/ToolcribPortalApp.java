@@ -53,6 +53,13 @@ public class ToolcribPortalApp extends ToolcribApp {
 
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.csc.rfid.toolcrib.ToolcribApp#determineDirection(org.rifidi.edge.
+	 * core.services.notification.data.gpio.GPIEvent)
+	 */
 	@Override
 	protected boolean determineDirection(GPIEvent gpievent) {
 		boolean inbound = false;
@@ -61,7 +68,7 @@ public class ToolcribPortalApp extends ToolcribApp {
 		}
 		return inbound;
 	}
-	
+
 	/**
 	 * Light up one of the LEDs on the light stack. Which light gets lit is
 	 * determined by this method.
@@ -91,7 +98,5 @@ public class ToolcribPortalApp extends ToolcribApp {
 			logger.warn("Problem executing GPO: " + e.getMessage());
 		}
 	}
-
-
 
 }

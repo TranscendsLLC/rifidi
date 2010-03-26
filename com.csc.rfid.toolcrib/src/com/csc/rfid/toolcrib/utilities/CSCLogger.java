@@ -25,7 +25,7 @@ import java.io.IOException;
 public final class CSCLogger {
 
 	/**
-	 * Constrcutor.
+	 * Constructor.
 	 * 
 	 * @param filenamePrefix
 	 */
@@ -33,7 +33,8 @@ public final class CSCLogger {
 	}
 
 	/**
-	 * 
+	 * This method writes a formatted string to the SAP log specified in the VM
+	 * arguments. ("com.csc.saplogfile")
 	 * 
 	 * @param entry_to_write
 	 */
@@ -62,7 +63,8 @@ public final class CSCLogger {
 	}
 
 	/**
-	 * 
+	 * This method writes a formatted string to the standard log specified in
+	 * the VM arguments. ("com.csc.standardlog")
 	 * 
 	 * @param entry_to_write
 	 */
@@ -91,7 +93,8 @@ public final class CSCLogger {
 	}
 
 	/**
-	 * 
+	 * Writes a formatted string to the ghost log specified in the vm args. This
+	 * happens when a tag has been seen on 2 readers.
 	 * 
 	 * @param entry_to_write
 	 */
@@ -120,7 +123,8 @@ public final class CSCLogger {
 	}
 
 	/**
-	 * 
+	 * This method writes a formatted string to the specified downtime log.
+	 * ("com.csc.downtimelog")
 	 * 
 	 * @param entry_to_write
 	 */

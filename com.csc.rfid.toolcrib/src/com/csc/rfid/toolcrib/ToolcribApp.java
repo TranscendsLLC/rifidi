@@ -303,6 +303,8 @@ public abstract class ToolcribApp {
 	}
 
 	/**
+	 * Called by spring
+	 * 
 	 * @param gpoController
 	 *            the gpoController to set
 	 */
