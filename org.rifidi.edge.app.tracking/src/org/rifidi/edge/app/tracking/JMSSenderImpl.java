@@ -42,8 +42,7 @@ public class JMSSenderImpl implements JMSSender {
 			return;
 		}
 		// form the message to send out over JMS
-		final String msg = "Product "
-				+ productsDAO.getProductName(event.getId())
+		final String msg = productsDAO.getProductName(event.getId())
 				+ " arrived at "
 				+ logicalReadersDAO.getLogicaReaderName(event.getReader(),
 						event.getAntenna());
@@ -62,8 +61,7 @@ public class JMSSenderImpl implements JMSSender {
 			logger.error("JMS is not properly configured");
 			return;
 		}
-		final String msg = "Product "
-				+ productsDAO.getProductName(event.getId())
+		final String msg = productsDAO.getProductName(event.getId())
 				+ " departed from "
 				+ logicalReadersDAO.getLogicaReaderName(event.getReader(),
 						event.getAntenna());
