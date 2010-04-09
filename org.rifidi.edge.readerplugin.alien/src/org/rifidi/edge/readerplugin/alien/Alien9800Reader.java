@@ -731,7 +731,7 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 					readerProperties, commands);
 			if (block) {
 				return aliensession
-						.submitAndBlock(command, 2, TimeUnit.SECONDS);
+						.submitAndBlock(command, 10, TimeUnit.SECONDS);
 
 			} else {
 				aliensession.submit(command);
