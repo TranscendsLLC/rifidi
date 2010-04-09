@@ -5,6 +5,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
 /**
@@ -17,7 +19,15 @@ public class DAOImpl implements ProductsDAO, LogicalReadersDAO {
 
 	/** The Spring datasource object */
 	private SimpleDriverDataSource datasource = null;
+	private static final Log logger = LogFactory.getLog(DAOImpl.class);
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.app.tracking.dao.ProductsDAO#getProductName(java.lang
+	 * .String)
+	 */
 	@Override
 	public String getProductName(String ID) {
 		if (datasource == null)
@@ -45,6 +55,13 @@ public class DAOImpl implements ProductsDAO, LogicalReadersDAO {
 		return ID;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.app.tracking.dao.LogicalReadersDAO#getLogicaReaderName
+	 * (java.lang.String, int)
+	 */
 	@Override
 	public String getLogicaReaderName(String readerID, int antenna) {
 		if (datasource == null)
@@ -74,8 +91,7 @@ public class DAOImpl implements ProductsDAO, LogicalReadersDAO {
 
 			}
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.warn("SQLException: " + e.getMessage());
 		}
 
 		return new String(readerID + ":" + antenna);

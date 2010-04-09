@@ -21,4 +21,5 @@ Import-Package: javax.jms;version="1.1.0",
  org.springframework.jms;version="2.5.6.SEC01",
  org.springframework.jms.core;version="2.5.6.SEC01"
 Require-Bundle: org.rifidi.com.espertech.esper;bundle-version="3.1.0",
- org.rifidi.edge.core.services;bundle-version="1.0.0"
+ org.rifidi.edge.core.services;bundle-version="1.0.0",
+ org.rifidi.org.relique.jdbc;bundle-version="1.0.0"
