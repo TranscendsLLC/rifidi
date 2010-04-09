@@ -72,7 +72,7 @@ public class AlienSetCommandObject extends AlienCommandObject {
 		assert (value != null);
 		String message = Alien9800ReaderSession.PROMPT_SUPPRESS + "set "
 				+ command + "=" + value + Alien9800ReaderSession.NEWLINE;
-		logger.info("Alien Set: " + "set " + command + "=" + value);
+		logger.debug("Alien Set: " + "set " + command + "=" + value);
 		readerSession.sendMessage(new ByteMessage(message.getBytes()));
 		ByteMessage incomingMessage;
 
