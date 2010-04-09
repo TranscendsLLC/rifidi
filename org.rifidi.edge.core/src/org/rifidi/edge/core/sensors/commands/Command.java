@@ -81,4 +81,14 @@ public abstract class Command implements Runnable {
 		this.sensorSession = sensorSession;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "Command: " + commandID;
+	}
+	
+	
+
 }

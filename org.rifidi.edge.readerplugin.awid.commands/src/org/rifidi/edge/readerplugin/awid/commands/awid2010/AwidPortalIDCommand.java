@@ -23,6 +23,7 @@ import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.sensors.commands.TimeoutCommand;
 import org.rifidi.edge.core.sensors.messages.ByteMessage;
 import org.rifidi.edge.core.services.notification.data.ReadCycle;
+import org.rifidi.edge.core.services.notification.data.ReadCycleMessageCreator;
 import org.rifidi.edge.core.services.notification.data.TagReadEvent;
 import org.rifidi.edge.readerplugin.awid.awid2010.AwidSession;
 import org.rifidi.edge.readerplugin.awid.awid2010.communication.commands.AbstractAwidCommand;
@@ -174,20 +175,30 @@ public class AwidPortalIDCommand extends TimeoutCommand {
 				logger.warn(portalIDCommand + " was not successful");
 			}
 
+			//receive tag reads
 			response = session.getEndpoint().receiveMessage(
 					calculateSessionTimeout());
 			List<Gen2PortalIDResponse> responses = new LinkedList<Gen2PortalIDResponse>();
+			
+			//receive tag messages until we get a timeout
 			while (!isCommandDone(response)) {
 				Gen2PortalIDResponse tagResponse = new Gen2PortalIDResponse(
 						response.message, session.getSensor().getID(), true);
-				// System.out.println(tagResponse);
 				responses.add(tagResponse);
-				response = session.getEndpoint().receiveMessage(
-						calculateSessionTimeout());
+				try {
+					response = session.getEndpoint().receiveMessage(
+							calculateSessionTimeout());
+				} catch (TimeoutException e) {
+					// Ignore this so we we are sure to collect the data we
+					// already have.
+					break;
+				}
 			}
+			//put all tag reads into a single ReadCycle
 			handleTags(responses);
 
 		} catch (IOException e) {
+			e.printStackTrace();
 			logger.warn("PortalID Command did not complete because "
 					+ "there was a problem with the session: " + session);
 		}
@@ -234,6 +245,7 @@ public class AwidPortalIDCommand extends TimeoutCommand {
 		ReadCycle readCycle = new ReadCycle(tags, super.sensorSession
 				.getSensor().getID(), System.currentTimeMillis());
 		super.sensorSession.getSensor().send(readCycle);
+		template.send(destination, new ReadCycleMessageCreator(readCycle));
 	}
 
 }

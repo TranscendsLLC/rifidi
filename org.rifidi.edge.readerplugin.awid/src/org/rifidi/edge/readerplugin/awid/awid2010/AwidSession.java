@@ -212,7 +212,7 @@ public class AwidSession extends AbstractPubSubIPSensorSession {
 					AckMessage ack = new AckMessage(response.message);
 				} catch (IOException e) {
 					logger.warn("IOException on stop command");
-				} 
+				}
 
 			}
 		};
@@ -244,6 +244,9 @@ public class AwidSession extends AbstractPubSubIPSensorSession {
 					ReaderStatusMessage status = new ReaderStatusMessage(
 							response.message);
 
+				} catch (TimeoutException ex) {
+					ex.printStackTrace();
+					throw ex;
 				} catch (IOException e) {
 					logger.warn("IOException on keepalive");
 				}
@@ -329,7 +332,6 @@ public class AwidSession extends AbstractPubSubIPSensorSession {
 	 */
 	@Override
 	public void disconnect() {
-		// TODO Auto-generated method stub
 		super.disconnect();
 		gpioSession.disconnect();
 	}
@@ -359,12 +361,15 @@ public class AwidSession extends AbstractPubSubIPSensorSession {
 	 */
 	@Override
 	public String toString() {
-		// TODO Auto-generated method stub
 		return super.toString() + ", " + gpioSession.toString();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.rifidi.edge.core.sensors.sessions.pubsub.AbstractPubSubIPSensorSession#clearUndelieverdMessages()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.core.sensors.sessions.pubsub.AbstractPubSubIPSensorSession
+	 * #clearUndelieverdMessages()
 	 */
 	@Override
 	protected void clearUndelieverdMessages() {
