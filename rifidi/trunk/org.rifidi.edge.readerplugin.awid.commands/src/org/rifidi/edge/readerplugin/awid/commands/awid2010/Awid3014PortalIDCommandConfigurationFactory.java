@@ -20,7 +20,7 @@ import org.rifidi.edge.readerplugin.awid.awid2010.Awid3014SensorFactory;
 public class Awid3014PortalIDCommandConfigurationFactory extends
 		Awid2010PortalIDCommandConfigurationFactory {
 	
-	public static final String FACTORY3014_ID = "Awid3014-Push-Start";
+	public static final String FACTORY3014_ID = "Awid3014-Poll";
 
 	/*
 	 * (non-Javadoc)

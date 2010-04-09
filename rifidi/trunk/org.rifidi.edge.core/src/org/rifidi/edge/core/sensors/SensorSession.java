@@ -118,7 +118,6 @@ public abstract class SensorSession {
 	 * default this method disconnects then reconnects.
 	 */
 	public void handleTimeout() {
-		logger.error("Timeout Exception on " + getSensor() + ":" + this);
 
 		/**
 		 * Create a reconnect thread that disconnects and reconnects.

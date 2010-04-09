@@ -27,7 +27,7 @@ public class Awid2010PortalIDWithMaskCommandConfigurationFactory
 		extends
 		AbstractCommandConfigurationFactory<AwidPortalIDWithMaskCommandConfiguration> {
 
-	public static final String FACTORY_ID = "Awid-Mask-Push-Start";
+	public static final String FACTORY_ID = "Awid-Mask-Poll";
 
 	/*
 	 * (non-Javadoc)

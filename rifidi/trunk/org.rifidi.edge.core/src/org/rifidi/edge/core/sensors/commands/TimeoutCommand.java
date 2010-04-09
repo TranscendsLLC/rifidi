@@ -5,6 +5,9 @@ package org.rifidi.edge.core.sensors.commands;
 
 import java.util.concurrent.TimeoutException;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 /**
  * An Abstract base class that can be used by Reader Commands which timeout.
  * Instead of implementing the run() method of the Command class, concrete
@@ -23,6 +26,8 @@ import java.util.concurrent.TimeoutException;
  * 
  */
 public abstract class TimeoutCommand extends Command {
+
+	private static final Log logger = LogFactory.getLog(TimeoutCommand.class);
 
 	/**
 	 * Constructor
@@ -53,6 +58,8 @@ public abstract class TimeoutCommand extends Command {
 		try {
 			execute();
 		} catch (TimeoutException e) {
+			logger.error("Timeout Exception on " + sensorSession.getSensor()
+					+ ":" + sensorSession + " " + this);
 			super.sensorSession.handleTimeout();
 		}
 
