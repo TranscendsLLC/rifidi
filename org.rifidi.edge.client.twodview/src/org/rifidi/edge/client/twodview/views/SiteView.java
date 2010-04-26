@@ -36,6 +36,7 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.views.properties.tabbed.ITabbedPropertySheetPageContributor;
 import org.rifidi.edge.client.model.sal.RemoteEdgeServer;
+import org.rifidi.edge.client.sal.SALPluginActivator;
 import org.rifidi.edge.client.sal.modelmanager.SALModelService;
 import org.rifidi.edge.client.sal.modelmanager.SALModelServiceImpl;
 import org.rifidi.edge.client.sal.modelmanager.SALModelServiceListener;
@@ -81,7 +82,7 @@ public class SiteView extends ViewPart implements SALModelServiceListener,
 	 * The constructor.
 	 */
 	public SiteView() {
-		modelService = new SALModelServiceImpl();
+		modelService = SALPluginActivator.getDefault().getSalModelService();
 		this.saveFolder = Activator.getSaveFolder();
 	}
 

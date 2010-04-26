@@ -35,6 +35,8 @@ public class SALPluginActivator extends AbstractUIPlugin {
 
 	public static final String IMAGE_TAG = "tag";
 
+	private SALModelService salModelService;
+
 	/**
 	 * The constructor
 	 */
@@ -66,6 +68,18 @@ public class SALPluginActivator extends AbstractUIPlugin {
 	}
 
 	/**
+	 * Get the model.
+	 * 
+	 * @return
+	 */
+	public SALModelService getSalModelService() {
+		if(salModelService==null){
+			salModelService=new SALModelServiceImpl();
+		}
+		return salModelService;
+	}
+
+	/**
 	 * Returns the shared instance
 	 * 
 	 * @return the shared instance
@@ -85,7 +99,7 @@ public class SALPluginActivator extends AbstractUIPlugin {
 	public static ImageDescriptor getImageDescriptor(String path) {
 		return imageDescriptorFromPlugin(PLUGIN_ID, path);
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 

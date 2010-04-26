@@ -36,6 +36,7 @@ import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.views.properties.tabbed.ITabbedPropertySheetPageContributor;
 import org.rifidi.edge.client.model.sal.RemoteEdgeServer;
 import org.rifidi.edge.client.model.sal.RemoteReader;
+import org.rifidi.edge.client.sal.SALPluginActivator;
 import org.rifidi.edge.client.sal.controller.edgeserver.EdgeServerTreeContentProvider;
 import org.rifidi.edge.client.sal.controller.edgeserver.EdgeServerTreeLabelProvider;
 import org.rifidi.edge.client.sal.modelmanager.SALModelService;
@@ -63,7 +64,7 @@ public class EdgeServerView extends ViewPart implements
 	 */
 	public EdgeServerView() {
 		super();
-		// this.modelService = new SALModelServiceImpl();
+		this.modelService = SALPluginActivator.getDefault().getSalModelService();
 	}
 
 	/**
