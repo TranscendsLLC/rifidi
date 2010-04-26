@@ -36,6 +36,7 @@ import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.views.properties.tabbed.ITabbedPropertySheetPageContributor;
 import org.rifidi.edge.client.model.sal.RemoteCommandConfiguration;
 import org.rifidi.edge.client.model.sal.RemoteEdgeServer;
+import org.rifidi.edge.client.sal.SALPluginActivator;
 import org.rifidi.edge.client.sal.controller.commands.CommandTreeContentProvider;
 import org.rifidi.edge.client.sal.controller.commands.CommandTreeLabelProvider;
 import org.rifidi.edge.client.sal.modelmanager.SALModelService;
@@ -64,7 +65,7 @@ public class CommandView extends ViewPart implements
 	 */
 	public CommandView() {
 		super();
-		this.modelService = new SALModelServiceImpl();
+		this.modelService = SALPluginActivator.getDefault().getSalModelService();
 	}
 
 	/**
