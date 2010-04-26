@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.perspectives">
+      <perspective
+            class="org.rifidi.edge.client.monitoring.PerspectiveFactory"
+            icon="IMG/monitor.png"
+            id="org.rifidi.edge.client.monitoring.perspective"
+            name="Event Monitor">
+      </perspective>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="org.rifidi.edge.client.monitoring.perspective">
+         <view
+               closeable="false"
+               id="org.eclipse.ui.console.ConsoleView"
+               minimized="false"
+               relationship="stack"
+               relative="org.eclipse.ui.editorss"
+               visible="true">
+         </view>
+         <perspectiveShortcut
+               id="org.rifidi.edge.client.monitoring.perspective">
+         </perspectiveShortcut>
+      </perspectiveExtension>
+   </extension>
+   <extension
+         point="org.eclipse.ui.viewActions">
+      <viewContribution
+            id="org.rifidi.edge.client.monitoring.viewContribution1"
+            targetID="org.rifidi.edge.client.monitoring.viewContribution1">
+         <action
+               class="org.rifidi.edge.client.monitoring.RefreshConsoleActionDelegate"
+               icon="IMG/arrow_refresh.png"
+               id="org.rifidi.edge.client.monitoring.RefreshConsoleActionDelagate"
+               label="Refresh"
+               style="push"
+               toolbarPath="toolbar">
+         </action>
+      </viewContribution>
+   </extension>
+
+</plugin>
