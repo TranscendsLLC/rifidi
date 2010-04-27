@@ -158,8 +158,10 @@ public class LLRPROSpecCommandConfiguration extends
 	/**
 	 * @return
 	 */
-	@Property(displayName = "Read Mode", description = "If read mode is set to POLL, you will need to use the LLRP Poll command to receieve tags. If it is set to PUSH, the reader will send back tags according to the Push Duration"
-			+ " ", defaultValue = "PUSH", writable = true, type = PropertyType.PT_STRING, category = category, orderValue = 3)
+	@Property(displayName = "Read Mode", description = "If read mode is set to POLL, "
+			+ "you will need to use the LLRP Poll command to receieve tags. If it is set "
+			+ "to PUSH, the reader will send back tags according to the Push Duration"
+			+ "", defaultValue = "PUSH", writable = true, type = PropertyType.PT_STRING, category = category, orderValue = 3)
 	public String getTriggerType() {
 		return triggerType;
 	}

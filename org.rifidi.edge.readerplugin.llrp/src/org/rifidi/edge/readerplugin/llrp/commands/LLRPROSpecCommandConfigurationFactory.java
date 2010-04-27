@@ -25,7 +25,7 @@ import org.rifidi.edge.readerplugin.llrp.LLRPReaderFactory;
  */
 public class LLRPROSpecCommandConfigurationFactory extends
 		AbstractCommandConfigurationFactory<AbstractCommandConfiguration<?>> {
-	/** Mbeaninfo for this class. */
+	/** MBeanInfo for this class. */
 	public static final MBeanInfo mbeaninfo;
 	static {
 		AnnotationMBeanInfoStrategy strategy = new AnnotationMBeanInfoStrategy();
