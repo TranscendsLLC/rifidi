@@ -66,6 +66,7 @@ import org.rifidi.edge.core.sensors.sessions.AbstractSensorSession;
 import org.rifidi.edge.core.services.notification.NotifierService;
 import org.rifidi.edge.core.services.notification.data.EPCGeneration2Event;
 import org.rifidi.edge.core.services.notification.data.ReadCycle;
+import org.rifidi.edge.core.services.notification.data.StandardTagReadEventFieldNames;
 import org.rifidi.edge.core.services.notification.data.TagReadEvent;
 import org.rifidi.edge.readerplugin.llrp.commands.internal.LLRPReset;
 import org.springframework.jms.core.JmsTemplate;
@@ -462,39 +463,39 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 					if (t.getROSpecID() != null) {
 					String rosid = t.getROSpecID().getROSpecID().toInteger()
 							.toString();
-					tag.addExtraInformation(LLRPConstants.ROSPEC_ID, rosid);
+					tag.addExtraInformation(LLRPTagReadEventFieldNames.ROSPEC_ID, rosid);
 					}
 					if (t.getPeakRSSI() != null) {
 						String rssi = t.getPeakRSSI().getPeakRSSI().toInteger()
 								.toString();
-						tag.addExtraInformation(LLRPConstants.RSSI_ID, rssi);
+						tag.addExtraInformation(StandardTagReadEventFieldNames.RSSI, rssi);
 					}
 
 					if (t.getSpecIndex() != null) {
 						String specindex = t.getSpecIndex().getSpecIndex()
 								.toInteger().toString();
-						tag.addExtraInformation(LLRPConstants.SPEC_INDEX,
+						tag.addExtraInformation(LLRPTagReadEventFieldNames.SPEC_INDEX,
 								specindex);
 					}
 					if (t.getInventoryParameterSpecID() != null) {
 						String invparamspecid = t.getInventoryParameterSpecID()
 								.getInventoryParameterSpecID().toInteger()
 								.toString();
-						tag.addExtraInformation(LLRPConstants.INVPARAMSPECID,
+						tag.addExtraInformation(LLRPTagReadEventFieldNames.INVPARAMSPECID,
 								invparamspecid);
 					}
 
 					if (t.getChannelIndex() != null) {
 						String channelindex = t.getChannelIndex()
 								.getChannelIndex().toInteger().toString();
-						tag.addExtraInformation(LLRPConstants.CHANNELINDEX,
+						tag.addExtraInformation(LLRPTagReadEventFieldNames.CHANNELINDEX,
 								channelindex);
 					}
 
 					if (t.getFirstSeenTimestampUTC() != null) {
 						String firstseenutc = t.getFirstSeenTimestampUTC()
 								.getMicroseconds().toBigInteger().toString();
-						tag.addExtraInformation(LLRPConstants.FIRSTSEENUTC,
+						tag.addExtraInformation(LLRPTagReadEventFieldNames.FIRSTSEENUTC,
 								firstseenutc);
 					}
 
@@ -502,28 +503,28 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 						String firstseenuptime = t
 								.getFirstSeenTimestampUptime()
 								.getMicroseconds().toBigInteger().toString();
-						tag.addExtraInformation(LLRPConstants.FIRSTSEENUPTIME,
+						tag.addExtraInformation(LLRPTagReadEventFieldNames.FIRSTSEENUPTIME,
 								firstseenuptime);
 					}
 					
 					if (t.getLastSeenTimestampUTC()!= null) {
 						String lastseenutc = t.getLastSeenTimestampUTC()
 								.getMicroseconds().toBigInteger().toString();
-						tag.addExtraInformation(LLRPConstants.LASTSEENUTC,
+						tag.addExtraInformation(LLRPTagReadEventFieldNames.LASTSEENUTC,
 								lastseenutc);
 					}
 					
 					if (t.getLastSeenTimestampUptime() != null) {
 						String lastseenuptime = t.getLastSeenTimestampUptime()
 								.getMicroseconds().toBigInteger().toString();
-						tag.addExtraInformation(LLRPConstants.LASTSEENUPTIME,
+						tag.addExtraInformation(LLRPTagReadEventFieldNames.LASTSEENUPTIME,
 								lastseenuptime);
 					}
 					
 					if (t.getTagSeenCount() != null) {
 						String tagseencount = t.getTagSeenCount().getTagCount()
 								.toInteger().toString();
-						tag.addExtraInformation(LLRPConstants.TAGSEENCOUNT,
+						tag.addExtraInformation(LLRPTagReadEventFieldNames.TAGSEENCOUNT,
 								tagseencount);
 					}
 					
@@ -532,12 +533,12 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 						if (aptd instanceof C1G2_CRC) {
 							String crc = ((C1G2_CRC) aptd).getCRC().toInteger()
 									.toString();
-							tag.addExtraInformation(LLRPConstants.AIRPROT_CRC,
+							tag.addExtraInformation(LLRPTagReadEventFieldNames.AIRPROT_CRC,
 									crc);
 						} else if (aptd instanceof C1G2_PC) {
 							String pc = ((C1G2_PC) aptd).getPC_Bits()
 									.toInteger().toString();
-							tag.addExtraInformation(LLRPConstants.AIRPROT_PC,
+							tag.addExtraInformation(LLRPTagReadEventFieldNames.AIRPROT_PC,
 									pc);
 						}
 					}
