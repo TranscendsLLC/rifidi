@@ -35,12 +35,15 @@ import org.llrp.ltk.generated.enumerations.AccessReportTriggerType;
 import org.llrp.ltk.generated.enumerations.NotificationEventType;
 import org.llrp.ltk.generated.enumerations.ROReportTriggerType;
 import org.llrp.ltk.generated.enumerations.StatusCode;
+import org.llrp.ltk.generated.interfaces.AirProtocolTagData;
 import org.llrp.ltk.generated.messages.RO_ACCESS_REPORT;
 import org.llrp.ltk.generated.messages.SET_READER_CONFIG;
 import org.llrp.ltk.generated.messages.SET_READER_CONFIG_RESPONSE;
 import org.llrp.ltk.generated.parameters.AccessReportSpec;
 import org.llrp.ltk.generated.parameters.AntennaID;
 import org.llrp.ltk.generated.parameters.C1G2EPCMemorySelector;
+import org.llrp.ltk.generated.parameters.C1G2_CRC;
+import org.llrp.ltk.generated.parameters.C1G2_PC;
 import org.llrp.ltk.generated.parameters.EPC_96;
 import org.llrp.ltk.generated.parameters.EventNotificationState;
 import org.llrp.ltk.generated.parameters.ROReportSpec;
@@ -70,7 +73,7 @@ import org.springframework.jms.core.MessageCreator;
 
 /**
  * This class represents a session with an LLRP reader. It handles connecting
- * and disconnecting, as well as recieving tag data.
+ * and disconnecting, as well as receiving tag data.
  * 
  * @author Matthew Dean
  */
@@ -139,7 +142,7 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 				+ this.getSensor().getID() + " attempting to connect to "
 				+ host + ":" + port);
 		this.setStatus(SessionStatus.CONNECTING);
-		// conntected flag
+		// Connected flag
 		boolean connected = false;
 		// try to connect up to MaxConAttempts number of times, unless
 		// maxConAttempts is -1, in which case, try forever
@@ -430,7 +433,9 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 	}
 
 	/**
-	 * 
+	 * This method receives asynchronous messages back from the LLRP reader. If
+	 * it isn't a RO_ACCESS_REPORT (the message thats tags come in) we don't
+	 * care about it at the moment.
 	 */
 	@Override
 	public void messageReceived(LLRPMessage arg0) {
@@ -441,15 +446,11 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 				List<TagReportData> trdl = rar.getTagReportDataList();
 				logger.debug("Got a RO_ACCESS_REPORT with " + trdl.size()
 						+ " tags");
-
-				// List<String> tagdatastring = new ArrayList<String>();
 				Set<TagReadEvent> tagreaderevents = new HashSet<TagReadEvent>();
 
 				for (TagReportData t : trdl) {
 					AntennaID antid = t.getAntennaID();
 					EPC_96 id = (EPC_96) t.getEPCParameter();
-					// System.out.println("EPC data processed : "
-					// + id.getEPC().toString(16));
 					String EPCData = id.getEPC().toString(16);
 					EPCGeneration2Event gen2event = new EPCGeneration2Event();
 					gen2event.setEPCMemory(this.parseString(EPCData), 96);
@@ -457,6 +458,94 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 					TagReadEvent tag = new TagReadEvent(readerID, gen2event,
 							antid.getAntennaID().intValue(), System
 									.currentTimeMillis());
+					// Add the custom information to the tags.
+					if (t.getROSpecID() != null) {
+					String rosid = t.getROSpecID().getROSpecID().toInteger()
+							.toString();
+					tag.addExtraInformation(LLRPConstants.ROSPEC_ID, rosid);
+					}
+					if (t.getPeakRSSI() != null) {
+						String rssi = t.getPeakRSSI().getPeakRSSI().toInteger()
+								.toString();
+						tag.addExtraInformation(LLRPConstants.RSSI_ID, rssi);
+					}
+
+					if (t.getSpecIndex() != null) {
+						String specindex = t.getSpecIndex().getSpecIndex()
+								.toInteger().toString();
+						tag.addExtraInformation(LLRPConstants.SPEC_INDEX,
+								specindex);
+					}
+					if (t.getInventoryParameterSpecID() != null) {
+						String invparamspecid = t.getInventoryParameterSpecID()
+								.getInventoryParameterSpecID().toInteger()
+								.toString();
+						tag.addExtraInformation(LLRPConstants.INVPARAMSPECID,
+								invparamspecid);
+					}
+
+					if (t.getChannelIndex() != null) {
+						String channelindex = t.getChannelIndex()
+								.getChannelIndex().toInteger().toString();
+						tag.addExtraInformation(LLRPConstants.CHANNELINDEX,
+								channelindex);
+					}
+
+					if (t.getFirstSeenTimestampUTC() != null) {
+						String firstseenutc = t.getFirstSeenTimestampUTC()
+								.getMicroseconds().toBigInteger().toString();
+						tag.addExtraInformation(LLRPConstants.FIRSTSEENUTC,
+								firstseenutc);
+					}
+
+					if (t.getFirstSeenTimestampUptime() != null) {
+						String firstseenuptime = t
+								.getFirstSeenTimestampUptime()
+								.getMicroseconds().toBigInteger().toString();
+						tag.addExtraInformation(LLRPConstants.FIRSTSEENUPTIME,
+								firstseenuptime);
+					}
+					
+					if (t.getLastSeenTimestampUTC()!= null) {
+						String lastseenutc = t.getLastSeenTimestampUTC()
+								.getMicroseconds().toBigInteger().toString();
+						tag.addExtraInformation(LLRPConstants.LASTSEENUTC,
+								lastseenutc);
+					}
+					
+					if (t.getLastSeenTimestampUptime() != null) {
+						String lastseenuptime = t.getLastSeenTimestampUptime()
+								.getMicroseconds().toBigInteger().toString();
+						tag.addExtraInformation(LLRPConstants.LASTSEENUPTIME,
+								lastseenuptime);
+					}
+					
+					if (t.getTagSeenCount() != null) {
+						String tagseencount = t.getTagSeenCount().getTagCount()
+								.toInteger().toString();
+						tag.addExtraInformation(LLRPConstants.TAGSEENCOUNT,
+								tagseencount);
+					}
+					
+					for (AirProtocolTagData aptd : t
+							.getAirProtocolTagDataList()) {
+						if (aptd instanceof C1G2_CRC) {
+							String crc = ((C1G2_CRC) aptd).getCRC().toInteger()
+									.toString();
+							tag.addExtraInformation(LLRPConstants.AIRPROT_CRC,
+									crc);
+						} else if (aptd instanceof C1G2_PC) {
+							String pc = ((C1G2_PC) aptd).getPC_Bits()
+									.toInteger().toString();
+							tag.addExtraInformation(LLRPConstants.AIRPROT_PC,
+									pc);
+						}
+					}
+					
+					// for (String key : tag.getExtraInformation().keySet()) {
+					// System.out.println(key + ", "
+					// + tag.getExtraInformation().get(key));
+					// }
 					tagreaderevents.add(tag);
 				}
 				ReadCycle cycle = new ReadCycle(tagreaderevents, readerID,
@@ -474,7 +563,6 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 	 * Used to create a JMS message to send to the Queue that collects Tag Data
 	 * 
 	 * @author Kyle Neumeier - kyle@pramari.com
-	 * 
 	 */
 	private class ObjectMessageCreator implements MessageCreator {
 
