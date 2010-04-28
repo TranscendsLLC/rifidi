@@ -27,7 +27,7 @@ import org.rifidi.edge.api.tags.TagDTO;
  * 
  * @author Kyle Neumeier - kyle@pramari.com
  */
-public class TagReadEvent implements Serializable {
+public class TagReadEvent implements Serializable, StandardTagReadEventFieldNames {
 
 	/** Serial Version ID for this class */
 	private static final long serialVersionUID = 1L;
