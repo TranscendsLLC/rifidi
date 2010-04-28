@@ -29,12 +29,6 @@ import java.util.Date;
  */
 public class AlienTag {
 
-	public static final String SPEED_ID = "Speed";
-
-	public static final String RSSI_ID = "RSSI";
-
-	public static final String DIRECTION = "Direction";
-
 	/** The FACTORY_ID of the tag as a hex string */
 	private String id_hex;
 	/** The date (on the reader) the tag was discovered */

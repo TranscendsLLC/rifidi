@@ -60,9 +60,11 @@ public class AlienTagReadEventFactory {
 		// a big integer representation of the epc
 		BigInteger epc = null;
 		try {
-			epc = new BigInteger(Hex.decodeHex(alienTag.getId_hex().toCharArray()));
+			epc = new BigInteger(Hex.decodeHex(alienTag.getId_hex()
+					.toCharArray()));
 		} catch (DecoderException e) {
-			throw new RuntimeException("Cannot decode tag: " + alienTag.getId_hex());
+			throw new RuntimeException("Cannot decode tag: "
+					+ alienTag.getId_hex());
 		}
 		int numbits = alienTag.getId_hex().length() * 4;
 
@@ -80,13 +82,13 @@ public class AlienTagReadEventFactory {
 		TagReadEvent retVal = new TagReadEvent(readerID, tagData, alienTag
 				.getAntenna(), alienTag.getLastSeenDate().getTime());
 		if (alienTag.getSpeed() != null) {
-			retVal.addExtraInformation(AlienTag.SPEED_ID, alienTag.getSpeed());
+			retVal.addExtraInformation(TagReadEvent.SPEED, alienTag.getSpeed());
 		}
 		if (alienTag.getRssi() != null) {
-			retVal.addExtraInformation(AlienTag.RSSI_ID, alienTag.getRssi());
+			retVal.addExtraInformation(TagReadEvent.SPEED, alienTag.getRssi());
 		}
 		if (alienTag.getDirection() != null) {
-			retVal.addExtraInformation(AlienTag.DIRECTION, alienTag
+			retVal.addExtraInformation(TagReadEvent.DIRECTION, alienTag
 					.getDirection());
 		}
 		return retVal;

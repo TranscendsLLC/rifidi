@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Rifidi Edge Alien Adapter
 Bundle-SymbolicName: org.rifidi.edge.readerplugin.alien
-Bundle-Version: 2.0.5
+Bundle-Version: 2.0.6
 Bundle-Vendor: Pramari, LLC
 Import-Package: javax.jms;version="1.1.0",
  org.apache.activemq.command;version="5.2.0",
@@ -17,7 +17,7 @@ Export-Package: org.rifidi.edge.readerplugin.alien,
  org.rifidi.edge.readerplugin.alien.commandobject,
  org.rifidi.edge.readerplugin.alien.messages
 Require-Bundle: org.rifidi.edge.core;bundle-version="5.3.6",
- org.rifidi.edge.core.services;bundle-version="1.2.1",
+ org.rifidi.edge.core.services;bundle-version="1.2.2",
  org.rifidi.edge.api;bundle-version="1.1.1"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Spring-Context: *;create-asynchronously:=true
