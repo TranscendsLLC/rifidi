@@ -86,7 +86,6 @@ public class AmbientBarcodeReader extends
 			Integer sessionID = this.sessionID.incrementAndGet();
 			if (session.compareAndSet(null, new AmbientBarcodeReaderSession(
 					this, Integer.toString(sessionID),
-					AmbientBarcodeConstants.IP_ADDRESS,
 					AmbientBarcodeConstants.PORT, this.template,
 					this.notifyServiceWrapper, super.getID(),
 					new HashSet<AbstractCommandConfiguration<?>>()))) {
@@ -113,7 +112,7 @@ public class AmbientBarcodeReader extends
 			Integer sessionID = this.sessionID.incrementAndGet();
 			// TODO: Fix the IP and the port here.
 			if (session.compareAndSet(null, new AmbientBarcodeReaderSession(
-					this, Integer.toString(sessionID), "127.0.0.1", 65000,
+					this, Integer.toString(sessionID), AmbientBarcodeConstants.PORT,
 					this.template, this.notifyServiceWrapper, super.getID(),
 					new HashSet<AbstractCommandConfiguration<?>>()))) {
 				// TODO: remove this once we get AspectJ in here!

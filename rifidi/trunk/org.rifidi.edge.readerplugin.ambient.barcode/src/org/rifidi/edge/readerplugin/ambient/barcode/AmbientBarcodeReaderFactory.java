@@ -19,7 +19,9 @@ import org.rifidi.edge.core.exceptions.InvalidStateException;
 import org.rifidi.edge.core.sensors.base.AbstractSensor;
 import org.rifidi.edge.core.sensors.base.AbstractSensorFactory;
 import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
+import org.rifidi.edge.core.services.esper.EsperManagementService;
 import org.rifidi.edge.core.services.notification.NotifierService;
+import org.rifidi.edge.readerplugin.ambient.barcode.tag.AmbientBarcodeTagEvent;
 import org.springframework.jms.core.JmsTemplate;
 
 /**
@@ -40,6 +42,7 @@ public class AmbientBarcodeReaderFactory extends
 	private static final String displayname = "Ambient-Barcode";
 	/** A JMS event notification sender */
 	private volatile NotifierService notifierService;
+	private volatile EsperManagementService esperService;
 
 	/*
 	 * (non-Javadoc)
@@ -53,7 +56,7 @@ public class AmbientBarcodeReaderFactory extends
 	public void bindCommandConfiguration(
 			AbstractCommandConfiguration<?> commandConfiguration,
 			Map<?, ?> properties) {
-		//Ignored.  
+		// Ignored.
 	}
 
 	/*
@@ -159,7 +162,7 @@ public class AmbientBarcodeReaderFactory extends
 	public void setTemplate(JmsTemplate template) {
 		this.template = template;
 	}
-	
+
 	/**
 	 * Called by spring
 	 * 
@@ -167,6 +170,18 @@ public class AmbientBarcodeReaderFactory extends
 	 */
 	public void setNotifierService(NotifierService notifierService) {
 		this.notifierService = notifierService;
+	}
+
+	/**
+	 * Called by spring
+	 * 
+	 * @param esperService
+	 */
+	public void setEsperService(EsperManagementService esperService) {
+		this.esperService = esperService;
+		this.esperService.getProvider().getEPAdministrator().getConfiguration()
+				.addEventType("AmbientBarcodeTagEvent",
+						AmbientBarcodeTagEvent.class);
 	}
 
 }

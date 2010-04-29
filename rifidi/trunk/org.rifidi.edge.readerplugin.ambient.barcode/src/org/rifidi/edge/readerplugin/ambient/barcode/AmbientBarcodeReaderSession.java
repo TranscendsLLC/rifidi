@@ -11,29 +11,27 @@
  */
 package org.rifidi.edge.readerplugin.ambient.barcode;
 
-import java.io.IOException;
-import java.util.Queue;
 import java.util.Set;
-import java.util.concurrent.LinkedBlockingQueue;
 
 import org.rifidi.edge.api.SessionStatus;
 import org.rifidi.edge.core.sensors.base.AbstractSensor;
 import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
-import org.rifidi.edge.core.sensors.messages.ByteMessage;
-import org.rifidi.edge.core.sensors.sessions.AbstractIPSensorSession;
+import org.rifidi.edge.core.sensors.sessions.AbstractServerSocketSensorSession;
 import org.rifidi.edge.core.sensors.sessions.MessageParsingStrategyFactory;
-import org.rifidi.edge.core.sensors.sessions.MessageProcessingStrategy;
 import org.rifidi.edge.core.sensors.sessions.MessageProcessingStrategyFactory;
-import org.rifidi.edge.core.sensors.sessions.poll.QueueingMessageProcessingStrategy;
 import org.rifidi.edge.core.services.notification.NotifierService;
+import org.rifidi.edge.core.services.notification.data.ReadCycle;
+import org.rifidi.edge.core.services.notification.data.ReadCycleMessageCreator;
+import org.rifidi.edge.readerplugin.ambient.barcode.tag.AmbientBarcodeTagHandler;
 import org.springframework.jms.core.JmsTemplate;
 
 /**
- * The session for the Ambient Barcode reader.  
+ * The session for the Ambient Barcode reader.
  * 
  * @author Matthew Dean - matt@pramari.com
  */
-public class AmbientBarcodeReaderSession extends AbstractIPSensorSession {
+public class AmbientBarcodeReaderSession extends
+		AbstractServerSocketSensorSession {
 
 	/** Service used to send out notifications */
 	private volatile NotifierService notifierService;
@@ -41,6 +39,8 @@ public class AmbientBarcodeReaderSession extends AbstractIPSensorSession {
 	private String readerID = null;
 
 	private JmsTemplate template = null;
+
+	private AmbientBarcodeTagHandler tagHandler = null;
 
 	/**
 	 * @param sensor
@@ -50,14 +50,15 @@ public class AmbientBarcodeReaderSession extends AbstractIPSensorSession {
 	 * @param commandConfigurations
 	 */
 	public AmbientBarcodeReaderSession(AbstractSensor<?> sensor, String id,
-			String host, int port, JmsTemplate template,
-			NotifierService notifierService, String readerID,
+			int port, JmsTemplate template, NotifierService notifierService,
+			String readerID,
 			Set<AbstractCommandConfiguration<?>> commandConfigurations) {
-		super(sensor, id, host, port, 0, 1, template.getDefaultDestination(),
-				template, commandConfigurations);
+		super(sensor, id, template.getDefaultDestination(), template, port, 10,
+				commandConfigurations);
 		this.readerID = readerID;
 		this.template = template;
 		this.notifierService = notifierService;
+		this.tagHandler = new AmbientBarcodeTagHandler(readerID);
 	}
 
 	/*
@@ -86,17 +87,6 @@ public class AmbientBarcodeReaderSession extends AbstractIPSensorSession {
 	 * (non-Javadoc)
 	 * 
 	 * @seeorg.rifidi.edge.core.sensors.sessions.AbstractIPSensorSession#
-	 * clearUndelieverdMessages()
-	 */
-	@Override
-	protected void clearUndelieverdMessages() {
-		// Messages non-existent, don't need to be cleared.
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @seeorg.rifidi.edge.core.sensors.sessions.AbstractIPSensorSession#
 	 * getMessageParsingStrategyFactory()
 	 */
 	@Override
@@ -112,50 +102,18 @@ public class AmbientBarcodeReaderSession extends AbstractIPSensorSession {
 	 */
 	@Override
 	protected MessageProcessingStrategyFactory getMessageProcessingStrategyFactory() {
-		return new QueueingMessageProcessingStrategyFactory(
-				new LinkedBlockingQueue<ByteMessage>());
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.rifidi.edge.core.sensors.sessions.AbstractIPSensorSession#onConnect()
-	 */
-	@Override
-	protected boolean onConnect() throws IOException {
-		// No authentication needed: accept any connection.
-		return true;
+		return new AmbientBarcodeMessageProcessingStrategyFactory(this);
 	}
 
 	/**
-	 * A factory that produces new QueueingMessageProcessingStrategy objects
-	 * (stolen from AbstractIPPollSession).
-	 * 
-	 * @author Kyle Neumeier - kyle@pramari.com
+	 * Process and send the tag.
 	 */
-	private class QueueingMessageProcessingStrategyFactory implements
-			MessageProcessingStrategyFactory {
+	public void sendTag(byte[] tag) {
+		ReadCycle cycle = this.tagHandler.processTag(tag);
+		
+		this.getSensor().send(cycle);
 
-		/** The queue to put new objects on */
-		private final Queue<ByteMessage> queue;
-
-		public QueueingMessageProcessingStrategyFactory(Queue<ByteMessage> queue) {
-			this.queue = queue;
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see
-		 * org.rifidi.edge.core.sensors.sessions.MessageProcessingStrategyFactory
-		 * #createMessageProcessor()
-		 */
-		@Override
-		public MessageProcessingStrategy createMessageProcessor() {
-			return new QueueingMessageProcessingStrategy(queue);
-		}
-
+		this.template.send(this.template.getDefaultDestination(),
+				new ReadCycleMessageCreator(cycle));
 	}
-
 }

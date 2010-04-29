@@ -1,13 +1,29 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:osgi="http://www.springframework.org/schema/osgi"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans 
-	http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+	http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+    http://www.springframework.org/schema/osgi 
+    http://www.springframework.org/schema/osgi/spring-osgi.xsd">
 
 	<!--  Create Reader Configuration Factory -->
 	<bean id="ambientBarcodeConfigurationFactory"
 		class="org.rifidi.edge.readerplugin.ambient.barcode.AmbientBarcodeReaderFactory">
 		<property name="context" ref="bundleContext" />
 		<property name="template" ref="internalMB" />
-		<property name="notifierService" ref="JMSNotifierService" />
+		<property name="notifierService" ref="JMSNotifierService"/> 
+		<property name="esperService" ref="esper"/>
 	</bean>
+
+	<bean id="TestBarcode"
+		class="org.rifidi.edge.readerplugin.ambient.barcode.test.TestBarcode"
+		init-method="start" destroy-method="stop">
+	</bean>
+
+	<bean id="barcodecommands"
+		class="org.rifidi.edge.readerplugin.ambient.barcode.test.TestBarcodeCommandProvider">
+		<property name="testBarcode" ref="TestBarcode" />
+	</bean>
+
+	<osgi:service ref="barcodecommands"
+		interface="org.eclipse.osgi.framework.console.CommandProvider" />
 </beans>

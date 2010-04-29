@@ -38,6 +38,7 @@ public class AmbientBarcodeMessageParsingStrategy implements
 	 */
 	@Override
 	public byte[] isMessage(byte message) {
+		messagebuilder.add(message);
 		if (messagebuilder.size() == MSGSIZE) {
 			byte retval[] = new byte[MSGSIZE];
 			for (int i = 0; i < MSGSIZE; i++) {

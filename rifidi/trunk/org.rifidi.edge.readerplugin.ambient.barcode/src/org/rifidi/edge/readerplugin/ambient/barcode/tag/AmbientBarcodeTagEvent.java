@@ -16,7 +16,7 @@ import java.math.BigInteger;
 import org.rifidi.edge.core.services.notification.data.DatacontainerEvent;
 
 /**
- * This class represents a barcode tag for the Ambient reader.  
+ * This class represents a barcode tag for the Ambient reader.
  * 
  * @author Matthew Dean - matt@pramari.com
  */
@@ -28,8 +28,8 @@ public class AmbientBarcodeTagEvent extends DatacontainerEvent {
 	private static final long serialVersionUID = -5334113422705563853L;
 
 	/** Store a hex copy of the epc for comparison. */
-	protected String hex = "";
-	
+	protected String barcode = "";
+
 	/**
 	 * Constructor.
 	 */
@@ -38,25 +38,24 @@ public class AmbientBarcodeTagEvent extends DatacontainerEvent {
 	}
 
 	/**
-	 * Set the epc memory bank.
+	 * Set the barcode
 	 * 
 	 * @param memBank
 	 * @param length
-	 *            The size of the memory bank in bits
 	 */
-	public void setEPCMemory(BigInteger memBank, Integer length) {
+	public void setBarcode(BigInteger memBank, Integer length) {
 		memoryBanks.get(0).setLength(length);
 		memoryBanks.get(0).setMemory(memBank);
-		hex = memBank.toString(16);
+		barcode = memBank.toString();
 	}
 
 	/**
-	 * Returns the epc in hex encoding.
+	 * Returns the barcode in decimal encoding.
 	 * 
 	 * @return
 	 */
-	public String getEpc() {
-		return hex;
+	public String getBarcode() {
+		return barcode;
 	}
 
 	/**
@@ -64,7 +63,7 @@ public class AmbientBarcodeTagEvent extends DatacontainerEvent {
 	 * 
 	 * @return
 	 */
-	public BigInteger getEPCMemory() {
+	public BigInteger getBarcodeMemory() {
 		return memoryBanks.get(0).getMemory();
 	}
 
@@ -73,7 +72,7 @@ public class AmbientBarcodeTagEvent extends DatacontainerEvent {
 	 * 
 	 * @return the number of bits in the EPC
 	 */
-	public Integer getEPCMemoryLength() {
+	public Integer getBarcodeMemoryLength() {
 		return memoryBanks.get(0).getLength();
 	}
 
@@ -85,7 +84,7 @@ public class AmbientBarcodeTagEvent extends DatacontainerEvent {
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof AmbientBarcodeTagEvent) {
-			return hex.hashCode() == obj.hashCode();
+			return barcode.hashCode() == obj.hashCode();
 		}
 		return false;
 	}
@@ -97,16 +96,24 @@ public class AmbientBarcodeTagEvent extends DatacontainerEvent {
 	 */
 	@Override
 	public int hashCode() {
-		return hex.hashCode();
+		return barcode.hashCode();
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.rifidi.edge.core.services.notification.data.DatacontainerEvent#getID()
+	 * 
+	 * @see
+	 * org.rifidi.edge.core.services.notification.data.DatacontainerEvent#getID
+	 * ()
 	 */
 	@Override
 	public BigInteger getID() {
 		return this.memoryBanks.get(0).getMemory();
+	}
+
+	@Override
+	public String toString() {
+		return "AmbientBarcodeTagEvent [hex=" + barcode + "]";
 	}
 
 }

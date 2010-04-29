@@ -19,4 +19,7 @@
 
 	<osgi:reference id="internalMB"
 		interface="org.springframework.jms.core.JmsTemplate" bean-name="internalJMSTemplate" />
+
+	<osgi:reference id="esper"
+		interface="org.rifidi.edge.core.services.esper.EsperManagementService" />
 </beans>
