@@ -26,7 +26,7 @@
 
 	<!--
 		Get a reference to the Esper Management Service from the OSGi Service
-		Registry
+		registry
 	-->
 	<osgi:reference id="esperManagementService"
 		interface="org.rifidi.edge.core.services.esper.EsperManagementService" />
