@@ -19,8 +19,9 @@ import org.rifidi.edge.core.services.notification.data.ReadCycle;
 import org.rifidi.edge.core.services.notification.data.TagReadEvent;
 
 /**
- * @author Matthew Dean - matt@pramari.com
  * 
+ * 
+ * @author Matthew Dean - matt@pramari.com
  */
 public class AmbientBarcodeTagHandler {
 
@@ -33,24 +34,31 @@ public class AmbientBarcodeTagHandler {
 		this.readerID = readerID;
 	}
 
+	/**
+	 * Convert the tag we recieve into a ReadCycle that will be processed by
+	 * Rifidi Edge.
+	 * 
+	 * @param tag
+	 * @return
+	 */
 	public ReadCycle processTag(byte[] tag) {
 		// We need every byte but the first one, which is an unprintable
 		// character.
 		byte[] actualtag = new byte[tag.length - 1];
 		for (int i = 1; i < tag.length; i++) {
-			actualtag[i - 1] = (byte)(tag[i]);
+			actualtag[i - 1] = (byte) (tag[i]);
 		}
-		
+
 		StringBuilder sb = new StringBuilder();
 		for (byte b : actualtag) {
 			sb.append((char) b);
 		}
-		
+
 		BigInteger epc = new BigInteger(sb.toString());
 		AmbientBarcodeTagEvent ambienttag = new AmbientBarcodeTagEvent();
-		
+
 		ambienttag.setBarcode(epc, 72);
-		
+
 		TagReadEvent tre = new TagReadEvent(this.readerID, ambienttag, 0,
 				System.currentTimeMillis());
 		Set<TagReadEvent> events = new HashSet<TagReadEvent>();

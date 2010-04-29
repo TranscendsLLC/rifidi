@@ -25,7 +25,7 @@ import org.rifidi.edge.readerplugin.ambient.barcode.tag.AmbientBarcodeTagEvent;
 import org.springframework.jms.core.JmsTemplate;
 
 /**
- * 
+ * Factory class for the Ambient Barcode Reader.  
  * 
  * @author Matthew Dean - matt@pramari.com
  */

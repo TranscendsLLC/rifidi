@@ -33,7 +33,7 @@ import org.rifidi.edge.core.services.notification.NotifierService;
 import org.springframework.jms.core.JmsTemplate;
 
 /**
- * 
+ * Sensor class for the Ambient Barcode Reader.  
  * 
  * @author Matthew Dean - matt@pramari.com
  */
@@ -47,7 +47,7 @@ public class AmbientBarcodeReader extends
 	private volatile JmsTemplate template;
 	/** The ID of the session */
 	private AtomicInteger sessionID = new AtomicInteger(0);
-	/** A wrapper containing the service to send jms notifications */
+	/** A wrapper containing the service to send JMS notifications */
 	private volatile NotifierService notifyServiceWrapper;
 	/** The name of the reader that will be displayed */
 	private String displayName = "Ambient Barcode";
