@@ -44,6 +44,7 @@ import org.llrp.ltk.generated.parameters.AntennaID;
 import org.llrp.ltk.generated.parameters.C1G2EPCMemorySelector;
 import org.llrp.ltk.generated.parameters.C1G2_CRC;
 import org.llrp.ltk.generated.parameters.C1G2_PC;
+import org.llrp.ltk.generated.parameters.EPCData;
 import org.llrp.ltk.generated.parameters.EPC_96;
 import org.llrp.ltk.generated.parameters.EventNotificationState;
 import org.llrp.ltk.generated.parameters.ROReportSpec;
@@ -451,10 +452,17 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 
 				for (TagReportData t : trdl) {
 					AntennaID antid = t.getAntennaID();
-					EPC_96 id = (EPC_96) t.getEPCParameter();
-					String EPCData = id.getEPC().toString(16);
 					EPCGeneration2Event gen2event = new EPCGeneration2Event();
-					gen2event.setEPCMemory(this.parseString(EPCData), 96);
+					if(t.getEPCParameter() instanceof EPCData){
+						EPCData id = (EPCData)t.getEPCParameter();
+						String EPCData = id.getEPC().toString(16);
+						gen2event.setEPCMemory(this.parseString(EPCData), EPCData.length()*4);
+						
+					}else{
+						EPC_96 id = (EPC_96) t.getEPCParameter();						
+						String EPCData = id.getEPC().toString(16);
+						gen2event.setEPCMemory(this.parseString(EPCData), 96);
+					}
 
 					TagReadEvent tag = new TagReadEvent(readerID, gen2event,
 							antid.getAntennaID().intValue(), System
