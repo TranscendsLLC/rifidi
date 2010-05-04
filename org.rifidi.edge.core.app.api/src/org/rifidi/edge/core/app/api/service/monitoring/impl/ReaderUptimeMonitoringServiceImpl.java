@@ -9,19 +9,18 @@
  *  License:	GNU Public License (GPL)
  *  				http://www.opensource.org/licenses/gpl-3.0.html
  */
-package org.rifidi.edge.core.app.api.impl;
+package org.rifidi.edge.core.app.api.service.monitoring.impl;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.CopyOnWriteArraySet;
 
-import org.rifidi.edge.core.app.api.ReaderUptimeMonitoringService;
-import org.rifidi.edge.core.app.api.ReaderUptimeSubscriber;
+import org.rifidi.edge.core.app.api.RifidiApp;
 import org.rifidi.edge.core.app.api.events.DowntimeEvent;
 import org.rifidi.edge.core.app.api.events.ReaderEvent;
 import org.rifidi.edge.core.app.api.events.UptimeEvent;
-import org.rifidi.edge.core.services.esper.EsperManagementService;
+import org.rifidi.edge.core.app.api.service.monitoring.ReaderUptimeMonitoringService;
+import org.rifidi.edge.core.app.api.service.monitoring.ReaderUptimeSubscriber;
 import org.rifidi.edge.core.services.notification.data.management.SessionDownEvent;
 import org.rifidi.edge.core.services.notification.data.management.SessionUpEvent;
 
@@ -35,30 +34,16 @@ import com.espertech.esper.client.StatementAwareUpdateListener;
  * 
  * @author Matthew Dean
  */
-public class ReaderUptimeMonitoringServiceImpl implements
+public class ReaderUptimeMonitoringServiceImpl extends RifidiApp implements
 		ReaderUptimeMonitoringService {
 
-	/** All statements that have been defined so far */
-	private final Set<EPStatement> statements = new CopyOnWriteArraySet<EPStatement>();
-
 	private Map<ReaderUptimeSubscriber, Set<String>> subscriberMap = new HashMap<ReaderUptimeSubscriber, Set<String>>();
-
-	/** Esper service */
-	private volatile EsperManagementService esperService;
-
-	/**
-	 * Called by spring
-	 * 
-	 * @param esperService
-	 *            the esperService to set
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.rifidi.edge.core.app.api.RifidiApp#start()
 	 */
-	public void setEsperService(EsperManagementService esperService) {
-		this.esperService = esperService;
-	}
-
-	/**
-	 * 
-	 */
+	@Override
 	public void start() {
 		EPStatement queryDownTimeEvent = esperService.getProvider()
 				.getEPAdministrator().createEPL(
@@ -85,9 +70,10 @@ public class ReaderUptimeMonitoringServiceImpl implements
 						if (b.getUnderlying() instanceof SessionUpEvent) {
 							SessionUpEvent sue = (SessionUpEvent) b
 									.getUnderlying();
-							for(ReaderUptimeSubscriber rus:subscriberMap.keySet()) {
-								for(String readerID:subscriberMap.get(rus)) {
-									if(sue.getReaderID().equals(readerID)) {
+							for (ReaderUptimeSubscriber rus : subscriberMap
+									.keySet()) {
+								for (String readerID : subscriberMap.get(rus)) {
+									if (sue.getReaderID().equals(readerID)) {
 										ReaderEvent re = new UptimeEvent();
 										re.setReaderID(sue.getReaderID());
 										re.setTime(sue.getTimestamp());
@@ -98,9 +84,10 @@ public class ReaderUptimeMonitoringServiceImpl implements
 						} else if (b.getUnderlying() instanceof SessionDownEvent) {
 							SessionDownEvent sde = (SessionDownEvent) b
 									.getUnderlying();
-							for(ReaderUptimeSubscriber rus:subscriberMap.keySet()) {
-								for(String readerID:subscriberMap.get(rus)) {
-									if(sde.getReaderID().equals(readerID)) {
+							for (ReaderUptimeSubscriber rus : subscriberMap
+									.keySet()) {
+								for (String readerID : subscriberMap.get(rus)) {
+									if (sde.getReaderID().equals(readerID)) {
 										ReaderEvent re = new DowntimeEvent();
 										re.setReaderID(sde.getReaderID());
 										re.setTime(sde.getTimestamp());
@@ -113,15 +100,6 @@ public class ReaderUptimeMonitoringServiceImpl implements
 				}
 			}
 		};
-	}
-
-	/**
-	 * 
-	 */
-	public void stop() {
-		for (EPStatement statement : statements) {
-			statement.destroy();
-		}
 	}
 
 	/*
