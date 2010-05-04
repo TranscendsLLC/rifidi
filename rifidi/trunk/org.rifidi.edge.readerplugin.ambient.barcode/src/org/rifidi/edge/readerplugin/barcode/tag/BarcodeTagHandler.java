@@ -1,5 +1,5 @@
 /*
- *  AmbientBarcodeTagHandler.java
+ *  BarcodeTagHandler.java
  *
  *  Created:	Apr 28, 2010
  *  Project:	Rifidi Edge Server - A middleware platform for RFID applications
@@ -9,7 +9,7 @@
  *  License:	GNU Public License (GPL)
  *  				http://www.opensource.org/licenses/gpl-3.0.html
  */
-package org.rifidi.edge.readerplugin.ambient.barcode.tag;
+package org.rifidi.edge.readerplugin.barcode.tag;
 
 import java.math.BigInteger;
 import java.util.HashSet;
@@ -23,14 +23,14 @@ import org.rifidi.edge.core.services.notification.data.TagReadEvent;
  * 
  * @author Matthew Dean - matt@pramari.com
  */
-public class AmbientBarcodeTagHandler {
+public class BarcodeTagHandler {
 
 	/**
 	 * 
 	 */
 	private String readerID;
 
-	public AmbientBarcodeTagHandler(String readerID) {
+	public BarcodeTagHandler(String readerID) {
 		this.readerID = readerID;
 	}
 
@@ -55,11 +55,11 @@ public class AmbientBarcodeTagHandler {
 		}
 
 		BigInteger epc = new BigInteger(sb.toString());
-		AmbientBarcodeTagEvent ambienttag = new AmbientBarcodeTagEvent();
+		BarcodeTagEvent barcodetag = new BarcodeTagEvent();
 
-		ambienttag.setBarcode(epc, 72);
+		barcodetag.setBarcode(epc, 72);
 
-		TagReadEvent tre = new TagReadEvent(this.readerID, ambienttag, 0,
+		TagReadEvent tre = new TagReadEvent(this.readerID, barcodetag, 0,
 				System.currentTimeMillis());
 		Set<TagReadEvent> events = new HashSet<TagReadEvent>();
 		events.add(tre);

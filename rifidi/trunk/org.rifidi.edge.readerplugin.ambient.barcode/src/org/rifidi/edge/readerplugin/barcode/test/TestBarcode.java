@@ -9,7 +9,7 @@
  *  License:	GNU Public License (GPL)
  *  				http://www.opensource.org/licenses/gpl-3.0.html
  */
-package org.rifidi.edge.readerplugin.ambient.barcode.test;
+package org.rifidi.edge.readerplugin.barcode.test;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -18,7 +18,7 @@ import java.net.UnknownHostException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.rifidi.edge.readerplugin.ambient.barcode.AmbientBarcodeConstants;
+import org.rifidi.edge.readerplugin.barcode.BarcodeConstants;
 
 /**
  * Tests out a barcode reader by sending either a fake or a real tag.  
@@ -36,14 +36,14 @@ public class TestBarcode {
 	 * Start (called by spring)
 	 */
 	public void start() {
-		logger.debug("Starting GPIOApp");
+		logger.debug("Starting Barcode Simulator App");
 	}
 
 	/**
 	 * Stop (called by spring)
 	 */
 	public void stop() {
-		logger.debug("Stopping GPIOApp");
+		logger.debug("Stopping Barcode Simulator App");
 	}
 
 	/**
@@ -51,17 +51,15 @@ public class TestBarcode {
 	 */
 	public void sendMessage(String message) {
 		try {
-			Socket sock = new Socket(AmbientBarcodeConstants.IP_ADDRESS,
-					AmbientBarcodeConstants.PORT);
+			Socket sock = new Socket(BarcodeConstants.IP_ADDRESS,
+					BarcodeConstants.PORT);
 			DataOutputStream dos = new DataOutputStream(sock.getOutputStream());
 			dos.writeBytes(message);
 		} catch (UnknownHostException e) {
-			logger.error("Unknown host exception at IP: "
-					+ AmbientBarcodeConstants.IP_ADDRESS + " and port: "
-					+ AmbientBarcodeConstants.PORT);
+			logger.error("Unknown host exception at IP: " + e.getMessage());
 		} catch (IOException e) {
 			logger.error("IOException occured while sending message "
-					+ "to barcode");
+					+ "to barcode: " +  e.getMessage());
 		}
 	}
 }

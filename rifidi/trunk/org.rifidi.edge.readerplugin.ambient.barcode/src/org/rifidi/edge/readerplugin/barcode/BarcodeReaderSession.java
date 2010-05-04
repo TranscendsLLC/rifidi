@@ -1,5 +1,5 @@
 /*
- *  AmbientBarcodeReaderSession.java
+ *  BarcodeReaderSession.java
  *
  *  Created:	Apr 22, 2010
  *  Project:	Rifidi Edge Server - A middleware platform for RFID applications
@@ -9,7 +9,7 @@
  *  License:	GNU Public License (GPL)
  *  				http://www.opensource.org/licenses/gpl-3.0.html
  */
-package org.rifidi.edge.readerplugin.ambient.barcode;
+package org.rifidi.edge.readerplugin.barcode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,15 +27,15 @@ import org.rifidi.edge.core.sensors.sessions.MessageProcessingStrategyFactory;
 import org.rifidi.edge.core.services.notification.NotifierService;
 import org.rifidi.edge.core.services.notification.data.ReadCycle;
 import org.rifidi.edge.core.services.notification.data.ReadCycleMessageCreator;
-import org.rifidi.edge.readerplugin.ambient.barcode.tag.AmbientBarcodeTagHandler;
+import org.rifidi.edge.readerplugin.barcode.tag.BarcodeTagHandler;
 import org.springframework.jms.core.JmsTemplate;
 
 /**
- * The session for the Ambient Barcode reader.
+ * The session for the Barcode reader.
  * 
  * @author Matthew Dean - matt@pramari.com
  */
-public class AmbientBarcodeReaderSession extends
+public class BarcodeReaderSession extends
 		AbstractServerSocketSensorSession {
 
 	/** Service used to send out notifications */
@@ -48,7 +48,7 @@ public class AmbientBarcodeReaderSession extends
 	private JmsTemplate template = null;
 
 	/** A class for handling incoming tags.   */
-	private AmbientBarcodeTagHandler tagHandler = null;
+	private BarcodeTagHandler tagHandler = null;
 
 	/**
 	 * 
@@ -59,7 +59,7 @@ public class AmbientBarcodeReaderSession extends
 	 * @param template
 	 * @param commandConfigurations
 	 */
-	public AmbientBarcodeReaderSession(AbstractSensor<?> sensor, String id,
+	public BarcodeReaderSession(AbstractSensor<?> sensor, String id,
 			int port, JmsTemplate template, NotifierService notifierService,
 			String readerID,
 			Set<AbstractCommandConfiguration<?>> commandConfigurations) {
@@ -68,7 +68,7 @@ public class AmbientBarcodeReaderSession extends
 		this.readerID = readerID;
 		this.template = template;
 		this.notifierService = notifierService;
-		this.tagHandler = new AmbientBarcodeTagHandler(readerID);
+		this.tagHandler = new BarcodeTagHandler(readerID);
 	}
 
 	/*
@@ -101,7 +101,7 @@ public class AmbientBarcodeReaderSession extends
 	 */
 	@Override
 	protected MessageParsingStrategyFactory getMessageParsingStrategyFactory() {
-		return new AmbientBarcodeMessageParsingStrategyFactory();
+		return new BarcodeMessageParsingStrategyFactory();
 	}
 
 	/*
@@ -112,7 +112,7 @@ public class AmbientBarcodeReaderSession extends
 	 */
 	@Override
 	protected MessageProcessingStrategyFactory getMessageProcessingStrategyFactory() {
-		return new AmbientBarcodeMessageProcessingStrategyFactory(this);
+		return new BarcodeMessageProcessingStrategyFactory(this);
 	}
 
 	/**
@@ -132,7 +132,7 @@ public class AmbientBarcodeReaderSession extends
 	 * 
 	 * @author Matthew Dean - matt@pramari.com
 	 */
-	private class AmbientBarcodeMessageParsingStrategyFactory implements
+	private class BarcodeMessageParsingStrategyFactory implements
 			MessageParsingStrategyFactory {
 
 		/*
@@ -144,7 +144,7 @@ public class AmbientBarcodeReaderSession extends
 		 */
 		@Override
 		public MessageParsingStrategy createMessageParser() {
-			return new AmbientBarcodeMessageParsingStrategy();
+			return new BarcodeMessageParsingStrategy();
 		}
 	}
 
@@ -155,13 +155,13 @@ public class AmbientBarcodeReaderSession extends
 	 * 
 	 * @author Matthew Dean - matt@pramari.com
 	 */
-	private class AmbientBarcodeMessageProcessingStrategy implements
+	private class BarcodeMessageProcessingStrategy implements
 			MessageProcessingStrategy {
 
 		/**
 		 * The session object.  
 		 */
-		private AmbientBarcodeReaderSession session = null;
+		private BarcodeReaderSession session = null;
 
 		/**
 		 * Processing strategy for the Ambient Barcode.  
@@ -169,8 +169,8 @@ public class AmbientBarcodeReaderSession extends
 		 * @param session
 		 * @param template
 		 */
-		public AmbientBarcodeMessageProcessingStrategy(SensorSession session) {
-			this.session = (AmbientBarcodeReaderSession) session;
+		public BarcodeMessageProcessingStrategy(SensorSession session) {
+			this.session = (BarcodeReaderSession) session;
 		}
 
 		/*
@@ -190,17 +190,17 @@ public class AmbientBarcodeReaderSession extends
 	 * 
 	 * @author Matthew Dean - matt@pramari.com
 	 */
-	private class AmbientBarcodeMessageProcessingStrategyFactory implements
+	private class BarcodeMessageProcessingStrategyFactory implements
 			MessageProcessingStrategyFactory {
 
 		/** The session */
-		private AmbientBarcodeReaderSession session;
+		private BarcodeReaderSession session;
 
 		/**
 		 * Factory class for the ProcessingStrategy.  
 		 */
-		public AmbientBarcodeMessageProcessingStrategyFactory(
-				AmbientBarcodeReaderSession session) {
+		public BarcodeMessageProcessingStrategyFactory(
+				BarcodeReaderSession session) {
 			this.session = session;
 		}
 
@@ -213,18 +213,17 @@ public class AmbientBarcodeReaderSession extends
 		 */
 		@Override
 		public MessageProcessingStrategy createMessageProcessor() {
-			return new AmbientBarcodeMessageProcessingStrategy(session);
+			return new BarcodeMessageProcessingStrategy(session);
 		}
 
 	}
 
 	/**
 	 * All messages coming back from the barcode reader are 10 characters long.
-	 * So any
 	 * 
 	 * @author Matthew Dean - matt@pramari.com
 	 */
-	private class AmbientBarcodeMessageParsingStrategy implements
+	private class BarcodeMessageParsingStrategy implements
 			MessageParsingStrategy {
 
 		/** The message currently being processed. */

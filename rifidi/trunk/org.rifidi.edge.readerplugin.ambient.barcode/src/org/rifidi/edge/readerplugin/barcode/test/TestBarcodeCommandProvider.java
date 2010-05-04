@@ -9,7 +9,7 @@
  *  License:	GNU Public License (GPL)
  *  				http://www.opensource.org/licenses/gpl-3.0.html
  */
-package org.rifidi.edge.readerplugin.ambient.barcode.test;
+package org.rifidi.edge.readerplugin.barcode.test;
 
 import org.eclipse.osgi.framework.console.CommandInterpreter;
 import org.eclipse.osgi.framework.console.CommandProvider;
@@ -54,7 +54,7 @@ public class TestBarcodeCommandProvider implements CommandProvider {
 	@Override
 	public String getHelp() {
 		StringBuilder retval = new StringBuilder();
-		retval.append("---Ambient Barcode Diagnostic Commands---\n");
+		retval.append("---Barcode Commands---\n");
 		retval.append("\tbarcode [<tagid>]");
 		retval.append(" - Sends a tag that you enter to the barcode "
 				+ "reader.  If you enter a tagid, the value must "

@@ -6,8 +6,8 @@
     http://www.springframework.org/schema/osgi/spring-osgi.xsd">
 
 	<!-- Put reader configuration service in OSGi registry -->
-	<osgi:service id="ambientBarcodeConfigurationFactoryService"
-		ref="ambientBarcodeConfigurationFactory">
+	<osgi:service id="BarcodeConfigurationFactoryService"
+		ref="BarcodeConfigurationFactory">
 		<osgi:interfaces>
 			<value>org.rifidi.edge.core.configuration.ServiceFactory</value>
 			<value>org.rifidi.edge.core.sensors.base.AbstractSensorFactory</value>
