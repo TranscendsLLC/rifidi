@@ -145,11 +145,30 @@ public abstract class DatacontainerEvent implements Serializable {
 			this.length = length;
 		}
 	}
-	
+
 	/**
-	 * Returns the tag identity information.  
+	 * Returns the tag identity information.
 	 * 
 	 * @return
 	 */
 	public abstract BigInteger getID();
+
+	/**
+	 * Get the ID as a formatted number. This string can include leading 0s if
+	 * necessary.
+	 * 
+	 * @return
+	 */
+	public abstract String getFormattedID();
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return getFormattedID();
+	}
+
 }
