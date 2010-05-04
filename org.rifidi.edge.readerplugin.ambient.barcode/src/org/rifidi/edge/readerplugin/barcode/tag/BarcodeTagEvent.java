@@ -1,5 +1,5 @@
 /*
- *  AmbientBarcodeTagEvent.java
+ *  BarcodeTagEvent.java
  *
  *  Created:	Apr 23, 2010
  *  Project:	Rifidi Edge Server - A middleware platform for RFID applications
@@ -9,31 +9,31 @@
  *  License:	GNU Public License (GPL)
  *  				http://www.opensource.org/licenses/gpl-3.0.html
  */
-package org.rifidi.edge.readerplugin.ambient.barcode.tag;
+package org.rifidi.edge.readerplugin.barcode.tag;
 
 import java.math.BigInteger;
 
 import org.rifidi.edge.core.services.notification.data.DatacontainerEvent;
 
 /**
- * This class represents a barcode tag for the Ambient reader.
+ * This class represents a barcode tag for the reader.
  * 
  * @author Matthew Dean - matt@pramari.com
  */
-public class AmbientBarcodeTagEvent extends DatacontainerEvent {
+public class BarcodeTagEvent extends DatacontainerEvent {
 
 	/**
 	 * Generated UID.
 	 */
 	private static final long serialVersionUID = -5334113422705563853L;
 
-	/** Store a hex copy of the epc for comparison. */
+	/** Store a decimal copy of the barcode */
 	protected String barcode = "";
 
 	/**
 	 * Constructor.
 	 */
-	public AmbientBarcodeTagEvent() {
+	public BarcodeTagEvent() {
 		memoryBanks.add(new MemoryBankLengthTuple(new BigInteger("0"), 1));
 	}
 
@@ -46,7 +46,7 @@ public class AmbientBarcodeTagEvent extends DatacontainerEvent {
 	public void setBarcode(BigInteger memBank, Integer length) {
 		memoryBanks.get(0).setLength(length);
 		memoryBanks.get(0).setMemory(memBank);
-		barcode = memBank.toString();
+		barcode = format(memoryBanks.get(0).getMemory());
 	}
 
 	/**
@@ -83,7 +83,7 @@ public class AmbientBarcodeTagEvent extends DatacontainerEvent {
 	 */
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof AmbientBarcodeTagEvent) {
+		if (obj instanceof BarcodeTagEvent) {
 			return barcode.hashCode() == obj.hashCode();
 		}
 		return false;
@@ -113,11 +113,33 @@ public class AmbientBarcodeTagEvent extends DatacontainerEvent {
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
 	public String toString() {
-		return "AmbientBarcodeTagEvent [hex=" + barcode + "]";
+		return "BarcodeTagEvent [id=" + barcode + "]";
+	}
+	
+	/**
+	 * 
+	 * @param integer
+	 * @return
+	 */
+	private String format(BigInteger integer){
+		StringBuffer buffer = new StringBuffer(integer.toString(10));
+		while(buffer.length()<10){
+			buffer.insert(0, "0");
+		}
+		return buffer.toString();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.services.notification.data.DatacontainerEvent#getFormattedID()
+	 */
+	@Override
+	public String getFormattedID() {
+		return barcode;
+	}
+	
 }

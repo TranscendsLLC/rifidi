@@ -1,5 +1,5 @@
 /*
- *  AmbientBarcodeReaderFactory.java
+ *  BarcodeReaderFactory.java
  *
  *  Created:	Apr 22, 2010
  *  Project:	Rifidi Edge Server - A middleware platform for RFID applications
@@ -9,7 +9,7 @@
  *  License:	GNU Public License (GPL)
  *  				http://www.opensource.org/licenses/gpl-3.0.html
  */
-package org.rifidi.edge.readerplugin.ambient.barcode;
+package org.rifidi.edge.readerplugin.barcode;
 
 import java.util.Map;
 
@@ -21,25 +21,25 @@ import org.rifidi.edge.core.sensors.base.AbstractSensorFactory;
 import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
 import org.rifidi.edge.core.services.esper.EsperManagementService;
 import org.rifidi.edge.core.services.notification.NotifierService;
-import org.rifidi.edge.readerplugin.ambient.barcode.tag.AmbientBarcodeTagEvent;
+import org.rifidi.edge.readerplugin.barcode.tag.BarcodeTagEvent;
 import org.springframework.jms.core.JmsTemplate;
 
 /**
- * Factory class for the Ambient Barcode Reader.  
+ * Factory class for the Barcode Reader.  
  * 
  * @author Matthew Dean - matt@pramari.com
  */
-public class AmbientBarcodeReaderFactory extends
-		AbstractSensorFactory<AmbientBarcodeReader> {
+public class BarcodeReaderFactory extends
+		AbstractSensorFactory<BarcodeReader> {
 
 	/** JMS template for sending tag data to JMS Queue */
 	private volatile JmsTemplate template;
 	/** The Unique FACTORY_ID for this Factory */
-	public static final String FACTORY_ID = "Ambient-Barcode";
+	public static final String FACTORY_ID = "Barcode";
 	/** Description of the sensorSession. */
-	private static final String description = "The Rifidi Adapter for the Ambient Barcode Reader";
+	private static final String description = "The Rifidi Adapter for the Barcode Reader";
 	/** The name of the reader that will be displayed */
-	private static final String displayname = "Ambient-Barcode";
+	private static final String displayname = "Barcode";
 	/** A JMS event notification sender */
 	private volatile NotifierService notifierService;
 	private volatile EsperManagementService esperService;
@@ -117,7 +117,7 @@ public class AmbientBarcodeReaderFactory extends
 		if (template == null || notifierService == null) {
 			throw new InvalidStateException("All services are not set");
 		}
-		AmbientBarcodeReader instance = new AmbientBarcodeReader();
+		BarcodeReader instance = new BarcodeReader();
 		instance.setID(serviceID);
 		instance.setTemplate((JmsTemplate) template);
 		instance.setNotifiyService(notifierService);
@@ -143,7 +143,7 @@ public class AmbientBarcodeReaderFactory extends
 	 */
 	@Override
 	public MBeanInfo getServiceDescription(String factoryID) {
-		return (MBeanInfo) AmbientBarcodeReader.mbeaninfo;
+		return (MBeanInfo) BarcodeReader.mbeaninfo;
 	}
 
 	/**
@@ -180,8 +180,8 @@ public class AmbientBarcodeReaderFactory extends
 	public void setEsperService(EsperManagementService esperService) {
 		this.esperService = esperService;
 		this.esperService.getProvider().getEPAdministrator().getConfiguration()
-				.addEventType("AmbientBarcodeTagEvent",
-						AmbientBarcodeTagEvent.class);
+				.addEventType("BarcodeTagEvent",
+						BarcodeTagEvent.class);
 	}
 
 }

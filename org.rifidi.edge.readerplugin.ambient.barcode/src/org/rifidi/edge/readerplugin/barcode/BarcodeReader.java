@@ -1,5 +1,5 @@
 /*
- *  AmbientBarcodeReader.java
+ *  BarcodeReader.java
  *
  *  Created:	Apr 22, 2010
  *  Project:	Rifidi Edge Server - A middleware platform for RFID applications
@@ -9,7 +9,7 @@
  *  License:	GNU Public License (GPL)
  *  				http://www.opensource.org/licenses/gpl-3.0.html
  */
-package org.rifidi.edge.readerplugin.ambient.barcode;
+package org.rifidi.edge.readerplugin.barcode;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -33,16 +33,16 @@ import org.rifidi.edge.core.services.notification.NotifierService;
 import org.springframework.jms.core.JmsTemplate;
 
 /**
- * Sensor class for the Ambient Barcode Reader.  
+ * Sensor class for the Barcode Reader.  
  * 
  * @author Matthew Dean - matt@pramari.com
  */
-public class AmbientBarcodeReader extends
-		AbstractSensor<AmbientBarcodeReaderSession> {
+public class BarcodeReader extends
+		AbstractSensor<BarcodeReaderSession> {
 
 	/** Logger for this class. */
 	private static final Log logger = LogFactory
-			.getLog(AmbientBarcodeReader.class);
+			.getLog(BarcodeReader.class);
 	/** Spring JMS template */
 	private volatile JmsTemplate template;
 	/** The ID of the session */
@@ -50,17 +50,17 @@ public class AmbientBarcodeReader extends
 	/** A wrapper containing the service to send JMS notifications */
 	private volatile NotifierService notifyServiceWrapper;
 	/** The name of the reader that will be displayed */
-	private String displayName = "Ambient Barcode";
+	private String displayName = "Barcode";
 	/** Flag to check if this reader is destroyed. */
 	private AtomicBoolean destroyed = new AtomicBoolean(false);
 	/** The only session an acura reader allows. */
-	private AtomicReference<AmbientBarcodeReaderSession> session = new AtomicReference<AmbientBarcodeReaderSession>();
+	private AtomicReference<BarcodeReaderSession> session = new AtomicReference<BarcodeReaderSession>();
 
 	/** MBeanInfo for this class. */
 	public static final MBeanInfo mbeaninfo;
 	static {
 		AnnotationMBeanInfoStrategy strategy = new AnnotationMBeanInfoStrategy();
-		mbeaninfo = strategy.getMBeanInfo(AmbientBarcodeReader.class);
+		mbeaninfo = strategy.getMBeanInfo(BarcodeReader.class);
 	}
 
 	/*
@@ -84,9 +84,9 @@ public class AmbientBarcodeReader extends
 	public String createSensorSession() throws CannotCreateSessionException {
 		if (!destroyed.get() && session.get() == null) {
 			Integer sessionID = this.sessionID.incrementAndGet();
-			if (session.compareAndSet(null, new AmbientBarcodeReaderSession(
+			if (session.compareAndSet(null, new BarcodeReaderSession(
 					this, Integer.toString(sessionID),
-					AmbientBarcodeConstants.PORT, this.template,
+					BarcodeConstants.PORT, this.template,
 					this.notifyServiceWrapper, super.getID(),
 					new HashSet<AbstractCommandConfiguration<?>>()))) {
 				// TODO: remove this once we get AspectJ in here!
@@ -111,8 +111,8 @@ public class AmbientBarcodeReader extends
 		if (!destroyed.get() && session.get() == null) {
 			Integer sessionID = this.sessionID.incrementAndGet();
 			// TODO: Fix the IP and the port here.
-			if (session.compareAndSet(null, new AmbientBarcodeReaderSession(
-					this, Integer.toString(sessionID), AmbientBarcodeConstants.PORT,
+			if (session.compareAndSet(null, new BarcodeReaderSession(
+					this, Integer.toString(sessionID), BarcodeConstants.PORT,
 					this.template, this.notifyServiceWrapper, super.getID(),
 					new HashSet<AbstractCommandConfiguration<?>>()))) {
 				// TODO: remove this once we get AspectJ in here!
@@ -134,7 +134,7 @@ public class AmbientBarcodeReader extends
 	@Override
 	public void destroySensorSession(String id)
 			throws CannotDestroySensorException {
-		AmbientBarcodeReaderSession ambientsession = session.get();
+		BarcodeReaderSession ambientsession = session.get();
 		if (ambientsession != null && ambientsession.getID().equals(id)) {
 			session.set(null);
 			ambientsession.killAllCommands();
@@ -166,7 +166,7 @@ public class AmbientBarcodeReader extends
 	@Override
 	public Map<String, SensorSession> getSensorSessions() {
 		Map<String, SensorSession> ret = new HashMap<String, SensorSession>();
-		AmbientBarcodeReaderSession ambientsession = session.get();
+		BarcodeReaderSession ambientsession = session.get();
 		if (ambientsession != null) {
 			ret.put(ambientsession.getID(), ambientsession);
 		}
