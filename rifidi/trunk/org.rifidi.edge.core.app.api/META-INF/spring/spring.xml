@@ -8,22 +8,22 @@
 
 	<!-- Create the application and inject esper and teh JMS sender -->
 	<bean id="readZoneMonitoringApp"
-		class="org.rifidi.edge.core.app.api.impl.ReadZoneMonitoringServiceImpl"
+		class="org.rifidi.edge.core.app.api.service.monitoring.impl.ReadZoneMonitoringServiceImpl"
 		init-method="start" destroy-method="stop">
 		<property name="esperService" ref="esperManagementService" />
 	</bean>
 
 	<bean id="readerUptimeMonitoringApp"
-		class="org.rifidi.edge.core.app.api.impl.ReaderUptimeMonitoringServiceImpl"
+		class="org.rifidi.edge.core.app.api.service.monitoring.impl.ReaderUptimeMonitoringServiceImpl"
 		init-method="start" destroy-method="stop">
 		<property name="esperService" ref="esperManagementService" />
 	</bean>
 
 	<osgi:service ref="readZoneMonitoringApp"
-		interface="org.rifidi.edge.core.app.api.impl.ReadZoneMonitoringServiceImpl" />
+		interface="org.rifidi.edge.core.app.api.service.monitoring.ReadZoneMonitoringService" />
 
 	<osgi:service ref="readerUptimeMonitoringApp"
-		interface="org.rifidi.edge.core.app.api.impl.ReaderUptimeMonitoringServiceImpl" />
+		interface="org.rifidi.edge.core.app.api.service.monitoring.ReaderUptimeMonitoringService" />
 
 	<osgi:reference id="esperManagementService"
 		interface="org.rifidi.edge.core.services.esper.EsperManagementService" />
