@@ -27,7 +27,8 @@ import org.rifidi.edge.api.tags.TagDTO;
  * 
  * @author Kyle Neumeier - kyle@pramari.com
  */
-public class TagReadEvent implements Serializable, StandardTagReadEventFieldNames {
+public class TagReadEvent implements Serializable,
+		StandardTagReadEventFieldNames {
 
 	/** Serial Version ID for this class */
 	private static final long serialVersionUID = 1L;
@@ -39,6 +40,8 @@ public class TagReadEvent implements Serializable, StandardTagReadEventFieldName
 	private long timestamp;
 	/** The ID of the reader that saw the tags */
 	private String readerID;
+	/** The toString */
+	private String toString;
 	/**
 	 * Any extra information that a tag contains would be stored here. Velocity
 	 * or Distance information, or anything else about the tag which is not in
@@ -65,6 +68,8 @@ public class TagReadEvent implements Serializable, StandardTagReadEventFieldName
 		this.timestamp = timestamp;
 		this.readerID = readerID;
 		this.extraInformation = new HashMap<String, Serializable>();
+		toString = "TAG READ EVENT: " + "tag:" + tag + "|readerID:" + readerID
+				+ "|antennaID:" + antennaID + "|timestamp:" + timestamp;
 	}
 
 	/**
@@ -124,5 +129,15 @@ public class TagReadEvent implements Serializable, StandardTagReadEventFieldName
 	 */
 	public void addExtraInformation(String key, Serializable value) {
 		this.extraInformation.put(key, value);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return toString;
 	}
 }

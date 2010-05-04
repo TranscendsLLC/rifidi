@@ -41,7 +41,8 @@ public class EPCGeneration2Event extends EPCGeneration1Event {
 	 * @return A hex sting with the first character being an x.
 	 */
 	public String getKillPwd() {
-		return "x" + readMemory(0, 0, 32).toString(16);
+		return "x"
+				+ new String(Hex.encodeHex(readMemory(0, 0, 32).toByteArray()));
 	}
 
 	/**
@@ -60,7 +61,7 @@ public class EPCGeneration2Event extends EPCGeneration1Event {
 	 * @return a hex string with the first character being a x
 	 */
 	public String getAccessPwd() {
-		return "x" + readMemory(0, 32, 32).toString(16);
+		return "x" + new String(Hex.encodeHex(readMemory(0, 32, 32).toByteArray()));
 	}
 
 	/**
@@ -78,7 +79,7 @@ public class EPCGeneration2Event extends EPCGeneration1Event {
 	 * @return
 	 */
 	public String getTid() {
-		return getTIDMemory().toString(16);
+		return new String(Hex.encodeHex(getTIDMemory().toByteArray()));
 	}
 
 	/**
@@ -87,7 +88,7 @@ public class EPCGeneration2Event extends EPCGeneration1Event {
 	 * @return
 	 */
 	public String getUser() {
-		return getUserMemory().toString(16);
+		return new String(Hex.encodeHex(getUserMemory().toByteArray()));
 	}
 
 	/**
@@ -96,7 +97,7 @@ public class EPCGeneration2Event extends EPCGeneration1Event {
 	 * @return
 	 */
 	public String getAfi() {
-		return readMemory(1, 8, 24).toString(16);
+		return new String(Hex.encodeHex(readMemory(1, 8, 24).toByteArray()));
 	}
 
 	/**
@@ -114,7 +115,7 @@ public class EPCGeneration2Event extends EPCGeneration1Event {
 	 * @return
 	 */
 	public String getNsi() {
-		return readMemory(1, 9, 23).toString(16);
+		return new String(Hex.encodeHex(readMemory(1, 9, 23).toByteArray()));
 	}
 
 	/**

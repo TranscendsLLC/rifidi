@@ -14,6 +14,8 @@ package org.rifidi.edge.core.services.notification.data;
 
 import java.math.BigInteger;
 
+import org.apache.commons.codec.binary.Hex;
+
 /**
  * A class that represents a EPC Class 1 Gen 1 Tag
  * 
@@ -42,9 +44,9 @@ public class EPCGeneration1Event extends DatacontainerEvent {
 	 *            The size of the memory bank in bits
 	 */
 	public void setEPCMemory(BigInteger memBank, Integer length) {
+		hex = new String(Hex.encodeHex(memBank.toByteArray()));
 		memoryBanks.get(0).setLength(length);
 		memoryBanks.get(0).setMemory(memBank);
-		hex = memBank.toString(16);
 	}
 
 	/**
@@ -99,10 +101,25 @@ public class EPCGeneration1Event extends DatacontainerEvent {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.rifidi.edge.core.services.notification.data.DatacontainerEvent#getID()
+	 * 
+	 * @see
+	 * org.rifidi.edge.core.services.notification.data.DatacontainerEvent#getID
+	 * ()
 	 */
 	@Override
 	public BigInteger getID() {
 		return this.memoryBanks.get(0).getMemory();
 	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seeorg.rifidi.edge.core.services.notification.data.DatacontainerEvent#
+	 * getFormattedID()
+	 */
+	@Override
+	public String getFormattedID() {
+		return getEpc();
+	}
+
 }
