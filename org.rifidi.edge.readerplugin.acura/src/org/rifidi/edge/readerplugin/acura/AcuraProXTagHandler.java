@@ -13,7 +13,6 @@ package org.rifidi.edge.readerplugin.acura;
 
 import java.math.BigInteger;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import org.rifidi.edge.core.services.notification.data.ReadCycle;
@@ -45,14 +44,7 @@ public class AcuraProXTagHandler {
 	 * 
 	 * @param tagdata
 	 */
-	public void processTag(List<Byte> tagdata) {
-		byte[] byteArray = new byte[tagdata.size()];
-		int x = 0;
-		for (Byte b : tagdata) {
-			byteArray[x] = b;
-			x++;
-		}
-
+	public void processTag(byte[] byteArray) {
 		BigInteger epc = new BigInteger(ByteAndHexConvertingUtility
 				.toHexStringNoSpaces(byteArray), 16);
 		AcuraProXTagEvent acuraTag = new AcuraProXTagEvent();
