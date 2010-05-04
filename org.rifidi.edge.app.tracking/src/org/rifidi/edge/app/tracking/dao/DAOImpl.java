@@ -48,8 +48,8 @@ public class DAOImpl implements ProductsDAO, LogicalReadersDAO {
 				}
 			}
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.debug(e.getMessage());
+			// ignore the SQL exception
 		}
 
 		return ID;
@@ -91,7 +91,7 @@ public class DAOImpl implements ProductsDAO, LogicalReadersDAO {
 
 			}
 		} catch (SQLException e) {
-			logger.warn("SQLException: " + e.getMessage());
+			logger.debug("SQLException: " + e.getMessage());
 		}
 
 		return new String(readerID + ":" + antenna);
