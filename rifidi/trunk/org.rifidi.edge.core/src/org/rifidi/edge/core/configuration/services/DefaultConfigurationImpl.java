@@ -307,7 +307,7 @@ public class DefaultConfigurationImpl implements Configuration, ServiceListener 
 		assert (attributes != null);
 		AttributeList ret = new AttributeList();
 		Set<String> attribNames = new HashSet<String>();
-		for (int count = 0; count < attributes.length - 1; count++) {
+		for (int count = 0; count < attributes.length; count++) {
 			attribNames.add(attributes[count]);
 		}
 		for (Attribute attr : this.attributes.asList()) {
