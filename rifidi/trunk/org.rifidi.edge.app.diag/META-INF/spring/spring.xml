@@ -5,6 +5,17 @@
 	http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
     http://www.springframework.org/schema/osgi 
     http://www.springframework.org/schema/osgi/spring-osgi.xsd">
+    
+    <bean
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<value>classpath:META-INF/spring/bundle.properties
+			</value>
+		</property>
+		<property name="systemPropertiesMode">
+			<value>2</value>
+		</property>
+	</bean>
 
 	<bean id="GPIOApp" class="org.rifidi.edge.app.diag.gpio.GPIOApp"
 		init-method="start" destroy-method="stop">
@@ -18,6 +29,7 @@
 	<bean id="TagApp" class="org.rifidi.edge.app.diag.tags.TagApp"
 		init-method="start" destroy-method="stop">
 		<property name="esperService" ref="esperManagementService" />
+		<property name="recentTagTimeout" value="${org.rifidi.edge.app.diag.recent}"/>
 	</bean>
 
 	<bean id="tagscommands" class="org.rifidi.edge.app.diag.tags.TagAppCommandProvider">
