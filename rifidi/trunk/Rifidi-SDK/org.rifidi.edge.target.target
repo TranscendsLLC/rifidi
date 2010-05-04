@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?pde version="3.5"?>
+
+<target name="Rifidi Edge Server Target">
+<locations>
+<location path="${workspace_loc}/Rifidi-SDK/esper" type="Directory"/>
+<location path="${workspace_loc}/Rifidi-SDK/libraries" type="Directory"/>
+<location path="${workspace_loc}/Rifidi-SDK/eclipseaspects" type="Directory"/>
+<location path="${workspace_loc}/Rifidi-SDK/spring" type="Directory"/>
+<location path="${workspace_loc}/Rifidi-SDK/logging" type="Directory"/>
+<location path="${workspace_loc}/Rifidi-SDK/tomcat" type="Directory"/>
+<location path="${workspace_loc}/Rifidi-SDK/javax" type="Directory"/>
+<location path="${workspace_loc}/Rifidi-SDK/commons" type="Directory"/>
+<location path="${workspace_loc}/Rifidi-SDK/aspectj" type="Directory"/>
+<location path="${workspace_loc}/Rifidi-SDK" type="Profile"/>
+<location path="${workspace_loc}/Rifidi-SDK/rifidi" type="Directory"/>
+</locations>
+<environment>
+<os>win32</os>
+<ws>win32</ws>
+<arch>x86</arch>
+<nl>en_US</nl>
+</environment>
+</target>
