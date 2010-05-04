@@ -11,21 +11,22 @@
  */
 package org.rifidi.edge.readerplugin.acura;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 
 import org.rifidi.edge.core.sensors.sessions.MessageParsingStrategy;
-import org.rifidi.edge.readerplugin.acura.utilities.ByteAndHexConvertingUtility;
 
 /**
+ * Parsing strategy for the
+ * 
  * @author Matthew Dean
- *
  */
 public class AcuraMessageParsingStrategy implements MessageParsingStrategy {
 
-	/** The message currently being processed. */
-	private byte[] _messageBuilder = new byte[0];
-	/** Character that terminates a message from acura. */
-	public static final char TERMINATION_CHAR = '\0';
+	private ArrayList<Byte> messageBuilder = new ArrayList<Byte>();
+
+	// TODO: It is possible we should monitor for start/end bytes instead of
+	// just going on length. For the moment, it doesn't matter.
+	private final int LENGTH = 14;
 
 	/*
 	 * (non-Javadoc)
@@ -34,24 +35,23 @@ public class AcuraMessageParsingStrategy implements MessageParsingStrategy {
 	 * org.rifidi.edge.core.sensors.base.threads.MessageParser#isMessage(byte)
 	 */
 	@Override
-	public byte[] isMessage(byte message) {
-		if (TERMINATION_CHAR == message) {
-			byte[] ret = _messageBuilder;
-			_messageBuilder = new byte[0];
-			return ret;
+	public byte[] isMessage(byte nextByte) {
+		messageBuilder.add(nextByte);
+		if (messageBuilder.size() == LENGTH) {
+			byte[] retval = new byte[LENGTH];
+			int index = 0;
+			for (Byte b : messageBuilder) {
+				retval[index] = b;
+			}
+			return retval;
 		}
-		_messageBuilder = Arrays.copyOf(_messageBuilder,
-				_messageBuilder.length + 1);
-		_messageBuilder[_messageBuilder.length - 1] = message;
-		this.printByteMessage(_messageBuilder);
 		return null;
 	}
-	
-	
-	private void printByteMessage(byte[] message) {
-		for(byte b:message) {
-			System.out.print(ByteAndHexConvertingUtility.toHexString(b) + " ");
-		}
-	}
+
+	// private void printByteMessage(byte[] message) {
+	// for(byte b:message) {
+	// System.out.print(ByteAndHexConvertingUtility.toHexString(b) + " ");
+	// }
+	// }
 
 }
