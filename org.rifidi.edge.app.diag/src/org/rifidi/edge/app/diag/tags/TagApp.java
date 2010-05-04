@@ -2,27 +2,26 @@ package org.rifidi.edge.app.diag.tags;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
-import java.util.concurrent.CopyOnWriteArraySet;
 
-import org.rifidi.edge.core.services.esper.EsperManagementService;
+import org.rifidi.edge.core.app.api.RifidiApp;
 
 import com.espertech.esper.client.EPOnDemandQueryResult;
-import com.espertech.esper.client.EPStatement;
 import com.espertech.esper.client.EventBean;
 
-public class TagApp {
+public class TagApp extends RifidiApp{
 	
-	/** Esper service */
-	private volatile EsperManagementService esperService;
-	/** All statements that have been defined so far */
-	private final Set<EPStatement> statements = new CopyOnWriteArraySet<EPStatement>();
+	private String recentTagTimeout;
 	
+	/*
+	 * (non-Javadoc)
+	 * @see org.rifidi.edge.core.app.api.RifidiApp#start()
+	 */
+	@Override
 	public void start(){
 		
 		// esper statement that creates a window.
 		statements.add(esperService.getProvider().getEPAdministrator().createEPL(
-			"create window recenttags.win:time(10 minute)" +
+			"create window recenttags.win:time("+recentTagTimeout+")" +
 			"(tag_ID String, readerID String, antennaID int, timestamp long)"));
 		
 		statements.add(esperService.getProvider().getEPAdministrator().createEPL(
@@ -37,13 +36,12 @@ public class TagApp {
 			"insert into curtags select tag_ID,readerID,antennaID,timestamp from recenttags"));
 		
 	}
-	
-	public void stop(){
-		for (EPStatement statement : statements) {
-			statement.destroy();
-		}
-	}
 
+	/**
+	 * 
+	 * @param readerID
+	 * @return
+	 */
 	List<TagData> getRecentTags(String readerID) {
 		List<TagData> recentTags = new LinkedList<TagData>();
 		String query = "select * from recenttags where readerID=\""+readerID+"\"";
@@ -62,6 +60,11 @@ public class TagApp {
 		return recentTags;
 	}
 	
+	/**
+	 * 
+	 * @param readerID
+	 * @return
+	 */
 	List<TagData> getCurrentTags(String readerID) {
 		List<TagData> recentTags = new LinkedList<TagData>();
 		String query = "select * from curtags where readerID=\""+readerID+"\"";
@@ -79,15 +82,12 @@ public class TagApp {
 		}
 		return recentTags;
 	}
-	
 	/**
 	 * Called by spring
 	 * 
-	 * @param esperService
-	 *            the esperService to set
+	 * @param timeout
 	 */
-	public void setEsperService(EsperManagementService esperService) {
-		this.esperService = esperService;
+	public void setRecentTagTimeout(String timeout) {
+		this.recentTagTimeout = timeout;
 	}
-
 }
