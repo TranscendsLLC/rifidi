@@ -66,5 +66,6 @@ Export-Package: org.rifidi.edge.core.configuration,
  org.rifidi.edge.core.utilities
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-Description: This bundle contains several core services needed by the edge server, such as ReaderSession service
-Require-Bundle: org.rifidi.edge.core.services;bundle-version="1.2.1",
- org.rifidi.edge.api;bundle-version="1.3.0"
+Require-Bundle: org.rifidi.edge.core.services;bundle-version="1.3.0",
+ org.rifidi.edge.api;bundle-version="1.3.0",
+ org.rifidi.gnu.io;bundle-version="2.1.7"
