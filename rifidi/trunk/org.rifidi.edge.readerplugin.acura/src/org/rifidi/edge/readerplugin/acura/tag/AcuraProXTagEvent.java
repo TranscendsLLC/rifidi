@@ -108,5 +108,11 @@ public class AcuraProXTagEvent extends DatacontainerEvent {
 	public BigInteger getID() {
 		return this.memoryBanks.get(0).getMemory();
 	}
+
+	@Override
+	public String getFormattedID() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 	
 }
