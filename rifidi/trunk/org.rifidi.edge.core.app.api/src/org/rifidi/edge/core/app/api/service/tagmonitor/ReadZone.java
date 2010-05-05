@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.rifidi.edge.core.app.api.service.monitoring;
+package org.rifidi.edge.core.app.api.service.tagmonitor;
 
 import java.util.HashSet;
 import java.util.Set;
