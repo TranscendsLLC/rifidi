@@ -29,7 +29,7 @@
 		<property name="esperService" ref="esperManagementService" />
 		<property name="template" ref="externalJMSTemplate" />
 		<property name="destination" ref="topic" />
-		<property name="readZoneMonitoringService" ref="monitoringService"/>
+		<property name="readZoneMonitoringService" ref="readZoneMonitoringService"/>
 	</bean>
 
 	
@@ -39,6 +39,15 @@
 		<property name="esperService" ref="esperManagementService" />
 		<property name="template" ref="externalJMSTemplate" />
 		<property name="destination" ref="tagtopic" />
+	</bean>
+	
+		<!-- Create the application and inject esper and teh JMS sender -->
+	<bean id="sensorapp" class="org.rifidi.edge.app.tracking.SensorMonitor"
+		init-method="start" destroy-method="stop">
+		<property name="esperService" ref="esperManagementService" />
+		<property name="template" ref="externalJMSTemplate" />
+		<property name="destination" ref="topic" />
+		<property name="sensorMonitoringService" ref="sensorMonitoringService"/>
 	</bean>
 
 	<!-- Create the JMS Sender service -->
@@ -86,8 +95,11 @@
 	<osgi:reference id="externalJMSTemplate"
 		interface="org.springframework.jms.core.JmsTemplate" bean-name="externalJMSTemplate" />
 		
-	<osgi:reference id="monitoringService"
-		interface="org.rifidi.edge.core.app.api.service.monitoring.ReadZoneMonitoringService" />
+	<osgi:reference id="readZoneMonitoringService"
+		interface="org.rifidi.edge.core.app.api.service.tagmonitor.ReadZoneMonitoringService" />
+		
+	<osgi:reference id="sensorMonitoringService"
+		interface="org.rifidi.edge.core.app.api.service.sensormonitor.SensorStatusMonitoringService" />
 	
 
 </beans>

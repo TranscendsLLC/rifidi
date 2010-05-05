@@ -3,11 +3,13 @@
  */
 package org.rifidi.edge.app.tracking;
 
+import java.util.Collections;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.app.api.JMSRifidiApp;
-import org.rifidi.edge.core.app.api.service.monitoring.ReadZoneMonitoringService;
-import org.rifidi.edge.core.app.api.service.monitoring.ReadZoneSubscriber;
+import org.rifidi.edge.core.app.api.service.tagmonitor.ReadZoneMonitoringService;
+import org.rifidi.edge.core.app.api.service.tagmonitor.ReadZoneSubscriber;
 import org.rifidi.edge.core.services.notification.data.TagReadEvent;
 
 /**
@@ -32,7 +34,7 @@ public class TrackingApp extends JMSRifidiApp implements ReadZoneSubscriber {
 	 */
 	@Override
 	public void start() {
-		monitoringService.subscribe(this);
+		monitoringService.subscribe(this, Collections.EMPTY_SET, 10);
 	}
 
 	/*

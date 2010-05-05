@@ -32,10 +32,12 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.mina.common.RuntimeIOException;
 import org.llrp.ltk.generated.enumerations.AccessReportTriggerType;
+import org.llrp.ltk.generated.enumerations.GetReaderCapabilitiesRequestedData;
 import org.llrp.ltk.generated.enumerations.NotificationEventType;
 import org.llrp.ltk.generated.enumerations.ROReportTriggerType;
 import org.llrp.ltk.generated.enumerations.StatusCode;
 import org.llrp.ltk.generated.interfaces.AirProtocolTagData;
+import org.llrp.ltk.generated.messages.GET_READER_CAPABILITIES;
 import org.llrp.ltk.generated.messages.RO_ACCESS_REPORT;
 import org.llrp.ltk.generated.messages.SET_READER_CONFIG;
 import org.llrp.ltk.generated.messages.SET_READER_CONFIG_RESPONSE;
@@ -63,12 +65,15 @@ import org.rifidi.edge.api.SessionStatus;
 import org.rifidi.edge.core.sensors.base.AbstractSensor;
 import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
 import org.rifidi.edge.core.sensors.commands.Command;
+import org.rifidi.edge.core.sensors.commands.TimeoutCommand;
 import org.rifidi.edge.core.sensors.sessions.AbstractSensorSession;
 import org.rifidi.edge.core.services.notification.NotifierService;
 import org.rifidi.edge.core.services.notification.data.EPCGeneration2Event;
 import org.rifidi.edge.core.services.notification.data.ReadCycle;
 import org.rifidi.edge.core.services.notification.data.StandardTagReadEventFieldNames;
 import org.rifidi.edge.core.services.notification.data.TagReadEvent;
+import org.rifidi.edge.core.services.notification.data.management.SensorConnectedEvent;
+import org.rifidi.edge.core.services.notification.data.management.SensorDisconnectedEvent;
 import org.rifidi.edge.readerplugin.llrp.commands.internal.LLRPReset;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
@@ -216,6 +221,7 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 			if (!processing.compareAndSet(false, true)) {
 				logger.warn("Executor was already active! ");
 			}
+			submit(getTimeoutCommand(), 10, TimeUnit.SECONDS);
 			setStatus(SessionStatus.PROCESSING);
 
 		} catch (TimeoutException e) {
@@ -236,6 +242,21 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 	@Override
 	protected Command getResetCommand() {
 		return new LLRPReset("LLRPResetCommand");
+	}
+
+	private Command getTimeoutCommand() {
+		return new TimeoutCommand("LLRP Timeout") {
+
+			@Override
+			protected void execute() throws TimeoutException {
+				GET_READER_CAPABILITIES grc = new GET_READER_CAPABILITIES();
+				GetReaderCapabilitiesRequestedData data = new GetReaderCapabilitiesRequestedData();
+				data.set(GetReaderCapabilitiesRequestedData.LLRP_Capabilities);
+				grc.setRequestedData(data);
+				transact(grc);
+
+			}
+		};
 	}
 
 	/**
@@ -276,16 +297,14 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 	 * 
 	 */
 	public LLRPMessage transact(LLRPMessage message) {
-		// System.out.println("Sending an LLRP message: " + message.getName());
-
 		LLRPMessage retVal = null;
 		try {
 			synchronized (connection) {
-				retVal = this.connection.transact(message);
+				retVal = this.connection.transact(message, 10000);
 			}
 		} catch (TimeoutException e) {
 			logger.error("Cannot send LLRP Message: ", e);
-			disconnect();
+			super.handleTimeout();
 		}
 
 		return retVal;
@@ -453,13 +472,14 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 				for (TagReportData t : trdl) {
 					AntennaID antid = t.getAntennaID();
 					EPCGeneration2Event gen2event = new EPCGeneration2Event();
-					if(t.getEPCParameter() instanceof EPCData){
-						EPCData id = (EPCData)t.getEPCParameter();
+					if (t.getEPCParameter() instanceof EPCData) {
+						EPCData id = (EPCData) t.getEPCParameter();
 						String EPCData = id.getEPC().toString(16);
-						gen2event.setEPCMemory(this.parseString(EPCData), EPCData.length()*4);
-						
-					}else{
-						EPC_96 id = (EPC_96) t.getEPCParameter();						
+						gen2event.setEPCMemory(this.parseString(EPCData),
+								EPCData.length() * 4);
+
+					} else {
+						EPC_96 id = (EPC_96) t.getEPCParameter();
 						String EPCData = id.getEPC().toString(16);
 						gen2event.setEPCMemory(this.parseString(EPCData), 96);
 					}
@@ -469,41 +489,47 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 									.currentTimeMillis());
 					// Add the custom information to the tags.
 					if (t.getROSpecID() != null) {
-					String rosid = t.getROSpecID().getROSpecID().toInteger()
-							.toString();
-					tag.addExtraInformation(LLRPTagReadEventFieldNames.ROSPEC_ID, rosid);
+						String rosid = t.getROSpecID().getROSpecID()
+								.toInteger().toString();
+						tag.addExtraInformation(
+								LLRPTagReadEventFieldNames.ROSPEC_ID, rosid);
 					}
 					if (t.getPeakRSSI() != null) {
 						String rssi = t.getPeakRSSI().getPeakRSSI().toInteger()
 								.toString();
-						tag.addExtraInformation(StandardTagReadEventFieldNames.RSSI, rssi);
+						tag.addExtraInformation(
+								StandardTagReadEventFieldNames.RSSI, rssi);
 					}
 
 					if (t.getSpecIndex() != null) {
 						String specindex = t.getSpecIndex().getSpecIndex()
 								.toInteger().toString();
-						tag.addExtraInformation(LLRPTagReadEventFieldNames.SPEC_INDEX,
+						tag.addExtraInformation(
+								LLRPTagReadEventFieldNames.SPEC_INDEX,
 								specindex);
 					}
 					if (t.getInventoryParameterSpecID() != null) {
 						String invparamspecid = t.getInventoryParameterSpecID()
 								.getInventoryParameterSpecID().toInteger()
 								.toString();
-						tag.addExtraInformation(LLRPTagReadEventFieldNames.INVPARAMSPECID,
+						tag.addExtraInformation(
+								LLRPTagReadEventFieldNames.INVPARAMSPECID,
 								invparamspecid);
 					}
 
 					if (t.getChannelIndex() != null) {
 						String channelindex = t.getChannelIndex()
 								.getChannelIndex().toInteger().toString();
-						tag.addExtraInformation(LLRPTagReadEventFieldNames.CHANNELINDEX,
+						tag.addExtraInformation(
+								LLRPTagReadEventFieldNames.CHANNELINDEX,
 								channelindex);
 					}
 
 					if (t.getFirstSeenTimestampUTC() != null) {
 						String firstseenutc = t.getFirstSeenTimestampUTC()
 								.getMicroseconds().toBigInteger().toString();
-						tag.addExtraInformation(LLRPTagReadEventFieldNames.FIRSTSEENUTC,
+						tag.addExtraInformation(
+								LLRPTagReadEventFieldNames.FIRSTSEENUTC,
 								firstseenutc);
 					}
 
@@ -511,46 +537,52 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 						String firstseenuptime = t
 								.getFirstSeenTimestampUptime()
 								.getMicroseconds().toBigInteger().toString();
-						tag.addExtraInformation(LLRPTagReadEventFieldNames.FIRSTSEENUPTIME,
+						tag.addExtraInformation(
+								LLRPTagReadEventFieldNames.FIRSTSEENUPTIME,
 								firstseenuptime);
 					}
-					
-					if (t.getLastSeenTimestampUTC()!= null) {
+
+					if (t.getLastSeenTimestampUTC() != null) {
 						String lastseenutc = t.getLastSeenTimestampUTC()
 								.getMicroseconds().toBigInteger().toString();
-						tag.addExtraInformation(LLRPTagReadEventFieldNames.LASTSEENUTC,
+						tag.addExtraInformation(
+								LLRPTagReadEventFieldNames.LASTSEENUTC,
 								lastseenutc);
 					}
-					
+
 					if (t.getLastSeenTimestampUptime() != null) {
 						String lastseenuptime = t.getLastSeenTimestampUptime()
 								.getMicroseconds().toBigInteger().toString();
-						tag.addExtraInformation(LLRPTagReadEventFieldNames.LASTSEENUPTIME,
+						tag.addExtraInformation(
+								LLRPTagReadEventFieldNames.LASTSEENUPTIME,
 								lastseenuptime);
 					}
-					
+
 					if (t.getTagSeenCount() != null) {
 						String tagseencount = t.getTagSeenCount().getTagCount()
 								.toInteger().toString();
-						tag.addExtraInformation(LLRPTagReadEventFieldNames.TAGSEENCOUNT,
+						tag.addExtraInformation(
+								LLRPTagReadEventFieldNames.TAGSEENCOUNT,
 								tagseencount);
 					}
-					
+
 					for (AirProtocolTagData aptd : t
 							.getAirProtocolTagDataList()) {
 						if (aptd instanceof C1G2_CRC) {
 							String crc = ((C1G2_CRC) aptd).getCRC().toInteger()
 									.toString();
-							tag.addExtraInformation(LLRPTagReadEventFieldNames.AIRPROT_CRC,
-									crc);
+							tag
+									.addExtraInformation(
+											LLRPTagReadEventFieldNames.AIRPROT_CRC,
+											crc);
 						} else if (aptd instanceof C1G2_PC) {
 							String pc = ((C1G2_PC) aptd).getPC_Bits()
 									.toInteger().toString();
-							tag.addExtraInformation(LLRPTagReadEventFieldNames.AIRPROT_PC,
-									pc);
+							tag.addExtraInformation(
+									LLRPTagReadEventFieldNames.AIRPROT_PC, pc);
 						}
 					}
-					
+
 					// for (String key : tag.getExtraInformation().keySet()) {
 					// System.out.println(key + ", "
 					// + tag.getExtraInformation().get(key));
