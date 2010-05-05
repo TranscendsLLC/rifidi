@@ -14,7 +14,6 @@ package org.rifidi.edge.readerplugin.llrp.commands;
 import javax.management.MBeanInfo;
 
 import org.rifidi.edge.core.configuration.impl.AbstractCommandConfigurationFactory;
-import org.rifidi.edge.core.configuration.mbeanstrategies.AnnotationMBeanInfoStrategy;
 import org.rifidi.edge.core.exceptions.InvalidStateException;
 import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
 import org.rifidi.edge.readerplugin.llrp.LLRPReaderFactory;
@@ -26,12 +25,6 @@ import org.rifidi.edge.readerplugin.llrp.LLRPReaderFactory;
  */
 public class LLRPROSpecFromFileCommandConfigurationFactory extends
 		AbstractCommandConfigurationFactory<AbstractCommandConfiguration<?>> {
-	/** MBeanInfo for this class. */
-	public static final MBeanInfo mbeaninfo;
-	static {
-		AnnotationMBeanInfoStrategy strategy = new AnnotationMBeanInfoStrategy();
-		mbeaninfo = strategy.getMBeanInfo(LLRPROSpecFromFileCommandConfiguration.class);
-	}
 
 	/*
 	 * (non-Javadoc)
@@ -107,7 +100,7 @@ public class LLRPROSpecFromFileCommandConfigurationFactory extends
 	 */
 	@Override
 	public MBeanInfo getServiceDescription(String factoryID) {
-		return (MBeanInfo) mbeaninfo.clone();
+		return (MBeanInfo) LLRPROSpecFromFileCommandConfiguration.mbeaninfo.clone();
 	}
 
 }
