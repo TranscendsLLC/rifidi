@@ -23,9 +23,7 @@ import gnu.io.UnsupportedCommOperationException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Queue;
 import java.util.Set;
-import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 
@@ -37,7 +35,7 @@ import org.rifidi.edge.api.SessionStatus;
 import org.rifidi.edge.core.sensors.base.AbstractSensor;
 import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
 import org.rifidi.edge.core.sensors.messages.ByteMessage;
-import org.rifidi.edge.core.sensors.sessions.poll.QueueingMessageProcessingStrategy;
+import org.rifidi.edge.core.sensors.sessions.threads.WriteThread;
 import org.springframework.jms.core.JmsTemplate;
 
 /**
@@ -63,12 +61,7 @@ public abstract class AbstractSerialSensorSession extends AbstractSensorSession 
 	private CommPortIdentifier portIdentifier = null;
 
 	/** Queue for writing messages. */
-	private LinkedBlockingQueue<ByteMessage> readQueue = new LinkedBlockingQueue<ByteMessage>();
-	/** Queue for writing messages. */
 	private LinkedBlockingQueue<ByteMessage> writeQueue = new LinkedBlockingQueue<ByteMessage>();
-
-	/** The factory to produce MessageProcessingStrategy objects */
-	private final QueueingMessageProcessingStrategyFactory qmpsf;
 
 	// Info for creating the serial port:
 	private String commPortName = null;
@@ -88,11 +81,11 @@ public abstract class AbstractSerialSensorSession extends AbstractSensorSession 
 			String commPortName, int baud, int databits, int stopbits,
 			int parity) {
 		super(sensor, ID, destination, template, commandConfigurations);
+		this.commPortName = commPortName;
 		this.baud = baud;
 		this.databits = databits;
 		this.stopbits = stopbits;
 		this.parity = parity;
-		this.qmpsf = new QueueingMessageProcessingStrategyFactory(readQueue);
 	}
 
 	/*
@@ -162,9 +155,8 @@ public abstract class AbstractSerialSensorSession extends AbstractSensorSession 
 				OutputStream out = serialPort.getOutputStream();
 				// Start the thread
 				this.readObject = new SerialReader(in, this
-						.getMessageParsingStrategyFactory(), this.qmpsf
-						.createMessageProcessor());
-				this.writeThread = new Thread(new SerialWriteThread(out,
+						.getMessageParsingStrategyFactory());
+				this.writeThread = new Thread(new WriteThread(out,
 						this.writeQueue));
 			} else {
 				logger.warn("Error: Port is not a serial port.");
@@ -198,12 +190,12 @@ public abstract class AbstractSerialSensorSession extends AbstractSensorSession 
 	}
 
 	/**
-	 * This method gets called when a message is received from the reader.  
+	 * This method gets called when a message is received from the reader.
 	 * 
 	 * @param message
 	 */
-	public abstract void messageReceived(ByteMessage message);
-	
+	protected abstract void messageReceived(ByteMessage message);
+
 	/**
 	 * Send a message over the line. This method is protected so that subclasses
 	 * can choose whether or not to expose it to clients.
@@ -228,9 +220,9 @@ public abstract class AbstractSerialSensorSession extends AbstractSensorSession 
 		InputStream in = null;
 
 		/** Message Parser used in this thread */
+		private MessageParsingStrategyFactory messageParserFactory;
+
 		private MessageParsingStrategy messageParser;
-		/** Message Processor to be used in this thread */
-		private MessageProcessingStrategy messageProcessor;
 
 		/**
 		 * The thread to read data from the serial port.
@@ -239,11 +231,10 @@ public abstract class AbstractSerialSensorSession extends AbstractSensorSession 
 		 *            The InputStream that comes in from the reader.
 		 */
 		public SerialReader(InputStream in,
-				MessageParsingStrategyFactory messageParserFactory,
-				MessageProcessingStrategy messageProcessor) {
+				MessageParsingStrategyFactory messageParserFactory) {
 			this.in = in;
+			this.messageParserFactory = messageParserFactory;
 			this.messageParser = messageParserFactory.createMessageParser();
-			this.messageProcessor = messageProcessor;
 		}
 
 		/*
@@ -260,8 +251,9 @@ public abstract class AbstractSerialSensorSession extends AbstractSensorSession 
 				while ((data = in.read()) > -1) {
 					byte[] message = messageParser.isMessage((byte) data);
 					if (message != null) {
-						this.messageProcessor.processMessage(message);
 						messageReceived(new ByteMessage(message));
+						this.messageParser = messageParserFactory
+								.createMessageParser();
 						break;
 					}
 				}
@@ -271,72 +263,4 @@ public abstract class AbstractSerialSensorSession extends AbstractSensorSession 
 			}
 		}
 	}
-
-	/**
-	 * Write data to the serial port.
-	 * 
-	 * @author Matthew Dean - matt@pramari.com
-	 */
-	public class SerialWriteThread implements Runnable {
-
-		OutputStream out = null;
-		/** Reference to the message queue. */
-		private BlockingQueue<ByteMessage> messageQueue;
-
-		/**
-		 * The thread to write data to a serial port.
-		 * 
-		 * @param out
-		 */
-		public SerialWriteThread(OutputStream out,
-				BlockingQueue<ByteMessage> messageQueue) {
-			this.out = out;
-			this.messageQueue = messageQueue;
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see java.lang.Runnable#run()
-		 */
-		@Override
-		public void run() {
-			logger.debug("Starting Write Thread");
-			try {
-				while (!Thread.interrupted()) {
-					ByteMessage m = messageQueue.take();
-					out.write(m.message);
-					out.flush();
-				}
-			} catch (IOException e) {
-				logger.error(e);
-			} catch (InterruptedException e) {
-				Thread.currentThread().interrupt();
-			}
-		}
-	}
-
-	/**
-	 * FIXME: Stolen from AbstractPollIP. We should make this into a full class
-	 * instead of an inner class - Matt
-	 * 
-	 * @author Kyle Neumeier - kyle@pramari.com
-	 */
-	private class QueueingMessageProcessingStrategyFactory implements
-			MessageProcessingStrategyFactory {
-
-		/** The queue to put new objects on */
-		private final Queue<ByteMessage> queue;
-
-		public QueueingMessageProcessingStrategyFactory(Queue<ByteMessage> queue) {
-			this.queue = queue;
-		}
-
-		@Override
-		public MessageProcessingStrategy createMessageProcessor() {
-			return new QueueingMessageProcessingStrategy(queue);
-		}
-
-	}
-
 }
