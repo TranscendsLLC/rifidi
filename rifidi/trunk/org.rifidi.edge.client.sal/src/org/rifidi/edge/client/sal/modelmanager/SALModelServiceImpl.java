@@ -80,4 +80,12 @@ public class SALModelServiceImpl implements SALModelService {
 
 	}
 
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.client.sal.modelmanager.SALModelService#getModel()
+	 */
+	@Override
+	public RemoteEdgeServer getModel() {
+		return this.model;
+	}
+	
 }

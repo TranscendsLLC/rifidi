@@ -11,6 +11,8 @@
  */
 package org.rifidi.edge.client.sal.modelmanager;
 
+import org.rifidi.edge.client.model.sal.RemoteEdgeServer;
+
 
 /**
  * This is the interface for a service that creates a SAL model and distributes
@@ -39,4 +41,6 @@ public interface SALModelService {
 	 * Reload the model and distribute to listeners and viewers
 	 */
 	public void reload();
+	
+	public RemoteEdgeServer getModel();
 }
