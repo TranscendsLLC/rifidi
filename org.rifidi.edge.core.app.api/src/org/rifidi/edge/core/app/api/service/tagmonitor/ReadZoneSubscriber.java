@@ -9,7 +9,7 @@
  *  License:	GNU Public License (GPL)
  *  				http://www.opensource.org/licenses/gpl-3.0.html
  */
-package org.rifidi.edge.core.app.api.service.monitoring;
+package org.rifidi.edge.core.app.api.service.tagmonitor;
 
 import org.rifidi.edge.core.services.notification.data.TagReadEvent;
 

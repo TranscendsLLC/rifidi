@@ -9,14 +9,14 @@
  *  License:	GNU Public License (GPL)
  *  				http://www.opensource.org/licenses/gpl-3.0.html
  */
-package org.rifidi.edge.core.app.api.service.monitoring.impl;
+package org.rifidi.edge.core.app.api.service.tagmonitor.impl;
 
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import org.rifidi.edge.core.app.api.service.monitoring.ReadZone;
+import org.rifidi.edge.core.app.api.service.tagmonitor.ReadZone;
 
 /**
  * This is a factory that creates the esper statements for monitoring read

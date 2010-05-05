@@ -9,7 +9,7 @@
  *  License:	GNU Public License (GPL)
  *  				http://www.opensource.org/licenses/gpl-3.0.html
  */
-package org.rifidi.edge.core.app.api.service.monitoring.impl;
+package org.rifidi.edge.core.app.api.service.tagmonitor.impl;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -17,9 +17,9 @@ import java.util.Map;
 import java.util.Set;
 
 import org.rifidi.edge.core.app.api.RifidiApp;
-import org.rifidi.edge.core.app.api.service.monitoring.ReadZone;
-import org.rifidi.edge.core.app.api.service.monitoring.ReadZoneMonitoringService;
-import org.rifidi.edge.core.app.api.service.monitoring.ReadZoneSubscriber;
+import org.rifidi.edge.core.app.api.service.tagmonitor.ReadZone;
+import org.rifidi.edge.core.app.api.service.tagmonitor.ReadZoneMonitoringService;
+import org.rifidi.edge.core.app.api.service.tagmonitor.ReadZoneSubscriber;
 import org.rifidi.edge.core.services.notification.data.TagReadEvent;
 
 import com.espertech.esper.client.EPServiceProvider;
