@@ -40,6 +40,8 @@ import org.rifidi.edge.core.sensors.SensorSession;
 import org.rifidi.edge.core.sensors.base.AbstractSensor;
 import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
 import org.rifidi.edge.core.sensors.commands.Command;
+import org.rifidi.edge.core.services.notification.data.management.SensorConnectedEvent;
+import org.rifidi.edge.core.services.notification.data.management.SensorDisconnectedEvent;
 import org.springframework.jms.core.JmsTemplate;
 
 /**
@@ -400,7 +402,22 @@ public abstract class AbstractSensorSession extends SensorSession {
 	 */
 	protected synchronized void setStatus(SessionStatus status) {
 		logger.debug("Changing state: " + status);
+		SessionStatus oldStatus =this.status;
 		this.status = status;
+		if (status == SessionStatus.PROCESSING
+				&& oldStatus != SessionStatus.PROCESSING) {
+			SensorConnectedEvent connectedEvent = new SensorConnectedEvent(this
+					.getSensor().getID(), System.currentTimeMillis(), this
+					.getID());
+			this.getSensor().sendEvent(connectedEvent);
+		}
+		if (oldStatus == SessionStatus.PROCESSING
+				&& status != SessionStatus.PROCESSING) {
+			SensorDisconnectedEvent disconnectedEvent = new SensorDisconnectedEvent(
+					this.getSensor().getID(), System.currentTimeMillis(), this
+							.getID());
+			this.getSensor().sendEvent(disconnectedEvent);
+		}
 	}
 
 	/**

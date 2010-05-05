@@ -25,8 +25,9 @@ import org.rifidi.edge.core.services.notification.data.ReadCycle;
 import org.rifidi.edge.core.services.notification.data.TagReadEvent;
 import org.rifidi.edge.core.services.notification.data.gpio.GPIEvent;
 import org.rifidi.edge.core.services.notification.data.gpio.GPOEvent;
-import org.rifidi.edge.core.services.notification.data.management.SessionDownEvent;
-import org.rifidi.edge.core.services.notification.data.management.SessionUpEvent;
+import org.rifidi.edge.core.services.notification.data.management.SensorConnectedEvent;
+import org.rifidi.edge.core.services.notification.data.management.SensorDisconnectedEvent;
+import org.rifidi.edge.core.services.notification.data.management.SensorStatusEvent;
 
 import com.espertech.esper.client.Configuration;
 import com.espertech.esper.client.EPServiceProvider;
@@ -60,8 +61,9 @@ public class EsperManagementServiceImpl implements EsperManagementService {
 		config.addEventType("ReadCycle", ReadCycle.class);
 		config.addEventType("GPIEvent", GPIEvent.class);
 		config.addEventType("GPOEvent", GPOEvent.class);
-		config.addEventType("SessionDownEvent", SessionDownEvent.class);
-		config.addEventType("SessionUpEvent", SessionUpEvent.class);
+		config.addEventType("SensorStatusEvent",SensorStatusEvent.class);
+		config.addEventType("SensorDisconnectedEvent", SensorDisconnectedEvent.class);
+		config.addEventType("SensorConnectedEvent", SensorConnectedEvent.class);
 	}
 
 	/*
