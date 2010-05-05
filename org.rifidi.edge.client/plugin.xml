@@ -89,7 +89,7 @@
          </property>
          <property
                name="aboutText"
-               value="Thank you for using Rifidi Workbench version 1.0.0.  For assistance, please see our forums at http://forums.rifidi.org">
+               value="Thank you for using Rifidi Workbench version 1.2 beta.  For assistance, please see our forums at http://forums.rifidi.org">
          </property>
          <property
                name="windowImages"

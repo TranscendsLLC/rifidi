@@ -18,22 +18,36 @@
                closeable="false"
                id="org.eclipse.ui.console.ConsoleView"
                minimized="false"
-               relationship="stack"
+               ratio="1"
+               relationship="right"
                relative="org.eclipse.ui.editorss"
+               visible="true">
+         </view>
+         <view
+               closeable="false"
+               id="org.rifidi.edge.client.monitoring.tagview"
+               minimized="false"
+               ratio=".7"
+               relationship="top"
+               relative="org.eclipse.ui.console.ConsoleView"
+               showTitle="true"
                visible="true">
          </view>
          <perspectiveShortcut
                id="org.rifidi.edge.client.monitoring.perspective">
          </perspectiveShortcut>
+         <actionSet
+               id="org.rifidi.edge.client.monitoring.actionSet">
+         </actionSet>
       </perspectiveExtension>
    </extension>
    <extension
          point="org.eclipse.ui.viewActions">
       <viewContribution
             id="org.rifidi.edge.client.monitoring.viewContribution1"
-            targetID="org.rifidi.edge.client.monitoring.viewContribution1">
+            targetID="org.eclipse.ui.console.ConsoleView">
          <action
-               class="org.rifidi.edge.client.monitoring.RefreshConsoleActionDelegate"
+               class="org.rifidi.edge.client.monitoring.console.RefreshConsoleActionDelegate"
                icon="IMG/arrow_refresh.png"
                id="org.rifidi.edge.client.monitoring.RefreshConsoleActionDelagate"
                label="Refresh"
@@ -41,6 +55,112 @@
                toolbarPath="toolbar">
          </action>
       </viewContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            allowMultiple="false"
+            class="org.rifidi.edge.client.monitoring.tagview.TagView"
+            icon="IMG/newspaper.png"
+            id="org.rifidi.edge.client.monitoring.tagview"
+            name="Tag View"
+            restorable="true">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            description="Clear the list of tags that have been seen"
+            id="org.rifidi.edge.client.monitoring.tags.clear"
+            name="Clear Tags">
+      </command>
+      <command
+            description="Refresh JMS Connection for Tags Destination"
+            id="org.rifidi.edge.client.monitoring.tags.refresh"
+            name="Refresh Tags JMS">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="org.rifidi.edge.client.monitoring.tagview.handlers.ClearTagHandlers"
+            commandId="org.rifidi.edge.client.monitoring.tags.clear">
+      </handler>
+      <handler
+            class="org.rifidi.edge.client.monitoring.tagview.handlers.RefreshJMSHandler"
+            commandId="org.rifidi.edge.client.monitoring.tags.refresh">
+      </handler>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="toolbar:org.rifidi.edge.client.monitoring.tagview?after=additions">
+         <command
+               commandId="org.rifidi.edge.client.monitoring.tags.clear"
+               icon="IMG/delete.png"
+               label="Clear Tag List"
+               style="push"
+               tooltip="Clears the list of tags that have been seen">
+         </command>
+         <command
+               commandId="org.rifidi.edge.client.monitoring.tags.refresh"
+               icon="IMG/arrow_refresh.png"
+               label="Refresh Tags JMS"
+               style="push"
+               tooltip="Refreshs the JMS connection for the tags">
+         </command>
+      </menuContribution>
+      <menuContribution
+            locationURI="menu:org.eclipse.ui.main.menu?after=org.rifidi.edge.client.menus.window">
+         <menu
+               icon="IMG/monitor.png"
+               id="monitor"
+               label="Monitoring">
+         </menu>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.actionSets">
+      <actionSet
+            id="org.rifidi.edge.client.monitoring.actionSet"
+            label="Monitoring Perspective Actions"
+            visible="false">
+         <action
+               class="org.rifidi.edge.client.monitoring.actions.RefreshAction"
+               icon="IMG/arrow_refresh.png"
+               id="org.rifidi.edge.client.monitoring.refresh"
+               label="Refresh"
+               menubarPath="monitor/refresh"
+               pulldown="true"
+               style="push"
+               tooltip="Refresh JMS Monitoring Connections">
+         </action>
+         <action
+               class="org.rifidi.edge.client.monitoring.actions.ClearEventsAction"
+               icon="IMG/delete.png"
+               id="org.rifidi.edge.client.monitoring.clear"
+               label="Clear"
+               menubarPath="monitor/clear"
+               style="push"
+               tooltip="Clear the collected events">
+         </action>
+         <action
+               class="org.rifidi.edge.client.monitoring.actions.PauseAction"
+               icon="IMG/control_pause_blue.png"
+               id="org.rifidi.edge.client.monitoring.pause"
+               label="Pause"
+               menubarPath="monitor/pause"
+               style="toggle"
+               tooltip="Pause the Event Monitors">
+         </action>
+         <action
+               class="org.rifidi.edge.client.monitoring.actions.StopJMSAction"
+               id="org.rifidi.edge.client.monitoring.stop"
+               label="Stop JMS"
+               menubarPath="monitor/stop"
+               style="push">
+         </action>
+      </actionSet>
    </extension>
 
 </plugin>
