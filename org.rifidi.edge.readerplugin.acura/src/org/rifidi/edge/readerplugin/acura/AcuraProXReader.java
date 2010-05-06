@@ -202,7 +202,7 @@ public class AcuraProXReader extends AbstractSensor<AcuraProXReaderSession> {
 	@Property(displayName = "Serial Port", description = "The serial port that the server "
 			+ "will attempt to connect to", writable = true, type = PropertyType.PT_STRING, category = "connection"
 			+ "", defaultValue = "COM1", orderValue = 3)
-	public String getMaxNumConnectionAttempts() {
+	public String getSerialPort() {
 		return this.serialPort;
 	}
 
@@ -210,7 +210,7 @@ public class AcuraProXReader extends AbstractSensor<AcuraProXReaderSession> {
 	 * @param MAX_CONNECTION_ATTEMPTS
 	 *            the MAX_CONNECTION_ATTEMPTS to set
 	 */
-	public void setMaxNumConnectionAttempts(String serialPort) {
+	public void setSerialPort(String serialPort) {
 		this.serialPort = serialPort;
 	}
 

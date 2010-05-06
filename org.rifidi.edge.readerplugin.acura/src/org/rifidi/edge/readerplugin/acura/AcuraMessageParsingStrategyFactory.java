@@ -26,6 +26,6 @@ public class AcuraMessageParsingStrategyFactory implements
 	 */
 	@Override
 	public MessageParsingStrategy createMessageParser() {
-		return null;
+		return new AcuraMessageParsingStrategy();
 	}
 }
