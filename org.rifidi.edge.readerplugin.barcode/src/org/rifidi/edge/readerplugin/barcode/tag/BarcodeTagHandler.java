@@ -44,13 +44,9 @@ public class BarcodeTagHandler {
 	public ReadCycle processTag(byte[] tag) {
 		// We need every byte but the first one, which is an unprintable
 		// character.
-		byte[] actualtag = new byte[tag.length - 1];
-		for (int i = 1; i < tag.length; i++) {
-			actualtag[i - 1] = (byte) (tag[i]);
-		}
 
 		StringBuilder sb = new StringBuilder();
-		for (byte b : actualtag) {
+		for (byte b : tag) {
 			sb.append((char) b);
 		}
 

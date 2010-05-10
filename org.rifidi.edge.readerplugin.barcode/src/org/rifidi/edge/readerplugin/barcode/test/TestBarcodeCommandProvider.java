@@ -33,15 +33,17 @@ public class TestBarcodeCommandProvider implements CommandProvider {
 		String arg = intp.nextArgument();
 		String msgtosend = "";
 		if (arg == null || arg.equals("")) {
-			msgtosend = "&000001044";
+			msgtosend = "000001044";
 		} else {
-			if (arg.length() != 10) {
-				intp.println("Argument must contain 10 characters exactly");
-				return null;
-			} else {
-				msgtosend = arg;
+			StringBuilder b = new StringBuilder();
+			for (char c : arg.toCharArray()) {
+				if(Character.isDigit(c)){
+					b.append(c);
+				}
 			}
+			msgtosend = b.toString();
 		}
+
 		testBarcode.sendMessage(msgtosend);
 		return null;
 	}

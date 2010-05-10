@@ -229,7 +229,7 @@ public class BarcodeReaderSession extends
 		/** The message currently being processed. */
 		private List<Byte> messagebuilder = new ArrayList<Byte>();
 		/** Once we hit this size, we have a completed message */
-		private static final int MSGSIZE = 10;
+		private static final int MSGSIZE = 9;
 
 		/*
 		 * (non-Javadoc)
