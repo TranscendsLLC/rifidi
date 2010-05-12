@@ -1,5 +1,5 @@
 /*
- *  BarcodeReaderSession.java
+ *  BarcodeSimulatorReaderSession.java
  *
  *  Created:	Apr 22, 2010
  *  Project:	Rifidi Edge Server - A middleware platform for RFID applications
@@ -27,7 +27,7 @@ import org.rifidi.edge.core.sensors.sessions.MessageProcessingStrategyFactory;
 import org.rifidi.edge.core.services.notification.NotifierService;
 import org.rifidi.edge.core.services.notification.data.ReadCycle;
 import org.rifidi.edge.core.services.notification.data.ReadCycleMessageCreator;
-import org.rifidi.edge.readerplugin.barcodesimulator.tag.BarcodeTagHandler;
+import org.rifidi.edge.readerplugin.barcodesimulator.tag.BarcodeSimulatorTagHandler;
 import org.springframework.jms.core.JmsTemplate;
 
 /**
@@ -35,7 +35,7 @@ import org.springframework.jms.core.JmsTemplate;
  * 
  * @author Matthew Dean - matt@pramari.com
  */
-public class BarcodeReaderSession extends
+public class BarcodeSimulatorReaderSession extends
 		AbstractServerSocketSensorSession {
 
 	/** Service used to send out notifications */
@@ -48,7 +48,7 @@ public class BarcodeReaderSession extends
 	private JmsTemplate template = null;
 
 	/** A class for handling incoming tags.   */
-	private BarcodeTagHandler tagHandler = null;
+	private BarcodeSimulatorTagHandler tagHandler = null;
 
 	/**
 	 * 
@@ -59,7 +59,7 @@ public class BarcodeReaderSession extends
 	 * @param template
 	 * @param commandConfigurations
 	 */
-	public BarcodeReaderSession(AbstractSensor<?> sensor, String id,
+	public BarcodeSimulatorReaderSession(AbstractSensor<?> sensor, String id,
 			int port, JmsTemplate template, NotifierService notifierService,
 			String readerID,
 			Set<AbstractCommandConfiguration<?>> commandConfigurations) {
@@ -68,7 +68,7 @@ public class BarcodeReaderSession extends
 		this.readerID = readerID;
 		this.template = template;
 		this.notifierService = notifierService;
-		this.tagHandler = new BarcodeTagHandler(readerID);
+		this.tagHandler = new BarcodeSimulatorTagHandler(readerID);
 	}
 
 	/*
@@ -161,7 +161,7 @@ public class BarcodeReaderSession extends
 		/**
 		 * The session object.  
 		 */
-		private BarcodeReaderSession session = null;
+		private BarcodeSimulatorReaderSession session = null;
 
 		/**
 		 * Processing strategy for the Ambient Barcode.  
@@ -170,7 +170,7 @@ public class BarcodeReaderSession extends
 		 * @param template
 		 */
 		public BarcodeMessageProcessingStrategy(SensorSession session) {
-			this.session = (BarcodeReaderSession) session;
+			this.session = (BarcodeSimulatorReaderSession) session;
 		}
 
 		/*
@@ -194,13 +194,13 @@ public class BarcodeReaderSession extends
 			MessageProcessingStrategyFactory {
 
 		/** The session */
-		private BarcodeReaderSession session;
+		private BarcodeSimulatorReaderSession session;
 
 		/**
 		 * Factory class for the ProcessingStrategy.  
 		 */
 		public BarcodeMessageProcessingStrategyFactory(
-				BarcodeReaderSession session) {
+				BarcodeSimulatorReaderSession session) {
 			this.session = session;
 		}
 
