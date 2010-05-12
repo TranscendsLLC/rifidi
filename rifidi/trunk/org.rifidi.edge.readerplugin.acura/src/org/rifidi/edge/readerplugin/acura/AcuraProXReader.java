@@ -36,7 +36,7 @@ import org.rifidi.edge.core.services.notification.NotifierService;
 import org.springframework.jms.core.JmsTemplate;
 
 /**
- * 
+ * The Acura reader.  Currently impossible to test, as the reader itself is a brick ATM. 
  * 
  * @author Matthew Dean
  */
@@ -53,7 +53,7 @@ public class AcuraProXReader extends AbstractSensor<AcuraProXReaderSession> {
 	private volatile NotifierService notifyServiceWrapper;
 	/** The name of the reader that will be displayed */
 	private String displayName = "Acura";
-	/** Flag to check if this reader is destroied. */
+	/** Flag to check if this reader is destroyed. */
 	private AtomicBoolean destroyed = new AtomicBoolean(false);
 	/** The only session an acura reader allows. */
 	private AtomicReference<AcuraProXReaderSession> session = new AtomicReference<AcuraProXReaderSession>();
