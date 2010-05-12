@@ -9,7 +9,7 @@
  *  License:	GNU Public License (GPL)
  *  				http://www.opensource.org/licenses/gpl-3.0.html
  */
-package org.rifidi.edge.readerplugin.barcode.test;
+package org.rifidi.edge.readerplugin.barcodesimulator.test;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -18,7 +18,7 @@ import java.net.UnknownHostException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.rifidi.edge.readerplugin.barcode.BarcodeConstants;
+import org.rifidi.edge.readerplugin.barcodesimulator.BarcodeConstants;
 
 /**
  * Tests out a barcode reader by sending either a fake or a real tag.  
