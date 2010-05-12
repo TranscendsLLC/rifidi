@@ -9,7 +9,7 @@
  *  License:	GNU Public License (GPL)
  *  				http://www.opensource.org/licenses/gpl-3.0.html
  */
-package org.rifidi.edge.readerplugin.barcode;
+package org.rifidi.edge.readerplugin.barcodesimulator;
 
 import java.util.Map;
 
@@ -21,7 +21,7 @@ import org.rifidi.edge.core.sensors.base.AbstractSensorFactory;
 import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
 import org.rifidi.edge.core.services.esper.EsperManagementService;
 import org.rifidi.edge.core.services.notification.NotifierService;
-import org.rifidi.edge.readerplugin.barcode.tag.BarcodeTagEvent;
+import org.rifidi.edge.readerplugin.barcodesimulator.tag.BarcodeTagEvent;
 import org.springframework.jms.core.JmsTemplate;
 
 /**
