@@ -1,5 +1,5 @@
 /*
- *  BarcodeTagHandler.java
+ *  BarcodeSimulatorTagHandler.java
  *
  *  Created:	Apr 28, 2010
  *  Project:	Rifidi Edge Server - A middleware platform for RFID applications
@@ -23,14 +23,14 @@ import org.rifidi.edge.core.services.notification.data.TagReadEvent;
  * 
  * @author Matthew Dean - matt@pramari.com
  */
-public class BarcodeTagHandler {
+public class BarcodeSimulatorTagHandler {
 
 	/**
 	 * 
 	 */
 	private String readerID;
 
-	public BarcodeTagHandler(String readerID) {
+	public BarcodeSimulatorTagHandler(String readerID) {
 		this.readerID = readerID;
 	}
 
@@ -51,7 +51,7 @@ public class BarcodeTagHandler {
 		}
 
 		BigInteger epc = new BigInteger(sb.toString());
-		BarcodeTagEvent barcodetag = new BarcodeTagEvent();
+		BarcodeSimulatorTagEvent barcodetag = new BarcodeSimulatorTagEvent();
 
 		barcodetag.setBarcode(epc, 72);
 

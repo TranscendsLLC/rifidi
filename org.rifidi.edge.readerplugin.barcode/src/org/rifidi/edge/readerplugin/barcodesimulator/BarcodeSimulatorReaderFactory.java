@@ -1,5 +1,5 @@
 /*
- *  BarcodeReaderFactory.java
+ *  BarcodeSimulatorReaderFactory.java
  *
  *  Created:	Apr 22, 2010
  *  Project:	Rifidi Edge Server - A middleware platform for RFID applications
@@ -21,7 +21,7 @@ import org.rifidi.edge.core.sensors.base.AbstractSensorFactory;
 import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
 import org.rifidi.edge.core.services.esper.EsperManagementService;
 import org.rifidi.edge.core.services.notification.NotifierService;
-import org.rifidi.edge.readerplugin.barcodesimulator.tag.BarcodeTagEvent;
+import org.rifidi.edge.readerplugin.barcodesimulator.tag.BarcodeSimulatorTagEvent;
 import org.springframework.jms.core.JmsTemplate;
 
 /**
@@ -29,8 +29,8 @@ import org.springframework.jms.core.JmsTemplate;
  * 
  * @author Matthew Dean - matt@pramari.com
  */
-public class BarcodeReaderFactory extends
-		AbstractSensorFactory<BarcodeReader> {
+public class BarcodeSimulatorReaderFactory extends
+		AbstractSensorFactory<BarcodeSimulatorReader> {
 
 	/** JMS template for sending tag data to JMS Queue */
 	private volatile JmsTemplate template;
@@ -117,7 +117,7 @@ public class BarcodeReaderFactory extends
 		if (template == null || notifierService == null) {
 			throw new InvalidStateException("All services are not set");
 		}
-		BarcodeReader instance = new BarcodeReader();
+		BarcodeSimulatorReader instance = new BarcodeSimulatorReader();
 		instance.setID(serviceID);
 		instance.setTemplate((JmsTemplate) template);
 		instance.setNotifiyService(notifierService);
@@ -143,7 +143,7 @@ public class BarcodeReaderFactory extends
 	 */
 	@Override
 	public MBeanInfo getServiceDescription(String factoryID) {
-		return (MBeanInfo) BarcodeReader.mbeaninfo;
+		return (MBeanInfo) BarcodeSimulatorReader.mbeaninfo;
 	}
 
 	/**
@@ -180,8 +180,8 @@ public class BarcodeReaderFactory extends
 	public void setEsperService(EsperManagementService esperService) {
 		this.esperService = esperService;
 		this.esperService.getProvider().getEPAdministrator().getConfiguration()
-				.addEventType("BarcodeTagEvent",
-						BarcodeTagEvent.class);
+				.addEventType("BarcodeSimulatorTagEvent",
+						BarcodeSimulatorTagEvent.class);
 	}
 
 }

@@ -1,5 +1,5 @@
 /*
- *  BarcodeReader.java
+ *  BarcodeSimulatorReader.java
  *
  *  Created:	Apr 22, 2010
  *  Project:	Rifidi Edge Server - A middleware platform for RFID applications
@@ -37,12 +37,12 @@ import org.springframework.jms.core.JmsTemplate;
  * 
  * @author Matthew Dean - matt@pramari.com
  */
-public class BarcodeReader extends
-		AbstractSensor<BarcodeReaderSession> {
+public class BarcodeSimulatorReader extends
+		AbstractSensor<BarcodeSimulatorReaderSession> {
 
 	/** Logger for this class. */
 	private static final Log logger = LogFactory
-			.getLog(BarcodeReader.class);
+			.getLog(BarcodeSimulatorReader.class);
 	/** Spring JMS template */
 	private volatile JmsTemplate template;
 	/** The ID of the session */
@@ -54,13 +54,13 @@ public class BarcodeReader extends
 	/** Flag to check if this reader is destroyed. */
 	private AtomicBoolean destroyed = new AtomicBoolean(false);
 	/** The only session an acura reader allows. */
-	private AtomicReference<BarcodeReaderSession> session = new AtomicReference<BarcodeReaderSession>();
+	private AtomicReference<BarcodeSimulatorReaderSession> session = new AtomicReference<BarcodeSimulatorReaderSession>();
 
 	/** MBeanInfo for this class. */
 	public static final MBeanInfo mbeaninfo;
 	static {
 		AnnotationMBeanInfoStrategy strategy = new AnnotationMBeanInfoStrategy();
-		mbeaninfo = strategy.getMBeanInfo(BarcodeReader.class);
+		mbeaninfo = strategy.getMBeanInfo(BarcodeSimulatorReader.class);
 	}
 
 	/*
@@ -84,7 +84,7 @@ public class BarcodeReader extends
 	public String createSensorSession() throws CannotCreateSessionException {
 		if (!destroyed.get() && session.get() == null) {
 			Integer sessionID = this.sessionID.incrementAndGet();
-			if (session.compareAndSet(null, new BarcodeReaderSession(
+			if (session.compareAndSet(null, new BarcodeSimulatorReaderSession(
 					this, Integer.toString(sessionID),
 					BarcodeConstants.PORT, this.template,
 					this.notifyServiceWrapper, super.getID(),
@@ -111,7 +111,7 @@ public class BarcodeReader extends
 		if (!destroyed.get() && session.get() == null) {
 			Integer sessionID = this.sessionID.incrementAndGet();
 			// TODO: Fix the IP and the port here.
-			if (session.compareAndSet(null, new BarcodeReaderSession(
+			if (session.compareAndSet(null, new BarcodeSimulatorReaderSession(
 					this, Integer.toString(sessionID), BarcodeConstants.PORT,
 					this.template, this.notifyServiceWrapper, super.getID(),
 					new HashSet<AbstractCommandConfiguration<?>>()))) {
@@ -134,7 +134,7 @@ public class BarcodeReader extends
 	@Override
 	public void destroySensorSession(String id)
 			throws CannotDestroySensorException {
-		BarcodeReaderSession ambientsession = session.get();
+		BarcodeSimulatorReaderSession ambientsession = session.get();
 		if (ambientsession != null && ambientsession.getID().equals(id)) {
 			session.set(null);
 			ambientsession.killAllCommands();
@@ -166,7 +166,7 @@ public class BarcodeReader extends
 	@Override
 	public Map<String, SensorSession> getSensorSessions() {
 		Map<String, SensorSession> ret = new HashMap<String, SensorSession>();
-		BarcodeReaderSession ambientsession = session.get();
+		BarcodeSimulatorReaderSession ambientsession = session.get();
 		if (ambientsession != null) {
 			ret.put(ambientsession.getID(), ambientsession);
 		}

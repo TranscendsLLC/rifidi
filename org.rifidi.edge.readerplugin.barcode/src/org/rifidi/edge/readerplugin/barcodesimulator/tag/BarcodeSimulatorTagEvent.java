@@ -1,5 +1,5 @@
 /*
- *  BarcodeTagEvent.java
+ *  BarcodeSimulatorTagEvent.java
  *
  *  Created:	Apr 23, 2010
  *  Project:	Rifidi Edge Server - A middleware platform for RFID applications
@@ -20,7 +20,7 @@ import org.rifidi.edge.core.services.notification.data.DatacontainerEvent;
  * 
  * @author Matthew Dean - matt@pramari.com
  */
-public class BarcodeTagEvent extends DatacontainerEvent {
+public class BarcodeSimulatorTagEvent extends DatacontainerEvent {
 
 	/**
 	 * Generated UID.
@@ -33,7 +33,7 @@ public class BarcodeTagEvent extends DatacontainerEvent {
 	/**
 	 * Constructor.
 	 */
-	public BarcodeTagEvent() {
+	public BarcodeSimulatorTagEvent() {
 		memoryBanks.add(new MemoryBankLengthTuple(new BigInteger("0"), 1));
 	}
 
@@ -83,7 +83,7 @@ public class BarcodeTagEvent extends DatacontainerEvent {
 	 */
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof BarcodeTagEvent) {
+		if (obj instanceof BarcodeSimulatorTagEvent) {
 			return barcode.hashCode() == obj.hashCode();
 		}
 		return false;
@@ -118,7 +118,7 @@ public class BarcodeTagEvent extends DatacontainerEvent {
 	 */
 	@Override
 	public String toString() {
-		return "BarcodeTagEvent [id=" + barcode + "]";
+		return "BarcodeSimulatorTagEvent [id=" + barcode + "]";
 	}
 	
 	/**
