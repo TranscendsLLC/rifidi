@@ -70,7 +70,7 @@ public class OpticonSensorSession extends AbstractSerialSensorSession {
 		super(sensor, ID, template.getDefaultDestination(), template,
 				commandConfigurations, commPortName, OpticonConstants.BAUD,
 				OpticonConstants.DATA_BITS, OpticonConstants.STOP_BITS,
-				OpticonConstants.PARITY);
+				OpticonConstants.PARITY, false);
 		this.readerID = readerID;
 		this.notifierService = notifierService;
 		this.template = template;
@@ -119,23 +119,16 @@ public class OpticonSensorSession extends AbstractSerialSensorSession {
 	@Override
 	protected void messageReceived(ByteMessage message) {
 
-		System.out.println("message recieved!: " + message.toString());
-
 		ReadCycle rc = this.taghandler.processTag(message.message);
 
-		System.out.println("Sending the message: " + message.toString());
-
 		this.getSensor().send(rc);
-
-		System.out.println("Sending the message to the default destination: "
-				+ message.toString());
 
 		this.template.send(this.template.getDefaultDestination(),
 				new ReadCycleMessageCreator(rc));
 	}
 
 	/**
-	 * Factory class for creating AmbientBarcodeMessageParsingStrategies.
+	 * Factory class for creating OpticonMessageParsingStrategies.
 	 * 
 	 * @author Matthew Dean - matt@pramari.com
 	 */
@@ -151,7 +144,7 @@ public class OpticonSensorSession extends AbstractSerialSensorSession {
 		 */
 		@Override
 		public MessageParsingStrategy createMessageParser() {
-			return new OpticonMessageProcessingStrategy();
+			return new OpticonMessageParsingStrategy();
 		}
 	}
 
@@ -160,14 +153,14 @@ public class OpticonSensorSession extends AbstractSerialSensorSession {
 	 * 
 	 * @author Matthew Dean - matt@pramari.com
 	 */
-	private class OpticonMessageProcessingStrategy implements
+	private class OpticonMessageParsingStrategy implements
 			MessageParsingStrategy {
 		/** The message currently being processed. */
 		private List<Byte> messagebuilder = new ArrayList<Byte>();
-		/** Once we hit this size, we have a completed message */
-		private static final int MSGSIZE = 12;
-		
-		
+
+		private static final byte STARTBYTE = 2;
+
+		private static final byte ENDBYTE = 3;
 
 		/*
 		 * (non-Javadoc)
@@ -179,25 +172,25 @@ public class OpticonSensorSession extends AbstractSerialSensorSession {
 		@Override
 		public byte[] isMessage(byte message) {
 			messagebuilder.add(message);
-			if (messagebuilder.size() == MSGSIZE) {
-				System.out.println("It is a message!  ");
+			if(message==STARTBYTE) {
+				messagebuilder.clear();
+			}
+			if (message == ENDBYTE) {
 				List<Byte> actualmessage = new ArrayList<Byte>();
-				for(Byte b:messagebuilder) {
-					if(Character.isDigit((char)b.byteValue())) {
+				for (Byte b : messagebuilder) {
+					if (Character.isDigit((char) b.byteValue())) {
 						actualmessage.add(b);
 					}
 				}
-				System.out.println("Done checking digits");
-				
 				byte retval[] = new byte[actualmessage.size()];
 				for (int i = 0; i < actualmessage.size(); i++) {
 					retval[i] = actualmessage.get(i);
 				}
 				messagebuilder.clear();
+				actualmessage.clear();
 				return retval;
 			}
 			return null;
 		}
 	}
-
 }
