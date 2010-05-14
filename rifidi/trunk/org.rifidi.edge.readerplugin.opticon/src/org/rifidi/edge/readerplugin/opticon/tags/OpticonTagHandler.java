@@ -42,7 +42,7 @@ public class OpticonTagHandler {
 	 */
 	public ReadCycle processTag(byte[] tag) {
 		
-		System.out.println("Processing the tag!  ");
+		//System.out.println("Processing the tag!  ");
 		
 		
 		
@@ -51,10 +51,10 @@ public class OpticonTagHandler {
 		
 		StringBuilder sb = new StringBuilder();
 		for (byte b : tag) {
-			System.out.print(b + " ");
+			//System.out.print(b + " ");
 			sb.append((char) b);
 		}
-		System.out.println();
+		//System.out.println();
 		
 		BigInteger epc = new BigInteger(sb.toString());
 		OpticonTagEvent barcodetag = new OpticonTagEvent();
@@ -68,7 +68,7 @@ public class OpticonTagHandler {
 		ReadCycle cycle = new ReadCycle(events, this.readerID, System
 				.currentTimeMillis());
 		
-		System.out.println("Returning the cycle");
+		//System.out.println("Returning the cycle");
 		
 		return cycle;
 	}
