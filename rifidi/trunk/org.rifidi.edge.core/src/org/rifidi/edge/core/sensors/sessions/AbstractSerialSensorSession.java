@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Set;
+import java.util.TooManyListenersException;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 
@@ -50,8 +51,8 @@ public abstract class AbstractSerialSensorSession extends AbstractSensorSession 
 			.getLog(AbstractSerialSensorSession.class);
 
 	/** Thread for reading from the socket. */
-	@SuppressWarnings("unused")
 	private SerialReader readObject;
+
 	/** Thread for writing to the socket. */
 	private Thread writeThread;
 
@@ -59,6 +60,8 @@ public abstract class AbstractSerialSensorSession extends AbstractSensorSession 
 	private CommPort commPort = null;
 	/** The ID for the serial port */
 	private CommPortIdentifier portIdentifier = null;
+
+	private boolean writeEnabled = true;
 
 	/** Queue for writing messages. */
 	private LinkedBlockingQueue<ByteMessage> writeQueue = new LinkedBlockingQueue<ByteMessage>();
@@ -79,13 +82,14 @@ public abstract class AbstractSerialSensorSession extends AbstractSensorSession 
 			Destination destination, JmsTemplate template,
 			Set<AbstractCommandConfiguration<?>> commandConfigurations,
 			String commPortName, int baud, int databits, int stopbits,
-			int parity) {
+			int parity, boolean writeEnabled) {
 		super(sensor, ID, destination, template, commandConfigurations);
 		this.commPortName = commPortName;
 		this.baud = baud;
 		this.databits = databits;
 		this.stopbits = stopbits;
 		this.parity = parity;
+		this.writeEnabled = writeEnabled;
 	}
 
 	/*
@@ -156,8 +160,18 @@ public abstract class AbstractSerialSensorSession extends AbstractSensorSession 
 				// Start the thread
 				this.readObject = new SerialReader(in, this
 						.getMessageParsingStrategyFactory());
-				this.writeThread = new Thread(new WriteThread(out,
-						this.writeQueue));
+				if (writeEnabled) {
+					this.writeThread = new Thread(new WriteThread(out,
+							this.writeQueue));
+					this.writeThread.start();
+				}
+
+				try {
+					serialPort.addEventListener(readObject);
+				} catch (TooManyListenersException e) {
+					logger.error(e);
+				}
+				serialPort.notifyOnDataAvailable(true);
 			} else {
 				logger.warn("Error: Port is not a serial port.");
 			}
@@ -173,18 +187,24 @@ public abstract class AbstractSerialSensorSession extends AbstractSensorSession 
 	public void disconnect() {
 		try {
 			// Should we do anything with the SerialReader here?
-			this.writeThread.join();
+			if (this.writeThread != null) {
+				this.writeThread.join();
+			}
 		} catch (InterruptedException e) {
 			// Don't care
 		}
 		try {
 			this.commPort.getInputStream().close();
 			this.commPort.getOutputStream().close();
-		} catch (IOException e) {
+		} catch (Exception e) {
 			// Don't care
 		} finally {
 			// Close the serial port
-			this.commPort.close();
+			try {
+				this.commPort.close();
+			} catch (Exception e) {
+				// Don't care
+			}
 		}
 
 	}
@@ -208,13 +228,11 @@ public abstract class AbstractSerialSensorSession extends AbstractSensorSession 
 	}
 
 	/**
-	 * Read data from the serial port.this.readThread = new Thread(new
-	 * SerialReadThread(in, this .getMessageParsingStrategyFactory(), this
-	 * .getMessageProcessingStrategyFactory()));
+	 * Read data from the serial port.
 	 * 
 	 * @author Matthew Dean - matt@pramari.com
 	 */
-	public class SerialReader implements SerialPortEventListener {
+	private class SerialReader implements SerialPortEventListener {
 
 		/** The InputStream that comes in from the reader. */
 		InputStream in = null;
@@ -246,7 +264,6 @@ public abstract class AbstractSerialSensorSession extends AbstractSensorSession 
 		@Override
 		public void serialEvent(SerialPortEvent ev) {
 			int data;
-
 			try {
 				while ((data = in.read()) > -1) {
 					byte[] message = messageParser.isMessage((byte) data);
