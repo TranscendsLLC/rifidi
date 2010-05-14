@@ -65,7 +65,7 @@ public class AcuraProXReaderSession extends AbstractSerialSensorSession {
 			Set<AbstractCommandConfiguration<?>> commandConfigurations) {
 		super(sensor, id, template.getDefaultDestination(), template,
 				commandConfigurations, comm, 9600, SerialPort.DATABITS_8,
-				SerialPort.STOPBITS_1, SerialPort.PARITY_NONE);
+				SerialPort.STOPBITS_1, SerialPort.PARITY_NONE, false);
 		this.readerID = readerID;
 		this.template = template;
 		this.notifierService = notifierService;
