@@ -21,7 +21,7 @@ import org.rifidi.edge.core.sensors.base.AbstractSensorFactory;
 import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
 import org.rifidi.edge.core.services.esper.EsperManagementService;
 import org.rifidi.edge.core.services.notification.NotifierService;
-import org.rifidi.edge.readerplugin.barcodesimulator.tag.BarcodeSimulatorTagEvent;
+import org.rifidi.edge.core.services.notification.data.BarcodeTagEvent;
 import org.springframework.jms.core.JmsTemplate;
 
 /**
@@ -42,7 +42,7 @@ public class BarcodeSimulatorReaderFactory extends
 	private static final String displayname = "Barcode";
 	/** A JMS event notification sender */
 	private volatile NotifierService notifierService;
-	private volatile EsperManagementService esperService;
+
 
 	/*
 	 * (non-Javadoc)
@@ -170,18 +170,6 @@ public class BarcodeSimulatorReaderFactory extends
 	 */
 	public void setNotifierService(NotifierService notifierService) {
 		this.notifierService = notifierService;
-	}
-
-	/**
-	 * Called by spring
-	 * 
-	 * @param esperService
-	 */
-	public void setEsperService(EsperManagementService esperService) {
-		this.esperService = esperService;
-		this.esperService.getProvider().getEPAdministrator().getConfiguration()
-				.addEventType("BarcodeSimulatorTagEvent",
-						BarcodeSimulatorTagEvent.class);
 	}
 
 }

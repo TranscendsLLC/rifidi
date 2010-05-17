@@ -15,6 +15,7 @@ import java.math.BigInteger;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.rifidi.edge.core.services.notification.data.BarcodeTagEvent;
 import org.rifidi.edge.core.services.notification.data.ReadCycle;
 import org.rifidi.edge.core.services.notification.data.TagReadEvent;
 
@@ -51,7 +52,7 @@ public class BarcodeSimulatorTagHandler {
 		}
 
 		BigInteger epc = new BigInteger(sb.toString());
-		BarcodeSimulatorTagEvent barcodetag = new BarcodeSimulatorTagEvent();
+		BarcodeTagEvent barcodetag = new BarcodeTagEvent();
 
 		barcodetag.setBarcode(epc, 72);
 
