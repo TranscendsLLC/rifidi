@@ -11,7 +11,6 @@
 		<property name="context" ref="bundleContext" />
 		<property name="template" ref="internalMB" />
 		<property name="notifierService" ref="JMSNotifierService"/> 
-		<property name="esperService" ref="esper"/>
 	</bean>
 
 	<bean id="TestBarcode"
