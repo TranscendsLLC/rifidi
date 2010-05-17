@@ -1,21 +1,27 @@
+
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:osgi="http://www.springframework.org/schema/osgi"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
 	http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
-    http://www.springframework.org/schema/osgi 
-    http://www.springframework.org/schema/osgi/spring-osgi.xsd">
+	http://www.springframework.org/schema/osgi
+	http://www.springframework.org/schema/osgi/spring-osgi.xsd">
 
 
-	<!-- Create the application and inject esper and teh JMS sender -->
+
+	<!--
+		Create the application and inject esper and teh JMS sender
+	-->
 	<bean id="readZoneMonitoringApp"
 		class="org.rifidi.edge.core.app.api.service.tagmonitor.impl.ReadZoneMonitoringServiceImpl"
 		init-method="start" destroy-method="stop">
+		<constructor-arg index="0" value="Service:ReadZone" />
 		<property name="esperService" ref="esperManagementService" />
 	</bean>
 
 	<bean id="sensorStatusMonitoringApp"
 		class="org.rifidi.edge.core.app.api.service.sensormonitor.impl.SensorStatusMonitoringServiceImpl"
 		init-method="start" destroy-method="stop">
+		<constructor-arg index="0" value="Service:SensorStatus" />
 		<property name="esperService" ref="esperManagementService" />
 	</bean>
 

@@ -28,6 +28,16 @@ public abstract class JMSRifidiApp extends RifidiApp {
 	private volatile JmsTemplate template;
 
 	/**
+	 * Constructor
+	 * 
+	 * @param name
+	 *            The name of the application
+	 */
+	public JMSRifidiApp(String name) {
+		super(name);
+	}
+
+	/**
 	 * Called by spring
 	 * 
 	 * @param destination

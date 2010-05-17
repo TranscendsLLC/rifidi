@@ -28,24 +28,25 @@ import com.espertech.esper.client.EventBean;
 import com.espertech.esper.client.StatementAwareUpdateListener;
 
 /**
- * 
+ * This is an implementation of the SensorStatusMonitorService.
  * 
  * @author Matthew Dean
+ * @author Kyle Neumeier - kyle@pramari.com
  */
 public class SensorStatusMonitoringServiceImpl extends RifidiApp implements
 		SensorStatusMonitoringService {
 
 	/** A map to keep up with subscribers and their esper statements */
-	private Map<SensorStatusSubscriber, Set<EPStatement>> subscriberMap = new HashMap<SensorStatusSubscriber, Set<EPStatement>>();
+	private Map<SensorStatusSubscriber, Set<String>> subscriberMap = new HashMap<SensorStatusSubscriber, Set<String>>();
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Constructor
 	 * 
-	 * @see org.rifidi.edge.core.app.api.RifidiApp#start()
+	 * @param name
+	 *            The name of the application
 	 */
-	@Override
-	public void start() {
-
+	public SensorStatusMonitoringServiceImpl(String name) {
+		super(name);
 	}
 
 	/*
@@ -64,21 +65,15 @@ public class SensorStatusMonitoringServiceImpl extends RifidiApp implements
 			if (subscriberMap.containsKey(subscriber)) {
 				return;
 			}
-			// create a new set of esper statementss
-			Set<EPStatement> statements = new HashSet<EPStatement>();
-			
-			//put sensors to monitor into an arraylist
+
+			// put sensors to monitor into an arraylist
 			ArrayList<String> sensors = new ArrayList<String>();
 			if (sensorsToMonitor != null) {
 				sensors.addAll(sensorsToMonitor);
 			}
-			// create the query
-			EPStatement statement = esperService.getProvider()
-					.getEPAdministrator().createEPL(getEsper(sensors));
-			statements.add(statement);
 
 			// add a listener to the query
-			statement.addListener(new StatementAwareUpdateListener() {
+			StatementAwareUpdateListener listener = new StatementAwareUpdateListener() {
 
 				@Override
 				public void update(EventBean[] arg0, EventBean[] arg1,
@@ -94,7 +89,9 @@ public class SensorStatusMonitoringServiceImpl extends RifidiApp implements
 					}
 
 				}
-			});
+			};
+
+			addStatement(getEsper(sensors), listener);
 
 		}
 
@@ -110,9 +107,9 @@ public class SensorStatusMonitoringServiceImpl extends RifidiApp implements
 	 */
 	public void unsubscribe(SensorStatusSubscriber subscriber) {
 		synchronized (subscriberMap) {
-			Set<EPStatement> statements = this.subscriberMap.remove(subscriber);
-			for (EPStatement statement : statements) {
-				statement.destroy();
+			Set<String> statements = this.subscriberMap.remove(subscriber);
+			for (String statement : statements) {
+				destroyStatement(statement);
 			}
 		}
 	}
@@ -120,12 +117,11 @@ public class SensorStatusMonitoringServiceImpl extends RifidiApp implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.app.api.RifidiApp#stop()
+	 * @see org.rifidi.edge.core.app.api.RifidiApp#_stop()
 	 */
 	@Override
-	public void stop() {
-		super.stop();
-
+	protected void _stop() {
+		super._stop();
 		// need to override the stop method so that we make sure to delete all
 		// esper statements
 		Set<SensorStatusSubscriber> subscribers = new HashSet<SensorStatusSubscriber>(
@@ -135,6 +131,12 @@ public class SensorStatusMonitoringServiceImpl extends RifidiApp implements
 		}
 	}
 
+	/**
+	 * A private method to build the esper statements to monitor the readers
+	 * 
+	 * @param readersToMonitor
+	 * @return
+	 */
 	private String getEsper(ArrayList<String> readersToMonitor) {
 		String statement = "select * from SensorStatusEvent";
 		// build where clause
@@ -148,8 +150,14 @@ public class SensorStatusMonitoringServiceImpl extends RifidiApp implements
 		}
 		return statement;
 	}
-	
-	private String sensorFilter(String sensor){
-		return "sensorID=\'"+sensor+"\'";
+
+	/**
+	 * A private method to build a filter for a single reader.
+	 * 
+	 * @param sensor
+	 * @return
+	 */
+	private String sensorFilter(String sensor) {
+		return "sensorID=\'" + sensor + "\'";
 	}
 }

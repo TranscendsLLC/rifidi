@@ -5,8 +5,8 @@
 	http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
     http://www.springframework.org/schema/osgi 
     http://www.springframework.org/schema/osgi/spring-osgi.xsd">
-    
-    <bean
+
+	<bean
 		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
 		<property name="locations">
 			<value>classpath:META-INF/spring/bundle.properties
@@ -16,25 +16,33 @@
 			<value>2</value>
 		</property>
 	</bean>
-
 	<bean id="GPIOApp" class="org.rifidi.edge.app.diag.gpio.GPIOApp"
 		init-method="start" destroy-method="stop">
 		<property name="serviceSet" ref="abstractGPIOService" />
 	</bean>
-
 	<bean id="gpiocommands" class="org.rifidi.edge.app.diag.gpio.GPIOAppCommandProvider">
 		<property name="gpioApp" ref="GPIOApp" />
 	</bean>
-
 	<bean id="TagApp" class="org.rifidi.edge.app.diag.tags.TagApp"
 		init-method="start" destroy-method="stop">
+		<constructor-arg index="0" value="Diagnostic:Tags" />
 		<property name="esperService" ref="esperManagementService" />
-		<property name="recentTagTimeout" value="${org.rifidi.edge.app.diag.recent}"/>
+		<property name="recentTagTimeout" value="${org.rifidi.edge.app.diag.recent}" />
 	</bean>
-
 	<bean id="tagscommands" class="org.rifidi.edge.app.diag.tags.TagAppCommandProvider">
 		<property name="tagApp" ref="TagApp" />
 	</bean>
+	<bean id="TagGeneratorApp" class="org.rifidi.edge.app.diag.tags.generator.TagGeneratorApp"
+		init-method="start" destroy-method="stop">
+		<constructor-arg index="0" value="Diagnostic:TagGenerator" />
+		<property name="esperService" ref="esperManagementService" />
+	</bean>
+
+	<bean id="tagsgeneratorcommands"
+		class="org.rifidi.edge.app.diag.tags.generator.TagGeneratorCommandProvider">
+		<property name="generatorApp" ref="TagGeneratorApp" />
+	</bean>
+
 
 	<!--
 		Get a reference to the Esper Management Service from the OSGi Service
@@ -42,27 +50,26 @@
 	-->
 	<osgi:reference id="esperManagementService"
 		interface="org.rifidi.edge.core.services.esper.EsperManagementService" />
-
 	<osgi:set id="abstractGPIOService"
-		interface="org.rifidi.edge.core.sensors.management.AbstractGPIOService" cardinality="0..N">
-		<osgi:listener ref="GPIOApp" bind-method="onBind" unbind-method="onUnbind"></osgi:listener>
+		interface="org.rifidi.edge.core.sensors.management.AbstractGPIOService"
+		cardinality="0..N">
+		<osgi:listener ref="GPIOApp" bind-method="onBind"
+			unbind-method="onUnbind"></osgi:listener>
 	</osgi:set>
-	
 	<!--
 		Register the command provider service in the OSGi registry. This
 		allows it to be hooked up the the eclipse console.
 	-->
 	<osgi:service ref="gpiocommands"
 		interface="org.eclipse.osgi.framework.console.CommandProvider" />
-
 	<osgi:service ref="tagscommands"
 		interface="org.eclipse.osgi.framework.console.CommandProvider" />
-
 	<osgi:service ref="gpisimulatorcommands"
 		interface="org.eclipse.osgi.framework.console.CommandProvider" />
 	<osgi:service ref="helpcommandprovider"
 		interface="org.eclipse.osgi.framework.console.CommandProvider" />
-
+	<osgi:service ref="tagsgeneratorcommands"
+		interface="org.eclipse.osgi.framework.console.CommandProvider" />
 	<bean id="gpisimulatorcommands"
 		class="org.rifidi.edge.app.diag.gpio.GPISimulatorAppCommandProvider">
 		<property name="simApp" ref="gpisimulationapp" />

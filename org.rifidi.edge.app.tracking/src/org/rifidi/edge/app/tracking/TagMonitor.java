@@ -21,18 +21,24 @@ import com.espertech.esper.client.StatementAwareUpdateListener;
  */
 public class TagMonitor extends JMSRifidiApp {
 
+	/**
+	 * Constructor
+	 * 
+	 * @param name
+	 */
+	public TagMonitor(String name) {
+		super(name);
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.app.api.RifidiApp#start()
+	 * @see org.rifidi.edge.core.app.api.RifidiApp#_start()
 	 */
 	@Override
-	public void start() {
-		EPStatement query = esperService.getProvider().getEPAdministrator()
-				.createEPL(
-						"select * from ReadCycle[select * from tags]");
-		statements.add(query);
-		query.addListener(new StatementAwareUpdateListener() {
+	protected void _start() {
+		super._start();
+		StatementAwareUpdateListener listener = new StatementAwareUpdateListener() {
 
 			@Override
 			public void update(EventBean[] arg0, EventBean[] arg1,
@@ -46,7 +52,9 @@ public class TagMonitor extends JMSRifidiApp {
 				}
 
 			}
-		});
+		};
+
+		addStatement("select * from ReadCycle[select * from tags]", listener);
 
 	}
 
@@ -59,7 +67,7 @@ public class TagMonitor extends JMSRifidiApp {
 		if (event.getExtraInformation().containsKey(TagReadEvent.RSSI))
 			buffer.append("|rssi:"
 					+ event.getExtraInformation().get(TagReadEvent.RSSI));
-		
+
 		return buffer.toString();
 	}
 
