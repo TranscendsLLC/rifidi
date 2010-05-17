@@ -26,8 +26,10 @@ public class BarcodeTagEvent extends DatacontainerEvent {
 	 */
 	private static final long serialVersionUID = -5334113422705563853L;
 
+	protected byte[] barcodeBytes;
 	/** Store a decimal copy of the barcode */
 	protected String barcode = "";
+	protected BigInteger barcodeBigInt;
 
 	/**
 	 * Constructor.
@@ -40,12 +42,11 @@ public class BarcodeTagEvent extends DatacontainerEvent {
 	 * Set the barcode
 	 * 
 	 * @param memBank
-	 * @param length
 	 */
-	public void setBarcode(BigInteger memBank, Integer length) {
-		memoryBanks.get(0).setLength(length);
-		memoryBanks.get(0).setMemory(memBank);
-		barcode = format(memoryBanks.get(0).getMemory());
+	public void setBarcode(byte[] memBank) {
+		barcodeBytes = memBank;
+		barcodeBigInt= new BigInteger(memBank);
+		barcode = format();
 	}
 
 	/**
@@ -62,17 +63,8 @@ public class BarcodeTagEvent extends DatacontainerEvent {
 	 * 
 	 * @return
 	 */
-	public BigInteger getBarcodeMemory() {
-		return memoryBanks.get(0).getMemory();
-	}
-
-	/**
-	 * Returns the length of the memory bank.
-	 * 
-	 * @return the number of bits in the EPC
-	 */
-	public Integer getBarcodeMemoryLength() {
-		return memoryBanks.get(0).getLength();
+	public byte[] getBarcodeMemory() {
+		return barcodeBytes;
 	}
 
 	/*
@@ -107,7 +99,7 @@ public class BarcodeTagEvent extends DatacontainerEvent {
 	 */
 	@Override
 	public BigInteger getID() {
-		return this.memoryBanks.get(0).getMemory();
+		return barcodeBigInt;
 	}
 
 	/*
@@ -125,10 +117,10 @@ public class BarcodeTagEvent extends DatacontainerEvent {
 	 * @param integer
 	 * @return
 	 */
-	private String format(BigInteger integer){
-		StringBuffer buffer = new StringBuffer(integer.toString(10));
-		while(buffer.length()<10){
-			buffer.insert(0, "0");
+	private String format(){
+		StringBuffer buffer = new StringBuffer();
+		for(byte b : barcodeBytes){
+			buffer.append((char)b);
 		}
 		return buffer.toString();
 	}
