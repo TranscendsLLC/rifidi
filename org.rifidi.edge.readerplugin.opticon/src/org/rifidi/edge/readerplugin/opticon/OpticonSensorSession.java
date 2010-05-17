@@ -29,7 +29,22 @@ import org.rifidi.edge.readerplugin.opticon.tags.OpticonTagHandler;
 import org.springframework.jms.core.JmsTemplate;
 
 /**
+ * The Session for the Opticon Barcode reader. This reader can either be set in
+ * HID mode or Serial mode; however we will always set it as a "serial" reader
+ * for our purposes.  Here are the settings necessary for getting this reader to work:
  * 
+ * SET
+ * 1. USB VPC [C01] {Serial Mode}
+ * 2. Clear all prefixes [MG]
+ * 3. Preamble [MZ]
+ * 4. ^B (STX) [1B]
+ * 5. Clear all suffixes [PR]
+ * 6. Postamble [PS]
+ * 7. ^C (ETX) [1C]
+ * 8. Multiple Read [S1]
+ * 9. 50ms [AH]
+ * 10. Enable Auto Trigger [+I]
+ * END
  * 
  * @author Matthew Dean - matt@pramari.com
  */
@@ -172,7 +187,7 @@ public class OpticonSensorSession extends AbstractSerialSensorSession {
 		@Override
 		public byte[] isMessage(byte message) {
 			messagebuilder.add(message);
-			if(message==STARTBYTE) {
+			if (message == STARTBYTE) {
 				messagebuilder.clear();
 			}
 			if (message == ENDBYTE) {
