@@ -18,6 +18,7 @@ import org.rifidi.edge.core.services.esper.EsperManagementService;
 import org.rifidi.edge.core.services.esper.events.DestroyEvent;
 import org.rifidi.edge.core.services.esper.events.StartEvent;
 import org.rifidi.edge.core.services.esper.events.StopEvent;
+import org.rifidi.edge.core.services.notification.data.BarcodeTagEvent;
 import org.rifidi.edge.core.services.notification.data.DatacontainerEvent;
 import org.rifidi.edge.core.services.notification.data.EPCGeneration1Event;
 import org.rifidi.edge.core.services.notification.data.EPCGeneration2Event;
@@ -58,6 +59,7 @@ public class EsperManagementServiceImpl implements EsperManagementService {
 		config.addEventType("DatacontainerEvent", DatacontainerEvent.class);
 		config.addEventType("EPCGeneration1Event", EPCGeneration1Event.class);
 		config.addEventType("EPCGeneration2Event", EPCGeneration2Event.class);
+		config.addEventType("BarcodeTagEvent", BarcodeTagEvent.class);
 		config.addEventType("ReadCycle", ReadCycle.class);
 		config.addEventType("GPIEvent", GPIEvent.class);
 		config.addEventType("GPOEvent", GPOEvent.class);
