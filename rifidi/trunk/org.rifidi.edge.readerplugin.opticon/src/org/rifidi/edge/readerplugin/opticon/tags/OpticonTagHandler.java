@@ -19,16 +19,22 @@ import org.rifidi.edge.core.services.notification.data.ReadCycle;
 import org.rifidi.edge.core.services.notification.data.TagReadEvent;
 
 /**
- * 
+ * This class takes in raw byte data and outputs a "ReadCycle" object which will
+ * eventually go to JMS.
  * 
  * @author Matthew Dean - matt@pramari.com
  */
 public class OpticonTagHandler {
 	/**
-	 * 
+	 * The ID of the reader.
 	 */
 	private String readerID;
 
+	/**
+	 * Constructor.
+	 * 
+	 * @param readerID
+	 */
 	public OpticonTagHandler(String readerID) {
 		this.readerID = readerID;
 	}
@@ -41,21 +47,12 @@ public class OpticonTagHandler {
 	 * @return
 	 */
 	public ReadCycle processTag(byte[] tag) {
-		
-		//System.out.println("Processing the tag!  ");
-		
-		
-		
-		// We need every byte but the first one, which is an unprintable
-		// character.
-		
+		// TODO: We may need to modify this to handle the tag data.
 		StringBuilder sb = new StringBuilder();
 		for (byte b : tag) {
-			//System.out.print(b + " ");
 			sb.append((char) b);
 		}
-		//System.out.println();
-		
+
 		BigInteger epc = new BigInteger(sb.toString());
 		OpticonTagEvent barcodetag = new OpticonTagEvent();
 
@@ -67,9 +64,6 @@ public class OpticonTagHandler {
 		events.add(tre);
 		ReadCycle cycle = new ReadCycle(events, this.readerID, System
 				.currentTimeMillis());
-		
-		//System.out.println("Returning the cycle");
-		
 		return cycle;
 	}
 }

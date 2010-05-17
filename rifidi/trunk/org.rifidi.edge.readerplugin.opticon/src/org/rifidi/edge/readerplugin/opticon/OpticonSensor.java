@@ -35,7 +35,7 @@ import org.rifidi.edge.core.services.notification.NotifierService;
 import org.springframework.jms.core.JmsTemplate;
 
 /**
- * 
+ * The Sensor class for the Opticon Barcode reader.  
  * 
  * @author Matthew Dean - matt@pramari.com
  */
@@ -195,7 +195,7 @@ public class OpticonSensor extends AbstractSensor<OpticonSensorSession> {
 	}
 
 	/**
-	 * @return the MAX_CONNECTION_ATTEMPTS
+	 * @return the The name of the Serial Port.  
 	 */
 	@Property(displayName = "Serial Port", description = "The serial port that the server "
 			+ "will attempt to connect to.  On linux the opticon will default to /dev/ttyUSB0"
@@ -222,6 +222,8 @@ public class OpticonSensor extends AbstractSensor<OpticonSensorSession> {
 	}
 
 	/**
+	 * Called by Spring.  
+	 * 
 	 * @param template
 	 *            the template to set
 	 */
@@ -229,7 +231,8 @@ public class OpticonSensor extends AbstractSensor<OpticonSensorSession> {
 		this.template = template;
 	}
 
-	/***
+	/**
+	 * Called by Spring.  
 	 * 
 	 * @param wrapper
 	 *            The JMS Notifier to set
