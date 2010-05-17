@@ -22,32 +22,35 @@
 		</property>
 	</bean>
 
-	<!-- Create the application and inject esper and teh JMS sender 	--> 
+	<!-- Create the application and inject esper and teh JMS sender 	-->
 	<bean id="trackapp" class="org.rifidi.edge.app.tracking.TrackingApp"
 		init-method="start" destroy-method="stop">
+		<constructor-arg index="0" value="Monitoring:ReadZones" />
 		<property name="trackingMessageFactory" ref="messageFactory"></property>
 		<property name="esperService" ref="esperManagementService" />
 		<property name="template" ref="externalJMSTemplate" />
 		<property name="destination" ref="topic" />
-		<property name="readZoneMonitoringService" ref="readZoneMonitoringService"/>
+		<property name="readZoneMonitoringService" ref="readZoneMonitoringService" />
 	</bean>
 
-	
+
 	<!-- Create the application and inject esper and teh JMS sender -->
 	<bean id="tagapp" class="org.rifidi.edge.app.tracking.TagMonitor"
 		init-method="start" destroy-method="stop">
+		<constructor-arg index="0" value="Monitoring:Tags" />
 		<property name="esperService" ref="esperManagementService" />
 		<property name="template" ref="externalJMSTemplate" />
 		<property name="destination" ref="tagtopic" />
 	</bean>
-	
-		<!-- Create the application and inject esper and teh JMS sender -->
+
+	<!-- Create the application and inject esper and teh JMS sender -->
 	<bean id="sensorapp" class="org.rifidi.edge.app.tracking.SensorMonitor"
 		init-method="start" destroy-method="stop">
+		<constructor-arg index="0" value="Monitoring:SensorStatus" />
 		<property name="esperService" ref="esperManagementService" />
 		<property name="template" ref="externalJMSTemplate" />
 		<property name="destination" ref="topic" />
-		<property name="sensorMonitoringService" ref="sensorMonitoringService"/>
+		<property name="sensorMonitoringService" ref="sensorMonitoringService" />
 	</bean>
 
 	<!-- Create the JMS Sender service -->
@@ -60,12 +63,12 @@
 	<bean id="topic" class="org.apache.activemq.command.ActiveMQTopic">
 		<property name="physicalName" value="org.rifidi.monitor.events" />
 	</bean>
-	
-		<!-- the JMS Destination to send messages to-->
+
+	<!-- the JMS Destination to send messages to-->
 	<bean id="tagtopic" class="org.apache.activemq.command.ActiveMQTopic">
 		<property name="physicalName" value="org.rifidi.monitor.tags" />
 	</bean>
-	
+
 
 	<bean id="dao" class="org.rifidi.edge.app.tracking.dao.DAOImpl">
 		<property name="datasource" ref="datasource" />
@@ -94,12 +97,12 @@
 	-->
 	<osgi:reference id="externalJMSTemplate"
 		interface="org.springframework.jms.core.JmsTemplate" bean-name="externalJMSTemplate" />
-		
+
 	<osgi:reference id="readZoneMonitoringService"
 		interface="org.rifidi.edge.core.app.api.service.tagmonitor.ReadZoneMonitoringService" />
-		
+
 	<osgi:reference id="sensorMonitoringService"
 		interface="org.rifidi.edge.core.app.api.service.sensormonitor.SensorStatusMonitoringService" />
-	
+
 
 </beans>

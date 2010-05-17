@@ -3,7 +3,6 @@
  */
 package org.rifidi.edge.app.tracking;
 
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -21,48 +20,60 @@ public class SensorMonitor extends JMSRifidiApp implements
 
 	private SensorStatusMonitoringService service;
 
+	/**
+	 * Constructor
+	 * 
+	 * @param name
+	 *            The name of the app
+	 */
+	public SensorMonitor(String name) {
+		super(name);
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.app.api.RifidiApp#start()
+	 * @see org.rifidi.edge.core.app.api.RifidiApp#_start()
 	 */
 	@Override
-	public void start() {
-		// TODO Auto-generated method stub
-
+	protected void _start() {
+		super._start();
+		Set<String> sensors = new HashSet<String>();
+		this.service.subscribe(this, sensors);
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.rifidi.edge.core.app.api.RifidiApp#stop()
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.rifidi.edge.core.app.api.RifidiApp#_stop()
 	 */
 	@Override
-	public void stop() {
-		super.stop();
-		if(service!=null){
+	protected void _stop() {
+		super._stop();
+		if (service != null) {
 			service.unsubscribe(this);
 		}
 	}
 
-
-
-	/* (non-Javadoc)
-	 * @see org.rifidi.edge.core.app.api.service.sensormonitor.SensorStatusSubscriber#handleSensorStatusEvent(org.rifidi.edge.core.services.notification.data.management.SensorStatusEvent)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.core.app.api.service.sensormonitor.SensorStatusSubscriber
+	 * #handleSensorStatusEvent(org.rifidi.edge.core.services.notification.data.
+	 * management.SensorStatusEvent)
 	 */
 	@Override
 	public void handleSensorStatusEvent(SensorStatusEvent event) {
 		super.sendTextMessage(event.toString());
-		
+
 	}
 
 	/**
-	 * @param service the service to set
+	 * @param service
+	 *            the service to set
 	 */
 	public void setSensorMonitoringService(SensorStatusMonitoringService service) {
 		this.service = service;
-		Set<String> sensors = new HashSet<String>();
-		sensors.add("Alien_1");
-		sensors.add("LLRP_1");
-		this.service.subscribe(this, sensors);
-		
 	}
 }

@@ -27,24 +27,35 @@ public class TrackingApp extends JMSRifidiApp implements ReadZoneSubscriber {
 	/** The service that monitors read zones. */
 	private volatile ReadZoneMonitoringService monitoringService;
 
+	/**
+	 * Constructor
+	 * 
+	 * @param name
+	 *            The name of the application
+	 */
+	public TrackingApp(String name) {
+		super(name);
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.app.api.RifidiApp#start()
+	 * @see org.rifidi.edge.core.app.api.RifidiApp#_start()
 	 */
 	@Override
-	public void start() {
+	protected void _start() {
+		super._start();
 		monitoringService.subscribe(this, Collections.EMPTY_SET, 10);
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.app.api.RifidiApp#stop()
+	 * @see org.rifidi.edge.core.app.api.RifidiApp#_stop()
 	 */
 	@Override
-	public void stop() {
-		super.stop();
+	protected void _stop() {
+		super._stop();
 		monitoringService.unsubscribe(this);
 	}
 

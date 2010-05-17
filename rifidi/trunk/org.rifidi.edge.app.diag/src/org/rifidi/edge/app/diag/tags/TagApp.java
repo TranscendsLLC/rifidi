@@ -4,37 +4,53 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.rifidi.edge.core.app.api.RifidiApp;
+import org.rifidi.edge.core.services.notification.data.TagReadEvent;
 
 import com.espertech.esper.client.EPOnDemandQueryResult;
 import com.espertech.esper.client.EventBean;
 
-public class TagApp extends RifidiApp{
-	
+public class TagApp extends RifidiApp {
+
 	private String recentTagTimeout;
+
+	/**
+	 * Constructor
+	 * 
+	 * @param name
+	 *            The application name
+	 */
+	public TagApp(String name) {
+		super(name);
+	}
 	
-	/*
-	 * (non-Javadoc)
+	/* (non-Javadoc)
 	 * @see org.rifidi.edge.core.app.api.RifidiApp#start()
 	 */
 	@Override
-	public void start(){
-		
+	public void start() {
+		// TODO Auto-generated method stub
+		super.start();
+	}
+
+
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.rifidi.edge.core.app.api.RifidiApp#_start()
+	 */
+	@Override
+	protected void _start() {
+
 		// esper statement that creates a window.
-		statements.add(esperService.getProvider().getEPAdministrator().createEPL(
-			"create window recenttags.win:time("+recentTagTimeout+")" +
-			"(tag_ID String, readerID String, antennaID int, timestamp long)"));
-		
-		statements.add(esperService.getProvider().getEPAdministrator().createEPL(
-				"create window curtags.std:firstunique(tag_ID,readerID,antennaID).win:time(10 sec)" +
-				"as recenttags"));
-		
-		statements.add(esperService.getProvider().getEPAdministrator().createEPL(
-			"insert into recenttags select cast(tag.epc?, String) as tag_ID , "
-			+ "readerID, antennaID, timestamp from ReadCycle[select * from tags]"));
-		
-		statements.add(esperService.getProvider().getEPAdministrator().createEPL(
-			"insert into curtags select tag_ID,readerID,antennaID,timestamp from recenttags"));
-		
+		addStatement("create window recenttags.win:time("+ recentTagTimeout+ ") as TagReadEvent");
+
+		addStatement("create window curtags.std:firstunique(tag.ID, readerID, antennaID).win:time(10 sec)"
+				+ "as TagReadEvent");
+
+		addStatement("insert into recenttags select * from ReadCycle[select * from tags]");
+
+		addStatement("insert into curtags select * from recenttags");
 	}
 
 	/**
@@ -44,44 +60,45 @@ public class TagApp extends RifidiApp{
 	 */
 	List<TagData> getRecentTags(String readerID) {
 		List<TagData> recentTags = new LinkedList<TagData>();
-		String query = "select * from recenttags where readerID=\""+readerID+"\"";
-		EPOnDemandQueryResult result = esperService.getProvider()
-				.getEPRuntime().executeQuery(query);
+		EPOnDemandQueryResult result = executeQuery("select * from recenttags where readerID=\""
+				+ readerID + "\"");
 		if (result.getArray() != null) {
 			for (EventBean event : result.getArray()) {
 				TagData data = new TagData();
-				data.setEpc((String)event.get("tag_ID"));
-				data.setAntenna((Integer)event.get("antennaID"));
+				TagReadEvent tag= (TagReadEvent)event.getUnderlying();
+				data.setEpc(tag.getTag().getFormattedID());
+				data.setAntenna(tag.getAntennaID());
 				data.setReaderID(readerID);
-				data.setTimestamp((Long)event.get("timestamp"));
+				data.setTimestamp(tag.getTimestamp());
 				recentTags.add(data);
 			}
 		}
 		return recentTags;
 	}
-	
+
 	/**
 	 * 
 	 * @param readerID
 	 * @return
 	 */
 	List<TagData> getCurrentTags(String readerID) {
-		List<TagData> recentTags = new LinkedList<TagData>();
-		String query = "select * from curtags where readerID=\""+readerID+"\"";
-		EPOnDemandQueryResult result = esperService.getProvider()
-				.getEPRuntime().executeQuery(query);
+		List<TagData> currentTags = new LinkedList<TagData>();
+		EPOnDemandQueryResult result = executeQuery("select * from curtags where readerID=\""
+				+ readerID + "\"");
 		if (result.getArray() != null) {
 			for (EventBean event : result.getArray()) {
 				TagData data = new TagData();
-				data.setEpc((String)event.get("tag_ID"));
-				data.setAntenna((Integer)event.get("antennaID"));
+				TagReadEvent tag= (TagReadEvent)event.getUnderlying();
+				data.setEpc(tag.getTag().getFormattedID());
+				data.setAntenna(tag.getAntennaID());
 				data.setReaderID(readerID);
-				data.setTimestamp((Long)event.get("timestamp"));
-				recentTags.add(data);
+				data.setTimestamp(tag.getTimestamp());
+				currentTags.add(data);
 			}
 		}
-		return recentTags;
+		return currentTags;
 	}
+
 	/**
 	 * Called by spring
 	 * 

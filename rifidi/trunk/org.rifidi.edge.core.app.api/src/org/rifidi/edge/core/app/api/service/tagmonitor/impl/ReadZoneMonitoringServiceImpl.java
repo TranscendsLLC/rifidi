@@ -39,16 +39,17 @@ public class ReadZoneMonitoringServiceImpl extends RifidiApp implements
 
 	/** The number of subscribers created so far */
 	private Integer counter = 0;
-	/** A map to keep up with subscribers and their esper statements */
-	private Map<ReadZoneSubscriber, Set<EPStatement>> subscriberMap = new HashMap<ReadZoneSubscriber, Set<EPStatement>>();
+	/** A map to keep up with subscribers and their esper statement names */
+	private Map<ReadZoneSubscriber, Set<String>> subscriberMap = new HashMap<ReadZoneSubscriber, Set<String>>();
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Constructor
 	 * 
-	 * @see org.rifidi.edge.core.app.api.RifidiApp#start()
+	 * @param name
+	 *            The name of this application
 	 */
-	@Override
-	public void start() {
+	public ReadZoneMonitoringServiceImpl(String name) {
+		super(name);
 	}
 
 	/*
@@ -69,23 +70,17 @@ public class ReadZoneMonitoringServiceImpl extends RifidiApp implements
 			if (subscriberMap.containsKey(subscriber)) {
 				return;
 			}
-			// create a new set of esper statementss
-			Set<EPStatement> statements = new HashSet<EPStatement>();
+			Set<String> statementNames = new HashSet<String>();
 			// create a new factory for creating esper statemetns
 			ReadZoneMonitorEsperFactory factory = new ReadZoneMonitorEsperFactory(
 					readZones, getCounter(), departureTime);
 			// create the esper statemetns from strings
 			for (String statement : factory.createStatements()) {
-				statements.add(esperService.getProvider().getEPAdministrator()
-						.createEPL(statement));
+				statementNames.add(addStatement(statement));
 			}
-			// create the esper query
-			EPStatement query = esperService.getProvider().getEPAdministrator()
-					.createEPL(factory.getQuery());
-			statements.add(query);
 
 			// create the listener
-			query.addListener(new StatementAwareUpdateListener() {
+			StatementAwareUpdateListener listener = new StatementAwareUpdateListener() {
 
 				@Override
 				public void update(EventBean[] arg0, EventBean[] arg1,
@@ -107,8 +102,9 @@ public class ReadZoneMonitoringServiceImpl extends RifidiApp implements
 					}
 
 				}
-			});
-			subscriberMap.put(subscriber, statements);
+			};
+			statementNames.add(addStatement(factory.getQuery(), listener));
+			subscriberMap.put(subscriber, statementNames);
 		}
 
 	}
@@ -138,9 +134,9 @@ public class ReadZoneMonitoringServiceImpl extends RifidiApp implements
 	@Override
 	public synchronized void unsubscribe(ReadZoneSubscriber rzs) {
 		synchronized (subscriberMap) {
-			Set<EPStatement> statements = this.subscriberMap.remove(rzs);
-			for (EPStatement statement : statements) {
-				statement.destroy();
+			Set<String> statements = this.subscriberMap.remove(rzs);
+			for (String name : statements) {
+				destroyStatement(name);
 			}
 		}
 	}
@@ -148,11 +144,11 @@ public class ReadZoneMonitoringServiceImpl extends RifidiApp implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.app.api.RifidiApp#stop()
+	 * @see org.rifidi.edge.core.app.api.RifidiApp#_stop()
 	 */
 	@Override
-	public void stop() {
-		super.stop();
+	protected void _stop() {
+		super._stop();
 
 		// need to override the stop method so that we make sure to delete all
 		// esper statements
