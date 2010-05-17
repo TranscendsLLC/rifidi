@@ -43,18 +43,10 @@ public class BarcodeSimulatorTagHandler {
 	 * @return
 	 */
 	public ReadCycle processTag(byte[] tag) {
-		// We need every byte but the first one, which is an unprintable
-		// character.
 
-		StringBuilder sb = new StringBuilder();
-		for (byte b : tag) {
-			sb.append((char) b);
-		}
 
-		BigInteger epc = new BigInteger(sb.toString());
 		BarcodeTagEvent barcodetag = new BarcodeTagEvent();
-
-		barcodetag.setBarcode(epc, 72);
+		barcodetag.setBarcode(tag);
 
 		TagReadEvent tre = new TagReadEvent(this.readerID, barcodetag, 0,
 				System.currentTimeMillis());
