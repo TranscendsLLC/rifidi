@@ -11,10 +11,10 @@
  */
 package org.rifidi.edge.readerplugin.opticon.tags;
 
-import java.math.BigInteger;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.rifidi.edge.core.services.notification.data.BarcodeTagEvent;
 import org.rifidi.edge.core.services.notification.data.ReadCycle;
 import org.rifidi.edge.core.services.notification.data.TagReadEvent;
 
@@ -53,10 +53,8 @@ public class OpticonTagHandler {
 			sb.append((char) b);
 		}
 
-		BigInteger epc = new BigInteger(sb.toString());
-		OpticonTagEvent barcodetag = new OpticonTagEvent();
-
-		barcodetag.setBarcode(epc, 72);
+		BarcodeTagEvent barcodetag = new BarcodeTagEvent();
+		barcodetag.setBarcode(tag);
 
 		TagReadEvent tre = new TagReadEvent(this.readerID, barcodetag, 0,
 				System.currentTimeMillis());

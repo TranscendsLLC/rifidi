@@ -31,20 +31,13 @@ import org.springframework.jms.core.JmsTemplate;
 /**
  * The Session for the Opticon Barcode reader. This reader can either be set in
  * HID mode or Serial mode; however we will always set it as a "serial" reader
- * for our purposes.  Here are the settings necessary for getting this reader to work:
+ * for our purposes. Here are the settings necessary for getting this reader to
+ * work:
  * 
- * SET
- * 1. USB VPC [C01] {Serial Mode}
- * 2. Clear all prefixes [MG]
- * 3. Preamble [MZ]
- * 4. ^B (STX) [1B]
- * 5. Clear all suffixes [PR]
- * 6. Postamble [PS]
- * 7. ^C (ETX) [1C]
- * 8. Multiple Read [S1]
- * 9. 50ms [AH]
- * 10. Enable Auto Trigger [+I]
- * END
+ * SET <br> 1. USB VPC [C01] {Serial Mode} <br> 2. Clear all prefixes [MG] <br> 3. Preamble
+ * [MZ] <br> 4. ^B (STX) [1B] <br> 5. Clear all suffixes [PR] <br> 6. Postamble [PS] <br> 7. ^C
+ * (ETX) [1C] <br> 8. Multiple Read [S1] <br> 9. 50ms [AH] <br> 10. Enable Auto Trigger [+I]
+ * <br> END
  * 
  * @author Matthew Dean - matt@pramari.com
  */
@@ -186,16 +179,12 @@ public class OpticonSensorSession extends AbstractSerialSensorSession {
 		 */
 		@Override
 		public byte[] isMessage(byte message) {
-			messagebuilder.add(message);
 			if (message == STARTBYTE) {
 				messagebuilder.clear();
-			}
-			if (message == ENDBYTE) {
+			} else if (message == ENDBYTE) {
 				List<Byte> actualmessage = new ArrayList<Byte>();
 				for (Byte b : messagebuilder) {
-					if (Character.isDigit((char) b.byteValue())) {
-						actualmessage.add(b);
-					}
+					actualmessage.add(b);
 				}
 				byte retval[] = new byte[actualmessage.size()];
 				for (int i = 0; i < actualmessage.size(); i++) {
@@ -204,6 +193,8 @@ public class OpticonSensorSession extends AbstractSerialSensorSession {
 				messagebuilder.clear();
 				actualmessage.clear();
 				return retval;
+			} else {
+				messagebuilder.add(message);
 			}
 			return null;
 		}
