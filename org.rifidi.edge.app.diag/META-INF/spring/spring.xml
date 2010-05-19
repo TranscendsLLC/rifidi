@@ -23,6 +23,11 @@
 	<bean id="gpiocommands" class="org.rifidi.edge.app.diag.gpio.GPIOAppCommandProvider">
 		<property name="gpioApp" ref="GPIOApp" />
 	</bean>
+	<bean id="SerialApp" class="org.rifidi.edge.app.diag.serial.SerialApp"
+		init-method="start" destroy-method="stop" />
+	<bean id="serialcommands" class="org.rifidi.edge.app.diag.serial.SerialCommandProvider">
+		<property name="serialApp" ref="SerialApp" />
+	</bean>
 	<bean id="TagApp" class="org.rifidi.edge.app.diag.tags.TagApp"
 		init-method="start" destroy-method="stop">
 		<constructor-arg index="0" value="Diagnostic:Tags" />
@@ -65,6 +70,8 @@
 	<osgi:service ref="tagscommands"
 		interface="org.eclipse.osgi.framework.console.CommandProvider" />
 	<osgi:service ref="gpisimulatorcommands"
+		interface="org.eclipse.osgi.framework.console.CommandProvider" />
+	<osgi:service ref="serialcommands"
 		interface="org.eclipse.osgi.framework.console.CommandProvider" />
 	<osgi:service ref="helpcommandprovider"
 		interface="org.eclipse.osgi.framework.console.CommandProvider" />
