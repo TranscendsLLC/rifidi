@@ -59,6 +59,13 @@ public class HelpCommandProvider implements CommandProvider {
 				+ "tags recently seen on the given reader.  \n");
 		retVal.append("\tcurrenttags <readerID> - Prints out a list of tags"
 				+ "currently seen by the given reader.  \n");
+		retVal.append("  ----Serial Commands----\n");
+		retVal.append("\tlistSerial - Prints out a list of serial ports " +
+				"that belong to this reader \n");
+		retVal.append("\tconnectSerial <port> <baud> <databits> <stopbits> <parity> " +
+				"- Connects to a serial port with the given options.  \n");
+		retVal.append("\tdisconnectSerial - Disconnects you from any serial ports you are " +
+				"connected to.\n");
 
 		return retVal.toString();
 	}
