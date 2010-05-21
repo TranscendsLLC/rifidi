@@ -11,7 +11,6 @@
  */
 package org.rifidi.edge.readerplugin.barcodesimulator.tag;
 
-import java.math.BigInteger;
 import java.util.HashSet;
 import java.util.Set;
 
