@@ -72,8 +72,6 @@ import org.rifidi.edge.core.services.notification.data.EPCGeneration2Event;
 import org.rifidi.edge.core.services.notification.data.ReadCycle;
 import org.rifidi.edge.core.services.notification.data.StandardTagReadEventFieldNames;
 import org.rifidi.edge.core.services.notification.data.TagReadEvent;
-import org.rifidi.edge.core.services.notification.data.management.SensorConnectedEvent;
-import org.rifidi.edge.core.services.notification.data.management.SensorDisconnectedEvent;
 import org.rifidi.edge.readerplugin.llrp.commands.internal.LLRPReset;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
