@@ -99,9 +99,9 @@ public class AlienGetTagListCommand extends AbstractAlien9800Command {
 			tagTypeCommand.execute();
 
 			// Setting the custom tag list format. This lets us get the velocity
-			// and rssi information, in addition to all the regular information.
-			// This tag list looks exatcly like the list coming back if the
-			// taglistformat was set to "Text", except it has the speed and RSSI
+			// and RSSI information, in addition to all the regular information.
+			// This tag list looks exactly like the list coming back if the
+			// TagListFormat was set to "Text", except it has the speed and RSSI
 			// information as well.
 			AlienCommandObject tagListFormat = new AlienSetCommandObject(
 					Alien9800ReaderSession.COMMAND_TAG_LIST_FORMAT, "custom",
@@ -110,9 +110,9 @@ public class AlienGetTagListCommand extends AbstractAlien9800Command {
 			tagListFormat.execute();
 
 			// Setting the custom tag list format. This lets us get the velocity
-			// and rssi information, in addition to all the regular information.
-			// This tag list looks exatcly like the list coming back if the
-			// taglistformat was set to "Text", except it has the speed and RSSI
+			// and RSSI information, in addition to all the regular information.
+			// This tag list looks exactly like the list coming back if the
+			// TagListFormat was set to "Text", except it has the speed and RSSI
 			// information as well.
 			AlienCommandObject tagListCustomFormat = new AlienSetCommandObject(
 					Alien9800ReaderSession.COMMAND_TAG_LIST_CUSTOM_FORMAT,
