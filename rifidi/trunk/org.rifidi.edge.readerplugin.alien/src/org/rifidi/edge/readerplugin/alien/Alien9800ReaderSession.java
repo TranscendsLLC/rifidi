@@ -56,7 +56,7 @@ public class Alien9800ReaderSession extends AbstractPollIPSensorSession
 			.getLog(Alien9800ReaderSession.class);
 	/** Username for connecting to the reader. */
 	private final String username;
-	/** Password for connnecting to the reader. */
+	/** Password for connecting to the reader. */
 	private final String password;
 	/** Each command needs to be terminated with a newline. */
 	public static final String NEWLINE = "\n";

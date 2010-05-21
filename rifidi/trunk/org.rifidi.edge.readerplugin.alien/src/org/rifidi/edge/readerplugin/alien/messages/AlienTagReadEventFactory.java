@@ -16,7 +16,6 @@
 package org.rifidi.edge.readerplugin.alien.messages;
 
 import java.math.BigInteger;
-import javax.xml.bind.annotation.adapters.HexBinaryAdapter;
 
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Hex;
