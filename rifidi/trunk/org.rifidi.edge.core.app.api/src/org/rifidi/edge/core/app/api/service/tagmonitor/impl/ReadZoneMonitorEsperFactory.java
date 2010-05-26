@@ -14,10 +14,11 @@ package org.rifidi.edge.core.app.api.service.tagmonitor.impl;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.rifidi.edge.core.app.api.service.EsperUtil;
 import org.rifidi.edge.core.app.api.service.tagmonitor.ReadZone;
 
 /**
@@ -27,7 +28,7 @@ import org.rifidi.edge.core.app.api.service.tagmonitor.ReadZone;
  * @author Matthew Dean
  * @author Kyle Neumeier - kyle@pramari.com
  */
-public class ReadZoneMonitorEsperFactory {
+public class ReadZoneMonitorEsperFactory extends AbstractReadZoneEsperFactory {
 
 	/** The set of read zones to monitor */
 	private final List<ReadZone> readzones;
@@ -36,7 +37,9 @@ public class ReadZoneMonitorEsperFactory {
 	/** The list of espoer statements */
 	private final List<String> statements;
 	/** The amount of time to wait before deciding a tag has departed. */
-	private final Integer departureWaitTime;
+	private final Float departureWaitTime;
+	/** The time unit used for the departure wait time */
+	private final TimeUnit timeUnit;
 	/** The logger for this class */
 	private final static Log logger = LogFactory
 			.getLog(ReadZoneMonitorEsperFactory.class);
@@ -50,11 +53,12 @@ public class ReadZoneMonitorEsperFactory {
 	 *            A unique integer should be given in order to make all window
 	 *            names unique
 	 * @param departureWaitTime
-	 *            The amount of time ins seconds to wait before deciding a tag
-	 *            has departed.
+	 *            The amount of time to wait before deciding a tag has departed.
+	 * @param timeUnit
+	 *            the timeUnit used for the departure time.
 	 */
-	public ReadZoneMonitorEsperFactory(Set<ReadZone> readzones,
-			Integer windowID, Integer departureWaitTime) {
+	public ReadZoneMonitorEsperFactory(List<ReadZone> readzones,
+			Integer windowID, Float departureWaitTime, TimeUnit timeUnit) {
 		this.readzones = new ArrayList<ReadZone>();
 		if (readzones != null) {
 			this.readzones.addAll(readzones);
@@ -62,27 +66,34 @@ public class ReadZoneMonitorEsperFactory {
 		this.windowName = "tags_" + windowID;
 		statements = new LinkedList<String>();
 		this.departureWaitTime = departureWaitTime;
+		this.timeUnit = timeUnit;
 
 	}
 
-	/**
-	 * Use this method to create the necessary statements
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @return A list of esper statements as strings
+	 * @see
+	 * org.rifidi.edge.core.app.api.service.RifidiAppEsperFactory#createStatements
+	 * ()
 	 */
+	@Override
 	public List<String> createStatements() {
 		statements.add(createWindowStatement());
-		statements.add(insertStatement());
+		String insertStatement = buildInsertStatement(windowName, readzones);
+		statements.add(insertStatement);
 		statements.add(deleteStatement());
 		return statements;
 	}
 
-	/**
-	 * Use this method to create a query that monitors the window
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @return
+	 * @see
+	 * org.rifidi.edge.core.app.api.service.RifidiAppEsperFactory#createQuery()
 	 */
-	public String getQuery() {
+	@Override
+	public String createQuery() {
 		return "select irstream * from " + windowName;
 	}
 
@@ -98,93 +109,6 @@ public class ReadZoneMonitorEsperFactory {
 	}
 
 	/**
-	 * A private method to create the "insert into" statement
-	 * 
-	 * @return
-	 */
-	private String insertStatement() {
-		String s = "insert into " + windowName
-				+ " select * from ReadCycle[select * from tags "
-				+ whereClause() + "]";
-		logger.debug("Insert statement: " + s);
-		return s;
-	}
-
-	/**
-	 * A private method to create the where clause in the select statement
-	 * 
-	 * @return
-	 */
-	private String whereClause() {
-		StringBuilder builder = new StringBuilder();
-		if (!readzones.isEmpty()) {
-			builder.append(" where (" + buildReader(readzones.get(0)));
-			builder.append("");
-			for (int i = 1; i < readzones.size(); i++) {
-				builder.append(" OR " + buildReader(readzones.get(i)));
-			}
-			builder.append(")");
-		}
-		return builder.toString();
-	}
-
-	/**
-	 * This method builds a single reader filter. For example:
-	 * 
-	 * (TagReadEvent.readerID='Alien_1'
-	 * 
-	 * or
-	 * 
-	 * (tagReadEvent.readerID='Alien_1' AND (antennaID=2))
-	 * 
-	 * 
-	 * @param zone
-	 * @return
-	 */
-	private String buildReader(ReadZone zone) {
-		StringBuilder sb = new StringBuilder("(TagReadEvent.readerID=\'"
-				+ zone.getReaderID() + "\'");
-		sb.append(buildAntenns(new ArrayList<Integer>(zone.getAntennas())));
-		sb.append(")");
-		return sb.toString();
-	}
-
-	/**
-	 * This method builds a list of antennaID filters. For example:
-	 * 
-	 * (antennaID=1)
-	 * 
-	 * or
-	 * 
-	 * (antennaID=1 OR antennaID=2)
-	 * 
-	 * @param antennas
-	 * @return
-	 */
-	private String buildAntenns(List<Integer> antennas) {
-		StringBuilder sb = new StringBuilder();
-		if (antennas.size() > 0) {
-			sb.append(" AND (" + buildAntenna(antennas.get(0)));
-			for (int i = 1; i < antennas.size(); i++) {
-				sb.append(" OR " + buildAntenna(antennas.get(i)));
-			}
-			sb.append(")");
-
-		}
-		return sb.toString();
-	}
-
-	/**
-	 * This method returns a single antennaID filter.
-	 * 
-	 * @param antenna
-	 * @return
-	 */
-	private String buildAntenna(Integer antenna) {
-		return "antennaID=" + antenna;
-	}
-
-	/**
 	 * A private method to create the delete statement
 	 * 
 	 * @return
@@ -195,9 +119,8 @@ public class ReadZoneMonitorEsperFactory {
 				+ windowName
 				+ " ->"
 				+ "(timer:interval("
-				+ Integer.toString(departureWaitTime)
-				+ " sec) "
-				+ "and not "
+				+ EsperUtil.timeUnitToEsperTime(departureWaitTime, timeUnit)
+				+ ")and not "
 				+ windowName
 				+ "(tag.ID=tag1.tag.ID, readerID=tag1.readerID, antennaID=tag1.antennaID))]"
 				+ "delete from "

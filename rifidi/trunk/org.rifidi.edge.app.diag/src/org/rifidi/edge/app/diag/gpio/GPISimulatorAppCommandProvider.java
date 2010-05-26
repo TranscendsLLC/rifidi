@@ -205,8 +205,23 @@ public class GPISimulatorAppCommandProvider implements CommandProvider {
 
 	@Override
 	public String getHelp() {
-		// TODO Auto-generated method stub
-		return "";
+		StringBuffer retVal = new StringBuffer();
+		retVal.append("  ---Diagnostic GPIO Simulation App Commands---\n");
+		retVal.append("\tsimGPIHigh <readerID> <port1> [port2]*"
+				+ " - Simulates setting the given GPI ports to high for "
+				+ "the given reader\n");
+		retVal.append("\tsimGPILow <readerID> <port1> [port2]*"
+				+ " - Simulates setting the given GPI ports to low for "
+				+ "the given reader\n");
+		retVal.append("\tsimGPIFlashHigh <readerID> <seconds> <port1> [port2]*"
+				+ " - Simulates setting the given GPI ports to high for "
+				+ "the given reader, then setting them back to high after the "
+				+ "given duration has passed\n");
+		retVal.append("\tsimGPIFlashLow <readerID> <seconds> <port1> [port2]*"
+				+ " - Simulates setting the given GPI ports to low for "
+				+ "the given reader, then setting them back to high after the "
+				+ "given duration has passed\n");
+		return retVal.toString();
 	}
 
 }

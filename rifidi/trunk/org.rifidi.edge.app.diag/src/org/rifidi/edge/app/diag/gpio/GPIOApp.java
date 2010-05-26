@@ -10,6 +10,8 @@ import java.util.concurrent.CopyOnWriteArraySet;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.eclipse.osgi.framework.console.CommandProvider;
+import org.rifidi.edge.core.app.api.AbstractRifidiApp;
 import org.rifidi.edge.core.sensors.exceptions.CannotExecuteException;
 import org.rifidi.edge.core.sensors.management.AbstractGPIOService;
 
@@ -19,19 +21,30 @@ import org.rifidi.edge.core.sensors.management.AbstractGPIOService;
  * @author kyle
  * @author matt
  */
-public class GPIOApp {
+public class GPIOApp extends AbstractRifidiApp{
 
 	private static final Log logger = LogFactory.getLog(GPIOApp.class);
 
 	private final Set<AbstractGPIOService<?>> gpioServiceList = new CopyOnWriteArraySet<AbstractGPIOService<?>>();
-
-	public void start() {
-		logger.debug("Starting GPIOApp");
+	
+	/**
+	 * @param group
+	 * @param name
+	 */
+	public GPIOApp(String group, String name) {
+		super(group, name);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.app.api.AbstractRifidiApp#lazyStart()
+	 */
+	@Override
+	public boolean lazyStart() {
+		String lazyStart= getProperty(LAZY_START, "true");
+		return Boolean.parseBoolean(lazyStart);
 	}
 
-	public void stop() {
-		logger.debug("Stopping GPIOApp");
-	}
+
 
 	public void setGPO(String readerID, Set<Integer> ports)
 			throws CannotExecuteException {
@@ -107,4 +120,15 @@ public class GPIOApp {
 	public Set<AbstractGPIOService<?>> getServiceSet() {
 		return this.gpioServiceList;
 	}
+
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.app.api.AbstractRifidiApp#getCommandProider()
+	 */
+	@Override
+	protected CommandProvider getCommandProider() {
+		GPIOAppCommandProvider commandProvider = new GPIOAppCommandProvider();
+		commandProvider.setGpioApp(this);
+		return commandProvider;
+	}
+	
 }

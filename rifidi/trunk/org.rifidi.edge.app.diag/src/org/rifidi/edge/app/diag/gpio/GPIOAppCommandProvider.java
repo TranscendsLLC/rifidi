@@ -117,8 +117,17 @@ public class GPIOAppCommandProvider implements CommandProvider {
 	 */
 	@Override
 	public String getHelp() {
-		// TODO Auto-generated method stub
-		return "";
+		StringBuffer retVal = new StringBuffer();
+		retVal.append("  ---Diagnostic GPIO App Commands---\n");
+		retVal.append("\ttestGPI <readerID> <port> - "
+				+ "Returns the GPI value of the given reader's port");
+		retVal.append("\tsetGPO <readerID> [<port>]*"
+				+ " - Sets the given ports to high.  Any ports not "
+				+ "mentioned that are currently high will be "
+				+ "set to low.  \n");
+		retVal.append("\tflashGPO <readerID> <port> - "
+				+ "Flashes the given GPO port high for 4 seconds.  \n");
+		return retVal.toString();
 	}
 
 }

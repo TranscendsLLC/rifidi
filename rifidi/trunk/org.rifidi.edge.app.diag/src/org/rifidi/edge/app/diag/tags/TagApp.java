@@ -1,49 +1,58 @@
 package org.rifidi.edge.app.diag.tags;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.rifidi.edge.core.app.api.RifidiApp;
+import org.eclipse.osgi.framework.console.CommandProvider;
+import org.rifidi.edge.core.app.api.AbstractRifidiApp;
+import org.rifidi.edge.core.app.api.AppState;
 import org.rifidi.edge.core.services.notification.data.TagReadEvent;
 
 import com.espertech.esper.client.EPOnDemandQueryResult;
 import com.espertech.esper.client.EventBean;
 
-public class TagApp extends RifidiApp {
+/**
+ * This is an application that lets the user query recently seen tags and tags
+ * that can currently be seen.
+ * 
+ * @author Kyle Neumeier - kyle@pramari.com
+ * 
+ */
+public class TagApp extends AbstractRifidiApp {
 
+	/** The amount of time to keep tags around as recent tags */
 	private String recentTagTimeout;
 
 	/**
-	 * Constructor
 	 * 
+	 * @param group
 	 * @param name
-	 *            The application name
 	 */
-	public TagApp(String name) {
-		super(name);
+	public TagApp(String group, String name) {
+		super(group, name);
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.rifidi.edge.core.app.api.RifidiApp#start()
+	 * @see org.rifidi.edge.core.app.api.AbstractRifidiApp#lazyStart()
 	 */
 	@Override
-	public void start() {
-		// TODO Auto-generated method stub
-		super.start();
+	public boolean lazyStart() {
+		String lazyStart= getProperty(LAZY_START, "true");
+		return Boolean.parseBoolean(lazyStart);
 	}
-
-
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.app.api.RifidiApp#_start()
+	 * @see org.rifidi.edge.core.app.api.AbstractRifidiApp#_start()
 	 */
 	@Override
 	protected void _start() {
 
 		// esper statement that creates a window.
-		addStatement("create window recenttags.win:time("+ recentTagTimeout+ ") as TagReadEvent");
+		addStatement("create window recenttags.win:time(" + recentTagTimeout
+				+ ") as TagReadEvent");
 
 		addStatement("create window curtags.std:firstunique(tag.ID, readerID, antennaID).win:time(10 sec)"
 				+ "as TagReadEvent");
@@ -58,19 +67,17 @@ public class TagApp extends RifidiApp {
 	 * @param readerID
 	 * @return
 	 */
-	List<TagData> getRecentTags(String readerID) {
-		List<TagData> recentTags = new LinkedList<TagData>();
+	List<TagReadEvent> getRecentTags(String readerID) {
+		if (getState() != AppState.STARTED) {
+			return new ArrayList<TagReadEvent>();
+		}
+		List<TagReadEvent> recentTags = new LinkedList<TagReadEvent>();
 		EPOnDemandQueryResult result = executeQuery("select * from recenttags where readerID=\""
 				+ readerID + "\"");
 		if (result.getArray() != null) {
 			for (EventBean event : result.getArray()) {
-				TagData data = new TagData();
-				TagReadEvent tag= (TagReadEvent)event.getUnderlying();
-				data.setEpc(tag.getTag().getFormattedID());
-				data.setAntenna(tag.getAntennaID());
-				data.setReaderID(readerID);
-				data.setTimestamp(tag.getTimestamp());
-				recentTags.add(data);
+				TagReadEvent tag = (TagReadEvent) event.getUnderlying();
+				recentTags.add(tag);
 			}
 		}
 		return recentTags;
@@ -81,30 +88,42 @@ public class TagApp extends RifidiApp {
 	 * @param readerID
 	 * @return
 	 */
-	List<TagData> getCurrentTags(String readerID) {
-		List<TagData> currentTags = new LinkedList<TagData>();
+	List<TagReadEvent> getCurrentTags(String readerID) {
+		if (getState() != AppState.STARTED) {
+			return new ArrayList<TagReadEvent>();
+		}
+		List<TagReadEvent> currentTags = new LinkedList<TagReadEvent>();
 		EPOnDemandQueryResult result = executeQuery("select * from curtags where readerID=\""
 				+ readerID + "\"");
 		if (result.getArray() != null) {
 			for (EventBean event : result.getArray()) {
-				TagData data = new TagData();
-				TagReadEvent tag= (TagReadEvent)event.getUnderlying();
-				data.setEpc(tag.getTag().getFormattedID());
-				data.setAntenna(tag.getAntennaID());
-				data.setReaderID(readerID);
-				data.setTimestamp(tag.getTimestamp());
-				currentTags.add(data);
+				TagReadEvent tag = (TagReadEvent) event.getUnderlying();
+				currentTags.add(tag);
 			}
 		}
 		return currentTags;
 	}
 
-	/**
-	 * Called by spring
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @param timeout
+	 * @see org.rifidi.edge.core.app.api.AbstractRifidiApp#initialize()
 	 */
-	public void setRecentTagTimeout(String timeout) {
-		this.recentTagTimeout = timeout;
+	@Override
+	public void initialize() {
+		this.recentTagTimeout = getProperty("RecentTagTimeout", "10 min");
 	}
+
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.app.api.AbstractRifidiApp#getCommandProider()
+	 */
+	@Override
+	protected CommandProvider getCommandProider() {
+		TagAppCommandProvider provider = new TagAppCommandProvider();
+		provider.setTagApp(this);
+		return provider;
+	}
+	
+	
+
 }

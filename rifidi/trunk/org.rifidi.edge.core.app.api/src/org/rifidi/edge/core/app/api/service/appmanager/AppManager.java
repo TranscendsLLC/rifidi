@@ -3,24 +3,48 @@
  */
 package org.rifidi.edge.core.app.api.service.appmanager;
 
-import java.util.Set;
+import java.util.Map;
 
 import org.rifidi.edge.core.app.api.RifidiApp;
 
 /**
+ * The AppManager keeps track of all registered Rifidi Apps. Apps are loaded
+ * into the Application Manager by registering themselves in the OSGi registry
+ * under the org.rifidi.edge.app.api.RifidiApp interface
+ * 
  * @author Kyle Neumeier - kyle@pramari.com
  * 
  */
 public interface AppManager {
 
-	void addApp(RifidiApp app);
+	/**
+	 * Dynamically load a group of applications into the edge server from an
+	 * OSGi bundle.
+	 * 
+	 * @param groupName
+	 *            The name of the group.
+	 */
+	void loadGroup(String groupName);
 
-	void start(String name);
+	/**
+	 * Start an application with the given ID
+	 * 
+	 * @param appID
+	 */
+	void startApp(Integer appID);
 
-	void start(RifidiApp app);
+	/**
+	 * Stop an application with the given ID
+	 * 
+	 * @param appID
+	 */
+	void stopApp(Integer appID);
 
-	void stop(String name);
-
-	Set<String> getApps();
+	/**
+	 * Return all Rifidi Applications that have been loaded
+	 * 
+	 * @return
+	 */
+	Map<Integer, RifidiApp> getApps();
 
 }

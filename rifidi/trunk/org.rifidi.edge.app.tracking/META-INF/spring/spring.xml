@@ -23,35 +23,35 @@
 	</bean>
 
 	<!-- Create the application and inject esper and teh JMS sender 	-->
-	<bean id="trackapp" class="org.rifidi.edge.app.tracking.TrackingApp"
-		init-method="start" destroy-method="stop">
-		<constructor-arg index="0" value="Monitoring:ReadZones" />
+	<bean id="trackapp" class="org.rifidi.edge.app.tracking.TrackingApp">
+		<constructor-arg index="0" value="Monitoring" />
+		<constructor-arg index="1" value="ReadZones" />
 		<property name="trackingMessageFactory" ref="messageFactory"></property>
-		<property name="esperService" ref="esperManagementService" />
 		<property name="template" ref="externalJMSTemplate" />
 		<property name="destination" ref="topic" />
 		<property name="readZoneMonitoringService" ref="readZoneMonitoringService" />
 	</bean>
+	<osgi:service ref="trackapp" interface="org.rifidi.edge.core.app.api.RifidiApp"/>
 
 
 	<!-- Create the application and inject esper and teh JMS sender -->
-	<bean id="tagapp" class="org.rifidi.edge.app.tracking.TagMonitor"
-		init-method="start" destroy-method="stop">
-		<constructor-arg index="0" value="Monitoring:Tags" />
-		<property name="esperService" ref="esperManagementService" />
+	<bean id="tagapp" class="org.rifidi.edge.app.tracking.TagMonitor">
+		<constructor-arg index="0" value="Monitoring" />
+		<constructor-arg index="1" value="Tags" />
 		<property name="template" ref="externalJMSTemplate" />
 		<property name="destination" ref="tagtopic" />
 	</bean>
+	<osgi:service ref="tagapp" interface="org.rifidi.edge.core.app.api.RifidiApp"/>
 
 	<!-- Create the application and inject esper and teh JMS sender -->
-	<bean id="sensorapp" class="org.rifidi.edge.app.tracking.SensorMonitor"
-		init-method="start" destroy-method="stop">
-		<constructor-arg index="0" value="Monitoring:SensorStatus" />
-		<property name="esperService" ref="esperManagementService" />
+	<bean id="sensorapp" class="org.rifidi.edge.app.tracking.SensorMonitor">
+		<constructor-arg index="0" value="Monitoring" />
+		<constructor-arg index="1" value="SensorStatus" />
 		<property name="template" ref="externalJMSTemplate" />
 		<property name="destination" ref="topic" />
 		<property name="sensorMonitoringService" ref="sensorMonitoringService" />
 	</bean>
+	<osgi:service ref="sensorapp" interface="org.rifidi.edge.core.app.api.RifidiApp"/>
 
 	<!-- Create the JMS Sender service -->
 	<bean id="messageFactory" class="org.rifidi.edge.app.tracking.TrackingMessageFactory">
@@ -86,12 +86,6 @@
 		<property name="password" value="${org.rifidi.jdbc.pass}" />
 	</bean>
 
-	<!--
-		Get a reference to the Esper Management Service from the OSGi Service
-		Registry
-	-->
-	<osgi:reference id="esperManagementService"
-		interface="org.rifidi.edge.core.services.esper.EsperManagementService" />
 	<!--
 		Get a reference to the JMS Template from the OSGi service registry
 	-->

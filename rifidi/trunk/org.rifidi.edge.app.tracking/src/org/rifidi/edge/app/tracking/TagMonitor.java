@@ -22,18 +22,18 @@ import com.espertech.esper.client.StatementAwareUpdateListener;
 public class TagMonitor extends JMSRifidiApp {
 
 	/**
-	 * Constructor
 	 * 
+	 * @param group
 	 * @param name
 	 */
-	public TagMonitor(String name) {
-		super(name);
+	public TagMonitor(String group, String name) {
+		super(group, name);
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.app.api.RifidiApp#_start()
+	 * @see org.rifidi.edge.core.app.api.AbstractRifidiApp#_start()
 	 */
 	@Override
 	protected void _start() {

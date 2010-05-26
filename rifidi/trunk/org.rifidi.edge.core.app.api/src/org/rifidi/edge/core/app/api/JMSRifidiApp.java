@@ -20,7 +20,7 @@ import org.springframework.jms.core.MessageCreator;
  * @author Kyle Neumeier - kyle@pramari.com
  * 
  */
-public abstract class JMSRifidiApp extends RifidiApp {
+public abstract class JMSRifidiApp extends AbstractRifidiApp {
 
 	/** JMS Destination to send messages to */
 	private volatile Destination destination;
@@ -28,13 +28,15 @@ public abstract class JMSRifidiApp extends RifidiApp {
 	private volatile JmsTemplate template;
 
 	/**
-	 * Constructor
+	 * Constructor for a AbstractRifidiApp
 	 * 
+	 * @param group
+	 *            the group this application is a part of
 	 * @param name
 	 *            The name of the application
 	 */
-	public JMSRifidiApp(String name) {
-		super(name);
+	public JMSRifidiApp(String group,String name) {
+		super(group,name);
 	}
 
 	/**
