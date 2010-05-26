@@ -147,6 +147,7 @@ public abstract class AbstractSerialSensorSession extends AbstractSensorSession 
 			throw new PortInUseException();
 		} else {
 			commPort = portIdentifier.open(this.getClass().getName(), 2000);
+			logger.info(this + " is connected");
 
 			if (commPort instanceof SerialPort) {
 				SerialPort serialPort = (SerialPort) commPort;
@@ -280,4 +281,10 @@ public abstract class AbstractSerialSensorSession extends AbstractSensorSession 
 			}
 		}
 	}
+
+	@Override
+	public String toString() {
+		return "SerialSession: " + commPortName + " (" + getStatus() + ")";
+	}
+	
 }

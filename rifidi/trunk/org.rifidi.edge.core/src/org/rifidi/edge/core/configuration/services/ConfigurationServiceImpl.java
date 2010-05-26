@@ -13,6 +13,7 @@
 package org.rifidi.edge.core.configuration.services;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -47,6 +48,7 @@ import org.rifidi.edge.core.exceptions.InvalidStateException;
 import org.rifidi.edge.core.sensors.SensorSession;
 import org.rifidi.edge.core.sensors.base.AbstractSensor;
 import org.rifidi.edge.core.services.notification.NotifierService;
+import org.springframework.core.io.Resource;
 
 /**
  * Implementation of service for managing configurations.
@@ -60,7 +62,7 @@ public class ConfigurationServiceImpl implements ConfigurationService,
 	private static final Log logger = LogFactory
 			.getLog(ConfigurationServiceImpl.class);
 	/** Path to the configfile. */
-	private final String path;
+	private final Resource persistanceResource;
 	/** Configurations. */
 	private final ConcurrentHashMap<String, Set<DefaultConfigurationImpl>> factoryToConfigurations;
 	/** Currently registered services. */
@@ -86,11 +88,11 @@ public class ConfigurationServiceImpl implements ConfigurationService,
 	 * Constructor.
 	 */
 	public ConfigurationServiceImpl(final BundleContext context,
-			final String path, final NotifierService notifierService,
+			final Resource persistanceResource, final NotifierService notifierService,
 			final JMXService jmxService) {
 		this.jmxService = jmxService;
 		this.notifierService = notifierService;
-		this.path = path;
+		this.persistanceResource = persistanceResource;
 		this.context = context;
 		factories = new ConcurrentHashMap<String, ServiceFactory<?>>();
 		IDToConfigurations = new ConcurrentHashMap<String, DefaultConfigurationImpl>();
@@ -122,7 +124,11 @@ public class ConfigurationServiceImpl implements ConfigurationService,
 		ConfigurationStore store;
 		try {
 			store = (ConfigurationStore) jaxbContext.createUnmarshaller()
-					.unmarshal(new File(path));
+					.unmarshal(persistanceResource.getFile());
+		} catch (IOException e) {
+			logger.error(e);
+			return ret;
+
 		} catch (JAXBException e) {
 			logger.error(e);
 			return ret;
@@ -264,9 +270,11 @@ public class ConfigurationServiceImpl implements ConfigurationService,
 		try {
 			Marshaller marshaller = jaxbContext.createMarshaller();
 			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-			File f = new File(path);
-			marshaller.marshal(store, new File(path));
-			logger.info("configuration saved at " + f.getAbsolutePath());
+			File file = persistanceResource.getFile();
+			marshaller.marshal(store, file);
+			logger.info("configuration saved at " + file);
+		}catch(IOException e){
+			logger.error(e);
 		} catch (JAXBException e) {
 			logger.error(e);
 		}

@@ -44,7 +44,7 @@
 			<ref bean="bundleContext" />
 		</constructor-arg>
 		<constructor-arg index="1"
-			value="${org.rifidi.edge.configuration}" />
+			value="file:${user.dir}/${org.rifidi.edge.configuration}" />
 		<constructor-arg index="2">
 			<ref bean="JMSNotifierService" />
 		</constructor-arg>

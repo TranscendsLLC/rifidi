@@ -104,7 +104,7 @@ public class ReaderDAOImpl implements ReaderDAO {
 	 */
 	public void bindReaderFactory(AbstractSensorFactory<?> readerFactory,
 			Dictionary<String, String> parameters) {
-		logger.info("Reader Factory Bound:"
+		logger.debug("Reader Factory Bound:"
 				+ readerFactory.getFactoryID());
 		readerConfigFactories.put(readerFactory.getFactoryID(),
 				readerFactory);
