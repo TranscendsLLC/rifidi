@@ -174,7 +174,7 @@ public class CommandDAOImpl implements CommandDAO {
 	public void bindCommandFactory(
 			AbstractCommandConfigurationFactory<?> commandConfigurationFactory,
 			Dictionary<String, String> parameters) {
-		logger.info("Command Configuration Factory Bound: "
+		logger.debug("Command Configuration Factory Bound: "
 				+ commandConfigurationFactory.getFactoryID());
 		commandFactories.add(commandConfigurationFactory);
 
