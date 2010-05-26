@@ -11,6 +11,7 @@
  */
 package org.rifidi.edge.core.app.api.service.tagmonitor;
 
+import org.rifidi.edge.core.app.api.service.RifidiAppSubscriber;
 import org.rifidi.edge.core.services.notification.data.TagReadEvent;
 
 /**
@@ -19,14 +20,14 @@ import org.rifidi.edge.core.services.notification.data.TagReadEvent;
  * 
  * @author Matthew Dean
  */
-public interface ReadZoneSubscriber {
+public interface ReadZoneSubscriber extends RifidiAppSubscriber {
 	/**
 	 * The method that will be called when an arrival event has happened.
 	 * 
 	 * @param event
 	 *            The Tag that arrived
 	 */
-	public void tagArrived(TagReadEvent event);
+	public void tagArrived(TagReadEvent tag);
 
 	/**
 	 * The method that will be called when a departed event has happened.
@@ -34,5 +35,5 @@ public interface ReadZoneSubscriber {
 	 * @param event
 	 *            The tag that departed.
 	 */
-	public void tagDeparted(TagReadEvent event);
+	public void tagDeparted(TagReadEvent tag);
 }

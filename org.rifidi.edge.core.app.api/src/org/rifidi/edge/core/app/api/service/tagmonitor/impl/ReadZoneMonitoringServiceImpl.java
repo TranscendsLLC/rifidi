@@ -11,12 +11,11 @@
  */
 package org.rifidi.edge.core.app.api.service.tagmonitor.impl;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
-import org.rifidi.edge.core.app.api.RifidiApp;
+import org.rifidi.edge.core.app.api.service.RifidiAppService;
 import org.rifidi.edge.core.app.api.service.tagmonitor.ReadZone;
 import org.rifidi.edge.core.app.api.service.tagmonitor.ReadZoneMonitoringService;
 import org.rifidi.edge.core.app.api.service.tagmonitor.ReadZoneSubscriber;
@@ -34,78 +33,37 @@ import com.espertech.esper.client.StatementAwareUpdateListener;
  * @author Matthew Dean
  * @author Kyle Neumeier - kyle@pramari.com
  */
-public class ReadZoneMonitoringServiceImpl extends RifidiApp implements
+public class ReadZoneMonitoringServiceImpl extends
+		RifidiAppService<ReadZoneSubscriber> implements
 		ReadZoneMonitoringService {
-
-	/** The number of subscribers created so far */
-	private Integer counter = 0;
-	/** A map to keep up with subscribers and their esper statement names */
-	private Map<ReadZoneSubscriber, Set<String>> subscriberMap = new HashMap<ReadZoneSubscriber, Set<String>>();
 
 	/**
 	 * Constructor
 	 * 
+	 * @param group
+	 *            the group this application is a part of
 	 * @param name
-	 *            The name of this application
+	 *            The name of the application
 	 */
-	public ReadZoneMonitoringServiceImpl(String name) {
-		super(name);
+	public ReadZoneMonitoringServiceImpl(String group, String name) {
+		super(group, name);
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.app.api.service.monitoring.ReadZoneMonitoringService
+	 * org.rifidi.edge.core.app.api.service.tagmonitor.ReadZoneMonitoringService
 	 * #
-	 * subscribe(org.rifidi.edge.core.app.api.service.monitoring.ReadZoneSubscriber
-	 * , java.util.Set, java.lang.Integer)
+	 * subscribe(org.rifidi.edge.core.app.api.service.tagmonitor.ReadZoneSubscriber
+	 * , java.util.List, java.lang.Float, java.util.concurrent.TimeUnit)
 	 */
 	@Override
 	public void subscribe(final ReadZoneSubscriber subscriber,
-			Set<ReadZone> readZones, Integer departureTime) {
-		synchronized (subscriberMap) {
-
-			// if already subscribed, return
-			if (subscriberMap.containsKey(subscriber)) {
-				return;
-			}
-			Set<String> statementNames = new HashSet<String>();
-			// create a new factory for creating esper statemetns
-			ReadZoneMonitorEsperFactory factory = new ReadZoneMonitorEsperFactory(
-					readZones, getCounter(), departureTime);
-			// create the esper statemetns from strings
-			for (String statement : factory.createStatements()) {
-				statementNames.add(addStatement(statement));
-			}
-
-			// create the listener
-			StatementAwareUpdateListener listener = new StatementAwareUpdateListener() {
-
-				@Override
-				public void update(EventBean[] arg0, EventBean[] arg1,
-						EPStatement arg2, EPServiceProvider arg3) {
-
-					// all additions
-					if (arg0 != null) {
-						for (EventBean b : arg0) {
-							TagReadEvent tre = (TagReadEvent) b.getUnderlying();
-							subscriber.tagArrived(tre);
-						}
-					}
-					// all deletions
-					if (arg1 != null) {
-						for (EventBean b : arg1) {
-							TagReadEvent tre = (TagReadEvent) b.getUnderlying();
-							subscriber.tagDeparted(tre);
-						}
-					}
-
-				}
-			};
-			statementNames.add(addStatement(factory.getQuery(), listener));
-			subscriberMap.put(subscriber, statementNames);
-		}
+			List<ReadZone> readZones, Float departureTime, TimeUnit timeUnit) {
+		ReadZoneMonitorEsperFactory esperFactory = new ReadZoneMonitorEsperFactory(
+				readZones, getCounter(), departureTime, timeUnit);
+		subscribe(subscriber, esperFactory);
 
 	}
 
@@ -120,50 +78,42 @@ public class ReadZoneMonitoringServiceImpl extends RifidiApp implements
 	 */
 	@Override
 	public void subscribe(ReadZoneSubscriber subscriber) {
-		subscribe(subscriber, new HashSet<ReadZone>(), 2);
+		subscribe(subscriber, Collections.EMPTY_LIST, 2f, TimeUnit.SECONDS);
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.app.api.service.monitoring.ReadZoneMonitoringService
-	 * #unsubscribe(org.rifidi.edge.core.app.api.service.monitoring.
-	 * ReadZoneSubscriber)
+	 * org.rifidi.edge.core.app.api.service.RifidiAppService#createListener(
+	 * org.rifidi.edge.core.app.api.service.RifidiAppSubscriber)
 	 */
 	@Override
-	public synchronized void unsubscribe(ReadZoneSubscriber rzs) {
-		synchronized (subscriberMap) {
-			Set<String> statements = this.subscriberMap.remove(rzs);
-			for (String name : statements) {
-				destroyStatement(name);
+	protected StatementAwareUpdateListener createListener(
+			final ReadZoneSubscriber subscriber) {
+		return new StatementAwareUpdateListener() {
+
+			@Override
+			public void update(EventBean[] arg0, EventBean[] arg1,
+					EPStatement arg2, EPServiceProvider arg3) {
+
+				// all additions
+				if (arg0 != null) {
+					for (EventBean b : arg0) {
+						TagReadEvent tre = (TagReadEvent) b.getUnderlying();
+						subscriber.tagArrived(tre);
+					}
+				}
+				// all deletions
+				if (arg1 != null) {
+					for (EventBean b : arg1) {
+						TagReadEvent tre = (TagReadEvent) b.getUnderlying();
+						subscriber.tagDeparted(tre);
+					}
+				}
+
 			}
-		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.rifidi.edge.core.app.api.RifidiApp#_stop()
-	 */
-	@Override
-	protected void _stop() {
-		super._stop();
-
-		// need to override the stop method so that we make sure to delete all
-		// esper statements
-		Set<ReadZoneSubscriber> subscribers = new HashSet<ReadZoneSubscriber>(
-				this.subscriberMap.keySet());
-		for (ReadZoneSubscriber subscriber : subscribers) {
-			unsubscribe(subscriber);
-		}
-	}
-
-	/*
-	 * Increments and returns the counter.
-	 */
-	private Integer getCounter() {
-		return counter++;
+		};
 	}
 
 }

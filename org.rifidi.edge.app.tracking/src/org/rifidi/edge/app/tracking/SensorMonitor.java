@@ -23,17 +23,19 @@ public class SensorMonitor extends JMSRifidiApp implements
 	/**
 	 * Constructor
 	 * 
+	 * @param group
+	 *            the group this app is a part of
 	 * @param name
 	 *            The name of the app
 	 */
-	public SensorMonitor(String name) {
-		super(name);
+	public SensorMonitor(String group, String name) {
+		super(group,name);
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.app.api.RifidiApp#_start()
+	 * @see org.rifidi.edge.core.app.api.AbstractRifidiApp#_start()
 	 */
 	@Override
 	protected void _start() {
@@ -45,7 +47,7 @@ public class SensorMonitor extends JMSRifidiApp implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.app.api.RifidiApp#_stop()
+	 * @see org.rifidi.edge.core.app.api.AbstractRifidiApp#_stop()
 	 */
 	@Override
 	protected void _stop() {

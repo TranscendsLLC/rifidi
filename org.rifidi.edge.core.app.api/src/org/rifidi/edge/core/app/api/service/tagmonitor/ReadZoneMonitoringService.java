@@ -11,7 +11,8 @@
  */
 package org.rifidi.edge.core.app.api.service.tagmonitor;
 
-import java.util.Set;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * The Read Zone Monitoring Service notifies subscribers when tags have arrived
@@ -42,11 +43,13 @@ public interface ReadZoneMonitoringService {
 	 *            The readzones to monitor. If the set is empty, monitor all
 	 *            readers and antennas.
 	 * @param departureTime
-	 *            In seconds. If this amount of time passes since the last time
-	 *            a tag has been seen, then fire a departure event.
+	 *            If this amount of time passes since the last time a tag has
+	 *            been seen, then fire a departure event.
+	 * @param timeUnit
+	 *            The unit used for the departure time.
 	 */
 	public void subscribe(ReadZoneSubscriber subscriber,
-			Set<ReadZone> readZones, Integer departureTime);
+			List<ReadZone> readZones, Float departureTime, TimeUnit timeUnit);
 
 	/**
 	 * Unsubscribe from arrival and departure events

@@ -6,32 +6,52 @@
 	http://www.springframework.org/schema/osgi
 	http://www.springframework.org/schema/osgi/spring-osgi.xsd">
 
-
-
+	<bean id="appManager" 
+		class="org.rifidi.edge.core.app.api.service.appmanager.impl.AppManagerImpl">
+		<property name="rifidiApps" ref="rifidiApps"/>
+		<property name="esperService" ref="esperManagementService" />
+	</bean>
+	
+	<bean id="AppManagerCommands" class="org.rifidi.edge.core.app.api.service.appmanager.impl.AppManagerCommandProvider">
+		<property name="appManager" ref="appManager"/>
+	</bean>
+	
+	<osgi:service ref="AppManagerCommands" interface="org.eclipse.osgi.framework.console.CommandProvider"/>
+	
 	<!--
 		Create the application and inject esper and teh JMS sender
 	-->
-	<bean id="readZoneMonitoringApp"
-		class="org.rifidi.edge.core.app.api.service.tagmonitor.impl.ReadZoneMonitoringServiceImpl"
-		init-method="start" destroy-method="stop">
-		<constructor-arg index="0" value="Service:ReadZone" />
-		<property name="esperService" ref="esperManagementService" />
+	<bean id="ReadZoneAppService"
+		class="org.rifidi.edge.core.app.api.service.tagmonitor.impl.ReadZoneMonitoringServiceImpl">
+		<constructor-arg index="0" value="AppService" />
+		<constructor-arg index="1" value="ReadZones" />
+		
+	</bean>
+	
+	<bean id="UniqueTagIntervalAppService"
+		class="org.rifidi.edge.core.app.api.service.tagmonitor.impl.UniqueTagIntervalNotificationServiceImpl">
+		<constructor-arg index="0" value="AppService" />
+		<constructor-arg index="1" value="UniqueTagInterval" />
 	</bean>
 
-	<bean id="sensorStatusMonitoringApp"
-		class="org.rifidi.edge.core.app.api.service.sensormonitor.impl.SensorStatusMonitoringServiceImpl"
-		init-method="start" destroy-method="stop">
-		<constructor-arg index="0" value="Service:SensorStatus" />
-		<property name="esperService" ref="esperManagementService" />
+	<bean id="SensorStatusAppService"
+		class="org.rifidi.edge.core.app.api.service.sensormonitor.impl.SensorStatusMonitoringServiceImpl">
+		<constructor-arg index="0" value="AppService" />
+		<constructor-arg index="1" value="SensorStatus" />
 	</bean>
-
-	<osgi:service ref="readZoneMonitoringApp"
-		interface="org.rifidi.edge.core.app.api.service.tagmonitor.ReadZoneMonitoringService" />
-
-	<osgi:service ref="sensorStatusMonitoringApp"
-		interface="org.rifidi.edge.core.app.api.service.sensormonitor.SensorStatusMonitoringService" />
+	
+	
+	<osgi:set id="rifidiApps" 
+		interface="org.rifidi.edge.core.app.api.RifidiApp" cardinality="0..N">
+		<osgi:listener ref="appManager" bind-method="bindApp" unbind-method="unbindApp" />
+	</osgi:set>
+	
+	<osgi:service ref="ReadZoneAppService" auto-export="interfaces"/>
+	<osgi:service ref="SensorStatusAppService" auto-export="interfaces"/>
+	<osgi:service ref="UniqueTagIntervalAppService" auto-export="interfaces"/>
 
 	<osgi:reference id="esperManagementService"
 		interface="org.rifidi.edge.core.services.esper.EsperManagementService" />
+		
 
 </beans>

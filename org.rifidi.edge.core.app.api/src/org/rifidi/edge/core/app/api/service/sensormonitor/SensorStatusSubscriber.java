@@ -11,6 +11,7 @@
  */
 package org.rifidi.edge.core.app.api.service.sensormonitor;
 
+import org.rifidi.edge.core.app.api.service.RifidiAppSubscriber;
 import org.rifidi.edge.core.services.notification.data.management.SensorStatusEvent;
 
 /**
@@ -20,7 +21,7 @@ import org.rifidi.edge.core.services.notification.data.management.SensorStatusEv
  * @author Matthew Dean
  * 
  */
-public interface SensorStatusSubscriber {
+public interface SensorStatusSubscriber extends RifidiAppSubscriber {
 	/**
 	 * Whenever a sensor status event occurs, this method will be called.
 	 * 

@@ -19,27 +19,46 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Enumeration;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.eclipse.osgi.framework.console.CommandInterpreter;
+import org.eclipse.osgi.framework.console.CommandProvider;
+import org.rifidi.edge.core.app.api.AbstractRifidiApp;
 
 /**
  * 
  * 
  * @author Matthew Dean - matt@pramari.com
  */
-public class SerialApp {
-
-	private static final Log logger = LogFactory.getLog(SerialApp.class);
+public class SerialApp extends AbstractRifidiApp {
 
 	private SerialTester serial = new SerialTester();
 
-	public void start() {
-		logger.debug("Starting SerialApp");
+	/**
+	 * @param group
+	 * @param name
+	 */
+	public SerialApp(String group, String name) {
+		super(group, name);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.app.api.AbstractRifidiApp#lazyStart()
+	 */
+	@Override
+	public boolean lazyStart() {
+		String lazyStart= getProperty(LAZY_START, "true");
+		return Boolean.parseBoolean(lazyStart);
 	}
 
-	public void stop() {
-		logger.debug("Stopping SerialApp");
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.rifidi.edge.core.app.api.AbstractRifidiApp#getCommandProider()
+	 */
+	@Override
+	protected CommandProvider getCommandProider() {
+		SerialCommandProvider commandProvider = new SerialCommandProvider();
+		commandProvider.setSerialApp(this);
+		return commandProvider;
 	}
 
 	/**
@@ -192,7 +211,7 @@ public class SerialApp {
 					this.commPort.getInputStream().close();
 				}
 			} catch (Exception e) {
-				//Don't care
+				// Don't care
 			} finally {
 				if (this.commPort != null) {
 					this.commPort.close();

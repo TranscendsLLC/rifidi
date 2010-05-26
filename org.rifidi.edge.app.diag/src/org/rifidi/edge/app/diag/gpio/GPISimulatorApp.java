@@ -12,11 +12,11 @@
 package org.rifidi.edge.app.diag.gpio;
 
 import java.util.Set;
-import java.util.concurrent.CopyOnWriteArraySet;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.rifidi.edge.core.services.esper.EsperManagementService;
+import org.eclipse.osgi.framework.console.CommandProvider;
+import org.rifidi.edge.core.app.api.AbstractRifidiApp;
 import org.rifidi.edge.core.services.notification.data.gpio.GPIEvent;
 import org.rifidi.edge.core.services.notification.data.gpio.GPOEvent;
 
@@ -30,27 +30,38 @@ import com.espertech.esper.client.StatementAwareUpdateListener;
  * 
  * @author Matthew Dean
  */
-public class GPISimulatorApp {
+public class GPISimulatorApp extends AbstractRifidiApp {
 
 	private static final Log logger = LogFactory.getLog(GPISimulatorApp.class);
 
-	/** Esper service */
-	protected volatile EsperManagementService esperService;
-
-	protected final Set<EPStatement> statements = new CopyOnWriteArraySet<EPStatement>();
-
 	/**
+	 * @param group
+	 * @param name
 	 */
-	public void start() {
-		EPStatement query = esperService.getProvider().getEPAdministrator()
-				.createEPL("select * from GPIEvent");
-		EPStatement query2 = esperService.getProvider().getEPAdministrator()
-		.createEPL("select * from GPOEvent");
-		statements.add(query);
-		statements.add(query2);
+	public GPISimulatorApp(String group, String name) {
+		super(group, name);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.rifidi.edge.core.app.api.AbstractRifidiApp#_start()
+	 */
+	protected void _start() {
+
 		StatementAwareUpdateListener stateUpdateListener = getSessionStateUpdateListener();
-		query.addListener(stateUpdateListener);
-		query2.addListener(stateUpdateListener);
+
+		addStatement("select * from GPIEvent", stateUpdateListener);
+		addStatement("select * from GPOEvent", stateUpdateListener);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.app.api.AbstractRifidiApp#lazyStart()
+	 */
+	@Override
+	public boolean lazyStart() {
+		String lazyStart= getProperty(LAZY_START, "true");
+		return Boolean.parseBoolean(lazyStart);
 	}
 
 	public StatementAwareUpdateListener getSessionStateUpdateListener() {
@@ -73,24 +84,16 @@ public class GPISimulatorApp {
 					for (EventBean eb : arg0) {
 						if (eb.getUnderlying() instanceof GPIEvent) {
 							logger.debug(eb.getUnderlying());
-							//System.out.println(eb.getUnderlying());
+							// System.out.println(eb.getUnderlying());
 						}
 						if (eb.getUnderlying() instanceof GPOEvent) {
 							logger.debug(eb.getUnderlying());
-							//System.out.println(eb.getUnderlying());
+							// System.out.println(eb.getUnderlying());
 						}
 					}
 				}
 			}
 		};
-	}
-
-	/**
-	 */
-	public void stop() {
-		for (EPStatement statement : statements) {
-			statement.destroy();
-		}
 	}
 
 	/*
@@ -99,7 +102,7 @@ public class GPISimulatorApp {
 	public void simGPIHigh(String readerID, Set<Integer> ports) {
 		for (Integer port : ports) {
 			GPIEvent gpi = new GPIEvent(readerID, port, true);
-			esperService.getProvider().getEPRuntime().sendEvent(gpi);
+			getEPRuntime().sendEvent(gpi);
 		}
 	}
 
@@ -109,7 +112,7 @@ public class GPISimulatorApp {
 	public void simGPILow(String readerID, Set<Integer> ports) {
 		for (Integer port : ports) {
 			GPIEvent gpi = new GPIEvent(readerID, port, false);
-			esperService.getProvider().getEPRuntime().sendEvent(gpi);
+			getEPRuntime().sendEvent(gpi);
 		}
 	}
 
@@ -129,17 +132,17 @@ public class GPISimulatorApp {
 		new GPIFlash(readerID, ports, seconds, false).start();
 	}
 
-	/**
-	 * Called by spring
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @param esperService
-	 *            the esperService to set
+	 * @see org.rifidi.edge.core.app.api.AbstractRifidiApp#getCommandProider()
 	 */
-	public void setEsperService(EsperManagementService esperService) {
-		//System.out.println("Setting esper");
-		this.esperService = esperService;
+	@Override
+	protected CommandProvider getCommandProider() {
+		GPISimulatorAppCommandProvider commandProvider = new GPISimulatorAppCommandProvider();
+		commandProvider.setSimApp(this);
+		return commandProvider;
 	}
-
 
 	/**
 	 * A threaded class that can handle flashing the GPIs for a few seconds

@@ -4,6 +4,7 @@
 package org.rifidi.edge.app.tracking;
 
 import java.util.Collections;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -28,30 +29,30 @@ public class TrackingApp extends JMSRifidiApp implements ReadZoneSubscriber {
 	private volatile ReadZoneMonitoringService monitoringService;
 
 	/**
-	 * Constructor
 	 * 
+	 * @param group
 	 * @param name
-	 *            The name of the application
 	 */
-	public TrackingApp(String name) {
-		super(name);
+	public TrackingApp(String group, String name) {
+		super(group, name);
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.app.api.RifidiApp#_start()
+	 * @see org.rifidi.edge.core.app.api.AbstractRifidiApp#_start()
 	 */
 	@Override
 	protected void _start() {
-		super._start();
-		monitoringService.subscribe(this, Collections.EMPTY_SET, 10);
+		// super._start();
+		// monitoringService.subscribe(this, Collections.EMPTY_LIST, 10f,
+		// TimeUnit.SECONDS);
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.app.api.RifidiApp#_stop()
+	 * @see org.rifidi.edge.core.app.api.AbstractRifidiApp#_stop()
 	 */
 	@Override
 	protected void _stop() {
