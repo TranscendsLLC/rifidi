@@ -36,12 +36,6 @@
 	</bean>
 	<osgi:service ref="TagGeneratorApp" interface="org.rifidi.edge.core.app.api.RifidiApp" />
 
-	<bean id="myapp" class="org.rifidi.edge.app.diag.gpio.NewApp">
-		<constructor-arg index="0" value="Diagnostic" />
-		<constructor-arg index="1" value="NewApp" />
-	</bean>
-	<osgi:service ref="myapp" interface="org.rifidi.edge.core.app.api.RifidiApp" />
-
 	<osgi:set id="abstractGPIOService"
 		interface="org.rifidi.edge.core.sensors.management.AbstractGPIOService"
 		cardinality="0..N">
