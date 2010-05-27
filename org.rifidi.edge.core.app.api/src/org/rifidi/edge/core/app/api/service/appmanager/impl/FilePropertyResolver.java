@@ -34,30 +34,41 @@ public class FilePropertyResolver implements RifidiAppPropertyResolver {
 	 */
 	@Override
 	public Properties reolveProperties(String appGroup, String appName) {
-		PropertiesFactoryBean propertiesFactoryBean = new PropertiesFactoryBean();
+		;
+		Properties retVal = new Properties();
 		try {
-			UrlResource resource = new UrlResource("file:"
+			UrlResource groupResource = new UrlResource("file:"
+					+ System.getProperty("user.dir") + File.separator
+					+ System.getProperty("org.rifidi.edge.applications")
+					+ File.separator + appGroup + File.separator + appGroup
+					+ ".properties");
+			UrlResource appResource = new UrlResource("file:"
 					+ System.getProperty("user.dir") + File.separator
 					+ System.getProperty("org.rifidi.edge.applications")
 					+ File.separator + appGroup + File.separator + appName
 					+ ".properties");
-
-			if (!resource.exists()) {
-				throw new IOException("Properties file does not exist: "
-						+ resource);
+			
+			try{				
+				retVal.putAll(getProperties(groupResource));
+			}catch(IOException ex){
+				logger.debug(ex);
 			}
-			propertiesFactoryBean.setLocation(resource);
-			propertiesFactoryBean.afterPropertiesSet();
-			Properties properties = (Properties) propertiesFactoryBean
-					.getObject();
-			return new Properties(properties);
+			try{
+				retVal.putAll(getProperties(appResource));
+			}catch(IOException ex){
+				logger.debug(ex);
+			}
 
 		} catch (MalformedURLException ex) {
 			logger.debug(ex);
-		} catch (IOException ex) {
-			logger.debug(ex);
 		}
-		return new Properties();
+		return retVal;
 	}
 
+	private Properties getProperties(UrlResource resource) throws IOException{
+		PropertiesFactoryBean appPropertiesFactoryBean = new PropertiesFactoryBean();
+		appPropertiesFactoryBean.setLocation(resource);
+		appPropertiesFactoryBean.afterPropertiesSet();
+		return (Properties) appPropertiesFactoryBean.getObject();
+	}
 }
