@@ -12,6 +12,7 @@
 package org.rifidi.edge.core.app.api.service.tagmonitor.impl;
 
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -114,6 +115,24 @@ public class ReadZoneMonitoringServiceImpl extends
 
 			}
 		};
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.core.app.api.service.tagmonitor.ReadZoneMonitoringService
+	 * #
+	 * subscribe(org.rifidi.edge.core.app.api.service.tagmonitor.ReadZoneSubscriber
+	 * , org.rifidi.edge.core.app.api.service.tagmonitor.ReadZone,
+	 * java.lang.Float, java.util.concurrent.TimeUnit)
+	 */
+	@Override
+	public void subscribe(ReadZoneSubscriber subscriber, ReadZone readZone,
+			Float departureTime, TimeUnit timeUnit) {
+		List<ReadZone> tempList = new LinkedList<ReadZone>();
+		tempList.add(readZone);
+		this.subscribe(subscriber, tempList, departureTime, timeUnit);
 	}
 
 }

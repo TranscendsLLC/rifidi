@@ -52,6 +52,17 @@ public interface ReadZoneMonitoringService {
 			List<ReadZone> readZones, Float departureTime, TimeUnit timeUnit);
 
 	/**
+	 * Subscribe to the arrival and departure events for the given read zone.  
+	 * 
+	 * @param subscriber
+	 * @param readZone
+	 * @param departureTime
+	 * @param timeUnit
+	 */
+	public void subscribe(ReadZoneSubscriber subscriber, ReadZone readZone,
+			Float departureTime, TimeUnit timeUnit);
+
+	/**
 	 * Unsubscribe from arrival and departure events
 	 * 
 	 * @param subscriber
