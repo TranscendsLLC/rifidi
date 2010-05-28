@@ -1,6 +1,7 @@
 package org.rifidi.edge.logging;
 
 import java.io.File;
+import java.net.URI;
 
 import org.apache.log4j.PropertyConfigurator;
 import org.osgi.framework.BundleActivator;
@@ -22,10 +23,17 @@ public class Activator implements BundleActivator {
 	@Override
 	public void start(BundleContext arg0) throws Exception {
 		System.out.println("START LOGGING BUNDLE");
-		String s = System.getProperty("org.rifidi.edge.logging");
+		System.out.println("ALL RIFIDI CONFIGURATION PATHS RELATIVE TO : "
+				+ System.getProperty("user.dir"));
+		System.setProperty("org.rifidi.edge.applications", "applications");
+		String s = "file:" + System.getProperty("user.dir")
+				+ System.getProperty("file.separator")
+				+ System.getProperty("org.rifidi.edge.logging");
+		URI uri = new URI(s);
 
-		if (s != null && new File(s).exists()) {
-			PropertyConfigurator.configure(s);
+		if (new File(uri).exists()) {
+			PropertyConfigurator.configure(uri.toURL());
+			System.out.println("Using log4j configuration at: " + s);
 		} else {
 			System.out.println("Cannot find log properties file at " + s
 					+ " Using default log4j properties");
