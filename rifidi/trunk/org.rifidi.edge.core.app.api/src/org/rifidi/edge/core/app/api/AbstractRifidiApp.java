@@ -32,6 +32,8 @@ public abstract class AbstractRifidiApp implements RifidiApp,
 
 	/** All the esper statements that have been defined so far */
 	private final Set<EPStatement> statements = new CopyOnWriteArraySet<EPStatement>();
+	/**Any additional events this app adds to the runtime.*/
+	private final Set<String> additionalEvents= new CopyOnWriteArraySet<String>();
 	/** Esper service */
 	private EsperManagementService esperService;
 	/** The group this application is a part of */
@@ -168,7 +170,7 @@ public abstract class AbstractRifidiApp implements RifidiApp,
 	protected EPRuntime getEPRuntime() {
 		return this.esperService.getProvider().getEPRuntime();
 	}
-
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -243,6 +245,15 @@ public abstract class AbstractRifidiApp implements RifidiApp,
 							+ statement.getText());
 				}
 			}
+			for (String customEvent : this.additionalEvents) {
+				try {
+					getEPAdministrator().getConfiguration().removeEventType(
+							customEvent, true);
+				} catch (Exception e) {
+					logger.debug("Exception when removing this eventtype: "
+							+ customEvent);
+				}
+			}
 			try {
 				if (commandProviderService != null) {
 					commandProviderService.unregister();
@@ -269,7 +280,7 @@ public abstract class AbstractRifidiApp implements RifidiApp,
 	 *            The statement to add
 	 * @return The name of the staement.
 	 */
-	protected String addStatement(String esperStatement) {
+	protected final String addStatement(String esperStatement) {
 		EPStatement statement = getEPAdministrator().createEPL(esperStatement);
 		statements.add(statement);
 		return statement.getName();
@@ -285,12 +296,35 @@ public abstract class AbstractRifidiApp implements RifidiApp,
 	 *            The listener to the statement
 	 * @return The name of the statement
 	 */
-	protected String addStatement(String esperStatement,
+	protected final String addStatement(String esperStatement,
 			StatementAwareUpdateListener listener) {
 		EPStatement statement = getEPAdministrator().createEPL(esperStatement);
 		statement.addListener(listener);
 		statements.add(statement);
 		return statement.getName();
+	}
+
+	/**
+	 * Adds a new event type to the esper configuration. The name of the event
+	 * type is clazz.getSimpleName(). Events will be automatically removed when the
+	 * application is stopped.
+	 * 
+	 * @param clazz
+	 *            The class of the event to add
+	 */
+	protected final void addEventType(Class<?> clazz) {
+		String eventName = clazz.getSimpleName();
+		getEPAdministrator().getConfiguration().addEventType(eventName, clazz);
+		this.additionalEvents.add(eventName);
+	}
+	
+	/**
+	 * This method sends the given event to the Esper Runtime.
+	 * 
+	 * @param event
+	 */
+	protected final void sendEvent(Object event) {
+		getEPRuntime().sendEvent(event);
 	}
 
 	/**
@@ -300,7 +334,7 @@ public abstract class AbstractRifidiApp implements RifidiApp,
 	 *            The query to run
 	 * @return The result of the query
 	 */
-	protected EPOnDemandQueryResult executeQuery(String esperQuery) {
+	protected final EPOnDemandQueryResult executeQuery(String esperQuery) {
 		return getEPRuntime().executeQuery(esperQuery);
 	}
 
@@ -310,7 +344,7 @@ public abstract class AbstractRifidiApp implements RifidiApp,
 	 * @param statementName
 	 *            The name of the statement to destroy.
 	 */
-	protected void destroyStatement(String statementName) {
+	protected final void destroyStatement(String statementName) {
 		EPStatement statement = getEPAdministrator()
 				.getStatement(statementName);
 		if (statement != null) {

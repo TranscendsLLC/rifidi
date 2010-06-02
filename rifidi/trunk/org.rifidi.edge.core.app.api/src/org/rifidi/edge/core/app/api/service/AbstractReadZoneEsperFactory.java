@@ -1,12 +1,11 @@
 /**
  * 
  */
-package org.rifidi.edge.core.app.api.service.tagmonitor.impl;
+package org.rifidi.edge.core.app.api.service;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.rifidi.edge.core.app.api.service.RifidiAppEsperFactory;
 import org.rifidi.edge.core.app.api.service.tagmonitor.ReadZone;
 
 /**

@@ -89,9 +89,14 @@ public abstract class RifidiAppService<T extends RifidiAppSubscriber> extends
 	 */
 	public void unsubscribe(T subscriber) {
 		synchronized (subscriberMap) {
+			if(!this.subscriberMap.containsKey(subscriber)){
+				return;
+			}
 			List<String> statements = this.subscriberMap.remove(subscriber);
-			for (String name : statements) {
-				destroyStatement(name);
+			if (statements != null) {
+				for (String name : statements) {
+					destroyStatement(name);
+				}
 			}
 		}
 	}
