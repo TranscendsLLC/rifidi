@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import org.rifidi.edge.core.app.api.service.AbstractReadZoneEsperFactory;
 import org.rifidi.edge.core.app.api.service.EsperUtil;
 import org.rifidi.edge.core.app.api.service.tagmonitor.ReadZone;
 

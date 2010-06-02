@@ -18,6 +18,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.rifidi.edge.core.app.api.service.AbstractReadZoneEsperFactory;
 import org.rifidi.edge.core.app.api.service.EsperUtil;
 import org.rifidi.edge.core.app.api.service.tagmonitor.ReadZone;
 

@@ -18,9 +18,6 @@
 	
 	<osgi:service ref="AppManagerCommands" interface="org.eclipse.osgi.framework.console.CommandProvider"/>
 	
-	<!--
-		Create the application and inject esper and teh JMS sender
-	-->
 	<bean id="ReadZoneAppService"
 		class="org.rifidi.edge.core.app.api.service.tagmonitor.impl.ReadZoneMonitoringServiceImpl">
 		<constructor-arg index="0" value="AppService" />
@@ -40,6 +37,12 @@
 		<constructor-arg index="1" value="SensorStatus" />
 	</bean>
 	
+	<bean id="StableSetAppService" class="org.rifidi.edge.core.app.api.service.tagmonitor.impl.StableSetServiceImpl">
+		<constructor-arg index="0" value="AppService" />
+		<constructor-arg index="1" value="StableSet" />
+	</bean>
+	
+	
 	
 	<osgi:set id="rifidiApps" 
 		interface="org.rifidi.edge.core.app.api.RifidiApp" cardinality="0..N">
@@ -49,6 +52,7 @@
 	<osgi:service ref="ReadZoneAppService" auto-export="interfaces"/>
 	<osgi:service ref="SensorStatusAppService" auto-export="interfaces"/>
 	<osgi:service ref="UniqueTagIntervalAppService" auto-export="interfaces"/>
+	<osgi:service ref="StableSetAppService"  auto-export="interfaces"/>
 
 	<osgi:reference id="esperManagementService"
 		interface="org.rifidi.edge.core.services.esper.EsperManagementService" />
