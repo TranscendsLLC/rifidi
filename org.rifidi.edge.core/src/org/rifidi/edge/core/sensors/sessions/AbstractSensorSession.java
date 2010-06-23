@@ -197,12 +197,14 @@ public abstract class AbstractSensorSession extends SensorSession {
 	 * back on the queuedCommands to be started again once the session restarts
 	 */
 	protected void resetCommands() {
+		logger.debug("Reset Commands");
 		this.queuedCommands.clear();
 		List<CommandExecutor> commandExs = new LinkedList<CommandExecutor>(
 				this.runningCommands);
 		// transfer all running commands to queued commands, preserving order
 		// and canceling the future if the command was scheduled.
 		for (CommandExecutor commandEx : commandExs) {
+			logger.info("Queing command: " + commandEx);
 			runningCommands.remove(commandEx);
 			if (commandEx.future != null) {
 				commandEx.future.cancel(true);
@@ -547,7 +549,7 @@ public abstract class AbstractSensorSession extends SensorSession {
 					instance.run();
 				}
 			} catch (Throwable t) {
-				logger.error("error: ", t);
+				logger.error("error: " + t.getMessage());
 			}
 		}
 
