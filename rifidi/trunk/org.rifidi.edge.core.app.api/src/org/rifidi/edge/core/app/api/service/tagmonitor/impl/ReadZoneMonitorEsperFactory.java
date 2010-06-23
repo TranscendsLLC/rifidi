@@ -18,8 +18,8 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.rifidi.edge.core.app.api.service.AbstractReadZoneEsperFactory;
 import org.rifidi.edge.core.app.api.service.EsperUtil;
+import org.rifidi.edge.core.app.api.service.RifidiAppEsperFactory;
 import org.rifidi.edge.core.app.api.service.tagmonitor.ReadZone;
 
 /**
@@ -29,7 +29,7 @@ import org.rifidi.edge.core.app.api.service.tagmonitor.ReadZone;
  * @author Matthew Dean
  * @author Kyle Neumeier - kyle@pramari.com
  */
-public class ReadZoneMonitorEsperFactory extends AbstractReadZoneEsperFactory {
+public class ReadZoneMonitorEsperFactory implements RifidiAppEsperFactory{
 
 	/** The set of read zones to monitor */
 	private final List<ReadZone> readzones;
@@ -81,7 +81,7 @@ public class ReadZoneMonitorEsperFactory extends AbstractReadZoneEsperFactory {
 	@Override
 	public List<String> createStatements() {
 		statements.add(createWindowStatement());
-		String insertStatement = buildInsertStatement(windowName, readzones);
+		String insertStatement = EsperUtil.buildInsertStatement(windowName, readzones);
 		statements.add(insertStatement);
 		statements.add(deleteStatement());
 		return statements;
@@ -115,18 +115,11 @@ public class ReadZoneMonitorEsperFactory extends AbstractReadZoneEsperFactory {
 	 * @return
 	 */
 	private String deleteStatement() {
-		return "on pattern "
-				+ "[every tag1="
-				+ windowName
-				+ " ->"
-				+ "(timer:interval("
-				+ EsperUtil.timeUnitToEsperTime(departureWaitTime, timeUnit)
-				+ ")and not "
-				+ windowName
+		String time = EsperUtil.timeUnitToEsperTime(departureWaitTime, timeUnit);
+		return "on pattern [every tag1="+ windowName+ " ->"
+				+ "(timer:interval("+ time+ ")and not "+ windowName
 				+ "(tag.ID=tag1.tag.ID, readerID=tag1.readerID, antennaID=tag1.antennaID))]"
-				+ "delete from "
-				+ windowName
-				+ " where "
+				+ "delete from "+ windowName + " where "
 				+ "tag.ID = tag1.tag.ID AND readerID=tag1.readerID AND antennaID=tag1.antennaID";
 	}
 

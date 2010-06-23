@@ -3,7 +3,8 @@
  */
 package org.rifidi.edge.app.tracking;
 
-import org.rifidi.edge.core.app.api.JMSRifidiApp;
+import org.rifidi.edge.core.app.api.AbstractRifidiApp;
+import org.rifidi.edge.core.app.api.resources.jms.JMSResource;
 import org.rifidi.edge.core.services.notification.data.TagReadEvent;
 
 import com.espertech.esper.client.EPServiceProvider;
@@ -19,8 +20,10 @@ import com.espertech.esper.client.StatementAwareUpdateListener;
  * @author kyle
  * 
  */
-public class TagMonitor extends JMSRifidiApp {
+public class TagMonitor extends AbstractRifidiApp {
 
+	private JMSResource jmsTextSender;
+	
 	/**
 	 * 
 	 * @param group
@@ -47,7 +50,7 @@ public class TagMonitor extends JMSRifidiApp {
 					for (EventBean bean : arg0) {
 						TagReadEvent event = (TagReadEvent) bean
 								.getUnderlying();
-						sendTextMessage(formTagMessage(event));
+						jmsTextSender.sendTextMessage(formTagMessage(event));
 					}
 				}
 
@@ -71,4 +74,11 @@ public class TagMonitor extends JMSRifidiApp {
 		return buffer.toString();
 	}
 
+	/**
+	 * @param jmsTextSender the jmsTextSender to set
+	 */
+	public void setJmsTextSender(JMSResource jmsTextSender) {
+		this.jmsTextSender = jmsTextSender;
+	}
+	
 }

@@ -7,15 +7,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import org.rifidi.edge.core.app.api.service.AbstractReadZoneEsperFactory;
 import org.rifidi.edge.core.app.api.service.EsperUtil;
+import org.rifidi.edge.core.app.api.service.RifidiAppEsperFactory;
 import org.rifidi.edge.core.app.api.service.tagmonitor.ReadZone;
 
 /**
  * @author kyle
  *
  */
-public class UniqueTagIntervalNotificationEsperFactory extends AbstractReadZoneEsperFactory {
+public class UniqueTagIntervalNotificationEsperFactory implements RifidiAppEsperFactory {
 
 	private final List<ReadZone> readZones;
 	private final Float notifyTime;
@@ -60,7 +60,7 @@ public class UniqueTagIntervalNotificationEsperFactory extends AbstractReadZoneE
 	public List<String> createStatements() {
 		ArrayList<String> statements = new ArrayList<String>();
 		statements.add("create window "+windowName+".std:firstunique(tag.ID) as TagReadEvent");
-		statements.add(buildInsertStatement(windowName, readZones));
+		statements.add(EsperUtil.buildInsertStatement(windowName, readZones));
 		statements.add("create window "+timerWindowName+".win:time(" +
 				EsperUtil.timeUnitToEsperTime(notifyTime, notifyTimeUnit)+
 				") as TagReadEvent");

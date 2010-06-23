@@ -1,0 +1,26 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: App API Resources
+Bundle-SymbolicName: org.rifidi.edge.core.app.api.resources
+Bundle-Version: 1.0.0
+Bundle-Vendor: Pramari, LLC
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Import-Package: javax.jms;version="1.1.0",
+ org.apache.activemq.command;version="5.2.0",
+ org.apache.commons.dbcp;version="1.2.2.osgi",
+ org.apache.commons.logging;version="1.1.1",
+ org.apache.derby.jdbc;version="10.5.1.1",
+ org.springframework.beans.factory;version="2.5.6.SEC01",
+ org.springframework.core;version="2.5.6.SEC01",
+ org.springframework.dao;version="2.5.6.SEC01",
+ org.springframework.jdbc.core;version="2.5.6.SEC01",
+ org.springframework.jdbc.core.simple;version="2.5.6.SEC01",
+ org.springframework.jdbc.core.support;version="2.5.6.SEC01",
+ org.springframework.jdbc.support;version="2.5.6.SEC01",
+ org.springframework.jms;version="2.5.6.SEC01",
+ org.springframework.jms.core;version="2.5.6.SEC01"
+Export-Package: org.rifidi.edge.core.app.api.resources,
+ org.rifidi.edge.core.app.api.resources.db,
+ org.rifidi.edge.core.app.api.resources.jms,
+ org.rifidi.edge.core.app.api.resources.serial
+Require-Bundle: org.rifidi.gnu.io;bundle-version="2.1.7"

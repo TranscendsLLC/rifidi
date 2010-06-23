@@ -3,12 +3,10 @@
  */
 package org.rifidi.edge.app.tracking;
 
-import java.util.Collections;
-import java.util.concurrent.TimeUnit;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.rifidi.edge.core.app.api.JMSRifidiApp;
+import org.rifidi.edge.core.app.api.AbstractRifidiApp;
+import org.rifidi.edge.core.app.api.resources.jms.JMSResource;
 import org.rifidi.edge.core.app.api.service.tagmonitor.ReadZoneMonitoringService;
 import org.rifidi.edge.core.app.api.service.tagmonitor.ReadZoneSubscriber;
 import org.rifidi.edge.core.services.notification.data.TagReadEvent;
@@ -19,7 +17,7 @@ import org.rifidi.edge.core.services.notification.data.TagReadEvent;
  * @author Kyle Neumeier - kyle@pramari.com
  * 
  */
-public class TrackingApp extends JMSRifidiApp implements ReadZoneSubscriber {
+public class TrackingApp extends AbstractRifidiApp implements ReadZoneSubscriber {
 
 	/** The Data Access Object */
 	private volatile TrackingMessageFactory messageFactory;
@@ -27,6 +25,7 @@ public class TrackingApp extends JMSRifidiApp implements ReadZoneSubscriber {
 	private static Log logger = LogFactory.getLog(TrackingApp.class);
 	/** The service that monitors read zones. */
 	private volatile ReadZoneMonitoringService monitoringService;
+	private volatile JMSResource jmsTextSender;
 
 	/**
 	 * 
@@ -69,7 +68,7 @@ public class TrackingApp extends JMSRifidiApp implements ReadZoneSubscriber {
 	 */
 	@Override
 	public void tagArrived(TagReadEvent event) {
-		sendTextMessage(messageFactory.getArrviedMessage(event));
+		jmsTextSender.sendTextMessage(messageFactory.getArrviedMessage(event));
 
 	}
 
@@ -81,7 +80,7 @@ public class TrackingApp extends JMSRifidiApp implements ReadZoneSubscriber {
 	 */
 	@Override
 	public void tagDeparted(TagReadEvent event) {
-		sendTextMessage(messageFactory.getDepartedMessage(event));
+		jmsTextSender.sendTextMessage(messageFactory.getDepartedMessage(event));
 
 	}
 
@@ -104,4 +103,11 @@ public class TrackingApp extends JMSRifidiApp implements ReadZoneSubscriber {
 		this.messageFactory = messageFactory;
 	}
 
+	/**
+	 * @param jmsTextSender the jmsTextSender to set
+	 */
+	public void setJmsTextSender(JMSResource jmsTextSender) {
+		this.jmsTextSender = jmsTextSender;
+	}
+	
 }
