@@ -1,5 +1,7 @@
 package org.rifidi.edge.readerplugin.llrp.commands.internal;
 
+import java.util.concurrent.TimeoutException;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.llrp.ltk.generated.enumerations.StatusCode;
@@ -14,7 +16,7 @@ import org.llrp.ltk.generated.messages.GET_ROSPECS_RESPONSE;
 import org.llrp.ltk.generated.parameters.AccessSpec;
 import org.llrp.ltk.generated.parameters.ROSpec;
 import org.llrp.ltk.types.LLRPMessage;
-import org.rifidi.edge.core.sensors.commands.Command;
+import org.rifidi.edge.core.sensors.commands.TimeoutCommand;
 import org.rifidi.edge.readerplugin.llrp.LLRPReaderSession;
 
 /**
@@ -24,18 +26,22 @@ import org.rifidi.edge.readerplugin.llrp.LLRPReaderSession;
  * @author Kyle Neumeier - kyle@pramari.com
  * 
  */
-public class LLRPReset extends Command {
+public class LLRPReset extends TimeoutCommand {
 
 	private final static Log logger = LogFactory.getLog(LLRPReset.class);
 
 	public LLRPReset(String commandID) {
 		super(commandID);
 	}
+	
+	
 
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.sensors.commands.TimeoutCommand#execute()
+	 */
 	@Override
-	public void run() {
+	protected void execute() throws TimeoutException {
 		LLRPReaderSession session = (LLRPReaderSession) this.sensorSession;
-
 		// Get a list of all ROSpecs on the reader
 		GET_ROSPECS getROSpecs = new GET_ROSPECS();
 		LLRPMessage ret = session.transact(getROSpecs);
@@ -89,5 +95,6 @@ public class LLRPReset extends Command {
 			logger.warn("Expecting GET_ACCESSSPEC_RESPONSE"
 					+ ", but got message of type " + ret.getName());
 		}
+		
 	}
 }

@@ -12,6 +12,7 @@
 package org.rifidi.edge.readerplugin.llrp.commands;
 
 import java.util.List;
+import java.util.concurrent.TimeoutException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -43,7 +44,7 @@ public class LLRPROSpecFromFileCommand extends AbstractLLRPCommand {
 	private LLRPReaderSession session = null;
 
 	/**
-	 * The ADD_ROSPEC command that will be loaded from a file and submitted.  
+	 * The ADD_ROSPEC command that will be loaded from a file and submitted.
 	 */
 	private ADD_ROSPEC addrospeccommand = null;
 
@@ -67,41 +68,40 @@ public class LLRPROSpecFromFileCommand extends AbstractLLRPCommand {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see java.lang.Runnable#run()
+	 * @see org.rifidi.edge.core.sensors.commands.TimeoutCommand#execute()
 	 */
 	@Override
-	public void run() {
+	protected void execute() throws TimeoutException {
 		this.session = (LLRPReaderSession) this.sensorSession;
-
-		if (addrospeccommand != null) {
-			// Find and delete all ROSpecs on the reader.
-			GET_ROSPECS rospecs = new GET_ROSPECS();
-			GET_ROSPECS_RESPONSE response = null;
-			try {
-				response = (GET_ROSPECS_RESPONSE) session.transact(rospecs);
-			} catch (Exception ex) {
-				ex.printStackTrace();
-			}
-			List<ROSpec> rospecList = response.getROSpecList();
-			for (ROSpec rspec : rospecList) {
-				DELETE_ROSPEC delROSpec = new DELETE_ROSPEC();
-				delROSpec.setROSpecID(new UnsignedInteger(rspec.getROSpecID()
-						.intValue()));
-				session.send(delROSpec);
-			}
-			
-			//Send the ADD_ROSPEC command
-			session.send(addrospeccommand);
-
-			//Enable the ROSpec
-			ENABLE_ROSPEC enablerospec = new ENABLE_ROSPEC();
-			enablerospec
-					.setROSpecID(addrospeccommand.getROSpec().getROSpecID());
-			session.send(enablerospec);
-		} else {
+		if (addrospeccommand == null) {
 			logger.error("Can't add ROSpec: the ROSpec was not initialized "
 					+ "correctly.  Check the XML file.  ");
+			return;
 		}
+		// Find and delete all ROSpecs on the reader.
+		GET_ROSPECS rospecs = new GET_ROSPECS();
+		GET_ROSPECS_RESPONSE response = null;
+		response = (GET_ROSPECS_RESPONSE) session.transact(rospecs);
+		List<ROSpec> rospecList = response.getROSpecList();
+		for (ROSpec rspec : rospecList) {
+			DELETE_ROSPEC delROSpec = new DELETE_ROSPEC();
+			delROSpec.setROSpecID(new UnsignedInteger(rspec.getROSpecID()
+					.intValue()));
+
+			// TODO: check the response?
+			session.transact(delROSpec);
+
+		}
+
+		// Send the ADD_ROSPEC command
+		// TODO: check the response?
+		session.transact(addrospeccommand);
+
+		// Enable the ROSpec
+		ENABLE_ROSPEC enablerospec = new ENABLE_ROSPEC();
+		enablerospec.setROSpecID(addrospeccommand.getROSpec().getROSpecID());
+		// TODO: check the response?
+		session.transact(enablerospec);
 
 	}
 

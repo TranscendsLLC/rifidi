@@ -11,6 +11,8 @@
  */
 package org.rifidi.edge.readerplugin.llrp.commands;
 
+import java.util.concurrent.TimeoutException;
+
 import org.llrp.ltk.generated.messages.GET_REPORT;
 import org.rifidi.edge.readerplugin.llrp.AbstractLLRPCommand;
 import org.rifidi.edge.readerplugin.llrp.LLRPReaderSession;
@@ -35,18 +37,17 @@ public class LLRPGetTagListCommand extends AbstractLLRPCommand {
 		super(commandID);
 	}
 	
-	
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Runnable#run()
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.sensors.commands.TimeoutCommand#execute()
 	 */
 	@Override
-	public void run() {
+	protected void execute() throws TimeoutException {
 		this.session = (LLRPReaderSession)this.sensorSession;
 		session.send(new GET_REPORT());
+		
 	}
+
 
 	/**
 	 * Sets the ROSpecID of this command.  

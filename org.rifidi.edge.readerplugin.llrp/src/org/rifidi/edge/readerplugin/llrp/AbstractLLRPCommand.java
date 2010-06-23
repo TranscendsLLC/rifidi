@@ -13,6 +13,7 @@
 package org.rifidi.edge.readerplugin.llrp;
 
 import org.rifidi.edge.core.sensors.commands.Command;
+import org.rifidi.edge.core.sensors.commands.TimeoutCommand;
 
 /**
  * This class represents an abstract command for an LLRP reader. Extend it to
@@ -20,7 +21,7 @@ import org.rifidi.edge.core.sensors.commands.Command;
  * 
  * @author Matthew Dean
  */
-public abstract class AbstractLLRPCommand extends Command {
+public abstract class AbstractLLRPCommand extends TimeoutCommand {
 
 	/**
 	 * Constructor for the AbstractLLRPCommand.  
