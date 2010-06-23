@@ -12,6 +12,7 @@
 package org.rifidi.edge.readerplugin.llrp.commands;
 
 import java.util.List;
+import java.util.concurrent.TimeoutException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -135,16 +136,15 @@ public class LLRPROSpecCommand extends AbstractLLRPCommand {
 			antenna_array.add(new UnsignedShort(i));
 		}
 	}
+	
+	
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Runnable#run()
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.sensors.commands.TimeoutCommand#execute()
 	 */
 	@Override
-	public void run() {
+	protected void execute() throws TimeoutException {
 		this.session = (LLRPReaderSession) this.sensorSession;
-
 		try {
 			boolean is_taken = false;
 			GET_ROSPECS rospecs = new GET_ROSPECS();
@@ -266,6 +266,7 @@ public class LLRPROSpecCommand extends AbstractLLRPCommand {
 		} catch (InvalidLLRPMessageException e) {
 			logger.error(e);
 		}
+		
 	}
 
 }

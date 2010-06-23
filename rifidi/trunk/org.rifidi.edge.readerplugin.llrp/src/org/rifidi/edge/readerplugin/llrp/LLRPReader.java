@@ -52,13 +52,15 @@ public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 	/** A hashmap containing all the properties for this reader */
 	private final ConcurrentHashMap<String, String> readerProperties;
 	/** IP address of the sensorSession. */
-	private volatile String ipAddress = "127.0.0.1";
+	private volatile String ipAddress = LLRPConstants.LOCALHOST;
 	/** Port to connect to */
 	private volatile int port = 5084;
 	/** Time between two connection attempts. */
 	private volatile Integer reconnectionInterval = 500;
 	/** Number of connection attempts before a connection goes into fail state. */
 	private volatile Integer maxNumConnectionAttempts = 10;
+	/** The path to the SET_READER_CONFIG path to use */
+	private String readerConfigPath = LLRPConstants.SET_READER_CONFIG_PATH;
 	/** JMS destination. */
 	private volatile Destination destination;
 	/** Spring JMS template */
@@ -69,7 +71,7 @@ public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 	private volatile NotifierService notifyServiceWrapper;
 	/** Provided by spring. */
 	private final Set<AbstractCommandConfiguration<?>> commands;
-	/** Flag to check if this reader is destroied. */
+	/** Flag to check if this reader is destroyed. */
 	private AtomicBoolean destroied = new AtomicBoolean(false);
 	/** Mbeaninfo for this class. */
 	public static final MBeanInfo mbeaninfo;
@@ -102,8 +104,8 @@ public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 			if (session.compareAndSet(null, new LLRPReaderSession(this,
 					sessionID.toString(), ipAddress, port,
 					reconnectionInterval, maxNumConnectionAttempts,
-					destination, template, notifyServiceWrapper, super.getID(),
-					commands))) {
+					readerConfigPath, destination, template,
+					notifyServiceWrapper, super.getID(), commands))) {
 				session.get().restoreCommands(sessionDTO);
 				// TODO: remove this once we get AspectJ in here!
 				notifyServiceWrapper.addSessionEvent(this.getID(), Integer
@@ -127,8 +129,8 @@ public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 			if (session.compareAndSet(null, new LLRPReaderSession(this,
 					sessionID.toString(), ipAddress, port,
 					reconnectionInterval, maxNumConnectionAttempts,
-					destination, template, notifyServiceWrapper, super.getID(),
-					commands))) {
+					readerConfigPath, destination, template,
+					notifyServiceWrapper, super.getID(), commands))) {
 
 				// TODO: remove this once we get AspectJ in here!
 				notifyServiceWrapper.addSessionEvent(this.getID(), Integer
@@ -149,13 +151,14 @@ public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 	@Override
 	public void destroySensorSession(String sessionid) {
 		LLRPReaderSession llrpsession = session.get();
-		if (llrpsession != null){
-			if(llrpsession.getID().equals(sessionid)) {
+		if (llrpsession != null) {
+			if (llrpsession.getID().equals(sessionid)) {
 				llrpsession.killAllCommands();
 				llrpsession.disconnect();
 				// TODO: remove this once we get AspectJ in here!
 				session.set(null);
-				notifyServiceWrapper.removeSessionEvent(this.getID(), sessionid);
+				notifyServiceWrapper
+						.removeSessionEvent(this.getID(), sessionid);
 			}
 		}
 		logger.warn("Tried to delete a non existant session: " + sessionid);
@@ -225,28 +228,40 @@ public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 	 */
 	@Override
 	public void applyPropertyChanges() {
-		LLRPReaderSession readerSession = session.get();
-		if (readerSession != null) {
-			readerSession.transact(readerSession.createSetReaderConfig());
-		}
+		/*
+		 * This method could send a SET_READER_CONFIG message with update
+		 * properties. However, at the moment, we don't allow any changes to the
+		 * reader that would affect the SET_READER_CONFIG message, so this just
+		 * sends a repeat.
+		 */
+
+		/*
+		 * LLRPReaderSession readerSession = session.get(); if (readerSession !=
+		 * null) { try { SET_READER_CONFIG_RESPONSE response =
+		 * (SET_READER_CONFIG_RESPONSE) readerSession
+		 * .transact(readerSession.createSetReaderConfig()); StatusCode sc =
+		 * response.getLLRPStatus().getStatusCode(); if (sc.intValue() !=
+		 * StatusCode.M_Success) {
+		 * logger.error("Problem with SET_READER_CONFIG: \n" +
+		 * response.toXMLString()); } } catch (TimeoutException e) {
+		 * readerSession.handleTimeout(); } catch (InvalidLLRPMessageException
+		 * e) { logger
+		 * .warn("Cannot print the XML for SET_READER_CONFIG_RESPONSE"); } }
+		 */
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.rifidi.edge.core.sensors.base.AbstractSensor#getDisplayName()
 	 */
 	@Override
-	@Property(displayName="Display Name", 
-			description="Logical Name of Reader",
-			writable=true,
-			type=PropertyType.PT_STRING,
-			category="connection",
-			defaultValue="LLRP",
-			orderValue=0)
+	@Property(displayName = "Display Name", description = "Logical Name of Reader", writable = true, type = PropertyType.PT_STRING, category = "connection", defaultValue = "LLRP", orderValue = 0)
 	public String getDisplayName() {
 		return displayName;
 	}
-	
-	public void setDisplayName(String displayName){
+
+	public void setDisplayName(String displayName) {
 		this.displayName = displayName;
 	}
 
@@ -255,13 +270,7 @@ public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 	 * 
 	 * @return the ipAddress
 	 */
-	@Property(displayName = "IP Address", 
-			  description = "IP Address of the Reader", 
-			  writable = true, 
-			  type = PropertyType.PT_STRING,
-			  category = "connection", 
-		      defaultValue = LLRPConstants.LOCALHOST, 
-			  orderValue = 0)
+	@Property(displayName = "IP Address", description = "IP Address of the Reader", writable = true, type = PropertyType.PT_STRING, category = "connection", defaultValue = LLRPConstants.LOCALHOST, orderValue = 0)
 	public String getIpAddress() {
 		return ipAddress;
 	}
@@ -281,15 +290,7 @@ public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 	 * 
 	 * @return the port
 	 */
-	@Property(displayName = "Port", 
-			  description = "Port of the Reader", 
-			  writable = true, 
-		      type = PropertyType.PT_INTEGER, 
-		      category = "connection", 
-		      orderValue = 1, 
-			  defaultValue = LLRPConstants.PORT,
-			  minValue = "0",
-			  maxValue = "65535")
+	@Property(displayName = "Port", description = "Port of the Reader", writable = true, type = PropertyType.PT_INTEGER, category = "connection", orderValue = 1, defaultValue = LLRPConstants.PORT, minValue = "0", maxValue = "65535")
 	public Integer getPort() {
 		return port;
 	}
@@ -309,14 +310,7 @@ public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 	 * 
 	 * @return the reconnectionInterval
 	 */
-	@Property(displayName = "Reconnection Interval", 
-			  description = "Upon connection failure, the time to wait between two connection attempts (ms)", 
-			  writable = true, 
-			  type = PropertyType.PT_INTEGER, 
-			  category = "connection", 
-			  defaultValue = LLRPConstants.RECONNECTION_INTERVAL, 
-			  orderValue = 4, 
-			  minValue = "0")
+	@Property(displayName = "Reconnection Interval", description = "Upon connection failure, the time to wait between two connection attempts (ms)", writable = true, type = PropertyType.PT_INTEGER, category = "connection", defaultValue = LLRPConstants.RECONNECTION_INTERVAL, orderValue = 4, minValue = "0")
 	public Integer getReconnectionInterval() {
 		return reconnectionInterval;
 	}
@@ -336,14 +330,7 @@ public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 	 * 
 	 * @return the maxNumConnectionAttempts
 	 */
-	@Property(displayName = "Maximum Connection Attempts", 
-			  description = "Upon connection failure, the number of times to attempt to recconnect before giving up. If set to '-1', then try forever", 
-			  writable = true, 
-			  type = PropertyType.PT_INTEGER, 
-		      category = "connection", 
-			  defaultValue = LLRPConstants.MAX_CONNECTION_ATTEMPTS, 
-		      orderValue = 5, 
-		      minValue = "-1")
+	@Property(displayName = "Maximum Connection Attempts", description = "Upon connection failure, the number of times to attempt to recconnect before giving up. If set to '-1', then try forever", writable = true, type = PropertyType.PT_INTEGER, category = "connection", defaultValue = LLRPConstants.MAX_CONNECTION_ATTEMPTS, orderValue = 5, minValue = "-1")
 	public Integer getMaxNumConnectionAttempts() {
 		return maxNumConnectionAttempts;
 	}
@@ -356,6 +343,26 @@ public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 	 */
 	public void setMaxNumConnectionAttempts(Integer maxNumConnectionAttempts) {
 		this.maxNumConnectionAttempts = maxNumConnectionAttempts;
+	}
+
+	/**
+	 * Returns the IP address of the reader.
+	 * 
+	 * @return the ipAddress
+	 */
+	@Property(displayName = "Reader Config File", description = "Path to SET_READER_CONFIG message", writable = true, type = PropertyType.PT_STRING, category = "connection", defaultValue = LLRPConstants.SET_READER_CONFIG_PATH, orderValue = 6)
+	public String getReaderConfigPath() {
+		return readerConfigPath;
+	}
+
+	/**
+	 * Sets the IP address of the reader.
+	 * 
+	 * @param ipAddress
+	 *            the ipAddress to set
+	 */
+	public void setReaderConfigPath(String readerConfigPath) {
+		this.readerConfigPath = readerConfigPath;
 	}
 
 	/**

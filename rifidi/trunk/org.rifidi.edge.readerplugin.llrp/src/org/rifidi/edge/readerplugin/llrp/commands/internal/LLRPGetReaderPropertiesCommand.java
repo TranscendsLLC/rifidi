@@ -11,6 +11,8 @@
  */
 package org.rifidi.edge.readerplugin.llrp.commands.internal;
 
+import java.util.concurrent.TimeoutException;
+
 import org.rifidi.edge.readerplugin.llrp.AbstractLLRPCommand;
 
 /**
@@ -30,11 +32,12 @@ public class LLRPGetReaderPropertiesCommand extends AbstractLLRPCommand {
 	}
 
 	/* (non-Javadoc)
-	 * @see java.lang.Runnable#run()
+	 * @see org.rifidi.edge.core.sensors.commands.TimeoutCommand#execute()
 	 */
 	@Override
-	public void run() {
-
+	protected void execute() throws TimeoutException {
+		// TODO Auto-generated method stub
+		
 	}
-
+	
 }

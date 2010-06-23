@@ -11,10 +11,8 @@
  */
 package org.rifidi.edge.readerplugin.llrp;
 
+import java.io.File;
 import java.io.IOException;
-import java.math.BigInteger;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -27,32 +25,25 @@ import javax.jms.Message;
 import javax.jms.Session;
 
 import org.apache.activemq.command.ActiveMQObjectMessage;
-import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.mina.common.RuntimeIOException;
+import org.llrp.ltk.exceptions.InvalidLLRPMessageException;
 import org.llrp.ltk.generated.enumerations.AccessReportTriggerType;
 import org.llrp.ltk.generated.enumerations.GetReaderCapabilitiesRequestedData;
 import org.llrp.ltk.generated.enumerations.NotificationEventType;
 import org.llrp.ltk.generated.enumerations.ROReportTriggerType;
 import org.llrp.ltk.generated.enumerations.StatusCode;
-import org.llrp.ltk.generated.interfaces.AirProtocolTagData;
 import org.llrp.ltk.generated.messages.GET_READER_CAPABILITIES;
 import org.llrp.ltk.generated.messages.RO_ACCESS_REPORT;
 import org.llrp.ltk.generated.messages.SET_READER_CONFIG;
 import org.llrp.ltk.generated.messages.SET_READER_CONFIG_RESPONSE;
 import org.llrp.ltk.generated.parameters.AccessReportSpec;
-import org.llrp.ltk.generated.parameters.AntennaID;
 import org.llrp.ltk.generated.parameters.C1G2EPCMemorySelector;
-import org.llrp.ltk.generated.parameters.C1G2_CRC;
-import org.llrp.ltk.generated.parameters.C1G2_PC;
-import org.llrp.ltk.generated.parameters.EPCData;
-import org.llrp.ltk.generated.parameters.EPC_96;
 import org.llrp.ltk.generated.parameters.EventNotificationState;
 import org.llrp.ltk.generated.parameters.ROReportSpec;
 import org.llrp.ltk.generated.parameters.ReaderEventNotificationSpec;
 import org.llrp.ltk.generated.parameters.TagReportContentSelector;
-import org.llrp.ltk.generated.parameters.TagReportData;
 import org.llrp.ltk.net.LLRPConnection;
 import org.llrp.ltk.net.LLRPConnectionAttemptFailedException;
 import org.llrp.ltk.net.LLRPConnector;
@@ -61,6 +52,7 @@ import org.llrp.ltk.types.Bit;
 import org.llrp.ltk.types.LLRPMessage;
 import org.llrp.ltk.types.UnsignedInteger;
 import org.llrp.ltk.types.UnsignedShort;
+import org.llrp.ltk.util.Util;
 import org.rifidi.edge.api.SessionStatus;
 import org.rifidi.edge.core.sensors.base.AbstractSensor;
 import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
@@ -68,10 +60,7 @@ import org.rifidi.edge.core.sensors.commands.Command;
 import org.rifidi.edge.core.sensors.commands.TimeoutCommand;
 import org.rifidi.edge.core.sensors.sessions.AbstractSensorSession;
 import org.rifidi.edge.core.services.notification.NotifierService;
-import org.rifidi.edge.core.services.notification.data.EPCGeneration2Event;
 import org.rifidi.edge.core.services.notification.data.ReadCycle;
-import org.rifidi.edge.core.services.notification.data.StandardTagReadEventFieldNames;
-import org.rifidi.edge.core.services.notification.data.TagReadEvent;
 import org.rifidi.edge.readerplugin.llrp.commands.internal.LLRPReset;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
@@ -94,11 +83,13 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 	private volatile NotifierService notifierService;
 	/** The ID of the reader this session belongs to */
 	private final String readerID;
+	private final String readerConfigPath;
 
 	/** Ok, because only accessed from synchronized block */
 	int messageID = 1;
 	int maxConAttempts = -1;
 	int reconnectionInterval = -1;
+	private AtomicBoolean timingOut = new AtomicBoolean(false);
 
 	/** atomic boolean that is true if we are inside the connection attempt loop */
 	private AtomicBoolean connectingLoop = new AtomicBoolean(false);
@@ -112,8 +103,11 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 	 * @param sensor
 	 * @param id
 	 * @param host
+	 * @param port
 	 * @param reconnectionInterval
 	 * @param maxConAttempts
+	 * @param readerConfigPath
+	 * @param timeout
 	 * @param destination
 	 * @param template
 	 * @param notifierService
@@ -122,15 +116,16 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 	 */
 	public LLRPReaderSession(AbstractSensor<?> sensor, String id, String host,
 			int port, int reconnectionInterval, int maxConAttempts,
-			Destination destination, JmsTemplate template,
-			NotifierService notifierService, String readerID,
-			Set<AbstractCommandConfiguration<?>> commands) {
+			String readerConfigPath, Destination destination,
+			JmsTemplate template, NotifierService notifierService,
+			String readerID, Set<AbstractCommandConfiguration<?>> commands) {
 		super(sensor, id, destination, template, commands);
 		this.host = host;
 		this.port = port;
 		this.connection = new LLRPConnector(this, host, port);
 		this.maxConAttempts = maxConAttempts;
 		this.reconnectionInterval = reconnectionInterval;
+		this.readerConfigPath = readerConfigPath;
 		this.notifierService = notifierService;
 		this.readerID = readerID;
 		this.setStatus(SessionStatus.CLOSED);
@@ -196,10 +191,22 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 		}
 
 		// physical connection established, set up session
+		timingOut.set(false);
 		onConnect();
+		
+		logger.info("LLRP Session " + this.getID() + " on sensor "
+				+ this.getSensor().getID() + " connected to " + host + ":"
+				+ port);
 	}
 
+	/**
+	 * This logic executes as soon as a socket is established to initialize the
+	 * connection. It occurs before any commands are scheduled
+	 */
 	private void onConnect() {
+		logger.info("LLRP Session " + this.getID() + " on sensor "
+				+ this.getSensor().getID() + " attempting to log in to " + host
+				+ ":" + port);
 		setStatus(SessionStatus.LOGGINGIN);
 		executor = new ScheduledThreadPoolExecutor(1);
 
@@ -212,8 +219,15 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 
 			StatusCode sc = config_response.getLLRPStatus().getStatusCode();
 			if (sc.intValue() != StatusCode.M_Success) {
-				logger.debug("SET_READER_CONFIG_RESPONSE "
-						+ "returned with status code " + sc.intValue());
+				if (config_response.getLLRPStatus().getStatusCode().toInteger() != 0) {
+					try {
+						logger.error("Problem with SET_READER_CONFIG: \n"
+								+ config_response.toXMLString());
+					} catch (InvalidLLRPMessageException e) {
+						logger.warn("Cannot print XML for "
+								+ "SET_READER_CONFIG_RESPONSE");
+					}
+				}
 			}
 
 			if (!processing.compareAndSet(false, true)) {
@@ -242,6 +256,12 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 		return new LLRPReset("LLRPResetCommand");
 	}
 
+	/**
+	 * This method returns a command used to ping the reader. It is used to
+	 * determine if the connection is still alive
+	 * 
+	 * @return
+	 */
 	private Command getTimeoutCommand() {
 		return new TimeoutCommand("LLRP Timeout") {
 
@@ -262,6 +282,8 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 	 */
 	@Override
 	public void disconnect() {
+		resetCommands();
+		this.submitAndBlock(getResetCommand(), getTimeout(), TimeUnit.MILLISECONDS);
 		try {
 			// if in the connecting loop, set atomic boolean to false and call
 			// notify on the connectingLoop monitor
@@ -277,9 +299,10 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 					((LLRPConnector) connection).disconnect();
 				}
 			}
-			// make sure commands are canceled
-			resetCommands();
+		} catch (Exception e) {
+			logger.error(e.getMessage());
 		} finally {
+
 			// make sure executor is shutdown!
 			if (executor != null) {
 				executor.shutdownNow();
@@ -292,23 +315,43 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 	}
 
 	/**
+	 * This method sends a message and waits for an LLRP response message.
 	 * 
+	 * @param message
+	 *            The LLRP message to send to the reader
+	 * @return The response message
+	 * @throws TimeoutException
+	 *             If there was a timeout when processing this command.
 	 */
-	public LLRPMessage transact(LLRPMessage message) {
-		LLRPMessage retVal = null;
-		try {
-			synchronized (connection) {
-				retVal = this.connection.transact(message, 10000);
+	public LLRPMessage transact(LLRPMessage message) throws TimeoutException {
+		synchronized (connection) {
+			try {
+				if (timingOut.get()) {
+					throw new IllegalStateException(
+							"Cannot execute while timing out: "
+									+ message.getName());
+				}
+				LLRPMessage response = this.connection.transact(message,
+						20000);
+				if (response != null) {
+					return response;
+				} else {
+					logger.error("Response for message: " + message.getName()
+							+ " was null");
+					throw new TimeoutException();
+				}
+			} catch (TimeoutException e) {
+				timingOut.set(true);
+				logger.error("Timeout when sending an LLRP Message: "
+						+ message.getName());
+				throw e;
 			}
-		} catch (TimeoutException e) {
-			logger.error("Cannot send LLRP Message: ", e);
-			super.handleTimeout();
 		}
-
-		return retVal;
 	}
 
 	/**
+	 * This command sends a message and does not wait for a response. Transact
+	 * should normally be preferred to this method.
 	 * 
 	 * @param message
 	 */
@@ -333,6 +376,26 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 	 * @return The SET_READER_CONFIG object.
 	 */
 	public SET_READER_CONFIG createSetReaderConfig() {
+		try {
+			LLRPMessage message = Util.loadXMLLLRPMessage(new File(
+					readerConfigPath));
+			return (SET_READER_CONFIG) message;
+		} catch (Exception e) {
+			logger.warn("No SET_READER_CONFIG message found at "
+					+ readerConfigPath + " Using default SET_READER_CONFIG");
+		}
+
+		return createDefaultConfig();
+
+	}
+
+	/**
+	 * A default SET_READER_CONFIG message to use in case the one from the file
+	 * cannot be loaded.
+	 * 
+	 * @return
+	 */
+	private SET_READER_CONFIG createDefaultConfig() {
 		SET_READER_CONFIG setReaderConfig = new SET_READER_CONFIG();
 
 		// Create a default RoReportSpec so that reports are sent at the end of
@@ -452,149 +515,33 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 	}
 
 	/**
-	 * This method receives asynchronous messages back from the LLRP reader. If
-	 * it isn't a RO_ACCESS_REPORT (the message thats tags come in) we don't
-	 * care about it at the moment.
+	 * This method receives asynchronous messages back from the LLRP reader. We
+	 * add relavent events to the esper runtime
 	 */
 	@Override
 	public void messageReceived(LLRPMessage arg0) {
-		logger.debug("Asynchronous message recieved");
+		if(!processing.get()){
+			return;
+		}
 		try {
-			if (arg0 instanceof RO_ACCESS_REPORT) {
-				RO_ACCESS_REPORT rar = (RO_ACCESS_REPORT) arg0;
-				List<TagReportData> trdl = rar.getTagReportDataList();
-				logger.debug("Got a RO_ACCESS_REPORT with " + trdl.size()
-						+ " tags");
-				Set<TagReadEvent> tagreaderevents = new HashSet<TagReadEvent>();
-
-				for (TagReportData t : trdl) {
-					AntennaID antid = t.getAntennaID();
-					EPCGeneration2Event gen2event = new EPCGeneration2Event();
-					if (t.getEPCParameter() instanceof EPCData) {
-						EPCData id = (EPCData) t.getEPCParameter();
-						String EPCData = id.getEPC().toString(16);
-						gen2event.setEPCMemory(this.parseString(EPCData),
-								EPCData.length() * 4);
-
-					} else {
-						EPC_96 id = (EPC_96) t.getEPCParameter();
-						String EPCData = id.getEPC().toString(16);
-						gen2event.setEPCMemory(this.parseString(EPCData), 96);
-					}
-
-					TagReadEvent tag = new TagReadEvent(readerID, gen2event,
-							antid.getAntennaID().intValue(), System
-									.currentTimeMillis());
-					// Add the custom information to the tags.
-					if (t.getROSpecID() != null) {
-						String rosid = t.getROSpecID().getROSpecID()
-								.toInteger().toString();
-						tag.addExtraInformation(
-								LLRPTagReadEventFieldNames.ROSPEC_ID, rosid);
-					}
-					if (t.getPeakRSSI() != null) {
-						String rssi = t.getPeakRSSI().getPeakRSSI().toInteger()
-								.toString();
-						tag.addExtraInformation(
-								StandardTagReadEventFieldNames.RSSI, rssi);
-					}
-
-					if (t.getSpecIndex() != null) {
-						String specindex = t.getSpecIndex().getSpecIndex()
-								.toInteger().toString();
-						tag.addExtraInformation(
-								LLRPTagReadEventFieldNames.SPEC_INDEX,
-								specindex);
-					}
-					if (t.getInventoryParameterSpecID() != null) {
-						String invparamspecid = t.getInventoryParameterSpecID()
-								.getInventoryParameterSpecID().toInteger()
-								.toString();
-						tag.addExtraInformation(
-								LLRPTagReadEventFieldNames.INVPARAMSPECID,
-								invparamspecid);
-					}
-
-					if (t.getChannelIndex() != null) {
-						String channelindex = t.getChannelIndex()
-								.getChannelIndex().toInteger().toString();
-						tag.addExtraInformation(
-								LLRPTagReadEventFieldNames.CHANNELINDEX,
-								channelindex);
-					}
-
-					if (t.getFirstSeenTimestampUTC() != null) {
-						String firstseenutc = t.getFirstSeenTimestampUTC()
-								.getMicroseconds().toBigInteger().toString();
-						tag.addExtraInformation(
-								LLRPTagReadEventFieldNames.FIRSTSEENUTC,
-								firstseenutc);
-					}
-
-					if (t.getFirstSeenTimestampUptime() != null) {
-						String firstseenuptime = t
-								.getFirstSeenTimestampUptime()
-								.getMicroseconds().toBigInteger().toString();
-						tag.addExtraInformation(
-								LLRPTagReadEventFieldNames.FIRSTSEENUPTIME,
-								firstseenuptime);
-					}
-
-					if (t.getLastSeenTimestampUTC() != null) {
-						String lastseenutc = t.getLastSeenTimestampUTC()
-								.getMicroseconds().toBigInteger().toString();
-						tag.addExtraInformation(
-								LLRPTagReadEventFieldNames.LASTSEENUTC,
-								lastseenutc);
-					}
-
-					if (t.getLastSeenTimestampUptime() != null) {
-						String lastseenuptime = t.getLastSeenTimestampUptime()
-								.getMicroseconds().toBigInteger().toString();
-						tag.addExtraInformation(
-								LLRPTagReadEventFieldNames.LASTSEENUPTIME,
-								lastseenuptime);
-					}
-
-					if (t.getTagSeenCount() != null) {
-						String tagseencount = t.getTagSeenCount().getTagCount()
-								.toInteger().toString();
-						tag.addExtraInformation(
-								LLRPTagReadEventFieldNames.TAGSEENCOUNT,
-								tagseencount);
-					}
-
-					for (AirProtocolTagData aptd : t
-							.getAirProtocolTagDataList()) {
-						if (aptd instanceof C1G2_CRC) {
-							String crc = ((C1G2_CRC) aptd).getCRC().toInteger()
-									.toString();
-							tag
-									.addExtraInformation(
-											LLRPTagReadEventFieldNames.AIRPROT_CRC,
-											crc);
-						} else if (aptd instanceof C1G2_PC) {
-							String pc = ((C1G2_PC) aptd).getPC_Bits()
-									.toInteger().toString();
-							tag.addExtraInformation(
-									LLRPTagReadEventFieldNames.AIRPROT_PC, pc);
-						}
-					}
-
-					// for (String key : tag.getExtraInformation().keySet()) {
-					// System.out.println(key + ", "
-					// + tag.getExtraInformation().get(key));
-					// }
-					tagreaderevents.add(tag);
-				}
-				ReadCycle cycle = new ReadCycle(tagreaderevents, readerID,
-						System.currentTimeMillis());
-				sensor.send(cycle);
-				this.getTemplate().send(this.getDestination(),
-						new ObjectMessageCreator(cycle));
+			if (!(arg0 instanceof RO_ACCESS_REPORT)) {
+				logger.debug("MESSAGE RECEIVED: "
+						+ arg0.getClass().getSimpleName());
 			}
+			Object event = LLRPEventFactory.createEvent(arg0, readerID);
+			if (event != null) {
+				if (event instanceof ReadCycle) {
+					ReadCycle cycle = (ReadCycle) event;
+					sensor.send(cycle);
+					this.getTemplate().send(this.getDestination(),
+							new ObjectMessageCreator(cycle));
+				} else {
+					sensor.sendEvent(event);
+				}
+			}
+
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("Exception while parsing message: " + e.getMessage());
 		}
 	}
 
@@ -637,25 +584,6 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 			return objectMessage;
 		}
 
-	}
-
-	/**
-	 * Parse the given string for results.
-	 * 
-	 * @param input
-	 * @return
-	 */
-	private BigInteger parseString(String input) {
-		BigInteger retVal = null;
-
-		try {
-			input = input.trim();
-			retVal = new BigInteger(Hex.decodeHex(input.toCharArray()));
-		} catch (Exception e) {
-			logger.warn("There was a problem when parsing LLRP Tags.  "
-					+ "tag has not been added", e);
-		}
-		return retVal;
 	}
 
 	/*
