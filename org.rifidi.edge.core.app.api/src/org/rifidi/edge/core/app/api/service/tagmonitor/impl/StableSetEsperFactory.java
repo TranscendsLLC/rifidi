@@ -7,15 +7,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import org.rifidi.edge.core.app.api.service.AbstractReadZoneEsperFactory;
 import org.rifidi.edge.core.app.api.service.EsperUtil;
+import org.rifidi.edge.core.app.api.service.RifidiAppEsperFactory;
 import org.rifidi.edge.core.app.api.service.tagmonitor.ReadZone;
 
 /**
  * @author kyle
  *
  */
-public class StableSetEsperFactory extends AbstractReadZoneEsperFactory {
+public class StableSetEsperFactory implements RifidiAppEsperFactory {
 
 	private List<ReadZone> readZones;
 	private boolean unique;
@@ -51,12 +51,12 @@ public class StableSetEsperFactory extends AbstractReadZoneEsperFactory {
 		if (unique) {
 			statements.add("create window " + stableSetWindow_unique
 					+ ".std:firstunique(tag.ID) as TagReadEvent");
-			statements.add(super.buildInsertStatement(stableSetWindow_unique,
+			statements.add(EsperUtil.buildInsertStatement(stableSetWindow_unique,
 					readZones));
 			statements.add("insert into " + stableSetWindow + " select * from "
 					+ stableSetWindow_unique);
 		}else{
-			statements.add(super.buildInsertStatement(stableSetWindow,
+			statements.add(EsperUtil.buildInsertStatement(stableSetWindow,
 					readZones));
 		}
 		return statements;

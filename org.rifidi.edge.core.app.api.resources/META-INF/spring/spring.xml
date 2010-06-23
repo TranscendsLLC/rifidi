@@ -1,0 +1,34 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:osgi="http://www.springframework.org/schema/osgi"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+    http://www.springframework.org/schema/osgi 
+    http://www.springframework.org/schema/osgi/spring-osgi.xsd">
+
+	<bean id="dbResourceService"
+		class="org.rifidi.edge.core.app.api.resources.db.DBResourceService" />
+
+
+	<bean id="JMSResourceServce"
+		class="org.rifidi.edge.core.app.api.resources.jms.JMSResourceService">
+		<property name="jmsTemplate" ref="externalJMSTemplate" />
+	</bean>
+
+	<bean id="serialResourceService"
+		class="org.rifidi.edge.core.app.api.resources.serial.SerialResourceService" />
+
+	<!--
+		Get a reference to the JMS Template from the OSGi service registry
+	-->
+	<osgi:reference id="externalJMSTemplate"
+		interface="org.springframework.jms.core.JmsTemplate" bean-name="externalJMSTemplate" />
+
+	<osgi:service ref="serialResourceService"
+		interface="org.rifidi.edge.core.app.api.resources.serial.SerialResourceService" />
+	<osgi:service ref="dbResourceService"
+		interface="org.rifidi.edge.core.app.api.resources.db.DBResourceService" />
+	<osgi:service ref="JMSResourceServce"
+		interface="org.rifidi.edge.core.app.api.resources.jms.JMSResourceService" />
+
+
+</beans>

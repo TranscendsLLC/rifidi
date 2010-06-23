@@ -4,13 +4,18 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.eclipse.osgi.framework.console.CommandProvider;
 import org.rifidi.edge.core.app.api.AbstractRifidiApp;
 import org.rifidi.edge.core.app.api.AppState;
 import org.rifidi.edge.core.services.notification.data.TagReadEvent;
 
 import com.espertech.esper.client.EPOnDemandQueryResult;
+import com.espertech.esper.client.EPServiceProvider;
+import com.espertech.esper.client.EPStatement;
 import com.espertech.esper.client.EventBean;
+import com.espertech.esper.client.StatementAwareUpdateListener;
 
 /**
  * This is an application that lets the user query recently seen tags and tags
@@ -23,6 +28,7 @@ public class TagApp extends AbstractRifidiApp {
 
 	/** The amount of time to keep tags around as recent tags */
 	private String recentTagTimeout;
+	private Log logger = LogFactory.getLog(TagApp.class);
 
 	/**
 	 * 
@@ -60,6 +66,7 @@ public class TagApp extends AbstractRifidiApp {
 		addStatement("insert into recenttags select * from ReadCycle[select * from tags]");
 
 		addStatement("insert into curtags select * from recenttags");
+		
 	}
 
 	/**
@@ -69,6 +76,7 @@ public class TagApp extends AbstractRifidiApp {
 	 */
 	List<TagReadEvent> getRecentTags(String readerID) {
 		if (getState() != AppState.STARTED) {
+			logger.warn("TagApp not started. Use 'startapp <AppID>'");
 			return new ArrayList<TagReadEvent>();
 		}
 		List<TagReadEvent> recentTags = new LinkedList<TagReadEvent>();
@@ -90,6 +98,7 @@ public class TagApp extends AbstractRifidiApp {
 	 */
 	List<TagReadEvent> getCurrentTags(String readerID) {
 		if (getState() != AppState.STARTED) {
+			logger.warn("TagApp not started. Use 'startapp <AppID>'");
 			return new ArrayList<TagReadEvent>();
 		}
 		List<TagReadEvent> currentTags = new LinkedList<TagReadEvent>();
@@ -102,6 +111,44 @@ public class TagApp extends AbstractRifidiApp {
 			}
 		}
 		return currentTags;
+	}
+	
+	public void measureReadRate(final String seconds){
+		if (getState() != AppState.STARTED) {
+			logger.warn("TagApp not started. Use 'startapp <AppID>'");
+			return;
+		}
+
+		addStatement("select tags from pattern" +
+				"[every tags=ReadCycle[select * from tags] " +
+				"until timer:interval("+seconds+" sec)]", 
+				new StatementAwareUpdateListener() {
+			
+					@Override
+					public void update(EventBean[] arg0, EventBean[] arg1,
+							EPStatement arg2, EPServiceProvider arg3) {
+						if (arg0 != null) {
+							for (EventBean b : arg0) {
+								TagReadEvent[] tags = (TagReadEvent[]) b
+										.get("tags");
+								float count;
+								if(tags==null){
+									count = 0f;
+								}else{
+									count = new Float(tags.length);
+								}
+								float time = Float.parseFloat(seconds);
+								float rate = count / time;
+
+								logger.info("Saw " + count + " tags in "
+										+ seconds + " seconds. Rate: " + rate
+										+ " tags/second");
+							}
+						}
+
+					}
+				});
+
 	}
 
 	/*

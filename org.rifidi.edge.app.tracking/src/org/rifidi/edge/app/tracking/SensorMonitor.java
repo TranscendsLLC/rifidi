@@ -6,7 +6,8 @@ package org.rifidi.edge.app.tracking;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.rifidi.edge.core.app.api.JMSRifidiApp;
+import org.rifidi.edge.core.app.api.AbstractRifidiApp;
+import org.rifidi.edge.core.app.api.resources.jms.JMSResource;
 import org.rifidi.edge.core.app.api.service.sensormonitor.SensorStatusMonitoringService;
 import org.rifidi.edge.core.app.api.service.sensormonitor.SensorStatusSubscriber;
 import org.rifidi.edge.core.services.notification.data.management.SensorStatusEvent;
@@ -15,10 +16,11 @@ import org.rifidi.edge.core.services.notification.data.management.SensorStatusEv
  * @author kyle
  * 
  */
-public class SensorMonitor extends JMSRifidiApp implements
+public class SensorMonitor extends AbstractRifidiApp implements
 		SensorStatusSubscriber {
 
 	private SensorStatusMonitoringService service;
+	private JMSResource jmsTextSender;
 
 	/**
 	 * Constructor
@@ -29,7 +31,7 @@ public class SensorMonitor extends JMSRifidiApp implements
 	 *            The name of the app
 	 */
 	public SensorMonitor(String group, String name) {
-		super(group,name);
+		super(group, name);
 	}
 
 	/*
@@ -67,7 +69,7 @@ public class SensorMonitor extends JMSRifidiApp implements
 	 */
 	@Override
 	public void handleSensorStatusEvent(SensorStatusEvent event) {
-		super.sendTextMessage(event.toString());
+		jmsTextSender.sendTextMessage(event.toString());;
 
 	}
 
@@ -78,4 +80,15 @@ public class SensorMonitor extends JMSRifidiApp implements
 	public void setSensorMonitoringService(SensorStatusMonitoringService service) {
 		this.service = service;
 	}
+
+	/**
+	 * Called by spring
+	 * 
+	 * @param jmsTextSender
+	 *            the jmsTextSender to set
+	 */
+	public void setJmsTextSender(JMSResource jmsTextSender) {
+		this.jmsTextSender = jmsTextSender;
+	}
+
 }

@@ -11,7 +11,7 @@ import org.rifidi.edge.core.services.notification.data.TagReadEvent;
  * 
  */
 public class TagAppCommandProvider implements CommandProvider {
-	
+
 	private TagApp tagApp;
 
 	public Object _recenttags(CommandInterpreter intp) {
@@ -38,6 +38,15 @@ public class TagAppCommandProvider implements CommandProvider {
 		return null;
 	}
 
+	public Object _tagrate(CommandInterpreter intp) {
+		String seconds = intp.nextArgument();
+		if (seconds == null || seconds.isEmpty()) {
+			seconds = "5";
+		}
+		tagApp.measureReadRate(seconds);
+		return null;
+	}
+
 	/**
 	 * @param tagApp
 	 *            the tagApp to set
@@ -45,7 +54,7 @@ public class TagAppCommandProvider implements CommandProvider {
 	public void setTagApp(TagApp tagApp) {
 		this.tagApp = tagApp;
 	}
-	
+
 	@Override
 	public String getHelp() {
 		StringBuffer retVal = new StringBuffer();
@@ -54,6 +63,9 @@ public class TagAppCommandProvider implements CommandProvider {
 				+ "tags recently seen on the given reader.  \n");
 		retVal.append("\tcurrenttags <readerID> - Prints out a list of tags"
 				+ "currently seen by the given reader.  \n");
+		retVal.append("\ttagrate [time] - Measures the number tags seen "
+				+ "within the given number of seconds. If no argument is "
+				+ "supplied, will default to 5 seconds  \n");
 		return retVal.toString();
 	}
 
