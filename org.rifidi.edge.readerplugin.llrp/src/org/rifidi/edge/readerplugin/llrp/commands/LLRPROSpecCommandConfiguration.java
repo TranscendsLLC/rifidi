@@ -144,7 +144,7 @@ public class LLRPROSpecCommandConfiguration extends
 	}
 
 	/**
-	 * Gets teh ROSpecID.
+	 * Gets the ROSpecID.
 	 * 
 	 * @return the roSpecID
 	 */
