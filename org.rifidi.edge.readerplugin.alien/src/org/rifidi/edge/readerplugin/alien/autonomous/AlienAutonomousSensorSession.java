@@ -39,6 +39,7 @@ public class AlienAutonomousSensorSession extends
 		AbstractServerSocketSensorSession {
 
 	/** The logger */
+	@SuppressWarnings("unused")
 	private final static Log logger = LogFactory
 			.getLog(AlienAutonomousSensorSession.class);
 	/** The notifierService used to send out notifications of session changes */
