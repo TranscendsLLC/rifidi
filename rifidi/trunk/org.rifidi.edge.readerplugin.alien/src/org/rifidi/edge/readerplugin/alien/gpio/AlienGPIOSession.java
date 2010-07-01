@@ -42,9 +42,10 @@ public class AlienGPIOSession extends AbstractServerSocketSensorSession {
 	private int initialExternalInputValue = 0;
 	/** The initial state of the external output */
 	private int initialExternalOutputValue = 0;
-	/** a variable that keeps track if this object has been initalized */
+	/** a variable that keeps track if this object has been initialized */
 	private boolean hasBeenInitialized = false;
 	/** The logger for this class */
+	@SuppressWarnings("unused")
 	private Log logger = LogFactory.getLog(AlienGPIOSession.class);
 
 	/**
