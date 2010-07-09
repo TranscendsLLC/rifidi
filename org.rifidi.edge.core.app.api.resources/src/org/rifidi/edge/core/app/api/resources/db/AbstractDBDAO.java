@@ -68,12 +68,16 @@ public abstract class AbstractDBDAO {
 			}
 
 		} catch (DataAccessException e) {
+			e.printStackTrace();
 			throw new IllegalStateException("DBDAO cannot be initialized",e);
 		} catch (MetaDataAccessException e) {
+			e.printStackTrace();
 			throw new IllegalStateException("DBDAO cannot be initialized",e);
 		} catch (SQLException e) {
+			e.printStackTrace();
 			throw new IllegalStateException("DBDAO cannot be initialized",e);
 		} catch (CannotCreateResourceException e) {
+			e.printStackTrace();
 			throw new IllegalStateException("DBDAO cannot be initialized",e);
 		}
 

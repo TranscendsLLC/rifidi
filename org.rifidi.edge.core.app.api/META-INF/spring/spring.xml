@@ -42,7 +42,10 @@
 		<constructor-arg index="1" value="StableSet" />
 	</bean>
 	
-	
+	<bean id="UniqueTagBatchIntervalAppService" class="org.rifidi.edge.core.app.api.service.tagmonitor.impl.UniqueTagBatchIntervalServiceImpl">
+		<constructor-arg index="0" value="AppService" />
+		<constructor-arg index="1" value="UniqueTagBatchInterval" />
+	</bean>
 	
 	<osgi:set id="rifidiApps" 
 		interface="org.rifidi.edge.core.app.api.RifidiApp" cardinality="0..N">
@@ -53,6 +56,7 @@
 	<osgi:service ref="SensorStatusAppService" auto-export="interfaces"/>
 	<osgi:service ref="UniqueTagIntervalAppService" auto-export="interfaces"/>
 	<osgi:service ref="StableSetAppService"  auto-export="interfaces"/>
+	<osgi:service ref="UniqueTagBatchIntervalAppService"  auto-export="interfaces"/>
 
 	<osgi:reference id="esperManagementService"
 		interface="org.rifidi.edge.core.services.esper.EsperManagementService" />
