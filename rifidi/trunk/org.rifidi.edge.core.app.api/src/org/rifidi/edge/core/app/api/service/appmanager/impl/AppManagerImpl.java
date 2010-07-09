@@ -141,7 +141,7 @@ public class AppManagerImpl implements AppManager {
 			}
 		}
 	}
-
+	
 	/**
 	 * Called by spring to set the initial list of Rifidi Apps
 	 * 

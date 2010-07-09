@@ -72,7 +72,7 @@ public class SensorStatusMonitorEsperFactory implements RifidiAppEsperFactory {
 	 */
 	@Override
 	public List<String> createStatements() {
-		return Collections.EMPTY_LIST;
+		return Collections.emptyList();
 	}
 
 }
