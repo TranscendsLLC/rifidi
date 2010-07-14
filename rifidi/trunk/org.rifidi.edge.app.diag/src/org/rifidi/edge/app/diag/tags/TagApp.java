@@ -165,7 +165,7 @@ public class TagApp extends AbstractRifidiApp {
 	 * @see org.rifidi.edge.core.app.api.AbstractRifidiApp#getCommandProider()
 	 */
 	@Override
-	protected CommandProvider getCommandProider() {
+	protected CommandProvider getCommandProvider() {
 		TagAppCommandProvider provider = new TagAppCommandProvider();
 		provider.setTagApp(this);
 		return provider;

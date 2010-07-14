@@ -65,7 +65,7 @@ public class TagGeneratorApp extends AbstractRifidiApp {
 	 * @see org.rifidi.edge.core.app.api.AbstractRifidiApp#getCommandProider()
 	 */
 	@Override
-	protected CommandProvider getCommandProider() {
+	protected CommandProvider getCommandProvider() {
 		TagGeneratorCommandProvider command = new TagGeneratorCommandProvider();
 		command.setGeneratorApp(this);
 		return command;

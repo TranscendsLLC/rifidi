@@ -138,7 +138,7 @@ public class GPISimulatorApp extends AbstractRifidiApp {
 	 * @see org.rifidi.edge.core.app.api.AbstractRifidiApp#getCommandProider()
 	 */
 	@Override
-	protected CommandProvider getCommandProider() {
+	protected CommandProvider getCommandProvider() {
 		GPISimulatorAppCommandProvider commandProvider = new GPISimulatorAppCommandProvider();
 		commandProvider.setSimApp(this);
 		return commandProvider;

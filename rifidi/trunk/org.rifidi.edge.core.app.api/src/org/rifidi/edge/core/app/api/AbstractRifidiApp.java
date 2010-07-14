@@ -32,8 +32,8 @@ public abstract class AbstractRifidiApp implements RifidiApp,
 
 	/** All the esper statements that have been defined so far */
 	private final Set<EPStatement> statements = new CopyOnWriteArraySet<EPStatement>();
-	/**Any additional events this app adds to the runtime.*/
-	private final Set<String> additionalEvents= new CopyOnWriteArraySet<String>();
+	/** Any additional events this app adds to the runtime. */
+	private final Set<String> additionalEvents = new CopyOnWriteArraySet<String>();
 	/** Esper service */
 	private EsperManagementService esperService;
 	/** The group this application is a part of */
@@ -143,10 +143,12 @@ public abstract class AbstractRifidiApp implements RifidiApp,
 	}
 
 	/**
+	 * Returns a CommandProvider object which will define any commands used by
+	 * the App.
 	 * 
 	 * @return
 	 */
-	protected CommandProvider getCommandProider() {
+	protected CommandProvider getCommandProvider() {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -170,7 +172,7 @@ public abstract class AbstractRifidiApp implements RifidiApp,
 	protected EPRuntime getEPRuntime() {
 		return this.esperService.getProvider().getEPRuntime();
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -208,11 +210,11 @@ public abstract class AbstractRifidiApp implements RifidiApp,
 		}
 		try {
 			logger.info("Starting App: " + getName());
-			CommandProvider commandProvider = getCommandProider();
+			CommandProvider commandProvider = getCommandProvider();
 			if (commandProvider != null) {
 				this.commandProviderService = bundleContext.registerService(
 						CommandProvider.class.getCanonicalName(),
-						getCommandProider(), null);
+						getCommandProvider(), null);
 			}
 			_start();
 		} catch (Exception e) {
@@ -306,8 +308,8 @@ public abstract class AbstractRifidiApp implements RifidiApp,
 
 	/**
 	 * Adds a new event type to the esper configuration. The name of the event
-	 * type is clazz.getSimpleName(). Events will be automatically removed when the
-	 * application is stopped.
+	 * type is clazz.getSimpleName(). Events will be automatically removed when
+	 * the application is stopped.
 	 * 
 	 * @param clazz
 	 *            The class of the event to add
@@ -317,7 +319,7 @@ public abstract class AbstractRifidiApp implements RifidiApp,
 		getEPAdministrator().getConfiguration().addEventType(eventName, clazz);
 		this.additionalEvents.add(eventName);
 	}
-	
+
 	/**
 	 * This method sends the given event to the Esper Runtime.
 	 * 
