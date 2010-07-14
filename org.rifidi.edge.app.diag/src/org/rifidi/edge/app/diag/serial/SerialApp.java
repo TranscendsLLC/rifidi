@@ -55,7 +55,7 @@ public class SerialApp extends AbstractRifidiApp {
 	 * @see org.rifidi.edge.core.app.api.AbstractRifidiApp#getCommandProider()
 	 */
 	@Override
-	protected CommandProvider getCommandProider() {
+	protected CommandProvider getCommandProvider() {
 		SerialCommandProvider commandProvider = new SerialCommandProvider();
 		commandProvider.setSerialApp(this);
 		return commandProvider;

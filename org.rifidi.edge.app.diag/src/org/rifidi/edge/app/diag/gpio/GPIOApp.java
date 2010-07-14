@@ -125,7 +125,7 @@ public class GPIOApp extends AbstractRifidiApp{
 	 * @see org.rifidi.edge.core.app.api.AbstractRifidiApp#getCommandProider()
 	 */
 	@Override
-	protected CommandProvider getCommandProider() {
+	protected CommandProvider getCommandProvider() {
 		GPIOAppCommandProvider commandProvider = new GPIOAppCommandProvider();
 		commandProvider.setGpioApp(this);
 		return commandProvider;
