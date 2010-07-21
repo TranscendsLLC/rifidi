@@ -1,0 +1,15 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:osgi="http://www.springframework.org/schema/osgi"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+    http://www.springframework.org/schema/osgi 
+    http://www.springframework.org/schema/osgi/spring-osgi.xsd">
+	
+	<!-- Create the application and inject esper and the JMS sender -->
+	<bean id="TagMonitorApp" class="org.rifidi.edge.app.diag.tagmonitor.TagMonitorApp">
+		<constructor-arg index="0" value="Diagnostic" />
+		<constructor-arg index="1" value="TagMonitor" />
+	</bean>
+	
+	<osgi:service ref="TagMonitorApp" interface="org.rifidi.edge.core.app.api.RifidiApp" />
+</beans>
