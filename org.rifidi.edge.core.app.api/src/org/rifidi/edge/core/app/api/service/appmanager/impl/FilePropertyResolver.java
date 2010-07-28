@@ -34,7 +34,6 @@ public class FilePropertyResolver implements RifidiAppPropertyResolver {
 	 */
 	@Override
 	public Properties reolveProperties(String appGroup, String appName) {
-		;
 		Properties retVal = new Properties();
 		try {
 			UrlResource groupResource = new UrlResource("file:"
