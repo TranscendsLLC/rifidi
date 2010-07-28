@@ -4,6 +4,7 @@
 package org.rifidi.edge.core.app.api.resources.db;
 
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.Properties;
 
 import org.rifidi.edge.core.app.api.resources.CannotCreateResourceException;
@@ -31,22 +32,15 @@ public abstract class AbstractDBDAO {
 	protected abstract Properties getProperties();
 
 	/**
-	 * Get a command to create a table. If this returns a string, this string
-	 * will be executed if the table listed in getTableName() does not exist. If
-	 * this returns null, the table will not be created.
+	 * Returns a Hashmap where the key is a table name, and the value is an SQL
+	 * string that creates a table. The create statement will be executed when
+	 * this DAO starts up if the table does not already exist.
 	 * 
 	 * @return
 	 */
-	protected String getCreateTableSQL() {
-		return null;
+	protected HashMap<String, String> getCreateTableSQL() {
+		return new HashMap<String, String>();
 	}
-
-	/**
-	 * Return the name of the table this DAO interacts with
-	 * 
-	 * @return
-	 */
-	protected abstract String getTableName();
 
 	/**
 	 * Set the DBResoruce service. It get a hold of the JDBCTemplate and create
@@ -61,24 +55,27 @@ public abstract class AbstractDBDAO {
 		try {
 			this.jdbcTemplate = service.getResource(descr);
 			MetadataUtils metadataUtils = service.getMetadataUtils(descr);
-			if (!metadataUtils.exists(getTableName())
-					&& getCreateTableSQL() != null) {
-				this.jdbcTemplate.getJdbcOperations().execute(
-						getCreateTableSQL());
+			HashMap<String, String> createStatements = getCreateTableSQL();
+			for (String tableName : createStatements.keySet()) {
+				if (!metadataUtils.exists(tableName)
+						&& getCreateTableSQL() != null) {
+					this.jdbcTemplate.getJdbcOperations().execute(
+							createStatements.get(tableName));
+				}
 			}
 
 		} catch (DataAccessException e) {
 			e.printStackTrace();
-			throw new IllegalStateException("DBDAO cannot be initialized",e);
+			throw new IllegalStateException("DBDAO cannot be initialized", e);
 		} catch (MetaDataAccessException e) {
 			e.printStackTrace();
-			throw new IllegalStateException("DBDAO cannot be initialized",e);
+			throw new IllegalStateException("DBDAO cannot be initialized", e);
 		} catch (SQLException e) {
 			e.printStackTrace();
-			throw new IllegalStateException("DBDAO cannot be initialized",e);
+			throw new IllegalStateException("DBDAO cannot be initialized", e);
 		} catch (CannotCreateResourceException e) {
 			e.printStackTrace();
-			throw new IllegalStateException("DBDAO cannot be initialized",e);
+			throw new IllegalStateException("DBDAO cannot be initialized", e);
 		}
 
 	}
