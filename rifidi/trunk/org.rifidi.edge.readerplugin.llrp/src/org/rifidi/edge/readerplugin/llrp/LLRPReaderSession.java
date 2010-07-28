@@ -35,7 +35,6 @@ import org.llrp.ltk.generated.enumerations.NotificationEventType;
 import org.llrp.ltk.generated.enumerations.ROReportTriggerType;
 import org.llrp.ltk.generated.enumerations.StatusCode;
 import org.llrp.ltk.generated.messages.GET_READER_CAPABILITIES;
-import org.llrp.ltk.generated.messages.RO_ACCESS_REPORT;
 import org.llrp.ltk.generated.messages.SET_READER_CONFIG;
 import org.llrp.ltk.generated.messages.SET_READER_CONFIG_RESPONSE;
 import org.llrp.ltk.generated.parameters.AccessReportSpec;
@@ -524,17 +523,17 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 			return;
 		}
 		try {
-			if (!(arg0 instanceof RO_ACCESS_REPORT)) {
-				logger.debug("MESSAGE RECEIVED: "
-						+ arg0.getClass().getSimpleName());
-			}
 			Object event = LLRPEventFactory.createEvent(arg0, readerID);
 			if (event != null) {
 				if (event instanceof ReadCycle) {
 					ReadCycle cycle = (ReadCycle) event;
 					sensor.send(cycle);
-					this.getTemplate().send(this.getDestination(),
-							new ObjectMessageCreator(cycle));
+					
+					// TODO: get rid of this for performance reasons. Need to
+					// have a better way to figure out if we need to send tag
+					// read to JMS
+					//this.getTemplate().send(this.getDestination(),
+					//		new ObjectMessageCreator(cycle));
 				} else {
 					sensor.sendEvent(event);
 				}
