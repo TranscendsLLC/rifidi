@@ -3,6 +3,21 @@
  */
 package org.rifidi.edge.core.app.api;
 
+import java.io.ByteArrayInputStream;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FilenameFilter;
+import java.io.IOException;
+import java.nio.MappedByteBuffer;
+import java.nio.channels.FileChannel;
+import java.nio.channels.FileChannel.MapMode;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
@@ -12,6 +27,7 @@ import org.apache.commons.logging.LogFactory;
 import org.eclipse.osgi.framework.console.CommandProvider;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
+import org.rifidi.edge.core.app.api.service.tagmonitor.ReadZone;
 import org.rifidi.edge.core.services.esper.EsperManagementService;
 import org.springframework.osgi.context.BundleContextAware;
 
@@ -53,6 +69,8 @@ public abstract class AbstractRifidiApp implements RifidiApp,
 	private BundleContext bundleContext;
 	/** A reference to the command provider */
 	private ServiceRegistration commandProviderService;
+	/** This is a map of ReadZones read in from the readzones directory */
+	public HashMap<String, ReadZone> readZones;
 
 	/**
 	 * Constructor for a AbstractRifidiApp
@@ -68,6 +86,7 @@ public abstract class AbstractRifidiApp implements RifidiApp,
 		this.hashString = group + ":" + name;
 		this.state = AppState.STOPPED;
 		this.properties = new Properties();
+		this.readZones = new HashMap<String, ReadZone>();
 	}
 
 	/*
@@ -143,13 +162,12 @@ public abstract class AbstractRifidiApp implements RifidiApp,
 	}
 
 	/**
-	 * Returns a CommandProvider object which will define any commands used by
-	 * the App.
+	 * Subclasses should override this method if they want to automatically
+	 * register a command provider for their app
 	 * 
 	 * @return
 	 */
 	protected CommandProvider getCommandProvider() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -216,6 +234,7 @@ public abstract class AbstractRifidiApp implements RifidiApp,
 						CommandProvider.class.getCanonicalName(),
 						getCommandProvider(), null);
 			}
+			loadReadZones();
 			_start();
 		} catch (Exception e) {
 			logger.warn("Cannot start " + this + ". ", e);
@@ -270,7 +289,7 @@ public abstract class AbstractRifidiApp implements RifidiApp,
 
 	/**
 	 * Subclasses should override this method do any work they need to do when
-	 * the application is stopping.
+	 * the application is stopping. Make sure to unregister any listeners here.
 	 */
 	protected void _stop() {
 	}
@@ -316,7 +335,33 @@ public abstract class AbstractRifidiApp implements RifidiApp,
 	 */
 	protected final void addEventType(Class<?> clazz) {
 		String eventName = clazz.getSimpleName();
+		addEventType(eventName, clazz);
+	}
+
+	/**
+	 * Adds a new event type to the esper configuration. The name of the event
+	 * type is clazz.getSimpleName(). Events will be automatically removed when
+	 * the application is stopped.
+	 * 
+	 * @param clazz
+	 *            The class of the event to add
+	 */
+	protected final void addEventType(String eventName, Class<?> clazz) {
 		getEPAdministrator().getConfiguration().addEventType(eventName, clazz);
+		this.additionalEvents.add(eventName);
+	}
+
+	/**
+	 * Add a new Map event type to the esper configuration. Events will be
+	 * automatically removed when the application is stopped.
+	 * 
+	 * @param eventName
+	 * @param description
+	 */
+	protected final void addEventType(String eventName,
+			Map<String, Object> description) {
+		getEPAdministrator().getConfiguration().addEventType(eventName,
+				description);
 		this.additionalEvents.add(eventName);
 	}
 
@@ -373,6 +418,165 @@ public abstract class AbstractRifidiApp implements RifidiApp,
 				+ " not found in list of properties for application "
 				+ getName());
 
+	}
+
+	/**
+	 * RifidiApps can store data files in their data directory. The file name
+	 * convention is [prefix]-[id].[suffix]. This method returns a map of all
+	 * files in the data directory with the given prefix. The key in the hashmap
+	 * is the file's id.
+	 * 
+	 * @param fileNamePrefix
+	 *            The prefix of the files to return
+	 * @return
+	 */
+	protected final HashMap<String, byte[]> getDataFiles(
+			final String fileNamePrefix) {
+		return getFiles(fileNamePrefix, "data");
+	}
+
+	/**
+	 * RifidiApps can store read zone configurations in their readzones
+	 * directory. These are property files which describe a read zone. The app
+	 * can then use the readzone in app services or in their own esper
+	 * statements.
+	 * 
+	 * Please see {@link ReadZone} for a list of valid properties for the
+	 * properties file
+	 * 
+	 * @return
+	 */
+	protected final HashMap<String, ReadZone> getReadZones() {
+		return new HashMap<String, ReadZone>(readZones);
+	}
+
+	/**
+	 * RifidiApps can store data files in their data directory. The file name
+	 * convention is [prefix]-[id].[suffix]. This method writes a file to the
+	 * data directory. If the file already exists, it will overwrite it.
+	 * 
+	 * @param filePrefix
+	 *            The prefix of the file
+	 * @param fileID
+	 *            The ID of the file
+	 * @param fileSuffix
+	 *            The sufix of the file
+	 * @param data
+	 *            The data to write
+	 */
+	protected final void writeData(String filePrefix, String fileID,
+			String fileSuffix, byte[] data) {
+		String dataDir = getDataDirPath("data");
+		String fileName = dataDir + File.separator + filePrefix + "-" + fileID
+				+ "." + fileSuffix;
+		DataOutputStream os = null;
+		try {
+			os = new DataOutputStream(new FileOutputStream(fileName));
+			os.write(data);
+			os.flush();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (os != null)
+					os.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+
+	/**
+	 * This is a helper method that does the work of loading the read zones
+	 */
+	private void loadReadZones() {
+		HashMap<String, byte[]> fileMap = getFiles("readzone", "readzones");
+		for (String readZoneName : fileMap.keySet()) {
+			byte[] file = fileMap.get(readZoneName);
+			Properties properties = new Properties();
+			try {
+				properties.load(new ByteArrayInputStream(file));
+				this.readZones.put(readZoneName, ReadZone
+						.createReadZone(properties));
+			} catch (IOException e) {
+			}
+		}
+	}
+
+	/**
+	 * This is a helper method that does the work of reading in files
+	 * 
+	 * @param fileNamePrefix
+	 * @param dir
+	 * @return
+	 */
+	private HashMap<String, byte[]> getFiles(final String fileNamePrefix,
+			String dir) {
+		HashMap<String, byte[]> fileMap = new HashMap<String, byte[]>();
+
+		// the path of the directory to read files from
+		String dataPath = getDataDirPath(dir);
+
+		// get the files to read in by filtering out the ones we don't want
+		File[] dataFiles = new File(dataPath).listFiles(new FilenameFilter() {
+
+			@Override
+			public boolean accept(File arg0, String arg1) {
+				if (arg0.isHidden())
+					return false;
+				if (arg1.endsWith("~")) {
+					return false;
+				}
+				return arg1.startsWith(fileNamePrefix);
+			}
+		});
+
+		// if we did not read in any files
+		if (dataFiles == null) {
+			return fileMap;
+		}
+
+		for (File f : dataFiles) {
+			try {
+				// read in the file
+				FileInputStream fileStream = new FileInputStream(f);
+				FileChannel channel = fileStream.getChannel();
+				MappedByteBuffer bb = channel.map(MapMode.READ_ONLY, 0, channel
+						.size());
+				byte[] bytes = new byte[(int) channel.size()];
+				bb.get(bytes);
+
+				// the file id is in between the '-' and the '.'
+				String id = f.getName().substring(f.getName().indexOf('-') + 1,
+						f.getName().indexOf('.'));
+				fileMap.put(id, bytes);
+			} catch (FileNotFoundException e) {
+				// ignore
+				logger.error("Cannot read file: " + f.getAbsolutePath());
+			} catch (IOException e) {
+				// ignore
+				logger.error("Cannot read file: " + f.getAbsolutePath());
+			}
+
+		}
+		return fileMap;
+
+	}
+
+	/**
+	 * This method returns the path of the supplied directory name relative to
+	 * the application/${groupName} folder
+	 * 
+	 * @param dir
+	 * @return
+	 */
+	private String getDataDirPath(String dir) {
+		return System.getProperty("user.dir") + File.separator
+				+ System.getProperty("org.rifidi.edge.applications")
+				+ File.separator + getGroup() + File.separator + dir;
 	}
 
 	/*
