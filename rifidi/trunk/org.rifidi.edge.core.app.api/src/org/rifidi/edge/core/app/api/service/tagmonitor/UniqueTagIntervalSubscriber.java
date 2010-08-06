@@ -10,7 +10,7 @@ import org.rifidi.edge.core.services.notification.data.TagReadEvent;
  * @author Kyle Neumeier - kyle@pramari.com
  *
  */
-public interface UniqueTagIntervalNotificationSubscriber extends RifidiAppSubscriber{
+public interface UniqueTagIntervalSubscriber extends RifidiAppSubscriber{
 	
 	void tagSeen(TagReadEvent tag);
 

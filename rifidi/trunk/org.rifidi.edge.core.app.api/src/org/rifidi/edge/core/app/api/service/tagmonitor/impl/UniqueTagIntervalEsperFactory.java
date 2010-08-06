@@ -15,7 +15,7 @@ import org.rifidi.edge.core.app.api.service.tagmonitor.ReadZone;
  * @author kyle
  *
  */
-public class UniqueTagIntervalNotificationEsperFactory implements RifidiAppEsperFactory {
+public class UniqueTagIntervalEsperFactory implements RifidiAppEsperFactory {
 
 	private final List<ReadZone> readZones;
 	private final Float notifyTime;
@@ -31,7 +31,7 @@ public class UniqueTagIntervalNotificationEsperFactory implements RifidiAppEsper
 	 * @param notifyTimeUnit
 	 * @param uniqueID
 	 */
-	public UniqueTagIntervalNotificationEsperFactory(List<ReadZone> readZones,
+	public UniqueTagIntervalEsperFactory(List<ReadZone> readZones,
 			Float notifyTime, TimeUnit notifyTimeUnit, int uniqueID) {
 		super();
 		this.readZones = new ArrayList<ReadZone>();
