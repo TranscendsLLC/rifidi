@@ -37,12 +37,12 @@ public class FilePropertyResolver implements RifidiAppPropertyResolver {
 		Properties retVal = new Properties();
 		try {
 			UrlResource groupResource = new UrlResource("file:"
-					+ System.getProperty("user.dir") + File.separator
+					+ System.getProperty("org.rifidi.home") + File.separator
 					+ System.getProperty("org.rifidi.edge.applications")
 					+ File.separator + appGroup + File.separator + appGroup
 					+ ".properties");
 			UrlResource appResource = new UrlResource("file:"
-					+ System.getProperty("user.dir") + File.separator
+					+ System.getProperty("org.rifidi.home") + File.separator
 					+ System.getProperty("org.rifidi.edge.applications")
 					+ File.separator + appGroup + File.separator + appName
 					+ ".properties");

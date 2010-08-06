@@ -574,7 +574,7 @@ public abstract class AbstractRifidiApp implements RifidiApp,
 	 * @return
 	 */
 	private String getDataDirPath(String dir) {
-		return System.getProperty("user.dir") + File.separator
+		return System.getProperty("org.rifidi.home") + File.separator
 				+ System.getProperty("org.rifidi.edge.applications")
 				+ File.separator + getGroup() + File.separator + dir;
 	}

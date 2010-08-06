@@ -11,7 +11,7 @@ import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 
 /**
  * By default the DBResource service will configure Derby at
- * ${user.dir}/applications/Resources/DB
+ * ${org.rifidi.home}/applications/Resources/DB
  * 
  * @author Kyle Neumeier - kyle@pramari.com
  * 
@@ -28,7 +28,7 @@ public class DBResourceService extends
 	public DBResourceService() {
 		super();
 		this.descriptionToMetadataUtils = new HashMap<DBResourceDescription, MetadataUtils>();
-		String derbyHome = System.getProperty("user.dir") + File.separator
+		String derbyHome = System.getProperty("org.rifidi.home") + File.separator
 				+ System.getProperty("org.rifidi.edge.applications")
 				+ File.separator + "Resources" + File.separator + "DB";
 
