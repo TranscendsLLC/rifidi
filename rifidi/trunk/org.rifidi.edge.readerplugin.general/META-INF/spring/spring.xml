@@ -1,0 +1,30 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:osgi="http://www.springframework.org/schema/osgi"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+    http://www.springframework.org/schema/osgi 
+    http://www.springframework.org/schema/osgi/spring-osgi.xsd">
+
+	<!--  Create Reader Configuration Factory -->
+	<bean id="GeneralSensorFactory"
+		class="org.rifidi.edge.readerplugin.general.GeneralSensorFactory">
+		<property name="context" ref="bundleContext" />
+		<property name="template" ref="internalMB" />
+		<property name="notifierService" ref="JMSNotifierService"/> 
+	</bean>
+			
+	<!-- Put reader configuration service in OSGi registry -->
+	<osgi:service id="GeneralSensorConfigurationFactoryService"
+		ref="GeneralSensorFactory">
+		<osgi:interfaces>
+			<value>org.rifidi.edge.core.configuration.ServiceFactory</value>
+			<value>org.rifidi.edge.core.sensors.base.AbstractSensorFactory</value>
+		</osgi:interfaces>
+	</osgi:service>
+
+	<osgi:reference id="JMSNotifierService"
+		interface="org.rifidi.edge.core.services.notification.NotifierService" />
+
+	<osgi:reference id="internalMB"
+		interface="org.springframework.jms.core.JmsTemplate" bean-name="internalJMSTemplate" />
+</beans>
