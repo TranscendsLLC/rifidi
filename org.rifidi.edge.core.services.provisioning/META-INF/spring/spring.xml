@@ -19,7 +19,7 @@
 	<bean id="provisioningService"
 		class="org.rifidi.edge.core.services.provisioning.impl.ProvisioningServiceImpl">
 		<property name="repositoryAdmin" ref="repoAdmin" />
-		<property name="pathToAppFolder" value="${user.dir}/${org.rifidi.edge.applications}" />
+		<property name="pathToAppFolder" value="${org.rifidi.home}/${org.rifidi.edge.applications}" />
 	</bean>
 	<bean id="provisioningCommands"
 		class="org.rifidi.edge.core.services.provisioning.impl.ProvisioningCommandProvider">
@@ -30,7 +30,7 @@
 		class="org.rifidi.edge.core.services.provisioning.impl.ApplicationLoader">
 		<property name="provisioningService" ref="provisioningService" />
 		<property name="defaultApplicationsFileName" value="${org.rifidi.edge.applications.initial}" />
-		<property name="pathToAppFolder" value="${user.dir}/${org.rifidi.edge.applications}" />
+		<property name="pathToAppFolder" value="${org.rifidi.home}/${org.rifidi.edge.applications}" />
 	</bean>
 
 	<osgi:reference id="repoAdmin"
