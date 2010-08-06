@@ -10,8 +10,8 @@ import java.util.concurrent.TimeUnit;
 import org.rifidi.edge.core.app.api.service.RifidiAppEsperFactory;
 import org.rifidi.edge.core.app.api.service.RifidiAppService;
 import org.rifidi.edge.core.app.api.service.tagmonitor.ReadZone;
-import org.rifidi.edge.core.app.api.service.tagmonitor.UniqueTagIntervalNotificationService;
-import org.rifidi.edge.core.app.api.service.tagmonitor.UniqueTagIntervalNotificationSubscriber;
+import org.rifidi.edge.core.app.api.service.tagmonitor.UniqueTagIntervalService;
+import org.rifidi.edge.core.app.api.service.tagmonitor.UniqueTagIntervalSubscriber;
 import org.rifidi.edge.core.services.notification.data.TagReadEvent;
 
 import com.espertech.esper.client.EPServiceProvider;
@@ -20,14 +20,14 @@ import com.espertech.esper.client.EventBean;
 import com.espertech.esper.client.StatementAwareUpdateListener;
 
 /**
- * This is an implementation of the UniqueTagIntervalNotificationService
+ * This is an implementation of the UniqueTagIntervalService
  * 
  * @author Kyle Neumeier - kyle@pramari.com
  * 
  */
-public class UniqueTagIntervalNotificationServiceImpl extends
-		RifidiAppService<UniqueTagIntervalNotificationSubscriber> implements
-		UniqueTagIntervalNotificationService {
+public class UniqueTagIntervalServiceImpl extends
+		RifidiAppService<UniqueTagIntervalSubscriber> implements
+		UniqueTagIntervalService {
 
 	/**
 	 * Constructor
@@ -37,7 +37,7 @@ public class UniqueTagIntervalNotificationServiceImpl extends
 	 * @param name
 	 *            The name of the application
 	 */
-	public UniqueTagIntervalNotificationServiceImpl(String group, String name) {
+	public UniqueTagIntervalServiceImpl(String group, String name) {
 		super(group,name);
 	}
 
@@ -50,7 +50,7 @@ public class UniqueTagIntervalNotificationServiceImpl extends
 	 */
 	@Override
 	protected StatementAwareUpdateListener createListener(
-			final UniqueTagIntervalNotificationSubscriber subscriber) {
+			final UniqueTagIntervalSubscriber subscriber) {
 		return new StatementAwareUpdateListener() {
 
 			@Override
@@ -71,15 +71,15 @@ public class UniqueTagIntervalNotificationServiceImpl extends
 	 * (non-Javadoc)
 	 * 
 	 * @seeorg.rifidi.edge.core.app.api.service.tagmonitor.
-	 * UniqueTagIntervalNotificationService
+	 * UniqueTagIntervalService
 	 * #subscribe(org.rifidi.edge.core.app.api
 	 * .service.tagmonitor.UniqueTagIntervalNotificationSubscriber,
 	 * java.util.List, java.lang.Float, java.util.concurrent.TimeUnit)
 	 */
 	@Override
-	public void subscribe(UniqueTagIntervalNotificationSubscriber subscriber,
+	public void subscribe(UniqueTagIntervalSubscriber subscriber,
 			List<ReadZone> readZones, Float notifyInterval, TimeUnit timeUnit) {
-		RifidiAppEsperFactory esperFactory = new UniqueTagIntervalNotificationEsperFactory(
+		RifidiAppEsperFactory esperFactory = new UniqueTagIntervalEsperFactory(
 				readZones, notifyInterval, timeUnit, getCounter());
 		subscribe(subscriber, esperFactory);
 
@@ -89,12 +89,12 @@ public class UniqueTagIntervalNotificationServiceImpl extends
 	 * (non-Javadoc)
 	 * 
 	 * @seeorg.rifidi.edge.core.app.api.service.tagmonitor.
-	 * UniqueTagIntervalNotificationService
+	 * UniqueTagIntervalService
 	 * #subscribe(org.rifidi.edge.core.app.api
 	 * .service.tagmonitor.UniqueTagIntervalNotificationSubscriber)
 	 */
 	@Override
-	public void subscribe(UniqueTagIntervalNotificationSubscriber subscriber) {
+	public void subscribe(UniqueTagIntervalSubscriber subscriber) {
 		subscribe(subscriber, Collections.EMPTY_LIST, 5f, TimeUnit.SECONDS);
 
 	}

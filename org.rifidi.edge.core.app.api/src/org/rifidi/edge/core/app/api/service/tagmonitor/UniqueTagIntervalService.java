@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit;
  * @author Kyle Neumeier - kyle@pramari.com
  * 
  */
-public interface UniqueTagIntervalNotificationService {
+public interface UniqueTagIntervalService {
 
 	/**
 	 * Subscribe to tag watch notifications. By default, watch every available
@@ -23,7 +23,7 @@ public interface UniqueTagIntervalNotificationService {
 	 * @param subscriber
 	 *            The subscriber
 	 */
-	public void subscribe(UniqueTagIntervalNotificationSubscriber subscriber);
+	public void subscribe(UniqueTagIntervalSubscriber subscriber);
 
 	/**
 	 * Subscribe to tag watch notifications
@@ -39,7 +39,7 @@ public interface UniqueTagIntervalNotificationService {
 	 * @param timeUnit
 	 *            the unit of time used for the notifyIterval
 	 */
-	public void subscribe(UniqueTagIntervalNotificationSubscriber subscriber,
+	public void subscribe(UniqueTagIntervalSubscriber subscriber,
 			List<ReadZone> readZones, Float notifyInterval, TimeUnit timeUnit);
 
 	/**
@@ -48,6 +48,6 @@ public interface UniqueTagIntervalNotificationService {
 	 * @param subscriber
 	 * @return
 	 */
-	public void unsubscribe(UniqueTagIntervalNotificationSubscriber subscriber);
+	public void unsubscribe(UniqueTagIntervalSubscriber subscriber);
 
 }
