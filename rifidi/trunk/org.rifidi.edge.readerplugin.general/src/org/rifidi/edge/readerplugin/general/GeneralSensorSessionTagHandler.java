@@ -56,6 +56,7 @@ class GeneralSensorSessionTagHandler {
 	 * @return
 	 */
 	public TagReadEvent parseTag(String message) {
+		//System.out.println("Starting to process the message");
 		try {
 			Map<String, String> extrainfo = new HashMap<String, String>();
 			Integer antenna = null;
@@ -66,7 +67,9 @@ class GeneralSensorSessionTagHandler {
 				String[] key_val = key_val_pair.split(KEY_VAL_DELIM);
 				String key = key_val[0];
 				String val = key_val[1];
+				//System.out.println("Have a pair: " + key + ", " + val);
 				if (key.equalsIgnoreCase(ID_KEY)) {
+					//System.out.println("Have a tag!  ");
 					int numbits = val.length() * 4;
 					BigInteger epc = null;
 					try {
@@ -76,28 +79,37 @@ class GeneralSensorSessionTagHandler {
 					}
 					gen2event.setEPCMemory(epc, numbits);
 				} else if (key.equalsIgnoreCase(ANTENNA_KEY)) {
+					//System.out.println("In the antenna!");
 					antenna = Integer.parseInt(val);
 				} else if (key.equalsIgnoreCase(TIMESTAMP_KEY)) {
+					System.out.println("In the timestamp!");
 					timestamp = Long.parseLong(val);
 				} else {
+					//System.out.println("processing the extra information!");
 					extrainfo.put(key, val);
 				}
-
-				if (timestamp == null) {
-					timestamp = System.currentTimeMillis();
-				}
-				TagReadEvent retVal = new TagReadEvent(readerID, gen2event,
-						antenna, timestamp);
-				for (String extrakey : extrainfo.keySet()) {
-					retVal.addExtraInformation(extrakey, extrainfo
-							.get(extrakey));
-				}
-				return retVal;
 			}
+			if (timestamp == null) {
+				timestamp = System.currentTimeMillis();
+			}
+			if (antenna == null) {
+				antenna = -1;
+			}
+			// System.out.println("Getting ready to create the tagevent, ID: "
+			// + gen2event.getEpc() + ", antenna:" + antenna
+			// + ", timestamp: " + timestamp);
+			TagReadEvent retVal = new TagReadEvent(readerID, gen2event,
+					antenna, timestamp);
+			for (String extrakey : extrainfo.keySet()) {
+				retVal.addExtraInformation(extrakey, extrainfo.get(extrakey));
+			}
+			return retVal;
+
 		} catch (Exception e) {
 			logger.error("There was an exception when processing an "
 					+ "incoming message for reader " + readerID + "\n "
 					+ e.getMessage());
+			//e.printStackTrace();
 		}
 		return null;
 	}
