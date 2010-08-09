@@ -31,7 +31,7 @@ import org.rifidi.edge.core.services.notification.data.TagReadEvent;
 import org.springframework.jms.core.JmsTemplate;
 
 /**
- * 
+ * The session class for the General sensor.  
  * 
  * @author Matthew Dean - matt@pramari.com
  */
@@ -89,14 +89,10 @@ public class GeneralSensorSession extends AbstractServerSocketSensorSession {
 
 		Set<TagReadEvent> tres = new HashSet<TagReadEvent>();
 		tres.add(event);
-		//System.out.println("Tagreadevent: " + event);
 		ReadCycle cycle = new ReadCycle(tres, readerID, System
 				.currentTimeMillis());
 
 		this.getSensor().send(cycle);
-		// System.out.println("Sending a cycle: " + cycle
-		// + ", sending to destination: "
-		// + this.template);
 		this.template.send(this.template.getDefaultDestination(),
 				new ReadCycleMessageCreator(cycle));
 	}

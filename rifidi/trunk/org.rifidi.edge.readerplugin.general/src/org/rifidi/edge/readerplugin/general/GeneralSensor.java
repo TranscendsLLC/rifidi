@@ -35,7 +35,8 @@ import org.springframework.jms.core.JmsTemplate;
 
 /**
  * A generic plugin that can handle data coming in from any reader or source, if
- * it is sent to the serversocket in the correct format.  The format is as follows:
+ * it is sent to the serversocket in the correct format. The format is as
+ * follows:
  * 
  * ID:(tag ID)|
  * 
@@ -76,7 +77,7 @@ public class GeneralSensor extends AbstractSensor<GeneralSensorSession> {
 	 */
 	@Override
 	public void applyPropertyChanges() {
-
+		//No properties.  
 	}
 
 	/*
@@ -102,14 +103,29 @@ public class GeneralSensor extends AbstractSensor<GeneralSensorSession> {
 		throw new CannotCreateSessionException();
 	}
 
+	/**
+	 * Sets the JMSTemplate.
+	 * 
+	 * @param template
+	 */
 	public void setTemplate(JmsTemplate template) {
 		this.template = template;
 	}
 
+	/**
+	 * Gets the JMSTemplate
+	 * 
+	 * @return
+	 */
 	public JmsTemplate getTemplate() {
 		return template;
 	}
 
+	/**
+	 * Sets the NotifierService.  
+	 * 
+	 * @param notifyServiceWrapper
+	 */
 	public void setNotifyService(NotifierService notifyServiceWrapper) {
 		this.notifyServiceWrapper = notifyServiceWrapper;
 	}
@@ -213,6 +229,11 @@ public class GeneralSensor extends AbstractSensor<GeneralSensorSession> {
 		return this.port;
 	}
 
+	/**
+	 * Sets the port for the reader.
+	 * 
+	 * @param port
+	 */
 	public void setPort(Integer port) {
 		this.port = port;
 	}
