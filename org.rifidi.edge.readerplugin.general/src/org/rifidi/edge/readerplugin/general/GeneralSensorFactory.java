@@ -22,7 +22,7 @@ import org.rifidi.edge.core.services.notification.NotifierService;
 import org.springframework.jms.core.JmsTemplate;
 
 /**
- * 
+ * Factory class for the General reader.  
  * 
  * @author Matthew Dean - matt@pramari.com
  */
