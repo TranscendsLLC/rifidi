@@ -61,6 +61,7 @@ public class GeneralSensorSession extends AbstractServerSocketSensorSession {
 		this.readerID = readerID;
 		this.notifierService = notifierService;
 		this.tagHandler = new GeneralSensorSessionTagHandler(readerID);
+		this.template=template;
 	}
 
 	/*
@@ -88,12 +89,14 @@ public class GeneralSensorSession extends AbstractServerSocketSensorSession {
 
 		Set<TagReadEvent> tres = new HashSet<TagReadEvent>();
 		tres.add(event);
-
+		//System.out.println("Tagreadevent: " + event);
 		ReadCycle cycle = new ReadCycle(tres, readerID, System
 				.currentTimeMillis());
 
 		this.getSensor().send(cycle);
-
+		// System.out.println("Sending a cycle: " + cycle
+		// + ", sending to destination: "
+		// + this.template);
 		this.template.send(this.template.getDefaultDestination(),
 				new ReadCycleMessageCreator(cycle));
 	}
