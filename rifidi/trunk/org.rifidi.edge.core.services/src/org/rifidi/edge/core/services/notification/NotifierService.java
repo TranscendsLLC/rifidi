@@ -15,6 +15,7 @@ package org.rifidi.edge.core.services.notification;
 import javax.management.AttributeList;
 
 import org.rifidi.edge.api.SessionStatus;
+import org.rifidi.edge.core.services.notification.data.ReadCycle;
 
 /**
  * Interface for a Service that other components can use to send notifications
@@ -170,5 +171,7 @@ public interface NotifierService {
 	 *            The changed attributes
 	 */
 	void attributesChanged(String configurationID, AttributeList attributes);
+	
+	void tagSeen(ReadCycle cycle);
 
 }

@@ -19,15 +19,12 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import javax.jms.Destination;
-
 import org.rifidi.edge.core.sensors.base.AbstractSensor;
 import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
 import org.rifidi.edge.core.sensors.messages.ByteMessage;
 import org.rifidi.edge.core.sensors.sessions.AbstractIPSensorSession;
 import org.rifidi.edge.core.sensors.sessions.MessageProcessingStrategy;
 import org.rifidi.edge.core.sensors.sessions.MessageProcessingStrategyFactory;
-import org.springframework.jms.core.JmsTemplate;
 
 /**
  * An implementation of IPSensorSession that uses polling semantics.
@@ -51,16 +48,14 @@ public abstract class AbstractPollIPSensorSession extends
 	 * @param port
 	 * @param reconnectionInterval
 	 * @param maxConAttempts
-	 * @param destination
-	 * @param template
 	 * @param commandConfigurations
 	 */
 	public AbstractPollIPSensorSession(AbstractSensor<?> sensor, String ID,
 			String host, int port, int reconnectionInterval,
-			int maxConAttempts, Destination destination, JmsTemplate template,
+			int maxConAttempts,
 			Set<AbstractCommandConfiguration<?>> commandConfigurations) {
 		super(sensor, ID, host, port, reconnectionInterval, maxConAttempts,
-				destination, template, commandConfigurations);
+				commandConfigurations);
 		readQueue = new LinkedBlockingQueue<ByteMessage>();
 		qmpsf = new QueueingMessageProcessingStrategyFactory(readQueue);
 	}

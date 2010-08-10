@@ -20,7 +20,6 @@ import org.rifidi.edge.core.sensors.base.AbstractSensor;
 import org.rifidi.edge.core.sensors.base.AbstractSensorFactory;
 import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
 import org.rifidi.edge.core.services.notification.NotifierService;
-import org.springframework.jms.core.JmsTemplate;
 
 /**
  * Factory class for the Barcode Reader.  
@@ -30,8 +29,6 @@ import org.springframework.jms.core.JmsTemplate;
 public class BarcodeSimulatorReaderFactory extends
 		AbstractSensorFactory<BarcodeSimulatorReader> {
 
-	/** JMS template for sending tag data to JMS Queue */
-	private volatile JmsTemplate template;
 	/** The Unique FACTORY_ID for this Factory */
 	public static final String FACTORY_ID = "Barcode";
 	/** Description of the sensorSession. */
@@ -112,12 +109,11 @@ public class BarcodeSimulatorReaderFactory extends
 		if (serviceID == null) {
 			throw new IllegalArgumentException("ServiceID is null");
 		}
-		if (template == null || notifierService == null) {
+		if ( notifierService == null) {
 			throw new InvalidStateException("All services are not set");
 		}
 		BarcodeSimulatorReader instance = new BarcodeSimulatorReader();
 		instance.setID(serviceID);
-		instance.setTemplate((JmsTemplate) template);
 		instance.setNotifiyService(notifierService);
 		instance.register(getContext(), FACTORY_ID);
 	}
@@ -142,23 +138,6 @@ public class BarcodeSimulatorReaderFactory extends
 	@Override
 	public MBeanInfo getServiceDescription(String factoryID) {
 		return (MBeanInfo) BarcodeSimulatorReader.mbeaninfo;
-	}
-
-	/**
-	 * @return the template
-	 */
-	public JmsTemplate getTemplate() {
-		return template;
-	}
-
-	/**
-	 * Called by spring
-	 * 
-	 * @param template
-	 *            the template to set
-	 */
-	public void setTemplate(JmsTemplate template) {
-		this.template = template;
 	}
 
 	/**

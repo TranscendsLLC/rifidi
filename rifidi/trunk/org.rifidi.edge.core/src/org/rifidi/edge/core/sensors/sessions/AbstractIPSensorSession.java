@@ -23,8 +23,6 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import javax.jms.Destination;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.api.SessionStatus;
@@ -34,7 +32,6 @@ import org.rifidi.edge.core.sensors.commands.Command;
 import org.rifidi.edge.core.sensors.messages.ByteMessage;
 import org.rifidi.edge.core.sensors.sessions.threads.ReadThread;
 import org.rifidi.edge.core.sensors.sessions.threads.WriteThread;
-import org.springframework.jms.core.JmsTemplate;
 
 /**
  * Base implementation of a ReaderPlugin that uses TCP/IP as a means of
@@ -105,18 +102,14 @@ public abstract class AbstractIPSensorSession extends AbstractSensorSession {
 	 *            Length of time between reconnects. Specified in MS
 	 * @param maxConAttempts
 	 *            Maximum number of reconnect attempts to make
-	 * @param destination
-	 *            JMS Queue to put tag data on
-	 * @param template
-	 *            JMSTemplate to use to send tag data
 	 * @param commandConfigurations
 	 * 
 	 */
 	public AbstractIPSensorSession(AbstractSensor<?> sensor, String ID,
 			String host, int port, int reconnectionInterval,
-			int maxConAttempts, Destination destination, JmsTemplate template,
+			int maxConAttempts,
 			Set<AbstractCommandConfiguration<?>> commandConfigurations) {
-		super(sensor, ID, destination, template, commandConfigurations);
+		super(sensor, ID, commandConfigurations);
 		this.host = host;
 		this.port = port;
 		this.maxConAttempts = maxConAttempts;

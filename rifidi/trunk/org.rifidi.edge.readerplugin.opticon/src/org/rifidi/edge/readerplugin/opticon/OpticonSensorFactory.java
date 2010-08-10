@@ -19,7 +19,6 @@ import org.rifidi.edge.core.exceptions.InvalidStateException;
 import org.rifidi.edge.core.sensors.base.AbstractSensorFactory;
 import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
 import org.rifidi.edge.core.services.notification.NotifierService;
-import org.springframework.jms.core.JmsTemplate;
 
 /**
  * The sensor factory for the opticon reader.  
@@ -28,8 +27,6 @@ import org.springframework.jms.core.JmsTemplate;
  */
 public class OpticonSensorFactory extends AbstractSensorFactory<OpticonSensor> {
 
-	/** JMS template for sending tag data to JMS Queue */
-	private volatile JmsTemplate template;
 	/** The Unique FACTORY_ID for this Factory */
 	public static final String FACTORY_ID = "Opticon";
 	/** Description of the sensorSession. */
@@ -104,12 +101,11 @@ public class OpticonSensorFactory extends AbstractSensorFactory<OpticonSensor> {
 		if (serviceID == null) {
 			throw new IllegalArgumentException("ServiceID is null");
 		}
-		if (template == null || notifierService == null) {
+		if (notifierService == null) {
 			throw new InvalidStateException("All services are not set");
 		}
 		OpticonSensor instance = new OpticonSensor();
 		instance.setID(serviceID);
-		instance.setTemplate((JmsTemplate) template);
 		instance.setNotifiyService(notifierService);
 		instance.register(getContext(), FACTORY_ID);
 	}
@@ -122,23 +118,6 @@ public class OpticonSensorFactory extends AbstractSensorFactory<OpticonSensor> {
 	@Override
 	public String getFactoryID() {
 		return FACTORY_ID;
-	}
-	
-	/**
-	 * @return the template
-	 */
-	public JmsTemplate getTemplate() {
-		return template;
-	}
-
-	/**
-	 * Called by spring
-	 * 
-	 * @param template
-	 *            the template to set
-	 */
-	public void setTemplate(JmsTemplate template) {
-		this.template = template;
 	}
 
 	/*

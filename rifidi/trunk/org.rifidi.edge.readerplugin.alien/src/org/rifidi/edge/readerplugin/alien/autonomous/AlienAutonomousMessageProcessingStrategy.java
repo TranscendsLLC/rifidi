@@ -24,12 +24,10 @@ import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.sensors.SensorSession;
 import org.rifidi.edge.core.sensors.sessions.MessageProcessingStrategy;
 import org.rifidi.edge.core.services.notification.data.ReadCycle;
-import org.rifidi.edge.core.services.notification.data.ReadCycleMessageCreator;
 import org.rifidi.edge.core.services.notification.data.TagReadEvent;
 import org.rifidi.edge.readerplugin.alien.messages.AlienMessage;
 import org.rifidi.edge.readerplugin.alien.messages.AlienTag;
 import org.rifidi.edge.readerplugin.alien.messages.AlienTagReadEventFactory;
-import org.springframework.jms.core.JmsTemplate;
 
 /**
  * This class is a handler for a single open socket with an Alien reader that is
@@ -48,8 +46,6 @@ public class AlienAutonomousMessageProcessingStrategy implements
 	private SensorSession session;
 	/** A factory for converting alien tag reads to TagReadEvents */
 	private AlienTagReadEventFactory tagReadEventFactory;
-	/** Template for sending out tag reads */
-	private JmsTemplate template;
 
 	/**
 	 * Create a new Handler for a connection with an Alien Reader in autonomous
@@ -59,10 +55,8 @@ public class AlienAutonomousMessageProcessingStrategy implements
 	 *            The input stream from the socket
 	 * @throws IOException
 	 */
-	public AlienAutonomousMessageProcessingStrategy(SensorSession session,
-			JmsTemplate template) {
+	public AlienAutonomousMessageProcessingStrategy(SensorSession session) {
 		this.session = session;
-		this.template = template;
 		this.tagReadEventFactory = new AlienTagReadEventFactory(session
 				.getSensor().getID());
 	}
@@ -87,7 +81,9 @@ public class AlienAutonomousMessageProcessingStrategy implements
 		ReadCycle readCycle = new ReadCycle(tagReadEvents, session.getSensor()
 				.getID(), System.currentTimeMillis());
 		session.getSensor().send(readCycle);
-		template.send(new ReadCycleMessageCreator(readCycle));
+		
+		//TODO: SEND HERE
+		//template.send(new ReadCycleMessageCreator(readCycle));
 	}
 
 }

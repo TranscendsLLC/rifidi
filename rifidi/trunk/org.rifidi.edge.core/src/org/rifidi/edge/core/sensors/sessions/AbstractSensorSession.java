@@ -30,8 +30,6 @@ import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import javax.jms.Destination;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.api.SessionStatus;
@@ -42,7 +40,6 @@ import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
 import org.rifidi.edge.core.sensors.commands.Command;
 import org.rifidi.edge.core.services.notification.data.management.SensorConnectedEvent;
 import org.rifidi.edge.core.services.notification.data.management.SensorDisconnectedEvent;
-import org.springframework.jms.core.JmsTemplate;
 
 /**
  * An Abstract class for concrete ReaderSessions to extend. This
@@ -81,10 +78,6 @@ public abstract class AbstractSensorSession extends SensorSession {
 	private volatile SessionStatus status;
 	/** Job counter */
 	private AtomicInteger counter = new AtomicInteger(0);
-	/** JMS destination. */
-	private volatile Destination destination;
-	/** Spring jms template */
-	private volatile JmsTemplate template;
 	/** True if the executor is up and running. */
 	protected AtomicBoolean processing = new AtomicBoolean(false);
 	/** Supplied by spring. */
@@ -111,11 +104,8 @@ public abstract class AbstractSensorSession extends SensorSession {
 	 *            Provided by spring
 	 */
 	public AbstractSensorSession(AbstractSensor<?> sensor, String ID,
-			Destination destination, JmsTemplate template,
 			Set<AbstractCommandConfiguration<?>> commandConfigurations) {
 		super(ID, sensor);
-		this.template = template;
-		this.destination = destination;
 		this.commandConfigurations = commandConfigurations;
 		status = SessionStatus.CREATED;
 		this.queuedCommands = new ConcurrentLinkedQueue<CommandExecutor>();
@@ -423,20 +413,6 @@ public abstract class AbstractSensorSession extends SensorSession {
 	}
 
 	/**
-	 * @return the destination
-	 */
-	protected Destination getDestination() {
-		return destination;
-	}
-
-	/**
-	 * @return the template
-	 */
-	protected JmsTemplate getTemplate() {
-		return template;
-	}
-
-	/**
 	 * Used to aquire a command instance.
 	 * 
 	 * @param commandID
@@ -541,8 +517,6 @@ public abstract class AbstractSensorSession extends SensorSession {
 					instance = getCommandInstance(commandID);
 					if (instance != null) {
 						instance.setReaderSession(sensorSession);
-						instance.setTemplate(template);
-						instance.setDestination(destination);
 					}
 				}
 				if (instance != null) {

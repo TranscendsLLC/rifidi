@@ -20,7 +20,6 @@ import org.rifidi.edge.core.sensors.base.AbstractSensor;
 import org.rifidi.edge.core.sensors.base.AbstractSensorFactory;
 import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
 import org.rifidi.edge.core.services.notification.NotifierService;
-import org.springframework.jms.core.JmsTemplate;
 
 /**
  * Sensor factory for the 3014.  
@@ -35,8 +34,6 @@ public class Awid3014SensorFactory extends
 	public static final String FACTORY_ID = "Awid3014";
 	/** A JMS event notification sender */
 	private volatile NotifierService notifierService;
-	/** JMS template for sending tag data to JMS Queue */
-	private volatile JmsTemplate template;
 
 	/**
 	 * Called by Spring
@@ -46,16 +43,6 @@ public class Awid3014SensorFactory extends
 	 */
 	public void setNotifierService(NotifierService notifierService) {
 		this.notifierService = notifierService;
-	}
-
-	/**
-	 * Called by spring
-	 * 
-	 * @param template
-	 *            the template to set
-	 */
-	public void setTemplate(JmsTemplate template) {
-		this.template = template;
 	}
 
 	/*
@@ -116,13 +103,12 @@ public class Awid3014SensorFactory extends
 		if (serviceID == null) {
 			throw new IllegalArgumentException("ServiceID is null");
 		}
-		if (template == null || notifierService == null) {
+		if (notifierService == null) {
 			throw new InvalidStateException("All services are not set");
 		}
 		AwidSensor sensor = new AwidSensor(commands, true);
 		sensor.setID(serviceID);
 		sensor.setNotifiyService(notifierService);
-		sensor.setTemplate(template);
 		sensor.register(getContext(), getFactoryID());
 	}
 

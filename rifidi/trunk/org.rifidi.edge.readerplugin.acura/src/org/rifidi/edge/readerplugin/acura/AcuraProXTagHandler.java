@@ -68,8 +68,10 @@ public class AcuraProXTagHandler {
 		this.session.getSensor().send(cycle);
 		// System.out.println("Sending tag: " + ByteAndHexConvertingUtility
 		// .toHexStringNoSpaces(byteArray));
-		this.session.getTemplate().send(
-				this.session.getTemplate().getDefaultDestination(),
-				new ReadCycleMessageCreator(cycle));
+		
+		//TODO: SEND TAGS
+		//this.session.getTemplate().send(
+		//		this.session.getTemplate().getDefaultDestination(),
+		//		new ReadCycleMessageCreator(cycle));
 	}
 }

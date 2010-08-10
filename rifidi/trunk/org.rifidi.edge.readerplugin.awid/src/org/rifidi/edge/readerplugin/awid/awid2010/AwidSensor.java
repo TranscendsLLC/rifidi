@@ -32,8 +32,6 @@ import org.rifidi.edge.core.sensors.SensorSession;
 import org.rifidi.edge.core.sensors.base.AbstractSensor;
 import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
 import org.rifidi.edge.core.sensors.exceptions.CannotDestroySensorException;
-import org.rifidi.edge.core.services.notification.NotifierService;
-import org.springframework.jms.core.JmsTemplate;
 
 /**
  * The Awid Sensor. It produces AwidSessions.
@@ -49,8 +47,7 @@ public class AwidSensor extends AbstractSensor<AwidSession> {
 	/** The IP address of the Awid */
 	private volatile String host = AwidDefaultValues.HOST;
 	/** The port of the Awid */
-	private volatile Integer port = Integer
-			.parseInt(AwidDefaultValues.PORT);
+	private volatile Integer port = Integer.parseInt(AwidDefaultValues.PORT);
 	/** The maximum number of reconnection attempts before giving up */
 	private volatile Integer maxNumConnectionAttempts = Integer
 			.parseInt(AwidDefaultValues.MAX_NUM_RECON_ATTEMPS);
@@ -61,12 +58,8 @@ public class AwidSensor extends AbstractSensor<AwidSession> {
 	private final AtomicReference<AwidSession> session = new AtomicReference<AwidSession>();
 	/** True if this sensor has been destroyed */
 	private final AtomicBoolean destroyed = new AtomicBoolean(false);
-	/** Spring JMS template */
-	private volatile JmsTemplate template;
 	/** The counter that keeps track of session IDs */
 	private AtomicInteger sessionID = new AtomicInteger(0);
-	/** service used to send notifications */
-	private volatile NotifierService notifierService;
 	/** Provided by spring. */
 	private final Set<AbstractCommandConfiguration<?>> commands;
 	/** Is the reader a 3014? */
@@ -126,10 +119,11 @@ public class AwidSensor extends AbstractSensor<AwidSession> {
 	public String createSensorSession() throws CannotCreateSessionException {
 		if (!destroyed.get() && session.get() == null) {
 			Integer sessionID = this.sessionID.incrementAndGet();
-			if (session.compareAndSet(null, new AwidSession(this, Integer
-					.toString(sessionID), host, port, reconnectionInterval,
-					maxNumConnectionAttempts, template, commands,
-					notifierService, is3014))) {
+			if (session.compareAndSet(null,
+					new AwidSession(this, Integer.toString(sessionID), host,
+							port, reconnectionInterval,
+							maxNumConnectionAttempts, commands,
+							notifierService, is3014))) {
 
 				// TODO: remove this once we get AspectJ in here!
 				notifierService.addSessionEvent(this.getID(), Integer
@@ -152,11 +146,12 @@ public class AwidSensor extends AbstractSensor<AwidSession> {
 			throws CannotCreateSessionException {
 		if (!destroyed.get() && session.get() == null) {
 			Integer sessionID = Integer.parseInt(sessionDTO.getID());
-			if (session.compareAndSet(null, new AwidSession(this, Integer
-					.toString(sessionID), host, port, reconnectionInterval,
-					maxNumConnectionAttempts, template, commands,
-					notifierService, is3014))) {
-				
+			if (session.compareAndSet(null,
+					new AwidSession(this, Integer.toString(sessionID), host,
+							port, reconnectionInterval,
+							maxNumConnectionAttempts, commands,
+							notifierService, is3014))) {
+
 				this.session.get().restoreCommands(sessionDTO);
 
 				// TODO: remove this once we get AspectJ in here!
@@ -244,26 +239,6 @@ public class AwidSensor extends AbstractSensor<AwidSession> {
 			}
 		}
 
-	}
-
-	/**
-	 * called by the sesnor factory
-	 * 
-	 * @param template
-	 *            the template to set
-	 */
-	public void setTemplate(JmsTemplate template) {
-		this.template = template;
-	}
-
-	/**
-	 * Called by the sesnor factory
-	 * 
-	 * @param wrapper
-	 *            The JMS Notifier to set
-	 */
-	public void setNotifiyService(NotifierService wrapper) {
-		this.notifierService = wrapper;
 	}
 
 	/*

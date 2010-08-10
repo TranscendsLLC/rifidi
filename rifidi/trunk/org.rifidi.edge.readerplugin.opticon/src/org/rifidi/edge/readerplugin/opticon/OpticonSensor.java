@@ -31,8 +31,6 @@ import org.rifidi.edge.core.sensors.SensorSession;
 import org.rifidi.edge.core.sensors.base.AbstractSensor;
 import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
 import org.rifidi.edge.core.sensors.exceptions.CannotDestroySensorException;
-import org.rifidi.edge.core.services.notification.NotifierService;
-import org.springframework.jms.core.JmsTemplate;
 
 /**
  * The Sensor class for the Opticon Barcode reader.  
@@ -44,8 +42,6 @@ public class OpticonSensor extends AbstractSensor<OpticonSensorSession> {
 
 	/** Logger for this class. */
 	private static final Log logger = LogFactory.getLog(OpticonSensor.class);
-	/** Spring JMS template */
-	private volatile JmsTemplate template;
 	/** Flag to check if this reader is destroyed. */
 	private AtomicBoolean destroyed = new AtomicBoolean(false);
 	/** The only session an Opticon reader allows. */
@@ -54,8 +50,6 @@ public class OpticonSensor extends AbstractSensor<OpticonSensorSession> {
 	private String displayName = "Opticon";
 	/** The ID of the session */
 	private AtomicInteger sessionID = new AtomicInteger(0);
-	/** A wrapper containing the service to send jms notifications */
-	private volatile NotifierService notifyServiceWrapper;
 	/** The ID for the serial port */
 	private String serialPortID = "/dev/ttyUSB0";
 	/** MBeanInfo for this class. */
@@ -87,11 +81,11 @@ public class OpticonSensor extends AbstractSensor<OpticonSensorSession> {
 		if (!destroyed.get() && session.get() == null) {
 			Integer sessionID = this.sessionID.incrementAndGet();
 			if (session.compareAndSet(null, new OpticonSensorSession(this,
-					Integer.toString(sessionID), template,
-					notifyServiceWrapper, super.getID(), null,
+					Integer.toString(sessionID),
+					notifierService, super.getID(), null,
 					this.serialPortID))) {
 				// TODO: remove this once we get AspectJ in here!
-				notifyServiceWrapper.addSessionEvent(this.getID(), Integer
+				notifierService.addSessionEvent(this.getID(), Integer
 						.toString(sessionID));
 				return sessionID.toString();
 			}
@@ -112,11 +106,11 @@ public class OpticonSensor extends AbstractSensor<OpticonSensorSession> {
 		if (!destroyed.get() && session.get() == null) {
 			Integer sessionID = this.sessionID.incrementAndGet();
 			if (session.compareAndSet(null, new OpticonSensorSession(this,
-					Integer.toString(sessionID), template,
-					notifyServiceWrapper, super.getID(), null,
+					Integer.toString(sessionID),
+					notifierService, super.getID(), null,
 					this.serialPortID))) {
 				// TODO: remove this once we get AspectJ in here!
-				notifyServiceWrapper.addSessionEvent(this.getID(), Integer
+				notifierService.addSessionEvent(this.getID(), Integer
 						.toString(sessionID));
 				return sessionID.toString();
 			}
@@ -139,7 +133,7 @@ public class OpticonSensor extends AbstractSensor<OpticonSensorSession> {
 			session.set(null);
 			opticonsession.disconnect();
 			// TODO: remove this once we get AspectJ in here!
-			notifyServiceWrapper.removeSessionEvent(this.getID(), id);
+			notifierService.removeSessionEvent(this.getID(), id);
 		} else {
 			String error = "Tried to delete a non existend session: " + id;
 			logger.warn(error);
@@ -219,26 +213,6 @@ public class OpticonSensor extends AbstractSensor<OpticonSensorSession> {
 	@Override
 	public MBeanInfo getMBeanInfo() {
 		return (MBeanInfo) mbeaninfo.clone();
-	}
-
-	/**
-	 * Called by Spring.  
-	 * 
-	 * @param template
-	 *            the template to set
-	 */
-	public void setTemplate(JmsTemplate template) {
-		this.template = template;
-	}
-
-	/**
-	 * Called by Spring.  
-	 * 
-	 * @param wrapper
-	 *            The JMS Notifier to set
-	 */
-	public void setNotifiyService(NotifierService wrapper) {
-		this.notifyServiceWrapper = wrapper;
 	}
 
 }

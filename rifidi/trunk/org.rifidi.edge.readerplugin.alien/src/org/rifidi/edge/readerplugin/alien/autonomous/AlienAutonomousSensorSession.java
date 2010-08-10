@@ -27,7 +27,6 @@ import org.rifidi.edge.core.sensors.sessions.MessageParsingStrategyFactory;
 import org.rifidi.edge.core.sensors.sessions.MessageProcessingStrategyFactory;
 import org.rifidi.edge.core.services.notification.NotifierService;
 import org.rifidi.edge.readerplugin.alien.AlienMessageParsingStrategyFactory;
-import org.springframework.jms.core.JmsTemplate;
 
 /**
  * The Session that Alien Readers can send reports to.
@@ -53,24 +52,22 @@ public class AlienAutonomousSensorSession extends
 	 * 
 	 * @param sensor
 	 * @param ID
-	 * @param template
 	 * @param notifierService
 	 * @param serverSocketPort
 	 * @param maxNumAutonomousReaders
 	 * @param commands
 	 */
 	public AlienAutonomousSensorSession(AbstractSensor<?> sensor, String ID,
-			JmsTemplate template, NotifierService notifierService,
-			int serverSocketPort, int maxNumAutonomousReaders,
+			NotifierService notifierService, int serverSocketPort,
+			int maxNumAutonomousReaders,
 			Set<AbstractCommandConfiguration<?>> commands) {
-		super(sensor, ID, template.getDefaultDestination(), template,
-				serverSocketPort, maxNumAutonomousReaders, commands);
+		super(sensor, ID, serverSocketPort, maxNumAutonomousReaders, commands);
 		this.notifierService = notifierService;
 		this.messageParserFactory = new AlienMessageParsingStrategyFactory();
 		this.messageProcessingFactory = new AlienAutonomousMessageProcessingStrategyFactory(
-				this, template);
+				this);
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 

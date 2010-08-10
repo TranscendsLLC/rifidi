@@ -28,8 +28,6 @@ import java.util.TooManyListenersException;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 
-import javax.jms.Destination;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.api.SessionStatus;
@@ -37,7 +35,6 @@ import org.rifidi.edge.core.sensors.base.AbstractSensor;
 import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
 import org.rifidi.edge.core.sensors.messages.ByteMessage;
 import org.rifidi.edge.core.sensors.sessions.threads.WriteThread;
-import org.springframework.jms.core.JmsTemplate;
 
 /**
  * This class represents a session with a Serial reader.
@@ -79,11 +76,10 @@ public abstract class AbstractSerialSensorSession extends AbstractSensorSession 
 	 * @param commandConfigurations
 	 */
 	public AbstractSerialSensorSession(AbstractSensor<?> sensor, String ID,
-			Destination destination, JmsTemplate template,
 			Set<AbstractCommandConfiguration<?>> commandConfigurations,
 			String commPortName, int baud, int databits, int stopbits,
 			int parity, boolean writeEnabled) {
-		super(sensor, ID, destination, template, commandConfigurations);
+		super(sensor, ID,commandConfigurations);
 		this.commPortName = commPortName;
 		this.baud = baud;
 		this.databits = databits;

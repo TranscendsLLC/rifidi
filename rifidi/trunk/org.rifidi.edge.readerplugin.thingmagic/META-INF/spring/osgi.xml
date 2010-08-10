@@ -23,7 +23,4 @@
 	<osgi:reference id="JMSNotifierService"
 		interface="org.rifidi.edge.core.services.notification.NotifierService" />
 
-	<!-- Get a reference to the JMS Queue -->
-	<osgi:reference id="internalMB"
-		interface="org.springframework.jms.core.JmsTemplate" bean-name="internalJMSTemplate" />
 </beans>

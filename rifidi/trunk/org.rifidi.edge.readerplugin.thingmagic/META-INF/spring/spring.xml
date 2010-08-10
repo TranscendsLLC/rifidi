@@ -7,7 +7,6 @@
 	<bean id="thingmagicConfigurationFactory"
 		class="org.rifidi.edge.readerplugin.thingmagic.ThingmagicReaderFactory">
 		<property name="context" ref="bundleContext" />
-		<property name="template" ref="internalMB" />
 		<property name="notifierService" ref="JMSNotifierService" />
 		<property name="commandConfigurations" ref="thingmagicCommands" />
 	</bean>

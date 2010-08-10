@@ -36,10 +36,8 @@ import org.rifidi.edge.core.exceptions.CannotCreateSessionException;
 import org.rifidi.edge.core.sensors.SensorSession;
 import org.rifidi.edge.core.sensors.base.AbstractSensor;
 import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
-import org.rifidi.edge.core.services.notification.NotifierService;
 import org.rifidi.edge.readerplugin.thingmagic.commandobject.ThingmagicCommandObjectWrapper;
 import org.rifidi.edge.readerplugin.thingmagic.commands.internal.ThingmagicPropertyCommand;
-import org.springframework.jms.core.JmsTemplate;
 
 /**
  * This plugin connects to the Thingmagic Reader.
@@ -78,14 +76,11 @@ public class ThingmagicReader extends AbstractSensor<ThingmagicReaderSession> {
 		AnnotationMBeanInfoStrategy strategy = new AnnotationMBeanInfoStrategy();
 		mbeaninfo = strategy.getMBeanInfo(ThingmagicReader.class);
 	}
-	/** Spring JMS template */
-	private volatile JmsTemplate template;
+	
 	/** Provided by spring. */
 	private final Set<AbstractCommandConfiguration<?>> commands;
 	/** The FACTORY_ID of the session */
 	private AtomicInteger sessionID = new AtomicInteger(0);
-	/** service used to send notifications */
-	private volatile NotifierService notifierService;
 
 	/**
 	 * Constructor.
@@ -130,7 +125,7 @@ public class ThingmagicReader extends AbstractSensor<ThingmagicReaderSession> {
 			if (session.compareAndSet(null, new ThingmagicReaderSession(this,
 					Integer.toString(sessionID), ipAddress, port,
 					(int) (long) reconnectionInterval,
-					maxNumConnectionAttempts, template, notifierService, this
+					maxNumConnectionAttempts, notifierService, this
 							.getID(), commands))) {
 
 				// TODO: remove this once we get AspectJ in here!
@@ -157,7 +152,7 @@ public class ThingmagicReader extends AbstractSensor<ThingmagicReaderSession> {
 			if (session.compareAndSet(null, new ThingmagicReaderSession(this,
 					Integer.toString(sessionID), ipAddress, port,
 					(int) (long) reconnectionInterval,
-					maxNumConnectionAttempts, template, notifierService, this
+					maxNumConnectionAttempts,  notifierService, this
 							.getID(), commands))) {
 				for (CommandDTO commandDTO : sessionDTO.getCommands()) {
 					session.get().submit(commandDTO.getCommandID(),
@@ -316,22 +311,6 @@ public class ThingmagicReader extends AbstractSensor<ThingmagicReaderSession> {
 		}
 	}
 
-	/**
-	 * @param template
-	 *            the template to set
-	 */
-	public void setTemplate(JmsTemplate template) {
-		this.template = template;
-	}
-
-	/***
-	 * 
-	 * @param wrapper
-	 *            The JMS Notifier to set
-	 */
-	public void setNotifiyService(NotifierService wrapper) {
-		this.notifierService = wrapper;
-	}
 
 	/*
 	 * (non-Javadoc)

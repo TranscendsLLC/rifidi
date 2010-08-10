@@ -42,8 +42,4 @@
 		</osgi:interfaces>
 	</osgi:service>
 	
-	
-	<osgi:reference id="internalMB"
-		interface="org.springframework.jms.core.JmsTemplate" bean-name="internalJMSTemplate" />
-	
 </beans>

@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Rifidi Edge JMS Service
 Bundle-SymbolicName: org.rifidi.edge.core.services.jms
-Bundle-Version: 1.0.0
+Bundle-Version: 1.1.0
 Bundle-Vendor: Pramari, LLC
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: javax.jms;version="1.1.0",
@@ -10,5 +10,8 @@ Import-Package: javax.jms;version="1.1.0",
  org.apache.activemq.command;version="5.2.0",
  org.apache.activemq.pool;version="5.2.0",
  org.apache.activemq.spring;version="5.2.0",
+ org.apache.activemq.xbean;version="5.3.0",
+ org.apache.naming.java;version="6.0.18",
+ org.apache.xbean.spring.context.impl;version="3.6.0",
  org.springframework.beans.factory.config;version="2.5.5",
  org.springframework.jms.core;version="2.5.5"

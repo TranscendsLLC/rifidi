@@ -2,24 +2,21 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Serialbarcode
 Bundle-SymbolicName: org.rifidi.edge.readerplugin.opticon
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.0.1
 Bundle-Vendor: Pramari, LLC
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: com.espertech.esper.client,
  gnu.io;version="2.1.7",
- javax.jms;version="1.1.0",
  net.sf.cglib.reflect;version="2.1.3",
- org.apache.activemq.command;version="5.2.0",
  org.apache.commons.codec.binary;version="1.3.0",
  org.apache.commons.logging;version="1.1.1",
  org.eclipse.osgi.framework.console;version="1.0.0",
  org.osgi.framework;version="1.3.0",
  org.springframework.core;version="2.5.6.SEC01",
- org.springframework.jms.core;version="2.5.6.SEC01",
  org.springframework.osgi.service.importer;version="1.1.3.RELEASE"
 Bundle-ActivationPolicy: lazy
-Require-Bundle: org.rifidi.edge.core;bundle-version="5.3.8",
- org.rifidi.edge.core.services;bundle-version="1.3.0",
+Require-Bundle: org.rifidi.edge.core;bundle-version="5.4.0",
+ org.rifidi.edge.core.services;bundle-version="1.4.0",
  org.rifidi.edge.api;bundle-version="1.3.0"
 Export-Package: org.rifidi.edge.readerplugin.opticon,
  org.rifidi.edge.readerplugin.opticon.tags

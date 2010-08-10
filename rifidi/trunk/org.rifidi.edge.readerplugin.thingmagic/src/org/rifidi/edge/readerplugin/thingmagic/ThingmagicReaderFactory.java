@@ -20,7 +20,6 @@ import org.rifidi.edge.core.sensors.base.AbstractSensor;
 import org.rifidi.edge.core.sensors.base.AbstractSensorFactory;
 import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
 import org.rifidi.edge.core.services.notification.NotifierService;
-import org.springframework.jms.core.JmsTemplate;
 
 /**
  * 
@@ -29,30 +28,11 @@ import org.springframework.jms.core.JmsTemplate;
  */
 public class ThingmagicReaderFactory extends AbstractSensorFactory<ThingmagicReader> {
 
-	/** JMS template for sending tag data to JMS Queue */
-	private volatile JmsTemplate template;
 	/** The Unique FACTORY_ID for this Factory */
 	public static final String FACTORY_ID = "ThingMagic";
 	/** A JMS event notification sender */
 	private volatile NotifierService notifierService;
-	
-	/**
-	 * @return the template
-	 */
-	public JmsTemplate getTemplate() {
-		return template;
-	}
-
-	/**
-	 * Called by spring
-	 * 
-	 * @param template
-	 *            the template to set
-	 */
-	public void setTemplate(JmsTemplate template) {
-		this.template = template;
-	}
-	
+		
 	/*
 	 * (non-Javadoc)
 	 * @see org.rifidi.edge.core.sensors.base.AbstractSensorFactory#bindCommandConfiguration(org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration, java.util.Map)
@@ -113,12 +93,11 @@ public class ThingmagicReaderFactory extends AbstractSensorFactory<ThingmagicRea
 		if (serviceID == null) {
 			throw new IllegalArgumentException("ServiceID is null");
 		}
-		if (template == null || notifierService == null) {
+		if (notifierService == null) {
 			throw new InvalidStateException("All services are not set");
 		}
 		ThingmagicReader instance = new ThingmagicReader(commands);
 		instance.setID(serviceID);
-		instance.setTemplate((JmsTemplate) template);
 		instance.setNotifiyService(notifierService);
 		instance.register(getContext(), FACTORY_ID);
 	}

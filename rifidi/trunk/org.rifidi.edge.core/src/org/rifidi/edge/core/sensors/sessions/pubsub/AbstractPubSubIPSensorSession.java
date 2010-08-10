@@ -16,14 +16,11 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.jms.Destination;
-
 import org.rifidi.edge.core.sensors.base.AbstractSensor;
 import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
 import org.rifidi.edge.core.sensors.sessions.AbstractIPSensorSession;
 import org.rifidi.edge.core.sensors.sessions.MessageProcessingStrategy;
 import org.rifidi.edge.core.sensors.sessions.MessageProcessingStrategyFactory;
-import org.springframework.jms.core.JmsTemplate;
 
 /**
  * An implementation of IPSensorSession with Publish-Subscribe semantics.
@@ -48,16 +45,14 @@ public abstract class AbstractPubSubIPSensorSession extends
 	 * @param port
 	 * @param reconnectionInterval
 	 * @param maxConAttempts
-	 * @param destination
-	 * @param template
 	 * @param commandConfigurations
 	 */
 	public AbstractPubSubIPSensorSession(AbstractSensor<?> sensor, String ID,
 			String host, int port, int reconnectionInterval,
-			int maxConAttempts, Destination destination, JmsTemplate template,
+			int maxConAttempts,
 			Set<AbstractCommandConfiguration<?>> commandConfigurations) {
 		super(sensor, ID, host, port, reconnectionInterval, maxConAttempts,
-				destination, template, commandConfigurations);
+				commandConfigurations);
 		subscribers = Collections
 				.synchronizedSet(new HashSet<IPSessionEndpoint>());
 		mpsf = new PubSubMessageProcessingStrategyFactory(subscribers);

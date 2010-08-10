@@ -26,7 +26,6 @@ import org.rifidi.edge.core.sensors.messages.ByteMessage;
 import org.rifidi.edge.core.services.notification.data.DatacontainerEvent;
 import org.rifidi.edge.core.services.notification.data.EPCGeneration2Event;
 import org.rifidi.edge.core.services.notification.data.ReadCycle;
-import org.rifidi.edge.core.services.notification.data.ReadCycleMessageCreator;
 import org.rifidi.edge.core.services.notification.data.TagReadEvent;
 import org.rifidi.edge.readerplugin.thingmagic.AbstractThingmagicCommand;
 import org.rifidi.edge.readerplugin.thingmagic.ThingmagicReaderSession;
@@ -170,7 +169,9 @@ public class ThingmagicGetTagListCommand extends AbstractThingmagicCommand {
 			ReadCycle cycle = new ReadCycle(events, reader.get(), System
 					.currentTimeMillis());
 			sensorSession.getSensor().send(cycle);
-			template.send(destination, new ReadCycleMessageCreator(cycle));
+			
+			//TODO send tags
+			//template.send(destination, new ReadCycleMessageCreator(cycle));
 		} catch (IOException e) {
 			// e.printStackTrace();
 		} catch (TimeoutException e) {

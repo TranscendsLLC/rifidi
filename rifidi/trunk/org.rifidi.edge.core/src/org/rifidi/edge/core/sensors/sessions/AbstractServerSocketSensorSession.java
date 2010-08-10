@@ -24,8 +24,6 @@ import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import javax.jms.Destination;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.api.SessionStatus;
@@ -34,7 +32,6 @@ import org.rifidi.edge.core.sensors.base.AbstractSensor;
 import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
 import org.rifidi.edge.core.sensors.commands.Command;
 import org.rifidi.edge.core.sensors.sessions.threads.ServerSocketSensorSessionReadThread;
-import org.springframework.jms.core.JmsTemplate;
 
 /**
  * When the session is started, it opens up a serversocket and uses the executor
@@ -78,10 +75,9 @@ public abstract class AbstractServerSocketSensorSession extends
 	 * @param commandConfigurations
 	 */
 	public AbstractServerSocketSensorSession(AbstractSensor<?> sensor,
-			String ID, Destination destination, JmsTemplate template,
-			int serverSocketPort, int maxNumSensors,
+			String ID, int serverSocketPort, int maxNumSensors,
 			Set<AbstractCommandConfiguration<?>> commandConfigurations) {
-		super(sensor, ID, destination, template, commandConfigurations);
+		super(sensor, ID,commandConfigurations);
 		this.serverSocketPort = serverSocketPort;
 		this.maxNumSensors = maxNumSensors;
 	}

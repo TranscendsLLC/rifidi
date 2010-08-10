@@ -17,7 +17,6 @@ package org.rifidi.edge.readerplugin.alien.autonomous;
 
 import org.rifidi.edge.core.sensors.sessions.MessageProcessingStrategy;
 import org.rifidi.edge.core.sensors.sessions.MessageProcessingStrategyFactory;
-import org.springframework.jms.core.JmsTemplate;
 
 /**
  * A factory for producing new AlienAutonomousMessageProcessingStrategy
@@ -30,8 +29,6 @@ public class AlienAutonomousMessageProcessingStrategyFactory implements
 
 	/** The session */
 	private AlienAutonomousSensorSession session;
-	/** Template used to send notifications */
-	private JmsTemplate template;
 
 	/**
 	 * Constructor
@@ -40,9 +37,8 @@ public class AlienAutonomousMessageProcessingStrategyFactory implements
 	 * @param template
 	 */
 	public AlienAutonomousMessageProcessingStrategyFactory(
-			AlienAutonomousSensorSession session, JmsTemplate template) {
+			AlienAutonomousSensorSession session) {
 		this.session = session;
-		this.template = template;
 	}
 
 	/*
@@ -54,7 +50,7 @@ public class AlienAutonomousMessageProcessingStrategyFactory implements
 	 */
 	@Override
 	public MessageProcessingStrategy createMessageProcessor() {
-		return new AlienAutonomousMessageProcessingStrategy(session, template);
+		return new AlienAutonomousMessageProcessingStrategy(session);
 	}
 
 }

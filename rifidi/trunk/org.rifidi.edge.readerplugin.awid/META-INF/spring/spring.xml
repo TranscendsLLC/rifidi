@@ -7,7 +7,6 @@
 	<bean id="awid2010SensorFactory"
 		class="org.rifidi.edge.readerplugin.awid.awid2010.Awid2010SensorFactory">
 		<property name="context" ref="bundleContext" />
-		<property name="template" ref="internalMB" />
 		<property name="notifierService" ref="JMSNotifierService" />
 		<property name="commandConfigurations" ref="awid2010Commands" />
 	</bean>
@@ -16,7 +15,6 @@
 	<bean id="awid3014SensorFactory"
 		class="org.rifidi.edge.readerplugin.awid.awid2010.Awid3014SensorFactory">
 		<property name="context" ref="bundleContext" />
-		<property name="template" ref="internalMB" />
 		<property name="notifierService" ref="JMSNotifierService" />
 		<property name="commandConfigurations" ref="awid3014Commands" />
 	</bean>
