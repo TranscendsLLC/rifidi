@@ -8,18 +8,6 @@
 
 
 	<!-- Exported Services -->
-	<osgi:service id="internalDestService" interface="javax.jms.Topic"
-		ref="internalDest" />
-	<osgi:service id="externalTagsDestService" interface="javax.jms.Topic"
-		ref="externalTagsDest" />
-	<osgi:service id="externalNotificationsDestService"
-		interface="javax.jms.Topic" ref="externalNotificationsDest" />
-	<osgi:service id="internalBrokerConFacService" interface="javax.jms.ConnectionFactory"
-		ref="internalBrokerConFac" />
-	<osgi:service id="externalBrokerConFacService" interface="javax.jms.ConnectionFactory"
-		ref="externalBrokerConFac" />
-	<osgi:service id="internalJMSTemplateService"
-		interface="org.springframework.jms.core.JmsTemplate" ref="internalJMSTemplate" />
 	<osgi:service id="externalJMSTemplateService"
 		interface="org.springframework.jms.core.JmsTemplate" ref="externalJMSTemplate" />
 </beans>

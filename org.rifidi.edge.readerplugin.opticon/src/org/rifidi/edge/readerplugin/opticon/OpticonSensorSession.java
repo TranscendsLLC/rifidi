@@ -24,9 +24,7 @@ import org.rifidi.edge.core.sensors.sessions.MessageParsingStrategy;
 import org.rifidi.edge.core.sensors.sessions.MessageParsingStrategyFactory;
 import org.rifidi.edge.core.services.notification.NotifierService;
 import org.rifidi.edge.core.services.notification.data.ReadCycle;
-import org.rifidi.edge.core.services.notification.data.ReadCycleMessageCreator;
 import org.rifidi.edge.readerplugin.opticon.tags.OpticonTagHandler;
-import org.springframework.jms.core.JmsTemplate;
 
 /**
  * The Session for the Opticon Barcode reader. This reader can either be set in
@@ -34,10 +32,18 @@ import org.springframework.jms.core.JmsTemplate;
  * for our purposes. Here are the settings necessary for getting this reader to
  * work:
  * 
- * SET <br> 1. USB VPC [C01] {Serial Mode} <br> 2. Clear all prefixes [MG] <br> 3. Preamble
- * [MZ] <br> 4. ^B (STX) [1B] <br> 5. Clear all suffixes [PR] <br> 6. Postamble [PS] <br> 7. ^C
- * (ETX) [1C] <br> 8. Multiple Read [S1] <br> 9. 50ms [AH] <br> 10. Enable Auto Trigger [+I]
- * <br> END
+ * SET <br>
+ * 1. USB VPC [C01] {Serial Mode} <br>
+ * 2. Clear all prefixes [MG] <br>
+ * 3. Preamble [MZ] <br>
+ * 4. ^B (STX) [1B] <br>
+ * 5. Clear all suffixes [PR] <br>
+ * 6. Postamble [PS] <br>
+ * 7. ^C (ETX) [1C] <br>
+ * 8. Multiple Read [S1] <br>
+ * 9. 50ms [AH] <br>
+ * 10. Enable Auto Trigger [+I] <br>
+ * END
  * 
  * @author Matthew Dean - matt@pramari.com
  */
@@ -48,9 +54,6 @@ public class OpticonSensorSession extends AbstractSerialSensorSession {
 
 	/** The ID for the reader. */
 	private String readerID = null;
-
-	/** The JMS Template */
-	private JmsTemplate template = null;
 
 	/**
 	 * 
@@ -71,17 +74,14 @@ public class OpticonSensorSession extends AbstractSerialSensorSession {
 	 * @param parity
 	 */
 	public OpticonSensorSession(AbstractSensor<?> sensor, String ID,
-			JmsTemplate template, NotifierService notifierService,
-			String readerID,
+			NotifierService notifierService, String readerID,
 			Set<AbstractCommandConfiguration<?>> commandConfigurations,
 			String commPortName) {
-		super(sensor, ID, template.getDefaultDestination(), template,
-				commandConfigurations, commPortName, OpticonConstants.BAUD,
-				OpticonConstants.DATA_BITS, OpticonConstants.STOP_BITS,
-				OpticonConstants.PARITY, false);
+		super(sensor, ID, commandConfigurations, commPortName,
+				OpticonConstants.BAUD, OpticonConstants.DATA_BITS,
+				OpticonConstants.STOP_BITS, OpticonConstants.PARITY, false);
 		this.readerID = readerID;
 		this.notifierService = notifierService;
-		this.template = template;
 		this.taghandler = new OpticonTagHandler(readerID);
 	}
 
@@ -98,13 +98,6 @@ public class OpticonSensorSession extends AbstractSerialSensorSession {
 		// TODO: Remove this once we have aspectJ
 		notifierService.sessionStatusChanged(this.readerID, this.getID(),
 				status);
-	}
-
-	/**
-	 * Returns the JMSTemplate.
-	 */
-	public JmsTemplate getTemplate() {
-		return template;
 	}
 
 	/*
@@ -131,8 +124,8 @@ public class OpticonSensorSession extends AbstractSerialSensorSession {
 
 		this.getSensor().send(rc);
 
-		this.template.send(this.template.getDefaultDestination(),
-				new ReadCycleMessageCreator(rc));
+		// this.template.send(this.template.getDefaultDestination(),
+		// new ReadCycleMessageCreator(rc));
 	}
 
 	/**

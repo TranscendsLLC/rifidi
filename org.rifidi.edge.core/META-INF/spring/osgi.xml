@@ -30,13 +30,7 @@
 
 	<osgi:reference id="JMSNotifierService"
 		interface="org.rifidi.edge.core.services.notification.NotifierService" />
-	<!-- Get reference to connection factory to internal Broker -->
-	<osgi:reference id="confac" interface="javax.jms.ConnectionFactory"
-		bean-name="internalBrokerConFac" />
 
-	<!-- Get a reference to the internal Message Buffer -->
-	<osgi:reference id="internalMB" interface="javax.jms.Topic"
-		bean-name="internalDest" />
 	<!-- Listener for Reader Configurations -->
 	<osgi:set id="readerSet"
 		interface="org.rifidi.edge.core.sensors.base.AbstractSensor"

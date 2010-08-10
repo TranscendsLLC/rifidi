@@ -24,7 +24,6 @@ import org.rifidi.edge.core.sensors.base.AbstractSensor;
 import org.rifidi.edge.core.sensors.base.AbstractSensorFactory;
 import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
 import org.rifidi.edge.core.services.notification.NotifierService;
-import org.springframework.jms.core.JmsTemplate;
 
 /**
  * This is a factory that registers and produces AlienAutonomousSensors, which
@@ -39,8 +38,6 @@ public class AlienAutonomousSensorFactory extends
 	public static final String FACTORY_ID = "Alien-Autonomous";
 	/** The service used to send out notifications to the client */
 	private NotifierService notifierService;
-	/** The template used to send out tags */
-	private JmsTemplate template;
 	/** Blueprint for new readers. */
 	private final MBeanInfo readerInfo;
 
@@ -62,15 +59,6 @@ public class AlienAutonomousSensorFactory extends
 		this.notifierService = notifierService;
 	}
 
-	/**
-	 * called by spring
-	 * 
-	 * @param template
-	 *            the template to set
-	 */
-	public void setTemplate(JmsTemplate template) {
-		this.template = template;
-	}
 
 	/*
 	 * (non-Javadoc)
@@ -106,7 +94,6 @@ public class AlienAutonomousSensorFactory extends
 	public void createInstance(String serviceID) {
 		AlienAutonomousSensor instance = new AlienAutonomousSensor(commands);
 		instance.setID(serviceID);
-		instance.setTemplate((JmsTemplate) template);
 		instance.setNotifierService(this.notifierService);
 		instance.register(getContext(), FACTORY_ID);
 	}

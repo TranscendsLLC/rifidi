@@ -19,12 +19,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import javax.jms.Destination;
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.Session;
-
-import org.apache.activemq.command.ActiveMQObjectMessage;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.mina.common.RuntimeIOException;
@@ -61,8 +55,6 @@ import org.rifidi.edge.core.sensors.sessions.AbstractSensorSession;
 import org.rifidi.edge.core.services.notification.NotifierService;
 import org.rifidi.edge.core.services.notification.data.ReadCycle;
 import org.rifidi.edge.readerplugin.llrp.commands.internal.LLRPReset;
-import org.springframework.jms.core.JmsTemplate;
-import org.springframework.jms.core.MessageCreator;
 
 /**
  * This class represents a session with an LLRP reader. It handles connecting
@@ -107,18 +99,15 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 	 * @param maxConAttempts
 	 * @param readerConfigPath
 	 * @param timeout
-	 * @param destination
-	 * @param template
 	 * @param notifierService
 	 * @param readerID
 	 * @param commands
 	 */
 	public LLRPReaderSession(AbstractSensor<?> sensor, String id, String host,
 			int port, int reconnectionInterval, int maxConAttempts,
-			String readerConfigPath, Destination destination,
-			JmsTemplate template, NotifierService notifierService,
+			String readerConfigPath, NotifierService notifierService,
 			String readerID, Set<AbstractCommandConfiguration<?>> commands) {
-		super(sensor, id, destination, template, commands);
+		super(sensor, id, commands);
 		this.host = host;
 		this.port = port;
 		this.connection = new LLRPConnector(this, host, port);
@@ -192,7 +181,7 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 		// physical connection established, set up session
 		timingOut.set(false);
 		onConnect();
-		
+
 		logger.info("LLRP Session " + this.getID() + " on sensor "
 				+ this.getSensor().getID() + " connected to " + host + ":"
 				+ port);
@@ -282,7 +271,8 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 	@Override
 	public void disconnect() {
 		resetCommands();
-		this.submitAndBlock(getResetCommand(), getTimeout(), TimeUnit.MILLISECONDS);
+		this.submitAndBlock(getResetCommand(), getTimeout(),
+				TimeUnit.MILLISECONDS);
 		try {
 			// if in the connecting loop, set atomic boolean to false and call
 			// notify on the connectingLoop monitor
@@ -330,8 +320,7 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 							"Cannot execute while timing out: "
 									+ message.getName());
 				}
-				LLRPMessage response = this.connection.transact(message,
-						20000);
+				LLRPMessage response = this.connection.transact(message, 20000);
 				if (response != null) {
 					return response;
 				} else {
@@ -519,7 +508,7 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 	 */
 	@Override
 	public void messageReceived(LLRPMessage arg0) {
-		if(!processing.get()){
+		if (!processing.get()) {
 			return;
 		}
 		try {
@@ -528,12 +517,12 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 				if (event instanceof ReadCycle) {
 					ReadCycle cycle = (ReadCycle) event;
 					sensor.send(cycle);
-					
+
 					// TODO: get rid of this for performance reasons. Need to
 					// have a better way to figure out if we need to send tag
 					// read to JMS
-					//this.getTemplate().send(this.getDestination(),
-					//		new ObjectMessageCreator(cycle));
+					// this.getTemplate().send(this.getDestination(),
+					// new ObjectMessageCreator(cycle));
 				} else {
 					sensor.sendEvent(event);
 				}
@@ -542,47 +531,6 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 		} catch (Exception e) {
 			logger.error("Exception while parsing message: " + e.getMessage());
 		}
-	}
-
-	/**
-	 * Used to create a JMS message to send to the Queue that collects Tag Data
-	 * 
-	 * @author Kyle Neumeier - kyle@pramari.com
-	 */
-	private class ObjectMessageCreator implements MessageCreator {
-
-		/** Message to send */
-		private ActiveMQObjectMessage objectMessage;
-
-		/**
-		 * Constructor.
-		 * 
-		 * @param cycle
-		 *            the tags to add to this message
-		 */
-		public ObjectMessageCreator(ReadCycle cycle) {
-			super();
-			objectMessage = new ActiveMQObjectMessage();
-
-			try {
-				objectMessage.setObject(cycle);
-			} catch (JMSException e) {
-				logger.warn("Unable to set tag event: " + e);
-			}
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see
-		 * org.springframework.jms.core.MessageCreator#createMessage(javax.jms
-		 * .Session)
-		 */
-		@Override
-		public Message createMessage(Session arg0) throws JMSException {
-			return objectMessage;
-		}
-
 	}
 
 	/*

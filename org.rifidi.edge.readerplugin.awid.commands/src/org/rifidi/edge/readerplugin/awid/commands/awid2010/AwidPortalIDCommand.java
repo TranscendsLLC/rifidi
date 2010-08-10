@@ -23,7 +23,6 @@ import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.core.sensors.commands.TimeoutCommand;
 import org.rifidi.edge.core.sensors.messages.ByteMessage;
 import org.rifidi.edge.core.services.notification.data.ReadCycle;
-import org.rifidi.edge.core.services.notification.data.ReadCycleMessageCreator;
 import org.rifidi.edge.core.services.notification.data.TagReadEvent;
 import org.rifidi.edge.readerplugin.awid.awid2010.AwidSession;
 import org.rifidi.edge.readerplugin.awid.awid2010.communication.commands.AbstractAwidCommand;
@@ -245,7 +244,8 @@ public class AwidPortalIDCommand extends TimeoutCommand {
 		ReadCycle readCycle = new ReadCycle(tags, super.sensorSession
 				.getSensor().getID(), System.currentTimeMillis());
 		super.sensorSession.getSensor().send(readCycle);
-		template.send(destination, new ReadCycleMessageCreator(readCycle));
+		//TODO: SEND TAGS
+		//template.send(destination, new ReadCycleMessageCreator(readCycle));
 	}
 
 }

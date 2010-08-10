@@ -25,7 +25,6 @@ import org.rifidi.edge.core.sensors.messages.ByteMessage;
 import org.rifidi.edge.core.sensors.sessions.MessageParsingStrategyFactory;
 import org.rifidi.edge.core.sensors.sessions.poll.AbstractPollIPSensorSession;
 import org.rifidi.edge.core.services.notification.NotifierService;
-import org.springframework.jms.core.JmsTemplate;
 
 /**
  * 
@@ -69,11 +68,10 @@ public class ThingmagicReaderSession extends AbstractPollIPSensorSession {
 	 */
 	public ThingmagicReaderSession(AbstractSensor<?> sensor, String id,
 			String host, int port, int reconnectionInterval,
-			int maxConAttempts, JmsTemplate template,
-			NotifierService notifierService, String readerID,
-			Set<AbstractCommandConfiguration<?>> commands) {
+			int maxConAttempts, NotifierService notifierService,
+			String readerID, Set<AbstractCommandConfiguration<?>> commands) {
 		super(sensor, id, host, port, reconnectionInterval, maxConAttempts,
-				template.getDefaultDestination(), template, commands);
+				commands);
 		this.notifierService = notifierService;
 		this.readerID = readerID;
 	}

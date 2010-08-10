@@ -7,7 +7,6 @@
 	<bean id="acuraConfigurationFactory"
 		class="org.rifidi.edge.readerplugin.acura.AcuraProXReaderFactory">
 		<property name="context" ref="bundleContext" />
-		<property name="template" ref="internalMB" />
 		<property name="notifierService" ref="JMSNotifierService" />
 	</bean>
 </beans>

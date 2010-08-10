@@ -19,7 +19,6 @@ import org.rifidi.edge.core.exceptions.InvalidStateException;
 import org.rifidi.edge.core.sensors.base.AbstractSensorFactory;
 import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
 import org.rifidi.edge.core.services.notification.NotifierService;
-import org.springframework.jms.core.JmsTemplate;
 
 /**
  * Factory class for the General reader.  
@@ -29,8 +28,7 @@ import org.springframework.jms.core.JmsTemplate;
 public class GeneralSensorFactory extends AbstractSensorFactory<GeneralSensor> {
 
 	
-	/** JMS template for sending tag data to JMS Queue */
-	private volatile JmsTemplate template;
+
 	/** The Unique FACTORY_ID for this Factory */
 	public static final String FACTORY_ID = "General";
 	/** Description of the sensorSession. */
@@ -83,13 +81,12 @@ public class GeneralSensorFactory extends AbstractSensorFactory<GeneralSensor> {
 		if (serviceID == null) {
 			throw new IllegalArgumentException("ServiceID is null");
 		}
-		if (template == null || notifierService == null) {
+		if (notifierService == null) {
 			throw new InvalidStateException("All services are not set");
 		}
 		GeneralSensor instance = new GeneralSensor();
 		instance.setID(serviceID);
-		instance.setTemplate((JmsTemplate) template);
-		instance.setNotifyService(notifierService);
+		instance.setNotifiyService(notifierService);
 		instance.register(getContext(), FACTORY_ID);
 	}
 
@@ -109,23 +106,6 @@ public class GeneralSensorFactory extends AbstractSensorFactory<GeneralSensor> {
 		return (MBeanInfo)GeneralSensor.mbeaninfo;
 	}
 	
-	/**
-	 * @return the template
-	 */
-	public JmsTemplate getTemplate() {
-		return template;
-	}
-
-	/**
-	 * Called by spring
-	 * 
-	 * @param template
-	 *            the template to set
-	 */
-	public void setTemplate(JmsTemplate template) {
-		this.template = template;
-	}
-
 	/**
 	 * Called by spring
 	 * 

@@ -24,7 +24,6 @@ import org.rifidi.edge.core.sensors.messages.ByteMessage;
 import org.rifidi.edge.core.sensors.sessions.AbstractSerialSensorSession;
 import org.rifidi.edge.core.sensors.sessions.MessageParsingStrategyFactory;
 import org.rifidi.edge.core.services.notification.NotifierService;
-import org.springframework.jms.core.JmsTemplate;
 
 /**
  * The Session for the AcuraProXReader.
@@ -42,8 +41,6 @@ public class AcuraProXReaderSession extends AbstractSerialSensorSession {
 
 	private String readerID = null;
 
-	private JmsTemplate template = null;
-
 	private AcuraProXTagHandler handler = null;
 
 	/**
@@ -60,23 +57,14 @@ public class AcuraProXReaderSession extends AbstractSerialSensorSession {
 	 * @param commandConfigurations
 	 */
 	public AcuraProXReaderSession(AbstractSensor<?> sensor, String id,
-			String comm, JmsTemplate template, NotifierService notifierService,
-			String readerID,
+			String comm, NotifierService notifierService, String readerID,
 			Set<AbstractCommandConfiguration<?>> commandConfigurations) {
-		super(sensor, id, template.getDefaultDestination(), template,
-				commandConfigurations, comm, 9600, SerialPort.DATABITS_8,
-				SerialPort.STOPBITS_1, SerialPort.PARITY_NONE, false);
+		super(sensor, id, commandConfigurations, comm, 9600,
+				SerialPort.DATABITS_8, SerialPort.STOPBITS_1,
+				SerialPort.PARITY_NONE, false);
 		this.readerID = readerID;
-		this.template = template;
 		this.notifierService = notifierService;
 		this.handler = new AcuraProXTagHandler(this, readerID);
-	}
-
-	/**
-	 * 
-	 */
-	public JmsTemplate getTemplate() {
-		return template;
 	}
 
 	/*

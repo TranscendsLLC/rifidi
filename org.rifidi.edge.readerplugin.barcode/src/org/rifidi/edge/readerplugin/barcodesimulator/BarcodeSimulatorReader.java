@@ -29,11 +29,9 @@ import org.rifidi.edge.core.sensors.SensorSession;
 import org.rifidi.edge.core.sensors.base.AbstractSensor;
 import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
 import org.rifidi.edge.core.sensors.exceptions.CannotDestroySensorException;
-import org.rifidi.edge.core.services.notification.NotifierService;
-import org.springframework.jms.core.JmsTemplate;
 
 /**
- * Sensor class for the Barcode Reader.  
+ * Sensor class for the Barcode Reader.
  * 
  * @author Matthew Dean - matt@pramari.com
  */
@@ -43,12 +41,9 @@ public class BarcodeSimulatorReader extends
 	/** Logger for this class. */
 	private static final Log logger = LogFactory
 			.getLog(BarcodeSimulatorReader.class);
-	/** Spring JMS template */
-	private volatile JmsTemplate template;
+
 	/** The ID of the session */
 	private AtomicInteger sessionID = new AtomicInteger(0);
-	/** A wrapper containing the service to send JMS notifications */
-	private volatile NotifierService notifyServiceWrapper;
 	/** The name of the reader that will be displayed */
 	private String displayName = "Barcode";
 	/** Flag to check if this reader is destroyed. */
@@ -85,12 +80,11 @@ public class BarcodeSimulatorReader extends
 		if (!destroyed.get() && session.get() == null) {
 			Integer sessionID = this.sessionID.incrementAndGet();
 			if (session.compareAndSet(null, new BarcodeSimulatorReaderSession(
-					this, Integer.toString(sessionID),
-					BarcodeConstants.PORT, this.template,
-					this.notifyServiceWrapper, super.getID(),
+					this, Integer.toString(sessionID), BarcodeConstants.PORT,
+					notifierService, super.getID(),
 					new HashSet<AbstractCommandConfiguration<?>>()))) {
 				// TODO: remove this once we get AspectJ in here!
-				notifyServiceWrapper.addSessionEvent(this.getID(), Integer
+				notifierService.addSessionEvent(this.getID(), Integer
 						.toString(sessionID));
 				return sessionID.toString();
 			}
@@ -113,10 +107,10 @@ public class BarcodeSimulatorReader extends
 			// TODO: Fix the IP and the port here.
 			if (session.compareAndSet(null, new BarcodeSimulatorReaderSession(
 					this, Integer.toString(sessionID), BarcodeConstants.PORT,
-					this.template, this.notifyServiceWrapper, super.getID(),
+					notifierService, super.getID(),
 					new HashSet<AbstractCommandConfiguration<?>>()))) {
 				// TODO: remove this once we get AspectJ in here!
-				notifyServiceWrapper.addSessionEvent(this.getID(), Integer
+				notifierService.addSessionEvent(this.getID(), Integer
 						.toString(sessionID));
 				return sessionID.toString();
 			}
@@ -140,7 +134,7 @@ public class BarcodeSimulatorReader extends
 			ambientsession.killAllCommands();
 			ambientsession.disconnect();
 			// TODO: remove this once we get AspectJ in here!
-			notifyServiceWrapper.removeSessionEvent(this.getID(), id);
+			notifierService.removeSessionEvent(this.getID(), id);
 		} else {
 			String error = "Tried to delete a non existend session: " + id;
 			logger.warn(error);
@@ -197,23 +191,6 @@ public class BarcodeSimulatorReader extends
 	@Override
 	public MBeanInfo getMBeanInfo() {
 		return mbeaninfo;
-	}
-
-	/**
-	 * @param template
-	 *            the template to set
-	 */
-	public void setTemplate(JmsTemplate template) {
-		this.template = template;
-	}
-
-	/***
-	 * 
-	 * @param wrapper
-	 *            The JMS Notifier to set
-	 */
-	public void setNotifiyService(NotifierService wrapper) {
-		this.notifyServiceWrapper = wrapper;
 	}
 
 }

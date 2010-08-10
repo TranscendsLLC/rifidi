@@ -24,7 +24,6 @@ import org.rifidi.edge.core.sensors.base.AbstractSensor;
 import org.rifidi.edge.core.sensors.base.AbstractSensorFactory;
 import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
 import org.rifidi.edge.core.services.notification.NotifierService;
-import org.springframework.jms.core.JmsTemplate;
 
 /**
  * The Factory for producing Alien9800 Readers
@@ -34,8 +33,6 @@ import org.springframework.jms.core.JmsTemplate;
 public class Alien9800ReaderFactory extends
 		AbstractSensorFactory<Alien9800Reader> {
 
-	/** JMS template for sending tag data to JMS Queue */
-	private volatile JmsTemplate template;
 	/** The Unique FACTORY_ID for this Factory */
 	public static final String FACTORY_ID = "Alien";
 	/** Description of the sensorSession. */
@@ -89,23 +86,6 @@ public class Alien9800ReaderFactory extends
 		this.notifierService = notifierService;
 	}
 
-	/**
-	 * @return the template
-	 */
-	public JmsTemplate getTemplate() {
-		return template;
-	}
-
-	/**
-	 * Called by spring
-	 * 
-	 * @param template
-	 *            the template to set
-	 */
-	public void setTemplate(JmsTemplate template) {
-		this.template = template;
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -118,7 +98,9 @@ public class Alien9800ReaderFactory extends
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.rifidi.edge.core.sensors.base.AbstractSensorFactory#getDescription()
+	 * 
+	 * @see
+	 * org.rifidi.edge.core.sensors.base.AbstractSensorFactory#getDescription()
 	 */
 	@Override
 	public String getDescription() {
@@ -127,7 +109,9 @@ public class Alien9800ReaderFactory extends
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.rifidi.edge.core.sensors.base.AbstractSensorFactory#getDisplayName()
+	 * 
+	 * @see
+	 * org.rifidi.edge.core.sensors.base.AbstractSensorFactory#getDisplayName()
 	 */
 	@Override
 	public String getDisplayName() {
@@ -147,12 +131,11 @@ public class Alien9800ReaderFactory extends
 		if (serviceID == null) {
 			throw new IllegalArgumentException("ServiceID is null");
 		}
-		if (template == null || notifierService == null) {
+		if (notifierService == null) {
 			throw new InvalidStateException("All services are not set");
 		}
 		Alien9800Reader instance = new Alien9800Reader(commands);
 		instance.setID(serviceID);
-		instance.setTemplate((JmsTemplate) template);
 		instance.setNotifiyService(notifierService);
 		instance.register(getContext(), FACTORY_ID);
 

@@ -20,7 +20,6 @@ import org.rifidi.edge.core.exceptions.InvalidStateException;
 import org.rifidi.edge.core.sensors.base.AbstractSensorFactory;
 import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
 import org.rifidi.edge.core.services.notification.NotifierService;
-import org.springframework.jms.core.JmsTemplate;
 
 /**
  * A factory class to create LLRPReaders.
@@ -33,16 +32,6 @@ public class LLRPReaderFactory extends AbstractSensorFactory<LLRPReader> {
 	private volatile NotifierService notifierService;
 	/** The ID for this factory */
 	public static final String FACTORY_ID = "LLRP";
-	/** Template for sending jms messages. */
-	private volatile JmsTemplate template;
-
-	/**
-	 * @param template
-	 *            the template to set
-	 */
-	public void setTemplate(JmsTemplate template) {
-		this.template = template;
-	}
 
 	/**
 	 * Called by spring.
@@ -128,13 +117,11 @@ public class LLRPReaderFactory extends AbstractSensorFactory<LLRPReader> {
 		if (serviceID == null) {
 			throw new IllegalArgumentException("Service ID is null");
 		}
-		if (template == null || notifierService == null) {
+		if (notifierService == null) {
 			throw new InvalidStateException("Required services are null");
 		}
 		LLRPReader instance = new LLRPReader(commands);
 		instance.setID(serviceID);
-		instance.setTemplate((JmsTemplate) template);
-		instance.setDestination(template.getDefaultDestination());
 		instance.setNotifiyService(notifierService);
 		instance.register(getContext(), FACTORY_ID);
 

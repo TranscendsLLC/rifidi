@@ -33,7 +33,6 @@ import org.rifidi.edge.readerplugin.awid.awid2010.communication.commands.StopCom
 import org.rifidi.edge.readerplugin.awid.awid2010.communication.messages.AckMessage;
 import org.rifidi.edge.readerplugin.awid.awid2010.communication.messages.ReaderStatusMessage;
 import org.rifidi.edge.readerplugin.awid.awid2010.gpio.AwidGPIOSession;
-import org.springframework.jms.core.JmsTemplate;
 
 /**
  * The session that provides communication with the Awid reader. It extends the
@@ -83,11 +82,10 @@ public class AwidSession extends AbstractPubSubIPSensorSession {
 	 */
 	public AwidSession(AbstractSensor<?> sensor, String ID, String host,
 			int port, int reconnectionInterval, int maxConAttempts,
-			JmsTemplate template,
+
 			Set<AbstractCommandConfiguration<?>> commandConfigurations,
 			NotifierService notifierSerivce, boolean is3014) {
 		super(sensor, ID, host, port, reconnectionInterval, maxConAttempts,
-				template.getDefaultDestination(), template,
 				commandConfigurations);
 		this.parsingStratFac = new AwidMessageParsingStrategyFactory();
 		// create a new object that listens for incoming messages

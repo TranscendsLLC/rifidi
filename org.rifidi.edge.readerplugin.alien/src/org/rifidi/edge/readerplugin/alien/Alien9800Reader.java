@@ -41,12 +41,10 @@ import org.rifidi.edge.core.sensors.SensorSession;
 import org.rifidi.edge.core.sensors.base.AbstractSensor;
 import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
 import org.rifidi.edge.core.sensors.exceptions.CannotDestroySensorException;
-import org.rifidi.edge.core.services.notification.NotifierService;
 import org.rifidi.edge.readerplugin.alien.commandobject.AlienCommandObjectWrapper;
 import org.rifidi.edge.readerplugin.alien.commandobject.AlienGetCommandObject;
 import org.rifidi.edge.readerplugin.alien.commandobject.AlienSetCommandObject;
 import org.rifidi.edge.readerplugin.alien.commands.internal.AlienPropertyCommand;
-import org.springframework.jms.core.JmsTemplate;
 
 /**
  * The plugin that connects to an Alien9800 reader
@@ -83,12 +81,8 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 	/** The port of the server socket */
 	private volatile Integer notifyPort = 0;
 	private volatile Integer ioStreamPort = 0;
-	/** Spring JMS template */
-	private volatile JmsTemplate template;
 	/** The ID of the session */
 	private AtomicInteger sessionID = new AtomicInteger(0);
-	/** service used to send notifications */
-	private volatile NotifierService notifierService;
 	private String displayName = "Alien";
 	/**
 	 * READER PROPERTIES - SETTABE, SET ON CONNECTION
@@ -239,7 +233,7 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 			if (session.compareAndSet(null, new Alien9800ReaderSession(this,
 					Integer.toString(sessionID), ipAddress, port, notifyPort,
 					ioStreamPort, (int) (long) reconnectionInterval,
-					maxNumConnectionAttempts, username, password, template,
+					maxNumConnectionAttempts, username, password,
 					notifierService, this.getID(), commands))) {
 				this.session.get().restoreCommands(sessionDTO);
 				// TODO: remove this once we get AspectJ in here!
@@ -264,7 +258,7 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 			if (session.compareAndSet(null, new Alien9800ReaderSession(this,
 					Integer.toString(sessionID), ipAddress, port, notifyPort,
 					ioStreamPort, (int) (long) reconnectionInterval,
-					maxNumConnectionAttempts, username, password, template,
+					maxNumConnectionAttempts, username, password,
 					notifierService, this.getID(), commands))) {
 
 				// TODO: remove this once we get AspectJ in here!
@@ -294,23 +288,6 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 				}
 			}
 		}
-	}
-
-	/**
-	 * @param template
-	 *            the template to set
-	 */
-	public void setTemplate(JmsTemplate template) {
-		this.template = template;
-	}
-
-	/***
-	 * 
-	 * @param wrapper
-	 *            The JMS Notifier to set
-	 */
-	public void setNotifiyService(NotifierService wrapper) {
-		this.notifierService = wrapper;
 	}
 
 	/*
@@ -730,8 +707,8 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 			AlienPropertyCommand command = new AlienPropertyCommand("",
 					readerProperties, commands);
 			if (block) {
-				return aliensession
-						.submitAndBlock(command, 10, TimeUnit.SECONDS);
+				return aliensession.submitAndBlock(command, 10,
+						TimeUnit.SECONDS);
 
 			} else {
 				aliensession.submit(command);

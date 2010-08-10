@@ -136,7 +136,9 @@ public class AlienGetTagListCommand extends AbstractAlien9800Command {
 			ReadCycle cycle = new ReadCycle(events, reader.get(), System
 					.currentTimeMillis());
 			sensorSession.getSensor().send(cycle);
-			template.send(destination, new ReadCycleMessageCreator(cycle));
+			
+			//TODO: SEND MESSAGE
+			//template.send(destination, new ReadCycleMessageCreator(cycle));
 
 		} catch (AlienException e) {
 			logger.error("Alien Exception while executing command: "

@@ -33,6 +33,7 @@ import org.rifidi.edge.api.jms.notifications.SessionAddedNotification;
 import org.rifidi.edge.api.jms.notifications.SessionRemovedNotification;
 import org.rifidi.edge.api.jms.notifications.SessionStatusChangedNotification;
 import org.rifidi.edge.core.services.notification.NotifierService;
+import org.rifidi.edge.core.services.notification.data.ReadCycle;
 import org.springframework.jms.core.JmsTemplate;
 
 /**
@@ -48,6 +49,8 @@ public class NotifierServiceImpl implements NotifierService {
 	private JmsTemplate extNotificationTemplate;
 	/** The queue to send out notifications on */
 	private Destination extNotificationDest;
+	/**The queue to send out tags on*/
+	private Destination externalTagsDest;
 	/** The logger for this class */
 	private Log logger = LogFactory.getLog(NotifierServiceImpl.class);
 
@@ -69,6 +72,16 @@ public class NotifierServiceImpl implements NotifierService {
 	 */
 	public void setExtNotificationDest(Destination extNotificationDest) {
 		this.extNotificationDest = extNotificationDest;
+	}
+	
+	/**
+	 * called by Spring
+	 * 
+	 * @param extNotificationDest
+	 *            the extNotificationDest to set
+	 */
+	public void setExtTagsDest(Destination extTagsDest) {
+		this.externalTagsDest = extTagsDest;
 	}
 
 	@Override
@@ -316,4 +329,15 @@ public class NotifierServiceImpl implements NotifierService {
 		}
 
 	}
+
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.core.services.notification.NotifierService#tagSeen(org.rifidi.edge.core.services.notification.data.ReadCycle)
+	 */
+	@Override
+	public void tagSeen(ReadCycle cycle) {
+		extNotificationTemplate.send(externalTagsDest,
+				new TagMessageMessageCreator(cycle.getBatch()));
+		
+	}
+	
 }

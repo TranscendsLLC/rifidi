@@ -38,9 +38,6 @@
 	
 	<osgi:reference id="JMSNotifierService"
 		interface="org.rifidi.edge.core.services.notification.NotifierService" />
-
-	<osgi:reference id="internalMB"
-		interface="org.springframework.jms.core.JmsTemplate" bean-name="internalJMSTemplate" />
 	
 	<osgi:reference id="readerDAO"
 		interface="org.rifidi.edge.core.daos.ReaderDAO" />

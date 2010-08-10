@@ -3,29 +3,21 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:osgi="http://www.springframework.org/schema/osgi"
 	xmlns:amq="http://activemq.apache.org/schema/core"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans 
-	http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+	http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+	http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd">
+
+	<!-- connection factory to use to connect to internal broker -->
+	<amq:connectionFactory id="internalBrokerConFac"
+		brokerURL="vm://internalBroker?create=false" />
+
+	<amq:topic id="extNotificationDest" physicalName="org.rifidi.edge.external.notifications" />
+	<amq:topic id="extTagsDest" physicalName="org.rifidi.edge.external.tags" />
 
 	<bean id="JMSNotifier"
 		class="org.rifidi.edge.core.services.notification.internal.NotifierServiceImpl">
-		<property name="extNotificationDest" ref="externalNotificationsDest" />
+		<property name="extNotificationDest" ref="extNotificationDest" />
+		<property name="extTagsDest" ref="extTagsDest" />
 		<property name="extNotificationTemplate" ref="externalJMSTemplate" />
-	</bean>
-
-	<bean id="tagEventListener"
-		class="org.rifidi.edge.core.services.notification.internal.TagEventListener">
-		<property name="extNotificationTemplate" ref="externalJMSTemplate" />
-		<property name="extNotificationDest" ref="externalTagsDest" />
-	</bean>
-
-
-	<!-- Listen to the internal JMSQueue -->
-	<bean id="jmsContainer"
-		class="org.springframework.jms.listener.SimpleMessageListenerContainer">
-		<property name="autoStartup" value="true" />
-		<property name="connectionFactory" ref="internalBrokerConFac" />
-		<property name="destination" ref="internalDest" />
-		<property name="messageListener" ref="tagEventListener" />
-		<property name="acceptMessagesWhileStopping" value="true" />
 	</bean>
 
 </beans>

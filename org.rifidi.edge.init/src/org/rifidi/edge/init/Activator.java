@@ -60,6 +60,8 @@ public class Activator implements BundleActivator {
 			PropertyConfigurator.configure(getClass().getResource(
 					"/log4j.properties"));
 		}
+		
+		System.setProperty("activemq.base", rifidiHome+File.separator+"config");
 
 	}
 

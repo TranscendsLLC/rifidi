@@ -20,7 +20,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
-import javax.jms.Destination;
 import javax.management.MBeanInfo;
 
 import org.apache.commons.logging.Log;
@@ -34,8 +33,6 @@ import org.rifidi.edge.core.exceptions.CannotCreateSessionException;
 import org.rifidi.edge.core.sensors.SensorSession;
 import org.rifidi.edge.core.sensors.base.AbstractSensor;
 import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
-import org.rifidi.edge.core.services.notification.NotifierService;
-import org.springframework.jms.core.JmsTemplate;
 
 /**
  * This class represents an LLRP reader. It handles the session and sets up the
@@ -61,14 +58,8 @@ public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 	private volatile Integer maxNumConnectionAttempts = 10;
 	/** The path to the SET_READER_CONFIG path to use */
 	private String readerConfigPath = LLRPConstants.SET_READER_CONFIG_PATH;
-	/** JMS destination. */
-	private volatile Destination destination;
-	/** Spring JMS template */
-	private volatile JmsTemplate template;
 	/** The ID of the session */
 	private AtomicInteger sessionIDcounter = new AtomicInteger(0);
-	/** A wrapper containing the service to send jms notifications */
-	private volatile NotifierService notifyServiceWrapper;
 	/** Provided by spring. */
 	private final Set<AbstractCommandConfiguration<?>> commands;
 	/** Flag to check if this reader is destroyed. */
@@ -104,11 +95,11 @@ public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 			if (session.compareAndSet(null, new LLRPReaderSession(this,
 					sessionID.toString(), ipAddress, port,
 					reconnectionInterval, maxNumConnectionAttempts,
-					readerConfigPath, destination, template,
-					notifyServiceWrapper, super.getID(), commands))) {
+					readerConfigPath, notifierService, super.getID(),
+					commands))) {
 				session.get().restoreCommands(sessionDTO);
 				// TODO: remove this once we get AspectJ in here!
-				notifyServiceWrapper.addSessionEvent(this.getID(), Integer
+				notifierService.addSessionEvent(this.getID(), Integer
 						.toString(sessionID));
 				return sessionID.toString();
 			}
@@ -129,11 +120,11 @@ public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 			if (session.compareAndSet(null, new LLRPReaderSession(this,
 					sessionID.toString(), ipAddress, port,
 					reconnectionInterval, maxNumConnectionAttempts,
-					readerConfigPath, destination, template,
-					notifyServiceWrapper, super.getID(), commands))) {
+					readerConfigPath, notifierService, super.getID(),
+					commands))) {
 
 				// TODO: remove this once we get AspectJ in here!
-				notifyServiceWrapper.addSessionEvent(this.getID(), Integer
+				notifierService.addSessionEvent(this.getID(), Integer
 						.toString(sessionID));
 				return sessionID.toString();
 			}
@@ -157,7 +148,7 @@ public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 				llrpsession.disconnect();
 				// TODO: remove this once we get AspectJ in here!
 				session.set(null);
-				notifyServiceWrapper
+				notifierService
 						.removeSessionEvent(this.getID(), sessionid);
 			}
 		}
@@ -194,16 +185,6 @@ public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 			Map<?, ?> properties) {
 		// TODO Auto-generated method stub
 
-	}
-
-	/***
-	 * Set the wrapper for the Notify Service.
-	 * 
-	 * @param wrapper
-	 *            The JMS Notifier to set
-	 */
-	public void setNotifiyService(NotifierService wrapper) {
-		this.notifyServiceWrapper = wrapper;
 	}
 
 	/*
@@ -365,25 +346,6 @@ public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 		this.readerConfigPath = readerConfigPath;
 	}
 
-	/**
-	 * Sets the JMS destination.
-	 * 
-	 * @param destination
-	 *            the destination to set
-	 */
-	public void setDestination(Destination destination) {
-		this.destination = destination;
-	}
-
-	/**
-	 * Sets the JMS template.
-	 * 
-	 * @param template
-	 *            the template to set
-	 */
-	public void setTemplate(JmsTemplate template) {
-		this.template = template;
-	}
 
 	/**
 	 * Gets the properties for the reader.

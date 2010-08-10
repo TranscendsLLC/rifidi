@@ -17,93 +17,12 @@
 		</property>
 	</bean>
 
-	<!--  Embedded broker to use for external message -->
-	<bean id="externalBroker" class="org.apache.activemq.broker.BrokerService"
-		init-method="start">
-		<property name="brokerName" value="externalBroker" />
-		<property name="persistent" value="false" />
-		<property name="useJmx" value="false" />
-		<property name="transportConnectorURIs">
-			<list>
-				<!-- This next line must not have a newline -->
-				<value>tcp://${org.rifidi.edge.jms.hostname}:${org.rifidi.edge.jms.port}</value>
-			</list>
-		</property>
-	</bean>
+	<bean class="org.rifidi.edge.core.services.jms.JMSInit" />
 
-	<!--  Embedded broker to use as internal JMS Queue -->
-	<bean id="internalBroker" class="org.apache.activemq.broker.BrokerService"
-		init-method="start">
-		<property name="brokerName" value="internalBroker" />
-		<property name="persistent" value="false" />
-		<property name="useJmx" value="false" />
-	</bean>
-
-	<!-- Topic to use as internal Message Bus -->
-	<bean id="internalDest" class="org.apache.activemq.command.ActiveMQTopic">
-		<property name="physicalName" value="org.rifidi.edge.internal" />
-	</bean>
-	<!--
-		<amq:topic id="internalDest" physicalName="org.rifidi.edge.internal"
-		/>
-	-->
-
-	<!--
-		Topic to use as Destination for sending tags to external Consumers
-	-->
-	<bean id="externalTagsDest" class="org.apache.activemq.command.ActiveMQTopic">
-		<property name="physicalName" value="${org.rifidi.edge.jms.topic.tags}" />
-	</bean>
-	<!--
-		<amq:topic id="externalTagsDest"
-		physicalName="org.rifidi.edge.external.tags" />
-	-->
-
-	<!--
-		Topic to use as Destination for sending notifications to external
-		Consumers
-	-->
-	<bean id="externalNotificationsDest" class="org.apache.activemq.command.ActiveMQTopic">
-		<property name="physicalName" value="${org.rifidi.edge.jms.topic.notifications}" />
-	</bean>
-	<!--
-		<amq:topic id="externalNotificationsDest"
-		physicalName="org.rifidi.edge.external.notifications" />
-	-->
-
-	<!-- connection factory to use to connect to internal broker -->
-	<bean id="internalBrokerConFac" class="org.apache.activemq.spring.ActiveMQConnectionFactory">
-		<property name="brokerURL" value="vm://internalBroker?create=false" />
-	</bean>
-	<!--
-		<amq:connectionFactory id="internalBrokerConFac"
-		brokerURL="vm://internalBroker?create=false" />
-	-->
 
 	<!-- connection factory to use to connect to external broker -->
-	<bean id="externalBrokerConFac" class="org.apache.activemq.spring.ActiveMQConnectionFactory">
-		<property name="brokerURL" value="vm://externalBroker?create=false" />
-	</bean>
-	<!--
-		<amq:connectionFactory id="externalBrokerConFac"
+	<amq:connectionFactory id="externalBrokerConFac"
 		brokerURL="vm://externalBroker?create=false" />
-	-->
-
-	<!--
-		JMS Template to use for putting data on the internal message bus.
-	-->
-	<bean id="internalJMSTemplate" class="org.springframework.jms.core.JmsTemplate">
-		<property name="connectionFactory">
-			<!-- lets wrap in a pool to avoid creating a connection per send -->
-			<bean class="org.apache.activemq.pool.PooledConnectionFactory"
-				destroy-method="stop">
-				<property name="connectionFactory" ref="internalBrokerConFac" />
-				<property name="maxConnections" value="50" />
-			</bean>
-		</property>
-		<property name="defaultDestination" ref="internalDest" />
-		<property name="sessionTransacted" value="false" />
-	</bean>
 
 	<!--
 		JMS Template to use for putting data on the external message bus. No

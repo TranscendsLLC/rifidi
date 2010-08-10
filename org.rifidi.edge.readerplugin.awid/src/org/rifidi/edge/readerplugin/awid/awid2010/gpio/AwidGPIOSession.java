@@ -66,7 +66,7 @@ public class AwidGPIOSession extends AbstractPubSubIPSensorSession implements
 	 */
 	public AwidGPIOSession(AbstractSensor<?> sensor, String ID, String host,
 			int port) {
-		super(sensor, ID, host, port, 1000, 3, null, null,
+		super(sensor, ID, host, port, 1000, 3,
 				new HashSet<AbstractCommandConfiguration<?>>());
 		messageQueue = new LinkedBlockingQueue<ByteMessage>();
 	}
@@ -280,11 +280,14 @@ public class AwidGPIOSession extends AbstractPubSubIPSensorSession implements
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.rifidi.edge.core.sensors.sessions.AbstractIPSensorSession#toString()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.core.sensors.sessions.AbstractIPSensorSession#toString()
 	 */
 	@Override
 	public String toString() {
-		return "[GPIO Session " + super.toString() +"]";
+		return "[GPIO Session " + super.toString() + "]";
 	}
 }

@@ -64,7 +64,7 @@ public class AlienGPIOSession extends AbstractServerSocketSensorSession {
 	public AlienGPIOSession(AbstractSensor<?> sensor, String ID,
 			int serverSocketPort,
 			AlienIOListMessageParsingStrategy parsingStrategy) {
-		super(sensor, ID, null, null, serverSocketPort, 1,
+		super(sensor, ID, serverSocketPort, 1,
 				new HashSet<AbstractCommandConfiguration<?>>());
 		this.IOListParsingStrategy = parsingStrategy;
 	}

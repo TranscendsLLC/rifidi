@@ -40,7 +40,6 @@ import org.rifidi.edge.readerplugin.alien.commandobject.AlienCommandObjectWrappe
 import org.rifidi.edge.readerplugin.alien.commandobject.AlienGetCommandObject;
 import org.rifidi.edge.readerplugin.alien.gpio.AlienGPIOSession;
 import org.rifidi.edge.readerplugin.alien.gpio.messages.TextIOListMessageParsingStrategy;
-import org.springframework.jms.core.JmsTemplate;
 
 /**
  * A session that connects to an Alien9800Reader
@@ -102,18 +101,18 @@ public class Alien9800ReaderSession extends AbstractPollIPSensorSession
 	 *            A thread safe set containing all available commands
 	 */
 	public Alien9800ReaderSession(AbstractSensor<?> sensor, String id,
-			String host, int port, int notifyPort, int ioStreamPort, int reconnectionInterval,
-			int maxConAttempts, String username, String password,
-			JmsTemplate template, NotifierService notifierService,
-			String readerID, Set<AbstractCommandConfiguration<?>> commands) {
+			String host, int port, int notifyPort, int ioStreamPort,
+			int reconnectionInterval, int maxConAttempts, String username,
+			String password, NotifierService notifierService, String readerID,
+			Set<AbstractCommandConfiguration<?>> commands) {
 		super(sensor, id, host, port, reconnectionInterval, maxConAttempts,
-				template.getDefaultDestination(), template, commands);
+				commands);
 		this.username = username;
 		this.password = password;
 		this.notifierService = notifierService;
 		this.readerID = readerID;
 		this.autonomousSession = new AlienAutonomousSensorSession(sensor, "1",
-				template, notifierService, notifyPort, 15,
+				 notifierService, notifyPort, 15,
 				new HashSet<AbstractCommandConfiguration<?>>());
 		this.gpiosession = new AlienGPIOSession(sensor, "2", ioStreamPort,
 				new TextIOListMessageParsingStrategy());
@@ -152,11 +151,11 @@ public class Alien9800ReaderSession extends AbstractPollIPSensorSession
 			}
 		});
 		autoSessionThread.start();
-		
+
 		final Alien9800ReaderSession interactiveSession = this;
-		
+
 		Thread gpioSessionThread = new Thread(new Runnable() {
-			
+
 			@Override
 			public void run() {
 				try {
@@ -164,17 +163,18 @@ public class Alien9800ReaderSession extends AbstractPollIPSensorSession
 					gpiosession.connect();
 				} catch (CannotExecuteException e) {
 					e.printStackTrace();
-					logger.warn("Cannot connect Alien GPIO Session: " + gpiosession);
+					logger.warn("Cannot connect Alien GPIO Session: "
+							+ gpiosession);
 				} catch (IOException e) {
 					e.printStackTrace();
-					logger.warn("Cannot connect Alien GPIO Session: " + gpiosession);
+					logger.warn("Cannot connect Alien GPIO Session: "
+							+ gpiosession);
 				}
-				
+
 			}
 		});
-		
-		gpioSessionThread.start();
 
+		gpioSessionThread.start();
 
 	}
 
@@ -221,7 +221,7 @@ public class Alien9800ReaderSession extends AbstractPollIPSensorSession
 			logger.warn("Timeout when logging in");
 			throw new IOException(ex);
 		}
-		
+
 		return true;
 	}
 

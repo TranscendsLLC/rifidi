@@ -9,7 +9,6 @@
 	<bean id="BarcodeConfigurationFactory"
 		class="org.rifidi.edge.readerplugin.barcodesimulator.BarcodeSimulatorReaderFactory">
 		<property name="context" ref="bundleContext" />
-		<property name="template" ref="internalMB" />
 		<property name="notifierService" ref="JMSNotifierService"/> 
 	</bean>
 

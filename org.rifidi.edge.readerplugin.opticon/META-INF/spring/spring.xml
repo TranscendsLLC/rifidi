@@ -9,7 +9,6 @@
 	<bean id="OpticonConfigurationFactory"
 		class="org.rifidi.edge.readerplugin.opticon.OpticonSensorFactory">
 		<property name="context" ref="bundleContext" />
-		<property name="template" ref="internalMB" />
 		<property name="notifierService" ref="JMSNotifierService" />
 	</bean>
 
@@ -23,7 +22,4 @@
 
 	<osgi:reference id="JMSNotifierService"
 		interface="org.rifidi.edge.core.services.notification.NotifierService" />
-
-	<osgi:reference id="internalMB"
-		interface="org.springframework.jms.core.JmsTemplate" bean-name="internalJMSTemplate" />
 </beans>

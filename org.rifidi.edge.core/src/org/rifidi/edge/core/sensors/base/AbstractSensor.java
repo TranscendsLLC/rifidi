@@ -47,6 +47,7 @@ import org.rifidi.edge.core.sensors.exceptions.ImmutableException;
 import org.rifidi.edge.core.sensors.exceptions.InUseException;
 import org.rifidi.edge.core.sensors.exceptions.NotSubscribedException;
 import org.rifidi.edge.core.services.esper.internal.EsperEventContainer;
+import org.rifidi.edge.core.services.notification.NotifierService;
 import org.rifidi.edge.core.services.notification.data.ReadCycle;
 import org.rifidi.edge.core.services.notification.data.TagReadEvent;
 
@@ -66,6 +67,8 @@ public abstract class AbstractSensor<T extends SensorSession> extends
 	protected final Set<Sensor> receivers = new CopyOnWriteArraySet<Sensor>();
 	/** True if the sensor is currently in use. */
 	protected AtomicBoolean inUse = new AtomicBoolean(false);
+	/**The notifier Service*/
+	protected NotifierService notifierService;
 
 	/**
 	 * This constructor is only for CGLIB. DO NOT OVERWRITE!
@@ -278,6 +281,17 @@ public abstract class AbstractSensor<T extends SensorSession> extends
 		// readers
 		throw new ImmutableException(getName() + " is immutable.");
 	}
+	
+
+	/***
+	 * Set the wrapper for the Notify Service.
+	 * 
+	 * @param wrapper
+	 *            The JMS Notifier to set
+	 */
+	public void setNotifiyService(NotifierService notifierService) {
+		this.notifierService = notifierService;
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -294,6 +308,12 @@ public abstract class AbstractSensor<T extends SensorSession> extends
 		for (LinkedBlockingQueue<ReadCycle> queue : tagSubscriberToQueueMap
 				.values()) {
 			queue.add(cycle);
+		}
+		String shouldNotify = System.getProperty("org.rifidi.ui.notify");
+		if(notifierService!=null){
+			if(shouldNotify==null || shouldNotify.equalsIgnoreCase("true")){
+				notifierService.tagSeen(cycle);				
+			}
 		}
 	}
 

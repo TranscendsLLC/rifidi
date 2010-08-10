@@ -8,7 +8,6 @@
 	<!--  Create Reader Configuration Factory -->
 	<bean id="llrpConfigurationFactory" class="org.rifidi.edge.readerplugin.llrp.LLRPReaderFactory">
 		<property name="context" ref="bundleContext" />
-		<property name="template" ref="internalMB" />
 		<property name="notifierService" ref="JMSNotifierService" />
 		<property name="commandConfigurations" ref="llrpCommands" />
 	</bean>
@@ -70,9 +69,6 @@
 
 	<osgi:reference id="JMSNotifierService"
 		interface="org.rifidi.edge.core.services.notification.NotifierService" />
-
-	<osgi:reference id="internalMB"
-		interface="org.springframework.jms.core.JmsTemplate" bean-name="internalJMSTemplate" />
 
 	<osgi:set id="llrpCommands"
 		interface="org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration"

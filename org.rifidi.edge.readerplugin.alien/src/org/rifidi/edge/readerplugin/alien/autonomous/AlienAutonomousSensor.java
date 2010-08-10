@@ -34,7 +34,6 @@ import org.rifidi.edge.core.sensors.SensorSession;
 import org.rifidi.edge.core.sensors.base.AbstractSensor;
 import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
 import org.rifidi.edge.core.services.notification.NotifierService;
-import org.springframework.jms.core.JmsTemplate;
 
 /**
  * A special sensor that is used to passively receive notifications from Alien
@@ -52,10 +51,6 @@ public class AlienAutonomousSensor extends
 	private volatile AtomicReference<AlienAutonomousSensorSession> session = new AtomicReference<AlienAutonomousSensorSession>();
 	/** Flag to check if this reader is destroied. */
 	private AtomicBoolean destroyed = new AtomicBoolean(false);
-	/** The template to use to send tags */
-	private volatile JmsTemplate template;
-	/** Notifier Service */
-	private volatile NotifierService notifierService;
 	/** The FACTORY_ID of the session */
 	private AtomicInteger sessionID = new AtomicInteger(0);
 	/** The port of the server socket */
@@ -80,13 +75,6 @@ public class AlienAutonomousSensor extends
 		this.commands = commands;
 	}
 
-	/**
-	 * @param template
-	 *            the template to set
-	 */
-	public void setTemplate(JmsTemplate template) {
-		this.template = template;
-	}
 
 	/**
 	 * @param notifierService
@@ -120,7 +108,7 @@ public class AlienAutonomousSensor extends
 		if (session.get() == null) {
 			Integer id = sessionID.incrementAndGet();
 			if (session.compareAndSet(null, new AlienAutonomousSensorSession(
-					this, Integer.toString(id), template, notifierService,
+					this, Integer.toString(id), notifierService,
 					notifyPort, maxNumberAutonomousReaders, commands))) {
 				if (sessionDTO.getCommands() != null) {
 					for (CommandDTO command : sessionDTO.getCommands()) {
@@ -150,7 +138,7 @@ public class AlienAutonomousSensor extends
 		if (session.get() == null) {
 			Integer id = sessionID.incrementAndGet();
 			if (session.compareAndSet(null, new AlienAutonomousSensorSession(
-					this, Integer.toString(id), template, notifierService,
+					this, Integer.toString(id), notifierService,
 					notifyPort, maxNumberAutonomousReaders, commands))) {
 				notifierService.addSessionEvent(getID(), id.toString());
 				return id.toString();

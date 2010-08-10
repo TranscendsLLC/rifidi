@@ -28,10 +28,9 @@ import org.rifidi.edge.core.services.notification.NotifierService;
 import org.rifidi.edge.core.services.notification.data.ReadCycle;
 import org.rifidi.edge.core.services.notification.data.ReadCycleMessageCreator;
 import org.rifidi.edge.core.services.notification.data.TagReadEvent;
-import org.springframework.jms.core.JmsTemplate;
 
 /**
- * The session class for the General sensor.  
+ * The session class for the General sensor.
  * 
  * @author Matthew Dean - matt@pramari.com
  */
@@ -49,19 +48,15 @@ public class GeneralSensorSession extends AbstractServerSocketSensorSession {
 	/** The ID for the reader. */
 	private String readerID = null;
 
-	/** The JMS Template */
-	private JmsTemplate template = null;
-
 	public GeneralSensorSession(AbstractSensor<?> sensor, String ID,
-			JmsTemplate template, NotifierService notifierService,
-			String readerID, int serverSocketPort,
+			NotifierService notifierService, String readerID,
+			int serverSocketPort,
 			Set<AbstractCommandConfiguration<?>> commandConfigurations) {
-		super(sensor, ID, template.getDefaultDestination(), template,
-				serverSocketPort, 10, commandConfigurations);
+		super(sensor, ID, serverSocketPort, 10, commandConfigurations);
 		this.readerID = readerID;
 		this.notifierService = notifierService;
 		this.tagHandler = new GeneralSensorSessionTagHandler(readerID);
-		this.template=template;
+
 	}
 
 	/*
@@ -93,16 +88,12 @@ public class GeneralSensorSession extends AbstractServerSocketSensorSession {
 				.currentTimeMillis());
 
 		this.getSensor().send(cycle);
-		this.template.send(this.template.getDefaultDestination(),
-				new ReadCycleMessageCreator(cycle));
+		
+		//TODO: SEND TAGS
+		//this.template.send(this.template.getDefaultDestination(),
+		//		new ReadCycleMessageCreator(cycle));
 	}
 
-	/**
-	 * Returns the JMSTemplate.
-	 */
-	public JmsTemplate getTemplate() {
-		return template;
-	}
 
 	/*
 	 * (non-Javadoc)

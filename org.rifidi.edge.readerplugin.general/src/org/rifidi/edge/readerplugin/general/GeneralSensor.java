@@ -30,8 +30,6 @@ import org.rifidi.edge.core.sensors.SensorSession;
 import org.rifidi.edge.core.sensors.base.AbstractSensor;
 import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
 import org.rifidi.edge.core.sensors.exceptions.CannotDestroySensorException;
-import org.rifidi.edge.core.services.notification.NotifierService;
-import org.springframework.jms.core.JmsTemplate;
 
 /**
  * A generic plugin that can handle data coming in from any reader or source, if
@@ -49,12 +47,8 @@ public class GeneralSensor extends AbstractSensor<GeneralSensorSession> {
 	 * 
 	 */
 	private Integer port = 4567;
-	/** Spring JMS template */
-	private volatile JmsTemplate template;
 	/** The ID of the session */
 	private AtomicInteger sessionID = new AtomicInteger(0);
-	/** A wrapper containing the service to send JMS notifications */
-	private volatile NotifierService notifyServiceWrapper;
 	/** The name of the reader that will be displayed */
 	private String displayName = "General";
 	/** Flag to check if this reader is destroyed. */
@@ -77,7 +71,7 @@ public class GeneralSensor extends AbstractSensor<GeneralSensorSession> {
 	 */
 	@Override
 	public void applyPropertyChanges() {
-		//No properties.  
+		// No properties.
 	}
 
 	/*
@@ -91,43 +85,16 @@ public class GeneralSensor extends AbstractSensor<GeneralSensorSession> {
 		if (!destroyed.get() && session.get() == null) {
 			Integer sessionID = this.sessionID.incrementAndGet();
 			if (session.compareAndSet(null, new GeneralSensorSession(this,
-					Integer.toString(sessionID), this.template,
-					this.notifyServiceWrapper, super.getID(), this.port,
+					Integer.toString(sessionID), notifierService,
+					super.getID(), this.port,
 					new HashSet<AbstractCommandConfiguration<?>>()))) {
 				// TODO: remove this once we get AspectJ in here!
-				notifyServiceWrapper.addSessionEvent(this.getID(), Integer
+				notifierService.addSessionEvent(this.getID(), Integer
 						.toString(sessionID));
 				return sessionID.toString();
 			}
 		}
 		throw new CannotCreateSessionException();
-	}
-
-	/**
-	 * Sets the JMSTemplate.
-	 * 
-	 * @param template
-	 */
-	public void setTemplate(JmsTemplate template) {
-		this.template = template;
-	}
-
-	/**
-	 * Gets the JMSTemplate
-	 * 
-	 * @return
-	 */
-	public JmsTemplate getTemplate() {
-		return template;
-	}
-
-	/**
-	 * Sets the NotifierService.  
-	 * 
-	 * @param notifyServiceWrapper
-	 */
-	public void setNotifyService(NotifierService notifyServiceWrapper) {
-		this.notifyServiceWrapper = notifyServiceWrapper;
 	}
 
 	/*
@@ -143,11 +110,11 @@ public class GeneralSensor extends AbstractSensor<GeneralSensorSession> {
 		if (!destroyed.get() && session.get() == null) {
 			Integer sessionID = this.sessionID.incrementAndGet();
 			if (session.compareAndSet(null, new GeneralSensorSession(this,
-					Integer.toString(sessionID), this.template,
-					this.notifyServiceWrapper, super.getID(), this.port,
+					Integer.toString(sessionID), notifierService,
+					super.getID(), this.port,
 					new HashSet<AbstractCommandConfiguration<?>>()))) {
 				// TODO: remove this once we get AspectJ in here!
-				notifyServiceWrapper.addSessionEvent(this.getID(), Integer
+				notifierService.addSessionEvent(this.getID(), Integer
 						.toString(sessionID));
 				return sessionID.toString();
 			}

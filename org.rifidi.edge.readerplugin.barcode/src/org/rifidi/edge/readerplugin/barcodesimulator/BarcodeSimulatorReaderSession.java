@@ -28,7 +28,6 @@ import org.rifidi.edge.core.services.notification.NotifierService;
 import org.rifidi.edge.core.services.notification.data.ReadCycle;
 import org.rifidi.edge.core.services.notification.data.ReadCycleMessageCreator;
 import org.rifidi.edge.readerplugin.barcodesimulator.tag.BarcodeSimulatorTagHandler;
-import org.springframework.jms.core.JmsTemplate;
 
 /**
  * The session for the Barcode reader.
@@ -44,10 +43,7 @@ public class BarcodeSimulatorReaderSession extends
 	/** The ID for the reader. */
 	private String readerID = null;
 
-	/** The JMS Template */
-	private JmsTemplate template = null;
-
-	/** A class for handling incoming tags.   */
+	/** A class for handling incoming tags. */
 	private BarcodeSimulatorTagHandler tagHandler = null;
 
 	/**
@@ -60,13 +56,10 @@ public class BarcodeSimulatorReaderSession extends
 	 * @param commandConfigurations
 	 */
 	public BarcodeSimulatorReaderSession(AbstractSensor<?> sensor, String id,
-			int port, JmsTemplate template, NotifierService notifierService,
-			String readerID,
+			int port, NotifierService notifierService, String readerID,
 			Set<AbstractCommandConfiguration<?>> commandConfigurations) {
-		super(sensor, id, template.getDefaultDestination(), template, port, 10,
-				commandConfigurations);
+		super(sensor, id, port, 10, commandConfigurations);
 		this.readerID = readerID;
-		this.template = template;
 		this.notifierService = notifierService;
 		this.tagHandler = new BarcodeSimulatorTagHandler(readerID);
 	}
@@ -86,12 +79,6 @@ public class BarcodeSimulatorReaderSession extends
 				status);
 	}
 
-	/**
-	 * Returns the JMSTemplate. 
-	 */
-	public JmsTemplate getTemplate() {
-		return template;
-	}
 
 	/*
 	 * (non-Javadoc)
@@ -123,8 +110,9 @@ public class BarcodeSimulatorReaderSession extends
 
 		this.getSensor().send(cycle);
 
-		this.template.send(this.template.getDefaultDestination(),
-				new ReadCycleMessageCreator(cycle));
+		//TODO: SEND TAGS
+		//this.template.send(this.template.getDefaultDestination(),
+		//		new ReadCycleMessageCreator(cycle));
 	}
 
 	/**
@@ -159,12 +147,12 @@ public class BarcodeSimulatorReaderSession extends
 			MessageProcessingStrategy {
 
 		/**
-		 * The session object.  
+		 * The session object.
 		 */
 		private BarcodeSimulatorReaderSession session = null;
 
 		/**
-		 * Processing strategy for the Ambient Barcode.  
+		 * Processing strategy for the Ambient Barcode.
 		 * 
 		 * @param session
 		 * @param template
@@ -197,7 +185,7 @@ public class BarcodeSimulatorReaderSession extends
 		private BarcodeSimulatorReaderSession session;
 
 		/**
-		 * Factory class for the ProcessingStrategy.  
+		 * Factory class for the ProcessingStrategy.
 		 */
 		public BarcodeMessageProcessingStrategyFactory(
 				BarcodeSimulatorReaderSession session) {

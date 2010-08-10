@@ -2,14 +2,13 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Rifidi Edge Core
 Bundle-SymbolicName: org.rifidi.edge.core
-Bundle-Version: 5.3.8
+Bundle-Version: 5.4.0
 Bundle-Vendor: Pramari, LLC
 Import-Package: com.espertech.esper.client,
  com.espertech.esper.client.metric,
  com.espertech.esper.client.soda,
  com.espertech.esper.client.time,
  com.espertech.esper.event,
- javax.jms;version="1.1.0",
  javax.xml.namespace,
  javax.xml.parsers,
  javax.xml.xpath,
@@ -23,9 +22,6 @@ Import-Package: com.espertech.esper.client,
  net.sf.cglib.transform.hook;version="2.1.3",
  net.sf.cglib.transform.impl;version="2.1.3",
  net.sf.cglib.util;version="2.1.3",
- org.apache.activemq;version="5.1.0",
- org.apache.activemq.broker;version="5.1.0",
- org.apache.activemq.command;version="5.1.0",
  org.apache.commons.codec.binary;version="1.3.0",
  org.apache.commons.logging;version="1.1.1",
  org.epcglobalinc.tdt,
@@ -36,11 +32,6 @@ Import-Package: com.espertech.esper.client,
  org.springframework.beans.factory;version="2.5.5",
  org.springframework.beans.factory.config;version="2.5.5",
  org.springframework.core.io;version="2.5.6.SEC01",
- org.springframework.jms;version="2.5.5",
- org.springframework.jms.core;version="2.5.5",
- org.springframework.jms.core.support;version="2.5.5",
- org.springframework.jms.listener;version="2.5.5",
- org.springframework.jms.support;version="2.5.5",
  org.w3c.dom,
  org.xml.sax
 Export-Package: org.rifidi.edge.core.configuration,
@@ -67,6 +58,6 @@ Export-Package: org.rifidi.edge.core.configuration,
  org.rifidi.edge.core.utilities
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-Description: This bundle contains several core services needed by the edge server, such as ReaderSession service
-Require-Bundle: org.rifidi.edge.core.services;bundle-version="1.3.0",
+Require-Bundle: org.rifidi.edge.core.services;bundle-version="1.4.0",
  org.rifidi.edge.api;bundle-version="1.3.0",
  org.rifidi.gnu.io;bundle-version="2.1.7"
