@@ -6,17 +6,6 @@
      http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi.xsd
      http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd">
 
-	<bean
-		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-		<property name="locations">
-			<value>classpath:META-INF/spring/bundle.properties
-			</value>
-		</property>
-		<property name="systemPropertiesMode">
-			<value>2</value>
-		</property>
-	</bean>
-
 	<bean class="org.rifidi.edge.core.services.jms.JMSInit" />
 
 
