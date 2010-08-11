@@ -99,7 +99,7 @@ public class EsperUtil {
 		throw new IllegalArgumentException("Invalid Esper time expression: "
 				+ esperTime);
 	}
-	
+
 	/**
 	 * A helper method to create the "insert into" statement. Only tags seen in
 	 * the listed readzones are inserted into the given window. If the List is
@@ -114,6 +114,22 @@ public class EsperUtil {
 				+ " select * from ReadCycle[select * from tags "
 				+ whereClause(readZones) + "]";
 		return s;
+	}
+
+	/**
+	 * A helper method to create the "insert into" statement. Only tags seen in
+	 * the given readzone are inserted into the given window. The readzone
+	 * cannot be null.
+	 * 
+	 * @param windowname
+	 * @param readZone
+	 * @return
+	 */
+	public static String buildInsertStatement(String windowname,
+			ReadZone readZone) {
+		List<ReadZone> readZoneList = new ArrayList<ReadZone>();
+		readZoneList.add(readZone);
+		return buildInsertStatement(windowname, readZoneList);
 	}
 
 	/**
@@ -204,11 +220,11 @@ public class EsperUtil {
 		return sb.toString();
 	}
 
-	private static String buildTagFilter(String filter, boolean include){
-		if(include){
-			return " tag.formattedID regexp '"+filter+"'";
-		}else{
-			return " tag.formattedID not regexp '"+filter+"'";
+	private static String buildTagFilter(String filter, boolean include) {
+		if (include) {
+			return " tag.formattedID regexp '" + filter + "'";
+		} else {
+			return " tag.formattedID not regexp '" + filter + "'";
 		}
 	}
 }
