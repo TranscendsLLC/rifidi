@@ -40,9 +40,10 @@ public class TagGeneratorCommandProvider implements CommandProvider {
 	public String getHelp() {
 		StringBuffer retVal = new StringBuffer();
 		retVal.append("  ---Diagnostic Tag Generator App Commands---\n");
-		return "\tstartTagRunner <tagSetID> <exposureID> - starts a given tag runner based "
+		retVal.append( "\tstartTagRunner <tagSetID> <exposureID> - starts a given tag runner based "
 				+ "on the tag and exposure property files in "
-				+ "the Diagnostic data folder\n";
+				+ "the Diagnostic data folder\n");
+		return retVal.toString();
 	}
 
 }

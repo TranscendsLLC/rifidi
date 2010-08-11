@@ -86,14 +86,14 @@ public class TagSet {
 	 */
 	private List<ReadCycle> getGroup(List<TagReadData> tags, int groupSize,
 			int firstIndex) {
-		List<TagReadData> tempList = new ArrayList<TagReadData>(tags);
+		List<TagReadData> tempList = new ArrayList<TagReadData>();
 		int index = new Integer(firstIndex);
 		while (tempList.size() < groupSize) {
 			index = index++;
-			if (index >= tagList.size()) {
+			if (index >= tags.size()) {
 				index = 0;
 			}
-			tempList.add(tagList.get(index));
+			tempList.add(tags.get(index));
 		}
 		return buildReadCycle(tempList);
 
