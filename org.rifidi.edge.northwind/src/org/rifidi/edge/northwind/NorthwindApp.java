@@ -38,8 +38,29 @@ import com.espertech.esper.client.StatementAwareUpdateListener;
  */
 public class NorthwindApp extends AbstractRifidiApp {
 
-	String dockdoor_reader = "Alien_1";
-	String weighstation_reader = "Alien_2";
+	// The names of the readers.
+	private String dockdoor_reader = "Alien_1";
+	private String weighstation_reader = "Alien_2";
+
+	// How long a tag can not be seen by a reader before the reader assumes the
+	// tag has left the field of view, in seconds.
+	private Float dockdoor_timeout = 2.0f;
+	private Float weighstation_timeout = 2.0f;
+
+	// How long a tag can remain on either the dockdoor or the weigh station
+	// before an alert is sent.
+	private String dockdoor_dwelltime = "120 sec";
+	private String weighstation_dwelltime = "120 sec";
+
+	// The maximum amount of time it should take before the tag makes its way
+	// from the dock door to the weigh station.
+	private String dockdoor_to_weighstation_timer = "10 min";
+	// The maximum amount of time a tag should be held once seen on the weigh
+	// station to make sure it doesn't go backwards. For example, if the tag is
+	// seen on
+	// the weigh station, and then 8 minutes later it is seen on the dock door,
+	// an alert will be fired.
+	private String weighstation_to_dockdoor_timer = "10 min";
 
 	private List<ReadZoneSubscriber> subscriberList = new ArrayList<ReadZoneSubscriber>();
 
@@ -69,29 +90,42 @@ public class NorthwindApp extends AbstractRifidiApp {
 		addEventType(WeighStationDepartedEvent.class);
 		addEventType(WeighStationArrivedEvent.class);
 
-		ReadZone dock_door = new ReadZone("Alien_1");
-		ReadZone weigh_station = new ReadZone("Alien_2");
+		// Create the read zones. Currently the only read zones are the Dock
+		// Door and the Weigh Station.
+		ReadZone dock_door = new ReadZone(dockdoor_reader);
+		ReadZone weigh_station = new ReadZone(weighstation_reader);
 
+		// Create the subscribers, which will monitor the defined read zones and
+		// send out events based on certain criteria.
 		NorthwindDockDoorReadZoneSubscriber dock_door_subscriber = new NorthwindDockDoorReadZoneSubscriber(
 				this, "dock_door");
 		NorthwindWeighStationReadZoneSubscriber weigh_station_subscriber = new NorthwindWeighStationReadZoneSubscriber(
 				this, "weigh_station");
+		// Add the subscribers to the subscriber list. This allows the
+		// subscribers to be deleted when needed.
 		this.subscriberList.add(dock_door_subscriber);
 		this.subscriberList.add(weigh_station_subscriber);
 
+		// Start listening to the subscribers we have created. All tags sent
+		// back by the readers are now being monitored, and all events generated
+		// from those tags will go into Esper.
 		this.readZoneMonitoringService.subscribe(dock_door_subscriber,
-				dock_door, 2.0f, TimeUnit.SECONDS);
+				dock_door, this.dockdoor_timeout, TimeUnit.SECONDS);
 		this.readZoneMonitoringService.subscribe(weigh_station_subscriber,
-				weigh_station, 2.0f, TimeUnit.SECONDS);
+				weigh_station, this.weighstation_timeout, TimeUnit.SECONDS);
 
+		// These statements insert all TagReadEvents from the given ReadZones
+		// into esper.
 		String insert_dockdoor_all = EsperUtil.buildInsertStatement(
 				"dock_door", dock_door);
 		String insert_weighstation_all = EsperUtil.buildInsertStatement(
 				"weigh_station", weigh_station);
-
 		addStatement(insert_dockdoor_all);
 		addStatement(insert_weighstation_all);
 
+		// This statement monitors the dock door and makes sure tags don't stay
+		// on too long. The amount of time a tag can be seen before generating
+		// an event is controlled by the "dockdoor_dwelltime" variable.
 		StatementAwareUpdateListener dockDoorTagOnTooLongListener = new StatementAwareUpdateListener() {
 			@Override
 			public void update(EventBean[] arg0, EventBean[] arg1,
@@ -107,7 +141,8 @@ public class NorthwindApp extends AbstractRifidiApp {
 		};
 		addStatement("select dockarrived.tag from pattern "
 				+ "[every dockarrived=DockDoorArrivedEvent-> "
-				+ "timer:interval(10 sec) and not DockDoorDepartedEvent"
+				+ "timer:interval(" + this.dockdoor_dwelltime
+				+ ") and not DockDoorDepartedEvent"
 				+ "(tag.tag.ID=dockarrived.tag.tag.ID)]",
 				dockDoorTagOnTooLongListener);
 		StatementAwareUpdateListener weighStationTagOnTooLongListener = new StatementAwareUpdateListener() {
@@ -125,7 +160,8 @@ public class NorthwindApp extends AbstractRifidiApp {
 		};
 		addStatement("select weigharrived.tag from pattern "
 				+ "[every weigharrived=WeighStationArrivedEvent-> "
-				+ "timer:interval(10 sec) and not WeighStationDepartedEvent"
+				+ "timer:interval(" + this.weighstation_dwelltime
+				+ ") and not WeighStationDepartedEvent"
 				+ "(tag.tag.ID=weigharrived.tag.tag.ID)]",
 				weighStationTagOnTooLongListener);
 
@@ -184,9 +220,11 @@ public class NorthwindApp extends AbstractRifidiApp {
 				}
 			}
 		};
-		addStatement("select skipdocktag.tag from WeighStationArrivedEvent as skipdocktag "
-				+ "where not exists (select * from dockdoorpre.std:unique(tag) "
-				+ "as d where skipdocktag.tag = d.tag)", dockDoorSkipListener);
+		addStatement(
+				"select skipdocktag.tag from WeighStationArrivedEvent as skipdocktag "
+						+ "where not exists (select * from dockdoorpre.std:unique(tag) "
+						+ "as d where skipdocktag.tag = d.tag)",
+				dockDoorSkipListener);
 
 	}
 
