@@ -82,6 +82,10 @@ public class NorthwindApp extends AbstractRifidiApp {
 	 */
 	@Override
 	public void _start() {
+		// The _start method is called after the initialize method. In this
+		// method you want to define your ReadZones and define your subscribers.
+		// This is also a good place to create your esper statements and
+		// listeners.
 		super._start();
 
 		/* These statements register the events we will use */
@@ -123,9 +127,10 @@ public class NorthwindApp extends AbstractRifidiApp {
 		addStatement(insert_dockdoor_all);
 		addStatement(insert_weighstation_all);
 
-		// This statement monitors the dock door and makes sure tags don't stay
-		// on too long. The amount of time a tag can be seen before generating
-		// an event is controlled by the "dockdoor_dwelltime" variable.
+		// These statements monitor the dock door and weigh station and makes
+		// sure tags don't stay on too long. The amount of time a tag can be
+		// seen before generating an event are controlled by the
+		// "dockdoor_dwelltime" and "weighstation_dwelltime" variables.
 		StatementAwareUpdateListener dockDoorTagOnTooLongListener = new StatementAwareUpdateListener() {
 			@Override
 			public void update(EventBean[] arg0, EventBean[] arg1,
@@ -165,6 +170,11 @@ public class NorthwindApp extends AbstractRifidiApp {
 				+ "(tag.tag.ID=weigharrived.tag.tag.ID)]",
 				weighStationTagOnTooLongListener);
 
+		// This monitor detects when a tag moves in the correct order: from dock
+		// door to weigh station. The amount of time it would take these
+		// statements to time out is given by the
+		// "dockdoor_to_weighstation_timer" variables and the
+		// "weighstation_to_dockdoor_timer" variables.
 		StatementAwareUpdateListener dockDoorToWeighStationListener = new StatementAwareUpdateListener() {
 			@Override
 			public void update(EventBean[] arg0, EventBean[] arg1,
@@ -181,8 +191,9 @@ public class NorthwindApp extends AbstractRifidiApp {
 		addStatement("select dock2weigh.tag from pattern "
 				+ "[every dock2weigh=DockDoorDepartedEvent-> "
 				+ "WeighStationArrivedEvent"
-				+ "(tag.tag.ID=dock2weigh.tag.tag.ID) "
-				+ "where timer:within(10 min)]", dockDoorToWeighStationListener);
+				+ "(tag.tag.ID=dock2weigh.tag.tag.ID) " + "where timer:within("
+				+ this.dockdoor_to_weighstation_timer + ")]",
+				dockDoorToWeighStationListener);
 
 		StatementAwareUpdateListener backwardsListener = new StatementAwareUpdateListener() {
 			@Override
@@ -196,18 +207,17 @@ public class NorthwindApp extends AbstractRifidiApp {
 				}
 			}
 		};
-
 		// Weigh station followed by dock door (going backwards, should not
 		// happen)
 		addStatement("select weigh2dock.tag from pattern "
 				+ "[every weigh2dock=WeighStationDepartedEvent-> "
 				+ "DockDoorArrivedEvent"
-				+ "(tag.tag.ID=weigh2dock.tag.tag.ID) "
-				+ "where timer:within(10 min)]", backwardsListener);
+				+ "(tag.tag.ID=weigh2dock.tag.tag.ID) " + "where timer:within("
+				+ this.weighstation_to_dockdoor_timer + ")]", backwardsListener);
 
-		//
-		addStatement("insert into dockdoorpre select * from DockDoorArrivedEvent");
-
+		// This listener will happen if a tag arrives at the weigh station which
+		// has not been seen at the dock door (or it took too long getting from
+		// the weigh station to the dock door and the statement timed out).
 		StatementAwareUpdateListener dockDoorSkipListener = new StatementAwareUpdateListener() {
 			@Override
 			public void update(EventBean[] arg0, EventBean[] arg1,
@@ -220,6 +230,7 @@ public class NorthwindApp extends AbstractRifidiApp {
 				}
 			}
 		};
+		addStatement("insert into dockdoorpre select * from DockDoorArrivedEvent");
 		addStatement(
 				"select skipdocktag.tag from WeighStationArrivedEvent as skipdocktag "
 						+ "where not exists (select * from dockdoorpre.std:unique(tag) "
@@ -254,6 +265,9 @@ public class NorthwindApp extends AbstractRifidiApp {
 	 */
 	@Override
 	public void initialize() {
+		// The initialize method is called first when the plugin is starting up.
+		// This is a good time to load in any variables you will need from
+		// external sources like properties files.
 
 	}
 
