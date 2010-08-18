@@ -32,7 +32,10 @@ import com.espertech.esper.client.EventBean;
 import com.espertech.esper.client.StatementAwareUpdateListener;
 
 /**
- * 
+ * This application is a sample displaying how a Rifidi Edge application is put
+ * together. It monitors 2 read zones, the "dock door" and the "weigh station".
+ * In a normal workflow, a tag will appear and disappear at the dock door, and
+ * then appear and disappear at the weigh station.  
  * 
  * @author Matthew Dean - matt@pramari.com
  */
@@ -55,11 +58,11 @@ public class NorthwindApp extends AbstractRifidiApp {
 	// The maximum amount of time it should take before the tag makes its way
 	// from the dock door to the weigh station.
 	private String dockdoor_to_weighstation_timer = "10 min";
+
 	// The maximum amount of time a tag should be held once seen on the weigh
 	// station to make sure it doesn't go backwards. For example, if the tag is
-	// seen on
-	// the weigh station, and then 8 minutes later it is seen on the dock door,
-	// an alert will be fired.
+	// seen on the weigh station, and then 8 minutes later it is seen on the
+	// dock door, an alert will be fired.
 	private String weighstation_to_dockdoor_timer = "10 min";
 
 	private List<ReadZoneSubscriber> subscriberList = new ArrayList<ReadZoneSubscriber>();
@@ -189,7 +192,7 @@ public class NorthwindApp extends AbstractRifidiApp {
 		};
 		// Dock door followed by weigh station (what should happen)
 		addStatement("select dock2weigh.tag from pattern "
-				+ "[every dock2weigh=DockDoorDepartedEvent-> "
+				+ "[every dock2weigh=DockDoorArrivedEvent-> "
 				+ "WeighStationArrivedEvent"
 				+ "(tag.tag.ID=dock2weigh.tag.tag.ID) " + "where timer:within("
 				+ this.dockdoor_to_weighstation_timer + ")]",
@@ -210,7 +213,7 @@ public class NorthwindApp extends AbstractRifidiApp {
 		// Weigh station followed by dock door (going backwards, should not
 		// happen)
 		addStatement("select weigh2dock.tag from pattern "
-				+ "[every weigh2dock=WeighStationDepartedEvent-> "
+				+ "[every weigh2dock=WeighStationArrivedEvent-> "
 				+ "DockDoorArrivedEvent"
 				+ "(tag.tag.ID=weigh2dock.tag.tag.ID) " + "where timer:within("
 				+ this.weighstation_to_dockdoor_timer + ")]", backwardsListener);
@@ -234,7 +237,7 @@ public class NorthwindApp extends AbstractRifidiApp {
 		addStatement(
 				"select skipdocktag.tag from WeighStationArrivedEvent as skipdocktag "
 						+ "where not exists (select * from dockdoorpre.std:unique(tag) "
-						+ "as d where skipdocktag.tag = d.tag)",
+						+ "as d where skipdocktag.tag.tag.ID = d.tag.tag.ID)",
 				dockDoorSkipListener);
 
 	}
@@ -269,6 +272,18 @@ public class NorthwindApp extends AbstractRifidiApp {
 		// This is a good time to load in any variables you will need from
 		// external sources like properties files.
 
+		this.dockdoor_reader = getProperty("DockDoorReader", null);
+		this.weighstation_reader = getProperty("WeighStationReader", null);
+		this.dockdoor_dwelltime = getProperty("DockDoorDwellTime", null);
+		this.weighstation_dwelltime = getProperty("WeighStationDwellTime", null);
+		this.dockdoor_timeout = Float.parseFloat(getProperty("DockDoorTimeout",
+				null));
+		this.weighstation_timeout = Float.parseFloat(getProperty(
+				"WeighStationTimeout", null));
+		this.dockdoor_to_weighstation_timer = getProperty(
+				"DockDoorToWeighStationTimer", null);
+		this.weighstation_to_dockdoor_timer = getProperty(
+				"WeighStationToDockDoorTimer", null);
 	}
 
 	/**
