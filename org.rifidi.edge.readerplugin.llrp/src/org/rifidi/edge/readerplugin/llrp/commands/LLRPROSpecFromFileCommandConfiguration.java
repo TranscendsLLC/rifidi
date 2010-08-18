@@ -93,8 +93,10 @@ public class LLRPROSpecFromFileCommandConfiguration extends
 			 * isn't correctly formatted. If you don't know how to format a
 			 * file, generate an ADD_ROSPEC xml with LLRP Commander.
 			 */
+			String directory = System.getProperty("org.rifidi.home");
+			String file = directory+File.separator+filename;
 			command.setAddrospeccommand((ADD_ROSPEC) Util
-					.loadXMLLLRPMessage(new File(filename)));
+					.loadXMLLLRPMessage(new File(file)));
 			retval = command;
 		} catch (FileNotFoundException e) {
 			logger.error(e.getMessage());

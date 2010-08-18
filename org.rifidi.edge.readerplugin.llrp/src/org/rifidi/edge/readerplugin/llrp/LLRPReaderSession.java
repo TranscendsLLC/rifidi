@@ -365,8 +365,10 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 	 */
 	public SET_READER_CONFIG createSetReaderConfig() {
 		try {
+			String directory = System.getProperty("org.rifidi.home");
+			String file = directory+File.separator+readerConfigPath;
 			LLRPMessage message = Util.loadXMLLLRPMessage(new File(
-					readerConfigPath));
+					file));
 			return (SET_READER_CONFIG) message;
 		} catch (Exception e) {
 			logger.warn("No SET_READER_CONFIG message found at "

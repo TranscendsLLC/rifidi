@@ -71,6 +71,7 @@ public class TagSet {
 	public synchronized List<ReadCycle> getNextGroup(int groupSize) {
 		List<ReadCycle> tempList = getGroup(tagList, groupSize, currentIndex);
 
+
 		// calculates the new index value based on modular division
 		currentIndex = (currentIndex + groupSize) % tagList.size();
 		return tempList;
@@ -89,7 +90,7 @@ public class TagSet {
 		List<TagReadData> tempList = new ArrayList<TagReadData>();
 		int index = new Integer(firstIndex);
 		while (tempList.size() < groupSize) {
-			index = index++;
+			index++;
 			if (index >= tags.size()) {
 				index = 0;
 			}
