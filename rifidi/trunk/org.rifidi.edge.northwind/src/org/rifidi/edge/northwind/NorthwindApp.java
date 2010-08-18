@@ -35,7 +35,7 @@ import com.espertech.esper.client.StatementAwareUpdateListener;
  * This application is a sample displaying how a Rifidi Edge application is put
  * together. It monitors 2 read zones, the "dock door" and the "weigh station".
  * In a normal workflow, a tag will appear and disappear at the dock door, and
- * then appear and disappear at the weigh station.  
+ * then appear and disappear at the weigh station.
  * 
  * @author Matthew Dean - matt@pramari.com
  */
@@ -71,7 +71,8 @@ public class NorthwindApp extends AbstractRifidiApp {
 	private ReadZoneMonitoringService readZoneMonitoringService;
 
 	/**
-	 * 
+	 * Constructor for the application. The group and name are the identifying
+	 * information for this application, which are set and called by spring.
 	 * 
 	 * @param group
 	 * @param name
@@ -141,7 +142,7 @@ public class NorthwindApp extends AbstractRifidiApp {
 				if (arg0 != null) {
 					TagReadEvent tag = (TagReadEvent) arg0[0]
 							.get("dockarrived.tag");
-					System.out.println("TAG SEEN TOO LONG ON DOCK DOOR: "
+					System.out.println("Tag seen for too long on the dock door: "
 							+ tag.getTag().getID());
 				}
 
@@ -160,7 +161,7 @@ public class NorthwindApp extends AbstractRifidiApp {
 				if (arg0 != null) {
 					TagReadEvent tag = (TagReadEvent) arg0[0]
 							.get("weigharrived.tag");
-					System.out.println("TAG SEEN TOO LONG ON WEIGH STATION: "
+					System.out.println("Tag seen for too long on the weigh station: "
 							+ tag.getTag().getID());
 				}
 

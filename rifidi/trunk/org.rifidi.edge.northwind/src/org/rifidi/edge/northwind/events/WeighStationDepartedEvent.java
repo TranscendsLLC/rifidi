@@ -14,7 +14,7 @@ package org.rifidi.edge.northwind.events;
 import org.rifidi.edge.core.services.notification.data.TagReadEvent;
 
 /**
- * 
+ * This event occurs when a tag departs the weigh station.  
  * 
  * @author Matthew Dean - matt@pramari.com
  */
