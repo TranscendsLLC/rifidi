@@ -14,8 +14,9 @@ package org.rifidi.edge.northwind.events;
 import org.rifidi.edge.core.services.notification.data.TagReadEvent;
 
 /**
+ * This event occurs whenever a tag arrives at the weigh station.
+ * 
  * @author Matthew Dean - matt@pramari.com
- *
  */
 public class WeighStationArrivedEvent {
 	/** The tag that arrived */

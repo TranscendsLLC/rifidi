@@ -17,22 +17,26 @@ import org.rifidi.edge.northwind.events.WeighStationArrivedEvent;
 import org.rifidi.edge.northwind.events.WeighStationDepartedEvent;
 
 /**
+ * This subscriber will monitor the weigh station and create an event whenever a
+ * tag is seen or leaves the view.
+ * 
  * @author Matthew Dean - matt@pramari.com
- *
  */
 public class NorthwindWeighStationReadZoneSubscriber implements
 		ReadZoneSubscriber {
 
+	// The application class. We need this so we can insert any events we create
+	// into Esper.
 	private NorthwindApp app;
 
 	private String location = null;
 
 	/**
-	 * 
 	 * @param app
 	 * @param location
 	 */
-	public NorthwindWeighStationReadZoneSubscriber(NorthwindApp app, String location) {
+	public NorthwindWeighStationReadZoneSubscriber(NorthwindApp app,
+			String location) {
 		this.location = location;
 		this.app = app;
 	}
@@ -63,6 +67,5 @@ public class NorthwindWeighStationReadZoneSubscriber implements
 				+ tag.getTag().getFormattedID());
 		this.app.sendNorthwindEvent(new WeighStationDepartedEvent(tag));
 	}
-
 
 }

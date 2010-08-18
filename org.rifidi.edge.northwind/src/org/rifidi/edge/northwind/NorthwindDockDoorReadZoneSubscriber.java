@@ -17,18 +17,19 @@ import org.rifidi.edge.northwind.events.DockDoorArrivedEvent;
 import org.rifidi.edge.northwind.events.DockDoorDepartedEvent;
 
 /**
- * 
+ * This subscriber will monitor the dock door and create an event whenever a tag
+ * is seen or leaves the view.
  * 
  * @author Matthew Dean - matt@pramari.com
  */
 public class NorthwindDockDoorReadZoneSubscriber implements ReadZoneSubscriber {
-
+	// The application class. We need this so we can insert any events we create
+	// into Esper.
 	private NorthwindApp app;
 
 	private String location = null;
 
 	/**
-	 * 
 	 * @param app
 	 * @param location
 	 */
