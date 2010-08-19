@@ -111,7 +111,7 @@ public class ReadZone implements Cloneable {
 				include = Boolean.parseBoolean(match);
 			}
 		}
-		if (!antennaProperty.trim().equals("")) {
+		if (antennaProperty!=null && !antennaProperty.trim().equals("")) {
 			String[] antennaArray = antennaProperty.split(",");
 			antennas = new Integer[antennaArray.length];
 			for (int i = 0; i < antennaArray.length; i++) {
