@@ -33,7 +33,6 @@ public class StableSetServiceImpl extends RifidiAppService<StableSetSubscriber> 
 	 */
 	public StableSetServiceImpl(String group, String name) {
 		super(group, name);
-		// TODO Auto-generated constructor stub
 	}
 	
 	/* (non-Javadoc)
