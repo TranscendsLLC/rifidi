@@ -29,15 +29,13 @@ public class NorthwindWeighStationReadZoneSubscriber implements
 	// into Esper.
 	private NorthwindApp app;
 
-	private String location = null;
+	private String location = "weigh_station";
 
 	/**
 	 * @param app
 	 * @param location
 	 */
-	public NorthwindWeighStationReadZoneSubscriber(NorthwindApp app,
-			String location) {
-		this.location = location;
+	public NorthwindWeighStationReadZoneSubscriber(NorthwindApp app) {
 		this.app = app;
 	}
 
