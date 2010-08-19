@@ -27,14 +27,13 @@ public class NorthwindDockDoorReadZoneSubscriber implements ReadZoneSubscriber {
 	// into Esper.
 	private NorthwindApp app;
 
-	private String location = null;
+	private String location = "dock_door";
 
 	/**
 	 * @param app
 	 * @param location
 	 */
-	public NorthwindDockDoorReadZoneSubscriber(NorthwindApp app, String location) {
-		this.location = location;
+	public NorthwindDockDoorReadZoneSubscriber(NorthwindApp app) {
 		this.app = app;
 	}
 
