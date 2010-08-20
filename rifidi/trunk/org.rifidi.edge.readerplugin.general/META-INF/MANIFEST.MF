@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: General
 Bundle-SymbolicName: org.rifidi.edge.readerplugin.general
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.0.0
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Require-Bundle: org.rifidi.edge.core;bundle-version="5.4.0",
  org.rifidi.edge.core.services;bundle-version="1.4.0",
