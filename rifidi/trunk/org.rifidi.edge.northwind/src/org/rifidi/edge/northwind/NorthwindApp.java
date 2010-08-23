@@ -67,6 +67,14 @@ public class NorthwindApp extends AbstractRifidiApp {
 	// of the value is "35", the forklift would have a GID tag.
 	private String forklift_prefix = "35";
 
+	// The amount of time a stable set subscriber will wait without seeing any
+	// new tags before it decides that it has seen them all.
+	private Float forklift_stable_set_time = 1.5f;
+
+	// Strings to represent the locations we are monitoring.
+	private static final String DOCK_DOOR = "dock_door";
+	private static final String WEIGH_STATION = "weigh_station";
+
 	// A list of ReadZoneSubscribers that is kept for when the time comes to
 	// unsubscribe them.
 	private List<ReadZoneSubscriber> subscriberList = new LinkedList<ReadZoneSubscriber>();
@@ -88,6 +96,32 @@ public class NorthwindApp extends AbstractRifidiApp {
 	 */
 	public NorthwindApp(String group, String name) {
 		super(group, name);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.rifidi.edge.core.app.api.AbstractRifidiApp#initialize()
+	 */
+	@Override
+	public void initialize() {
+		// The initialize method is called first when the application is
+		// starting up. This is a good time to load in any variables you will
+		// need from
+		// external sources like properties files.
+		this.dockdoor_dwelltime = getProperty("DockDoorDwellTime", null);
+		this.weighstation_dwelltime = getProperty("WeighStationDwellTime", null);
+		this.dockdoor_timeout = Float.parseFloat(getProperty("DockDoorTimeout",
+				null));
+		this.weighstation_timeout = Float.parseFloat(getProperty(
+				"WeighStationTimeout", null));
+		this.dockdoor_to_weighstation_timer = getProperty(
+				"DockDoorToWeighStationTimer", null);
+		this.weighstation_to_dockdoor_timer = getProperty(
+				"WeighStationToDockDoorTimer", null);
+		this.forklift_prefix = getProperty("ForkliftPrefix", null);
+		this.forklift_stable_set_time = Float.parseFloat(getProperty(
+				"ForkliftStableSetTime", null));
 	}
 
 	/**
@@ -114,20 +148,20 @@ public class NorthwindApp extends AbstractRifidiApp {
 
 		// Create the subscribers, which will monitor the defined read zones and
 		// send out events based on certain criteria.
-		NorthwindDockDoorReadZoneSubscriber dock_door_subscriber = new NorthwindDockDoorReadZoneSubscriber(
-				this);
-		NorthwindWeighStationReadZoneSubscriber weigh_station_subscriber = new NorthwindWeighStationReadZoneSubscriber(
-				this);
+		NorthwindReadZoneSubscriber dock_door_subscriber = new NorthwindReadZoneSubscriber(
+				this, DOCK_DOOR, true);
+		NorthwindReadZoneSubscriber weigh_station_subscriber = new NorthwindReadZoneSubscriber(
+				this, WEIGH_STATION, false);
 		// Add the subscribers to the subscriber list. This allows the
 		// subscribers to be deleted when needed.
-		NorthwindDockDoorForkliftSubscriber dock_door_forklift_subscriber = new NorthwindDockDoorForkliftSubscriber(
-				this.forklift_prefix);
-		NorthwindWeighStationForkliftSubscriber weigh_station_forklife_subscriber = new NorthwindWeighStationForkliftSubscriber(
-				this.forklift_prefix);
+		NorthwindForkliftSubscriber dock_door_forklift_subscriber = new NorthwindForkliftSubscriber(
+				this.forklift_prefix, DOCK_DOOR);
+		NorthwindForkliftSubscriber weigh_station_forklift_subscriber = new NorthwindForkliftSubscriber(
+				this.forklift_prefix, DOCK_DOOR);
 		this.subscriberList.add(dock_door_subscriber);
 		this.subscriberList.add(weigh_station_subscriber);
 		this.stableSubscriberList.add(dock_door_forklift_subscriber);
-		this.stableSubscriberList.add(weigh_station_forklife_subscriber);
+		this.stableSubscriberList.add(weigh_station_forklift_subscriber);
 
 		// Start listening to the subscribers we have created. All tags sent
 		// back by the readers are now being monitored, and all events generated
@@ -141,9 +175,11 @@ public class NorthwindApp extends AbstractRifidiApp {
 		tempDockList.add(dock_door);
 		tempWeighList.add(weigh_station);
 		this.stableSetService.subscribe(dock_door_forklift_subscriber,
-				tempDockList, 2.0f, TimeUnit.SECONDS, true);
-		this.stableSetService.subscribe(weigh_station_forklife_subscriber,
-				tempWeighList, 2.0f, TimeUnit.SECONDS, true);
+				tempDockList, this.forklift_stable_set_time, TimeUnit.SECONDS,
+				true);
+		this.stableSetService.subscribe(weigh_station_forklift_subscriber,
+				tempWeighList, this.forklift_stable_set_time, TimeUnit.SECONDS,
+				true);
 
 		// These statements monitor the dock door and weigh station and makes
 		// sure tags don't stay on too long. The amount of time a tag can be
@@ -281,31 +317,6 @@ public class NorthwindApp extends AbstractRifidiApp {
 	 */
 	public void sendNorthwindEvent(Object event) {
 		this.sendEvent(event);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.rifidi.edge.core.app.api.AbstractRifidiApp#initialize()
-	 */
-	@Override
-	public void initialize() {
-		// The initialize method is called first when the application is
-		// starting up. This is a good time to load in any variables you will
-		// need from
-		// external sources like properties files.
-		this.dockdoor_dwelltime = getProperty("DockDoorDwellTime", null);
-		this.weighstation_dwelltime = getProperty("WeighStationDwellTime", null);
-		this.dockdoor_timeout = Float.parseFloat(getProperty("DockDoorTimeout",
-				null));
-		this.weighstation_timeout = Float.parseFloat(getProperty(
-				"WeighStationTimeout", null));
-		this.dockdoor_to_weighstation_timer = getProperty(
-				"DockDoorToWeighStationTimer", null);
-		this.weighstation_to_dockdoor_timer = getProperty(
-				"WeighStationToDockDoorTimer", null);
-		this.forklift_prefix = getProperty("ForkliftPrefix", null);
-
 	}
 
 	/**

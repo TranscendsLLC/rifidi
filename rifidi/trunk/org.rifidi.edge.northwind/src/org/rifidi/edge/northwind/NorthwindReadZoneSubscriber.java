@@ -1,7 +1,7 @@
 /*
- *  NorthwindWeighStationReadZoneSubscriber.java
+ *  NorthwindReadZoneSubscriber.java
  *
- *  Created:	Aug 11, 2010
+ *  Created:	Aug 20, 2010
  *  Project:	Rifidi Edge Server - A middleware platform for RFID applications
  *  				http://www.rifidi.org
  *  				http://rifidi.sourceforge.net
@@ -13,30 +13,45 @@ package org.rifidi.edge.northwind;
 
 import org.rifidi.edge.core.app.api.service.tagmonitor.ReadZoneSubscriber;
 import org.rifidi.edge.core.services.notification.data.TagReadEvent;
+import org.rifidi.edge.northwind.events.DockDoorArrivedEvent;
+import org.rifidi.edge.northwind.events.DockDoorDepartedEvent;
 import org.rifidi.edge.northwind.events.WeighStationArrivedEvent;
 import org.rifidi.edge.northwind.events.WeighStationDepartedEvent;
 
 /**
- * This subscriber will monitor the weigh station and create an event whenever a
- * tag is seen or leaves the view.
+ * This subscriber will monitor a read zone and create an event whenever a tag
+ * is seen or leaves the view.
  * 
  * @author Matthew Dean - matt@pramari.com
  */
-public class NorthwindWeighStationReadZoneSubscriber implements
-		ReadZoneSubscriber {
+public class NorthwindReadZoneSubscriber implements ReadZoneSubscriber {
 
 	// The application class. We need this so we can insert any events we create
 	// into Esper.
 	private NorthwindApp app;
-
-	private String location = "weigh_station";
+	// The location this subscriber is monitoring.
+	private String location = null;
+	// Is the location the dock door? If not, it is the weigh station.
+	private Boolean isDockDoor = null;
 
 	/**
+	 * Constructor.
+	 * 
 	 * @param app
+	 *            The a0pplication which we need to send any events generated.
 	 * @param location
+	 *            A string representation of the location this subscriber is
+	 *            listening for events on.
+	 * @param isDockDoor
+	 *            Is this location the dock door? If not, it is the weigh
+	 *            station. This is used for determining the type of event to
+	 *            send out.
 	 */
-	public NorthwindWeighStationReadZoneSubscriber(NorthwindApp app) {
+	public NorthwindReadZoneSubscriber(NorthwindApp app, String location,
+			boolean isDockDoor) {
 		this.app = app;
+		this.location = location;
+		this.isDockDoor = isDockDoor;
 	}
 
 	/*
@@ -50,7 +65,11 @@ public class NorthwindWeighStationReadZoneSubscriber implements
 	public void tagArrived(TagReadEvent tag) {
 		System.out.println("Tag arrived at location " + location + ": "
 				+ tag.getTag().getFormattedID());
-		this.app.sendNorthwindEvent(new WeighStationArrivedEvent(tag));
+		if (this.isDockDoor) {
+			this.app.sendNorthwindEvent(new DockDoorArrivedEvent(tag));
+		} else {
+			this.app.sendNorthwindEvent(new WeighStationArrivedEvent(tag));
+		}
 	}
 
 	/*
@@ -63,7 +82,11 @@ public class NorthwindWeighStationReadZoneSubscriber implements
 	public void tagDeparted(TagReadEvent tag) {
 		System.out.println("Tag departed at location " + location + ": "
 				+ tag.getTag().getFormattedID());
-		this.app.sendNorthwindEvent(new WeighStationDepartedEvent(tag));
+		if (this.isDockDoor) {
+			this.app.sendNorthwindEvent(new DockDoorDepartedEvent(tag));
+		} else {
+			this.app.sendNorthwindEvent(new WeighStationDepartedEvent(tag));
+		}
 	}
 
 }
