@@ -13,6 +13,7 @@ package org.rifidi.edge.northwind;
 
 import java.util.Set;
 
+import org.rifidi.edge.core.app.api.service.tagmonitor.StableSetSubscriber;
 import org.rifidi.edge.core.services.notification.data.TagReadEvent;
 
 /**
@@ -23,7 +24,21 @@ import org.rifidi.edge.core.services.notification.data.TagReadEvent;
  * 
  * @author Matthew Dean - matt@pramari.com
  */
-public abstract class NorthwindForkliftSubscriber {
+public class NorthwindForkliftSubscriber implements
+		StableSetSubscriber {
+	// The prefix we expect for a forklift tag. As an example, it might be "35",
+	// indicating a GID tag.
+	private String forklift_prefix;
+	
+	// String to show the location this subscriber is listening to.
+	private String location;
+
+	public NorthwindForkliftSubscriber(String forklift_prefix, String location) {
+		this.forklift_prefix = forklift_prefix;
+
+		this.location = location;
+	}
+
 	/**
 	 * This method checks the existence of the forklift prefix in any of the
 	 * tags in the given set. If one is found, true is returned. If the prefix
@@ -50,8 +65,7 @@ public abstract class NorthwindForkliftSubscriber {
 	 * @param forklift_prefix
 	 * @param location
 	 */
-	public void checkForForklift(Set<TagReadEvent> stableSet,
-			String forklift_prefix, String location) {
+	private void checkForForklift(Set<TagReadEvent> stableSet) {
 		if (this.forklift_present(forklift_prefix, stableSet)) {
 			System.out.println("Forklift is present, there are "
 					+ stableSet.size() + " items on the field at location "
@@ -61,5 +75,16 @@ public abstract class NorthwindForkliftSubscriber {
 					+ stableSet.size() + " items present at location "
 					+ location + ".");
 		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seeorg.rifidi.edge.core.app.api.service.tagmonitor.StableSetSubscriber#
+	 * stableSetReached(java.util.Set)
+	 */
+	@Override
+	public void stableSetReached(Set<TagReadEvent> stableSet) {
+		this.checkForForklift(stableSet);
 	}
 }
