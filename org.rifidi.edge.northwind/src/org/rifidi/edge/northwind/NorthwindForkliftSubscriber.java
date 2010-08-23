@@ -39,14 +39,10 @@ public class NorthwindForkliftSubscriber implements
 		this.location = location;
 	}
 
-	/**
+	/*
 	 * This method checks the existence of the forklift prefix in any of the
 	 * tags in the given set. If one is found, true is returned. If the prefix
 	 * is not present, false is returned.
-	 * 
-	 * @param forklift_prefix
-	 * @param tags
-	 * @return
 	 */
 	private boolean forklift_present(String forklift_prefix,
 			Set<TagReadEvent> tags) {
@@ -58,12 +54,8 @@ public class NorthwindForkliftSubscriber implements
 		return false;
 	}
 
-	/**
-	 * Checks to see if the forklift is present
-	 * 
-	 * @param stableSet
-	 * @param forklift_prefix
-	 * @param location
+	/*
+	 * Checks to see if the forklift is present.  
 	 */
 	private void checkForForklift(Set<TagReadEvent> stableSet) {
 		if (this.forklift_present(forklift_prefix, stableSet)) {
