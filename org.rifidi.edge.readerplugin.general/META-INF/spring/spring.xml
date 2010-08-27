@@ -6,15 +6,15 @@
     http://www.springframework.org/schema/osgi/spring-osgi.xsd">
 
 	<!--  Create Reader Configuration Factory -->
-	<bean id="GeneralSensorFactory"
-		class="org.rifidi.edge.readerplugin.general.GeneralSensorFactory">
+	<bean id="GenericSensorFactory"
+		class="org.rifidi.edge.readerplugin.generic.GenericSensorFactory">
 		<property name="context" ref="bundleContext" />
 		<property name="notifierService" ref="JMSNotifierService"/> 
 	</bean>
 			
 	<!-- Put reader configuration service in OSGi registry -->
-	<osgi:service id="GeneralSensorConfigurationFactoryService"
-		ref="GeneralSensorFactory">
+	<osgi:service id="GenericSensorConfigurationFactoryService"
+		ref="GenericSensorFactory">
 		<osgi:interfaces>
 			<value>org.rifidi.edge.core.configuration.ServiceFactory</value>
 			<value>org.rifidi.edge.core.sensors.base.AbstractSensorFactory</value>

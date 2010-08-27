@@ -1,5 +1,5 @@
 /*
- *  GeneralSensor.java
+ *  GenericSensor.java
  *
  *  Created:	Aug 5, 2010
  *  Project:	Rifidi Edge Server - A middleware platform for RFID applications
@@ -9,7 +9,7 @@
  *  License:	GNU Public License (GPL)
  *  				http://www.opensource.org/licenses/gpl-3.0.html
  */
-package org.rifidi.edge.readerplugin.general;
+package org.rifidi.edge.readerplugin.generic;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -36,12 +36,15 @@ import org.rifidi.edge.core.sensors.exceptions.CannotDestroySensorException;
  * it is sent to the serversocket in the correct format. The format is as
  * follows:
  * 
- * ID:(tag ID)|
+ * ID:(tag ID)|Antenna:(antenna)|Timestamp:(millis since epoch)
+ * 
+ * Any amount of other values can be specified in pairs delimited by colons,
+ * with pipes delimiting pairs.
  * 
  * @author Matthew Dean - matt@pramari.com
  */
 @JMXMBean
-public class GeneralSensor extends AbstractSensor<GeneralSensorSession> {
+public class GenericSensor extends AbstractSensor<GenericSensorSession> {
 
 	/**
 	 * 
@@ -50,17 +53,17 @@ public class GeneralSensor extends AbstractSensor<GeneralSensorSession> {
 	/** The ID of the session */
 	private AtomicInteger sessionID = new AtomicInteger(0);
 	/** The name of the reader that will be displayed */
-	private String displayName = "General";
+	private String displayName = "Generic";
 	/** Flag to check if this reader is destroyed. */
 	private AtomicBoolean destroyed = new AtomicBoolean(false);
-	/** The only session an general reader allows. */
-	private AtomicReference<GeneralSensorSession> session = new AtomicReference<GeneralSensorSession>();
+	/** The only session an generic reader allows. */
+	private AtomicReference<GenericSensorSession> session = new AtomicReference<GenericSensorSession>();
 
 	/** MBeanInfo for this class. */
 	public static final MBeanInfo mbeaninfo;
 	static {
 		AnnotationMBeanInfoStrategy strategy = new AnnotationMBeanInfoStrategy();
-		mbeaninfo = strategy.getMBeanInfo(GeneralSensor.class);
+		mbeaninfo = strategy.getMBeanInfo(GenericSensor.class);
 	}
 
 	/*
@@ -84,7 +87,7 @@ public class GeneralSensor extends AbstractSensor<GeneralSensorSession> {
 	public String createSensorSession() throws CannotCreateSessionException {
 		if (!destroyed.get() && session.get() == null) {
 			Integer sessionID = this.sessionID.incrementAndGet();
-			if (session.compareAndSet(null, new GeneralSensorSession(this,
+			if (session.compareAndSet(null, new GenericSensorSession(this,
 					Integer.toString(sessionID), notifierService,
 					super.getID(), this.port,
 					new HashSet<AbstractCommandConfiguration<?>>()))) {
@@ -109,7 +112,7 @@ public class GeneralSensor extends AbstractSensor<GeneralSensorSession> {
 			throws CannotCreateSessionException {
 		if (!destroyed.get() && session.get() == null) {
 			Integer sessionID = this.sessionID.incrementAndGet();
-			if (session.compareAndSet(null, new GeneralSensorSession(this,
+			if (session.compareAndSet(null, new GenericSensorSession(this,
 					Integer.toString(sessionID), notifierService,
 					super.getID(), this.port,
 					new HashSet<AbstractCommandConfiguration<?>>()))) {
@@ -153,9 +156,9 @@ public class GeneralSensor extends AbstractSensor<GeneralSensorSession> {
 	@Override
 	public Map<String, SensorSession> getSensorSessions() {
 		Map<String, SensorSession> ret = new HashMap<String, SensorSession>();
-		GeneralSensorSession generalsession = session.get();
-		if (generalsession != null) {
-			ret.put(generalsession.getID(), generalsession);
+		GenericSensorSession genericsession = session.get();
+		if (genericsession != null) {
+			ret.put(genericsession.getID(), genericsession);
 		}
 		return ret;
 	}
