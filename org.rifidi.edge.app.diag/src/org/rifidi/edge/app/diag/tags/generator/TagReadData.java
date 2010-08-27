@@ -8,7 +8,6 @@ import java.math.BigInteger;
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Hex;
 import org.rifidi.edge.core.services.notification.data.EPCGeneration2Event;
-import org.rifidi.edge.core.services.notification.data.TagReadEvent;
 
 /**
  * This object is a factory for generating a TagReadEvent for getting from
@@ -26,49 +25,36 @@ import org.rifidi.edge.core.services.notification.data.TagReadEvent;
  * @author Kyle Neumeier - kyle@pramari.com
  * 
  */
-public class TagReadData {
-	/** The reader ID that 'saw' this tag */
-	private final String readerID;
-	/** The antenna that saw this tag */
-	private final int antennaID;
-	/** The event */
-	private final EPCGeneration2Event tag = new EPCGeneration2Event();
+public class TagReadData extends AbstractReadData<EPCGeneration2Event>{
+
 
 	/**
 	 * @param tagID
 	 * @param readerID
 	 * @param antenna
 	 */
-	public TagReadData(String tagID, String readerID, String antennaID) {
-		super();
-		this.readerID = readerID;
-		this.antennaID = Integer.parseInt(antennaID);
+	public TagReadData(String tagID, String readerID, int antennaID) {
+		super(tagID,readerID, antennaID);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.app.diag.tags.generator.AbstractReadData#createTag(java.lang.String)
+	 */
+	@Override
+	protected EPCGeneration2Event createTag(String id) {
+		EPCGeneration2Event tag = new EPCGeneration2Event();
 		try {
 			tag.setEPCMemory(
-					new BigInteger(Hex.decodeHex(tagID.toCharArray())), 96);
+					new BigInteger(Hex.decodeHex(id.toCharArray())), 96);
 		} catch (DecoderException e) {
 			e.printStackTrace();
 			tag.setEPCMemory(new BigInteger("0"), 96);
 		}
+		return tag;
 	}
+	
+	
 
-	/**
-	 * Return the reader this tag was seen on
-	 * 
-	 * @return
-	 */
-	public String getReaderID() {
-		return readerID;
-	}
 
-	/**
-	 * Return the TagReadEvent for this tag
-	 * 
-	 * @return
-	 */
-	public TagReadEvent getTagReadEvent() {
-		return new TagReadEvent(readerID, tag, antennaID, System
-				.currentTimeMillis());
-	}
 
 }

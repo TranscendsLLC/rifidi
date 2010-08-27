@@ -21,13 +21,13 @@ public abstract class ExposureRunner<T extends Exposure> implements Runnable {
 	/** The tag set to run */
 	private final TagSet tagSet;
 	/** The list of tag data */
-	protected List<TagReadData> tagData;
+	protected List<AbstractReadData<?>> tagData;
 	/** The exposure to run */
 	protected final T exposure;
 	/** The esper runtime */
 	private final EPRuntime epRuntime;
 	/** Turns true when the runner should stop */
-	private boolean shouldStop = false;
+	private volatile boolean shouldStop = false;
 	/** The total number of tags seen so far */
 	private int tagsSeen = 0;
 
@@ -42,7 +42,7 @@ public abstract class ExposureRunner<T extends Exposure> implements Runnable {
 	 *            The list of tags that should be used
 	 */
 	public ExposureRunner(EPRuntime epRuntime, T exposure,
-			List<TagReadData> tags) {
+			List<AbstractReadData<?>> tags) {
 		this.epRuntime = epRuntime;
 		this.exposure = exposure;
 		this.tagSet = new TagSet(tags);
@@ -69,11 +69,14 @@ public abstract class ExposureRunner<T extends Exposure> implements Runnable {
 			tagsSeen += readCycles.size();
 			checkTags();
 
-			try {
-				Thread.sleep(calculateDelay());
-			} catch (InterruptedException e) {
-				Thread.currentThread().interrupt();
-				return;
+			if (!shouldStop) {
+
+				try {
+					Thread.sleep(calculateDelay());
+				} catch (InterruptedException e) {
+					Thread.currentThread().interrupt();
+					return;
+				}
 			}
 		}
 	}

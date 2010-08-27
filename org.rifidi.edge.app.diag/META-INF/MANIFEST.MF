@@ -18,3 +18,5 @@ Import-Package: gnu.io;version="2.1.7",
  org.springframework.beans.factory.config;version="2.5.6.SEC01",
  org.springframework.core.io.support;version="2.5.6.SEC01"
 DynamicImport-Package: *
+Export-Package: org.rifidi.edge.app.diag.tags.generator,
+ org.rifidi.edge.app.diag.tags.generator.exposures

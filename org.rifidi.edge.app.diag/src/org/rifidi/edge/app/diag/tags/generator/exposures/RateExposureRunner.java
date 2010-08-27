@@ -5,8 +5,8 @@ package org.rifidi.edge.app.diag.tags.generator.exposures;
 
 import java.util.List;
 
+import org.rifidi.edge.app.diag.tags.generator.AbstractReadData;
 import org.rifidi.edge.app.diag.tags.generator.ExposureRunner;
-import org.rifidi.edge.app.diag.tags.generator.TagReadData;
 
 import com.espertech.esper.client.EPRuntime;
 
@@ -25,7 +25,7 @@ public class RateExposureRunner extends ExposureRunner<RateExposure> {
 	 * @param tags
 	 */
 	public RateExposureRunner(EPRuntime epRuntime, RateExposure exposure,
-			List<TagReadData> tags) {
+			List<AbstractReadData<?>> tags) {
 		super(epRuntime, exposure, tags);
 		int rate = exposure.getTagRate();
 		delayTime = Math.max(100, 1000 / rate);

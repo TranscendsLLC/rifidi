@@ -28,14 +28,14 @@ import org.rifidi.edge.core.services.notification.data.TagReadEvent;
 public class TagSet {
 
 	/** The tags to be shown */
-	private final List<TagReadData> tagList;
+	private final List<AbstractReadData<?>> tagList;
 	/** The tag index */
 	private int currentIndex;
 
 	/**
 	 * @param tagList
 	 */
-	public TagSet(List<TagReadData> tagList) {
+	public TagSet(List<AbstractReadData<?>> tagList) {
 		super();
 		if (tagList == null) {
 			throw new NullPointerException("TagList cannot be null");
@@ -55,7 +55,7 @@ public class TagSet {
 	 * @return
 	 */
 	public List<ReadCycle> getRandomGroup(int groupSize) {
-		List<TagReadData> tempList = new ArrayList<TagReadData>(tagList);
+		List<AbstractReadData<?>> tempList = new ArrayList<AbstractReadData<?>>(tagList);
 		Collections.shuffle(tempList);
 		return getGroup(tempList, groupSize, 0);
 	}
@@ -85,9 +85,9 @@ public class TagSet {
 	 * @param firstIndex
 	 * @return
 	 */
-	private List<ReadCycle> getGroup(List<TagReadData> tags, int groupSize,
+	private List<ReadCycle> getGroup(List<AbstractReadData<?>> tags, int groupSize,
 			int firstIndex) {
-		List<TagReadData> tempList = new ArrayList<TagReadData>();
+		List<AbstractReadData<?>> tempList = new ArrayList<AbstractReadData<?>>();
 		int index = new Integer(firstIndex);
 		while (tempList.size() < groupSize) {
 			index++;
@@ -106,9 +106,9 @@ public class TagSet {
 	 * @param tags
 	 * @return
 	 */
-	private List<ReadCycle> buildReadCycle(List<TagReadData> tags) {
+	private List<ReadCycle> buildReadCycle(List<AbstractReadData<?>> tags) {
 		List<ReadCycle> readCycles = new ArrayList<ReadCycle>();
-		for (TagReadData tag : tags) {
+		for (AbstractReadData<?> tag : tags) {
 			Set<TagReadEvent> tagReadEvents = new HashSet<TagReadEvent>();
 			tagReadEvents.add(tag.getTagReadEvent());
 			readCycles.add(new ReadCycle(tagReadEvents, tag.getReaderID(),
