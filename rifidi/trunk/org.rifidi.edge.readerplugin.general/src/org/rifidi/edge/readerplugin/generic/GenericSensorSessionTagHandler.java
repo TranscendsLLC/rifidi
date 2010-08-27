@@ -1,5 +1,5 @@
 /*
- *  GeneralSensorSessionTagHandler.java
+ *  GenericSensorSessionTagHandler.java
  *
  *  Created:	Aug 4, 2010
  *  Project:	Rifidi Edge Server - A middleware platform for RFID applications
@@ -9,7 +9,7 @@
  *  License:	GNU Public License (GPL)
  *  				http://www.opensource.org/licenses/gpl-3.0.html
  */
-package org.rifidi.edge.readerplugin.general;
+package org.rifidi.edge.readerplugin.generic;
 
 import java.math.BigInteger;
 import java.util.HashMap;
@@ -27,7 +27,7 @@ import org.rifidi.edge.core.services.notification.data.TagReadEvent;
  * 
  * @author Matthew Dean - matt@pramari.com
  */
-class GeneralSensorSessionTagHandler {
+class GenericSensorSessionTagHandler {
 
 	/**
 	 * All values we will be searching for upon message parsing: Tag ID,
@@ -43,13 +43,13 @@ class GeneralSensorSessionTagHandler {
 
 	private String readerID = null;
 
-	public GeneralSensorSessionTagHandler(String readerID) {
+	public GenericSensorSessionTagHandler(String readerID) {
 
 	}
 
 	/** Logger for this class. */
 	private static final Log logger = LogFactory
-			.getLog(GeneralSensorSessionTagHandler.class);
+			.getLog(GenericSensorSessionTagHandler.class);
 
 	/**
 	 * 

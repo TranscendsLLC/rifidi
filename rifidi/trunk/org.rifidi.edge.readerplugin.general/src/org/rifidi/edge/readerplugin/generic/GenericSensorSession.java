@@ -1,5 +1,5 @@
 /*
- *  GeneralSensorSession.java
+ *  GenericSensorSession.java
  *
  *  Created:	Aug 4, 2010
  *  Project:	Rifidi Edge Server - A middleware platform for RFID applications
@@ -9,7 +9,7 @@
  *  License:	GNU Public License (GPL)
  *  				http://www.opensource.org/licenses/gpl-3.0.html
  */
-package org.rifidi.edge.readerplugin.general;
+package org.rifidi.edge.readerplugin.generic;
 
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -30,32 +30,32 @@ import org.rifidi.edge.core.services.notification.data.ReadCycleMessageCreator;
 import org.rifidi.edge.core.services.notification.data.TagReadEvent;
 
 /**
- * The session class for the General sensor.
+ * The session class for the Generic sensor.
  * 
  * @author Matthew Dean - matt@pramari.com
  */
-public class GeneralSensorSession extends AbstractServerSocketSensorSession {
+public class GenericSensorSession extends AbstractServerSocketSensorSession {
 
 	/** Logger for this class. */
 	// private static final Log logger = LogFactory
-	// .getLog(GeneralSensorSession.class);
+	// .getLog(GenericSensorSession.class);
 
 	/** Service used to send out notifications */
 	private volatile NotifierService notifierService;
 
-	private GeneralSensorSessionTagHandler tagHandler = null;
+	private GenericSensorSessionTagHandler tagHandler = null;
 
 	/** The ID for the reader. */
 	private String readerID = null;
 
-	public GeneralSensorSession(AbstractSensor<?> sensor, String ID,
+	public GenericSensorSession(AbstractSensor<?> sensor, String ID,
 			NotifierService notifierService, String readerID,
 			int serverSocketPort,
 			Set<AbstractCommandConfiguration<?>> commandConfigurations) {
 		super(sensor, ID, serverSocketPort, 10, commandConfigurations);
 		this.readerID = readerID;
 		this.notifierService = notifierService;
-		this.tagHandler = new GeneralSensorSessionTagHandler(readerID);
+		this.tagHandler = new GenericSensorSessionTagHandler(readerID);
 
 	}
 
@@ -154,20 +154,20 @@ public class GeneralSensorSession extends AbstractServerSocketSensorSession {
 	 */
 	@Override
 	protected MessageProcessingStrategyFactory getMessageProcessingStrategyFactory() {
-		return new GeneralMessageProcessingStrategyFactory(this);
+		return new GenericMessageProcessingStrategyFactory(this);
 	}
 
 	/**
 	 * 
 	 * @author Matthew Dean - matt@pramari.com
 	 */
-	private class GeneralMessageProcessingStrategyFactory implements
+	private class GenericMessageProcessingStrategyFactory implements
 			MessageProcessingStrategyFactory {
 
-		private GeneralSensorSession session = null;
+		private GenericSensorSession session = null;
 
-		public GeneralMessageProcessingStrategyFactory(
-				GeneralSensorSession session) {
+		public GenericMessageProcessingStrategyFactory(
+				GenericSensorSession session) {
 			this.session = session;
 		}
 
@@ -180,13 +180,13 @@ public class GeneralSensorSession extends AbstractServerSocketSensorSession {
 		 */
 		@Override
 		public MessageProcessingStrategy createMessageProcessor() {
-			return new GeneralMessageProcessingStrategy(session);
+			return new GenericMessageProcessingStrategy(session);
 		}
 
 	}
 
 	/*
-	 * Message processing strategy for the GeneralSensorSession. This class will
+	 * Message processing strategy for the GenericSensorSession. This class will
 	 * take in a pipe-delimited message, parse out the expected values: ID:(tag
 	 * id), Antenna:(antenna tag was last seen on), and Timestamp:(milliseconds
 	 * since epoch expected).
@@ -194,12 +194,12 @@ public class GeneralSensorSession extends AbstractServerSocketSensorSession {
 	 * Anything else will go in the extrainformation hashmap as a key:value pair
 	 * separated by a colon.
 	 */
-	private class GeneralMessageProcessingStrategy implements
+	private class GenericMessageProcessingStrategy implements
 			MessageProcessingStrategy {
 
-		private GeneralSensorSession session = null;
+		private GenericSensorSession session = null;
 
-		public GeneralMessageProcessingStrategy(GeneralSensorSession session) {
+		public GenericMessageProcessingStrategy(GenericSensorSession session) {
 			this.session = session;
 		}
 

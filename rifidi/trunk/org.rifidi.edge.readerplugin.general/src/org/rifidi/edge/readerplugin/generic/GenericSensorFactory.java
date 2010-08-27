@@ -1,5 +1,5 @@
 /*
- *  GeneralSensorFactory.java
+ *  GenericSensorFactory.java
  *
  *  Created:	Aug 5, 2010
  *  Project:	Rifidi Edge Server - A middleware platform for RFID applications
@@ -9,7 +9,7 @@
  *  License:	GNU Public License (GPL)
  *  				http://www.opensource.org/licenses/gpl-3.0.html
  */
-package org.rifidi.edge.readerplugin.general;
+package org.rifidi.edge.readerplugin.generic;
 
 import java.util.Map;
 
@@ -21,20 +21,20 @@ import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
 import org.rifidi.edge.core.services.notification.NotifierService;
 
 /**
- * Factory class for the General reader.  
+ * Factory class for the Generic reader.  
  * 
  * @author Matthew Dean - matt@pramari.com
  */
-public class GeneralSensorFactory extends AbstractSensorFactory<GeneralSensor> {
+public class GenericSensorFactory extends AbstractSensorFactory<GenericSensor> {
 
 	
 
 	/** The Unique FACTORY_ID for this Factory */
-	public static final String FACTORY_ID = "General";
+	public static final String FACTORY_ID = "Generic";
 	/** Description of the sensorSession. */
-	private static final String description = "A general Rifidi Adapter.  ";
+	private static final String description = "A generic Rifidi Adapter.  ";
 	/** The name of the reader that will be displayed */
-	private static final String displayname = "General";
+	private static final String displayname = "Generic";
 	/** A JMS event notification sender */
 	private volatile NotifierService notifierService;
 	
@@ -84,7 +84,7 @@ public class GeneralSensorFactory extends AbstractSensorFactory<GeneralSensor> {
 		if (notifierService == null) {
 			throw new InvalidStateException("All services are not set");
 		}
-		GeneralSensor instance = new GeneralSensor();
+		GenericSensor instance = new GenericSensor();
 		instance.setID(serviceID);
 		instance.setNotifiyService(notifierService);
 		instance.register(getContext(), FACTORY_ID);
@@ -103,7 +103,7 @@ public class GeneralSensorFactory extends AbstractSensorFactory<GeneralSensor> {
 	 */
 	@Override
 	public MBeanInfo getServiceDescription(String factoryID) {
-		return (MBeanInfo)GeneralSensor.mbeaninfo;
+		return (MBeanInfo)GenericSensor.mbeaninfo;
 	}
 	
 	/**
