@@ -3,9 +3,9 @@ package org.rifidi.edge.app.diag.tags.generator.exposures;
 import java.util.List;
 import java.util.Properties;
 
+import org.rifidi.edge.app.diag.tags.generator.AbstractReadData;
 import org.rifidi.edge.app.diag.tags.generator.Exposure;
 import org.rifidi.edge.app.diag.tags.generator.ExposureRunner;
-import org.rifidi.edge.app.diag.tags.generator.TagReadData;
 
 import com.espertech.esper.client.EPRuntime;
 
@@ -39,7 +39,7 @@ public class RateExposure extends Exposure {
 	 * .List, com.espertech.esper.client.EPRuntime)
 	 */
 	@Override
-	public ExposureRunner<RateExposure> createRunner(List<TagReadData> tags,
+	public ExposureRunner<RateExposure> createRunner(List<AbstractReadData<?>> tags,
 			EPRuntime epRuntime) {
 		return new RateExposureRunner(epRuntime, this, tags);
 	}

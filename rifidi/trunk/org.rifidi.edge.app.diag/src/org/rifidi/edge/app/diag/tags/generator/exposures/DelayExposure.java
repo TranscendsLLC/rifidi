@@ -6,6 +6,7 @@ package org.rifidi.edge.app.diag.tags.generator.exposures;
 import java.util.List;
 import java.util.Properties;
 
+import org.rifidi.edge.app.diag.tags.generator.AbstractReadData;
 import org.rifidi.edge.app.diag.tags.generator.Exposure;
 import org.rifidi.edge.app.diag.tags.generator.ExposureRunner;
 import org.rifidi.edge.app.diag.tags.generator.TagReadData;
@@ -48,7 +49,7 @@ public class DelayExposure extends Exposure {
 	 * .List, com.espertech.esper.client.EPRuntime)
 	 */
 	@Override
-	public ExposureRunner<DelayExposure> createRunner(List<TagReadData> tags,
+	public ExposureRunner<DelayExposure> createRunner(List<AbstractReadData<?>> tags,
 			EPRuntime epRuntime) {
 		return new DelayExposureRunner(epRuntime, this, tags);
 	}

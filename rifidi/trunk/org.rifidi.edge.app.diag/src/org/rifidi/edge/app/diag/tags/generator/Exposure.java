@@ -22,7 +22,7 @@ public abstract class Exposure extends Properties {
 	/*
 	 * Properties that are common to all exposures
 	 */
-	
+
 	/** The type of exposure */
 	public static final String PROPERTY_TYPE = "exposureType";
 	/** A delay Exposure type - 'delay' */
@@ -102,7 +102,7 @@ public abstract class Exposure extends Properties {
 	 * @param runtime
 	 * @return
 	 */
-	public abstract ExposureRunner<?> createRunner(List<TagReadData> tags,
-			EPRuntime runtime);
+	public abstract ExposureRunner<?> createRunner(
+			List<AbstractReadData<?>> tags, EPRuntime runtime);
 
 }

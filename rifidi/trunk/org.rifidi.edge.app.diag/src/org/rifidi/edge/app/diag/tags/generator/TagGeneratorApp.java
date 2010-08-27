@@ -40,10 +40,10 @@ import org.rifidi.edge.core.app.api.AbstractRifidiApp;
  * @author Kyle Neumeier - kyle@pramari.com
  * 
  */
-public class TagGeneratorApp extends AbstractRifidiApp {
+public class TagGeneratorApp extends AbstractRifidiApp implements TagGenerator{
 
 	/** The List of tagReadData */
-	private HashMap<String, List<TagReadData>> tagReadData = new HashMap<String, List<TagReadData>>();
+	private HashMap<String, List<AbstractReadData<?>>> tagReadData = new HashMap<String, List<AbstractReadData<?>>>();
 	private HashMap<String, Exposure> exposures = new HashMap<String, Exposure>();
 	private HashMap<Integer, ExposureRunner<?>> runners = new HashMap<Integer, ExposureRunner<?>>();
 	private int runnerCount = 0;
@@ -68,14 +68,14 @@ public class TagGeneratorApp extends AbstractRifidiApp {
 		// init tags
 		Map<String, byte[]> tagFiles = super.getDataFiles("tags");
 		for (String id : tagFiles.keySet()) {
-			tagReadData.put(id, processTagFile(tagFiles.get(id)));
+			addTagSet(id, processTagFile(tagFiles.get(id)));
 			logger.info("Loaded tag file with ID " + id);
 		}
 
 		// init exposures
 		Map<String, byte[]> exposureFiles = super.getDataFiles("exposure");
 		for (String id : exposureFiles.keySet()) {
-			exposures.put(id, processExposureFile(exposureFiles.get(id)));
+			addExposure(id, processExposureFile(exposureFiles.get(id)));
 			logger.info("Loaded Exposure properties with ID " + id);
 		}
 
@@ -108,18 +108,12 @@ public class TagGeneratorApp extends AbstractRifidiApp {
 		String lazyStart = getProperty(LAZY_START, "true");
 		return Boolean.parseBoolean(lazyStart);
 	}
-
-	/**
-	 * Method to start a runner with the supplied tagBatchID and exposureID
-	 * 
-	 * @param tagReadDataID
-	 * @param exposureID
-	 * @return
+	
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.app.diag.tags.generator.TagGenerator#startRunner(java.util.List, org.rifidi.edge.app.diag.tags.generator.Exposure)
 	 */
-	public synchronized Integer startRunner(String tagReadDataID,
-			String exposureID) {
-		List<TagReadData> tags = tagReadData.get(tagReadDataID);
-		Exposure exposure = exposures.get(exposureID);
+	@Override
+	public Integer startRunner(List<AbstractReadData<?>> tags, Exposure exposure) {
 		if (tags == null) {
 			return null;
 		}
@@ -135,6 +129,45 @@ public class TagGeneratorApp extends AbstractRifidiApp {
 		t.start();
 		return runnerCount;
 	}
+
+	@Override
+	public synchronized Integer startRunner(String tagReadDataID,
+			String exposureID) {
+		List<AbstractReadData<?>> tags = tagReadData.get(tagReadDataID);
+		Exposure exposure = exposures.get(exposureID);
+		return startRunner(tags, exposure);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.app.diag.tags.generator.TagGenerator#stopRunner(java.lang.Integer)
+	 */
+	@Override
+	public void stopRunner(Integer runnerID) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	
+
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.app.diag.tags.generator.TagGenerator#addExposure(java.lang.String, org.rifidi.edge.app.diag.tags.generator.Exposure)
+	 */
+	@Override
+	public void addExposure(String exposureID, Exposure exposure) {
+		exposures.put(exposureID, exposure);
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.app.diag.tags.generator.TagGenerator#addTagSet(java.lang.String, java.util.List)
+	 */
+	@Override
+	public void addTagSet(String tagSetID, List<AbstractReadData<?>> tags) {
+		tagReadData.put(tagSetID, tags);
+		
+	}
+
+
 
 	/*
 	 * (non-Javadoc)
@@ -156,7 +189,7 @@ public class TagGeneratorApp extends AbstractRifidiApp {
 	 * @return
 	 */
 	private ExposureRunner<?> createExposureRunner(Exposure exposure,
-			List<TagReadData> tags) {
+			List<AbstractReadData<?>> tags) {
 		return exposure.createRunner(tags, this.getEPRuntime());
 	}
 
@@ -166,10 +199,10 @@ public class TagGeneratorApp extends AbstractRifidiApp {
 	 * @param file
 	 * @return
 	 */
-	private List<TagReadData> processTagFile(byte[] file) {
+	private List<AbstractReadData<?>> processTagFile(byte[] file) {
 		BufferedReader reader = new BufferedReader(new StringReader(new String(
 				file)));
-		List<TagReadData> retVal = new ArrayList<TagReadData>();
+		List<AbstractReadData<?>> retVal = new ArrayList<AbstractReadData<?>>();
 		try {
 			String line = reader.readLine();
 			while (line != null) {
@@ -177,7 +210,7 @@ public class TagGeneratorApp extends AbstractRifidiApp {
 					String[] values = line.split(",");
 					retVal
 							.add(new TagReadData(values[0], values[1],
-									values[2]));
+									Integer.parseInt(values[2])));
 				}
 				line = reader.readLine();
 			}
