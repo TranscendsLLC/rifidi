@@ -18,9 +18,9 @@ public class JMSInit {
 	public JMSInit() throws Exception {
 		try {
 			String directory = System.getProperty("activemq.base");
-			BrokerService externalbroker = BrokerFactory.createBroker(new URI(
+			BrokerService externalbroker = BrokerFactory.createBroker(new URI(new String(
 					"xbean:" + directory + File.separator
-							+ "rifidi-amq-external.xml"));
+							+ "rifidi-amq-external.xml").replace("\\", "/")));
 			externalbroker.start();
 		} catch (Exception e) {
 			e.printStackTrace();
