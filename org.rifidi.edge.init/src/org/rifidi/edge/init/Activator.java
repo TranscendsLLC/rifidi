@@ -38,6 +38,7 @@ public class Activator implements BundleActivator {
 		if (rifidiHome == null) {
 			String userDir = System.getProperty("user.dir");
 			System.setProperty("org.rifidi.home", userDir);
+			rifidiHome = System.getProperty("org.rifidi.home");
 		}
 		System.out.println("ALL RIFIDI CONFIGURATION PATHS RELATIVE TO : "
 				+ System.getProperty("org.rifidi.home"));
