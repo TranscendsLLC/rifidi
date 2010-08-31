@@ -21,7 +21,7 @@ import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
 
 /**
  * @author Kyle Neumeier - kyle@pramari.com
- * @author Daniel Gómez - dgomez@idlinksolutions.com
+ * @author Daniel Gomez - dgomez@idlinksolutions.com
  * 
  */
 @JMXMBean
