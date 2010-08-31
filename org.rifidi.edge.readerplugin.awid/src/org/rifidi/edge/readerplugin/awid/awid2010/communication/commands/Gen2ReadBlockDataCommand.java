@@ -17,7 +17,7 @@ package org.rifidi.edge.readerplugin.awid.awid2010.communication.commands;
  * 
  * 
  * @author Kyle Neumeier - kyle@pramari.com
- * @author Daniel Gómez - dgomez@idlinksolutions.com
+ * @author Daniel Gomez - dgomez@idlinksolutions.com
  * 
  */
 public class Gen2ReadBlockDataCommand extends AbstractAwidCommand {

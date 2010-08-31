@@ -29,7 +29,7 @@ import org.rifidi.edge.readerplugin.awid.awid2010.communication.TagResponseMessa
  * bytes into the memory banks of the EPCGeneration2Event
  * 
  * @author Kyle Neumeier - kyle@pramari.com
- * @author Daniel Gómez - dgomez@idlinksolutions.com
+ * @author Daniel Gomez - dgomez@idlinksolutions.com
  * 
  */
 public class Gen2ReadBlockDataResponse extends AbstractAwidMessage implements

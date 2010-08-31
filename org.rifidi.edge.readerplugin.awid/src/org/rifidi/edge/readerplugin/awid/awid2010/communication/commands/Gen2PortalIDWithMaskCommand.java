@@ -16,7 +16,7 @@ package org.rifidi.edge.readerplugin.awid.awid2010.communication.commands;
  * tags. Responses are sent back as tags are seen
  * 
  * @author Kyle Neumeier - kyle@pramari.com
- * @author Daniel Gómez - dgomez@idlinksolutions.com
+ * @author Daniel Gomez - dgomez@idlinksolutions.com
  * 
  */
 public class Gen2PortalIDWithMaskCommand extends AbstractAwidCommand {
