@@ -1,3 +1,14 @@
+/*
+ *  Activator.java
+ *
+ *  Created:	April 16th, 2010
+ *  Project:	Rifidi Edge Server - A middleware platform for RFID applications
+ *  				http://www.rifidi.org
+ *  				http://rifidi.sourceforge.net
+ *  Copyright:	Pramari LLC and the Rifidi Project
+ *  License:	GNU Public License (GPL)
+ *  				http://www.opensource.org/licenses/gpl-3.0.html
+ */
 package org.rifidi.edge.init;
 
 import java.io.File;
@@ -6,6 +17,7 @@ import java.net.URI;
 import org.apache.log4j.PropertyConfigurator;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
+import org.rifidi.edge.init.utility.URIUtility;
 
 /**
  * 
@@ -56,9 +68,9 @@ public class Activator implements BundleActivator {
 			String s = "file:" + slash + rifidiHome
 					+ System.getProperty("file.separator")
 					+ System.getProperty("org.rifidi.edge.logging");
-			System.out.println(s);
-			System.out.println(s.replace("\\", "/"));
-			URI uri = new URI(s.replace("\\", "/"));
+			// We have to do this bit of idiocy to get URIs to work with windows
+			// backslashes and "Documents and Settings".
+			URI uri = new URI(URIUtility.createURI(s));
 
 			if (new File(uri).exists()) {
 				PropertyConfigurator.configure(uri.toURL());
