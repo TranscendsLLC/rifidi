@@ -157,7 +157,7 @@ public class NorthwindApp extends AbstractRifidiApp {
 		NorthwindForkliftSubscriber dock_door_forklift_subscriber = new NorthwindForkliftSubscriber(
 				this.forklift_prefix, DOCK_DOOR);
 		NorthwindForkliftSubscriber weigh_station_forklift_subscriber = new NorthwindForkliftSubscriber(
-				this.forklift_prefix, DOCK_DOOR);
+				this.forklift_prefix, WEIGH_STATION);
 		this.subscriberList.add(dock_door_subscriber);
 		this.subscriberList.add(weigh_station_subscriber);
 		this.stableSubscriberList.add(dock_door_forklift_subscriber);
@@ -284,7 +284,6 @@ public class NorthwindApp extends AbstractRifidiApp {
 				}
 			}
 		};
-		// addStatement("insert into dockdoorpre select * from DockDoorArrivedEvent");
 		addStatement(
 				"select skipdocktag.tag from WeighStationArrivedEvent as skipdocktag "
 						+ "where not exists (select * from DockDoorArrivedEvent.std:unique"
