@@ -15,8 +15,7 @@ import java.math.BigInteger;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.rifidi.edge.core.services.notification.data.ReadCycle;
-import org.rifidi.edge.core.services.notification.data.ReadCycleMessageCreator;
+import org.rifidi.edge.core.services.notification.ReadCycle;
 import org.rifidi.edge.core.services.notification.data.TagReadEvent;
 import org.rifidi.edge.readerplugin.acura.tag.AcuraProXTagEvent;
 import org.rifidi.edge.readerplugin.acura.utilities.ByteAndHexConvertingUtility;

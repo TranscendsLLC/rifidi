@@ -36,7 +36,7 @@ import javax.xml.datatype.DatatypeFactory;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.rifidi.edge.core.services.notification.data.DatacontainerEvent;
+import org.rifidi.edge.core.services.notification.DatacontainerEvent;
 import org.rifidi.edge.core.services.notification.data.TagReadEvent;
 import org.rifidi.edge.epcglobal.ale.api.read.data.ECReport;
 import org.rifidi.edge.epcglobal.ale.api.read.data.ECReports;

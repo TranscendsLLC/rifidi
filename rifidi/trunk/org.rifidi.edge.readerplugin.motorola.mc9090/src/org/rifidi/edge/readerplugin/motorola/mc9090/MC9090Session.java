@@ -60,8 +60,7 @@ public class MC9090Session extends AbstractServerSocketSensorSession {
 			JmsTemplate template, NotifierService notifierService,
 			int serverSocketPort, int maxNumSensors,
 			Set<AbstractCommandConfiguration<?>> commands) {
-		super(sensor, ID, template.getDefaultDestination(), template,
-				serverSocketPort, maxNumSensors, commands);
+		super(sensor, ID, serverSocketPort, maxNumSensors, commands);
 		this.messageParserFactory = new MC9090MessageParsingStategyFactory();
 		this.messageProcessorFactory = new MC9090MessageProcessingStrategyFactory(
 				this);

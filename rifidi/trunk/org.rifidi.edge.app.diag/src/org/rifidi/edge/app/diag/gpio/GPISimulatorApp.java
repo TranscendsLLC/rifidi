@@ -17,8 +17,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eclipse.osgi.framework.console.CommandProvider;
 import org.rifidi.edge.core.app.api.AbstractRifidiApp;
-import org.rifidi.edge.core.services.notification.data.gpio.GPIEvent;
-import org.rifidi.edge.core.services.notification.data.gpio.GPOEvent;
+import org.rifidi.edge.core.services.notification.GPIEvent;
+import org.rifidi.edge.core.services.notification.GPOEvent;
 
 import com.espertech.esper.client.EPServiceProvider;
 import com.espertech.esper.client.EPStatement;

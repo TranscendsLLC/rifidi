@@ -22,9 +22,9 @@ import org.llrp.ltk.generated.parameters.EPC_96;
 import org.llrp.ltk.generated.parameters.GPIEvent;
 import org.llrp.ltk.generated.parameters.TagReportData;
 import org.llrp.ltk.types.LLRPMessage;
-import org.rifidi.edge.core.services.notification.data.EPCGeneration2Event;
-import org.rifidi.edge.core.services.notification.data.ReadCycle;
-import org.rifidi.edge.core.services.notification.data.StandardTagReadEventFieldNames;
+import org.rifidi.edge.core.services.notification.EPCGeneration2Event;
+import org.rifidi.edge.core.services.notification.ReadCycle;
+import org.rifidi.edge.core.services.notification.StandardTagReadEventFieldNames;
 import org.rifidi.edge.core.services.notification.data.TagReadEvent;
 
 /**
@@ -222,11 +222,11 @@ public class LLRPEventFactory {
 	 * @param readerID
 	 * @return
 	 */
-	private static org.rifidi.edge.core.services.notification.data.gpio.GPIEvent createGPIEvent(
+	private static org.rifidi.edge.core.services.notification.GPIEvent createGPIEvent(
 			GPIEvent llrpGPIEvent, String readerID) {
 		int port = llrpGPIEvent.getGPIPortNumber().toInteger();
 		boolean state = llrpGPIEvent.getGPIEvent().toBoolean();
-		return new org.rifidi.edge.core.services.notification.data.gpio.GPIEvent(
+		return new org.rifidi.edge.core.services.notification.GPIEvent(
 				readerID, port, state);
 	}
 }

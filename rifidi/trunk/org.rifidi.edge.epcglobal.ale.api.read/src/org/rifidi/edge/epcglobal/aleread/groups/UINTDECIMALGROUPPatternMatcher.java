@@ -22,7 +22,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.rifidi.edge.core.services.notification.data.DatacontainerEvent;
+import org.rifidi.edge.core.services.notification.DatacontainerEvent;
 
 /**
  * Group matcher for UINT DECIMAL patterns. See ALE 1.1 6.2.2.3.

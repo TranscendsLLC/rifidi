@@ -30,8 +30,6 @@ import org.rifidi.edge.core.sensors.base.AbstractSensor;
 import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
 import org.rifidi.edge.core.sensors.commands.Command;
 import org.rifidi.edge.core.sensors.messages.ByteMessage;
-import org.rifidi.edge.core.sensors.sessions.threads.ReadThread;
-import org.rifidi.edge.core.sensors.sessions.threads.WriteThread;
 
 /**
  * Base implementation of a ReaderPlugin that uses TCP/IP as a means of

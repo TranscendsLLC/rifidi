@@ -1,6 +1,6 @@
 package org.rifidi.edge.app.diag.tags.generator;
 
-import org.rifidi.edge.core.services.notification.data.BarcodeTagEvent;
+import org.rifidi.edge.core.services.notification.BarcodeTagEvent;
 
 public class BarcodeReadData extends AbstractReadData<BarcodeTagEvent> {
 

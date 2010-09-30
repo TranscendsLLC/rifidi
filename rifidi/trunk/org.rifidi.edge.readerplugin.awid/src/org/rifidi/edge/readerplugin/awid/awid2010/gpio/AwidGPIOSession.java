@@ -15,10 +15,10 @@ import org.rifidi.edge.core.sensors.base.AbstractSensor;
 import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
 import org.rifidi.edge.core.sensors.exceptions.CannotExecuteException;
 import org.rifidi.edge.core.sensors.messages.ByteMessage;
+import org.rifidi.edge.core.sensors.sessions.AbstractPubSubIPSensorSession;
+import org.rifidi.edge.core.sensors.sessions.IPSessionEndpoint;
 import org.rifidi.edge.core.sensors.sessions.MessageParsingStrategy;
 import org.rifidi.edge.core.sensors.sessions.MessageParsingStrategyFactory;
-import org.rifidi.edge.core.sensors.sessions.pubsub.AbstractPubSubIPSensorSession;
-import org.rifidi.edge.core.sensors.sessions.pubsub.IPSessionEndpoint;
 import org.rifidi.edge.readerplugin.awid.awid2010.communication.commands.AbstractAwidCommand;
 
 /**

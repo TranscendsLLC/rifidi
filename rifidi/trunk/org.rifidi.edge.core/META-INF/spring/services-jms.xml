@@ -1,0 +1,31 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:osgi="http://www.springframework.org/schema/osgi"
+	xmlns:amq="http://activemq.apache.org/schema/core"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+     http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi.xsd
+     http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd">
+
+	<bean class="org.rifidi.edge.core.services.jms.JMSInit" />
+
+
+	<!-- connection factory to use to connect to external broker -->
+	<amq:connectionFactory id="externalBrokerConFac"
+		brokerURL="vm://externalBroker?create=false" />
+
+	<!--
+		JMS Template to use for putting data on the external message bus. No
+		default destination
+	-->
+	<bean id="externalJMSTemplate" class="org.springframework.jms.core.JmsTemplate">
+		<property name="connectionFactory">
+			<!-- lets wrap in a pool to avoid creating a connection per send -->
+			<bean class="org.apache.activemq.pool.PooledConnectionFactory"
+				destroy-method="stop">
+				<property name="connectionFactory" ref="externalBrokerConFac" />
+				<property name="maxConnections" value="50" />
+			</bean>
+		</property>
+		<property name="sessionTransacted" value="false" />
+	</bean>
+</beans>
