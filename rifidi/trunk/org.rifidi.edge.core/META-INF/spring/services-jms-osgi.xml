@@ -7,6 +7,6 @@
      http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi.xsd">
 
 	<!-- Exported Services -->
-	<osgi:service id="externalJMSTemplateService"
-		interface="org.springframework.jms.core.JmsTemplate" ref="externalJMSTemplate" />
+	<osgi:service interface="org.springframework.jms.core.JmsTemplate" 
+	   ref="externalJMSTemplate" />
 </beans>

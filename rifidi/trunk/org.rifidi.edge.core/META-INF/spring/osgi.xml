@@ -28,9 +28,6 @@
 	</osgi:set>
 	<!-- Imported Services -->
 
-	<!--   osgi:reference id="JMSNotifierService"
-		interface="org.rifidi.edge.core.services.notification.NotifierService" /-->
-
 	<!-- Listener for Reader Configurations -->
 	<osgi:set id="readerSet"
 		interface="org.rifidi.edge.core.sensors.base.AbstractSensor"

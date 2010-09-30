@@ -15,8 +15,6 @@
         <property name="appManager" ref="appManager"/>
     </bean>
     
-    <osgi:service ref="AppManagerCommands" interface="org.eclipse.osgi.framework.console.CommandProvider"/>
-    
     <bean id="ReadZoneAppService"
         class="org.rifidi.edge.core.app.api.service.tagmonitor.impl.ReadZoneMonitoringServiceImpl">
         <constructor-arg index="0" value="AppService" />
@@ -50,15 +48,13 @@
         interface="org.rifidi.edge.core.app.api.RifidiApp" cardinality="0..N">
         <osgi:listener ref="appManager" bind-method="bindApp" unbind-method="unbindApp" />
     </osgi:set>
+
     
+    <osgi:service ref="AppManagerCommands" interface="org.eclipse.osgi.framework.console.CommandProvider"/>    
     <osgi:service ref="ReadZoneAppService" auto-export="interfaces"/>
     <osgi:service ref="SensorStatusAppService" auto-export="interfaces"/>
     <osgi:service ref="UniqueTagIntervalAppService" auto-export="interfaces"/>
     <osgi:service ref="StableSetAppService"  auto-export="interfaces"/>
     <osgi:service ref="UniqueTagBatchIntervalAppService"  auto-export="interfaces"/>
-
-    <!--  osgi:reference id="esperManagementService"
-        interface="org.rifidi.edge.core.services.esper.EsperManagementService" / -->
-        
 
 </beans>
