@@ -6,10 +6,6 @@
 	http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
 	http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd">
 
-	<!-- connection factory to use to connect to internal broker -->
-	<amq:connectionFactory id="internalBrokerConFac"
-		brokerURL="vm://internalBroker?create=false" />
-
 	<amq:topic id="extNotificationDest" physicalName="org.rifidi.edge.external.notifications" />
 	<amq:topic id="extTagsDest" physicalName="org.rifidi.edge.external.tags" />
 

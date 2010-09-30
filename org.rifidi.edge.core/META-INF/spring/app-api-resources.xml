@@ -17,12 +17,6 @@
 	<bean id="serialResourceService"
 		class="org.rifidi.edge.core.app.api.resources.serial.SerialResourceService" />
 
-	<!--
-		Get a reference to the JMS Template from the OSGi service registry
-	-->
-	<osgi:reference id="externalJMSTemplate"
-		interface="org.springframework.jms.core.JmsTemplate" bean-name="externalJMSTemplate" />
-
 	<osgi:service ref="serialResourceService"
 		interface="org.rifidi.edge.core.app.api.resources.serial.SerialResourceService" />
 	<osgi:service ref="dbResourceService"
