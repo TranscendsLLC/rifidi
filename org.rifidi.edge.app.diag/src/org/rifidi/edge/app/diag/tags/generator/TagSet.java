@@ -9,7 +9,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.rifidi.edge.core.services.notification.data.ReadCycle;
+import org.rifidi.edge.core.services.notification.ReadCycle;
 import org.rifidi.edge.core.services.notification.data.TagReadEvent;
 
 /**

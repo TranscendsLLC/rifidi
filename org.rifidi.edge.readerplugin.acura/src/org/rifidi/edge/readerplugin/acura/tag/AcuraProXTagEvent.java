@@ -13,7 +13,8 @@ package org.rifidi.edge.readerplugin.acura.tag;
 
 import java.math.BigInteger;
 
-import org.rifidi.edge.core.services.notification.data.DatacontainerEvent;
+import org.rifidi.edge.core.services.notification.DatacontainerEvent;
+import org.rifidi.edge.core.services.notification.DatacontainerEvent.MemoryBankLengthTuple;
 
 /**
  * 

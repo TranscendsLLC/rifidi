@@ -6,8 +6,8 @@ package org.rifidi.edge.readerplugin.alien.gpio;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.rifidi.edge.core.services.notification.data.gpio.GPIEvent;
-import org.rifidi.edge.core.services.notification.data.gpio.GPOEvent;
+import org.rifidi.edge.core.services.notification.GPIEvent;
+import org.rifidi.edge.core.services.notification.GPOEvent;
 import org.rifidi.edge.readerplugin.alien.gpio.messages.AlienGPIOMessage;
 import org.rifidi.edge.readerplugin.alien.gpio.messages.GPIOEvent;
 

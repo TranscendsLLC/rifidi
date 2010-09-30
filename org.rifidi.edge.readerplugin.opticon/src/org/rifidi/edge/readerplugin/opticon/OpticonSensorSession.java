@@ -23,7 +23,7 @@ import org.rifidi.edge.core.sensors.sessions.AbstractSerialSensorSession;
 import org.rifidi.edge.core.sensors.sessions.MessageParsingStrategy;
 import org.rifidi.edge.core.sensors.sessions.MessageParsingStrategyFactory;
 import org.rifidi.edge.core.services.notification.NotifierService;
-import org.rifidi.edge.core.services.notification.data.ReadCycle;
+import org.rifidi.edge.core.services.notification.ReadCycle;
 import org.rifidi.edge.readerplugin.opticon.tags.OpticonTagHandler;
 
 /**

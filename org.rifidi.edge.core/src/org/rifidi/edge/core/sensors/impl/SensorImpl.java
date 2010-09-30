@@ -31,8 +31,8 @@ import org.rifidi.edge.core.sensors.exceptions.DuplicateSubscriptionException;
 import org.rifidi.edge.core.sensors.exceptions.ImmutableException;
 import org.rifidi.edge.core.sensors.exceptions.InUseException;
 import org.rifidi.edge.core.sensors.exceptions.NotSubscribedException;
-import org.rifidi.edge.core.services.esper.internal.EsperEventContainer;
-import org.rifidi.edge.core.services.notification.data.ReadCycle;
+import org.rifidi.edge.core.services.esper.EsperEventContainer;
+import org.rifidi.edge.core.services.notification.ReadCycle;
 import org.rifidi.edge.core.services.notification.data.TagReadEvent;
 
 /**

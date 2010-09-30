@@ -14,7 +14,6 @@ Export-Package: org.rifidi.edge.readerplugin.alien,
  org.rifidi.edge.readerplugin.alien.commandobject,
  org.rifidi.edge.readerplugin.alien.messages
 Require-Bundle: org.rifidi.edge.core;bundle-version="5.4.0",
- org.rifidi.edge.core.services;bundle-version="1.4.0",
  org.rifidi.edge.api;bundle-version="1.1.1"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Spring-Context: *;create-asynchronously:=true

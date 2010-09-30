@@ -23,8 +23,8 @@ import org.rifidi.edge.core.sensors.exceptions.DuplicateSensorNameException;
 import org.rifidi.edge.core.sensors.exceptions.ImmutableException;
 import org.rifidi.edge.core.sensors.exceptions.InUseException;
 import org.rifidi.edge.core.sensors.exceptions.NoSuchSensorException;
+import org.rifidi.edge.core.sensors.management.SensorDTO;
 import org.rifidi.edge.core.sensors.management.SensorManagementService;
-import org.rifidi.edge.core.sensors.management.dtos.SensorDTO;
 import org.rifidi.edge.epcglobal.ale.api.lr.data.LRSpec;
 import org.rifidi.edge.epcglobal.ale.api.lr.data.LRSpec.Properties;
 

@@ -9,10 +9,10 @@ import java.util.Set;
 
 import org.rifidi.edge.core.sensors.SensorSession;
 import org.rifidi.edge.core.sensors.sessions.MessageProcessingStrategy;
-import org.rifidi.edge.core.services.notification.data.DatacontainerEvent;
-import org.rifidi.edge.core.services.notification.data.EPCGeneration2Event;
-import org.rifidi.edge.core.services.notification.data.ReadCycle;
-import org.rifidi.edge.core.services.notification.data.ReadCycleMessageCreator;
+import org.rifidi.edge.core.services.notification.DatacontainerEvent;
+import org.rifidi.edge.core.services.notification.EPCGeneration2Event;
+import org.rifidi.edge.core.services.notification.ReadCycle;
+import org.rifidi.edge.core.services.notification.ReadCycleMessageCreator;
 import org.rifidi.edge.core.services.notification.data.TagReadEvent;
 import org.rifidi.edge.readerplugin.motorola.mc9090.tags.MC9090TagMessage;
 import org.springframework.jms.core.JmsTemplate;

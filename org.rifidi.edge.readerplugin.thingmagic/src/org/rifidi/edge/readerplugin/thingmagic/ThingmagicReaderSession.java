@@ -22,8 +22,8 @@ import org.rifidi.edge.core.sensors.base.AbstractSensor;
 import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
 import org.rifidi.edge.core.sensors.commands.Command;
 import org.rifidi.edge.core.sensors.messages.ByteMessage;
+import org.rifidi.edge.core.sensors.sessions.AbstractPollIPSensorSession;
 import org.rifidi.edge.core.sensors.sessions.MessageParsingStrategyFactory;
-import org.rifidi.edge.core.sensors.sessions.poll.AbstractPollIPSensorSession;
 import org.rifidi.edge.core.services.notification.NotifierService;
 
 /**

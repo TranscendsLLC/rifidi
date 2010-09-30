@@ -31,7 +31,7 @@ import org.rifidi.edge.api.rmi.dto.SessionDTO;
 import org.rifidi.edge.core.sensors.base.AbstractSensor;
 import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
 import org.rifidi.edge.core.sensors.commands.Command;
-import org.rifidi.edge.core.sensors.sessions.threads.ServerSocketSensorSessionReadThread;
+import org.rifidi.edge.core.sensors.sessions.ServerSocketSensorSessionReadThread;
 
 /**
  * When the session is started, it opens up a serversocket and uses the executor

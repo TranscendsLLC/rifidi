@@ -53,7 +53,7 @@ import org.rifidi.edge.core.sensors.commands.Command;
 import org.rifidi.edge.core.sensors.commands.TimeoutCommand;
 import org.rifidi.edge.core.sensors.sessions.AbstractSensorSession;
 import org.rifidi.edge.core.services.notification.NotifierService;
-import org.rifidi.edge.core.services.notification.data.ReadCycle;
+import org.rifidi.edge.core.services.notification.ReadCycle;
 import org.rifidi.edge.readerplugin.llrp.commands.internal.LLRPReset;
 
 /**

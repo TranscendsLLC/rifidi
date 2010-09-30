@@ -22,7 +22,6 @@ import org.rifidi.edge.core.sensors.exceptions.ImmutableException;
 import org.rifidi.edge.core.sensors.exceptions.InUseException;
 import org.rifidi.edge.core.sensors.exceptions.NoSuchSensorException;
 import org.rifidi.edge.core.sensors.exceptions.NotSubscribedException;
-import org.rifidi.edge.core.sensors.management.dtos.SensorDTO;
 
 /**
  * Service for managing all modifiable aspects of the sensors.

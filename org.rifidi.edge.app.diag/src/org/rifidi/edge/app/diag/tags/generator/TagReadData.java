@@ -7,7 +7,7 @@ import java.math.BigInteger;
 
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Hex;
-import org.rifidi.edge.core.services.notification.data.EPCGeneration2Event;
+import org.rifidi.edge.core.services.notification.EPCGeneration2Event;
 
 /**
  * This object is a factory for generating a TagReadEvent for getting from

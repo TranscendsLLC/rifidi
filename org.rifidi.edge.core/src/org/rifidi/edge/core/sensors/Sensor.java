@@ -13,8 +13,8 @@
 package org.rifidi.edge.core.sensors;
 
 import org.rifidi.edge.core.sensors.exceptions.NotSubscribedException;
-import org.rifidi.edge.core.services.esper.internal.EsperEventContainer;
-import org.rifidi.edge.core.services.notification.data.ReadCycle;
+import org.rifidi.edge.core.services.esper.EsperEventContainer;
+import org.rifidi.edge.core.services.notification.ReadCycle;
 
 public interface Sensor {
 

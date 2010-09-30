@@ -6,7 +6,7 @@ package org.rifidi.edge.app.diag.tags.generator;
 import java.util.Collection;
 import java.util.List;
 
-import org.rifidi.edge.core.services.notification.data.ReadCycle;
+import org.rifidi.edge.core.services.notification.ReadCycle;
 
 import com.espertech.esper.client.EPRuntime;
 

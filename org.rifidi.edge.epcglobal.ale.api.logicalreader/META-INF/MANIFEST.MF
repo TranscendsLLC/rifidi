@@ -16,5 +16,4 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: org.rifidi.edge.epcglobal.ale.api.lr,
  org.rifidi.edge.epcglobal.ale.api.lr.data,
  org.rifidi.edge.epcglobal.ale.api.lr.ws
-Require-Bundle: org.rifidi.edge.core.services;bundle-version="1.0.0",
- org.rifidi.edge.core;bundle-version="5.3.1"
+Require-Bundle: org.rifidi.edge.core;bundle-version="5.3.1"

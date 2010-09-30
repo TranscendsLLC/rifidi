@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.rifidi.edge.ale.esper.AbstractSignalStatement;
-import org.rifidi.edge.core.services.esper.events.StopEvent;
+import org.rifidi.edge.core.services.esper.StopEvent;
 import org.rifidi.edge.core.services.notification.data.TagReadEvent;
 import org.rifidi.edge.epcglobal.aleread.ALEReadAPI;
 

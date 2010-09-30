@@ -14,7 +14,7 @@ package org.rifidi.edge.readerplugin.awid.awid2010.communication.messages;
 import java.math.BigInteger;
 import java.util.Arrays;
 
-import org.rifidi.edge.core.services.notification.data.EPCGeneration2Event;
+import org.rifidi.edge.core.services.notification.EPCGeneration2Event;
 import org.rifidi.edge.core.services.notification.data.TagReadEvent;
 import org.rifidi.edge.readerplugin.awid.awid2010.communication.TagResponseMessage;
 

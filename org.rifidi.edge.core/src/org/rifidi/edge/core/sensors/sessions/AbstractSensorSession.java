@@ -38,8 +38,8 @@ import org.rifidi.edge.core.sensors.SensorSession;
 import org.rifidi.edge.core.sensors.base.AbstractSensor;
 import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
 import org.rifidi.edge.core.sensors.commands.Command;
-import org.rifidi.edge.core.services.notification.data.management.SensorConnectedEvent;
-import org.rifidi.edge.core.services.notification.data.management.SensorDisconnectedEvent;
+import org.rifidi.edge.core.services.notification.SensorConnectedEvent;
+import org.rifidi.edge.core.services.notification.SensorDisconnectedEvent;
 
 /**
  * An Abstract class for concrete ReaderSessions to extend. This
