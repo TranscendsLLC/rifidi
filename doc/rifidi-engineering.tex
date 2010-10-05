@@ -1,5 +1,96 @@
-kajdsfhsadjfasdhfjk'
-lkjadhfa;sdf
+\documentclass[11pt]{article}
+%\documentclass[11pt]{amsart}
+\usepackage{geometry}                % See geometry.pdf to learn the layout options. There are lots.
+\geometry{letterpaper}                   % ... or a4paper or a5paper or ... 
+%\geometry{landscape}                % Activate for for rotated page geometry
+\usepackage[parfill]{parskip}    % Activate to begin paragraphs with an empty line rather than an indent
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb,latexsym}
+\usepackage{epstopdf}
+\DeclareGraphicsRule{.tif}{png}{.png}{`convert #1 `dirname #1`/`basename #1 .tif`.png}
 
-kjahdfklahsdf
-ahsdfkjsdahf
+\title{RIFIDI Engineering}
+\author{James Percent \\ james@pramari.com}
+\date{10/10/2010}                                           % Activate to display a given date or no date
+
+\begin{document}
+\maketitle
+
+\section{Introduction}
+
+This document is the basis for the getting started on the RIFIDI engineering team; it should contain explanations or references to explanations of everything you need.  It's obviously evolving, so let us know if you find anything missing, outdated, or incorrect.
+
+Rather than explain everything the idea is to gather the references that you'll need (get all the links, all the technologies in play).  We presume some exposure to certain technologies like eclipse, some other shit.
+
+\section{Network and Email}
+
+Blah blee blah blah blah
+
+\subsection{Project Management Software}
+
+We use Scrum to manage our development projects.  There's a plethora of Scrum tutorials, guides and books, but you can probably grok everything you need on-the-job.  That said, I recommend \cite{scrum-guide} as a brief introduction, and the original publication \cite{scrum-book} for a more thorough treatment.  We have a copy of \cite{scrum-book} in the office.
+
+We use basecamp \cite{basecamp} for client facing project management and documentation, and we use Rally \cite{rallydev} for Sprint planning and tracking (Sprints are the units of work in Scrum).  You should have accounts to both of these, so let someone know if you do not.
+
+\section{Development Environment}
+\subsection{Platform}
+
+This section provides information about installing and configuring Ubuntu Linux, which is our supported platform.  We should be able to run on any platform that supports Java 6, but such configurations are beyond the scope of this document.
+
+The supported version of Ubuntu is 10.04.1 LTS, Lucid Lynx \cite{ubuntu, lucid}.  Instructions regarding Ubuntu installation and configuration can be found in \cite{lucid-doc}.  If you're not familiar with Ubuntu Linux, please take note of the package management system because it is an important piece of the platform in terms of getting you environment up and running.  An old tutorial is here \cite{apt-get-tut}, and, as always, Google is your friend.
+
+The packages required to setup the environment are blah blee blah blah.  You will need to install these packages.  This command should work
+\begin{verbatim}
+	$ apt-get install eclipse \
+					sun-java-6
+\end{verbatim}
+
+\subsection{SCM}
+
+All RIFIDI-based software can be downloaded from our online repositories \cite{rep-edge, rep-external, rep-internal, rep-ambient}.  Subclipse \cite{subclipse} is an Eclipse plugin that we use to interface with our SVN server.  To install Subclipse, from within Eclipse click \begin{verbatim}Help->Install new software\end{verbatim} 
+
+A dialog box will appear; click on add, paste in the Subclipse update site URL \cite{subclipse-update}.  This should show you the available software.  Check all required boxes and click finish.  The Subclipse documentation is installed with the plugin, and it can be accessed from within Eclipse help.  An online version can be found at \cite{subclipse-doc}.
+
+ \subsection{Edge Server}
+\subsubsection{ Configuration}
+
+First we need to create a new repository location.  From within to do this within the SVN Repository browsing view, click 
+\begin{verbatim}  
+File->New->SVN->Checkout projects From SVN
+\end{verbatim}
+
+Add the URL for the Edge Server repository \cite{rep-edge}.  Next we'll check out the target platform
+
+Next click through the 
+
+
+Eclipse.location from within Eclipse.  To do this go to the SVN Repository Browsing
+
+\subsubsection{Running Unit, System and RegressionTests}
+\subsubsection{Adding Platform Features}
+\subsubsection{Creating Edge-Server Applications}
+\subsubsection{Testing Applications}
+\subsubsection{Platform Deployment}
+
+\begin{thebibliography}{99}
+\bibitem{ubuntu} Ubuntu Releases.  \url{http://releases.ubuntu.com}.
+\bibitem{lucid} Ubuntu 10.04.1.  \url{http://releases.ubuntu.com/lucid}.
+\bibitem{lucid-doc} Ubuntu 10.04.1 Documentation. \url{https://help.ubuntu.com/10.04/index.html}.
+\bibitem{apt-get-tut} Apt.  \url{http://www.debian.org/doc/manuals/apt-howto/ch-apt-get.en.html}.
+\bibitem{basecamp} Pramari Basecamp.  \url{https://pramari.basecamphq.com}.
+\bibitem{rallydev}  Rally.  \url{https://community.rallydev.com}.
+\bibitem{scrum-book}  Schwaber, Ken. Agile Project Management with Scrum.
+\bibitem{scrum-guide} Scrum Guide.  \url{http://www.scrum.org/scrumguideenglish}. 
+\bibitem{rep-edge} RIFIDI Edge Server. \url{https://svn.rifidi.org/svn/rep-edge}.
+\bibitem{rep-external} RIFIDI Toolkit. \url{https://svn.rifidi.org/svn/rep-external}.
+\bibitem{rep-internal} RIFIDI ?? . \url{https://svn.rifidi.org/svn/rep-internal}.
+\bibitem{rep-ambient} Ambient Project. \url{https://svn.rifidi.org/svn/rep-ambient}.
+\bibitem{eclipse} Eclipse.  \url{http://www.eclipse.org.}.
+\bibitem{subclipse} Subclipse.  \url{http://subclipse.tigris.org/}.
+\bibitem{subclipse-doc} Subclipse online documentation.  \url{http://svn.collab.net/subclipse/help/index.jsp}
+\bibitem{subclipse-update} Subclipse.  \url{http://subclipse.tigris.org/update_1.6.x}
+\end{thebibliography}
+\end{document}  
+
+
