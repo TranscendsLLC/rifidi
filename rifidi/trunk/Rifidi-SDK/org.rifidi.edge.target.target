@@ -6,51 +6,14 @@
 <location path="${workspace_loc}/Rifidi-SDK/lib/esper" type="Directory"/>
 <location path="${workspace_loc}/Rifidi-SDK/lib/libraries" type="Directory"/>
 <location path="${workspace_loc}/Rifidi-SDK/lib/eclipseaspects" type="Directory"/>
-<location path="${workspace_loc}/Rifidi-SDK/lib/spring" type="Directory"/>
 <location path="${workspace_loc}/Rifidi-SDK/lib/logging" type="Directory"/>
 <location path="${workspace_loc}/Rifidi-SDK/lib/tomcat" type="Directory"/>
 <location path="${workspace_loc}/Rifidi-SDK/lib/javax" type="Directory"/>
 <location path="${workspace_loc}/Rifidi-SDK/lib/commons" type="Directory"/>
 <location path="${workspace_loc}/Rifidi-SDK/lib/aspectj" type="Directory"/>
 <location path="${workspace_loc}/Rifidi-SDK/lib/plugins" type="Profile"/>
-<location path="${workspace_loc}/Rifidi-SDK/lib/rifidi" type="Directory">
-<includeBundles>
-<plugin id="org.rifidi.edge.app.diag.source"/>
-<plugin id="org.rifidi.edge.api.source"/>
-<plugin id="org.rifidi.edge.readerplugin.awid.commands.source"/>
-<plugin id="org.rifidi.edge.init.source"/>
-<plugin id="org.rifidi.edge.readerplugin.llrp"/>
-<plugin id="org.rifidi.edge.readerplugin.thingmagic.source"/>
-<plugin id="org.rifidi.edge.readerplugin.generic"/>
-<plugin id="org.rifidi.edge.readerplugin.opticon.source"/>
-<plugin id="org.rifidi.edge.readerplugin.opticon"/>
-<plugin id="org.rifidi.edge.readerplugin.thingmagic.commands.source"/>
-<plugin id="org.rifidi.edge.readerplugin.awid"/>
-<plugin id="org.rifidi.edge.readerplugin.thingmagic"/>
-<plugin id="org.rifidi.edge.catalina.config"/>
-<plugin id="org.rifidi.edge.readerplugin.llrp.source"/>
-<plugin id="org.rifidi.edge.core"/>
-<plugin id="org.rifidi.edge.core.source"/>
-<plugin id="org.rifidi.edge.readerplugin.alien"/>
-<plugin id="org.rifidi.edge.console.source"/>
-<plugin id="org.rifidi.edge.catalina.config.source"/>
-<plugin id="org.rifidi.edge.app.diag"/>
-<plugin id="org.rifidi.edge.readerplugin.alien.commands"/>
-<plugin id="org.rifidi.edge.console"/>
-<plugin id="org.rifidi.edge.readerplugin.generic.source"/>
-<plugin id="org.rifidi.edge.readerplugin.alien.source"/>
-<plugin id="org.rifidi.edge.readerplugin.awid.commands"/>
-<plugin id="org.rifidi.edge.readerplugin.awid.source"/>
-<plugin id="org.rifidi.edge.epcglobal.ale.api.read"/>
-<plugin id="org.rifidi.edge.epcglobal.ale.api.logicalreader"/>
-<plugin id="org.rifidi.edge.epcglobal.ale.api.read.source"/>
-<plugin id="org.rifidi.edge.api"/>
-<plugin id="org.rifidi.edge.readerplugin.alien.commands.source"/>
-<plugin id="org.rifidi.edge.readerplugin.thingmagic.commands"/>
-<plugin id="org.rifidi.edge.epcglobal.ale.api.logicalreader.source"/>
-<plugin id="org.rifidi.edge.init"/>
-</includeBundles>
-</location>
+<location path="${workspace_loc}/Rifidi-SDK/lib/rifidi" type="Directory"/>
+<location path="${workspace_loc}/Rifidi-SDK/lib/spring" type="Directory"/>
 </locations>
 <environment>
 <os>win32</os>
