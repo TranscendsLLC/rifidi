@@ -19,13 +19,49 @@
 
 \section{Introduction}
 
-This document is the basis for the getting started on the RIFIDI engineering team; it should contain explanations or references to explanations of everything you need.  It's obviously evolving, so let us know if you find anything missing, outdated, or incorrect.
+This document is the basis for the getting started on the RIFIDI engineering team.  It's the single source for all the information you need to get going.  It's obviously evolving, so let us know if you find anything missing, outdated, or incorrect.
 
-Rather than explain everything the idea is to gather the references that you'll need (get all the links, all the technologies in play).  We presume some exposure to certain technologies like eclipse, some other shit.
+\subsection{Operating System}\label{os}
+
+This section provides information about installing and configuring Ubuntu Linux, which is our supported platform.  We should be able to run on any platform that supports Java 6, but such configurations are beyond the scope of this document.
+
+The supported version of Ubuntu is 10.04.1 LTS, Lucid Lynx \cite{ubuntu, lucid}.  Instructions regarding Ubuntu installation and configuration can be found in \cite{lucid-doc}.  If you're not familiar with Ubuntu Linux, please take note of the package management system because it is an important piece of the platform in terms of getting you environment up and running.  An old tutorial is here \cite{apt-get-tut}, and, as always, Google is your friend.
+
+The are only a few packages required to setup the environment; this command should work:
+\begin{verbatim}
+	$ sudo apt-get install eclipse emacs23 sun-java6-jdk thunderbird vim.
+\end{verbatim}
+
+Note, the period at the end of the command is a syntactic element of the English language, and it is not par of the command.
 
 \section{Network and Email}
 
-Blah blee blah blah blah
+Our Pramari email accounts are our primary means of communications.  All email communication for company related information should happen via Pramari email accounts.   Our emails are proprietary and confidential and should be treated with care.  
+
+Each user has a soft limit of 100 megabytes of email.  We recommend using the Mozilla Thunderbird email client \cite{thunderbird}.  If you completed Section~\ref{os}, then you already have Thunderbird installed.
+
+Email can also be accessed through a web client \url{http://webmail.textdrivehosting.com/index.php}; the server, $hardwood.textdrive.com$ must be selected from the drop-down list.  Your userID is	 $firstname-pramari$; ask me or someone else for your initial password.
+
+The steps required to configure Thunderbird are straight forward: 
+\begin{itemize}
+\item add a new account;
+\item use the settings shown in Figures~\ref{fig:thunderbird1}-~\ref{fig:thunderbird3}, substituting your name and user-id for Prasith Govin and pgovin respectively.
+\end{itemize} 
+
+\begin{figure}
+\resizebox{\textwidth}{!}{\includegraphics{thunderbird1.png}}
+\caption{\label{fig:thunderbird1} Thunderbird 1}
+\end{figure}
+
+\begin{figure}
+\resizebox{\textwidth}{!}{\includegraphics{thunderbird2.png}}
+\caption{\label{fig:thunderbird2} Thunderbird 1}
+\end{figure}
+
+\begin{figure}
+\resizebox{\textwidth}{!}{\includegraphics{thunderbird3.png}}
+\caption{\label{fig:thunderbird3} Thunderbird 1}
+\end{figure}
 
 \subsection{Project Management Software}
 
@@ -34,23 +70,61 @@ We use Scrum to manage our development projects.  There's a plethora of Scrum tu
 We use basecamp \cite{basecamp} for client facing project management and documentation, and we use Rally \cite{rallydev} for Sprint planning and tracking (Sprints are the units of work in Scrum).  You should have accounts to both of these, so let someone know if you do not.
 
 \section{Development Environment}
-\subsection{Platform}
 
-This section provides information about installing and configuring Ubuntu Linux, which is our supported platform.  We should be able to run on any platform that supports Java 6, but such configurations are beyond the scope of this document.
+Our development process, for better or worse, is very tightly coupled to the eclipse\cite{eclipse} platform.  If you completed Section~\ref{os}, then eclipse should be installed on your system.  From Ubuntu, click $applications->development$.  We recommend creating a workspace for each project, as depicted in Figure~\ref{fig:eclipse1}.
 
-The supported version of Ubuntu is 10.04.1 LTS, Lucid Lynx \cite{ubuntu, lucid}.  Instructions regarding Ubuntu installation and configuration can be found in \cite{lucid-doc}.  If you're not familiar with Ubuntu Linux, please take note of the package management system because it is an important piece of the platform in terms of getting you environment up and running.  An old tutorial is here \cite{apt-get-tut}, and, as always, Google is your friend.
+All RIFIDI-based software can be downloaded from our online repositories \cite{rep-edge, rep-external, rep-internal, rep-ambient}.  Subclipse \cite{subclipse} is an Eclipse plugin that we use to interface with our SVN server.  To install Subclipse, from within Eclipse click: \begin{verbatim}Help->Install new software.\end{verbatim}  Figure~\ref{fig:eclipse2} shows this.
 
-The packages required to setup the environment are blah blee blah blah.  You will need to install these packages.  This command should work
-\begin{verbatim}
-	$ apt-get install eclipse \
-					sun-java-6
-\end{verbatim}
+A dialog box will appear; click on add, paste in the Subclipse update site URL \cite{subclipse-update}; see Figure~\ref{fig:eclipse3} for visual verification.  This should show you the available software.  Check all required boxes and click finish.  The Subclipse documentation is installed with the plugin, and it can be accessed from within Eclipse help.  An online version can be found at \cite{subclipse-doc}.
 
-\subsection{SCM}
+\begin{figure}
+\resizebox{\textwidth}{!}{\includegraphics{eclipse1.png}}
+\caption{\label{fig:eclipse1} Eclipse workspace}
+\end{figure}
 
-All RIFIDI-based software can be downloaded from our online repositories \cite{rep-edge, rep-external, rep-internal, rep-ambient}.  Subclipse \cite{subclipse} is an Eclipse plugin that we use to interface with our SVN server.  To install Subclipse, from within Eclipse click \begin{verbatim}Help->Install new software\end{verbatim} 
+\begin{figure}
+\resizebox{\textwidth}{!}{\includegraphics{eclipse2.png}}
+\caption{\label{fig:eclipse2} Eclipse software installation }
+\end{figure}
 
-A dialog box will appear; click on add, paste in the Subclipse update site URL \cite{subclipse-update}.  This should show you the available software.  Check all required boxes and click finish.  The Subclipse documentation is installed with the plugin, and it can be accessed from within Eclipse help.  An online version can be found at \cite{subclipse-doc}.
+\begin{figure}
+\resizebox{\textwidth}{!}{\includegraphics{eclipse3.png}}
+\caption{\label{fig:eclipse3} Subclipse }
+\end{figure}
+
+\begin{figure}
+\resizebox{\textwidth}{!}{\includegraphics{eclipse4.png}}
+\caption{\label{fig:eclipse4} Subclipse }
+\end{figure}
+
+
+\begin{figure}
+\resizebox{\textwidth}{!}{\includegraphics{eclipse5.png}}
+\caption{\label{fig:eclipse5}  }
+\end{figure}
+
+\begin{figure}
+\resizebox{\textwidth}{!}{\includegraphics{eclipse6.png}}
+\caption{\label{fig:eclipse6}  }
+\end{figure}
+
+
+\begin{figure}
+\resizebox{\textwidth}{!}{\includegraphics{eclipse7.png}}
+\caption{\label{fig:eclipse7}}
+\end{figure}
+
+
+\begin{figure}
+\resizebox{\textwidth}{!}{\includegraphics{eclipse8.png}}
+\caption{\label{fig:eclipse8} }
+\end{figure}
+
+
+\begin{figure}
+\resizebox{\textwidth}{!}{\includegraphics{eclipse9.png}}
+\caption{\label{fig:eclipse9} Checking out sources }
+\end{figure}
 
  \subsection{Edge Server}
 \subsubsection{ Configuration}
