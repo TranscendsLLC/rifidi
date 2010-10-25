@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Komodo Project File - DO NOT EDIT -->
+<project id="e96cfd34-2fdc-4f93-a51e-3b2cd593aad0" name="buchi.kpf" kpf_version="4">
+<preference-set idref="e96cfd34-2fdc-4f93-a51e-3b2cd593aad0">
+  <boolean id="import_live">1</boolean>
+</preference-set>
+<preference-set idref="e96cfd34-2fdc-4f93-a51e-3b2cd593aad0/automata.py">
+  <string id="lastInvocation">default</string>
+<preference-set id="Invocations">
+<preference-set id="default">
+  <string id="postparams"></string>
+  <string id="userEnvironment"></string>
+  <string id="language">Python</string>
+  <string id="getparams"></string>
+  <boolean id="use-console">0</boolean>
+  <string id="mpostparams"></string>
+  <string relative="path" id="filename">automata.py</string>
+  <string id="request-method">GET</string>
+  <string id="params"></string>
+  <string id="executable-params"></string>
+  <string id="posttype">application/x-www-form-urlencoded</string>
+  <string id="documentRoot"></string>
+  <string id="cookieparams"></string>
+  <boolean id="show-dialog">1</boolean>
+  <boolean id="sim-cgi">0</boolean>
+  <string id="cwd"></string>
+  <string id="userCGIEnvironment"></string>
+</preference-set>
+</preference-set>
+</preference-set>
+</project>
