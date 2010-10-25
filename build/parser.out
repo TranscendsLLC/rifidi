@@ -1,0 +1,873 @@
+
+
+Unused terminals:
+
+
+Grammar
+
+Rule 1     manifest -> header
+Rule 2     manifest -> manifest header
+Rule 3     header -> import_package
+Rule 4     header -> HEADER
+Rule 5     import_package -> IMPORT_PACKAGE imports
+Rule 6     imports -> import
+Rule 7     imports -> imports COMMA import
+Rule 8     import -> package_names
+Rule 9     import -> package_names SEMI_COLON parameter
+Rule 10    package_names -> package_name
+Rule 11    package_names -> package_names SEMI_COLON package_name
+Rule 12    package_name -> ID
+Rule 13    package_name -> package_name DOT ID
+Rule 14    parameter -> version
+Rule 15    parameter -> directive
+Rule 16    parameter -> parameter SEMI_COLON version
+Rule 17    parameter -> parameter SEMI_COLON directive
+Rule 18    directive -> TOKEN COLON EQUAL TOKEN
+Rule 19    directive -> TOKEN COLON EQUAL ID
+Rule 20    directive -> ID COLON EQUAL TOKEN
+Rule 21    directive -> ID COLON EQUAL ID
+Rule 22    version -> TOKEN EQUAL version_string
+Rule 23    version -> ID EQUAL version_string
+Rule 24    version_string -> QUOTE version_number QUOTE
+Rule 25    version_string -> QUOTE LPAREN version_number COMMA version_number RPAREN QUOTE
+Rule 26    version_string -> QUOTE LPAREN version_number COMMA version_number RANGLE QUOTE
+Rule 27    version_string -> QUOTE LANGLE version_number COMMA version_number RANGLE QUOTE
+Rule 28    version_string -> QUOTE LANGLE version_number COMMA version_number RPAREN QUOTE
+Rule 29    version_number -> NUMBER
+Rule 30    version_number -> NUMBER DOT NUMBER
+Rule 31    version_number -> NUMBER DOT NUMBER DOT NUMBER
+Rule 32    version_number -> NUMBER DOT NUMBER DOT NUMBER DOT TOKEN
+
+Terminals, with rules where they appear
+
+COLON                : 18 19 20 21
+COMMA                : 7 25 26 27 28
+DOT                  : 13 30 31 31 32 32 32
+EQUAL                : 18 19 20 21 22 23
+HEADER               : 4
+ID                   : 12 13 19 20 21 21 23
+IMPORT_PACKAGE       : 5
+LANGLE               : 27 28
+LPAREN               : 25 26
+NUMBER               : 29 30 30 31 31 31 32 32 32
+QUOTE                : 24 24 25 25 26 26 27 27 28 28
+RANGLE               : 26 27
+RPAREN               : 25 28
+SEMI_COLON           : 9 11 16 17
+TOKEN                : 18 18 19 20 22 32
+error                : 
+
+Nonterminals, with rules where they appear
+
+directive            : 15 17
+header               : 1 2
+import               : 6 7
+import_package       : 3
+imports              : 5 7
+manifest             : 2 0
+package_name         : 10 11 13
+package_names        : 8 9 11
+parameter            : 9 16 17
+version              : 14 16
+version_number       : 24 25 25 26 26 27 27 28 28
+version_string       : 22 23
+
+
+Parsing method: LALR
+
+
+state 0
+
+    (0) S' -> . manifest
+    (1) manifest -> . header
+    (2) manifest -> . manifest header
+    (3) header -> . import_package
+    (4) header -> . HEADER
+    (5) import_package -> . IMPORT_PACKAGE imports
+
+    HEADER          shift and go to state 1
+    IMPORT_PACKAGE  shift and go to state 5
+
+
+    header                         shift and go to state 4
+    import_package                 shift and go to state 2
+    manifest                       shift and go to state 3
+
+state 1
+
+    (4) header -> HEADER .
+
+    HEADER          reduce using rule 4 (header -> HEADER .)
+    IMPORT_PACKAGE  reduce using rule 4 (header -> HEADER .)
+    $end            reduce using rule 4 (header -> HEADER .)
+
+
+
+state 2
+
+    (3) header -> import_package .
+
+    HEADER          reduce using rule 3 (header -> import_package .)
+    IMPORT_PACKAGE  reduce using rule 3 (header -> import_package .)
+    $end            reduce using rule 3 (header -> import_package .)
+
+
+
+state 3
+
+    (0) S' -> manifest .
+    (2) manifest -> manifest . header
+    (3) header -> . import_package
+    (4) header -> . HEADER
+    (5) import_package -> . IMPORT_PACKAGE imports
+
+    HEADER          shift and go to state 1
+    IMPORT_PACKAGE  shift and go to state 5
+
+
+    header                         shift and go to state 6
+    import_package                 shift and go to state 2
+
+state 4
+
+    (1) manifest -> header .
+
+    HEADER          reduce using rule 1 (manifest -> header .)
+    IMPORT_PACKAGE  reduce using rule 1 (manifest -> header .)
+    $end            reduce using rule 1 (manifest -> header .)
+
+
+
+state 5
+
+    (5) import_package -> IMPORT_PACKAGE . imports
+    (6) imports -> . import
+    (7) imports -> . imports COMMA import
+    (8) import -> . package_names
+    (9) import -> . package_names SEMI_COLON parameter
+    (10) package_names -> . package_name
+    (11) package_names -> . package_names SEMI_COLON package_name
+    (12) package_name -> . ID
+    (13) package_name -> . package_name DOT ID
+
+    ID              shift and go to state 11
+
+
+    package_names                  shift and go to state 7
+    imports                        shift and go to state 9
+    package_name                   shift and go to state 8
+    import                         shift and go to state 10
+
+state 6
+
+    (2) manifest -> manifest header .
+
+    HEADER          reduce using rule 2 (manifest -> manifest header .)
+    IMPORT_PACKAGE  reduce using rule 2 (manifest -> manifest header .)
+    $end            reduce using rule 2 (manifest -> manifest header .)
+
+
+
+state 7
+
+    (8) import -> package_names .
+    (9) import -> package_names . SEMI_COLON parameter
+    (11) package_names -> package_names . SEMI_COLON package_name
+
+    COMMA           reduce using rule 8 (import -> package_names .)
+    HEADER          reduce using rule 8 (import -> package_names .)
+    IMPORT_PACKAGE  reduce using rule 8 (import -> package_names .)
+    $end            reduce using rule 8 (import -> package_names .)
+    SEMI_COLON      shift and go to state 12
+
+
+
+state 8
+
+    (10) package_names -> package_name .
+    (13) package_name -> package_name . DOT ID
+
+    SEMI_COLON      reduce using rule 10 (package_names -> package_name .)
+    COMMA           reduce using rule 10 (package_names -> package_name .)
+    HEADER          reduce using rule 10 (package_names -> package_name .)
+    IMPORT_PACKAGE  reduce using rule 10 (package_names -> package_name .)
+    $end            reduce using rule 10 (package_names -> package_name .)
+    DOT             shift and go to state 13
+
+
+
+state 9
+
+    (5) import_package -> IMPORT_PACKAGE imports .
+    (7) imports -> imports . COMMA import
+
+    HEADER          reduce using rule 5 (import_package -> IMPORT_PACKAGE imports .)
+    IMPORT_PACKAGE  reduce using rule 5 (import_package -> IMPORT_PACKAGE imports .)
+    $end            reduce using rule 5 (import_package -> IMPORT_PACKAGE imports .)
+    COMMA           shift and go to state 14
+
+
+
+state 10
+
+    (6) imports -> import .
+
+    COMMA           reduce using rule 6 (imports -> import .)
+    HEADER          reduce using rule 6 (imports -> import .)
+    IMPORT_PACKAGE  reduce using rule 6 (imports -> import .)
+    $end            reduce using rule 6 (imports -> import .)
+
+
+
+state 11
+
+    (12) package_name -> ID .
+
+    DOT             reduce using rule 12 (package_name -> ID .)
+    SEMI_COLON      reduce using rule 12 (package_name -> ID .)
+    COMMA           reduce using rule 12 (package_name -> ID .)
+    HEADER          reduce using rule 12 (package_name -> ID .)
+    IMPORT_PACKAGE  reduce using rule 12 (package_name -> ID .)
+    $end            reduce using rule 12 (package_name -> ID .)
+
+
+
+state 12
+
+    (9) import -> package_names SEMI_COLON . parameter
+    (11) package_names -> package_names SEMI_COLON . package_name
+    (14) parameter -> . version
+    (15) parameter -> . directive
+    (16) parameter -> . parameter SEMI_COLON version
+    (17) parameter -> . parameter SEMI_COLON directive
+    (12) package_name -> . ID
+    (13) package_name -> . package_name DOT ID
+    (22) version -> . TOKEN EQUAL version_string
+    (23) version -> . ID EQUAL version_string
+    (18) directive -> . TOKEN COLON EQUAL TOKEN
+    (19) directive -> . TOKEN COLON EQUAL ID
+    (20) directive -> . ID COLON EQUAL TOKEN
+    (21) directive -> . ID COLON EQUAL ID
+
+    ID              shift and go to state 20
+    TOKEN           shift and go to state 17
+
+
+    package_name                   shift and go to state 15
+    directive                      shift and go to state 16
+    version                        shift and go to state 18
+    parameter                      shift and go to state 19
+
+state 13
+
+    (13) package_name -> package_name DOT . ID
+
+    ID              shift and go to state 21
+
+
+
+state 14
+
+    (7) imports -> imports COMMA . import
+    (8) import -> . package_names
+    (9) import -> . package_names SEMI_COLON parameter
+    (10) package_names -> . package_name
+    (11) package_names -> . package_names SEMI_COLON package_name
+    (12) package_name -> . ID
+    (13) package_name -> . package_name DOT ID
+
+    ID              shift and go to state 11
+
+
+    package_names                  shift and go to state 7
+    package_name                   shift and go to state 8
+    import                         shift and go to state 22
+
+state 15
+
+    (11) package_names -> package_names SEMI_COLON package_name .
+    (13) package_name -> package_name . DOT ID
+
+    SEMI_COLON      reduce using rule 11 (package_names -> package_names SEMI_COLON package_name .)
+    COMMA           reduce using rule 11 (package_names -> package_names SEMI_COLON package_name .)
+    HEADER          reduce using rule 11 (package_names -> package_names SEMI_COLON package_name .)
+    IMPORT_PACKAGE  reduce using rule 11 (package_names -> package_names SEMI_COLON package_name .)
+    $end            reduce using rule 11 (package_names -> package_names SEMI_COLON package_name .)
+    DOT             shift and go to state 13
+
+
+
+state 16
+
+    (15) parameter -> directive .
+
+    SEMI_COLON      reduce using rule 15 (parameter -> directive .)
+    COMMA           reduce using rule 15 (parameter -> directive .)
+    HEADER          reduce using rule 15 (parameter -> directive .)
+    IMPORT_PACKAGE  reduce using rule 15 (parameter -> directive .)
+    $end            reduce using rule 15 (parameter -> directive .)
+
+
+
+state 17
+
+    (22) version -> TOKEN . EQUAL version_string
+    (18) directive -> TOKEN . COLON EQUAL TOKEN
+    (19) directive -> TOKEN . COLON EQUAL ID
+
+    EQUAL           shift and go to state 24
+    COLON           shift and go to state 23
+
+
+
+state 18
+
+    (14) parameter -> version .
+
+    SEMI_COLON      reduce using rule 14 (parameter -> version .)
+    COMMA           reduce using rule 14 (parameter -> version .)
+    HEADER          reduce using rule 14 (parameter -> version .)
+    IMPORT_PACKAGE  reduce using rule 14 (parameter -> version .)
+    $end            reduce using rule 14 (parameter -> version .)
+
+
+
+state 19
+
+    (9) import -> package_names SEMI_COLON parameter .
+    (16) parameter -> parameter . SEMI_COLON version
+    (17) parameter -> parameter . SEMI_COLON directive
+
+    COMMA           reduce using rule 9 (import -> package_names SEMI_COLON parameter .)
+    HEADER          reduce using rule 9 (import -> package_names SEMI_COLON parameter .)
+    IMPORT_PACKAGE  reduce using rule 9 (import -> package_names SEMI_COLON parameter .)
+    $end            reduce using rule 9 (import -> package_names SEMI_COLON parameter .)
+    SEMI_COLON      shift and go to state 25
+
+
+
+state 20
+
+    (12) package_name -> ID .
+    (23) version -> ID . EQUAL version_string
+    (20) directive -> ID . COLON EQUAL TOKEN
+    (21) directive -> ID . COLON EQUAL ID
+
+    DOT             reduce using rule 12 (package_name -> ID .)
+    SEMI_COLON      reduce using rule 12 (package_name -> ID .)
+    COMMA           reduce using rule 12 (package_name -> ID .)
+    HEADER          reduce using rule 12 (package_name -> ID .)
+    IMPORT_PACKAGE  reduce using rule 12 (package_name -> ID .)
+    $end            reduce using rule 12 (package_name -> ID .)
+    EQUAL           shift and go to state 27
+    COLON           shift and go to state 26
+
+
+
+state 21
+
+    (13) package_name -> package_name DOT ID .
+
+    DOT             reduce using rule 13 (package_name -> package_name DOT ID .)
+    SEMI_COLON      reduce using rule 13 (package_name -> package_name DOT ID .)
+    COMMA           reduce using rule 13 (package_name -> package_name DOT ID .)
+    HEADER          reduce using rule 13 (package_name -> package_name DOT ID .)
+    IMPORT_PACKAGE  reduce using rule 13 (package_name -> package_name DOT ID .)
+    $end            reduce using rule 13 (package_name -> package_name DOT ID .)
+
+
+
+state 22
+
+    (7) imports -> imports COMMA import .
+
+    COMMA           reduce using rule 7 (imports -> imports COMMA import .)
+    HEADER          reduce using rule 7 (imports -> imports COMMA import .)
+    IMPORT_PACKAGE  reduce using rule 7 (imports -> imports COMMA import .)
+    $end            reduce using rule 7 (imports -> imports COMMA import .)
+
+
+
+state 23
+
+    (18) directive -> TOKEN COLON . EQUAL TOKEN
+    (19) directive -> TOKEN COLON . EQUAL ID
+
+    EQUAL           shift and go to state 28
+
+
+
+state 24
+
+    (22) version -> TOKEN EQUAL . version_string
+    (24) version_string -> . QUOTE version_number QUOTE
+    (25) version_string -> . QUOTE LPAREN version_number COMMA version_number RPAREN QUOTE
+    (26) version_string -> . QUOTE LPAREN version_number COMMA version_number RANGLE QUOTE
+    (27) version_string -> . QUOTE LANGLE version_number COMMA version_number RANGLE QUOTE
+    (28) version_string -> . QUOTE LANGLE version_number COMMA version_number RPAREN QUOTE
+
+    QUOTE           shift and go to state 29
+
+
+    version_string                 shift and go to state 30
+
+state 25
+
+    (16) parameter -> parameter SEMI_COLON . version
+    (17) parameter -> parameter SEMI_COLON . directive
+    (22) version -> . TOKEN EQUAL version_string
+    (23) version -> . ID EQUAL version_string
+    (18) directive -> . TOKEN COLON EQUAL TOKEN
+    (19) directive -> . TOKEN COLON EQUAL ID
+    (20) directive -> . ID COLON EQUAL TOKEN
+    (21) directive -> . ID COLON EQUAL ID
+
+    TOKEN           shift and go to state 17
+    ID              shift and go to state 33
+
+
+    version                        shift and go to state 32
+    directive                      shift and go to state 31
+
+state 26
+
+    (20) directive -> ID COLON . EQUAL TOKEN
+    (21) directive -> ID COLON . EQUAL ID
+
+    EQUAL           shift and go to state 34
+
+
+
+state 27
+
+    (23) version -> ID EQUAL . version_string
+    (24) version_string -> . QUOTE version_number QUOTE
+    (25) version_string -> . QUOTE LPAREN version_number COMMA version_number RPAREN QUOTE
+    (26) version_string -> . QUOTE LPAREN version_number COMMA version_number RANGLE QUOTE
+    (27) version_string -> . QUOTE LANGLE version_number COMMA version_number RANGLE QUOTE
+    (28) version_string -> . QUOTE LANGLE version_number COMMA version_number RPAREN QUOTE
+
+    QUOTE           shift and go to state 29
+
+
+    version_string                 shift and go to state 35
+
+state 28
+
+    (18) directive -> TOKEN COLON EQUAL . TOKEN
+    (19) directive -> TOKEN COLON EQUAL . ID
+
+    TOKEN           shift and go to state 36
+    ID              shift and go to state 37
+
+
+
+state 29
+
+    (24) version_string -> QUOTE . version_number QUOTE
+    (25) version_string -> QUOTE . LPAREN version_number COMMA version_number RPAREN QUOTE
+    (26) version_string -> QUOTE . LPAREN version_number COMMA version_number RANGLE QUOTE
+    (27) version_string -> QUOTE . LANGLE version_number COMMA version_number RANGLE QUOTE
+    (28) version_string -> QUOTE . LANGLE version_number COMMA version_number RPAREN QUOTE
+    (29) version_number -> . NUMBER
+    (30) version_number -> . NUMBER DOT NUMBER
+    (31) version_number -> . NUMBER DOT NUMBER DOT NUMBER
+    (32) version_number -> . NUMBER DOT NUMBER DOT NUMBER DOT TOKEN
+
+    LPAREN          shift and go to state 41
+    LANGLE          shift and go to state 39
+    NUMBER          shift and go to state 40
+
+
+    version_number                 shift and go to state 38
+
+state 30
+
+    (22) version -> TOKEN EQUAL version_string .
+
+    SEMI_COLON      reduce using rule 22 (version -> TOKEN EQUAL version_string .)
+    COMMA           reduce using rule 22 (version -> TOKEN EQUAL version_string .)
+    HEADER          reduce using rule 22 (version -> TOKEN EQUAL version_string .)
+    IMPORT_PACKAGE  reduce using rule 22 (version -> TOKEN EQUAL version_string .)
+    $end            reduce using rule 22 (version -> TOKEN EQUAL version_string .)
+
+
+
+state 31
+
+    (17) parameter -> parameter SEMI_COLON directive .
+
+    SEMI_COLON      reduce using rule 17 (parameter -> parameter SEMI_COLON directive .)
+    COMMA           reduce using rule 17 (parameter -> parameter SEMI_COLON directive .)
+    HEADER          reduce using rule 17 (parameter -> parameter SEMI_COLON directive .)
+    IMPORT_PACKAGE  reduce using rule 17 (parameter -> parameter SEMI_COLON directive .)
+    $end            reduce using rule 17 (parameter -> parameter SEMI_COLON directive .)
+
+
+
+state 32
+
+    (16) parameter -> parameter SEMI_COLON version .
+
+    SEMI_COLON      reduce using rule 16 (parameter -> parameter SEMI_COLON version .)
+    COMMA           reduce using rule 16 (parameter -> parameter SEMI_COLON version .)
+    HEADER          reduce using rule 16 (parameter -> parameter SEMI_COLON version .)
+    IMPORT_PACKAGE  reduce using rule 16 (parameter -> parameter SEMI_COLON version .)
+    $end            reduce using rule 16 (parameter -> parameter SEMI_COLON version .)
+
+
+
+state 33
+
+    (23) version -> ID . EQUAL version_string
+    (20) directive -> ID . COLON EQUAL TOKEN
+    (21) directive -> ID . COLON EQUAL ID
+
+    EQUAL           shift and go to state 27
+    COLON           shift and go to state 26
+
+
+
+state 34
+
+    (20) directive -> ID COLON EQUAL . TOKEN
+    (21) directive -> ID COLON EQUAL . ID
+
+    TOKEN           shift and go to state 42
+    ID              shift and go to state 43
+
+
+
+state 35
+
+    (23) version -> ID EQUAL version_string .
+
+    SEMI_COLON      reduce using rule 23 (version -> ID EQUAL version_string .)
+    COMMA           reduce using rule 23 (version -> ID EQUAL version_string .)
+    HEADER          reduce using rule 23 (version -> ID EQUAL version_string .)
+    IMPORT_PACKAGE  reduce using rule 23 (version -> ID EQUAL version_string .)
+    $end            reduce using rule 23 (version -> ID EQUAL version_string .)
+
+
+
+state 36
+
+    (18) directive -> TOKEN COLON EQUAL TOKEN .
+
+    SEMI_COLON      reduce using rule 18 (directive -> TOKEN COLON EQUAL TOKEN .)
+    COMMA           reduce using rule 18 (directive -> TOKEN COLON EQUAL TOKEN .)
+    HEADER          reduce using rule 18 (directive -> TOKEN COLON EQUAL TOKEN .)
+    IMPORT_PACKAGE  reduce using rule 18 (directive -> TOKEN COLON EQUAL TOKEN .)
+    $end            reduce using rule 18 (directive -> TOKEN COLON EQUAL TOKEN .)
+
+
+
+state 37
+
+    (19) directive -> TOKEN COLON EQUAL ID .
+
+    SEMI_COLON      reduce using rule 19 (directive -> TOKEN COLON EQUAL ID .)
+    COMMA           reduce using rule 19 (directive -> TOKEN COLON EQUAL ID .)
+    HEADER          reduce using rule 19 (directive -> TOKEN COLON EQUAL ID .)
+    IMPORT_PACKAGE  reduce using rule 19 (directive -> TOKEN COLON EQUAL ID .)
+    $end            reduce using rule 19 (directive -> TOKEN COLON EQUAL ID .)
+
+
+
+state 38
+
+    (24) version_string -> QUOTE version_number . QUOTE
+
+    QUOTE           shift and go to state 44
+
+
+
+state 39
+
+    (27) version_string -> QUOTE LANGLE . version_number COMMA version_number RANGLE QUOTE
+    (28) version_string -> QUOTE LANGLE . version_number COMMA version_number RPAREN QUOTE
+    (29) version_number -> . NUMBER
+    (30) version_number -> . NUMBER DOT NUMBER
+    (31) version_number -> . NUMBER DOT NUMBER DOT NUMBER
+    (32) version_number -> . NUMBER DOT NUMBER DOT NUMBER DOT TOKEN
+
+    NUMBER          shift and go to state 40
+
+
+    version_number                 shift and go to state 45
+
+state 40
+
+    (29) version_number -> NUMBER .
+    (30) version_number -> NUMBER . DOT NUMBER
+    (31) version_number -> NUMBER . DOT NUMBER DOT NUMBER
+    (32) version_number -> NUMBER . DOT NUMBER DOT NUMBER DOT TOKEN
+
+    RANGLE          reduce using rule 29 (version_number -> NUMBER .)
+    RPAREN          reduce using rule 29 (version_number -> NUMBER .)
+    COMMA           reduce using rule 29 (version_number -> NUMBER .)
+    QUOTE           reduce using rule 29 (version_number -> NUMBER .)
+    DOT             shift and go to state 46
+
+
+
+state 41
+
+    (25) version_string -> QUOTE LPAREN . version_number COMMA version_number RPAREN QUOTE
+    (26) version_string -> QUOTE LPAREN . version_number COMMA version_number RANGLE QUOTE
+    (29) version_number -> . NUMBER
+    (30) version_number -> . NUMBER DOT NUMBER
+    (31) version_number -> . NUMBER DOT NUMBER DOT NUMBER
+    (32) version_number -> . NUMBER DOT NUMBER DOT NUMBER DOT TOKEN
+
+    NUMBER          shift and go to state 40
+
+
+    version_number                 shift and go to state 47
+
+state 42
+
+    (20) directive -> ID COLON EQUAL TOKEN .
+
+    SEMI_COLON      reduce using rule 20 (directive -> ID COLON EQUAL TOKEN .)
+    COMMA           reduce using rule 20 (directive -> ID COLON EQUAL TOKEN .)
+    HEADER          reduce using rule 20 (directive -> ID COLON EQUAL TOKEN .)
+    IMPORT_PACKAGE  reduce using rule 20 (directive -> ID COLON EQUAL TOKEN .)
+    $end            reduce using rule 20 (directive -> ID COLON EQUAL TOKEN .)
+
+
+
+state 43
+
+    (21) directive -> ID COLON EQUAL ID .
+
+    SEMI_COLON      reduce using rule 21 (directive -> ID COLON EQUAL ID .)
+    COMMA           reduce using rule 21 (directive -> ID COLON EQUAL ID .)
+    HEADER          reduce using rule 21 (directive -> ID COLON EQUAL ID .)
+    IMPORT_PACKAGE  reduce using rule 21 (directive -> ID COLON EQUAL ID .)
+    $end            reduce using rule 21 (directive -> ID COLON EQUAL ID .)
+
+
+
+state 44
+
+    (24) version_string -> QUOTE version_number QUOTE .
+
+    SEMI_COLON      reduce using rule 24 (version_string -> QUOTE version_number QUOTE .)
+    COMMA           reduce using rule 24 (version_string -> QUOTE version_number QUOTE .)
+    HEADER          reduce using rule 24 (version_string -> QUOTE version_number QUOTE .)
+    IMPORT_PACKAGE  reduce using rule 24 (version_string -> QUOTE version_number QUOTE .)
+    $end            reduce using rule 24 (version_string -> QUOTE version_number QUOTE .)
+
+
+
+state 45
+
+    (27) version_string -> QUOTE LANGLE version_number . COMMA version_number RANGLE QUOTE
+    (28) version_string -> QUOTE LANGLE version_number . COMMA version_number RPAREN QUOTE
+
+    COMMA           shift and go to state 48
+
+
+
+state 46
+
+    (30) version_number -> NUMBER DOT . NUMBER
+    (31) version_number -> NUMBER DOT . NUMBER DOT NUMBER
+    (32) version_number -> NUMBER DOT . NUMBER DOT NUMBER DOT TOKEN
+
+    NUMBER          shift and go to state 49
+
+
+
+state 47
+
+    (25) version_string -> QUOTE LPAREN version_number . COMMA version_number RPAREN QUOTE
+    (26) version_string -> QUOTE LPAREN version_number . COMMA version_number RANGLE QUOTE
+
+    COMMA           shift and go to state 50
+
+
+
+state 48
+
+    (27) version_string -> QUOTE LANGLE version_number COMMA . version_number RANGLE QUOTE
+    (28) version_string -> QUOTE LANGLE version_number COMMA . version_number RPAREN QUOTE
+    (29) version_number -> . NUMBER
+    (30) version_number -> . NUMBER DOT NUMBER
+    (31) version_number -> . NUMBER DOT NUMBER DOT NUMBER
+    (32) version_number -> . NUMBER DOT NUMBER DOT NUMBER DOT TOKEN
+
+    NUMBER          shift and go to state 40
+
+
+    version_number                 shift and go to state 51
+
+state 49
+
+    (30) version_number -> NUMBER DOT NUMBER .
+    (31) version_number -> NUMBER DOT NUMBER . DOT NUMBER
+    (32) version_number -> NUMBER DOT NUMBER . DOT NUMBER DOT TOKEN
+
+    RANGLE          reduce using rule 30 (version_number -> NUMBER DOT NUMBER .)
+    RPAREN          reduce using rule 30 (version_number -> NUMBER DOT NUMBER .)
+    COMMA           reduce using rule 30 (version_number -> NUMBER DOT NUMBER .)
+    QUOTE           reduce using rule 30 (version_number -> NUMBER DOT NUMBER .)
+    DOT             shift and go to state 52
+
+
+
+state 50
+
+    (25) version_string -> QUOTE LPAREN version_number COMMA . version_number RPAREN QUOTE
+    (26) version_string -> QUOTE LPAREN version_number COMMA . version_number RANGLE QUOTE
+    (29) version_number -> . NUMBER
+    (30) version_number -> . NUMBER DOT NUMBER
+    (31) version_number -> . NUMBER DOT NUMBER DOT NUMBER
+    (32) version_number -> . NUMBER DOT NUMBER DOT NUMBER DOT TOKEN
+
+    NUMBER          shift and go to state 40
+
+
+    version_number                 shift and go to state 53
+
+state 51
+
+    (27) version_string -> QUOTE LANGLE version_number COMMA version_number . RANGLE QUOTE
+    (28) version_string -> QUOTE LANGLE version_number COMMA version_number . RPAREN QUOTE
+
+    RANGLE          shift and go to state 55
+    RPAREN          shift and go to state 54
+
+
+
+state 52
+
+    (31) version_number -> NUMBER DOT NUMBER DOT . NUMBER
+    (32) version_number -> NUMBER DOT NUMBER DOT . NUMBER DOT TOKEN
+
+    NUMBER          shift and go to state 56
+
+
+
+state 53
+
+    (25) version_string -> QUOTE LPAREN version_number COMMA version_number . RPAREN QUOTE
+    (26) version_string -> QUOTE LPAREN version_number COMMA version_number . RANGLE QUOTE
+
+    RPAREN          shift and go to state 57
+    RANGLE          shift and go to state 58
+
+
+
+state 54
+
+    (28) version_string -> QUOTE LANGLE version_number COMMA version_number RPAREN . QUOTE
+
+    QUOTE           shift and go to state 59
+
+
+
+state 55
+
+    (27) version_string -> QUOTE LANGLE version_number COMMA version_number RANGLE . QUOTE
+
+    QUOTE           shift and go to state 60
+
+
+
+state 56
+
+    (31) version_number -> NUMBER DOT NUMBER DOT NUMBER .
+    (32) version_number -> NUMBER DOT NUMBER DOT NUMBER . DOT TOKEN
+
+    RANGLE          reduce using rule 31 (version_number -> NUMBER DOT NUMBER DOT NUMBER .)
+    RPAREN          reduce using rule 31 (version_number -> NUMBER DOT NUMBER DOT NUMBER .)
+    COMMA           reduce using rule 31 (version_number -> NUMBER DOT NUMBER DOT NUMBER .)
+    QUOTE           reduce using rule 31 (version_number -> NUMBER DOT NUMBER DOT NUMBER .)
+    DOT             shift and go to state 61
+
+
+
+state 57
+
+    (25) version_string -> QUOTE LPAREN version_number COMMA version_number RPAREN . QUOTE
+
+    QUOTE           shift and go to state 62
+
+
+
+state 58
+
+    (26) version_string -> QUOTE LPAREN version_number COMMA version_number RANGLE . QUOTE
+
+    QUOTE           shift and go to state 63
+
+
+
+state 59
+
+    (28) version_string -> QUOTE LANGLE version_number COMMA version_number RPAREN QUOTE .
+
+    SEMI_COLON      reduce using rule 28 (version_string -> QUOTE LANGLE version_number COMMA version_number RPAREN QUOTE .)
+    COMMA           reduce using rule 28 (version_string -> QUOTE LANGLE version_number COMMA version_number RPAREN QUOTE .)
+    HEADER          reduce using rule 28 (version_string -> QUOTE LANGLE version_number COMMA version_number RPAREN QUOTE .)
+    IMPORT_PACKAGE  reduce using rule 28 (version_string -> QUOTE LANGLE version_number COMMA version_number RPAREN QUOTE .)
+    $end            reduce using rule 28 (version_string -> QUOTE LANGLE version_number COMMA version_number RPAREN QUOTE .)
+
+
+
+state 60
+
+    (27) version_string -> QUOTE LANGLE version_number COMMA version_number RANGLE QUOTE .
+
+    SEMI_COLON      reduce using rule 27 (version_string -> QUOTE LANGLE version_number COMMA version_number RANGLE QUOTE .)
+    COMMA           reduce using rule 27 (version_string -> QUOTE LANGLE version_number COMMA version_number RANGLE QUOTE .)
+    HEADER          reduce using rule 27 (version_string -> QUOTE LANGLE version_number COMMA version_number RANGLE QUOTE .)
+    IMPORT_PACKAGE  reduce using rule 27 (version_string -> QUOTE LANGLE version_number COMMA version_number RANGLE QUOTE .)
+    $end            reduce using rule 27 (version_string -> QUOTE LANGLE version_number COMMA version_number RANGLE QUOTE .)
+
+
+
+state 61
+
+    (32) version_number -> NUMBER DOT NUMBER DOT NUMBER DOT . TOKEN
+
+    TOKEN           shift and go to state 64
+
+
+
+state 62
+
+    (25) version_string -> QUOTE LPAREN version_number COMMA version_number RPAREN QUOTE .
+
+    SEMI_COLON      reduce using rule 25 (version_string -> QUOTE LPAREN version_number COMMA version_number RPAREN QUOTE .)
+    COMMA           reduce using rule 25 (version_string -> QUOTE LPAREN version_number COMMA version_number RPAREN QUOTE .)
+    HEADER          reduce using rule 25 (version_string -> QUOTE LPAREN version_number COMMA version_number RPAREN QUOTE .)
+    IMPORT_PACKAGE  reduce using rule 25 (version_string -> QUOTE LPAREN version_number COMMA version_number RPAREN QUOTE .)
+    $end            reduce using rule 25 (version_string -> QUOTE LPAREN version_number COMMA version_number RPAREN QUOTE .)
+
+
+
+state 63
+
+    (26) version_string -> QUOTE LPAREN version_number COMMA version_number RANGLE QUOTE .
+
+    SEMI_COLON      reduce using rule 26 (version_string -> QUOTE LPAREN version_number COMMA version_number RANGLE QUOTE .)
+    COMMA           reduce using rule 26 (version_string -> QUOTE LPAREN version_number COMMA version_number RANGLE QUOTE .)
+    HEADER          reduce using rule 26 (version_string -> QUOTE LPAREN version_number COMMA version_number RANGLE QUOTE .)
+    IMPORT_PACKAGE  reduce using rule 26 (version_string -> QUOTE LPAREN version_number COMMA version_number RANGLE QUOTE .)
+    $end            reduce using rule 26 (version_string -> QUOTE LPAREN version_number COMMA version_number RANGLE QUOTE .)
+
+
+
+state 64
+
+    (32) version_number -> NUMBER DOT NUMBER DOT NUMBER DOT TOKEN .
+
+    RANGLE          reduce using rule 32 (version_number -> NUMBER DOT NUMBER DOT NUMBER DOT TOKEN .)
+    RPAREN          reduce using rule 32 (version_number -> NUMBER DOT NUMBER DOT NUMBER DOT TOKEN .)
+    COMMA           reduce using rule 32 (version_number -> NUMBER DOT NUMBER DOT NUMBER DOT TOKEN .)
+    QUOTE           reduce using rule 32 (version_number -> NUMBER DOT NUMBER DOT NUMBER DOT TOKEN .)
+
+
