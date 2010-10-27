@@ -2,6 +2,14 @@
 
 import unittest
 import manifest
+import manifest_parser
+
+class manifest_ast_test(unittest.TestCase):
+    def test_simple(self):
+        ast = manifest.Ast()
+        test = 'org.java.junit'
+        parser = manifest_parser.ManifestParser()
+        parser.parse(test, ast)
 
 class manifest_test(unittest.TestCase):
     def set_version(self, v, m, mi, mic, qual):

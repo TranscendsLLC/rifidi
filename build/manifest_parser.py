@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
-import base_parser
+import ply.lex as lex
+import ply.yacc as yacc
 
 class DefaultAst:
     def __init__(self):
@@ -61,8 +62,8 @@ class DefaultAst:
         #print ' version number '
         self.stack.append('version_number')
         
-class ManifestParser(base_parser.Parser):    
-
+class ManifestParser:    
+    precedence = ()
     reserved = {
         'Import-Package:' : 'IMPORT_PACKAGE',
         'Export-Package:' : 'EXPORT_PACKAGE',
@@ -80,8 +81,8 @@ class ManifestParser(base_parser.Parser):
     }
         
     tokens = ('DOT','COLON', 'COMMA', 'SEMI_COLON', 'QUOTE', 'LPAREN', 'RPAREN',
-              'RANGLE', 'LANGLE', 'NUMBER', 'HEADER', 'ID', 'TOKEN','SLASH',
-              'EQUAL', 'PERCENT', 'PLUS') + tuple(reserved.values())
+              'RANGLE', 'LANGLE', 'NUMBER', 'HEADER', 'HEADER1', 'ID', 'TOKEN','SLASH',
+              'EQUAL', 'PERCENT', 'PLUS', 'DOLLAR', 'newline', 'newline1')+ tuple(reserved.values())
     t_COLON = r'\:'
     t_COMMA = r'\,'
     t_DOT = r'\.'
@@ -95,10 +96,33 @@ class ManifestParser(base_parser.Parser):
     t_QUOTE = r'\"'
     t_PERCENT = r'%'
     t_PLUS = r'\+'
+    t_DOLLAR = '\$'
     t_ignore = " \t"
         
-    def t_newline(self, t):
+    def __init__(self, **kw):
+        #self.debug = kw.get('debug', 0)
+        self.names = { }
+        try:
+            modname = os.path.split(os.path.splitext(__file__)[0])[1] + \
+            "_" + self.__class__.__name__
+        except:
+            modname = "parser"+"_"+self.__class__.__name__
+        #self.debugfile = modname + ".dbg"
+        #self.tabmodule = modname + "_" + "parsetab"
+        #print self.debugfile, self.tabmodule
+
+        lex.lex(module=self)#, debug=self.debug)
+        yacc.yacc(module=self)#,
+                  #debug=self.debug,
+                  #debugfile=self.debugfile,
+                  #tabmodule=self.tabmodule)    
+        
+    def t_newline1(self, t):
         r'[\r\n]+'
+        t.lexer.lineno += t.value.count("\n")
+             
+    def t_newline(self, t):
+        r'[\n]+'
         t.lexer.lineno += t.value.count("\n")
         
     def t_error(self, t):
@@ -111,25 +135,25 @@ class ManifestParser(base_parser.Parser):
         return t
             
     def t_HEADER(self, t):
-        r'[a-zA-Z_][a-zA-Z_0-9(\n )]*\-[a-zA-Z_(\n )][a-zA-Z_0-9(\n )]*\:'
+        r'^[a-zA-Z_][a-zA-Z_0-9(\n )]*\-[a-zA-Z_(\n )][a-zA-Z_0-9(\n )]*\:'
         t.type = ManifestParser.reserved.get(t.value, 'HEADER')
         print 't_HEADER ', t.value, t.type
         return t
     
-    #def t_HEADER1(self, t):
-    #    r'[a-zA-Z_][a-zA-Z_0-9]+\:'
-    #    t.type = ManifestParser.reserved.get(t.value, 'HEADER')
-    #    print 't_HEADER1 ', t.value, t.type
-    #    return t
+    def t_HEADER1(self, t):
+        r'^[a-zA-Z_][a-zA-Z_0-9]+\:'
+        t.type = ManifestParser.reserved.get(t.value, 'HEADER1')
+        print 't_HEADER1 ', t.value, t.type
+        return t
         
     def t_ID(self, t):
-        r'[a-zA-Z_][a-zA-Z_0-9(\n )]*'    
+        r'[a-zA-Z_][a-zA-Z_0-9(\n )\$]*'    
         t.type = ManifestParser.reserved.get(t.value, 'ID')
         print 't_ID', t.value, t.type
         return t
             
     def t_TOKEN(self, t):
-        r'[a-zA-Z0-9_-][a-zA-Z0-9-_(\n )]*'
+        r'[a-zA-Z0-9_-][a-zA-Z0-9-_(\n )\$\+\=]*'
         t.type = ManifestParser.reserved.get(t.value, 'TOKEN')
         print 't_TOKEN ', t.value, t.type
         return t
@@ -167,6 +191,8 @@ class ManifestParser(base_parser.Parser):
                     | HEADER ID
                     | HEADER TOKEN
                     | HEADER package_name
+                    | HEADER1 package_name
+                    | not_used DOLLAR
                     | not_used package_name
                     | not_used PLUS
                     | not_used SLASH
@@ -286,7 +312,8 @@ class ManifestParser(base_parser.Parser):
         assert ast != None
         assert sentence != None
         self.ast = ast
-        self.run_parser(sentence)
+        yacc.parse(sentence)
+    
             
 if __name__ == '__main__':
     pass
