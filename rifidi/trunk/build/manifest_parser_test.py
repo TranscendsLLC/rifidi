@@ -23,7 +23,7 @@ class ManifestParserTest(unittest.TestCase):
 #        print test_string
         ast = manifest_parser.DefaultAst()
         parser.parse(test_string, ast)
-
+        
         self.assertEquals('manifest', ast.stack.pop())
         self.assertEquals('header', ast.stack.pop())
         self.assertEquals('not_used', ast.stack.pop())
@@ -31,8 +31,7 @@ class ManifestParserTest(unittest.TestCase):
         self.assertEquals('url', ast.stack.pop())
         self.assertEquals('url', ast.stack.pop())
         self.assertEquals('url', ast.stack.pop())
-
-
+       
     def test_main_class(self):        
         test_string = 'Main-Class: org.eclipse.core.runtime.adaptor.EclipseStarter'
         parser = manifest_parser.ManifestParser()
@@ -46,15 +45,14 @@ class ManifestParserTest(unittest.TestCase):
         self.assertEquals('package_name', ast.stack.pop())
         self.assertEquals('package_name', ast.stack.pop())
     #  'package_name', 'package_name', 'not_used', 'header', 'manifest'
-
+        
         self.assertEquals('package_name', ast.stack.pop())
         self.assertEquals('package_name', ast.stack.pop())        
         self.assertEquals('package_name', ast.stack.pop())
         self.assertEquals('package_name', ast.stack.pop())
     #   package_name', 'package_name', 'package_name', 'package_name', 
     #   print ast.stack
-
-
+        
     def test_bundle_localization(self):        
         test_string = 'Bundle-Localization: systembundle'
         parser = manifest_parser.ManifestParser()
@@ -64,7 +62,6 @@ class ManifestParserTest(unittest.TestCase):
         self.assertEquals('header', ast.stack.pop())
         self.assertEquals('not_used', ast.stack.pop())
         
-
     def test_bundle_required_exe_env(self):        
         test_string = 'Bundle-RequiredExecutionEnvironment: J2SE-1.5,OSGi/Minimum-1.2'
         parser = manifest_parser.ManifestParser()
@@ -74,14 +71,14 @@ class ManifestParserTest(unittest.TestCase):
         self.assertEquals('header', ast.stack.pop())
         self.assertEquals('not_used', ast.stack.pop())
 #'not_used', 'header', 'manifest']
-
+        
         self.assertEquals('jdk_version', ast.stack.pop())
         self.assertEquals('jdk_version', ast.stack.pop())                
         self.assertEquals('jdk_version', ast.stack.pop())
         self.assertEquals('jdk_version', ast.stack.pop())
         self.assertEquals('jdk_version', ast.stack.pop())                
 #'jdk_version', 'jdk_version', 'jdk_version', 'jdk_version', 'jdk_version', 
-
+        
         self.assertEquals('jdk_version', ast.stack.pop())
         self.assertEquals('jdk_version', ast.stack.pop())                
         self.assertEquals('jdk_version', ast.stack.pop())
@@ -89,7 +86,6 @@ class ManifestParserTest(unittest.TestCase):
         self.assertEquals('jdk_version', ast.stack.pop())                
         self.assertEquals('jdk_version', ast.stack.pop())
 #'jdk_version', 'jdk_version', 'jdk_version', 'jdk_version', 'jdk_version', 'jdk_version', 
-
         
     def test_bundle_symbolic_name(self):        
         test_string = 'Bundle-SymbolicName: org.eclipse.osgi; singleton:=true'
@@ -117,9 +113,9 @@ class ManifestParserTest(unittest.TestCase):
         self.assertEquals('header', ast.stack.pop())
         self.assertEquals('not_used', ast.stack.pop())
         self.assertEquals('bundle_activator', ast.stack.pop())
-
+        
 # 'bundle_activator', 'not_used', 'header', 'manifest']
-
+        
         self.assertEquals('package_name', ast.stack.pop())
         self.assertEquals('package_name', ast.stack.pop())        
         self.assertEquals('package_name', ast.stack.pop())
@@ -127,11 +123,11 @@ class ManifestParserTest(unittest.TestCase):
         self.assertEquals('package_name', ast.stack.pop())
         self.assertEquals('package_name', ast.stack.pop())
         self.assertEquals('package_name', ast.stack.pop())
-
+        
 #'package_name', 'package_name', 'package_name', 'package_name', 'package_name', 'package_name', 'package_name',
         test_string ='Bundle-Activator: org.eclipse.osgi.framework.internal.core.SystemBundl\n'+' eActivator'
         parser = manifest_parser.ManifestParser()
- 
+        
         ast = manifest_parser.DefaultAst()
         parser.parse(test_string, ast)
         self.assertEquals('manifest', ast.stack.pop())
@@ -146,44 +142,40 @@ class ManifestParserTest(unittest.TestCase):
         self.assertEquals('package_name', ast.stack.pop())
         print ast.stack        
     # 'package_name', 'package_name', 'package_name', 'package_name', 'package_name', 'package_name', 
-
         
     def test_bundle_version(self):        
         test_string = 'Bundle-Version: 3.5.2.R35x_v20100126'
-
+        
         parser = manifest_parser.ManifestParser()
         ast = manifest_parser.DefaultAst()
         parser.parse(test_string, ast)
-
+        
         #print '-'*80
         #print test_string
         #print ast.stack.pop()
         #print '-'*80
 #        self.assertEquals('', ast.stack.pop())
-
         
     def test_bundle_description(self):        
         test_string = 'Bundle-Description: %systemBundle'
-
+        
         parser = manifest_parser.ManifestParser()
         ast = manifest_parser.DefaultAst()
         parser.parse(test_string, ast)
-
+        
         #print '-'*80
         #print test_string
         #print ast.stack.pop()
         #print '-'*80
 #        self.assertEquals('', ast.stack.pop())
-
-
         
     def test_bundle_vendor(self):        
         test_string = 'Bundle-Vendor: %eclipse.org'
-
+        
         parser = manifest_parser.ManifestParser()
         ast = manifest_parser.DefaultAst()
         parser.parse(test_string, ast)
-
+        
         #print '-'*80
         #print test_string
         #print ast.stack.pop()
@@ -196,75 +188,75 @@ class ManifestParserTest(unittest.TestCase):
         parser = manifest_parser.ManifestParser()
         ast = manifest_parser.DefaultAst()
         parser.parse(test_string, ast)
-
+        
         #print '-'*80
         #print test_string
         #print ast.stack.pop()
         #print '-'*80
 #        self.assertEquals('', ast.stack.pop())
-
+        
         
     def test_other(self):        
         test_string = 'Eclipse-ExtensibleAPI: true'
-
+        
         parser = manifest_parser.ManifestParser()
         ast = manifest_parser.DefaultAst()
         parser.parse(test_string, ast)
-
+        
         #print '-'*80
         #print test_string
         #print ast.stack.pop()
         #print '-'*80
 #        self.assertEquals('', ast.stack.pop())
-
+        
         test_string = 'Eclipse-SystemBundle: true'
         parser = manifest_parser.ManifestParser()
         ast = manifest_parser.DefaultAst()
         parser.parse(test_string, ast)
-
+        
         #print '-'*80
         #print test_string
         #print ast.stack.pop()
         #print '-'*80
 #        self.assertEquals('', ast.stack.pop())
-
+        
         test_string = 'Export-Service: org.osgi.service.packageadmin.PackageAdmin,org.osgi.se\n'+\
                       ' rvice.permissionadmin.PermissionAdmin,org.osgi.service.startlevel.Sta\n'+\
                       ' rtLevel,org.eclipse.osgi.service.debug.DebugOptions'
         parser = manifest_parser.ManifestParser()
         ast = manifest_parser.DefaultAst()
         parser.parse(test_string, ast)
-
+        
         #print '-'*80
         #print test_string
         #print ast.stack.pop()
         #print '-'*80
-
+        
         test_string = 'Bundle-Copyright: %copyright'
         parser = manifest_parser.ManifestParser()
         ast = manifest_parser.DefaultAst()
         parser.parse(test_string, ast)
-
+        
         #print '-'*80
         #print test_string
         #print ast.stack.pop()
         #print '-'*80
         #
-        #test_string = 'Name: org/eclipse/osgi/framework/internal/core/AbstractBundle$2.class'
-        #parser = manifest_parser.ManifestParser()
-        #ast = manifest_parser.DefaultAst()
-        #parser.parse(test_string, ast)
+        test_string = 'Name: org/eclipse/osgi/framework/internal/core/AbstractBundle$2.class'
+        parser = manifest_parser.ManifestParser()
+        ast = manifest_parser.DefaultAst()
+        parser.parse(test_string, ast)
         #
         #print '-'*80
         #print test_string
         #print ast.stack.pop()
         #print '-'*80
-
+        
         test_string = 'SHA1-Digest: +12NVGN/07NmVNXWMm+vjJdS69A='
         parser = manifest_parser.ManifestParser()
         ast = manifest_parser.DefaultAst()
         parser.parse(test_string, ast)
-
+        
         #print '-'*80
         #print test_string
         #print ast.stack.pop()
@@ -334,7 +326,7 @@ class ManifestParserTest(unittest.TestCase):
 
         parser = manifest_parser.ManifestParser()
         ast = manifest_parser.DefaultAst()
-      #  parser.parse(test_string, ast)
+        #parser.parse(test_string, ast)
 
         print '-'*80
         print test_string

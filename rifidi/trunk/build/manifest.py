@@ -1,6 +1,50 @@
 #!/usr/bin/env python
 
-import base_parser
+import manifest_parser
+
+class Ast(manifest_parser.DefaultAst):
+    def __init__(self):
+        self.stack = []
+    def bundle_symbolic_name(self, p):
+        #print ' bundle symbolic name '
+        self.stack.append('bundle_symbolic_name')
+    def export_package(self, p):
+        #print ' export package '
+        self.stack.append('export_package')
+    def exports(self, p):
+        #print ' exports '
+        self.stack.append('export')
+    def import_package(self, p):
+        #print ' import package '
+        self.stack.append('import_package')
+    def imports(self, p):
+        #print ' imports '
+        self.stack.append('imports')
+    def _import(self, p):
+        #print ' _import '
+        self.stack.append('import')
+    def package_names(self, p):
+        #print ' package-names '
+        self.stack.append('package_names')
+    def package_name(self, p):
+        assert p[0] != None
+        if(len(p) == 2):
+            print 'here'
+        #:
+        print ' len p ', len(p)
+        self.stack.append('package_name')
+    def parameter(self, p):
+        #print 'parameter '
+        self.stack.append('parameter')
+    def version(self, p):
+       # print ' version '
+        self.stack.append('version')
+    def version_string(self, p):
+        # print ' version string'
+        self.stack.append('version_string')
+    def version_number(self, p):
+        #print ' version number '
+        self.stack.append('version_number')
 
 class Bundle:
     def __init__(self):
