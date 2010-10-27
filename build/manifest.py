@@ -27,12 +27,12 @@ class Ast(manifest_parser.DefaultAst):
         #print ' package-names '
         self.stack.append('package_names')
     def package_name(self, p):
-        assert p[0] != None
-        if(len(p) == 2):
+        if(len(p) == 4):
+            p[0] = p[1]+p[2]+p[3]
             print 'here'
-        #:
-        print ' len p ', len(p)
-        self.stack.append('package_name')
+        else:
+            assert len(p) == 2
+            p[0] = p[1]
     def parameter(self, p):
         #print 'parameter '
         self.stack.append('parameter')

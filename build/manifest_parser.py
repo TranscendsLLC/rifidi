@@ -99,6 +99,8 @@ class ManifestParser:
     t_DOLLAR = '\$'
     t_ignore = " \t"
         
+    start = 'package_name'
+    
     def __init__(self, **kw):
         #self.debug = kw.get('debug', 0)
         self.names = { }
