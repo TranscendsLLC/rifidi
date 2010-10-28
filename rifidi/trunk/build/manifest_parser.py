@@ -7,10 +7,10 @@ class DefaultAst:
     def __init__(self):
         self.stack = []
     def manifest(self, p):
-        print ' manifest '
+        #print ' manifest '
         self.stack.append('manifest')
     def header(self, p):
-        print ' header '
+        #print ' header '
         self.stack.append('header')
     def bundle_symbolic_name(self, p):
         #print ' bundle symbolic name '
@@ -32,19 +32,19 @@ class DefaultAst:
         #print ' exports '
         self.stack.append('export')
     def import_package(self, p):
-        print ' import package '
+        #print ' import package '
         self.stack.append('import_package')
     def imports(self, p):
-        print ' imports '
+        #print ' imports '
         self.stack.append('imports')
     def _import(self, p):
-        print ' _import '
+        #print ' _import '
         self.stack.append('import')
     def package_names(self, p):
-        print ' package-names '
+        #print ' package-names '
         self.stack.append('package_names')
     def package_name(self, p):
-        print ' package_name '
+        #print ' package_name '
         self.stack.append('package_name')
     def parameter(self, p):
         #print 'parameter '
@@ -53,10 +53,10 @@ class DefaultAst:
         #print 'directive'
         self.stack.append('directive')
     def version(self, p):
-       # print ' version '
+        #print ' version '
         self.stack.append('version')
     def version_string(self, p):
-        # print ' version string'
+        #print ' version string'
         self.stack.append('version_string')
     def version_number(self, p):
         #print ' version number '

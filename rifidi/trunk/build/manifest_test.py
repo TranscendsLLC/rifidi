@@ -18,6 +18,10 @@ class manifest_ast_test(unittest.TestCase):
 
         parser = manifest_parser.ManifestParser()
         parser.parse(test, ast)
+        for i in ast.bundles:
+            for j in i.ipackages:
+                print '----: ', j
+                print j.b_version, j.b_inclusive, j.e_version, j.e_inclusive
 
 class manifest_test(unittest.TestCase):
     def set_version(self, v, m, mi, mic, qual):
