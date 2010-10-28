@@ -75,8 +75,7 @@ public class ReadZoneMonitorEsperFactoryTest {
 		/**List<String> stmt = new ArrayList<String>();
 		stmt = readZoneMonitorEsperFactory.createStatements();
 		List expStmt  = new ArrayList<String>();
-		
-		
+			
 		List<ReadZone> expReadZones = new ArrayList<ReadZone>();
 		expReadZones.add(readZone);
 		expReadZones.add(readZone1);
