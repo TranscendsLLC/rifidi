@@ -66,24 +66,11 @@ public class ReadZoneMonitorEsperFactoryTest {
 	public void tearDown() throws Exception {
 	}
 
-		
 	/**
 	 * Test method for {@link org.rifidi.edge.core.app.api.service.tagmonitor.impl.ReadZoneMonitorEsperFactory#createStatements()}.
 	 */
 	@Test
 	public void testCreateStatements() {
-		/**List<String> stmt = new ArrayList<String>();
-		stmt = readZoneMonitorEsperFactory.createStatements();
-		List expStmt  = new ArrayList<String>();
-			
-		List<ReadZone> expReadZones = new ArrayList<ReadZone>();
-		expReadZones.add(readZone);
-		expReadZones.add(readZone1);
-		
-		expStmt.add(expReadZones);
-		String expWindowStmt = new String("create window tags_5.std:firstunique(tag.Id, readerId, antennaID) as TagReadEvent");
-		expStmt.add(expWindowStmt);
-		*/
 		
 	}
 
