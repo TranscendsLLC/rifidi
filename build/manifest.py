@@ -4,22 +4,24 @@ import manifest_parser
 
 class Ast(manifest_parser.DefaultAst):
     def __init__(self):
-        self.stack = []
+        self.bundles = []
+        manifest_parser.DefaultAst.__init__(self)
     def __add_packages__(self, bundle, cmd, packages):
         if(cmd == 'import-package'):
+            print packages
             for i in packages:
                 bundle.add_ipackage(i)
                 print '---- adding package ----', i
         else:
             assert False
-            pass
-        
+              
     def manifest(self, p):
         assert len(p) == 2 or len(p) == 3
         if len(p) == 2:
             p[0] = Bundle()
             if p[1] != None:
                 self.__add_packages__(p[0], p[1][0], p[1][1])
+                self.bundles.append(p[0])
         else:
             assert p[1] != None
             self.__add_packages__(p[1], p[2][0], p[2][1])
@@ -48,13 +50,13 @@ class Ast(manifest_parser.DefaultAst):
         print ' imports '
         assert len(p) == 2 or len(p) == 4
         if len(p) == 2:
-            p[0] = [p[1],]
+            p[0] = p[1]
         else:
             print p[1], p[2], p[3]
             assert p[1] != None
 #                p[0] = [p[3],]
  #           else:
-            p[1].append(p[3])
+            p[1].extend(p[3])
             p[0] = p[1]
             
         self.stack.append('imports')
@@ -68,13 +70,13 @@ class Ast(manifest_parser.DefaultAst):
             assert len(p[1]) == 1 or p[3] == None
             if p[3] != None:
                 assert len(p[3]) == 4
-                p[1].set_version_range(p[3][0], p[3][1], p[3][2], p[3][3])
+                p[1][0].set_version_range(p[3][0], p[3][1], p[3][2], p[3][3])
             p[0] = p[1]
         self.stack.append('import')
         assert p[0] != None
         
     def package_names(self, p):
-        #print ' package-names '
+        print ' package-names '
         if len(p) == 2:
             p[0] = [Package(p[1]),]
         else:
@@ -82,29 +84,30 @@ class Ast(manifest_parser.DefaultAst):
             p[0] = p[1].append(Package(p[3]))
         self.stack.append('package_names')
     def package_name(self, p):
+        print 'package_name'
         if len(p) == 4:
             p[0] = p[1]+p[2]+p[3]
         else:
             assert len(p) == 2
             p[0] = p[1]
     def parameter(self, p):
-        #print 'parameter '
+        #print 'parameter ', p[1], len(p)
         assert len(p) == 2 or len(p) == 4
-        if len(p) == 2 and p[1] != None:
+        # XXX - this is a hack
+        if p[1] != None:
             p[0] = p[1]
-        else:
-            if p[3] != None:
-                assert p[1] == None
-                p[0] = p[3]
+        elif p[3] != None:
+            p[0] = p[3]
+        #print '----------------', p[0]
         self.stack.append('parameter')
     def version(self, p):
-        # print ' version '
+        print ' version '
         assert len(p) == 4
         p[0] = p[3]   
         self.stack.append('version')
     def version_string(self, p):
         assert len(p) == 4 or len(p) == 8
-        # print ' version string'
+        print ' version string'
         if len(p) == 4:
             p[0] = [p[1], True, p[1], True]
         elif len(p) == 8 and p[2] == '(' and p[6] == ')':
