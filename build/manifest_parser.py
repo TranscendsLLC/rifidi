@@ -30,6 +30,8 @@ class DefaultAst:
         self.stack.append('export_package')
     def exports(self, p):
         #print ' exports '
+        self.stack.append('exports')
+    def export(self, p):
         self.stack.append('export')
     def import_package(self, p):
         #print ' import package '
@@ -133,7 +135,11 @@ class ManifestParser:
         r'[0-9]+'
         print 't_NUMBER'
         return t
-            
+    #
+    #def t_VERSION(self, t):
+    #    r'version='
+    #    return t
+    #
     def t_HEADER(self, t):
         r'^[a-zA-Z_][a-zA-Z_0-9(\n )]*\-[a-zA-Z_(\n )][a-zA-Z_0-9(\n )]*\:'
         t.type = ManifestParser.reserved.get(t.value, 'HEADER')
@@ -166,10 +172,9 @@ class ManifestParser:
     def p_header(self, p):
         '''header : import_package
                  | bundle_symbolic_name
-                 | export_package
                  | not_used'''
         self.ast.header(p)
-        
+#                 | export_package        
     def p_bundle_symbolic_name(self, p):
         '''bundle_symbolic_name : BUNDLE_SYMBOLIC_NAME package_name
                                 |  bundle_symbolic_name SEMI_COLON parameter'''
@@ -229,22 +234,22 @@ class ManifestParser:
             | url SLASH ID
             | url SLASH TOKEN'''
         self.ast.url(p)
-        
-    def p_export_package(self, p):
-        '''export_package : EXPORT_PACKAGE exports'''
-        self.ast.export_package(p)
-        
-    def p_exports(self, p):
-        '''exports : export
-                   | exports COMMA export'''
-        self.ast.exports(p)
-    def p_export(self, p):
-        '''export : package_names'''
-        pass
-        assert False
-            
+    #    
+    #def p_export_package(self, p):
+    #    '''export_package : 
+    #    self.ast.export_package(p)
+    #    
+    #def p_exports(self, p):
+    #    '''exports : export
+    #               | exports COMMA export'''
+    #    self.ast.exports(p)
+    #def p_export(self, p):
+    #    '''export : package_names'''
+    #    self.ast.export(p)
+    
     def p_import_package(self, p):
-        '''import_package : IMPORT_PACKAGE imports'''
+        '''import_package : IMPORT_PACKAGE imports
+                            | EXPORT_PACKAGE imports'''
         self.ast.import_package(p)
             
     def p_imports(self, p):
@@ -259,7 +264,8 @@ class ManifestParser:
             
     def p_package_names(self, p):
         '''package_names : package_name
-                         | package_names SEMI_COLON package_name'''
+                         | package_names SEMI_COLON package_name
+                         | package_names SEMI_COLON parameter'''
         self.ast.package_names(p)
             
     def p_package_name(self, p):
@@ -278,8 +284,16 @@ class ManifestParser:
         '''directive : TOKEN COLON EQUAL TOKEN
                      | TOKEN COLON EQUAL ID
                      | ID COLON EQUAL TOKEN
-                     | ID COLON EQUAL ID'''
+                     | ID COLON EQUAL ID
+                     | ID COLON EQUAL QUOTE unused_package_name QUOTE
+                     | ID TOKEN COLON EQUAL QUOTE unused_package_name QUOTE
+                     | ID TOKEN COLON EQUAL ID'''
+        print 'directive'
         self.ast.directive(p)
+    def p_unused_package_name(self, p):
+        '''unused_package_name : package_name
+                               | unused_package_name COMMA package_name'''
+        print 'unused package name'
             
     def p_version(self, p):
         '''version : TOKEN EQUAL version_string
