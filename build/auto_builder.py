@@ -1,63 +1,65 @@
 #!/usr/bin/env python
 
 import os
-import manifest
 import subprocess
+
+import manifest
+import manifest_parser
 
 from optparse import OptionParser
 from properties import *
 from os.path import join, getsize
-
-class AutoBuilderFactory:
-    def __init__(self, options):
-        self.options = options
-        vlist = self.options.num_variables.split(',')
-        pass
-        clist = self.options.num_clauses.split(',')
-        nl = self.options.num_literals
-        #nv = self.options.num_variables
-        #nc = self.options.num_clauses
-
-class AutoBuildParameterParser:
-    def __init__(self):
-        self.args = None
-        self.options = None
-        self.parser = OptionParser()
-        self.__configure_parser__()
-        self.__parse_parameters__()
-        assert self.options != None
-        
-    def __configure_parser__(self):
-        pass
-        #lhelp = 'Number of literals per clause bound; Default is 3'
-        #Nhelp = 'Bounding number of variables; default value is 4'
-        #Lhelp = 'Number of claueses; default value is 4'
-        #fhelp = 'Number of forumlas per experiment; default value is 10'
-        #ehelp = 'Experiment.  Determines with experiment to run; supported '\
-        #        +'values are: sat and f-sat; default is: sat.  '
-        #vhelp = 'Verbose.  Prints additional information for some commands.'
-        #self.parser.add_option("-l", "--literals-per-clause-bound",
-        #                       dest="num_literals", default=3, type=int, help=lhelp)
-        #self.parser.add_option("-N", "--variable-range",
-        #                       dest="num_variables", metavar="VARIABLES", type=str,
-        #                       default='1,5', help=Nhelp)
-        #self.parser.add_option("-L", "--clause-range", dest="num_clauses", metavar="CLAUSES",
-        #                  type=str, default='1,5', help=Nhelp)
-        #self.parser.add_option("-f", "--num-formulas", dest="num_formulas", default=10, type=int,
-        #                  help=fhelp)
-        #self.parser.add_option("-e", "--experiement", dest="command",
-        #                  metavar="COMMAND", default='sat', type=str,
-        #                  help=ehelp)
-        #self.parser.add_option("-v", "--verbose", action="store_true", default=False,
-        #                  dest="verbose", help=vhelp)
-        
-    def __parse_parameters__(self):
-        (self.options, self.args) = self.parser.parse_args()
-        #assert self.options.command == 'sat' or self.options.command == 'f-sat'
-    def get_options(self):
-        pass
-        #assert self.options != None
-        #return self.options
+#
+#class AutoBuilderFactory:
+#    def __init__(self, options):
+#        self.options = options
+#        vlist = self.options.num_variables.split(',')
+#        pass
+#        clist = self.options.num_clauses.split(',')
+#        nl = self.options.num_literals
+#        #nv = self.options.num_variables
+#        #nc = self.options.num_clauses
+#
+#class AutoBuildParameterParser:
+#    def __init__(self):
+#        self.args = None
+#        self.options = None
+#        self.parser = OptionParser()
+#        self.__configure_parser__()
+#        self.__parse_parameters__()
+#        assert self.options != None
+#        
+#    def __configure_parser__(self):
+#        pass
+#        #lhelp = 'Number of literals per clause bound; Default is 3'
+#        #Nhelp = 'Bounding number of variables; default value is 4'
+#        #Lhelp = 'Number of claueses; default value is 4'
+#        #fhelp = 'Number of forumlas per experiment; default value is 10'
+#        #ehelp = 'Experiment.  Determines with experiment to run; supported '\
+#        #        +'values are: sat and f-sat; default is: sat.  '
+#        #vhelp = 'Verbose.  Prints additional information for some commands.'
+#        #self.parser.add_option("-l", "--literals-per-clause-bound",
+#        #                       dest="num_literals", default=3, type=int, help=lhelp)
+#        #self.parser.add_option("-N", "--variable-range",
+#        #                       dest="num_variables", metavar="VARIABLES", type=str,
+#        #                       default='1,5', help=Nhelp)
+#        #self.parser.add_option("-L", "--clause-range", dest="num_clauses", metavar="CLAUSES",
+#        #                  type=str, default='1,5', help=Nhelp)
+#        #self.parser.add_option("-f", "--num-formulas", dest="num_formulas", default=10, type=int,
+#        #                  help=fhelp)
+#        #self.parser.add_option("-e", "--experiement", dest="command",
+#        #                  metavar="COMMAND", default='sat', type=str,
+#        #                  help=ehelp)
+#        #self.parser.add_option("-v", "--verbose", action="store_true", default=False,
+#        #                  dest="verbose", help=vhelp)
+#        
+#    def __parse_parameters__(self):
+#        (self.options, self.args) = self.parser.parse_args()
+#        #assert self.options.command == 'sat' or self.options.command == 'f-sat'
+#    def get_options(self):
+#        pass
+#        #assert self.options != None
+#        #return self.options
 
 
  
@@ -75,8 +77,8 @@ class Jars:
         self.jars = []
         
     def __parse_manifest__(self, manifest_string):
-        parser = manifest.ManifestParser()
-        ast = manifest.abstract_syntax_tree()
+        parser = manifest_parser.ManifestParser()
+        ast = manifest.Ast()
         parser.parse(manifest_string, ast)
     
     def __extract_manifest__(self, root, file):
@@ -113,14 +115,15 @@ class Jars:
             
     def find_all(self, libs):
         for i in libs:
+            print 'libs: ', i
             for root, dirs, files in os.walk(i):
-                for j in dirs:
-                    self.find_all(j)
+                #print 'root, dirs, files: ', root, dirs, files
  
                 #print root, "consumes",
                 #print sum(getsize(join(root, name)) for name in files),
                 #print "bytes in", len(files), "non-directory files"
                 for file in files:
+                    print 'file: ', file
                     if file.endswith(r'.jar'):
                         self.jars.append((root, file))
                     
@@ -144,6 +147,7 @@ if __name__ == '__main__':
     #parser = RandomSatParameterParser()
     #rsat_factory = RandomSatFactory(parser.get_options())
     jar_finder = Jars()
+    print 'jar path', jar_path
     jar_finder.find_all(jar_path)
     jar_finder.load()
     
