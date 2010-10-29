@@ -326,7 +326,7 @@ class ManifestParserTest(unittest.TestCase):
 
         parser = manifest_parser.ManifestParser()
         ast = manifest_parser.DefaultAst()
-        #parser.parse(test_string, ast)
+        parser.parse(test_string, ast)
 
         print '-'*80
         print test_string
