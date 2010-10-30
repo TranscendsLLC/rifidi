@@ -20,22 +20,25 @@ class Ast(manifest_parser.DefaultAst):
               
     def manifest(self, p):
         assert len(p) == 2 or len(p) == 3
+        print 'manifest'
         if len(p) == 2:
-            p[0] = Bundle()
             if p[1] != None:
+                p[0] = Bundle()
                 self.__add_packages__(p[0], p[1][0], p[1][1])
                 self.bundles.append(p[0])
         else:
-            assert p[1] != None
-            self.__add_packages__(p[1], p[2][0], p[2][1])
+            if p[2] != None:
+                self.__add_packages__(p[1], p[2][0], p[2][1])
+            p[0] = p[1]
             
     def header(self, p):
+        print 'manifest'
         assert len(p) == 2
         if p[1] != None:
             p[0] = p[1]
             
     def bundle_symbolic_name(self, p):
-        #print ' bundle symbolic name '
+        print ' bundle symbolic name '
         self.stack.append('bundle_symbolic_name')
     def export_package(self, p):
         #print ' export package '
@@ -44,7 +47,7 @@ class Ast(manifest_parser.DefaultAst):
         #print ' exports '
         self.stack.append('exports')
     def export(self, p):
-        print ' export '
+        #print ' export '
         self.stack.append('export')
         
     def import_package(self, p):
@@ -110,7 +113,7 @@ class Ast(manifest_parser.DefaultAst):
         # XXX - this is a hack
         if p[1] != None:
             p[0] = p[1]
-        elif p[3] != None:
+        elif len(p) == 4 and p[3] != None:
             p[0] = p[3]
         #print '----------------', p[0]
         self.stack.append('parameter')

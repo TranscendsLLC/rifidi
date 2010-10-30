@@ -67,9 +67,9 @@ class DefaultAst:
 class ManifestParser:    
     precedence = ()
     reserved = {
+        'Manifest-Version:' : 'MANIFEST_VERSION',
         'Import-Package:' : 'IMPORT_PACKAGE',
         'Export-Package:' : 'EXPORT_PACKAGE',
-        'Manifest-Version:' : 'MANIFEST_VERSION',
         'Bundle-DocUrl:' : 'BUNDLE_DOC_URL',
         'Bundle-Activator:' : 'BUNDLE_ACTIVATOR',
         'Main-Class:' : 'MAIN_CLASS',
@@ -79,12 +79,13 @@ class ManifestParser:
         'Bundle-Version:' : 'BUNDLE_VERSION',
         'Bundle-Description:' : 'BUNDLE_DESCRIPTION',
         'Bundle-Vendor:' :  'BUNDLE_VENDOR',
-        'Bundle-Name:' : 'BUNDLE_NAME'
+        'Bundle-Name:' : 'BUNDLE_NAME',
     }
         
     tokens = ('DOT','COLON', 'COMMA', 'SEMI_COLON', 'QUOTE', 'LPAREN', 'RPAREN',
-              'RANGLE', 'LANGLE', 'NUMBER', 'HEADER', 'HEADER1', 'ID', 'TOKEN','SLASH',
-              'EQUAL', 'PERCENT', 'PLUS', 'DOLLAR', 'newline', 'newline1')+ tuple(reserved.values())
+              'RANGLE', 'LANGLE', 'NUMBER', 'STARTHEADER', 'HEADER', 'HEADER1', 'ID', 'TOKEN',
+              'SLASH', 'EQUAL', 'PERCENT', 'PLUS', 'DOLLAR', 'IGNORE')+ tuple(reserved.values())
+    
     t_COLON = r'\:'
     t_COMMA = r'\,'
     t_DOT = r'\.'
@@ -119,13 +120,6 @@ class ManifestParser:
                   #debugfile=self.debugfile,
                   #tabmodule=self.tabmodule)    
         
-    def t_newline1(self, t):
-        r'[\r\n]+'
-        t.lexer.lineno += t.value.count("\n")
-             
-    def t_newline(self, t):
-        r'[\n]+'
-        t.lexer.lineno += t.value.count("\n")
         
     def t_error(self, t):
         print 'Illegal character --->t.value[0]<----'
@@ -140,30 +134,49 @@ class ManifestParser:
     #    r'version='
     #    return t
     #
+    #def t_NEWLINE(self, t):
+    #    r'[\f]+'
+    #    print 't_NEWLINE '
+    #    t.lexer.lineno += t.value.count("\n")
+
+    def t_STARTHEADER(self, t):
+        r'^[a-zA-Z_][a-zA-Z_][a-zA-Z_0-9(\r\n )]*\-[a-zA-Z_(\r\n )][a-zA-Z_0-9(\r\n )]*\:'
+        t.type = ManifestParser.reserved.get(t.value, 'HEADER')
+        print 't_STARTHEADER ', t.value, t.type
+        return t
+    
     def t_HEADER(self, t):
-        r'^[a-zA-Z_][a-zA-Z_0-9(\n )]*\-[a-zA-Z_(\n )][a-zA-Z_0-9(\n )]*\:'
+        r'\r\n[a-zA-Z_][a-zA-Z_0-9(\r\n )]*\-[a-zA-Z_(\r\n )][a-zA-Z_0-9(\r\n )]*\:'
+
+        if t.value.startswith('\r\n'):
+            t.value = t.value[2:]
+            print t.value
         t.type = ManifestParser.reserved.get(t.value, 'HEADER')
         print 't_HEADER ', t.value, t.type
         return t
     
     def t_HEADER1(self, t):
-        r'^[a-zA-Z_][a-zA-Z_0-9]+\:'
+        r'\r\n[a-zA-Z_][a-zA-Z_0-9(\r\n )]+\:'
         t.type = ManifestParser.reserved.get(t.value, 'HEADER1')
         print 't_HEADER1 ', t.value, t.type
         return t
-        
+            
     def t_ID(self, t):
-        r'[a-zA-Z_][a-zA-Z_0-9(\n )\$]*'    
+        r'[a-zA-Z_][a-zA-Z_0-9\$(\r\n )]*'    
         t.type = ManifestParser.reserved.get(t.value, 'ID')
         print 't_ID', t.value, t.type
         return t
             
     def t_TOKEN(self, t):
-        r'[a-zA-Z0-9_-][a-zA-Z0-9-_(\n )\$\+\=]*'
+        r'[a-zA-Z0-9_-][a-zA-Z0-9-_\$\+\=(\r\n )]*'
         t.type = ManifestParser.reserved.get(t.value, 'TOKEN')
         print 't_TOKEN ', t.value, t.type
         return t
-            
+    
+    def t_IGNORE(self,t):
+        r' \t'
+        print ' t_IGNORE ', t.type
+
     def p_manifest(self, p):
         '''manifest : header
                     | manifest header '''
@@ -182,7 +195,7 @@ class ManifestParser:
     
     def p_not_used(self, p):
         '''not_used : MANIFEST_VERSION version_number
-                    | BUNDLE_DOC_URL url
+                    | BUNDLE_DOC_URL url 
                     | MAIN_CLASS package_name
                     | BUNDLE_LOCALIZATION ID
                     | BUNDLE_REQUIRED_EXE_ENV jdk_version
