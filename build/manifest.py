@@ -3,22 +3,53 @@
 import ply.lex as lex
 import ply.yacc as yacc
 import re
+import os
 
 class Bundle:
     def __init__(self):
-        self.path = None
         self.sym_name = ''
         self.ipackages = []
         self.epackages = []
+        self.root = ''
+        self.file = ''
         
     def add_ipackage(self, i):
-        
         self.ipackages.append(i)
     
     def add_epackage(self, e):
-        
         self.epackages.append(e)
+    
+    def display(self):
+        print        'Symbolic Name     = ',self.sym_name
+        print        'File              = ', os.path.join(self.root, self.file)
+        imports =    'Imported Packages = '
+        exports =    'Exported Packages = '
+        wrap_start = '                    '
+
+        for i in  self.ipackages:
+            for c in i.name:
+                if ((len(imports) + 1) % 80) == 0:
+                    imports += '\n'+wrap_start + c
+                else:
+                    imports += c
+        if ((len(imports) + 1) % 80) == 0:
+            imports += '\n'+wrap_start
+        else:
+            imports += ','
+        print imports[:len(imports) - 1]                
+        
+        for e in  self.epackages:
+            for c in e.name:
+                if ((len(exports) + 1) % 80) == 0:
+                    exports += '\n'+wrap_start + c
+                else:
+                    exports += c
+        if ((len(exports) + 1) % 80) == 0:
+            exports += '\n'+wrap_start
+        else:
+            exports += ','
             
+        print exports[:len(exports) - 1]
         
 class Package:
     def __init__(self, name):
@@ -152,7 +183,7 @@ class Ast:
             
     def packages(self, p):
         #print ' packages '
-        print p[0], p[1], p[2] 
+        #print p[0], p[1], p[2] 
         assert len(p) == 3 and p[2] != None
         
         packages = p[2]
@@ -169,11 +200,11 @@ class Ast:
                 assert False
             
     def bundle_symbolic_name(self, p):
-        print ' bundle symbolic name '
+        #print ' bundle symbolic name '
         assert len(p) == 3 or len(p) == 4
         if len(p) == 3:
             self.bundle.sym_name = p[2]
-            print self.bundle.sym_name        
+            #self.bundle.sym_name        
         
     def ex_im_ports(self, p):
         #print ' _ports '
@@ -195,7 +226,7 @@ class Ast:
             assert len(p[1]) == 1 or p[3] == None
             if p[3] != None:
                 assert len(p[3]) == 4
-                print p[1], p[3] 
+                #print p[1], p[3] 
                 p[1][0].set_version_range(p[3][0], p[3][1], p[3][2], p[3][3])
             p[0] = p[1]
         
@@ -226,13 +257,13 @@ class Ast:
         #print '----------------', p[0]
         
     def version(self, p):
-        print ' version '
+        #print ' version '
         assert len(p) == 4
         p[0] = p[3]   
         
     def version_string(self, p):
         assert len(p) == 4 or len(p) == 8
-        print ' version string', p[0], p[1], p[2], p[3]
+        #print ' version string', p[0], p[1], p[2], p[3]
         if len(p) == 4:
             p[0] = [p[2], True, p[2], True]
         elif len(p) == 8 and p[2] == '(' and p[6] == ')':
@@ -244,12 +275,12 @@ class Ast:
         elif len(p) == 8 and p[2] == '[' and p[6] == ']':
             p[0] = [p[3], True, p[5], True]            
         else:
-            print p[0], p[1], p[2], p[3], p[4], p[5], p[6], p[7], len(p)
+            #print p[0], p[1], p[2], p[3], p[4], p[5], p[6], p[7], len(p)
             assert False
         
     def version_number(self, p):
         assert len(p) <= 8
-        print ' version number '
+        #print ' version number '
         p[0] = Version()
         if len(p) >= 2:
             p[0].set_major(p[1])
@@ -317,25 +348,25 @@ class ManifestParser:
             
     def t_NUMBER(self, t):
         r'[0-9]+'
-        print 't_NUMBER'
+        #print 't_NUMBER'
         return t
     
     def t_HEADER(self, t):
         r'^[a-zA-Z_0-9]*\-[a-zA-Z_][a-zA-Z_0-9]*\:'
         t.type = ManifestParser.reserved.get(t.value, 'HEADER')
-        print 't_HEADER ', t.value, t.type
+        #print 't_HEADER ', t.value, t.type
         return t    
 
     def t_ID(self, t):
         r'[a-zA-Z_][a-zA-Z_0-9\$]*'    
         t.type = ManifestParser.reserved.get(t.value, 'ID')
-        print 't_ID', t.value, t.type
+        #print 't_ID', t.value, t.type
         return t
             
     def t_TOKEN(self, t):
         r'[a-zA-Z0-9_-][a-zA-Z0-9-_\$\+\=]*'
         t.type = ManifestParser.reserved.get(t.value, 'TOKEN')
-        print 't_TOKEN ', t.value, t.type
+        #print 't_TOKEN ', t.value, t.type
         return t
             
     def p_header(self, p):
@@ -421,13 +452,13 @@ class ManifestParser:
                      | ID COLON EQUAL QUOTE unused_package_name QUOTE
                      | ID TOKEN COLON EQUAL QUOTE unused_package_name QUOTE
                      | ID TOKEN COLON EQUAL ID'''
-        print 'directive'
+        #print 'directive'
         self.ast.directive(p)
 
     def p_unused_package_name(self, p):
         '''unused_package_name : package_name
                                | unused_package_name COMMA package_name'''
-        print 'unused package name'
+        #print 'unused package name'
             
     def p_version(self, p):
         '''version : TOKEN EQUAL version_string
