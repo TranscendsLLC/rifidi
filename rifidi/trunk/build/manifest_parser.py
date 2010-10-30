@@ -2,6 +2,7 @@
 
 import ply.lex as lex
 import ply.yacc as yacc
+import re
 
 class DefaultAst:
     def __init__(self):
@@ -15,31 +16,23 @@ class DefaultAst:
     def bundle_symbolic_name(self, p):
         #print ' bundle symbolic name '
         self.stack.append('bundle_symbolic_name')
-    def not_used(self, p):
-        #print ' not used '
-        self.stack.append('not_used')
-    def bundle_activator(self, p):
-        self.stack.append('bundle_activator')
-    def url(self, p):
-        self.stack.append('url')
-    def jdk_version(self, p):
-        #print ' jdk version '
-        self.stack.append('jdk_version')
-    def export_package(self, p):
-        #print ' export package '
-        self.stack.append('export_package')
-    def exports(self, p):
-        #print ' exports '
-        self.stack.append('exports')
-    def export(self, p):
-        self.stack.append('export')
-    def import_package(self, p):
+#    def not_used(self, p):
+#        #print ' not used '
+#        self.stack.append('not_used')
+#    def bundle_activator(self, p):
+#        self.stack.append('bundle_activator')
+#    def url(self, p):
+#        self.stack.append('url')
+#    def jdk_version(self, p):
+#        self.stack.append('jdk_version')
+
+    def packages(self, p):
         #print ' import package '
-        self.stack.append('import_package')
-    def imports(self, p):
+        self.stack.append('packages')
+    def ex_im_ports(self, p):
         #print ' imports '
         self.stack.append('imports')
-    def _import(self, p):
+    def ex_im_port(self, p):
         #print ' _import '
         self.stack.append('import')
     def package_names(self, p):
@@ -67,24 +60,16 @@ class DefaultAst:
 class ManifestParser:    
     precedence = ()
     reserved = {
-        'Manifest-Version:' : 'MANIFEST_VERSION',
         'Import-Package:' : 'IMPORT_PACKAGE',
         'Export-Package:' : 'EXPORT_PACKAGE',
-        'Bundle-DocUrl:' : 'BUNDLE_DOC_URL',
-        'Bundle-Activator:' : 'BUNDLE_ACTIVATOR',
-        'Main-Class:' : 'MAIN_CLASS',
-        'Bundle-Localization:' : 'BUNDLE_LOCALIZATION',
-        'Bundle-RequiredExecutionEnvironment:' : 'BUNDLE_REQUIRED_EXE_ENV',
         'Bundle-SymbolicName:': 'BUNDLE_SYMBOLIC_NAME',
         'Bundle-Version:' : 'BUNDLE_VERSION',
-        'Bundle-Description:' : 'BUNDLE_DESCRIPTION',
-        'Bundle-Vendor:' :  'BUNDLE_VENDOR',
         'Bundle-Name:' : 'BUNDLE_NAME',
     }
         
     tokens = ('DOT','COLON', 'COMMA', 'SEMI_COLON', 'QUOTE', 'LPAREN', 'RPAREN',
-              'RANGLE', 'LANGLE', 'NUMBER', 'STARTHEADER', 'HEADER', 'HEADER1', 'ID', 'TOKEN',
-              'SLASH', 'EQUAL', 'PERCENT', 'PLUS', 'DOLLAR', 'IGNORE')+ tuple(reserved.values())
+              'RANGLE', 'LANGLE', 'NUMBER', 'HEADER', 'ID', 'TOKEN',
+              'SLASH', 'EQUAL', 'PERCENT', 'PLUS', 'DOLLAR')+ tuple(reserved.values())
     
     t_COLON = r'\:'
     t_COMMA = r'\,'
@@ -120,96 +105,67 @@ class ManifestParser:
                   #debugfile=self.debugfile,
                   #tabmodule=self.tabmodule)    
         
-        
     def t_error(self, t):
-        print 'Illegal character --->t.value[0]<----'
+        print 'Illegal character t.value[0] --->'#,t,'<----'
         t.lexer.skip(1)
             
     def t_NUMBER(self, t):
         r'[0-9]+'
         print 't_NUMBER'
         return t
-    #
-    #def t_VERSION(self, t):
-    #    r'version='
-    #    return t
-    #
-    #def t_NEWLINE(self, t):
-    #    r'[\f]+'
-    #    print 't_NEWLINE '
-    #    t.lexer.lineno += t.value.count("\n")
-
-    def t_STARTHEADER(self, t):
-        r'^[a-zA-Z_][a-zA-Z_][a-zA-Z_0-9(\r\n )]*\-[a-zA-Z_(\r\n )][a-zA-Z_0-9(\r\n )]*\:'
-        t.type = ManifestParser.reserved.get(t.value, 'HEADER')
-        print 't_STARTHEADER ', t.value, t.type
-        return t
     
     def t_HEADER(self, t):
-        r'\r\n[a-zA-Z_][a-zA-Z_0-9(\r\n )]*\-[a-zA-Z_(\r\n )][a-zA-Z_0-9(\r\n )]*\:'
-
-        if t.value.startswith('\r\n'):
-            t.value = t.value[2:]
-            print t.value
+        r'^[a-zA-Z_0-9]*\-[a-zA-Z_][a-zA-Z_0-9]*\:'
         t.type = ManifestParser.reserved.get(t.value, 'HEADER')
         print 't_HEADER ', t.value, t.type
-        return t
-    
-    def t_HEADER1(self, t):
-        r'\r\n[a-zA-Z_][a-zA-Z_0-9(\r\n )]+\:'
-        t.type = ManifestParser.reserved.get(t.value, 'HEADER1')
-        print 't_HEADER1 ', t.value, t.type
-        return t
-            
+        return t    
+    #def t_HEADER1(self, t):
+    #    r'^[a-zA-Z_][a-zA-Z_0-9]+\:'
+    #    t.type = ManifestParser.reserved.get(t.value, 'HEADER1')
+    #    print 't_HEADER1 ', t.value, t.type
+    #    return t
+    #
+
     def t_ID(self, t):
-        r'[a-zA-Z_][a-zA-Z_0-9\$(\r\n )]*'    
+        r'[a-zA-Z_][a-zA-Z_0-9\$]*'    
         t.type = ManifestParser.reserved.get(t.value, 'ID')
         print 't_ID', t.value, t.type
         return t
             
     def t_TOKEN(self, t):
-        r'[a-zA-Z0-9_-][a-zA-Z0-9-_\$\+\=(\r\n )]*'
+        r'[a-zA-Z0-9_-][a-zA-Z0-9-_\$\+\=]*'
         t.type = ManifestParser.reserved.get(t.value, 'TOKEN')
         print 't_TOKEN ', t.value, t.type
         return t
-    
-    def t_IGNORE(self,t):
-        r' \t'
-        print ' t_IGNORE ', t.type
-
-    def p_manifest(self, p):
-        '''manifest : header
-                    | manifest header '''
-        self.ast.manifest(p)
             
     def p_header(self, p):
-        '''header : import_package
+        '''header : packages
                  | bundle_symbolic_name
+                 | bundle_version
+                 | bundle_name
                  | not_used'''
         self.ast.header(p)
-#                 | export_package        
+
+    def p_bundle_version(self, p):
+        '''bundle_version : BUNDLE_VERSION version_number'''
+        assert False
+        
+    def p_bundle_name(self, p):
+        '''bundle_name : BUNDLE_NAME'''
+        assert False
+
     def p_bundle_symbolic_name(self, p):
         '''bundle_symbolic_name : BUNDLE_SYMBOLIC_NAME package_name
                                 |  bundle_symbolic_name SEMI_COLON parameter'''
         self.ast.bundle_symbolic_name(p)
     
     def p_not_used(self, p):
-        '''not_used : MANIFEST_VERSION version_number
-                    | BUNDLE_DOC_URL url 
-                    | MAIN_CLASS package_name
-                    | BUNDLE_LOCALIZATION ID
-                    | BUNDLE_REQUIRED_EXE_ENV jdk_version
-                    | BUNDLE_VENDOR PERCENT
-                    | BUNDLE_VERSION version_number
-                    | BUNDLE_DESCRIPTION PERCENT
-                    | bundle_activator
-                    | HEADER
+        '''not_used : HEADER
                     | HEADER PERCENT
                     | HEADER NUMBER
                     | HEADER ID
                     | HEADER TOKEN
                     | HEADER package_name
-                    | HEADER1 package_name
                     | not_used DOLLAR
                     | not_used package_name
                     | not_used PLUS
@@ -220,60 +176,45 @@ class ManifestParser:
                     | not_used TOKEN
                     | not_used COMMA'''
         self.ast.not_used(p)
+        assert False
         print 'not used'
-    
-    def p_bundle_activator(self, p):
-        '''bundle_activator : BUNDLE_ACTIVATOR package_name
-                            | bundle_activator package_name'''
-        self.ast.bundle_activator(p)
-        
-    def p_jdk_version(self, p):
-        '''jdk_version : TOKEN
-               | ID
-               | jdk_version DOT
-               | jdk_version ID
-               | jdk_version TOKEN
-               | jdk_version COMMA
-               | jdk_version NUMBER
-               | jdk_version SLASH'''
-        self.ast.jdk_version(p)
-        
-    def p_url(self, p):
-        '''url : ID COLON SLASH SLASH
-            | url ID
-            | url TOKEN
-            | url DOT ID
-            | url DOT TOKEN
-            | url SLASH ID
-            | url SLASH TOKEN'''
-        self.ast.url(p)
     #    
-    #def p_export_package(self, p):
-    #    '''export_package : 
-    #    self.ast.export_package(p)
+    #def p_jdk_version(self, p):
+    #    '''jdk_version : TOKEN
+    #           | ID
+    #           | jdk_version DOT
+    #           | jdk_version ID
+    #           | jdk_version TOKEN
+    #           | jdk_version COMMA
+    #           | jdk_version NUMBER
+    #           | jdk_version SLASH'''
+    #    self.ast.jdk_version(p)
     #    
-    #def p_exports(self, p):
-    #    '''exports : export
-    #               | exports COMMA export'''
-    #    self.ast.exports(p)
-    #def p_export(self, p):
-    #    '''export : package_names'''
-    #    self.ast.export(p)
+    #def p_url(self, p):
+    #    '''url : ID COLON SLASH SLASH
+    #        | url ID
+    #        | url TOKEN
+    #        | url DOT ID
+    #        | url DOT TOKEN
+    #        | url SLASH ID
+    #        | url SLASH TOKEN'''
+    #    self.ast.url(p)
+    #    
     
-    def p_import_package(self, p):
-        '''import_package : IMPORT_PACKAGE imports
+    def p_packages(self, p):
+        '''packages : IMPORT_PACKAGE imports
                             | EXPORT_PACKAGE imports'''
-        self.ast.import_package(p)
+        self.ast.packages(p)
             
-    def p_imports(self, p):
+    def p_ex_im_ports(self, p):
         '''imports : import
                    | imports COMMA import'''
-        self.ast.imports(p)
+        self.ast.ex_im_ports(p)
             
-    def p_import(self, p):
+    def p_ex_im_port(self, p):
         '''import : package_names
                    | package_names SEMI_COLON parameter'''
-        self.ast._import(p)
+        self.ast.ex_im_port(p)
             
     def p_package_names(self, p):
         '''package_names : package_name
@@ -303,6 +244,7 @@ class ManifestParser:
                      | ID TOKEN COLON EQUAL ID'''
         print 'directive'
         self.ast.directive(p)
+
     def p_unused_package_name(self, p):
         '''unused_package_name : package_name
                                | unused_package_name COMMA package_name'''
@@ -335,11 +277,22 @@ class ManifestParser:
         else:
             print "Syntax error at EOF"
         raise SyntaxError   
-    def parse(self, sentence, ast):
+    def parse(self, manifest, ast):
         assert ast != None
-        assert sentence != None
+        assert manifest != None
+        manifest = re.sub(r'\r\n ', '', manifest)
+        headers = re.split(r'\r\n', manifest)
         self.ast = ast
-        yacc.parse(sentence)
+        for header in headers:
+            if header.startswith('Import-Package:') \
+                or header.startswith('Export-Package:') \
+                or header.startswith('Bundle-SymbolicName:'):
+                    
+                print header
+                yacc.parse(header)
+        return
+
+
     
             
 if __name__ == '__main__':
