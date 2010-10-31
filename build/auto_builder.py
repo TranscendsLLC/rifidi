@@ -106,8 +106,8 @@ class Jars:
                 for file in files:
                     if file.endswith(r'.jar'):
                         self.jar_files.append((root, file))
-
-
+                        
+                        
 class Dep:
     def __init__(self, jars, src):
         self.jars = jars
@@ -121,16 +121,8 @@ class Dep:
             inserted = False
             for pentry, bentry in packages[package.name]:
                 index = packages[package.name].index((pentry, bentry))
-                # h4x0r.  The import and export packages have slightly different
-                # semantics, but they both use the Package type; this makes
-                # some things a bit messy.
                 assert index >= 0 and index <= len(packages[package.name])
-                #print '--->', package.b_version, package.e_version,'<---'
-                #assert package.b_version == package.e_version and\
-                #       package.b_inclusive and package.e_inclusive
-                #assert pentry.b_version == pentry.e_version and\
-                #       pentry.b_inclusive and pentry.e_inclusive
-                
+
                 if package.b_version.is_equal(pentry.b_version):
                     if bundle.jar:
                         packages[package.name].insert(index, (package, bundle))
@@ -163,30 +155,37 @@ class Dep:
             for package in bundle.epackages:
                 self.__add_package__(exports, package, bundle)
         
-        assert 'org.osgi.framework' in exports 
+        #assert 'org.osgi.framework' in exports 
         # package.name = [(pacakge, bundle), (package, bundle)]
         for bundle in src.bundles:
+            for required_bundle_info in bundle.rbundles:
+                if required_bundle_info.name in bundles and \
+                    required_bundle_info.is_in_range(\
+                        bundles[required_bundle_info.name].version):
+                    print 'adding dep '+str(required_bundle_info.name)+\
+                          '-'+str(bundles[required_bundle_info.name].version),' to ',\
+                                  bundle.sym_name
+                    bundle.add_dep(bundles[required_bundle_info.name])
+                                    
             for package in bundle.ipackages:
                 found = False
                 if package.name in exports:
                     for ex_package, ex_bundle in exports[package.name]:
-                        assert ex_package.b_version == ex_package.e_version and\
-                               ex_package.b_inclusive and ex_package.e_inclusive
+#                        import pdb
+#                        pdb.set_trace()
                         if package.is_in_range(ex_package.b_version):
                             found = True
                             print 'adding dep '+ex_bundle.sym_name+' to '+bundle.sym_name
                             bundle.add_dep(ex_bundle)
-                        else:
-                            import pdb
-                            pdb.set_trace()
                     if not found:
-                        print 'ERROR: cannot resolve package: '+package.name+\
-                        ' for bundle '+bundle.sym_name
+                        print 'ERROR: cannot: '+package.name+\
+                        ' for bundle '+bundle.sym_name+' correct version not found'
                         return False                
                 else:
                     print 'ERROR: cannot resolve package: ', package.name\
-                    +' for bundle '+bundle.sym_name
+                    +' for bundle '+bundle.sym_name+' the packages does not exist'
                     return False
+            
         return True  
         
     def check_deps(jars, src):
