@@ -10,7 +10,9 @@ class Bundle:
         self.sym_name = ''
         self.ipackages = []
         self.epackages = []
+        self.rbundles = []
         self.root = ''
+        self.jar = False
         self.file = ''
         
     def add_ipackage(self, i):
@@ -19,11 +21,18 @@ class Bundle:
     def add_epackage(self, e):
         self.epackages.append(e)
     
+    def add_rbundle(self, b):
+        self.rbundles.append(b)
+    
     def display(self):
         print        'Symbolic Name     = ',self.sym_name
-        print        'File              = ', os.path.join(self.root, self.file)
+        if self.jar == True:
+            print    'Java Archive      = ', os.path.join(self.root, self.file)
+        else:
+            print    'Source Directory  = ', self.root
         imports =    'Imported Packages = '
         exports =    'Exported Packages = '
+        rbundles =   'Required Bundles  = '
         wrap_start = '                    '
 
         for i in  self.ipackages:
@@ -50,6 +59,18 @@ class Bundle:
             exports += ','
             
         print exports[:len(exports) - 1]
+        
+        for i in  self.rbundles:
+            for c in i.name:
+                if ((len(rbundles) + 1) % 80) == 0:
+                    rbundles += '\n'+wrap_start + c
+                else:
+                    rbundles += c
+        if ((len(rbundles) + 1) % 80) == 0:
+            rbundles += '\n'+wrap_start
+        else:
+            rbundles += ','
+        print rbundles[:len(rbundles) - 1]                
         
 class Package:
     def __init__(self, name):
@@ -91,7 +112,7 @@ class Package:
         
         if self.b_version == None and self.e_version == None:
             return True
-        
+            
         if not version.isLess(self.b_version) \
             and not (self.b_inclusive and version.isEqual(self.b_version)):
             return False
@@ -196,6 +217,8 @@ class Ast:
             elif cmd == 'Export-Package:':
                 self.bundle.add_epackage(i)
                 #print '---- adding export package ----', i                        
+            elif cmd == 'Require-Bundle:':
+                self.bundle.add_rbundle(i)
             else:
                 assert False
             
@@ -206,8 +229,8 @@ class Ast:
             self.bundle.sym_name = p[2]
             #self.bundle.sym_name        
         
-    def ex_im_ports(self, p):
-        #print ' _ports '
+    def requires(self, p):
+        #print ' requires '
         assert len(p) == 2 or len(p) == 4
         if len(p) == 2:
             p[0] = p[1]
@@ -217,8 +240,8 @@ class Ast:
             p[1].extend(p[3])
             p[0] = p[1]
             
-    def ex_im_port(self, p):
-        #print ' _import '
+    def require(self, p):
+        #print ' require '
         assert len(p) == 2 or len(p) == 4
         if len(p) == 2:
             p[0] = p[1]
@@ -302,6 +325,7 @@ class ManifestParser:
         'Bundle-SymbolicName:': 'BUNDLE_SYMBOLIC_NAME',
         'Bundle-Version:' : 'BUNDLE_VERSION',
         'Bundle-Name:' : 'BUNDLE_NAME',
+        'Require-Bundle:' : 'REQUIRE_BUNDLE'
     }
         
     tokens = ('DOT','COLON', 'COMMA', 'SEMI_COLON', 'QUOTE', 'LPAREN', 'RPAREN',
@@ -343,7 +367,7 @@ class ManifestParser:
                   #tabmodule=self.tabmodule)    
         
     def t_error(self, t):
-        print 'Illegal character t.value[0] --->'#,t,'<----'
+        print 'Illegal character t.value[0] --->',t,'<----'
         t.lexer.skip(1)
             
     def t_NUMBER(self, t):
@@ -412,19 +436,20 @@ class ManifestParser:
     #    
     
     def p_packages(self, p):
-        '''packages : IMPORT_PACKAGE imports
-                            | EXPORT_PACKAGE imports'''
+        '''packages : IMPORT_PACKAGE requires
+                    | EXPORT_PACKAGE requires
+                    | REQUIRE_BUNDLE requires'''
         self.ast.packages(p)
             
-    def p_ex_im_ports(self, p):
-        '''imports : import
-                   | imports COMMA import'''
-        self.ast.ex_im_ports(p)
+    def p_requires(self, p):
+        '''requires : require
+                    | requires COMMA require'''
+        self.ast.requires(p)
             
-    def p_ex_im_port(self, p):
-        '''import : package_names
+    def p_require(self, p):
+        '''require : package_names
                    | package_names SEMI_COLON parameter'''
-        self.ast.ex_im_port(p)
+        self.ast.require(p)
             
     def p_package_names(self, p):
         '''package_names : package_name
@@ -459,18 +484,19 @@ class ManifestParser:
         '''unused_package_name : package_name
                                | unused_package_name COMMA package_name'''
         #print 'unused package name'
-            
+        
     def p_version(self, p):
         '''version : TOKEN EQUAL version_string
-                    | ID EQUAL version_string'''
+                    | ID EQUAL version_string
+                    | ID TOKEN EQUAL version_string''' # hack for bundle-version
         self.ast.version(p)
             
     def p_version_string(self, p):
         '''version_string : QUOTE version_number QUOTE
-                        | QUOTE LPAREN version_number COMMA version_number RPAREN QUOTE
-                        | QUOTE LPAREN version_number COMMA version_number RANGLE QUOTE
-                        | QUOTE LANGLE version_number COMMA version_number RANGLE QUOTE
-                        | QUOTE LANGLE version_number COMMA version_number RPAREN QUOTE'''
+                          | QUOTE LPAREN version_number COMMA version_number RPAREN QUOTE
+                          | QUOTE LPAREN version_number COMMA version_number RANGLE QUOTE
+                          | QUOTE LANGLE version_number COMMA version_number RANGLE QUOTE
+                          | QUOTE LANGLE version_number COMMA version_number RPAREN QUOTE'''
         self.ast.version_string(p)
             
     def p_version_number(self, p):
@@ -490,16 +516,23 @@ class ManifestParser:
     
     def parse(self, manifest):
         assert manifest != None
-        
-        manifest = re.sub(r'\r\n ', '', manifest)
-        headers = re.split(r'\r\n', manifest)
-        
+
+        manifest = re.sub(r'\r','',  manifest)        
+        #manifest = re.sub(r'\r\n ', '', manifest)
+        manifest = re.sub(r'\n ', '', manifest)
+        #headers = re.split(r'\r\n', manifest)
+        headers = re.split(r'\n', manifest)
+
         self.ast = Ast() 
         
         for header in headers:
             if header.startswith('Import-Package:') \
                 or header.startswith('Export-Package:') \
-                or header.startswith('Bundle-SymbolicName:'):            
+                or header.startswith('Require-Bundle:') \
+                or header.startswith('Bundle-SymbolicName:'):
+                # h4x0r
+                if header.startswith('Require-Bundle:'):
+                    header = re.sub(r'bundle-', '', header)
                 #print header
                 yacc.parse(header)
         return self.ast.bundle
