@@ -4,6 +4,7 @@ import ply.lex as lex
 import ply.yacc as yacc
 import re
 import os
+import sys
 
 class Bundle:
     def __init__(self):
@@ -14,6 +15,7 @@ class Bundle:
         self.root = ''
         self.jar = False
         self.file = ''
+        self.deps = []
         
     def add_ipackage(self, i):
         self.ipackages.append(i)
@@ -23,6 +25,9 @@ class Bundle:
     
     def add_rbundle(self, b):
         self.rbundles.append(b)
+        
+    def add_dep(self, bundle):
+        self.deps.append(bundle)
     
     def display(self):
         print        'Symbolic Name     = ',self.sym_name
@@ -41,10 +46,10 @@ class Bundle:
                     imports += '\n'+wrap_start + c
                 else:
                     imports += c
-        if ((len(imports) + 1) % 80) == 0:
-            imports += '\n'+wrap_start
-        else:
-            imports += ','
+            if ((len(imports) + 1) % 80) == 0:
+                imports += '\n'+wrap_start
+            else:
+                imports += ','
         print imports[:len(imports) - 1]                
         
         for e in  self.epackages:
@@ -53,11 +58,10 @@ class Bundle:
                     exports += '\n'+wrap_start + c
                 else:
                     exports += c
-        if ((len(exports) + 1) % 80) == 0:
-            exports += '\n'+wrap_start
-        else:
-            exports += ','
-            
+            if ((len(exports) + 1) % 80) == 0:
+                exports += '\n'+wrap_start
+            else:
+                exports += ','            
         print exports[:len(exports) - 1]
         
         for i in  self.rbundles:
@@ -66,25 +70,23 @@ class Bundle:
                     rbundles += '\n'+wrap_start + c
                 else:
                     rbundles += c
-        if ((len(rbundles) + 1) % 80) == 0:
-            rbundles += '\n'+wrap_start
-        else:
-            rbundles += ','
+            if ((len(rbundles) + 1) % 80) == 0:
+                rbundles += '\n'+wrap_start
+            else:
+                rbundles += ','
         print rbundles[:len(rbundles) - 1]                
         
 class Package:
     def __init__(self, name):
         self.name = name
-        self.b_version = None
-        self.e_version = None
-        self.b_inclusive = False
-        self.e_inclusive = False
+        self.b_version = Version()
+        self.e_version = Version()
+        self.e_version.set_major(sys.maxint)
+        self.b_inclusive = True
+        self.e_inclusive = True
     
     def __str__(self):
         string = ''
-        if self.b_version == None and self.e_version == None:
-            return string
-            
         assert self.b_version != None and self.e_version != None
             
         if self.b_inclusive:
@@ -110,19 +112,22 @@ class Package:
             
     def is_in_range(self, version):
         
-        if self.b_version == None and self.e_version == None:
-            return True
+        #if self.b_version == None and self.e_version == None:
+        #    return True
             
-        if not version.isLess(self.b_version) \
-            and not (self.b_inclusive and version.isEqual(self.b_version)):
+        if not version.is_less(self.b_version) \
+            and not (self.b_inclusive and version.is_equal(self.b_version)):
             return False
-        elif not self.e_version.isLess(version) \
-            and not(self.e_inclusive and self.e_version.isEqual(version)):
+        elif self.e_version.is_less(version) \
+            and not(self.e_inclusive and self.e_version.is_equal(version)):
             return False
         else:
             return True
-                
-            
+        
+#    def is_less(self, package):
+
+
+        
 class Version:
     def __init__(self):
         self.major = 0
@@ -172,7 +177,7 @@ class Version:
         self.qual_set = True
         self.qual = qual
             
-    def isLess(self, version):
+    def is_less(self, version):
         if self.major < version.major:
             return False
         elif self.major > version.major:
@@ -190,7 +195,7 @@ class Version:
         else:
             return True
             
-    def isEqual(self, version):
+    def is_equal(self, version):
         if self.major == version.major and self.minor == version.minor and \
            self.micro == version.micro and self.qual == version.qual:
             return True

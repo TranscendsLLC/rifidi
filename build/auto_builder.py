@@ -113,53 +113,82 @@ class Dep:
         self.jars = jars
         self.src = src
         self.exports = {}
-        slef.bundles = {}
+        self.bundles = {}
         
-    def __add_package__(packages, package, bundle):
+    def __add_package__(self, packages, package, bundle):
         #package.name -> [(package, bundle), (package, bundle)]
-        if package in packages:
+        if package.name in packages:
             inserted = False
-            for pentry, bentry in packages[package]:
-                index = packages[package].index((pentry, bentry))
-                assert index >= 0 and index <= len(package[package])
-                if package.isEqual(pentry):
-                    if bundle.jar == True:
-                        packages[package].insert(index, (package, bundle))
+            for pentry, bentry in packages[package.name]:
+                index = packages[package.name].index((pentry, bentry))
+                # h4x0r.  The import and export packages have slightly different
+                # semantics, but they both use the Package type; this makes
+                # some things a bit messy.
+                assert index >= 0 and index <= len(packages[package.name])
+                #print '--->', package.b_version, package.e_version,'<---'
+                #assert package.b_version == package.e_version and\
+                #       package.b_inclusive and package.e_inclusive
+                #assert pentry.b_version == pentry.e_version and\
+                #       pentry.b_inclusive and pentry.e_inclusive
+                
+                if package.b_version.is_equal(pentry.b_version):
+                    if bundle.jar:
+                        packages[package.name].insert(index, (package, bundle))
                     else:
-                        packages[package].insert(index+1, (package, bundle))
+                        packages[package.name].insert(index+1, (package, bundle))
                     inserted = True
                     break
-                elif package.isLess(pentry):
-                    packages[package].insert(index, (package, bundle))
+                elif package.b_version.is_less(pentry.b_version):
+                    packages[package.name].insert(index, (package, bundle))
                     inserted = True
                     break
                 
             if inserted == False:
-                packages[package].append((package, bundle))
+                packages[package.name].append((package, bundle))
                     
         else:
-            packages[package] = [(package, bundle)]
-            
-    def generate_deps(jars, src):
+            packages[package.name] = [(package, bundle)]
+        
+    def resolve(self):
         exports = {}
         bundles = {}
         for bundle in src.bundles:
             bundles[bundle.sym_name] = bundle
             for package in bundle.epackages:
-                self.add_package(exports, package, bundle)
+                self.__add_package__(exports, package, bundle)
                 
         for bundle in jars.bundles:
             bundles[bundle.sym_name] = bundle
             print bundle.display()
             for package in bundle.epackages:
-                self.add_package(exports, package, bundle)
-                
-        self.exports = exports
-        self.bundles = bundles
+                self.__add_package__(exports, package, bundle)
+        
+        assert 'org.osgi.framework' in exports 
         # package.name = [(pacakge, bundle), (package, bundle)]
         for bundle in src.bundles:
-            pass
-            
+            for package in bundle.ipackages:
+                found = False
+                if package.name in exports:
+                    for ex_package, ex_bundle in exports[package.name]:
+                        assert ex_package.b_version == ex_package.e_version and\
+                               ex_package.b_inclusive and ex_package.e_inclusive
+                        if package.is_in_range(ex_package.b_version):
+                            found = True
+                            print 'adding dep '+ex_bundle.sym_name+' to '+bundle.sym_name
+                            bundle.add_dep(ex_bundle)
+                        else:
+                            import pdb
+                            pdb.set_trace()
+                    if not found:
+                        print 'ERROR: cannot resolve package: '+package.name+\
+                        ' for bundle '+bundle.sym_name
+                        return False                
+                else:
+                    print 'ERROR: cannot resolve package: ', package.name\
+                    +' for bundle '+bundle.sym_name
+                    return False
+        return True  
+        
     def check_deps(jars, src):
         exports, bundles = generate_deps(jars, src)
         for i in src.bundles:
@@ -203,8 +232,8 @@ if __name__ == '__main__':
         jars.display()
         src.display()
         
-        
-        deps = generate_deps(jars, src)
+        deps = Dep(jars, src)
+        assert deps.resolve()
         
     if params.options.display_dep == True:
         assert False
