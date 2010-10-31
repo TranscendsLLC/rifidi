@@ -3,6 +3,7 @@
 import unittest
 import manifest
 import manifest_parser
+import sys
 
 class manifest_test(unittest.TestCase):
     def set_version(self, v, m, mi, mic, qual):
@@ -141,103 +142,101 @@ class manifest_test(unittest.TestCase):
                     self.assertEquals('5.1.0', i.b_version.__str__())
                     self.assertEquals(True, i.e_inclusive)
                     self.assertEquals('5.1.0',i.e_version.__str__())
-
+                    
                 elif i.name == 'javax.jms':
                     self.assertEquals(True, i.b_inclusive)
                     self.assertEquals('1.1.0', i.b_version.__str__())
                     self.assertEquals(False,i.e_inclusive)
                     self.assertEquals('2.0.0',i.e_version.__str__())
-
+                    
                 elif i.name =='javax.mail':
                     self.assertEquals(True, i.b_inclusive)
                     self.assertEquals('1.4.0', i.b_version.__str__())
                     self.assertEquals(False, i.e_inclusive)
                     self.assertEquals('2.0.0',i.e_version.__str__())
-
+                    
                 elif i.name == 'javax.mail.internet':
                     self.assertEquals(True, i.b_inclusive)
                     self.assertEquals('1.4.0', i.b_version.__str__())
                     self.assertEquals(False, i.e_inclusive)
                     self.assertEquals('2.0.0',i.e_version.__str__())
-
+                    
                 elif i.name == 'javax.management':
-                    self.assertEquals(False, i.b_inclusive)
-                    self.assertEquals(None, i.b_version)
-                    self.assertEquals(False, i.e_inclusive)
-                    self.assertEquals(None,i.e_version)
+                    self.assertEquals(True, i.b_inclusive)
+                    self.assertEquals(0, i.b_version.major)
+                    self.assertEquals(True, i.e_inclusive)
+                    self.assertEquals(str(sys.maxint),i.e_version.major)
                     
                 elif i.name == 'javax.naming':
-                    self.assertEquals(False, i.b_inclusive)
-                    self.assertEquals(None, i.b_version)
-                    self.assertEquals(False, i.e_inclusive)
-                    self.assertEquals(None,i.e_version)                    
-
+                    self.assertEquals(True, i.b_inclusive)
+                    self.assertEquals(0, i.b_version.major)
+                    self.assertEquals(True, i.e_inclusive)
+                    self.assertEquals(str(sys.maxint),i.e_version.major)
+                    
                 elif i.name == 'javax.swing':
-                    self.assertEquals(False, i.b_inclusive)
-                    self.assertEquals(None, i.b_version)
-                    self.assertEquals(False, i.e_inclusive)
-                    self.assertEquals(None,i.e_version)
-
+                    self.assertEquals(True, i.b_inclusive)
+                    self.assertEquals(0, i.b_version.major)
+                    self.assertEquals(True, i.e_inclusive)
+                    self.assertEquals(str(sys.maxint),i.e_version.major)                    
+                    
                 elif i.name == 'javax.swing.border':
-                    self.assertEquals(False, i.b_inclusive)
-                    self.assertEquals(None, i.b_version)
-                    self.assertEquals(False,i.e_inclusive)
-                    self.assertEquals(None,i.e_version)
+                    self.assertEquals(True, i.b_inclusive)
+                    self.assertEquals(0, i.b_version.major)
+                    self.assertEquals(True, i.e_inclusive)
+                    self.assertEquals(str(sys.maxint),i.e_version.major)                    
                     
                 elif i.name == 'javax.swing.event':
-                    self.assertEquals(False, i.b_inclusive)
-                    self.assertEquals(None, i.b_version)
-                    self.assertEquals(False,i.e_inclusive)
-                    self.assertEquals(None,i.e_version)
+                    self.assertEquals(True, i.b_inclusive)
+                    self.assertEquals(0, i.b_version.major)
+                    self.assertEquals(True, i.e_inclusive)
+                    self.assertEquals(str(sys.maxint),i.e_version.major)                    
                     
                 elif i.name == 'javax.swing.table':
-                    self.assertEquals(False, i.b_inclusive)
-                    self.assertEquals(None, i.b_version)
-                    self.assertEquals(False,i.e_inclusive)
-                    self.assertEquals(None,i.e_version)
-
+                    self.assertEquals(True, i.b_inclusive)
+                    self.assertEquals(0, i.b_version.major)
+                    self.assertEquals(True, i.e_inclusive)
+                    self.assertEquals(str(sys.maxint),i.e_version.major)
+                    
                 elif i.name == 'javax.swing.text':
-                    self.assertEquals(False, i.b_inclusive)
-                    self.assertEquals(None, i.b_version)
-                    self.assertEquals(False,i.e_inclusive)
-                    self.assertEquals(None,i.e_version)
-
+                    self.assertEquals(True, i.b_inclusive)
+                    self.assertEquals(0, i.b_version.major)
+                    self.assertEquals(True, i.e_inclusive)
+                    self.assertEquals(str(sys.maxint),i.e_version.major)
+                    
                 elif i.name == 'javax.swing.tree':
-                    #
-                    #self.assertEquals(False, i.b_inclusive)
-                    #self.assertEquals(None, i.b_version)
-                    #self.assertEquals(False,i.e_inclusive)
-                    #self.assertEquals(None,i.e_version)                    
-                    #
-                    pass
+                    self.assertEquals(True, i.b_inclusive)
+                    self.assertEquals(0, i.b_version.major)
+                    self.assertEquals(True, i.e_inclusive)
+                    self.assertEquals(str(sys.maxint),i.e_version.major)
+
                 elif i.name == 'javax.xml.parsers':
                     self.assertEquals(True, i.b_inclusive)
-  #                  self.assertEquals(, i.b_version)
-   #                 self.assertEquals(False,i.e_inclusive)
-   #                 self.assertEquals(None,i.e_version)
-                                        pass
-                elif i.name == 'org.w3c.dom':
-                    self.assertEquals(False, i.b_inclusive)
-                    self.assertEquals(None, i.b_version)
-                    self.assertEquals(False,i.e_inclusive)
-                    self.assertEquals(None,i.e_version)
+                    self.assertEquals(0, i.b_version.major)
+                    self.assertEquals(True, i.e_inclusive)
+                    self.assertEquals(str(sys.maxint),i.e_version.major)
                     
-                elif i.name == 'org.xml.sax':    
-                    self.assertEquals(False, i.b_inclusive)
-                    self.assertEquals(None, i.b_version)
-                    self.assertEquals(False,i.e_inclusive)
-                    self.assertEquals(None,i.e_version)
+                elif i.name == 'org.w3c.dom':
+                    self.assertEquals(True, i.b_inclusive)
+                    self.assertEquals(0, i.b_version.major)
+                    self.assertEquals(True, i.e_inclusive)
+                    self.assertEquals(str(sys.maxint),i.e_version.major)
+                    
+                elif i.name == 'org.xml.sax':
+                    self.assertEquals(True, i.b_inclusive)
+                    self.assertEquals(0, i.b_version.major)
+                    self.assertEquals(True, i.e_inclusive)
+                    self.assertEquals(str(sys.maxint),i.e_version.major)
                     
                 elif i.name == 'org.xml.sax.helpers':
-                    self.assertEquals(False, i.b_inclusive)
-                    self.assertEquals(None, i.b_version)
-                    self.assertEquals(False,i.e_inclusive)
-                    self.assertEquals(None,i.e_version)
+                    self.assertEquals(True, i.b_inclusive)
+                    self.assertEquals(0, i.b_version.major)
+                    self.assertEquals(True, i.e_inclusive)
+                    self.assertEquals(str(sys.maxint),i.e_version.major)
                     
                 else:
                     print i.name
                     self.assertTrue(False)  
-                               
+                    
     def test_version(self):
         v = manifest.Version()
         v1 = manifest.Version()
@@ -266,7 +265,7 @@ class manifest_test(unittest.TestCase):
         self.assertEquals(False, v.is_equal(v1))
         self.assertEquals(True, v.is_less(v1))
         self.assertEquals(False, v1.is_less(v))
-            
+        
     def test_package(self):
         i = manifest.Package('java.lang.whatever')
         v = manifest.Version()
@@ -276,6 +275,7 @@ class manifest_test(unittest.TestCase):
         self.set_version(v, 1, 3, 3, '7')
         self.set_version(v1, 3, 1, 4, '1')
         i.set_version_range(v, True, v1, False)
+        
         self.assertEquals(True, i.is_in_range(v))
         self.assertEquals(False, i.is_in_range(v1))
         
@@ -302,6 +302,6 @@ class manifest_test(unittest.TestCase):
         self.assertEquals(True, i.is_in_range(v1))
         self.assertEquals(True, i.is_in_range(v2))       
         
- 
+        
 if __name__ == "__main__":
     unittest.main()

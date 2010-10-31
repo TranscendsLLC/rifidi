@@ -12,6 +12,7 @@ class Bundle:
         self.ipackages = []
         self.epackages = []
         self.rbundles = []
+        self.version = Version()
         self.root = ''
         self.jar = False
         self.file = ''
@@ -23,7 +24,7 @@ class Bundle:
     def add_epackage(self, e):
         self.epackages.append(e)
     
-    def add_rbundle(self, b):
+    def add_required_bundle_lookup_info(self, b):
         self.rbundles.append(b)
         
     def add_dep(self, bundle):
@@ -81,7 +82,7 @@ class Package:
         self.name = name
         self.b_version = Version()
         self.e_version = Version()
-        self.e_version.set_major(sys.maxint)
+        self.e_version.set_major(str(sys.maxint))
         self.b_inclusive = True
         self.e_inclusive = True
     
@@ -97,9 +98,9 @@ class Package:
         string += self.b_version.__str__() +','+ self.e_version.__str__()
         
         if self.e_inclusive:
-            string += '['
+            string += ']'
         else:
-            string += '('
+            string += ')'
             
         return string
        
@@ -111,23 +112,16 @@ class Package:
         self.e_inclusive = e_inc
             
     def is_in_range(self, version):
-        
-        #if self.b_version == None and self.e_version == None:
-        #    return True
-            
-        if not version.is_less(self.b_version) \
-            and not (self.b_inclusive and version.is_equal(self.b_version)):
-            return False
-        elif self.e_version.is_less(version) \
-            and not(self.e_inclusive and self.e_version.is_equal(version)):
-            return False
+        if version.is_less(self.b_version) or (version.is_equal(self.b_version) \
+            and self.b_inclusive):
+            if self.e_version.is_less(version) or (self.e_inclusive and \
+                self.e_version.is_equal(version)):
+                    return True
+            else:
+                return False
         else:
-            return True
-        
-#    def is_less(self, package):
-
-
-        
+            return False
+            
 class Version:
     def __init__(self):
         self.major = 0
@@ -190,10 +184,13 @@ class Version:
             return False
         elif self.micro > version.micro:
             return True
-        elif self.qual <= version.qual:
+        elif self.qual < version.qual:
             return False
-        else:
+        elif self.qual > version.qual:
             return True
+        else:
+            # must be equal
+            return False
             
     def is_equal(self, version):
         if self.major == version.major and self.minor == version.minor and \
@@ -207,6 +204,18 @@ class Ast:
     def __init__(self):
         self.bundle = Bundle()
             
+            
+    def bundle_symbolic_name(self, p):
+        #print ' bundle symbolic name '
+        assert len(p) == 3 or len(p) == 4
+        if len(p) == 3:
+            self.bundle.sym_name = p[2]
+            #self.bundle.sym_name        
+            
+    def bundle_version(self, p):
+        assert len(p) == 3
+        self.bundle.version = p[2]
+        
     def packages(self, p):
         #print ' packages '
         #print p[0], p[1], p[2] 
@@ -223,17 +232,10 @@ class Ast:
                 self.bundle.add_epackage(i)
                 #print '---- adding export package ----', i                        
             elif cmd == 'Require-Bundle:':
-                self.bundle.add_rbundle(i)
+                self.bundle.add_required_bundle_lookup_info(i)
             else:
                 assert False
-            
-    def bundle_symbolic_name(self, p):
-        #print ' bundle symbolic name '
-        assert len(p) == 3 or len(p) == 4
-        if len(p) == 3:
-            self.bundle.sym_name = p[2]
-            #self.bundle.sym_name        
-        
+                
     def requires(self, p):
         #print ' requires '
         assert len(p) == 2 or len(p) == 4
@@ -318,7 +320,8 @@ class Ast:
             p[0].set_micro(p[5])
         if len(p) == 8:
             p[0].set_qual(p[7])
-    
+        
+        
     def directive(self, p):
         pass
         
@@ -407,7 +410,7 @@ class ManifestParser:
 
     def p_bundle_version(self, p):
         '''bundle_version : BUNDLE_VERSION version_number'''
-        assert False
+        self.ast.bundle_version(p)
         
     def p_bundle_name(self, p):
         '''bundle_name : BUNDLE_NAME'''
@@ -534,11 +537,15 @@ class ManifestParser:
             if header.startswith('Import-Package:') \
                 or header.startswith('Export-Package:') \
                 or header.startswith('Require-Bundle:') \
-                or header.startswith('Bundle-SymbolicName:'):
+                or header.startswith('Bundle-SymbolicName:') \
+                or header.startswith('Bundle-Version:'):
+                #if header.startswith('Bundle-Version:'):
+                #    print header
                 # h4x0r
                 if header.startswith('Require-Bundle:'):
                     header = re.sub(r'bundle-', '', header)
                 #print header
+                
                 yacc.parse(header)
         return self.ast.bundle
         
