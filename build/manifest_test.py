@@ -235,7 +235,25 @@ class manifest_test(unittest.TestCase):
                 else:
                     print i.name
                     self.assertTrue(False)  
-                    
+    
+    def test_bundle_version(self):
+        test = 'Bundle-Version: 3.5.2.R35x_v20100126\n'
+        p = manifest.ManifestParser()
+        bundle = p.parse(test)
+        self.assertEquals(bundle.version.__str__(), '3.5.2.R35x_v20100126')
+    def test_export_package(self):
+        test = 'Export-Package: org.apache.commons.pool;version=1.4, org.apache.common\r\n s.pool.impl;version=1.4'
+        p = manifest.ManifestParser()
+        bundle = p.parse(test)
+        self.assertEquals(2, bundle.epackages.__len__())
+        self.assertEquals(bundle.epackages[0].name, 'org.apache.commons.pool')
+        self.assertEquals(bundle.epackages[0].b_version.__str__(), '1.4')
+        self.assertEquals(bundle.epackages[0].e_version.__str__(), '1.4')
+        self.assertEquals(bundle.epackages[1].name, 'org.apache.commons.pool.impl')
+        self.assertEquals(bundle.epackages[1].b_version.__str__(), '1.4')
+        self.assertEquals(bundle.epackages[1].e_version.__str__(), '1.4')
+        
+        
     def test_version(self):
         v = manifest.Version()
         v1 = manifest.Version()
