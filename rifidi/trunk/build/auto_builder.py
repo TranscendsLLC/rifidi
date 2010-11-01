@@ -8,106 +8,41 @@ import manifest_parser
 
 from optparse import OptionParser
 from properties import *
-from os.path import join, getsize
-    
-class Parameters:
-    def __init__(self):
-        self.args = None
-        self.options = None
-        self.parser = OptionParser(version="%prog 1.3.37")
-        display_jars_help = 'Display Java archives'
-        display_src_help = 'Display sources'
-        display_dep_help = 'Display dependencies'
-        check_dep_help = 'Check dependencies'
-        gen_build_help = 'Generate build artifacts; if no options are given, '\
-                         'then this command is executed; supported values'\
-                         ' are: ant, make, maven; default value is: ant.'
-        self.parser.add_option("-j", "--display-jars", action="store_true",
-                                default=False, dest="display_jars",
-                                help=display_jars_help)
-        self.parser.add_option("-s", "--display-src", action="store_true",
-                                default=False, dest="display_src",
-                                help=display_src_help)
-        self.parser.add_option("-d", "--display-dep", action="store_true",
-                               default=False, dest="display_dep",
-                               help=display_dep_help)
-        self.parser.add_option("-c", "--check-dep", action="store_true",
-                               default=False, dest="check_dep",
-                               help=check_dep_help)
-        self.parser.add_option("-g", "--gen-build",
-                      dest="gen_build", metavar="BUILD-TYPE", type=str,
-                      default='ant', help=gen_build_help)
-                        
-        (self.options, self.args) = self.parser.parse_args()
+from os.path import join, getsize, abspath
+
+class Gen:
+    def __init__(self, deps):
+        self.jars = deps.jars
+        self.src = deps.src.bundles
+        self.exports = deps.exports
+        self.bundles = deps.bundles
+        
+    def generate_build_files(self):
+        for bundle in self.src:
+            assert bundle.root != ''
+            home = os.getcwd()
+            os.chdir(bundle.root)
+            build_xml = open('./build.xml', 'w')
+            build_xml.write('<?xml version="1.0"?>\n')
+            build_xml.write('<project name="'+str(bundle.sym_name)+'" default="compile" '+\
+                            'basedir="'+str(home)+'">\n')
+            build_xml.write('<property name="src" value="'+str(bundle.root)+'/src"/>\n')
+            build_xml.write('<property name="build" value="'+str(bundle.root)+'/bin" />\n')
+            build_xml.write('<target name="compile">\n')
+            classpath='classpath="'
+            for dep in bundle.deps:
+                print dep.sym_name
+                assert dep.jar
+                classpath += join(dep.root, dep.file) +':'
+            print classpath
+            build_xml.write('\t<javac srcdir="${src}" destdir="${build}" '+\
+                            classpath+'"/>\n')
+            build_xml.write('</target>\n')
+            build_xml.write('</project>')
+            build_xml.close()
+            os.chdir(home)
             
-         
-class Src:
-    def __init__(self):
-        self.src_manifests = []
-        self.src_files = []
-        self.bundles = []
         
-    def load(self):
-        for root, dir in self.src_manifests:
-            #print join(root, dir, 'MANIFEST.MF')
-            manifest_des = open(join(root, dir, 'MANIFEST.MF'), 'r')
-            manifest_file = manifest_des.read()
-            #print manifest_file
-            parser = manifest.ManifestParser()
-            bundle = parser.parse(manifest_file)
-            bundle.root = root
-            self.bundles.append(bundle)
-            
-    def display(self):
-        for i in self.bundles:
-            i.display()
-        print '-'*80
-        
-    def find(self, src_path):
-        for i in src_path:
-            for root, dirs, files in os.walk(i):
-                for dir in dirs:
-                    if dir == 'META-INF':
-                        self.src_manifests.append((root, dir))    
-                        
-                    
-class Jars:
-    def __init__(self):
-        self.jar_files = []
-        self.bundles = []
-        
-    def load(self):
-        for root, file in self.jar_files:
-            ret = subprocess.call(['cp', join(root, file), '/tmp'])
-        cdir = os.getcwd()
-        os.chdir('/tmp')
-        for root, file in self.jar_files:
-            ret = subprocess.call(['jar', 'xf', file, 'META-INF/MANIFEST.MF'])
-            assert ret == 0
-            manifest_des = open('META-INF/MANIFEST.MF', 'r')
-            manifest_file = manifest_des.read()
-            parser = manifest.ManifestParser()
-            bundle = parser.parse(manifest_file)
-            bundle.root = root
-            bundle.file = file
-            bundle.jar = True
-            self.bundles.append(bundle)
-        os.chdir(cdir)
-            
-    def display(self):
-        for i in self.bundles:
-            i.display()
-            print '-'*80
-        
-    def find(self, jar_path):
-        for i in jar_path:
-            #print 'jar_path: ', i
-            for root, dirs, files in os.walk(i):
-                for file in files:
-                    if file.endswith(r'.jar'):
-                        self.jar_files.append((root, file))
-                        
-                        
 class Dep:
     def __init__(self, jars, src):
         self.jars = jars
@@ -154,8 +89,7 @@ class Dep:
             print bundle.display()
             for package in bundle.epackages:
                 self.__add_package__(exports, package, bundle)
-        
-        #assert 'org.osgi.framework' in exports 
+    
         # package.name = [(pacakge, bundle), (package, bundle)]
         for bundle in src.bundles:
             for required_bundle_info in bundle.rbundles:
@@ -171,8 +105,6 @@ class Dep:
                 found = False
                 if package.name in exports:
                     for ex_package, ex_bundle in exports[package.name]:
-#                        import pdb
-#                        pdb.set_trace()
                         if package.is_in_range(ex_package.b_version):
                             found = True
                             print 'adding dep '+ex_bundle.sym_name+' to '+bundle.sym_name
@@ -185,15 +117,109 @@ class Dep:
                     print 'ERROR: cannot resolve package: ', package.name\
                     +' for bundle '+bundle.sym_name+' the packages does not exist'
                     return False
+                        
+        return True
+
+class Jars:
+    def __init__(self):
+        self.jar_files = []
+        self.bundles = []
+        
+    def load(self):
+        for root, file in self.jar_files:
+            ret = subprocess.call(['cp', join(root, file), '/tmp'])
+        cdir = os.getcwd()
+        os.chdir('/tmp')
+        for root, file in self.jar_files:
+            ret = subprocess.call(['jar', 'xf', file, 'META-INF/MANIFEST.MF'])
+            assert ret == 0
+            manifest_des = open('META-INF/MANIFEST.MF', 'r')
+            manifest_file = manifest_des.read()
+            parser = manifest.ManifestParser()
+            bundle = parser.parse(manifest_file)
+            bundle.root = root
+            bundle.file = file
+            bundle.jar = True
+            self.bundles.append(bundle)
+        os.chdir(cdir)
             
-        return True  
+    def display(self):
+        for i in self.bundles:
+            i.display()
+            print '-'*80
         
-    def check_deps(jars, src):
-        exports, bundles = generate_deps(jars, src)
-        for i in src.bundles:
-            pass
+    def find(self, jar_path):
+        for i in jar_path:
+            #print 'jar_path: ', i
+            for root, dirs, files in os.walk(i):
+                for file in files:
+                    if file.endswith(r'.jar'):
+                        self.jar_files.append((root, file))
+                        
+                        
+   
+class Src:
+    def __init__(self):
+        self.src_manifests = []
+        self.src_files = []
+        self.bundles = []
         
-        print exports
+    def load(self):
+        for root, dir in self.src_manifests:
+            #print join(root, dir, 'MANIFEST.MF')
+            manifest_des = open(join(root, dir, 'MANIFEST.MF'), 'r')
+            manifest_file = manifest_des.read()
+            #print manifest_file
+            parser = manifest.ManifestParser()
+            bundle = parser.parse(manifest_file)
+            bundle.root = root
+            self.bundles.append(bundle)
+            
+    def display(self):
+        for i in self.bundles:
+            i.display()
+        print '-'*80
+        
+    def find(self, src_path):
+        for i in src_path:
+            for root, dirs, files in os.walk(i):
+                for dir in dirs:
+                    if dir == 'META-INF':
+                        self.src_manifests.append((root, dir))    
+                                            
+    
+class Parameters:
+    def __init__(self):
+        self.args = None
+        self.options = None
+        self.parser = OptionParser(version="%prog 1.3.37")
+        display_jars_help = 'Display Java archives'
+        display_src_help = 'Display sources'
+        check_dep_help = 'Check dependencies'
+        build_gen_help = 'Generate build artifacts'
+        #; if no options are given, '\
+        #                 'then this command is executed; supported values'\
+        #                 ' are: ant, make, maven; default value is: ant.'
+        self.parser.add_option("-j", "--display-jars", action="store_true",
+                                default=False, dest="display_jars",
+                                help=display_jars_help)
+        self.parser.add_option("-s", "--display-src", action="store_true",
+                                default=False, dest="display_src",
+                                help=display_src_help)
+        self.parser.add_option("-c", "--check-dep", action="store_true",
+                               default=False, dest="check_dep",
+                               help=check_dep_help)
+        self.parser.add_option("-b", "--build-gen", action="store_true",
+                               default=False, dest="build_gen",
+                               help=build_gen_help)
+        
+        #self.parser.add_option("-g", "--gen-build",
+        #              dest="gen_build", metavar="BUILD-TYPE", type=str,
+        #              default='ant', help=gen_build_help)
+                        
+        (self.options, self.args) = self.parser.parse_args()
+            
+ 
 
 def load_jars():
     jfinder = Jars()
@@ -206,11 +232,25 @@ def load_src():
     sfinder.find(src_path)
     sfinder.load()
     return sfinder
-    
+
+def convert_paths(jar_path, src_path):
+    index = 0
+    for path in jar_path:
+        jar_path[index] = abspath(path)
+        index += 1
+    index = 0
+    for path in src_path:
+        src_path[index] = abspath(path)
+        index += 1
+        
 if __name__ == '__main__':
 #    print jar_path, src_path
     jars = None
     src = None
+    deps = None
+    
+    #convert_paths(jar_path, src_path)
+        
     params = Parameters()
 
     if params.options.display_jars == True:
@@ -228,19 +268,24 @@ if __name__ == '__main__':
         if src == None:
             src = load_src()
         
-        jars.display()
-        src.display()
+        #jars.display()
+        #src.display()
         
         deps = Dep(jars, src)
         assert deps.resolve()
         
-    if params.options.display_dep == True:
-        assert False
-        assert False
+    if params.options.build_gen == True:
+        if jars == None:
+            jars = load_jars()
+       
+        if src == None:
+            src = load_src()
         
-    if params.options.gen_build == True:
-        assert False
-        
-    #else:
-    #    params.parser.print_version()
-    #    params.parser.print_help()
+        if deps == None:
+            deps = Dep(jars, src)
+            assert deps.resolve()
+        gen = Gen(deps)
+        gen.generate_build_files()
+    else:
+        params.parser.print_version()
+        params.parser.print_help()
