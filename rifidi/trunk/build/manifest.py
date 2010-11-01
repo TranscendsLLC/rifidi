@@ -17,6 +17,7 @@ class Bundle:
         self.jar = False
         self.file = ''
         self.deps = []
+        self.build_level = 0
         
     def add_ipackage(self, i):
         self.ipackages.append(i)
@@ -251,15 +252,16 @@ class Ast:
             p[0] = p[1]
             
     def require(self, p):
-        #print ' require '
+        print ' require '
         assert len(p) == 2 or len(p) == 4
         if len(p) == 2:
             p[0] = p[1]
         else:
             assert len(p[1]) == 1 or p[3] == None
+            print 'length = ' , p[3]        
             if p[3] != None:
                 assert len(p[3]) == 4
-                #print p[1], p[3] 
+                print p[1], p[3] 
                 p[1][0].set_version_range(p[3][0], p[3][1], p[3][2], p[3][3])
             p[0] = p[1]
         
@@ -292,7 +294,7 @@ class Ast:
         #print '----------------', p[0]
         
     def version(self, p):
-        #print ' version '
+        print ' version '
         assert len(p) == 4
         p[0] = p[3]
         
@@ -317,8 +319,13 @@ class Ast:
         
     def version_number(self, p):
         assert len(p) <= 8
-        #print ' version number '
-        p[0] = Version()
+        print ' version number '
+        if p[1] != 'version_number':
+            p[0] = Version()
+        else:
+            print p[1]
+            assert False
+            
         if len(p) >= 2:
             p[0].set_major(p[1])
         if len(p) >= 4:
@@ -382,30 +389,30 @@ class ManifestParser:
                   #tabmodule=self.tabmodule)    
         
     def t_error(self, t):
-        #print 'Illegal character t.value[0] --->',t,'<----'
+        print 'Illegal character t.value[0] --->',t,'<----'
         t.lexer.skip(1)
             
     def t_NUMBER(self, t):
         r'[0-9]+'
-        #print 't_NUMBER'
+        print 't_NUMBER'
         return t
     
     def t_HEADER(self, t):
         r'^[a-zA-Z_0-9]*\-[a-zA-Z_][a-zA-Z_0-9]*\:'
         t.type = ManifestParser.reserved.get(t.value, 'HEADER')
-        #print 't_HEADER ', t.value, t.type
+        print 't_HEADER ', t.value, t.type
         return t    
 
     def t_ID(self, t):
         r'[a-zA-Z_][a-zA-Z_0-9\$]*'    
         t.type = ManifestParser.reserved.get(t.value, 'ID')
-        #print 't_ID', t.value, t.type
+        print 't_ID', t.value, t.type
         return t
             
     def t_TOKEN(self, t):
         r'[a-zA-Z0-9_-][a-zA-Z0-9-_\$\+\=]*'
         t.type = ManifestParser.reserved.get(t.value, 'TOKEN')
-        #print 't_TOKEN ', t.value, t.type
+        print 't_TOKEN ', t.value, t.type
         return t
             
     def p_header(self, p):
@@ -509,12 +516,13 @@ class ManifestParser:
         '''version : TOKEN EQUAL version_string
                     | ID EQUAL version_string
                     | ID TOKEN EQUAL version_string'''
-#                    | ID EQUAL version_number ''' # hack for bundle-version
+#                   | ID EQUAL version_number ''' # hack for bundle-version
         self.ast.version(p)
             
     def p_version_string(self, p):
+
         '''version_string : QUOTE version_number QUOTE
-                          | version_number
+                         | version_number
                           | QUOTE LPAREN version_number COMMA version_number RPAREN QUOTE
                           | QUOTE LPAREN version_number COMMA version_number RANGLE QUOTE
                           | QUOTE LANGLE version_number COMMA version_number RANGLE QUOTE
@@ -523,9 +531,13 @@ class ManifestParser:
             
     def p_version_number(self, p):
         '''version_number : NUMBER
-                          | version_number DOT NUMBER
-                          | version_number DOT TOKEN
+                          | NUMBER DOT NUMBER
+                          | NUMBER DOT NUMBER DOT NUMBER
+                          | NUMBER DOT NUMBER DOT NUMBER DOT NUMBER
+                          | NUMBER DOT NUMBER DOT NUMBER DOT ID
+                          | NUMBER DOT NUMBER DOT NUMBER DOT TOKEN
                           | version_number DOT ID
+                          | version_number DOT TOKEN
                           | version_number ID
                           | version_number TOKEN'''
         self.ast.version_number(p)

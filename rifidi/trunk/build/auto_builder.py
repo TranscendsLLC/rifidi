@@ -5,8 +5,7 @@ import manifest
 import os
 import subprocess
 
-from properties import jar_path, src_path
-
+from conf import jar_path, src_path
 from optparse import OptionParser
 from os.path import join, abspath
 
@@ -41,15 +40,40 @@ class Gen:
             build_xml.write('</project>')
             build_xml.close()
             os.chdir(home)
-            
-        
+
+
 class Dep:
     def __init__(self, jars, src):
         self.jars = jars
         self.src = src
         self.exports = {}
         self.bundles = {}
+    
+    def sort(self):
+        for bundle in src.bundles:
+            print bundle.sym_name, bundle.build_level
         
+        for bundle in src.bundles:
+            for dep_bundle in bundle.deps:
+                for dep_dep_bundle in dep_bundle.deps:
+                    if dep_dep_bundle == bundle:
+                        print 'ERROR: circular dependencies are not supported.'
+                        return False
+
+                print 'bundle ', bundle, bundle.sym_name, '=', bundle.build_level                
+                print 'dep bundle ', dep_bundle, dep_bundle.sym_name,'=', dep_bundle.build_level
+
+                
+                if dep_bundle.build_level <= bundle.build_level:
+                    print 'matched', dep_bundle.sym_name
+                    dep_bundle.build_level = bundle.build_level + 1
+        src.bundles = sorted(src.bundles, key=lambda bundle : bundle.build_level)
+        
+        for bundle in src.bundles:
+            print bundle.sym_name, bundle.build_level
+            
+        return True
+    
     def __add_package__(self, packages, package, bundle):
         #package.name -> [(package, bundle), (package, bundle)]
         if package.name in packages:
@@ -80,16 +104,25 @@ class Dep:
         exports = {}
         bundles = {}
         for bundle in src.bundles:
+            assert not bundle.sym_name in bundles 
             bundles[bundle.sym_name] = bundle
+                
             for package in bundle.epackages:
                 self.__add_package__(exports, package, bundle)
                 
+        #print bundles
+            
         for bundle in jars.bundles:
+            print ' ------ bundles ---->', bundles, '<------------------'
+            print '--->'+str(bundle.sym_name)+'<---', bundle
+            assert not bundle.sym_name in bundles 
             bundles[bundle.sym_name] = bundle
-            print bundle.display()
+            #print bundle.display()
             for package in bundle.epackages:
                 self.__add_package__(exports, package, bundle)
-    
+                
+        #print bundles
+        
         # package.name = [(pacakge, bundle), (package, bundle)]
         for bundle in src.bundles:
             for required_bundle_info in bundle.rbundles:
@@ -99,27 +132,45 @@ class Dep:
                     print 'adding dep '+str(required_bundle_info.name)+\
                           '-'+str(bundles[required_bundle_info.name].version),' to ',\
                                   bundle.sym_name
+                    #print 'Adding the dep bundle = ', required_bundle_info.name, bundles[required_bundle_info.name]
+                    
                     bundle.add_dep(bundles[required_bundle_info.name])
                                     
             for package in bundle.ipackages:
                 found = False
+                found = []
                 if package.name in exports:
                     for ex_package, ex_bundle in exports[package.name]:
                         if package.is_in_range(ex_package.b_version):
                             found = True
                             print 'adding dep '+ex_bundle.sym_name+' to '+bundle.sym_name
                             bundle.add_dep(ex_bundle)
+                        else:
+                            found.append(ex_package.b_version) 
+                        #else:
+                            #import pdb
+                            #pdb.set_trace()
+                        #    if package.is_in_range(ex_package.b_version):
+                        #        pass
                     if not found:
-                        print 'ERROR: cannot: '+package.name+\
-                        ' for bundle '+bundle.sym_name+' correct version not found'
-                        return False                
+                        found_str = ''
+                        for i in found:
+                            found_str += i.b_version.__str__() + ', '
+                            
+                        print 'ERROR: cannot find the correct version of '+package.name+\
+                        ' for '+bundle.sym_name+'; requires '+package.__str__()+\
+                        ' found = '+found
+                        
+                        
+                        return False
+                        
                 else:
                     print 'ERROR: cannot resolve package: ', package.name\
                     +' for bundle '+bundle.sym_name+' the packages does not exist'
                     return False
-                        
         return True
-
+        
+        
 class Jars:
     def __init__(self):
         self.jar_files = []
@@ -135,12 +186,16 @@ class Jars:
             assert ret == 0
             manifest_des = open('META-INF/MANIFEST.MF', 'r')
             manifest_file = manifest_des.read()
-            print manifest_file
+            #print manifest_file
             parser = manifest.ManifestParser()
             bundle = parser.parse(manifest_file)
             bundle.root = root
             bundle.file = file
             bundle.jar = True
+            if bundle.sym_name == '':
+                print 'Bundle '+join(root, file)+' has no symbolic name; skipping'
+                continue
+            assert bundle.sym_name != ''
             self.bundles.append(bundle)
         os.chdir(cdir)
             
@@ -158,7 +213,7 @@ class Jars:
                         self.jar_files.append((root, file))
                         
                         
-   
+       
 class Src:
     def __init__(self):
         self.src_manifests = []
@@ -174,12 +229,13 @@ class Src:
             parser = manifest.ManifestParser()
             bundle = parser.parse(manifest_file)
             bundle.root = root
+            print bundle, bundle.sym_name
             self.bundles.append(bundle)
             
     def display(self):
         for i in self.bundles:
             i.display()
-        print '-'*80
+            print '-'*80
         
     def find(self, src_path):
         for i in src_path:
@@ -252,11 +308,14 @@ if __name__ == '__main__':
     params = Parameters()
     
     if params.options.display_jars:
+        print '-'*80
         jars = load_jars()
         jars.display()
         cmd_set = True
  
     if params.options.display_src:
+        if not cmd_set:
+            print '-'*80
         src = load_src()
         src.display()
         cmd_set = True
@@ -273,6 +332,7 @@ if __name__ == '__main__':
         
         deps = Dep(jars, src)
         assert deps.resolve()
+        assert deps.sort()
         cmd_set = True
         
     if params.options.build_gen or not cmd_set:
@@ -285,6 +345,7 @@ if __name__ == '__main__':
         if deps == None:
             deps = Dep(jars, src)
             assert deps.resolve()
+            assert deps.sort()
         gen = Gen(deps)
         gen.generate_build_files()
         
