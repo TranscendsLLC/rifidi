@@ -1,14 +1,14 @@
 #!/usr/bin/env python
 
+import manifest
+
 import os
 import subprocess
 
-import manifest
-import manifest_parser
+from properties import jar_path, src_path
 
 from optparse import OptionParser
-from properties import *
-from os.path import join, getsize, abspath
+from os.path import join, abspath
 
 class Gen:
     def __init__(self, deps):
@@ -135,6 +135,7 @@ class Jars:
             assert ret == 0
             manifest_des = open('META-INF/MANIFEST.MF', 'r')
             manifest_file = manifest_des.read()
+            print manifest_file
             parser = manifest.ManifestParser()
             bundle = parser.parse(manifest_file)
             bundle.root = root
@@ -150,7 +151,7 @@ class Jars:
         
     def find(self, jar_path):
         for i in jar_path:
-            #print 'jar_path: ', i
+            print 'jar_path: ', i
             for root, dirs, files in os.walk(i):
                 for file in files:
                     if file.endswith(r'.jar'):
@@ -244,28 +245,27 @@ def convert_paths(jar_path, src_path):
         index += 1
         
 if __name__ == '__main__':
-#    print jar_path, src_path
     jars = None
     src = None
     deps = None
-    
-    #convert_paths(jar_path, src_path)
-        
+    cmd_set = False        
     params = Parameters()
-
-    if params.options.display_jars == True:
+    
+    if params.options.display_jars:
         jars = load_jars()
         jars.display()
+        cmd_set = True
  
-    if params.options.display_src == True:
+    if params.options.display_src:
         src = load_src()
         src.display()
+        cmd_set = True
         
-    if params.options.check_dep == True:
-        if jars == None:
+    if params.options.check_dep:
+        if not jars:
             jars = load_jars()
        
-        if src == None:
+        if not src:
             src = load_src()
         
         #jars.display()
@@ -273,8 +273,9 @@ if __name__ == '__main__':
         
         deps = Dep(jars, src)
         assert deps.resolve()
+        cmd_set = True
         
-    if params.options.build_gen == True:
+    if params.options.build_gen or not cmd_set:
         if jars == None:
             jars = load_jars()
        
@@ -286,6 +287,7 @@ if __name__ == '__main__':
             assert deps.resolve()
         gen = Gen(deps)
         gen.generate_build_files()
-    else:
-        params.parser.print_version()
-        params.parser.print_help()
+        
+    #else:
+    #    params.parser.print_version()
+    #    params.parser.print_help()
