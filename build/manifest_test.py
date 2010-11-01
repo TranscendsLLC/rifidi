@@ -2,7 +2,6 @@
 
 import unittest
 import manifest
-import manifest_parser
 import sys
 
 class manifest_test(unittest.TestCase):
