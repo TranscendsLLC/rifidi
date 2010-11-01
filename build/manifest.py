@@ -214,8 +214,11 @@ class Ast:
             
     def bundle_version(self, p):
         assert len(p) == 3
-        self.bundle.version = p[2]
-        
+        if isinstance(p[2], Version): 
+            self.bundle.version = p[2]
+        else:
+            self.bundle.version = Version()
+            
     def packages(self, p):
         #print ' packages '
         #print p[0], p[1], p[2] 
@@ -272,6 +275,8 @@ class Ast:
         #print 'package_name'
         if len(p) == 4:
             p[0] = p[1]+p[2]+p[3]
+        elif len(p) == 3:
+            p[0] = p[1]+p[2]
         else:
             assert len(p) == 2
             p[0] = p[1]
@@ -289,12 +294,14 @@ class Ast:
     def version(self, p):
         #print ' version '
         assert len(p) == 4
-        p[0] = p[3]   
+        p[0] = p[3]
         
     def version_string(self, p):
-        assert len(p) == 4 or len(p) == 8
+        assert len(p) == 2 or len(p) == 4 or len(p) == 8
         #print ' version string', p[0], p[1], p[2], p[3]
-        if len(p) == 4:
+        if len(p) == 2:
+            p[0] = [p[1], True, p[1], True]
+        elif len(p) == 4:
             p[0] = [p[2], True, p[2], True]
         elif len(p) == 8 and p[2] == '(' and p[6] == ')':
             p[0] = [p[3], False, p[5], False]
@@ -375,7 +382,7 @@ class ManifestParser:
                   #tabmodule=self.tabmodule)    
         
     def t_error(self, t):
-        print 'Illegal character t.value[0] --->',t,'<----'
+        #print 'Illegal character t.value[0] --->',t,'<----'
         t.lexer.skip(1)
             
     def t_NUMBER(self, t):
@@ -409,7 +416,8 @@ class ManifestParser:
         pass
 
     def p_bundle_version(self, p):
-        '''bundle_version : BUNDLE_VERSION version_number'''
+        '''bundle_version : BUNDLE_VERSION version_number
+                        | BUNDLE_VERSION ID'''
         self.ast.bundle_version(p)
         
     def p_bundle_name(self, p):
@@ -467,9 +475,12 @@ class ManifestParser:
             
     def p_package_name(self, p):
         '''package_name : ID
-                        | package_name DOT ID'''
+                        | package_name DOT ID
+                        | package_name TOKEN
+                        | package_name ID
+                        | package_name DOT NUMBER'''
         self.ast.package_name(p)
-            
+
     def p_parameter(self, p):
         '''parameter : version
                      | directive
@@ -479,6 +490,7 @@ class ManifestParser:
             
     def p_directive(self, p):
         '''directive : TOKEN COLON EQUAL TOKEN
+                     | ID EQUAL QUOTE ID QUOTE
                      | TOKEN COLON EQUAL ID
                      | ID COLON EQUAL TOKEN
                      | ID COLON EQUAL ID
@@ -496,11 +508,13 @@ class ManifestParser:
     def p_version(self, p):
         '''version : TOKEN EQUAL version_string
                     | ID EQUAL version_string
-                    | ID TOKEN EQUAL version_string''' # hack for bundle-version
+                    | ID TOKEN EQUAL version_string'''
+#                    | ID EQUAL version_number ''' # hack for bundle-version
         self.ast.version(p)
             
     def p_version_string(self, p):
         '''version_string : QUOTE version_number QUOTE
+                          | version_number
                           | QUOTE LPAREN version_number COMMA version_number RPAREN QUOTE
                           | QUOTE LPAREN version_number COMMA version_number RANGLE QUOTE
                           | QUOTE LANGLE version_number COMMA version_number RANGLE QUOTE
@@ -509,10 +523,11 @@ class ManifestParser:
             
     def p_version_number(self, p):
         '''version_number : NUMBER
-                          | NUMBER DOT NUMBER
-                          | NUMBER DOT NUMBER DOT NUMBER
-                          | NUMBER DOT NUMBER DOT NUMBER DOT TOKEN
-                          | NUMBER DOT NUMBER DOT NUMBER DOT ID'''
+                          | version_number DOT NUMBER
+                          | version_number DOT TOKEN
+                          | version_number DOT ID
+                          | version_number ID
+                          | version_number TOKEN'''
         self.ast.version_number(p)
             
     def p_error(self, p):
