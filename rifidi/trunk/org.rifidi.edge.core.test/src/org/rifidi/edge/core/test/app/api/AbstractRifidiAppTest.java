@@ -5,164 +5,113 @@ package org.rifidi.edge.core.test.app.api;
 
 import static org.junit.Assert.*;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Properties;
+
+import org.easymock.EasyMock;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.rifidi.edge.core.app.api.AbstractRifidiApp;
+import org.rifidi.edge.core.app.api.AppState;
+import org.rifidi.edge.core.app.api.RifidiApp;
+import org.rifidi.edge.core.app.api.service.tagmonitor.ReadZone;
+import org.rifidi.edge.core.services.esper.EsperManagementService;
 
-
-
+/**
+ * @author manoj
+ *
+ */
 public class AbstractRifidiAppTest {
+	public class RifidiAppRunner extends AbstractRifidiApp{
+		HashMap<String,ReadZone> readZoneHash  = new HashMap<String,ReadZone>(); 
 
-	public class AbstractAppTest extends AbstractRifidiApp {
-		public AbstractAppTest(String group, String name) {
+		/**
+		 * @param group
+		 * @param name
+		 */
+		public RifidiAppRunner(String group, String name) {
 			super(group, name);
+			// TODO Auto-generated constructor stub
 		}
-	}
-	
-	private AbstractAppTest subject;
 		
-	@BeforeClass
-	public static void setUpBeforeClass() throws Exception {
+		public HashMap<String,ReadZone> getReadZones() {
+			return super.getReadZones();
+		}
+		
 	}
-
-	@AfterClass
-	public static void tearDownAfterClass() throws Exception {
-	}
-
-	@Before
-	public void setUp() throws Exception {
-		this.subject = new AbstractAppTest("group", "name");
-	}
-
-	/**
-	 * @throws java.lang.Exception
-	 */
-	@After
-	public void tearDown() throws Exception {
-	}
-
-	/**
-	 * Test method for {@link org.rifidi.edge.core.app.api.AbstractRifidiApp#hashCode()}.
-	 */
-	@Test
-	public final void testHashCode() {
-		//fail("Not yet implemented"); // TODO
-	}
-
-	/**
-	 * Test method for {@link org.rifidi.edge.core.app.api.AbstractRifidiApp#AbstractRifidiApp(java.lang.String, java.lang.String)}.
-	 */
-	@Test
-	public final void testAbstractRifidiApp() {
-		//fail("Not yet implemented"); // TODO
-	}
-
+	RifidiAppRunner testSubject;
+	
+	
+		
+		
 	/**
 	 * Test method for {@link org.rifidi.edge.core.app.api.AbstractRifidiApp#getName()}.
 	 */
 	@Test
-	public final void testGetName() {
-		String appName = "name";
-		assertEquals(subject.getName(), appName);
+	public void test() {
+		
+	    testSubject = new RifidiAppRunner("AbstractRifidiAppTest", "rifidi");
+	    	    
+		assertEquals("AbstractRifidiAppTest", testSubject.getGroup());
+		assertEquals("rifidi", testSubject.getName());
+		assertEquals(AppState.STOPPED,testSubject.getState());
+		boolean caught=false;
+		String s = null;
+		try{
+		testSubject.start();
+		}catch(IllegalStateException e){
+			caught =true;
+			s = e.getMessage();
+		}
+		assertEquals(true, caught);
+		assertEquals("Application cannot be started "
+					+ "until EsperManagementService has been injected", s);
+		caught =false;
+		EsperServiceMock esperService = new EsperServiceMock();
+		testSubject.setEsperService(esperService);
+		assertEquals(esperService,testSubject.getEsperService());
+		
+		caught=false;
+		s = null;
+		/* set up the testSubject so that you can test that the loadReadZones executes correctly */
+		//Properties properties = new Properties();
+		//properties.setProperty("org.rifidi.home", System.getProperty("user.dir"));
+		//System.out.println(System.getProperty("user.dir"));
+		//properties.setProperty("org.rifidi.edge.applications", "applications");
+		//testSubject.setAppProperties(properties);
+		//assertEquals(properties.getProperty("org.rifidi.home"), testSubject.getProperties());
+		
+		try{
+			testSubject.start();
+		}catch(IllegalStateException e){
+			caught =true;
+			s = e.getMessage();
+		}
+		
+		assertEquals(false, caught);
+		assertEquals(AppState.STARTED, testSubject.getState());
+		
+		/* test that the loadReadZones function was excecuted and did what we thought it does*/
+		
+		HashMap<String,ReadZone> readZones = new HashMap<String, ReadZone>();
+		readZones= testSubject.getReadZones();
+		
+		if(readZones.isEmpty() == true){ 
+			System.out.println("empty");
+		}
+		Iterator<String> i = readZones.keySet().iterator();
+	
+		assertEquals("dock_door", i.next().toString());
+		assertEquals("weigh_station", i.next().toString());
+				
 	}
-
-	/**
-	 * Test method for {@link org.rifidi.edge.core.app.api.AbstractRifidiApp#getGroup()}.
-	 */
-	@Test
-	public final void testGetGroup() {
-		//fail("Not yet implemented"); // TODO
-	}
-
-	/**
-	 * Test method for {@link org.rifidi.edge.core.app.api.AbstractRifidiApp#getState()}.
-	 */
-	@Test
-	public final void testGetState() {
-	//	fail("Not yet implemented"); // TODO
-	}
-
-	/**
-	 * Test method for {@link org.rifidi.edge.core.app.api.AbstractRifidiApp#setEsperService(org.rifidi.edge.core.services.esper.EsperManagementService)}.
-	 */
-	@Test
-	public final void testSetEsperService() {
-		//fail("Not yet implemented"); // TODO
-	}
-
-	/**
-	 * Test method for {@link org.rifidi.edge.core.app.api.AbstractRifidiApp#setAppProperties(java.util.Properties)}.
-	 */
-	@Test
-	public final void testSetAppProperties() {
-//		fail("Not yet implemented"); // TODO
-	}
-
-	/**
-	 * Test method for {@link org.rifidi.edge.core.app.api.AbstractRifidiApp#setBundleContext(org.osgi.framework.BundleContext)}.
-	 */
-	@Test
-	public final void testSetBundleContext() {
-	//	fail("Not yet implemented"); // TODO
-	}
-
-	/**
-	 * Test method for {@link org.rifidi.edge.core.app.api.AbstractRifidiApp#initialize()}.
-	 */
-	@Test
-	public final void testInitialize() {
-		//fail("Not yet implemented"); // TODO
-	}
-
-	/**
-	 * Test method for {@link org.rifidi.edge.core.app.api.AbstractRifidiApp#lazyStart()}.
-	 */
-	@Test
-	public final void testLazyStart() {
-		//fail("Not yet implemented"); // TODO
-	}
-
-	/**
-	 * Test method for {@link org.rifidi.edge.core.app.api.AbstractRifidiApp#start()}.
-	 */
-	@Test
-	public final void testStart() {
-	//	fail("Not yet implemented"); // TODO
-	}
-
-	/**
-	 * Test method for {@link org.rifidi.edge.core.app.api.AbstractRifidiApp#stop()}.
-	 */
-	@Test
-	public final void testStop() {
-		//fail("Not yet implemented"); // TODO
-	}
-
-	/**
-	 * Test method for {@link org.rifidi.edge.core.app.api.AbstractRifidiApp#toString()}.
-	 */
-	@Test
-	public final void testToString() {
-		//fail("Not yet implemented"); // TODO
-	}
-
-	/**
-	 * Test method for {@link org.rifidi.edge.core.app.api.AbstractRifidiApp#equals(java.lang.Object)}.
-	 */
-	@Test
-	public final void testEqualsObject() {
-		//fail("Not yet implemented"); // TODO
-	}
-
-	/**
-	 * Test method for {@link org.rifidi.edge.core.app.api.AbstractRifidiApp#compareTo(org.rifidi.edge.core.app.api.RifidiApp)}.
-	 */
-	@Test
-	public final void testCompareTo() {
-//		fail("Not yet implemented"); // TODO
-	}
+	
+	
 
 }
