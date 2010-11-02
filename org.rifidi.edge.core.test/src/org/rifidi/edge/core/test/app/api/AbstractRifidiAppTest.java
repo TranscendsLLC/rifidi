@@ -103,7 +103,7 @@ public class AbstractRifidiAppTest {
 		readZones= testSubject.getReadZones();
 		
 		if(readZones.isEmpty() == true){ 
-			System.out.println("empty");
+			System.out.println("empty"); 
 		}
 		Iterator<String> i = readZones.keySet().iterator();
 	
