@@ -165,6 +165,8 @@ class Dep:
                         return False
                         
                 else:
+                    import re
+                    print re.match(r'javax.xml.namespace', str(exports))
                     print 'ERROR: cannot resolve package: ', package.name\
                     +' for bundle '+bundle.sym_name+' the packages does not exist'
                     return False
@@ -194,6 +196,14 @@ class Jars:
             bundle.jar = True
             if bundle.sym_name == '':
                 print 'Bundle '+join(root, file)+' has no symbolic name; skipping'
+                if bundle.file == 'aspectjrt.jar' or \
+                    bundle.file == 'aspectjweaver.jar' or\
+                    bundle.file == 'cglib-nodep-2.2.jar' or \
+                    bundle.file == 'RXTXcomm.jar':
+                    pass
+                else:
+                    print '--->'+str(bundle.file)+'<---'
+                    assert False
                 continue
             assert bundle.sym_name != ''
             self.bundles.append(bundle)
