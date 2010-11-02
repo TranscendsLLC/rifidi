@@ -30,10 +30,11 @@ class Gen:
             build_xml.write('<target name="compile">\n')
             classpath='classpath="'
             for dep in bundle.deps:
-                print dep.sym_name
-                assert dep.jar
+                #print dep.sym_name
+                #assert dep.jar
                 classpath += join(dep.root, dep.file) +':'
-            print classpath
+
+            classpath = classpath.rstrip(':')
             build_xml.write('\t<javac srcdir="${src}" destdir="${build}" '+\
                             classpath+'"/>\n')
             build_xml.write('</target>\n')
@@ -50,8 +51,8 @@ class Dep:
         self.bundles = {}
     
     def sort(self):
-        for bundle in src.bundles:
-            print bundle.sym_name, bundle.build_level
+        #for bundle in src.bundles:
+        #    print bundle.sym_name, bundle.build_level
         
         for bundle in src.bundles:
             for dep_bundle in bundle.deps:
@@ -60,12 +61,12 @@ class Dep:
                         print 'ERROR: circular dependencies are not supported.'
                         return False
 
-                print 'bundle ', bundle, bundle.sym_name, '=', bundle.build_level                
-                print 'dep bundle ', dep_bundle, dep_bundle.sym_name,'=', dep_bundle.build_level
+                #print 'bundle ', bundle, bundle.sym_name, '=', bundle.build_level                
+                #print 'dep bundle ', dep_bundle, dep_bundle.sym_name,'=', dep_bundle.build_level
 
                 
                 if dep_bundle.build_level <= bundle.build_level:
-                    print 'matched', dep_bundle.sym_name
+                    #print 'matched', dep_bundle.sym_name
                     dep_bundle.build_level = bundle.build_level + 1
         src.bundles = sorted(src.bundles, key=lambda bundle : bundle.build_level)
         
@@ -113,8 +114,8 @@ class Dep:
         #print bundles
             
         for bundle in jars.bundles:
-            print ' ------ bundles ---->', bundles, '<------------------'
-            print '--->'+str(bundle.sym_name)+'<---', bundle
+            #print ' ------ bundles ---->', bundles, '<------------------'
+            #print '--->'+str(bundle.sym_name)+'<---', bundle
             assert not bundle.sym_name in bundles 
             bundles[bundle.sym_name] = bundle
             #print bundle.display()
@@ -160,16 +161,14 @@ class Dep:
                         print 'ERROR: cannot find the correct version of '+package.name+\
                         ' for '+bundle.sym_name+'; requires '+package.__str__()+\
                         ' found = '+found
-                        
-                        
                         return False
                         
                 else:
                     import re
                     print re.match(r'javax.xml.namespace', str(exports))
                     print 'ERROR: cannot resolve package: ', package.name\
-                    +' for bundle '+bundle.sym_name+' the packages does not exist'
-                    return False
+                    +' for bundle '+bundle.sym_name+'; skipping it'
+                    #return False
         return True
         
         
@@ -241,6 +240,7 @@ class Src:
             bundle.root = root
             print bundle, bundle.sym_name
             self.bundles.append(bundle)
+            print '.',
             
     def display(self):
         for i in self.bundles:
@@ -252,6 +252,7 @@ class Src:
             for root, dirs, files in os.walk(i):
                 for dir in dirs:
                     if dir == 'META-INF':
+                        print '.',
                         self.src_manifests.append((root, dir))    
                                             
     

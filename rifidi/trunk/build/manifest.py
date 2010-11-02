@@ -262,7 +262,7 @@ class Ast:
             assert len(p[1]) == 1 or p[3] == None
             if p[3] != None:
                 assert len(p[3]) == 4
-                print p[1], p[3] 
+                #print p[1], p[3] 
                 p[1][0].set_version_range(p[3][0], p[3][1], p[3][2], p[3][3])
             p[0] = p[1]
         
@@ -324,7 +324,7 @@ class Ast:
         if p[1] != 'version_number':
             p[0] = Version()
         else:
-            print p[1]
+            #print p[1]
             assert False
             
         if len(p) >= 2:
