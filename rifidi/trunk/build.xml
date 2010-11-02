@@ -1,0 +1,4 @@
+<project name="rifidi-build" default="compile" basedir="/home/manoj/workspace/Rifidi-SDK">
+<target name="compile">
+</target>
+</project>
