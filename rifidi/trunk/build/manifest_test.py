@@ -283,6 +283,24 @@ class manifest_test(unittest.TestCase):
         self.assertEquals(True, v.is_less(v1))
         self.assertEquals(False, v1.is_less(v))
         
+        v2 = manifest.Version()
+        v3 = manifest.Version()
+
+        v2.set_major(3)
+        v2.set_minor(3)
+        v2.set_micro(0)
+
+        v3.set_major(3)
+        v3.set_minor(3)
+        
+
+        
+        self.assertEquals(False, v3.is_less(v2))
+        self.assertEquals(False, v2.is_less(v3))
+        self.assertEquals(True, v2.is_equal(v3))
+        self.assertEquals(True, v3.is_equal(v2))
+        
+        
     def test_package(self):
         i = manifest.Package('java.lang.whatever')
         v = manifest.Version()
@@ -317,7 +335,27 @@ class manifest_test(unittest.TestCase):
         
         self.assertEquals(True, i.is_in_range(v))
         self.assertEquals(True, i.is_in_range(v1))
-        self.assertEquals(True, i.is_in_range(v2))       
+        self.assertEquals(True, i.is_in_range(v2))
+        
+        
+        v2 = manifest.Version()
+        v3 = manifest.Version()
+
+        v2.set_major(3)
+        v2.set_minor(3)
+        v2.set_micro(0)
+
+        v3.set_major(3)
+        v3.set_minor(3)
+        
+        m = manifest.Package('java.is.teh.s0x0r')
+        m1 = manifest.Package('java.is.teh.s0x0r')
+        
+        m.set_version_range(v2, True, v2, True)
+        m1.set_version_range(v3, True, v3, True)
+        
+        self.assertEquals(True, m.is_in_range(m1.b_version))
+        self.assertEquals(True, m1.is_in_range(m.b_version))
         
         
 if __name__ == "__main__":

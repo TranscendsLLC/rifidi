@@ -21,16 +21,16 @@ class Bundle:
         
     def add_ipackage(self, i):
         self.ipackages.append(i)
-    
+       
     def add_epackage(self, e):
         self.epackages.append(e)
-    
+       
     def add_required_bundle_lookup_info(self, b):
         self.rbundles.append(b)
         
     def add_dep(self, bundle):
         self.deps.append(bundle)
-    
+       
     def display(self):
         print        'Symbolic Name     = ',self.sym_name
         if self.jar == True:
@@ -41,7 +41,7 @@ class Bundle:
         exports =    'Exported Packages = '
         rbundles =   'Required Bundles  = '
         wrap_start = '                    '
-
+            
         for i in  self.ipackages:
             for c in i.name:
                 if ((len(imports) + 1) % 80) == 0:
@@ -53,7 +53,7 @@ class Bundle:
             else:
                 imports += ','
         print imports[:len(imports) - 1]                
-        
+          
         for e in  self.epackages:
             for c in e.name:
                 if ((len(exports) + 1) % 80) == 0:
@@ -65,7 +65,7 @@ class Bundle:
             else:
                 exports += ','            
         print exports[:len(exports) - 1]
-        
+           
         for i in  self.rbundles:
             for c in i.name:
                 if ((len(rbundles) + 1) % 80) == 0:
@@ -86,7 +86,7 @@ class Package:
         self.e_version.set_major(str(sys.maxint))
         self.b_inclusive = True
         self.e_inclusive = True
-    
+     
     def __str__(self):
         string = ''
         assert self.b_version != None and self.e_version != None
@@ -97,7 +97,7 @@ class Package:
             string += '('
             
         string += self.b_version.__str__() +','+ self.e_version.__str__()
-        
+          
         if self.e_inclusive:
             string += ']'
         else:
@@ -125,27 +125,27 @@ class Package:
             
 class Version:
     def __init__(self):
-        self.major = 0
+        self.major = '0'
         self.major_set = False
-        self.minor = 0
+        self.minor = '0'
         self.minor_set = False
-        self.micro = 0
+        self.micro = '0'
         self.micro_set = False        
         self.qual = '0'
         self.qual_set = False        
-
+        
     def __str__(self):
         string = ''
         if(self.major_set):
             string += str(self.major)
         else:
             return string
-        
+           
         if(self.minor_set):
             string = string + '.' +str(self.minor)
         else:
             return string
-        
+           
         if(self.micro_set):
             string = string + '.' +str(self.micro)
         else:
@@ -155,7 +155,7 @@ class Version:
             string = string + '.' +str(self.qual)
             
         return string        
-
+           
     def set_major(self, major):
         self.major_set = True
         self.major = major
@@ -227,7 +227,7 @@ class Ast:
         
         packages = p[2]
         cmd = p[1]
-
+        
         for i in packages:            
             if cmd == 'Import-Package:':
                 self.bundle.add_ipackage(i)
@@ -265,7 +265,7 @@ class Ast:
                 #print p[1], p[3] 
                 p[1][0].set_version_range(p[3][0], p[3][1], p[3][2], p[3][3])
             p[0] = p[1]
-        
+               
     def package_names(self, p):
         #print ' package-names '
         if len(p) == 2:
