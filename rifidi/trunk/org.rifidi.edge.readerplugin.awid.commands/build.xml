@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<project name="org.rifidi.edge.readerplugin.awid.commands" default="compile" basedir="/home/percent/development-10-28/build">
+	<property name="src" value="../org.rifidi.edge.readerplugin.awid.commands/src"/>
+	<property name="build" value="../org.rifidi.edge.readerplugin.awid.commands/bin" />
+	<target name="init" depends="clean">
+		<tstamp />
+		<mkdir dir="${build}" />
+	</target>
+	<target name="clean" description="clean up">
+		<delete dir="${build}" />
+	</target>
+	<target name="compile" depends="init">
+		<javac srcdir="${src}" destdir="${build}" classpath="../Rifidi-SDK/lib/javax/geronimo-jms_1.1_spec-1.1.1.jar:../org.rifidi.edge.api//bin:../org.rifidi.edge.readerplugin.awid//bin:../Rifidi-SDK/lib/spring/org.springframework.jms-2.5.6.SEC01.jar:../Rifidi-SDK/lib/logging/com.springsource.org.apache.commons.logging-1.1.1.jar:../Rifidi-SDK/lib/spring/org.springframework.core-2.5.6.SEC01.jar:../org.rifidi.edge.core//bin:../Rifidi-SDK/lib/plugins/org.eclipse.osgi_3.5.0.v20090520.jar"/>
+	</target>
+</project>

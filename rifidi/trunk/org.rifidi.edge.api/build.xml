@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<project name="org.rifidi.edge.api" default="compile" basedir="/home/percent/development-10-28/build">
+	<property name="src" value="../org.rifidi.edge.api/src"/>
+	<property name="build" value="../org.rifidi.edge.api/bin" />
+	<target name="init" depends="clean">
+		<tstamp />
+		<mkdir dir="${build}" />
+	</target>
+	<target name="clean" description="clean up">
+		<delete dir="${build}" />
+	</target>
+	<target name="compile" depends="init">
+		<javac srcdir="${src}" destdir="${build}" classpath=""/>
+	</target>
+</project>
