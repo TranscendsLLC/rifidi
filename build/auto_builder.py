@@ -15,8 +15,46 @@ class Gen:
         self.src = deps.src.bundles
         self.exports = deps.exports
         self.bundles = deps.bundles
-        
+#<?xml version="1.0" encoding="UTF-8"?>
+#<project name="BundleName" default="deploy" basedir=".">
+#    <property name="version" value="1.0.0" />
+#
+#
+#
+#    classpath = '<path id="classpath.buildtime"> \n'+\
+#                '<pathelement location="/home/to/equinox/equinox.jar" />\n'+\
+#                '<pathelement location="/home/to/dependency.jar" />\n'+\
+#                '</path>\n'
+#
+#
+#    <target name="compile" depends="init" description="compile the source ">
+#        <javac srcdir="${src}" destdir="${build}" classpathref="classpath.buildtime" />
+#    </target>
+#
+#    <target name="dist" depends="compile" description="generate the distribution">
+#        <mkdir dir="${dist}"/>
+#        <jar jarfile="${dist}/${ant.project.name}-${version}.jar" basedir="${build}" manifest="META-INF/MANIFEST.MF">
+#            <manifest>
+#                <attribute name="Bundle-Name" value="${ant.project.name}"/>
+#                <attribute name="Bundle-Version" value="${version}"/>
+#            </manifest>
+#        </jar>
+#    </target>
+#
+#    <target name="deploy" depends="dist">
+#        <copy file="${dist}/${buildfilename}" todir="${deployloc}" overwrite="true"/>
+#    </target>
+#
+#    clean = '<target name="clean" description="clean up">\n'+\
+#             '<delete dir="${build}" />' +\
+#            '</target> '\
+
     def generate_build_files(self):
+        master_build_file = '<project name="rifidi-build" default="compile" basedir=".">\n'+\
+                            '\t<target name="compile">\n'
+        
+        
+        
         for bundle in self.src:
             assert bundle.root != ''
             home = os.getcwd()
@@ -25,23 +63,41 @@ class Gen:
             build_xml.write('<?xml version="1.0"?>\n')
             build_xml.write('<project name="'+str(bundle.sym_name)+'" default="compile" '+\
                             'basedir="'+str(home)+'">\n')
-            build_xml.write('<property name="src" value="'+str(bundle.root)+'/src"/>\n')
-            build_xml.write('<property name="build" value="'+str(bundle.root)+'/bin" />\n')
-            build_xml.write('<target name="compile">\n')
+            build_xml.write('\t<property name="src" value="'+str(bundle.root)+'/src"/>\n')
+            build_xml.write('\t<property name="build" value="'+str(bundle.root)+'/bin" />\n')
+            #build_xml.write('\t<property name="dist" location="dist" />\n')
+            #build_xml.write('<property name="dep-loc" location='str(home)+bundles'/>')
+            build_xml.write('\t<target name="init" depends="clean">\n'+\
+                            '\t\t<tstamp />\n\t\t<mkdir dir="${build}" />\n'+\
+                            '\t</target>\n')
+            build_xml.write('\t<target name="clean" description="clean up">\n'+\
+                            '\t\t<delete dir="${build}" />\n'+\
+                            '\t</target>\n')
+
+            build_xml.write('\t<target name="compile" depends="init">\n')
+            
             classpath='classpath="'
             for dep in bundle.deps:
-                #print dep.sym_name
+                print dep.sym_name
                 #assert dep.jar
-                classpath += join(dep.root, dep.file) +':'
-
+                bindir = ''
+                if not dep.jar:
+                    bindir = '/bin'
+                classpath += join(dep.root, dep.file)+bindir+':'
+                
             classpath = classpath.rstrip(':')
-            build_xml.write('\t<javac srcdir="${src}" destdir="${build}" '+\
+            build_xml.write('\t\t<javac srcdir="${src}" destdir="${build}" '+\
                             classpath+'"/>\n')
-            build_xml.write('</target>\n')
+            build_xml.write('\t</target>\n')
             build_xml.write('</project>')
+            master_build_file += '\t\t<echo message="'+bundle.root+'" /> \n' 
+            master_build_file += '\t\t<ant dir="'+bundle.root+'" /> \n'
             build_xml.close()
+            
             os.chdir(home)
-
+        master_build_file += '\t</target>\n</project>\n'
+        master_build_xml = open('./build.xml', 'w')
+        master_build_xml.write(master_build_file)
 
 class Dep:
     def __init__(self, jars, src):
@@ -49,31 +105,6 @@ class Dep:
         self.src = src
         self.exports = {}
         self.bundles = {}
-    
-    def sort(self):
-        #for bundle in src.bundles:
-        #    print bundle.sym_name, bundle.build_level
-        
-        for bundle in src.bundles:
-            for dep_bundle in bundle.deps:
-                for dep_dep_bundle in dep_bundle.deps:
-                    if dep_dep_bundle == bundle:
-                        print 'ERROR: circular dependencies are not supported.'
-                        return False
-
-                #print 'bundle ', bundle, bundle.sym_name, '=', bundle.build_level                
-                #print 'dep bundle ', dep_bundle, dep_bundle.sym_name,'=', dep_bundle.build_level
-
-                
-                if dep_bundle.build_level <= bundle.build_level:
-                    #print 'matched', dep_bundle.sym_name
-                    dep_bundle.build_level = bundle.build_level + 1
-        src.bundles = sorted(src.bundles, key=lambda bundle : bundle.build_level)
-        
-        for bundle in src.bundles:
-            print bundle.sym_name, bundle.build_level
-            
-        return True
     
     def __add_package__(self, packages, package, bundle):
         #package.name -> [(package, bundle), (package, bundle)]
@@ -100,7 +131,32 @@ class Dep:
                     
         else:
             packages[package.name] = [(package, bundle)]
+    
+    def sort(self):
+        #for bundle in src.bundles:
+        #    print bundle.sym_name, bundle.build_level
         
+        for bundle in src.bundles:
+            for dep_bundle in bundle.deps:
+                for dep_dep_bundle in dep_bundle.deps:
+                    if dep_dep_bundle == bundle:
+                        print 'ERROR: circular dependencies are not supported.'
+                        return False
+
+                #print 'bundle ', bundle, bundle.sym_name, '=', bundle.build_level                
+                #print 'dep bundle ', dep_bundle, dep_bundle.sym_name,'=', dep_bundle.build_level
+
+                
+                if dep_bundle.build_level >= bundle.build_level and not dep_bundle.jar:
+                    print 'matched: ', bundle.sym_name, ' deps on ', dep_bundle.sym_name
+                    bundle.build_level = dep_bundle.build_level + 1
+        src.bundles = sorted(src.bundles, key=lambda bundle : bundle.build_level)
+        
+        for bundle in src.bundles:
+            print bundle.sym_name, bundle.build_level
+            
+        return True
+    
     def resolve(self):
         exports = {}
         bundles = {}
@@ -116,8 +172,10 @@ class Dep:
         for bundle in jars.bundles:
             #print ' ------ bundles ---->', bundles, '<------------------'
             #print '--->'+str(bundle.sym_name)+'<---', bundle
-            assert not bundle.sym_name in bundles 
-            bundles[bundle.sym_name] = bundle
+            if not bundle.sym_name in bundles:
+                bundles[bundle.sym_name] = bundle
+            else:
+                print 'Bundle '+str(bundle.sym_name)+'found both binary and src; using the src version (this should be an option)'
             #print bundle.display()
             for package in bundle.epackages:
                 self.__add_package__(exports, package, bundle)
@@ -136,18 +194,27 @@ class Dep:
                     #print 'Adding the dep bundle = ', required_bundle_info.name, bundles[required_bundle_info.name]
                     
                     bundle.add_dep(bundles[required_bundle_info.name])
-                                    
+            
+
+            
             for package in bundle.ipackages:
+                print package.name
+                
                 found = False
-                found = []
+                version_found = []
                 if package.name in exports:
                     for ex_package, ex_bundle in exports[package.name]:
+                        #if package.name == 'javax.jms':
+                            #import pdb
+                            #pdb.set_trace()
                         if package.is_in_range(ex_package.b_version):
                             found = True
-                            print 'adding dep '+ex_bundle.sym_name+' to '+bundle.sym_name
+                            print 'adding dep '+ex_bundle.sym_name+' to '+bundle.sym_name, 'because of package ', package.name
                             bundle.add_dep(ex_bundle)
                         else:
-                            found.append(ex_package.b_version) 
+                            version_found.append(ex_package)
+                            print ' pde build doesnt do the right thing either'
+                            
                         #else:
                             #import pdb
                             #pdb.set_trace()
@@ -155,12 +222,12 @@ class Dep:
                         #        pass
                     if not found:
                         found_str = ''
-                        for i in found:
-                            found_str += i.b_version.__str__() + ', '
+                        for i in version_found:
+                            found_str += i.__str__() + ', '
                             
                         print 'ERROR: cannot find the correct version of '+package.name+\
                         ' for '+bundle.sym_name+'; requires '+package.__str__()+\
-                        ' found = '+found
+                        ' found = '+found_str
                         return False
                         
                 else:
