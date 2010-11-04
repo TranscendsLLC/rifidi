@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<project name="org.rifidi.edge.epcglobal.ale.api.logicalreader" default="compile" basedir="/home/percent/development-10-28/build">
+	<property name="src" value="../org.rifidi.edge.epcglobal.ale.api.logicalreader/src"/>
+	<property name="build" value="../org.rifidi.edge.epcglobal.ale.api.logicalreader/bin" />
+	<target name="init" depends="clean">
+		<tstamp />
+		<mkdir dir="${build}" />
+	</target>
+	<target name="clean" description="clean up">
+		<delete dir="${build}" />
+	</target>
+	<target name="compile" depends="init">
+		<javac srcdir="${src}" destdir="${build}" classpath="../Rifidi-SDK/lib/spring/org.springframework.web-2.5.6.SEC01.jar:../Rifidi-SDK/lib/plugins/org.eclipse.osgi_3.5.0.v20090520.jar:../Rifidi-SDK/lib/logging/com.springsource.org.apache.commons.logging-1.1.1.jar:../Rifidi-SDK/lib/esper/esper-3.4.0.jar:../Rifidi-SDK/lib/spring/org.springframework.beans-2.5.6.SEC01.jar:../org.rifidi.edge.core//bin"/>
+	</target>
+</project>

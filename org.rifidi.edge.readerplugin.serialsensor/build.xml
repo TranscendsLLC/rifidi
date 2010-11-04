@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<project name="org.rifidi.edge.readerplugin.serialsensor" default="compile" basedir="/home/percent/development-10-28/build">
+	<property name="src" value="../org.rifidi.edge.readerplugin.serialsensor/src"/>
+	<property name="build" value="../org.rifidi.edge.readerplugin.serialsensor/bin" />
+	<target name="init" depends="clean">
+		<tstamp />
+		<mkdir dir="${build}" />
+	</target>
+	<target name="clean" description="clean up">
+		<delete dir="${build}" />
+	</target>
+	<target name="compile" depends="init">
+		<javac srcdir="${src}" destdir="${build}" classpath="../Rifidi-SDK/lib/libraries/org.rifidi.gnu.io.buildh4xor_2.1.7.jar:../Rifidi-SDK/lib/plugins/org.eclipse.osgi_3.5.0.v20090520.jar"/>
+	</target>
+</project>
