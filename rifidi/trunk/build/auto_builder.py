@@ -49,12 +49,34 @@ class Gen:
 #             '<delete dir="${build}" />' +\
 #            '</target> '\
 
+    def __build_classpath__(self, bundle):
+        if bundle.classpath == None:
+            bundle.classpath = {}
+                
+            for dep in bundle.deps:
+                #print dep.sym_name
+                    
+                if dep.classpath == None:
+                    self.__build_classpath__(dep)
+                    
+                for clazz1 in dep.classpath.keys():
+                    bundle.classpath[clazz1] = clazz1
+    
+                clazz = ''              
+                clazz += join(dep.root, dep.file)
+                if not dep.jar:
+                    clazz += '/bin'
+                    
+                if not (clazz in bundle.classpath):
+                    bundle.classpath[clazz] = clazz
+                    
     def generate_build_files(self):
-        master_build_file = '<project name="rifidi-build" default="compile" basedir=".">\n'+\
-                            '\t<target name="compile">\n'
         
-        
-        
+        master_build_file = '<project name="rifidi-build" default="compile" basedir=".">\n'
+                            
+        master_compile = '\t<target name="compile">\n'
+        master_clean = '\t<target name="clean" description="clean up" >\n'
+
         for bundle in self.src:
             assert bundle.root != ''
             home = os.getcwd()
@@ -73,29 +95,34 @@ class Gen:
             build_xml.write('\t<target name="clean" description="clean up">\n'+\
                             '\t\t<delete dir="${build}" />\n'+\
                             '\t</target>\n')
-
+                
             build_xml.write('\t<target name="compile" depends="init">\n')
-            
+                
+            self.__build_classpath__(bundle)
+                
             classpath='classpath="'
-            for dep in bundle.deps:
-                print dep.sym_name
-                #assert dep.jar
-                bindir = ''
-                if not dep.jar:
-                    bindir = '/bin'
-                classpath += join(dep.root, dep.file)+bindir+':'
+            for clazz in bundle.classpath.keys():
+                classpath += clazz+':'        
                 
             classpath = classpath.rstrip(':')
+                
             build_xml.write('\t\t<javac srcdir="${src}" destdir="${build}" '+\
                             classpath+'"/>\n')
             build_xml.write('\t</target>\n')
             build_xml.write('</project>')
-            master_build_file += '\t\t<echo message="'+bundle.root+'" /> \n' 
-            master_build_file += '\t\t<ant dir="'+bundle.root+'" /> \n'
+            #master_build_file += '\t\t<echo message="'+bundle.root+'" /> \n' 
+            master_compile += '\t\t<ant dir="'+bundle.root+'" /> \n'
+            master_clean += '\t\t<ant dir="'+bundle.root+'" target="clean" /> \n'
             build_xml.close()
             
             os.chdir(home)
-        master_build_file += '\t</target>\n</project>\n'
+        master_compile += '\t</target>\n'
+        master_clean += '\t</target>\n'
+        
+        master_build_file += master_clean
+        master_build_file += master_compile
+        
+        master_build_file += '\n</project>\n'
         master_build_xml = open('./build.xml', 'w')
         master_build_xml.write(master_build_file)
 
@@ -131,25 +158,35 @@ class Dep:
                     
         else:
             packages[package.name] = [(package, bundle)]
+            
+    def __partially_order__(self, bundle):
+        ret = False
+        for dep_bundle in bundle.deps:
+            for dep_dep_bundle in dep_bundle.deps:
+                if dep_dep_bundle == bundle:
+                    print 'ERROR: circular dependencies are not supported.'
+                    assert False
+                        
+                #print 'bundle ', bundle, bundle.sym_name, '=', bundle.build_level                
+                #print 'dep bundle ', dep_bundle, dep_bundle.sym_name,'=', dep_bundle.build_level
+                
+                
+            if dep_bundle.build_level >= bundle.build_level and not dep_bundle.jar:
+                print 'matched: ', bundle.sym_name, ' deps on ', dep_bundle.sym_name
+                bundle.build_level = dep_bundle.build_level + 1
+                ret = True
+        return ret      
     
     def sort(self):
         #for bundle in src.bundles:
         #    print bundle.sym_name, bundle.build_level
-        
-        for bundle in src.bundles:
-            for dep_bundle in bundle.deps:
-                for dep_dep_bundle in dep_bundle.deps:
-                    if dep_dep_bundle == bundle:
-                        print 'ERROR: circular dependencies are not supported.'
-                        return False
-
-                #print 'bundle ', bundle, bundle.sym_name, '=', bundle.build_level                
-                #print 'dep bundle ', dep_bundle, dep_bundle.sym_name,'=', dep_bundle.build_level
-
-                
-                if dep_bundle.build_level >= bundle.build_level and not dep_bundle.jar:
-                    print 'matched: ', bundle.sym_name, ' deps on ', dep_bundle.sym_name
-                    bundle.build_level = dep_bundle.build_level + 1
+        h4x0r = True
+        while h4x0r:
+            h4x0r = False
+            for bundle in src.bundles:
+                if self.__partially_order__(bundle):
+                    h4x0r = True
+                   
         src.bundles = sorted(src.bundles, key=lambda bundle : bundle.build_level)
         
         for bundle in src.bundles:
@@ -194,9 +231,7 @@ class Dep:
                     #print 'Adding the dep bundle = ', required_bundle_info.name, bundles[required_bundle_info.name]
                     
                     bundle.add_dep(bundles[required_bundle_info.name])
-            
-
-            
+                    
             for package in bundle.ipackages:
                 print package.name
                 

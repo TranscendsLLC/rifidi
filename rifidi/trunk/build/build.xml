@@ -1,52 +1,55 @@
 <project name="rifidi-build" default="compile" basedir=".">
+	<target name="clean" description="clean up" >
+		<ant dir="../org.rifidi.edge.readerplugin.serialsensor" target="clean" /> 
+		<ant dir="../org.rifidi.edge.api" target="clean" /> 
+		<ant dir="../org.rifidi.edge.init" target="clean" /> 
+		<ant dir="../org.rifidi.edge.core" target="clean" /> 
+		<ant dir="../org.rifidi.app.example" target="clean" /> 
+		<ant dir="../org.rifidi.app.template" target="clean" /> 
+		<ant dir="../org.rifidi.edge.readerplugin.awid" target="clean" /> 
+		<ant dir="../org.rifidi.edge.readerplugin.thingmagic" target="clean" /> 
+		<ant dir="../org.rifidi.edge.epcglobal.ale.api.logicalreader" target="clean" /> 
+		<ant dir="../org.rifidi.edge.app.diag" target="clean" /> 
+		<ant dir="../org.rifidi.edge.readerplugin.barcode" target="clean" /> 
+		<ant dir="../org.rifidi.edge.app.tracking" target="clean" /> 
+		<ant dir="../org.rifidi.edge.readerplugin.generic" target="clean" /> 
+		<ant dir="../org.rifidi.edge.northwind" target="clean" /> 
+		<ant dir="../org.rifidi.edge.readerplugin.llrp" target="clean" /> 
+		<ant dir="../org.rifidi.edge.console" target="clean" /> 
+		<ant dir="../org.rifidi.edge.readerplugin.acura" target="clean" /> 
+		<ant dir="../org.rifidi.edge.readerplugin.motorola.mc9090" target="clean" /> 
+		<ant dir="../org.rifidi.edge.readerplugin.alien" target="clean" /> 
+		<ant dir="../org.rifidi.edge.readerplugin.opticon" target="clean" /> 
+		<ant dir="../org.rifidi.edge.readerplugin.alien.commands" target="clean" /> 
+		<ant dir="../org.rifidi.edge.readerplugin.awid.commands" target="clean" /> 
+		<ant dir="../org.rifidi.edge.readerplugin.thingmagic.commands" target="clean" /> 
+		<ant dir="../org.rifidi.edge.epcglobal.ale.api.read" target="clean" /> 
+	</target>
 	<target name="compile">
-		<echo message="../org.rifidi.edge.readerplugin.serialsensor" /> 
 		<ant dir="../org.rifidi.edge.readerplugin.serialsensor" /> 
-		<echo message="../org.rifidi.edge.api" /> 
 		<ant dir="../org.rifidi.edge.api" /> 
-		<echo message="../org.rifidi.edge.init" /> 
 		<ant dir="../org.rifidi.edge.init" /> 
-		<echo message="../org.rifidi.app.example" /> 
-		<ant dir="../org.rifidi.app.example" /> 
-		<echo message="../org.rifidi.edge.readerplugin.alien.commands" /> 
-		<ant dir="../org.rifidi.edge.readerplugin.alien.commands" /> 
-		<echo message="../org.rifidi.app.template" /> 
-		<ant dir="../org.rifidi.app.template" /> 
-		<echo message="../org.rifidi.edge.readerplugin.awid" /> 
-		<ant dir="../org.rifidi.edge.readerplugin.awid" /> 
-		<echo message="../org.rifidi.edge.readerplugin.thingmagic" /> 
-		<ant dir="../org.rifidi.edge.readerplugin.thingmagic" /> 
-		<echo message="../org.rifidi.edge.epcglobal.ale.api.logicalreader" /> 
-		<ant dir="../org.rifidi.edge.epcglobal.ale.api.logicalreader" /> 
-		<echo message="../org.rifidi.edge.app.diag" /> 
-		<ant dir="../org.rifidi.edge.app.diag" /> 
-		<echo message="../org.rifidi.edge.readerplugin.barcode" /> 
-		<ant dir="../org.rifidi.edge.readerplugin.barcode" /> 
-		<echo message="../org.rifidi.edge.app.tracking" /> 
-		<ant dir="../org.rifidi.edge.app.tracking" /> 
-		<echo message="../org.rifidi.edge.readerplugin.generic" /> 
-		<ant dir="../org.rifidi.edge.readerplugin.generic" /> 
-		<echo message="../org.rifidi.edge.northwind" /> 
-		<ant dir="../org.rifidi.edge.northwind" /> 
-		<echo message="../org.rifidi.edge.readerplugin.llrp" /> 
-		<ant dir="../org.rifidi.edge.readerplugin.llrp" /> 
-		<echo message="../org.rifidi.edge.console" /> 
-		<ant dir="../org.rifidi.edge.console" /> 
-		<echo message="../org.rifidi.edge.readerplugin.acura" /> 
-		<ant dir="../org.rifidi.edge.readerplugin.acura" /> 
-		<echo message="../org.rifidi.edge.readerplugin.motorola.mc9090" /> 
-		<ant dir="../org.rifidi.edge.readerplugin.motorola.mc9090" /> 
-		<echo message="../org.rifidi.edge.readerplugin.alien" /> 
-		<ant dir="../org.rifidi.edge.readerplugin.alien" /> 
-		<echo message="../org.rifidi.edge.readerplugin.opticon" /> 
-		<ant dir="../org.rifidi.edge.readerplugin.opticon" /> 
-		<echo message="../org.rifidi.edge.core" /> 
 		<ant dir="../org.rifidi.edge.core" /> 
-		<echo message="../org.rifidi.edge.readerplugin.awid.commands" /> 
+		<ant dir="../org.rifidi.app.example" /> 
+		<ant dir="../org.rifidi.app.template" /> 
+		<ant dir="../org.rifidi.edge.readerplugin.awid" /> 
+		<ant dir="../org.rifidi.edge.readerplugin.thingmagic" /> 
+		<ant dir="../org.rifidi.edge.epcglobal.ale.api.logicalreader" /> 
+		<ant dir="../org.rifidi.edge.app.diag" /> 
+		<ant dir="../org.rifidi.edge.readerplugin.barcode" /> 
+		<ant dir="../org.rifidi.edge.app.tracking" /> 
+		<ant dir="../org.rifidi.edge.readerplugin.generic" /> 
+		<ant dir="../org.rifidi.edge.northwind" /> 
+		<ant dir="../org.rifidi.edge.readerplugin.llrp" /> 
+		<ant dir="../org.rifidi.edge.console" /> 
+		<ant dir="../org.rifidi.edge.readerplugin.acura" /> 
+		<ant dir="../org.rifidi.edge.readerplugin.motorola.mc9090" /> 
+		<ant dir="../org.rifidi.edge.readerplugin.alien" /> 
+		<ant dir="../org.rifidi.edge.readerplugin.opticon" /> 
+		<ant dir="../org.rifidi.edge.readerplugin.alien.commands" /> 
 		<ant dir="../org.rifidi.edge.readerplugin.awid.commands" /> 
-		<echo message="../org.rifidi.edge.readerplugin.thingmagic.commands" /> 
 		<ant dir="../org.rifidi.edge.readerplugin.thingmagic.commands" /> 
-		<echo message="../org.rifidi.edge.epcglobal.ale.api.read" /> 
 		<ant dir="../org.rifidi.edge.epcglobal.ale.api.read" /> 
 	</target>
+
 </project>

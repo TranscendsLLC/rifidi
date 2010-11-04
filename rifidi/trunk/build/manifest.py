@@ -18,6 +18,7 @@ class Bundle:
         self.file = ''
         self.deps = {}
         self.build_level = 0
+        self.classpath = None
         
     def add_ipackage(self, i):
         self.ipackages.append(i)
