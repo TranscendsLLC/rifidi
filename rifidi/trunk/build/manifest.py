@@ -16,7 +16,7 @@ class Bundle:
         self.root = ''
         self.jar = False
         self.file = ''
-        self.deps = []
+        self.deps = {}
         self.build_level = 0
         
     def add_ipackage(self, i):
@@ -29,7 +29,7 @@ class Bundle:
         self.rbundles.append(b)
         
     def add_dep(self, bundle):
-        self.deps.append(bundle)
+        self.deps[bundle] = bundle
        
     def display(self):
         print        'Symbolic Name     = ',self.sym_name
@@ -302,10 +302,14 @@ class Ast:
     def version_string(self, p):
         assert len(p) == 2 or len(p) == 4 or len(p) == 8
         #print ' version string', p[0], p[1], p[2], p[3]
+        if len(p) == 2 or len(p) == 4:
+            v = Version()
+            v.set_major(str(sys.maxint))
+        
         if len(p) == 2:
-            p[0] = [p[1], True, p[1], True]
+            p[0] = [p[1], True, v, False]
         elif len(p) == 4:
-            p[0] = [p[2], True, p[2], True]
+            p[0] = [p[2], True, v, False]
         elif len(p) == 8 and p[2] == '(' and p[6] == ')':
             p[0] = [p[3], False, p[5], False]
         elif len(p) == 8 and p[2] == '(' and p[6] == ']':
