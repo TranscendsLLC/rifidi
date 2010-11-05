@@ -10,7 +10,7 @@
 \usepackage{epstopdf}
 \DeclareGraphicsRule{.tif}{png}{.png}{`convert #1 `dirname #1`/`basename #1 .tif`.png}
 
-\title{RIFIDI Engineering}
+\title{Rifidi Engineering}
 \author{James Percent \\ james@pramari.com}
 \date{10/10/2010}                                           % Activate to display a given date or no date
 
@@ -24,7 +24,7 @@
 
 \section{Introduction}
 
-This document is the basis for the getting started on the RIFIDI engineering team.  It is the single source for all the information you need to get going.  It is obviously evolving, so let us know if you find anything missing, outdated, or incorrect.
+This document is the basis for the getting started on the Rifidi engineering team.  It is the single source for all the information you need to get going.  It is obviously evolving, so let us know if you find anything missing, outdated, or incorrect.
 
 Rather than litter the entire document with all the links, we have chosen a citation-based reference approach.  This keeps the presentation concise and the reference material co-located.   Citations should be clickable and any link within a citation should also be directly clickable.   This may seem annoying at first, but in the end we think having a concise index to the reference material is highly advantageous and worth a bit of clicking around.
 
@@ -60,17 +60,17 @@ The steps required to configure Thunderbird are straight forward:
 \end{itemize} 
 
 \begin{figure}
-\includegraphics{thunderbird1.png}
+\includegraphics{rifidi-eng/thunderbird1.png}
 \caption{\label{fig:thunderbird1} Pramari Account Settings}
 \end{figure}
 
 \begin{figure}
-\includegraphics{thunderbird2.png}
+\includegraphics{rifidi-eng/thunderbird2.png}
 \caption{\label{fig:thunderbird2} Server Settings}
 \end{figure}
 
 \begin{figure}
-\includegraphics{thunderbird3.png}
+\includegraphics{rifidi-eng/thunderbird3.png}
 \caption{\label{fig:thunderbird3} SMTP Settings}
 \end{figure}
 
@@ -94,22 +94,22 @@ All RIFIDI-based software can be downloaded from our online repositories \cite{r
 We depend on several other packages: \textit{Eclipse Plug-in Development Environment, PDE/API Tools Environment, Java Development Tools, Eclipse XML Editors and Tools, JavaScript Developer Tools, Web, XML and Java EE Development}.  To install these packages, click: \textit{Help$\rightarrow$Install new software}.  From the drop-down box select the Galileo update site \cite{galileo} and select the packages as shown in Figure~\ref{fig:eclipse4}.
 
 \begin{figure}
-\resizebox{\textwidth}{!}{\includegraphics{eclipse1.png}}
+\resizebox{\textwidth}{!}{\includegraphics{rifidi-eng/eclipse1.png}}
 \caption{\label{fig:eclipse1} Eclipse Workspace}
 \end{figure}
 
 \begin{figure}
-\resizebox{\textwidth}{!}{\includegraphics{eclipse2.png}}
+\resizebox{\textwidth}{!}{\includegraphics{rifidi-eng/eclipse2.png}}
 \caption{\label{fig:eclipse2} Eclipse Software Installation }
 \end{figure}
 
 \begin{figure}
-\resizebox{\textwidth}{!}{\includegraphics{eclipse3.png}}
+\resizebox{\textwidth}{!}{\includegraphics{rifidi-eng/eclipse3.png}}
 \caption{\label{fig:eclipse3} Subclipse }
 \end{figure}
 
 \begin{figure}
-\resizebox{\textwidth}{!}{\includegraphics{eclipse4.png}}
+\resizebox{\textwidth}{!}{\includegraphics{rifidi-eng/eclipse4.png}}
 \caption{\label{fig:eclipse4} Additional Eclipse Packages }
 \end{figure}
 
@@ -132,7 +132,7 @@ An essential part of developing PDE services is the target platform.  The target
 Dependency injection \cite{di} is a design paradigm whereby the logic of the system is separated from acquiring and configuring dependancies.  The Edge Server relies on Spring Dynamic Modules \cite{spring-dm} to register services in the OSGi service registry and to handle dependency injection.  Each bundle has a Spring directory that defines its services and dependency injection rules.
  
 \begin{figure}
-\includegraphics{lifecyle.png}
+\includegraphics{rifidi-eng/lifecyle.png}
 \caption{\label{fig:state} Lifecyle of a Bundle}
 \end{figure}
  
@@ -149,50 +149,50 @@ After the download completes, return to the Java perspective, so that we can set
 Finally we need to setup the run configuration.  We have included a EdgeServer.launch file in the Rifidi-SDK, so an Eclipse run-configuration already exists.  Open the run configuration as shown in Figure~\ref{fig:eclipse11}, and find the \textit{Edge Server} run configuration under \textit{OSGI Framework} as show in Figure~\ref{fig:eclipse12}, and click run.  To confirm the system is up and running, from the Eclipse console, type apps as shown in Figure~\ref{fig:eclipse13}.
 
 \begin{figure}
-\resizebox{\textwidth}{!}{\includegraphics{eclipse5.png}}
+\resizebox{\textwidth}{!}{\includegraphics{rifidi-eng/eclipse5.png}}
 \caption{\label{fig:eclipse5} Switching Perspective}
 \end{figure}
 
 \begin{figure}
-\resizebox{\textwidth}{!}{\includegraphics{eclipse6.png}}
+\resizebox{\textwidth}{!}{\includegraphics{rifidi-eng/eclipse6.png}}
 \caption{\label{fig:eclipse6} SVN Exploring Perspective }
 \end{figure}
 
  
 \begin{figure}
-\resizebox{\textwidth}{!}{\includegraphics{eclipse7.png}}
+\resizebox{\textwidth}{!}{\includegraphics{rifidi-eng/eclipse7.png}}
 \caption{\label{fig:eclipse7}Adding a New Repository 1}
 \end{figure}
 
 
 \begin{figure}
-\resizebox{\textwidth}{!}{\includegraphics{eclipse8.png}}
+\resizebox{\textwidth}{!}{\includegraphics{rifidi-eng/eclipse8.png}}
 \caption{\label{fig:eclipse8}  Adding a New Repository 2}
 \end{figure}
  
  
 \begin{figure}
-\resizebox{\textwidth}{!}{\includegraphics{eclipse9.png}}
+\resizebox{\textwidth}{!}{\includegraphics{rifidi-eng/eclipse9.png}}
 \caption{\label{fig:eclipse9} Edge Server Source Checkout}
 \end{figure}
 
 \begin{figure}
-\resizebox{\textwidth}{!}{\includegraphics{eclipse10.png}}
+\resizebox{\textwidth}{!}{\includegraphics{rifidi-eng/eclipse10.png}}
 \caption{\label{fig:eclipse10} Setting the Target Platform}
 \end{figure}
 
 \begin{figure}
-\resizebox{\textwidth}{!}{\includegraphics{eclipse11.png}}
+\resizebox{\textwidth}{!}{\includegraphics{rifidi-eng/eclipse11.png}}
 \caption{\label{fig:eclipse11} Run Configurations}
 \end{figure}
 
 \begin{figure}
-\resizebox{\textwidth}{!}{\includegraphics{eclipse12.png}}
+\resizebox{\textwidth}{!}{\includegraphics{rifidi-eng/eclipse12.png}}
 \caption{\label{fig:eclipse12} Default Edge Server Run Configuration}
 \end{figure}
 
 \begin{figure}
-\resizebox{\textwidth}{!}{\includegraphics{eclipse13.png}}
+\resizebox{\textwidth}{!}{\includegraphics{rifidi-eng/eclipse13.png}}
 \caption{\label{fig:eclipse13} OSGi Console}
 \end{figure}
 
