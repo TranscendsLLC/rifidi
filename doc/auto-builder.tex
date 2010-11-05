@@ -1,0 +1,98 @@
+\documentclass[11pt]{article}
+%\documentclass[11pt]{amsart}
+\usepackage{geometry}                % See geometry.pdf to learn the layout options. There are lots.
+\geometry{letterpaper}                   % ... or a4paper or a5paper or ... 
+%\geometry{landscape}                % Activate for for rotated page geometry
+\usepackage[parfill]{parskip}    % Activate to begin paragraphs with an empty line rather than an indent
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb,latexsym}
+\usepackage{epstopdf}
+\DeclareGraphicsRule{.tif}{png}{.png}{`convert #1 `dirname #1`/`basename #1 .tif`.png}
+
+\title{Rifidi Auto-Builder}
+\author{James Percent \\ james@pramari.com}
+\date{\today}                                          % Activate to display a given date or no date
+
+\begin{document}
+\maketitle
+
+\tableofcontents
+\listoffigures
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Introduction}
+
+We like working in PDE, but we need automated builds for our enviornment.   PDE builder sucks, and we like to program, so we wrote a quick script to generate Ant-based build files for our project.
+
+Why.
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Python}\label{os}
+
+We implemented the script in python.  We like Python because...
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Usage}
+
+Talk about how to use the script and what it does.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Design}
+
+Talk about how the script works.  The design concepts.
+
+\section{Code}
+
+\section{Bugs and Odities}
+The code currently has a few quarks.  Does not handle gnu-io as PDE does.  I made a dumby jar for building Gnu\_io
+
+\begin{itemize}
+
+\item Jars added to the project as libs.  These Jars must be in the lib directory, at the same level as the META-INF folder 
+or they will not be found and used
+\item Doesn't handle parsing regular Jar files.
+\item Doesn't handle parsing bundles of Jars.  For example, the GNU IO package is not handle properly by default.
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\clearpage
+
+\begin{thebibliography}{99}
+\bibitem{ubuntu} Ubuntu Releases.  \url{http://releases.ubuntu.com}.
+\bibitem{lucid} Ubuntu 10.04.1.  \url{http://releases.ubuntu.com/lucid}.
+\bibitem{lucid-doc} Ubuntu 10.04.1 Documentation. \url{https://help.ubuntu.com/10.04/index.html}.
+\bibitem{apt-get-tut} Apt.  \url{http://www.debian.org/doc/manuals/apt-howto/ch-apt-get.en.html}.
+\bibitem{webmail}  Webmail.  \url{http://webmail.textdrivehosting.com/index.php}.
+\bibitem{thunderbird} Thunderbird. \url{http://www.mozilla.org/projects/thunderbird}.
+\bibitem{harwood} Mail server \url{harwood.textdrive.com}.
+\bibitem{basecamp} Pramari Basecamp.  \url{https://pramari.basecamphq.com}.
+\bibitem{rallydev}  Rally.  \url{https://community.rallydev.com}.
+\bibitem{scrum-book}  Schwaber, Ken. Agile Project Management with Scrum.
+\bibitem{scrum-guide} Scrum Guide.  \url{http://www.scrum.org/scrumguideenglish}. 
+\bibitem{rep-edge} RIFIDI Edge Server. \url{https://svn.rifidi.org/svn/rep-edge}.
+\bibitem{rep-external} RIFIDI Toolkit. \url{https://svn.rifidi.org/svn/rep-external}.
+%\bibitem{rep-internal} RIFIDI ?? . \url{https://svn.rifidi.org/svn/rep-internal}.
+\bibitem{rep-ambient} Ambient Project. \url{https://svn.rifidi.org/svn/rep-ambient}.
+\bibitem{eclipse} Eclipse.  \url{http://www.eclipse.org.}.
+\bibitem{pde} Plug-in Development Environment.  \url{http://www.eclipse.org/pde/}.
+\bibitem{osgi-book} OSGI and Equinox: Creating Highly Modular Javaª Systems.  \url{http://equinoxosgi.org}.
+\bibitem{equinox} Equinox.  \url{http://www.eclipse.org/equinox}.
+\bibitem{osgi} OSGi Alliance. \url{http://www.osgi.org/Main/HomePage}.	
+\bibitem{spring-dm} Spring Dynamic Modules for OSGi Service Platforms.  \url{http://www.springsource.org/osgi}.
+\bibitem{galileo} Eclipse Galileo.  \url{http://download.eclipse.org/releases/galileo}
+\bibitem{subclipse} Subclipse.  \url{http://subclipse.tigris.org/}.
+\bibitem{di} Fowler, M.  Dependency Injection.  \url{http://martinfowler.com/articles/injection.html}.
+\bibitem{subclipse-doc} Subclipse online documentation.  \url{http://svn.collab.net/subclipse/help/index.jsp}.
+\bibitem{subclipse-update} Subclipse.  \url{http://subclipse.tigris.org/update_1.6.x}.
+\end{thebibliography}
+\end{document}  
+
+
