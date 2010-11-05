@@ -17,6 +17,7 @@ class Bundle:
         self.jar = False
         self.file = ''
         self.deps = {}
+        self.extra_libs = None
         self.build_level = 0
         self.classpath = None
         

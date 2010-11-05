@@ -332,7 +332,7 @@ class Src:
         self.bundles = []
         
     def load(self):
-        for root, dir in self.src_manifests:
+        for root, dir, libs in self.src_manifests:
             #print join(root, dir, 'MANIFEST.MF')
             manifest_des = open(join(root, dir, 'MANIFEST.MF'), 'r')
             manifest_file = manifest_des.read()
@@ -340,24 +340,50 @@ class Src:
             parser = manifest.ManifestParser()
             bundle = parser.parse(manifest_file)
             bundle.root = root
-            print bundle, bundle.sym_name
+            print bundle, bundle.sym_name, libs
+            if libs.__len__() > 0:
+                print libs
+                bundle.extra_libs = libs
+                assert False
             self.bundles.append(bundle)
-            print '.',
+            #print '.',
             
     def display(self):
         for i in self.bundles:
             i.display()
             print '-'*80
-        
+    
+    def find_lib(self, path):
+        libs = []
+        for root, dirs, files in os.walk(path):
+            for file in files:
+                if file.endswith(r'.jar'):
+                    libs.append(join(root, file))
+        return libs
+            
     def find(self, src_path):
+        
         for i in src_path:
             for root, dirs, files in os.walk(i):
+                next_tuple = None
+                
+                found_manifest = False
+                if 'META-INF' in dirs:
+                    found_manifest = True
+                else:
+                    continue
+
                 for dir in dirs:
                     if dir == 'META-INF':
                         print '.',
-                        self.src_manifests.append((root, dir))    
-                                            
-    
+                        next_tuple = (root, dir, []))
+                    if found_manifest == True and dir == 'lib':
+                        print 'lookin for libs in ', root, dir
+                        libs = self.find_lib(join(root, dir))
+                        assert libs.__len__() > 0
+                        self.src_manifests[self.src_manifests.__len__()-1][2].
+                        print libs
+                        
 class Parameters:
     def __init__(self):
         self.args = None

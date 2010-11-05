@@ -1,7 +1,13 @@
 #!/usr/bin/env python
 
 jar_path = ['../Rifidi-SDK/lib/' ]
-src_path = ['../org.rifidi.app.example', '../org.rifidi.edge.readerplugin.alien.commands',\
+src_path = [
+'../labtrack.common',
+'../com.ambient.labtrack.association', '../com.ambient.labtrack.common',
+'../com.ambient.labtrack.common.model.ui', '../com.ambient.labtrack.grouping',
+'../com.ambient.labtrack.jms', '../com.ambient.labtrack.portal',
+'../com.ambient.labtrack.receiving', '../com.ambient.labtrack.tests',
+'../org.rifidi.app.example', '../org.rifidi.edge.readerplugin.alien.commands',\
 '../org.rifidi.edge.readerplugin.serialsensor', '../org.rifidi.app.template',\
 '../org.rifidi.edge.readerplugin.awid','../org.rifidi.edge.readerplugin.thingmagic',\
 '../org.rifidi.edge.api', '../org.rifidi.edge.epcglobal.ale.api.logicalreader',\
