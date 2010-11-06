@@ -20,6 +20,7 @@ class Bundle:
         self.extra_libs = None
         self.build_level = 0
         self.classpath = None
+        self.extra_libs = {}
         
     def add_ipackage(self, i):
         self.ipackages.append(i)
