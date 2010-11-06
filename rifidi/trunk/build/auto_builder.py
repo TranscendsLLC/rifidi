@@ -56,7 +56,7 @@ class Gen:
             for lib in bundle.extra_libs.keys():
                 bundle.classpath[lib] = lib
                 print bundle.extra_libs
-                #assert False
+                #cdassert False
                 
             for dep in bundle.deps:
                 #print dep.sym_name
@@ -203,12 +203,14 @@ class Dep:
         exports = {}
         bundles = {}
         for bundle in src.bundles:
+            #print bundle.sym_name   
             assert not bundle.sym_name in bundles 
             bundles[bundle.sym_name] = bundle
                 
             for package in bundle.epackages:
                 self.__add_package__(exports, package, bundle)
-                
+        #assert False
+        
         #print bundles
             
         for bundle in jars.bundles:
@@ -353,9 +355,8 @@ class Src:
             parser = manifest.ManifestParser()
             bundle = parser.parse(manifest_file)
             bundle.root = root
-            print bundle, bundle.sym_name, libs
-            
-	    if libs.keys().__len__() > 0:
+            #print bundle, bundle.sym_name
+            if libs.keys().__len__() > 0:
                 print libs
                 bundle.extra_libs = libs
                 #assert False
@@ -365,17 +366,8 @@ class Src:
         for i in self.bundles:
             i.display()
             print '-'*80
-    
-    def find_lib(self, path):
-        libs = []
-        for root, dirs, files in os.walk(path):
-            for file in files:
-                if file.endswith(r'.jar'):
-                    libs.append(join(root, file))
-        return libs
-            
-    def find(self, src_path):
         
+    def find(self, src_path):
         for i in src_path:
             for root, dirs, files in os.walk(i):
                 
@@ -399,7 +391,6 @@ class Src:
                 manifest += (libs,)
                 self.src_manifests.append(manifest)
     
-
 class Parameters:
     def __init__(self):
         self.args = None
