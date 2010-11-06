@@ -52,6 +52,11 @@ class Gen:
     def __build_classpath__(self, bundle):
         if bundle.classpath == None:
             bundle.classpath = {}
+               
+            for lib in bundle.extra_libs.keys():
+                bundle.classpath[lib] = lib
+                print bundle.extra_libs
+                #assert False
                 
             for dep in bundle.deps:
                 #print dep.sym_name
@@ -331,6 +336,14 @@ class Src:
         self.src_files = []
         self.bundles = []
         
+    def find_libs(self, path):
+        libs = {}
+        for root, dirs, files in os.walk(path):
+            for file in files:
+                if file.endswith(r'.jar'):
+                    libs[join(root, file)] = join(root, file)
+        return libs
+        
     def load(self):
         for root, dir, libs in self.src_manifests:
             #print join(root, dir, 'MANIFEST.MF')
@@ -341,12 +354,12 @@ class Src:
             bundle = parser.parse(manifest_file)
             bundle.root = root
             print bundle, bundle.sym_name, libs
-            if libs.__len__() > 0:
+            
+	    if libs.keys().__len__() > 0:
                 print libs
                 bundle.extra_libs = libs
-                assert False
+                #assert False
             self.bundles.append(bundle)
-            #print '.',
             
     def display(self):
         for i in self.bundles:
@@ -365,25 +378,28 @@ class Src:
         
         for i in src_path:
             for root, dirs, files in os.walk(i):
-                next_tuple = None
                 
-                found_manifest = False
+                libs = {}
+                manifest = ()
+                manifest_found = False
+                
                 if 'META-INF' in dirs:
-                    found_manifest = True
+                    manifest_found = True
                 else:
                     continue
-
+                    
                 for dir in dirs:
                     if dir == 'META-INF':
-                        print '.',
-                        next_tuple = (root, dir, []))
-                    if found_manifest == True and dir == 'lib':
-                        print 'lookin for libs in ', root, dir
-                        libs = self.find_lib(join(root, dir))
-                        assert libs.__len__() > 0
-                        self.src_manifests[self.src_manifests.__len__()-1][2].
+                        manifest = (root, dir)
+                    if dir == 'lib':
+                        libs = self.find_libs(join(root, dir))
                         print libs
+                        #assert False
                         
+                manifest += (libs,)
+                self.src_manifests.append(manifest)
+    
+
 class Parameters:
     def __init__(self):
         self.args = None
