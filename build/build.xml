@@ -3,8 +3,9 @@
 		<ant dir="../org.rifidi.edge.readerplugin.serialsensor" target="clean" /> 
 		<ant dir="../org.rifidi.edge.api" target="clean" /> 
 		<ant dir="../org.rifidi.edge.init" target="clean" /> 
+		<ant dir="../com.ambient.labtrack.jms" target="clean" /> 
 		<ant dir="../org.rifidi.edge.core" target="clean" /> 
-		<ant dir="../org.rifidi.app.example" target="clean" /> 
+		<ant dir="../com.ambient.labtrack.common" target="clean" /> 
 		<ant dir="../org.rifidi.app.template" target="clean" /> 
 		<ant dir="../org.rifidi.edge.readerplugin.awid" target="clean" /> 
 		<ant dir="../org.rifidi.edge.readerplugin.thingmagic" target="clean" /> 
@@ -20,7 +21,11 @@
 		<ant dir="../org.rifidi.edge.readerplugin.motorola.mc9090" target="clean" /> 
 		<ant dir="../org.rifidi.edge.readerplugin.alien" target="clean" /> 
 		<ant dir="../org.rifidi.edge.readerplugin.opticon" target="clean" /> 
-		<ant dir="../org.rifidi.edge.readerplugin.alien.commands" target="clean" /> 
+		<ant dir="../com.ambient.labtrack.association" target="clean" /> 
+		<ant dir="../com.ambient.labtrack.grouping" target="clean" /> 
+		<ant dir="../com.ambient.labtrack.portal" target="clean" /> 
+		<ant dir="../com.ambient.labtrack.receiving" target="clean" /> 
+		<ant dir="../com.ambient.labtrack.tests" target="clean" /> 
 		<ant dir="../org.rifidi.edge.readerplugin.awid.commands" target="clean" /> 
 		<ant dir="../org.rifidi.edge.readerplugin.thingmagic.commands" target="clean" /> 
 		<ant dir="../org.rifidi.edge.epcglobal.ale.api.read" target="clean" /> 
@@ -29,8 +34,9 @@
 		<ant dir="../org.rifidi.edge.readerplugin.serialsensor" /> 
 		<ant dir="../org.rifidi.edge.api" /> 
 		<ant dir="../org.rifidi.edge.init" /> 
+		<ant dir="../com.ambient.labtrack.jms" /> 
 		<ant dir="../org.rifidi.edge.core" /> 
-		<ant dir="../org.rifidi.app.example" /> 
+		<ant dir="../com.ambient.labtrack.common" /> 
 		<ant dir="../org.rifidi.app.template" /> 
 		<ant dir="../org.rifidi.edge.readerplugin.awid" /> 
 		<ant dir="../org.rifidi.edge.readerplugin.thingmagic" /> 
@@ -46,7 +52,11 @@
 		<ant dir="../org.rifidi.edge.readerplugin.motorola.mc9090" /> 
 		<ant dir="../org.rifidi.edge.readerplugin.alien" /> 
 		<ant dir="../org.rifidi.edge.readerplugin.opticon" /> 
-		<ant dir="../org.rifidi.edge.readerplugin.alien.commands" /> 
+		<ant dir="../com.ambient.labtrack.association" /> 
+		<ant dir="../com.ambient.labtrack.grouping" /> 
+		<ant dir="../com.ambient.labtrack.portal" /> 
+		<ant dir="../com.ambient.labtrack.receiving" /> 
+		<ant dir="../com.ambient.labtrack.tests" /> 
 		<ant dir="../org.rifidi.edge.readerplugin.awid.commands" /> 
 		<ant dir="../org.rifidi.edge.readerplugin.thingmagic.commands" /> 
 		<ant dir="../org.rifidi.edge.epcglobal.ale.api.read" /> 
