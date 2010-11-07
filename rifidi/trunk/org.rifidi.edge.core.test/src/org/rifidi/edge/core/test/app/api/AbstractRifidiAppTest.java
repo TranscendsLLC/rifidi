@@ -40,6 +40,7 @@ public class AbstractRifidiAppTest {
 			// TODO Auto-generated constructor stub
 		}
 		
+		@Override
 		public HashMap<String,ReadZone> getReadZones() {
 			return super.getReadZones();
 		}
@@ -73,9 +74,9 @@ public class AbstractRifidiAppTest {
 		assertEquals("Application cannot be started "
 					+ "until EsperManagementService has been injected", s);
 		caught =false;
-		EsperServiceMock esperService = new EsperServiceMock();
-		testSubject.setEsperService(esperService);
-		assertEquals(esperService,testSubject.getEsperService());
+		//EsperServiceMock esperService = new EsperServiceMock();
+		//testSubject.setEsperService(esperService);
+		//assertEquals(esperService,testSubject.getEsperService());
 		
 		caught=false;
 		s = null;
