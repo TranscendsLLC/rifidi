@@ -4,7 +4,6 @@
 <target name="Rifidi Edge Server Target">
 <locations>
 <location path="${workspace_loc}/Rifidi-SDK/lib/esper" type="Directory"/>
-<location path="${workspace_loc}/Rifidi-SDK/lib/libraries" type="Directory"/>
 <location path="${workspace_loc}/Rifidi-SDK/lib/eclipseaspects" type="Directory"/>
 <location path="${workspace_loc}/Rifidi-SDK/lib/logging" type="Directory"/>
 <location path="${workspace_loc}/Rifidi-SDK/lib/tomcat" type="Directory"/>
@@ -14,6 +13,7 @@
 <location path="${workspace_loc}/Rifidi-SDK/lib/plugins" type="Profile"/>
 <location path="${workspace_loc}/Rifidi-SDK/lib/rifidi" type="Directory"/>
 <location path="${workspace_loc}/Rifidi-SDK/lib/spring" type="Directory"/>
+<location path="/Users/percent/new-11-06/Rifidi-SDK/lib/libraries" type="Directory"/>
 </locations>
 <environment>
 <os>win32</os>
