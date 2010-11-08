@@ -74,13 +74,20 @@ class Gen:
                     
                 if not (clazz in bundle.classpath):
                     bundle.classpath[clazz] = clazz
-                    
+    
     def generate_build_files(self):
         
         master_build_file = '<project name="rifidi-build" default="compile" basedir=".">\n'
-                            
+        master_build_file += '\t<property name="lib" value="./lib" />\n'        
+        master_build_file += '\t<target name="init">\n'+\
+                             '\t\t<delete dir="${lib}" />\n'+\
+                             '\t\t<mkdir dir="${lib}" />\n'+\
+                             '\t</target>\n'
         master_compile = '\t<target name="compile">\n'
-        master_clean = '\t<target name="clean" description="clean up" >\n'
+        master_clean = '\t<target name="clean" description="clean up">\n'
+        #master_clean
+        master_lint = '\t<target name="lint" description="run lint" >\n'
+        master_package = '\t<target name="package" description="packages bundles" depends="init">\n'
 
         for bundle in self.src:
             assert bundle.root != ''
@@ -90,42 +97,62 @@ class Gen:
             build_xml.write('<?xml version="1.0"?>\n')
             build_xml.write('<project name="'+str(bundle.sym_name)+'" default="compile" '+\
                             'basedir="'+str(home)+'">\n')
-            build_xml.write('\t<property name="src" value="'+str(bundle.root)+'/src"/>\n')
+        
+            build_xml.write('\t<property name="lib" value="'+str(home)+'/lib" />\n')
+            build_xml.write('\t<property name="src" value="'+str(bundle.root)+'/src" />\n')
             build_xml.write('\t<property name="build" value="'+str(bundle.root)+'/bin" />\n')
-            #build_xml.write('\t<property name="dist" location="dist" />\n')
-            #build_xml.write('<property name="dep-loc" location='str(home)+bundles'/>')
+            build_xml.write('\t<property name="manifest" value="'+str(bundle.root)+'/META-INF/MANIFEST.MF" />\n')
+            build_xml.write('\t<property name="bundle" value="'+str(home)+'/lib/'+str(bundle.sym_name)+'-'+\
+                            bundle.version.__str__()+'.jar " />\n')
+            
+            self.__build_classpath__(bundle)
+            
+            build_xml.write('\t<path id="classpath">\n')
+            for location in bundle.classpath.keys():
+                build_xml.write('\t\t<pathelement location="'+str(location)+'"/>\n')
+            build_xml.write('\t</path>\n')
+
             build_xml.write('\t<target name="init" depends="clean">\n'+\
                             '\t\t<tstamp />\n\t\t<mkdir dir="${build}" />\n'+\
                             '\t</target>\n')
+            
             build_xml.write('\t<target name="clean" description="clean up">\n'+\
                             '\t\t<delete dir="${build}" />\n'+\
                             '\t</target>\n')
-                
+        
             build_xml.write('\t<target name="compile" depends="init">\n')
-                
-            self.__build_classpath__(bundle)
-                
-            classpath='classpath="'
-            for clazz in bundle.classpath.keys():
-                classpath += clazz+':'        
-                
-            classpath = classpath.rstrip(':')
-                
             build_xml.write('\t\t<javac srcdir="${src}" destdir="${build}" '+\
-                            classpath+'"/>\n')
+                            'classpathRef="classpath"/>\n')
             build_xml.write('\t</target>\n')
-            build_xml.write('</project>')
-            #master_build_file += '\t\t<echo message="'+bundle.root+'" /> \n' 
-            master_compile += '\t\t<ant dir="'+bundle.root+'" /> \n'
+
+            build_xml.write('\t<target name="lint" depends="init">\n')
+            build_xml.write('\t\t<javac srcdir="${src}" destdir="${build}" '+\
+                            'classpathRef="classpath">\n')
+            build_xml.write('\t\t\t<compilerarg value="-Xlint"/>\n')
+            build_xml.write('\t\t</javac>\n')
+            build_xml.write('\t</target>\n')
+            
+            build_xml.write('\t<target name="package" depends="compile">\n')	    
+            build_xml.write('\t\t<jar destfile="${bundle}" basedir="${src}" manifest="${manifest}"/>\n')
+            build_xml.write('\t</target>\n')
+            
+            build_xml.write('</project>\n')
+            master_compile += '\t\t<ant dir="'+bundle.root+'" target="compile" /> \n'
             master_clean += '\t\t<ant dir="'+bundle.root+'" target="clean" /> \n'
+            master_lint += '\t\t<ant dir="'+bundle.root+'" target="lint" /> \n'
+            master_package += '\t\t<ant dir="'+bundle.root+'" target="package" /> \n'
             build_xml.close()
             
             os.chdir(home)
         master_compile += '\t</target>\n'
         master_clean += '\t</target>\n'
+        master_lint += '\t</target>\n'
+        master_package += '\t</target>\n'
         
         master_build_file += master_clean
         master_build_file += master_compile
+        master_build_file += master_lint
+        master_build_file += master_package
         
         master_build_file += '\n</project>\n'
         master_build_xml = open('./build.xml', 'w')
@@ -390,7 +417,8 @@ class Src:
                         
                 manifest += (libs,)
                 self.src_manifests.append(manifest)
-    
+                    
+                    
 class Parameters:
     def __init__(self):
         self.args = None
