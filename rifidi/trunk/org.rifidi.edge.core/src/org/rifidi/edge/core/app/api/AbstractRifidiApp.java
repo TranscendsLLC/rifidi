@@ -444,7 +444,7 @@ public abstract class AbstractRifidiApp implements RifidiApp,
 	 * 
 	 * @return
 	 */
-	protected final HashMap<String, ReadZone> getReadZones() {
+	protected HashMap<String, ReadZone> getReadZones() {
 		return new HashMap<String, ReadZone>(readZones);
 	}
 
