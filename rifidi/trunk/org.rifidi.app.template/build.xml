@@ -1,7 +1,40 @@
 <?xml version="1.0"?>
-<project name="org.rifidi.app.template" default="compile" basedir="/home/percent/development-10-28/build">
-	<property name="src" value="../org.rifidi.app.template/src"/>
+<project name="org.rifidi.app.template" default="compile" basedir="/Users/percent/new-11-06/build">
+	<property name="lib" value="/Users/percent/new-11-06/build/lib" />
+	<property name="src" value="../org.rifidi.app.template/src" />
 	<property name="build" value="../org.rifidi.app.template/bin" />
+	<property name="manifest" value="../org.rifidi.app.template/META-INF/MANIFEST.MF" />
+	<property name="bundle" value="/Users/percent/new-11-06/build/lib/org.rifidi.app.template-1.0.0.jar " />
+	<path id="classpath">
+		<pathelement location="../Rifidi-SDK/lib/libraries/activemq-pool-5.3.0.jar"/>
+		<pathelement location="../Rifidi-SDK/lib/spring/spring-security-core-2.0.4.jar"/>
+		<pathelement location="../Rifidi-SDK/lib/not-part-of-target-platform/org.rifidi.gnu.io.buildh4xor_2.1.7.jar"/>
+		<pathelement location="../Rifidi-SDK/lib/logging/com.springsource.org.apache.commons.logging-1.1.1.jar"/>
+		<pathelement location="../Rifidi-SDK/lib/commons/com.springsource.org.apache.commons.codec-1.3.0.jar"/>
+		<pathelement location="../Rifidi-SDK/lib/spring/org.springframework.osgi.core-1.1.3.RELEASE.jar"/>
+		<pathelement location="../Rifidi-SDK/lib/spring/org.springframework.jdbc-2.5.6.SEC01.jar"/>
+		<pathelement location="../Rifidi-SDK/lib/spring/org.springframework.transaction-2.5.6.SEC01.jar"/>
+		<pathelement location="../Rifidi-SDK/lib/libraries/activemq-core-5.3.0.jar"/>
+		<pathelement location="../org.rifidi.edge.api//bin"/>
+		<pathelement location="../Rifidi-SDK/lib/commons/com.springsource.org.apache.commons.dbcp-1.2.2.osgi.jar"/>
+		<pathelement location="../Rifidi-SDK/lib/spring/org.springframework.osgi.extender-1.1.3.RELEASE.jar"/>
+		<pathelement location="../Rifidi-SDK/lib/libraries/org.apache.felix.bundlerepository-1.5.0-SNAPSHOT.jar"/>
+		<pathelement location="../Rifidi-SDK/lib/plugins/org.eclipse.osgi_3.5.0.v20090520.jar"/>
+		<pathelement location="../org.rifidi.edge.init//bin"/>
+		<pathelement location="../Rifidi-SDK/lib/javax/geronimo-jms_1.1_spec-1.1.1.jar"/>
+		<pathelement location="../Rifidi-SDK/lib/logging/com.springsource.org.apache.log4j-1.2.15.jar"/>
+		<pathelement location="../Rifidi-SDK/lib/plugins/org.eclipse.osgi.services_3.2.0.v20090520-1800.jar"/>
+		<pathelement location="../Rifidi-SDK/lib/spring/com.springsource.net.sf.cglib-2.1.3.jar"/>
+		<pathelement location="../Rifidi-SDK/lib/spring/com.springsource.org.aopalliance-1.0.0.jar"/>
+		<pathelement location="../Rifidi-SDK/lib/spring/org.springframework.core-2.5.6.SEC01.jar"/>
+		<pathelement location="../Rifidi-SDK/lib/spring/org.springframework.jms-2.5.6.SEC01.jar"/>
+		<pathelement location="../Rifidi-SDK/lib/esper/esper-3.4.0.jar"/>
+		<pathelement location="../Rifidi-SDK/lib/spring/org.rifidi.org.springframework.aop.jar"/>
+		<pathelement location="../org.rifidi.edge.core//bin"/>
+		<pathelement location="../Rifidi-SDK/lib/spring/org.rifidi.org.springframework.context.jar"/>
+		<pathelement location="../Rifidi-SDK/lib/libraries/tdt-0.9.0.jar"/>
+		<pathelement location="../Rifidi-SDK/lib/spring/org.springframework.beans-2.5.6.SEC01.jar"/>
+	</path>
 	<target name="init" depends="clean">
 		<tstamp />
 		<mkdir dir="${build}" />
@@ -10,6 +43,14 @@
 		<delete dir="${build}" />
 	</target>
 	<target name="compile" depends="init">
-		<javac srcdir="${src}" destdir="${build}" classpath="../Rifidi-SDK/lib/libraries/org.rifidi.gnu.io.buildh4xor_2.1.7.jar:../Rifidi-SDK/lib/libraries/activemq-pool-5.3.0.jar:../Rifidi-SDK/lib/spring/spring-security-core-2.0.4.jar:../Rifidi-SDK/lib/logging/com.springsource.org.apache.commons.logging-1.1.1.jar:../Rifidi-SDK/lib/libraries/activemq-core-5.3.0.jar:../Rifidi-SDK/lib/spring/org.springframework.osgi.core-1.1.3.RELEASE.jar:../Rifidi-SDK/lib/spring/org.springframework.jdbc-2.5.6.SEC01.jar:../Rifidi-SDK/lib/spring/org.springframework.transaction-2.5.6.SEC01.jar:../Rifidi-SDK/lib/commons/com.springsource.org.apache.commons.codec-1.3.0.jar:../org.rifidi.edge.api//bin:../Rifidi-SDK/lib/commons/com.springsource.org.apache.commons.dbcp-1.2.2.osgi.jar:../Rifidi-SDK/lib/spring/org.springframework.osgi.extender-1.1.3.RELEASE.jar:../Rifidi-SDK/lib/libraries/org.apache.felix.bundlerepository-1.5.0-SNAPSHOT.jar:../Rifidi-SDK/lib/plugins/org.eclipse.osgi_3.5.0.v20090520.jar:../org.rifidi.edge.init//bin:../Rifidi-SDK/lib/javax/geronimo-jms_1.1_spec-1.1.1.jar:../Rifidi-SDK/lib/logging/com.springsource.org.apache.log4j-1.2.15.jar:../Rifidi-SDK/lib/plugins/org.eclipse.osgi.services_3.2.0.v20090520-1800.jar:../Rifidi-SDK/lib/spring/com.springsource.net.sf.cglib-2.1.3.jar:../Rifidi-SDK/lib/spring/com.springsource.org.aopalliance-1.0.0.jar:../Rifidi-SDK/lib/spring/org.springframework.core-2.5.6.SEC01.jar:../Rifidi-SDK/lib/spring/org.springframework.jms-2.5.6.SEC01.jar:../Rifidi-SDK/lib/esper/esper-3.4.0.jar:../Rifidi-SDK/lib/spring/org.rifidi.org.springframework.aop.jar:../org.rifidi.edge.core//bin:../Rifidi-SDK/lib/spring/org.rifidi.org.springframework.context.jar:../Rifidi-SDK/lib/libraries/tdt-0.9.0.jar:../Rifidi-SDK/lib/spring/org.springframework.beans-2.5.6.SEC01.jar"/>
+		<javac srcdir="${src}" destdir="${build}" classpathRef="classpath"/>
+	</target>
+	<target name="lint" depends="init">
+		<javac srcdir="${src}" destdir="${build}" classpathRef="classpath">
+			<compilerarg value="-Xlint"/>
+		</javac>
+	</target>
+	<target name="package" depends="compile">
+		<jar destfile="${bundle}" basedir="${src}" manifest="${manifest}"/>
 	</target>
 </project>
