@@ -2,12 +2,13 @@
 
 jar_path = ['../Rifidi-SDK/lib/' ]
 src_path = [
-'../labtrack.common',
+'../org.rifidi.labtrack.common.model',
 '../com.ambient.labtrack.association', 
 '../com.ambient.labtrack.common', 
 '../com.ambient.labtrack.grouping', '../com.ambient.labtrack.jms', 
 '../com.ambient.labtrack.portal', '../com.ambient.labtrack.receiving', 
 '../com.ambient.labtrack.tests',
+'../com.ambient.labtrack.common.model.ui',
 '../org.rifidi.edge.readerplugin.serialsensor', '../org.rifidi.app.template',\
 '../org.rifidi.edge.readerplugin.awid','../org.rifidi.edge.readerplugin.thingmagic',\
 '../org.rifidi.edge.api', '../org.rifidi.edge.epcglobal.ale.api.logicalreader',\

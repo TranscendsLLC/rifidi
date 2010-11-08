@@ -1,65 +1,80 @@
 <project name="rifidi-build" default="compile" basedir=".">
-	<target name="clean" description="clean up" >
-		<ant dir="../org.rifidi.edge.readerplugin.serialsensor" target="clean" /> 
+	<property name="lib" value="./lib" />
+	<target name="init">
+		<delete dir="${lib}" />
+		<mkdir dir="${lib}" />
+	</target>
+	<target name="clean" description="clean up">
+		<ant dir="../com.ambient.labtrack.common.model.ui" target="clean" /> 
 		<ant dir="../org.rifidi.edge.api" target="clean" /> 
 		<ant dir="../org.rifidi.edge.init" target="clean" /> 
-		<ant dir="../com.ambient.labtrack.jms" target="clean" /> 
+		<ant dir="../org.rifidi.labtrack.common.model" target="clean" /> 
 		<ant dir="../org.rifidi.edge.core" target="clean" /> 
-		<ant dir="../com.ambient.labtrack.common" target="clean" /> 
+		<ant dir="../com.ambient.labtrack.jms" target="clean" /> 
 		<ant dir="../org.rifidi.app.template" target="clean" /> 
-		<ant dir="../org.rifidi.edge.readerplugin.awid" target="clean" /> 
-		<ant dir="../org.rifidi.edge.readerplugin.thingmagic" target="clean" /> 
-		<ant dir="../org.rifidi.edge.epcglobal.ale.api.logicalreader" target="clean" /> 
 		<ant dir="../org.rifidi.edge.app.diag" target="clean" /> 
-		<ant dir="../org.rifidi.edge.readerplugin.barcode" target="clean" /> 
 		<ant dir="../org.rifidi.edge.app.tracking" target="clean" /> 
-		<ant dir="../org.rifidi.edge.readerplugin.generic" target="clean" /> 
-		<ant dir="../org.rifidi.edge.northwind" target="clean" /> 
-		<ant dir="../org.rifidi.edge.readerplugin.llrp" target="clean" /> 
 		<ant dir="../org.rifidi.edge.console" target="clean" /> 
-		<ant dir="../org.rifidi.edge.readerplugin.acura" target="clean" /> 
-		<ant dir="../org.rifidi.edge.readerplugin.motorola.mc9090" target="clean" /> 
-		<ant dir="../org.rifidi.edge.readerplugin.alien" target="clean" /> 
-		<ant dir="../org.rifidi.edge.readerplugin.opticon" target="clean" /> 
+		<ant dir="../com.ambient.labtrack.common" target="clean" /> 
+		<ant dir="../com.ambient.labtrack.tests" target="clean" /> 
 		<ant dir="../com.ambient.labtrack.association" target="clean" /> 
 		<ant dir="../com.ambient.labtrack.grouping" target="clean" /> 
 		<ant dir="../com.ambient.labtrack.portal" target="clean" /> 
 		<ant dir="../com.ambient.labtrack.receiving" target="clean" /> 
-		<ant dir="../com.ambient.labtrack.tests" target="clean" /> 
-		<ant dir="../org.rifidi.edge.readerplugin.awid.commands" target="clean" /> 
-		<ant dir="../org.rifidi.edge.readerplugin.thingmagic.commands" target="clean" /> 
-		<ant dir="../org.rifidi.edge.epcglobal.ale.api.read" target="clean" /> 
 	</target>
 	<target name="compile">
-		<ant dir="../org.rifidi.edge.readerplugin.serialsensor" /> 
-		<ant dir="../org.rifidi.edge.api" /> 
-		<ant dir="../org.rifidi.edge.init" /> 
-		<ant dir="../com.ambient.labtrack.jms" /> 
-		<ant dir="../org.rifidi.edge.core" /> 
-		<ant dir="../com.ambient.labtrack.common" /> 
-		<ant dir="../org.rifidi.app.template" /> 
-		<ant dir="../org.rifidi.edge.readerplugin.awid" /> 
-		<ant dir="../org.rifidi.edge.readerplugin.thingmagic" /> 
-		<ant dir="../org.rifidi.edge.epcglobal.ale.api.logicalreader" /> 
-		<ant dir="../org.rifidi.edge.app.diag" /> 
-		<ant dir="../org.rifidi.edge.readerplugin.barcode" /> 
-		<ant dir="../org.rifidi.edge.app.tracking" /> 
-		<ant dir="../org.rifidi.edge.readerplugin.generic" /> 
-		<ant dir="../org.rifidi.edge.northwind" /> 
-		<ant dir="../org.rifidi.edge.readerplugin.llrp" /> 
-		<ant dir="../org.rifidi.edge.console" /> 
-		<ant dir="../org.rifidi.edge.readerplugin.acura" /> 
-		<ant dir="../org.rifidi.edge.readerplugin.motorola.mc9090" /> 
-		<ant dir="../org.rifidi.edge.readerplugin.alien" /> 
-		<ant dir="../org.rifidi.edge.readerplugin.opticon" /> 
-		<ant dir="../com.ambient.labtrack.association" /> 
-		<ant dir="../com.ambient.labtrack.grouping" /> 
-		<ant dir="../com.ambient.labtrack.portal" /> 
-		<ant dir="../com.ambient.labtrack.receiving" /> 
-		<ant dir="../com.ambient.labtrack.tests" /> 
-		<ant dir="../org.rifidi.edge.readerplugin.awid.commands" /> 
-		<ant dir="../org.rifidi.edge.readerplugin.thingmagic.commands" /> 
-		<ant dir="../org.rifidi.edge.epcglobal.ale.api.read" /> 
+		<ant dir="../com.ambient.labtrack.common.model.ui" target="compile" /> 
+		<ant dir="../org.rifidi.edge.api" target="compile" /> 
+		<ant dir="../org.rifidi.edge.init" target="compile" /> 
+		<ant dir="../org.rifidi.labtrack.common.model" target="compile" /> 
+		<ant dir="../org.rifidi.edge.core" target="compile" /> 
+		<ant dir="../com.ambient.labtrack.jms" target="compile" /> 
+		<ant dir="../org.rifidi.app.template" target="compile" /> 
+		<ant dir="../org.rifidi.edge.app.diag" target="compile" /> 
+		<ant dir="../org.rifidi.edge.app.tracking" target="compile" /> 
+		<ant dir="../org.rifidi.edge.console" target="compile" /> 
+		<ant dir="../com.ambient.labtrack.common" target="compile" /> 
+		<ant dir="../com.ambient.labtrack.tests" target="compile" /> 
+		<ant dir="../com.ambient.labtrack.association" target="compile" /> 
+		<ant dir="../com.ambient.labtrack.grouping" target="compile" /> 
+		<ant dir="../com.ambient.labtrack.portal" target="compile" /> 
+		<ant dir="../com.ambient.labtrack.receiving" target="compile" /> 
+	</target>
+	<target name="lint" description="run lint" >
+		<ant dir="../com.ambient.labtrack.common.model.ui" target="lint" /> 
+		<ant dir="../org.rifidi.edge.api" target="lint" /> 
+		<ant dir="../org.rifidi.edge.init" target="lint" /> 
+		<ant dir="../org.rifidi.labtrack.common.model" target="lint" /> 
+		<ant dir="../org.rifidi.edge.core" target="lint" /> 
+		<ant dir="../com.ambient.labtrack.jms" target="lint" /> 
+		<ant dir="../org.rifidi.app.template" target="lint" /> 
+		<ant dir="../org.rifidi.edge.app.diag" target="lint" /> 
+		<ant dir="../org.rifidi.edge.app.tracking" target="lint" /> 
+		<ant dir="../org.rifidi.edge.console" target="lint" /> 
+		<ant dir="../com.ambient.labtrack.common" target="lint" /> 
+		<ant dir="../com.ambient.labtrack.tests" target="lint" /> 
+		<ant dir="../com.ambient.labtrack.association" target="lint" /> 
+		<ant dir="../com.ambient.labtrack.grouping" target="lint" /> 
+		<ant dir="../com.ambient.labtrack.portal" target="lint" /> 
+		<ant dir="../com.ambient.labtrack.receiving" target="lint" /> 
+	</target>
+	<target name="package" description="packages bundles" depends="init">
+		<ant dir="../com.ambient.labtrack.common.model.ui" target="package" /> 
+		<ant dir="../org.rifidi.edge.api" target="package" /> 
+		<ant dir="../org.rifidi.edge.init" target="package" /> 
+		<ant dir="../org.rifidi.labtrack.common.model" target="package" /> 
+		<ant dir="../org.rifidi.edge.core" target="package" /> 
+		<ant dir="../com.ambient.labtrack.jms" target="package" /> 
+		<ant dir="../org.rifidi.app.template" target="package" /> 
+		<ant dir="../org.rifidi.edge.app.diag" target="package" /> 
+		<ant dir="../org.rifidi.edge.app.tracking" target="package" /> 
+		<ant dir="../org.rifidi.edge.console" target="package" /> 
+		<ant dir="../com.ambient.labtrack.common" target="package" /> 
+		<ant dir="../com.ambient.labtrack.tests" target="package" /> 
+		<ant dir="../com.ambient.labtrack.association" target="package" /> 
+		<ant dir="../com.ambient.labtrack.grouping" target="package" /> 
+		<ant dir="../com.ambient.labtrack.portal" target="package" /> 
+		<ant dir="../com.ambient.labtrack.receiving" target="package" /> 
 	</target>
 
 </project>
