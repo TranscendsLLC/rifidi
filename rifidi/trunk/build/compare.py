@@ -2,8 +2,9 @@
 
 import manifest
 
-import os
 import subprocess
+import os
+import re
 
 from conf import jar_path, src_path
 from optparse import OptionParser
@@ -13,6 +14,7 @@ def compare(first, second):
     missing = []
     for i in first:
         found = False
+        
         for j in second:
             if i == j:
                 found = True

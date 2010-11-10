@@ -102,7 +102,7 @@ class Gen:
             build_xml.write('\t<property name="src" value="'+str(bundle.root)+'/src" />\n')
             build_xml.write('\t<property name="build" value="'+str(bundle.root)+'/bin" />\n')
             build_xml.write('\t<property name="manifest" value="'+str(bundle.root)+'/META-INF/MANIFEST.MF" />\n')
-            build_xml.write('\t<property name="bundle" value="'+str(home)+'/lib/'+str(bundle.sym_name)+'-'+\
+            build_xml.write('\t<property name="bundle" value="'+str(home)+'/lib/'+str(bundle.sym_name)+'_'+\
                             bundle.version.__str__()+'.jar " />\n')
             
             self.__build_classpath__(bundle)
@@ -333,7 +333,7 @@ class Jars:
                 print 'Bundle '+join(root, file)+' has no symbolic name; skipping'
                 if bundle.file == 'aspectjrt.jar' or \
                     bundle.file == 'aspectjweaver.jar' or\
-                    bundle.file == 'cglib-nodep-2.2.jar' or \
+                    bundle.file == 'cglib-nodep_2.2.jar' or \
                     bundle.file == 'RXTXcomm.jar':
                     pass
                 else:
