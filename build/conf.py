@@ -2,7 +2,7 @@
 
 jar_path = ['../Rifidi-SDK/lib/' ]
 src_path = [
-'../org.rifidi.labtrack.common.model',
+'../org.rifidi.labtrack.common',
 '../com.ambient.labtrack.association', 
 '../com.ambient.labtrack.common', 
 '../com.ambient.labtrack.grouping', '../com.ambient.labtrack.jms', 
