@@ -3,6 +3,7 @@
 
 <product name="Rifidi Edge Server" application="org.eclipse.ui.ide.workbench" version="1.2.0" useFeatures="false" includeLaunchers="true">
 
+
    <configIni use="default">
    </configIni>
 
@@ -29,6 +30,21 @@
 -Dorg.rifidi.ui.notify=false</vmArgs>
       <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts</vmArgsMac>
    </launcherArgs>
+
+   <windowImages/>
+
+
+   <launcher>
+      <solaris/>
+      <win useIco="false">
+         <bmp/>
+      </win>
+   </launcher>
+
+
+   <vm>
+   </vm>
+
 
    <plugins>
       <plugin id="com.espertech.esper"/>
@@ -95,14 +111,6 @@
       <plugin id="org.rifidi.edge.catalina.config" fragment="true"/>
       <plugin id="org.rifidi.edge.console"/>
       <plugin id="org.rifidi.edge.core"/>
-      <plugin id="org.rifidi.edge.core.app.api"/>
-      <plugin id="org.rifidi.edge.core.app.api.resources"/>
-      <plugin id="org.rifidi.edge.core.rmi.server"/>
-      <plugin id="org.rifidi.edge.core.services"/>
-      <plugin id="org.rifidi.edge.core.services.jms"/>
-      <plugin id="org.rifidi.edge.core.services.logging"/>
-      <plugin id="org.rifidi.edge.core.services.notification"/>
-      <plugin id="org.rifidi.edge.core.services.provisioning"/>
       <plugin id="org.rifidi.edge.epcglobal.ale.api.logicalreader"/>
       <plugin id="org.rifidi.edge.epcglobal.ale.api.read"/>
       <plugin id="org.rifidi.edge.init"/>
