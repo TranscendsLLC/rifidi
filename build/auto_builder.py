@@ -104,7 +104,7 @@ class Gen:
             build_xml.write('\t<property name="build" value="'+str(bundle.root)+'/bin" />\n')
             build_xml.write('\t<property name="manifest" value="'+str(bundle.root)+'/META-INF/MANIFEST.MF" />\n')
             build_xml.write('\t<property name="bundle" value="'+str(home)+'/lib/'+str(bundle.sym_name)+'_'+\
-                            bundle.version.__str__()+'.jar " />\n')
+                            bundle.version.__str__()+'.jar" />\n')
             
             self.__build_classpath__(bundle)
             
@@ -152,12 +152,13 @@ class Gen:
         #for jar_bundle in self.required_jars:
         #    print join (jar_bundle.root, jar_bundle.file)
         #    master_package += '\t\t<copy file="'+join(jar_bundle.root, jar_bundle.file)+'" todir="${lib}" overwrite="true" />\n'
-        for path, dir in self.target_platform.values():
-            if dir:
-                print path
-                master_package += '\t\t<copy todir="${lib}"><fileset dir="'+path+'"/></copy>\n'
+        for root, file, is_dir in self.target_platform.values():
+            if is_dir:
+                print join(root, file)
+                master_package+= '\t\t<mkdir dir="${lib}/'+file+'"/>\n'
+                master_package += '\t\t<copy todir="${lib}/'+file+'"><fileset dir="'+join(root,file)+'"/></copy>\n'
             else:
-                master_package += '\t\t<copy file="'+path+'" todir="${lib}" overwrite="true" />\n'
+                master_package += '\t\t<copy file="'+join(root,file)+'" todir="${lib}" overwrite="true" />\n'
         master_package += '\t</target>\n'
         
         master_build_file += master_clean
@@ -379,7 +380,7 @@ class Jars:
             self.bundles.append(bundle)
             if not(bundle.file in do_not_package_libs):
                 self.target_platform[join(bundle.root,bundle.file)] =\
-                    (join(bundle.root, bundle.file), False)
+                    (bundle.root, bundle.file, False)
                 
         os.chdir(cdir)
             
@@ -394,7 +395,7 @@ class Jars:
             for root, dirs, files in os.walk(i):
                 for dir in dirs:
                     if dir in bundle_dirs:
-                        self.target_platform[join(root,dir)] = (join(root, dir), True)
+                        self.target_platform[join(root,dir)] = (root, dir, True)
                 for file in files:
                     if file.endswith(r'.jar'):
                         self.jar_files.append((root, file))
