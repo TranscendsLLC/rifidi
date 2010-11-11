@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>org.rifidi.edge.readerplugin.barcodesimulator</name>
+	<name>org.rifidi.edge.adapter.barcodesimulator</name>
 	<comment></comment>
 	<projects>
 	</projects>

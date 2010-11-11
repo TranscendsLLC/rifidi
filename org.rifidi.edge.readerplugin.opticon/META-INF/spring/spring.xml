@@ -7,7 +7,7 @@
 
 	<!--  Create Reader Configuration Factory -->
 	<bean id="OpticonConfigurationFactory"
-		class="org.rifidi.edge.readerplugin.opticon.OpticonSensorFactory">
+		class="org.rifidi.edge.adapter.opticon.OpticonSensorFactory">
 		<property name="context" ref="bundleContext" />
 		<property name="notifierService" ref="JMSNotifierService" />
 	</bean>

@@ -5,21 +5,35 @@
 
 	<!--  Create Reader Configuration Factory -->
 	<bean id="alienConfigurationFactory"
-		class="org.rifidi.edge.readerplugin.alien.Alien9800ReaderFactory">
+		class="org.rifidi.edge.adapter.alien.Alien9800ReaderFactory">
 		<property name="context" ref="bundleContext" />
 		<property name="notifierService" ref="JMSNotifierService" />
 		<property name="commandConfigurations" ref="alienCommands" />
 	</bean>
 
 	<bean id="alienAutoConfigurationFactory"
-		class="org.rifidi.edge.readerplugin.alien.autonomous.AlienAutonomousSensorFactory">
+		class="org.rifidi.edge.adapter.alien.autonomous.AlienAutonomousSensorFactory">
 		<property name="context" ref="bundleContext" />
 		<property name="notifierService" ref="JMSNotifierService" />
 		<property name="commandConfigurations" ref="alienautoCommands" />
 	</bean>
 	
-	<bean id = "alienGPIOService" class="org.rifidi.edge.readerplugin.alien.AlienGPIOService">
+	<bean id = "alienGPIOService" class="org.rifidi.edge.adapter.alien.AlienGPIOService">
 		<property name = "readerDAO" ref="readerDAO"/>
+	</bean>
+		
+	<!--  Create Command Configuration Factory -->
+	<bean id="alienGetTagListCommandConfigurationFactory"
+		class="org.rifidi.edge.adapter.alien.commands.AlienGetTagListCommandConfigurationFactory">
+		<property name="context" ref="bundleContext" />
+	</bean>
+	<bean id="alienAutonomousModeCommandConfigurationFactory"
+		class="org.rifidi.edge.adapter.alien.commands.AlienAutonomousModeCommandConfigurationFactory">
+		<property name="context" ref="bundleContext" />
+	</bean>
+	<bean id="alienAutonomousModeStopCommandConfigurationFactory"
+		class="org.rifidi.edge.adapter.alien.commands.AlienAutonomousModeStopCommandConfigurationFactory">
+		<property name="context" ref="bundleContext" />
 	</bean>
 		
 </beans>

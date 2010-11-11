@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
-<project name="org.rifidi.edge.readerplugin.thingmagic" default="compile" basedir="/home/percent/development-10-28/build">
-	<property name="src" value="../org.rifidi.edge.readerplugin.thingmagic/src"/>
-	<property name="build" value="../org.rifidi.edge.readerplugin.thingmagic/bin" />
+<project name="org.rifidi.edge.adapter.thingmagic" default="compile" basedir="/home/percent/development-10-28/build">
+	<property name="src" value="../org.rifidi.edge.adapter.thingmagic/src"/>
+	<property name="build" value="../org.rifidi.edge.adapter.thingmagic/bin" />
 	<target name="init" depends="clean">
 		<tstamp />
 		<mkdir dir="${build}" />

@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
-<project name="org.rifidi.edge.readerplugin.generic" default="compile" basedir="/home/percent/development-10-28/build">
-	<property name="src" value="../org.rifidi.edge.readerplugin.generic/src"/>
-	<property name="build" value="../org.rifidi.edge.readerplugin.generic/bin" />
+<project name="org.rifidi.edge.adapter.generic" default="compile" basedir="/home/percent/development-10-28/build">
+	<property name="src" value="../org.rifidi.edge.adapter.generic/src"/>
+	<property name="build" value="../org.rifidi.edge.adapter.generic/bin" />
 	<target name="init" depends="clean">
 		<tstamp />
 		<mkdir dir="${build}" />

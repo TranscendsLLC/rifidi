@@ -6,7 +6,7 @@
      http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi.xsd">
 
 	<!--  Create Reader Configuration Factory -->
-	<bean id="llrpConfigurationFactory" class="org.rifidi.edge.readerplugin.llrp.LLRPReaderFactory">
+	<bean id="llrpConfigurationFactory" class="org.rifidi.edge.adapter.llrp.LLRPReaderFactory">
 		<property name="context" ref="bundleContext" />
 		<property name="notifierService" ref="JMSNotifierService" />
 		<property name="commandConfigurations" ref="llrpCommands" />
@@ -14,19 +14,19 @@
 
 	<!-- Create commands -->
 	<bean id="llrpGetTagListCommandConfigurationFactory"
-		class="org.rifidi.edge.readerplugin.llrp.commands.LLRPGetTagListCommandConfigurationFactory">
+		class="org.rifidi.edge.adapter.llrp.commands.LLRPGetTagListCommandConfigurationFactory">
 		<property name="context" ref="bundleContext" />
 	</bean>
 	<bean id="llrpDeleteROSpecCommandConfigurationFactory"
-		class="org.rifidi.edge.readerplugin.llrp.commands.LLRPDeleteROSpecCommandConfigurationFactory">
+		class="org.rifidi.edge.adapter.llrp.commands.LLRPDeleteROSpecCommandConfigurationFactory">
 		<property name="context" ref="bundleContext" />
 	</bean>
 	<bean id="llrpROSpecCommandConfigurationFactory"
-		class="org.rifidi.edge.readerplugin.llrp.commands.LLRPROSpecCommandConfigurationFactory">
+		class="org.rifidi.edge.adapter.llrp.commands.LLRPROSpecCommandConfigurationFactory">
 		<property name="context" ref="bundleContext" />
 	</bean>
 	<bean id="llrpROSpecFromFileCommandConfigurationFactory"
-		class="org.rifidi.edge.readerplugin.llrp.commands.LLRPROSpecFromFileCommandConfigurationFactory">
+		class="org.rifidi.edge.adapter.llrp.commands.LLRPROSpecFromFileCommandConfigurationFactory">
 		<property name="context" ref="bundleContext" />
 	</bean>
 
