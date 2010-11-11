@@ -261,6 +261,9 @@ class Dep:
                 bundles[bundle.sym_name] = bundle
             else:
                 print 'Bundle '+str(bundle.sym_name)+' found both binary and src; using the src version (this should be an option)'
+                assert join(bundle.root, bundle.file) in self.target_platform
+                del self.target_platform[join(bundle.root,bundle.file)]
+                
             #print bundle.display()
             for package in bundle.epackages:
                 self.__add_package__(exports, package, bundle)
