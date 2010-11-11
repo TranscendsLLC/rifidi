@@ -5,7 +5,8 @@ import manifest
 import os
 import subprocess
 
-from conf import jar_path, src_path
+from conf import jar_path, src_path, bundle_dirs, do_not_package_libs
+
 from optparse import OptionParser
 from os.path import join, abspath
 
@@ -15,6 +16,9 @@ class Gen:
         self.src = deps.src.bundles
         self.exports = deps.exports
         self.bundles = deps.bundles
+        self.required_jars = deps.required_jars.values()
+        self.target_platform = deps.target_platform
+        
 #<?xml version="1.0" encoding="UTF-8"?>
 #<project name="BundleName" default="deploy" basedir=".">
 #    <property name="version" value="1.0.0" />
@@ -55,12 +59,9 @@ class Gen:
                
             for lib in bundle.extra_libs.keys():
                 bundle.classpath[lib] = lib
-                print bundle.extra_libs
-                #cdassert False
+                #print 'EXTRA LIBS #####################', bundle.extra_libs
                 
             for dep in bundle.deps:
-                #print dep.sym_name
-                    
                 if dep.classpath == None:
                     self.__build_classpath__(dep)
                     
@@ -147,6 +148,16 @@ class Gen:
         master_compile += '\t</target>\n'
         master_clean += '\t</target>\n'
         master_lint += '\t</target>\n'
+        
+        #for jar_bundle in self.required_jars:
+        #    print join (jar_bundle.root, jar_bundle.file)
+        #    master_package += '\t\t<copy file="'+join(jar_bundle.root, jar_bundle.file)+'" todir="${lib}" overwrite="true" />\n'
+        for path, dir in self.target_platform.values():
+            if dir:
+                print path
+                master_package += '\t\t<copy todir="${lib}"><fileset dir="'+path+'"/></copy>\n'
+            else:
+                master_package += '\t\t<copy file="'+path+'" todir="${lib}" overwrite="true" />\n'
         master_package += '\t</target>\n'
         
         master_build_file += master_clean
@@ -159,20 +170,23 @@ class Gen:
         master_build_xml.write(master_build_file)
 
 class Dep:
-    def __init__(self, jars, src):
+    def __init__(self, jars, src, target):
         self.jars = jars
         self.src = src
         self.exports = {}
         self.bundles = {}
-    
+        self.required_jars = {}
+        self.target_platform = target
+        
     def __add_package__(self, packages, package, bundle):
         #package.name -> [(package, bundle), (package, bundle)]
         if package.name in packages:
+                
             inserted = False
             for pentry, bentry in packages[package.name]:
                 index = packages[package.name].index((pentry, bentry))
                 assert index >= 0 and index <= len(packages[package.name])
-
+                    
                 if package.b_version.is_equal(pentry.b_version):
                     if bundle.jar:
                         packages[package.name].insert(index, (package, bundle))
@@ -180,11 +194,12 @@ class Dep:
                         packages[package.name].insert(index+1, (package, bundle))
                     inserted = True
                     break
+                    
                 elif package.b_version.is_less(pentry.b_version):
                     packages[package.name].insert(index, (package, bundle))
                     inserted = True
                     break
-                
+                    
             if inserted == False:
                 packages[package.name].append((package, bundle))
                     
@@ -204,11 +219,11 @@ class Dep:
                 
                 
             if dep_bundle.build_level >= bundle.build_level and not dep_bundle.jar:
-                print 'matched: ', bundle.sym_name, ' deps on ', dep_bundle.sym_name
+                #print 'matched: ', bundle.sym_name, ' deps on ', dep_bundle.sym_name
                 bundle.build_level = dep_bundle.build_level + 1
                 ret = True
         return ret      
-    
+        
     def sort(self):
         #for bundle in src.bundles:
         #    print bundle.sym_name, bundle.build_level
@@ -225,12 +240,12 @@ class Dep:
             print bundle.sym_name, bundle.build_level
             
         return True
-    
+        
     def resolve(self):
         exports = {}
         bundles = {}
         for bundle in src.bundles:
-            #print bundle.sym_name   
+            print bundle.sym_name   
             assert not bundle.sym_name in bundles 
             bundles[bundle.sym_name] = bundle
                 
@@ -241,18 +256,18 @@ class Dep:
         #print bundles
             
         for bundle in jars.bundles:
-            #print ' ------ bundles ---->', bundles, '<------------------'
-            #print '--->'+str(bundle.sym_name)+'<---', bundle
+            print '--->'+str(bundle.sym_name)+'<---', bundle
             if not bundle.sym_name in bundles:
                 bundles[bundle.sym_name] = bundle
             else:
-                print 'Bundle '+str(bundle.sym_name)+'found both binary and src; using the src version (this should be an option)'
+                print 'Bundle '+str(bundle.sym_name)+' found both binary and src; using the src version (this should be an option)'
             #print bundle.display()
             for package in bundle.epackages:
                 self.__add_package__(exports, package, bundle)
-                
-        #print bundles
         
+        #assert False
+        #print bundles
+        required_jars = {}
         # package.name = [(pacakge, bundle), (package, bundle)]
         for bundle in src.bundles:
             for required_bundle_info in bundle.rbundles:
@@ -265,7 +280,11 @@ class Dep:
                     #print 'Adding the dep bundle = ', required_bundle_info.name, bundles[required_bundle_info.name]
                     
                     bundle.add_dep(bundles[required_bundle_info.name])
-                    
+                    if bundles[required_bundle_info.name].jar:
+                        required_jars[bundles[required_bundle_info.name].sym_name] =\
+                        bundles[required_bundle_info.name]
+                        
+                        
             for package in bundle.ipackages:
                 print package.name
                 
@@ -280,6 +299,8 @@ class Dep:
                             found = True
                             print 'adding dep '+ex_bundle.sym_name+' to '+bundle.sym_name, 'because of package ', package.name
                             bundle.add_dep(ex_bundle)
+                            if ex_bundle.jar:
+                                required_jars[ex_bundle.sym_name] = ex_bundle
                         else:
                             version_found.append(ex_package)
                             print ' pde build doesnt do the right thing either'
@@ -305,6 +326,10 @@ class Dep:
                     print 'ERROR: cannot resolve package: ', package.name\
                     +' for bundle '+bundle.sym_name+'; skipping it'
                     #return False
+                    
+        #print required_jars
+        #self.required_jars = required_jars
+        #assert False
         return True
         
         
@@ -312,6 +337,8 @@ class Jars:
     def __init__(self):
         self.jar_files = []
         self.bundles = []
+        self.unique_bundles = {}
+        self.target_platform = {}
         
     def load(self):
         for root, file in self.jar_files:
@@ -330,18 +357,27 @@ class Jars:
             bundle.file = file
             bundle.jar = True
             if bundle.sym_name == '':
-                print 'Bundle '+join(root, file)+' has no symbolic name; skipping'
-                if bundle.file == 'aspectjrt.jar' or \
-                    bundle.file == 'aspectjweaver.jar' or\
-                    bundle.file == 'cglib-nodep_2.2.jar' or \
-                    bundle.file == 'RXTXcomm.jar':
-                    pass
-                else:
-                    print '--->'+str(bundle.file)+'<---'
+                print 'Bundle '+join(root, file)+' has no symbolic name; skipping it'
+                if not (bundle.file == 'aspectjrt.jar' or \
+                        bundle.file == 'aspectjweaver.jar' or\
+                        bundle.file == 'cglib-nodep_2.2.jar' or \
+                        bundle.file == 'RXTXcomm.jar'):
+                        
+                    print '------------------------------------------------------------------------------------>'+str(bundle.file)+'<---'
                     assert False
+                    
                 continue
+                
+
+                
             assert bundle.sym_name != ''
+            assert not bundle.sym_name in self.unique_bundles
+            self.unique_bundles[bundle.sym_name] = bundle
             self.bundles.append(bundle)
+            if not(bundle.file in do_not_package_libs):
+                self.target_platform[join(bundle.root,bundle.file)] =\
+                    (join(bundle.root, bundle.file), False)
+                
         os.chdir(cdir)
             
     def display(self):
@@ -353,6 +389,9 @@ class Jars:
         for i in jar_path:
             print 'jar_path: ', i
             for root, dirs, files in os.walk(i):
+                for dir in dirs:
+                    if dir in bundle_dirs:
+                        self.target_platform[join(root,dir)] = (join(root, dir), True)
                 for file in files:
                     if file.endswith(r'.jar'):
                         self.jar_files.append((root, file))
@@ -451,7 +490,6 @@ class Parameters:
         (self.options, self.args) = self.parser.parse_args()
             
  
-
 def load_jars():
     jfinder = Jars()
     jfinder.find(jar_path)
@@ -504,7 +542,7 @@ if __name__ == '__main__':
         #jars.display()
         #src.display()
         
-        deps = Dep(jars, src)
+        deps = Dep(jars, src, jars.target_platform)
         assert deps.resolve()
         assert deps.sort()
         cmd_set = True
@@ -517,7 +555,7 @@ if __name__ == '__main__':
             src = load_src()
         
         if deps == None:
-            deps = Dep(jars, src)
+            deps = Dep(jars, src, jars.target_platform)
             assert deps.resolve()
             assert deps.sort()
         gen = Gen(deps)
