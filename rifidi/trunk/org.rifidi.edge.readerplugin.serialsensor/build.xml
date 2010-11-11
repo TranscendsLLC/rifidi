@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
-<project name="org.rifidi.edge.readerplugin.serialsensor" default="compile" basedir="/home/percent/development-10-28/build">
-	<property name="src" value="../org.rifidi.edge.readerplugin.serialsensor/src"/>
-	<property name="build" value="../org.rifidi.edge.readerplugin.serialsensor/bin" />
+<project name="org.rifidi.edge.adapter.serialsensor" default="compile" basedir="/home/percent/development-10-28/build">
+	<property name="src" value="../org.rifidi.edge.adapter.serialsensor/src"/>
+	<property name="build" value="../org.rifidi.edge.adapter.serialsensor/bin" />
 	<target name="init" depends="clean">
 		<tstamp />
 		<mkdir dir="${build}" />

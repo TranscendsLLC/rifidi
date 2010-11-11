@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
-<project name="org.rifidi.edge.readerplugin.opticon" default="compile" basedir="/home/percent/development-10-28/build">
-	<property name="src" value="../org.rifidi.edge.readerplugin.opticon/src"/>
-	<property name="build" value="../org.rifidi.edge.readerplugin.opticon/bin" />
+<project name="org.rifidi.edge.adapter.opticon" default="compile" basedir="/home/percent/development-10-28/build">
+	<property name="src" value="../org.rifidi.edge.adapter.opticon/src"/>
+	<property name="build" value="../org.rifidi.edge.adapter.opticon/bin" />
 	<target name="init" depends="clean">
 		<tstamp />
 		<mkdir dir="${build}" />

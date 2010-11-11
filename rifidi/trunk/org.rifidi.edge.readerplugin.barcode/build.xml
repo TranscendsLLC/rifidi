@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<project name="org.rifidi.edge.readerplugin.barcodesimulator" default="compile" basedir="/home/percent/development-10-28/build">
+<project name="org.rifidi.edge.adapter.barcodesimulator" default="compile" basedir="/home/percent/development-10-28/build">
 	<property name="src" value="../org.rifidi.edge.readerplugin.barcode/src"/>
 	<property name="build" value="../org.rifidi.edge.readerplugin.barcode/bin" />
 	<target name="init" depends="clean">

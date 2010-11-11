@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
-<project name="org.rifidi.edge.readerplugin.llrp" default="compile" basedir="/home/percent/development-10-28/build">
-	<property name="src" value="../org.rifidi.edge.readerplugin.llrp/src"/>
-	<property name="build" value="../org.rifidi.edge.readerplugin.llrp/bin" />
+<project name="org.rifidi.edge.adapter.llrp" default="compile" basedir="/home/percent/development-10-28/build">
+	<property name="src" value="../org.rifidi.edge.adapter.llrp/src"/>
+	<property name="build" value="../org.rifidi.edge.adapter.llrp/bin" />
 	<target name="init" depends="clean">
 		<tstamp />
 		<mkdir dir="${build}" />

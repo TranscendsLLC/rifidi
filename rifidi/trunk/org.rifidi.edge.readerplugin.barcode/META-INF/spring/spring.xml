@@ -7,18 +7,18 @@
 
 	<!--  Create Reader Configuration Factory -->
 	<bean id="BarcodeConfigurationFactory"
-		class="org.rifidi.edge.readerplugin.barcodesimulator.BarcodeSimulatorReaderFactory">
+		class="org.rifidi.edge.adapter.barcodesimulator.BarcodeSimulatorReaderFactory">
 		<property name="context" ref="bundleContext" />
 		<property name="notifierService" ref="JMSNotifierService"/> 
 	</bean>
 
 	<bean id="TestBarcode"
-		class="org.rifidi.edge.readerplugin.barcodesimulator.test.TestBarcode"
+		class="org.rifidi.edge.adapter.barcodesimulator.test.TestBarcode"
 		init-method="start" destroy-method="stop">
 	</bean>
 
 	<bean id="barcodecommands"
-		class="org.rifidi.edge.readerplugin.barcodesimulator.test.TestBarcodeCommandProvider">
+		class="org.rifidi.edge.adapter.barcodesimulator.test.TestBarcodeCommandProvider">
 		<property name="testBarcode" ref="TestBarcode" />
 	</bean>
 

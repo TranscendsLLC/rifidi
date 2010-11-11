@@ -7,7 +7,7 @@
 
 	<!--  Create Reader Configuration Factory -->
 	<bean id="GenericSensorFactory"
-		class="org.rifidi.edge.readerplugin.generic.GenericSensorFactory">
+		class="org.rifidi.edge.adapter.generic.GenericSensorFactory">
 		<property name="context" ref="bundleContext" />
 		<property name="notifierService" ref="JMSNotifierService"/> 
 	</bean>

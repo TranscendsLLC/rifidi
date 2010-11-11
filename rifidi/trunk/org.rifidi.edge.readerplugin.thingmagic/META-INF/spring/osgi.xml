@@ -5,6 +5,14 @@
     http://www.springframework.org/schema/osgi 
     http://www.springframework.org/schema/osgi/spring-osgi.xsd">
 
+	<!-- Put command configuration service in OSGi Registry -->
+	<osgi:service id="thingmagicGetTagListCommandConfigurationFactoryReg" ref="thingmagicGetTagListCommandConfigurationFactory">
+		<osgi:interfaces>
+			<value>org.rifidi.edge.core.configuration.ServiceFactory</value>
+			<value>org.rifidi.edge.core.configuration.impl.AbstractCommandConfigurationFactory</value>
+		</osgi:interfaces>
+	</osgi:service>
+
 	<!-- Put reader configuration service in OSGi Registry -->
 	<osgi:service id="thingmagicConfigurationFactoryService" ref="thingmagicConfigurationFactory">
 		<osgi:interfaces>
