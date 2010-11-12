@@ -161,19 +161,19 @@ class Version:
            
     def set_major(self, major):
         self.major_set = True
-        self.major = major
+        self.major = str(major)
             
     def set_minor(self, minor):
         self.minor_set = True
-        self.minor = minor
+        self.minor = str(minor)
             
     def set_micro(self, micro):
         self.micro_set = True
-        self.micro = micro
+        self.micro = str(micro)
             
     def set_qual(self, qual):
         self.qual_set = True
-        self.qual = qual
+        self.qual = str(qual)
             
     def is_less(self, version):
         if self.major < version.major:
