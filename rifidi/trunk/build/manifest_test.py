@@ -24,112 +24,112 @@ class manifest_test(unittest.TestCase):
             if i.name =='org.apache.log4j':
                 self.assertEquals(True, i.b_inclusive)
                 self.assertEquals('1.2.15', i.b_version.__str__())
-                self.assertEquals(True, i.e_inclusive)
-                self.assertEquals('1.2.15',i.e_version.__str__())
+                self.assertEquals(False, i.e_inclusive)
+                self.assertEquals(str(sys.maxint),i.e_version.__str__())
 
             elif i.name == 'org.apache.log4j.chainsaw':
                 self.assertEquals(True, i.b_inclusive)
                 self.assertEquals('1.2.15', i.b_version.__str__())
-                self.assertEquals(True, i.e_inclusive)
-                self.assertEquals('1.2.15',i.e_version.__str__())
+                self.assertEquals(False, i.e_inclusive)
+                self.assertEquals(str(sys.maxint),i.e_version.__str__())
                 
             elif i.name == 'org.apache.log4j.config':
                 self.assertEquals(True, i.b_inclusive)
                 self.assertEquals('1.2.15', i.b_version.__str__())
-                self.assertEquals(True, i.e_inclusive)
-                self.assertEquals('1.2.15',i.e_version.__str__())
+                self.assertEquals(False, i.e_inclusive)
+                self.assertEquals(str(sys.maxint),i.e_version.__str__())
             elif i.name == 'org.apache.log4j.helpers':
                 self.assertEquals(True, i.b_inclusive)
                 self.assertEquals('1.2.15', i.b_version.__str__())
-                self.assertEquals(True, i.e_inclusive)
-                self.assertEquals('1.2.15',i.e_version.__str__())    
+                self.assertEquals(False, i.e_inclusive)
+                self.assertEquals(str(sys.maxint),i.e_version.__str__())    
             elif i.name == 'org.apache.log4j.jdbc':
                 self.assertEquals(True, i.b_inclusive)
                 self.assertEquals('1.2.15', i.b_version.__str__())
-                self.assertEquals(True, i.e_inclusive)
-                self.assertEquals('1.2.15',i.e_version.__str__())
+                self.assertEquals(False, i.e_inclusive)
+                self.assertEquals(str(sys.maxint),i.e_version.__str__())
             elif i.name == 'org.apache.log4j.jmx':
                 self.assertEquals(True, i.b_inclusive)
                 self.assertEquals('1.2.15', i.b_version.__str__())
-                self.assertEquals(True, i.e_inclusive)
-                self.assertEquals('1.2.15',i.e_version.__str__())
+                self.assertEquals(False, i.e_inclusive)
+                self.assertEquals(str(sys.maxint),i.e_version.__str__())
             elif i.name == 'org.apache.log4j.lf5':
                 self.assertEquals(True, i.b_inclusive)
                 self.assertEquals('1.2.15', i.b_version.__str__())
-                self.assertEquals(True, i.e_inclusive)
-                self.assertEquals('1.2.15',i.e_version.__str__())
+                self.assertEquals(False, i.e_inclusive)
+                self.assertEquals(str(sys.maxint),i.e_version.__str__())
             elif i.name == 'org.apache.log4j.lf5.config':
                 self.assertEquals(True, i.b_inclusive)
                 self.assertEquals('1.2.15', i.b_version.__str__())
-                self.assertEquals(True, i.e_inclusive)
-                self.assertEquals('1.2.15',i.e_version.__str__())
+                self.assertEquals(False, i.e_inclusive)
+                self.assertEquals(str(sys.maxint),i.e_version.__str__())
             elif i.name == 'org.apache.log4j.lf5.util':
                 self.assertEquals(True, i.b_inclusive)
                 self.assertEquals('1.2.15', i.b_version.__str__())
-                self.assertEquals(True, i.e_inclusive)
-                self.assertEquals('1.2.15',i.e_version.__str__())
+                self.assertEquals(False, i.e_inclusive)
+                self.assertEquals(str(sys.maxint),i.e_version.__str__())
             elif i.name == 'org.apache.log4j.lf5.viewer':
                 self.assertEquals(True, i.b_inclusive)
                 self.assertEquals('1.2.15', i.b_version.__str__())
-                self.assertEquals(True, i.e_inclusive)
-                self.assertEquals('1.2.15',i.e_version.__str__())
+                self.assertEquals(False, i.e_inclusive)
+                self.assertEquals(str(sys.maxint),i.e_version.__str__())
             elif i.name == 'org.apache.log4j.lf5.viewer.categoryexplorer':
                 self.assertEquals(True, i.b_inclusive)
                 self.assertEquals('1.2.15', i.b_version.__str__())
-                self.assertEquals(True, i.e_inclusive)
-                self.assertEquals('1.2.15',i.e_version.__str__())
+                self.assertEquals(False, i.e_inclusive)
+                self.assertEquals(str(sys.maxint),i.e_version.__str__())
         
             elif i.name == 'org.apache.log4j.lf5.viewer.configure':
                 self.assertEquals(True, i.b_inclusive)
                 self.assertEquals('1.2.15', i.b_version.__str__())
-                self.assertEquals(True, i.e_inclusive)
-                self.assertEquals('1.2.15',i.e_version.__str__())        
+                self.assertEquals(False, i.e_inclusive)
+                self.assertEquals(str(sys.maxint),i.e_version.__str__())        
         
             elif i.name == 'org.apache.log4j.lf5.viewer.images':
                 self.assertEquals(True, i.b_inclusive)
                 self.assertEquals('1.2.15', i.b_version.__str__())
-                self.assertEquals(True, i.e_inclusive)
-                self.assertEquals('1.2.15',i.e_version.__str__())
+                self.assertEquals(False, i.e_inclusive)
+                self.assertEquals(str(sys.maxint),i.e_version.__str__())
             elif i.name == 'org.apache.log4j.net':
                 self.assertEquals(True, i.b_inclusive)
                 self.assertEquals('1.2.15', i.b_version.__str__())
-                self.assertEquals(True, i.e_inclusive)
-                self.assertEquals('1.2.15',i.e_version.__str__())
+                self.assertEquals(False, i.e_inclusive)
+                self.assertEquals(str(sys.maxint),i.e_version.__str__())
             elif i.name == 'org.apache.log4j.nt':
                 self.assertEquals(True, i.b_inclusive)
                 self.assertEquals('1.2.15', i.b_version.__str__())
-                self.assertEquals(True, i.e_inclusive)
-                self.assertEquals('1.2.15',i.e_version.__str__())
+                self.assertEquals(False, i.e_inclusive)
+                self.assertEquals(str(sys.maxint),i.e_version.__str__())
             elif i.name == 'org.apache.log4j.or':
                 self.assertEquals(True, i.b_inclusive)
                 self.assertEquals('1.2.15', i.b_version.__str__())
-                self.assertEquals(True, i.e_inclusive)
-                self.assertEquals('1.2.15',i.e_version.__str__())
+                self.assertEquals(False, i.e_inclusive)
+                self.assertEquals(str(sys.maxint),i.e_version.__str__())
             elif i.name == 'org.apache.log4j.or.jms':
                 self.assertEquals(True, i.b_inclusive)
                 self.assertEquals('1.2.15', i.b_version.__str__())
-                self.assertEquals(True, i.e_inclusive)
-                self.assertEquals('1.2.15',i.e_version.__str__())
+                self.assertEquals(False, i.e_inclusive)
+                self.assertEquals(str(sys.maxint),i.e_version.__str__())
             elif i.name == 'org.apache.log4j.or.sax':
                 self.assertEquals(True, i.b_inclusive)
                 self.assertEquals('1.2.15', i.b_version.__str__())
-                self.assertEquals(True, i.e_inclusive)
-                self.assertEquals('1.2.15',i.e_version.__str__())
+                self.assertEquals(False, i.e_inclusive)
+                self.assertEquals(str(sys.maxint),i.e_version.__str__())
             elif i.name == 'org.apache.log4j.spi':
                 self.assertEquals(True, i.b_inclusive)
                 self.assertEquals('1.2.15', i.b_version.__str__())
-                self.assertEquals(True, i.e_inclusive)
-                self.assertEquals('1.2.15',i.e_version.__str__())
+                self.assertEquals(False, i.e_inclusive)
+                self.assertEquals(str(sys.maxint),i.e_version.__str__())
             elif i.name == 'org.apache.log4j.varia':
                 self.assertEquals(True, i.b_inclusive)
                 self.assertEquals('1.2.15', i.b_version.__str__())
-                self.assertEquals(True, i.e_inclusive)
-                self.assertEquals('1.2.15',i.e_version.__str__())
+                self.assertEquals(False, i.e_inclusive)
+                self.assertEquals(str(sys.maxint),i.e_version.__str__())
             elif i.name == 'org.apache.log4j.xml':
                 self.assertEquals(True, i.b_inclusive)
                 self.assertEquals('1.2.15', i.b_version.__str__())
-                self.assertEquals(True, i.e_inclusive)
-                self.assertEquals('1.2.15',i.e_version.__str__())
+                self.assertEquals(False, i.e_inclusive)
+                self.assertEquals(str(sys.maxint),i.e_version.__str__())
                 
             else:
                 print i.name
@@ -162,73 +162,73 @@ class manifest_test(unittest.TestCase):
                     
                 elif i.name == 'javax.management':
                     self.assertEquals(True, i.b_inclusive)
-                    self.assertEquals(0, i.b_version.major)
+                    self.assertEquals('0', i.b_version.major)
                     self.assertEquals(True, i.e_inclusive)
                     self.assertEquals(str(sys.maxint),i.e_version.major)
                     
                 elif i.name == 'javax.naming':
                     self.assertEquals(True, i.b_inclusive)
-                    self.assertEquals(0, i.b_version.major)
+                    self.assertEquals('0', i.b_version.major)
                     self.assertEquals(True, i.e_inclusive)
                     self.assertEquals(str(sys.maxint),i.e_version.major)
                     
                 elif i.name == 'javax.swing':
                     self.assertEquals(True, i.b_inclusive)
-                    self.assertEquals(0, i.b_version.major)
+                    self.assertEquals('0', i.b_version.major)
                     self.assertEquals(True, i.e_inclusive)
                     self.assertEquals(str(sys.maxint),i.e_version.major)                    
                     
                 elif i.name == 'javax.swing.border':
                     self.assertEquals(True, i.b_inclusive)
-                    self.assertEquals(0, i.b_version.major)
+                    self.assertEquals('0', i.b_version.major)
                     self.assertEquals(True, i.e_inclusive)
                     self.assertEquals(str(sys.maxint),i.e_version.major)                    
                     
                 elif i.name == 'javax.swing.event':
                     self.assertEquals(True, i.b_inclusive)
-                    self.assertEquals(0, i.b_version.major)
+                    self.assertEquals('0', i.b_version.major)
                     self.assertEquals(True, i.e_inclusive)
                     self.assertEquals(str(sys.maxint),i.e_version.major)                    
                     
                 elif i.name == 'javax.swing.table':
                     self.assertEquals(True, i.b_inclusive)
-                    self.assertEquals(0, i.b_version.major)
+                    self.assertEquals('0', i.b_version.major)
                     self.assertEquals(True, i.e_inclusive)
                     self.assertEquals(str(sys.maxint),i.e_version.major)
                     
                 elif i.name == 'javax.swing.text':
                     self.assertEquals(True, i.b_inclusive)
-                    self.assertEquals(0, i.b_version.major)
+                    self.assertEquals('0', i.b_version.major)
                     self.assertEquals(True, i.e_inclusive)
                     self.assertEquals(str(sys.maxint),i.e_version.major)
                     
                 elif i.name == 'javax.swing.tree':
                     self.assertEquals(True, i.b_inclusive)
-                    self.assertEquals(0, i.b_version.major)
+                    self.assertEquals('0', i.b_version.major)
                     self.assertEquals(True, i.e_inclusive)
                     self.assertEquals(str(sys.maxint),i.e_version.major)
 
                 elif i.name == 'javax.xml.parsers':
                     self.assertEquals(True, i.b_inclusive)
-                    self.assertEquals(0, i.b_version.major)
+                    self.assertEquals('0', i.b_version.major)
                     self.assertEquals(True, i.e_inclusive)
                     self.assertEquals(str(sys.maxint),i.e_version.major)
                     
                 elif i.name == 'org.w3c.dom':
                     self.assertEquals(True, i.b_inclusive)
-                    self.assertEquals(0, i.b_version.major)
+                    self.assertEquals('0', i.b_version.major)
                     self.assertEquals(True, i.e_inclusive)
                     self.assertEquals(str(sys.maxint),i.e_version.major)
                     
                 elif i.name == 'org.xml.sax':
                     self.assertEquals(True, i.b_inclusive)
-                    self.assertEquals(0, i.b_version.major)
+                    self.assertEquals('0', i.b_version.major)
                     self.assertEquals(True, i.e_inclusive)
                     self.assertEquals(str(sys.maxint),i.e_version.major)
                     
                 elif i.name == 'org.xml.sax.helpers':
                     self.assertEquals(True, i.b_inclusive)
-                    self.assertEquals(0, i.b_version.major)
+                    self.assertEquals('0', i.b_version.major)
                     self.assertEquals(True, i.e_inclusive)
                     self.assertEquals(str(sys.maxint),i.e_version.major)
                     
@@ -248,10 +248,10 @@ class manifest_test(unittest.TestCase):
         self.assertEquals(2, bundle.epackages.__len__())
         self.assertEquals(bundle.epackages[0].name, 'org.apache.commons.pool')
         self.assertEquals(bundle.epackages[0].b_version.__str__(), '1.4')
-        self.assertEquals(bundle.epackages[0].e_version.__str__(), '1.4')
+        self.assertEquals(bundle.epackages[0].e_version.__str__(), str(sys.maxint))
         self.assertEquals(bundle.epackages[1].name, 'org.apache.commons.pool.impl')
         self.assertEquals(bundle.epackages[1].b_version.__str__(), '1.4')
-        self.assertEquals(bundle.epackages[1].e_version.__str__(), '1.4')
+        self.assertEquals(bundle.epackages[1].e_version.__str__(), str(sys.maxint))
         
         
     def test_version(self):
