@@ -5,7 +5,7 @@
      http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi.xsd">
 	
 	<!--  Create the Command handler -->
-	<bean id="customCommands" class="org.rifidi.edge.console.RifidiEdgeServerCommands">
+	<bean id="customCommands" class="org.rifidi.edge.core.console.RifidiEdgeServerCommands">
 		<property name="readerDAO" ref="ReaderDAOImpl" />
 		<property name="commandDAO" ref="CommandDAOImpl" />
 		<property name="configService" ref="configurationService" />
