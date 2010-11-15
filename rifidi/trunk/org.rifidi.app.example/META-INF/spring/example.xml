@@ -6,11 +6,11 @@
     http://www.springframework.org/schema/osgi 
     http://www.springframework.org/schema/osgi/spring-osgi.xsd">
 
-	<bean id="app1" class="org.rifidi.app.example.ExampleApp">
+	<bean id="app1" class="org.rifidi.edge.examples.example.ExampleApp">
 		<property name="monitoringService" ref="monitoringService" />
 	</bean>
 
-	<bean id="app2" class="org.rifidi.app.example.AnotherApp">
+	<bean id="app2" class="org.rifidi.edge.examples.example.AnotherApp">
 	</bean>
 
 	<osgi:reference id="monitoringService"

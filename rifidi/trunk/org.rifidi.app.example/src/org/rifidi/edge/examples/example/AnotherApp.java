@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.rifidi.app.example;
+package org.rifidi.edge.examples.example;
 
 import java.io.BufferedReader;
 import java.io.IOException;

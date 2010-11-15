@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.rifidi.app.example;
+package org.rifidi.edge.examples.example;
 
 import java.util.concurrent.TimeUnit;
 
@@ -40,7 +40,7 @@ public class ExampleApp extends AbstractRifidiApp implements ReadZoneSubscriber 
 
 	public ExampleApp() {
 		// 'Templates' is the group name. 'ExampleApp' is the app name
-		super("Examples", "ExampleApp");
+		super("Example", "ExampleApp");
 	}
 
 	/*
