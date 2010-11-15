@@ -1,4 +1,4 @@
-package org.rifidi.edge.app.tracking.dao;
+package org.rifidi.edge.app.tracking;
 
 import java.sql.Connection;
 import java.sql.ResultSet;

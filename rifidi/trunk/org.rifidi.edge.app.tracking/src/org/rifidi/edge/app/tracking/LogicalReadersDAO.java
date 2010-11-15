@@ -1,4 +1,4 @@
-package org.rifidi.edge.app.tracking.dao;
+package org.rifidi.edge.app.tracking;
 
 /**
  * Interface for a Data Access Object that looks up a Logical Reader Name
