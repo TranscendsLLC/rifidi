@@ -79,7 +79,7 @@
 	</bean>
 
 
-	<bean id="dao" class="org.rifidi.edge.app.tracking.dao.DAOImpl">
+	<bean id="dao" class="org.rifidi.edge.app.tracking.DAOImpl">
 		<property name="datasource" ref="datasource" />
 	</bean>
 

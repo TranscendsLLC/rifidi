@@ -1,4 +1,4 @@
-package org.rifidi.edge.app.tracking.dao;
+package org.rifidi.edge.app.tracking;
 
 /**
  * A Data Access Object that looks up a product name

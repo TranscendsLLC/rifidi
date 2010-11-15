@@ -5,8 +5,6 @@ package org.rifidi.edge.app.tracking;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.rifidi.edge.app.tracking.dao.LogicalReadersDAO;
-import org.rifidi.edge.app.tracking.dao.ProductsDAO;
 import org.rifidi.edge.core.services.notification.EPCGeneration2Event;
 import org.rifidi.edge.core.services.notification.data.TagReadEvent;
 
