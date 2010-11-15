@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Exampleapp
-Bundle-SymbolicName: org.rifidi.app.template
+Bundle-SymbolicName: org.rifidi.edge.examples.template
 Bundle-Version: 1.0.0
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: com.espertech.esper.client,

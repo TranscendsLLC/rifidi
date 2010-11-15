@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
-<project name="org.rifidi.app.template" default="compile" basedir="/home/percent/development-10-28/build">
+<project name="org.rifidi.edge.examples.template" default="compile" basedir="/home/percent/development-10-28/build">
 	<property name="lib" value="/home/percent/development-10-28/build/lib" />
-	<property name="src" value="../org.rifidi.app.template/src" />
-	<property name="build" value="../org.rifidi.app.template/bin" />
-	<property name="manifest" value="../org.rifidi.app.template/META-INF/MANIFEST.MF" />
+	<property name="src" value="../org.rifidi.edge.examples.template/src" />
+	<property name="build" value="../org.rifidi.edge.examples.template/bin" />
+	<property name="manifest" value="../org.rifidi.edge.examples.template/META-INF/MANIFEST.MF" />
 	<property name="bundle" value="/home/percent/development-10-28/build/lib/org.rifidi.app.template_1.0.0.jar " />
 	<path id="classpath">
 		<pathelement location="../Rifidi-SDK/lib/spring/com.springsource.org.aopalliance_1.0.0.jar"/>
