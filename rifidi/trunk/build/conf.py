@@ -6,20 +6,13 @@ jar_path = [
 bundle_dirs = [
 'org.aspectj.runtime_1.6.4.20090304172355',
 'org.aspectj.weaver_1.6.4.20090304172355',
-'org.rifidi.gnu.io_2.1.7']
+'org.rifidi.gnu.io_2.1.7'
+]
 
 src_path = [
 
-'../com.ambient.labtrack.portal',
-'../com.ambient.labtrack.grouping',
-'../com.ambient.labtrack.receiving', 
-'../com.ambient.labtrack.association', 
-'../com.ambient.labtrack.jms', 
-'../com.ambient.labtrack.common', 
-'../org.rifidi.labtrack.common',
-'../com.ambient.labtrack.common.model.ui',
-'../com.ambient.labtrack.tests',
-
+'../com.ambient.labtrack',
+'../com.ambient.labtrack.messages',
 '../org.rifidi.edge.api',
 '../org.rifidi.edge.init',
 '../org.rifidi.edge.core',
