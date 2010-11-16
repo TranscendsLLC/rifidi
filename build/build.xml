@@ -5,182 +5,265 @@
 		<mkdir dir="${lib}" />
 	</target>
 	<target name="clean" description="clean up">
-		<ant dir="../org.rifidi.labtrack.common" target="clean" /> 
-		<ant dir="../com.ambient.labtrack.common.model.ui" target="clean" /> 
+		<ant dir="../com.ambient.labtrack.messages" target="clean" /> 
 		<ant dir="../org.rifidi.edge.api" target="clean" /> 
 		<ant dir="../org.rifidi.edge.init" target="clean" /> 
-		<ant dir="../com.ambient.labtrack.jms" target="clean" /> 
 		<ant dir="../org.rifidi.edge.core" target="clean" /> 
-		<ant dir="../com.ambient.labtrack.common" target="clean" /> 
+		<ant dir="../com.ambient.labtrack" target="clean" /> 
 		<ant dir="../org.rifidi.edge.app.diag" target="clean" /> 
-		<ant dir="../com.ambient.labtrack.portal" target="clean" /> 
-		<ant dir="../com.ambient.labtrack.grouping" target="clean" /> 
-		<ant dir="../com.ambient.labtrack.receiving" target="clean" /> 
-		<ant dir="../com.ambient.labtrack.association" target="clean" /> 
-		<ant dir="../com.ambient.labtrack.tests" target="clean" /> 
 	</target>
 	<target name="compile">
-		<ant dir="../org.rifidi.labtrack.common" target="compile" /> 
-		<ant dir="../com.ambient.labtrack.common.model.ui" target="compile" /> 
+		<ant dir="../com.ambient.labtrack.messages" target="compile" /> 
 		<ant dir="../org.rifidi.edge.api" target="compile" /> 
 		<ant dir="../org.rifidi.edge.init" target="compile" /> 
-		<ant dir="../com.ambient.labtrack.jms" target="compile" /> 
 		<ant dir="../org.rifidi.edge.core" target="compile" /> 
-		<ant dir="../com.ambient.labtrack.common" target="compile" /> 
+		<ant dir="../com.ambient.labtrack" target="compile" /> 
 		<ant dir="../org.rifidi.edge.app.diag" target="compile" /> 
-		<ant dir="../com.ambient.labtrack.portal" target="compile" /> 
-		<ant dir="../com.ambient.labtrack.grouping" target="compile" /> 
-		<ant dir="../com.ambient.labtrack.receiving" target="compile" /> 
-		<ant dir="../com.ambient.labtrack.association" target="compile" /> 
-		<ant dir="../com.ambient.labtrack.tests" target="compile" /> 
 	</target>
 	<target name="lint" description="run lint" >
-		<ant dir="../org.rifidi.labtrack.common" target="lint" /> 
-		<ant dir="../com.ambient.labtrack.common.model.ui" target="lint" /> 
+		<ant dir="../com.ambient.labtrack.messages" target="lint" /> 
 		<ant dir="../org.rifidi.edge.api" target="lint" /> 
 		<ant dir="../org.rifidi.edge.init" target="lint" /> 
-		<ant dir="../com.ambient.labtrack.jms" target="lint" /> 
 		<ant dir="../org.rifidi.edge.core" target="lint" /> 
-		<ant dir="../com.ambient.labtrack.common" target="lint" /> 
+		<ant dir="../com.ambient.labtrack" target="lint" /> 
 		<ant dir="../org.rifidi.edge.app.diag" target="lint" /> 
-		<ant dir="../com.ambient.labtrack.portal" target="lint" /> 
-		<ant dir="../com.ambient.labtrack.grouping" target="lint" /> 
-		<ant dir="../com.ambient.labtrack.receiving" target="lint" /> 
-		<ant dir="../com.ambient.labtrack.association" target="lint" /> 
-		<ant dir="../com.ambient.labtrack.tests" target="lint" /> 
 	</target>
 	<target name="package" description="packages bundles" depends="init">
-		<ant dir="../org.rifidi.labtrack.common" target="package" /> 
-		<ant dir="../com.ambient.labtrack.common.model.ui" target="package" /> 
+		<ant dir="../com.ambient.labtrack.messages" target="package" /> 
 		<ant dir="../org.rifidi.edge.api" target="package" /> 
 		<ant dir="../org.rifidi.edge.init" target="package" /> 
-		<ant dir="../com.ambient.labtrack.jms" target="package" /> 
 		<ant dir="../org.rifidi.edge.core" target="package" /> 
-		<ant dir="../com.ambient.labtrack.common" target="package" /> 
+		<ant dir="../com.ambient.labtrack" target="package" /> 
 		<ant dir="../org.rifidi.edge.app.diag" target="package" /> 
-		<ant dir="../com.ambient.labtrack.portal" target="package" /> 
-		<ant dir="../com.ambient.labtrack.grouping" target="package" /> 
-		<ant dir="../com.ambient.labtrack.receiving" target="package" /> 
-		<ant dir="../com.ambient.labtrack.association" target="package" /> 
-		<ant dir="../com.ambient.labtrack.tests" target="package" /> 
+		<echo> copying ../Rifidi-SDK/lib/logging/com.springsource.slf4j.log4j_1.5.6.jar </echo>
 		<copy file="../Rifidi-SDK/lib/logging/com.springsource.slf4j.log4j_1.5.6.jar" todir="${lib}" overwrite="true" />
+		<echo> copying ../Rifidi-SDK/lib/rifidi/org.rifidi.edge.readerplugin.thingmagic.source_1.0.4.jar </echo>
 		<copy file="../Rifidi-SDK/lib/rifidi/org.rifidi.edge.readerplugin.thingmagic.source_1.0.4.jar" todir="${lib}" overwrite="true" />
+		<echo> copying ../Rifidi-SDK/lib/tomcat/com.springsource.org.apache.jasper.org.eclipse.jdt_6.0.18.jar </echo>
 		<copy file="../Rifidi-SDK/lib/tomcat/com.springsource.org.apache.jasper.org.eclipse.jdt_6.0.18.jar" todir="${lib}" overwrite="true" />
+		<echo> copying ../Rifidi-SDK/lib/rifidi/org.rifidi.edge.epcglobal.ale.api.read_1.0.1.jar </echo>
 		<copy file="../Rifidi-SDK/lib/rifidi/org.rifidi.edge.epcglobal.ale.api.read_1.0.1.jar" todir="${lib}" overwrite="true" />
+		<echo> copying ../Rifidi-SDK/lib/rifidi/org.rifidi.edge.epcglobal.ale.api.logicalreader.source_1.0.1.jar </echo>
 		<copy file="../Rifidi-SDK/lib/rifidi/org.rifidi.edge.epcglobal.ale.api.logicalreader.source_1.0.1.jar" todir="${lib}" overwrite="true" />
+		<echo> copying ../Rifidi-SDK/lib/spring/org.springframework.beans_2.5.6.SEC01.jar </echo>
 		<copy file="../Rifidi-SDK/lib/spring/org.springframework.beans_2.5.6.SEC01.jar" todir="${lib}" overwrite="true" />
+		<echo> copying ../Rifidi-SDK/lib/libraries/org.apache.derby_10.5.1.1_201005192117.jar </echo>
 		<copy file="../Rifidi-SDK/lib/libraries/org.apache.derby_10.5.1.1_201005192117.jar" todir="${lib}" overwrite="true" />
+		<echo> copying ../Rifidi-SDK/lib/tomcat/org.springframework.osgi.catalina.start.osgi_1.0.0.SNAPSHOT.jar </echo>
 		<copy file="../Rifidi-SDK/lib/tomcat/org.springframework.osgi.catalina.start.osgi_1.0.0.SNAPSHOT.jar" todir="${lib}" overwrite="true" />
+		<echo> copying ../Rifidi-SDK/lib/rifidi/org.rifidi.edge.readerplugin.thingmagic.commands_1.0.2.jar </echo>
 		<copy file="../Rifidi-SDK/lib/rifidi/org.rifidi.edge.readerplugin.thingmagic.commands_1.0.2.jar" todir="${lib}" overwrite="true" />
+		<echo> copying ../Rifidi-SDK/lib/javax/com.springsource.javax.persistence_1.0.0.jar </echo>
 		<copy file="../Rifidi-SDK/lib/javax/com.springsource.javax.persistence_1.0.0.jar" todir="${lib}" overwrite="true" />
-		<copy file="../Rifidi-SDK/lib/rifidi/org.rifidi.edge.console_1.0.1.jar" todir="${lib}" overwrite="true" />
+		<echo> copying ../Rifidi-SDK/lib/commons/org.apache.commons.digester_1.8.1.jar </echo>
 		<copy file="../Rifidi-SDK/lib/commons/org.apache.commons.digester_1.8.1.jar" todir="${lib}" overwrite="true" />
+		<echo> copying ../Rifidi-SDK/lib/javax/com.springsource.javax.annotation_1.0.0.jar </echo>
 		<copy file="../Rifidi-SDK/lib/javax/com.springsource.javax.annotation_1.0.0.jar" todir="${lib}" overwrite="true" />
-		<copy file="../Rifidi-SDK/lib/eclipseaspects/plugins/org.eclipse.equinox.weaving.caching_1.0.0.200905031323.jar" todir="${lib}" overwrite="true" />
+		<echo> copying ../Rifidi-SDK/lib/javax/javax.servlet_2.5.0.v200806031605.jar </echo>
+		<copy file="../Rifidi-SDK/lib/javax/javax.servlet_2.5.0.v200806031605.jar" todir="${lib}" overwrite="true" />
+		<echo> copying ../Rifidi-SDK/lib/plugins/org.eclipse.osgi.services_3.2.0.v20090520-1800.jar </echo>
 		<copy file="../Rifidi-SDK/lib/plugins/org.eclipse.osgi.services_3.2.0.v20090520-1800.jar" todir="${lib}" overwrite="true" />
+		<echo> copying ../Rifidi-SDK/lib/javax/com.springsource.javax.xml.soap_1.3.0.jar </echo>
 		<copy file="../Rifidi-SDK/lib/javax/com.springsource.javax.xml.soap_1.3.0.jar" todir="${lib}" overwrite="true" />
+		<echo> copying ../Rifidi-SDK/lib/spring/org.springframework.osgi.core_1.1.3.RELEASE.jar </echo>
 		<copy file="../Rifidi-SDK/lib/spring/org.springframework.osgi.core_1.1.3.RELEASE.jar" todir="${lib}" overwrite="true" />
+		<echo> copying ../Rifidi-SDK/lib/rifidi/org.rifidi.edge.readerplugin.thingmagic.commands.source_1.0.2.jar </echo>
 		<copy file="../Rifidi-SDK/lib/rifidi/org.rifidi.edge.readerplugin.thingmagic.commands.source_1.0.2.jar" todir="${lib}" overwrite="true" />
+		<echo> copying ../Rifidi-SDK/lib/commons/com.springsource.org.apache.tools.ant_1.7.1.jar </echo>
 		<copy file="../Rifidi-SDK/lib/commons/com.springsource.org.apache.tools.ant_1.7.1.jar" todir="${lib}" overwrite="true" />
+		<echo> copying ../Rifidi-SDK/lib/spring/org.springframework.jdbc_2.5.6.SEC01.jar </echo>
 		<copy file="../Rifidi-SDK/lib/spring/org.springframework.jdbc_2.5.6.SEC01.jar" todir="${lib}" overwrite="true" />
+		<echo> copying ../Rifidi-SDK/lib/rifidi/org.rifidi.edge.readerplugin.awid.commands.source_1.0.3.jar </echo>
 		<copy file="../Rifidi-SDK/lib/rifidi/org.rifidi.edge.readerplugin.awid.commands.source_1.0.3.jar" todir="${lib}" overwrite="true" />
+		<echo> copying ../Rifidi-SDK/lib/esper/org.rifidi.org.antlr.runtime_3.1.1.jar </echo>
 		<copy file="../Rifidi-SDK/lib/esper/org.rifidi.org.antlr.runtime_3.1.1.jar" todir="${lib}" overwrite="true" />
+		<echo> copying ../Rifidi-SDK/lib/spring/org.springframework.osgi.io_1.1.3.RELEASE.jar </echo>
 		<copy file="../Rifidi-SDK/lib/spring/org.springframework.osgi.io_1.1.3.RELEASE.jar" todir="${lib}" overwrite="true" />
+		<echo> copying ../Rifidi-SDK/lib/commons/org.apache.commons.beanutils_1.8.0.jar </echo>
 		<copy file="../Rifidi-SDK/lib/commons/org.apache.commons.beanutils_1.8.0.jar" todir="${lib}" overwrite="true" />
+		<echo> copying ../Rifidi-SDK/lib/commons/com.springsource.org.apache.commons.dbcp_1.2.2.osgi.jar </echo>
 		<copy file="../Rifidi-SDK/lib/commons/com.springsource.org.apache.commons.dbcp_1.2.2.osgi.jar" todir="${lib}" overwrite="true" />
+		<echo> copying ../Rifidi-SDK/lib/spring/org.springframework.bundle.osgi.web.extender_1.1.3.jar </echo>
 		<copy file="../Rifidi-SDK/lib/spring/org.springframework.bundle.osgi.web.extender_1.1.3.jar" todir="${lib}" overwrite="true" />
+		<echo> copying ../Rifidi-SDK/lib/spring/com.springsource.org.aopalliance_1.0.0.jar </echo>
 		<copy file="../Rifidi-SDK/lib/spring/com.springsource.org.aopalliance_1.0.0.jar" todir="${lib}" overwrite="true" />
+		<echo> copying ../Rifidi-SDK/lib/rifidi/org.rifidi.edge.readerplugin.llrp.source_2.0.7.jar </echo>
 		<copy file="../Rifidi-SDK/lib/rifidi/org.rifidi.edge.readerplugin.llrp.source_2.0.7.jar" todir="${lib}" overwrite="true" />
+		<echo> copying ../Rifidi-SDK/lib/javax/com.springsource.javax.xml.stream_1.0.1.jar </echo>
 		<copy file="../Rifidi-SDK/lib/javax/com.springsource.javax.xml.stream_1.0.1.jar" todir="${lib}" overwrite="true" />
+		<echo> copying ../Rifidi-SDK/lib/rifidi/org.rifidi.edge.catalina.config_1.0.0.jar </echo>
 		<copy file="../Rifidi-SDK/lib/rifidi/org.rifidi.edge.catalina.config_1.0.0.jar" todir="${lib}" overwrite="true" />
+		<echo> copying ../Rifidi-SDK/lib/rifidi/org.rifidi.edge.readerplugin.awid.commands_1.0.3.jar </echo>
 		<copy file="../Rifidi-SDK/lib/rifidi/org.rifidi.edge.readerplugin.awid.commands_1.0.3.jar" todir="${lib}" overwrite="true" />
+		<echo> copying ../Rifidi-SDK/lib/spring/org.rifidi.org.springframework.context_2.5.6.SEC01.jar </echo>
 		<copy file="../Rifidi-SDK/lib/spring/org.rifidi.org.springframework.context_2.5.6.SEC01.jar" todir="${lib}" overwrite="true" />
+		<echo> copying ../Rifidi-SDK/lib/rifidi/org.rifidi.edge.readerplugin.thingmagic_1.0.4.jar </echo>
 		<copy file="../Rifidi-SDK/lib/rifidi/org.rifidi.edge.readerplugin.thingmagic_1.0.4.jar" todir="${lib}" overwrite="true" />
+		<echo> copying ../Rifidi-SDK/lib/commons/org.apache.commons.lang_2.3.0.v200803061910.jar </echo>
 		<copy file="../Rifidi-SDK/lib/commons/org.apache.commons.lang_2.3.0.v200803061910.jar" todir="${lib}" overwrite="true" />
+		<echo> copying ../Rifidi-SDK/lib/libraries/org.apache.xbean.spring_3.6.0.jar </echo>
 		<copy file="../Rifidi-SDK/lib/libraries/org.apache.xbean.spring_3.6.0.jar" todir="${lib}" overwrite="true" />
+		<echo> copying ../Rifidi-SDK/lib/logging/com.springsource.org.apache.commons.logging_1.1.1.jar </echo>
 		<copy file="../Rifidi-SDK/lib/logging/com.springsource.org.apache.commons.logging_1.1.1.jar" todir="${lib}" overwrite="true" />
+		<echo> copying ../Rifidi-SDK/lib/rifidi/org.rifidi.edge.readerplugin.generic.source_1.0.0.jar </echo>
 		<copy file="../Rifidi-SDK/lib/rifidi/org.rifidi.edge.readerplugin.generic.source_1.0.0.jar" todir="${lib}" overwrite="true" />
+		<echo> copying ../Rifidi-SDK/lib/javax/com.springsource.javax.xml.bind_2.0.0.jar </echo>
+		<copy file="../Rifidi-SDK/lib/javax/com.springsource.javax.xml.bind_2.0.0.jar" todir="${lib}" overwrite="true" />
+		<echo> copying ../Rifidi-SDK/lib/rifidi/org.rifidi.edge.app.diag.source_1.0.0.jar </echo>
 		<copy file="../Rifidi-SDK/lib/rifidi/org.rifidi.edge.app.diag.source_1.0.0.jar" todir="${lib}" overwrite="true" />
-		<copy file="../Rifidi-SDK/lib/spring/org.springframework.web.servlet_2.5.6.SEC01.jar" todir="${lib}" overwrite="true" />
-		<copy file="../Rifidi-SDK/lib/tomcat/com.springsource.org.apache.taglibs.standard_1.1.2.jar" todir="${lib}" overwrite="true" />
-		<copy file="../Rifidi-SDK/lib/libraries/org.rifidi.org.apache.mina-core_1.0.0.jar" todir="${lib}" overwrite="true" />
-		<copy file="../Rifidi-SDK/lib/javax/org.apache.geronimo.specs.geronimo-j2ee-management_1.1_spec_1.0.1.jar" todir="${lib}" overwrite="true" />
-		<copy file="../Rifidi-SDK/lib/rifidi/org.rifidi.edge.readerplugin.awid_1.0.7.jar" todir="${lib}" overwrite="true" />
-		<copy file="../Rifidi-SDK/lib/rifidi/org.rifidi.edge.readerplugin.opticon_1.0.1.jar" todir="${lib}" overwrite="true" />
+		<echo> copying ../Rifidi-SDK/lib/plugins/org.eclipse.osgi_3.5.0.v20090520.jar </echo>
 		<copy file="../Rifidi-SDK/lib/plugins/org.eclipse.osgi_3.5.0.v20090520.jar" todir="${lib}" overwrite="true" />
+		<echo> copying ../Rifidi-SDK/lib/libraries/org.rifidi.org.apache.mina-core_1.0.0.jar </echo>
+		<copy file="../Rifidi-SDK/lib/libraries/org.rifidi.org.apache.mina-core_1.0.0.jar" todir="${lib}" overwrite="true" />
+		<echo> copying ../Rifidi-SDK/lib/javax/org.apache.geronimo.specs.geronimo-j2ee-management_1.1_spec_1.0.1.jar </echo>
+		<copy file="../Rifidi-SDK/lib/javax/org.apache.geronimo.specs.geronimo-j2ee-management_1.1_spec_1.0.1.jar" todir="${lib}" overwrite="true" />
+		<echo> copying ../Rifidi-SDK/lib/rifidi/org.rifidi.edge.readerplugin.awid_1.0.7.jar </echo>
+		<copy file="../Rifidi-SDK/lib/rifidi/org.rifidi.edge.readerplugin.awid_1.0.7.jar" todir="${lib}" overwrite="true" />
+		<echo> copying ../Rifidi-SDK/lib/rifidi/org.rifidi.edge.readerplugin.opticon_1.0.1.jar </echo>
+		<copy file="../Rifidi-SDK/lib/rifidi/org.rifidi.edge.readerplugin.opticon_1.0.1.jar" todir="${lib}" overwrite="true" />
+		<echo> copying ../Rifidi-SDK/lib/tomcat/com.springsource.org.apache.taglibs.standard_1.1.2.jar </echo>
+		<copy file="../Rifidi-SDK/lib/tomcat/com.springsource.org.apache.taglibs.standard_1.1.2.jar" todir="${lib}" overwrite="true" />
+		<echo> copying ../Rifidi-SDK/lib/eclipseaspects/plugins/org.eclipse.equinox.weaving.aspectj_1.0.0.200905031323.jar </echo>
 		<copy file="../Rifidi-SDK/lib/eclipseaspects/plugins/org.eclipse.equinox.weaving.aspectj_1.0.0.200905031323.jar" todir="${lib}" overwrite="true" />
+		<echo> copying ../Rifidi-SDK/lib/rifidi/org.rifidi.edge.readerplugin.alien.commands.source_1.0.2.jar </echo>
 		<copy file="../Rifidi-SDK/lib/rifidi/org.rifidi.edge.readerplugin.alien.commands.source_1.0.2.jar" todir="${lib}" overwrite="true" />
+		<echo> copying ../Rifidi-SDK/lib/plugins/org.eclipse.equinox.weaving.hook_1.0.0.200905031323.jar </echo>
 		<copy file="../Rifidi-SDK/lib/plugins/org.eclipse.equinox.weaving.hook_1.0.0.200905031323.jar" todir="${lib}" overwrite="true" />
+		<echo> copying ../Rifidi-SDK/lib/aspectj/org.aspectj.runtime_1.6.4.20090304172355 </echo>
 		<mkdir dir="${lib}/org.aspectj.runtime_1.6.4.20090304172355"/>
 		<copy todir="${lib}/org.aspectj.runtime_1.6.4.20090304172355"><fileset dir="../Rifidi-SDK/lib/aspectj/org.aspectj.runtime_1.6.4.20090304172355"/></copy>
+		<echo> copying ../Rifidi-SDK/lib/plugins/org.eclipse.equinox.launcher_1.0.201.R35x_v20090715.jar </echo>
 		<copy file="../Rifidi-SDK/lib/plugins/org.eclipse.equinox.launcher_1.0.201.R35x_v20090715.jar" todir="${lib}" overwrite="true" />
+		<echo> copying ../Rifidi-SDK/lib/spring/org.springframework.osgi.web_1.1.3.RELEASE.jar </echo>
 		<copy file="../Rifidi-SDK/lib/spring/org.springframework.osgi.web_1.1.3.RELEASE.jar" todir="${lib}" overwrite="true" />
+		<echo> copying ../Rifidi-SDK/lib/rifidi/org.rifidi.edge.init.source_1.0.1.jar </echo>
 		<copy file="../Rifidi-SDK/lib/rifidi/org.rifidi.edge.init.source_1.0.1.jar" todir="${lib}" overwrite="true" />
+		<echo> copying ../Rifidi-SDK/lib/javax/com.springsource.javax.ejb_3.0.0.jar </echo>
 		<copy file="../Rifidi-SDK/lib/javax/com.springsource.javax.ejb_3.0.0.jar" todir="${lib}" overwrite="true" />
+		<echo> copying ../Rifidi-SDK/lib/spring/org.springframework.transaction_2.5.6.SEC01.jar </echo>
 		<copy file="../Rifidi-SDK/lib/spring/org.springframework.transaction_2.5.6.SEC01.jar" todir="${lib}" overwrite="true" />
+		<echo> copying ../Rifidi-SDK/lib/commons/org.apache.commons.pool_1.4.0.jar </echo>
 		<copy file="../Rifidi-SDK/lib/commons/org.apache.commons.pool_1.4.0.jar" todir="${lib}" overwrite="true" />
+		<echo> copying ../Rifidi-SDK/lib/rifidi/org.rifidi.edge.readerplugin.alien_2.0.7.jar </echo>
 		<copy file="../Rifidi-SDK/lib/rifidi/org.rifidi.edge.readerplugin.alien_2.0.7.jar" todir="${lib}" overwrite="true" />
+		<echo> copying ../Rifidi-SDK/lib/aspectj/org.aspectj.weaver_1.6.4.20090304172355 </echo>
 		<mkdir dir="${lib}/org.aspectj.weaver_1.6.4.20090304172355"/>
 		<copy todir="${lib}/org.aspectj.weaver_1.6.4.20090304172355"><fileset dir="../Rifidi-SDK/lib/aspectj/org.aspectj.weaver_1.6.4.20090304172355"/></copy>
+		<echo> copying ../Rifidi-SDK/lib/tomcat/com.springsource.org.apache.jasper_6.0.18.jar </echo>
 		<copy file="../Rifidi-SDK/lib/tomcat/com.springsource.org.apache.jasper_6.0.18.jar" todir="${lib}" overwrite="true" />
-		<copy file="../Rifidi-SDK/lib/libraries/org.rifidi.org.llrp.ltk_1.0.6.jar" todir="${lib}" overwrite="true" />
-		<copy file="../Rifidi-SDK/lib/tomcat/com.springsource.org.apache.coyote_6.0.18.jar" todir="${lib}" overwrite="true" />
-		<copy file="../Rifidi-SDK/lib/plugins/com.mysql.jdbc_5.1.10.jar" todir="${lib}" overwrite="true" />
-		<copy file="../Rifidi-SDK/lib/rifidi/org.rifidi.edge.readerplugin.alien.commands_1.0.2.jar" todir="${lib}" overwrite="true" />
-		<copy file="../Rifidi-SDK/lib/spring/org.springframework.security.core_2.0.4.jar" todir="${lib}" overwrite="true" />
-		<copy file="../Rifidi-SDK/lib/javax/com.springsource.javax.xml.bind_2.0.0.jar" todir="${lib}" overwrite="true" />
-		<copy file="../Rifidi-SDK/lib/rifidi/org.rifidi.edge.readerplugin.generic_1.0.0.jar" todir="${lib}" overwrite="true" />
-		<copy file="../Rifidi-SDK/lib/logging/com.springsource.slf4j.jcl_1.5.6.jar" todir="${lib}" overwrite="true" />
-		<copy file="../Rifidi-SDK/lib/rifidi/org.rifidi.edge.readerplugin.awid.source_1.0.7.jar" todir="${lib}" overwrite="true" />
-		<copy file="../Rifidi-SDK/lib/tomcat/com.springsource.org.apache.el_6.0.18.jar" todir="${lib}" overwrite="true" />
-		<copy file="../Rifidi-SDK/lib/eclipseaspects/plugins/org.eclipse.equinox.weaving.caching.j9_1.0.0.200905031323.jar" todir="${lib}" overwrite="true" />
-		<copy file="../Rifidi-SDK/lib/libraries/org.jdom_1.0.0.v200806100616.jar" todir="${lib}" overwrite="true" />
-		<copy file="../Rifidi-SDK/lib/javax/org.apache.geronimo.specs.geronimo-activation_1.1_spec_1.0.2.jar" todir="${lib}" overwrite="true" />
-		<copy file="../Rifidi-SDK/lib/logging/com.springsource.slf4j.api_1.5.6.jar" todir="${lib}" overwrite="true" />
-		<copy file="../Rifidi-SDK/lib/rifidi/org.rifidi.edge.epcglobal.ale.api.logicalreader_1.0.1.jar" todir="${lib}" overwrite="true" />
-		<copy file="../Rifidi-SDK/lib/esper/com.espertech.esper_3.4.0.jar" todir="${lib}" overwrite="true" />
-		<copy file="../Rifidi-SDK/lib/libraries/org.apache.activemq.kahadb_5.3.0.jar" todir="${lib}" overwrite="true" />
-		<copy file="../Rifidi-SDK/lib/javax/com.springsource.javax.xml.rpc_1.1.0.jar" todir="${lib}" overwrite="true" />
-		<copy file="../Rifidi-SDK/lib/rifidi/org.rifidi.edge.console.source_1.0.1.jar" todir="${lib}" overwrite="true" />
-		<copy file="../Rifidi-SDK/lib/spring/org.rifidi.org.springframework.aop_2.5.6.SEC01.jar" todir="${lib}" overwrite="true" />
-		<copy file="../Rifidi-SDK/lib/plugins/org.eclipse.equinox.simpleconfigurator_1.0.100.v20090520-1905.jar" todir="${lib}" overwrite="true" />
-		<copy file="../Rifidi-SDK/lib/javax/com.springsource.javax.servlet.jsp_2.1.0.jar" todir="${lib}" overwrite="true" />
-		<copy file="../Rifidi-SDK/lib/rifidi/org.rifidi.edge.app.tracking_1.0.0.jar" todir="${lib}" overwrite="true" />
-		<copy file="../Rifidi-SDK/lib/javax/org.apache.geronimo.specs.geronimo-javamail_1.4_spec_1.3.0.jar" todir="${lib}" overwrite="true" />
-		<copy file="../Rifidi-SDK/lib/spring/com.springsource.net.sf.cglib_2.1.3.jar" todir="${lib}" overwrite="true" />
-		<copy file="../Rifidi-SDK/lib/spring/org.springframework.bundle.spring.aspects_2.5.5.jar" todir="${lib}" overwrite="true" />
-		<copy file="../Rifidi-SDK/lib/rifidi/org.rifidi.edge.epcglobal.ale.api.read.source_1.0.1.jar" todir="${lib}" overwrite="true" />
-		<copy file="../Rifidi-SDK/lib/rifidi/org.rifidi.edge.catalina.config.source_1.0.0.jar" todir="${lib}" overwrite="true" />
-		<copy file="../Rifidi-SDK/lib/rifidi/org.rifidi.edge.api.source_1.3.0.jar" todir="${lib}" overwrite="true" />
-		<copy file="../Rifidi-SDK/lib/commons/org.apache.commons.collections_3.2.0.v200803061811.jar" todir="${lib}" overwrite="true" />
-		<copy file="../Rifidi-SDK/lib/rifidi/org.rifidi.edge.core.source_5.4.0.jar" todir="${lib}" overwrite="true" />
-		<copy file="../Rifidi-SDK/lib/javax/com.springsource.javax.servlet.jsp.jstl_1.1.2.jar" todir="${lib}" overwrite="true" />
-		<copy file="../Rifidi-SDK/lib/spring/org.springframework.core_2.5.6.SEC01.jar" todir="${lib}" overwrite="true" />
-		<copy file="../Rifidi-SDK/lib/spring/org.springframework.web_2.5.6.SEC01.jar" todir="${lib}" overwrite="true" />
-		<copy file="../Rifidi-SDK/lib/spring/org.springframework.orm_2.5.6.SEC01.jar" todir="${lib}" overwrite="true" />
-		<copy file="../Rifidi-SDK/lib/javax/com.springsource.javax.servlet_2.5.0.jar" todir="${lib}" overwrite="true" />
-		<copy file="../Rifidi-SDK/lib/javax/com.springsource.javax.el_1.0.0.jar" todir="${lib}" overwrite="true" />
-		<copy file="../Rifidi-SDK/lib/rifidi/org.rifidi.edge.app.tracking.source_1.0.0.jar" todir="${lib}" overwrite="true" />
-		<copy file="../Rifidi-SDK/lib/libraries/org.fosstrak.tdt.tdt_0.9.0.jar" todir="${lib}" overwrite="true" />
-		<copy file="../Rifidi-SDK/lib/commons/org.apache.commons.jxpath_1.3.0.jar" todir="${lib}" overwrite="true" />
-		<copy file="../Rifidi-SDK/lib/javax/com.springsource.javax.xml.ws_2.1.1.jar" todir="${lib}" overwrite="true" />
-		<copy file="../Rifidi-SDK/lib/spring/org.springframework.osgi.extender_1.1.3.RELEASE.jar" todir="${lib}" overwrite="true" />
-		<copy file="../Rifidi-SDK/lib/tomcat/com.springsource.org.apache.catalina_6.0.18.jar" todir="${lib}" overwrite="true" />
-		<copy file="../Rifidi-SDK/lib/rifidi/org.rifidi.edge.readerplugin.opticon.source_1.0.1.jar" todir="${lib}" overwrite="true" />
-		<copy file="../Rifidi-SDK/lib/libraries/org.rifidi.org.relique.jdbc_1.0.0.jar" todir="${lib}" overwrite="true" />
-		<copy file="../Rifidi-SDK/lib/spring/org.springframework.context.support_2.5.6.SEC01.jar" todir="${lib}" overwrite="true" />
-		<copy file="../Rifidi-SDK/lib/tomcat/com.springsource.org.apache.juli.extras_6.0.18.jar" todir="${lib}" overwrite="true" />
-		<copy file="../Rifidi-SDK/lib/rifidi/org.rifidi.edge.readerplugin.alien.source_2.0.7.jar" todir="${lib}" overwrite="true" />
+		<echo> copying ../Rifidi-SDK/lib/libraries/org.apache.felix.bundlerepository_1.5.0.SNAPSHOT.jar </echo>
 		<copy file="../Rifidi-SDK/lib/libraries/org.apache.felix.bundlerepository_1.5.0.SNAPSHOT.jar" todir="${lib}" overwrite="true" />
+		<echo> copying ../Rifidi-SDK/lib/tomcat/com.springsource.org.apache.coyote_6.0.18.jar </echo>
+		<copy file="../Rifidi-SDK/lib/tomcat/com.springsource.org.apache.coyote_6.0.18.jar" todir="${lib}" overwrite="true" />
+		<echo> copying ../Rifidi-SDK/lib/rifidi/org.rifidi.edge.readerplugin.awid.source_1.0.7.jar </echo>
+		<copy file="../Rifidi-SDK/lib/rifidi/org.rifidi.edge.readerplugin.awid.source_1.0.7.jar" todir="${lib}" overwrite="true" />
+		<echo> copying ../Rifidi-SDK/lib/rifidi/org.rifidi.edge.readerplugin.alien.commands_1.0.2.jar </echo>
+		<copy file="../Rifidi-SDK/lib/rifidi/org.rifidi.edge.readerplugin.alien.commands_1.0.2.jar" todir="${lib}" overwrite="true" />
+		<echo> copying ../Rifidi-SDK/lib/spring/org.springframework.security.core_2.0.4.jar </echo>
+		<copy file="../Rifidi-SDK/lib/spring/org.springframework.security.core_2.0.4.jar" todir="${lib}" overwrite="true" />
+		<echo> copying ../Rifidi-SDK/lib/spring/org.springframework.web.servlet_2.5.6.SEC01.jar </echo>
+		<copy file="../Rifidi-SDK/lib/spring/org.springframework.web.servlet_2.5.6.SEC01.jar" todir="${lib}" overwrite="true" />
+		<echo> copying ../Rifidi-SDK/lib/eclipseaspects/plugins/org.eclipse.equinox.weaving.caching_1.0.0.200905031323.jar </echo>
+		<copy file="../Rifidi-SDK/lib/eclipseaspects/plugins/org.eclipse.equinox.weaving.caching_1.0.0.200905031323.jar" todir="${lib}" overwrite="true" />
+		<echo> copying ../Rifidi-SDK/lib/rifidi/org.rifidi.edge.readerplugin.generic_1.0.0.jar </echo>
+		<copy file="../Rifidi-SDK/lib/rifidi/org.rifidi.edge.readerplugin.generic_1.0.0.jar" todir="${lib}" overwrite="true" />
+		<echo> copying ../Rifidi-SDK/lib/logging/com.springsource.slf4j.jcl_1.5.6.jar </echo>
+		<copy file="../Rifidi-SDK/lib/logging/com.springsource.slf4j.jcl_1.5.6.jar" todir="${lib}" overwrite="true" />
+		<echo> copying ../Rifidi-SDK/lib/plugins/com.mysql.jdbc_5.1.10.jar </echo>
+		<copy file="../Rifidi-SDK/lib/plugins/com.mysql.jdbc_5.1.10.jar" todir="${lib}" overwrite="true" />
+		<echo> copying ../Rifidi-SDK/lib/tomcat/com.springsource.org.apache.el_6.0.18.jar </echo>
+		<copy file="../Rifidi-SDK/lib/tomcat/com.springsource.org.apache.el_6.0.18.jar" todir="${lib}" overwrite="true" />
+		<echo> copying ../Rifidi-SDK/lib/eclipseaspects/plugins/org.eclipse.equinox.weaving.caching.j9_1.0.0.200905031323.jar </echo>
+		<copy file="../Rifidi-SDK/lib/eclipseaspects/plugins/org.eclipse.equinox.weaving.caching.j9_1.0.0.200905031323.jar" todir="${lib}" overwrite="true" />
+		<echo> copying ../Rifidi-SDK/lib/libraries/org.jdom_1.0.0.v200806100616.jar </echo>
+		<copy file="../Rifidi-SDK/lib/libraries/org.jdom_1.0.0.v200806100616.jar" todir="${lib}" overwrite="true" />
+		<echo> copying ../Rifidi-SDK/lib/javax/org.apache.geronimo.specs.geronimo-activation_1.1_spec_1.0.2.jar </echo>
+		<copy file="../Rifidi-SDK/lib/javax/org.apache.geronimo.specs.geronimo-activation_1.1_spec_1.0.2.jar" todir="${lib}" overwrite="true" />
+		<echo> copying ../Rifidi-SDK/lib/logging/com.springsource.slf4j.api_1.5.6.jar </echo>
+		<copy file="../Rifidi-SDK/lib/logging/com.springsource.slf4j.api_1.5.6.jar" todir="${lib}" overwrite="true" />
+		<echo> copying ../Rifidi-SDK/lib/rifidi/org.rifidi.edge.epcglobal.ale.api.logicalreader_1.0.1.jar </echo>
+		<copy file="../Rifidi-SDK/lib/rifidi/org.rifidi.edge.epcglobal.ale.api.logicalreader_1.0.1.jar" todir="${lib}" overwrite="true" />
+		<echo> copying ../Rifidi-SDK/lib/tomcat/com.springsource.org.apache.juli.extras_6.0.18.jar </echo>
+		<copy file="../Rifidi-SDK/lib/tomcat/com.springsource.org.apache.juli.extras_6.0.18.jar" todir="${lib}" overwrite="true" />
+		<echo> copying ../Rifidi-SDK/lib/libraries/org.apache.activemq.kahadb_5.3.0.jar </echo>
+		<copy file="../Rifidi-SDK/lib/libraries/org.apache.activemq.kahadb_5.3.0.jar" todir="${lib}" overwrite="true" />
+		<echo> copying ../Rifidi-SDK/lib/javax/com.springsource.javax.xml.rpc_1.1.0.jar </echo>
+		<copy file="../Rifidi-SDK/lib/javax/com.springsource.javax.xml.rpc_1.1.0.jar" todir="${lib}" overwrite="true" />
+		<echo> copying ../Rifidi-SDK/lib/spring/org.rifidi.org.springframework.aop_2.5.6.SEC01.jar </echo>
+		<copy file="../Rifidi-SDK/lib/spring/org.rifidi.org.springframework.aop_2.5.6.SEC01.jar" todir="${lib}" overwrite="true" />
+		<echo> copying ../Rifidi-SDK/lib/plugins/org.eclipse.equinox.simpleconfigurator_1.0.100.v20090520-1905.jar </echo>
+		<copy file="../Rifidi-SDK/lib/plugins/org.eclipse.equinox.simpleconfigurator_1.0.100.v20090520-1905.jar" todir="${lib}" overwrite="true" />
+		<echo> copying ../Rifidi-SDK/lib/javax/com.springsource.javax.servlet.jsp_2.1.0.jar </echo>
+		<copy file="../Rifidi-SDK/lib/javax/com.springsource.javax.servlet.jsp_2.1.0.jar" todir="${lib}" overwrite="true" />
+		<echo> copying ../Rifidi-SDK/lib/rifidi/org.rifidi.edge.app.tracking_1.0.0.jar </echo>
+		<copy file="../Rifidi-SDK/lib/rifidi/org.rifidi.edge.app.tracking_1.0.0.jar" todir="${lib}" overwrite="true" />
+		<echo> copying ../Rifidi-SDK/lib/javax/org.apache.geronimo.specs.geronimo-javamail_1.4_spec_1.3.0.jar </echo>
+		<copy file="../Rifidi-SDK/lib/javax/org.apache.geronimo.specs.geronimo-javamail_1.4_spec_1.3.0.jar" todir="${lib}" overwrite="true" />
+		<echo> copying ../Rifidi-SDK/lib/spring/com.springsource.net.sf.cglib_2.1.3.jar </echo>
+		<copy file="../Rifidi-SDK/lib/spring/com.springsource.net.sf.cglib_2.1.3.jar" todir="${lib}" overwrite="true" />
+		<echo> copying ../Rifidi-SDK/lib/spring/org.springframework.bundle.spring.aspects_2.5.5.jar </echo>
+		<copy file="../Rifidi-SDK/lib/spring/org.springframework.bundle.spring.aspects_2.5.5.jar" todir="${lib}" overwrite="true" />
+		<echo> copying ../Rifidi-SDK/lib/rifidi/org.rifidi.edge.epcglobal.ale.api.read.source_1.0.1.jar </echo>
+		<copy file="../Rifidi-SDK/lib/rifidi/org.rifidi.edge.epcglobal.ale.api.read.source_1.0.1.jar" todir="${lib}" overwrite="true" />
+		<echo> copying ../Rifidi-SDK/lib/rifidi/org.rifidi.edge.catalina.config.source_1.0.0.jar </echo>
+		<copy file="../Rifidi-SDK/lib/rifidi/org.rifidi.edge.catalina.config.source_1.0.0.jar" todir="${lib}" overwrite="true" />
+		<echo> copying ../Rifidi-SDK/lib/rifidi/org.rifidi.edge.api.source_1.3.0.jar </echo>
+		<copy file="../Rifidi-SDK/lib/rifidi/org.rifidi.edge.api.source_1.3.0.jar" todir="${lib}" overwrite="true" />
+		<echo> copying ../Rifidi-SDK/lib/commons/org.apache.commons.collections_3.2.0.v200803061811.jar </echo>
+		<copy file="../Rifidi-SDK/lib/commons/org.apache.commons.collections_3.2.0.v200803061811.jar" todir="${lib}" overwrite="true" />
+		<echo> copying ../Rifidi-SDK/lib/rifidi/org.rifidi.edge.core.source_5.4.0.jar </echo>
+		<copy file="../Rifidi-SDK/lib/rifidi/org.rifidi.edge.core.source_5.4.0.jar" todir="${lib}" overwrite="true" />
+		<echo> copying ../Rifidi-SDK/lib/javax/com.springsource.javax.servlet.jsp.jstl_1.1.2.jar </echo>
+		<copy file="../Rifidi-SDK/lib/javax/com.springsource.javax.servlet.jsp.jstl_1.1.2.jar" todir="${lib}" overwrite="true" />
+		<echo> copying ../Rifidi-SDK/lib/spring/org.springframework.core_2.5.6.SEC01.jar </echo>
+		<copy file="../Rifidi-SDK/lib/spring/org.springframework.core_2.5.6.SEC01.jar" todir="${lib}" overwrite="true" />
+		<echo> copying ../Rifidi-SDK/lib/spring/org.springframework.web_2.5.6.SEC01.jar </echo>
+		<copy file="../Rifidi-SDK/lib/spring/org.springframework.web_2.5.6.SEC01.jar" todir="${lib}" overwrite="true" />
+		<echo> copying ../Rifidi-SDK/lib/spring/org.springframework.orm_2.5.6.SEC01.jar </echo>
+		<copy file="../Rifidi-SDK/lib/spring/org.springframework.orm_2.5.6.SEC01.jar" todir="${lib}" overwrite="true" />
+		<echo> copying ../Rifidi-SDK/lib/javax/com.springsource.javax.servlet_2.5.0.jar </echo>
+		<copy file="../Rifidi-SDK/lib/javax/com.springsource.javax.servlet_2.5.0.jar" todir="${lib}" overwrite="true" />
+		<echo> copying ../Rifidi-SDK/lib/javax/com.springsource.javax.el_1.0.0.jar </echo>
+		<copy file="../Rifidi-SDK/lib/javax/com.springsource.javax.el_1.0.0.jar" todir="${lib}" overwrite="true" />
+		<echo> copying ../Rifidi-SDK/lib/rifidi/org.rifidi.edge.app.tracking.source_1.0.0.jar </echo>
+		<copy file="../Rifidi-SDK/lib/rifidi/org.rifidi.edge.app.tracking.source_1.0.0.jar" todir="${lib}" overwrite="true" />
+		<echo> copying ../Rifidi-SDK/lib/libraries/org.fosstrak.tdt.tdt_0.9.0.jar </echo>
+		<copy file="../Rifidi-SDK/lib/libraries/org.fosstrak.tdt.tdt_0.9.0.jar" todir="${lib}" overwrite="true" />
+		<echo> copying ../Rifidi-SDK/lib/commons/org.apache.commons.jxpath_1.3.0.jar </echo>
+		<copy file="../Rifidi-SDK/lib/commons/org.apache.commons.jxpath_1.3.0.jar" todir="${lib}" overwrite="true" />
+		<echo> copying ../Rifidi-SDK/lib/javax/com.springsource.javax.xml.ws_2.1.1.jar </echo>
+		<copy file="../Rifidi-SDK/lib/javax/com.springsource.javax.xml.ws_2.1.1.jar" todir="${lib}" overwrite="true" />
+		<echo> copying ../Rifidi-SDK/lib/spring/org.springframework.osgi.extender_1.1.3.RELEASE.jar </echo>
+		<copy file="../Rifidi-SDK/lib/spring/org.springframework.osgi.extender_1.1.3.RELEASE.jar" todir="${lib}" overwrite="true" />
+		<echo> copying ../Rifidi-SDK/lib/tomcat/com.springsource.org.apache.catalina_6.0.18.jar </echo>
+		<copy file="../Rifidi-SDK/lib/tomcat/com.springsource.org.apache.catalina_6.0.18.jar" todir="${lib}" overwrite="true" />
+		<echo> copying ../Rifidi-SDK/lib/rifidi/org.rifidi.edge.readerplugin.opticon.source_1.0.1.jar </echo>
+		<copy file="../Rifidi-SDK/lib/rifidi/org.rifidi.edge.readerplugin.opticon.source_1.0.1.jar" todir="${lib}" overwrite="true" />
+		<echo> copying ../Rifidi-SDK/lib/libraries/org.rifidi.org.relique.jdbc_1.0.0.jar </echo>
+		<copy file="../Rifidi-SDK/lib/libraries/org.rifidi.org.relique.jdbc_1.0.0.jar" todir="${lib}" overwrite="true" />
+		<echo> copying ../Rifidi-SDK/lib/spring/org.springframework.context.support_2.5.6.SEC01.jar </echo>
+		<copy file="../Rifidi-SDK/lib/spring/org.springframework.context.support_2.5.6.SEC01.jar" todir="${lib}" overwrite="true" />
+		<echo> copying ../Rifidi-SDK/lib/esper/com.espertech.esper_3.4.0.jar </echo>
+		<copy file="../Rifidi-SDK/lib/esper/com.espertech.esper_3.4.0.jar" todir="${lib}" overwrite="true" />
+		<echo> copying ../Rifidi-SDK/lib/rifidi/org.rifidi.edge.readerplugin.alien.source_2.0.7.jar </echo>
+		<copy file="../Rifidi-SDK/lib/rifidi/org.rifidi.edge.readerplugin.alien.source_2.0.7.jar" todir="${lib}" overwrite="true" />
+		<echo> copying ../Rifidi-SDK/lib/libraries/org.rifidi.org.llrp.ltk_1.0.6.jar </echo>
+		<copy file="../Rifidi-SDK/lib/libraries/org.rifidi.org.llrp.ltk_1.0.6.jar" todir="${lib}" overwrite="true" />
+		<echo> copying ../Rifidi-SDK/lib/spring/org.springframework.jms_2.5.6.SEC01.jar </echo>
 		<copy file="../Rifidi-SDK/lib/spring/org.springframework.jms_2.5.6.SEC01.jar" todir="${lib}" overwrite="true" />
+		<echo> copying ../Rifidi-SDK/lib/javax/org.apache.geronimo.specs.geronimo-jms_1.1_spec_1.1.1.jar </echo>
 		<copy file="../Rifidi-SDK/lib/javax/org.apache.geronimo.specs.geronimo-jms_1.1_spec_1.1.1.jar" todir="${lib}" overwrite="true" />
-		<copy file="../Rifidi-SDK/lib/delta-pack/plugins/org.eclipse.swt.motif.aix.ppc_3.5.2.v3557f.jar" todir="${lib}" overwrite="true" />
+		<echo> copying ../Rifidi-SDK/lib/libraries/org.apache.activemq.activemq-core_5.3.0.jar </echo>
 		<copy file="../Rifidi-SDK/lib/libraries/org.apache.activemq.activemq-core_5.3.0.jar" todir="${lib}" overwrite="true" />
+		<echo> copying ../Rifidi-SDK/lib/logging/com.springsource.org.apache.log4j_1.2.15.jar </echo>
 		<copy file="../Rifidi-SDK/lib/logging/com.springsource.org.apache.log4j_1.2.15.jar" todir="${lib}" overwrite="true" />
-		<copy file="../Rifidi-SDK/lib/javax/javax.servlet_2.5.0.v200806031605.jar" todir="${lib}" overwrite="true" />
+		<echo> copying ../Rifidi-SDK/lib/commons/com.springsource.org.apache.commons.codec_1.3.0.jar </echo>
 		<copy file="../Rifidi-SDK/lib/commons/com.springsource.org.apache.commons.codec_1.3.0.jar" todir="${lib}" overwrite="true" />
+		<echo> copying ../Rifidi-SDK/lib/rifidi/org.rifidi.edge.readerplugin.llrp_2.0.7.jar </echo>
 		<copy file="../Rifidi-SDK/lib/rifidi/org.rifidi.edge.readerplugin.llrp_2.0.7.jar" todir="${lib}" overwrite="true" />
+		<echo> copying ../Rifidi-SDK/lib/libraries/org.apache.activemq.activemq-pool_5.3.0.jar </echo>
 		<copy file="../Rifidi-SDK/lib/libraries/org.apache.activemq.activemq-pool_5.3.0.jar" todir="${lib}" overwrite="true" />
+		<echo> copying ../Rifidi-SDK/lib/libraries/org.rifidi.gnu.io_2.1.7 </echo>
 		<mkdir dir="${lib}/org.rifidi.gnu.io_2.1.7"/>
 		<copy todir="${lib}/org.rifidi.gnu.io_2.1.7"><fileset dir="../Rifidi-SDK/lib/libraries/org.rifidi.gnu.io_2.1.7"/></copy>
 	</target>

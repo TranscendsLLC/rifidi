@@ -134,7 +134,7 @@ class Gen:
             build_xml.write('\t</target>\n')
             
             build_xml.write('\t<target name="package" depends="compile">\n')	    
-            build_xml.write('\t\t<jar destfile="${bundle}" basedir="${src}" manifest="${manifest}"/>\n')
+            build_xml.write('\t\t<jar destfile="${bundle}" basedir="${build}" manifest="${manifest}"/>\n')
             build_xml.write('\t</target>\n')
             
             build_xml.write('</project>\n')
@@ -153,6 +153,7 @@ class Gen:
         #    print join (jar_bundle.root, jar_bundle.file)
         #    master_package += '\t\t<copy file="'+join(jar_bundle.root, jar_bundle.file)+'" todir="${lib}" overwrite="true" />\n'
         for root, file, is_dir in self.target_platform.values():
+            master_package += '\t\t<echo> copying '+join(root,file)+' </echo>\n'
             if is_dir:
                 print join(root, file)
                 master_package+= '\t\t<mkdir dir="${lib}/'+file+'"/>\n'
