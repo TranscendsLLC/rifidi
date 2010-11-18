@@ -83,7 +83,7 @@ do_not_package_libs = [
 ################################################################################
 
 launchers = ['../Rifidi-SDK/launchers']
-config_top_dir = 'config.1'
+config_top_dir = 'config'
 lib = 'lib'
 debian_dir = 'DEBIAN'
 deploy = 'deploy'
