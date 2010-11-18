@@ -131,30 +131,47 @@ def debian_packages():
                 if not re.search('.svn', export_dir) and re.search('linux', export_dir):
                     data_dir = join(start, config, export_dir, 'data')
                     sbin_dir = join('usr', 'local', 'sbin')
-                    rifidi_dir = join(deploy, config, export_dir, 'rifidi')
+                    src_rifidi_dir = join(deploy, config, export_dir, 'rifidi')
                     
                     print 'mkdir -p '+join(data_dir, sbin_dir)
-                    print 'cp -r'+join(debian, 'DEBIAN')+' '+data_dir
-                    print 'ln -s '+ join(os.getcwd(), rifidi_dir) +' '+join(data_dir, sbin_dir)
+                    print 'cp -r '+join(debian, 'DEBIAN')+' '+data_dir
+                    print 'ln -s '+ join(os.getcwd(), src_rifidi_dir) +' '+join(data_dir, sbin_dir)
                     #return
-                    retmk = subprocess.call(['mkdir', '-p', join(data_dir, sbin_dir)])
+                    retmk = subprocess.call(['mkdir', '-p', join(data_dir, sbin_dir, 'rifidi')])
                     retcp = subprocess.call(['cp', '-r', join(debian, 'DEBIAN'), data_dir])
-                    retln = subprocess.call(['ln', '-s', join(os.getcwd(), rifidi_dir),
-                                            join(data_dir, sbin_dir)])
+                    # we don't copy all the files
+                    for rifidi_root, rifidi_dirs, rifidi_files in os.walk(join(os.getcwd(), src_rifidi_dir)):
+                        for rifidi_dir in rifidi_dirs:
+                            rifidi_path = join(rifidi_root, rifidi_dir)
+                            start_index = rifidi_path.rfind('rifidi')
+                            print 'mkdir '+join(data_dir, sbin_dir,rifidi_path[start_index:])
+                            retmk = subprocess.call(['mkdir', join(data_dir, sbin_dir,rifidi_path[start_index:])])
+                            assert not retmk
+                            
+                        for rifidi_file in rifidi_files:
+                            rifidi_path = join(rifidi_root, rifidi_file)
+                            start_index = rifidi_path.rfind('rifidi')
+                            assert start_index != -1
+                            print 'ln -s '+ join(os.getcwd(), rifidi_root, rifidi_file)+' '+\
+                                    join(data_dir, sbin_dir,rifidi_path[start_index:])
+                            retln = subprocess.call(['ln', join(os.getcwd(), rifidi_root, rifidi_file),
+                                                    join(data_dir, sbin_dir,rifidi_path[start_index:])])
+                            assert not retln
+                            
                     for droot, ddirs, dfiles in os.walk(join(data_dir, 'DEBIAN')):
                         for ddir in ddirs:
                             if re.search('.svn', ddir):
-                                retrm1 = subprocess.call(['rm', '-rf',
+                                retrm = subprocess.call(['rm', '-rf',
                                                           join(droot, ddir)])
-                                assert not retrm1
+                                assert not retrm
                         
                     current = os.getcwd()
                     os.chdir(join(start, config, export_dir))
-                    print os.path
+                    print os.getcwd()
                     print 'dpkg --build data '+join(current, 'debian-packages')
-                    return 
                     retdpg = subprocess.call(['dpkg', '--build', 'data',
-                                              join(current, 'debian-packages')])
+                                              join(current, 'debian-packages',
+                                                   'rifidi-'+config+'.deb')])
                     os.chdir(current)
                     assert not retmk and not retcp and not retln
             
