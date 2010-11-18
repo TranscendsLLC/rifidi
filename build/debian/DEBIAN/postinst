@@ -5,7 +5,7 @@ sudo chmod +x /usr/local/sbin/rifidi/rifidi
 sudo chmod 755 /usr/local/sbin/rifidi/startupscript/rifidi
 
 # Start the init.d files
-sudo cp /usr/local/sbin/rifidi/startupscript/rifidi /etc/init.d
+sudo ln -s /usr/local/sbin/rifidi/startupscript/rifidi /etc/init.d/rifidi
 sudo update-rc.d rifidi defaults
 
 # Start the rifidiserver
