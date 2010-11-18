@@ -1,0 +1,14 @@
+#!/bin/sh
+
+# Change the permissions of the executables
+sudo chmod +x /usr/local/sbin/rifidi/rifidi-server
+sudo chmod 755 /usr/local/sbin/rifidi/rifidi-server.sh
+
+# Start the init.d files
+sudo ln -s /usr/local/sbin/rifidi/rifidi-server.sh /etc/init.d/rifidi-server
+sudo update-rc.d rifidi-server defaults
+
+# Start the rifidi-server
+sudo /etc/init.d/rifidi-server start
+
+
