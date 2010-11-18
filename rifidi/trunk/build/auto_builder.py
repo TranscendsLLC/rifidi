@@ -126,7 +126,7 @@ class Gen:
         for root, file, is_dir in self.target_platform.values():
             #master_package += '\t\t<echo> copying '+join(root,file)+' </echo>\n'
             if is_dir:
-                print join(root, file)
+                #print join(root, file)
                 master_package+= '\t\t<mkdir dir="${lib}/'+file+'"/>\n'
                 master_package += '\t\t<copy todir="${lib}/'+file+'"><fileset dir="'+join(root,file)+'"/></copy>\n'
             else:
@@ -210,15 +210,16 @@ class Dep:
         src.bundles = sorted(src.bundles, key=lambda bundle : bundle.build_level)
         
         for bundle in src.bundles:
-            print bundle.sym_name, bundle.build_level
-            
+            #print bundle.sym_name, bundle.build_level
+            pass
+        
         return True
         
     def resolve(self):
         exports = {}
         bundles = {}
         for bundle in src.bundles:
-            print bundle.sym_name   
+            #print bundle.sym_name   
             assert not bundle.sym_name in bundles 
             bundles[bundle.sym_name] = bundle
                 
@@ -229,11 +230,11 @@ class Dep:
         #print bundles
             
         for bundle in jars.bundles:
-            print '--->'+str(bundle.sym_name)+'<---', bundle
+            #print '--->'+str(bundle.sym_name)+'<---', bundle
             if not bundle.sym_name in bundles:
                 bundles[bundle.sym_name] = bundle
             else:
-                print 'Bundle '+str(bundle.sym_name)+' found both binary and src; using the src version (this should be an option)'
+                #print 'Bundle '+str(bundle.sym_name)+' found both binary and src; using the src version (this should be an option)'
                 assert join(bundle.root, bundle.file) in self.target_platform
                 del self.target_platform[join(bundle.root,bundle.file)]
                 
@@ -250,9 +251,9 @@ class Dep:
                 if required_bundle_info.name in bundles and \
                     required_bundle_info.is_in_range(\
                         bundles[required_bundle_info.name].version):
-                    print 'adding dep '+str(required_bundle_info.name)+\
-                          '-'+str(bundles[required_bundle_info.name].version),' to ',\
-                                  bundle.sym_name
+                    #print 'adding dep '+str(required_bundle_info.name)+\
+                    #      '-'+str(bundles[required_bundle_info.name].version),' to ',\
+                    #              bundle.sym_name
                     #print 'Adding the dep bundle = ', required_bundle_info.name, bundles[required_bundle_info.name]
                     
                     bundle.add_dep(bundles[required_bundle_info.name])
@@ -262,8 +263,6 @@ class Dep:
                         
                         
             for package in bundle.ipackages:
-                print package.name
-                
                 found = False
                 version_found = []
                 if package.name in exports:
@@ -273,13 +272,13 @@ class Dep:
                             #pdb.set_trace()
                         if package.is_in_range(ex_package.b_version):
                             found = True
-                            print 'adding dep '+ex_bundle.sym_name+' to '+bundle.sym_name, 'because of package ', package.name
+                            #print 'adding dep '+ex_bundle.sym_name+' to '+bundle.sym_name, 'because of package ', package.name
                             bundle.add_dep(ex_bundle)
                             if ex_bundle.jar:
                                 required_jars[ex_bundle.sym_name] = ex_bundle
                         else:
                             version_found.append(ex_package)
-                            print ' pde build doesnt do the right thing either'
+                            #print ' pde build doesnt do the right thing either'
                             
                         #else:
                             #import pdb
@@ -333,7 +332,7 @@ class Jars:
             bundle.file = file
             bundle.jar = True
             if bundle.sym_name == '':
-                print 'Bundle '+join(root, file)+' has no symbolic name; skipping it'
+                #print 'Bundle '+join(root, file)+' has no symbolic name; skipping it'
                 if not (bundle.file == 'aspectjrt.jar' or \
                         bundle.file == 'aspectjweaver.jar' or\
                         bundle.file == 'cglib-nodep_2.2.jar' or \
@@ -363,7 +362,7 @@ class Jars:
         
     def find(self, jar_path):
         for i in jar_path:
-            print 'jar_path: ', i
+            #print 'jar_path: ', i
             for root, dirs, files in os.walk(i):
                 for dir in dirs:
                     if dir in bundle_dirs:
@@ -399,7 +398,7 @@ class Src:
             bundle.root = root
             #print bundle, bundle.sym_name
             if libs.keys().__len__() > 0:
-                print libs
+                #print libs
                 bundle.extra_libs = libs
                 #assert False
             self.bundles.append(bundle)
@@ -427,7 +426,7 @@ class Src:
                         manifest = (root, dir)
                     if dir == 'lib':
                         libs = self.find_libs(join(root, dir))
-                        print libs
+                        #print libs
                         #assert False
                         
                 manifest += (libs,)

@@ -1,4 +1,6 @@
 #version=1
+com.ambient.labtrack,1.0.0,plugins/com.ambient.labtrack_1.0.0.jar,4,true
+com.ambient.labtrack.messages,1.0.0,plugins/com.ambient.labtrack.messages_1.0.0.jar,4,true
 com.espertech.esper,3.4.0,plugins/com.espertech.esper_3.4.0.jar,4,true
 com.mysql.jdbc,5.1.10,plugins/com.mysql.jdbc_5.1.10.jar,4,true
 com.springsource.javax.annotation,1.0.0,plugins/com.springsource.javax.annotation_1.0.0.jar,4,true
