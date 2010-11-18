@@ -1,0 +1,72 @@
+Project,Bundle name,License
+AspectJ,org.aspectj.runtime,EPL
+AspectJ,org.apsectj.weaver,EPL
+Java Language Annotations from Glassfish ,com.springsource.javax.annotation,CDDL
+Java EJB API,com.springsource.javax.ejb,CDDL
+Java Expression Language API from Sun Java Application Server,com.springsource.javax.el,CDDL
+J2EE MEJB from Apache Geronimo,com.springsource.javax.management.j2ee,Apache 2.0
+Java Persistence API from Glassfish,com.springsource.javax.persistence,CDDL
+JavaServer Pages API,com.springsource.javax.servlet.jsp,CDDL
+Java JSP Standard Tag Library from Glassfish,com.springsource.javax.servlet.jsp.jstl,CDDL
+JavaServer API,com.springsource.javax.servlet,CDDL
+Java XML Binding API,com.springsource.javax.xml.bind,CDDL
+JAX-RPC API,com.springsource.javax.xml.rpc,CDDL
+JAX-SOAP API,com.springsource.javax.xml.soap,CDDL
+Java Web Services API,com.springsource.javax.xml.ws,CDDL
+Java XML Streaming API (Stax),com.springsource.javax.xml.stream,CDDL
+CGLib,com.springsource.net.sf.cglib,Apache 2.0
+AOPalliance AOP,com.springsource.org.aopalliance,Public Doman
+Apache Tomcat Catalina,com.springsource.org.apache.catalina,Apache 2.0
+Apache Commons Codec,com.springsource.org.apache.commons.codec,Apache 2.0
+Apache Commons Logging,com.springsource.org.apache.commons.logging,Apache 2.0
+Apache Coyote,com.springsource.org.apache.coyote,Apache 2.0
+Apache Expression Language,com.springsource.org.apache.el,Apache 2.0
+Apache Jasper JSP Support,com.springsource.org.apache.jasper,Apache 2.0
+Apache Jasper Java Developer Tools (JDT) bundle,com.springsource.org.apache.jasper.org.eclipse.jdt,Apache 2.0
+Apache Java Util Logging Extras,com.springsource.org.apache.juli.extras,Apache 2.0
+Apache Log4J,com.springsource.org.apache.log4j,Apache 2.0
+Apache Standard Tag Libraries,com.springsource.org.apache.taglibs.standard,Apache 2.0
+Apache Ant,com.springsource.org.apache.tools.ant,Apache 2.0
+SLF4J API,com.springsource.slf4j.api,Custom(http://www.slf4j.org/license.html)
+SLF4J Jakarta Commons Logging Binding,com.springsource.slf4j.jcl,Custom(http://www.slf4j.org/license.html)
+SLF4J Log4J Binding,com.springsource.slf4j.log4j,Custom(http://www.slf4j.org/license.html)
+Java Servlet API from Tomcat,javax.servlet,Apache 2.0
+ActiveMQ,org.apache.activemq.activemq-core,Apache 2.0
+ActiveMQ,org.apache.activemq.activemq-pool,Apache 2.0
+Apache Commons Bean Utils,org.apache.commons.beanutils,Apache 2.0
+Apache Commons Collections,org.apache.commons.collections,Apache 2.0
+Apache Commons Digester,org.apache.commons.digester,Apache 2.0
+Apaache Commons Jxpath,org.apache.commons.jxpath,Apache 2.0
+Apache Commons Lang,org.apache.commons.lang,Apache 2.0
+Apache Commons Pool,org.apache.commons.pool,Apache 2.0
+Java Activation API from Geronimo,org.apache.geronimo.specs.geronimo-activation,Apache 2.0
+Javamail API from Geronimo,org.apache.geronimo.specs.geronimo-javamail,Apache 2.0
+Java JMS API from Geronimo,org.apache.geronimo.specs.geronimo-jms,Apache 2.0
+Apache Mina,org.apache.mina-core,Apache 2.0
+Eclipse Equinox,org.eclipse.equinox.launcher,EPL
+Eclipse Equionx,org.eclipse.equionox.simpleconfigurator,EPL
+Eclipse Equionox,org.eclipse.equinox.weaving.aspectj,EPL
+Eclipse Equionx,org.eclipse.equinox.weaving.hook,EPL
+Eclipse Equionx,org.eclipse.osgi,EPL
+Fosstrak TDT,org.fosstrak.tdt.tdt,LGPL
+JDOM,org.jdom,Custom(http://www.jdom.org/docs/faq.html#a0030)
+Esper,com.espertech.esper,GPL
+LTK-Java,org.llrp.ltk,Apache 2.0
+ANTLR,org.antlr.runtime,BSD
+Spring Framewok,org.springframework.aop,Apache 2.0
+Spring Framewok,org.springframework.context,Apache 2.0
+Spring Framewok,org.springframework.beans,Apache 2.0
+Spring DM,org.springframework.bundle.osgi.web.extender,Apache 2.0
+Spring DM,org.springframework.bundle.spring.aspects,Apache 2.0
+Spring Framewok,org.springframework.context.support,Apache 2.0
+Spring Framewok,org.springframework.core,Apache 2.0
+Spring Framewok,org.springframework.jms,Apache 2.0
+Spring DM,org.springframework.osgi.catalina.start.osgi,Apache 2.0
+Spring DM,org.springframework.osgi.core,Apache 2.0
+Spring DM,org.springframework.osgi.extender,Apache 2.0
+Spring DM,org.springframework.osgi.io,Apache 2.0
+Spring DM,org.springframework.osgi.web,Apache 2.0
+Spring Security,org.springframework.security.core,Apache 2.0
+Spring Framewok,org.springframework.transaction,Apache 2.0
+Spring Framewok,org.springframework.web,Apache 2.0
+Spring Framewok,org.springframework.web.servlet,Apache 2.0
