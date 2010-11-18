@@ -171,7 +171,7 @@ def debian_packages():
                     print 'dpkg --build data '+join(current, 'debian-packages')
                     retdpg = subprocess.call(['dpkg', '--build', 'data',
                                               join(current, 'debian-packages',
-                                                   'rifidi-'+config+'.deb')])
+                                                   'rifidi-'+config+'-'+export_dir+'.deb')])
                     os.chdir(current)
                     assert not retmk and not retcp and not retln
             
