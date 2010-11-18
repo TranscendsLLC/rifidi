@@ -87,5 +87,5 @@ lib = 'lib'
 debian = 'debian'
 deploy = 'deploy1/'
 exports = 'export/'
-configurations = ['ambient-server-conf', 'edge-server-conf']
+configurations = ['ambient', 'edge']
 

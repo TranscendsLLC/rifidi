@@ -3,7 +3,7 @@ Version: 1.2
 Section: web 
 Depends: sun-java6-jre
 Maintainer: [support@pramari.com]
-Architecture: i386
+Architecture: amd64 
 Replaces: 
 Provides: rifidi
 Description: 
