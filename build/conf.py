@@ -1,5 +1,11 @@
 #!/usr/bin/env python
 
+################################################################################
+#
+# Auto Builder configuration settings
+#
+################################################################################
+
 jar_path = [
 '../Rifidi-SDK/lib/']
 
@@ -17,19 +23,6 @@ src_path = [
 '../org.rifidi.edge.init',
 '../org.rifidi.edge.core',
 '../org.rifidi.edge.app.diag']
-#,
-#
-#'../org.rifidi.edge.adapter.serialsensor',
-#'../org.rifidi.edge.adapter.barcode',
-#'../org.rifidi.edge.adapter.generic',
-#'../org.rifidi.edge.adapter.awid',
-#'../org.rifidi.edge.adapter.thingmagic',
-#'../org.rifidi.edge.adapter.llrp',
-#'../org.rifidi.edge.adapter.alien',
-#'../org.rifidi.edge.adapter.opticon',
-#'../org.rifidi.edge.epcglobal.ale.api.logicalreader',
-#'../org.rifidi.edge.epcglobal.ale.api.read',
-#]
 
 do_not_package_libs = [
 'org.eclipse.swt.gtk.linux.s390x_3.5.0.v3550b.jar',
@@ -82,4 +75,17 @@ do_not_package_libs = [
 'org.eclipse.core.filesystem.solaris.sparc_1.1.0.R35x_v20091203-1235.jar',
 'org.rifidi.edge.readerplugin.acura_1.0.1.jar',
 'org.eclipse.jdt.launching.ui.macosx_1.0.0.v20090527.jar']
+
+################################################################################
+#
+# Package Manager configuration settings
+#
+################################################################################
+
+launchers = ['../Rifidi-SDK/launchers']
+lib = 'lib'
+debian = 'debian'
+deploy = 'deploy1/'
+exports = 'export/'
+configurations = ['ambient-server-conf', 'edge-server-conf']
 

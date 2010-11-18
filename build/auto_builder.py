@@ -18,41 +18,7 @@ class Gen:
         self.bundles = deps.bundles
         self.required_jars = deps.required_jars.values()
         self.target_platform = deps.target_platform
-        
-#<?xml version="1.0" encoding="UTF-8"?>
-#<project name="BundleName" default="deploy" basedir=".">
-#    <property name="version" value="1.0.0" />
-#
-#
-#
-#    classpath = '<path id="classpath.buildtime"> \n'+\
-#                '<pathelement location="/home/to/equinox/equinox.jar" />\n'+\
-#                '<pathelement location="/home/to/dependency.jar" />\n'+\
-#                '</path>\n'
-#
-#
-#    <target name="compile" depends="init" description="compile the source ">
-#        <javac srcdir="${src}" destdir="${build}" classpathref="classpath.buildtime" />
-#    </target>
-#
-#    <target name="dist" depends="compile" description="generate the distribution">
-#        <mkdir dir="${dist}"/>
-#        <jar jarfile="${dist}/${ant.project.name}-${version}.jar" basedir="${build}" manifest="META-INF/MANIFEST.MF">
-#            <manifest>
-#                <attribute name="Bundle-Name" value="${ant.project.name}"/>
-#                <attribute name="Bundle-Version" value="${version}"/>
-#            </manifest>
-#        </jar>
-#    </target>
-#
-#    <target name="deploy" depends="dist">
-#        <copy file="${dist}/${buildfilename}" todir="${deployloc}" overwrite="true"/>
-#    </target>
-#
-#    clean = '<target name="clean" description="clean up">\n'+\
-#             '<delete dir="${build}" />' +\
-#            '</target> '\
-
+    
     def __build_classpath__(self, bundle):
         if bundle.classpath == None:
             bundle.classpath = {}
@@ -103,6 +69,7 @@ class Gen:
             build_xml.write('\t<property name="src" value="'+str(bundle.root)+'/src" />\n')
             build_xml.write('\t<property name="build" value="'+str(bundle.root)+'/bin" />\n')
             build_xml.write('\t<property name="manifest" value="'+str(bundle.root)+'/META-INF/MANIFEST.MF" />\n')
+            build_xml.write('\t<property name="metainf" value="'+str(bundle.root)+'/META-INF" />\n')
             build_xml.write('\t<property name="bundle" value="'+str(home)+'/lib/'+str(bundle.sym_name)+'_'+\
                             bundle.version.__str__()+'.jar" />\n')
             
@@ -133,8 +100,12 @@ class Gen:
             build_xml.write('\t\t</javac>\n')
             build_xml.write('\t</target>\n')
             
-            build_xml.write('\t<target name="package" depends="compile">\n')	    
-            build_xml.write('\t\t<jar destfile="${bundle}" basedir="${build}" manifest="${manifest}"/>\n')
+            build_xml.write('\t<target name="package" depends="compile">\n')
+            
+            build_xml.write('\t\t<jar destfile="${bundle}" basedir="${build}" manifest="${manifest}">\n')
+            build_xml.write('\t\t\t<metainf dir="${metainf}"/>\n')
+            build_xml.write('\t\t</jar>\n')
+    
             build_xml.write('\t</target>\n')
             
             build_xml.write('</project>\n')
