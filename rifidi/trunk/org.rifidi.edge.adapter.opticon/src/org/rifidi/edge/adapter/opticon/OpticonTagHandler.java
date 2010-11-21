@@ -9,7 +9,7 @@
  *  License:	GNU Public License (GPL)
  *  				http://www.opensource.org/licenses/gpl-3.0.html
  */
-package org.rifidi.edge.adapter.opticon.tags;
+package org.rifidi.edge.adapter.opticon;
 
 import java.util.HashSet;
 import java.util.Set;
