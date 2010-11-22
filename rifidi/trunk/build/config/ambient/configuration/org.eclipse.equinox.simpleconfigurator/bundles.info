@@ -1,5 +1,6 @@
 #version=1
 com.ambient.labtrack,1.0.0,plugins/com.ambient.labtrack_1.0.0.jar,4,true
+com.ambient.labtrack.test,1.0.0,plugins/com.ambient.labtrack.test_1.0.0.jar,4,false
 com.ambient.labtrack.messages,1.0.0,plugins/com.ambient.labtrack.messages_1.0.0.jar,4,true
 com.espertech.esper,3.4.0,plugins/com.espertech.esper_3.4.0.jar,4,true
 com.mysql.jdbc,5.1.10,plugins/com.mysql.jdbc_5.1.10.jar,4,true
@@ -65,15 +66,10 @@ org.rifidi.edge.app.diag,1.0.0,plugins/org.rifidi.edge.app.diag_1.0.0.jar,4,true
 org.rifidi.edge.app.tracking,1.0.0,plugins/org.rifidi.edge.app.tracking_1.0.0.jar,4,true
 org.rifidi.edge.catalina.config,1.0.0,plugins/org.rifidi.edge.catalina.config_1.0.0.jar,4,false
 org.rifidi.edge.core,5.4.0,plugins/org.rifidi.edge.core_5.4.0.jar,4,true
-#org.rifidi.edge.epcglobal.ale.api.logicalreader,1.0.1,plugins/org.rifidi.edge.epcglobal.ale.api.logicalreader_1.0.1.jar,4,true
-#org.rifidi.edge.epcglobal.ale.api.read,1.0.1,plugins/org.rifidi.edge.epcglobal.ale.api.read_1.0.1.jar,4,true
 org.rifidi.edge.init,1.0.1,plugins/org.rifidi.edge.init_1.0.1.jar,2,true
-org.rifidi.edge.readerplugin.alien,2.0.7,plugins/org.rifidi.edge.readerplugin.alien_2.0.7.jar,4,true
-org.rifidi.edge.readerplugin.awid,1.0.7,plugins/org.rifidi.edge.readerplugin.awid_1.0.7.jar,4,true
-org.rifidi.edge.readerplugin.generic,1.0.0,plugins/org.rifidi.edge.readerplugin.generic_1.0.0.jar,4,true
-org.rifidi.edge.readerplugin.llrp,2.0.7,plugins/org.rifidi.edge.readerplugin.llrp_2.0.7.jar,4,true
-org.rifidi.edge.readerplugin.opticon,1.0.1,plugins/org.rifidi.edge.readerplugin.opticon_1.0.1.jar,4,true
-org.rifidi.edge.readerplugin.thingmagic,1.0.4,plugins/org.rifidi.edge.readerplugin.thingmagic_1.0.4.jar,4,true
+org.rifidi.edge.adapter.llrp,2.0.7,plugins/org.rifidi.edge.adapter.llrp_2.0.7.jar,4,true
+org.rifidi.edge.adapter.opticon,1.0.1,plugins/org.rifidi.edge.adapter.opticon_1.0.1.jar,4,true
+org.rifidi.edge.adapter.thingmagic,1.0.4,plugins/org.rifidi.edge.adapter.thingmagic_1.0.4.jar,4,true
 org.rifidi.gnu.io,2.1.7,plugins/org.rifidi.gnu.io_2.1.7,4,true
 org.rifidi.org.antlr.runtime,3.1.1,plugins/org.rifidi.org.antlr.runtime_3.1.1.jar,4,true
 org.rifidi.org.apache.mina-core,1.0.0,plugins/org.rifidi.org.apache.mina-core_1.0.0.jar,4,true
