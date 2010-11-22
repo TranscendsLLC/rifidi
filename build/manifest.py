@@ -16,6 +16,8 @@ class Bundle:
         self.root = ''
         self.jar = False
         self.file = ''
+        self.fragment = False
+        self.fragment_host = None
         self.deps = {}
         self.extra_libs = None
         self.build_level = 0
@@ -222,7 +224,16 @@ class Ast:
             self.bundle.version = p[2]
         else:
             self.bundle.version = Version()
-            
+
+    def fragment_host(self,p):
+        assert len(p) == 3 or len(p) == 5
+        # another h4x0r
+        self.bundle.fragment = True
+        self.bundle.fragment_host = Package(p[2])
+        if len(p) == 5:
+            self.bundle.fragment_host.set_version_range(p[4][0], p[4][1], p[4][2], p[4][3])
+        self.bundle.add_required_bundle_lookup_info(self.bundle.fragment_host)
+        
     def packages(self, p):
         #print ' packages '
         #print p[0], p[1], p[2] 
@@ -241,6 +252,7 @@ class Ast:
                 self.bundle.add_epackage(i)
                 #print '---- adding export package ----', i                        
             elif cmd == 'Require-Bundle:':
+                # h4x0r
                 self.bundle.add_required_bundle_lookup_info(i)
             else:
                 assert False
@@ -355,7 +367,8 @@ class ManifestParser:
         'Bundle-SymbolicName:': 'BUNDLE_SYMBOLIC_NAME',
         'Bundle-Version:' : 'BUNDLE_VERSION',
         'Bundle-Name:' : 'BUNDLE_NAME',
-        'Require-Bundle:' : 'REQUIRE_BUNDLE'
+        'Require-Bundle:' : 'REQUIRE_BUNDLE',
+        'Fragment-Host:' : 'FRAGMENT_HOST'
     }
         
     tokens = ('DOT','COLON', 'COMMA', 'SEMI_COLON', 'QUOTE', 'LPAREN', 'RPAREN',
@@ -427,9 +440,15 @@ class ManifestParser:
         '''header : packages
                  | bundle_symbolic_name
                  | bundle_version
-                 | bundle_name'''
+                 | bundle_name
+                 | fragment_host'''
         pass
 
+    def p_fragment_host(self, p):
+        '''fragment_host : FRAGMENT_HOST package_name
+                        | FRAGMENT_HOST package_name SEMI_COLON parameter'''
+        self.ast.fragment_host(p)
+            
     def p_bundle_version(self, p):
         '''bundle_version : BUNDLE_VERSION version_number
                         | BUNDLE_VERSION ID'''
@@ -573,11 +592,13 @@ class ManifestParser:
                 or header.startswith('Export-Package:') \
                 or header.startswith('Require-Bundle:') \
                 or header.startswith('Bundle-SymbolicName:') \
+                or header.startswith('Fragment-Host:') \
                 or header.startswith('Bundle-Version:'):
                 #if header.startswith('Bundle-Version:'):
                 #    print header
                 # h4x0r
-                if header.startswith('Require-Bundle:'):
+                if header.startswith('Require-Bundle:') \
+                    or header.startswith('Fragment-Host:'):
                     header = re.sub(r'bundle-', '', header)
                 #print header
                 

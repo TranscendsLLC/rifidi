@@ -18,6 +18,7 @@ bundle_dirs = [
 src_path = [
 
 '../com.ambient.labtrack',
+'../com.ambient.labtrack.test',
 '../com.ambient.labtrack.messages',
 '../org.rifidi.edge.api',
 '../org.rifidi.edge.init',
@@ -83,7 +84,7 @@ do_not_package_libs = [
 ################################################################################
 
 launchers = ['../Rifidi-SDK/launchers']
-config_top_dir = 'config'
+config_top_dir = 'config.1'
 lib = 'lib'
 debian_dir = 'DEBIAN'
 deploy = 'deploy'
