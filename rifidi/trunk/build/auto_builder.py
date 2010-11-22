@@ -247,14 +247,19 @@ class Dep:
         required_jars = {}
         # package.name = [(pacakge, bundle), (package, bundle)]
         for bundle in src.bundles:
+            
+            if bundle.fragment:
+                assert bundle.fragment_host.name in bundles
+              
             for required_bundle_info in bundle.rbundles:
                 if required_bundle_info.name in bundles and \
                     required_bundle_info.is_in_range(\
                         bundles[required_bundle_info.name].version):
-                    #print 'adding dep '+str(required_bundle_info.name)+\
-                    #      '-'+str(bundles[required_bundle_info.name].version),' to ',\
-                    #              bundle.sym_name
-                    #print 'Adding the dep bundle = ', required_bundle_info.name, bundles[required_bundle_info.name]
+                    if bundle.fragment and bundle.sym_name == 'com.ambient.labtrack.test':
+                        print 'adding dep '+str(required_bundle_info.name)+\
+                              '-'+str(bundles[required_bundle_info.name].version),' to ',\
+                                      bundle.sym_name
+                        print 'Adding the dep bundle = ', required_bundle_info.name, bundles[required_bundle_info.name]
                     
                     bundle.add_dep(bundles[required_bundle_info.name])
                     if bundles[required_bundle_info.name].jar:
