@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tns:TypeMap xmlns:tns="http://www.example.org/relationships/"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.example.org/relationships/ relationships.xsd ">
+	<TypeDefinition TypeID="10" TypeName="JAR" />
+	<TypeDefinition TypeID="20" TypeName="BAG" />
+	<TypeDefinition TypeID="30" TypeName="EMPLOYEE BADGE" />
+	<TypeDefinition TypeID="40" TypeName="TOTE" />
+	<TypeDefinition TypeID="50" TypeName="VEHICLE" />
+	<TypeDefinition TypeID="60" TypeName="TEST TUBE" />
+	<TypeDefinition TypeID="70" TypeName="CASETTE" />
+	<TypeDefinition TypeID="80" TypeName="SLIDE" />
+	<TypeDefinition TypeID="90" TypeName="FOLDER" />
+	<TypeDefinition TypeID="A0" TypeName="STORAGE TRAY CASSETTES" />
+	<TypeDefinition TypeID="B0" TypeName="STORAGE TRAY SLIDES" />
+	<TypeDefinition TypeID="C0" TypeName="BASKET CASSETTES" />
+</tns:TypeMap>

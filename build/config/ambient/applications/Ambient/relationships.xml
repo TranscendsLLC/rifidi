@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tns:Relationships xmlns:tns="http://www.example.org/relationships/"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.example.org/relationships/ ../xsds/Relationships.xsd ">
+	<!-- Bag to Test Tube and Jar -->
+	<Parent typeID="20">
+		<Child typeID="60" />
+		<Child typeID="10" />
+	</Parent>
+	<!--  Jar to Cassette-->
+	<Parent typeID="10">
+		<Child typeID="70" />
+	</Parent>
+	<!--  Cassette to Slide-->
+	<Parent typeID="70">
+		<Child typeID="80" />
+	</Parent>
+	<!--  Folder to slide-->
+	<Parent typeID="90">
+		<Child typeID="80" />
+	</Parent>
+	<!-- Cassette Storage Tray to slide -->
+	<Parent typeID="A0">
+		<Child typeID="80" />
+	</Parent>
+	<!-- Slide storage tray to Cassette -->
+	<Parent typeID="B0">
+		<Child typeID="70" />
+	</Parent>
+	<!-- Cassette Baseket to Cassette -->
+	<Parent typeID="C0">
+		<Child typeID="70" />
+	</Parent>
+</tns:Relationships>
