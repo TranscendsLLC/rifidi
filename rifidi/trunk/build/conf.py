@@ -22,7 +22,8 @@ src_path = [
 '../org.rifidi.edge.api',
 '../org.rifidi.edge.init',
 '../org.rifidi.edge.core',
-'../org.rifidi.edge.app.diag']
+'../org.rifidi.edge.app.diag',
+'../org.rifidi.edge.adapter.llrp']
 
 do_not_package_libs = [
 'com.springsource.org.junit_4.8.1.jar',
