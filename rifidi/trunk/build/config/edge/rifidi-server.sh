@@ -74,7 +74,10 @@ do_stop()
 	# sleep for some time.
 	start-stop-daemon --stop --quiet --oknodo --retry=0/30/KILL/5 --exec $DAEMON
 	[ "$?" = 2 ] && return 2
-	# Many daemons don't delete their pidfiles when they exit.
+
+	# XXX - Hacked a python script in place because this thing doesn't work  
+	python $DIR/rifidi-shutdown.py
+        # Many daemons don't delete their pidfiles when they exit.
 	rm -f $PIDFILE
 	return "$RETVAL"
 }

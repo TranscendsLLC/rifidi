@@ -58,6 +58,7 @@ class Gen:
 
         for bundle in self.src:
             assert bundle.root != ''
+            extra_libs = False
             home = os.getcwd()
             os.chdir(bundle.root)
             build_xml = open('./build.xml', 'w')
@@ -78,6 +79,7 @@ class Gen:
             build_xml.write('\t<path id="classpath">\n')
             for location in bundle.classpath.keys():
                 build_xml.write('\t\t<pathelement location="'+str(location)+'"/>\n')
+
             build_xml.write('\t</path>\n')
 
             build_xml.write('\t<target name="init" depends="clean">\n'+\
@@ -101,11 +103,21 @@ class Gen:
             build_xml.write('\t</target>\n')
             
             build_xml.write('\t<target name="package" depends="compile">\n')
-            
+            for i in bundle.extra_libs:
+                build_xml.write('\t\t<mkdir dir="tmp1"/>\n')
+                build_xml.write('\t\t<unjar src="'+i+'" dest="tmp1" />\n')
+                extra_libs = True
+            if extra_libs:    
+                build_xml.write('\t\t<delete dir="'+join('tmp1', 'META-INF')+'"/>\n')
+                build_xml.write('\t\t<copy todir="${build}">\n')
+                build_xml.write('\t\t\t<fileset dir="tmp1"><include name="**"/></fileset>\n')
+                build_xml.write('\t\t</copy>\n')
+                build_xml.write('\t\t<delete dir="tmp1"/>\n')
+
             build_xml.write('\t\t<jar destfile="${bundle}" basedir="${build}" manifest="${manifest}">\n')
             build_xml.write('\t\t\t<metainf dir="${metainf}"/>\n')
             build_xml.write('\t\t</jar>\n')
-    
+                
             build_xml.write('\t</target>\n')
             
             build_xml.write('</project>\n')
@@ -219,7 +231,7 @@ class Dep:
         exports = {}
         bundles = {}
         for bundle in src.bundles:
-            #print bundle.sym_name   
+            print bundle.sym_name
             assert not bundle.sym_name in bundles 
             bundles[bundle.sym_name] = bundle
                 
@@ -416,7 +428,6 @@ class Src:
     def find(self, src_path):
         for i in src_path:
             for root, dirs, files in os.walk(i):
-                
                 libs = {}
                 manifest = ()
                 manifest_found = False

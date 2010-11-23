@@ -1,14 +1,12 @@
 #!/usr/bin/env python
 
-import os
-import re
-import time
-import unittest
 import subprocess
+import unittest
+import time
+import os
 
 from os.path import join
 from telnetlib import Telnet
-from subprocess import Popen, PIPE
 
 class RifidiSmokeTest(unittest.TestCase):
     
@@ -19,34 +17,11 @@ class RifidiSmokeTest(unittest.TestCase):
         assert not ret and not ret1 and not ret2
     
     def test_init_script(self):
-        ret = subprocess.call(['/etc/init.d/rifidi-server', 'stop'])
-        time.sleep(1.0)
-        ret = subprocess.call(['/etc/init.d/rifidi-server', 'stop'])
-        time.sleep(1.0)
-
-        p1 = Popen(['ps','ax'], stdout=PIPE)
-        p2 = Popen(['grep', 'rifidi'], stdin=p1.stdout, stdout=PIPE)
-        output = p2.communicate()[0]
-        output = output.split('\n')
-        for i in output:
-            if i == '':
-                continue
-            elif not re.search('grep', i) and not re.search('python', i):
-                self.fail()
-        
-        ret = subprocess.call(['sudo', '/etc/init.d/rifidi-server', 'start'])        
-        p1 = Popen(['ps','ax'], stdout=PIPE)
-        p2 = Popen(['grep', 'rifidi'], stdin=p1.stdout, stdout=PIPE)
-        output = p2.communicate()[0]
-        output = output.split('\n')
-        count = 0
- #       print output
-#        time.sleep(20.0)
-        for i in output:
-            if not re.search('grep', i) and not re.search('python', i) and not i == '':
-                count += 1
-        self.assertEquals(2,count)
-
+        #print 'here'
+        #ret = subprocess.call(['sudo', '/etc/init.d/rifidi-server', 'stop'])
+        #assert not ret
+        pass
+    
     def test_rifidi_server(self):
         
         ret = subprocess.call(['sudo', '/etc/init.d/rifidi-server', 'stop'])
@@ -87,9 +62,8 @@ class RifidiSmokeTest(unittest.TestCase):
             if value == '':
                 done = True
         self.assertEqual(expected, actual)
-        ret1 = subprocess.call(['sudo', '/etc/init.d/rifidi-server', 'stop'])
-        ret1 = subprocess.call(['sudo', '/etc/init.d/rifidi-server', 'start'])
-        print '--->'+actual+'<---'
+            
+        #print '--->'+actual+'<---'
             
             
 if __name__ == '__main__':

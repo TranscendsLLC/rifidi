@@ -1,7 +1,7 @@
 Package: rifidi
 Version: 1.2
 Section: web 
-Depends: sun-java6-jre
+Depends: sun-java6-jre, python
 Maintainer: [support@pramari.com]
 Architecture: i386
 Replaces: 

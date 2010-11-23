@@ -102,6 +102,7 @@
 		<copy file="../Rifidi-SDK/lib/tomcat/com.springsource.org.apache.coyote_6.0.18.jar" todir="${lib}" overwrite="true" />
 		<copy file="../Rifidi-SDK/lib/rifidi/org.rifidi.edge.readerplugin.awid.source_1.0.7.jar" todir="${lib}" overwrite="true" />
 		<copy file="../Rifidi-SDK/lib/rifidi/org.rifidi.edge.readerplugin.alien.commands_1.0.2.jar" todir="${lib}" overwrite="true" />
+		<copy file="../Rifidi-SDK/lib/rifidi/org.rifidi.edge.readerplugin.serialsensor.source_1.0.0.201009301229.jar" todir="${lib}" overwrite="true" />
 		<copy file="../Rifidi-SDK/lib/spring/org.springframework.security.core_2.0.4.jar" todir="${lib}" overwrite="true" />
 		<copy file="../Rifidi-SDK/lib/spring/org.springframework.web.servlet_2.5.6.SEC01.jar" todir="${lib}" overwrite="true" />
 		<copy file="../Rifidi-SDK/lib/eclipseaspects/plugins/org.eclipse.equinox.weaving.caching_1.0.0.200905031323.jar" todir="${lib}" overwrite="true" />
