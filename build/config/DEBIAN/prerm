@@ -3,4 +3,5 @@
 sudo /etc/init.d/rifidi-server stop
 sudo update-rc.d rifidi-server defaults
 sudo rm -f /etc/init.d/rifidi-server
+sudo rm -rf /usr/local/sbin/rifidi
 
