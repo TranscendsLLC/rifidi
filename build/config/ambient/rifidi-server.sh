@@ -74,7 +74,10 @@ do_stop()
 	# sleep for some time.
 	start-stop-daemon --stop --quiet --oknodo --retry=0/30/KILL/5 --exec $DAEMON
 	[ "$?" = 2 ] && return 2
-	# Many daemons don't delete their pidfiles when they exit.
+
+	# XXX - Hacked a python script in place because this thing doesn't work  
+	python $DIR/rifidi-shutdown.py
+        # Many daemons don't delete their pidfiles when they exit.
 	rm -f $PIDFILE
 	return "$RETVAL"
 }
@@ -107,6 +110,7 @@ del_ip_rules(){
 	iptables --delete INPUT --protocol tcp --source 127.0.0.1 --dport 2020 --jump ACCEPT
 	iptables --delete INPUT --protocol tcp --dport 2020 --jump REJECT
 }
+
 case "$1" in
   start)
 	log_daemon_msg "Starting $DESC" "$NAME"
@@ -114,7 +118,7 @@ case "$1" in
 	case "$?" in
 		0) add_ip_rules && log_daemon_msg "$DESC started" && log_end_msg 0 ;;
 		1) log_daemon_msg "$DESC already started" && log_end_msg 0;;
-		2) log_daemon_msg "$DESC not started" && log_end_msg 1 ;;
+		2) log_daemon_msg "$DESC not started" && log_end_msg 1;;
 	esac
 	;;
   stop)
@@ -122,8 +126,8 @@ case "$1" in
 	do_stop
 	case "$?" in
 		0) del_ip_rules && log_end_msg 0;;
-		1) log_end msg 0;; 
-		2) log_end_msg 1 ;;
+		1) log_daemon_msg "$DESC already stopped" && log_end msg 0;; 
+		2) log_end_msg 1;;
 	esac
 	;;
   status)
@@ -167,4 +171,4 @@ case "$1" in
 	;;
 esac
 
-:
+
