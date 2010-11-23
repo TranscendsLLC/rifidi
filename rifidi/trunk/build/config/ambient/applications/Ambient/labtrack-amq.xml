@@ -1,0 +1,33 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:amq="http://activemq.apache.org/schema/core" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+  http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd">
+
+	<bean
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<list>
+				<value>file://${org.rifidi.home}/${org.rifidi.edge.applications}/Ambient/Ambient.properties
+				</value>
+			</list>
+		</property>
+	</bean>
+
+
+	<broker brokerName="ambientBroker" persistent="true" useJmx="true"
+		xmlns="http://activemq.apache.org/schema/core">
+		<networkConnectors>
+			<networkConnector uri="static://(${labtrack.jms.mainserver.brokerurl})"
+				duplex="true" networkTTL="5">
+				<staticallyIncludedDestinations>
+					<queue physicalName="${labtrack.jms.mainserver.queue.from}" />
+				</staticallyIncludedDestinations>
+			</networkConnector>
+		</networkConnectors>
+		<persistenceAdapter>
+			<kahaDB directory="${org.rifidi.home}/applications/Ambient/kahadb" />
+		</persistenceAdapter>
+	</broker>
+
+</beans>
