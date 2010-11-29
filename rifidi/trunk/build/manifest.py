@@ -178,17 +178,17 @@ class Version:
         self.qual = str(qual)
             
     def is_less(self, version):
-        if self.major < version.major:
+        if int(self.major) < int(version.major):
             return False
-        elif self.major > version.major:
+        elif int(self.major) > int(version.major):
             return True
-        elif self.minor < version.minor:
+        elif int(self.minor) < int(version.minor):
             return False
-        elif self.minor > version.minor:
+        elif int(self.minor) > int(version.minor):
             return True
-        elif self.micro < version.micro:
+        elif int(self.micro) < int(version.micro):
             return False
-        elif self.micro > version.micro:
+        elif int(self.micro) > int(version.micro):
             return True
         elif self.qual < version.qual:
             return False
