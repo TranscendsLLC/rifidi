@@ -11,6 +11,7 @@
 		<ant dir="../org.rifidi.edge.core" target="clean" /> 
 		<ant dir="../com.ambient.labtrack" target="clean" /> 
 		<ant dir="../org.rifidi.edge.app.diag" target="clean" /> 
+		<ant dir="../org.rifidi.edge.adapter.opticon" target="clean" /> 
 		<ant dir="../org.rifidi.edge.adapter.llrp" target="clean" /> 
 		<ant dir="../com.ambient.labtrack.test" target="clean" /> 
 	</target>
@@ -21,6 +22,7 @@
 		<ant dir="../org.rifidi.edge.core" target="compile" /> 
 		<ant dir="../com.ambient.labtrack" target="compile" /> 
 		<ant dir="../org.rifidi.edge.app.diag" target="compile" /> 
+		<ant dir="../org.rifidi.edge.adapter.opticon" target="compile" /> 
 		<ant dir="../org.rifidi.edge.adapter.llrp" target="compile" /> 
 		<ant dir="../com.ambient.labtrack.test" target="compile" /> 
 	</target>
@@ -31,6 +33,7 @@
 		<ant dir="../org.rifidi.edge.core" target="lint" /> 
 		<ant dir="../com.ambient.labtrack" target="lint" /> 
 		<ant dir="../org.rifidi.edge.app.diag" target="lint" /> 
+		<ant dir="../org.rifidi.edge.adapter.opticon" target="lint" /> 
 		<ant dir="../org.rifidi.edge.adapter.llrp" target="lint" /> 
 		<ant dir="../com.ambient.labtrack.test" target="lint" /> 
 	</target>
@@ -41,6 +44,7 @@
 		<ant dir="../org.rifidi.edge.core" target="package" /> 
 		<ant dir="../com.ambient.labtrack" target="package" /> 
 		<ant dir="../org.rifidi.edge.app.diag" target="package" /> 
+		<ant dir="../org.rifidi.edge.adapter.opticon" target="package" /> 
 		<ant dir="../org.rifidi.edge.adapter.llrp" target="package" /> 
 		<ant dir="../com.ambient.labtrack.test" target="package" /> 
 		<copy file="../Rifidi-SDK/lib/logging/com.springsource.slf4j.log4j_1.5.6.jar" todir="${lib}" overwrite="true" />

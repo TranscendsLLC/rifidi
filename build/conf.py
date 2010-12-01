@@ -23,6 +23,7 @@ src_path = [
 '../org.rifidi.edge.init',
 '../org.rifidi.edge.core',
 '../org.rifidi.edge.app.diag',
+'../org.rifidi.edge.adapter.opticon',
 '../org.rifidi.edge.adapter.llrp']
 
 do_not_package_libs = [
