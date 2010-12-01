@@ -142,31 +142,31 @@ case "$1" in
 	#do_reload
 	#log_end_msg $?
 	#;;
-  restart|force-reload)
+#  restart|force-reload)
 	#
 	# If the "reload" option is implemented then remove the
 	# 'force-reload' alias
 	#
-	log_daemon_msg "Restarting $DESC" "$NAME"
-	do_stop
-	case "$?" in
-	  0|1)
-	  	del_ip_rules
-	  	do_start
-		case "$?" in
-			0) add_ip_rules && log_end_msg 0 ;;
-			1) log_end_msg 1 ;; # Old process is still running
-			*) log_end_msg 1 ;; # Failed to start
-		esac
-		;;
-	  *)
+#	log_daemon_msg "Restarting $DESC" "$NAME"
+#	do_stop
+#	case "$?" in
+#	  0|1)
+#	  	del_ip_rules
+#	  	do_start
+#		case "$?" in
+#			0) add_ip_rules && log_end_msg 0 ;;
+#			1) log_end_msg 1 ;; # Old process is still running
+#			*) log_end_msg 1 ;; # Failed to start
+#		esac
+#		;;
+#	  *)
 	  	# Failed to stop
-		log_end_msg 1
-		;;
-	esac
-	;;
+#		log_end_msg 1
+#		;;
+#	esac
+#	;;
   *)
-	echo "Usage: $SCRIPTNAME {start|stop|status|restart|force-reload}" >&2
+	echo "Usage: $SCRIPTNAME {start|stop|status}" >&2
 	exit 3
 	;;
 esac
