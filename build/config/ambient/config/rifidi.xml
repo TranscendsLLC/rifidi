@@ -4,7 +4,7 @@
         <attributes>
             <entry>
                 <key>Filename</key>
-                <value>config/add_rospec_r420_rec_port.llrp</value>
+                <value>config/ar_r420_4_rp.llrp</value>
             </entry>
         </attributes>
         <factoryID>LLRP-ADD_ROSPEC-File</factoryID>
