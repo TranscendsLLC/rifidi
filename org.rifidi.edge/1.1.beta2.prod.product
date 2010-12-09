@@ -94,7 +94,6 @@
       <plugin id="org.jdom"/>
       <plugin id="org.rifidi.com.espertech.esper"/>
       <plugin id="org.rifidi.edge.api"/>
-      <plugin id="org.rifidi.edge.catalina.config" fragment="true"/>
       <plugin id="org.rifidi.edge.console"/>
       <plugin id="org.rifidi.edge.core"/>
       <plugin id="org.rifidi.edge.rmi"/>
@@ -106,13 +105,10 @@
       <plugin id="org.rifidi.edge.epcglobal.ale.api.logicalreader"/>
       <plugin id="org.rifidi.edge.epcglobal.ale.api.read"/>
       <plugin id="org.rifidi.edge.logging"/>
-      <plugin id="org.rifidi.edge.readerplugin.alien"/>
-      <plugin id="org.rifidi.edge.readerplugin.alien.commands"/>
-      <plugin id="org.rifidi.edge.readerplugin.awid"/>
-      <plugin id="org.rifidi.edge.readerplugin.awid.commands"/>
-      <plugin id="org.rifidi.edge.readerplugin.llrp"/>
-      <plugin id="org.rifidi.edge.readerplugin.thingmagic"/>
-      <plugin id="org.rifidi.edge.readerplugin.thingmagic.commands"/>
+      <plugin id="org.rifidi.edge.adapter.alien"/>
+      <plugin id="org.rifidi.edge.adapter.awid"/>
+      <plugin id="org.rifidi.edge.adapter.llrp"/>
+      <plugin id="org.rifidi.edge.adapter.thingmagic"/>
       <plugin id="org.rifidi.org.antlr.runtime"/>
       <plugin id="org.rifidi.org.apache.mina-core"/>
       <plugin id="org.rifidi.org.llrp.ltk"/>
