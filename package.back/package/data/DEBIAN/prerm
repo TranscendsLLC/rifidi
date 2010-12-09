@@ -1,8 +1,0 @@
-#!/bin/sh
-
-# Stop the edge server
-sudo /etc/init.d/rifidiserver stop
-
-# Remove the init daemon
-sudo rm -f /etc/init.d/rifidiserver
-
