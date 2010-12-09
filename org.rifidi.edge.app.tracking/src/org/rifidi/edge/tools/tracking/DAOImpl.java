@@ -1,4 +1,4 @@
-package org.rifidi.edge.app.tracking;
+package org.rifidi.edge.tools.tracking;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -25,7 +25,7 @@ public class DAOImpl implements ProductsDAO, LogicalReadersDAO {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.app.tracking.dao.ProductsDAO#getProductName(java.lang
+	 * org.rifidi.edge.tools.tracking.dao.ProductsDAO#getProductName(java.lang
 	 * .String)
 	 */
 	@Override
@@ -59,7 +59,7 @@ public class DAOImpl implements ProductsDAO, LogicalReadersDAO {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.app.tracking.dao.LogicalReadersDAO#getLogicaReaderName
+	 * org.rifidi.edge.tools.tracking.dao.LogicalReadersDAO#getLogicaReaderName
 	 * (java.lang.String, int)
 	 */
 	@Override

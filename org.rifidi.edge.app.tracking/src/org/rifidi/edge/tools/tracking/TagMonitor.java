@@ -1,11 +1,11 @@
 /**
  * 
  */
-package org.rifidi.edge.app.tracking;
+package org.rifidi.edge.tools.tracking;
 
-import org.rifidi.edge.core.app.api.AbstractRifidiApp;
-import org.rifidi.edge.core.app.api.resources.jms.JMSResource;
-import org.rifidi.edge.core.services.notification.data.TagReadEvent;
+import org.rifidi.edge.api.AbstractRifidiApp;
+import org.rifidi.edge.api.resources.JMSResource;
+import org.rifidi.edge.notification.TagReadEvent;
 
 import com.espertech.esper.client.EPServiceProvider;
 import com.espertech.esper.client.EPStatement;

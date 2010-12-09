@@ -35,7 +35,7 @@
 	</bean>
 
 	<!-- Create the application and inject esper and teh JMS sender 	-->
-	<bean id="trackapp" class="org.rifidi.edge.app.tracking.TrackingApp">
+	<bean id="trackapp" class="org.rifidi.edge.tools.tracking.TrackingApp">
 		<constructor-arg index="0" value="Monitoring" />
 		<constructor-arg index="1" value="ReadZones" />
 		<property name="trackingMessageFactory" ref="messageFactory"></property>
@@ -46,7 +46,7 @@
 
 
 	<!-- Create the application and inject esper and teh JMS sender -->
-	<bean id="tagapp" class="org.rifidi.edge.app.tracking.TagMonitor">
+	<bean id="tagapp" class="org.rifidi.edge.tools.tracking.TagMonitor">
 		<constructor-arg index="0" value="Monitoring" />
 		<constructor-arg index="1" value="Tags" />
 		<property name="jmsTextSender" ref="jmsTagSender" />
@@ -54,7 +54,7 @@
 	<osgi:service ref="tagapp" interface="org.rifidi.edge.core.app.api.RifidiApp" />
 
 	<!-- Create the application and inject esper and teh JMS sender -->
-	<bean id="sensorapp" class="org.rifidi.edge.app.tracking.SensorMonitor">
+	<bean id="sensorapp" class="org.rifidi.edge.tools.tracking.SensorMonitor">
 		<constructor-arg index="0" value="Monitoring" />
 		<constructor-arg index="1" value="SensorStatus" />
 		<property name="jmsTextSender" ref="jmsEventSender" />
@@ -63,7 +63,7 @@
 	<osgi:service ref="sensorapp" interface="org.rifidi.edge.core.app.api.RifidiApp" />
 
 	<!-- Create the JMS Sender service -->
-	<bean id="messageFactory" class="org.rifidi.edge.app.tracking.TrackingMessageFactory">
+	<bean id="messageFactory" class="org.rifidi.edge.tools.tracking.TrackingMessageFactory">
 		<property name="productsDAO" ref="dao" />
 		<property name="logicalReadersDAO" ref="dao" />
 	</bean>
@@ -79,7 +79,7 @@
 	</bean>
 
 
-	<bean id="dao" class="org.rifidi.edge.app.tracking.DAOImpl">
+	<bean id="dao" class="org.rifidi.edge.tools.tracking.DAOImpl">
 		<property name="datasource" ref="datasource" />
 	</bean>
 
