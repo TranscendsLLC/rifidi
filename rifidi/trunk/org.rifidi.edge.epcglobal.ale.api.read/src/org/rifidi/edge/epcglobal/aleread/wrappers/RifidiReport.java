@@ -20,7 +20,6 @@ import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.rifidi.edge.core.services.notification.DatacontainerEvent;
 import org.rifidi.edge.epcglobal.ale.api.read.EPC;
 import org.rifidi.edge.epcglobal.ale.api.read.data.ECReport;
 import org.rifidi.edge.epcglobal.ale.api.read.data.ECReportGroup;
@@ -37,6 +36,7 @@ import org.rifidi.edge.epcglobal.aleread.filters.ALEField;
 import org.rifidi.edge.epcglobal.aleread.filters.PatternMatcher;
 import org.rifidi.edge.epcglobal.aleread.filters.ReportALEField;
 import org.rifidi.edge.epcglobal.aleread.groups.GroupMatcher;
+import org.rifidi.edge.notification.DatacontainerEvent;
 
 /**
  * Wrapper for ecreports.

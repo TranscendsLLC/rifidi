@@ -14,9 +14,9 @@ package org.rifidi.edge.adapter.llrp.commands;
 import javax.management.MBeanInfo;
 
 import org.rifidi.edge.adapter.llrp.LLRPReaderFactory;
-import org.rifidi.edge.core.configuration.impl.AbstractCommandConfigurationFactory;
-import org.rifidi.edge.core.exceptions.InvalidStateException;
-import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
+import org.rifidi.edge.configuration.AbstractCommandConfigurationFactory;
+import org.rifidi.edge.exceptions.InvalidStateException;
+import org.rifidi.edge.sensors.AbstractCommandConfiguration;
 
 /**
  * Factory for the ROSpecFromFileConfiguration.  
@@ -30,7 +30,7 @@ public class LLRPROSpecFromFileCommandConfigurationFactory extends
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.configuration.impl.AbstractCommandConfigurationFactory
+	 * org.rifidi.edge.configuration.impl.AbstractCommandConfigurationFactory
 	 * #getCommandDescription()
 	 */
 	@Override
@@ -46,7 +46,7 @@ public class LLRPROSpecFromFileCommandConfigurationFactory extends
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.configuration.impl.AbstractCommandConfigurationFactory
+	 * org.rifidi.edge.configuration.impl.AbstractCommandConfigurationFactory
 	 * #getDisplayName()
 	 */
 	@Override
@@ -58,7 +58,7 @@ public class LLRPROSpecFromFileCommandConfigurationFactory extends
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.configuration.impl.AbstractCommandConfigurationFactory
+	 * org.rifidi.edge.configuration.impl.AbstractCommandConfigurationFactory
 	 * #getReaderFactoryID()
 	 */
 	@Override
@@ -70,7 +70,7 @@ public class LLRPROSpecFromFileCommandConfigurationFactory extends
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.configuration.ServiceFactory#createInstance(java
+	 * org.rifidi.edge.configuration.ServiceFactory#createInstance(java
 	 * .lang.String)
 	 */
 	@Override
@@ -84,7 +84,7 @@ public class LLRPROSpecFromFileCommandConfigurationFactory extends
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.configuration.ServiceFactory#getFactoryID()
+	 * @see org.rifidi.edge.configuration.ServiceFactory#getFactoryID()
 	 */
 	@Override
 	public String getFactoryID() {
@@ -95,7 +95,7 @@ public class LLRPROSpecFromFileCommandConfigurationFactory extends
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.configuration.ServiceFactory#getServiceDescription
+	 * org.rifidi.edge.configuration.ServiceFactory#getServiceDescription
 	 * (java.lang.String)
 	 */
 	@Override

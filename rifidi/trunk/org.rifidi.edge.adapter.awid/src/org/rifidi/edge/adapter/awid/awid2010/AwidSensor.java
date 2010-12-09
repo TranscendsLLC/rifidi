@@ -23,15 +23,15 @@ import javax.management.MBeanInfo;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.api.rmi.dto.SessionDTO;
-import org.rifidi.edge.core.configuration.annotations.JMXMBean;
-import org.rifidi.edge.core.configuration.annotations.Property;
-import org.rifidi.edge.core.configuration.annotations.PropertyType;
-import org.rifidi.edge.core.configuration.mbeanstrategies.AnnotationMBeanInfoStrategy;
-import org.rifidi.edge.core.exceptions.CannotCreateSessionException;
-import org.rifidi.edge.core.sensors.SensorSession;
-import org.rifidi.edge.core.sensors.base.AbstractSensor;
-import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
-import org.rifidi.edge.core.sensors.exceptions.CannotDestroySensorException;
+import org.rifidi.edge.configuration.AnnotationMBeanInfoStrategy;
+import org.rifidi.edge.configuration.JMXMBean;
+import org.rifidi.edge.configuration.Property;
+import org.rifidi.edge.configuration.PropertyType;
+import org.rifidi.edge.exceptions.CannotCreateSessionException;
+import org.rifidi.edge.sensors.AbstractCommandConfiguration;
+import org.rifidi.edge.sensors.AbstractSensor;
+import org.rifidi.edge.sensors.CannotDestroySensorException;
+import org.rifidi.edge.sensors.SensorSession;
 
 /**
  * The Awid Sensor. It produces AwidSessions.
@@ -87,7 +87,7 @@ public class AwidSensor extends AbstractSensor<AwidSession> {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.configuration.RifidiService#getMBeanInfo()
+	 * @see org.rifidi.edge.configuration.RifidiService#getMBeanInfo()
 	 */
 	@Override
 	public MBeanInfo getMBeanInfo() {
@@ -97,7 +97,7 @@ public class AwidSensor extends AbstractSensor<AwidSession> {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.sensors.base.AbstractSensor#getSensorSessions()
+	 * @see org.rifidi.edge.sensors.base.AbstractSensor#getSensorSessions()
 	 */
 	@Override
 	public Map<String, SensorSession> getSensorSessions() {
@@ -113,7 +113,7 @@ public class AwidSensor extends AbstractSensor<AwidSession> {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.sensors.base.AbstractSensor#createSensorSession()
+	 * org.rifidi.edge.sensors.base.AbstractSensor#createSensorSession()
 	 */
 	@Override
 	public String createSensorSession() throws CannotCreateSessionException {
@@ -138,7 +138,7 @@ public class AwidSensor extends AbstractSensor<AwidSession> {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.sensors.base.AbstractSensor#createSensorSession(
+	 * org.rifidi.edge.sensors.base.AbstractSensor#createSensorSession(
 	 * org.rifidi.edge.api.rmi.dto.SessionDTO)
 	 */
 	@Override
@@ -167,7 +167,7 @@ public class AwidSensor extends AbstractSensor<AwidSession> {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.sensors.base.AbstractSensor#destroySensorSession
+	 * org.rifidi.edge.sensors.base.AbstractSensor#destroySensorSession
 	 * (java.lang.String)
 	 */
 	@Override
@@ -190,7 +190,7 @@ public class AwidSensor extends AbstractSensor<AwidSession> {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.sensors.base.AbstractSensor#destroy()
+	 * @see org.rifidi.edge.sensors.base.AbstractSensor#destroy()
 	 */
 	@Override
 	protected void destroy() {
@@ -211,7 +211,7 @@ public class AwidSensor extends AbstractSensor<AwidSession> {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.sensors.base.AbstractSensor#applyPropertyChanges()
+	 * org.rifidi.edge.sensors.base.AbstractSensor#applyPropertyChanges()
 	 */
 	@Override
 	public void applyPropertyChanges() {
@@ -224,8 +224,8 @@ public class AwidSensor extends AbstractSensor<AwidSession> {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.sensors.base.AbstractSensor#unbindCommandConfiguration
-	 * (org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration,
+	 * org.rifidi.edge.sensors.base.AbstractSensor#unbindCommandConfiguration
+	 * (org.rifidi.edge.sensors.commands.AbstractCommandConfiguration,
 	 * java.util.Map)
 	 */
 	@Override
@@ -244,7 +244,7 @@ public class AwidSensor extends AbstractSensor<AwidSession> {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.sensors.base.AbstractSensor#getDisplayName()
+	 * @see org.rifidi.edge.sensors.base.AbstractSensor#getDisplayName()
 	 */
 	@Override
 	@Property(displayName = "Display Name", description = "Logical Name of Reader", writable = true, type = PropertyType.PT_STRING, category = "connection", defaultValue = "Awid", orderValue = 0)

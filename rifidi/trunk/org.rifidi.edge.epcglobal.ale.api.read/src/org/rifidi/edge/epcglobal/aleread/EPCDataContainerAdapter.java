@@ -25,10 +25,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.epcglobalinc.tdt.LevelTypeList;
 import org.fosstrak.tdt.TDTEngine;
-import org.rifidi.edge.core.services.notification.DatacontainerEvent;
-import org.rifidi.edge.core.services.notification.EPCGeneration1Event;
-import org.rifidi.edge.core.services.notification.EPCGeneration2Event;
 import org.rifidi.edge.epcglobal.aleread.filters.ALEField;
+import org.rifidi.edge.notification.DatacontainerEvent;
+import org.rifidi.edge.notification.EPCGeneration1Event;
+import org.rifidi.edge.notification.EPCGeneration2Event;
 
 /**
  * Adapter for extracting information from an EPC tag using TDT.

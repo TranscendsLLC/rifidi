@@ -2,7 +2,7 @@ package org.rifidi.edge.app.diag.tags;
 
 import org.eclipse.osgi.framework.console.CommandInterpreter;
 import org.eclipse.osgi.framework.console.CommandProvider;
-import org.rifidi.edge.core.services.notification.data.TagReadEvent;
+import org.rifidi.edge.notification.TagReadEvent;
 
 /**
  * A command provider for the TagApp

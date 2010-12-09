@@ -14,9 +14,9 @@ package org.rifidi.edge.adapter.thingmagic.commands;
 import javax.management.MBeanInfo;
 
 import org.rifidi.edge.adapter.thingmagic.ThingmagicReaderFactory;
-import org.rifidi.edge.core.configuration.impl.AbstractCommandConfigurationFactory;
-import org.rifidi.edge.core.configuration.mbeanstrategies.AnnotationMBeanInfoStrategy;
-import org.rifidi.edge.core.exceptions.InvalidStateException;
+import org.rifidi.edge.configuration.AbstractCommandConfigurationFactory;
+import org.rifidi.edge.configuration.AnnotationMBeanInfoStrategy;
+import org.rifidi.edge.exceptions.InvalidStateException;
 
 /**
  * 
@@ -43,7 +43,7 @@ public class ThingmagicGetTagListCommandConfigurationFactory
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.configuration.impl.AbstractCommandConfigurationFactory
+	 * org.rifidi.edge.configuration.impl.AbstractCommandConfigurationFactory
 	 * #getReaderFactoryID()
 	 */
 	@Override
@@ -55,7 +55,7 @@ public class ThingmagicGetTagListCommandConfigurationFactory
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.configuration.ServiceFactory#createInstance(java
+	 * org.rifidi.edge.configuration.ServiceFactory#createInstance(java
 	 * .lang.String)
 	 */
 	@Override
@@ -70,7 +70,7 @@ public class ThingmagicGetTagListCommandConfigurationFactory
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.configuration.ServiceFactory#getFactoryID()
+	 * @see org.rifidi.edge.configuration.ServiceFactory#getFactoryID()
 	 */
 	@Override
 	public String getFactoryID() {
@@ -81,7 +81,7 @@ public class ThingmagicGetTagListCommandConfigurationFactory
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.configuration.ServiceFactory#getServiceDescription
+	 * org.rifidi.edge.configuration.ServiceFactory#getServiceDescription
 	 * (java.lang.String)
 	 */
 	@Override
@@ -93,7 +93,7 @@ public class ThingmagicGetTagListCommandConfigurationFactory
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.configuration.impl.AbstractCommandConfigurationFactory
+	 * org.rifidi.edge.configuration.impl.AbstractCommandConfigurationFactory
 	 * #getCommandDescription()
 	 */
 	@Override
@@ -107,7 +107,7 @@ public class ThingmagicGetTagListCommandConfigurationFactory
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.configuration.impl.AbstractCommandConfigurationFactory
+	 * org.rifidi.edge.configuration.impl.AbstractCommandConfigurationFactory
 	 * #getDisplayName()
 	 */
 	@Override

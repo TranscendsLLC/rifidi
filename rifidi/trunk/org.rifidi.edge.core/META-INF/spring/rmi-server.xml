@@ -7,20 +7,20 @@
 	http://www.springframework.org/schema/security/spring-security-2.0.xsd ">
 
 	<bean id="sensorManagerStub"
-		class="org.rifidi.edge.core.rmi.server.SensorManagerServiceImpl">
+		class="org.rifidi.edge.rmi.SensorManagerServiceImpl">
 		<property name="readerDAO" ref="ReaderDAOImpl" />
 		<property name="configurationService" ref="configurationService" />
 		<property name="commandDAO" ref="CommandDAOImpl" />
 	</bean>
 
 	<bean id="commandManagerStub"
-		class="org.rifidi.edge.core.rmi.server.CommandManagerServiceImpl">
+		class="org.rifidi.edge.rmi.CommandManagerServiceImpl">
 		<property name="configurationService" ref="configurationService" />
 		<property name="commandDAO" ref="CommandDAOImpl" />
 	</bean>
 
 	<bean id="edgeServerManagerStub"
-		class="org.rifidi.edge.core.rmi.server.EdgeServerManagerServiceImpl">
+		class="org.rifidi.edge.rmi.EdgeServerManagerServiceImpl">
 		<property name="configurationService" ref="configurationService" />
 	</bean>
 

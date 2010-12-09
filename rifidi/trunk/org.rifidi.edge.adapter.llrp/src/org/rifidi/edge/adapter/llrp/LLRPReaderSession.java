@@ -48,13 +48,13 @@ import org.llrp.ltk.types.UnsignedShort;
 import org.llrp.ltk.util.Util;
 import org.rifidi.edge.adapter.llrp.commands.internal.LLRPReset;
 import org.rifidi.edge.api.SessionStatus;
-import org.rifidi.edge.core.sensors.base.AbstractSensor;
-import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
-import org.rifidi.edge.core.sensors.commands.Command;
-import org.rifidi.edge.core.sensors.commands.TimeoutCommand;
-import org.rifidi.edge.core.sensors.sessions.AbstractSensorSession;
-import org.rifidi.edge.core.services.notification.NotifierService;
-import org.rifidi.edge.core.services.notification.ReadCycle;
+import org.rifidi.edge.notification.NotifierService;
+import org.rifidi.edge.notification.ReadCycle;
+import org.rifidi.edge.sensors.AbstractCommandConfiguration;
+import org.rifidi.edge.sensors.AbstractSensor;
+import org.rifidi.edge.sensors.Command;
+import org.rifidi.edge.sensors.TimeoutCommand;
+import org.rifidi.edge.sensors.sessions.AbstractSensorSession;
 
 /**
  * This class represents a session with an LLRP reader. It handles connecting
@@ -237,7 +237,7 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.sensors.SensorSession#getResetCommand()
+	 * @see org.rifidi.edge.sensors.SensorSession#getResetCommand()
 	 */
 	@Override
 	protected Command getResetCommand() {
@@ -466,7 +466,7 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.sensors.base.AbstractSensorSession#submit(java.lang
+	 * org.rifidi.edge.sensors.base.AbstractSensorSession#submit(java.lang
 	 * .String, long, java.util.concurrent.TimeUnit)
 	 */
 	@Override

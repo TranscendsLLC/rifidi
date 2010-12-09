@@ -5,12 +5,12 @@ package org.rifidi.edge.examples.example;
 
 import java.util.concurrent.TimeUnit;
 
-import org.rifidi.edge.core.app.api.AbstractRifidiApp;
-import org.rifidi.edge.core.app.api.service.EsperUtil;
-import org.rifidi.edge.core.app.api.service.tagmonitor.ReadZone;
-import org.rifidi.edge.core.app.api.service.tagmonitor.ReadZoneMonitoringService;
-import org.rifidi.edge.core.app.api.service.tagmonitor.ReadZoneSubscriber;
-import org.rifidi.edge.core.services.notification.data.TagReadEvent;
+import org.rifidi.edge.api.AbstractRifidiApp;
+import org.rifidi.edge.api.service.EsperUtil;
+import org.rifidi.edge.api.service.tagmonitor.ReadZone;
+import org.rifidi.edge.api.service.tagmonitor.ReadZoneMonitoringService;
+import org.rifidi.edge.api.service.tagmonitor.ReadZoneSubscriber;
+import org.rifidi.edge.notification.TagReadEvent;
 
 /**
  * This app monitors a read zone and prints out a line when it sees a new tag.
@@ -46,7 +46,7 @@ public class ExampleApp extends AbstractRifidiApp implements ReadZoneSubscriber 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.app.api.AbstractRifidiApp#_start()
+	 * @see org.rifidi.edge.api.AbstractRifidiApp#_start()
 	 */
 	@Override
 	protected void _start() {
@@ -70,7 +70,7 @@ public class ExampleApp extends AbstractRifidiApp implements ReadZoneSubscriber 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.app.api.AbstractRifidiApp#_stop()
+	 * @see org.rifidi.edge.api.AbstractRifidiApp#_stop()
 	 */
 	@Override
 	protected void _stop() {
@@ -83,7 +83,7 @@ public class ExampleApp extends AbstractRifidiApp implements ReadZoneSubscriber 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.app.api.AbstractRifidiApp#initialize()
+	 * @see org.rifidi.edge.api.AbstractRifidiApp#initialize()
 	 */
 	@Override
 	public void initialize() {
@@ -103,8 +103,8 @@ public class ExampleApp extends AbstractRifidiApp implements ReadZoneSubscriber 
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.app.api.service.tagmonitor.ReadZoneSubscriber#tagArrived
-	 * (org.rifidi.edge.core.services.notification.data.TagReadEvent)
+	 * org.rifidi.edge.api.service.tagmonitor.ReadZoneSubscriber#tagArrived
+	 * (org.rifidi.edge.notification.data.TagReadEvent)
 	 */
 	@Override
 	public void tagArrived(TagReadEvent tag) {
@@ -115,8 +115,8 @@ public class ExampleApp extends AbstractRifidiApp implements ReadZoneSubscriber 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @seeorg.rifidi.edge.core.app.api.service.tagmonitor.ReadZoneSubscriber#
-	 * tagDeparted(org.rifidi.edge.core.services.notification.data.TagReadEvent)
+	 * @seeorg.rifidi.edge.api.service.tagmonitor.ReadZoneSubscriber#
+	 * tagDeparted(org.rifidi.edge.notification.data.TagReadEvent)
 	 */
 	@Override
 	public void tagDeparted(TagReadEvent tag) {

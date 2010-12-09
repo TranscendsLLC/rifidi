@@ -11,7 +11,7 @@ import org.rifidi.edge.adapter.alien.Alien9800Reader;
 import org.rifidi.edge.adapter.alien.commandobject.AlienException;
 import org.rifidi.edge.adapter.alien.gpio.messages.AlienGPIOMessage;
 import org.rifidi.edge.adapter.alien.gpio.messages.AlienIOListMessageParsingStrategy;
-import org.rifidi.edge.core.sensors.sessions.MessageProcessingStrategy;
+import org.rifidi.edge.sensors.sessions.MessageProcessingStrategy;
 
 /**
  * This is an implementation of the MessageProcessingStrategy for Alien's

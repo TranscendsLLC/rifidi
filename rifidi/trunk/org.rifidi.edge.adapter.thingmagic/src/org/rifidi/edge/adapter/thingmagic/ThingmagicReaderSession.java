@@ -18,13 +18,13 @@ import java.util.concurrent.TimeUnit;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.api.SessionStatus;
-import org.rifidi.edge.core.sensors.base.AbstractSensor;
-import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
-import org.rifidi.edge.core.sensors.commands.Command;
-import org.rifidi.edge.core.sensors.messages.ByteMessage;
-import org.rifidi.edge.core.sensors.sessions.AbstractPollIPSensorSession;
-import org.rifidi.edge.core.sensors.sessions.MessageParsingStrategyFactory;
-import org.rifidi.edge.core.services.notification.NotifierService;
+import org.rifidi.edge.notification.NotifierService;
+import org.rifidi.edge.sensors.AbstractCommandConfiguration;
+import org.rifidi.edge.sensors.AbstractSensor;
+import org.rifidi.edge.sensors.ByteMessage;
+import org.rifidi.edge.sensors.Command;
+import org.rifidi.edge.sensors.sessions.AbstractPollIPSensorSession;
+import org.rifidi.edge.sensors.sessions.MessageParsingStrategyFactory;
 
 /**
  * 
@@ -111,7 +111,7 @@ public class ThingmagicReaderSession extends AbstractPollIPSensorSession {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.sensors.base.AbstractIPSensorSession#onConnect()
+	 * org.rifidi.edge.sensors.base.AbstractIPSensorSession#onConnect()
 	 */
 	@Override
 	public boolean onConnect() throws IOException {
@@ -122,7 +122,7 @@ public class ThingmagicReaderSession extends AbstractPollIPSensorSession {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.sensors.SensorSession#getResetCommand()
+	 * @see org.rifidi.edge.sensors.SensorSession#getResetCommand()
 	 */
 	@Override
 	protected Command getResetCommand() {
@@ -137,7 +137,7 @@ public class ThingmagicReaderSession extends AbstractPollIPSensorSession {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.sensors.SensorSession#submit(java.lang.String,
+	 * @see org.rifidi.edge.sensors.SensorSession#submit(java.lang.String,
 	 * long, java.util.concurrent.TimeUnit)
 	 */
 	@Override
@@ -174,8 +174,8 @@ public class ThingmagicReaderSession extends AbstractPollIPSensorSession {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.sensors.sessions.AbstractIPSensorSession#sendMessage
-	 * (org.rifidi.edge.core.sensors.messages.ByteMessage)
+	 * org.rifidi.edge.sensors.sessions.AbstractIPSensorSession#sendMessage
+	 * (org.rifidi.edge.sensors.messages.ByteMessage)
 	 */
 	@Override
 	public void sendMessage(ByteMessage message) throws IOException {

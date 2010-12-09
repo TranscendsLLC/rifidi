@@ -14,8 +14,8 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.rifidi.edge.core.app.api.service.tagmonitor.ReadZone;
-import org.rifidi.edge.core.app.api.service.tagmonitor.impl.ReadZoneMonitorEsperFactory;
+import org.rifidi.edge.api.service.tagmonitor.ReadZone;
+import org.rifidi.edge.api.service.tagmonitor.ReadZoneMonitorEsperFactory;
 
 /**
  * @author manoj
@@ -67,7 +67,7 @@ public class ReadZoneMonitorEsperFactoryTest {
 	}
 
 	/**
-	 * Test method for {@link org.rifidi.edge.core.app.api.service.tagmonitor.impl.ReadZoneMonitorEsperFactory#createStatements()}.
+	 * Test method for {@link org.rifidi.edge.api.service.tagmonitor.ReadZoneMonitorEsperFactory#createStatements()}.
 	 */
 	@Test
 	public void testCreateStatements() {
@@ -75,7 +75,7 @@ public class ReadZoneMonitorEsperFactoryTest {
 	}
 
 	/**
-	 * Test method for {@link org.rifidi.edge.core.app.api.service.tagmonitor.impl.ReadZoneMonitorEsperFactory#createQuery()}.
+	 * Test method for {@link org.rifidi.edge.api.service.tagmonitor.ReadZoneMonitorEsperFactory#createQuery()}.
 	 */
 	@Test
 	public void testCreateQuery() {

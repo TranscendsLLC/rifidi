@@ -1,6 +1,6 @@
 package org.rifidi.edge.core.mock;
 
-import org.rifidi.edge.core.app.api.service.tagmonitor.ReadZone;
+import org.rifidi.edge.api.service.tagmonitor.ReadZone;
 
 public class myclass {
 

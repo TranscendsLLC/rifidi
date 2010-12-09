@@ -17,17 +17,17 @@
 
 	<!--  Custom commands -->
 	<bean id="provisioningService"
-		class="org.rifidi.edge.core.services.provisioning.ProvisioningServiceImpl">
+		class="org.rifidi.edge.services.ProvisioningServiceImpl">
 		<property name="repositoryAdmin" ref="repoAdmin" />
 		<property name="pathToAppFolder" value="${org.rifidi.home}/${org.rifidi.edge.applications}" />
 	</bean>
 	<bean id="provisioningCommands"
-		class="org.rifidi.edge.core.services.provisioning.ProvisioningCommandProvider">
+		class="org.rifidi.edge.services.ProvisioningCommandProvider">
 		<property name="provisioningService" ref="provisioningService" />
 	</bean>
 
 	<bean id="ApplicationLoader"
-		class="org.rifidi.edge.core.services.provisioning.ApplicationLoader">
+		class="org.rifidi.edge.services.ApplicationLoader">
 		<property name="provisioningService" ref="provisioningService" />
 		<property name="defaultApplicationsFileName" value="${org.rifidi.edge.applications.initial}" />
 		<property name="pathToAppFolder" value="${org.rifidi.home}/${org.rifidi.edge.applications}" />

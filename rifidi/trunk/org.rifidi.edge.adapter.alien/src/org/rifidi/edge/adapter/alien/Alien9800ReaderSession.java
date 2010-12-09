@@ -31,15 +31,15 @@ import org.rifidi.edge.adapter.alien.commandobject.AlienGetCommandObject;
 import org.rifidi.edge.adapter.alien.gpio.AlienGPIOSession;
 import org.rifidi.edge.adapter.alien.gpio.messages.TextIOListMessageParsingStrategy;
 import org.rifidi.edge.api.SessionStatus;
-import org.rifidi.edge.core.sensors.base.AbstractSensor;
-import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
-import org.rifidi.edge.core.sensors.commands.Command;
-import org.rifidi.edge.core.sensors.commands.TimeoutCommand;
-import org.rifidi.edge.core.sensors.exceptions.CannotExecuteException;
-import org.rifidi.edge.core.sensors.messages.ByteMessage;
-import org.rifidi.edge.core.sensors.sessions.AbstractPollIPSensorSession;
-import org.rifidi.edge.core.sensors.sessions.MessageParsingStrategyFactory;
-import org.rifidi.edge.core.services.notification.NotifierService;
+import org.rifidi.edge.notification.NotifierService;
+import org.rifidi.edge.sensors.AbstractCommandConfiguration;
+import org.rifidi.edge.sensors.AbstractSensor;
+import org.rifidi.edge.sensors.ByteMessage;
+import org.rifidi.edge.sensors.CannotExecuteException;
+import org.rifidi.edge.sensors.Command;
+import org.rifidi.edge.sensors.TimeoutCommand;
+import org.rifidi.edge.sensors.sessions.AbstractPollIPSensorSession;
+import org.rifidi.edge.sensors.sessions.MessageParsingStrategyFactory;
 
 /**
  * A session that connects to an Alien9800Reader
@@ -132,7 +132,7 @@ public class Alien9800ReaderSession extends AbstractPollIPSensorSession
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.sensors.SensorSession#connect()
+	 * @see org.rifidi.edge.sensors.SensorSession#connect()
 	 */
 	@Override
 	public void connect() throws IOException {
@@ -229,7 +229,7 @@ public class Alien9800ReaderSession extends AbstractPollIPSensorSession
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.sensors.sessions.AbstractIPSensorSession#disconnect
+	 * org.rifidi.edge.sensors.sessions.AbstractIPSensorSession#disconnect
 	 * ()
 	 */
 	@Override
@@ -290,8 +290,8 @@ public class Alien9800ReaderSession extends AbstractPollIPSensorSession
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.sensors.sessions.AbstractIPSensorSession#sendMessage
-	 * (org.rifidi.edge.core.sensors.messages.ByteMessage)
+	 * org.rifidi.edge.sensors.sessions.AbstractIPSensorSession#sendMessage
+	 * (org.rifidi.edge.sensors.messages.ByteMessage)
 	 */
 	@Override
 	public void sendMessage(ByteMessage message) throws IOException {
@@ -332,7 +332,7 @@ public class Alien9800ReaderSession extends AbstractPollIPSensorSession
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.sensors.SensorSession#submit(java.lang.String,
+	 * @see org.rifidi.edge.sensors.SensorSession#submit(java.lang.String,
 	 * long, java.util.concurrent.TimeUnit)
 	 */
 	@Override
@@ -461,7 +461,7 @@ public class Alien9800ReaderSession extends AbstractPollIPSensorSession
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.sensors.sessions.AbstractIPSensorSession#toString()
+	 * org.rifidi.edge.sensors.sessions.AbstractIPSensorSession#toString()
 	 */
 	@Override
 	public String toString() {

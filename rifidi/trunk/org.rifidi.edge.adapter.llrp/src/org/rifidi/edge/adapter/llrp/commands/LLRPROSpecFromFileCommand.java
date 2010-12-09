@@ -68,7 +68,7 @@ public class LLRPROSpecFromFileCommand extends AbstractLLRPCommand {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.sensors.commands.TimeoutCommand#execute()
+	 * @see org.rifidi.edge.sensors.commands.TimeoutCommand#execute()
 	 */
 	@Override
 	protected void execute() throws TimeoutException {

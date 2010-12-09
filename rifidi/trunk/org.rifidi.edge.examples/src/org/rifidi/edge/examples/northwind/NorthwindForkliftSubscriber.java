@@ -13,8 +13,8 @@ package org.rifidi.edge.examples.northwind;
 
 import java.util.Set;
 
-import org.rifidi.edge.core.app.api.service.tagmonitor.StableSetSubscriber;
-import org.rifidi.edge.core.services.notification.data.TagReadEvent;
+import org.rifidi.edge.api.service.tagmonitor.StableSetSubscriber;
+import org.rifidi.edge.notification.TagReadEvent;
 
 /**
  * This class has a helper method to check if there is a tag that contains the
@@ -72,7 +72,7 @@ public class NorthwindForkliftSubscriber implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @seeorg.rifidi.edge.core.app.api.service.tagmonitor.StableSetSubscriber#
+	 * @seeorg.rifidi.edge.api.service.tagmonitor.StableSetSubscriber#
 	 * stableSetReached(java.util.Set)
 	 */
 	@Override

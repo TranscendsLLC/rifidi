@@ -17,11 +17,11 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.rifidi.edge.core.app.api.AbstractRifidiApp;
-import org.rifidi.edge.core.app.api.AppState;
-import org.rifidi.edge.core.app.api.RifidiApp;
-import org.rifidi.edge.core.app.api.service.tagmonitor.ReadZone;
-import org.rifidi.edge.core.services.esper.EsperManagementService;
+import org.rifidi.edge.api.AbstractRifidiApp;
+import org.rifidi.edge.api.AppState;
+import org.rifidi.edge.api.RifidiApp;
+import org.rifidi.edge.api.service.tagmonitor.ReadZone;
+import org.rifidi.edge.services.EsperManagementService;
 
 /**
  * @author manoj
@@ -52,7 +52,7 @@ public class AbstractRifidiAppTest {
 		
 		
 	/**
-	 * Test method for {@link org.rifidi.edge.core.app.api.AbstractRifidiApp#getName()}.
+	 * Test method for {@link org.rifidi.edge.api.AbstractRifidiApp#getName()}.
 	 */
 	@Test
 	public void test() {

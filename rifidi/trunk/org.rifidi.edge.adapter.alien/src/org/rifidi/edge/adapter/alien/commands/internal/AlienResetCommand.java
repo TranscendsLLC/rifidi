@@ -3,7 +3,7 @@
  */
 package org.rifidi.edge.adapter.alien.commands.internal;
 
-import org.rifidi.edge.core.sensors.commands.Command;
+import org.rifidi.edge.sensors.Command;
 
 /**
  * @author Owner

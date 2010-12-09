@@ -24,10 +24,10 @@ import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.adapter.alien.messages.AlienMessage;
 import org.rifidi.edge.adapter.alien.messages.AlienTag;
 import org.rifidi.edge.adapter.alien.messages.AlienTagReadEventFactory;
-import org.rifidi.edge.core.sensors.SensorSession;
-import org.rifidi.edge.core.sensors.sessions.MessageProcessingStrategy;
-import org.rifidi.edge.core.services.notification.ReadCycle;
-import org.rifidi.edge.core.services.notification.data.TagReadEvent;
+import org.rifidi.edge.notification.ReadCycle;
+import org.rifidi.edge.notification.TagReadEvent;
+import org.rifidi.edge.sensors.SensorSession;
+import org.rifidi.edge.sensors.sessions.MessageProcessingStrategy;
 
 /**
  * This class is a handler for a single open socket with an Alien reader that is

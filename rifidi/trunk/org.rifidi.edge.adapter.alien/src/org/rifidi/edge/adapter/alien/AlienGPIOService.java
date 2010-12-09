@@ -9,8 +9,8 @@ import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.rifidi.edge.core.sensors.exceptions.CannotExecuteException;
-import org.rifidi.edge.core.sensors.management.AbstractGPIOService;
+import org.rifidi.edge.sensors.AbstractGPIOService;
+import org.rifidi.edge.sensors.CannotExecuteException;
 
 /**
  * This class is a service that lets applications access the GPIO functionality
@@ -29,7 +29,7 @@ public class AlienGPIOService extends
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.sensors.sessions.interfaces.AbstractGPIOService#
+	 * org.rifidi.edge.sensors.sessions.interfaces.AbstractGPIOService#
 	 * setGPO(java.lang.String, java.util.Collection)
 	 */
 	@Override
@@ -49,7 +49,7 @@ public class AlienGPIOService extends
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.sensors.sessions.interfaces.AbstractGPIOService#
+	 * org.rifidi.edge.sensors.sessions.interfaces.AbstractGPIOService#
 	 * flashGPO(java.lang.String, int, java.util.Set)
 	 */
 	@Override
@@ -70,7 +70,7 @@ public class AlienGPIOService extends
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.sensors.management.AbstractGPIOService#testGPI(java
+	 * org.rifidi.edge.sensors.management.AbstractGPIOService#testGPI(java
 	 * .lang.String, int)
 	 */
 	@Override

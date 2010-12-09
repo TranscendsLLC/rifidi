@@ -8,7 +8,7 @@ import java.util.Set;
 
 import org.eclipse.osgi.framework.console.CommandInterpreter;
 import org.eclipse.osgi.framework.console.CommandProvider;
-import org.rifidi.edge.core.sensors.exceptions.CannotExecuteException;
+import org.rifidi.edge.sensors.CannotExecuteException;
 
 /**
  * @author kyle

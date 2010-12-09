@@ -25,14 +25,14 @@ import javax.management.MBeanInfo;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.api.rmi.dto.SessionDTO;
-import org.rifidi.edge.core.configuration.annotations.JMXMBean;
-import org.rifidi.edge.core.configuration.annotations.Property;
-import org.rifidi.edge.core.configuration.annotations.PropertyType;
-import org.rifidi.edge.core.configuration.mbeanstrategies.AnnotationMBeanInfoStrategy;
-import org.rifidi.edge.core.exceptions.CannotCreateSessionException;
-import org.rifidi.edge.core.sensors.SensorSession;
-import org.rifidi.edge.core.sensors.base.AbstractSensor;
-import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
+import org.rifidi.edge.configuration.AnnotationMBeanInfoStrategy;
+import org.rifidi.edge.configuration.JMXMBean;
+import org.rifidi.edge.configuration.Property;
+import org.rifidi.edge.configuration.PropertyType;
+import org.rifidi.edge.exceptions.CannotCreateSessionException;
+import org.rifidi.edge.sensors.AbstractCommandConfiguration;
+import org.rifidi.edge.sensors.AbstractSensor;
+import org.rifidi.edge.sensors.SensorSession;
 
 /**
  * This class represents an LLRP reader. It handles the session and sets up the
@@ -84,7 +84,7 @@ public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.sensors.base.AbstractSensor#createReaderSession(
+	 * org.rifidi.edge.sensors.base.AbstractSensor#createReaderSession(
 	 * org.rifidi.edge.api.rmi.dto.SessionDTO)
 	 */
 	@Override
@@ -136,7 +136,7 @@ public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.sensors.base.AbstractSensor#destroySensorSession
+	 * org.rifidi.edge.sensors.base.AbstractSensor#destroySensorSession
 	 * (java.lang.String)
 	 */
 	@Override
@@ -158,7 +158,7 @@ public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.configuration.RifidiService#destroy()
+	 * @see org.rifidi.edge.configuration.RifidiService#destroy()
 	 */
 	@Override
 	protected void destroy() {
@@ -175,8 +175,8 @@ public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.sensors.base.AbstractSensor#unbindCommandConfiguration
-	 * (org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration,
+	 * org.rifidi.edge.sensors.base.AbstractSensor#unbindCommandConfiguration
+	 * (org.rifidi.edge.sensors.commands.AbstractCommandConfiguration,
 	 * java.util.Map)
 	 */
 	@Override
@@ -234,7 +234,7 @@ public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.sensors.base.AbstractSensor#getDisplayName()
+	 * @see org.rifidi.edge.sensors.base.AbstractSensor#getDisplayName()
 	 */
 	@Override
 	@Property(displayName = "Display Name", description = "Logical Name of Reader", writable = true, type = PropertyType.PT_STRING, category = "connection", defaultValue = "LLRP", orderValue = 0)
@@ -359,7 +359,7 @@ public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.configuration.RifidiService#getMBeanInfo()
+	 * @see org.rifidi.edge.configuration.RifidiService#getMBeanInfo()
 	 */
 	@Override
 	public MBeanInfo getMBeanInfo() {

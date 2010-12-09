@@ -15,8 +15,8 @@
  */
 package org.rifidi.edge.adapter.alien;
 
-import org.rifidi.edge.core.sensors.sessions.MessageParsingStrategy;
-import org.rifidi.edge.core.sensors.sessions.MessageParsingStrategyFactory;
+import org.rifidi.edge.sensors.sessions.MessageParsingStrategy;
+import org.rifidi.edge.sensors.sessions.MessageParsingStrategyFactory;
 
 /**
  * Produces new AlienMessageParsingStrategies
@@ -31,7 +31,7 @@ public class AlienMessageParsingStrategyFactory implements
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.sensors.base.threads.MessageParsingStrategyFactory
+	 * org.rifidi.edge.sensors.base.threads.MessageParsingStrategyFactory
 	 * #createMessageParser()
 	 */
 	@Override

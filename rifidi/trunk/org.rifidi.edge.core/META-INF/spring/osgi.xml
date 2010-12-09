@@ -6,22 +6,22 @@
      http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi.xsd">
 
 	<!-- Exported Services -->
-	<osgi:service id="ReaderDAOBinding" interface="org.rifidi.edge.core.daos.ReaderDAO"
+	<osgi:service id="ReaderDAOBinding" interface="org.rifidi.edge.daos.ReaderDAO"
 		ref="ReaderDAOImpl" />
 	<osgi:service id="SensorManagementBinding"
-		interface="org.rifidi.edge.core.sensors.management.SensorManagementService"
+		interface="org.rifidi.edge.sensors.SensorManagementService"
 		ref="SensorManagement" />
 	<!-- Bind the CommandDAO as an OSGi Service. -->
-	<osgi:service id="CommandDAOBinding" interface="org.rifidi.edge.core.daos.CommandDAO"
+	<osgi:service id="CommandDAOBinding" interface="org.rifidi.edge.daos.CommandDAO"
 		ref="CommandDAOImpl" />
 
 	<osgi:service id="configurationServiceRegistration" ref="configurationService"
-		interface="org.rifidi.edge.core.configuration.services.ConfigurationService" />
+		interface="org.rifidi.edge.configuration.ConfigurationService" />
 	<osgi:service id="jmxServiceRegistration" ref="jmxService"
-		interface="org.rifidi.edge.core.configuration.services.JMXService" />
+		interface="org.rifidi.edge.configuration.JMXService" />
 
 	<!-- Imported Services -->
-	<osgi:set id="serviceFactoriesSet" interface="org.rifidi.edge.core.configuration.ServiceFactory"
+	<osgi:set id="serviceFactoriesSet" interface="org.rifidi.edge.configuration.ServiceFactory"
 		cardinality="0..N">
 		<osgi:listener ref="configurationService" bind-method="bind"
 			unbind-method="unbind" />
@@ -30,7 +30,7 @@
 
 	<!-- Listener for Reader Configurations -->
 	<osgi:set id="readerSet"
-		interface="org.rifidi.edge.core.sensors.base.AbstractSensor"
+		interface="org.rifidi.edge.sensors.AbstractSensor"
 		cardinality="0..N">
 		<osgi:listener ref="ReaderDAOImpl" bind-method="bindReader"
 			unbind-method="unbindReader" />
@@ -40,7 +40,7 @@
 
 	<!-- Listener for Reader Configuration Factories -->
 	<osgi:set id="readerFactoriesSet"
-		interface="org.rifidi.edge.core.sensors.base.AbstractSensorFactory"
+		interface="org.rifidi.edge.sensors.AbstractSensorFactory"
 		cardinality="0..N">
 		<osgi:listener ref="ReaderDAOImpl" bind-method="bindReaderFactory"
 			unbind-method="unbindReaderFactory" />
@@ -48,19 +48,19 @@
 
 	<!-- Listener for Command Configurations -->
 	<osgi:set id="commandSet"
-		interface="org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration"
+		interface="org.rifidi.edge.sensors.AbstractCommandConfiguration"
 		cardinality="0..N">
 		<osgi:listener ref="CommandDAOImpl" bind-method="bindCommand"
 			unbind-method="unbindCommand" />
 	</osgi:set>
 
 	<osgi:set id="commandFactoriesSet"
-		interface="org.rifidi.edge.core.configuration.impl.AbstractCommandConfigurationFactory"
+		interface="org.rifidi.edge.configuration.AbstractCommandConfigurationFactory"
 		cardinality="0..N">
 		<osgi:listener ref="CommandDAOImpl" bind-method="bindCommandFactory"
 			unbind-method="unbindCommandFactory" />
 	</osgi:set>
 
 	<osgi:service id="esperManagerService" ref="esperManager"
-		interface="org.rifidi.edge.core.services.esper.EsperManagementService" />
+		interface="org.rifidi.edge.services.EsperManagementService" />
 </beans>

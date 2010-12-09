@@ -10,7 +10,7 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.rifidi.edge.core.app.api.service.tagmonitor.ReadZone;
+import org.rifidi.edge.api.service.tagmonitor.ReadZone;
 
 /**
  * @author manoj
@@ -49,7 +49,7 @@ public class ReadZoneTest {
 	}
 
 	/**
-	 * Test method for {@link org.rifidi.edge.core.app.api.service.tagmonitor.ReadZone#ReadZone(java.lang.String)}.
+	 * Test method for {@link org.rifidi.edge.api.service.tagmonitor.ReadZone#ReadZone(java.lang.String)}.
 	 */
 	@Test
 	public void testReadZoneString() {
@@ -57,7 +57,7 @@ public class ReadZoneTest {
 	}
 
 	/**
-	 * Test method for {@link org.rifidi.edge.core.app.api.service.tagmonitor.ReadZone#ReadZone(java.lang.String, java.lang.Integer[])}.
+	 * Test method for {@link org.rifidi.edge.api.service.tagmonitor.ReadZone#ReadZone(java.lang.String, java.lang.Integer[])}.
 	 */
 	@Test
 	public void testReadZoneStringIntegerArray() {
@@ -65,7 +65,7 @@ public class ReadZoneTest {
 	}
 
 	/**
-	 * Test method for {@link org.rifidi.edge.core.app.api.service.tagmonitor.ReadZone#ReadZone(java.lang.String, java.util.List, boolean, java.lang.Integer[])}.
+	 * Test method for {@link org.rifidi.edge.api.service.tagmonitor.ReadZone#ReadZone(java.lang.String, java.util.List, boolean, java.lang.Integer[])}.
 	 */
 	@Test
 	public void testReadZoneStringListOfStringBooleanIntegerArray() {
@@ -73,7 +73,7 @@ public class ReadZoneTest {
 	}
 
 	/**
-	 * Test method for {@link org.rifidi.edge.core.app.api.service.tagmonitor.ReadZone#createReadZone(java.util.Properties)}.
+	 * Test method for {@link org.rifidi.edge.api.service.tagmonitor.ReadZone#createReadZone(java.util.Properties)}.
 	 */
 	@Test
 	public void testCreateReadZone() {
@@ -81,7 +81,7 @@ public class ReadZoneTest {
 	}
 
 	/**
-	 * Test method for {@link org.rifidi.edge.core.app.api.service.tagmonitor.ReadZone#getReaderID()}.
+	 * Test method for {@link org.rifidi.edge.api.service.tagmonitor.ReadZone#getReaderID()}.
 	 */
 	@Test
 	public void testGetReaderID() {
@@ -92,7 +92,7 @@ public class ReadZoneTest {
 	}
 	
 	/**
-	 * Test method for {@link org.rifidi.edge.core.app.api.service.tagmonitor.ReadZone#isInclude()}.
+	 * Test method for {@link org.rifidi.edge.api.service.tagmonitor.ReadZone#isInclude()}.
 	 */
 	@Test
 	public void testIsInclude() {
@@ -101,7 +101,7 @@ public class ReadZoneTest {
 
 	
 	/**
-	 * Test method for {@link org.rifidi.edge.core.app.api.service.tagmonitor.ReadZone#setInclude(boolean)}.
+	 * Test method for {@link org.rifidi.edge.api.service.tagmonitor.ReadZone#setInclude(boolean)}.
 	 */
 	@Test
 	public void testSetInclude() {
@@ -111,7 +111,7 @@ public class ReadZoneTest {
 	}
 
 	/**
-	 * Test method for {@link org.rifidi.edge.core.app.api.service.tagmonitor.ReadZone#clone()}.
+	 * Test method for {@link org.rifidi.edge.api.service.tagmonitor.ReadZone#clone()}.
 	 */
 	@Test
 	public void testClone() {

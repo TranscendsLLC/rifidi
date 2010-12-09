@@ -15,7 +15,7 @@
  */
 package org.rifidi.edge.adapter.alien;
 
-import org.rifidi.edge.core.sensors.commands.TimeoutCommand;
+import org.rifidi.edge.sensors.TimeoutCommand;
 
 /**
  * A superclass for use by commands for the Alien9800 Reader

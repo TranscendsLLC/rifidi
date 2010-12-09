@@ -1,6 +1,6 @@
 package org.rifidi.edge.adapter.alien.gpio;
 
-import org.rifidi.edge.core.sensors.sessions.MessageParsingStrategy;
+import org.rifidi.edge.sensors.sessions.MessageParsingStrategy;
 
 /**
  * This is an implementation of the MessageParsingStrategy for the Alien
@@ -22,7 +22,7 @@ public class AlienGPIOMessageParsingStrategy implements MessageParsingStrategy {
 	final StringBuffer sb = new StringBuffer();
 	
 	/* (non-Javadoc)
-	 * @see org.rifidi.edge.core.sensors.sessions.MessageParsingStrategy#isMessage(byte)
+	 * @see org.rifidi.edge.sensors.sessions.MessageParsingStrategy#isMessage(byte)
 	 */
 	@Override
 	public byte[] isMessage(byte message) {

@@ -8,15 +8,15 @@
 	<!-- Put reader configuration service in OSGi Registry -->
 	<osgi:service id="alienConfigurationFactoryService" ref="alienConfigurationFactory">
 		<osgi:interfaces>
-			<value>org.rifidi.edge.core.configuration.ServiceFactory</value>
-			<value>org.rifidi.edge.core.sensors.base.AbstractSensorFactory</value>
+			<value>org.rifidi.edge.configuration.ServiceFactory</value>
+			<value>org.rifidi.edge.sensors.AbstractSensorFactory</value>
 		</osgi:interfaces>
 	</osgi:service>
 	
 	<osgi:service id="alienAutoConfigurationFactoryService" ref="alienAutoConfigurationFactory">
 		<osgi:interfaces>
-			<value>org.rifidi.edge.core.configuration.ServiceFactory</value>
-			<value>org.rifidi.edge.core.sensors.base.AbstractSensorFactory</value>
+			<value>org.rifidi.edge.configuration.ServiceFactory</value>
+			<value>org.rifidi.edge.sensors.AbstractSensorFactory</value>
 		</osgi:interfaces>
 	</osgi:service>
 	
@@ -29,39 +29,39 @@
 	<!-- Put command configuration service in OSGi Registry -->
 	<osgi:service id="alienGetTagListCommandConfigurationFactoryReg" ref="alienGetTagListCommandConfigurationFactory">
 		<osgi:interfaces>
-			<value>org.rifidi.edge.core.configuration.ServiceFactory</value>
-			<value>org.rifidi.edge.core.configuration.impl.AbstractCommandConfigurationFactory</value>
+			<value>org.rifidi.edge.configuration.ServiceFactory</value>
+			<value>org.rifidi.edge.configuration.AbstractCommandConfigurationFactory</value>
 		</osgi:interfaces>
 	</osgi:service>
 	
 	<osgi:service id="alienAutonomousModeCommandConfigurationFactoryReg" ref="alienAutonomousModeCommandConfigurationFactory">
 		<osgi:interfaces>
-			<value>org.rifidi.edge.core.configuration.ServiceFactory</value>
-			<value>org.rifidi.edge.core.configuration.impl.AbstractCommandConfigurationFactory</value>
+			<value>org.rifidi.edge.configuration.ServiceFactory</value>
+			<value>org.rifidi.edge.configuration.AbstractCommandConfigurationFactory</value>
 		</osgi:interfaces>
 	</osgi:service>
 	
 	<osgi:service id="alienAutonomousModeStopCommandConfigurationFactoryReg" ref="alienAutonomousModeStopCommandConfigurationFactory">
 		<osgi:interfaces>
-			<value>org.rifidi.edge.core.configuration.ServiceFactory</value>
-			<value>org.rifidi.edge.core.configuration.impl.AbstractCommandConfigurationFactory</value>
+			<value>org.rifidi.edge.configuration.ServiceFactory</value>
+			<value>org.rifidi.edge.configuration.AbstractCommandConfigurationFactory</value>
 		</osgi:interfaces>
 	</osgi:service>
 	
 	
-	<osgi:set id="alienCommands" interface="org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration"
+	<osgi:set id="alienCommands" interface="org.rifidi.edge.sensors.AbstractCommandConfiguration"
 		cardinality="0..N" filter="(reader=Alien)">
 		<osgi:listener ref="alienConfigurationFactory" bind-method="bindCommandConfiguration" unbind-method="unbindCommandConfiguration"/>
 	</osgi:set>
 	
-	<osgi:set id="alienautoCommands" interface="org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration"
+	<osgi:set id="alienautoCommands" interface="org.rifidi.edge.sensors.AbstractCommandConfiguration"
 		cardinality="0..N" filter="(reader=Alien-Autonomous)">
 		<osgi:listener ref="alienAutoConfigurationFactory" bind-method="bindCommandConfiguration" unbind-method="unbindCommandConfiguration"/>
 	</osgi:set>
 	
 	<osgi:reference id="JMSNotifierService"
-		interface="org.rifidi.edge.core.services.notification.NotifierService" />
+		interface="org.rifidi.edge.notification.NotifierService" />
 	
 	<osgi:reference id="readerDAO"
-		interface="org.rifidi.edge.core.daos.ReaderDAO" />
+		interface="org.rifidi.edge.daos.ReaderDAO" />
 </beans>

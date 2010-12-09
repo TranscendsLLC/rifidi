@@ -18,7 +18,7 @@ package org.rifidi.edge.adapter.alien;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.rifidi.edge.core.sensors.sessions.MessageParsingStrategy;
+import org.rifidi.edge.sensors.sessions.MessageParsingStrategy;
 
 /**
  * This object parses alien messages that come in byte by byte, for example from
@@ -42,7 +42,7 @@ public class AlienMessageParsingStrategy implements MessageParsingStrategy {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.sensors.base.threads.MessageParser#isMessage(byte)
+	 * org.rifidi.edge.sensors.base.threads.MessageParser#isMessage(byte)
 	 */
 	@Override
 	public byte[] isMessage(byte message) {

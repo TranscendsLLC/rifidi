@@ -12,14 +12,14 @@ import java.util.concurrent.TimeUnit;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.adapter.awid.awid2010.communication.commands.AbstractAwidCommand;
-import org.rifidi.edge.core.sensors.base.AbstractSensor;
-import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
-import org.rifidi.edge.core.sensors.exceptions.CannotExecuteException;
-import org.rifidi.edge.core.sensors.messages.ByteMessage;
-import org.rifidi.edge.core.sensors.sessions.AbstractPubSubIPSensorSession;
-import org.rifidi.edge.core.sensors.sessions.IPSessionEndpoint;
-import org.rifidi.edge.core.sensors.sessions.MessageParsingStrategy;
-import org.rifidi.edge.core.sensors.sessions.MessageParsingStrategyFactory;
+import org.rifidi.edge.sensors.AbstractCommandConfiguration;
+import org.rifidi.edge.sensors.AbstractSensor;
+import org.rifidi.edge.sensors.ByteMessage;
+import org.rifidi.edge.sensors.CannotExecuteException;
+import org.rifidi.edge.sensors.sessions.AbstractPubSubIPSensorSession;
+import org.rifidi.edge.sensors.sessions.IPSessionEndpoint;
+import org.rifidi.edge.sensors.sessions.MessageParsingStrategy;
+import org.rifidi.edge.sensors.sessions.MessageParsingStrategyFactory;
 
 /**
  * This is a Session that is used for the GPIO functionality for the AWID TCP/IP
@@ -162,8 +162,8 @@ public class AwidGPIOSession extends AbstractPubSubIPSensorSession implements
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.sensors.sessions.AbstractIPSensorSession#sendMessage
-	 * (org.rifidi.edge.core.sensors.messages.ByteMessage)
+	 * org.rifidi.edge.sensors.sessions.AbstractIPSensorSession#sendMessage
+	 * (org.rifidi.edge.sensors.messages.ByteMessage)
 	 */
 	public void sendMessage(AbstractAwidCommand message) throws IOException {
 		super.sendMessage(new ByteMessage(message.getCommand()));
@@ -190,7 +190,7 @@ public class AwidGPIOSession extends AbstractPubSubIPSensorSession implements
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.sensors.sessions.AbstractIPSensorSession#onConnect()
+	 * org.rifidi.edge.sensors.sessions.AbstractIPSensorSession#onConnect()
 	 */
 	@Override
 	protected boolean onConnect() throws IOException {
@@ -202,7 +202,7 @@ public class AwidGPIOSession extends AbstractPubSubIPSensorSession implements
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.sensors.sessions.AbstractIPSensorSession#disconnect
+	 * org.rifidi.edge.sensors.sessions.AbstractIPSensorSession#disconnect
 	 * ()
 	 */
 	@Override
@@ -215,8 +215,8 @@ public class AwidGPIOSession extends AbstractPubSubIPSensorSession implements
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.sensors.sessions.pubsub.IPSessionEndpoint#handleMessage
-	 * (org.rifidi.edge.core.sensors.messages.ByteMessage)
+	 * org.rifidi.edge.sensors.sessions.pubsub.IPSessionEndpoint#handleMessage
+	 * (org.rifidi.edge.sensors.messages.ByteMessage)
 	 */
 	@Override
 	public void handleMessage(ByteMessage message) {
@@ -284,7 +284,7 @@ public class AwidGPIOSession extends AbstractPubSubIPSensorSession implements
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.sensors.sessions.AbstractIPSensorSession#toString()
+	 * org.rifidi.edge.sensors.sessions.AbstractIPSensorSession#toString()
 	 */
 	@Override
 	public String toString() {

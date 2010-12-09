@@ -22,10 +22,10 @@ import org.llrp.ltk.generated.parameters.EPC_96;
 import org.llrp.ltk.generated.parameters.GPIEvent;
 import org.llrp.ltk.generated.parameters.TagReportData;
 import org.llrp.ltk.types.LLRPMessage;
-import org.rifidi.edge.core.services.notification.EPCGeneration2Event;
-import org.rifidi.edge.core.services.notification.ReadCycle;
-import org.rifidi.edge.core.services.notification.StandardTagReadEventFieldNames;
-import org.rifidi.edge.core.services.notification.data.TagReadEvent;
+import org.rifidi.edge.notification.EPCGeneration2Event;
+import org.rifidi.edge.notification.ReadCycle;
+import org.rifidi.edge.notification.StandardTagReadEventFieldNames;
+import org.rifidi.edge.notification.TagReadEvent;
 
 /**
  * This factory creates events that can be added to the Esper runtime from LLRP
@@ -222,11 +222,11 @@ public class LLRPEventFactory {
 	 * @param readerID
 	 * @return
 	 */
-	private static org.rifidi.edge.core.services.notification.GPIEvent createGPIEvent(
+	private static org.rifidi.edge.notification.GPIEvent createGPIEvent(
 			GPIEvent llrpGPIEvent, String readerID) {
 		int port = llrpGPIEvent.getGPIPortNumber().toInteger();
 		boolean state = llrpGPIEvent.getGPIEvent().toBoolean();
-		return new org.rifidi.edge.core.services.notification.GPIEvent(
+		return new org.rifidi.edge.notification.GPIEvent(
 				readerID, port, state);
 	}
 }

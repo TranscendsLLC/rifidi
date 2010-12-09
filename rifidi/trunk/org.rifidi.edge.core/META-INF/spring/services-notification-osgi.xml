@@ -8,7 +8,7 @@
 
 	<!-- Exported Services -->
 	<osgi:service ref="JMSNotifierService"
-		interface="org.rifidi.edge.core.services.notification.NotifierService" />
+		interface="org.rifidi.edge.notification.NotifierService" />
 
 	<!-- Imported Services -->
 

@@ -13,11 +13,11 @@ package org.rifidi.edge.adapter.thingmagic.commands;
 
 import javax.management.MBeanInfo;
 
-import org.rifidi.edge.core.configuration.annotations.JMXMBean;
-import org.rifidi.edge.core.configuration.annotations.Property;
-import org.rifidi.edge.core.configuration.annotations.PropertyType;
-import org.rifidi.edge.core.configuration.mbeanstrategies.AnnotationMBeanInfoStrategy;
-import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
+import org.rifidi.edge.configuration.AnnotationMBeanInfoStrategy;
+import org.rifidi.edge.configuration.JMXMBean;
+import org.rifidi.edge.configuration.Property;
+import org.rifidi.edge.configuration.PropertyType;
+import org.rifidi.edge.sensors.AbstractCommandConfiguration;
 
 /**
  * 
@@ -46,7 +46,7 @@ public class ThingmagicGetTagListCommandConfiguration extends
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration#getCommand
+	 * org.rifidi.edge.sensors.commands.AbstractCommandConfiguration#getCommand
 	 * (java.lang.String)
 	 */
 	@Override
@@ -64,7 +64,7 @@ public class ThingmagicGetTagListCommandConfiguration extends
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.configuration.RifidiService#getMBeanInfo()
+	 * @see org.rifidi.edge.configuration.RifidiService#getMBeanInfo()
 	 */
 	@Override
 	public MBeanInfo getMBeanInfo() {

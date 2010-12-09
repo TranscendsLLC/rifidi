@@ -8,27 +8,27 @@
 	<!-- Put command configuration service in OSGi Registry -->
 	<osgi:service id="thingmagicGetTagListCommandConfigurationFactoryReg" ref="thingmagicGetTagListCommandConfigurationFactory">
 		<osgi:interfaces>
-			<value>org.rifidi.edge.core.configuration.ServiceFactory</value>
-			<value>org.rifidi.edge.core.configuration.impl.AbstractCommandConfigurationFactory</value>
+			<value>org.rifidi.edge.configuration.ServiceFactory</value>
+			<value>org.rifidi.edge.configuration.AbstractCommandConfigurationFactory</value>
 		</osgi:interfaces>
 	</osgi:service>
 
 	<!-- Put reader configuration service in OSGi Registry -->
 	<osgi:service id="thingmagicConfigurationFactoryService" ref="thingmagicConfigurationFactory">
 		<osgi:interfaces>
-			<value>org.rifidi.edge.core.configuration.ServiceFactory</value>
-			<value>org.rifidi.edge.core.sensors.base.AbstractSensorFactory</value>
+			<value>org.rifidi.edge.configuration.ServiceFactory</value>
+			<value>org.rifidi.edge.sensors.AbstractSensorFactory</value>
 		</osgi:interfaces>
 	</osgi:service>
 	
 	<!-- Create a set that listens for ThingMagic command configurations -->
-	<osgi:set id="thingmagicCommands" interface="org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration"
+	<osgi:set id="thingmagicCommands" interface="org.rifidi.edge.sensors.AbstractCommandConfiguration"
 		cardinality="0..N" filter="(reader=ThingMagic)">
 		<osgi:listener ref="thingmagicConfigurationFactory" bind-method="bindCommandConfiguration" unbind-method="unbindCommandConfiguration"/>
 	</osgi:set>
 	
 	<!-- Get a reference to the NotifierService -->
 	<osgi:reference id="JMSNotifierService"
-		interface="org.rifidi.edge.core.services.notification.NotifierService" />
+		interface="org.rifidi.edge.notification.NotifierService" />
 
 </beans>

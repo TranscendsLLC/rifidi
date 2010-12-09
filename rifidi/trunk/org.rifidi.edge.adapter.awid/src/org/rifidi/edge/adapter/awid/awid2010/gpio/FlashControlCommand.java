@@ -7,8 +7,8 @@ import java.io.IOException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.rifidi.edge.core.sensors.commands.Command;
-import org.rifidi.edge.core.sensors.messages.ByteMessage;
+import org.rifidi.edge.sensors.ByteMessage;
+import org.rifidi.edge.sensors.Command;
 
 /**
  * This is the Command that handles the 'Flash On/Off Control'. It sends the

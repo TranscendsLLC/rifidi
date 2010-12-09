@@ -9,11 +9,11 @@
 	<osgi:service id="BarcodeConfigurationFactoryService"
 		ref="BarcodeConfigurationFactory">
 		<osgi:interfaces>
-			<value>org.rifidi.edge.core.configuration.ServiceFactory</value>
-			<value>org.rifidi.edge.core.sensors.base.AbstractSensorFactory</value>
+			<value>org.rifidi.edge.configuration.ServiceFactory</value>
+			<value>org.rifidi.edge.sensors.AbstractSensorFactory</value>
 		</osgi:interfaces>
 	</osgi:service>
 
 	<osgi:reference id="JMSNotifierService"
-		interface="org.rifidi.edge.core.services.notification.NotifierService" />
+		interface="org.rifidi.edge.notification.NotifierService" />
 </beans>

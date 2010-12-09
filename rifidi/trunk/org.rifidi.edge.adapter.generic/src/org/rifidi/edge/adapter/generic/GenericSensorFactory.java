@@ -15,10 +15,10 @@ import java.util.Map;
 
 import javax.management.MBeanInfo;
 
-import org.rifidi.edge.core.exceptions.InvalidStateException;
-import org.rifidi.edge.core.sensors.base.AbstractSensorFactory;
-import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
-import org.rifidi.edge.core.services.notification.NotifierService;
+import org.rifidi.edge.exceptions.InvalidStateException;
+import org.rifidi.edge.notification.NotifierService;
+import org.rifidi.edge.sensors.AbstractCommandConfiguration;
+import org.rifidi.edge.sensors.AbstractSensorFactory;
 
 /**
  * Factory class for the Generic reader.  
@@ -39,7 +39,7 @@ public class GenericSensorFactory extends AbstractSensorFactory<GenericSensor> {
 	private volatile NotifierService notifierService;
 	
 	/* (non-Javadoc)
-	 * @see org.rifidi.edge.core.sensors.base.AbstractSensorFactory#bindCommandConfiguration(org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration, java.util.Map)
+	 * @see org.rifidi.edge.sensors.base.AbstractSensorFactory#bindCommandConfiguration(org.rifidi.edge.sensors.commands.AbstractCommandConfiguration, java.util.Map)
 	 */
 	@Override
 	public void bindCommandConfiguration(
@@ -48,7 +48,7 @@ public class GenericSensorFactory extends AbstractSensorFactory<GenericSensor> {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.rifidi.edge.core.sensors.base.AbstractSensorFactory#getDescription()
+	 * @see org.rifidi.edge.sensors.base.AbstractSensorFactory#getDescription()
 	 */
 	@Override
 	public String getDescription() {
@@ -56,7 +56,7 @@ public class GenericSensorFactory extends AbstractSensorFactory<GenericSensor> {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.rifidi.edge.core.sensors.base.AbstractSensorFactory#getDisplayName()
+	 * @see org.rifidi.edge.sensors.base.AbstractSensorFactory#getDisplayName()
 	 */
 	@Override
 	public String getDisplayName() {
@@ -64,7 +64,7 @@ public class GenericSensorFactory extends AbstractSensorFactory<GenericSensor> {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.rifidi.edge.core.sensors.base.AbstractSensorFactory#unbindCommandConfiguration(org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration, java.util.Map)
+	 * @see org.rifidi.edge.sensors.base.AbstractSensorFactory#unbindCommandConfiguration(org.rifidi.edge.sensors.commands.AbstractCommandConfiguration, java.util.Map)
 	 */
 	@Override
 	public void unbindCommandConfiguration(
@@ -73,7 +73,7 @@ public class GenericSensorFactory extends AbstractSensorFactory<GenericSensor> {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.rifidi.edge.core.configuration.ServiceFactory#createInstance(java.lang.String)
+	 * @see org.rifidi.edge.configuration.ServiceFactory#createInstance(java.lang.String)
 	 */
 	@Override
 	public void createInstance(String serviceID)
@@ -91,7 +91,7 @@ public class GenericSensorFactory extends AbstractSensorFactory<GenericSensor> {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.rifidi.edge.core.configuration.ServiceFactory#getFactoryID()
+	 * @see org.rifidi.edge.configuration.ServiceFactory#getFactoryID()
 	 */
 	@Override
 	public String getFactoryID() {
@@ -99,7 +99,7 @@ public class GenericSensorFactory extends AbstractSensorFactory<GenericSensor> {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.rifidi.edge.core.configuration.ServiceFactory#getServiceDescription(java.lang.String)
+	 * @see org.rifidi.edge.configuration.ServiceFactory#getServiceDescription(java.lang.String)
 	 */
 	@Override
 	public MBeanInfo getServiceDescription(String factoryID) {

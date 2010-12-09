@@ -5,7 +5,7 @@
 	http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 
 	<bean id="rifidiLoggingService"
-		class="org.rifidi.edge.core.services.logging.LoggingServiceImpl">
+		class="org.rifidi.edge.services.LoggingServiceImpl">
 	</bean>
 
 </beans>

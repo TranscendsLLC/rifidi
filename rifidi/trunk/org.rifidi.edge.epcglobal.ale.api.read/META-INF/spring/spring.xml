@@ -16,9 +16,9 @@
 		</property>
 	</bean>
 	<osgi:reference id="sensorManagementBinding"
-		interface="org.rifidi.edge.core.sensors.management.SensorManagementService" />
+		interface="org.rifidi.edge.sensors.SensorManagementService" />
 	<osgi:reference id="esperManagerService"
-		interface="org.rifidi.edge.core.services.esper.EsperManagementService" />
+		interface="org.rifidi.edge.services.EsperManagementService" />
 
 	<bean id="aleReadAPIService"
 		class="org.rifidi.edge.epcglobal.ale.api.read.ws.ALEServicePortTypeImpl">
@@ -27,7 +27,7 @@
 		<property name="reportFactory" ref="reportFactory" />
 	</bean>
 
-	<bean id="ReadWebServiceDeployer" class="org.rifidi.edge.core.utilities.JaxWsServiceExporter"
+	<bean id="ReadWebServiceDeployer" class="org.rifidi.edge.util.JaxWsServiceExporter"
 		init-method="start" destroy-method="stop">
 		<property name="port" value="${org.rifidi.edge.ale.port}" />
 		<property name="host" value="http://${org.rifidi.edge.ale.host}" />

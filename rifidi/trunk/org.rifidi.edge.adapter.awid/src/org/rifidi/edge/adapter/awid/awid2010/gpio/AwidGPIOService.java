@@ -10,8 +10,8 @@ import java.util.Set;
 
 import org.rifidi.edge.adapter.awid.awid2010.AwidSession;
 import org.rifidi.edge.api.SessionStatus;
-import org.rifidi.edge.core.sensors.exceptions.CannotExecuteException;
-import org.rifidi.edge.core.sensors.management.AbstractGPIOService;
+import org.rifidi.edge.sensors.AbstractGPIOService;
+import org.rifidi.edge.sensors.CannotExecuteException;
 
 /**
  * This class is a service that lets applications access the GPIO functionality
@@ -27,7 +27,7 @@ public class AwidGPIOService extends AbstractGPIOService<AwidSession> {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.sensors.management.AbstractGPIOService#flashGPO(
+	 * org.rifidi.edge.sensors.management.AbstractGPIOService#flashGPO(
 	 * java.lang.String, int, java.util.Set)
 	 */
 	@Override
@@ -42,7 +42,7 @@ public class AwidGPIOService extends AbstractGPIOService<AwidSession> {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.sensors.management.AbstractGPIOService#setGPO(java
+	 * org.rifidi.edge.sensors.management.AbstractGPIOService#setGPO(java
 	 * .lang.String, java.util.Collection)
 	 */
 	@Override
@@ -57,7 +57,7 @@ public class AwidGPIOService extends AbstractGPIOService<AwidSession> {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.sensors.management.AbstractGPIOService#testGPI(java
+	 * org.rifidi.edge.sensors.management.AbstractGPIOService#testGPI(java
 	 * .lang.String, int)
 	 */
 	@Override

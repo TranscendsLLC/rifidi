@@ -10,7 +10,7 @@
 	<amq:topic id="extTagsDest" physicalName="org.rifidi.edge.external.tags" />
 
 	<bean id="JMSNotifierService"
-		class="org.rifidi.edge.core.services.notification.NotifierServiceImpl">
+		class="org.rifidi.edge.notification.NotifierServiceImpl">
 		<property name="extNotificationDest" ref="extNotificationDest" />
 		<property name="extTagsDest" ref="extTagsDest" />
 		<property name="extNotificationTemplate" ref="externalJMSTemplate" />

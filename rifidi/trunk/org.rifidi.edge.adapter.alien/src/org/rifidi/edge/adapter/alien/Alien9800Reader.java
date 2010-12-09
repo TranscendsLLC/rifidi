@@ -35,16 +35,16 @@ import org.rifidi.edge.adapter.alien.commandobject.AlienGetCommandObject;
 import org.rifidi.edge.adapter.alien.commandobject.AlienSetCommandObject;
 import org.rifidi.edge.adapter.alien.commands.internal.AlienPropertyCommand;
 import org.rifidi.edge.api.rmi.dto.SessionDTO;
-import org.rifidi.edge.core.configuration.annotations.JMXMBean;
-import org.rifidi.edge.core.configuration.annotations.Operation;
-import org.rifidi.edge.core.configuration.annotations.Property;
-import org.rifidi.edge.core.configuration.annotations.PropertyType;
-import org.rifidi.edge.core.configuration.mbeanstrategies.AnnotationMBeanInfoStrategy;
-import org.rifidi.edge.core.exceptions.CannotCreateSessionException;
-import org.rifidi.edge.core.sensors.SensorSession;
-import org.rifidi.edge.core.sensors.base.AbstractSensor;
-import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
-import org.rifidi.edge.core.sensors.exceptions.CannotDestroySensorException;
+import org.rifidi.edge.configuration.AnnotationMBeanInfoStrategy;
+import org.rifidi.edge.configuration.JMXMBean;
+import org.rifidi.edge.configuration.Operation;
+import org.rifidi.edge.configuration.Property;
+import org.rifidi.edge.configuration.PropertyType;
+import org.rifidi.edge.exceptions.CannotCreateSessionException;
+import org.rifidi.edge.sensors.AbstractCommandConfiguration;
+import org.rifidi.edge.sensors.AbstractSensor;
+import org.rifidi.edge.sensors.CannotDestroySensorException;
+import org.rifidi.edge.sensors.SensorSession;
 
 /**
  * The plugin that connects to an Alien9800 reader
@@ -191,7 +191,7 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.configuration.RifidiService#getMBeanInfo()
+	 * @see org.rifidi.edge.configuration.RifidiService#getMBeanInfo()
 	 */
 	@Override
 	public MBeanInfo getMBeanInfo() {
@@ -202,8 +202,8 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.sensors.base.AbstractSensor#unbindCommandConfiguration
-	 * (org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration,
+	 * org.rifidi.edge.sensors.base.AbstractSensor#unbindCommandConfiguration
+	 * (org.rifidi.edge.sensors.commands.AbstractCommandConfiguration,
 	 * java.util.Map)
 	 */
 	@Override
@@ -222,7 +222,7 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.sensors.base.AbstractSensor#createReaderSession(
+	 * org.rifidi.edge.sensors.base.AbstractSensor#createReaderSession(
 	 * org.rifidi.edge.api.rmi.dto.SessionDTO)
 	 */
 	@Override
@@ -273,7 +273,7 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.configuration.RifidiService#destroy()
+	 * @see org.rifidi.edge.configuration.RifidiService#destroy()
 	 */
 	@Override
 	protected void destroy() {
@@ -294,7 +294,7 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.sensors.base.AbstractSensor#destroySensorSession
+	 * org.rifidi.edge.sensors.base.AbstractSensor#destroySensorSession
 	 * (java.lang.String)
 	 */
 	@Override
@@ -337,7 +337,7 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.sensors.base.AbstractSensor#getDisplayName()
+	 * @see org.rifidi.edge.sensors.base.AbstractSensor#getDisplayName()
 	 */
 	@Override
 	@Property(displayName = "Display Name", description = "Logical Name of Reader", writable = true, type = PropertyType.PT_STRING, category = "connection", defaultValue = "Alien", orderValue = 0)
@@ -688,7 +688,7 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.sensors.base.AbstractSensor#applyPropertyChanges()
+	 * org.rifidi.edge.sensors.base.AbstractSensor#applyPropertyChanges()
 	 */
 	@Override
 	@Operation(description = "Apply all property changes to reader")

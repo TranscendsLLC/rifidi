@@ -3,7 +3,7 @@ package org.rifidi.edge.core.mock;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.rifidi.edge.core.app.api.service.tagmonitor.ReadZone;
+import org.rifidi.edge.api.service.tagmonitor.ReadZone;
 
 public class ReadZoneMock extends ReadZone {
 	

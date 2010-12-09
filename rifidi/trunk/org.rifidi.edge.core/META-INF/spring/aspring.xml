@@ -5,21 +5,21 @@
 	http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 
 	<!-- Create Reader Configuration DAO Service -->
-	<bean id="ReaderDAOImpl" class="org.rifidi.edge.core.daos.internal.impl.ReaderDAOImpl">
+	<bean id="ReaderDAOImpl" class="org.rifidi.edge.daos.ReaderDAOImpl">
 		<property name="readerFactories" ref="readerFactoriesSet" />
 		<property name="reader" ref="readerSet" />
 		<property name="notifierService" ref="JMSNotifierService" />
 	</bean>
 
 	<!-- Create Reader Configuration DAO Service -->
-	<bean id="CommandDAOImpl" class="org.rifidi.edge.core.daos.internal.impl.CommandDAOImpl">
+	<bean id="CommandDAOImpl" class="org.rifidi.edge.daos.CommandDAOImpl">
 		<property name="commandFactories" ref="commandFactoriesSet" />
 		<property name="commands" ref="commandSet" />
 		<property name="notifierService" ref="JMSNotifierService" />
 	</bean>
 
 	<!-- Create Logical Reader management Service -->
-	<bean id="SensorManagement" class="org.rifidi.edge.core.sensors.management.SensorManagementServiceImpl">
+	<bean id="SensorManagement" class="org.rifidi.edge.sensors.SensorManagementServiceImpl">
 		<property name="reader" ref="readerSet" />
 		<property name="esperManager" ref="esperManager"/>
 	</bean>
@@ -36,7 +36,7 @@
 	</bean>
 
 	<bean id="configurationService"
-		class="org.rifidi.edge.core.configuration.services.ConfigurationServiceImpl"
+		class="org.rifidi.edge.configuration.ConfigurationServiceImpl"
 		scope="singleton">
 		<property name="serviceFactories">
 			<ref bean="serviceFactoriesSet" />
@@ -54,8 +54,8 @@
 		</constructor-arg>
 	</bean>
 
-	<bean id="jmxService" class="org.rifidi.edge.core.configuration.services.JMXServiceImpl"
+	<bean id="jmxService" class="org.rifidi.edge.configuration.JMXServiceImpl"
 		scope="singleton"/>
 	<bean id="esperManager"
-		class="org.rifidi.edge.core.services.esper.EsperManagementServiceImpl" />
+		class="org.rifidi.edge.services.EsperManagementServiceImpl" />
 </beans>

@@ -19,8 +19,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.rifidi.edge.core.sensors.messages.ByteMessage;
-import org.rifidi.edge.core.sensors.sessions.IPSessionEndpoint;
+import org.rifidi.edge.sensors.ByteMessage;
+import org.rifidi.edge.sensors.sessions.IPSessionEndpoint;
 
 /**
  * This class subscribes to the session and receives and processes incoming Awid

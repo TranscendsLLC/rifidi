@@ -3,8 +3,8 @@
  */
 package org.rifidi.edge.app.diag.tags.generator;
 
-import org.rifidi.edge.core.services.notification.DatacontainerEvent;
-import org.rifidi.edge.core.services.notification.data.TagReadEvent;
+import org.rifidi.edge.notification.DatacontainerEvent;
+import org.rifidi.edge.notification.TagReadEvent;
 
 /**
  * @author kyle

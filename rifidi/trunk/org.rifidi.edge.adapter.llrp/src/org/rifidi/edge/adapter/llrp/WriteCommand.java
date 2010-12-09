@@ -6,8 +6,8 @@ package org.rifidi.edge.adapter.llrp;
 import java.io.InputStream;
 import java.util.concurrent.TimeoutException;
 
-import org.rifidi.edge.core.sensors.commands.TimeoutCommand;
-import org.rifidi.edge.core.sensors.exceptions.CannotExecuteException;
+import org.rifidi.edge.sensors.CannotExecuteException;
+import org.rifidi.edge.sensors.TimeoutCommand;
 
 /**
  * @author kyle
@@ -26,7 +26,7 @@ public class WriteCommand extends TimeoutCommand {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.rifidi.edge.core.sensors.commands.TimeoutCommand#execute()
+	 * @see org.rifidi.edge.sensors.commands.TimeoutCommand#execute()
 	 */
 	@Override
 	protected void execute() throws TimeoutException {
