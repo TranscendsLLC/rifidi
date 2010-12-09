@@ -23,13 +23,13 @@
 	</bean>
 
 	<bean id="jmsEventSender"
-		class="org.rifidi.edge.core.app.api.resources.jms.JMSResource">
+		class="org.rifidi.edge.api.resources.JMSResource">
 		<property name="template" ref="externalJMSTemplate" />
 		<property name="destination" ref="topic" />
 	</bean>
 
 	<bean id="jmsTagSender"
-		class="org.rifidi.edge.core.app.api.resources.jms.JMSResource">
+		class="org.rifidi.edge.api.resources.JMSResource">
 		<property name="template" ref="externalJMSTemplate" />
 		<property name="destination" ref="tagtopic" />
 	</bean>
@@ -42,7 +42,7 @@
 		<property name="readZoneMonitoringService" ref="readZoneMonitoringService" />
 		<property name="jmsTextSender" ref="jmsEventSender" />
 	</bean>
-	<osgi:service ref="trackapp" interface="org.rifidi.edge.core.app.api.RifidiApp" />
+	<osgi:service ref="trackapp" interface="org.rifidi.edge.api.RifidiApp" />
 
 
 	<!-- Create the application and inject esper and teh JMS sender -->
@@ -51,7 +51,7 @@
 		<constructor-arg index="1" value="Tags" />
 		<property name="jmsTextSender" ref="jmsTagSender" />
 	</bean>
-	<osgi:service ref="tagapp" interface="org.rifidi.edge.core.app.api.RifidiApp" />
+	<osgi:service ref="tagapp" interface="org.rifidi.edge.api.RifidiApp" />
 
 	<!-- Create the application and inject esper and teh JMS sender -->
 	<bean id="sensorapp" class="org.rifidi.edge.tools.tracking.SensorMonitor">
@@ -60,7 +60,7 @@
 		<property name="jmsTextSender" ref="jmsEventSender" />
 		<property name="sensorMonitoringService" ref="sensorMonitoringService" />
 	</bean>
-	<osgi:service ref="sensorapp" interface="org.rifidi.edge.core.app.api.RifidiApp" />
+	<osgi:service ref="sensorapp" interface="org.rifidi.edge.api.RifidiApp" />
 
 	<!-- Create the JMS Sender service -->
 	<bean id="messageFactory" class="org.rifidi.edge.tools.tracking.TrackingMessageFactory">
@@ -102,10 +102,10 @@
 		interface="org.springframework.jms.core.JmsTemplate" bean-name="externalJMSTemplate" />
 
 	<osgi:reference id="readZoneMonitoringService"
-		interface="org.rifidi.edge.core.app.api.service.tagmonitor.ReadZoneMonitoringService" />
+		interface="org.rifidi.edge.api.service.tagmonitor.ReadZoneMonitoringService" />
 
 	<osgi:reference id="sensorMonitoringService"
-		interface="org.rifidi.edge.core.app.api.service.sensormonitor.SensorStatusMonitoringService" />
+		interface="org.rifidi.edge.api.service.sensormonitor.SensorStatusMonitoringService" />
 
 
 </beans>
