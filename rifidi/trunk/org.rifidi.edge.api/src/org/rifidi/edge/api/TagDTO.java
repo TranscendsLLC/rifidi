@@ -9,7 +9,7 @@
  * License:     The software in this package is published under the terms of the EPL License
  *                   A copy of the license is included in this distribution under Rifidi-License.txt 
  */
-package org.rifidi.edge.api.tags;
+package org.rifidi.edge.api;
 
 import java.io.Serializable;
 import java.math.BigInteger;

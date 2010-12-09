@@ -14,7 +14,7 @@
 package org.rifidi.edge.rmi;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.rifidi.edge.api.rmi.services.EdgeServerManagerService;
+import org.rifidi.edge.api.EdgeServerManagerService;
 import org.rifidi.edge.configuration.ConfigurationService;
 
 /**

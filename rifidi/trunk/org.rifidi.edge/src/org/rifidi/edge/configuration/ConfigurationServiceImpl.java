@@ -36,7 +36,7 @@ import org.apache.commons.logging.LogFactory;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceRegistration;
-import org.rifidi.edge.api.rmi.dto.SessionDTO;
+import org.rifidi.edge.api.SessionDTO;
 import org.rifidi.edge.exceptions.CannotCreateServiceException;
 import org.rifidi.edge.exceptions.InvalidStateException;
 import org.rifidi.edge.notification.NotifierService;

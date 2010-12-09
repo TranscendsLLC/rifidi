@@ -1,5 +1,5 @@
 /*
- * JobDeletedNotification.java
+ * SessionRemovedNotification.java
  * 
  * Created:     July 22nd, 2009
  * Project:       Rifidi Edge Server - A middleware platform for RFID applications
@@ -9,43 +9,34 @@
  * License:     The software in this package is published under the terms of the EPL License
  *                   A copy of the license is included in this distribution under Rifidi-License.txt 
  */
-
-package org.rifidi.edge.api.jms.notifications;
+package org.rifidi.edge.api;
 
 import java.io.Serializable;
 
 /**
- * A Notification that is sent when a Job is deleted from a session
+ * A notification send to a client when a session has been deleted
  * 
  * @author Kyle Neumeier - kyle@pramari.com
  */
-public class JobDeletedNotification implements Serializable {
+public class SessionRemovedNotification implements Serializable {
 
-	/** The serialVersionID */
+	/** SerialVersionID */
 	private static final long serialVersionUID = 1L;
-	/** The reader ID this job is running on */
+	/** The ID of the reader */
 	private String readerID;
-	/** The session ID this job is running on */
+	/** The ID of the session */
 	private String sessionID;
-	/** The ID of this job */
-	private Integer jobID;
 
 	/**
-	 * Constructor.   
-	 * 
 	 * @param readerID
-	 * @param sessionID
-	 * @param jobID
 	 */
-	public JobDeletedNotification(String readerID, String sessionID,
-			Integer jobID) {
+	public SessionRemovedNotification(String readerID, String sessionID) {
 		this.readerID = readerID;
 		this.sessionID = sessionID;
-		this.jobID = jobID;
 	}
 
 	/**
-	 * Returns the ID for the reader.  
+	 * Returns the ID of the reader.
 	 * 
 	 * @return the readerID
 	 */
@@ -54,21 +45,12 @@ public class JobDeletedNotification implements Serializable {
 	}
 
 	/**
-	 * Returns the session ID.  
+	 * Returns the ID of the session.
 	 * 
 	 * @return the sessionID
 	 */
 	public String getSessionID() {
 		return sessionID;
-	}
-
-	/**
-	 * Returns the jobID.
-	 *  
-	 * @return the jobID
-	 */
-	public Integer getJobID() {
-		return jobID;
 	}
 
 }

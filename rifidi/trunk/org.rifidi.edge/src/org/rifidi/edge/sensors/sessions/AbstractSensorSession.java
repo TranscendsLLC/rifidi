@@ -32,8 +32,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.rifidi.edge.api.CommandDTO;
 import org.rifidi.edge.api.SessionStatus;
-import org.rifidi.edge.api.rmi.dto.CommandDTO;
 import org.rifidi.edge.notification.SensorConnectedEvent;
 import org.rifidi.edge.notification.SensorDisconnectedEvent;
 import org.rifidi.edge.sensors.AbstractCommandConfiguration;

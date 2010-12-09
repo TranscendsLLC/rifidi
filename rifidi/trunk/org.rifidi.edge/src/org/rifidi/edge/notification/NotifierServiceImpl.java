@@ -17,21 +17,21 @@ import javax.management.AttributeList;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.rifidi.edge.api.CommandConfigFactoryAdded;
+import org.rifidi.edge.api.CommandConfigFactoryRemoved;
+import org.rifidi.edge.api.CommandConfigurationAddedNotification;
+import org.rifidi.edge.api.CommandConfigurationRemovedNotification;
+import org.rifidi.edge.api.JobDeletedNotification;
+import org.rifidi.edge.api.JobSubmittedNotification;
+import org.rifidi.edge.api.PropertyChangedNotification;
+import org.rifidi.edge.api.ReaderAddedNotification;
+import org.rifidi.edge.api.ReaderFactoryAddedNotification;
+import org.rifidi.edge.api.ReaderFactoryRemovedNotification;
+import org.rifidi.edge.api.ReaderRemovedNotification;
+import org.rifidi.edge.api.SessionAddedNotification;
+import org.rifidi.edge.api.SessionRemovedNotification;
 import org.rifidi.edge.api.SessionStatus;
-import org.rifidi.edge.api.jms.notifications.CommandConfigFactoryAdded;
-import org.rifidi.edge.api.jms.notifications.CommandConfigFactoryRemoved;
-import org.rifidi.edge.api.jms.notifications.CommandConfigurationAddedNotification;
-import org.rifidi.edge.api.jms.notifications.CommandConfigurationRemovedNotification;
-import org.rifidi.edge.api.jms.notifications.JobDeletedNotification;
-import org.rifidi.edge.api.jms.notifications.JobSubmittedNotification;
-import org.rifidi.edge.api.jms.notifications.PropertyChangedNotification;
-import org.rifidi.edge.api.jms.notifications.ReaderAddedNotification;
-import org.rifidi.edge.api.jms.notifications.ReaderFactoryAddedNotification;
-import org.rifidi.edge.api.jms.notifications.ReaderFactoryRemovedNotification;
-import org.rifidi.edge.api.jms.notifications.ReaderRemovedNotification;
-import org.rifidi.edge.api.jms.notifications.SessionAddedNotification;
-import org.rifidi.edge.api.jms.notifications.SessionRemovedNotification;
-import org.rifidi.edge.api.jms.notifications.SessionStatusChangedNotification;
+import org.rifidi.edge.api.SessionStatusChangedNotification;
 import org.springframework.jms.core.JmsTemplate;
 
 /**

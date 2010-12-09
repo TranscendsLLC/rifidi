@@ -9,12 +9,11 @@
  * License:     The software in this package is published under the terms of the EPL License
  *                   A copy of the license is included in this distribution under Rifidi-License.txt 
  */
-package org.rifidi.edge.api.rmi.dto;
+package org.rifidi.edge.api;
 
 import java.io.Serializable;
 import java.util.List;
 
-import org.rifidi.edge.api.SessionStatus;
 
 /**
  * A Data Transfer Object for Sessions. For serializing information about

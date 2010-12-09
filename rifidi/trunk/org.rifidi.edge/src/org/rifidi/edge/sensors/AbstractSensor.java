@@ -30,8 +30,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import javax.management.AttributeList;
 
 import org.osgi.framework.BundleContext;
-import org.rifidi.edge.api.rmi.dto.ReaderDTO;
-import org.rifidi.edge.api.rmi.dto.SessionDTO;
+import org.rifidi.edge.api.ReaderDTO;
+import org.rifidi.edge.api.SessionDTO;
 import org.rifidi.edge.configuration.Configuration;
 import org.rifidi.edge.configuration.ConfigurationType;
 import org.rifidi.edge.configuration.RifidiService;

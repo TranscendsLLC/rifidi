@@ -20,9 +20,9 @@ import javax.management.MBeanInfo;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.rifidi.edge.api.rmi.dto.CommandConfigFactoryDTO;
-import org.rifidi.edge.api.rmi.dto.CommandConfigurationDTO;
-import org.rifidi.edge.api.rmi.services.CommandManagerService;
+import org.rifidi.edge.api.CommandConfigFactoryDTO;
+import org.rifidi.edge.api.CommandConfigurationDTO;
+import org.rifidi.edge.api.CommandManagerService;
 import org.rifidi.edge.configuration.AbstractCommandConfigurationFactory;
 import org.rifidi.edge.configuration.Configuration;
 import org.rifidi.edge.configuration.ConfigurationService;

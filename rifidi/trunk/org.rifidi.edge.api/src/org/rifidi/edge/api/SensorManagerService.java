@@ -9,7 +9,7 @@
  * License:     The software in this package is published under the terms of the EPL License
  *                   A copy of the license is included in this distribution under Rifidi-License.txt 
  */
-package org.rifidi.edge.api.rmi.services;
+package org.rifidi.edge.api;
 
 import java.rmi.RemoteException;
 import java.util.Set;
@@ -18,10 +18,6 @@ import java.util.concurrent.TimeUnit;
 import javax.management.AttributeList;
 import javax.management.MBeanInfo;
 
-import org.rifidi.edge.api.rmi.dto.ReaderDTO;
-import org.rifidi.edge.api.rmi.dto.ReaderFactoryDTO;
-import org.rifidi.edge.api.rmi.dto.SessionDTO;
-import org.rifidi.edge.api.rmi.exceptions.CommandSubmissionException;
 
 /**
  * This is the interface for a stub that allows users to interact with readers

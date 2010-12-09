@@ -23,7 +23,7 @@ import javax.management.AttributeList;
 
 import org.eclipse.osgi.framework.console.CommandInterpreter;
 import org.eclipse.osgi.framework.console.CommandProvider;
-import org.rifidi.edge.api.rmi.dto.CommandDTO;
+import org.rifidi.edge.api.CommandDTO;
 import org.rifidi.edge.configuration.AbstractCommandConfigurationFactory;
 import org.rifidi.edge.configuration.Configuration;
 import org.rifidi.edge.configuration.ConfigurationService;

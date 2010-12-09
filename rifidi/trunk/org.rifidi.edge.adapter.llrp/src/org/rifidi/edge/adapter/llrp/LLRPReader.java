@@ -24,7 +24,7 @@ import javax.management.MBeanInfo;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.rifidi.edge.api.rmi.dto.SessionDTO;
+import org.rifidi.edge.api.SessionDTO;
 import org.rifidi.edge.configuration.AnnotationMBeanInfoStrategy;
 import org.rifidi.edge.configuration.JMXMBean;
 import org.rifidi.edge.configuration.Property;

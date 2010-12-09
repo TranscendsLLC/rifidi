@@ -9,15 +9,13 @@
  * License:     The software in this package is published under the terms of the EPL License
  *                   A copy of the license is included in this distribution under Rifidi-License.txt 
  */
-package org.rifidi.edge.api.rmi.services;
+package org.rifidi.edge.api;
 
 import java.util.Set;
 
 import javax.management.AttributeList;
 import javax.management.MBeanInfo;
 
-import org.rifidi.edge.api.rmi.dto.CommandConfigFactoryDTO;
-import org.rifidi.edge.api.rmi.dto.CommandConfigurationDTO;
 
 /**
  * This is the interface for a stub that allows clients to interact with

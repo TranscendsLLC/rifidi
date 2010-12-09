@@ -10,11 +10,10 @@
  *                   A copy of the license is included in this distribution under Rifidi-License.txt 
  */
 
-package org.rifidi.edge.api.jms.notifications;
+package org.rifidi.edge.api;
 
 import java.io.Serializable;
 
-import org.rifidi.edge.api.SessionStatus;
 
 /**
  * A notification sent to a client when the status of a session changes.
