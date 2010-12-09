@@ -8,8 +8,8 @@ import java.util.Set;
 
 import org.rifidi.edge.adapter.alien.gpio.messages.AlienGPIOMessage;
 import org.rifidi.edge.adapter.alien.gpio.messages.GPIOEvent;
-import org.rifidi.edge.core.services.notification.GPIEvent;
-import org.rifidi.edge.core.services.notification.GPOEvent;
+import org.rifidi.edge.notification.GPIEvent;
+import org.rifidi.edge.notification.GPOEvent;
 
 /**
  * This class is a factory that creates a GPIEvent or a GPOEvent from an

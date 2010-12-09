@@ -22,8 +22,8 @@ import java.util.List;
 import java.util.Set;
 
 import org.rifidi.edge.ale.esper.AbstractSignalStatement;
-import org.rifidi.edge.core.services.notification.data.TagReadEvent;
 import org.rifidi.edge.epcglobal.aleread.ALEReadAPI;
+import org.rifidi.edge.notification.TagReadEvent;
 
 import com.espertech.esper.client.EPAdministrator;
 import com.espertech.esper.client.EPServiceProvider;

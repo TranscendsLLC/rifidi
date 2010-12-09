@@ -11,7 +11,7 @@
  */
 package org.rifidi.edge.examples.northwind;
 
-import org.rifidi.edge.core.services.notification.data.TagReadEvent;
+import org.rifidi.edge.notification.TagReadEvent;
 
 /**
  * This event occurs whenever a tag arrives at the dock door.  

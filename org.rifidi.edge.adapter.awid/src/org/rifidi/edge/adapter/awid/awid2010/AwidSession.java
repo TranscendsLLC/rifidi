@@ -26,13 +26,13 @@ import org.rifidi.edge.adapter.awid.awid2010.communication.messages.AckMessage;
 import org.rifidi.edge.adapter.awid.awid2010.communication.messages.ReaderStatusMessage;
 import org.rifidi.edge.adapter.awid.awid2010.gpio.AwidGPIOSession;
 import org.rifidi.edge.api.SessionStatus;
-import org.rifidi.edge.core.sensors.base.AbstractSensor;
-import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
-import org.rifidi.edge.core.sensors.commands.TimeoutCommand;
-import org.rifidi.edge.core.sensors.messages.ByteMessage;
-import org.rifidi.edge.core.sensors.sessions.AbstractPubSubIPSensorSession;
-import org.rifidi.edge.core.sensors.sessions.MessageParsingStrategyFactory;
-import org.rifidi.edge.core.services.notification.NotifierService;
+import org.rifidi.edge.notification.NotifierService;
+import org.rifidi.edge.sensors.AbstractCommandConfiguration;
+import org.rifidi.edge.sensors.AbstractSensor;
+import org.rifidi.edge.sensors.ByteMessage;
+import org.rifidi.edge.sensors.TimeoutCommand;
+import org.rifidi.edge.sensors.sessions.AbstractPubSubIPSensorSession;
+import org.rifidi.edge.sensors.sessions.MessageParsingStrategyFactory;
 
 /**
  * The session that provides communication with the Awid reader. It extends the
@@ -111,7 +111,7 @@ public class AwidSession extends AbstractPubSubIPSensorSession {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.sensors.SensorSession#connect()
+	 * @see org.rifidi.edge.sensors.SensorSession#connect()
 	 */
 	@Override
 	public void connect() throws IOException {
@@ -135,7 +135,7 @@ public class AwidSession extends AbstractPubSubIPSensorSession {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.sensors.base.AbstractIPSensorSession#onConnect()
+	 * org.rifidi.edge.sensors.base.AbstractIPSensorSession#onConnect()
 	 */
 	@Override
 	public boolean onConnect() throws IOException {
@@ -166,7 +166,7 @@ public class AwidSession extends AbstractPubSubIPSensorSession {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.sensors.sessions.AbstractIPSensorSession#onConnectFailed
+	 * org.rifidi.edge.sensors.sessions.AbstractIPSensorSession#onConnectFailed
 	 * ()
 	 */
 	@Override
@@ -193,7 +193,7 @@ public class AwidSession extends AbstractPubSubIPSensorSession {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.sensors.SensorSession#getResetCommand()
+	 * @see org.rifidi.edge.sensors.SensorSession#getResetCommand()
 	 */
 	@Override
 	protected TimeoutCommand getResetCommand() {
@@ -257,7 +257,7 @@ public class AwidSession extends AbstractPubSubIPSensorSession {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.sensors.sessions.AbstractSensorSession#submit(java
+	 * org.rifidi.edge.sensors.sessions.AbstractSensorSession#submit(java
 	 * .lang.String, long, java.util.concurrent.TimeUnit)
 	 */
 	@Override
@@ -272,7 +272,7 @@ public class AwidSession extends AbstractPubSubIPSensorSession {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.sensors.sessions.AbstractSensorSession#killComand
+	 * org.rifidi.edge.sensors.sessions.AbstractSensorSession#killComand
 	 * (java.lang.Integer)
 	 */
 	@Override
@@ -306,7 +306,7 @@ public class AwidSession extends AbstractPubSubIPSensorSession {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.sensors.sessions.AbstractSensorSession#setStatus
+	 * org.rifidi.edge.sensors.sessions.AbstractSensorSession#setStatus
 	 * (org.rifidi.edge.api.SessionStatus)
 	 */
 	@Override
@@ -325,7 +325,7 @@ public class AwidSession extends AbstractPubSubIPSensorSession {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.sensors.sessions.AbstractIPSensorSession#disconnect
+	 * org.rifidi.edge.sensors.sessions.AbstractIPSensorSession#disconnect
 	 * ()
 	 */
 	@Override
@@ -355,7 +355,7 @@ public class AwidSession extends AbstractPubSubIPSensorSession {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.sensors.sessions.AbstractIPSensorSession#toString()
+	 * org.rifidi.edge.sensors.sessions.AbstractIPSensorSession#toString()
 	 */
 	@Override
 	public String toString() {
@@ -366,7 +366,7 @@ public class AwidSession extends AbstractPubSubIPSensorSession {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.sensors.sessions.pubsub.AbstractPubSubIPSensorSession
+	 * org.rifidi.edge.sensors.sessions.pubsub.AbstractPubSubIPSensorSession
 	 * #clearUndelieverdMessages()
 	 */
 	@Override

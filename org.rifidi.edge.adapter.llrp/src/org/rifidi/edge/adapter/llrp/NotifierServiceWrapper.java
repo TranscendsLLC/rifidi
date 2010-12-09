@@ -13,7 +13,7 @@ package org.rifidi.edge.adapter.llrp;
 
 import java.util.Dictionary;
 
-import org.rifidi.edge.core.services.notification.NotifierService;
+import org.rifidi.edge.notification.NotifierService;
 
 public class NotifierServiceWrapper {
 	/** The JMS notifier */

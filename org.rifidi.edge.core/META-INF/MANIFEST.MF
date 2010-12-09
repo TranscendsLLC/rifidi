@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Rifidi Edge Core
-Bundle-SymbolicName: org.rifidi.edge.core
+Bundle-SymbolicName: org.rifidi.edge
 Bundle-Version: 5.4.0
 Bundle-Vendor: Pramari, LLC
 Import-Package: com.espertech.esper.client,
@@ -77,38 +77,22 @@ Import-Package: com.espertech.esper.client,
  org.springframework.security.vote;version="2.0.4",
  org.w3c.dom,
  org.xml.sax
-Export-Package: org.rifidi.edge.core.app.api,
- org.rifidi.edge.core.app.api.resources,
- org.rifidi.edge.core.app.api.resources.db,
- org.rifidi.edge.core.app.api.resources.jms,
- org.rifidi.edge.core.app.api.resources.serial,
- org.rifidi.edge.core.app.api.service,
- org.rifidi.edge.core.app.api.service.sensormonitor,
- org.rifidi.edge.core.app.api.service.tagmonitor,
- org.rifidi.edge.core.configuration,
- org.rifidi.edge.core.configuration.annotations,
- org.rifidi.edge.core.configuration.impl,
- org.rifidi.edge.core.configuration.listeners,
- org.rifidi.edge.core.configuration.mbeanstrategies,
- org.rifidi.edge.core.configuration.services,
- org.rifidi.edge.core.console,
- org.rifidi.edge.core.daos,
- org.rifidi.edge.core.exceptions,
- org.rifidi.edge.core.messages.exceptions,
- org.rifidi.edge.core.sensors,
- org.rifidi.edge.core.sensors.base,
- org.rifidi.edge.core.sensors.commands,
- org.rifidi.edge.core.sensors.exceptions,
- org.rifidi.edge.core.sensors.management,
- org.rifidi.edge.core.sensors.messages,
- org.rifidi.edge.core.sensors.sessions,
- org.rifidi.edge.core.services.esper,
- org.rifidi.edge.core.services.logging,
- org.rifidi.edge.core.services.notification,
- org.rifidi.edge.core.services.notification.data,
- org.rifidi.edge.core.services.notification.data.management,
- org.rifidi.edge.core.services.provisioning,
- org.rifidi.edge.core.utilities
+Export-Package: org.rifidi.edge.api,
+ org.rifidi.edge.api.resources,
+ org.rifidi.edge.api.service,
+ org.rifidi.edge.api.service.appmanager,
+ org.rifidi.edge.api.service.sensormonitor,
+ org.rifidi.edge.api.service.tagmonitor,
+ org.rifidi.edge.configuration,
+ org.rifidi.edge.console,
+ org.rifidi.edge.daos,
+ org.rifidi.edge.exceptions,
+ org.rifidi.edge.notification,
+ org.rifidi.edge.rmi,
+ org.rifidi.edge.sensors,
+ org.rifidi.edge.sensors.sessions,
+ org.rifidi.edge.services,
+ org.rifidi.edge.util
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-Description: This bundle contains several core services needed by the edge server, such as ReaderSession service
 Require-Bundle: org.rifidi.edge.api;bundle-version="1.3.0",

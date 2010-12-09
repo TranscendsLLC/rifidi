@@ -15,11 +15,11 @@ import javax.management.MBeanInfo;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.rifidi.edge.core.configuration.annotations.JMXMBean;
-import org.rifidi.edge.core.configuration.annotations.Property;
-import org.rifidi.edge.core.configuration.annotations.PropertyType;
-import org.rifidi.edge.core.configuration.mbeanstrategies.AnnotationMBeanInfoStrategy;
-import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
+import org.rifidi.edge.configuration.AnnotationMBeanInfoStrategy;
+import org.rifidi.edge.configuration.JMXMBean;
+import org.rifidi.edge.configuration.Property;
+import org.rifidi.edge.configuration.PropertyType;
+import org.rifidi.edge.sensors.AbstractCommandConfiguration;
 
 /**
  * The configuration class for the CommandConfiguration.
@@ -66,7 +66,7 @@ public class LLRPROSpecCommandConfiguration extends
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration#getCommand
+	 * org.rifidi.edge.sensors.commands.AbstractCommandConfiguration#getCommand
 	 * ()
 	 */
 	@Override
@@ -231,7 +231,7 @@ public class LLRPROSpecCommandConfiguration extends
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.configuration.RifidiService#getMBeanInfo()
+	 * @see org.rifidi.edge.configuration.RifidiService#getMBeanInfo()
 	 */
 	@Override
 	public MBeanInfo getMBeanInfo() {

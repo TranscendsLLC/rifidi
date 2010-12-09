@@ -18,7 +18,7 @@ package org.rifidi.edge.epcglobal.aleread.groups;
 import java.util.List;
 import java.util.Map;
 
-import org.rifidi.edge.core.services.notification.DatacontainerEvent;
+import org.rifidi.edge.notification.DatacontainerEvent;
 
 /**
  * @author jochen

@@ -28,13 +28,13 @@ import org.rifidi.edge.ale.esper.starters.IntervalTimingStatement;
 import org.rifidi.edge.ale.esper.starters.StartEventStatement;
 import org.rifidi.edge.ale.esper.stoppers.DurationTimingStatement;
 import org.rifidi.edge.ale.esper.timer.Timer;
-import org.rifidi.edge.core.services.notification.data.TagReadEvent;
 import org.rifidi.edge.epcglobal.ale.api.read.data.ECSpec;
 import org.rifidi.edge.epcglobal.ale.api.read.ws.DuplicateSubscriptionExceptionResponse;
 import org.rifidi.edge.epcglobal.ale.api.read.ws.ECSpecValidationExceptionResponse;
 import org.rifidi.edge.epcglobal.ale.api.read.ws.InvalidURIExceptionResponse;
 import org.rifidi.edge.epcglobal.ale.api.read.ws.NoSuchSubscriberExceptionResponse;
 import org.rifidi.edge.epcglobal.aleread.ALEReadAPI;
+import org.rifidi.edge.notification.TagReadEvent;
 
 import com.espertech.esper.client.EPServiceProvider;
 import com.espertech.esper.client.EPStatement;

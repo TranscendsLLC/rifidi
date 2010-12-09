@@ -3,7 +3,7 @@
  */
 package org.rifidi.edge.adapter.awid.awid2010.gpio;
 
-import org.rifidi.edge.core.sensors.sessions.MessageParsingStrategy;
+import org.rifidi.edge.sensors.sessions.MessageParsingStrategy;
 
 /**
  * This class is the parsing strategy for incoming GPI/O messages for the AWID
@@ -26,7 +26,7 @@ public class AwidGPIOMessageParsingStrategy implements MessageParsingStrategy {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.sensors.sessions.MessageParsingStrategy#isMessage
+	 * org.rifidi.edge.sensors.sessions.MessageParsingStrategy#isMessage
 	 * (byte)
 	 */
 	@Override

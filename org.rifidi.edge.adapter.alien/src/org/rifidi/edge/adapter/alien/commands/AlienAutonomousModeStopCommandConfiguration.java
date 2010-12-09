@@ -14,8 +14,8 @@ package org.rifidi.edge.adapter.alien.commands;
 
 import javax.management.MBeanInfo;
 
-import org.rifidi.edge.core.configuration.mbeanstrategies.AnnotationMBeanInfoStrategy;
-import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
+import org.rifidi.edge.configuration.AnnotationMBeanInfoStrategy;
+import org.rifidi.edge.sensors.AbstractCommandConfiguration;
 
 /**
  * @author kyle
@@ -36,7 +36,7 @@ public class AlienAutonomousModeStopCommandConfiguration
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration#getCommand
+	 * org.rifidi.edge.sensors.commands.AbstractCommandConfiguration#getCommand
 	 * (java.lang.String)
 	 */
 	@Override
@@ -45,7 +45,7 @@ public class AlienAutonomousModeStopCommandConfiguration
 	}
 
 	/* (non-Javadoc)
-	 * @see org.rifidi.edge.core.configuration.RifidiService#getMBeanInfo()
+	 * @see org.rifidi.edge.configuration.RifidiService#getMBeanInfo()
 	 */
 	@Override
 	public MBeanInfo getMBeanInfo() {

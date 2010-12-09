@@ -8,8 +8,8 @@ import java.util.BitSet;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.rifidi.edge.core.sensors.commands.Command;
-import org.rifidi.edge.core.sensors.messages.ByteMessage;
+import org.rifidi.edge.sensors.ByteMessage;
+import org.rifidi.edge.sensors.Command;
 
 /**
  * This is the Command that handles the 'Status Command'. It sends the Status

@@ -18,7 +18,7 @@ import java.util.concurrent.TimeoutException;
 
 import org.rifidi.edge.adapter.alien.Alien9800ReaderSession;
 import org.rifidi.edge.adapter.alien.messages.AlienTag;
-import org.rifidi.edge.core.sensors.messages.ByteMessage;
+import org.rifidi.edge.sensors.ByteMessage;
 
 public class GetTagListCommandObject {
 	/** The sensorSession to send the command to */

@@ -87,11 +87,11 @@
       <plugin id="org.rifidi.edge.api"/>
       <plugin id="org.rifidi.edge.console"/>
       <plugin id="org.rifidi.edge.core"/>
-      <plugin id="org.rifidi.edge.core.rmi.server"/>
+      <plugin id="org.rifidi.edge.rmi"/>
       <plugin id="org.rifidi.edge.core.services"/>
       <plugin id="org.rifidi.edge.core.services.jms"/>
       <plugin id="org.rifidi.edge.core.services.logging"/>
-      <plugin id="org.rifidi.edge.core.services.notification"/>
+      <plugin id="org.rifidi.edge.notification"/>
       <plugin id="org.rifidi.edge.epcglobal.ale.api.logicalreader"/>
       <plugin id="org.rifidi.edge.epcglobal.ale.api.read"/>
       <plugin id="org.rifidi.edge.readerplugin.alien"/>

@@ -11,14 +11,14 @@ import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.adapter.alien.Alien9800Reader;
 import org.rifidi.edge.adapter.alien.Alien9800ReaderSession;
 import org.rifidi.edge.adapter.alien.gpio.messages.AlienIOListMessageParsingStrategy;
-import org.rifidi.edge.core.sensors.base.AbstractSensor;
-import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
-import org.rifidi.edge.core.sensors.exceptions.CannotExecuteException;
-import org.rifidi.edge.core.sensors.sessions.AbstractServerSocketSensorSession;
-import org.rifidi.edge.core.sensors.sessions.MessageParsingStrategy;
-import org.rifidi.edge.core.sensors.sessions.MessageParsingStrategyFactory;
-import org.rifidi.edge.core.sensors.sessions.MessageProcessingStrategy;
-import org.rifidi.edge.core.sensors.sessions.MessageProcessingStrategyFactory;
+import org.rifidi.edge.sensors.AbstractCommandConfiguration;
+import org.rifidi.edge.sensors.AbstractSensor;
+import org.rifidi.edge.sensors.CannotExecuteException;
+import org.rifidi.edge.sensors.sessions.AbstractServerSocketSensorSession;
+import org.rifidi.edge.sensors.sessions.MessageParsingStrategy;
+import org.rifidi.edge.sensors.sessions.MessageParsingStrategyFactory;
+import org.rifidi.edge.sensors.sessions.MessageProcessingStrategy;
+import org.rifidi.edge.sensors.sessions.MessageProcessingStrategyFactory;
 
 /**
  * This is a session that listens for events on an Alien reader's IOStream. It
@@ -88,7 +88,7 @@ public class AlienGPIOSession extends AbstractServerSocketSensorSession {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.sensors.sessions.AbstractServerSocketSensorSession
+	 * org.rifidi.edge.sensors.sessions.AbstractServerSocketSensorSession
 	 * #_connect()
 	 */
 	@Override
@@ -103,7 +103,7 @@ public class AlienGPIOSession extends AbstractServerSocketSensorSession {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.sensors.sessions.AbstractServerSocketSensorSession
+	 * org.rifidi.edge.sensors.sessions.AbstractServerSocketSensorSession
 	 * #disconnect()
 	 */
 	@Override
@@ -116,7 +116,7 @@ public class AlienGPIOSession extends AbstractServerSocketSensorSession {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.sensors.sessions.AbstractServerSocketSensorSession
+	 * org.rifidi.edge.sensors.sessions.AbstractServerSocketSensorSession
 	 * #getMessageParsingStrategyFactory()
 	 */
 	@Override
@@ -134,7 +134,7 @@ public class AlienGPIOSession extends AbstractServerSocketSensorSession {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.sensors.sessions.AbstractServerSocketSensorSession
+	 * org.rifidi.edge.sensors.sessions.AbstractServerSocketSensorSession
 	 * #getMessageProcessingStrategyFactory()
 	 */
 	@Override
@@ -153,7 +153,7 @@ public class AlienGPIOSession extends AbstractServerSocketSensorSession {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.sensors.sessions.AbstractServerSocketSensorSession
+	 * org.rifidi.edge.sensors.sessions.AbstractServerSocketSensorSession
 	 * #toString()
 	 */
 	@Override

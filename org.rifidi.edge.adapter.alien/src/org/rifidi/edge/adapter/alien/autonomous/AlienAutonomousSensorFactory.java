@@ -19,11 +19,11 @@ import java.util.Map;
 
 import javax.management.MBeanInfo;
 
-import org.rifidi.edge.core.configuration.mbeanstrategies.AnnotationMBeanInfoStrategy;
-import org.rifidi.edge.core.sensors.base.AbstractSensor;
-import org.rifidi.edge.core.sensors.base.AbstractSensorFactory;
-import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
-import org.rifidi.edge.core.services.notification.NotifierService;
+import org.rifidi.edge.configuration.AnnotationMBeanInfoStrategy;
+import org.rifidi.edge.notification.NotifierService;
+import org.rifidi.edge.sensors.AbstractCommandConfiguration;
+import org.rifidi.edge.sensors.AbstractSensor;
+import org.rifidi.edge.sensors.AbstractSensorFactory;
 
 /**
  * This is a factory that registers and produces AlienAutonomousSensors, which
@@ -64,7 +64,7 @@ public class AlienAutonomousSensorFactory extends
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.sensors.base.AbstractSensorFactory#getDescription()
+	 * org.rifidi.edge.sensors.base.AbstractSensorFactory#getDescription()
 	 */
 	@Override
 	public String getDescription() {
@@ -76,7 +76,7 @@ public class AlienAutonomousSensorFactory extends
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.sensors.base.AbstractSensorFactory#getDisplayName()
+	 * org.rifidi.edge.sensors.base.AbstractSensorFactory#getDisplayName()
 	 */
 	@Override
 	public String getDisplayName() {
@@ -87,7 +87,7 @@ public class AlienAutonomousSensorFactory extends
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.configuration.ServiceFactory#createInstance(java
+	 * org.rifidi.edge.configuration.ServiceFactory#createInstance(java
 	 * .lang.String)
 	 */
 	@Override
@@ -101,7 +101,7 @@ public class AlienAutonomousSensorFactory extends
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.configuration.ServiceFactory#getFactoryID()
+	 * @see org.rifidi.edge.configuration.ServiceFactory#getFactoryID()
 	 */
 	@Override
 	public String getFactoryID() {
@@ -112,7 +112,7 @@ public class AlienAutonomousSensorFactory extends
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.configuration.ServiceFactory#getServiceDescription
+	 * org.rifidi.edge.configuration.ServiceFactory#getServiceDescription
 	 * (java.lang .String)
 	 */
 	@Override
@@ -125,7 +125,7 @@ public class AlienAutonomousSensorFactory extends
 	 * 
 	 * @seeorg.rifidi.edge.core.sensors.base.AbstractSensorFactory#
 	 * bindCommandConfiguration
-	 * (org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration,
+	 * (org.rifidi.edge.sensors.commands.AbstractCommandConfiguration,
 	 * java.util.Map)
 	 */
 	@Override
@@ -139,7 +139,7 @@ public class AlienAutonomousSensorFactory extends
 	 * 
 	 * @seeorg.rifidi.edge.core.sensors.base.AbstractSensorFactory#
 	 * unbindCommandConfiguration
-	 * (org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration,
+	 * (org.rifidi.edge.sensors.commands.AbstractCommandConfiguration,
 	 * java.util.Map)
 	 */
 	@Override

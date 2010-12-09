@@ -11,9 +11,9 @@ import java.util.concurrent.CopyOnWriteArraySet;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eclipse.osgi.framework.console.CommandProvider;
-import org.rifidi.edge.core.app.api.AbstractRifidiApp;
-import org.rifidi.edge.core.sensors.exceptions.CannotExecuteException;
-import org.rifidi.edge.core.sensors.management.AbstractGPIOService;
+import org.rifidi.edge.api.AbstractRifidiApp;
+import org.rifidi.edge.sensors.AbstractGPIOService;
+import org.rifidi.edge.sensors.CannotExecuteException;
 
 /**
  * 
@@ -36,7 +36,7 @@ public class GPIOApp extends AbstractRifidiApp{
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.rifidi.edge.core.app.api.AbstractRifidiApp#lazyStart()
+	 * @see org.rifidi.edge.api.AbstractRifidiApp#lazyStart()
 	 */
 	@Override
 	public boolean lazyStart() {
@@ -122,7 +122,7 @@ public class GPIOApp extends AbstractRifidiApp{
 	}
 
 	/* (non-Javadoc)
-	 * @see org.rifidi.edge.core.app.api.AbstractRifidiApp#getCommandProider()
+	 * @see org.rifidi.edge.api.AbstractRifidiApp#getCommandProider()
 	 */
 	@Override
 	protected CommandProvider getCommandProvider() {

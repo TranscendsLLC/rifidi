@@ -15,9 +15,9 @@ import java.util.Properties;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eclipse.osgi.framework.console.CommandProvider;
+import org.rifidi.edge.api.AbstractRifidiApp;
 import org.rifidi.edge.app.diag.tags.generator.exposures.DelayExposure;
 import org.rifidi.edge.app.diag.tags.generator.exposures.RateExposure;
-import org.rifidi.edge.core.app.api.AbstractRifidiApp;
 
 /**
  * This can generate tag events and place the events in esper. It uses the
@@ -61,7 +61,7 @@ public class TagGeneratorApp extends AbstractRifidiApp implements TagGenerator{
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.app.api.AbstractRifidiApp#_start()
+	 * @see org.rifidi.edge.api.AbstractRifidiApp#_start()
 	 */
 	@Override
 	protected void _start() {
@@ -84,7 +84,7 @@ public class TagGeneratorApp extends AbstractRifidiApp implements TagGenerator{
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.app.api.AbstractRifidiApp#_stop()
+	 * @see org.rifidi.edge.api.AbstractRifidiApp#_stop()
 	 */
 	@Override
 	protected void _stop() {
@@ -101,7 +101,7 @@ public class TagGeneratorApp extends AbstractRifidiApp implements TagGenerator{
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.app.api.AbstractRifidiApp#lazyStart()
+	 * @see org.rifidi.edge.api.AbstractRifidiApp#lazyStart()
 	 */
 	@Override
 	public boolean lazyStart() {
@@ -172,7 +172,7 @@ public class TagGeneratorApp extends AbstractRifidiApp implements TagGenerator{
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.app.api.AbstractRifidiApp#getCommandProider()
+	 * @see org.rifidi.edge.api.AbstractRifidiApp#getCommandProider()
 	 */
 	@Override
 	protected CommandProvider getCommandProvider() {

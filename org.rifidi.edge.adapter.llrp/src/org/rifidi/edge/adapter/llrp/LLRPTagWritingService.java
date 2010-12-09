@@ -7,9 +7,9 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import org.llrp.ltk.generated.parameters.LLRPStatus;
-import org.rifidi.edge.core.sensors.commands.TimeoutCommand;
-import org.rifidi.edge.core.sensors.exceptions.CannotExecuteException;
-import org.rifidi.edge.core.sensors.management.AbstractTagWritingService;
+import org.rifidi.edge.sensors.AbstractTagWritingService;
+import org.rifidi.edge.sensors.CannotExecuteException;
+import org.rifidi.edge.sensors.TimeoutCommand;
 
 /**
  * @author kyle
@@ -18,7 +18,7 @@ import org.rifidi.edge.core.sensors.management.AbstractTagWritingService;
 public class LLRPTagWritingService extends AbstractTagWritingService<LLRPReaderSession> {
 
 	/* (non-Javadoc)
-	 * @see org.rifidi.edge.core.sensors.management.AbstractTagWritingService#writeEPC(java.lang.String, int, byte[])
+	 * @see org.rifidi.edge.sensors.management.AbstractTagWritingService#writeEPC(java.lang.String, int, byte[])
 	 */
 	@Override
 	public void writeEPC(String readerID, int antenna, byte[] data)
@@ -32,7 +32,7 @@ public class LLRPTagWritingService extends AbstractTagWritingService<LLRPReaderS
 	}
 
 	/* (non-Javadoc)
-	 * @see org.rifidi.edge.core.sensors.management.AbstractTagWritingService#writeUser(java.lang.String, int, byte[])
+	 * @see org.rifidi.edge.sensors.management.AbstractTagWritingService#writeUser(java.lang.String, int, byte[])
 	 */
 	@Override
 	public void writeUser(String readerID, int antenna, byte[] data)

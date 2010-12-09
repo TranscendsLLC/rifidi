@@ -16,13 +16,13 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import org.rifidi.edge.core.app.api.AbstractRifidiApp;
-import org.rifidi.edge.core.app.api.service.tagmonitor.ReadZone;
-import org.rifidi.edge.core.app.api.service.tagmonitor.ReadZoneMonitoringService;
-import org.rifidi.edge.core.app.api.service.tagmonitor.ReadZoneSubscriber;
-import org.rifidi.edge.core.app.api.service.tagmonitor.StableSetService;
-import org.rifidi.edge.core.app.api.service.tagmonitor.StableSetSubscriber;
-import org.rifidi.edge.core.services.notification.data.TagReadEvent;
+import org.rifidi.edge.api.AbstractRifidiApp;
+import org.rifidi.edge.api.service.tagmonitor.ReadZone;
+import org.rifidi.edge.api.service.tagmonitor.ReadZoneMonitoringService;
+import org.rifidi.edge.api.service.tagmonitor.ReadZoneSubscriber;
+import org.rifidi.edge.api.service.tagmonitor.StableSetService;
+import org.rifidi.edge.api.service.tagmonitor.StableSetSubscriber;
+import org.rifidi.edge.notification.TagReadEvent;
 
 import com.espertech.esper.client.EPServiceProvider;
 import com.espertech.esper.client.EPStatement;
@@ -97,7 +97,7 @@ public class NorthwindApp extends AbstractRifidiApp {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.app.api.AbstractRifidiApp#initialize()
+	 * @see org.rifidi.edge.api.AbstractRifidiApp#initialize()
 	 */
 	@Override
 	public void initialize() {

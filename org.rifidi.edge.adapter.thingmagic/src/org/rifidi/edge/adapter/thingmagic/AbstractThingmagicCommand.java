@@ -11,7 +11,7 @@
  */
 package org.rifidi.edge.adapter.thingmagic;
 
-import org.rifidi.edge.core.sensors.commands.Command;
+import org.rifidi.edge.sensors.Command;
 
 /**
  * A superclass for use by commands for the Thingmagic Reader

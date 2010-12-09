@@ -14,9 +14,9 @@ package org.rifidi.edge.adapter.barcodesimulator.tag;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.rifidi.edge.core.services.notification.BarcodeTagEvent;
-import org.rifidi.edge.core.services.notification.ReadCycle;
-import org.rifidi.edge.core.services.notification.data.TagReadEvent;
+import org.rifidi.edge.notification.BarcodeTagEvent;
+import org.rifidi.edge.notification.ReadCycle;
+import org.rifidi.edge.notification.TagReadEvent;
 
 /**
  * 

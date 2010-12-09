@@ -15,8 +15,8 @@
  */
 package org.rifidi.edge.adapter.alien.autonomous;
 
-import org.rifidi.edge.core.sensors.sessions.MessageProcessingStrategy;
-import org.rifidi.edge.core.sensors.sessions.MessageProcessingStrategyFactory;
+import org.rifidi.edge.sensors.sessions.MessageProcessingStrategy;
+import org.rifidi.edge.sensors.sessions.MessageProcessingStrategyFactory;
 
 /**
  * A factory for producing new AlienAutonomousMessageProcessingStrategy
@@ -45,7 +45,7 @@ public class AlienAutonomousMessageProcessingStrategyFactory implements
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.sensors.base.threads.MessageProcessingStrategyFactory
+	 * org.rifidi.edge.sensors.base.threads.MessageProcessingStrategyFactory
 	 * #createMessageProcessor()
 	 */
 	@Override

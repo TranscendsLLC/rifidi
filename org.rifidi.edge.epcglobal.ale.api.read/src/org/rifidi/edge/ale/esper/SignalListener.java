@@ -17,8 +17,8 @@ package org.rifidi.edge.ale.esper;
 
 import java.util.List;
 
-import org.rifidi.edge.core.services.notification.data.TagReadEvent;
 import org.rifidi.edge.epcglobal.aleread.ALEReadAPI;
+import org.rifidi.edge.notification.TagReadEvent;
 
 /**
  * This listener can be used on a SignalStatement and will be called when a

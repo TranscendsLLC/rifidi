@@ -17,15 +17,15 @@
 	</bean>
 
 	<osgi:reference id="esperManagerService"
-		interface="org.rifidi.edge.core.services.esper.EsperManagementService" />
+		interface="org.rifidi.edge.services.EsperManagementService" />
 	<osgi:reference id="sensorManagementBinding"
-		interface="org.rifidi.edge.core.sensors.management.SensorManagementService" />
+		interface="org.rifidi.edge.sensors.SensorManagementService" />
 
 	<bean id="aleLRAPIService"
 		class="org.rifidi.edge.epcglobal.ale.api.lr.ws.ALELRServicePortTypeImpl">
 		<property name="sensorManagementService" ref="sensorManagementBinding" />
 	</bean>
-	<bean id="LRWebServiceDeployer" class="org.rifidi.edge.core.utilities.JaxWsServiceExporter"
+	<bean id="LRWebServiceDeployer" class="org.rifidi.edge.util.JaxWsServiceExporter"
 		init-method="start" destroy-method="stop">
 		<property name="port" value="${org.rifidi.edge.ale.port}" />
 		<property name="host" value="http://${org.rifidi.edge.ale.host}" />

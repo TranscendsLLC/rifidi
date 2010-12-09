@@ -19,10 +19,10 @@ import java.math.BigInteger;
 
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Hex;
-import org.rifidi.edge.core.services.notification.DatacontainerEvent;
-import org.rifidi.edge.core.services.notification.EPCGeneration1Event;
-import org.rifidi.edge.core.services.notification.EPCGeneration2Event;
-import org.rifidi.edge.core.services.notification.data.TagReadEvent;
+import org.rifidi.edge.notification.DatacontainerEvent;
+import org.rifidi.edge.notification.EPCGeneration1Event;
+import org.rifidi.edge.notification.EPCGeneration2Event;
+import org.rifidi.edge.notification.TagReadEvent;
 
 /**
  * This is a factory to create new TagReadEvent objects from AlienTag objects

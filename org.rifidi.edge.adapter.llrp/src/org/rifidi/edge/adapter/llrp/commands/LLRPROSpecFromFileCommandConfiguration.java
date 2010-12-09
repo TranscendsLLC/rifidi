@@ -23,11 +23,11 @@ import org.jdom.JDOMException;
 import org.llrp.ltk.exceptions.InvalidLLRPMessageException;
 import org.llrp.ltk.generated.messages.ADD_ROSPEC;
 import org.llrp.ltk.util.Util;
-import org.rifidi.edge.core.configuration.annotations.JMXMBean;
-import org.rifidi.edge.core.configuration.annotations.Property;
-import org.rifidi.edge.core.configuration.annotations.PropertyType;
-import org.rifidi.edge.core.configuration.mbeanstrategies.AnnotationMBeanInfoStrategy;
-import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
+import org.rifidi.edge.configuration.AnnotationMBeanInfoStrategy;
+import org.rifidi.edge.configuration.JMXMBean;
+import org.rifidi.edge.configuration.Property;
+import org.rifidi.edge.configuration.PropertyType;
+import org.rifidi.edge.sensors.AbstractCommandConfiguration;
 
 /**
  * The configuration class for the LLRPROSpecFromFileCommand. This class
@@ -78,7 +78,7 @@ public class LLRPROSpecFromFileCommandConfiguration extends
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration#getCommand
+	 * org.rifidi.edge.sensors.commands.AbstractCommandConfiguration#getCommand
 	 * (java.lang.String)
 	 */
 	@Override
@@ -136,7 +136,7 @@ public class LLRPROSpecFromFileCommandConfiguration extends
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.configuration.services.RifidiService#getMBeanInfo()
+	 * org.rifidi.edge.configuration.services.RifidiService#getMBeanInfo()
 	 */
 	@Override
 	public MBeanInfo getMBeanInfo() {

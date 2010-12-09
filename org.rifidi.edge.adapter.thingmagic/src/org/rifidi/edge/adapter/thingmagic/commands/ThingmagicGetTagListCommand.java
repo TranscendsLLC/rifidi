@@ -25,11 +25,11 @@ import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.adapter.thingmagic.AbstractThingmagicCommand;
 import org.rifidi.edge.adapter.thingmagic.ThingmagicReaderSession;
 import org.rifidi.edge.adapter.thingmagic.commands.helper.ThingMagicStringBuilder;
-import org.rifidi.edge.core.sensors.messages.ByteMessage;
-import org.rifidi.edge.core.services.notification.DatacontainerEvent;
-import org.rifidi.edge.core.services.notification.EPCGeneration2Event;
-import org.rifidi.edge.core.services.notification.ReadCycle;
-import org.rifidi.edge.core.services.notification.data.TagReadEvent;
+import org.rifidi.edge.notification.DatacontainerEvent;
+import org.rifidi.edge.notification.EPCGeneration2Event;
+import org.rifidi.edge.notification.ReadCycle;
+import org.rifidi.edge.notification.TagReadEvent;
+import org.rifidi.edge.sensors.ByteMessage;
 
 /**
  * The command for the thingmagic which will return a list of tags. Currently

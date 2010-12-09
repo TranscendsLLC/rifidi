@@ -21,7 +21,7 @@ import java.util.Enumeration;
 
 import org.eclipse.osgi.framework.console.CommandInterpreter;
 import org.eclipse.osgi.framework.console.CommandProvider;
-import org.rifidi.edge.core.app.api.AbstractRifidiApp;
+import org.rifidi.edge.api.AbstractRifidiApp;
 
 /**
  * 
@@ -41,7 +41,7 @@ public class SerialApp extends AbstractRifidiApp {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.rifidi.edge.core.app.api.AbstractRifidiApp#lazyStart()
+	 * @see org.rifidi.edge.api.AbstractRifidiApp#lazyStart()
 	 */
 	@Override
 	public boolean lazyStart() {
@@ -52,7 +52,7 @@ public class SerialApp extends AbstractRifidiApp {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.app.api.AbstractRifidiApp#getCommandProider()
+	 * @see org.rifidi.edge.api.AbstractRifidiApp#getCommandProider()
 	 */
 	@Override
 	protected CommandProvider getCommandProvider() {

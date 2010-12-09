@@ -24,7 +24,6 @@ import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.rifidi.edge.core.services.esper.EsperManagementService;
 import org.rifidi.edge.epcglobal.ale.api.read.data.ECSpec;
 import org.rifidi.edge.epcglobal.ale.api.read.ws.DuplicateNameExceptionResponse;
 import org.rifidi.edge.epcglobal.ale.api.read.ws.DuplicateSubscriptionExceptionResponse;
@@ -34,6 +33,7 @@ import org.rifidi.edge.epcglobal.ale.api.read.ws.NoSuchSubscriberExceptionRespon
 import org.rifidi.edge.epcglobal.aleread.wrappers.RifidiBoundarySpec;
 import org.rifidi.edge.epcglobal.aleread.wrappers.RifidiECSpec;
 import org.rifidi.edge.epcglobal.aleread.wrappers.RifidiReport;
+import org.rifidi.edge.services.EsperManagementService;
 
 import com.espertech.esper.client.EPServiceProvider;
 

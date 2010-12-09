@@ -17,16 +17,16 @@ import java.util.Set;
 
 import org.rifidi.edge.adapter.barcodesimulator.tag.BarcodeSimulatorTagHandler;
 import org.rifidi.edge.api.SessionStatus;
-import org.rifidi.edge.core.sensors.SensorSession;
-import org.rifidi.edge.core.sensors.base.AbstractSensor;
-import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
-import org.rifidi.edge.core.sensors.sessions.AbstractServerSocketSensorSession;
-import org.rifidi.edge.core.sensors.sessions.MessageParsingStrategy;
-import org.rifidi.edge.core.sensors.sessions.MessageParsingStrategyFactory;
-import org.rifidi.edge.core.sensors.sessions.MessageProcessingStrategy;
-import org.rifidi.edge.core.sensors.sessions.MessageProcessingStrategyFactory;
-import org.rifidi.edge.core.services.notification.NotifierService;
-import org.rifidi.edge.core.services.notification.ReadCycle;
+import org.rifidi.edge.notification.NotifierService;
+import org.rifidi.edge.notification.ReadCycle;
+import org.rifidi.edge.sensors.AbstractCommandConfiguration;
+import org.rifidi.edge.sensors.AbstractSensor;
+import org.rifidi.edge.sensors.SensorSession;
+import org.rifidi.edge.sensors.sessions.AbstractServerSocketSensorSession;
+import org.rifidi.edge.sensors.sessions.MessageParsingStrategy;
+import org.rifidi.edge.sensors.sessions.MessageParsingStrategyFactory;
+import org.rifidi.edge.sensors.sessions.MessageProcessingStrategy;
+import org.rifidi.edge.sensors.sessions.MessageProcessingStrategyFactory;
 
 /**
  * The session for the Barcode reader.
@@ -93,7 +93,7 @@ public class BarcodeSimulatorReaderSession extends
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.sensors.sessions.AbstractIPSensorSession#
+	 * @see org.rifidi.edge.sensors.sessions.AbstractIPSensorSession#
 	 * getMessageProcessingStrategyFactory()
 	 */
 	@Override
@@ -126,7 +126,7 @@ public class BarcodeSimulatorReaderSession extends
 		 * (non-Javadoc)
 		 * 
 		 * @see
-		 * org.rifidi.edge.core.sensors.sessions.MessageParsingStrategyFactory
+		 * org.rifidi.edge.sensors.sessions.MessageParsingStrategyFactory
 		 * #createMessageParser()
 		 */
 		@Override
@@ -195,7 +195,7 @@ public class BarcodeSimulatorReaderSession extends
 		 * (non-Javadoc)
 		 * 
 		 * @see
-		 * org.rifidi.edge.core.sensors.sessions.MessageProcessingStrategyFactory
+		 * org.rifidi.edge.sensors.sessions.MessageProcessingStrategyFactory
 		 * #createMessageProcessor()
 		 */
 		@Override
@@ -222,7 +222,7 @@ public class BarcodeSimulatorReaderSession extends
 		 * (non-Javadoc)
 		 * 
 		 * @see
-		 * org.rifidi.edge.core.sensors.sessions.MessageParsingStrategy#isMessage
+		 * org.rifidi.edge.sensors.sessions.MessageParsingStrategy#isMessage
 		 * (byte)
 		 */
 		@Override

@@ -11,7 +11,7 @@
  */
 package org.rifidi.edge.adapter.awid.awid2010.communication;
 
-import org.rifidi.edge.core.services.notification.data.TagReadEvent;
+import org.rifidi.edge.notification.TagReadEvent;
 
 /**
  * This is an interfaces for classes that extend AbstractAwidMessage which

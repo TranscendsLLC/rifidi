@@ -5,7 +5,7 @@ package org.rifidi.edge.core.mock;
 
 import java.util.List;
 
-import org.rifidi.edge.core.app.api.service.tagmonitor.ReadZone;
+import org.rifidi.edge.api.service.tagmonitor.ReadZone;
 
 /**
  * @author percent

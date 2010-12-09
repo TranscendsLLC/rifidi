@@ -12,8 +12,8 @@
  */
 package org.rifidi.edge.adapter.llrp;
 
-import org.rifidi.edge.core.sensors.commands.Command;
-import org.rifidi.edge.core.sensors.commands.TimeoutCommand;
+import org.rifidi.edge.sensors.Command;
+import org.rifidi.edge.sensors.TimeoutCommand;
 
 /**
  * This class represents an abstract command for an LLRP reader. Extend it to

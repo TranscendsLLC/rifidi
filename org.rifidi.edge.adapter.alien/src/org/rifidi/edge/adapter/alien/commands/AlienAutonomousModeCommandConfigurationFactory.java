@@ -17,8 +17,8 @@ package org.rifidi.edge.adapter.alien.commands;
 import javax.management.MBeanInfo;
 
 import org.rifidi.edge.adapter.alien.Alien9800ReaderFactory;
-import org.rifidi.edge.core.configuration.impl.AbstractCommandConfigurationFactory;
-import org.rifidi.edge.core.configuration.mbeanstrategies.AnnotationMBeanInfoStrategy;
+import org.rifidi.edge.configuration.AbstractCommandConfigurationFactory;
+import org.rifidi.edge.configuration.AnnotationMBeanInfoStrategy;
 
 /**
  * @author Jochen Mader - jochen@pramari.com
@@ -41,7 +41,7 @@ public class AlienAutonomousModeCommandConfigurationFactory
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.configuration.impl.AbstractCommandConfigurationFactory
+	 * org.rifidi.edge.configuration.impl.AbstractCommandConfigurationFactory
 	 * #getReaderFactoryID()
 	 */
 	@Override
@@ -53,7 +53,7 @@ public class AlienAutonomousModeCommandConfigurationFactory
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.configuration.ServiceFactory#createInstance(java
+	 * org.rifidi.edge.configuration.ServiceFactory#createInstance(java
 	 * .lang.String)
 	 */
 	@Override
@@ -66,7 +66,7 @@ public class AlienAutonomousModeCommandConfigurationFactory
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.configuration.ServiceFactory#getFactoryID()
+	 * @see org.rifidi.edge.configuration.ServiceFactory#getFactoryID()
 	 */
 	@Override
 	public String getFactoryID() {
@@ -77,7 +77,7 @@ public class AlienAutonomousModeCommandConfigurationFactory
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.configuration.ServiceFactory#getServiceDescription
+	 * org.rifidi.edge.configuration.ServiceFactory#getServiceDescription
 	 * (java.lang.String)
 	 */
 	@Override
@@ -89,7 +89,7 @@ public class AlienAutonomousModeCommandConfigurationFactory
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.configuration.impl.AbstractCommandConfigurationFactory
+	 * org.rifidi.edge.configuration.impl.AbstractCommandConfigurationFactory
 	 * #getCommandDescription()
 	 */
 	@Override
@@ -103,7 +103,7 @@ public class AlienAutonomousModeCommandConfigurationFactory
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.configuration.impl.AbstractCommandConfigurationFactory
+	 * org.rifidi.edge.configuration.impl.AbstractCommandConfigurationFactory
 	 * #getDisplayName()
 	 */
 	@Override

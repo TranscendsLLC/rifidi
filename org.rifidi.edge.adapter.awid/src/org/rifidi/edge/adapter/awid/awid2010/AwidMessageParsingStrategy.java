@@ -17,7 +17,7 @@ import java.util.List;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.rifidi.edge.core.sensors.sessions.MessageParsingStrategy;
+import org.rifidi.edge.sensors.sessions.MessageParsingStrategy;
 
 /**
  * The message parsing strategy for an Awid. The purpose of this class is to
@@ -77,7 +77,7 @@ public class AwidMessageParsingStrategy implements MessageParsingStrategy {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.sensors.base.threads.MessageParsingStrategy#isMessage
+	 * org.rifidi.edge.sensors.base.threads.MessageParsingStrategy#isMessage
 	 * (byte)
 	 */
 	@Override

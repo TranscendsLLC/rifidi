@@ -19,8 +19,8 @@ import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.rifidi.edge.core.services.notification.EPCGeneration2Event;
-import org.rifidi.edge.core.services.notification.data.TagReadEvent;
+import org.rifidi.edge.notification.EPCGeneration2Event;
+import org.rifidi.edge.notification.TagReadEvent;
 
 /**
  * 

@@ -3,6 +3,6 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Test1
 Bundle-SymbolicName: org.rifidi.edge.core.test
 Bundle-Version: 1.0.0.qualifier
-Fragment-Host: org.rifidi.edge.core
+Fragment-Host: org.rifidi.edge
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: org.junit;version="4.8.1"

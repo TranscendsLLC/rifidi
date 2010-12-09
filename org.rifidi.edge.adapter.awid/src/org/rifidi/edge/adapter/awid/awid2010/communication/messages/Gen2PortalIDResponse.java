@@ -15,8 +15,8 @@ import java.math.BigInteger;
 import java.util.Arrays;
 
 import org.rifidi.edge.adapter.awid.awid2010.communication.TagResponseMessage;
-import org.rifidi.edge.core.services.notification.EPCGeneration2Event;
-import org.rifidi.edge.core.services.notification.data.TagReadEvent;
+import org.rifidi.edge.notification.EPCGeneration2Event;
+import org.rifidi.edge.notification.TagReadEvent;
 
 /**
  * This is a Response message from the Awid that contains a single Gen2 Tag. It

@@ -5,7 +5,7 @@ package org.rifidi.edge.core.mock;
 
 import java.math.BigInteger;
 
-import org.rifidi.edge.core.services.notification.DatacontainerEvent;
+import org.rifidi.edge.notification.DatacontainerEvent;
 
 public class MockDatacontainerEvent extends DatacontainerEvent {
 
@@ -14,7 +14,7 @@ public class MockDatacontainerEvent extends DatacontainerEvent {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.rifidi.edge.core.services.notification.DatacontainerEvent#getFormattedID()
+	 * @see org.rifidi.edge.notification.DatacontainerEvent#getFormattedID()
 	 */
 	@Override
 	public String getFormattedID() {
@@ -23,7 +23,7 @@ public class MockDatacontainerEvent extends DatacontainerEvent {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.rifidi.edge.core.services.notification.DatacontainerEvent#getID()
+	 * @see org.rifidi.edge.notification.DatacontainerEvent#getID()
 	 */
 	@Override
 	public BigInteger getID() {

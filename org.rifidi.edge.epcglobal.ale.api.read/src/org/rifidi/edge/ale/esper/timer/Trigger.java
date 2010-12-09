@@ -16,9 +16,9 @@ import java.util.TimeZone;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.rifidi.edge.core.services.esper.StartEvent;
-import org.rifidi.edge.core.services.esper.StopEvent;
 import org.rifidi.edge.epcglobal.ale.api.read.ws.InvalidURIExceptionResponse;
+import org.rifidi.edge.services.StartEvent;
+import org.rifidi.edge.services.StopEvent;
 
 import com.espertech.esper.client.EventSender;
 

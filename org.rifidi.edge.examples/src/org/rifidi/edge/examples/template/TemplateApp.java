@@ -3,7 +3,7 @@
  */
 package org.rifidi.edge.examples.template;
 
-import org.rifidi.edge.core.app.api.AbstractRifidiApp;
+import org.rifidi.edge.api.AbstractRifidiApp;
 
 /**
  * This is an app that developers can use as a template when getting started
@@ -19,7 +19,7 @@ public class TemplateApp extends AbstractRifidiApp {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.app.api.AbstractRifidiApp#_start()
+	 * @see org.rifidi.edge.api.AbstractRifidiApp#_start()
 	 */
 	@Override
 	protected void _start() {
@@ -31,7 +31,7 @@ public class TemplateApp extends AbstractRifidiApp {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.app.api.AbstractRifidiApp#_stop()
+	 * @see org.rifidi.edge.api.AbstractRifidiApp#_stop()
 	 */
 	@Override
 	protected void _stop() {
@@ -44,7 +44,7 @@ public class TemplateApp extends AbstractRifidiApp {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.app.api.AbstractRifidiApp#initialize()
+	 * @see org.rifidi.edge.api.AbstractRifidiApp#initialize()
 	 */
 	@Override
 	public void initialize() {

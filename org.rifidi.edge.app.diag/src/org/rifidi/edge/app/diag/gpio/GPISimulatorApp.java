@@ -16,9 +16,9 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eclipse.osgi.framework.console.CommandProvider;
-import org.rifidi.edge.core.app.api.AbstractRifidiApp;
-import org.rifidi.edge.core.services.notification.GPIEvent;
-import org.rifidi.edge.core.services.notification.GPOEvent;
+import org.rifidi.edge.api.AbstractRifidiApp;
+import org.rifidi.edge.notification.GPIEvent;
+import org.rifidi.edge.notification.GPOEvent;
 
 import com.espertech.esper.client.EPServiceProvider;
 import com.espertech.esper.client.EPStatement;
@@ -45,7 +45,7 @@ public class GPISimulatorApp extends AbstractRifidiApp {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.app.api.AbstractRifidiApp#_start()
+	 * @see org.rifidi.edge.api.AbstractRifidiApp#_start()
 	 */
 	protected void _start() {
 
@@ -56,7 +56,7 @@ public class GPISimulatorApp extends AbstractRifidiApp {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.rifidi.edge.core.app.api.AbstractRifidiApp#lazyStart()
+	 * @see org.rifidi.edge.api.AbstractRifidiApp#lazyStart()
 	 */
 	@Override
 	public boolean lazyStart() {
@@ -135,7 +135,7 @@ public class GPISimulatorApp extends AbstractRifidiApp {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.app.api.AbstractRifidiApp#getCommandProider()
+	 * @see org.rifidi.edge.api.AbstractRifidiApp#getCommandProider()
 	 */
 	@Override
 	protected CommandProvider getCommandProvider() {

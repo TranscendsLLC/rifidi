@@ -9,8 +9,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.rifidi.edge.core.services.notification.ReadCycle;
-import org.rifidi.edge.core.services.notification.data.TagReadEvent;
+import org.rifidi.edge.notification.ReadCycle;
+import org.rifidi.edge.notification.TagReadEvent;
 
 /**
  * A TagSet is an object that represents the set of tags an ExposureRunner sends

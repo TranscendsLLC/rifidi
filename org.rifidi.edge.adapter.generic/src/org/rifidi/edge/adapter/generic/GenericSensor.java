@@ -21,15 +21,15 @@ import java.util.concurrent.atomic.AtomicReference;
 import javax.management.MBeanInfo;
 
 import org.rifidi.edge.api.rmi.dto.SessionDTO;
-import org.rifidi.edge.core.configuration.annotations.JMXMBean;
-import org.rifidi.edge.core.configuration.annotations.Property;
-import org.rifidi.edge.core.configuration.annotations.PropertyType;
-import org.rifidi.edge.core.configuration.mbeanstrategies.AnnotationMBeanInfoStrategy;
-import org.rifidi.edge.core.exceptions.CannotCreateSessionException;
-import org.rifidi.edge.core.sensors.SensorSession;
-import org.rifidi.edge.core.sensors.base.AbstractSensor;
-import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
-import org.rifidi.edge.core.sensors.exceptions.CannotDestroySensorException;
+import org.rifidi.edge.configuration.AnnotationMBeanInfoStrategy;
+import org.rifidi.edge.configuration.JMXMBean;
+import org.rifidi.edge.configuration.Property;
+import org.rifidi.edge.configuration.PropertyType;
+import org.rifidi.edge.exceptions.CannotCreateSessionException;
+import org.rifidi.edge.sensors.AbstractCommandConfiguration;
+import org.rifidi.edge.sensors.AbstractSensor;
+import org.rifidi.edge.sensors.CannotDestroySensorException;
+import org.rifidi.edge.sensors.SensorSession;
 
 /**
  * A generic plugin that can handle data coming in from any reader or source, if
@@ -70,7 +70,7 @@ public class GenericSensor extends AbstractSensor<GenericSensorSession> {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.sensors.base.AbstractSensor#applyPropertyChanges()
+	 * org.rifidi.edge.sensors.base.AbstractSensor#applyPropertyChanges()
 	 */
 	@Override
 	public void applyPropertyChanges() {
@@ -81,7 +81,7 @@ public class GenericSensor extends AbstractSensor<GenericSensorSession> {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.sensors.base.AbstractSensor#createSensorSession()
+	 * org.rifidi.edge.sensors.base.AbstractSensor#createSensorSession()
 	 */
 	@Override
 	public String createSensorSession() throws CannotCreateSessionException {
@@ -104,7 +104,7 @@ public class GenericSensor extends AbstractSensor<GenericSensorSession> {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.sensors.base.AbstractSensor#createSensorSession(
+	 * org.rifidi.edge.sensors.base.AbstractSensor#createSensorSession(
 	 * org.rifidi.edge.api.rmi.dto.SessionDTO)
 	 */
 	@Override
@@ -129,7 +129,7 @@ public class GenericSensor extends AbstractSensor<GenericSensorSession> {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.sensors.base.AbstractSensor#destroySensorSession
+	 * org.rifidi.edge.sensors.base.AbstractSensor#destroySensorSession
 	 * (java.lang.String)
 	 */
 	@Override
@@ -141,7 +141,7 @@ public class GenericSensor extends AbstractSensor<GenericSensorSession> {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.sensors.base.AbstractSensor#getDisplayName()
+	 * @see org.rifidi.edge.sensors.base.AbstractSensor#getDisplayName()
 	 */
 	@Override
 	protected String getDisplayName() {
@@ -151,7 +151,7 @@ public class GenericSensor extends AbstractSensor<GenericSensorSession> {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.sensors.base.AbstractSensor#getSensorSessions()
+	 * @see org.rifidi.edge.sensors.base.AbstractSensor#getSensorSessions()
 	 */
 	@Override
 	public Map<String, SensorSession> getSensorSessions() {
@@ -167,8 +167,8 @@ public class GenericSensor extends AbstractSensor<GenericSensorSession> {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.sensors.base.AbstractSensor#unbindCommandConfiguration
-	 * (org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration,
+	 * org.rifidi.edge.sensors.base.AbstractSensor#unbindCommandConfiguration
+	 * (org.rifidi.edge.sensors.commands.AbstractCommandConfiguration,
 	 * java.util.Map)
 	 */
 	@Override
@@ -182,7 +182,7 @@ public class GenericSensor extends AbstractSensor<GenericSensorSession> {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.configuration.services.RifidiService#getMBeanInfo()
+	 * org.rifidi.edge.configuration.services.RifidiService#getMBeanInfo()
 	 */
 	@Override
 	public MBeanInfo getMBeanInfo() {

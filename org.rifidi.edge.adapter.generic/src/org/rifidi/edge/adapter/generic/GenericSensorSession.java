@@ -17,16 +17,16 @@ import java.util.List;
 import java.util.Set;
 
 import org.rifidi.edge.api.SessionStatus;
-import org.rifidi.edge.core.sensors.base.AbstractSensor;
-import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
-import org.rifidi.edge.core.sensors.sessions.AbstractServerSocketSensorSession;
-import org.rifidi.edge.core.sensors.sessions.MessageParsingStrategy;
-import org.rifidi.edge.core.sensors.sessions.MessageParsingStrategyFactory;
-import org.rifidi.edge.core.sensors.sessions.MessageProcessingStrategy;
-import org.rifidi.edge.core.sensors.sessions.MessageProcessingStrategyFactory;
-import org.rifidi.edge.core.services.notification.NotifierService;
-import org.rifidi.edge.core.services.notification.ReadCycle;
-import org.rifidi.edge.core.services.notification.data.TagReadEvent;
+import org.rifidi.edge.notification.NotifierService;
+import org.rifidi.edge.notification.ReadCycle;
+import org.rifidi.edge.notification.TagReadEvent;
+import org.rifidi.edge.sensors.AbstractCommandConfiguration;
+import org.rifidi.edge.sensors.AbstractSensor;
+import org.rifidi.edge.sensors.sessions.AbstractServerSocketSensorSession;
+import org.rifidi.edge.sensors.sessions.MessageParsingStrategy;
+import org.rifidi.edge.sensors.sessions.MessageParsingStrategyFactory;
+import org.rifidi.edge.sensors.sessions.MessageProcessingStrategy;
+import org.rifidi.edge.sensors.sessions.MessageProcessingStrategyFactory;
 
 /**
  * The session class for the Generic sensor.
@@ -98,7 +98,7 @@ public class GenericSensorSession extends AbstractServerSocketSensorSession {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.sensors.sessions.AbstractServerSocketSensorSession
+	 * org.rifidi.edge.sensors.sessions.AbstractServerSocketSensorSession
 	 * #getMessageParsingStrategyFactory()
 	 */
 	@Override
@@ -108,7 +108,7 @@ public class GenericSensorSession extends AbstractServerSocketSensorSession {
 			 * (non-Javadoc)
 			 * 
 			 * @see
-			 * org.rifidi.edge.core.sensors.sessions.MessageParsingStrategyFactory
+			 * org.rifidi.edge.sensors.sessions.MessageParsingStrategyFactory
 			 * #createMessageParser()
 			 */
 			@Override
@@ -121,7 +121,7 @@ public class GenericSensorSession extends AbstractServerSocketSensorSession {
 					 * (non-Javadoc)
 					 * 
 					 * @see
-					 * org.rifidi.edge.core.sensors.sessions.MessageParsingStrategy
+					 * org.rifidi.edge.sensors.sessions.MessageParsingStrategy
 					 * #isMessage(byte)
 					 */
 					@Override
@@ -148,7 +148,7 @@ public class GenericSensorSession extends AbstractServerSocketSensorSession {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.sensors.sessions.AbstractServerSocketSensorSession
+	 * org.rifidi.edge.sensors.sessions.AbstractServerSocketSensorSession
 	 * #getMessageProcessingStrategyFactory()
 	 */
 	@Override
@@ -174,7 +174,7 @@ public class GenericSensorSession extends AbstractServerSocketSensorSession {
 		 * (non-Javadoc)
 		 * 
 		 * @see
-		 * org.rifidi.edge.core.sensors.sessions.MessageProcessingStrategyFactory
+		 * org.rifidi.edge.sensors.sessions.MessageProcessingStrategyFactory
 		 * #createMessageProcessor()
 		 */
 		@Override
@@ -205,7 +205,7 @@ public class GenericSensorSession extends AbstractServerSocketSensorSession {
 		/*
 		 * (non-Javadoc)
 		 * 
-		 * @see org.rifidi.edge.core.sensors.sessions.MessageProcessingStrategy#
+		 * @see org.rifidi.edge.sensors.sessions.MessageProcessingStrategy#
 		 * processMessage(byte[])
 		 */
 		@Override

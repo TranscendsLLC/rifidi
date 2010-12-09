@@ -15,15 +15,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import org.rifidi.edge.adapter.opticon.tags.OpticonTagHandler;
 import org.rifidi.edge.api.SessionStatus;
-import org.rifidi.edge.core.sensors.base.AbstractSensor;
-import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
-import org.rifidi.edge.core.sensors.messages.ByteMessage;
-import org.rifidi.edge.core.sensors.sessions.AbstractSerialSensorSession;
-import org.rifidi.edge.core.sensors.sessions.MessageParsingStrategy;
-import org.rifidi.edge.core.sensors.sessions.MessageParsingStrategyFactory;
-import org.rifidi.edge.core.services.notification.NotifierService;
-import org.rifidi.edge.core.services.notification.ReadCycle;
+import org.rifidi.edge.notification.NotifierService;
+import org.rifidi.edge.notification.ReadCycle;
+import org.rifidi.edge.sensors.AbstractCommandConfiguration;
+import org.rifidi.edge.sensors.AbstractSensor;
+import org.rifidi.edge.sensors.ByteMessage;
+import org.rifidi.edge.sensors.sessions.AbstractSerialSensorSession;
+import org.rifidi.edge.sensors.sessions.MessageParsingStrategy;
+import org.rifidi.edge.sensors.sessions.MessageParsingStrategyFactory;
 
 /**
  * The Session for the Opticon Barcode reader. This reader can either be set in
@@ -114,7 +115,7 @@ public class OpticonSensorSession extends AbstractSerialSensorSession {
 	 * (non-Javadoc)
 	 * 
 	 * @seeorg.rifidi.edge.core.sensors.sessions.AbstractSerialSensorSession#
-	 * messageReceived(org.rifidi.edge.core.sensors.messages.ByteMessage)
+	 * messageReceived(org.rifidi.edge.sensors.messages.ByteMessage)
 	 */
 	@Override
 	protected void messageReceived(ByteMessage message) {
@@ -139,7 +140,7 @@ public class OpticonSensorSession extends AbstractSerialSensorSession {
 		 * (non-Javadoc)
 		 * 
 		 * @see
-		 * org.rifidi.edge.core.sensors.sessions.MessageParsingStrategyFactory
+		 * org.rifidi.edge.sensors.sessions.MessageParsingStrategyFactory
 		 * #createMessageParser()
 		 */
 		@Override
@@ -166,7 +167,7 @@ public class OpticonSensorSession extends AbstractSerialSensorSession {
 		 * (non-Javadoc)
 		 * 
 		 * @see
-		 * org.rifidi.edge.core.sensors.sessions.MessageParsingStrategy#isMessage
+		 * org.rifidi.edge.sensors.sessions.MessageParsingStrategy#isMessage
 		 * (byte)
 		 */
 		@Override

@@ -11,8 +11,8 @@
  */
 package org.rifidi.edge.examples.northwind;
 
-import org.rifidi.edge.core.app.api.service.tagmonitor.ReadZoneSubscriber;
-import org.rifidi.edge.core.services.notification.data.TagReadEvent;
+import org.rifidi.edge.api.service.tagmonitor.ReadZoneSubscriber;
+import org.rifidi.edge.notification.TagReadEvent;
 
 /**
  * This subscriber will monitor a read zone and create an event whenever a tag
@@ -54,8 +54,8 @@ public class NorthwindReadZoneSubscriber implements ReadZoneSubscriber {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.app.api.service.tagmonitor.ReadZoneSubscriber#tagArrived
-	 * (org.rifidi.edge.core.services.notification.data.TagReadEvent)
+	 * org.rifidi.edge.api.service.tagmonitor.ReadZoneSubscriber#tagArrived
+	 * (org.rifidi.edge.notification.data.TagReadEvent)
 	 */
 	@Override
 	public void tagArrived(TagReadEvent tag) {
@@ -71,8 +71,8 @@ public class NorthwindReadZoneSubscriber implements ReadZoneSubscriber {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @seeorg.rifidi.edge.core.app.api.service.tagmonitor.ReadZoneSubscriber#
-	 * tagDeparted(org.rifidi.edge.core.services.notification.data.TagReadEvent)
+	 * @seeorg.rifidi.edge.api.service.tagmonitor.ReadZoneSubscriber#
+	 * tagDeparted(org.rifidi.edge.notification.data.TagReadEvent)
 	 */
 	@Override
 	public void tagDeparted(TagReadEvent tag) {

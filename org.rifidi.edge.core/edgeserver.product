@@ -74,14 +74,14 @@
       <plugin id="org.fosstrak.tdt.tdt"/>
       <plugin id="org.jdom"/>
       <plugin id="org.rifidi.com.espertech.esper"/>
-      <plugin id="org.rifidi.edge.core.configuration"/>
+      <plugin id="org.rifidi.edge.configuration"/>
       <plugin id="org.rifidi.edge.api"/>
       <plugin id="org.rifidi.edge.console"/>
       <plugin id="org.rifidi.edge.core"/>
-      <plugin id="org.rifidi.edge.core.rmi.server"/>
+      <plugin id="org.rifidi.edge.rmi"/>
       <plugin id="org.rifidi.edge.core.services"/>
       <plugin id="org.rifidi.edge.core.services.jms"/>
-      <plugin id="org.rifidi.edge.core.services.notification"/>
+      <plugin id="org.rifidi.edge.notification"/>
       <plugin id="org.rifidi.edge.epcglobal.ale.api.logicalreader"/>
       <plugin id="org.rifidi.edge.epcglobal.ale.api.read"/>
       <plugin id="org.rifidi.edge.readerplugin.alien"/>
@@ -135,14 +135,14 @@
       <plugin id="org.fosstrak.tdt.tdt" autoStart="true" startLevel="4" />
       <plugin id="org.jdom" autoStart="true" startLevel="4" />
       <plugin id="org.rifidi.com.espertech.esper" autoStart="true" startLevel="4" />
-      <plugin id="org.rifidi.edge.core.configuration" autoStart="true" startLevel="4" />
+      <plugin id="org.rifidi.edge.configuration" autoStart="true" startLevel="4" />
       <plugin id="org.rifidi.edge.api" autoStart="true" startLevel="4" />
       <plugin id="org.rifidi.edge.console" autoStart="true" startLevel="4" />
       <plugin id="org.rifidi.edge.core" autoStart="true" startLevel="4" />
-      <plugin id="org.rifidi.edge.core.rmi.server" autoStart="true" startLevel="4" />
+      <plugin id="org.rifidi.edge.rmi" autoStart="true" startLevel="4" />
       <plugin id="org.rifidi.edge.core.services" autoStart="true" startLevel="4" />
       <plugin id="org.rifidi.edge.core.services.jms" autoStart="true" startLevel="4" />
-      <plugin id="org.rifidi.edge.core.services.notification" autoStart="true" startLevel="4" />
+      <plugin id="org.rifidi.edge.notification" autoStart="true" startLevel="4" />
       <plugin id="org.rifidi.edge.epcglobal.ale.api.logicalreader" autoStart="true" startLevel="4" />
       <plugin id="org.rifidi.edge.epcglobal.ale.api.read" autoStart="true" startLevel="4" />
       <plugin id="org.rifidi.edge.readerplugin.alien" autoStart="true" startLevel="4" />

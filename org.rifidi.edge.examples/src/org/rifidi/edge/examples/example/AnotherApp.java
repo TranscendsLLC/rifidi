@@ -10,8 +10,8 @@ import java.util.HashMap;
 
 import org.eclipse.osgi.framework.console.CommandInterpreter;
 import org.eclipse.osgi.framework.console.CommandProvider;
-import org.rifidi.edge.core.app.api.AbstractRifidiApp;
-import org.rifidi.edge.core.services.notification.data.TagReadEvent;
+import org.rifidi.edge.api.AbstractRifidiApp;
+import org.rifidi.edge.notification.TagReadEvent;
 
 import com.espertech.esper.client.EPServiceProvider;
 import com.espertech.esper.client.EPStatement;
@@ -55,7 +55,7 @@ public class AnotherApp extends AbstractRifidiApp {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.app.api.AbstractRifidiApp#_start()
+	 * @see org.rifidi.edge.api.AbstractRifidiApp#_start()
 	 */
 	@Override
 	protected void _start() {
@@ -103,7 +103,7 @@ public class AnotherApp extends AbstractRifidiApp {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.app.api.AbstractRifidiApp#initialize()
+	 * @see org.rifidi.edge.api.AbstractRifidiApp#initialize()
 	 */
 	@Override
 	public void initialize() {
@@ -141,7 +141,7 @@ public class AnotherApp extends AbstractRifidiApp {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.core.app.api.AbstractRifidiApp#getCommandProvider()
+	 * @see org.rifidi.edge.api.AbstractRifidiApp#getCommandProvider()
 	 */
 	@Override
 	protected CommandProvider getCommandProvider() {

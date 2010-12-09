@@ -17,7 +17,7 @@ import org.llrp.ltk.generated.parameters.AccessSpec;
 import org.llrp.ltk.generated.parameters.ROSpec;
 import org.llrp.ltk.types.LLRPMessage;
 import org.rifidi.edge.adapter.llrp.LLRPReaderSession;
-import org.rifidi.edge.core.sensors.commands.TimeoutCommand;
+import org.rifidi.edge.sensors.TimeoutCommand;
 
 /**
  * This command gets all the ROSpecs and acessSpecs on the reader and deletes
@@ -37,7 +37,7 @@ public class LLRPReset extends TimeoutCommand {
 	
 
 	/* (non-Javadoc)
-	 * @see org.rifidi.edge.core.sensors.commands.TimeoutCommand#execute()
+	 * @see org.rifidi.edge.sensors.commands.TimeoutCommand#execute()
 	 */
 	@Override
 	protected void execute() throws TimeoutException {

@@ -11,7 +11,7 @@
 		<constructor-arg index="1" value="GPIO" />
 		<property name="serviceSet" ref="abstractGPIOService" />
 	</bean>
-	<osgi:service ref="GPIOApp" interface="org.rifidi.edge.core.app.api.RifidiApp" />
+	<osgi:service ref="GPIOApp" interface="org.rifidi.edge.api.RifidiApp" />
 
 	<bean id="gpisimulationapp" class="org.rifidi.edge.app.diag.gpio.GPISimulatorApp">
 		<constructor-arg index="0" value="Diagnostic" />
@@ -22,13 +22,13 @@
 		<constructor-arg index="0" value="Diagnostic" />
 		<constructor-arg index="1" value="Serial" />
 	</bean>
-	<osgi:service ref="SerialApp" interface="org.rifidi.edge.core.app.api.RifidiApp" />
+	<osgi:service ref="SerialApp" interface="org.rifidi.edge.api.RifidiApp" />
 
 	<bean id="TagApp" class="org.rifidi.edge.app.diag.tags.TagApp">
 		<constructor-arg index="0" value="Diagnostic" />
 		<constructor-arg index="1" value="Tags" />
 	</bean>
-	<osgi:service ref="TagApp" interface="org.rifidi.edge.core.app.api.RifidiApp" />
+	<osgi:service ref="TagApp" interface="org.rifidi.edge.api.RifidiApp" />
 
 	<bean id="TagGeneratorApp" class="org.rifidi.edge.app.diag.tags.generator.TagGeneratorApp">
 		<constructor-arg index="0" value="Diagnostic" />
@@ -37,7 +37,7 @@
 	<osgi:service ref="TagGeneratorApp" auto-export="all-classes" />
 
 	<osgi:set id="abstractGPIOService"
-		interface="org.rifidi.edge.core.sensors.management.AbstractGPIOService"
+		interface="org.rifidi.edge.sensors.AbstractGPIOService"
 		cardinality="0..N">
 		<osgi:listener ref="GPIOApp" bind-method="onBind"
 			unbind-method="onUnbind"></osgi:listener>

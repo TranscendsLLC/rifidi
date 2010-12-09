@@ -21,12 +21,12 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.adapter.alien.AlienMessageParsingStrategyFactory;
 import org.rifidi.edge.api.SessionStatus;
-import org.rifidi.edge.core.sensors.base.AbstractSensor;
-import org.rifidi.edge.core.sensors.commands.AbstractCommandConfiguration;
-import org.rifidi.edge.core.sensors.sessions.AbstractServerSocketSensorSession;
-import org.rifidi.edge.core.sensors.sessions.MessageParsingStrategyFactory;
-import org.rifidi.edge.core.sensors.sessions.MessageProcessingStrategyFactory;
-import org.rifidi.edge.core.services.notification.NotifierService;
+import org.rifidi.edge.notification.NotifierService;
+import org.rifidi.edge.sensors.AbstractCommandConfiguration;
+import org.rifidi.edge.sensors.AbstractSensor;
+import org.rifidi.edge.sensors.sessions.AbstractServerSocketSensorSession;
+import org.rifidi.edge.sensors.sessions.MessageParsingStrategyFactory;
+import org.rifidi.edge.sensors.sessions.MessageProcessingStrategyFactory;
 
 /**
  * The Session that Alien Readers can send reports to.
@@ -94,7 +94,7 @@ public class AlienAutonomousSensorSession extends
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.sensors.base.AbstractSensorSession#setStatus(org
+	 * org.rifidi.edge.sensors.base.AbstractSensorSession#setStatus(org
 	 * .rifidi.edge.api.SessionStatus)
 	 */
 	@Override
@@ -108,7 +108,7 @@ public class AlienAutonomousSensorSession extends
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.sensors.sessions.AbstractServerSocketSensorSession
+	 * org.rifidi.edge.sensors.sessions.AbstractServerSocketSensorSession
 	 * #toString()
 	 */
 	@Override

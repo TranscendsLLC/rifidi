@@ -21,7 +21,7 @@ import java.util.concurrent.TimeoutException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.adapter.alien.Alien9800ReaderSession;
-import org.rifidi.edge.core.sensors.messages.ByteMessage;
+import org.rifidi.edge.sensors.ByteMessage;
 
 /**
  * A command object that will set an property on the Alien Reader

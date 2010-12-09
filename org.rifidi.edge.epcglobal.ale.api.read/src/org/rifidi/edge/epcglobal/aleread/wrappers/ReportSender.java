@@ -36,8 +36,6 @@ import javax.xml.datatype.DatatypeFactory;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.rifidi.edge.core.services.notification.DatacontainerEvent;
-import org.rifidi.edge.core.services.notification.data.TagReadEvent;
 import org.rifidi.edge.epcglobal.ale.api.read.data.ECReport;
 import org.rifidi.edge.epcglobal.ale.api.read.data.ECReports;
 import org.rifidi.edge.epcglobal.ale.api.read.data.ECSpec;
@@ -45,6 +43,8 @@ import org.rifidi.edge.epcglobal.ale.api.read.ws.DuplicateSubscriptionExceptionR
 import org.rifidi.edge.epcglobal.ale.api.read.ws.NoSuchSubscriberExceptionResponse;
 import org.rifidi.edge.epcglobal.aleread.ALEReadAPI;
 import org.rifidi.edge.epcglobal.aleread.wrappers.RifidiECSpec.ResultContainer;
+import org.rifidi.edge.notification.DatacontainerEvent;
+import org.rifidi.edge.notification.TagReadEvent;
 
 /**
  * Very simple report sender. Takes in the reports, serialiyes them to XML and

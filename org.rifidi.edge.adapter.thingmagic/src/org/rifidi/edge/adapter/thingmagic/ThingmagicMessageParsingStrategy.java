@@ -13,7 +13,7 @@ package org.rifidi.edge.adapter.thingmagic;
 
 import java.util.Arrays;
 
-import org.rifidi.edge.core.sensors.sessions.MessageParsingStrategy;
+import org.rifidi.edge.sensors.sessions.MessageParsingStrategy;
 
 /**
  * 
@@ -33,7 +33,7 @@ public class ThingmagicMessageParsingStrategy implements MessageParsingStrategy 
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.rifidi.edge.core.sensors.base.threads.MessageParsingStrategy#isMessage
+	 * org.rifidi.edge.sensors.base.threads.MessageParsingStrategy#isMessage
 	 * (byte)
 	 */
 	@Override

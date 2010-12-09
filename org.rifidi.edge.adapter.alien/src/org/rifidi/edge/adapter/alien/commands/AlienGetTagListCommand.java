@@ -28,8 +28,8 @@ import org.rifidi.edge.adapter.alien.commandobject.AlienSetCommandObject;
 import org.rifidi.edge.adapter.alien.commandobject.GetTagListCommandObject;
 import org.rifidi.edge.adapter.alien.messages.AlienTag;
 import org.rifidi.edge.adapter.alien.messages.AlienTagReadEventFactory;
-import org.rifidi.edge.core.services.notification.ReadCycle;
-import org.rifidi.edge.core.services.notification.data.TagReadEvent;
+import org.rifidi.edge.notification.ReadCycle;
+import org.rifidi.edge.notification.TagReadEvent;
 
 /**
  * An Command that runs on an AlienSession to get Tags back from an AlienReader
