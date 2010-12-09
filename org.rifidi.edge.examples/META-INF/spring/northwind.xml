@@ -8,7 +8,7 @@
 	<osgi:reference id="readZoneMonitoringService"
 		interface="org.rifidi.edge.api.service.tagmonitor.ReadZoneMonitoringService" />
 
-	<bean id="Northwind" class="org.rifidi.edge.northwind.NorthwindApp">
+	<bean id="Northwind" class="org.rifidi.edge.examples.northwind.NorthwindApp">
 		<constructor-arg index="0" value="Northwind" />
 		<constructor-arg index="1" value="Shipping" />
 		<property name="stableSetService" ref="stableSetService" />
