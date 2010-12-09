@@ -22,7 +22,7 @@ src_path = [
 '../org.rifidi.edge.api',
 '../org.rifidi.edge.init',
 '../org.rifidi.edge.core',
-'../org.rifidi.edge.app.diag',
+'../org.rifidi.edge.tools',
 '../org.rifidi.edge.adapter.opticon',
 '../org.rifidi.edge.adapter.llrp']
 
