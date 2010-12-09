@@ -20,7 +20,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import javax.management.MBeanInfo;
 
-import org.rifidi.edge.api.rmi.dto.SessionDTO;
+import org.rifidi.edge.api.SessionDTO;
 import org.rifidi.edge.configuration.AnnotationMBeanInfoStrategy;
 import org.rifidi.edge.configuration.JMXMBean;
 import org.rifidi.edge.configuration.Property;

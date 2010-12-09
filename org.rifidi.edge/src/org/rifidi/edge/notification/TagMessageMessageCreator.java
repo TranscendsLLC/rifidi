@@ -25,7 +25,7 @@ import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.Session;
 
-import org.rifidi.edge.api.tags.TagBatch;
+import org.rifidi.edge.api.TagBatch;
 import org.springframework.jms.core.MessageCreator;
 
 /**

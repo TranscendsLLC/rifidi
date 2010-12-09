@@ -20,7 +20,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.osgi.framework.BundleContext;
-import org.rifidi.edge.api.rmi.dto.CommandConfigurationDTO;
+import org.rifidi.edge.api.CommandConfigurationDTO;
 import org.rifidi.edge.configuration.Configuration;
 import org.rifidi.edge.configuration.ConfigurationType;
 import org.rifidi.edge.configuration.RifidiService;

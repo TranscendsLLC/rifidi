@@ -34,7 +34,7 @@ import org.rifidi.edge.adapter.alien.commandobject.AlienCommandObjectWrapper;
 import org.rifidi.edge.adapter.alien.commandobject.AlienGetCommandObject;
 import org.rifidi.edge.adapter.alien.commandobject.AlienSetCommandObject;
 import org.rifidi.edge.adapter.alien.commands.internal.AlienPropertyCommand;
-import org.rifidi.edge.api.rmi.dto.SessionDTO;
+import org.rifidi.edge.api.SessionDTO;
 import org.rifidi.edge.configuration.AnnotationMBeanInfoStrategy;
 import org.rifidi.edge.configuration.JMXMBean;
 import org.rifidi.edge.configuration.Operation;

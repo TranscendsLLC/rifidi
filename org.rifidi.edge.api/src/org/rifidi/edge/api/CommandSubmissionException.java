@@ -12,7 +12,7 @@
 /**
  * 
  */
-package org.rifidi.edge.api.rmi.exceptions;
+package org.rifidi.edge.api;
 
 /**
  * This is an exception that is thrown if there was a problem when submitting

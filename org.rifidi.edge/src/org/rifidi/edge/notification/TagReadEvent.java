@@ -18,7 +18,7 @@ package org.rifidi.edge.notification;
 import java.io.Serializable;
 import java.util.HashMap;
 
-import org.rifidi.edge.api.tags.TagDTO;
+import org.rifidi.edge.api.TagDTO;
 
 /**
  * This class acts as a wrapper around a DataContainerEvent (which stores tag

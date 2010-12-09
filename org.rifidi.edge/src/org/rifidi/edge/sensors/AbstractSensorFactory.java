@@ -18,7 +18,7 @@ package org.rifidi.edge.sensors;
 import java.util.Map;
 import java.util.Set;
 
-import org.rifidi.edge.api.rmi.dto.ReaderFactoryDTO;
+import org.rifidi.edge.api.ReaderFactoryDTO;
 import org.rifidi.edge.configuration.AbstractServiceFactory;
 
 /**

@@ -16,7 +16,7 @@
 package org.rifidi.edge.configuration;
 
 import org.osgi.framework.BundleContext;
-import org.rifidi.edge.api.rmi.dto.CommandConfigFactoryDTO;
+import org.rifidi.edge.api.CommandConfigFactoryDTO;
 
 /**
  * Base class for a service factory. This class is meant for scenarios where

@@ -23,11 +23,11 @@ import javax.management.MBeanInfo;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.rifidi.edge.api.rmi.dto.ReaderDTO;
-import org.rifidi.edge.api.rmi.dto.ReaderFactoryDTO;
-import org.rifidi.edge.api.rmi.dto.SessionDTO;
-import org.rifidi.edge.api.rmi.exceptions.CommandSubmissionException;
-import org.rifidi.edge.api.rmi.services.SensorManagerService;
+import org.rifidi.edge.api.CommandSubmissionException;
+import org.rifidi.edge.api.ReaderDTO;
+import org.rifidi.edge.api.ReaderFactoryDTO;
+import org.rifidi.edge.api.SensorManagerService;
+import org.rifidi.edge.api.SessionDTO;
 import org.rifidi.edge.configuration.Configuration;
 import org.rifidi.edge.configuration.ConfigurationService;
 import org.rifidi.edge.daos.CommandDAO;

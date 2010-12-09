@@ -20,9 +20,9 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.rifidi.edge.api.CommandDTO;
+import org.rifidi.edge.api.SessionDTO;
 import org.rifidi.edge.api.SessionStatus;
-import org.rifidi.edge.api.rmi.dto.CommandDTO;
-import org.rifidi.edge.api.rmi.dto.SessionDTO;
 
 /**
  * This class represents a session with a sensor, which is an active connection

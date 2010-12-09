@@ -12,7 +12,7 @@
 /**
  * 
  */
-package org.rifidi.edge.api.rmi.dto;
+package org.rifidi.edge.api;
 
 import java.io.Serializable;
 import java.util.concurrent.TimeUnit;

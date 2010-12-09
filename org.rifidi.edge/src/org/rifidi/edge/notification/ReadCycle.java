@@ -16,8 +16,8 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.rifidi.edge.api.tags.TagBatch;
-import org.rifidi.edge.api.tags.TagDTO;
+import org.rifidi.edge.api.TagBatch;
+import org.rifidi.edge.api.TagDTO;
 
 /**
  * This represents a read cycle from a reader. It contains 0 to many

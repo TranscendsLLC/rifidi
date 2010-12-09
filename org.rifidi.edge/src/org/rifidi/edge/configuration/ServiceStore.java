@@ -20,7 +20,7 @@ import java.util.Set;
 
 import javax.xml.bind.annotation.XmlType;
 
-import org.rifidi.edge.api.rmi.dto.SessionDTO;
+import org.rifidi.edge.api.SessionDTO;
 
 /**
  * @author Jochen Mader - jochen@pramari.com

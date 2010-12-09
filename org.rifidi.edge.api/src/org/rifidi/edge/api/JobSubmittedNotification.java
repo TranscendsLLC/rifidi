@@ -10,7 +10,7 @@
  *                   A copy of the license is included in this distribution under Rifidi-License.txt 
  */
 
-package org.rifidi.edge.api.jms.notifications;
+package org.rifidi.edge.api;
 
 import java.io.Serializable;
 
