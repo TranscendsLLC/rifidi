@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Rifidi Edge ALE Logical Reader Implementation
-Bundle-SymbolicName: org.rifidi.edge.epcglobal.ale.api.logicalreader
+Bundle-SymbolicName: org.rifidi.edge.ale
 Bundle-Version: 1.0.1
 Import-Package: com.espertech.esper.client,
  com.espertech.esper.client.metric,

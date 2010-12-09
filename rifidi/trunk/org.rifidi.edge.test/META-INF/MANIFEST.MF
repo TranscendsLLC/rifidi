@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Test1
-Bundle-SymbolicName: org.rifidi.edge.core.test
+Bundle-SymbolicName: org.rifidi.edge.test
 Bundle-Version: 1.0.0.qualifier
 Fragment-Host: org.rifidi.edge
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6

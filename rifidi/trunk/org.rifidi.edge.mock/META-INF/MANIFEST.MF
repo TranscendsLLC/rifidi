@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Test
-Bundle-SymbolicName: org.rifidi.edge.core.mock
+Bundle-SymbolicName: org.rifidi.edge.mock
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: org.rifidi.edge.core.mock.Activator
 Require-Bundle: org.rifidi.edge;bundle-version="5.4.0"
