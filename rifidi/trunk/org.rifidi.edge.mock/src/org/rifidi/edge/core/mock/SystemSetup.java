@@ -6,12 +6,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 
-import org.rifidi.edge.app.diag.tags.generator.AbstractReadData;
-import org.rifidi.edge.app.diag.tags.generator.BarcodeReadData;
-import org.rifidi.edge.app.diag.tags.generator.Exposure;
-import org.rifidi.edge.app.diag.tags.generator.TagReadData;
-import org.rifidi.edge.app.diag.tags.generator.exposures.DelayExposure;
-import org.rifidi.edge.app.diag.tags.generator.exposures.RateExposure;
+import org.rifidi.edge.tools.diagnostics.AbstractReadData;
+import org.rifidi.edge.tools.diagnostics.BarcodeReadData;
+import org.rifidi.edge.tools.diagnostics.DelayExposure;
+import org.rifidi.edge.tools.diagnostics.Exposure;
+import org.rifidi.edge.tools.diagnostics.RateExposure;
+import org.rifidi.edge.tools.diagnostics.TagReadData;
 
 public class SystemSetup {
 	

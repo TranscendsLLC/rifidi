@@ -1,15 +1,15 @@
 /**
  * 
  */
-package org.rifidi.edge.app.tracking;
+package org.rifidi.edge.tools.tracking;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.rifidi.edge.core.app.api.AbstractRifidiApp;
-import org.rifidi.edge.core.app.api.resources.jms.JMSResource;
-import org.rifidi.edge.core.app.api.service.tagmonitor.ReadZoneMonitoringService;
-import org.rifidi.edge.core.app.api.service.tagmonitor.ReadZoneSubscriber;
-import org.rifidi.edge.core.services.notification.data.TagReadEvent;
+import org.rifidi.edge.api.AbstractRifidiApp;
+import org.rifidi.edge.api.resources.JMSResource;
+import org.rifidi.edge.api.service.tagmonitor.ReadZoneMonitoringService;
+import org.rifidi.edge.api.service.tagmonitor.ReadZoneSubscriber;
+import org.rifidi.edge.notification.TagReadEvent;
 
 /**
  * This class keeps track of arrival and departure events.

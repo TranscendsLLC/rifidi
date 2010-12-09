@@ -1,16 +1,16 @@
 /**
  * 
  */
-package org.rifidi.edge.app.tracking;
+package org.rifidi.edge.tools.tracking;
 
 import java.util.HashSet;
 import java.util.Set;
 
-import org.rifidi.edge.core.app.api.AbstractRifidiApp;
-import org.rifidi.edge.core.app.api.resources.jms.JMSResource;
-import org.rifidi.edge.core.app.api.service.sensormonitor.SensorStatusMonitoringService;
-import org.rifidi.edge.core.app.api.service.sensormonitor.SensorStatusSubscriber;
-import org.rifidi.edge.core.services.notification.data.management.SensorStatusEvent;
+import org.rifidi.edge.api.AbstractRifidiApp;
+import org.rifidi.edge.api.resources.JMSResource;
+import org.rifidi.edge.api.service.sensormonitor.SensorStatusMonitoringService;
+import org.rifidi.edge.api.service.sensormonitor.SensorStatusSubscriber;
+import org.rifidi.edge.notification.SensorStatusEvent;
 
 /**
  * @author kyle

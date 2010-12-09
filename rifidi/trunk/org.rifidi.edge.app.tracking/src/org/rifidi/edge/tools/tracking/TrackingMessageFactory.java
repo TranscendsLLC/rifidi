@@ -1,12 +1,12 @@
 /**
  * 
  */
-package org.rifidi.edge.app.tracking;
+package org.rifidi.edge.tools.tracking;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.rifidi.edge.core.services.notification.EPCGeneration2Event;
-import org.rifidi.edge.core.services.notification.data.TagReadEvent;
+import org.rifidi.edge.notification.EPCGeneration2Event;
+import org.rifidi.edge.notification.TagReadEvent;
 
 /**
  * This class is used to send message on the JMS queue.
