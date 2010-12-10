@@ -21,7 +21,7 @@ src_path = [
 '../com.ambient.labtrack.messages',
 '../org.rifidi.edge.api',
 '../org.rifidi.edge.init',
-'../org.rifidi.edge.core',
+'../org.rifidi.edge',
 '../org.rifidi.edge.tools',
 '../org.rifidi.edge.adapter.opticon',
 '../org.rifidi.edge.adapter.llrp']
