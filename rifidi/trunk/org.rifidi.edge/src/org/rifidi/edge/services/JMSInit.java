@@ -5,7 +5,7 @@ import java.net.URI;
 
 import org.apache.activemq.broker.BrokerFactory;
 import org.apache.activemq.broker.BrokerService;
-import org.rifidi.edge.init.utility.URIUtility;
+import org.rifidi.edge.init.URIUtility;
 
 /**
  * This class initializes JMS by reading in a file called
