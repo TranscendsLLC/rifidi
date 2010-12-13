@@ -1,11 +1,11 @@
 <?xml version="1.0"?>
-<project name="org.rifidi.edge.init" default="compile" basedir="/home/percent/workspace/build">
-	<property name="lib" value="/home/percent/workspace/build/lib" />
+<project name="org.rifidi.edge.init" default="compile" basedir="/Users/percent/new-11-06/build">
+	<property name="lib" value="/Users/percent/new-11-06/build/lib" />
 	<property name="src" value="../org.rifidi.edge.init/src" />
 	<property name="build" value="../org.rifidi.edge.init/bin" />
 	<property name="manifest" value="../org.rifidi.edge.init/META-INF/MANIFEST.MF" />
 	<property name="metainf" value="../org.rifidi.edge.init/META-INF" />
-	<property name="bundle" value="/home/percent/workspace/build/lib/org.rifidi.edge.init_1.0.1.jar" />
+	<property name="bundle" value="/Users/percent/new-11-06/build/lib/org.rifidi.edge.init_1.0.1.jar" />
 	<path id="classpath">
 		<pathelement location="../Rifidi-SDK/lib/plugins/org.eclipse.osgi_3.5.0.v20090520.jar"/>
 		<pathelement location="../Rifidi-SDK/lib/logging/com.springsource.org.apache.log4j_1.2.15.jar"/>

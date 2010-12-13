@@ -17,7 +17,6 @@ import java.net.URI;
 import org.apache.log4j.PropertyConfigurator;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
-import org.rifidi.edge.init.utility.URIUtility;
 
 /**
  * 

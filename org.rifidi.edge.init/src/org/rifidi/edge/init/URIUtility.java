@@ -9,7 +9,7 @@
  *  License:	GNU Public License (GPL)
  *  				http://www.opensource.org/licenses/gpl-3.0.html
  */
-package org.rifidi.edge.init.utility;
+package org.rifidi.edge.init;
 
 /**
  * This class acts as a utility to format strings in such a way that it can be
