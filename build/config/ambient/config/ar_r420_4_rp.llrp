@@ -5,7 +5,7 @@
     <llrp:Priority>0</llrp:Priority>
     <llrp:CurrentState>Disabled</llrp:CurrentState>
     <llrp:ROBoundarySpec>
-     <llrp:ROSpecStartTrigger>
+      <llrp:ROSpecStartTrigger>
         <llrp:ROSpecStartTriggerType>Immediate</llrp:ROSpecStartTriggerType>
       </llrp:ROSpecStartTrigger>
       <llrp:ROSpecStopTrigger>
@@ -35,12 +35,12 @@
           <llrp:C1G2InventoryCommand>
             <llrp:TagInventoryStateAware>0</llrp:TagInventoryStateAware>
             <llrp:C1G2RFControl>
-              <llrp:ModeIndex>1000</llrp:ModeIndex>
+              <llrp:ModeIndex>1</llrp:ModeIndex>
               <llrp:Tari>0</llrp:Tari>
             </llrp:C1G2RFControl>
             <llrp:C1G2SingulationControl>
               <llrp:Session>1</llrp:Session>
-              <llrp:TagPopulation>32</llrp:TagPopulation>
+              <llrp:TagPopulation>200</llrp:TagPopulation>
               <llrp:TagTransitTime>0</llrp:TagTransitTime>
             </llrp:C1G2SingulationControl>
           </llrp:C1G2InventoryCommand>
@@ -58,12 +58,12 @@
           <llrp:C1G2InventoryCommand>
             <llrp:TagInventoryStateAware>0</llrp:TagInventoryStateAware>
             <llrp:C1G2RFControl>
-              <llrp:ModeIndex>1000</llrp:ModeIndex>
+              <llrp:ModeIndex>1</llrp:ModeIndex>
               <llrp:Tari>0</llrp:Tari>
             </llrp:C1G2RFControl>
             <llrp:C1G2SingulationControl>
               <llrp:Session>1</llrp:Session>
-              <llrp:TagPopulation>32</llrp:TagPopulation>
+              <llrp:TagPopulation>200</llrp:TagPopulation>
               <llrp:TagTransitTime>0</llrp:TagTransitTime>
             </llrp:C1G2SingulationControl>
           </llrp:C1G2InventoryCommand>
@@ -81,12 +81,12 @@
           <llrp:C1G2InventoryCommand>
             <llrp:TagInventoryStateAware>0</llrp:TagInventoryStateAware>
             <llrp:C1G2RFControl>
-              <llrp:ModeIndex>1000</llrp:ModeIndex>
+              <llrp:ModeIndex>1</llrp:ModeIndex>
               <llrp:Tari>0</llrp:Tari>
             </llrp:C1G2RFControl>
             <llrp:C1G2SingulationControl>
               <llrp:Session>1</llrp:Session>
-              <llrp:TagPopulation>32</llrp:TagPopulation>
+              <llrp:TagPopulation>200</llrp:TagPopulation>
               <llrp:TagTransitTime>0</llrp:TagTransitTime>
             </llrp:C1G2SingulationControl>
           </llrp:C1G2InventoryCommand>
@@ -104,12 +104,12 @@
           <llrp:C1G2InventoryCommand>
             <llrp:TagInventoryStateAware>0</llrp:TagInventoryStateAware>
             <llrp:C1G2RFControl>
-              <llrp:ModeIndex>1000</llrp:ModeIndex>
+              <llrp:ModeIndex>1</llrp:ModeIndex>
               <llrp:Tari>0</llrp:Tari>
             </llrp:C1G2RFControl>
             <llrp:C1G2SingulationControl>
               <llrp:Session>1</llrp:Session>
-              <llrp:TagPopulation>32</llrp:TagPopulation>
+              <llrp:TagPopulation>200</llrp:TagPopulation>
               <llrp:TagTransitTime>0</llrp:TagTransitTime>
             </llrp:C1G2SingulationControl>
           </llrp:C1G2InventoryCommand>
