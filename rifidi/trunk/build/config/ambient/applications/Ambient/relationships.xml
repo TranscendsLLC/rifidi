@@ -5,6 +5,7 @@
 	<!-- Bag to Test Tube and Jar -->
 	<Parent typeID="20">
 		<Child typeID="60" />
+		<Child typeID="61" />
 		<Child typeID="10" />
 	</Parent>
 	<!--  Jar to Cassette-->

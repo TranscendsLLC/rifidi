@@ -8,6 +8,7 @@
 	<TypeDefinition TypeID="40" TypeName="TOTE" />
 	<TypeDefinition TypeID="50" TypeName="VEHICLE" />
 	<TypeDefinition TypeID="60" TypeName="TEST TUBE" />
+	<TypeDefinition TypeID="60" TypeName="TEST TUBE 61" />
 	<TypeDefinition TypeID="70" TypeName="CASETTE" />
 	<TypeDefinition TypeID="80" TypeName="SLIDE" />
 	<TypeDefinition TypeID="90" TypeName="FOLDER" />
