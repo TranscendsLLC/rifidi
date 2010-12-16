@@ -6,21 +6,11 @@
     <llrp:CurrentState>Disabled</llrp:CurrentState>
     <llrp:ROBoundarySpec>
       <llrp:ROSpecStartTrigger>
-        <llrp:ROSpecStartTriggerType>GPI</llrp:ROSpecStartTriggerType>
-        <llrp:GPITriggerValue>
-          <llrp:GPIPortNum>1</llrp:GPIPortNum>
-          <llrp:GPIEvent>1</llrp:GPIEvent>
-          <llrp:Timeout>0</llrp:Timeout>
-        </llrp:GPITriggerValue>
+        <llrp:ROSpecStartTriggerType>Immediate</llrp:ROSpecStartTriggerType>
       </llrp:ROSpecStartTrigger>
       <llrp:ROSpecStopTrigger>
-        <llrp:ROSpecStopTriggerType>GPI_With_Timeout</llrp:ROSpecStopTriggerType>
+        <llrp:ROSpecStopTriggerType>Null</llrp:ROSpecStopTriggerType>
         <llrp:DurationTriggerValue>0</llrp:DurationTriggerValue>
-        <llrp:GPITriggerValue>
-          <llrp:GPIPortNum>1</llrp:GPIPortNum>
-          <llrp:GPIEvent>0</llrp:GPIEvent>
-          <llrp:Timeout>0</llrp:Timeout>
-        </llrp:GPITriggerValue>
       </llrp:ROSpecStopTrigger>
     </llrp:ROBoundarySpec>
     <llrp:AISpec>
@@ -119,7 +109,7 @@
             </llrp:C1G2RFControl>
             <llrp:C1G2SingulationControl>
               <llrp:Session>1</llrp:Session>
-              <llrp:TagPopulation>1</llrp:TagPopulation>
+              <llrp:TagPopulation>200</llrp:TagPopulation>
               <llrp:TagTransitTime>0</llrp:TagTransitTime>
             </llrp:C1G2SingulationControl>
           </llrp:C1G2InventoryCommand>
