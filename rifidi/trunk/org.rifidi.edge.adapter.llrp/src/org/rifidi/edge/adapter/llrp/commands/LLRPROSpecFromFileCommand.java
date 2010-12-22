@@ -17,11 +17,15 @@ import java.util.concurrent.TimeoutException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.llrp.ltk.generated.messages.ADD_ROSPEC;
+import org.llrp.ltk.generated.messages.CUSTOM_MESSAGE;
 import org.llrp.ltk.generated.messages.DELETE_ROSPEC;
 import org.llrp.ltk.generated.messages.ENABLE_ROSPEC;
 import org.llrp.ltk.generated.messages.GET_ROSPECS;
 import org.llrp.ltk.generated.messages.GET_ROSPECS_RESPONSE;
 import org.llrp.ltk.generated.parameters.ROSpec;
+import org.llrp.ltk.types.BytesToEnd_HEX;
+import org.llrp.ltk.types.SignedByte;
+import org.llrp.ltk.types.UnsignedByte;
 import org.llrp.ltk.types.UnsignedInteger;
 import org.rifidi.edge.adapter.llrp.AbstractLLRPCommand;
 import org.rifidi.edge.adapter.llrp.LLRPReaderSession;
@@ -93,10 +97,23 @@ public class LLRPROSpecFromFileCommand extends AbstractLLRPCommand {
 
 		}
 
+		BytesToEnd_HEX data = new BytesToEnd_HEX();
+		CUSTOM_MESSAGE msg = new CUSTOM_MESSAGE();
+		msg.setVendorIdentifier(new UnsignedInteger(25882));
+		msg.setMessageSubtype(new UnsignedByte(21));
+		data.add(new SignedByte(0));
+		data.add(new SignedByte(0));
+		data.add(new SignedByte(0));
+		data.add(new SignedByte(0));
+		msg.setData(data);
+		session.send(msg);
+		
 		// Send the ADD_ROSPEC command
 		// TODO: check the response?
 		session.transact(addrospeccommand);
-
+		
+		
+		
 		// Enable the ROSpec
 		ENABLE_ROSPEC enablerospec = new ENABLE_ROSPEC();
 		enablerospec.setROSpecID(addrospeccommand.getROSpec().getROSpecID());
