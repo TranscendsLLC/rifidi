@@ -218,6 +218,17 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 				}
 			}
 
+			// BytesToEnd_HEX data = new BytesToEnd_HEX();
+			// CUSTOM_MESSAGE msg = new CUSTOM_MESSAGE();
+			// msg.setVendorIdentifier(new UnsignedInteger(25882));
+			// msg.setMessageSubtype(new UnsignedByte(21));
+			// data.add(new SignedByte(0));
+			// data.add(new SignedByte(0));
+			// data.add(new SignedByte(0));
+			// data.add(new SignedByte(0));
+			// msg.setData(data);
+			// connection.transact(msg);
+
 			if (!processing.compareAndSet(false, true)) {
 				logger.warn("Executor was already active! ");
 			}
@@ -366,9 +377,8 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 	public SET_READER_CONFIG createSetReaderConfig() {
 		try {
 			String directory = System.getProperty("org.rifidi.home");
-			String file = directory+File.separator+readerConfigPath;
-			LLRPMessage message = Util.loadXMLLLRPMessage(new File(
-					file));
+			String file = directory + File.separator + readerConfigPath;
+			LLRPMessage message = Util.loadXMLLLRPMessage(new File(file));
 			return (SET_READER_CONFIG) message;
 		} catch (Exception e) {
 			logger.warn("No SET_READER_CONFIG message found at "
@@ -465,8 +475,7 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.rifidi.edge.sensors.base.AbstractSensorSession#submit(java.lang
+	 * @see org.rifidi.edge.sensors.base.AbstractSensorSession#submit(java.lang
 	 * .String, long, java.util.concurrent.TimeUnit)
 	 */
 	@Override
