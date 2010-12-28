@@ -34,6 +34,14 @@
         <llrp:ProtocolID>EPCGlobalClass1Gen2</llrp:ProtocolID>
         <llrp:AntennaConfiguration>
           <llrp:AntennaID>1</llrp:AntennaID>
+          <llrp:RFReceiver>
+            <llrp:ReceiverSensitivity>1</llrp:ReceiverSensitivity>
+          </llrp:RFReceiver>
+          <llrp:RFTransmitter>
+            <llrp:HopTableID>1</llrp:HopTableID>
+            <llrp:ChannelIndex>0</llrp:ChannelIndex>
+            <llrp:TransmitPower>81</llrp:TransmitPower>
+          </llrp:RFTransmitter>
           <llrp:C1G2InventoryCommand>
             <llrp:TagInventoryStateAware>0</llrp:TagInventoryStateAware>
             <llrp:C1G2RFControl>
@@ -54,6 +62,14 @@
         </llrp:AntennaConfiguration>
         <llrp:AntennaConfiguration>
           <llrp:AntennaID>2</llrp:AntennaID>
+          <llrp:RFReceiver>
+            <llrp:ReceiverSensitivity>1</llrp:ReceiverSensitivity>
+          </llrp:RFReceiver>
+          <llrp:RFTransmitter>
+            <llrp:HopTableID>1</llrp:HopTableID>
+            <llrp:ChannelIndex>0</llrp:ChannelIndex>
+            <llrp:TransmitPower>81</llrp:TransmitPower>
+          </llrp:RFTransmitter>
           <llrp:C1G2InventoryCommand>
             <llrp:TagInventoryStateAware>0</llrp:TagInventoryStateAware>
             <llrp:C1G2RFControl>
@@ -74,6 +90,14 @@
         </llrp:AntennaConfiguration>
         <llrp:AntennaConfiguration>
           <llrp:AntennaID>3</llrp:AntennaID>
+          <llrp:RFReceiver>
+            <llrp:ReceiverSensitivity>1</llrp:ReceiverSensitivity>
+          </llrp:RFReceiver>
+          <llrp:RFTransmitter>
+            <llrp:HopTableID>1</llrp:HopTableID>
+            <llrp:ChannelIndex>0</llrp:ChannelIndex>
+            <llrp:TransmitPower>81</llrp:TransmitPower>
+          </llrp:RFTransmitter>
           <llrp:C1G2InventoryCommand>
             <llrp:TagInventoryStateAware>0</llrp:TagInventoryStateAware>
             <llrp:C1G2RFControl>
@@ -94,6 +118,14 @@
         </llrp:AntennaConfiguration>
         <llrp:AntennaConfiguration>
           <llrp:AntennaID>4</llrp:AntennaID>
+          <llrp:RFReceiver>
+            <llrp:ReceiverSensitivity>7</llrp:ReceiverSensitivity>
+          </llrp:RFReceiver>
+          <llrp:RFTransmitter>
+            <llrp:HopTableID>1</llrp:HopTableID>
+            <llrp:ChannelIndex>0</llrp:ChannelIndex>
+            <llrp:TransmitPower>71</llrp:TransmitPower>
+          </llrp:RFTransmitter>
           <llrp:C1G2InventoryCommand>
             <llrp:TagInventoryStateAware>0</llrp:TagInventoryStateAware>
             <llrp:C1G2RFControl>
@@ -102,7 +134,7 @@
             </llrp:C1G2RFControl>
             <llrp:C1G2SingulationControl>
               <llrp:Session>2</llrp:Session>
-              <llrp:TagPopulation>200</llrp:TagPopulation>
+              <llrp:TagPopulation>1</llrp:TagPopulation>
               <llrp:TagTransitTime>0</llrp:TagTransitTime>
             </llrp:C1G2SingulationControl>
             <llrp:Custom>
