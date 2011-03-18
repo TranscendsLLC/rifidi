@@ -15,7 +15,7 @@
 	</bean>
 
 
-	<broker brokerName="ambientBroker" persistent="true" useJmx="true"
+	<broker brokerName="ambientBroker" persistent="true" useJmx="false"
 		xmlns="http://activemq.apache.org/schema/core">
 		<networkConnectors>
 			<networkConnector uri="static://(${labtrack.jms.mainserver.brokerurl})"
@@ -25,9 +25,11 @@
 				</staticallyIncludedDestinations>
 			</networkConnector>
 		</networkConnectors>
-		<persistenceAdapter>
-			<kahaDB directory="${org.rifidi.home}/applications/Ambient/kahadb" />
-		</persistenceAdapter>
+		<!--
+			<persistenceAdapter> <kahaDB
+			directory="${org.rifidi.home}/applications/Ambient/kahadb" />
+			</persistenceAdapter>
+		-->
 	</broker>
 
 </beans>
