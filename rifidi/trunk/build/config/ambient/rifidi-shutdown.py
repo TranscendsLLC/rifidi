@@ -9,32 +9,29 @@ from subprocess import Popen, PIPE
 from telnetlib import Telnet
 
 if __name__ == '__main__':
-
-    skipgrep=1
-
+    
     # try a nice shutdown
     try :
         telnet = Telnet('localhost', '2020')
         actual = telnet.read_eager()
-        telnet.write('close\r\n')
+        telnet.write('exit\r\n')
     except:
         pass
-
+        
     # kill anything that is left
     p1 = Popen(['ps','ax'], stdout=PIPE)
     p2 = Popen(['grep', 'rifidi'], stdin=p1.stdout, stdout=PIPE)
-    output = p2.communicate()[0]
+    output = p2.communicate()[0]    
     output = output.split('\n')
-    #print('output: ',output,'\n')
+    #print output
     if output:
         for i in output:
-            #print('i: ',i,'\n')
-            if (skipgrep==1):
-                skipgrep=0
-                #continue
+            if re.search('grep', i):
+                continue
             else:
                 pid = i.strip().split(' ')
-                assert pid.__len__() > 1
-                #print pid[1]
-                out = os.system('sudo kill -9 '+ str(pid[0]))
-                #print out
+                assert pid.__len__() > 0
+                #print pid[0]
+                fnull = open('/dev/null', 'w')
+                out = subprocess.call(['kill', '-9', str(pid[0])], shell=True, stdout=fnull, stderr=fnull)
+
