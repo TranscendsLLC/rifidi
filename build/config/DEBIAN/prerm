@@ -1,7 +1,13 @@
 #!/bin/sh
 
+#Stops the program's execution for clean deletion
 sudo /etc/init.d/rifidi-server stop
+#Restores the programs state to a default setting
 sudo update-rc.d rifidi-server defaults
+#forces the removal of /etc/init.d/rifidi-server and all symlinks.
+sudo update-rc.d -f rifidi-server remove
+#ensuring cleanup occurs
 sudo rm -f /etc/init.d/rifidi-server
+#Removing local files
 sudo rm -rf /usr/local/sbin/rifidi
 
