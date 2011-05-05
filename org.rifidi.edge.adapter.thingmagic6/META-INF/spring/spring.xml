@@ -4,10 +4,27 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans 
 	http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
      http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi.xsd">
-	
-	
-	
+
+	<!--  Create Reader Configuration Factory -->
+	<bean id="thingmagic6ConfigurationFactory"
+		class="org.rifidi.edge.adapter.thingmagic6.Thingmagic6SensorFactory">
+		<property name="context" ref="bundleContext" />
+		<property name="notifierService" ref="JMSNotifierService" />
+		<!--
+			<property name="commandConfigurations" ref="thingmagicCommands" />
+		-->
+	</bean>
+
 	<osgi:reference id="JMSNotifierService"
 		interface="org.rifidi.edge.notification.NotifierService" />
-		
+
+	<!-- Put reader configuration service in OSGi Registry -->
+	<osgi:service id="thingmagic6ConfigurationFactoryService"
+		ref="thingmagic6ConfigurationFactory">
+		<osgi:interfaces>
+			<value>org.rifidi.edge.configuration.ServiceFactory</value>
+			<value>org.rifidi.edge.sensors.AbstractSensorFactory</value>
+		</osgi:interfaces>
+	</osgi:service>
+
 </beans>
