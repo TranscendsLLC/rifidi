@@ -3,17 +3,9 @@
  */
 package org.rifidi.edge.adapter.thingmagic6;
 
-import java.util.HashSet;
-import java.util.Set;
-
-import org.rifidi.edge.notification.EPCGeneration2Event;
-import org.rifidi.edge.notification.ReadCycle;
-import org.rifidi.edge.notification.TagReadEvent;
-
 import com.thingmagic.ReadListener;
 import com.thingmagic.Reader;
 import com.thingmagic.TagReadData;
-import com.thingmagic.Gen2.TagData;
 
 /**
  * 
