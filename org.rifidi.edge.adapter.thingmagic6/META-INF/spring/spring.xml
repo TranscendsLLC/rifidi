@@ -10,9 +10,7 @@
 		class="org.rifidi.edge.adapter.thingmagic6.Thingmagic6SensorFactory">
 		<property name="context" ref="bundleContext" />
 		<property name="notifierService" ref="JMSNotifierService" />
-		<!--
-			<property name="commandConfigurations" ref="thingmagicCommands" />
-		-->
+		<property name="commandConfigurations" ref="thingmagic6Commands" />
 	</bean>
 
 	<osgi:reference id="JMSNotifierService"
@@ -26,5 +24,27 @@
 			<value>org.rifidi.edge.sensors.AbstractSensorFactory</value>
 		</osgi:interfaces>
 	</osgi:service>
+
+	<bean id="thingmagic6PushCommandConfigurationFactory"
+		class="org.rifidi.edge.adapter.thingmagic6.commands.Thingmagic6PushCommandConfigurationFactory">
+		<property name="context" ref="bundleContext" />
+	</bean>
+
+	<!-- Put command configuration service in OSGi Registry -->
+	<osgi:service id="thingmagic6PushCommandConfigurationFactoryReg"
+		ref="thingmagic6PushCommandConfigurationFactory">
+		<osgi:interfaces>
+			<value>org.rifidi.edge.configuration.ServiceFactory</value>
+			<value>org.rifidi.edge.configuration.AbstractCommandConfigurationFactory</value>
+		</osgi:interfaces>
+	</osgi:service>
+
+	<!-- Create a set that listens for ThingMagic command configurations -->
+	<osgi:set id="thingmagic6Commands"
+		interface="org.rifidi.edge.sensors.AbstractCommandConfiguration"
+		cardinality="0..N" filter="(reader=Thingmagic6)">
+		<osgi:listener ref="thingmagic6ConfigurationFactory"
+			bind-method="bindCommandConfiguration" unbind-method="unbindCommandConfiguration" />
+	</osgi:set>
 
 </beans>

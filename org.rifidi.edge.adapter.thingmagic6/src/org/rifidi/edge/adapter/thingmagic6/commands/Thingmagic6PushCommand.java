@@ -27,9 +27,8 @@ public class Thingmagic6PushCommand extends TimeoutCommand {
 	@Override
 	protected void execute() throws TimeoutException {
 		this.session = (Thingmagic6SensorSession) this.sensorSession;
-		// try {
-		//					
-		// }
+		System.out.println("Start reading!");
+		session.startReading();
 	}
 
 }

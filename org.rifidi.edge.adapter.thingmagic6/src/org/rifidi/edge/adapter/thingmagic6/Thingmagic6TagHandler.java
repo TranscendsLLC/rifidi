@@ -26,6 +26,7 @@ public class Thingmagic6TagHandler implements ReadListener {
 	 */
 	@Override
 	public void tagRead(Reader arg0, TagReadData arg1) {
+		System.out.println("Reading a tag!");
 		System.out.println(arg1.epcString() + ", " + arg1.getTag().getProtocol());
 	}
 	
