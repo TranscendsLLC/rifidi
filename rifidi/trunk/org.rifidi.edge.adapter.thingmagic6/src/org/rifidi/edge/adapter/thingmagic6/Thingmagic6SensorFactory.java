@@ -10,6 +10,7 @@ import javax.management.MBeanInfo;
 import org.rifidi.edge.exceptions.InvalidStateException;
 import org.rifidi.edge.notification.NotifierService;
 import org.rifidi.edge.sensors.AbstractCommandConfiguration;
+import org.rifidi.edge.sensors.AbstractSensor;
 import org.rifidi.edge.sensors.AbstractSensorFactory;
 
 /**
@@ -72,7 +73,9 @@ public class Thingmagic6SensorFactory extends
 	public void unbindCommandConfiguration(
 			AbstractCommandConfiguration<?> commandConfiguration,
 			Map<?, ?> properties) {
-		// Nothing
+		for (AbstractSensor<?> reader : sensors) {
+			reader.unbindCommandConfiguration(commandConfiguration, properties);
+		}
 	}
 
 	/*

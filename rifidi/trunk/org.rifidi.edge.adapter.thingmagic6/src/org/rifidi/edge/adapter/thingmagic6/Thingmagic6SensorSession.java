@@ -16,6 +16,9 @@ import org.rifidi.edge.sensors.sessions.AbstractSensorSession;
 
 import com.thingmagic.Reader;
 import com.thingmagic.ReaderException;
+import com.thingmagic.SimpleReadPlan;
+import com.thingmagic.TagProtocol;
+import com.thingmagic.Reader.Region;
 
 /**
  * 
@@ -27,9 +30,12 @@ public class Thingmagic6SensorSession extends AbstractSensorSession {
 	public Reader reader;
 
 	int maxConAttempts = -1;
-	int reconnectionInterval = -1;
-	
+	int reconnectionInterval = 500;
+
 	public String readerID;
+	public String port;
+
+	public Thingmagic6TagHandler handler = null;
 
 	/** atomic boolean that is true if we are inside the connection attempt loop */
 	private AtomicBoolean connectingLoop = new AtomicBoolean(false);
@@ -47,16 +53,25 @@ public class Thingmagic6SensorSession extends AbstractSensorSession {
 			Set<AbstractCommandConfiguration<?>> commandConfigurations) {
 		super(sensor, ID, commandConfigurations);
 		this.readerID = readerID;
+		this.port = port;
 	}
-	
+
 	/**
 	 * 
 	 */
 	public void startReading() {
+		//reader.addReadListener(new Thingmagic6TagHandler(this));
 		reader.startReading();
-		reader.addReadListener(new Thingmagic6TagHandler(this));
 	}
 	
+	public void stopReading() {
+		try {
+			reader.stopReading();
+		} catch (InterruptedException e) {
+			//FIXME: Log this
+		}
+	}
+
 	/**
 	 * 
 	 */
@@ -75,14 +90,19 @@ public class Thingmagic6SensorSession extends AbstractSensorSession {
 		boolean connected = false;
 		// TODO Auto-generated method stub
 		this.setStatus(SessionStatus.CONNECTING);
+		System.out.println("Connecting");
 		connectingLoop.set(true);
 		try {
 			for (int connCount = 0; connCount < maxConAttempts
 					|| maxConAttempts == -1; connCount++) {
 				try {
-					reader = Reader.create("tmr:///dev/ttyACM0");
+					System.out.println("Trying to connect");
+					reader = Reader.create("tmr:///dev/ttyACM5");
+					System.out.println("Got past the reader create");
 					reader.connect();
+					System.out.println("Past the connect");
 					connected = true;
+					break;
 				} catch (ReaderException e) {
 					e.printStackTrace();
 				}
@@ -108,8 +128,56 @@ public class Thingmagic6SensorSession extends AbstractSensorSession {
 		// if not connected, exit
 		if (!connected) {
 			setStatus(SessionStatus.CLOSED);
+			System.out.println("Can't connect");
 			throw new IOException("Cannot connect");
 		}
+
+		onConnect();
+	}
+
+	/**
+	 * 
+	 */
+	private void onConnect() {
+		System.out.println("Processing!");
+		setStatus(SessionStatus.PROCESSING);
+		this.handler = new Thingmagic6TagHandler(this);
+		reader.addReadListener(handler);
+		SimpleReadPlan srp = new SimpleReadPlan();
+		srp.antennas = new int[] { 1, 2, 3, 4 };
+		srp.protocol = TagProtocol.GEN2;
+
+		try {
+			reader.paramSet("/reader/read/plan", srp);
+			reader.paramSet("/reader/region/id", Region.NA);
+		} catch (ReaderException e) {
+			e.printStackTrace();
+		}
+		try {
+			printArray((int[]) reader
+					.paramGet("/reader/antenna/connectedPortList"));
+			// printArray((int[]) reader.paramGet("/reader/antenna/portList"));
+			System.out.println("Check ports: "
+					+ reader.paramGet("/reader/antenna/checkPort"));
+			System.out.println("Read plan: "
+					+ reader.paramGet("/reader/read/plan"));
+			System.out.println("Region: "
+					+ reader.paramGet("/reader/region/id"));
+			// printRegionArray((Region[]) reader
+			// .paramGet("/reader/region/supportedRegions"));
+		} catch (ReaderException e) {
+			e.printStackTrace();
+		}
+
+		//this.startReading();
+	}
+
+	private void printArray(int[] array) {
+		System.out.println("Array: ");
+		for (Integer i : array) {
+			System.out.println(i);
+		}
+		System.out.println("fin");
 	}
 
 	/*
@@ -124,6 +192,16 @@ public class Thingmagic6SensorSession extends AbstractSensorSession {
 
 	public String getReaderID() {
 		return readerID;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "Thingmagic6Session: " + port + " (" + getStatus() + ")";
 	}
 
 }
