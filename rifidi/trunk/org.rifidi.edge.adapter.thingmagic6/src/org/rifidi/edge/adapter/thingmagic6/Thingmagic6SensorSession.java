@@ -130,7 +130,6 @@ public class Thingmagic6SensorSession extends AbstractSensorSession {
 		// if not connected, exit
 		if (!connected) {
 			setStatus(SessionStatus.CLOSED);
-			System.out.println("Can't connect");
 			throw new IOException("Cannot connect");
 		}
 
@@ -141,7 +140,6 @@ public class Thingmagic6SensorSession extends AbstractSensorSession {
 	 * 
 	 */
 	private void onConnect() {
-		System.out.println("Processing!");
 		setStatus(SessionStatus.PROCESSING);
 		this.handler = new Thingmagic6TagHandler(this);
 		this.exceptionhandler = new Thingmagic6ExceptionHandler(this);
@@ -158,14 +156,12 @@ public class Thingmagic6SensorSession extends AbstractSensorSession {
 			e.printStackTrace();
 		}
 		try {
-			printArray((int[]) reader
-					.paramGet("/reader/antenna/connectedPortList"));
-			System.out.println("Check ports: "
-					+ reader.paramGet("/reader/antenna/checkPort"));
+			// printArray((int[]) reader
+			// .paramGet("/reader/antenna/connectedPortList"));
+			// System.out.println("Check ports: "
+			// + reader.paramGet("/reader/antenna/checkPort"));
 			System.out.println("Read plan: "
 					+ reader.paramGet("/reader/read/plan"));
-			System.out.println("Region: "
-					+ reader.paramGet("/reader/region/id"));
 		} catch (ReaderException e) {
 			e.printStackTrace();
 		}
@@ -173,13 +169,13 @@ public class Thingmagic6SensorSession extends AbstractSensorSession {
 		this.startReading();
 	}
 
-	private void printArray(int[] array) {
-		System.out.println("Array: ");
-		for (Integer i : array) {
-			System.out.println(i);
-		}
-		System.out.println("fin");
-	}
+	// private void printArray(int[] array) {
+	// System.out.println("Array: ");
+	// for (Integer i : array) {
+	// System.out.println(i);
+	// }
+	// System.out.println("fin");
+	// }
 
 	/*
 	 * (non-Javadoc)
