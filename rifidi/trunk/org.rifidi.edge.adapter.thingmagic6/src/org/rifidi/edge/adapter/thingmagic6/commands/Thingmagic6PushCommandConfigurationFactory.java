@@ -58,7 +58,7 @@ public class Thingmagic6PushCommandConfigurationFactory
 	@Override
 	public void createInstance(String serviceID)
 			throws IllegalArgumentException, InvalidStateException {
-		System.out.println("Creating an instance!  ");
+		System.out.println("Creating an instance of Thingmagic6PushCommand!  ");
 		Thingmagic6PushCommandConfiguration config = new Thingmagic6PushCommandConfiguration();
 		config.setID(serviceID);
 		config.register(getContext(), Thingmagic6SensorFactory.FACTORY_ID);

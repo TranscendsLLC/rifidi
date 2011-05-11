@@ -36,6 +36,7 @@ public class Thingmagic6SensorSession extends AbstractSensorSession {
 	public String port;
 
 	public Thingmagic6TagHandler handler = null;
+	public Thingmagic6ExceptionHandler exceptionhandler = null;
 
 	/** atomic boolean that is true if we are inside the connection attempt loop */
 	private AtomicBoolean connectingLoop = new AtomicBoolean(false);
@@ -61,6 +62,7 @@ public class Thingmagic6SensorSession extends AbstractSensorSession {
 	 */
 	public void startReading() {
 		//reader.addReadListener(new Thingmagic6TagHandler(this));
+		//System.out.println("Startreading called!  ");
 		reader.startReading();
 	}
 	
@@ -97,7 +99,7 @@ public class Thingmagic6SensorSession extends AbstractSensorSession {
 					|| maxConAttempts == -1; connCount++) {
 				try {
 					System.out.println("Trying to connect");
-					reader = Reader.create("tmr:///dev/ttyACM5");
+					reader = Reader.create(port);
 					System.out.println("Got past the reader create");
 					reader.connect();
 					System.out.println("Past the connect");
@@ -142,7 +144,9 @@ public class Thingmagic6SensorSession extends AbstractSensorSession {
 		System.out.println("Processing!");
 		setStatus(SessionStatus.PROCESSING);
 		this.handler = new Thingmagic6TagHandler(this);
+		this.exceptionhandler = new Thingmagic6ExceptionHandler(this);
 		reader.addReadListener(handler);
+		reader.addReadExceptionListener(exceptionhandler);
 		SimpleReadPlan srp = new SimpleReadPlan();
 		srp.antennas = new int[] { 1, 2, 3, 4 };
 		srp.protocol = TagProtocol.GEN2;
@@ -156,20 +160,17 @@ public class Thingmagic6SensorSession extends AbstractSensorSession {
 		try {
 			printArray((int[]) reader
 					.paramGet("/reader/antenna/connectedPortList"));
-			// printArray((int[]) reader.paramGet("/reader/antenna/portList"));
 			System.out.println("Check ports: "
 					+ reader.paramGet("/reader/antenna/checkPort"));
 			System.out.println("Read plan: "
 					+ reader.paramGet("/reader/read/plan"));
 			System.out.println("Region: "
 					+ reader.paramGet("/reader/region/id"));
-			// printRegionArray((Region[]) reader
-			// .paramGet("/reader/region/supportedRegions"));
 		} catch (ReaderException e) {
 			e.printStackTrace();
 		}
 
-		//this.startReading();
+		this.startReading();
 	}
 
 	private void printArray(int[] array) {

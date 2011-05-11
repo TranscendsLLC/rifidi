@@ -16,7 +16,6 @@ import org.rifidi.edge.sensors.AbstractSensorFactory;
 /**
  * 
  * 
- * 
  * @author Matthew Dean
  */
 public class Thingmagic6SensorFactory extends

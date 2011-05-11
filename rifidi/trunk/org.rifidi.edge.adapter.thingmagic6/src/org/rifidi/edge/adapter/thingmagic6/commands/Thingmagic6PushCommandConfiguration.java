@@ -19,6 +19,11 @@ import org.rifidi.edge.sensors.AbstractCommandConfiguration;
 public class Thingmagic6PushCommandConfiguration extends
 		AbstractCommandConfiguration<Thingmagic6PushCommand> {
 	
+	
+	public Thingmagic6PushCommandConfiguration() {
+		System.out.println("In the push command constructor!  ");
+	}
+	
 	public static final MBeanInfo mbeaninfo;
 	static {
 		AnnotationMBeanInfoStrategy strategy = new AnnotationMBeanInfoStrategy();
