@@ -3,6 +3,7 @@
  */
 package org.rifidi.edge.api.service.tagmonitor;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -40,8 +41,7 @@ public class LimitStableSetEsperFactory implements RifidiAppEsperFactory {
 	 */
 	@Override
 	public String createQuery() {
-		// TODO Auto-generated method stub
-		return null;
+		return "select rstream * from " + stableSetWindow;
 	}
 
 	/*
@@ -51,8 +51,18 @@ public class LimitStableSetEsperFactory implements RifidiAppEsperFactory {
 	 */
 	@Override
 	public List<String> createStatements() {
-		// TODO Auto-generated method stub
-		return null;
+		List<String> statements = new ArrayList<String>();
+		statements.add("create window " + stableSetWindow + ".win:time_length_batch("
+				+ stableSetTimeString + "," + limit + ") as TagReadEvent");
+			statements.add("create window " + stableSetWindow_unique
+					+ ".std:firstunique(tag.ID) as TagReadEvent");
+			statements.add(EsperUtil.buildInsertStatement(stableSetWindow_unique,
+					readZones));
+			statements.add("insert into " + stableSetWindow + " select * from "
+					+ stableSetWindow_unique);
+		
+		return statements;
+	}
 	}
 
-}
+
