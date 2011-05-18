@@ -49,20 +49,40 @@ public class LimitStableSetEsperFactory implements RifidiAppEsperFactory {
 	 * 
 	 * @see org.rifidi.edge.api.service.RifidiAppEsperFactory#createStatements()
 	 */
+//	@Override
+//	public List<String> createStatements() {
+//		List<String> statements = new ArrayList<String>();
+//		statements.add("create window " + stableSetWindow + ".std:firstunique(tag.ID).win:time_length_batch("
+//				+ stableSetTimeString + "," + limit + ") as TagReadEvent");
+//			statements.add("create window " + stableSetWindow_unique
+//					+ ".std:firstunique(tag.ID) as TagReadEvent");
+//			statements.add(EsperUtil.buildInsertStatement(stableSetWindow_unique,
+//					readZones));
+//			statements.add("insert into " + stableSetWindow + " select * from "
+//					+ stableSetWindow_unique);
+//		
+//		return statements;
+//	}
+	
 	@Override
 	public List<String> createStatements() {
 		List<String> statements = new ArrayList<String>();
-		statements.add("create window " + stableSetWindow + ".std:firstunique(tag.ID).win:time_length_batch("
+	
+		statements.add("create window " + stableSetWindow_unique
+				+ ".std:firstunique(tag.ID) as TagReadEvent");
+		
+		statements.add("create window " + stableSetWindow + ".win:time_length_batch("
 				+ stableSetTimeString + "," + limit + ") as TagReadEvent");
-			statements.add("create window " + stableSetWindow_unique
-					+ ".std:firstunique(tag.ID) as TagReadEvent");
+
+		
 			statements.add(EsperUtil.buildInsertStatement(stableSetWindow_unique,
 					readZones));
 			statements.add("insert into " + stableSetWindow + " select * from "
 					+ stableSetWindow_unique);
-		
-		return statements;
+
+			return statements;
 	}
+
 	}
 
 
