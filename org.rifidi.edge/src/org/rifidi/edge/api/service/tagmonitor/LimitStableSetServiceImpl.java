@@ -78,6 +78,7 @@ public class LimitStableSetServiceImpl extends
 		}
 		subscribe(subscriber, new LimitStableSetEsperFactory(readZones,
 				stableSetTime, stableSetTimeUnit, limit, getCounter()));
+		System.out.println("subscribed to limitStableset");
 	}
 
 }
