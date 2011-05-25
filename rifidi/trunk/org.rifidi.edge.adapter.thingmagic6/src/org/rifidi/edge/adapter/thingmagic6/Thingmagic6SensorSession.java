@@ -112,7 +112,9 @@ public class Thingmagic6SensorSession extends AbstractSensorSession {
 					logger.info("Successfully connected to Thingmagic 6e at " + this.port);
 					break;
 				} catch (ReaderException e) {
-					e.printStackTrace();
+					if(logger.isDebugEnabled()) {
+						logger.debug("Failed to connect to Thingmagic6 at " + this.port + ", reason is: " + e.getMessage());
+					}
 				}
 
 				try {
