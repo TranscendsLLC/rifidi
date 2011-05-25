@@ -47,7 +47,7 @@ public class Thingmagic6Sensor extends AbstractSensor<Thingmagic6SensorSession> 
 	/** Flag to check if this reader is destroyed. */
 	private AtomicBoolean destroyed = new AtomicBoolean(false);
 	/** Time between two connection attempts. */
-	private volatile Integer reconnectionInterval = 500;
+	private volatile Integer reconnectionInterval = 2500;
 	/** Number of connection attempts before a connection goes into fail state. */
 	private volatile Integer maxNumConnectionAttempts = 10;
 	/** The only session an LLRP reader allows. */
