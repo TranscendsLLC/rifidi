@@ -53,7 +53,7 @@ public class LimitStableSetEsperFactory implements RifidiAppEsperFactory {
 	public List<String> createStatements() {
 		List<String> statements = new ArrayList<String>();
 		statements.add("create window " + stableSetWindow + ".win:time_length_batch("
-				+ stableSetTimeString + "," + limit + ",FORCE_UPDATE, START_EAGER) as TagReadEvent");
+				+ stableSetTimeString + "," + limit + ",FORCE_UPDATE) as TagReadEvent");
 			statements.add("create window " + stableSetWindow_unique
 					+ ".std:firstunique(tag.ID) as TagReadEvent");
 			statements.add(EsperUtil.buildInsertStatement(stableSetWindow_unique,
