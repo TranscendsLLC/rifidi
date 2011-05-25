@@ -21,7 +21,7 @@ public class Thingmagic6ExceptionHandler implements ReadExceptionListener {
 	 */
 	@Override
 	public void tagReadException(Reader arg0, ReaderException arg1) {
-		//System.out.println("Tag Read Exception!  " + arg1.getMessage() + arg1.getCause());
+		//System.out.println("Tag Read Exception!  " + arg1.getMessage() + " ... " + arg1.getCause());
 		try {
 			Thread.sleep(500);
 		} catch (InterruptedException e) {

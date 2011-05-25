@@ -3,7 +3,9 @@
  */
 package org.rifidi.edge.adapter.thingmagic6;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -55,6 +57,10 @@ public class Thingmagic6Sensor extends AbstractSensor<Thingmagic6SensorSession> 
 	/** The ID of the session */
 	private AtomicInteger sessionIDcounter = new AtomicInteger(0);
 
+	private String antennaSequence;
+
+	private int[] antennas = new int[] { 1, 2, 3, 4 };
+
 	public static final MBeanInfo mbeaninfo;
 	private String displayName;
 	static {
@@ -77,9 +83,70 @@ public class Thingmagic6Sensor extends AbstractSensor<Thingmagic6SensorSession> 
 	public String getPort() {
 		return port;
 	}
-	
+
 	public void setPort(String port) {
-		this.port=port;
+		this.port = port;
+	}
+
+	/**
+	 * Gets the Antenna Sequence.
+	 * 
+	 * @return the port
+	 */
+	@Property(displayName = "Antenna Sequence", description = "Comma separated list of Antennas"
+			+ "", writable = true, type = PropertyType.PT_STRING, category = "connection"
+			+ "", orderValue = 1, defaultValue = ThingmagicConstants.ANTENNAS)
+	public String getAntennaSequence() {
+		return antennaSequence;
+	}
+
+	/**
+	 * Sets the antenna sequence. The antenna sequence must consist of a
+	 * comma-separated list of integers between 1 and 4.
+	 * 
+	 * @param antennaSequence
+	 */
+	public void setAntennaSequence(String antennaSequence) {
+		int[] sequence = findSequence(antennaSequence);
+		if (sequence == null) {
+			this.antennas = null;
+			this.antennaSequence = "error";
+		} else {
+			this.antennas = sequence;
+			this.antennaSequence = antennaSequence;
+		}
+	}
+
+	private int[] findSequence(String antennaSequence)
+			throws NumberFormatException {
+		String[] split = antennaSequence.split(",");
+		List<Integer> retVal = new ArrayList<Integer>();
+		for (String i : split) {
+			retVal.add(Integer.valueOf(i));
+		}
+		if (checkSequence(retVal)) {
+			return createArray(retVal);
+		}
+		return null;
+	}
+
+	private boolean checkSequence(List<Integer> sequence) {
+		for (Integer i : sequence) {
+			if (!ThingmagicConstants.VALID_ANTENNAS.contains(i)) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	private int[] createArray(List<Integer> intList) {
+		int[] retVal = new int[intList.size()];
+		int index = 0;
+		for (Integer i : intList) {
+			retVal[index] = i;
+			index++;
+		}
+		return retVal;
 	}
 
 	/*
@@ -104,7 +171,8 @@ public class Thingmagic6Sensor extends AbstractSensor<Thingmagic6SensorSession> 
 			Integer sessionID = this.sessionIDcounter.incrementAndGet();
 			if (session.compareAndSet(null, new Thingmagic6SensorSession(this,
 					sessionID.toString(), notifierService, super.getID(), port,
-					reconnectionInterval, maxNumConnectionAttempts, commands))) {
+					reconnectionInterval, maxNumConnectionAttempts, antennas,
+					commands))) {
 
 				// TODO: remove this once we get AspectJ in here!
 				notifierService.addSessionEvent(this.getID(), Integer
@@ -129,7 +197,8 @@ public class Thingmagic6Sensor extends AbstractSensor<Thingmagic6SensorSession> 
 			Integer sessionID = Integer.parseInt(sessionDTO.getID());
 			if (session.compareAndSet(null, new Thingmagic6SensorSession(this,
 					sessionID.toString(), notifierService, super.getID(), port,
-					reconnectionInterval, maxNumConnectionAttempts, commands))) {
+					reconnectionInterval, maxNumConnectionAttempts, antennas,
+					commands))) {
 				session.get().restoreCommands(sessionDTO);
 				// TODO: remove this once we get AspectJ in here!
 				notifierService.addSessionEvent(this.getID(), Integer
@@ -154,8 +223,13 @@ public class Thingmagic6Sensor extends AbstractSensor<Thingmagic6SensorSession> 
 		Thingmagic6SensorSession thingsession = session.get();
 		if (thingsession != null) {
 			if (thingsession.getID().equals(sessionid)) {
-				thingsession.killAllCommands();
-				thingsession.disconnect();
+				try {
+					thingsession.killAllCommands();
+					thingsession.disconnect();
+				} catch (Exception e) {
+					// FIXME: We don't really care at the moment, but handle
+					// this properly.
+				}
 				// TODO: remove this once we get AspectJ in here!
 				session.set(null);
 				notifierService.removeSessionEvent(this.getID(), sessionid);
@@ -221,9 +295,9 @@ public class Thingmagic6Sensor extends AbstractSensor<Thingmagic6SensorSession> 
 	 * 
 	 * @return the reconnectionInterval
 	 */
-	@Property(displayName = "Reconnection Interval", description = "Upon connection failure, the " +
-			"time to wait between two connection attempts (ms)", writable = true, type = PropertyType.PT_INTEGER, category = "connection" +
-					"", defaultValue = ThingmagicConstants.RECONNECTION_INTERVAL, orderValue = 4, minValue = "0")
+	@Property(displayName = "Reconnection Interval", description = "Upon connection failure, the "
+			+ "time to wait between two connection attempts (ms)", writable = true, type = PropertyType.PT_INTEGER, category = "connection"
+			+ "", defaultValue = ThingmagicConstants.RECONNECTION_INTERVAL, orderValue = 4, minValue = "0")
 	public Integer getReconnectionInterval() {
 		return reconnectionInterval;
 	}
@@ -237,15 +311,14 @@ public class Thingmagic6Sensor extends AbstractSensor<Thingmagic6SensorSession> 
 	public void setReconnectionInterval(Integer reconnectionInterval) {
 		this.reconnectionInterval = reconnectionInterval;
 	}
-	
+
 	/**
 	 * Gets the number of connection attempts to try before giving up.
 	 * 
 	 * @return the maxNumConnectionAttempts
 	 */
-	@Property(displayName = "Maximum Connection Attempts" +
-			"", description = "Upon connection failure, the number of times to attempt to recconnect before " +
-					"giving up. If set to '-1', then try forever", writable = true, type = PropertyType.PT_INTEGER, category = "connection", defaultValue = ThingmagicConstants.MAX_CONNECTION_ATTEMPTS, orderValue = 5, minValue = "-1")
+	@Property(displayName = "Maximum Connection Attempts" + "", description = "Upon connection failure, the number of times to attempt to recconnect before "
+			+ "giving up. If set to '-1', then try forever", writable = true, type = PropertyType.PT_INTEGER, category = "connection", defaultValue = ThingmagicConstants.MAX_CONNECTION_ATTEMPTS, orderValue = 5, minValue = "-1")
 	public Integer getMaxNumConnectionAttempts() {
 		return maxNumConnectionAttempts;
 	}

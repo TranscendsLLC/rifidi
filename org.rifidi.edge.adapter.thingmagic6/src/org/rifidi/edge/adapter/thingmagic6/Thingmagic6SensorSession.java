@@ -30,13 +30,14 @@ public class Thingmagic6SensorSession extends AbstractSensorSession {
 	public Reader reader;
 
 	int maxConAttempts = -1;
-	int reconnectionInterval = 500;
+	int reconnectionInterval = 2500;
 
-	public String readerID;
-	public String port;
+	private String readerID;
+	private String port;
+	private int[] antennas;
 
-	public Thingmagic6TagHandler handler = null;
-	public Thingmagic6ExceptionHandler exceptionhandler = null;
+	private Thingmagic6TagHandler handler = null;
+	private Thingmagic6ExceptionHandler exceptionhandler = null;
 
 	/** atomic boolean that is true if we are inside the connection attempt loop */
 	private AtomicBoolean connectingLoop = new AtomicBoolean(false);
@@ -50,27 +51,28 @@ public class Thingmagic6SensorSession extends AbstractSensorSession {
 	 */
 	public Thingmagic6SensorSession(AbstractSensor<?> sensor, String ID,
 			NotifierService notifierService, String readerID, String port,
-			int reconnectionInterval, int maxConAttempts,
+			int reconnectionInterval, int maxConAttempts, int[] antennas,
 			Set<AbstractCommandConfiguration<?>> commandConfigurations) {
 		super(sensor, ID, commandConfigurations);
 		this.readerID = readerID;
 		this.port = port;
+		this.antennas = antennas;
 	}
 
 	/**
 	 * 
 	 */
 	public void startReading() {
-		//reader.addReadListener(new Thingmagic6TagHandler(this));
-		//System.out.println("Startreading called!  ");
+		// reader.addReadListener(new Thingmagic6TagHandler(this));
+		// System.out.println("Startreading called!  ");
 		reader.startReading();
 	}
-	
+
 	public void stopReading() {
 		try {
 			reader.stopReading();
 		} catch (InterruptedException e) {
-			//FIXME: Log this
+			// FIXME: Log this
 		}
 	}
 
@@ -146,7 +148,9 @@ public class Thingmagic6SensorSession extends AbstractSensorSession {
 		reader.addReadListener(handler);
 		reader.addReadExceptionListener(exceptionhandler);
 		SimpleReadPlan srp = new SimpleReadPlan();
-		srp.antennas = new int[] { 1, 2, 3, 4 };
+		if (this.antennas != null) {
+			srp.antennas = this.antennas;
+		}
 		srp.protocol = TagProtocol.GEN2;
 
 		try {
@@ -156,10 +160,6 @@ public class Thingmagic6SensorSession extends AbstractSensorSession {
 			e.printStackTrace();
 		}
 		try {
-			// printArray((int[]) reader
-			// .paramGet("/reader/antenna/connectedPortList"));
-			// System.out.println("Check ports: "
-			// + reader.paramGet("/reader/antenna/checkPort"));
 			System.out.println("Read plan: "
 					+ reader.paramGet("/reader/read/plan"));
 		} catch (ReaderException e) {
@@ -168,14 +168,6 @@ public class Thingmagic6SensorSession extends AbstractSensorSession {
 
 		this.startReading();
 	}
-
-	// private void printArray(int[] array) {
-	// System.out.println("Array: ");
-	// for (Integer i : array) {
-	// System.out.println(i);
-	// }
-	// System.out.println("fin");
-	// }
 
 	/*
 	 * (non-Javadoc)
