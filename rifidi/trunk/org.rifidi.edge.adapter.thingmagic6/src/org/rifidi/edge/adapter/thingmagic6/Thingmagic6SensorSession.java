@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.api.SessionStatus;
 import org.rifidi.edge.notification.NotifierService;
 import org.rifidi.edge.notification.ReadCycle;
@@ -27,6 +29,11 @@ import com.thingmagic.Reader.Region;
  */
 public class Thingmagic6SensorSession extends AbstractSensorSession {
 
+	
+	/** Logger for this class. */
+	private static final Log logger = LogFactory
+			.getLog(Thingmagic6SensorSession.class);
+	
 	public Reader reader;
 
 	int maxConAttempts = -1;
@@ -94,18 +101,15 @@ public class Thingmagic6SensorSession extends AbstractSensorSession {
 		boolean connected = false;
 		// TODO Auto-generated method stub
 		this.setStatus(SessionStatus.CONNECTING);
-		System.out.println("Connecting");
 		connectingLoop.set(true);
 		try {
 			for (int connCount = 0; connCount < maxConAttempts
 					|| maxConAttempts == -1; connCount++) {
 				try {
-					System.out.println("Trying to connect");
 					reader = Reader.create(port);
-					System.out.println("Got past the reader create");
 					reader.connect();
-					System.out.println("Past the connect");
 					connected = true;
+					logger.info("Successfully connected to Thingmagic 6e at " + this.port);
 					break;
 				} catch (ReaderException e) {
 					e.printStackTrace();
@@ -159,12 +163,12 @@ public class Thingmagic6SensorSession extends AbstractSensorSession {
 		} catch (ReaderException e) {
 			e.printStackTrace();
 		}
-		try {
-			System.out.println("Read plan: "
-					+ reader.paramGet("/reader/read/plan"));
-		} catch (ReaderException e) {
-			e.printStackTrace();
-		}
+		// try {
+		// System.out.println("Read plan: "
+		// + reader.paramGet("/reader/read/plan"));
+		// } catch (ReaderException e) {
+		// e.printStackTrace();
+		// }
 
 		this.startReading();
 	}
