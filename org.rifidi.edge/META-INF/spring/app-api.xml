@@ -1,60 +1,73 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:osgi="http://www.springframework.org/schema/osgi"
-    xsi:schemaLocation="http://www.springframework.org/schema/beans
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:osgi="http://www.springframework.org/schema/osgi"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
     http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
     http://www.springframework.org/schema/osgi
     http://www.springframework.org/schema/osgi/spring-osgi.xsd">
 
-    <bean id="appManager" 
-        class="org.rifidi.edge.api.service.appmanager.AppManagerImpl">
-        <property name="rifidiApps" ref="rifidiApps"/>
-        <property name="esperService" ref="esperManager" />
-    </bean>
-    
-    <bean id="AppManagerCommands" class="org.rifidi.edge.api.service.appmanager.AppManagerCommandProvider">
-        <property name="appManager" ref="appManager"/>
-    </bean>
-    
-    <bean id="ReadZoneAppService"
-        class="org.rifidi.edge.api.service.tagmonitor.ReadZoneMonitoringServiceImpl">
-        <constructor-arg index="0" value="AppService" />
-        <constructor-arg index="1" value="ReadZones" />
-        
-    </bean>
-    
-    <bean id="UniqueTagIntervalAppService"
-        class="org.rifidi.edge.api.service.tagmonitor.UniqueTagIntervalServiceImpl">
-        <constructor-arg index="0" value="AppService" />
-        <constructor-arg index="1" value="UniqueTagInterval" />
-    </bean>
+	<bean id="appManager" class="org.rifidi.edge.api.service.appmanager.AppManagerImpl">
+		<property name="rifidiApps" ref="rifidiApps" />
+		<property name="esperService" ref="esperManager" />
+	</bean>
 
-    <bean id="SensorStatusAppService"
-        class="org.rifidi.edge.api.service.sensormonitor.SensorStatusMonitoringServiceImpl">
-        <constructor-arg index="0" value="AppService" />
-        <constructor-arg index="1" value="SensorStatus" />
-    </bean>
-    
-    <bean id="StableSetAppService" class="org.rifidi.edge.api.service.tagmonitor.StableSetServiceImpl">
-        <constructor-arg index="0" value="AppService" />
-        <constructor-arg index="1" value="StableSet" />
-    </bean>
-    
-    <bean id="UniqueTagBatchIntervalAppService" class="org.rifidi.edge.api.service.tagmonitor.UniqueTagBatchIntervalServiceImpl">
-        <constructor-arg index="0" value="AppService" />
-        <constructor-arg index="1" value="UniqueTagBatchInterval" />
-    </bean>
-    
-    <osgi:set id="rifidiApps" 
-        interface="org.rifidi.edge.api.RifidiApp" cardinality="0..N">
-        <osgi:listener ref="appManager" bind-method="bindApp" unbind-method="unbindApp" />
-    </osgi:set>
+	<bean id="AppManagerCommands"
+		class="org.rifidi.edge.api.service.appmanager.AppManagerCommandProvider">
+		<property name="appManager" ref="appManager" />
+	</bean>
 
-    
-    <osgi:service ref="AppManagerCommands" interface="org.eclipse.osgi.framework.console.CommandProvider"/>    
-    <osgi:service ref="ReadZoneAppService" auto-export="interfaces"/>
-    <osgi:service ref="SensorStatusAppService" auto-export="interfaces"/>
-    <osgi:service ref="UniqueTagIntervalAppService" auto-export="interfaces"/>
-    <osgi:service ref="StableSetAppService"  auto-export="interfaces"/>
-    <osgi:service ref="UniqueTagBatchIntervalAppService"  auto-export="interfaces"/>
+	<bean id="ReadZoneAppService"
+		class="org.rifidi.edge.api.service.tagmonitor.ReadZoneMonitoringServiceImpl">
+		<constructor-arg index="0" value="AppService" />
+		<constructor-arg index="1" value="ReadZones" />
+
+	</bean>
+
+	<bean id="UniqueTagIntervalAppService"
+		class="org.rifidi.edge.api.service.tagmonitor.UniqueTagIntervalServiceImpl">
+		<constructor-arg index="0" value="AppService" />
+		<constructor-arg index="1" value="UniqueTagInterval" />
+	</bean>
+
+	<bean id="SensorStatusAppService"
+		class="org.rifidi.edge.api.service.sensormonitor.SensorStatusMonitoringServiceImpl">
+		<constructor-arg index="0" value="AppService" />
+		<constructor-arg index="1" value="SensorStatus" />
+	</bean>
+
+	<bean id="StableSetAppService"
+		class="org.rifidi.edge.api.service.tagmonitor.StableSetServiceImpl">
+		<constructor-arg index="0" value="AppService" />
+		<constructor-arg index="1" value="StableSet" />
+	</bean>
+
+	<bean id="LimitStableSetAppService"
+		class="org.rifidi.edge.api.service.tagmonitor.LimitStableSetServiceImpl">
+		<constructor-arg index="0" value="AppService" />
+		<constructor-arg index="1" value="LimitStableSet" />
+	</bean>
+
+	<bean id="UniqueTagBatchIntervalAppService"
+		class="org.rifidi.edge.api.service.tagmonitor.UniqueTagBatchIntervalServiceImpl">
+		<constructor-arg index="0" value="AppService" />
+		<constructor-arg index="1" value="UniqueTagBatchInterval" />
+	</bean>
+
+	<osgi:set id="rifidiApps" interface="org.rifidi.edge.api.RifidiApp"
+		cardinality="0..N">
+		<osgi:listener ref="appManager" bind-method="bindApp"
+			unbind-method="unbindApp" />
+	</osgi:set>
+
+
+	<osgi:service ref="AppManagerCommands"
+		interface="org.eclipse.osgi.framework.console.CommandProvider" />
+	<osgi:service ref="ReadZoneAppService" auto-export="interfaces" />
+	<osgi:service ref="SensorStatusAppService" auto-export="interfaces" />
+	<osgi:service ref="UniqueTagIntervalAppService"
+		auto-export="interfaces" />
+	<osgi:service ref="StableSetAppService" auto-export="interfaces" />
+	<osgi:service ref="LimitStableSetAppService" auto-export="interfaces" />
+	<osgi:service ref="UniqueTagBatchIntervalAppService"
+		auto-export="interfaces" />
 
 </beans>
