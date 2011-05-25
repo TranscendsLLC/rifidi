@@ -41,6 +41,7 @@ public class Thingmagic6Sensor extends AbstractSensor<Thingmagic6SensorSession> 
 	private static final Log logger = LogFactory
 			.getLog(Thingmagic6Sensor.class);
 	/** A hashmap containing all the properties for this reader */
+	@SuppressWarnings("unused")
 	private final ConcurrentHashMap<String, String> readerProperties;
 	/** The port the reader is connected to */
 	private volatile String port = "tmr:///dev/ttyACM0";
