@@ -83,7 +83,7 @@
 			</entry>
 			<entry>
 				<key>AntennaSequence</key>
-				<value>1</value>
+				<value>1,2</value>
 			</entry>
 		</attributes>
 		<factoryID>Thingmagic6</factoryID>
