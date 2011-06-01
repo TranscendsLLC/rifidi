@@ -182,6 +182,7 @@ public class Thingmagic6SensorSession extends AbstractSensorSession {
 	 */
 	@Override
 	public void disconnect() {
+		setStatus(SessionStatus.CLOSED);
 		reader.destroy();
 	}
 
