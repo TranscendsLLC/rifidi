@@ -62,6 +62,8 @@ public class Thingmagic6Sensor extends AbstractSensor<Thingmagic6SensorSession> 
 
 	private int[] antennas = new int[] { 1, 2, 3, 4 };
 
+	private int upgradeFirmware;
+
 	public static final MBeanInfo mbeaninfo;
 	private String displayName;
 	static {
@@ -116,6 +118,26 @@ public class Thingmagic6Sensor extends AbstractSensor<Thingmagic6SensorSession> 
 			this.antennas = sequence;
 			this.antennaSequence = antennaSequence;
 		}
+	}
+
+	/**
+	 * Gets the Upgrade Firmware. 1 means the firmware will be upgraded, 0 means
+	 * it will not. The path to upgrade the firmware is:
+	 * 
+	 * /usr/local/sbin/rifidi/update/firmware.sim
+	 * 
+	 * @return
+	 */
+	@Property(displayName = "Upgrade Firmware", description = "Sets whether to upgrade the firmware or not.  1 "
+			+ "means the firware will be upgraded, 0 means it will not.  The path of the file it will look for "
+			+ "is: /usr/local/sbin/rifidi/update/firmware.sim", writable = true, type = PropertyType.PT_INTEGER, category = "connection"
+			+ "", defaultValue = ThingmagicConstants.UPGRADE_FIRMWARE, orderValue = 7, minValue = "0", maxValue = "1")
+	public int getUpgradeFirmware() {
+		return upgradeFirmware;
+	}
+
+	public void setUpgradeFirmware(int upgradeFirmware) {
+		this.upgradeFirmware = upgradeFirmware;
 	}
 
 	private int[] findSequence(String antennaSequence)
@@ -173,7 +195,7 @@ public class Thingmagic6Sensor extends AbstractSensor<Thingmagic6SensorSession> 
 			if (session.compareAndSet(null, new Thingmagic6SensorSession(this,
 					sessionID.toString(), notifierService, super.getID(), port,
 					reconnectionInterval, maxNumConnectionAttempts, antennas,
-					commands))) {
+					upgradeFirmware, commands))) {
 
 				// TODO: remove this once we get AspectJ in here!
 				notifierService.addSessionEvent(this.getID(), Integer
@@ -199,7 +221,7 @@ public class Thingmagic6Sensor extends AbstractSensor<Thingmagic6SensorSession> 
 			if (session.compareAndSet(null, new Thingmagic6SensorSession(this,
 					sessionID.toString(), notifierService, super.getID(), port,
 					reconnectionInterval, maxNumConnectionAttempts, antennas,
-					commands))) {
+					upgradeFirmware, commands))) {
 				session.get().restoreCommands(sessionDTO);
 				// TODO: remove this once we get AspectJ in here!
 				notifierService.addSessionEvent(this.getID(), Integer

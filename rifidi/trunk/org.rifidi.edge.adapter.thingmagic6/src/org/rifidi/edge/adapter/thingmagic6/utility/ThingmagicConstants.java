@@ -20,6 +20,8 @@ public class ThingmagicConstants {
 
 	public static final HashSet<Integer> VALID_ANTENNAS = new HashSet<Integer>(
 			Arrays.asList(1, 2, 3, 4));
-	
+
 	public static final String ANTENNAS = "1,2,3,4";
+
+	public static final String UPGRADE_FIRMWARE = "0";
 }
