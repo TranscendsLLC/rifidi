@@ -178,9 +178,11 @@ public class Thingmagic6SensorSession extends AbstractSensorSession {
 
 		if (this.upgradeFirmware == 1) {
 			try {
+				logger.info("Upgrading firmware of Thingmagic6e at " + port);
 				reader
 						.firmwareLoad(new FileInputStream(new File(
 								FIRMWARE_PATH)));
+				logger.info("Firmware has upgraded successfully!");
 			} catch (FileNotFoundException e1) {
 				logger.error("File at " + FIRMWARE_PATH + " not found");
 			} catch (IOException e1) {
