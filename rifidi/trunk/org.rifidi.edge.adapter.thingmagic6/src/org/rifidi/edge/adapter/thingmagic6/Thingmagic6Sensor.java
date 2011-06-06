@@ -132,11 +132,11 @@ public class Thingmagic6Sensor extends AbstractSensor<Thingmagic6SensorSession> 
 			+ "means the firware will be upgraded, 0 means it will not.  The path of the file it will look for "
 			+ "is: /usr/local/sbin/rifidi/update/firmware.sim", writable = true, type = PropertyType.PT_INTEGER, category = "connection"
 			+ "", defaultValue = ThingmagicConstants.UPGRADE_FIRMWARE, orderValue = 7, minValue = "0", maxValue = "1")
-	public int getUpgradeFirmware() {
+	public Integer getUpgradeFirmware() {
 		return upgradeFirmware;
 	}
 
-	public void setUpgradeFirmware(int upgradeFirmware) {
+	public void setUpgradeFirmware(Integer upgradeFirmware) {
 		this.upgradeFirmware = upgradeFirmware;
 	}
 
