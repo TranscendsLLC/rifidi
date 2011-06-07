@@ -11,7 +11,7 @@
 
 	<!-- connection factory to use to connect to external broker -->
 	<amq:connectionFactory id="externalBrokerConFac"
-		brokerURL="vm://externalBroker?create=false" />
+		brokerURL="vm://externalBroker?create=true" />
 
 	<!--
 		JMS Template to use for putting data on the external message bus. No
