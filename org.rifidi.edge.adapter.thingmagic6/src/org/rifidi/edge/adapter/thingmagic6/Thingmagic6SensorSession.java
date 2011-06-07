@@ -194,8 +194,7 @@ public class Thingmagic6SensorSession extends AbstractSensorSession {
 		}
 
 		try {
-			logger.info("Read plan: "
-					+ reader.paramGet("/reader/read/plan"));
+			logger.info("Read plan: " + reader.paramGet("/reader/read/plan"));
 			logger.info("Software Version :" + reader.paramGet("/reader/version/software"));
 			logger.info("Hardware Version :" + reader.paramGet("/reader/version/hardware"));
 		} catch (ReaderException e) {
