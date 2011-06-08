@@ -107,7 +107,7 @@ public class Thingmagic6SensorSession extends AbstractSensorSession {
 		// Connected flag
 		boolean connected = false;
 		// TODO Auto-generated method stub
-		this.setStatus(SessionStatus.CONNECTING);
+		//this.setStatus(SessionStatus.CONNECTING);
 		connectingLoop.set(true);
 		try {
 			for (int connCount = 0; connCount < maxConAttempts
