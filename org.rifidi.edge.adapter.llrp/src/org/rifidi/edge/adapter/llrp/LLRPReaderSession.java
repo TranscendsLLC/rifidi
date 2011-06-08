@@ -129,7 +129,7 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 		logger.info("LLRP Session " + this.getID() + " on sensor "
 				+ this.getSensor().getID() + " attempting to connect to "
 				+ host + ":" + port);
-		this.setStatus(SessionStatus.CONNECTING);
+		//this.setStatus(SessionStatus.CONNECTING);
 		// Connected flag
 		boolean connected = false;
 		// try to connect up to MaxConAttempts number of times, unless
