@@ -1,5 +1,0 @@
-<project name="rifidi-build" default="compile" basedir="build/">
-<target name="compile">
-	<fail message="Something wrong here."/>
-</target>
-</project>
