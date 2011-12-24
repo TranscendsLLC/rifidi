@@ -1,0 +1,25 @@
+Package: rifidi
+Version: 1.2
+Section: web 
+Depends: sun-java6-jre, python
+Maintainer: [support@pramari.com]
+Architecture: amd64 
+Replaces: 
+Provides: rifidi
+Description: 
+	Rifidi Edge is a complete RFID Middleware Platform 
+	with an edge server and development tools to enable 
+	the development and deployment of highly customized 
+	RFID applications.   The goal of the product is to 
+	provide an open source alternative to popular RFID 
+	platforms such as IBM Premises Server and Microsoft 
+	Biztalk RFID.   Built on a cutting edge Java OSGI 
+	platform and integrated with a powerful open source 
+	rules engine (Esper) Rifidi Edge can build complex 
+	applications that interact with the most popular 
+	RFID and sensor devices available today. 
+
+
+
+
+

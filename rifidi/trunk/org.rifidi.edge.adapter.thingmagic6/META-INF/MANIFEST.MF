@@ -1,0 +1,21 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Thingmagic6
+Bundle-SymbolicName: org.rifidi.edge.adapter.thingmagic6
+Bundle-Version: 1.0.0
+Bundle-Vendor: Pramari, LLC
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Import-Package: com.thingmagic,
+ org.apache.commons.codec;version="1.3.0",
+ org.apache.commons.codec.binary;version="1.3.0",
+ org.apache.commons.logging;version="1.1.1",
+ org.apache.log4j,
+ org.apache.mina.common;version="1.1.7",
+ org.jdom,
+ org.osgi.framework;version="1.3.0",
+ org.springframework.core;version="3.0.5.RELEASE"
+Bundle-ActivationPolicy: lazy
+Require-Bundle: org.rifidi.edge.api;bundle-version="1.3.0",
+ org.rifidi.edge;bundle-version="5.4.0"
+Export-Package: org.rifidi.edge.adapter.thingmagic6,
+ org.rifidi.edge.adapter.thingmagic6.commands

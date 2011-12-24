@@ -1,0 +1,66 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:osgi="http://www.springframework.org/schema/osgi"
+	xmlns:amq="http://activemq.apache.org/schema/core"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+     http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi.xsd">
+
+	<!-- Exported Services -->
+	<osgi:service id="ReaderDAOBinding" interface="org.rifidi.edge.daos.ReaderDAO"
+		ref="ReaderDAOImpl" />
+	<osgi:service id="SensorManagementBinding"
+		interface="org.rifidi.edge.sensors.SensorManagementService"
+		ref="SensorManagement" />
+	<!-- Bind the CommandDAO as an OSGi Service. -->
+	<osgi:service id="CommandDAOBinding" interface="org.rifidi.edge.daos.CommandDAO"
+		ref="CommandDAOImpl" />
+
+	<osgi:service id="configurationServiceRegistration" ref="configurationService"
+		interface="org.rifidi.edge.configuration.ConfigurationService" />
+	<osgi:service id="jmxServiceRegistration" ref="jmxService"
+		interface="org.rifidi.edge.configuration.JMXService" />
+
+	<!-- Imported Services -->
+	<osgi:set id="serviceFactoriesSet" interface="org.rifidi.edge.configuration.ServiceFactory"
+		cardinality="0..N">
+		<osgi:listener ref="configurationService" bind-method="bind"
+			unbind-method="unbind" />
+	</osgi:set>
+	<!-- Imported Services -->
+
+	<!-- Listener for Reader Configurations -->
+	<osgi:set id="readerSet"
+		interface="org.rifidi.edge.sensors.AbstractSensor"
+		cardinality="0..N">
+		<osgi:listener ref="ReaderDAOImpl" bind-method="bindReader"
+			unbind-method="unbindReader" />
+		<osgi:listener ref="SensorManagement" bind-method="bindReader"
+			unbind-method="unbindReader" />
+	</osgi:set>
+
+	<!-- Listener for Reader Configuration Factories -->
+	<osgi:set id="readerFactoriesSet"
+		interface="org.rifidi.edge.sensors.AbstractSensorFactory"
+		cardinality="0..N">
+		<osgi:listener ref="ReaderDAOImpl" bind-method="bindReaderFactory"
+			unbind-method="unbindReaderFactory" />
+	</osgi:set>
+
+	<!-- Listener for Command Configurations -->
+	<osgi:set id="commandSet"
+		interface="org.rifidi.edge.sensors.AbstractCommandConfiguration"
+		cardinality="0..N">
+		<osgi:listener ref="CommandDAOImpl" bind-method="bindCommand"
+			unbind-method="unbindCommand" />
+	</osgi:set>
+
+	<osgi:set id="commandFactoriesSet"
+		interface="org.rifidi.edge.configuration.AbstractCommandConfigurationFactory"
+		cardinality="0..N">
+		<osgi:listener ref="CommandDAOImpl" bind-method="bindCommandFactory"
+			unbind-method="unbindCommandFactory" />
+	</osgi:set>
+
+	<osgi:service id="esperManagerService" ref="esperManager"
+		interface="org.rifidi.edge.services.EsperManagementService" />
+</beans>
