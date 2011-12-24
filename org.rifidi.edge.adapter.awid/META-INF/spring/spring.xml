@@ -1,0 +1,58 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+	<!--  Create 2010 Command Configuration Factory -->
+	<bean id="awid2010PortalId"
+		class="org.rifidi.edge.adapter.awid.commands.awid2010.Awid2010PortalIDCommandConfigurationFactory">
+		<property name="context" ref="bundleContext" />
+	</bean>
+	
+	<bean id="awid2010Stop"
+	class="org.rifidi.edge.adapter.awid.commands.awid2010.Awid2010StopCommandConfigurationFactory">
+		<property name="context" ref="bundleContext" />
+	</bean>
+	
+	<!--  Create 3014 Command Configuration Factory -->
+	<bean id="awid3014PortalId"
+		class="org.rifidi.edge.adapter.awid.commands.awid2010.Awid3014PortalIDCommandConfigurationFactory">
+		<property name="context" ref="bundleContext" />
+	</bean>
+
+	<bean id="awid3014Stop"
+	class="org.rifidi.edge.adapter.awid.commands.awid2010.Awid3014StopCommandConfigurationFactory">
+		<property name="context" ref="bundleContext" />
+	</bean>
+	
+	<bean id="awid2010PortalIDWithMask"
+	class="org.rifidi.edge.adapter.awid.commands.awid2010.Awid2010PortalIDWithMaskCommandConfigurationFactory">
+		<property name="context" ref="bundleContext" />
+	</bean>
+	
+	<bean id="awid2010ReadBlockData"
+	class="org.rifidi.edge.adapter.awid.commands.awid2010.Awid2010ReadBlockDataCommandConfigurationFactory">
+		<property name="context" ref="bundleContext" />
+	</bean>
+	
+	<!--  Create Reader Configuration Factory -->
+	<bean id="awid2010SensorFactory"
+		class="org.rifidi.edge.adapter.awid.awid2010.Awid2010SensorFactory">
+		<property name="context" ref="bundleContext" />
+		<property name="notifierService" ref="JMSNotifierService" />
+		<property name="commandConfigurations" ref="awid2010Commands" />
+	</bean>
+	
+	<!--  Create Reader Configuration Factory -->
+	<bean id="awid3014SensorFactory"
+		class="org.rifidi.edge.adapter.awid.awid2010.Awid3014SensorFactory">
+		<property name="context" ref="bundleContext" />
+		<property name="notifierService" ref="JMSNotifierService" />
+		<property name="commandConfigurations" ref="awid3014Commands" />
+	</bean>
+	
+	<bean id = "awidGPIOService" class="org.rifidi.edge.adapter.awid.awid2010.gpio.AwidGPIOService">
+		<property name = "readerDAO" ref="readerDAO"/>
+	</bean>
+	
+</beans>

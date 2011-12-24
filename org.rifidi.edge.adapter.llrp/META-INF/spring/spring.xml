@@ -1,0 +1,80 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:osgi="http://www.springframework.org/schema/osgi"
+	xmlns:amq="http://activemq.apache.org/schema/core"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+     http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi.xsd">
+
+	<!--  Create Reader Configuration Factory -->
+	<bean id="llrpConfigurationFactory" class="org.rifidi.edge.adapter.llrp.LLRPReaderFactory">
+		<property name="context" ref="bundleContext" />
+		<property name="notifierService" ref="JMSNotifierService" />
+		<property name="commandConfigurations" ref="llrpCommands" />
+	</bean>
+
+	<!-- Create commands -->
+	<bean id="llrpGetTagListCommandConfigurationFactory"
+		class="org.rifidi.edge.adapter.llrp.commands.LLRPGetTagListCommandConfigurationFactory">
+		<property name="context" ref="bundleContext" />
+	</bean>
+	<bean id="llrpDeleteROSpecCommandConfigurationFactory"
+		class="org.rifidi.edge.adapter.llrp.commands.LLRPDeleteROSpecCommandConfigurationFactory">
+		<property name="context" ref="bundleContext" />
+	</bean>
+	<bean id="llrpROSpecCommandConfigurationFactory"
+		class="org.rifidi.edge.adapter.llrp.commands.LLRPROSpecCommandConfigurationFactory">
+		<property name="context" ref="bundleContext" />
+	</bean>
+	<bean id="llrpROSpecFromFileCommandConfigurationFactory"
+		class="org.rifidi.edge.adapter.llrp.commands.LLRPROSpecFromFileCommandConfigurationFactory">
+		<property name="context" ref="bundleContext" />
+	</bean>
+
+	<!-- OSGi -->
+	<osgi:service id="llrpGetTagListCommandConfigurationFactoryReg"
+		ref="llrpGetTagListCommandConfigurationFactory">
+		<osgi:interfaces>
+			<value>org.rifidi.edge.configuration.ServiceFactory</value>
+			<value>org.rifidi.edge.configuration.AbstractCommandConfigurationFactory</value>
+		</osgi:interfaces>
+	</osgi:service>
+	<osgi:service id="llrpDeleteROSpecCommandConfigurationFactoryReg"
+		ref="llrpDeleteROSpecCommandConfigurationFactory">
+		<osgi:interfaces>
+			<value>org.rifidi.edge.configuration.ServiceFactory</value>
+			<value>org.rifidi.edge.configuration.AbstractCommandConfigurationFactory</value>
+		</osgi:interfaces>
+	</osgi:service>
+	<osgi:service id="llrpROSpecCommandConfigurationFactoryReg"
+		ref="llrpROSpecCommandConfigurationFactory">
+		<osgi:interfaces>
+			<value>org.rifidi.edge.configuration.ServiceFactory</value>
+			<value>org.rifidi.edge.configuration.AbstractCommandConfigurationFactory</value>
+		</osgi:interfaces>
+	</osgi:service>
+	<osgi:service id="llrpROSpecFromFileCommandConfigurationFactoryReg"
+		ref="llrpROSpecFromFileCommandConfigurationFactory">
+		<osgi:interfaces>
+			<value>org.rifidi.edge.configuration.ServiceFactory</value>
+			<value>org.rifidi.edge.configuration.AbstractCommandConfigurationFactory</value>
+		</osgi:interfaces>
+	</osgi:service>
+
+	<osgi:service id="llrpConfigurationFactoryService" ref="llrpConfigurationFactory">
+		<osgi:interfaces>
+			<value>org.rifidi.edge.configuration.ServiceFactory</value>
+			<value>org.rifidi.edge.sensors.AbstractSensorFactory</value>
+		</osgi:interfaces>
+	</osgi:service>
+
+	<osgi:reference id="JMSNotifierService"
+		interface="org.rifidi.edge.notification.NotifierService" />
+
+	<osgi:set id="llrpCommands"
+		interface="org.rifidi.edge.sensors.AbstractCommandConfiguration"
+		cardinality="0..N" filter="(reader=LLRP)">
+		<osgi:listener ref="llrpConfigurationFactory"
+			bind-method="bindCommandConfiguration" unbind-method="unbindCommandConfiguration" />
+	</osgi:set>
+
+</beans>

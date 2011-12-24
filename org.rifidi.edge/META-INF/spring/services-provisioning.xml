@@ -1,0 +1,41 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:osgi="http://www.springframework.org/schema/osgi"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+     http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi.xsd">
+
+	<bean
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<value>classpath:META-INF/spring/bundle.properties
+			</value>
+		</property>
+		<property name="systemPropertiesMode">
+			<value>2</value>
+		</property>
+	</bean>
+
+	<!--  Custom commands -->
+	<bean id="provisioningService"
+		class="org.rifidi.edge.services.ProvisioningServiceImpl">
+		<property name="repositoryAdmin" ref="repoAdmin" />
+		<property name="pathToAppFolder" value="${org.rifidi.home}/${org.rifidi.edge.applications}" />
+	</bean>
+	<bean id="provisioningCommands"
+		class="org.rifidi.edge.services.ProvisioningCommandProvider">
+		<property name="provisioningService" ref="provisioningService" />
+	</bean>
+
+	<bean id="ApplicationLoader"
+		class="org.rifidi.edge.services.ApplicationLoader">
+		<property name="provisioningService" ref="provisioningService" />
+		<property name="defaultApplicationsFileName" value="${org.rifidi.edge.applications.initial}" />
+		<property name="pathToAppFolder" value="${org.rifidi.home}/${org.rifidi.edge.applications}" />
+	</bean>
+
+	<osgi:reference id="repoAdmin"
+		interface="org.osgi.service.obr.RepositoryAdmin" />
+
+	<osgi:service ref="provisioningCommands"
+		interface="org.eclipse.osgi.framework.console.CommandProvider" />
+</beans>

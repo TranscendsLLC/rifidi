@@ -1,0 +1,37 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: rxtx Plugin
+Bundle-SymbolicName: org.rifidi.gnu.io
+Bundle-Version: 2.1.7
+Bundle-ClassPath: RXTXcomm.jar
+Bundle-Vendor: Pramari, LLC
+Export-Package: gnu.io;version="2.1.7"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-NativeCode: 
+ nativelib/Linux/i686-unknown-linux-gnu/librxtxParallel.so;
+ nativelib/Linux/i686-unknown-linux-gnu/librxtxSerial.so;
+ osname=Linux; processor=x86,
+ 
+ nativelib/Linux/ia64-unknown-linux-gnu/librxtxSerial.so;
+ osname=Linux; processor=ia64,
+ 
+ nativelib/Linux/x86_64-unknown-linux-gnu/librxtxSerial.so;
+ osname=Linux; processor=x86-64,
+ 
+  
+ nativelib/Mac_OS_X/librxtxSerial.jnilib;
+ osname=Mac OS X; processor=x86; processor=PowerPC; processor=x86-64,
+ 
+ 
+ nativelib/Solaris/sparc-solaris/sparc32-sun-solaris2.8/librxtxSerial-2.1-7.so;
+ nativelib/Solaris/sparc-solaris/sparc32-sun-solaris2.8/librxtxSerial.so;
+ osname=Solaris; processor=Sparc,
+ 
+ nativelib/Solaris/sparc-solaris/sparc64-sun-solaris2.8/librxtxSerial-2.1-7.so;
+ nativelib/Solaris/sparc-solaris/sparc64-sun-solaris2.8/librxtxSerial.so;
+ osname=Solaris; processor=Sparc64,
+ 
+ 
+ nativelib/Windows/i368-mingw32/rxtxParallel.dll;
+ nativelib/Windows/i368-mingw32/rxtxSerial.dll;
+ osname=Win32; osname=windows 7; processor=x86

@@ -1,0 +1,28 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:osgi="http://www.springframework.org/schema/osgi"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+    http://www.springframework.org/schema/osgi 
+    http://www.springframework.org/schema/osgi/spring-osgi.xsd">
+
+	<bean id="dbResourceService"
+		class="org.rifidi.edge.api.resources.DBResourceService" />
+
+
+	<bean id="JMSResourceServce"
+		class="org.rifidi.edge.api.resources.JMSResourceService">
+		<property name="jmsTemplate" ref="externalJMSTemplate" />
+	</bean>
+
+	<bean id="serialResourceService"
+		class="org.rifidi.edge.api.resources.SerialResourceService" />
+
+	<osgi:service ref="serialResourceService"
+		interface="org.rifidi.edge.api.resources.SerialResourceService" />
+	<osgi:service ref="dbResourceService"
+		interface="org.rifidi.edge.api.resources.DBResourceService" />
+	<osgi:service ref="JMSResourceServce"
+		interface="org.rifidi.edge.api.resources.JMSResourceService" />
+
+
+</beans>
