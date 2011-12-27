@@ -65,7 +65,7 @@ org.rifidi.edge.catalina.config,1.0.0,plugins/org.rifidi.edge.catalina.config_1.
 org.rifidi.edge.init,1.0.1,plugins/org.rifidi.edge.init-1.0.1.jar,2,true
 org.rifidi.edge.adapter.llrp,2.0.7,plugins/org.rifidi.edge.adapter.llrp-2.0.7.jar,4,true
 org.rifidi.edge.adapter.opticon,1.0.1,plugins/org.rifidi.edge.adapter.opticon-1.0.1.jar,4,true
-#org.rifidi.edge.adapter.thingmagic6,1.0.0,plugins/org.rifidi.edge.adapter.thingmagic6-1.0.0.jar,4,true
+#org.rifidi.edge.adapter.thingmagic,1.0.4,plugins/org.rifidi.edge.adapter.thingmagic-1.0.4.jar,4,true
 org.rifidi.gnu.io,2.1.7,plugins/org.rifidi.gnu.io_2.1.7,4,true
 org.rifidi.org.antlr.runtime,3.1.1,plugins/org.rifidi.org.antlr.runtime_3.1.1.jar,4,true
 org.rifidi.org.apache.mina-core,1.0.0,plugins/org.rifidi.org.apache.mina-core_1.0.0.jar,4,true
