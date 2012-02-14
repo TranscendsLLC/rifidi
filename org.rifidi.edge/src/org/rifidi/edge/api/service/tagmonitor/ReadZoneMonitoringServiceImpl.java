@@ -16,6 +16,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import org.rifidi.edge.api.service.RifidiAppEsperFactory;
 import org.rifidi.edge.api.service.RifidiAppService;
 import org.rifidi.edge.notification.TagReadEvent;
 
@@ -50,29 +51,36 @@ public class ReadZoneMonitoringServiceImpl extends
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.rifidi.edge.api.service.tagmonitor.ReadZoneMonitoringService
-	 * #
-	 * subscribe(org.rifidi.edge.api.service.tagmonitor.ReadZoneSubscriber
-	 * , java.util.List, java.lang.Float, java.util.concurrent.TimeUnit)
+	 * @see org.rifidi.edge.api.service.tagmonitor.ReadZoneMonitoringService #
+	 * subscribe(org.rifidi.edge.api.service.tagmonitor.ReadZoneSubscriber ,
+	 * java.util.List, java.lang.Float, java.util.concurrent.TimeUnit)
 	 */
 	@Override
 	public void subscribe(final ReadZoneSubscriber subscriber,
 			List<ReadZone> readZones, Float departureTime, TimeUnit timeUnit) {
-		ReadZoneMonitorEsperFactory esperFactory = new ReadZoneMonitorEsperFactory(
-				readZones, getCounter(), departureTime, timeUnit);
-		subscribe(subscriber, esperFactory);
+		this.subscribe(subscriber, readZones, departureTime, timeUnit, false);
+	}
 
+	@Override
+	public void subscribe(ReadZoneSubscriber subscriber,
+			List<ReadZone> readZones, Float departureTime, TimeUnit timeUnit,
+			boolean wholereader) {
+		RifidiAppEsperFactory esperFactory;
+		if (wholereader) {
+			esperFactory = new UniqueReadZoneMonitorEsperFactory(
+					readZones, getCounter(), departureTime, timeUnit, true, true);
+		} else {
+			esperFactory = new ReadZoneMonitorEsperFactory(
+					readZones, getCounter(), departureTime, timeUnit);
+		}
+		subscribe(subscriber, esperFactory);
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.rifidi.edge.api.service.monitoring.ReadZoneMonitoringService
-	 * #
-	 * subscribe(org.rifidi.edge.api.service.monitoring.ReadZoneSubscriber
-	 * )
+	 * @see org.rifidi.edge.api.service.monitoring.ReadZoneMonitoringService #
+	 * subscribe(org.rifidi.edge.api.service.monitoring.ReadZoneSubscriber )
 	 */
 	@Override
 	public void subscribe(ReadZoneSubscriber subscriber) {
@@ -82,8 +90,7 @@ public class ReadZoneMonitoringServiceImpl extends
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.rifidi.edge.api.service.RifidiAppService#createListener(
+	 * @see org.rifidi.edge.api.service.RifidiAppService#createListener(
 	 * org.rifidi.edge.api.service.RifidiAppSubscriber)
 	 */
 	@Override
@@ -117,12 +124,10 @@ public class ReadZoneMonitoringServiceImpl extends
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.rifidi.edge.api.service.tagmonitor.ReadZoneMonitoringService
-	 * #
-	 * subscribe(org.rifidi.edge.api.service.tagmonitor.ReadZoneSubscriber
-	 * , org.rifidi.edge.api.service.tagmonitor.ReadZone,
-	 * java.lang.Float, java.util.concurrent.TimeUnit)
+	 * @see org.rifidi.edge.api.service.tagmonitor.ReadZoneMonitoringService #
+	 * subscribe(org.rifidi.edge.api.service.tagmonitor.ReadZoneSubscriber ,
+	 * org.rifidi.edge.api.service.tagmonitor.ReadZone, java.lang.Float,
+	 * java.util.concurrent.TimeUnit)
 	 */
 	@Override
 	public void subscribe(ReadZoneSubscriber subscriber, ReadZone readZone,

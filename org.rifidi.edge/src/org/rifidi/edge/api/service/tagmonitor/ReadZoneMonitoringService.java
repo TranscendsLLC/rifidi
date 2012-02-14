@@ -52,7 +52,33 @@ public interface ReadZoneMonitoringService {
 			List<ReadZone> readZones, Float departureTime, TimeUnit timeUnit);
 
 	/**
-	 * Subscribe to the arrival and departure events for the given read zone.  
+	 * Subscribe to arrival and departure events from the given read zones
+	 * 
+	 * @param subscriber
+	 *            The subscriber
+	 * @param readZones
+	 *            The readzones to monitor. If the set is empty, monitor all
+	 *            readers and antennas.
+	 * @param departureTime
+	 *            If this amount of time passes since the last time a tag has
+	 *            been seen, then fire a departure event.
+	 * @param timeUnit
+	 *            The unit used for the departure time.
+	 * @param wholereader
+	 *            If this value is set to "true", the subscriber will not
+	 *            receive new arrival events if the tag switches between
+	 *            antennas or readers that are included in the given readzones.
+	 *            For instance, if the reader LLRP_1 antennas 1 and 2 are being
+	 *            monitored, and the tag disappears on antenna 1 and reappears
+	 *            on antenna 2, a new arrival event will not occur for the
+	 *            switch to antenna 2.
+	 */
+	public void subscribe(ReadZoneSubscriber subscriber,
+			List<ReadZone> readZones, Float departureTime, TimeUnit timeUnit,
+			boolean wholereader);
+
+	/**
+	 * Subscribe to the arrival and departure events for the given read zone.
 	 * 
 	 * @param subscriber
 	 * @param readZone
