@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.codec.binary.Hex;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.llrp.ltk.generated.interfaces.AirProtocolTagData;
@@ -78,22 +79,26 @@ public class LLRPEventFactory {
 			String readerID) {
 		List<TagReportData> trdl = rar.getTagReportDataList();
 		Set<TagReadEvent> tagreaderevents = new HashSet<TagReadEvent>();
-
 		for (TagReportData t : trdl) {
 			AntennaID antid = t.getAntennaID();
 			EPCGeneration2Event gen2event = new EPCGeneration2Event();
 			if (t.getEPCParameter() instanceof EPCData) {
 				EPCData id = (EPCData) t.getEPCParameter();
 				String EPCData = id.getEPC().toString(16);
-				gen2event.setEPCMemory(parseString(EPCData),
-						EPCData.length() * 4);
-
+				//Left padding non-significant zeros, as they are not preserved.  
+				//FIXME: This has not been tested yet.  
+				EPCData = StringUtils.leftPad(EPCData,
+						(id.getByteLength()-1) * 2, "0");
+				gen2event.setEPCMemory(parseString(EPCData), (id
+						.getByteLength()-1) * 8);
 			} else {
 				EPC_96 id = (EPC_96) t.getEPCParameter();
 				String EPCData = id.getEPC().toString(16);
+				//Left padding, as non-significant zeros are not preserved.  
+				EPCData = StringUtils.leftPad(EPCData, 24, "0");
 				gen2event.setEPCMemory(parseString(EPCData), 96);
 			}
-	
+
 			TagReadEvent tag = new TagReadEvent(readerID, gen2event, antid
 					.getAntennaID().intValue(), System.currentTimeMillis());
 			// Add the custom information to the tags.
@@ -181,8 +186,9 @@ public class LLRPEventFactory {
 							LLRPTagReadEventFieldNames.AIRPROT_PC, pc);
 				}
 			}
-			if(logger.isDebugEnabled()){
-				logger.debug(tag.getTag().getFormattedID() + " ANT: " + tag.getAntennaID());
+			if (logger.isDebugEnabled()) {
+				logger.debug(tag.getTag().getFormattedID() + " ANT: "
+						+ tag.getAntennaID());
 			}
 
 			// for (String key : tag.getExtraInformation().keySet()) {
@@ -203,10 +209,16 @@ public class LLRPEventFactory {
 	 */
 	private static BigInteger parseString(String input) {
 		BigInteger retVal = null;
-
 		try {
 			input = input.trim();
-			retVal = new BigInteger(Hex.decodeHex(input.toCharArray()));
+			if (input.length() % 2 != 0) {
+				input = "0" + input;
+			}
+			if (input.length() % 2 != 0) {
+				input = "0" + input;
+			}
+			byte[] decode = Hex.decodeHex(input.toCharArray());
+			retVal = new BigInteger(decode);
 		} catch (Exception e) {
 			logger.warn("There was a problem when parsing LLRP Tags.  "
 					+ "tag has not been added", e);
@@ -226,7 +238,6 @@ public class LLRPEventFactory {
 			GPIEvent llrpGPIEvent, String readerID) {
 		int port = llrpGPIEvent.getGPIPortNumber().toInteger();
 		boolean state = llrpGPIEvent.getGPIEvent().toBoolean();
-		return new org.rifidi.edge.notification.GPIEvent(
-				readerID, port, state);
+		return new org.rifidi.edge.notification.GPIEvent(readerID, port, state);
 	}
 }
