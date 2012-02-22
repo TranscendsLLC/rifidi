@@ -76,5 +76,19 @@
 		<osgi:listener ref="llrpConfigurationFactory"
 			bind-method="bindCommandConfiguration" unbind-method="unbindCommandConfiguration" />
 	</osgi:set>
+	
+	<!-- Create the GPIO service -->
+	<osgi:reference id="readerDAO"
+		interface="org.rifidi.edge.daos.ReaderDAO" />
+	
+	<bean id = "llrpGPIOService" class="org.rifidi.edge.adapter.llrp.gpio.LLRPGPIOService">
+		<property name = "readerDAO" ref="readerDAO"/>
+	</bean>
+	
+	<osgi:service id="llrpGPIOServiceOSGi" ref="llrpGPIOService" auto-export="all-classes">
+		  <service-properties>
+    		<entry key="reader" value="LLRP"/>
+		  </service-properties>
+	</osgi:service>
 
 </beans>
