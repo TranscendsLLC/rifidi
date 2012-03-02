@@ -84,7 +84,7 @@ public class LLRPEventFactory {
 			EPCGeneration2Event gen2event = new EPCGeneration2Event();
 			if (t.getEPCParameter() instanceof EPCData) {
 				EPCData id = (EPCData) t.getEPCParameter();
-				String EPCData = id.getEPC().toString(16);
+				String EPCData = id.getEPC().toString();
 				//Left padding non-significant zeros, as they are not preserved.  
 				//FIXME: This has not been tested yet.  
 				EPCData = StringUtils.leftPad(EPCData,
@@ -93,7 +93,7 @@ public class LLRPEventFactory {
 						.getByteLength()-1) * 8);
 			} else {
 				EPC_96 id = (EPC_96) t.getEPCParameter();
-				String EPCData = id.getEPC().toString(16);
+				String EPCData = id.getEPC().toString();
 				//Left padding, as non-significant zeros are not preserved.  
 				EPCData = StringUtils.leftPad(EPCData, 24, "0");
 				gen2event.setEPCMemory(parseString(EPCData), 96);
