@@ -174,11 +174,7 @@ public class LLRPROSpecCommand extends AbstractLLRPCommand {
 				ROSpecStartTrigger rst = new ROSpecStartTrigger();
 				if(triggerType.equals("PUSH")) {
 					rst.setROSpecStartTriggerType(new ROSpecStartTriggerType(
-							ROSpecStartTriggerType.Periodic));
-					PeriodicTriggerValue ptv = new PeriodicTriggerValue();
-					ptv.setPeriod(new UnsignedInteger(1000));
-					ptv.setOffset(new UnsignedInteger(0));
-					rst.setPeriodicTriggerValue(ptv);
+							ROSpecStartTriggerType.Immediate));
 				} else {
 					rst.setROSpecStartTriggerType(new ROSpecStartTriggerType(
 							ROSpecStartTriggerType.Null));
