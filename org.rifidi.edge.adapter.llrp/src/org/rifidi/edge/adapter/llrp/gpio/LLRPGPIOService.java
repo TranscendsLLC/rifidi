@@ -70,7 +70,6 @@ public class LLRPGPIOService extends AbstractGPIOService<LLRPReaderSession> {
 		}
 		int num_ports = grcr.getGPOWriteDataList().size();
 
-		System.out.println("number of ports: " + num_ports);
 		List<GPOWriteData> writedata = new ArrayList<GPOWriteData>();
 		for (int i = 1; i <= num_ports; i++) {
 			Bit setbit;
@@ -89,7 +88,6 @@ public class LLRPGPIOService extends AbstractGPIOService<LLRPReaderSession> {
 		src.setGPOWriteDataList(writedata);
 		src.setResetToFactoryDefault(new Bit(0));
 		
-		System.out.println("Sending the data!");
 		session.send(src);
 	}
 
@@ -172,8 +170,6 @@ public class LLRPGPIOService extends AbstractGPIOService<LLRPReaderSession> {
 			}
 			srchigh.setGPOWriteDataList(gpowritehigh);
 			srchigh.setResetToFactoryDefault(new Bit(0));
-
-			System.out.println("Setting the ports to high");
 			
 			session.send(srchigh);
 
@@ -181,10 +177,7 @@ public class LLRPGPIOService extends AbstractGPIOService<LLRPReaderSession> {
 			try {
 				Thread.sleep(flashTime * 1000);
 			} catch (InterruptedException e) {
-				System.err.println("Flash thread interrupted");
 			}
-			
-			System.out.println("Setting the ports to low");
 
 			SET_READER_CONFIG srclow = new SET_READER_CONFIG();
 			List<GPOWriteData> gpowritelow = new ArrayList<GPOWriteData>();
