@@ -44,7 +44,7 @@ class GenericSensorSessionTagHandler {
 	private String readerID = null;
 
 	public GenericSensorSessionTagHandler(String readerID) {
-
+		this.readerID = readerID;
 	}
 
 	/** Logger for this class. */
@@ -100,7 +100,7 @@ class GenericSensorSessionTagHandler {
 			logger.error("There was an exception when processing an "
 					+ "incoming message for reader " + readerID + "\n "
 					+ e.getMessage());
-			//e.printStackTrace();
+			// e.printStackTrace();
 		}
 		return null;
 	}
