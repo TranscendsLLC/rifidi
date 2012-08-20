@@ -14,9 +14,9 @@ package org.rifidi.edge.adapter.awid.commands.awid2010;
 
 import javax.management.MBeanInfo;
 
+import org.rifidi.edge.adapter.awid.awid2010.Awid2010SensorFactory;
 import org.rifidi.edge.configuration.AbstractCommandConfigurationFactory;
 import org.rifidi.edge.exceptions.InvalidStateException;
-import org.rifidi.edge.adapter.awid.awid2010.Awid2010SensorFactory;
 
 public class Awid2010ReadBlockDataCommandConfigurationFactory
 		extends
