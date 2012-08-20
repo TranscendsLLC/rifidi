@@ -1,9 +1,10 @@
 Package: rifidi
-Version: 1.2.2
+Version: 1.4.0
 Installed-Size: 38912
 Section: web 
-Depends: sun-java6-jre, python, beep
-Maintainer: [support@pramari.com]
+Depends: openjdk-java6-jre|openjdk-java7-jre|sun-java6-jre|sun-java7-jre
+Suggests: python
+Maintainer: [matt@transcends.co]
 Architecture: i386
 Replaces: 
 Provides: rifidi
