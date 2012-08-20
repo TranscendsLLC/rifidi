@@ -3,7 +3,6 @@
  */
 package org.rifidi.edge.adapter.llrp;
 
-import java.io.InputStream;
 import java.util.concurrent.TimeoutException;
 
 import org.rifidi.edge.sensors.CannotExecuteException;
@@ -30,7 +29,7 @@ public class WriteCommand extends TimeoutCommand {
 	 */
 	@Override
 	protected void execute() throws TimeoutException {
-		InputStream stream = WriteCommand.class.getResourceAsStream("LLRPMessageTemplate/add_accessspec.llrp");
+		//InputStream stream = WriteCommand.class.getResourceAsStream("LLRPMessageTemplate/add_accessspec.llrp");
 		//DELETE ALL ROSPECS 
 		//DELETE ALL ACCESS SPECS
 		//FORM ACCESS SPEC, SEND, & ENABLE

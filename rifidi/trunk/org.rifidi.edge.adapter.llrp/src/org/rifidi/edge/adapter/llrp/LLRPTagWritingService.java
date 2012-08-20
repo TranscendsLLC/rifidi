@@ -4,12 +4,9 @@
 package org.rifidi.edge.adapter.llrp;
 
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
-import org.llrp.ltk.generated.parameters.LLRPStatus;
 import org.rifidi.edge.sensors.AbstractTagWritingService;
 import org.rifidi.edge.sensors.CannotExecuteException;
-import org.rifidi.edge.sensors.TimeoutCommand;
 
 /**
  * @author kyle

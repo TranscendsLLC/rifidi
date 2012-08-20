@@ -32,7 +32,6 @@ import org.llrp.ltk.generated.parameters.AISpec;
 import org.llrp.ltk.generated.parameters.AISpecStopTrigger;
 import org.llrp.ltk.generated.parameters.C1G2EPCMemorySelector;
 import org.llrp.ltk.generated.parameters.InventoryParameterSpec;
-import org.llrp.ltk.generated.parameters.PeriodicTriggerValue;
 import org.llrp.ltk.generated.parameters.ROBoundarySpec;
 import org.llrp.ltk.generated.parameters.ROReportSpec;
 import org.llrp.ltk.generated.parameters.ROSpec;

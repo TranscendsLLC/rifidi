@@ -12,7 +12,6 @@
  */
 package org.rifidi.edge.adapter.llrp;
 
-import org.rifidi.edge.sensors.Command;
 import org.rifidi.edge.sensors.TimeoutCommand;
 
 /**
