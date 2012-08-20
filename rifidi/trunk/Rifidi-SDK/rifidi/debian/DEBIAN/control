@@ -1,9 +1,10 @@
 Package: rifidi
-Version: 1.2.2
+Version: 1.4.0
 Installed-Size: 38912
 Section: web 
-Depends: sun-java6-jre, python, beep
-Maintainer: [support@pramari.com]
+Depends: 
+Suggests: python, openjdk-6-jre
+Maintainer: [matt@transcends.co]
 Architecture: i386
 Replaces: 
 Provides: rifidi
@@ -19,9 +20,3 @@ Description:
 	rules engine (Esper) Rifidi Edge can build complex 
 	applications that interact with the most popular 
 	RFID and sensor devices available today. 
-	
-
-
-
-
-
