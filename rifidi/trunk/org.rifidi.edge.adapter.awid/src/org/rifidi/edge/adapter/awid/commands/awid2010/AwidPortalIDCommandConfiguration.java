@@ -13,8 +13,8 @@ package org.rifidi.edge.adapter.awid.commands.awid2010;
 
 import javax.management.MBeanInfo;
 
-import org.rifidi.edge.configuration.JMXMBean;
 import org.rifidi.edge.configuration.AnnotationMBeanInfoStrategy;
+import org.rifidi.edge.configuration.JMXMBean;
 import org.rifidi.edge.sensors.AbstractCommandConfiguration;
 
 @JMXMBean

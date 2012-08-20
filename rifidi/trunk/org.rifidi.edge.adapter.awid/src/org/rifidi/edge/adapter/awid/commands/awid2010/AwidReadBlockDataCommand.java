@@ -16,8 +16,6 @@ import java.util.concurrent.TimeoutException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.rifidi.edge.sensors.TimeoutCommand;
-import org.rifidi.edge.sensors.ByteMessage;
 import org.rifidi.edge.adapter.awid.awid2010.AwidSession;
 import org.rifidi.edge.adapter.awid.awid2010.communication.commands.AntennaSourceCommand;
 import org.rifidi.edge.adapter.awid.awid2010.communication.commands.AntennaSwitchCommand;
@@ -25,6 +23,8 @@ import org.rifidi.edge.adapter.awid.awid2010.communication.commands.Gen2ReadBloc
 import org.rifidi.edge.adapter.awid.awid2010.communication.commands.StopCommand;
 import org.rifidi.edge.adapter.awid.awid2010.communication.messages.AckMessage;
 import org.rifidi.edge.adapter.awid.awid2010.communication.messages.Gen2ReadBlockDataResponse;
+import org.rifidi.edge.sensors.ByteMessage;
+import org.rifidi.edge.sensors.TimeoutCommand;
 
 /**
  * A command to start reading Gen2Tags. It sends three awid commands. The first
