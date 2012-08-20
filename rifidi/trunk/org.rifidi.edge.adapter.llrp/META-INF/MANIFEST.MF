@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Rifidi Edge LLRP Adapter
 Bundle-SymbolicName: org.rifidi.edge.adapter.llrp
-Bundle-Version: 2.0.7
+Bundle-Version: 2.0.8
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: org.apache.commons.codec;version="1.3.0",
@@ -28,4 +28,9 @@ Require-Bundle: org.rifidi.edge.api;bundle-version="1.1.1",
 Spring-Context: *;create-asynchronously:=true
 Eclipse-BuddyPolicy: global
 Bundle-Vendor: Pramari, LLC
+Export-Package: org.rifidi.edge.adapter.llrp,
+ org.rifidi.edge.adapter.llrp.commandobject,
+ org.rifidi.edge.adapter.llrp.commands,
+ org.rifidi.edge.adapter.llrp.commands.internal,
+ org.rifidi.edge.adapter.llrp.gpio
 
