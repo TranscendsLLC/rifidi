@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Thinkifylib
+Bundle-SymbolicName: org.rifidi.edge.thinkifylib
+Bundle-Version: 1.0.0
+Bundle-Vendor: Thinkify
+Export-Package: Serialio,
+ Serialio.modem,
+ Serialio.tool,
+ com.thinkify.rfid,
+ javax.comm
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
