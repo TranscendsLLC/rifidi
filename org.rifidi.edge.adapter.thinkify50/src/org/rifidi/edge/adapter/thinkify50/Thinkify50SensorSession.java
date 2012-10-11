@@ -4,12 +4,9 @@
 package org.rifidi.edge.adapter.thinkify50;
 
 import java.io.IOException;
-import java.util.Enumeration;
 import java.util.Set;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
-
-import javax.comm.CommPortIdentifier;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -19,7 +16,6 @@ import org.rifidi.edge.sensors.AbstractCommandConfiguration;
 import org.rifidi.edge.sensors.AbstractSensor;
 import org.rifidi.edge.sensors.sessions.AbstractSensorSession;
 
-import com.thinkify.rfid.SerialManager;
 import com.thinkify.rfid.ThinkifyReader;
 import com.thinkify.rfid.ThinkifyTag;
 
