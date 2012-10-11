@@ -3,6 +3,8 @@
  */
 package org.rifidi.edge.adapter.thinkify50;
 
+import gnu.io.CommPortIdentifier;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -12,7 +14,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
-import javax.comm.CommPortIdentifier;
 import javax.management.MBeanInfo;
 
 import org.apache.commons.logging.Log;
