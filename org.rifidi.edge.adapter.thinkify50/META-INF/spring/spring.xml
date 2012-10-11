@@ -1,0 +1,37 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:osgi="http://www.springframework.org/schema/osgi"
+	xmlns:amq="http://activemq.apache.org/schema/core"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+     http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi.xsd">
+
+	<!-- Create Reader Configuration Factory -->
+	<bean id="thinkify50ConfigurationFactory"
+		class="org.rifidi.edge.adapter.thinkify50.Thinkify50SensorFactory">
+		<property name="context" ref="bundleContext" />
+		<property name="notifierService" ref="JMSNotifierService" />
+		<!--<property name="commandConfigurations" ref="thinkify50Commands" /> -->
+	</bean>
+
+	<osgi:reference id="JMSNotifierService"
+		interface="org.rifidi.edge.notification.NotifierService" />
+
+	<!-- Put reader configuration service in OSGi Registry -->
+	<osgi:service id="thinkify50ConfigurationFactoryService"
+		ref="thinkify50ConfigurationFactory">
+		<osgi:interfaces>
+			<value>org.rifidi.edge.configuration.ServiceFactory</value>
+			<value>org.rifidi.edge.sensors.AbstractSensorFactory</value>
+		</osgi:interfaces>
+	</osgi:service>
+
+	<!-- <bean id="thinkify50PushCommandConfigurationFactory" class="org.rifidi.edge.adapter.thingmagic6.commands.Thingmagic6PushCommandConfigurationFactory"> 
+		<property name="context" ref="bundleContext" /> </bean> <osgi:service id="thingmagic6PushCommandConfigurationFactoryReg" 
+		ref="thinkify50PushCommandConfigurationFactory"> <osgi:interfaces> <value>org.rifidi.edge.configuration.ServiceFactory</value> 
+		<value>org.rifidi.edge.configuration.AbstractCommandConfigurationFactory</value> 
+		</osgi:interfaces> </osgi:service> <osgi:set id="thingmagic6Commands" interface="org.rifidi.edge.sensors.AbstractCommandConfiguration" 
+		cardinality="0..N" filter="(reader=Thinkify50)"> <osgi:listener ref="thingmagic6ConfigurationFactory" 
+		bind-method="bindCommandConfiguration" unbind-method="unbindCommandConfiguration" 
+		/> </osgi:set> -->
+
+</beans>
