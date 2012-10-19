@@ -1,0 +1,4 @@
+Regular 1.2 RifidiApps will require some modification before they can be run with 1.3.  The upgrade process is not difficult and will only take around half an hour.  
+
+Visit the upgrade guide on our wiki for the steps on how to do this:
+http://wiki.rifidi.org/index.php/Rifidi_App_Upgrade_Guide
