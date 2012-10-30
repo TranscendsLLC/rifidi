@@ -4,6 +4,7 @@
 package org.rifidi.edge.adapter.thinkify50;
 
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -12,6 +13,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.api.SessionStatus;
 import org.rifidi.edge.notification.NotifierService;
+import org.rifidi.edge.notification.ReadCycle;
+import org.rifidi.edge.notification.TagReadEvent;
 import org.rifidi.edge.sensors.AbstractCommandConfiguration;
 import org.rifidi.edge.sensors.AbstractSensor;
 import org.rifidi.edge.sensors.sessions.AbstractSensorSession;
@@ -34,6 +37,8 @@ public class Thinkify50SensorSession extends AbstractSensorSession {
 
 	private String readerID;
 	private String port;
+
+	ReadThread readthread = null;
 
 	private ThinkifyReader reader;
 
@@ -63,19 +68,20 @@ public class Thinkify50SensorSession extends AbstractSensorSession {
 		this.setStatus(SessionStatus.CONNECTING);
 		this.connectingLoop.set(true);
 		try {
-			for (int connCount = 0; connCount < maxConAttempts
+			for (int connCount = 0; connCount < maxConAttempts && !connected
 					|| maxConAttempts == -1; connCount++) {
 
 				try {
 					reader = new ThinkifyReader(port);
+					reader.debugLevel = 0;
 					reader.open();
 					connected = true;
 					logger.info("Connected to reader " + this.readerID
 							+ " at port " + this.port);
 				} catch (Exception e) {
 					logger.info("Exception while trying to connect to reader "
-							+ this.readerID + " at port " + this.port);
-					e.printStackTrace();
+							+ this.readerID + " at port " + this.port + ": "
+							+ e.getLocalizedMessage());
 				}
 
 				try {
@@ -102,10 +108,23 @@ public class Thinkify50SensorSession extends AbstractSensorSession {
 			throw new IOException("Cannot connect");
 		}
 		onConnect();
-		
-		ReadThread readthread = new ReadThread(reader, new Thinkify50TagHandler(this));
+	}
+
+	/**
+	 * 
+	 */
+	public void startReading() {
+		readthread = new ReadThread(reader, new Thinkify50TagHandler(this,
+				this.readerID), this);
 		Thread thread = new Thread(readthread);
 		thread.start();
+	}
+
+	/**
+	 * 
+	 */
+	public void stopReading() {
+		readthread.stop = true;
 	}
 
 	/**
@@ -142,15 +161,19 @@ public class Thinkify50SensorSession extends AbstractSensorSession {
 
 	public class ReadThread extends Thread {
 
-		private volatile boolean stop = false;
+		public volatile boolean stop = false;
 
 		private Thinkify50TagHandler handler;
 
 		private ThinkifyReader reader;
 
-		public ReadThread(ThinkifyReader reader, Thinkify50TagHandler handler) {
+		private Thinkify50SensorSession session;
+
+		public ReadThread(ThinkifyReader reader, Thinkify50TagHandler handler,
+				Thinkify50SensorSession session) {
 			this.handler = handler;
 			this.reader = reader;
+			this.session = session;
 		}
 
 		/*
@@ -166,8 +189,20 @@ public class Thinkify50SensorSession extends AbstractSensorSession {
 
 				stop = false;
 				while (!stop) {
-					for(ThinkifyTag tag:this.reader.taglist) {
-						this.handler.tagArrived(tag.getEpc());
+					try {
+						Set<TagReadEvent> taglist = new HashSet<TagReadEvent>();
+						for (ThinkifyTag aTag : reader.taglist) {
+							System.out.println("Tag arrived: " + aTag.getEpc());
+							taglist.add(handler.tagArrived(aTag.getEpc(),
+									aTag.getLastSeenTime(), aTag.getRSSI(),
+									aTag.getReadCount()));
+						}
+						ReadCycle cycle = new ReadCycle(taglist, readerID,
+								System.currentTimeMillis());
+						this.session.getSensor().send(cycle);
+						reader.taglist.clear();
+						Thread.sleep(1000);
+					} catch (InterruptedException e) {
 					}
 				}
 
