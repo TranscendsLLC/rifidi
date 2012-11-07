@@ -26,7 +26,6 @@ public class Thinkify50PushCommandConfigurationFactory extends
 	@Override
 	public void createInstance(String serviceID)
 			throws IllegalArgumentException, InvalidStateException {
-		System.out.println("Create instance called");
 		Thinkify50PushCommandConfiguration config = new Thinkify50PushCommandConfiguration();
 		config.setID(serviceID);
 		config.register(getContext(), Thinkify50SensorFactory.FACTORY_ID);

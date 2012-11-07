@@ -46,7 +46,9 @@ public class Thinkify50Sensor extends AbstractSensor<Thinkify50SensorSession> {
 	@SuppressWarnings("unused")
 	private final ConcurrentHashMap<String, String> readerProperties;
 	/** The port the reader is connected to */
-	private volatile String port = "/dev/ttyUSB0";
+	private volatile String port = Thinkify50Constants.PORT;
+	/** The read rate for the reader */
+	private volatile int readrate = 1000;
 	/** Flag to check if this reader is destroyed. */
 	private AtomicBoolean destroyed = new AtomicBoolean(false);
 	/** Time between two connection attempts. */
@@ -72,7 +74,7 @@ public class Thinkify50Sensor extends AbstractSensor<Thinkify50SensorSession> {
 		this.readerProperties = new ConcurrentHashMap<String, String>();
 
 		System.setProperty("gnu.io.rxtx.SerialPorts", "/dev/ttyACM0");
-		
+
 		HashSet<CommPortIdentifier> set = SerialManager
 				.getAvailableSerialPorts();
 
@@ -92,7 +94,7 @@ public class Thinkify50Sensor extends AbstractSensor<Thinkify50SensorSession> {
 			Integer sessionID = this.sessionIDcounter.incrementAndGet();
 			if (session.compareAndSet(null, new Thinkify50SensorSession(this,
 					sessionID.toString(), notifierService, super.getID(), port,
-					reconnectionInterval, maxNumConnectionAttempts, commands))) {
+					reconnectionInterval, maxNumConnectionAttempts, commands, readrate))) {
 
 				// TODO: remove this once we get AspectJ in here!
 				notifierService.addSessionEvent(this.getID(),
@@ -117,7 +119,7 @@ public class Thinkify50Sensor extends AbstractSensor<Thinkify50SensorSession> {
 			Integer sessionID = Integer.parseInt(sessionDTO.getID());
 			if (session.compareAndSet(null, new Thinkify50SensorSession(this,
 					sessionID.toString(), notifierService, super.getID(), port,
-					reconnectionInterval, maxNumConnectionAttempts, commands))) {
+					reconnectionInterval, maxNumConnectionAttempts, commands, readrate))) {
 				session.get().restoreCommands(sessionDTO);
 				// TODO: remove this once we get AspectJ in here!
 				notifierService.addSessionEvent(this.getID(),
@@ -157,6 +159,16 @@ public class Thinkify50Sensor extends AbstractSensor<Thinkify50SensorSession> {
 
 	public void setPort(String port) {
 		this.port = port;
+	}
+
+	@Property(displayName = "ReadRate", description = "The rate that the reader will read at in milliseconds", writable = true, type = PropertyType.PT_INTEGER, category = "reading"
+			+ "", orderValue = 2, defaultValue = Thinkify50Constants.READRATE)
+	public int getReadRate() {
+		return readrate;
+	}
+
+	public void setReadRate(Integer readrate) {
+		this.readrate = readrate;
 	}
 
 	/*

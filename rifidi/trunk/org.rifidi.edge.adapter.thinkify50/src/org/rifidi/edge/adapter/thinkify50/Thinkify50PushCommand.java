@@ -26,7 +26,6 @@ public class Thinkify50PushCommand extends TimeoutCommand {
 	 */
 	@Override
 	protected void execute() throws TimeoutException {
-		System.out.println("Executing the command");
 		this.session = (Thinkify50SensorSession) this.sensorSession;
 		session.startReading();
 	}

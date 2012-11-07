@@ -30,8 +30,6 @@ public class Thinkify50SensorFactory extends
 	@Override
 	public void createInstance(String serviceID)
 			throws IllegalArgumentException, InvalidStateException {
-		
-		System.out.println("In the create instance!");
 		if (serviceID == null) {
 			throw new IllegalArgumentException("Service ID is null");
 		}

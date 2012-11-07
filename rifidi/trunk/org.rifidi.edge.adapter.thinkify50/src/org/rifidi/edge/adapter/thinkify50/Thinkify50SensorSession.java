@@ -38,6 +38,8 @@ public class Thinkify50SensorSession extends AbstractSensorSession {
 	private String readerID;
 	private String port;
 
+	private int interval = 1000;
+
 	ReadThread readthread = null;
 
 	private ThinkifyReader reader;
@@ -48,12 +50,14 @@ public class Thinkify50SensorSession extends AbstractSensorSession {
 	public Thinkify50SensorSession(AbstractSensor<?> sensor, String ID,
 			NotifierService notifierService, String readerID, String port,
 			Integer reconnectionInterval, Integer maxConnectionAttempts,
-			Set<AbstractCommandConfiguration<?>> commandConfigurations) {
+			Set<AbstractCommandConfiguration<?>> commandConfigurations,
+			int readrate) {
 		super(sensor, ID, commandConfigurations);
 		this.readerID = readerID;
 		this.port = port;
 		this.maxConAttempts = maxConnectionAttempts;
 		this.reconnectionInterval = reconnectionInterval;
+		this.interval = readrate;
 	}
 
 	/*
@@ -114,8 +118,9 @@ public class Thinkify50SensorSession extends AbstractSensorSession {
 	 * 
 	 */
 	public void startReading() {
+
 		readthread = new ReadThread(reader, new Thinkify50TagHandler(this,
-				this.readerID), this);
+				this.readerID), this, interval);
 		Thread thread = new Thread(readthread);
 		thread.start();
 	}
@@ -132,6 +137,8 @@ public class Thinkify50SensorSession extends AbstractSensorSession {
 	 */
 	private void onConnect() {
 		setStatus(SessionStatus.PROCESSING);
+
+		startReading();
 	}
 
 	/*
@@ -141,6 +148,7 @@ public class Thinkify50SensorSession extends AbstractSensorSession {
 	 */
 	@Override
 	public void disconnect() {
+		stopReading();
 		reader.close();
 		setStatus(SessionStatus.CLOSED);
 	}
@@ -169,11 +177,14 @@ public class Thinkify50SensorSession extends AbstractSensorSession {
 
 		private Thinkify50SensorSession session;
 
+		private int interval;
+
 		public ReadThread(ThinkifyReader reader, Thinkify50TagHandler handler,
-				Thinkify50SensorSession session) {
+				Thinkify50SensorSession session, int interval) {
 			this.handler = handler;
 			this.reader = reader;
 			this.session = session;
+			this.interval = interval;
 		}
 
 		/*
@@ -183,7 +194,6 @@ public class Thinkify50SensorSession extends AbstractSensorSession {
 		 */
 		@Override
 		public void run() {
-			System.out.println("Starting the thread");
 			try {
 				this.reader.setAutoMode(true);
 
@@ -192,7 +202,6 @@ public class Thinkify50SensorSession extends AbstractSensorSession {
 					try {
 						Set<TagReadEvent> taglist = new HashSet<TagReadEvent>();
 						for (ThinkifyTag aTag : reader.taglist) {
-							System.out.println("Tag arrived: " + aTag.getEpc());
 							taglist.add(handler.tagArrived(aTag.getEpc(),
 									aTag.getLastSeenTime(), aTag.getRSSI(),
 									aTag.getReadCount()));
@@ -201,7 +210,7 @@ public class Thinkify50SensorSession extends AbstractSensorSession {
 								System.currentTimeMillis());
 						this.session.getSensor().send(cycle);
 						reader.taglist.clear();
-						Thread.sleep(1000);
+						Thread.sleep(interval);
 					} catch (InterruptedException e) {
 					}
 				}

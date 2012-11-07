@@ -10,8 +10,9 @@ import org.rifidi.edge.configuration.JMXMBean;
 import org.rifidi.edge.sensors.AbstractCommandConfiguration;
 
 /**
+ * 
+ * 
  * @author matt
- *
  */
 @JMXMBean
 public class Thinkify50PushCommandConfiguration extends
@@ -30,7 +31,6 @@ public class Thinkify50PushCommandConfiguration extends
 	 */
 	@Override
 	public Thinkify50PushCommand getCommand(String readerID) {
-		System.out.println("Getcommand called");
 		Thinkify50PushCommand command = new Thinkify50PushCommand(super.getID());
 		return command;
 	}
