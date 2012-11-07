@@ -10,7 +10,7 @@
 		class="org.rifidi.edge.adapter.thinkify50.Thinkify50SensorFactory">
 		<property name="context" ref="bundleContext" />
 		<property name="notifierService" ref="JMSNotifierService" />
-		<property name="commandConfigurations" ref="thinkify50Commands" />
+		<!-- <property name="commandConfigurations" ref="thinkify50Commands" /> -->
 	</bean>
 
 	<osgi:reference id="JMSNotifierService"
@@ -25,7 +25,7 @@
 		</osgi:interfaces>
 	</osgi:service>
 
-	<bean id="thinkify50PushCommandConfigurationFactory"
+	<!-- <bean id="thinkify50PushCommandConfigurationFactory"
 		class="org.rifidi.edge.adapter.thinkify50.Thinkify50PushCommandConfigurationFactory">
 		<property name="context" ref="bundleContext" />
 	</bean>
@@ -40,6 +40,6 @@
 		cardinality="0..N" filter="(reader=Thinkify50)">
 		<osgi:listener ref="thinkify50ConfigurationFactory"
 			bind-method="bindCommandConfiguration" unbind-method="unbindCommandConfiguration" />
-	</osgi:set>
+	</osgi:set> -->
 
 </beans>
