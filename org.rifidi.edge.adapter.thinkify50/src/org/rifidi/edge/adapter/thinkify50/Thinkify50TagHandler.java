@@ -44,7 +44,7 @@ public class Thinkify50TagHandler {
 		}
 		gen2event.setEPCMemory(bigint, numbits);
 		TagReadEvent tre = new TagReadEvent(readerID, gen2event, 1, time);
-		tre.addExtraInformation("RSSI", rssi);
+		tre.addExtraInformation(Thinkify50Constants.RSSI, rssi);
 		return tre;
 	}
 

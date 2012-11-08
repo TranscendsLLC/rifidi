@@ -19,4 +19,10 @@ public class Thinkify50Constants {
 	public static final String FACTORY_ID = "Thinkify50";
 
 	public static final String READRATE = "1000";
+
+	public static final String RSSI = "RSSI";
+
+	public static final String RA = "6";
+
+	public static final String MA = "";
 }

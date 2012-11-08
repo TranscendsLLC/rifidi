@@ -38,7 +38,9 @@ public class Thinkify50SensorSession extends AbstractSensorSession {
 	private String readerID;
 	private String port;
 
-	private int interval = 1000;
+	private int interval;
+	private int ra;
+	private String ma;
 
 	ReadThread readthread = null;
 
@@ -51,13 +53,15 @@ public class Thinkify50SensorSession extends AbstractSensorSession {
 			NotifierService notifierService, String readerID, String port,
 			Integer reconnectionInterval, Integer maxConnectionAttempts,
 			Set<AbstractCommandConfiguration<?>> commandConfigurations,
-			int readrate) {
+			int readrate, int ra, String ma) {
 		super(sensor, ID, commandConfigurations);
 		this.readerID = readerID;
 		this.port = port;
 		this.maxConAttempts = maxConnectionAttempts;
 		this.reconnectionInterval = reconnectionInterval;
 		this.interval = readrate;
+		this.ra = ra;
+		this.ma = ma;
 	}
 
 	/*
@@ -118,7 +122,16 @@ public class Thinkify50SensorSession extends AbstractSensorSession {
 	 * 
 	 */
 	public void startReading() {
-
+		try {
+			System.out.println(this.reader.send_receive("ra" + ra));
+			if (this.ma != "") {
+				this.reader.send_receive("ma" + ma);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (TimeoutException e) {
+			e.printStackTrace();
+		}
 		readthread = new ReadThread(reader, new Thinkify50TagHandler(this,
 				this.readerID), this, interval);
 		Thread thread = new Thread(readthread);
