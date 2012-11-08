@@ -51,6 +51,10 @@ public class Thinkify50Sensor extends AbstractSensor<Thinkify50SensorSession> {
 	private volatile int readrate = 1000;
 	/** Flag to check if this reader is destroyed. */
 	private AtomicBoolean destroyed = new AtomicBoolean(false);
+	/** The reader attenuation */
+	private volatile Integer ra = 6;
+	/** The reader mask */
+	private String ma = "";
 	/** Time between two connection attempts. */
 	private volatile Integer reconnectionInterval = 2500;
 	/** Number of connection attempts before a connection goes into fail state. */
@@ -64,6 +68,7 @@ public class Thinkify50Sensor extends AbstractSensor<Thinkify50SensorSession> {
 
 	public static final MBeanInfo mbeaninfo;
 	private String displayName;
+
 	static {
 		AnnotationMBeanInfoStrategy strategy = new AnnotationMBeanInfoStrategy();
 		mbeaninfo = strategy.getMBeanInfo(Thinkify50Sensor.class);
@@ -94,7 +99,8 @@ public class Thinkify50Sensor extends AbstractSensor<Thinkify50SensorSession> {
 			Integer sessionID = this.sessionIDcounter.incrementAndGet();
 			if (session.compareAndSet(null, new Thinkify50SensorSession(this,
 					sessionID.toString(), notifierService, super.getID(), port,
-					reconnectionInterval, maxNumConnectionAttempts, commands, readrate))) {
+					reconnectionInterval, maxNumConnectionAttempts, commands,
+					readrate, ra, ma))) {
 
 				// TODO: remove this once we get AspectJ in here!
 				notifierService.addSessionEvent(this.getID(),
@@ -119,7 +125,8 @@ public class Thinkify50Sensor extends AbstractSensor<Thinkify50SensorSession> {
 			Integer sessionID = Integer.parseInt(sessionDTO.getID());
 			if (session.compareAndSet(null, new Thinkify50SensorSession(this,
 					sessionID.toString(), notifierService, super.getID(), port,
-					reconnectionInterval, maxNumConnectionAttempts, commands, readrate))) {
+					reconnectionInterval, maxNumConnectionAttempts, commands,
+					readrate, ra, ma))) {
 				session.get().restoreCommands(sessionDTO);
 				// TODO: remove this once we get AspectJ in here!
 				notifierService.addSessionEvent(this.getID(),
@@ -169,6 +176,26 @@ public class Thinkify50Sensor extends AbstractSensor<Thinkify50SensorSession> {
 
 	public void setReadRate(Integer readrate) {
 		this.readrate = readrate;
+	}
+
+	@Property(displayName = "ra", description = "Sets the reader attenuation", writable = true, type = PropertyType.PT_INTEGER, category = "reading"
+			+ "", orderValue = 2, defaultValue = Thinkify50Constants.RA, minValue = "0", maxValue = "19")
+	public int getra() {
+		return ra;
+	}
+
+	public void setra(Integer ra) {
+		this.ra = ra;
+	}
+
+	@Property(displayName = "ma", description = "Sets the mask for the reader", writable = true, type = PropertyType.PT_STRING, category = "reading"
+			+ "", orderValue = 2, defaultValue = Thinkify50Constants.MA)
+	public String getma() {
+		return ma;
+	}
+
+	public void setma(String ma) {
+		this.ma = ma;
 	}
 
 	/*
