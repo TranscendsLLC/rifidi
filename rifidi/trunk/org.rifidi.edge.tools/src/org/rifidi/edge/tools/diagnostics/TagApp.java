@@ -63,7 +63,8 @@ public class TagApp extends AbstractRifidiApp {
 		addStatement("create window curtags.std:firstunique(tag.ID, readerID, antennaID).win:time(10 sec)"
 				+ "as TagReadEvent");
 
-		addStatement("insert into recenttags select * from ReadCycle[select * from tags]");
+		//addStatement("insert into recenttags select * from ReadCycle[select * from tags]");
+		addStatement("insert into recenttags select * from ReadCycle[tags]");
 
 		addStatement("insert into curtags select * from recenttags");
 		
