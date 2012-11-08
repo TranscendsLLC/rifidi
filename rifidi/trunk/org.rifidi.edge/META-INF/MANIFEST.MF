@@ -9,6 +9,7 @@ Import-Package: com.espertech.esper.client,
  com.espertech.esper.client.soda,
  com.espertech.esper.client.time,
  com.espertech.esper.event,
+ gnu.io;version="2.2.0.pre2",
  javax.jms;version="1.1.0",
  javax.xml.namespace,
  javax.xml.parsers,
@@ -37,12 +38,10 @@ Import-Package: com.espertech.esper.client,
  org.apache.commons.dbcp;version="1.2.2.osgi",
  org.apache.commons.logging;version="1.1.1",
  org.apache.log4j;version="1.2.15",
- org.aspectj.lang.reflect;version="1.6.4",
  org.eclipse.osgi.framework.console;version="1.0.0",
  org.epcglobalinc.tdt,
  org.fosstrak.tdt,
  org.osgi.framework;version="1.4.0",
- org.osgi.service.cm;version="1.2.1",
  org.osgi.service.obr;version="1.0.0",
  org.springframework.aop;version="3.0.5.RELEASE",
  org.springframework.aop.config;version="3.0.5.RELEASE",
@@ -67,8 +66,7 @@ Import-Package: com.espertech.esper.client,
  org.springframework.remoting.support;version="3.0.5.RELEASE",
  org.w3c.dom,
  org.xml.sax
-Bundle-ClassPath: .,
- lib/RXTXcomm.jar
+Bundle-ClassPath: .
 Export-Package: org.rifidi.edge.api,
  org.rifidi.edge.api.resources,
  org.rifidi.edge.api.service,
@@ -87,7 +85,6 @@ Export-Package: org.rifidi.edge.api,
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-Description: This bundle contains several core services needed by the edge server, such as ReaderSession service
 Require-Bundle: org.rifidi.edge.api;bundle-version="1.3.0",
- org.rifidi.gnu.io;bundle-version="2.1.7",
  org.springframework.osgi.core;bundle-version="1.2.1";visibility:=reexport,
  org.rifidi.edge.init;bundle-version="1.0.1"
 DynamicImport-Package: *

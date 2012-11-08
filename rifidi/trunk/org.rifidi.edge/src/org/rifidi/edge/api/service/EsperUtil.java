@@ -110,8 +110,11 @@ public class EsperUtil {
 	 */
 	public static String buildInsertStatement(String windowName,
 			List<ReadZone> readZones) {
+		// String s = "insert into " + windowName
+		// + " select * from ReadCycle[select * from tags "
+		// + whereClause(readZones) + "]";
 		String s = "insert into " + windowName
-				+ " select * from ReadCycle[select * from tags "
+				+ " select * from ReadCycle[tags "
 				+ whereClause(readZones) + "]";
 		return s;
 	}
