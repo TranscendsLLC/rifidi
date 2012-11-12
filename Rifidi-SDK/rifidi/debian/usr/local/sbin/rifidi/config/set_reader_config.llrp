@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<llrp:SET_READER_CONFIG xmlns:llrp="http://www.llrp.org/ltk/schema/core/encoding/xml/1.0" Version="1" MessageID="0">
+  <llrp:ResetToFactoryDefault>0</llrp:ResetToFactoryDefault>
+  <llrp:ReaderEventNotificationSpec>
+    <llrp:EventNotificationState>
+      <llrp:EventType>GPI_Event</llrp:EventType>
+      <llrp:NotificationState>1</llrp:NotificationState>
+    </llrp:EventNotificationState>
+  </llrp:ReaderEventNotificationSpec>
+  <llrp:ROReportSpec>
+    <llrp:ROReportTrigger>None</llrp:ROReportTrigger>
+    <llrp:N>0</llrp:N>
+    <llrp:TagReportContentSelector>
+      <llrp:EnableROSpecID>1</llrp:EnableROSpecID>
+      <llrp:EnableSpecIndex>0</llrp:EnableSpecIndex>
+      <llrp:EnableInventoryParameterSpecID>0</llrp:EnableInventoryParameterSpecID>
+      <llrp:EnableAntennaID>1</llrp:EnableAntennaID>
+      <llrp:EnableChannelIndex>0</llrp:EnableChannelIndex>
+      <llrp:EnablePeakRSSI>1</llrp:EnablePeakRSSI>
+      <llrp:EnableFirstSeenTimestamp>1</llrp:EnableFirstSeenTimestamp>
+      <llrp:EnableLastSeenTimestamp>1</llrp:EnableLastSeenTimestamp>
+      <llrp:EnableTagSeenCount>1</llrp:EnableTagSeenCount>
+      <llrp:EnableAccessSpecID>1</llrp:EnableAccessSpecID>
+      <llrp:C1G2EPCMemorySelector>
+        <llrp:EnableCRC>0</llrp:EnableCRC>
+        <llrp:EnablePCBits>0</llrp:EnablePCBits>
+      </llrp:C1G2EPCMemorySelector>
+    </llrp:TagReportContentSelector>
+  </llrp:ROReportSpec>
+  <llrp:AccessReportSpec>
+    <llrp:AccessReportTrigger>Whenever_ROReport_Is_Generated</llrp:AccessReportTrigger>
+  </llrp:AccessReportSpec>
+  <llrp:GPIPortCurrentState>
+    <llrp:GPIPortNum>1</llrp:GPIPortNum>
+    <llrp:Config>1</llrp:Config>
+    <llrp:State>Low</llrp:State>
+  </llrp:GPIPortCurrentState>
+  <llrp:GPIPortCurrentState>
+    <llrp:GPIPortNum>2</llrp:GPIPortNum>
+    <llrp:Config>1</llrp:Config>
+    <llrp:State>Low</llrp:State>
+  </llrp:GPIPortCurrentState>
+  <llrp:GPIPortCurrentState>
+    <llrp:GPIPortNum>3</llrp:GPIPortNum>
+    <llrp:Config>1</llrp:Config>
+    <llrp:State>Low</llrp:State>
+  </llrp:GPIPortCurrentState>
+  <llrp:GPIPortCurrentState>
+    <llrp:GPIPortNum>4</llrp:GPIPortNum>
+    <llrp:Config>1</llrp:Config>
+    <llrp:State>Low</llrp:State>
+  </llrp:GPIPortCurrentState>
+</llrp:SET_READER_CONFIG>
+
