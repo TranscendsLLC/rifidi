@@ -4,6 +4,7 @@
 package org.rifidi.edge.adapter.thinkify50;
 
 import java.io.IOException;
+import java.util.ConcurrentModificationException;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.TimeoutException;
@@ -213,6 +214,7 @@ public class Thinkify50SensorSession extends AbstractSensorSession {
 				stop = false;
 				while (!stop) {
 					try {
+						try {
 						Set<TagReadEvent> taglist = new HashSet<TagReadEvent>();
 						for (ThinkifyTag aTag : reader.taglist) {
 							taglist.add(handler.tagArrived(aTag.getEpc(),
@@ -224,6 +226,9 @@ public class Thinkify50SensorSession extends AbstractSensorSession {
 						this.session.getSensor().send(cycle);
 						reader.taglist.clear();
 						Thread.sleep(interval);
+						} catch(ConcurrentModificationException e) {
+							logger.error("ConcurrentModificationException encountered");
+						}
 					} catch (InterruptedException e) {
 					}
 				}
