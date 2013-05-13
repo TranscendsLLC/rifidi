@@ -125,7 +125,7 @@ case "$1" in
 	do_stop
 	case "$?" in
 		0) del_ip_rules && log_end_msg 0;;
-		1) log_end msg 0;; 
+		1) log_end_msg 0;; 
 		2) log_end_msg 1 ;;
 	esac
 	;;
