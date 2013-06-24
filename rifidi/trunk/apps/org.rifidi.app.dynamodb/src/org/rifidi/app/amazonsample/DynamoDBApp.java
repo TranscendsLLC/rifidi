@@ -62,7 +62,7 @@ public class DynamoDBApp extends AbstractRifidiApp {
 	 */
 	@Override
 	public void initialize() {
-		String tableName = "epc-table";
+		String tableName = "epc-tags";
 
 		waitForTableToBecomeAvailable(tableName);
 

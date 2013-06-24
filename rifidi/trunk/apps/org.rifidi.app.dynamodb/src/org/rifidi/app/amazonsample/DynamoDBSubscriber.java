@@ -3,6 +3,8 @@
  */
 package org.rifidi.app.amazonsample;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -23,6 +25,9 @@ public class DynamoDBSubscriber implements ReadZoneSubscriber {
 
 	public AmazonDynamoDBClient dynamoDB;
 
+	private static final SimpleDateFormat FORMATTER = new SimpleDateFormat(
+			"yyyy-MM-dd HH:mm:ss");
+	
 	public String tableName;
 
 	/**
@@ -65,13 +70,14 @@ public class DynamoDBSubscriber implements ReadZoneSubscriber {
 
 	private static Map<String, AttributeValue> newItem(String epc, int antenna,
 			String readerid, long timestamp) {
+		Date date = new Date(timestamp);
 		Map<String, AttributeValue> item = new HashMap<String, AttributeValue>();
 		item.put("epc", new AttributeValue(epc));
 		item.put("antenna",
 				new AttributeValue().withN(Integer.toString(antenna)));
 		item.put("reader", new AttributeValue(readerid));
 		item.put("timestamp",
-				new AttributeValue().withN(Long.toString(timestamp)));
+				new AttributeValue(FORMATTER.format(date)));
 
 		return item;
 	}
