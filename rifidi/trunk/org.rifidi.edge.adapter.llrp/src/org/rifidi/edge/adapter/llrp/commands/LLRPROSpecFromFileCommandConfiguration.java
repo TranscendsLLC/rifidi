@@ -1,13 +1,9 @@
 /*
- *  LLRPROSpecFromFileCommandConfiguration.java
- *
- *  Created:	Apr 26, 2010
- *  Project:	Rifidi Edge Server - A middleware platform for RFID applications
- *  				http://www.rifidi.org
- *  				http://rifidi.sourceforge.net
- *  Copyright:	Pramari LLC and the Rifidi Project
- *  License:	GNU Public License (GPL)
- *  				http://www.opensource.org/licenses/gpl-3.0.html
+ * Copyright (c) 2013 Transcends, LLC.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the GNU Public License v2.0
+ * which accompanies this distribution, and is available at
+ * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
  */
 package org.rifidi.edge.adapter.llrp.commands;
 
@@ -22,6 +18,7 @@ import org.apache.commons.logging.LogFactory;
 import org.jdom.JDOMException;
 import org.llrp.ltk.exceptions.InvalidLLRPMessageException;
 import org.llrp.ltk.generated.messages.ADD_ROSPEC;
+import org.llrp.ltk.types.LLRPMessage;
 import org.llrp.ltk.util.Util;
 import org.rifidi.edge.configuration.AnnotationMBeanInfoStrategy;
 import org.rifidi.edge.configuration.JMXMBean;
@@ -97,7 +94,8 @@ public class LLRPROSpecFromFileCommandConfiguration extends
 			 */
 			String directory = System.getProperty("org.rifidi.home");
 			String file = directory + File.separator + filename;
-			command.setAddrospeccommand((ADD_ROSPEC) Util
+			
+			command.setLLRPMessage(Util
 					.loadXMLLLRPMessage(new File(file)));
 			command.setImpinjExtensions(this.impinjExtensions);
 			retval = command;
