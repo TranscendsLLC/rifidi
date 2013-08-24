@@ -1,13 +1,9 @@
 /*
- *  LLRPRoSpecFromFileCommand.java
- *
- *  Created:	Apr 26, 2010
- *  Project:	Rifidi Edge Server - A middleware platform for RFID applications
- *  				http://www.rifidi.org
- *  				http://rifidi.sourceforge.net
- *  Copyright:	Pramari LLC and the Rifidi Project
- *  License:	GNU Public License (GPL)
- *  				http://www.opensource.org/licenses/gpl-3.0.html
+ * Copyright (c) 2013 Transcends, LLC.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the GNU Public License v2.0
+ * which accompanies this distribution, and is available at
+ * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
  */
 package org.rifidi.edge.adapter.llrp.commands;
 
@@ -24,6 +20,7 @@ import org.llrp.ltk.generated.messages.GET_ROSPECS;
 import org.llrp.ltk.generated.messages.GET_ROSPECS_RESPONSE;
 import org.llrp.ltk.generated.parameters.ROSpec;
 import org.llrp.ltk.types.BytesToEnd_HEX;
+import org.llrp.ltk.types.LLRPMessage;
 import org.llrp.ltk.types.SignedByte;
 import org.llrp.ltk.types.UnsignedByte;
 import org.llrp.ltk.types.UnsignedInteger;
@@ -52,7 +49,7 @@ public class LLRPROSpecFromFileCommand extends AbstractLLRPCommand {
 	/**
 	 * The ADD_ROSPEC command that will be loaded from a file and submitted.
 	 */
-	private ADD_ROSPEC addrospeccommand = null;
+	private LLRPMessage llrpcommand = null;
 
 	/**
 	 * @param commandID
@@ -64,10 +61,10 @@ public class LLRPROSpecFromFileCommand extends AbstractLLRPCommand {
 	/**
 	 * Sets the ROSpecCommand
 	 * 
-	 * @param addrospeccommand
+	 * @param llrpcommand
 	 */
-	public void setAddrospeccommand(ADD_ROSPEC addrospeccommand) {
-		this.addrospeccommand = addrospeccommand;
+	public void setLLRPMessage(LLRPMessage llrpcommand) {
+		this.llrpcommand = llrpcommand;
 
 	}
 
@@ -83,49 +80,53 @@ public class LLRPROSpecFromFileCommand extends AbstractLLRPCommand {
 	@Override
 	protected void execute() throws TimeoutException {
 		this.session = (LLRPReaderSession) this.sensorSession;
-		if (addrospeccommand == null) {
-			logger.error("Can't add ROSpec: the ROSpec was not initialized "
-					+ "correctly.  Check the XML file.  ");
-			return;
-		}
-		// Find and delete all ROSpecs on the reader.
-		GET_ROSPECS rospecs = new GET_ROSPECS();
-		GET_ROSPECS_RESPONSE response = null;
-		response = (GET_ROSPECS_RESPONSE) session.transact(rospecs);
-		List<ROSpec> rospecList = response.getROSpecList();
-		for (ROSpec rspec : rospecList) {
-			DELETE_ROSPEC delROSpec = new DELETE_ROSPEC();
-			delROSpec.setROSpecID(new UnsignedInteger(rspec.getROSpecID()
-					.intValue()));
+		if (llrpcommand instanceof ADD_ROSPEC) {
+			ADD_ROSPEC addRospec = (ADD_ROSPEC)llrpcommand;
+			if (addRospec == null) {
+				logger.error("Can't add ROSpec: the ROSpec was not initialized "
+						+ "correctly.  Check the XML file.  ");
+				return;
+			}
+			// Find and delete all ROSpecs on the reader.
+			GET_ROSPECS rospecs = new GET_ROSPECS();
+			GET_ROSPECS_RESPONSE response = null;
+			response = (GET_ROSPECS_RESPONSE) session.transact(rospecs);
+			List<ROSpec> rospecList = response.getROSpecList();
+			for (ROSpec rspec : rospecList) {
+				DELETE_ROSPEC delROSpec = new DELETE_ROSPEC();
+				delROSpec.setROSpecID(new UnsignedInteger(rspec.getROSpecID()
+						.intValue()));
 
+				// TODO: check the response?
+				session.transact(delROSpec);
+
+			}
+
+			if (impinjExtensions) {
+				BytesToEnd_HEX data = new BytesToEnd_HEX();
+				CUSTOM_MESSAGE msg = new CUSTOM_MESSAGE();
+				msg.setVendorIdentifier(new UnsignedInteger(25882));
+				msg.setMessageSubtype(new UnsignedByte(21));
+				data.add(new SignedByte(0));
+				data.add(new SignedByte(0));
+				data.add(new SignedByte(0));
+				data.add(new SignedByte(0));
+				msg.setData(data);
+				session.send(msg);
+			}
+
+			// Send the ADD_ROSPEC command
 			// TODO: check the response?
-			session.transact(delROSpec);
+			session.transact(addRospec);
 
+			// Enable the ROSpec
+			ENABLE_ROSPEC enablerospec = new ENABLE_ROSPEC();
+			enablerospec.setROSpecID(addRospec.getROSpec().getROSpecID());
+			// TODO: check the response?
+			session.transact(enablerospec);
+		} else {
+			session.transact(llrpcommand);
 		}
-
-		if (impinjExtensions) {
-			BytesToEnd_HEX data = new BytesToEnd_HEX();
-			CUSTOM_MESSAGE msg = new CUSTOM_MESSAGE();
-			msg.setVendorIdentifier(new UnsignedInteger(25882));
-			msg.setMessageSubtype(new UnsignedByte(21));
-			data.add(new SignedByte(0));
-			data.add(new SignedByte(0));
-			data.add(new SignedByte(0));
-			data.add(new SignedByte(0));
-			msg.setData(data);
-			session.send(msg);
-		}
-
-		// Send the ADD_ROSPEC command
-		// TODO: check the response?
-		session.transact(addrospeccommand);
-
-		// Enable the ROSpec
-		ENABLE_ROSPEC enablerospec = new ENABLE_ROSPEC();
-		enablerospec.setROSpecID(addrospeccommand.getROSpec().getROSpecID());
-		// TODO: check the response?
-		session.transact(enablerospec);
-
 	}
 
 }
