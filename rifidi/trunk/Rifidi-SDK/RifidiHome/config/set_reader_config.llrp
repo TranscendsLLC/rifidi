@@ -50,5 +50,8 @@
     <llrp:Config>1</llrp:Config>
     <llrp:State>Low</llrp:State>
   </llrp:GPIPortCurrentState>
+  <llrp:EventsAndReports>
+    <llrp:HoldEventsAndReportsUponReconnect>0</llrp:HoldEventsAndReportsUponReconnect>
+  </llrp:EventsAndReports>
 </llrp:SET_READER_CONFIG>
 
