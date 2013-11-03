@@ -44,6 +44,6 @@ public class LLRPConstants {
 	public final static String MAX_CONNECTION_ATTEMPTS = "-1";
 
 	/** The default path to the SET_READER_CONFIG XML */
-	public final static String SET_READER_CONFIG_PATH = "sensorconfig/SET_READER_CONFIG.llrp";
+	public final static String SET_READER_CONFIG_PATH = "config/SET_READER_CONFIG.llrp";
 
 }
