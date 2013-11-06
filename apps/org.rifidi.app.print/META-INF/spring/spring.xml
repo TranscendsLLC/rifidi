@@ -10,13 +10,13 @@
 		<constructor-arg index="0" value="Print" />
 		<constructor-arg index="1" value="PrintApp" />
 		<property name="readZoneMonitoringService" ref="readZoneMonitoringService" />
-		<property name="readerDAOImpl" ref="readerDAOImpl"/>
+		<property name="readerDAO" ref="readerDAOImpl"/>
 	</bean>
 	<osgi:service ref="PrintApp" interface="org.rifidi.edge.api.RifidiApp" />
 	
 	<osgi:reference id="readZoneMonitoringService"
 		interface="org.rifidi.edge.api.service.tagmonitor.ReadZoneMonitoringService" />
 
-	<osgi:reference id="readerDAOImpl" interface="org.rifidi.edge.daos.ReaderDAOImpl"/>
+	<osgi:reference id="readerDAOImpl" interface="org.rifidi.edge.daos.ReaderDAO"/>
 	
 </beans>

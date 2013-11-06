@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: DBApp
+Bundle-Name: PrintApp
 Bundle-SymbolicName: org.rifidi.app.print
 Bundle-Version: 1.0.0
 Bundle-Vendor: Transcends, LLC

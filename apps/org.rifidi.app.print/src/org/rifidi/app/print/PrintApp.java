@@ -15,7 +15,7 @@ import org.rifidi.edge.api.AbstractRifidiApp;
 import org.rifidi.edge.api.service.tagmonitor.ReadZone;
 import org.rifidi.edge.api.service.tagmonitor.ReadZoneMonitoringService;
 import org.rifidi.edge.api.service.tagmonitor.ReadZoneSubscriber;
-import org.rifidi.edge.daos.ReaderDAOImpl;
+import org.rifidi.edge.daos.ReaderDAO;
 import org.rifidi.edge.sensors.AbstractSensorFactory;
 
 /**
@@ -27,7 +27,7 @@ public class PrintApp extends AbstractRifidiApp {
 	/** The service for monitoring arrival and departure events */
 	private ReadZoneMonitoringService readZoneMonitoringService;
 	private List<ReadZoneSubscriber> subscriberList;
-	private ReaderDAOImpl readerDAO;
+	private ReaderDAO readerDAO;
 
 	public PrintApp(String group, String name) {
 		super(group, name);
@@ -41,6 +41,10 @@ public class PrintApp extends AbstractRifidiApp {
 	@Override
 	public void _start() {
 		System.out.println("Starting PrintApp");
+		System.out.println(readerDAO.getReaderFactories());
+//		for (AbstractSensorFactory factory : readerDAO.getReaderFactories()) {
+//			System.out.println(factory.getDisplayName());
+//		}
 		super._start();
 	}
 
@@ -80,11 +84,8 @@ public class PrintApp extends AbstractRifidiApp {
 		this.readZoneMonitoringService = rzms;
 	}
 	
-	public void setReaderDAOImpl(ReaderDAOImpl readerDAO) {
+	public void setReaderDAO(ReaderDAO readerDAO) {
 		this.readerDAO=readerDAO;
-		for(AbstractSensorFactory factory:readerDAO.getReaderFactories()) {
-			System.out.println(factory.getDisplayName());
-		}
 	}
 
 }
