@@ -1,0 +1,90 @@
+/*
+ * Copyright (c) 2013 Transcends, LLC.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the GNU Public License v2.0
+ * which accompanies this distribution, and is available at
+ * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
+ */
+package org.rifidi.app.print;
+
+import java.util.LinkedList;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+import org.rifidi.edge.api.AbstractRifidiApp;
+import org.rifidi.edge.api.service.tagmonitor.ReadZone;
+import org.rifidi.edge.api.service.tagmonitor.ReadZoneMonitoringService;
+import org.rifidi.edge.api.service.tagmonitor.ReadZoneSubscriber;
+import org.rifidi.edge.daos.ReaderDAOImpl;
+import org.rifidi.edge.sensors.AbstractSensorFactory;
+
+/**
+ * @author Matthew Dean - matt@transcends.co
+ * 
+ */
+public class PrintApp extends AbstractRifidiApp {
+
+	/** The service for monitoring arrival and departure events */
+	private ReadZoneMonitoringService readZoneMonitoringService;
+	private List<ReadZoneSubscriber> subscriberList;
+	private ReaderDAOImpl readerDAO;
+
+	public PrintApp(String group, String name) {
+		super(group, name);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.rifidi.edge.api.AbstractRifidiApp#_start()
+	 */
+	@Override
+	public void _start() {
+		System.out.println("Starting PrintApp");
+		super._start();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.rifidi.edge.api.AbstractRifidiApp#_stop()
+	 */
+	@Override
+	public void _stop() {
+		for (ReadZoneSubscriber s : this.subscriberList) {
+			this.readZoneMonitoringService.unsubscribe(s);
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.rifidi.edge.api.AbstractRifidiApp#initialize()
+	 */
+	@Override
+	public void initialize() {
+		PrintSubscriber sub = new PrintSubscriber();
+		this.subscriberList = new LinkedList<ReadZoneSubscriber>();
+		this.subscriberList.add(sub);
+		this.readZoneMonitoringService.subscribe(sub,
+				new LinkedList<ReadZone>(), 4.0f, TimeUnit.SECONDS, true);
+	}
+
+	/**
+	 * Called by spring. This method injects the ReadZoneMonitoringService into
+	 * the application.
+	 * 
+	 * @param rzms
+	 */
+	public void setReadZoneMonitoringService(ReadZoneMonitoringService rzms) {
+		this.readZoneMonitoringService = rzms;
+	}
+	
+	public void setReaderDAOImpl(ReaderDAOImpl readerDAO) {
+		this.readerDAO=readerDAO;
+		for(AbstractSensorFactory factory:readerDAO.getReaderFactories()) {
+			System.out.println(factory.getDisplayName());
+		}
+	}
+
+}
