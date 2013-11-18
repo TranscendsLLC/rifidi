@@ -36,6 +36,7 @@ public class PrintSubscriber implements ReadZoneSubscriber {
 	 */
 	@Override
 	public void tagArrived(TagReadEvent tag) {
+		System.out.println("TAG ARRIVED: " + tag.getTag().getFormattedID());
 	}
 
 	/*
@@ -47,6 +48,6 @@ public class PrintSubscriber implements ReadZoneSubscriber {
 	 */
 	@Override
 	public void tagDeparted(TagReadEvent tag) {
-		// NO OP
+		System.out.println("TAG DEPARTED: " + tag.getTag().getFormattedID());
 	}
 }
