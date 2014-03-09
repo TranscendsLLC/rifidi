@@ -79,7 +79,13 @@ public class AlienTagReadEventFactory {
 			retVal.addExtraInformation(TagReadEvent.SPEED, alienTag.getSpeed());
 		}
 		if (alienTag.getRssi() != null) {
-			retVal.addExtraInformation(TagReadEvent.SPEED, alienTag.getRssi());
+			retVal.addExtraInformation(TagReadEvent.RSSI, alienTag.getRssi());
+//			double rand = (Math.random() * 200);
+//			if(this.readerID.equals("Alien_1")) {
+//				retVal.addExtraInformation(TagReadEvent.RSSI, 200.0 );
+//			} else {
+//				retVal.addExtraInformation(TagReadEvent.RSSI, 100.0);
+//			}
 		}
 		if (alienTag.getDirection() != null) {
 			retVal.addExtraInformation(TagReadEvent.DIRECTION, alienTag
