@@ -144,7 +144,7 @@ public class EsperUtil {
 	 * 
 	 * @return
 	 */
-	private static String whereClause(List<ReadZone> readzones) {
+	public static String whereClause(List<ReadZone> readzones) {
 		StringBuilder builder = new StringBuilder();
 		if (!readzones.isEmpty()) {
 			builder.append(" where (" + buildReader(readzones.get(0)));

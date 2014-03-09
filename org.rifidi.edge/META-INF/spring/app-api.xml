@@ -21,6 +21,11 @@
 		<constructor-arg index="1" value="ReadZones" />
 
 	</bean>
+	
+	<bean id="RSSIMonitoringService" class="org.rifidi.edge.api.service.tagmonitor.RSSIMonitoringServiceImpl">
+		<constructor-arg index="0" value="AppService" />
+		<constructor-arg index="1" value="RSSI" />
+	</bean>
 
 	<bean id="UniqueTagIntervalAppService"
 		class="org.rifidi.edge.api.service.tagmonitor.UniqueTagIntervalServiceImpl">
@@ -69,5 +74,6 @@
 	<osgi:service ref="LimitStableSetAppService" auto-export="interfaces" />
 	<osgi:service ref="UniqueTagBatchIntervalAppService"
 		auto-export="interfaces" />
+	<osgi:service ref="RSSIMonitoringService" auto-export="interfaces" />
 
 </beans>

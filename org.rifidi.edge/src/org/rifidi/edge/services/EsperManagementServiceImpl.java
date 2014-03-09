@@ -15,6 +15,7 @@ import org.rifidi.edge.notification.EPCGeneration1Event;
 import org.rifidi.edge.notification.EPCGeneration2Event;
 import org.rifidi.edge.notification.GPIEvent;
 import org.rifidi.edge.notification.GPOEvent;
+import org.rifidi.edge.notification.RSSITagReadEvent;
 import org.rifidi.edge.notification.ReadCycle;
 import org.rifidi.edge.notification.SensorConnectedEvent;
 import org.rifidi.edge.notification.SensorDisconnectedEvent;
@@ -57,6 +58,7 @@ public class EsperManagementServiceImpl implements EsperManagementService {
 		config.addEventType("SensorStatusEvent",SensorStatusEvent.class);
 		config.addEventType("SensorDisconnectedEvent", SensorDisconnectedEvent.class);
 		config.addEventType("SensorConnectedEvent", SensorConnectedEvent.class);
+		config.addEventType("RSSITagReadEvent", RSSITagReadEvent.class);
 	}
 
 	/*
