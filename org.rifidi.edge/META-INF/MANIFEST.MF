@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Rifidi Edge Core
 Bundle-SymbolicName: org.rifidi.edge
 Bundle-Version: 5.5.0
-Bundle-Vendor: Pramari
+Bundle-Vendor: Transcends
 Import-Package: com.espertech.esper.client,
  com.espertech.esper.client.metric,
  com.espertech.esper.client.soda,
