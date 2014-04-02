@@ -70,7 +70,7 @@ public class RSSIMonitorEsperFactory implements RifidiAppEsperFactory {
 	@Override
 	public List<String> createStatements() {
 		statements.add("create window " + windowName_first + ".win:time_batch("+interval+") as TagReadEvent");
-		statements.add(EsperUtil.buildInsertStatement(windowName_first, readzones));
+		statements.add(EsperUtil.buildInsertStatement(windowName_first, readzones, false));
 		statements.add("create window " + windowName_avg + ".win:time_batch("+interval+") as RSSITagReadEvent");
 		statements.add("insert into "  + windowName_avg + " select tag.formattedID, readerID, avg(cast(extraInformation('RSSI'),Double)) as avgRSSI, cast(count(*),Double) as tagCount from "
 					+ windowName_first + " group by tag.ID, readerID having cast(count(*),Double)>" + countThreshold + " and avg(cast(extraInformation('RSSI'),Double))>" + minAvgRSSIThreshold );		

@@ -64,6 +64,16 @@ public class LimitStableSetServiceImpl extends
 			}
 		};
 	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.rifidi.edge.api.service.tagmonitor.LimitStableSetService#subscribe(org.rifidi.edge.api.service.tagmonitor.LimitStableSetSubscriber, java.util.List, java.lang.Float, java.util.concurrent.TimeUnit, int)
+	 */
+	@Override
+	public void subscribe(LimitStableSetSubscriber subscriber, List<ReadZone> zones,
+			Float stableSetTime, TimeUnit stableSetTimeUnit, int limit) {
+		this.subscribe(subscriber, zones, stableSetTime, stableSetTimeUnit, limit, false);
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -75,13 +85,13 @@ public class LimitStableSetServiceImpl extends
 	 */
 	@Override
 	public void subscribe(LimitStableSetSubscriber subscriber, List<ReadZone> zones,
-			Float stableSetTime, TimeUnit stableSetTimeUnit, int limit) {
+			Float stableSetTime, TimeUnit stableSetTimeUnit, int limit, boolean useRegex) {
 		List<ReadZone> readZones = new ArrayList<ReadZone>();
 		if (zones != null) {
 			readZones.addAll(zones);
 		}
 		subscribe(subscriber, new LimitStableSetEsperFactory(readZones,
-				stableSetTime, stableSetTimeUnit, limit, getCounter()));
+				stableSetTime, stableSetTimeUnit, limit, getCounter(), useRegex));
 	}
 
 }

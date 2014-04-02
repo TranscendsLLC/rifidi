@@ -68,10 +68,12 @@ public interface ReadZoneMonitoringService {
 	 *            monitored, and the tag disappears on antenna 1 and reappears
 	 *            on antenna 2, a new arrival event will not occur for the
 	 *            switch to antenna 2.
+	 * @param useRegex
+	 * 		      Is the readername a regex?
 	 */
 	public void subscribe(ReadZoneSubscriber subscriber,
 			List<ReadZone> readZones, Float departureTime, TimeUnit timeUnit,
-			boolean wholereader);
+			boolean wholereader, boolean useRegex);
 
 	/**
 	 * Subscribe to the arrival and departure events for the given read zone.

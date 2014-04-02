@@ -113,13 +113,13 @@ public class EsperUtil {
 	 * @return
 	 */
 	public static String buildInsertStatement(String windowName,
-			List<ReadZone> readZones) {
+			List<ReadZone> readZones, boolean useRegex) {
 		// String s = "insert into " + windowName
 		// + " select * from ReadCycle[select * from tags "
 		// + whereClause(readZones) + "]";
 		String s = "insert into " + windowName
 				+ " select * from ReadCycle[tags "
-				+ whereClause(readZones) + "]";
+				+ whereClause(readZones, useRegex) + "]";
 		return s;
 	}
 
@@ -136,21 +136,22 @@ public class EsperUtil {
 			ReadZone readZone) {
 		List<ReadZone> readZoneList = new ArrayList<ReadZone>();
 		readZoneList.add(readZone);
-		return buildInsertStatement(windowname, readZoneList);
+		return buildInsertStatement(windowname, readZoneList, false);
 	}
 
 	/**
 	 * A private method to create the where clause in the select statement
+	 * @param useRegex 
 	 * 
 	 * @return
 	 */
-	public static String whereClause(List<ReadZone> readzones) {
+	public static String whereClause(List<ReadZone> readzones, boolean useRegex) {
 		StringBuilder builder = new StringBuilder();
 		if (!readzones.isEmpty()) {
-			builder.append(" where (" + buildReader(readzones.get(0)));
+			builder.append(" where (" + buildReader(readzones.get(0), useRegex));
 			builder.append("");
 			for (int i = 1; i < readzones.size(); i++) {
-				builder.append(" OR " + buildReader(readzones.get(i)));
+				builder.append(" OR " + buildReader(readzones.get(i), useRegex));
 			}
 			builder.append(")");
 		}
@@ -170,9 +171,15 @@ public class EsperUtil {
 	 * @param zone
 	 * @return
 	 */
-	private static String buildReader(ReadZone zone) {
-		StringBuilder sb = new StringBuilder("(TagReadEvent.readerID=\'"
+	private static String buildReader(ReadZone zone, boolean useRegex) {
+		StringBuilder sb;
+		if(useRegex) {
+			sb = new StringBuilder("(TagReadEvent.readerID regexp \'"
 				+ zone.getReaderID() + "\'");
+		} else {
+			sb = new StringBuilder("(TagReadEvent.readerID=\'"
+					+ zone.getReaderID() + "\'");
+		}
 		sb.append(buildAntenns(new ArrayList<Integer>(zone.getAntennas())));
 		sb.append(buildTagFilter(zone.getTagPatterns(), zone.isInclude()));
 		sb.append(")");

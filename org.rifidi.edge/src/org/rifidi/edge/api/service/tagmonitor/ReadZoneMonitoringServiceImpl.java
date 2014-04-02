@@ -54,20 +54,20 @@ public class ReadZoneMonitoringServiceImpl extends
 	@Override
 	public void subscribe(final ReadZoneSubscriber subscriber,
 			List<ReadZone> readZones, Float departureTime, TimeUnit timeUnit) {
-		this.subscribe(subscriber, readZones, departureTime, timeUnit, false);
+		this.subscribe(subscriber, readZones, departureTime, timeUnit, false, false);
 	}
 
 	@Override
 	public void subscribe(ReadZoneSubscriber subscriber,
 			List<ReadZone> readZones, Float departureTime, TimeUnit timeUnit,
-			boolean wholereader) {
+			boolean wholereader, boolean useRegex) {
 		RifidiAppEsperFactory esperFactory;
 		if (wholereader) {
 			esperFactory = new UniqueReadZoneMonitorEsperFactory(
 					readZones, getCounter(), departureTime, timeUnit, true, true);
 		} else {
 			esperFactory = new ReadZoneMonitorEsperFactory(
-					readZones, getCounter(), departureTime, timeUnit);
+					readZones, getCounter(), departureTime, timeUnit, useRegex);
 		}
 		subscribe(subscriber, esperFactory);
 	}

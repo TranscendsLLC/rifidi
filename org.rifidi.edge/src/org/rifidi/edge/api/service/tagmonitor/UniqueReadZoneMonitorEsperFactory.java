@@ -99,7 +99,7 @@ public class UniqueReadZoneMonitorEsperFactory implements RifidiAppEsperFactory 
 		statements.add("create window " + windowName
 				+ ".std:firstunique(tag.ID, readerID"
 				+ ", antennaID) as TagReadEvent");
-		statements.add(EsperUtil.buildInsertStatement(windowName, readzones));
+		statements.add(EsperUtil.buildInsertStatement(windowName, readzones, false));
 		statements.add("create window " + uniqueWindowName + ".std:firstunique(tag.ID) as TagReadEvent");
 		statements.add("insert into " + uniqueWindowName + " select * from " + windowName);
 		statements.add("on pattern [every tag1="+ windowName+ " ->"

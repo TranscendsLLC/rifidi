@@ -63,7 +63,7 @@ public class UniqueTagIntervalEsperFactory implements RifidiAppEsperFactory {
 	public List<String> createStatements() {
 		ArrayList<String> statements = new ArrayList<String>();
 		statements.add("create window "+windowName+".std:firstunique(tag.ID) as TagReadEvent");
-		statements.add(EsperUtil.buildInsertStatement(windowName, readZones));
+		statements.add(EsperUtil.buildInsertStatement(windowName, readZones, false));
 		statements.add("create window "+timerWindowName+".win:time(" +
 				EsperUtil.timeUnitToEsperTime(notifyTime, notifyTimeUnit)+
 				") as TagReadEvent");

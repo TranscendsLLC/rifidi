@@ -37,6 +37,8 @@ public interface LimitStableSetService {
 	 */
 	public void subscribe(LimitStableSetSubscriber subscriber, List<ReadZone> zones,
 			Float stableSetTime, TimeUnit stableSetTimeUnit, int limit);
+	public void subscribe(LimitStableSetSubscriber subscriber, List<ReadZone> zones,
+			Float stableSetTime, TimeUnit stableSetTimeUnit, int limit, boolean useRegex);
 
 	/**
 	 * Unsubscribe from the Stable Set service
