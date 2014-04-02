@@ -304,6 +304,12 @@ public abstract class AbstractRifidiApp implements RifidiApp,
 	 */
 	protected final String addStatement(String esperStatement) {
 		EPStatement statement = getEPAdministrator().createEPL(esperStatement);
+		try {
+			//Small sleep statement to give the esper statement a chance to propogate
+			Thread.sleep(100);
+		} catch (InterruptedException e) {
+			logger.error(e.getMessage());
+		}
 		statements.add(statement);
 		return statement.getName();
 
