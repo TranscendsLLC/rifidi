@@ -59,20 +59,27 @@ public class StableSetServiceImpl extends RifidiAppService<StableSetSubscriber> 
 		};
 	}
 
-
-
 	/* (non-Javadoc)
 	 * @see org.rifidi.edge.api.service.tagmonitor.StableSetService#subscribe(org.rifidi.edge.api.service.tagmonitor.StableSetSubscriber, java.util.List, java.lang.Float, java.util.concurrent.TimeUnit, boolean)
 	 */
 	@Override
 	public void subscribe(StableSetSubscriber subscriber, List<ReadZone> zones,
 			Float stableSetTime, TimeUnit stableSetTimeUnit, boolean unique) {
+		this.subscribe(subscriber, zones, stableSetTime, stableSetTimeUnit, unique, false);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.rifidi.edge.api.service.tagmonitor.StableSetService#subscribe(org.rifidi.edge.api.service.tagmonitor.StableSetSubscriber, java.util.List, java.lang.Float, java.util.concurrent.TimeUnit, boolean)
+	 */
+	@Override
+	public void subscribe(StableSetSubscriber subscriber, List<ReadZone> zones,
+			Float stableSetTime, TimeUnit stableSetTimeUnit, boolean unique, boolean useRegex) {
 		List<ReadZone> readZones = new ArrayList<ReadZone>();
 		if (zones != null) {
 			readZones.addAll(zones);
 		}
 		subscribe(subscriber, new StableSetEsperFactory(readZones,
-				stableSetTime, stableSetTimeUnit, unique, getCounter()));
+				stableSetTime, stableSetTimeUnit, unique, getCounter(), useRegex));
 
 	}
 

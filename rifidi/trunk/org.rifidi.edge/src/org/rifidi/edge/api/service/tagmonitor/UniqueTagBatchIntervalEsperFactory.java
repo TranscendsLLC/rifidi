@@ -74,7 +74,7 @@ public class UniqueTagBatchIntervalEsperFactory implements
 		List<String> statements = new ArrayList<String>();
 		statements.add("create window " + windowName
 				+ ".std:firstunique(tag.ID) as TagReadEvent");
-		statements.add(EsperUtil.buildInsertStatement(windowName, readZones));
+		statements.add(EsperUtil.buildInsertStatement(windowName, readZones, false));
 		statements.add("on pattern[every timer:interval(" + interval
 				+ ")] delete from " + windowName);
 		return statements;

@@ -36,6 +36,8 @@ public interface StableSetService {
 	 */
 	public void subscribe(StableSetSubscriber subscriber, List<ReadZone> zones,
 			Float stableSetTime, TimeUnit stableSetTimeUnit, boolean unique);
+	public void subscribe(StableSetSubscriber subscriber, List<ReadZone> zones,
+			Float stableSetTime, TimeUnit stableSetTimeUnit, boolean unique, boolean useRegex);
 
 	/**
 	 * Unsubscribe from the Stable Set service

@@ -25,12 +25,14 @@ public class LimitStableSetEsperFactory implements RifidiAppEsperFactory {
 	private final String stableSetWindow;
 	private final String stableSetWindow_unique;
 	private final String stableSetTimeString;
+	private final Boolean useRegex;
 
 	public LimitStableSetEsperFactory(List<ReadZone> readZones,
 			Float stableSetTime, TimeUnit stableSetTimeUnit, int limit,
-			int windowID) {
+			int windowID, Boolean useRegex) {
 		this.readZones = readZones;
 		this.limit = limit;
+		this.useRegex=useRegex;
 		stableSetTimeString = EsperUtil.timeUnitToEsperTime(stableSetTime,
 				stableSetTimeUnit);
 		this.stableSetWindow = "rifidi_appservice_stableSetWindow" + windowID;
@@ -76,7 +78,7 @@ public class LimitStableSetEsperFactory implements RifidiAppEsperFactory {
 			statements.add("create window " + stableSetWindow_unique
 					+ "wind:length("+limit+").std:firstunique(tag.ID) retain-intersection as TagReadEvent");
 			statements.add(EsperUtil.buildInsertStatement(stableSetWindow_unique,
-					readZones));
+					readZones, this.useRegex));
 			statements.add("insert into " + stableSetWindow + " select * from "
 					+ stableSetWindow_unique);
 		

@@ -36,6 +36,8 @@ public class ReadZoneMonitorEsperFactory implements RifidiAppEsperFactory{
 	private final Float departureWaitTime;
 	/** The time unit used for the departure wait time */
 	private final TimeUnit timeUnit;
+	/** Is the readername a regex? */
+	private final Boolean useRegex;
 	/** The logger for this class */
 	private final static Log logger = LogFactory
 			.getLog(ReadZoneMonitorEsperFactory.class);
@@ -54,7 +56,7 @@ public class ReadZoneMonitorEsperFactory implements RifidiAppEsperFactory{
 	 *            the timeUnit used for the departure time.
 	 */
 	public ReadZoneMonitorEsperFactory(List<ReadZone> readzones,
-			Integer windowID, Float departureWaitTime, TimeUnit timeUnit) {
+			Integer windowID, Float departureWaitTime, TimeUnit timeUnit, Boolean useRegex) {
 		this.readzones = new ArrayList<ReadZone>();
 		if (readzones != null) {
 			this.readzones.addAll(readzones);
@@ -63,7 +65,7 @@ public class ReadZoneMonitorEsperFactory implements RifidiAppEsperFactory{
 		statements = new LinkedList<String>();
 		this.departureWaitTime = departureWaitTime;
 		this.timeUnit = timeUnit;
-
+		this.useRegex = useRegex;
 	}
 
 	/*
@@ -76,7 +78,7 @@ public class ReadZoneMonitorEsperFactory implements RifidiAppEsperFactory{
 	@Override
 	public List<String> createStatements() {
 		statements.add(createWindowStatement());
-		String insertStatement = EsperUtil.buildInsertStatement(windowName, readzones);
+		String insertStatement = EsperUtil.buildInsertStatement(windowName, readzones, useRegex);
 		statements.add(insertStatement);
 		statements.add(deleteStatement());
 		return statements;
