@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: PrintApp
+Bundle-Name: ReaderConfigApp
 Bundle-SymbolicName: org.rifidi.app.readerconfig
 Bundle-Version: 1.0.0
 Bundle-Vendor: Transcends, LLC
