@@ -73,7 +73,7 @@ public class DBApp extends AbstractRifidiApp {
 		this.subscriberList = new LinkedList<ReadZoneSubscriber>();
 		this.subscriberList.add(sub);
 		this.readZoneMonitoringService.subscribe(sub,
-				new LinkedList<ReadZone>(), this.timeout, TimeUnit.SECONDS, true);
+				new LinkedList<ReadZone>(), this.timeout, TimeUnit.SECONDS);
 	}
 
 	/**
