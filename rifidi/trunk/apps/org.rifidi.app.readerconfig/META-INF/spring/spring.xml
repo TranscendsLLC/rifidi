@@ -1,0 +1,23 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:osgi="http://www.springframework.org/schema/osgi"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+	http://www.springframework.org/schema/osgi
+	http://www.springframework.org/schema/osgi/spring-osgi.xsd">
+
+
+	<bean id="DynamicReaderApp" class="org.rifidi.app.dynamicreader.DynamicReaderApp">
+		<constructor-arg index="0" value="DynamicReader" />
+		<constructor-arg index="1" value="DynamicReaderApp" />
+		<property name="readZoneMonitoringService" ref="readZoneMonitoringService" />
+		<property name="readerDAO" ref="readerDAOImpl"/>
+		<property name="commandDAO" ref="commandDAOImpl"/>
+	</bean>
+	<osgi:service ref="DynamicReaderApp" interface="org.rifidi.edge.api.RifidiApp" />
+	
+	<osgi:reference id="readZoneMonitoringService"
+		interface="org.rifidi.edge.api.service.tagmonitor.ReadZoneMonitoringService" />
+
+	<osgi:reference id="readerDAOImpl" interface="org.rifidi.edge.daos.ReaderDAO"/>
+	<osgi:reference id="commandDAOImpl" interface="org.rifidi.edge.daos.CommandDAO"/>
+</beans>
