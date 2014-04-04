@@ -87,7 +87,7 @@ public class PrintApp extends AbstractRifidiApp {
 		this.subscriberList = new LinkedList<ReadZoneSubscriber>();
 		this.subscriberList.add(sub);
 		this.readZoneMonitoringService.subscribe(sub,
-				new LinkedList<ReadZone>(), 4.0f, TimeUnit.SECONDS, true);
+				new LinkedList<ReadZone>(), 4.0f, TimeUnit.SECONDS);
 	}
 
 	/**
