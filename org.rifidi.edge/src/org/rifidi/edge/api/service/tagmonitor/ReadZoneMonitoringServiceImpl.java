@@ -56,7 +56,24 @@ public class ReadZoneMonitoringServiceImpl extends
 			List<ReadZone> readZones, Float departureTime, TimeUnit timeUnit) {
 		this.subscribe(subscriber, readZones, departureTime, timeUnit, false, false);
 	}
-
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.rifidi.edge.api.service.tagmonitor.ReadZoneMonitoringService #
+	 * subscribe(org.rifidi.edge.api.service.tagmonitor.ReadZoneSubscriber ,
+	 * java.util.List, java.lang.Float, java.util.concurrent.TimeUnit)
+	 */
+	@Override
+	public void subscribe(final ReadZoneSubscriber subscriber,
+			List<ReadZone> readZones, Float departureTime, TimeUnit timeUnit, boolean unique) {
+		this.subscribe(subscriber, readZones, departureTime, timeUnit, unique, false);
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.rifidi.edge.api.service.tagmonitor.ReadZoneMonitoringService#subscribe(org.rifidi.edge.api.service.tagmonitor.ReadZoneSubscriber, java.util.List, java.lang.Float, java.util.concurrent.TimeUnit, boolean, boolean)
+	 */
 	@Override
 	public void subscribe(ReadZoneSubscriber subscriber,
 			List<ReadZone> readZones, Float departureTime, TimeUnit timeUnit,
