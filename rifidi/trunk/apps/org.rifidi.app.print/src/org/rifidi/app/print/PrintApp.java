@@ -36,8 +36,6 @@ public class PrintApp extends AbstractRifidiApp {
 	/** The service for monitoring arrival and departure events */
 	private ReadZoneMonitoringService readZoneMonitoringService;
 	private List<ReadZoneSubscriber> subscriberList;
-	private ReaderDAO readerDAO;
-	private CommandDAO commandDAO;
 
 	public PrintApp(String group, String name) {
 		super(group, name);
@@ -51,20 +49,6 @@ public class PrintApp extends AbstractRifidiApp {
 	@Override
 	public void _start() {
 		System.out.println("Starting PrintApp");
-		try {
-			Thread.sleep(10000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		System.out.println(readerDAO.getReaderFactories());
-		
-		//Execute this LLRP_Push_Stop command (AKA "Delete ROSpec") on reader LLRP_1 session 1
-		//Make sure the settings for this command are correct
-		this.executeCommand("LLRP_Push_Stop_1", "LLRP_1", "1");
-		
-		//Now that we have deleted the old ROSpec we can add a new one.  Like the other command,
-		//this command has to already exist.  
-		this.executeCommand("LLRP_ADD_ROSPEC_File_2", "LLRP_1", "1");
 
 		super._start();
 	}
@@ -103,20 +87,5 @@ public class PrintApp extends AbstractRifidiApp {
 	 */
 	public void setReadZoneMonitoringService(ReadZoneMonitoringService rzms) {
 		this.readZoneMonitoringService = rzms;
-	}
-
-	public void setReaderDAO(ReaderDAO readerDAO) {
-		this.readerDAO = readerDAO;
-	}
-
-	public void setCommandDAO(CommandDAO commandDAO) {
-		this.commandDAO = commandDAO;
-	}
-
-	//Execute a given commmand on a given reader and session
-	private void executeCommand(String commandID, String reader, String sessionID) {		
-		AbstractSensor<?> llrpReader = readerDAO.getReaderByID(reader);
-		SensorSession session = llrpReader.getSensorSessions().get(sessionID);
-		session.submit(commandID, -1, TimeUnit.MILLISECONDS);
 	}
 }
