@@ -48,9 +48,13 @@ public class PrintApp extends AbstractRifidiApp {
 	 */
 	@Override
 	public void _start() {
-		System.out.println("Starting PrintApp");
-
 		super._start();
+
+		PrintSubscriber sub = new PrintSubscriber();
+		this.subscriberList = new LinkedList<ReadZoneSubscriber>();
+		this.subscriberList.add(sub);
+		this.readZoneMonitoringService.subscribe(sub,
+				new LinkedList<ReadZone>(), 4.0f, TimeUnit.SECONDS);
 	}
 
 	/*
@@ -72,11 +76,6 @@ public class PrintApp extends AbstractRifidiApp {
 	 */
 	@Override
 	public void initialize() {
-		PrintSubscriber sub = new PrintSubscriber();
-		this.subscriberList = new LinkedList<ReadZoneSubscriber>();
-		this.subscriberList.add(sub);
-		this.readZoneMonitoringService.subscribe(sub,
-				new LinkedList<ReadZone>(), 4.0f, TimeUnit.SECONDS);
 	}
 
 	/**

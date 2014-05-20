@@ -74,18 +74,6 @@ public class DynamoDBApp extends AbstractRifidiApp {
 	 */
 	@Override
 	public void initialize() {
-		String tableName = "epc-tags";
-
-		waitForTableToBecomeAvailable(tableName);
-
-		DynamoDBSubscriber sub = new DynamoDBSubscriber(this.dynamoDB,
-				tableName);
-
-		this.subscriberList = new LinkedList<ReadZoneSubscriber>();
-		this.subscriberList.add(sub);
-		this.readZoneMonitoringService.subscribe(sub,
-				new LinkedList<ReadZone>(), 4.0f, TimeUnit.SECONDS, true);
-
 	}
 
 	/**
@@ -95,6 +83,17 @@ public class DynamoDBApp extends AbstractRifidiApp {
 	@Override
 	public void _start() {
 		super._start();
+
+		String tableName = "epc-tags";
+
+		waitForTableToBecomeAvailable(tableName);
+
+		DynamoDBSubscriber sub = new DynamoDBSubscriber(this.dynamoDB,
+				tableName);
+		this.subscriberList = new LinkedList<ReadZoneSubscriber>();
+		this.subscriberList.add(sub);
+		this.readZoneMonitoringService.subscribe(sub,
+				new LinkedList<ReadZone>(), 4.0f, TimeUnit.SECONDS, true);
 	}
 
 	/**
