@@ -47,11 +47,11 @@ public class Thinkify50TagHandler {
 		int numbits = epc.length() * 4;
 		BigInteger bigint = null;
 		try {
-			bigint = new BigInteger(Hex.decodeHex(epc.toCharArray()));
-		} catch (DecoderException e) {
+			bigint = new BigInteger(epc,16);
+		} catch (Exception e) {
 			throw new RuntimeException("Cannot decode tag: " + epc);
 		}
-		gen2event.setEPCMemory(bigint, numbits);
+		gen2event.setEPCMemory(bigint, epc, numbits);
 		TagReadEvent tre = new TagReadEvent(readerID, gen2event, 1, time);
 		tre.addExtraInformation(Thinkify50Constants.RSSI, rssi);
 		return tre;

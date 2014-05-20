@@ -78,8 +78,9 @@ public class Gen2ReadBlockDataResponse extends AbstractAwidMessage implements
 			logger.debug("EPC Memory Bank"
 					+ new String(Hex.encodeHex(shiftedmessage)));
 			//TODO: what if we don't have 96 bits?
-			gen2Event.setEPCMemory(new BigInteger(Arrays.copyOfRange(
-					shiftedmessage, 7, 19)), 12 * 8);
+			BigInteger epc = new BigInteger(Arrays.copyOfRange(
+					shiftedmessage, 7, 19));
+			gen2Event.setEPCMemory(epc, epc.toString(16), 12 * 8);
 		} else if (memorybank == 2) {
 			logger.debug("TID Memory Bank "
 					+ new String(Hex.encodeHex(shiftedmessage)));

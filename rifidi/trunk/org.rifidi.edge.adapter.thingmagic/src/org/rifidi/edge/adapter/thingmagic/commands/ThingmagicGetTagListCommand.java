@@ -202,13 +202,13 @@ public class ThingmagicGetTagListCommand extends AbstractThingmagicCommand {
 		int numBits = id.length()*4;
 		BigInteger epc;
 		try {
-			epc = new BigInteger(Hex.decodeHex(id.toCharArray()));
-		} catch (DecoderException e) {
+			epc = new BigInteger(id, 16);
+		} catch (Exception e) {
 			throw new RuntimeException("Cannot decode ID: " + id);
 		}
 
 		EPCGeneration2Event gen2event = new EPCGeneration2Event();
-		gen2event.setEPCMemory(epc, numBits);
+		gen2event.setEPCMemory(epc, id, numBits);
 		tagData = gen2event;
 
 		Integer antennaID = Integer.parseInt(splitString[1]);

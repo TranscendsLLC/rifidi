@@ -98,14 +98,14 @@ public class LLRPEventFactory {
 				//FIXME: This has not been tested yet.  
 				EPCData = StringUtils.leftPad(EPCData,
 						(id.getByteLength()-1) * 2, "0");
-				gen2event.setEPCMemory(parseString(EPCData), (id
+				gen2event.setEPCMemory(parseString(EPCData), EPCData, (id
 						.getByteLength()-1) * 8);
 			} else {
 				EPC_96 id = (EPC_96) t.getEPCParameter();
 				String EPCData = id.getEPC().toString();
 				//Left padding, as non-significant zeros are not preserved.  
 				EPCData = StringUtils.leftPad(EPCData, 24, "0");
-				gen2event.setEPCMemory(parseString(EPCData), 96);
+				gen2event.setEPCMemory(parseString(EPCData), EPCData, 96);
 			}
 
 			TagReadEvent tag = new TagReadEvent(readerID, gen2event, antid
@@ -226,8 +226,7 @@ public class LLRPEventFactory {
 			if (input.length() % 2 != 0) {
 				input = "0" + input;
 			}
-			byte[] decode = Hex.decodeHex(input.toCharArray());
-			retVal = new BigInteger(decode);
+			retVal = new BigInteger(input, 16);
 		} catch (Exception e) {
 			logger.warn("There was a problem when parsing LLRP Tags.  "
 					+ "tag has not been added", e);

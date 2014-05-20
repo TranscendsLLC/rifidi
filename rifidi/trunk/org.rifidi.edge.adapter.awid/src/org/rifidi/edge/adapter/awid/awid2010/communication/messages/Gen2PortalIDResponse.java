@@ -61,8 +61,9 @@ public class Gen2PortalIDResponse extends AbstractAwidMessage implements
 		int numIDBytes = messageLength - (9 + (includesAntennaByte ? 1 : 0));
 
 		// copy the tag id payload, ignoring the PC bytes.
-		gen2Event.setEPCMemory(new BigInteger(Arrays.copyOfRange(
-				super.rawmessage, 5, numIDBytes + 5)), numIDBytes * 8);
+		BigInteger epc = new BigInteger(Arrays.copyOfRange(
+				super.rawmessage, 5, numIDBytes + 5));
+		gen2Event.setEPCMemory(epc, epc.toString(16), numIDBytes * 8);
 		TagReadEvent tre;
 		if (includesAntennaByte) {
 			// antenna byte is third from last byte
