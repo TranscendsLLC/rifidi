@@ -51,6 +51,13 @@ public class DBApp extends AbstractRifidiApp {
 	@Override
 	public void _start() {
 		super._start();
+
+		DBSubscriber sub = new DBSubscriber(this.conn);
+		this.subscriberList = new LinkedList<ReadZoneSubscriber>();
+		this.subscriberList.add(sub);
+		this.readZoneMonitoringService.subscribe(sub,
+				new LinkedList<ReadZone>(), this.timeout, TimeUnit.SECONDS);
+		
 		this.conn.init();
 	}
 
@@ -74,11 +81,6 @@ public class DBApp extends AbstractRifidiApp {
 	@Override
 	public void initialize() {
 		this.timeout = Float.parseFloat(this.getProperty(TIMEOUT, "8.0"));
-		DBSubscriber sub = new DBSubscriber(this.conn);
-		this.subscriberList = new LinkedList<ReadZoneSubscriber>();
-		this.subscriberList.add(sub);
-		this.readZoneMonitoringService.subscribe(sub,
-				new LinkedList<ReadZone>(), this.timeout, TimeUnit.SECONDS);
 	}
 
 	/**
