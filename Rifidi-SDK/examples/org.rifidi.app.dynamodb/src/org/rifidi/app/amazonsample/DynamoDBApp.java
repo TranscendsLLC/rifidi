@@ -1,3 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2014 Transcends, LLC.
+ * This program is free software; you can redistribute it and/or modify it under the terms of the GNU 
+ * General Public License as published by the Free Software Foundation; either version 2 of the 
+ * License, or (at your option) any later version. This program is distributed in the hope that it will 
+ * be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details. You 
+ * should have received a copy of the GNU General Public License along with this program; if not, 
+ * write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, 
+ * USA. 
+ * http://www.gnu.org/licenses/gpl-2.0.html
+ *******************************************************************************/
 package org.rifidi.app.amazonsample;
 
 import java.util.LinkedList;
@@ -62,18 +74,6 @@ public class DynamoDBApp extends AbstractRifidiApp {
 	 */
 	@Override
 	public void initialize() {
-		String tableName = "epc-table";
-
-		waitForTableToBecomeAvailable(tableName);
-
-		DynamoDBSubscriber sub = new DynamoDBSubscriber(this.dynamoDB,
-				tableName);
-
-		this.subscriberList = new LinkedList<ReadZoneSubscriber>();
-		this.subscriberList.add(sub);
-		this.readZoneMonitoringService.subscribe(sub,
-				new LinkedList<ReadZone>(), 4.0f, TimeUnit.SECONDS, true);
-
 	}
 
 	/**
@@ -83,6 +83,17 @@ public class DynamoDBApp extends AbstractRifidiApp {
 	@Override
 	public void _start() {
 		super._start();
+
+		String tableName = "epc-tags";
+
+		waitForTableToBecomeAvailable(tableName);
+
+		DynamoDBSubscriber sub = new DynamoDBSubscriber(this.dynamoDB,
+				tableName);
+		this.subscriberList = new LinkedList<ReadZoneSubscriber>();
+		this.subscriberList.add(sub);
+		this.readZoneMonitoringService.subscribe(sub,
+				new LinkedList<ReadZone>(), 4.0f, TimeUnit.SECONDS, true);
 	}
 
 	/**

@@ -10,54 +10,49 @@
  * USA. 
  * http://www.gnu.org/licenses/gpl-2.0.html
  *******************************************************************************/
-package org.rifidi.app.db;
+package org.rifidi.app.print;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
+import org.rifidi.edge.api.service.tagmonitor.ReadZoneSubscriber;
 import org.rifidi.edge.notification.TagReadEvent;
-import org.springframework.jdbc.core.JdbcTemplate;
 
 /**
+ * The subscriber class. This class monitors the arrived and departed events for
+ * all readers.
+ * 
+ * @author Matthew Dean - matt@transcends.co
  */
-public class DatabaseConnection {
-
-	private JdbcTemplate jdbcTemplate;
-
-	private static final String USE_COMMAND = "use db;";
-
-	private static final SimpleDateFormat FORMATTER = new SimpleDateFormat(
-			"yyyy-MM-dd HH:mm:ss");
+public class PrintSubscriber implements ReadZoneSubscriber {
 
 	/**
+	 * Constructor
 	 * 
+	 * @param conn
+	 *            The database connection
 	 */
-	public DatabaseConnection(JdbcTemplate jdbcTemplate) {
-		this.jdbcTemplate = jdbcTemplate;
+	public PrintSubscriber() {
 	}
 
-	/**
-	 * Opens the connection with the database.
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.api.service.tagmonitor.ReadZoneSubscriber#tagArrived(
+	 * org.rifidi.edge.notification.TagReadEvent)
 	 */
-	public void init() {
-		// use the database 'db'
-		this.jdbcTemplate.execute(USE_COMMAND);
+	@Override
+	public void tagArrived(TagReadEvent tag) {
+		System.out.println("TAG ARRIVED: " + tag.getTag().getFormattedID());
 	}
 
-	/**
+	/*
+	 * (non-Javadoc)
 	 * 
+	 * @see
+	 * org.rifidi.edge.api.service.tagmonitor.ReadZoneSubscriber#tagDeparted
+	 * (org.rifidi.edge.notification.TagReadEvent)
 	 */
-	public synchronized void arrivedEvent(TagReadEvent tag) {
-		String epc = tag.getTag().getFormattedID();
-		Date date = new Date(tag.getTimestamp());
-		String datestr = FORMATTER.format(date);
-		String command = "INSERT INTO assets VALUES('" + epc + "', '"
-				+ tag.getReaderID() + "', '" + tag.getAntennaID() + "', '"
-				+ datestr + "');";
-		try {
-			this.jdbcTemplate.execute(command);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+	@Override
+	public void tagDeparted(TagReadEvent tag) {
+		System.out.println("TAG DEPARTED: " + tag.getTag().getFormattedID());
 	}
 }
