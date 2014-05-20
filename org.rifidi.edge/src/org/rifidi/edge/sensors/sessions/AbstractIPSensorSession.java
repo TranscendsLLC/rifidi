@@ -157,6 +157,10 @@ public abstract class AbstractIPSensorSession extends AbstractSensorSession {
 				&& connecting.compareAndSet(false, true)) {
 			try {
 				setStatus(SessionStatus.CONNECTING);
+                //fix for abandoned sockets
+                if (socket != null) {
+                        try{ socket.close();} catch (Exception e) {}
+                }
 				socket = null;
 				// if an executor exists, execute it (delete the executor :))
 				if (processing.get()) {
