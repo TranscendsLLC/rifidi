@@ -10,7 +10,7 @@
  * USA. 
  * http://www.gnu.org/licenses/gpl-2.0.html
  *******************************************************************************/
-package org.rifidi.app.db;
+package org.rifidi.app.print;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -20,26 +20,24 @@ import org.rifidi.edge.api.AbstractRifidiApp;
 import org.rifidi.edge.api.service.tagmonitor.ReadZone;
 import org.rifidi.edge.api.service.tagmonitor.ReadZoneMonitoringService;
 import org.rifidi.edge.api.service.tagmonitor.ReadZoneSubscriber;
+import org.rifidi.edge.daos.CommandDAO;
+import org.rifidi.edge.daos.ReaderDAO;
+import org.rifidi.edge.sensors.AbstractCommandConfiguration;
+import org.rifidi.edge.sensors.AbstractSensor;
+import org.rifidi.edge.sensors.Command;
+import org.rifidi.edge.sensors.SensorSession;
 
 /**
  * @author Matthew Dean - matt@transcends.co
  * 
  */
-public class DBApp extends AbstractRifidiApp {
-
-	// Property names
-	public static final String TIMEOUT = "Timeout";
-
-	private DatabaseConnection conn;
+public class PrintApp extends AbstractRifidiApp {
 
 	/** The service for monitoring arrival and departure events */
 	private ReadZoneMonitoringService readZoneMonitoringService;
-
-	private float timeout;
-	
 	private List<ReadZoneSubscriber> subscriberList;
 
-	public DBApp(String group, String name) {
+	public PrintApp(String group, String name) {
 		super(group, name);
 	}
 
@@ -52,13 +50,11 @@ public class DBApp extends AbstractRifidiApp {
 	public void _start() {
 		super._start();
 
-		DBSubscriber sub = new DBSubscriber(this.conn);
+		PrintSubscriber sub = new PrintSubscriber();
 		this.subscriberList = new LinkedList<ReadZoneSubscriber>();
 		this.subscriberList.add(sub);
 		this.readZoneMonitoringService.subscribe(sub,
-				new LinkedList<ReadZone>(), this.timeout, TimeUnit.SECONDS);
-		
-		this.conn.init();
+				new LinkedList<ReadZone>(), 4.0f, TimeUnit.SECONDS);
 	}
 
 	/*
@@ -80,16 +76,6 @@ public class DBApp extends AbstractRifidiApp {
 	 */
 	@Override
 	public void initialize() {
-		this.timeout = Float.parseFloat(this.getProperty(TIMEOUT, "8.0"));
-	}
-
-	/**
-	 * Called by spring.
-	 * 
-	 * @param conn
-	 */
-	public void setDatabaseConnection(DatabaseConnection conn) {
-		this.conn = conn;
 	}
 
 	/**
@@ -101,5 +87,4 @@ public class DBApp extends AbstractRifidiApp {
 	public void setReadZoneMonitoringService(ReadZoneMonitoringService rzms) {
 		this.readZoneMonitoringService = rzms;
 	}
-
 }
