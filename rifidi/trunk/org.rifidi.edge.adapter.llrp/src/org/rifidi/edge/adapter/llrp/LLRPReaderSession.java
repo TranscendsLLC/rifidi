@@ -146,9 +146,19 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 					connected = true;
 					break;
 				} catch (LLRPConnectionAttemptFailedException e) {
+					// fix for abandoned connection
+					try {
+						((LLRPConnector) connection).disconnect();
+					} catch (Exception ex) {
+					}
 					logger.debug("Attempt to connect to LLRP reader failed: "
 							+ connCount);
 				} catch (RuntimeIOException e) {
+					// fix for abandoned connection
+					try {
+						((LLRPConnector) connection).disconnect();
+					} catch (Exception ex) {
+					}
 					logger.debug("Attempt to connect to LLRP reader failed: "
 							+ connCount);
 				}
