@@ -69,13 +69,14 @@ class GenericSensorSessionTagHandler {
 				String val = key_val[1];
 				if (key.equalsIgnoreCase(ID_KEY)) {
 					int numbits = val.length() * 4;
-					BigInteger epc = null;
+					BigInteger epc;
 					try {
-						epc = new BigInteger(Hex.decodeHex(val.toCharArray()));
-					} catch (DecoderException e) {
-						throw new RuntimeException("Cannot decode tag: " + val);
+						epc = new BigInteger(val, 16);
+					} catch (Exception e) {
+						throw new RuntimeException("Cannot decode ID: "
+								+ val);
 					}
-					gen2event.setEPCMemory(epc, numbits);
+					gen2event.setEPCMemory(epc, val, numbits);
 				} else if (key.equalsIgnoreCase(ANTENNA_KEY)) {
 					antenna = Integer.parseInt(val);
 				} else if (key.equalsIgnoreCase(TIMESTAMP_KEY)) {

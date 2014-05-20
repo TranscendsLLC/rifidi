@@ -57,25 +57,22 @@ public class AlienTagReadEventFactory {
 		// the new event
 		DatacontainerEvent tagData = null;
 		// a big integer representation of the epc
-		BigInteger epc = null;
+		BigInteger epc;
 		try {
-			epc = new BigInteger(Hex.decodeHex(alienTag.getId_hex()
-					.toCharArray()));
-		} catch (DecoderException e) {
-			throw new RuntimeException("Cannot decode tag: "
-					+ alienTag.getId_hex());
+			epc = new BigInteger(alienTag.getId_hex(), 16);
+		} catch (Exception e) {
+			throw new RuntimeException("Cannot decode ID: " + alienTag.getId_hex());
 		}
 		int numbits = alienTag.getId_hex().length() * 4;
-
 		// choose whether to make a gen1 or a gen2 tag
 		if (alienTag.getProtocol() == 1) {
 			EPCGeneration1Event gen1event = new EPCGeneration1Event();
 			// make some wild guesses on the length of the epc field
-			gen1event.setEPCMemory(epc, numbits);
+			gen1event.setEPCMemory(epc, alienTag.getId_hex(), numbits);
 			tagData = gen1event;
 		} else {
 			EPCGeneration2Event gen2event = new EPCGeneration2Event();
-			gen2event.setEPCMemory(epc, numbits);
+			gen2event.setEPCMemory(epc, alienTag.getId_hex(), numbits);
 			tagData = gen2event;
 		}
 		TagReadEvent retVal = new TagReadEvent(readerID, tagData, alienTag

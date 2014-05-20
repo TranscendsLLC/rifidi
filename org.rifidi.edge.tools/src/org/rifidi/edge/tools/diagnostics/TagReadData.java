@@ -54,10 +54,10 @@ public class TagReadData extends AbstractReadData<EPCGeneration2Event>{
 		EPCGeneration2Event tag = new EPCGeneration2Event();
 		try {
 			tag.setEPCMemory(
-					new BigInteger(Hex.decodeHex(id.toCharArray())), 96);
+					new BigInteger(Hex.decodeHex(id.toCharArray())), id, 96);
 		} catch (DecoderException e) {
 			e.printStackTrace();
-			tag.setEPCMemory(new BigInteger("0"), 96);
+			tag.setEPCMemory(new BigInteger("0"), id, 96);
 		}
 		return tag;
 	}

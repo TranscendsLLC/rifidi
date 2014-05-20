@@ -43,8 +43,8 @@ public class EPCGeneration1Event extends DatacontainerEvent {
 	 * @param length
 	 *            The size of the memory bank in bits
 	 */
-	public void setEPCMemory(BigInteger memBank, Integer length) {
-		hex = new String(Hex.encodeHex(memBank.toByteArray()));
+	public void setEPCMemory(BigInteger memBank, String epc, Integer length) {
+		hex = epc;
 		memoryBanks.get(0).setLength(length);
 		memoryBanks.get(0).setMemory(memBank);
 	}

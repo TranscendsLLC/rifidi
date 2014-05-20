@@ -64,13 +64,13 @@ public class Thingmagic6TagHandler implements ReadListener {
 		int numBits = tag.epcString().length()*4;
 		BigInteger epc;
 		try {
-			epc = new BigInteger(Hex.decodeHex(tag.epcString().toCharArray()));
-		} catch (DecoderException e) {
+			epc = new BigInteger(tag.epcString(), 16);
+		} catch (Exception e) {
 			throw new RuntimeException("Cannot decode ID: " + tag.epcString());
 		}
 
 		EPCGeneration2Event gen2event = new EPCGeneration2Event();
-		gen2event.setEPCMemory(epc, numBits);
+		gen2event.setEPCMemory(epc, tag.epcString(), numBits);
 		tagData = gen2event;
 
 		TagReadEvent tagevent = new TagReadEvent(session.getReaderID(), tagData,

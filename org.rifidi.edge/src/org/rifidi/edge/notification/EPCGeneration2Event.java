@@ -163,8 +163,8 @@ public class EPCGeneration2Event extends EPCGeneration1Event {
 	 * .BigInteger, java.lang.Integer)
 	 */
 	@Override
-	public void setEPCMemory(BigInteger memBank, Integer length) {
-		hex = new String(Hex.encodeHex(memBank.toByteArray()));
+	public void setEPCMemory(BigInteger memBank, String epc, Integer length) {
+		hex = epc;
 		memoryBanks.get(1).setMemory(memBank);
 		memoryBanks.get(1).setLength(length);
 	}
