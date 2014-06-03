@@ -21,6 +21,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import org.rifidi.edge.api.service.EsperUtil;
 import org.rifidi.edge.api.service.RifidiAppService;
 import org.rifidi.edge.notification.RSSITagReadEvent;
 
@@ -40,7 +41,11 @@ public class RSSIMonitoringServiceImpl extends
 	private static final String READER_ID = "(maxby(avgRSSI)).readerID()";
 	private static final String MAX_RSSI = "max(avgRSSI)";
 	private static final String SUM_RSSI = "tagCount";
+	private static final String ANTENNA = "antenna";
+	
+	private boolean useRegex;
 
+	
 	public RSSIMonitoringServiceImpl(String group, String name) {
 		super(group, name);
 	}
@@ -56,10 +61,12 @@ public class RSSIMonitoringServiceImpl extends
 	 */
 	@Override
 	public void subscribe(RSSIReadZoneSubscriber subscriber,
-			List<ReadZone> readZones, Float windowTime,
-			TimeUnit timeUnit, Integer countThreshold, Double minAvgRSSIThreshold) {
-		this.subscribe(subscriber, new RSSIMonitorEsperFactory(readZones, getCounter(), 
-				windowTime, timeUnit, countThreshold, minAvgRSSIThreshold));
+			HashMap<String,ReadZone> readZones, Float windowTime,
+			TimeUnit timeUnit, Integer countThreshold, Double minAvgRSSIThreshold, boolean useRegex) {
+		this.useRegex = useRegex;
+		this.readZones = readZones;
+		this.subscribe(subscriber, new RSSIMonitorEsperFactory(new LinkedList<ReadZone>(readZones.values()), getCounter(), 
+				windowTime, timeUnit, countThreshold, minAvgRSSIThreshold, useRegex));
 	}
 
 	@Override
@@ -76,8 +83,11 @@ public class RSSIMonitoringServiceImpl extends
 					List<RSSITagReadEvent> retVal = new LinkedList<RSSITagReadEvent>();
 					for (EventBean b : arg0) {
 						HashMap<Object,Object> tre = (HashMap<Object,Object>) b.getUnderlying();
-						RSSITagReadEvent tag = new RSSITagReadEvent((String)tre.get(TAG_ID),(String)tre.get(READER_ID),(Double)tre.get(MAX_RSSI),(Double)tre.get(SUM_RSSI));
-						//System.out.println(tag);
+						RSSITagReadEvent tag = new RSSITagReadEvent((String)tre.get(TAG_ID),(String)tre.get(READER_ID),(Integer)tre.get(ANTENNA),(Double)tre.get(MAX_RSSI),(Double)tre.get(SUM_RSSI));
+
+						tag.setReadZone(EsperUtil.returnReaderMatch(readZones, useRegex, (String)tre.get(READER_ID), (Integer)tre.get(ANTENNA)));
+						
+						System.out.println(tag);
 						retVal.add(tag);
 					}
 					subscriber.tagArrived(removeDuplicates(retVal));
@@ -87,7 +97,7 @@ public class RSSIMonitoringServiceImpl extends
 					List<RSSITagReadEvent> retVal = new LinkedList<RSSITagReadEvent>();
 					for (EventBean b : arg0) {
 						HashMap<Object,Object> tre = (HashMap<Object,Object>) b.getUnderlying();
-						RSSITagReadEvent tag = new RSSITagReadEvent((String)tre.get(TAG_ID),(String)tre.get(READER_ID),(Double)tre.get(MAX_RSSI),(Double)tre.get(SUM_RSSI));
+						RSSITagReadEvent tag = new RSSITagReadEvent((String)tre.get(TAG_ID),(String)tre.get(READER_ID),(Integer)tre.get(ANTENNA),(Double)tre.get(MAX_RSSI),(Double)tre.get(SUM_RSSI));
 						retVal.add(tag);
 					}
 					subscriber.tagDeparted(removeDuplicates(retVal));

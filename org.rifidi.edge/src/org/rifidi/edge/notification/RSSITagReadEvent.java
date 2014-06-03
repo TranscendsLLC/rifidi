@@ -23,21 +23,24 @@ import java.math.BigInteger;
  * @author rifidi
  */
 public class RSSITagReadEvent {
-
+	
 	private String tagID;
 	private String readerID;
 	private Double avgRSSI;
 	private Double tagCount;
+	private Integer antenna;
+	private String readZone;
 
 	/**
 	 * 
 	 */
-	public RSSITagReadEvent(String tagID, String readerID, Double avgRSSI,
+	public RSSITagReadEvent(String tagID, String readerID, Integer antenna, Double avgRSSI,
 			Double tagCount) {
 		this.tagID = tagID;
 		this.readerID = readerID;
 		this.avgRSSI = avgRSSI;
 		this.tagCount = tagCount;
+		this.antenna=antenna;
 	}
 
 	public String getTagID() {
@@ -64,6 +67,14 @@ public class RSSITagReadEvent {
 		this.avgRSSI = avgRSSI;
 	}
 
+	public Integer getAntenna() {
+		return antenna;
+	}
+
+	public void setAntenna(Integer antenna) {
+		this.antenna = antenna;
+	}
+
 	public void setTagCount(Double tagCount) {
 		this.tagCount = tagCount;
 	}
@@ -71,14 +82,24 @@ public class RSSITagReadEvent {
 	public Double getTagCount() {
 		return this.tagCount;
 	}
+	
+	public String getReadZone() {
+		return readZone;
+	}
+
+	public void setReadZone(String readzone) {
+		this.readZone = readzone;
+	}
 
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		builder.append("RSSITagReadEvent tag: " + this.tagID);
 		builder.append(", reader: " + this.readerID);
+		builder.append(", antenna: " + this.antenna);
 		builder.append(", avg: " + this.avgRSSI);
 		builder.append(", sum: " + this.tagCount);
+		builder.append(", readzone: " + this.readZone);
 		return builder.toString();
 	}
 

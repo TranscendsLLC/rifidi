@@ -13,6 +13,7 @@
 package org.rifidi.edge.api.service;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -161,6 +162,38 @@ public class EsperUtil {
 			builder.append(")");
 		}
 		return builder.toString();
+	}
+	
+	public static String returnReaderMatch(HashMap<String,ReadZone> readzones, boolean useRegex, String reader, Integer antenna) {
+		for (String zonename : readzones.keySet()) {
+			ReadZone zone = readzones.get(zonename);
+			if (useRegex) {
+				if(reader.matches(zone.getReaderID())) {
+					if(zone.getAntennas().isEmpty()) {
+						return zonename;
+					} else {
+						for(Integer ant:zone.getAntennas()) {
+							if(ant.equals(antenna)) {
+								return zonename;
+							}
+						}
+					}
+				}
+			} else {
+				if(reader.equals(zone.getReaderID())) {
+					if(zone.getAntennas().isEmpty()) {
+						return zonename;
+					} else {
+						for(Integer ant:zone.getAntennas()) {
+							if(ant.equals(antenna)) {
+								return zonename;
+							}
+						}
+					}
+				}
+			}
+		}
+		return reader;
 	}
 
 	/**
