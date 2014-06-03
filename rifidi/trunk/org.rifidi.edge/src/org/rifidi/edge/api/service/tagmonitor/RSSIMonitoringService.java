@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.rifidi.edge.api.service.tagmonitor;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -21,6 +22,6 @@ import java.util.concurrent.TimeUnit;
  */
 public interface RSSIMonitoringService {
 	public void subscribe(RSSIReadZoneSubscriber subscriber,
-			List<ReadZone> readZones, Float windowTime, TimeUnit timeUnit, Integer countThreshold, Double minAvgRSSIThreshold);
+			HashMap<String,ReadZone> readZones, Float windowTime, TimeUnit timeUnit, Integer countThreshold, Double minAvgRSSIThreshold, boolean useRegex);
 	public void unsubscribe(RSSIReadZoneSubscriber subscriber);
 }

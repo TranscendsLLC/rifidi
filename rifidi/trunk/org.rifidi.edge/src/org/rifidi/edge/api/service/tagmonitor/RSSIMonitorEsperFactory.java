@@ -50,21 +50,22 @@ public class RSSIMonitorEsperFactory implements RifidiAppEsperFactory {
 	private final static Log logger = LogFactory
 			.getLog(RSSIMonitorEsperFactory.class);
 	private final String interval;
+	private final boolean useRegex;
 	
 	private final Integer countThreshold;
 	
 	private final Double minAvgRSSIThreshold;
 
 	public RSSIMonitorEsperFactory(List<ReadZone> readzones, Integer windowID,
-			Float windowTime, TimeUnit timeUnit, Integer countThreshold, Double mingAvgRSSIThreshold) {
+			Float windowTime, TimeUnit timeUnit, Integer countThreshold, Double mingAvgRSSIThreshold, boolean useRegex) {
 		this.readzones = new ArrayList<ReadZone>();
 		if (readzones != null) {
 			this.readzones.addAll(readzones);
 		}
 		this.windowName = "rssi_" + windowID;
-		this.windowName_avg = windowName + "_avg";
-		this.windowName_first = windowName + "_first";
-		this.windowName_sub = windowName + "_sub";
+		this.windowName_avg = windowName + "_avg_" + windowID;
+		this.windowName_first = windowName + "_first_" + windowID;
+		this.windowName_sub = windowName + "_sub_" + windowID;
 		//this.slidingWindowName = "sliding_" + windowID;
 		statements = new LinkedList<String>();
 		//this.windowTime = windowTime;
@@ -72,6 +73,7 @@ public class RSSIMonitorEsperFactory implements RifidiAppEsperFactory {
 		this.interval = EsperUtil.timeUnitToEsperTime(windowTime, timeUnit);
 		this.countThreshold = countThreshold;
 		this.minAvgRSSIThreshold = mingAvgRSSIThreshold;
+		this.useRegex = useRegex;
 	}
 
 	/*
@@ -82,12 +84,12 @@ public class RSSIMonitorEsperFactory implements RifidiAppEsperFactory {
 	@Override
 	public List<String> createStatements() {
 		statements.add("create window " + windowName_first + ".win:time_batch("+interval+") as TagReadEvent");
-		statements.add(EsperUtil.buildInsertStatement(windowName_first, readzones, false));
+		statements.add(EsperUtil.buildInsertStatement(windowName_first, readzones, this.useRegex));
 		statements.add("create window " + windowName_avg + ".win:time_batch("+interval+") as RSSITagReadEvent");
-		statements.add("insert into "  + windowName_avg + " select tag.formattedID, readerID, avg(cast(extraInformation('RSSI'),Double)) as avgRSSI, cast(count(*),Double) as tagCount from "
-					+ windowName_first + " group by tag.ID, readerID having cast(count(*),Double)>" + countThreshold + " and avg(cast(extraInformation('RSSI'),Double))>" + minAvgRSSIThreshold );		
-		statements.add("insert into "  + windowName + " select tagID, maxby(avgRSSI).readerID from "
-				+ windowName_avg + " group by tagID"  );
+		statements.add("insert into "  + windowName_avg + " select tag.formattedID, readerID, antennaID, avg(cast(extraInformation('RSSI'),Double)) as avgRSSI, cast(count(*),Double) as tagCount from "
+					+ windowName_first + " group by tag.ID, readerID having cast(count(*),Double)>" + countThreshold + " and avg(cast(extraInformation('RSSI'),Double))>" + minAvgRSSIThreshold );
+		statements.add("insert into "  + windowName + " select tagID, antenna, maxby(avgRSSI).readerID from "
+				+ windowName_avg + " group by tagID, antenna");
 		return statements;
 	}
 
