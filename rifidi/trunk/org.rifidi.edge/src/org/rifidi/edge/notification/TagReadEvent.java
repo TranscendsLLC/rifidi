@@ -50,6 +50,11 @@ public class TagReadEvent implements Serializable,
 	private HashMap<String, Serializable> extraInformation = null;
 
 	/**
+	 * Default Constructor
+	 */
+	public TagReadEvent() {}
+	
+	/**
 	 * Constructor
 	 * 
 	 * @param readerID
