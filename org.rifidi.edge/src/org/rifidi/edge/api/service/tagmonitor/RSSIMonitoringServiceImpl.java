@@ -87,7 +87,6 @@ public class RSSIMonitoringServiceImpl extends
 
 						tag.setReadZone(EsperUtil.returnReaderMatch(readZones, useRegex, (String)tre.get(READER_ID), (Integer)tre.get(ANTENNA)));
 						
-						System.out.println(tag);
 						retVal.add(tag);
 					}
 					subscriber.tagArrived(removeDuplicates(retVal));
