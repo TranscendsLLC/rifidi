@@ -85,8 +85,9 @@ public class RSSIMonitoringServiceImpl extends
 						HashMap<Object,Object> tre = (HashMap<Object,Object>) b.getUnderlying();
 						RSSITagReadEvent tag = new RSSITagReadEvent((String)tre.get(TAG_ID),(String)tre.get(READER_ID),(Integer)tre.get(ANTENNA),(Double)tre.get(MAX_RSSI),(Double)tre.get(SUM_RSSI));
 
-						tag.setReadZone(EsperUtil.returnReaderMatch(readZones, useRegex, (String)tre.get(READER_ID), (Integer)tre.get(ANTENNA)));
-						
+						if ((String)tre.get(READER_ID)!=null) {
+							tag.setReadZone(EsperUtil.returnReaderMatch(readZones, useRegex, (String)tre.get(READER_ID), (Integer)tre.get(ANTENNA)));
+						}
 						retVal.add(tag);
 					}
 					subscriber.tagArrived(removeDuplicates(retVal));
