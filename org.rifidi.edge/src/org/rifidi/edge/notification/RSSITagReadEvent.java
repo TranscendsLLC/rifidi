@@ -18,7 +18,7 @@ package org.rifidi.edge.notification;
 /**
  * 
  * 
- * @author rifidi
+ * @author Matthew Dean - matt@transcends.co
  */
 public class RSSITagReadEvent {
 	

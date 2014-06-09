@@ -22,7 +22,7 @@ import org.rifidi.edge.api.service.RifidiAppSubscriber;
 import org.rifidi.edge.notification.RSSITagReadEvent;
 
 /**
- * @author rifidi
+ * @author Matthew Dean - matt@transcends.co
  *
  */
 public interface RSSIReadZoneSubscriber extends RifidiAppSubscriber {
