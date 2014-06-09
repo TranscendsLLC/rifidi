@@ -38,6 +38,8 @@ public interface StableSetService {
 	 * @param unique
 	 *            If true, the stable set will only pay attention to unique tags
 	 *            and will not count (or return) duplicates
+	 * @param useRegex
+	 * 			Are you using regular expressions in the readezones you pass in?  
 	 */
 	public void subscribe(StableSetSubscriber subscriber, List<ReadZone> zones,
 			Float stableSetTime, TimeUnit stableSetTimeUnit, boolean unique);

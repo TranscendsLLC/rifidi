@@ -100,7 +100,7 @@ public interface ReadZoneMonitoringService {
 	 *            on antenna 2, a new arrival event will not occur for the
 	 *            switch to antenna 2.
 	 * @param useRegex
-	 * 		      Is the readername a regex?
+	 * 		      Are you using regular expressions in the readezones you pass in?  
 	 */
 	public void subscribe(ReadZoneSubscriber subscriber,
 			List<ReadZone> readZones, Float departureTime, TimeUnit timeUnit,
