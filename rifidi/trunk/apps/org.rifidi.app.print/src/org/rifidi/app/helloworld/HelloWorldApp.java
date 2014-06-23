@@ -10,7 +10,7 @@
  * USA. 
  * http://www.gnu.org/licenses/gpl-2.0.html
  *******************************************************************************/
-package org.rifidi.app.print;
+package org.rifidi.app.helloworld;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -20,24 +20,19 @@ import org.rifidi.edge.api.AbstractRifidiApp;
 import org.rifidi.edge.api.service.tagmonitor.ReadZone;
 import org.rifidi.edge.api.service.tagmonitor.ReadZoneMonitoringService;
 import org.rifidi.edge.api.service.tagmonitor.ReadZoneSubscriber;
-import org.rifidi.edge.daos.CommandDAO;
-import org.rifidi.edge.daos.ReaderDAO;
-import org.rifidi.edge.sensors.AbstractCommandConfiguration;
-import org.rifidi.edge.sensors.AbstractSensor;
-import org.rifidi.edge.sensors.Command;
-import org.rifidi.edge.sensors.SensorSession;
 
 /**
- * @author Matthew Dean - matt@transcends.co
+ * A simple application which prints out arriving and departing tag for all readers.
  * 
+ * @author Matthew Dean - matt@transcends.co
  */
-public class PrintApp extends AbstractRifidiApp {
+public class HelloWorldApp extends AbstractRifidiApp {
 
 	/** The service for monitoring arrival and departure events */
 	private ReadZoneMonitoringService readZoneMonitoringService;
 	private List<ReadZoneSubscriber> subscriberList;
 
-	public PrintApp(String group, String name) {
+	public HelloWorldApp(String group, String name) {
 		super(group, name);
 	}
 
@@ -50,7 +45,7 @@ public class PrintApp extends AbstractRifidiApp {
 	public void _start() {
 		super._start();
 
-		PrintSubscriber sub = new PrintSubscriber();
+		HelloWorldSubscriber sub = new HelloWorldSubscriber();
 		this.subscriberList = new LinkedList<ReadZoneSubscriber>();
 		this.subscriberList.add(sub);
 		this.readZoneMonitoringService.subscribe(sub,
