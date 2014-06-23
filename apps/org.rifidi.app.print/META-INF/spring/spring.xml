@@ -6,12 +6,12 @@
 	http://www.springframework.org/schema/osgi/spring-osgi.xsd">
 
 
-	<bean id="PrintApp" class="org.rifidi.app.print.PrintApp">
-		<constructor-arg index="0" value="Print" />
-		<constructor-arg index="1" value="PrintApp" />
+	<bean id="HelloWorldApp" class="org.rifidi.app.helloworld.HelloWorldApp">
+		<constructor-arg index="0" value="HelloWorld" />
+		<constructor-arg index="1" value="HelloWorldApp" />
 		<property name="readZoneMonitoringService" ref="readZoneMonitoringService" />
 	</bean>
-	<osgi:service ref="PrintApp" interface="org.rifidi.edge.api.RifidiApp" />
+	<osgi:service ref="HelloWorldApp" interface="org.rifidi.edge.api.RifidiApp" />
 	
 	<osgi:reference id="readZoneMonitoringService"
 		interface="org.rifidi.edge.api.service.tagmonitor.ReadZoneMonitoringService" />

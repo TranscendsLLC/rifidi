@@ -10,7 +10,7 @@
  * USA. 
  * http://www.gnu.org/licenses/gpl-2.0.html
  *******************************************************************************/
-package org.rifidi.app.print;
+package org.rifidi.app.helloworld;
 
 import org.rifidi.edge.api.service.tagmonitor.ReadZoneSubscriber;
 import org.rifidi.edge.notification.TagReadEvent;
@@ -21,7 +21,7 @@ import org.rifidi.edge.notification.TagReadEvent;
  * 
  * @author Matthew Dean - matt@transcends.co
  */
-public class PrintSubscriber implements ReadZoneSubscriber {
+public class HelloWorldSubscriber implements ReadZoneSubscriber {
 
 	/**
 	 * Constructor
@@ -29,7 +29,7 @@ public class PrintSubscriber implements ReadZoneSubscriber {
 	 * @param conn
 	 *            The database connection
 	 */
-	public PrintSubscriber() {
+	public HelloWorldSubscriber() {
 	}
 
 	/*
