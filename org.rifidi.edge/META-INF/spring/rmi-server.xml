@@ -5,6 +5,16 @@
 
 	<!-- xmlns:security="http://www.springframework.org/schema/security" -->
 
+	<bean id="restletServer" class="org.rifidi.edge.rest.RestletServer">
+		<constructor-arg index="0" ref="restletManagerStub"/>
+	</bean>
+
+	<bean id="restletManagerStub" class="org.rifidi.edge.rest.SensorManagerServiceRestletImpl">
+		<property name="sensorManagerService" ref="sensorManagerStub"/>
+		<property name="commandManagerService" ref="commandManagerStub"/>
+		<property name="appManager" ref="appManager"/>
+	</bean>
+	
 	<bean id="sensorManagerStub" class="org.rifidi.edge.rmi.SensorManagerServiceImpl">
 		<property name="readerDAO" ref="ReaderDAOImpl" />
 		<property name="configurationService" ref="configurationService" />

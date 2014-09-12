@@ -58,6 +58,11 @@ public class SensorManagerServiceImpl implements SensorManagerService {
 	private static final Log logger = LogFactory
 			.getLog(SensorManagerServiceImpl.class);
 
+	public SensorManagerServiceImpl() {
+	}
+	
+	
+	
 	/*
 	 * (non-Javadoc)
 	 * 
