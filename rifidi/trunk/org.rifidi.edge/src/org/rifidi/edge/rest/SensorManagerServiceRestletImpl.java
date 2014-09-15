@@ -265,6 +265,8 @@ public class SensorManagerServiceRestletImpl extends Application {
 				try {
 					appManager.stopApp((Integer.parseInt((String) request.getAttributes().get(
 							"appID"))));
+					response.setEntity(self.generateReturnString(self
+							.generateSuccessMessage()), MediaType.TEXT_XML);
 				} catch (Exception e) {
 					response.setEntity(e.getMessage(), MediaType.TEXT_PLAIN);
 				}
