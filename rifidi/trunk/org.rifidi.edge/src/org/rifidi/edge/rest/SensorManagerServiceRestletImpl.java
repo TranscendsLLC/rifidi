@@ -12,25 +12,27 @@
  *******************************************************************************/
 package org.rifidi.edge.rest;
 
+import java.io.Serializable;
+import java.io.StringWriter;
+import java.io.Writer;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import javax.management.Attribute;
 import javax.management.AttributeList;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Marshaller;
 
 import org.restlet.Application;
 import org.restlet.Request;
 import org.restlet.Response;
 import org.restlet.Restlet;
-import org.restlet.Server;
 import org.restlet.data.MediaType;
-import org.restlet.data.Protocol;
-import org.restlet.resource.Get;
-import org.restlet.resource.ServerResource;
 import org.restlet.routing.Router;
 import org.rifidi.edge.api.CommandConfigurationDTO;
-import org.rifidi.edge.api.CommandDTO;
 import org.rifidi.edge.api.CommandManagerService;
 import org.rifidi.edge.api.CommandSubmissionException;
 import org.rifidi.edge.api.ReaderDTO;
@@ -38,14 +40,15 @@ import org.rifidi.edge.api.RifidiApp;
 import org.rifidi.edge.api.SensorManagerService;
 import org.rifidi.edge.api.SessionDTO;
 import org.rifidi.edge.api.service.appmanager.AppManager;
-import org.rifidi.edge.configuration.ConfigurationService;
 
 /**
- * This class handles the incoming restlet requests.
+ * This class handles the incoming rest requests.
  * 
  * @author Matthew Dean - matt@transcends.co
  */
 public class SensorManagerServiceRestletImpl extends Application {
+
+	public static final String SUCCESS_MESSAGE = "Success";
 
 	/** The sensor manager service for sensor commands */
 	public SensorManagerService sensorManagerService;
@@ -56,78 +59,30 @@ public class SensorManagerServiceRestletImpl extends Application {
 	/**  */
 	public AppManager appManager;
 
-	/**
-	 * 
-	 */
-	public SensorManagerServiceRestletImpl() {
-
-		System.out.println("CALLED RESTLET CONSTRUCTOR *********");
-		// Create the HTTP server and listen on port 8182
-		// try {
-		// new Server(Protocol.HTTP, 8182, RestletServer.class).start();
-		// } catch (Exception e) {
-		// e.printStackTrace();
-		// }
-		// this.initRestlet();
-		// this.initTest();
-	}
-
-	@Get
-	public String toString() {
-		return "hello, world";
-	}
-
 	@Override
 	public Restlet createInboundRoot() {
-		System.out.println("Hit createInboundRoot!");
-		// Router router = new Router(getContext());
-		// Restlet hello = new Restlet() {
-		// @Override
-		// public void handle(Request request, Response response) {
-		// System.out.println("hit hello");
-		// response.setEntity("hello", MediaType.TEXT_PLAIN);
-		// }
-		// };
-		// Restlet world = new Restlet() {
-		// @Override
-		// public void handle(Request request, Response response) {
-		// System.out.println("hit world");
-		// response.setEntity("world", MediaType.TEXT_PLAIN);
-		// }
-		// };
-		// router.attach("/hello/{name}", HelloWorldResource.class);
-		// router.attach("/world", world);
-		//
-		// return router;
 		return this.initRestlet();
 	}
 
 	public Router initRestlet() {
 		final SensorManagerServiceRestletImpl self = this;
-
-		Restlet hello = new Restlet() {
-			@Override
-			public void handle(Request request, Response response) {
-				System.out.println("hit hello");
-				response.setEntity("hello", MediaType.TEXT_PLAIN);
-			}
-		};
-		Restlet world = new Restlet() {
-			@Override
-			public void handle(Request request, Response response) {
-				System.out.println("hit world");
-				response.setEntity("world", MediaType.TEXT_PLAIN);
-			}
-		};
+		
 		Restlet readers = new Restlet() {
 			@Override
 			public void handle(Request request, Response response) {
-				System.out.println("hit readers");
 				Set<ReaderDTO> dtos = sensorManagerService.getReaders();
+				List<ReaderNameDTO> rnd = new LinkedList<ReaderNameDTO>();
 				for (ReaderDTO dto : dtos) {
-					response.getAttributes().put(dto.getReaderID(),
-							dto.getReaderFactoryID());
+					ReaderNameDTO r = new ReaderNameDTO();
+					r.setReaderID(dto.getReaderID());
+					r.setReaderType(dto.getReaderFactoryID());
+					rnd.add(r);
+//					response.getAttributes().put(dto.getReaderID(),
+//							dto.getReaderFactoryID());
 				}
+				ReaderResponseMessageDTO rrmd = new ReaderResponseMessageDTO();
+				rrmd.setReaders(rnd);
+				response.setEntity(self.generateReturnString(rrmd), MediaType.TEXT_XML);
 			}
 		};
 
@@ -136,10 +91,16 @@ public class SensorManagerServiceRestletImpl extends Application {
 			public void handle(Request request, Response response) {
 				Set<CommandConfigurationDTO> dtos = commandManagerService
 						.getCommands();
+				List<CommandNameDTO> cnd = new LinkedList<CommandNameDTO>();
 				for (CommandConfigurationDTO dto : dtos) {
-					response.getAttributes().put(dto.getCommandConfigID(),
-							dto.getCommandConfigFactoryID());
+					CommandNameDTO c = new CommandNameDTO();
+					c.setCommandID(dto.getCommandConfigID());
+					c.setCommandType(dto.getCommandConfigFactoryID());
+					cnd.add(c);
 				}
+				CommandResponseMessageDTO crmd = new CommandResponseMessageDTO();
+				crmd.setCommands(cnd);
+				response.setEntity(self.generateReturnString(crmd), MediaType.TEXT_XML);
 			}
 		};
 
@@ -164,34 +125,56 @@ public class SensorManagerServiceRestletImpl extends Application {
 		Restlet startSession = new Restlet() {
 			@Override
 			public void handle(Request request, Response response) {
-				System.out.println("Startsession called");
-				sensorManagerService.startSession((String) request
-						.getAttributes().get("readerID"), (String) request
-						.getAttributes().get("sessionID"));
+				try {
+					sensorManagerService.startSession((String) request
+							.getAttributes().get("readerID"), (String) request
+							.getAttributes().get("sessionID"));
+					response.setEntity(self.generateReturnString(self
+							.generateSuccessMessage()), MediaType.TEXT_XML);
+				} catch (Exception e) {
+					response.setEntity(e.getMessage(), MediaType.TEXT_PLAIN);
+				}
 			}
 		};
 		Restlet stopSession = new Restlet() {
 			@Override
 			public void handle(Request request, Response response) {
-				System.out.println("Stopsession called");
-				sensorManagerService.stopSession((String) request
-						.getAttributes().get("readerID"), (String) request
-						.getAttributes().get("sessionID"));
+				try {
+					sensorManagerService.stopSession((String) request
+							.getAttributes().get("readerID"), (String) request
+							.getAttributes().get("sessionID"));
+					response.setEntity(self.generateReturnString(self
+							.generateSuccessMessage()), MediaType.TEXT_XML);
+				} catch (Exception e) {
+					response.setEntity(e.getMessage(), MediaType.TEXT_PLAIN);
+				}
 			}
 		};
 		Restlet createSession = new Restlet() {
 			@Override
 			public void handle(Request request, Response response) {
-				sensorManagerService.createSession((String) request
-						.getAttributes().get("readerID"));
+				try {
+					sensorManagerService.createSession((String) request
+							.getAttributes().get("readerID"));
+					response.setEntity(self.generateReturnString(self
+							.generateSuccessMessage()), MediaType.TEXT_XML);
+				} catch (Exception e) {
+					response.setEntity(e.getMessage(), MediaType.TEXT_PLAIN);
+				}
 			}
 		};
 		Restlet deleteSession = new Restlet() {
 			@Override
 			public void handle(Request request, Response response) {
-				sensorManagerService.deleteSession((String) request
-						.getAttributes().get("readerID"), (String) request
-						.getAttributes().get("sessionID"));
+				try {
+					sensorManagerService.deleteSession((String) request
+							.getAttributes().get("readerID"), (String) request
+							.getAttributes().get("sessionID"));
+					response.setEntity(self.generateReturnString(self
+							.generateSuccessMessage()), MediaType.TEXT_XML);
+				} catch (Exception e) {
+					response.setEntity(e.getMessage(), MediaType.TEXT_PLAIN);
+				}
 			}
 		};
 		Restlet executeCommand = new Restlet() {
@@ -204,10 +187,14 @@ public class SensorManagerServiceRestletImpl extends Application {
 							.getAttributes().get("commandID"), Long
 							.parseLong((String) request.getAttributes().get(
 									"repeatInterval")), TimeUnit.MILLISECONDS);
+					response.setEntity(self.generateReturnString(self
+							.generateSuccessMessage()), MediaType.TEXT_XML);
 				} catch (NumberFormatException | CommandSubmissionException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					response.setEntity(e.getMessage(), MediaType.TEXT_PLAIN);
+				} catch (Exception e) {
+					response.setEntity(e.getMessage(), MediaType.TEXT_PLAIN);
 				}
+
 			}
 		};
 		Restlet setProperties = new Restlet() {
@@ -225,9 +212,11 @@ public class SensorManagerServiceRestletImpl extends Application {
 
 					sensorManagerService.setReaderProperties((String) request
 							.getAttributes().get("readerID"), attributes);
+
+					response.setEntity(self.generateReturnString(self
+							.generateSuccessMessage()), MediaType.TEXT_XML);
 				} catch (Exception e) {
-					// TODO Handle exception
-					e.printStackTrace();
+					response.setEntity(e.getMessage(), MediaType.TEXT_PLAIN);
 				}
 			}
 		};
@@ -247,9 +236,11 @@ public class SensorManagerServiceRestletImpl extends Application {
 
 					sensorManagerService.createReader((String) request
 							.getAttributes().get("readerType"), attributes);
+
+					response.setEntity(self.generateReturnString(self
+							.generateSuccessMessage()), MediaType.TEXT_XML);
 				} catch (Exception e) {
-					// TODO Handle exception
-					e.printStackTrace();
+					response.setEntity(e.getMessage(), MediaType.TEXT_PLAIN);
 				}
 			}
 		};
@@ -257,24 +248,46 @@ public class SensorManagerServiceRestletImpl extends Application {
 		Restlet startApp = new Restlet() {
 			@Override
 			public void handle(Request request, Response response) {
-				appManager.startApp((Integer) request.getAttributes().get(
-						"appID"));
+				try {
+					appManager.startApp((Integer.parseInt((String) request.getAttributes().get(
+							"appID"))));
+					response.setEntity(self.generateReturnString(self
+							.generateSuccessMessage()), MediaType.TEXT_XML);
+				} catch (Exception e) {
+					response.setEntity(e.getMessage(), MediaType.TEXT_PLAIN);
+				}
 			}
 		};
 
 		Restlet stopApp = new Restlet() {
 			@Override
 			public void handle(Request request, Response response) {
-				appManager.stopApp((Integer) request.getAttributes().get(
-						"appID"));
+				try {
+					appManager.stopApp((Integer.parseInt((String) request.getAttributes().get(
+							"appID"))));
+				} catch (Exception e) {
+					response.setEntity(e.getMessage(), MediaType.TEXT_PLAIN);
+				}
 			}
 		};
 		Restlet apps = new Restlet() {
 			@Override
 			public void handle(Request request, Response response) {
-				Map<Integer, RifidiApp> apps = appManager.getApps();
-				for (Integer i : apps.keySet()) {
-					response.getAttributes().put(apps.get(i).getName(), i);
+				try {
+					Map<Integer, RifidiApp> apps = appManager.getApps();
+					List<AppNameDTO> appNames = new LinkedList<AppNameDTO>();
+					for (Integer i : apps.keySet()) {
+						AppNameDTO and = new AppNameDTO();
+						and.setAppName(apps.get(i).getGroup()+":"+apps.get(i).getName());
+						and.setAppNumber(Integer.toString(i));
+						and.setAppStatus(apps.get(i).getState().toString());
+						appNames.add(and);
+					}
+					AppResponseMessageDTO armd = new AppResponseMessageDTO();
+					armd.setApps(appNames);
+					response.setEntity(self.generateReturnString(armd), MediaType.TEXT_XML);
+				} catch (Exception e) {
+					response.setEntity(e.getMessage(), MediaType.TEXT_PLAIN);
 				}
 			}
 		};
@@ -287,17 +300,36 @@ public class SensorManagerServiceRestletImpl extends Application {
 		router.attach("/stopSession/{readerID}/{sessionID}", stopSession);
 		router.attach("/createSession/{readerID}", createSession);
 		router.attach("/deleteSession/{readerID}/{sessionID}", deleteSession);
-		router.attach("/executeCommand/{readerID}/{sessionID}/{commandID}/{repeatInterval}",
+		router.attach(
+				"/executeCommand/{readerID}/{sessionID}/{commandID}/{repeatInterval}",
 				executeCommand);
 		router.attach("/setProperties/{readerID}/{properties}", setProperties);
 		router.attach("/createReader/{readerType}/{properties}", createReader);
 		router.attach("/startApp/{appID}", startApp);
 		router.attach("/stopApp/{appID}", stopApp);
 		router.attach("/apps", apps);
-		router.attach("/hello/{name}", HelloWorldResource.class);
-		router.attach("/world", world);
-		System.out.println("Finished attaching routers");
 		return router;
+	}
+
+	public String generateSuccessMessage() {
+		RestResponseMessageDTO message = new RestResponseMessageDTO();
+		message.setMessage(SUCCESS_MESSAGE);
+		return message.toString();
+	}
+
+	public String generateReturnString(Serializable message) {
+		try {
+			JAXBContext jaxbContext = JAXBContext.newInstance(message
+					.getClass());
+			Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+			Writer writer = new StringWriter();
+			jaxbMarshaller.marshal(message, writer);
+			String content = writer.toString();
+			writer.close();
+			return content;
+		} catch (Exception e) {
+			return e.getMessage();
+		}
 	}
 
 	// Spring Inject
