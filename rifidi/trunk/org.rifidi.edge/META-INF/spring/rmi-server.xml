@@ -13,6 +13,7 @@
 		<property name="sensorManagerService" ref="sensorManagerStub"/>
 		<property name="commandManagerService" ref="commandManagerStub"/>
 		<property name="appManager" ref="appManager"/>
+		<property name="configurationService" ref="configurationService" />
 	</bean>
 	
 	<bean id="sensorManagerStub" class="org.rifidi.edge.rmi.SensorManagerServiceImpl">

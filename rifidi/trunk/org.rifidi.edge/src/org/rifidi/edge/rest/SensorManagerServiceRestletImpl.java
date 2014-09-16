@@ -40,6 +40,8 @@ import org.rifidi.edge.api.RifidiApp;
 import org.rifidi.edge.api.SensorManagerService;
 import org.rifidi.edge.api.SessionDTO;
 import org.rifidi.edge.api.service.appmanager.AppManager;
+import org.rifidi.edge.configuration.Configuration;
+import org.rifidi.edge.configuration.ConfigurationService;
 
 /**
  * This class handles the incoming rest requests.
@@ -56,6 +58,9 @@ public class SensorManagerServiceRestletImpl extends Application {
 	/** The command manager service for command commands */
 	public CommandManagerService commandManagerService;
 
+	/** Configuration Service */
+	private volatile ConfigurationService configService;
+
 	/**  */
 	public AppManager appManager;
 
@@ -66,7 +71,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 
 	public Router initRestlet() {
 		final SensorManagerServiceRestletImpl self = this;
-		
+
 		Restlet readers = new Restlet() {
 			@Override
 			public void handle(Request request, Response response) {
@@ -80,7 +85,8 @@ public class SensorManagerServiceRestletImpl extends Application {
 				}
 				ReaderResponseMessageDTO rrmd = new ReaderResponseMessageDTO();
 				rrmd.setReaders(rnd);
-				response.setEntity(self.generateReturnString(rrmd), MediaType.TEXT_XML);
+				response.setEntity(self.generateReturnString(rrmd),
+						MediaType.TEXT_XML);
 			}
 		};
 
@@ -98,7 +104,8 @@ public class SensorManagerServiceRestletImpl extends Application {
 				}
 				CommandResponseMessageDTO crmd = new CommandResponseMessageDTO();
 				crmd.setCommands(cnd);
-				response.setEntity(self.generateReturnString(crmd), MediaType.TEXT_XML);
+				response.setEntity(self.generateReturnString(crmd),
+						MediaType.TEXT_XML);
 			}
 		};
 
@@ -114,19 +121,20 @@ public class SensorManagerServiceRestletImpl extends Application {
 						r.setReaderID(dto.getReaderID());
 						r.setReaderType(dto.getReaderFactoryID());
 						rsrmd.setReader(r);
-//						response.getAttributes().put(dto.getReaderID(),
-//								dto.getReaderFactoryID());
+						// response.getAttributes().put(dto.getReaderID(),
+						// dto.getReaderFactoryID());
 						List<SessionNameDTO> slist = new LinkedList<SessionNameDTO>();
 						for (SessionDTO sdto : dto.getSessions()) {
 							SessionNameDTO snd = new SessionNameDTO();
 							snd.setSessionId(sdto.getID());
 							snd.setSessionStatus(sdto.getStatus().toString());
-//							response.getAttributes().put(sdto.getID(),
-//									sdto.getStatus());
+							// response.getAttributes().put(sdto.getID(),
+							// sdto.getStatus());
 							slist.add(snd);
 						}
 						rsrmd.setSessions(slist);
-						response.setEntity(self.generateReturnString(rsrmd), MediaType.TEXT_XML);
+						response.setEntity(self.generateReturnString(rsrmd),
+								MediaType.TEXT_XML);
 						break;
 					}
 				}
@@ -232,6 +240,31 @@ public class SensorManagerServiceRestletImpl extends Application {
 			}
 		};
 
+		Restlet getProperties = new Restlet() {
+			@Override
+			public void handle(Request request, Response response) {
+				try {
+					Configuration configuration = configService
+							.getConfiguration((String) request.getAttributes()
+									.get("readerID"));
+					PropertyResponseMessageDTO prmd = new PropertyResponseMessageDTO();
+					List<PropertyNameDTO> pndList = new LinkedList<PropertyNameDTO>();
+					for (String key : configuration.getAttributes().keySet()) {
+						PropertyNameDTO pnd = new PropertyNameDTO();
+						pnd.setPropertyName(key);
+						pnd.setPropertyValue(configuration.getAttributes()
+								.get(key).toString());
+						pndList.add(pnd);
+					}
+					prmd.setProperties(pndList);
+					response.setEntity(self.generateReturnString(prmd)
+							.toString(), MediaType.TEXT_XML);
+				} catch (Exception e) {
+					response.setEntity(e.getMessage(), MediaType.TEXT_PLAIN);
+				}
+			}
+		};
+
 		Restlet createReader = new Restlet() {
 			@Override
 			public void handle(Request request, Response response) {
@@ -260,8 +293,8 @@ public class SensorManagerServiceRestletImpl extends Application {
 			@Override
 			public void handle(Request request, Response response) {
 				try {
-					appManager.startApp((Integer.parseInt((String) request.getAttributes().get(
-							"appID"))));
+					appManager.startApp((Integer.parseInt((String) request
+							.getAttributes().get("appID"))));
 					response.setEntity(self.generateReturnString(self
 							.generateSuccessMessage()), MediaType.TEXT_XML);
 				} catch (Exception e) {
@@ -274,8 +307,8 @@ public class SensorManagerServiceRestletImpl extends Application {
 			@Override
 			public void handle(Request request, Response response) {
 				try {
-					appManager.stopApp((Integer.parseInt((String) request.getAttributes().get(
-							"appID"))));
+					appManager.stopApp((Integer.parseInt((String) request
+							.getAttributes().get("appID"))));
 					response.setEntity(self.generateReturnString(self
 							.generateSuccessMessage()), MediaType.TEXT_XML);
 				} catch (Exception e) {
@@ -291,14 +324,28 @@ public class SensorManagerServiceRestletImpl extends Application {
 					List<AppNameDTO> appNames = new LinkedList<AppNameDTO>();
 					for (Integer i : apps.keySet()) {
 						AppNameDTO and = new AppNameDTO();
-						and.setAppName(apps.get(i).getGroup()+":"+apps.get(i).getName());
+						and.setAppName(apps.get(i).getGroup() + ":"
+								+ apps.get(i).getName());
 						and.setAppNumber(Integer.toString(i));
 						and.setAppStatus(apps.get(i).getState().toString());
 						appNames.add(and);
 					}
 					AppResponseMessageDTO armd = new AppResponseMessageDTO();
 					armd.setApps(appNames);
-					response.setEntity(self.generateReturnString(armd), MediaType.TEXT_XML);
+					response.setEntity(self.generateReturnString(armd),
+							MediaType.TEXT_XML);
+				} catch (Exception e) {
+					response.setEntity(e.getMessage(), MediaType.TEXT_PLAIN);
+				}
+			}
+		};
+		Restlet save = new Restlet() {
+			@Override
+			public void handle(Request request, Response response) {
+				try {
+					configService.storeConfiguration();
+					response.setEntity(self.generateReturnString(self
+							.generateSuccessMessage()), MediaType.TEXT_XML);
 				} catch (Exception e) {
 					response.setEntity(e.getMessage(), MediaType.TEXT_PLAIN);
 				}
@@ -316,11 +363,13 @@ public class SensorManagerServiceRestletImpl extends Application {
 		router.attach(
 				"/executeCommand/{readerID}/{sessionID}/{commandID}/{repeatInterval}",
 				executeCommand);
+		router.attach("/getProperties/{readerID}", getProperties);
 		router.attach("/setProperties/{readerID}/{properties}", setProperties);
 		router.attach("/createReader/{readerType}/{properties}", createReader);
 		router.attach("/startApp/{appID}", startApp);
 		router.attach("/stopApp/{appID}", stopApp);
 		router.attach("/apps", apps);
+		router.attach("/save", save);
 		return router;
 	}
 
@@ -359,6 +408,16 @@ public class SensorManagerServiceRestletImpl extends Application {
 
 	public void setAppManager(AppManager appManager) {
 		this.appManager = appManager;
+	}
+
+	/**
+	 * Sets the configuration service for this class.
+	 * 
+	 * @param configService
+	 *            the configService to set
+	 */
+	public void setConfigurationService(ConfigurationService configService) {
+		this.configService = configService;
 	}
 
 }
