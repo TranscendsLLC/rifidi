@@ -25,13 +25,9 @@ public class Activator implements BundleActivator {
 	 * )
 	 */
 	@Override
-	public void start(BundleContext context) throws Exception {
-		System.out.println("Starting Moquette MQTT Broker");	
-		
+	public void start(BundleContext context) throws Exception {		
 		this.server = new Server();
-		this.server.startServer();
-		
-		System.out.println("Moquette MQTT Broker started");		
+		this.server.startServer();	
 	}
 
 	/*
