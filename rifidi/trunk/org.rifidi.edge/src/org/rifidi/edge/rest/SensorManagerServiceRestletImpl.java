@@ -77,8 +77,6 @@ public class SensorManagerServiceRestletImpl extends Application {
 					r.setReaderID(dto.getReaderID());
 					r.setReaderType(dto.getReaderFactoryID());
 					rnd.add(r);
-//					response.getAttributes().put(dto.getReaderID(),
-//							dto.getReaderFactoryID());
 				}
 				ReaderResponseMessageDTO rrmd = new ReaderResponseMessageDTO();
 				rrmd.setReaders(rnd);
@@ -108,15 +106,28 @@ public class SensorManagerServiceRestletImpl extends Application {
 			@Override
 			public void handle(Request request, Response response) {
 				Set<ReaderDTO> dtos = sensorManagerService.getReaders();
+				ReaderStatusResponseMessageDTO rsrmd = new ReaderStatusResponseMessageDTO();
 				for (ReaderDTO dto : dtos) {
 					if (dto.getReaderID().equals(
 							request.getAttributes().get("readerID"))) {
-						response.getAttributes().put(dto.getReaderID(),
-								dto.getReaderFactoryID());
+						ReaderNameDTO r = new ReaderNameDTO();
+						r.setReaderID(dto.getReaderID());
+						r.setReaderType(dto.getReaderFactoryID());
+						rsrmd.setReader(r);
+//						response.getAttributes().put(dto.getReaderID(),
+//								dto.getReaderFactoryID());
+						List<SessionNameDTO> slist = new LinkedList<SessionNameDTO>();
 						for (SessionDTO sdto : dto.getSessions()) {
-							response.getAttributes().put(sdto.getID(),
-									sdto.getStatus());
+							SessionNameDTO snd = new SessionNameDTO();
+							snd.setSessionId(sdto.getID());
+							snd.setSessionStatus(sdto.getStatus().toString());
+//							response.getAttributes().put(sdto.getID(),
+//									sdto.getStatus());
+							slist.add(snd);
 						}
+						rsrmd.setSessions(slist);
+						response.setEntity(self.generateReturnString(rsrmd), MediaType.TEXT_XML);
+						break;
 					}
 				}
 			}
