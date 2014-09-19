@@ -11,32 +11,30 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * 
- * 
  * @author Matthew Dean - matt@transcends.co
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "reader")
-public class ReaderNameDTO implements Serializable {
-
+public class ReaderTypeDTO implements Serializable {
+	
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = -3061458043419955402L;
-
-	@XmlElement(name = "serviceID")
-	private String readerID;
+	private static final long serialVersionUID = 289658215644693284L;
 	
 	@XmlElement(name = "factoryID")
 	private String readerType;
-
 	
-	public String getReaderID() {
-		return readerID;
+	@XmlElement(name = "description")
+	private String readerDesc;
+
+	public String getReaderDesc() {
+		return readerDesc;
 	}
 
-	public void setReaderID(String readerID) {
-		this.readerID = readerID;
+	public void setReaderDesc(String readerDesc) {
+		this.readerDesc = readerDesc;
 	}
 
 	public String getReaderType() {

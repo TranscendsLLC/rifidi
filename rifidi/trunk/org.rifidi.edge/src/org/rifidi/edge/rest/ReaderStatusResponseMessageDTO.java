@@ -17,7 +17,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlRootElement(name = "Response")
+@XmlRootElement(name = "response")
 public class ReaderStatusResponseMessageDTO implements Serializable {
 
 	/**
@@ -25,11 +25,11 @@ public class ReaderStatusResponseMessageDTO implements Serializable {
 	 */
 	private static final long serialVersionUID = 725905841777041513L;
 	
-	@XmlElement(name = "Reader")
+	@XmlElement(name = "sensor")
 	private ReaderNameDTO reader;
 	
-	@XmlElementWrapper(required = true, name="Sessions")
-	@XmlElement(name = "Session")
+	@XmlElementWrapper(required = true, name="sessions")
+	@XmlElement(name = "session")
 	private List<SessionNameDTO> sessions;
 
 	public ReaderNameDTO getReader() {

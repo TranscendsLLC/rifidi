@@ -18,22 +18,24 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "response")
-public class PropertyResponseMessageDTO implements Serializable {
-
+public class CommandTypesResponseMessageDTO implements Serializable {
+	
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 2958131583863210255L;
+	private static final long serialVersionUID = -7073194007507750696L;
+	
+	@XmlElementWrapper(required = true, name="commands")
+	@XmlElement(name = "command")
+	private List<CommandTypeDTO> commands;
 
-	@XmlElementWrapper(required = true, name="attributes")
-	@XmlElement(name = "entry")
-	private List<PropertyNameDTO> properties;
-
-	public List<PropertyNameDTO> getProperties() {
-		return properties;
+	public List<CommandTypeDTO> getCommands() {
+		return commands;
 	}
 
-	public void setProperties(List<PropertyNameDTO> properties) {
-		this.properties = properties;
+	public void setCommands(List<CommandTypeDTO> commands) {
+		this.commands = commands;
 	}
+	
+	
 }
