@@ -10,6 +10,7 @@
 		<constructor-arg index="1" value="RifidiServicesApp" />
 		
 		<property name="stableSetService" ref="stableSetServiceRef" />
+		<property name="limitStableSetService" ref="limitStableSetServiceRef" />
 		<property name="readZoneMonitoringService" ref="readZoneMonitoringServiceRef" />
 		<property name="uniqueTagBatchIntervalService" ref="uniqueTagBatchIntervalServiceRef" />
 		<property name="rssiMonitoringService" ref="rssiMonitoringServiceRef" />
@@ -21,6 +22,9 @@
 	
 	<osgi:reference id="stableSetServiceRef"
 		interface="org.rifidi.edge.api.service.tagmonitor.StableSetService" />
+		
+	<osgi:reference id="limitStableSetServiceRef"
+		interface="org.rifidi.edge.api.service.tagmonitor.LimitStableSetService" />
 		
 	<osgi:reference id="readZoneMonitoringServiceRef"
 		interface="org.rifidi.edge.api.service.tagmonitor.ReadZoneMonitoringService" />
