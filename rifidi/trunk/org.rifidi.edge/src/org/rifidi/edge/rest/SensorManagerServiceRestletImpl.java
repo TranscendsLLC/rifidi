@@ -420,10 +420,10 @@ public class SensorManagerServiceRestletImpl extends Application {
 		return router;
 	}
 
-	public String generateSuccessMessage() {
+	public RestResponseMessageDTO generateSuccessMessage() {
 		RestResponseMessageDTO message = new RestResponseMessageDTO();
 		message.setMessage(SUCCESS_MESSAGE);
-		return message.toString();
+		return message;
 	}
 
 	public String generateReturnString(Serializable message) {
