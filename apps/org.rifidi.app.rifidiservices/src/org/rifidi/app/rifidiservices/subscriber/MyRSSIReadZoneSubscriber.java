@@ -59,7 +59,7 @@ public class MyRSSIReadZoneSubscriber implements RSSIReadZoneSubscriber {
 	private RifidiServicesApp rifidiServicesApp;
 
 	/** The read zone for this subscriber **/
-	private ReadZone readZone;
+	//private ReadZone readZone;
 
 	/** Logger for this class */
 	private final Log logger = LogFactory.getLog(getClass());
@@ -80,28 +80,33 @@ public class MyRSSIReadZoneSubscriber implements RSSIReadZoneSubscriber {
 	 * @param readZone
 	 *            the readzone instance associated with this subscriber
 	 */
-	public MyRSSIReadZoneSubscriber(RifidiServicesApp rifidiServicesApp,
-			ReadZone readZone) {
+	public MyRSSIReadZoneSubscriber(RifidiServicesApp rifidiServicesApp
+			//,ReadZone readZone
+			) {
 
 		this.rifidiServicesApp = rifidiServicesApp;
-		this.readZone = readZone;
+		//this.readZone = readZone;
 
 	}
 
 	/**
 	 * @return the readZone
 	 */
+	/*
 	public ReadZone getReadZone() {
 		return readZone;
 	}
+	*/
 
 	/**
 	 * @param readZone
 	 *            the readZone to set
 	 */
+	/*
 	public void setReadZone(ReadZone readZone) {
 		this.readZone = readZone;
 	}
+	*/
 
 	@Override
 	public void tagArrived(List<RSSITagReadEvent> rssiTagReadEventList) {
@@ -123,9 +128,9 @@ public class MyRSSIReadZoneSubscriber implements RSSIReadZoneSubscriber {
 		}
 
 		// Subscribe
-		rifidiServicesApp.subscribeToStableSetService(readZone);
-		logger.debug("subscribed the subscriber for reader id: "
-				+ getReadZone().getReaderID());
+		//rifidiServicesApp.subscribeToStableSetService(readZone);
+		//logger.debug("subscribed the subscriber for reader id: "
+		//		+ getReadZone().getReaderID());
 
 	}
 

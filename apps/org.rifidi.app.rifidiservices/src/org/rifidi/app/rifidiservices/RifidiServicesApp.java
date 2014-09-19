@@ -12,12 +12,10 @@
  *******************************************************************************/
 package org.rifidi.app.rifidiservices;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.logging.Log;
@@ -26,19 +24,18 @@ import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
+import org.rifidi.app.rifidiservices.subscriber.MyLimitStableSetSubscriber;
 import org.rifidi.app.rifidiservices.subscriber.MyRSSIReadZoneSubscriber;
 import org.rifidi.app.rifidiservices.subscriber.MyReadZoneSubscriber;
 import org.rifidi.app.rifidiservices.subscriber.MyStableSetSubscriber;
 import org.rifidi.app.rifidiservices.subscriber.MyUniqueTagBatchSubscriber;
 import org.rifidi.edge.api.AbstractRifidiApp;
+import org.rifidi.edge.api.service.tagmonitor.LimitStableSetService;
 import org.rifidi.edge.api.service.tagmonitor.RSSIMonitoringService;
 import org.rifidi.edge.api.service.tagmonitor.ReadZone;
 import org.rifidi.edge.api.service.tagmonitor.ReadZoneMonitoringService;
-import org.rifidi.edge.api.service.tagmonitor.ReadZoneSubscriber;
 import org.rifidi.edge.api.service.tagmonitor.StableSetService;
-import org.rifidi.edge.api.service.tagmonitor.StableSetSubscriber;
 import org.rifidi.edge.api.service.tagmonitor.UniqueTagBatchIntervalService;
-import org.rifidi.edge.api.service.tagmonitor.UniqueTagBatchIntervalSubscriber;
 import org.rifidi.edge.daos.ReaderDAO;
 import org.rifidi.edge.sensors.AbstractSensor;
 import org.rifidi.edge.sensors.SensorSession;
@@ -51,13 +48,25 @@ import org.rifidi.edge.sensors.SensorSession;
 public class RifidiServicesApp 
 		extends AbstractRifidiApp {
 
-	/** The stableSet service */
+	/** The stableSet service: returns a list of tags representing a "group" after 
+	 * an allotted time has passed with no new tags arriving. For instance, if you 
+	 * place 30 tags in the readzone of the reader, assuming all tags can be read 
+	 * correctly it will return a list of 30 tags assuming no new tags are seen 
+	 * for the duration given */
 	private StableSetService stableSetService;
 	
-	/** The readZoneMonitoring service */
+	/** Exactly the same as the StableSetService, however you can also place a 
+	 * limit on the number of tags that can show up before it automatically returns.
+	 * If the tag limit is hit before the time duration of the StableSet runs out 
+	 * it will automatically return with all seen tags */
+	private LimitStableSetService limitStableSetService;
+	
+	/** The readZoneMonitoring service: Monitors a ReadZone or group of ReadZones 
+	 * and reports when a tag enters or leaves a reader or antenna in the readzone */
 	private ReadZoneMonitoringService readZoneMonitoringService;
 	
-	/** The uniqueTagBatch service: notifies subscribers every x time units of unique tags in a read zone.**/
+	/** The uniqueTagBatch service: notifies subscribers every x time units of 
+	 * unique tags in a read zone.**/
 	private UniqueTagBatchIntervalService uniqueTagBatchIntervalService;
 	
 	/** This service monitors which readzone returns the highest average RSSI 
@@ -71,6 +80,10 @@ public class RifidiServicesApp
 	// A list of all stableSetsubscribers that is kept for when the time comes to
 	// unsubscribe them.
 	private List<MyStableSetSubscriber> stableSetSubscriberList;
+	
+	// A list of all limitStableSetsubscribers that is kept for when the time comes to
+	// unsubscribe them.
+	private List<MyLimitStableSetSubscriber> limitStableSetSubscriberList;
 	
 	// A list of all readzoneSubscribers that is kept for when the time comes to
 	// unsubscribe them.
@@ -104,6 +117,12 @@ public class RifidiServicesApp
 	 * It's used for stableSet Service
 	 */
 	private Float stableSetTime;
+	
+	/**
+	 * limitOfTags: The limit of tags that are being looked for. If this limit is hit 
+	 * before the stableSetTime is reached, it will return all seen tags. 
+	 * It's used for limitStableSet Service */
+	private Integer limitOfTags;
 	
 	/** departureTime: If this amount of time in seconds passes since the last 
 	 * time a tag has been seen, then fire a departure event. By default is 4 seconds,
@@ -192,6 +211,20 @@ public class RifidiServicesApp
 		this.stableSetService = stableSetService;
 	}
 	
+	/**
+	 * @return the limitStableSetService
+	 */
+	public LimitStableSetService getLimitStableSetService() {
+		return limitStableSetService;
+	}
+
+	/**
+	 * @param limitStableSetService the limitStableSetService to set
+	 */
+	public void setLimitStableSetService(LimitStableSetService limitStableSetService) {
+		this.limitStableSetService = limitStableSetService;
+	}
+
 	/**
 	 * @return the readZoneMonitoringService
 	 */
@@ -286,7 +319,6 @@ public class RifidiServicesApp
 	}
 	
 	
-
 	/**
 	 * @return the windowTime
 	 */
@@ -349,6 +381,8 @@ public class RifidiServicesApp
 		
 		stableSetSubscriberList = new LinkedList<MyStableSetSubscriber>();
 		
+		limitStableSetSubscriberList = new LinkedList<MyLimitStableSetSubscriber>();
+		
 		readZoneMonitoringSubscriberList = new LinkedList<MyReadZoneSubscriber>();
 		
 		uniqueTagBatchSubscriberList = new LinkedList<MyUniqueTagBatchSubscriber>();
@@ -356,7 +390,7 @@ public class RifidiServicesApp
 		rssiReadZoneSubscriberList = new LinkedList<MyRSSIReadZoneSubscriber>();
 		
 		//Get all the read zones
-		Map<String, ReadZone> allReadZones = super.getReadZones();
+		HashMap<String, ReadZone> allReadZones = super.getReadZones();
 		
 		//Get the front door read zone. According to this readzone properties file, 
 		//Front_Door readzone contains only one reader
@@ -367,10 +401,16 @@ public class RifidiServicesApp
 		ReadZone backDoorReadZone = allReadZones.get("Back_Door");
 		
 		//Subscribe the frontDoorReadZone to stableSetService
-		subscribeToStableSetService(frontDoorReadZone);
+		//subscribeToStableSetService(frontDoorReadZone);
 				
 		//Subscribe the backDoorReadZone to stableSetService
-		subscribeToStableSetService(backDoorReadZone);
+		//subscribeToStableSetService(backDoorReadZone);
+		
+		//Subscribe the frontDoorReadZone to limitStableSetService
+		subscribeToLimitStableSetService(frontDoorReadZone);
+				
+		//Subscribe the backDoorReadZone to limitStableSetService
+		subscribeToLimitStableSetService(backDoorReadZone);
 				
 		//Subscribe the frontDoorReadZone to readZoneMonitoringService
 		subscribeToReadZoneService(frontDoorReadZone);
@@ -384,11 +424,8 @@ public class RifidiServicesApp
 		//Subscribe the backDoorReadZone to uniqueTagBatchIntervalService
 		subscribeToUniqueTagBatchIntervalService(backDoorReadZone);
 		
-		//Subscribe the frontDoorReadZone to rssiMonitoringService
-		subscribeToRSSIMonitoringService(frontDoorReadZone);
-				
-		//Subscribe the backDoorReadZone to rssiMonitoringService
-		subscribeToRSSIMonitoringService(backDoorReadZone);
+		//Subscribe allReadZones to rssiMonitoringService
+		subscribeToRSSIMonitoringService(allReadZones);
 				
 		//map->, key: the subscriber, value: the service
 		//iterate over keyset
@@ -407,6 +444,11 @@ public class RifidiServicesApp
 		//Unsubscribe from stableset service
 		for (MyStableSetSubscriber sub : this.stableSetSubscriberList) {
 			unsubscribeFromStableSetService(sub);
+		}
+		
+		//Unsubscribe from limitStableset service
+		for (MyLimitStableSetSubscriber sub : this.limitStableSetSubscriberList) {
+			unsubscribeFromLimitStableSetService(sub);
 		}
 		
 		//Unsubscribe from readzone service
@@ -443,7 +485,20 @@ public class RifidiServicesApp
 		this.stableSetTime = stableSetTime;
 	}
 	
-	
+	/**
+	 * @return the limitOfTags
+	 */
+	public Integer getLimitOfTags() {
+		return limitOfTags;
+	}
+
+	/**
+	 * @param limitOfTags the limitOfTags to set
+	 */
+	public void setLimitOfTags(Integer limitOfTags) {
+		this.limitOfTags = limitOfTags;
+	}
+
 	/**
 	 * 
 	 * @param stableSetSubscriber
@@ -453,6 +508,15 @@ public class RifidiServicesApp
 		getStableSetService().unsubscribe(myStableSetSubscriber);
 		
 		logger.info("unsubscribed subscriber with reader id: " + myStableSetSubscriber.getReadZone().getReaderID());
+		
+	}
+	
+	
+	public void unsubscribeFromLimitStableSetService(MyLimitStableSetSubscriber myLimitStableSetSubscriber){
+		
+		getLimitStableSetService().unsubscribe(myLimitStableSetSubscriber);
+		
+		logger.info("unsubscribed subscriber with reader id: " + myLimitStableSetSubscriber.getReadZone().getReaderID());
 		
 	}
 	
@@ -475,13 +539,13 @@ public class RifidiServicesApp
 	public void unsubscribeFromRSSIMonitoringService(MyRSSIReadZoneSubscriber myRSSIReadZoneSubscriber){
 		
 		getRssiMonitoringService().unsubscribe(myRSSIReadZoneSubscriber);
-		logger.info("unsubscribed subscriber with reader id: " + myRSSIReadZoneSubscriber.getReadZone().getReaderID());
+		//logger.info("unsubscribed subscriber with reader id: " + myRSSIReadZoneSubscriber.getReadZone().getReaderID());
 	}
 	
 	
 	/**
 	 * 
-	 * @param stableSetSubscriber
+	 * @param readZone the readZone to subscribe
 	 */
 	public void subscribeToStableSetService(ReadZone readZone){
 		
@@ -502,6 +566,33 @@ public class RifidiServicesApp
 		
 		logger.info("subscribed readzone with reader id: " + readZone.getReaderID()
 				+ " and readerStableSetTime: " + getStableSetTime());
+		
+	}
+	
+	/**
+	 * 
+	 * @param readZone the readZone to subscribe
+	 */
+	public void subscribeToLimitStableSetService(ReadZone readZone){
+		
+		//Create an instance of the limit stableset subscriber
+		MyLimitStableSetSubscriber myLimitStableSetSubscriber = new MyLimitStableSetSubscriber(this, 
+				readZone);
+		
+		limitStableSetSubscriberList.add(myLimitStableSetSubscriber);
+		
+		//Create a list of readzones
+		List<ReadZone> readZoneList = new LinkedList<ReadZone>();
+		
+		//Add the readzone to the readzone list and subscribe 
+		readZoneList.add(readZone);
+		
+		getLimitStableSetService().subscribe(myLimitStableSetSubscriber, readZoneList, getStableSetTime(), 
+				TimeUnit.SECONDS, getLimitOfTags(), true);
+		
+		logger.info("subscribed readzone with reader id: " + readZone.getReaderID()
+				+ " and readerStableSetTime: " + getStableSetTime() + " and limitOfTags: "
+				+ getLimitOfTags());
 		
 	}
 	
@@ -561,28 +652,20 @@ public class RifidiServicesApp
 	
 	/**
 	 * 
-	 * @param readZone the readzone to subscribe
+	 * @param allReadZones all the readzones to subscribe
 	 */
-	public void subscribeToRSSIMonitoringService(ReadZone readZone){
+	public void subscribeToRSSIMonitoringService(HashMap<String, ReadZone> allReadZones){
 		
 		//Create an instance of the rssi read zone subscriber
-		MyRSSIReadZoneSubscriber myRSSIReadZoneSubscriber = new MyRSSIReadZoneSubscriber(this, 
-				readZone);
+		MyRSSIReadZoneSubscriber myRSSIReadZoneSubscriber = new MyRSSIReadZoneSubscriber(this);
 		
 		rssiReadZoneSubscriberList.add(myRSSIReadZoneSubscriber);
 		
-		//Create a list of readzones
-		HashMap<String, ReadZone> readZoneMap = new HashMap<String, ReadZone>();
-		
-		//Add the readzone to the readzone map and subscribe
-		//TODO - What is the key for this readzone ?
-		readZoneMap.put(readZone.getReaderID(), readZone);
-		
-		getRssiMonitoringService().subscribe(myRSSIReadZoneSubscriber, readZoneMap, 
+		getRssiMonitoringService().subscribe(myRSSIReadZoneSubscriber, allReadZones, 
 				getWindowTime(), TimeUnit.SECONDS, getCountThreshold(), getMinAvgRSSIThreshold(),
 				true);
 		
-		logger.info("subscribed readzone with reader id: " + readZone.getReaderID()
+		logger.info("subscribed all readzones to RSSI Monitor"
 				+ " and getWindowTime: " + getWindowTime() + ", countThreshold: " 
 				+ getCountThreshold() + ", minAvgRSSIThreshold: " + getMinAvgRSSIThreshold());
 		
@@ -604,6 +687,9 @@ public class RifidiServicesApp
 		
 		//Set stableset time from properties
 		setStableSetTime( Float.parseFloat(getProperty("stableSetTime", null)) );
+		
+		//Set limit of tags for stableset time from properties
+		setLimitOfTags( Integer.parseInt(getProperty("limitOfTags", null)) );
 		
 		//Set the notifyInterval
 		setNotifyInterval(Float.parseFloat(getProperty("notifyInterval", null)) );
