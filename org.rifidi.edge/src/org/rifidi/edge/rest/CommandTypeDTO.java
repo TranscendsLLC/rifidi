@@ -16,25 +16,25 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "command")
-public class CommandNameDTO implements Serializable {
-
+public class CommandTypeDTO implements Serializable {
+	
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 4359786581033001139L;
-	
-	@XmlElement(name = "commandID")
-	private String commandID;
+	private static final long serialVersionUID = -5889100459511661297L;
 	
 	@XmlElement(name = "factoryID")
 	private String commandType;
+	
+	@XmlElement(name = "description")
+	private String commandDesc;
 
-	public String getCommandID() {
-		return commandID;
+	public String getCommandDesc() {
+		return commandDesc;
 	}
 
-	public void setCommandID(String commandID) {
-		this.commandID = commandID;
+	public void setCommandDesc(String commandDesc) {
+		this.commandDesc = commandDesc;
 	}
 
 	public String getCommandType() {
@@ -44,4 +44,6 @@ public class CommandNameDTO implements Serializable {
 	public void setCommandType(String commandType) {
 		this.commandType = commandType;
 	}
+	
+	
 }

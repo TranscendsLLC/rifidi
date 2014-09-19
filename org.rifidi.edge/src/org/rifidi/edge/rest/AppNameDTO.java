@@ -13,16 +13,16 @@ import javax.xml.bind.annotation.XmlRootElement;
  *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlRootElement(name = "App")
+@XmlRootElement(name = "app")
 public class AppNameDTO {
 	
-	@XmlElement(name = "ID")
+	@XmlElement(name = "id")
 	private String appName;
 	
-	@XmlElement(name = "Number")
+	@XmlElement(name = "number")
 	private String appNumber;
 	
-	@XmlElement(name = "Status")
+	@XmlElement(name = "status")
 	private String appStatus;
 
 	public String getAppName() {

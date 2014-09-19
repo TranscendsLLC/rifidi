@@ -19,7 +19,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author Matthew Dean - matt@transcends.co
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlRootElement(name = "Response")
+@XmlRootElement(name = "response")
 public class ReaderResponseMessageDTO implements Serializable {
 
 	/**
@@ -27,8 +27,8 @@ public class ReaderResponseMessageDTO implements Serializable {
 	 */
 	private static final long serialVersionUID = 2510040385822992897L;
 	
-	@XmlElementWrapper(required = true, name="Readers")
-	@XmlElement(name = "Reader")
+	@XmlElementWrapper(required = true, name="sensors")
+	@XmlElement(name = "sensor")
 	private List<ReaderNameDTO> readers;
 	
 	public ReaderResponseMessageDTO() {

@@ -32,10 +32,12 @@ import org.restlet.Response;
 import org.restlet.Restlet;
 import org.restlet.data.MediaType;
 import org.restlet.routing.Router;
+import org.rifidi.edge.api.CommandConfigFactoryDTO;
 import org.rifidi.edge.api.CommandConfigurationDTO;
 import org.rifidi.edge.api.CommandManagerService;
 import org.rifidi.edge.api.CommandSubmissionException;
 import org.rifidi.edge.api.ReaderDTO;
+import org.rifidi.edge.api.ReaderFactoryDTO;
 import org.rifidi.edge.api.RifidiApp;
 import org.rifidi.edge.api.SensorManagerService;
 import org.rifidi.edge.api.SessionDTO;
@@ -316,6 +318,49 @@ public class SensorManagerServiceRestletImpl extends Application {
 				}
 			}
 		};
+		
+		Restlet readerTypes = new Restlet() {
+			@Override
+			public void handle(Request request, Response response) {
+				try {
+					ReaderTypesReponseMessageDTO rtr = new ReaderTypesReponseMessageDTO();
+					Set<ReaderFactoryDTO> grf = self.sensorManagerService.getReaderFactories();
+					List<ReaderTypeDTO> ret = new LinkedList<ReaderTypeDTO>();
+					for(ReaderFactoryDTO rfd:grf) {
+						ReaderTypeDTO rtd = new ReaderTypeDTO();
+						rtd.setReaderDesc(rfd.getReaderFactoryDescription());
+						rtd.setReaderType(rfd.getReaderFactoryID());
+						ret.add(rtd);
+					}
+					rtr.setSensors(ret);
+					response.setEntity(self.generateReturnString(rtr).toString(), MediaType.TEXT_XML);
+				} catch (Exception e) {
+					response.setEntity(e.getMessage(), MediaType.TEXT_PLAIN);
+				}
+			}
+		};
+		
+		Restlet commandTypes = new Restlet() {
+			@Override
+			public void handle(Request request, Response response) {
+				try {
+					CommandTypesResponseMessageDTO rtr = new CommandTypesResponseMessageDTO();
+					Set<CommandConfigFactoryDTO> grf = self.commandManagerService.getCommandConfigFactories();
+					List<CommandTypeDTO> ret = new LinkedList<CommandTypeDTO>();
+					for(CommandConfigFactoryDTO rfd:grf) {
+						CommandTypeDTO rtd = new CommandTypeDTO();
+						rtd.setCommandDesc(rfd.getDescription());
+						rtd.setCommandType(rfd.getCommandFactoryID());
+						ret.add(rtd);
+					}
+					rtr.setCommands(ret);
+					response.setEntity(self.generateReturnString(rtr).toString(), MediaType.TEXT_XML);
+				} catch (Exception e) {
+					response.setEntity(e.getMessage(), MediaType.TEXT_PLAIN);
+				}
+			}
+		};
+		
 		Restlet apps = new Restlet() {
 			@Override
 			public void handle(Request request, Response response) {
@@ -355,19 +400,21 @@ public class SensorManagerServiceRestletImpl extends Application {
 		Router router = new Router(getContext());
 		router.attach("/readers", readers);
 		router.attach("/commands", commands);
-		router.attach("/readerStatus/{readerID}", readerStatus);
-		router.attach("/startSession/{readerID}/{sessionID}", startSession);
-		router.attach("/stopSession/{readerID}/{sessionID}", stopSession);
-		router.attach("/createSession/{readerID}", createSession);
-		router.attach("/deleteSession/{readerID}/{sessionID}", deleteSession);
+		router.attach("/readerstatus/{readerID}", readerStatus);
+		router.attach("/startsession/{readerID}/{sessionID}", startSession);
+		router.attach("/stopsession/{readerID}/{sessionID}", stopSession);
+		router.attach("/createsession/{readerID}", createSession);
+		router.attach("/deletesession/{readerID}/{sessionID}", deleteSession);
 		router.attach(
-				"/executeCommand/{readerID}/{sessionID}/{commandID}/{repeatInterval}",
+				"/executecommand/{readerID}/{sessionID}/{commandID}/{repeatInterval}",
 				executeCommand);
-		router.attach("/getProperties/{readerID}", getProperties);
-		router.attach("/setProperties/{readerID}/{properties}", setProperties);
-		router.attach("/createReader/{readerType}/{properties}", createReader);
-		router.attach("/startApp/{appID}", startApp);
-		router.attach("/stopApp/{appID}", stopApp);
+		router.attach("/getproperties/{readerID}", getProperties);
+		router.attach("/setproperties/{readerID}/{properties}", setProperties);
+		router.attach("/createreader/{readerType}/{properties}", createReader);
+		router.attach("/startapp/{appID}", startApp);
+		router.attach("/stopapp/{appID}", stopApp);
+		router.attach("/commandtypes", commandTypes);
+		router.attach("/readertypes", readerTypes);
 		router.attach("/apps", apps);
 		router.attach("/save", save);
 		return router;

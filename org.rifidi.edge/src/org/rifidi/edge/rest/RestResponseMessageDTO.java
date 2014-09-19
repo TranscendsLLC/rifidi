@@ -8,7 +8,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlRootElement(name = "Response")
+@XmlRootElement(name = "response")
 public class RestResponseMessageDTO implements Serializable {
 
 	/**
@@ -16,7 +16,7 @@ public class RestResponseMessageDTO implements Serializable {
 	 */
 	private static final long serialVersionUID = 618168723573019895L;
 	
-	@XmlElement(name="Message")
+	@XmlElement(name="message")
 	public String message;
 
 	public String getMessage() {

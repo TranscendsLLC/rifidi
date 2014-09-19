@@ -15,7 +15,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlRootElement(name = "Session")
+@XmlRootElement(name = "session")
 public class SessionNameDTO implements Serializable {
 
 	/**
@@ -23,10 +23,10 @@ public class SessionNameDTO implements Serializable {
 	 */
 	private static final long serialVersionUID = -5143356679507192666L;
 
-	@XmlElement(name = "SessionID")
+	@XmlElement(name = "ID")
 	private String sessionId;
 	
-	@XmlElement(name = "SessionStatus")
+	@XmlElement(name = "status")
 	private String sessionStatus;
 
 	public String getSessionId() {

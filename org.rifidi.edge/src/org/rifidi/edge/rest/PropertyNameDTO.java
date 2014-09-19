@@ -15,7 +15,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlRootElement(name = "Property")
+@XmlRootElement(name = "entry")
 public class PropertyNameDTO implements Serializable {
 
 	/**
@@ -23,10 +23,10 @@ public class PropertyNameDTO implements Serializable {
 	 */
 	private static final long serialVersionUID = 7820007681094278919L;
 
-	@XmlElement(name = "PropertyName")
+	@XmlElement(name = "key")
 	private String propertyName;
 	
-	@XmlElement(name = "PropertyValue")
+	@XmlElement(name = "value")
 	private String propertyValue;
 
 	public String getPropertyName() {
