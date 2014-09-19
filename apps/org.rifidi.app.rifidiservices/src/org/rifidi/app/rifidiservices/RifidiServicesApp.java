@@ -26,10 +26,12 @@ import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
+import org.rifidi.app.rifidiservices.subscriber.MyRSSIReadZoneSubscriber;
 import org.rifidi.app.rifidiservices.subscriber.MyReadZoneSubscriber;
 import org.rifidi.app.rifidiservices.subscriber.MyStableSetSubscriber;
 import org.rifidi.app.rifidiservices.subscriber.MyUniqueTagBatchSubscriber;
 import org.rifidi.edge.api.AbstractRifidiApp;
+import org.rifidi.edge.api.service.tagmonitor.RSSIMonitoringService;
 import org.rifidi.edge.api.service.tagmonitor.ReadZone;
 import org.rifidi.edge.api.service.tagmonitor.ReadZoneMonitoringService;
 import org.rifidi.edge.api.service.tagmonitor.ReadZoneSubscriber;
@@ -58,6 +60,10 @@ public class RifidiServicesApp
 	/** The uniqueTagBatch service: notifies subscribers every x time units of unique tags in a read zone.**/
 	private UniqueTagBatchIntervalService uniqueTagBatchIntervalService;
 	
+	/** This service monitors which readzone returns the highest average RSSI 
+	 * value for a tag in a given duration. **/
+	private RSSIMonitoringService rssiMonitoringService;
+	
 	/** Reader DAO -- used to stop reader sessions */
 	/** Injected from spring, if you need to stop reader sessions for a particular reader **/
 	private ReaderDAO readerDAO;
@@ -73,6 +79,10 @@ public class RifidiServicesApp
 	// A list of all uniqueTagBatchSubscribers that is kept for when the time comes to
 	// unsubscribe them.
 	private List<MyUniqueTagBatchSubscriber> uniqueTagBatchSubscriberList;
+	
+	// A list of all rssiReadZoneSubscribers that is kept for when the time comes to
+	// unsubscribe them.
+	private List<MyRSSIReadZoneSubscriber> rssiReadZoneSubscriberList;
 	
 	
 	/** mqttClient to be used in sending tag data to mqttServer  **/
@@ -98,14 +108,41 @@ public class RifidiServicesApp
 	/** departureTime: If this amount of time in seconds passes since the last 
 	 * time a tag has been seen, then fire a departure event. By default is 4 seconds,
 	 * but then is read from properties.
+	 * It's used for readZoneMonitoring Service
 	 */
 	private Float departureTime;
 	
 	/**
 	 * notifYInterval: Interval in seconds to notify all of tags currently seen 
 	 * at the given readzones
+	 * It's used for uniqueTagBatchInterval Service
 	 */
 	private Float notifyInterval;
+	
+	/**
+	 * windowTime: The timeout that will be used to determine if a tag has gone 
+	 * to a new zone. Times less than 5s are not recommended.
+	 * It's used for RSSIMonitoring Service
+	 */
+	private Float windowTime;
+	
+	/**
+	 * countThreshold: The threshold for number of times a tag must be read before 
+	 * the readzone it has shown up at will be switched. 
+	 * Do not set this to greater than the windowTime divided by the frequency in 
+	 * seconds that tag reports will show up as configured by your reader.
+	 * It's used for RSSIMonitoring Service
+	 */
+	private Integer countThreshold;
+	
+	
+	/**
+	 *  minAvgRSSIThreshold: The lowest average RSSI that will have to be seen
+	 *  before the readzone is switched.
+	 *  It's used for RSSIMonitoring Service
+	 */
+	private Double minAvgRSSIThreshold;
+	
 	
 	/** Logger for this class */
 	private final Log logger = LogFactory.getLog(getClass());
@@ -185,6 +222,21 @@ public class RifidiServicesApp
 			UniqueTagBatchIntervalService uniqueTagBatchIntervalService) {
 		this.uniqueTagBatchIntervalService = uniqueTagBatchIntervalService;
 	}
+	
+
+	/**
+	 * @return the rssiMonitoringService
+	 */
+	public RSSIMonitoringService getRssiMonitoringService() {
+		return rssiMonitoringService;
+	}
+
+	/**
+	 * @param rssiMonitoringService the rssiMonitoringService to set
+	 */
+	public void setRssiMonitoringService(RSSIMonitoringService rssiMonitoringService) {
+		this.rssiMonitoringService = rssiMonitoringService;
+	}
 
 	/**
 	 * Inject the reader DAO to allow this app to stop the reader.  
@@ -232,6 +284,50 @@ public class RifidiServicesApp
 	public void setNotifyInterval(Float notifyInterval) {
 		this.notifyInterval = notifyInterval;
 	}
+	
+	
+
+	/**
+	 * @return the windowTime
+	 */
+	public Float getWindowTime() {
+		return windowTime;
+	}
+
+	/**
+	 * @param windowTime the windowTime to set
+	 */
+	public void setWindowTime(Float windowTime) {
+		this.windowTime = windowTime;
+	}
+
+	/**
+	 * @return the countThreshold
+	 */
+	public Integer getCountThreshold() {
+		return countThreshold;
+	}
+
+	/**
+	 * @param countThreshold the countThreshold to set
+	 */
+	public void setCountThreshold(Integer countThreshold) {
+		this.countThreshold = countThreshold;
+	}
+
+	/**
+	 * @return the minAvgRSSIThreshold
+	 */
+	public Double getMinAvgRSSIThreshold() {
+		return minAvgRSSIThreshold;
+	}
+
+	/**
+	 * @param minAvgRSSIThreshold the minAvgRSSIThreshold to set
+	 */
+	public void setMinAvgRSSIThreshold(Double minAvgRSSIThreshold) {
+		this.minAvgRSSIThreshold = minAvgRSSIThreshold;
+	}
 
 	/**
 	 * Constructor called by spring injection
@@ -257,6 +353,8 @@ public class RifidiServicesApp
 		
 		uniqueTagBatchSubscriberList = new LinkedList<MyUniqueTagBatchSubscriber>();
 		
+		rssiReadZoneSubscriberList = new LinkedList<MyRSSIReadZoneSubscriber>();
+		
 		//Get all the read zones
 		Map<String, ReadZone> allReadZones = super.getReadZones();
 		
@@ -269,10 +367,10 @@ public class RifidiServicesApp
 		ReadZone backDoorReadZone = allReadZones.get("Back_Door");
 		
 		//Subscribe the frontDoorReadZone to stableSetService
-		//subscribeToStableSetService(frontDoorReadZone);
+		subscribeToStableSetService(frontDoorReadZone);
 				
 		//Subscribe the backDoorReadZone to stableSetService
-		//subscribeToStableSetService(backDoorReadZone);
+		subscribeToStableSetService(backDoorReadZone);
 				
 		//Subscribe the frontDoorReadZone to readZoneMonitoringService
 		subscribeToReadZoneService(frontDoorReadZone);
@@ -285,6 +383,12 @@ public class RifidiServicesApp
 				
 		//Subscribe the backDoorReadZone to uniqueTagBatchIntervalService
 		subscribeToUniqueTagBatchIntervalService(backDoorReadZone);
+		
+		//Subscribe the frontDoorReadZone to rssiMonitoringService
+		subscribeToRSSIMonitoringService(frontDoorReadZone);
+				
+		//Subscribe the backDoorReadZone to rssiMonitoringService
+		subscribeToRSSIMonitoringService(backDoorReadZone);
 				
 		//map->, key: the subscriber, value: the service
 		//iterate over keyset
@@ -315,6 +419,10 @@ public class RifidiServicesApp
 			unsubscribeFromUniqueTagBatchIntervalService(sub);
 		}
 		
+		//Unsubscribe from rssiMonitoringService
+		for (MyRSSIReadZoneSubscriber sub : this.rssiReadZoneSubscriberList) {
+			unsubscribeFromRSSIMonitoringService(sub);
+		}
 		
 	}
 	
@@ -362,6 +470,14 @@ public class RifidiServicesApp
 		getUniqueTagBatchIntervalService().unsubscribe(myUniqueTagBatchSubscriber);
 		logger.info("unsubscribed subscriber with reader id: " + myUniqueTagBatchSubscriber.getReadZone().getReaderID());
 	}
+	
+	
+	public void unsubscribeFromRSSIMonitoringService(MyRSSIReadZoneSubscriber myRSSIReadZoneSubscriber){
+		
+		getRssiMonitoringService().unsubscribe(myRSSIReadZoneSubscriber);
+		logger.info("unsubscribed subscriber with reader id: " + myRSSIReadZoneSubscriber.getReadZone().getReaderID());
+	}
+	
 	
 	/**
 	 * 
@@ -442,6 +558,36 @@ public class RifidiServicesApp
 		
 	}
 	
+	
+	/**
+	 * 
+	 * @param readZone the readzone to subscribe
+	 */
+	public void subscribeToRSSIMonitoringService(ReadZone readZone){
+		
+		//Create an instance of the rssi read zone subscriber
+		MyRSSIReadZoneSubscriber myRSSIReadZoneSubscriber = new MyRSSIReadZoneSubscriber(this, 
+				readZone);
+		
+		rssiReadZoneSubscriberList.add(myRSSIReadZoneSubscriber);
+		
+		//Create a list of readzones
+		HashMap<String, ReadZone> readZoneMap = new HashMap<String, ReadZone>();
+		
+		//Add the readzone to the readzone map and subscribe
+		//TODO - What is the key for this readzone ?
+		readZoneMap.put(readZone.getReaderID(), readZone);
+		
+		getRssiMonitoringService().subscribe(myRSSIReadZoneSubscriber, readZoneMap, 
+				getWindowTime(), TimeUnit.SECONDS, getCountThreshold(), getMinAvgRSSIThreshold(),
+				true);
+		
+		logger.info("subscribed readzone with reader id: " + readZone.getReaderID()
+				+ " and getWindowTime: " + getWindowTime() + ", countThreshold: " 
+				+ getCountThreshold() + ", minAvgRSSIThreshold: " + getMinAvgRSSIThreshold());
+		
+	}
+	
 
 	/*
 	 * (non-Javadoc)
@@ -461,6 +607,15 @@ public class RifidiServicesApp
 		
 		//Set the notifyInterval
 		setNotifyInterval(Float.parseFloat(getProperty("notifyInterval", null)) );
+		
+		//Set the windowTime
+		setWindowTime(Float.parseFloat(getProperty("windowTime", null)) );
+				
+		//Set the countThreshold
+		setCountThreshold(Integer.parseInt(getProperty("countThreshold", null)) );
+				
+		//Set the minAvgRSSIThreshold
+		setMinAvgRSSIThreshold(Double.parseDouble(getProperty("minAvgRSSIThreshold", null)) );
 		
 		int mqttQos = Integer.parseInt(getProperty("mqttQos", "2"));
 		setMqttQos(mqttQos);

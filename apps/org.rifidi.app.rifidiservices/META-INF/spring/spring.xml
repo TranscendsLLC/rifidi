@@ -12,6 +12,7 @@
 		<property name="stableSetService" ref="stableSetServiceRef" />
 		<property name="readZoneMonitoringService" ref="readZoneMonitoringServiceRef" />
 		<property name="uniqueTagBatchIntervalService" ref="uniqueTagBatchIntervalServiceRef" />
+		<property name="rssiMonitoringService" ref="rssiMonitoringServiceRef" />
 		<property name="readerDAO" ref="readerDAORef"/>
 		
 	</bean>
@@ -25,7 +26,10 @@
 		interface="org.rifidi.edge.api.service.tagmonitor.ReadZoneMonitoringService" />
 		
 	<osgi:reference id="uniqueTagBatchIntervalServiceRef"
-		interface="org.rifidi.edge.api.service.tagmonitor.UniqueTagBatchIntervalService" />	
+		interface="org.rifidi.edge.api.service.tagmonitor.UniqueTagBatchIntervalService" />
+		
+    <osgi:reference id="rssiMonitoringServiceRef" 
+    interface="org.rifidi.edge.api.service.tagmonitor.RSSIMonitoringService"/>	
 		
 	<osgi:reference id="readerDAORef" interface="org.rifidi.edge.daos.ReaderDAO"/>	
 	

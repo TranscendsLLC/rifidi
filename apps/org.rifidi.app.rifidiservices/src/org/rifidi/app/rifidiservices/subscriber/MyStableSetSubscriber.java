@@ -131,10 +131,12 @@ public class MyStableSetSubscriber
 
 
 		//You can stop the session for every reader
+		/*
 		for (String readerID : readerIdSet) {
 			this.rifidiServicesApp.stopReaderSession(readerID);
 			logger.debug("info session for reader id: " + readerID);
 		}
+		
 
 		try {
 
@@ -143,6 +145,7 @@ public class MyStableSetSubscriber
 		} catch (InterruptedException e) {
 			// Don't care
 		}
+		*/
 
 		// Subscribe
 		rifidiServicesApp.subscribeToStableSetService(readZone);
