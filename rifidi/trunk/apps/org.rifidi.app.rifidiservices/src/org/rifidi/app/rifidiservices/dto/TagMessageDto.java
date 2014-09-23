@@ -12,6 +12,7 @@ public class TagMessageDto
 	private String tag;
 	private Long timeStamp;
 	private String stationId;
+	private int antennaId;
 	/**
 	 * @return the tag
 	 */
@@ -27,8 +28,18 @@ public class TagMessageDto
 	}
 	
 	
-	
-	
+	/**
+	 * @return the antennaId
+	 */
+	public int getAntennaId() {
+		return antennaId;
+	}
+	/**
+	 * @param antennaId the antennaId to set
+	 */
+	public void setAntennaId(int antennaId) {
+		this.antennaId = antennaId;
+	}
 	/**
 	 * @return the stationId
 	 */

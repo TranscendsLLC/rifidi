@@ -37,6 +37,7 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.MqttPersistenceException;
 import org.rifidi.app.rifidiservices.RifidiServicesApp;
 import org.rifidi.app.rifidiservices.dto.StableSetMessageDto;
+import org.rifidi.app.rifidiservices.util.MyMqttUtil;
 import org.rifidi.edge.api.service.tagmonitor.ReadZone;
 import org.rifidi.edge.api.service.tagmonitor.ReadZoneSubscriber;
 import org.rifidi.edge.api.service.tagmonitor.StableSetSubscriber;
@@ -48,8 +49,7 @@ import org.rifidi.edge.notification.TagReadEvent;
  * 
  * @author Manuel Tobon - manuel@transcends.co
  */
-public class MyStableSetSubscriber 
-		implements StableSetSubscriber {
+public class MyStableSetSubscriber implements StableSetSubscriber {
 
 	/**
 	 * Reference to application of this subscriber to notify for example when to
@@ -63,7 +63,7 @@ public class MyStableSetSubscriber
 
 	/** Logger for this class */
 	private final Log logger = LogFactory.getLog(getClass());
-	
+
 	/** The topic name to post messages from this subscriber **/
 	private String topicName = "myTopicStableSet";
 
@@ -80,7 +80,8 @@ public class MyStableSetSubscriber
 	 * @param readZone
 	 *            the readzone instance associated with this subscriber
 	 */
-	public MyStableSetSubscriber(RifidiServicesApp rifidiServicesApp, ReadZone readZone) {
+	public MyStableSetSubscriber(RifidiServicesApp rifidiServicesApp,
+			ReadZone readZone) {
 
 		this.rifidiServicesApp = rifidiServicesApp;
 		this.readZone = readZone;
@@ -94,58 +95,59 @@ public class MyStableSetSubscriber
 
 		// You can unsubscribe this subscriber using the app reference
 		rifidiServicesApp.unsubscribeFromStableSetService(this);
-		 
+
 		// logger.debug("unsubscribed the subscriber for reader id: "
 		// + getReadZone().getReaderID());
-		 
-		// Create a new tagMessageDto instance, for example, to create an xml representation
+
+		// Create a new tagMessageDto instance, for example, to create an xml
+		// representation
 		// of tag list, using annotations -see StableSetMessageDto
-		 StableSetMessageDto stableSetMessageDto = new StableSetMessageDto();
-		 stableSetMessageDto.setTimeStamp(new Date().getTime());
-		 
-		 //Maybe these tags are read by several readers in this read event (in case that
-		 //the readzone maps to multiple readers), so you can keep track of all readers 
-		 //in a set as long you iterate over tags
-		 //you can use a Set, that is a Collection that contains no duplicates
-		 Set<String> readerIdSet = new HashSet<String>(); 
-		 
+		StableSetMessageDto stableSetMessageDto = new StableSetMessageDto();
+		stableSetMessageDto.setTimeStamp(new Date().getTime());
+
+		// Maybe these tags are read by several readers in this read event (in
+		// case that
+		// the readzone maps to multiple readers), so you can keep track of all
+		// readers
+		// in a set as long you iterate over tags
+		// you can use a Set, that is a Collection that contains no duplicates
+		Set<String> readerIdSet = new HashSet<String>();
+
 		// Iterate over the tags
 		for (TagReadEvent tag : tagReadEventSet) {
-			
-			//Extract the reader id to keep in a set
+
+			// Extract the reader id to keep in a set
 			readerIdSet.add(tag.getReaderID());
 
 			// add this tag to the list of tags inside
 			// stableSetMessageDto object
 
 			stableSetMessageDto.addTag(tag.getTag().getFormattedID());
-			logger.debug("tag added to tag list of reader id " + tag.getReaderID()
-					+ ": " + tag.getTag().getFormattedID());
+			logger.debug("tag added to tag list of reader id "
+					+ tag.getReaderID() + ": " + tag.getTag().getFormattedID());
 
 		}
 
-		//You can publish the list of tags to queue server like mqtt
-		publishToQueue(stableSetMessageDto);
-		logger.info("published to queue stableSetMessageDto: "
-					+ stableSetMessageDto);
+		//Below is an example of how you can publish the list of tags to queue server like mqtt
+		//but you can also publish events to the cloud, or database, or amazon, or another
+		//MyMqttUtil.postMqttMesssage(rifidiServicesApp.getMqttClient(), getTopicName(), 
+		//		rifidiServicesApp.getMqttQos(), stableSetMessageDto);
+		//logger.info("published to queue stableSetMessageDto: "
+		//		+ stableSetMessageDto);
 
-
-		//You can stop the session for every reader
+		// You can stop the session for every reader
 		/*
-		for (String readerID : readerIdSet) {
-			this.rifidiServicesApp.stopReaderSession(readerID);
-			logger.debug("info session for reader id: " + readerID);
-		}
-		
-
-		try {
-
-			Thread.sleep(500);
-
-		} catch (InterruptedException e) {
-			// Don't care
-		}
-		*/
+		 * for (String readerID : readerIdSet) {
+		 * this.rifidiServicesApp.stopReaderSession(readerID);
+		 * logger.debug("info session for reader id: " + readerID); }
+		 * 
+		 * 
+		 * try {
+		 * 
+		 * Thread.sleep(500);
+		 * 
+		 * } catch (InterruptedException e) { // Don't care }
+		 */
 
 		// Subscribe
 		rifidiServicesApp.subscribeToStableSetService(readZone);
@@ -168,8 +170,6 @@ public class MyStableSetSubscriber
 	public void setReadZone(ReadZone readZone) {
 		this.readZone = readZone;
 	}
-	
-	
 
 	/**
 	 * @return the topicName
@@ -179,91 +179,11 @@ public class MyStableSetSubscriber
 	}
 
 	/**
-	 * @param topicName the topicName to set
+	 * @param topicName
+	 *            the topicName to set
 	 */
 	public void setTopicName(String topicName) {
 		this.topicName = topicName;
-	}
-
-	/**
-	 * Publish a message to the broker
-	 * 
-	 * @param stableSetMessageDto
-	 *            the object from which we are going to generate xml string
-	 *            representation and send to broker
-	 */
-	private void publishToQueue(StableSetMessageDto stableSetMessageDto) {
-
-		try {
-
-			JAXBContext jaxbContext = JAXBContext
-					.newInstance(StableSetMessageDto.class);
-			Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
-
-			// output pretty printed
-			jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT,
-					Boolean.TRUE);
-
-			// Create xml String and send to server using mqttClient
-			Writer writer = new StringWriter();
-			jaxbMarshaller.marshal(stableSetMessageDto, writer);
-			String content = writer.toString();
-			writer.close();
-
-			logger.info("Publishing message: " + content);
-			MqttMessage message = new MqttMessage(content.getBytes());
-			message.setQos(rifidiServicesApp.getMqttQos());
-			
-			try {
-				
-				rifidiServicesApp.getMqttClient().connect();
-	            logger.info("Connected to broker: " + rifidiServicesApp.getMqttClient().getServerURI());
-	            
-			} catch(MqttException mEx){
-				
-				logger.error("Error connecting to broker", mEx);
-				throw new RuntimeException(mEx);
-				
-			}
-            
-            try {
-
-            	rifidiServicesApp.getMqttClient().publish(getTopicName(), message);
-            	logger.info("Message published");
-            	
-            } catch (MqttException mEx) {
-
-        			logger.error("Error publishing to queue", mEx);
-        			throw new RuntimeException(mEx);
-
-        	}
-			
-			try {
-				
-				rifidiServicesApp.getMqttClient().disconnect();
-				logger.info("mqttClient disconnected.");
-				
-			} catch (MqttException mEx){
-				
-				logger.error("Error trying to disconnect mqttClient", mEx);
-				throw new RuntimeException(mEx);
-				
-			}
-
-		} 
-		
-		catch (JAXBException jEx) {
-
-			logger.error("Error publishing to queue", jEx);
-			throw new RuntimeException(jEx);
-
-		} catch (IOException ioEx) {
-
-			logger.error("Error publishing to queue", ioEx);
-			throw new RuntimeException(ioEx);
-
-		}
-
 	}
 
 }
