@@ -401,16 +401,16 @@ public class RifidiServicesApp
 		ReadZone backDoorReadZone = allReadZones.get("Back_Door");
 		
 		//Subscribe the frontDoorReadZone to stableSetService
-		//subscribeToStableSetService(frontDoorReadZone);
+		subscribeToStableSetService(frontDoorReadZone);
 				
 		//Subscribe the backDoorReadZone to stableSetService
-		//subscribeToStableSetService(backDoorReadZone);
+		subscribeToStableSetService(backDoorReadZone);
 		
 		//Subscribe the frontDoorReadZone to limitStableSetService
-		subscribeToLimitStableSetService(frontDoorReadZone);
+		//subscribeToLimitStableSetService(frontDoorReadZone);
 				
 		//Subscribe the backDoorReadZone to limitStableSetService
-		subscribeToLimitStableSetService(backDoorReadZone);
+		//subscribeToLimitStableSetService(backDoorReadZone);
 				
 		//Subscribe the frontDoorReadZone to readZoneMonitoringService
 		subscribeToReadZoneService(frontDoorReadZone);
@@ -427,9 +427,6 @@ public class RifidiServicesApp
 		//Subscribe allReadZones to rssiMonitoringService
 		subscribeToRSSIMonitoringService(allReadZones);
 				
-		//map->, key: the subscriber, value: the service
-		//iterate over keyset
-		//hashmap.get(key).unsubscribe(key)
 	}
 	
 
@@ -616,7 +613,7 @@ public class RifidiServicesApp
 		readZoneList.add(readZone);
 		
 		getReadZoneMonitoringService().subscribe(myReadZoneSubscriber, readZoneList, 
-				getDepartureTime(), TimeUnit.SECONDS, false, true);
+				getDepartureTime(), TimeUnit.SECONDS, true, true);
 		
 		logger.info("subscribed readzone with reader id: " + readZone.getReaderID()
 				+ " and departureTime: " + getDepartureTime());

@@ -38,6 +38,7 @@ import org.eclipse.paho.client.mqttv3.MqttPersistenceException;
 import org.rifidi.app.rifidiservices.RifidiServicesApp;
 import org.rifidi.app.rifidiservices.dto.StableSetMessageDto;
 import org.rifidi.app.rifidiservices.dto.TagBatchSeenMessageDto;
+import org.rifidi.app.rifidiservices.util.MyMqttUtil;
 import org.rifidi.edge.api.service.tagmonitor.ReadZone;
 import org.rifidi.edge.api.service.tagmonitor.ReadZoneSubscriber;
 import org.rifidi.edge.api.service.tagmonitor.StableSetSubscriber;
@@ -126,12 +127,14 @@ public class MyUniqueTagBatchSubscriber
 		}
 
 		//You can publish the list of tags to queue server like mqtt
-		publishToQueue(tagBatchSeenMessageDto);
-		logger.info("published to queue tagBatchSeenMessageDto: "
-					+ tagBatchSeenMessageDto);
+		//MyMqttUtil.postMqttMesssage(rifidiServicesApp.getMqttClient(), getTopicName(), 
+		//		rifidiServicesApp.getMqttQos(), tagBatchSeenMessageDto);
+		//logger.info("published to queue tagBatchSeenMessageDto: "
+		//			+ tagBatchSeenMessageDto);
 
 
 		//You can stop the session for every reader
+		/*
 		for (String readerID : readerIdSet) {
 			this.rifidiServicesApp.stopReaderSession(readerID);
 			logger.debug("info session for reader id: " + readerID);
@@ -144,6 +147,7 @@ public class MyUniqueTagBatchSubscriber
 		} catch (InterruptedException e) {
 			// Don't care
 		}
+		*/
 
 		// Subscribe
 		rifidiServicesApp.subscribeToStableSetService(readZone);
@@ -182,87 +186,5 @@ public class MyUniqueTagBatchSubscriber
 	public void setTopicName(String topicName) {
 		this.topicName = topicName;
 	}
-
-	/**
-	 * Publish a message to the broker
-	 * 
-	 * @param tagBatchSeenMessageDto
-	 *            the object from which we are going to generate xml string
-	 *            representation and send to broker
-	 */
-	private void publishToQueue(TagBatchSeenMessageDto tagBatchSeenMessageDto) {
-
-		try {
-
-			JAXBContext jaxbContext = JAXBContext
-					.newInstance(TagBatchSeenMessageDto.class);
-			Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
-
-			// output pretty printed
-			jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT,
-					Boolean.TRUE);
-
-			// Create xml String and send to server using mqttClient
-			Writer writer = new StringWriter();
-			jaxbMarshaller.marshal(tagBatchSeenMessageDto, writer);
-			String content = writer.toString();
-			writer.close();
-
-			logger.info("Publishing message: " + content);
-			MqttMessage message = new MqttMessage(content.getBytes());
-			message.setQos(rifidiServicesApp.getMqttQos());
-			
-			try {
-				
-				rifidiServicesApp.getMqttClient().connect();
-	            logger.info("Connected to broker: " + rifidiServicesApp.getMqttClient().getServerURI());
-	            
-			} catch(MqttException mEx){
-				
-				logger.error("Error connecting to broker", mEx);
-				throw new RuntimeException(mEx);
-				
-			}
-            
-            try {
-
-            	rifidiServicesApp.getMqttClient().publish(getTopicName(), message);
-            	logger.info("Message published");
-            	
-            } catch (MqttException mEx) {
-
-        			logger.error("Error publishing to queue", mEx);
-        			throw new RuntimeException(mEx);
-
-        	}
-			
-			try {
-				
-				rifidiServicesApp.getMqttClient().disconnect();
-				logger.info("mqttClient disconnected.");
-				
-			} catch (MqttException mEx){
-				
-				logger.error("Error trying to disconnect mqttClient", mEx);
-				throw new RuntimeException(mEx);
-				
-			}
-
-		} 
-		
-		catch (JAXBException jEx) {
-
-			logger.error("Error publishing to queue", jEx);
-			throw new RuntimeException(jEx);
-
-		} catch (IOException ioEx) {
-
-			logger.error("Error publishing to queue", ioEx);
-			throw new RuntimeException(ioEx);
-
-		}
-
-	}
-
 
 }

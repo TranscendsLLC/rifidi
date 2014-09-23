@@ -26,6 +26,7 @@ import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.rifidi.app.rifidiservices.RifidiServicesApp;
 import org.rifidi.app.rifidiservices.dto.TagMessageDto;
+import org.rifidi.app.rifidiservices.util.MyMqttUtil;
 import org.rifidi.edge.api.service.tagmonitor.ReadZone;
 import org.rifidi.edge.api.service.tagmonitor.ReadZoneSubscriber;
 import org.rifidi.edge.notification.TagReadEvent;
@@ -69,83 +70,18 @@ public class MyReadZoneSubscriber implements ReadZoneSubscriber {
 	@Override
 	public void tagArrived(TagReadEvent tag) {
 
-		logger.info("TAG ARRIVED: " + tag.getTag().getFormattedID());
+		logger.info("TAG ARRIVED: " + tag.getTag().getFormattedID() + " from antenna: " 
+					+ tag.getAntennaID());
 
 		TagMessageDto tagMessageDto = new TagMessageDto();
 		tagMessageDto.setTag(tag.getTag().getFormattedID());
 		tagMessageDto.setTimeStamp(tag.getTimestamp());
 		tagMessageDto.setStationId(tag.getReaderID());
-
-		try {
-
-			JAXBContext jaxbContext = JAXBContext
-					.newInstance(TagMessageDto.class);
-			Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
-
-			// output pretty printed
-			jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT,
-					Boolean.TRUE);
-
-			// Create xml String and send to server using mqttClient
-			Writer writer = new StringWriter();
-			jaxbMarshaller.marshal(tagMessageDto, writer);
-			String content = writer.toString();
-			writer.close();
-
-			logger.info("Publishing message: " + content);
-			MqttMessage message = new MqttMessage(content.getBytes());
-			message.setQos(rifidiServicesApp.getMqttQos());
-
-			String mqttTopic = tag.getReaderID();
-
-			try {
-
-				rifidiServicesApp.getMqttClient().connect();
-				logger.info("Connected to broker: "
-						+ rifidiServicesApp.getMqttClient().getServerURI());
-
-			} catch (MqttException mEx) {
-
-				logger.error("Error connecting to broker", mEx);
-				throw new RuntimeException(mEx);
-
-			}
-
-			try {
-
-				rifidiServicesApp.getMqttClient().publish(mqttTopic, message);
-				logger.info("Message published");
-
-			} catch (MqttException mEx) {
-
-				logger.error("Error publishing to queue", mEx);
-				throw new RuntimeException(mEx);
-
-			}
-
-			try {
-
-				rifidiServicesApp.getMqttClient().disconnect();
-				logger.info("mqttClient disconnected.");
-
-			} catch (MqttException mEx) {
-
-				logger.error("Error trying to disconnect mqttClient", mEx);
-				throw new RuntimeException(mEx);
-
-			}
-
-		} catch (JAXBException jEx) {
-
-			logger.error("Error publishing to queue", jEx);
-			throw new RuntimeException(jEx);
-
-		} catch (IOException ioEx) {
-
-			logger.error("Error publishing to queue", ioEx);
-			throw new RuntimeException(ioEx);
-
-		}
+		tagMessageDto.setAntennaId(tag.getAntennaID());
+		
+		//You can do whatever you need with tag data, like posting to mqtt server
+		//MyMqttUtil.postMqttMesssage(rifidiServicesApp.getMqttClient(), tag.getReaderID(), 
+		//		rifidiServicesApp.getMqttQos(), tagMessageDto);
 
 	}
 
@@ -158,6 +94,7 @@ public class MyReadZoneSubscriber implements ReadZoneSubscriber {
 	 */
 	@Override
 	public void tagDeparted(TagReadEvent tag) {
-		logger.info("TAG DEPARTED: " + tag.getTag().getFormattedID());
+		logger.info("TAG DEPARTED: " + tag.getTag().getFormattedID() + " from antenna: " 
+				+ tag.getAntennaID());
 	}
 }

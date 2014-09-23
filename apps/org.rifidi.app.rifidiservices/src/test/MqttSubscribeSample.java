@@ -87,7 +87,8 @@ public class MqttSubscribeSample
 	 * @throws MqttException
 	 */
 	
-	private String brokerUrl = "tcp://iot.eclipse.org:1883";
+	//private String brokerUrl = "tcp://iot.eclipse.org:1883";
+	private String brokerUrl = "tcp://localhost:1883";
 	private MqttClient client;
 	private boolean quietMode = false;
 	private MqttConnectOptions 	conOpt;
@@ -96,7 +97,7 @@ public class MqttSubscribeSample
 	private String userName = null;
 	private String clientId = "testMQTTRifidi";
 	//private String topicName = "transcendstest";
-	private String topicName = "Alien_1";
+	private String topicName = "Back_Door_3";
 	private int qos = 2;
 
     public MqttSubscribeSample() 
