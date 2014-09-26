@@ -22,7 +22,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.api.AbstractRifidiApp;
 import org.rifidi.edge.api.service.tagmonitor.ReadZone;
-import org.rifidi.edge.api.service.tagmonitor.ReadZoneMonitoringService;
 import org.rifidi.edge.api.service.tagmonitor.StableSetService;
 import org.rifidi.edge.daos.ReaderDAO;
 import org.rifidi.edge.sensors.AbstractSensor;
