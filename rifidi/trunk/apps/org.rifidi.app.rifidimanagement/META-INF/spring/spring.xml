@@ -10,11 +10,11 @@
 		<constructor-arg index="0" value="RifidiManagement" />
 		<constructor-arg index="1" value="RifidiManagementApp" />
 		
-		<property name="readZoneMonitoringService" ref="readZoneMonitoringServiceRef" />
+		<property name="stableSetService" ref="stableSetServiceRef" />
 	</bean>
 	
 	<osgi:service ref="rifidiManagementAppRef" interface="org.rifidi.edge.api.RifidiApp" />
 	
-	<osgi:reference id="readZoneMonitoringServiceRef"
-		interface="org.rifidi.edge.api.service.tagmonitor.ReadZoneMonitoringService" />
+	<osgi:reference id="stableSetServiceRef"
+		interface="org.rifidi.edge.api.service.tagmonitor.StableSetService" />
 </beans>
