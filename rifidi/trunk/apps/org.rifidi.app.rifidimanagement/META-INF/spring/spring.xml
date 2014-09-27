@@ -11,10 +11,15 @@
 		<constructor-arg index="1" value="RifidiManagementApp" />
 		
 		<property name="stableSetService" ref="stableSetServiceRef" />
+		
+		<property name="readerDAO" ref="readerDAORef"/>
+		
 	</bean>
 	
 	<osgi:service ref="rifidiManagementAppRef" interface="org.rifidi.edge.api.RifidiApp" />
 	
 	<osgi:reference id="stableSetServiceRef"
 		interface="org.rifidi.edge.api.service.tagmonitor.StableSetService" />
+		
+	<osgi:reference id="readerDAORef" interface="org.rifidi.edge.daos.ReaderDAO"/>
 </beans>
