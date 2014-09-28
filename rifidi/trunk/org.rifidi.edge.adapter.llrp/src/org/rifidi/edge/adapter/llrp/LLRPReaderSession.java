@@ -14,6 +14,8 @@ package org.rifidi.edge.adapter.llrp;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -23,17 +25,26 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.mina.common.RuntimeIOException;
+import org.jdom.Document;
 import org.llrp.ltk.exceptions.InvalidLLRPMessageException;
+import org.llrp.ltk.generated.LLRPMessageFactory;
 import org.llrp.ltk.generated.enumerations.AccessReportTriggerType;
+import org.llrp.ltk.generated.enumerations.AirProtocols;
 import org.llrp.ltk.generated.enumerations.GetReaderCapabilitiesRequestedData;
 import org.llrp.ltk.generated.enumerations.NotificationEventType;
 import org.llrp.ltk.generated.enumerations.ROReportTriggerType;
 import org.llrp.ltk.generated.enumerations.StatusCode;
+import org.llrp.ltk.generated.messages.ADD_ACCESSSPEC;
+import org.llrp.ltk.generated.messages.ADD_ACCESSSPEC_RESPONSE;
 import org.llrp.ltk.generated.messages.GET_READER_CAPABILITIES;
 import org.llrp.ltk.generated.messages.SET_READER_CONFIG;
 import org.llrp.ltk.generated.messages.SET_READER_CONFIG_RESPONSE;
+import org.llrp.ltk.generated.parameters.AccessCommand;
 import org.llrp.ltk.generated.parameters.AccessReportSpec;
+import org.llrp.ltk.generated.parameters.AccessSpec;
 import org.llrp.ltk.generated.parameters.C1G2EPCMemorySelector;
+import org.llrp.ltk.generated.parameters.C1G2TagSpec;
+import org.llrp.ltk.generated.parameters.C1G2TargetTag;
 import org.llrp.ltk.generated.parameters.EventNotificationState;
 import org.llrp.ltk.generated.parameters.ROReportSpec;
 import org.llrp.ltk.generated.parameters.ReaderEventNotificationSpec;
@@ -43,7 +54,11 @@ import org.llrp.ltk.net.LLRPConnectionAttemptFailedException;
 import org.llrp.ltk.net.LLRPConnector;
 import org.llrp.ltk.net.LLRPEndpoint;
 import org.llrp.ltk.types.Bit;
+import org.llrp.ltk.types.BitArray_HEX;
+import org.llrp.ltk.types.LLRPBitList;
 import org.llrp.ltk.types.LLRPMessage;
+import org.llrp.ltk.types.SignedShort;
+import org.llrp.ltk.types.TwoBitField;
 import org.llrp.ltk.types.UnsignedInteger;
 import org.llrp.ltk.types.UnsignedShort;
 import org.llrp.ltk.util.Util;
@@ -521,6 +536,65 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 		NotifierService service = notifierService;
 		if (service != null) {
 			service.jobDeleted(this.readerID, this.getID(), id);
+		}
+	}
+
+	public String addAccessSpec(String targetMB, Boolean targetMatch, String targetPointer,
+			String targetTagMask, String targeTagData, String writeOpSpecID,
+			String writeAccessPassword, Integer writeMB1, Integer writeMB2,
+			Integer writeWordPointer, String writeData) {
+		try {
+			AccessSpec spec = new AccessSpec();
+			spec.setAccessSpecID(new UnsignedInteger(1));
+			spec.setAntennaID(new UnsignedShort(0));
+			spec.setProtocolID(new AirProtocols(
+					AirProtocols.EPCGlobalClass1Gen2));
+			spec.setROSpecID(new UnsignedInteger(0));
+			AccessCommand command = new AccessCommand();
+			C1G2TagSpec cgSpec = new C1G2TagSpec();
+			C1G2TargetTag tag = new C1G2TargetTag();
+			tag.setMatch(new Bit(targetMatch));
+			TwoBitField tbf = new TwoBitField();
+			tbf.set(writeMB1);
+			tbf.set(writeMB2);
+			tag.setMB(tbf);
+			tag.setPointer(new UnsignedShort(writeWordPointer));
+			BitArray_HEX bitHex = new BitArray_HEX(writeData);
+			tag.setTagData(bitHex);
+			List<C1G2TargetTag> tagList = new LinkedList<C1G2TargetTag>();
+			tagList.add(tag);
+			cgSpec.setC1G2TargetTagList(tagList);
+			
+			command.setAirProtocolTagSpec(cgSpec);
+			spec.setAccessCommand(command);
+
+			ADD_ACCESSSPEC aas = new ADD_ACCESSSPEC();
+			aas.setAccessSpec(spec);
+
+			ADD_ACCESSSPEC_RESPONSE response = null;
+			try {
+				response = (ADD_ACCESSSPEC_RESPONSE) this.transact(aas);
+				return response.toString();
+			} catch (TimeoutException e) {
+				return e.getMessage();
+			}
+		} catch (Exception e) {
+			return e.getMessage();
+		}
+	}
+
+	public String sendLLRPMessage(Document xmlMessage) {
+		try {
+			LLRPMessage message = LLRPMessageFactory.createLLRPMessage(xmlMessage);
+			LLRPMessage response = null;
+			try {
+				response = this.transact(message);
+				return response.toString();
+			} catch (TimeoutException e) {
+				return e.getMessage();
+			}
+		} catch (Exception e) {
+			return e.getMessage();
 		}
 	}
 
