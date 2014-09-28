@@ -1,9 +1,10 @@
 package org.rifidi.edge;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.dna.mqtt.moquette.server.Server;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
-
 
 /**
  * 
@@ -16,6 +17,9 @@ import org.osgi.framework.BundleContext;
 public class Activator implements BundleActivator {
 
 	private Server server;
+	
+	/** Logger */
+	private final Log logger = LogFactory.getLog(getClass());
 
 	/*
 	 * (non-Javadoc)
@@ -25,9 +29,19 @@ public class Activator implements BundleActivator {
 	 * )
 	 */
 	@Override
-	public void start(BundleContext context) throws Exception {		
-		this.server = new Server();
-		this.server.startServer();	
+	public void start(BundleContext context) throws Exception {
+		try {
+			boolean enabled = Boolean.parseBoolean(System
+					.getProperty("org.rifidi.mqtt.enabled"));
+
+			if (enabled) {
+				logger.info("Starting Moquette MQTT");
+				this.server = new Server();
+				this.server.startServer();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	/*
