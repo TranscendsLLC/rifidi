@@ -10,7 +10,7 @@ public class MyResponseHandler
 	//Variable to get current value 
 	private StringBuffer buffer = new StringBuffer();
 	
-	//Variable to get message value form xml response
+	//Variable to get message value from xml response
 	private String messageValue;
 	
 	// this method is called every time the parser gets an open tag '<'  
