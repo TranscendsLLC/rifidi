@@ -3,15 +3,22 @@ package org.rifidi.app.rifidimanagement.test;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.StringReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import javax.imageio.IIOException;
 import javax.net.ssl.HttpsURLConnection;
 import javax.xml.bind.JAXB;
+import javax.xml.bind.helpers.ParseConversionEventImpl;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
 
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
@@ -26,8 +33,12 @@ public class MyHttpTestClient {
 	private String strProtocol = "http";
 	private String strHost = "localhost";
 	private String strPort = "8111";
-	
-	private static enum RequestMethodEnum {POST, GET};
+
+	private static enum RequestMethodEnum {
+		POST, GET
+	};
+
+	private final String SUCCESS_MESSAGE = "Success";
 
 	/**
 	 * @param args
@@ -36,51 +47,46 @@ public class MyHttpTestClient {
 		// TODO Auto-generated method stub
 
 		MyHttpTestClient myHttpTestClient = new MyHttpTestClient();
-		
+
 		String strCommand = "startsession/Front_Door_1/1";
 
+		// You can submit a GET or a POST request
+
 		// HTTP GET request
-		myHttpTestClient.process(RequestMethodEnum.GET, strCommand);
-		
+		//myHttpTestClient.processStartSession(RequestMethodEnum.GET, strCommand);
+
 		// HTTP POST request
-		//testClient.process(RequestMethodEnum.POST, strCommand);
+		 myHttpTestClient.processStartSession(RequestMethodEnum.POST, strCommand);
 
 	}
 
-	public void process(RequestMethodEnum requestMethodEnum, String strCommand) 
-			throws MalformedURLException, SAXException,	IOException {
+	public void processStartSession(RequestMethodEnum requestMethodEnum,
+			String strCommand) throws MalformedURLException, SAXException,
+			IOException, ParserConfigurationException {
 
 		String strUrl = strProtocol + "://" + strHost + ":" + strPort + "/"
 				+ strCommand;
-		
-		if (requestMethodEnum.equals(RequestMethodEnum.GET)){
-		
-			sendGet(strUrl);
-			
+
+		String xmlResponse = null;
+
+		if (requestMethodEnum.equals(RequestMethodEnum.GET)) {
+
+			xmlResponse = sendGet(strUrl);
+
 		} else if (requestMethodEnum.equals(RequestMethodEnum.POST)) {
-		
-			sendPost(strUrl, null);
+
+			xmlResponse = sendPost(strUrl, null);
 		}
 
-		// the SAX way:
-		// XMLReader myReader = XMLReaderFactory.createXMLReader();
-		// myReader.setContentHandler(handler);
-		// myReader.parse(new InputSource(url.openStream()));
-
-		// test post and get
-
-		// unmarshal xml url
-		// RestResponseMessageDTO responseDTO = JAXB.unmarshal(url,
-		// RestResponseMessageDTO.class);
-
-		// System.out.println("responseDTO.message: " +
-		// responseDTO.getMessage());
+		processXml(xmlResponse);
 
 	}
 
 	// HTTP GET request
-	private void sendGet(String url)
-			throws MalformedURLException, IOException {
+	private String sendGet(String url) throws MalformedURLException,
+			IOException {
+
+		String xmlResponse = null;
 
 		URL obj = new URL(url);
 		HttpURLConnection con = (HttpURLConnection) obj.openConnection();
@@ -94,35 +100,41 @@ public class MyHttpTestClient {
 		int responseCode = con.getResponseCode();
 		System.out.println("\nSending 'GET' request to URL : " + url);
 		System.out.println("Response Code : " + responseCode);
-		
-		if (responseCode == 200){
+
+		if (responseCode == 200) {
 
 			BufferedReader in = new BufferedReader(new InputStreamReader(
 					con.getInputStream()));
 			String inputLine;
 			StringBuffer response = new StringBuffer();
-	
+
 			while ((inputLine = in.readLine()) != null) {
 				response.append(inputLine);
 			}
 			in.close();
-	
+
+			xmlResponse = response.toString();
+
 			// print result
 			System.out.println(response.toString());
-			
+
 		} else {
-			
+
 			System.out.println("response not ok");
-			
+
 		}
+
+		return xmlResponse;
 
 	}
 
 	// HTTP POST request
-	private void sendPost(String url, String urlParameters)
-			throws MalformedURLException, IOException{
+	private String sendPost(String url, String urlParameters)
+			throws MalformedURLException, IOException,
+			ParserConfigurationException, SAXException {
 
-		// String url = "https://selfsolve.apple.com/wcResults.do";
+		String xmlResponse = null;
+
 		URL obj = new URL(url);
 		HttpURLConnection con = (HttpURLConnection) obj.openConnection();
 
@@ -134,31 +146,77 @@ public class MyHttpTestClient {
 		// Send post request
 		con.setDoOutput(true);
 		DataOutputStream wr = new DataOutputStream(con.getOutputStream());
-		
+
 		if (urlParameters != null && !urlParameters.isEmpty()) {
 			wr.writeBytes(urlParameters);
 		}
-		
+
 		wr.flush();
 		wr.close();
 
 		int responseCode = con.getResponseCode();
+
 		System.out.println("\nSending 'POST' request to URL : " + url);
 		System.out.println("Post parameters : " + urlParameters);
 		System.out.println("Response Code : " + responseCode);
 
-		BufferedReader in = new BufferedReader(new InputStreamReader(
-				con.getInputStream()));
-		String inputLine;
-		StringBuffer response = new StringBuffer();
+		if (responseCode == 200) {
 
-		while ((inputLine = in.readLine()) != null) {
-			response.append(inputLine);
+			BufferedReader in = new BufferedReader(new InputStreamReader(
+					con.getInputStream()));
+			String inputLine;
+			StringBuffer response = new StringBuffer();
+
+			while ((inputLine = in.readLine()) != null) {
+				response.append(inputLine);
+			}
+			in.close();
+			
+			xmlResponse = response.toString();
+
+			// print result
+			System.out.println(response.toString());
+			
+		} else {
+
+			System.out.println("response not ok");
+
 		}
-		in.close();
 
-		// print result
-		System.out.println(response.toString());
+		return xmlResponse;
+
+	}
+
+	public void processXml(String xml) throws SAXException,
+			ParserConfigurationException, IOException {
+
+		// obtain and configure a SAX based parser
+		SAXParserFactory saxParserFactory = SAXParserFactory.newInstance();
+
+		// obtain object for SAX parser
+		SAXParser saxParser = saxParserFactory.newSAXParser();
+
+		// create the reader (scanner)
+		XMLReader xmlreader = saxParser.getXMLReader();
+
+		MyResponseHandler myResponseHandler = new MyResponseHandler();
+
+		// assign our handler
+		xmlreader.setContentHandler(myResponseHandler);
+
+		// perform the synchronous parse
+		xmlreader.parse(new InputSource(new StringReader(xml)));
+
+		System.out.println("myResponseHandler.getMessageValue(): "
+				+ myResponseHandler.getMessageValue());
+
+		if (myResponseHandler.getMessageValue().equals(SUCCESS_MESSAGE)) {
+
+			// Do whatever logic with success outcome
+		} else {
+
+			// Not a success outcome
+		}
 
 	}
 
