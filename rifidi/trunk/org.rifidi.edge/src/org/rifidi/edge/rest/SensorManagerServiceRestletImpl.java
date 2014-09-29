@@ -254,11 +254,17 @@ public class SensorManagerServiceRestletImpl extends Application {
 					for (String key : configuration.getAttributes().keySet()) {
 						PropertyNameDTO pnd = new PropertyNameDTO();
 						pnd.setPropertyName(key);
-						pnd.setPropertyValue(configuration.getAttributes()
-								.get(key).toString());
+						if (configuration.getAttributes().get(key) != null) {
+							pnd.setPropertyValue(configuration.getAttributes()
+									.get(key).toString());
+						} else {
+							pnd.setPropertyValue("null");
+						}
 						pndList.add(pnd);
 					}
 					prmd.setProperties(pndList);
+					System.out.println(self.generateReturnString(prmd)
+							.toString());
 					response.setEntity(self.generateReturnString(prmd)
 							.toString(), MediaType.TEXT_XML);
 				} catch (Exception e) {
@@ -286,6 +292,27 @@ public class SensorManagerServiceRestletImpl extends Application {
 					response.setEntity(self.generateReturnString(self
 							.generateSuccessMessage()), MediaType.TEXT_XML);
 				} catch (Exception e) {
+					response.setEntity(e.getMessage(), MediaType.TEXT_PLAIN);
+				}
+			}
+		};
+		
+		Restlet createCommand = new Restlet() {
+			@Override
+			public void handle(Request request, Response response) {
+				try {
+					AttributeList attributes = new AttributeList();
+					String propList = (String) request.getAttributes().get(
+							"properties");
+					String[] splitProp = propList.split(";");
+					for (String pair : splitProp) {
+						String[] prop = pair.split("=");
+						attributes.add(new Attribute(prop[0], prop[1]));
+					}
+					
+					self.commandManagerService.createCommand((String) request
+							.getAttributes().get("commandType"), attributes);
+				} catch(Exception e) {
 					response.setEntity(e.getMessage(), MediaType.TEXT_PLAIN);
 				}
 			}
@@ -318,49 +345,53 @@ public class SensorManagerServiceRestletImpl extends Application {
 				}
 			}
 		};
-		
+
 		Restlet readerTypes = new Restlet() {
 			@Override
 			public void handle(Request request, Response response) {
 				try {
 					ReaderTypesReponseMessageDTO rtr = new ReaderTypesReponseMessageDTO();
-					Set<ReaderFactoryDTO> grf = self.sensorManagerService.getReaderFactories();
+					Set<ReaderFactoryDTO> grf = self.sensorManagerService
+							.getReaderFactories();
 					List<ReaderTypeDTO> ret = new LinkedList<ReaderTypeDTO>();
-					for(ReaderFactoryDTO rfd:grf) {
+					for (ReaderFactoryDTO rfd : grf) {
 						ReaderTypeDTO rtd = new ReaderTypeDTO();
 						rtd.setReaderDesc(rfd.getReaderFactoryDescription());
 						rtd.setReaderType(rfd.getReaderFactoryID());
 						ret.add(rtd);
 					}
 					rtr.setSensors(ret);
-					response.setEntity(self.generateReturnString(rtr).toString(), MediaType.TEXT_XML);
+					response.setEntity(self.generateReturnString(rtr)
+							.toString(), MediaType.TEXT_XML);
 				} catch (Exception e) {
 					response.setEntity(e.getMessage(), MediaType.TEXT_PLAIN);
 				}
 			}
 		};
-		
+
 		Restlet commandTypes = new Restlet() {
 			@Override
 			public void handle(Request request, Response response) {
 				try {
 					CommandTypesResponseMessageDTO rtr = new CommandTypesResponseMessageDTO();
-					Set<CommandConfigFactoryDTO> grf = self.commandManagerService.getCommandConfigFactories();
+					Set<CommandConfigFactoryDTO> grf = self.commandManagerService
+							.getCommandConfigFactories();
 					List<CommandTypeDTO> ret = new LinkedList<CommandTypeDTO>();
-					for(CommandConfigFactoryDTO rfd:grf) {
+					for (CommandConfigFactoryDTO rfd : grf) {
 						CommandTypeDTO rtd = new CommandTypeDTO();
 						rtd.setCommandDesc(rfd.getDescription());
 						rtd.setCommandType(rfd.getCommandFactoryID());
 						ret.add(rtd);
 					}
 					rtr.setCommands(ret);
-					response.setEntity(self.generateReturnString(rtr).toString(), MediaType.TEXT_XML);
+					response.setEntity(self.generateReturnString(rtr)
+							.toString(), MediaType.TEXT_XML);
 				} catch (Exception e) {
 					response.setEntity(e.getMessage(), MediaType.TEXT_PLAIN);
 				}
 			}
 		};
-		
+
 		Restlet apps = new Restlet() {
 			@Override
 			public void handle(Request request, Response response) {
@@ -411,6 +442,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 		router.attach("/getproperties/{readerID}", getProperties);
 		router.attach("/setproperties/{readerID}/{properties}", setProperties);
 		router.attach("/createreader/{readerType}/{properties}", createReader);
+		router.attach("/createcommand/{commandType}/{properties}", createCommand);
 		router.attach("/startapp/{appID}", startApp);
 		router.attach("/stopapp/{appID}", stopApp);
 		router.attach("/commandtypes", commandTypes);
