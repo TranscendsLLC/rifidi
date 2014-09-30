@@ -18,12 +18,47 @@ public class RestResponseMessageDTO implements Serializable {
 	
 	@XmlElement(name="message")
 	public String message;
-
+	
+	@XmlElement(name="state")
+	public String state;
+	
+	@XmlElement(name="description")
+	public String description;
+	
 	public String getMessage() {
 		return message;
 	}
 
 	public void setMessage(String message) {
 		this.message = message;
-	}	
+	}
+
+	/**
+	 * @return the description
+	 */
+	public String getDescription() {
+		return description;
+	}
+
+	/**
+	 * @param description the description to set
+	 */
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	/**
+	 * @return the state
+	 */
+	public String getState() {
+		return state;
+	}
+
+	/**
+	 * @param state the state to set
+	 */
+	public void setState(String state) {
+		this.state = state;
+	}
+	
 }
