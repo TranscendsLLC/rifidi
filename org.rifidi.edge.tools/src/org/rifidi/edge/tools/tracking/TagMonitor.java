@@ -41,6 +41,13 @@ public class TagMonitor extends AbstractRifidiApp {
 	public TagMonitor(String group, String name) {
 		super(group, name);
 	}
+	
+	@Override
+	public boolean lazyStart() {
+		
+		String lazyStart= getProperty(LAZY_START, "true");
+		return Boolean.parseBoolean(lazyStart);
+	}
 
 	/*
 	 * (non-Javadoc)
