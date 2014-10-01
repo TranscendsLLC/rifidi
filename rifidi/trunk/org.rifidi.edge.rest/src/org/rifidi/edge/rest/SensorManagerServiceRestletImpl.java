@@ -160,8 +160,8 @@ public class SensorManagerServiceRestletImpl extends Application {
 					sensorManagerService
 							.startSession(strReaderId, strSessionID);
 
-					SessionStatus currentSessionState = checkSessionState(strReaderId, 
-							strSessionID, SessionStatus.PROCESSING);
+					SessionStatus currentSessionState = checkSessionState(
+							strReaderId, strSessionID, SessionStatus.PROCESSING);
 
 					if (currentSessionState.equals(SessionStatus.PROCESSING)) {
 
@@ -174,9 +174,10 @@ public class SensorManagerServiceRestletImpl extends Application {
 						// Generate a failure message with currentSessionStatus
 						response.setEntity(
 								self.generateReturnString(self
-										.generateErrorMessage("Unable to start session, current state is "
-												+ currentSessionState
-												+ "  - See Rifidi Edge Sever Log for details",
+										.generateErrorMessage(
+												"Unable to start session, current state is "
+														+ currentSessionState
+														+ "  - See Rifidi Edge Sever Log for details",
 												currentSessionState.toString())),
 								MediaType.TEXT_XML);
 
@@ -199,8 +200,8 @@ public class SensorManagerServiceRestletImpl extends Application {
 
 					sensorManagerService.stopSession(strReaderId, strSessionID);
 
-					SessionStatus currentSessionState = checkSessionState(strReaderId, 
-							strSessionID, SessionStatus.CLOSED);
+					SessionStatus currentSessionState = checkSessionState(
+							strReaderId, strSessionID, SessionStatus.CLOSED);
 
 					if (currentSessionState.equals(SessionStatus.CLOSED)) {
 
@@ -213,9 +214,10 @@ public class SensorManagerServiceRestletImpl extends Application {
 						// Generate a failure message with currentSessionStatus
 						response.setEntity(
 								self.generateReturnString(self
-										.generateErrorMessage("Unable to stop session, current state is "
-												+ currentSessionState
-												+ "  - See Rifidi Edge Sever Log for details",
+										.generateErrorMessage(
+												"Unable to stop session, current state is "
+														+ currentSessionState
+														+ "  - See Rifidi Edge Sever Log for details",
 												currentSessionState.toString())),
 								MediaType.TEXT_XML);
 
@@ -334,10 +336,16 @@ public class SensorManagerServiceRestletImpl extends Application {
 					AttributeList attributes = new AttributeList();
 					String propList = (String) request.getAttributes().get(
 							"properties");
-					String[] splitProp = propList.split(";");
-					for (String pair : splitProp) {
-						String[] prop = pair.split("=");
-						attributes.add(new Attribute(prop[0], prop[1]));
+
+					// Check if request has properties to process...
+					if (propList != null && !propList.isEmpty()) {
+						
+						String[] splitProp = propList.split(";");
+						for (String pair : splitProp) {
+							String[] prop = pair.split("=");
+							attributes.add(new Attribute(prop[0], prop[1]));
+						}
+						
 					}
 
 					sensorManagerService.createReader((String) request
@@ -358,14 +366,24 @@ public class SensorManagerServiceRestletImpl extends Application {
 					AttributeList attributes = new AttributeList();
 					String propList = (String) request.getAttributes().get(
 							"properties");
-					String[] splitProp = propList.split(";");
-					for (String pair : splitProp) {
-						String[] prop = pair.split("=");
-						attributes.add(new Attribute(prop[0], prop[1]));
+
+					// Check if request has properties to process...
+					if (propList != null && !propList.isEmpty()) {
+
+						String[] splitProp = propList.split(";");
+
+						for (String pair : splitProp) {
+							String[] prop = pair.split("=");
+							attributes.add(new Attribute(prop[0], prop[1]));
+						}
 					}
 
 					self.commandManagerService.createCommand((String) request
 							.getAttributes().get("commandType"), attributes);
+
+					response.setEntity(self.generateReturnString(self
+							.generateSuccessMessage()), MediaType.TEXT_XML);
+
 				} catch (Exception e) {
 					response.setEntity(e.getMessage(), MediaType.TEXT_PLAIN);
 				}
@@ -495,9 +513,20 @@ public class SensorManagerServiceRestletImpl extends Application {
 				executeCommand);
 		router.attach("/getproperties/{readerID}", getProperties);
 		router.attach("/setproperties/{readerID}/{properties}", setProperties);
+
+		// createreader with properties
 		router.attach("/createreader/{readerType}/{properties}", createReader);
+
+		// createreader with no properties
+		router.attach("/createreader/{readerType}", createReader);
+
+		// createcommand with properties
 		router.attach("/createcommand/{commandType}/{properties}",
 				createCommand);
+
+		// createcommand with no properties
+		router.attach("/createcommand/{commandType}", createCommand);
+
 		router.attach("/startapp/{appID}", startApp);
 		router.attach("/stopapp/{appID}", stopApp);
 		router.attach("/commandtypes", commandTypes);
@@ -513,7 +542,8 @@ public class SensorManagerServiceRestletImpl extends Application {
 		return message;
 	}
 
-	public RestResponseMessageDTO generateErrorMessage(String description, String currentState) {
+	public RestResponseMessageDTO generateErrorMessage(String description,
+			String currentState) {
 		RestResponseMessageDTO message = new RestResponseMessageDTO();
 		message.setMessage(ERROR_MESSAGE);
 		message.setDescription(description);
@@ -562,23 +592,26 @@ public class SensorManagerServiceRestletImpl extends Application {
 		this.configService = configService;
 	}
 
-	
 	/**
 	 * Checks is session of reader id is at desired state before reaching n
 	 * attempts every 500ms
-	 * @param strReaderId the reader id
-	 * @param strSessionID the session id
-	 * @param desiredState the desired state to check for the session
+	 * 
+	 * @param strReaderId
+	 *            the reader id
+	 * @param strSessionID
+	 *            the session id
+	 * @param desiredState
+	 *            the desired state to check for the session
 	 * @return current session state for session
 	 */
-	private SessionStatus checkSessionState(String strReaderId, String strSessionID, 
-			SessionStatus desiredState) {
+	private SessionStatus checkSessionState(String strReaderId,
+			String strSessionID, SessionStatus desiredState) {
 
 		// Define a session state to track the actual status of session
 		SessionStatus currentSessionState = null;
-		
-		//the count to loop to check every 500ms this amount and if
-		//status processing is not seen then return false
+
+		// the count to loop to check every 500ms this amount and if
+		// status processing is not seen then return false
 		int attemptCount = 20;
 
 		for (int i = 0; i < attemptCount; i++) {
@@ -597,8 +630,8 @@ public class SensorManagerServiceRestletImpl extends Application {
 
 			// Check if session is already in desired state
 			// and return successful message
-			SessionDTO sessionDto = sensorManagerService.getSession(strReaderId,
-					strSessionID);
+			SessionDTO sessionDto = sensorManagerService.getSession(
+					strReaderId, strSessionID);
 
 			// Ask if its state is in desired state
 			currentSessionState = sessionDto.getStatus();
