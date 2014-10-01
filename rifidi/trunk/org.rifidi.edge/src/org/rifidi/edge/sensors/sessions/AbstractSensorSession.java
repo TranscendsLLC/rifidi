@@ -418,7 +418,7 @@ public abstract class AbstractSensorSession extends SensorSession {
 	 * @param commandID
 	 * @return
 	 */
-	protected Command getCommandInstance(String commandID) {
+	public Command getCommandInstance(String commandID) {
 		for (AbstractCommandConfiguration<?> config : commandConfigurations) {
 			if (config.getID().equals(commandID)) {
 				return config.getCommand(this.getSensor().getID());
