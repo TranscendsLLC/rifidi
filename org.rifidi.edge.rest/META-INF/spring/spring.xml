@@ -1,0 +1,34 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:osgi="http://www.springframework.org/schema/osgi"
+	xmlns:amq="http://activemq.apache.org/schema/core"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+     http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi.xsd">
+
+	<!-- xmlns:security="http://www.springframework.org/schema/security" -->
+
+	<osgi:reference id="sensorManagerServiceRef"
+		interface="org.rifidi.edge.rmi.SensorManagerServiceImpl" />
+		
+	<osgi:reference id="commandManagerServiceRef"
+		interface="org.rifidi.edge.rmi.CommandManagerServiceImpl" />
+		
+	<osgi:reference id="configurationServiceRegistration" 
+		interface="org.rifidi.edge.configuration.ConfigurationService" />
+		
+	<osgi:reference id="appManagerRef"
+		interface="org.rifidi.edge.api.service.appmanager.AppManager" />
+
+	<bean id="restletManagerStub" class="org.rifidi.edge.rest.SensorManagerServiceRestletImpl">
+		<property name="sensorManagerService" ref="sensorManagerServiceRef"/>
+		<property name="commandManagerService" ref="commandManagerServiceRef"/>
+		<property name="appManager" ref="appManagerRef"/>
+		<property name="configurationService" ref="configurationServiceRegistration" />
+	</bean>
+	
+	<bean id="restletServer" class="org.rifidi.edge.rest.RestletServer">
+		<constructor-arg index="0" ref="restletManagerStub"/>
+	</bean>
+	
+
+</beans>
