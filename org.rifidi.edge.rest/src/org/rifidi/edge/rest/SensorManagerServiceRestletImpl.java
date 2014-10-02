@@ -46,6 +46,7 @@ import org.rifidi.edge.api.SessionStatus;
 import org.rifidi.edge.api.service.appmanager.AppManager;
 import org.rifidi.edge.configuration.Configuration;
 import org.rifidi.edge.configuration.ConfigurationService;
+import org.rifidi.edge.sensors.AbstractSensor;
 
 /**
  * This class handles the incoming rest requests.
@@ -278,6 +279,10 @@ public class SensorManagerServiceRestletImpl extends Application {
 			@Override
 			public void handle(Request request, Response response) {
 				try {
+					
+					String strObjectId = (String) request
+							.getAttributes().get("readerID");
+					
 					AttributeList attributes = new AttributeList();
 					String propList = (String) request.getAttributes().get(
 							"properties");
@@ -287,8 +292,11 @@ public class SensorManagerServiceRestletImpl extends Application {
 						attributes.add(new Attribute(prop[0], prop[1]));
 					}
 
-					sensorManagerService.setReaderProperties((String) request
-							.getAttributes().get("readerID"), attributes);
+					//Set properties for reader, if parameter is a reader id
+					sensorManagerService.setReaderProperties(strObjectId, attributes);
+					
+					//Set properties for command, if parameter is a command id
+					commandManagerService.setCommandProperties(strObjectId, attributes);
 
 					response.setEntity(self.generateReturnString(self
 							.generateSuccessMessage()), MediaType.TEXT_XML);
