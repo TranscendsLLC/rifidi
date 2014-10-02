@@ -185,7 +185,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 					}
 
 				} catch (Exception e) {
-					response.setEntity(e.getMessage(), MediaType.TEXT_PLAIN);
+					response.setEntity(e.toString(), MediaType.TEXT_PLAIN);
 				}
 			}
 		};
@@ -224,7 +224,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 
 					}
 				} catch (Exception e) {
-					response.setEntity(e.getMessage(), MediaType.TEXT_PLAIN);
+					response.setEntity(e.toString(), MediaType.TEXT_PLAIN);
 				}
 			}
 		};
@@ -237,7 +237,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 					response.setEntity(self.generateReturnString(self
 							.generateSuccessMessage()), MediaType.TEXT_XML);
 				} catch (Exception e) {
-					response.setEntity(e.getMessage(), MediaType.TEXT_PLAIN);
+					response.setEntity(e.toString(), MediaType.TEXT_PLAIN);
 				}
 			}
 		};
@@ -251,7 +251,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 					response.setEntity(self.generateReturnString(self
 							.generateSuccessMessage()), MediaType.TEXT_XML);
 				} catch (Exception e) {
-					response.setEntity(e.getMessage(), MediaType.TEXT_PLAIN);
+					response.setEntity(e.toString(), MediaType.TEXT_PLAIN);
 				}
 			}
 		};
@@ -268,9 +268,9 @@ public class SensorManagerServiceRestletImpl extends Application {
 					response.setEntity(self.generateReturnString(self
 							.generateSuccessMessage()), MediaType.TEXT_XML);
 				} catch (NumberFormatException | CommandSubmissionException e) {
-					response.setEntity(e.getMessage(), MediaType.TEXT_PLAIN);
+					response.setEntity(e.toString(), MediaType.TEXT_PLAIN);
 				} catch (Exception e) {
-					response.setEntity(e.getMessage(), MediaType.TEXT_PLAIN);
+					response.setEntity(e.toString(), MediaType.TEXT_PLAIN);
 				}
 
 			}
@@ -283,17 +283,55 @@ public class SensorManagerServiceRestletImpl extends Application {
 					String strObjectId = (String) request
 							.getAttributes().get("readerID");
 					
-					AttributeList attributes = new AttributeList();
-					String propList = (String) request.getAttributes().get(
+					String strPropAttr = (String) request.getAttributes().get(
 							"properties");
-					String[] splitProp = propList.split(";");
-					for (String pair : splitProp) {
-						String[] prop = pair.split("=");
-						attributes.add(new Attribute(prop[0], prop[1]));
-					}
+					
+					AttributeList attributes = getProcessedAttributes(strPropAttr);
 
 					//Set properties for reader, if parameter is a reader id
-					sensorManagerService.setReaderProperties(strObjectId, attributes);
+					
+					//Check if reader id exists
+					if (readerExists(strObjectId)){
+						
+						//Check if properties are valid for this reader
+						Configuration configuration = configService
+								.getConfiguration(strObjectId);
+						
+						//Get the possible attribute list for this reader
+						String[] attributeNameVector = configuration.getAttributeNames();
+						
+						//Iterate over posted attributes
+						for (Attribute attribute : attributes.asList()) {
+							
+							//Current posted attribute is not valid until it is confirmed
+							boolean isValidAttribute = false;
+							
+							//Iterate over possible attribute list for this reader and check
+							//if posted attribute matches any valid attibute
+							for (int i=0; i<attributeNameVector.length; i++){
+								
+								if(attribute.getName().equals(attributeNameVector[i])){
+									
+									isValidAttribute = true;
+									
+								}
+							}
+							
+							if (!isValidAttribute){
+								
+								throw new Exception("Not a valid property: " + attribute.getName());
+							}
+							
+						}
+						
+						sensorManagerService.setReaderProperties(strObjectId, attributes);
+						
+					}
+					
+					//Check if command exists
+					//commandManagerService.getc
+					
+					
 					
 					//Set properties for command, if parameter is a command id
 					commandManagerService.setCommandProperties(strObjectId, attributes);
@@ -301,7 +339,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 					response.setEntity(self.generateReturnString(self
 							.generateSuccessMessage()), MediaType.TEXT_XML);
 				} catch (Exception e) {
-					response.setEntity(e.getMessage(), MediaType.TEXT_PLAIN);
+					response.setEntity(e.toString(), MediaType.TEXT_PLAIN);
 				}
 			}
 		};
@@ -332,7 +370,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 					response.setEntity(self.generateReturnString(prmd)
 							.toString(), MediaType.TEXT_XML);
 				} catch (Exception e) {
-					response.setEntity(e.getMessage(), MediaType.TEXT_PLAIN);
+					response.setEntity(e.toString(), MediaType.TEXT_PLAIN);
 				}
 			}
 		};
@@ -341,28 +379,20 @@ public class SensorManagerServiceRestletImpl extends Application {
 			@Override
 			public void handle(Request request, Response response) {
 				try {
-					AttributeList attributes = new AttributeList();
-					String propList = (String) request.getAttributes().get(
+					
+					String strReaderType = (String) request.getAttributes().get("readerType");
+					
+					String strPropAttr = (String) request.getAttributes().get(
 							"properties");
-
-					// Check if request has properties to process...
-					if (propList != null && !propList.isEmpty()) {
-						
-						String[] splitProp = propList.split(";");
-						for (String pair : splitProp) {
-							String[] prop = pair.split("=");
-							attributes.add(new Attribute(prop[0], prop[1]));
-						}
-						
-					}
-
-					sensorManagerService.createReader((String) request
-							.getAttributes().get("readerType"), attributes);
+					
+					AttributeList attributes = getProcessedAttributes(strPropAttr);
+					
+					sensorManagerService.createReader(strReaderType, attributes);
 
 					response.setEntity(self.generateReturnString(self
 							.generateSuccessMessage()), MediaType.TEXT_XML);
 				} catch (Exception e) {
-					response.setEntity(e.getMessage(), MediaType.TEXT_PLAIN);
+					response.setEntity(e.toString(), MediaType.TEXT_PLAIN);
 				}
 			}
 		};
@@ -371,20 +401,11 @@ public class SensorManagerServiceRestletImpl extends Application {
 			@Override
 			public void handle(Request request, Response response) {
 				try {
-					AttributeList attributes = new AttributeList();
-					String propList = (String) request.getAttributes().get(
+					
+					String strPropAttr = (String) request.getAttributes().get(
 							"properties");
 
-					// Check if request has properties to process...
-					if (propList != null && !propList.isEmpty()) {
-
-						String[] splitProp = propList.split(";");
-
-						for (String pair : splitProp) {
-							String[] prop = pair.split("=");
-							attributes.add(new Attribute(prop[0], prop[1]));
-						}
-					}
+					AttributeList attributes = getProcessedAttributes(strPropAttr);
 
 					self.commandManagerService.createCommand((String) request
 							.getAttributes().get("commandType"), attributes);
@@ -393,7 +414,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 							.generateSuccessMessage()), MediaType.TEXT_XML);
 
 				} catch (Exception e) {
-					response.setEntity(e.getMessage(), MediaType.TEXT_PLAIN);
+					response.setEntity(e.toString(), MediaType.TEXT_PLAIN);
 				}
 			}
 		};
@@ -407,7 +428,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 					response.setEntity(self.generateReturnString(self
 							.generateSuccessMessage()), MediaType.TEXT_XML);
 				} catch (Exception e) {
-					response.setEntity(e.getMessage(), MediaType.TEXT_PLAIN);
+					response.setEntity(e.toString(), MediaType.TEXT_PLAIN);
 				}
 			}
 		};
@@ -421,7 +442,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 					response.setEntity(self.generateReturnString(self
 							.generateSuccessMessage()), MediaType.TEXT_XML);
 				} catch (Exception e) {
-					response.setEntity(e.getMessage(), MediaType.TEXT_PLAIN);
+					response.setEntity(e.toString(), MediaType.TEXT_PLAIN);
 				}
 			}
 		};
@@ -444,7 +465,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 					response.setEntity(self.generateReturnString(rtr)
 							.toString(), MediaType.TEXT_XML);
 				} catch (Exception e) {
-					response.setEntity(e.getMessage(), MediaType.TEXT_PLAIN);
+					response.setEntity(e.toString(), MediaType.TEXT_PLAIN);
 				}
 			}
 		};
@@ -467,7 +488,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 					response.setEntity(self.generateReturnString(rtr)
 							.toString(), MediaType.TEXT_XML);
 				} catch (Exception e) {
-					response.setEntity(e.getMessage(), MediaType.TEXT_PLAIN);
+					response.setEntity(e.toString(), MediaType.TEXT_PLAIN);
 				}
 			}
 		};
@@ -491,7 +512,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 					response.setEntity(self.generateReturnString(armd),
 							MediaType.TEXT_XML);
 				} catch (Exception e) {
-					response.setEntity(e.getMessage(), MediaType.TEXT_PLAIN);
+					response.setEntity(e.toString(), MediaType.TEXT_PLAIN);
 				}
 			}
 		};
@@ -503,7 +524,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 					response.setEntity(self.generateReturnString(self
 							.generateSuccessMessage()), MediaType.TEXT_XML);
 				} catch (Exception e) {
-					response.setEntity(e.getMessage(), MediaType.TEXT_PLAIN);
+					response.setEntity(e.toString(), MediaType.TEXT_PLAIN);
 				}
 			}
 		};
@@ -570,7 +591,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 			writer.close();
 			return content;
 		} catch (Exception e) {
-			return e.getMessage();
+			return e.toString();
 		}
 	}
 
@@ -654,6 +675,99 @@ public class SensorManagerServiceRestletImpl extends Application {
 
 		return currentSessionState;
 
+	}
+	
+	/**
+	 * Processes a chain of semicolon separated properties and checks it's well pair formed
+	 * @param propertiesChain separated values of properties, for example: (prop1=val2;prop2=val2;prop3=val3)
+	 * @return AttributeList containing the attributes
+	 * @throws Exception if any property has no recognizable value
+	 */
+	private AttributeList getProcessedAttributes(String propertiesChain)
+			throws Exception {
+		
+		AttributeList attributes = new AttributeList();
+		
+		// Check if propertiesChain has properties to process...
+		if (propertiesChain != null && !propertiesChain.isEmpty()) {
+			
+			String[] splitProp = propertiesChain.split(";");
+			
+			for (String pair : splitProp) {
+				
+				String[] prop = pair.split("=");
+				
+				//chech if property has property and value
+				if (prop.length == 2) {
+					
+					//It has property and value
+					attributes.add(new Attribute(prop[0], prop[1]));
+					
+				} else {
+
+					//Property with no recognizable value, for example Port=123=456, or Port, 
+					throw new Exception("Property with no recognizable value: " + prop[0]);
+
+				}
+			}
+			
+		}
+		
+		return attributes;
+	}
+	
+	/**
+	 * Checks is reader given by reader id exists
+	 * @param strReaderIdthe reader id to check
+	 * @throws Exception id reader with reader id does not exist
+	 */
+	private boolean readerExists(String strReaderId) {
+		
+		boolean readerExists = false;
+		
+		ReaderDTO readerDTO = sensorManagerService.getReader(strReaderId);
+		
+		if (readerDTO != null){
+			
+			readerExists = true;
+		}
+		
+		return readerExists;
+		
+	}
+	
+	
+	private void validateReaderAttributes(AttributeList attributes, String strReaderType)
+			throws Exception {
+		
+
+		
+		ReaderFactoryDTO readerFactoryDTO = sensorManagerService.getReaderFactory(strReaderType);
+		
+		//readerFactoryDTO.
+		
+		Configuration configuration = configService.getConfiguration(strReaderType);
+		
+		if (configuration == null){
+			
+			throw new Exception("Not a valid reader type: " + strReaderType);
+			
+		}
+		
+		String[] validAttributeNamesVector = configuration.getAttributeNames();
+		
+		//For every attribute, check if it is a valid one for this type of reader
+		/*
+		for(Attribute attribute : attributes.asList()){
+			
+			for ()
+			sensorManagerService.getReaderFactories()
+			
+			attribute.getName()
+		}
+		attributes.g
+		*/
+		
 	}
 
 }
