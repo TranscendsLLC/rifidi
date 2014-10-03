@@ -539,10 +539,8 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 		}
 	}
 
-	public String addAccessSpec(String targetMB, Boolean targetMatch, String targetPointer,
-			String targetTagMask, String targeTagData, String writeOpSpecID,
-			String writeAccessPassword, Integer writeMB1, Integer writeMB2,
-			Integer writeWordPointer, String writeData) {
+	public String addAccessSpec(String writeAccessPassword,
+			String writeData) {
 		try {
 			AccessSpec spec = new AccessSpec();
 			spec.setAccessSpecID(new UnsignedInteger(1));
@@ -553,18 +551,19 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 			AccessCommand command = new AccessCommand();
 			C1G2TagSpec cgSpec = new C1G2TagSpec();
 			C1G2TargetTag tag = new C1G2TargetTag();
-			tag.setMatch(new Bit(targetMatch));
+			//tag.setMatch(new Bit(targetMatch));
 			TwoBitField tbf = new TwoBitField();
-			tbf.set(writeMB1);
-			tbf.set(writeMB2);
+			tbf.set(0);
+			tbf.set(0);
 			tag.setMB(tbf);
-			tag.setPointer(new UnsignedShort(writeWordPointer));
+			tag.setPointer(new UnsignedShort(0));
 			BitArray_HEX bitHex = new BitArray_HEX(writeData);
 			tag.setTagData(bitHex);
+
 			List<C1G2TargetTag> tagList = new LinkedList<C1G2TargetTag>();
 			tagList.add(tag);
 			cgSpec.setC1G2TargetTagList(tagList);
-			
+
 			command.setAirProtocolTagSpec(cgSpec);
 			spec.setAccessCommand(command);
 
@@ -585,7 +584,8 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 
 	public String sendLLRPMessage(Document xmlMessage) {
 		try {
-			LLRPMessage message = LLRPMessageFactory.createLLRPMessage(xmlMessage);
+			LLRPMessage message = LLRPMessageFactory
+					.createLLRPMessage(xmlMessage);
 			LLRPMessage response = null;
 			try {
 				response = this.transact(message);

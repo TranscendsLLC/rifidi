@@ -33,6 +33,7 @@ import org.restlet.Response;
 import org.restlet.Restlet;
 import org.restlet.data.MediaType;
 import org.restlet.routing.Router;
+import org.rifidi.edge.adapter.llrp.LLRPReaderSession;
 import org.rifidi.edge.api.CommandConfigFactoryDTO;
 import org.rifidi.edge.api.CommandConfigurationDTO;
 import org.rifidi.edge.api.CommandManagerService;
@@ -46,7 +47,9 @@ import org.rifidi.edge.api.SessionStatus;
 import org.rifidi.edge.api.service.appmanager.AppManager;
 import org.rifidi.edge.configuration.Configuration;
 import org.rifidi.edge.configuration.ConfigurationService;
+import org.rifidi.edge.daos.ReaderDAO;
 import org.rifidi.edge.sensors.AbstractSensor;
+import org.rifidi.edge.sensors.SensorSession;
 
 /**
  * This class handles the incoming rest requests.
@@ -70,6 +73,9 @@ public class SensorManagerServiceRestletImpl extends Application {
 
 	/**  */
 	public AppManager appManager;
+
+	/** */
+	public ReaderDAO readerDAO;
 
 	@Override
 	public Restlet createInboundRoot() {
@@ -503,6 +509,33 @@ public class SensorManagerServiceRestletImpl extends Application {
 			}
 		};
 
+		Restlet llrpEncode = new Restlet() {
+			@Override
+			public void handle(Request request, Response response) {
+				try {
+					AbstractSensor<?> sensor = readerDAO
+							.getReaderByID((String) request.getAttributes()
+									.get("readerID"));
+					Map<String, SensorSession> sessionMap = sensor.getSensorSessions();
+					if(sessionMap.containsKey(request.getAttributes()
+									.get("sessionID"))) {
+						LLRPReaderSession session = (LLRPReaderSession) sessionMap.get(request.getAttributes()
+								.get("sessionID"));
+						session.addAccessSpec((String)request.getAttributes()
+								.get("password"), (String)request.getAttributes()
+								.get("tag"));
+					} else {
+						throw new Exception("There was a problem encoding the tag");
+					}
+					
+					response.setEntity(self.generateSuccessMessage().toString(),
+							MediaType.TEXT_XML);
+				} catch (Exception e) {
+
+				}
+			}
+		};
+
 		Router router = new Router(getContext());
 		router.attach("/readers", readers);
 		router.attach("/commands", commands);
@@ -536,6 +569,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 		router.attach("/readertypes", readerTypes);
 		router.attach("/apps", apps);
 		router.attach("/save", save);
+		router.attach("/llrpencode/{readerID}/{sessionID}/{tag}/{password}", llrpEncode);
 		return router;
 	}
 
@@ -584,6 +618,12 @@ public class SensorManagerServiceRestletImpl extends Application {
 	public void setAppManager(AppManager appManager) {
 		this.appManager = appManager;
 	}
+
+	public void setReaderDAO(ReaderDAO readerDAO) {
+		this.readerDAO = readerDAO;
+	}
+
+	// End Spring Inject
 
 	/**
 	 * Sets the configuration service for this class.
