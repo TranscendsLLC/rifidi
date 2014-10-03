@@ -288,48 +288,22 @@ public class SensorManagerServiceRestletImpl extends Application {
 					
 					AttributeList attributes = getProcessedAttributes(strPropAttr);
 
-					//Set properties for reader, if parameter is a reader id
+					//Validate properties for this reader or command
+					validateAttributesForReaderOrCommand(strObjectId, attributes);
 					
 					//Check if reader id exists
-					if (readerExists(strObjectId)){
-						
-						//Check if properties are valid for this reader
-						Configuration configuration = configService
-								.getConfiguration(strObjectId);
-						
-						//Get the possible attribute list for this reader
-						String[] attributeNameVector = configuration.getAttributeNames();
-						
-						//Iterate over posted attributes
-						for (Attribute attribute : attributes.asList()) {
-							
-							//Current posted attribute is not valid until it is confirmed
-							boolean isValidAttribute = false;
-							
-							//Iterate over possible attribute list for this reader and check
-							//if posted attribute matches any valid attibute
-							for (int i=0; i<attributeNameVector.length; i++){
-								
-								if(attribute.getName().equals(attributeNameVector[i])){
-									
-									isValidAttribute = true;
-									
-								}
-							}
-							
-							if (!isValidAttribute){
-								
-								throw new Exception("Not a valid property: " + attribute.getName());
-							}
-							
-						}
+					if (readerExists(strObjectId)) {
 						
 						sensorManagerService.setReaderProperties(strObjectId, attributes);
 						
+					} else if (commandExists(strObjectId)) {
+						
+						//Check if command exists
+						commandManagerService.getCommandConfiguration(strObjectId);
 					}
 					
-					//Check if command exists
-					//commandManagerService.getc
+					
+					sensorManagerService.getReaderFactory("strReaderType");
 					
 					
 					
@@ -719,7 +693,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 	/**
 	 * Checks is reader given by reader id exists
 	 * @param strReaderIdthe reader id to check
-	 * @throws Exception id reader with reader id does not exist
+	 * @throws Exception if reader with reader id does not exist
 	 */
 	private boolean readerExists(String strReaderId) {
 		
@@ -736,38 +710,66 @@ public class SensorManagerServiceRestletImpl extends Application {
 		
 	}
 	
-	
-	private void validateReaderAttributes(AttributeList attributes, String strReaderType)
-			throws Exception {
+	/**
+	 * Checks is command given by command id exists
+	 * @param strCommandId command id to check
+	 * @throws Exception if command with command id does not exist
+	 */
+	private boolean commandExists(String strCommandId) {
 		
-
+		boolean commandExists = false;
 		
-		ReaderFactoryDTO readerFactoryDTO = sensorManagerService.getReaderFactory(strReaderType);
+		CommandConfigurationDTO commandConfigurationDTO = commandManagerService.getCommandConfiguration(strCommandId);;
 		
-		//readerFactoryDTO.
-		
-		Configuration configuration = configService.getConfiguration(strReaderType);
-		
-		if (configuration == null){
+		if (commandConfigurationDTO != null){
 			
-			throw new Exception("Not a valid reader type: " + strReaderType);
-			
+			commandExists = true;
 		}
 		
-		String[] validAttributeNamesVector = configuration.getAttributeNames();
-		
-		//For every attribute, check if it is a valid one for this type of reader
-		/*
-		for(Attribute attribute : attributes.asList()){
-			
-			for ()
-			sensorManagerService.getReaderFactories()
-			
-			attribute.getName()
-		}
-		attributes.g
-		*/
+		return commandExists;
 		
 	}
+	
+	/**
+	 * Validate if attributes are valid for reader or command id
+	 * @param strObjectId the id of reader or command
+	 * @param attributes the lsit of attributes to validate
+	 * @throws Exception if there is a non valid property for reader or command
+	 */
+	private void validateAttributesForReaderOrCommand(String strObjectId, AttributeList attributes) 
+			throws Exception {
+		
+		//Check if properties are valid for this reader or command
+		Configuration configuration = configService
+				.getConfiguration(strObjectId);
+		
+		//Get the possible attribute list for this reader or command
+		String[] attributeNameVector = configuration.getAttributeNames();
+		
+		//Iterate over posted attributes
+		for (Attribute attribute : attributes.asList()) {
+			
+			//Current posted attribute is not valid until it is confirmed
+			boolean isValidAttribute = false;
+			
+			//Iterate over possible attribute list for this reader or command and check
+			//if posted attribute matches any valid attibute
+			for (int i=0; i<attributeNameVector.length; i++){
+				
+				if(attribute.getName().equals(attributeNameVector[i])){
+					
+					isValidAttribute = true;
+					
+				}
+			}
+			
+			if (!isValidAttribute){
+				
+				throw new Exception("Not a valid property: " + attribute.getName());
+			}
+			
+		}
+	}
+	
 
 }
