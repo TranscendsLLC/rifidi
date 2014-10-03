@@ -18,12 +18,15 @@
 		
 	<osgi:reference id="appManagerRef"
 		interface="org.rifidi.edge.api.service.appmanager.AppManager" />
+		
+	<osgi:reference id="readerDAOImpl" interface="org.rifidi.edge.daos.ReaderDAO"/>
 
 	<bean id="restletManagerStub" class="org.rifidi.edge.rest.SensorManagerServiceRestletImpl">
 		<property name="sensorManagerService" ref="sensorManagerServiceRef"/>
 		<property name="commandManagerService" ref="commandManagerServiceRef"/>
 		<property name="appManager" ref="appManagerRef"/>
 		<property name="configurationService" ref="configurationServiceRegistration" />
+		<property name="readerDAO" ref="readerDAOImpl" />
 	</bean>
 	
 	<bean id="restletServer" class="org.rifidi.edge.rest.RestletServer">
