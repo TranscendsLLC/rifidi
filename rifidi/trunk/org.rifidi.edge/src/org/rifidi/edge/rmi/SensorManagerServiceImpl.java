@@ -71,15 +71,17 @@ public class SensorManagerServiceImpl implements SensorManagerService {
 	 * .lang.String, javax.management.AttributeList)
 	 */
 	@Override
-	public void createReader(String readerConfigurationFactoryID,
+	public String createReader(String readerConfigurationFactoryID,
 			AttributeList readerConfigurationProperties) {
 		logger.debug("RMI call: createReader");
 		try {
-			configurationService.createService(readerConfigurationFactoryID,
+			return configurationService.createService(readerConfigurationFactoryID,
 					readerConfigurationProperties);
 		} catch (CannotCreateServiceException e) {
 			logger.warn("Sensor not created");
 		}
+		
+		return null;
 	}
 
 	/*
