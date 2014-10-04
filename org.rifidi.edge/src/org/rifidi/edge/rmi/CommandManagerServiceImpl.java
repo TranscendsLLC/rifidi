@@ -73,15 +73,18 @@ public class CommandManagerServiceImpl implements CommandManagerService {
 	 * java.lang.String, javax.management.AttributeList)
 	 */
 	@Override
-	public void createCommand(String commandConfigurationType,
+	public String createCommand(String commandConfigurationType,
 			AttributeList properties) {
 		logger.info("RMI: Create Command called");
 		try {
-			configurationService.createService(commandConfigurationType,
+			return configurationService.createService(commandConfigurationType,
 					properties);
 		} catch (CannotCreateServiceException e) {
 			logger.warn("Command Configuraiton not created");
 		}
+		
+		return null;
+		
 	}
 
 	/*
