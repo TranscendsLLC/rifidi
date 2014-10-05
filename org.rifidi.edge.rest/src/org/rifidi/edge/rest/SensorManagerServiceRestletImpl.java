@@ -15,7 +15,6 @@ package org.rifidi.edge.rest;
 import java.io.Serializable;
 import java.io.StringWriter;
 import java.io.Writer;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +26,8 @@ import javax.management.AttributeList;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 
+import org.jdom.Document;
+import org.jdom.input.SAXBuilder;
 import org.restlet.Application;
 import org.restlet.Request;
 import org.restlet.Response;
@@ -285,36 +286,37 @@ public class SensorManagerServiceRestletImpl extends Application {
 			@Override
 			public void handle(Request request, Response response) {
 				try {
-					
-					String strObjectId = (String) request
-							.getAttributes().get("readerID");
-					
+
+					String strObjectId = (String) request.getAttributes().get(
+							"readerID");
+
 					String strPropAttr = (String) request.getAttributes().get(
 							"properties");
-					
+
 					AttributeList attributes = getProcessedAttributes(strPropAttr);
 
-					//Validate properties for this reader or command
-					validateAttributesForReaderOrCommand(strObjectId, attributes);
-					
-					//Check if reader id exists
+					// Validate properties for this reader or command
+					validateAttributesForReaderOrCommand(strObjectId,
+							attributes);
+
+					// Check if reader id exists
 					if (readerExists(strObjectId)) {
-						
-						sensorManagerService.setReaderProperties(strObjectId, attributes);
-						
+
+						sensorManagerService.setReaderProperties(strObjectId,
+								attributes);
+
 					} else if (commandExists(strObjectId)) {
-						
-						//Check if command exists
-						commandManagerService.getCommandConfiguration(strObjectId);
+
+						// Check if command exists
+						commandManagerService
+								.getCommandConfiguration(strObjectId);
 					}
-					
-					
+
 					sensorManagerService.getReaderFactory("strReaderType");
-					
-					
-					
-					//Set properties for command, if parameter is a command id
-					commandManagerService.setCommandProperties(strObjectId, attributes);
+
+					// Set properties for command, if parameter is a command id
+					commandManagerService.setCommandProperties(strObjectId,
+							attributes);
 
 					response.setEntity(self.generateReturnString(self
 							.generateSuccessMessage()), MediaType.TEXT_XML);
@@ -359,15 +361,17 @@ public class SensorManagerServiceRestletImpl extends Application {
 			@Override
 			public void handle(Request request, Response response) {
 				try {
-					
-					String strReaderType = (String) request.getAttributes().get("readerType");
-					
+
+					String strReaderType = (String) request.getAttributes()
+							.get("readerType");
+
 					String strPropAttr = (String) request.getAttributes().get(
 							"properties");
-					
+
 					AttributeList attributes = getProcessedAttributes(strPropAttr);
-					
-					sensorManagerService.createReader(strReaderType, attributes);
+
+					sensorManagerService
+							.createReader(strReaderType, attributes);
 
 					response.setEntity(self.generateReturnString(self
 							.generateSuccessMessage()), MediaType.TEXT_XML);
@@ -381,7 +385,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 			@Override
 			public void handle(Request request, Response response) {
 				try {
-					
+
 					String strPropAttr = (String) request.getAttributes().get(
 							"properties");
 
@@ -516,19 +520,51 @@ public class SensorManagerServiceRestletImpl extends Application {
 					AbstractSensor<?> sensor = readerDAO
 							.getReaderByID((String) request.getAttributes()
 									.get("readerID"));
-					Map<String, SensorSession> sessionMap = sensor.getSensorSessions();
-					if(sessionMap.containsKey(request.getAttributes()
-									.get("sessionID"))) {
-						LLRPReaderSession session = (LLRPReaderSession) sessionMap.get(request.getAttributes()
-								.get("sessionID"));
-						session.addAccessSpec((String)request.getAttributes()
-								.get("password"), (String)request.getAttributes()
-								.get("tag"));
+					Map<String, SensorSession> sessionMap = sensor
+							.getSensorSessions();
+					if (sessionMap.containsKey(request.getAttributes().get(
+							"sessionID"))) {
+						LLRPReaderSession session = (LLRPReaderSession) sessionMap
+								.get(request.getAttributes().get("sessionID"));
+						session.addAccessSpec((String) request.getAttributes()
+								.get("password"), (String) request
+								.getAttributes().get("tag"));
 					} else {
-						throw new Exception("There was a problem encoding the tag");
+						throw new Exception(
+								"There was a problem encoding the tag");
 					}
-					
-					response.setEntity(self.generateSuccessMessage().toString(),
+
+					response.setEntity(
+							self.generateSuccessMessage().toString(),
+							MediaType.TEXT_XML);
+				} catch (Exception e) {
+
+				}
+			}
+		};
+
+		Restlet llrpMessage = new Restlet() {
+			@Override
+			public void handle(Request request, Response response) {
+				try {
+					AbstractSensor<?> sensor = readerDAO
+							.getReaderByID((String) request.getAttributes()
+									.get("readerID"));
+					Map<String, SensorSession> sessionMap = sensor
+							.getSensorSessions();
+					if (sessionMap.containsKey(request.getAttributes().get(
+							"sessionID"))) {
+						LLRPReaderSession session = (LLRPReaderSession) sessionMap
+								.get(request.getAttributes().get("sessionID"));
+
+						SAXBuilder sb = new SAXBuilder();
+						Document doc = sb.build((String) request
+								.getAttributes().get("llrpmessage"));
+
+						session.sendLLRPMessage(doc);
+					}
+					response.setEntity(
+							self.generateSuccessMessage().toString(),
 							MediaType.TEXT_XML);
 				} catch (Exception e) {
 
@@ -569,7 +605,10 @@ public class SensorManagerServiceRestletImpl extends Application {
 		router.attach("/readertypes", readerTypes);
 		router.attach("/apps", apps);
 		router.attach("/save", save);
-		router.attach("/llrpencode/{readerID}/{sessionID}/{tag}/{password}", llrpEncode);
+		router.attach("/llrpencode/{readerID}/{sessionID}/{tag}/{password}",
+				llrpEncode);
+		router.attach("/llrpmessage/{readerID}/{sessionID}/{llrpmessage}",
+				llrpMessage);
 		return router;
 	}
 
@@ -690,126 +729,146 @@ public class SensorManagerServiceRestletImpl extends Application {
 		return currentSessionState;
 
 	}
-	
+
 	/**
-	 * Processes a chain of semicolon separated properties and checks it's well pair formed
-	 * @param propertiesChain separated values of properties, for example: (prop1=val2;prop2=val2;prop3=val3)
+	 * Processes a chain of semicolon separated properties and checks it's well
+	 * pair formed
+	 * 
+	 * @param propertiesChain
+	 *            separated values of properties, for example:
+	 *            (prop1=val2;prop2=val2;prop3=val3)
 	 * @return AttributeList containing the attributes
-	 * @throws Exception if any property has no recognizable value
+	 * @throws Exception
+	 *             if any property has no recognizable value
 	 */
 	private AttributeList getProcessedAttributes(String propertiesChain)
 			throws Exception {
-		
+
 		AttributeList attributes = new AttributeList();
-		
+
 		// Check if propertiesChain has properties to process...
 		if (propertiesChain != null && !propertiesChain.isEmpty()) {
-			
+
 			String[] splitProp = propertiesChain.split(";");
-			
+
 			for (String pair : splitProp) {
-				
+
 				String[] prop = pair.split("=");
-				
-				//chech if property has property and value
+
+				// chech if property has property and value
 				if (prop.length == 2) {
-					
-					//It has property and value
+
+					// It has property and value
 					attributes.add(new Attribute(prop[0], prop[1]));
-					
+
 				} else {
 
-					//Property with no recognizable value, for example Port=123=456, or Port, 
-					throw new Exception("Property with no recognizable value: " + prop[0]);
+					// Property with no recognizable value, for example
+					// Port=123=456, or Port,
+					throw new Exception("Property with no recognizable value: "
+							+ prop[0]);
 
 				}
 			}
-			
+
 		}
-		
+
 		return attributes;
 	}
-	
+
 	/**
 	 * Checks is reader given by reader id exists
-	 * @param strReaderIdthe reader id to check
-	 * @throws Exception if reader with reader id does not exist
+	 * 
+	 * @param strReaderIdthe
+	 *            reader id to check
+	 * @throws Exception
+	 *             if reader with reader id does not exist
 	 */
 	private boolean readerExists(String strReaderId) {
-		
+
 		boolean readerExists = false;
-		
+
 		ReaderDTO readerDTO = sensorManagerService.getReader(strReaderId);
-		
-		if (readerDTO != null){
-			
+
+		if (readerDTO != null) {
+
 			readerExists = true;
 		}
-		
+
 		return readerExists;
-		
+
 	}
-	
+
 	/**
 	 * Checks is command given by command id exists
-	 * @param strCommandId command id to check
-	 * @throws Exception if command with command id does not exist
+	 * 
+	 * @param strCommandId
+	 *            command id to check
+	 * @throws Exception
+	 *             if command with command id does not exist
 	 */
 	private boolean commandExists(String strCommandId) {
-		
+
 		boolean commandExists = false;
-		
-		CommandConfigurationDTO commandConfigurationDTO = commandManagerService.getCommandConfiguration(strCommandId);;
-		
-		if (commandConfigurationDTO != null){
-			
+
+		CommandConfigurationDTO commandConfigurationDTO = commandManagerService
+				.getCommandConfiguration(strCommandId);
+		;
+
+		if (commandConfigurationDTO != null) {
+
 			commandExists = true;
 		}
-		
+
 		return commandExists;
-		
+
 	}
-	
+
 	/**
 	 * Validate if attributes are valid for reader or command id
-	 * @param strObjectId the id of reader or command
-	 * @param attributes the lsit of attributes to validate
-	 * @throws Exception if there is a non valid property for reader or command
+	 * 
+	 * @param strObjectId
+	 *            the id of reader or command
+	 * @param attributes
+	 *            the lsit of attributes to validate
+	 * @throws Exception
+	 *             if there is a non valid property for reader or command
 	 */
-	private void validateAttributesForReaderOrCommand(String strObjectId, AttributeList attributes) 
-			throws Exception {
-		
-		//Check if properties are valid for this reader or command
+	private void validateAttributesForReaderOrCommand(String strObjectId,
+			AttributeList attributes) throws Exception {
+
+		// Check if properties are valid for this reader or command
 		Configuration configuration = configService
 				.getConfiguration(strObjectId);
-		
-		//Get the possible attribute list for this reader or command
+
+		// Get the possible attribute list for this reader or command
 		String[] attributeNameVector = configuration.getAttributeNames();
-		
-		//Iterate over posted attributes
+
+		// Iterate over posted attributes
 		for (Attribute attribute : attributes.asList()) {
-			
-			//Current posted attribute is not valid until it is confirmed
+
+			// Current posted attribute is not valid until it is confirmed
 			boolean isValidAttribute = false;
-			
-			//Iterate over possible attribute list for this reader or command and check
-			//if posted attribute matches any valid attibute
-			for (int i=0; i<attributeNameVector.length; i++){
-				
-				if(attribute.getName().equals(attributeNameVector[i])){
-					
+
+			// Iterate over possible attribute list for this reader or command
+			// and check
+			// if posted attribute matches any valid attibute
+			for (int i = 0; i < attributeNameVector.length; i++) {
+
+				if (attribute.getName().equals(attributeNameVector[i])) {
+
 					isValidAttribute = true;
-					
+
 				}
 			}
-			
-			if (!isValidAttribute){
-				
-				throw new Exception("Not a valid property: " + attribute.getName());
+
+			if (!isValidAttribute) {
+
+				throw new Exception("Not a valid property: "
+						+ attribute.getName());
 			}
-			
+
 		}
 	}
-	
 
 }
