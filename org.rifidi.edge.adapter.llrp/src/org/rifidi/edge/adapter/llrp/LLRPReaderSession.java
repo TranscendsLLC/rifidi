@@ -14,6 +14,7 @@ package org.rifidi.edge.adapter.llrp;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -29,11 +30,14 @@ import org.jdom.Document;
 import org.llrp.ltk.exceptions.InvalidLLRPMessageException;
 import org.llrp.ltk.generated.LLRPMessageFactory;
 import org.llrp.ltk.generated.enumerations.AccessReportTriggerType;
+import org.llrp.ltk.generated.enumerations.AccessSpecState;
+import org.llrp.ltk.generated.enumerations.AccessSpecStopTriggerType;
 import org.llrp.ltk.generated.enumerations.AirProtocols;
 import org.llrp.ltk.generated.enumerations.GetReaderCapabilitiesRequestedData;
 import org.llrp.ltk.generated.enumerations.NotificationEventType;
 import org.llrp.ltk.generated.enumerations.ROReportTriggerType;
 import org.llrp.ltk.generated.enumerations.StatusCode;
+import org.llrp.ltk.generated.interfaces.AccessCommandOpSpec;
 import org.llrp.ltk.generated.messages.ADD_ACCESSSPEC;
 import org.llrp.ltk.generated.messages.ADD_ACCESSSPEC_RESPONSE;
 import org.llrp.ltk.generated.messages.GET_READER_CAPABILITIES;
@@ -42,6 +46,8 @@ import org.llrp.ltk.generated.messages.SET_READER_CONFIG_RESPONSE;
 import org.llrp.ltk.generated.parameters.AccessCommand;
 import org.llrp.ltk.generated.parameters.AccessReportSpec;
 import org.llrp.ltk.generated.parameters.AccessSpec;
+import org.llrp.ltk.generated.parameters.AccessSpecStopTrigger;
+import org.llrp.ltk.generated.parameters.C1G2BlockWrite;
 import org.llrp.ltk.generated.parameters.C1G2EPCMemorySelector;
 import org.llrp.ltk.generated.parameters.C1G2TagSpec;
 import org.llrp.ltk.generated.parameters.C1G2TargetTag;
@@ -55,12 +61,11 @@ import org.llrp.ltk.net.LLRPConnector;
 import org.llrp.ltk.net.LLRPEndpoint;
 import org.llrp.ltk.types.Bit;
 import org.llrp.ltk.types.BitArray_HEX;
-import org.llrp.ltk.types.LLRPBitList;
 import org.llrp.ltk.types.LLRPMessage;
-import org.llrp.ltk.types.SignedShort;
 import org.llrp.ltk.types.TwoBitField;
 import org.llrp.ltk.types.UnsignedInteger;
 import org.llrp.ltk.types.UnsignedShort;
+import org.llrp.ltk.types.UnsignedShortArray_HEX;
 import org.llrp.ltk.util.Util;
 import org.rifidi.edge.adapter.llrp.commands.internal.LLRPReset;
 import org.rifidi.edge.api.SessionStatus;
@@ -542,6 +547,8 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 	public String addAccessSpec(String writeAccessPassword,
 			String writeData) {
 		try {
+			System.out.println("Add accessspec! ");
+			
 			AccessSpec spec = new AccessSpec();
 			spec.setAccessSpecID(new UnsignedInteger(1));
 			spec.setAntennaID(new UnsignedShort(0));
@@ -559,16 +566,43 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 			tag.setPointer(new UnsignedShort(0));
 			BitArray_HEX bitHex = new BitArray_HEX(writeData);
 			tag.setTagData(bitHex);
+			tag.setMatch(new Bit(0));
+			tag.setTagMask(new BitArray_HEX());
 
 			List<C1G2TargetTag> tagList = new LinkedList<C1G2TargetTag>();
 			tagList.add(tag);
 			cgSpec.setC1G2TargetTagList(tagList);
 
 			command.setAirProtocolTagSpec(cgSpec);
+			
+			List<AccessCommandOpSpec> opSpecList = new ArrayList<AccessCommandOpSpec>();
+			
+			C1G2BlockWrite write = new C1G2BlockWrite();
+			write.setAccessPassword(new UnsignedInteger(writeAccessPassword));
+			write.setWriteData(new UnsignedShortArray_HEX(writeData));
+			write.setOpSpecID(new UnsignedShort(1));
+			write.setMB(tbf);
+			write.setWordPointer(new UnsignedShort(0));
+			
+			
+			opSpecList.add(write);
+			command.setAccessCommandOpSpecList(opSpecList);
 			spec.setAccessCommand(command);
+			spec.setCurrentState(new AccessSpecState(AccessSpecState.Active));
+			
+			
+			
+			AccessSpecStopTrigger stopTrigger = new AccessSpecStopTrigger();
+			stopTrigger.setAccessSpecStopTrigger(new AccessSpecStopTriggerType(AccessSpecStopTriggerType.Operation_Count));
+			stopTrigger.setOperationCountValue(new UnsignedShort(1));
+			
+			spec.setAccessSpecStopTrigger(stopTrigger);
 
 			ADD_ACCESSSPEC aas = new ADD_ACCESSSPEC();
+			
 			aas.setAccessSpec(spec);
+			
+			System.out.println(aas.toXMLString());
 
 			ADD_ACCESSSPEC_RESPONSE response = null;
 			try {
@@ -578,6 +612,7 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 				return e.getMessage();
 			}
 		} catch (Exception e) {
+			e.printStackTrace();
 			return e.getMessage();
 		}
 	}
