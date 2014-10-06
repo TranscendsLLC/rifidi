@@ -16,13 +16,13 @@ public class RestResponseMessageDTO implements Serializable {
 	 */
 	private static final long serialVersionUID = 618168723573019895L;
 	
-	@XmlElement(name="message")
+	@XmlElement(name="message")//Success / Fail
 	public String message;
 	
-	@XmlElement(name="state")
+	@XmlElement(name="state")//Exception / (empty for Success)
 	public String state;
 	
-	@XmlElement(name="description")
+	@XmlElement(name="description")//properties that fail in the create command or reader, prop1=val1|prop2=val2
 	public String description;
 	
 	public String getMessage() {

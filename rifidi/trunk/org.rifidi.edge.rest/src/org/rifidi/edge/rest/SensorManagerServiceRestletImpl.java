@@ -15,6 +15,7 @@ package org.rifidi.edge.rest;
 import java.io.Serializable;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -49,6 +50,8 @@ import org.rifidi.edge.api.service.appmanager.AppManager;
 import org.rifidi.edge.configuration.Configuration;
 import org.rifidi.edge.configuration.ConfigurationService;
 import org.rifidi.edge.daos.ReaderDAO;
+import org.rifidi.edge.rest.exception.CommandNorReaderExistsException;
+import org.rifidi.edge.rest.exception.NotValidPropertyForObjectException;
 import org.rifidi.edge.sensors.AbstractSensor;
 import org.rifidi.edge.sensors.SensorSession;
 
@@ -61,7 +64,9 @@ public class SensorManagerServiceRestletImpl extends Application {
 
 	public static final String SUCCESS_MESSAGE = "Success";
 
-	public static final String ERROR_MESSAGE = "Error";
+	public static final String FAIL_MESSAGE = "Fail";
+
+	public static final String WARNING_STATE = "Warning";
 
 	/** The sensor manager service for sensor commands */
 	public SensorManagerService sensorManagerService;
@@ -192,9 +197,13 @@ public class SensorManagerServiceRestletImpl extends Application {
 					}
 
 				} catch (Exception e) {
-					response.setEntity(e.toString(), MediaType.TEXT_PLAIN);
+
+					response.setEntity(self.generateReturnString(self
+							.generateErrorMessage(e.toString(), null)),
+							MediaType.TEXT_XML);
 				}
 			}
+
 		};
 		Restlet stopSession = new Restlet() {
 			@Override
@@ -231,7 +240,10 @@ public class SensorManagerServiceRestletImpl extends Application {
 
 					}
 				} catch (Exception e) {
-					response.setEntity(e.toString(), MediaType.TEXT_PLAIN);
+
+					response.setEntity(self.generateReturnString(self
+							.generateErrorMessage(e.toString(), null)),
+							MediaType.TEXT_XML);
 				}
 			}
 		};
@@ -244,7 +256,10 @@ public class SensorManagerServiceRestletImpl extends Application {
 					response.setEntity(self.generateReturnString(self
 							.generateSuccessMessage()), MediaType.TEXT_XML);
 				} catch (Exception e) {
-					response.setEntity(e.toString(), MediaType.TEXT_PLAIN);
+
+					response.setEntity(self.generateReturnString(self
+							.generateErrorMessage(e.toString(), null)),
+							MediaType.TEXT_XML);
 				}
 			}
 		};
@@ -258,7 +273,10 @@ public class SensorManagerServiceRestletImpl extends Application {
 					response.setEntity(self.generateReturnString(self
 							.generateSuccessMessage()), MediaType.TEXT_XML);
 				} catch (Exception e) {
-					response.setEntity(e.toString(), MediaType.TEXT_PLAIN);
+
+					response.setEntity(self.generateReturnString(self
+							.generateErrorMessage(e.toString(), null)),
+							MediaType.TEXT_XML);
 				}
 			}
 		};
@@ -275,9 +293,13 @@ public class SensorManagerServiceRestletImpl extends Application {
 					response.setEntity(self.generateReturnString(self
 							.generateSuccessMessage()), MediaType.TEXT_XML);
 				} catch (NumberFormatException | CommandSubmissionException e) {
-					response.setEntity(e.toString(), MediaType.TEXT_PLAIN);
+					response.setEntity(self.generateReturnString(self
+							.generateErrorMessage(e.getMessage(), null)),
+							MediaType.TEXT_XML);
 				} catch (Exception e) {
-					response.setEntity(e.toString(), MediaType.TEXT_PLAIN);
+					response.setEntity(self.generateReturnString(self
+							.generateErrorMessage(e.toString(), null)),
+							MediaType.TEXT_XML);
 				}
 
 			}
@@ -293,35 +315,58 @@ public class SensorManagerServiceRestletImpl extends Application {
 					String strPropAttr = (String) request.getAttributes().get(
 							"properties");
 
+					boolean readerExists = readerExists(strObjectId);
+					boolean commandExists = commandExists(strObjectId);
+
+					// Check if command or reader exists before submit
+					// getproperties
+					if (!commandExists && !readerExists) {
+						throw new CommandNorReaderExistsException(strObjectId);
+					}
+
 					AttributeList attributes = getProcessedAttributes(strPropAttr);
+
+					// Check if reader id exists
+					if (readerExists) {
+
+						// Set properties for reader, if parameter is a reader
+						// id
+						sensorManagerService.setReaderProperties(strObjectId,
+								attributes);
+
+					} else if (commandExists) { // Check if command exists
+
+						// Set properties for command, if parameter is a command
+						// id
+						commandManagerService.setCommandProperties(strObjectId,
+								attributes);
+					}
 
 					// Validate properties for this reader or command
 					validateAttributesForReaderOrCommand(strObjectId,
 							attributes);
 
-					// Check if reader id exists
-					if (readerExists(strObjectId)) {
-
-						sensorManagerService.setReaderProperties(strObjectId,
-								attributes);
-
-					} else if (commandExists(strObjectId)) {
-
-						// Check if command exists
-						commandManagerService
-								.getCommandConfiguration(strObjectId);
-					}
-
-					sensorManagerService.getReaderFactory("strReaderType");
-
-					// Set properties for command, if parameter is a command id
-					commandManagerService.setCommandProperties(strObjectId,
-							attributes);
-
 					response.setEntity(self.generateReturnString(self
 							.generateSuccessMessage()), MediaType.TEXT_XML);
+
+				} catch (CommandNorReaderExistsException nEx) {
+
+					response.setEntity(self.generateReturnString(self
+							.generateErrorMessage(nEx.getMessage(), null)),
+							MediaType.TEXT_XML);
+
+				} catch (NotValidPropertyForObjectException nEx) {
+
+					response.setEntity(self.generateReturnString(self
+							.generateWarningMessage(nEx.getMessage())),
+							MediaType.TEXT_XML);
+
 				} catch (Exception e) {
-					response.setEntity(e.toString(), MediaType.TEXT_PLAIN);
+
+					response.setEntity(self.generateReturnString(self
+							.generateErrorMessage(e.toString(), null)),
+							MediaType.TEXT_XML);
+
 				}
 			}
 		};
@@ -330,9 +375,19 @@ public class SensorManagerServiceRestletImpl extends Application {
 			@Override
 			public void handle(Request request, Response response) {
 				try {
+
+					String strObjectId = (String) request.getAttributes().get(
+							"readerID");
+
+					// Check if reader or command exists before submit
+					// getproperties
+					if (!commandExists(strObjectId)
+							&& !readerExists(strObjectId)) {
+						throw new CommandNorReaderExistsException(strObjectId);
+					}
+
 					Configuration configuration = configService
-							.getConfiguration((String) request.getAttributes()
-									.get("readerID"));
+							.getConfiguration(strObjectId);
 					PropertyResponseMessageDTO prmd = new PropertyResponseMessageDTO();
 					List<PropertyNameDTO> pndList = new LinkedList<PropertyNameDTO>();
 					for (String key : configuration.getAttributes().keySet()) {
@@ -347,12 +402,20 @@ public class SensorManagerServiceRestletImpl extends Application {
 						pndList.add(pnd);
 					}
 					prmd.setProperties(pndList);
-					System.out.println(self.generateReturnString(prmd)
-							.toString());
+					// System.out.println(self.generateReturnString(prmd)
+					// .toString());
 					response.setEntity(self.generateReturnString(prmd)
 							.toString(), MediaType.TEXT_XML);
+				} catch (CommandNorReaderExistsException nEx) {
+
+					response.setEntity(self.generateReturnString(self
+							.generateErrorMessage(nEx.getMessage(), null)),
+							MediaType.TEXT_XML);
 				} catch (Exception e) {
-					response.setEntity(e.toString(), MediaType.TEXT_PLAIN);
+
+					response.setEntity(self.generateReturnString(self
+							.generateErrorMessage(e.toString(), null)),
+							MediaType.TEXT_XML);
 				}
 			}
 		};
@@ -360,6 +423,9 @@ public class SensorManagerServiceRestletImpl extends Application {
 		Restlet createReader = new Restlet() {
 			@Override
 			public void handle(Request request, Response response) {
+				
+				String readerId = null;
+				
 				try {
 
 					String strReaderType = (String) request.getAttributes()
@@ -369,14 +435,38 @@ public class SensorManagerServiceRestletImpl extends Application {
 							"properties");
 
 					AttributeList attributes = getProcessedAttributes(strPropAttr);
+					
+					//Create reader
+					readerId = sensorManagerService.createReader(
+							strReaderType, attributes);
 
-					sensorManagerService
-							.createReader(strReaderType, attributes);
+					// Validate what properties are wrong for this created
+					// reader
+					validateAttributesForReaderOrCommand(readerId, attributes);
 
 					response.setEntity(self.generateReturnString(self
 							.generateSuccessMessage()), MediaType.TEXT_XML);
-				} catch (Exception e) {
-					response.setEntity(e.toString(), MediaType.TEXT_PLAIN);
+
+				} catch (NotValidPropertyForObjectException nE) {
+					
+					//If there was an invalid property creating the reader,
+					//and the reader was created, the reader must be deleted
+					if (readerId != null){
+						sensorManagerService.deleteReader(readerId);
+					}
+
+					response.setEntity(self.generateReturnString(self
+							.generateErrorMessage(nE.getMessage(), null)),
+							MediaType.TEXT_XML);
+
+				}
+
+				catch (Exception e) {
+
+					response.setEntity(self.generateReturnString(self
+							.generateErrorMessage(e.toString(), null)),
+							MediaType.TEXT_XML);
+
 				}
 			}
 		};
@@ -384,6 +474,9 @@ public class SensorManagerServiceRestletImpl extends Application {
 		Restlet createCommand = new Restlet() {
 			@Override
 			public void handle(Request request, Response response) {
+				
+				String strCommandId = null;
+				
 				try {
 
 					String strPropAttr = (String) request.getAttributes().get(
@@ -391,14 +484,37 @@ public class SensorManagerServiceRestletImpl extends Application {
 
 					AttributeList attributes = getProcessedAttributes(strPropAttr);
 
-					self.commandManagerService.createCommand((String) request
-							.getAttributes().get("commandType"), attributes);
+					//Create the command
+					strCommandId = self.commandManagerService
+							.createCommand((String) request.getAttributes()
+									.get("commandType"), attributes);
+					
+					// Validate properties for this command
+					validateAttributesForReaderOrCommand(strCommandId, attributes);
 
 					response.setEntity(self.generateReturnString(self
 							.generateSuccessMessage()), MediaType.TEXT_XML);
 
-				} catch (Exception e) {
-					response.setEntity(e.toString(), MediaType.TEXT_PLAIN);
+				} catch (NotValidPropertyForObjectException nE) {
+					
+					//If there was an invalid property creating the command,
+					//and the command was created, the command must be deleted
+					if (strCommandId != null){
+						commandManagerService.deleteCommand(strCommandId);
+					}
+
+					response.setEntity(self.generateReturnString(self
+							.generateErrorMessage(nE.getMessage(), null)),
+							MediaType.TEXT_XML);
+
+				}
+
+				catch (Exception e) {
+
+					response.setEntity(self.generateReturnString(self
+							.generateErrorMessage(e.toString(), null)),
+							MediaType.TEXT_XML);
+
 				}
 			}
 		};
@@ -412,7 +528,10 @@ public class SensorManagerServiceRestletImpl extends Application {
 					response.setEntity(self.generateReturnString(self
 							.generateSuccessMessage()), MediaType.TEXT_XML);
 				} catch (Exception e) {
-					response.setEntity(e.toString(), MediaType.TEXT_PLAIN);
+
+					response.setEntity(self.generateReturnString(self
+							.generateErrorMessage(e.toString(), null)),
+							MediaType.TEXT_XML);
 				}
 			}
 		};
@@ -426,7 +545,10 @@ public class SensorManagerServiceRestletImpl extends Application {
 					response.setEntity(self.generateReturnString(self
 							.generateSuccessMessage()), MediaType.TEXT_XML);
 				} catch (Exception e) {
-					response.setEntity(e.toString(), MediaType.TEXT_PLAIN);
+
+					response.setEntity(self.generateReturnString(self
+							.generateErrorMessage(e.toString(), null)),
+							MediaType.TEXT_XML);
 				}
 			}
 		};
@@ -449,7 +571,10 @@ public class SensorManagerServiceRestletImpl extends Application {
 					response.setEntity(self.generateReturnString(rtr)
 							.toString(), MediaType.TEXT_XML);
 				} catch (Exception e) {
-					response.setEntity(e.toString(), MediaType.TEXT_PLAIN);
+
+					response.setEntity(self.generateReturnString(self
+							.generateErrorMessage(e.toString(), null)),
+							MediaType.TEXT_XML);
 				}
 			}
 		};
@@ -472,7 +597,10 @@ public class SensorManagerServiceRestletImpl extends Application {
 					response.setEntity(self.generateReturnString(rtr)
 							.toString(), MediaType.TEXT_XML);
 				} catch (Exception e) {
-					response.setEntity(e.toString(), MediaType.TEXT_PLAIN);
+
+					response.setEntity(self.generateReturnString(self
+							.generateErrorMessage(e.toString(), null)),
+							MediaType.TEXT_XML);
 				}
 			}
 		};
@@ -496,7 +624,10 @@ public class SensorManagerServiceRestletImpl extends Application {
 					response.setEntity(self.generateReturnString(armd),
 							MediaType.TEXT_XML);
 				} catch (Exception e) {
-					response.setEntity(e.toString(), MediaType.TEXT_PLAIN);
+
+					response.setEntity(self.generateReturnString(self
+							.generateErrorMessage(e.toString(), null)),
+							MediaType.TEXT_XML);
 				}
 			}
 		};
@@ -508,7 +639,10 @@ public class SensorManagerServiceRestletImpl extends Application {
 					response.setEntity(self.generateReturnString(self
 							.generateSuccessMessage()), MediaType.TEXT_XML);
 				} catch (Exception e) {
-					response.setEntity(e.toString(), MediaType.TEXT_PLAIN);
+
+					response.setEntity(self.generateReturnString(self
+							.generateErrorMessage(e.toString(), null)),
+							MediaType.TEXT_XML);
 				}
 			}
 		};
@@ -621,9 +755,17 @@ public class SensorManagerServiceRestletImpl extends Application {
 	public RestResponseMessageDTO generateErrorMessage(String description,
 			String currentState) {
 		RestResponseMessageDTO message = new RestResponseMessageDTO();
-		message.setMessage(ERROR_MESSAGE);
+		message.setMessage(FAIL_MESSAGE);
 		message.setDescription(description);
 		message.setState(currentState);
+		return message;
+	}
+
+	public RestResponseMessageDTO generateWarningMessage(String description) {
+		RestResponseMessageDTO message = new RestResponseMessageDTO();
+		message.setMessage(SUCCESS_MESSAGE);
+		message.setDescription(description);
+		message.setState(WARNING_STATE);
 		return message;
 	}
 
@@ -831,11 +973,14 @@ public class SensorManagerServiceRestletImpl extends Application {
 	 *            the id of reader or command
 	 * @param attributes
 	 *            the lsit of attributes to validate
-	 * @throws Exception
+	 * @throws NotValidPropertyForObjectException
 	 *             if there is a non valid property for reader or command
 	 */
 	private void validateAttributesForReaderOrCommand(String strObjectId,
-			AttributeList attributes) throws Exception {
+			AttributeList attributes) throws NotValidPropertyForObjectException {
+
+		// List of non valid property=value pair
+		List<String> notValidPropertiesList = new ArrayList<>();
 
 		// Check if properties are valid for this reader or command
 		Configuration configuration = configService
@@ -858,17 +1003,57 @@ public class SensorManagerServiceRestletImpl extends Application {
 				if (attribute.getName().equals(attributeNameVector[i])) {
 
 					isValidAttribute = true;
-
+					break;
 				}
 			}
 
 			if (!isValidAttribute) {
-
-				throw new Exception("Not a valid property: "
-						+ attribute.getName());
+				notValidPropertiesList.add(attribute.getName() + "="
+						+ attribute.getValue());
 			}
 
 		}
+
+		// Check if non valid properties list has elements
+		if (!notValidPropertiesList.isEmpty()) {
+
+			// There is at least one non valid property
+			NotValidPropertyForObjectException notValidPropertyForObjectException = new NotValidPropertyForObjectException(
+					"Not valid properties: "
+							+ getFormatedListOfNonValidProperties(notValidPropertiesList));
+
+			notValidPropertyForObjectException
+					.setNotValidPropertiesList(notValidPropertiesList);
+
+			throw notValidPropertyForObjectException;
+		}
+
+	}
+
+	/**
+	 * 
+	 * @param notValidPropertiesList
+	 * @return
+	 */
+	private String getFormatedListOfNonValidProperties(
+			List<String> notValidPropertiesList) {
+
+		if (!notValidPropertiesList.isEmpty()) {
+
+			StringBuilder stringBuilder = new StringBuilder();
+
+			for (String prop : notValidPropertiesList) {
+
+				stringBuilder.append(prop + "|");
+
+			}
+
+			// Delete last pipe and return string
+			return stringBuilder.substring(0, stringBuilder.length() - 1);
+
+		}
+
+		return "";
 	}
 
 }
