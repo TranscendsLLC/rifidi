@@ -231,19 +231,22 @@ public class Thinkify50Sensor extends AbstractSensor<Thinkify50SensorSession> {
 		// TODO Auto-generated method stub
 
 	}
-
+	
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.sensors.AbstractSensor#getDisplayName()
+	 * @see org.rifidi.edge.sensors.base.AbstractSensor#getDisplayName()
 	 */
-	@Property(displayName = "Display Name", description = "Logical Name of Reader"
-			+ "", writable = true, type = PropertyType.PT_STRING, category = "connection", defaultValue = "Thinkify50", orderValue = 0)
 	@Override
-	protected String getDisplayName() {
-		// TODO Auto-generated method stub
+	@Property(displayName = "Display Name", description = "Logical Name of Reader", writable = true, type = PropertyType.PT_STRING, category = "connection", defaultValue = "Thinkify50", orderValue = 0)
+	public String getDisplayName() {
 		return displayName;
 	}
+
+	public void setDisplayName(String displayName) {
+		this.displayName = displayName;
+	}
+
 
 	/**
 	 * Gets the reconnect interval.

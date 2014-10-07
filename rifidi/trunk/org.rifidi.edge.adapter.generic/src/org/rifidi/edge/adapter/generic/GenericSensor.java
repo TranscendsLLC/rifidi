@@ -142,16 +142,6 @@ public class GenericSensor extends AbstractSensor<GenericSensorSession> {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.rifidi.edge.sensors.base.AbstractSensor#getDisplayName()
-	 */
-	@Override
-	protected String getDisplayName() {
-		return displayName;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
 	 * @see org.rifidi.edge.sensors.base.AbstractSensor#getSensorSessions()
 	 */
 	@Override
@@ -188,6 +178,21 @@ public class GenericSensor extends AbstractSensor<GenericSensorSession> {
 	@Override
 	public MBeanInfo getMBeanInfo() {
 		return mbeaninfo;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.rifidi.edge.sensors.base.AbstractSensor#getDisplayName()
+	 */
+	@Override
+	@Property(displayName = "Display Name", description = "Logical Name of Reader", writable = true, type = PropertyType.PT_STRING, category = "connection", defaultValue = "Generic", orderValue = 0)
+	public String getDisplayName() {
+		return displayName;
+	}
+
+	public void setDisplayName(String displayName) {
+		this.displayName = displayName;
 	}
 
 	/**
