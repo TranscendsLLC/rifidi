@@ -30,6 +30,7 @@ import org.apache.commons.logging.LogFactory;
 /*
  *
  * @author Carlson Lam - Convergence Systems Ltd
+ * @author Matthew Dean - matt@transcends.co
  *
  * CS468/CS203 Low-level API demo code in Java
  * Please make sure that you firmware version  on the reader is at least:

@@ -12,6 +12,10 @@
  *******************************************************************************/
 package org.rifidi.edge.adapter.csl.util;
 
+/*
+ * @author Matthew Dean - matt@transcends.co
+ */
+
 public enum ReaderState {
 	NOT_CONNECTED, CONNECTED, BUSY
 };
