@@ -567,7 +567,9 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 			BitArray_HEX bitHex = new BitArray_HEX(writeData);
 			tag.setTagData(bitHex);
 			tag.setMatch(new Bit(0));
-			tag.setTagMask(new BitArray_HEX());
+			tag.setTagMask(new BitArray_HEX(0000));
+			tag.setTagData(new BitArray_HEX(0000));
+			
 
 			List<C1G2TargetTag> tagList = new LinkedList<C1G2TargetTag>();
 			tagList.add(tag);
@@ -607,7 +609,8 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 			ADD_ACCESSSPEC_RESPONSE response = null;
 			try {
 				response = (ADD_ACCESSSPEC_RESPONSE) this.transact(aas);
-				return response.toString();
+				System.out.println("Response: " + response.toXMLString());
+				return response.toXMLString();
 			} catch (TimeoutException e) {
 				return e.getMessage();
 			}
