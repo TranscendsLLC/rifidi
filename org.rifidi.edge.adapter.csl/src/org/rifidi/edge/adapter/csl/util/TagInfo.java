@@ -12,6 +12,11 @@
  *******************************************************************************/
 package org.rifidi.edge.adapter.csl.util;
 
+/*
+ * @author Matthew Dean - matt@transcends.co
+ * 
+ */
+
 public class TagInfo {
 	public String addr;
 	public int antennaPort;

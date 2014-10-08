@@ -10,17 +10,7 @@
  * USA. 
  * http://www.gnu.org/licenses/gpl-2.0.html
  *******************************************************************************/
-/*
- *  GenericSensorSessionTagHandler.java
- *
- *  Created:	Aug 4, 2010
- *  Project:	Rifidi Edge Server - A middleware platform for RFID applications
- *  				http://www.rifidi.org
- *  				http://rifidi.sourceforge.net
- *  Copyright:	Pramari LLC and the Rifidi Project
- *  License:	GNU Public License (GPL)
- *  				http://www.opensource.org/licenses/gpl-3.0.html
- */
+
 package org.rifidi.edge.adapter.csl;
 
 import java.math.BigInteger;
@@ -38,7 +28,7 @@ import org.rifidi.edge.notification.TagReadEvent;
 /**
  * 
  * 
- * @author Matthew Dean - matt@pramari.com
+ * @author Matthew Dean - matt@transcends.co
  */
 class CslSocketSensorSessionTagHandler {
 
