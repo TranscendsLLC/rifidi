@@ -668,9 +668,8 @@ public class SensorManagerServiceRestletImpl extends Application {
 								"There was a problem encoding the tag");
 					}
 
-					response.setEntity(
-							self.generateSuccessMessage().toString(),
-							MediaType.TEXT_XML);
+					response.setEntity(self.generateReturnString(self
+							.generateSuccessMessage()), MediaType.TEXT_XML);
 				} catch (Exception e) {
 
 				}
@@ -697,9 +696,8 @@ public class SensorManagerServiceRestletImpl extends Application {
 
 						session.sendLLRPMessage(doc);
 					}
-					response.setEntity(
-							self.generateSuccessMessage().toString(),
-							MediaType.TEXT_XML);
+					response.setEntity(self.generateReturnString(self
+							.generateSuccessMessage()), MediaType.TEXT_XML);
 				} catch (Exception e) {
 
 				}
