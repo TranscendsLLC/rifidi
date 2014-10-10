@@ -40,6 +40,7 @@ import org.llrp.ltk.generated.enumerations.StatusCode;
 import org.llrp.ltk.generated.interfaces.AccessCommandOpSpec;
 import org.llrp.ltk.generated.messages.ADD_ACCESSSPEC;
 import org.llrp.ltk.generated.messages.ADD_ACCESSSPEC_RESPONSE;
+import org.llrp.ltk.generated.messages.DELETE_ACCESSSPEC;
 import org.llrp.ltk.generated.messages.GET_READER_CAPABILITIES;
 import org.llrp.ltk.generated.messages.SET_READER_CONFIG;
 import org.llrp.ltk.generated.messages.SET_READER_CONFIG_RESPONSE;
@@ -546,6 +547,7 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 
 	public String addAccessSpec(String writeAccessPassword,
 			String writeData) {
+		//TODO: Throw exception if writeData does not divide evenly by 4
 		try {
 			System.out.println("Add accessspec! ");
 			
@@ -564,7 +566,7 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 			tbf.set(0);
 			tag.setMB(tbf);
 			tag.setPointer(new UnsignedShort(0));
-			BitArray_HEX bitHex = new BitArray_HEX(writeData);
+			BitArray_HEX bitHex = new BitArray_HEX("0000");
 			tag.setTagData(bitHex);
 			tag.setMatch(new Bit(0));
 			tag.setTagMask(new BitArray_HEX(0000));
@@ -581,18 +583,20 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 			
 			C1G2BlockWrite write = new C1G2BlockWrite();
 			write.setAccessPassword(new UnsignedInteger(writeAccessPassword));
-			write.setWriteData(new UnsignedShortArray_HEX(writeData));
+			UnsignedShortArray_HEX writeArray = new UnsignedShortArray_HEX();
+			for(String word:writeData.split(":")) {
+				System.out.println("Adding short: " + word);
+				writeArray.add(new UnsignedShort(word, 16));
+			}
+			write.setWriteData(writeArray);
 			write.setOpSpecID(new UnsignedShort(1));
 			write.setMB(tbf);
-			write.setWordPointer(new UnsignedShort(0));
-			
+			write.setWordPointer(new UnsignedShort(2));
 			
 			opSpecList.add(write);
 			command.setAccessCommandOpSpecList(opSpecList);
 			spec.setAccessCommand(command);
 			spec.setCurrentState(new AccessSpecState(AccessSpecState.Active));
-			
-			
 			
 			AccessSpecStopTrigger stopTrigger = new AccessSpecStopTrigger();
 			stopTrigger.setAccessSpecStopTrigger(new AccessSpecStopTriggerType(AccessSpecStopTriggerType.Operation_Count));
@@ -610,6 +614,13 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 			try {
 				response = (ADD_ACCESSSPEC_RESPONSE) this.transact(aas);
 				System.out.println("Response: " + response.toXMLString());
+				
+				Thread.sleep(3000);
+				
+				DELETE_ACCESSSPEC deleteAccessSpec = new DELETE_ACCESSSPEC();
+				deleteAccessSpec.setAccessSpecID(new UnsignedInteger(0));
+				this.send(deleteAccessSpec);
+				
 				return response.toXMLString();
 			} catch (TimeoutException e) {
 				return e.getMessage();
@@ -618,6 +629,14 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 			e.printStackTrace();
 			return e.getMessage();
 		}
+	}
+	
+	public String[] splitHexArray(String arg) {
+		ArrayList<String> retVal = new ArrayList<String>();
+		for(int i=0;i<arg.length();i+=4) {
+			retVal.add(arg.substring(i, i+4));
+		}
+		return retVal.toArray(new String[arg.length()]);
 	}
 
 	public String sendLLRPMessage(Document xmlMessage) {
