@@ -41,7 +41,9 @@ import org.llrp.ltk.generated.interfaces.AccessCommandOpSpec;
 import org.llrp.ltk.generated.messages.ADD_ACCESSSPEC;
 import org.llrp.ltk.generated.messages.ADD_ACCESSSPEC_RESPONSE;
 import org.llrp.ltk.generated.messages.DELETE_ACCESSSPEC;
+import org.llrp.ltk.generated.messages.ENABLE_ACCESSSPEC;
 import org.llrp.ltk.generated.messages.GET_READER_CAPABILITIES;
+import org.llrp.ltk.generated.messages.RO_ACCESS_REPORT;
 import org.llrp.ltk.generated.messages.SET_READER_CONFIG;
 import org.llrp.ltk.generated.messages.SET_READER_CONFIG_RESPONSE;
 import org.llrp.ltk.generated.parameters.AccessCommand;
@@ -556,14 +558,14 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 			spec.setAntennaID(new UnsignedShort(0));
 			spec.setProtocolID(new AirProtocols(
 					AirProtocols.EPCGlobalClass1Gen2));
-			spec.setROSpecID(new UnsignedInteger(0));
+			spec.setROSpecID(new UnsignedInteger(1));
 			AccessCommand command = new AccessCommand();
 			C1G2TagSpec cgSpec = new C1G2TagSpec();
 			C1G2TargetTag tag = new C1G2TargetTag();
 			//tag.setMatch(new Bit(targetMatch));
 			TwoBitField tbf = new TwoBitField();
-			tbf.set(0);
-			tbf.set(0);
+			tbf.clear(0);
+			tbf.set(1);
 			tag.setMB(tbf);
 			tag.setPointer(new UnsignedShort(0));
 			BitArray_HEX bitHex = new BitArray_HEX("0000");
@@ -591,16 +593,17 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 			write.setWriteData(writeArray);
 			write.setOpSpecID(new UnsignedShort(1));
 			write.setMB(tbf);
-			write.setWordPointer(new UnsignedShort(2));
+			write.setWordPointer(new UnsignedShort(0x02));
 			
 			opSpecList.add(write);
 			command.setAccessCommandOpSpecList(opSpecList);
 			spec.setAccessCommand(command);
 			spec.setCurrentState(new AccessSpecState(AccessSpecState.Active));
 			
+			
 			AccessSpecStopTrigger stopTrigger = new AccessSpecStopTrigger();
 			stopTrigger.setAccessSpecStopTrigger(new AccessSpecStopTriggerType(AccessSpecStopTriggerType.Operation_Count));
-			stopTrigger.setOperationCountValue(new UnsignedShort(1));
+			stopTrigger.setOperationCountValue(new UnsignedShort(10));
 			
 			spec.setAccessSpecStopTrigger(stopTrigger);
 
@@ -614,6 +617,11 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 			try {
 				response = (ADD_ACCESSSPEC_RESPONSE) this.transact(aas);
 				System.out.println("Response: " + response.toXMLString());
+				
+				ENABLE_ACCESSSPEC enablespec = new ENABLE_ACCESSSPEC();
+				enablespec.setAccessSpecID(new UnsignedInteger(0));
+				
+				this.send(enablespec);
 				
 				Thread.sleep(3000);
 				
@@ -661,6 +669,15 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 	 */
 	@Override
 	public void messageReceived(LLRPMessage arg0) {
+		if((arg0 instanceof RO_ACCESS_REPORT)) {
+//			try {
+////				RO_ACCESS_REPORT report = (RO_ACCESS_REPORT)arg0;
+////				if(report.getRFSurveyReportDataList()) {
+////					System.out.println(arg0.toXMLString());
+////				}
+//			} catch (InvalidLLRPMessageException e) {
+//			}
+		}
 		if (!processing.get()) {
 			return;
 		}
