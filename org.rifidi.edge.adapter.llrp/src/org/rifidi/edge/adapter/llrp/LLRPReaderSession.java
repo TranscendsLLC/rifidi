@@ -577,8 +577,8 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 				ENABLE_ACCESSSPEC enablespec = new ENABLE_ACCESSSPEC();
 				enablespec.setAccessSpecID(new UnsignedInteger(accessSpecId));
 				
-				//this.send(enablespec);
-				this.transact(enablespec);
+				this.send(enablespec);
+				//this.transact(enablespec);
 
 				
 				// Thread.sleep(3000);
@@ -598,7 +598,7 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 		}
 	}
 
-	public String addAccessSpec_Original(String writeAccessPassword,
+	public String addAccessSpec_matts(String writeAccessPassword,
 			String writeData) {
 		// TODO: Throw exception if writeData does not divide evenly by 4
 		try {
@@ -852,8 +852,8 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 		return "LLRPSession: " + host + ":" + port + " (" + getStatus() + ")";
 	}
 
-	private static final String TARGET_EPC = "300833b2ddd90140000000000000108a";
-	private static final String TAG_MASK = "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF";
+	private static final String TARGET_EPC = "300833b2ddd9014035050000";
+	private static final String TAG_MASK = "ffffffffffffffffffffffff";
 	private static final int WRITE_ACCESSSPEC_ID = 2;
 	private static final int READ_ACCESSSPEC_ID = 444;
 	private static final int WRITE_OPSPEC_ID = 2121;
