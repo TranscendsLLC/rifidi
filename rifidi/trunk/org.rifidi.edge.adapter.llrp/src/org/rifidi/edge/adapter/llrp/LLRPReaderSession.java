@@ -854,6 +854,7 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 
 	private static final String TARGET_EPC = "300833b2ddd9014035050000";
 	private static final String TAG_MASK = "ffffffffffffffffffffffff";
+	//private static final String TAG_MASK = "ffff";
 	private static final int WRITE_ACCESSSPEC_ID = 2;
 	private static final int READ_ACCESSSPEC_ID = 444;
 	private static final int WRITE_OPSPEC_ID = 2121;
@@ -989,6 +990,7 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 		// We use this to specify which tags we want to operate on.
 		AccessCommand accessCommand = new AccessCommand();
 
+		
 		// Create a new tag spec.
 		C1G2TagSpec tagSpec = new C1G2TagSpec();
 		C1G2TargetTag targetTag = new C1G2TargetTag();
@@ -996,8 +998,10 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 		// We want to check memory bank 1 (the EPC memory bank).
 		TwoBitField memBank = new TwoBitField();
 		// Clear bit 0 and set bit 1 (bank 1 in binary).
+		
 		memBank.clear(0);
 		memBank.set(1);
+	
 		targetTag.setMB(memBank);
 		// The EPC data starts at offset 0x20.
 		// Start reading or writing from there.
@@ -1010,6 +1014,14 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 		BitArray_HEX tagData = new BitArray_HEX(TARGET_EPC);
 		targetTag.setTagData(tagData);
 
+		/*
+		BitArray_HEX bitHex = new BitArray_HEX("0000");
+		targetTag.setTagData(bitHex);
+		targetTag.setMatch(new Bit(0));
+		targetTag.setTagMask(new BitArray_HEX(TAG_MASK));
+		targetTag.setTagData(new BitArray_HEX(0000));
+		  */ 
+
 		// Add a list of target tags to the tag spec.
 		List targetTagList = new ArrayList();
 		targetTagList.add(targetTag);
@@ -1017,6 +1029,9 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 
 		// Add the tag spec to the access command.
 		accessCommand.setAirProtocolTagSpec(tagSpec);
+		
+		
+		
 
 		// A list to hold the op specs for this access command.
 		List opSpecList = new ArrayList();
@@ -1107,7 +1122,7 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 	
 	// Create a OpSpec that writes to user memory
 
-    public C1G2Write buildEpcWriteOpSpec(String writeData) {
+    public C1G2BlockWrite buildEpcWriteOpSpec(String writeData) {
 
         // Create a new OpSpec.
 
@@ -1117,7 +1132,8 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 
         // In this case, we want to write to the tag.
 
-        C1G2Write opSpec = new C1G2Write();
+        //C1G2Write opSpec = new C1G2Write();
+    	C1G2BlockWrite opSpec = new C1G2BlockWrite();
 
         // Set the OpSpecID to a unique number.
 
@@ -1131,9 +1147,13 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 
         // Set bit 1 (bank 1 in binary).
 
+        /*
         opMemBank.set(1);
-
         opMemBank.clear(0);
+        */
+        
+        opMemBank.set(0);
+        opMemBank.clear(1);
 
         opSpec.setMB(opMemBank);
 
