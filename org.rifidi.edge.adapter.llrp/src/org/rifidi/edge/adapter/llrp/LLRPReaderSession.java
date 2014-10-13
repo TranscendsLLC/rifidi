@@ -556,18 +556,12 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 	public String addAccessSpec(String writeAccessPassword, String writeData) {
 		// TODO: Throw exception if writeData does not divide evenly by 4
 		try {
-			System.out.println("Add accessspec! ");
-			
+			System.out.println("Add accessspec! ");			
 			int accessSpecId = 2;
-
-			AccessSpec spec = buildAccessSpec(accessSpecId, writeData);
-			
+			AccessSpec spec = buildAccessSpec(accessSpecId, writeData);			
 			ADD_ACCESSSPEC aas = new ADD_ACCESSSPEC();
-
 			aas.setAccessSpec(spec);
-
 			System.out.println(aas.toXMLString());
-
 			ADD_ACCESSSPEC_RESPONSE response = null;
 			try {
 
@@ -578,109 +572,6 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 				enablespec.setAccessSpecID(new UnsignedInteger(accessSpecId));
 				
 				this.send(enablespec);
-				//this.transact(enablespec);
-
-				
-				// Thread.sleep(3000);
-				Thread.sleep(10000);
-
-				DELETE_ACCESSSPEC deleteAccessSpec = new DELETE_ACCESSSPEC();
-				deleteAccessSpec.setAccessSpecID(new UnsignedInteger(accessSpecId));
-				this.send(deleteAccessSpec);
-
-				return response.toXMLString();
-			} catch (TimeoutException e) {
-				return e.getMessage();
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			return e.getMessage();
-		}
-	}
-
-	public String addAccessSpec_matts(String writeAccessPassword,
-			String writeData) {
-		// TODO: Throw exception if writeData does not divide evenly by 4
-		try {
-			System.out.println("Add accessspec! ");
-
-			AccessSpec spec = new AccessSpec();
-			spec.setAccessSpecID(new UnsignedInteger(1));
-			spec.setAntennaID(new UnsignedShort(0));
-			spec.setProtocolID(new AirProtocols(
-					AirProtocols.EPCGlobalClass1Gen2));
-			spec.setROSpecID(new UnsignedInteger(1));
-			AccessCommand command = new AccessCommand();
-			C1G2TagSpec cgSpec = new C1G2TagSpec();
-			C1G2TargetTag tag = new C1G2TargetTag();
-			// tag.setMatch(new Bit(targetMatch));
-			TwoBitField tbf = new TwoBitField();
-			tbf.clear(0);
-			tbf.set(1);
-			tag.setMB(tbf);
-			tag.setPointer(new UnsignedShort(0));
-			BitArray_HEX bitHex = new BitArray_HEX("0000");
-			tag.setTagData(bitHex);
-			tag.setMatch(new Bit(0));
-			tag.setTagMask(new BitArray_HEX(0000));
-			tag.setTagData(new BitArray_HEX(0000));
-
-			List<C1G2TargetTag> tagList = new LinkedList<C1G2TargetTag>();
-			tagList.add(tag);
-			cgSpec.setC1G2TargetTagList(tagList);
-
-			command.setAirProtocolTagSpec(cgSpec);
-
-			List<AccessCommandOpSpec> opSpecList = new ArrayList<AccessCommandOpSpec>();
-
-			C1G2BlockWrite write = new C1G2BlockWrite();
-			write.setAccessPassword(new UnsignedInteger(writeAccessPassword));
-			UnsignedShortArray_HEX writeArray = new UnsignedShortArray_HEX();
-			for (String word : writeData.split(":")) {
-				System.out.println("Adding short: " + word);
-				writeArray.add(new UnsignedShort(word, 16));
-			}
-			write.setWriteData(writeArray);
-			write.setOpSpecID(new UnsignedShort(1));
-			write.setMB(tbf);
-			// write.setWordPointer(new UnsignedShort(0x02));
-			write.setWordPointer(new UnsignedShort(0x00));
-
-			opSpecList.add(write);
-			command.setAccessCommandOpSpecList(opSpecList);
-			spec.setAccessCommand(command);
-			spec.setCurrentState(new AccessSpecState(AccessSpecState.Active));
-
-			AccessSpecStopTrigger stopTrigger = new AccessSpecStopTrigger();
-			stopTrigger.setAccessSpecStopTrigger(new AccessSpecStopTriggerType(
-					AccessSpecStopTriggerType.Operation_Count));
-			stopTrigger.setOperationCountValue(new UnsignedShort(10));
-
-			spec.setAccessSpecStopTrigger(stopTrigger);
-
-			ADD_ACCESSSPEC aas = new ADD_ACCESSSPEC();
-
-			aas.setAccessSpec(spec);
-
-			System.out.println(aas.toXMLString());
-
-			ADD_ACCESSSPEC_RESPONSE response = null;
-			try {
-
-				response = (ADD_ACCESSSPEC_RESPONSE) this.transact(aas);
-				System.out.println("Response: " + response.toXMLString());
-
-				ENABLE_ACCESSSPEC enablespec = new ENABLE_ACCESSSPEC();
-				enablespec.setAccessSpecID(new UnsignedInteger(1));
-
-				this.send(enablespec);
-
-				// Thread.sleep(3000);
-				Thread.sleep(10000);
-
-				DELETE_ACCESSSPEC deleteAccessSpec = new DELETE_ACCESSSPEC();
-				deleteAccessSpec.setAccessSpecID(new UnsignedInteger(1));
-				this.send(deleteAccessSpec);
 
 				return response.toXMLString();
 			} catch (TimeoutException e) {
@@ -703,17 +594,11 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 			spec.setProtocolID(new AirProtocols(
 					AirProtocols.EPCGlobalClass1Gen2));
 			spec.setROSpecID(new UnsignedInteger(1));
-
-			AccessCommand command = new AccessCommand();
-
+			
 			// Create a new OpSpec.
-
 			// This specifies what operation we want to perform on the
-
 			// tags that match the specifications above.
-
 			// In this case, we want to write to the tag.
-
 			C1G2Write opSpec = new C1G2Write();
 
 			// Set the OpSpecID to a unique number.
@@ -725,13 +610,9 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 			// For this demo, we'll write to user memory (bank 3).
 
 			TwoBitField opMemBank = new TwoBitField();
-
-			// Set bits 0 and 1 (bank 3 in binary).
-
-			opMemBank.set(1);
-
-			opMemBank.clear(0);
-
+			// Set bits 0 and 1 (bank 1 in binary).
+			opMemBank.set(0);
+			opMemBank.clear(1);
 			opSpec.setMB(opMemBank);
 
 			// We'll write to the base of this memory bank (0x00).
@@ -757,6 +638,11 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 
 	}
 
+	/**
+	 * Split the hex array into groups of 4 by splitting on a colon charater.  
+	 * @param arg
+	 * @return
+	 */
 	public String[] splitHexArray(String arg) {
 		ArrayList<String> retVal = new ArrayList<String>();
 		for (int i = 0; i < arg.length(); i += 4) {
@@ -802,21 +688,15 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 				// See if any operations were performed on
 				// this tag (read, write, kill).
 				// If so, print out the details.
+				
 				for (AccessCommandOpSpecResult op : ops) {
+					//Delete access spec if there is a CommandOpSpecResult coming back.  
+					this.deleteAccessSpecs();
 					System.out.println(op.toString());
 				}
 			}
 		}
 		
-		if ((arg0 instanceof RO_ACCESS_REPORT)) {
-			// try {
-			// // RO_ACCESS_REPORT report = (RO_ACCESS_REPORT)arg0;
-			// // if(report.getRFSurveyReportDataList()) {
-			// // System.out.println(arg0.toXMLString());
-			// // }
-			// } catch (InvalidLLRPMessageException e) {
-			// }
-		}
 		if (!processing.get()) {
 			return;
 		}
@@ -852,8 +732,8 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 		return "LLRPSession: " + host + ":" + port + " (" + getStatus() + ")";
 	}
 
-	private static final String TARGET_EPC = "300833b2ddd9014035050000";
-	private static final String TAG_MASK = "ffffffffffffffffffffffff";
+	private static final String TARGET_EPC = "000000000000000000000000";
+	private static final String TAG_MASK =   "000000000000000000000000";
 	//private static final String TAG_MASK = "ffff";
 	private static final int WRITE_ACCESSSPEC_ID = 2;
 	private static final int READ_ACCESSSPEC_ID = 444;
@@ -870,8 +750,6 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 
 	// Enable the AccessSpec
 	public void enableAccessSpec(int accessSpecID) {
-		ENABLE_ACCESSSPEC_RESPONSE response;
-
 		System.out.println("Enabling the AccessSpec.");
 		ENABLE_ACCESSSPEC enable = new ENABLE_ACCESSSPEC();
 		enable.setAccessSpecID(new UnsignedInteger(accessSpecID));
@@ -887,7 +765,6 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 
 	// Delete all AccessSpecs from the reader
 	public void deleteAccessSpecs() {
-		DELETE_ACCESSSPEC_RESPONSE response;
 
 		System.out.println("Deleting all AccessSpecs.");
 		DELETE_ACCESSSPEC del = new DELETE_ACCESSSPEC();
@@ -928,32 +805,6 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 		return opSpec;
 	}
 
-	// Create a OpSpec that writes to user memory
-	public C1G2Write buildWriteOpSpec() {
-		// Create a new OpSpec.
-		// This specifies what operation we want to perform on the
-		// tags that match the specifications above.
-		// In this case, we want to write to the tag.
-		C1G2Write opSpec = new C1G2Write();
-		// Set the OpSpecID to a unique number.
-		opSpec.setOpSpecID(new UnsignedShort(WRITE_OPSPEC_ID));
-		opSpec.setAccessPassword(new UnsignedInteger(0));
-		// For this demo, we'll write to user memory (bank 3).
-		TwoBitField opMemBank = new TwoBitField();
-		// Set bits 0 and 1 (bank 3 in binary).
-		opMemBank.set(0);
-		opMemBank.set(1);
-		opSpec.setMB(opMemBank);
-		// We'll write to the base of this memory bank (0x00).
-		opSpec.setWordPointer(new UnsignedShort(0x00));
-		UnsignedShortArray_HEX writeData = new UnsignedShortArray_HEX();
-		// We'll write 8 bytes or two words.
-		writeData.add(new UnsignedShort(0xAABB));
-		writeData.add(new UnsignedShort(0xCCDD));
-		opSpec.setWriteData(writeData);
-
-		return opSpec;
-	}
 
 	// Create an AccessSpec.
 	// It will contain our two OpSpecs (read and write).
@@ -1014,27 +865,16 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 		BitArray_HEX tagData = new BitArray_HEX(TARGET_EPC);
 		targetTag.setTagData(tagData);
 
-		/*
-		BitArray_HEX bitHex = new BitArray_HEX("0000");
-		targetTag.setTagData(bitHex);
-		targetTag.setMatch(new Bit(0));
-		targetTag.setTagMask(new BitArray_HEX(TAG_MASK));
-		targetTag.setTagData(new BitArray_HEX(0000));
-		  */ 
-
 		// Add a list of target tags to the tag spec.
-		List targetTagList = new ArrayList();
+		List<C1G2TargetTag> targetTagList = new ArrayList<C1G2TargetTag>();
 		targetTagList.add(targetTag);
 		tagSpec.setC1G2TargetTagList(targetTagList);
 
 		// Add the tag spec to the access command.
 		accessCommand.setAirProtocolTagSpec(tagSpec);
-		
-		
-		
 
 		// A list to hold the op specs for this access command.
-		List opSpecList = new ArrayList();
+		List<AccessCommandOpSpec> opSpecList = new ArrayList<AccessCommandOpSpec>();
 
 		// Are we reading or writing to the tag?
 		// Add the appropriate op spec to the op spec list.
@@ -1059,36 +899,6 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 		return accessSpec;
 	}
 
-	// Add the AccessSpec to the reader.
-	/*
-	public void addAccessSpec(int accessSpecID) {
-		ADD_ACCESSSPEC_RESPONSE response;
-
-		AccessSpec accessSpec = buildAccessSpec(accessSpecID);
-		System.out.println("Adding the AccessSpec.");
-		try {
-			ADD_ACCESSSPEC accessSpecMsg = new ADD_ACCESSSPEC();
-			accessSpecMsg.setAccessSpec(accessSpec);
-			 response = (ADD_ACCESSSPEC_RESPONSE) this.transact(accessSpecMsg, TIMEOUT_MS);
-			// System.out.println(response.toXMLString());
-
-			// Check if the we successfully added the AccessSpec.
-			// StatusCode status = response.getLLRPStatus().getStatusCode();
-
-			/*
-			 * if (status.equals(new StatusCode("M_Success"))) {
-			 * System.out.println("Successfully added AccessSpec."); } else {
-			 * System.out.println("Error adding AccessSpec."); System.exit(1); }
-			 */
-
-	/*
-		} catch (Exception e) {
-			System.out.println("Error adding AccessSpec.");
-			e.printStackTrace();
-		}
-	}
-	*/
-
 	// Finally, modify the messageReceived function so that it prints OpSpec
 	// results to the console. The changes required have been highlighted below.
 
@@ -1112,13 +922,7 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 				}
 			}
 		}
-	}
-	
-	
-	
-	
-	
-	
+	}	
 	
 	// Create a OpSpec that writes to user memory
 
@@ -1152,8 +956,8 @@ public class LLRPReaderSession extends AbstractSensorSession implements
         opMemBank.clear(0);
         */
         
-        opMemBank.set(0);
-        opMemBank.clear(1);
+        opMemBank.set(1);
+        opMemBank.clear(0);
 
         opSpec.setMB(opMemBank);
 
