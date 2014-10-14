@@ -125,8 +125,7 @@ public class RifidiServicesApp
 	private Integer limitOfTags;
 	
 	/** departureTime: If this amount of time in seconds passes since the last 
-	 * time a tag has been seen, then fire a departure event. By default is 4 seconds,
-	 * but then is read from properties.
+	 * time a tag has been seen, then fire a departure event.
 	 * It's used for readZoneMonitoring Service
 	 */
 	private Float departureTime;
