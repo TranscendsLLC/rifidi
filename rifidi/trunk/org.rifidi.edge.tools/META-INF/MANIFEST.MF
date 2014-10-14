@@ -29,6 +29,6 @@ Bundle-ClassPath: .,
  lib/RXTXcomm.jar
 Require-Bundle: org.rifidi.org.relique.jdbc;bundle-version="1.0.0",
  org.rifidi.edge;bundle-version="5.4.0",
- com.espertech.esper;bundle-version="4.7.0"
+ com.espertech.esper
 Export-Package: org.rifidi.edge.tools.diagnostics,
  org.rifidi.edge.tools.tracking
