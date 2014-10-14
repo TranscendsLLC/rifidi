@@ -25,10 +25,10 @@ import org.rifidi.edge.api.service.tagmonitor.ReadZoneSubscriber;
 
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.auth.AWSCredentials;
-import com.amazonaws.services.dynamodb.AmazonDynamoDBClient;
-import com.amazonaws.services.dynamodb.model.DescribeTableRequest;
-import com.amazonaws.services.dynamodb.model.TableDescription;
-import com.amazonaws.services.dynamodb.model.TableStatus;
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
+import com.amazonaws.services.dynamodbv2.model.DescribeTableRequest;
+import com.amazonaws.services.dynamodbv2.model.TableDescription;
+import com.amazonaws.services.dynamodbv2.model.TableStatus;
 
 public class DynamoDBApp extends AbstractRifidiApp {
 
@@ -41,6 +41,62 @@ public class DynamoDBApp extends AbstractRifidiApp {
 	private ReadZoneMonitoringService readZoneMonitoringService;
 
 	private List<ReadZoneSubscriber> subscriberList;
+	
+	/** departureTime: If this amount of time in seconds passes since the last 
+	 * time a tag has been seen, then fire a departure event.
+	 * It's used for readZoneMonitoring Service
+	 */
+	private Float departureTime;
+	
+	/** awsSecretKey **/
+	private String awsSecretKey;
+	
+	/** awsAccessKeyId **/
+	private String awsAccessKeyId;
+	
+	
+
+	/**
+	 * @return the departureTime
+	 */
+	public Float getDepartureTime() {
+		return departureTime;
+	}
+
+	/**
+	 * @param departureTime the departureTime to set
+	 */
+	public void setDepartureTime(Float departureTime) {
+		this.departureTime = departureTime;
+	}
+
+	/**
+	 * @return the awsSecretKey
+	 */
+	public String getAwsSecretKey() {
+		return awsSecretKey;
+	}
+
+	/**
+	 * @param awsSecretKey the awsSecretKey to set
+	 */
+	public void setAwsSecretKey(String awsSecretKey) {
+		this.awsSecretKey = awsSecretKey;
+	}
+
+	/**
+	 * @return the awsAccessKeyId
+	 */
+	public String getAwsAccessKeyId() {
+		return awsAccessKeyId;
+	}
+
+	/**
+	 * @param awsAccessKeyId the awsAccessKeyId to set
+	 */
+	public void setAwsAccessKeyId(String awsAccessKeyId) {
+		this.awsAccessKeyId = awsAccessKeyId;
+	}
 
 	/**
 	 * 
@@ -55,12 +111,12 @@ public class DynamoDBApp extends AbstractRifidiApp {
 
 			@Override
 			public String getAWSSecretKey() {
-				return "PUT SECRET HERE";
+				return awsSecretKey;
 			}
 
 			@Override
 			public String getAWSAccessKeyId() {
-				return "PUT KEY HERE";
+				return awsAccessKeyId;
 			}
 		};
 
@@ -74,6 +130,15 @@ public class DynamoDBApp extends AbstractRifidiApp {
 	 */
 	@Override
 	public void initialize() {
+		
+		//Set departure time from properties
+		setDepartureTime( Float.parseFloat(getProperty("departureTime",	null)) );
+		
+		//Set awsAccessKeyId from properties
+		setAwsAccessKeyId(getProperty("awsAccessKeyId",	null));
+		
+		//Set awsSecretKey from properties
+		setAwsSecretKey(getProperty("awsSecretKey",	null));
 	}
 
 	/**
@@ -93,7 +158,7 @@ public class DynamoDBApp extends AbstractRifidiApp {
 		this.subscriberList = new LinkedList<ReadZoneSubscriber>();
 		this.subscriberList.add(sub);
 		this.readZoneMonitoringService.subscribe(sub,
-				new LinkedList<ReadZone>(), 4.0f, TimeUnit.SECONDS, true);
+				new LinkedList<ReadZone>(), departureTime, TimeUnit.SECONDS, true);
 	}
 
 	/**
