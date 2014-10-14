@@ -17,13 +17,15 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.api.service.tagmonitor.ReadZoneSubscriber;
 import org.rifidi.edge.notification.TagReadEvent;
 
-import com.amazonaws.services.dynamodb.AmazonDynamoDBClient;
-import com.amazonaws.services.dynamodb.model.AttributeValue;
-import com.amazonaws.services.dynamodb.model.PutItemRequest;
-import com.amazonaws.services.dynamodb.model.PutItemResult;
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
+import com.amazonaws.services.dynamodbv2.model.AttributeValue;
+import com.amazonaws.services.dynamodbv2.model.PutItemRequest;
+import com.amazonaws.services.dynamodbv2.model.PutItemResult;
 
 /**
  * 
@@ -32,6 +34,9 @@ import com.amazonaws.services.dynamodb.model.PutItemResult;
  */
 public class DynamoDBSubscriber implements ReadZoneSubscriber {
 
+	/** Logger for this class */
+	private final Log logger = LogFactory.getLog(getClass());
+	
 	public AmazonDynamoDBClient dynamoDB;
 
 	private static final SimpleDateFormat FORMATTER = new SimpleDateFormat(
@@ -57,12 +62,16 @@ public class DynamoDBSubscriber implements ReadZoneSubscriber {
 	 */
 	@Override
 	public void tagArrived(TagReadEvent tag) {
+		
+		logger.info("TAG ARRIVED: " + tag.getTag().getFormattedID() + " from antenna: " 
+				+ tag.getAntennaID());
+		
 		Map<String, AttributeValue> item = newItem(tag.getTag()
 				.getFormattedID(), tag.getAntennaID(), tag.getReaderID(),
 				tag.getTimestamp());
 		PutItemRequest putItemRequest = new PutItemRequest(tableName, item);
 		PutItemResult putItemResult = dynamoDB.putItem(putItemRequest);
-		System.out.println("Result: " + putItemResult);
+		logger.info("Result: " + putItemResult);
 	}
 
 	/*
