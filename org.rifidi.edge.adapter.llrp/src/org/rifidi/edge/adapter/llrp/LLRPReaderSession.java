@@ -15,7 +15,6 @@ package org.rifidi.edge.adapter.llrp;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
@@ -42,9 +41,7 @@ import org.llrp.ltk.generated.interfaces.AccessCommandOpSpecResult;
 import org.llrp.ltk.generated.messages.ADD_ACCESSSPEC;
 import org.llrp.ltk.generated.messages.ADD_ACCESSSPEC_RESPONSE;
 import org.llrp.ltk.generated.messages.DELETE_ACCESSSPEC;
-import org.llrp.ltk.generated.messages.DELETE_ACCESSSPEC_RESPONSE;
 import org.llrp.ltk.generated.messages.ENABLE_ACCESSSPEC;
-import org.llrp.ltk.generated.messages.ENABLE_ACCESSSPEC_RESPONSE;
 import org.llrp.ltk.generated.messages.GET_READER_CAPABILITIES;
 import org.llrp.ltk.generated.messages.RO_ACCESS_REPORT;
 import org.llrp.ltk.generated.messages.SET_READER_CONFIG;
@@ -58,7 +55,6 @@ import org.llrp.ltk.generated.parameters.C1G2EPCMemorySelector;
 import org.llrp.ltk.generated.parameters.C1G2Read;
 import org.llrp.ltk.generated.parameters.C1G2TagSpec;
 import org.llrp.ltk.generated.parameters.C1G2TargetTag;
-import org.llrp.ltk.generated.parameters.C1G2Write;
 import org.llrp.ltk.generated.parameters.EventNotificationState;
 import org.llrp.ltk.generated.parameters.ROReportSpec;
 import org.llrp.ltk.generated.parameters.ReaderEventNotificationSpec;
@@ -553,18 +549,17 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 		}
 	}
 
-	public String addAccessSpec(String writeAccessPassword, String writeData) {
+	public String addAccessSpec(String writeAccessPassword, String writeData ) {
 		// TODO: Throw exception if writeData does not divide evenly by 4
 		try {
 			System.out.println("Add accessspec! ");			
 			int accessSpecId = 2;
-			AccessSpec spec = buildAccessSpec(accessSpecId, writeData);			
+			AccessSpec spec = buildAccessSpec(accessSpecId, writeData, LLRPWriteOperationEnum.WRITE_EPC);			
 			ADD_ACCESSSPEC aas = new ADD_ACCESSSPEC();
 			aas.setAccessSpec(spec);
 			System.out.println(aas.toXMLString());
 			ADD_ACCESSSPEC_RESPONSE response = null;
 			try {
-
 				response = (ADD_ACCESSSPEC_RESPONSE) this.transact(aas);
 				System.out.println("Response: " + response.toXMLString());
 				
@@ -581,61 +576,6 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 			e.printStackTrace();
 			return e.getMessage();
 		}
-	}
-
-	public String buildWriteOpSpec(String writeAccessPassword, String writeData) {
-
-		try {
-			System.out.println("Add accessspec! ");
-
-			AccessSpec spec = new AccessSpec();
-			spec.setAccessSpecID(new UnsignedInteger(1));
-			spec.setAntennaID(new UnsignedShort(0));
-			spec.setProtocolID(new AirProtocols(
-					AirProtocols.EPCGlobalClass1Gen2));
-			spec.setROSpecID(new UnsignedInteger(1));
-			
-			// Create a new OpSpec.
-			// This specifies what operation we want to perform on the
-			// tags that match the specifications above.
-			// In this case, we want to write to the tag.
-			C1G2Write opSpec = new C1G2Write();
-
-			// Set the OpSpecID to a unique number.
-
-			opSpec.setOpSpecID(new UnsignedShort(1));
-
-			opSpec.setAccessPassword(new UnsignedInteger(0));
-
-			// For this demo, we'll write to user memory (bank 3).
-
-			TwoBitField opMemBank = new TwoBitField();
-			// Set bits 0 and 1 (bank 1 in binary).
-			opMemBank.set(0);
-			opMemBank.clear(1);
-			opSpec.setMB(opMemBank);
-
-			// We'll write to the base of this memory bank (0x00).
-
-			opSpec.setWordPointer(new UnsignedShort(0x02));
-
-			// UnsignedShortArray_HEX writeData = new UnsignedShortArray_HEX();
-
-			// We'll write 8 bytes or two words.
-			UnsignedShortArray_HEX writeArray = new UnsignedShortArray_HEX();
-			for (String word : writeData.split(":")) {
-				System.out.println("Adding short: " + word);
-				writeArray.add(new UnsignedShort(word, 16));
-			}
-			opSpec.setWriteData(writeArray);
-
-			// return opSpec;
-			return "";
-		} catch (Exception e) {
-			e.printStackTrace();
-			return e.getMessage();
-		}
-
 	}
 
 	/**
@@ -739,6 +679,10 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 	private static final int READ_ACCESSSPEC_ID = 444;
 	private static final int WRITE_OPSPEC_ID = 2121;
 	private static final int READ_OPSPEC_ID = 1212;
+	private static final int WRITE_ACCESSPASS = 111;
+	private static final int WRITE_KILLPASS = 112;
+	
+	public enum LLRPWriteOperationEnum { WRITE_EPC, WRITE_ACCESSPASS, WRITE_KILLPASS }
 
 	// The TAG_MASK and TARGET_EPC constants are used to define which tags we
 	// want to write to. The reader will take each tag EPC and bitwise AND it
@@ -808,7 +752,7 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 
 	// Create an AccessSpec.
 	// It will contain our two OpSpecs (read and write).
-	public AccessSpec buildAccessSpec(int accessSpecID, String writeData) {
+	public AccessSpec buildAccessSpec(int accessSpecID, String writeData, LLRPWriteOperationEnum writeOperation) {
 		System.out.println("Building the AccessSpec.");
 
 		AccessSpec accessSpec = new AccessSpec();
@@ -898,45 +842,13 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 
 		return accessSpec;
 	}
-
-	// Finally, modify the messageReceived function so that it prints OpSpec
-	// results to the console. The changes required have been highlighted below.
-
-	public void messageReceivedAS(LLRPMessage message) {
-		if (message.getTypeNum() == RO_ACCESS_REPORT.TYPENUM) {
-			// The message received is an Access Report.
-			RO_ACCESS_REPORT report = (RO_ACCESS_REPORT) message;
-			// Get a list of the tags read.
-			List<TagReportData> tags = report.getTagReportDataList();
-			// Loop through the list and get the EPC of each tag.
-			for (TagReportData tag : tags) {
-				System.out.println(tag.getEPCParameter());
-				System.out.println(tag.getLastSeenTimestampUTC());
-				List<AccessCommandOpSpecResult> ops = tag
-						.getAccessCommandOpSpecResultList();
-				// See if any operations were performed on
-				// this tag (read, write, kill).
-				// If so, print out the details.
-				for (AccessCommandOpSpecResult op : ops) {
-					System.out.println(op.toString());
-				}
-			}
-		}
-	}	
 	
-	// Create a OpSpec that writes to user memory
-
+	// Create a OpSpec that writes to epc memory
     public C1G2BlockWrite buildEpcWriteOpSpec(String writeData) {
-
         // Create a new OpSpec.
-
         // This specifies what operation we want to perform on the
-
         // tags that match the specifications above.
-
         // In this case, we want to write to the tag.
-
-        //C1G2Write opSpec = new C1G2Write();
     	C1G2BlockWrite opSpec = new C1G2BlockWrite();
 
         // Set the OpSpecID to a unique number.
@@ -946,22 +858,13 @@ public class LLRPReaderSession extends AbstractSensorSession implements
         opSpec.setAccessPassword(new UnsignedInteger(0));
 
         // For this demo, we'll write to user memory (bank 3).
-
         TwoBitField opMemBank = new TwoBitField();
 
-        // Set bit 1 (bank 1 in binary).
-
-        /*
-        opMemBank.set(1);
-        opMemBank.clear(0);
-        */
-        
+        // Set bit 1 (bank 2 in binary).        
         opMemBank.set(1);
         opMemBank.clear(0);
 
         opSpec.setMB(opMemBank);
-
-        // We'll write to the base of this memory bank (0x00).
 
         opSpec.setWordPointer(new UnsignedShort(0x02));
 
@@ -974,26 +877,73 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 			writeArray.add(new UnsignedShort(word, 16));
 		}
 
-        /*
-        writeData.add(new UnsignedShort(0x0000));
+        opSpec.setWriteData(writeArray); 
 
-        writeData.add(new UnsignedShort(0x0000));
+       return opSpec;
+    }
+    
+    // Create a OpSpec that writes the access password
+    public C1G2BlockWrite buildEpcWriteAccessPass(Integer oldPass, String pass) {
+        // Create a new OpSpec.
+        // This specifies what operation we want to perform on the
+        // tags that match the specifications above.
+        // In this case, we want to write to the tag.
+    	C1G2BlockWrite opSpec = new C1G2BlockWrite();
+        // Set the OpSpecID to a unique number.
+        opSpec.setOpSpecID(new UnsignedShort(WRITE_ACCESSPASS));
+        opSpec.setAccessPassword(new UnsignedInteger(oldPass));
 
-        writeData.add(new UnsignedShort(0x0000));
+        // For this demo, we'll write to user memory (bank 3).
+        TwoBitField opMemBank = new TwoBitField();
+        // Clear twobits (bank 0 in binary).        
+        opMemBank.clear(1);
+        opMemBank.clear(0);
 
-        writeData.add(new UnsignedShort(0x0000));
+        opSpec.setMB(opMemBank);
+        opSpec.setWordPointer(new UnsignedShort(2));
 
-        writeData.add(new UnsignedShort(0x0000));
-
-        writeData.add(new UnsignedShort(0x5555));
-        */
+        UnsignedShortArray_HEX writeArray = new UnsignedShortArray_HEX();        
+        for (String word : pass.split(":")) {
+			System.out.println("Adding short: " + word);
+			writeArray.add(new UnsignedShort(word, 16));
+		}
 
         opSpec.setWriteData(writeArray); 
 
        return opSpec;
+    }
+    
+    // Create a OpSpec that writes the access password
+    public C1G2BlockWrite buildEpcWriteKillPass(Integer accessPass, String killPass) {
+        // Create a new OpSpec.
+        // This specifies what operation we want to perform on the
+        // tags that match the specifications above.
+        // In this case, we want to write to the tag.
+    	C1G2BlockWrite opSpec = new C1G2BlockWrite();
+        // Set the OpSpecID to a unique number.
+        opSpec.setOpSpecID(new UnsignedShort(WRITE_KILLPASS));
+        opSpec.setAccessPassword(new UnsignedInteger(accessPass));
 
+        // For this demo, we'll write to user memory (bank 3).
+        TwoBitField opMemBank = new TwoBitField();
+        // Clear twobits (bank 0 in binary).        
+        opMemBank.clear(1);
+        opMemBank.clear(0);
+
+        opSpec.setMB(opMemBank);
+        opSpec.setWordPointer(new UnsignedShort(0x02));
+
+        UnsignedShortArray_HEX writeArray = new UnsignedShortArray_HEX();        
+        for (String word : killPass.split(":")) {
+			System.out.println("Adding short: " + word);
+			writeArray.add(new UnsignedShort(word, 16));
+		}
+
+        opSpec.setWriteData(writeArray); 
+
+       return opSpec;
     }
 
-
+    
 
 }
