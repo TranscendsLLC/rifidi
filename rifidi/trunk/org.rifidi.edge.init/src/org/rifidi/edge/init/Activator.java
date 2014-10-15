@@ -18,6 +18,7 @@ import java.net.URI;
 import org.apache.log4j.PropertyConfigurator;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
+import org.restlet.resource.ClientResource;
 
 /**
  * 
@@ -44,6 +45,42 @@ public class Activator implements BundleActivator {
 
 		try {
 			System.out.println("START RIFIDI INITIALIZTION BUNDLE");
+
+			boolean failoverEnabled = false;
+			String primary = System.getProperty("org.rifidi.failover.primary");
+			if (primary != null) {
+				failoverEnabled = true;
+			}
+			if (failoverEnabled) {
+				Integer failoverTrySeconds = Integer.parseInt(System
+						.getProperty("org.rifidi.failover.frequency"));
+				Integer numFailsRequired = Integer.parseInt(System
+						.getProperty("org.rifidi.failover.failurecount"));
+				for (int numFails = 0; numFails < numFailsRequired;) {
+					try {
+						Thread.sleep(failoverTrySeconds * 1000);
+						ClientResource client = new ClientResource("http://"
+								+ primary + "/readers");
+						client.get();
+						System.out.println("CLIENT: " + client.getResponse());
+						// Got past the get()...reset the counter
+						if (numFails > 0) {
+							System.out.println("Request to primary " + primary
+									+ " succeeded after previous failure, resetting the counter");
+							numFails = 0;
+						}
+					} catch (InterruptedException e) {
+						// Do nothing...wasn't a network failure
+					} catch (Exception e) {
+						// Exception happened, could not connect to
+						numFails++;
+						System.out.println("Failed to connect to primary " + primary
+								+ ", incrementing counter: " + numFails + " number of fails required: " + numFailsRequired);
+					}
+				}
+
+				// TODO: Call the primary here, get a response.
+			}
 
 			// look up the path to the rifidi home directory
 			String rifidiHome = System.getProperty("org.rifidi.home");
