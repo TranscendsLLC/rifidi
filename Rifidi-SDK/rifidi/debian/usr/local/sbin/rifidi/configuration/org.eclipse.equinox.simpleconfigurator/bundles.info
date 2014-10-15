@@ -1,5 +1,6 @@
 #version=1
 org.antlr.v4.runtime,4.4.0,plugins/org.antlr.v4.runtime_4.4.0.jar,4,true
+org.apache.commons.codec,1.9.0,plugins/org.apache.commons.codec_1.9.0.jar,4,true
 org.aspectj.runtime,1.6.4.20090304172355,plugins/org.aspectj.runtime_1.6.4.20090304172355,3,true
 org.aspectj.weaver,1.6.4.20090304172355,plugins/org.aspectj.weaver_1.6.4.20090304172355,3,true
 org.joda.time.format,2.4.0,plugins/org.joda.time.format_2.4.0.jar,4,true
@@ -28,7 +29,7 @@ com.springsource.javax.xml.ws,2.1.1,plugins/com.springsource.javax.xml.ws_2.1.1.
 com.springsource.net.sf.cglib,2.1.3,plugins/com.springsource.net.sf.cglib_2.1.3.jar,4,true
 com.springsource.org.aopalliance,1.0.0,plugins/com.springsource.org.aopalliance_1.0.0.jar,4,true
 com.springsource.org.apache.catalina,6.0.18,plugins/com.springsource.org.apache.catalina_6.0.18.jar,4,true
-com.springsource.org.apache.commons.codec,1.3.0,plugins/com.springsource.org.apache.commons.codec_1.3.0.jar,4,true
+#com.springsource.org.apache.commons.codec,1.3.0,plugins/com.springsource.org.apache.commons.codec_1.3.0.jar,4,true
 com.springsource.org.apache.commons.dbcp,1.2.2.osgi,plugins/com.springsource.org.apache.commons.dbcp_1.2.2.osgi.jar,4,true
 com.springsource.org.apache.commons.logging,1.1.1,plugins/com.springsource.org.apache.commons.logging_1.1.1.jar,4,true
 com.springsource.org.apache.coyote,6.0.18,plugins/com.springsource.org.apache.coyote_6.0.18.jar,4,false
