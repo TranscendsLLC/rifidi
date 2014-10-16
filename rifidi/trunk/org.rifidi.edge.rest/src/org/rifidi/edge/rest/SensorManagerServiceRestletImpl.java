@@ -50,11 +50,18 @@ import org.rifidi.edge.api.service.appmanager.AppManager;
 import org.rifidi.edge.configuration.Configuration;
 import org.rifidi.edge.configuration.ConfigurationService;
 import org.rifidi.edge.daos.ReaderDAO;
+import org.rifidi.edge.notification.TagReadEvent;
 import org.rifidi.edge.rest.exception.CommandNorReaderExistsException;
+import org.rifidi.edge.rest.exception.NotLLRPReaderTypeException;
 import org.rifidi.edge.rest.exception.NotValidPropertyForObjectException;
+import org.rifidi.edge.rest.exception.ReaderDoesNotExistException;
+import org.rifidi.edge.rest.exception.SessionDoesNotExistException;
 import org.rifidi.edge.sensors.AbstractSensor;
 import org.rifidi.edge.sensors.SensorSession;
+import org.rifidi.edge.services.EsperManagementService;
 
+import com.espertech.esper.client.EPOnDemandQueryResult;
+import com.espertech.esper.client.EventBean;
 /**
  * This class handles the incoming rest requests.
  * 
@@ -67,6 +74,8 @@ public class SensorManagerServiceRestletImpl extends Application {
 	public static final String FAIL_MESSAGE = "Fail";
 
 	public static final String WARNING_STATE = "Warning";
+	
+	public static final String[] LlrpReaderTypeArrray = new String[] {"LLRP"};
 
 	/** The sensor manager service for sensor commands */
 	public SensorManagerService sensorManagerService;
@@ -76,6 +85,9 @@ public class SensorManagerServiceRestletImpl extends Application {
 
 	/** Configuration Service */
 	private volatile ConfigurationService configService;
+	
+	/** Esper service */
+	private EsperManagementService esperService;
 
 	/**  */
 	public AppManager appManager;
@@ -651,27 +663,93 @@ public class SensorManagerServiceRestletImpl extends Application {
 			@Override
 			public void handle(Request request, Response response) {
 				try {
-					AbstractSensor<?> sensor = readerDAO
-							.getReaderByID((String) request.getAttributes()
-									.get("readerID"));
+					
+					String strReaderId = (String) request.getAttributes()
+							.get("readerID");
+					
+					Object objSessionId = request.getAttributes().get("sessionID");
+					
+					//Check if reader id exists
+					if (!readerExists(strReaderId)){
+						throw new ReaderDoesNotExistException(strReaderId);
+					}
+					
+					AbstractSensor<?> sensor = readerDAO.getReaderByID(strReaderId);
+					
+					// look up the associated service configuration object
+					Configuration config = configService.getConfiguration(strReaderId);
+					
+					//Check if reader id is a LLRP reader type
+					String strCurrentReaderType = sensor.getDTO(config).getReaderFactoryID();
+					boolean isLlrpReaderType = false;
+					
+					//Iterate over defined llrp reader types
+					for(int i=0; i< LlrpReaderTypeArrray.length; i++){
+						
+						//If current reader type matches a defined llrp reader type
+						if (strCurrentReaderType.equals(LlrpReaderTypeArrray[i])){
+							
+							isLlrpReaderType = true;
+							break;
+						}
+					}
+					
+					if (!isLlrpReaderType){
+						
+						//It is not a llrp reader type
+						throw new NotLLRPReaderTypeException(strReaderId, strCurrentReaderType);
+						
+					}
+					
 					Map<String, SensorSession> sessionMap = sensor
 							.getSensorSessions();
-					if (sessionMap.containsKey(request.getAttributes().get(
-							"sessionID"))) {
+					
+					//Check if session id exists
+					if (sessionMap.containsKey(objSessionId)) {
+						
 						LLRPReaderSession session = (LLRPReaderSession) sessionMap
-								.get(request.getAttributes().get("sessionID"));
-						session.addAccessSpec((String) request.getAttributes()
-								.get("password"), (String) request
-								.getAttributes().get("tag"));
+								.get(objSessionId);
+						
+						//Check if there is more than one tag in the scope of this reader, if so then fail
+						//session.g
+						
+						if (false){
+							
+							//There is more than one tag in the scope of the reader
+							
+							
+						} else {
+							
+							//There is only one tag in the scope of this reader
+
+							//TODO password comes from jvm, and pass every variable that is in jvm: kill pw, access pws, tag mask, tag epc, timeout 
+							session.addAccessSpec((String) request.getAttributes()
+									.get("password"), (String) request
+									.getAttributes().get("tag"));
+						}
+						
+						
 					} else {
-						throw new Exception(
-								"There was a problem encoding the tag");
+						
+						//Session id does not exist
+						throw new SessionDoesNotExistException(strReaderId, (String) objSessionId);
 					}
 
 					response.setEntity(self.generateReturnString(self
 							.generateSuccessMessage()), MediaType.TEXT_XML);
+					
+				} catch(ReaderDoesNotExistException | SessionDoesNotExistException 
+						| NotLLRPReaderTypeException rEx) {
+					
+					response.setEntity(self.generateReturnString(self
+							.generateErrorMessage(rEx.getMessage(), null)),
+							MediaType.TEXT_XML);
+					
 				} catch (Exception e) {
 
+					response.setEntity(self.generateReturnString(self
+							.generateErrorMessage(e.getMessage(), null)),
+							MediaType.TEXT_XML);
 				}
 			}
 		};
@@ -921,8 +999,6 @@ public class SensorManagerServiceRestletImpl extends Application {
 	 * 
 	 * @param strReaderIdthe
 	 *            reader id to check
-	 * @throws Exception
-	 *             if reader with reader id does not exist
 	 */
 	private boolean readerExists(String strReaderId) {
 
@@ -1053,5 +1129,21 @@ public class SensorManagerServiceRestletImpl extends Application {
 
 		return "";
 	}
+	
+	/*
+	private List<TagReadEvent> getCurrentTags(String readerID) {
+		
+		List<TagReadEvent> currentTags = new LinkedList<TagReadEvent>();
+		EPOnDemandQueryResult result = executeQuery("select * from curtags where readerID=\""
+				+ readerID + "\"");
+		if (result.getArray() != null) {
+			for (EventBean event : result.getArray()) {
+				TagReadEvent tag = (TagReadEvent) event.getUnderlying();
+				currentTags.add(tag);
+			}
+		}
+		return currentTags;
+	}
+	*/
 
 }
