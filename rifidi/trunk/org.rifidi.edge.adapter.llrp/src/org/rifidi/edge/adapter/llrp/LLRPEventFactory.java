@@ -106,9 +106,16 @@ public class LLRPEventFactory {
 				EPCData = StringUtils.leftPad(EPCData, 24, "0");
 				gen2event.setEPCMemory(parseString(EPCData), EPCData, 96);
 			}
-
-			TagReadEvent tag = new TagReadEvent(readerID, gen2event, antid
+			TagReadEvent tag;
+			if(t.getLastSeenTimestampUTC()==null) {
+				tag = new TagReadEvent(readerID, gen2event, antid
 					.getAntennaID().intValue(), System.currentTimeMillis());
+			} else {
+				System.out.println("Setting timestamp to " + t.getLastSeenTimestampUTC().getMicroseconds().toLong()/1000);
+				tag = new TagReadEvent(readerID, gen2event, antid
+						.getAntennaID().intValue(), t.getLastSeenTimestampUTC().getMicroseconds().toLong()/1000);
+					
+			}
 			// Add the custom information to the tags.
 			if (t.getROSpecID() != null) {
 				String rosid = t.getROSpecID().getROSpecID().toInteger()
