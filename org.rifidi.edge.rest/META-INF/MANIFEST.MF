@@ -5,7 +5,8 @@ Bundle-SymbolicName: org.rifidi.edge.rest
 Bundle-Version: 1.0.0
 Bundle-Vendor: Transcends, LLC
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Import-Package: org.apache.commons.logging,
+Import-Package: com.espertech.esper.client,
+ org.apache.commons.logging,
  org.jdom;version="1.0.0",
  org.jdom.input;version="1.0.0",
  org.llrp.ltk.net,

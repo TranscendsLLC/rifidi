@@ -50,18 +50,15 @@ import org.rifidi.edge.api.service.appmanager.AppManager;
 import org.rifidi.edge.configuration.Configuration;
 import org.rifidi.edge.configuration.ConfigurationService;
 import org.rifidi.edge.daos.ReaderDAO;
-import org.rifidi.edge.notification.TagReadEvent;
 import org.rifidi.edge.rest.exception.CommandNorReaderExistsException;
 import org.rifidi.edge.rest.exception.NotLLRPReaderTypeException;
 import org.rifidi.edge.rest.exception.NotValidPropertyForObjectException;
 import org.rifidi.edge.rest.exception.ReaderDoesNotExistException;
 import org.rifidi.edge.rest.exception.SessionDoesNotExistException;
+import org.rifidi.edge.rest.exception.SessionIsRunningLLRPEncodingException;
 import org.rifidi.edge.sensors.AbstractSensor;
 import org.rifidi.edge.sensors.SensorSession;
 import org.rifidi.edge.services.EsperManagementService;
-
-import com.espertech.esper.client.EPOnDemandQueryResult;
-import com.espertech.esper.client.EventBean;
 /**
  * This class handles the incoming rest requests.
  * 
@@ -710,22 +707,49 @@ public class SensorManagerServiceRestletImpl extends Application {
 						LLRPReaderSession session = (LLRPReaderSession) sessionMap
 								.get(objSessionId);
 						
-						//Check if there is more than one tag in the scope of this reader, if so then fail
-						//session.g
-						
-						if (false){
+						//Validate no current operations on session are running, and response to user if so
+						if (session.isRunningLLRPEncoding()){
 							
+							throw new SessionIsRunningLLRPEncodingException(strReaderId, (String) objSessionId);
+							
+						}
+						
+						//TODO Check if there is more than one tag in the scope of this reader, if so then fail
+						
+						
+						if (false) {
+							//TODO
 							//There is more than one tag in the scope of the reader
 							
 							
 						} else {
 							
 							//There is only one tag in the scope of this reader
-
-							//TODO password comes from jvm, and pass every variable that is in jvm: kill pw, access pws, tag mask, tag epc, timeout 
+							
+							//Get jvm properties
+							String strTargetEpc = System.getProperty("org.rifidi.llrp.encode.targetepc"); 
+							String strTagMask = System.getProperty("org.rifidi.llrp.encode.tagmask");
+							Integer intTimeout = Integer.parseInt(System.getProperty("org.rifidi.llrp.encode.timeout"));
+							String strAccessPwd = System.getProperty("org.rifidi.llrp.encode.accesspwd");
+							String strKillPwd = System.getProperty("org.rifidi.llrp.encode.killpwd");
+							String strKillPwdLock = System.getProperty("org.rifidi.llrp.encode.killpwdlock");
+							String strAccessPwdLock = System.getProperty("org.rifidi.llrp.encode.accesspwdlock");
+							String strEpcLock = System.getProperty("org.rifidi.llrp.encode.epclock");
+							
+							//Get the tag id from url
+							String strTag = (String) request.getAttributes().get("tag");
+							
+							session.addAccessSpec(strTag, strTargetEpc, strTagMask,
+									intTimeout, strAccessPwd, strKillPwd, strKillPwdLock, 
+									strAccessPwdLock, strEpcLock);
+							
+							/* TODO delete
 							session.addAccessSpec((String) request.getAttributes()
 									.get("password"), (String) request
 									.getAttributes().get("tag"));
+									*/
+							
+							
 						}
 						
 						
@@ -739,7 +763,8 @@ public class SensorManagerServiceRestletImpl extends Application {
 							.generateSuccessMessage()), MediaType.TEXT_XML);
 					
 				} catch(ReaderDoesNotExistException | SessionDoesNotExistException 
-						| NotLLRPReaderTypeException rEx) {
+						| NotLLRPReaderTypeException | SessionIsRunningLLRPEncodingException
+						rEx) {
 					
 					response.setEntity(self.generateReturnString(self
 							.generateErrorMessage(rEx.getMessage(), null)),
@@ -815,7 +840,9 @@ public class SensorManagerServiceRestletImpl extends Application {
 		router.attach("/readertypes", readerTypes);
 		router.attach("/apps", apps);
 		router.attach("/save", save);
-		router.attach("/llrpencode/{readerID}/{sessionID}/{tag}/{password}",
+		router.attach("/llrpencode/{readerID}/{sessionID}/{tag}",
+				llrpEncode);
+		router.attach("/llrpencode/{readerID}/{sessionID}/{tag}/{operationCode}",
 				llrpEncode);
 		router.attach("/llrpmessage/{readerID}/{sessionID}/{llrpmessage}",
 				llrpMessage);
@@ -949,8 +976,8 @@ public class SensorManagerServiceRestletImpl extends Application {
 	}
 
 	/**
-	 * Processes a chain of semicolon separated properties and checks it's well
-	 * pair formed
+	 * Processes a chain of semicolon separated properties and checks whether it 
+	 * is a well formed pair
 	 * 
 	 * @param propertiesChain
 	 *            separated values of properties, for example:
@@ -995,7 +1022,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 	}
 
 	/**
-	 * Checks is reader given by reader id exists
+	 * Checks if reader given by reader id exists
 	 * 
 	 * @param strReaderIdthe
 	 *            reader id to check
@@ -1105,9 +1132,11 @@ public class SensorManagerServiceRestletImpl extends Application {
 	}
 
 	/**
-	 * 
-	 * @param notValidPropertiesList
-	 * @return
+	 * Returns a string containing the values located inside notValidPropertiesList 
+	 * and separated by |
+	 * @param notValidPropertiesList the list of properties to process
+	 * @return  a string containing the values located inside notValidPropertiesList 
+	 * and separated by |
 	 */
 	private String getFormatedListOfNonValidProperties(
 			List<String> notValidPropertiesList) {
