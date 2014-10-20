@@ -111,7 +111,6 @@ public class LLRPEventFactory {
 				tag = new TagReadEvent(readerID, gen2event, antid
 					.getAntennaID().intValue(), System.currentTimeMillis());
 			} else {
-				System.out.println("Setting timestamp to " + t.getLastSeenTimestampUTC().getMicroseconds().toLong()/1000);
 				tag = new TagReadEvent(readerID, gen2event, antid
 						.getAntennaID().intValue(), t.getLastSeenTimestampUTC().getMicroseconds().toLong()/1000);
 					
