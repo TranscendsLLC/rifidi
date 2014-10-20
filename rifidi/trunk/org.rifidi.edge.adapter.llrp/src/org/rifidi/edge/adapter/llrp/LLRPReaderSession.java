@@ -101,6 +101,8 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 	/** The ID of the reader this session belongs to */
 	private final String readerID;
 	private final String readerConfigPath;
+	
+	public Long lastTagTimestamp;
 
 	/** Ok, because only accessed from synchronized block */
 	int messageID = 1;
@@ -268,7 +270,8 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 			if (!processing.compareAndSet(false, true)) {
 				logger.warn("Executor was already active! ");
 			}
-			submit(getTimeoutCommand(), 10, TimeUnit.SECONDS);
+			this.lastTagTimestamp=System.currentTimeMillis();
+			submit(getTimeoutCommand(this), 10, TimeUnit.SECONDS);
 			setStatus(SessionStatus.PROCESSING);
 
 		} catch (TimeoutException e) {
@@ -297,17 +300,20 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 	 * 
 	 * @return
 	 */
-	private Command getTimeoutCommand() {
+	private Command getTimeoutCommand(final LLRPReaderSession session) {
 		return new TimeoutCommand("LLRP Timeout") {
 
 			@Override
 			protected void execute() throws TimeoutException {
-				GET_READER_CAPABILITIES grc = new GET_READER_CAPABILITIES();
-				GetReaderCapabilitiesRequestedData data = new GetReaderCapabilitiesRequestedData();
-				data.set(GetReaderCapabilitiesRequestedData.LLRP_Capabilities);
-				grc.setRequestedData(data);
-				transact(grc);
-
+				//If the last tag was seen less than 10 seconds ago, do nothing.
+				Long tenSecondsAgo = System.currentTimeMillis() - 10000;
+				if (tenSecondsAgo > session.lastTagTimestamp) {
+					GET_READER_CAPABILITIES grc = new GET_READER_CAPABILITIES();
+					GetReaderCapabilitiesRequestedData data = new GetReaderCapabilitiesRequestedData();
+					data.set(GetReaderCapabilitiesRequestedData.LLRP_Capabilities);
+					grc.setRequestedData(data);
+					transact(grc);
+				}
 			}
 		};
 	}
@@ -615,6 +621,7 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 	public void messageReceived(LLRPMessage arg0) {
 		
 		if (arg0.getTypeNum() == RO_ACCESS_REPORT.TYPENUM) {
+			this.lastTagTimestamp = System.currentTimeMillis();
 			// The message received is an Access Report.
 			RO_ACCESS_REPORT report = (RO_ACCESS_REPORT) arg0;
 			// Get a list of the tags read.
