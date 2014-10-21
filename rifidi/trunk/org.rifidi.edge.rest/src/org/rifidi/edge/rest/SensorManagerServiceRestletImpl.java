@@ -50,15 +50,11 @@ import org.rifidi.edge.api.service.appmanager.AppManager;
 import org.rifidi.edge.configuration.Configuration;
 import org.rifidi.edge.configuration.ConfigurationService;
 import org.rifidi.edge.daos.ReaderDAO;
-import org.rifidi.edge.rest.exception.CommandNorReaderExistsException;
-import org.rifidi.edge.rest.exception.NotLLRPReaderTypeException;
 import org.rifidi.edge.rest.exception.NotValidPropertyForObjectException;
-import org.rifidi.edge.rest.exception.ReaderDoesNotExistException;
-import org.rifidi.edge.rest.exception.SessionDoesNotExistException;
-import org.rifidi.edge.rest.exception.SessionIsRunningLLRPEncodingException;
 import org.rifidi.edge.sensors.AbstractSensor;
 import org.rifidi.edge.sensors.SensorSession;
 import org.rifidi.edge.services.EsperManagementService;
+
 /**
  * This class handles the incoming rest requests.
  * 
@@ -71,8 +67,8 @@ public class SensorManagerServiceRestletImpl extends Application {
 	public static final String FAIL_MESSAGE = "Fail";
 
 	public static final String WARNING_STATE = "Warning";
-	
-	public static final String[] LlrpReaderTypeArrray = new String[] {"LLRP"};
+
+	public static final String[] LlrpReaderTypeArrray = new String[] { "LLRP" };
 
 	/** The sensor manager service for sensor commands */
 	public SensorManagerService sensorManagerService;
@@ -82,7 +78,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 
 	/** Configuration Service */
 	private volatile ConfigurationService configService;
-	
+
 	/** Esper service */
 	private EsperManagementService esperService;
 
@@ -330,7 +326,9 @@ public class SensorManagerServiceRestletImpl extends Application {
 					// Check if command or reader exists before submit
 					// getproperties
 					if (!commandExists && !readerExists) {
-						throw new CommandNorReaderExistsException(strObjectId);
+						throw new Exception(
+								"Neither reader nor command with id "
+										+ strObjectId + " exist");
 					}
 
 					AttributeList attributes = getProcessedAttributes(strPropAttr);
@@ -358,12 +356,6 @@ public class SensorManagerServiceRestletImpl extends Application {
 					response.setEntity(self.generateReturnString(self
 							.generateSuccessMessage()), MediaType.TEXT_XML);
 
-				} catch (CommandNorReaderExistsException nEx) {
-
-					response.setEntity(self.generateReturnString(self
-							.generateErrorMessage(nEx.getMessage(), null)),
-							MediaType.TEXT_XML);
-
 				} catch (NotValidPropertyForObjectException nEx) {
 
 					response.setEntity(self.generateReturnString(self
@@ -373,7 +365,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 				} catch (Exception e) {
 
 					response.setEntity(self.generateReturnString(self
-							.generateErrorMessage(e.toString(), null)),
+							.generateErrorMessage(e.getMessage(), null)),
 							MediaType.TEXT_XML);
 
 				}
@@ -392,7 +384,9 @@ public class SensorManagerServiceRestletImpl extends Application {
 					// getproperties
 					if (!commandExists(strObjectId)
 							&& !readerExists(strObjectId)) {
-						throw new CommandNorReaderExistsException(strObjectId);
+						throw new Exception(
+								"Neither reader nor command with id "
+										+ strObjectId + " exist");
 					}
 
 					Configuration configuration = configService
@@ -415,15 +409,11 @@ public class SensorManagerServiceRestletImpl extends Application {
 					// .toString());
 					response.setEntity(self.generateReturnString(prmd)
 							.toString(), MediaType.TEXT_XML);
-				} catch (CommandNorReaderExistsException nEx) {
 
-					response.setEntity(self.generateReturnString(self
-							.generateErrorMessage(nEx.getMessage(), null)),
-							MediaType.TEXT_XML);
 				} catch (Exception e) {
 
 					response.setEntity(self.generateReturnString(self
-							.generateErrorMessage(e.toString(), null)),
+							.generateErrorMessage(e.getMessage(), null)),
 							MediaType.TEXT_XML);
 				}
 			}
@@ -432,9 +422,9 @@ public class SensorManagerServiceRestletImpl extends Application {
 		Restlet createReader = new Restlet() {
 			@Override
 			public void handle(Request request, Response response) {
-				
+
 				String readerId = null;
-				
+
 				try {
 
 					String strReaderType = (String) request.getAttributes()
@@ -444,10 +434,10 @@ public class SensorManagerServiceRestletImpl extends Application {
 							"properties");
 
 					AttributeList attributes = getProcessedAttributes(strPropAttr);
-					
-					//Create reader
-					readerId = sensorManagerService.createReader(
-							strReaderType, attributes);
+
+					// Create reader
+					readerId = sensorManagerService.createReader(strReaderType,
+							attributes);
 
 					// Validate what properties are wrong for this created
 					// reader
@@ -457,10 +447,10 @@ public class SensorManagerServiceRestletImpl extends Application {
 							.generateSuccessMessage()), MediaType.TEXT_XML);
 
 				} catch (NotValidPropertyForObjectException nE) {
-					
-					//If there was an invalid property creating the reader,
-					//and the reader was created, the reader must be deleted
-					if (readerId != null){
+
+					// If there was an invalid property creating the reader,
+					// and the reader was created, the reader must be deleted
+					if (readerId != null) {
 						sensorManagerService.deleteReader(readerId);
 					}
 
@@ -483,9 +473,9 @@ public class SensorManagerServiceRestletImpl extends Application {
 		Restlet createCommand = new Restlet() {
 			@Override
 			public void handle(Request request, Response response) {
-				
+
 				String strCommandId = null;
-				
+
 				try {
 
 					String strPropAttr = (String) request.getAttributes().get(
@@ -493,22 +483,23 @@ public class SensorManagerServiceRestletImpl extends Application {
 
 					AttributeList attributes = getProcessedAttributes(strPropAttr);
 
-					//Create the command
+					// Create the command
 					strCommandId = self.commandManagerService
 							.createCommand((String) request.getAttributes()
 									.get("commandType"), attributes);
-					
+
 					// Validate properties for this command
-					validateAttributesForReaderOrCommand(strCommandId, attributes);
+					validateAttributesForReaderOrCommand(strCommandId,
+							attributes);
 
 					response.setEntity(self.generateReturnString(self
 							.generateSuccessMessage()), MediaType.TEXT_XML);
 
 				} catch (NotValidPropertyForObjectException nE) {
-					
-					//If there was an invalid property creating the command,
-					//and the command was created, the command must be deleted
-					if (strCommandId != null){
+
+					// If there was an invalid property creating the command,
+					// and the command was created, the command must be deleted
+					if (strCommandId != null) {
 						commandManagerService.deleteCommand(strCommandId);
 					}
 
@@ -660,116 +651,117 @@ public class SensorManagerServiceRestletImpl extends Application {
 			@Override
 			public void handle(Request request, Response response) {
 				try {
-					
-					String strReaderId = (String) request.getAttributes()
-							.get("readerID");
-					
-					Object objSessionId = request.getAttributes().get("sessionID");
-					
-					//Check if reader id exists
-					if (!readerExists(strReaderId)){
-						throw new ReaderDoesNotExistException(strReaderId);
+
+					String strReaderId = (String) request.getAttributes().get(
+							"readerID");
+
+					Object objSessionId = request.getAttributes().get(
+							"sessionID");
+
+					// Check if reader id exists
+					if (!readerExists(strReaderId)) {
+						throw new Exception("Reader with id " + strReaderId
+								+ " does not exist");
 					}
-					
-					AbstractSensor<?> sensor = readerDAO.getReaderByID(strReaderId);
-					
+
+					AbstractSensor<?> sensor = readerDAO
+							.getReaderByID(strReaderId);
+
 					// look up the associated service configuration object
-					Configuration config = configService.getConfiguration(strReaderId);
-					
-					//Check if reader id is a LLRP reader type
-					String strCurrentReaderType = sensor.getDTO(config).getReaderFactoryID();
+					Configuration config = configService
+							.getConfiguration(strReaderId);
+
+					// Check if reader id is a LLRP reader type
+					String strCurrentReaderType = sensor.getDTO(config)
+							.getReaderFactoryID();
 					boolean isLlrpReaderType = false;
-					
-					//Iterate over defined llrp reader types
-					for(int i=0; i< LlrpReaderTypeArrray.length; i++){
-						
-						//If current reader type matches a defined llrp reader type
-						if (strCurrentReaderType.equals(LlrpReaderTypeArrray[i])){
-							
+
+					// Iterate over defined llrp reader types
+					for (int i = 0; i < LlrpReaderTypeArrray.length; i++) {
+
+						// If current reader type matches a defined llrp reader
+						// type
+						if (strCurrentReaderType
+								.equals(LlrpReaderTypeArrray[i])) {
+
 							isLlrpReaderType = true;
 							break;
 						}
 					}
-					
-					if (!isLlrpReaderType){
-						
-						//It is not a llrp reader type
-						throw new NotLLRPReaderTypeException(strReaderId, strCurrentReaderType);
-						
+
+					if (!isLlrpReaderType) {
+
+						// It is not a llrp reader type
+						throw new Exception("Reader with id " + strReaderId
+								+ " of type " + strCurrentReaderType
+								+ " is not a LLRP reader type");
+
 					}
-					
+
 					Map<String, SensorSession> sessionMap = sensor
 							.getSensorSessions();
-					
-					//Check if session id exists
+
+					// Check if session id exists
 					if (sessionMap.containsKey(objSessionId)) {
-						
+
 						LLRPReaderSession session = (LLRPReaderSession) sessionMap
 								.get(objSessionId);
-						
-						//Validate no current operations on session are running, and response to user if so
-						if (session.isRunningLLRPEncoding()){
-							
-							throw new SessionIsRunningLLRPEncodingException(strReaderId, (String) objSessionId);
-							
+
+						// Validate no current operations on session are
+						// running, and response to user if so
+						if (session.isRunningLLRPEncoding()) {
+
+							throw new Exception(
+									"Session with id "
+											+ objSessionId
+											+ " of reader with id "
+											+ strReaderId
+											+ " is currently in the middle of encoding operations. Try again in a while");
+
 						}
-						
-						//TODO Check if there is more than one tag in the scope of this reader, if so then fail
-						
-						
-						if (false) {
-							//TODO
-							//There is more than one tag in the scope of the reader
-							
-							
-						} else {
-							
-							//There is only one tag in the scope of this reader
-							
-							//Get jvm properties
-							String strTargetEpc = System.getProperty("org.rifidi.llrp.encode.targetepc"); 
-							String strTagMask = System.getProperty("org.rifidi.llrp.encode.tagmask");
-							Integer intTimeout = Integer.parseInt(System.getProperty("org.rifidi.llrp.encode.timeout"));
-							String strAccessPwd = System.getProperty("org.rifidi.llrp.encode.accesspwd");
-							String strKillPwd = System.getProperty("org.rifidi.llrp.encode.killpwd");
-							String strKillPwdLock = System.getProperty("org.rifidi.llrp.encode.killpwdlock");
-							String strAccessPwdLock = System.getProperty("org.rifidi.llrp.encode.accesspwdlock");
-							String strEpcLock = System.getProperty("org.rifidi.llrp.encode.epclock");
-							
-							//Get the tag id from url
-							String strTag = (String) request.getAttributes().get("tag");
-							
-							session.addAccessSpec(strTag, strTargetEpc, strTagMask,
-									intTimeout, strAccessPwd, strKillPwd, strKillPwdLock, 
-									strAccessPwdLock, strEpcLock);
-							
-							/* TODO delete
-							session.addAccessSpec((String) request.getAttributes()
-									.get("password"), (String) request
-									.getAttributes().get("tag"));
-									*/
-							
-							
+
+						// TODO Check if there is more than one tag in the scope
+						// of this reader, if so then fail
+						boolean thereAreMultipleTags = false;
+
+						if (thereAreMultipleTags) {
+
+							// There is more than one tag in the scope of the
+							// reader
+							throw new Exception(
+									"There are more than one tag for reader with id "
+											+ strReaderId);
+
 						}
-						
-						
+
+						// There is only one tag in the scope of this reader
+						// for session object
+						// Get jvm properties
+						setLlrpEncodeJvmProperties(session);
+
+						// Get the tag id from url
+						String strTag = (String) request.getAttributes().get(
+								"tag");
+
+						session.llrpEncode(strTag);
+
+						/*
+						 * TODO delete session.addAccessSpec((String)
+						 * request.getAttributes() .get("password"), (String)
+						 * request .getAttributes().get("tag"));
+						 */
+
 					} else {
-						
-						//Session id does not exist
-						throw new SessionDoesNotExistException(strReaderId, (String) objSessionId);
+
+						// Session id does not exist
+						throw new Exception("Session with id " + objSessionId
+								+ " does not exist for reader with id "
+								+ strReaderId);
 					}
 
 					response.setEntity(self.generateReturnString(self
 							.generateSuccessMessage()), MediaType.TEXT_XML);
-					
-				} catch(ReaderDoesNotExistException | SessionDoesNotExistException 
-						| NotLLRPReaderTypeException | SessionIsRunningLLRPEncodingException
-						rEx) {
-					
-					response.setEntity(self.generateReturnString(self
-							.generateErrorMessage(rEx.getMessage(), null)),
-							MediaType.TEXT_XML);
-					
+
 				} catch (Exception e) {
 
 					response.setEntity(self.generateReturnString(self
@@ -840,9 +832,9 @@ public class SensorManagerServiceRestletImpl extends Application {
 		router.attach("/readertypes", readerTypes);
 		router.attach("/apps", apps);
 		router.attach("/save", save);
-		router.attach("/llrpencode/{readerID}/{sessionID}/{tag}",
-				llrpEncode);
-		router.attach("/llrpencode/{readerID}/{sessionID}/{tag}/{operationCode}",
+		router.attach("/llrpencode/{readerID}/{sessionID}/{tag}", llrpEncode);
+		router.attach(
+				"/llrpencode/{readerID}/{sessionID}/{tag}/{operationCode}",
 				llrpEncode);
 		router.attach("/llrpmessage/{readerID}/{sessionID}/{llrpmessage}",
 				llrpMessage);
@@ -976,7 +968,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 	}
 
 	/**
-	 * Processes a chain of semicolon separated properties and checks whether it 
+	 * Processes a chain of semicolon separated properties and checks whether it
 	 * is a well formed pair
 	 * 
 	 * @param propertiesChain
@@ -1132,11 +1124,13 @@ public class SensorManagerServiceRestletImpl extends Application {
 	}
 
 	/**
-	 * Returns a string containing the values located inside notValidPropertiesList 
-	 * and separated by |
-	 * @param notValidPropertiesList the list of properties to process
-	 * @return  a string containing the values located inside notValidPropertiesList 
-	 * and separated by |
+	 * Returns a string containing the values located inside
+	 * notValidPropertiesList and separated by |
+	 * 
+	 * @param notValidPropertiesList
+	 *            the list of properties to process
+	 * @return a string containing the values located inside
+	 *         notValidPropertiesList and separated by |
 	 */
 	private String getFormatedListOfNonValidProperties(
 			List<String> notValidPropertiesList) {
@@ -1158,21 +1152,102 @@ public class SensorManagerServiceRestletImpl extends Application {
 
 		return "";
 	}
-	
-	/*
-	private List<TagReadEvent> getCurrentTags(String readerID) {
-		
-		List<TagReadEvent> currentTags = new LinkedList<TagReadEvent>();
-		EPOnDemandQueryResult result = executeQuery("select * from curtags where readerID=\""
-				+ readerID + "\"");
-		if (result.getArray() != null) {
-			for (EventBean event : result.getArray()) {
-				TagReadEvent tag = (TagReadEvent) event.getUnderlying();
-				currentTags.add(tag);
-			}
+
+	/**
+	 * Set the jvm properties into session object
+	 * 
+	 * @param session
+	 *            the session of reader where the properties are going to be set
+	 * @throws Exception
+	 *             if there is an invalid lock privilege name from jvm
+	 */
+	private void setLlrpEncodeJvmProperties(LLRPReaderSession session)
+			throws Exception {
+
+		String strTargetEpc = System
+				.getProperty("org.rifidi.llrp.encode.targetepc");
+
+		session.setTargetEpc(strTargetEpc != null ? strTargetEpc
+				: LLRPReaderSession.DEFAULT_TARGET_EPC);
+
+		String strTagMask = System
+				.getProperty("org.rifidi.llrp.encode.tagmask");
+
+		session.setTagMask(strTagMask != null ? strTagMask
+				: LLRPReaderSession.DEFAULT_TAG_MASK);
+
+		String strTimeout = System
+				.getProperty("org.rifidi.llrp.encode.timeout");
+
+		session.setOperationsTimeout(strTimeout != null ? Integer
+				.parseInt(strTimeout)
+				: LLRPReaderSession.DEFAULT_OPERATIONS_TIMEOUT);
+
+		String strAccessPwd = System
+				.getProperty("org.rifidi.llrp.encode.accesspwd");
+
+		session.setAccessPwd(strAccessPwd != null ? strAccessPwd
+				: LLRPReaderSession.DEFAULT_ACCESS_PASSWORD);
+
+		String strKillPwd = System
+				.getProperty("org.rifidi.llrp.encode.killpwd");
+
+		session.setKillPwd(strKillPwd != null ? strKillPwd
+				: LLRPReaderSession.DEFAULT_KILL_PASSWORD);
+
+		String strKillPwdLock = System
+				.getProperty("org.rifidi.llrp.encode.killpwdlock");
+
+		if (strKillPwd != null) {
+
+			int intKillPwdLockPrivilege = LLRPReaderSession
+					.getLockPrivilege(strKillPwdLock);
+			session.setKillPwdLockPrivilege(intKillPwdLockPrivilege);
+
+		} else {
+
+			session.setKillPwdLockPrivilege(LLRPReaderSession.DEFAULT_KILL_PASSWORD_LOCK_PRIVILEGE);
 		}
-		return currentTags;
+
+		String strAccessPwdLock = System
+				.getProperty("org.rifidi.llrp.encode.accesspwdlock");
+
+		if (strAccessPwdLock != null) {
+
+			int intAccessPwdLockPrivilege = LLRPReaderSession
+					.getLockPrivilege(strAccessPwdLock);
+			session.setAccessPwdLockPrivilege(intAccessPwdLockPrivilege);
+
+		} else {
+
+			session.setAccessPwdLockPrivilege(LLRPReaderSession.DEFAULT_ACCESS_PASSWORD_LOCK_PRIVILEGE);
+		}
+
+		String strEpcLock = System
+				.getProperty("org.rifidi.llrp.encode.epclock");
+
+		if (strEpcLock != null) {
+
+			int intEpcLockPrivilege = LLRPReaderSession
+					.getLockPrivilege(strEpcLock);
+			session.setEpcLockPrivilege(intEpcLockPrivilege);
+
+		} else {
+
+			session.setEpcLockPrivilege(LLRPReaderSession.DEFAULT_EPC_LOCK_PRIVILEGE);
+		}
+
 	}
-	*/
+
+	/*
+	 * private List<TagReadEvent> getCurrentTags(String readerID) {
+	 * 
+	 * List<TagReadEvent> currentTags = new LinkedList<TagReadEvent>();
+	 * EPOnDemandQueryResult result =
+	 * executeQuery("select * from curtags where readerID=\"" + readerID +
+	 * "\""); if (result.getArray() != null) { for (EventBean event :
+	 * result.getArray()) { TagReadEvent tag = (TagReadEvent)
+	 * event.getUnderlying(); currentTags.add(tag); } } return currentTags; }
+	 */
 
 }
