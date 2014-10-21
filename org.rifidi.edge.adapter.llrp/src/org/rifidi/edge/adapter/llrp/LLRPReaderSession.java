@@ -110,8 +110,9 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 	private volatile NotifierService notifierService;
 	/** The ID of the reader this session belongs to */
 	private final String readerID;
+
 	private final String readerConfigPath;
-	
+
 	public Long lastTagTimestamp;
 
 	/** Ok, because only accessed from synchronized block */
@@ -130,14 +131,107 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 	/** Indicates if this session is in the middle of LLRP encode operations **/
 	private boolean isRunningLLRPEncoding = false;
 
+	/** the EPC Tag Data to perform operation on **/
+	private String targetEpc;
+
+	/**
+	 * the Tag Mask to perform operation on (0 is wildcard match, F is Exact
+	 * Match)
+	 **/
+	private String tagMask;
+
+	/**
+	 * the duration of time to attempt operation (O is infinite until operation
+	 * occurs, set in milliseconds)
+	 **/
+	private Integer operationsTimeout;
+
+	/** Access Password (Hex Value) **/
+	private String accessPwd;
+
+	/** Kill Password (Hex Value) **/
+	private String killPwd;
+
+	/**
+	 * value to perform a Kill Password Lock Operation (values can be Read_Write
+	 * (which Locks), Perma_Lock, Unlock)
+	 **/
+	private int killPwdLockPrivilege;
+
+	/**
+	 * value to perform an Access Password Lock Operation (values can be
+	 * Read_Write (which Locks), Perma_Lock, Unlock)
+	 **/
+	private int accessPwdLockPrivilege;
+
+	/**
+	 * value to perform an EPC Lock Operation (values can be Read_Write (which
+	 * Locks), Perma_Lock, Unlock)
+	 **/
+	private int epcLockPrivilege;
+
 	/**
 	 * Indicates the count of LLRP operations that should be executed on this
 	 * session
 	 **/
-	private int operationNumber = 6;
-	
-	private static final String TARGET_EPC = "000000000000000000000000";
-	private static final String TAG_MASK = "000000000000000000000000";
+	private int operationNumber;
+
+	/** Default target Epc value if there is no property read from jvm **/
+	public static final String DEFAULT_TARGET_EPC = "000000000000000000000000";
+
+	/**
+	 * Default tag mask value if there is no property read from jvm. (0 is
+	 * wildcard match, F is Exact Match)
+	 **/
+	public static final String DEFAULT_TAG_MASK = "000000000000000000000000";
+
+	/**
+	 * Default operations timeout value if there is no property read from jvm. O
+	 * is infinite until operation occurs, set in milliseconds
+	 **/
+	public static final int DEFAULT_OPERATIONS_TIMEOUT = 0;
+
+	/**
+	 * Default access password value if there is no property read from jvm. (Hex
+	 * Value)
+	 **/
+	public static final String DEFAULT_ACCESS_PASSWORD = "0";
+
+	/**
+	 * Default kill password value if there is no property read from jvm. (Hex
+	 * Value)
+	 **/
+	public static final String DEFAULT_KILL_PASSWORD = "0";
+
+	/**
+	 * Default kill password lock privilege if there is no property read from
+	 * jvm. (values can be Read_Write (which Locks), Perma_Lock, Unlock)
+	 **/
+	public static final int DEFAULT_KILL_PASSWORD_LOCK_PRIVILEGE = C1G2LockPrivilege.Read_Write;
+
+	/**
+	 * Default access password lock privilege if there is no property read from
+	 * jvm. (values can be Read_Write (which Locks), Perma_Lock, Unlock)
+	 **/
+	public static final int DEFAULT_ACCESS_PASSWORD_LOCK_PRIVILEGE = C1G2LockPrivilege.Read_Write;
+
+	/**
+	 * Default EPC lock privilege if there is no property read from jvm. (values
+	 * can be Read_Write (which Locks), Perma_Lock, Unlock)
+	 **/
+	public static final int DEFAULT_EPC_LOCK_PRIVILEGE = C1G2LockPrivilege.Read_Write;
+
+	/** Expected value for Read_Write lock privilege taken from jvm **/
+	public final static String READ_WRITE_LOCK_PRIVILEGE = "Read_Write";
+
+	/** Expected value for Perma_Lock lock privilege taken from jvm **/
+	public final static String PERMA_LOCK_PRIVILEGE = "Perma_Lock";
+
+	/** Expected value for Unlock lock privilege taken from jvm **/
+	public final static String UNLOCK_PRIVILEGE = "Unlock";
+
+	// private static final String TARGET_EPC = "000000000000000000000000";
+	// private static final String TAG_MASK = "000000000000000000000000";
 	// private static final String TAG_MASK = "ffff";
 	private static final int WRITE_ACCESSSPEC_ID = 2;
 	private static final int READ_ACCESSSPEC_ID = 444;
@@ -145,6 +239,9 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 	private static final int READ_OPSPEC_ID = 1212;
 	private static final int WRITE_ACCESSPASS = 111;
 	private static final int WRITE_KILLPASS = 112;
+	private static final int KILL_PASSWORD_LOCK_ID = 10;
+	private static final int ACCESS_PASSWORD_LOCK_ID = 11;
+	private static final int EPC_LOCK_ID = 12;
 
 	/**
 	 * @return the isRunningLLRPEncoding
@@ -159,6 +256,126 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 	 */
 	public void setRunningLLRPEncoding(boolean isRunningLLRPEncoding) {
 		this.isRunningLLRPEncoding = isRunningLLRPEncoding;
+	}
+
+	/**
+	 * @return the targetEpc
+	 */
+	public String getTargetEpc() {
+		return targetEpc;
+	}
+
+	/**
+	 * @param targetEpc
+	 *            the targetEpc to set
+	 */
+	public void setTargetEpc(String targetEpc) {
+		this.targetEpc = targetEpc;
+	}
+
+	/**
+	 * @return the tagMask
+	 */
+	public String getTagMask() {
+		return tagMask;
+	}
+
+	/**
+	 * @param tagMask
+	 *            the tagMask to set
+	 */
+	public void setTagMask(String tagMask) {
+		this.tagMask = tagMask;
+	}
+
+	/**
+	 * @return the operationsTimeout
+	 */
+	public Integer getOperationsTimeout() {
+		return operationsTimeout;
+	}
+
+	/**
+	 * @param operationsTimeout
+	 *            the operationsTimeout to set
+	 */
+	public void setOperationsTimeout(Integer operationsTimeout) {
+		this.operationsTimeout = operationsTimeout;
+	}
+
+	/**
+	 * @return the accessPwd
+	 */
+	public String getAccessPwd() {
+		return accessPwd;
+	}
+
+	/**
+	 * @param accessPwd
+	 *            the accessPwd to set
+	 */
+	public void setAccessPwd(String accessPwd) {
+		this.accessPwd = accessPwd;
+	}
+
+	/**
+	 * @return the killPwd
+	 */
+	public String getKillPwd() {
+		return killPwd;
+	}
+
+	/**
+	 * @param killPwd
+	 *            the killPwd to set
+	 */
+	public void setKillPwd(String killPwd) {
+		this.killPwd = killPwd;
+	}
+
+	/**
+	 * @return the killPwdLockPrivilege
+	 */
+	public int getKillPwdLockPrivilege() {
+		return killPwdLockPrivilege;
+	}
+
+	/**
+	 * @param killPwdLockPrivilege
+	 *            the killPwdLockPrivilege to set
+	 */
+	public void setKillPwdLockPrivilege(int killPwdLockPrivilege) {
+		this.killPwdLockPrivilege = killPwdLockPrivilege;
+	}
+
+	/**
+	 * @return the accessPwdLockPrivilege
+	 */
+	public int getAccessPwdLockPrivilege() {
+		return accessPwdLockPrivilege;
+	}
+
+	/**
+	 * @param accessPwdLockPrivilege
+	 *            the accessPwdLock to set
+	 */
+	public void setAccessPwdLockPrivilege(int accessPwdLockPrivilege) {
+		this.accessPwdLockPrivilege = accessPwdLockPrivilege;
+	}
+
+	/**
+	 * @return the epcLockPrivilege
+	 */
+	public int getEpcLockPrivilege() {
+		return epcLockPrivilege;
+	}
+
+	/**
+	 * @param epcLockPrivilege
+	 *            the epcLockPrivilege to set
+	 */
+	public void setEpcLockPrivilege(int epcLockPrivilege) {
+		this.epcLockPrivilege = epcLockPrivilege;
 	}
 
 	/**
@@ -336,7 +553,7 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 			if (!processing.compareAndSet(false, true)) {
 				logger.warn("Executor was already active! ");
 			}
-			this.lastTagTimestamp=System.currentTimeMillis();
+			this.lastTagTimestamp = System.currentTimeMillis();
 			submit(getTimeoutCommand(this), 10, TimeUnit.SECONDS);
 			setStatus(SessionStatus.PROCESSING);
 
@@ -371,7 +588,8 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 
 			@Override
 			protected void execute() throws TimeoutException {
-				//If the last tag was seen less than 10 seconds ago, do nothing.
+				// If the last tag was seen less than 10 seconds ago, do
+				// nothing.
 				Long tenSecondsAgo = System.currentTimeMillis() - 10000;
 				if (tenSecondsAgo > session.lastTagTimestamp) {
 					GET_READER_CAPABILITIES grc = new GET_READER_CAPABILITIES();
@@ -621,46 +839,47 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 		}
 	}
 
-	private ADD_ACCESSSPEC_RESPONSE executeOperation(int accessSpecId, String epcId, LLRPWriteOperationEnum 
-			writeOperation)
+	private ADD_ACCESSSPEC_RESPONSE executeOperation(int accessSpecId,
+			String epcId, LLRPWriteOperationEnum writeOperation)
 			throws InvalidLLRPMessageException, TimeoutException {
-		
-		//Decrement the operation number counter
-		decrementOperationNumber();
 
-		//try {
-			System.out.println("Add accessspec! " + accessSpecId);
-//////			int accessSpecId = 2;
-			AccessSpec spec = buildAccessSpec(accessSpecId, epcId, writeOperation);
-			ADD_ACCESSSPEC aas = new ADD_ACCESSSPEC();
-			aas.setAccessSpec(spec);
-			System.out.println(aas.toXMLString());
-			ADD_ACCESSSPEC_RESPONSE response = null;
-			
-				response = (ADD_ACCESSSPEC_RESPONSE) this.transact(aas);
-				System.out.println("Response: " + response.toXMLString());
+		// try {
+		System.out.println("Add accessspec! " + accessSpecId);
+		// //// int accessSpecId = 2;
+		AccessSpec spec = buildAccessSpec(accessSpecId, epcId, writeOperation);
+		ADD_ACCESSSPEC aas = new ADD_ACCESSSPEC();
+		aas.setAccessSpec(spec);
+		System.out.println(aas.toXMLString());
+		ADD_ACCESSSPEC_RESPONSE response = null;
 
-				ENABLE_ACCESSSPEC enablespec = new ENABLE_ACCESSSPEC();
-				enablespec.setAccessSpecID(new UnsignedInteger(accessSpecId));
+		response = (ADD_ACCESSSPEC_RESPONSE) this.transact(aas);
+		System.out.println("Response: " + response.toXMLString());
 
-				this.send(enablespec);
+		ENABLE_ACCESSSPEC enablespec = new ENABLE_ACCESSSPEC();
+		enablespec.setAccessSpecID(new UnsignedInteger(accessSpecId));
 
-				return response;
-			/*
-		} catch (Exception e) {
-			e.printStackTrace();
-			return e.getMessage();
-		}
-		*/
+		this.send(enablespec);
+
+		return response;
+		/*
+		 * } catch (Exception e) { e.printStackTrace(); return e.getMessage(); }
+		 */
+	}
+
+	// TODO to exceute only this operation:
+	public void llrpEpcWriteOperation() {
+
+	}
+
+	// TODO to exceute only this operation:
+	public void llrpWriteAccessPasswordOperation() {
+
 	}
 
 	// public String addAccessSpec(String writeAccessPassword, String writeData
 	// ) {
-	public String addAccessSpec(String strTag, String strTargetEpc,
-			String strTagMask, int intTimeout, String strAccesspwd,
-			String strKillPwd, String strKillPwdLock, String strAccessPwdLock,
-			String strEpcLock)
-			throws TimeoutException, InvalidLLRPMessageException {
+	public void llrpEncode(String strTag) throws TimeoutException,
+			InvalidLLRPMessageException {
 
 		// TODO: Throw exception if writeData does not divide evenly by 4
 
@@ -668,48 +887,45 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 		// operation call, until it reaches zero
 		// on the first called operation, start the session and the timer
 		setRunningLLRPEncoding(true);
+		setOperationNumber(6);
 
 		// 1. Call write EPC id
-		executeOperation(WRITE_ACCESSSPEC_ID, strTag, LLRPWriteOperationEnum.WRITE_EPC);
+		executeOperation(WRITE_ACCESSSPEC_ID, strTag,
+				LLRPWriteOperationEnum.WRITE_EPC);
 
 		// 2. Call write kill pwd
-		executeOperation(WRITE_KILLPASS, strTag, LLRPWriteOperationEnum.WRITE_KILLPASS);
-		
+		executeOperation(WRITE_KILLPASS, strTag,
+				LLRPWriteOperationEnum.WRITE_KILLPASS);
+
 		// 3. Call write access pwd
-		executeOperation(WRITE_ACCESSPASS, strTag, LLRPWriteOperationEnum.WRITE_ACCESSPASS);
-		
+		executeOperation(WRITE_ACCESSPASS, strTag,
+				LLRPWriteOperationEnum.WRITE_ACCESSPASS);
+
 		// 4. Call lock the EPC
-		//executeOperation(xx, strTag, LLRPWriteOperationEnum.xx);
-		
+		// executeOperation(xx, strTag, LLRPWriteOperationEnum.xx);
+
 		// 5. lock kill pwd
 		// 6. lock access pwd
 
-		try {
-			System.out.println("Add accessspec! ");
-			int accessSpecId = 2;
-			AccessSpec spec = buildAccessSpec(accessSpecId, strTag,
-					LLRPWriteOperationEnum.WRITE_EPC);
-			ADD_ACCESSSPEC aas = new ADD_ACCESSSPEC();
-			aas.setAccessSpec(spec);
-			System.out.println(aas.toXMLString());
-			ADD_ACCESSSPEC_RESPONSE response = null;
-			try {
-				response = (ADD_ACCESSSPEC_RESPONSE) this.transact(aas);
-				System.out.println("Response: " + response.toXMLString());
-
-				ENABLE_ACCESSSPEC enablespec = new ENABLE_ACCESSSPEC();
-				enablespec.setAccessSpecID(new UnsignedInteger(accessSpecId));
-
-				this.send(enablespec);
-
-				return response.toXMLString();
-			} catch (TimeoutException e) {
-				return e.getMessage();
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			return e.getMessage();
-		}
+		/*
+		 * try { System.out.println("Add accessspec! "); int accessSpecId = 2;
+		 * AccessSpec spec = buildAccessSpec(accessSpecId, strTag,
+		 * LLRPWriteOperationEnum.WRITE_EPC); ADD_ACCESSSPEC aas = new
+		 * ADD_ACCESSSPEC(); aas.setAccessSpec(spec);
+		 * System.out.println(aas.toXMLString()); ADD_ACCESSSPEC_RESPONSE
+		 * response = null; try { response = (ADD_ACCESSSPEC_RESPONSE)
+		 * this.transact(aas); System.out.println("Response: " +
+		 * response.toXMLString());
+		 * 
+		 * ENABLE_ACCESSSPEC enablespec = new ENABLE_ACCESSSPEC();
+		 * enablespec.setAccessSpecID(new UnsignedInteger(accessSpecId));
+		 * 
+		 * this.send(enablespec);
+		 * 
+		 * return response.toXMLString(); } catch (TimeoutException e) { return
+		 * e.getMessage(); } } catch (Exception e) { e.printStackTrace(); return
+		 * e.getMessage(); }
+		 */
 	}
 
 	/**
@@ -767,12 +983,6 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 
 				for (AccessCommandOpSpecResult op : ops) {
 
-					// TODO
-					// substract one unit from the number of operations, once it
-					// reaches to zero, write to topic, or , when the timeout
-					// comes
-					// set the timeout with the first operation
-
 					if (op instanceof C1G2BlockEraseOpSpecResult) {
 
 						C1G2BlockEraseOpSpecResult res = (C1G2BlockEraseOpSpecResult) op;
@@ -811,16 +1021,29 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 
 					}
 
+					// Delete access spec if there is a CommandOpSpecResult
+					// coming back.
+					this.deleteAccessSpecs();
+					System.out.println(op.toString());
+
+					// Decrement the operation number counter
+					decrementOperationNumber();
+
+					// TODO test if counter == 0. If it is 0, check if there is
+					// any error in the list of tracked errors
+
+					// TODO
+					// substract one unit from the number of operations, once it
+					// reaches to zero, reset session, write to topic, or , when
+					// the timeout
+					// comes
+					// set the timeout with the first operation
+
 					// TODO keep track of every error message on every operation
 					// : for fail
 
 					// TODO return a single success message if all operations
 					// success
-
-					// Delete access spec if there is a CommandOpSpecResult
-					// coming back.
-					this.deleteAccessSpecs();
-					System.out.println(op.toString());
 
 				}
 			}
@@ -933,8 +1156,10 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 	// Create an AccessSpec.
 	// It will contain our two OpSpecs (read and write).
 	// receive the type of operation
-	public AccessSpec buildAccessSpec(int accessSpecID, String writeData,
+	// public AccessSpec buildAccessSpec(int accessSpecID, String writeData,
+	public AccessSpec buildAccessSpec(int accessSpecID, String epcId,
 			LLRPWriteOperationEnum writeOperation) {
+
 		System.out.println("Building the AccessSpec.");
 
 		// TODO have 6 different of AccessSpec objects
@@ -985,11 +1210,11 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 		targetTag.setPointer(new UnsignedShort(0x20));
 		// This is the mask we'll use to compare the EPC.
 		// We want to match all bits of the EPC, so all mask bits are set.
-		BitArray_HEX tagMask = new BitArray_HEX(TAG_MASK);
-		targetTag.setTagMask(tagMask);
+		BitArray_HEX hexTagMask = new BitArray_HEX(getTagMask());
+		targetTag.setTagMask(hexTagMask);
 		// We only only to operate on tags with this EPC.
-		BitArray_HEX tagData = new BitArray_HEX(TARGET_EPC);
-		targetTag.setTagData(tagData);
+		BitArray_HEX hexTagData = new BitArray_HEX(getTargetEpc());
+		targetTag.setTagData(hexTagData);
 
 		// Add a list of target tags to the tag spec.
 		List<C1G2TargetTag> targetTagList = new ArrayList<C1G2TargetTag>();
@@ -1006,15 +1231,49 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 		// Add the appropriate op spec to the op spec list.
 
 		// TODO have here specific if statements, without else
+		// TODO build six different methods, like buildEpcWriteOpSpec, and
+		// pass the appropiate parameter as needed
 		// if (operation == )
+
 		if (accessSpecID == WRITE_ACCESSSPEC_ID) {
 
-			// TODO build six different methods, like buildEpcWriteOpSpec, and
-			// pass the appropiate parameter as needed
-			opSpecList.add(buildEpcWriteOpSpec(writeData));
-		} else {
-			opSpecList.add(buildReadOpSpec());
+			opSpecList.add(buildEpcWriteOpSpec(accessSpecID, epcId));
+
+		} else if (accessSpecID == WRITE_KILLPASS) {
+
+			opSpecList.add(buildEpcWriteKillPass(accessSpecID));
+
+		} else if (accessSpecID == WRITE_ACCESSPASS) {
+
+			// TODO instead of hard code these passwords should be taken from
+			// parameters
+			// access password: comes from jvm
+			// old password: set it at the beginning of operation (the one that
+			// i'll rename)
+			opSpecList
+					.add(buildEpcWriteAccessPass(accessSpecID, new Integer(0)));
+
+		} else if (accessSpecID == ACCESS_PASSWORD_LOCK_ID) {
+			
+			opSpecList.add(buildLockOpSpec(accessSpecID, getAccessPwdLockPrivilege(), 
+					C1G2LockDataField.Access_Password));
+
+		} else if (accessSpecID == KILL_PASSWORD_LOCK_ID) {
+			
+			opSpecList.add(buildLockOpSpec(accessSpecID, getKillPwdLockPrivilege(), 
+					C1G2LockDataField.Kill_Password));
+
+		} else if (accessSpecID == EPC_LOCK_ID) {
+			
+			opSpecList.add(buildLockOpSpec(accessSpecID, getEpcLockPrivilege(), 
+					C1G2LockDataField.EPC_Memory));
+
 		}
+
+		/*
+		 * else { // TODO remove this else statement, and add the other three
+		 * opSpecList.add(buildReadOpSpec()); }
+		 */
 
 		accessCommand.setAccessCommandOpSpecList(opSpecList);
 
@@ -1032,7 +1291,7 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 	}
 
 	// Create a OpSpec that writes to epc memory
-	public C1G2BlockWrite buildEpcWriteOpSpec(String writeData) {
+	public C1G2BlockWrite buildEpcWriteOpSpec(int accessSpecID, String epcId) {
 		// Create a new OpSpec.
 		// This specifies what operation we want to perform on the
 		// tags that match the specifications above.
@@ -1041,9 +1300,10 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 
 		// Set the OpSpecID to a unique number.
 
-		opSpec.setOpSpecID(new UnsignedShort(WRITE_OPSPEC_ID));
+		// opSpec.setOpSpecID(new UnsignedShort(WRITE_OPSPEC_ID));
+		opSpec.setOpSpecID(new UnsignedShort(accessSpecID));
 
-		opSpec.setAccessPassword(new UnsignedInteger(0));
+		opSpec.setAccessPassword(new UnsignedInteger(getAccessPwd()));
 
 		// For this demo, we'll write to user memory (bank 3).
 		TwoBitField opMemBank = new TwoBitField();
@@ -1060,7 +1320,7 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 
 		// We'll write 12 bytes or three words.
 
-		for (String word : writeData.split(":")) {
+		for (String word : epcId.split(":")) {
 			System.out.println("Adding short: " + word);
 			writeArray.add(new UnsignedShort(word, 16));
 		}
@@ -1071,14 +1331,16 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 	}
 
 	// Create a OpSpec that writes the access password
-	public C1G2BlockWrite buildEpcWriteAccessPass(Integer oldPass, String pass) {
+	// TODO for a new tag, an old password is always zero
+	public C1G2BlockWrite buildEpcWriteAccessPass(int accessSpecID,
+			Integer oldPass) {
 		// Create a new OpSpec.
 		// This specifies what operation we want to perform on the
 		// tags that match the specifications above.
 		// In this case, we want to write to the tag.
 		C1G2BlockWrite opSpec = new C1G2BlockWrite();
 		// Set the OpSpecID to a unique number.
-		opSpec.setOpSpecID(new UnsignedShort(WRITE_ACCESSPASS));
+		opSpec.setOpSpecID(new UnsignedShort(accessSpecID));
 		opSpec.setAccessPassword(new UnsignedInteger(oldPass));
 
 		// For this demo, we'll write to user memory (bank 3).
@@ -1090,8 +1352,11 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 		opSpec.setMB(opMemBank);
 		opSpec.setWordPointer(new UnsignedShort(2));
 
+		// new pass is 8 characters long
+		// cut by 4 character blocks -> for access password and kill password
+		// change to this same logic, the loop for epc tag
 		UnsignedShortArray_HEX writeArray = new UnsignedShortArray_HEX();
-		for (String word : pass.split(":")) {
+		for (String word : getAccessPwd().split(":")) {
 			System.out.println("Adding short: " + word);
 			writeArray.add(new UnsignedShort(word, 16));
 		}
@@ -1101,17 +1366,25 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 		return opSpec;
 	}
 
+	/*
+	 * private UnsignedShortArray_HEX getWriteData(String value){
+	 * 
+	 * //The value comes with no ':' symbols //always split it into 4 characters
+	 * 
+	 * 
+	 * }
+	 */
+
 	// Create a OpSpec that writes the access password
-	public C1G2BlockWrite buildEpcWriteKillPass(Integer accessPass,
-			String killPass) {
+	public C1G2BlockWrite buildEpcWriteKillPass(int accessSpecID) {
 		// Create a new OpSpec.
 		// This specifies what operation we want to perform on the
 		// tags that match the specifications above.
 		// In this case, we want to write to the tag.
 		C1G2BlockWrite opSpec = new C1G2BlockWrite();
 		// Set the OpSpecID to a unique number.
-		opSpec.setOpSpecID(new UnsignedShort(WRITE_KILLPASS));
-		opSpec.setAccessPassword(new UnsignedInteger(accessPass));
+		opSpec.setOpSpecID(new UnsignedShort(accessSpecID));
+		opSpec.setAccessPassword(new UnsignedInteger(getAccessPwd()));
 
 		// For this demo, we'll write to user memory (bank 3).
 		TwoBitField opMemBank = new TwoBitField();
@@ -1123,7 +1396,7 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 		opSpec.setWordPointer(new UnsignedShort(0x02));
 
 		UnsignedShortArray_HEX writeArray = new UnsignedShortArray_HEX();
-		for (String word : killPass.split(":")) {
+		for (String word : getKillPwd().split(":")) {
 			System.out.println("Adding short: " + word);
 			writeArray.add(new UnsignedShort(word, 16));
 		}
@@ -1132,6 +1405,287 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 
 		return opSpec;
 	}
+
+	/**
+	 * Converts string representation of lock privilege into int representation
+	 * 
+	 * @param lockPrivilege
+	 *            the string lock value to be parsed into int representation
+	 * @return int representation of this string lock value
+	 * @throws Exception
+	 *             if lockPrivilege is invalid, that is, is not any of
+	 *             Read_Write, Perma_Lock or Unlock string values
+	 */
+	public static int getLockPrivilege(String lockPrivilege) throws Exception {
+
+		switch (lockPrivilege) {
+
+		case READ_WRITE_LOCK_PRIVILEGE:
+			return C1G2LockPrivilege.Read_Write;
+
+		case PERMA_LOCK_PRIVILEGE:
+			return C1G2LockPrivilege.Perma_Lock;
+
+		case UNLOCK_PRIVILEGE:
+			return C1G2LockPrivilege.Unlock;
+
+		default:
+			throw new Exception("Invalid lock privilege value: "
+					+ lockPrivilege + ". Valid ones are: "
+					+ LLRPReaderSession.READ_WRITE_LOCK_PRIVILEGE + ", "
+					+ LLRPReaderSession.PERMA_LOCK_PRIVILEGE + ", "
+					+ LLRPReaderSession.UNLOCK_PRIVILEGE);
+
+		}
+
+	}
+
+	/**
+	 * 
+	 * @param opSpecId
+	 * @param lockPrivilege
+	 * @param lockDataField
+	 * @return
+	 */
+	public C1G2Lock buildLockOpSpec(int opSpecId, int lockPrivilege,
+			int lockDataField) {
+		// Create a new OpSpec.
+		// This specifies what operation we want to perform on the
+		// tags that match the specifications above.
+		// In this case, we want to write to the tag.
+		C1G2Lock opSpec = new C1G2Lock();
+
+		// Set the OpSpecID to a unique number.
+
+		opSpec.setOpSpecID(new UnsignedShort(opSpecId));
+
+		// opSpec.setWordPointer(new UnsignedShort(0x02));->only for writing
+
+		opSpec.setAccessPassword(new UnsignedInteger(getAccessPwd()));
+		C1G2LockPayload payload = new C1G2LockPayload();
+		C1G2LockDataField dataField = new C1G2LockDataField(lockDataField);
+		payload.setDataField(dataField);
+
+		C1G2LockPrivilege privilege = new C1G2LockPrivilege(lockPrivilege);
+		payload.setPrivilege(privilege);
+
+		List<C1G2LockPayload> c1G2LockPayloadList = new ArrayList<>();
+		c1G2LockPayloadList.add(payload);
+
+		opSpec.setC1G2LockPayloadList(c1G2LockPayloadList);
+
+		return opSpec;
+	}
+
+	/*
+	 * public C1G2Lock buildLockAccessPWDOpSpec(String accesspassword) { //
+	 * Create a new OpSpec. // This specifies what operation we want to perform
+	 * on the // tags that match the specifications above. // In this case, we
+	 * want to write to the tag. C1G2Lock opSpec = new C1G2Lock();
+	 * 
+	 * // Set the OpSpecID to a unique number.
+	 * 
+	 * opSpec.setOpSpecID(new UnsignedShort(AccessPWDLock_OPSPEC_ID)); ///comes
+	 * from private member constant
+	 * 
+	 * 
+	 * opSpec.setWordPointer(new UnsignedShort(0x02)); opSpec.AccessPassword =
+	 * accesspassword; C1G2LockPayload payload = new C1G2LockPayload(); opspec.
+	 * payload.DataField = C1G2LockDataField.Access_Password;; opspec.
+	 * payload.Privilege = C1G2LockPrivilege.Read_Write; }
+	 * 
+	 * 
+	 * return opSpec; } public C1G2Lock buildLockKillWDOpSpec(String
+	 * accesspassword) { // Create a new OpSpec. // This specifies what
+	 * operation we want to perform on the // tags that match the specifications
+	 * above. // In this case, we want to write to the tag. C1G2Lock opSpec =
+	 * new C1G2Lock();
+	 * 
+	 * // Set the OpSpecID to a unique number.
+	 * 
+	 * opSpec.setOpSpecID(new UnsignedShort(KillPWDLock_OPSPEC_ID)); ///comes
+	 * from private member constant
+	 * 
+	 * 
+	 * opSpec.setWordPointer(new UnsignedShort(0x02)); opSpec.AccessPassword =
+	 * accesspassword; C1G2LockPayload payload = new C1G2LockPayload(); opspec.
+	 * payload.DataField = C1G2LockDataField.Kill_Password; opspec.
+	 * payload.Privilege = C1G2LockPrivilege.Read_Write; }
+	 * 
+	 * 
+	 * return opSpec; } public C1G2Lock buildUnLockEPCOpSpec(String
+	 * accesspassword) { // Create a new OpSpec. // This specifies what
+	 * operation we want to perform on the // tags that match the specifications
+	 * above. // In this case, we want to write to the tag. C1G2Lock opSpec =
+	 * new C1G2Lock();
+	 * 
+	 * // Set the OpSpecID to a unique number.
+	 * 
+	 * opSpec.setOpSpecID(new UnsignedShort(EPCLock_OPSPEC_ID)); ///comes from
+	 * private member constant
+	 * 
+	 * 
+	 * opSpec.setWordPointer(new UnsignedShort(0x02));
+	 * 
+	 * opSpec.AccessPassword = accesspassword; C1G2LockPayload payload = new
+	 * C1G2LockPayload(); opspec.payload.DataField
+	 * =C1G2LockDataField.EPC_Memory; opspec.payload.Privilege =
+	 * C1G2LockPrivilege.Unlock; }
+	 * 
+	 * 
+	 * return opSpec; } public C1G2Lock buildUnLockAccessPWDOpSpec(String
+	 * accesspassword) { // Create a new OpSpec. // This specifies what
+	 * operation we want to perform on the // tags that match the specifications
+	 * above. // In this case, we want to write to the tag. C1G2Lock opSpec =
+	 * new C1G2Lock();
+	 * 
+	 * // Set the OpSpecID to a unique number.
+	 * 
+	 * opSpec.setOpSpecID(new UnsignedShort(AccessPWDLock_OPSPEC_ID)); ///comes
+	 * from private member constant
+	 * 
+	 * 
+	 * opSpec.setWordPointer(new UnsignedShort(0x02)); opSpec.AccessPassword =
+	 * accesspassword; C1G2LockPayload payload = new C1G2LockPayload(); opspec.
+	 * payload.DataField = C1G2LockDataField.Access_Password;; opspec.
+	 * payload.Privilege = C1G2LockPrivilege.Unlock; }
+	 * 
+	 * 
+	 * return opSpec; } public C1G2Lock buildUnLockKillWDOpSpec(String
+	 * accesspassword) { // Create a new OpSpec. // This specifies what
+	 * operation we want to perform on the // tags that match the specifications
+	 * above. // In this case, we want to write to the tag. C1G2Lock opSpec =
+	 * new C1G2Lock();
+	 * 
+	 * // Set the OpSpecID to a unique number.
+	 * 
+	 * opSpec.setOpSpecID(new UnsignedShort(KillPWDLock_OPSPEC_ID)); ///comes
+	 * from private member constant
+	 * 
+	 * 
+	 * opSpec.setWordPointer(new UnsignedShort(0x02)); opSpec.AccessPassword =
+	 * accesspassword; C1G2LockPayload payload = new C1G2LockPayload(); opspec.
+	 * payload.DataField = C1G2LockDataField.Kill_Password; opspec.
+	 * payload.Privilege = C1G2LockPrivilege.Unlock; }
+	 * 
+	 * 
+	 * return opSpec; }
+	 */
+
+	/*
+	 * public C1G2Lock buildLockEPCOpSpec(String accesspassword) { // Create a
+	 * new OpSpec. // This specifies what operation we want to perform on the //
+	 * tags that match the specifications above. // In this case, we want to
+	 * write to the tag. C1G2Lock opSpec = new C1G2Lock();
+	 * 
+	 * // Set the OpSpecID to a unique number.
+	 * 
+	 * opSpec.setOpSpecID(new UnsignedShort(EPCLock_OPSPEC_ID)); ///comes from
+	 * private member constant
+	 * 
+	 * 
+	 * //opSpec.setWordPointer(new UnsignedShort(0x02));->only for writing
+	 * 
+	 * opSpec.AccessPassword = accesspassword; C1G2LockPayload payload = new
+	 * C1G2LockPayload(); opSpec.payload.DataField
+	 * =C1G2LockDataField.EPC_Memory; opSpec.payload.Privilege =
+	 * C1G2LockPrivilege.Read_Write; }
+	 * 
+	 * 
+	 * return opSpec; } public C1G2Lock buildLockAccessPWDOpSpec(String
+	 * accesspassword) { // Create a new OpSpec. // This specifies what
+	 * operation we want to perform on the // tags that match the specifications
+	 * above. // In this case, we want to write to the tag. C1G2Lock opSpec =
+	 * new C1G2Lock();
+	 * 
+	 * // Set the OpSpecID to a unique number.
+	 * 
+	 * opSpec.setOpSpecID(new UnsignedShort(AccessPWDLock_OPSPEC_ID)); ///comes
+	 * from private member constant
+	 * 
+	 * 
+	 * opSpec.setWordPointer(new UnsignedShort(0x02)); opSpec.AccessPassword =
+	 * accesspassword; C1G2LockPayload payload = new C1G2LockPayload(); opspec.
+	 * payload.DataField = C1G2LockDataField.Access_Password;; opspec.
+	 * payload.Privilege = C1G2LockPrivilege.Read_Write; }
+	 * 
+	 * 
+	 * return opSpec; } public C1G2Lock buildLockKillWDOpSpec(String
+	 * accesspassword) { // Create a new OpSpec. // This specifies what
+	 * operation we want to perform on the // tags that match the specifications
+	 * above. // In this case, we want to write to the tag. C1G2Lock opSpec =
+	 * new C1G2Lock();
+	 * 
+	 * // Set the OpSpecID to a unique number.
+	 * 
+	 * opSpec.setOpSpecID(new UnsignedShort(KillPWDLock_OPSPEC_ID)); ///comes
+	 * from private member constant
+	 * 
+	 * 
+	 * opSpec.setWordPointer(new UnsignedShort(0x02)); opSpec.AccessPassword =
+	 * accesspassword; C1G2LockPayload payload = new C1G2LockPayload(); opspec.
+	 * payload.DataField = C1G2LockDataField.Kill_Password; opspec.
+	 * payload.Privilege = C1G2LockPrivilege.Read_Write; }
+	 * 
+	 * 
+	 * return opSpec; } public C1G2Lock buildUnLockEPCOpSpec(String
+	 * accesspassword) { // Create a new OpSpec. // This specifies what
+	 * operation we want to perform on the // tags that match the specifications
+	 * above. // In this case, we want to write to the tag. C1G2Lock opSpec =
+	 * new C1G2Lock();
+	 * 
+	 * // Set the OpSpecID to a unique number.
+	 * 
+	 * opSpec.setOpSpecID(new UnsignedShort(EPCLock_OPSPEC_ID)); ///comes from
+	 * private member constant
+	 * 
+	 * 
+	 * opSpec.setWordPointer(new UnsignedShort(0x02));
+	 * 
+	 * opSpec.AccessPassword = accesspassword; C1G2LockPayload payload = new
+	 * C1G2LockPayload(); opspec.payload.DataField
+	 * =C1G2LockDataField.EPC_Memory; opspec.payload.Privilege =
+	 * C1G2LockPrivilege.Unlock; }
+	 * 
+	 * 
+	 * return opSpec; } public C1G2Lock buildUnLockAccessPWDOpSpec(String
+	 * accesspassword) { // Create a new OpSpec. // This specifies what
+	 * operation we want to perform on the // tags that match the specifications
+	 * above. // In this case, we want to write to the tag. C1G2Lock opSpec =
+	 * new C1G2Lock();
+	 * 
+	 * // Set the OpSpecID to a unique number.
+	 * 
+	 * opSpec.setOpSpecID(new UnsignedShort(AccessPWDLock_OPSPEC_ID)); ///comes
+	 * from private member constant
+	 * 
+	 * 
+	 * opSpec.setWordPointer(new UnsignedShort(0x02)); opSpec.AccessPassword =
+	 * accesspassword; C1G2LockPayload payload = new C1G2LockPayload(); opspec.
+	 * payload.DataField = C1G2LockDataField.Access_Password;; opspec.
+	 * payload.Privilege = C1G2LockPrivilege.Unlock; }
+	 * 
+	 * 
+	 * return opSpec; } public C1G2Lock buildUnLockKillWDOpSpec(String
+	 * accesspassword) { // Create a new OpSpec. // This specifies what
+	 * operation we want to perform on the // tags that match the specifications
+	 * above. // In this case, we want to write to the tag. C1G2Lock opSpec =
+	 * new C1G2Lock();
+	 * 
+	 * // Set the OpSpecID to a unique number.
+	 * 
+	 * opSpec.setOpSpecID(new UnsignedShort(KillPWDLock_OPSPEC_ID)); ///comes
+	 * from private member constant
+	 * 
+	 * 
+	 * opSpec.setWordPointer(new UnsignedShort(0x02)); opSpec.AccessPassword =
+	 * accesspassword; C1G2LockPayload payload = new C1G2LockPayload(); opspec.
+	 * payload.DataField = C1G2LockDataField.Kill_Password; opspec.
+	 * payload.Privilege = C1G2LockPrivilege.Unlock; }
+	 * 
+	 * 
+	 * return opSpec; }
+	 */
 
 	/*
 	 * 
