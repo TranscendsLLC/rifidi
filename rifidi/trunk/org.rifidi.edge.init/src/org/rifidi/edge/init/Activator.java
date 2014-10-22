@@ -60,7 +60,7 @@ public class Activator implements BundleActivator {
 					try {
 						Thread.sleep(failoverTrySeconds * 1000);
 						ClientResource client = new ClientResource("http://"
-								+ primary + "/readers");
+								+ primary + "/ping");
 						client.get();
 						System.out.println("CLIENT: " + client.getResponse());
 						// Got past the get()...reset the counter

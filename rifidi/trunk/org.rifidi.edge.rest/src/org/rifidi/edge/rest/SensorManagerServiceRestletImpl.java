@@ -798,6 +798,14 @@ public class SensorManagerServiceRestletImpl extends Application {
 				}
 			}
 		};
+		Restlet ping = new Restlet() {
+			@Override
+			public void handle(Request request, Response response) {
+				PingDTO ping = new PingDTO();
+				ping.setTimestamp(Long.toString(System.currentTimeMillis()));
+				response.setEntity(self.generateReturnString(ping), MediaType.TEXT_XML);
+			}
+		};
 
 		Router router = new Router(getContext());
 		router.attach("/readers", readers);
@@ -838,6 +846,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 				llrpEncode);
 		router.attach("/llrpmessage/{readerID}/{sessionID}/{llrpmessage}",
 				llrpMessage);
+		router.attach("/ping", ping);
 		return router;
 	}
 
