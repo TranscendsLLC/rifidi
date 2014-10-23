@@ -149,6 +149,9 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 
 	/** Access Password (Hex Value) **/
 	private String accessPwd;
+	
+	/** Old access Password (Hex Value) **/
+	private String oldAccessPwd;
 
 	/** Kill Password (Hex Value) **/
 	private String killPwd;
@@ -197,6 +200,12 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 	 * Value)
 	 **/
 	public static final String DEFAULT_ACCESS_PASSWORD = "0";
+	
+	/**
+	 * Default old access password value if there is no property read from jvm. (Hex
+	 * Value)
+	 **/
+	public static final String DEFAULT_OLD_ACCESS_PASSWORD = "0";
 
 	/**
 	 * Default kill password value if there is no property read from jvm. (Hex
@@ -256,7 +265,27 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 	/** Map to keep track of the operation and order **/
 	private LLRPOperationTracker llrpOperationTracker;
 	
+	/** The block length the tag on this session must satisfy. For example for EPC
+	 * it needs to split in blocks of 4: /0A50708041A1B1D1A1B1E238 
+	 * so we have blocks like this 0A50 7080 41A1 B1D1 A1B1 E238 
+	 * to set the data on tag
+	 * Default is 4**/
+	private int writeDataBlockLength = 4;
 	
+	
+	/**
+	 * @return the writeDataBlockLength
+	 */
+	public int getWriteDataBlockLength() {
+		return writeDataBlockLength;
+	}
+
+	/**
+	 * @param writeDataBlockLength the writeDataBlockLength to set
+	 */
+	public void setWriteDataBlockLength(int writeDataBlockLength) {
+		this.writeDataBlockLength = writeDataBlockLength;
+	}
 
 	/**
 	 * @return the isRunningLLRPEncoding
@@ -331,6 +360,20 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 	 */
 	public void setAccessPwd(String accessPwd) {
 		this.accessPwd = accessPwd;
+	}
+	
+	/**
+	 * @return the oldAccessPwd
+	 */
+	public String getOldAccessPwd() {
+		return oldAccessPwd;
+	}
+
+	/**
+	 * @param oldAccessPwd the oldAccessPwd to set
+	 */
+	public void setOldAccessPwd(String oldAccessPwd) {
+		this.oldAccessPwd = oldAccessPwd;
 	}
 
 	/**
@@ -1261,8 +1304,6 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 
 	// Create an AccessSpec.
 	// It will contain our two OpSpecs (read and write).
-	// receive the type of operation
-	// public AccessSpec buildAccessSpec(int accessSpecID, String writeData,
 	public AccessSpec buildAccessSpec(int accessSpecID, String epcId) {
 		// LLRPWriteOperationEnum writeOperation) {
 
@@ -1332,14 +1373,6 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 		// A list to hold the op specs for this access command.
 		List<AccessCommandOpSpec> opSpecList = new ArrayList<AccessCommandOpSpec>();
 
-		// Are we reading or writing to the tag?
-		// Add the appropriate op spec to the op spec list.
-
-		// TODO have here specific if statements, without else
-		// TODO build six different methods, like buildEpcWriteOpSpec, and
-		// pass the appropiate parameter as needed
-		// if (operation == )
-
 		if (accessSpecID == WRITE_EPC_ACCESSSPEC_ID) {
 
 			opSpecList.add(buildEpcWriteOpSpec(epcId));
@@ -1350,12 +1383,7 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 
 		} else if (accessSpecID == WRITE_ACCESSPASS_ACCESSSPEC_ID) {
 
-			// TODO instead of hard code these passwords should be taken from
-			// parameters
-			// access password: comes from jvm
-			// old password: set it at the beginning of operation (the one that
-			// i'll rename)
-			opSpecList.add(buildEpcWriteAccessPass(new Integer(0)));
+			opSpecList.add(buildEpcWriteAccessPass());
 
 		} else if (accessSpecID == LOCK_ACCESSPASS_ACCESSSPEC_ID) {
 
@@ -1423,23 +1451,17 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 
 		opSpec.setWordPointer(new UnsignedShort(0x02));
 
-		UnsignedShortArray_HEX writeArray = new UnsignedShortArray_HEX();
-
-		// We'll write 12 bytes or three words.
-
-		for (String word : epcId.split(":")) {
-			System.out.println("Adding short: " + word);
-			writeArray.add(new UnsignedShort(word, 16));
-		}
+		UnsignedShortArray_HEX writeArray = getFormatedWriteArrayData(epcId);
 
 		opSpec.setWriteData(writeArray);
 
 		return opSpec;
 	}
 
+ 
 	// Create a OpSpec that writes the access password
-	// TODO for a new tag, an old password is always zero
-	public C1G2BlockWrite buildEpcWriteAccessPass(Integer oldPass) {
+	// For a new tag, an old password is always zero
+	public C1G2BlockWrite buildEpcWriteAccessPass() {
 		// Create a new OpSpec.
 		// This specifies what operation we want to perform on the
 		// tags that match the specifications above.
@@ -1447,7 +1469,7 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 		C1G2BlockWrite opSpec = new C1G2BlockWrite();
 		// Set the OpSpecID to a unique number.
 		opSpec.setOpSpecID(new UnsignedShort(WRITE_ACCESSPASS_OPSPEC_ID));
-		opSpec.setAccessPassword(new UnsignedInteger(oldPass));
+		opSpec.setAccessPassword(new UnsignedInteger(getOldAccessPwd()));
 
 		// For this demo, we'll write to user memory (bank 3).
 		TwoBitField opMemBank = new TwoBitField();
@@ -1458,28 +1480,13 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 		opSpec.setMB(opMemBank);
 		opSpec.setWordPointer(new UnsignedShort(2));
 
-		// new pass is 8 characters long
-		// cut by 4 character blocks -> for access password and kill password
-		// change to this same logic, the loop for epc tag
-		UnsignedShortArray_HEX writeArray = new UnsignedShortArray_HEX();
-		for (String word : getAccessPwd().split(":")) {
-			System.out.println("Adding short: " + word);
-			writeArray.add(new UnsignedShort(word, 16));
-		}
+		UnsignedShortArray_HEX writeArray = getFormatedWriteArrayData(getAccessPwd());
 
 		opSpec.setWriteData(writeArray);
 
 		return opSpec;
 	}
-
-	/*
-	 * private UnsignedShortArray_HEX getWriteData(String value){
-	 * 
-	 * //The value comes with no ':' symbols //always split it into 4 characters
-	 * 
-	 * 
-	 * }
-	 */
+	
 
 	// Create a OpSpec that writes the access password
 	public C1G2BlockWrite buildEpcWriteKillPass() {
@@ -1501,16 +1508,40 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 		opSpec.setMB(opMemBank);
 		opSpec.setWordPointer(new UnsignedShort(0x02));
 
-		UnsignedShortArray_HEX writeArray = new UnsignedShortArray_HEX();
-		for (String word : getKillPwd().split(":")) {
-			System.out.println("Adding short: " + word);
-			writeArray.add(new UnsignedShort(word, 16));
-		}
+		UnsignedShortArray_HEX writeArray = getFormatedWriteArrayData(getKillPwd());
 
 		opSpec.setWriteData(writeArray);
 
 		return opSpec;
 	}
+	
+	private UnsignedShortArray_HEX getFormatedWriteArrayData(String data){
+		
+		UnsignedShortArray_HEX writeArray = new UnsignedShortArray_HEX();
+
+		//It is required that the remainder of data.length() / getWriteDataBlockLength() is zero
+		if (data.length() % getWriteDataBlockLength() == 0){
+			
+			int numberOfBlocks = data.length() / getWriteDataBlockLength();
+			
+			for(int i = 0; i < numberOfBlocks ; i++) {
+				
+				int currentIndex = i * getWriteDataBlockLength();
+				String word = data.substring(currentIndex, currentIndex + getWriteDataBlockLength());
+				System.out.println("Adding short: " + word);
+				writeArray.add(new UnsignedShort(word, 16));
+				
+			}
+		} else {
+			
+			//The data could be a value of zero
+			writeArray.add(new UnsignedShort(data, 16));
+			
+		}
+		
+		return writeArray;
+	}
+	
 
 	/**
 	 * Converts string representation of lock privilege into int representation

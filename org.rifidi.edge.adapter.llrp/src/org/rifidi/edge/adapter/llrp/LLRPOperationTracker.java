@@ -10,8 +10,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class LLRPOperationTracker 
 		implements Serializable {
 	
-	//private int operationOrder;
-	//private int currentOperationNumberReceived;
 	private Map<Integer, LLRPOperationDto> operationMap;
 	
 	/**
@@ -19,7 +17,7 @@ public class LLRPOperationTracker
 	 */
 	public LLRPOperationTracker() {
 		super();
-		//currentOperationNumberReceived = 0;
+
 		operationMap = new HashMap<Integer, LLRPOperationDto>();
 	}
 	
