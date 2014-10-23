@@ -733,6 +733,9 @@ public class SensorManagerServiceRestletImpl extends Application {
 											+ strReaderId);
 
 						}
+						
+						//Set the block length of data to be written on this reader' session 
+						session.setWriteDataBlockLength(4);
 
 						// There is only one tag in the scope of this reader
 						// for session object
@@ -1168,7 +1171,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 	 * @param session
 	 *            the session of reader where the properties are going to be set
 	 * @throws Exception
-	 *             if there is an invalid lock privilege name from jvm
+	 *             if there is a validation error on a property
 	 */
 	private void setLlrpEncodeJvmProperties(LLRPReaderSession session)
 			throws Exception {
@@ -1176,11 +1179,15 @@ public class SensorManagerServiceRestletImpl extends Application {
 		String strTargetEpc = System
 				.getProperty("org.rifidi.llrp.encode.targetepc");
 
+		checkBlockLengthReminder(strTargetEpc, session.getWriteDataBlockLength());
+
 		session.setTargetEpc(strTargetEpc != null ? strTargetEpc
 				: LLRPReaderSession.DEFAULT_TARGET_EPC);
 
 		String strTagMask = System
 				.getProperty("org.rifidi.llrp.encode.tagmask");
+
+		checkBlockLengthReminder(strTagMask, session.getWriteDataBlockLength());
 
 		session.setTagMask(strTagMask != null ? strTagMask
 				: LLRPReaderSession.DEFAULT_TAG_MASK);
@@ -1195,22 +1202,34 @@ public class SensorManagerServiceRestletImpl extends Application {
 		String strAccessPwd = System
 				.getProperty("org.rifidi.llrp.encode.accesspwd");
 
+		validatePassword(strAccessPwd, "Access");
+
 		session.setAccessPwd(strAccessPwd != null ? strAccessPwd
 				: LLRPReaderSession.DEFAULT_ACCESS_PASSWORD);
+		
+		String strOldAccessPwd = System
+				.getProperty("org.rifidi.llrp.encode.oldaccesspwd");
+
+		validatePassword(strOldAccessPwd, "Old access");
+
+		session.setOldAccessPwd(strOldAccessPwd != null ? strOldAccessPwd
+				: LLRPReaderSession.DEFAULT_OLD_ACCESS_PASSWORD);
 
 		String strKillPwd = System
 				.getProperty("org.rifidi.llrp.encode.killpwd");
+		
+		validatePassword(strKillPwd, "Kill");
 
 		session.setKillPwd(strKillPwd != null ? strKillPwd
 				: LLRPReaderSession.DEFAULT_KILL_PASSWORD);
 
-		String strKillPwdLock = System
-				.getProperty("org.rifidi.llrp.encode.killpwdlock");
+		String strKillPwdLockPrivilege = System
+				.getProperty("org.rifidi.llrp.encode.killpwdlockprivilege");
 
 		if (strKillPwd != null) {
 
 			int intKillPwdLockPrivilege = LLRPReaderSession
-					.getLockPrivilege(strKillPwdLock);
+					.getLockPrivilege(strKillPwdLockPrivilege);
 			session.setKillPwdLockPrivilege(intKillPwdLockPrivilege);
 
 		} else {
@@ -1218,13 +1237,13 @@ public class SensorManagerServiceRestletImpl extends Application {
 			session.setKillPwdLockPrivilege(LLRPReaderSession.DEFAULT_KILL_PASSWORD_LOCK_PRIVILEGE);
 		}
 
-		String strAccessPwdLock = System
-				.getProperty("org.rifidi.llrp.encode.accesspwdlock");
+		String strAccessPwdLockPrivilege = System
+				.getProperty("org.rifidi.llrp.encode.accesspwdlockprivilege");
 
-		if (strAccessPwdLock != null) {
+		if (strAccessPwdLockPrivilege != null) {
 
 			int intAccessPwdLockPrivilege = LLRPReaderSession
-					.getLockPrivilege(strAccessPwdLock);
+					.getLockPrivilege(strAccessPwdLockPrivilege);
 			session.setAccessPwdLockPrivilege(intAccessPwdLockPrivilege);
 
 		} else {
@@ -1232,18 +1251,61 @@ public class SensorManagerServiceRestletImpl extends Application {
 			session.setAccessPwdLockPrivilege(LLRPReaderSession.DEFAULT_ACCESS_PASSWORD_LOCK_PRIVILEGE);
 		}
 
-		String strEpcLock = System
-				.getProperty("org.rifidi.llrp.encode.epclock");
+		String strEpcLockPrivilege = System
+				.getProperty("org.rifidi.llrp.encode.epclockprivilege");
 
-		if (strEpcLock != null) {
+		if (strEpcLockPrivilege != null) {
 
 			int intEpcLockPrivilege = LLRPReaderSession
-					.getLockPrivilege(strEpcLock);
+					.getLockPrivilege(strEpcLockPrivilege);
 			session.setEpcLockPrivilege(intEpcLockPrivilege);
 
 		} else {
 
 			session.setEpcLockPrivilege(LLRPReaderSession.DEFAULT_EPC_LOCK_PRIVILEGE);
+		}
+
+	}
+
+	/**
+	 * Validate password is not empty and if it's length is one, the value must be zero.
+	 * Otherwise the password length must be eight 
+	 * @param strPassword the value of the password to be checked
+	 * @param whichPassword the name of the password to be checked, for exception throwing purposes
+	 * @throws Exception if strPassword is not null and strPassword length is empty
+	 * or if password length is one and value is different to '0'
+	 * or if password length is different to eight
+	 */
+	private void validatePassword(String strPassword, String whichPassword) throws Exception {
+
+		if (strPassword != null && strPassword.isEmpty()) {
+			throw new Exception(whichPassword + " password is empty");
+		}
+		
+		if (
+				(strPassword.length() == 1 && !strPassword.equals("0"))
+				&&
+				(strPassword.length() != 8 )
+			){
+			throw new Exception(whichPassword + " password must be 8 characters or value of 0");
+		}
+	}
+
+	/**
+	 * Validate the remainder of value / blockLength is zero.
+	 * @param value the value to be checked
+	 * @param blockLength the length of block the value has to satisfy
+	 * @throws Exception if the remainder of value / blockLength is different to zero
+	 */
+	private void checkBlockLengthReminder(String value, int blockLength)
+			throws Exception {
+
+		int reminder = value.length() % blockLength;
+		if (reminder != 0) {
+			throw new Exception("The value " + value
+					+ " has a wrong length of " + value.length()
+					+ ". It is expected this length to be a multiple of "
+					+ blockLength);
 		}
 
 	}
