@@ -15,7 +15,9 @@ package org.rifidi.edge.adapter.llrp;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -60,7 +62,6 @@ import org.llrp.ltk.generated.parameters.C1G2KillOpSpecResult;
 import org.llrp.ltk.generated.parameters.C1G2Lock;
 import org.llrp.ltk.generated.parameters.C1G2LockOpSpecResult;
 import org.llrp.ltk.generated.parameters.C1G2LockPayload;
-import org.llrp.ltk.generated.parameters.C1G2Read;
 import org.llrp.ltk.generated.parameters.C1G2ReadOpSpecResult;
 import org.llrp.ltk.generated.parameters.C1G2TagSpec;
 import org.llrp.ltk.generated.parameters.C1G2TargetTag;
@@ -245,8 +246,17 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 	private static final int LOCK_KILLPASS_ACCESSSPEC_ID = 9;
 	private static final int LOCK_KILLPASS_OPSPEC_ID = 10;
 
-	private static final int LOC_ACCESSPASS_ACCESSSPEC_ID = 11;
-	private static final int LOC_ACCESSPASS_OPSPEC_ID = 12;
+	private static final int LOCK_ACCESSPASS_ACCESSSPEC_ID = 11;
+	private static final int LOCK_ACCESSPASS_OPSPEC_ID = 12;
+	
+	/** Operation names **/
+	private enum OPERATION_NAME {EPCWrite, KillPasswordWrite, AccessPasswordWrite, 
+		EPCLock, KillPasswordLock, AccessPasswordLock};
+	
+	/** Map to keep track of the operation and order **/
+	private LLRPOperationTracker llrpOperationTracker;
+	
+	
 
 	/**
 	 * @return the isRunningLLRPEncoding
@@ -844,7 +854,7 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 		}
 	}
 
-	private ADD_ACCESSSPEC_RESPONSE executeOperation(int accessSpecId, String epcId)
+	private ADD_ACCESSSPEC_RESPONSE executeLLRPOperation(int accessSpecId, String epcId)
 			throws InvalidLLRPMessageException, TimeoutException {
 
 		// try {
@@ -887,29 +897,87 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 
 		// TODO: Throw exception if writeData does not divide evenly by 4
 
-		// the counter should begin in fixed value 6, and decrement on every
-		// operation call, until it reaches zero
-		// on the first called operation, start the session and the timer
+		//Initialize operation tracker, to be able to receive asynchronous messages
+		llrpOperationTracker = new LLRPOperationTracker();
+		
+		LLRPOperationDto epcWriteOpDto = new LLRPOperationDto(OPERATION_NAME.EPCWrite.name(),
+				WRITE_EPC_OPSPEC_ID);
+		llrpOperationTracker.addOperationDto(epcWriteOpDto);
+		
+				
+		LLRPOperationDto killPwdWriteOpDto = new LLRPOperationDto(OPERATION_NAME.KillPasswordWrite.name(),
+				WRITE_KILLPASS_OPSPEC_ID);
+		llrpOperationTracker.addOperationDto(killPwdWriteOpDto);
+		
+		
+		LLRPOperationDto accessPwdWriteOpDto = new LLRPOperationDto(OPERATION_NAME.AccessPasswordWrite.name(),
+				WRITE_ACCESSPASS_OPSPEC_ID);
+		llrpOperationTracker.addOperationDto(accessPwdWriteOpDto);
+		
+		
+		LLRPOperationDto epcLockOpDto = new LLRPOperationDto(OPERATION_NAME.EPCLock.name(),
+				LOCK_EPC_OPSPEC_ID);
+		llrpOperationTracker.addOperationDto(epcLockOpDto);
+		
+		
+		LLRPOperationDto killPwdLockOpDto = new LLRPOperationDto(OPERATION_NAME.KillPasswordLock.name(),
+				LOCK_KILLPASS_OPSPEC_ID);
+		llrpOperationTracker.addOperationDto(killPwdLockOpDto);
+		
+		
+		LLRPOperationDto accessPwdLockOpDto = new LLRPOperationDto(OPERATION_NAME.AccessPasswordLock.name(),
+				LOCK_ACCESSPASS_OPSPEC_ID);
+		llrpOperationTracker.addOperationDto(accessPwdLockOpDto);
+		
+
+		//Start the encode operations
 		setRunningLLRPEncoding(true);
-		setOperationNumber(6);
+		setOperationNumber(llrpOperationTracker.getOperationMap().size());
+
+		//Call the operations in the same order as the operation map was filled
 
 		// 1. Call write EPC id
-		executeOperation(WRITE_EPC_ACCESSSPEC_ID, strTag);
+		executeLLRPOperation(WRITE_EPC_ACCESSSPEC_ID, strTag);
 
 		// 2. Call write kill pwd
-		executeOperation(WRITE_KILLPASS_ACCESSSPEC_ID, strTag);
-
+		executeLLRPOperation(WRITE_KILLPASS_ACCESSSPEC_ID, strTag);
+		
 		// 3. Call write access pwd
-		executeOperation(WRITE_ACCESSPASS_ACCESSSPEC_ID, strTag);
+		executeLLRPOperation(WRITE_ACCESSPASS_ACCESSSPEC_ID, strTag);
 
+		
 		// 4. Call lock the EPC
-		executeOperation(LOCK_EPC_ACCESSSPEC_ID, strTag);
+		executeLLRPOperation(LOCK_EPC_ACCESSSPEC_ID, strTag);
 
+		
 		// 5. lock kill pwd
-		executeOperation(LOCK_KILLPASS_ACCESSSPEC_ID, strTag);
+		executeLLRPOperation(LOCK_KILLPASS_ACCESSSPEC_ID, strTag);
 
+		
 		// 6. lock access pwd
-		executeOperation(LOC_ACCESSPASS_ACCESSSPEC_ID, strTag);
+		executeLLRPOperation(LOCK_ACCESSPASS_ACCESSSPEC_ID, strTag);
+		
+		
+		//Timeout check:
+		//for(int i= 0; i< 20; i++)
+		try{
+			//Test timeout
+			Thread.sleep(10000);
+		} catch (InterruptedException e){
+			
+		}
+		
+		for(LLRPOperationDto llrpOperationDto : llrpOperationTracker.getOperationMap().values()){
+			
+			System.out.println("llrpOperationDto.getOpSpecId(): " + llrpOperationDto.getOpSpecId());
+			System.out.println("llrpOperationDto.getOperationName(): " + llrpOperationDto.getOperationName());
+			System.out.println("llrpOperationDto.getResponseResult(): " + llrpOperationDto.getResponseResult());
+			System.out.println("\n ");
+			
+			
+		}
+		
+		setRunningLLRPEncoding(false);
 
 		/*
 		 * try { System.out.println("Add accessspec! "); int accessSpecId = 2;
@@ -992,36 +1060,66 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 						C1G2BlockEraseOpSpecResult res = (C1G2BlockEraseOpSpecResult) op;
 						System.out.println("res.getResult(): "
 								+ res.getResult());
+						System.out.println("res.getOpSpecID(): "
+								+ res.getOpSpecID());
+						
+						//Assign the result to appropiate operation in tracker
+						llrpOperationTracker.setResponse(res.getOpSpecID().toInteger(), res.getResult().toString());
 
 					} else if (op instanceof C1G2BlockWriteOpSpecResult) {
 
 						C1G2BlockWriteOpSpecResult res = (C1G2BlockWriteOpSpecResult) op;
 						System.out.println("res.getResult(): "
 								+ res.getResult());
+						System.out.println("res.getOpSpecID(): "
+								+ res.getOpSpecID());
+						
+						//Assign the result to appropiate operation in tracker
+						llrpOperationTracker.setResponse(res.getOpSpecID().toInteger(), res.getResult().toString());
 
 					} else if (op instanceof C1G2KillOpSpecResult) {
 
 						C1G2KillOpSpecResult res = (C1G2KillOpSpecResult) op;
 						System.out.println("res.getResult(): "
 								+ res.getResult());
+						System.out.println("res.getOpSpecID(): "
+								+ res.getOpSpecID());
+						
+						//Assign the result to appropiate operation in tracker
+						llrpOperationTracker.setResponse(res.getOpSpecID().toInteger(), res.getResult().toString());
 
 					} else if (op instanceof C1G2LockOpSpecResult) {
 
 						C1G2LockOpSpecResult res = (C1G2LockOpSpecResult) op;
 						System.out.println("res.getResult(): "
 								+ res.getResult());
+						System.out.println("res.getOpSpecID(): "
+								+ res.getOpSpecID());
+						
+						//Assign the result to appropiate operation in tracker
+						llrpOperationTracker.setResponse(res.getOpSpecID().toInteger(), res.getResult().toString());
 
 					} else if (op instanceof C1G2ReadOpSpecResult) {
 
 						C1G2ReadOpSpecResult res = (C1G2ReadOpSpecResult) op;
 						System.out.println("res.getResult(): "
 								+ res.getResult());
+						System.out.println("res.getOpSpecID(): "
+								+ res.getOpSpecID());
+						
+						//Assign the result to appropiate operation in tracker
+						llrpOperationTracker.setResponse(res.getOpSpecID().toInteger(), res.getResult().toString());
 
 					} else if (op instanceof C1G2WriteOpSpecResult) {
 
 						C1G2WriteOpSpecResult res = (C1G2WriteOpSpecResult) op;
 						System.out.println("res.getResult(): "
 								+ res.getResult());
+						System.out.println("res.getOpSpecID(): "
+								+ res.getOpSpecID());
+						
+						//Assign the result to appropiate operation in tracker
+						llrpOperationTracker.setResponse(res.getOpSpecID().toInteger(), res.getResult().toString());
 
 					}
 
@@ -1259,9 +1357,9 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 			// i'll rename)
 			opSpecList.add(buildEpcWriteAccessPass(new Integer(0)));
 
-		} else if (accessSpecID == LOC_ACCESSPASS_ACCESSSPEC_ID) {
+		} else if (accessSpecID == LOCK_ACCESSPASS_ACCESSSPEC_ID) {
 
-			opSpecList.add(buildLockOpSpec(LOC_ACCESSPASS_OPSPEC_ID,
+			opSpecList.add(buildLockOpSpec(LOCK_ACCESSPASS_OPSPEC_ID,
 					getAccessPwdLockPrivilege(),
 					C1G2LockDataField.Access_Password));
 
