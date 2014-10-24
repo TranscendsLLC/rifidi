@@ -2,23 +2,23 @@ package org.rifidi.edge.adapter.llrp;
 
 import java.io.Serializable;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-
+import org.llrp.ltk.generated.interfaces.AccessCommandOpSpecResult;
 import org.llrp.ltk.types.UnsignedShort;
 
 public class LLRPOperationDto 
 		implements Serializable {
 	
-	private Integer opSpecId;
+	private UnsignedShort opSpecId;
 	private String operationName;
-	private String responseResult;
+	private AccessCommandOpSpecResult responseResult;
 	
+
 	/**
-	 * @param operationOrder
+	 * 
 	 * @param operationName
+	 * @param opSpecId
 	 */
-	public LLRPOperationDto(String operationName, Integer opSpecId) {
+	public LLRPOperationDto(String operationName, UnsignedShort opSpecId) {
 		super();
 		this.operationName = operationName;
 		this.opSpecId = opSpecId;
@@ -40,28 +40,28 @@ public class LLRPOperationDto
 	/**
 	 * @return the responseResult
 	 */
-	public String getResponseResult() {
+	public AccessCommandOpSpecResult getResponseResult() {
 		return responseResult;
 	}
 
 	/**
 	 * @param responseResult the responseResult to set
 	 */
-	public void setResponseResult(String responseResult) {
+	public void setResponseResult(AccessCommandOpSpecResult responseResult) {
 		this.responseResult = responseResult;
 	}
 
 	/**
 	 * @return the opSpecId
 	 */
-	public Integer getOpSpecId() {
+	public UnsignedShort getOpSpecId() {
 		return opSpecId;
 	}
 
 	/**
 	 * @param opSpecId the opSpecId to set
 	 */
-	public void setOpSpecId(Integer opSpecId) {
+	public void setOpSpecId(UnsignedShort opSpecId) {
 		this.opSpecId = opSpecId;
 	}
 
