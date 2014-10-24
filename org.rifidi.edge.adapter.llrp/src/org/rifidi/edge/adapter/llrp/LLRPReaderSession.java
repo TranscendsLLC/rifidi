@@ -15,6 +15,7 @@ package org.rifidi.edge.adapter.llrp;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
@@ -58,6 +59,8 @@ import org.llrp.ltk.generated.parameters.C1G2Lock;
 import org.llrp.ltk.generated.parameters.C1G2LockPayload;
 import org.llrp.ltk.generated.parameters.C1G2TagSpec;
 import org.llrp.ltk.generated.parameters.C1G2TargetTag;
+import org.llrp.ltk.generated.parameters.EPCData;
+import org.llrp.ltk.generated.parameters.EPC_96;
 import org.llrp.ltk.generated.parameters.EventNotificationState;
 import org.llrp.ltk.generated.parameters.ROReportSpec;
 import org.llrp.ltk.generated.parameters.ReaderEventNotificationSpec;
@@ -1038,6 +1041,8 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 		
 		
 
+
+
 		setRunningLLRPEncoding(false);
 
 		/*
@@ -1113,6 +1118,18 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 				// See if any operations were performed on
 				// this tag (read, write, kill).
 				// If so, print out the details.
+				
+				if (this.numTagsChecker) {
+					if (this.numTagsSet != null) {
+						if (tag.getEPCParameter() instanceof EPC_96) {
+							EPC_96 id = (EPC_96) tag.getEPCParameter();
+							this.numTagsSet.add(id.getEPC().toString());
+						} else {
+							EPCData id = (EPCData) tag.getEPCParameter();
+							this.numTagsSet.add(id.getEPC().toString());
+						}
+					}
+				}
 
 				for (AccessCommandOpSpecResult op : ops) {
 
@@ -1203,6 +1220,21 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 	@Override
 	public String toString() {
 		return "LLRPSession: " + host + ":" + port + " (" + getStatus() + ")";
+	}
+	
+	private boolean numTagsChecker=false;
+	private HashSet<String> numTagsSet;
+	
+	public Integer numTagsOnLLRP() {
+		this.numTagsChecker=true;
+		numTagsSet = new HashSet<String>();
+		try {
+			Thread.sleep(2000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		this.numTagsChecker=false;
+		return numTagsSet.size();		
 	}
 
 	/*
