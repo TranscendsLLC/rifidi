@@ -15,9 +15,11 @@ package org.rifidi.edge.adapter.llrp;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.Timer;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -263,7 +265,7 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 		EPCWrite, KillPasswordWrite, AccessPasswordWrite, EPCLock, KillPasswordLock, AccessPasswordLock
 	};
 
-	/** Map to keep track of the operation and order **/
+	/** Object to keep track of the operation and order **/
 	private LLRPOperationTracker llrpOperationTracker;
 
 	/**
@@ -467,7 +469,12 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 		this.notifierService = notifierService;
 		this.readerID = readerID;
 		this.setStatus(SessionStatus.CLOSED);
+		
 	}
+	
+	
+	
+	
 
 	/*
 	 * (non-Javadoc)
@@ -904,12 +911,12 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 		 */
 	}
 
-	// TODO to exceute only this operation:
+	// TODO to execute only this operation:
 	public void llrpEpcWriteOperation() {
 
 	}
 
-	// TODO to exceute only this operation:
+	// TODO to execute only this operation:
 	public void llrpWriteAccessPasswordOperation() {
 
 	}
@@ -921,50 +928,73 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 
 		// Initialize operation tracker, to be able to receive asynchronous
 		// messages
-		llrpOperationTracker = new LLRPOperationTracker();
+		llrpOperationTracker = new LLRPOperationTracker(this);
 
+		//Add the operations in the same order we want to be executed by this tracker
+		
+		
 		LLRPOperationDto epcWriteOpDto = new LLRPOperationDto(
-				OPERATION_NAME.EPCWrite.name(), WRITE_EPC_OPSPEC_ID);
+				OPERATION_NAME.EPCWrite.name(), WRITE_EPC_ACCESSSPEC_ID, WRITE_EPC_OPSPEC_ID, 
+				strTag);
 		llrpOperationTracker.addOperationDto(epcWriteOpDto);
-
-		LLRPOperationDto killPwdWriteOpDto = new LLRPOperationDto(
-				OPERATION_NAME.KillPasswordWrite.name(),
-				WRITE_KILLPASS_OPSPEC_ID);
-		llrpOperationTracker.addOperationDto(killPwdWriteOpDto);
-
+		
+		/*
+		
 		LLRPOperationDto accessPwdWriteOpDto = new LLRPOperationDto(
-				OPERATION_NAME.AccessPasswordWrite.name(),
-				WRITE_ACCESSPASS_OPSPEC_ID);
+				OPERATION_NAME.AccessPasswordWrite.name(), WRITE_ACCESSPASS_ACCESSSPEC_ID,
+				WRITE_ACCESSPASS_OPSPEC_ID, strTag);
 		llrpOperationTracker.addOperationDto(accessPwdWriteOpDto);
 
+		
+		LLRPOperationDto killPwdWriteOpDto = new LLRPOperationDto(
+				OPERATION_NAME.KillPasswordWrite.name(),WRITE_KILLPASS_ACCESSSPEC_ID,
+				WRITE_KILLPASS_OPSPEC_ID, strTag);
+		llrpOperationTracker.addOperationDto(killPwdWriteOpDto);
+
 		LLRPOperationDto epcLockOpDto = new LLRPOperationDto(
-				OPERATION_NAME.EPCLock.name(), LOCK_EPC_OPSPEC_ID);
+				OPERATION_NAME.EPCLock.name(), LOCK_EPC_ACCESSSPEC_ID, LOCK_EPC_OPSPEC_ID, 
+				strTag);
 		llrpOperationTracker.addOperationDto(epcLockOpDto);
 
 		LLRPOperationDto killPwdLockOpDto = new LLRPOperationDto(
-				OPERATION_NAME.KillPasswordLock.name(), LOCK_KILLPASS_OPSPEC_ID);
+				OPERATION_NAME.KillPasswordLock.name(), LOCK_KILLPASS_ACCESSSPEC_ID,
+				LOCK_KILLPASS_OPSPEC_ID, strTag);
 		llrpOperationTracker.addOperationDto(killPwdLockOpDto);
 
 		LLRPOperationDto accessPwdLockOpDto = new LLRPOperationDto(
-				OPERATION_NAME.AccessPasswordLock.name(),
-				LOCK_ACCESSPASS_OPSPEC_ID);
+				OPERATION_NAME.AccessPasswordLock.name(), LOCK_ACCESSPASS_ACCESSSPEC_ID,
+				LOCK_ACCESSPASS_OPSPEC_ID, strTag);
 		llrpOperationTracker.addOperationDto(accessPwdLockOpDto);
+		*/
 
 		// Start the encode operations
 		setRunningLLRPEncoding(true);
 		
-		//TODO add a timer to control
+		//Add a timer to control
+		Timer timer = new Timer(true);
+		timer.schedule(llrpOperationTracker, new Date());
+		System.out.println("TimerTask begins! :" + new Date());
 
-		// Call the operations (must be the operations put in tracker)
+
+		// Call the operations in tracker
+		for (LLRPOperationDto llrpOperationDto : llrpOperationTracker.getOperationMap()
+				.values()) {
+			
+			executeLLRPOperation(llrpOperationDto.getAccessSpecId(), llrpOperationDto.getEpc());
+			
+		}
 
 		// 1. Call write EPC id
-		executeLLRPOperation(WRITE_EPC_ACCESSSPEC_ID, strTag);
-
-		// 2. Call write kill pwd
-		executeLLRPOperation(WRITE_KILLPASS_ACCESSSPEC_ID, strTag);
-
-		// 3. Call write access pwd
+		//executeLLRPOperation(WRITE_EPC_ACCESSSPEC_ID, strTag);
+		
+	
+		
+		/*
+		// 2. Call write access pwd
 		executeLLRPOperation(WRITE_ACCESSPASS_ACCESSSPEC_ID, strTag);
+				
+		// 3. Call write kill pwd
+		executeLLRPOperation(WRITE_KILLPASS_ACCESSSPEC_ID, strTag);
 
 		// 4. Call lock the EPC
 		executeLLRPOperation(LOCK_EPC_ACCESSSPEC_ID, strTag);
@@ -974,6 +1004,10 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 
 		// 6. lock access pwd
 		executeLLRPOperation(LOCK_ACCESSPASS_ACCESSSPEC_ID, strTag);
+*/
+
+		
+		
 
 		/*
 		 * for (LLRPOperationDto llrpOperationDto : llrpOperationTracker
@@ -990,60 +1024,7 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 		 */
 		
 		
-		//TODO Pending to move and change this timeout logic to be in a Timer
-		long millisToSleep = 500;
-		int numberOfLoops = (int) (getTimeout() / millisToSleep);
-
-		for (int i = 0; i < numberOfLoops; i++) {
-
-			// Check if all messages received, if so and all succeed return
-			// success
-			if (llrpOperationTracker.areAllResultsReceived()) {
-
-				break;
-
-			} else {
-
-				try {
-
-					// Sleep the time out
-					Thread.sleep(millisToSleep);
-
-				} catch (InterruptedException e) {
-
-					// No matters
-				}
-			}
-
-		}
 		
-		if (llrpOperationTracker.areAllResultsReceived()) {
-			
-			System.out.println("allResultsReceived()");
-			
-		} else {
-			
-			System.out.println("NOT allResultsReceived()");
-			
-		}
-
-		if (llrpOperationTracker.areAllResultsSuccessful()) {
-
-			// TODO post to queue a single success message
-			System.out.println("allResultsSuccessful()");
-
-		} else {
-
-			System.out.println("NOT allResultsSuccessful()");
-			// TODO post to queue a fail message
-		}
-		
-		
-		
-
-
-
-		setRunningLLRPEncoding(false);
 
 		/*
 		 * try { System.out.println("Add accessspec! "); int accessSpecId = 2;
@@ -1436,7 +1417,9 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 		// opSpec.setOpSpecID(new UnsignedShort(WRITE_OPSPEC_ID));
 		opSpec.setOpSpecID(WRITE_EPC_OPSPEC_ID);
 
-		opSpec.setAccessPassword(new UnsignedInteger(getAccessPwd()));
+		//opSpec.setAccessPassword(new UnsignedInteger(getAccessPwd()));
+		UnsignedInteger unsignedIntAccesPass = new UnsignedInteger(getOldAccessPwd(), 16);
+		opSpec.setAccessPassword(unsignedIntAccesPass);
 
 		// For this demo, we'll write to user memory (bank 3).
 		TwoBitField opMemBank = new TwoBitField();

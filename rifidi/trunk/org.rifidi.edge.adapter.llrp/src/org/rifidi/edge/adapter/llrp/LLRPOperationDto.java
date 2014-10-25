@@ -8,20 +8,25 @@ import org.llrp.ltk.types.UnsignedShort;
 public class LLRPOperationDto 
 		implements Serializable {
 	
+	private int accessSpecId;
 	private UnsignedShort opSpecId;
 	private String operationName;
 	private AccessCommandOpSpecResult responseResult;
+	private String epc;
 	
 
 	/**
 	 * 
 	 * @param operationName
 	 * @param opSpecId
+	 * @param epc
 	 */
-	public LLRPOperationDto(String operationName, UnsignedShort opSpecId) {
+	public LLRPOperationDto(String operationName, int accessSpecId, UnsignedShort opSpecId, String epc) {
 		super();
 		this.operationName = operationName;
+		this.accessSpecId = accessSpecId;
 		this.opSpecId = opSpecId;
+		this.epc = epc;
 	}
 	
 	/**
@@ -65,5 +70,33 @@ public class LLRPOperationDto
 		this.opSpecId = opSpecId;
 	}
 
+	/**
+	 * @return the accessSpecId
+	 */
+	public int getAccessSpecId() {
+		return accessSpecId;
+	}
+
+	/**
+	 * @param accessSpecId the accessSpecId to set
+	 */
+	public void setAccessSpecId(int accessSpecId) {
+		this.accessSpecId = accessSpecId;
+	}
+
+	/**
+	 * @return the epc
+	 */
+	public String getEpc() {
+		return epc;
+	}
+
+	/**
+	 * @param epc the epc to set
+	 */
+	public void setEpc(String epc) {
+		this.epc = epc;
+	}
 	
+		
 }
