@@ -20,6 +20,7 @@ import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
+import org.llrp.ltk.exceptions.InvalidLLRPMessageException;
 import org.llrp.ltk.generated.enumerations.C1G2BlockEraseResultType;
 import org.llrp.ltk.generated.enumerations.C1G2BlockWriteResultType;
 import org.llrp.ltk.generated.enumerations.C1G2KillResultType;
@@ -46,15 +47,6 @@ public class LLRPOperationTracker extends TimerTask implements Serializable {
 	/** Reference to llrpReaderSession **/
 	LLRPReaderSession llrpReaderSession;
 
-	/** Quality of service level for mqtt, example: 2 **/
-	private int mqttQos;
-
-	/** mqtt broker url, example: tcp://localhost:1883 **/
-	private String mqttBroker;
-
-	/** mqtt client id to publish messages on queue **/
-	private String mqttClientId;
-
 	/** mqttClient to be used in sending tag data to mqttServer **/
 	private MqttClient mqttClient;
 
@@ -70,54 +62,9 @@ public class LLRPOperationTracker extends TimerTask implements Serializable {
 		super();
 		this.llrpReaderSession = llrpReaderSession;
 		operationMap = new HashMap<UnsignedShort, LLRPOperationDto>();
-		initializeMqttParameters();
 	}
 
-	/**
-	 * @return the mqttQos
-	 */
-	public int getMqttQos() {
-		return mqttQos;
-	}
-
-	/**
-	 * @param mqttQos
-	 *            the mqttQos to set
-	 */
-	public void setMqttQos(int mqttQos) {
-		this.mqttQos = mqttQos;
-	}
-
-	/**
-	 * @return the mqttBroker
-	 */
-	public String getMqttBroker() {
-		return mqttBroker;
-	}
-
-	/**
-	 * @param mqttBroker
-	 *            the mqttBroker to set
-	 */
-	public void setMqttBroker(String mqttBroker) {
-		this.mqttBroker = mqttBroker;
-	}
-
-	/**
-	 * @return the mqttClientId
-	 */
-	public String getMqttClientId() {
-		return mqttClientId;
-	}
-
-	/**
-	 * @param mqttClientId
-	 *            the mqttClientId to set
-	 */
-	public void setMqttClientId(String mqttClientId) {
-		this.mqttClientId = mqttClientId;
-	}
-
+	
 	/**
 	 * @return the mqttClient
 	 */
@@ -169,6 +116,7 @@ public class LLRPOperationTracker extends TimerTask implements Serializable {
 
 			// Assign the result to appropriate operation in tracker
 			operationMap.get(res.getOpSpecID()).setResponseResult(res);
+			operationMap.get(res.getOpSpecID()).setResponseCode(res.getResult().toString());
 
 		} else if (result instanceof C1G2BlockWriteOpSpecResult) {
 
@@ -178,6 +126,7 @@ public class LLRPOperationTracker extends TimerTask implements Serializable {
 
 			// Assign the result to appropriate operation in tracker
 			operationMap.get(res.getOpSpecID()).setResponseResult(res);
+			operationMap.get(res.getOpSpecID()).setResponseCode(res.getResult().toString());
 
 		} else if (result instanceof C1G2KillOpSpecResult) {
 
@@ -187,6 +136,7 @@ public class LLRPOperationTracker extends TimerTask implements Serializable {
 
 			// Assign the result to appropriate operation in tracker
 			operationMap.get(res.getOpSpecID()).setResponseResult(res);
+			operationMap.get(res.getOpSpecID()).setResponseCode(res.getResult().toString());
 
 		} else if (result instanceof C1G2LockOpSpecResult) {
 
@@ -196,6 +146,7 @@ public class LLRPOperationTracker extends TimerTask implements Serializable {
 
 			// Assign the result to appropriate operation in tracker
 			operationMap.get(res.getOpSpecID()).setResponseResult(res);
+			operationMap.get(res.getOpSpecID()).setResponseCode(res.getResult().toString());
 
 		} else if (result instanceof C1G2ReadOpSpecResult) {
 
@@ -205,6 +156,7 @@ public class LLRPOperationTracker extends TimerTask implements Serializable {
 
 			// Assign the result to appropriate operation in tracker
 			operationMap.get(res.getOpSpecID()).setResponseResult(res);
+			operationMap.get(res.getOpSpecID()).setResponseCode(res.getResult().toString());
 
 		} else if (result instanceof C1G2WriteOpSpecResult) {
 
@@ -214,6 +166,7 @@ public class LLRPOperationTracker extends TimerTask implements Serializable {
 
 			// Assign the result to appropriate operation in tracker
 			operationMap.get(res.getOpSpecID()).setResponseResult(res);
+			operationMap.get(res.getOpSpecID()).setResponseCode(res.getResult().toString());
 
 		}
 
@@ -333,7 +286,11 @@ public class LLRPOperationTracker extends TimerTask implements Serializable {
 
 	}
 
-	private void checkOperationStatus() {
+	/**
+	 * 
+	 * @return
+	 */
+	public LLRPEncodeMessageDto checkOperationStatus() {
 
 		long millisToSleep = 500;
 		int numberOfLoops = (int) (llrpReaderSession.getTimeout() / millisToSleep);
@@ -360,6 +317,8 @@ public class LLRPOperationTracker extends TimerTask implements Serializable {
 			}
 
 		}
+		
+		LLRPEncodeMessageDto llrpEncodeMessageDto = new LLRPEncodeMessageDto();
 
 		if (areAllResultsReceived()) {
 
@@ -373,11 +332,11 @@ public class LLRPOperationTracker extends TimerTask implements Serializable {
 
 		if (areAllResultsSuccessful()) {
 
-			// Post to queue a single success message
+			// Post to queue a single success message is asynchronous
 			System.out.println("allResultsSuccessful()");
 			String topicName = llrpReaderSession.getSensor().getID()
 					+ "/encode";
-			LLRPEncodeMessageDto llrpEncodeMessageDto = new LLRPEncodeMessageDto();
+			
 
 			// TODO change this hard coded success message
 			llrpEncodeMessageDto.setStatus("Success");
@@ -385,8 +344,24 @@ public class LLRPOperationTracker extends TimerTask implements Serializable {
 
 		} else {
 
+			// TODO change this hard coded fail message
+			llrpEncodeMessageDto.setStatus("Fail");
+			
 			System.out.println("NOT allResultsSuccessful()");
-			// TODO post to queue a fail message
+
+		
+			//Set the operation list with it's returned operation code
+			for (LLRPOperationDto llrpOperationDto : getOperationMap().values()) {
+				
+				try{
+					llrpEncodeMessageDto.addOperation(llrpOperationDto.getOperationName() + ":" + llrpOperationDto.getResponseCode() + "accessspecres: " + llrpOperationDto.getAccessSpecResponse().toXMLString());
+				} catch (InvalidLLRPMessageException ex){
+					ex.printStackTrace();
+				}
+				
+			}
+			
+			// TODO post to queue a fail message if asynchronous
 		}
 
 		// Cancel this timer
@@ -394,6 +369,8 @@ public class LLRPOperationTracker extends TimerTask implements Serializable {
 		System.out.println("TimerTask cancelled! :" + new Date());
 
 		llrpReaderSession.setRunningLLRPEncoding(false);
+		
+		return llrpEncodeMessageDto;
 
 	}
 
@@ -417,7 +394,7 @@ public class LLRPOperationTracker extends TimerTask implements Serializable {
 
 			logger.info("Publishing message: " + content);
 			MqttMessage message = new MqttMessage(content.getBytes());
-			message.setQos(mqttQos);
+			message.setQos(llrpReaderSession.getMqttQos());
 
 			try {
 
@@ -469,16 +446,14 @@ public class LLRPOperationTracker extends TimerTask implements Serializable {
 
 	}
 
-	private void initializeMqttParameters() {
-
-		setMqttJvmProperties();
+	public void initializeMqttParameters() {
 
 		MemoryPersistence persistence = new MemoryPersistence();
 
 		try {
 
-			setMqttClient(new MqttClient(getMqttBroker(), getMqttClientId(),
-					persistence));
+			setMqttClient(new MqttClient(llrpReaderSession.getMqttBroker(), 
+					llrpReaderSession.getMqttClientId(), persistence));
 			MqttConnectOptions connOpts = new MqttConnectOptions();
 			connOpts.setCleanSession(true);
 
@@ -488,23 +463,6 @@ public class LLRPOperationTracker extends TimerTask implements Serializable {
 			throw new RuntimeException(mEx);
 
 		}
-
-	}
-
-	private void setMqttJvmProperties() {
-
-		String mqttQos = System.getProperty("org.rifidi.llrp.encode.mqttqos");
-
-		setMqttQos(Integer.valueOf(mqttQos));
-
-		String mqttBroker = System.getProperty("org.rifidi.llrp.encode.mqttbroker");
-
-		setMqttBroker(mqttBroker);
-
-		String mqttClientId = System
-				.getProperty("org.rifidi.llrp.encode.mqttclientid");
-
-		setMqttClientId(mqttClientId);
 
 	}
 

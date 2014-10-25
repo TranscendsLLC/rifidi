@@ -3,6 +3,7 @@ package org.rifidi.edge.adapter.llrp;
 import java.io.Serializable;
 
 import org.llrp.ltk.generated.interfaces.AccessCommandOpSpecResult;
+import org.llrp.ltk.generated.messages.ADD_ACCESSSPEC_RESPONSE;
 import org.llrp.ltk.types.UnsignedShort;
 
 public class LLRPOperationDto 
@@ -12,7 +13,9 @@ public class LLRPOperationDto
 	private UnsignedShort opSpecId;
 	private String operationName;
 	private AccessCommandOpSpecResult responseResult;
+	private String responseCode;
 	private String epc;
+	private ADD_ACCESSSPEC_RESPONSE accessSpecResponse;
 	
 
 	/**
@@ -29,6 +32,25 @@ public class LLRPOperationDto
 		this.epc = epc;
 	}
 	
+	
+	/**
+	 * @return the responseCode
+	 */
+	public String getResponseCode() {
+		return responseCode;
+	}
+
+
+
+	/**
+	 * @param responseCode the responseCode to set
+	 */
+	public void setResponseCode(String responseCode) {
+		this.responseCode = responseCode;
+	}
+
+
+
 	/**
 	 * @return the operationName
 	 */
@@ -97,6 +119,22 @@ public class LLRPOperationDto
 	public void setEpc(String epc) {
 		this.epc = epc;
 	}
+
+	/**
+	 * @return the accessSpecResponse
+	 */
+	public ADD_ACCESSSPEC_RESPONSE getAccessSpecResponse() {
+		return accessSpecResponse;
+	}
+
+	/**
+	 * @param accessSpecResponse the accessSpecResponse to set
+	 */
+	public void setAccessSpecResponse(ADD_ACCESSSPEC_RESPONSE accessSpecResponse) {
+		this.accessSpecResponse = accessSpecResponse;
+	}
+	
+		
 	
 		
 }
