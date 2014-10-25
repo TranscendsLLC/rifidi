@@ -27,6 +27,8 @@ import javax.management.AttributeList;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jdom.Document;
 import org.jdom.input.SAXBuilder;
 import org.restlet.Application;
@@ -87,6 +89,11 @@ public class SensorManagerServiceRestletImpl extends Application {
 
 	/** */
 	public ReaderDAO readerDAO;
+	
+	/** Logger for this class */
+	private final Log logger = LogFactory.getLog(getClass());
+	
+	
 
 	@Override
 	public Restlet createInboundRoot() {
@@ -94,6 +101,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 	}
 
 	public Router initRestlet() {
+		
 		final SensorManagerServiceRestletImpl self = this;
 
 		Restlet readers = new Restlet() {
@@ -647,6 +655,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 			}
 		};
 
+		
 		Restlet llrpEncode = new Restlet() {
 			@Override
 			public void handle(Request request, Response response) {
@@ -694,7 +703,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 						// It is not a llrp reader type
 						throw new Exception("Reader with id " + strReaderId
 								+ " of type " + strCurrentReaderType
-								+ " is not a LLRP reader type");
+								+ " is not an LLRP reader type");
 
 					}
 
@@ -720,17 +729,27 @@ public class SensorManagerServiceRestletImpl extends Application {
 
 						}
 
-						// TODO Check if there is more than one tag in the scope
+						// Check if there is more than one tag in the scope
 						// of this reader, if so then fail
-						boolean thereAreMultipleTags = false;
+						int numberOfTags = session.numTagsOnLLRP().intValue();
+						boolean thereIsOneTag = (numberOfTags == 1);
+						
 
-						if (thereAreMultipleTags) {
+						if (!thereIsOneTag) {
+							
+							if (numberOfTags < 1 ) {
 
-							// There is more than one tag in the scope of the
-							// reader
-							throw new Exception(
-									"There are more than one tag for reader with id "
-											+ strReaderId);
+								// There is no tag in the scope of the reader
+								throw new Exception(
+										"There is no tag in the scope of reader with id "
+												+ strReaderId);
+							} else {
+								
+								throw new Exception(
+										"There are " + numberOfTags + " tags in the scope of the reader with id "
+												+ strReaderId);
+								
+							}
 
 						}
 						
@@ -745,8 +764,26 @@ public class SensorManagerServiceRestletImpl extends Application {
 						// Get the tag id from url
 						String strTag = (String) request.getAttributes().get(
 								"tag");
+						
+						checkBlockLengthReminder(strTag, session.getWriteDataBlockLength(), "tag");
+						
+						//Check if there is a single operation requested
+						String strOperationCode = (String) request.getAttributes().get(
+								"operationCode");
+						
+						if (strOperationCode == null){
+						
+							//There is no operation code, so we submit the complete encode operation 
+							session.llrpEncode(strTag);
+							
+						} else {
+							
+							//Single shot operation, according to operation code
+							//TODO
+						}
+						
 
-						session.llrpEncode(strTag);
+						
 
 						/*
 						 * TODO delete session.addAccessSpec((String)
@@ -1179,7 +1216,8 @@ public class SensorManagerServiceRestletImpl extends Application {
 		String strTargetEpc = System
 				.getProperty("org.rifidi.llrp.encode.targetepc");
 
-		checkBlockLengthReminder(strTargetEpc, session.getWriteDataBlockLength());
+		checkBlockLengthReminder(strTargetEpc,
+				session.getWriteDataBlockLength(), "targetEpc");
 
 		session.setTargetEpc(strTargetEpc != null ? strTargetEpc
 				: LLRPReaderSession.DEFAULT_TARGET_EPC);
@@ -1187,7 +1225,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 		String strTagMask = System
 				.getProperty("org.rifidi.llrp.encode.tagmask");
 
-		checkBlockLengthReminder(strTagMask, session.getWriteDataBlockLength());
+		checkBlockLengthReminder(strTagMask, session.getWriteDataBlockLength(), "tagMask");
 
 		session.setTagMask(strTagMask != null ? strTagMask
 				: LLRPReaderSession.DEFAULT_TAG_MASK);
@@ -1206,7 +1244,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 
 		session.setAccessPwd(strAccessPwd != null ? strAccessPwd
 				: LLRPReaderSession.DEFAULT_ACCESS_PASSWORD);
-		
+
 		String strOldAccessPwd = System
 				.getProperty("org.rifidi.llrp.encode.oldaccesspwd");
 
@@ -1217,16 +1255,18 @@ public class SensorManagerServiceRestletImpl extends Application {
 
 		String strKillPwd = System
 				.getProperty("org.rifidi.llrp.encode.killpwd");
-		
+
 		validatePassword(strKillPwd, "Kill");
 
 		session.setKillPwd(strKillPwd != null ? strKillPwd
 				: LLRPReaderSession.DEFAULT_KILL_PASSWORD);
+		
+		//Set the lock privileges
 
 		String strKillPwdLockPrivilege = System
 				.getProperty("org.rifidi.llrp.encode.killpwdlockprivilege");
 
-		if (strKillPwd != null) {
+		if (strKillPwdLockPrivilege != null) {
 
 			int intKillPwdLockPrivilege = LLRPReaderSession
 					.getLockPrivilege(strKillPwdLockPrivilege);
@@ -1268,41 +1308,51 @@ public class SensorManagerServiceRestletImpl extends Application {
 	}
 
 	/**
-	 * Validate password is not empty and if it's length is one, the value must be zero.
-	 * Otherwise the password length must be eight 
-	 * @param strPassword the value of the password to be checked
-	 * @param whichPassword the name of the password to be checked, for exception throwing purposes
-	 * @throws Exception if strPassword is not null and strPassword length is empty
-	 * or if password length is one and value is different to '0'
-	 * or if password length is different to eight
+	 * Validate password is not empty and if it's length is one, the value must
+	 * be zero. Otherwise the password length must be 8
+	 * 
+	 * @param strPassword
+	 *            the value of the password to be checked
+	 * @param whichPassword
+	 *            the name of the password to be checked, for exception throwing
+	 *            purposes
+	 * @throws Exception
+	 *             if strPassword is not null and strPassword length is empty or
+	 *             if password length is one and value is different to '0' or if
+	 *             password length is different to eight
 	 */
-	private void validatePassword(String strPassword, String whichPassword) throws Exception {
+	private void validatePassword(String strPassword, String whichPassword)
+			throws Exception {
 
 		if (strPassword != null && strPassword.isEmpty()) {
 			throw new Exception(whichPassword + " password is empty");
 		}
-		
-		if (
-				(strPassword.length() == 1 && !strPassword.equals("0"))
-				&&
-				(strPassword.length() != 8 )
-			){
-			throw new Exception(whichPassword + " password must be 8 characters or value of 0");
+
+		if ((strPassword.length() == 1 && !strPassword.equals("0"))
+				&& (strPassword.length() != 8)) {
+			throw new Exception(whichPassword
+					+ " password must be 8 characters or value of 0");
 		}
 	}
 
 	/**
 	 * Validate the remainder of value / blockLength is zero.
-	 * @param value the value to be checked
-	 * @param blockLength the length of block the value has to satisfy
-	 * @throws Exception if the remainder of value / blockLength is different to zero
+	 * 
+	 * @param value
+	 *            the value to be checked
+	 * @param blockLength
+	 *            the length of block the value has to satisfy
+	 * @param valueName
+	 *            the name of the value to be checked, to be put in the exception message if it fails
+	 * @throws Exception
+	 *             if the remainder of value / blockLength is different to zero
 	 */
-	private void checkBlockLengthReminder(String value, int blockLength)
+	private void checkBlockLengthReminder(String value, int blockLength, String valueName)
 			throws Exception {
 
 		int reminder = value.length() % blockLength;
 		if (reminder != 0) {
-			throw new Exception("The value " + value
+			throw new Exception("The value for " + valueName 
 					+ " has a wrong length of " + value.length()
 					+ ". It is expected this length to be a multiple of "
 					+ blockLength);
@@ -1310,6 +1360,9 @@ public class SensorManagerServiceRestletImpl extends Application {
 
 	}
 
+	
+	
+	
 	/*
 	 * private List<TagReadEvent> getCurrentTags(String readerID) {
 	 * 
