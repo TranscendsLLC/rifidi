@@ -1,12 +1,25 @@
 package org.rifidi.edge.adapter.llrp;
 
+import java.io.IOException;
 import java.io.Serializable;
-import java.util.Collection;
+import java.io.StringWriter;
+import java.io.Writer;
+import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import java.util.TimerTask;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.eclipse.paho.client.mqttv3.MqttClient;
+import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
+import org.eclipse.paho.client.mqttv3.MqttException;
+import org.eclipse.paho.client.mqttv3.MqttMessage;
+import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import org.llrp.ltk.generated.enumerations.C1G2BlockEraseResultType;
 import org.llrp.ltk.generated.enumerations.C1G2BlockWriteResultType;
 import org.llrp.ltk.generated.enumerations.C1G2KillResultType;
@@ -22,34 +35,107 @@ import org.llrp.ltk.generated.parameters.C1G2ReadOpSpecResult;
 import org.llrp.ltk.generated.parameters.C1G2WriteOpSpecResult;
 import org.llrp.ltk.types.UnsignedShort;
 
-public class LLRPOperationTracker 
-		implements Serializable {
-	
+public class LLRPOperationTracker extends TimerTask implements Serializable {
+
 	/** Map to keep track of all operations and responses received **/
 	private Map<UnsignedShort, LLRPOperationDto> operationMap;
-	
+
 	/** milliseconds to sleep this thread and wait for timeout **/
 	long millisToSleep = 500;
-	
-	/** current time waited **/
-	long currentTimeWaited = 0;
-	
-	//int numberOfLoops = (int) (getTimeout() / millisToSleep);
-	
+
+	/** Reference to llrpReaderSession **/
+	LLRPReaderSession llrpReaderSession;
+
+	/** Quality of service level for mqtt, example: 2 **/
+	private int mqttQos;
+
+	/** mqtt broker url, example: tcp://localhost:1883 **/
+	private String mqttBroker;
+
+	/** mqtt client id to publish messages on queue **/
+	private String mqttClientId;
+
+	/** mqttClient to be used in sending tag data to mqttServer **/
+	private MqttClient mqttClient;
+
+	/** Logger for this class */
+	final Log logger = LogFactory.getLog(getClass());
+
+	// int numberOfLoops = (int) (getTimeout() / millisToSleep);
+
 	/**
 	 *
 	 */
-	public LLRPOperationTracker() {
+	public LLRPOperationTracker(LLRPReaderSession llrpReaderSession) {
 		super();
-
+		this.llrpReaderSession = llrpReaderSession;
 		operationMap = new HashMap<UnsignedShort, LLRPOperationDto>();
+		initializeMqttParameters();
 	}
-	
-	public void addOperationDto(LLRPOperationDto llrpOperationDto){
+
+	/**
+	 * @return the mqttQos
+	 */
+	public int getMqttQos() {
+		return mqttQos;
+	}
+
+	/**
+	 * @param mqttQos
+	 *            the mqttQos to set
+	 */
+	public void setMqttQos(int mqttQos) {
+		this.mqttQos = mqttQos;
+	}
+
+	/**
+	 * @return the mqttBroker
+	 */
+	public String getMqttBroker() {
+		return mqttBroker;
+	}
+
+	/**
+	 * @param mqttBroker
+	 *            the mqttBroker to set
+	 */
+	public void setMqttBroker(String mqttBroker) {
+		this.mqttBroker = mqttBroker;
+	}
+
+	/**
+	 * @return the mqttClientId
+	 */
+	public String getMqttClientId() {
+		return mqttClientId;
+	}
+
+	/**
+	 * @param mqttClientId
+	 *            the mqttClientId to set
+	 */
+	public void setMqttClientId(String mqttClientId) {
+		this.mqttClientId = mqttClientId;
+	}
+
+	/**
+	 * @return the mqttClient
+	 */
+	public MqttClient getMqttClient() {
+		return mqttClient;
+	}
+
+	/**
+	 * @param mqttClient
+	 *            the mqttClient to set
+	 */
+	public void setMqttClient(MqttClient mqttClient) {
+		this.mqttClient = mqttClient;
+	}
+
+	public void addOperationDto(LLRPOperationDto llrpOperationDto) {
 		operationMap.put(llrpOperationDto.getOpSpecId(), llrpOperationDto);
 	}
-
-	
 
 	/**
 	 * @return the operationMap
@@ -59,25 +145,27 @@ public class LLRPOperationTracker
 	}
 
 	/**
-	 * @param operationMap the operationMap to set
+	 * @param operationMap
+	 *            the operationMap to set
 	 */
-	public void setOperationMap(Map<UnsignedShort, LLRPOperationDto> operationMap) {
+	public void setOperationMap(
+			Map<UnsignedShort, LLRPOperationDto> operationMap) {
 		this.operationMap = operationMap;
 	}
-	
+
 	/**
 	 * Set the result received
-	 * @param result the received result of operation 
+	 * 
+	 * @param result
+	 *            the received result of operation
 	 */
-	public void setResult(AccessCommandOpSpecResult result){
-		
+	public void setResult(AccessCommandOpSpecResult result) {
+
 		if (result instanceof C1G2BlockEraseOpSpecResult) {
 
 			C1G2BlockEraseOpSpecResult res = (C1G2BlockEraseOpSpecResult) result;
-			System.out.println("\n1.res.getResult(): "
-					+ res.getResult());
-			System.out.println("res.getOpSpecID(): "
-					+ res.getOpSpecID());
+			System.out.println("\n1.res.getResult(): " + res.getResult());
+			System.out.println("res.getOpSpecID(): " + res.getOpSpecID());
 
 			// Assign the result to appropriate operation in tracker
 			operationMap.get(res.getOpSpecID()).setResponseResult(res);
@@ -85,10 +173,8 @@ public class LLRPOperationTracker
 		} else if (result instanceof C1G2BlockWriteOpSpecResult) {
 
 			C1G2BlockWriteOpSpecResult res = (C1G2BlockWriteOpSpecResult) result;
-			System.out.println("\n2.res.getResult(): "
-					+ res.getResult());
-			System.out.println("res.getOpSpecID(): "
-					+ res.getOpSpecID());
+			System.out.println("\n2.res.getResult(): " + res.getResult());
+			System.out.println("res.getOpSpecID(): " + res.getOpSpecID());
 
 			// Assign the result to appropriate operation in tracker
 			operationMap.get(res.getOpSpecID()).setResponseResult(res);
@@ -96,10 +182,8 @@ public class LLRPOperationTracker
 		} else if (result instanceof C1G2KillOpSpecResult) {
 
 			C1G2KillOpSpecResult res = (C1G2KillOpSpecResult) result;
-			System.out.println("\n3.res.getResult(): "
-					+ res.getResult());
-			System.out.println("res.getOpSpecID(): "
-					+ res.getOpSpecID());
+			System.out.println("\n3.res.getResult(): " + res.getResult());
+			System.out.println("res.getOpSpecID(): " + res.getOpSpecID());
 
 			// Assign the result to appropriate operation in tracker
 			operationMap.get(res.getOpSpecID()).setResponseResult(res);
@@ -107,10 +191,8 @@ public class LLRPOperationTracker
 		} else if (result instanceof C1G2LockOpSpecResult) {
 
 			C1G2LockOpSpecResult res = (C1G2LockOpSpecResult) result;
-			System.out.println("\n4.res.getResult(): "
-					+ res.getResult());
-			System.out.println("res.getOpSpecID(): "
-					+ res.getOpSpecID());
+			System.out.println("\n4.res.getResult(): " + res.getResult());
+			System.out.println("res.getOpSpecID(): " + res.getOpSpecID());
 
 			// Assign the result to appropriate operation in tracker
 			operationMap.get(res.getOpSpecID()).setResponseResult(res);
@@ -118,10 +200,8 @@ public class LLRPOperationTracker
 		} else if (result instanceof C1G2ReadOpSpecResult) {
 
 			C1G2ReadOpSpecResult res = (C1G2ReadOpSpecResult) result;
-			System.out.println("\n5.res.getResult(): "
-					+ res.getResult());
-			System.out.println("res.getOpSpecID(): "
-					+ res.getOpSpecID());
+			System.out.println("\n5.res.getResult(): " + res.getResult());
+			System.out.println("res.getOpSpecID(): " + res.getOpSpecID());
 
 			// Assign the result to appropriate operation in tracker
 			operationMap.get(res.getOpSpecID()).setResponseResult(res);
@@ -129,114 +209,303 @@ public class LLRPOperationTracker
 		} else if (result instanceof C1G2WriteOpSpecResult) {
 
 			C1G2WriteOpSpecResult res = (C1G2WriteOpSpecResult) result;
-			System.out.println("\n6.res.getResult(): "
-					+ res.getResult());
-			System.out.println("res.getOpSpecID(): "
-					+ res.getOpSpecID());
+			System.out.println("\n6.res.getResult(): " + res.getResult());
+			System.out.println("res.getOpSpecID(): " + res.getOpSpecID());
 
 			// Assign the result to appropriate operation in tracker
 			operationMap.get(res.getOpSpecID()).setResponseResult(res);
 
 		}
-		
-		
+
 	}
-	
+
 	/**
 	 * Checks if all results are received
+	 * 
 	 * @return true if all results are received, otherwise returns false
 	 */
-	public boolean areAllResultsReceived(){
-		
-		for(LLRPOperationDto llrpOperationDto : getOperationMap().values()){
-			
-			if (llrpOperationDto.getResponseResult() == null){
+	public boolean areAllResultsReceived() {
+
+		for (LLRPOperationDto llrpOperationDto : getOperationMap().values()) {
+
+			if (llrpOperationDto.getResponseResult() == null) {
 				return false;
 			}
 		}
-		
+
 		return true;
-		
+
 	}
-	
+
 	/**
 	 * Checks if all results are received and are success
+	 * 
 	 * @return true if all results are received and are success
 	 */
-	public boolean areAllResultsSuccessful(){
-		
-		if (!areAllResultsReceived()){
+	public boolean areAllResultsSuccessful() {
+
+		if (!areAllResultsReceived()) {
 			return false;
 		}
-		
-		for(LLRPOperationDto llrpOperationDto : getOperationMap().values()){
-			
+
+		for (LLRPOperationDto llrpOperationDto : getOperationMap().values()) {
+
 			if (llrpOperationDto.getResponseResult() instanceof C1G2BlockEraseOpSpecResult) {
 
-				C1G2BlockEraseOpSpecResult res = (C1G2BlockEraseOpSpecResult) llrpOperationDto.getResponseResult();
-				
-				if (res.getResult().intValue() != C1G2BlockEraseResultType.Success){
-					
+				C1G2BlockEraseOpSpecResult res = (C1G2BlockEraseOpSpecResult) llrpOperationDto
+						.getResponseResult();
+
+				if (res.getResult().intValue() != C1G2BlockEraseResultType.Success) {
+
 					return false;
-					
+
 				}
-				
+
 			} else if (llrpOperationDto.getResponseResult() instanceof C1G2BlockWriteOpSpecResult) {
 
-				C1G2BlockWriteOpSpecResult res = (C1G2BlockWriteOpSpecResult) llrpOperationDto.getResponseResult();
+				C1G2BlockWriteOpSpecResult res = (C1G2BlockWriteOpSpecResult) llrpOperationDto
+						.getResponseResult();
 
-				if (res.getResult().intValue() != C1G2BlockWriteResultType.Success){
-					
+				if (res.getResult().intValue() != C1G2BlockWriteResultType.Success) {
+
 					return false;
-					
+
 				}
 
 			} else if (llrpOperationDto.getResponseResult() instanceof C1G2KillOpSpecResult) {
 
-				C1G2KillOpSpecResult res = (C1G2KillOpSpecResult) llrpOperationDto.getResponseResult();
-				
-				if (res.getResult().intValue() != C1G2KillResultType.Success){
-					
+				C1G2KillOpSpecResult res = (C1G2KillOpSpecResult) llrpOperationDto
+						.getResponseResult();
+
+				if (res.getResult().intValue() != C1G2KillResultType.Success) {
+
 					return false;
-					
+
 				}
 
 			} else if (llrpOperationDto.getResponseResult() instanceof C1G2LockOpSpecResult) {
 
-				C1G2LockOpSpecResult res = (C1G2LockOpSpecResult) llrpOperationDto.getResponseResult();
+				C1G2LockOpSpecResult res = (C1G2LockOpSpecResult) llrpOperationDto
+						.getResponseResult();
 
-				if (res.getResult().intValue() != C1G2LockResultType.Success){
-					
+				if (res.getResult().intValue() != C1G2LockResultType.Success) {
+
 					return false;
-					
+
 				}
 
 			} else if (llrpOperationDto.getResponseResult() instanceof C1G2ReadOpSpecResult) {
 
-				C1G2ReadOpSpecResult res = (C1G2ReadOpSpecResult) llrpOperationDto.getResponseResult();
+				C1G2ReadOpSpecResult res = (C1G2ReadOpSpecResult) llrpOperationDto
+						.getResponseResult();
 
-				if (res.getResult().intValue() != C1G2ReadResultType.Success){
-					
+				if (res.getResult().intValue() != C1G2ReadResultType.Success) {
+
 					return false;
-					
+
 				}
 
 			} else if (llrpOperationDto.getResponseResult() instanceof C1G2WriteOpSpecResult) {
 
-				C1G2WriteOpSpecResult res = (C1G2WriteOpSpecResult) llrpOperationDto.getResponseResult();
+				C1G2WriteOpSpecResult res = (C1G2WriteOpSpecResult) llrpOperationDto
+						.getResponseResult();
 
-				if (res.getResult().intValue() != C1G2WriteResultType.Success){
-					
+				if (res.getResult().intValue() != C1G2WriteResultType.Success) {
+
 					return false;
-					
+
 				}
 
 			}
-			
+
 		}
-		
+
 		return true;
-		
+
 	}
-	
+
+	@Override
+	public void run() {
+
+		System.out.println("Start time:" + new Date());
+		checkOperationStatus();
+		System.out.println("End time:" + new Date());
+
+	}
+
+	private void checkOperationStatus() {
+
+		long millisToSleep = 500;
+		int numberOfLoops = (int) (llrpReaderSession.getTimeout() / millisToSleep);
+
+		for (int i = 0; i < numberOfLoops; i++) {
+
+			// Check if all messages received, if so and all succeed return
+			// success
+			if (areAllResultsReceived()) {
+
+				break;
+
+			} else {
+
+				try {
+
+					// Sleep the time out
+					Thread.sleep(millisToSleep);
+
+				} catch (InterruptedException e) {
+
+					// No matters
+				}
+			}
+
+		}
+
+		if (areAllResultsReceived()) {
+
+			System.out.println("allResultsReceived()");
+
+		} else {
+
+			System.out.println("NOT allResultsReceived()");
+
+		}
+
+		if (areAllResultsSuccessful()) {
+
+			// Post to queue a single success message
+			System.out.println("allResultsSuccessful()");
+			String topicName = llrpReaderSession.getSensor().getID()
+					+ "/encode";
+			LLRPEncodeMessageDto llrpEncodeMessageDto = new LLRPEncodeMessageDto();
+
+			// TODO change this hard coded success message
+			llrpEncodeMessageDto.setStatus("Success");
+			//postMqttMesssage(topicName, llrpEncodeMessageDto);
+
+		} else {
+
+			System.out.println("NOT allResultsSuccessful()");
+			// TODO post to queue a fail message
+		}
+
+		// Cancel this timer
+		cancel();
+		System.out.println("TimerTask cancelled! :" + new Date());
+
+		llrpReaderSession.setRunningLLRPEncoding(false);
+
+	}
+
+	public void postMqttMesssage(String mqttTopic, Object messageContent) {
+
+		try {
+
+			JAXBContext jaxbContext = JAXBContext.newInstance(messageContent
+					.getClass());
+			Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+
+			// output pretty printed
+			jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT,
+					Boolean.TRUE);
+
+			// Create xml String and send to server using mqttClient
+			Writer writer = new StringWriter();
+			jaxbMarshaller.marshal(messageContent, writer);
+			String content = writer.toString();
+			writer.close();
+
+			logger.info("Publishing message: " + content);
+			MqttMessage message = new MqttMessage(content.getBytes());
+			message.setQos(mqttQos);
+
+			try {
+
+				mqttClient.connect();
+				logger.info("Connected to broker: " + mqttClient.getServerURI());
+
+			} catch (MqttException mEx) {
+
+				logger.error("Error connecting to broker", mEx);
+				throw new RuntimeException(mEx);
+
+			}
+
+			try {
+
+				mqttClient.publish(mqttTopic, message);
+				logger.info("Message published");
+
+			} catch (MqttException mEx) {
+
+				logger.error("Error publishing to queue", mEx);
+				throw new RuntimeException(mEx);
+
+			}
+
+			try {
+
+				mqttClient.disconnect();
+				logger.info("mqttClient disconnected.");
+
+			} catch (MqttException mEx) {
+
+				logger.error("Error trying to disconnect mqttClient", mEx);
+				throw new RuntimeException(mEx);
+
+			}
+
+		} catch (JAXBException jEx) {
+
+			logger.error("Error publishing to queue", jEx);
+			throw new RuntimeException(jEx);
+
+		} catch (IOException ioEx) {
+
+			logger.error("Error publishing to queue", ioEx);
+			throw new RuntimeException(ioEx);
+
+		}
+
+	}
+
+	private void initializeMqttParameters() {
+
+		setMqttJvmProperties();
+
+		MemoryPersistence persistence = new MemoryPersistence();
+
+		try {
+
+			setMqttClient(new MqttClient(getMqttBroker(), getMqttClientId(),
+					persistence));
+			MqttConnectOptions connOpts = new MqttConnectOptions();
+			connOpts.setCleanSession(true);
+
+		} catch (MqttException mEx) {
+
+			logger.error("Error creating mqttClient instance to broker", mEx);
+			throw new RuntimeException(mEx);
+
+		}
+
+	}
+
+	private void setMqttJvmProperties() {
+
+		String mqttQos = System.getProperty("org.rifidi.llrp.encode.mqttqos");
+
+		setMqttQos(Integer.valueOf(mqttQos));
+
+		String mqttBroker = System.getProperty("org.rifidi.llrp.encode.mqttbroker");
+
+		setMqttBroker(mqttBroker);
+
+		String mqttClientId = System
+				.getProperty("org.rifidi.llrp.encode.mqttclientid");
+
+		setMqttClientId(mqttClientId);
+
+	}
+
 }
