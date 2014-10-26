@@ -6,6 +6,8 @@ Bundle-Version: 1.0.0
 Bundle-Vendor: Transcends, LLC
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: com.espertech.esper.client,
+ javax.xml.bind,
+ javax.xml.bind.annotation,
  org.apache.commons.logging,
  org.jdom;version="1.0.0",
  org.jdom.input;version="1.0.0",

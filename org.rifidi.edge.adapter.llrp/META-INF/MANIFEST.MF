@@ -5,7 +5,8 @@ Bundle-SymbolicName: org.rifidi.edge.adapter.llrp
 Bundle-Version: 2.1.0
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Import-Package: javax.xml.bind.annotation,
+Import-Package: javax.xml.bind,
+ javax.xml.bind.annotation,
  org.apache.commons.codec,
  org.apache.commons.codec.binary,
  org.apache.commons.lang;version="2.3.0",
