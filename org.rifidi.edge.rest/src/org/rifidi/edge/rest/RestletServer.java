@@ -24,7 +24,7 @@ public class RestletServer {
 	 */
 	public RestletServer(Application app) {
 		try {
-			System.out.println("RestletServer called");
+			logger.info("RestletServer called");
 			boolean enabled = Boolean.parseBoolean(System
 					.getProperty("org.rifidi.restlet.enabled"));
 			if (enabled) {
