@@ -259,7 +259,7 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 		LLRPEPCWrite, LLRPAccessPasswordWrite, LLRPKillPasswordWrite, LLRPEPCLock, LLRPKillPasswordLock, LLRPAccessPasswordLock
 	};
 
-	/** Object to keep track of the operation and order **/
+	/** Object to keep track of the operations and responses on each one **/
 	private LLRPOperationTracker llrpOperationTracker;
 
 	/**
@@ -975,7 +975,7 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 
 	// Execute only this operation:
 	public LLRPEncodeMessageDto llrpWriteEpcOperation(String epc)
-			throws InvalidLLRPMessageException, TimeoutException {
+			throws InvalidLLRPMessageException, TimeoutException, Exception {
 
 		// Initialize operation tracker, to be able to receive asynchronous
 		// messages
@@ -995,7 +995,7 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 
 	// TODO to execute only this operation:
 	public LLRPEncodeMessageDto llrpWriteAccessPasswordOperation()
-			throws InvalidLLRPMessageException, TimeoutException {
+			throws InvalidLLRPMessageException, TimeoutException, Exception {
 
 		// Initialize operation tracker, to be able to receive asynchronous
 		// messages
@@ -1017,7 +1017,7 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 	// public String addAccessSpec(String writeAccessPassword, String writeData
 	// ) {
 	public LLRPEncodeMessageDto llrpEncode(String strTag)
-			throws TimeoutException, InvalidLLRPMessageException {
+			throws TimeoutException, InvalidLLRPMessageException, Exception {
 
 		// Initialize operation tracker, to be able to receive asynchronous
 		// messages
@@ -1025,45 +1025,39 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 
 		// Add the operations in the same order we want to be executed by this
 		// tracker
-		
+
 		LLRPOperationDto accessPwdWriteOpDto = new LLRPOperationDto(
 				LLRP_OPERATION_CODE.LLRPAccessPasswordWrite.name(),
 				WRITE_ACCESSPASS_ACCESSSPEC_ID, WRITE_ACCESSPASS_OPSPEC_ID,
 				strTag);
 		llrpOperationTracker.addOperationDto(accessPwdWriteOpDto);
 
-		
 		LLRPOperationDto epcWriteOpDto = new LLRPOperationDto(
 				LLRP_OPERATION_CODE.LLRPEPCWrite.name(),
 				WRITE_EPC_ACCESSSPEC_ID, WRITE_EPC_OPSPEC_ID, strTag);
 		llrpOperationTracker.addOperationDto(epcWriteOpDto);
 
-		
 		LLRPOperationDto killPwdWriteOpDto = new LLRPOperationDto(
 				LLRP_OPERATION_CODE.LLRPKillPasswordWrite.name(),
 				WRITE_KILLPASS_ACCESSSPEC_ID, WRITE_KILLPASS_OPSPEC_ID, strTag);
 		llrpOperationTracker.addOperationDto(killPwdWriteOpDto);
 
-		
 		LLRPOperationDto epcLockOpDto = new LLRPOperationDto(
 				LLRP_OPERATION_CODE.LLRPEPCLock.name(), LOCK_EPC_ACCESSSPEC_ID,
 				LOCK_EPC_OPSPEC_ID, strTag);
 		llrpOperationTracker.addOperationDto(epcLockOpDto);
 
-		
 		LLRPOperationDto killPwdLockOpDto = new LLRPOperationDto(
 				LLRP_OPERATION_CODE.LLRPKillPasswordLock.name(),
 				LOCK_KILLPASS_ACCESSSPEC_ID, LOCK_KILLPASS_OPSPEC_ID, strTag);
 		llrpOperationTracker.addOperationDto(killPwdLockOpDto);
 
-		
 		LLRPOperationDto accessPwdLockOpDto = new LLRPOperationDto(
 				LLRP_OPERATION_CODE.LLRPAccessPasswordLock.name(),
 				LOCK_ACCESSPASS_ACCESSSPEC_ID, LOCK_ACCESSPASS_OPSPEC_ID,
 				strTag);
 		llrpOperationTracker.addOperationDto(accessPwdLockOpDto);
 
-		
 		return startRequestedOperations(llrpOperationTracker);
 
 	}
@@ -1079,7 +1073,7 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 	 */
 	private LLRPEncodeMessageDto startRequestedOperations(
 			LLRPOperationTracker llrpOperationTracker) throws TimeoutException,
-			InvalidLLRPMessageException {
+			InvalidLLRPMessageException, Exception {
 
 		// Start the requested operations
 		setRunningLLRPEncoding(true);
@@ -1097,9 +1091,11 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 
 			llrpOperationDto.setAccessSpecResponse(response);
 
-			// TODO check if response is failure, and return synchronous message
-			// error
-			// it's throw an Exception
+			// Check if response is failure, and return synchronous message
+			if (!response.getLLRPStatus().getStatusCode()
+					.equals(StatusCode.M_Success)) {
+				throw new Exception(response.toXMLString());
+			}
 
 		}
 
@@ -1590,9 +1586,12 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 			writeArray.add(new UnsignedShort(data, 16));
 
 		} else {
-			
-			throw new RuntimeException("The value " + data + " does not satisfy data.length() % getWriteDataBlockLength() == 0");
-			
+
+			throw new RuntimeException(
+					"The value "
+							+ data
+							+ " does not satisfy data.length() % getWriteDataBlockLength() == 0");
+
 		}
 
 		return writeArray;
@@ -1667,6 +1666,16 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 		opSpec.setC1G2LockPayloadList(c1G2LockPayloadList);
 
 		return opSpec;
+	}
+
+	/**
+	 * Cleans up the session and access specs
+	 */
+	public void cleanupSession() {
+
+		deleteAccessSpecs();
+		setRunningLLRPEncoding(false);
+
 	}
 
 	/*
