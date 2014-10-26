@@ -1274,7 +1274,7 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 				
 				// Delete access spec if there is a CommandOpSpecResult
 				// coming back.
-				this.deleteAccessSpecs();
+				//this.deleteAccessSpecs();
 			}
 		}
 
