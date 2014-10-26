@@ -38,7 +38,6 @@ import org.restlet.Restlet;
 import org.restlet.data.MediaType;
 import org.restlet.routing.Router;
 import org.rifidi.edge.adapter.llrp.LLRPEncodeMessageDto;
-//import org.rifidi.edge.adapter.llrp.LLRPEncodeMessageDto;
 import org.rifidi.edge.adapter.llrp.LLRPReaderSession;
 import org.rifidi.edge.api.CommandConfigFactoryDTO;
 import org.rifidi.edge.api.CommandConfigurationDTO;
@@ -58,6 +57,7 @@ import org.rifidi.edge.rest.exception.NotValidPropertyForObjectException;
 import org.rifidi.edge.sensors.AbstractSensor;
 import org.rifidi.edge.sensors.SensorSession;
 import org.rifidi.edge.services.EsperManagementService;
+//import org.rifidi.edge.adapter.llrp.LLRPEncodeMessageDto;
 
 /**
  * This class handles the incoming rest requests.
@@ -91,19 +91,324 @@ public class SensorManagerServiceRestletImpl extends Application {
 
 	/** */
 	public ReaderDAO readerDAO;
-	
+
 	/** Logger for this class */
 	private final Log logger = LogFactory.getLog(getClass());
-	
-	
 
 	@Override
 	public Restlet createInboundRoot() {
 		return this.initRestlet();
 	}
 
+	private void executeLlrpOperation(Request request, Response response,
+			LLRPReaderSession.LLRP_OPERATION_CODE strOperationCode) {
+
+		LLRPReaderSession session = null;
+
+		try {
+
+			// Variable to receive synchronous response if set
+			LLRPEncodeMessageDto llrpEncodeMessageDto = new LLRPEncodeMessageDto();
+			llrpEncodeMessageDto.setStatus("Success !!!");
+
+			String strReaderId = (String) request.getAttributes().get(
+					"readerID");
+
+			Object objSessionId = request.getAttributes().get("sessionID");
+
+			// Check if reader id exists
+			if (!readerExists(strReaderId)) {
+				throw new Exception("Reader with id " + strReaderId
+						+ " does not exist");
+			}
+
+			AbstractSensor<?> sensor = readerDAO.getReaderByID(strReaderId);
+
+			// look up the associated service configuration object
+			Configuration config = configService.getConfiguration(strReaderId);
+
+			// Check if reader id is a LLRP reader type
+			String strCurrentReaderType = sensor.getDTO(config)
+					.getReaderFactoryID();
+			boolean isLlrpReaderType = false;
+
+			// Iterate over defined llrp reader types
+			for (int i = 0; i < LlrpReaderTypeArrray.length; i++) {
+
+				// If current reader type matches a defined llrp reader
+				// type
+				if (strCurrentReaderType.equals(LlrpReaderTypeArrray[i])) {
+
+					isLlrpReaderType = true;
+					break;
+				}
+			}
+
+			if (!isLlrpReaderType) {
+
+				// It is not an llrp reader type
+				throw new Exception("Reader with id " + strReaderId
+						+ " of type " + strCurrentReaderType
+						+ " is not an LLRP reader type");
+
+			}
+
+			Map<String, SensorSession> sessionMap = sensor.getSensorSessions();
+
+			// Check if session id exists
+			if (sessionMap.containsKey(objSessionId)) {
+
+				session = (LLRPReaderSession) sessionMap.get(objSessionId);
+
+				// Validate no current operations on session are
+				// running, and response to user if so
+				if (session.isRunningLLRPEncoding()) {
+
+					throw new Exception(
+							"Session with id "
+									+ objSessionId
+									+ " of reader with id "
+									+ strReaderId
+									+ " is currently in the middle of encoding operations. Try again in a while");
+
+				}
+
+				// Check if there is more than one tag in the scope
+				// of this reader, if so then fail
+				int numberOfTags = session.numTagsOnLLRP().intValue();
+				boolean thereIsOneTag = (numberOfTags == 1);
+
+				if (!thereIsOneTag) {
+
+					if (numberOfTags < 1) {
+
+						// There is no tag in the scope of the reader
+						throw new Exception(
+								"There is no tag in the scope of reader with id "
+										+ strReaderId);
+					} else {
+
+						throw new Exception("There are " + numberOfTags
+								+ " tags in the scope of the reader with id "
+								+ strReaderId);
+
+					}
+
+				}
+
+				// Set the block length of data to be written on this reader'
+				// session
+				session.setWriteDataBlockLength(4);
+
+				// There is only one tag in the scope of this reader
+				// for session object
+				// Get jvm properties
+				setLlrpEncodeJvmProperties(session);
+
+				if (strOperationCode == null) {
+
+					// There is no operation code, so we submit the complete
+					// encode operation
+
+					// Get the tag id from url
+					String strTag = (String) request.getAttributes().get("tag");
+
+					checkBlockLengthReminder(strTag,
+							session.getWriteDataBlockLength(), "tag");
+
+					llrpEncodeMessageDto = session.llrpEncode(strTag);
+
+				} else {
+
+					// Single shot operation, according to operation code
+
+					// Get the properties
+					String strPropAttr = (String) request.getAttributes().get(
+							"properties");
+
+					// Validate that if there are parameters, they are well pair
+					// formed values
+					AttributeList attributes = getProcessedAttributes(strPropAttr);
+
+					if (strOperationCode
+							.equals(LLRPReaderSession.LLRP_OPERATION_CODE.LLRPEPCWrite
+									.toString())) {
+
+						// check the required properties for epc write
+						// operation, and overwrite the properties got from jvm
+
+						// check for accesspwd and tag
+						String accesspwd = (String) getAttributeValue(
+								attributes, "accesspwd");
+						validatePassword(accesspwd, "Access");
+						session.setAccessPwd(accesspwd);
+
+						String strTag = (String) getAttributeValue(attributes,
+								"tag");
+						checkBlockLengthReminder(strTag,
+								session.getWriteDataBlockLength(), "tag");
+
+						llrpEncodeMessageDto = session
+								.llrpWriteEpcOperation(strTag);
+
+					} else if (strOperationCode
+							.equals(LLRPReaderSession.LLRP_OPERATION_CODE.LLRPAccessPasswordWrite
+									.toString())) {
+
+						// check for oldaccesspwd and accesspwd
+						String oldaccesspwd = (String) getAttributeValue(
+								attributes, "oldaccesspwd");
+						validatePassword(oldaccesspwd, "Old access");
+
+						String accesspwd = (String) getAttributeValue(
+								attributes, "accesspwd");
+						validatePassword(accesspwd, "Access");
+
+						session.setOldAccessPwd(oldaccesspwd);
+						session.setAccessPwd(accesspwd);
+
+						llrpEncodeMessageDto = session
+								.llrpWriteAccessPasswordOperation();
+
+					} else if (strOperationCode
+							.equals(LLRPReaderSession.LLRP_OPERATION_CODE.LLRPKillPasswordWrite
+									.toString())) {
+
+						// check for accesspwd and kill password
+						String accesspwd = (String) getAttributeValue(
+								attributes, "accesspwd");
+						validatePassword(accesspwd, "Access");
+						session.setAccessPwd(accesspwd);
+
+						String killpwd = (String) getAttributeValue(attributes,
+								"killpwd");
+						validatePassword(killpwd, "Kill");
+						session.setKillPwd(killpwd);
+
+						llrpEncodeMessageDto = session
+								.llrpWriteKillPasswordOperation();
+
+					} else if (strOperationCode
+							.equals(LLRPReaderSession.LLRP_OPERATION_CODE.LLRPEPCLock
+									.toString())) {
+
+						// check for accesspwd
+						String accesspwd = (String) getAttributeValue(
+								attributes, "accesspwd");
+						validatePassword(accesspwd, "Access");
+						session.setAccessPwd(accesspwd);
+
+						// check for privilege type
+						String strPrivilege = (String) getAttributeValue(
+								attributes, "privilege");
+
+						int intEpcLockPrivilege = LLRPReaderSession
+								.getLockPrivilege(strPrivilege);
+						session.setEpcLockPrivilege(intEpcLockPrivilege);
+
+						llrpEncodeMessageDto = session.llrpLockEpcOperation();
+
+					} else if (strOperationCode
+							.equals(LLRPReaderSession.LLRP_OPERATION_CODE.LLRPAccessPasswordLock
+									.toString())) {
+
+						// check for accesspwd
+						String accesspwd = (String) getAttributeValue(
+								attributes, "accesspwd");
+						validatePassword(accesspwd, "Access");
+						session.setAccessPwd(accesspwd);
+
+						// check for privilege type
+						String strPrivilege = (String) getAttributeValue(
+								attributes, "privilege");
+
+						int intAccessPwdLockPrivilege = LLRPReaderSession
+								.getLockPrivilege(strPrivilege);
+						session.setAccessPwdLockPrivilege(intAccessPwdLockPrivilege);
+
+						llrpEncodeMessageDto = session
+								.llrpLockAccessPasswordOperation();
+
+					} else if (strOperationCode
+							.equals(LLRPReaderSession.LLRP_OPERATION_CODE.LLRPKillPasswordLock
+									.toString())) {
+
+						// check for accesspwd
+						String accesspwd = (String) getAttributeValue(
+								attributes, "accesspwd");
+						validatePassword(accesspwd, "Access");
+						session.setAccessPwd(accesspwd);
+
+						// check for privilege type
+						String strPrivilege = (String) getAttributeValue(
+								attributes, "privilege");
+
+						int intKillPwdLockPrivilege = LLRPReaderSession
+								.getLockPrivilege(strPrivilege);
+						session.setKillPwdLockPrivilege(intKillPwdLockPrivilege);
+
+						llrpEncodeMessageDto = session
+								.llrpLockKillPasswordOperation();
+
+					} else {
+
+						throw new Exception("Operation with code "
+								+ strOperationCode + " is invalid. ");
+
+					}
+
+				}
+
+				/*
+				 * TODO delete session.addAccessSpec((String)
+				 * request.getAttributes() .get("password"), (String) request
+				 * .getAttributes().get("tag"));
+				 */
+
+			} else {
+
+				// Session id does not exist
+				throw new Exception("Session with id " + objSessionId
+						+ " does not exist for reader with id " + strReaderId);
+			}
+
+			// response.setEntity(self.generateReturnString(self
+			// .generateSuccessMessage()), MediaType.TEXT_XML);
+
+			response.setEntity(this.generateReturnString(llrpEncodeMessageDto),
+					MediaType.TEXT_XML);
+
+		} catch (Exception e) {
+
+			// test ini
+			// LLRPEncodeMessageDto llrpEncodeMessageDto = new
+			// LLRPEncodeMessageDto();
+			// llrpEncodeMessageDto.setStatus(FAIL_MESSAGE);
+			// response.setEntity(self.generateReturnString(llrpEncodeMessageDto),
+			// MediaType.TEXT_XML);
+			// test end
+
+			e.printStackTrace();
+
+			response.setEntity(
+					this.generateReturnString(this.generateErrorMessage(
+							e.getMessage(), null)), MediaType.TEXT_XML);
+
+		} finally {
+
+			// cleanup session
+			if (session != null) {
+
+				session.cleanupSession();
+
+			}
+
+		}
+
+	}
+
 	public Router initRestlet() {
-		
+
 		final SensorManagerServiceRestletImpl self = this;
 
 		Restlet readers = new Restlet() {
@@ -657,289 +962,88 @@ public class SensorManagerServiceRestletImpl extends Application {
 			}
 		};
 
-		
 		Restlet llrpEncode = new Restlet() {
 			@Override
 			public void handle(Request request, Response response) {
+
+				logger.info("llrpEncode requested");
+				executeLlrpOperation(request, response, null);
+
+			}
+		};
+
+		Restlet llrpEpcWrite = new Restlet() {
+			@Override
+			public void handle(Request request, Response response) {
+
+				logger.info("llrpEpcWrite requested");
+				executeLlrpOperation(request, response,
+						LLRPReaderSession.LLRP_OPERATION_CODE.LLRPEPCWrite);
+
+			}
+		};
+
+		Restlet llrpAccessPasswordWrite = new Restlet() {
+			@Override
+			public void handle(Request request, Response response) {
+
+				logger.info("llrpAccessPasswordWrite requested");
+				executeLlrpOperation(
+						request,
+						response,
+						LLRPReaderSession.LLRP_OPERATION_CODE.LLRPAccessPasswordWrite);
+
+			}
+		};
+
+		Restlet llrpKillPasswordWrite = new Restlet() {
+			@Override
+			public void handle(Request request, Response response) {
+
+				logger.info("llrpKillPasswordWrite requested");
+				executeLlrpOperation(
+						request,
+						response,
+						LLRPReaderSession.LLRP_OPERATION_CODE.LLRPKillPasswordWrite);
+
+			}
+		};
+
+		Restlet llrpEPCLock = new Restlet() {
+			@Override
+			public void handle(Request request, Response response) {
+
+				logger.info("llrpEPCLock requested");
+				executeLlrpOperation(request, response,
+						LLRPReaderSession.LLRP_OPERATION_CODE.LLRPEPCLock);
+
+			}
+		};
+
+		Restlet llrpAccessPasswordLock = new Restlet() {
+			@Override
+			public void handle(Request request, Response response) {
+
+				logger.info("llrpAccessPasswordLock requested");
+				executeLlrpOperation(
+						request,
+						response,
+						LLRPReaderSession.LLRP_OPERATION_CODE.LLRPAccessPasswordLock);
+
+			}
+		};
+
+		Restlet llrpKillPasswordLock = new Restlet() {
+			@Override
+			public void handle(Request request, Response response) {
 				
-				LLRPReaderSession session = null;
-				
-				try {
-					
-					//Variable to receive synchronous response if set
-					LLRPEncodeMessageDto llrpEncodeMessageDto = new LLRPEncodeMessageDto();
-					llrpEncodeMessageDto.setStatus("Success !!!");
+				logger.info("llrpKillPasswordLock requested");
 
-					String strReaderId = (String) request.getAttributes().get(
-							"readerID");
+				executeLlrpOperation(
+						request,
+						response,
+						LLRPReaderSession.LLRP_OPERATION_CODE.LLRPKillPasswordLock);
 
-					Object objSessionId = request.getAttributes().get(
-							"sessionID");
-
-					// Check if reader id exists
-					if (!readerExists(strReaderId)) {
-						throw new Exception("Reader with id " + strReaderId
-								+ " does not exist");
-					}
-
-					AbstractSensor<?> sensor = readerDAO
-							.getReaderByID(strReaderId);
-
-					// look up the associated service configuration object
-					Configuration config = configService
-							.getConfiguration(strReaderId);
-
-					// Check if reader id is a LLRP reader type
-					String strCurrentReaderType = sensor.getDTO(config)
-							.getReaderFactoryID();
-					boolean isLlrpReaderType = false;
-
-					// Iterate over defined llrp reader types
-					for (int i = 0; i < LlrpReaderTypeArrray.length; i++) {
-
-						// If current reader type matches a defined llrp reader
-						// type
-						if (strCurrentReaderType
-								.equals(LlrpReaderTypeArrray[i])) {
-
-							isLlrpReaderType = true;
-							break;
-						}
-					}
-
-					if (!isLlrpReaderType) {
-
-						// It is not a llrp reader type
-						throw new Exception("Reader with id " + strReaderId
-								+ " of type " + strCurrentReaderType
-								+ " is not an LLRP reader type");
-
-					}
-
-					Map<String, SensorSession> sessionMap = sensor
-							.getSensorSessions();
-
-					// Check if session id exists
-					if (sessionMap.containsKey(objSessionId)) {
-
-						session = (LLRPReaderSession) sessionMap
-								.get(objSessionId);
-
-						// Validate no current operations on session are
-						// running, and response to user if so
-						if (session.isRunningLLRPEncoding()) {
-
-							throw new Exception(
-									"Session with id "
-											+ objSessionId
-											+ " of reader with id "
-											+ strReaderId
-											+ " is currently in the middle of encoding operations. Try again in a while");
-
-						}
-
-						// Check if there is more than one tag in the scope
-						// of this reader, if so then fail
-						int numberOfTags = session.numTagsOnLLRP().intValue();
-						boolean thereIsOneTag = (numberOfTags == 1);
-						
-
-						if (!thereIsOneTag) {
-							
-							if (numberOfTags < 1 ) {
-
-								// There is no tag in the scope of the reader
-								throw new Exception(
-										"There is no tag in the scope of reader with id "
-												+ strReaderId);
-							} else {
-								
-								throw new Exception(
-										"There are " + numberOfTags + " tags in the scope of the reader with id "
-												+ strReaderId);
-								
-							}
-
-						}
-						
-						//Set the block length of data to be written on this reader' session 
-						session.setWriteDataBlockLength(4);
-
-						// There is only one tag in the scope of this reader
-						// for session object
-						// Get jvm properties
-						setLlrpEncodeJvmProperties(session);
-						
-						// Get the tag id from url
-						String strTag = (String) request.getAttributes().get(
-								"tag");
-						
-						checkBlockLengthReminder(strTag, session.getWriteDataBlockLength(), "tag");
-						
-						//Check if there is a single operation requested
-						String strOperationCode = (String) request.getAttributes().get(
-								"operationCode");
-						
-						if (strOperationCode == null){
-						
-							//There is no operation code, so we submit the complete encode operation 
-							llrpEncodeMessageDto = session.llrpEncode(strTag);
-							
-						} else {
-							
-							//Single shot operation, according to operation code
-							
-							//Get the properties							
-							String strPropAttr = (String) request.getAttributes().get(
-									"properties");
-							
-							//Validate that if there are parameters, they are well pair formed values
-							AttributeList attributes = getProcessedAttributes(strPropAttr);
-							
-							if (strOperationCode.equals(LLRPReaderSession.LLRP_OPERATION_CODE.LLRPEPCWrite.toString())){
-								
-								//check the required properties for epc write operation, and overwrite the properties got from jvm
-								
-								//check for accesspwd
-								String accesspwd = (String) getAttributeValue(attributes, "accesspwd");
-								validatePassword(accesspwd, "Access");
-								session.setAccessPwd(accesspwd);
-								
-								llrpEncodeMessageDto = session.llrpWriteEpcOperation(strTag);
-								
-							} else if (strOperationCode.equals(LLRPReaderSession.LLRP_OPERATION_CODE.LLRPAccessPasswordWrite.toString())){
-								
-								//check for oldaccesspwd and accesspwd
-								String oldaccesspwd = (String) getAttributeValue(attributes, "oldaccesspwd");
-								validatePassword(oldaccesspwd, "Old access");
-								
-								String accesspwd = (String) getAttributeValue(attributes, "accesspwd");
-								validatePassword(accesspwd, "Access");
-								
-								session.setOldAccessPwd(oldaccesspwd);
-								session.setAccessPwd(accesspwd);
-								
-								llrpEncodeMessageDto = session.llrpWriteAccessPasswordOperation();
-								
-								
-							} else if (strOperationCode.equals(LLRPReaderSession.LLRP_OPERATION_CODE.LLRPKillPasswordWrite.toString())){
-								
-								//check for accesspwd and kill password
-								String accesspwd = (String) getAttributeValue(attributes, "accesspwd");
-								validatePassword(accesspwd, "Access");
-								session.setAccessPwd(accesspwd);
-								
-								String killpwd = (String) getAttributeValue(attributes, "killpwd");
-								validatePassword(killpwd, "Kill");
-								session.setKillPwd(killpwd);
-								
-								llrpEncodeMessageDto = session.llrpWriteKillPasswordOperation();
-								
-							} else if (strOperationCode.equals(LLRPReaderSession.LLRP_OPERATION_CODE.LLRPEPCLock.toString())){
-								
-								//check for accesspwd
-								String accesspwd = (String) getAttributeValue(attributes, "accesspwd");
-								validatePassword(accesspwd, "Access");
-								session.setAccessPwd(accesspwd);
-								
-								//check for privilege type
-								String strPrivilege = (String) getAttributeValue(attributes, "privilege");
-								
-								int intEpcLockPrivilege = LLRPReaderSession
-										.getLockPrivilege(strPrivilege);
-								session.setEpcLockPrivilege(intEpcLockPrivilege);
-								
-								llrpEncodeMessageDto = session.llrpLockEpcOperation();
-								
-							} else if (strOperationCode.equals(LLRPReaderSession.LLRP_OPERATION_CODE.LLRPAccessPasswordLock.toString())){
-								
-								
-								//check for accesspwd
-								String accesspwd = (String) getAttributeValue(attributes, "accesspwd");
-								validatePassword(accesspwd, "Access");
-								session.setAccessPwd(accesspwd);
-								
-								//check for privilege type
-								String strPrivilege = (String) getAttributeValue(attributes, "privilege");
-								
-								int intAccessPwdLockPrivilege = LLRPReaderSession
-										.getLockPrivilege(strPrivilege);
-								session.setAccessPwdLockPrivilege(intAccessPwdLockPrivilege);
-								
-								llrpEncodeMessageDto = session.llrpLockAccessPasswordOperation();
-								
-								
-							} else if (strOperationCode.equals(LLRPReaderSession.LLRP_OPERATION_CODE.LLRPKillPasswordLock.toString())){
-								
-								//check for accesspwd
-								String accesspwd = (String) getAttributeValue(attributes, "accesspwd");
-								validatePassword(accesspwd, "Access");
-								session.setAccessPwd(accesspwd);
-								
-								//check for privilege type
-								String strPrivilege = (String) getAttributeValue(attributes, "privilege");
-								
-								int intKillPwdLockPrivilege = LLRPReaderSession
-										.getLockPrivilege(strPrivilege);
-								session.setKillPwdLockPrivilege(intKillPwdLockPrivilege);
-								
-								llrpEncodeMessageDto = session.llrpLockKillPasswordOperation();
-								
-							} else {
-								
-								throw new Exception("Operation with code " + strOperationCode + " is invalid. ");
-								
-							}
-							
-							
-							
-						}
-						
-
-
-						/*
-						 * TODO delete session.addAccessSpec((String)
-						 * request.getAttributes() .get("password"), (String)
-						 * request .getAttributes().get("tag"));
-						 */
-
-					} else {
-
-						// Session id does not exist
-						throw new Exception("Session with id " + objSessionId
-								+ " does not exist for reader with id "
-								+ strReaderId);
-					}
-
-					//response.setEntity(self.generateReturnString(self
-					//		.generateSuccessMessage()), MediaType.TEXT_XML);
-					
-					response.setEntity(self.generateReturnString(llrpEncodeMessageDto), MediaType.TEXT_XML);
-
-				} catch (Exception e) {
-					
-					//test ini
-					//LLRPEncodeMessageDto llrpEncodeMessageDto = new LLRPEncodeMessageDto();
-					//llrpEncodeMessageDto.setStatus(FAIL_MESSAGE);
-					//response.setEntity(self.generateReturnString(llrpEncodeMessageDto), MediaType.TEXT_XML);
-					//test end
-					
-					e.printStackTrace();
-
-					response.setEntity(self.generateReturnString(self
-							.generateErrorMessage(e.getMessage(), null)),
-							MediaType.TEXT_XML);
-					
-				} finally {
-					
-					//cleanup session
-					if (session != null){
-						
-						session.cleanupSession();
-						
-					}
-					
-				}
 			}
 		};
 
@@ -975,7 +1079,8 @@ public class SensorManagerServiceRestletImpl extends Application {
 			public void handle(Request request, Response response) {
 				PingDTO ping = new PingDTO();
 				ping.setTimestamp(Long.toString(System.currentTimeMillis()));
-				response.setEntity(self.generateReturnString(ping), MediaType.TEXT_XML);
+				response.setEntity(self.generateReturnString(ping),
+						MediaType.TEXT_XML);
 			}
 		};
 
@@ -1012,19 +1117,70 @@ public class SensorManagerServiceRestletImpl extends Application {
 		router.attach("/readertypes", readerTypes);
 		router.attach("/apps", apps);
 		router.attach("/save", save);
-		router.attach("/llrpencode/{readerID}/{sessionID}/{tag}", llrpEncode);
 		
-		//single shot command with no properties
+		// single shot commands
+
+		// LLRPEPCWrite single shot command with no properties
+		router.attach("/llrpencode/{readerID}/{sessionID}/LLRPEPCWrite",
+				llrpEpcWrite);
+
+		// LLRPEPCWrite single shot command with properties
 		router.attach(
-				"/llrpencode/{readerID}/{sessionID}/{tag}/{operationCode}",
-				llrpEncode);
+				"/llrpencode/{readerID}/{sessionID}/LLRPEPCWrite/{properties}",
+				llrpEpcWrite);
+
+		// llrpAccessPasswordWrite single shot command with no properties
+		router.attach(
+				"/llrpencode/{readerID}/{sessionID}/LLRPAccessPasswordWrite",
+				llrpAccessPasswordWrite);
+
+		// llrpAccessPasswordWrite single shot command with properties
+		router.attach(
+				"/llrpencode/{readerID}/{sessionID}/LLRPAccessPasswordWrite/{properties}",
+				llrpAccessPasswordWrite);
+
+		// llrpKillPasswordWrite single shot command with no properties
+		router.attach(
+				"/llrpencode/{readerID}/{sessionID}/LLRPKillPasswordWrite",
+				llrpKillPasswordWrite);
+
+		// llrpKillPasswordWrite single shot command with properties
+		router.attach(
+				"/llrpencode/{readerID}/{sessionID}/LLRPKillPasswordWrite/{properties}",
+				llrpKillPasswordWrite);
+
+		// llrpEPCLock single shot command with no properties
+		router.attach("/llrpencode/{readerID}/{sessionID}/LLRPEPCLock",
+				llrpEPCLock);
+
+		// llrpEPCLock single shot command with properties
+		router.attach(
+				"/llrpencode/{readerID}/{sessionID}/LLRPEPCLock/{properties}",
+				llrpEPCLock);
+
+		// llrpAccessPasswordLock single shot command with no properties
+		router.attach(
+				"/llrpencode/{readerID}/{sessionID}/LLRPAccessPasswordLock",
+				llrpAccessPasswordLock);
+
+		// llrpAccessPasswordLock single shot command with properties
+		router.attach(
+				"/llrpencode/{readerID}/{sessionID}/LLRPAccessPasswordLock/{properties}",
+				llrpAccessPasswordLock);
+
+		// llrpKillPasswordLock single shot command with no properties
+		router.attach(
+				"/llrpencode/{readerID}/{sessionID}/LLRPKillPasswordLock",
+				llrpKillPasswordLock);
+
+		// llrpKillPasswordLock single shot command with properties
+		router.attach(
+				"/llrpencode/{readerID}/{sessionID}/LLRPKillPasswordLock/{properties}",
+				llrpKillPasswordLock);
 		
-		//single shot command with properties
-				router.attach(
-						"/llrpencode/{readerID}/{sessionID}/{tag}/{operationCode}/{properties}",
-						llrpEncode);
-		
-		
+		//llrp encode
+		router.attach("/llrpencode/{readerID}/{sessionID}/{tag}", llrpEncode);
+
 		router.attach("/llrpmessage/{readerID}/{sessionID}/{llrpmessage}",
 				llrpMessage);
 		router.attach("/ping", ping);
@@ -1367,7 +1523,8 @@ public class SensorManagerServiceRestletImpl extends Application {
 		String strTagMask = System
 				.getProperty("org.rifidi.llrp.encode.tagmask");
 
-		checkBlockLengthReminder(strTagMask, session.getWriteDataBlockLength(), "tagMask");
+		checkBlockLengthReminder(strTagMask, session.getWriteDataBlockLength(),
+				"tagMask");
 
 		session.setTagMask(strTagMask != null ? strTagMask
 				: LLRPReaderSession.DEFAULT_TAG_MASK);
@@ -1402,8 +1559,8 @@ public class SensorManagerServiceRestletImpl extends Application {
 
 		session.setKillPwd(strKillPwd != null ? strKillPwd
 				: LLRPReaderSession.DEFAULT_KILL_PASSWORD);
-		
-		//Set the lock privileges
+
+		// Set the lock privileges
 
 		String strKillPwdLockPrivilege = System
 				.getProperty("org.rifidi.llrp.encode.killpwdlockprivilege");
@@ -1446,48 +1603,49 @@ public class SensorManagerServiceRestletImpl extends Application {
 
 			session.setEpcLockPrivilege(LLRPReaderSession.DEFAULT_EPC_LOCK_PRIVILEGE);
 		}
-		
-		//Check if properties for mqtt are set, if so then submit operations response
-		//in asynchronous mode to this mqtt, 
-		//otherwise, submit operations ressonse to web browser in synchronous mode
+
+		// Check if properties for mqtt are set, if so then submit operations
+		// response
+		// in asynchronous mode to this mqtt,
+		// otherwise, submit operations ressonse to web browser in synchronous
+		// mode
 		boolean asynchronousMode = true;
-		
-		//Check mqttbroker
-		String mqttBroker = System.getProperty("org.rifidi.llrp.encode.mqttbroker");
-		
-		if (mqttBroker != null && !mqttBroker.isEmpty()){
-			
+
+		// Check mqttbroker
+		String mqttBroker = System
+				.getProperty("org.rifidi.llrp.encode.mqttbroker");
+
+		if (mqttBroker != null && !mqttBroker.isEmpty()) {
+
 			session.setMqttBroker(mqttBroker);
-			
+
 		} else {
 			asynchronousMode = false;
 		}
-		
-		
-		//Check mqttqos
+
+		// Check mqttqos
 		String mqttQos = System.getProperty("org.rifidi.llrp.encode.mqttqos");
-		
-		if (mqttQos != null && !mqttQos.isEmpty()){
-			
+
+		if (mqttQos != null && !mqttQos.isEmpty()) {
+
 			session.setMqttQos(Integer.valueOf(mqttQos));
-			
+
 		} else {
 			asynchronousMode = false;
 		}
-		
-		
-		//Check mqttclientid
+
+		// Check mqttclientid
 		String mqttClientId = System
 				.getProperty("org.rifidi.llrp.encode.mqttclientid");
-		
-		if (mqttClientId != null && !mqttClientId.isEmpty()){
-			
+
+		if (mqttClientId != null && !mqttClientId.isEmpty()) {
+
 			session.setMqttClientId(mqttClientId);
-			
+
 		} else {
 			asynchronousMode = false;
 		}
-		
+
 		session.setExecuteOperationsInAsynchronousMode(asynchronousMode);
 
 	}
@@ -1519,20 +1677,21 @@ public class SensorManagerServiceRestletImpl extends Application {
 					+ " password must be 8 characters or value of 0");
 		}
 	}
-	
-	private Object getAttributeValue(AttributeList attributes, String attributeName)
-			throws Exception {
-		
+
+	private Object getAttributeValue(AttributeList attributes,
+			String attributeName) throws Exception {
+
 		for (Attribute attr : attributes.asList()) {
-			
-			if (attr.getName().equals(attributeName)){
+
+			if (attr.getName().equals(attributeName)) {
 				return attr.getValue();
 			}
-			 
+
 		}
-		
-		throw new Exception("The property " + attributeName + " is required and is not present");
-		
+
+		throw new Exception("The property " + attributeName
+				+ " is required and is not present");
+
 	}
 
 	/**
@@ -1543,25 +1702,24 @@ public class SensorManagerServiceRestletImpl extends Application {
 	 * @param blockLength
 	 *            the length of block the value has to satisfy
 	 * @param valueName
-	 *            the name of the value to be checked, to be put in the exception message if it fails
+	 *            the name of the value to be checked, to be put in the
+	 *            exception message if it fails
 	 * @throws Exception
 	 *             if the remainder of value / blockLength is different to zero
 	 */
-	private void checkBlockLengthReminder(String value, int blockLength, String valueName)
-			throws Exception {
+	private void checkBlockLengthReminder(String value, int blockLength,
+			String valueName) throws Exception {
 
 		int reminder = value.length() % blockLength;
 		if (reminder != 0) {
-			throw new Exception("The value for " + valueName 
+			throw new Exception("The value for " + valueName
 					+ " has a wrong length of " + value.length()
 					+ ". It is expected this length to be a multiple of "
 					+ blockLength);
 		}
 
 	}
-	
-		
-	
+
 	/*
 	 * private List<TagReadEvent> getCurrentTags(String readerID) {
 	 * 
