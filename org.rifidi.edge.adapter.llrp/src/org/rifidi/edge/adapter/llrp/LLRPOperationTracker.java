@@ -6,6 +6,8 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.TimerTask;
 
@@ -38,8 +40,8 @@ import org.llrp.ltk.types.UnsignedShort;
 
 public class LLRPOperationTracker extends TimerTask implements Serializable {
 
-	/** Map to keep track of all operations and responses received **/
-	private Map<UnsignedShort, LLRPOperationDto> operationMap;
+	/** List to keep track of all operations and responses received **/
+	private List<LLRPOperationDto> operationList;
 
 	/** milliseconds to sleep this thread and wait for timeout **/
 	long millisToSleep = 500;
@@ -61,7 +63,7 @@ public class LLRPOperationTracker extends TimerTask implements Serializable {
 	public LLRPOperationTracker(LLRPReaderSession llrpReaderSession) {
 		super();
 		this.llrpReaderSession = llrpReaderSession;
-		operationMap = new HashMap<UnsignedShort, LLRPOperationDto>();
+		operationList = new LinkedList<LLRPOperationDto>();
 	}
 
 	
@@ -81,24 +83,39 @@ public class LLRPOperationTracker extends TimerTask implements Serializable {
 	}
 
 	public void addOperationDto(LLRPOperationDto llrpOperationDto) {
-		operationMap.put(llrpOperationDto.getOpSpecId(), llrpOperationDto);
+		operationList.add(llrpOperationDto);
 	}
 
-	/**
-	 * @return the operationMap
-	 */
-	public Map<UnsignedShort, LLRPOperationDto> getOperationMap() {
-		return operationMap;
-	}
+	
 
 	/**
-	 * @param operationMap
-	 *            the operationMap to set
+	 * @return the operationList
 	 */
-	public void setOperationMap(
-			Map<UnsignedShort, LLRPOperationDto> operationMap) {
-		this.operationMap = operationMap;
+	public List<LLRPOperationDto> getOperationList() {
+		return operationList;
 	}
+
+
+	/**
+	 * @param operationList the operationList to set
+	 */
+	public void setOperationList(List<LLRPOperationDto> operationList) {
+		this.operationList = operationList;
+	}
+	
+	public LLRPOperationDto getOperationByOpSpecId(UnsignedShort opSpecId){
+		
+		for(LLRPOperationDto llrpOperationDto : operationList){
+			
+			if (llrpOperationDto.getOpSpecId().equals(opSpecId)){
+				
+				return llrpOperationDto;
+			}
+		}
+		
+		return null;
+	}
+
 
 	/**
 	 * Set the result received
@@ -111,62 +128,68 @@ public class LLRPOperationTracker extends TimerTask implements Serializable {
 		if (result instanceof C1G2BlockEraseOpSpecResult) {
 
 			C1G2BlockEraseOpSpecResult res = (C1G2BlockEraseOpSpecResult) result;
-			System.out.println("\n1.res.getResult(): " + res.getResult());
-			System.out.println("res.getOpSpecID(): " + res.getOpSpecID());
+			logger.info("\n1.res.getResult(): " + res.getResult());
+			logger.info("res.getOpSpecID(): " + res.getOpSpecID());
 
 			// Assign the result to appropriate operation in tracker
-			operationMap.get(res.getOpSpecID()).setResponseResult(res);
-			operationMap.get(res.getOpSpecID()).setResponseCode(res.getResult().toString());
+			LLRPOperationDto llrpOperationDto = getOperationByOpSpecId(res.getOpSpecID());
+			llrpOperationDto.setResponseResult(res);
+			llrpOperationDto.setResponseCode(res.getResult().toString());
 
 		} else if (result instanceof C1G2BlockWriteOpSpecResult) {
 
 			C1G2BlockWriteOpSpecResult res = (C1G2BlockWriteOpSpecResult) result;
-			System.out.println("\n2.res.getResult(): " + res.getResult());
-			System.out.println("res.getOpSpecID(): " + res.getOpSpecID());
+			logger.info("\n2.res.getResult(): " + res.getResult());
+			logger.info("res.getOpSpecID(): " + res.getOpSpecID());
 
 			// Assign the result to appropriate operation in tracker
-			operationMap.get(res.getOpSpecID()).setResponseResult(res);
-			operationMap.get(res.getOpSpecID()).setResponseCode(res.getResult().toString());
+			LLRPOperationDto llrpOperationDto = getOperationByOpSpecId(res.getOpSpecID());
+			llrpOperationDto.setResponseResult(res);
+			llrpOperationDto.setResponseCode(res.getResult().toString());
 
 		} else if (result instanceof C1G2KillOpSpecResult) {
 
 			C1G2KillOpSpecResult res = (C1G2KillOpSpecResult) result;
-			System.out.println("\n3.res.getResult(): " + res.getResult());
-			System.out.println("res.getOpSpecID(): " + res.getOpSpecID());
+			logger.info("\n3.res.getResult(): " + res.getResult());
+			logger.info("res.getOpSpecID(): " + res.getOpSpecID());
 
 			// Assign the result to appropriate operation in tracker
-			operationMap.get(res.getOpSpecID()).setResponseResult(res);
-			operationMap.get(res.getOpSpecID()).setResponseCode(res.getResult().toString());
+			LLRPOperationDto llrpOperationDto = getOperationByOpSpecId(res.getOpSpecID());
+			llrpOperationDto.setResponseResult(res);
+			llrpOperationDto.setResponseCode(res.getResult().toString());
 
 		} else if (result instanceof C1G2LockOpSpecResult) {
 
 			C1G2LockOpSpecResult res = (C1G2LockOpSpecResult) result;
-			System.out.println("\n4.res.getResult(): " + res.getResult());
-			System.out.println("res.getOpSpecID(): " + res.getOpSpecID());
+			logger.info("\n4.res.getResult(): " + res.getResult());
+			logger.info("res.getOpSpecID(): " + res.getOpSpecID());
 
 			// Assign the result to appropriate operation in tracker
-			operationMap.get(res.getOpSpecID()).setResponseResult(res);
-			operationMap.get(res.getOpSpecID()).setResponseCode(res.getResult().toString());
+			LLRPOperationDto llrpOperationDto = getOperationByOpSpecId(res.getOpSpecID());
+			llrpOperationDto.setResponseResult(res);
+			llrpOperationDto.setResponseCode(res.getResult().toString());
 
 		} else if (result instanceof C1G2ReadOpSpecResult) {
 
 			C1G2ReadOpSpecResult res = (C1G2ReadOpSpecResult) result;
-			System.out.println("\n5.res.getResult(): " + res.getResult());
-			System.out.println("res.getOpSpecID(): " + res.getOpSpecID());
+			logger.info("\n5.res.getResult(): " + res.getResult());
+			logger.info("res.getOpSpecID(): " + res.getOpSpecID());
 
 			// Assign the result to appropriate operation in tracker
-			operationMap.get(res.getOpSpecID()).setResponseResult(res);
-			operationMap.get(res.getOpSpecID()).setResponseCode(res.getResult().toString());
+			LLRPOperationDto llrpOperationDto = getOperationByOpSpecId(res.getOpSpecID());
+			llrpOperationDto.setResponseResult(res);
+			llrpOperationDto.setResponseCode(res.getResult().toString());
 
 		} else if (result instanceof C1G2WriteOpSpecResult) {
 
 			C1G2WriteOpSpecResult res = (C1G2WriteOpSpecResult) result;
-			System.out.println("\n6.res.getResult(): " + res.getResult());
-			System.out.println("res.getOpSpecID(): " + res.getOpSpecID());
+			logger.info("\n6.res.getResult(): " + res.getResult());
+			logger.info("res.getOpSpecID(): " + res.getOpSpecID());
 
 			// Assign the result to appropriate operation in tracker
-			operationMap.get(res.getOpSpecID()).setResponseResult(res);
-			operationMap.get(res.getOpSpecID()).setResponseCode(res.getResult().toString());
+			LLRPOperationDto llrpOperationDto = getOperationByOpSpecId(res.getOpSpecID());
+			llrpOperationDto.setResponseResult(res);
+			llrpOperationDto.setResponseCode(res.getResult().toString());
 
 		}
 
@@ -179,7 +202,7 @@ public class LLRPOperationTracker extends TimerTask implements Serializable {
 	 */
 	public boolean areAllResultsReceived() {
 
-		for (LLRPOperationDto llrpOperationDto : getOperationMap().values()) {
+		for (LLRPOperationDto llrpOperationDto : getOperationList()) {
 
 			if (llrpOperationDto.getResponseResult() == null) {
 				return false;
@@ -201,7 +224,7 @@ public class LLRPOperationTracker extends TimerTask implements Serializable {
 			return false;
 		}
 
-		for (LLRPOperationDto llrpOperationDto : getOperationMap().values()) {
+		for (LLRPOperationDto llrpOperationDto : getOperationList()) {
 
 			if (llrpOperationDto.getResponseResult() instanceof C1G2BlockEraseOpSpecResult) {
 
@@ -280,9 +303,9 @@ public class LLRPOperationTracker extends TimerTask implements Serializable {
 	@Override
 	public void run() {
 
-		System.out.println("Start time:" + new Date());
+		logger.info("Start time:" + new Date());
 		checkOperationStatus();
-		System.out.println("End time:" + new Date());
+		logger.info("End time:" + new Date());
 
 	}
 
@@ -322,59 +345,55 @@ public class LLRPOperationTracker extends TimerTask implements Serializable {
 
 		if (areAllResultsReceived()) {
 
-			System.out.println("allResultsReceived()");
+			logger.info("allResultsReceived()");
 
 		} else {
 
-			System.out.println("NOT allResultsReceived()");
+			logger.info("NOT allResultsReceived()");
 
 		}
+		
+		//topic to post message if asynchronous
+		String topicName = llrpReaderSession.getSensor().getID()
+				+ "/encode";
 
 		if (areAllResultsSuccessful()) {
 
-			// Post to queue a single success message is asynchronous
-			System.out.println("allResultsSuccessful()");
-			String topicName = llrpReaderSession.getSensor().getID()
-					+ "/encode";
-			
+			logger.info("allResultsSuccessful()");
 
 			// TODO change this hard coded success message
 			llrpEncodeMessageDto.setStatus("Success");
-			//postMqttMesssage(topicName, llrpEncodeMessageDto);
 
 		} else {
 
 			// TODO change this hard coded fail message
 			llrpEncodeMessageDto.setStatus("Fail");
 			
-			System.out.println("NOT allResultsSuccessful()");
-
+			logger.info("NOT allResultsSuccessful()");
 		
 			//Set the operation list with it's returned operation code
-			for (LLRPOperationDto llrpOperationDto : getOperationMap().values()) {
+			for (LLRPOperationDto llrpOperationDto : getOperationList()) {
 				
-				//try{
-					//llrpEncodeMessageDto.addOperation(llrpOperationDto.getOperationName() + ":" + llrpOperationDto.getResponseCode() + "accessspecres: " + llrpOperationDto.getAccessSpecResponse().toXMLString());
-					llrpEncodeMessageDto.addOperation(llrpOperationDto.getOperationName() + ":" + llrpOperationDto.getResponseCode());
-				//} catch (InvalidLLRPMessageException ex){
-				//	ex.printStackTrace();
-				//}
+				llrpEncodeMessageDto.addOperation(llrpOperationDto.getOperationName() + ":" + llrpOperationDto.getResponseCode());
 				
 			}
 			
-			// TODO post to queue a fail message if asynchronous
 		}
-
-		// Cancel this timer
-		cancel();
-		System.out.println("TimerTask cancelled! :" + new Date());
 		
+		// post to queue and cleanup if asynchronous
 		if (llrpReaderSession.isExecuteOperationsInAsynchronousMode()){
+			
+			postMqttMesssage(topicName, llrpEncodeMessageDto);
 			
 			llrpReaderSession.cleanupSession();
 			
 		}
 
+		// Cancel this timer
+		cancel();
+		
+		logger.info("TimerTask cancelled! :" + new Date());
+		
 		return llrpEncodeMessageDto;
 
 	}
