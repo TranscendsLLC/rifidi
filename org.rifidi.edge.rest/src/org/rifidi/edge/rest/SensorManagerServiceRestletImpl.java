@@ -833,7 +833,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 								validatePassword(killpwd, "Kill");
 								session.setKillPwd(killpwd);
 								
-								//llrpEncodeMessageDto = session.llrpWriteKillPasswordOperation();
+								llrpEncodeMessageDto = session.llrpWriteKillPasswordOperation();
 								
 							} else if (strOperationCode.equals(LLRPReaderSession.LLRP_OPERATION_CODE.LLRPEPCLock.toString())){
 								
@@ -843,14 +843,47 @@ public class SensorManagerServiceRestletImpl extends Application {
 								session.setAccessPwd(accesspwd);
 								
 								//check for privilege type
-								String privilege = (String) getAttributeValue(attributes, "privilege");
-								//session.setEpcLockPrivilege(epcLockPrivilege)
+								String strPrivilege = (String) getAttributeValue(attributes, "privilege");
 								
-								//llrpEncodeMessageDto = session.llrpLockEpcOperation();
+								int intEpcLockPrivilege = LLRPReaderSession
+										.getLockPrivilege(strPrivilege);
+								session.setEpcLockPrivilege(intEpcLockPrivilege);
+								
+								llrpEncodeMessageDto = session.llrpLockEpcOperation();
 								
 							} else if (strOperationCode.equals(LLRPReaderSession.LLRP_OPERATION_CODE.LLRPAccessPasswordLock.toString())){
 								
+								
+								//check for accesspwd
+								String accesspwd = (String) getAttributeValue(attributes, "accesspwd");
+								validatePassword(accesspwd, "Access");
+								session.setAccessPwd(accesspwd);
+								
+								//check for privilege type
+								String strPrivilege = (String) getAttributeValue(attributes, "privilege");
+								
+								int intAccessPwdLockPrivilege = LLRPReaderSession
+										.getLockPrivilege(strPrivilege);
+								session.setAccessPwdLockPrivilege(intAccessPwdLockPrivilege);
+								
+								llrpEncodeMessageDto = session.llrpLockAccessPasswordOperation();
+								
+								
 							} else if (strOperationCode.equals(LLRPReaderSession.LLRP_OPERATION_CODE.LLRPKillPasswordLock.toString())){
+								
+								//check for accesspwd
+								String accesspwd = (String) getAttributeValue(attributes, "accesspwd");
+								validatePassword(accesspwd, "Access");
+								session.setAccessPwd(accesspwd);
+								
+								//check for privilege type
+								String strPrivilege = (String) getAttributeValue(attributes, "privilege");
+								
+								int intKillPwdLockPrivilege = LLRPReaderSession
+										.getLockPrivilege(strPrivilege);
+								session.setKillPwdLockPrivilege(intKillPwdLockPrivilege);
+								
+								llrpEncodeMessageDto = session.llrpLockKillPasswordOperation();
 								
 							} else {
 								
@@ -885,11 +918,18 @@ public class SensorManagerServiceRestletImpl extends Application {
 
 				} catch (Exception e) {
 					
+					//test ini
+					//LLRPEncodeMessageDto llrpEncodeMessageDto = new LLRPEncodeMessageDto();
+					//llrpEncodeMessageDto.setStatus(FAIL_MESSAGE);
+					//response.setEntity(self.generateReturnString(llrpEncodeMessageDto), MediaType.TEXT_XML);
+					//test end
+					
 					e.printStackTrace();
 
 					response.setEntity(self.generateReturnString(self
 							.generateErrorMessage(e.getMessage(), null)),
 							MediaType.TEXT_XML);
+					
 				} finally {
 					
 					//cleanup session
