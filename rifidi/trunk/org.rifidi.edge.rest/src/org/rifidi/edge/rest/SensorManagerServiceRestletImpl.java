@@ -661,6 +661,9 @@ public class SensorManagerServiceRestletImpl extends Application {
 		Restlet llrpEncode = new Restlet() {
 			@Override
 			public void handle(Request request, Response response) {
+				
+				LLRPReaderSession session = null;
+				
 				try {
 					
 					//Variable to receive synchronous response if set
@@ -719,7 +722,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 					// Check if session id exists
 					if (sessionMap.containsKey(objSessionId)) {
 
-						LLRPReaderSession session = (LLRPReaderSession) sessionMap
+						session = (LLRPReaderSession) sessionMap
 								.get(objSessionId);
 
 						// Validate no current operations on session are
@@ -860,7 +863,6 @@ public class SensorManagerServiceRestletImpl extends Application {
 						}
 						
 
-						
 
 						/*
 						 * TODO delete session.addAccessSpec((String)
@@ -888,6 +890,15 @@ public class SensorManagerServiceRestletImpl extends Application {
 					response.setEntity(self.generateReturnString(self
 							.generateErrorMessage(e.getMessage(), null)),
 							MediaType.TEXT_XML);
+				} finally {
+					
+					//cleanup session
+					if (session != null){
+						
+						session.cleanupSession();
+						
+					}
+					
 				}
 			}
 		};
