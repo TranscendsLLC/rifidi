@@ -353,11 +353,12 @@ public class LLRPOperationTracker extends TimerTask implements Serializable {
 			//Set the operation list with it's returned operation code
 			for (LLRPOperationDto llrpOperationDto : getOperationMap().values()) {
 				
-				try{
-					llrpEncodeMessageDto.addOperation(llrpOperationDto.getOperationName() + ":" + llrpOperationDto.getResponseCode() + "accessspecres: " + llrpOperationDto.getAccessSpecResponse().toXMLString());
-				} catch (InvalidLLRPMessageException ex){
-					ex.printStackTrace();
-				}
+				//try{
+					//llrpEncodeMessageDto.addOperation(llrpOperationDto.getOperationName() + ":" + llrpOperationDto.getResponseCode() + "accessspecres: " + llrpOperationDto.getAccessSpecResponse().toXMLString());
+					llrpEncodeMessageDto.addOperation(llrpOperationDto.getOperationName() + ":" + llrpOperationDto.getResponseCode());
+				//} catch (InvalidLLRPMessageException ex){
+				//	ex.printStackTrace();
+				//}
 				
 			}
 			
@@ -367,9 +368,13 @@ public class LLRPOperationTracker extends TimerTask implements Serializable {
 		// Cancel this timer
 		cancel();
 		System.out.println("TimerTask cancelled! :" + new Date());
-
-		llrpReaderSession.setRunningLLRPEncoding(false);
 		
+		if (llrpReaderSession.isExecuteOperationsInAsynchronousMode()){
+			
+			llrpReaderSession.cleanupSession();
+			
+		}
+
 		return llrpEncodeMessageDto;
 
 	}
@@ -465,5 +470,6 @@ public class LLRPOperationTracker extends TimerTask implements Serializable {
 		}
 
 	}
+
 
 }
