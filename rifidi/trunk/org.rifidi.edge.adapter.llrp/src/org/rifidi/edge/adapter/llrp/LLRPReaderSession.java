@@ -951,16 +951,16 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 			String epcId) throws InvalidLLRPMessageException, TimeoutException {
 
 		// try {
-		System.out.println("Add accessspec! " + accessSpecId);
+		logger.info("Add accessspec! " + accessSpecId);
 		// //// int accessSpecId = 2;
 		AccessSpec spec = buildAccessSpec(accessSpecId, epcId);
 		ADD_ACCESSSPEC aas = new ADD_ACCESSSPEC();
 		aas.setAccessSpec(spec);
-		System.out.println(aas.toXMLString());
+		logger.info(aas.toXMLString());
 		ADD_ACCESSSPEC_RESPONSE response = null;
 
 		response = (ADD_ACCESSSPEC_RESPONSE) this.transact(aas);
-		System.out.println("Response__: " + response.toXMLString());
+		logger.info("Response__: " + response.toXMLString());
 
 		ENABLE_ACCESSSPEC enablespec = new ENABLE_ACCESSSPEC();
 		enablespec.setAccessSpecID(new UnsignedInteger(accessSpecId));
@@ -1163,7 +1163,7 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 
 		// Call the operations in tracker
 		for (LLRPOperationDto llrpOperationDto : llrpOperationTracker
-				.getOperationMap().values()) {
+				.getOperationList()) {
 
 			ADD_ACCESSSPEC_RESPONSE response = executeLLRPOperation(
 					llrpOperationDto.getAccessSpecId(),
@@ -1186,7 +1186,7 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 			// Add a timer to control
 			Timer timer = new Timer(true);
 			timer.schedule(llrpOperationTracker, new Date());
-			System.out.println("TimerTask begins! :" + new Date());
+			logger.info("TimerTask begins! :" + new Date());
 
 		} else {
 
@@ -1267,13 +1267,14 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 
 					// Assign the result to appropriate operation in tracker
 					llrpOperationTracker.setResult(op);
-
-					// Delete access spec if there is a CommandOpSpecResult
-					// coming back.
-					this.deleteAccessSpecs();
-					System.out.println(op.toString());
+				
+					logger.info(op.toString());
 
 				}
+				
+				// Delete access spec if there is a CommandOpSpecResult
+				// coming back.
+				this.deleteAccessSpecs();
 			}
 		}
 
@@ -1378,7 +1379,7 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 
 	// Enable the AccessSpec
 	public void enableAccessSpec(int accessSpecID) {
-		System.out.println("Enabling the AccessSpec.");
+		logger.info("Enabling the AccessSpec.");
 		ENABLE_ACCESSSPEC enable = new ENABLE_ACCESSSPEC();
 		enable.setAccessSpecID(new UnsignedInteger(accessSpecID));
 		try {
@@ -1386,7 +1387,7 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 			// TIMEOUT_MS);
 			// System.out.println(response.toXMLString());
 		} catch (Exception e) {
-			System.out.println("Error enabling AccessSpec.");
+			logger.info("Error enabling AccessSpec.");
 			e.printStackTrace();
 		}
 	}
@@ -1394,7 +1395,7 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 	// Delete all AccessSpecs from the reader
 	public void deleteAccessSpecs() {
 
-		System.out.println("Deleting all AccessSpecs.");
+		logger.info("Deleting all AccessSpecs.");
 		DELETE_ACCESSSPEC del = new DELETE_ACCESSSPEC();
 		// Use zero as the ROSpec ID.
 		// This means delete all AccessSpecs.
@@ -1404,7 +1405,7 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 			// TIMEOUT_MS);
 			// System.out.println(response.toXMLString());
 		} catch (Exception e) {
-			System.out.println("Error deleting AccessSpec.");
+			logger.info("Error deleting AccessSpec.");
 			e.printStackTrace();
 		}
 	}
@@ -1431,7 +1432,7 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 	public AccessSpec buildAccessSpec(int accessSpecID, String epcId) {
 		// LLRPWriteOperationEnum writeOperation) {
 
-		System.out.println("Building the AccessSpec.");
+		logger.info("Building the AccessSpec.");
 
 		AccessSpec accessSpec = new AccessSpec();
 
@@ -1655,7 +1656,7 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 				int currentIndex = i * getWriteDataBlockLength();
 				String word = data.substring(currentIndex, currentIndex
 						+ getWriteDataBlockLength());
-				System.out.println("Adding short: " + word);
+				logger.info("Adding short: " + word);
 				writeArray.add(new UnsignedShort(word, 16));
 
 			}
