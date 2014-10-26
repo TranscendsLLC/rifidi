@@ -1013,6 +1013,86 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 		return startRequestedOperations(llrpOperationTracker);
 
 	}
+	
+	public LLRPEncodeMessageDto llrpWriteKillPasswordOperation()
+			throws InvalidLLRPMessageException, TimeoutException, Exception {
+
+		// Initialize operation tracker, to be able to receive asynchronous
+		// messages
+		llrpOperationTracker = new LLRPOperationTracker(this);
+
+		// Add the operations in the same order we want to be executed by this
+		// tracker
+
+		LLRPOperationDto epcWriteOpDto = new LLRPOperationDto(
+				LLRP_OPERATION_CODE.LLRPKillPasswordWrite.name(),
+				WRITE_KILLPASS_ACCESSSPEC_ID, WRITE_KILLPASS_OPSPEC_ID,
+				null);
+		llrpOperationTracker.addOperationDto(epcWriteOpDto);
+
+		return startRequestedOperations(llrpOperationTracker);
+
+	}
+	
+	public LLRPEncodeMessageDto llrpLockEpcOperation()
+			throws InvalidLLRPMessageException, TimeoutException, Exception {
+
+		// Initialize operation tracker, to be able to receive asynchronous
+		// messages
+		llrpOperationTracker = new LLRPOperationTracker(this);
+
+		// Add the operations in the same order we want to be executed by this
+		// tracker
+
+		LLRPOperationDto epcLockOpDto = new LLRPOperationDto(
+				LLRP_OPERATION_CODE.LLRPEPCLock.name(),
+				LOCK_EPC_ACCESSSPEC_ID, LOCK_EPC_OPSPEC_ID,
+				null);
+		llrpOperationTracker.addOperationDto(epcLockOpDto);
+
+		return startRequestedOperations(llrpOperationTracker);
+
+	}
+	
+	public LLRPEncodeMessageDto llrpLockAccessPasswordOperation()
+			throws InvalidLLRPMessageException, TimeoutException, Exception {
+
+		// Initialize operation tracker, to be able to receive asynchronous
+		// messages
+		llrpOperationTracker = new LLRPOperationTracker(this);
+
+		// Add the operations in the same order we want to be executed by this
+		// tracker
+
+		LLRPOperationDto epcLockOpDto = new LLRPOperationDto(
+				LLRP_OPERATION_CODE.LLRPAccessPasswordLock.name(),
+				LOCK_ACCESSPASS_ACCESSSPEC_ID, LOCK_ACCESSPASS_OPSPEC_ID,
+				null);
+		llrpOperationTracker.addOperationDto(epcLockOpDto);
+
+		return startRequestedOperations(llrpOperationTracker);
+
+	}
+	
+	public LLRPEncodeMessageDto llrpLockKillPasswordOperation()
+			throws InvalidLLRPMessageException, TimeoutException, Exception {
+
+		// Initialize operation tracker, to be able to receive asynchronous
+		// messages
+		llrpOperationTracker = new LLRPOperationTracker(this);
+
+		// Add the operations in the same order we want to be executed by this
+		// tracker
+
+		LLRPOperationDto epcLockOpDto = new LLRPOperationDto(
+				LLRP_OPERATION_CODE.LLRPKillPasswordLock.name(),
+				LOCK_KILLPASS_ACCESSSPEC_ID, LOCK_KILLPASS_OPSPEC_ID,
+				null);
+		llrpOperationTracker.addOperationDto(epcLockOpDto);
+
+		return startRequestedOperations(llrpOperationTracker);
+
+	}
 
 	// public String addAccessSpec(String writeAccessPassword, String writeData
 	// ) {
@@ -1092,8 +1172,7 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 			llrpOperationDto.setAccessSpecResponse(response);
 
 			// Check if response is failure, and return synchronous message
-			if (!response.getLLRPStatus().getStatusCode()
-					.equals(StatusCode.M_Success)) {
+			if (response.getLLRPStatus().getStatusCode().intValue() != StatusCode.M_Success) {
 				throw new Exception(response.toXMLString());
 			}
 
@@ -1608,6 +1687,16 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 	 *             Read_Write, Perma_Lock or Unlock string values
 	 */
 	public static int getLockPrivilege(String lockPrivilege) throws Exception {
+		
+		Exception e = new Exception("Invalid lock privilege value: "
+				+ lockPrivilege + ". Valid ones are: "
+				+ LLRPReaderSession.READ_WRITE_LOCK_PRIVILEGE + ", "
+				+ LLRPReaderSession.PERMA_LOCK_PRIVILEGE + ", "
+				+ LLRPReaderSession.UNLOCK_PRIVILEGE);
+		
+		if (lockPrivilege == null || lockPrivilege.isEmpty()){
+			throw e;
+		}
 
 		switch (lockPrivilege) {
 
@@ -1621,11 +1710,7 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 			return C1G2LockPrivilege.Unlock;
 
 		default:
-			throw new Exception("Invalid lock privilege value: "
-					+ lockPrivilege + ". Valid ones are: "
-					+ LLRPReaderSession.READ_WRITE_LOCK_PRIVILEGE + ", "
-					+ LLRPReaderSession.PERMA_LOCK_PRIVILEGE + ", "
-					+ LLRPReaderSession.UNLOCK_PRIVILEGE);
+			throw e;
 
 		}
 
