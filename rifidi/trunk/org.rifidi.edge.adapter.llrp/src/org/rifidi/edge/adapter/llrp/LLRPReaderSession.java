@@ -1191,9 +1191,6 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 			//TODO change Success hard coded value
 			llrpEncodeMessageDto.setStatus("Success");
 			
-			//Set operation list to null, to avoid showing in web browser an empty list
-			llrpEncodeMessageDto.setOperationList(null);
-
 		} else {
 
 			// Check the operation status in synchronous mode

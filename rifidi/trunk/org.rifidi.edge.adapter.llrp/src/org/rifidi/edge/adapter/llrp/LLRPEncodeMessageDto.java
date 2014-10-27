@@ -33,7 +33,6 @@ public class LLRPEncodeMessageDto implements Serializable {
 	 */
 	public LLRPEncodeMessageDto() {
 		super();
-		operationList = new ArrayList<String>();
 	}
 
 
@@ -69,6 +68,11 @@ public class LLRPEncodeMessageDto implements Serializable {
 	}
 	
 	public void addOperation(String operation){
+		
+		if(operationList == null){
+			//Initialize operation list
+			operationList = new ArrayList<String>();
+		}
 		operationList.add(operation);
 	}	
 	
