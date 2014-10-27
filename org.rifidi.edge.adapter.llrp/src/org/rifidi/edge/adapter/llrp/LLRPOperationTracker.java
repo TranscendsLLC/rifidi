@@ -63,7 +63,6 @@ public class LLRPOperationTracker extends TimerTask implements Serializable {
 	public LLRPOperationTracker(LLRPReaderSession llrpReaderSession) {
 		super();
 		this.llrpReaderSession = llrpReaderSession;
-		operationList = new LinkedList<LLRPOperationDto>();
 	}
 
 	
@@ -83,6 +82,13 @@ public class LLRPOperationTracker extends TimerTask implements Serializable {
 	}
 
 	public void addOperationDto(LLRPOperationDto llrpOperationDto) {
+		
+		if (operationList == null){
+			
+			//Initialize operation list
+			operationList = new LinkedList<LLRPOperationDto>();
+			
+		}
 		operationList.add(llrpOperationDto);
 	}
 
