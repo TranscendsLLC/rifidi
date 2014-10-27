@@ -1179,7 +1179,7 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 		}
 
 		if (isExecuteOperationsInAsynchronousMode()) {
-
+			
 			llrpOperationTracker.initializeMqttParameters();
 
 			// Check the operation status in asynchronous mode
@@ -1187,6 +1187,12 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 			Timer timer = new Timer(true);
 			timer.schedule(llrpOperationTracker, new Date());
 			logger.info("TimerTask begins! :" + new Date());
+			
+			//TODO change Success hard coded value
+			llrpEncodeMessageDto.setStatus("Success");
+			
+			//Set operation list to null, to avoid showing in web browser an empty list
+			llrpEncodeMessageDto.setOperationList(null);
 
 		} else {
 

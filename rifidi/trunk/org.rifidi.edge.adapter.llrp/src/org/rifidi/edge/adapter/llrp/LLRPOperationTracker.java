@@ -304,6 +304,17 @@ public class LLRPOperationTracker extends TimerTask implements Serializable {
 	public void run() {
 
 		logger.info("Start time:" + new Date());
+		
+		
+		//Test
+		/*
+		try{
+			Thread.sleep(15000);
+		} catch(InterruptedException ex){
+			
+		}
+		*/
+		
 		checkOperationStatus();
 		logger.info("End time:" + new Date());
 
@@ -330,7 +341,7 @@ public class LLRPOperationTracker extends TimerTask implements Serializable {
 
 				try {
 
-					// Sleep the time out
+					// Sleep
 					Thread.sleep(millisToSleep);
 
 				} catch (InterruptedException e) {
@@ -353,10 +364,6 @@ public class LLRPOperationTracker extends TimerTask implements Serializable {
 
 		}
 		
-		//topic to post message if asynchronous
-		String topicName = llrpReaderSession.getSensor().getID()
-				+ "/encode";
-
 		if (areAllResultsSuccessful()) {
 
 			logger.info("allResultsSuccessful()");
@@ -383,22 +390,26 @@ public class LLRPOperationTracker extends TimerTask implements Serializable {
 		// post to queue and cleanup if asynchronous
 		if (llrpReaderSession.isExecuteOperationsInAsynchronousMode()){
 			
-			postMqttMesssage(topicName, llrpEncodeMessageDto);
+			//topic to post message if asynchronous
+			String topicName = llrpReaderSession.getSensor().getID()
+					+ "/encode";
+			
+			postMqttMessage(topicName, llrpEncodeMessageDto);
 			
 			llrpReaderSession.cleanupSession();
 			
+			// Cancel this timer
+			cancel();
+			
+			logger.info("TimerTask cancelled! :" + new Date());
+			
 		}
 
-		// Cancel this timer
-		cancel();
-		
-		logger.info("TimerTask cancelled! :" + new Date());
-		
 		return llrpEncodeMessageDto;
 
 	}
 
-	public void postMqttMesssage(String mqttTopic, Object messageContent) {
+	public void postMqttMessage(String mqttTopic, Object messageContent) {
 
 		try {
 
