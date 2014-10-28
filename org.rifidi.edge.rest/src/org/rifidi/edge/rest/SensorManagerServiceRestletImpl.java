@@ -101,7 +101,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 	}
 
 	private void executeLlrpOperation(Request request, Response response,
-			LLRPReaderSession.LLRP_OPERATION_CODE strOperationCode) {
+			LLRPReaderSession.LLRP_OPERATION_CODE operationCode) {
 
 		LLRPReaderSession session = null;
 
@@ -205,7 +205,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 				// Get jvm properties
 				setLlrpEncodeJvmProperties(session);
 
-				if (strOperationCode == null) {
+				if (operationCode == null) {
 
 					// There is no operation code, so we submit the complete
 					// encode operation
@@ -229,10 +229,9 @@ public class SensorManagerServiceRestletImpl extends Application {
 					// Validate that if there are parameters, they are well pair
 					// formed values
 					AttributeList attributes = getProcessedAttributes(strPropAttr);
-
-					if (strOperationCode
-							.equals(LLRPReaderSession.LLRP_OPERATION_CODE.LLRPEPCWrite
-									.toString())) {
+					
+					if (operationCode
+							.equals(LLRPReaderSession.LLRP_OPERATION_CODE.LLRPEPCWrite)) {
 
 						// check the required properties for epc write
 						// operation, and overwrite the properties got from jvm
@@ -251,9 +250,8 @@ public class SensorManagerServiceRestletImpl extends Application {
 						llrpEncodeMessageDto = session
 								.llrpWriteEpcOperation(strTag);
 
-					} else if (strOperationCode
-							.equals(LLRPReaderSession.LLRP_OPERATION_CODE.LLRPAccessPasswordWrite
-									.toString())) {
+					} else if (operationCode
+							.equals(LLRPReaderSession.LLRP_OPERATION_CODE.LLRPAccessPasswordWrite)) {
 
 						// check for oldaccesspwd and accesspwd
 						String oldaccesspwd = (String) getAttributeValue(
@@ -270,9 +268,8 @@ public class SensorManagerServiceRestletImpl extends Application {
 						llrpEncodeMessageDto = session
 								.llrpWriteAccessPasswordOperation();
 
-					} else if (strOperationCode
-							.equals(LLRPReaderSession.LLRP_OPERATION_CODE.LLRPKillPasswordWrite
-									.toString())) {
+					} else if (operationCode
+							.equals(LLRPReaderSession.LLRP_OPERATION_CODE.LLRPKillPasswordWrite)) {
 
 						// check for accesspwd and kill password
 						String accesspwd = (String) getAttributeValue(
@@ -288,9 +285,8 @@ public class SensorManagerServiceRestletImpl extends Application {
 						llrpEncodeMessageDto = session
 								.llrpWriteKillPasswordOperation();
 
-					} else if (strOperationCode
-							.equals(LLRPReaderSession.LLRP_OPERATION_CODE.LLRPEPCLock
-									.toString())) {
+					} else if (operationCode
+							.equals(LLRPReaderSession.LLRP_OPERATION_CODE.LLRPEPCLock)) {
 
 						// check for accesspwd
 						String accesspwd = (String) getAttributeValue(
@@ -308,9 +304,8 @@ public class SensorManagerServiceRestletImpl extends Application {
 
 						llrpEncodeMessageDto = session.llrpLockEpcOperation();
 
-					} else if (strOperationCode
-							.equals(LLRPReaderSession.LLRP_OPERATION_CODE.LLRPAccessPasswordLock
-									.toString())) {
+					} else if (operationCode
+							.equals(LLRPReaderSession.LLRP_OPERATION_CODE.LLRPAccessPasswordLock)) {
 
 						// check for accesspwd
 						String accesspwd = (String) getAttributeValue(
@@ -329,9 +324,8 @@ public class SensorManagerServiceRestletImpl extends Application {
 						llrpEncodeMessageDto = session
 								.llrpLockAccessPasswordOperation();
 
-					} else if (strOperationCode
-							.equals(LLRPReaderSession.LLRP_OPERATION_CODE.LLRPKillPasswordLock
-									.toString())) {
+					} else if (operationCode
+							.equals(LLRPReaderSession.LLRP_OPERATION_CODE.LLRPKillPasswordLock)) {
 
 						// check for accesspwd
 						String accesspwd = (String) getAttributeValue(
@@ -353,7 +347,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 					} else {
 
 						throw new Exception("Operation with code "
-								+ strOperationCode + " is invalid. ");
+								+ operationCode + " is invalid. ");
 
 					}
 
