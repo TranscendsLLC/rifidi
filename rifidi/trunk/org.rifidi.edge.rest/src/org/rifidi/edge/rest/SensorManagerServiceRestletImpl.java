@@ -1045,6 +1045,9 @@ public class SensorManagerServiceRestletImpl extends Application {
 			@Override
 			public void handle(Request request, Response response) {
 				try {
+					
+					logger.info("llrpMessage requested");
+					
 					AbstractSensor<?> sensor = readerDAO
 							.getReaderByID((String) request.getAttributes()
 									.get("readerID"));
@@ -1056,8 +1059,10 @@ public class SensorManagerServiceRestletImpl extends Application {
 								.get(request.getAttributes().get("sessionID"));
 
 						SAXBuilder sb = new SAXBuilder();
-						Document doc = sb.build((String) request
-								.getAttributes().get("llrpmessage"));
+						
+						String strEntityAsText = request.getEntityAsText();
+						
+						Document doc = sb.build(strEntityAsText);
 
 						session.sendLLRPMessage(doc);
 					}
@@ -1175,7 +1180,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 		//llrp encode
 		router.attach("/llrpencode/{readerID}/{sessionID}/{tag}", llrpEncode);
 
-		router.attach("/llrpmessage/{readerID}/{sessionID}/{llrpmessage}",
+		router.attach("/llrpmessage/{readerID}/{sessionID}",
 				llrpMessage);
 		router.attach("/ping", ping);
 		return router;
