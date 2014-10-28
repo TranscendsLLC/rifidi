@@ -1116,12 +1116,12 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 				LLRP_OPERATION_CODE.LLRPEPCWrite.name(),
 				WRITE_EPC_ACCESSSPEC_ID, WRITE_EPC_OPSPEC_ID, strTag);
 		llrpOperationTracker.addOperationDto(epcWriteOpDto);
-
+		
 		LLRPOperationDto killPwdWriteOpDto = new LLRPOperationDto(
 				LLRP_OPERATION_CODE.LLRPKillPasswordWrite.name(),
 				WRITE_KILLPASS_ACCESSSPEC_ID, WRITE_KILLPASS_OPSPEC_ID, strTag);
 		llrpOperationTracker.addOperationDto(killPwdWriteOpDto);
-
+	
 		LLRPOperationDto epcLockOpDto = new LLRPOperationDto(
 				LLRP_OPERATION_CODE.LLRPEPCLock.name(), LOCK_EPC_ACCESSSPEC_ID,
 				LOCK_EPC_OPSPEC_ID, strTag);
@@ -1644,7 +1644,7 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 		opMemBank.clear(0);
 
 		opSpec.setMB(opMemBank);
-		opSpec.setWordPointer(new UnsignedShort(0x02));
+		opSpec.setWordPointer(new UnsignedShort(0));
 
 		UnsignedShortArray_HEX writeArray = getFormatedWriteArrayData(getKillPwd());
 
