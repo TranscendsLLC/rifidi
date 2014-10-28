@@ -1569,6 +1569,7 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 		// opSpec.setAccessPassword(new UnsignedInteger(getAccessPwd()));
 		UnsignedInteger unsignedIntAccesPass = new UnsignedInteger(
 				getAccessPwd(), 16);
+		
 		opSpec.setAccessPassword(unsignedIntAccesPass);
 
 		// For this demo, we'll write to user memory (bank 3).
@@ -1599,8 +1600,12 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 		C1G2BlockWrite opSpec = new C1G2BlockWrite();
 		// Set the OpSpecID to a unique number.
 		opSpec.setOpSpecID(WRITE_ACCESSPASS_OPSPEC_ID);
-		opSpec.setAccessPassword(new UnsignedInteger(getOldAccessPwd()));
-
+		
+		UnsignedInteger unsignedIntAccesPass = new UnsignedInteger(
+				getOldAccessPwd(), 16);
+		
+		opSpec.setAccessPassword(unsignedIntAccesPass);
+		
 		// For this demo, we'll write to user memory (bank 3).
 		TwoBitField opMemBank = new TwoBitField();
 		// Clear twobits (bank 0 in binary).
@@ -1626,7 +1631,11 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 		C1G2BlockWrite opSpec = new C1G2BlockWrite();
 		// Set the OpSpecID to a unique number.
 		opSpec.setOpSpecID(WRITE_KILLPASS_OPSPEC_ID);
-		opSpec.setAccessPassword(new UnsignedInteger(getAccessPwd()));
+		
+		UnsignedInteger unsignedIntAccesPass = new UnsignedInteger(
+				getAccessPwd(), 16);
+		
+		opSpec.setAccessPassword(unsignedIntAccesPass);
 
 		// For this demo, we'll write to user memory (bank 3).
 		TwoBitField opMemBank = new TwoBitField();
@@ -1741,7 +1750,10 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 
 		// opSpec.setWordPointer(new UnsignedShort(0x02));->only for writing
 
-		opSpec.setAccessPassword(new UnsignedInteger(getAccessPwd()));
+		UnsignedInteger unsignedIntAccesPass = new UnsignedInteger(
+				getAccessPwd(), 16);
+		
+		opSpec.setAccessPassword(unsignedIntAccesPass);
 		C1G2LockPayload payload = new C1G2LockPayload();
 		C1G2LockDataField dataField = new C1G2LockDataField(lockDataField);
 		payload.setDataField(dataField);
