@@ -1052,10 +1052,15 @@ public class SensorManagerServiceRestletImpl extends Application {
 					AbstractSensor<?> sensor = readerDAO
 							.getReaderByID((String) request.getAttributes()
 									.get("readerID"));
+					
+					if (sensor == null){
+						throw new Exception("ReaderID is missing or invalid");
+					}
+					
 					Map<String, SensorSession> sessionMap = sensor
 							.getSensorSessions();
 					String llrpResponse = "";
-					if (sessionMap.containsKey(request.getAttributes().get(
+					if (sessionMap != null && sessionMap.containsKey(request.getAttributes().get(
 							"sessionID"))) {
 						LLRPReaderSession session = (LLRPReaderSession) sessionMap
 								.get(request.getAttributes().get("sessionID"));
@@ -1065,13 +1070,11 @@ public class SensorManagerServiceRestletImpl extends Application {
 						String strEntityAsText = request.getEntityAsText();
 						Document doc = sb.build(new StringReader(strEntityAsText));
 						llrpResponse = session.sendLLRPMessage(doc);
+						response.setEntity(llrpResponse, MediaType.TEXT_XML);
 					} else {
-						response.setEntity(self.generateReturnString(self.generateErrorMessage(
-								"SessionID or or ReaderID missing or invalid", null)), MediaType.TEXT_XML);
+						throw new Exception("SessionID is missing or invalid");
 					}
-					response.setEntity(llrpResponse, MediaType.TEXT_XML);
 				} catch (Exception e) {
-					e.printStackTrace();
 					response.setEntity(self.generateReturnString(self
 							.generateErrorMessage(e.getMessage(), null)),
 							MediaType.TEXT_XML);
