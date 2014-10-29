@@ -63,7 +63,7 @@ public class MyHttpTestClient {
 
 			HttpPost httpPost = new HttpPost(strUrl);
 			
-			String strXml = "<llrp:SET_READER_CONFIG xmlns:llrp=\"http://www.llrp.org/ltk/schema/core/encoding/xml/1.0\" Version=\"1\" MessageID=\"0\">" +
+			String strXml =	"<llrp:SET_READER_CONFIG xmlns:llrp=\"http://www.llrp.org/ltk/schema/core/encoding/xml/1.0\" Version=\"1\" MessageID=\"0\">" +
   "<llrp:ResetToFactoryDefault>0</llrp:ResetToFactoryDefault>"+
   "<llrp:ReaderEventNotificationSpec>"+
     "<llrp:EventNotificationState>"+
@@ -108,7 +108,10 @@ public class MyHttpTestClient {
     "<llrp:GPIPortNum>3</llrp:GPIPortNum>"+
     "<llrp:Config>1</llrp:Config>"+
     "<llrp:State>Low</llrp:State>"+
-  "</llrp:GPIPortCurrentState>";
+  "</llrp:GPIPortCurrentState>" +  "<llrp:EventsAndReports>" + 
+    "<llrp:HoldEventsAndReportsUponReconnect>0</llrp:HoldEventsAndReportsUponReconnect>" + 
+  "</llrp:EventsAndReports>" + 
+"</llrp:SET_READER_CONFIG>";
 
 			//File file = new File(fileName.trim());
 			

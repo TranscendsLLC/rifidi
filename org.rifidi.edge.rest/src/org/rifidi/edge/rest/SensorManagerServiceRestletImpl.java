@@ -13,6 +13,7 @@
 package org.rifidi.edge.rest;
 
 import java.io.Serializable;
+import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
@@ -1053,6 +1054,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 									.get("readerID"));
 					Map<String, SensorSession> sessionMap = sensor
 							.getSensorSessions();
+					String llrpResponse = "";
 					if (sessionMap.containsKey(request.getAttributes().get(
 							"sessionID"))) {
 						LLRPReaderSession session = (LLRPReaderSession) sessionMap
@@ -1061,15 +1063,18 @@ public class SensorManagerServiceRestletImpl extends Application {
 						SAXBuilder sb = new SAXBuilder();
 						
 						String strEntityAsText = request.getEntityAsText();
-						
-						Document doc = sb.build(strEntityAsText);
-
-						session.sendLLRPMessage(doc);
+						Document doc = sb.build(new StringReader(strEntityAsText));
+						llrpResponse = session.sendLLRPMessage(doc);
+					} else {
+						response.setEntity(self.generateReturnString(self.generateErrorMessage(
+								"SessionID or or ReaderID missing or invalid", null)), MediaType.TEXT_XML);
 					}
-					response.setEntity(self.generateReturnString(self
-							.generateSuccessMessage()), MediaType.TEXT_XML);
+					response.setEntity(llrpResponse, MediaType.TEXT_XML);
 				} catch (Exception e) {
-
+					e.printStackTrace();
+					response.setEntity(self.generateReturnString(self
+							.generateErrorMessage(e.getMessage(), null)),
+							MediaType.TEXT_XML);
 				}
 			}
 		};
