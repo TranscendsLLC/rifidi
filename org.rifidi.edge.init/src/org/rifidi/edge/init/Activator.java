@@ -48,10 +48,11 @@ public class Activator implements BundleActivator {
 
 			boolean failoverEnabled = false;
 			String primary = System.getProperty("org.rifidi.failover.primary");
-			if (primary != null) {
+			if (primary != null && !primary.equals("")) {
 				failoverEnabled = true;
 			}
 			if (failoverEnabled) {
+				System.out.println("Primary: " + primary);
 				Integer failoverTrySeconds = Integer.parseInt(System
 						.getProperty("org.rifidi.failover.frequency"));
 				Integer numFailsRequired = Integer.parseInt(System
