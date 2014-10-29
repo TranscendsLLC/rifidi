@@ -1710,21 +1710,21 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 		if (lockPrivilege == null || lockPrivilege.isEmpty()){
 			throw e;
 		}
-
-		switch (lockPrivilege) {
-
-		case READ_WRITE_LOCK_PRIVILEGE:
+		
+		if (lockPrivilege.equals(READ_WRITE_LOCK_PRIVILEGE)){
+			
 			return C1G2LockPrivilege.Read_Write;
-
-		case PERMA_LOCK_PRIVILEGE:
+			
+		} else if (lockPrivilege.equals(PERMA_LOCK_PRIVILEGE)){
+			
 			return C1G2LockPrivilege.Perma_Lock;
-
-		case UNLOCK_PRIVILEGE:
+			
+		} else if (lockPrivilege.equals(UNLOCK_PRIVILEGE)){
+			
 			return C1G2LockPrivilege.Unlock;
-
-		default:
+			
+		} else {
 			throw e;
-
 		}
 
 	}
