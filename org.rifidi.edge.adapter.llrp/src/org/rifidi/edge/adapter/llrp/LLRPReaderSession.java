@@ -1761,7 +1761,7 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 		C1G2LockPrivilege privilege = new C1G2LockPrivilege(lockPrivilege);
 		payload.setPrivilege(privilege);
 
-		List<C1G2LockPayload> c1G2LockPayloadList = new ArrayList<>();
+		List<C1G2LockPayload> c1G2LockPayloadList = new ArrayList<C1G2LockPayload>();
 		c1G2LockPayloadList.add(payload);
 
 		opSpec.setC1G2LockPayloadList(c1G2LockPayloadList);
