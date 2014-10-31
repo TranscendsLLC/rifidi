@@ -1,8 +1,14 @@
 #version=1
+org.restlet,2.2.1.v20140506-1533,plugins/org.restlet.jar,4,true
+org.restlet.ext.servlet,2.3.0.m2-v20140506-1156,plugins/org.restlet.ext.servlet.jar,4,true
+org.moquette,0.4.0,plugins/org.moquette_0.4.0.jar,4,true
+org.eclipse.paho,0.4.0,plugins/org.eclipse.paho_0.4.0.jar,4,true
+org.jolokia.osgi.bundle,1.2.2,plugins/jolokia-osgi-bundle-1.2.2.jar,4,true
 org.antlr.v4.runtime,4.4.0,plugins/org.antlr.v4.runtime_4.4.0.jar,4,true
 org.apache.commons.codec,1.9.0,plugins/org.apache.commons.codec_1.9.0.jar,4,true
 org.aspectj.runtime,1.6.4.20090304172355,plugins/org.aspectj.runtime_1.6.4.20090304172355,3,true
 org.aspectj.weaver,1.6.4.20090304172355,plugins/org.aspectj.weaver_1.6.4.20090304172355,3,true
+com.thinkify,1.0.0,plugins/com.thinkify_1.0.0.jar,4,true
 org.joda.time.format,2.4.0,plugins/org.joda.time.format_2.4.0.jar,4,true
 org.rxtx,2.2.0.pre2,plugins/rxtx-osgi-2.2-pre2.jar,3,true
 com.amazonaws,1.9.0,plugins/com.amazonaws_1.9.0.jar,4,true
@@ -113,8 +119,8 @@ org.springframework.osgi.io,1.2.1,plugins/org.springframework.osgi.io_1.2.1.jar,
 #org.springframework.osgi.web,1.2.1,plugins/org.springframework.osgi.web_1.2.1.jar,4,true
 #org.springframework.security.core,2.0.4,plugins/org.springframework.security.core_2.0.4.jar,4,true
 org.springframework.transaction,3.1.2.RELEASE,plugins/org.springframework.transaction-3.1.2.RELEASE.jar,4,true
-#org.springframework.web,3.1.2.RELEASE,plugins/org.springframework.web-3.1.2.RELEASE.jar,4,true
-#org.springframework.web.servlet,3.1.2.RELEASE,plugins/org.springframework.web.servlet-3.1.2.RELEASE.jar,4,true
+org.springframework.web,3.1.2.RELEASE,plugins/org.springframework.web-3.1.2.RELEASE.jar,4,true
+org.springframework.web.servlet,3.1.2.RELEASE,plugins/org.springframework.web.servlet-3.1.2.RELEASE.jar,4,true
 #org.springframework.social.core,1.0.2,plugins/spring-social-core-1.0.2.RELEASE-osgi.jar,4,true
 #org.springframework.social.facebook,1.0.2,plugins/spring-social-facebook-1.0.2.RELEASE-osgi.jar,4,true
 #org.springframework.social.linkedin,1.0.2,plugins/spring-social-linkedin-1.0.0.RC1-osgi.jar,4,true
