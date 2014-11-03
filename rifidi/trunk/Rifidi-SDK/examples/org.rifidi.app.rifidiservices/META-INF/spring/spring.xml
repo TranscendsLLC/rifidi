@@ -1,0 +1,41 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:osgi="http://www.springframework.org/schema/osgi"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+	http://www.springframework.org/schema/osgi
+	http://www.springframework.org/schema/osgi/spring-osgi.xsd">
+
+	<bean id="rifidiServicesApp" class="org.rifidi.app.rifidiservices.RifidiServicesApp">
+		<constructor-arg index="0" value="RifidiServices" />
+		<constructor-arg index="1" value="RifidiServicesApp" />
+		
+		<property name="stableSetService" ref="stableSetServiceRef" />
+		<property name="limitStableSetService" ref="limitStableSetServiceRef" />
+		<property name="readZoneMonitoringService" ref="readZoneMonitoringServiceRef" />
+		<property name="uniqueTagBatchIntervalService" ref="uniqueTagBatchIntervalServiceRef" />
+		<property name="rssiMonitoringService" ref="rssiMonitoringServiceRef" />
+		<property name="readerDAO" ref="readerDAORef"/>
+		
+	</bean>
+	
+	<osgi:service ref="rifidiServicesApp" interface="org.rifidi.edge.api.RifidiApp" />
+	
+	<osgi:reference id="stableSetServiceRef"
+		interface="org.rifidi.edge.api.service.tagmonitor.StableSetService" />
+		
+	<osgi:reference id="limitStableSetServiceRef"
+		interface="org.rifidi.edge.api.service.tagmonitor.LimitStableSetService" />
+		
+	<osgi:reference id="readZoneMonitoringServiceRef"
+		interface="org.rifidi.edge.api.service.tagmonitor.ReadZoneMonitoringService" />
+		
+	<osgi:reference id="uniqueTagBatchIntervalServiceRef"
+		interface="org.rifidi.edge.api.service.tagmonitor.UniqueTagBatchIntervalService" />
+		
+    <osgi:reference id="rssiMonitoringServiceRef" 
+    interface="org.rifidi.edge.api.service.tagmonitor.RSSIMonitoringService"/>	
+		
+	<osgi:reference id="readerDAORef" interface="org.rifidi.edge.daos.ReaderDAO"/>	
+	
+		
+</beans>
