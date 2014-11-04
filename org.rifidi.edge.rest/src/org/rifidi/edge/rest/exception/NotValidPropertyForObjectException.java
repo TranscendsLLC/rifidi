@@ -8,7 +8,7 @@ public class NotValidPropertyForObjectException
 		extends Exception 
 		implements Serializable {
 	
-	private List<String> notValidPropertiesList = new ArrayList<>();
+	private List<String> notValidPropertiesList = new ArrayList<String>();
 	
 	
 	public NotValidPropertyForObjectException(String message) {
