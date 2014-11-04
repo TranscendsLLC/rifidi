@@ -25,6 +25,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eclipse.osgi.framework.console.CommandProvider;
 import org.rifidi.edge.api.AbstractRifidiApp;
+import org.rifidi.edge.util.RifidiEdgeHelper;
 
 /**
  * This can generate tag events and place the events in esper. It uses the
@@ -73,14 +74,14 @@ public class TagGeneratorApp extends AbstractRifidiApp implements TagGenerator{
 	@Override
 	protected void _start() {
 		// init tags
-		Map<String, byte[]> tagFiles = super.getDataFiles("tags");
+		Map<String, byte[]> tagFiles = RifidiEdgeHelper.getReadzoneDataFiles("tags", getGroup());
 		for (String id : tagFiles.keySet()) {
 			addTagSet(id, processTagFile(tagFiles.get(id)));
 			logger.info("Loaded tag file with ID " + id);
 		}
 
 		// init exposures
-		Map<String, byte[]> exposureFiles = super.getDataFiles("exposure");
+		Map<String, byte[]> exposureFiles = RifidiEdgeHelper.getReadzoneDataFiles("exposure", getGroup());
 		for (String id : exposureFiles.keySet()) {
 			addExposure(id, processExposureFile(exposureFiles.get(id)));
 			logger.info("Loaded Exposure properties with ID " + id);
