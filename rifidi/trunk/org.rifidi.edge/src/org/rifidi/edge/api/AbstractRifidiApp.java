@@ -36,6 +36,7 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
 import org.rifidi.edge.api.service.tagmonitor.ReadZone;
 import org.rifidi.edge.services.EsperManagementService;
+import org.rifidi.edge.util.RifidiEdgeHelper;
 import org.springframework.osgi.context.BundleContextAware;
 
 import com.espertech.esper.client.EPAdministrator;
@@ -240,7 +241,8 @@ public abstract class AbstractRifidiApp implements RifidiApp,
 						CommandProvider.class.getCanonicalName(),
 						getCommandProvider(), null);
 			}
-			loadReadZones();
+			readZones = RifidiEdgeHelper.getReadZones(getGroup());
+			
 			_start();
 		} catch (Exception e) {
 			logger.warn("Cannot start " + this + ". ", e);
@@ -438,20 +440,7 @@ public abstract class AbstractRifidiApp implements RifidiApp,
 
 	}
 
-	/**
-	 * RifidiApps can store data files in their data directory. The file name
-	 * convention is [prefix]-[id].[suffix]. This method returns a map of all
-	 * files in the data directory with the given prefix. The key in the hashmap
-	 * is the file's id.
-	 * 
-	 * @param fileNamePrefix
-	 *            The prefix of the files to return
-	 * @return
-	 */
-	protected final HashMap<String, byte[]> getDataFiles(
-			final String fileNamePrefix) {
-		return getFiles(fileNamePrefix, "data");
-	}
+	
 
 	/**
 	 * RifidiApps can store read zone configurations in their readzones
@@ -466,135 +455,6 @@ public abstract class AbstractRifidiApp implements RifidiApp,
 	 */
 	protected HashMap<String, ReadZone> getReadZones() {
 		return new HashMap<String, ReadZone>(readZones);
-	}
-
-	/**
-	 * RifidiApps can store data files in their data directory. The file name
-	 * convention is [prefix]-[id].[suffix]. This method writes a file to the
-	 * data directory. If the file already exists, it will overwrite it.
-	 * 
-	 * @param filePrefix
-	 *            The prefix of the file
-	 * @param fileID
-	 *            The ID of the file
-	 * @param fileSuffix
-	 *            The sufix of the file
-	 * @param data
-	 *            The data to write
-	 */
-	protected final void writeData(String filePrefix, String fileID,
-			String fileSuffix, byte[] data) {
-		String dataDir = getDataDirPath("data");
-		String fileName = dataDir + File.separator + filePrefix + "-" + fileID
-				+ "." + fileSuffix;
-		DataOutputStream os = null;
-		try {
-			os = new DataOutputStream(new FileOutputStream(fileName));
-			os.write(data);
-			os.flush();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-			try {
-				if (os != null)
-					os.close();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-	}
-
-	/**
-	 * This is a helper method that does the work of loading the read zones
-	 */
-	private void loadReadZones() {
-		HashMap<String, byte[]> fileMap = getFiles("readzone", "readzones");
-		for (String readZoneName : fileMap.keySet()) {
-			byte[] file = fileMap.get(readZoneName);
-			Properties properties = new Properties();
-			try {
-				properties.load(new ByteArrayInputStream(file));
-				this.readZones.put(readZoneName, ReadZone
-						.createReadZone(properties));
-			} catch (IOException e) {
-			}
-		}
-	}
-
-	/**
-	 * This is a helper method that does the work of reading in files
-	 * 
-	 * @param fileNamePrefix
-	 * @param dir
-	 * @return
-	 */
-	private HashMap<String, byte[]> getFiles(final String fileNamePrefix,
-			String dir) {
-		HashMap<String, byte[]> fileMap = new HashMap<String, byte[]>();
-
-		// the path of the directory to read files from
-		String dataPath = getDataDirPath(dir);
-
-		// get the files to read in by filtering out the ones we don't want
-		File[] dataFiles = new File(dataPath).listFiles(new FilenameFilter() {
-
-			@Override
-			public boolean accept(File arg0, String arg1) {
-				if (arg0.isHidden())
-					return false;
-				if (arg1.endsWith("~")) {
-					return false;
-				}
-				return arg1.startsWith(fileNamePrefix);
-			}
-		});
-
-		// if we did not read in any files
-		if (dataFiles == null) {
-			return fileMap;
-		}
-
-		for (File f : dataFiles) {
-			try {
-				// read in the file
-				FileInputStream fileStream = new FileInputStream(f);
-				FileChannel channel = fileStream.getChannel();
-				MappedByteBuffer bb = channel.map(MapMode.READ_ONLY, 0, channel
-						.size());
-				byte[] bytes = new byte[(int) channel.size()];
-				bb.get(bytes);
-
-				// the file id is in between the '-' and the '.'
-				String id = f.getName().substring(f.getName().indexOf('-') + 1,
-						f.getName().indexOf('.'));
-				fileMap.put(id, bytes);
-			} catch (FileNotFoundException e) {
-				// ignore
-				logger.error("Cannot read file: " + f.getAbsolutePath());
-			} catch (IOException e) {
-				// ignore
-				logger.error("Cannot read file: " + f.getAbsolutePath());
-			}
-
-		}
-		return fileMap;
-
-	}
-
-	/**
-	 * This method returns the path of the supplied directory name relative to
-	 * the application/${groupName} folder
-	 * 
-	 * @param dir
-	 * @return
-	 */
-	private String getDataDirPath(String dir) {
-		return System.getProperty("org.rifidi.home") + File.separator
-				+ System.getProperty("org.rifidi.edge.applications")
-				+ File.separator + getGroup() + File.separator + dir;
 	}
 
 	/*
