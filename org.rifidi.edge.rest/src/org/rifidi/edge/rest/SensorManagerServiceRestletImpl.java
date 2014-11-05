@@ -62,6 +62,7 @@ import org.rifidi.edge.sensors.AbstractSensor;
 import org.rifidi.edge.sensors.SensorSession;
 import org.rifidi.edge.services.EsperManagementService;
 import org.rifidi.edge.util.RifidiEdgeHelper;
+
 //import org.rifidi.edge.adapter.llrp.LLRPEncodeMessageDto;
 
 /**
@@ -234,7 +235,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 					// Validate that if there are parameters, they are well pair
 					// formed values
 					AttributeList attributes = getProcessedAttributes(strPropAttr);
-					
+
 					if (operationCode
 							.equals(LLRPReaderSession.LLRP_OPERATION_CODE.LLRPEPCWrite)) {
 
@@ -615,12 +616,12 @@ public class SensorManagerServiceRestletImpl extends Application {
 					response.setEntity(self.generateReturnString(self
 							.generateErrorMessage(nEx.getMessage(), null)),
 							MediaType.TEXT_XML);
-				} catch( CommandSubmissionException cEx){
-					
+				} catch (CommandSubmissionException cEx) {
+
 					response.setEntity(self.generateReturnString(self
 							.generateErrorMessage(cEx.getMessage(), null)),
 							MediaType.TEXT_XML);
-					
+
 				} catch (Exception e) {
 					response.setEntity(self.generateReturnString(self
 							.generateErrorMessage(e.toString(), null)),
@@ -1041,7 +1042,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 		Restlet llrpKillPasswordLock = new Restlet() {
 			@Override
 			public void handle(Request request, Response response) {
-				
+
 				logger.info("llrpKillPasswordLock requested");
 
 				executeLlrpOperation(
@@ -1056,29 +1057,31 @@ public class SensorManagerServiceRestletImpl extends Application {
 			@Override
 			public void handle(Request request, Response response) {
 				try {
-					
+
 					logger.info("llrpMessage requested");
-					
+
 					AbstractSensor<?> sensor = readerDAO
 							.getReaderByID((String) request.getAttributes()
 									.get("readerID"));
-					
-					if (sensor == null){
+
+					if (sensor == null) {
 						throw new Exception("ReaderID is missing or invalid");
 					}
-					
+
 					Map<String, SensorSession> sessionMap = sensor
 							.getSensorSessions();
 					String llrpResponse = "";
-					if (sessionMap != null && sessionMap.containsKey(request.getAttributes().get(
-							"sessionID"))) {
+					if (sessionMap != null
+							&& sessionMap.containsKey(request.getAttributes()
+									.get("sessionID"))) {
 						LLRPReaderSession session = (LLRPReaderSession) sessionMap
 								.get(request.getAttributes().get("sessionID"));
 
 						SAXBuilder sb = new SAXBuilder();
-						
+
 						String strEntityAsText = request.getEntityAsText();
-						Document doc = sb.build(new StringReader(strEntityAsText));
+						Document doc = sb.build(new StringReader(
+								strEntityAsText));
 						llrpResponse = session.sendLLRPMessage(doc);
 						response.setEntity(llrpResponse, MediaType.TEXT_XML);
 					} else {
@@ -1091,7 +1094,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 				}
 			}
 		};
-		
+
 		Restlet ping = new Restlet() {
 			@Override
 			public void handle(Request request, Response response) {
@@ -1101,30 +1104,32 @@ public class SensorManagerServiceRestletImpl extends Application {
 						MediaType.TEXT_XML);
 			}
 		};
-		
-		
+
 		Restlet getAppProperties = new Restlet() {
 			@Override
 			public void handle(Request request, Response response) {
 				try {
-					
+
 					logger.info("getAppProperties requested");
-					
+
 					Integer intAppId = Integer.parseInt((String) request
 							.getAttributes().get("appID"));
-					
+
 					Map<Integer, RifidiApp> appMap = appManager.getApps();
-					
-					if (appMap != null && appMap.get(intAppId) != null){
-						
+
+					if (appMap != null && appMap.get(intAppId) != null) {
+
 						RifidiApp app = appMap.get(intAppId);
-						Properties appProperties = RifidiEdgeHelper.getApplicationProperties(app.getGroup(), app.getName());
-						
+						Properties appProperties = RifidiEdgeHelper
+								.getApplicationProperties(app.getGroup(),
+										app.getName());
+
 						PropertyResponseMessageDTO responseMessageDTO = new PropertyResponseMessageDTO();
 						List<PropertyNameDTO> propertyNameList = new LinkedList<PropertyNameDTO>();
-						
-						for(Map.Entry<Object,Object> mapEntry : appProperties.entrySet() ){
-						
+
+						for (Map.Entry<Object, Object> mapEntry : appProperties
+								.entrySet()) {
+
 							PropertyNameDTO pnd = new PropertyNameDTO();
 							pnd.setPropertyName((String) mapEntry.getKey());
 							pnd.setPropertyValue((String) mapEntry.getValue());
@@ -1132,13 +1137,17 @@ public class SensorManagerServiceRestletImpl extends Application {
 						}
 
 						responseMessageDTO.setProperties(propertyNameList);
-												
-						response.setEntity(self.generateReturnString(responseMessageDTO)
-								.toString(), MediaType.TEXT_XML);
+
+						response.setEntity(
+								self.generateReturnString(responseMessageDTO)
+										.toString(), MediaType.TEXT_XML);
+
+					} else {
+						
+						throw new Exception("Application with id " + intAppId + " does not exist.");
 						
 					}
-					
-					
+
 				} catch (Exception e) {
 					response.setEntity(self.generateReturnString(self
 							.generateErrorMessage(e.getMessage(), null)),
@@ -1146,29 +1155,31 @@ public class SensorManagerServiceRestletImpl extends Application {
 				}
 			}
 		};
-		
+
 		Restlet getGroupProperties = new Restlet() {
 			@Override
 			public void handle(Request request, Response response) {
 				try {
-					
+
 					logger.info("getGroupProperties requested");
-					
+
 					Integer intAppId = Integer.parseInt((String) request
 							.getAttributes().get("appID"));
-					
+
 					Map<Integer, RifidiApp> appMap = appManager.getApps();
-					
-					if (appMap != null && appMap.get(intAppId) != null){
-						
+
+					if (appMap != null && appMap.get(intAppId) != null) {
+
 						RifidiApp app = appMap.get(intAppId);
-						Properties groupProperties = RifidiEdgeHelper.getGroupProperties(app.getGroup());
-						
+						Properties groupProperties = RifidiEdgeHelper
+								.getGroupProperties(app.getGroup());
+
 						PropertyResponseMessageDTO responseMessageDTO = new PropertyResponseMessageDTO();
 						List<PropertyNameDTO> propertyNameList = new LinkedList<PropertyNameDTO>();
-						
-						for(Map.Entry<Object,Object> mapEntry : groupProperties.entrySet() ){
-						
+
+						for (Map.Entry<Object, Object> mapEntry : groupProperties
+								.entrySet()) {
+
 							PropertyNameDTO pnd = new PropertyNameDTO();
 							pnd.setPropertyName((String) mapEntry.getKey());
 							pnd.setPropertyValue((String) mapEntry.getValue());
@@ -1176,13 +1187,17 @@ public class SensorManagerServiceRestletImpl extends Application {
 						}
 
 						responseMessageDTO.setProperties(propertyNameList);
-												
-						response.setEntity(self.generateReturnString(responseMessageDTO)
-								.toString(), MediaType.TEXT_XML);
+
+						response.setEntity(
+								self.generateReturnString(responseMessageDTO)
+										.toString(), MediaType.TEXT_XML);
+
+					} else {
+						
+						throw new Exception("Application with id " + intAppId + " does not exist.");
 						
 					}
-					
-					
+
 				} catch (Exception e) {
 					response.setEntity(self.generateReturnString(self
 							.generateErrorMessage(e.getMessage(), null)),
@@ -1190,43 +1205,48 @@ public class SensorManagerServiceRestletImpl extends Application {
 				}
 			}
 		};
-		
+
 		Restlet getReadZones = new Restlet() {
 			@Override
 			public void handle(Request request, Response response) {
 				try {
-					
+
 					logger.info("getReadZones requested");
-					
+
 					Integer intAppId = Integer.parseInt((String) request
 							.getAttributes().get("appID"));
-					
+
 					Map<Integer, RifidiApp> appMap = appManager.getApps();
-					
-					if (appMap != null && appMap.get(intAppId) != null){
-						
+
+					if (appMap != null && appMap.get(intAppId) != null) {
+
 						RifidiApp app = appMap.get(intAppId);
-						HashMap<String, ReadZone> readZones = RifidiEdgeHelper.getReadZones(app.getGroup()); 
-												
+						HashMap<String, ReadZone> readZones = RifidiEdgeHelper
+								.getReadZones(app.getGroup());
+
 						PropertyResponseMessageDTO responseMessageDTO = new PropertyResponseMessageDTO();
 						List<PropertyNameDTO> propertyNameList = new LinkedList<PropertyNameDTO>();
-						
-						for(String strReadZone : readZones.keySet() ){
-						
+
+						for (String strReadZone : readZones.keySet()) {
+
 							PropertyNameDTO pnd = new PropertyNameDTO();
-							pnd.setPropertyName("readzone");
+							pnd.setPropertyName(null);
 							pnd.setPropertyValue(strReadZone);
 							propertyNameList.add(pnd);
 						}
 
 						responseMessageDTO.setProperties(propertyNameList);
-												
-						response.setEntity(self.generateReturnString(responseMessageDTO)
-								.toString(), MediaType.TEXT_XML);
+
+						response.setEntity(
+								self.generateReturnString(responseMessageDTO)
+										.toString(), MediaType.TEXT_XML);
+
+					} else {
+						
+						throw new Exception("Application with id " + intAppId + " does not exist.");
 						
 					}
-					
-					
+
 				} catch (Exception e) {
 					response.setEntity(self.generateReturnString(self
 							.generateErrorMessage(e.getMessage(), null)),
@@ -1235,32 +1255,71 @@ public class SensorManagerServiceRestletImpl extends Application {
 			}
 		};
 		
+		Restlet deleteReadZone = new Restlet() {
+			@Override
+			public void handle(Request request, Response response) {
+				try {
+
+					logger.info("deleteReadZone requested");
+
+					Integer intAppId = Integer.parseInt((String) request
+							.getAttributes().get("appID"));
+					
+					String readZone = (String) request.getAttributes().get("readZone");
+
+					Map<Integer, RifidiApp> appMap = appManager.getApps();
+
+					if (appMap != null && appMap.get(intAppId) != null) {
+
+						RifidiApp app = appMap.get(intAppId);
+						RifidiEdgeHelper.deleteReadZone(app.getGroup(), readZone);
+
+						response.setEntity(self.generateReturnString(self
+								.generateSuccessMessage()), MediaType.TEXT_XML);
+
+					} else {
+						
+						throw new Exception("Application with id " + intAppId + " does not exist.");
+						
+					}
+
+				} catch (Exception e) {
+					response.setEntity(self.generateReturnString(self
+							.generateErrorMessage(e.getMessage(), null)),
+							MediaType.TEXT_XML);
+				}
+			}
+		};
+
 		Restlet getReadZoneProperties = new Restlet() {
 			@Override
 			public void handle(Request request, Response response) {
 				try {
-					
+
 					logger.info("getReadZoneProperties requested");
-					
+
 					Integer intAppId = Integer.parseInt((String) request
 							.getAttributes().get("appID"));
-					
-					String readZoneName = (String) request.getAttributes().get("readZoneName");
-					
+
+					String readZoneName = (String) request.getAttributes().get(
+							"readZoneName");
+
 					Map<Integer, RifidiApp> appMap = appManager.getApps();
-					
-					if (appMap != null && appMap.get(intAppId) != null){
-						
+
+					if (appMap != null && appMap.get(intAppId) != null) {
+
 						RifidiApp app = appMap.get(intAppId);
-						
-						Properties readZoneProperties = RifidiEdgeHelper.getReadZoneProperties(
-								app.getGroup(), app.getName(), readZoneName); 
-												
+
+						Properties readZoneProperties = RifidiEdgeHelper
+								.getReadZoneProperties(app.getGroup(),
+										app.getName(), readZoneName);
+
 						PropertyResponseMessageDTO responseMessageDTO = new PropertyResponseMessageDTO();
 						List<PropertyNameDTO> propertyNameList = new LinkedList<PropertyNameDTO>();
-						
-						for(Map.Entry<Object,Object> mapEntry : readZoneProperties.entrySet() ){
-						
+
+						for (Map.Entry<Object, Object> mapEntry : readZoneProperties
+								.entrySet()) {
+
 							PropertyNameDTO pnd = new PropertyNameDTO();
 							pnd.setPropertyName((String) mapEntry.getKey());
 							pnd.setPropertyValue((String) mapEntry.getValue());
@@ -1268,13 +1327,17 @@ public class SensorManagerServiceRestletImpl extends Application {
 						}
 
 						responseMessageDTO.setProperties(propertyNameList);
-												
-						response.setEntity(self.generateReturnString(responseMessageDTO)
-								.toString(), MediaType.TEXT_XML);
+
+						response.setEntity(
+								self.generateReturnString(responseMessageDTO)
+										.toString(), MediaType.TEXT_XML);
+
+					} else {
+						
+						throw new Exception("Application with id " + intAppId + " does not exist.");
 						
 					}
-					
-					
+
 				} catch (Exception e) {
 					response.setEntity(self.generateReturnString(self
 							.generateErrorMessage(e.getMessage(), null)),
@@ -1282,8 +1345,111 @@ public class SensorManagerServiceRestletImpl extends Application {
 				}
 			}
 		};
+
+		Restlet setAppProperties = new Restlet() {
+			@Override
+			public void handle(Request request, Response response) {
+
+				// String strCommandId = null;
+
+				try {
+
+					logger.info("setAppProperties requested");
+
+					Integer intAppId = Integer.parseInt((String) request
+							.getAttributes().get("appID"));
+
+					String strPropAttr = (String) request.getAttributes().get(
+							"properties");
+					
+					AttributeList attributes = getProcessedAttributes(strPropAttr);
+
+					Map<Integer, RifidiApp> appMap = appManager.getApps();
+
+					if (appMap != null && appMap.get(intAppId) != null) {
+						
+						RifidiApp app = appMap.get(intAppId);
+
+						RifidiEdgeHelper.setApplicationProperties(app.getGroup(),
+								app.getName(), attributes);
+
+						response.setEntity(self.generateReturnString(self
+								.generateSuccessMessage()), MediaType.TEXT_XML);
+					} else {
+						
+						throw new Exception("Application with id " + intAppId + " does not exist.");
+						
+					}
+
+				} catch (NotValidPropertyForObjectException nE) {
+
+					response.setEntity(self.generateReturnString(self
+							.generateErrorMessage(nE.getMessage(), null)),
+							MediaType.TEXT_XML);
+
+				}
+
+				catch (Exception e) {
+
+					//e.printStackTrace();
+					response.setEntity(self.generateReturnString(self
+							.generateErrorMessage(e.getMessage(), null)),
+							MediaType.TEXT_XML);
+
+				}
+			}
+		};
 		
-		
+		Restlet setGroupProperties = new Restlet() {
+			@Override
+			public void handle(Request request, Response response) {
+
+				try {
+
+					logger.info("setGroupProperties requested");
+
+					Integer intAppId = Integer.parseInt((String) request
+							.getAttributes().get("appID"));
+
+					String strPropAttr = (String) request.getAttributes().get(
+							"properties");
+					
+					AttributeList attributes = getProcessedAttributes(strPropAttr);
+
+					Map<Integer, RifidiApp> appMap = appManager.getApps();
+
+					if (appMap != null && appMap.get(intAppId) != null) {
+						
+						RifidiApp app = appMap.get(intAppId);
+
+						RifidiEdgeHelper.setGroupProperties(app.getGroup(), attributes);
+
+						response.setEntity(self.generateReturnString(self
+								.generateSuccessMessage()), MediaType.TEXT_XML);
+					} else {
+						
+						throw new Exception("Application with id " + intAppId + " does not exist.");
+						
+					}
+
+				} catch (NotValidPropertyForObjectException nE) {
+
+					response.setEntity(self.generateReturnString(self
+							.generateErrorMessage(nE.getMessage(), null)),
+							MediaType.TEXT_XML);
+
+				}
+
+				catch (Exception e) {
+
+					//e.printStackTrace();
+					response.setEntity(self.generateReturnString(self
+							.generateErrorMessage(e.getMessage(), null)),
+							MediaType.TEXT_XML);
+
+				}
+			}
+		};
 
 		Router router = new Router(getContext());
 		router.attach("/readers", readers);
@@ -1296,23 +1462,34 @@ public class SensorManagerServiceRestletImpl extends Application {
 		router.attach(
 				"/executecommand/{readerID}/{sessionID}/{commandID}/{repeatInterval}",
 				executeCommand);
-		
-		//get and set properties for a reader
+
+		// get and set properties for a reader
 		router.attach("/getproperties/{readerID}", getProperties);
 		router.attach("/setproperties/{readerID}/{properties}", setProperties);
-		
-		//get properties for an application
+
+		// get properties for an application
 		router.attach("/getAppProperties/{appID}", getAppProperties);
-		
-		//get properties for a group
+
+		// set properties for an application
+		router.attach("/setAppProperties/{appID}/{properties}",
+				setAppProperties);
+
+		// get properties for a group
 		router.attach("/getGroupProperties/{appID}", getGroupProperties);
 		
-		//get readzones names
+		// set properties for a group
+		router.attach("/setGroupProperties/{appID}/{properties}",
+				setGroupProperties);
+
+		// get readzones
 		router.attach("/getReadZones/{appID}", getReadZones);
 		
-		//get readzones properties
-		router.attach("/getReadZoneProperties/{appID}/{readZoneName}", getReadZoneProperties);
-		
+		// delete readzone
+		router.attach("/deleteReadZone/{appID}/{readZone}", deleteReadZone);
+
+		// get readzones properties
+		router.attach("/getReadZoneProperties/{appID}/{readZoneName}",
+				getReadZoneProperties);
 
 		// createreader with properties
 		router.attach("/createreader/{readerType}/{properties}", createReader);
@@ -1333,7 +1510,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 		router.attach("/readertypes", readerTypes);
 		router.attach("/apps", apps);
 		router.attach("/save", save);
-		
+
 		// single shot commands
 
 		// LLRPEPCWrite single shot command with no properties
@@ -1393,15 +1570,14 @@ public class SensorManagerServiceRestletImpl extends Application {
 		router.attach(
 				"/llrpencode/{readerID}/{sessionID}/LLRPKillPasswordLock/{properties}",
 				llrpKillPasswordLock);
-		
-		//llrp encode
+
+		// llrp encode
 		router.attach("/llrpencode/{readerID}/{sessionID}/{tag}", llrpEncode);
 
-		router.attach("/llrpmessage/{readerID}/{sessionID}",
-				llrpMessage);
-		
+		router.attach("/llrpmessage/{readerID}/{sessionID}", llrpMessage);
+
 		router.attach("/ping", ping);
-				
+
 		return router;
 	}
 
