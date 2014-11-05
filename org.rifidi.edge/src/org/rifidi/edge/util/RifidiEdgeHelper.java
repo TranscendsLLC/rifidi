@@ -260,6 +260,57 @@ public class RifidiEdgeHelper implements Serializable {
 	}
 	
 	/**
+	 * Add a readZone
+	 * @param groupName name of application group
+	 * @param readZone readzone name to add
+	 * @param attributes attributes to be set on readzone
+	 * @throws IOException if there is an error setting the properties on file
+	 * @throws Exception if readzone already exists
+	 */
+	public static void addReadZone(String groupName, String readZone, AttributeList 
+			attributes) throws IOException, Exception {
+
+		String dataPath = getDataDirPath(groupName, READZONES_FOLDER_NAME);
+		String fileName = dataPath + File.separator + READZONE_FILE_NAME_PREFIX 
+				+ "-" + readZone + ".properties";
+		
+		//check if file exists
+		File file = new File(fileName);
+		if (file.exists()){
+			throw new Exception("Readzone " + readZone + " already exists.");
+		}
+		
+		setProperties(fileName, attributes);
+
+	}
+	
+	/**
+	 * Set properties for an existing readzone
+	 * @param groupName name of application group
+	 * @param readZone readzone name to set properties
+	 * @param attributes attributes to be set on readzone
+	 * @throws IOException if there is an error setting the properties on file
+	 * @throws Exception if readzone does not exist
+	 */
+	public static void setReadZoneProperties(String groupName, String readZone, AttributeList 
+			attributes) throws IOException, Exception {
+
+		String dataPath = getDataDirPath(groupName, READZONES_FOLDER_NAME);
+		String fileName = dataPath + File.separator + READZONE_FILE_NAME_PREFIX 
+				+ "-" + readZone + ".properties";
+		
+		//check if file exists
+		File file = new File(fileName);
+		if (!file.exists()){
+			throw new Exception("Readzone " + readZone + " does not exist.");
+		}
+		
+		setProperties(fileName, attributes);
+
+	}
+	
+	
+	/**
 	 * Set group properties
 	 * 
 	 * @param groupName
