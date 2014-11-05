@@ -79,7 +79,13 @@ public class SensorManagerServiceRestletImpl extends Application {
 	public static final String WARNING_STATE = "Warning";
 
 	public static final String[] LlrpReaderTypeArrray = new String[] { "LLRP" };
-
+	
+	public static final String[] ReadZoneRequiredProperties = new String[] {"readerID"};
+	
+	public static final String[] ReadZoneValidProperties = new String[] {"readerID", 
+		"antennas", "tagPattern", "matchPattern"};
+	
+	
 	/** The sensor manager service for sensor commands */
 	public SensorManagerService sensorManagerService;
 
@@ -1450,6 +1456,121 @@ public class SensorManagerServiceRestletImpl extends Application {
 				}
 			}
 		};
+		
+		Restlet addReadZone = new Restlet() {
+			@Override
+			public void handle(Request request, Response response) {
+
+				try {
+
+					logger.info("addReadZone requested");
+
+					Integer intAppId = Integer.parseInt((String) request
+							.getAttributes().get("appID"));
+					
+					String readZone = (String) request.getAttributes().get("readZone");
+
+					String strPropAttr = (String) request.getAttributes().get(
+							"properties");
+					
+					AttributeList attributes = getProcessedAttributes(strPropAttr);
+					
+					//Validate that properties are valid for readzone
+					validateReadzoneProperties(attributes);
+					
+					//Validate that properties contain the minimum required ones
+					validateMinumimRequiredReadzoneProperties(attributes);
+
+					Map<Integer, RifidiApp> appMap = appManager.getApps();
+
+					if (appMap != null && appMap.get(intAppId) != null) {
+						
+						RifidiApp app = appMap.get(intAppId);
+
+						RifidiEdgeHelper.addReadZone(app.getGroup(), readZone, attributes);
+
+						response.setEntity(self.generateReturnString(self
+								.generateSuccessMessage()), MediaType.TEXT_XML);
+					} else {
+						
+						throw new Exception("Application with id " + intAppId + " does not exist.");
+						
+					}
+
+				} catch (NotValidPropertyForObjectException nE) {
+
+					response.setEntity(self.generateReturnString(self
+							.generateErrorMessage(nE.getMessage(), null)),
+							MediaType.TEXT_XML);
+
+				}
+
+				catch (Exception e) {
+
+					//e.printStackTrace();
+					response.setEntity(self.generateReturnString(self
+							.generateErrorMessage(e.getMessage(), null)),
+							MediaType.TEXT_XML);
+
+				}
+			}
+		};
+		
+		Restlet setReadZoneProperties = new Restlet() {
+			@Override
+			public void handle(Request request, Response response) {
+
+				try {
+
+					logger.info("setReadZoneProperties requested");
+
+					Integer intAppId = Integer.parseInt((String) request
+							.getAttributes().get("appID"));
+					
+					String readZone = (String) request.getAttributes().get("readZoneName");
+
+					String strPropAttr = (String) request.getAttributes().get(
+							"properties");
+					
+					AttributeList attributes = getProcessedAttributes(strPropAttr);
+					
+					//Validate that properties are valid for readzone
+					validateReadzoneProperties(attributes);
+
+					Map<Integer, RifidiApp> appMap = appManager.getApps();
+
+					if (appMap != null && appMap.get(intAppId) != null) {
+						
+						RifidiApp app = appMap.get(intAppId);
+
+						RifidiEdgeHelper.setReadZoneProperties(app.getGroup(), readZone, attributes);
+
+						response.setEntity(self.generateReturnString(self
+								.generateSuccessMessage()), MediaType.TEXT_XML);
+					} else {
+						
+						throw new Exception("Application with id " + intAppId + " does not exist.");
+						
+					}
+
+				} catch (NotValidPropertyForObjectException nE) {
+
+					response.setEntity(self.generateReturnString(self
+							.generateErrorMessage(nE.getMessage(), null)),
+							MediaType.TEXT_XML);
+
+				}
+
+				catch (Exception e) {
+
+					//e.printStackTrace();
+					response.setEntity(self.generateReturnString(self
+							.generateErrorMessage(e.getMessage(), null)),
+							MediaType.TEXT_XML);
+
+				}
+			}
+		};
 
 		Router router = new Router(getContext());
 		router.attach("/readers", readers);
@@ -1486,10 +1607,17 @@ public class SensorManagerServiceRestletImpl extends Application {
 		
 		// delete readzone
 		router.attach("/deleteReadZone/{appID}/{readZone}", deleteReadZone);
+		
+		// add readzone
+		router.attach("/addReadZone/{appID}/{readZone}/{properties}", addReadZone);
 
-		// get readzones properties
+		// get readzone properties
 		router.attach("/getReadZoneProperties/{appID}/{readZoneName}",
 				getReadZoneProperties);
+		
+		// set readzone properties
+		router.attach("/setReadZoneProperties/{appID}/{readZoneName}/{properties}",
+				setReadZoneProperties);
 
 		// createreader with properties
 		router.attach("/createreader/{readerType}/{properties}", createReader);
@@ -2112,6 +2240,75 @@ public class SensorManagerServiceRestletImpl extends Application {
 					+ blockLength);
 		}
 
+	}
+	
+	/**
+	 * Validate that properties for a readzone are valid and there is at least 
+	 * the minimum required properties
+	 * @param attributes list of attributes to validate
+	 * @throws Exception if there is a non valid property or the properties list has
+	 * an invalid property for a readzone
+	 */
+	private void validateReadzoneProperties(AttributeList attributes)
+			throws Exception {
+		
+		for(Attribute attribute : attributes.asList()){
+			
+			//Validate if this property is valid for readzone
+			boolean isValidProperty = false;
+			for(int i = 0; i < ReadZoneValidProperties.length; i++){
+				
+				if ( attribute.getName().trim().equals(ReadZoneValidProperties[i]) ){
+					isValidProperty = true;
+					break;
+				}
+				
+			}
+			
+			if (!isValidProperty){
+				
+				String validProperties = "";
+				for(int i = 0; i < ReadZoneValidProperties.length; i++){
+					validProperties += ReadZoneValidProperties[i] + "\n";
+				}
+				
+				throw new Exception("Invalid property " + attribute.getName() 
+						+ " for readzone. Valid ones are: " + validProperties);
+			}
+			
+		}
+	}
+	
+	private void validateMinumimRequiredReadzoneProperties(AttributeList attributes)
+			throws Exception {
+		
+		//Validate all minimum required properties are provided
+		for(int i = 0; i < ReadZoneRequiredProperties.length; i++){
+			
+			boolean requiredPropertyFound = false;
+			for(Attribute attribute : attributes.asList()){
+								
+				if ( ReadZoneRequiredProperties[i].equals(attribute.getName().trim()) ){
+					requiredPropertyFound = true;
+					break;
+				}
+				
+			}
+			
+			if (!requiredPropertyFound){
+				
+				String requiredProperties = "";
+				for(int j = 0; j < ReadZoneRequiredProperties.length; j++){
+					requiredProperties += ReadZoneRequiredProperties[j] + "\n";
+				}
+				
+				throw new Exception("Required property " + ReadZoneRequiredProperties[i] 
+						+ " not found. Required ones are : " + requiredProperties);
+				
+			}
+			
+		}
+		
 	}
 
 	/*
