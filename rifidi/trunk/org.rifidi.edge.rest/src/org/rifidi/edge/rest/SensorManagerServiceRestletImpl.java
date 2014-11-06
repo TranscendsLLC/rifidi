@@ -16,6 +16,8 @@ import java.io.Serializable;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -237,6 +239,9 @@ public class SensorManagerServiceRestletImpl extends Application {
 					// Get the properties
 					String strPropAttr = (String) request.getAttributes().get(
 							"properties");
+					
+					//Decode url attributes
+					strPropAttr = URLDecoder.decode(strPropAttr, "UTF-8");
 
 					// Validate that if there are parameters, they are well pair
 					// formed values
@@ -646,6 +651,9 @@ public class SensorManagerServiceRestletImpl extends Application {
 
 					String strPropAttr = (String) request.getAttributes().get(
 							"properties");
+					
+					//Decode url attributes
+					strPropAttr = URLDecoder.decode(strPropAttr, "UTF-8");
 
 					boolean readerExists = readerExists(strObjectId);
 					boolean commandExists = commandExists(strObjectId);
@@ -759,6 +767,9 @@ public class SensorManagerServiceRestletImpl extends Application {
 
 					String strPropAttr = (String) request.getAttributes().get(
 							"properties");
+					
+					//Decode url attributes
+					strPropAttr = URLDecoder.decode(strPropAttr, "UTF-8");
 
 					AttributeList attributes = getProcessedAttributes(strPropAttr);
 
@@ -807,6 +818,9 @@ public class SensorManagerServiceRestletImpl extends Application {
 
 					String strPropAttr = (String) request.getAttributes().get(
 							"properties");
+					
+					//Decode url attributes
+					strPropAttr = URLDecoder.decode(strPropAttr, "UTF-8");
 
 					AttributeList attributes = getProcessedAttributes(strPropAttr);
 
@@ -1368,6 +1382,9 @@ public class SensorManagerServiceRestletImpl extends Application {
 					String strPropAttr = (String) request.getAttributes().get(
 							"properties");
 					
+					//Decode url attributes
+					strPropAttr = URLDecoder.decode(strPropAttr, "UTF-8");
+					
 					AttributeList attributes = getProcessedAttributes(strPropAttr);
 
 					Map<Integer, RifidiApp> appMap = appManager.getApps();
@@ -1419,6 +1436,9 @@ public class SensorManagerServiceRestletImpl extends Application {
 
 					String strPropAttr = (String) request.getAttributes().get(
 							"properties");
+					
+					//Decode url attributes
+					strPropAttr = URLDecoder.decode(strPropAttr, "UTF-8");
 					
 					AttributeList attributes = getProcessedAttributes(strPropAttr);
 
@@ -1472,6 +1492,9 @@ public class SensorManagerServiceRestletImpl extends Application {
 
 					String strPropAttr = (String) request.getAttributes().get(
 							"properties");
+					
+					//Decode url attributes
+					strPropAttr = URLDecoder.decode(strPropAttr, "UTF-8");
 					
 					AttributeList attributes = getProcessedAttributes(strPropAttr);
 					
@@ -1531,6 +1554,9 @@ public class SensorManagerServiceRestletImpl extends Application {
 
 					String strPropAttr = (String) request.getAttributes().get(
 							"properties");
+					
+					//Decode url attributes
+					strPropAttr = URLDecoder.decode(strPropAttr, "UTF-8");
 					
 					AttributeList attributes = getProcessedAttributes(strPropAttr);
 					
