@@ -82,9 +82,11 @@ public class SensorManagerServiceRestletImpl extends Application {
 
 	public static final String[] LlrpReaderTypeArrray = new String[] { "LLRP" };
 	
-	public static final String[] ReadZoneRequiredProperties = new String[] {"readerID"};
+	public static final String ReaderIDPropertyName = "readerID";
 	
-	public static final String[] ReadZoneValidProperties = new String[] {"readerID", 
+	public static final String[] ReadZoneRequiredProperties = new String[] {ReaderIDPropertyName};
+	
+	public static final String[] ReadZoneValidProperties = new String[] {ReaderIDPropertyName, 
 		"antennas", "tagPattern", "matchPattern"};
 	
 	
@@ -772,10 +774,32 @@ public class SensorManagerServiceRestletImpl extends Application {
 					strPropAttr = URLDecoder.decode(strPropAttr, "UTF-8");
 
 					AttributeList attributes = getProcessedAttributes(strPropAttr);
+					
+					//From attributes, extract the readerID property if is there
+					Attribute attributeToDelete = null;
+					for (Attribute attribute : attributes.asList()) {
+						if (attribute.getName().equals(ReaderIDPropertyName)){
+							readerId = (String) attribute.getValue();
+
+							//remove readerID from attributes, so when the time 
+							//to validate the properties for reader comes, it does 
+							//not throw error because of this readerID property name
+							//Hold a reference of attribute to be deleted, to delete
+							//outside this loop, because if try to delete inside, 
+							//we get an ConcurrentModificationException
+							attributeToDelete = attribute;
+						}
+					}
+					
+					if (attributeToDelete != null){
+						attributes.remove(attributeToDelete);
+					}
 
 					// Create reader
 					readerId = sensorManagerService.createReader(strReaderType,
-							attributes);
+							attributes, readerId);
+					
+					
 
 					// Validate what properties are wrong for this created
 					// reader
@@ -800,6 +824,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 
 				catch (Exception e) {
 
+					e.printStackTrace();
 					response.setEntity(self.generateReturnString(self
 							.generateErrorMessage(e.toString(), null)),
 							MediaType.TEXT_XML);

@@ -325,6 +325,55 @@ public class ConfigurationServiceImpl implements ConfigurationService,
 		}
 		throw new CannotCreateServiceException();
 	}
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seeorg.rifidi.edge.core.configuration.services.ConfigurationService#
+	 * createService( java.lang.String, javax.management.AttributeList, java.lang.String)
+	 */
+	@Override
+	public String createService(final String factoryID,
+			final AttributeList attributes, String requiredServiceID) throws CannotCreateServiceException {
+		ServiceFactory<?> factory = factories.get(factoryID);
+		if (factory == null) {
+			logger.warn("Tried to use a nonexistent factory: " + factoryID);
+			throw new CannotCreateServiceException();
+		}
+		
+		//TODO validate and accept only alphanum and underscores, with regex
+		//requiredServiceID = requiredServiceID.replaceAll("[^A-Z^a-z^0-9^_]", "_");
+		synchronized (serviceNames) {
+
+			if (serviceNames.contains(requiredServiceID)) {
+				throw new CannotCreateServiceException("Service with id: " + requiredServiceID + " already exists");
+			}
+			serviceNames.add(requiredServiceID);
+		}
+
+		DefaultConfigurationImpl config = createAndRegisterConfiguration(
+				requiredServiceID, factoryID, attributes, new HashSet<SessionDTO>());
+
+		if (factoryToConfigurations.get(factoryID) == null) {
+			factoryToConfigurations.put(factoryID,
+					new CopyOnWriteArraySet<DefaultConfigurationImpl>());
+		}
+		factoryToConfigurations.get(factoryID).add(config);
+		IDToConfigurations.put(requiredServiceID, config);
+
+		if (factory != null) {
+			// TODO: Ticket #236
+			try {
+				factory.createInstance(requiredServiceID);
+				return requiredServiceID;
+			} catch (IllegalArgumentException e) {
+				logger.error("exception", e);
+			} catch (InvalidStateException e) {
+				logger.error("exception ", e);
+			}
+		}
+		throw new CannotCreateServiceException();
+	}
 
 	/*
 	 * (non-Javadoc)

@@ -83,6 +83,27 @@ public class SensorManagerServiceImpl implements SensorManagerService {
 		
 		return null;
 	}
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.rifidi.edge.api.rmi.services.SensorManagerService#createReader(java
+	 * .lang.String, javax.management.AttributeList, java.lang.String)
+	 */
+	@Override
+	public String createReader(String readerConfigurationFactoryID,
+			AttributeList readerConfigurationProperties, String serviceID) {
+		logger.debug("RMI call: createReader with service id: " + serviceID);
+		try {
+			return configurationService.createService(readerConfigurationFactoryID,
+					readerConfigurationProperties, serviceID);
+		} catch (CannotCreateServiceException e) {
+			logger.warn("Sensor not created for required service id: " + serviceID);
+		}
+		
+		return null;
+	}
 
 	/*
 	 * (non-Javadoc)
