@@ -66,7 +66,7 @@ public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 	private AtomicBoolean destroied = new AtomicBoolean(false);
 	/** Mbeaninfo for this class. */
 	public static final MBeanInfo mbeaninfo;
-	private String displayName;
+	private String displayName="LLRP";
 	static {
 		AnnotationMBeanInfoStrategy strategy = new AnnotationMBeanInfoStrategy();
 		mbeaninfo = strategy.getMBeanInfo(LLRPReader.class);
