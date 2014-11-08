@@ -122,11 +122,10 @@ public class ConfigurationServiceImpl implements ConfigurationService,
 			store = (ConfigurationStore) jaxbContext.createUnmarshaller()
 					.unmarshal(persistanceResource.getFile());
 		} catch (IOException e) {
-			logger.error(e);
+			logger.error("Error loading config/rifidi.xml, no configuration loaded");
 			return ret;
-
 		} catch (JAXBException e) {
-			logger.error(e);
+			logger.error("Exception loading config/rifidi.xml or file not found, no configuration loaded");
 			return ret;
 		}
 		if (store.getServices() != null) {
