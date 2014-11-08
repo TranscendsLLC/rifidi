@@ -50,18 +50,19 @@ public class UrlEncodeHttpTestClient {
 		UrlEncodeHttpTestClient myHttpTestClient = new UrlEncodeHttpTestClient();
 
 		String strCommand = "setGroupProperties/7/";
-		String prop = "mqttBroker=tcp://broker.mqtt-dashboard36.com:1883";
+		String prop = "mqttBroker=tcp://test.mqtt-dashboard.com:1883";
 		String encodedProp = URLEncoder.encode(prop, "UTF-8");
+		System.out.println("encodeProp: " + encodedProp);
 		String url = strCommand + encodedProp;
 
 
 		// You can submit a GET or a POST request
 
 		// HTTP GET request
-		//myHttpTestClient.processCommand(RequestMethodEnum.GET, url);
+		myHttpTestClient.processCommand(RequestMethodEnum.GET, url);
 
 		// HTTP POST request
-		 myHttpTestClient.processCommand(RequestMethodEnum.POST, url);
+		// myHttpTestClient.processCommand(RequestMethodEnum.POST, url);
 
 	}
 

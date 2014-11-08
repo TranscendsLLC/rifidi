@@ -50,6 +50,18 @@ public interface ConfigurationService {
 	 * @return The ID of the newly created service
 	 */
 	String createService(String factoryID, AttributeList attributes) throws CannotCreateServiceException;
+	
+	/**
+	 * Create a new service with a required service id.
+	 * 
+	 * @param factoryID The ID of the factory to use to create the new service
+	 * @param attributes The Attributes to set on the new service
+	 * @param serviceIDthe required service id to be set on service
+	 * @return The ID of the newly created service
+	 */
+	String createService(String factoryID, AttributeList attributes, String serviceID) 
+			throws CannotCreateServiceException;
+
 
 	/**
 	 * Destroy a service.
