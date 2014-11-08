@@ -60,7 +60,7 @@ public interface ConfigurationService {
 	 * @return The ID of the newly created service
 	 */
 	String createService(String factoryID, AttributeList attributes, String serviceID) 
-			throws CannotCreateServiceException;
+			throws Exception;
 
 
 	/**

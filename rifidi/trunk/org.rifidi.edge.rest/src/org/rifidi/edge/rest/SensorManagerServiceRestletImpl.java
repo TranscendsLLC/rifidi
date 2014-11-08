@@ -799,8 +799,6 @@ public class SensorManagerServiceRestletImpl extends Application {
 					readerId = sensorManagerService.createReader(strReaderType,
 							attributes, readerId);
 					
-					
-
 					// Validate what properties are wrong for this created
 					// reader
 					validateAttributesForReaderOrCommand(readerId, attributes);

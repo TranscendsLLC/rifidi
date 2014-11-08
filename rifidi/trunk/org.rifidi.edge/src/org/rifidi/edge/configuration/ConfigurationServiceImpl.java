@@ -23,6 +23,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.management.Attribute;
 import javax.management.AttributeList;
@@ -334,15 +336,20 @@ public class ConfigurationServiceImpl implements ConfigurationService,
 	 */
 	@Override
 	public String createService(final String factoryID,
-			final AttributeList attributes, String requiredServiceID) throws CannotCreateServiceException {
+			final AttributeList attributes, String requiredServiceID) throws Exception {
 		ServiceFactory<?> factory = factories.get(factoryID);
 		if (factory == null) {
 			logger.warn("Tried to use a nonexistent factory: " + factoryID);
 			throw new CannotCreateServiceException();
 		}
-		
-		//TODO validate and accept only alphanum and underscores, with regex
-		//requiredServiceID = requiredServiceID.replaceAll("[^A-Z^a-z^0-9^_]", "_");
+
+		//Validate and accept only alphanumeric values and underscores
+		Pattern pattern = Pattern.compile("^[a-zA-Z0-9_]+$");
+		Matcher matcher = pattern.matcher(requiredServiceID);
+		if (!matcher.matches()){
+			throw new CannotCreateServiceException("Invalid character for reader id. It's allowed only alphanumeric and underscore characters");
+		}
+ 
 		synchronized (serviceNames) {
 
 			if (serviceNames.contains(requiredServiceID)) {

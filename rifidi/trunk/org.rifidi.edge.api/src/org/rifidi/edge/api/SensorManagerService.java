@@ -91,7 +91,8 @@ public interface SensorManagerService {
 	 * @throws RemoteException
 	 */
 	String createReader(String readerFactoryID, AttributeList readerProperties, 
-			String serviceID);
+			String serviceID)
+			throws Exception;
 
 	/**
 	 * This method returns the DTO for a particular reader
