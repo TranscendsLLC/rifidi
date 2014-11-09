@@ -796,8 +796,15 @@ public class SensorManagerServiceRestletImpl extends Application {
 					}
 
 					// Create reader
-					readerId = sensorManagerService.createReader(strReaderType,
-							attributes, readerId);
+					if (readerId == null){
+						//no reader id is provided, so call the default create method
+						readerId = sensorManagerService.createReader(strReaderType,
+								attributes);
+					} else {
+						//reader id is provided
+						readerId = sensorManagerService.createReader(strReaderType,
+								attributes, readerId);
+					}
 					
 					// Validate what properties are wrong for this created
 					// reader
