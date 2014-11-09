@@ -99,6 +99,7 @@ public class RifidiEdgeHelper implements Serializable {
 	private static final void writeProperties(String fileName, byte[] data) {
 		DataOutputStream os = null;
 		try {
+			Thread.sleep(1000);
 			os = new DataOutputStream(new FileOutputStream(fileName));
 			os.write(data);
 			os.flush();
@@ -106,6 +107,8 @@ public class RifidiEdgeHelper implements Serializable {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
+		} catch (InterruptedException iEx) {
+			iEx.printStackTrace();
 		} finally {
 			try {
 				if (os != null)
