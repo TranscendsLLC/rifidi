@@ -99,7 +99,7 @@ public class RifidiEdgeHelper implements Serializable {
 	private static final void writeProperties(String fileName, byte[] data) {
 		DataOutputStream os = null;
 		try {
-			Thread.sleep(1000);
+			Thread.sleep(2000);
 			os = new DataOutputStream(new FileOutputStream(fileName));
 			os.write(data);
 			os.flush();
@@ -191,31 +191,35 @@ public class RifidiEdgeHelper implements Serializable {
 		properties.load(new ByteArrayInputStream(appPropBytes));
 		return properties;
 	}
-	
+
 	/**
 	 * Deletes readzone
-	 * @param groupName group name of application
-	 * @param readZone readzone name
-	 * @throws Exception if readzone does not exist
+	 * 
+	 * @param groupName
+	 *            group name of application
+	 * @param readZone
+	 *            readzone name
+	 * @throws Exception
+	 *             if readzone does not exist
 	 */
 	public static void deleteReadZone(String groupName, String readZone)
-			throws Exception{
-		
+			throws Exception {
+
 		String dataPath = getDataDirPath(groupName, READZONES_FOLDER_NAME);
-		String fileName = dataPath + File.separator + READZONE_FILE_NAME_PREFIX 
+		String fileName = dataPath + File.separator + READZONE_FILE_NAME_PREFIX
 				+ "-" + readZone + ".properties";
 
-		//check if file exists
+		// check if file exists
 		File file = new File(fileName);
-		if (!file.exists()){
-			//If not exists, can not delete
+		if (!file.exists()) {
+			// If not exists, can not delete
 			throw new Exception("Readzone " + readZone + " does not exist");
 		} else {
-			
-			//exists, delete file
+
+			// exists, delete file
 			file.delete();
 		}
-		
+
 	}
 
 	/**
@@ -261,58 +265,69 @@ public class RifidiEdgeHelper implements Serializable {
 		setProperties(fileName, attributes);
 
 	}
-	
+
 	/**
 	 * Add a readZone
-	 * @param groupName name of application group
-	 * @param readZone readzone name to add
-	 * @param attributes attributes to be set on readzone
-	 * @throws IOException if there is an error setting the properties on file
-	 * @throws Exception if readzone already exists
+	 * 
+	 * @param groupName
+	 *            name of application group
+	 * @param readZone
+	 *            readzone name to add
+	 * @param attributes
+	 *            attributes to be set on readzone
+	 * @throws IOException
+	 *             if there is an error setting the properties on file
+	 * @throws Exception
+	 *             if readzone already exists
 	 */
-	public static void addReadZone(String groupName, String readZone, AttributeList 
-			attributes) throws IOException, Exception {
+	public static void addReadZone(String groupName, String readZone,
+			AttributeList attributes) throws IOException, Exception {
 
 		String dataPath = getDataDirPath(groupName, READZONES_FOLDER_NAME);
-		String fileName = dataPath + File.separator + READZONE_FILE_NAME_PREFIX 
+		String fileName = dataPath + File.separator + READZONE_FILE_NAME_PREFIX
 				+ "-" + readZone + ".properties";
-		
-		//check if file exists
+
+		// check if file exists
 		File file = new File(fileName);
-		if (file.exists()){
+		if (file.exists()) {
 			throw new Exception("Readzone " + readZone + " already exists.");
 		}
-		
+
 		setProperties(fileName, attributes);
 
 	}
-	
+
 	/**
 	 * Set properties for an existing readzone
-	 * @param groupName name of application group
-	 * @param readZone readzone name to set properties
-	 * @param attributes attributes to be set on readzone
-	 * @throws IOException if there is an error setting the properties on file
-	 * @throws Exception if readzone does not exist
+	 * 
+	 * @param groupName
+	 *            name of application group
+	 * @param readZone
+	 *            readzone name to set properties
+	 * @param attributes
+	 *            attributes to be set on readzone
+	 * @throws IOException
+	 *             if there is an error setting the properties on file
+	 * @throws Exception
+	 *             if readzone does not exist
 	 */
-	public static void setReadZoneProperties(String groupName, String readZone, AttributeList 
-			attributes) throws IOException, Exception {
+	public static void setReadZoneProperties(String groupName, String readZone,
+			AttributeList attributes) throws IOException, Exception {
 
 		String dataPath = getDataDirPath(groupName, READZONES_FOLDER_NAME);
-		String fileName = dataPath + File.separator + READZONE_FILE_NAME_PREFIX 
+		String fileName = dataPath + File.separator + READZONE_FILE_NAME_PREFIX
 				+ "-" + readZone + ".properties";
-		
-		//check if file exists
+
+		// check if file exists
 		File file = new File(fileName);
-		if (!file.exists()){
+		if (!file.exists()) {
 			throw new Exception("Readzone " + readZone + " does not exist.");
 		}
-		
+
 		setProperties(fileName, attributes);
 
 	}
-	
-	
+
 	/**
 	 * Set group properties
 	 * 
@@ -323,8 +338,8 @@ public class RifidiEdgeHelper implements Serializable {
 	 * @throws IOException
 	 *             if there is an error setting the properties
 	 */
-	public static void setGroupProperties(String groupName, AttributeList attributes) 
-			throws IOException {
+	public static void setGroupProperties(String groupName,
+			AttributeList attributes) throws IOException {
 
 		String dataPath = getDataDirPath(groupName, null);
 		String fileName = dataPath + File.separator + groupName + ".properties";
@@ -345,61 +360,91 @@ public class RifidiEdgeHelper implements Serializable {
 	private static void setProperties(String fileName, AttributeList attributes)
 			throws IOException {
 
-		//check if file exists
-		File file = new File(fileName);
-		if (!file.exists()){
-			//If not exists, create it
-			file.createNewFile();
-		}
+		File file = null;
+		InputStream ips = null;
+		InputStreamReader ipsr = null;
+		BufferedReader br = null;
 		
-		List<String> fileLines = new LinkedList<String>();
+		String dataToWrite = null;
+		
+		try {
 
-		InputStream ips = new FileInputStream(fileName);
-		InputStreamReader ipsr = new InputStreamReader(ips);
-		BufferedReader br = new BufferedReader(ipsr);
-		String line;
-		while ((line = br.readLine()) != null) {
-			fileLines.add(line);
-		}
-		br.close();
+			// check if file exists
+			file = new File(fileName);
+			if (!file.exists()) {
+				// If not exists, create it
+				file.createNewFile();
+			}
 
-		// Iterate properties received to see if they exist in file, and update
-		// them,
-		// or add to file if they do not exist.
-		for (Attribute attribute : attributes.asList()) {
+			List<String> fileLines = new LinkedList<String>();
 
-			String propName = attribute.getName();
-			boolean attributeFound = false;
-			for (String fileLine : fileLines) {
-				if (!fileLine.isEmpty() && !fileLine.startsWith("#")) {
-					String[] splittedLine = fileLine.split("=");
-					if (splittedLine.length > 0) {
-						String filePropName = splittedLine[0];
-						if (filePropName.trim().equals(propName.trim())) {
-							attributeFound = true;
-							int index = fileLines.indexOf(fileLine);
-							fileLines.set(index,
-									filePropName + "=" + attribute.getValue());
+			ips = new FileInputStream(fileName);
+			ipsr = new InputStreamReader(ips);
+			br = new BufferedReader(ipsr);
+			String line;
+			while ((line = br.readLine()) != null) {
+				fileLines.add(line);
+			}
+
+			// Iterate properties received to see if they exist in file, and
+			// update
+			// them,
+			// or add to file if they do not exist.
+			for (Attribute attribute : attributes.asList()) {
+
+				String propName = attribute.getName();
+				boolean attributeFound = false;
+				for (String fileLine : fileLines) {
+					if (!fileLine.isEmpty() && !fileLine.startsWith("#")) {
+						String[] splittedLine = fileLine.split("=");
+						if (splittedLine.length > 0) {
+							String filePropName = splittedLine[0];
+							if (filePropName.trim().equals(propName.trim())) {
+								attributeFound = true;
+								int index = fileLines.indexOf(fileLine);
+								fileLines.set(index, filePropName + "="
+										+ attribute.getValue());
+							}
 						}
 					}
 				}
+
+				if (!attributeFound) {
+					// add new attribute
+					fileLines.add(attribute.getName() + "="
+							+ attribute.getValue());
+				}
+
 			}
 
-			if (!attributeFound) {
-				// add new attribute
-				fileLines.add(attribute.getName() + "=" + attribute.getValue());
+			// fileLines has the attributes to be set
+			dataToWrite = "";
+			for (String data : fileLines) {
+				dataToWrite += data + "\n";
 			}
+			
+		} finally {
 
-		}
-
-		// fileLines has the attributes to be set
-		String dataToWrite = "";
-		for (String data : fileLines) {
-			dataToWrite += data + "\n";
+			//close file resources
+			
+			if (br != null){
+				br.close();
+			}
+			
+			if (ipsr != null){
+				ipsr.close();
+			}
+			
+			if (ips != null){
+				ips.close();
+			}
+			
 		}
 
 		// Write to app properties file
-		writeProperties(fileName, dataToWrite.getBytes());
+		if (dataToWrite != null){
+			writeProperties(fileName, dataToWrite.getBytes());
+		}
 
 	}
 
