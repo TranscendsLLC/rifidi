@@ -503,32 +503,31 @@ public class SensorManagerServiceRestletImpl extends Application {
 					String strSessionID = (String) request.getAttributes().get(
 							"sessionID");
 
-					sensorManagerService
-							.startSession(strReaderId, strSessionID);
-
-					SessionStatus currentSessionState = checkSessionState(
+					SessionStatus checkSessionState = checkSessionState(
 							strReaderId, strSessionID, SessionStatus.PROCESSING);
+					
+					if ( !checkSessionState.equals(SessionStatus.PROCESSING) && !checkSessionState.equals(SessionStatus.CONNECTING) ) {
+						sensorManagerService.startSession(strReaderId, strSessionID);
 
-					if (currentSessionState.equals(SessionStatus.PROCESSING)) {
+						SessionStatus currentSessionState = checkSessionState(strReaderId, strSessionID, SessionStatus.PROCESSING);
 
-						// Generate a success message
-						response.setEntity(self.generateReturnString(self
-								.generateSuccessMessage()), MediaType.TEXT_XML);
+						if (currentSessionState.equals(SessionStatus.PROCESSING)) {
 
+							// Generate a success message
+							response.setEntity(self.generateReturnString(self.generateSuccessMessage()), MediaType.TEXT_XML);
+
+						} else {
+
+							// Generate a failure message with
+							// currentSessionStatus
+							response.setEntity(self.generateReturnString(self.generateErrorMessage("Session already started, current state is " + currentSessionState
+											+ "  - See Rifidi Edge Sever Log for details", currentSessionState.toString())), MediaType.TEXT_XML);
+
+						}
 					} else {
-
-						// Generate a failure message with currentSessionStatus
-						response.setEntity(
-								self.generateReturnString(self
-										.generateErrorMessage(
-												"Unable to start session, current state is "
-														+ currentSessionState
-														+ "  - See Rifidi Edge Sever Log for details",
-												currentSessionState.toString())),
-								MediaType.TEXT_XML);
-
+						response.setEntity(self.generateReturnString(self.generateErrorMessage("Unable to start session, current state is " + checkSessionState
+								, checkSessionState.toString())), MediaType.TEXT_XML);
 					}
-
 				} catch (Exception e) {
 
 					response.setEntity(self.generateReturnString(self
