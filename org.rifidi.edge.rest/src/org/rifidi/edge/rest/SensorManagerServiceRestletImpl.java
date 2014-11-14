@@ -503,8 +503,9 @@ public class SensorManagerServiceRestletImpl extends Application {
 					String strSessionID = (String) request.getAttributes().get(
 							"sessionID");
 
-					SessionStatus checkSessionState = checkSessionState(
-							strReaderId, strSessionID, SessionStatus.PROCESSING);
+					SessionStatus checkSessionState = sensorManagerService.getSession(
+							strReaderId, strSessionID).getStatus();
+
 					
 					if ( !checkSessionState.equals(SessionStatus.PROCESSING) && !checkSessionState.equals(SessionStatus.CONNECTING) ) {
 						sensorManagerService.startSession(strReaderId, strSessionID);
@@ -529,7 +530,6 @@ public class SensorManagerServiceRestletImpl extends Application {
 								, checkSessionState.toString())), MediaType.TEXT_XML);
 					}
 				} catch (Exception e) {
-
 					response.setEntity(self.generateReturnString(self
 							.generateErrorMessage(e.toString(), null)),
 							MediaType.TEXT_XML);
