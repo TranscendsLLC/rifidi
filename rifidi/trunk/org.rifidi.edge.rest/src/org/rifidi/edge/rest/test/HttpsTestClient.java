@@ -47,7 +47,7 @@ public class HttpsTestClient {
 	public static void main(String[] args) throws Exception {
 		// TODO Auto-generated method stub
 
-		HttpsTestClient myHttpTestClient = new HttpsTestClient();
+		HttpsTestClient myHttpsTestClient = new HttpsTestClient();
 
 		String strCommand = "setGroupProperties/7/";
 		String prop = "mqttBroker=tcp://test.mqtt-dashboard.com:1883";
@@ -59,10 +59,10 @@ public class HttpsTestClient {
 		// You can submit a GET or a POST request
 
 		// HTTP GET request
-		//myHttpTestClient.processCommand(RequestMethodEnum.GET, url);
+		myHttpsTestClient.processCommand(RequestMethodEnum.GET, url);
 
 		// HTTP POST request
-		 myHttpTestClient.processCommand(RequestMethodEnum.POST, url);
+		//myHttpsTestClient.processCommand(RequestMethodEnum.POST, url);
 
 	}
 
