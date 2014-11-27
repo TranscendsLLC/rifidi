@@ -4,7 +4,7 @@ org.restlet,2.2.1,plugins/org.restlet_2.2.1.jar,4,true
 org.restlet.ext.servlet,2.3.0.m2-v20140506-1156,plugins/org.restlet.ext.servlet.jar,4,true
 org.restlet.ext.simple,1.0.0,plugins/org.restlet.ext.simple_1.0.0.jar,4,true
 org.jsslutils,1.0.0,plugins/org.jsslutils_1.0.0.jar,4,true
-org.moquette,0.4.0,plugins/org.moquette_0.4.0.jar,4,true
+org.moquette,0.6.0,plugins/org.moquette_0.6.0.jar,4,true
 org.eclipse.paho,0.4.0,plugins/org.eclipse.paho_0.4.0.jar,4,true
 org.jolokia.osgi.bundle,1.2.2,plugins/jolokia-osgi-bundle-1.2.2.jar,4,true
 org.antlr.v4.runtime,4.4.0,plugins/org.antlr.v4.runtime_4.4.0.jar,4,true
@@ -131,3 +131,4 @@ org.springframework.web.servlet,3.1.2.RELEASE,plugins/org.springframework.web.se
 #org.springframework.social.test,1.0.2,plugins/spring-social-test-1.0.2.RELEASE-osgi.jar,4,true
 #org.springframework.social.twitter,1.0.2,plugins/spring-social-twitter-1.0.2.RELEASE-osgi.jar,4,true
 #org.springframework.social.web,1.0.2,plugins/spring-social-web-1.0.2.RELEASE-osgi.jar,4,true
+vert.x,2.1.5,plugins/vert.x_2.1.5.jar,4,true
