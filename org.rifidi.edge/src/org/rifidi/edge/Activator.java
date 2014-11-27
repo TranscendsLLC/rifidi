@@ -17,7 +17,7 @@ import org.osgi.framework.BundleContext;
 public class Activator implements BundleActivator {
 
 	private Server server;
-	
+
 	/** Logger */
 	private final Log logger = LogFactory.getLog(getClass());
 
@@ -35,13 +35,23 @@ public class Activator implements BundleActivator {
 					.getProperty("org.rifidi.mqtt.enabled"));
 
 			if (enabled) {
+
+				String rifidihome = System.getProperty("org.rifidi.home");
+
+				// set moquette path
+				System.setProperty("moquette.path",
+						System.getProperty("org.rifidi.home"));
+
 				logger.info("Starting Moquette MQTT");
 				this.server = new Server();
 				this.server.startServer();
 			}
+			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+
 	}
 
 	/*
