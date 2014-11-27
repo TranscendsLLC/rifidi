@@ -22,7 +22,7 @@ public class MqttPublishSample
 		String topic        = "transcendstest";
         String content      = "testing mqtt 3";
         int qos             = 2;
-        String broker       = "tcp://iot.eclipse.org:1883";
+        String broker       = "tcp://localhost:1883";
         String clientId     = "clientIdPublisher";
         //MemoryPersistence persistence = new MemoryPersistence();
 
