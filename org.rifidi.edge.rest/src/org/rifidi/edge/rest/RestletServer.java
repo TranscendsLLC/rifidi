@@ -167,8 +167,10 @@ public class RestletServer {
 				}
 			}).listen(7852);
 			*/
-			RestletServer.Serverx serv = new Serverx();
-			serv.start();
+			
+			
+			//RestletServer.Serverx serv = new Serverx();
+			//serv.start();
 
 		} catch (Exception e) {
 			// TODO Handle this
@@ -176,7 +178,7 @@ public class RestletServer {
 		}
 	}
 	
-	
+	/*
 	 class Serverx extends Verticle {
 		public void start() {
 	          vertx.createHttpServer().requestHandler(new Handler<HttpServerRequest>() {
@@ -191,5 +193,5 @@ public class RestletServer {
 	      }
 
 		}
-	
+	*/
 }
