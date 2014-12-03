@@ -557,7 +557,7 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 		try {
 			for (int connCount = 0; connCount < maxConAttempts
 					|| maxConAttempts == -1; connCount++) {
-
+				
 				// attempt to make the connection
 				try {
 					((LLRPConnector) connection).connect();
@@ -715,37 +715,45 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 	 */
 	@Override
 	public void disconnect() {
-		resetCommands();
-		this.submitAndBlock(getResetCommand(), getTimeout(),
-				TimeUnit.MILLISECONDS);
-		try {
-			// if in the connecting loop, set atomic boolean to false and call
-			// notify on the connectingLoop monitor
-			if (connectingLoop.getAndSet(false)) {
-				synchronized (connectingLoop) {
-					connectingLoop.notify();
-				}
-			}
-			// if already connected, disconnect
-			if (processing.get()) {
+		if (processing.get()) {
+			try {
+				resetCommands();
+				this.submitAndBlock(getResetCommand(), getTimeout(),
+						TimeUnit.MILLISECONDS);
+				// if already connected, disconnect
 				if (processing.compareAndSet(true, false)) {
 					logger.debug("Disconnecting");
 					((LLRPConnector) connection).disconnect();
 				}
+			} catch (Exception e) {
+				logger.error(e.getMessage());
+			} finally {
+				// make sure executor is shutdown!
+				if (executor != null) {
+					executor.shutdownNow();
+					executor = null;
+				}
+				// notify anyone who cares that session is now closed
+				setStatus(SessionStatus.CLOSED);
 			}
-		} catch (Exception e) {
-			logger.error(e.getMessage());
-		} finally {
-
-			// make sure executor is shutdown!
-			if (executor != null) {
-				executor.shutdownNow();
-				executor = null;
+		} else {
+			try {
+				// Try to stop connecting
+				if (connectingLoop.getAndSet(false)) {
+					synchronized (connectingLoop) {
+						connectingLoop.notify();
+					}
+				}
+			} finally {
+				// make sure executor is shutdown!
+				if (executor != null) {
+					executor.shutdownNow();
+					executor = null;
+				}
+				// notify anyone who cares that session is now closed
+				setStatus(SessionStatus.CLOSED);
 			}
-			// notify anyone who cares that session is now closed
-			setStatus(SessionStatus.CLOSED);
 		}
-
 	}
 
 	/**
