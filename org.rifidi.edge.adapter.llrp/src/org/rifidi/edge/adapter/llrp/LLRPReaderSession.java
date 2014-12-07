@@ -38,8 +38,7 @@ import org.llrp.ltk.generated.enumerations.AirProtocols;
 import org.llrp.ltk.generated.enumerations.C1G2LockDataField;
 import org.llrp.ltk.generated.enumerations.C1G2LockPrivilege;
 import org.llrp.ltk.generated.enumerations.GetReaderCapabilitiesRequestedData;
-import org.llrp.ltk.generated.enumerations.NotificationEventType;
-import org.llrp.ltk.generated.enumerations.ROReportTriggerType;
+import org.llrp.ltk.generated.enumerations.GetReaderConfigRequestedData;
 import org.llrp.ltk.generated.enumerations.StatusCode;
 import org.llrp.ltk.generated.interfaces.AccessCommandOpSpec;
 import org.llrp.ltk.generated.interfaces.AccessCommandOpSpecResult;
@@ -48,6 +47,8 @@ import org.llrp.ltk.generated.messages.ADD_ACCESSSPEC_RESPONSE;
 import org.llrp.ltk.generated.messages.DELETE_ACCESSSPEC;
 import org.llrp.ltk.generated.messages.ENABLE_ACCESSSPEC;
 import org.llrp.ltk.generated.messages.GET_READER_CAPABILITIES;
+import org.llrp.ltk.generated.messages.GET_READER_CONFIG;
+import org.llrp.ltk.generated.messages.GET_ROSPECS;
 import org.llrp.ltk.generated.messages.RO_ACCESS_REPORT;
 import org.llrp.ltk.generated.messages.SET_READER_CONFIG;
 import org.llrp.ltk.generated.messages.SET_READER_CONFIG_RESPONSE;
@@ -56,17 +57,12 @@ import org.llrp.ltk.generated.parameters.AccessReportSpec;
 import org.llrp.ltk.generated.parameters.AccessSpec;
 import org.llrp.ltk.generated.parameters.AccessSpecStopTrigger;
 import org.llrp.ltk.generated.parameters.C1G2BlockWrite;
-import org.llrp.ltk.generated.parameters.C1G2EPCMemorySelector;
 import org.llrp.ltk.generated.parameters.C1G2Lock;
 import org.llrp.ltk.generated.parameters.C1G2LockPayload;
 import org.llrp.ltk.generated.parameters.C1G2TagSpec;
 import org.llrp.ltk.generated.parameters.C1G2TargetTag;
 import org.llrp.ltk.generated.parameters.EPCData;
 import org.llrp.ltk.generated.parameters.EPC_96;
-import org.llrp.ltk.generated.parameters.EventNotificationState;
-import org.llrp.ltk.generated.parameters.ROReportSpec;
-import org.llrp.ltk.generated.parameters.ReaderEventNotificationSpec;
-import org.llrp.ltk.generated.parameters.TagReportContentSelector;
 import org.llrp.ltk.generated.parameters.TagReportData;
 import org.llrp.ltk.net.LLRPConnection;
 import org.llrp.ltk.net.LLRPConnectionAttemptFailedException;
@@ -827,74 +823,41 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 					+ readerConfigPath + " Using default SET_READER_CONFIG");
 		}
 
-		return createDefaultConfig();
-
+		return LLRPConstants.createDefaultConfig();
 	}
 
+	
 	/**
-	 * A default SET_READER_CONFIG message to use in case the one from the file
-	 * cannot be loaded.
+	 * Gets the reader config and returns the xml representation.  
 	 * 
 	 * @return
+	 * @throws TimeoutException 
+	 * @throws InvalidLLRPMessageException 
 	 */
-	private SET_READER_CONFIG createDefaultConfig() {
-		SET_READER_CONFIG setReaderConfig = new SET_READER_CONFIG();
-
-		// Create a default RoReportSpec so that reports are sent at the end of
-		// ROSpecs
-		ROReportSpec roReportSpec = new ROReportSpec();
-		roReportSpec.setN(new UnsignedShort(0));
-		roReportSpec.setROReportTrigger(new ROReportTriggerType(
-				ROReportTriggerType.None));
-		TagReportContentSelector tagReportContentSelector = new TagReportContentSelector();
-		tagReportContentSelector.setEnableAccessSpecID(new Bit(0));
-		tagReportContentSelector.setEnableAntennaID(new Bit(1));
-		tagReportContentSelector.setEnableChannelIndex(new Bit(0));
-		tagReportContentSelector.setEnableFirstSeenTimestamp(new Bit(0));
-		tagReportContentSelector.setEnableInventoryParameterSpecID(new Bit(0));
-		tagReportContentSelector.setEnableLastSeenTimestamp(new Bit(0));
-		tagReportContentSelector.setEnablePeakRSSI(new Bit(0));
-		tagReportContentSelector.setEnableROSpecID(new Bit(1));
-		tagReportContentSelector.setEnableSpecIndex(new Bit(0));
-		tagReportContentSelector.setEnableTagSeenCount(new Bit(0));
-		C1G2EPCMemorySelector epcMemSel = new C1G2EPCMemorySelector();
-		epcMemSel.setEnableCRC(new Bit(0));
-		epcMemSel.setEnablePCBits(new Bit(0));
-		tagReportContentSelector
-				.addToAirProtocolEPCMemorySelectorList(epcMemSel);
-		roReportSpec.setTagReportContentSelector(tagReportContentSelector);
-		setReaderConfig.setROReportSpec(roReportSpec);
-
-		// Set default AccessReportSpec
-
-		AccessReportSpec accessReportSpec = new AccessReportSpec();
-		accessReportSpec.setAccessReportTrigger(new AccessReportTriggerType(
-				AccessReportTriggerType.Whenever_ROReport_Is_Generated));
-		setReaderConfig.setAccessReportSpec(accessReportSpec);
-
-		// Set up reporting for AISpec events, ROSpec events, and GPI Events
-
-		ReaderEventNotificationSpec eventNoteSpec = new ReaderEventNotificationSpec();
-		EventNotificationState noteState = new EventNotificationState();
-		noteState.setEventType(new NotificationEventType(
-				NotificationEventType.AISpec_Event));
-		noteState.setNotificationState(new Bit(0));
-		eventNoteSpec.addToEventNotificationStateList(noteState);
-		noteState = new EventNotificationState();
-		noteState.setEventType(new NotificationEventType(
-				NotificationEventType.ROSpec_Event));
-		noteState.setNotificationState(new Bit(0));
-		eventNoteSpec.addToEventNotificationStateList(noteState);
-		noteState = new EventNotificationState();
-		noteState.setEventType(new NotificationEventType(
-				NotificationEventType.GPI_Event));
-		noteState.setNotificationState(new Bit(0));
-		eventNoteSpec.addToEventNotificationStateList(noteState);
-		setReaderConfig.setReaderEventNotificationSpec(eventNoteSpec);
-
-		setReaderConfig.setResetToFactoryDefault(new Bit(0));
-
-		return setReaderConfig;
+	public String getReaderConfig() throws InvalidLLRPMessageException, TimeoutException {
+		GET_READER_CONFIG grc = new GET_READER_CONFIG();
+		grc.setAntennaID(new UnsignedShort(0));
+		GetReaderConfigRequestedData data = new GetReaderConfigRequestedData();
+		data.set(0);
+		grc.setRequestedData(data);
+		grc.setGPIPortNum(new UnsignedShort(0));
+		grc.setGPOPortNum(new UnsignedShort(0));		
+		String retVal = this.transact(grc).toXMLString();
+		return retVal;
+	}
+	
+	/**
+	 * 
+	 * 
+	 * @param rospecID
+	 * @return
+	 * @throws TimeoutException 
+	 * @throws InvalidLLRPMessageException 
+	 */
+	public String getRospecs() throws InvalidLLRPMessageException, TimeoutException {
+		GET_ROSPECS gr = new GET_ROSPECS();
+		String retVal = this.transact(gr).toXMLString();
+		return retVal;
 	}
 
 	/*
