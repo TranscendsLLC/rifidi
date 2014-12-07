@@ -17,7 +17,6 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.net.URLDecoder;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -42,9 +41,8 @@ import org.restlet.Message;
 import org.restlet.Request;
 import org.restlet.Response;
 import org.restlet.Restlet;
-import org.restlet.data.Form;
 import org.restlet.data.MediaType;
-import org.restlet.engine.header.*;
+import org.restlet.engine.header.Header;
 import org.restlet.routing.Router;
 import org.restlet.util.Series;
 import org.rifidi.edge.adapter.llrp.LLRPEncodeMessageDto;
@@ -96,6 +94,8 @@ public class SensorManagerServiceRestletImpl extends Application {
 	public static final String[] ReadZoneValidProperties = new String[] {ReaderIDPropertyName, 
 		"antennas", "tagPattern", "matchPattern"};
 	
+	public enum LLRPGetOperations { GET_ROSPECS, GET_READER_CONFIG }
+	
 	
 	/** The sensor manager service for sensor commands */
 	public SensorManagerService sensorManagerService;
@@ -121,6 +121,81 @@ public class SensorManagerServiceRestletImpl extends Application {
 	@Override
 	public Restlet createInboundRoot() {
 		return this.initRestlet();
+	}
+	
+	private void llrpGetOperation(Request request, Response response, LLRPGetOperations operation) {
+		LLRPReaderSession session = null;
+		
+		try {
+			String strReaderId = (String) request.getAttributes().get(
+					"readerID");
+
+			Object objSessionId = request.getAttributes().get("sessionID");
+
+			// Check if reader id exists
+			if (!readerExists(strReaderId)) {
+				throw new Exception("Reader with id " + strReaderId
+						+ " does not exist");
+			}
+
+			AbstractSensor<?> sensor = readerDAO.getReaderByID(strReaderId);
+
+			// look up the associated service configuration object
+			Configuration config = configService.getConfiguration(strReaderId);
+
+			// Check if reader id is a LLRP reader type
+			String strCurrentReaderType = sensor.getDTO(config)
+					.getReaderFactoryID();
+			boolean isLlrpReaderType = false;
+
+			// Iterate over defined llrp reader types
+			for (int i = 0; i < LlrpReaderTypeArrray.length; i++) {
+
+				// If current reader type matches a defined llrp reader
+				// type
+				if (strCurrentReaderType.equals(LlrpReaderTypeArrray[i])) {
+					isLlrpReaderType = true;
+					break;
+				}
+			}
+
+			if (!isLlrpReaderType) {
+				// It is not an llrp reader type
+				throw new Exception("Reader with id " + strReaderId
+						+ " of type " + strCurrentReaderType
+						+ " is not an LLRP reader type");
+			}
+
+			Map<String, SensorSession> sessionMap = sensor.getSensorSessions();
+
+			// Check if session id exists
+			if (sessionMap.containsKey(objSessionId)) {
+				session = (LLRPReaderSession) sessionMap.get(objSessionId);			
+				
+				String returnXML = "";
+				
+				if (operation.equals(LLRPGetOperations.GET_ROSPECS)) {
+					returnXML = session.getRospecs();
+				} else if (operation
+						.equals(LLRPGetOperations.GET_READER_CONFIG)) {
+					returnXML = session.getReaderConfig();
+				} else {
+					throw new Exception("Operation with code " + operation
+							+ " is invalid. ");
+				}
+				
+				response.setEntity(returnXML, MediaType.TEXT_XML);
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			response.setEntity(this.generateReturnString(this.generateErrorMessage(e.getMessage(), null)), MediaType.TEXT_XML);
+		} finally {
+			// cleanup session
+			if (session != null) {
+				session.cleanupSession();
+			}
+		}
 	}
 
 	private void executeLlrpOperation(Request request, Response response,
@@ -1072,6 +1147,24 @@ public class SensorManagerServiceRestletImpl extends Application {
 				}
 			}
 		};
+		
+		Restlet llrpGetReaderConfig = new Restlet() {
+			@Override
+			public void handle(Request request, Response response) {
+				logger.info("llrpGetReaderConfig requested");
+				setCorsHeaders(response);
+				llrpGetOperation(request, response, LLRPGetOperations.GET_READER_CONFIG);
+			}
+		};
+		
+		Restlet llrpGetRospecs = new Restlet() {
+			@Override
+			public void handle(Request request, Response response) {
+				logger.info("llrpGetRospecs requested");				
+				setCorsHeaders(response);				
+				llrpGetOperation(request, response, LLRPGetOperations.GET_ROSPECS);
+			}
+		};
 
 		Restlet llrpEncode = new Restlet() {
 			@Override
@@ -1794,6 +1887,9 @@ public class SensorManagerServiceRestletImpl extends Application {
 		router.attach("/save", save);
 
 		// single shot commands
+		
+		router.attach("/llrpgetrospecs/{readerID}/{sessionID}", llrpGetRospecs);
+		router.attach("/llrpgetreaderconfig/{readerID}/{sessionID}", llrpGetReaderConfig);
 
 		// LLRPEPCWrite single shot command with no properties
 		router.attach("/llrpencode/{readerID}/{sessionID}/LLRPEPCWrite",
