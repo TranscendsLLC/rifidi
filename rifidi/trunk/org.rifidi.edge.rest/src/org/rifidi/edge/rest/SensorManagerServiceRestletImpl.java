@@ -130,13 +130,17 @@ public class SensorManagerServiceRestletImpl extends Application {
 			String strReaderId = (String) request.getAttributes().get(
 					"readerID");
 
-			Object objSessionId = request.getAttributes().get("sessionID");
+			String strSessionID = (String) request.getAttributes().get(
+					"sessionID");
 
 			// Check if reader id exists
 			if (!readerExists(strReaderId)) {
 				throw new Exception("Reader with id " + strReaderId
 						+ " does not exist");
 			}
+
+			SessionStatus checkSessionState = sensorManagerService.getSession(
+					strReaderId, strSessionID).getStatus();
 
 			AbstractSensor<?> sensor = readerDAO.getReaderByID(strReaderId);
 
@@ -169,27 +173,38 @@ public class SensorManagerServiceRestletImpl extends Application {
 			Map<String, SensorSession> sessionMap = sensor.getSensorSessions();
 
 			// Check if session id exists
-			if (sessionMap.containsKey(objSessionId)) {
-				session = (LLRPReaderSession) sessionMap.get(objSessionId);			
-				
-				String returnXML = "";
-				
-				if (operation.equals(LLRPGetOperations.GET_ROSPECS)) {
-					returnXML = session.getRospecs();
-				} else if (operation
-						.equals(LLRPGetOperations.GET_READER_CONFIG)) {
-					returnXML = session.getReaderConfig();
+			if (sessionMap.containsKey(strSessionID)) {
+				if (checkSessionState.equals(SessionStatus.PROCESSING)) {
+					session = (LLRPReaderSession) sessionMap.get(strSessionID);
+
+					String returnXML = "";
+
+					if (operation.equals(LLRPGetOperations.GET_ROSPECS)) {
+						returnXML = session.getRospecs();
+					} else if (operation
+							.equals(LLRPGetOperations.GET_READER_CONFIG)) {
+						returnXML = session.getReaderConfig();
+					} else {
+						throw new Exception("Operation with code " + operation
+								+ " is invalid. ");
+					}
+
+					response.setEntity(returnXML, MediaType.TEXT_XML);
 				} else {
-					throw new Exception("Operation with code " + operation
-							+ " is invalid. ");
+					throw new Exception("Session with id " + strSessionID
+							+ " is not in the PROCESSING state. ");
 				}
-				
-				response.setEntity(returnXML, MediaType.TEXT_XML);
+			} else {
+				// Session id does not exist
+				throw new Exception("Session with id " + strSessionID
+						+ " does not exist for reader with id " + strReaderId);
 			}
 
 		} catch (Exception e) {
-			e.printStackTrace();
-			response.setEntity(this.generateReturnString(this.generateErrorMessage(e.getMessage(), null)), MediaType.TEXT_XML);
+			// e.printStackTrace();
+			response.setEntity(
+					this.generateReturnString(this.generateErrorMessage(
+							e.getMessage(), null)), MediaType.TEXT_XML);
 		} finally {
 			// cleanup session
 			if (session != null) {
