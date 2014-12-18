@@ -258,10 +258,14 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 	private static final int READ_ACCESSPASS_ACCESSSPEC_ID = 15;
 	private static final UnsignedShort READ_ACCESSPASS_OPSPEC_ID = new UnsignedShort(
 			16);
+	
+	private static final int READ_KILLPASS_ACCESSSPEC_ID = 17;
+	private static final UnsignedShort READ_KILLPASS_OPSPEC_ID = new UnsignedShort(
+			18);
 
 	/** Operation names **/
 	public enum LLRP_OPERATION_CODE {
-		LLRPEPCWrite, LLRPEPCRead, LLRPAccessPasswordWrite, LLRPAccessPasswordRead, LLRPKillPasswordWrite, LLRPEPCLock, LLRPKillPasswordLock, LLRPAccessPasswordLock
+		LLRPEPCWrite, LLRPEPCRead, LLRPAccessPasswordWrite, LLRPAccessPasswordValidate, LLRPKillPasswordRead, LLRPKillPasswordWrite, LLRPEPCLock, LLRPKillPasswordLock, LLRPAccessPasswordLock
 	};
 
 	/** Object to keep track of the operations and responses on each one **/
@@ -285,6 +289,28 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 	private String mqttClientId;
 
 	private boolean executeOperationsInAsynchronousMode;
+	
+	/** default number of blocks for EPC to be read **/
+	public static final int DEFAULT_WORD_COUNT = 6;
+	
+	/** number of blocks for EPC to be read **/
+	private int wordCount = DEFAULT_WORD_COUNT;
+	
+	
+
+	/**
+	 * @return the wordCount
+	 */
+	public int getWordCount() {
+		return wordCount;
+	}
+
+	/**
+	 * @param wordCount the wordCount to set
+	 */
+	public void setWordCount(int wordCount) {
+		this.wordCount = wordCount;
+	}
 
 	/**
 	 * @return the executeOperationsInAsynchronousMode
@@ -1026,10 +1052,30 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 		// tracker
 
 		LLRPOperationDto accessPwdReadDto = new LLRPOperationDto(
-				LLRP_OPERATION_CODE.LLRPAccessPasswordRead.name(),
+				LLRP_OPERATION_CODE.LLRPAccessPasswordValidate.name(),
 				READ_ACCESSPASS_ACCESSSPEC_ID, READ_ACCESSPASS_OPSPEC_ID,
 				null);
 		llrpOperationTracker.addOperationDto(accessPwdReadDto);
+
+		return startRequestedOperations(llrpOperationTracker);
+
+	}
+	
+	public LLRPEncodeMessageDto llrpReadKillPasswordOperation()
+			throws InvalidLLRPMessageException, TimeoutException, Exception {
+
+		// Initialize operation tracker, to be able to receive asynchronous
+		// messages
+		llrpOperationTracker = new LLRPOperationTracker(this);
+
+		// Add the operations in the same order we want to be executed by this
+		// tracker
+
+		LLRPOperationDto killPwdReadDto = new LLRPOperationDto(
+				LLRP_OPERATION_CODE.LLRPKillPasswordRead.name(),
+				READ_KILLPASS_ACCESSSPEC_ID, READ_KILLPASS_OPSPEC_ID,
+				null);
+		llrpOperationTracker.addOperationDto(killPwdReadDto);
 
 		return startRequestedOperations(llrpOperationTracker);
 
@@ -1534,10 +1580,6 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 
 			opSpecList.add(buildEpcWriteAccessPass());
 
-		} else if (accessSpecID == READ_ACCESSPASS_ACCESSSPEC_ID) {
-
-			opSpecList.add(buildAccessPassRead());
-
 		} else if (accessSpecID == LOCK_ACCESSPASS_ACCESSSPEC_ID) {
 
 			opSpecList.add(buildLockOpSpec(LOCK_ACCESSPASS_OPSPEC_ID,
@@ -1558,10 +1600,17 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 
 		} else if (accessSpecID == READ_EPC_ACCESSSPEC_ID) {
 
-			//opSpecList.add(buildEpcReadOpSpec(epcId));
 			opSpecList.add(buildEpcReadOpSpec());
 
-		}
+		} else if (accessSpecID == READ_KILLPASS_ACCESSSPEC_ID) {
+
+			opSpecList.add(buildKillPassRead());
+
+		} else if (accessSpecID == READ_ACCESSPASS_ACCESSSPEC_ID) {
+
+			opSpecList.add(buildAccessPassRead());
+
+		} 
 
 		/*
 		 * else { // TODO remove this else statement, and add the other three
@@ -1834,18 +1883,14 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 
 		// Set bit 1 (bank 2 in binary).
 		opMemBank.set(1);
-		opMemBank.clear(0);//?????
+		opMemBank.clear(0);
 
 		opSpec.setMB(opMemBank);
 
 		opSpec.setWordPointer(new UnsignedShort(0x02));
 
-		//UnsignedShortArray_HEX writeArray = getFormatedWriteArrayData(epcId);
-
-		//opSpec.setWriteData(writeArray);
-		
-		// Read six words. 
-		opSpec.setWordCount(new UnsignedShort(6));
+		// Read n words. 
+		opSpec.setWordCount(new UnsignedShort(getWordCount()));
 
 		return opSpec;
 	}
@@ -1874,11 +1919,37 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 		opSpec.setMB(opMemBank);
 		opSpec.setWordPointer(new UnsignedShort(2));
 
-		//UnsignedShortArray_HEX writeArray = getFormatedWriteArrayData(getAccessPwd());
+		// Read two words. 
+		opSpec.setWordCount(new UnsignedShort(2));
 
-		//opSpec.setWriteData(writeArray);
+		return opSpec;
+	}
+	
+	// Create a OpSpec that reads the kill password
+	public C1G2Read buildKillPassRead() {
+		// Create a new OpSpec.
+		// This specifies what operation we want to perform on the
+		// tags that match the specifications above.
+		// In this case, we want to write to the tag.
+		C1G2Read opSpec = new C1G2Read();
+		// Set the OpSpecID to a unique number.
+		opSpec.setOpSpecID(READ_KILLPASS_OPSPEC_ID);
 		
-		// Read six words. 
+		UnsignedInteger unsignedIntAccesPass = new UnsignedInteger(
+				getOldAccessPwd(), 16);
+		
+		opSpec.setAccessPassword(unsignedIntAccesPass);
+		
+		// For this demo, we'll write to user memory (bank 3).
+		TwoBitField opMemBank = new TwoBitField();
+		// Clear twobits (bank 0 in binary).
+		opMemBank.clear(1);
+		opMemBank.clear(0);
+
+		opSpec.setMB(opMemBank);
+		opSpec.setWordPointer(new UnsignedShort(0));
+
+		//Read two words. 
 		opSpec.setWordCount(new UnsignedShort(2));
 
 		return opSpec;

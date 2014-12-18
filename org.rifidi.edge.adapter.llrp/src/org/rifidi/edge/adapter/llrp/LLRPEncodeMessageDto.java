@@ -22,6 +22,9 @@ public class LLRPEncodeMessageDto implements Serializable {
 	@XmlElement(name="status")
 	private String status;//Success / Fail
 	
+	@XmlElement(name="data")
+	private String data;//data returned from read operation
+	
 	@XmlElementWrapper(required = true)
 	@XmlElement(name = "operation")
 	/** List of operations **/
@@ -49,6 +52,22 @@ public class LLRPEncodeMessageDto implements Serializable {
 	 */
 	public void setStatus(String status) {
 		this.status = status;
+	}
+	
+	
+	/**
+	 * @return the data
+	 */
+	public String getData() {
+		return data;
+	}
+
+
+	/**
+	 * @param data the data to set
+	 */
+	public void setData(String data) {
+		this.data = data;
 	}
 
 
