@@ -222,7 +222,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 
 			// Variable to receive synchronous response if set
 			LLRPEncodeMessageDto llrpEncodeMessageDto = new LLRPEncodeMessageDto();
-			llrpEncodeMessageDto.setStatus("Success !!!");
+			//llrpEncodeMessageDto.setStatus("Success !!!");
 
 			String strReaderId = (String) request.getAttributes().get(
 					"readerID");
@@ -317,6 +317,23 @@ public class SensorManagerServiceRestletImpl extends Application {
 				// for session object
 				// Get jvm properties
 				setLlrpEncodeJvmProperties(session);
+				
+				//Try an access password read to see if tag is not yet encoded
+				//Hold a reference to boolean value indicating if session is executing in asynchronous mode
+				boolean operationExecuteMode = session.isExecuteOperationsInAsynchronousMode();
+				
+				//Force session to execute in synchronous mode
+				session.setExecuteOperationsInAsynchronousMode(false);
+								
+				//Check access password read before the encode operation
+				llrpEncodeMessageDto = session.llrpReadAccessPasswordOperation();
+				
+				if (!llrpEncodeMessageDto.getStatus().equals("Success")){
+					throw new Exception("Not able to read access password, maybe it's an already encoded tag.");
+				}
+								
+				//Set the initial operation execute mode
+				session.setExecuteOperationsInAsynchronousMode(operationExecuteMode);
 
 				if (operationCode == null) {
 
@@ -365,6 +382,28 @@ public class SensorManagerServiceRestletImpl extends Application {
 
 						llrpEncodeMessageDto = session
 								.llrpWriteEpcOperation(strTag);
+
+					} else if (operationCode
+							.equals(LLRPReaderSession.LLRP_OPERATION_CODE.LLRPEPCRead)) {
+
+						// check the required properties for epc read
+						// operation, and overwrite the properties got from jvm
+
+						// check for accesspwd and tag
+						String accesspwd = (String) getAttributeValue(
+								attributes, "accesspwd");
+						validatePassword(accesspwd, "Access");
+						session.setAccessPwd(accesspwd);
+
+						/*
+						String strTag = (String) getAttributeValue(attributes,
+								"tag");
+						checkBlockLengthReminder(strTag,
+								session.getWriteDataBlockLength(), "tag");
+								*/
+
+						llrpEncodeMessageDto = session
+								.llrpReadEpcOperation();
 
 					} else if (operationCode
 							.equals(LLRPReaderSession.LLRP_OPERATION_CODE.LLRPAccessPasswordWrite)) {
@@ -1207,6 +1246,20 @@ public class SensorManagerServiceRestletImpl extends Application {
 
 			}
 		};
+		
+		Restlet llrpEpcRead = new Restlet() {
+			@Override
+			public void handle(Request request, Response response) {
+				
+				logger.info("llrpEpcRead requested");
+				
+				setCorsHeaders(response);
+				
+				executeLlrpOperation(request, response,
+						LLRPReaderSession.LLRP_OPERATION_CODE.LLRPEPCRead);
+
+			}
+		};
 
 		Restlet llrpAccessPasswordWrite = new Restlet() {
 			@Override
@@ -1914,6 +1967,15 @@ public class SensorManagerServiceRestletImpl extends Application {
 		router.attach(
 				"/llrpencode/{readerID}/{sessionID}/LLRPEPCWrite/{properties}",
 				llrpEpcWrite);
+		
+		// LLRPEPCRead single shot command with no properties
+		router.attach("/llrpencode/{readerID}/{sessionID}/LLRPEPCRead",
+				llrpEpcRead);
+
+		// LLRPEPCRead single shot command with properties
+		router.attach(
+				"/llrpencode/{readerID}/{sessionID}/LLRPEPCRead/{properties}",
+				llrpEpcRead);
 
 		// llrpAccessPasswordWrite single shot command with no properties
 		router.attach(

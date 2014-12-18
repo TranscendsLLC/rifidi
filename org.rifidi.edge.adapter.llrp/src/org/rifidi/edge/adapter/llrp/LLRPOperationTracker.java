@@ -180,6 +180,8 @@ public class LLRPOperationTracker extends TimerTask implements Serializable {
 			C1G2ReadOpSpecResult res = (C1G2ReadOpSpecResult) result;
 			logger.info("\n5.res.getResult(): " + res.getResult());
 			logger.info("res.getOpSpecID(): " + res.getOpSpecID());
+			logger.info("res.getName(): " + res.getName());
+			logger.info("res.getReadData(): " + res.getReadData());
 
 			// Assign the result to appropriate operation in tracker
 			LLRPOperationDto llrpOperationDto = getOperationByOpSpecId(res.getOpSpecID());
