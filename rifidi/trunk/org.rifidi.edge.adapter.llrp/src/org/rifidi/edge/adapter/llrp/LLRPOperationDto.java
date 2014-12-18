@@ -5,6 +5,7 @@ import java.io.Serializable;
 import org.llrp.ltk.generated.interfaces.AccessCommandOpSpecResult;
 import org.llrp.ltk.generated.messages.ADD_ACCESSSPEC_RESPONSE;
 import org.llrp.ltk.types.UnsignedShort;
+import org.llrp.ltk.types.UnsignedShortArray_HEX;
 
 public class LLRPOperationDto 
 		implements Serializable {
@@ -16,6 +17,7 @@ public class LLRPOperationDto
 	private String responseCode;
 	private String epc;
 	private ADD_ACCESSSPEC_RESPONSE accessSpecResponse;
+	private UnsignedShortArray_HEX readData;
 	
 
 	/**
@@ -32,7 +34,27 @@ public class LLRPOperationDto
 		this.epc = epc;
 	}
 	
-	
+		
+	/**
+	 * @return the readData
+	 */
+	public UnsignedShortArray_HEX getReadData() {
+		return readData;
+	}
+
+
+
+
+	/**
+	 * @param readData the readData to set
+	 */
+	public void setReadData(UnsignedShortArray_HEX readData) {
+		this.readData = readData;
+	}
+
+
+
+
 	/**
 	 * @return the responseCode
 	 */

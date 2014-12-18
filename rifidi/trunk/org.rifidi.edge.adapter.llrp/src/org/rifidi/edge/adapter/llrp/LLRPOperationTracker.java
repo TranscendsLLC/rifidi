@@ -37,6 +37,7 @@ import org.llrp.ltk.generated.parameters.C1G2LockOpSpecResult;
 import org.llrp.ltk.generated.parameters.C1G2ReadOpSpecResult;
 import org.llrp.ltk.generated.parameters.C1G2WriteOpSpecResult;
 import org.llrp.ltk.types.UnsignedShort;
+import org.rifidi.edge.adapter.llrp.LLRPReaderSession.LLRP_OPERATION_CODE;
 
 public class LLRPOperationTracker extends TimerTask implements Serializable {
 
@@ -187,6 +188,7 @@ public class LLRPOperationTracker extends TimerTask implements Serializable {
 			LLRPOperationDto llrpOperationDto = getOperationByOpSpecId(res.getOpSpecID());
 			llrpOperationDto.setResponseResult(res);
 			llrpOperationDto.setResponseCode(res.getResult().toString());
+			llrpOperationDto.setReadData(res.getReadData());
 
 		} else if (result instanceof C1G2WriteOpSpecResult) {
 
@@ -395,6 +397,15 @@ public class LLRPOperationTracker extends TimerTask implements Serializable {
 			
 		}
 		
+		//Set the received data for single shot operation, so there should be one operation
+		//Exclude the access password read from setting the access password retrieved value
+		LLRPOperationDto readOperationDto = getOperationList().get(0);
+		
+		if (!readOperationDto.getOperationName().equals(LLRP_OPERATION_CODE.LLRPAccessPasswordValidate.toString())){
+			//trim white spaces
+			llrpEncodeMessageDto.setData(readOperationDto.getReadData().toString().replaceAll("\\s", ""));
+		}
+				
 		// post to queue and cleanup if asynchronous
 		if (llrpReaderSession.isExecuteOperationsInAsynchronousMode()){
 			
