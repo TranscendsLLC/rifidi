@@ -480,6 +480,26 @@ public class SensorManagerServiceRestletImpl extends Application {
 								.llrpLockKillPasswordOperation();
 
 					} else if (operationCode
+							.equals(LLRPReaderSession.LLRP_OPERATION_CODE.LLRPUserMemoryLock)) {
+
+						// check for accesspwd
+						String accesspwd = (String) getAttributeValue(
+								attributes, "accesspwd");
+						validatePassword(accesspwd, "Access");
+						session.setAccessPwd(accesspwd);
+
+						// check for privilege type
+						String strPrivilege = (String) getAttributeValue(
+								attributes, "privilege");
+
+						int intUserMemoryLockPrivilege = LLRPReaderSession
+								.getLockPrivilege(strPrivilege);
+						session.setUserMemoryLockPrivilege(intUserMemoryLockPrivilege);
+
+						llrpEncodeMessageDto = session
+								.llrpLockUserMemoryOperation();
+
+					} else if (operationCode
 							.equals(LLRPReaderSession.LLRP_OPERATION_CODE.LLRPEPCRead)) {
 
 						// check the required properties for epc read
@@ -500,7 +520,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 						} else {
 							
 							//Set default word count value
-							session.setWordCount(LLRPReaderSession.DEFAULT_WORD_COUNT);
+							session.setWordCount(LLRPReaderSession.DEFAULT_EPC_WORD_COUNT);
 						}
 
 						llrpEncodeMessageDto = session
@@ -518,13 +538,6 @@ public class SensorManagerServiceRestletImpl extends Application {
 						validatePassword(accesspwd, "Access");
 						session.setOldAccessPwd(accesspwd);
 
-						/*
-						String strTag = (String) getAttributeValue(attributes,
-								"tag");
-						checkBlockLengthReminder(strTag,
-								session.getWriteDataBlockLength(), "tag");
-								*/
-
 						llrpEncodeMessageDto = session
 								.llrpReadAccessPasswordOperation();
 
@@ -540,15 +553,57 @@ public class SensorManagerServiceRestletImpl extends Application {
 						validatePassword(accesspwd, "Access");
 						session.setOldAccessPwd(accesspwd);
 
-						/*
-						String strTag = (String) getAttributeValue(attributes,
-								"tag");
-						checkBlockLengthReminder(strTag,
-								session.getWriteDataBlockLength(), "tag");
-								*/
-
 						llrpEncodeMessageDto = session
 								.llrpReadKillPasswordOperation();
+
+					} else if (operationCode
+							.equals(LLRPReaderSession.LLRP_OPERATION_CODE.LLRPUserMemoryRead)) {
+
+						// check the required properties for user memory read
+						// operation, and overwrite the properties got from jvm
+
+						// check for accesspwd
+						String accesspwd = (String) getAttributeValue(
+								attributes, "accesspwd");
+						validatePassword(accesspwd, "Access");
+						session.setAccessPwd(accesspwd);
+						
+						//check for wordCount
+						String strWordCount = (String) getNonRequiredAttributeValue(attributes, "wordCount");
+						if (strWordCount != null && !strWordCount.isEmpty()) {
+
+							session.setWordCount(Integer.parseInt(strWordCount));
+
+						} else {
+							
+							//Set default user memory word count value
+							session.setWordCount(LLRPReaderSession.DEFAULT_USER_MEMORY_WORD_COUNT);
+						}
+
+						llrpEncodeMessageDto = session
+								.llrpReadUserMemoryOperation();
+
+					} else if (operationCode
+							.equals(LLRPReaderSession.LLRP_OPERATION_CODE.LLRPUserMemoryWrite)) {
+
+						// check the required properties for user memory read
+						// operation, and overwrite the properties got from jvm
+
+						// check for accesspwd
+						String accesspwd = (String) getAttributeValue(
+								attributes, "accesspwd");
+						validatePassword(accesspwd, "Access");
+						session.setAccessPwd(accesspwd);
+						
+						String strData = (String) getAttributeValue(attributes,
+								"data");
+						checkBlockLengthReminder(strData,
+								session.getWriteDataBlockLength(), "data");
+						
+						session.setUserMemoryData(strData);
+
+						llrpEncodeMessageDto = session
+								.llrpWriteUserMemoryOperation();
 
 					} else {
 
@@ -1376,6 +1431,23 @@ public class SensorManagerServiceRestletImpl extends Application {
 			}
 		};
 		
+		
+		Restlet llrpUserMemoryLock = new Restlet() {
+			@Override
+			public void handle(Request request, Response response) {
+
+				logger.info("llrpUserMemoryLock requested");
+				
+				setCorsHeaders(response);
+
+				executeLlrpOperation(
+						request,
+						response,
+						LLRPReaderSession.LLRP_OPERATION_CODE.LLRPUserMemoryLock);
+
+			}
+		};
+		
 		Restlet llrpEpcRead = new Restlet() {
 			@Override
 			public void handle(Request request, Response response) {
@@ -1414,6 +1486,34 @@ public class SensorManagerServiceRestletImpl extends Application {
 				
 				executeLlrpOperation(request, response,
 						LLRPReaderSession.LLRP_OPERATION_CODE.LLRPKillPasswordRead);
+
+			}
+		};
+		
+		Restlet llrpUserMemoryRead = new Restlet() {
+			@Override
+			public void handle(Request request, Response response) {
+				
+				logger.info("llrpUserMemoryRead requested");
+				
+				setCorsHeaders(response);
+				
+				executeLlrpOperation(request, response,
+						LLRPReaderSession.LLRP_OPERATION_CODE.LLRPUserMemoryRead);
+
+			}
+		};
+		
+		Restlet llrpUserMemoryWrite = new Restlet() {
+			@Override
+			public void handle(Request request, Response response) {
+				
+				logger.info("llrpUserMemoryWrite requested");
+				
+				setCorsHeaders(response);
+				
+				executeLlrpOperation(request, response,
+						LLRPReaderSession.LLRP_OPERATION_CODE.LLRPUserMemoryWrite);
 
 			}
 		};
@@ -2096,6 +2196,16 @@ public class SensorManagerServiceRestletImpl extends Application {
 				"/llrpencode/{readerID}/{sessionID}/LLRPKillPasswordLock/{properties}",
 				llrpKillPasswordLock);
 		
+		// llrpUserMemoryLock single shot command with no properties
+		router.attach(
+				"/llrpencode/{readerID}/{sessionID}/LLRPUserMemoryLock",
+				llrpUserMemoryLock);
+
+		// llrpUserMemoryLock single shot command with properties
+		router.attach(
+				"/llrpencode/{readerID}/{sessionID}/LLRPUserMemoryLock/{properties}",
+				llrpUserMemoryLock);
+		
 		// LLRPEPCRead single shot command with no properties
 		router.attach("/llrpencode/{readerID}/{sessionID}/LLRPEPCRead",
 				llrpEpcRead);
@@ -2119,6 +2229,22 @@ public class SensorManagerServiceRestletImpl extends Application {
 		// LLRPKillPasswordRead single shot command with properties
 		router.attach("/llrpencode/{readerID}/{sessionID}/LLRPKillPasswordRead/{properties}",
 				llrpKillPwdRead);
+		
+		// LLRPUserMemoryRead single shot command with no properties
+		router.attach("/llrpencode/{readerID}/{sessionID}/LLRPUserMemoryRead",
+				llrpUserMemoryRead);
+
+		// LLRPUserMemoryRead single shot command with properties
+		router.attach("/llrpencode/{readerID}/{sessionID}/LLRPUserMemoryRead/{properties}",
+				llrpUserMemoryRead);
+		
+		// LLRPUserMemoryWrite single shot command with no properties
+		router.attach("/llrpencode/{readerID}/{sessionID}/LLRPUserMemoryWrite",
+				llrpUserMemoryWrite);
+
+		// LLRPUserMemoryWrite single shot command with properties
+		router.attach("/llrpencode/{readerID}/{sessionID}/LLRPUserMemoryWrite/{properties}",
+				llrpUserMemoryWrite);
 		
 
 		// llrp encode
@@ -2546,6 +2672,20 @@ public class SensorManagerServiceRestletImpl extends Application {
 		} else {
 
 			session.setEpcLockPrivilege(LLRPReaderSession.DEFAULT_EPC_LOCK_PRIVILEGE);
+		}
+		
+		String strUserMemoryLockPrivilege = System
+				.getProperty("org.rifidi.llrp.encode.usermemorylockprivilege");
+
+		if (strUserMemoryLockPrivilege != null) {
+
+			int intUserMemoryLockPrivilege = LLRPReaderSession
+					.getLockPrivilege(strUserMemoryLockPrivilege);
+			session.setUserMemoryLockPrivilege(intUserMemoryLockPrivilege);
+
+		} else {
+
+			session.setUserMemoryLockPrivilege(LLRPReaderSession.DEFAULT_USER_MEMORY_LOCK_PRIVILEGE);
 		}
 
 		// Check if properties for mqtt are set, if so then submit operations
