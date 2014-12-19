@@ -402,8 +402,11 @@ public class LLRPOperationTracker extends TimerTask implements Serializable {
 		LLRPOperationDto readOperationDto = getOperationList().get(0);
 		
 		if (!readOperationDto.getOperationName().equals(LLRP_OPERATION_CODE.LLRPAccessPasswordValidate.toString())){
-			//trim white spaces
-			llrpEncodeMessageDto.setData(readOperationDto.getReadData().toString().replaceAll("\\s", ""));
+			
+			if (readOperationDto.getReadData() != null){
+				//trim white spaces and retrieve data
+				llrpEncodeMessageDto.setData(readOperationDto.getReadData().toString().replaceAll("\\s", ""));
+			}
 		}
 				
 		// post to queue and cleanup if asynchronous
