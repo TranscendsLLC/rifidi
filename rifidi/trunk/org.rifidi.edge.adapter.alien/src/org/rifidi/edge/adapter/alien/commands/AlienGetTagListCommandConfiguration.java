@@ -30,7 +30,7 @@ import org.rifidi.edge.sensors.AbstractCommandConfiguration;
 public class AlienGetTagListCommandConfiguration extends
 		AbstractCommandConfiguration<AlienGetTagListCommand> {
 	/** Type of tag to read */
-	private int tagType = 2;
+	private int tagType = 1;
 	public static final MBeanInfo mbeaninfo;
 	static {
 		AnnotationMBeanInfoStrategy strategy = new AnnotationMBeanInfoStrategy();
@@ -61,7 +61,7 @@ public class AlienGetTagListCommandConfiguration extends
 	 */
 	@Property(displayName = "Tag Type", description = "0=Gen1, "
 			+ "1=Gen2, 2=Both", writable = true, type = PropertyType.PT_INTEGER, minValue = ""
-			+ "0", maxValue = "2", defaultValue = "2")
+			+ "0", maxValue = "2", defaultValue = "1")
 	public Integer getTagType() {
 		return tagType;
 	}

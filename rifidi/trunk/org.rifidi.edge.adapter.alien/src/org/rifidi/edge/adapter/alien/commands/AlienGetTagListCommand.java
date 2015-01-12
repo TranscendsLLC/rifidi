@@ -46,7 +46,7 @@ public class AlienGetTagListCommand extends AbstractAlien9800Command {
 	/** Tagtypes. */
 	private Integer[] tagTypes = new Integer[] { 7, 16, 31 };
 	/** Tagtypes to query for: 0 - GEN1 1 - GEN2 2 - ALL */
-	private Integer tagType = 2;
+	private Integer tagType = 1;
 	/** The readeriD */
 	private AtomicReference<String> reader = new AtomicReference<String>();
 
