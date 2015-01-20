@@ -856,10 +856,8 @@ public class SensorManagerServiceRestletImpl extends Application {
 		Restlet deleteSession = new Restlet() {
 			@Override
 			public void handle(Request request, Response response) {
-				try {
-					
-					setCorsHeaders(response);
-					
+				try {					
+					setCorsHeaders(response);					
 					sensorManagerService.deleteSession((String) request
 							.getAttributes().get("readerID"), (String) request
 							.getAttributes().get("sessionID"));
@@ -873,6 +871,33 @@ public class SensorManagerServiceRestletImpl extends Application {
 				}
 			}
 		};
+		
+		Restlet deleteReader = new Restlet() {
+			@Override
+			public void handle(Request request, Response response) {
+				try {
+					sensorManagerService.deleteReader((String) request.getAttributes().get("readerID"));
+				} catch (Exception e) {
+					response.setEntity(self.generateReturnString(self
+							.generateErrorMessage(e.toString(), null)),
+							MediaType.TEXT_XML);
+				}
+			}
+		};
+		
+		Restlet deleteCommand = new Restlet() {
+			@Override
+			public void handle(Request request, Response response) {
+				try {
+					commandManagerService.deleteCommand((String) request.getAttributes().get("commandID"));
+				} catch (Exception e) {
+					response.setEntity(self.generateReturnString(self
+							.generateErrorMessage(e.toString(), null)),
+							MediaType.TEXT_XML);
+				}
+			}
+		};
+		
 		Restlet executeCommand = new Restlet() {
 			@Override
 			public void handle(Request request, Response response) {
@@ -1229,6 +1254,19 @@ public class SensorManagerServiceRestletImpl extends Application {
 				}
 			}
 		};
+		
+//		Restlet readerMetadata = new Restlet() {
+//			@Override
+//			public void handle(Request request, Response response) {
+//				try {
+//					
+//				} catch (Exception e) {
+//
+//					response.setEntity(self.generateReturnString(self
+//							.generateErrorMessage(e.toString(), null)),
+//							MediaType.TEXT_XML);
+//				}
+//		};
 
 		Restlet commandTypes = new Restlet() {
 			@Override
@@ -2074,9 +2112,9 @@ public class SensorManagerServiceRestletImpl extends Application {
 		router.attach("/stopsession/{readerID}/{sessionID}", stopSession);
 		router.attach("/createsession/{readerID}", createSession);
 		router.attach("/deletesession/{readerID}/{sessionID}", deleteSession);
-		router.attach(
-				"/executecommand/{readerID}/{sessionID}/{commandID}/{repeatInterval}",
-				executeCommand);
+		router.attach("/deletereader/{readerID}", deleteReader);
+		router.attach("/deletecommand/{commandID}", deleteCommand);
+		router.attach("/executecommand/{readerID}/{sessionID}/{commandID}/{repeatInterval}", executeCommand);
 
 		// get and set properties for a reader
 		router.attach("/getproperties/{readerID}", getProperties);
