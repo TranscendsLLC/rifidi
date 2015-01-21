@@ -876,7 +876,10 @@ public class SensorManagerServiceRestletImpl extends Application {
 			@Override
 			public void handle(Request request, Response response) {
 				try {
+					setCorsHeaders(response);
 					sensorManagerService.deleteReader((String) request.getAttributes().get("readerID"));
+					response.setEntity(self.generateReturnString(self
+							.generateSuccessMessage()), MediaType.TEXT_XML);
 				} catch (Exception e) {
 					response.setEntity(self.generateReturnString(self
 							.generateErrorMessage(e.toString(), null)),
@@ -889,7 +892,10 @@ public class SensorManagerServiceRestletImpl extends Application {
 			@Override
 			public void handle(Request request, Response response) {
 				try {
+					setCorsHeaders(response);
 					commandManagerService.deleteCommand((String) request.getAttributes().get("commandID"));
+					response.setEntity(self.generateReturnString(self
+							.generateSuccessMessage()), MediaType.TEXT_XML);
 				} catch (Exception e) {
 					response.setEntity(self.generateReturnString(self
 							.generateErrorMessage(e.toString(), null)),
@@ -1261,11 +1267,12 @@ public class SensorManagerServiceRestletImpl extends Application {
 //				try {
 //					
 //				} catch (Exception e) {
-//
+//					self.readerDAO.getR
 //					response.setEntity(self.generateReturnString(self
 //							.generateErrorMessage(e.toString(), null)),
 //							MediaType.TEXT_XML);
 //				}
+//			}
 //		};
 
 		Restlet commandTypes = new Restlet() {
@@ -1283,6 +1290,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 						CommandTypeDTO rtd = new CommandTypeDTO();
 						rtd.setCommandDesc(rfd.getDescription());
 						rtd.setCommandType(rfd.getCommandFactoryID());
+						rtd.setReaderFactory(rfd.getReaderFactoryID());
 						ret.add(rtd);
 					}
 					rtr.setCommands(ret);
