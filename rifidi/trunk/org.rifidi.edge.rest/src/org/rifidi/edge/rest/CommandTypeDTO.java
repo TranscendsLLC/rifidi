@@ -28,6 +28,9 @@ public class CommandTypeDTO implements Serializable {
 	
 	@XmlElement(name = "description")
 	private String commandDesc;
+	
+	@XmlElement(name = "readerFactoryID")
+	private String readerFactory;
 
 	public String getCommandDesc() {
 		return commandDesc;
@@ -44,6 +47,13 @@ public class CommandTypeDTO implements Serializable {
 	public void setCommandType(String commandType) {
 		this.commandType = commandType;
 	}
-	
+
+	public String getReaderFactory() {
+		return readerFactory;
+	}
+
+	public void setReaderFactory(String readerFactory) {
+		this.readerFactory = readerFactory;
+	}
 	
 }
