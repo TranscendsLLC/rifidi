@@ -36,4 +36,6 @@ public class PropertyResponseMessageDTO implements Serializable {
 	public void setProperties(List<PropertyNameDTO> properties) {
 		this.properties = properties;
 	}
+	
+	
 }

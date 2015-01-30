@@ -29,6 +29,8 @@ import java.util.concurrent.TimeUnit;
 
 import javax.management.Attribute;
 import javax.management.AttributeList;
+import javax.management.MBeanAttributeInfo;
+import javax.management.openmbean.OpenMBeanAttributeInfoSupport;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 
@@ -59,11 +61,14 @@ import org.rifidi.edge.api.SessionDTO;
 import org.rifidi.edge.api.SessionStatus;
 import org.rifidi.edge.api.service.appmanager.AppManager;
 import org.rifidi.edge.api.service.tagmonitor.ReadZone;
+import org.rifidi.edge.configuration.AbstractCommandConfigurationFactory;
 import org.rifidi.edge.configuration.Configuration;
 import org.rifidi.edge.configuration.ConfigurationService;
+import org.rifidi.edge.daos.CommandDAO;
 import org.rifidi.edge.daos.ReaderDAO;
 import org.rifidi.edge.rest.exception.NotValidPropertyForObjectException;
 import org.rifidi.edge.sensors.AbstractSensor;
+import org.rifidi.edge.sensors.AbstractSensorFactory;
 import org.rifidi.edge.sensors.SensorSession;
 import org.rifidi.edge.services.EsperManagementService;
 import org.rifidi.edge.util.RifidiEdgeHelper;
@@ -114,6 +119,8 @@ public class SensorManagerServiceRestletImpl extends Application {
 
 	/** */
 	public ReaderDAO readerDAO;
+	
+	public CommandDAO commandDAO;
 
 	/** Logger for this class */
 	private final Log logger = LogFactory.getLog(getClass());
@@ -1261,19 +1268,94 @@ public class SensorManagerServiceRestletImpl extends Application {
 			}
 		};
 		
-//		Restlet readerMetadata = new Restlet() {
-//			@Override
-//			public void handle(Request request, Response response) {
-//				try {
-//					
-//				} catch (Exception e) {
-//					self.readerDAO.getR
-//					response.setEntity(self.generateReturnString(self
-//							.generateErrorMessage(e.toString(), null)),
-//							MediaType.TEXT_XML);
-//				}
-//			}
-//		};
+		Restlet readerMetadata = new Restlet() {
+			@Override
+			public void handle(Request request, Response response) {
+				try {
+					ReaderMetadataResponseMessageDTO rmrmd = new ReaderMetadataResponseMessageDTO();
+					
+					List<ReaderFactoryMetadataDTO> readerFactoryMetadataList = new ArrayList<ReaderFactoryMetadataDTO>();					
+					Set<AbstractSensorFactory<?>> readerfactories = self.readerDAO.getReaderFactories();
+					for(AbstractSensorFactory<?> factory:readerfactories) {	
+						List<ReaderMetadataDTO> readerMetadataList = new ArrayList<ReaderMetadataDTO>();
+						MBeanAttributeInfo[] attArray = factory.getServiceDescription(factory.getFactoryID()).getAttributes();
+						for(MBeanAttributeInfo att:attArray) {
+							ReaderMetadataDTO readerMetadata = new ReaderMetadataDTO();
+							OpenMBeanAttributeInfoSupport supp = (OpenMBeanAttributeInfoSupport)att;
+							if (supp.getDefaultValue() != null) {
+								readerMetadata.setDefaultValue(supp.getDefaultValue().toString());
+							}
+							if (supp.getDescription() != null) {
+								readerMetadata.setDescription(supp.getDescription());
+							}
+							if (supp.getMaxValue() != null) {
+								readerMetadata.setMaxValue(supp.getMaxValue().toString());
+							}
+							if (supp.getMinValue() != null) {
+								readerMetadata.setMinValue(supp.getMinValue().toString());
+							}
+							if (supp.getType() != null) {
+								readerMetadata.setType(supp.getType());
+							}
+							if (supp.getName() != null) {
+								readerMetadata.setName(supp.getName());
+							}
+							readerMetadataList.add(readerMetadata);
+						}
+
+						ReaderFactoryMetadataDTO readerMetaFactory = new ReaderFactoryMetadataDTO();
+						readerMetaFactory.setReadermetadata(readerMetadataList);
+						readerMetaFactory.setId(factory.getFactoryID());
+						readerFactoryMetadataList.add(readerMetaFactory);
+					}
+					
+					List<CommandFactoryMetadataDTO> commandFactoryMetadataList = new ArrayList<CommandFactoryMetadataDTO>();		
+					Set<AbstractCommandConfigurationFactory<?>> commandfactories = self.commandDAO.getCommandFactories();
+					for(AbstractCommandConfigurationFactory<?> factory:commandfactories) {			
+						List<CommandMetadataDTO> commandMetadataList = new ArrayList<CommandMetadataDTO>();
+						MBeanAttributeInfo[] attArray = factory.getServiceDescription(factory.getFactoryID()).getAttributes();
+						for(MBeanAttributeInfo att:attArray) {
+							CommandMetadataDTO commandMetadata = new CommandMetadataDTO();
+							OpenMBeanAttributeInfoSupport supp = (OpenMBeanAttributeInfoSupport)att;
+							if (supp.getDefaultValue() != null) {
+								commandMetadata.setDefaultValue(supp.getDefaultValue().toString());
+							}
+							if (supp.getDescription() != null) {
+								commandMetadata.setDescription(supp.getDescription());
+							}
+							if (supp.getMaxValue() != null) {
+								commandMetadata.setMaxValue(supp.getMaxValue().toString());
+							}
+							if (supp.getMinValue() != null) {
+								commandMetadata.setMinValue(supp.getMinValue().toString());
+							}
+							if (supp.getType() != null) {
+								commandMetadata.setType(supp.getType());
+							}
+							if (supp.getName() != null) {
+								commandMetadata.setName(supp.getName());
+							}
+							commandMetadataList.add(commandMetadata);
+						}
+						CommandFactoryMetadataDTO commandMetaFactory = new CommandFactoryMetadataDTO();
+						commandMetaFactory.setCommandmetadata(commandMetadataList);
+						commandMetaFactory.setId(factory.getFactoryID());
+						commandMetaFactory.setReaderID(factory.getReaderFactoryID());
+						commandFactoryMetadataList.add(commandMetaFactory);
+					}
+					
+					rmrmd.setCommandMetaList(commandFactoryMetadataList);
+					rmrmd.setReaderMetaList(readerFactoryMetadataList);
+					
+					response.setEntity(self.generateReturnString(rmrmd)
+							.toString(), MediaType.TEXT_XML);
+				} catch (Exception e) {					
+					response.setEntity(self.generateReturnString(self
+							.generateErrorMessage(e.toString(), null)),
+							MediaType.TEXT_XML);
+				}
+			}
+		};
 
 		Restlet commandTypes = new Restlet() {
 			@Override
@@ -2176,6 +2258,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 		router.attach("/stopapp/{appID}", stopApp);
 		router.attach("/commandtypes", commandTypes);
 		router.attach("/readertypes", readerTypes);
+		router.attach("/readermetadata", readerMetadata);
 		router.attach("/apps", apps);
 		router.attach("/save", save);
 
@@ -2360,6 +2443,10 @@ public class SensorManagerServiceRestletImpl extends Application {
 
 	public void setReaderDAO(ReaderDAO readerDAO) {
 		this.readerDAO = readerDAO;
+	}
+	
+	public void setCommandDAO(CommandDAO commandDAO) {
+		this.commandDAO = commandDAO;
 	}
 
 	// End Spring Inject
