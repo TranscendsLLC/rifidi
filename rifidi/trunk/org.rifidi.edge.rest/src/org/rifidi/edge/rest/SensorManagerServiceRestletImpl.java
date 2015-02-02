@@ -3065,13 +3065,14 @@ public class SensorManagerServiceRestletImpl extends Application {
                 .getResourceRef().getBaseRef() : request.getResourceRef();
  
         if (hostRef.getHostDomain() != null) {
-            String host = hostRef.getHostDomain();
+        	
+           String host = hostRef.getHostDomain();
             int hostRefPortValue = hostRef.getHostPort();
  
             if ((hostRefPortValue != -1)
                     && (hostRefPortValue != request.getProtocol()
                             .getDefaultPort())) {
-                host = host + ':' + hostRefPortValue;
+                host = hostRef.getScheme() + "://" + host + ':' + hostRefPortValue;
             }
  
             //addHeader(HeaderConstants.HEADER_HOST, host, headers);
