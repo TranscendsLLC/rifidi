@@ -52,6 +52,7 @@ import org.rifidi.edge.adapter.llrp.LLRPEncodeMessageDto;
 import org.rifidi.edge.adapter.llrp.LLRPReaderSession;
 import org.rifidi.edge.api.CommandConfigFactoryDTO;
 import org.rifidi.edge.api.CommandConfigurationDTO;
+import org.rifidi.edge.api.CommandDTO;
 import org.rifidi.edge.api.CommandManagerService;
 import org.rifidi.edge.api.CommandSubmissionException;
 import org.rifidi.edge.api.ReaderDTO;
@@ -732,15 +733,19 @@ public class SensorManagerServiceRestletImpl extends Application {
 						r.setReaderID(dto.getReaderID());
 						r.setReaderType(dto.getReaderFactoryID());
 						rsrmd.setReader(r);
-						// response.getAttributes().put(dto.getReaderID(),
-						// dto.getReaderFactoryID());
 						List<SessionNameDTO> slist = new LinkedList<SessionNameDTO>();
 						for (SessionDTO sdto : dto.getSessions()) {
 							SessionNameDTO snd = new SessionNameDTO();
 							snd.setSessionId(sdto.getID());
 							snd.setSessionStatus(sdto.getStatus().toString());
-							// response.getAttributes().put(sdto.getID(),
-							// sdto.getStatus());
+							List<ExecutingCommandDTO> exec = new ArrayList<ExecutingCommandDTO>();
+							for( CommandDTO command:sdto.getCommands() ) {
+								ExecutingCommandDTO ecdto = new ExecutingCommandDTO();
+								ecdto.setCommandID(command.getCommandID());
+								ecdto.setInterval(command.getInterval());
+								exec.add(ecdto);
+							}
+							snd.setExecutingCommands(exec);
 							slist.add(snd);
 						}
 						rsrmd.setSessions(slist);

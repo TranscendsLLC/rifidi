@@ -4,10 +4,12 @@
 package org.rifidi.edge.rest;
 
 import java.io.Serializable;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -28,6 +30,10 @@ public class SessionNameDTO implements Serializable {
 	
 	@XmlElement(name = "status")
 	private String sessionStatus;
+	
+	@XmlElementWrapper(required = true, name="executingcommands")
+	@XmlElement(name = "executingcommand")
+	private List<ExecutingCommandDTO> executingCommands;
 
 	public String getSessionId() {
 		return sessionId;
@@ -43,6 +49,14 @@ public class SessionNameDTO implements Serializable {
 
 	public void setSessionStatus(String sessionStatus) {
 		this.sessionStatus = sessionStatus;
+	}
+
+	public List<ExecutingCommandDTO> getExecutingCommands() {
+		return executingCommands;
+	}
+
+	public void setExecutingCommands(List<ExecutingCommandDTO> executingCommands) {
+		this.executingCommands = executingCommands;
 	}
 	
 }
