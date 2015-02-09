@@ -22,6 +22,9 @@ public class CommandMetadataDTO implements Serializable {
 	@XmlElement(name = "name")
 	private String name;
 	
+	@XmlElement(name = "displayname")
+	private String displayName;
+	
 	@XmlElement(name = "defaultvalue")
 	private String defaultValue;
 	
@@ -36,6 +39,39 @@ public class CommandMetadataDTO implements Serializable {
 	
 	@XmlElement(name = "minvalue")
 	private String minValue;
+	
+	@XmlElement(name = "category")
+	private String category;
+	
+	@XmlElement(name = "writable")
+	private Boolean writable;
+	
+	@XmlElement(name = "ordervalue")
+	private Float orderValue;
+
+	public String getCategory() {
+		return category;
+	}
+
+	public void setCategory(String category) {
+		this.category = category;
+	}
+
+	public Boolean getWritable() {
+		return writable;
+	}
+
+	public void setWritable(Boolean writable) {
+		this.writable = writable;
+	}
+
+	public Float getOrderValue() {
+		return orderValue;
+	}
+
+	public void setOrderValue(Float orderValue) {
+		this.orderValue = orderValue;
+	}
 
 	public String getName() {
 		return name;
@@ -84,5 +120,15 @@ public class CommandMetadataDTO implements Serializable {
 	public void setMinValue(String minValue) {
 		this.minValue = minValue;
 	}
+
+	public String getDisplayName() {
+		return displayName;
+	}
+
+	public void setDisplayName(String displayName) {
+		this.displayName = displayName;
+	}
+	
+	
 	
 }
