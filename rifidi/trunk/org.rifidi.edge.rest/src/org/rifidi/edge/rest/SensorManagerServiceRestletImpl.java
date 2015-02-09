@@ -44,6 +44,7 @@ import org.restlet.Request;
 import org.restlet.Response;
 import org.restlet.Restlet;
 import org.restlet.data.MediaType;
+import org.restlet.data.Reference;
 import org.restlet.engine.header.Header;
 import org.restlet.routing.Router;
 import org.restlet.util.Series;
@@ -678,7 +679,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 			@Override
 			public void handle(Request request, Response response) {
 				
-				setCorsHeaders(response);
+				setResponseHeaders(request, response);
 				
 				Set<ReaderDTO> dtos = sensorManagerService.getReaders();
 				List<ReaderNameDTO> rnd = new LinkedList<ReaderNameDTO>();
@@ -699,7 +700,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 			@Override
 			public void handle(Request request, Response response) {
 				
-				setCorsHeaders(response);
+				setResponseHeaders(request, response);
 				
 				Set<CommandConfigurationDTO> dtos = commandManagerService
 						.getCommands();
@@ -721,7 +722,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 			@Override
 			public void handle(Request request, Response response) {
 				
-				setCorsHeaders(response);
+				setResponseHeaders(request, response);
 				
 				Set<ReaderDTO> dtos = sensorManagerService.getReaders();
 				ReaderStatusResponseMessageDTO rsrmd = new ReaderStatusResponseMessageDTO();
@@ -761,8 +762,8 @@ public class SensorManagerServiceRestletImpl extends Application {
 			public void handle(Request request, Response response) {
 				try {
 					
-					setCorsHeaders(response);
-
+					setResponseHeaders(request, response);
+					
 					String strReaderId = (String) request.getAttributes().get(
 							"readerID");
 					String strSessionID = (String) request.getAttributes().get(
@@ -807,7 +808,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 			public void handle(Request request, Response response) {
 				try {
 					
-					setCorsHeaders(response);
+					setResponseHeaders(request, response);
 
 					String strReaderId = (String) request.getAttributes().get(
 							"readerID");
@@ -851,7 +852,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 			public void handle(Request request, Response response) {
 				try {
 					
-					setCorsHeaders(response);
+					setResponseHeaders(request, response);
 					
 					sensorManagerService.createSession((String) request
 							.getAttributes().get("readerID"));
@@ -869,7 +870,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 			@Override
 			public void handle(Request request, Response response) {
 				try {					
-					setCorsHeaders(response);					
+					setResponseHeaders(request, response);					
 					sensorManagerService.deleteSession((String) request
 							.getAttributes().get("readerID"), (String) request
 							.getAttributes().get("sessionID"));
@@ -888,7 +889,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 			@Override
 			public void handle(Request request, Response response) {
 				try {
-					setCorsHeaders(response);
+					setResponseHeaders(request, response);
 					sensorManagerService.deleteReader((String) request.getAttributes().get("readerID"));
 					response.setEntity(self.generateReturnString(self
 							.generateSuccessMessage()), MediaType.TEXT_XML);
@@ -904,7 +905,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 			@Override
 			public void handle(Request request, Response response) {
 				try {
-					setCorsHeaders(response);
+					setResponseHeaders(request, response);
 					commandManagerService.deleteCommand((String) request.getAttributes().get("commandID"));
 					response.setEntity(self.generateReturnString(self
 							.generateSuccessMessage()), MediaType.TEXT_XML);
@@ -921,7 +922,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 			public void handle(Request request, Response response) {
 				try {
 					
-					setCorsHeaders(response);
+					setResponseHeaders(request, response);
 					
 					sensorManagerService.submitCommand((String) request
 							.getAttributes().get("readerID"), (String) request
@@ -954,7 +955,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 			public void handle(Request request, Response response) {
 				try {
 
-					setCorsHeaders(response);
+					setResponseHeaders(request, response);
 					
 					String strObjectId = (String) request.getAttributes().get(
 							"readerID");
@@ -1022,7 +1023,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 			public void handle(Request request, Response response) {
 				try {
 					
-					setCorsHeaders(response);
+					setResponseHeaders(request, response);
 
 					String strObjectId = (String) request.getAttributes().get(
 							"readerID");
@@ -1074,7 +1075,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 
 				try {
 					
-					setCorsHeaders(response);
+					setResponseHeaders(request, response);
 
 					String strReaderType = (String) request.getAttributes()
 							.get("readerType");
@@ -1158,7 +1159,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 
 				try {
 					
-					setCorsHeaders(response);
+					setResponseHeaders(request, response);
 
 					String strPropAttr = (String) request.getAttributes().get(
 							"properties");
@@ -1209,7 +1210,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 			public void handle(Request request, Response response) {
 				try {
 					
-					setCorsHeaders(response);
+					setResponseHeaders(request, response);
 					
 					appManager.startApp((Integer.parseInt((String) request
 							.getAttributes().get("appID"))));
@@ -1229,7 +1230,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 			public void handle(Request request, Response response) {
 				try {
 					
-					setCorsHeaders(response);
+					setResponseHeaders(request, response);
 					
 					appManager.stopApp((Integer.parseInt((String) request
 							.getAttributes().get("appID"))));
@@ -1249,7 +1250,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 			public void handle(Request request, Response response) {
 				try {
 					
-					setCorsHeaders(response);
+					setResponseHeaders(request, response);
 					
 					ReaderTypesReponseMessageDTO rtr = new ReaderTypesReponseMessageDTO();
 					Set<ReaderFactoryDTO> grf = self.sensorManagerService
@@ -1393,7 +1394,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 			public void handle(Request request, Response response) {
 				try {
 					
-					setCorsHeaders(response);
+					setResponseHeaders(request, response);
 					
 					CommandTypesResponseMessageDTO rtr = new CommandTypesResponseMessageDTO();
 					Set<CommandConfigFactoryDTO> grf = self.commandManagerService
@@ -1424,7 +1425,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 				
 				try {
 					
-					setCorsHeaders(response);
+					setResponseHeaders(request, response);
 					
 					Map<Integer, RifidiApp> apps = appManager.getApps();
 					List<AppNameDTO> appNames = new LinkedList<AppNameDTO>();
@@ -1453,7 +1454,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 			public void handle(Request request, Response response) {
 				try {
 					
-					setCorsHeaders(response);
+					setResponseHeaders(request, response);
 					
 					configService.storeConfiguration();
 					response.setEntity(self.generateReturnString(self
@@ -1471,7 +1472,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 			@Override
 			public void handle(Request request, Response response) {
 				logger.info("llrpGetReaderConfig requested");
-				setCorsHeaders(response);
+				setResponseHeaders(request, response);
 				llrpGetOperation(request, response, LLRPGetOperations.GET_READER_CONFIG);
 			}
 		};
@@ -1480,7 +1481,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 			@Override
 			public void handle(Request request, Response response) {
 				logger.info("llrpGetRospecs requested");				
-				setCorsHeaders(response);				
+				setResponseHeaders(request, response);				
 				llrpGetOperation(request, response, LLRPGetOperations.GET_ROSPECS);
 			}
 		};
@@ -1491,7 +1492,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 
 				logger.info("llrpEncode requested");
 				
-				setCorsHeaders(response);
+				setResponseHeaders(request, response);
 				
 				executeLlrpOperation(request, response, null);
 
@@ -1504,7 +1505,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 				
 				logger.info("llrpEpcWrite requested");
 				
-				setCorsHeaders(response);
+				setResponseHeaders(request, response);
 				
 				executeLlrpOperation(request, response,
 						LLRPReaderSession.LLRP_OPERATION_CODE.LLRPEPCWrite);
@@ -1518,7 +1519,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 
 				logger.info("llrpAccessPasswordWrite requested");
 				
-				setCorsHeaders(response);
+				setResponseHeaders(request, response);
 				
 				executeLlrpOperation(
 						request,
@@ -1534,7 +1535,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 
 				logger.info("llrpKillPasswordWrite requested");
 				
-				setCorsHeaders(response);
+				setResponseHeaders(request, response);
 				
 				executeLlrpOperation(
 						request,
@@ -1550,7 +1551,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 
 				logger.info("llrpEPCLock requested");
 				
-				setCorsHeaders(response);
+				setResponseHeaders(request, response);
 				
 				executeLlrpOperation(request, response,
 						LLRPReaderSession.LLRP_OPERATION_CODE.LLRPEPCLock);
@@ -1564,7 +1565,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 
 				logger.info("llrpAccessPasswordLock requested");
 				
-				setCorsHeaders(response);
+				setResponseHeaders(request, response);
 				
 				executeLlrpOperation(
 						request,
@@ -1580,7 +1581,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 
 				logger.info("llrpKillPasswordLock requested");
 				
-				setCorsHeaders(response);
+				setResponseHeaders(request, response);
 
 				executeLlrpOperation(
 						request,
@@ -1597,7 +1598,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 
 				logger.info("llrpUserMemoryLock requested");
 				
-				setCorsHeaders(response);
+				setResponseHeaders(request, response);
 
 				executeLlrpOperation(
 						request,
@@ -1613,7 +1614,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 				
 				logger.info("llrpEpcRead requested");
 				
-				setCorsHeaders(response);
+				setResponseHeaders(request, response);
 				
 				executeLlrpOperation(request, response,
 						LLRPReaderSession.LLRP_OPERATION_CODE.LLRPEPCRead);
@@ -1627,7 +1628,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 				
 				logger.info("llrpAccessPwdValidate requested");
 				
-				setCorsHeaders(response);
+				setResponseHeaders(request, response);
 				
 				executeLlrpOperation(request, response,
 						LLRPReaderSession.LLRP_OPERATION_CODE.LLRPAccessPasswordValidate);
@@ -1641,7 +1642,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 				
 				logger.info("llrpKillPwdRead requested");
 				
-				setCorsHeaders(response);
+				setResponseHeaders(request, response);
 				
 				executeLlrpOperation(request, response,
 						LLRPReaderSession.LLRP_OPERATION_CODE.LLRPKillPasswordRead);
@@ -1655,7 +1656,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 				
 				logger.info("llrpUserMemoryRead requested");
 				
-				setCorsHeaders(response);
+				setResponseHeaders(request, response);
 				
 				executeLlrpOperation(request, response,
 						LLRPReaderSession.LLRP_OPERATION_CODE.LLRPUserMemoryRead);
@@ -1669,7 +1670,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 				
 				logger.info("llrpUserMemoryWrite requested");
 				
-				setCorsHeaders(response);
+				setResponseHeaders(request, response);
 				
 				executeLlrpOperation(request, response,
 						LLRPReaderSession.LLRP_OPERATION_CODE.LLRPUserMemoryWrite);
@@ -1684,7 +1685,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 
 					logger.info("llrpMessage requested");
 					
-					setCorsHeaders(response);
+					setResponseHeaders(request, response);
 
 					AbstractSensor<?> sensor = readerDAO
 							.getReaderByID((String) request.getAttributes()
@@ -1725,7 +1726,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 			@Override
 			public void handle(Request request, Response response) {
 				
-				setCorsHeaders(response);
+				setResponseHeaders(request, response);
 				
 				PingDTO ping = new PingDTO();
 				ping.setTimestamp(Long.toString(System.currentTimeMillis()));
@@ -1741,7 +1742,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 
 					logger.info("getAppProperties requested");
 					
-					setCorsHeaders(response);
+					setResponseHeaders(request, response);
 
 					Integer intAppId = Integer.parseInt((String) request
 							.getAttributes().get("appID"));
@@ -1794,7 +1795,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 
 					logger.info("getGroupProperties requested");
 					
-					setCorsHeaders(response);
+					setResponseHeaders(request, response);
 
 					Integer intAppId = Integer.parseInt((String) request
 							.getAttributes().get("appID"));
@@ -1846,7 +1847,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 
 					logger.info("getReadZones requested");
 					
-					setCorsHeaders(response);
+					setResponseHeaders(request, response);
 
 					Integer intAppId = Integer.parseInt((String) request
 							.getAttributes().get("appID"));
@@ -1897,7 +1898,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 
 					logger.info("deleteReadZone requested");
 					
-					setCorsHeaders(response);
+					setResponseHeaders(request, response);
 
 					Integer intAppId = Integer.parseInt((String) request
 							.getAttributes().get("appID"));
@@ -1935,7 +1936,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 
 					logger.info("getReadZoneProperties requested");
 					
-					setCorsHeaders(response);
+					setResponseHeaders(request, response);
 
 					Integer intAppId = Integer.parseInt((String) request
 							.getAttributes().get("appID"));
@@ -1995,7 +1996,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 
 					logger.info("setAppProperties requested");
 					
-					setCorsHeaders(response);
+					setResponseHeaders(request, response);
 
 					Integer intAppId = Integer.parseInt((String) request
 							.getAttributes().get("appID"));
@@ -2052,7 +2053,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 
 					logger.info("setGroupProperties requested");
 					
-					setCorsHeaders(response);
+					setResponseHeaders(request, response);
 
 					Integer intAppId = Integer.parseInt((String) request
 							.getAttributes().get("appID"));
@@ -2108,7 +2109,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 
 					logger.info("addReadZone requested");
 					
-					setCorsHeaders(response);
+					setResponseHeaders(request, response);
 
 					Integer intAppId = Integer.parseInt((String) request
 							.getAttributes().get("appID"));
@@ -2172,7 +2173,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 
 					logger.info("setReadZoneProperties requested");
 					
-					setCorsHeaders(response);
+					setResponseHeaders(request, response);
 
 					Integer intAppId = Integer.parseInt((String) request
 							.getAttributes().get("appID"));
@@ -3080,6 +3081,38 @@ public class SensorManagerServiceRestletImpl extends Application {
 		responseHeaders.add(new Header("Access-Control-Allow-Headers", "Access-Control-Allow-Origin, Origin, X-Requested-With, Content-Type, Accept"));
 		responseHeaders.add(new Header("Access-Control-Allow-Origin", "*"));
 		
+	}
+	
+	private void setResponseHeaders(Request request, Response response){
+		
+		Series<Header> responseHeaders = (Series<Header>) response.getAttributes().get("org.restlet.http.headers");
+
+		if (responseHeaders == null) { 
+	        responseHeaders = new Series(Header.class);
+	        response.getAttributes().put("org.restlet.http.headers", responseHeaders); 
+	    }
+		
+		Reference hostRef = (request.getResourceRef().getBaseRef() != null) ? request
+                .getResourceRef().getBaseRef() : request.getResourceRef();
+ 
+        if (hostRef.getHostDomain() != null) {
+        	
+           String host = hostRef.getHostDomain();
+            int hostRefPortValue = hostRef.getHostPort();
+ 
+            if ((hostRefPortValue != -1)
+                    && (hostRefPortValue != request.getProtocol()
+                            .getDefaultPort())) {
+                host = hostRef.getScheme() + "://" + host + ':' + hostRefPortValue;
+            }
+ 
+            //addHeader(HeaderConstants.HEADER_HOST, host, headers);
+            responseHeaders.add(new Header("Access-Control-Expose-Headers", "Host"));
+            responseHeaders.add(new Header("Host", host));
+        }
+
+        setCorsHeaders(response);
+				
 	}
 
 	/*
