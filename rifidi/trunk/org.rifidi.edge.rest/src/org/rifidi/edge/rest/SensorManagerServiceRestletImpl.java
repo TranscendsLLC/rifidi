@@ -1278,6 +1278,9 @@ public class SensorManagerServiceRestletImpl extends Application {
 			@Override
 			public void handle(Request request, Response response) {
 				try {
+					
+					setResponseHeaders(request, response);
+					
 					ReaderMetadataResponseMessageDTO rmrmd = new ReaderMetadataResponseMessageDTO();
 					
 					String cat_str = "org.rifidi.edge.category";
