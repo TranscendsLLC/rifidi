@@ -73,6 +73,7 @@ import org.rifidi.edge.sensors.AbstractSensor;
 import org.rifidi.edge.sensors.AbstractSensorFactory;
 import org.rifidi.edge.sensors.SensorSession;
 import org.rifidi.edge.services.EsperManagementService;
+import org.rifidi.edge.services.ProvisioningService;
 import org.rifidi.edge.util.RifidiEdgeHelper;
 
 //import org.rifidi.edge.adapter.llrp.LLRPEncodeMessageDto;
@@ -109,6 +110,9 @@ public class SensorManagerServiceRestletImpl extends Application {
 
 	/** The command manager service for command commands */
 	public CommandManagerService commandManagerService;
+	
+	/** The Provisioning Service */
+	private volatile ProvisioningService provisioningService;
 
 	/** Configuration Service */
 	private volatile ConfigurationService configService;
@@ -1084,28 +1088,33 @@ public class SensorManagerServiceRestletImpl extends Application {
 							"properties");
 					
 					//Decode url attributes
-					strPropAttr = URLDecoder.decode(strPropAttr, "UTF-8");
+					AttributeList attributes = new AttributeList();
+					if (strPropAttr != null) {
+						strPropAttr = URLDecoder.decode(strPropAttr, "UTF-8");
 
-					AttributeList attributes = getProcessedAttributes(strPropAttr);
-					
-					//From attributes, extract the readerID property if is there
-					Attribute attributeToDelete = null;
-					for (Attribute attribute : attributes.asList()) {
-						if (attribute.getName().equals(ReaderIDPropertyName)){
-							readerId = (String) attribute.getValue();
+						attributes = getProcessedAttributes(strPropAttr);
 
-							//remove readerID from attributes, so when the time 
-							//to validate the properties for reader comes, it does 
-							//not throw error because of this readerID property name
-							//Hold a reference of attribute to be deleted, to delete
-							//outside this loop, because if try to delete inside, 
-							//we get an ConcurrentModificationException
-							attributeToDelete = attribute;
+						// From attributes, extract the readerID property if is
+						// there
+						Attribute attributeToDelete = null;
+						for (Attribute attribute : attributes.asList()) {
+							if (attribute.getName()
+									.equals(ReaderIDPropertyName)) {
+								readerId = (String) attribute.getValue();
+
+								// remove readerID from attributes, so when the time
+								// to validate the properties for reader comes, it does
+								// not throw error because of this readerID property name
+								// Hold a reference of attribute to be deleted,  to delete
+								// outside this loop, because if try to delete inside,
+								// we get an ConcurrentModificationException
+								attributeToDelete = attribute;
+							}
 						}
-					}
-					
-					if (attributeToDelete != null){
-						attributes.remove(attributeToDelete);
+
+						if (attributeToDelete != null) {
+							attributes.remove(attributeToDelete);
+						}
 					}
 
 					// Create reader
@@ -1123,8 +1132,10 @@ public class SensorManagerServiceRestletImpl extends Application {
 					// reader
 					validateAttributesForReaderOrCommand(readerId, attributes);
 
-					response.setEntity(self.generateReturnString(self
-							.generateSuccessMessage()), MediaType.TEXT_XML);
+					CreateReaderResponseMessageDTO crmd = new CreateReaderResponseMessageDTO();
+					crmd.setReaderID(readerId);
+					
+					response.setEntity(self.generateReturnString(crmd), MediaType.TEXT_XML);
 
 				} catch (NotValidPropertyForObjectException nE) {
 
@@ -1163,12 +1174,16 @@ public class SensorManagerServiceRestletImpl extends Application {
 
 					String strPropAttr = (String) request.getAttributes().get(
 							"properties");
+
+					AttributeList attributes = new AttributeList();
 					
-					//Decode url attributes
-					strPropAttr = URLDecoder.decode(strPropAttr, "UTF-8");
+					if (strPropAttr != null) {
+						// Decode url attributes
+						strPropAttr = URLDecoder.decode(strPropAttr, "UTF-8");
 
-					AttributeList attributes = getProcessedAttributes(strPropAttr);
-
+						attributes = getProcessedAttributes(strPropAttr);
+					}
+					
 					// Create the command
 					strCommandId = self.commandManagerService
 							.createCommand((String) request.getAttributes()
@@ -1178,8 +1193,10 @@ public class SensorManagerServiceRestletImpl extends Application {
 					validateAttributesForReaderOrCommand(strCommandId,
 							attributes);
 
-					response.setEntity(self.generateReturnString(self
-							.generateSuccessMessage()), MediaType.TEXT_XML);
+					CreateCommandResponseMessageDTO ccrmd = new CreateCommandResponseMessageDTO();
+					ccrmd.setCommandID(strCommandId);
+					
+					response.setEntity(self.generateReturnString(ccrmd), MediaType.TEXT_XML);
 
 				} catch (NotValidPropertyForObjectException nE) {
 
@@ -1452,6 +1469,17 @@ public class SensorManagerServiceRestletImpl extends Application {
 				}
 			}
 		};
+//		Restlet loadApp = new Restlet() {
+//			@Override
+//			public void handle(Request request, Response response) {
+//				try {
+//					Set<String> bundles = provisioningService.provision((String)request.getAttributes().get("path"));
+//					
+//				} catch(Exception e) {
+//					
+//				}
+//			}
+//		};
 		Restlet save = new Restlet() {
 			@Override
 			public void handle(Request request, Response response) {
@@ -1470,6 +1498,8 @@ public class SensorManagerServiceRestletImpl extends Application {
 				}
 			}
 		};
+		
+		
 		
 		Restlet llrpGetReaderConfig = new Restlet() {
 			@Override
@@ -2462,14 +2492,16 @@ public class SensorManagerServiceRestletImpl extends Application {
 
 	// Spring Inject
 
-	public void setSensorManagerService(
-			SensorManagerService sensorManagerService) {
+	public void setSensorManagerService(SensorManagerService sensorManagerService) {
 		this.sensorManagerService = sensorManagerService;
 	}
 
-	public void setCommandManagerService(
-			CommandManagerService commandManagerService) {
+	public void setCommandManagerService(CommandManagerService commandManagerService) {
 		this.commandManagerService = commandManagerService;
+	}
+	
+	public void setProvisioningService(ProvisioningService provisioningService) {
+		this.provisioningService = provisioningService;
 	}
 
 	public void setAppManager(AppManager appManager) {
