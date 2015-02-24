@@ -27,6 +27,9 @@ public class CreateCommandResponseMessageDTO implements Serializable {
 	
 	@XmlElement(name = "commandID")
 	private String commandID;
+	
+	@XmlElement(name = "message")
+	private String status = "Success";
 
 	public String getCommandID() {
 		return commandID;
@@ -35,5 +38,13 @@ public class CreateCommandResponseMessageDTO implements Serializable {
 	public void setCommandID(String commandID) {
 		this.commandID = commandID;
 	}
+	
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}	
 
 }

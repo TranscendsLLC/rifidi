@@ -27,6 +27,9 @@ public class CreateReaderResponseMessageDTO implements Serializable {
 	
 	@XmlElement(name = "readerID")
 	private String readerID;
+	
+	@XmlElement(name = "message")
+	private String status = "Success";
 
 	public String getReaderID() {
 		return readerID;
@@ -35,5 +38,13 @@ public class CreateReaderResponseMessageDTO implements Serializable {
 	public void setReaderID(String readerID) {
 		this.readerID = readerID;
 	}
-	
+
+	public String getStatus() {
+		//If this is returned, the commmand is a success
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}	
 }
