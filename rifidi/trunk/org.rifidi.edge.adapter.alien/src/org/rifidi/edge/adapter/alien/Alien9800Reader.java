@@ -254,7 +254,8 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 	@Override
 	public String createSensorSession() throws CannotCreateSessionException {
 		if (!destroyed.get() && session.get() == null) {
-			Integer sessionID = this.sessionID.incrementAndGet();
+			//Forcing the sessionID to 1 for now
+			Integer sessionID = 1;
 			if (session.compareAndSet(null, new Alien9800ReaderSession(this,
 					Integer.toString(sessionID), ipAddress, port, notifyPort,
 					ioStreamPort, (int) (long) reconnectionInterval,
