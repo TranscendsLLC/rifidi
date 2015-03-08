@@ -17,7 +17,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 import javax.management.MBeanInfo;
@@ -59,7 +58,7 @@ public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 	/** The path to the SET_READER_CONFIG path to use */
 	private String readerConfigPath = LLRPConstants.SET_READER_CONFIG_PATH;
 	/** The ID of the session */
-	private AtomicInteger sessionIDcounter = new AtomicInteger(0);
+	private final Integer sessionIDcounter = new Integer(1);
 	/** Provided by spring. */
 	private final Set<AbstractCommandConfiguration<?>> commands;
 	/** Flag to check if this reader is destroyed. */
@@ -116,7 +115,7 @@ public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 	@Override
 	public String createSensorSession() throws CannotCreateSessionException {
 		if (!destroied.get() && session.get() == null) {
-			Integer sessionID = this.sessionIDcounter.incrementAndGet();
+			Integer sessionID = this.sessionIDcounter;
 			if (session.compareAndSet(null, new LLRPReaderSession(this,
 					sessionID.toString(), ipAddress, port,
 					reconnectionInterval, maxNumConnectionAttempts,
