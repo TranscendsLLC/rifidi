@@ -27,6 +27,9 @@ public class ExecutingCommandDTO implements Serializable {
 	@XmlElement(name = "commandID")
 	private String commandID;
 	
+	@XmlElement(name = "factoryID")
+	private String factoryID;
+	
 	@XmlElement(name = "interval")
 	private Long interval;
 
@@ -45,4 +48,14 @@ public class ExecutingCommandDTO implements Serializable {
 	public void setInterval(Long interval) {
 		this.interval = interval;
 	}
+
+	public String getFactoryID() {
+		return factoryID;
+	}
+
+	public void setFactoryID(String factoryID) {
+		this.factoryID = factoryID;
+	}
+	
+	
 }

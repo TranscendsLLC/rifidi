@@ -746,6 +746,13 @@ public class SensorManagerServiceRestletImpl extends Application {
 							for( CommandDTO command:sdto.getCommands() ) {
 								ExecutingCommandDTO ecdto = new ExecutingCommandDTO();
 								ecdto.setCommandID(command.getCommandID());
+								Set<CommandConfigurationDTO> configdtos = commandManagerService
+										.getCommands();
+								for(CommandConfigurationDTO configdto:configdtos) {
+									if(configdto.getCommandConfigID().equals(command.getCommandID())) {
+										ecdto.setFactoryID(configdto.getCommandConfigFactoryID());
+									}
+								}
 								ecdto.setInterval(command.getInterval());
 								exec.add(ecdto);
 							}
