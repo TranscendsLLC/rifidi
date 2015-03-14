@@ -822,6 +822,7 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 			} catch (Exception e) {
 				logger.error(e.getMessage());
 			} finally {
+				this.timingOut.set(false);
 				// make sure executor is shutdown!
 				if (executor != null) {
 					executor.shutdownNow();
@@ -879,6 +880,9 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 				timingOut.set(true);
 				logger.error("Timeout when sending an LLRP Message: "
 						+ message.getName());
+				//Disconnect and possibly reconnect
+				logger.info("Attempting to reconnect to reader " + this.readerID + " after a timeout");
+				this.disconnect();
 				throw e;
 			}
 		}
@@ -903,6 +907,26 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 	public void errorOccured(String arg0) {
 		logger.error("LLRP Error Occurred: " + arg0);
 		// TODO: should we disconnect?
+		try {
+			this.disconnect();
+		} catch (Exception e) {
+			logger.error("Exception occurred trying to disconnect from reader " + this.readerID);
+		}
+//		final LLRPReaderSession self = this;
+//		final String finalReaderID = this.readerID;
+//		Timer connectTimer = new Timer();
+//		connectTimer.schedule(new TimerTask() {			
+//			@Override
+//			public void run() {
+//				try {
+//					//Disconnect and possibly reconnect
+//					logger.info("Attempting to reconnect to reader " + finalReaderID + " after a timeout");
+//					self._connect();
+//				} catch (IOException e) {
+//					logger.error("Unable to reconnect to reader " + finalReaderID);
+//				}
+//			}
+//		}, 500);
 	}
 
 	/**
