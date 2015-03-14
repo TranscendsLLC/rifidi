@@ -862,13 +862,18 @@ public class SensorManagerServiceRestletImpl extends Application {
 			@Override
 			public void handle(Request request, Response response) {
 				try {
-					
+					String readerID = (String) request.getAttributes().get("readerID");
+					List<SessionDTO> sessions = sensorManagerService.getReader(readerID).getSessions();
+					//only one session allowed.  
+					if(!sessions.isEmpty()) {
+						throw new Exception("Reader " + readerID + " already has a session." );
+					}
 					setResponseHeaders(request, response);
 					
-					sensorManagerService.createSession((String) request
-							.getAttributes().get("readerID"));
-					response.setEntity(self.generateReturnString(self
-							.generateSuccessMessage()), MediaType.TEXT_XML);
+					sensorManagerService.createSession(readerID);
+					CreateSessionResponseMessageDTO sr = new CreateSessionResponseMessageDTO();
+					sr.setSessionID(1); // The sessionID for any reader should be 1.  
+					response.setEntity(self.generateReturnString(sr), MediaType.TEXT_XML);
 				} catch (Exception e) {
 
 					response.setEntity(self.generateReturnString(self
