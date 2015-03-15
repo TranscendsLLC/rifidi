@@ -17,8 +17,6 @@ package org.rifidi.edge.adapter.alien.messages;
 
 import java.math.BigInteger;
 
-import org.apache.commons.codec.DecoderException;
-import org.apache.commons.codec.binary.Hex;
 import org.rifidi.edge.notification.DatacontainerEvent;
 import org.rifidi.edge.notification.EPCGeneration1Event;
 import org.rifidi.edge.notification.EPCGeneration2Event;
