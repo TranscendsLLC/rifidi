@@ -32,74 +32,88 @@ import org.rifidi.edge.api.service.RifidiAppEsperFactory;
  */
 public class RSSIMonitorEsperFactory implements RifidiAppEsperFactory {
 
-	/** The set of read zones to monitor */
-	private final List<ReadZone> readzones;
-	/** The name of the esper window to use */
-	private final String windowName;
-	
-	private final String windowName_avg;
-	
-	private final String windowName_first;
-	
-	private final String windowName_sub;
-	/** The list of esper statements */
-	private final List<String> statements;
-	/** The time unit used for the departure wait time */
-	private final TimeUnit timeUnit;
-	/** The logger for this class */
-	private final static Log logger = LogFactory
-			.getLog(RSSIMonitorEsperFactory.class);
-	private final String interval;
-	private final boolean useRegex;
-	
-	private final Integer countThreshold;
-	
-	private final Double minAvgRSSIThreshold;
+   /** The set of read zones to monitor */
+   private final List<ReadZone> readzones;
+   /** The name of the esper window to use */
+   private final String windowName;
+   
+   private final String windowName_avg;
+   
+   private final String windowName_first;
+   
+   private final String windowName_max;
 
-	public RSSIMonitorEsperFactory(List<ReadZone> readzones, Integer windowID,
-			Float windowTime, TimeUnit timeUnit, Integer countThreshold, Double mingAvgRSSIThreshold, boolean useRegex) {
-		this.readzones = new ArrayList<ReadZone>();
-		if (readzones != null) {
-			this.readzones.addAll(readzones);
-		}
-		this.windowName = "rssi_" + windowID;
-		this.windowName_avg = windowName + "_avg_" + windowID;
-		this.windowName_first = windowName + "_first_" + windowID;
-		this.windowName_sub = windowName + "_sub_" + windowID;
-		//this.slidingWindowName = "sliding_" + windowID;
-		statements = new LinkedList<String>();
-		//this.windowTime = windowTime;
-		this.timeUnit = timeUnit;
-		this.interval = EsperUtil.timeUnitToEsperTime(windowTime, timeUnit);
-		this.countThreshold = countThreshold;
-		this.minAvgRSSIThreshold = mingAvgRSSIThreshold;
-		this.useRegex = useRegex;
-	}
+   /** The list of esper statements */
+   private final List<String> statements;
+   /** The time unit used for the departure wait time */
+   private final TimeUnit timeUnit;
+   /** The logger for this class */
+   private final static Log logger = LogFactory
+         .getLog(RSSIMonitorEsperFactory.class);
+   private final String interval;
+   private final boolean useRegex;
+   
+   private final Integer countThreshold;
+   
+   private final Double minAvgRSSIThreshold;
+   
+   private final Double changeRSSIThreshold;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.rifidi.edge.api.service.RifidiAppEsperFactory#createStatements()
-	 */
-	@Override
-	public List<String> createStatements() {
-		statements.add("create window " + windowName_first + ".win:time_batch("+interval+") as TagReadEvent");
-		statements.add(EsperUtil.buildInsertStatement(windowName_first, readzones, this.useRegex));
-		statements.add("create window " + windowName_avg + ".win:time_batch("+interval+") as RSSITagReadEvent");
-		statements.add("insert into "  + windowName_avg + " select tag.formattedID, readerID, antennaID, avg(cast(extraInformation('RSSI'),Double)) as avgRSSI, cast(count(*),Double) as tagCount from "
-					+ windowName_first + " group by tag.ID, readerID having cast(count(*),Double)>" + countThreshold + " and avg(cast(extraInformation('RSSI'),Double))>" + minAvgRSSIThreshold );
-		statements.add("insert into "  + windowName + " select tagID, antenna, maxby(avgRSSI).readerID from "
-				+ windowName_avg + " group by tagID, antenna");
-		return statements;
-	}
+   public RSSIMonitorEsperFactory(List<ReadZone> readzones, Integer windowID, Float windowTime, TimeUnit timeUnit,
+         Integer countThreshold, Double mingAvgRSSIThreshold, Double changeRSSIThreshold, boolean useRegex) {
+      this.readzones = new ArrayList<ReadZone>();
+      if (readzones != null) {
+         this.readzones.addAll(readzones);
+      }
+      this.windowName = "rssi_" + windowID;
+      this.windowName_avg = windowName + "_avg_" + windowID;
+      this.windowName_first = windowName + "_first_" + windowID;
+      this.windowName_max = windowName + "_max_" + windowID;
+      //this.slidingWindowName = "sliding_" + windowID;
+      statements = new LinkedList<String>();
+      //this.windowTime = windowTime;
+      this.timeUnit = timeUnit;
+      this.interval = EsperUtil.timeUnitToEsperTime(windowTime, timeUnit);
+      this.countThreshold = countThreshold;
+      this.minAvgRSSIThreshold = mingAvgRSSIThreshold;
+      this.changeRSSIThreshold = changeRSSIThreshold;
+      this.useRegex = useRegex;
+   }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.rifidi.edge.api.service.RifidiAppEsperFactory#createQuery()
-	 */
-	@Override
-	public String createQuery() {
-		return "select irstream * from " + windowName + " output every " + interval;
-	}
+   /*
+    * (non-Javadoc)
+    * 
+    * @see org.rifidi.edge.api.service.RifidiAppEsperFactory#createStatements()
+    */
+   @Override
+   public List<String> createStatements() {
+      statements.add("create window " + windowName_first + ".win:time_batch("+interval+") as TagReadEvent");
+      statements.add(EsperUtil.buildInsertStatement(windowName_first, readzones, this.useRegex));
+      statements.add("create window " + windowName_avg + ".win:time_batch("+interval+") as RSSITagReadEvent");
+      statements.add("create window " + windowName_max + ".win:time_batch("+interval+") as RSSITagReadEvent");
+
+      // Average RSSI
+      statements.add("insert into "  + windowName_avg + " select tag.formattedID, readerID, antennaID, avg(cast(extraInformation('RSSI'),Double)) as avgRSSI, cast(count(*),Double) as tagCount from " + windowName_first + " group by tag.ID, readerID having cast(count(*),Double)>" + countThreshold + " and avg(cast(extraInformation('RSSI'),Double))>" + minAvgRSSIThreshold);
+
+      // Max Avg
+      statements.add("insert into " + windowName_max + " select tagID, max(avgRSSI) as avgRSSI, maxby(avgRSSI).readerID as readerID, antenna, tagCount from " + windowName_avg + " group by tagID");
+
+      // Second Avg
+      statements.add("insert into " + windowName_max + " select avg2.tagID as tagID, max(avg2b.avgRSSI) as avgRSSI, maxby(avg2b.avgRSSI).readerID as readerID from " + windowName_avg + " as avg2 inner join " + windowName_avg + " as avg2b on avg2.tagID=avg2b.tagID where avg2.avgRSSI>avg2b.avgRSSI group by avg2.tagID");
+
+      // Threshold Check
+      statements.add("insert into " + windowName + " select tagID, avgRSSI, readerID, antenna, tagCount from " + windowName_max + " group by tagID having (avgRSSI>min(avgRSSI)+" + changeRSSIThreshold + ") or (avgRSSI=min(avgRSSI)) and (avgRSSI=max(avgRSSI))");
+
+      return statements;
+   }
+
+   /*
+    * (non-Javadoc)
+    * 
+    * @see org.rifidi.edge.api.service.RifidiAppEsperFactory#createQuery()
+    */
+   @Override
+   public String createQuery() {
+      return "select irstream * from " + windowName + " output every " + interval;
+   }
 }

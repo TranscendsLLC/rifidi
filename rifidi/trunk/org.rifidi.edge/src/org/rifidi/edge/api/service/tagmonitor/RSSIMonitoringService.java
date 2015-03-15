@@ -13,7 +13,6 @@
 package org.rifidi.edge.api.service.tagmonitor;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -21,27 +20,30 @@ import java.util.concurrent.TimeUnit;
  * @author Matthew Dean matt@transcends.co
  */
 public interface RSSIMonitoringService {
-	/**
-	 * Subscribe to the RSSIMonitoring service for the given readzones.  
-	 * 
-	 * @param subscriber
-	 * 			The subscriber that will be invoked when tags arrive.
-	 * @param readZones
-	 * 			The readzones that will be monitored.  Pass in an empty map if you wish to monitor per reader.  
-	 * @param windowTime
-	 * 			The timeout that will be used to determine if a tag has gone to a new zone.  Times less than 5s are not recommended.  
-	 * @param timeUnit
-	 * 			The unit of time to use with the timeout.  
-	 * @param countThreshold
-	 * 			The threshold for number of times a tag must be read before the readzone it has shown up at will be switched.  Do not
-	 * 			set this to greater than the windowTime divided by the frequency in seconds that tag reports will show up as configured
-	 * 			by your reader.  
-	 * @param minAvgRSSIThreshold
-	 * 			The lowest average RSSI that will have to be seen before the readzone is switched.  
-	 * @param useRegex
-	 * 			Are you using regular expressions in the readezones you pass in?  
-	 */
-	public void subscribe(RSSIReadZoneSubscriber subscriber,
-			HashMap<String,ReadZone> readZones, Float windowTime, TimeUnit timeUnit, Integer countThreshold, Double minAvgRSSIThreshold, boolean useRegex);
-	public void unsubscribe(RSSIReadZoneSubscriber subscriber);
+   /**
+    * Subscribe to the RSSIMonitoring service for the given readzones.  
+    * 
+    * @param subscriber
+    *          The subscriber that will be invoked when tags arrive.
+    * @param readZones
+    *          The readzones that will be monitored.  Pass in an empty map if you wish to monitor per reader.  
+    * @param windowTime
+    *          The timeout that will be used to determine if a tag has gone to a new zone.  Times less than 5s are not recommended.  
+    * @param timeUnit
+    *          The unit of time to use with the timeout.  
+    * @param countThreshold
+    *          The threshold for number of times a tag must be read before the readzone it has shown up at will be switched.  Do not
+    *          set this to greater than the windowTime divided by the frequency in seconds that tag reports will show up as configured
+    *          by your reader.  
+    * @param minAvgRSSIThreshold
+    *          The lowest average RSSI that will have to be seen before the readzone is switched.
+    * @param changeRSSIThreshold
+    *          The threshold for the amount the maximum average RSSI must be greater than the second maximum average RSSI
+    *          (by readzone) before the readzone is switched. 
+    * @param useRegex
+    *          Are you using regular expressions in the readezones you pass in?  
+    */
+   public void subscribe(RSSIReadZoneSubscriber subscriber,
+         HashMap<String,ReadZone> readZones, Float windowTime, TimeUnit timeUnit, Integer countThreshold, Double minAvgRSSIThreshold, Double changeRSSIThreshold, boolean useRegex);
+   public void unsubscribe(RSSIReadZoneSubscriber subscriber);
 }
