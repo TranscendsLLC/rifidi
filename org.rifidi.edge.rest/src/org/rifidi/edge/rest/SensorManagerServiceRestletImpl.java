@@ -725,45 +725,61 @@ public class SensorManagerServiceRestletImpl extends Application {
 		Restlet readerStatus = new Restlet() {
 			@Override
 			public void handle(Request request, Response response) {
-				
+
 				setResponseHeaders(request, response);
-				
+
 				Set<ReaderDTO> dtos = sensorManagerService.getReaders();
 				ReaderStatusResponseMessageDTO rsrmd = new ReaderStatusResponseMessageDTO();
-				for (ReaderDTO dto : dtos) {
-					if (dto.getReaderID().equals(
-							request.getAttributes().get("readerID"))) {
-						ReaderNameDTO r = new ReaderNameDTO();
-						r.setReaderID(dto.getReaderID());
-						r.setReaderType(dto.getReaderFactoryID());
-						rsrmd.setReader(r);
-						List<SessionNameDTO> slist = new LinkedList<SessionNameDTO>();
-						for (SessionDTO sdto : dto.getSessions()) {
-							SessionNameDTO snd = new SessionNameDTO();
-							snd.setSessionId(sdto.getID());
-							snd.setSessionStatus(sdto.getStatus().toString());
-							List<ExecutingCommandDTO> exec = new ArrayList<ExecutingCommandDTO>();
-							for( CommandDTO command:sdto.getCommands() ) {
-								ExecutingCommandDTO ecdto = new ExecutingCommandDTO();
-								ecdto.setCommandID(command.getCommandID());
-								Set<CommandConfigurationDTO> configdtos = commandManagerService
-										.getCommands();
-								for(CommandConfigurationDTO configdto:configdtos) {
-									if(configdto.getCommandConfigID().equals(command.getCommandID())) {
-										ecdto.setFactoryID(configdto.getCommandConfigFactoryID());
+				boolean readerFound = false;
+				try {
+					for (ReaderDTO dto : dtos) {
+						if (dto.getReaderID().equals(request.getAttributes().get("readerID"))) {
+							readerFound = true;
+							ReaderNameDTO r = new ReaderNameDTO();
+							r.setReaderID(dto.getReaderID());
+							r.setReaderType(dto.getReaderFactoryID());
+							rsrmd.setReader(r);
+							List<SessionNameDTO> slist = new LinkedList<SessionNameDTO>();
+							for (SessionDTO sdto : dto.getSessions()) {
+								SessionNameDTO snd = new SessionNameDTO();
+								snd.setSessionId(sdto.getID());
+								snd.setSessionStatus(sdto.getStatus()
+										.toString());
+								List<ExecutingCommandDTO> exec = new ArrayList<ExecutingCommandDTO>();
+								for (CommandDTO command : sdto.getCommands()) {
+									ExecutingCommandDTO ecdto = new ExecutingCommandDTO();
+									ecdto.setCommandID(command.getCommandID());
+									Set<CommandConfigurationDTO> configdtos = commandManagerService
+											.getCommands();
+									for (CommandConfigurationDTO configdto : configdtos) {
+										if (configdto.getCommandConfigID()
+												.equals(command.getCommandID())) {
+											ecdto.setFactoryID(configdto
+													.getCommandConfigFactoryID());
+										}
 									}
+									ecdto.setInterval(command.getInterval());
+									exec.add(ecdto);
 								}
-								ecdto.setInterval(command.getInterval());
-								exec.add(ecdto);
+								snd.setExecutingCommands(exec);
+								slist.add(snd);
 							}
-							snd.setExecutingCommands(exec);
-							slist.add(snd);
+							rsrmd.setSessions(slist);
+							response.setEntity(
+									self.generateReturnString(rsrmd),
+									MediaType.TEXT_XML);
+							break;
 						}
-						rsrmd.setSessions(slist);
-						response.setEntity(self.generateReturnString(rsrmd),
-								MediaType.TEXT_XML);
-						break;
 					}
+					if (!readerFound) {
+						throw new Exception("No reader with ID "
+								+ request.getAttributes().get("readerID")
+								+ " found.");
+					}
+				} catch (Exception e) {
+					response.setEntity(self.generateReturnString(self
+							.generateErrorMessage(e.toString(), null)),
+							MediaType.TEXT_XML);
 				}
 			}
 		};
