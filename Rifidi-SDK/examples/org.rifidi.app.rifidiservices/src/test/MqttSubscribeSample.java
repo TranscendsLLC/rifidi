@@ -97,7 +97,7 @@ public class MqttSubscribeSample
 	private String userName = null;
 	private String clientId = "testMQTTRifidi";
 	//private String topicName = "transcendstest";
-	private String topicName = "Back_Door_3";
+	private String topicName = "LLRP_1/encode";
 	private int qos = 2;
 
     public MqttSubscribeSample() 
