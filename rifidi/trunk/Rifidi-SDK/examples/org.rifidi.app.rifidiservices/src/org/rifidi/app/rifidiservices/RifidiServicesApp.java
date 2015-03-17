@@ -659,7 +659,7 @@ public class RifidiServicesApp
 		
 		getRssiMonitoringService().subscribe(myRSSIReadZoneSubscriber, allReadZones, 
 				getWindowTime(), TimeUnit.SECONDS, getCountThreshold(), getMinAvgRSSIThreshold(),
-				true);
+				0.0d, true);
 		
 		logger.info("subscribed all readzones to RSSI Monitor"
 				+ " and getWindowTime: " + getWindowTime() + ", countThreshold: " 
