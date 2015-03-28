@@ -921,7 +921,7 @@ var module = angular.module('rifidiApp')
 
                               console.log("displayName with change");
 
-                              $http.get('scripts/controllers/components/menu/serversxx.json').
+                              $http.get('http://localhost:8111/getServersFile').
                                   success(function (data, status, headers, config) {
 
                                       var displayNameisUnique = true;
@@ -932,6 +932,7 @@ var module = angular.module('rifidiApp')
 
                                               //displayName already exists, then can not be created again
                                               displayNameisUnique = false;
+
                                           }
 
                                       });
@@ -939,42 +940,16 @@ var module = angular.module('rifidiApp')
                                       if (displayNameisUnique) {
 
                                           //save server properties
-                                          saveServerProperties($scope.elementSelected);
+                                          saveServerProperties($scope.elementTree.currentNode.displayName, $scope.elementSelected);
 
 
                                       } else {
 
                                           console.log("duplicate server display name");
 
-                                          $scope.errorMessage = "Duplicate server display name " + $scope.elementSelected.displayName;
+                                         // $scope.errorMessage = "Duplicate server display name " + $scope.elementSelected.displayName;
 
-                                          //do not create server, and display error message
-                                          ngDialog.openConfirm({
-                                              template: 'errorMsgModifyingServerPropertiesTmpl.html',
-
-                                              scope: $scope, //Pass the scope object if you need to access in the template
-
-                                              showClose: false,
-
-                                              closeByEscape: true,
-
-                                              closeByDocument: false
-
-
-                                          }).then(
-                                              function (value) {
-                                                  console.log("ok");
-
-                                              },
-
-                                              function (value) {
-
-                                                  //Cancel or do nothing
-                                                  console.log("cancel");
-
-
-                                              }
-                                          );
+                                          showErrorDialog('Display name ' + $scope.elementSelected.displayName + ' already exists for server');
 
 
                                           //$scope.serverCreationStatus.status = 'Fail';
@@ -992,7 +967,7 @@ var module = angular.module('rifidiApp')
                                   });
                           } else {
 
-                              saveServerProperties($scope.elementSelected);
+                              saveServerProperties($scope.elementTree.currentNode.displayName, $scope.elementSelected);
 
                           }
 
@@ -1057,8 +1032,136 @@ var module = angular.module('rifidiApp')
 
           };
 
-        var saveServerProperties = function(server) {
+        var saveServerProperties = function(oldServerName, server) {
 
+            console.log("saveServerProperties");
+
+            console.log("oldServerName:");
+            console.log(oldServerName);
+            console.log("server:");
+            console.log(server);
+
+            $http.get('http://localhost:8111/getServersFile').
+                success(function (data, status, headers, config) {
+
+                    var serversOriginalData = angular.copy(data);
+
+                    var dataToStore = "[";
+
+                    //iterate the server list, and find the server that matches with oldServerName, and replace properties
+
+                    serversOriginalData.forEach(function (serverOriginal) {
+
+                        if (serverOriginal.displayName == oldServerName){
+
+                            dataToStore +=
+                                '{'
+                                + '"displayName": ' + '"' + server.displayName + '",'
+                                + '"restProtocol" : ' + '"' + server.restProtocol + '",'
+                                + '"ipAddress" : ' + '"' + server.ipAddress + '",'
+                                + '"restPort" : ' + '"' + server.restPort + '"'
+                                + '},';
+
+                        } else {
+
+                            dataToStore +=
+                                '{'
+                                + '"displayName": ' + '"' + serverOriginal.displayName + '",'
+                                + '"restProtocol" : ' + '"' + serverOriginal.restProtocol + '",'
+                                + '"ipAddress" : ' + '"' + serverOriginal.ipAddress + '",'
+                                + '"restPort" : ' + '"' + serverOriginal.restPort + '"'
+                                + '},';
+
+                        }
+
+
+
+                    });
+
+                    //Quit the last semicolon ;
+                    if (dataToStore.length > 0){
+                        dataToStore = dataToStore.substring(0, dataToStore.length - 1);
+                    }
+
+                    dataToStore += "]";
+
+                    console.log("dataToStore:");
+                    console.log(dataToStore);
+
+                    //call the rest command to store data
+                    $http.get('http://localhost:8111/updateServersFile/' + encodeURIComponent(dataToStore)).
+                        success(function (data, status, headers, config) {
+
+                            console.log("success response editing server properties");
+
+                            var xmlEditServerResponse;
+                            if (window.DOMParser) {
+                                var parser = new DOMParser();
+                                xmlEditServerResponse = parser.parseFromString(data, "text/xml");
+                            }
+                            else // Internet Explorer
+                            {
+                                xmlEditServerResponse = new ActiveXObject("Microsoft.XMLDOM");
+                                xmlEditServerResponse.async = false;
+                                xmlEditServerResponse.loadXML(data);
+                            }
+
+                            //get the xml response and extract the values for properties
+                            var editServerCommandMessage = xmlEditServerResponse.getElementsByTagName("message")[0].childNodes[0].nodeValue;
+
+                            if (editServerCommandMessage == 'Success') {
+                                console.log("Success editing server properties");
+
+                                setSuccessMessage("Success editing server properties");
+                                $rootScope.operationSuccessMsg = getSuccessMessage();
+
+                                //refresh tree view
+                                TreeViewPainting.paintTreeView();
+
+
+                            } else {
+
+                                var editServerCommandDescription = xmlEditServerResponse.getElementsByTagName("description")[0].childNodes[0].nodeValue;
+                                console.log("fail editing server");
+                                console.log(editServerCommandDescription);
+                                showErrorDialog('Error editing server properties: ' + editServerCommandDescription);
+                            }
+
+                        }).
+                        error(function (data, status, headers, config) {
+                            console.log("error editing server properties");
+
+                            showErrorDialog('Error editing server properties');
+
+
+                            // called asynchronously if an error occurs
+                            // or server returns response with an error status.
+                        });
+
+
+
+                }).
+                error(function (data, status, headers, config) {
+                    console.log("error reading servers on saving server properties");
+
+
+                    // called asynchronously if an error occurs
+                    // or server returns response with an error status.
+                });
+
+
+            /*
+            console.log("serversOriginalData");
+            console.log(serversOriginalData);
+            console.log("serversOriginalData.length");
+            console.log(serversOriginalData.length);
+            */
+
+
+
+
+
+            /*
             console.log("saveServerProperties op success");
             setSuccessMessage("Save server properties operation success");
             //$scope.operationSuccessMsg = "Save server properties operation success";
@@ -1066,6 +1169,7 @@ var module = angular.module('rifidiApp')
             console.log("$rootScope.operationSuccessMsg:");
             console.log($rootScope.operationSuccessMsg);
             //$scope.$apply();
+            */
         }
 
         var saveServerConfig = function(){
