@@ -515,6 +515,7 @@ var module = angular.module('rifidiApp')
                           console.log("to delete");
 
                           //call delete server operation
+                          deleteServer($scope.elementSelected);
                       }
 
                   },
@@ -529,6 +530,106 @@ var module = angular.module('rifidiApp')
               );
 
           };
+
+        var deleteServer = function(serverElement){
+
+            $http.get('http://localhost:8111/getServersFile').
+                success(function (data, status, headers, config) {
+
+                    var serversOriginalData = angular.copy(data);
+
+                    var dataToStore = "[";
+
+                    //iterate the server list, and find the server that matches with serverElement, and remove it
+
+                    serversOriginalData.forEach(function (serverOriginal) {
+
+                        if (serverOriginal.displayName != serverElement.displayName){
+
+                            dataToStore +=
+                                '{'
+                                + '"displayName": ' + '"' + serverOriginal.displayName + '",'
+                                + '"restProtocol" : ' + '"' + serverOriginal.restProtocol + '",'
+                                + '"ipAddress" : ' + '"' + serverOriginal.ipAddress + '",'
+                                + '"restPort" : ' + '"' + serverOriginal.restPort + '"'
+                                + '},';
+
+                        }
+
+                    });
+
+                    //Quit the last semicolon ;
+                    if (dataToStore.length > 0){
+                        dataToStore = dataToStore.substring(0, dataToStore.length - 1);
+                    }
+
+                    dataToStore += "]";
+
+                    console.log("dataToStore:");
+                    console.log(dataToStore);
+
+                    //call the rest command to store data
+                    $http.get('http://localhost:8111/updateServersFile/' + encodeURIComponent(dataToStore)).
+                        success(function (data, status, headers, config) {
+
+                            console.log("success response deleting server");
+
+                            var xmlDeleteServerResponse;
+                            if (window.DOMParser) {
+                                var parser = new DOMParser();
+                                xmlDeleteServerResponse = parser.parseFromString(data, "text/xml");
+                            }
+                            else // Internet Explorer
+                            {
+                                xmlDeleteServerResponse = new ActiveXObject("Microsoft.XMLDOM");
+                                xmlDeleteServerResponse.async = false;
+                                xmlDeleteServerResponse.loadXML(data);
+                            }
+
+                            //get the xml response and extract the values for properties
+                            var deleteServerCommandMessage = xmlDeleteServerResponse.getElementsByTagName("message")[0].childNodes[0].nodeValue;
+
+                            if (deleteServerCommandMessage == 'Success') {
+                                console.log("Success deleting server");
+
+                                setSuccessMessage("Success deleting server");
+                                $rootScope.operationSuccessMsg = getSuccessMessage();
+
+                                //refresh tree view
+                                TreeViewPainting.paintTreeView();
+
+
+                            } else {
+
+                                var deleteServerCommandDescription = xmlDeleteServerResponse.getElementsByTagName("description")[0].childNodes[0].nodeValue;
+                                console.log("fail deleting server");
+                                console.log(deleteServerCommandDescription);
+                                showErrorDialog('Error deleting server: ' + deleteServerCommandDescription);
+                            }
+
+                        }).
+                        error(function (data, status, headers, config) {
+                            console.log("error deleting server");
+
+                            showErrorDialog('Error deleting server');
+
+
+                            // called asynchronously if an error occurs
+                            // or server returns response with an error status.
+                        });
+
+
+
+                }).
+                error(function (data, status, headers, config) {
+                    console.log("error reading servers on saving server properties");
+
+
+                    // called asynchronously if an error occurs
+                    // or server returns response with an error status.
+                });
+
+        }
 
 
 
