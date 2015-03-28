@@ -12,13 +12,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Serializable;
-import java.nio.MappedByteBuffer;
-import java.nio.channels.FileChannel;
-import java.nio.channels.FileChannel.MapMode;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 
 import javax.management.Attribute;
@@ -99,7 +95,7 @@ public class RifidiEdgeHelper implements Serializable {
 	private static final void writeProperties(String fileName, byte[] data) {
 		DataOutputStream os = null;
 		try {
-			Thread.sleep(3000);
+			//Thread.sleep(3000);
 			os = new DataOutputStream(new FileOutputStream(fileName));
 			os.write(data);
 			os.flush();
@@ -107,9 +103,9 @@ public class RifidiEdgeHelper implements Serializable {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
-		} catch (InterruptedException iEx) {
+		} /*catch (InterruptedException iEx) {
 			iEx.printStackTrace();
-		} finally {
+		}*/ finally {
 			try {
 				if (os != null)
 					os.close();
@@ -504,27 +500,14 @@ public class RifidiEdgeHelper implements Serializable {
 		}
 
 		for (File f : dataFiles) {
-			try {
-				// read in the file
-				FileInputStream fileStream = new FileInputStream(f);
-				FileChannel channel = fileStream.getChannel();
-				MappedByteBuffer bb = channel.map(MapMode.READ_ONLY, 0,
-						channel.size());
-				byte[] bytes = new byte[(int) channel.size()];
-				bb.get(bytes);
-
-				// the file id is in between the '-' and the '.'
-				String id = f.getName().substring(f.getName().indexOf('-') + 1,
-						f.getName().indexOf('.'));
-				fileMap.put(id, bytes);
-			} catch (FileNotFoundException e) {
-				// ignore
-				logger.error("Cannot read file: " + f.getAbsolutePath());
-			} catch (IOException e) {
-				// ignore
-				logger.error("Cannot read file: " + f.getAbsolutePath());
-			}
-
+						
+			byte[] bytes = readContentIntoByteArray(f);
+			
+			// the file id is in between the '-' and the '.'
+			String id = f.getName().substring(f.getName().indexOf('-') + 1,
+					f.getName().indexOf('.'));
+			fileMap.put(id, bytes);
+		
 		}
 		return fileMap;
 
@@ -568,40 +551,43 @@ public class RifidiEdgeHelper implements Serializable {
 
 		// Assume there is only one application property file
 		File f = dataFiles[0];
-
-		FileInputStream fileStream = null;
-		FileChannel channel = null;
-		MappedByteBuffer bb = null;
-
-		try {
-			// read in the file
-			fileStream = new FileInputStream(f);
-			channel = fileStream.getChannel();
-			bb = channel.map(MapMode.READ_ONLY, 0, channel.size());
-			byte[] bytes = new byte[(int) channel.size()];
-			bb.get(bytes);
-
-			return bytes;
-		} catch (FileNotFoundException e) {
-			throw new PropertiesFileNotFoundException(groupName, appName);
-		} catch (IOException e) {
-			throw new PropertiesFileNotFoundException(groupName, appName);
-		} finally {
-			try {
-				if (fileStream != null) {
-					fileStream.close();
-				}
-				if (channel != null) {
-					channel.close();
-				}
-				if (bb != null) {
-					bb.clear();
-				}
-			} catch (IOException e) {
-
-			}
-		}
+		return readContentIntoByteArray(f);
 	}
+	
+	public static byte[] getServersFile() throws Exception {
+
+		// the path of the directory to read files from
+		String dataPath = getServersDirPath() + File.separator + "servers.json";
+		
+		File file = new File(dataPath);
+	       
+		byte[] bytes = readContentIntoByteArray(file);
+		return bytes;
+		
+	}
+	
+	private static byte[] readContentIntoByteArray(File file)
+	   {
+	      FileInputStream fileInputStream = null;
+	      byte[] bFile = new byte[(int) file.length()];
+	      try
+	      {
+	         //convert file into array of bytes
+	         fileInputStream = new FileInputStream(file);
+	         fileInputStream.read(bFile);
+	         fileInputStream.close();
+	         for (int i = 0; i < bFile.length; i++)
+	         {
+	            System.out.print((char) bFile[i]);
+	         }
+	      }
+	      catch (Exception e)
+	      {
+	         e.printStackTrace();
+	      }
+	      return bFile;
+	   }
+
 
 	/**
 	 * Get application group properties file
@@ -639,32 +625,7 @@ public class RifidiEdgeHelper implements Serializable {
 
 		// Assume there is only one group property file
 		File f = dataFiles[0];
-
-		FileInputStream fileStream = null;
-
-		try {
-			// read in the file
-			fileStream = new FileInputStream(f);
-			FileChannel channel = fileStream.getChannel();
-			MappedByteBuffer bb = channel.map(MapMode.READ_ONLY, 0,
-					channel.size());
-			byte[] bytes = new byte[(int) channel.size()];
-			bb.get(bytes);
-
-			return bytes;
-		} catch (FileNotFoundException e) {
-			throw new PropertiesFileNotFoundException(groupName);
-		} catch (IOException e) {
-			throw new PropertiesFileNotFoundException(groupName);
-		} finally {
-			try {
-				if (fileStream != null) {
-					fileStream.close();
-				}
-			} catch (IOException e) {
-
-			}
-		}
+		return readContentIntoByteArray(f);
 
 	}
 
@@ -711,34 +672,7 @@ public class RifidiEdgeHelper implements Serializable {
 
 		// Assume there is only one readzone property file
 		File f = dataFiles[0];
-
-		FileInputStream fileStream = null;
-
-		try {
-			// read in the file
-			fileStream = new FileInputStream(f);
-			FileChannel channel = fileStream.getChannel();
-			MappedByteBuffer bb = channel.map(MapMode.READ_ONLY, 0,
-					channel.size());
-			byte[] bytes = new byte[(int) channel.size()];
-			bb.get(bytes);
-
-			return bytes;
-		} catch (FileNotFoundException e) {
-			throw new PropertiesFileNotFoundException(groupName, appName,
-					readZoneName);
-		} catch (IOException e) {
-			throw new PropertiesFileNotFoundException(groupName, appName,
-					readZoneName);
-		} finally {
-			try {
-				if (fileStream != null) {
-					fileStream.close();
-				}
-			} catch (IOException e) {
-
-			}
-		}
+		return readContentIntoByteArray(f);
 	}
 
 	/**
@@ -756,5 +690,44 @@ public class RifidiEdgeHelper implements Serializable {
 				+ File.separator + groupName + File.separator
 				+ (dir != null ? dir : "");
 	}
+	
+	private static String getServersDirPath() {
+		return  System.getProperty("org.rifidi.home") + File.separator
+				+ "admin" + File.separator + "config";
+	}
+	
+
+	/**
+	 * Sets the content of servers.json
+	 * @param content the content to be set in servers.json file
+	 * @throws IOException
+	 */
+	public static void updateServersFile(String content) throws Exception {
+		String dataPath = getServersDirPath();
+		String fileName = dataPath + File.separator + "servers.json";
+		writeToServersFile(fileName, content.getBytes());
+
+	}
+	
+	
+	private static final void writeToServersFile(String fileName, byte[] data) 
+			throws Exception {
+		DataOutputStream os = null;
+		try {
+			//Thread.sleep(6000);
+			os = new DataOutputStream(new FileOutputStream(fileName));
+			os.write(data);
+			os.flush();
+		}  finally {
+			try {
+				if (os != null)
+					os.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+	
 
 }
