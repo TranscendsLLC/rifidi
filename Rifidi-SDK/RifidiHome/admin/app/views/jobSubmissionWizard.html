@@ -1,0 +1,179 @@
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <span class="glyphicon glyphicon-dashboard" aria-hidden="true"></span> Job Submission Wizard
+    </div>
+    <div class="panel-body">
+
+
+                <!--
+                ng-submit="submitForm(form.$valid)"
+                -->
+                <form class="form-horizontal" role="form" name="form" novalidate>
+
+                    <!--
+                    ng-class="{ 'has-error' : form.displayName.$invalid && !form.displayName.$pristine }"
+                    -->
+
+
+                    <div class="form-group">
+
+                        <h4>1. Choose a command type</h4>
+
+                        <div class="col-sm-3">
+                            <label class="control-label" for="commandType">Command Type</label>
+                        </div>
+
+                        <div class="col-sm-6">
+
+                            <select id="commandType"
+                                    name="commandType"
+                                    ng-change="commandTypeSelectAction(commandWizardData.commandType)"
+                                    ng-model="commandWizardData.commandType"
+                                    ng-required="true"
+                                    ng-options="value as value.factoryID for value in commandWizardData.commandTypes | orderBy:'factoryID'"
+                                    aria-describedby="helpCommandType"
+                                    class="form-control"
+                                    >
+                                <option>--</option>
+                            </select>
+
+                            <div ng-show="form.$submitted || form.commandType.$touched" >
+
+                                <div ng-show="form.commandType.$error.required">
+
+                                    Command type is required.
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-12">
+
+                            <span id="helpCommandType" class="help-block">{{commandWizardData.commandType.description}}.</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+
+                        <h4>2. You can create a new command instance or select one already created</h4>
+
+                        <div class="col-sm-3">
+                            <label class="control-label" for="commandInstance">Command Instance</label>
+                        </div>
+
+                        <div class="col-sm-6">
+                            <select id="commandInstance"
+                                    name="commandInstance"
+                                    ng-change="commandInstanceSelectAction(commandWizardData.commandInstance)"
+                                    ng-model="commandWizardData.commandInstance"
+                                    ng-required="true"
+                                    ng-options="value as value.commandID for value in commandWizardData.commandInstances | orderBy:'commandID'"
+                                    class="form-control"
+                                    aria-describedby="helpCommandInstance"
+                                    >
+
+                            </select>
+
+                            <div ng-show="form.$submitted || form.commandInstance.$touched" >
+
+                                <div ng-show="form.commandInstance.$error.required">
+
+                                    Command instance is required.
+
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <h4>3. Command properties</h4>
+
+                        <tabset>
+                            <tab heading="{{propertyCategory.category}}" ng-repeat="propertyCategory in commandWizardData.commandProperties.propertyCategoryList | orderBy:'category'">
+                                <br/>
+
+                                <div class="form-group" ng-repeat="property in propertyCategory.properties | orderBy:['ordervalue', 'displayname']">
+
+                                    <div class="col-sm-6">
+                                        <label class="control-label" for="{{property.name}}">{{property.displayname}}</label>
+                                    </div>
+
+
+                                    <div class="col-sm-6" >
+
+                                        <input aria-describedby="help{{property.name}}" id="{{property.name}}"
+                                               name="{{property.name}}" ng-disabled="!property.writable" ng-readonly="!property.writable"
+                                               type="{{property.htmlType}}" ng-value="property.value" ng-model="property.value" min="property.minvalue" max="property.maxvalue"
+                                               class="form-control"
+                                                />
+
+                                        <div ng-show="form.$submitted || form.property.name.$touched" >
+
+                                            <div ng-show="form.property.name.$error.required">
+
+                                                {{property.name}} is required.
+
+                                            </div>
+                                        </div>
+
+                                        <span id="help{{property.name}}" class="help-block">{{property.description}}</span>
+
+                                    </div>
+
+                                    <br>
+                                    <p>
+
+                                </div>
+
+
+                            </tab>
+                        </tabset>
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <h4>4. Scheduling options</h4>
+
+                        <div class="col-sm-12">
+                            <label class="control-label" for="commandInstance"><input type="radio" name="schedulingOption"
+                                                                                      value="oneTime" data-ng-model="commandWizardData.schedulingOption" ng-click="">
+                                One Time Execution</label>
+                        </div>
+
+                        <div class="col-sm-12">
+                            <label class="control-label" for="commandInstance"><input type="radio" name="schedulingOption"
+                                                                                      value="recurring" data-ng-model="commandWizardData.schedulingOption">
+                                Recurring Execution</label>
+                        </div>
+
+                        <div class="col-sm-6">
+
+                            <input aria-describedby="intervalHelp" id="interval" name="interval" type="number"
+                                   class="form-control" data-ng-model="commandWizardData.interval" required
+                                   ng-disabled="commandWizardData.schedulingOption == 'oneTime'"
+
+                                    />
+
+                            <span id="intervalHelp"  class="help-block">The interval, in milisecs, if recurring.</span>
+
+                        </div>
+
+                    </div>
+
+
+                    <input class="btn btn-danger" type="button" value="Cancel" ng-click="go('/#')" />
+                    <input class="btn btn-primary" ng-disabled="form.$invalid" ng-click="openSubmitJobDialog()" type="submit" value="Submit" />
+
+
+                </form>
+
+    </div>
+</div>
+
+
+

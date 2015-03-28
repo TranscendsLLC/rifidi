@@ -1,0 +1,78 @@
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <span class="glyphicon glyphicon-dashboard" aria-hidden="true"></span> Create Read Zone Wizard
+    </div>
+    <div class="panel-body">
+
+
+        <form class="form-horizontal" role="form" name="form" novalidate>
+
+
+            <div class="form-group">
+
+                <div class="col-sm-6">
+                    <label class="control-label" for="readzone">Readzone</label>
+                </div>
+
+                <div class="col-sm-6" >
+
+                    <input aria-describedby="helpReadzone" id="readZone"
+                           name="readZone" type="text" ng-value="readzoneProperties.readzone" ng-model="readzoneProperties.readzone"
+                           class="form-control"
+                            />
+
+                    <div ng-show="form.$submitted || form.readZone.$touched" >
+
+                        <div ng-show="form.readZone.$error.required">
+
+                            readZone is required.
+
+                        </div>
+                    </div>
+
+                </div>
+
+                <br>
+                <p>
+
+            </div>
+
+            <div class="form-group" ng-repeat="property in readzoneProperties.properties | orderBy:['key']">
+
+                <div class="col-sm-6">
+                    <label class="control-label" for="{{property.key}}">{{property.key}}</label>
+                </div>
+
+
+                <div class="col-sm-6" >
+
+                    <input aria-describedby="help{{property.key}}" id="{{property.key}}"
+                           name="{{property.key}}" type="text" ng-value="property.value" ng-model="property.value"
+                           class="form-control"
+                            />
+
+                    <div ng-show="form.$submitted || form.property.key.$touched" >
+
+                        <div ng-show="form.property.key.$error.required">
+
+                            {{property.key}} is required.
+
+                        </div>
+                    </div>
+
+                </div>
+
+                <br>
+                <p>
+
+            </div>
+
+            <input class="btn btn-primary" ng-hide="getPropertiesErrorMsg" ng-click="openCreateReadzoneDialog()" ng-disabled="form.$invalid" type="submit" value="Create" />
+
+        </form>
+
+    </div>
+</div>
+
+
+

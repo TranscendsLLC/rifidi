@@ -1,0 +1,1 @@
+[{"displayName": "Server11","restProtocol" : "http","ipAddress" : "localhost","restPort" : "8111"},{"displayName": "Server11-by ip","restProtocol" : "http","ipAddress" : "192.168.88.87","restPort" : "8111"},{"displayName": "server3","restProtocol" : "http","ipAddress" : "10.100.6.8","restPort" : "8111"}]
