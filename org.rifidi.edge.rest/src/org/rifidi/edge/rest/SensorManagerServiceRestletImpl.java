@@ -2286,6 +2286,46 @@ public class SensorManagerServiceRestletImpl extends Application {
 				}
 			}
 		};
+		
+		Restlet updateServersFile = new Restlet() {
+			@Override
+			public void handle(Request request, Response response) {
+				try {
+					
+					setResponseHeaders(request, response);
+					
+					String data = (String) request.getAttributes().get("data");
+					String decodedData = URLDecoder.decode(data, "UTF-8");
+					RifidiEdgeHelper.updateServersFile(decodedData);
+					response.setEntity(self.generateReturnString(self
+							.generateSuccessMessage()), MediaType.TEXT_XML);
+				} catch (Exception e) {
+
+					response.setEntity(self.generateReturnString(self
+							.generateErrorMessage(e.toString(), null)),
+							MediaType.TEXT_XML);
+				}
+			}
+		};
+		
+		Restlet getServersFile = new Restlet() {
+			@Override
+			public void handle(Request request, Response response) {
+				try {
+					
+					setResponseHeaders(request, response);
+					
+					byte[] data = RifidiEdgeHelper.getServersFile();
+					String str = new String(data, "UTF-8");
+					response.setEntity(str, MediaType.APPLICATION_JSON);
+				} catch (Exception e) {
+
+					response.setEntity(self.generateReturnString(self
+							.generateErrorMessage(e.toString(), null)),
+							MediaType.TEXT_XML);
+				}
+			}
+		};
 
 		Router router = new Router(getContext());
 		router.attach("/readers", readers);
@@ -2475,6 +2515,12 @@ public class SensorManagerServiceRestletImpl extends Application {
 		router.attach("/llrpmessage/{readerID}/{sessionID}", llrpMessage);
 
 		router.attach("/ping", ping);
+		
+		//router to update servers file
+		router.attach("/updateServersFile/{data}", updateServersFile);
+		
+		//router to get servers file
+		router.attach("/getServersFile", getServersFile);
 
 		return router;
 	}
