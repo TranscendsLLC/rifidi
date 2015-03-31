@@ -117,7 +117,7 @@
 
                        <div ng-switch="elementTree.currentNode.elementType">
 
-                           <div ng-switch-when="servers">
+                           <div ng-switch-when="serversXX">
                                <div class="serversProperties">
                                    <button type="button" class="btn btn-default" aria-label="Left Align" data-ng-click="mode = 'server'">
                                        <span class="glyphicon glyphicon-plus" aria-hidden="true">Add Server</span>
@@ -350,7 +350,7 @@
                                    -->
                            </div>
 
-                           <div ng-switch-when="sensorManagement">
+                           <div ng-switch-when="sensorManagementXX">
                                <button type="button" class="btn btn-default" aria-label="Left Align">
                                    <a href ="#/sensorWizard/{{elementSelected.restProtocol}}/{{elementSelected.ipAddress}}/{{elementSelected.restPort}}"><span class="glyphicon glyphicon-plus" aria-hidden="true">Add Sensor</span></a>
                                </button>
@@ -729,7 +729,7 @@
     <script src="bower_components/angular-wizard/dist/angular-wizard.js"></script>
     <script src="bower_components/ngDialog/js/ngDialog.js"></script>
     <script src="bower_components/angular-mocks/angular-mocks.js"></script>
-    <script src="bower_components/ng-contextmenu/dist/ng-context-menu.js"></script>
+    <script src="bower_components/ng-contextmenu/dist/ng-contextmenu.js"></script>
     <!-- endbower -->
     <!-- endbuild -->
 
