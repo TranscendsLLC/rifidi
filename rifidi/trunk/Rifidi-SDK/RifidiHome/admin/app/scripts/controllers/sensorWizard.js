@@ -8,7 +8,7 @@
  * Controller of the rifidiApp
  */
 angular.module('rifidiApp')
-  .controller('SensorWizardCtrl', function ($scope, $http, $routeParams) {
+  .controller('SensorWizardCtrl', function ($routeParams, $rootScope, $scope, $http, $location, ngDialog, TreeViewPainting, commonVariableService) {
     $scope.awesomeThings = [
       'HTML5 Boilerplate',
       'AngularJS',
@@ -385,6 +385,12 @@ angular.module('rifidiApp')
         $scope.selectedReaderType = selectedReaderType;
         $scope.prepareCreateSessionStep();
         $scope.prepareCreateCommandStep();
+        prepareSchedulingOptions();
+      }
+
+      var prepareSchedulingOptions = function(){
+        $scope.interval = 1000;
+        $scope.schedulingOption = "recurring";
       }
 
       $scope.commandTypeSelectAction = function(selectedCommandType){
@@ -676,11 +682,15 @@ angular.module('rifidiApp')
 
 
 
-      }
+      };
 
-      $scope.finishedSensorWizard = function(selectedReaderType){
 
-        console.log("finishedSensorWizard");
+
+
+      $scope.finishSensorWizard = function(selectedReaderType){
+
+
+        console.log("finishSensorWizard");
         //create the reader
 
         $scope.showSensorCreationResponse = true;
