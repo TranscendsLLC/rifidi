@@ -472,8 +472,6 @@ angular.module('rifidiApp')
         $scope.selectedCommandInstance = selectedCommandInstance;
 
         //Get the properties for the selected command type, from readermetadata
-        //$scope.selectedReaderType
-        //$scope.selectedCommandType
 
         $http.get(host + '/readermetadata')
             .success(function(data, status, headers, config) {
@@ -495,39 +493,13 @@ angular.module('rifidiApp')
 
               var commandMetadataXmlVector = xmlMetadata.getElementsByTagName("command");
 
-              //console.log("commandMetadataXmlVector.length: " + commandMetadataXmlVector.length);
-
-
               for(var index = 0; index < commandMetadataXmlVector.length; index++) {
-
 
                 var propertiesXmlVector = commandMetadataXmlVector[index].getElementsByTagName("property");
                 var id = commandMetadataXmlVector[index].getElementsByTagName("id")[0].childNodes[0];
                 var readerID = commandMetadataXmlVector[index].getElementsByTagName("readerID")[0].childNodes[0];
 
-                /*
-                console.log("id: " + id.nodeValue);
-                console.log("readerID: " + readerID.nodeValue);
-                console.log("properties length: " + propertiesXmlVector.length);
-                console.log("propertiesXmlVector");
-                console.log(propertiesXmlVector);
-                */
-
-                //check if current command is the required one
-                /*
-                console.log("readerID.nodeValue:");
-                console.log(readerID.nodeValue);
-                console.log("$scope.selectedReaderType:");
-                console.log($scope.selectedReaderType);
-                console.log("id.nodeValue:");
-                console.log(id.nodeValue);
-                console.log("selectedCommandInstance.factoryID:");
-                console.log(selectedCommandInstance.factoryID);
-                */
-
                 if (readerID.nodeValue == $scope.selectedReaderType.factoryID && id.nodeValue ==  selectedCommandInstance.factoryID){
-
-                  //console.log("found selectedCommandInstance.factoryID: " + selectedCommandInstance.factoryID);
 
                   //Create the properties object for this command
                   $scope.commandProperties = {
@@ -540,10 +512,13 @@ angular.module('rifidiApp')
                   //extract the properties
                   for(var indexProp = 0; indexProp < propertiesXmlVector.length; indexProp++) {
 
-
                     var name = propertiesXmlVector[indexProp].getElementsByTagName("name")[0].childNodes[0];
                     var displayname = propertiesXmlVector[indexProp].getElementsByTagName("displayname")[0].childNodes[0];
-                    var defaultvalue = propertiesXmlVector[indexProp].getElementsByTagName("defaultvalue")[0].childNodes[0];
+                    var defaultvalue = {};
+                    if (propertiesXmlVector[indexProp].getElementsByTagName("defaultvalue").length > 0){
+                      defaultvalue = propertiesXmlVector[indexProp].getElementsByTagName("defaultvalue")[0].childNodes[0];
+                    }
+
                     var description = propertiesXmlVector[indexProp].getElementsByTagName("description")[0].childNodes[0];
                     var type = propertiesXmlVector[indexProp].getElementsByTagName("type")[0].childNodes[0];
                     var maxvalue = 0;
@@ -576,16 +551,6 @@ angular.module('rifidiApp')
 
                       $scope.commandProperties.propertyCategoryList.push(propertyCategory);
                     }
-
-                    /*
-                    var customdefaultvalue;
-
-                    if (type.nodeValue == 'java.lang.Integer'){
-                      customdefaultvalue = parseInt(defaultvalue.nodeValue);
-                    } else {
-                      customdefaultvalue = defaultvalue.nodeValue;
-                    }
-                    */
 
                     var propertyElement = {
                       "name": name.nodeValue,

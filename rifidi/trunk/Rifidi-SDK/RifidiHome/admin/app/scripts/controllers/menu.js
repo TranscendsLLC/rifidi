@@ -3926,6 +3926,7 @@ module.service('TreeViewPainting', function($http, $rootScope) {
                                                                  "iconClass":"folder",
                                                                  "readerFactoryID": readerFactoryID.nodeValue,
                                                                  "elementType": "commandType",
+                                                                 "contextMenuId": "contextMenuCommandType_commandManagement",
                                                                  "host": server.host,
                                                                  "readerTypeElement": readerTypeElement,
                                                                  "children": []

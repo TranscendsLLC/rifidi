@@ -105,12 +105,6 @@
 				var menuServers = '<ul id="contextMenuServers" class="dropdown-menu">'+
 					'<li><a href ="#/serverWizard"><i class="addserver">&nbsp;&nbsp;&nbsp;&nbsp;Add server</i></a></li>'+
 					'<li><a ng-click ="openSaveAllServersConfigDialog()"><i class="saveservers">&nbsp;&nbsp;&nbsp;&nbsp;Save all servers config</i></a></li>'+
-					'<li><a ng-click="openDeleteCommandDialog()"><i class="script-delete">&nbsp;&nbsp;&nbsp;&nbsp;--test-Delete Command Template</i></a></li>'+
-					'<li><a href="#/createCommandWizard"><i class="submit-job">&nbsp;&nbsp;&nbsp;&nbsp;--test-Create Command Template</i></a></li>'+
-					'<li><a ng-click="openStartAppDialog()"><i class="linkstart">&nbsp;&nbsp;&nbsp;&nbsp;--test-Start App</i></a></li>'+
-					'<li><a ng-click="openStopAppDialog()"><i class="linkstop">&nbsp;&nbsp;&nbsp;&nbsp;--test-Stop App</i></a></li>'+
-					'<li><a ng-click="openDeleteReadZoneDialog()"><i class="script-delete">&nbsp;&nbsp;&nbsp;&nbsp;--test-Delete Read Zone</i></a></li>'+
-					'<li><a href="#/createReadzoneWizard"><i class="submit-job">&nbsp;&nbsp;&nbsp;&nbsp;--test-Add Read Zone</i></a></li>'+
 					'</ul>';
 
 				//tree template
@@ -122,6 +116,7 @@
 					+ menuServers
 					+ menuCommand_Sensor
 					+ menuCommand_commandManagement
+					+ menuCommandType_commandManagement
 					+ menuApp
 					+ menuReadZone
 					+ menuReadZones

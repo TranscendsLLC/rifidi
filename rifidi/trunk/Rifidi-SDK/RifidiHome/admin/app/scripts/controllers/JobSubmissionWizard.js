@@ -211,7 +211,6 @@ angular.module('rifidiApp')
                   //extract the properties
                   for(var indexProp = 0; indexProp < propertiesXmlVector.length; indexProp++) {
 
-
                     var name = propertiesXmlVector[indexProp].getElementsByTagName("name")[0].childNodes[0];
                     var displayname = propertiesXmlVector[indexProp].getElementsByTagName("displayname")[0].childNodes[0];
                     var defaultvalue = {};

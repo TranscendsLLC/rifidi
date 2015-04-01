@@ -6,141 +6,17 @@
 
     <div class="panel-body">
 
-        <!--
-
         <wizard on-finish="finishedSensorWizard(selectedReaderType)" edit-mode="false" ng-controller="SensorWizardCtrl">
 
             <wz-step title="Reader Type Selection">
 
-                <h4>Reader adapter configuration wizard</h4>
-
-                <form class="form-horizontal" role="form" name="form" novalidate>
-
-
-                    <div class="form-group">
-
-                        <p><h4>1. Please choose a reader type</h4></p>
-
-                        <div class="col-sm-3">
-                            <label class="control-label" for="readerType">Reader Type</label>
-                        </div>
-                        <div class="col-sm-6">
-                            <select id="readerType" name="readerType"
-                                    ng-change="readerTypeSelectAction(selectedReaderType)"
-                                    ng-model="selectedReaderType"
-                                    ng-required="true"
-                                    class="form-control"
-                                    aria-describedby="helpReaderType"
-                                    ng-options="value as value.factoryID for value in readerTypes | orderBy:'factoryID'">
-                                <option>--</option>
-                            </select>
-
-                            <div ng-show="form.$submitted || form.readerType.$touched" >
-
-                                <div ng-show="form.readerType.$error.required">
-
-                                    Reader type is required.
-
-                                </div>
-                            </div>
-
-                            <span id="helpReaderType" class="help-block">{{selectedReaderType.description}}</span>
-                        </div>
-
-                    </div>
-
-                    <div class="form-group">
-                        <div class="col-sm-3">
-                            <label class="control-label" for="ipAddress">IP Address</label>
-                        </div>
-                        <div class="col-sm-6">
-                            <input aria-describedby="helpIpAddress" id="ipAddress" name="ipAddress" type="text"
-                                   class="form-control" value="" data-ng-model="serverToCreate.ipAddress" required >
-
-                            <div ng-show="form.$submitted || form.ipAddress.$touched" >
-
-                                <div ng-show="form.ipAddress.$error.required">
-
-                                    IP address is required.
-
-                                </div>
-                            </div>
-
-                            <span id="helpIpAddress" class="help-block">The ip address or server name.</span>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <div class="col-sm-3">
-                            <label class="control-label" for="ipAddress">Rest Protocol</label>
-                        </div>
-                        <div class="col-sm-6">
-
-                            <select id="restProtocol" name="restProtocol" aria-describedby="helpProtocol"
-                                    class="form-control" value="" data-ng-model="serverToCreate.restProtocol"
-                                    ng-required="true"
-                                    ng-options="value as value.protocol for value in serverProtocols | orderBy:'protocol'">
-                                <option>--</option>
-                            </select>
-
-
-
-                            <div ng-show="form.$submitted || form.restProtocol.$touched" >
-
-                                <div ng-show="form.restProtocol.$error.required">
-
-                                    Protocol is required.
-
-                                </div>
-                            </div>
-
-                            <span id="helpProtocol" class="help-block">The protocol to communicate with rest services, be it http or https.</span>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <div class="col-sm-3">
-                            <label class="control-label" for="ipAddress">Rest Port</label>
-                        </div>
-                        <div class="col-sm-6">
-
-                            <input aria-describedby="helpPort" id="restPort" name="restPort" type="text"
-                                   class="form-control"  data-ng-model="serverToCreate.restPort" required>
-
-                            <div ng-show="form.$submitted || form.restPort.$touched" >
-
-                                <div ng-show="form.restPort.$error.required">
-
-                                    Port is required.
-
-                                </div>
-                            </div>
-
-                            <span id="helpPort" class="help-block">The port number to call rest services. The default value is 8111</span>
-                        </div>
-                    </div>
-
-                    <input class="btn btn-danger" type="button" value="Cancel" ng-click="go('/#')" />
-                    <input class="btn btn-primary" ng-disabled="form.$invalid" ng-click="openCreateServerDialog()" type="submit" value="Create" />
-                </form>
-            </wz-step>
-        </wizard>
--->
-
-
-
-
-
-
-        <wizard on-finish="finishedSensorWizard(selectedReaderType)" edit-mode="false" ng-controller="SensorWizardCtrl">
-
-            <wz-step title="Reader Type Selection">
-
-                <form class="form-horizontal" role="form" name="form" novalidate >
+                <form class="form-horizontal" role="form" name="form1" novalidate >
 
                     <h4>Reader adapter configuration wizard</h4>
 
                     <div class="form-group" >
 
-                        <h4>1. Please choose a reader type</h4>
+                        <h4>1. You must choose a reader type</h4>
 
                         <div class="col-sm-3">
                             <label class="control-label" for="readerType">Reader Type</label>
@@ -157,25 +33,27 @@
                                 <option>--</option>
                             </select>
 
-                            <div ng-show="form.$submitted || form.readerType.$touched" >
+                            <div ng-show="form1.$submitted || form1.readerType.$touched" >
 
-                                <div ng-show="form.readerType.$error.required">
+                                <div ng-show="form1.readerType.$error.required">
 
                                     Reader type is required.
 
                                 </div>
                             </div>
+                        </div>
+
+                        <div class="col-sm-12">
 
                             <span id="helpReaderType" class="help-block">{{selectedReaderType.description}}</span>
 
                         </div>
-                        <br>
 
-                        <div class="row">
+                    </div>
 
-                        </div>
+                    <div class="form-group" >
 
-                        <p><h4>2. Optionally provide a reader id</h4></p>
+                        <h4>2. Optionally provide a reader id</h4>
 
                         <div class="col-sm-3">
                             <label class="control-label" for="readerId">Reader ID</label>
@@ -189,6 +67,10 @@
                                    aria-describedby="helpReaderId"
                                    ng-model="customReaderId">
                             </input>
+
+                        </div>
+
+                        <div class="col-sm-12">
 
                             <span id="helpReaderId" class="help-block">The reader id is important for applications' read zones to appropriate operate, and this id is used to link read zones with sensors. This command enables one to set the readerId versus the system generating one (default behavior).</span>
 
@@ -204,7 +86,7 @@
 
             <wz-step title="Create session">
 
-                <form class="form-horizontal" role="form" name="form" novalidate >
+                <form class="form-horizontal" role="form" name="form2" novalidate >
 
                     <h4>Create session for reader type: {{selectedReaderType.factoryID}}</h4>
 
@@ -223,7 +105,6 @@
 
                             </div>
 
-
                         </div>
 
                         <div class="col-lg-6">
@@ -239,114 +120,160 @@
 
                     <input type="submit" class="btn btn-warning" wz-previous value="Previous" />
                     <input type="submit" class="btn btn-primary" wz-next value="Next" />
+
                 </form>
 
 
             </wz-step>
 
             <wz-step title="Create command">
-                <h4>Create command</h4>
 
-                <form novalidate >
+                <form class="form-horizontal" role="form" name="form3" novalidate>
 
-                    <div class="form-group row" >
+                    <h4>Create command</h4>
 
-                        <p><h4>1. You can choose a command type</h4></p>
+                    <div class="form-group" >
 
-                        <div class="col-lg-3">
+                        <h4>1. You must choose a command type</h4>
+
+                        <div class="col-sm-3">
                             <label class="control-label" for="commandType">Command Type</label>
                         </div>
-                        <div class="col-lg-3">
+
+                        <div class="col-sm-6">
                             <select id="commandType"
+                                    name="commandType"
                                     ng-change="commandTypeSelectAction(selectedCommandType)"
                                     ng-model="selectedCommandType"
                                     ng-required="true"
-                                    ng-options="value as value.factoryID for value in commandTypes | orderBy:'factoryID'">
+                                    ng-options="value as value.factoryID for value in commandTypes | orderBy:'factoryID'"
+                                    aria-describedby="helpCommandType"
+                                    class="form-control"
+                                    >
                                 <option>--</option>
                             </select>
 
+                            <div ng-show="form3.$submitted || form3.commandType.$touched" >
+
+                                <div ng-show="form3.commandType.$error.required">
+
+                                    Command type is required.
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-12">
+
+                            <span id="helpCommandType" class="help-block">{{selectedCommandType.description}}</span>
 
                         </div>
-                        <br>
-                        <p>
-                            {{selectedCommandType.description}}
-                        </p>
+                    </div>
 
-                        <p><h4>2. Then you can select an instance of an already created command</h4></p>
+                    <div class="form-group">
+
+                        <h4>2. Then you must either create a command instance or choose an already created one</h4>
 
                         <div class="col-lg-3">
                             <label class="control-label" for="commandInstance">Command Instance</label>
                         </div>
                         <div class="col-lg-3">
                             <select id="commandInstance"
+                                    name="commandInstance"
                                     ng-change="commandInstanceSelectAction(selectedCommandInstance)"
                                     ng-model="selectedCommandInstance"
                                     ng-required="true"
+                                    class="form-control"
+                                    aria-describedby="helpCommandInstance"
                                     ng-options="value as value.commandID for value in commandInstances | orderBy:'commandID'">
 
                             </select>
 
+                            <div ng-show="form.$submitted || form.commandInstance.$touched" >
+
+                                <div ng-show="form.commandInstance.$error.required">
+
+                                    Command instance is required.
+
+                                </div>
+                            </div>
 
                         </div>
-                        <br>
+                    </div>
 
+                    <div class="form-group">
 
-                        <p><h4>Properties for command instance</h4></p>
+                        <h4>3. Then set the properties for command instance</h4>
 
                         <tabset>
                             <tab heading="{{propertyCategory.category}}" ng-repeat="propertyCategory in commandProperties.propertyCategoryList">
                                 <br/>
 
-                                <form role="form">
+                                    <div class="form-group" ng-repeat="property in propertyCategory.properties | orderBy:['ordervalue', 'displayname']">
 
-                                    <div class="form-group row" >
+                                        <div class="col-sm-6">
+                                            <label class="control-label">{{property.displayname}}</label>
+                                        </div>
 
-                                        <div ng-repeat="property in propertyCategory.properties | orderBy:['ordervalue', 'displayname']">
-
-                                            <div class="col-lg-6">
-                                                <label class="control-label">{{property.displayname}}</label>
-                                            </div>
-
-
-                                            <div class="col-lg-3">
-                                                <input ng-show="property.type == 'java.lang.Integer'" type="number" ng-model="property.value" min="property.minvalue" max="property.maxvalue"/>
-                                                <input ng-show="property.type != 'java.lang.Integer'" type="text" ng-model="property.value" />
-
-
-
-                                            </div>
-
-
-                                            <br>
-                                            <p>
+                                        <div class="col-sm-6">
+                                            <input class="form-control" ng-show="property.type == 'java.lang.Integer'" type="number" ng-model="property.value" min="property.minvalue" max="property.maxvalue"/>
+                                            <input class="form-control" ng-show="property.type != 'java.lang.Integer'" type="text" ng-model="property.value" />
 
                                         </div>
 
+                                        <br>
+                                        <p>
+
                                     </div>
 
-
-                                </form>
                             </tab>
                         </tabset>
 
-                        <br>
+                    </div>
 
+                    <div class="form-group">
+
+                        <h4>4. Finally set the scheduling options</h4>
+
+                        <div class="col-sm-12">
+                            <label class="control-label" for="commandInstance"><input type="radio" name="schedulingOption"
+                                value="oneTime" data-ng-model="schedulingOption" ng-click="">
+                                One Time Execution</label>
+                        </div>
+
+                        <div class="col-sm-12">
+                            <label class="control-label" for="commandInstance"><input type="radio" name="schedulingOption"
+                                value="recurring" data-ng-model="schedulingOption">
+                                Recurring Execution</label>
+                        </div>
+
+                        <div class="col-sm-6">
+
+                            <input aria-describedby="intervalHelp" id="interval" name="interval" type="number"
+                                   class="form-control" data-ng-model="interval" required
+                                   ng-disabled="schedulingOption == 'oneTime'"
+
+                                    />
+
+                            <span id="intervalHelp"  class="help-block">The interval, in milisecs, if recurring.</span>
+
+                        </div>
 
                     </div>
 
+                    <input type="submit" class="btn btn-warning" wz-previous value="Previous" />
+                    <input type="submit" class="btn btn-primary" wz-next value="Next" />
+
                 </form>
 
-
-                <input type="submit" wz-previous value="Previous" />
-                <input type="submit" wz-next value="Next" />
             </wz-step>
 
             <wz-step title="Summary">
                 <h4>Summary</h4>
 
-                <form novalidate >
+                <form class="form-horizontal" role="form" name="form4" novalidate>
 
-                    <div class="form-group row" >
+                    <div class="form-group" >
 
 
                         <h4>System is going to execute next steps:</h4>
