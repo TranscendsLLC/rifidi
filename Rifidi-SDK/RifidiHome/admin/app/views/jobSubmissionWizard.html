@@ -17,7 +17,7 @@
 
                     <div class="form-group">
 
-                        <h4>1. Choose a command type</h4>
+                        <h4>1. You must choose a command type</h4>
 
                         <div class="col-sm-3">
                             <label class="control-label" for="commandType">Command Type</label>
@@ -51,11 +51,12 @@
 
                             <span id="helpCommandType" class="help-block">{{commandWizardData.commandType.description}}.</span>
                         </div>
+
                     </div>
 
                     <div class="form-group">
 
-                        <h4>2. You can create a new command instance or select one already created</h4>
+                        <h4>2. Then you must either create a command instance or choose an already created one</h4>
 
                         <div class="col-sm-3">
                             <label class="control-label" for="commandInstance">Command Instance</label>
@@ -90,7 +91,7 @@
 
                     <div class="form-group">
 
-                        <h4>3. Command properties</h4>
+                        <h4>3. Then set the properties for command instance</h4>
 
                         <tabset>
                             <tab heading="{{propertyCategory.category}}" ng-repeat="propertyCategory in commandWizardData.commandProperties.propertyCategoryList | orderBy:'category'">
@@ -129,7 +130,6 @@
 
                                 </div>
 
-
                             </tab>
                         </tabset>
                     </div>
@@ -137,7 +137,7 @@
 
                     <div class="form-group">
 
-                        <h4>4. Scheduling options</h4>
+                        <h4>4. Finally set the scheduling options</h4>
 
                         <div class="col-sm-12">
                             <label class="control-label" for="commandInstance"><input type="radio" name="schedulingOption"

@@ -31,7 +31,13 @@
                                 'display': 'none'
                             });
                             $(iElement).bind('contextmenu', function(event) {
+
                                 event.preventDefault();
+
+                                //init custom
+                                iElement.click();
+                                //end custom
+
                                 ul.css({
                                     position: "fixed",
                                     display: "block",
