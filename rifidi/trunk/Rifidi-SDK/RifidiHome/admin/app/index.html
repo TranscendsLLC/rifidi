@@ -457,7 +457,7 @@
                                        </tab>
                                    </tabset>
 
-                                   <input class="btn btn-primary" ng-click="openSaveCommandInstancePropertiesDialog()" ng-disabled="form.$invalid" type="submit" value="Save" />
+                                   <input class="btn btn-primary" ng-click="openSaveCommandInstancePropertiesDialog(commandProperties, elementSelected.host, elementSelected.commandID)" ng-disabled="form.$invalid" type="submit" value="Save" />
 
                                    </form>
                                </div>
@@ -746,6 +746,9 @@
         <script src="scripts/controllers/CreateCommandWizard.js"></script>
         <script src="scripts/controllers/CreateReadzoneWizard.js"></script>
         <script src="scripts/controllers/menu.js"></script>
+
+        <!-- Services -->
+        <script src="scripts/services/serverService.js"></script>
 
 
 

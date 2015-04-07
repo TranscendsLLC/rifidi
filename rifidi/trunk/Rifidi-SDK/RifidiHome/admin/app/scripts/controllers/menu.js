@@ -11,7 +11,8 @@
  * Controller of the rifidiApp
  */
 var module = angular.module('rifidiApp')
-  .controller('MenuController', function ($rootScope, $scope, $http, $location, ngDialog, TreeViewPainting, commonVariableService) {
+  .controller('MenuController', function ($rootScope, $scope, $http, $location, ngDialog, TreeViewPainting, commonVariableService,
+                                          ServerService) {
 
         var getSuccessMessage = function () {
             return commonVariableService.getSuccessMessage();
@@ -101,6 +102,7 @@ var module = angular.module('rifidiApp')
 
                       if (message == 'Success') {
                           console.log("success deleting sensor");
+                          $rootScope.operationSuccessMsg = "Success deleting sensor";
                           TreeViewPainting.paintTreeView();
 
                       } else {
@@ -158,7 +160,8 @@ var module = angular.module('rifidiApp')
 
 
                     if (message == 'Success') {
-                        console.log("success deleting read zone");
+                        console.log("success deleting readzone");
+                        $rootScope.operationSuccessMsg = "Success deleting readzone";
                         TreeViewPainting.paintTreeView();
 
                     } else {
@@ -273,6 +276,7 @@ var module = angular.module('rifidiApp')
 
                       if (message == 'Success') {
                           console.log("success creating session");
+                          $rootScope.operationSuccessMsg = "Success creating session";
                           TreeViewPainting.paintTreeView();
 
                       } else {
@@ -323,6 +327,7 @@ var module = angular.module('rifidiApp')
 
                       if (message == 'Success') {
                           console.log("success deleting session");
+                          $rootScope.operationSuccessMsg = "Success deleting session";
                           TreeViewPainting.paintTreeView();
 
                       } else {
@@ -375,6 +380,7 @@ var module = angular.module('rifidiApp')
 
                       if (message == 'Success') {
                           console.log("success starting session");
+                          $rootScope.operationSuccessMsg = "Success starting session";
                           TreeViewPainting.paintTreeView();
 
                       } else {
@@ -427,6 +433,7 @@ var module = angular.module('rifidiApp')
 
                       if (message == 'Success') {
                           console.log("success stopping session");
+                          $rootScope.operationSuccessMsg = "Success stopping session";
                           TreeViewPainting.paintTreeView();
 
                       } else {
@@ -533,7 +540,7 @@ var module = angular.module('rifidiApp')
 
         var deleteServer = function(serverElement){
 
-            $http.get('http://localhost:8111/getServersFile').
+            ServerService.callServerListService().
                 success(function (data, status, headers, config) {
 
                     var serversOriginalData = angular.copy(data);
@@ -569,7 +576,7 @@ var module = angular.module('rifidiApp')
                     console.log(dataToStore);
 
                     //call the rest command to store data
-                    $http.get('http://localhost:8111/updateServersFile/' + encodeURIComponent(dataToStore)).
+                    ServerService.callUpdateServersService(dataToStore).
                         success(function (data, status, headers, config) {
 
                             console.log("success response deleting server");
@@ -592,8 +599,7 @@ var module = angular.module('rifidiApp')
                             if (deleteServerCommandMessage == 'Success') {
                                 console.log("Success deleting server");
 
-                                setSuccessMessage("Success deleting server");
-                                $rootScope.operationSuccessMsg = getSuccessMessage();
+                                $rootScope.operationSuccessMsg = "Success deleting server";
 
                                 //refresh tree view
                                 TreeViewPainting.paintTreeView();
@@ -1022,7 +1028,7 @@ var module = angular.module('rifidiApp')
 
                               console.log("displayName with change");
 
-                              $http.get('http://localhost:8111/getServersFile').
+                              ServerService.callServerListService().
                                   success(function (data, status, headers, config) {
 
                                       var displayNameisUnique = true;
@@ -1142,7 +1148,7 @@ var module = angular.module('rifidiApp')
             console.log("server:");
             console.log(server);
 
-            $http.get('http://localhost:8111/getServersFile').
+            ServerService.callServerListService().
                 success(function (data, status, headers, config) {
 
                     var serversOriginalData = angular.copy(data);
@@ -1190,7 +1196,7 @@ var module = angular.module('rifidiApp')
                     console.log(dataToStore);
 
                     //call the rest command to store data
-                    $http.get('http://localhost:8111/updateServersFile/' + encodeURIComponent(dataToStore)).
+                    ServerService.callUpdateServersService(dataToStore).
                         success(function (data, status, headers, config) {
 
                             console.log("success response editing server properties");
@@ -1213,8 +1219,7 @@ var module = angular.module('rifidiApp')
                             if (editServerCommandMessage == 'Success') {
                                 console.log("Success editing server properties");
 
-                                setSuccessMessage("Success editing server properties");
-                                $rootScope.operationSuccessMsg = getSuccessMessage();
+                                $rootScope.operationSuccessMsg = "Success editing server properties";
 
                                 //refresh tree view
                                 TreeViewPainting.paintTreeView();
@@ -1300,9 +1305,7 @@ var module = angular.module('rifidiApp')
                     if (message == 'Success') {
                         console.log("success saving server config");
 
-                        setSuccessMessage("Save server config operation success");
-                        //$scope.operationSuccessMsg = "Save server properties operation success";
-                        $rootScope.operationSuccessMsg = getSuccessMessage();
+                        $rootScope.operationSuccessMsg = ("Success saving server config");
 
                         TreeViewPainting.paintTreeView();
 
@@ -1338,6 +1341,8 @@ var module = angular.module('rifidiApp')
             console.log("$scope.elementSelected");
             console.log($scope.elementSelected);
 
+            $rootScope.operationSuccessMsgs = [];
+
             //call the save operation on every server
 
             $scope.elementList[0].children.forEach(function (server) {
@@ -1371,9 +1376,9 @@ var module = angular.module('rifidiApp')
                             if (message == 'Success') {
                                 console.log("success saving server config for server: " + saveHost);
 
-                                setSuccessMessage( (getSuccessMessage() != null ? getSuccessMessage() : "") + "Save server config operation success for server: " + saveHost );
+
                                 //$scope.operationSuccessMsg = "Save server properties operation success";
-                                $rootScope.operationSuccessMsg = getSuccessMessage();
+                                $rootScope.operationSuccessMsgs.push("Success saving server config for server: " + saveHost);
 
                                 TreeViewPainting.paintTreeView();
 
@@ -2825,7 +2830,7 @@ var module = angular.module('rifidiApp')
 
                     if (message == 'Success') {
                         console.log("success updating sensor properties");
-                        $scope.operationSuccessMsg = "Save sensor properties operation success";
+                        $scope.operationSuccessMsg = "Success saving sensor properties";
                         TreeViewPainting.paintTreeView();
 
                     } else {
@@ -3033,6 +3038,7 @@ var module = angular.module('rifidiApp')
                             console.log("success setting properties for command");
 
                                 $rootScope.operationSuccessMsg = "Success setting properties for command";
+                                TreeViewPainting.paintTreeView();
 
                         } else {
                             var setCommandPropertiesDescription = xmlSetCommandPropertiesResponse.getElementsByTagName("description")[0].childNodes[0].nodeValue;
@@ -3111,6 +3117,7 @@ var module = angular.module('rifidiApp')
                         console.log("success setting properties for app group");
 
                         $rootScope.operationSuccessMsg = "Success setting properties for app group";
+                        TreeViewPainting.paintTreeView();
 
                     } else {
                         var setAppGroupPropertiesDescription = xmlSetAppGroupPropertiesResponse.getElementsByTagName("description")[0].childNodes[0].nodeValue;
@@ -3187,6 +3194,7 @@ var module = angular.module('rifidiApp')
                         console.log("success setting properties for app");
 
                         $rootScope.operationSuccessMsg = "Success setting properties for app";
+                        TreeViewPainting.paintTreeView();
 
                     } else {
                         var setAppPropertiesDescription = xmlSetAppPropertiesResponse.getElementsByTagName("description")[0].childNodes[0].nodeValue;
@@ -3274,6 +3282,7 @@ var module = angular.module('rifidiApp')
                         console.log("success setting properties for readzone");
 
                         $rootScope.operationSuccessMsg = "Success setting properties for readzone";
+                        TreeViewPainting.paintTreeView();
 
                     } else {
                         var setReadzonePropertiesDescription = xmlSetReadzonePropertiesResponse.getElementsByTagName("description")[0].childNodes[0].nodeValue;
@@ -3332,11 +3341,8 @@ var module = angular.module('rifidiApp')
                     if (startAppMessage == 'Success') {
                         console.log("success starting app");
 
-                        //refresh tree view
+                        $rootScope.operationSuccessMsg = "Success starting app";
                         TreeViewPainting.paintTreeView();
-
-                        setSuccessMessage("Success starting app");
-                        $rootScope.operationSuccessMsg = getSuccessMessage();
 
                     } else {
                         var startAppCommandDescription = xmlStartApp.getElementsByTagName("description")[0].childNodes[0].nodeValue;
@@ -3389,8 +3395,7 @@ var module = angular.module('rifidiApp')
                     if (stopAppMessage == 'Success') {
                         console.log("success stopping app");
 
-                        setSuccessMessage("Success stopping app");
-                        $rootScope.operationSuccessMsg = getSuccessMessage();
+                        $rootScope.operationSuccessMsg = "Success stopping app";
 
                         //refresh tree view
                         TreeViewPainting.paintTreeView();
@@ -3434,7 +3439,7 @@ var module = angular.module('rifidiApp')
 
 
 
-module.service('TreeViewPainting', function($http, $rootScope) {
+module.service('TreeViewPainting', function($http, $rootScope, ServerService) {
        var service = {
 
          paintTreeView: function () {
@@ -3443,7 +3448,7 @@ module.service('TreeViewPainting', function($http, $rootScope) {
                 console.log("paintTreeView function called");
 
 
-             $http.get('http://localhost:8111/getServersFile').
+             ServerService.callServerListService().
                  success(function (data, status, headers, config) {
                      console.log("funciono lectura servers ");
                      console.log("cantidad servidores:");
@@ -3721,6 +3726,8 @@ module.service('TreeViewPainting', function($http, $rootScope) {
                                                          "elementType": "commandInstance_sensor",
                                                          "contextMenuId": "contextMenuCommand_sensor",
                                                          "commandType": factoryID.nodeValue,
+                                                         "commandID": commandID.nodeValue,
+                                                         "host": server.host,
                                                          "children": []
                                                      };
 
@@ -4213,7 +4220,19 @@ module.service('TreeViewPainting', function($http, $rootScope) {
                                                          "elementType": "app",
                                                          "contextMenuId": "contextMenuApp",
                                                          "host": appGroupElement.host,
+                                                         "allowStartApp": false,
+                                                         "allowStopApp": false,
                                                          "children": []
+
+                                                     };
+
+                                                     if ( appElement.status == 'STARTED' ){
+
+                                                         appElement.allowStopApp = true;
+
+                                                     } else if ( appElement.status == 'STOPPED' ) {
+
+                                                         appElement.allowStartApp = true;
 
                                                      }
 

@@ -97,8 +97,8 @@
 
 				//app menu
 				var menuApp = '<ul id="contextMenuApp" class="dropdown-menu">'+
-					'<li><a ng-click="openStartAppDialog()"><i class="linkstart">&nbsp;&nbsp;&nbsp;&nbsp;Start App</i></a></li>'+
-					'<li><a ng-click="openStopAppDialog()"><i class="linkstop">&nbsp;&nbsp;&nbsp;&nbsp;Stop App</i></a></li>'+
+					'<li ng-class="{disabledLink: !elementSelected.allowStartApp}"><a ng-click="elementSelected.allowStartApp && openStartAppDialog()"><i ng-class="{disabledLink: !elementSelected.allowStartApp, linkstart: elementSelected.allowStartApp}">&nbsp;&nbsp;&nbsp;&nbsp;Start App</i></a></li>'+
+					'<li ng-class="{disabledLink: !elementSelected.allowStopApp}"><a ng-click="elementSelected.allowStopApp && openStopAppDialog()"><i ng-class="{disabledLink: !elementSelected.allowStopApp, linkstop: elementSelected.allowStopApp}">&nbsp;&nbsp;&nbsp;&nbsp;Stop App</i></a></li>'+
 					'</ul>';
 
 				//servers menu

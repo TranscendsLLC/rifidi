@@ -8,7 +8,8 @@
  * Controller of the rifidiApp
  */
 angular.module('rifidiApp')
-  .controller('ServerWizardCtrl', function ($rootScope, $scope, $http, $routeParams, $location, ngDialog, TreeViewPainting, commonVariableService) {
+  .controller('ServerWizardCtrl', function ($rootScope, $scope, $http, $routeParams, $location, ngDialog, TreeViewPainting,
+                                            commonVariableService, ServerService) {
 
       var getSuccessMessage = function () {
         return commonVariableService.getSuccessMessage();
@@ -41,7 +42,7 @@ angular.module('rifidiApp')
         console.log($scope.serverToCreate);
 
         //Validate display name does not exist
-        $http.get('http://localhost:8111/getServersFile').
+          ServerService.callServerListService().
             success(function (data, status, headers, config) {
               console.log("worked servers load on server creation");
 
@@ -93,7 +94,7 @@ angular.module('rifidiApp')
                 console.log(dataToStore);
 
                 //call the rest command to store data
-                $http.get('http://localhost:8111/updateServersFile/' + encodeURIComponent(dataToStore)).
+                  ServerService.callUpdateServersService(dataToStore).
                     success(function (data, status, headers, config) {
 
                       console.log("success response adding server");
