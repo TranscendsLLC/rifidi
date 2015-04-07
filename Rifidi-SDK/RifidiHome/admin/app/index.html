@@ -37,15 +37,16 @@
         <div class="row">
             <div class="col-md-5" >
 
-                    <div class="alert alert-success" ng-show="operationSuccessMsg">
-                        {{operationSuccessMsg}}
+                    <div class="alert alert-success" ng-show="operationSuccessMsg || operationSuccessMsgs.length > 0">
+                        <div>{{operationSuccessMsg}}</div>
+                        <div ng-repeat="msg in operationSuccessMsgs">{{msg}}</div>
                     </div>
+
 
             </div>
         </div>
 
        <div ng-controller="MenuController">
-
 
        <div class="row">
            <div class="col-md-5">
@@ -687,7 +688,7 @@
 
 
       <div class="footer">
-        <p>Copyright Rifidi 2015</p>
+        <p>Copyright Transcends 2015</p>
       </div>
 
     </div>

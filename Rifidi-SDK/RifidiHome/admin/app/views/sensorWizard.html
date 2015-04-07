@@ -317,6 +317,9 @@
 
                 <form class="form-horizontal" role="form" name="form4" novalidate>
 
+                    <input type="submit" class="btn btn-warning" wz-previous value="Previous" />
+                    <input type="submit" class="btn btn-primary"  wz-finish value="Confirm and execute" />
+
                     <h4>Summary: System is going to execute next steps:</h4>
 
 
@@ -396,32 +399,24 @@
                             <span class="glyphicon glyphicon-dashboard" aria-hidden="true"></span> Create command of type {{selectedCommandType.factoryID}}
                         </div>
 
-                        <!--
-                        <h4 ng-show="selectedCommandInstance.commandID == '<New>'">* Create command of type {{selectedCommandType.factoryID}}</h4>
-                        <h4 ng-show="selectedCommandInstance.commandID != '<New>'">* Do not create command of type {{selectedCommandType.factoryID}}</h4>
-                        -->
-
                         <div class="panel-body">
 
                         </div>
 
                     </div>
 
+                    <!--
                     <div class="panel panel-default" ng-show="selectedCommandInstance.commandID != '<New>'">
                         <div class="panel-heading">
                             <span class="glyphicon glyphicon-dashboard" aria-hidden="true"></span> Do not create command of type {{selectedCommandType.factoryID}}
                         </div>
 
-                        <!--
-                        <h4 ng-show="selectedCommandInstance.commandID == '<New>'">* Create command of type {{selectedCommandType.factoryID}}</h4>
-                        <h4 ng-show="selectedCommandInstance.commandID != '<New>'">* Do not create command of type {{selectedCommandType.factoryID}}</h4>
-                        -->
-
                         <div class="panel-body">
 
                         </div>
 
                     </div>
+                    -->
 
                     <div class="panel panel-default">
                         <div class="panel-heading">
@@ -481,13 +476,9 @@
                         <div class="panel-body">
                         </div>
 
-                        <!--
-                       <h4 ng-show="selectedReaderConnectionProperties.startSessionAut">* Start session</h4>
-                       <h4 ng-show="!selectedReaderConnectionProperties.startSessionAut">* Do not start session</h4>
-                       -->
-
                     </div>
 
+                    <!--
                     <div class="panel panel-default" ng-show="!selectedReaderConnectionProperties.startSessionAut">
                         <div class="panel-heading">
                             <span class="glyphicon glyphicon-dashboard" aria-hidden="true"></span> Do not start session
@@ -496,12 +487,9 @@
                         <div class="panel-body">
                         </div>
 
-                        <!--
-                       <h4 ng-show="selectedReaderConnectionProperties.startSessionAut">* Start session</h4>
-                       <h4 ng-show="!selectedReaderConnectionProperties.startSessionAut">* Do not start session</h4>
-                       -->
-
                     </div>
+                    -->
+
 
                     <input type="submit" class="btn btn-warning" wz-previous value="Previous" />
                     <input type="submit" class="btn btn-primary"  wz-finish value="Confirm and execute" />

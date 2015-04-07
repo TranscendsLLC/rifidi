@@ -684,20 +684,23 @@ angular.module('rifidiApp')
 
       };
 
-
-
-
       $scope.finishSensorWizard = function(selectedReaderType){
 
+        $rootScope.operationSuccessMsgs = [];
 
-        console.log("finishSensorWizard");
+
+        console.log("finishSensorWizard!");
         //create the reader
 
-        $scope.showSensorCreationResponse = true;
+        //$scope.showSensorCreationResponse = true;
 
         $scope.sensorCreationResponseStatus = {};
         $scope.sensorCreationResponseStatus.message = "";
         $scope.sensorCreationResponseStatus.description = "";
+
+        $scope.sessionCreationResponseStatus = {};
+        $scope.sessionCreationResponseStatus.message = "";
+        $scope.sessionCreationResponseStatus.description = "";
 
         $scope.commandCreationResponseStatus = {};
         $scope.commandCreationResponseStatus.message = "";
@@ -711,6 +714,9 @@ angular.module('rifidiApp')
         $scope.executeCommandResponseStatus.message = "";
         $scope.executeCommandResponseStatus.description = "";
 
+        $scope.startSessionResponseStatus = {};
+        $scope.startSessionResponseStatus.message = "";
+        $scope.startSessionResponseStatus.description = "";
 
         var strProperties = "";
 
@@ -727,12 +733,10 @@ angular.module('rifidiApp')
           strProperties = strProperties.substring(0, strProperties.length - 1);
         }
 
-        //If there is customreaderid, then set
+        //If there is customreaderid, then add as a property
         if ($scope.customReaderId && $scope.customReaderId != ''){
           strProperties += ";readerID=" + $scope.customReaderId
         }
-
-
 
         $http.get(host + '/createreader/' + $scope.selectedReaderConnectionProperties.readerid + "/" + encodeURIComponent(strProperties))
             .success(function(data, status, headers, config) {
@@ -759,168 +763,209 @@ angular.module('rifidiApp')
               //$scope.sensorCreationResponseStatus.description = "";
 
               if (message == 'Success'){
-                console.log("success creating reader by wizard");
+                console.log("success creating sensor by wizard");
 
                           $scope.readerID = xmlCreateReaderResponse.getElementsByTagName("readerID")[0].childNodes[0].nodeValue;
 
+                          $rootScope.operationSuccessMsgs.push("Success creating sensor: " + $scope.readerID);
+
                           //Create a session on that created reader
                           $http.get(host + '/createsession/' +  $scope.readerID)
+
                               .success(function(data, status, headers, config) {
 
-                                console.log("success creating session by wizard");
+                                var xmlCreateSessionResponse;
+                                if (window.DOMParser)
+                                {
+                                  var parser = new DOMParser();
+                                  xmlCreateSessionResponse = parser.parseFromString(data,"text/xml");
+                                }
+                                else // Internet Explorer
+                                {
+                                  xmlCreateSessionResponse = new ActiveXObject("Microsoft.XMLDOM");
+                                  xmlCreateSessionResponse.async=false;
+                                  xmlCreateSessionResponse.loadXML(data);
+                                }
 
-                                //construct the properties to be set on command, be it an already existing command or a new one
-                                var strCommandProperties = "";
+                                //get the xml response and extract the value
+                                var message = xmlCreateSessionResponse.getElementsByTagName("message")[0].childNodes[0].nodeValue;
 
-                                console.log("$scope.ommandProperties.propertyCategoryList");
-                                console.log($scope.commandProperties.propertyCategoryList);
-                                console.log("$scopecommandProperties.propertyCategoryList.length");
-                                console.log($scope.commandProperties.propertyCategoryList.length);
+                                $scope.sessionCreationResponseStatus.message = message;
 
-                                for (var idxCat=0; idxCat < $scope.commandProperties.propertyCategoryList.length; idxCat++){
+                                if (message == 'Success') {
 
-                                  console.log("$scope.commandProperties.propertyCategoryList[idxCat]");
-                                  console.log($scope.commandProperties.propertyCategoryList[idxCat]);
+                                  var createdSessionID = xmlCreateSessionResponse.getElementsByTagName("sessionID")[0].childNodes[0].nodeValue;
 
-                                  for (var idxProp=0; idxProp < $scope.commandProperties.propertyCategoryList[idxCat].properties.length; idxProp++){
+                                  console.log("success creating session by wizard");
+                                  $rootScope.operationSuccessMsgs.push("Success creating session: " + 'session ' + createdSessionID);
 
-                                    strCommandProperties += $scope.commandProperties.propertyCategoryList[idxCat].properties[idxProp].name + "="
-                                    + $scope.commandProperties.propertyCategoryList[idxCat].properties[idxProp].value + ";"
+                                  //construct the properties to be set on command, be it an already existing command or a new one
+                                  var strCommandProperties = "";
+
+                                  console.log("$scope.ommandProperties.propertyCategoryList");
+                                  console.log($scope.commandProperties.propertyCategoryList);
+                                  console.log("$scopecommandProperties.propertyCategoryList.length");
+                                  console.log($scope.commandProperties.propertyCategoryList.length);
+
+                                  for (var idxCat = 0; idxCat < $scope.commandProperties.propertyCategoryList.length; idxCat++) {
+
+                                    console.log("$scope.commandProperties.propertyCategoryList[idxCat]");
+                                    console.log($scope.commandProperties.propertyCategoryList[idxCat]);
+
+                                    for (var idxProp = 0; idxProp < $scope.commandProperties.propertyCategoryList[idxCat].properties.length; idxProp++) {
+
+                                      strCommandProperties += $scope.commandProperties.propertyCategoryList[idxCat].properties[idxProp].name + "="
+                                      + $scope.commandProperties.propertyCategoryList[idxCat].properties[idxProp].value + ";"
+                                    }
+
                                   }
 
+                                  //Quit the last semicolon ;
+                                  if (strCommandProperties.length > 0) {
+                                    strCommandProperties = strCommandProperties.substring(0, strCommandProperties.length - 1);
+                                  }
 
-                                }
+                                  console.log("strCommandProperties");
+                                  console.log(strCommandProperties);
 
-                                //Quit the last semicolon ;
-                                if (strCommandProperties.length > 0){
-                                  strCommandProperties = strCommandProperties.substring(0, strCommandProperties.length - 1);
-                                }
+                                  //Check if need to create command
+                                  if ($scope.selectedCommandInstance.commandID == '<New>') {
 
-                                console.log("strCommandProperties");
-                                console.log(strCommandProperties);
+                                    //Create command
+                                    console.log("going to create command");
 
+                                    //create command
+                                    console.log("$scope.selectedCommandType");
+                                    console.log($scope.selectedCommandType);
+                                    console.log($scope.selectedCommandType.factoryID);
+                                    console.log("going to execute: " + host + '/createcommand/' + $scope.selectedCommandType.factoryID + "/" + strCommandProperties);
 
-                                //Check if need to create command
-                                if($scope.selectedCommandInstance.commandID == '<New>'){
+                                    $http.get(host + '/createcommand/' + $scope.selectedCommandType.factoryID + "/" + strCommandProperties)
+                                        .success(function (data, status, headers, config) {
 
-                                  //Create command
-                                  console.log("going to create command");
+                                          console.log("success response creating command in wizard");
 
-                                        //create command
-                                        console.log("$scope.selectedCommandType");
-                                        console.log($scope.selectedCommandType);
-                                        console.log($scope.selectedCommandType.factoryID);
-                                        console.log("going to execute: " + host + '/createcommand/' + $scope.selectedCommandType.factoryID + "/" + strCommandProperties);
+                                          var xmlCreateCommandResponse;
+                                          if (window.DOMParser) {
+                                            var parser = new DOMParser();
+                                            xmlCreateCommandResponse = parser.parseFromString(data, "text/xml");
+                                          }
+                                          else // Internet Explorer
+                                          {
+                                            xmlCreateCommandResponse = new ActiveXObject("Microsoft.XMLDOM");
+                                            xmlCreateCommandResponse.async = false;
+                                            xmlCreateCommandResponse.loadXML(data);
+                                          }
 
-                                        $http.get(host + '/createcommand/' + $scope.selectedCommandType.factoryID + "/" + strCommandProperties)
-                                            .success(function(data, status, headers, config) {
+                                          //get the xml response and extract the values for properties
+                                          var createCommandMessage = xmlCreateCommandResponse.getElementsByTagName("message")[0].childNodes[0].nodeValue;
 
-                                              console.log("success response creating command in wizard");
+                                          $scope.commandCreationResponseStatus.message = createCommandMessage;
 
-                                              var xmlCreateCommandResponse;
-                                              if (window.DOMParser)
-                                              {
-                                                var parser = new DOMParser();
-                                                xmlCreateCommandResponse = parser.parseFromString(data,"text/xml");
-                                              }
-                                              else // Internet Explorer
-                                              {
-                                                xmlCreateCommandResponse = new ActiveXObject("Microsoft.XMLDOM");
-                                                xmlCreateCommandResponse.async=false;
-                                                xmlCreateCommandResponse.loadXML(data);
-                                              }
+                                          if (createCommandMessage == 'Success') {
+                                            console.log("success creating command by wizard");
 
-                                              //get the xml response and extract the values for properties
-                                              var createCommandMessage = xmlCreateCommandResponse.getElementsByTagName("message")[0].childNodes[0].nodeValue;
+                                            var commandID = xmlCreateCommandResponse.getElementsByTagName("commandID")[0].childNodes[0].nodeValue;
 
-                                              $scope.commandCreationResponseStatus.message = createCommandMessage;
+                                            $rootScope.operationSuccessMsgs.push("Success creating command: " + commandID);
 
-                                              if (createCommandMessage == 'Success') {
-                                                console.log("success creating command by wizard");
+                                            continueExecutingCommand(commandID, createdSessionID);
 
-                                                var commandID = xmlCreateCommandResponse.getElementsByTagName("commandID")[0].childNodes[0].nodeValue;
+                                          } else {
 
-                                                    continueExecutingCommand(commandID);
-
-                                              } else {
-                                                var createCommandDescription = xmlCreateCommandResponse.getElementsByTagName("description")[0].childNodes[0].nodeValue;
-                                                $scope.commandCreationResponseStatus.description = createCommandDescription;
-                                                console.log("fail creating command by wizard");
-                                                console.log(createCommandDescription);
-                                              }
-
-
-                                            }).
-                                            error(function(data, status, headers, config) {
-                                              console.log("error creating command in wizard");
+                                            var createCommandDescription = xmlCreateCommandResponse.getElementsByTagName("description")[0].childNodes[0].nodeValue;
+                                            $scope.commandCreationResponseStatus.description = createCommandDescription;
+                                            console.log("fail creating command by wizard: ");
+                                            console.log(createCommandDescription);
+                                            showErrorDialog('Fail creating command: ' + createCommandDescription);
+                                          }
 
 
-                                              // called asynchronously if an error occurs
-                                              // or server returns response with an error status.
-                                            });
+                                        }).
+                                        error(function (data, status, headers, config) {
+                                          console.log("error creating command in wizard");
+
+                                          showErrorDialog('Fail creating command');
 
 
+                                          // called asynchronously if an error occurs
+                                          // or server returns response with an error status.
+                                        });
+
+                                  } else {
+
+                                    console.log("NOT going to create command");
+                                    //Set properties for already existing command instance
+
+                                    console.log("going to set command properties: " + host + '/setproperties/' + $scope.selectedCommandInstance.commandID + '/' + strCommandProperties);
+
+                                    $http.get(host + '/setproperties/' + $scope.selectedCommandInstance.commandID + '/' + strCommandProperties)
+                                        .success(function (data, status, headers, config) {
+
+                                          var xmlSetCommandPropertiesResponse;
+                                          if (window.DOMParser) {
+                                            var parser = new DOMParser();
+                                            xmlSetCommandPropertiesResponse = parser.parseFromString(data, "text/xml");
+                                          }
+                                          else // Internet Explorer
+                                          {
+                                            xmlSetCommandPropertiesResponse = new ActiveXObject("Microsoft.XMLDOM");
+                                            xmlSetCommandPropertiesResponse.async = false;
+                                            xmlSetCommandPropertiesResponse.loadXML(data);
+                                          }
+
+
+                                          //get the xml response and extract the value
+                                          var message = xmlSetCommandPropertiesResponse.getElementsByTagName("message")[0].childNodes[0].nodeValue;
+
+                                          $scope.setCommandPropertiesResponseStatus.message = message;
+
+                                          if (message == 'Success') {
+                                            console.log("success setting properties for command in wizard");
+
+                                            $rootScope.operationSuccessMsgs.push("Success setting properties for command");
+
+                                            continueExecutingCommand($scope.selectedCommandInstance.commandID, createdSessionID);
+
+                                          } else {
+
+                                            var setCommandPropertiesDescription = xmlSetCommandPropertiesResponse.getElementsByTagName("description")[0].childNodes[0].nodeValue;
+                                            $scope.setCommandPropertiesResponseStatus.description = setCommandPropertiesDescription;
+                                            console.log("fail set command properties by wizard");
+                                            console.log(setCommandPropertiesDescription);
+
+                                            showErrorDialog('Fail setting command properties: ' + setCommandPropertiesDescription);
+                                          }
+
+
+                                        })
+                                        .error(function (data, status, headers, config) {
+                                          console.log("error setting properties for existing command in wizard");
+
+                                          showErrorDialog('Fail setting command properties: ');
+
+                                          // called asynchronously if an error occurs
+                                          // or server returns response with an error status.
+                                        });
+
+
+                                  }
 
                                 } else {
 
-                                  console.log("NOT going to create command");
-                                  //Set properties for already existing command instance
+                                  var description = xmlCreateSessionResponse.getElementsByTagName("description")[0].childNodes[0].nodeValue;
+                                  $scope.sessionCreationResponseStatus.description = description;
+                                  console.log("fail creating session by wizard: " + description);
 
-                                  console.log("going to set command properties: " + host + '/setproperties/' + $scope.selectedCommandInstance.commandID + '/' + strCommandProperties);
-
-                                  $http.get(host + '/setproperties/' + $scope.selectedCommandInstance.commandID + '/' + strCommandProperties)
-                                      .success(function(data, status, headers, config) {
-
-                                        var xmlSetCommandPropertiesResponse;
-                                        if (window.DOMParser)
-                                        {
-                                          var parser = new DOMParser();
-                                          xmlSetCommandPropertiesResponse = parser.parseFromString(data,"text/xml");
-                                        }
-                                        else // Internet Explorer
-                                        {
-                                          xmlSetCommandPropertiesResponse = new ActiveXObject("Microsoft.XMLDOM");
-                                          xmlSetCommandPropertiesResponse.async=false;
-                                          xmlSetCommandPropertiesResponse.loadXML(data);
-                                        }
-
-
-                                        //get the xml response and extract the value
-                                        var message = xmlSetCommandPropertiesResponse.getElementsByTagName("message")[0].childNodes[0].nodeValue;
-
-                                        $scope.setCommandPropertiesResponseStatus.message = message;
-
-                                        if (message == 'Success') {
-                                          console.log("success setting properties for command in wizard");
-
-                                          //Can continue with next service call in wizard: execute command, but must ensure that asynchronous call
-                                          //was made and successfully finished
-                                          //canExecuteCommand = true;
-                                          continueExecutingCommand($scope.selectedCommandInstance.commandID);
-
-
-                                        } else {
-                                          var setCommandPropertiesDescription = xmlSetCommandPropertiesResponse.getElementsByTagName("description")[0].childNodes[0].nodeValue;
-                                          $scope.setCommandPropertiesResponseStatus.description = setCommandPropertiesDescription;
-                                          console.log("fail set command properties by wizard");
-                                          console.log(setCommandPropertiesDescription);
-                                        }
-
-
-                                    })
-                                    .error(function(data, status, headers, config) {
-                                      console.log("error setting properties for existing command in wizard");
-
-                                      // called asynchronously if an error occurs
-                                      // or server returns response with an error status.
-                                    });
-
+                                  showErrorDialog('Fail creating session: ' + description);
 
                                 }
 
                               })
                               .error(function(data, status, headers, config) {
                                 console.log("error creating session by wizard");
+
+                                showErrorDialog('Fail creating session');
 
                                 // called asynchronously if an error occurs
                                 // or server returns response with an error status.
@@ -930,16 +975,20 @@ angular.module('rifidiApp')
               } else {
                 var description = xmlCreateReaderResponse.getElementsByTagName("description")[0].childNodes[0].nodeValue;
                 $scope.sensorCreationResponseStatus.description = description;
-                console.log("fail creating reader by wizard");
+                console.log("fail creating reader by wizard: " + description);
+
+                showErrorDialog('Fail creating reader: ' + description);
               }
 
-              console.log($scope.sensorCreationResponseStatus);
+              //console.log($scope.sensorCreationResponseStatus);
 
 
 
         })
         .error(function(data, status, headers, config) {
           console.log("error creating reader by wizard");
+
+              showErrorDialog('Fail creating reader');
 
           // called asynchronously if an error occurs
           // or server returns response with an error status.
@@ -986,12 +1035,16 @@ angular.module('rifidiApp')
       }
 
 
-      function continueExecutingCommand(commandId){
+      function continueExecutingCommand(commandId, sessionId, readerId){
 
         console.log("continueExecutingCommand for command id: " + commandId);
 
-        var sessionId = 1;
+        //var sessionId = 1;
         var repeatInterval = -1;
+
+        if ($scope.schedulingOption == "recurring"){
+          repeatInterval = $scope.interval;
+        }
 
         console.log("going to call execute command: " + host + '/executecommand/' + $scope.readerID + "/" + sessionId + "/" +  commandId + '/' + repeatInterval);
 
@@ -1020,19 +1073,87 @@ angular.module('rifidiApp')
               if (message == 'Success') {
                 console.log("success executing command in wizard");
 
-                //If start session chosen, then start the session
+                $rootScope.operationSuccessMsgs.push("Success executing command");
+
+                //If start session was chosen, then start it
+                if( $scope.selectedReaderConnectionProperties.startSessionAut ){
+
+                  //call the rest service to start session
+                  console.log("going to start session");
+
+                  $http.get(host + '/startsession/' + readerId + "/" + sessionId)
+                      .success(function (data, status, headers, config) {
+
+                        var startSessionCommandResponse;
+                        if (window.DOMParser) {
+                          var parser = new DOMParser();
+                          startSessionCommandResponse = parser.parseFromString(data, "text/xml");
+                        }
+                        else // Internet Explorer
+                        {
+                          startSessionCommandResponse = new ActiveXObject("Microsoft.XMLDOM");
+                          startSessionCommandResponse.async = false;
+                          startSessionCommandResponse.loadXML(data);
+                        }
+
+                        //get the xml response and extract the message response
+                        var message = startSessionCommandResponse.getElementsByTagName("message")[0].childNodes[0].nodeValue;
+                        $scope.startSessionResponseStatus.message = message;
+
+                        if (message == 'Success') {
+
+                          console.log("success starting session");
+                          $rootScope.operationSuccessMsgs.push("Success starting session");
+
+
+                          //TreeViewPainting.paintTreeView();
+
+                        } else {
+
+                          var startSessionCommandDescription = startSessionCommandResponse.getElementsByTagName("description")[0].childNodes[0].nodeValue;
+                          console.log("fail starting session");
+                          console.log(startSessionCommandDescription);
+                          $scope.startSessionResponseStatus.description = startSessionCommandDescription;
+
+                          showErrorDialog('Fail starting session: ' + startSessionCommandDescription);
+
+                          //show modal dialog with error
+                          //showErrorDialog('Error starting session: ' + startSessionCommandDescription);
+
+                        }
+
+
+                      }).
+                      error(function (data, status, headers, config) {
+                        console.log("error starting session");
+
+                        //show modal dialog with error
+                        showErrorDialog('Fail starting session');
+
+
+                        // called asynchronously if an error occurs
+                        // or server returns response with an error status.
+                      });
+
+
+
+                }
 
               } else {
                 var executeCommandDescription = xmlExecuteCommandResponse.getElementsByTagName("description")[0].childNodes[0].nodeValue;
                 $scope.executeCommandResponseStatus.description = executeCommandDescription;
                 console.log("fail executing command by wizard");
                 console.log(executeCommandDescription);
+
+                showErrorDialog('Fail executing command: ' + executeCommandDescription);
               }
 
 
             })
             .error(function(data, status, headers, config) {
-              console.log("error setting properties for existing command in wizard");
+              console.log("error fail executing command by wizard");
+
+              showErrorDialog('Fail executing command');
 
               // called asynchronously if an error occurs
               // or server returns response with an error status.
@@ -1040,7 +1161,45 @@ angular.module('rifidiApp')
 
 
 
-      }
+      };
+
+      function showErrorDialog(errorMsg) {
+
+        $scope.errorMsg = errorMsg;
+
+        ngDialog.openConfirm({template: 'errorDialogTmpl.html',
+
+          scope: $scope, //Pass the scope object if you need to access in the template
+
+          showClose: false,
+
+          closeByEscape: true,
+
+          closeByDocument: false
+
+        }).then(
+
+            function(value) {
+
+              //confirm operation
+              console.log("first");
+
+            },
+
+            function(value) {
+
+              //Cancel or do nothing
+              console.log("second");
+              console.log("value: " + value);
+
+
+
+
+            }
+
+        );
+
+      };
 
 
 
