@@ -46,7 +46,7 @@
 
 	  			//server menu
 				var menuServer = '<ul id="contextMenuServer" class="dropdown-menu">'+
-					'<li><a ng-click="openSaveServerConfigDialog()"><i class="saveserver">&nbsp;&nbsp;&nbsp;&nbsp;Save server config</i></a></li>'+
+					'<li ng-class="{disabledLink: !elementSelected.allowSaveServerConfig}"><a ng-click="elementSelected.allowSaveServerConfig && openSaveServerConfigDialog()"><i ng-class="{disabledLink: !elementSelected.allowSaveServerConfig, saveserver: elementSelected.allowSaveServerConfig}">&nbsp;&nbsp;&nbsp;&nbsp;Save server config</i></a></li>'+
 					'<li><a ng-click="openDeleteServerDialog()"><i class="deleteserver">&nbsp;&nbsp;&nbsp;&nbsp;Delete server</i></a></li>'+
 					'<li class="divider"></li>'+
 					'</ul>';
@@ -59,14 +59,14 @@
 				//sensor menu
 				var menuSensor = '<ul id="contextMenuSensor" class="dropdown-menu">'+
 					'<li><a ng-click="openDeleteSensorDialog()"><i class="readerdelete">&nbsp;&nbsp;&nbsp;&nbsp;Delete Sensor</i></a></li>'+
-					'<li ng-class="{' + 'disabledLink' + ': !elementSelected.allowCreateSession' +  '}"' + '><a ng-click="createSession()"><i ng-class="{' + 'disabledLink' + ': !elementSelected.allowCreateSession, ' + 'linkadd' + ': elementSelected.allowCreateSession' + '}"' + '>&nbsp;&nbsp;&nbsp;&nbsp;Create Session</i></a></li>'+
+					'<li ng-class="{disabledLink: !elementSelected.allowCreateSession}"><a ng-click="elementSelected.allowCreateSession && createSession()"><i ng-class="{disabledLink: !elementSelected.allowCreateSession, linkadd: elementSelected.allowCreateSession}">&nbsp;&nbsp;&nbsp;&nbsp;Create Session</i></a></li>'+
 					'</ul>';
 
 				//session menu
 				var menuSession = '<ul id="contextMenuSession" class="dropdown-menu">'+
 					'<li><a ng-click="openDeleteSessionDialog()"><i class="linkdelete">&nbsp;&nbsp;&nbsp;&nbsp;Delete Session</i></a></li>'+
-					'<li><a ng-click="startSession()"><i class="linkstart">&nbsp;&nbsp;&nbsp;&nbsp;Start Session</i></a></li>'+
-					'<li><a ng-click="stopSession()"><i class="linkstop">&nbsp;&nbsp;&nbsp;&nbsp;Stop Session</i></a></li>'+
+					'<li ng-class="{disabledLink: !elementSelected.allowStartSession}"><a ng-click="elementSelected.allowStartSession && startSession()"><i ng-class="{disabledLink: !elementSelected.allowStartSession, linkstart: elementSelected.allowStartSession}">&nbsp;&nbsp;&nbsp;&nbsp;Start Session</i></a></li>'+
+					'<li ng-class="{disabledLink: !elementSelected.allowStopSession}"><a ng-click="elementSelected.allowStopSession && stopSession()"><i ng-class="{disabledLink: !elementSelected.allowStopSession, linkstop: elementSelected.allowStopSession}">&nbsp;&nbsp;&nbsp;&nbsp;Stop Session</i></a></li>'+
 					'<li><a href="#/jobSubmissionWizard"><i class="submit-job">&nbsp;&nbsp;&nbsp;&nbsp;Submit Job</i></a></li>'+
 					'</ul>';
 

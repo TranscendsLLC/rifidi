@@ -2686,6 +2686,7 @@ var module = angular.module('rifidiApp')
 
                   //console.log("set 2 propertyType: " + $scope.propertyType);
                   $rootScope.operationSuccessMsg = null;
+                  $rootScope.operationSuccessMsgs = [];
                   $scope.getPropertiesErrorMsg = null;
 
 
@@ -3471,6 +3472,7 @@ module.service('TreeViewPainting', function($http, $rootScope) {
                          server.children = [];
                          server.host = server.restProtocol + "://" + server.ipAddress + ":" + server.restPort;
                          server.status = 'CONNECTING';
+                         server.allowSaveServerConfig = false;
 
                          partialElementList[0].children.push(server);
 
@@ -3508,6 +3510,7 @@ module.service('TreeViewPainting', function($http, $rootScope) {
                                              //change server status
                                              server.status = 'CONNECTED';
                                              server.iconClass = "server-connected";
+                                             server.allowSaveServerConfig = true;
                                          }
                                      });
 
@@ -3679,17 +3682,24 @@ module.service('TreeViewPainting', function($http, $rootScope) {
                                                      "collapsed": true,
                                                      "status": sessionStatus.nodeValue,
                                                      "contextMenuId": "contextMenuSession",
+                                                     "allowStartSession": false,
+                                                     "allowStopSession": false,
                                                      "children": []
                                                  };
 
                                                  //Assign the icon depending on status:
                                                  if (sessionStatus.nodeValue == 'CREATED' || sessionStatus.nodeValue == 'CLOSED'){
                                                      sessionElement.iconClass = 'link-red';
+                                                     sessionElement.allowStartSession = true;
                                                  } else if (sessionStatus.nodeValue == 'CONNECTING'){
                                                      sessionElement.iconClass = 'link-yellow';
+                                                     //not allowed to start neither to stop session, so states remains in false
                                                  }  else if (sessionStatus.nodeValue == 'PROCESSING'){
                                                      sessionElement.iconClass = 'link-green';
+                                                     sessionElement.allowStopSession = true;
                                                  }
+
+
 
 
 
