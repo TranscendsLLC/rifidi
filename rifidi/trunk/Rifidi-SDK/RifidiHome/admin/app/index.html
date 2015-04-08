@@ -114,57 +114,10 @@
                    <div class="panel-heading">
                        <span class="glyphicon glyphicon-wrench" aria-hidden="true"></span> {{elementSelected.elementName}} Properties
                    </div>
+
                    <div class="panel-body">
 
                        <div ng-switch="elementTree.currentNode.elementType">
-
-                           <div ng-switch-when="serversXX">
-                               <div class="serversProperties">
-                                   <button type="button" class="btn btn-default" aria-label="Left Align" data-ng-click="mode = 'server'">
-                                       <span class="glyphicon glyphicon-plus" aria-hidden="true">Add Server</span>
-                                   </button>
-                                   <div class="input_panel" data-ng-show="mode == 'server'">
-                                       <h4>New Server</h4>
-                                       <form role="form">
-
-                                           <div class="form-group row" >
-                                               <div class="col-lg-6">
-                                                   <label class="control-label" for="ipAddress">Display Name</label>
-                                               </div>
-                                               <div class="col-lg-6">
-                                                   <input id="displayNameCreate" name="displayName" type="text" placeholder="Server 1" data-ng-model="temporaryNode.elementName" class="input-xlarge"/>
-                                               </div>
-
-                                           </div>
-                                           <div class="form-group row">
-                                               <div class="col-lg-6">
-                                                   <label class="control-label" for="ipAddress">IP Address</label>
-                                               </div>
-                                               <div class="col-lg-6">
-                                                   <input id="ipAddressCreate" name="ipAddress" type="text" placeholder="127.0.0.1" data-ng-model="temporaryNode.ipAddress" class="input-xlarge">
-                                               </div>
-                                           </div>
-                                           <div class="form-group row">
-                                               <div class="col-lg-6">
-                                                   <label class="control-label" for="ipAddress">Rest Protocol</label>
-                                               </div>
-                                               <div class="col-lg-6">
-                                                   <input id="restProtocolCreate" name="restProtocol" type="text" placeholder="http" data-ng-model="temporaryNode.restProtocol" class="input-xlarge">
-                                               </div>
-                                           </div>
-                                           <div class="form-group row">
-                                               <div class="col-lg-6">
-                                                   <label class="control-label" for="ipAddress">Rest Port</label>
-                                               </div>
-                                               <div class="col-lg-6">
-                                                   <input id="restPortCreate" name="restPort" type="text" placeholder="8111" data-ng-model="temporaryNode.restPort" class="input-xlarge">
-                                               </div>
-                                           </div>
-                                       </form>
-                                       <input type="button" value="Create Server" class="done_button" data-ng-click="addServerDone()">
-                                   </div>
-                               </div>
-                           </div>
 
                            <div ng-switch-when="server">
 
@@ -351,13 +304,12 @@
                                    -->
                            </div>
 
-                           <div ng-switch-when="sensorManagementXX">
-                               <button type="button" class="btn btn-default" aria-label="Left Align">
-                                   <a href ="#/sensorWizard/{{elementSelected.restProtocol}}/{{elementSelected.ipAddress}}/{{elementSelected.restPort}}"><span class="glyphicon glyphicon-plus" aria-hidden="true">Add Sensor</span></a>
-                               </button>
-                           </div>
 
                            <div ng-switch-when="sensor">
+
+                               <div class="panel-heading">
+                                   <span class="glyphicon glyphicon-wrench" aria-hidden="true"></span> {{elementSelected.elementName}} Properties
+                               </div>
 
                                <form class="form-horizontal" role="form" name="form" novalidate>
 
@@ -411,6 +363,10 @@
                            </div>
 
                            <div ng-switch-when="commandInstance_sensor">
+
+                               <div class="panel-heading">
+                                   <span class="glyphicon glyphicon-wrench" aria-hidden="true"></span> {{elementSelected.elementName}} Properties
+                               </div>
 
                                <div class="form-group">
 
@@ -466,32 +422,40 @@
 
                            <div ng-switch-when="commandType">
 
-                                   <div class="form-group">
-                                       <div class="col-sm-4">
-                                           <label class="control-label" for="readerType">Compatible Reader Type</label>
-                                       </div>
-                                       <div class="col-sm-6">
-                                           <label class="control-label" id="readerType" >{{elementSelected.readerFactoryID}}</label>
+                               <div class="panel-heading">
+                                   <span class="glyphicon glyphicon-wrench" aria-hidden="true"></span> {{elementSelected.elementName}} Properties
+                               </div>
 
-
-                                       </div>
+                               <div class="form-group">
+                                   <div class="col-sm-4">
+                                       <label class="control-label" for="readerType">Compatible Reader Type</label>
                                    </div>
-
-                                   <div class="form-group">
-                                       <div class="col-sm-4">
-                                           <label class="control-label" for="description">Description</label>
-                                       </div>
-                                       <div class="col-sm-6">
-                                           <label class="control-label" id="description" >{{elementSelected.description}}</label>
+                                   <div class="col-sm-6">
+                                       <label class="control-label" id="readerType" >{{elementSelected.readerFactoryID}}</label>
 
 
-                                       </div>
                                    </div>
+                               </div>
+
+                               <div class="form-group">
+                                   <div class="col-sm-4">
+                                       <label class="control-label" for="description">Description</label>
+                                   </div>
+                                   <div class="col-sm-6">
+                                       <label class="control-label" id="description" >{{elementSelected.description}}</label>
+
+
+                                   </div>
+                               </div>
 
 
                            </div>
 
                            <div ng-switch-when="commandInstance_commandManagement">
+
+                               <div class="panel-heading">
+                                   <span class="glyphicon glyphicon-wrench" aria-hidden="true"></span> {{elementSelected.elementName}} Properties
+                               </div>
 
                                <div class="form-group">
 
@@ -547,6 +511,10 @@
 
                            <div ng-switch-when="appGroup">
 
+                               <div class="panel-heading">
+                                   <span class="glyphicon glyphicon-wrench" aria-hidden="true"></span> {{elementSelected.elementName}} Properties
+                               </div>
+
                                <div ng-show="getPropertiesErrorMsg">
                                    {{getPropertiesErrorMsg}}
                                </div>
@@ -589,6 +557,10 @@
                            </div>
 
                            <div ng-switch-when="app">
+
+                               <div class="panel-heading">
+                                   <span class="glyphicon glyphicon-wrench" aria-hidden="true"></span> {{elementSelected.elementName}} Properties
+                               </div>
 
                                <div ng-show="getPropertiesErrorMsg">
                                    {{getPropertiesErrorMsg}}
@@ -633,6 +605,10 @@
 
                            <div ng-switch-when="readZone">
 
+                               <div class="panel-heading">
+                                   <span class="glyphicon glyphicon-wrench" aria-hidden="true"></span> {{elementSelected.elementName}} Properties
+                               </div>
+
                                <div ng-show="getPropertiesErrorMsg">
                                    {{getPropertiesErrorMsg}}
                                </div>
@@ -672,6 +648,10 @@
                                    <input class="btn btn-primary" ng-hide="getPropertiesErrorMsg" ng-click="openSaveReadzonePropertiesDialog()" ng-disabled="form.$invalid" type="submit" value="Save" />
 
                                </form>
+                           </div>
+
+                           <div ng-switch-when="">
+                               Nothing
                            </div>
 
                        </div>
