@@ -33,6 +33,7 @@ app.service('CommonService', function($http){
         var elementValue = xmlObject.getElementsByTagName(tagName)[0].childNodes[0].nodeValue;
         return elementValue;
 
-    }
+    };
+
 
 });

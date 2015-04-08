@@ -604,6 +604,9 @@ var module = angular.module('rifidiApp')
                                 //refresh tree view
                                 TreeViewPainting.paintTreeView();
 
+                                //crearl element selection
+                                $scope.elementTree.currentNode = "";
+                                $scope.elementSelected = null;
 
                             } else {
 
