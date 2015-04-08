@@ -12,7 +12,7 @@
  */
 var module = angular.module('rifidiApp')
   .controller('MenuController', function ($rootScope, $scope, $http, $location, ngDialog, TreeViewPainting, commonVariableService,
-                                          ServerService) {
+                                          ServerService, AppService, CommonService) {
 
         var getSuccessMessage = function () {
             return commonVariableService.getSuccessMessage();
@@ -635,7 +635,170 @@ var module = angular.module('rifidiApp')
                     // or server returns response with an error status.
                 });
 
-        }
+        };
+
+        var openRestartAppsDialog = function(host, groupName) {
+
+            ngDialog.openConfirm({template: 'restartAppsDialogTmpl.html',
+
+                scope: $scope, //Pass the scope object if you need to access in the template
+
+                showClose: false,
+
+                closeByEscape: true,
+
+                closeByDocument: false
+
+            }).then(
+
+                function(value) {
+
+                    //confirm operation
+                    if (value == 'Restart'){
+                        console.log("to restart");
+
+                        //call start app operation
+                        restartAppsIfRunning(host, groupName);
+                    }
+
+                },
+
+                function(value) {
+
+                    //Cancel or do nothing
+                    console.log("cancel");
+
+                }
+
+            );
+
+        };
+
+        var restartAppsIfRunning = function(host, groupName){
+
+            console.log("restartAppsIfRunning");
+            console.log("restartAppsIfRunning.groupName");
+            console.log(groupName);
+
+            //Get the applications belonging to this group
+
+            AppService.callAppListService(host)
+                .success(function (data, status, headers, config) {
+
+                    console.log("restartAppsIfRunning. Success calling API for app list");
+
+                    var apps = AppService.getAppsFromReceivedData(data, groupName);
+
+                    //Restart the applications given by apps list
+
+                    //Iterate the applications and restart if state is STARTED
+                    apps.forEach( function (app) {
+
+                      //  if (app.status == 'STARTED') {
+
+                            console.log("restartAppsIfRunning. Going to stop app:");
+                            console.log(app.number);
+
+                            //Call the service to stop this app
+                            AppService.callStopAppService(host, app.number)
+                                .success(function (data, status, headers, config) {
+
+                                    console.log("restartAppsIfRunning. Success calling stop app service");
+                                    console.log("restartAppsIfRunning.status:");
+                                    console.log(status);
+                                    console.log("restartAppsIfRunning.headers:");
+                                    console.log(headers);
+                                    console.log("restartAppsIfRunning.config:");
+                                    console.log(config);
+
+                                    var appIdReturned = AppService.extractAppIdFromStopAppUrl(config.url);
+                                    console.log("callStopAppService.appIdReturned:");
+                                    console.log(appIdReturned);
+
+                                    //decode the response to see if success
+                                    var respMessage = CommonService.getElementValue(data, "message");
+
+                                    if ( respMessage == 'Success' ){
+
+                                        //Call the service to start app
+                                        console.log("restartAppsIfRunning. Success stopping app. Going to start it");
+
+                                        //Call the service to start this app
+                                        AppService.callStartAppService(host, appIdReturned)
+                                            .success(function (data, status, headers, config) {
+
+                                                console.log("restartAppsIfRunning. Success calling start app service");
+
+                                                //decode the response to see if success
+                                                var respMessage = CommonService.getElementValue(data, "message");
+
+                                                if ( respMessage == 'Success' ){
+
+                                                    console.log("restartAppsIfRunning. Success stopping and restaring app");
+                                                    //Add message to success mesagges area
+                                                    $rootScope.operationSuccessMsgs.push('Success restarting app with id: ' + appIdReturned);
+
+                                                } else {
+
+                                                    //Fail stopping app
+                                                    console.log("restartAppsIfRunning. Fail starting app with id: " + appIdReturned);
+                                                    //Display modal dialog with error
+                                                    var description = CommonService.getElementValue(data, "description");
+                                                    showErrorDialog('Error starting app with id ' + appIdReturned + ': ' + description);
+
+                                                }
+
+
+                                            })
+                                            .error(function (data, status, headers, config) {
+
+                                                console.log("restartAppsIfRunning. Error starting app with id: " + appIdReturned);
+                                                //Display modal dialog with error
+                                                var description = CommonService.getElementValue(data, "description");
+                                                showErrorDialog('Error starting app with id ' + appIdReturned + ': ' + description);
+
+                                            });
+
+
+
+
+                                    } else {
+
+                                        //Fail stopping app
+                                        console.log("restartAppsIfRunning. Fail stopping app with id: " + appIdReturned);
+
+                                        //Display modal dialog with error
+                                        var description = CommonService.getElementValue(data, "description");
+                                        showErrorDialog('Error stopping app with id ' + appIdReturned + ': ' + description);
+
+                                    }
+
+
+                                })
+                                .error(function (data, status, headers, config) {
+
+                                    console.log("restartAppsIfRunning: Error stopping app");
+                                    showErrorDialog('Error stopping app');
+
+                                });
+/*
+                        } else {
+
+                            console.log("restartAppsIfRunning. NOT going to stop app:");
+                            console.log(app.number);
+                        }
+*/
+                    });
+
+
+                })
+                .error(function (data, status, headers, config) {
+
+                    console.log("restartAppsIfRunning: Error reading apps to restart");
+
+                });
+
+        };
 
 
 
@@ -2859,7 +3022,12 @@ var module = angular.module('rifidiApp')
 
         }
 
-        $scope.openSaveAppGroupPropertiesDialog = function(){
+        $scope.openSaveAppGroupPropertiesDialog = function(currentNode){
+
+            //console.log("openSaveAppGroupPropertiesDialog.currentNode:");
+            //console.log(currentNode);
+
+            var groupName = angular.copy(currentNode.groupName);
 
             ngDialog.openConfirm({template: 'saveAppGroupPropertiesDialogTmpl.html',
 
@@ -2880,7 +3048,7 @@ var module = angular.module('rifidiApp')
                         console.log("to save");
 
                         //call save sensor properties operation
-                        saveAppGroupProperties($scope.appGroupProperties);
+                        saveAppGroupProperties($scope.appGroupProperties, groupName);
 
                     }
 
@@ -3064,12 +3232,14 @@ var module = angular.module('rifidiApp')
 
         }
 
-        var saveAppGroupProperties = function(appGroupProperties){
+        var saveAppGroupProperties = function(appGroupProperties, groupName){
 
             // console.log("commandElement:");
             // console.log(commandElement);
-            console.log("appGroupProperties:");
+            console.log("saveAppGroupProperties.appGroupProperties:");
             console.log(appGroupProperties);
+            console.log("saveAppGroupProperties.groupName:");
+            console.log(groupName);
 
             //call update command properties
 
@@ -3118,6 +3288,11 @@ var module = angular.module('rifidiApp')
 
                         $rootScope.operationSuccessMsg = "Success setting properties for app group";
                         TreeViewPainting.paintTreeView();
+
+                        //Show a modal dialog to confirm if user wants to restart apps in order for properties to take effect
+                        openRestartAppsDialog(appGroupProperties.host, groupName);
+
+
 
                     } else {
                         var setAppGroupPropertiesDescription = xmlSetAppGroupPropertiesResponse.getElementsByTagName("description")[0].childNodes[0].nodeValue;
@@ -4216,7 +4391,6 @@ module.service('TreeViewPainting', function($http, $rootScope, ServerService) {
                                                          "appName": appName,
                                                          "number": number.nodeValue,
                                                          "status": status.nodeValue,
-                                                         "iconClass": "app",
                                                          "elementType": "app",
                                                          "contextMenuId": "contextMenuApp",
                                                          "host": appGroupElement.host,
@@ -4229,10 +4403,12 @@ module.service('TreeViewPainting', function($http, $rootScope, ServerService) {
                                                      if ( appElement.status == 'STARTED' ){
 
                                                          appElement.allowStopApp = true;
+                                                         appElement.iconClass = 'app-started';
 
                                                      } else if ( appElement.status == 'STOPPED' ) {
 
                                                          appElement.allowStartApp = true;
+                                                         appElement.iconClass = 'app-stopped';
 
                                                      }
 
@@ -4350,7 +4526,9 @@ module.service('TreeViewPainting', function($http, $rootScope, ServerService) {
 
                              }).
                              error(function (data, status, headers, config) {
-                                 console.log("error reading apps");
+                                 console.log("paintTreeView. Error reading apps");
+                                 console.log("paintTreeView. data:");
+                                 console.log(data);
 
 
                                  // called asynchronously if an error occurs
