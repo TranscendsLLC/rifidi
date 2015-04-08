@@ -583,7 +583,7 @@
 
                                    </div>
 
-                                   <input class="btn btn-primary" ng-hide="getPropertiesErrorMsg" ng-click="openSaveAppGroupPropertiesDialog()" ng-disabled="form.$invalid" type="submit" value="Save" />
+                                   <input class="btn btn-primary" ng-hide="getPropertiesErrorMsg" ng-click="openSaveAppGroupPropertiesDialog(elementTree.currentNode)" ng-disabled="form.$invalid" type="submit" value="Save" />
 
                                </form>
                            </div>
@@ -749,6 +749,8 @@
 
         <!-- Services -->
         <script src="scripts/services/serverService.js"></script>
+        <script src="scripts/services/appService.js"></script>
+        <script src="scripts/services/commonService.js"></script>
 
 
 

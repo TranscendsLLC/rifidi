@@ -257,3 +257,15 @@ div[data-tree-model] li .folder {
     background-image: url("/images/folder.png");
     background-repeat: no-repeat;
 }
+
+div[data-tree-model] li .app-started {
+    padding: 1px 10px;
+    background-image: url("/images/app-started.jpg");
+    background-repeat: no-repeat;
+}
+
+div[data-tree-model] li .app-stopped {
+    padding: 1px 10px;
+    background-image: url("/images/app-stopped.png");
+    background-repeat: no-repeat;
+}
