@@ -677,6 +677,43 @@ var module = angular.module('rifidiApp')
 
         };
 
+        var openRestartAppDialog = function(host, app) {
+
+            ngDialog.openConfirm({template: 'restartAppDialogTmpl.html',
+
+                scope: $scope, //Pass the scope object if you need to access in the template
+
+                showClose: false,
+
+                closeByEscape: true,
+
+                closeByDocument: false
+
+            }).then(
+
+                function(value) {
+
+                    //confirm operation
+                    if (value == 'Restart'){
+                        console.log("to restart");
+
+                        //call start app operation
+                        restartAppIfRunning(host, app);
+                    }
+
+                },
+
+                function(value) {
+
+                    //Cancel or do nothing
+                    console.log("cancel");
+
+                }
+
+            );
+
+        };
+
         var restartAppsIfRunning = function(host, groupName){
 
             console.log("restartAppsIfRunning");
@@ -697,7 +734,7 @@ var module = angular.module('rifidiApp')
                     //Iterate the applications and restart if state is STARTED
                     apps.forEach( function (app) {
 
-                      //  if (app.status == 'STARTED') {
+                        if (app.status == 'STARTED') {
 
                             console.log("restartAppsIfRunning. Going to stop app:");
                             console.log(app.number);
@@ -737,7 +774,7 @@ var module = angular.module('rifidiApp')
 
                                                 if ( respMessage == 'Success' ){
 
-                                                    console.log("restartAppsIfRunning. Success stopping and restaring app");
+                                                    console.log("restartAppsIfRunning. Success stopping and restarting app");
                                                     //Add message to success mesagges area
                                                     $rootScope.operationSuccessMsgs.push('Success restarting app with id: ' + appIdReturned);
 
@@ -784,13 +821,13 @@ var module = angular.module('rifidiApp')
                                     showErrorDialog('Error stopping app');
 
                                 });
-/*
+
                         } else {
 
                             console.log("restartAppsIfRunning. NOT going to stop app:");
                             console.log(app.number);
                         }
-*/
+
                     });
 
 
@@ -803,6 +840,94 @@ var module = angular.module('rifidiApp')
 
         };
 
+        var restartAppIfRunning = function(host, app){
+
+            console.log("restartAppIfRunning");
+            console.log("restartAppIfRunning.app");
+            console.log(app);
+
+
+            if (app.status == 'STARTED') {
+
+                console.log("restartAppIfRunning. Going to stop app:");
+                console.log("app.number");
+                console.log(app.number);
+
+                //Call the service to stop this app
+                AppService.callStopAppService(host, app.number)
+                    .success(function (data, status, headers, config) {
+
+                        //decode the response to see if success
+                        var respMessage = CommonService.getElementValue(data, "message");
+
+                        if ( respMessage == 'Success' ){
+
+                            //Call the service to start app
+                            console.log("restartAppIfRunning. Success stopping app. Going to start it");
+
+                            //Call the service to start this app
+                            AppService.callStartAppService(host, app.number)
+                                .success(function (data, status, headers, config) {
+
+                                    console.log("restartAppIfRunning. Success calling start app service");
+
+                                    //decode the response to see if success
+                                    var respMessage = CommonService.getElementValue(data, "message");
+
+                                    if ( respMessage == 'Success' ){
+
+                                        console.log("restartAppIfRunning. Success stopping and restarting app");
+                                        //Add message to success mesagges area
+                                        $rootScope.operationSuccessMsgs.push('Success restarting app');
+
+                                    } else {
+
+                                        //Fail stopping app
+                                        console.log('restartAppIfRunning. Fail starting app');
+                                        //Display modal dialog with error
+                                        var description = CommonService.getElementValue(data, "description");
+                                        showErrorDialog('Error starting app: ' + description);
+
+                                    }
+
+
+                                })
+                                .error(function (data, status, headers, config) {
+
+                                    console.log('restartAppIfRunning. Error starting app');
+                                    //Display modal dialog with error
+                                    var description = CommonService.getElementValue(data, "description");
+                                    showErrorDialog('Error starting app: ' + description);
+
+                                });
+
+                        } else {
+
+                            //Fail stopping app
+                            console.log('restartAppIfRunning. Fail stopping app');
+
+                            //Display modal dialog with error
+                            var description = CommonService.getElementValue(data, "description");
+                            showErrorDialog('Error stopping app: ' + description);
+
+                        }
+
+
+                    })
+                    .error(function (data, status, headers, config) {
+
+                        console.log("restartAppIfRunning: Error stopping app");
+                        showErrorDialog('Error stopping app');
+
+                    });
+
+           } else {
+
+             console.log("restartAppIfRunning. NOT going to stop app");
+
+           }
+
+        };
 
 
         $scope.openStartAppDialog = function() {
@@ -2907,7 +3032,10 @@ var module = angular.module('rifidiApp')
 
         };
 
-        $scope.openSaveReadzonePropertiesDialog = function(){
+        $scope.openSaveReadzonePropertiesDialog = function(currentNode, readzoneProperties){
+
+            var readzoneNode = angular.copy(currentNode);
+            var readzoneProperties = angular.copy(readzoneProperties);
 
             ngDialog.openConfirm({template: 'saveReadzonePropertiesDialogTmpl.html',
 
@@ -2928,7 +3056,7 @@ var module = angular.module('rifidiApp')
                         console.log("to save");
 
                         //call save sensor properties operation
-                        saveReadzoneProperties($scope.readzoneProperties);
+                        saveReadzoneProperties(readzoneNode, readzoneProperties);
 
                     }
 
@@ -3025,12 +3153,13 @@ var module = angular.module('rifidiApp')
 
         }
 
-        $scope.openSaveAppGroupPropertiesDialog = function(currentNode){
+        $scope.openSaveAppGroupPropertiesDialog = function(currentNode, appGroupProperties){
 
             //console.log("openSaveAppGroupPropertiesDialog.currentNode:");
             //console.log(currentNode);
 
             var groupName = angular.copy(currentNode.groupName);
+            var appGroupProperties = angular.copy(appGroupProperties);
 
             ngDialog.openConfirm({template: 'saveAppGroupPropertiesDialogTmpl.html',
 
@@ -3051,7 +3180,7 @@ var module = angular.module('rifidiApp')
                         console.log("to save");
 
                         //call save sensor properties operation
-                        saveAppGroupProperties($scope.appGroupProperties, groupName);
+                        saveAppGroupProperties(appGroupProperties, groupName);
 
                     }
 
@@ -3068,7 +3197,10 @@ var module = angular.module('rifidiApp')
 
         };
 
-        $scope.openSaveAppPropertiesDialog = function(){
+        $scope.openSaveAppPropertiesDialog = function(appProperties, app){
+
+            var appProperties = angular.copy(appProperties);
+            var app = angular.copy(app);
 
             ngDialog.openConfirm({template: 'saveAppPropertiesDialogTmpl.html',
 
@@ -3089,7 +3221,7 @@ var module = angular.module('rifidiApp')
                         console.log("to save");
 
                         //call save sensor properties operation
-                        saveAppProperties($scope.appProperties);
+                        saveAppProperties(appProperties, app);
 
                     }
 
@@ -3321,10 +3453,13 @@ var module = angular.module('rifidiApp')
 
         }
 
-        var saveAppProperties = function(appProperties){
+        var saveAppProperties = function(appProperties, app){
 
+            console.log("saveAppProperties:");
             console.log("appProperties:");
             console.log(appProperties);
+            console.log("app:");
+            console.log(app);
 
             //call update app properties
 
@@ -3374,6 +3509,12 @@ var module = angular.module('rifidiApp')
                         $rootScope.operationSuccessMsg = "Success setting properties for app";
                         TreeViewPainting.paintTreeView();
 
+                        //Show a modal dialog to confirm if user wants to restart app in order for properties to take effect
+                        //Only in case app is running
+                        if ( app.status == 'STARTED') {
+                            openRestartAppDialog(appProperties.host, app);
+                        }
+
                     } else {
                         var setAppPropertiesDescription = xmlSetAppPropertiesResponse.getElementsByTagName("description")[0].childNodes[0].nodeValue;
                         $scope.setAppPropertiesResponseStatus.description = setAppPropertiesDescription;
@@ -3399,14 +3540,16 @@ var module = angular.module('rifidiApp')
         };
 
 
-        var saveReadzoneProperties = function(readzoneProperties){
+        var saveReadzoneProperties = function(readzoneNode, readzoneProperties){
 
-            console.log("readzoneProperties:");
+            console.log("saveReadzoneProperties:");
+            console.log("saveReadzoneProperties.readzoneProperties:");
             console.log(readzoneProperties);
 
             var host = readzoneProperties.host;
             var appId = readzoneProperties.appId;
             var readzone = readzoneProperties.readzone;
+            var groupName = readzoneNode.groupName;
 
             //call set readzone properties
 
@@ -3432,7 +3575,7 @@ var module = angular.module('rifidiApp')
             console.log("strReadzoneProperties");
             console.log(strReadzoneProperties);
 
-            $scope.setReadzonePropertiesResponseStatus = {};
+            //$scope.setReadzonePropertiesResponseStatus = {};
 
             $http.get(host + '/setReadZoneProperties/' + appId + '/' + readzone + '/' + encodeURIComponent(strReadzoneProperties))
                 .success(function(data, status, headers, config) {
@@ -3454,7 +3597,7 @@ var module = angular.module('rifidiApp')
                     //get the xml response and extract the value
                     var message = xmlSetReadzonePropertiesResponse.getElementsByTagName("message")[0].childNodes[0].nodeValue;
 
-                    $scope.setReadzonePropertiesResponseStatus.message = message;
+                    //$scope.setReadzonePropertiesResponseStatus.message = message;
 
                     if (message == 'Success') {
                         console.log("success setting properties for readzone");
@@ -3462,13 +3605,18 @@ var module = angular.module('rifidiApp')
                         $rootScope.operationSuccessMsg = "Success setting properties for readzone";
                         TreeViewPainting.paintTreeView();
 
+                        //Show a modal dialog to confirm if user wants to restart apps in order for properties to take effect
+                        openRestartAppsDialog(host, groupName);
+
                     } else {
+
                         var setReadzonePropertiesDescription = xmlSetReadzonePropertiesResponse.getElementsByTagName("description")[0].childNodes[0].nodeValue;
                         $scope.setReadzonePropertiesResponseStatus.description = setReadzonePropertiesDescription;
                         console.log("fail setting readzone properties");
                         console.log(setReadzonePropertiesDescription);
 
                         showErrorDialog('Error setting properties for readzone: ' + setReadzonePropertiesDescription);
+
                     }
 
 
@@ -3617,13 +3765,13 @@ var module = angular.module('rifidiApp')
 
 
 
-module.service('TreeViewPainting', function($http, $rootScope, ServerService) {
+module.service('TreeViewPainting', function($http, $rootScope, ServerService, CommonService) {
        var service = {
 
          paintTreeView: function () {
 
-                //Paint tree view logic
-                console.log("paintTreeView function called");
+            //Paint tree view logic
+            console.log("paintTreeView function called");
 
 
              ServerService.callServerListService().
@@ -3658,6 +3806,10 @@ module.service('TreeViewPainting', function($http, $rootScope, ServerService) {
                          server.allowSaveServerConfig = false;
 
                          partialElementList[0].children.push(server);
+
+                         //After server is added, order the server list
+                         partialElementList[0].children.sort( CommonService.compareElements );
+
 
                          //for each server make an asynchronous call to test whether ping operation returns success
                          $http.get(server.restProtocol + "://" + server.ipAddress + ":" + server.restPort + '/ping')
@@ -3806,6 +3958,9 @@ module.service('TreeViewPainting', function($http, $rootScope, ServerService) {
                                              sensorElement.host = server.host;
                                              sensorElement.sensorManagementElement = server.children[0];
                                              server.children[0].children.push(sensorElement);
+
+                                             //After inserted the sensor element, order the list
+                                             server.children[0].children.sort( CommonService.compareElements );
                                          }
                                      });
 
@@ -3910,6 +4065,9 @@ module.service('TreeViewPainting', function($http, $rootScope, ServerService) {
                                                      };
 
                                                      sessionElement.children.push(commandElement);
+
+                                                     //Order the command element list after the element is added
+                                                     sessionElement.children.sort( CommonService.compareElements );
 
                                                  }
 
@@ -4063,6 +4221,10 @@ module.service('TreeViewPainting', function($http, $rootScope, ServerService) {
 
                                              server.children[1].children.push(readerTypeElement);
 
+                                             //Order the reader type list after the element is added
+                                             server.children[1].children.sort( CommonService.compareElements );
+
+
                                          }
 
                                      });
@@ -4129,6 +4291,9 @@ module.service('TreeViewPainting', function($http, $rootScope, ServerService) {
                                                              }
 
                                                              readerTypeElement.children.push(commandTypeElement);
+
+                                                             //Order the command type list after the element is added
+                                                             readerTypeElement.children.sort( CommonService.compareElements );
 
                                                          }
 
@@ -4197,6 +4362,9 @@ module.service('TreeViewPainting', function($http, $rootScope, ServerService) {
                                                                          };
 
                                                                          factoryElement.children.push(commandElement);
+
+                                                                         //Order the command element list after the element is added
+                                                                         factoryElement.children.sort( CommonService.compareElements );
 
                                                                      }
 
@@ -4373,6 +4541,9 @@ module.service('TreeViewPainting', function($http, $rootScope, ServerService) {
 
                                                  server.children[2].children[0].children.push(angular.copy(appGroupElement));
 
+                                                 //Order the app group list after the element is added
+                                                 server.children[2].children[0].children.sort( CommonService.compareElements );
+
 
                                              }
 
@@ -4416,6 +4587,9 @@ module.service('TreeViewPainting', function($http, $rootScope, ServerService) {
                                                      }
 
                                                      appGroupElement.children[0].children.push(appElement);
+
+                                                     //Order the app list after the element is added
+                                                     appGroupElement.children[0].children.sort( CommonService.compareElements );
 
                                                      //Add the application number to this application group in order to later add the associated read zones
                                                      if (appGroupElement.readzoneAppId == "") {
@@ -4498,11 +4672,15 @@ module.service('TreeViewPainting', function($http, $rootScope, ServerService) {
                                                                      "appId": appGroupElement.readzoneAppId,
                                                                      "contextMenuId": "contextMenuReadZone",
                                                                      "host": appGroupElement.host,
+                                                                     "groupName": appGroupElement.groupName,
                                                                      "elementType": "readZone",
                                                                      "children": []
                                                                  };
 
                                                                  appGroupElement.children[1].children.push(angular.copy(readzoneElement));
+
+                                                                 //Order the readzone list after the element is added
+                                                                 appGroupElement.children[1].children.sort( CommonService.compareElements );
                                                              }
 
                                                          }

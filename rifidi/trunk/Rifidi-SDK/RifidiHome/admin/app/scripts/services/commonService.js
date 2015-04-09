@@ -35,5 +35,34 @@ app.service('CommonService', function($http){
 
     };
 
+    // Compares two servers elements to be ordered
+    this.compareServersElements = function(a, b){
+
+        if (a.displayName < b.displayName ){
+            return -1;
+        }
+        if (a.displayName > b.displayName ){
+            return 1;
+        }
+        return 0;
+    };
+
+    // Compares two objects to be ordered.
+    // The object must have a 'elementName' property
+    this.compareElements = function(a, b){
+
+        if (a.elementName < b.elementName ){
+            return -1;
+        }
+        if (a.elementName > b.elementName ){
+            return 1;
+        }
+        return 0;
+    };
+
+
+
+
+
 
 });

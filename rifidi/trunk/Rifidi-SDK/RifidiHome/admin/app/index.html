@@ -551,7 +551,7 @@
 
                                    </div>
 
-                                   <input class="btn btn-primary" ng-hide="getPropertiesErrorMsg" ng-click="openSaveAppGroupPropertiesDialog(elementTree.currentNode)" ng-disabled="form.$invalid" type="submit" value="Save" />
+                                   <input class="btn btn-primary" ng-hide="getPropertiesErrorMsg" ng-click="openSaveAppGroupPropertiesDialog(elementTree.currentNode, appGroupProperties)" ng-disabled="form.$invalid" type="submit" value="Save" />
 
                                </form>
                            </div>
@@ -598,7 +598,7 @@
 
                                    </div>
 
-                                   <input class="btn btn-primary" ng-hide="getPropertiesErrorMsg" ng-click="openSaveAppPropertiesDialog()" ng-disabled="form.$invalid" type="submit" value="Save" />
+                                   <input class="btn btn-primary" ng-hide="getPropertiesErrorMsg" ng-click="openSaveAppPropertiesDialog(appProperties, elementSelected)" ng-disabled="form.$invalid" type="submit" value="Save" />
 
                                </form>
                            </div>
@@ -645,7 +645,7 @@
 
                                    </div>
 
-                                   <input class="btn btn-primary" ng-hide="getPropertiesErrorMsg" ng-click="openSaveReadzonePropertiesDialog()" ng-disabled="form.$invalid" type="submit" value="Save" />
+                                   <input class="btn btn-primary" ng-hide="getPropertiesErrorMsg" ng-click="openSaveReadzonePropertiesDialog(elementTree.currentNode, readzoneProperties)" ng-disabled="form.$invalid" type="submit" value="Save" />
 
                                </form>
                            </div>
