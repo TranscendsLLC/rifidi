@@ -8,7 +8,8 @@
  * Controller of the rifidiApp
  */
 angular.module('rifidiApp')
-  .controller('SensorWizardCtrl', function ($routeParams, $rootScope, $scope, $http, $location, ngDialog, TreeViewPainting, commonVariableService) {
+  .controller('SensorWizardCtrl', function ($routeParams, $rootScope, $scope, $http, $location, ngDialog, TreeViewPainting,
+                                            commonVariableService) {
     $scope.awesomeThings = [
       'HTML5 Boilerplate',
       'AngularJS',
@@ -1105,8 +1106,8 @@ angular.module('rifidiApp')
                           console.log("success starting session");
                           $rootScope.operationSuccessMsgs.push("Success starting session");
 
-
-                          //TreeViewPainting.paintTreeView();
+                          //Refresh menu
+                          TreeViewPainting.paintTreeView();
 
                         } else {
 
