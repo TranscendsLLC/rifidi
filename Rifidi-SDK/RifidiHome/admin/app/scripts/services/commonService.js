@@ -60,6 +60,37 @@ app.service('CommonService', function($http){
         return 0;
     };
 
+    this.setReadzonePropertiesHelpText = function(properties){
+
+        //Iterate the properties to put the help text
+        properties.forEach(function (property) {
+
+            if (property.key == 'readerID') {
+
+                property.helpText = 'The Service ID of the reader defined in the rifidi.xml';
+
+            } else if (property.key == 'antennas') {
+
+                property.helpText = '(optional) Where you list the antennas. Blank means all antennas';
+
+            } else if (property.key == 'tagPattern') {
+
+                property.helpText = '(optional) Where you can filter tags based on a regular expression';
+
+            } else if (property.key == 'matchPattern') {
+
+                property.helpText = '(optional) Where you either match or exclude the filter pattern. '
+                + 'If set to true, only use tags that match the tagPattern. If set to false, '
+                + 'filter out tags that match the tagPattern';
+
+            }
+
+        });
+
+        return properties;
+
+    };
+
 
 
 

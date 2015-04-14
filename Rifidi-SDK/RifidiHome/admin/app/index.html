@@ -307,10 +307,6 @@
 
                            <div ng-switch-when="sensor">
 
-                               <div class="panel-heading">
-                                   <span class="glyphicon glyphicon-wrench" aria-hidden="true"></span> {{elementSelected.elementName}} Properties
-                               </div>
-
                                <form class="form-horizontal" role="form" name="form" novalidate>
 
                                <tabset>
@@ -363,10 +359,6 @@
                            </div>
 
                            <div ng-switch-when="commandInstance_sensor">
-
-                               <div class="panel-heading">
-                                   <span class="glyphicon glyphicon-wrench" aria-hidden="true"></span> {{elementSelected.elementName}} Properties
-                               </div>
 
                                <div class="form-group">
 
@@ -422,10 +414,6 @@
 
                            <div ng-switch-when="commandType">
 
-                               <div class="panel-heading">
-                                   <span class="glyphicon glyphicon-wrench" aria-hidden="true"></span> {{elementSelected.elementName}} Properties
-                               </div>
-
                                <div class="form-group">
                                    <div class="col-sm-4">
                                        <label class="control-label" for="readerType">Compatible Reader Type</label>
@@ -452,10 +440,6 @@
                            </div>
 
                            <div ng-switch-when="commandInstance_commandManagement">
-
-                               <div class="panel-heading">
-                                   <span class="glyphicon glyphicon-wrench" aria-hidden="true"></span> {{elementSelected.elementName}} Properties
-                               </div>
 
                                <div class="form-group">
 
@@ -511,10 +495,6 @@
 
                            <div ng-switch-when="appGroup">
 
-                               <div class="panel-heading">
-                                   <span class="glyphicon glyphicon-wrench" aria-hidden="true"></span> {{elementSelected.elementName}} Properties
-                               </div>
-
                                <div ng-show="getPropertiesErrorMsg">
                                    {{getPropertiesErrorMsg}}
                                </div>
@@ -557,10 +537,6 @@
                            </div>
 
                            <div ng-switch-when="app">
-
-                               <div class="panel-heading">
-                                   <span class="glyphicon glyphicon-wrench" aria-hidden="true"></span> {{elementSelected.elementName}} Properties
-                               </div>
 
                                <div ng-show="getPropertiesErrorMsg">
                                    {{getPropertiesErrorMsg}}
@@ -605,10 +581,6 @@
 
                            <div ng-switch-when="readZone">
 
-                               <div class="panel-heading">
-                                   <span class="glyphicon glyphicon-wrench" aria-hidden="true"></span> {{elementSelected.elementName}} Properties
-                               </div>
-
                                <div ng-show="getPropertiesErrorMsg">
                                    {{getPropertiesErrorMsg}}
                                </div>
@@ -617,17 +589,49 @@
 
                                    <div class="form-group" ng-repeat="property in readzoneProperties.properties | orderBy:['key']">
 
-                                       <div class="col-sm-6">
+                                       <div class="col-sm-3">
                                            <label class="control-label" for="{{property.key}}">{{property.key}}</label>
                                        </div>
 
 
-                                       <div class="col-sm-6" >
+                                       <div class="col-sm-7">
 
-                                           <input aria-describedby="help{{property.key}}" id="{{property.key}}"
-                                                  name="{{property.key}}" type="text" ng-value="property.value" ng-model="property.value"
-                                                  class="form-control"
-                                                   />
+                                           <div ng-hide="property.key == 'readerID'">
+
+                                               <input aria-describedby="help{{property.key}}" id="{{property.key}}"
+                                                      name="{{property.key}}" type="text" ng-value="property.value" ng-model="property.value"
+                                                      class="form-control"
+                                                       />
+
+                                           </div>
+
+                                           <div ng-show="property.key == 'readerID'">
+
+                                               <div class="radio">
+                                                   <label>By single reader</label>
+                                               </div>
+
+                                               <select id="{{property.key}}"
+                                                       name="{{property.key}}"
+                                                       ng-model="property.value"
+                                                       ng-required="false"
+                                                       class="form-control"
+                                                       aria-describedby="help{{property.key}}"
+                                                       ng-options="value.id as value.id for value in sensors | orderBy:'id'">
+
+                                                   <option>--</option>
+                                               </select>
+
+                                               <div class="radio">
+                                                   <label>By regular expression</label>
+                                                   <input aria-describedby="help{{property.key}}"
+                                                          name="{{property.key}}" type="text" ng-value="property.value" ng-model="property.value"
+                                                          class="form-control"
+                                                           />
+
+                                               </div>
+
+                                           </div>
 
                                            <div ng-show="form.$submitted || form.property.key.$touched" >
 
@@ -637,6 +641,8 @@
 
                                                </div>
                                            </div>
+
+                                           <span id="help{{property.key}}" class="help-block">{{property.helpText}}</span>
 
                                        </div>
 
@@ -731,6 +737,7 @@
         <script src="scripts/services/serverService.js"></script>
         <script src="scripts/services/appService.js"></script>
         <script src="scripts/services/commonService.js"></script>
+        <script src="scripts/services/sensorService.js"></script>
 
 
 

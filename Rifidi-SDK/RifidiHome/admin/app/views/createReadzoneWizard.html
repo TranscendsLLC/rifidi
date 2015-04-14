@@ -10,11 +10,11 @@
 
             <div class="form-group">
 
-                <div class="col-sm-6">
+                <div class="col-sm-3">
                     <label class="control-label" for="readzone">Readzone</label>
                 </div>
 
-                <div class="col-sm-6" >
+                <div class="col-sm-7" >
 
                     <input aria-describedby="helpReadzone" id="readZone"
                            name="readZone" type="text" ng-value="readzoneProperties.readzone" ng-model="readzoneProperties.readzone"
@@ -25,10 +25,12 @@
 
                         <div ng-show="form.readZone.$error.required">
 
-                            readZone is required.
+                            readzone name is required. Can not contain spaces.
 
                         </div>
                     </div>
+
+                    <span id="helpReadzone" class="help-block">The readzone is required. Can not contain spaces.</span>
 
                 </div>
 
@@ -39,17 +41,49 @@
 
             <div class="form-group" ng-repeat="property in readzoneProperties.properties | orderBy:['key']">
 
-                <div class="col-sm-6">
+                <div class="col-sm-3">
                     <label class="control-label" for="{{property.key}}">{{property.key}}</label>
                 </div>
 
 
-                <div class="col-sm-6" >
+                <div class="col-sm-7" >
 
-                    <input aria-describedby="help{{property.key}}" id="{{property.key}}"
-                           name="{{property.key}}" type="text" ng-value="property.value" ng-model="property.value"
-                           class="form-control"
-                            />
+                    <div ng-hide="property.key == 'readerID'">
+
+                        <input aria-describedby="help{{property.key}}"
+                               name="{{property.key}}" type="text" ng-value="property.value" ng-model="property.value"
+                               class="form-control"
+                                />
+
+                    </div>
+
+                    <div ng-show="property.key == 'readerID'">
+
+                        <div class="radio">
+                            <label>By single reader</label>
+                        </div>
+
+                        <select id="{{property.key}}"
+                                name="{{property.key}}"
+                                ng-model="property.value"
+                                ng-required="false"
+                                class="form-control"
+                                aria-describedby="help{{property.key}}"
+                                ng-options="value.id as value.id for value in sensors | orderBy:'id'">
+                            <option>--</option>
+                        </select>
+
+                        <div class="radio">
+                            <label>By regular expression</label>
+                            <input aria-describedby="help{{property.key}}"
+                               name="{{property.key}}" type="text" ng-value="property.value" ng-model="property.value"
+                               class="form-control"
+                                />
+
+                        </div>
+
+                    </div>
+
 
                     <div ng-show="form.$submitted || form.property.key.$touched" >
 
@@ -59,6 +93,8 @@
 
                         </div>
                     </div>
+
+                    <span id="help{{property.key}}" class="help-block">{{property.helpText}}</span>
 
                 </div>
 
