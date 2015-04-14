@@ -12,7 +12,7 @@
  */
 var module = angular.module('rifidiApp')
   .controller('MenuController', function ($rootScope, $scope, $http, $location, ngDialog, TreeViewPainting, commonVariableService,
-                                          ServerService, AppService, CommonService) {
+                                          ServerService, SensorService, AppService, CommonService) {
 
         var getSuccessMessage = function () {
             return commonVariableService.getSuccessMessage();
@@ -679,6 +679,8 @@ var module = angular.module('rifidiApp')
 
         var openRestartAppDialog = function(host, app) {
 
+            $scope.appToRestart = app;
+
             ngDialog.openConfirm({template: 'restartAppDialogTmpl.html',
 
                 scope: $scope, //Pass the scope object if you need to access in the template
@@ -776,7 +778,17 @@ var module = angular.module('rifidiApp')
 
                                                     console.log("restartAppsIfRunning. Success stopping and restarting app");
                                                     //Add message to success mesagges area
-                                                    $rootScope.operationSuccessMsgs.push('Success restarting app with id: ' + appIdReturned);
+
+                                                    //Get the app name grom apps vector, bases on received app id
+                                                    var localAppName;
+                                                    apps.forEach( function (app) {
+
+                                                        if (app.number == appIdReturned){
+                                                            localAppName = app.appName;
+                                                        }
+
+                                                    });
+                                                    $rootScope.operationSuccessMsgs.push('Success restarting app ' + localAppName);
 
                                                 } else {
 
@@ -877,8 +889,8 @@ var module = angular.module('rifidiApp')
                                     if ( respMessage == 'Success' ){
 
                                         console.log("restartAppIfRunning. Success stopping and restarting app");
-                                        //Add message to success mesagges area
-                                        $rootScope.operationSuccessMsgs.push('Success restarting app');
+                                        //Add message to success messages area
+                                        $rootScope.operationSuccessMsgs.push('Success restarting app ' + app.appName);
 
                                     } else {
 
@@ -2836,6 +2848,7 @@ var module = angular.module('rifidiApp')
                       console.log("readZone selected");
 
                       $scope.readzoneProperties = null;
+                      //$scope.sensors = [];
 
                       //get the app id
                       var appId = $scope.elementSelected.appId;
@@ -2967,6 +2980,9 @@ var module = angular.module('rifidiApp')
                                       $scope.readzoneProperties.properties.push(propertyElement);
                                   }
 
+                                  //Set the help text for readzone properties
+                                  $scope.readzoneProperties.properties = CommonService.setReadzonePropertiesHelpText( $scope.readzoneProperties.properties);
+
                               }
 
                           }).
@@ -2977,6 +2993,20 @@ var module = angular.module('rifidiApp')
                               // or server returns response with an error status.
                           });
 
+                      //load the sensors
+                      SensorService.callSensorListService(host)
+                          .success(function(data, status, headers, config) {
+
+                              console.log("success reading sensors");
+                              $scope.sensors = SensorService.getSensorsFromReceivedData(data);
+
+                          })
+                          .error(function(data, status, headers, config) {
+                              console.log("error reading sensors");
+
+                              // called asynchronously if an error occurs
+                              // or server returns response with an error status.
+                          });
 
                   }
 
@@ -4736,6 +4766,17 @@ module.service('TreeViewPainting', function($http, $rootScope, ServerService, Co
                      // called asynchronously if an error occurs
                      // or server returns response with an error status.
                  });
+
+             //Ini test
+             console.log("$rootScope.elementList: ");
+             console.log($rootScope.elementList);
+             console.log("$rootScope: ");
+             console.log($rootScope);
+             console.log("$rootScope.Scope");
+             console.log($rootScope.$Scope);
+             //$rootScope.elementList[0].children[0].status = 'CONNECTING';
+             //$rootScope.elementList[0].children[1].status = 'CONNECTING';
+             //end test
 
              }
 

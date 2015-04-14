@@ -8,7 +8,8 @@
  * Controller of the rifidiApp
  */
 angular.module('rifidiApp')
-  .controller('CreateReadzoneWizardCtrl', function ($rootScope, $scope, $http, $routeParams, $location, ngDialog, commonVariableService) {
+  .controller('CreateReadzoneWizardCtrl', function ($rootScope, $scope, $http, $routeParams, $location, ngDialog, commonVariableService
+                                                    , CommonService, SensorService) {
 
 
       var getSuccessMessage = function () {
@@ -48,34 +49,58 @@ angular.module('rifidiApp')
         //As readzones have four fixed properties: readerID antennas tagPattern matchPattern,
         //then create a list with those properties
 
-          var propertyElement = {
-            "key": 'readerID',
-            "value": ''
-          }
+        var propertyElement = {
+          "key": 'readerID',
+          "value": ''
+        }
 
-          $scope.readzoneProperties.properties.push(angular.copy(propertyElement));
+        $scope.readzoneProperties.properties.push(angular.copy(propertyElement));
 
-          propertyElement = {
-            "key": 'antennas',
-            "value": ''
-          }
+        propertyElement = {
+          "key": 'antennas',
+          "value": ''
+        }
 
-          $scope.readzoneProperties.properties.push(angular.copy(propertyElement));
+        $scope.readzoneProperties.properties.push(angular.copy(propertyElement));
 
-          var propertyElement = {
-            "key": 'tagPattern',
-            "value": ''
-          }
+        var propertyElement = {
+          "key": 'tagPattern',
+          "value": ''
+        }
 
-          $scope.readzoneProperties.properties.push(angular.copy(propertyElement));
+        $scope.readzoneProperties.properties.push(angular.copy(propertyElement));
 
-          var propertyElement = {
-            "key": 'matchPattern',
-            "value": ''
-          }
+        var propertyElement = {
+          "key": 'matchPattern',
+          "value": ''
+        }
 
-          $scope.readzoneProperties.properties.push(angular.copy(propertyElement));
+        $scope.readzoneProperties.properties.push(angular.copy(propertyElement));
 
+        //Set the help text for readzone properties
+        $scope.readzoneProperties.properties = CommonService.setReadzonePropertiesHelpText( $scope.readzoneProperties.properties);
+
+        //Init sensors
+        initSensors(host);
+
+
+      };
+
+      function initSensors(host){
+
+        SensorService.callSensorListService(host)
+            .success(function (data, status, headers, config) {
+
+              $scope.sensors = SensorService.getSensorsFromReceivedData(data);
+
+            })
+            . error(function (data, status, headers, config) {
+
+              console.log("error getting sensors");
+
+              showErrorDialog('Error getting sensors');
+
+            });
       };
 
 
