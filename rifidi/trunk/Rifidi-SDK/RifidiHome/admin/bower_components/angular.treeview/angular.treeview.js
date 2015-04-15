@@ -53,7 +53,8 @@
 
 				//sensor management menu
 				var menuSensorManagement = '<ul id="contextMenuSensorManagement" class="dropdown-menu">'+
-					'<li><a href ="#/sensorWizard/{{elementSelected.restProtocol}}/{{elementSelected.ipAddress}}/{{elementSelected.restPort}}"><i class="readeradd">&nbsp;&nbsp;&nbsp;&nbsp;Add Sensor</i></a></li>'+
+					'<li ng-show="elementSelected.server.allowSaveServerConfig" ng-class="{disabledLink: !elementSelected.server.allowSaveServerConfig}"><a ng-click="elementSelected.server.allowSaveServerConfig" href ="#/sensorWizard/{{elementSelected.restProtocol}}/{{elementSelected.ipAddress}}/{{elementSelected.restPort}}"><i ng-class="{disabledLink: !elementSelected.server.allowSaveServerConfig, readeradd: elementSelected.server.allowSaveServerConfig}">&nbsp;&nbsp;&nbsp;&nbsp;Add Sensor</i></a></li>'+
+					'<li ng-show="!elementSelected.server.allowSaveServerConfig" ng-class="{disabledLink: !elementSelected.server.allowSaveServerConfig}">&nbsp;&nbsp;&nbsp;&nbsp;<i ng-class="{disabledLink: !elementSelected.server.allowSaveServerConfig, readeradd: elementSelected.server.allowSaveServerConfig}">&nbsp;&nbsp;&nbsp;&nbsp;Add Sensor</i></li>'+
 					'</ul>';
 
 				//sensor menu
@@ -123,11 +124,11 @@
 					+
 					'<ul>' +
 						'<li data-ng-repeat="node in ' + treeModel + '">' +
-							'<i class="collapsed" data-ng-show="node.' + nodeChildren + '.length && node.collapsed" data-ng-click="' + treeId + '.selectNodeHead(node)"></i>' +
+							'<i ' + 'tooltip="PRUEBAxxA" ' + ' class="collapsed" data-ng-show="node.' + nodeChildren + '.length && node.collapsed" data-ng-click="' + treeId + '.selectNodeHead(node)"></i>' +
 							'<i class="expanded" data-ng-show="node.' + nodeChildren + '.length && !node.collapsed" data-ng-click="' + treeId + '.selectNodeHead(node)"></i>' +
 							'<i class="normal" data-ng-hide="node.' + nodeChildren + '.length"></i>' +
 							'<i class="{{node.iconClass}}"></i> ' +
-							'<span ' + 'tooltip="PRUEBAxx"' + ' context="{{node.contextMenuId}}" data-ng-class="node.selected" data-ng-click="' + treeId + '.selectNodeLabel(node)">{{node.' + nodeLabel + '}}</span>' +
+							'<span ' + 'tooltip="PRUEBAxxB"' + ' context="{{node.contextMenuId}}" data-ng-class="node.selected" data-ng-click="' + treeId + '.selectNodeLabel(node)">{{node.' + nodeLabel + '}}</span>' +
 							'<div data-ng-hide="node.collapsed" data-tree-id="' + treeId + '" data-tree-model="node.' + nodeChildren + '" data-node-id=' + nodeId + ' data-node-label=' + nodeLabel + ' data-node-children=' + nodeChildren + '></div>' +
 						'</li>' +
 					'</ul>'
