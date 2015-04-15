@@ -280,27 +280,24 @@
 
                         <div class="col-sm-12">
                             <label class="control-label" for="commandInstance"><input type="radio" name="schedulingOption"
-                                value="oneTime" data-ng-model="schedulingOption" ng-click="">
+                                value="oneTime" ng-model="schedulingOption" ng-click="">
                                 One Time Execution</label>
                         </div>
 
                         <div class="col-sm-12">
                             <label class="control-label" for="commandInstance"><input type="radio" name="schedulingOption"
-                                value="recurring" data-ng-model="schedulingOption">
+                                value="recurring" ng-model="schedulingOption">
                                 Recurring Execution (milliseconds)</label>
                         </div>
 
                         <div class="col-sm-6">
 
-                            <input aria-describedby="intervalHelp" id="interval" name="interval" type="number"
-                                   class="form-control" data-ng-model="interval" required
-                                   ng-disabled="schedulingOption == 'oneTime'"
-
+                            <input aria-describedby="intervalHelp" id="interval"
+                                   name="interval" ng-disabled="schedulingOption == 'oneTime'"
+                                   type="number" ng-value="interval" ng-model="interval"
+                                   class="form-control"
                                     />
 
-                            <!--
-                            <span id="intervalHelp"  class="help-block">The interval, in millisecs, if recurring.</span>
-                            -->
 
                         </div>
 
@@ -464,6 +461,28 @@
                         </div>
 
                         <div class="panel-body">
+
+                            <div class="form-group"  >
+
+                                <div class="col-sm-6">
+                                    <label class="control-label" >Schedulling option</label>
+                                </div>
+                                <div class="col-sm-6">
+                                    {{schedulingOption}}
+                                </div>
+
+                            </div>
+
+                            <div class="form-group" ng-show="schedulingOption == 'recurring'" >
+
+                                <div class="col-sm-6">
+                                    <label class="control-label" >Interval (miliseconds)</label>
+                                </div>
+                                <div class="col-sm-6">
+                                    {{interval}}
+                                </div>
+                            </div>
+
                         </div>
 
                     </div>
@@ -478,51 +497,11 @@
 
                     </div>
 
-                    <!--
-                    <div class="panel panel-default" ng-show="!selectedReaderConnectionProperties.startSessionAut">
-                        <div class="panel-heading">
-                            <span class="glyphicon glyphicon-dashboard" aria-hidden="true"></span> Do not start session
-                        </div>
-
-                        <div class="panel-body">
-                        </div>
-
-                    </div>
-                    -->
-
 
                     <input type="submit" class="btn btn-warning" wz-previous value="Previous" />
                     <input type="submit" class="btn btn-primary"  wz-finish value="Confirm and execute" />
 
                 </form>
-
-                <!--
-
-                <div >
-
-                    <div class="col-lg-6">
-                        <label class="control-label" >Creation of reader response:</label>
-                    </div>
-                    <div class="col-lg-3">
-                        x{{sensorCreationResponseStatus.message}}
-                        <br>
-                        y{{sensorCreationResponseStatus.description}}
-                    </div>
-
-                    <br>
-                    <p></p>
-
-                    <div class="col-lg-6">
-                        <label class="control-label" >Reader id</label>
-                    </div>
-                    <div class="col-lg-3">
-                        {{customReaderId}}
-                    </div>
-
-                    <br>
-                    <p></p>
-                </div>
-                -->
 
             </wz-step>
 

@@ -41,6 +41,8 @@ angular.module('rifidiApp')
         var ipAddress = $routeParams.ipAddress;
         var restPort = $routeParams.restPort;
 
+      $scope.interval = 25;
+
         var host = restProtocol + "://" + ipAddress + ":" + restPort;
 
         //console.log("host: " + host);
@@ -390,6 +392,7 @@ angular.module('rifidiApp')
       }
 
       var prepareSchedulingOptions = function(){
+        console.log('prepareSchedulingOptions');
         $scope.interval = 1000;
         $scope.schedulingOption = "recurring";
       }
@@ -1044,8 +1047,13 @@ angular.module('rifidiApp')
         var repeatInterval = -1;
 
         if ($scope.schedulingOption == "recurring"){
+          console.log('schedulingOption is recurring');
           repeatInterval = $scope.interval;
+        } else {
+          console.log('schedulingOption is one time');
         }
+        console.log('repeatInterval: ');
+        console.log(repeatInterval);
 
         console.log("going to call execute command: " + host + '/executecommand/' + $scope.readerID + "/" + sessionId + "/" +  commandId + '/' + repeatInterval);
 

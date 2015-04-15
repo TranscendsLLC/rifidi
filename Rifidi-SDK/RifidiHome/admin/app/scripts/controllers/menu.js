@@ -3934,8 +3934,10 @@ module.service('TreeViewPainting', function($http, $rootScope, ServerService, Co
                              "collapsed": true,
                              "iconClass":"reader-cog",
                              "contextMenuId": "contextMenuSensorManagement",
+                             "server": server,
                              "children": []
                          };
+
                          server.children.push(sensorManagementElement);
 
                          //for each server, connect and query the list of sensors and place them under sensor management element
