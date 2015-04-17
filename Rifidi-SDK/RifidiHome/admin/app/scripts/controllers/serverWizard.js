@@ -9,7 +9,7 @@
  */
 angular.module('rifidiApp')
   .controller('ServerWizardCtrl', function ($rootScope, $scope, $http, $routeParams, $location, ngDialog, TreeViewPainting,
-                                            commonVariableService, ServerService) {
+                                            commonVariableService, ServerService, MenuService) {
 
       var getSuccessMessage = function () {
         return commonVariableService.getSuccessMessage();
@@ -121,7 +121,8 @@ angular.module('rifidiApp')
                         $rootScope.operationSuccessMsg = getSuccessMessage();
 
                         //refresh tree view
-                        TreeViewPainting.paintTreeView();
+                        //TreeViewPainting.paintTreeView();
+                        MenuService.updateMenuServers();
 
 
                       } else {

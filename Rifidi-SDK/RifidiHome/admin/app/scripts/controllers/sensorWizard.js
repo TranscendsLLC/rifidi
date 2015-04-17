@@ -41,7 +41,9 @@ angular.module('rifidiApp')
         var ipAddress = $routeParams.ipAddress;
         var restPort = $routeParams.restPort;
 
-      $scope.interval = 25;
+      //$scope.schedulingInterval= 700;
+      //$scope.schedulingOption;
+
 
         var host = restProtocol + "://" + ipAddress + ":" + restPort;
 
@@ -302,7 +304,6 @@ angular.module('rifidiApp')
         $scope.commandInstances = [];
         $scope.commandProperties = [];
 
-
         //console.log("$scope.selectedReaderType");
         //console.log($scope.selectedReaderType);
 
@@ -380,7 +381,6 @@ angular.module('rifidiApp')
             });
 
 
-
       }
 
       $scope.readerTypeSelectAction = function(selectedReaderType){
@@ -389,12 +389,20 @@ angular.module('rifidiApp')
         $scope.prepareCreateSessionStep();
         $scope.prepareCreateCommandStep();
         prepareSchedulingOptions();
-      }
+      };
+
+      $scope.schedulingIntervalSelectAction = function(schedulingInterval){
+        $scope.schedulingInterval = schedulingInterval;
+      };
+
+      $scope.schedulingOptionSelectAction = function(schedulingOption){
+        $scope.schedulingOption = schedulingOption;
+      };
 
       var prepareSchedulingOptions = function(){
         console.log('prepareSchedulingOptions');
-        $scope.interval = 1000;
-        $scope.schedulingOption = "recurring";
+        $scope.schedulingInterval = 1000;
+        $scope.schedulingOption = 'recurring';
       }
 
       $scope.commandTypeSelectAction = function(selectedCommandType){
@@ -406,7 +414,6 @@ angular.module('rifidiApp')
         //load the command instances for selected command type
         $http.get(host + '/commands')
             .success(function(data, status, headers, config) {
-
 
               var xmlCommands;
               if (window.DOMParser)
@@ -694,6 +701,8 @@ angular.module('rifidiApp')
 
 
         console.log("finishSensorWizard!");
+        console.log('$scope.selectedReaderType:');
+        console.log($scope.selectedReaderType);
         //create the reader
 
         //$scope.showSensorCreationResponse = true;
@@ -1046,9 +1055,12 @@ angular.module('rifidiApp')
         //var sessionId = 1;
         var repeatInterval = -1;
 
+        console.log('$scope.schedulingOption: ' + $scope.schedulingOption);
+        console.log('$scope.schedulingInterval: ' + $scope.schedulingInterval);
+
         if ($scope.schedulingOption == "recurring"){
           console.log('schedulingOption is recurring');
-          repeatInterval = $scope.interval;
+          repeatInterval = $scope.schedulingInterval;
         } else {
           console.log('schedulingOption is one time');
         }

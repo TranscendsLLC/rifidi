@@ -9,7 +9,7 @@
  */
 angular.module('rifidiApp')
   .controller('CreateReadzoneWizardCtrl', function ($rootScope, $scope, $http, $routeParams, $location, ngDialog, commonVariableService
-                                                    , CommonService, SensorService) {
+                                                    , CommonService, SensorService, AppService) {
 
 
       var getSuccessMessage = function () {
@@ -148,6 +148,8 @@ angular.module('rifidiApp')
         var appId = $scope.readzoneProperties.appId;
         var readzone = $scope.readzoneProperties.readzone;
 
+        var groupName = angular.copy($scope.elementSelected.groupName);
+
         //call create readzone properties
 
         var strReadzoneProperties = "";
@@ -205,7 +207,8 @@ angular.module('rifidiApp')
                 setSuccessMessage("Success adding readzone");
                 $rootScope.operationSuccessMsg = getSuccessMessage();
 
-                //continueExecutingCommand(commandID);
+              //Show a modal dialog to confirm if user wants to restart apps in order for properties to take effect
+              openRestartAppsDialog(host, groupName);
 
               } else {
 
@@ -227,7 +230,181 @@ angular.module('rifidiApp')
               // called asynchronously if an error occurs
               // or server returns response with an error status.
             });
-      }
+      };
+
+    var openRestartAppsDialog = function(host, groupName) {
+
+        ngDialog.openConfirm({template: 'restartAppsDialogTmpl.html',
+
+            scope: $scope, //Pass the scope object if you need to access in the template
+
+            showClose: false,
+
+            closeByEscape: true,
+
+            closeByDocument: false
+
+        }).then(
+
+            function(value) {
+
+                //confirm operation
+                if (value == 'Restart'){
+                    console.log("to restart");
+
+                    //call start app operation
+                    restartAppsIfRunning(host, groupName);
+                }
+
+            },
+
+            function(value) {
+
+                //Cancel or do nothing
+                console.log("cancel");
+
+            }
+
+        );
+
+    };
+
+    var restartAppsIfRunning = function(host, groupName){
+
+        console.log("restartAppsIfRunning");
+        console.log("restartAppsIfRunning.groupName");
+        console.log(groupName);
+
+        //Get the applications belonging to this group
+
+        AppService.callAppListService(host)
+            .success(function (data, status, headers, config) {
+
+                console.log("restartAppsIfRunning. Success calling API for app list");
+
+                var apps = AppService.getAppsFromReceivedData(data, groupName);
+
+                //Restart the applications given by apps list
+
+                //Iterate the applications and restart if state is STARTED
+                apps.forEach( function (app) {
+
+                    if (app.status == 'STARTED') {
+
+                        console.log("restartAppsIfRunning. Going to stop app:");
+                        console.log(app.number);
+
+                        //Call the service to stop this app
+                        AppService.callStopAppService(host, app.number)
+                            .success(function (data, status, headers, config) {
+
+                                console.log("restartAppsIfRunning. Success calling stop app service");
+                                console.log("restartAppsIfRunning.status:");
+                                console.log(status);
+                                console.log("restartAppsIfRunning.headers:");
+                                console.log(headers);
+                                console.log("restartAppsIfRunning.config:");
+                                console.log(config);
+
+                                var appIdReturned = AppService.extractAppIdFromStopAppUrl(config.url);
+                                console.log("callStopAppService.appIdReturned:");
+                                console.log(appIdReturned);
+
+                                //decode the response to see if success
+                                var respMessage = CommonService.getElementValue(data, "message");
+
+                                if ( respMessage == 'Success' ){
+
+                                    //Call the service to start app
+                                    console.log("restartAppsIfRunning. Success stopping app. Going to start it");
+
+                                    //Call the service to start this app
+                                    AppService.callStartAppService(host, appIdReturned)
+                                        .success(function (data, status, headers, config) {
+
+                                            console.log("restartAppsIfRunning. Success calling start app service");
+
+                                            //decode the response to see if success
+                                            var respMessage = CommonService.getElementValue(data, "message");
+
+                                            if ( respMessage == 'Success' ){
+
+                                                console.log("restartAppsIfRunning. Success stopping and restarting app");
+                                                //Add message to success mesagges area
+
+                                                //Get the app name grom apps vector, bases on received app id
+                                                var localAppName;
+                                                apps.forEach( function (app) {
+
+                                                    if (app.number == appIdReturned){
+                                                        localAppName = app.appName;
+                                                    }
+
+                                                });
+                                                $rootScope.operationSuccessMsgs.push('Success restarting app ' + localAppName);
+
+                                            } else {
+
+                                                //Fail stopping app
+                                                console.log("restartAppsIfRunning. Fail starting app with id: " + appIdReturned);
+                                                //Display modal dialog with error
+                                                var description = CommonService.getElementValue(data, "description");
+                                                showErrorDialog('Error starting app with id ' + appIdReturned + ': ' + description);
+
+                                            }
+
+
+                                        })
+                                        .error(function (data, status, headers, config) {
+
+                                            console.log("restartAppsIfRunning. Error starting app with id: " + appIdReturned);
+                                            //Display modal dialog with error
+                                            var description = CommonService.getElementValue(data, "description");
+                                            showErrorDialog('Error starting app with id ' + appIdReturned + ': ' + description);
+
+                                        });
+
+
+
+
+                                } else {
+
+                                    //Fail stopping app
+                                    console.log("restartAppsIfRunning. Fail stopping app with id: " + appIdReturned);
+
+                                    //Display modal dialog with error
+                                    var description = CommonService.getElementValue(data, "description");
+                                    showErrorDialog('Error stopping app with id ' + appIdReturned + ': ' + description);
+
+                                }
+
+
+                            })
+                            .error(function (data, status, headers, config) {
+
+                                console.log("restartAppsIfRunning: Error stopping app");
+                                showErrorDialog('Error stopping app');
+
+                            });
+
+                    } else {
+
+                        console.log("restartAppsIfRunning. NOT going to stop app:");
+                        console.log(app.number);
+                    }
+
+                });
+
+
+            })
+            .error(function (data, status, headers, config) {
+
+                console.log("restartAppsIfRunning: Error reading apps to restart");
+
+            });
+
+    };
+
 
 
 

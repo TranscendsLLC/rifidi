@@ -6,7 +6,7 @@
 
     <div class="panel-body">
 
-        <wizard on-finish="finishSensorWizard(selectedReaderType)" edit-mode="false" ng-controller="SensorWizardCtrl">
+        <wizard on-finish="finishSensorWizard(selectedReaderType)" edit-mode="false">
         <!--<wizard on-finish="openSensorWizardSummaryDialog()" edit-mode="false" ng-controller="SensorWizardCtrl">-->
 
             <wz-step title="Reader Type Selection">
@@ -71,6 +71,7 @@
 
                         </div>
 
+
                         <div class="col-sm-12">
 
                             <span id="helpReaderId" class="help-block">The reader id is important for applications' read zones to appropriate operate, and this id is used to link read zones with sensors. This command enables one to set the readerId versus the system generating one (default behavior).</span>
@@ -86,6 +87,7 @@
             </wz-step>
 
             <wz-step title="Create session">
+
 
                 <form class="form-horizontal" role="form" name="form2" novalidate >
 
@@ -280,13 +282,13 @@
 
                         <div class="col-sm-12">
                             <label class="control-label" for="commandInstance"><input type="radio" name="schedulingOption"
-                                value="oneTime" ng-model="schedulingOption" ng-click="">
+                                value="oneTime" ng-model="schedulingOption" ng-change="schedulingOptionSelectAction(schedulingOption)">
                                 One Time Execution</label>
                         </div>
 
                         <div class="col-sm-12">
                             <label class="control-label" for="commandInstance"><input type="radio" name="schedulingOption"
-                                value="recurring" ng-model="schedulingOption">
+                                value="recurring" ng-model="schedulingOption" ng-change="schedulingOptionSelectAction(schedulingOption)">
                                 Recurring Execution (milliseconds)</label>
                         </div>
 
@@ -294,10 +296,9 @@
 
                             <input aria-describedby="intervalHelp" id="interval"
                                    name="interval" ng-disabled="schedulingOption == 'oneTime'"
-                                   type="number" ng-value="interval" ng-model="interval"
+                                   type="number" ng-model="schedulingInterval" ng-change="schedulingIntervalSelectAction(schedulingInterval)"
                                    class="form-control"
                                     />
-
 
                         </div>
 
@@ -479,7 +480,7 @@
                                     <label class="control-label" >Interval (miliseconds)</label>
                                 </div>
                                 <div class="col-sm-6">
-                                    {{interval}}
+                                    {{schedulingInterval}}
                                 </div>
                             </div>
 
