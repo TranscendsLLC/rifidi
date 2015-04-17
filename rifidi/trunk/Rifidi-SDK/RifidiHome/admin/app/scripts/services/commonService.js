@@ -35,6 +35,7 @@ app.service('CommonService', function($http){
 
     };
 
+    /*
     // Compares two servers elements to be ordered
     this.compareServersElements = function(a, b){
 
@@ -46,15 +47,16 @@ app.service('CommonService', function($http){
         }
         return 0;
     };
+    */
 
     // Compares two objects to be ordered.
     // The object must have a 'elementName' property
     this.compareElements = function(a, b){
 
-        if (a.elementName < b.elementName ){
+        if (a.elementName.toLowerCase() < b.elementName.toLowerCase() ){
             return -1;
         }
-        if (a.elementName > b.elementName ){
+        if (a.elementName.toLowerCase() > b.elementName.toLowerCase() ){
             return 1;
         }
         return 0;

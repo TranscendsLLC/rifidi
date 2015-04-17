@@ -11,8 +11,10 @@
  * Controller of the rifidiApp
  */
 var module = angular.module('rifidiApp')
-  .controller('MenuController', function ($rootScope, $scope, $http, $location, ngDialog, TreeViewPainting, commonVariableService,
-                                          ServerService, SensorService, AppService, CommonService) {
+  .controller('MenuController', function ($rootScope, $scope, $http, $location, $interval, ngDialog, TreeViewPainting, commonVariableService,
+                                          ServerService, SensorService, AppService, CommonService, MenuService) {
+
+
 
         var getSuccessMessage = function () {
             return commonVariableService.getSuccessMessage();
@@ -138,6 +140,7 @@ var module = angular.module('rifidiApp')
             var host = angular.copy($scope.elementSelected.host);
             var appId = angular.copy($scope.elementSelected.appId);
             var readZone = angular.copy($scope.elementSelected.readzone);
+            var groupName = angular.copy($scope.elementSelected.groupName);
 
             //call the rest operation to delete sensor
             $http.get(host + '/deleteReadZone/' + appId + "/" + readZone)
@@ -163,6 +166,9 @@ var module = angular.module('rifidiApp')
                         console.log("success deleting readzone");
                         $rootScope.operationSuccessMsg = "Success deleting readzone";
                         TreeViewPainting.paintTreeView();
+
+                        //Show a modal dialog to confirm if user wants to restart apps in order for properties to take effect
+                        openRestartAppsDialog(host, groupName);
 
                     } else {
                         var deleteReadZoneCommandDescription = deleteReadZoneCommandResponse.getElementsByTagName("description")[0].childNodes[0].nodeValue;
@@ -602,9 +608,10 @@ var module = angular.module('rifidiApp')
                                 $rootScope.operationSuccessMsg = "Success deleting server";
 
                                 //refresh tree view
-                                TreeViewPainting.paintTreeView();
+                                //TreeViewPainting.paintTreeView();
+                                MenuService.updateMenuServers();
 
-                                //crearl element selection
+                                //clear element selection
                                 $scope.elementTree.currentNode = "";
                                 $scope.elementSelected = null;
 
@@ -1525,7 +1532,8 @@ var module = angular.module('rifidiApp')
                                 $rootScope.operationSuccessMsg = "Success editing server properties";
 
                                 //refresh tree view
-                                TreeViewPainting.paintTreeView();
+                                //TreeViewPainting.paintTreeView();
+                                MenuService.updateMenuServers();
 
 
                             } else {
@@ -1725,10 +1733,16 @@ var module = angular.module('rifidiApp')
 
           //$scope.refreshMenuTreeView = function () {
 
-          TreeViewPainting.paintTreeView();
+        TreeViewPainting.paintTreeView();
 
 
+        $interval(callAtInterval, 5000);
 
+        function callAtInterval(){
+
+            MenuService.updateMenuServers();
+
+        }
 
 
           //}
@@ -3833,6 +3847,7 @@ module.service('TreeViewPainting', function($http, $rootScope, ServerService, Co
                          server.children = [];
                          server.host = server.restProtocol + "://" + server.ipAddress + ":" + server.restPort;
                          server.status = 'CONNECTING';
+                         server.tooltipText = 'Connecting';
                          server.allowSaveServerConfig = false;
 
                          partialElementList[0].children.push(server);
@@ -3876,6 +3891,7 @@ module.service('TreeViewPainting', function($http, $rootScope, ServerService, Co
                                              server.status = 'CONNECTED';
                                              server.iconClass = "server-connected";
                                              server.allowSaveServerConfig = true;
+                                             server.tooltipText = 'Connected';
                                          }
                                      });
 
@@ -4051,6 +4067,7 @@ module.service('TreeViewPainting', function($http, $rootScope, ServerService, Co
                                                      "elementId": "session " + sessionID.nodeValue,
                                                      "collapsed": true,
                                                      "status": sessionStatus.nodeValue,
+                                                     "tooltipText": sessionStatus.nodeValue,
                                                      "contextMenuId": "contextMenuSession",
                                                      "allowStartSession": false,
                                                      "allowStopSession": false,
@@ -4600,6 +4617,7 @@ module.service('TreeViewPainting', function($http, $rootScope, ServerService, Co
                                                          "elementType": "app",
                                                          "contextMenuId": "contextMenuApp",
                                                          "host": appGroupElement.host,
+                                                         "tooltipText": status.nodeValue,
                                                          "allowStartApp": false,
                                                          "allowStopApp": false,
                                                          "children": []
@@ -4782,7 +4800,9 @@ module.service('TreeViewPainting', function($http, $rootScope, ServerService, Co
 
              }
 
-       }
+       };
+
+
 
        return service;
  });
