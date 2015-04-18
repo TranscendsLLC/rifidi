@@ -596,7 +596,8 @@
 
                                        <div class="col-sm-7">
 
-                                           <div ng-hide="property.key == 'readerID'">
+                                           <!--hide default input fields for readerID and matchtPattern to display them in custom fields-->
+                                           <div ng-hide="property.key == 'readerID' || property.key =='matchPattern'">
 
                                                <input aria-describedby="help{{property.key}}" id="{{property.key}}"
                                                       name="{{property.key}}" type="text" ng-value="property.value" ng-model="property.value"
@@ -633,6 +634,21 @@
 
                                                <span ng-show="sensors[0]" id="help{{property.key}}" class="help-block">A regex is for example: {{sensors[0].id}}.* and means all sensors whose readerid begins with {{sensors[0].id}}</span>
                                                <span ng-show="!sensors[0]" id="help{{property.key}}" class="help-block">A regex is for example: Alien_1.* and means all sensors whose readerid begins with Alien_1</span>
+
+                                           </div>
+
+                                           <div ng-show="property.key == 'matchPattern'">
+
+                                               <select id="{{property.key}}"
+                                                       name="{{property.key}}"
+                                                       ng-model="property.value"
+                                                       ng-required="false"
+                                                       class="form-control"
+                                                       aria-describedby="help{{property.key}}"
+                                                       ng-options="value.id as value.id for value in booleanValues">
+
+                                                   <option>--</option>
+                                               </select>
 
                                            </div>
 

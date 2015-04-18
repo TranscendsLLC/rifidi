@@ -12,6 +12,8 @@ angular.module('rifidiApp')
                                                     , CommonService, SensorService, AppService) {
 
 
+      $scope.booleanValues = CommonService.getBooleanValues();
+
       var getSuccessMessage = function () {
         return commonVariableService.getSuccessMessage();
       };

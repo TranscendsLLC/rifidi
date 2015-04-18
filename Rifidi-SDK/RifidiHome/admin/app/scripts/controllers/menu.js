@@ -15,6 +15,7 @@ var module = angular.module('rifidiApp')
                                           ServerService, SensorService, AppService, CommonService, MenuService) {
 
 
+        $scope.booleanValues = CommonService.getBooleanValues();
 
         var getSuccessMessage = function () {
             return commonVariableService.getSuccessMessage();
@@ -1740,7 +1741,7 @@ var module = angular.module('rifidiApp')
 
         function callAtInterval(){
 
-            MenuService.updateMenuServers();
+            //MenuService.updateMenuServers();
 
         }
 
