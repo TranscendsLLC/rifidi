@@ -37,7 +37,6 @@ app.service('AppService', function($http, CommonService){
 
     // Method that takes the xml response from server and returns the applications
     // belonging to specific group
-
     this.getAppsFromReceivedData = function(data, groupName){
 
         var xmlData = CommonService.getXmlObjectFromXmlServerData(data);

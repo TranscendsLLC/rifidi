@@ -4,6 +4,20 @@
 
 app.service('CommonService', function($http){
 
+    //Method that returns a list of boolean values: true and false, to display in selection lists
+    this.getBooleanValues = function(){
+
+        var trueElement = {"id": "true", "value": "true"};
+        var falseElement = {"id": "false", "value": "false"};
+
+        var booleanValues = [];
+        booleanValues.push(trueElement);
+        booleanValues.push(falseElement);
+
+        return booleanValues;
+
+    };
+
     // Method that takes the xml data got from server and return the javascript xml object
     this.getXmlObjectFromXmlServerData = function(data){
 

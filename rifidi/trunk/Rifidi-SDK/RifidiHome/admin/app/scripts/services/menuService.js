@@ -36,10 +36,11 @@ app.service('MenuService', function($rootScope, $http, ServerService, CommonServ
 
                             newServerExists = true;
 
-                            menuServer.host = newServer.host;
                             menuServer.restProtocol = newServer.restProtocol;
                             menuServer.ipAddress = newServer.ipAddress;
-                            menuServer.restPort = newServer.restPort
+                            menuServer.restPort = newServer.restPort;
+                            menuServer.host = newServer.restProtocol + '://' + newServer.ipAddress + ':' + newServer.restPort;
+
                             //then update the menuServer, with initial properties
                             //menuServer.iconClass = "server-disconnected";
 
@@ -58,13 +59,11 @@ app.service('MenuService', function($rootScope, $http, ServerService, CommonServ
                         newServer.elementName = newServer.displayName;
                         newServer.elementId = "server";
                         newServer.elementType = "server";
-                        newServer.iconClass = "server-disconnected";
                         newServer.contextMenuId = "contextMenuServer";
                         newServer.children = [];
                         newServer.host = newServer.restProtocol + "://" + newServer.ipAddress + ":" + newServer.restPort;
-                        newServer.status = 'CONNECTING';
-                        newServer.tooltipText = 'Connecting';
-                        newServer.allowSaveServerConfig = false;
+
+                        changeServerStatusToConnecting(newServer);
 
                         console.log('going to add new server to menu');
 
@@ -99,7 +98,6 @@ app.service('MenuService', function($rootScope, $http, ServerService, CommonServ
                         //then delete the server from menu (add to a list, and then when exit this menu servers loop, delete)
                         serversToDelete.push(angular.copy(menuServer));
 
-
                     }
 
                 });
@@ -130,6 +128,9 @@ app.service('MenuService', function($rootScope, $http, ServerService, CommonServ
                 //order the menu list of servers
                 menuServers.sort( CommonService.compareElements );
 
+                //call the method to update menu servers status
+                updateMenuServersStatus();
+
 
             })
             . error(function (data, status, headers, config) {
@@ -142,6 +143,116 @@ app.service('MenuService', function($rootScope, $http, ServerService, CommonServ
         //return $http({ method: 'GET', url: serviceUrl });
 
     };
+
+    var changeServerStatusToConnecting = function(server){
+
+        server.status = 'CONNECTING';
+        server.tooltipText = 'Connecting';
+        server.allowSaveServerConfig = false;
+        server.iconClass = "server-disconnected";
+
+    };
+
+    var changeServerStatusToConnected = function(server) {
+
+        server.status = 'CONNECTED';
+        server.iconClass = "server-connected";
+        server.allowSaveServerConfig = true;
+        server.tooltipText = 'Connected';
+
+    };
+
+
+    //Method that updates the status of menu servers
+    var updateMenuServersStatus = function(){
+
+        console.log('updateMenuServersStatus');
+
+        //get the reference to menu servers
+        var menuServers = $rootScope.elementList[0].children;
+
+        menuServers.forEach(function (menuServer) {
+
+            var protocol = menuServer.restProtocol;
+            var ipAddress = menuServer.ipAddress;
+            var port = menuServer.restPort;
+
+            //For each server make an asynchronous call to test whether the ping rest operation returns success
+            ServerService.callPingServerService(protocol, ipAddress, port)
+                .success(function (data, status, headers, config) {
+
+                    console.log('updateMenuServersStatus.callPingServerService.success response');
+                    console.log('updateMenuServersStatus.callPingServerService.headers:');
+                    console.log('config:');
+                    console.log(config);
+
+                    var serverTimestamp = ServerService.getPingTimestampFromReceivedData(data);
+
+                    //find the right server to change status to 'CONNECTED'
+
+                    var originalUrl = config.url;
+                    //extract the '/apps' suffix to get the host name
+                    var pingResponseHost = getHostFromConfigPingResponse(config);
+                    console.log('pingResponseHost:');
+                    console.log(pingResponseHost);
+
+                    if (serverTimestamp) {
+                        console.log("server ping from host: " + pingResponseHost + ", timestamp: " + serverTimestamp);
+
+                        //change server connecting status to connected
+
+                        menuServers.forEach(function (serverToTest) {
+
+                            console.log('inside menuservers loop');
+                            console.log('serverToTest.host: ' + serverToTest.host);
+                            console.log('pingResponseHost: ' + pingResponseHost);
+
+                            if (serverToTest.host == pingResponseHost) {
+
+                                console.log('going to change state to connected, on host:');
+                                console.log(pingResponseHost);
+                                //change server status to connected
+                                changeServerStatusToConnected(serverToTest);
+                            }
+                        });
+
+                    }
+
+
+                })
+                . error(function (data, status, headers, config) {
+
+                    console.log('updateMenuServersStatus.callPingServerService error');
+                    //change server status to 'CONNECTING'
+
+                    var pingResponseHost = getHostFromConfigPingResponse(config);
+                    console.log('pingErrorResponse.pingResponseHost:');
+                    console.log(pingResponseHost);
+
+                    //change server to connecting status
+
+                    menuServers.forEach(function (server) {
+
+                        if (server.host == pingResponseHost) {
+
+                            console.log('going to change state to connecting, on host:');
+                            console.log(pingResponseHost);
+                            //change server status
+                            changeServerStatusToConnecting(server);
+                        }
+                    });
+                });
+        });
+    };
+
+    //Gets the host protocol://ipaddress:port from config returned by ping rest operation
+    //it assumes the rest operation is like protocol://ipaddress:port/ping
+    var getHostFromConfigPingResponse = function(config){
+
+        return config.url.substring(0, config.url.lastIndexOf("/"));
+
+    };
+
 
     //Method that calls the API to stop application
     this.callStopAppService = function(host, appId){
