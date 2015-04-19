@@ -17,6 +17,12 @@ var module = angular.module('rifidiApp')
 
         $scope.booleanValues = CommonService.getBooleanValues();
 
+        var clearElementSelection = function () {
+
+            $scope.elementTree.currentNode = "";
+            $scope.elementSelected = null;
+        };
+
         var getSuccessMessage = function () {
             return commonVariableService.getSuccessMessage();
         };
@@ -106,7 +112,6 @@ var module = angular.module('rifidiApp')
                       if (message == 'Success') {
                           console.log("success deleting sensor");
                           $rootScope.operationSuccessMsg = "Success deleting sensor";
-                          TreeViewPainting.paintTreeView();
 
                       } else {
                           var deleteReaderCommandDescription = deleteReaderCommandResponse.getElementsByTagName("description")[0].childNodes[0].nodeValue;
@@ -119,6 +124,12 @@ var module = angular.module('rifidiApp')
 
                       }
 
+                      //refresh tree view
+                      MenuService.createUpdateMenu();
+
+                      //clear element selection
+                      clearElementSelection();
+
 
                   }).
                   error(function (data, status, headers, config) {
@@ -130,6 +141,10 @@ var module = angular.module('rifidiApp')
 
                       // called asynchronously if an error occurs
                       // or server returns response with an error status.
+
+                      //refresh tree view
+                      MenuService.createUpdateMenu();
+
                   });
 
 
@@ -609,12 +624,10 @@ var module = angular.module('rifidiApp')
                                 $rootScope.operationSuccessMsg = "Success deleting server";
 
                                 //refresh tree view
-                                //TreeViewPainting.paintTreeView();
-                                MenuService.updateMenuServers();
+                                MenuService.createUpdateMenu();
 
                                 //clear element selection
-                                $scope.elementTree.currentNode = "";
-                                $scope.elementSelected = null;
+                                clearElementSelection();
 
                             } else {
 
@@ -1534,7 +1547,7 @@ var module = angular.module('rifidiApp')
 
                                 //refresh tree view
                                 //TreeViewPainting.paintTreeView();
-                                MenuService.updateMenuServers();
+                                MenuService.createUpdateMenu();
 
 
                             } else {
@@ -1741,7 +1754,7 @@ var module = angular.module('rifidiApp')
 
         function callAtInterval(){
 
-            //MenuService.updateMenuServers();
+            //MenuService.createUpdateMenu();
 
         }
 
@@ -3988,6 +4001,7 @@ module.service('TreeViewPainting', function($http, $rootScope, ServerService, Co
                                      var sensorElement = {
                                          "elementName": serviceID.nodeValue,
                                          "elementId": serviceID.nodeValue,
+                                         "id": serviceID.nodeValue,
                                          "elementType": "sensor",
                                          "collapsed": true,
                                          "factoryID": factoryID.nodeValue,

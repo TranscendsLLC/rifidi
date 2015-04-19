@@ -9,55 +9,14 @@
  */
 angular.module('rifidiApp')
   .controller('SensorWizardCtrl', function ($routeParams, $rootScope, $scope, $http, $location, ngDialog, TreeViewPainting,
-                                            commonVariableService) {
-    $scope.awesomeThings = [
-      'HTML5 Boilerplate',
-      'AngularJS',
-      'Karma'
-    ];
-
-
-
-      //console.log("cleaning readerTypes: ");
-      //$scope.readerTypes = [];
-      //$scope.commandTypes = [];
-      //$scope.commandInstances = [];
-      //$scope.selectedReaderType = "xx";
-      //console.log("set $scope.selectedReaderType:  " + $scope.selectedReaderType);
-      //$scope.selectedCommandType = {};
-      //$scope.selectedCommandInstance = {};
-      //$scope.readersConnectionProperties = [];
-      //$scope.customReaderId = "";
-      //$scope.selectedReaderConnectionProperties = [];
-
-
-      //loadReaderTypes();
-
-      //Call the reader types service, and create a list with reader types
-      //$scope.loadReaderTypes = function () {
+                                            commonVariableService, MenuService) {
 
         //retrieve the reader types
         var restProtocol = $routeParams.restProtocol;
         var ipAddress = $routeParams.ipAddress;
         var restPort = $routeParams.restPort;
 
-      //$scope.schedulingInterval= 700;
-      //$scope.schedulingOption;
-
-
         var host = restProtocol + "://" + ipAddress + ":" + restPort;
-
-        //console.log("host: " + host);
-
-
-
-      /*
-        $scope.readerTypes = [
-          { id: 1, name: 'Foo111', factoryID: 'xxx111' },
-          { id: 2, name: 'Bar222', factoryID: 'yyy222' },
-          { id: 22, name: 'Bar222BB', factoryID: 'yyy222BB' }
-        ];
-        */
 
         $http.get(host + '/readertypes')
             .success(function(data, status, headers, config) {
@@ -1126,9 +1085,6 @@ angular.module('rifidiApp')
                           console.log("success starting session");
                           $rootScope.operationSuccessMsgs.push("Success starting session");
 
-                          //Refresh menu
-                          TreeViewPainting.paintTreeView();
-
                         } else {
 
                           var startSessionCommandDescription = startSessionCommandResponse.getElementsByTagName("description")[0].childNodes[0].nodeValue;
@@ -1169,6 +1125,9 @@ angular.module('rifidiApp')
                 showErrorDialog('Fail executing command: ' + executeCommandDescription);
               }
 
+              //Refresh menu
+              MenuService.createUpdateMenu();
+
 
             })
             .error(function(data, status, headers, config) {
@@ -1178,9 +1137,10 @@ angular.module('rifidiApp')
 
               // called asynchronously if an error occurs
               // or server returns response with an error status.
+
+              //Refresh menu
+              MenuService.createUpdateMenu();
             });
-
-
 
       };
 
