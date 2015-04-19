@@ -242,8 +242,6 @@ var module = angular.module('rifidiApp')
 
                           $rootScope.operationSuccessMsg = "Success deleting command";
 
-                          //update scope success messsage
-                          TreeViewPainting.paintTreeView();
 
                       } else {
                           var deleteCommandCommandDescription = deleteCommandCommandResponse.getElementsByTagName("description")[0].childNodes[0].nodeValue;
@@ -256,6 +254,8 @@ var module = angular.module('rifidiApp')
 
                       }
 
+                      MenuService.createUpdateMenu();
+
 
                   }).
                   error(function (data, status, headers, config) {
@@ -263,6 +263,8 @@ var module = angular.module('rifidiApp')
 
                       //show modal dialog with error
                       showErrorDialog('Error deleting command');
+
+                      MenuService.createUpdateMenu();
 
 
                       // called asynchronously if an error occurs
@@ -299,7 +301,6 @@ var module = angular.module('rifidiApp')
                       if (message == 'Success') {
                           console.log("success creating session");
                           $rootScope.operationSuccessMsg = "Success creating session";
-                          TreeViewPainting.paintTreeView();
 
                       } else {
                           var createSessionCommandDescription = createSessionCommandResponse.getElementsByTagName("description")[0].childNodes[0].nodeValue;
@@ -311,6 +312,8 @@ var module = angular.module('rifidiApp')
 
                       }
 
+                      MenuService.createUpdateMenu();
+
 
                   }).
                   error(function (data, status, headers, config) {
@@ -318,6 +321,8 @@ var module = angular.module('rifidiApp')
 
                       //show modal dialog with error
                       showErrorDialog('Error creating session');
+
+                      MenuService.createUpdateMenu();
 
 
                       // called asynchronously if an error occurs
@@ -350,7 +355,6 @@ var module = angular.module('rifidiApp')
                       if (message == 'Success') {
                           console.log("success deleting session");
                           $rootScope.operationSuccessMsg = "Success deleting session";
-                          TreeViewPainting.paintTreeView();
 
                       } else {
                           var deleteSessionCommandDescription = deleteSessionCommandResponse.getElementsByTagName("description")[0].childNodes[0].nodeValue;
@@ -362,6 +366,8 @@ var module = angular.module('rifidiApp')
 
                       }
 
+                      MenuService.createUpdateMenu();
+
 
                   }).
                   error(function (data, status, headers, config) {
@@ -369,6 +375,8 @@ var module = angular.module('rifidiApp')
 
                       //show modal dialog with error
                       showErrorDialog('Error deleting session');
+
+                      MenuService.createUpdateMenu();
 
 
                       // called asynchronously if an error occurs
@@ -403,7 +411,6 @@ var module = angular.module('rifidiApp')
                       if (message == 'Success') {
                           console.log("success starting session");
                           $rootScope.operationSuccessMsg = "Success starting session";
-                          TreeViewPainting.paintTreeView();
 
                       } else {
                           var startSessionCommandDescription = startSessionCommandResponse.getElementsByTagName("description")[0].childNodes[0].nodeValue;
@@ -415,6 +422,8 @@ var module = angular.module('rifidiApp')
 
                       }
 
+                      MenuService.createUpdateMenu();
+
 
                   }).
                   error(function (data, status, headers, config) {
@@ -422,6 +431,8 @@ var module = angular.module('rifidiApp')
 
                       //show modal dialog with error
                       showErrorDialog('Error starting session');
+
+                      MenuService.createUpdateMenu();
 
 
                       // called asynchronously if an error occurs
@@ -456,7 +467,6 @@ var module = angular.module('rifidiApp')
                       if (message == 'Success') {
                           console.log("success stopping session");
                           $rootScope.operationSuccessMsg = "Success stopping session";
-                          TreeViewPainting.paintTreeView();
 
                       } else {
                           var stopSessionCommandDescription = stopSessionCommandResponse.getElementsByTagName("description")[0].childNodes[0].nodeValue;
@@ -468,6 +478,8 @@ var module = angular.module('rifidiApp')
 
                       }
 
+                      MenuService.createUpdateMenu();
+
 
                   }).
                   error(function (data, status, headers, config) {
@@ -475,6 +487,8 @@ var module = angular.module('rifidiApp')
 
                       //show modal dialog with error
                       showErrorDialog('Error stopping session');
+
+                      MenuService.createUpdateMenu();
 
 
                       // called asynchronously if an error occurs
@@ -1754,7 +1768,7 @@ var module = angular.module('rifidiApp')
 
         function callAtInterval(){
 
-            //MenuService.createUpdateMenu();
+            MenuService.createUpdateMenu();
 
         }
 
@@ -4078,6 +4092,7 @@ module.service('TreeViewPainting', function($http, $rootScope, ServerService, Co
 
                                                  var sessionElement = {
                                                      "sessionID": sessionID.nodeValue,
+                                                     "id": sessionID.nodeValue,
                                                      "elementName": "session " + sessionID.nodeValue,
                                                      "elementId": "session " + sessionID.nodeValue,
                                                      "collapsed": true,
@@ -4093,9 +4108,10 @@ module.service('TreeViewPainting', function($http, $rootScope, ServerService, Co
                                                  if (sessionStatus.nodeValue == 'CREATED' || sessionStatus.nodeValue == 'CLOSED'){
                                                      sessionElement.iconClass = 'link-red';
                                                      sessionElement.allowStartSession = true;
-                                                 } else if (sessionStatus.nodeValue == 'CONNECTING'){
+                                                 } else if (sessionStatus.nodeValue == 'CONNECTING' || sessionStatus.nodeValue == 'LOGGINGIN'){
                                                      sessionElement.iconClass = 'link-yellow';
-                                                     //not allowed to start neither to stop session, so states remains in false
+                                                     sessionElement.allowStopSession = true;
+                                                     //not allowed to start session, so state remains in false
                                                  }  else if (sessionStatus.nodeValue == 'PROCESSING'){
                                                      sessionElement.iconClass = 'link-green';
                                                      sessionElement.allowStopSession = true;
@@ -4116,6 +4132,7 @@ module.service('TreeViewPainting', function($http, $rootScope, ServerService, Co
                                                      var commandElement = {
                                                          "elementName": commandID.nodeValue,
                                                          "elementId": commandID.nodeValue,
+                                                         "id": commandID.nodeValue,
                                                          "collapsed": true,
                                                          "interval": commandInterval.nodeValue,
                                                          "iconClass": 'script-gear',

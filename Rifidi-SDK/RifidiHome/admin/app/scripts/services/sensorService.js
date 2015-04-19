@@ -14,7 +14,6 @@ app.service('SensorService', function($http, CommonService){
     };
 
     // Method that takes the xml response from server and returns the list of sensors
-
     this.getSensorsFromReceivedData = function(data){
 
         var xmlData = CommonService.getXmlObjectFromXmlServerData(data);
@@ -36,7 +35,6 @@ app.service('SensorService', function($http, CommonService){
             };
 
             sensorsToReturn.push(sensorElement);
-
 
         }
 
@@ -63,8 +61,77 @@ app.service('SensorService', function($http, CommonService){
 
         return appId;
 
-    }
+    };
 
+    //Method that calls the API to get the sessions and executing commands for each session,
+    //for reader given the sensorId
+    this.callReaderStatusService = function(host, sensorId) {
+
+        var serviceUrl = host + '/readerstatus/' + sensorId;
+        return $http({ method: 'GET', url: serviceUrl });
+
+    };
+
+    // Method that takes the xml response from server and returns the list of sessions and executing commands for each session
+    this.getReaderStatusFromReceivedData = function(data){
+
+        var xmlData = CommonService.getXmlObjectFromXmlServerData(data);
+
+        //get the xml response and extract the values to construct the session list
+        var xmlVector = xmlData.getElementsByTagName("sensor");
+
+        var sensor = {};
+        var serviceID = xmlVector[0].getElementsByTagName("serviceID")[0].childNodes[0].nodeValue;
+        var factoryID = type = xmlVector[0].getElementsByTagName("factoryID")[0].childNodes[0].nodeValue;
+        sensor.id = serviceID;
+        sensor.type = factoryID;
+
+        //extract the sessions
+        var sessions = [];
+
+        xmlVector = xmlData.getElementsByTagName("session");
+
+        for (var index = 0; index < xmlVector.length; index++) {
+
+            var id = xmlVector[index].getElementsByTagName("ID")[0].childNodes[0].nodeValue;
+            var status = xmlVector[index].getElementsByTagName("status")[0].childNodes[0].nodeValue;
+
+            var session = {};
+            session.id = id;
+            session.status = status;
+
+            sessions.push(session);
+
+            var executingCommands = [];
+            session.executingCommands = executingCommands;
+
+            var xmlCommands = xmlVector[index].getElementsByTagName('executingcommand');
+
+            for (var indexComm = 0; indexComm < xmlCommands.length; indexComm++) {
+
+                var commandID = xmlCommands[indexComm].getElementsByTagName("commandID")[0].childNodes[0].nodeValue;
+                var factoryID = xmlCommands[indexComm].getElementsByTagName("factoryID")[0].childNodes[0].nodeValue;
+                var interval = xmlCommands[indexComm].getElementsByTagName("interval")[0].childNodes[0].nodeValue;
+
+                var command = {};
+                command.id = commandID;
+                command.type = factoryID;
+                command.interval = interval;
+
+                executingCommands.push(command);
+
+            }
+
+        }
+
+        var readerStatus = {};
+
+        readerStatus.sensor = sensor;
+        readerStatus.sessions = sessions;
+
+        return readerStatus;
+
+    };
 
 
 });

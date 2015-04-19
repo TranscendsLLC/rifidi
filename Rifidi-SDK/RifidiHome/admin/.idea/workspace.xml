@@ -24,31 +24,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="menuService.js" pinned="false" current-in-tab="true">
+      <file leaf-file-name="menuService.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/scripts/services/menuService.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-0.19757366" vertical-offset="5520" max-vertical-offset="9843">
-              <caret line="318" column="63" selection-start-line="318" selection-start-column="63" selection-end-line="318" selection-end-column="63" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="CreateReadzoneWizard.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/scripts/controllers/CreateReadzoneWizard.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="7735">
-              <caret line="7" column="30" selection-start-line="7" selection-start-column="30" selection-end-line="7" selection-end-column="30" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="serverWizard.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/scripts/controllers/serverWizard.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="1797" max-vertical-offset="4386">
-              <caret line="124" column="55" selection-start-line="124" selection-start-column="55" selection-end-line="124" selection-end-column="55" />
+            <state vertical-scroll-proportion="-26.071428" vertical-offset="12632" max-vertical-offset="15453">
+              <caret line="786" column="20" selection-start-line="786" selection-start-column="20" selection-end-line="786" selection-end-column="20" />
               <folding />
             </state>
           </provider>
@@ -57,18 +37,8 @@
       <file leaf-file-name="sensorService.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/scripts/services/sensorService.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="102" max-vertical-offset="1292">
-              <caret line="34" column="19" selection-start-line="34" selection-start-column="19" selection-end-line="34" selection-end-column="19" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="index.html" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/index.html">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-8.314815" vertical-offset="10635" max-vertical-offset="13175">
-              <caret line="652" column="49" selection-start-line="639" selection-start-column="43" selection-end-line="652" selection-end-column="49" />
+            <state vertical-scroll-proportion="0.0" vertical-offset="1337" max-vertical-offset="2431">
+              <caret line="107" column="45" selection-start-line="107" selection-start-column="45" selection-end-line="107" selection-end-column="45" />
               <folding />
             </state>
           </provider>
@@ -94,21 +64,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="sensorWizard.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/scripts/controllers/sensorWizard.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-8.071428" vertical-offset="17505" max-vertical-offset="20315">
-              <caret line="1043" column="43" selection-start-line="1043" selection-start-column="43" selection-end-line="1043" selection-end-column="43" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="menu.js" pinned="false" current-in-tab="false">
+      <file leaf-file-name="menu.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/scripts/controllers/menu.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-14.142858" vertical-offset="1797" max-vertical-offset="82127">
-              <caret line="129" column="47" selection-start-line="129" selection-start-column="47" selection-end-line="129" selection-end-column="47" />
+            <state vertical-scroll-proportion="0.33275563" vertical-offset="3888" max-vertical-offset="82416">
+              <caret line="240" column="60" selection-start-line="240" selection-start-column="39" selection-end-line="240" selection-end-column="60" />
               <folding />
             </state>
           </provider>
@@ -166,7 +126,6 @@
         <option value="$PROJECT_DIR$/app/scripts/app.js" />
         <option value="$PROJECT_DIR$/app/restartAppsDialogTmpl.html" />
         <option value="$PROJECT_DIR$/app/scripts/controllers/components/menu/menuRifidi.css" />
-        <option value="$PROJECT_DIR$/app/scripts/services/sensorService.js" />
         <option value="$PROJECT_DIR$/app/restartAppDialogTmpl.html" />
         <option value="$PROJECT_DIR$/app/views/sensorWizard.html" />
         <option value="$PROJECT_DIR$/bower_components/angular.treeview/angular.treeview.js" />
@@ -177,9 +136,10 @@
         <option value="$PROJECT_DIR$/app/scripts/controllers/CreateReadzoneWizard.js" />
         <option value="$PROJECT_DIR$/app/scripts/controllers/sensorWizard.js" />
         <option value="$PROJECT_DIR$/app/scripts/services/commonService.js" />
-        <option value="$PROJECT_DIR$/app/scripts/controllers/menu.js" />
         <option value="$PROJECT_DIR$/app/scripts/controllers/serverWizard.js" />
+        <option value="$PROJECT_DIR$/app/scripts/services/sensorService.js" />
         <option value="$PROJECT_DIR$/app/scripts/services/menuService.js" />
+        <option value="$PROJECT_DIR$/app/scripts/controllers/menu.js" />
       </list>
     </option>
   </component>
@@ -835,22 +795,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/scripts/controllers/menu.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-14.142858" vertical-offset="1797" max-vertical-offset="82127">
-          <caret line="129" column="47" selection-start-line="129" selection-start-column="47" selection-end-line="129" selection-end-column="47" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/scripts/services/sensorService.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="102" max-vertical-offset="1292">
-          <caret line="34" column="19" selection-start-line="34" selection-start-column="19" selection-end-line="34" selection-end-column="19" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/scripts/controllers/serverWizard.js">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="1797" max-vertical-offset="4386">
@@ -867,10 +811,26 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/app/scripts/services/sensorService.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="1337" max-vertical-offset="2431">
+          <caret line="107" column="45" selection-start-line="107" selection-start-column="45" selection-end-line="107" selection-end-column="45" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/app/scripts/services/menuService.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-0.19757366" vertical-offset="5520" max-vertical-offset="9843">
-          <caret line="318" column="63" selection-start-line="318" selection-start-column="63" selection-end-line="318" selection-end-column="63" />
+        <state vertical-scroll-proportion="-26.071428" vertical-offset="12632" max-vertical-offset="15453">
+          <caret line="786" column="20" selection-start-line="786" selection-start-column="20" selection-end-line="786" selection-end-column="20" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/scripts/controllers/menu.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.33275563" vertical-offset="3888" max-vertical-offset="82416">
+          <caret line="240" column="60" selection-start-line="240" selection-start-column="39" selection-end-line="240" selection-end-column="60" />
           <folding />
         </state>
       </provider>
