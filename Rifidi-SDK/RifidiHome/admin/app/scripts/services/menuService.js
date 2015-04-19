@@ -2,25 +2,47 @@
  * Created by Alejandro on 07/04/2015.
  */
 
-app.service('MenuService', function($rootScope, $http, ServerService, CommonService){
+app.service('MenuService', function($rootScope, $http, ServerService, CommonService, SensorService){
 
-    //Method that updates the list of menu servers
-    this.updateMenuServers = function(){
+    //Method that creates and updates the tree view menu
+    this.createUpdateMenu = function(){
 
-        console.log('updateMenuServers');
+        console.log('createUpdateMenu');
+
+        //in rootScope attribute we have the menu elements from servers root
+        if ( !$rootScope.elementList ){
+
+            $rootScope.elementList = [];
+
+        }
+
+        if ( !$rootScope.elementList[0] ){
+
+            var serversElement = [{
+                "elementName": "Servers",
+                "elementId": "servers",
+                "elementType": "servers",
+                "collapsed": true,
+                "contextMenuId": "contextMenuServers",
+                "iconClass":"server",
+                "children": []
+            }];
+
+            $rootScope.elementList[0].push(serversElement);
+
+        }
+
+        var menuServers = $rootScope.elementList[0].children;
+        console.log('menuServers: ');
+        console.log(menuServers);
 
         //Query the updated list of servers
         ServerService.callServerListService()
             .success(function (data, status, headers, config) {
 
-                console.log('updateMenuServers.success response');
+                console.log('createUpdateMenu.success response');
 
-                //in rootScope attribute wa have the meno elements from servers root, so we need to compare
-                //this new received list with servers inside menu
-                var menuServers = $rootScope.elementList[0].children;
-
-                console.log('menuServers: ');
-                console.log(menuServers);
+                //We need to compare this new received list of servers with servers inside menu
 
                 //iterate over the received servers
                 //if exists -> then update
@@ -40,13 +62,6 @@ app.service('MenuService', function($rootScope, $http, ServerService, CommonServ
                             menuServer.ipAddress = newServer.ipAddress;
                             menuServer.restPort = newServer.restPort;
                             menuServer.host = newServer.restProtocol + '://' + newServer.ipAddress + ':' + newServer.restPort;
-
-                            //then update the menuServer, with initial properties
-                            //menuServer.iconClass = "server-disconnected";
-
-                            //menuServer.status = 'CONNECTING';
-                            //menuServer.tooltipText = 'Connecting';
-                            //menuServer.allowSaveServerConfig = false;
 
                         }
 
@@ -134,7 +149,7 @@ app.service('MenuService', function($rootScope, $http, ServerService, CommonServ
 
             })
             . error(function (data, status, headers, config) {
-                console.log("updateMenuServers.fail response");
+                console.log("createUpdateMenu.fail response");
 
             });
 
@@ -213,6 +228,16 @@ app.service('MenuService', function($rootScope, $http, ServerService, CommonServ
                                 console.log(pingResponseHost);
                                 //change server status to connected
                                 changeServerStatusToConnected(serverToTest);
+
+                                //update sensors for this server
+                                updateMenuSensors(serverToTest);
+
+                                //update commands this server
+                                //updateMenuCommands(serverToTest);
+
+                                //update apps for this server
+                                //updateMenuApps(serverToTest);
+
                             }
                         });
 
@@ -239,11 +264,216 @@ app.service('MenuService', function($rootScope, $http, ServerService, CommonServ
                             console.log(pingResponseHost);
                             //change server status
                             changeServerStatusToConnecting(server);
+
+                            //remove child nodes
+                            removeChildNodes(server);
                         }
                     });
                 });
         });
     };
+
+    //Updates the menu list of sensors for server
+    var updateMenuSensors = function(serverElement){
+
+        //if there is no children elements, then create it
+        if ( !serverElement.children ){
+
+            serverElement.children = [];
+
+        }
+
+        //if there is no 'Sensor Management' element, then create it
+        if ( !serverElement.children[0] ){
+
+            //Create the sensor management element
+            var sensorManagementElement = {
+                "host": server.host,
+                "restProtocol": server.restProtocol,
+                "ipAddress": server.ipAddress,
+                "restPort": server.restPort,
+                "elementName": "Sensor Management",
+                "elementId": "sensorManagement",
+                "elementType": "sensorManagement",
+                "collapsed": true,
+                "iconClass":"reader-cog",
+                "contextMenuId": "contextMenuSensorManagement",
+                "server": server,
+                "children": []
+            }
+
+            serverElement.children[0] = sensorManagementElement;
+
+        }
+
+        //Refresh the list of sensors for this server
+        var menuSensors = serverElement.children[0].children;
+
+        console.log('serverElement.children[0]');
+        console.log(serverElement.children[0]);
+
+        console.log('menu sensors');
+        console.log(menuSensors);
+
+        //Query the updated list of sensors
+        SensorService.callSensorListService(serverElement.host)
+            .success(function (data, status, headers, config) {
+
+                console.log('callSensorListService.success response');
+
+                //We need to compare this new received list with sensors inside server
+                var newSensorList = SensorService.getSensorsFromReceivedData(data);
+
+                console.log('menuSensors for host: ' + serverElement.host);
+                console.log(menuSensors);
+
+                //iterate over the received sensors
+                //if exists -> then update
+                //if does not exist -> then add
+                newSensorList.forEach(function (newSensor) {
+
+                    var newSensorExists = false;
+
+                    //iterate over the current list of sensors in menu
+                    menuSensors.forEach(function (menuSensor) {
+
+                        if(!newSensorExists && (newSensor.id == menuSensor.elementId) ){
+
+                            newSensorExists = true;
+
+                            menuSensor.factoryID = newSensor.type;
+
+                        }
+
+                    });
+
+                    if ( !newSensorExists ){
+
+                        //then add new server to menu list
+
+                        //complete the attributes for new sensor to add
+
+                        newSensor.elementName = newSensor.id;
+                        newSensor.elementId = newSensor.id;
+                        newSensor.elementType = 'sensor';
+                        newSensor.collapsed = true;
+                        newSensor.factoryID = newSensor.type;
+                        newSensor.contextMenuId = 'contextMenuSensor';
+                        newSensor.iconClass = 'reader';
+                        newSensor.allowCreateSession = false;
+                        newSensor.children = [];
+
+                        console.log('going to add new sensor to menu on server: ' + serverElement.host);
+
+                        menuSensors.push(newSensor);
+
+                        console.log('new menu sensors');
+                        console.log(menuSensors);
+
+                    }
+
+                });
+
+                //iterate over the menu sensors to check what are deleted
+                //if menu sensor exists -> then do nothing, because it was already updated in previous loop
+                //if menu sensor does not exist -> then delete from menu list of sensors
+
+                var sensorsToDelete = [];
+
+                console.log('checking sensors to delete');
+                menuSensors.forEach(function (menuSensor) {
+
+                    var menuSensorExists = false;
+
+                    console.log('menuSensor:');
+                    console.log(menuSensor);
+
+                    //iterate over the new received sensor list
+                    newSensorList.forEach(function (newSensor) {
+
+                        console.log('newSensor:');
+                        console.log(newSensor);
+
+                        if( (newSensor.id == menuSensor.id) ){
+
+                            console.log('newSensor.id = menuSensor.id');
+                            menuSensorExists = true;
+
+                        } else {
+
+                            console.log('newSensor.id <> menuSensor.id');
+
+                        }
+
+                    });
+
+                    if ( !menuSensorExists ){
+
+                        //then delete the sensor from menu (add to a list, and then when exit this menu sensors loop, delete)
+                        sensorsToDelete.push(angular.copy(menuSensor));
+
+                    }
+
+                });
+
+
+                if ( sensorsToDelete.length > 0 ){
+
+                    //There is at least one sensor to delete, then delete
+
+                    //iterate the list of sensors to delete, and delete
+                    sensorsToDelete.forEach(function (sensorToDelete) {
+
+                        //iterate over the menu sensors
+                        var currentIndex = -1;
+                        menuSensors.forEach(function (menuSensor) {
+
+                            currentIndex++;
+                            if( sensorToDelete.id == menuSensor.id ){
+
+                                menuSensors.splice(currentIndex,1);
+                            }
+
+                        });
+
+                    });
+
+                }
+
+
+                //order the menu list of sensors
+                menuSensors.sort( CommonService.compareElements );
+
+            })
+            . error(function (data, status, headers, config) {
+
+                console.log('updateMenuSensors.fail response on server: ' + serverElement.host);
+
+                //Delete the list of sensors node
+                menuSensors = [];
+
+            });
+
+
+
+    };
+
+    var removeChildNodes = function(element){
+
+        console.log('removeChildNodes');
+        console.log('element');
+        console.log(element);
+        console.log('element.children');
+        console.log(element.children);
+
+        if (element && element.children){
+
+            element.children = [];
+
+        }
+
+    };
+
 
     //Gets the host protocol://ipaddress:port from config returned by ping rest operation
     //it assumes the rest operation is like protocol://ipaddress:port/ping

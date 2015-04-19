@@ -122,7 +122,7 @@ angular.module('rifidiApp')
 
                         //refresh tree view
                         //TreeViewPainting.paintTreeView();
-                        MenuService.updateMenuServers();
+                        MenuService.createUpdateMenu();
 
 
                       } else {

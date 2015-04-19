@@ -2,7 +2,8 @@
  * Created by tws on 07/04/2015.
  */
 
-app.service('CommonService', function($http){
+app.service('CommonService', function($http) {
+
 
     //Method that returns a list of boolean values: true and false, to display in selection lists
     this.getBooleanValues = function(){
