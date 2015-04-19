@@ -288,17 +288,17 @@ app.service('MenuService', function($rootScope, $http, ServerService, CommonServ
 
             //Create the sensor management element
             var sensorManagementElement = {
-                "host": server.host,
-                "restProtocol": server.restProtocol,
-                "ipAddress": server.ipAddress,
-                "restPort": server.restPort,
+                "host": serverElement.host,
+                "restProtocol": serverElement.restProtocol,
+                "ipAddress": serverElement.ipAddress,
+                "restPort": serverElement.restPort,
                 "elementName": "Sensor Management",
                 "elementId": "sensorManagement",
                 "elementType": "sensorManagement",
                 "collapsed": true,
                 "iconClass":"reader-cog",
                 "contextMenuId": "contextMenuSensorManagement",
-                "server": server,
+                "server": serverElement,
                 "children": []
             }
 
@@ -353,6 +353,7 @@ app.service('MenuService', function($rootScope, $http, ServerService, CommonServ
 
                         //complete the attributes for new sensor to add
 
+                        newSensor.host = serverElement.host;
                         newSensor.elementName = newSensor.id;
                         newSensor.elementId = newSensor.id;
                         newSensor.elementType = 'sensor';
@@ -444,6 +445,13 @@ app.service('MenuService', function($rootScope, $http, ServerService, CommonServ
                 //order the menu list of sensors
                 menuSensors.sort( CommonService.compareElements );
 
+                //for each sensor update the sessions and executing command instances
+                menuSensors.forEach(function (menuSensor) {
+
+                    refreshSessions(menuSensor);
+
+                });
+
             })
             . error(function (data, status, headers, config) {
 
@@ -455,6 +463,328 @@ app.service('MenuService', function($rootScope, $http, ServerService, CommonServ
             });
 
 
+
+    };
+
+    var refreshSessions = function(sensorElement){
+
+        console.log('refreshSessions');
+        console.log('sensorElement: ');
+        console.log(sensorElement);
+
+        var menuSessions = sensorElement.children;
+        console.log('menuSessions for sensor: ' + sensorElement.id + ', and host: ' + sensorElement.host);
+        console.log(menuSessions);
+
+        //Query the updated list of sessions
+        SensorService.callReaderStatusService(sensorElement.host, sensorElement.id)
+            .success(function (data, status, headers, config) {
+
+                console.log('refreshSessions.success response');
+
+                //We need to compare this new received list with sessions inside sensor
+                var readerStatus = SensorService.getReaderStatusFromReceivedData(data);
+                var newSessionList = readerStatus.sessions;
+
+                //iterate over the received sessions
+                //if exists -> then update
+                //if does not exist -> then add
+                newSessionList.forEach(function (newSession) {
+
+                    var newSessionExists = false;
+
+                    //iterate over the current list of sessions for this sensorElement
+                    menuSessions.forEach(function (menuSession) {
+
+                        if(!newSessionExists && (newSession.id == menuSession.sessionID) ){
+
+                            newSessionExists = true;
+                            menuSession.status = newSession.status;
+
+                            //Update menu executing commands for this session
+                            updateExecutingCommandsForSession(menuSession, newSession.executingCommands);
+
+                        }
+
+                    });
+
+                    if ( !newSessionExists ){
+
+                        //then add new session to menu list
+
+                        //complete the attributes for new session to add
+
+                        newSession.sessionID = newSession.id;
+                        newSession.sensor = sensorElement;
+                        newSession.elementName = 'session ' + newSession.id;
+                        newSession.elementId = 'session ' + newSession.id;
+                        newSession.collapsed = true;
+                        newSession.tooltipText = newSession.id;
+                        newSession.contextMenuId = 'contextMenuSession';
+                        newSession.allowStartSession = false;
+                        newSession.allowStopSession = false;
+                        newSession.children = [];
+
+                        console.log('going to add new session to menu on sensor: ' + readerStatus.sensor.id);
+
+                        menuSessions.push(newSession);
+
+                        console.log('new menu sessions');
+                        console.log(menuSessions);
+
+                        //Update menu executing commands for this session
+                        updateExecutingCommandsForSession(newSession, newSession.executingCommands);
+
+                    }
+
+                });
+
+                //iterate over the menu sessions to check what are deleted
+                //if menu session exists -> then do nothing, because it was already updated in previous loop
+                //if menu session does not exist -> then delete from menu list of sessions
+
+                var sessionsToDelete = [];
+
+                console.log('checking sessions to delete on sensor: ' + + readerStatus.sensor.id);
+                menuSessions.forEach(function (menuSession) {
+
+                    var menuSessionExists = false;
+
+                    console.log('menuSession:');
+                    console.log(menuSession);
+
+                    //iterate over the new received session list
+                    newSessionList.forEach(function (newSession) {
+
+                        console.log('newSession:');
+                        console.log(newSession);
+
+                        if( (newSession.id == menuSession.id) ){
+
+                            console.log('newSession.id == menuSession.id');
+                            menuSessionExists = true;
+
+                        } else {
+
+                            console.log('newSession.id <> menuSession.id');
+
+                        }
+
+                    });
+
+                    if ( !menuSessionExists ){
+
+                        //then delete the session from menu (add to a list, and then when exit this menu sessions loop, delete)
+                        sessionsToDelete.push(angular.copy(menuSession));
+
+                    }
+
+                });
+
+
+                if ( sessionsToDelete.length > 0 ){
+
+                    //There is at least one session to delete, then delete
+
+                    //iterate the list of sessions to delete, and delete
+                    sessionsToDelete.forEach(function (sessionToDelete) {
+
+                        //iterate over the menu sessions
+                        var currentIndex = -1;
+                        menuSessions.forEach(function (menuSession) {
+
+                            currentIndex++;
+                            if( sessionToDelete.id == menuSession.id ){
+
+                                menuSessions.splice(currentIndex,1);
+                            }
+
+                        });
+
+                    });
+
+                }
+
+
+                //order the menu list of sensors
+                menuSessions.sort( CommonService.compareElements );
+
+                //for each session, update the icons and state related attributes
+                menuSessions.forEach(function (menuSession) {
+
+                    menuSession.tooltipText = menuSession.status;
+
+                    //Assign the icon depending on status:
+                    if (menuSession.status == 'CREATED' || menuSession.status == 'CLOSED'){
+
+                        menuSession.iconClass = 'link-red';
+                        menuSession.allowStartSession = true;
+                        //not allowed to stop session
+                        menuSession.allowStopSession = false;
+
+                    } else if (menuSession.status == 'CONNECTING' || menuSession.status == 'LOGGINGIN'){
+
+                        menuSession.iconClass = 'link-yellow';
+                        //not allowed to start session
+                        menuSession.allowStartSession = false;
+                        menuSession.allowStopSession = true;
+
+
+                    }  else if (menuSession.status == 'PROCESSING'){
+
+                        menuSession.iconClass = 'link-green';
+                        //not allowed to start session
+                        menuSession.allowStartSession = false;
+                        menuSession.allowStopSession = true;
+
+                    }
+
+                });
+
+                //If sensor has no session, then allow to create one session
+                var allowCreateSession = (menuSessions.length == 0);
+                sensorElement.allowCreateSession = allowCreateSession;
+
+
+            })
+            . error(function (data, status, headers, config) {
+
+                console.log('updateMenuSessions.fail response on sensor: ' + sensorElement.id);
+
+                //Delete the list of sessions node
+                menuSessions = [];
+
+            });
+
+    };
+
+    var updateExecutingCommandsForSession = function(sessionElement, newCommands){
+
+        //todo
+        //iterate over the session element commands to check what commands are new or deleted
+        //if command exists -> then update properties with new command
+        //if command does not exist -> then delete command from menu commands
+
+        //We need to compare this new received list newCommands with commands inside sessionElement
+        var menuCommands = sessionElement.children;
+
+        //iterate over the received commands
+        //if exists -> then update
+        //if does not exist -> then add
+        newCommands.forEach(function (newCommand) {
+
+            var newCommandExists = false;
+
+            //iterate over the current list of commands for this sessionElement
+            menuCommands.forEach(function (menuCommand) {
+
+                if(!newCommandExists && (newCommand.id == menuCommand.commandID) ){
+
+                    newCommandExists = true;
+                    menuCommand.interval = newCommand.interval;
+
+                }
+
+            });
+
+            if ( !newCommandExists ){
+
+                //then add new command instance to session
+
+                //complete the attributes for new command to add
+
+                newCommand.elementName = newCommand.id;
+                newCommand.elementId = newCommand.id;
+                newCommand.collapsed = true;
+                newCommand.iconClass = 'script-gear';
+                newCommand.session = sessionElement;
+                newCommand.elementType = 'commandInstance_sensor';
+                newCommand.contextMenuId = 'contextMenuCommand_sensor';
+                newCommand.commandType = newCommand.type;
+                newCommand.commandID = newCommand.id;
+                newCommand.host = sessionElement.host;
+                newCommand.children = [];
+
+                console.log('going to add new command instance to menu on session: ' + sessionElement.id);
+
+                menuCommands.push(newCommand);
+
+                console.log('new menu commands');
+                console.log(menuCommands);
+
+            }
+
+        });
+
+        //iterate over the menu commands to check what are deleted
+        //if menu command exists -> then do nothing, because it was already updated in previous loop
+        //if menu command does not exist -> then delete from menu list of commands
+
+        var commandsToDelete = [];
+
+        console.log('checking commands to delete on session: ' + + sessionElement.id);
+        menuCommands.forEach(function (menuCommand) {
+
+            var menuCommandExists = false;
+
+            console.log('menuCommand:');
+            console.log(menuCommand);
+
+            //iterate over the new received command list
+            newCommands.forEach(function (newCommand) {
+
+                console.log('newCommand:');
+                console.log(newCommand);
+
+                if( (newCommand.id == menuCommand.id) ){
+
+                    console.log('newCommand.id == menuCommand.id');
+                    menuCommandExists = true;
+
+                } else {
+
+                    console.log('newCommand.id <> menuCommand.id');
+
+                }
+
+            });
+
+            if ( !menuCommandExists ){
+
+                //then delete the command from menu (add to a list, and then when exit this menu commands loop, delete)
+                commandsToDelete.push(angular.copy(menuCommand));
+
+            }
+
+        });
+
+
+        if ( commandsToDelete.length > 0 ){
+
+            //There is at least one command to delete, then delete
+
+            //iterate the list of commands to delete, and delete
+            commandsToDelete.forEach(function (commandToDelete) {
+
+                //iterate over the menu commands
+                var currentIndex = -1;
+                menuCommands.forEach(function (menuCommand) {
+
+                    currentIndex++;
+                    if( commandToDelete.id == menuCommand.id ){
+
+                        menuCommands.splice(currentIndex, 1);
+                    }
+
+                });
+
+            });
+
+        }
+
+
+        //order the menu list of commands
+        menuCommands.sort( CommonService.compareElements );
 
     };
 
