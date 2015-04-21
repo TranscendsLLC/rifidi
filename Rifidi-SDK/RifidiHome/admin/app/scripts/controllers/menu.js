@@ -1764,7 +1764,7 @@ var module = angular.module('rifidiApp')
         TreeViewPainting.paintTreeView();
 
 
-        $interval(callAtInterval, 5000);
+        $interval(callAtInterval, 10000);
 
         function callAtInterval(){
 
@@ -2053,7 +2053,7 @@ var module = angular.module('rifidiApp')
 
 
                       //$scope.commandWizardData.commandInstance = selectedCommandInstance;
-                      var host = angular.copy($scope.elementSelected.session.sensor.sensorManagementElement.host);
+                      var host = angular.copy($scope.elementSelected.host);
                       var readerType = angular.copy($scope.elementSelected.session.sensor.factoryID);
                       var commandType = angular.copy($scope.elementSelected.commandType);
                       var commandId = angular.copy($scope.elementSelected.elementId);
@@ -2276,7 +2276,8 @@ var module = angular.module('rifidiApp')
 
                       //$scope.commandWizardData.commandInstance = selectedCommandInstance;
                       var host = angular.copy($scope.elementSelected.host);
-                      var readerType = angular.copy($scope.elementSelected.factoryElement.readerTypeElement.factoryID);
+                      //var readerType = angular.copy($scope.elementSelected.factoryElement.readerTypeElement.factoryID);
+                      var readerType = angular.copy($scope.elementSelected.readerType.readerFactoryID);
                       var commandType = angular.copy($scope.elementSelected.factoryID);
                       var commandId = angular.copy($scope.elementSelected.commandID);
 
@@ -2552,8 +2553,13 @@ var module = angular.module('rifidiApp')
                                           var maxvalue = 0;
                                           var minvalue = 0;
                                           if (type.nodeValue == 'java.lang.Integer') {
-                                              maxvalue = propertiesXmlVector[indexProp].getElementsByTagName("maxvalue")[0].childNodes[0];
-                                              minvalue = propertiesXmlVector[indexProp].getElementsByTagName("minvalue")[0].childNodes[0];
+                                              if ( propertiesXmlVector[indexProp].getElementsByTagName("maxvalue") &&  propertiesXmlVector[indexProp].getElementsByTagName("maxvalue")[0]) {
+                                                  maxvalue = propertiesXmlVector[indexProp].getElementsByTagName("maxvalue")[0].childNodes[0];
+                                              }
+
+                                              if ( propertiesXmlVector[indexProp].getElementsByTagName("minvalue") &&  propertiesXmlVector[indexProp].getElementsByTagName("minvalue")[0] ) {
+                                                  minvalue = propertiesXmlVector[indexProp].getElementsByTagName("minvalue")[0].childNodes[0];
+                                              }
                                           }
                                           var category = propertiesXmlVector[indexProp].getElementsByTagName("category")[0].childNodes[0];
                                           var writable = propertiesXmlVector[indexProp].getElementsByTagName("writable")[0].childNodes[0];
@@ -4294,6 +4300,7 @@ module.service('TreeViewPainting', function($http, $rootScope, ServerService, Co
                                                  "elementId": factoryID.nodeValue + " Commands",
                                                  "collapsed": true,
                                                  "factoryID": factoryID.nodeValue,
+                                                 "id": factoryID.nodeValue,
                                                  "description": description.nodeValue,
                                                  "iconClass":"reader-cog",
                                                  "host": server.host,
