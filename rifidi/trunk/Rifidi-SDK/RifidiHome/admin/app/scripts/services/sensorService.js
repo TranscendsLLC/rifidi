@@ -110,15 +110,20 @@ app.service('SensorService', function($http, CommonService){
             for (var indexComm = 0; indexComm < xmlCommands.length; indexComm++) {
 
                 var commandID = xmlCommands[indexComm].getElementsByTagName("commandID")[0].childNodes[0].nodeValue;
-                var factoryID = xmlCommands[indexComm].getElementsByTagName("factoryID")[0].childNodes[0].nodeValue;
+                var factoryID = null;
+                if ( xmlCommands[indexComm].getElementsByTagName("factoryID") && xmlCommands[indexComm].getElementsByTagName("factoryID")[0] ) {
+                    factoryID = xmlCommands[indexComm].getElementsByTagName("factoryID")[0].childNodes[0].nodeValue;
+                }
                 var interval = xmlCommands[indexComm].getElementsByTagName("interval")[0].childNodes[0].nodeValue;
 
-                var command = {};
-                command.id = commandID;
-                command.type = factoryID;
-                command.interval = interval;
+                if ( factoryID != null ) {
+                    var command = {};
+                    command.id = commandID;
+                    command.type = factoryID;
+                    command.interval = interval;
 
-                executingCommands.push(command);
+                    executingCommands.push(command);
+                }
 
             }
 
@@ -130,6 +135,125 @@ app.service('SensorService', function($http, CommonService){
         readerStatus.sessions = sessions;
 
         return readerStatus;
+
+    };
+
+    //Method that calls the API to get the reader types for host
+    this.callReaderTypesService = function(host) {
+
+        var serviceUrl = host + '/readertypes';
+        return $http({ method: 'GET', url: serviceUrl });
+
+    };
+
+    // Method that takes the xml response from server and returns the list of reader types
+    this.getReaderTypesFromReceivedData = function(data){
+
+        var xmlData = CommonService.getXmlObjectFromXmlServerData(data);
+
+        //get the xml response and extract the values to construct the reader types list
+        var xmlVector = xmlData.getElementsByTagName("sensor");
+
+        var readerTypesToReturn = [];
+
+        for (var index = 0; index < xmlVector.length; index++) {
+
+            var factoryID = xmlVector[index].getElementsByTagName("factoryID")[0].childNodes[0].nodeValue;
+            var description = xmlVector[index].getElementsByTagName("description")[0].childNodes[0].nodeValue;
+
+            //Add the reader type to reader types list
+            var readerType = {
+                "factoryID": factoryID,
+                "description": description
+            };
+
+            readerTypesToReturn.push(readerType);
+
+        }
+
+        return readerTypesToReturn;
+
+    };
+
+    //Method that calls the API to get the command types for host
+    this.callCommandTypesService = function(host) {
+
+        var serviceUrl = host + '/commandtypes';
+        return $http({ method: 'GET', url: serviceUrl });
+
+    };
+
+    // Method that takes the xml response from server and returns the list of command types
+    this.getCommandTypesFromReceivedData = function(data, readerType){
+
+        var xmlData = CommonService.getXmlObjectFromXmlServerData(data);
+
+        //get the xml response and extract the values to construct the command types list
+        var xmlVector = xmlData.getElementsByTagName("command");
+
+        var commandTypesToReturn = [];
+
+        for (var index = 0; index < xmlVector.length; index++) {
+
+            var factoryID = xmlVector[index].getElementsByTagName("factoryID")[0].childNodes[0].nodeValue;
+            var description = xmlVector[index].getElementsByTagName("description")[0].childNodes[0].nodeValue;
+            var readerFactoryID = xmlVector[index].getElementsByTagName("readerFactoryID")[0].childNodes[0].nodeValue;
+
+            //Add the command type to command types list if reader type match
+            if ( readerType == readerFactoryID ) {
+
+                var commandType = {
+                    "factoryID": factoryID,
+                    "description": description,
+                    "readerFactoryID": readerFactoryID
+                };
+
+                commandTypesToReturn.push(commandType);
+            }
+
+        }
+
+        return commandTypesToReturn;
+
+    };
+
+    //Method that calls the API to get the command instances for host
+    this.callCommandInstancesService = function(host) {
+
+        var serviceUrl = host + '/commands';
+        return $http({ method: 'GET', url: serviceUrl });
+
+    };
+
+    // Method that takes the xml response from server and returns the list of command instances
+    this.getCommandInstancesFromReceivedData = function(data, commandType){
+
+        var xmlData = CommonService.getXmlObjectFromXmlServerData(data);
+
+        //get the xml response and extract the values to construct the command instances list
+        var xmlVector = xmlData.getElementsByTagName("command");
+
+        var commandInstancesToReturn = [];
+
+        for (var index = 0; index < xmlVector.length; index++) {
+
+            var commandID = xmlVector[index].getElementsByTagName("commandID")[0].childNodes[0].nodeValue;
+            var factoryID = xmlVector[index].getElementsByTagName("factoryID")[0].childNodes[0].nodeValue;
+
+            //Add the command instance to command instances list if command type matches
+            if ( factoryID == commandType ) {
+
+                var commandInstance = {
+                    "commandID": commandID,
+                    "factoryID": factoryID
+                };
+
+                commandInstancesToReturn.push(commandInstance);
+            }
+
+        }
+
+        return commandInstancesToReturn;
 
     };
 

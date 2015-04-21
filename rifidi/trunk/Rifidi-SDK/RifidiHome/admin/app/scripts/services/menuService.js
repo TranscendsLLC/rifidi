@@ -232,8 +232,8 @@ app.service('MenuService', function($rootScope, $http, ServerService, CommonServ
                                 //update sensors for this server
                                 updateMenuSensors(serverToTest);
 
-                                //update commands this server
-                                //updateMenuCommands(serverToTest);
+                                //update reader types this server
+                                updateMenuReaderTypes(serverToTest);
 
                                 //update apps for this server
                                 //updateMenuApps(serverToTest);
@@ -448,7 +448,7 @@ app.service('MenuService', function($rootScope, $http, ServerService, CommonServ
                 //for each sensor update the sessions and executing command instances
                 menuSensors.forEach(function (menuSensor) {
 
-                    refreshSessions(menuSensor);
+                    updateSessions(menuSensor);
 
                 });
 
@@ -466,9 +466,499 @@ app.service('MenuService', function($rootScope, $http, ServerService, CommonServ
 
     };
 
-    var refreshSessions = function(sensorElement){
+    //Updates the list of reader types for server
+    var updateMenuReaderTypes = function(serverElement){
 
-        console.log('refreshSessions');
+        //if there is no children elements, then create it
+        if ( !serverElement.children ){
+
+            serverElement.children = [];
+
+        }
+
+        //if there is no 'Command Management' element, then create it
+        if ( !serverElement.children[1] ){
+
+            //Create the command management element
+            var commandManagementElement = {
+                "host": serverElement.host,
+                "elementName": "Command Management",
+                "elementId": "commandManagement",
+                "collapsed": true,
+                "iconClass": 'cog',
+                "children": []
+            };
+
+            serverElement.children[1] = commandManagementElement;
+
+        }
+
+        //Refresh the list of command types for this server
+        var menuReaderTypes = serverElement.children[1].children;
+
+        console.log('serverElement.children[1]');
+        console.log(serverElement.children[1]);
+
+        console.log('menu reader types');
+        console.log(menuReaderTypes);
+
+        //Query the updated list of reader types
+        SensorService.callReaderTypesService(serverElement.host)
+            .success(function (data, status, headers, config) {
+
+                console.log('callReaderTypesService.success response');
+
+                //We need to compare this new received list with reader types inside server
+                var newReaderTypeList = SensorService.getReaderTypesFromReceivedData(data);
+
+                console.log('menuReaderTypes for host: ' + serverElement.host);
+                console.log(menuReaderTypes);
+
+                //iterate over the received reader types
+                //if exists -> then update
+                //if does not exist -> then add
+                newReaderTypeList.forEach(function (newReaderType) {
+
+                    var newReaderTypeExists = false;
+
+                    //iterate over the current list of reader types in menu
+                    menuReaderTypes.forEach(function (menuReaderType) {
+
+                        if(!newReaderTypeExists && (newReaderType.factoryID == menuReaderType.factoryID) ){
+
+                            newReaderTypeExists = true;
+
+                            menuReaderType.description = newReaderType.description;
+
+                        }
+
+                    });
+
+                    if ( !newReaderTypeExists ){
+
+                        //then add new reader type to menu list
+
+                        //complete the attributes for new reader type to add
+                        newReaderType.elementName = newReaderType.factoryID + ' Commands';
+                        newReaderType.elementId = newReaderType.factoryID + ' Commands';
+                        newReaderType.collapsed = true;
+                        newReaderType.id = newReaderType.factoryID;
+                        newReaderType.iconClass = 'reader-cog';
+                        newReaderType.host = serverElement.host;
+                        newReaderType.children = [];
+
+                        console.log('going to add new reader type to menu on server: ' + serverElement.host);
+
+                        menuReaderTypes.push(newReaderType);
+
+                        console.log('new menu reader types');
+                        console.log(menuReaderTypes);
+
+                    }
+
+                });
+
+
+
+                //iterate over the menu reader types to check what are deleted
+                //if menu reader type exists -> then do nothing, because it was already updated in previous loop
+                //if menu reader type does not exist -> then delete from menu list of reader types
+
+                var readerTypesToDelete = [];
+
+                console.log('checking reader types to delete');
+                menuReaderTypes.forEach(function (menuReaderType) {
+
+                    var menuReaderTypeExists = false;
+
+                    console.log('menuReaderTypeExists:');
+                    console.log(menuReaderTypeExists);
+
+                    //iterate over the new received reader types list
+                    newReaderTypeList.forEach(function (newReaderType) {
+
+                        console.log('newReaderType:');
+                        console.log(newReaderType);
+
+                        if( (newReaderType.factoryID == menuReaderType.factoryID) ){
+
+                            console.log('newReaderType.factoryID = menuReaderType.factoryID');
+                            menuReaderTypeExists = true;
+
+                        } else {
+
+                            console.log('newReaderType.factoryID <> menuReaderType.factoryID');
+
+                        }
+
+                    });
+
+                    if ( !menuReaderTypeExists ){
+
+                        //then delete the reader type from menu (add to a list, and then when exit this menu reader types loop, delete)
+                        readerTypesToDelete.push(angular.copy(menuReaderType));
+
+                    }
+
+                });
+
+                if ( readerTypesToDelete.length > 0 ){
+
+                    //There is at least one reader type to delete, then delete
+
+                    //iterate the list of reader types to delete, and delete
+                    readerTypesToDelete.forEach(function (readerTypeToDelete) {
+
+                        //iterate over the menu reader types
+                        var currentIndex = -1;
+                        menuReaderTypes.forEach(function (menuReaderType) {
+
+                            currentIndex++;
+                            if( readerTypeToDelete.id == menuReaderType.id ){
+
+                                menuReaderTypes.splice(currentIndex,1);
+                            }
+
+                        });
+
+                    });
+
+                }
+
+
+                //order the menu list of reader types
+                menuReaderTypes.sort( CommonService.compareElements );
+
+                //for each reader type update the command types
+                menuReaderTypes.forEach(function (menuReaderType) {
+
+                    updateCommandTypes(menuReaderType);
+
+                });
+
+
+
+            })
+            . error(function (data, status, headers, config) {
+
+                console.log('updateMenuReaderTypes.fail response on server: ' + serverElement.host);
+
+                //Delete the list of reader types node
+                menuReaderTypes = [];
+
+            });
+
+    };
+
+    var updateCommandTypes = function(menuReaderType){
+
+        console.log('updateCommandTypes');
+        console.log('menuReaderType: ');
+        console.log(menuReaderType);
+
+        var menuCommandTypes = menuReaderType.children;
+        console.log('menuCommandTypes for readertype: ' + menuReaderType.id + ', and host: ' + menuReaderType.host);
+        console.log(menuCommandTypes);
+
+        //Query the updated list of command types
+        SensorService.callCommandTypesService(menuReaderType.host)
+            .success(function (data, status, headers, config) {
+
+                console.log('updateCommandTypes.success response');
+
+                //We need to compare this new received list with command types inside sensor type
+                var newCommandTypesList = SensorService.getCommandTypesFromReceivedData(data, menuReaderType.factoryID);
+
+                //iterate over the received command types
+                //if exists -> then update
+                //if does not exist -> then add
+                newCommandTypesList.forEach(function (newCommandType) {
+
+                    var newCommandTypeExists = false;
+
+                    //iterate over the current list of command types for this reader type
+                    menuCommandTypes.forEach(function (menuCommandType) {
+
+                        if(!newCommandTypeExists && (newCommandType.factoryID == menuCommandType.factoryID) ){
+
+                            newCommandTypeExists = true;
+                            menuCommandType.description = newCommandType.description;
+
+                        }
+
+                    });
+
+                    if ( !newCommandTypeExists ){
+
+                        //then add new command type to menu list
+
+                        //complete the attributes for new command type to add
+
+                        newCommandType.elementName = newCommandType.factoryID;
+                        newCommandType.elementId = newCommandType.factoryID;
+                        newCommandType.collapsed = true;
+                        newCommandType.factoryID = newCommandType.factoryID;
+                        newCommandType.iconClass = 'folder';
+                        newCommandType.elementType = 'commandType';
+                        newCommandType.contextMenuId = 'contextMenuCommandType_commandManagement';
+                        newCommandType.host = menuReaderType.host;
+                        newCommandType.readerTypeElement = 'readerTypeElement';
+                        newCommandType.children = [];
+
+                        console.log('going to add new command type to menu on reader type: ' + menuReaderType.id);
+
+                        menuCommandTypes.push(newCommandType);
+
+                        console.log('new menu command types');
+                        console.log(menuCommandTypes);
+
+                    }
+
+                });
+
+                //iterate over the menu command types to check what are deleted
+                //if menu command type exists -> then do nothing, because it was already updated in previous loop
+                //if menu command type does not exist -> then delete from menu list of command types
+
+                var commandTypesToDelete = [];
+
+                console.log('checking command types to delete on reader type: ' + + menuReaderType.id);
+                menuCommandTypes.forEach(function (menuCommandType) {
+
+                    var menuCommandTypeExists = false;
+
+                    console.log('menuCommandType:');
+                    console.log(menuCommandType);
+
+                    //iterate over the new received command type list
+                    newCommandTypesList.forEach(function (newCommandType) {
+
+                        console.log('newCommandType:');
+                        console.log(newCommandType);
+
+                        if( (newCommandType.factoryID == menuCommandType.factoryID) ){
+
+                            console.log('newCommandType.factoryID == menuCommandType.factoryID');
+                            menuCommandTypeExists = true;
+
+                        } else {
+
+                            console.log('newCommandType.factoryID <> menuCommandType.factoryID');
+
+                        }
+
+                    });
+
+                    if ( !menuCommandTypeExists ){
+
+                        //then delete the command type from menu (add to a list, and then when exit this menu command type loop, delete)
+                        commandTypesToDelete.push(angular.copy(menuCommandType));
+
+                    }
+
+                });
+
+
+                if ( commandTypesToDelete.length > 0 ){
+
+                    //There is at least one command type to delete, then delete
+
+                    //iterate the list of command types to delete, and delete
+                    commandTypesToDelete.forEach(function (commandTypeToDelete) {
+
+                        //iterate over the menu command types
+                        var currentIndex = -1;
+                        menuCommandTypes.forEach(function (menuCommandType) {
+
+                            currentIndex++;
+                            if( commandTypeToDelete.factoryID == menuCommandType.factoryID ){
+
+                                menuCommandTypes.splice(currentIndex,1);
+                            }
+
+                        });
+
+                    });
+
+                }
+
+
+                //order the menu list of command types
+                menuCommandTypes.sort( CommonService.compareElements );
+
+                //for each command types, update the command instances
+                menuCommandTypes.forEach(function (menuCommandType) {
+
+                    updateCommandInstances(menuCommandType);
+
+                });
+
+            })
+            . error(function (data, status, headers, config) {
+
+                console.log('updateCommandTypes.fail response on reader type: ' + menuReaderType.id);
+
+                //Delete the list of command types
+                menuCommandTypes = [];
+
+            });
+
+    };
+
+    var updateCommandInstances = function(menuCommandType){
+
+        console.log('updateCommandInstances');
+        console.log('menuCommandType: ');
+        console.log(menuCommandType);
+
+        var menuCommandInstances = menuCommandType.children;
+        console.log('menuCommandInstances for command type: ' + menuCommandType.id + ', and host: ' + menuCommandType.host);
+        console.log(menuCommandInstances);
+
+        //Query the updated list of command instances
+        SensorService.callCommandInstancesService(menuCommandType.host)
+            .success(function (data, status, headers, config) {
+
+                console.log('updateCommandInstances.success response');
+
+                //We need to compare this new received list with command instances inside sensor type
+                var newCommandInstancesList = SensorService.getCommandInstancesFromReceivedData(data, menuCommandType.factoryID);
+
+                //iterate over the received command instances
+                //if exists -> then update
+                //if does not exist -> then add
+                newCommandInstancesList.forEach(function (newCommandInstance) {
+
+                    var newCommandInstanceExists = false;
+
+                    //iterate over the current list of command instances for this command type
+                    menuCommandInstances.forEach(function (menuCommandInstance) {
+
+                        if(!newCommandInstanceExists && (newCommandInstance.commandID == menuCommandInstance.commandID) ){
+
+                            newCommandInstanceExists = true;
+
+                        }
+
+                    });
+
+                    if ( !newCommandInstanceExists ){
+
+                        //then add new command instance to menu list
+
+                        //complete the attributes for new command instance to add
+
+                        newCommandInstance.elementName = newCommandInstance.commandID;
+                        newCommandInstance.elementId = newCommandInstance.commandID;
+                        newCommandInstance.id = newCommandInstance.commandID;
+                        newCommandInstance.collapsed = true;
+                        newCommandInstance.commandID = newCommandInstance.commandID;
+                        newCommandInstance.factoryID = newCommandInstance.factoryID;
+                        newCommandInstance.elementType = 'commandInstance_commandManagement';
+                        newCommandInstance.iconClass = 'cog';
+                        newCommandInstance.host = menuCommandType.host;
+                        newCommandInstance.contextMenuId = 'contextMenuCommand_commandManagement';
+                        newCommandInstance.readerType = menuCommandType;
+                        //newCommandInstance.factoryElement = ' factoryElement,
+                        newCommandInstance.children = [];
+
+                        console.log('going to add new command instance to menu on command type: ' + menuCommandType.id);
+
+                        menuCommandInstances.push(newCommandInstance);
+
+                        console.log('new menu command instances');
+                        console.log(menuCommandInstances);
+
+                    }
+
+                });
+
+                //iterate over the menu command instances to check what are deleted
+                //if menu command instance exists -> then do nothing, because it was already updated in previous loop
+                //if menu command instance does not exist -> then delete from menu list of command instances
+
+                var commandInstancesToDelete = [];
+
+                console.log('checking command instances to delete on command type: ' + + menuCommandType.id);
+                menuCommandInstances.forEach(function (menuCommandInstance) {
+
+                    var menuCommandInstanceExists = false;
+
+                    console.log('menuCommandInstance:');
+                    console.log(menuCommandInstance);
+
+                    //iterate over the new received command instance list
+                    newCommandInstancesList.forEach(function (newCommandInstance) {
+
+                        console.log('newCommandInstance:');
+                        console.log(newCommandInstance);
+
+                        if( (newCommandInstance.commandID == menuCommandInstance.commandID) ){
+
+                            console.log('newCommandInstance.commandID == menuCommandInstance.commandID');
+                            menuCommandInstanceExists = true;
+
+                        } else {
+
+                            console.log('newCommandInstance.commandID <> menuCommandInstance.commandID');
+
+                        }
+
+                    });
+
+                    if ( !menuCommandInstanceExists ){
+
+                        //then delete the command instance from menu (add to a list, and then when exit this menu command instance loop, delete)
+                        commandInstancesToDelete.push(angular.copy(menuCommandInstance));
+
+                    }
+
+                });
+
+
+                if ( commandInstancesToDelete.length > 0 ){
+
+                    //There is at least one command instance to delete, then delete
+
+                    //iterate the list of command instances to delete, and delete
+                    commandInstancesToDelete.forEach(function (commandInstanceToDelete) {
+
+                        //iterate over the menu command instances
+                        var currentIndex = -1;
+                        menuCommandInstances.forEach(function (menuCommandInstance) {
+
+                            currentIndex++;
+                            if( commandInstanceToDelete.commandID == menuCommandInstance.commandID ){
+
+                                menuCommandInstances.splice(currentIndex,1);
+                            }
+
+                        });
+
+                    });
+
+                }
+
+                //order the menu list of command instances
+                menuCommandInstances.sort( CommonService.compareElements );
+
+            })
+            . error(function (data, status, headers, config) {
+
+                console.log('updateCommandInstances.fail response on command type: ' + menuCommandType.id);
+
+                //Delete the list of command types
+                menuCommandInstances = [];
+
+            });
+
+    };
+
+
+
+    var updateSessions = function(sensorElement){
+
+        console.log('updateSessions');
         console.log('sensorElement: ');
         console.log(sensorElement);
 
@@ -480,7 +970,7 @@ app.service('MenuService', function($rootScope, $http, ServerService, CommonServ
         SensorService.callReaderStatusService(sensorElement.host, sensorElement.id)
             .success(function (data, status, headers, config) {
 
-                console.log('refreshSessions.success response');
+                console.log('updateSessions.success response');
 
                 //We need to compare this new received list with sessions inside sensor
                 var readerStatus = SensorService.getReaderStatusFromReceivedData(data);
@@ -524,6 +1014,7 @@ app.service('MenuService', function($rootScope, $http, ServerService, CommonServ
                         newSession.allowStartSession = false;
                         newSession.allowStopSession = false;
                         newSession.children = [];
+                        newSession.host = sensorElement.host;
 
                         console.log('going to add new session to menu on sensor: ' + readerStatus.sensor.id);
 
