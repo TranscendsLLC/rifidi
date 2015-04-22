@@ -2,7 +2,7 @@
  * Created by Alejandro on 07/04/2015.
  */
 
-app.service('MenuService', function($rootScope, $http, ServerService, CommonService, SensorService){
+app.service('MenuService', function($rootScope, $http, ServerService, CommonService, SensorService, AppService){
 
     //Method that creates and updates the tree view menu
     this.createUpdateMenu = function(){
@@ -16,23 +16,33 @@ app.service('MenuService', function($rootScope, $http, ServerService, CommonServ
 
         }
 
-        if ( !$rootScope.elementList[0] ){
+        var serversElement = $rootScope.elementList[0];
+
+        if ( !serversElement ){
 
             var serversElement = [{
                 "elementName": "Servers",
                 "elementId": "servers",
                 "elementType": "servers",
-                "collapsed": true,
+                "collapsed": false,
                 "contextMenuId": "contextMenuServers",
                 "iconClass":"server",
                 "children": []
             }];
 
-            $rootScope.elementList[0].push(serversElement);
+            $rootScope.elementList = serversElement;
 
         }
 
-        var menuServers = $rootScope.elementList[0].children;
+        var menuServers = serversElement.children;
+
+        if ( !menuServers ){
+
+            menuServers = [];
+            $rootScope.elementList[0].children = menuServers;
+
+        }
+
         console.log('menuServers: ');
         console.log(menuServers);
 
@@ -40,7 +50,7 @@ app.service('MenuService', function($rootScope, $http, ServerService, CommonServ
         ServerService.callServerListService()
             .success(function (data, status, headers, config) {
 
-                console.log('createUpdateMenu.success response');
+                console.log('callServerListService.success response');
 
                 //We need to compare this new received list of servers with servers inside menu
 
@@ -149,7 +159,7 @@ app.service('MenuService', function($rootScope, $http, ServerService, CommonServ
 
             })
             . error(function (data, status, headers, config) {
-                console.log("createUpdateMenu.fail response");
+                console.log("callServerListService.fail response");
 
             });
 
@@ -236,7 +246,7 @@ app.service('MenuService', function($rootScope, $http, ServerService, CommonServ
                                 updateMenuReaderTypes(serverToTest);
 
                                 //update apps for this server
-                                //updateMenuApps(serverToTest);
+                                updateMenuApps(serverToTest);
 
                             }
                         });
@@ -650,6 +660,658 @@ app.service('MenuService', function($rootScope, $http, ServerService, CommonServ
 
     };
 
+    //Updates the list of apps for server
+    var updateMenuApps = function(serverElement){
+
+        console.log('updateMenuApps');
+
+        //if there is no children elements, then create it
+        if ( !serverElement.children ){
+
+            //console.log('!serverElement.children');
+            serverElement.children = [];
+
+        } else {
+
+            //console.log('serverElement.children');
+        }
+
+
+        //if there is no 'App Management' element, then create it
+        var appManagementElement = serverElement.children[2];
+        if ( !appManagementElement ){
+
+            //console.log('!appManagementElement');
+
+            //Create the app management element
+
+            appManagementElement = {
+                "elementName": "App Management",
+                "elementId": "App Management",
+                "collapsed": true,
+                "iconClass": "app-dev",
+                "children": [],
+                "host": serverElement.host
+            };
+
+            //console.log('serverElement.children[2]:');
+            //console.log(serverElement.children[2]);
+            serverElement.children[2] = appManagementElement;
+
+        } else {
+
+            //console.log('appManagementElement');
+
+        }
+/*
+        console.log('new appManagementElement:');
+        console.log(appManagementElement);
+
+        console.log('new serverElement.children[2]:');
+        console.log(serverElement.children[2]);
+*/
+
+        // if there is no 'App Groups' element, then create it
+        var appGroupsElement = appManagementElement.children[0];
+        if ( !appGroupsElement ) {
+
+            console.log('!appGroupsElement');
+
+            appGroupsElement = {
+                "elementName": "App Groups",
+                "elementId": "App Group",
+                "collapsed": true,
+                "iconClass": "appgroups",
+                "children": []
+            };
+
+            appManagementElement.children[0] = appGroupsElement;
+
+        } else {
+
+            console.log('appGroupsElement');
+
+        }
+
+        //Refresh the list of app groups for this server
+        var menuAppGroups = appGroupsElement.children;
+
+        console.log('menuAppGroups:');
+        console.log(menuAppGroups);
+
+        //Query the updated list of app groups
+        AppService.callAppListService(serverElement.host)
+            .success(function (data, status, headers, config) {
+
+                console.log('callAppListService.success response');
+
+                //We need to compare this new received list with app groups inside server
+                var newAppGroupList = AppService.getAppGroupsFromReceivedData(data);
+
+                console.log('newAppGroupList: ');
+                console.log(newAppGroupList);
+
+                console.log('menuAppGroupList for host: ' + serverElement.host);
+                console.log(menuAppGroups);
+
+                //iterate over the received app groups
+                //if exists -> then update
+                //if does not exist -> then add
+
+                newAppGroupList.forEach(function (newAppGroup) {
+
+                    var newAppGroupExists = false;
+
+                    //iterate over the current list of app groups in menu
+                    menuAppGroups.forEach(function (menuAppGroup) {
+
+                        if(!newAppGroupExists && (newAppGroup.groupName == menuAppGroup.groupName) ){
+
+                            newAppGroupExists = true;
+
+                            //menuReaderType.description = newReaderType.description;
+
+                        }
+
+                    });
+
+                    if ( !newAppGroupExists ){
+
+                        //then add new app group to menu list
+
+                        //complete the attributes for new app group to add
+
+                        newAppGroup.elementName = newAppGroup.groupName;
+                        newAppGroup.elementId = newAppGroup.groupName;
+                        newAppGroup.collapsed = true;
+                        //newAppGroup.readzoneAppId": "",
+                        newAppGroup.elementType = 'appGroup';
+                        newAppGroup.iconClass = 'group';
+                        newAppGroup.host = serverElement.host;
+                        newAppGroup.children = [];
+
+                        console.log('going to add new app group to menu on server: ' + serverElement.host);
+
+                        menuAppGroups.push(newAppGroup);
+
+                        console.log('new menu app groups:');
+                        console.log(menuAppGroups);
+
+                    }
+
+                });
+
+                //iterate over the menu app groups to check what are deleted
+                //if menu app group exists -> then do nothing, because it was already updated in previous loop
+                //if menu app group does not exist -> then delete from menu list of app groups
+
+                var appGroupsToDelete = [];
+
+                console.log('checking app groups to delete');
+                menuAppGroups.forEach(function (menuAppGroup) {
+
+                    var menuAppGroupExists = false;
+
+                    console.log('menuAppGroupExists:');
+                    console.log(menuAppGroupExists);
+
+                    //iterate over the new received app group list
+                    newAppGroupList.forEach(function (newAppGroup) {
+
+                        console.log('newAppGroup:');
+                        console.log(newAppGroup);
+
+                        if( newAppGroup.groupName == menuAppGroup.groupName ){
+
+                            console.log('newAppGroup.groupName == menuAppGroup.groupName');
+                            menuAppGroupExists = true;
+
+                        } else {
+
+                            console.log('newAppGroup.groupName <> menuAppGroup.groupName');
+
+                        }
+
+                    });
+
+                    if ( !menuAppGroupExists ){
+
+                        //then delete the app group from menu (add to a list, and then when exit this menu app group loop, delete)
+                        appGroupsToDelete.push(angular.copy(menuAppGroup));
+
+                    }
+
+                });
+
+                if ( appGroupsToDelete.length > 0 ){
+
+                    //There is at least one app group to delete, then delete
+
+                    //iterate the list of app groups to delete, and delete
+                    appGroupsToDelete.forEach(function (appGroupToDelete) {
+
+                        //iterate over the menu reader types
+                        var currentIndex = -1;
+                        menuAppGroups.forEach(function (menuAppGroup) {
+
+                            currentIndex++;
+                            if( appGroupToDelete.groupName == menuAppGroup.groupName ){
+
+                                menuAppGroups.splice(currentIndex,1);
+                            }
+
+                        });
+
+                    });
+
+                }
+
+
+                //order the menu list of app groups
+                menuAppGroups.sort( CommonService.compareElements );
+
+                //for each app group update the Apps and Readzones containers
+                menuAppGroups.forEach(function (menuAppGroup) {
+
+                    updateAppContainer(menuAppGroup, data);
+
+                    updateReadzoneContainer(menuAppGroup);
+
+                });
+
+            })
+            . error(function (data, status, headers, config) {
+
+                console.log('menuAppGroups.fail response on server: ' + serverElement.host);
+
+                //Delete the list of app groups
+                menuAppGroups = [];
+
+            });
+
+
+    };
+
+    var updateAppContainer = function(menuAppGroup, appsData) {
+
+        console.log('updateAppContainer');
+
+        //if there is no children , then create it
+        if (!menuAppGroup.children) {
+
+            //console.log('!serverElement.children');
+            menuAppGroup.children = [];
+
+        } else {
+
+            //console.log('serverElement.children');
+        }
+
+
+        //if there is no 'Apps' element, then create it
+        var appsElement = menuAppGroup.children[0];
+        if (!appsElement) {
+
+            //console.log('!appsElement');
+
+            //Create the apps element
+
+            appsElement = {
+                "elementName": 'Apps',
+                "elementId": 'Apps',
+                "collapsed": true,
+                "groupName": menuAppGroup.groupName,
+                "iconClass": 'apps',
+                "host": menuAppGroup.host,
+                "children": []
+            };
+
+            menuAppGroup.children[0] = appsElement;
+
+        } else {
+
+            //console.log('appManagementElement');
+
+        }
+
+        //Add the apps for this apps element
+        updateApps(appsElement, appsData);
+    };
+
+    var updateApps = function(appsElement, appsData){
+
+        console.log('updateApps');
+        console.log('appsElement: ');
+        console.log(appsElement);
+
+        var menuApps = appsElement.children;
+        console.log('menuApps for host: ' + appsElement.host);
+        console.log(menuApps);
+
+        //We need to compare this new received list with apps inside apps element
+        var newAppList = AppService.getAppsFromReceivedData(appsData, appsElement.groupName);
+
+        //iterate over the received apps
+        //if exists -> then update
+        //if does not exist -> then add
+        newAppList.forEach(function (newApp) {
+
+            var newAppExists = false;
+
+            //iterate over the current list of apps for this apps element
+            menuApps.forEach(function (menuApp) {
+
+                if(!newAppExists && (newApp.appId == menuApp.appId) ){
+
+                    newAppExists = true;
+
+                    //update attributes for new app element
+                    menuApp.status = newApp.status;
+                    menuApp.appName = newApp.appName;
+
+                }
+
+            });
+
+            if ( !newAppExists ){
+
+                //then add new app to menu list
+
+                //complete the attributes for new app to add
+
+                newApp.elementName = newApp.appName;
+                newApp.elementId = newApp.appName;
+                newApp.collapsed = true;
+                newApp.number = newApp.appId;
+                newApp.elementType = 'app';
+                newApp.contextMenuId = 'contextMenuApp';
+                newApp.host = appsElement.host;
+                newApp.tooltipText = newApp.status;
+                newApp.allowStartApp = false;
+                newApp.allowStopApp = false;
+                newApp.children = [];
+
+                console.log('going to add new app to menu');
+
+                menuApps.push(newApp);
+
+                console.log('new menu apps');
+                console.log(menuApps);
+
+            }
+
+        });
+
+        //iterate over the apps to check what are deleted
+        //if menu app exists -> then do nothing, because it was already updated in previous loop
+        //if menu app does not exist -> then delete from menu list of apps
+
+        var appsToDelete = [];
+
+        console.log('checking apps to delete on group: ' + appsElement.groupName);
+        menuApps.forEach(function (menuApp) {
+
+            var menuAppExists = false;
+
+            console.log('menuApp:');
+            console.log(menuApp);
+
+            //iterate over the new received app list
+            newAppList.forEach(function (newApp) {
+
+                console.log('newApp:');
+                console.log(newApp);
+
+                if( (newApp.appId == menuApp.appId) ){
+
+                    console.log('newApp.appId == menuApp.appId');
+                    menuAppExists = true;
+
+                } else {
+
+                    console.log('newApp.appId <> menuApp.appId');
+
+                }
+
+            });
+
+            if ( !menuAppExists ){
+
+                //then delete the app from menu (add to a list, and then when exit this apps loop, delete)
+                appsToDelete.push(angular.copy(menuApp));
+
+            }
+
+        });
+
+
+        if ( appsToDelete.length > 0 ){
+
+            //There is at least one app to delete, then delete
+
+            //iterate the list of apps to delete, and delete
+            appsToDelete.forEach(function (appToDelete) {
+
+                //iterate over the menu apps
+                var currentIndex = -1;
+                menuApps.forEach(function (menuApp) {
+
+                    currentIndex++;
+                    if( appToDelete.appId == menuApp.appId ){
+
+                        menuApps.splice(currentIndex,1);
+                    }
+
+                });
+
+            });
+
+        }
+
+
+        //order the menu list of apps
+        menuApps.sort( CommonService.compareElements );
+
+        //Update app state related attributes
+
+        menuApps.forEach(function (menuApp) {
+
+            if ( menuApp.status == 'STARTED' ){
+
+                menuApp.allowStopApp = true;
+                menuApp.iconClass = 'app-started';
+
+            } else if ( menuApp.status == 'STOPPED' ) {
+
+                menuApp.allowStartApp = true;
+                menuApp.iconClass = 'app-stopped';
+
+            }
+
+        });
+
+    };
+
+    var updateReadzoneContainer = function(menuAppGroup) {
+
+        console.log('updateReadzoneContainer');
+
+        //if there is no children , then create it
+        if (!menuAppGroup.children) {
+
+            //console.log('!serverElement.children');
+            menuAppGroup.children = [];
+
+        } else {
+
+            //console.log('serverElement.children');
+        }
+
+        //if there is no 'ReadZones' element, then create it
+        var readzonesElement = menuAppGroup.children[1];
+        if (!readzonesElement) {
+
+            //console.log('!readzonesElement');
+
+            //Create the readzones element
+
+            var readzonesElement = {
+                "elementName": "ReadZones",
+                "elementId": "ReadZones",
+                "collapsed": true,
+                "groupName": menuAppGroup.groupName,
+                "iconClass": "readzones",
+                "host": menuAppGroup.host,
+                "appId": menuAppGroup.readzoneAppId,
+                "contextMenuId": "contextMenuReadZones",
+                "elementType": "readZones",
+                "children": []
+            };
+
+            menuAppGroup.children[1] = readzonesElement;
+
+        } else {
+
+            //console.log('appManagementElement');
+
+        }
+
+        //Add the readzones for this readzones element
+        updateReadzones(readzonesElement);
+    };
+
+    var updateReadzones = function(readzonesElement, appsData){
+
+        console.log('updateReadzones');
+        console.log('readzonesElement: ');
+        console.log(readzonesElement);
+
+        //var menuReadzones = readzonesElement.children;
+        //console.log('menuReadzones for host: ' + readzonesElement.host);
+        //console.log(menuReadzones);
+
+        //if there is no children elements, then create it
+        if ( !readzonesElement.children ){
+
+            //console.log('!readzonesElement.children');
+            readzonesElement.children = [];
+
+        } else {
+
+            //console.log('readzonesElement.children');
+        }
+
+
+        //Refresh the list of readzones for this group
+        var menuReadzones = readzonesElement.children;
+
+        console.log('menuReadzones:');
+        console.log(menuReadzones);
+
+        //Query the updated list of readzones
+        AppService.callReadzoneListService(readzonesElement.host, readzonesElement.appId)
+            .success(function (data, status, headers, config) {
+
+                console.log('callReadzoneListService.success response');
+
+                //We need to compare this new received list with readzones inside server
+                var newReadzoneList = AppService.getReadzonesFromReceivedData(data);
+
+                console.log('newReadzoneList: ');
+                console.log(newReadzoneList);
+
+                console.log('menuReadzones for host: ' + readzonesElement.host);
+                console.log(menuReadzones);
+
+                //iterate over the received readzones
+                //if exists -> then update
+                //if does not exist -> then add
+
+                newReadzoneList.forEach(function (newReadzone) {
+
+                    var newReadzoneExists = false;
+
+                    //iterate over the current list of readzones in menu
+                    menuReadzones.forEach(function (menuReadzone) {
+
+                        if(!newReadzoneExists && (newReadzone.readzone == menuReadzone.readzone) ){
+
+                            newReadzoneExists = true;
+
+                            //menuReaderType.description = newReaderType.description;
+
+                        }
+
+                    });
+
+                    if ( !newReadzoneExists ){
+
+                        //then add new readzone to menu list
+
+                        //complete the attributes for new readzone to add
+
+                        newReadzone.elementName = newReadzone.readzone;
+                        newReadzone.elementId = newReadzone.readzone;
+                        newReadzone.collapsed = true;
+                        newReadzone.iconClass = 'readzone';
+                        newReadzone.appId = readzonesElement.appId;
+                        newReadzone.contextMenuId = 'contextMenuReadZone';
+                        newReadzone.host = readzonesElement.host;
+                        newReadzone.groupName = readzonesElement.groupName;
+                        newReadzone.elementType = 'readZone';
+                        newReadzone.children = [];
+
+                        console.log('going to add new readzone to menu on server: ' + readzonesElement.host);
+
+                        menuReadzones.push(newReadzone);
+
+                        console.log('new menu readzones:');
+                        console.log(menuReadzones);
+
+                    }
+
+                });
+
+                //iterate over the menu readzones to check what are deleted
+                //if menu readzone exists -> then do nothing, because it was already updated in previous loop
+                //if menu readzone does not exist -> then delete from menu list of readzones
+
+                var readzonesToDelete = [];
+
+                console.log('checking readzones to delete');
+                menuReadzones.forEach(function (menuReadzone) {
+
+                    var menuReadzoneExists = false;
+
+                    console.log('menuReadzoneExists:');
+                    console.log(menuReadzoneExists);
+
+                    //iterate over the new received readzone list
+                    newReadzoneList.forEach(function (newReadzone) {
+
+                        console.log('newReadzone:');
+                        console.log(newReadzone);
+
+                        if( newReadzone.readzone == menuReadzone.readzone ){
+
+                            console.log('newReadzone.readzone == menuReadzone.readzone');
+                            menuReadzoneExists = true;
+
+                        } else {
+
+                            console.log('newReadzone.readzone <> menuReadzone.readzone');
+
+                        }
+
+                    });
+
+                    if ( !menuReadzoneExists ){
+
+                        //then delete the readzone from menu (add to a list, and then when exit this menu readzone loop, delete)
+                        readzonesToDelete.push(angular.copy(menuReadzone));
+
+                    }
+
+                });
+
+                if ( readzonesToDelete.length > 0 ){
+
+                    //There is at least one readzone to delete, then delete
+
+                    //iterate the list of readzones to delete, and delete
+                    readzonesToDelete.forEach(function (readzoneToDelete) {
+
+                        //iterate over the menu readzones
+                        var currentIndex = -1;
+                        menuReadzones.forEach(function (menuReadzone) {
+
+                            currentIndex++;
+                            if( readzoneToDelete.readzone == menuReadzone.readzone ){
+
+                                menuReadzones.splice(currentIndex,1);
+                            }
+
+                        });
+
+                    });
+
+                }
+
+                //order the menu list of readzones
+                menuReadzones.sort( CommonService.compareElements );
+
+            })
+            . error(function (data, status, headers, config) {
+
+                console.log('callReadzoneListService.fail response on server: ' + readzonesElement.host);
+
+                //Delete the list of readzones
+                menuReadzones = [];
+
+            });
+
+    };
+
     var updateCommandTypes = function(menuReaderType){
 
         console.log('updateCommandTypes');
@@ -705,7 +1367,7 @@ app.service('MenuService', function($rootScope, $http, ServerService, CommonServ
                         newCommandType.readerTypeElement = 'readerTypeElement';
                         newCommandType.children = [];
 
-                        console.log('going to add new command type to menu on reader type: ' + menuReaderType.id);
+                        console.log('going to add new command type to menu on reader type: ' + menuReaderType.factoryID);
 
                         menuCommandTypes.push(newCommandType);
 
@@ -722,7 +1384,7 @@ app.service('MenuService', function($rootScope, $http, ServerService, CommonServ
 
                 var commandTypesToDelete = [];
 
-                console.log('checking command types to delete on reader type: ' + + menuReaderType.id);
+                console.log('checking command types to delete on reader type: ' + menuReaderType.id);
                 menuCommandTypes.forEach(function (menuCommandType) {
 
                     var menuCommandTypeExists = false;
@@ -812,7 +1474,7 @@ app.service('MenuService', function($rootScope, $http, ServerService, CommonServ
         console.log(menuCommandType);
 
         var menuCommandInstances = menuCommandType.children;
-        console.log('menuCommandInstances for command type: ' + menuCommandType.id + ', and host: ' + menuCommandType.host);
+        console.log('menuCommandInstances for command type: ' + menuCommandType.factoryID + ', and host: ' + menuCommandType.host);
         console.log(menuCommandInstances);
 
         //Query the updated list of command instances
@@ -862,7 +1524,7 @@ app.service('MenuService', function($rootScope, $http, ServerService, CommonServ
                         //newCommandInstance.factoryElement = ' factoryElement,
                         newCommandInstance.children = [];
 
-                        console.log('going to add new command instance to menu on command type: ' + menuCommandType.id);
+                        console.log('going to add new command instance to menu on command type: ' + newCommandInstance.commandID);
 
                         menuCommandInstances.push(newCommandInstance);
 
@@ -879,7 +1541,7 @@ app.service('MenuService', function($rootScope, $http, ServerService, CommonServ
 
                 var commandInstancesToDelete = [];
 
-                console.log('checking command instances to delete on command type: ' + + menuCommandType.id);
+                console.log('checking command instances to delete on command type: ' + menuCommandType.factoryID);
                 menuCommandInstances.forEach(function (menuCommandInstance) {
 
                     var menuCommandInstanceExists = false;
@@ -1036,7 +1698,7 @@ app.service('MenuService', function($rootScope, $http, ServerService, CommonServ
 
                 var sessionsToDelete = [];
 
-                console.log('checking sessions to delete on sensor: ' + + readerStatus.sensor.id);
+                console.log('checking sessions to delete on sensor: ' + readerStatus.sensor.id);
                 menuSessions.forEach(function (menuSession) {
 
                     var menuSessionExists = false;
@@ -1213,7 +1875,7 @@ app.service('MenuService', function($rootScope, $http, ServerService, CommonServ
 
         var commandsToDelete = [];
 
-        console.log('checking commands to delete on session: ' + + sessionElement.id);
+        console.log('checking commands to delete on session: ' + sessionElement.id);
         menuCommands.forEach(function (menuCommand) {
 
             var menuCommandExists = false;
@@ -1303,92 +1965,6 @@ app.service('MenuService', function($rootScope, $http, ServerService, CommonServ
         return config.url.substring(0, config.url.lastIndexOf("/"));
 
     };
-
-
-    //Method that calls the API to stop application
-    this.callStopAppService = function(host, appId){
-
-        console.log('callStopAppService');
-        console.log('appId');
-        console.log(appId);
-        var serviceUrl = host + '/stopapp/' + appId;
-        return $http({ method: 'GET', url: serviceUrl });
-
-    };
-
-    //Method that calls the API to start application
-    this.callStartAppService = function(host, appId){
-
-        console.log('callStartAppService');
-        console.log('appId');
-        console.log(appId);
-        var serviceUrl = host + '/startapp/' + appId;
-        return $http({ method: 'GET', url: serviceUrl });
-
-    };
-
-    // Method that takes the xml response from server and returns the applications
-    // belonging to specific group
-
-    this.getAppsFromReceivedData = function(data, groupName){
-
-        var xmlData = CommonService.getXmlObjectFromXmlServerData(data);
-
-        //get the xml response and extract the values to construct the app list where group matches
-        var appsXmlVector = xmlData.getElementsByTagName("app");
-
-        var appsToReturn = [];
-
-        for (var index = 0; index < appsXmlVector.length; index++) {
-
-            var id = appsXmlVector[index].getElementsByTagName("id")[0].childNodes[0].nodeValue;
-            var number = appsXmlVector[index].getElementsByTagName("number")[0].childNodes[0].nodeValue;
-            var status = appsXmlVector[index].getElementsByTagName("status")[0].childNodes[0].nodeValue;
-
-            //As id comes in the form 'AppGroup:AppName' we need to split it into two different variables
-
-            var localGroupName = id.split(":")[0];
-            var appName = id.split(":")[1];
-
-            if (localGroupName == groupName) {
-
-                //Add the application to app list
-                var appElement = {
-                    "number": number,
-                    "status": status,
-                    "groupName": groupName,
-                    "appName": appName
-                };
-
-                appsToReturn.push(appElement);
-
-            }
-        }
-
-        return appsToReturn;
-
-    };
-
-    // Method that extracts from url used to stop app, the app id parameter
-    // It is expected the url has the form: "http://localhost:8111/stopapp/{appNumber}"
-
-    this.extractAppIdFromStopAppUrl = function(url){
-
-        //console.log('extractAppIdFromStopAppUrl');
-        //console.log('extractAppIdFromStopAppUrl.url:');
-        //console.log(url);
-
-        //find the text 'stopapp/' and extract value after that string
-        var word = 'stopapp/';
-        var indexInicio = url.lastIndexOf(word) + word.length;
-        var appId = url.substring(indexInicio, url.length);
-
-        //console.log("extractAppIdFromStopAppUrl.appId:");
-        //console.log(appId);
-
-        return appId;
-
-    }
 
 
 });
