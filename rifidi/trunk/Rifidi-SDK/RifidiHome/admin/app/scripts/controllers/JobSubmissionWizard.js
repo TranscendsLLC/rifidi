@@ -8,7 +8,8 @@
  * Controller of the rifidiApp
  */
 angular.module('rifidiApp')
-  .controller('JobSubmissionWizardCtrl', function ($rootScope, $scope, $http, $routeParams, $location, ngDialog, commonVariableService) {
+  .controller('JobSubmissionWizardCtrl', function ($rootScope, $scope, $http, $routeParams, $location, ngDialog, commonVariableService,
+    MenuService) {
 
 
       var getSuccessMessage = function () {
@@ -23,14 +24,14 @@ angular.module('rifidiApp')
 
       //retrieve the server data
 
-      var restProtocol = angular.copy($scope.elementSelected.sensor.sensorManagementElement.restProtocol);
-      var ipAddress = angular.copy($scope.elementSelected.sensor.sensorManagementElement.ipAddress);
-      var restPort = angular.copy($scope.elementSelected.sensor.sensorManagementElement.restPort);
+      //var restProtocol = angular.copy($scope.elementSelected.sensor.sensorManagementElement.restProtocol);
+      //var ipAddress = angular.copy($scope.elementSelected.sensor.sensorManagementElement.ipAddress);
+      //var restPort = angular.copy($scope.elementSelected.sensor.sensorManagementElement.restPort);
       var readerType = angular.copy($scope.elementSelected.sensor.factoryID);
 
       var session = angular.copy($scope.elementSelected);
 
-      var host = restProtocol + "://" +  ipAddress + ":" + restPort;
+      //var host = restProtocol + "://" +  ipAddress + ":" + restPort;
 
       $scope.commandWizardData = {};
       $scope.commandWizardData.interval = 1000;
@@ -44,7 +45,7 @@ angular.module('rifidiApp')
       //load the command types
 
       //load command templates for selected reader type
-      $http.get(host + '/commandtypes')
+      $http.get($scope.elementSelected.host + '/commandtypes')
           .success(function(data, status, headers, config) {
 
 
@@ -103,7 +104,7 @@ angular.module('rifidiApp')
         //$scope.commandWizardData.commandType = selectedCommandType;
 
         //load the command instances for selected command type
-        $http.get(host + '/commands')
+        $http.get($scope.elementSelected.host + '/commands')
             .success(function(data, status, headers, config) {
 
               var xmlCommands;
@@ -172,7 +173,7 @@ angular.module('rifidiApp')
         $scope.commandWizardData.commandInstance = selectedCommandInstance;
 
         //Get the properties for the selected command type, from readermetadata
-        $http.get(host + '/readermetadata')
+        $http.get($scope.elementSelected.host + '/readermetadata')
             .success(function(data, status, headers, config) {
 
               var xmlMetadata;
@@ -295,7 +296,7 @@ angular.module('rifidiApp')
 
 
                     //call the service to get properties of command instance
-                    $http.get(host + '/getproperties/' + $scope.commandWizardData.commandInstance.commandID)
+                    $http.get($scope.elementSelected.host + '/getproperties/' + $scope.commandWizardData.commandInstance.commandID)
                         .success(function(data, status, headers, config) {
 
                           var xmlCommandProperties;
@@ -443,7 +444,7 @@ angular.module('rifidiApp')
           $scope.commandWizardData.commandCreationResponseStatus = {};
 
           //create command
-          $http.get(host + '/createcommand/' + $scope.commandWizardData.commandType.factoryID + "/" + strCommandProperties)
+          $http.get($scope.elementSelected.host + '/createcommand/' + $scope.commandWizardData.commandType.factoryID + "/" + strCommandProperties)
               .success(function(data, status, headers, config) {
 
                 console.log("success response creating command in wizard");
@@ -506,7 +507,7 @@ angular.module('rifidiApp')
           //console.log("going to set command properties: " + host + '/setproperties/' + $scope.selectedCommandInstance.commandID + '/' + strCommandProperties);
           $scope.commandWizardData.setCommandPropertiesResponseStatus = {};
 
-          $http.get(host + '/setproperties/' + $scope.commandWizardData.commandInstance.commandID + '/' + strCommandProperties)
+          $http.get($scope.elementSelected.host + '/setproperties/' + $scope.commandWizardData.commandInstance.commandID + '/' + strCommandProperties)
               .success(function(data, status, headers, config) {
 
                 var xmlSetCommandPropertiesResponse;
@@ -587,9 +588,9 @@ angular.module('rifidiApp')
           console.log("session.sensor.elementId:");
           console.log(session.sensor.elementId);
 
-          console.log("going to call execute command: " + host + '/executecommand/' + session.sensor.elementId + "/" + session.sessionID + "/" +  commandId + '/' + repeatInterval);
+          console.log("going to call execute command: " + $scope.elementSelected.host + '/executecommand/' + session.sensor.elementId + "/" + session.sessionID + "/" +  commandId + '/' + repeatInterval);
 
-          $http.get(host + '/executecommand/' + session.sensor.elementId + "/" + session.sessionID + "/" + commandId + '/' + repeatInterval)
+          $http.get($scope.elementSelected.host + '/executecommand/' + session.sensor.elementId + "/" + session.sessionID + "/" + commandId + '/' + repeatInterval)
               .success(function(data, status, headers, config) {
 
                 var xmlExecuteCommandResponse;
@@ -615,6 +616,7 @@ angular.module('rifidiApp')
                   console.log("success executing command in wizard");
 
                   $rootScope.operationSuccessMsg = angular.copy($rootScope.operationSuccessMsg) + ". Success executing command";
+                  MenuService.createUpdateMenu();
 
                 } else {
                   var executeCommandDescription = xmlExecuteCommandResponse.getElementsByTagName("description")[0].childNodes[0].nodeValue;

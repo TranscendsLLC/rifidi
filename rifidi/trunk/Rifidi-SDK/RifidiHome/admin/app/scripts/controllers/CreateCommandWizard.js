@@ -345,6 +345,8 @@ angular.module('rifidiApp')
                 setSuccessMessage("Success creating command: " + commandID);
                 $rootScope.operationSuccessMsg = getSuccessMessage();
 
+                MenuService.createUpdateMenu();
+
                 //continueExecutingCommand(commandID);
 
               } else {

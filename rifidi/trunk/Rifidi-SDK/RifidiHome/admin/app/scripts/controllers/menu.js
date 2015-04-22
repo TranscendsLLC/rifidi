@@ -181,7 +181,8 @@ var module = angular.module('rifidiApp')
                     if (message == 'Success') {
                         console.log("success deleting readzone");
                         $rootScope.operationSuccessMsg = "Success deleting readzone";
-                        TreeViewPainting.paintTreeView();
+                        //TreeViewPainting.paintTreeView();
+                        MenuService.createUpdateMenu();
 
                         //Show a modal dialog to confirm if user wants to restart apps in order for properties to take effect
                         openRestartAppsDialog(host, groupName);
@@ -774,10 +775,10 @@ var module = angular.module('rifidiApp')
                         if (app.status == 'STARTED') {
 
                             console.log("restartAppsIfRunning. Going to stop app:");
-                            console.log(app.number);
+                            console.log(app.appId);
 
                             //Call the service to stop this app
-                            AppService.callStopAppService(host, app.number)
+                            AppService.callStopAppService(host, app.appId)
                                 .success(function (data, status, headers, config) {
 
                                     console.log("restartAppsIfRunning. Success calling stop app service");
@@ -818,7 +819,7 @@ var module = angular.module('rifidiApp')
                                                     var localAppName;
                                                     apps.forEach( function (app) {
 
-                                                        if (app.number == appIdReturned){
+                                                        if (app.appId == appIdReturned){
                                                             localAppName = app.appName;
                                                         }
 
@@ -872,7 +873,7 @@ var module = angular.module('rifidiApp')
                         } else {
 
                             console.log("restartAppsIfRunning. NOT going to stop app:");
-                            console.log(app.number);
+                            console.log(app.appId);
                         }
 
                     });
@@ -897,11 +898,11 @@ var module = angular.module('rifidiApp')
             if (app.status == 'STARTED') {
 
                 console.log("restartAppIfRunning. Going to stop app:");
-                console.log("app.number");
-                console.log(app.number);
+                console.log("app.appId");
+                console.log(app.appId);
 
                 //Call the service to stop this app
-                AppService.callStopAppService(host, app.number)
+                AppService.callStopAppService(host, app.appId)
                     .success(function (data, status, headers, config) {
 
                         //decode the response to see if success
@@ -913,7 +914,7 @@ var module = angular.module('rifidiApp')
                             console.log("restartAppIfRunning. Success stopping app. Going to start it");
 
                             //Call the service to start this app
-                            AppService.callStartAppService(host, app.number)
+                            AppService.callStartAppService(host, app.appId)
                                 .success(function (data, status, headers, config) {
 
                                     console.log("restartAppIfRunning. Success calling start app service");
@@ -1646,7 +1647,8 @@ var module = angular.module('rifidiApp')
 
                         $rootScope.operationSuccessMsg = ("Success saving server config");
 
-                        TreeViewPainting.paintTreeView();
+                        //TreeViewPainting.paintTreeView();
+                        MenuService.createUpdateMenu();
 
                     } else {
                         var saveServerConfigCommandDescription = saveCommandResponse.getElementsByTagName("description")[0].childNodes[0].nodeValue;
@@ -1719,7 +1721,8 @@ var module = angular.module('rifidiApp')
                                 //$scope.operationSuccessMsg = "Save server properties operation success";
                                 $rootScope.operationSuccessMsgs.push("Success saving server config for server: " + saveHost);
 
-                                TreeViewPainting.paintTreeView();
+                                //TreeViewPainting.paintTreeView();
+                                MenuService.createUpdateMenu();
 
                             } else {
                                 var saveServerConfigCommandDescription = saveCommandResponse.getElementsByTagName("description")[0].childNodes[0].nodeValue;
@@ -1761,31 +1764,20 @@ var module = angular.module('rifidiApp')
 
           //$scope.refreshMenuTreeView = function () {
 
-        TreeViewPainting.paintTreeView();
+        //TreeViewPainting.paintTreeView();
+
+        MenuService.createUpdateMenu();
 
 
-        $interval(callAtInterval, 10000);
+        $interval(callAtInterval, 5000);
 
         function callAtInterval(){
 
-            MenuService.createUpdateMenu();
+            //MenuService.createUpdateMenu();
 
         }
 
 
-          //}
-
-
-          $scope.tabs = [
-              { title:'Dynamic Title 1', content:'Dynamic content 1' },
-              { title:'Dynamic Title 2', content:'Dynamic content 2', disabled: true }
-          ];
-
-          var tabsSensor=[
-              { title:'Connection', content:'Dynamic content 1' },
-              { title:'General', content:'Dynamic content 2'},
-              { title:'General', content:'Dynamic content 2'}
-          ];
 
           $scope.$watch( 'elementTree.currentNode', function( newObj, oldObj ) {
 
@@ -2732,7 +2724,7 @@ var module = angular.module('rifidiApp')
                      $scope.appGroupProperties = null;
 
                      //get the app id of the first app below this app group
-                     var appId = $scope.elementSelected.children[0].children[0].number;
+                     var appId = $scope.elementSelected.children[0].children[0].appId;
 
                       //call getGroupProperties operation
                       var host = angular.copy($scope.elementSelected.host);
@@ -2815,7 +2807,7 @@ var module = angular.module('rifidiApp')
                       $scope.appProperties = null;
 
                       //get the app id of the first app below this app group
-                      var appId = $scope.elementSelected.number;
+                      var appId = $scope.elementSelected.appId;
 
                       //call getAppProperties operation
                       var host = angular.copy($scope.elementSelected.host);
@@ -3202,8 +3194,9 @@ var module = angular.module('rifidiApp')
 
                     if (message == 'Success') {
                         console.log("success updating sensor properties");
-                        $scope.operationSuccessMsg = "Success saving sensor properties";
-                        TreeViewPainting.paintTreeView();
+                        $rootScope.operationSuccessMsg = "Success saving sensor properties";
+                        //TreeViewPainting.paintTreeView();
+                        MenuService.createUpdateMenu();
 
                     } else {
                         var updateSensorPropertiesCommandDescription = updateSensorPropertiesCommandResponse.getElementsByTagName("description")[0].childNodes[0].nodeValue;
@@ -3419,7 +3412,8 @@ var module = angular.module('rifidiApp')
                             console.log("success setting properties for command");
 
                                 $rootScope.operationSuccessMsg = "Success setting properties for command";
-                                TreeViewPainting.paintTreeView();
+                                //TreeViewPainting.paintTreeView();
+                                MenuService.createUpdateMenu();
 
                         } else {
                             var setCommandPropertiesDescription = xmlSetCommandPropertiesResponse.getElementsByTagName("description")[0].childNodes[0].nodeValue;
@@ -3500,7 +3494,8 @@ var module = angular.module('rifidiApp')
                         console.log("success setting properties for app group");
 
                         $rootScope.operationSuccessMsg = "Success setting properties for app group";
-                        TreeViewPainting.paintTreeView();
+                        //TreeViewPainting.paintTreeView();
+                        MenuService.createUpdateMenu();
 
                         //Show a modal dialog to confirm if user wants to restart apps in order for properties to take effect
                         openRestartAppsDialog(appGroupProperties.host, groupName);
@@ -3585,7 +3580,8 @@ var module = angular.module('rifidiApp')
                         console.log("success setting properties for app");
 
                         $rootScope.operationSuccessMsg = "Success setting properties for app";
-                        TreeViewPainting.paintTreeView();
+                        //TreeViewPainting.paintTreeView();
+                        MenuService.createUpdateMenu();
 
                         //Show a modal dialog to confirm if user wants to restart app in order for properties to take effect
                         //Only in case app is running
@@ -3681,7 +3677,8 @@ var module = angular.module('rifidiApp')
                         console.log("success setting properties for readzone");
 
                         $rootScope.operationSuccessMsg = "Success setting properties for readzone";
-                        TreeViewPainting.paintTreeView();
+                        //TreeViewPainting.paintTreeView();
+                        MenuService.createUpdateMenu();
 
                         //Show a modal dialog to confirm if user wants to restart apps in order for properties to take effect
                         openRestartAppsDialog(host, groupName);
@@ -3718,7 +3715,7 @@ var module = angular.module('rifidiApp')
             console.log("startApp");
 
             var host = $scope.elementSelected.host;
-            var appId = $scope.elementSelected.number;
+            var appId = $scope.elementSelected.appId;
 
             $http.get(host + '/startapp/' + appId)
                 .success(function(data, status, headers, config) {
@@ -3746,7 +3743,8 @@ var module = angular.module('rifidiApp')
                         console.log("success starting app");
 
                         $rootScope.operationSuccessMsg = "Success starting app";
-                        TreeViewPainting.paintTreeView();
+                        //TreeViewPainting.paintTreeView();
+                        MenuService.createUpdateMenu();
 
                     } else {
                         var startAppCommandDescription = xmlStartApp.getElementsByTagName("description")[0].childNodes[0].nodeValue;
@@ -3772,7 +3770,7 @@ var module = angular.module('rifidiApp')
             console.log("stopApp");
 
             var host = $scope.elementSelected.host;
-            var appId = $scope.elementSelected.number;
+            var appId = $scope.elementSelected.appId;
 
             $http.get(host + '/stopapp/' + appId)
                 .success(function(data, status, headers, config) {
@@ -3802,7 +3800,8 @@ var module = angular.module('rifidiApp')
                         $rootScope.operationSuccessMsg = "Success stopping app";
 
                         //refresh tree view
-                        TreeViewPainting.paintTreeView();
+                        //TreeViewPainting.paintTreeView();
+                        MenuService.createUpdateMenu();
 
                     } else {
                         var stopAppCommandDescription = xmlStopApp.getElementsByTagName("description")[0].childNodes[0].nodeValue;
@@ -4682,12 +4681,12 @@ module.service('TreeViewPainting', function($http, $rootScope, ServerService, Co
 
                                                      //Add the application number to this application group in order to later add the associated read zones
                                                      if (appGroupElement.readzoneAppId == "") {
-                                                         appGroupElement.readzoneAppId = appElement.number;
+                                                         appGroupElement.readzoneAppId = appElement.appId;
                                                      }
 
                                                      //Add the application id to the readzones element
                                                      if ( appGroupElement.children[1].appId == ""){
-                                                         appGroupElement.children[1].appId = appElement.number;;
+                                                         appGroupElement.children[1].appId = appElement.appId;;
                                                      }
 
 

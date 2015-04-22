@@ -208,6 +208,7 @@ angular.module('rifidiApp')
 
                 setSuccessMessage("Success adding readzone");
                 $rootScope.operationSuccessMsg = getSuccessMessage();
+                  MenuService.createUpdateMenu();
 
               //Show a modal dialog to confirm if user wants to restart apps in order for properties to take effect
               openRestartAppsDialog(host, groupName);
@@ -354,6 +355,8 @@ angular.module('rifidiApp')
                                                 showErrorDialog('Error starting app with id ' + appIdReturned + ': ' + description);
 
                                             }
+
+                                            MenuService.createUpdateMenu();
 
 
                                         })
