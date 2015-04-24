@@ -16,6 +16,9 @@
 	<osgi:reference id="configurationServiceRegistration" 
 		interface="org.rifidi.edge.configuration.ConfigurationService" />
 		
+	<osgi:reference id="provisioningServiceRegistration" 
+		interface="org.rifidi.edge.services.ProvisioningService" />
+		
 	<osgi:reference id="appManagerRef"
 		interface="org.rifidi.edge.api.service.appmanager.AppManager" />
 		
@@ -28,6 +31,7 @@
 		<property name="commandManagerService" ref="commandManagerServiceRef"/>
 		<property name="appManager" ref="appManagerRef"/>
 		<property name="configurationService" ref="configurationServiceRegistration" />
+		<property name="provisioningService" ref="provisioningServiceRegistration" />
 		<property name="readerDAO" ref="readerDAOImpl" />
 		<property name="commandDAO" ref="commandDAOImpl" />
 	</bean>
