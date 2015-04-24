@@ -1497,17 +1497,21 @@ public class SensorManagerServiceRestletImpl extends Application {
 				}
 			}
 		};
-//		Restlet loadApp = new Restlet() {
-//			@Override
-//			public void handle(Request request, Response response) {
-//				try {
-//					Set<String> bundles = provisioningService.provision((String)request.getAttributes().get("path"));
-//					
-//				} catch(Exception e) {
-//					
-//				}
-//			}
-//		};
+		Restlet loadApp = new Restlet() {
+			@Override
+			public void handle(Request request, Response response) {
+				try {
+					provisioningService.provision((String)request.getAttributes().get("path"));
+					response.setEntity(self.generateReturnString(self
+							.generateSuccessMessage()), MediaType.TEXT_XML);
+				} catch(Exception e) {
+					e.printStackTrace();
+					response.setEntity(self.generateReturnString(self
+							.generateErrorMessage(e.toString(), null)),
+							MediaType.TEXT_XML);
+				}
+			}
+		};
 		Restlet save = new Restlet() {
 			@Override
 			public void handle(Request request, Response response) {
@@ -2389,6 +2393,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 
 		router.attach("/startapp/{appID}", startApp);
 		router.attach("/stopapp/{appID}", stopApp);
+		router.attach("/loadapp/{path}", loadApp);
 		router.attach("/commandtypes", commandTypes);
 		router.attach("/readertypes", readerTypes);
 		router.attach("/readermetadata", readerMetadata);
