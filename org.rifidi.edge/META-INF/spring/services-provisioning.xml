@@ -38,4 +38,6 @@
 
 	<osgi:service ref="provisioningCommands"
 		interface="org.eclipse.osgi.framework.console.CommandProvider" />
+	<osgi:service id="provisioningServiceRegistration" ref="provisioningService"
+		interface="org.rifidi.edge.services.ProvisioningService" />
 </beans>
