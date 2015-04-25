@@ -675,6 +675,81 @@
                                </form>
                            </div>
 
+                           <div ng-switch-when="servers">
+
+                               <div ng-show="getPropertiesErrorMsg">
+                                   {{getPropertiesErrorMsg}}
+                               </div>
+
+                               <form class="form-horizontal" role="form" name="form" novalidate>
+
+                                   <div class="form-group" >
+
+                                       <div class="col-sm-3">
+                                           <label class="control-label" for="enableAutoRefresh">Enable auto refresh</label>
+                                       </div>
+
+                                       <div class="col-sm-6">
+
+                                           <select id="enableAutoRefresh"
+                                                   name="enableAutoRefresh"
+                                                   ng-model="propEnableAutoRefresh"
+                                                   ng-required="true"
+                                                   class="form-control"
+                                                   aria-describedby="helpEnableAutoRefresh"
+                                                   ng-options="value.id as value.id for value in booleanValues">
+
+                                               <option>--</option>
+                                           </select>
+
+                                       </div>
+
+                                       <div ng-show="form.$submitted || form.enableAutoRefresh.$touched" >
+
+                                           <div ng-show="form.enableAutoRefresh.$error.required">
+
+                                               enableAutoRefresh is required.
+
+                                           </div>
+                                       </div>
+
+                                   </div>
+                                   <span id="helpEnableAutoRefresh" class="help-block">Set true to enable auto refresh of menu</span>
+
+                                   <br>
+                                   <p>
+
+                                   <div class="form-group" >
+
+                                       <div class="col-sm-3">
+                                           <label class="control-label" for="autoRefreshDelay">Auto refresh delay</label>
+                                       </div>
+
+                                       <div class="col-sm-6">
+
+                                           <input aria-describedby="helpAutoRefreshDelay" id="autoRefreshDelay" name="autoRefreshDelay" type="number"
+                                                  class="form-control" ng-model="propAutoRefreshDelay" required
+                                                   />
+
+                                       </div>
+
+                                       <div ng-show="form.$submitted || form.autoRefreshDelay.$touched" >
+
+                                           <div ng-show="form.autoRefreshDelay.$error.required">
+
+                                               autoRefreshDelay is required.
+
+                                           </div>
+                                       </div>
+
+                                   </div>
+                                   <span id="helpAutoRefreshDelay" class="help-block">Set the time in milliseconds for menu autorefresh to periodically execute</span>
+
+                                   <input class="btn btn-primary" ng-click="openSaveServersPropertiesDialog(propEnableAutoRefresh, propAutoRefreshDelay)" ng-disabled="form.$invalid" type="submit" value="Save" />
+
+                               </form>
+                           </div>
+
                            <div ng-switch-when="">
                                Nothing
                            </div>
