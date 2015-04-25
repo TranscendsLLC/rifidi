@@ -27,8 +27,8 @@
       <file leaf-file-name="menuService.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/scripts/services/menuService.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.49311927" vertical-offset="34295" max-vertical-offset="34731">
-              <caret line="2030" column="13" selection-start-line="2030" selection-start-column="13" selection-end-line="2030" selection-end-column="13" />
+            <state vertical-scroll-proportion="0.5321101" vertical-offset="33734" max-vertical-offset="34884">
+              <caret line="1998" column="31" selection-start-line="1998" selection-start-column="31" selection-end-line="1998" selection-end-column="31" />
               <folding />
             </state>
           </provider>
@@ -764,8 +764,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/scripts/services/menuService.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.49311927" vertical-offset="34295" max-vertical-offset="34731">
-          <caret line="2030" column="13" selection-start-line="2030" selection-start-column="13" selection-end-line="2030" selection-end-column="13" />
+        <state vertical-scroll-proportion="0.5321101" vertical-offset="33734" max-vertical-offset="34884">
+          <caret line="1998" column="31" selection-start-line="1998" selection-start-column="31" selection-end-line="1998" selection-end-column="31" />
           <folding />
         </state>
       </provider>
