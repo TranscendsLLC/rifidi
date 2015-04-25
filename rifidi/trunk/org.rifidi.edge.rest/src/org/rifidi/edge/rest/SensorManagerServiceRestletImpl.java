@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.rifidi.edge.rest;
 
+import java.io.File;
 import java.io.Serializable;
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -44,8 +45,10 @@ import org.restlet.Request;
 import org.restlet.Response;
 import org.restlet.Restlet;
 import org.restlet.data.Header;
+import org.restlet.data.LocalReference;
 import org.restlet.data.MediaType;
 import org.restlet.data.Reference;
+import org.restlet.resource.Directory;
 import org.restlet.routing.Router;
 import org.restlet.util.Series;
 import org.rifidi.edge.adapter.llrp.LLRPEncodeMessageDto;
@@ -2330,6 +2333,46 @@ public class SensorManagerServiceRestletImpl extends Application {
 				}
 			}
 		};
+		
+		Restlet updateUIPropertiesFile = new Restlet() {
+			@Override
+			public void handle(Request request, Response response) {
+				try {
+					
+					setResponseHeaders(request, response);
+					
+					String data = (String) request.getAttributes().get("data");
+					String decodedData = URLDecoder.decode(data, "UTF-8");
+					RifidiEdgeHelper.updateUIPropertiesFile(decodedData);
+					response.setEntity(self.generateReturnString(self
+							.generateSuccessMessage()), MediaType.TEXT_XML);
+				} catch (Exception e) {
+
+					response.setEntity(self.generateReturnString(self
+							.generateErrorMessage(e.toString(), null)),
+							MediaType.TEXT_XML);
+				}
+			}
+		};
+		
+		Restlet getUIPropertiesFile = new Restlet() {
+			@Override
+			public void handle(Request request, Response response) {
+				try {
+					
+					setResponseHeaders(request, response);
+					
+					byte[] data = RifidiEdgeHelper.getUIPropertiesFile();
+					String str = new String(data, "UTF-8");
+					response.setEntity(str, MediaType.APPLICATION_JSON);
+				} catch (Exception e) {
+
+					response.setEntity(self.generateReturnString(self
+							.generateErrorMessage(e.toString(), null)),
+							MediaType.TEXT_XML);
+				}
+			}
+		};
 
 		Router router = new Router(getContext());
 		router.attach("/readers", readers);
@@ -2526,6 +2569,37 @@ public class SensorManagerServiceRestletImpl extends Application {
 		
 		//router to get servers file
 		router.attach("/getServersFile", getServersFile);
+		
+		//router to update ui properties file
+		router.attach("/updateUIPropertiesFile/{data}", updateUIPropertiesFile);
+		
+		//router to get properties file
+		router.attach("/getUIPropertiesFile", getUIPropertiesFile);
+		
+		//Attach web administration dashboard app
+		//Directory directory = new Directory(getContext(), "file://D://datos//proyectos//idlink//rfid//rifidi_workspace//Rifidi-SDK//RifidiHome//admin//app");
+		//Directory directory = new Directory(getContext(), "file:\\D:\\datos\\proyectos\\idlink\\rfid\rifidi_workspace\\Rifidi-SDK\\RifidiHome\\admin\\app");
+	
+		
+		String appPath = System.getProperty("org.rifidi.home") + File.separator
+					+ "admin" + File.separator + "app" + File.separator;
+		
+		//System.out.println("appPath: " + appPath);
+		
+		//router.getApplication().
+		
+		Directory directory = new Directory(getContext(), appPath);
+		router.attach("/console", directory);
+		
+		
+		///getContext().getParameters().add("useForwardedForHeader", "true");
+		//Directory directory = new Directory(getContext(),
+			     //LocalReference.createClapReference(appPath));
+			//	LocalReference.createFileReference(appPath));
+			//  directory.setIndexName("index.html");
+		router.attach("/console", directory);
+
+		
 
 		return router;
 	}
